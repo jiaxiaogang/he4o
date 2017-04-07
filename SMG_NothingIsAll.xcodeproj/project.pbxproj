@@ -14,6 +14,7 @@
 		08AF45551E97D0B500377887 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45541E97D0B500377887 /* Assets.xcassets */; };
 		08AF45581E97D0B500377887 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45561E97D0B500377887 /* LaunchScreen.storyboard */; };
 		08AF45631E97D6F200377887 /* GC.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF45621E97D6F200377887 /* GC.m */; };
+		08AF456B1E97D80C00377887 /* MemStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF456A1E97D80C00377887 /* MemStore.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,8 @@
 		08AF45591E97D0B500377887 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		08AF45611E97D6F200377887 /* GC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GC.h; sourceTree = "<group>"; };
 		08AF45621E97D6F200377887 /* GC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GC.m; sourceTree = "<group>"; };
+		08AF45691E97D80C00377887 /* MemStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemStore.h; sourceTree = "<group>"; };
+		08AF456A1E97D80C00377887 /* MemStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MemStore.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +89,7 @@
 		08AF455F1E97D43C00377887 /* Class */ = {
 			isa = PBXGroup;
 			children = (
+				08AF45681E97D80C00377887 /* Store */,
 				08AF45601E97D45E00377887 /* GC */,
 			);
 			path = Class;
@@ -98,6 +102,15 @@
 				08AF45621E97D6F200377887 /* GC.m */,
 			);
 			path = GC;
+			sourceTree = "<group>";
+		};
+		08AF45681E97D80C00377887 /* Store */ = {
+			isa = PBXGroup;
+			children = (
+				08AF45691E97D80C00377887 /* MemStore.h */,
+				08AF456A1E97D80C00377887 /* MemStore.m */,
+			);
+			path = Store;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -176,6 +189,7 @@
 				08AF45631E97D6F200377887 /* GC.m in Sources */,
 				08AF454D1E97D0B500377887 /* AppDelegate.m in Sources */,
 				08AF454A1E97D0B500377887 /* main.m in Sources */,
+				08AF456B1E97D80C00377887 /* MemStore.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
