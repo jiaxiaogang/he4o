@@ -7,6 +7,7 @@
 //
 
 #import "MemStore.h"
+#import "TMCache.h"
 
 static MemStore *instance;
 
@@ -22,8 +23,9 @@ static MemStore *instance;
 
 -(NSMutableDictionary *)dic{
     if (_dic == nil) {
-        _dic = [tmcache]
+        _dic = [NSMutableDictionary dictionaryWithDictionary:[[TMDiskCache sharedCache] objectForKey:@"MemStore_Dic_Key"]];
     }
+    return _dic;
 }
 
 @end
