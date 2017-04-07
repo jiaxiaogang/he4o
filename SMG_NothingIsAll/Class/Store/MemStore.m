@@ -19,4 +19,11 @@ static MemStore *instance;
     return instance;
 }
 
+
+-(NSMutableDictionary *)dic{
+    if (_dic == nil) {
+        _dic = [tmcache]
+    }
+}
+
 @end
