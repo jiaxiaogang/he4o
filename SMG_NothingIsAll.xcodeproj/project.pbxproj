@@ -13,6 +13,7 @@
 		08AF45531E97D0B500377887 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45511E97D0B500377887 /* Main.storyboard */; };
 		08AF45551E97D0B500377887 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45541E97D0B500377887 /* Assets.xcassets */; };
 		08AF45581E97D0B500377887 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45561E97D0B500377887 /* LaunchScreen.storyboard */; };
+		08AF45631E97D6F200377887 /* GC.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF45621E97D6F200377887 /* GC.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,8 @@
 		08AF45541E97D0B500377887 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		08AF45571E97D0B500377887 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		08AF45591E97D0B500377887 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		08AF45611E97D6F200377887 /* GC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GC.h; sourceTree = "<group>"; };
+		08AF45621E97D6F200377887 /* GC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GC.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +61,7 @@
 		08AF45471E97D0B500377887 /* SMG_NothingIsAll */ = {
 			isa = PBXGroup;
 			children = (
+				08AF455F1E97D43C00377887 /* Class */,
 				08AF454B1E97D0B500377887 /* AppDelegate.h */,
 				08AF454C1E97D0B500377887 /* AppDelegate.m */,
 				08AF454E1E97D0B500377887 /* ViewController.h */,
@@ -77,6 +81,23 @@
 				08AF45491E97D0B500377887 /* main.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		08AF455F1E97D43C00377887 /* Class */ = {
+			isa = PBXGroup;
+			children = (
+				08AF45601E97D45E00377887 /* GC */,
+			);
+			path = Class;
+			sourceTree = "<group>";
+		};
+		08AF45601E97D45E00377887 /* GC */ = {
+			isa = PBXGroup;
+			children = (
+				08AF45611E97D6F200377887 /* GC.h */,
+				08AF45621E97D6F200377887 /* GC.m */,
+			);
+			path = GC;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -110,6 +131,7 @@
 				TargetAttributes = {
 					08AF45441E97D0B500377887 = {
 						CreatedOnToolsVersion = 8.3;
+						DevelopmentTeam = JFKVVV67KW;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -151,6 +173,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				08AF45501E97D0B500377887 /* ViewController.m in Sources */,
+				08AF45631E97D6F200377887 /* GC.m in Sources */,
 				08AF454D1E97D0B500377887 /* AppDelegate.m in Sources */,
 				08AF454A1E97D0B500377887 /* main.m in Sources */,
 			);
@@ -274,6 +297,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = JFKVVV67KW;
 				INFOPLIST_FILE = SMG_NothingIsAll/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jxg.test.SMG-NothingIsAll";
@@ -285,6 +309,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = JFKVVV67KW;
 				INFOPLIST_FILE = SMG_NothingIsAll/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jxg.test.SMG-NothingIsAll";
