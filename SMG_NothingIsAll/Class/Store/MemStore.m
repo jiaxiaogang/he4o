@@ -8,6 +8,15 @@
 
 #import "MemStore.h"
 
+static MemStore *instance;
+
 @implementation MemStore
+
++(id) shareInstance{
+    if (instance == nil) {
+        instance = [[MemStore alloc] init];
+    }
+    return instance;
+}
 
 @end

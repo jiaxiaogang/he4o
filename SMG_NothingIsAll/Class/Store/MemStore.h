@@ -15,4 +15,7 @@
  */
 @interface MemStore : NSObject
 
++(id) shareInstance;
+@property (strong,nonatomic) NSMutableDictionary *dic;  //内存kv存储;
+
 @end
