@@ -15,6 +15,7 @@
 		08AF45581E97D0B500377887 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45561E97D0B500377887 /* LaunchScreen.storyboard */; };
 		08AF45631E97D6F200377887 /* GC.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF45621E97D6F200377887 /* GC.m */; };
 		08AF456B1E97D80C00377887 /* MemStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF456A1E97D80C00377887 /* MemStore.m */; };
+		08AF456E1E97DDF600377887 /* MKStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF456D1E97DDF600377887 /* MKStore.m */; };
 		2753D7CF7BAEDFEACAF9264A /* libPods-SMG_NothingIsAll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */; };
 /* End PBXBuildFile section */
 
@@ -33,6 +34,8 @@
 		08AF45621E97D6F200377887 /* GC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GC.m; sourceTree = "<group>"; };
 		08AF45691E97D80C00377887 /* MemStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemStore.h; sourceTree = "<group>"; };
 		08AF456A1E97D80C00377887 /* MemStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MemStore.m; sourceTree = "<group>"; };
+		08AF456C1E97DDF600377887 /* MKStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKStore.h; sourceTree = "<group>"; };
+		08AF456D1E97DDF600377887 /* MKStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKStore.m; sourceTree = "<group>"; };
 		DE79539824FEDBA53557ECCA /* Pods-SMG_NothingIsAll.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SMG_NothingIsAll.release.xcconfig"; path = "Pods/Target Support Files/Pods-SMG_NothingIsAll/Pods-SMG_NothingIsAll.release.xcconfig"; sourceTree = "<group>"; };
 		DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SMG_NothingIsAll.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E74E5256A45FDF9C80A280FD /* Pods-SMG_NothingIsAll.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SMG_NothingIsAll.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SMG_NothingIsAll/Pods-SMG_NothingIsAll.debug.xcconfig"; sourceTree = "<group>"; };
@@ -116,6 +119,8 @@
 			children = (
 				08AF45691E97D80C00377887 /* MemStore.h */,
 				08AF456A1E97D80C00377887 /* MemStore.m */,
+				08AF456C1E97DDF600377887 /* MKStore.h */,
+				08AF456D1E97DDF600377887 /* MKStore.m */,
 			);
 			path = Store;
 			sourceTree = "<group>";
@@ -261,6 +266,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				08AF45501E97D0B500377887 /* ViewController.m in Sources */,
+				08AF456E1E97DDF600377887 /* MKStore.m in Sources */,
 				08AF45631E97D6F200377887 /* GC.m in Sources */,
 				08AF454D1E97D0B500377887 /* AppDelegate.m in Sources */,
 				08AF454A1E97D0B500377887 /* main.m in Sources */,
@@ -427,6 +433,7 @@
 				08AF455E1E97D0B500377887 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

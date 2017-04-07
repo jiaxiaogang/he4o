@@ -9,11 +9,12 @@
 #import "MemStore.h"
 #import "TMCache.h"
 
-static MemStore *instance;
+
 
 @implementation MemStore
 
-+(id) shareInstance{
+static MemStore *instance;
++(id) sharedInstance{
     if (instance == nil) {
         instance = [[MemStore alloc] init];
     }
