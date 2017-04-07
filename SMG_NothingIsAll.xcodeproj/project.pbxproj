@@ -15,6 +15,7 @@
 		08AF45581E97D0B500377887 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45561E97D0B500377887 /* LaunchScreen.storyboard */; };
 		08AF45631E97D6F200377887 /* GC.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF45621E97D6F200377887 /* GC.m */; };
 		08AF456B1E97D80C00377887 /* MemStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF456A1E97D80C00377887 /* MemStore.m */; };
+		2753D7CF7BAEDFEACAF9264A /* libPods-SMG_NothingIsAll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,9 @@
 		08AF45621E97D6F200377887 /* GC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GC.m; sourceTree = "<group>"; };
 		08AF45691E97D80C00377887 /* MemStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemStore.h; sourceTree = "<group>"; };
 		08AF456A1E97D80C00377887 /* MemStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MemStore.m; sourceTree = "<group>"; };
+		DE79539824FEDBA53557ECCA /* Pods-SMG_NothingIsAll.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SMG_NothingIsAll.release.xcconfig"; path = "Pods/Target Support Files/Pods-SMG_NothingIsAll/Pods-SMG_NothingIsAll.release.xcconfig"; sourceTree = "<group>"; };
+		DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SMG_NothingIsAll.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E74E5256A45FDF9C80A280FD /* Pods-SMG_NothingIsAll.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SMG_NothingIsAll.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SMG_NothingIsAll/Pods-SMG_NothingIsAll.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -39,6 +43,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2753D7CF7BAEDFEACAF9264A /* libPods-SMG_NothingIsAll.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -50,6 +55,8 @@
 			children = (
 				08AF45471E97D0B500377887 /* SMG_NothingIsAll */,
 				08AF45461E97D0B500377887 /* Products */,
+				C2C394C172413FE5FD49262C /* Pods */,
+				207E0C8ABC4501E50CC5D363 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -113,6 +120,23 @@
 			path = Store;
 			sourceTree = "<group>";
 		};
+		207E0C8ABC4501E50CC5D363 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C2C394C172413FE5FD49262C /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				E74E5256A45FDF9C80A280FD /* Pods-SMG_NothingIsAll.debug.xcconfig */,
+				DE79539824FEDBA53557ECCA /* Pods-SMG_NothingIsAll.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -120,9 +144,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 08AF455C1E97D0B500377887 /* Build configuration list for PBXNativeTarget "SMG_NothingIsAll" */;
 			buildPhases = (
+				695B8C085D8E79B46D107142 /* [CP] Check Pods Manifest.lock */,
 				08AF45411E97D0B500377887 /* Sources */,
 				08AF45421E97D0B500377887 /* Frameworks */,
 				08AF45431E97D0B500377887 /* Resources */,
+				A3A068A1F85BECB7B75D5186 /* [CP] Embed Pods Frameworks */,
+				9F7152650ADCE3A7B7E7624F /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -179,6 +206,54 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		695B8C085D8E79B46D107142 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		9F7152650ADCE3A7B7E7624F /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SMG_NothingIsAll/Pods-SMG_NothingIsAll-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A3A068A1F85BECB7B75D5186 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SMG_NothingIsAll/Pods-SMG_NothingIsAll-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		08AF45411E97D0B500377887 /* Sources */ = {
@@ -309,6 +384,7 @@
 		};
 		08AF455D1E97D0B500377887 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E74E5256A45FDF9C80A280FD /* Pods-SMG_NothingIsAll.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = JFKVVV67KW;
@@ -321,6 +397,7 @@
 		};
 		08AF455E1E97D0B500377887 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DE79539824FEDBA53557ECCA /* Pods-SMG_NothingIsAll.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = JFKVVV67KW;
