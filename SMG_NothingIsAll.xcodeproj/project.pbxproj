@@ -51,6 +51,7 @@
 		08F3AFA81E9888B400747EDD /* Happy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Happy.m; sourceTree = "<group>"; };
 		08F3AFAA1E98898000747EDD /* Mind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mind.h; sourceTree = "<group>"; };
 		08F3AFAB1E98898000747EDD /* Mind.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Mind.m; sourceTree = "<group>"; };
+		08F3AFAD1E988E2A00747EDD /* MindEnum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MindEnum.h; sourceTree = "<group>"; };
 		DE79539824FEDBA53557ECCA /* Pods-SMG_NothingIsAll.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SMG_NothingIsAll.release.xcconfig"; path = "Pods/Target Support Files/Pods-SMG_NothingIsAll/Pods-SMG_NothingIsAll.release.xcconfig"; sourceTree = "<group>"; };
 		DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SMG_NothingIsAll.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E74E5256A45FDF9C80A280FD /* Pods-SMG_NothingIsAll.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SMG_NothingIsAll.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SMG_NothingIsAll/Pods-SMG_NothingIsAll.debug.xcconfig"; sourceTree = "<group>"; };
@@ -150,6 +151,7 @@
 				08F3AF9B1E98883C00747EDD /* Happy */,
 				08F3AFAA1E98898000747EDD /* Mind.h */,
 				08F3AFAB1E98898000747EDD /* Mind.m */,
+				08F3AFAD1E988E2A00747EDD /* MindEnum.h */,
 			);
 			path = Mind;
 			sourceTree = "<group>";
