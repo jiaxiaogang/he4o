@@ -61,6 +61,8 @@
 		08F3AFC91E98AE6D00747EDD /* LanguageStoreLogModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LanguageStoreLogModel.m; sourceTree = "<group>"; };
 		08F3AFCD1E98B12A00747EDD /* SMGHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMGHeader.h; sourceTree = "<group>"; };
 		08F3AFD01E98B13B00747EDD /* SMGEnum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMGEnum.h; sourceTree = "<group>"; };
+		08F3AFD11E98B5A300747EDD /* LanguageHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LanguageHeader.h; sourceTree = "<group>"; };
+		08F3AFD21E98B63200747EDD /* StoreHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StoreHeader.h; sourceTree = "<group>"; };
 		DE79539824FEDBA53557ECCA /* Pods-SMG_NothingIsAll.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SMG_NothingIsAll.release.xcconfig"; path = "Pods/Target Support Files/Pods-SMG_NothingIsAll/Pods-SMG_NothingIsAll.release.xcconfig"; sourceTree = "<group>"; };
 		DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SMG_NothingIsAll.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E74E5256A45FDF9C80A280FD /* Pods-SMG_NothingIsAll.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SMG_NothingIsAll.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SMG_NothingIsAll/Pods-SMG_NothingIsAll.debug.xcconfig"; sourceTree = "<group>"; };
@@ -155,6 +157,7 @@
 				08AF456D1E97DDF600377887 /* MKStore.m */,
 				08F3AFB91E98966E00747EDD /* Store.h */,
 				08F3AFBA1E98966E00747EDD /* Store.m */,
+				08F3AFD21E98B63200747EDD /* StoreHeader.h */,
 			);
 			path = Store;
 			sourceTree = "<group>";
@@ -181,6 +184,7 @@
 				08F3AFC61E98AE3A00747EDD /* LanguageStoreModel.m */,
 				08F3AFC81E98AE6D00747EDD /* LanguageStoreLogModel.h */,
 				08F3AFC91E98AE6D00747EDD /* LanguageStoreLogModel.m */,
+				08F3AFD11E98B5A300747EDD /* LanguageHeader.h */,
 			);
 			path = Language;
 			sourceTree = "<group>";

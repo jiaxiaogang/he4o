@@ -7,38 +7,29 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MemStore.h"
-#import "MKStore.h"
 
-@class LanguageStoreModel;
+@class LanguageStoreModel,MemStore,MKStore;
 @interface Store : NSObject
 
 
+@property (strong,nonatomic) MemStore *memStore;    //记忆存储
+@property (strong,nonatomic) MKStore *mkStore;      //知识图谱
+
+
+
+/**
+ *  MARK:--------------------init--------------------
+ */
 -(id) init;
-
-
-
-/**
- *  MARK:--------------------记忆存储--------------------
- */
-@property (strong,nonatomic) MemStore *memStore;
-
-
-
-/**
- *  MARK:--------------------知识图谱--------------------
- */
-@property (strong,nonatomic) MKStore *mkStore;
-
 
 
 /**
  *  MARK:--------------------搜索关于文字的记忆--------------------
- *  searchMemStoreWithLanguageText:搜索匹配的记忆
- *  searchMemStoreContainerText:搜索相关的记忆
+ *  searchMemStoreWithLanguageText:搜索精确匹配的记忆
+ *  searchMemStoreContainerText:搜索相关的所有记忆
  */
--(LanguageStoreModel*) searchMemStoreWithLanguageText:(NSString*)text;
--(NSMutableArray*) searchMemStoreContainerText:(NSString*)text;
+-(LanguageStoreModel*) searchMemStoreWithLanguageText:(NSString*)text;  //搜索精确匹配的记忆
+-(NSMutableArray*) searchMemStoreContainerText:(NSString*)text;         //搜索相关的所有记忆
 
 
 

@@ -8,6 +8,9 @@
 
 #import "SMG.h"
 #import "SMGHeader.h"
+#import "LanguageHeader.h"
+#import "GC.h"
+#import "Store.h"
 
 @implementation SMG
 
@@ -25,7 +28,10 @@ static SMG *_instance;
 -(void) requestWithText:(NSString*)text withComplete:(void (^)(NSString* response))complete{
     text = STRTOOK(text);
     //1,搜记忆;
-    self.store.
+    LanguageStoreModel *model = [self.store searchMemStoreWithLanguageText:text];
+    if (model) {
+        model.
+    }
     //2,有则根据mind值回复;
     //3,无则根据mind值回复;
 }
