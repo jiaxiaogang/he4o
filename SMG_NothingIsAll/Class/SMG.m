@@ -10,6 +10,14 @@
 
 @implementation SMG
 
+static SMG *_instance;
++(id) sharedInstance{
+    if (_instance == nil) {
+        _instance = [[SMG alloc] init];
+    }
+    return _instance;
+}
+
 /**
  *  MARK:--------------------问话--------------------
  */
@@ -20,9 +28,9 @@
 }
 
 -(void) responseWithJoyAngerType:(JoyAngerType)joyAngerType {
-    //1,搜记忆;
-    //2,有则根据mind值回复;
-    //3,无则根据mind值回复;
+    //1,找到上关记忆;
+    //2,有则根据mind值update记忆;
+    //3,无则根据回复I can't undestand;
 }
 
 @end

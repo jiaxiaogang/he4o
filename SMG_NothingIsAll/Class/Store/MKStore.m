@@ -12,11 +12,5 @@
 
 @implementation MKStore
 
-static MKStore *instance;
-+(id) sharedInstance{
-    if (instance == nil) {
-        instance = [[MKStore alloc] init];
-    }
-    return instance;
-}
+
 @end

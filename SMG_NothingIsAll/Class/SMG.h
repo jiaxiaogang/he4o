@@ -13,6 +13,7 @@
 
 @interface SMG : NSObject
 
++(id) sharedInstance;
 @property (strong,nonatomic) Store *store;  //记忆功能;
 @property (strong,nonatomic) GC *gc;        //回收器
 

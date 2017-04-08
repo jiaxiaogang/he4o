@@ -13,13 +13,7 @@
 
 @implementation MemStore
 
-static MemStore *instance;
-+(id) sharedInstance{
-    if (instance == nil) {
-        instance = [[MemStore alloc] init];
-    }
-    return instance;
-}
+
 
 
 -(NSMutableDictionary *)dic{

@@ -17,6 +17,6 @@
  */
 @interface MKStore : MemStore
 
-+(id) sharedInstance;
+
 
 @end
