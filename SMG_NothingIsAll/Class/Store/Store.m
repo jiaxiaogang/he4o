@@ -31,8 +31,14 @@
     return [self.memStore.dic objectForKey:STRTOOK(text)];
 }
 
--(NSArray*) searchMemStoreContainerText:(NSString*)text{
-    self.memStore.dic 
+-(NSMutableArray*) searchMemStoreContainerText:(NSString*)text{
+    NSMutableArray *arr = [[NSMutableArray alloc] init];
+    for (NSString *key in self.memStore.dic.allKeys) {
+        if ([key containsString:STRTOOK(text)]) {
+            [arr addObject:[self.memStore.dic objectForKey:key]];
+        }
+    }
+    return arr;
 }
 
 @end

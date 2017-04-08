@@ -38,7 +38,7 @@
  *  searchMemStoreContainerText:搜索相关的记忆
  */
 -(LanguageStoreModel*) searchMemStoreWithLanguageText:(NSString*)text;
--(NSArray*) searchMemStoreContainerText:(NSString*)text;
+-(NSMutableArray*) searchMemStoreContainerText:(NSString*)text;
 
 
 
