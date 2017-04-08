@@ -30,16 +30,9 @@
             return logModel.text;
         }
     }
-    //2,无记忆则根据Language系统输出回复;
-    if (complete)
-        complete([self.language outputTextWithRequestText:text withStoreModel:model]);
-    
-    
-    
-    
-    //1,模糊搜索记忆
+    //2,无记忆则根据;模糊搜索记忆
     NSArray *arr = [[SMG sharedInstance].store searchMemStoreContainerText:STRTOOK(requestText)];
-    //2,有时,找匹配项
+    //3,找到模糊匹配时,找匹配项
     if (arr) {
         for (LanguageStoreModel *storeModel in arr) {
             if(storeModel.logArr){
@@ -51,13 +44,14 @@
             }
         }
     }
-    //3,无时,判断交流欲望(心情不好时,不回答)
+    //4,模糊无时,判断交流欲望(心情不好时,不回答)
     if ([SMG sharedInstance].mind.sadHappyValue < 0) {
         return @"(▭-▭)✧";//淡定;
     }
-    //4,开心时,随机返回点东西;
-    withStoreModel
-    //5,不开心时,可以不理对方;
+    //5,开心时,随机返回点东西;//xxx明天写;
+    //在requestText中找分词;自己大脑中有分词的情况下;
+    //假如无分词时,文字大于三字;则不回答;
+    //小于三字;则尝试回答;
     return nil;
 }
 

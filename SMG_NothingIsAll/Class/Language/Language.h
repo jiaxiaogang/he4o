@@ -15,6 +15,7 @@
  *  3,不断提升Language对语言中的理解分析能力;
  *  4,不断提升Language对语言的组织输出能力;
  */
+@class LanguageStoreModel;
 @interface Language : NSObject
 
 /**

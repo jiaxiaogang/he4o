@@ -52,18 +52,7 @@ static SMG *_instance;
     //2,搜记忆;
     LanguageStoreModel *model = [self.store searchMemStoreWithLanguageText:text];
     
-    //3,有则根据mind值排序回复;(找到习惯系统中的最佳回答)
-    if (model && model.logArr && model.logArr.count) {
-        NSArray *sortArr = [model.logArr sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-            return ((LanguageStoreLogModel*)obj1).powerValue < ((LanguageStoreLogModel*)obj2).powerValue;
-        }];
-        LanguageStoreLogModel *logModel = sortArr[0];
-        if (logModel.powerValue > 0 && complete) {
-            complete(logModel.text);
-            return;
-        }
-    }
-    //4,无则根据Language系统输出回复;
+    //3,Language系统输出回复;
     if (complete)
         complete([self.language outputTextWithRequestText:text withStoreModel:model]);
 }
