@@ -57,16 +57,15 @@ static SMG *_instance;
         NSArray *sortArr = [model.logArr sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
             return ((LanguageStoreLogModel*)obj1).powerValue < ((LanguageStoreLogModel*)obj2).powerValue;
         }];
-        if (complete) {
-            LanguageStoreLogModel *logModel = sortArr[0];
+        LanguageStoreLogModel *logModel = sortArr[0];
+        if (logModel.powerValue > 0 && complete) {
             complete(logModel.text);
+            return;
         }
     }
     //4,无则根据Language系统输出回复;
-    else{
-        if (complete)
-             complete([self.language outputTextWithRequestText:text]);
-    }
+    if (complete)
+        complete([self.language outputTextWithRequestText:text]);
 }
 
 -(void) requestWithJoyAngerType:(JoyAngerType)joyAngerType {
