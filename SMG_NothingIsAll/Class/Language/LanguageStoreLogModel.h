@@ -14,6 +14,6 @@
 @interface LanguageStoreLogModel : NSObject
 
 @property (strong,nonatomic) NSString *text;
-@property (assign, nonatomic) int sadHappyValue;    //反馈值(一般为-1,0,1)
+@property (assign, nonatomic) float powerValue;   //权重 (sadHappyValue * 1 + useCount * 0.1f)
 
 @end

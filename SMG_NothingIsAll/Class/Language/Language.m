@@ -15,7 +15,7 @@
  *  MARK:--------------------语言输出能力--------------------
  */
 -(NSString*) outputTextWithRequestText:(NSString*)requestText{
-    
+    return nil;
 }
 
 

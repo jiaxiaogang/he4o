@@ -17,15 +17,16 @@
  */
 @interface Mind : NSObject
 
-/**
- *  MARK:--------------------哀乐值--------------------
- *  value:(-10到10)
- *  探索行为+1,反馈怒-2;
- *
- */
-@property (assign, nonatomic) int sadHappyValue;
 
-@property (assign, nonatomic) double lastChangeTime;
+
+@property (assign, nonatomic) int sadHappyValue;        //哀乐值(-10到10) 探索行为+1,反馈怒-2;
+@property (assign, nonatomic) double lastChangeTime;    //最后心情变化时间
+
+
+/**
+ *  MARK:--------------------心情变化--------------------
+ */
+-(void) changeSadHappyValue:(int)value;
 
 
 

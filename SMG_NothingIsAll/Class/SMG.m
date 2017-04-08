@@ -22,18 +22,51 @@ static SMG *_instance;
     return _instance;
 }
 
+-(id) init{
+    self = [super init];
+    if (self) {
+        [self initData];
+    }
+    return self;
+}
+
+-(void) initData{
+    self.store = [[Store alloc] init];
+    self.gc = [[GC alloc] init];
+    self.language = [[Language alloc] init];
+    self.mind = [[Mind alloc] init];
+}
+
 /**
  *  MARK:--------------------问话--------------------
  */
 -(void) requestWithText:(NSString*)text withComplete:(void (^)(NSString* response))complete{
     text = STRTOOK(text);
-    //1,搜记忆;
-    LanguageStoreModel *model = [self.store searchMemStoreWithLanguageText:text];
-    if (model) {
-        model.
+    //1,心情不好时,不回答,(需要安慰加心情值再聊)
+    if (self.mind.sadHappyValue < -5) {
+        if (complete)
+            complete(@"🔥");
+        return;
     }
-    //2,有则根据mind值回复;
-    //3,无则根据mind值回复;
+    
+    //2,搜记忆;
+    LanguageStoreModel *model = [self.store searchMemStoreWithLanguageText:text];
+    
+    //3,有则根据mind值排序回复;(找到习惯系统中的最佳回答)
+    if (model && model.logArr && model.logArr.count) {
+        NSArray *sortArr = [model.logArr sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+            return ((LanguageStoreLogModel*)obj1).powerValue < ((LanguageStoreLogModel*)obj2).powerValue;
+        }];
+        if (complete) {
+            LanguageStoreLogModel *logModel = sortArr[0];
+            complete(logModel.text);
+        }
+    }
+    //4,无则根据Language系统输出回复;
+    else{
+        if (complete)
+             complete([self.language outputTextWithRequestText:text]);
+    }
 }
 
 -(void) requestWithJoyAngerType:(JoyAngerType)joyAngerType {
