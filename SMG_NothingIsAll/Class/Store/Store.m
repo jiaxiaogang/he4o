@@ -35,7 +35,7 @@
 -(NSMutableArray*) searchMemStoreContainerText:(NSString*)text{
     NSMutableArray *arr = [[NSMutableArray alloc] init];
     for (NSString *key in self.memStore.dic.allKeys) {
-        if ([key containsString:STRTOOK(text)]) {
+        if (key.length < 10 && [key containsString:STRTOOK(text)]) {//10个字以下的才模糊匹配;太长的句子模糊没意义
             [arr addObject:[self.memStore.dic objectForKey:key]];
         }
     }

@@ -9,6 +9,8 @@
 #import "Language.h"
 #import "SMG.h"
 #import "StoreHeader.h"
+#import "SMGHeader.h"
+#import "LanguageHeader.h"
 
 @implementation Language
 
@@ -18,12 +20,25 @@
  */
 -(NSString*) outputTextWithRequestText:(NSString*)requestText{
     //1,模糊搜索记忆
-    //[SMG sharedIntance].store
-    
-    //LanguageStoreModel *model = [  sear:text];
+    NSArray *arr = [[SMG sharedInstance].store searchMemStoreContainerText:STRTOOK(requestText)];
     //2,有时,找匹配项
-    //3,无时,判断交流欲望
+    if (arr) {
+        for (LanguageStoreModel *storeModel in arr) {
+            if(storeModel.logArr){
+                for (LanguageStoreLogModel *logModel in storeModel.logArr) {
+                    if (logModel.powerValue > 2) {
+                        return logModel.text;
+                    }
+                }
+            }
+        }
+    }
+    //3,无时,判断交流欲望(心情不好时,不回答)
+    if ([SMG sharedInstance].mind.sadHappyValue < 0) {
+        return @"(▭-▭)✧";//淡定;
+    }
     //4,开心时,随机返回点东西;
+    
     //5,不开心时,可以不理对方;
     return nil;
 }

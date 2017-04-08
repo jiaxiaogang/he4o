@@ -15,7 +15,7 @@
 @implementation SMG
 
 static SMG *_instance;
-+(id) sharedInstance{
++(SMG*) sharedInstance{
     if (_instance == nil) {
         _instance = [[SMG alloc] init];
     }

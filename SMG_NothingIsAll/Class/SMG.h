@@ -13,7 +13,7 @@
 @class Language,GC,Store;
 @interface SMG : NSObject
 
-+(id) sharedInstance;
++(SMG*) sharedInstance;
 @property (strong,nonatomic) Store *store;          //记忆功能;
 @property (strong,nonatomic) GC *gc;                //回收器
 @property (strong,nonatomic) Language *language;    //语言输入输出能力
