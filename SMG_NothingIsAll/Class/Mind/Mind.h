@@ -17,9 +17,6 @@
  */
 @interface Mind : NSObject
 
-@property (assign, nonatomic) int joyAngerValue;    //喜怒值(-10到10)
-
-
 /**
  *  MARK:--------------------哀乐值--------------------
  *  value:(-10到10)
@@ -29,5 +26,33 @@
 @property (assign, nonatomic) int sadHappyValue;
 
 @property (assign, nonatomic) double lastChangeTime;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//@property (assign, nonatomic) int joyAngerValue;    //喜怒值(-10到10)
 
 @end
