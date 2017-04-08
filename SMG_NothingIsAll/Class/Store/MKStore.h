@@ -7,11 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "MemStore.h"
 
 /**
  *  MARK:--------------------知识图谱--------------------
+ *  MK也是记忆;(对比如下:)
+ *  共同点:都可以被GC从dic回收到local;甚至删掉;
+ *  不同点:知识图谱是被理解系统生成,更可信,更稳定,明确mind值;
  */
-@interface MKStore : NSObject
+@interface MKStore : MemStore
 
 +(id) sharedInstance;
 

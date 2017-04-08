@@ -16,11 +16,10 @@
 		08AF45631E97D6F200377887 /* GC.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF45621E97D6F200377887 /* GC.m */; };
 		08AF456B1E97D80C00377887 /* MemStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF456A1E97D80C00377887 /* MemStore.m */; };
 		08AF456E1E97DDF600377887 /* MKStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF456D1E97DDF600377887 /* MKStore.m */; };
-		08F3AFA01E98886200747EDD /* Joy.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F3AF9F1E98886200747EDD /* Joy.m */; };
-		08F3AFA31E98887E00747EDD /* Anger.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F3AFA21E98887E00747EDD /* Anger.m */; };
-		08F3AFA61E98889800747EDD /* Sad.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F3AFA51E98889800747EDD /* Sad.m */; };
-		08F3AFA91E9888B400747EDD /* Happy.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F3AFA81E9888B400747EDD /* Happy.m */; };
 		08F3AFAC1E98898000747EDD /* Mind.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F3AFAB1E98898000747EDD /* Mind.m */; };
+		08F3AFB21E98929C00747EDD /* MindUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F3AFB11E98929C00747EDD /* MindUtils.m */; };
+		08F3AFB81E98963600747EDD /* SMG.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F3AFB71E98963600747EDD /* SMG.m */; };
+		08F3AFBB1E98966E00747EDD /* Store.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F3AFBA1E98966E00747EDD /* Store.m */; };
 		2753D7CF7BAEDFEACAF9264A /* libPods-SMG_NothingIsAll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */; };
 /* End PBXBuildFile section */
 
@@ -41,17 +40,16 @@
 		08AF456A1E97D80C00377887 /* MemStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MemStore.m; sourceTree = "<group>"; };
 		08AF456C1E97DDF600377887 /* MKStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKStore.h; sourceTree = "<group>"; };
 		08AF456D1E97DDF600377887 /* MKStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKStore.m; sourceTree = "<group>"; };
-		08F3AF9E1E98886200747EDD /* Joy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Joy.h; sourceTree = "<group>"; };
-		08F3AF9F1E98886200747EDD /* Joy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Joy.m; sourceTree = "<group>"; };
-		08F3AFA11E98887E00747EDD /* Anger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Anger.h; sourceTree = "<group>"; };
-		08F3AFA21E98887E00747EDD /* Anger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Anger.m; sourceTree = "<group>"; };
-		08F3AFA41E98889800747EDD /* Sad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sad.h; sourceTree = "<group>"; };
-		08F3AFA51E98889800747EDD /* Sad.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Sad.m; sourceTree = "<group>"; };
-		08F3AFA71E9888B400747EDD /* Happy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Happy.h; sourceTree = "<group>"; };
-		08F3AFA81E9888B400747EDD /* Happy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Happy.m; sourceTree = "<group>"; };
 		08F3AFAA1E98898000747EDD /* Mind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mind.h; sourceTree = "<group>"; };
 		08F3AFAB1E98898000747EDD /* Mind.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Mind.m; sourceTree = "<group>"; };
 		08F3AFAD1E988E2A00747EDD /* MindEnum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MindEnum.h; sourceTree = "<group>"; };
+		08F3AFB01E98929C00747EDD /* MindUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MindUtils.h; sourceTree = "<group>"; };
+		08F3AFB11E98929C00747EDD /* MindUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MindUtils.m; sourceTree = "<group>"; };
+		08F3AFB61E98963600747EDD /* SMG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMG.h; sourceTree = "<group>"; };
+		08F3AFB71E98963600747EDD /* SMG.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMG.m; sourceTree = "<group>"; };
+		08F3AFB91E98966E00747EDD /* Store.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Store.h; sourceTree = "<group>"; };
+		08F3AFBA1E98966E00747EDD /* Store.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Store.m; sourceTree = "<group>"; };
+		08F3AFBC1E989B8F00747EDD /* MindHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MindHeader.h; sourceTree = "<group>"; };
 		DE79539824FEDBA53557ECCA /* Pods-SMG_NothingIsAll.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SMG_NothingIsAll.release.xcconfig"; path = "Pods/Target Support Files/Pods-SMG_NothingIsAll/Pods-SMG_NothingIsAll.release.xcconfig"; sourceTree = "<group>"; };
 		DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SMG_NothingIsAll.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E74E5256A45FDF9C80A280FD /* Pods-SMG_NothingIsAll.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SMG_NothingIsAll.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SMG_NothingIsAll/Pods-SMG_NothingIsAll.debug.xcconfig"; sourceTree = "<group>"; };
@@ -118,6 +116,8 @@
 				08F3AF991E98883C00747EDD /* Mind */,
 				08AF45681E97D80C00377887 /* Store */,
 				08AF45601E97D45E00377887 /* GC */,
+				08F3AFB61E98963600747EDD /* SMG.h */,
+				08F3AFB71E98963600747EDD /* SMG.m */,
 			);
 			path = Class;
 			sourceTree = "<group>";
@@ -138,6 +138,8 @@
 				08AF456A1E97D80C00377887 /* MemStore.m */,
 				08AF456C1E97DDF600377887 /* MKStore.h */,
 				08AF456D1E97DDF600377887 /* MKStore.m */,
+				08F3AFB91E98966E00747EDD /* Store.h */,
+				08F3AFBA1E98966E00747EDD /* Store.m */,
 			);
 			path = Store;
 			sourceTree = "<group>";
@@ -145,51 +147,14 @@
 		08F3AF991E98883C00747EDD /* Mind */ = {
 			isa = PBXGroup;
 			children = (
-				08F3AF9C1E98883C00747EDD /* Joy */,
-				08F3AF9A1E98883C00747EDD /* Anger */,
-				08F3AF9D1E98883C00747EDD /* Sad */,
-				08F3AF9B1E98883C00747EDD /* Happy */,
 				08F3AFAA1E98898000747EDD /* Mind.h */,
 				08F3AFAB1E98898000747EDD /* Mind.m */,
 				08F3AFAD1E988E2A00747EDD /* MindEnum.h */,
+				08F3AFB01E98929C00747EDD /* MindUtils.h */,
+				08F3AFB11E98929C00747EDD /* MindUtils.m */,
+				08F3AFBC1E989B8F00747EDD /* MindHeader.h */,
 			);
 			path = Mind;
-			sourceTree = "<group>";
-		};
-		08F3AF9A1E98883C00747EDD /* Anger */ = {
-			isa = PBXGroup;
-			children = (
-				08F3AFA11E98887E00747EDD /* Anger.h */,
-				08F3AFA21E98887E00747EDD /* Anger.m */,
-			);
-			path = Anger;
-			sourceTree = "<group>";
-		};
-		08F3AF9B1E98883C00747EDD /* Happy */ = {
-			isa = PBXGroup;
-			children = (
-				08F3AFA71E9888B400747EDD /* Happy.h */,
-				08F3AFA81E9888B400747EDD /* Happy.m */,
-			);
-			path = Happy;
-			sourceTree = "<group>";
-		};
-		08F3AF9C1E98883C00747EDD /* Joy */ = {
-			isa = PBXGroup;
-			children = (
-				08F3AF9E1E98886200747EDD /* Joy.h */,
-				08F3AF9F1E98886200747EDD /* Joy.m */,
-			);
-			path = Joy;
-			sourceTree = "<group>";
-		};
-		08F3AF9D1E98883C00747EDD /* Sad */ = {
-			isa = PBXGroup;
-			children = (
-				08F3AFA41E98889800747EDD /* Sad.h */,
-				08F3AFA51E98889800747EDD /* Sad.m */,
-			);
-			path = Sad;
 			sourceTree = "<group>";
 		};
 		207E0C8ABC4501E50CC5D363 /* Frameworks */ = {
@@ -333,16 +298,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				08F3AFAC1E98898000747EDD /* Mind.m in Sources */,
-				08F3AFA91E9888B400747EDD /* Happy.m in Sources */,
 				08AF45501E97D0B500377887 /* ViewController.m in Sources */,
 				08AF456E1E97DDF600377887 /* MKStore.m in Sources */,
+				08F3AFBB1E98966E00747EDD /* Store.m in Sources */,
+				08F3AFB81E98963600747EDD /* SMG.m in Sources */,
 				08AF45631E97D6F200377887 /* GC.m in Sources */,
-				08F3AFA61E98889800747EDD /* Sad.m in Sources */,
 				08AF454D1E97D0B500377887 /* AppDelegate.m in Sources */,
-				08F3AFA01E98886200747EDD /* Joy.m in Sources */,
 				08AF454A1E97D0B500377887 /* main.m in Sources */,
 				08AF456B1E97D80C00377887 /* MemStore.m in Sources */,
-				08F3AFA31E98887E00747EDD /* Anger.m in Sources */,
+				08F3AFB21E98929C00747EDD /* MindUtils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
