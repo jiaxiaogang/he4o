@@ -10,12 +10,14 @@
 #import "Store.h"
 #import "GC.h"
 #import "MindHeader.h"
+#import "Language.h"
 
 @interface SMG : NSObject
 
 +(id) sharedInstance;
-@property (strong,nonatomic) Store *store;  //记忆功能;
-@property (strong,nonatomic) GC *gc;        //回收器
+@property (strong,nonatomic) Store *store;          //记忆功能;
+@property (strong,nonatomic) GC *gc;                //回收器
+@property (strong,nonatomic) Language *language;    //语言输入输出能力
 
 /**
  *  MARK:--------------------问话--------------------
@@ -25,5 +27,5 @@
 /**
  *  MARK:--------------------收到回复--------------------
  */
--(void) responseWithJoyAngerType:(JoyAngerType)joyAngerType ;
+-(void) requestWithJoyAngerType:(JoyAngerType)joyAngerType ;
 @end

@@ -27,7 +27,7 @@ static SMG *_instance;
     //3,无则根据mind值回复;
 }
 
--(void) responseWithJoyAngerType:(JoyAngerType)joyAngerType {
+-(void) requestWithJoyAngerType:(JoyAngerType)joyAngerType {
     //1,找到上关记忆;
     //2,有则根据mind值update记忆;
     //3,无则根据回复I can't undestand;

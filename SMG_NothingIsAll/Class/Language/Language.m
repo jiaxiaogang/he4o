@@ -6,8 +6,8 @@
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "LanguageUtils.h"
+#import "Language.h"
 
-@implementation LanguageUtils
+@implementation Language
 
 @end
