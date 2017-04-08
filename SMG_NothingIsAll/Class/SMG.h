@@ -22,7 +22,7 @@
 /**
  *  MARK:--------------------问话--------------------
  */
--(void) requestWithText:(NSString*)test withComplete:(void (^)(NSString* response))complete;
+-(void) requestWithText:(NSString*)text withComplete:(void (^)(NSString* response))complete;
 
 /**
  *  MARK:--------------------收到回复--------------------

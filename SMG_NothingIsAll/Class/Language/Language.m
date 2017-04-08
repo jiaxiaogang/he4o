@@ -10,4 +10,23 @@
 
 @implementation Language
 
+
+/**
+ *  MARK:--------------------语言输出能力--------------------
+ */
+-(NSString*) outputTextWithRequestText:(NSString*)requestText{
+    
+}
+
+
+/**
+ *  MARK:--------------------用于分析语言输入,并且找出规律词和图谱词并返回--------------------
+ *
+ */
+-(NSArray*) inputTextWithRequestText:(NSString*)requestText{
+    return nil;
+}
+
+
+
 @end

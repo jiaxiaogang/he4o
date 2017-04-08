@@ -7,6 +7,7 @@
 //
 
 #import "SMG.h"
+#import "SMGHeader.h"
 
 @implementation SMG
 
@@ -21,8 +22,10 @@ static SMG *_instance;
 /**
  *  MARK:--------------------问话--------------------
  */
--(void) requestWithText:(NSString*)test withComplete:(void (^)(NSString* response))complete{
+-(void) requestWithText:(NSString*)text withComplete:(void (^)(NSString* response))complete{
+    text = STRTOOK(text);
     //1,搜记忆;
+    self.store.
     //2,有则根据mind值回复;
     //3,无则根据mind值回复;
 }

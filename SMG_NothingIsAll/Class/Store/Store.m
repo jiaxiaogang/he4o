@@ -7,7 +7,32 @@
 //
 
 #import "Store.h"
+#import "SMGHeader.h"
 
 @implementation Store
+
+-(id) init{
+    self = [super init];
+    if (self) {
+        [self initData];
+    }
+    return self;
+}
+
+-(void) initData{
+    self.memStore = [[MemStore alloc] init];
+    self.mkStore = [[MKStore alloc] init];
+}
+
+/**
+ *  MARK:--------------------搜索关于文字的记忆--------------------
+ */
+-(LanguageStoreModel*) searchMemStoreWithLanguageText:(NSString*)text{
+    return [self.memStore.dic objectForKey:STRTOOK(text)];
+}
+
+-(NSArray*) searchMemStoreContainerText:(NSString*)text{
+    self.memStore.dic 
+}
 
 @end

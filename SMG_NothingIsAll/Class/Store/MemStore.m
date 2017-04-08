@@ -14,8 +14,6 @@
 @implementation MemStore
 
 
-
-
 -(NSMutableDictionary *)dic{
     if (_dic == nil) {
         _dic = [NSMutableDictionary dictionaryWithDictionary:[[TMDiskCache sharedCache] objectForKey:@"MemStore_Dic_Key"]];
