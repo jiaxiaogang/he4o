@@ -18,7 +18,25 @@
 /**
  *  MARK:--------------------语言输出能力--------------------
  */
--(NSString*) outputTextWithRequestText:(NSString*)requestText{
+-(NSString*) outputTextWithRequestText:(NSString*)requestText withStoreModel:(LanguageStoreModel*)storeModel{
+    
+    //1,有记忆根据mind值排序回复;(找到习惯系统中的最佳回答)
+    if (storeModel && storeModel.logArr && storeModel.logArr.count) {
+        NSArray *sortArr = [storeModel.logArr sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+            return ((LanguageStoreLogModel*)obj1).powerValue < ((LanguageStoreLogModel*)obj2).powerValue;
+        }];
+        LanguageStoreLogModel *logModel = sortArr[0];
+        if (logModel.powerValue > 0 ) {
+            return logModel.text;
+        }
+    }
+    //2,无记忆则根据Language系统输出回复;
+    if (complete)
+        complete([self.language outputTextWithRequestText:text withStoreModel:model]);
+    
+    
+    
+    
     //1,模糊搜索记忆
     NSArray *arr = [[SMG sharedInstance].store searchMemStoreContainerText:STRTOOK(requestText)];
     //2,有时,找匹配项
@@ -38,7 +56,7 @@
         return @"(▭-▭)✧";//淡定;
     }
     //4,开心时,随机返回点东西;
-    
+    withStoreModel
     //5,不开心时,可以不理对方;
     return nil;
 }

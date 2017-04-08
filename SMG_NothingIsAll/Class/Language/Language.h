@@ -20,7 +20,7 @@
 /**
  *  MARK:--------------------语言输出能力--------------------
  */
--(NSString*) outputTextWithRequestText:(NSString*)requestText;
+-(NSString*) outputTextWithRequestText:(NSString*)requestText withStoreModel:(LanguageStoreModel*)storeModel;
 
 
 /**

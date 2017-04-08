@@ -65,7 +65,7 @@ static SMG *_instance;
     }
     //4,无则根据Language系统输出回复;
     if (complete)
-        complete([self.language outputTextWithRequestText:text]);
+        complete([self.language outputTextWithRequestText:text withStoreModel:model]);
 }
 
 -(void) requestWithJoyAngerType:(JoyAngerType)joyAngerType {
