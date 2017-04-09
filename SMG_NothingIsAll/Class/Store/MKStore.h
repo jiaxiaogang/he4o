@@ -20,6 +20,7 @@
 
 /**
  *  MARK:--------------------分词--------------------
+ *  计划功能:随后添加分词使用频率;使其更正确的工作;
  */
 -(BOOL) containerWord:(NSString*)word;//图谱分词数组;包含某词;
 -(void) addWord:(NSString*)word;

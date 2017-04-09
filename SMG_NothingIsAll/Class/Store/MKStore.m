@@ -12,7 +12,7 @@
 
 @interface MKStore ()
 
-@property (strong,nonatomic) NSMutableArray *words;//分词数组
+@property (strong,nonatomic) NSMutableArray *words;//分词数组(有单字词:如:你我他的是啊)(有多字词:如:你好,人民,苹果)
 
 @end
 
