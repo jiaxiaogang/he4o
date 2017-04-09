@@ -14,4 +14,7 @@
  */
 @interface FeelValueModel : NSObject
 
+@property (assign, nonatomic) NSInteger <#valName#>;
+
+
 @end
