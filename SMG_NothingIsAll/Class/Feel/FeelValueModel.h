@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "FeelHeader.h"
 
 
 /**
@@ -14,8 +15,9 @@
  */
 @interface FeelValueModel : NSObject
 
-//fromFeelId,toFeelId,compleType,倍率;
-@property (assign, nonatomic) NSInteger fromFeelId;
-
+//@property (assign, nonatomic) NSInteger fromFeelId;
+@property (assign, nonatomic) NSInteger toFeelId;               //和谁比
+@property (assign, nonatomic) ComparisonType comparisonType;    //比较结果(toFeelId/fromFeelId)
+@property (assign, nonatomic) NSInteger rate;                   //倍率(toFeelId/fromFeelId)
 
 @end

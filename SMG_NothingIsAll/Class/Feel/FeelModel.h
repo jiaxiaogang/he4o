@@ -14,6 +14,6 @@
 @interface FeelModel : NSObject
 
 @property (assign, nonatomic) NSInteger feelId;
-@property (strong,nonatomic) NSMutableDictionary *attributes;
+@property (strong,nonatomic) NSMutableDictionary *attributes;   //可自由增减的属性池;
 
 @end
