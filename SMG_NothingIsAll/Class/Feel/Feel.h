@@ -8,6 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ *  MARK:--------------------感觉系统--------------------
+ *  INPUT信息后->转化为感觉码->记忆系统;
+ */
 @interface Feel : NSObject
 
 

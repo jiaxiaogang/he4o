@@ -6,3 +6,11 @@
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
+/**
+ *  MARK:--------------------ComparisonType--------------------
+ */
+typedef NS_ENUM(NSInteger, ComparisonType) {
+    ComparisonType_Than = 0,
+    ComparisonType_Equal = 1,
+    ComparisonType_Less = 2,
+};

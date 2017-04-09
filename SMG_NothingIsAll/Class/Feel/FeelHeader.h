@@ -7,3 +7,6 @@
 //
 
 #import "FeelEnum.h"
+#import "Feel.h"
+#import "FeelModel.h"
+#import "FeelValueModel.h"

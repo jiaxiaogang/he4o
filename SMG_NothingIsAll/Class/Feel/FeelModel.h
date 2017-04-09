@@ -8,8 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ *  MARK:--------------------感觉码 模型--------------------
+ */
 @interface FeelModel : NSObject
 
 @property (assign, nonatomic) NSInteger feelId;
+@property (strong,nonatomic) NSMutableDictionary *attributes;
 
 @end
