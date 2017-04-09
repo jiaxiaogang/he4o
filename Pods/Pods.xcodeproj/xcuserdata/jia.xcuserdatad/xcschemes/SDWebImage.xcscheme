@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '4B6F6FDBE21BE02F5A532B53B788448F'
-               BlueprintName = 'TMCache'
+               BlueprintIdentifier = 'F9841B7CB1C8CEDDDCC29298C76AF5B0'
+               BlueprintName = 'SDWebImage'
                ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'libTMCache.a'>
+               BuildableName = 'libSDWebImage.a'>
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
