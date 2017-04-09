@@ -18,9 +18,9 @@
 @class StoreModel_Text;
 @interface Language : NSObject
 
-/**
- *  MARK:--------------------语言输出能力--------------------
- */
+
+//MARK:----------语言输出能力----------
+//不理解的不回答;
 -(NSString*) outputTextWithRequestText:(NSString*)requestText withStoreModel:(StoreModel_Text*)storeModel;
 
 

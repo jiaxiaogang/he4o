@@ -36,7 +36,8 @@
         StoreModel_Text *model = memArr[memArr.count - i - 1];
         [self analyzeText:model.text];
     }
-    //2,词义,行为
+    //2,行为<-->文字
+    
     //3,联想
 }
 
