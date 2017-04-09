@@ -29,14 +29,14 @@
  *  MARK:--------------------搜索关于文字的记忆--------------------
  */
 -(LanguageStoreModel*) searchMemStoreWithLanguageText:(NSString*)text{
-    return [self.memStore.dic objectForKey:STRTOOK(text)];
+    return [self.memStore.memDic objectForKey:STRTOOK(text)];
 }
 
 -(NSMutableArray*) searchMemStoreContainerText:(NSString*)text{
     NSMutableArray *arr = [[NSMutableArray alloc] init];
-    for (NSString *key in self.memStore.dic.allKeys) {
-        if (key.length < 10 && [key containsString:STRTOOK(text)]) {//10个字以下的才模糊匹配;太长的句子模糊没意义
-            [arr addObject:[self.memStore.dic objectForKey:key]];
+    for (NSString *key in self.memStore.memDic.allKeys) {
+        if (key.length < 10 && [key containsString:STRTOOK(text)]) {//10个字以下的才模糊匹配;太长的句子模糊没意义//随后添加分词系统的作用使这里更厉害;
+            [arr addObject:[self.memStore.memDic objectForKey:key]];
         }
     }
     return arr;

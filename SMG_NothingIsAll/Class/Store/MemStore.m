@@ -14,11 +14,11 @@
 @implementation MemStore
 
 
--(NSMutableDictionary *)dic{
-    if (_dic == nil) {
-        _dic = [NSMutableDictionary dictionaryWithDictionary:[[TMDiskCache sharedCache] objectForKey:@"MemStore_Dic_Key"]];
+-(NSMutableDictionary *)memDic{
+    if (_memDic == nil) {
+        _memDic = [[NSMutableDictionary alloc] initWithDictionary:[[TMDiskCache sharedCache] objectForKey:@"MemStore_Dic_Key"]];
     }
-    return _dic;
+    return _memDic;
 }
 
 @end

@@ -18,7 +18,13 @@
 @interface MKStore : MemStore
 
 
+/**
+ *  MARK:--------------------分词--------------------
+ */
 -(BOOL) containerWord:(NSString*)word;//图谱分词数组;包含某词;
 -(void) addWord:(NSString*)word;
+
+
+
 
 @end
