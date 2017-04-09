@@ -1,5 +1,10 @@
 # SMG_NothingIsAll(人工智能系统,代号:无即是有)
 
-##### 像孩子一样;可实现互动交流式的学习和表达的人工智能系统;
+##### 类人,通用型人工智能系统;
 
-## 介绍:,只设计各种能力;所有知识后天学习;详情见代码和笔记;
+## 介绍:所有行为,记忆系统,知识图谱全为空;
+## 只面向各种能力作设计开发;全部后天学习;详情见代码和笔记;
+### 流程:#
+##### INPUT->Feel->Memory->Understand->MappingKnowledge
+##### Mind->Memory&MappingKnowledge->Mind->OUTPUT
+
