@@ -10,7 +10,7 @@
 #import "MindHeader.h"
 
 
-@class Language,GC,Store,Understand;
+@class Language,GC,Store,Understand,Feel;
 @interface SMG : NSObject
 
 +(SMG*) sharedInstance;
@@ -19,6 +19,7 @@
 @property (strong,nonatomic) Language *language;    //语言输入输出能力
 @property (strong,nonatomic) Mind *mind;            //当前心情
 @property (strong,nonatomic) Understand *understand;//闲下时,开始理解分析自己的记忆和知识;
+@property (strong,nonatomic) Feel *feel;            //感觉系统
 
 
 /**
@@ -34,4 +35,8 @@
 //MARK:--------------------Store--------------------
 -(NSArray*) getStore_MemStore_MemArr;//获取习惯记忆;
 
+
+
+
 @end
+

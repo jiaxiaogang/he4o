@@ -8,12 +8,13 @@
 
 #import "Input.h"
 #import "InputHeader.h"
+#import "SMGHeader.h"
 
 @implementation Input
 
 -(void)commitInputModel:(InputModel*)inputModel{
     if (inputModel) {
-        
+        [SMG sharedInstance].feel commit
     }
 }
 

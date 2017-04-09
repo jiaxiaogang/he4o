@@ -15,8 +15,9 @@
  *  3,图片只是简单的压缩大小,质量和模糊(图片的对比问题)(参见:笔记page9)
  *  4,视频,不是每桢单独感觉,而是按注意力来感觉;(注意力吸引参见:笔记page9)
  */
+@class InputModel;
 @interface Feel : NSObject
 
-
+-(void) commitInputModel:(InputModel*)inputModel;
 
 @end

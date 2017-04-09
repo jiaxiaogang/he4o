@@ -12,6 +12,8 @@
 #import "GC.h"
 #import "StoreHeader.h"
 #import "UnderstandHeader.h"
+#import "InputHeader.h"
+#import "FeelHeader.h"
 
 @implementation SMG
 
@@ -37,6 +39,7 @@ static SMG *_instance;
     self.language = [[Language alloc] init];
     self.mind = [[Mind alloc] init];
     self.understand = [[Understand alloc] init];
+    self.feel = [[Feel alloc] init];
 }
 
 /**
@@ -74,5 +77,15 @@ static SMG *_instance;
 }
 
 
+
+/**
+ *  MARK:--------------------工作流程--------------------
+ */
+//1,输入多媒体数据
+-(void) process_Input:(InputModel*)inputModel{
+    if (inputModel) {
+        self.feel
+    }
+}
 
 @end
