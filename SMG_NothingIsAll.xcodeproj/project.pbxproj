@@ -50,6 +50,7 @@
 		08AF456A1E97D80C00377887 /* MemStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MemStore.m; sourceTree = "<group>"; };
 		08AF456C1E97DDF600377887 /* MKStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKStore.h; sourceTree = "<group>"; };
 		08AF456D1E97DDF600377887 /* MKStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKStore.m; sourceTree = "<group>"; };
+		08C84A8B1E9A861900897D8B /* InputHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InputHeader.h; sourceTree = "<group>"; };
 		08F3AFAA1E98898000747EDD /* Mind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mind.h; sourceTree = "<group>"; };
 		08F3AFAB1E98898000747EDD /* Mind.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Mind.m; sourceTree = "<group>"; };
 		08F3AFAD1E988E2A00747EDD /* MindEnum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MindEnum.h; sourceTree = "<group>"; };
@@ -206,6 +207,7 @@
 		08C84A8A1E9A85A600897D8B /* Input */ = {
 			isa = PBXGroup;
 			children = (
+				08C84A8B1E9A861900897D8B /* InputHeader.h */,
 			);
 			path = Input;
 			sourceTree = "<group>";
