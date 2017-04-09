@@ -24,4 +24,15 @@
  */
 -(void) appendFeelValueModel:(FeelValueModel*)feelValueModel withKEY:(NSString*)key;    //追加属性;
 
+
+
+
+
+
+/**
+ *  MARK:--------------------propertys--------------------
+ */
+//MARK:----------追加属性key----------
+-(void) addAttributesKey:(NSString*)key;
+
 @end
