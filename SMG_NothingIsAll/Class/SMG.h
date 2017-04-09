@@ -21,17 +21,18 @@
 
 
 
-/**
- *  MARK:--------------------问话--------------------
- */
--(void) requestWithText:(NSString*)text withComplete:(void (^)(NSString* response))complete;
-
-
 
 /**
- *  MARK:--------------------收到回复--------------------
+ *  MARK:--------------------method--------------------
  */
--(void) requestWithJoyAngerType:(JoyAngerType)joyAngerType ;
 
+//MARK:--------------------QA--------------------
+-(void) requestWithText:(NSString*)text withComplete:(void (^)(NSString* response))complete;//问话
+-(void) requestWithJoyAngerType:(JoyAngerType)joyAngerType ;//收到回复
+
+
+
+//MARK:--------------------Store--------------------
+-(NSArray*) getStore_MemStore_MemArr;//获取习惯记忆;
 
 @end

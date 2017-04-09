@@ -10,7 +10,7 @@
 #import "SMGHeader.h"
 #import "LanguageHeader.h"
 #import "GC.h"
-#import "Store.h"
+#import "StoreHeader.h"
 
 @implementation SMG
 
@@ -38,8 +38,10 @@ static SMG *_instance;
 }
 
 /**
- *  MARK:--------------------问话--------------------
+ *  MARK:--------------------method--------------------
  */
+
+//MARK:--------------------QA--------------------
 -(void) requestWithText:(NSString*)text withComplete:(void (^)(NSString* response))complete{
     text = STRTOOK(text);
     //1,心情不好时,不回答,(需要安慰加心情值再聊)
@@ -62,5 +64,13 @@ static SMG *_instance;
     //2,有则根据mind值update记忆;
     //3,无则根据回复I can't undestand;
 }
+
+
+//MARK:--------------------Store--------------------
+-(NSArray*) getStore_MemStore_MemArr{
+    return self.store.memStore.memArr;
+}
+
+
 
 @end

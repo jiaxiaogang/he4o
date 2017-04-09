@@ -7,6 +7,7 @@
 //
 
 #import "SMGEnum.h"
+#import "SMG.h"
 
 
 
