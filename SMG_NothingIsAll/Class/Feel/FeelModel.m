@@ -39,14 +39,19 @@
  */
 -(NSMutableArray *)attributesKeys{
     if (_attributesKeys == nil) {
-        _attributesKeys = [[NSMutableArray alloc] initWithArray:[[TMCache sharedCache] objectForKey:@"FeelModel_Attributes_Keys"]];
+        //1,先天
+        _attributesKeys = [[NSMutableArray alloc] initWithObjects:@"", nil];
+        //2,后天
+        [_attributesKeys addObjectsFromArray:[[TMCache sharedCache] objectForKey:@"FeelModel_Attributes_AcquiredKeys"]];
     }
     return _attributesKeys;
 }
 
 -(void) addAttributesKey:(NSString*)key{
-    [self.attributesKeys addObject:STRTOOK(key)];
-    [[TMCache sharedCache] setObject:self.attributesKeys forKey:@"FeelModel_Attributes_Keys"];
+    if (![self.attributesKeys containsObject:STRTOOK(key)]) {
+        [self.attributesKeys addObject:STRTOOK(key)];
+        [[TMCache sharedCache] setObject:self.attributesKeys forKey:@"FeelModel_Attributes_AcquiredKeys"];
+    }
 }
 
 -(NSMutableDictionary *)attributes{
