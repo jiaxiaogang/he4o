@@ -162,6 +162,7 @@
 		08AF455F1E97D43C00377887 /* Class */ = {
 			isa = PBXGroup;
 			children = (
+				08C84A8A1E9A85A600897D8B /* Input */,
 				08F639801E9A2DCE003CD163 /* Feel */,
 				083DA5EA1E99E3530047A6DF /* Understand */,
 				08F3AFCB1E98B11600747EDD /* Audio */,
@@ -200,6 +201,13 @@
 				08F3AFD21E98B63200747EDD /* StoreHeader.h */,
 			);
 			path = Store;
+			sourceTree = "<group>";
+		};
+		08C84A8A1E9A85A600897D8B /* Input */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Input;
 			sourceTree = "<group>";
 		};
 		08F3AF991E98883C00747EDD /* Mind */ = {
