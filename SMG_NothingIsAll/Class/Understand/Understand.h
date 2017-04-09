@@ -21,7 +21,8 @@
  */
 @interface Understand : NSObject
 
-
+//MARK:--------------------开始思考人生--------------------
+-(void) startUnderstand;
 
 
 /**

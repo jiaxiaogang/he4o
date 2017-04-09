@@ -11,6 +11,7 @@
 #import "LanguageHeader.h"
 #import "GC.h"
 #import "StoreHeader.h"
+#import "UnderstandHeader.h"
 
 @implementation SMG
 
@@ -35,6 +36,7 @@ static SMG *_instance;
     self.gc = [[GC alloc] init];
     self.language = [[Language alloc] init];
     self.mind = [[Mind alloc] init];
+    self.understand = [[Understand alloc] init];
 }
 
 /**

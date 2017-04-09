@@ -6,8 +6,4 @@
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#ifndef UnderstandHeader_h
-#define UnderstandHeader_h
-
-
-#endif /* UnderstandHeader_h */
+#import "Understand.h"

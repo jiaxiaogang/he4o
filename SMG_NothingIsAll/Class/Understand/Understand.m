@@ -13,7 +13,13 @@
 
 @implementation Understand
 
-
+//MARK:--------------------开始思考人生--------------------
+-(void) startUnderstand{
+    //最近三条记忆;
+    for (int i = 0 ; i < 3; i++) {
+        
+    }
+}
 
 /**
  *  MARK:--------------------text部分--------------------
