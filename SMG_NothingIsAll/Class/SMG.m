@@ -78,14 +78,5 @@ static SMG *_instance;
 
 
 
-/**
- *  MARK:--------------------工作流程--------------------
- */
-//1,输入多媒体数据
--(void) process_Input:(InputModel*)inputModel{
-    if (inputModel) {
-        self.feel
-    }
-}
 
 @end

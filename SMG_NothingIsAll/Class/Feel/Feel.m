@@ -17,4 +17,10 @@
     }
 }
 
+-(void) feelForText:(NSString*)text{
+    
+}
+
+
+
 @end
