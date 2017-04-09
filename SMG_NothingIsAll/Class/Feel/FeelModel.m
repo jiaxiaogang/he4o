@@ -40,7 +40,26 @@
 -(NSMutableArray *)attributesKeys{
     if (_attributesKeys == nil) {
         //1,先天
-        _attributesKeys = [[NSMutableArray alloc] initWithObjects:@"position",AttributesKey_Position, nil];
+        _attributesKeys = [[NSMutableArray alloc] initWithObjects:
+                           AttributesKey_Position,
+                           AttributesKey_Color,
+                           AttributesKey_Pain,
+                           AttributesKey_Hungry,
+                           AttributesKey_Bright,
+                           AttributesKey_Shape,
+                           AttributesKey_Size,
+                           AttributesKey_SizeHeight,
+                           AttributesKey_SizeWidth,
+                           AttributesKey_SizeLong,
+                           AttributesKey_SizeThick,
+                           AttributesKey_SizeDeep,
+                           AttributesKey_Temperature,
+                           AttributesKey_TasteSweet,
+                           AttributesKey_TasteSour,
+                           AttributesKey_TasteBitter,
+                           AttributesKey_TastePiquant,
+                           AttributesKey_TasteSalty,
+                           AttributesKey_Speed, nil];
         //2,后天
         [_attributesKeys addObjectsFromArray:[[TMCache sharedCache] objectForKey:@"FeelModel_Attributes_AcquiredKeys"]];
     }
