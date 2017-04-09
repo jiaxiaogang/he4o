@@ -7,7 +7,14 @@
 //
 
 #import "Input.h"
+#import "InputHeader.h"
 
 @implementation Input
+
+-(void)commitInputModel:(InputModel*)inputModel{
+    if (inputModel) {
+        
+    }
+}
 
 @end

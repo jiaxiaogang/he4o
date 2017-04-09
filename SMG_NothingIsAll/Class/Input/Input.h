@@ -12,8 +12,12 @@
  *  MARK:--------------------输入--------------------
  *  输入是多媒体的;(音,视,行为,文字)
  */
+@class InputModel;
 @interface Input : NSObject
 
--(void)commitInputModel:(
+/**
+ *  MARK:--------------------提交输入多媒体模型--------------------
+ */
+-(void)commitInputModel:(InputModel*)inputModel;
 
 @end
