@@ -57,6 +57,12 @@ static NSString *AttributesKey_SizeWidth    = @"sizeWidth"; //宽窄(value:FeelV
 static NSString *AttributesKey_SizeLong     = @"sizeLong";  //长短(value:FeelValueModel)(对应行为:比)
 static NSString *AttributesKey_SizeThick    = @"sizeThick"; //粗细(value:FeelValueModel)(对应行为:比)
 static NSString *AttributesKey_SizeDeep     = @"sizeDeep";  //深浅(value:FeelValueModel)(对应行为:比)
+static NSString *AttributesKey_Temperature  = @"temperature";//温度(value:FeelValueModel)(对应行为:比)
+static NSString *AttributesKey_TasteSweet   = @"tasteSweet"; //甜味(value:FeelValueModel)(对应行为:比)
+static NSString *AttributesKey_TasteSour    = @"tasteSour";  //酸味(value:FeelValueModel)(对应行为:比)
+static NSString *AttributesKey_TasteBitter  = @"tasteBatter";//苦味(value:FeelValueModel)(对应行为:比)
+static NSString *AttributesKey_TastePiquant = @"tastePiquant";//辣味(value:FeelValueModel)(对应行为:比)
+static NSString *AttributesKey_TasteSalty   = @"tasteSalty";//咸味(value:FeelValueModel)(对应行为:比)
 
 
 
