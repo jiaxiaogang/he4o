@@ -65,6 +65,8 @@ static NSString *AttributesKey_TastePiquant = @"tastePiquant";//辣味(value:Fee
 static NSString *AttributesKey_TasteSalty   = @"tasteSalty";//咸味(value:FeelValueModel)(对应行为:比)
 static NSString *AttributesKey_Speed        = @"speed";     //速度(value:FeelValueModel)(对应行为:比)
 //...多少,力气,硬度,年龄,重量,虚实,胖瘦等;
+//(随后把这里精典成size表示一切尺寸,或者直接由比较来表示一切)
+//定义越多,实现越少;只有去掉一切定义;保留最原始的数据,才能够
 
 
 
