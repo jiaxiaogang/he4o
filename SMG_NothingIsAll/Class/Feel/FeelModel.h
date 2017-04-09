@@ -47,8 +47,11 @@
  */
 static NSString *AttributesKey_Position     = @"position";  //方位(value:x,y,z)
 static NSString *AttributesKey_Color        = @"color";     //颜色值(value:FFFFFF)(对应行为:看)
-static NSString *AttributesKey_Pain         = @"pain";      //痛感(value:0-1)(对应行为:打)
-static NSString *AttributesKey_Pain         = @"pain";      //痛感(value:0-1)(对应行为:打)
+static NSString *AttributesKey_Pain         = @"pain";      //痛感(value:-1->1)(对应行为:摸打)
+static NSString *AttributesKey_Hungry       = @"hungry";    //饿感(value:-1->1)(对应行为:饱饿)
+static NSString *AttributesKey_Bright       = @"bright";    //亮度(value:0->1)
+static NSString *AttributesKey_Shape        = @"shape";     //外形
+
 
 
 
