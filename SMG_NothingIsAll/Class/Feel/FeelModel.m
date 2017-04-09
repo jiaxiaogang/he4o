@@ -49,6 +49,12 @@
     [[TMCache sharedCache] setObject:self.attributesKeys forKey:@"FeelModel_Attributes_Keys"];
 }
 
+-(NSMutableDictionary *)attributes{
+    if (_attributes == nil) {
+        _attributes = [[NSMutableDictionary alloc] init];
+    }
+    return _attributes;
+}
 
 
 @end
