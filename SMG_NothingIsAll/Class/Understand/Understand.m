@@ -17,7 +17,9 @@
 -(void) startUnderstand{
     //最近三条记忆;
     for (int i = 0 ; i < 3; i++) {
-        
+        NSArray *memArr = [[SMG sharedInstance] getStore_MemStore_MemArr];
+        StoreModel_Text *model = memArr[memArr.count - i - 1];
+        [self analyzeText:model.text];
     }
 }
 
@@ -25,6 +27,7 @@
  *  MARK:--------------------text部分--------------------
  *  用于text的理解
  */
+//MARK:----------分析分词----------
 -(NSArray*) analyzeText:(NSString*)text{
     //计算机器械;(5字4词)
     //是什么;(3字2词)(其中'是'为单字词)
