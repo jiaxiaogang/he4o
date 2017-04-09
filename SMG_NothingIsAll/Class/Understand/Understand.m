@@ -10,4 +10,14 @@
 
 @implementation Understand
 
+
+
+/**
+ *  MARK:--------------------text部分--------------------
+ *  用于text的理解
+ */
+//计算机器械;
+-(void) 
+
+
 @end

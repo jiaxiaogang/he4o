@@ -13,12 +13,16 @@
 
 @implementation MemStore
 
-
--(NSMutableDictionary *)memDic{
-    if (_memDic == nil) {
-        _memDic = [[NSMutableDictionary alloc] initWithDictionary:[[TMDiskCache sharedCache] objectForKey:@"MemStore_Dic_Key"]];
+-(NSMutableArray *)memArr{
+    if (_memArr == nil) {
+        _memArr = [[NSMutableArray alloc] initWithArray:[[TMCache sharedCache] objectForKey:@"MemStore_MemArr_Key"]];
     }
-    return _memDic;
+    return _memArr;
+}
+
+
+-(NSArray*) localArr{
+    return [[TMCache sharedCache] objectForKey:@"MemStore_LocalArr_Key"];
 }
 
 @end
