@@ -50,7 +50,7 @@
 
 -(NSMutableArray*) searchMemStoreContainerWord:(NSString*)word{
     NSMutableArray *arr = [[NSMutableArray alloc] init];
-    for (StoreModel_Text *model in self.memStore.memArr) {
+    for (StoreModel_Text *model in self.memStore.memArr) {//习惯池;
         if ([model.text containsString:STRTOOK(word)]) {//10个字以下的才模糊匹配;太长的句子模糊没意义//随后添加分词系统的作用使这里更厉害;
             [arr addObject:model];
         }

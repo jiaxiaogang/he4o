@@ -28,21 +28,20 @@
     //1,数据
     text = STRTOOK(text);
     NSMutableArray *mArr = [[NSMutableArray alloc] init];
-    NSArray *memArr = [[SMG sharedInstance] getStore_MemStore_MemArr];//习惯池
     //2,循环找text中的词
     for (int i = 0; i < text.length; i++) {
         NSString *checkWord = [text substringWithRange:NSMakeRange(i, 2)];
         if ([[SMG sharedInstance].store.mkStore containerWord:checkWord]) {
-            [mArr addObject:checkWord];
+            [mArr addObject:checkWord]; //本来就有的词;
         }else{
-            for (StoreModel_Text *model in memArr) {
-                
+            NSArray *findWordFromMem = [[SMG sharedInstance].store searchMemStoreContainerWord:checkWord];
+            if (findWordFromMem && findWordFromMem.count >= 3) {//只有达到三次听到的词;才认为是一个词;
+                [[SMG sharedInstance].store.mkStore addWord:checkWord];
+                [mArr addObject:checkWord];
             }
         }
     }
-    
-    
-    return nil;
+    return mArr;
 }
 
 
