@@ -7,6 +7,7 @@
 //
 
 #import "Feel.h"
+#import "InputHeader.h"
 
 @implementation Feel
 
@@ -18,6 +19,10 @@
 }
 
 -(void) feelForText:(NSString*)text{
+    
+}
+
+-(void) feelForImg:(UIImage*)img{
     
 }
 
