@@ -63,6 +63,8 @@ static NSString *AttributesKey_TasteSour    = @"tasteSour";  //酸味(value:Feel
 static NSString *AttributesKey_TasteBitter  = @"tasteBatter";//苦味(value:FeelValueModel)(对应行为:比)
 static NSString *AttributesKey_TastePiquant = @"tastePiquant";//辣味(value:FeelValueModel)(对应行为:比)
 static NSString *AttributesKey_TasteSalty   = @"tasteSalty";//咸味(value:FeelValueModel)(对应行为:比)
+static NSString *AttributesKey_Speed        = @"speed";     //速度(value:FeelValueModel)(对应行为:比)
+//...多少,力气,硬度,年龄,重量,虚实,胖瘦等;
 
 
 
