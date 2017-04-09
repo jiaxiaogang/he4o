@@ -13,14 +13,31 @@
 
 @implementation Understand
 
+
+-(id) init{
+    self = [super init];
+    if (self) {
+        
+    }
+    return self;
+}
+
+-(void) initData{
+    self.timer = [NSTimer timerWithTimeInterval:10 target:self selector:@selector(startUnderstand) userInfo:nil repeats:YES];
+    [[NSRunLoop mainRunLoop] addTimer:_timer forMode:NSRunLoopCommonModes];
+    [_timer fire];
+}
+
 //MARK:--------------------开始思考人生--------------------
 -(void) startUnderstand{
-    //最近三条记忆;
+    //1,分词:最近三条记忆;
     for (int i = 0 ; i < 3; i++) {
         NSArray *memArr = [[SMG sharedInstance] getStore_MemStore_MemArr];
         StoreModel_Text *model = memArr[memArr.count - i - 1];
         [self analyzeText:model.text];
     }
+    //2,词义,行为
+    //3,联想
 }
 
 /**
@@ -53,5 +70,10 @@
     return mArr;
 }
 
+
+-(void)dealloc{
+    [self.timer invalidate];
+    self.timer = nil;
+}
 
 @end
