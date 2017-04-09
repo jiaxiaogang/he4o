@@ -52,7 +52,7 @@ static SMG *_instance;
     }
     
     //2,搜记忆;
-    LanguageStoreModel *model = [self.store searchMemStoreWithLanguageText:text];
+    StoreModel_Text *model = [self.store searchMemStoreWithLanguageText:text];
     
     //3,Language系统输出回复;
     if (complete)

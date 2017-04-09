@@ -35,7 +35,7 @@
         if ([[SMG sharedInstance].store.mkStore containerWord:checkWord]) {
             [mArr addObject:checkWord];
         }else{
-            for (LanguageStoreModel *model in memArr) {
+            for (StoreModel_Text *model in memArr) {
                 
             }
         }

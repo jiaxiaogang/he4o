@@ -1,5 +1,5 @@
 //
-//  LanguageStoreLogModel.h
+//  StoreLogModel_Text.h
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/4/8.
@@ -11,7 +11,7 @@
 /**
  *  MARK:--------------------文字交流(回复记录)模型--------------------
  */
-@interface LanguageStoreLogModel : NSObject
+@interface StoreLogModel_Text : NSObject
 
 @property (strong,nonatomic) NSString *text;
 @property (assign, nonatomic) float powerValue;   //权重 (sadHappyValue * 1 + useCount * 0.1f)

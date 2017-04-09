@@ -15,7 +15,7 @@
  */
 @interface MemStore : NSObject
 
-@property (strong,nonatomic) NSMutableArray *memArr;  //内存kv存储;(数组中存LanguageStoreModel对象)(习惯记忆,GC会回收不常用的旧数据到localArr)
+@property (strong,nonatomic) NSMutableArray *memArr;  //内存kv存储;(数组中存StoreModel_Text对象)(习惯记忆,GC会回收不常用的旧数据到localArr)
 
 -(NSArray*) localArr;                                 //硬盘存储;(不常调用,调用耗时)
 

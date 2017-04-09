@@ -9,3 +9,5 @@
 #import "Store.h"
 #import "MemStore.h"
 #import "MKStore.h"
+#import "StoreModel_Text.h"
+#import "StoreLogModel_Text.h"

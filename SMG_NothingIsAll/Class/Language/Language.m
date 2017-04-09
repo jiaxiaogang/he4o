@@ -18,14 +18,14 @@
 /**
  *  MARK:--------------------语言输出能力--------------------
  */
--(NSString*) outputTextWithRequestText:(NSString*)requestText withStoreModel:(LanguageStoreModel*)storeModel{
+-(NSString*) outputTextWithRequestText:(NSString*)requestText withStoreModel:(StoreModel_Text*)storeModel{
     
     //1,有记忆根据mind值排序回复;(找到习惯系统中的最佳回答)
     if (storeModel && storeModel.logArr && storeModel.logArr.count) {
         NSArray *sortArr = [storeModel.logArr sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-            return ((LanguageStoreLogModel*)obj1).powerValue < ((LanguageStoreLogModel*)obj2).powerValue;
+            return ((StoreLogModel_Text*)obj1).powerValue < ((StoreLogModel_Text*)obj2).powerValue;
         }];
-        LanguageStoreLogModel *logModel = sortArr[0];
+        StoreLogModel_Text *logModel = sortArr[0];
         if (logModel.powerValue > 0 ) {
             return logModel.text;
         }
@@ -34,9 +34,9 @@
     NSArray *arr = [[SMG sharedInstance].store searchMemStoreContainerText:STRTOOK(requestText)];
     //3,找到模糊匹配时,找匹配项
     if (arr) {
-        for (LanguageStoreModel *storeModel in arr) {
+        for (StoreModel_Text *storeModel in arr) {
             if(storeModel.logArr){
-                for (LanguageStoreLogModel *logModel in storeModel.logArr) {
+                for (StoreLogModel_Text *logModel in storeModel.logArr) {
                     if (logModel.powerValue > 2) {
                         return logModel.text;
                     }

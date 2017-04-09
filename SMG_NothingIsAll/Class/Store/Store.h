@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class LanguageStoreModel,MemStore,MKStore;
+@class StoreModel_Text,MemStore,MKStore;
 @interface Store : NSObject
 
 
@@ -28,8 +28,9 @@
  *  searchMemStoreWithLanguageText:搜索精确匹配的记忆
  *  searchMemStoreContainerText:搜索相关的所有记忆
  */
--(LanguageStoreModel*) searchMemStoreWithLanguageText:(NSString*)text;  //搜索精确匹配的记忆
--(NSMutableArray*) searchMemStoreContainerText:(NSString*)text;         //搜索相关的所有记忆
+-(StoreModel_Text*) searchMemStoreWithLanguageText:(NSString*)text;  //搜索精确匹配的记忆
+-(NSMutableArray*) searchMemStoreContainerText:(NSString*)text;         //搜索相关话题的所有记忆
+-(NSMutableArray*) searchMemStoreContainerWord:(NSString*)word;         //搜索用到某词的所有记忆
 
 
 
