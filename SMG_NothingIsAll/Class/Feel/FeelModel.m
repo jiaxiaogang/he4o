@@ -40,7 +40,7 @@
 -(NSMutableArray *)attributesKeys{
     if (_attributesKeys == nil) {
         //1,先天
-        _attributesKeys = [[NSMutableArray alloc] initWithObjects:@"", nil];
+        _attributesKeys = [[NSMutableArray alloc] initWithObjects:@"position",AttributesKey_Position, nil];
         //2,后天
         [_attributesKeys addObjectsFromArray:[[TMCache sharedCache] objectForKey:@"FeelModel_Attributes_AcquiredKeys"]];
     }

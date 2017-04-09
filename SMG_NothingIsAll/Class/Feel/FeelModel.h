@@ -17,6 +17,9 @@
 @property (assign, nonatomic) NSInteger feelId;
 @property (strong,nonatomic) NSMutableDictionary *attributes;   //可自由增减的属性池;
 
+
+
+
 /**
  *  MARK:--------------------追加属性--------------------
  *  feelValueModel:比较值
@@ -36,3 +39,21 @@
 -(void) addAttributesKey:(NSString*)key;
 
 @end
+
+
+
+/**
+ *  MARK:--------------------先天attributesKeys--------------------
+ */
+static NSString *AttributesKey_Position     = @"position";  //方位(value:x,y,z)
+static NSString *AttributesKey_Color        = @"color";     //颜色值(value:FFFFFF)(对应行为:看)
+static NSString *AttributesKey_Pain         = @"pain";      //痛感(value:0-1)(对应行为:打)
+static NSString *AttributesKey_Pain         = @"pain";      //痛感(value:0-1)(对应行为:打)
+
+
+
+
+
+
+
+
