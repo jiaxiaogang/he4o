@@ -10,4 +10,11 @@
 
 @implementation Feel
 
+-(void) commitInputModel:(InputModel*)inputModel{
+    NSLog(@"感觉系统收到Input发来的多媒体数据");
+    if (inputModel) {
+        
+    }
+}
+
 @end

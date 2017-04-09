@@ -15,9 +15,9 @@
 @class InputModel;
 @interface Input : NSObject
 
-/**
- *  MARK:--------------------提交输入多媒体模型--------------------
- */
--(void)commitInputModel:(InputModel*)inputModel;
+
+
+
+-(void) seeWorld;
 
 @end
