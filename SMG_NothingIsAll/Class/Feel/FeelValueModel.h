@@ -14,6 +14,7 @@
  */
 @interface FeelValueModel : NSObject
 
+//fromFeelId,toFeelId,compleType,倍率;
 @property (assign, nonatomic) NSInteger <#valName#>;
 
 

@@ -1,5 +1,5 @@
 //
-//  FeelModel.h
+//  Feel.h
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/4/9.
@@ -8,8 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-@interface FeelModel : NSObject
-
-@property (assign, nonatomic) NSInteger feelId;
+@interface Feel : NSObject
 
 @end
