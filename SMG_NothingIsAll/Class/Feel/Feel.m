@@ -26,6 +26,10 @@
     
 }
 
+-(void) feelForAudio:(NSObject*)audio{
+    
+}
+
 
 
 @end
