@@ -26,7 +26,11 @@
  *  key:比的是什么;(key来自tmcache存的"FeelModel_Attributes_Keys")
  */
 -(void) appendFeelValueModel:(FeelValueModel*)feelValueModel withKEY:(NSString*)key{
-    
+    if (feelValueModel && [self.attributesKeys containsObject:STRTOOK(key)]) {
+        NSMutableArray *valueArr = [[NSMutableArray alloc] initWithArray:[self.attributes objectForKey:STRTOOK(key)]];
+        [valueArr addObject:feelValueModel];
+        [self.attributes setObject:valueArr forKey:STRTOOK(key)];
+    }
 }
 
 
