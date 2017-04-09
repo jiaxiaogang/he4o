@@ -11,9 +11,17 @@
 /**
  *  MARK:--------------------感觉码 模型--------------------
  */
+@class FeelValueModel;
 @interface FeelModel : NSObject
 
 @property (assign, nonatomic) NSInteger feelId;
 @property (strong,nonatomic) NSMutableDictionary *attributes;   //可自由增减的属性池;
+
+/**
+ *  MARK:--------------------追加属性--------------------
+ *  feelValueModel:比较值
+ *  key:比的是什么;(key来自tmcache存的"FeelModel_Attributes_Keys")
+ */
+-(void) appendFeelValueModel:(FeelValueModel*)feelValueModel withKEY:(NSString*)key;    //追加属性;
 
 @end
