@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		083DA5EE1E99E37A0047A6DF /* Understand.m in Sources */ = {isa = PBXBuildFile; fileRef = 083DA5ED1E99E37A0047A6DF /* Understand.m */; };
 		08AF454A1E97D0B500377887 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF45491E97D0B500377887 /* main.m */; };
 		08AF454D1E97D0B500377887 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF454C1E97D0B500377887 /* AppDelegate.m */; };
 		08AF45501E97D0B500377887 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF454F1E97D0B500377887 /* ViewController.m */; };
@@ -27,6 +28,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		083DA5EB1E99E36A0047A6DF /* UnderstandHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnderstandHeader.h; sourceTree = "<group>"; };
+		083DA5EC1E99E37A0047A6DF /* Understand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Understand.h; sourceTree = "<group>"; };
+		083DA5ED1E99E37A0047A6DF /* Understand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Understand.m; sourceTree = "<group>"; };
 		08AF45451E97D0B500377887 /* SMG_NothingIsAll.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SMG_NothingIsAll.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		08AF45491E97D0B500377887 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		08AF454B1E97D0B500377887 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -80,6 +84,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		083DA5EA1E99E3530047A6DF /* Understand */ = {
+			isa = PBXGroup;
+			children = (
+				083DA5EB1E99E36A0047A6DF /* UnderstandHeader.h */,
+				083DA5EC1E99E37A0047A6DF /* Understand.h */,
+				083DA5ED1E99E37A0047A6DF /* Understand.m */,
+			);
+			path = Understand;
+			sourceTree = "<group>";
+		};
 		08AF453C1E97D0B500377887 = {
 			isa = PBXGroup;
 			children = (
@@ -126,6 +140,7 @@
 		08AF455F1E97D43C00377887 /* Class */ = {
 			isa = PBXGroup;
 			children = (
+				083DA5EA1E99E3530047A6DF /* Understand */,
 				08F3AFCB1E98B11600747EDD /* Audio */,
 				08F3AFCC1E98B11600747EDD /* Image */,
 				08F3AFC11E98A13200747EDD /* Extension */,
@@ -365,6 +380,7 @@
 				08AF454A1E97D0B500377887 /* main.m in Sources */,
 				08AF456B1E97D80C00377887 /* MemStore.m in Sources */,
 				08F3AFB21E98929C00747EDD /* MindUtils.m in Sources */,
+				083DA5EE1E99E37A0047A6DF /* Understand.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
