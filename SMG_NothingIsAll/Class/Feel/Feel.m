@@ -8,6 +8,7 @@
 
 #import "Feel.h"
 #import "InputHeader.h"
+#import "SMGHeader.h"
 
 @implementation Feel
 
@@ -18,16 +19,19 @@
     }
 }
 
--(void) feelForText:(NSString*)text{
-    
+-(NSString*) feelForText:(NSString*)text{
+    //作数据检查,例如大于50字;则背不下来;只记部分;
+    return STRTOOK(text);
 }
 
--(void) feelForImg:(UIImage*)img{
-    
+-(UIImage*) feelForImg:(UIImage*)img{
+    //先从本地找替代品;
+    return nil;//压缩尺寸,压缩质量,压缩大小后返回;
 }
 
--(void) feelForAudio:(NSObject*)audio{
-    
+-(NSObject*) feelForAudio:(NSObject*)audio{
+    //先从本地找替代品;
+    return nil;
 }
 
 
