@@ -46,7 +46,8 @@
 }
 
 -(UIImage*) feelForImg:(UIImage*)img{
-    //先从本地找替代品;
+    //先从本地找替代品;取不到合适的;再解析img;
+    
     return nil;//压缩尺寸,压缩质量,压缩大小后返回;
 }
 

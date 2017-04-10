@@ -10,6 +10,7 @@
 #import "SMGHeader.h"
 #import "StoreHeader.h"
 #import "LanguageHeader.h"
+#import "FeelHeader.h"
 
 @implementation Understand
 
@@ -30,7 +31,12 @@
 
 
 -(void) commitFeelModel:(FeelModel*)model{
-    
+    if (model) {
+        //1,整理感觉系统传过来的数据;
+        //2,找出共同点与逻辑;
+        //3,更新记忆,MK;及逻辑推理记忆;
+        //4,根据Mind来调用OUTPUT;(表达语言,表达表情,下一次注意力采集信息)
+    }
 }
 
 
