@@ -11,17 +11,23 @@
 /**
  *  MARK:--------------------感觉码 模型--------------------
  */
-@class FeelValueModel,FeelImgModel;
+@class FeelValueModel,FeelImgModel,FeelAudioModel,FeelTextModel;
 @interface FeelModel : NSObject
 
-@property (strong,nonatomic) FeelImgModel *imgModel;//图像感觉化数据;
-
-
-
-
-
 @property (assign, nonatomic) NSInteger feelId;
-@property (strong,nonatomic) NSMutableDictionary *attributes;   //可自由增减的属性池;
+@property (strong,nonatomic) FeelImgModel *imgModel;//图像感觉化数据;
+@property (strong,nonatomic) FeelAudioModel *audioModel;
+@property (strong,nonatomic) FeelTextModel *textModel;
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -31,12 +37,8 @@
  *  feelValueModel:比较值
  *  key:比的是什么;(key来自tmcache存的"FeelModel_Attributes_Keys")
  */
+@property (strong,nonatomic) NSMutableDictionary *attributes;   //可自由增减的属性池;
 -(void) appendFeelValueModel:(FeelValueModel*)feelValueModel withKEY:(NSString*)key;    //追加属性;
-
-
-
-
-
 
 /**
  *  MARK:--------------------propertys--------------------
@@ -45,6 +47,8 @@
 -(void) addAttributesKey:(NSString*)key;
 
 @end
+
+
 
 
 

@@ -10,6 +10,7 @@
 #import "InputHeader.h"
 #import "SMGHeader.h"
 #import "FeelHeader.h"
+#import "UnderstandHeader.h"
 
 @implementation Feel
 
@@ -25,14 +26,17 @@
         audioModel.audio = [self feelForAudio:inputModel.audio];
         
         //3,文本感觉化
+        FeelTextModel *textModel = [[FeelTextModel alloc] init];
+        textModel.text = [self feelForText:inputModel.text];
+        textModel.attributes = [[NSMutableDictionary alloc] init];
         
-        
-        //2,感觉模型
+        //4,感觉模型
         FeelModel *model = [[FeelModel alloc] init];
-        model.
-        model.imgModel =
+        model.textModel = textModel;
+        model.imgModel = imgModel;
+        model.audioModel = audioModel;
         
-        [SMG sharedInstance].understand commit
+        [[SMG sharedInstance].understand commitFeelModel:model];
     }
 }
 

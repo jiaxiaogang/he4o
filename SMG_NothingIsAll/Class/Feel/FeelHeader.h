@@ -12,3 +12,5 @@
 #import "FeelValueModel.h"
 #import "FeelImgModel.h"
 #import "FeelAudioModel.h"
+#import "FeelTextModel.h"
+

@@ -28,6 +28,13 @@
     [_timer fire];
 }
 
+
+-(void) commitFeelModel:(FeelModel*)model{
+    
+}
+
+
+
 //MARK:--------------------开始思考人生--------------------
 -(void) startUnderstand{
     //1,分词:最近三条记忆;

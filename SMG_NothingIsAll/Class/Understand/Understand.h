@@ -25,12 +25,15 @@
  *  注:找出逻辑关系的规律,将其记录;
  *
  */
+@class FeelModel;
 @interface Understand : NSObject
 
 
 @property(strong,nonatomic)NSTimer* timer;//10秒思考一次;
 
 -(id) init;
+
+-(void) commitFeelModel:(FeelModel*)model;
 
 //MARK:--------------------开始思考人生--------------------
 -(void) startUnderstand;
@@ -47,6 +50,11 @@
 /**
  *  MARK:--------------------行为<-->文字--------------------
  */
+
+
+
+
+
 
 
 
