@@ -14,6 +14,9 @@
 @class FeelValueModel;
 @interface FeelModel : NSObject
 
+
+@property (strong,nonatomic) UIImage *img;//图像感觉化;
+
 @property (assign, nonatomic) NSInteger feelId;
 @property (strong,nonatomic) NSMutableDictionary *attributes;   //可自由增减的属性池;
 

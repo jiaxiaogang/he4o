@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		083DA5EE1E99E37A0047A6DF /* Understand.m in Sources */ = {isa = PBXBuildFile; fileRef = 083DA5ED1E99E37A0047A6DF /* Understand.m */; };
+		088331C61E9BD3D00026DE23 /* FeelImgModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088331C51E9BD3D00026DE23 /* FeelImgModel.m */; };
 		08AF454A1E97D0B500377887 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF45491E97D0B500377887 /* main.m */; };
 		08AF454D1E97D0B500377887 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF454C1E97D0B500377887 /* AppDelegate.m */; };
 		08AF45501E97D0B500377887 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF454F1E97D0B500377887 /* ViewController.m */; };
@@ -36,6 +37,8 @@
 		083DA5EB1E99E36A0047A6DF /* UnderstandHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnderstandHeader.h; sourceTree = "<group>"; };
 		083DA5EC1E99E37A0047A6DF /* Understand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Understand.h; sourceTree = "<group>"; };
 		083DA5ED1E99E37A0047A6DF /* Understand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Understand.m; sourceTree = "<group>"; };
+		088331C41E9BD3D00026DE23 /* FeelImgModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeelImgModel.h; sourceTree = "<group>"; };
+		088331C51E9BD3D00026DE23 /* FeelImgModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeelImgModel.m; sourceTree = "<group>"; };
 		08AF45451E97D0B500377887 /* SMG_NothingIsAll.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SMG_NothingIsAll.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		08AF45491E97D0B500377887 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		08AF454B1E97D0B500377887 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -278,6 +281,8 @@
 				08F639881E9A2FF4003CD163 /* Feel.m */,
 				08F6398A1E9A3316003CD163 /* FeelHeader.h */,
 				08F6398B1E9A3326003CD163 /* FeelEnum.h */,
+				088331C41E9BD3D00026DE23 /* FeelImgModel.h */,
+				088331C51E9BD3D00026DE23 /* FeelImgModel.m */,
 			);
 			path = Feel;
 			sourceTree = "<group>";
@@ -425,6 +430,7 @@
 				08F3AFAC1E98898000747EDD /* Mind.m in Sources */,
 				08AF45501E97D0B500377887 /* ViewController.m in Sources */,
 				08F639861E9A2F6C003CD163 /* FeelModel.m in Sources */,
+				088331C61E9BD3D00026DE23 /* FeelImgModel.m in Sources */,
 				08AF456E1E97DDF600377887 /* MKStore.m in Sources */,
 				08F3AFBB1E98966E00747EDD /* Store.m in Sources */,
 				08C84A9C1E9A874C00897D8B /* InputModel.m in Sources */,
