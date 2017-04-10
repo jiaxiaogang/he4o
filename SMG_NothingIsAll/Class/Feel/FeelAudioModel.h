@@ -10,4 +10,8 @@
 
 @interface FeelAudioModel : NSObject
 
+@property (strong,nonatomic) id audio;
+@property (assign, nonatomic) NSRange range;                    //音频的开始结束位置
+@property (strong,nonatomic) NSMutableDictionary *attributes;   //附加信息
+
 @end
