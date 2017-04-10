@@ -10,6 +10,7 @@
 		083DA5EE1E99E37A0047A6DF /* Understand.m in Sources */ = {isa = PBXBuildFile; fileRef = 083DA5ED1E99E37A0047A6DF /* Understand.m */; };
 		088331C61E9BD3D00026DE23 /* FeelImgModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088331C51E9BD3D00026DE23 /* FeelImgModel.m */; };
 		088331C91E9BD59F0026DE23 /* FeelAudioModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088331C81E9BD59F0026DE23 /* FeelAudioModel.m */; };
+		088331CC1E9BD68C0026DE23 /* FeelTextModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088331CB1E9BD68C0026DE23 /* FeelTextModel.m */; };
 		08AF454A1E97D0B500377887 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF45491E97D0B500377887 /* main.m */; };
 		08AF454D1E97D0B500377887 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF454C1E97D0B500377887 /* AppDelegate.m */; };
 		08AF45501E97D0B500377887 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF454F1E97D0B500377887 /* ViewController.m */; };
@@ -42,6 +43,8 @@
 		088331C51E9BD3D00026DE23 /* FeelImgModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeelImgModel.m; sourceTree = "<group>"; };
 		088331C71E9BD59F0026DE23 /* FeelAudioModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeelAudioModel.h; sourceTree = "<group>"; };
 		088331C81E9BD59F0026DE23 /* FeelAudioModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeelAudioModel.m; sourceTree = "<group>"; };
+		088331CA1E9BD68C0026DE23 /* FeelTextModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeelTextModel.h; sourceTree = "<group>"; };
+		088331CB1E9BD68C0026DE23 /* FeelTextModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeelTextModel.m; sourceTree = "<group>"; };
 		08AF45451E97D0B500377887 /* SMG_NothingIsAll.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SMG_NothingIsAll.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		08AF45491E97D0B500377887 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		08AF454B1E97D0B500377887 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -288,6 +291,8 @@
 				088331C51E9BD3D00026DE23 /* FeelImgModel.m */,
 				088331C71E9BD59F0026DE23 /* FeelAudioModel.h */,
 				088331C81E9BD59F0026DE23 /* FeelAudioModel.m */,
+				088331CA1E9BD68C0026DE23 /* FeelTextModel.h */,
+				088331CB1E9BD68C0026DE23 /* FeelTextModel.m */,
 			);
 			path = Feel;
 			sourceTree = "<group>";
@@ -452,6 +457,7 @@
 				08AF456B1E97D80C00377887 /* MemStore.m in Sources */,
 				08F3AFB21E98929C00747EDD /* MindUtils.m in Sources */,
 				08C84A991E9A86C400897D8B /* StoreModel_Text.m in Sources */,
+				088331CC1E9BD68C0026DE23 /* FeelTextModel.m in Sources */,
 				083DA5EE1E99E37A0047A6DF /* Understand.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

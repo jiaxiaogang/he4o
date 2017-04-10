@@ -20,11 +20,18 @@
         FeelImgModel *imgModel = [[FeelImgModel alloc] init];
         imgModel.img = [self feelForImg:inputModel.img];
         
+        //2,声音感觉化
+        FeelAudioModel *audioModel = [[FeelAudioModel alloc] init];
+        audioModel.audio = [self feelForAudio:inputModel.audio];
+        
+        //3,文本感觉化
         
         
         //2,感觉模型
         FeelModel *model = [[FeelModel alloc] init];
+        model.
         model.imgModel =
+        
         [SMG sharedInstance].understand commit
     }
 }
