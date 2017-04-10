@@ -11,11 +11,14 @@
 /**
  *  MARK:--------------------感觉码 模型--------------------
  */
-@class FeelValueModel;
+@class FeelValueModel,FeelImgModel;
 @interface FeelModel : NSObject
 
+@property (strong,nonatomic) FeelImgModel *imgModel;//图像感觉化数据;
 
-@property (strong,nonatomic) UIImage *img;//图像感觉化;
+
+
+
 
 @property (assign, nonatomic) NSInteger feelId;
 @property (strong,nonatomic) NSMutableDictionary *attributes;   //可自由增减的属性池;

@@ -9,12 +9,22 @@
 #import "Feel.h"
 #import "InputHeader.h"
 #import "SMGHeader.h"
+#import "FeelHeader.h"
 
 @implementation Feel
 
 -(void) commitInputModel:(InputModel*)inputModel{
     NSLog(@"感觉系统收到Input发来的多媒体数据");
     if (inputModel) {
+        //1,图片感觉化
+        FeelImgModel *imgModel = [[FeelImgModel alloc] init];
+        imgModel.img = [self feelForImg:inputModel.img];
+        
+        
+        
+        //2,感觉模型
+        FeelModel *model = [[FeelModel alloc] init];
+        model.imgModel =
         [SMG sharedInstance].understand commit
     }
 }
