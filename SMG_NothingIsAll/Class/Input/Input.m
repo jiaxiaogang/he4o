@@ -38,6 +38,11 @@
             //方案二:
             //2,先发出寻找命令;
             //3,转动摄像头拍照;找不到再转动角度后再拍;再找;直到找到;;;
+            InputModel *model = [[InputModel alloc] init];
+            BOOL find = [[SMG sharedInstance].feel commitInputModelForFindObject:model];
+            if (find) {
+                
+            }
         }
     }
 }
