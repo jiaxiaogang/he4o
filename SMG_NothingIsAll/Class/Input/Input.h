@@ -22,4 +22,10 @@
 
 -(void) seeWorld:(id)property;//指定注意下某物的某属性;
 
+/**
+ *  MARK:--------------------在视野查找某物--------------------
+ *  attributes:确认唯一性的参数集;
+ */
+-(void) findAtWorld:(NSDictionary*)attributes;
+
 @end
