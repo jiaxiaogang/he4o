@@ -16,3 +16,9 @@
 @property (strong,nonatomic) NSMutableDictionary *attributes;   //附加信息
 
 @end
+
+
+
+
+static NSString *FeelImgModelAttributesKey_Line     = @"line";  //抽象线的path
+static NSString *FeelImgModelAttributesKey_Area     = @"area";  //抽象面的外形
