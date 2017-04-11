@@ -40,6 +40,16 @@
     }
 }
 
+
+//查找任务_提交收集来的原数据;
+-(BOOL) commitInputModelForFindObject:(InputModel*)inputModel{
+    if ([STRTOOK(inputModel.text) isEqualToString:@"正确数据"]) {
+        return true;//直到找到正确的数据;或任务被打断;
+    }
+    return false;
+}
+
+
 -(NSString*) feelForText:(NSString*)text{
     //作数据检查,例如大于50字;则背不下来;只记部分;
     return STRTOOK(text);
@@ -55,6 +65,8 @@
     //先从本地找替代品;
     return nil;
 }
+
+
 
 
 

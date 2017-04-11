@@ -20,4 +20,10 @@
 
 -(void) commitInputModel:(InputModel*)inputModel;
 
+
+
+//查找任务_提交收集来的原数据;
+-(BOOL) commitInputModelForFindObject:(InputModel*)inputModel;
+
+
 @end
