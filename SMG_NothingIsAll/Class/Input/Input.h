@@ -18,8 +18,6 @@
 @interface Input : NSObject
 
 
-
-
 -(void) seeWorld:(id)property;//指定注意下某物的某属性;
 
 /**
