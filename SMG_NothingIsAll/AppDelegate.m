@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "StudyViewController.h"
 
 @interface AppDelegate ()
 
@@ -16,7 +17,13 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.window.backgroundColor = [UIColor whiteColor];
+    StudyViewController *page = [[StudyViewController alloc] init];
+    UINavigationController *naviC = [[UINavigationController alloc] initWithRootViewController:page];
+    [self.window setRootViewController:naviC];
+    [self.window makeKeyAndVisible];
+    
     return YES;
 }
 
