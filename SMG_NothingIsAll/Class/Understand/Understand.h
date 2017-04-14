@@ -31,6 +31,12 @@
 
 @property(strong,nonatomic)NSTimer* timer;//10秒思考一次;
 
+
+//1,Input->Feel->Understand(Do)->Memory(MemStore,MKStore,LogicStore)
+@property (strong,nonatomic) NSString *doType;
+
+
+
 -(id) init;
 
 -(void) commitFeelModel:(FeelModel*)model;
