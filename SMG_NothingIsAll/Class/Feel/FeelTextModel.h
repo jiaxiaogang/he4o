@@ -8,6 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ *  MARK:--------------------Input_文字--------------------
+ *
+ */
 @interface FeelTextModel : NSObject
 
 @property (strong,nonatomic) NSString *text;

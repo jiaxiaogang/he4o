@@ -8,6 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ *  MARK:--------------------Input_听觉--------------------
+ *
+ */
 @interface FeelAudioModel : NSObject
 
 @property (strong,nonatomic) id audio;

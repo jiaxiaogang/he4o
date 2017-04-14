@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		083DA5EE1E99E37A0047A6DF /* Understand.m in Sources */ = {isa = PBXBuildFile; fileRef = 083DA5ED1E99E37A0047A6DF /* Understand.m */; };
+		084750A91EA05C7E00316BEF /* Do.m in Sources */ = {isa = PBXBuildFile; fileRef = 084750A81EA05C7E00316BEF /* Do.m */; };
 		088331C61E9BD3D00026DE23 /* FeelImgModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088331C51E9BD3D00026DE23 /* FeelImgModel.m */; };
 		088331C91E9BD59F0026DE23 /* FeelAudioModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088331C81E9BD59F0026DE23 /* FeelAudioModel.m */; };
 		088331CC1E9BD68C0026DE23 /* FeelTextModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088331CB1E9BD68C0026DE23 /* FeelTextModel.m */; };
@@ -39,6 +40,8 @@
 		083DA5EB1E99E36A0047A6DF /* UnderstandHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnderstandHeader.h; sourceTree = "<group>"; };
 		083DA5EC1E99E37A0047A6DF /* Understand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Understand.h; sourceTree = "<group>"; };
 		083DA5ED1E99E37A0047A6DF /* Understand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Understand.m; sourceTree = "<group>"; };
+		084750A71EA05C7E00316BEF /* Do.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Do.h; sourceTree = "<group>"; };
+		084750A81EA05C7E00316BEF /* Do.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Do.m; sourceTree = "<group>"; };
 		088331C41E9BD3D00026DE23 /* FeelImgModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeelImgModel.h; sourceTree = "<group>"; };
 		088331C51E9BD3D00026DE23 /* FeelImgModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeelImgModel.m; sourceTree = "<group>"; };
 		088331C71E9BD59F0026DE23 /* FeelAudioModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeelAudioModel.h; sourceTree = "<group>"; };
@@ -132,6 +135,15 @@
 			name = Text;
 			sourceTree = "<group>";
 		};
+		084750A61EA05C6C00316BEF /* Do */ = {
+			isa = PBXGroup;
+			children = (
+				084750A71EA05C7E00316BEF /* Do.h */,
+				084750A81EA05C7E00316BEF /* Do.m */,
+			);
+			path = Do;
+			sourceTree = "<group>";
+		};
 		08AF453C1E97D0B500377887 = {
 			isa = PBXGroup;
 			children = (
@@ -178,6 +190,7 @@
 		08AF455F1E97D43C00377887 /* Class */ = {
 			isa = PBXGroup;
 			children = (
+				084750A61EA05C6C00316BEF /* Do */,
 				08C84A8F1E9A86B900897D8B /* Output */,
 				08C84A8A1E9A85A600897D8B /* Input */,
 				08F639801E9A2DCE003CD163 /* Feel */,
@@ -445,6 +458,7 @@
 				08F3AFBB1E98966E00747EDD /* Store.m in Sources */,
 				088331C91E9BD59F0026DE23 /* FeelAudioModel.m in Sources */,
 				08C84A9C1E9A874C00897D8B /* InputModel.m in Sources */,
+				084750A91EA05C7E00316BEF /* Do.m in Sources */,
 				08C84A8E1E9A866200897D8B /* Input.m in Sources */,
 				08F639831E9A2EC0003CD163 /* FeelValueModel.m in Sources */,
 				08F3AFB81E98963600747EDD /* SMG.m in Sources */,

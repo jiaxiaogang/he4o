@@ -9,6 +9,14 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+
+/**
+ *  MARK:--------------------Input_视觉--------------------
+ *  1,抠图
+ *  2,人脸,表情
+ *  3,肢体动作
+ *
+ */
 @interface FeelImgModel : NSObject
 
 @property (strong,nonatomic) UIImage *img;                      //图片
