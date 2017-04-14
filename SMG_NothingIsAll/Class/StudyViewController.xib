@@ -30,36 +30,65 @@
                                     <constraints>
                                         <constraint firstAttribute="height" constant="30" id="nGV-tE-nko"/>
                                     </constraints>
-                                    <state key="normal" title="人"/>
+                                    <state key="normal" title="小赤"/>
                                 </button>
-                                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="hZv-1C-Vzu">
-                                    <rect key="frame" x="0.0" y="30" width="100" height="236"/>
-                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </tableView>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pjn-5B-e8w">
+                                    <rect key="frame" x="0.0" y="30" width="100" height="30"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="30" id="e2x-iR-B9f"/>
+                                    </constraints>
+                                    <state key="normal" title="小臂"/>
+                                </button>
                             </subviews>
                             <color key="backgroundColor" red="0.93333333333333335" green="0.93333333333333335" blue="0.93333333333333335" alpha="1" colorSpace="calibratedRGB"/>
                             <constraints>
                                 <constraint firstItem="331-0h-HGu" firstAttribute="leading" secondItem="pRn-Gp-alG" secondAttribute="leading" id="AVj-zm-jtK"/>
-                                <constraint firstAttribute="trailing" secondItem="hZv-1C-Vzu" secondAttribute="trailing" id="DfQ-eE-FUe"/>
-                                <constraint firstItem="hZv-1C-Vzu" firstAttribute="top" secondItem="331-0h-HGu" secondAttribute="bottom" id="HIl-Wc-5hl"/>
                                 <constraint firstItem="331-0h-HGu" firstAttribute="top" secondItem="pRn-Gp-alG" secondAttribute="top" id="IC1-BH-G56"/>
-                                <constraint firstItem="hZv-1C-Vzu" firstAttribute="leading" secondItem="pRn-Gp-alG" secondAttribute="leading" id="L0K-QI-9fd"/>
                                 <constraint firstAttribute="trailing" secondItem="331-0h-HGu" secondAttribute="trailing" id="N7O-Dt-x6Q"/>
-                                <constraint firstAttribute="bottom" secondItem="hZv-1C-Vzu" secondAttribute="bottom" id="P0d-6T-igD"/>
+                                <constraint firstItem="pjn-5B-e8w" firstAttribute="leading" secondItem="pRn-Gp-alG" secondAttribute="leading" id="Yk6-Nd-7YV"/>
                                 <constraint firstAttribute="width" constant="100" id="cBI-FB-wuG"/>
+                                <constraint firstItem="pjn-5B-e8w" firstAttribute="top" secondItem="331-0h-HGu" secondAttribute="bottom" id="dWz-EK-ayr"/>
+                                <constraint firstAttribute="trailing" secondItem="pjn-5B-e8w" secondAttribute="trailing" id="uj2-eq-Chh"/>
                             </constraints>
                         </view>
+                        <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="0rj-ky-uLE">
+                            <rect key="frame" x="110" y="5" width="228" height="266"/>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                        </textView>
                     </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
                         <constraint firstItem="pRn-Gp-alG" firstAttribute="top" secondItem="RcJ-Mn-RNd" secondAttribute="top" constant="5" id="60F-EO-noG"/>
+                        <constraint firstAttribute="bottom" secondItem="0rj-ky-uLE" secondAttribute="bottom" constant="5" id="TN3-qf-fyc"/>
                         <constraint firstAttribute="bottom" secondItem="pRn-Gp-alG" secondAttribute="bottom" constant="5" id="Xer-ys-mbd"/>
+                        <constraint firstAttribute="trailing" secondItem="0rj-ky-uLE" secondAttribute="trailing" constant="5" id="iAW-DG-0iK"/>
+                        <constraint firstItem="0rj-ky-uLE" firstAttribute="leading" secondItem="pRn-Gp-alG" secondAttribute="trailing" constant="5" id="nbh-g5-I96"/>
+                        <constraint firstItem="0rj-ky-uLE" firstAttribute="top" secondItem="RcJ-Mn-RNd" secondAttribute="top" constant="5" id="rLv-pr-OTB"/>
                         <constraint firstItem="pRn-Gp-alG" firstAttribute="leading" secondItem="RcJ-Mn-RNd" secondAttribute="leading" constant="5" id="tmK-Xm-h4a"/>
                     </constraints>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Eak-Ig-YCc">
                     <rect key="frame" x="16" y="332" width="343" height="276"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mZ1-Fn-yXG">
+                            <rect key="frame" x="5" y="5" width="100" height="266"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="100" id="a8c-I5-EwL"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstItem="mZ1-Fn-yXG" firstAttribute="leading" secondItem="Eak-Ig-YCc" secondAttribute="leading" constant="5" id="LZE-n5-UoJ"/>
+                        <constraint firstItem="mZ1-Fn-yXG" firstAttribute="top" secondItem="Eak-Ig-YCc" secondAttribute="top" constant="5" id="Zv9-Ib-sob"/>
+                        <constraint firstAttribute="bottom" secondItem="mZ1-Fn-yXG" secondAttribute="bottom" constant="5" id="lsR-Yn-7oy"/>
+                    </constraints>
                 </view>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="V2t-9z-vIC">
                     <rect key="frame" x="0.0" y="618" width="187.5" height="49"/>
