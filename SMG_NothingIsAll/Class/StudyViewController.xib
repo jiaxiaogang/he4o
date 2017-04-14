@@ -92,14 +92,29 @@
                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                             <textInputTraits key="textInputTraits"/>
                         </textField>
+                        <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="vie-yG-wbq">
+                            <rect key="frame" x="115" y="123" width="113" height="30"/>
+                            <nil key="textColor"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <textInputTraits key="textInputTraits"/>
+                        </textField>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ldk-lF-MnO">
+                            <rect key="frame" x="128" y="163" width="86" height="30"/>
+                            <state key="normal" title="openDoType"/>
+                        </button>
                     </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
                         <constraint firstItem="hbW-Qt-7h2" firstAttribute="centerY" secondItem="Eak-Ig-YCc" secondAttribute="centerY" id="8CJ-1B-Tmd"/>
+                        <constraint firstItem="hbW-Qt-7h2" firstAttribute="leading" secondItem="vie-yG-wbq" secondAttribute="trailing" constant="10" id="JY4-bj-QEK"/>
                         <constraint firstItem="mZ1-Fn-yXG" firstAttribute="leading" secondItem="Eak-Ig-YCc" secondAttribute="leading" constant="5" id="LZE-n5-UoJ"/>
+                        <constraint firstItem="Ldk-lF-MnO" firstAttribute="top" secondItem="vie-yG-wbq" secondAttribute="bottom" constant="10" id="VPL-Ah-Jbe"/>
+                        <constraint firstItem="Ldk-lF-MnO" firstAttribute="centerX" secondItem="Eak-Ig-YCc" secondAttribute="centerX" id="WYG-Kh-pyZ"/>
                         <constraint firstItem="mZ1-Fn-yXG" firstAttribute="top" secondItem="Eak-Ig-YCc" secondAttribute="top" constant="5" id="Zv9-Ib-sob"/>
                         <constraint firstAttribute="bottom" secondItem="mZ1-Fn-yXG" secondAttribute="bottom" constant="5" id="lsR-Yn-7oy"/>
+                        <constraint firstItem="vie-yG-wbq" firstAttribute="centerY" secondItem="Eak-Ig-YCc" secondAttribute="centerY" id="lyo-0d-DUV"/>
                         <constraint firstAttribute="trailing" secondItem="hbW-Qt-7h2" secondAttribute="trailing" constant="5" id="usV-F2-CHP"/>
+                        <constraint firstItem="vie-yG-wbq" firstAttribute="leading" secondItem="mZ1-Fn-yXG" secondAttribute="trailing" constant="10" id="xXq-mj-WrG"/>
                     </constraints>
                 </view>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="V2t-9z-vIC">
