@@ -8,7 +8,13 @@
 
 #import "StudyViewController.h"
 
-@interface StudyViewController ()
+@interface StudyViewController ()<UITableViewDelegate,UITableViewDataSource>
+
+@property (weak, nonatomic) IBOutlet UITextView *inputTV;
+@property (weak, nonatomic) IBOutlet UILabel *selectNameLab;
+@property (weak, nonatomic) IBOutlet UITextField *doTypeTF;
+@property (weak, nonatomic) IBOutlet UITextField *targetTF;
+@property (weak, nonatomic) IBOutlet UITableView *doTableView;
 
 @end
 
@@ -39,6 +45,9 @@
 }
 
 
+/**
+ *  MARK:--------------------UITableViewDelegate,UITableViewDataSource--------------------
+ */
 
 
 
