@@ -7,6 +7,7 @@
 //
 
 #import "StudyViewController.h"
+#import "SMGHeader.h"
 
 @interface StudyViewController ()<UITableViewDelegate,UITableViewDataSource>
 
@@ -15,6 +16,7 @@
 @property (weak, nonatomic) IBOutlet UITextField *doTypeTF;
 @property (weak, nonatomic) IBOutlet UITextField *targetTF;
 @property (weak, nonatomic) IBOutlet UITableView *doTableView;
+@property (weak, nonatomic) IBOutlet UILabel *errorTipsLab;
 
 @end
 
@@ -84,5 +86,16 @@
     [self.selectNameLab setText:@"小臂"];
 }
 
+- (IBAction)clearBtnOnClick:(id)sender {
+    if (STRISOK(self.selectNameLab.text)) {
+        
+    }else{
+        [self.errorTipsLab setText:@"请选择发言人"];
+    }
+}
+
+- (IBAction)commitBtnOnClick:(id)sender {
+    
+}
 
 @end
