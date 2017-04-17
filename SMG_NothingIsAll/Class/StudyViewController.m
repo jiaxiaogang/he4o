@@ -8,6 +8,7 @@
 
 #import "StudyViewController.h"
 #import "SMGHeader.h"
+#import "UnderstandHeader.h"
 
 @interface StudyViewController ()<UITableViewDelegate,UITableViewDataSource>
 
@@ -96,7 +97,8 @@
             if (STRISOK(self.doTypeTF.text)) {
                 if (STRISOK(self.targetTF.text)) {
                     NSLog(@"%@_%@_%@",self.selectNameLab.text,self.doTypeTF.text,self.targetTF.text);
-                    Inputmode
+                    UnderstandModel *uModel = [[UnderstandModel alloc] init];
+                    
                     [self clearAllContent];
                 }else{
                     [self showErrorTips:@"请输入目标"];

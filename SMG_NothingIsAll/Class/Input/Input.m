@@ -10,6 +10,7 @@
 #import "InputHeader.h"
 #import "SMGHeader.h"
 #import "FeelHeader.h"
+#import "UnderstandHeader.h"
 
 @implementation Input
 
@@ -24,6 +25,11 @@
     inputModel.audio = nil;
     //4,提交给Feel
     [[SMG sharedInstance].feel commitInputModel:inputModel];
+}
+
+//使用文字输入;
+-(void) commitByStr:(NSString*)str withUnderstandModel:(UnderstandModel*)uModel{
+    
 }
 
 /**
