@@ -73,5 +73,16 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
+/**
+ *  MARK:--------------------onclick--------------------
+ */
+- (IBAction)xiaoChiOnClick:(id)sender {
+    [self.selectNameLab setText:@"小赤"];
+}
+
+- (IBAction)xiaoBiOnClick:(id)sender {
+    [self.selectNameLab setText:@"小臂"];
+}
+
 
 @end
