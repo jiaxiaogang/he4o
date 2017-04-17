@@ -132,4 +132,10 @@
 -(void) showErrorTips:(NSString*)tips{
     [self.errorTipsLab setText:STRTOOK(tips)];
 }
+
+
+
+
+
 @end
+
