@@ -95,7 +95,19 @@
 }
 
 - (IBAction)commitBtnOnClick:(id)sender {
-    
+    if (STRISOK(self.selectNameLab.text)) {
+        if (STRISOK(self.doTypeTF.text)) {
+            if (STRISOK(self.targetTF.text)) {
+                NSLog(@"%@_%@_%@",self.selectNameLab.text,self.doTypeTF.text,self.targetTF.text);
+            }else{
+                [self.errorTipsLab setText:@"请输入目标"];
+            }
+        }else{
+            [self.errorTipsLab setText:@"请输入行为"];
+        }
+    }else{
+        [self.errorTipsLab setText:@"请选择发言人"];
+    }
 }
 
 @end
