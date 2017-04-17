@@ -25,7 +25,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self initView];
-    [self  initData];
+    [self initData];
     [self initDisplay];
 }
 
@@ -87,11 +87,11 @@
 }
 
 - (IBAction)clearBtnOnClick:(id)sender {
-    if (STRISOK(self.selectNameLab.text)) {
-        
-    }else{
-        [self.errorTipsLab setText:@"请选择发言人"];
-    }
+    [self.errorTipsLab setText:@""];
+    [self.selectNameLab setText:@""];
+    [self.targetTF setText:@""];
+    [self.doTypeTF setText:@""];
+    [self.inputTV setText:@""];
 }
 
 - (IBAction)commitBtnOnClick:(id)sender {
