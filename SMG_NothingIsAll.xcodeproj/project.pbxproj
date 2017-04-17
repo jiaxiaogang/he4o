@@ -25,6 +25,7 @@
 		08C84A981E9A86C400897D8B /* StoreLogModel_Text.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A951E9A86C400897D8B /* StoreLogModel_Text.m */; };
 		08C84A991E9A86C400897D8B /* StoreModel_Text.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A971E9A86C400897D8B /* StoreModel_Text.m */; };
 		08C84A9C1E9A874C00897D8B /* InputModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A9B1E9A874C00897D8B /* InputModel.m */; };
+		08CF5B061EA4C610001098C7 /* UnderstandModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08CF5B051EA4C610001098C7 /* UnderstandModel.m */; };
 		08F3AFAC1E98898000747EDD /* Mind.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F3AFAB1E98898000747EDD /* Mind.m */; };
 		08F3AFB21E98929C00747EDD /* MindUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F3AFB11E98929C00747EDD /* MindUtils.m */; };
 		08F3AFB81E98963600747EDD /* SMG.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F3AFB71E98963600747EDD /* SMG.m */; };
@@ -73,6 +74,8 @@
 		08C84A971E9A86C400897D8B /* StoreModel_Text.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoreModel_Text.m; sourceTree = "<group>"; };
 		08C84A9A1E9A874C00897D8B /* InputModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputModel.h; sourceTree = "<group>"; };
 		08C84A9B1E9A874C00897D8B /* InputModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputModel.m; sourceTree = "<group>"; };
+		08CF5B041EA4C610001098C7 /* UnderstandModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnderstandModel.h; sourceTree = "<group>"; };
+		08CF5B051EA4C610001098C7 /* UnderstandModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UnderstandModel.m; sourceTree = "<group>"; };
 		08F3AFAA1E98898000747EDD /* Mind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mind.h; sourceTree = "<group>"; };
 		08F3AFAB1E98898000747EDD /* Mind.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Mind.m; sourceTree = "<group>"; };
 		08F3AFAD1E988E2A00747EDD /* MindEnum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MindEnum.h; sourceTree = "<group>"; };
@@ -117,6 +120,8 @@
 				083DA5EB1E99E36A0047A6DF /* UnderstandHeader.h */,
 				083DA5EC1E99E37A0047A6DF /* Understand.h */,
 				083DA5ED1E99E37A0047A6DF /* Understand.m */,
+				08CF5B041EA4C610001098C7 /* UnderstandModel.h */,
+				08CF5B051EA4C610001098C7 /* UnderstandModel.m */,
 			);
 			path = Understand;
 			sourceTree = "<group>";
@@ -464,6 +469,7 @@
 				08AF454A1E97D0B500377887 /* main.m in Sources */,
 				08AF456B1E97D80C00377887 /* MemStore.m in Sources */,
 				08F3AFB21E98929C00747EDD /* MindUtils.m in Sources */,
+				08CF5B061EA4C610001098C7 /* UnderstandModel.m in Sources */,
 				08C84A991E9A86C400897D8B /* StoreModel_Text.m in Sources */,
 				088331CC1E9BD68C0026DE23 /* FeelTextModel.m in Sources */,
 				083DA5EE1E99E37A0047A6DF /* Understand.m in Sources */,
