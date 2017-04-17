@@ -87,11 +87,7 @@
 }
 
 - (IBAction)clearBtnOnClick:(id)sender {
-    [self.errorTipsLab setText:@""];
-    [self.selectNameLab setText:@""];
-    [self.targetTF setText:@""];
-    [self.doTypeTF setText:@""];
-    [self.inputTV setText:@""];
+    [self clearAllContent];
 }
 
 - (IBAction)commitBtnOnClick:(id)sender {
@@ -100,18 +96,36 @@
             if (STRISOK(self.doTypeTF.text)) {
                 if (STRISOK(self.targetTF.text)) {
                     NSLog(@"%@_%@_%@",self.selectNameLab.text,self.doTypeTF.text,self.targetTF.text);
+                    
+                    [self clearAllContent];
                 }else{
-                    [self.errorTipsLab setText:@"请输入目标"];
+                    [self showErrorTips:@"请输入目标"];
                 }
             }else{
-                [self.errorTipsLab setText:@"请输入行为"];
+                [self showErrorTips:@"请输入行为"];
             }
         }else{
-            [self.errorTipsLab setText:@"请选择发言人"];
+            [self showErrorTips:@"请选择发言人"];
         }
     }else{
-        [self.errorTipsLab setText:@"请输入原话"];
+        [self showErrorTips:@"请输入原话"];
     }
 }
 
+
+/**
+ *  MARK:--------------------method--------------------
+ */
+-(void) clearAllContent{
+    [self.errorTipsLab setText:@""];
+    [self.selectNameLab setText:@""];
+    [self.targetTF setText:@""];
+    [self.doTypeTF setText:@""];
+    [self.inputTV setText:@""];
+    [self showErrorTips:@""];
+}
+
+-(void) showErrorTips:(NSString*)tips{
+    [self.errorTipsLab setText:STRTOOK(tips)];
+}
 @end
