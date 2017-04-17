@@ -10,7 +10,7 @@
 #import "MindHeader.h"
 
 
-@class Language,GC,Store,Understand,Feel;
+@class Language,GC,Store,Understand,Feel,Input;
 @interface SMG : NSObject
 
 +(SMG*) sharedInstance;
@@ -20,6 +20,7 @@
 @property (strong,nonatomic) Mind *mind;            //当前心情
 @property (strong,nonatomic) Understand *understand;//闲下时,开始理解分析自己的记忆和知识;
 @property (strong,nonatomic) Feel *feel;            //感觉系统
+@property (strong,nonatomic) Input *input;          //输入系统(计算机视觉,听觉,文字,触觉,网络等)
 
 
 /**
