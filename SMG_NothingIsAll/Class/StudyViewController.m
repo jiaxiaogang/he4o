@@ -99,6 +99,7 @@
                 if (STRISOK(self.targetTF.text)) {
                     NSLog(@"%@_%@_%@",self.selectNameLab.text,self.doTypeTF.text,self.targetTF.text);
                     UnderstandModel *uModel = [[UnderstandModel alloc] init];
+                    
                     //InputModel *inputModel = [[InputModel alloc] init];
                     [[SMG sharedInstance].input commitByStr:self.selectNameLab.text withUnderstandModel:uModel];
                     [self clearAllContent];

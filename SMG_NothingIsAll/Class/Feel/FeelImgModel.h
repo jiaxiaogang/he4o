@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "FeelModel.h"
 
 
 /**
@@ -17,7 +18,7 @@
  *  3,肢体动作
  *
  */
-@interface FeelImgModel : NSObject
+@interface FeelImgModel : FeelModel
 
 @property (strong,nonatomic) UIImage *img;                      //图片
 @property (assign, nonatomic) CGRect frame;                     //坐标及大小

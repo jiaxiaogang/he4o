@@ -6,8 +6,8 @@
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "UnderstandModel.h"
+#import "DoModel.h"
 
-@implementation UnderstandModel
+@implementation DoModel
 
 @end

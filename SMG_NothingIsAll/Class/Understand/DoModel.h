@@ -11,8 +11,13 @@
 
 /**
  *  MARK:--------------------理解item模型--------------------
+ *  1,行为
+ *  2,属性
+ *  3,逻辑
+ *      3.1,行为中包含逻辑
+ *      3.2,行为间总结逻辑
  */
-@interface UnderstandModel : NSObject
+@interface DoModel : NSObject
 
 @property (strong,nonatomic) NSString *fromMKId;
 @property (strong,nonatomic) NSString *doType;
