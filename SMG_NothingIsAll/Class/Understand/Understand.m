@@ -44,6 +44,15 @@
 -(void) commitWithFeelModel:(FeelModel*)feelModel withDoModel:(DoModel*)doModel{
     if ([feelModel isKindOfClass:[FeelTextModel class]]) {
         //文字输入
+        /*
+         *
+         *  1,存记忆
+         *  2,存MK
+         *      2.1,针对doModel的fromMKId和toMKId存MK;
+         *  3,找出逻辑规律
+         *      3.1,例如:多次出现行为:'我' 吃 '瓜'  对应  textModel:我吃瓜
+         *
+         */
     }else if ([feelModel isKindOfClass:[FeelImgModel class]]) {
         //图像输入
     }else if ([feelModel isKindOfClass:[FeelAudioModel class]]) {
