@@ -26,7 +26,7 @@
  *  注:找出逻辑关系的规律,将其记录;
  *
  */
-@class FeelModel;
+@class FeelModel,DoModel;
 @interface Understand : NSObject
 
 
@@ -41,6 +41,8 @@
 -(id) init;
 
 -(void) commitFeelModel:(FeelModel*)model;
+//使用信息对应行为输入;
+-(void) commitWithFeelModel:(FeelModel*)feelModel withDoModel:(DoModel*)doModel;
 
 //MARK:--------------------开始思考人生--------------------
 -(void) startUnderstand;

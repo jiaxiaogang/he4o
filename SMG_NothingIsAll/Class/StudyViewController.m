@@ -99,10 +99,17 @@
             if (STRISOK(self.doTypeTF.text)) {
                 if (STRISOK(self.targetTF.text)) {
                     NSLog(@"%@_%@_%@",self.selectNameLab.text,self.doTypeTF.text,self.targetTF.text);
+                    //1,doModel
                     DoModel *doModel = [[DoModel alloc] init];
+                    doModel.fromMKId = self.selectNameLab.text;
+                    doModel.toMKId = self.targetTF.text;
+                    doModel.doType = self.doTypeTF.text;
+                    
+                    //2,feelTextModel
                     FeelTextModel *feelTextModel = [[FeelTextModel alloc] init];
                     feelTextModel.text = self.selectNameLab.text;
-                    //InputModel *inputModel = [[InputModel alloc] init];
+                    
+                    //3,
                     [[SMG sharedInstance].input commitWithFeelModel:feelTextModel withDoModel:doModel];
                     [self clearAllContent];
                 }else{

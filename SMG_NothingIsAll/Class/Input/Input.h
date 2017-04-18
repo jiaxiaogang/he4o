@@ -20,9 +20,6 @@
 
 -(void) seeWorld:(id)property;//指定注意下某物的某属性;
 
-//使用信息对应行为输入;
--(void) commitWithFeelModel:(FeelModel*)feelModel withDoModel:(DoModel*)doModel;
-
 /**
  *  MARK:--------------------在视野查找某物--------------------
  *  attributes:确认唯一性的参数集;
