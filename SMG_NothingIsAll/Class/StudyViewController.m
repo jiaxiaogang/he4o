@@ -100,10 +100,10 @@
                 if (STRISOK(self.targetTF.text)) {
                     NSLog(@"%@_%@_%@",self.selectNameLab.text,self.doTypeTF.text,self.targetTF.text);
                     DoModel *doModel = [[DoModel alloc] init];
-                    FeelTextModel *feelModel = [[[FeelModel alloc] init];
-                                            feelModel.
+                    FeelTextModel *feelTextModel = [[FeelTextModel alloc] init];
+                    feelTextModel.text = self.selectNameLab.text;
                     //InputModel *inputModel = [[InputModel alloc] init];
-                    [SMG sharedInstance].input commitByStr:self.selectNameLab.text withFeelModel:feelModel withDoModel:doModel];
+                    [[SMG sharedInstance].input commitWithFeelModel:feelTextModel withDoModel:doModel];
                     [self clearAllContent];
                 }else{
                     [self showErrorTips:@"请输入目标"];
