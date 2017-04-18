@@ -14,14 +14,14 @@
  *  注意力对象有可能是一颗树;或者两颗树;或者注意力仅仅是树的大小;
  *  注意力是可持续的;一次注意力,可以提交很多次数据;有时是声音;有时是图像;有时是大脑指定的属性值;
  */
-@class InputModel,UnderstandModel;
+@class InputModel,DoModel,FeelModel;
 @interface Input : NSObject
 
 
 -(void) seeWorld:(id)property;//指定注意下某物的某属性;
 
-//使用文字输入;
--(void) commitByStr:(NSString*)str withUnderstandModel:(UnderstandModel*)uModel;
+//使用信息对应行为输入;
+-(void) commitByStr:(NSString*)str withFeelModel:(FeelModel*)feelModel withDoModel:(DoModel*)doModel;
 
 /**
  *  MARK:--------------------在视野查找某物--------------------

@@ -15,9 +15,6 @@
 @interface FeelModel : NSObject
 
 @property (assign, nonatomic) NSInteger feelId;
-@property (strong,nonatomic) FeelTextModel *textModel;
-
-
 
 
 /**

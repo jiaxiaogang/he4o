@@ -27,8 +27,8 @@
     [[SMG sharedInstance].feel commitInputModel:inputModel];
 }
 
-//使用文字输入;
--(void) commitByStr:(NSString*)str withUnderstandModel:(UnderstandModel*)uModel{
+//使用信息对应行为输入;
+-(void) commitByStr:(NSString*)str withFeelModel:(FeelModel*)feelModel withDoModel:(DoModel*)doModel{
     
 }
 

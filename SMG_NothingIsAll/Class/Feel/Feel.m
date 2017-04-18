@@ -32,9 +32,7 @@
         
         //4,感觉模型
         FeelModel *model = [[FeelModel alloc] init];
-        model.textModel = textModel;
-        model.imgModel = imgModel;
-        model.audioModel = audioModel;
+        
         
         [[SMG sharedInstance].understand commitFeelModel:model];
     }
