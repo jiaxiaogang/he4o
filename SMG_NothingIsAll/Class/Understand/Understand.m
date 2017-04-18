@@ -11,6 +11,7 @@
 #import "StoreHeader.h"
 #import "LanguageHeader.h"
 #import "FeelHeader.h"
+#import "UnderstandHeader.h"
 
 @implementation Understand
 

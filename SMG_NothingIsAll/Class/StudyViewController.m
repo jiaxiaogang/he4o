@@ -109,8 +109,10 @@
                     FeelTextModel *feelTextModel = [[FeelTextModel alloc] init];
                     feelTextModel.text = self.selectNameLab.text;
                     
-                    //3,
-                    [[SMG sharedInstance].input commitWithFeelModel:feelTextModel withDoModel:doModel];
+                    //3,commit
+                    [[SMG sharedInstance].understand commitWithFeelModel:feelTextModel withDoModel:doModel];
+                    
+                    //4,clear
                     [self clearAllContent];
                 }else{
                     [self showErrorTips:@"请输入目标"];
