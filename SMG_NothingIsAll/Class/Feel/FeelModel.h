@@ -15,19 +15,7 @@
 @interface FeelModel : NSObject
 
 @property (assign, nonatomic) NSInteger feelId;
-@property (strong,nonatomic) FeelImgModel *imgModel;//图像感觉化数据;
-@property (strong,nonatomic) FeelAudioModel *audioModel;
 @property (strong,nonatomic) FeelTextModel *textModel;
-
-
-
-
-
-
-
-
-
-
 
 
 

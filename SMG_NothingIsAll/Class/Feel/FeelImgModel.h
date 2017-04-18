@@ -12,17 +12,19 @@
 
 
 /**
- *  MARK:--------------------Input_视觉--------------------
+ *  MARK:--------------------Input_视觉图像感觉化数据--------------------
+ *  基于双摄像头的立体计算机视觉;
+ *
  *  1,抠图
  *  2,人脸,表情
  *  3,肢体动作
+ *
  *
  */
 @interface FeelImgModel : FeelModel
 
 @property (strong,nonatomic) UIImage *img;                      //图片
 @property (assign, nonatomic) CGRect frame;                     //坐标及大小
-@property (strong,nonatomic) NSMutableDictionary *attributes;   //附加信息
 
 @end
 
