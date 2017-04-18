@@ -7,14 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "FeelModel.h"
 
 /**
  *  MARK:--------------------Input_文字--------------------
  *
  */
-@interface FeelTextModel : NSObject
+@interface FeelTextModel : FeelModel
 
 @property (strong,nonatomic) NSString *text;
-@property (strong,nonatomic) NSMutableDictionary *attributes;   //附加信息
 
 @end
