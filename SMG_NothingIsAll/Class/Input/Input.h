@@ -21,7 +21,7 @@
 -(void) seeWorld:(id)property;//指定注意下某物的某属性;
 
 //使用信息对应行为输入;
--(void) commitByStr:(NSString*)str withFeelModel:(FeelModel*)feelModel withDoModel:(DoModel*)doModel;
+-(void) commitWithFeelModel:(FeelModel*)feelModel withDoModel:(DoModel*)doModel;
 
 /**
  *  MARK:--------------------在视野查找某物--------------------

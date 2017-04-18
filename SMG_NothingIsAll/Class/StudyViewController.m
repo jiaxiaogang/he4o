@@ -10,6 +10,7 @@
 #import "SMGHeader.h"
 #import "UnderstandHeader.h"
 #import "InputHeader.h"
+#import "FeelHeader.h"
 
 @interface StudyViewController ()<UITableViewDelegate,UITableViewDataSource>
 
@@ -98,10 +99,11 @@
             if (STRISOK(self.doTypeTF.text)) {
                 if (STRISOK(self.targetTF.text)) {
                     NSLog(@"%@_%@_%@",self.selectNameLab.text,self.doTypeTF.text,self.targetTF.text);
-                    DoModel *uModel = [[DoModel alloc] init];
-                    
+                    DoModel *doModel = [[DoModel alloc] init];
+                    FeelTextModel *feelModel = [[[FeelModel alloc] init];
+                                            feelModel.
                     //InputModel *inputModel = [[InputModel alloc] init];
-                    [[SMG sharedInstance].input commitByStr:self.selectNameLab.text withUnderstandModel:uModel];
+                    [SMG sharedInstance].input commitByStr:self.selectNameLab.text withFeelModel:feelModel withDoModel:doModel];
                     [self clearAllContent];
                 }else{
                     [self showErrorTips:@"请输入目标"];

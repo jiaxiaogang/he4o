@@ -28,8 +28,14 @@
 }
 
 //使用信息对应行为输入;
--(void) commitByStr:(NSString*)str withFeelModel:(FeelModel*)feelModel withDoModel:(DoModel*)doModel{
-    
+-(void) commitWithFeelModel:(FeelModel*)feelModel withDoModel:(DoModel*)doModel{
+    if ([feelModel isKindOfClass:[FeelTextModel class]]) {
+        //文字输入
+    }else if ([feelModel isKindOfClass:[FeelImgModel class]]) {
+        //图像输入
+    }else if ([feelModel isKindOfClass:[FeelAudioModel class]]) {
+        //声音输入
+    }
 }
 
 /**
