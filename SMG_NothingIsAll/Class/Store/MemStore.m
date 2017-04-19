@@ -88,7 +88,7 @@
     return nil;
 }
 
--(NSArray*) getMemoryWithWhereDic:(NSDictionary*)whereDic{
+-(NSMutableArray*) getMemoryWithWhereDic:(NSDictionary*)whereDic{
     //数据检查
     if (whereDic == nil || whereDic.count == 0) {
         return self.memArr;
@@ -115,7 +115,7 @@
 }
 
 //获取where的最近一条;(模糊匹配)
--(NSDictionary*) getSingleMemoryContainerWhereDic:(NSDictionary*)whereDic{
+-(NSDictionary*) getSingleMemoryContainsWhereDic:(NSDictionary*)whereDic{
     //数据检查
     if (whereDic == nil || whereDic.count == 0) {
         return [self getLastMemory];
@@ -131,7 +131,7 @@
 }
 
 //获取where的所有条;(模糊匹配)
--(NSArray*) getMemoryContainerWhereDic:(NSDictionary*)whereDic limit:(NSInteger)limit{
+-(NSMutableArray*) getMemoryContainsWhereDic:(NSDictionary*)whereDic limit:(NSInteger)limit{
     //数据检查
     if (whereDic == nil || whereDic.count == 0) {
         return self.memArr;

@@ -34,25 +34,9 @@
     return [self.memStore getSingleMemoryWithWhereDic:where];
 }
 
--(NSMutableArray*) searchMemStoreContainerText:(NSString*)text{
-    NSMutableArray *arr = [[NSMutableArray alloc] init];
-    for (StoreModel_Text *model in self.memStore.memArr) {
-        if (model.text.length < 10 && [model.text containsString:STRTOOK(text)]) {//10个字以下的才模糊匹配;太长的句子模糊没意义//随后添加分词系统的作用使这里更厉害;
-            [arr addObject:model];
-        }
-    }
-    return arr;
+-(NSMutableArray*) searchMemStoreContainerText:(NSString*)text limit:(NSInteger)limit{
+    NSDictionary *where = [NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(text), @"text",nil];
+    return [self.memStore getMemoryContainsWhereDic:where limit:limit];//习惯池;从记忆中搜索数量很多的存到习惯中...//随后添加分词系统的作用使这里更厉害;
 }
-
--(NSMutableArray*) searchMemStoreContainerWord:(NSString*)word{
-    NSMutableArray *arr = [[NSMutableArray alloc] init];
-    for (StoreModel_Text *model in self.memStore.memArr) {//习惯池;
-        if ([model.text containsString:STRTOOK(word)]) {//10个字以下的才模糊匹配;太长的句子模糊没意义//随后添加分词系统的作用使这里更厉害;
-            [arr addObject:model];
-        }
-    }
-    return arr;
-}
-
 
 @end
