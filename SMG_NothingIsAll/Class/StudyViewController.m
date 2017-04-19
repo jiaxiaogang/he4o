@@ -47,7 +47,8 @@
 }
 
 -(void) initData{
-    
+    [self sayOnClick:self.sayChiBtn];
+    [self doOnClick:self.doSelfBtn];
 }
 
 -(void) initDisplay{
@@ -137,9 +138,26 @@
 }
 
 - (IBAction)commitBtnOnClick:(id)sender {
-    if (STRISOK(self.inputTV.text)) {
-        if (STRISOK(self.selectNameLab.text)) {
-            if (STRISOK(self.doTypeTF.text)) {
+    if (!STRISOK(self.inputTV.text)) {
+        [self showErrorTips:@"请输入原话"];
+        return;
+    }
+    if (!STRISOK(self.sayPersonName)) {
+        [self showErrorTips:@"请选择发言人"];
+        return;
+    }
+    if (!STRISOK(self.doPersonName)) {
+        [self showErrorTips:@"请选择行为人"];
+        return;
+    }
+    if (!STRISOK(self.doTypeTF.text)) {
+        [self showErrorTips:@"请输入行为"];
+    }
+    
+    if (!STRISOK(self.targetTF.text)) {
+        [self showErrorTips:@"请输入目标"];
+    }
+    
                 if (STRISOK(self.targetTF.text)) {
                     NSLog(@"行为人:%@___%@_%@",self.doPersonName,self.doTypeTF.text,self.targetTF.text);
                     //1,doModel
@@ -157,18 +175,7 @@
                     
                     //4,clear
                     [self clearAllContent];
-                }else{
-                    [self showErrorTips:@"请输入目标"];
-                }
-            }else{
-                [self showErrorTips:@"请输入行为"];
-            }
-        }else{
-            [self showErrorTips:@"请选择发言人"];
-        }
-    }else{
-        [self showErrorTips:@"请输入原话"];
-    }
+                
 }
 
 
