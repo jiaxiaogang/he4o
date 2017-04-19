@@ -19,4 +19,9 @@
 
 -(NSArray*) localArr;                                 //硬盘存储;(不常调用,调用耗时)
 
+
+-(NSDictionary*) getLastMemory;                         //获取最后一条;
+-(NSDictionary*) getPreviousMemory:(NSDictionary*)mem;  //获取mem的上一条;
+
+
 @end
