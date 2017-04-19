@@ -157,25 +157,23 @@
     if (!STRISOK(self.targetTF.text)) {
         [self showErrorTips:@"请输入目标"];
     }
+    NSLog(@"------------\n发言人:%@\n%@\n------------\n行为人:%@\n%@_%@\n------------\n",self.sayPersonName,self.inputTV.text,self.doPersonName,self.doTypeTF.text,self.targetTF.text);
+    //1,doModel
+    DoModel *doModel = [[DoModel alloc] init];
+    doModel.fromMKId = self.doPersonName;
+    doModel.toMKId = self.targetTF.text;
+    doModel.doType = self.doTypeTF.text;
     
-                if (STRISOK(self.targetTF.text)) {
-                    NSLog(@"行为人:%@___%@_%@",self.doPersonName,self.doTypeTF.text,self.targetTF.text);
-                    //1,doModel
-                    DoModel *doModel = [[DoModel alloc] init];
-                    doModel.fromMKId = self.doPersonName;
-                    doModel.toMKId = self.targetTF.text;
-                    doModel.doType = self.doTypeTF.text;
-                    
-                    //2,feelTextModel
-                    FeelTextModel *feelTextModel = [[FeelTextModel alloc] init];
-                    feelTextModel.text = self.inputTV.text;
-                    
-                    //3,commit
-                    [[SMG sharedInstance].understand commitWithFeelModel:feelTextModel withDoModel:doModel];
-                    
-                    //4,clear
-                    [self clearAllContent];
-                
+    //2,feelTextModel
+    FeelTextModel *feelTextModel = [[FeelTextModel alloc] init];
+    feelTextModel.text = self.inputTV.text;
+    
+    //3,commit
+    [[SMG sharedInstance].understand commitWithFeelModel:feelTextModel withDoModel:doModel];
+    
+    //4,clear
+    [self clearAllContent];
+    
 }
 
 
@@ -184,7 +182,8 @@
  */
 -(void) clearAllContent{
     [self.errorTipsLab setText:@""];
-    [self.selectNameLab setText:@""];
+    self.sayPersonName = @"";
+    self.doPersonName = @"";
     [self.targetTF setText:@""];
     [self.doTypeTF setText:@""];
     [self.inputTV setText:@""];
