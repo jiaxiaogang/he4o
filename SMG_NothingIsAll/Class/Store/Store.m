@@ -29,13 +29,14 @@
 /**
  *  MARK:--------------------搜索关于文字的记忆--------------------
  */
--(StoreModel_Text*) searchMemStoreWithLanguageText:(NSString*)text{
+-(NSDictionary*) searchMemStoreWithLanguageText:(NSString*)text{
     for (StoreModel_Text *model in self.memStore.memArr) {
         if ([STRTOOK(text) isEqualToString:model.text]) {
             return model;
         }
     }
     return nil;
+    [self.memStore getmem
 }
 
 -(NSMutableArray*) searchMemStoreContainerText:(NSString*)text{
