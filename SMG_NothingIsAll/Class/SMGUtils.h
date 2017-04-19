@@ -18,4 +18,5 @@
  */
 @interface SMGUtils (Compare)
 +(BOOL) compareItemA:(id)itemA itemB:(id)itemB;
++(BOOL) compareItemA:(id)itemA containsItemB:(id)itemB;
 @end

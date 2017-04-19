@@ -116,7 +116,25 @@
 
 //获取where的最近一条;(模糊匹配)
 -(NSDictionary*) getSingleMemoryContainerWhereDic:(NSDictionary*)whereDic{
-    
+    //数据检查
+    if (whereDic == nil || whereDic.count == 0) {
+        return [self getLastMemory];
+    }
+    for (NSInteger i = self.memArr.count - 1; i >= 0; i--) {
+        NSDictionary *item = self.memArr[i];
+        BOOL isEqual = true;
+        //对比所有value;
+        for (NSString *key in whereDic.allKeys) {
+            if (![SMGUtils compareItemA:[item objectForKey:key] itemB:[whereDic objectForKey:key]]) {
+                isEqual = false;
+            }
+        }
+        //都一样,则返回;
+        if (isEqual) {
+            return item;
+        }
+    }
+    return nil;
 }
 
 //获取where的所有条;(模糊匹配)

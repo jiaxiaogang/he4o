@@ -59,4 +59,39 @@
     }
 }
 
+
++(BOOL) compareItemA:(id)itemA containsItemB:(id)itemB{
+    if (itemA == nil && itemB == nil) {
+        return true;
+    }else if(itemA == nil || itemB == nil || [itemA class] != [itemB class]){
+        return false;
+    }else{
+        if ([itemA isKindOfClass:[NSString class]]) {
+            return [(NSString*)itemA containsString:itemB];        //NSString
+        }else if ([itemA isKindOfClass:[NSArray class]]) {
+            return [itemA containsObject:itemB];                    //NSArray
+        }else if ([itemA isKindOfClass:[NSDictionary class]]) {
+            for (NSString *key in [(NSDictionary*)itemB allKeys]) { //NSDictionary
+                if(![SMGUtils compareItemA:[(NSDictionary*)itemA objectForKey:key] itemB:[(NSDictionary*)itemB objectForKey:key]]){
+                    return false;
+                }
+            }
+            return true;
+        }else if ([itemA isKindOfClass:[NSSet class]]) {
+            return [itemA containsObject:itemB];                      //NSSet
+        }else if ([itemA isKindOfClass:[NSDate class]]) {
+            return [itemA containsDate:itemB];                     //NSDate
+        }else if ([itemA isKindOfClass:[NSIndexSet class]]) {
+            return [itemA containsIndexes:itemB];                 //NSIndexSet
+        }else if ([itemA isKindOfClass:[NSHashTable class]]) {
+            return [itemA containsObject:itemB];                //NSHashTable
+        }else if ([itemA isKindOfClass:[NSOrderedSet class]]) {
+            return [itemA containsObject:itemB];               //NSOrderedSet
+        }else{
+            return [itemA isEqual:itemB];                           //不识别的类型
+        }
+        //这里随后补上自定义的数据类型;例如feelModel 图片,声音等;
+    }
+}
+
 @end
