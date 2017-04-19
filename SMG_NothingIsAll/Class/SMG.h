@@ -33,11 +33,5 @@
 
 
 
-//MARK:--------------------Store--------------------
--(NSArray*) getStore_MemStore_MemArr;//获取习惯记忆;
-
-
-
-
 @end
 

@@ -71,11 +71,6 @@ static SMG *_instance;
 }
 
 
-//MARK:--------------------Store--------------------
--(NSArray*) getStore_MemStore_MemArr{
-    return self.store.memStore.memArr;
-}
-
 
 
 

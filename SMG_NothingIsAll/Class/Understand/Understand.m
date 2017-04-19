@@ -93,7 +93,7 @@
         if ([[SMG sharedInstance].store.mkStore containerWord:checkWord]) {
             [mArr addObject:checkWord]; //本来就有的词;
         }else{
-            NSArray *findWordFromMem = [[SMG sharedInstance].store searchMemStoreContainerWord:checkWord];
+            NSArray *findWordFromMem = [[SMG sharedInstance].store searchMemStoreContainerText:checkWord limit:3];
             if (findWordFromMem && findWordFromMem.count >= 3) {//只有达到三次听到的词;才认为是一个词;
                 [[SMG sharedInstance].store.mkStore addWord:checkWord];
                 [mArr addObject:checkWord];
