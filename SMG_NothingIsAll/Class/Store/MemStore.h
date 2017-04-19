@@ -22,6 +22,7 @@
 
 -(NSDictionary*) getLastMemory;                         //获取最后一条;
 -(NSDictionary*) getPreviousMemory:(NSDictionary*)mem;  //获取mem的上一条;
+-(NSDictionary*) getNextMemory:(NSDictionary*)mem;      //获取mem的下一条;
 
 
 @end
