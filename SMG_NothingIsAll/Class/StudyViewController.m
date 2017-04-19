@@ -89,6 +89,10 @@
     [self.selectNameLab setText:@"小臂"];
 }
 
+- (IBAction)selfOnClick:(id)sender {
+    [self.selectNameLab setText:@"自己"];
+}
+
 - (IBAction)clearBtnOnClick:(id)sender {
     [self clearAllContent];
 }
@@ -98,7 +102,7 @@
         if (STRISOK(self.selectNameLab.text)) {
             if (STRISOK(self.doTypeTF.text)) {
                 if (STRISOK(self.targetTF.text)) {
-                    NSLog(@"%@_%@_%@",self.selectNameLab.text,self.doTypeTF.text,self.targetTF.text);
+                    NSLog(@"行为人:%@___%@_%@",self.selectNameLab.text,self.doTypeTF.text,self.targetTF.text);
                     //1,doModel
                     DoModel *doModel = [[DoModel alloc] init];
                     doModel.fromMKId = self.selectNameLab.text;

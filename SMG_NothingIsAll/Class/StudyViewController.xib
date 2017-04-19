@@ -51,14 +51,28 @@
                                         <action selector="xiaoBiOnClick:" destination="-1" eventType="touchUpInside" id="1mX-Cx-fR0"/>
                                     </connections>
                                 </button>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iWW-xy-HMr">
+                                    <rect key="frame" x="0.0" y="60" width="100" height="30"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="30" id="hF4-Ap-A0a"/>
+                                    </constraints>
+                                    <state key="normal" title="自己"/>
+                                    <connections>
+                                        <action selector="selfOnClick:" destination="-1" eventType="touchUpInside" id="The-Dh-LCH"/>
+                                        <action selector="xiaoBiOnClick:" destination="-1" eventType="touchUpInside" id="jXw-lW-7FQ"/>
+                                    </connections>
+                                </button>
                             </subviews>
                             <color key="backgroundColor" red="0.93333333333333335" green="0.93333333333333335" blue="0.93333333333333335" alpha="1" colorSpace="calibratedRGB"/>
                             <constraints>
                                 <constraint firstItem="331-0h-HGu" firstAttribute="leading" secondItem="pRn-Gp-alG" secondAttribute="leading" id="AVj-zm-jtK"/>
+                                <constraint firstAttribute="trailing" secondItem="iWW-xy-HMr" secondAttribute="trailing" id="FZV-ez-j9G"/>
                                 <constraint firstItem="331-0h-HGu" firstAttribute="top" secondItem="pRn-Gp-alG" secondAttribute="top" id="IC1-BH-G56"/>
                                 <constraint firstAttribute="trailing" secondItem="331-0h-HGu" secondAttribute="trailing" id="N7O-Dt-x6Q"/>
+                                <constraint firstItem="iWW-xy-HMr" firstAttribute="leading" secondItem="pRn-Gp-alG" secondAttribute="leading" id="Yco-6n-fKy"/>
                                 <constraint firstItem="pjn-5B-e8w" firstAttribute="leading" secondItem="pRn-Gp-alG" secondAttribute="leading" id="Yk6-Nd-7YV"/>
                                 <constraint firstAttribute="width" constant="100" id="cBI-FB-wuG"/>
+                                <constraint firstItem="iWW-xy-HMr" firstAttribute="top" secondItem="pjn-5B-e8w" secondAttribute="bottom" id="cr9-bE-8TK"/>
                                 <constraint firstItem="pjn-5B-e8w" firstAttribute="top" secondItem="331-0h-HGu" secondAttribute="bottom" id="dWz-EK-ayr"/>
                                 <constraint firstAttribute="trailing" secondItem="pjn-5B-e8w" secondAttribute="trailing" id="uj2-eq-Chh"/>
                             </constraints>
