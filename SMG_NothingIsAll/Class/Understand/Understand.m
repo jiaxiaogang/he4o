@@ -63,10 +63,10 @@
 //MARK:--------------------开始思考人生--------------------
 -(void) startUnderstand{
     //1,分词:最近三条记忆;
-    for (int i = 0 ; i < 3; i++) {
-        NSArray *memArr = [[SMG sharedInstance] getStore_MemStore_MemArr];
-        StoreModel_Text *model = memArr[memArr.count - i - 1];
-        [self analyzeText:model.text];
+    NSArray *memArr = [[SMG sharedInstance].store.memStore getMemoryContainsWhereDic:nil limit:3];
+    for (int i = 0 ; i < memArr.count; i++) {
+        NSDictionary *mem = memArr[memArr.count - i - 1];
+        [self analyzeText:[mem objectForKey:@"text"]];
     }
     //2,行为<-->文字
     

@@ -61,9 +61,9 @@
 
 
 +(BOOL) compareItemA:(id)itemA containsItemB:(id)itemB{
-    if (itemA == nil && itemB == nil) {
+    if (itemB == nil) {
         return true;
-    }else if(itemA == nil || itemB == nil || [itemA class] != [itemB class]){
+    }else if(itemA == nil || [itemA class] != [itemB class]){
         return false;
     }else{
         if ([itemA isKindOfClass:[NSString class]]) {
