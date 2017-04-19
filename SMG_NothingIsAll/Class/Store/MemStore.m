@@ -65,6 +65,27 @@
     return nil;
 }
 
+-(NSDictionary*) getSingleMemoryWithWhereDic:(NSDictionary*)whereDic{
+    if (whereDic == nil || whereDic.count == 0) {
+        return [self getLastMemory];
+    }
+    for (NSInteger i = self.memArr.count - 1; i >= 0; i--) {
+        NSDictionary *item = self.memArr[i];
+        for (NSString *key in whereDic.allKeys) {
+            
+        }
+    }
+    return nil;
+}
+
+-(NSArray*) getMemoryWithWhereDic:(NSDictionary*)whereDic{
+    if (whereDic == nil || whereDic.count == 0) {
+        return self.memArr;
+    }
+    return nil;
+}
+
+
 
 -(void) addMemory:(NSDictionary*)mem{
     if (mem) {
