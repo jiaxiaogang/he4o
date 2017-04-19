@@ -111,7 +111,7 @@
                     
                     //2,feelTextModel
                     FeelTextModel *feelTextModel = [[FeelTextModel alloc] init];
-                    feelTextModel.text = self.selectNameLab.text;
+                    feelTextModel.text = self.inputTV.text;
                     
                     //3,commit
                     [[SMG sharedInstance].understand commitWithFeelModel:feelTextModel withDoModel:doModel];
