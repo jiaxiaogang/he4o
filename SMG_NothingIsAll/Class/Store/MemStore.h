@@ -15,14 +15,14 @@
  */
 @interface MemStore : NSObject
 
-@property (strong,nonatomic) NSMutableArray *memArr;  //内存kv存储;(数组中存StoreModel_Text对象)(习惯记忆,GC会回收不常用的旧数据到localArr)
-
--(NSArray*) localArr;                                 //硬盘存储;(不常调用,调用耗时)
-
 
 -(NSDictionary*) getLastMemory;                         //获取最后一条;
 -(NSDictionary*) getPreviousMemory:(NSDictionary*)mem;  //获取mem的上一条;
 -(NSDictionary*) getNextMemory:(NSDictionary*)mem;      //获取mem的下一条;
+
+-(void) addMemory:(NSDictionary*)mem;                   //新增一条
+-(void) addMemoryToFront:(NSDictionary*)mem;            //新增一条到mem前面;
+-(void) addMemoryToBack:(NSDictionary*)mem;             //新增一条到mem后面;
 
 
 @end
