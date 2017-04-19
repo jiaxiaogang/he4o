@@ -19,6 +19,10 @@
 
 @implementation MemStore
 
+
+/**
+ *  MARK:--------------------private--------------------
+ */
 -(NSMutableArray *)memArr{
     if (_memArr == nil) {
         _memArr = [[NSMutableArray alloc] initWithArray:[self getLocalArr]];
@@ -32,5 +36,35 @@
 -(NSArray*) getLocalArr{
     return [[TMCache sharedCache] objectForKey:@"MemStore_LocalArr_Key"];
 }
+
+
+/**
+ *  MARK:--------------------public--------------------
+ */
+-(NSDictionary*) getLastMemory{
+    
+}
+
+-(NSDictionary*) getPreviousMemory:(NSDictionary*)mem{
+    
+}
+
+-(NSDictionary*) getNextMemory:(NSDictionary*)mem{
+    
+}
+
+
+-(void) addMemory:(NSDictionary*)mem{
+    
+}
+
+-(void) addMemoryToFront:(NSDictionary*)mem{
+    
+}
+
+-(void) addMemoryToBack:(NSDictionary*)mem{
+    
+}
+
 
 @end
