@@ -42,6 +42,9 @@
 
 //使用信息对应行为输入;
 -(void) commitWithFeelModel:(FeelModel*)feelModel withDoModel:(DoModel*)doModel{
+    if (feelModel == nil) {
+        return;
+    }
     if ([feelModel isKindOfClass:[FeelTextModel class]]) {
         /*---------文字输入---------
          *
@@ -52,6 +55,15 @@
          *      3.1,例如:多次出现行为:'我' 吃 '瓜'  对应  textModel:我吃瓜
          *
          */
+        
+        //1,存记忆
+        FeelTextModel *ftModel = (FeelTextModel*)feelModel;
+        NSDictionary *mem = [NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(ftModel.text),@"text",doModel,@"doModel", nil];
+        [[SMG sharedInstance].store.memStore addMemory:mem];
+        
+        //2,存MK
+        
+        
     }else if ([feelModel isKindOfClass:[FeelImgModel class]]) {
         //图像输入
     }else if ([feelModel isKindOfClass:[FeelAudioModel class]]) {
