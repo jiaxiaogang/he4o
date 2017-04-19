@@ -84,7 +84,17 @@
 }
 
 -(void) addMemory:(NSDictionary*)mem insertBackByMem:(NSDictionary*)byMem{
-    
+    if (mem && byMem) {
+        NSInteger byMemIndex = [self.memArr indexOfObject:byMem];
+        if (byMemIndex > 0) {
+            if (byMemIndex < self.memArr.count - 1) {
+                [self.memArr insertObject:mem atIndex:byMemIndex + 1];
+            }else{
+                [self.memArr addObject:mem];
+            }
+            [self saveToLocal];
+        }
+    }
 }
 
 -(void) saveToLocal{
