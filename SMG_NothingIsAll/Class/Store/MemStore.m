@@ -122,7 +122,6 @@
     }
     for (NSInteger i = self.memArr.count - 1; i >= 0; i--) {
         NSDictionary *item = self.memArr[i];
-        BOOL isEqual = true;
         //是否item包含whereDic
         if ([SMGUtils compareItemA:item containsItemB:whereDic]) {
             return item;
@@ -132,8 +131,26 @@
 }
 
 //获取where的所有条;(模糊匹配)
--(NSArray*) getMemoryContainerWhereDic:(NSDictionary*)whereDic{
-    
+-(NSArray*) getMemoryContainerWhereDic:(NSDictionary*)whereDic limit:(NSInteger)limit{
+    //数据检查
+    if (whereDic == nil || whereDic.count == 0) {
+        return self.memArr;
+    }
+    NSMutableArray *valArr = nil;
+    for (NSInteger i = self.memArr.count - 1; i >= 0; i--) {
+        NSDictionary *item = self.memArr[i];
+        //是否item包含whereDic
+        if ([SMGUtils compareItemA:item containsItemB:whereDic]) {
+            if (valArr == nil) {
+                valArr = [[NSMutableArray alloc] init];
+            }
+            [valArr addObject:item];
+            if (valArr.count >= limit) {
+                return valArr;
+            }
+        }
+    }
+    return valArr;
 }
 
 
