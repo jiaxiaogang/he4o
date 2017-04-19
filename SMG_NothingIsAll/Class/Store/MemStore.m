@@ -89,10 +89,29 @@
 }
 
 -(NSArray*) getMemoryWithWhereDic:(NSDictionary*)whereDic{
+    //数据检查
     if (whereDic == nil || whereDic.count == 0) {
         return self.memArr;
     }
-    return nil;
+    NSMutableArray *valArr = nil;
+    for (NSInteger i = self.memArr.count - 1; i >= 0; i--) {
+        NSDictionary *item = self.memArr[i];
+        BOOL isEqual = true;
+        //对比所有value;
+        for (NSString *key in whereDic.allKeys) {
+            if (![SMGUtils compareItemA:[item objectForKey:key] itemB:[whereDic objectForKey:key]]) {
+                isEqual = false;
+            }
+        }
+        //都一样,则收集到valArr;
+        if (isEqual) {
+            if (valArr == nil) {
+                valArr = [[NSMutableArray alloc] init];
+            }
+            [valArr addObject:item];
+        }
+    }
+    return valArr;
 }
 
 
