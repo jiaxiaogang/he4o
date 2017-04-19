@@ -126,7 +126,7 @@
 			path = Understand;
 			sourceTree = "<group>";
 		};
-		083DA5EF1E99F2B50047A6DF /* Text */ = {
+		083DA5EF1E99F2B50047A6DF /* temp */ = {
 			isa = PBXGroup;
 			children = (
 				08C84A941E9A86C400897D8B /* StoreLogModel_Text.h */,
@@ -134,7 +134,7 @@
 				08C84A961E9A86C400897D8B /* StoreModel_Text.h */,
 				08C84A971E9A86C400897D8B /* StoreModel_Text.m */,
 			);
-			name = Text;
+			name = temp;
 			sourceTree = "<group>";
 		};
 		084750AA1EA05FE100316BEF /* UI */ = {
@@ -218,9 +218,7 @@
 		08AF45681E97D80C00377887 /* Store */ = {
 			isa = PBXGroup;
 			children = (
-				08F1074E1EA5A740000AB7BD /* Image */,
-				08F1074D1EA5A71C000AB7BD /* Audio */,
-				083DA5EF1E99F2B50047A6DF /* Text */,
+				083DA5EF1E99F2B50047A6DF /* temp */,
 				08AF45691E97D80C00377887 /* MemStore.h */,
 				08AF456A1E97D80C00377887 /* MemStore.m */,
 				08AF456C1E97DDF600377887 /* MKStore.h */,
@@ -252,20 +250,6 @@
 				08C84A921E9A86B900897D8B /* LanguageHeader.h */,
 			);
 			path = Output;
-			sourceTree = "<group>";
-		};
-		08F1074D1EA5A71C000AB7BD /* Audio */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Audio;
-			sourceTree = "<group>";
-		};
-		08F1074E1EA5A740000AB7BD /* Image */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Image;
 			sourceTree = "<group>";
 		};
 		08F3AF991E98883C00747EDD /* Mind */ = {
