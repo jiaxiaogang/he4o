@@ -17,7 +17,7 @@
  *      3.1,行为中包含逻辑
  *      3.2,行为间总结逻辑
  */
-@interface DoModel : NSObject
+@interface DoModel : NSObject<NSCoding>
 
 @property (strong,nonatomic) NSString *fromMKId;
 @property (strong,nonatomic) NSString *doType;

@@ -63,6 +63,9 @@
         
         //2,存MK
         
+        //3,Understand
+        [[SMG sharedInstance].understand startUnderstand];
+        
         
     }else if ([feelModel isKindOfClass:[FeelImgModel class]]) {
         //图像输入
