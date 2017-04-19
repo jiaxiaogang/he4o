@@ -30,13 +30,8 @@
  *  MARK:--------------------搜索关于文字的记忆--------------------
  */
 -(NSDictionary*) searchMemStoreWithLanguageText:(NSString*)text{
-    for (StoreModel_Text *model in self.memStore.memArr) {
-        if ([STRTOOK(text) isEqualToString:model.text]) {
-            return model;
-        }
-    }
-    return nil;
-    [self.memStore getmem
+    NSDictionary *where = [NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(text),@"text", nil];
+    return [self.memStore getSingleMemoryWithWhereDic:where];
 }
 
 -(NSMutableArray*) searchMemStoreContainerText:(NSString*)text{

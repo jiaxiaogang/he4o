@@ -21,6 +21,8 @@
 -(NSDictionary*) getNextMemory:(NSDictionary*)mem;      //获取mem的下一条;
 -(NSDictionary*) getSingleMemoryWithWhereDic:(NSDictionary*)whereDic;   //获取where的最近一条;
 -(NSArray*) getMemoryWithWhereDic:(NSDictionary*)whereDic;              //获取where的所有条;
+-(NSDictionary*) getSingleMemoryContainerWhereDic:(NSDictionary*)whereDic;   //获取where的最近一条;(模糊匹配)
+-(NSArray*) getMemoryContainerWhereDic:(NSDictionary*)whereDic;              //获取where的所有条;(模糊匹配)
 
 -(void) addMemory:(NSDictionary*)mem;                   //新增一条
 -(void) addMemory:(NSDictionary*)mem insertFrontByMem:(NSDictionary*)byMem;            //新增mem到byMem前面;

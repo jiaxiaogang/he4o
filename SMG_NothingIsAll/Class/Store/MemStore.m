@@ -114,6 +114,15 @@
     return valArr;
 }
 
+//获取where的最近一条;(模糊匹配)
+-(NSDictionary*) getSingleMemoryContainerWhereDic:(NSDictionary*)whereDic{
+    
+}
+
+//获取where的所有条;(模糊匹配)
+-(NSArray*) getMemoryContainerWhereDic:(NSDictionary*)whereDic{
+    
+}
 
 
 -(void) addMemory:(NSDictionary*)mem{
