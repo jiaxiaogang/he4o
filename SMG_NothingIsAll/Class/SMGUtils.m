@@ -72,7 +72,7 @@
             return [itemA containsObject:itemB];                    //NSArray
         }else if ([itemA isKindOfClass:[NSDictionary class]]) {
             for (NSString *key in [(NSDictionary*)itemB allKeys]) { //NSDictionary
-                if(![SMGUtils compareItemA:[(NSDictionary*)itemA objectForKey:key] itemB:[(NSDictionary*)itemB objectForKey:key]]){
+                if(![SMGUtils compareItemA:[(NSDictionary*)itemA objectForKey:key] containsItemB:[(NSDictionary*)itemB objectForKey:key]]){
                     return false;
                 }
             }
@@ -88,7 +88,7 @@
         }else if ([itemA isKindOfClass:[NSOrderedSet class]]) {
             return [itemA containsObject:itemB];               //NSOrderedSet
         }else{
-            return [itemA isEqual:itemB];                           //不识别的类型
+            return [SMGUtils compareItemA:itemA itemB:itemB];       //不识别的类型
         }
         //这里随后补上自定义的数据类型;例如feelModel 图片,声音等;
     }
