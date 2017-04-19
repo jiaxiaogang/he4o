@@ -134,7 +134,7 @@
 -(NSMutableArray*) getMemoryContainsWhereDic:(NSDictionary*)whereDic limit:(NSInteger)limit{
     //数据检查
     if (whereDic == nil || whereDic.count == 0) {
-        return self.memArr;
+        return self.memArr;//随后加上limit逻辑;
     }
     NSMutableArray *valArr = nil;
     for (NSInteger i = self.memArr.count - 1; i >= 0; i--) {

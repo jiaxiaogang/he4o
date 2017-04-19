@@ -103,7 +103,8 @@
     text = STRTOOK(text);
     NSMutableArray *mArr = [[NSMutableArray alloc] init];
     //2,循环找text中的词
-    for (int i = 0; i < text.length; i++) {
+    for (int i = 0; i < text.length - 1; i++) {
+        //双字词分析;
         NSString *checkWord = [text substringWithRange:NSMakeRange(i, 2)];
         if ([[SMG sharedInstance].store.mkStore containerWord:checkWord]) {
             [mArr addObject:checkWord]; //本来就有的词;
