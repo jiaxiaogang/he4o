@@ -8,6 +8,7 @@
 
 #import "SMGEnum.h"
 #import "SMG.h"
+#import "SMGUtils.h"
 
 
 
