@@ -15,11 +15,21 @@
 @interface StudyViewController ()<UITableViewDelegate,UITableViewDataSource>
 
 @property (weak, nonatomic) IBOutlet UITextView *inputTV;
-@property (weak, nonatomic) IBOutlet UILabel *selectNameLab;
 @property (weak, nonatomic) IBOutlet UITextField *doTypeTF;
 @property (weak, nonatomic) IBOutlet UITextField *targetTF;
 @property (weak, nonatomic) IBOutlet UITableView *doTableView;
 @property (weak, nonatomic) IBOutlet UILabel *errorTipsLab;
+
+@property (weak, nonatomic) IBOutlet UIButton *sayChiBtn;
+@property (weak, nonatomic) IBOutlet UIButton *sayBiBtn;
+@property (weak, nonatomic) IBOutlet UIButton *saySelfBtn;
+
+@property (weak, nonatomic) IBOutlet UIButton *doChiBtn;
+@property (weak, nonatomic) IBOutlet UIButton *doBiBtn;
+@property (weak, nonatomic) IBOutlet UIButton *doSelfBtn;
+
+@property (strong,nonatomic) NSString *sayPersonName;
+@property (strong,nonatomic) NSString *doPersonName;
 
 @end
 
@@ -81,16 +91,45 @@
 /**
  *  MARK:--------------------onclick--------------------
  */
-- (IBAction)xiaoChiOnClick:(id)sender {
-    [self.selectNameLab setText:@"小赤"];
+- (IBAction)sayChiOnClick:(UIButton *)sender {
+    [self sayOnClick:sender];
+}
+- (IBAction)sayBiOnClick:(UIButton *)sender {
+    [self sayOnClick:sender];
+}
+- (IBAction)saySelfOnClick:(UIButton *)sender {
+    [self sayOnClick:sender];
+}
+-(void) sayOnClick:(UIButton*)sender{
+    //name
+    self.sayPersonName = sender.currentTitle;
+    
+    //color
+    [self.sayChiBtn setBackgroundColor:[UIColor clearColor]];
+    [self.sayBiBtn setBackgroundColor:[UIColor clearColor]];
+    [self.saySelfBtn setBackgroundColor:[UIColor clearColor]];
+    [sender setBackgroundColor:[UIColor greenColor]];
 }
 
-- (IBAction)xiaoBiOnClick:(id)sender {
-    [self.selectNameLab setText:@"小臂"];
-}
 
-- (IBAction)selfOnClick:(id)sender {
-    [self.selectNameLab setText:@"自己"];
+- (IBAction)doChiOnClick:(UIButton *)sender {
+    [self doOnClick:sender];
+}
+- (IBAction)doBiOnClick:(UIButton *)sender {
+    [self doOnClick:sender];
+}
+- (IBAction)doSelfOnClick:(UIButton *)sender {
+    [self doOnClick:sender];
+}
+-(void) doOnClick:(UIButton*)sender{
+    //name
+    self.doPersonName = sender.currentTitle;
+    
+    //color
+    [self.doChiBtn setBackgroundColor:[UIColor clearColor]];
+    [self.doBiBtn setBackgroundColor:[UIColor clearColor]];
+    [self.doSelfBtn setBackgroundColor:[UIColor clearColor]];
+    [sender setBackgroundColor:[UIColor greenColor]];
 }
 
 - (IBAction)clearBtnOnClick:(id)sender {
@@ -102,10 +141,10 @@
         if (STRISOK(self.selectNameLab.text)) {
             if (STRISOK(self.doTypeTF.text)) {
                 if (STRISOK(self.targetTF.text)) {
-                    NSLog(@"行为人:%@___%@_%@",self.selectNameLab.text,self.doTypeTF.text,self.targetTF.text);
+                    NSLog(@"行为人:%@___%@_%@",self.doPersonName,self.doTypeTF.text,self.targetTF.text);
                     //1,doModel
                     DoModel *doModel = [[DoModel alloc] init];
-                    doModel.fromMKId = self.selectNameLab.text;
+                    doModel.fromMKId = self.doPersonName;
                     doModel.toMKId = self.targetTF.text;
                     doModel.doType = self.doTypeTF.text;
                     
