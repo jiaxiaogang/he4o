@@ -24,5 +24,6 @@
 -(void) addMemoryToFront:(NSDictionary*)mem;            //新增一条到mem前面;
 -(void) addMemoryToBack:(NSDictionary*)mem;             //新增一条到mem后面;
 
+-(void) saveToLocal;
 
 @end

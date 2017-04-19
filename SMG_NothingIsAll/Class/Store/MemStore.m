@@ -42,11 +42,17 @@
  *  MARK:--------------------public--------------------
  */
 -(NSDictionary*) getLastMemory{
-    
+    return [self.memArr lastObject];
 }
 
 -(NSDictionary*) getPreviousMemory:(NSDictionary*)mem{
-    
+    if (mem) {
+        NSInteger memIndex = [self.memArr indexOfObject:mem];
+        if (memIndex > 0) {
+            return self.memArr[memIndex - 1];
+        }
+    }
+    return nil;
 }
 
 -(NSDictionary*) getNextMemory:(NSDictionary*)mem{
@@ -66,5 +72,8 @@
     
 }
 
+-(void) saveToLocal{
+    [[TMCache sharedCache] setObject:self.memArr forKey:@"MemStore_LocalArr_Key"];
+}
 
 @end
