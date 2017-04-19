@@ -56,19 +56,34 @@
 }
 
 -(NSDictionary*) getNextMemory:(NSDictionary*)mem{
-    
+    if (mem) {
+        NSInteger memIndex = [self.memArr indexOfObject:mem];
+        if (memIndex >= 0 && memIndex < self.memArr.count - 1) {
+            return self.memArr[memIndex + 1];
+        }
+    }
+    return nil;
 }
 
 
 -(void) addMemory:(NSDictionary*)mem{
-    
+    if (mem) {
+        [self.memArr addObject:mem];
+        [self saveToLocal];
+    }
 }
 
--(void) addMemoryToFront:(NSDictionary*)mem{
-    
+-(void) addMemory:(NSDictionary*)mem insertFrontByMem:(NSDictionary*)byMem{
+    if (mem && byMem) {
+        NSInteger byMemIndex = [self.memArr indexOfObject:byMem];
+        if (byMemIndex > 0) {
+            [self.memArr insertObject:mem atIndex:byMemIndex - 1];
+            [self saveToLocal];
+        }
+    }
 }
 
--(void) addMemoryToBack:(NSDictionary*)mem{
+-(void) addMemory:(NSDictionary*)mem insertBackByMem:(NSDictionary*)byMem{
     
 }
 
