@@ -1,13 +1,13 @@
+////
+////  StoreLogModel_Text.m
+////  SMG_NothingIsAll
+////
+////  Created by 贾  on 2017/4/8.
+////  Copyright © 2017年 XiaoGang. All rights reserved.
+////
 //
-//  StoreLogModel_Text.m
-//  SMG_NothingIsAll
+//#import "StoreLogModel_Text.h"
 //
-//  Created by 贾  on 2017/4/8.
-//  Copyright © 2017年 XiaoGang. All rights reserved.
+//@implementation StoreLogModel_Text
 //
-
-#import "StoreLogModel_Text.h"
-
-@implementation StoreLogModel_Text
-
-@end
+//@end
