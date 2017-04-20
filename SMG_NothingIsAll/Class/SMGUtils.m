@@ -21,7 +21,7 @@
 +(BOOL) compareItemA:(id)itemA itemB:(id)itemB{
     if (itemA == nil && itemB == nil) {
         return true;
-    }else if(itemA == nil || itemB == nil || [itemA class] != [itemB class]){
+    }else if(itemA == nil || itemB == nil || ![itemA isMemberOfClass:[itemB class]]){
         return false;
     }else{
         if ([itemA isKindOfClass:[NSString class]]) {
@@ -63,7 +63,7 @@
 +(BOOL) compareItemA:(id)itemA containsItemB:(id)itemB{
     if (itemB == nil) {
         return true;
-    }else if(itemA == nil || [itemA class] != [itemB class]){
+    }else if(itemA == nil || ![itemA isMemberOfClass:[itemB class]]){
         return false;
     }else{
         if ([itemA isKindOfClass:[NSString class]]) {
