@@ -8,12 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
-@class StoreModel_Text,MemStore,MKStore;
+@class LogicStore,MemStore,MKStore;
 @interface Store : NSObject
 
 
 @property (strong,nonatomic) MemStore *memStore;    //记忆存储
 @property (strong,nonatomic) MKStore *mkStore;      //知识图谱
+@property (strong,nonatomic) LogicStore *logicStore;//逻辑存储
 
 
 
