@@ -21,7 +21,7 @@
 +(BOOL) compareItemA:(id)itemA itemB:(id)itemB{
     if (itemA == nil && itemB == nil) {
         return true;
-    }else if(itemA == nil || itemB == nil || ![itemA isMemberOfClass:[itemB class]]){
+    }else if(itemA == nil || itemB == nil || ![self compareKindClassWithItemA:itemA itemB:itemB]){
         return false;
     }else{
         if ([itemA isKindOfClass:[NSString class]]) {
@@ -72,7 +72,7 @@
     
     if (itemB == nil) {
         return true;
-    }else if(itemA == nil || (![itemA isKindOfClass:[itemB class]] && ![itemB isKindOfClass:[itemA class]])){
+    }else if(itemA == nil || ![self compareKindClassWithItemA:itemA itemB:itemB]){
         return false;
     }else{
         if ([itemA isKindOfClass:[NSString class]]) {
@@ -106,12 +106,26 @@
 
 
 /**
- *  MARK:--------------------对比itemA和itemB是否有继承关系或同类型--------------------
+ *  MARK:--------------------对比itemA和itemB是否有继承关系或同类型(NSObject除外)--------------------
  */
 +(BOOL) compareKindClassWithItemA:(id)itemA itemB:(id)itemB{
     if (itemA == nil && itemB == nil) {
         return true;
-    }else if()
+    }else if(itemA == nil || itemB == nil){
+        return false;
+    }else{
+        if ([itemA isKindOfClass:[NSArray class]]) {
+            return [itemB isKindOfClass:[NSArray class]];
+        }else if([itemA isKindOfClass:[NSString class]]){
+            return [itemB isKindOfClass:[NSString class]];
+        }else if([itemA isKindOfClass:[NSDictionary class]]){
+            return [itemB isKindOfClass:[NSDictionary class]];
+        }else{
+            BOOL isSeem = ([itemA class] == [itemB class]);
+            BOOL isKind = ([itemA isKindOfClass:[itemB class]] || [itemB isKindOfClass:[itemA class]]);
+            return isSeem || isKind;
+        }
+    }
 }
 
 @end
