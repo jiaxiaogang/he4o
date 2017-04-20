@@ -56,14 +56,23 @@
             return [itemA isEqual:itemB];                           //不识别的类型
         }
         //这里随后补上自定义的数据类型;例如feelModel 图片,声音等;
+        //在自定义Model中实现重写isEqual:
     }
 }
 
 
 +(BOOL) compareItemA:(id)itemA containsItemB:(id)itemB{
+    id aC = [itemA class];
+    id bC = [itemB class];
+    NSLog(@"");
+    
+    NSDictionary *temp = [[NSDictionary alloc] init];
+    id dC = [temp class];
+    id cC = [NSDictionary class];
+    
     if (itemB == nil) {
         return true;
-    }else if(itemA == nil || ![itemA isMemberOfClass:[itemB class]]){
+    }else if(itemA == nil || (![itemA isKindOfClass:[itemB class]] && ![itemB isKindOfClass:[itemA class]])){
         return false;
     }else{
         if ([itemA isKindOfClass:[NSString class]]) {
@@ -91,7 +100,18 @@
             return [SMGUtils compareItemA:itemA itemB:itemB];       //不识别的类型
         }
         //这里随后补上自定义的数据类型;例如feelModel 图片,声音等;
+        //在自定义Model中实现重写isEqual:
     }
+}
+
+
+/**
+ *  MARK:--------------------对比itemA和itemB是否有继承关系或同类型--------------------
+ */
++(BOOL) compareKindClassWithItemA:(id)itemA itemB:(id)itemB{
+    if (itemA == nil && itemB == nil) {
+        return true;
+    }else if()
 }
 
 @end
