@@ -1,13 +1,13 @@
 //
-//  StoreHeader.h
+//  LogicStore.m
 //  SMG_NothingIsAll
 //
-//  Created by 贾  on 2017/4/8.
+//  Created by 贾  on 2017/4/20.
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "Store.h"
-#import "MemStore.h"
-#import "MKStore.h"
 #import "LogicStore.h"
 
+@implementation LogicStore
+
+@end
