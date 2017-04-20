@@ -81,7 +81,7 @@
                                 <constraint firstAttribute="trailing" secondItem="pjn-5B-e8w" secondAttribute="trailing" id="uj2-eq-Chh"/>
                             </constraints>
                         </view>
-                        <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="我吃瓜" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="0rj-ky-uLE">
+                        <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="吃瓜" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="0rj-ky-uLE">
                             <rect key="frame" x="110" y="30" width="228" height="241"/>
                             <color key="backgroundColor" red="0.93333333333333335" green="0.93333333333333335" blue="0.93333333333333335" alpha="1" colorSpace="calibratedRGB"/>
                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
