@@ -125,33 +125,40 @@
 }
 
 //预判词(limit:取几个 | havThan:有没达到多少个结果)
+//注:目前仅支持用"一刀两"推出"一刀两断"从前至后预判;
+//注:词本身不作数 如:"计算" 只能判出"计算机"不能返回"计算";
 -(void) getInferenceWord:(NSString*)str withLimit:(NSInteger)limit withHavThan:(NSInteger)havThan withOutBlock:(void(^)(NSMutableArray *valueWords,BOOL havThan))outBlock {
+    //数据检查
     NSMutableArray *mArr = nil;
     str = STRTOOK(str);
-    if (!STRISOK(str) || limit == 0) {
+    if (!STRISOK(str) || limit == 0 || self.wordArr == nil) {
         if (outBlock) outBlock(mArr,havThan >= 0);
     }
-    
-    
-    //数据检查
-    if (whereDic == nil || whereDic.count == 0) {
-        return [self getLastMemory];
-    }
-    for (NSInteger i = self.memArr.count - 1; i >= 0; i--) {
-        NSDictionary *item = self.memArr[i];
-        BOOL isEqual = true;
-        //对比所有value;
-        for (NSString *key in whereDic.allKeys) {
-            if (![SMGUtils compareItemA:[item objectForKey:key] itemB:[whereDic objectForKey:key]]) {
-                isEqual = false;
+    //找
+    NSInteger findCount = 0;
+    for (NSInteger i = self.wordArr.count - 1; i >= 0; i--) {
+        NSDictionary *item = self.wordArr[i];
+        NSString *itemText = [item objectForKey:@"text"];
+        if (itemText && itemText.length > str.length) {
+            if ([str isEqualToString:[itemText substringToIndex:str.length]]) {
+                if (mArr == nil) {
+                    mArr = [[NSMutableArray alloc] init];
+                }
+                //收集;
+                if (mArr.count < limit) {
+                    [mArr addObject:itemText];
+                }
+                //计数;
+                findCount ++;
+                //收集完毕;
+                if (findCount >= havThan && mArr.count >= limit) {
+                    break;
+                }
             }
         }
-        //都一样,则返回;
-        if (isEqual) {
-            return item;
-        }
     }
-    return nil;
+    //送出
+    if (outBlock) outBlock(mArr,findCount >= havThan);
 }
 
 -(NSMutableArray*) getMemoryWithWhereDic:(NSDictionary*)whereDic{
