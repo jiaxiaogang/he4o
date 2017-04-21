@@ -115,6 +115,28 @@
  *  MARK:--------------------public--------------------
  */
 //精确匹配某词
+-(NSDictionary*) getSingleWordWithText:(NSString*)text{
+    return [self getSingleWordWithWhere:[NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(text),@"text", nil]];
+}
+//获取where的最近一条;(精确匹配)
+-(NSDictionary*) getSingleWordWithWhere:(NSDictionary*)whereDic{
+    //数据检查
+    if (whereDic == nil || whereDic.count == 0) {
+        if (self.wordArr.count > 0) {
+            return [self.wordArr lastObject];
+        }else{
+            return nil;
+        }
+    }
+    for (NSInteger i = self.wordArr.count - 1; i >= 0; i--) {
+        NSDictionary *item = self.wordArr[i];
+        //是否item包含whereDic
+        if ([SMGUtils compareItemA:item containsItemB:whereDic]) {
+            return item;
+        }
+    }
+    return nil;
+}
 
 //给句子分词(一个句子有可能有多种分法:[[indexPath0,indexPath1],[indexP0]],现在只作一种)
 +(NSMutableArray*) getIntelligenceWordArrWithSentence:(NSString*)sentence{
@@ -187,40 +209,11 @@
     return valArr;
 }
 
-//获取where的最近一条;(模糊匹配)
--(NSDictionary*) getSingleMemoryContainsWhereDic:(NSDictionary*)whereDic{
-    //数据检查
-    if (whereDic == nil || whereDic.count == 0) {
-        return [self getLastMemory];
-    }
-    for (NSInteger i = self.memArr.count - 1; i >= 0; i--) {
-        NSDictionary *item = self.memArr[i];
-        //是否item包含whereDic
-        if ([SMGUtils compareItemA:item containsItemB:whereDic]) {
-            return item;
-        }
-    }
-    return nil;
-}
 
-//获取where的所有条;(模糊匹配)
--(NSMutableArray*) getMemoryContainsWhereDic:(NSDictionary*)whereDic limit:(NSInteger)limit{
-    NSMutableArray *valArr = nil;
-    for (NSInteger i = self.memArr.count - 1; i >= 0; i--) {
-        NSDictionary *item = self.memArr[i];
-        //是否item包含whereDic
-        if ([SMGUtils compareItemA:item containsItemB:whereDic]) {
-            if (valArr == nil) {
-                valArr = [[NSMutableArray alloc] init];
-            }
-            [valArr addObject:item];
-            if (valArr.count >= limit) {
-                return valArr;
-            }
-        }
-    }
-    return valArr;
-}
+
+
+
+
 
 
 -(void) addMemory:(NSDictionary*)mem{

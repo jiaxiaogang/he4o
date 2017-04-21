@@ -62,14 +62,6 @@
 
 
 +(BOOL) compareItemA:(id)itemA containsItemB:(id)itemB{
-    id aC = [itemA class];
-    id bC = [itemB class];
-    NSLog(@"");
-    
-    NSDictionary *temp = [[NSDictionary alloc] init];
-    id dC = [temp class];
-    id cC = [NSDictionary class];
-    
     if (itemB == nil) {
         return true;
     }else if(itemA == nil || ![self compareKindClassWithItemA:itemA itemB:itemB]){
