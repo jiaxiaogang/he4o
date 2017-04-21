@@ -15,13 +15,12 @@
  *  3,不断提升Language对语言中的理解分析能力;
  *  4,不断提升Language对语言的组织输出能力;
  */
-@class StoreModel_Text;
 @interface Language : NSObject
 
 
 //MARK:----------语言输出能力----------
 //不理解的不回答;
--(NSString*) outputTextWithRequestText:(NSString*)requestText withStoreModel:(StoreModel_Text*)storeModel;
+-(NSString*) outputTextWithRequestText:(NSString*)requestText withStoreModel:(id)storeModel;
 
 
 /**

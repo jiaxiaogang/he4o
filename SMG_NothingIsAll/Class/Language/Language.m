@@ -12,13 +12,20 @@
 #import "SMGHeader.h"
 #import "LanguageHeader.h"
 
+@interface Language ()
+
+@property (strong,nonatomic) NSMutableArray *wordArr;       //分词(DIC | Key:word Value:str | Key:MKObjId Value:NSInteger )
+
+@end
+
 @implementation Language
+
 
 
 /**
  *  MARK:--------------------语言输出能力--------------------
  */
--(NSString*) outputTextWithRequestText:(NSString*)requestText withStoreModel:(StoreModel_Text*)storeModel{
+-(NSString*) outputTextWithRequestText:(NSString*)requestText withStoreModel:(id)storeModel{
     
     //1,有记忆根据mind值排序回复;(找到习惯系统中的最佳回答)
     //这里修改为到'逻辑记忆'中取最佳回答;

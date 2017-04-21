@@ -21,7 +21,6 @@
 		08AF456B1E97D80C00377887 /* MemStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF456A1E97D80C00377887 /* MemStore.m */; };
 		08AF456E1E97DDF600377887 /* MKStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF456D1E97DDF600377887 /* MKStore.m */; };
 		08C84A8E1E9A866200897D8B /* Input.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A8D1E9A866200897D8B /* Input.m */; };
-		08C84A931E9A86B900897D8B /* Language.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A911E9A86B900897D8B /* Language.m */; };
 		08C84A981E9A86C400897D8B /* StoreLogModel_Text.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A951E9A86C400897D8B /* StoreLogModel_Text.m */; };
 		08C84A991E9A86C400897D8B /* StoreModel_Text.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A971E9A86C400897D8B /* StoreModel_Text.m */; };
 		08C84A9C1E9A874C00897D8B /* InputModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A9B1E9A874C00897D8B /* InputModel.m */; };
@@ -35,6 +34,7 @@
 		08F639831E9A2EC0003CD163 /* FeelValueModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F639821E9A2EC0003CD163 /* FeelValueModel.m */; };
 		08F639861E9A2F6C003CD163 /* FeelModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F639851E9A2F6C003CD163 /* FeelModel.m */; };
 		08F639891E9A2FF4003CD163 /* Feel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F639881E9A2FF4003CD163 /* Feel.m */; };
+		08FDCE881EAA355500882ADC /* Language.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FDCE861EAA355500882ADC /* Language.m */; };
 		2753D7CF7BAEDFEACAF9264A /* libPods-SMG_NothingIsAll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */; };
 /* End PBXBuildFile section */
 
@@ -67,9 +67,6 @@
 		08C84A8B1E9A861900897D8B /* InputHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InputHeader.h; sourceTree = "<group>"; };
 		08C84A8C1E9A866200897D8B /* Input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Input.h; sourceTree = "<group>"; };
 		08C84A8D1E9A866200897D8B /* Input.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Input.m; sourceTree = "<group>"; };
-		08C84A901E9A86B900897D8B /* Language.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Language.h; sourceTree = "<group>"; };
-		08C84A911E9A86B900897D8B /* Language.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Language.m; sourceTree = "<group>"; };
-		08C84A921E9A86B900897D8B /* LanguageHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LanguageHeader.h; sourceTree = "<group>"; };
 		08C84A941E9A86C400897D8B /* StoreLogModel_Text.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoreLogModel_Text.h; sourceTree = "<group>"; };
 		08C84A951E9A86C400897D8B /* StoreLogModel_Text.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoreLogModel_Text.m; sourceTree = "<group>"; };
 		08C84A961E9A86C400897D8B /* StoreModel_Text.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoreModel_Text.h; sourceTree = "<group>"; };
@@ -103,6 +100,9 @@
 		08F639881E9A2FF4003CD163 /* Feel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Feel.m; sourceTree = "<group>"; };
 		08F6398A1E9A3316003CD163 /* FeelHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeelHeader.h; sourceTree = "<group>"; };
 		08F6398B1E9A3326003CD163 /* FeelEnum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeelEnum.h; sourceTree = "<group>"; };
+		08FDCE851EAA355500882ADC /* Language.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Language.h; sourceTree = "<group>"; };
+		08FDCE861EAA355500882ADC /* Language.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Language.m; sourceTree = "<group>"; };
+		08FDCE871EAA355500882ADC /* LanguageHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LanguageHeader.h; sourceTree = "<group>"; };
 		DE79539824FEDBA53557ECCA /* Pods-SMG_NothingIsAll.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SMG_NothingIsAll.release.xcconfig"; path = "Pods/Target Support Files/Pods-SMG_NothingIsAll/Pods-SMG_NothingIsAll.release.xcconfig"; sourceTree = "<group>"; };
 		DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SMG_NothingIsAll.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E74E5256A45FDF9C80A280FD /* Pods-SMG_NothingIsAll.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SMG_NothingIsAll.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SMG_NothingIsAll/Pods-SMG_NothingIsAll.debug.xcconfig"; sourceTree = "<group>"; };
@@ -196,6 +196,7 @@
 		08AF455F1E97D43C00377887 /* Class */ = {
 			isa = PBXGroup;
 			children = (
+				08FDCE841EAA355500882ADC /* Language */,
 				084750AA1EA05FE100316BEF /* UI */,
 				08C84A8F1E9A86B900897D8B /* Output */,
 				08C84A8A1E9A85A600897D8B /* Input */,
@@ -255,9 +256,6 @@
 		08C84A8F1E9A86B900897D8B /* Output */ = {
 			isa = PBXGroup;
 			children = (
-				08C84A901E9A86B900897D8B /* Language.h */,
-				08C84A911E9A86B900897D8B /* Language.m */,
-				08C84A921E9A86B900897D8B /* LanguageHeader.h */,
 			);
 			path = Output;
 			sourceTree = "<group>";
@@ -302,6 +300,16 @@
 				088331CB1E9BD68C0026DE23 /* FeelTextModel.m */,
 			);
 			path = Feel;
+			sourceTree = "<group>";
+		};
+		08FDCE841EAA355500882ADC /* Language */ = {
+			isa = PBXGroup;
+			children = (
+				08FDCE851EAA355500882ADC /* Language.h */,
+				08FDCE861EAA355500882ADC /* Language.m */,
+				08FDCE871EAA355500882ADC /* LanguageHeader.h */,
+			);
+			path = Language;
 			sourceTree = "<group>";
 		};
 		207E0C8ABC4501E50CC5D363 /* Frameworks */ = {
@@ -455,10 +463,10 @@
 				084750AE1EA0601400316BEF /* StudyViewController.m in Sources */,
 				08F639831E9A2EC0003CD163 /* FeelValueModel.m in Sources */,
 				08F3AFB81E98963600747EDD /* SMG.m in Sources */,
-				08C84A931E9A86B900897D8B /* Language.m in Sources */,
 				08AF45631E97D6F200377887 /* GC.m in Sources */,
 				08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */,
 				08AF454D1E97D0B500377887 /* AppDelegate.m in Sources */,
+				08FDCE881EAA355500882ADC /* Language.m in Sources */,
 				08C84A981E9A86C400897D8B /* StoreLogModel_Text.m in Sources */,
 				08F639891E9A2FF4003CD163 /* Feel.m in Sources */,
 				08AF454A1E97D0B500377887 /* main.m in Sources */,
