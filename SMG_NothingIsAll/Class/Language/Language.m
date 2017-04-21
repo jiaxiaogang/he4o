@@ -12,8 +12,6 @@
 #import "SMGHeader.h"
 #import "LanguageHeader.h"
 #import "TMCache.h"
-#import <UIKit/UIKit.h>
-
 
 @interface Language ()
 
@@ -163,16 +161,16 @@
         return mArr;
     }
     
+    //1,把所有词找出来;
+    //2,测试连贯性;(最连贯的返回)
     
     
+    //1,是词则加入
+    //2,连词则先删后加
+    //3,非连词;新字后追,是词则加入;(参考:笔记p12;)
     
     
-    
-    NSIndexPath *ip = [[NSIndexPath alloc] init];
-    [NSIndexPath indexPathForItem:0 inSection:0];
-    
-    
-    NSMakeRange(<#NSUInteger loc#>, <#NSUInteger len#>)
+    SMGRangeMake(0, 0);
     
     return mArr;
 }

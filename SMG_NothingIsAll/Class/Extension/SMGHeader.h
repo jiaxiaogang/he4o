@@ -9,8 +9,13 @@
 #import "SMGEnum.h"
 #import "SMG.h"
 #import "SMGUtils.h"
+#import "SMGRange.h"
 
 
+
+/**
+ *  MARK:--------------------数据检查--------------------
+ */
 
 //是否空字符串
 #define STRISOK(a) (a  && ![a isKindOfClass:[NSNull class]] && [a isKindOfClass:[NSString class]] && ![a isEqualToString:@""])
@@ -23,3 +28,12 @@
 
 //数组取子防闪
 #define ARR_INDEX(a,i) (a && [a isKindOfClass:[NSArray class]] && a.count > i) ?  a[i] : nil
+
+
+
+/**
+ *  MARK:--------------------快捷建对象--------------------
+ */
+
+//SMGRange
+#define SMGRangeMake(loc,len) [SMGRange rangeWithLocation:loc length:len]
