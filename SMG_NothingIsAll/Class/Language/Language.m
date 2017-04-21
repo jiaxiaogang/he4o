@@ -11,6 +11,7 @@
 #import "StoreHeader.h"
 #import "SMGHeader.h"
 #import "LanguageHeader.h"
+#import "TMCache.h"
 
 @interface Language ()
 
@@ -74,6 +75,169 @@
  */
 -(NSArray*) inputTextWithRequestText:(NSString*)requestText{
     return nil;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ *  MARK:--------------------private--------------------
+ */
+-(NSMutableArray *)wordArr{
+    if (_wordArr == nil) {
+        _wordArr = [[NSMutableArray alloc] initWithArray:[self getLocalArr]];
+    }
+    return _wordArr;
+}
+
+//硬盘存储;(不常调用,调用耗时)
+-(NSArray*) getLocalArr{
+    return [[TMCache sharedCache] objectForKey:@"Language_WordArr_Key"];
+}
+
+
+/**
+ *  MARK:--------------------public--------------------
+ */
+//精确匹配某词
+
+//给句子分词(一个句子有可能有多种分法:[[indexPath0,indexPath1],[indexP0]],现在只作一种)
++(NSMutableArray*) getIntelligenceWordArrWithSentence:(NSString*)sentence{
+    return nil;
+}
+
+-(NSDictionary*) getSingleMemoryWithWhereDic:(NSDictionary*)whereDic{
+    //数据检查
+    if (whereDic == nil || whereDic.count == 0) {
+        return [self getLastMemory];
+    }
+    for (NSInteger i = self.memArr.count - 1; i >= 0; i--) {
+        NSDictionary *item = self.memArr[i];
+        BOOL isEqual = true;
+        //对比所有value;
+        for (NSString *key in whereDic.allKeys) {
+            if (![SMGUtils compareItemA:[item objectForKey:key] itemB:[whereDic objectForKey:key]]) {
+                isEqual = false;
+            }
+        }
+        //都一样,则返回;
+        if (isEqual) {
+            return item;
+        }
+    }
+    return nil;
+}
+
+-(NSMutableArray*) getMemoryWithWhereDic:(NSDictionary*)whereDic{
+    //数据检查
+    if (whereDic == nil || whereDic.count == 0) {
+        return self.memArr;
+    }
+    NSMutableArray *valArr = nil;
+    for (NSInteger i = self.memArr.count - 1; i >= 0; i--) {
+        NSDictionary *item = self.memArr[i];
+        BOOL isEqual = true;
+        //对比所有value;
+        for (NSString *key in whereDic.allKeys) {
+            if (![SMGUtils compareItemA:[item objectForKey:key] itemB:[whereDic objectForKey:key]]) {
+                isEqual = false;
+            }
+        }
+        //都一样,则收集到valArr;
+        if (isEqual) {
+            if (valArr == nil) {
+                valArr = [[NSMutableArray alloc] init];
+            }
+            [valArr addObject:item];
+        }
+    }
+    return valArr;
+}
+
+//获取where的最近一条;(模糊匹配)
+-(NSDictionary*) getSingleMemoryContainsWhereDic:(NSDictionary*)whereDic{
+    //数据检查
+    if (whereDic == nil || whereDic.count == 0) {
+        return [self getLastMemory];
+    }
+    for (NSInteger i = self.memArr.count - 1; i >= 0; i--) {
+        NSDictionary *item = self.memArr[i];
+        //是否item包含whereDic
+        if ([SMGUtils compareItemA:item containsItemB:whereDic]) {
+            return item;
+        }
+    }
+    return nil;
+}
+
+//获取where的所有条;(模糊匹配)
+-(NSMutableArray*) getMemoryContainsWhereDic:(NSDictionary*)whereDic limit:(NSInteger)limit{
+    NSMutableArray *valArr = nil;
+    for (NSInteger i = self.memArr.count - 1; i >= 0; i--) {
+        NSDictionary *item = self.memArr[i];
+        //是否item包含whereDic
+        if ([SMGUtils compareItemA:item containsItemB:whereDic]) {
+            if (valArr == nil) {
+                valArr = [[NSMutableArray alloc] init];
+            }
+            [valArr addObject:item];
+            if (valArr.count >= limit) {
+                return valArr;
+            }
+        }
+    }
+    return valArr;
+}
+
+
+-(void) addMemory:(NSDictionary*)mem{
+    if (mem) {
+        [self.memArr addObject:mem];
+        [self saveToLocal];
+    }
+}
+
+-(void) addMemory:(NSDictionary*)mem insertFrontByMem:(NSDictionary*)byMem{
+    if (mem && byMem) {
+        NSInteger byMemIndex = [self.memArr indexOfObject:byMem];
+        if (byMemIndex > 0) {
+            [self.memArr insertObject:mem atIndex:byMemIndex - 1];
+            [self saveToLocal];
+        }
+    }
+}
+
+-(void) addMemory:(NSDictionary*)mem insertBackByMem:(NSDictionary*)byMem{
+    if (mem && byMem) {
+        NSInteger byMemIndex = [self.memArr indexOfObject:byMem];
+        if (byMemIndex > 0) {
+            if (byMemIndex < self.memArr.count - 1) {
+                [self.memArr insertObject:mem atIndex:byMemIndex + 1];
+            }else{
+                [self.memArr addObject:mem];
+            }
+            [self saveToLocal];
+        }
+    }
+}
+
+-(void) saveToLocal{
+    [[TMCache sharedCache] setObject:self.wordArr forKey:@"Language_WordArr_Key"];
 }
 
 
