@@ -123,11 +123,7 @@
 -(NSDictionary*) getSingleWordWithWhere:(NSDictionary*)whereDic{
     //数据检查
     if (whereDic == nil || whereDic.count == 0) {
-        if (self.wordArr.count > 0) {
-            return [self.wordArr lastObject];
-        }else{
-            return nil;
-        }
+        return nil;
     }
     for (NSInteger i = self.wordArr.count - 1; i >= 0; i--) {
         NSDictionary *item = self.wordArr[i];
@@ -147,11 +143,12 @@
 }
 
 /**
- *  MARK:--------------------给句子分词--------------------
+ *  MARK:--------------------给句子智能分词--------------------
  *
  *  (一个句子有可能有多种分法:[[indexPath0,indexPath1],[indexP0]],现在只作一种)
+ *
  */
-+(NSMutableArray*) getIntelligenceWordArrWithSentence:(NSString*)sentence{
+-(NSMutableArray*) getIntelligenceWordArrWithSentence:(NSString*)sentence{
     //1,单字词:了,的,是,啊,呢;
     //2,双字词:牛逼,咬叼;
     //3,多字词:中国人;
@@ -162,20 +159,38 @@
     }
     
     //1,把所有词找出来;
-    //2,测试连贯性;(最连贯的返回)
-    
-    
-    //1,是词则加入
-    //2,连词则先删后加
-    //3,非连词;新字后追,是词则加入;(参考:笔记p12;)
-    
-    
-    SMGRangeMake(0, 0);
+    NSMutableArray *wordArr = [self getWordArrWithSentence:sentence];
+    //2,测试连贯性;(最连贯的返回)(参考:笔记p12;)
+    if (wordArr) {
+        //1,应该找出意思最合理的返回,但目前只返回最通顺的
+        //xxx
+    }
     
     return mArr;
 }
 
-
+/**
+ *  MARK:--------------------从句子中找出所有分词--------------------
+ */
+-(NSMutableArray*) getWordArrWithSentence:(NSString*)sentence{
+    NSMutableArray *mArr = nil;
+    sentence = STRTOOK(sentence);
+    if (!STRISOK(sentence)) {
+        return mArr;
+    }
+    for (NSInteger loc = 0; loc < sentence.length; loc ++) {
+        for (NSInteger len = 1; len < sentence.length - loc; len ++) {
+            NSString *checkWord = [sentence substringWithRange:NSMakeRange(loc, len)];
+            if ([self getSingleWordWithText:checkWord]) {
+                if (mArr == nil) {
+                    mArr = [[NSMutableArray alloc] init];
+                }
+                [mArr addObject:SMGRangeMake(loc, len)];
+            }
+        }
+    }
+    return mArr;
+}
 
 
 /**

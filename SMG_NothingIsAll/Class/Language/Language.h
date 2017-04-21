@@ -34,12 +34,20 @@
 
 
 /**
- *  MARK:--------------------给句子分词--------------------
+ *  MARK:--------------------给句子智能分词--------------------
  *
  *  (一个句子有可能有多种分法:[[indexPath0,indexPath1],[indexP0]],现在只作一种)
  *
  */
-+(NSMutableArray*) getIntelligenceWordArrWithSentence:(NSString*)sentence;
+-(NSMutableArray*) getIntelligenceWordArrWithSentence:(NSString*)sentence;
+
+
+
+/**
+ *  MARK:--------------------从句子中找出所有分词--------------------
+ */
+-(NSMutableArray*) getWordArrWithSentence:(NSString*)sentence;
+
 
 
 /**
