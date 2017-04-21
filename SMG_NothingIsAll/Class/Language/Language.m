@@ -118,10 +118,21 @@
 
 //给句子分词(一个句子有可能有多种分法:[[indexPath0,indexPath1],[indexP0]],现在只作一种)
 +(NSMutableArray*) getIntelligenceWordArrWithSentence:(NSString*)sentence{
+    //1,单字词:了,的,是,啊,呢;
+    //2,双字词:牛逼,咬叼;
+    //3,多字词:中国人;
     return nil;
 }
 
--(NSDictionary*) getSingleMemoryWithWhereDic:(NSDictionary*)whereDic{
+//预判词(limit:取几个 | havThan:有没达到多少个结果)
+-(void) getInferenceWord:(NSString*)str withLimit:(NSInteger)limit withHavThan:(NSInteger)havThan withOutBlock:(void(^)(NSMutableArray *valueWords,BOOL havThan))outBlock {
+    NSMutableArray *mArr = nil;
+    str = STRTOOK(str);
+    if (!STRISOK(str) || limit == 0) {
+        if (outBlock) outBlock(mArr,havThan >= 0);
+    }
+    
+    
     //数据检查
     if (whereDic == nil || whereDic.count == 0) {
         return [self getLastMemory];
