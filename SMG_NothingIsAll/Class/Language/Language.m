@@ -118,6 +118,7 @@
 -(NSDictionary*) getSingleWordWithText:(NSString*)text{
     return [self getSingleWordWithWhere:[NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(text),@"text", nil]];
 }
+
 //获取where的最近一条;(精确匹配)
 -(NSDictionary*) getSingleWordWithWhere:(NSDictionary*)whereDic{
     //数据检查
@@ -130,8 +131,15 @@
     }
     for (NSInteger i = self.wordArr.count - 1; i >= 0; i--) {
         NSDictionary *item = self.wordArr[i];
-        //是否item包含whereDic
-        if ([SMGUtils compareItemA:item containsItemB:whereDic]) {
+        BOOL isEqual = true;
+        //对比所有value;
+        for (NSString *key in whereDic.allKeys) {
+            if (![SMGUtils compareItemA:[item objectForKey:key] itemB:[whereDic objectForKey:key]]) {
+                isEqual = false;
+            }
+        }
+        //都一样,则返回;
+        if (isEqual) {
             return item;
         }
     }
@@ -183,18 +191,18 @@
     if (outBlock) outBlock(mArr,findCount >= havThan);
 }
 
--(NSMutableArray*) getMemoryWithWhereDic:(NSDictionary*)whereDic{
+-(NSMutableArray*) getWordArrWithWhere:(NSDictionary*)where{
     //数据检查
-    if (whereDic == nil || whereDic.count == 0) {
-        return self.memArr;
+    if (where == nil || where.count == 0) {
+        return self.wordArr;
     }
     NSMutableArray *valArr = nil;
-    for (NSInteger i = self.memArr.count - 1; i >= 0; i--) {
-        NSDictionary *item = self.memArr[i];
+    for (NSInteger i = self.wordArr.count - 1; i >= 0; i--) {
+        NSDictionary *item = self.wordArr[i];
         BOOL isEqual = true;
         //对比所有value;
-        for (NSString *key in whereDic.allKeys) {
-            if (![SMGUtils compareItemA:[item objectForKey:key] itemB:[whereDic objectForKey:key]]) {
+        for (NSString *key in where.allKeys) {
+            if (![SMGUtils compareItemA:[item objectForKey:key] itemB:[where objectForKey:key]]) {
                 isEqual = false;
             }
         }
@@ -212,40 +220,16 @@
 
 
 
-
-
-
-
--(void) addMemory:(NSDictionary*)mem{
-    if (mem) {
-        [self.memArr addObject:mem];
+/**
+ *  MARK:--------------------add--------------------
+ */
+-(void) addWord:(NSDictionary*)word{
+    if (word) {
+        [self.wordArr addObject:word];
         [self saveToLocal];
     }
 }
 
--(void) addMemory:(NSDictionary*)mem insertFrontByMem:(NSDictionary*)byMem{
-    if (mem && byMem) {
-        NSInteger byMemIndex = [self.memArr indexOfObject:byMem];
-        if (byMemIndex > 0) {
-            [self.memArr insertObject:mem atIndex:byMemIndex - 1];
-            [self saveToLocal];
-        }
-    }
-}
-
--(void) addMemory:(NSDictionary*)mem insertBackByMem:(NSDictionary*)byMem{
-    if (mem && byMem) {
-        NSInteger byMemIndex = [self.memArr indexOfObject:byMem];
-        if (byMemIndex > 0) {
-            if (byMemIndex < self.memArr.count - 1) {
-                [self.memArr insertObject:mem atIndex:byMemIndex + 1];
-            }else{
-                [self.memArr addObject:mem];
-            }
-            [self saveToLocal];
-        }
-    }
-}
 
 -(void) saveToLocal{
     [[TMCache sharedCache] setObject:self.wordArr forKey:@"Language_WordArr_Key"];
