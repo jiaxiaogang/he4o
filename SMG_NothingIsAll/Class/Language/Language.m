@@ -162,8 +162,11 @@
     NSMutableArray *wordArr = [self getWordArrWithSentence:sentence];
     //2,测试连贯性;(最连贯的返回)(参考:笔记p12;)
     if (wordArr) {
-        //1,应该找出意思最合理的返回,但目前只返回最通顺的
+        //3,应该找出意思最合理的返回,但目前只返回最通顺的
         //xxx
+        //3.1,从前往后
+        //3.2,优先长词
+        //3.3,遇到非词时,反推;
     }
     
     return mArr;
