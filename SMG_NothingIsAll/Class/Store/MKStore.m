@@ -26,20 +26,12 @@
  *  MARK:--------------------Text--------------------
  *  调用转到Text;
  */
--(NSArray *)words{
-    if (_words == nil) {
-        _words = [[NSMutableArray alloc] initWithArray:[[TMCache sharedCache] objectForKey:@"MKStore_Words_Key"]];
-    }
-    return _words;
-}
-
 -(BOOL) containerWord:(NSString*)word{
-    return [self.words containsObject:STRTOOK(word)];
+    return [self.text getSingleWordWithText:STRTOOK(word)];
 }
 
 -(void) addWord:(NSString*)word{
-    [self.words addObject:STRTOOK(word)];
-    [[TMCache sharedCache] setObject:self.words forKey:@"MKStore_Words_Key"];
+    [self.text addWord:[NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(word),@"word", nil]];
 }
 
 @end

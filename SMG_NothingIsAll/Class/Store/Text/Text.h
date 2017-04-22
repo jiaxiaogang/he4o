@@ -76,6 +76,14 @@
 -(void) getInferenceWord:(NSString*)str withLimit:(NSInteger)limit withHavThan:(NSInteger)havThan withOutBlock:(void(^)(NSMutableArray *valueWords,BOOL havThan))outBlock;
 
 
+
+//精确匹配某词
+-(NSDictionary*) getSingleWordWithText:(NSString*)text;
+
+//获取where的最近一条;(精确匹配)
+-(NSDictionary*) getSingleWordWithWhere:(NSDictionary*)whereDic;
+
+
 /**
  *  MARK:--------------------addWord--------------------
  *  (DIC | Key:word Value:str | Key:MKObjId Value:NSInteger )

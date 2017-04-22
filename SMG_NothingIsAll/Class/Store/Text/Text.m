@@ -15,10 +15,16 @@
 @interface Text ()
 
 /**
- *  MARK:--------------------wordArr--------------------
+ *  MARK:--------------------分词数组--------------------
  *
- *  分词(DIC | Key:word Value:str | Key:wordId Value:NSInteger )注:wordId为主键;
- *  (有单字词:如:你我他的是啊)(有多字词:如:你好,人民,苹果)
+ *  结构:
+ *      (DIC | Key:word Value:str | Key:wordId Value:NSInteger )注:wordId为主键;
+ *  
+ *  元素:
+ *      (有单字词:如:你我他的是啊)(有多字词:如:你好,人民,苹果)
+ *
+ *  考虑:
+ *      1,功能:随后添加分词使用频率;使其更正确的工作;
  *
  */
 @property (strong,nonatomic) NSMutableArray *wordArr;
@@ -114,7 +120,7 @@
 
 //硬盘存储;(不常调用,调用耗时)
 -(NSArray*) getLocalArr{
-    return [[TMCache sharedCache] objectForKey:@"Language_WordArr_Key"];
+    return [[TMCache sharedCache] objectForKey:@"MKStore_Text_WordArr_Key"];
 }
 
 
@@ -289,7 +295,7 @@
 
 
 -(void) saveToLocal{
-    [[TMCache sharedCache] setObject:self.wordArr forKey:@"Language_WordArr_Key"];
+    [[TMCache sharedCache] setObject:self.wordArr forKey:@"MKStore_Text_WordArr_Key"];
 }
 
 
