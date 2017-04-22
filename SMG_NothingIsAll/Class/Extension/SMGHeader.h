@@ -23,6 +23,9 @@
 //字符串防闪
 #define STRTOOK(a) (a  && ![a isKindOfClass:[NSNull class]]) ? ([a isKindOfClass:[NSString class]] ? a : [NSString stringWithFormat:@"%@", a]) : @""
 
+//是否空数组
+#define ARRISOK(a) (a  && [a isKindOfClass:[NSArray class]] && a.count)
+
 //数组防闪
 #define ARRTOOK(a) (a  && [a isKindOfClass:[NSArray class]]) ?  a : [NSArray new]
 
