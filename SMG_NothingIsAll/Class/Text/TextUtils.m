@@ -1,15 +1,16 @@
 //
-//  LanguageUtils.m
+//  TextUtils.m
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/4/22.
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
+#import "TextUtils.h"
 #import "LanguageUtils.h"
 #import "SMGHeader.h"
 
-@implementation LanguageUtils
+@implementation TextUtils
 
 /**
  *  MARK:--------------------获取句子中未知词数--------------------
@@ -117,6 +118,7 @@
 
 
 @end
+
 
 
 

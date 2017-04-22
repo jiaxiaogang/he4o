@@ -1,11 +1,12 @@
 //
-//  LanguageUtils.m
+//  Text.m
 //  SMG_NothingIsAll
 //
-//  Created by 贾  on 2017/4/8.
+//  Created by 贾  on 2017/4/22.
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
+#import "Text.h"
 #import "Language.h"
 #import "SMG.h"
 #import "StoreHeader.h"
@@ -13,13 +14,13 @@
 #import "LanguageHeader.h"
 #import "TMCache.h"
 
-@interface Language ()
+@interface Text ()
 
 @property (strong,nonatomic) NSMutableArray *wordArr;       //分词(DIC | Key:word Value:str | Key:MKObjId Value:NSInteger )
 
 @end
 
-@implementation Language
+@implementation Text
 
 
 
@@ -174,6 +175,7 @@
 
 /**
  *  MARK:--------------------从句子中找出所有分词--------------------
+ *  注:误区,这种方式将依赖于算法;
  */
 -(NSMutableArray*) getWordArrWithSentence:(NSString*)sentence{
     NSMutableArray *mArr = nil;
