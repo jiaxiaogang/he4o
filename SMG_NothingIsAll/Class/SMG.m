@@ -8,7 +8,7 @@
 
 #import "SMG.h"
 #import "SMGHeader.h"
-#import "LanguageHeader.h"
+#import "TextHeader.h"
 #import "GC.h"
 #import "StoreHeader.h"
 #import "UnderstandHeader.h"
@@ -36,7 +36,7 @@ static SMG *_instance;
 -(void) initData{
     self.store = [[Store alloc] init];
     self.gc = [[GC alloc] init];
-    self.language = [[Language alloc] init];
+    self.text = [[Text alloc] init];
     self.mind = [[Mind alloc] init];
     self.understand = [[Understand alloc] init];
     self.feel = [[Feel alloc] init];
@@ -57,11 +57,11 @@ static SMG *_instance;
     }
     
     //2,搜记忆;
-    StoreModel_Text *model = [self.store searchMemStoreWithLanguageText:text];
+    NSDictionary *mem = [self.store searchMemStoreWithLanguageText:text];
     
     //3,Language系统输出回复;
     if (complete)
-        complete([self.language outputTextWithRequestText:text withStoreModel:model]);
+        complete([self.text outputTextWithRequestText:text withStoreModel:mem]);
 }
 
 -(void) requestWithJoyAngerType:(JoyAngerType)joyAngerType {

@@ -9,7 +9,6 @@
 #import "Understand.h"
 #import "SMGHeader.h"
 #import "StoreHeader.h"
-#import "LanguageHeader.h"
 #import "FeelHeader.h"
 #import "UnderstandHeader.h"
 

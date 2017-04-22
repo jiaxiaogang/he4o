@@ -7,11 +7,9 @@
 //
 
 #import "Text.h"
-#import "Language.h"
 #import "SMG.h"
 #import "StoreHeader.h"
 #import "SMGHeader.h"
-#import "LanguageHeader.h"
 #import "TMCache.h"
 
 @interface Text ()

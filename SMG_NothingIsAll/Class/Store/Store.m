@@ -9,7 +9,6 @@
 #import "Store.h"
 #import "SMGHeader.h"
 #import "StoreHeader.h"
-#import "LanguageHeader.h"
 
 @implementation Store
 
