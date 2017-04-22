@@ -49,11 +49,55 @@
 }
 
 /**
- *  MARK:--------------------ContainsIndexAtRange--------------------
+ *  MARK:--------------------SMGRange_RemoveDuplicates--------------------
  */
-//RangeArr是否包含Index
+//获取无重复noDupRangeArr
++(NSMutableArray*) getNoDupRangeArr:(NSArray*)dupRangeArr fromIndex:(NSInteger)fromIndex{
+    //向前找
+    
+    //向后找
+}
+
+//获取包含index的最长的range
++(SMGRange*) getMaximumRangeFromRangeArr:(NSArray*)rangeArr containsIndex:(NSInteger)index {
+    NSArray *containsIndexRangeArr = [self getRangeArrFromRangeArr:rangeArr containsIndex:index];
+    if (ARRISOK(containsIndexRangeArr)) {
+        SMGRange *curRange = nil;
+        for (SMGRange *item in containsIndexRangeArr) {
+            if (!curRange || curRange.length < item.length) {
+                curRange = item;
+            }
+        }
+        return curRange;
+    }
+    return nil;
+}
+
+//筛选出RangeArr中包含Index的;(RangeArr需要是有序的,否则找不全)
++(NSArray*) getRangeArrFromRangeArr:(NSArray*)rangeArr containsIndex:(NSInteger)index {
+    NSMutableArray *valueArr = nil;
+    if (ARRISOK(rangeArr)) {
+        BOOL start = false;
+        for (SMGRange *item in rangeArr) {
+            if ([self containsIndex:index atRange:item]) {
+                start = true;
+                if (valueArr == nil) valueArr = [[NSMutableArray alloc] init];
+                [valueArr addObject:item];
+            }else{
+                if (start) {
+                    break;
+                }
+            }
+        }
+    }
+    return valueArr;
+}
+
+/**
+ *  MARK:--------------------ContainsIndex_AtRange--------------------
+ */
+//RangeArr是否包含Index(RangeArr需要是去重后的RangeArr)
 +(BOOL) containsIndex:(NSInteger)index atRangeArr:(NSArray*)rangeArr{
-    //数据检查
     if (ARRISOK(rangeArr)) {
         for (SMGRange *range in rangeArr) {
             if ([self containsIndex:index atRange:range]) {
