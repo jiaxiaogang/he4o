@@ -9,17 +9,23 @@
 #import "MKStore.h"
 #import "TMCache.h"
 #import "SMGHeader.h"
-#import "TextHeader.h"
+#import "StoreHeader.h"
 
 @interface MKStore ()
 
-@property (strong,nonatomic) Text *text;
+@property (strong,nonatomic) TextStore *textStore;       //字符串 处理能力
 
 @end
 
 @implementation MKStore
 
-
+-(id) init{
+    self = [super init];
+    if (self) {
+        self.textStore = [[TextStore alloc] init];
+    }
+    return self;
+}
 
 
 /**
@@ -27,11 +33,11 @@
  *  调用转到Text;
  */
 -(BOOL) containerWord:(NSString*)word{
-    return [self.text getSingleWordWithText:STRTOOK(word)];
+    return [self.textStore getSingleWordWithText:STRTOOK(word)];
 }
 
 -(void) addWord:(NSString*)word{
-    [self.text addWord:[NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(word),@"word", nil]];
+    [self.textStore addWord:[NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(word),@"word", nil]];
 }
 
 @end

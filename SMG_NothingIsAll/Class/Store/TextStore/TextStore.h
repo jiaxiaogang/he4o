@@ -28,10 +28,6 @@
 @interface TextStore : NSObject
 
 
-//MARK:----------语言输出能力----------
-//不理解的不回答;
--(NSString*) outputTextWithRequestText:(NSString*)requestText withStoreModel:(id)storeModel;
-
 
 //MARK:--------------------用于分析语言输入,并且找出规律词和图谱词并返回--------------------
 -(NSArray*) inputTextWithRequestText:(NSString*)requestText;

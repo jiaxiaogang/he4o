@@ -10,13 +10,12 @@
 #import "MindHeader.h"
 
 
-@class Text,GC,Store,Understand,Feel,Input;
+@class GC,Store,Understand,Feel,Input;
 @interface SMG : NSObject
 
 +(SMG*) sharedInstance;
 @property (strong,nonatomic) Store *store;          //记忆功能;
 @property (strong,nonatomic) GC *gc;                //回收器
-@property (strong,nonatomic) Text *text;            //字符串 处理能力
 @property (strong,nonatomic) Mind *mind;            //当前心情
 @property (strong,nonatomic) Understand *understand;//闲下时,开始理解分析自己的记忆和知识;
 @property (strong,nonatomic) Feel *feel;            //感觉系统
