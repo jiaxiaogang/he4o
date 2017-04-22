@@ -19,10 +19,10 @@
  *      3,sentence:     句子
  *
  *  返回值:NSNumber数组
- *  注:这种算法式的理解,应该费弃;
+ *  注:这种算法式的理解,应该费弃;(语言功能是后天自主学习而来;先天算法局限性太大)
  *
  */
-+(NSArray*) getUnknownWordCount:(NSArray*)knowRangeArr fromIndex:(NSInteger)fromIndex withSentence:(NSString*)sentence;
+//+(NSArray*) getUnknownWordCount:(NSArray*)knowRangeArr fromIndex:(NSInteger)fromIndex withSentence:(NSString*)sentence;
 
 
 @end

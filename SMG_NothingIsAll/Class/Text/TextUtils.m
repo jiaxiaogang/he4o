@@ -7,7 +7,6 @@
 //
 
 #import "TextUtils.h"
-#import "LanguageUtils.h"
 #import "SMGHeader.h"
 
 @implementation TextUtils
@@ -23,41 +22,41 @@
  *  返回值:NSNumber数组
  *
  */
-+(NSArray*) getUnknownWordCount:(NSArray*)knowRangeArr fromIndex:(NSInteger)fromIndex withSentence:(NSString*)sentence{
-    //数据检查
-    NSMutableArray *valueArr = nil;
-    
-    knowRangeArr = ARRTOOK(knowRangeArr);
-    
-    fromIndex = MAX(fromIndex, 0);
-    fromIndex = MIN(sentence.length - 1, fromIndex);
-    
-    if (!STRISOK(sentence)) return valueArr;
-    
-    //向前找
-    for (NSUInteger i = fromIndex; i > 0; i--) {
-        
-    }
-    
-    //向后找
-    for (NSUInteger i = 0; i < knowRangeArr.count; <#increment#>) {
-        
-    }
-    knowRangeArr[0];
-    if (knowRangeArr) {
-        
-    }
-}
+//+(NSArray*) getUnknownWordCount:(NSArray*)knowRangeArr fromIndex:(NSInteger)fromIndex withSentence:(NSString*)sentence{
+//    //数据检查
+//    NSMutableArray *valueArr = nil;
+//    
+//    knowRangeArr = ARRTOOK(knowRangeArr);
+//    
+//    fromIndex = MAX(fromIndex, 0);
+//    fromIndex = MIN(sentence.length - 1, fromIndex);
+//    
+//    if (!STRISOK(sentence)) return valueArr;
+//    
+//    //向前找
+//    for (NSUInteger i = fromIndex; i > 0; i--) {
+//        
+//    }
+//    
+//    //向后找
+//    for (NSUInteger i = 0; i < knowRangeArr.count; <#increment#>) {
+//        
+//    }
+//    knowRangeArr[0];
+//    if (knowRangeArr) {
+//        
+//    }
+//}
 
 /**
  *  MARK:--------------------SMGRange_RemoveDuplicates--------------------
  */
-//获取无重复noDupRangeArr
-+(NSMutableArray*) getNoDupRangeArr:(NSArray*)dupRangeArr fromIndex:(NSInteger)fromIndex{
-    //向前找
-    
-    //向后找
-}
+////获取无重复noDupRangeArr
+//+(NSMutableArray*) getNoDupRangeArr:(NSArray*)dupRangeArr fromIndex:(NSInteger)fromIndex{
+//    //向前找
+//    
+//    //向后找
+//}
 
 //获取包含index的最长的range
 +(SMGRange*) getMaximumRangeFromRangeArr:(NSArray*)rangeArr containsIndex:(NSInteger)index {
