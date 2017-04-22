@@ -9,10 +9,11 @@
 #import "MKStore.h"
 #import "TMCache.h"
 #import "SMGHeader.h"
+#import "TextHeader.h"
 
 @interface MKStore ()
 
-@property (strong,nonatomic) NSMutableArray *words;//分词数组(有单字词:如:你我他的是啊)(有多字词:如:你好,人民,苹果)
+@property (strong,nonatomic) Text *text;
 
 @end
 
@@ -22,7 +23,8 @@
 
 
 /**
- *  MARK:--------------------分词--------------------
+ *  MARK:--------------------Text--------------------
+ *  调用转到Text;
  */
 -(NSArray *)words{
     if (_words == nil) {

@@ -7,19 +7,22 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MemStore.h"
 
 /**
  *  MARK:--------------------知识图谱--------------------
- *  MK也是记忆;(对比如下:)
- *  共同点:都可以被GC从dic回收到local;甚至删掉;
- *  不同点:知识图谱是被理解系统生成,更可信,更稳定,明确mind值;
+ *  MK是Mem被Understand加工后的结果;(对比如下:)
+ *  同时出现为MK
+ *  先后出现为Logic
+ *
+ *  注:
+ *      1,可以被GC从dic回收到local;甚至删掉;
+ *      2,MK是被Understand生成,更可信,更稳定,明确mind值;
  */
-@interface MKStore : MemStore
+@interface MKStore : NSObject
 
 
 /**
- *  MARK:--------------------分词--------------------
+ *  MARK:--------------------Text--------------------
  *  计划功能:随后添加分词使用频率;使其更正确的工作;
  */
 -(BOOL) containerWord:(NSString*)word;//图谱分词数组;包含某词;

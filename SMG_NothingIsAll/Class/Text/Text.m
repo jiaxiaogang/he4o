@@ -14,7 +14,15 @@
 
 @interface Text ()
 
-@property (strong,nonatomic) NSMutableArray *wordArr;       //分词(DIC | Key:word Value:str | Key:MKObjId Value:NSInteger )
+/**
+ *  MARK:--------------------wordArr--------------------
+ *
+ *  分词(DIC | Key:word Value:str | Key:wordId Value:NSInteger )注:wordId为主键;
+ *  (有单字词:如:你我他的是啊)(有多字词:如:你好,人民,苹果)
+ *
+ */
+@property (strong,nonatomic) NSMutableArray *wordArr;
+
 
 @end
 
