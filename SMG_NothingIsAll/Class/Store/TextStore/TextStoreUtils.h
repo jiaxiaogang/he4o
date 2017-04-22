@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface TextUtils : NSObject
+@interface TextStoreUtils : NSObject
 
 /**
  *  MARK:--------------------获取句子中未知词数--------------------

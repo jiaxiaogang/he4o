@@ -6,13 +6,13 @@
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "Text.h"
+#import "TextStore.h"
 #import "SMG.h"
 #import "StoreHeader.h"
 #import "SMGHeader.h"
 #import "TMCache.h"
 
-@interface Text ()
+@interface TextStore ()
 
 /**
  *  MARK:--------------------分词数组--------------------
@@ -32,7 +32,7 @@
 
 @end
 
-@implementation Text
+@implementation TextStore
 
 
 

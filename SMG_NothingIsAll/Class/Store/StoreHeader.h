@@ -11,3 +11,7 @@
 #import "MKStore.h"
 #import "LogicStore.h"
 
+
+//Text
+#import "TextStore.h"
+#import "TextStoreUtils.h"

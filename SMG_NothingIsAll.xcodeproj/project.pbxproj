@@ -26,8 +26,11 @@
 		08C84A9C1E9A874C00897D8B /* InputModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A9B1E9A874C00897D8B /* InputModel.m */; };
 		08CBF4081EA84CE10066522A /* LogicStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08CBF4071EA84CE10066522A /* LogicStore.m */; };
 		08E5B3FB1EAB5F1D00999E65 /* DoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E5B3FA1EAB5F1D00999E65 /* DoModel.m */; };
-		08E5B4021EAB645900999E65 /* Text.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E5B3FE1EAB645900999E65 /* Text.m */; };
-		08E5B4031EAB645900999E65 /* TextUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E5B4011EAB645900999E65 /* TextUtils.m */; };
+		08E5B4101EAB68DD00999E65 /* TextStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E5B40D1EAB68DD00999E65 /* TextStore.m */; };
+		08E5B4111EAB68DD00999E65 /* TextStoreUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E5B40F1EAB68DD00999E65 /* TextStoreUtils.m */; };
+		08E5B4151EAB68ED00999E65 /* DoStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E5B4141EAB68ED00999E65 /* DoStore.m */; };
+		08E5B41A1EAB692500999E65 /* TextUnderstand.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E5B4191EAB692500999E65 /* TextUnderstand.m */; };
+		08E5B41D1EAB692F00999E65 /* DoUnderstand.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E5B41C1EAB692F00999E65 /* DoUnderstand.m */; };
 		08F3AFAC1E98898000747EDD /* Mind.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F3AFAB1E98898000747EDD /* Mind.m */; };
 		08F3AFB21E98929C00747EDD /* MindUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F3AFB11E98929C00747EDD /* MindUtils.m */; };
 		08F3AFB81E98963600747EDD /* SMG.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F3AFB71E98963600747EDD /* SMG.m */; };
@@ -79,11 +82,16 @@
 		08CBF4071EA84CE10066522A /* LogicStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogicStore.m; sourceTree = "<group>"; };
 		08E5B3F91EAB5F1D00999E65 /* DoModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoModel.h; sourceTree = "<group>"; };
 		08E5B3FA1EAB5F1D00999E65 /* DoModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DoModel.m; sourceTree = "<group>"; };
-		08E5B3FD1EAB645900999E65 /* Text.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Text.h; sourceTree = "<group>"; };
-		08E5B3FE1EAB645900999E65 /* Text.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Text.m; sourceTree = "<group>"; };
-		08E5B3FF1EAB645900999E65 /* TextHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextHeader.h; sourceTree = "<group>"; };
-		08E5B4001EAB645900999E65 /* TextUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextUtils.h; sourceTree = "<group>"; };
-		08E5B4011EAB645900999E65 /* TextUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextUtils.m; sourceTree = "<group>"; };
+		08E5B40C1EAB68DD00999E65 /* TextStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextStore.h; sourceTree = "<group>"; };
+		08E5B40D1EAB68DD00999E65 /* TextStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextStore.m; sourceTree = "<group>"; };
+		08E5B40E1EAB68DD00999E65 /* TextStoreUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextStoreUtils.h; sourceTree = "<group>"; };
+		08E5B40F1EAB68DD00999E65 /* TextStoreUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextStoreUtils.m; sourceTree = "<group>"; };
+		08E5B4131EAB68ED00999E65 /* DoStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoStore.h; sourceTree = "<group>"; };
+		08E5B4141EAB68ED00999E65 /* DoStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DoStore.m; sourceTree = "<group>"; };
+		08E5B4181EAB692500999E65 /* TextUnderstand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextUnderstand.h; sourceTree = "<group>"; };
+		08E5B4191EAB692500999E65 /* TextUnderstand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextUnderstand.m; sourceTree = "<group>"; };
+		08E5B41B1EAB692F00999E65 /* DoUnderstand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoUnderstand.h; sourceTree = "<group>"; };
+		08E5B41C1EAB692F00999E65 /* DoUnderstand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DoUnderstand.m; sourceTree = "<group>"; };
 		08F3AFAA1E98898000747EDD /* Mind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mind.h; sourceTree = "<group>"; };
 		08F3AFAB1E98898000747EDD /* Mind.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Mind.m; sourceTree = "<group>"; };
 		08F3AFAD1E988E2A00747EDD /* MindEnum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MindEnum.h; sourceTree = "<group>"; };
@@ -129,6 +137,8 @@
 		083DA5EA1E99E3530047A6DF /* Understand */ = {
 			isa = PBXGroup;
 			children = (
+				08E5B4161EAB691800999E65 /* DoUnderstand */,
+				08E5B4171EAB691800999E65 /* TextUnderstand */,
 				083DA5EB1E99E36A0047A6DF /* UnderstandHeader.h */,
 				083DA5EC1E99E37A0047A6DF /* Understand.h */,
 				083DA5ED1E99E37A0047A6DF /* Understand.m */,
@@ -230,7 +240,8 @@
 		08AF45681E97D80C00377887 /* Store */ = {
 			isa = PBXGroup;
 			children = (
-				08E5B3FC1EAB645900999E65 /* Text */,
+				08E5B4121EAB68ED00999E65 /* DoStore */,
+				08E5B40B1EAB68DD00999E65 /* TextStore */,
 				083DA5EF1E99F2B50047A6DF /* temp */,
 				08AF45691E97D80C00377887 /* MemStore.h */,
 				08AF456A1E97D80C00377887 /* MemStore.m */,
@@ -266,16 +277,42 @@
 			path = Output;
 			sourceTree = "<group>";
 		};
-		08E5B3FC1EAB645900999E65 /* Text */ = {
+		08E5B40B1EAB68DD00999E65 /* TextStore */ = {
 			isa = PBXGroup;
 			children = (
-				08E5B3FD1EAB645900999E65 /* Text.h */,
-				08E5B3FE1EAB645900999E65 /* Text.m */,
-				08E5B3FF1EAB645900999E65 /* TextHeader.h */,
-				08E5B4001EAB645900999E65 /* TextUtils.h */,
-				08E5B4011EAB645900999E65 /* TextUtils.m */,
+				08E5B40C1EAB68DD00999E65 /* TextStore.h */,
+				08E5B40D1EAB68DD00999E65 /* TextStore.m */,
+				08E5B40E1EAB68DD00999E65 /* TextStoreUtils.h */,
+				08E5B40F1EAB68DD00999E65 /* TextStoreUtils.m */,
 			);
-			path = Text;
+			path = TextStore;
+			sourceTree = "<group>";
+		};
+		08E5B4121EAB68ED00999E65 /* DoStore */ = {
+			isa = PBXGroup;
+			children = (
+				08E5B4131EAB68ED00999E65 /* DoStore.h */,
+				08E5B4141EAB68ED00999E65 /* DoStore.m */,
+			);
+			path = DoStore;
+			sourceTree = "<group>";
+		};
+		08E5B4161EAB691800999E65 /* DoUnderstand */ = {
+			isa = PBXGroup;
+			children = (
+				08E5B41B1EAB692F00999E65 /* DoUnderstand.h */,
+				08E5B41C1EAB692F00999E65 /* DoUnderstand.m */,
+			);
+			path = DoUnderstand;
+			sourceTree = "<group>";
+		};
+		08E5B4171EAB691800999E65 /* TextUnderstand */ = {
+			isa = PBXGroup;
+			children = (
+				08E5B4181EAB692500999E65 /* TextUnderstand.h */,
+				08E5B4191EAB692500999E65 /* TextUnderstand.m */,
+			);
+			path = TextUnderstand;
 			sourceTree = "<group>";
 		};
 		08F3AF991E98883C00747EDD /* Mind */ = {
@@ -463,10 +500,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				08F3AFAC1E98898000747EDD /* Mind.m in Sources */,
-				08E5B4031EAB645900999E65 /* TextUtils.m in Sources */,
 				08F639861E9A2F6C003CD163 /* FeelModel.m in Sources */,
 				088331C61E9BD3D00026DE23 /* FeelImgModel.m in Sources */,
 				08FDCE8E1EAA4A8E00882ADC /* SMGRange.m in Sources */,
+				08E5B41D1EAB692F00999E65 /* DoUnderstand.m in Sources */,
 				08AF456E1E97DDF600377887 /* MKStore.m in Sources */,
 				08F3AFBB1E98966E00747EDD /* Store.m in Sources */,
 				088331C91E9BD59F0026DE23 /* FeelAudioModel.m in Sources */,
@@ -474,6 +511,7 @@
 				08C84A8E1E9A866200897D8B /* Input.m in Sources */,
 				084750AE1EA0601400316BEF /* StudyViewController.m in Sources */,
 				08F639831E9A2EC0003CD163 /* FeelValueModel.m in Sources */,
+				08E5B4111EAB68DD00999E65 /* TextStoreUtils.m in Sources */,
 				08F3AFB81E98963600747EDD /* SMG.m in Sources */,
 				08AF45631E97D6F200377887 /* GC.m in Sources */,
 				08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */,
@@ -483,12 +521,14 @@
 				08AF454A1E97D0B500377887 /* main.m in Sources */,
 				08E5B3FB1EAB5F1D00999E65 /* DoModel.m in Sources */,
 				08AF456B1E97D80C00377887 /* MemStore.m in Sources */,
-				08E5B4021EAB645900999E65 /* Text.m in Sources */,
 				08CBF4081EA84CE10066522A /* LogicStore.m in Sources */,
 				08F3AFB21E98929C00747EDD /* MindUtils.m in Sources */,
 				08C84A991E9A86C400897D8B /* StoreModel_Text.m in Sources */,
+				08E5B4101EAB68DD00999E65 /* TextStore.m in Sources */,
 				088331CC1E9BD68C0026DE23 /* FeelTextModel.m in Sources */,
+				08E5B4151EAB68ED00999E65 /* DoStore.m in Sources */,
 				083DA5EE1E99E37A0047A6DF /* Understand.m in Sources */,
+				08E5B41A1EAB692500999E65 /* TextUnderstand.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -25,7 +25,7 @@
  *  4,不断提升Language对语言的组织输出能力;
  *  
  */
-@interface Text : NSObject
+@interface TextStore : NSObject
 
 
 //MARK:----------语言输出能力----------

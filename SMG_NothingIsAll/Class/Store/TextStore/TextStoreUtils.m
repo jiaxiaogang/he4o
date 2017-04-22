@@ -6,10 +6,10 @@
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "TextUtils.h"
+#import "TextStoreUtils.h"
 #import "SMGHeader.h"
 
-@implementation TextUtils
+@implementation TextStoreUtils
 
 /**
  *  MARK:--------------------获取句子中未知词数--------------------
