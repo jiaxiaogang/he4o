@@ -13,7 +13,20 @@
 
 @interface MemStore ()
 
-@property (strong,nonatomic) NSMutableArray *memArr;  //内存kv存储;(数组中存StoreModel_Text对象)(习惯记忆,GC会回收不常用的旧数据到localArr)
+/**
+ *  MARK:--------------------记忆流--------------------
+ *
+ *  结构:
+ *      (DIC | Key:word Value:str | Key:wordId Value:NSInteger )注:wordId为主键;
+ *
+ *  元素:
+ *      (有单字词:如:你我他的是啊)(有多字词:如:你好,人民,苹果)
+ *
+ *  考虑:
+ *      1,功能:随后添加分词使用频率;使其更正确的工作;
+ *
+ */
+@property (strong,nonatomic) NSMutableArray *memArr;
 
 @end
 

@@ -42,6 +42,14 @@
     if (!ARRISOK(modelArr)) {
         return;
     }
+    //1,存MK(存MK,并生成mkId)
+    //  1.1,找到MK则存;找不到不存;
+    //2,存Logic(根据mkId更深了解逻辑,存Logic并生成LogicId)
+    //  2.1,分析出逻辑则存,分析不到不存;
+    //3,存Mem(并使用MKId和LogicId占位符)
+    
+    
+    
     //2,收集记忆数据
     NSMutableDictionary *memDic = [[NSMutableDictionary alloc] init];
     for (FeelModel *model in modelArr) {
@@ -56,6 +64,7 @@
              *      3.1,例如:多次出现行为:'我' 吃 '瓜'  对应  textModel:我吃瓜
              *
              */
+            
             
             //1,存记忆
             FeelTextModel *ftModel = (FeelTextModel*)feelModel;
