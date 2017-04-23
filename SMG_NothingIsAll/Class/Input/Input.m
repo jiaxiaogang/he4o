@@ -16,9 +16,6 @@
 
 
 -(void) seeWorld:(id)property{
-    //1,收集摄像头图片
-    //2,收集麦克风声音
-    //3,收集用户输入的文字
     InputModel *inputModel = [[InputModel alloc] init];
     inputModel.text = @"";
     inputModel.img = [UIImage imageNamed:@""];

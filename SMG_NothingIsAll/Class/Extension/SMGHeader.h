@@ -17,21 +17,17 @@
  *  MARK:--------------------数据检查--------------------
  */
 
-//是否空字符串
-#define STRISOK(a) (a  && ![a isKindOfClass:[NSNull class]] && [a isKindOfClass:[NSString class]] && ![a isEqualToString:@""])
+//String
+#define STRISOK(a) (a  && ![a isKindOfClass:[NSNull class]] && [a isKindOfClass:[NSString class]] && ![a isEqualToString:@""])//是否空字符串
+#define STRTOOK(a) (a  && ![a isKindOfClass:[NSNull class]]) ? ([a isKindOfClass:[NSString class]] ? a : [NSString stringWithFormat:@"%@", a]) : @""//字符串防闪
 
-//字符串防闪
-#define STRTOOK(a) (a  && ![a isKindOfClass:[NSNull class]]) ? ([a isKindOfClass:[NSString class]] ? a : [NSString stringWithFormat:@"%@", a]) : @""
+//Array
+#define ARRISOK(a) (a  && [a isKindOfClass:[NSArray class]] && a.count)//是否空数组
+#define ARRTOOK(a) (a  && [a isKindOfClass:[NSArray class]]) ?  a : [NSArray new]//数组防闪
+#define ARR_INDEX(a,i) (a && [a isKindOfClass:[NSArray class]] && a.count > i) ?  a[i] : nil//数组取子防闪
 
-//是否空数组
-#define ARRISOK(a) (a  && [a isKindOfClass:[NSArray class]] && a.count)
-
-//数组防闪
-#define ARRTOOK(a) (a  && [a isKindOfClass:[NSArray class]]) ?  a : [NSArray new]
-
-//数组取子防闪
-#define ARR_INDEX(a,i) (a && [a isKindOfClass:[NSArray class]] && a.count > i) ?  a[i] : nil
-
+//NSNumber
+#define NSNUMBERISOK(a) (a  && [a isKindOfClass:[NSNumber class]])//是否有效NSNumber
 
 
 /**
@@ -40,3 +36,5 @@
 
 //SMGRange
 #define SMGRangeMake(loc,len) [SMGRange rangeWithLocation:loc length:len]
+
+

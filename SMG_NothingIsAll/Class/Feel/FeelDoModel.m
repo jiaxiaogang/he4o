@@ -6,9 +6,9 @@
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "DoModel.h"
+#import "FeelDoModel.h"
 
-@implementation DoModel
+@implementation FeelDoModel
 
 /**
  *  MARK:--------------------NSCoding--------------------

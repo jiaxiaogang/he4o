@@ -82,10 +82,10 @@
 
 /**
  *  MARK:--------------------addWord--------------------
- *  (DIC | Key:word Value:str | Key:MKObjId Value:NSInteger )
- */
--(void) addWord:(NSDictionary*)word;
 
+ */
+-(void) addWord:(NSString*)word;
+-(void) addWordArr:(NSArray*)wordArr;
 
 
 @end

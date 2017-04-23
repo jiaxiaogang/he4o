@@ -243,16 +243,45 @@
 /**
  *  MARK:--------------------add--------------------
  */
--(void) addWord:(NSDictionary*)word{
+-(void) addWord:(NSString*)word{
     if (word) {
-        [self.wordArr addObject:word];
+        NSNumber *wordId = @([self createWordId]);
+        NSDictionary *item = [NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(word),@"word",wordId,@"wordId", nil];
+        [self.wordArr addObject:item];
+        [self saveToLocal];
+    }
+}
+
+-(void) addWordArr:(NSArray*)wordArr{
+    if (ARRISOK(wordArr)) {
+        NSInteger wordId = [self createWordId:wordArr.count];//申请wordArr.count个wordId
+        for (NSString *word in wordArr) {
+            NSDictionary *item = [NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(word),@"word",@(wordId),@"wordId", nil];
+            [self.wordArr addObject:item];
+            wordId ++;
+        }
         [self saveToLocal];
     }
 }
 
 
+/**
+ *  MARK:--------------------private--------------------
+ */
 -(void) saveToLocal{
     [[TMCache sharedCache] setObject:self.wordArr forKey:@"MKStore_Text_WordArr_Key"];
+}
+
+-(NSInteger) createWordId{
+    return [self createWordId:1];
+}
+
+-(NSInteger) createWordId:(NSInteger)limit{
+    limit = MAX(0, limit);
+    NSInteger lastWordId = [[NSUserDefaults standardUserDefaults] integerForKey:@"MKStore_Text_WordId"];
+    [[NSUserDefaults standardUserDefaults] setInteger:lastWordId + limit forKey:@"MKStore_Text_WordId"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    return lastWordId + limit;
 }
 
 

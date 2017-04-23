@@ -30,46 +30,49 @@
 }
 
 
--(void) commitFeelModel:(FeelModel*)model{
-    if (model) {
-        //1,整理感觉系统传过来的数据;(属性,图像等)
-        //2,找出共同点与逻辑;
-        //3,更新记忆,MK;及逻辑推理记忆;
-        //4,根据Mind来调用OUTPUT;(表达语言,表达表情,下一次注意力采集信息)(这种采集分析采集分析的递归过程,发现和DeepMind/DNC里的架构很像)
-    }
-}
-
-//使用信息对应行为输入;
--(void) commitWithFeelModel:(FeelModel*)feelModel withDoModel:(DoModel*)doModel{
-    if (feelModel == nil) {
+/**
+ *  MARK:--------------------Feel交由Understand处理理解并存MK,Mem,Logic--------------------
+ *  1,整理感觉系统传过来的数据;(属性,图像等)
+ *  2,找出共同点与逻辑;
+ *  3,更新记忆,MK;及逻辑推理记忆;
+ *  4,根据Mind来调用OUTPUT;(表达语言,表达表情,下一次注意力采集信息)(这种采集分析采集分析的递归过程,发现和DeepMind/DNC里的架构很像)
+ */
+-(void) commitWithFeelModelArr:(NSArray*)modelArr{
+    //1,数据检查
+    if (!ARRISOK(modelArr)) {
         return;
     }
-    if ([feelModel isKindOfClass:[FeelTextModel class]]) {
-        /*---------文字输入---------
-         *
-         *  1,存记忆
-         *  2,存MK
-         *      2.1,针对doModel的fromMKId和toMKId存MK;
-         *  3,找出逻辑规律(语言规律,行为规律,语言中字词和行为的对称关系)
-         *      3.1,例如:多次出现行为:'我' 吃 '瓜'  对应  textModel:我吃瓜
-         *
-         */
+    //2,收集记忆数据
+    NSMutableDictionary *memDic = [[NSMutableDictionary alloc] init];
+    for (FeelModel *model in modelArr) {
         
-        //1,存记忆
-        FeelTextModel *ftModel = (FeelTextModel*)feelModel;
-        NSDictionary *mem = [NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(ftModel.text),@"text",doModel,@"doModel", nil];
-        [[SMG sharedInstance].store.memStore addMemory:mem];
-        
-        //2,存MK
-        
-        //3,Understand
-        [[SMG sharedInstance].understand startUnderstand];
-        
-        
-    }else if ([feelModel isKindOfClass:[FeelImgModel class]]) {
-        //图像输入
-    }else if ([feelModel isKindOfClass:[FeelAudioModel class]]) {
-        //声音输入
+        if ([feelModel isKindOfClass:[FeelTextModel class]]) {
+            /*---------文字输入---------
+             *
+             *  1,存记忆
+             *  2,存MK
+             *      2.1,针对doModel的fromMKId和toMKId存MK;
+             *  3,找出逻辑规律(语言规律,行为规律,语言中字词和行为的对称关系)
+             *      3.1,例如:多次出现行为:'我' 吃 '瓜'  对应  textModel:我吃瓜
+             *
+             */
+            
+            //1,存记忆
+            FeelTextModel *ftModel = (FeelTextModel*)feelModel;
+            NSDictionary *mem = [NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(ftModel.text),@"text",doModel,@"doModel", nil];
+            [[SMG sharedInstance].store.memStore addMemory:mem];
+            
+            //2,存MK
+            
+            //3,Understand
+            [[SMG sharedInstance].understand startUnderstand];
+            
+            
+        }else if ([feelModel isKindOfClass:[FeelImgModel class]]) {
+            //图像输入
+        }else if ([feelModel isKindOfClass:[FeelAudioModel class]]) {
+            //声音输入
+        }
     }
 }
 

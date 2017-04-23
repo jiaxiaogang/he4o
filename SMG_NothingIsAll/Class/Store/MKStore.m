@@ -37,7 +37,11 @@
 }
 
 -(void) addWord:(NSString*)word{
-    [self.textStore addWord:[NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(word),@"word", nil]];
+    [self.textStore addWord:STRTOOK(word)];
+}
+
+-(void) addWordArr:(NSArray*)wordArr{
+    [self.textStore addWordArr:wordArr];
 }
 
 @end
