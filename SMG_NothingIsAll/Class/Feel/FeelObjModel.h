@@ -13,7 +13,7 @@
 
 /**
  *  MARK:--------------------Input_视觉图像感觉化数据--------------------
- *  基于双摄像头的立体计算机视觉;
+ *  基于双摄像头的立体计算机视觉;(ImgModel表示的是RealObj实物)
  *
  *  1,人脸,表情
  *  2,肢体动作
@@ -25,7 +25,7 @@
  *
  *
  */
-@interface FeelImgModel : FeelModel
+@interface FeelObjModel : FeelModel
 
 @property (strong,nonatomic) UIImage *img;                      //图片
 @property (assign, nonatomic) CGRect frame;                     //坐标及大小

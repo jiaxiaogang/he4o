@@ -6,8 +6,8 @@
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "FeelImgModel.h"
+#import "FeelObjModel.h"
 
-@implementation FeelImgModel
+@implementation FeelObjModel
 
 @end

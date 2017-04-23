@@ -244,6 +244,7 @@
  *  MARK:--------------------add--------------------
  */
 -(void) addWord:(NSString*)word{
+    //去重
     if (word) {
         NSNumber *wordId = @([self createWordId]);
         NSDictionary *item = [NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(word),@"word",wordId,@"wordId", nil];
@@ -253,6 +254,7 @@
 }
 
 -(void) addWordArr:(NSArray*)wordArr{
+    //去重
     if (ARRISOK(wordArr)) {
         NSInteger wordId = [self createWordId:wordArr.count];//申请wordArr.count个wordId
         for (NSString *word in wordArr) {

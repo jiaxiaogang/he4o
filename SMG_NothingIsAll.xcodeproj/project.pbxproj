@@ -11,7 +11,7 @@
 		083DA5EE1E99E37A0047A6DF /* Understand.m in Sources */ = {isa = PBXBuildFile; fileRef = 083DA5ED1E99E37A0047A6DF /* Understand.m */; };
 		084750AE1EA0601400316BEF /* StudyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 084750AC1EA0601400316BEF /* StudyViewController.m */; };
 		084750AF1EA0601400316BEF /* StudyViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 084750AD1EA0601400316BEF /* StudyViewController.xib */; };
-		088331C61E9BD3D00026DE23 /* FeelImgModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088331C51E9BD3D00026DE23 /* FeelImgModel.m */; };
+		088331C61E9BD3D00026DE23 /* FeelObjModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088331C51E9BD3D00026DE23 /* FeelObjModel.m */; };
 		088331C91E9BD59F0026DE23 /* FeelAudioModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088331C81E9BD59F0026DE23 /* FeelAudioModel.m */; };
 		088331CC1E9BD68C0026DE23 /* FeelTextModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088331CB1E9BD68C0026DE23 /* FeelTextModel.m */; };
 		08AF454A1E97D0B500377887 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF45491E97D0B500377887 /* main.m */; };
@@ -52,8 +52,8 @@
 		084750AB1EA0601400316BEF /* StudyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StudyViewController.h; sourceTree = "<group>"; };
 		084750AC1EA0601400316BEF /* StudyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StudyViewController.m; sourceTree = "<group>"; };
 		084750AD1EA0601400316BEF /* StudyViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StudyViewController.xib; sourceTree = "<group>"; };
-		088331C41E9BD3D00026DE23 /* FeelImgModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeelImgModel.h; sourceTree = "<group>"; };
-		088331C51E9BD3D00026DE23 /* FeelImgModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeelImgModel.m; sourceTree = "<group>"; };
+		088331C41E9BD3D00026DE23 /* FeelObjModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeelObjModel.h; sourceTree = "<group>"; };
+		088331C51E9BD3D00026DE23 /* FeelObjModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeelObjModel.m; sourceTree = "<group>"; };
 		088331C71E9BD59F0026DE23 /* FeelAudioModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeelAudioModel.h; sourceTree = "<group>"; };
 		088331C81E9BD59F0026DE23 /* FeelAudioModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeelAudioModel.m; sourceTree = "<group>"; };
 		088331CA1E9BD68C0026DE23 /* FeelTextModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeelTextModel.h; sourceTree = "<group>"; };
@@ -347,8 +347,8 @@
 				08F639881E9A2FF4003CD163 /* Feel.m */,
 				08F6398A1E9A3316003CD163 /* FeelHeader.h */,
 				08F6398B1E9A3326003CD163 /* FeelEnum.h */,
-				088331C41E9BD3D00026DE23 /* FeelImgModel.h */,
-				088331C51E9BD3D00026DE23 /* FeelImgModel.m */,
+				088331C41E9BD3D00026DE23 /* FeelObjModel.h */,
+				088331C51E9BD3D00026DE23 /* FeelObjModel.m */,
 				088331C71E9BD59F0026DE23 /* FeelAudioModel.h */,
 				088331C81E9BD59F0026DE23 /* FeelAudioModel.m */,
 				088331CA1E9BD68C0026DE23 /* FeelTextModel.h */,
@@ -501,7 +501,7 @@
 			files = (
 				08F3AFAC1E98898000747EDD /* Mind.m in Sources */,
 				08F639861E9A2F6C003CD163 /* FeelModel.m in Sources */,
-				088331C61E9BD3D00026DE23 /* FeelImgModel.m in Sources */,
+				088331C61E9BD3D00026DE23 /* FeelObjModel.m in Sources */,
 				08FDCE8E1EAA4A8E00882ADC /* SMGRange.m in Sources */,
 				0803698D1EAC4C4400B4819C /* FeelDoModel.m in Sources */,
 				08E5B41D1EAB692F00999E65 /* DoUnderstand.m in Sources */,

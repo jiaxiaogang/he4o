@@ -10,7 +10,8 @@
 #import "Feel.h"
 #import "FeelModel.h"
 #import "FeelValueModel.h"
-#import "FeelImgModel.h"
+#import "FeelObjModel.h"
 #import "FeelAudioModel.h"
 #import "FeelTextModel.h"
+#import "FeelDoModel.h"
 
