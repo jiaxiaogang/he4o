@@ -18,7 +18,7 @@
  *  MARK:--------------------分词数组--------------------
  *
  *  结构:
- *      (DIC | Key:word Value:str | Key:wordId Value:NSInteger | Key:doId Value:NSInteger | Key:objId Value:NSInteger )注:wordId为主键;
+ *      (DIC | Key:word Value:str | Key:itemId Value:NSInteger | Key:doId Value:NSInteger | Key:objId Value:NSInteger )注:itemId为主键;
  *  
  *  元素:
  *      (有单字词:如:你我他的是啊)(有多字词:如:你好,人民,苹果)
@@ -246,8 +246,8 @@
 -(NSDictionary*) addWord:(NSString*)word{
     //去重
     if (word) {
-        NSNumber *wordId = @([self createWordId]);
-        NSDictionary *item = [NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(word),@"word",wordId,@"wordId", nil];
+        NSString *itemId = [NSString stringWithFormat:@"%ld",[self createItemId]];
+        NSDictionary *item = [NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(word),@"word",itemId,@"itemId", nil];
         [self.wordArr addObject:item];
         [self saveToLocal];
         return item;
@@ -259,12 +259,12 @@
     //去重
     NSMutableArray *valueArr = nil;
     if (ARRISOK(wordArr)) {
-        NSInteger wordId = [self createWordId:wordArr.count];//申请wordArr.count个wordId
+        NSInteger itemId = [self createItemId:wordArr.count];//申请wordArr.count个wordId
         for (NSString *word in wordArr) {
             if (valueArr == nil) valueArr = [[NSMutableArray alloc] init];
-            NSDictionary *item = [NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(word),@"word",@(wordId),@"wordId", nil];
+            NSDictionary *item = [NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(word),@"word",[NSString stringWithFormat:@"%ld",itemId],@"itemId", nil];
             [valueArr addObject:item];
-            wordId ++;
+            itemId ++;
         }
         //save
         [self.wordArr addObjectsFromArray:valueArr];
@@ -281,16 +281,16 @@
     [[TMCache sharedCache] setObject:self.wordArr forKey:@"MKStore_Text_WordArr_Key"];
 }
 
--(NSInteger) createWordId{
-    return [self createWordId:1];
+-(NSInteger) createItemId{
+    return [self createItemId:1];
 }
 
--(NSInteger) createWordId:(NSInteger)limit{
+-(NSInteger) createItemId:(NSInteger)limit{
     limit = MAX(0, limit);
-    NSInteger lastWordId = [[NSUserDefaults standardUserDefaults] integerForKey:@"MKStore_Text_WordId"];
-    [[NSUserDefaults standardUserDefaults] setInteger:lastWordId + limit forKey:@"MKStore_Text_WordId"];
+    NSInteger lastId = [[NSUserDefaults standardUserDefaults] integerForKey:@"MKStore_Text_WordId"];
+    [[NSUserDefaults standardUserDefaults] setInteger:lastId + limit forKey:@"MKStore_Text_WordId"];
     [[NSUserDefaults standardUserDefaults] synchronize];
-    return lastWordId + limit;
+    return lastId + limit;
 }
 
 

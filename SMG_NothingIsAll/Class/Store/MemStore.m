@@ -9,6 +9,9 @@
 #import "MemStore.h"
 #import "TMCache.h"
 #import "SMGHeader.h"
+#import "FeelHeader.h"
+#import "StoreHeader.h"
+#import "UnderstandHeader.h"
 
 
 @interface MemStore ()

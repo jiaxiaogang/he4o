@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0803698D1EAC4C4400B4819C /* FeelDoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0803698C1EAC4C4400B4819C /* FeelDoModel.m */; };
 		081BCAB01EAC7DF100D248E1 /* ObjStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 081BCAAF1EAC7DF100D248E1 /* ObjStore.m */; };
+		081BCAB31EACEC6500D248E1 /* UnderstandUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 081BCAB21EACEC6500D248E1 /* UnderstandUtils.m */; };
 		083DA5EE1E99E37A0047A6DF /* Understand.m in Sources */ = {isa = PBXBuildFile; fileRef = 083DA5ED1E99E37A0047A6DF /* Understand.m */; };
 		084750AE1EA0601400316BEF /* StudyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 084750AC1EA0601400316BEF /* StudyViewController.m */; };
 		084750AF1EA0601400316BEF /* StudyViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 084750AD1EA0601400316BEF /* StudyViewController.xib */; };
@@ -49,6 +50,8 @@
 		0803698C1EAC4C4400B4819C /* FeelDoModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeelDoModel.m; sourceTree = "<group>"; };
 		081BCAAE1EAC7DF100D248E1 /* ObjStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjStore.h; sourceTree = "<group>"; };
 		081BCAAF1EAC7DF100D248E1 /* ObjStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjStore.m; sourceTree = "<group>"; };
+		081BCAB11EACEC6500D248E1 /* UnderstandUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnderstandUtils.h; sourceTree = "<group>"; };
+		081BCAB21EACEC6500D248E1 /* UnderstandUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UnderstandUtils.m; sourceTree = "<group>"; };
 		083DA5EB1E99E36A0047A6DF /* UnderstandHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnderstandHeader.h; sourceTree = "<group>"; };
 		083DA5EC1E99E37A0047A6DF /* Understand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Understand.h; sourceTree = "<group>"; };
 		083DA5ED1E99E37A0047A6DF /* Understand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Understand.m; sourceTree = "<group>"; };
@@ -161,6 +164,8 @@
 				083DA5EB1E99E36A0047A6DF /* UnderstandHeader.h */,
 				083DA5EC1E99E37A0047A6DF /* Understand.h */,
 				083DA5ED1E99E37A0047A6DF /* Understand.m */,
+				081BCAB11EACEC6500D248E1 /* UnderstandUtils.h */,
+				081BCAB21EACEC6500D248E1 /* UnderstandUtils.m */,
 			);
 			path = Understand;
 			sourceTree = "<group>";
@@ -541,6 +546,7 @@
 				08AF454D1E97D0B500377887 /* AppDelegate.m in Sources */,
 				08C84A981E9A86C400897D8B /* StoreLogModel_Text.m in Sources */,
 				08F639891E9A2FF4003CD163 /* Feel.m in Sources */,
+				081BCAB31EACEC6500D248E1 /* UnderstandUtils.m in Sources */,
 				08AF454A1E97D0B500377887 /* main.m in Sources */,
 				08AF456B1E97D80C00377887 /* MemStore.m in Sources */,
 				08CBF4081EA84CE10066522A /* LogicStore.m in Sources */,

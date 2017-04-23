@@ -70,7 +70,7 @@
 -(NSDictionary*) addItem:(NSString*)itemName{
     //去重
     if (itemName) {
-        NSNumber *itemId = @([self createItemId]);
+        NSString *itemId = [NSString stringWithFormat:@"%ld",[self createItemId]];
         NSDictionary *item = [NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(itemName),@"itemName",itemId,@"itemId", nil];
         [self.dataArr addObject:item];
         [self saveToLocal];
@@ -86,7 +86,7 @@
         NSInteger itemId = [self createItemId:itemNameArr.count];//申请itemNameArr.count个itemId
         for (NSString *itemName in itemNameArr) {
             if (valueArr == nil) valueArr = [[NSMutableArray alloc] init];
-            NSDictionary *item = [NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(itemName),@"itemName",@(itemId),@"itemId", nil];
+            NSDictionary *item = [NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(itemName),@"itemName",[NSString stringWithFormat:@"%ld",itemId],@"itemId", nil];
             [valueArr addObject:item];
             itemId ++;
         }

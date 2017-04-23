@@ -60,7 +60,8 @@
     for (FeelModel *model in modelArr) {
         if ([model isKindOfClass:[FeelTextModel class]]) {//字符串输入
             //1,收集保存分词数据
-            [self getWordArrAtText:((FeelTextModel*)model).text outBlock:^(NSArray *oldWordArr, NSArray *newWordArr) {
+            FeelTextModel *textModel = ((FeelTextModel*)model);
+            [UnderstandUtils getWordArrAtText:textModel.text outBlock:^(NSArray *oldWordArr, NSArray *newWordArr) {
                 [findOldWordArr addObjectsFromArray:oldWordArr];
                 NSArray *value = [[SMG sharedInstance].store.mkStore addWordArr:newWordArr];
                 [findNewWordArr addObjectsFromArray:value];
@@ -76,17 +77,15 @@
     
     //3,Mem数据
     NSMutableDictionary *memDic = [[NSMutableDictionary alloc] init];
-    __block NSMutableArray *memTextArr = [[NSMutableArray alloc] init];
-    __block NSMutableArray *memObjArr = [[NSMutableArray alloc] init];
-    __block NSMutableArray *memDoArr = [[NSMutableArray alloc] init];
+    NSMutableArray *memObjArr = [[NSMutableArray alloc] init];
+    NSMutableArray *memDoArr = [[NSMutableArray alloc] init];
     for (FeelModel *model in modelArr) {
-        if ([model isKindOfClass:[FeelTextModel class]]) {//字符串输入
-            [memTextArr addObject:STRTOOK(((FeelTextModel*)model).text)];
-        }else if ([model isKindOfClass:[FeelObjModel class]]) {//图像输入物体
-            [memObjArr addObject:STRTOOK(((FeelObjModel*)model).name)];
+        if ([model isKindOfClass:[FeelTextModel class]]){
+            //3.1,文本
+            [memDic setObject:((FeelTextModel*)model).text forKey:@"text"];
         }else if ([model isKindOfClass:[FeelDoModel class]]) {//图像输入行为
             FeelDoModel *doModel = (FeelDoModel*)model;
-            //如果doModel的fromMKId和toMKId是指向的名字;则这里修正为itemId;
+            //3.2,如果doModel的fromMKId和toMKId是指向的名字;则这里修正为itemId;
             for (NSDictionary *objItem in findObjArr) {
                 if ([STRTOOK(doModel.fromMKId) isEqualToString:[objItem objectForKey:@"itemName"]]) {
                     doModel.fromMKId = STRTOOK([objItem objectForKey:@"itemId"]);
@@ -98,9 +97,12 @@
             [memDoArr addObject:doModel];
         }
     }
-    [memDic setObject:memTextArr forKey:@"text"];
-    [memDic setObject:memObjArr forKey:@"obj"];
     [memDic setObject:memDoArr forKey:@"do"];
+    //3.3,收集objId数组
+    for (NSDictionary *item in findObjArr) {
+        [memObjArr addObject:[item objectForKey:@"itemId"]];
+    }
+    [memDic setObject:memObjArr forKey:@"obj"];
     [[SMG sharedInstance].store.memStore addMemory:memDic];
     
     //4,Logic数据
@@ -114,37 +116,6 @@
  *  MARK:--------------------private--------------------
  */
 
-//MARK:----------找到新的多字分词----------
--(void) getWordArrAtText:(NSString*)text outBlock:(void(^)(NSArray *oldWordArr,NSArray *newWordArr))outBlock{
-    //计算机器械;(5字4词)
-    //是什么;(3字2词)(其中'是'为单字词)
-    //要我说;(3字3词)单字词
-    //目前只写双字词
-    
-    //1,数据
-    text = STRTOOK(text);
-    NSMutableArray *oldArr = [[NSMutableArray alloc] init];
-    NSMutableArray *newArr = [[NSMutableArray alloc] init];
-    //2,循环找text中的新词
-    for (int i = 0; i < text.length - 1; i++) {
-        //双字词分析;
-        NSString *checkWord = [text substringWithRange:NSMakeRange(i, 2)];
-        NSDictionary *findLocalWord = [[SMG sharedInstance].store.mkStore containerWord:checkWord];
-        if (findLocalWord) {
-            [oldArr addObject:findLocalWord];
-        }else{
-            NSArray *findWordFromMem = [[SMG sharedInstance].store searchMemStoreContainerText:checkWord limit:3];
-            if (findWordFromMem && findWordFromMem.count >= 3) {//只有达到三次听到的词;才认为是一个词;
-                [newArr addObject:checkWord];
-            }
-        }
-    }
-    //3,返回数据
-    if (outBlock) {
-        outBlock(oldArr,newArr);
-    }
-}
-
 //MARK:----------找到新的单字分词----------
 -(void) getSingleWordArrAtText:(NSString*)text outBlock:(void(^)(NSArray *oldWordArr,NSArray *newWordArr))outBlock{
     //有三次被孤立时,采用;
@@ -157,7 +128,12 @@
     if ([[SMG sharedInstance].store.mkStore containerWordWithWhere:where]) {
         return;
     }
-    //2,找记忆数据
+    //2,找相关的记忆数据
+    NSMutableArray *dataArr = [UnderstandUtils getNeedUnderstandMemoryWithWhereDic:where];
+    for (NSDictionary *item in dataArr) {
+        //item   {unknowObjArr=[@"2",@"3"],unknowDoArr=[@"2",@"3"],unknowWordArr=[@"苹果",@"吃"]}
+    }
+    
     
     
 }
@@ -212,7 +188,7 @@
     NSMutableArray *newWords = [[NSMutableArray alloc] init];
     for (int i = 0 ; i < memArr.count; i++) {
         NSDictionary *mem = memArr[memArr.count - i - 1];
-        [self getWordArrAtText:[mem objectForKey:@"text"] outBlock:^(NSArray *oldWordArr, NSArray *newWordArr) {
+        [UnderstandUtils getWordArrAtText:[mem objectForKey:@"text"] outBlock:^(NSArray *oldWordArr, NSArray *newWordArr) {
             [newWords addObjectsFromArray:newWordArr];
         }];
     }
