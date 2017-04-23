@@ -40,6 +40,10 @@
     return [self.textStore getSingleWordWithText:STRTOOK(word)];
 }
 
+-(NSDictionary*) containerWordWithWhere:(NSDictionary*)where{
+    return [self.textStore getSingleWordWithWhere:where];
+}
+
 -(NSDictionary*) addWord:(NSString*)word{
     return [self.textStore addWord:STRTOOK(word)];
 }

@@ -18,7 +18,7 @@
  *  MARK:--------------------分词数组--------------------
  *
  *  结构:
- *      (DIC | Key:word Value:str | Key:wordId Value:NSInteger )注:wordId为主键;
+ *      (DIC | Key:word Value:str | Key:wordId Value:NSInteger | Key:doId Value:NSInteger | Key:objId Value:NSInteger )注:wordId为主键;
  *  
  *  元素:
  *      (有单字词:如:你我他的是啊)(有多字词:如:你好,人民,苹果)

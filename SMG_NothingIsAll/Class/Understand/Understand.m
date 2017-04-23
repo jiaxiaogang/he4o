@@ -111,10 +111,10 @@
 }
 
 /**
- *  MARK:--------------------text部分--------------------
- *  用于text的理解
+ *  MARK:--------------------private--------------------
  */
-//MARK:----------找到新的分词----------
+
+//MARK:----------找到新的多字分词----------
 -(void) getWordArrAtText:(NSString*)text outBlock:(void(^)(NSArray *oldWordArr,NSArray *newWordArr))outBlock{
     //计算机器械;(5字4词)
     //是什么;(3字2词)(其中'是'为单字词)
@@ -144,6 +144,40 @@
         outBlock(oldArr,newArr);
     }
 }
+
+//MARK:----------找到新的单字分词----------
+-(void) getSingleWordArrAtText:(NSString*)text outBlock:(void(^)(NSArray *oldWordArr,NSArray *newWordArr))outBlock{
+    //有三次被孤立时,采用;
+}
+
+//MARK:----------找obj的对应Text----------
+-(void) understandObj:(NSInteger)objId atText:(NSString*)text outBlock:(void(^)(NSArray *oldWordArr,NSArray *newWordArr))outBlock{
+    //1,是否已被理解
+    NSDictionary *where = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%ld",(long)objId],@"objId", nil];
+    if ([[SMG sharedInstance].store.mkStore containerWordWithWhere:where]) {
+        return;
+    }
+    //2,找记忆数据
+    
+    
+}
+
+//MARK:----------找do的对应Text----------
+-(void) understandDo:(NSInteger)doId atText:(NSString*)text outBlock:(void(^)(NSArray *oldWordArr,NSArray *newWordArr))outBlock{
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 //MARK:----------找到新的逻辑----------
 -(NSArray*) getNewLogicArrAtText:(NSString*)text{
