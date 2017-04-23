@@ -1,14 +1,14 @@
 //
-//  DoStore.h
+//  ObjStore.h
 //  SMG_NothingIsAll
 //
-//  Created by 贾  on 2017/4/22.
+//  Created by 贾  on 2017/4/23.
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 
-@interface DoStore : NSObject
+@interface ObjStore : NSObject
 
 /**
  *  MARK:--------------------getObj--------------------
@@ -24,5 +24,6 @@
  */
 -(void) addItem:(NSString*)itemName;
 -(void) addItemNameArr:(NSArray*)itemNameArr;
+
 
 @end

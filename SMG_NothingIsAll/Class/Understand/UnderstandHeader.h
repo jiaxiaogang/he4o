@@ -7,4 +7,3 @@
 //
 
 #import "Understand.h"
-#import "DoModel.h"

@@ -1,18 +1,18 @@
 //
-//  DoStore.m
+//  ObjStore.m
 //  SMG_NothingIsAll
 //
-//  Created by 贾  on 2017/4/22.
+//  Created by 贾  on 2017/4/23.
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "DoStore.h"
+#import "ObjStore.h"
 #import "SMG.h"
 #import "StoreHeader.h"
 #import "SMGHeader.h"
 #import "TMCache.h"
 
-@interface DoStore ()
+@interface ObjStore ()
 
 /**
  *  MARK:--------------------分词数组--------------------
@@ -21,7 +21,7 @@
  *      (DIC | Key:itemName Value:str | Key:itemId Value:NSInteger )注:itemId为主键;
  *
  *  元素:
- *      (行为对象,如打,吃等);
+ *      (实物对象,如人,苹果等);
  *
  */
 @property (strong,nonatomic) NSMutableArray *dataArr;
@@ -29,7 +29,7 @@
 
 @end
 
-@implementation DoStore
+@implementation ObjStore
 
 
 
@@ -102,11 +102,11 @@
 
 //硬盘存储;(不常调用,调用耗时)
 -(NSArray*) getLocalArr{
-    return [[TMCache sharedCache] objectForKey:@"MKStore_Do_DataArr_Key"];
+    return [[TMCache sharedCache] objectForKey:@"MKStore_Obj_DataArr_Key"];
 }
 
 -(void) saveToLocal{
-    [[TMCache sharedCache] setObject:self.dataArr forKey:@"MKStore_Do_DataArr_Key"];
+    [[TMCache sharedCache] setObject:self.dataArr forKey:@"MKStore_Obj_DataArr_Key"];
 }
 
 -(NSInteger) createItemId{
@@ -115,8 +115,8 @@
 
 -(NSInteger) createItemId:(NSInteger)limit{
     limit = MAX(0, limit);
-    NSInteger lastId = [[NSUserDefaults standardUserDefaults] integerForKey:@"MKStore_Do_ItemId"];
-    [[NSUserDefaults standardUserDefaults] setInteger:lastId + limit forKey:@"MKStore_Do_ItemId"];
+    NSInteger lastId = [[NSUserDefaults standardUserDefaults] integerForKey:@"MKStore_Obj_ObjId"];
+    [[NSUserDefaults standardUserDefaults] setInteger:lastId + limit forKey:@"MKStore_Obj_ObjId"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     return lastId + limit;
 }
@@ -124,4 +124,3 @@
 
 
 @end
-

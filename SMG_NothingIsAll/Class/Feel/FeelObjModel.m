@@ -1,5 +1,5 @@
 //
-//  FeelImgModel.m
+//  FeelObjModel.m
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/4/10.

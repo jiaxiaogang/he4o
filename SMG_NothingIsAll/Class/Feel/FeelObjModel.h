@@ -1,5 +1,5 @@
 //
-//  FeelImgModel.h
+//  FeelObjModel.h
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/4/10.
@@ -27,6 +27,7 @@
  */
 @interface FeelObjModel : FeelModel
 
+@property (strong,nonatomic) NSString *objName;
 @property (strong,nonatomic) UIImage *img;                      //图片
 @property (assign, nonatomic) CGRect frame;                     //坐标及大小
 

@@ -159,7 +159,7 @@
     }
     NSLog(@"------------\n发言人:%@\n%@\n------------\n行为人:%@\n%@_%@\n------------\n",self.sayPersonName,self.inputTV.text,self.doPersonName,self.doTypeTF.text,self.targetTF.text);
     //1,doModel
-    DoModel *doModel = [[DoModel alloc] init];
+    FeelDoModel *doModel = [[FeelDoModel alloc] init];
     doModel.fromMKId = self.doPersonName;
     doModel.toMKId = self.targetTF.text;
     doModel.doType = self.doTypeTF.text;
@@ -169,7 +169,7 @@
     feelTextModel.text = self.inputTV.text;
     
     //3,commit
-    [[SMG sharedInstance].understand commitWithFeelModel:feelTextModel withDoModel:doModel];
+    [[SMG sharedInstance].understand commitWithFeelModelArr:@[doModel,feelTextModel]];
     
     //4,clear
     [self clearAllContent];

@@ -25,7 +25,7 @@
  *  MARK:--------------------Text--------------------
  *  调用转到Text;
  */
--(BOOL) containerWord:(NSString*)word;//图谱分词数组;包含某词;
+-(NSDictionary*) containerWord:(NSString*)word;//图谱分词数组;包含某词;
 -(void) addWord:(NSString*)word;
 -(void) addWordArr:(NSArray*)wordArr;
 

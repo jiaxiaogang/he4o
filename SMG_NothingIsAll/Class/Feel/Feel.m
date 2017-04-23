@@ -18,7 +18,7 @@
     NSLog(@"感觉系统收到Input发来的多媒体数据");
     if (inputModel) {
         //1,图片感觉化
-        FeelImgModel *imgModel = [[FeelImgModel alloc] init];
+        FeelObjModel *imgModel = [[FeelObjModel alloc] init];
         imgModel.img = [self feelForImg:inputModel.img];
         
         //2,声音感觉化
@@ -30,11 +30,7 @@
         textModel.text = [self feelForText:inputModel.text];
         textModel.attributes = [[NSMutableDictionary alloc] init];
         
-        //4,感觉模型
-        FeelModel *model = [[FeelModel alloc] init];
-        
-        
-        [[SMG sharedInstance].understand commitFeelModel:model];
+        [[SMG sharedInstance].understand commitWithFeelModelArr:@[imgModel,audioModel,textModel]];
     }
 }
 

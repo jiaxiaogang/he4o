@@ -11,7 +11,7 @@
 /**
  *  MARK:--------------------感觉码 模型--------------------
  */
-@class FeelValueModel,FeelImgModel,FeelAudioModel,FeelTextModel;
+@class FeelValueModel,FeelAudioModel,FeelTextModel;
 @interface FeelModel : NSObject
 
 @property (assign, nonatomic) NSInteger feelId;

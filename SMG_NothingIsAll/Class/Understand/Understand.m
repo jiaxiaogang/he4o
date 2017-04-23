@@ -52,40 +52,42 @@
         return;
     }
     
-    //2,收集记忆数据
+    //2,收集数据
     NSMutableDictionary *memDic = [[NSMutableDictionary alloc] init];
-    NSString *newWordArr = nil;
+    __block NSArray *findNewWordArr = nil;
+    __block NSArray *findOldWordArr = nil;
+    
+    
     for (FeelModel *model in modelArr) {
-        
-        if ([model isKindOfClass:[FeelTextModel class]]) {
+        if ([model isKindOfClass:[FeelTextModel class]]) {//字符串输入
             FeelTextModel *ftModel = (FeelTextModel*)model;
-            //1,MK 分词:最近三条记忆;
-            newWordArr = [self getNewWordArrAtText:ftModel.text];
-            //2,存记忆
-            NSDictionary *mem = [NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(ftModel.text),@"text",doModel,@"doModel", nil];
-            [[SMG sharedInstance].store.memStore addMemory:mem];
+            //1,收集分词数据
+            [self getWordArrAtText:ftModel.text outBlock:^(NSArray *oldWordArr, NSArray *newWordArr) {
+                findNewWordArr = newWordArr;
+                findOldWordArr = oldWordArr;
+            }];
             
-            //2,存MK
+            //2,收集记忆数据
+            [memDic setObject:STRTOOK(ftModel.text) forKey:@"text"];
+        }else if ([model isKindOfClass:[FeelObjModel class]]) {//图像输入物体
             
-            //3,Understand
+        }else if ([model isKindOfClass:[FeelDoModel class]]) {//图像输入行为
             
-            //2,行为<-->文字
-            //2.1,有分词时,优先分词;
-            //2.2,把行为与文字同时出现的规律记下来;等下次再出现行为文字变化,或出现文字,行为变化时;再分析do<-->word的关系;
-            
-            //3,联想
-            
-            
-        }else if ([model isKindOfClass:[FeelObjModel class]]) {
-            //图像输入物体
-        }else if ([model isKindOfClass:[FeelDoModel class]]) {
-            //图像输入行为
         }
         
-        
-        //3,存MK
-        [[SMG sharedInstance].store.mkStore addWord:checkWord];
+        //3,存数据
+        [[SMG sharedInstance].store.mkStore addWordArr:findNewWordArr];
+        [[SMG sharedInstance].store.memStore addMemory:memDic];
     }
+    
+    
+    //3,Understand
+    
+    //2,行为<-->文字
+    //2.1,有分词时,优先分词;
+    //2.2,把行为与文字同时出现的规律记下来;等下次再出现行为文字变化,或出现文字,行为变化时;再分析do<-->word的关系;
+    
+    //3,联想
 }
 
 /**
@@ -93,7 +95,7 @@
  *  用于text的理解
  */
 //MARK:----------找到新的分词----------
--(NSArray*) getNewWordArrAtText:(NSString*)text{
+-(void) getWordArrAtText:(NSString*)text outBlock:(void(^)(NSArray *oldWordArr,NSArray *newWordArr))outBlock{
     //计算机器械;(5字4词)
     //是什么;(3字2词)(其中'是'为单字词)
     //要我说;(3字3词)单字词
@@ -101,19 +103,26 @@
     
     //1,数据
     text = STRTOOK(text);
-    NSMutableArray *mArr = [[NSMutableArray alloc] init];
+    NSMutableArray *oldArr = [[NSMutableArray alloc] init];
+    NSMutableArray *newArr = [[NSMutableArray alloc] init];
     //2,循环找text中的新词
     for (int i = 0; i < text.length - 1; i++) {
         //双字词分析;
         NSString *checkWord = [text substringWithRange:NSMakeRange(i, 2)];
-        if (![[SMG sharedInstance].store.mkStore containerWord:checkWord]) {
+        NSDictionary *findLocalWord = [[SMG sharedInstance].store.mkStore containerWord:checkWord];
+        if (findLocalWord) {
+            [oldArr addObject:findLocalWord];
+        }else{
             NSArray *findWordFromMem = [[SMG sharedInstance].store searchMemStoreContainerText:checkWord limit:3];
             if (findWordFromMem && findWordFromMem.count >= 3) {//只有达到三次听到的词;才认为是一个词;
-                [mArr addObject:checkWord];
+                [newArr addObject:checkWord];
             }
         }
     }
-    return mArr;
+    //3,返回数据
+    if (outBlock) {
+        outBlock(oldArr,newArr);
+    }
 }
 
 //MARK:----------找到新的逻辑----------
@@ -149,7 +158,9 @@
     NSMutableArray *newWords = [[NSMutableArray alloc] init];
     for (int i = 0 ; i < memArr.count; i++) {
         NSDictionary *mem = memArr[memArr.count - i - 1];
-        [newWords addObjectsFromArray:[self getNewWordArrAtText:[mem objectForKey:@"text"]]];
+        [self getWordArrAtText:[mem objectForKey:@"text"] outBlock:^(NSArray *oldWordArr, NSArray *newWordArr) {
+            [newWords addObjectsFromArray:newWordArr];
+        }];
     }
     //2,存MK
     [[SMG sharedInstance].store.mkStore addWordArr:newWords];

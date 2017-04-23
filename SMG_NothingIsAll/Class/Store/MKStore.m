@@ -32,7 +32,7 @@
  *  MARK:--------------------Text--------------------
  *  调用转到Text;
  */
--(BOOL) containerWord:(NSString*)word{
+-(NSDictionary*) containerWord:(NSString*)word{
     return [self.textStore getSingleWordWithText:STRTOOK(word)];
 }
 
