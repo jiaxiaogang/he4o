@@ -29,7 +29,6 @@
  *  注:找出逻辑关系的规律,将其记录;
  *
  */
-@class FeelModel;
 @interface Understand : NSObject
 
 
@@ -39,29 +38,11 @@
 
 -(id) init;
 
-//使用信息对应行为输入;
+
+/**
+ *  MARK:--------------------Feel->Understand->Store--------------------
+ */
 -(void) commitWithFeelModelArr:(NSArray*)modelArr;
-
-//MARK:--------------------开始思考人生--------------------
--(void) startUnderstand;
-
-
-/**
- *  MARK:--------------------text部分--------------------
- *  用于text的理解
- */
-//MARK:--------------------text部分--------------------
--(NSArray*) analyzeText:(NSString*)text;
-
-
-/**
- *  MARK:--------------------行为<-->文字--------------------
- */
-
-
-
-
-
 
 
 

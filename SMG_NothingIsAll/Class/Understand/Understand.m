@@ -65,7 +65,17 @@
             //2,存MK
             
             //3,Understand
-            [[SMG sharedInstance].understand startUnderstand];
+            //1,分词:最近三条记忆;
+            NSArray *memArr = [[SMG sharedInstance].store.memStore getMemoryContainsWhereDic:nil limit:3];
+            for (int i = 0 ; i < memArr.count; i++) {
+                NSDictionary *mem = memArr[memArr.count - i - 1];
+                [self analyzeText:[mem objectForKey:@"text"]];
+            }
+            //2,行为<-->文字
+            //2.1,有分词时,优先分词;
+            //2.2,把行为与文字同时出现的规律记下来;等下次再出现行为文字变化,或出现文字,行为变化时;再分析do<-->word的关系;
+            
+            //3,联想
             
             
         }else if ([feelModel isKindOfClass:[FeelImgModel class]]) {
@@ -74,22 +84,6 @@
             //声音输入
         }
     }
-}
-
-
-//MARK:--------------------开始思考人生--------------------
--(void) startUnderstand{
-    //1,分词:最近三条记忆;
-    NSArray *memArr = [[SMG sharedInstance].store.memStore getMemoryContainsWhereDic:nil limit:3];
-    for (int i = 0 ; i < memArr.count; i++) {
-        NSDictionary *mem = memArr[memArr.count - i - 1];
-        [self analyzeText:[mem objectForKey:@"text"]];
-    }
-    //2,行为<-->文字
-    //2.1,有分词时,优先分词;
-    //2.2,把行为与文字同时出现的规律记下来;等下次再出现行为文字变化,或出现文字,行为变化时;再分析do<-->word的关系;
-    
-    //3,联想
 }
 
 /**
