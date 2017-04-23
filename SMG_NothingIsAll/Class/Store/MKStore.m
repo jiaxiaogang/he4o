@@ -25,6 +25,8 @@
     self = [super init];
     if (self) {
         self.textStore = [[TextStore alloc] init];
+        self.objStore = [[ObjStore alloc] init];
+        self.doStore = [[DoStore alloc] init];
     }
     return self;
 }

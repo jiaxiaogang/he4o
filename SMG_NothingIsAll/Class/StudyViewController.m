@@ -168,8 +168,12 @@
     FeelTextModel *feelTextModel = [[FeelTextModel alloc] init];
     feelTextModel.text = self.inputTV.text;
     
+    //3,objModel
+    FeelObjModel *objModel = [[FeelObjModel alloc] init];
+    objModel.name = self.targetTF.text;
+    
     //3,commit
-    [[SMG sharedInstance].understand commitWithFeelModelArr:@[doModel,feelTextModel]];
+    [[SMG sharedInstance].understand commitWithFeelModelArr:@[doModel,feelTextModel,objModel]];
     
     //4,clear
     [self clearAllContent];
