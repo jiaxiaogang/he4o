@@ -84,8 +84,8 @@
  *  MARK:--------------------addWord--------------------
 
  */
--(void) addWord:(NSString*)word;
--(void) addWordArr:(NSArray*)wordArr;
+-(NSDictionary*) addWord:(NSString*)word;
+-(NSMutableArray*) addWordArr:(NSArray*)wordArr;
 
 
 @end

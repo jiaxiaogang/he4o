@@ -7,11 +7,17 @@
 //
 
 #import "Store.h"
+
+//Mem
 #import "MemStore.h"
-#import "MKStore.h"
+
+//Logic
 #import "LogicStore.h"
 
 
-//Text
+//MK
+#import "MKStore.h"
 #import "TextStore.h"
 #import "TextStoreUtils.h"
+#import "ObjStore.h"
+#import "DoStore.h"

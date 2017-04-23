@@ -67,26 +67,33 @@
 /**
  *  MARK:--------------------addItem--------------------
  */
--(void) addItem:(NSString*)itemName{
+-(NSDictionary*) addItem:(NSString*)itemName{
     //去重
     if (itemName) {
         NSNumber *itemId = @([self createItemId]);
         NSDictionary *item = [NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(itemName),@"itemName",itemId,@"itemId", nil];
         [self.dataArr addObject:item];
         [self saveToLocal];
+        return item;
     }
+    return nil;
 }
--(void) addItemNameArr:(NSArray*)itemNameArr{
+
+-(NSMutableArray*) addItemNameArr:(NSArray*)itemNameArr{
     //去重
+    NSMutableArray *valueArr = nil;
     if (ARRISOK(itemNameArr)) {
         NSInteger itemId = [self createItemId:itemNameArr.count];//申请itemNameArr.count个itemId
         for (NSString *itemName in itemNameArr) {
+            if (valueArr == nil) valueArr = [[NSMutableArray alloc] init];
             NSDictionary *item = [NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(itemName),@"itemName",@(itemId),@"itemId", nil];
-            [self.dataArr addObject:item];
+            [valueArr addObject:item];
             itemId ++;
         }
+        [self.dataArr addObjectsFromArray:valueArr];
         [self saveToLocal];
     }
+    return valueArr;
 }
 
 

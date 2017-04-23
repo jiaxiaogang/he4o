@@ -22,7 +22,7 @@
 /**
  *  MARK:--------------------addItem--------------------
  */
--(void) addItem:(NSString*)itemName;
--(void) addItemNameArr:(NSArray*)itemNameArr;
+-(NSDictionary*) addItem:(NSString*)itemName;
+-(NSMutableArray*) addItemNameArr:(NSArray*)itemNameArr;
 
 @end

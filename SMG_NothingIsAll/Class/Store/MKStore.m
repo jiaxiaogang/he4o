@@ -14,6 +14,8 @@
 @interface MKStore ()
 
 @property (strong,nonatomic) TextStore *textStore;       //字符串 处理能力
+@property (strong,nonatomic) ObjStore *objStore;
+@property (strong,nonatomic) DoStore *doStore;
 
 @end
 
@@ -36,12 +38,34 @@
     return [self.textStore getSingleWordWithText:STRTOOK(word)];
 }
 
--(void) addWord:(NSString*)word{
-    [self.textStore addWord:STRTOOK(word)];
+-(NSDictionary*) addWord:(NSString*)word{
+    return [self.textStore addWord:STRTOOK(word)];
 }
 
--(void) addWordArr:(NSArray*)wordArr{
-    [self.textStore addWordArr:wordArr];
+-(NSMutableArray*) addWordArr:(NSArray*)wordArr{
+    return [self.textStore addWordArr:wordArr];
+}
+
+/**
+ *  MARK:--------------------objModel--------------------
+ */
+-(NSDictionary*) addObj:(NSString*)itemName{
+    return [self.objStore addItem:itemName];
+}
+
+-(NSMutableArray*) addObjArr:(NSArray*)itemNameArr{
+    return [self.objStore addItemNameArr:itemNameArr];
+}
+
+/**
+ *  MARK:--------------------doModel--------------------
+ */
+-(NSDictionary*) addDo:(NSString*)itemName{
+    return [self.doStore addItem:itemName];
+}
+
+-(NSMutableArray*) addDoArr:(NSArray*)itemNameArr{
+    return [self.doStore addItemNameArr:itemNameArr];
 }
 
 @end

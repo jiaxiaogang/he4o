@@ -243,27 +243,34 @@
 /**
  *  MARK:--------------------add--------------------
  */
--(void) addWord:(NSString*)word{
+-(NSDictionary*) addWord:(NSString*)word{
     //去重
     if (word) {
         NSNumber *wordId = @([self createWordId]);
         NSDictionary *item = [NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(word),@"word",wordId,@"wordId", nil];
         [self.wordArr addObject:item];
         [self saveToLocal];
+        return item;
     }
+    return nil;
 }
 
--(void) addWordArr:(NSArray*)wordArr{
+-(NSMutableArray*) addWordArr:(NSArray*)wordArr{
     //去重
+    NSMutableArray *valueArr = nil;
     if (ARRISOK(wordArr)) {
         NSInteger wordId = [self createWordId:wordArr.count];//申请wordArr.count个wordId
         for (NSString *word in wordArr) {
+            if (valueArr == nil) valueArr = [[NSMutableArray alloc] init];
             NSDictionary *item = [NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(word),@"word",@(wordId),@"wordId", nil];
-            [self.wordArr addObject:item];
+            [valueArr addObject:item];
             wordId ++;
         }
+        //save
+        [self.wordArr addObjectsFromArray:valueArr];
         [self saveToLocal];
     }
+    return valueArr;
 }
 
 

@@ -26,8 +26,23 @@
  *  调用转到Text;
  */
 -(NSDictionary*) containerWord:(NSString*)word;//图谱分词数组;包含某词;
--(void) addWord:(NSString*)word;
--(void) addWordArr:(NSArray*)wordArr;
+-(NSDictionary*) addWord:(NSString*)word;
+-(NSMutableArray*) addWordArr:(NSArray*)wordArr;
+
+
+/**
+ *  MARK:--------------------objModel--------------------
+ */
+-(NSDictionary*) addObj:(NSString*)itemName;
+-(NSMutableArray*) addObjArr:(NSArray*)itemNameArr;
+
+
+/**
+ *  MARK:--------------------doModel--------------------
+ */
+-(NSDictionary*) addDo:(NSString*)itemName;
+-(NSMutableArray*) addDoArr:(NSArray*)itemNameArr;
+
 
 
 
