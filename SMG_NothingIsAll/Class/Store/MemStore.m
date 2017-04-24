@@ -115,7 +115,7 @@
         BOOL isEqual = true;
         //对比所有value;
         for (NSString *key in whereDic.allKeys) {
-            if (![SMGUtils compareItemA:[item objectForKey:key] itemB:[whereDic objectForKey:key]]) {
+            if (![SMGUtils compareItemA:[item objectForKey:key] itemB:[whereDic objectForKey:key]]) {//xxxbug这里对比了NSArray和NSString;
                 isEqual = false;
             }
         }

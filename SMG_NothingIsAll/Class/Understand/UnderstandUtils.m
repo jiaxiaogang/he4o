@@ -54,6 +54,20 @@
  *  MARK:--------------------从'记忆'中找到需要'理解'处理的数据--------------------
  *  value:中的元素数据格式:{unknowObjArr=[@"2",@"3"],unknowDoArr=[@"2",@"3"],unknowWordArr=[@"苹果",@"吃"]}
  */
++(NSMutableArray*) getNeedUnderstandMemoryWithObjId:(NSString*)objId{
+    if (STRISOK(objId)) {
+        return [self getNeedUnderstandMemoryWithWhereDic:[NSDictionary dictionaryWithObjectsAndKeys:objId,@"obj", nil]];
+    }
+    return nil;
+}
+
++(NSMutableArray*) getNeedUnderstandMemoryWithDoId:(NSString*)doId{
+    if (STRISOK(doId)) {
+        return [self getNeedUnderstandMemoryWithWhereDic:[NSDictionary dictionaryWithObjectsAndKeys:doId,@"do", nil]];
+    }
+    return nil;
+}
+
 +(NSMutableArray*) getNeedUnderstandMemoryWithWhereDic:(NSDictionary*)whereDic{
     //1,申请收集数据的数组
     __block NSMutableArray *unknownWordArr = [[NSMutableArray alloc] init];

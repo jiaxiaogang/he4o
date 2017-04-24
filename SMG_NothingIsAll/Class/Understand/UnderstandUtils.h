@@ -23,6 +23,8 @@
  *  MARK:--------------------从'记忆'中找到需要'理解'处理的数据--------------------
  *  value:中的元素数据格式:{unknowObjArr=[@"2",@"3"],unknowDoArr=[@"2",@"3"],unknowWordArr=[@"苹果",@"吃"]}
  */
++(NSMutableArray*) getNeedUnderstandMemoryWithObjId:(NSString*)objId;
++(NSMutableArray*) getNeedUnderstandMemoryWithDoId:(NSString*)doId;
 +(NSMutableArray*) getNeedUnderstandMemoryWithWhereDic:(NSDictionary*)whereDic;//获取需要理解的memArr(未理解的元素<=3 && 句子分词完整)
 
 @end

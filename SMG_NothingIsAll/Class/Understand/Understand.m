@@ -107,6 +107,12 @@
     
     //4,Logic数据
     //4.1,行为<-->文字
+    for (NSString *objId in memObjArr) {
+        [self understandObj:objId atText:@"" outBlock:^(NSArray *oldWordArr, NSArray *newWordArr) {
+            
+        }];
+    }
+    
     //4.2,把行为与文字同时出现的规律记下来;等下次再出现行为文字变化,或出现文字,行为变化时;再分析do<-->word的关系;
     
     
@@ -122,14 +128,14 @@
 }
 
 //MARK:----------找obj的对应Text----------
--(void) understandObj:(NSInteger)objId atText:(NSString*)text outBlock:(void(^)(NSArray *oldWordArr,NSArray *newWordArr))outBlock{
+-(void) understandObj:(NSString*)objId atText:(NSString*)text outBlock:(void(^)(NSArray *oldWordArr,NSArray *newWordArr))outBlock{
     //1,是否已被理解
-    NSDictionary *where = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%ld",(long)objId],@"objId", nil];
+    NSDictionary *where = [NSDictionary dictionaryWithObjectsAndKeys:objId,@"itemId", nil];
     if ([[SMG sharedInstance].store.mkStore containerWordWithWhere:where]) {
         return;
     }
     //2,找相关的记忆数据
-    NSMutableArray *dataArr = [UnderstandUtils getNeedUnderstandMemoryWithWhereDic:where];
+    NSMutableArray *dataArr = [UnderstandUtils getNeedUnderstandMemoryWithObjId:objId];
     //3,数据分解([{unknowObjArr=[@"2",@"3"],unknowDoArr=[@"2",@"3"],unknowWordArr=[@"苹果",@"吃"]}])
     NSMutableArray *objArrs = [[NSMutableArray alloc] init];
     NSMutableArray *doArrs = [[NSMutableArray alloc] init];
