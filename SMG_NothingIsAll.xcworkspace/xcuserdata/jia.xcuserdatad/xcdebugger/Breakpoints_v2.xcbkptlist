@@ -15,7 +15,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "158"
             endingLineNumber = "158"
-            landmarkName = "-understandObj:atText:outBlock:"
+            landmarkName = "-getNewLogicArrAtText:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

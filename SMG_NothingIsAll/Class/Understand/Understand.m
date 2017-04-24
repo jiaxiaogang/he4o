@@ -130,9 +130,43 @@
     }
     //2,找相关的记忆数据
     NSMutableArray *dataArr = [UnderstandUtils getNeedUnderstandMemoryWithWhereDic:where];
+    //3,数据分解([{unknowObjArr=[@"2",@"3"],unknowDoArr=[@"2",@"3"],unknowWordArr=[@"苹果",@"吃"]}])
+    NSMutableArray *objArrs = [[NSMutableArray alloc] init];
+    NSMutableArray *doArrs = [[NSMutableArray alloc] init];
+    NSMutableArray *wordArrs = [[NSMutableArray alloc] init];
     for (NSDictionary *item in dataArr) {
-        //item   {unknowObjArr=[@"2",@"3"],unknowDoArr=[@"2",@"3"],unknowWordArr=[@"苹果",@"吃"]}
+        [objArrs addObject:[item objectForKey:@"unknowObjArr"]];
+        [doArrs addObject:[item objectForKey:@"unknowDoArr"]];
+        [wordArrs addObject:[item objectForKey:@"unknowWordArr"]];
     }
+    //4,数据比对obj<->word
+    for (NSArray *objArrItem in objArrs) {
+        for (NSString *objId in objArrItem) {
+            NSMutableArray *linkArr = nil;
+            for (NSArray *wordArrItem in wordArrs) {
+                if (linkArr == nil) {
+                    linkArr = [NSMutableArray arrayWithArray:wordArrItem];
+                }else{
+                    if (linkArr.count == 0) {
+                        NSLog(@"此objId:%@__对应有空words",objId);
+                        break;
+                    }else{
+                        for (NSInteger i = 0,max = linkArr.count; i < max; i++) {
+                            if (![wordArrItem containsObject:linkArr[i]]) {
+                                [linkArr removeObjectAtIndex:i];
+                                max --;
+                                i --;
+                            }
+                        }
+                    }
+                }
+            }
+            if (linkArr.count == 1) {
+                NSLog(@"对应成功objId:%@___word:%@",objId,linkArr[0]);
+            }
+        }
+    }
+    
     
     
     
