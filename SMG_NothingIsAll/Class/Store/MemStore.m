@@ -116,6 +116,7 @@
         //对比所有value;
         for (NSString *key in whereDic.allKeys) {
             if (![SMGUtils compareItemA:[item objectForKey:key] itemB:[whereDic objectForKey:key]]) {//这里的where里do的话;只有doId;而记忆里其实还有fromId和toId;xxx未来的BUG;
+                //此处对比了do数组和feelDoModel数组;所以有问题;
                 isEqual = false;
             }
         }

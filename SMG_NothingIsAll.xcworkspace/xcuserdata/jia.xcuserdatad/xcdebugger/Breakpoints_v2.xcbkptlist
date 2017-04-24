@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/Class/Understand/Understand.m"
-            timestampString = "514693277.792863"
+            timestampString = "514740719.096224"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "198"
-            endingLineNumber = "198"
+            startingLineNumber = "281"
+            endingLineNumber = "281"
             landmarkName = "-getNewLogicArrAtText:"
             landmarkType = "7">
          </BreakpointContent>
@@ -25,29 +25,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/Class/Store/TextStore/TextStore.m"
-            timestampString = "514732802.90642"
+            filePath = "SMG_NothingIsAll/Class/Understand/Understand.m"
+            timestampString = "514740719.096224"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "112"
-            endingLineNumber = "112"
-            landmarkName = "-getSingleWordWithWhere:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/Class/Understand/UnderstandUtils.m"
-            timestampString = "514733020.46065"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "120"
-            endingLineNumber = "120"
-            landmarkName = "+getNeedUnderstandMemoryWithWhereDic:"
+            startingLineNumber = "222"
+            endingLineNumber = "222"
+            landmarkName = "-understandDo:outBlock:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -58,28 +42,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/Class/Understand/Understand.m"
-            timestampString = "514737559.840636"
+            timestampString = "514740719.096224"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "120"
-            endingLineNumber = "120"
-            landmarkName = "-commitWithFeelModelArr:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/Class/Understand/Understand.m"
-            timestampString = "514737560.780497"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "110"
-            endingLineNumber = "110"
-            landmarkName = "-commitWithFeelModelArr:"
+            startingLineNumber = "224"
+            endingLineNumber = "224"
+            landmarkName = "-understandDo:outBlock:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

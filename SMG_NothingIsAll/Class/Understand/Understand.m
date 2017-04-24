@@ -86,15 +86,21 @@
         }else if ([model isKindOfClass:[FeelDoModel class]]) {//图像输入行为
             FeelDoModel *doModel = (FeelDoModel*)model;
             //3.2,如果doModel的fromMKId和toMKId是指向的名字;则这里修正为itemId;
+            NSMutableDictionary *memDoItem = [[NSMutableDictionary alloc] init];
             for (NSDictionary *objItem in findObjArr) {
                 if ([STRTOOK(doModel.fromMKId) isEqualToString:[objItem objectForKey:@"itemName"]]) {
-                    doModel.fromMKId = STRTOOK([objItem objectForKey:@"itemId"]);
+                    [memDoItem setObject:STRTOOK([objItem objectForKey:@"itemId"]) forKey:@"fromMKId"];
                 }
                 if ([STRTOOK(doModel.toMKId) isEqualToString:[objItem objectForKey:@"itemName"]]) {
-                    doModel.toMKId = STRTOOK([objItem objectForKey:@"itemId"]);
+                    [memDoItem setObject:STRTOOK([objItem objectForKey:@"itemId"]) forKey:@"toMKId"];
                 }
             }
-            [memDoArr addObject:doModel];
+            for (NSDictionary *findDoItem in findDoArr) {
+                if ([STRTOOK(doModel.doType) isEqualToString:[findDoItem objectForKey:@"itemName"]]) {
+                    [memDoItem setObject:STRTOOK([findDoItem objectForKey:@"itemId"]) forKey:@"doMKId"];
+                }
+            }
+            [memDoArr addObject:memDoItem];
         }
     }
     [memDic setObject:memDoArr forKey:@"do"];
@@ -117,8 +123,8 @@
         }];
     }
     //5,MK_对应逻辑(行为<-->文字)(把行为与文字同时出现的规律记下来;等下次再出现行为文字变化,或出现文字,行为变化时;再分析do<-->word的关系;)
-    for (NSString *doId in memDoArr) {
-        [self understandDo:doId outBlock:^(NSMutableDictionary *linkDic) {
+    for (NSDictionary *findDoItem in findDoArr) {
+        [self understandDo:[findDoItem objectForKey:@"itemId"] outBlock:^(NSMutableDictionary *linkDic) {
             if (linkDic) {
                 for (NSString *key in linkDic.allKeys) {
                     [[SMG sharedInstance].store.mkStore addWord:key withObjId:nil  withDoId:[linkDic objectForKey:key]];
