@@ -243,16 +243,32 @@
 /**
  *  MARK:--------------------add--------------------
  */
--(NSDictionary*) addWord:(NSString*)word{
-    //去重
-    if (word) {
-        NSString *itemId = [NSString stringWithFormat:@"%ld",[self createItemId]];
-        NSDictionary *item = [NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(word),@"word",itemId,@"itemId", nil];
-        [self.wordArr addObject:item];
-        [self saveToLocal];
-        return item;
+-(NSDictionary*) addWord:(NSString*)word withObjId:(NSString*)objId withDoId:(NSString*)doId{
+    if (!STRISOK(word)) {
+        return nil;
     }
-    return nil;
+    NSMutableDictionary *newItem = [[NSMutableDictionary alloc] init];
+    //1,找本地重复的
+    NSDictionary *localItem = [self getSingleWordWithText:word];
+    //2,word,itemId
+    if (localItem) {
+        [newItem setDictionary:localItem];
+        [self.wordArr removeObject:localItem];
+    }else{
+        NSString *itemId = [NSString stringWithFormat:@"%ld",[self createItemId]];
+        [newItem setObject:word forKey:@"word"];
+        [newItem setObject:itemId forKey:@"itemId"];
+    }
+    //3,objId,doId
+    if (STRISOK(objId)) [newItem setObject:objId forKey:@"objId"];
+    if (STRISOK(doId)) [newItem setObject:objId forKey:@"doId"];
+    //4,存新 & 返回;
+    [self.wordArr addObject:newItem];
+    [self saveToLocal];
+    return newItem;
+}
+-(NSDictionary*) addWord:(NSString*)word{
+    return [self addWord:word withObjId:nil withDoId:nil];
 }
 
 -(NSMutableArray*) addWordArr:(NSArray*)wordArr{

@@ -29,7 +29,7 @@
 -(NSDictionary*) containerWordWithWhere:(NSDictionary*)where;//根据其它字段找某词;
 -(NSDictionary*) addWord:(NSString*)word;
 -(NSMutableArray*) addWordArr:(NSArray*)wordArr;
-
+-(NSDictionary*) addWord:(NSString*)word withObjId:(NSString*)objId withDoId:(NSString*)doId;
 
 /**
  *  MARK:--------------------objModel--------------------

@@ -86,6 +86,7 @@
  */
 -(NSDictionary*) addWord:(NSString*)word;
 -(NSMutableArray*) addWordArr:(NSArray*)wordArr;
+-(NSDictionary*) addWord:(NSString*)word withObjId:(NSString*)objId withDoId:(NSString*)doId;
 
 
 @end

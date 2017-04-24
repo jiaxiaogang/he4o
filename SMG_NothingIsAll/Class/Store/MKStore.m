@@ -52,6 +52,10 @@
     return [self.textStore addWordArr:wordArr];
 }
 
+-(NSDictionary*) addWord:(NSString*)word withObjId:(NSString*)objId withDoId:(NSString*)doId{
+    return [self.textStore addWord:word withObjId:objId withDoId:doId];
+}
+
 /**
  *  MARK:--------------------objModel--------------------
  */

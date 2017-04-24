@@ -105,15 +105,31 @@
     [memDic setObject:memObjArr forKey:@"obj"];
     [[SMG sharedInstance].store.memStore addMemory:memDic];
     
-    //4,Logic数据
-    //4.1,行为<-->文字
+    
+    //4,MK_对应逻辑(实物<-->文字)
     for (NSString *objId in memObjArr) {
-        [self understandObj:objId atText:@"" outBlock:^(NSArray *oldWordArr, NSArray *newWordArr) {
-            
+        [self understandObj:objId atText:@"" outBlock:^(NSMutableDictionary *linkDic) {
+            if (linkDic) {
+                for (NSString *key in linkDic.allKeys) {
+                    [[SMG sharedInstance].store.mkStore addWord:key withObjId:[linkDic objectForKey:key]  withDoId:nil];
+                }
+            }
+        }];
+    }
+    //5,MK_对应逻辑(行为<-->文字)(把行为与文字同时出现的规律记下来;等下次再出现行为文字变化,或出现文字,行为变化时;再分析do<-->word的关系;)
+    for (NSString *doId in memDoArr) {
+        [self understandDo:doId outBlock:^(NSMutableDictionary *linkDic) {
+            if (linkDic) {
+                for (NSString *key in linkDic.allKeys) {
+                    [[SMG sharedInstance].store.mkStore addWord:key withObjId:nil  withDoId:[linkDic objectForKey:key]];
+                }
+            }
         }];
     }
     
-    //4.2,把行为与文字同时出现的规律记下来;等下次再出现行为文字变化,或出现文字,行为变化时;再分析do<-->word的关系;
+    //4.3,实物的行为逻辑;
+    
+    //4,Logic数据
     
     
 }
@@ -127,10 +143,15 @@
     //有三次被孤立时,采用;
 }
 
-//MARK:----------找obj的对应Text----------
--(void) understandObj:(NSString*)objId atText:(NSString*)text outBlock:(void(^)(NSArray *oldWordArr,NSArray *newWordArr))outBlock{
+/**
+ *  MARK:--------------------找obj的对应Text--------------------
+ *  参数text:当前理解中记忆的text;先不需要;从记忆里活取;
+ */
+-(void) understandObj:(NSString*)objId atText:(NSString*)text outBlock:(void(^)(NSMutableDictionary *linkDic))outBlock{
+    if (!STRISOK(objId)) return;
+    NSMutableDictionary *valueDic = nil;
     //1,是否已被理解
-    NSDictionary *where = [NSDictionary dictionaryWithObjectsAndKeys:objId,@"itemId", nil];
+    NSDictionary *where = [NSDictionary dictionaryWithObjectsAndKeys:objId,@"objId", nil];
     if ([[SMG sharedInstance].store.mkStore containerWordWithWhere:where]) {
         return;
     }
@@ -169,18 +190,74 @@
             }
             if (linkArr.count == 1) {
                 NSLog(@"对应成功objId:%@___word:%@",objId,linkArr[0]);
+                if (valueDic == nil) {
+                    valueDic = [[NSMutableDictionary alloc] init];
+                }
+                [valueDic setObject:objId forKey:linkArr[0]];
             }
         }
     }
-    
-    
-    
-    
+    //5,返回数据;
+    if (outBlock) {
+        outBlock (valueDic);
+    }
 }
 
 //MARK:----------找do的对应Text----------
--(void) understandDo:(NSInteger)doId atText:(NSString*)text outBlock:(void(^)(NSArray *oldWordArr,NSArray *newWordArr))outBlock{
-    
+-(void) understandDo:(NSString*)doId outBlock:(void(^)(NSMutableDictionary *linkDic))outBlock{
+    if (!STRISOK(doId)) return;
+    NSMutableDictionary *valueDic = nil;
+    //1,是否已被理解
+    NSDictionary *where = [NSDictionary dictionaryWithObjectsAndKeys:doId,@"doId", nil];
+    if ([[SMG sharedInstance].store.mkStore containerWordWithWhere:where]) {
+        return;
+    }
+    //2,找相关的记忆数据
+    NSMutableArray *dataArr = [UnderstandUtils getNeedUnderstandMemoryWithDoId:doId];
+    //3,数据分解([{unknowObjArr=[@"2",@"3"],unknowDoArr=[@"2",@"3"],unknowWordArr=[@"苹果",@"吃"]}])
+    NSMutableArray *objArrs = [[NSMutableArray alloc] init];
+    NSMutableArray *doArrs = [[NSMutableArray alloc] init];
+    NSMutableArray *wordArrs = [[NSMutableArray alloc] init];
+    for (NSDictionary *item in dataArr) {
+        [objArrs addObject:[item objectForKey:@"unknowObjArr"]];
+        [doArrs addObject:[item objectForKey:@"unknowDoArr"]];
+        [wordArrs addObject:[item objectForKey:@"unknowWordArr"]];
+    }
+    //4,数据比对do<->word
+    for (NSArray *doArrItem in doArrs) {
+        for (NSString *doId in doArrItem) {
+            NSMutableArray *linkArr = nil;
+            for (NSArray *wordArrItem in wordArrs) {
+                if (linkArr == nil) {
+                    linkArr = [NSMutableArray arrayWithArray:wordArrItem];
+                }else{
+                    if (linkArr.count == 0) {
+                        NSLog(@"此doId:%@__对应有空words",doId);
+                        break;
+                    }else{
+                        for (NSInteger i = 0,max = linkArr.count; i < max; i++) {
+                            if (![wordArrItem containsObject:linkArr[i]]) {
+                                [linkArr removeObjectAtIndex:i];
+                                max --;
+                                i --;
+                            }
+                        }
+                    }
+                }
+            }
+            if (linkArr.count == 1) {
+                NSLog(@"对应成功doId:%@___word:%@",doId,linkArr[0]);
+                if (valueDic == nil) {
+                    valueDic = [[NSMutableDictionary alloc] init];
+                }
+                [valueDic setObject:linkArr[0] forKey:doId];
+            }
+        }
+    }
+    //5,返回数据;
+    if (outBlock) {
+        outBlock (valueDic);
+    }
 }
 
 
