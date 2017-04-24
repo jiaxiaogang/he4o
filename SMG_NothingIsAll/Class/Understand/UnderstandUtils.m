@@ -9,6 +9,7 @@
 #import "UnderstandUtils.h"
 #import "SMGHeader.h"
 #import "StoreHeader.h"
+#import "FeelHeader.h"
 
 @implementation UnderstandUtils
 
@@ -78,20 +79,21 @@
     NSMutableArray *memArr = [[SMG sharedInstance].store.memStore getMemoryWithWhereDic:whereDic];
     if (memArr) {
         for (NSDictionary *memItem in memArr) {
+            //memItem结构:{do=[feelDoModel],obj=[10,12],text=@"asdf"}
             //条件1,取未理解元素和;不能>3
             if ([memItem objectForKey:@"obj"]) {
-                for (NSDictionary *item in [memItem objectForKey:@"obj"]) {
-                    NSDictionary *where = [NSDictionary dictionaryWithObjectsAndKeys:[item objectForKey:@"itemId"],@"objId", nil];
+                for (NSString *objId in [memItem objectForKey:@"obj"]) {
+                    NSDictionary *where = [NSDictionary dictionaryWithObjectsAndKeys:objId,@"objId", nil];
                     if(![[SMG sharedInstance].store.mkStore containerWordWithWhere:where]){
-                        [unknownObjArr addObject:[item objectForKey:@"itemId"]];
+                        [unknownObjArr addObject:objId];
                     }
                 }
             }
             if ([memItem objectForKey:@"do"]) {
-                for (NSDictionary *item in [memItem objectForKey:@"do"]) {
-                    NSDictionary *where = [NSDictionary dictionaryWithObjectsAndKeys:[item objectForKey:@"itemId"],@"doId", nil];
+                for (FeelDoModel *item in [memItem objectForKey:@"do"]) {
+                    NSDictionary *where = [NSDictionary dictionaryWithObjectsAndKeys:item.doType,@"doId", nil];
                     if(![[SMG sharedInstance].store.mkStore containerWordWithWhere:where]){
-                        [unknownDoArr addObject:[item objectForKey:@"itemId"]];
+                        [unknownDoArr addObject:item.doType];
                     }
                 }
             }

@@ -85,8 +85,8 @@
  *  MARK:--------------------public--------------------
  */
 //精确匹配某词
--(NSDictionary*) getSingleWordWithText:(NSString*)text{
-    return [self getSingleWordWithWhere:[NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(text),@"text", nil]];
+-(NSDictionary*) getSingleWordWithText:(NSString*)word{
+    return [self getSingleWordWithWhere:[NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(word),@"word", nil]];
 }
 
 //获取where的最近一条;(精确匹配)

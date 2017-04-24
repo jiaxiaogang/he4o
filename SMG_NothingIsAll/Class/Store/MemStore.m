@@ -20,7 +20,7 @@
  *  MARK:--------------------记忆流--------------------
  *
  *  结构:
- *      (DIC | Key:word Value:str | Key:wordId Value:NSInteger )注:wordId为主键;
+ *      item0:{do=[feelDoModel],obj=[10,12],text=@"asdf"};
  *
  *  元素:
  *      (有单字词:如:你我他的是啊)(有多字词:如:你好,人民,苹果)
