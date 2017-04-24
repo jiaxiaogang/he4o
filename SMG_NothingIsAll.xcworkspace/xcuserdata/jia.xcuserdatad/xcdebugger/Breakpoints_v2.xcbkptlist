@@ -106,7 +106,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/jia/Desktop/temp/SMG_NothingIsAll_Local/SMG_NothingIsAll/SMG_NothingIsAll/Class/Understand/UnderstandUtils.m"
-                  timestampString = "514693798.64318"
+                  timestampString = "514731127.743276"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "83"
@@ -121,7 +121,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/jia/Desktop/temp/SMG_NothingIsAll_Local/SMG_NothingIsAll/SMG_NothingIsAll/Class/Understand/UnderstandUtils.m"
-                  timestampString = "514693798.646079"
+                  timestampString = "514731127.747221"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "83"
@@ -154,7 +154,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/jia/Desktop/temp/SMG_NothingIsAll_Local/SMG_NothingIsAll/SMG_NothingIsAll/Class/Understand/UnderstandUtils.m"
-                  timestampString = "514693800.600773"
+                  timestampString = "514731127.753372"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "91"
@@ -169,7 +169,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/jia/Desktop/temp/SMG_NothingIsAll_Local/SMG_NothingIsAll/SMG_NothingIsAll/Class/Understand/UnderstandUtils.m"
-                  timestampString = "514693800.603943"
+                  timestampString = "514731127.756162"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "91"
@@ -240,6 +240,22 @@
             startingLineNumber = "177"
             endingLineNumber = "177"
             landmarkName = "-understandObj:atText:outBlock:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SMG_NothingIsAll/Class/Store/MemStore.m"
+            timestampString = "514731189.447326"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "127"
+            endingLineNumber = "127"
+            landmarkName = "-getMemoryWithWhereDic:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

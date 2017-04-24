@@ -56,14 +56,14 @@
  */
 +(NSMutableArray*) getNeedUnderstandMemoryWithObjId:(NSString*)objId{
     if (STRISOK(objId)) {
-        return [self getNeedUnderstandMemoryWithWhereDic:[NSDictionary dictionaryWithObjectsAndKeys:objId,@"obj", nil]];
+        return [self getNeedUnderstandMemoryWithWhereDic:[NSDictionary dictionaryWithObjectsAndKeys:@[objId],@"obj", nil]];
     }
     return nil;
 }
 
 +(NSMutableArray*) getNeedUnderstandMemoryWithDoId:(NSString*)doId{
     if (STRISOK(doId)) {
-        return [self getNeedUnderstandMemoryWithWhereDic:[NSDictionary dictionaryWithObjectsAndKeys:doId,@"do", nil]];
+        return [self getNeedUnderstandMemoryWithWhereDic:[NSDictionary dictionaryWithObjectsAndKeys:@[doId],@"do", nil]];
     }
     return nil;
 }
