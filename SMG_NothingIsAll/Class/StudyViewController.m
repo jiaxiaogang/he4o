@@ -180,6 +180,24 @@
     
 }
 
+- (IBAction)testBtnOnClick:(id)sender {
+    //1,doModel
+    FeelDoModel *doModel = [[FeelDoModel alloc] init];
+    doModel.fromMKId = @"";
+    doModel.toMKId = @"";
+    doModel.doType = @"";
+    
+    //2,feelTextModel
+    FeelTextModel *feelTextModel = [[FeelTextModel alloc] init];
+    feelTextModel.text = @"";
+    
+    //3,objModel
+    FeelObjModel *objModel = [[FeelObjModel alloc] init];
+    objModel.name = @"";
+    
+    //3,commit
+    [[SMG sharedInstance].understand commitWithFeelModelArr:@[doModel,feelTextModel,objModel]];
+}
 
 /**
  *  MARK:--------------------method--------------------

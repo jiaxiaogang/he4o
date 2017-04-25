@@ -219,7 +219,7 @@
                     </constraints>
                 </view>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="V2t-9z-vIC">
-                    <rect key="frame" x="0.0" y="618" width="187.5" height="49"/>
+                    <rect key="frame" x="0.0" y="618" width="123.5" height="49"/>
                     <color key="backgroundColor" red="1" green="0.0" blue="0.0" alpha="0.29999999999999999" colorSpace="calibratedRGB"/>
                     <state key="normal" title="Clear"/>
                     <connections>
@@ -227,42 +227,44 @@
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SKM-HR-TEc">
-                    <rect key="frame" x="187.5" y="618" width="187.5" height="49"/>
+                    <rect key="frame" x="125.5" y="618" width="124" height="49"/>
+                    <color key="backgroundColor" red="0.0" green="1" blue="1" alpha="0.29999999999999999" colorSpace="calibratedRGB"/>
+                    <state key="normal" title="Test"/>
+                    <connections>
+                        <action selector="testBtnOnClick:" destination="-1" eventType="touchUpInside" id="GMG-7r-eBF"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ubu-fy-3me">
+                    <rect key="frame" x="251.5" y="618" width="123.5" height="49"/>
                     <color key="backgroundColor" red="0.0" green="1" blue="0.0" alpha="0.29999999999999999" colorSpace="calibratedRGB"/>
                     <state key="normal" title="Commit"/>
                     <connections>
-                        <action selector="commitBtnOnClick:" destination="-1" eventType="touchUpInside" id="mtf-ps-WJK"/>
+                        <action selector="commitBtnOnClick:" destination="-1" eventType="touchUpInside" id="dtT-aO-y7N"/>
                     </connections>
                 </button>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Nq2-EN-0YG">
-                    <rect key="frame" x="187" y="618" width="1" height="49"/>
-                    <color key="backgroundColor" red="0.93333333333333335" green="0.93333333333333335" blue="0.93333333333333335" alpha="1" colorSpace="calibratedRGB"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="1" id="bAE-Hi-T8Q"/>
-                    </constraints>
-                </view>
             </subviews>
             <color key="backgroundColor" red="0.93333333333333335" green="0.93333333333333335" blue="0.93333333333333335" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
                 <constraint firstAttribute="bottom" secondItem="V2t-9z-vIC" secondAttribute="bottom" id="4IB-s0-oFC"/>
+                <constraint firstItem="ubu-fy-3me" firstAttribute="width" secondItem="SKM-HR-TEc" secondAttribute="width" id="6jX-Vd-dWD"/>
                 <constraint firstItem="V2t-9z-vIC" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="8it-kw-PC3"/>
                 <constraint firstItem="RcJ-Mn-RNd" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="40" id="94v-pu-hSl"/>
-                <constraint firstAttribute="bottom" secondItem="Nq2-EN-0YG" secondAttribute="bottom" id="D4b-OV-Z6a"/>
-                <constraint firstItem="Nq2-EN-0YG" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="H8q-LP-XuM"/>
+                <constraint firstAttribute="bottom" secondItem="ubu-fy-3me" secondAttribute="bottom" id="Eub-mi-DUS"/>
                 <constraint firstAttribute="trailing" secondItem="RcJ-Mn-RNd" secondAttribute="trailing" constant="16" id="Jmw-Je-Y61"/>
                 <constraint firstItem="Eak-Ig-YCc" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="16" id="KWB-BP-c6R"/>
                 <constraint firstItem="V2t-9z-vIC" firstAttribute="top" secondItem="Eak-Ig-YCc" secondAttribute="bottom" constant="10" id="NfC-4K-2cE"/>
                 <constraint firstItem="SKM-HR-TEc" firstAttribute="top" secondItem="Eak-Ig-YCc" secondAttribute="bottom" constant="10" id="SAu-3N-wes"/>
+                <constraint firstAttribute="trailing" secondItem="ubu-fy-3me" secondAttribute="trailing" id="Tin-hp-acM"/>
                 <constraint firstItem="RcJ-Mn-RNd" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="16" id="azU-xs-Qmh"/>
-                <constraint firstItem="Nq2-EN-0YG" firstAttribute="top" secondItem="Eak-Ig-YCc" secondAttribute="bottom" constant="10" id="cFx-n5-Wqf"/>
                 <constraint firstAttribute="bottom" secondItem="SKM-HR-TEc" secondAttribute="bottom" id="f9w-u7-Imc"/>
+                <constraint firstItem="ubu-fy-3me" firstAttribute="leading" secondItem="SKM-HR-TEc" secondAttribute="trailing" constant="2" id="fkO-3J-ylw"/>
                 <constraint firstAttribute="bottom" secondItem="Eak-Ig-YCc" secondAttribute="bottom" constant="59" id="g96-Ie-RLI"/>
-                <constraint firstItem="SKM-HR-TEc" firstAttribute="leading" secondItem="V2t-9z-vIC" secondAttribute="trailing" id="h2v-gd-st6"/>
+                <constraint firstItem="SKM-HR-TEc" firstAttribute="leading" secondItem="V2t-9z-vIC" secondAttribute="trailing" constant="2" id="h2v-gd-st6"/>
                 <constraint firstItem="Eak-Ig-YCc" firstAttribute="height" secondItem="RcJ-Mn-RNd" secondAttribute="height" id="nSX-1l-x4e"/>
                 <constraint firstAttribute="trailing" secondItem="Eak-Ig-YCc" secondAttribute="trailing" constant="16" id="nwY-Ev-NSe"/>
                 <constraint firstItem="Eak-Ig-YCc" firstAttribute="top" secondItem="RcJ-Mn-RNd" secondAttribute="bottom" constant="16" id="oGb-tJ-fkq"/>
                 <constraint firstItem="SKM-HR-TEc" firstAttribute="width" secondItem="V2t-9z-vIC" secondAttribute="width" id="ojO-W4-j4i"/>
-                <constraint firstAttribute="trailing" secondItem="SKM-HR-TEc" secondAttribute="trailing" id="pYP-y7-J6u"/>
+                <constraint firstItem="ubu-fy-3me" firstAttribute="top" secondItem="Eak-Ig-YCc" secondAttribute="bottom" constant="10" id="s8g-Fj-vIn"/>
             </constraints>
             <point key="canvasLocation" x="33.5" y="54.5"/>
         </view>
