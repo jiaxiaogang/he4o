@@ -25,6 +25,6 @@
  */
 +(NSMutableArray*) getNeedUnderstandMemoryWithObjId:(NSString*)objId;
 +(NSMutableArray*) getNeedUnderstandMemoryWithDoId:(NSString*)doId;
-+(NSMutableArray*) getNeedUnderstandMemoryWithWhereDic:(NSDictionary*)whereDic;//获取需要理解的memArr(未理解的元素<=3 && 句子分词完整)
++(NSMutableArray*) getNeedUnderstandMemoryWithMemArr:(NSMutableArray*)memArr;//获取需要理解的memArr(未理解的元素<=3 && 句子分词完整)
 
 @end

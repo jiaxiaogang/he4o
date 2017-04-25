@@ -147,6 +147,16 @@
     return nil;
 }
 
+//获取doId的所有条;(模糊匹配)
+-(NSMutableArray*) getMemoryContainsWithDoId:(NSString*)doId limit:(NSInteger)limit{
+    if (!STRISOK(doId)) {
+        return nil;
+    }
+    NSDictionary *doDic = [NSDictionary dictionaryWithObjectsAndKeys:doId,@"doId", nil];
+    NSDictionary *where = [NSDictionary dictionaryWithObjectsAndKeys:@[doDic],@"do" ,nil];
+    return [self getMemoryContainsWhereDic:where limit:limit];
+}
+
 //获取where的所有条;(模糊匹配)
 -(NSMutableArray*) getMemoryContainsWhereDic:(NSDictionary*)whereDic limit:(NSInteger)limit{
     NSMutableArray *valArr = nil;

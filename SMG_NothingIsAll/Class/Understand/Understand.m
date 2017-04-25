@@ -89,15 +89,15 @@
             NSMutableDictionary *memDoItem = [[NSMutableDictionary alloc] init];
             for (NSDictionary *objItem in findObjArr) {
                 if ([STRTOOK(doModel.fromMKId) isEqualToString:[objItem objectForKey:@"itemName"]]) {
-                    [memDoItem setObject:STRTOOK([objItem objectForKey:@"itemId"]) forKey:@"fromMKId"];
+                    [memDoItem setObject:STRTOOK([objItem objectForKey:@"itemId"]) forKey:@"fromId"];
                 }
                 if ([STRTOOK(doModel.toMKId) isEqualToString:[objItem objectForKey:@"itemName"]]) {
-                    [memDoItem setObject:STRTOOK([objItem objectForKey:@"itemId"]) forKey:@"toMKId"];
+                    [memDoItem setObject:STRTOOK([objItem objectForKey:@"itemId"]) forKey:@"toId"];
                 }
             }
             for (NSDictionary *findDoItem in findDoArr) {
                 if ([STRTOOK(doModel.doType) isEqualToString:[findDoItem objectForKey:@"itemName"]]) {
-                    [memDoItem setObject:STRTOOK([findDoItem objectForKey:@"itemId"]) forKey:@"doMKId"];
+                    [memDoItem setObject:STRTOOK([findDoItem objectForKey:@"itemId"]) forKey:@"doId"];
                 }
             }
             [memDoArr addObject:memDoItem];

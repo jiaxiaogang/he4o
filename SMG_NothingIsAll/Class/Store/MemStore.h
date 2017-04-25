@@ -23,6 +23,7 @@
 -(NSMutableArray*) getMemoryWithWhereDic:(NSDictionary*)whereDic;              //获取where的所有条;
 -(NSDictionary*) getSingleMemoryContainsWhereDic:(NSDictionary*)whereDic;              //获取where的最近一条;(模糊匹配)
 -(NSMutableArray*) getMemoryContainsWhereDic:(NSDictionary*)whereDic limit:(NSInteger)limit;  //获取where的所有条;(模糊匹配)
+-(NSMutableArray*) getMemoryContainsWithDoId:(NSString*)doId limit:(NSInteger)limit;  //获取doId的所有条;(模糊匹配)
 
 -(void) addMemory:(NSDictionary*)mem;                   //新增一条
 -(void) addMemory:(NSDictionary*)mem insertFrontByMem:(NSDictionary*)byMem;            //新增mem到byMem前面;

@@ -70,7 +70,21 @@
         if ([itemA isKindOfClass:[NSString class]]) {
             return [(NSString*)itemA containsString:itemB];        //NSString
         }else if ([itemA isKindOfClass:[NSArray class]]) {
-            return [itemA containsObject:itemB];                    //NSArray
+            BOOL itemAContainsItemB = true;//默认true;查到一个不包含设为false;
+            for (id bItem in itemB) {
+                BOOL aItemContainsBItem = false;//默认fale;查到一个包含设为true;
+                for (id aItem in itemA) {
+                    if ([self compareItemA:aItem containsItemB:bItem]) {
+                        aItemContainsBItem = true;
+                        break;
+                    }
+                }
+                if (!aItemContainsBItem) {
+                    itemAContainsItemB = false;
+                }
+            }
+            //return [itemA containsObject:itemB];
+            return itemAContainsItemB;                    //NSArray
         }else if ([itemA isKindOfClass:[NSDictionary class]]) {
             for (NSString *key in [(NSDictionary*)itemB allKeys]) { //NSDictionary
                 if(![SMGUtils compareItemA:[(NSDictionary*)itemA objectForKey:key] containsItemB:[(NSDictionary*)itemB objectForKey:key]]){

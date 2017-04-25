@@ -57,64 +57,69 @@
  */
 +(NSMutableArray*) getNeedUnderstandMemoryWithObjId:(NSString*)objId{
     if (STRISOK(objId)) {
-        return [self getNeedUnderstandMemoryWithWhereDic:[NSDictionary dictionaryWithObjectsAndKeys:@[objId],@"obj", nil]];
+        //2,取相关记忆
+        NSDictionary *where = [NSDictionary dictionaryWithObjectsAndKeys:@[objId],@"obj", nil];
+        NSMutableArray *memArr = [[SMG sharedInstance].store.memStore getMemoryWithWhereDic:where];
+        return [self getNeedUnderstandMemoryWithMemArr:memArr];
     }
     return nil;
 }
 
 +(NSMutableArray*) getNeedUnderstandMemoryWithDoId:(NSString*)doId{
     if (STRISOK(doId)) {
-        return [self getNeedUnderstandMemoryWithWhereDic:[NSDictionary dictionaryWithObjectsAndKeys:@[doId],@"do", nil]];
+        //2,取相关记忆
+        NSMutableArray *memArr = [[SMG sharedInstance].store.memStore getMemoryContainsWithDoId:doId limit:10];
+        return [self getNeedUnderstandMemoryWithMemArr:memArr];
     }
     return nil;
 }
 
-+(NSMutableArray*) getNeedUnderstandMemoryWithWhereDic:(NSDictionary*)whereDic{
++(NSMutableArray*) getNeedUnderstandMemoryWithMemArr:(NSMutableArray*)memArr{
+    if (!ARRISOK(memArr)) {
+        return nil;
+    }
     //1,申请收集数据的数组
     __block NSMutableArray *unknownWordArr = [[NSMutableArray alloc] init];
     NSMutableArray *unknownObjArr = [[NSMutableArray alloc] init];
     NSMutableArray *unknownDoArr = [[NSMutableArray alloc] init];
     NSMutableArray *valueArr = [[NSMutableArray alloc] init];
-    //2,取相关记忆
-    NSMutableArray *memArr = [[SMG sharedInstance].store.memStore getMemoryWithWhereDic:whereDic];
-    if (memArr) {
-        for (NSDictionary *memItem in memArr) {
-            //memItem结构:{do=[feelDoModel],obj=[10,12],text=@"asdf"}
-            //条件1,取未理解元素和;不能>3
-            if ([memItem objectForKey:@"obj"]) {
-                for (NSString *objId in [memItem objectForKey:@"obj"]) {
-                    NSDictionary *where = [NSDictionary dictionaryWithObjectsAndKeys:objId,@"objId", nil];
-                    if(![[SMG sharedInstance].store.mkStore containerWordWithWhere:where]){
-                        [unknownObjArr addObject:objId];
-                    }
+    //2,收集数据
+    for (NSDictionary *memItem in memArr) {
+        //memItem结构:{do=[feelDoModel],obj=[10,12],text=@"asdf"}
+        //条件1,取未理解元素和;不能>3
+        if ([memItem objectForKey:@"obj"]) {
+            for (NSString *objId in [memItem objectForKey:@"obj"]) {
+                NSDictionary *where = [NSDictionary dictionaryWithObjectsAndKeys:objId,@"objId", nil];
+                if(![[SMG sharedInstance].store.mkStore containerWordWithWhere:where]){
+                    [unknownObjArr addObject:objId];
                 }
             }
-            if ([memItem objectForKey:@"do"]) {
-                for (FeelDoModel *item in [memItem objectForKey:@"do"]) {
-                    NSDictionary *where = [NSDictionary dictionaryWithObjectsAndKeys:item.doType,@"doId", nil];
-                    if(![[SMG sharedInstance].store.mkStore containerWordWithWhere:where]){
-                        [unknownDoArr addObject:item.doType];
-                    }
+        }
+        if ([memItem objectForKey:@"do"]) {
+            for (NSDictionary *item in [memItem objectForKey:@"do"]) {
+                NSDictionary *where = [NSDictionary dictionaryWithObjectsAndKeys:[item objectForKey:@"doId"],@"doId", nil];
+                if(![[SMG sharedInstance].store.mkStore containerWordWithWhere:where]){
+                    [unknownDoArr addObject:[item objectForKey:@"doId"]];
                 }
             }
-            if (unknownDoArr.count + unknownObjArr.count <= 3) {
-                //条件2,不能有未分词的陌生词;
-                [UnderstandUtils getWordArrAtText:[memItem objectForKey:@"text"] outBlock:^(NSArray *oldWordArr, NSArray *newWordArr) {
-                    if (!ARRISOK(newWordArr)) {
-                        for (NSDictionary *oldWord in oldWordArr) {
-                            if (![oldWord objectForKey:@"objId"] && ![oldWord objectForKey:@"doId"]) {
-                                [unknownWordArr addObject:oldWord];
-                            }
-                        }
-                        //条件3,未理解的分词数量差<2;
-                        NSInteger diffCount = unknownWordArr.count - unknownDoArr.count - unknownObjArr.count;
-                        if (diffCount < 2 && diffCount > -2) {
-                            NSDictionary *valueItem = [NSDictionary dictionaryWithObjectsAndKeys:unknownObjArr,@"unknowObjArr",unknownDoArr,@"unknowDoArr",unknownWordArr,@"unknowWordArr",nil];
-                            [valueArr addObject:valueItem];
+        }
+        if (unknownDoArr.count + unknownObjArr.count <= 3) {
+            //条件2,不能有未分词的陌生词;
+            [UnderstandUtils getWordArrAtText:[memItem objectForKey:@"text"] outBlock:^(NSArray *oldWordArr, NSArray *newWordArr) {
+                if (!ARRISOK(newWordArr)) {
+                    for (NSDictionary *oldWord in oldWordArr) {
+                        if (![oldWord objectForKey:@"objId"] && ![oldWord objectForKey:@"doId"]) {
+                            [unknownWordArr addObject:oldWord];
                         }
                     }
-                }];
-            }
+                    //条件3,未理解的分词数量差<2;
+                    NSInteger diffCount = unknownWordArr.count - unknownDoArr.count - unknownObjArr.count;
+                    if (diffCount < 2 && diffCount > -2) {
+                        NSDictionary *valueItem = [NSDictionary dictionaryWithObjectsAndKeys:unknownObjArr,@"unknowObjArr",unknownDoArr,@"unknowDoArr",unknownWordArr,@"unknowWordArr",nil];
+                        [valueArr addObject:valueItem];
+                    }
+                }
+            }];
         }
     }
     return valueArr;

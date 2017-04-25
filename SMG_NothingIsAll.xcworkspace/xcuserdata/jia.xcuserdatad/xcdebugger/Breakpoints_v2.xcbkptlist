@@ -25,29 +25,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/Class/Understand/Understand.m"
-            timestampString = "514740719.096224"
+            filePath = "SMG_NothingIsAll/Class/SMGUtils.m"
+            timestampString = "514777840.852712"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "222"
-            endingLineNumber = "222"
-            landmarkName = "-understandDo:outBlock:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/Class/Understand/Understand.m"
-            timestampString = "514740719.096224"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "224"
-            endingLineNumber = "224"
-            landmarkName = "-understandDo:outBlock:"
+            startingLineNumber = "106"
+            endingLineNumber = "106"
+            landmarkName = "+compareItemA:containsItemB:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
