@@ -201,7 +201,7 @@
                 if (valueDic == nil) {
                     valueDic = [[NSMutableDictionary alloc] init];
                 }
-                [valueDic setObject:objId forKey:linkArr[0]];
+                [valueDic setObject:linkArr[0] forKey:objId];
             }
         }
     }
