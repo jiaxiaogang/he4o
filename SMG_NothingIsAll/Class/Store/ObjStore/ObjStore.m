@@ -68,10 +68,8 @@
  *  MARK:--------------------addItem--------------------
  */
 -(NSDictionary*) addItem:(NSString*)itemName{
-    //去重
-    if (itemName) {
-        NSString *itemId = [NSString stringWithFormat:@"%ld",[self createItemId]];
-        NSDictionary *item = [NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(itemName),@"itemName",itemId,@"itemId", nil];
+    NSDictionary *item = [self createItemWithName:itemName withRemoveLocal:true];
+    if (item) {
         [self.dataArr addObject:item];
         [self saveToLocal];
         return item;
@@ -79,18 +77,18 @@
     return nil;
 }
 
+
 -(NSMutableArray*) addItemNameArr:(NSArray*)itemNameArr{
-    //去重
     NSMutableArray *valueArr = nil;
     if (ARRISOK(itemNameArr)) {
-        NSInteger itemId = [self createItemId:itemNameArr.count];//申请itemNameArr.count个itemId
+        valueArr = [[NSMutableArray alloc] init];
         for (NSString *itemName in itemNameArr) {
-            if (valueArr == nil) valueArr = [[NSMutableArray alloc] init];
-            NSDictionary *item = [NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(itemName),@"itemName",[NSString stringWithFormat:@"%ld",itemId],@"itemId", nil];
-            [valueArr addObject:item];
-            itemId ++;
+            NSDictionary *item = [self createItemWithName:itemName withRemoveLocal:true];
+            if (item) {
+                [self.dataArr addObject:item];
+                [valueArr addObject:item];
+            }
         }
-        [self.dataArr addObjectsFromArray:valueArr];
         [self saveToLocal];
     }
     return valueArr;
@@ -128,6 +126,23 @@
     return lastId + limit;
 }
 
+-(NSDictionary*) createItemWithName:(NSString*)itemName withRemoveLocal:(BOOL)removeLocal{
+    if (!STRISOK(itemName)) {
+        return nil;
+    }
+    //1,找本地重复的
+    NSDictionary *localItem = [self getSingleItemWithItemName:itemName];
+    //2,remove掉旧的;创建新的;
+    if (localItem) {
+        if (removeLocal) {
+            [self.dataArr removeObject:localItem];
+        }
+        return localItem;
+    }else{
+        NSString *itemId = [NSString stringWithFormat:@"%ld",[self createItemId]];
+        return [NSDictionary dictionaryWithObjectsAndKeys:itemName,@"itemName",itemId,@"itemId", nil];
+    }
+}
 
 
 @end

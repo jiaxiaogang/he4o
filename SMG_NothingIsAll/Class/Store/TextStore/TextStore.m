@@ -261,7 +261,7 @@
     }
     //3,objId,doId
     if (STRISOK(objId)) [newItem setObject:objId forKey:@"objId"];
-    if (STRISOK(doId)) [newItem setObject:objId forKey:@"doId"];
+    if (STRISOK(doId)) [newItem setObject:doId forKey:@"doId"];
     //4,存新 & 返回;
     [self.wordArr addObject:newItem];
     [self saveToLocal];

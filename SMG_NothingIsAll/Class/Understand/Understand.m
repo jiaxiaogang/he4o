@@ -117,7 +117,8 @@
         [self understandObj:objId atText:@"" outBlock:^(NSMutableDictionary *linkDic) {
             if (linkDic) {
                 for (NSString *key in linkDic.allKeys) {
-                    [[SMG sharedInstance].store.mkStore addWord:key withObjId:[linkDic objectForKey:key]  withDoId:nil];
+                    NSDictionary *objItem = [linkDic objectForKey:key];
+                    [[SMG sharedInstance].store.mkStore addWord:key withObjId:[objItem objectForKey:@"itemId"] withDoId:nil];
                 }
             }
         }];
@@ -127,7 +128,8 @@
         [self understandDo:[findDoItem objectForKey:@"itemId"] outBlock:^(NSMutableDictionary *linkDic) {
             if (linkDic) {
                 for (NSString *key in linkDic.allKeys) {
-                    [[SMG sharedInstance].store.mkStore addWord:key withObjId:nil  withDoId:[linkDic objectForKey:key]];
+                    NSDictionary *doItem = [linkDic objectForKey:key];
+                    [[SMG sharedInstance].store.mkStore addWord:key withObjId:nil withDoId:[doItem objectForKey:@"itemId"]];
                 }
             }
         }];

@@ -208,7 +208,31 @@
                                @"text":@"苹果很甜",
                                @"name":@"甜"};
         
-        _testArr = [NSMutableArray arrayWithObjects:dic1,dic2,dic3,dic4, nil];
+        NSDictionary *dic5 = @{@"fromMKId":@"小赤",
+                               @"doType":@"给",
+                               @"toMKId":@"苹果",
+                               @"text":@"小赤给我苹果",
+                               @"name":@"苹果"};
+        
+        NSDictionary *dic6 = @{@"fromMKId":@"我",
+                               @"doType":@"吃",
+                               @"toMKId":@"苹果",
+                               @"text":@"我吃苹果",
+                               @"name":@"苹果"};
+        
+        NSDictionary *dic7 = @{@"fromMKId":@"我",
+                               @"doType":@"感觉",
+                               @"toMKId":@"甜",
+                               @"text":@"我感觉甜",
+                               @"name":@"甜"};
+        
+        NSDictionary *dic8 = @{@"fromMKId":@"苹果",
+                               @"doType":@"是",
+                               @"toMKId":@"甜",
+                               @"text":@"苹果很甜",
+                               @"name":@"甜"};
+        
+        _testArr = [NSMutableArray arrayWithObjects:dic1,dic2,dic3,dic4,dic5,dic6,dic7,dic8, nil];
     }
     return _testArr;
 }
@@ -217,7 +241,7 @@
     if (ARRISOK(self.testArr))
     {
         NSDictionary *dic = self.testArr[0];
-        [self.testArr removeObject:dic];
+        [self.testArr removeObjectAtIndex:0];
         
         //1,doModel
         FeelDoModel *doModel = [[FeelDoModel alloc] init];
