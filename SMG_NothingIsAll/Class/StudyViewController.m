@@ -184,55 +184,13 @@
 
 -(NSMutableArray *) testArr{
     if (_testArr == nil) {
-        NSDictionary *dic1 = @{@"fromMKId":@"小赤",
-                              @"doType":@"给",
-                              @"toMKId":@"苹果",
-                              @"text":@"小赤给我苹果",
-                              @"name":@"苹果"};
-        
-        NSDictionary *dic2 = @{@"fromMKId":@"我",
-                              @"doType":@"吃",
-                              @"toMKId":@"苹果",
-                              @"text":@"我吃苹果",
-                              @"name":@"苹果"};
-        
-        NSDictionary *dic3 = @{@"fromMKId":@"我",
-                               @"doType":@"感觉",
-                               @"toMKId":@"甜",
-                               @"text":@"我感觉甜",
-                               @"name":@"甜"};
-        
-        NSDictionary *dic4 = @{@"fromMKId":@"苹果",
-                               @"doType":@"是",
-                               @"toMKId":@"甜",
-                               @"text":@"苹果很甜",
-                               @"name":@"甜"};
-        
-        NSDictionary *dic5 = @{@"fromMKId":@"小赤",
-                               @"doType":@"给",
-                               @"toMKId":@"苹果",
-                               @"text":@"小赤给我苹果",
-                               @"name":@"苹果"};
-        
-        NSDictionary *dic6 = @{@"fromMKId":@"我",
-                               @"doType":@"吃",
-                               @"toMKId":@"苹果",
-                               @"text":@"我吃苹果",
-                               @"name":@"苹果"};
-        
-        NSDictionary *dic7 = @{@"fromMKId":@"我",
-                               @"doType":@"感觉",
-                               @"toMKId":@"甜",
-                               @"text":@"我感觉甜",
-                               @"name":@"甜"};
-        
-        NSDictionary *dic8 = @{@"fromMKId":@"苹果",
-                               @"doType":@"是",
-                               @"toMKId":@"甜",
-                               @"text":@"苹果很甜",
-                               @"name":@"甜"};
-        
-        _testArr = [NSMutableArray arrayWithObjects:dic1,dic2,dic3,dic4,dic5,dic6,dic7,dic8, nil];
+        _testArr = [NSMutableArray arrayWithObjects:
+                    @{@"fromMKId":@"小赤",@"doType":@"给",@"toMKId":@"苹果",@"text":@"小赤给苹果",@"name":@"苹果"},
+                    @{@"fromMKId":@"小赤",@"doType":@"给",@"toMKId":@"桃",@"text":@"小赤给桃",@"name":@"桃"},
+                    @{@"fromMKId":@"小臂",@"doType":@"给",@"toMKId":@"苹果",@"text":@"小臂给苹果",@"name":@"苹果"},
+                    @{@"fromMKId":@"小生",@"doType":@"取",@"toMKId":@"苹果",@"text":@"小生取苹果",@"name":@"苹果"},
+                    @{@"fromMKId":@"小贾",@"doType":@"吃",@"toMKId":@"苹果",@"text":@"小贾吃苹果",@"name":@"苹果"},
+                    @{@"fromMKId":@"小刚",@"doType":@"吃",@"toMKId":@"桃",@"text":@"小刚吃桃",@"name":@"桃"}, nil];
     }
     return _testArr;
 }
@@ -289,3 +247,52 @@
 
 @end
 
+
+
+//NSDictionary *dic1 = @{@"fromMKId":@"小赤",
+//                       @"doType":@"给",
+//                       @"toMKId":@"苹果",
+//                       @"text":@"小赤给我苹果",
+//                       @"name":@"苹果"};
+//
+//NSDictionary *dic2 = @{@"fromMKId":@"我",
+//                       @"doType":@"吃",
+//                       @"toMKId":@"苹果",
+//                       @"text":@"我吃苹果",
+//                       @"name":@"苹果"};
+//
+//NSDictionary *dic3 = @{@"fromMKId":@"我",
+//                       @"doType":@"感觉",
+//                       @"toMKId":@"甜",
+//                       @"text":@"我感觉甜",
+//                       @"name":@"甜"};
+//
+//NSDictionary *dic4 = @{@"fromMKId":@"苹果",
+//                       @"doType":@"是",
+//                       @"toMKId":@"甜",
+//                       @"text":@"苹果很甜",
+//                       @"name":@"甜"};
+//
+//NSDictionary *dic5 = @{@"fromMKId":@"小赤",
+//                       @"doType":@"给",
+//                       @"toMKId":@"苹果",
+//                       @"text":@"小赤给我苹果",
+//                       @"name":@"苹果"};
+//
+//NSDictionary *dic6 = @{@"fromMKId":@"我",
+//                       @"doType":@"吃",
+//                       @"toMKId":@"苹果",
+//                       @"text":@"我吃苹果",
+//                       @"name":@"苹果"};
+//
+//NSDictionary *dic7 = @{@"fromMKId":@"我",
+//                       @"doType":@"感觉",
+//                       @"toMKId":@"甜",
+//                       @"text":@"我感觉甜",
+//                       @"name":@"甜"};
+//
+//NSDictionary *dic8 = @{@"fromMKId":@"苹果",
+//                       @"doType":@"是",
+//                       @"toMKId":@"甜",
+//                       @"text":@"苹果很甜",
+//                       @"name":@"甜"};
