@@ -20,6 +20,7 @@
 //String
 #define STRISOK(a) (a  && ![a isKindOfClass:[NSNull class]] && [a isKindOfClass:[NSString class]] && ![a isEqualToString:@""])//是否空字符串
 #define STRTOOK(a) (a  && ![a isKindOfClass:[NSNull class]]) ? ([a isKindOfClass:[NSString class]] ? a : [NSString stringWithFormat:@"%@", a]) : @""//字符串防闪
+#define STRFORMAT(a, ...) [NSString stringWithFormat:a, ##__VA_ARGS__]//String.format
 
 //Array
 #define ARRISOK(a) (a  && [a isKindOfClass:[NSArray class]] && a.count)//是否空数组
