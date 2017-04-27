@@ -14,6 +14,40 @@
 
 @implementation Feel
 
+
+-(NSString*) feelForText:(NSString*)text{
+    //作数据检查,例如大于50字;则背不下来;只记部分;
+    return STRTOOK(text);
+}
+
+-(UIImage*) feelForImg:(UIImage*)img{
+    //解析出
+    //先从本地找替代品;取不到合适的;再解析img;
+    
+    return nil;//压缩尺寸,压缩质量,压缩大小后返回;
+}
+
+-(NSObject*) feelForAudio:(NSObject*)audio{
+    //先从本地找替代品;
+    return nil;
+}
+
+
+
+
+
+@end
+
+
+
+
+/**
+ *  MARK:--------------------输入部分--------------------
+ *
+ *
+ */
+@implementation Feel (INPUT)
+
 -(void) commitInputModel:(InputModel*)inputModel{
     NSLog(@"感觉系统收到Input发来的多媒体数据");
     if (inputModel) {
@@ -43,26 +77,15 @@
     return false;
 }
 
-
--(NSString*) feelForText:(NSString*)text{
-    //作数据检查,例如大于50字;则背不下来;只记部分;
-    return STRTOOK(text);
-}
-
--(UIImage*) feelForImg:(UIImage*)img{
-    //解析出
-    //先从本地找替代品;取不到合适的;再解析img;
-    
-    return nil;//压缩尺寸,压缩质量,压缩大小后返回;
-}
-
--(NSObject*) feelForAudio:(NSObject*)audio{
-    //先从本地找替代品;
-    return nil;
-}
+@end
 
 
-
+/**
+ *  MARK:--------------------输出部分--------------------
+ *
+ *
+ */
+@implementation Feel (OUTPUT)
 
 
 @end

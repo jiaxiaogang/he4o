@@ -33,8 +33,6 @@
 		08E5B4101EAB68DD00999E65 /* TextStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E5B40D1EAB68DD00999E65 /* TextStore.m */; };
 		08E5B4111EAB68DD00999E65 /* TextStoreUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E5B40F1EAB68DD00999E65 /* TextStoreUtils.m */; };
 		08E5B4151EAB68ED00999E65 /* DoStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E5B4141EAB68ED00999E65 /* DoStore.m */; };
-		08E5B41A1EAB692500999E65 /* TextUnderstand.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E5B4191EAB692500999E65 /* TextUnderstand.m */; };
-		08E5B41D1EAB692F00999E65 /* DoUnderstand.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E5B41C1EAB692F00999E65 /* DoUnderstand.m */; };
 		08F3AFAC1E98898000747EDD /* Mind.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F3AFAB1E98898000747EDD /* Mind.m */; };
 		08F3AFB21E98929C00747EDD /* MindUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F3AFB11E98929C00747EDD /* MindUtils.m */; };
 		08F3AFB81E98963600747EDD /* SMG.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F3AFB71E98963600747EDD /* SMG.m */; };
@@ -102,10 +100,6 @@
 		08E5B40F1EAB68DD00999E65 /* TextStoreUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextStoreUtils.m; sourceTree = "<group>"; };
 		08E5B4131EAB68ED00999E65 /* DoStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoStore.h; sourceTree = "<group>"; };
 		08E5B4141EAB68ED00999E65 /* DoStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DoStore.m; sourceTree = "<group>"; };
-		08E5B4181EAB692500999E65 /* TextUnderstand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextUnderstand.h; sourceTree = "<group>"; };
-		08E5B4191EAB692500999E65 /* TextUnderstand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextUnderstand.m; sourceTree = "<group>"; };
-		08E5B41B1EAB692F00999E65 /* DoUnderstand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoUnderstand.h; sourceTree = "<group>"; };
-		08E5B41C1EAB692F00999E65 /* DoUnderstand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DoUnderstand.m; sourceTree = "<group>"; };
 		08F3AFAA1E98898000747EDD /* Mind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mind.h; sourceTree = "<group>"; };
 		08F3AFAB1E98898000747EDD /* Mind.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Mind.m; sourceTree = "<group>"; };
 		08F3AFAD1E988E2A00747EDD /* MindEnum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MindEnum.h; sourceTree = "<group>"; };
@@ -179,8 +173,6 @@
 		083DA5EA1E99E3530047A6DF /* Understand */ = {
 			isa = PBXGroup;
 			children = (
-				08E5B4161EAB691800999E65 /* DoUnderstand */,
-				08E5B4171EAB691800999E65 /* TextUnderstand */,
 				083DA5EB1E99E36A0047A6DF /* UnderstandHeader.h */,
 				083DA5EC1E99E37A0047A6DF /* Understand.h */,
 				083DA5ED1E99E37A0047A6DF /* Understand.m */,
@@ -333,24 +325,6 @@
 				08E5B4141EAB68ED00999E65 /* DoStore.m */,
 			);
 			path = DoStore;
-			sourceTree = "<group>";
-		};
-		08E5B4161EAB691800999E65 /* DoUnderstand */ = {
-			isa = PBXGroup;
-			children = (
-				08E5B41B1EAB692F00999E65 /* DoUnderstand.h */,
-				08E5B41C1EAB692F00999E65 /* DoUnderstand.m */,
-			);
-			path = DoUnderstand;
-			sourceTree = "<group>";
-		};
-		08E5B4171EAB691800999E65 /* TextUnderstand */ = {
-			isa = PBXGroup;
-			children = (
-				08E5B4181EAB692500999E65 /* TextUnderstand.h */,
-				08E5B4191EAB692500999E65 /* TextUnderstand.m */,
-			);
-			path = TextUnderstand;
 			sourceTree = "<group>";
 		};
 		08F3AF991E98883C00747EDD /* Mind */ = {
@@ -546,7 +520,6 @@
 				08FDCE8E1EAA4A8E00882ADC /* SMGRange.m in Sources */,
 				082F9D601EB236E80009F6A9 /* SMGOutputDelegate.m in Sources */,
 				0803698D1EAC4C4400B4819C /* FeelDoModel.m in Sources */,
-				08E5B41D1EAB692F00999E65 /* DoUnderstand.m in Sources */,
 				08AF456E1E97DDF600377887 /* MKStore.m in Sources */,
 				08F3AFBB1E98966E00747EDD /* Store.m in Sources */,
 				088331C91E9BD59F0026DE23 /* FeelAudioModel.m in Sources */,
@@ -572,7 +545,6 @@
 				088331CC1E9BD68C0026DE23 /* FeelTextModel.m in Sources */,
 				08E5B4151EAB68ED00999E65 /* DoStore.m in Sources */,
 				083DA5EE1E99E37A0047A6DF /* Understand.m in Sources */,
-				08E5B41A1EAB692500999E65 /* TextUnderstand.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

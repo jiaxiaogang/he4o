@@ -7,10 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MindHeader.h"
+#import "MindEnum.h"
 
 
-@class GC,Store,Understand,Feel,Input,Output;
+@class GC,Store,Understand,Feel,Input,Output,Mind;
 @interface SMG : NSObject
 
 +(SMG*) sharedInstance;

@@ -14,6 +14,7 @@
 #import "InputHeader.h"
 #import "FeelHeader.h"
 #import "OutputHeader.h"
+#import "MindHeader.h"
 
 @implementation SMG
 

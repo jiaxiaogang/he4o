@@ -14,6 +14,7 @@
  *  喜怒主外;
  *  哀乐主内;
  *  注:目前只写喜怒哀乐;主要是用于人工智能的交流和学习功能;
+ *  注:由Mind颜色Output的需求;
  */
 @interface Mind : NSObject
 

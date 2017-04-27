@@ -18,12 +18,31 @@
 @class InputModel;
 @interface Feel : NSObject
 
+
+@end
+
+
+/**
+ *  MARK:--------------------输入部分--------------------
+ *
+ *
+ */
+@interface Feel (INPUT)
+
 -(void) commitInputModel:(InputModel*)inputModel;
-
-
-
 //查找任务_提交收集来的原数据;
 -(BOOL) commitInputModelForFindObject:(InputModel*)inputModel;
+
+
+@end
+
+
+/**
+ *  MARK:--------------------输出部分--------------------
+ *
+ *
+ */
+@interface Feel (OUTPUT)
 
 
 @end
