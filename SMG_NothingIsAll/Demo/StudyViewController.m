@@ -185,12 +185,17 @@
 -(NSMutableArray *) testArr{
     if (_testArr == nil) {
         _testArr = [NSMutableArray arrayWithObjects:
-                    @{@"fromMKId":@"小赤",@"doType":@"给",@"toMKId":@"苹果",@"text":@"小赤给苹果",@"name":@"苹果"},
-                    @{@"fromMKId":@"小赤",@"doType":@"给",@"toMKId":@"桃",@"text":@"小赤给桃",@"name":@"桃"},
-                    @{@"fromMKId":@"小臂",@"doType":@"给",@"toMKId":@"苹果",@"text":@"小臂给苹果",@"name":@"苹果"},
-                    @{@"fromMKId":@"小生",@"doType":@"取",@"toMKId":@"苹果",@"text":@"小生取苹果",@"name":@"苹果"},
-                    @{@"fromMKId":@"小贾",@"doType":@"吃",@"toMKId":@"苹果",@"text":@"小贾吃苹果",@"name":@"苹果"},
-                    @{@"fromMKId":@"小刚",@"doType":@"吃",@"toMKId":@"桃",@"text":@"小刚吃桃",@"name":@"桃"}, nil];
+                    @{@"text":@"苹果",@"obj":@"苹果"},
+                    @{@"text":@"苹果",@"obj":@"苹果"},
+                    @{@"text":@"苹果",@"obj":@"苹果"},
+                    @{@"text":@"苹果",@"obj":@"苹果"},
+                    @{@"fromMKId":@"小赤",@"doType":@"吃",@"toMKId":@"小赤吃苹果",@"text":@"苹果"},
+                    @{@"fromMKId":@"小赤",@"doType":@"给",@"toMKId":@"苹果",@"text":@"小赤给苹果"},
+                    @{@"fromMKId":@"小赤",@"doType":@"给",@"toMKId":@"桃",@"text":@"小赤给桃"},
+                    @{@"fromMKId":@"小臂",@"doType":@"给",@"toMKId":@"苹果",@"text":@"小臂给苹果"},
+                    @{@"fromMKId":@"小生",@"doType":@"取",@"toMKId":@"苹果",@"text":@"小生取苹果"},
+                    @{@"fromMKId":@"小贾",@"doType":@"吃",@"toMKId":@"苹果",@"text":@"小贾吃苹果"},
+                    @{@"fromMKId":@"小刚",@"doType":@"吃",@"toMKId":@"桃",@"text":@"小刚吃桃"}, nil];
     }
     return _testArr;
 }
@@ -200,23 +205,33 @@
     {
         NSDictionary *dic = self.testArr[0];
         [self.testArr removeObjectAtIndex:0];
+        NSMutableArray *commitArr = [[NSMutableArray alloc] init];
         
         //1,doModel
-        FeelDoModel *doModel = [[FeelDoModel alloc] init];
-        doModel.fromMKId = [dic objectForKey:@"fromMKId"];
-        doModel.toMKId = [dic objectForKey:@"toMKId"];
-        doModel.doType = [dic objectForKey:@"doType"];
+        if ([dic objectForKey:@"doType"]) {
+            FeelDoModel *doModel = [[FeelDoModel alloc] init];
+            doModel.fromMKId = [dic objectForKey:@"fromMKId"];
+            doModel.toMKId = [dic objectForKey:@"toMKId"];
+            doModel.doType = [dic objectForKey:@"doType"];
+            [commitArr addObject:doModel];
+        }
         
         //2,feelTextModel
-        FeelTextModel *feelTextModel = [[FeelTextModel alloc] init];
-        feelTextModel.text = [dic objectForKey:@"text"];
+        if ([dic objectForKey:@"text"]) {
+            FeelTextModel *feelTextModel = [[FeelTextModel alloc] init];
+            feelTextModel.text = [dic objectForKey:@"text"];
+            [commitArr addObject:feelTextModel];
+        }
         
-        //3,objModel
-        FeelObjModel *objModel = [[FeelObjModel alloc] init];
-        objModel.name = [dic objectForKey:@"name"];
+        //3,
+        if ([dic objectForKey:@"obj"]) {
+            FeelObjModel *objModel = [[FeelObjModel alloc] init];
+            objModel.name = [dic objectForKey:@"obj"];
+            [commitArr addObject:objModel];
+        }
         
         //4,commit
-        [[SMG sharedInstance].understand commitWithFeelModelArr:@[doModel,feelTextModel,objModel]];
+        [[SMG sharedInstance].understand commitWithFeelModelArr:commitArr];
     }
     else
     {

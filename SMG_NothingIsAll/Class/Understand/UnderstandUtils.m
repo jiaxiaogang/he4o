@@ -26,6 +26,12 @@
     //目前只写双字词
     
     //1,数据
+    if (!STRISOK(text)) {
+        if (outBlock) {
+            outBlock(nil,nil);
+        }
+        return;
+    }
     text = STRTOOK(text);
     NSMutableArray *oldArr = [[NSMutableArray alloc] init];
     NSMutableArray *newArr = [[NSMutableArray alloc] init];
