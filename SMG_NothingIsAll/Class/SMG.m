@@ -13,6 +13,7 @@
 #import "UnderstandHeader.h"
 #import "InputHeader.h"
 #import "FeelHeader.h"
+#import "OutputHeader.h"
 
 @implementation SMG
 
@@ -33,11 +34,12 @@ static SMG *_instance;
 }
 
 -(void) initData{
-    self.store = [[Store alloc] init];
-    self.gc = [[GC alloc] init];
-    self.mind = [[Mind alloc] init];
+    self.store      = [[Store alloc] init];
+    self.gc         = [[GC alloc] init];
+    self.mind       = [[Mind alloc] init];
     self.understand = [[Understand alloc] init];
-    self.feel = [[Feel alloc] init];
+    self.feel       = [[Feel alloc] init];
+    self.output     = [[Output alloc] init];
 }
 
 /**

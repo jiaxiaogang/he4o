@@ -31,12 +31,22 @@
  */
 @interface Understand : NSObject
 
-
 @property(strong,nonatomic)NSTimer* timer;//10秒思考一次;
 
-
-
 -(id) init;
+
+@end
+
+
+
+
+/**
+ *  MARK:--------------------输入理解--------------------
+ *
+ *
+ *
+ */
+@interface Understand (INPUT)
 
 
 /**
@@ -45,6 +55,26 @@
 -(void) commitWithFeelModelArr:(NSArray*)modelArr;
 
 
+@end
 
+
+
+/**
+ *  MARK:--------------------输出理解--------------------
+ *
+ *       (产生需求)            (产生可表达需求)      (生成表达方式及内容)
+ *  Mind---------->Understand--------------->Feel------------------>Output
+ *
+ *  1,理解分析需求
+ *  2,任务队列(本地化)
+ *
+ *
+ */
+@interface Understand (OUTPUT)
+
+/**
+ *  MARK:--------------------Mind->Understand->Feel->Output--------------------
+ */
+-(void) commitWithMindDemandModelArr:(NSArray*)modelArr;
 
 @end
