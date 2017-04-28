@@ -6,8 +6,14 @@
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#ifndef SMGEnum_h
-#define SMGEnum_h
 
-
-#endif /* SMGEnum_h */
+/**
+ *  MARK:--------------------存储数据类型--------------------
+ */
+typedef NS_ENUM(NSInteger, StoreType) {
+    StoreType_Mem    = 0,
+    StoreType_Do     = 1,
+    StoreType_Obj    = 2,
+    StoreType_Text   = 3,
+    StoreType_Logic  = 4,
+};

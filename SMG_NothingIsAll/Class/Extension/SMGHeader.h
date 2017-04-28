@@ -10,6 +10,8 @@
 #import "SMG.h"
 #import "SMGUtils.h"
 #import "SMGRange.h"
+#import "SMGEnum.h"
+#import "StoreHeader.h"
 
 
 

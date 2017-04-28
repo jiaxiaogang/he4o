@@ -18,6 +18,10 @@
 		088331C61E9BD3D00026DE23 /* FeelObjModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088331C51E9BD3D00026DE23 /* FeelObjModel.m */; };
 		088331C91E9BD59F0026DE23 /* FeelAudioModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088331C81E9BD59F0026DE23 /* FeelAudioModel.m */; };
 		088331CC1E9BD68C0026DE23 /* FeelTextModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088331CB1E9BD68C0026DE23 /* FeelTextModel.m */; };
+		0895DAE61EB2D52D00E2B5C7 /* DataViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0895DAE41EB2D52D00E2B5C7 /* DataViewController.m */; };
+		0895DAE71EB2D52D00E2B5C7 /* DataViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0895DAE51EB2D52D00E2B5C7 /* DataViewController.xib */; };
+		0895DAEB1EB2D7EB00E2B5C7 /* DataCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0895DAE91EB2D7EB00E2B5C7 /* DataCell.m */; };
+		0895DAEC1EB2D7EB00E2B5C7 /* DataCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0895DAEA1EB2D7EB00E2B5C7 /* DataCell.xib */; };
 		08AF454A1E97D0B500377887 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF45491E97D0B500377887 /* main.m */; };
 		08AF454D1E97D0B500377887 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF454C1E97D0B500377887 /* AppDelegate.m */; };
 		08AF45551E97D0B500377887 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45541E97D0B500377887 /* Assets.xcassets */; };
@@ -70,6 +74,13 @@
 		088331C81E9BD59F0026DE23 /* FeelAudioModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeelAudioModel.m; sourceTree = "<group>"; };
 		088331CA1E9BD68C0026DE23 /* FeelTextModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeelTextModel.h; sourceTree = "<group>"; };
 		088331CB1E9BD68C0026DE23 /* FeelTextModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeelTextModel.m; sourceTree = "<group>"; };
+		0895DAE31EB2D52D00E2B5C7 /* DataViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataViewController.h; sourceTree = "<group>"; };
+		0895DAE41EB2D52D00E2B5C7 /* DataViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataViewController.m; sourceTree = "<group>"; };
+		0895DAE51EB2D52D00E2B5C7 /* DataViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DataViewController.xib; sourceTree = "<group>"; };
+		0895DAE81EB2D7EB00E2B5C7 /* DataCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataCell.h; sourceTree = "<group>"; };
+		0895DAE91EB2D7EB00E2B5C7 /* DataCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataCell.m; sourceTree = "<group>"; };
+		0895DAEA1EB2D7EB00E2B5C7 /* DataCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DataCell.xib; sourceTree = "<group>"; };
+		0895DAED1EB2DCBD00E2B5C7 /* AppEnum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppEnum.h; sourceTree = "<group>"; };
 		08AF45451E97D0B500377887 /* SMG_NothingIsAll.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SMG_NothingIsAll.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		08AF45491E97D0B500377887 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		08AF454B1E97D0B500377887 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -166,6 +177,13 @@
 				082F9D5B1EB236AC0009F6A9 /* StudyViewController.xib */,
 				082F9D5E1EB236E80009F6A9 /* SMGOutputDelegate.h */,
 				082F9D5F1EB236E80009F6A9 /* SMGOutputDelegate.m */,
+				0895DAE31EB2D52D00E2B5C7 /* DataViewController.h */,
+				0895DAE41EB2D52D00E2B5C7 /* DataViewController.m */,
+				0895DAE51EB2D52D00E2B5C7 /* DataViewController.xib */,
+				0895DAE81EB2D7EB00E2B5C7 /* DataCell.h */,
+				0895DAE91EB2D7EB00E2B5C7 /* DataCell.m */,
+				0895DAEA1EB2D7EB00E2B5C7 /* DataCell.xib */,
+				0895DAED1EB2DCBD00E2B5C7 /* AppEnum.h */,
 			);
 			path = Demo;
 			sourceTree = "<group>";
@@ -452,8 +470,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0895DAE71EB2D52D00E2B5C7 /* DataViewController.xib in Resources */,
 				082F9D5D1EB236AC0009F6A9 /* StudyViewController.xib in Resources */,
 				08AF45581E97D0B500377887 /* LaunchScreen.storyboard in Resources */,
+				0895DAEC1EB2D7EB00E2B5C7 /* DataCell.xib in Resources */,
 				08AF45551E97D0B500377887 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -516,6 +536,7 @@
 				08F3AFAC1E98898000747EDD /* Mind.m in Sources */,
 				08F639861E9A2F6C003CD163 /* FeelModel.m in Sources */,
 				081BCAB01EAC7DF100D248E1 /* ObjStore.m in Sources */,
+				0895DAEB1EB2D7EB00E2B5C7 /* DataCell.m in Sources */,
 				088331C61E9BD3D00026DE23 /* FeelObjModel.m in Sources */,
 				08FDCE8E1EAA4A8E00882ADC /* SMGRange.m in Sources */,
 				082F9D601EB236E80009F6A9 /* SMGOutputDelegate.m in Sources */,
@@ -544,6 +565,7 @@
 				08E5B4101EAB68DD00999E65 /* TextStore.m in Sources */,
 				088331CC1E9BD68C0026DE23 /* FeelTextModel.m in Sources */,
 				08E5B4151EAB68ED00999E65 /* DoStore.m in Sources */,
+				0895DAE61EB2D52D00E2B5C7 /* DataViewController.m in Sources */,
 				083DA5EE1E99E37A0047A6DF /* Understand.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

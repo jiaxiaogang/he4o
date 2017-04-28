@@ -11,6 +11,7 @@
 #import "UnderstandHeader.h"
 #import "InputHeader.h"
 #import "FeelHeader.h"
+#import "DataViewController.h"
 
 @interface StudyViewController ()<UITableViewDelegate,UITableViewDataSource>
 
@@ -180,6 +181,11 @@
     //4,clear
     [self clearAllContent];
     
+}
+
+- (IBAction)dataBtnOnClick:(id)sender {
+    DataViewController *page = [[DataViewController alloc] init];
+    [self.navigationController pushViewController:page animated:true];
 }
 
 -(NSMutableArray *) testArr{

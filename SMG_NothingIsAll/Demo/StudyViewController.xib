@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12118" systemVersion="16C67" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12120" systemVersion="16C67" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12086"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -219,7 +219,7 @@
                     </constraints>
                 </view>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="V2t-9z-vIC">
-                    <rect key="frame" x="0.0" y="618" width="123.5" height="49"/>
+                    <rect key="frame" x="0.0" y="618" width="92.5" height="49"/>
                     <color key="backgroundColor" red="1" green="0.0" blue="0.0" alpha="0.29999999999999999" colorSpace="calibratedRGB"/>
                     <state key="normal" title="Clear"/>
                     <connections>
@@ -227,7 +227,7 @@
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SKM-HR-TEc">
-                    <rect key="frame" x="125.5" y="618" width="124" height="49"/>
+                    <rect key="frame" x="94.5" y="618" width="92" height="49"/>
                     <color key="backgroundColor" red="0.0" green="1" blue="1" alpha="0.29999999999999999" colorSpace="calibratedRGB"/>
                     <state key="normal" title="Test"/>
                     <connections>
@@ -235,16 +235,25 @@
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ubu-fy-3me">
-                    <rect key="frame" x="251.5" y="618" width="123.5" height="49"/>
+                    <rect key="frame" x="188.5" y="618" width="92.5" height="49"/>
                     <color key="backgroundColor" red="0.0" green="1" blue="0.0" alpha="0.29999999999999999" colorSpace="calibratedRGB"/>
                     <state key="normal" title="Commit"/>
                     <connections>
                         <action selector="commitBtnOnClick:" destination="-1" eventType="touchUpInside" id="dtT-aO-y7N"/>
                     </connections>
                 </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lRI-Ma-RzR">
+                    <rect key="frame" x="283" y="618" width="92" height="49"/>
+                    <color key="backgroundColor" red="1" green="1" blue="0.0" alpha="0.29999999999999999" colorSpace="calibratedRGB"/>
+                    <state key="normal" title="Data"/>
+                    <connections>
+                        <action selector="dataBtnOnClick:" destination="-1" eventType="touchUpInside" id="U8f-2l-pif"/>
+                    </connections>
+                </button>
             </subviews>
             <color key="backgroundColor" red="0.93333333333333335" green="0.93333333333333335" blue="0.93333333333333335" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
+                <constraint firstItem="lRI-Ma-RzR" firstAttribute="top" secondItem="Eak-Ig-YCc" secondAttribute="bottom" constant="10" id="0zP-J7-7xf"/>
                 <constraint firstAttribute="bottom" secondItem="V2t-9z-vIC" secondAttribute="bottom" id="4IB-s0-oFC"/>
                 <constraint firstItem="ubu-fy-3me" firstAttribute="width" secondItem="SKM-HR-TEc" secondAttribute="width" id="6jX-Vd-dWD"/>
                 <constraint firstItem="V2t-9z-vIC" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="8it-kw-PC3"/>
@@ -254,17 +263,20 @@
                 <constraint firstItem="Eak-Ig-YCc" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="16" id="KWB-BP-c6R"/>
                 <constraint firstItem="V2t-9z-vIC" firstAttribute="top" secondItem="Eak-Ig-YCc" secondAttribute="bottom" constant="10" id="NfC-4K-2cE"/>
                 <constraint firstItem="SKM-HR-TEc" firstAttribute="top" secondItem="Eak-Ig-YCc" secondAttribute="bottom" constant="10" id="SAu-3N-wes"/>
-                <constraint firstAttribute="trailing" secondItem="ubu-fy-3me" secondAttribute="trailing" id="Tin-hp-acM"/>
+                <constraint firstAttribute="bottom" secondItem="lRI-Ma-RzR" secondAttribute="bottom" id="Vkv-d8-7nK"/>
                 <constraint firstItem="RcJ-Mn-RNd" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="16" id="azU-xs-Qmh"/>
                 <constraint firstAttribute="bottom" secondItem="SKM-HR-TEc" secondAttribute="bottom" id="f9w-u7-Imc"/>
                 <constraint firstItem="ubu-fy-3me" firstAttribute="leading" secondItem="SKM-HR-TEc" secondAttribute="trailing" constant="2" id="fkO-3J-ylw"/>
                 <constraint firstAttribute="bottom" secondItem="Eak-Ig-YCc" secondAttribute="bottom" constant="59" id="g96-Ie-RLI"/>
                 <constraint firstItem="SKM-HR-TEc" firstAttribute="leading" secondItem="V2t-9z-vIC" secondAttribute="trailing" constant="2" id="h2v-gd-st6"/>
+                <constraint firstItem="lRI-Ma-RzR" firstAttribute="width" secondItem="ubu-fy-3me" secondAttribute="width" id="hcA-Zp-RAm"/>
+                <constraint firstAttribute="trailing" secondItem="lRI-Ma-RzR" secondAttribute="trailing" id="nHE-vy-u4U"/>
                 <constraint firstItem="Eak-Ig-YCc" firstAttribute="height" secondItem="RcJ-Mn-RNd" secondAttribute="height" id="nSX-1l-x4e"/>
                 <constraint firstAttribute="trailing" secondItem="Eak-Ig-YCc" secondAttribute="trailing" constant="16" id="nwY-Ev-NSe"/>
                 <constraint firstItem="Eak-Ig-YCc" firstAttribute="top" secondItem="RcJ-Mn-RNd" secondAttribute="bottom" constant="16" id="oGb-tJ-fkq"/>
                 <constraint firstItem="SKM-HR-TEc" firstAttribute="width" secondItem="V2t-9z-vIC" secondAttribute="width" id="ojO-W4-j4i"/>
                 <constraint firstItem="ubu-fy-3me" firstAttribute="top" secondItem="Eak-Ig-YCc" secondAttribute="bottom" constant="10" id="s8g-Fj-vIn"/>
+                <constraint firstItem="lRI-Ma-RzR" firstAttribute="leading" secondItem="ubu-fy-3me" secondAttribute="trailing" constant="2" id="uEY-UY-5gU"/>
             </constraints>
             <point key="canvasLocation" x="33.5" y="54.5"/>
         </view>
