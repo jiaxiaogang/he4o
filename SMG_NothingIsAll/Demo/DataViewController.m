@@ -30,6 +30,7 @@
 }
 
 -(void) initView{
+    self.title = @"数据";
     UINib *nib = [UINib nibWithNibName:[DataCell reuseIdentifier] bundle: nil];
     [self.tableView registerNib:nib forCellReuseIdentifier:[DataCell reuseIdentifier]];
 }
@@ -43,6 +44,10 @@
     self.tableView.dataSource = self;
 }
 
+-(void) viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    [self.navigationController setNavigationBarHidden:false];
+}
 
 /**
  *  MARK:--------------------UITableViewDelegate,UITableViewDataSource--------------------

@@ -121,6 +121,19 @@
             [mStr appendString:[self.dic objectForKey:@"word"]];
             [mStr appendString:@"\n"];
             [self.dataLab setText:mStr];
+            
+            //objId
+            [mStr appendString:@"对应实物:"];
+            [mStr appendString:STRTOOK([self getObjName:[self.dic objectForKey:@"objId"]])];
+            [mStr appendString:@"\n"];
+            [self.dataLab setText:mStr];
+            
+            //doId
+            [mStr appendString:@"对应行为:"];
+            [mStr appendString:STRTOOK([self getObjName:[self.dic objectForKey:@"doId"]])];
+            [mStr appendString:@"\n"];
+            [self.dataLab setText:mStr];
+            
         }else if (self.storeType == StoreType_Logic) {
             [self.dataLab setText:@"逻辑"];
         }
