@@ -117,8 +117,8 @@
             [mStr appendString:@"\n"];
             
             //itemName
-            [mStr appendString:@"分词名字:"];
-            [mStr appendString:[self.dic objectForKey:@"itemName"]];
+            [mStr appendString:@"词汇:"];
+            [mStr appendString:[self.dic objectForKey:@"word"]];
             [mStr appendString:@"\n"];
             [self.dataLab setText:mStr];
         }else if (self.storeType == StoreType_Logic) {
