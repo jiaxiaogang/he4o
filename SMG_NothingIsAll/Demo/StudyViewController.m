@@ -195,7 +195,7 @@
                     @{@"text":@"苹果",@"obj":@"苹果"},
                     @{@"text":@"苹果",@"obj":@"苹果"},
                     @{@"text":@"苹果",@"obj":@"苹果"},
-                    @{@"fromMKId":@"小赤",@"doType":@"吃",@"toMKId":@"小赤吃苹果",@"text":@"苹果"},
+                    @{@"fromMKId":@"小赤",@"doType":@"吃",@"toMKId":@"苹果",@"text":@"小赤吃苹果"},
                     @{@"fromMKId":@"小赤",@"doType":@"给",@"toMKId":@"苹果",@"text":@"小赤给苹果"},
                     @{@"fromMKId":@"小赤",@"doType":@"给",@"toMKId":@"桃",@"text":@"小赤给桃"},
                     @{@"fromMKId":@"小臂",@"doType":@"给",@"toMKId":@"苹果",@"text":@"小臂给苹果"},

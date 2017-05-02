@@ -72,7 +72,8 @@
             //Do
             if (ARRISOK(doArr)) {
                 [mStr appendString:@"行为:"];
-                for (NSString *itemId in doArr) {
+                for (NSDictionary *doItem in doArr) {
+                    NSString *itemId = [doItem objectForKey:@"doId"];
                     NSString *itemName = [self getDoName:itemId];
                     if (STRISOK(itemName)) {
                         [mStr appendString:itemName];

@@ -270,6 +270,12 @@
         }else if ([model isKindOfClass:[FeelDoModel class]]) {//图像输入行为
             NSDictionary *value = [[SMG sharedInstance].store.mkStore addDo:((FeelDoModel*)model).doType];
             [findDoArr addObject:value];
+            
+            NSDictionary *fromObj = [[SMG sharedInstance].store.mkStore addObj:((FeelDoModel*)model).fromMKId];
+            [findObjArr addObject:fromObj];
+            
+            NSDictionary *toObj = [[SMG sharedInstance].store.mkStore addObj:((FeelDoModel*)model).toMKId];
+            [findObjArr addObject:toObj];
         }
     }
     
