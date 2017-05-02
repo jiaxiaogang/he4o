@@ -25,8 +25,10 @@
  *  MARK:--------------------Text--------------------
  *  调用转到Text;
  */
--(NSDictionary*) containerWord:(NSString*)word;//图谱分词数组;包含某词;
--(NSDictionary*) containerWordWithWhere:(NSDictionary*)where;//根据其它字段找某词;
+-(BOOL) containerWord:(NSString*)word;//图谱分词数组;包含某词;
+-(BOOL) containerWordWithWhere:(NSDictionary*)where;//根据其它字段找某词;
+-(NSDictionary*) getWord:(NSString*)word;//图谱分词数组;包含某词;
+-(NSDictionary*) getWordWithWhere:(NSDictionary*)where;//根据其它字段找某词;
 -(NSDictionary*) addWord:(NSString*)word;
 -(NSMutableArray*) addWordArr:(NSArray*)wordArr;
 -(NSDictionary*) addWord:(NSString*)word withObjId:(NSString*)objId withDoId:(NSString*)doId;
@@ -34,6 +36,8 @@
 /**
  *  MARK:--------------------objModel--------------------
  */
+-(NSDictionary*) getObj:(NSString*)itemName;
+-(NSDictionary*) getObjWithWhere:(NSDictionary*)where;
 -(NSDictionary*) addObj:(NSString*)itemName;
 -(NSMutableArray*) addObjArr:(NSArray*)itemNameArr;
 
@@ -41,6 +45,8 @@
 /**
  *  MARK:--------------------doModel--------------------
  */
+-(NSDictionary*) getDo:(NSString*)itemName;
+-(NSDictionary*) getDoWithWhere:(NSDictionary*)where;
 -(NSDictionary*) addDo:(NSString*)itemName;
 -(NSMutableArray*) addDoArr:(NSArray*)itemNameArr;
 

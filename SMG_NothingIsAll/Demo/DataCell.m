@@ -7,6 +7,7 @@
 //
 
 #import "DataCell.h"
+#import "StoreHeader.h"
 
 @interface DataCell ()
 
@@ -43,7 +44,45 @@
 -(void) refreshDisplay{
     if (self.dic) {
         if (self.storeType == StoreType_Mem) {
-            [self.dataLab setText:@"记忆"];
+            NSArray *doArr = [self.dic objectForKey:@"do"];
+            NSArray *objArr = [self.dic objectForKey:@"obj"];
+            NSString *text = [self.dic objectForKey:@"text"];
+            
+            NSMutableString *mStr = [[NSMutableString alloc] init];
+            //Text
+            [mStr appendString:@"记忆:"];
+            if (STRISOK(text)) {
+                [mStr appendString:text];
+            }
+            [mStr appendString:@"\n"];
+            
+            //Obj
+            if (ARRISOK(objArr)) {
+                [mStr appendString:@"实物:"];
+                for (NSString *itemId in objArr) {
+                    NSString *itemName = [self getObjName:itemId];
+                    if (STRISOK(itemName)) {
+                        [mStr appendString:itemName];
+                        [mStr appendString:@","];
+                    }
+                    [mStr appendString:@"\n"];
+                }
+            }
+            
+            //Do
+            if (ARRISOK(doArr)) {
+                [mStr appendString:@"行为:"];
+                for (NSString *itemId in doArr) {
+                    NSString *itemName = [self getDoName:itemId];
+                    if (STRISOK(itemName)) {
+                        [mStr appendString:itemName];
+                        [mStr appendString:@","];
+                    }
+                    [mStr appendString:@"\n"];
+                }
+            }
+            
+            [self.dataLab setText:mStr];
         }else if (self.storeType == StoreType_Do) {
             [self.dataLab setText:@"行为"];
         }else if (self.storeType == StoreType_Obj) {
@@ -56,10 +95,36 @@
     }
 }
 
+/**
+ *  MARK:--------------------method--------------------
+ */
+-(NSString*) getObjName:(NSString*)itemId{
+    NSDictionary *objDic = [[SMG sharedInstance].store.mkStore getObjWithWhere:[NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(itemId),@"itemId", nil]];
+    if (objDic && [objDic objectForKey:@"itemName"]) {
+        return STRTOOK([objDic objectForKey:@"itemName"]);
+    }
+    return nil;
+}
+
+-(NSString*) getDoName:(NSString*)itemId{
+    NSDictionary *objDic = [[SMG sharedInstance].store.mkStore getDoWithWhere:[NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(itemId),@"itemId", nil]];
+    if (objDic && [objDic objectForKey:@"itemName"]) {
+        return STRTOOK([objDic objectForKey:@"itemName"]);
+    }
+    return nil;
+}
+
+-(NSString*) getWordName:(NSString*)itemId{
+    NSDictionary *objDic = [[SMG sharedInstance].store.mkStore getWordWithWhere:[NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(itemId),@"itemId", nil]];
+    if (objDic && [objDic objectForKey:@"word"]) {
+        return STRTOOK([objDic objectForKey:@"word"]);
+    }
+    return nil;
+}
 
 
 + (CGFloat) getCellHeight{
-    return 64;
+    return 164;
 }
 
 @end

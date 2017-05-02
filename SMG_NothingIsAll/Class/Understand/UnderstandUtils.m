@@ -39,7 +39,7 @@
     for (int i = 0; i < text.length - 1; i++) {
         //双字词分析;
         NSString *checkWord = [text substringWithRange:NSMakeRange(i, 2)];
-        NSDictionary *findLocalWord = [[SMG sharedInstance].store.mkStore containerWord:checkWord];
+        NSDictionary *findLocalWord = [[SMG sharedInstance].store.mkStore getWord:checkWord];
         if (findLocalWord) {
             [oldArr addObject:findLocalWord];
         }else{

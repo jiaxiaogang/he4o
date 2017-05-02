@@ -36,11 +36,19 @@
  *  MARK:--------------------Text--------------------
  *  调用转到Text;
  */
--(NSDictionary*) containerWord:(NSString*)word{
+-(BOOL) containerWord:(NSString*)word{
+    return [self getWord:word] != nil;
+}
+
+-(BOOL) containerWordWithWhere:(NSDictionary*)where{
+    return [self getWordWithWhere:where] != nil;
+}
+
+-(NSDictionary*) getWord:(NSString*)word{
     return [self.textStore getSingleWordWithText:STRTOOK(word)];
 }
 
--(NSDictionary*) containerWordWithWhere:(NSDictionary*)where{
+-(NSDictionary*) getWordWithWhere:(NSDictionary*)where{
     return [self.textStore getSingleWordWithWhere:where];
 }
 
@@ -59,6 +67,14 @@
 /**
  *  MARK:--------------------objModel--------------------
  */
+-(NSDictionary*) getObj:(NSString*)itemName{
+    return [self.objStore getSingleItemWithItemName:itemName];
+}
+
+-(NSDictionary*) getObjWithWhere:(NSDictionary*)where{
+    return [self.objStore getSingleItemWithWhere:where];
+}
+
 -(NSDictionary*) addObj:(NSString*)itemName{
     return [self.objStore addItem:itemName];
 }
@@ -70,6 +86,14 @@
 /**
  *  MARK:--------------------doModel--------------------
  */
+-(NSDictionary*) getDo:(NSString*)itemName{
+    return [self.doStore getSingleItemWithItemName:itemName];
+}
+
+-(NSDictionary*) getDoWithWhere:(NSDictionary*)where{
+    return [self.doStore getSingleItemWithWhere:where];
+}
+
 -(NSDictionary*) addDo:(NSString*)itemName{
     return [self.doStore addItem:itemName];
 }
