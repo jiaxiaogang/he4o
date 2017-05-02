@@ -84,15 +84,18 @@
 }
 
 - (IBAction)doBtnOnClick:(id)sender {
-    [self setDatas:nil withStoreType:StoreType_Do];
+    NSMutableArray *arr = [[SMG sharedInstance].store.mkStore getDoArrWithWhere:nil];
+    [self setDatas:arr withStoreType:StoreType_Do];
 }
 
 - (IBAction)objBtnOnClick:(id)sender {
-    [self setDatas:nil withStoreType:StoreType_Obj];
+    NSMutableArray *arr = [[SMG sharedInstance].store.mkStore getObjArrWithWhere:nil];
+    [self setDatas:arr withStoreType:StoreType_Obj];
 }
 
 - (IBAction)textBtnOnClick:(id)sender {
-    [self setDatas:nil withStoreType:StoreType_Text];
+    NSMutableArray *arr = [[SMG sharedInstance].store.mkStore getWordArrWithWhere:nil];
+    [self setDatas:arr withStoreType:StoreType_Text];
 }
 
 - (IBAction)logicBtnOnClick:(id)sender {

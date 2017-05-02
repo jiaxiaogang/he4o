@@ -17,7 +17,8 @@
 -(NSDictionary*) getSingleItemWithItemName:(NSString*)itemName;
 //获取where的最近一条;(精确匹配)
 -(NSDictionary*) getSingleItemWithWhere:(NSDictionary*)whereDic;
-
+//获取where的所有条
+-(NSMutableArray*) getItemArrWithWhere:(NSDictionary*)where;
 
 /**
  *  MARK:--------------------addItem--------------------

@@ -79,6 +79,8 @@
 //获取where的最近一条;(精确匹配)
 -(NSDictionary*) getSingleWordWithWhere:(NSDictionary*)whereDic;
 
+//获取多条
+-(NSMutableArray*) getWordArrWithWhere:(NSDictionary*)where;
 
 /**
  *  MARK:--------------------addWord--------------------

@@ -63,7 +63,7 @@
                     NSString *itemName = [self getObjName:itemId];
                     if (STRISOK(itemName)) {
                         [mStr appendString:itemName];
-                        [mStr appendString:@","];
+                        [mStr appendString:@" "];
                     }
                     [mStr appendString:@"\n"];
                 }
@@ -76,7 +76,7 @@
                     NSString *itemName = [self getDoName:itemId];
                     if (STRISOK(itemName)) {
                         [mStr appendString:itemName];
-                        [mStr appendString:@","];
+                        [mStr appendString:@" "];
                     }
                     [mStr appendString:@"\n"];
                 }
@@ -84,11 +84,43 @@
             
             [self.dataLab setText:mStr];
         }else if (self.storeType == StoreType_Do) {
-            [self.dataLab setText:@"行为"];
+            
+            NSMutableString *mStr = [[NSMutableString alloc] init];
+            //itemId
+            [mStr appendString:@"行为Id:"];
+            [mStr appendString:[self.dic objectForKey:@"itemId"]];
+            [mStr appendString:@"\n"];
+            
+            //itemName
+            [mStr appendString:@"行为名字:"];
+            [mStr appendString:[self.dic objectForKey:@"itemName"]];
+            [mStr appendString:@"\n"];
+            [self.dataLab setText:mStr];
+            
         }else if (self.storeType == StoreType_Obj) {
-            [self.dataLab setText:@"实物"];
+            NSMutableString *mStr = [[NSMutableString alloc] init];
+            //itemId
+            [mStr appendString:@"实物Id:"];
+            [mStr appendString:[self.dic objectForKey:@"itemId"]];
+            [mStr appendString:@"\n"];
+            
+            //itemName
+            [mStr appendString:@"实物名字:"];
+            [mStr appendString:[self.dic objectForKey:@"itemName"]];
+            [mStr appendString:@"\n"];
+            [self.dataLab setText:mStr];
         }else if (self.storeType == StoreType_Text) {
-            [self.dataLab setText:@"分词"];
+            NSMutableString *mStr = [[NSMutableString alloc] init];
+            //itemId
+            [mStr appendString:@"分词Id:"];
+            [mStr appendString:[self.dic objectForKey:@"itemId"]];
+            [mStr appendString:@"\n"];
+            
+            //itemName
+            [mStr appendString:@"分词名字:"];
+            [mStr appendString:[self.dic objectForKey:@"itemName"]];
+            [mStr appendString:@"\n"];
+            [self.dataLab setText:mStr];
         }else if (self.storeType == StoreType_Logic) {
             [self.dataLab setText:@"逻辑"];
         }

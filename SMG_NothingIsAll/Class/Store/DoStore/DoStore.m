@@ -64,6 +64,32 @@
     return nil;
 }
 
+-(NSMutableArray*) getItemArrWithWhere:(NSDictionary*)where{
+    //数据检查
+    if (where == nil || where.count == 0) {
+        return self.dataArr;
+    }
+    NSMutableArray *valArr = nil;
+    for (NSInteger i = self.dataArr.count - 1; i >= 0; i--) {
+        NSDictionary *item = self.dataArr[i];
+        BOOL isEqual = true;
+        //对比所有value;
+        for (NSString *key in where.allKeys) {
+            if (![SMGUtils compareItemA:[item objectForKey:key] itemB:[where objectForKey:key]]) {
+                isEqual = false;
+            }
+        }
+        //都一样,则收集到valArr;
+        if (isEqual) {
+            if (valArr == nil) {
+                valArr = [[NSMutableArray alloc] init];
+            }
+            [valArr addObject:item];
+        }
+    }
+    return valArr;
+}
+
 /**
  *  MARK:--------------------addItem--------------------
  */
