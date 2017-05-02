@@ -130,7 +130,7 @@
             
             //doId
             [mStr appendString:@"对应行为:"];
-            [mStr appendString:STRTOOK([self getObjName:[self.dic objectForKey:@"doId"]])];
+            [mStr appendString:STRTOOK([self getDoName:[self.dic objectForKey:@"doId"]])];
             [mStr appendString:@"\n"];
             [self.dataLab setText:mStr];
             
