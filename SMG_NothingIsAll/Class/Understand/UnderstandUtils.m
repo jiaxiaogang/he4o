@@ -35,17 +35,39 @@
     text = STRTOOK(text);
     NSMutableArray *oldArr = [[NSMutableArray alloc] init];
     NSMutableArray *newArr = [[NSMutableArray alloc] init];
+    ////2,循环找text中的新词
+    //for (int i = 0; i < text.length - 1; i++) {
+    //    //双字词分析;
+    //    NSString *checkWord = [text substringWithRange:NSMakeRange(i, 2)];
+    //    NSDictionary *findLocalWord = [[SMG sharedInstance].store.mkStore getWord:checkWord];
+    //    if (findLocalWord) {
+    //        [oldArr addObject:findLocalWord];
+    //    }else{
+    //        NSArray *findWordFromMem = [[SMG sharedInstance].store searchMemStoreContainerText:checkWord limit:3];
+    //        if (findWordFromMem && findWordFromMem.count >= 3) {//只有达到三次听到的词;才认为是一个词;
+    //            [newArr addObject:checkWord];
+    //        }
+    //    }
+    //}
     //2,循环找text中的新词
-    for (int i = 0; i < text.length - 1; i++) {
-        //双字词分析;
-        NSString *checkWord = [text substringWithRange:NSMakeRange(i, 2)];
-        NSDictionary *findLocalWord = [[SMG sharedInstance].store.mkStore getWord:checkWord];
-        if (findLocalWord) {
-            [oldArr addObject:findLocalWord];
-        }else{
-            NSArray *findWordFromMem = [[SMG sharedInstance].store searchMemStoreContainerText:checkWord limit:3];
-            if (findWordFromMem && findWordFromMem.count >= 3) {//只有达到三次听到的词;才认为是一个词;
-                [newArr addObject:checkWord];
+    NSInteger curIndex = 0;//解析到的下标
+    while (curIndex < text.length) {
+        NSString *checkStr = [text substringFromIndex:curIndex];//找词字符串
+        NSInteger maxWordLength = MIN(10, checkStr.length);     //词最长10个字
+        for (NSInteger i = maxWordLength; i > 0; i--) {
+            NSString *checkWord = [checkStr substringToIndex:i];
+            NSDictionary *findLocalWord = [[SMG sharedInstance].store.mkStore getWord:checkWord];
+            if (findLocalWord) {//是旧词
+                [oldArr addObject:findLocalWord];
+                curIndex += i;
+                break;
+            }else{//不是旧词
+                NSArray *findWordFromMem = [[SMG sharedInstance].store searchMemStoreContainerText:checkWord limit:3];
+                if (findWordFromMem && findWordFromMem.count >= 3) {//只有达到三次听到的词;才认为是一个词;
+                    [newArr addObject:checkWord];
+                    curIndex += i;
+                    break;
+                }
             }
         }
     }

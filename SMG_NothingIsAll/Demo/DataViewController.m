@@ -86,25 +86,30 @@
 - (IBAction)memoryBtnOnClick:(id)sender {
     NSMutableArray *arr = [[SMG sharedInstance].store.memStore getMemoryWithWhereDic:nil];
     [self setDatas:arr withStoreType:StoreType_Mem];
+    self.title = @"记忆";
 }
 
 - (IBAction)doBtnOnClick:(id)sender {
     NSMutableArray *arr = [[SMG sharedInstance].store.mkStore getDoArrWithWhere:nil];
     [self setDatas:arr withStoreType:StoreType_Do];
+    self.title = @"行为";
 }
 
 - (IBAction)objBtnOnClick:(id)sender {
     NSMutableArray *arr = [[SMG sharedInstance].store.mkStore getObjArrWithWhere:nil];
     [self setDatas:arr withStoreType:StoreType_Obj];
+    self.title = @"实物";
 }
 
 - (IBAction)textBtnOnClick:(id)sender {
     NSMutableArray *arr = [[SMG sharedInstance].store.mkStore getWordArrWithWhere:nil];
     [self setDatas:arr withStoreType:StoreType_Text];
+    self.title = @"分词";
 }
 
 - (IBAction)logicBtnOnClick:(id)sender {
     [self setDatas:nil withStoreType:StoreType_Logic];
+    self.title = @"逻辑";
 }
 
 /**

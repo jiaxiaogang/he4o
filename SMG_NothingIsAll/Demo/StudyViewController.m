@@ -201,7 +201,16 @@
                     @{@"fromMKId":@"小臂",@"doType":@"给",@"toMKId":@"苹果",@"text":@"小臂给苹果"},
                     @{@"fromMKId":@"小生",@"doType":@"取",@"toMKId":@"苹果",@"text":@"小生取苹果"},
                     @{@"fromMKId":@"小贾",@"doType":@"吃",@"toMKId":@"苹果",@"text":@"小贾吃苹果"},
-                    @{@"fromMKId":@"小刚",@"doType":@"吃",@"toMKId":@"桃",@"text":@"小刚吃桃"}, nil];
+                    @{@"fromMKId":@"小刚",@"doType":@"吃",@"toMKId":@"桃",@"text":@"小刚吃桃"},
+                    
+                    @{@"fromMKId":@"小赤",@"doType":@"吃",@"toMKId":@"苹果",@"text":@"小赤吃苹果"},
+                    @{@"fromMKId":@"小赤",@"doType":@"吃",@"toMKId":@"苹果",@"text":@"小赤吃苹果"},
+                    @{@"fromMKId":@"小赤",@"doType":@"吃",@"toMKId":@"苹果",@"text":@"小赤吃苹果"},
+                    @{@"fromMKId":@"小赤",@"doType":@"吃",@"toMKId":@"桃",@"text":@"小赤吃桃"},
+                    @{@"fromMKId":@"小赤",@"doType":@"吃",@"toMKId":@"桃",@"text":@"小赤吃桃"},
+                    @{@"fromMKId":@"小赤",@"doType":@"吃",@"toMKId":@"桃",@"text":@"小赤吃桃"},
+                    
+                    nil];
     }
     return _testArr;
 }
