@@ -62,6 +62,22 @@
                 curIndex += i;
                 break;
             }else{//不是旧词
+                NSInteger *sumNone = 0;//有0边是词,需要10次;
+                NSInteger *sumOne = 0;//有1边是词,需要6次;
+                NSInteger *sumTwo = 0;//有2边是词,需要3次;
+                NSInteger *sumAll = 0;//全句都是词时,可分析是否为词,是词时直接1次即可;如:小花吃饭了,(小花是局部名词)
+                
+                NSArray *allMem = [[SMG sharedInstance].store.memStore getMemoryWithWhereDic:nil];
+                for (NSDictionary *itemMem in allMem) {
+                    NSString *memText = [itemMem objectForKey:@"text"];
+                    if ([SMGUtils compareItemA:memText containsItemB:checkWord]) {
+                        NSRange range = [memText rangeOfString:checkWord];
+                        
+                    }
+                }
+                
+                
+                
                 NSArray *findWordFromMem = [[SMG sharedInstance].store searchMemStoreContainerText:checkWord limit:3];
                 if (findWordFromMem && findWordFromMem.count >= 3) {//只有达到三次听到的词;才认为是一个词;
                     [newArr addObject:checkWord];
@@ -151,6 +167,23 @@
         }
     }
     return valueArr;
+}
+
+
+/**
+ *  MARK:--------------------private--------------------
+ */
+//检测Index左侧是否为词
+-(BOOL) checkLeftInsideIsWordWithText:(NSString*)text index:(NSInteger)index{
+    text = STRTOOK(text);
+    //1,左侧没字了,是词
+    if (index == 0 || index > text.length) {
+        return true;
+    }
+    if () {
+        <#statements#>
+    }
+    
 }
 
 @end
