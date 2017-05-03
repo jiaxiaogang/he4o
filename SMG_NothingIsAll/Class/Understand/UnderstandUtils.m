@@ -62,10 +62,10 @@
                 [oldArr addObject:findLocalWord];
                 findWord = true;
             }else{//不是旧词
-                NSInteger *sumNone = 0;//有0边是词,需要10次;
-                NSInteger *sumOne = 0;//有1边是词,需要6次;
-                NSInteger *sumTwo = 0;//有2边是词,需要3次;
-                NSInteger *sumAll = 0;//全句都是词时,可分析是否为词,是词时直接1次即可;如:小花吃饭了,(小花是局部名词)
+                NSInteger sumNone = 0;//有0边是词,需要10次;
+                NSInteger sumOne = 0;//有1边是词,需要6次;
+                NSInteger sumTwo = 0;//有2边是词,需要3次;
+                NSInteger sumAll = 0;//全句都是词时,可分析是否为词,是词时直接1次即可;如:小花吃饭了,(小花是局部名词)
                 
                 NSArray *allMem = [[SMG sharedInstance].store.memStore getMemoryWithWhereDic:nil];
                 for (NSDictionary *itemMem in allMem) {
@@ -134,12 +134,13 @@
         return nil;
     }
     //1,申请收集数据的数组
-    __block NSMutableArray *unknownWordArr = [[NSMutableArray alloc] init];
-    NSMutableArray *unknownObjArr = [[NSMutableArray alloc] init];
-    NSMutableArray *unknownDoArr = [[NSMutableArray alloc] init];
     NSMutableArray *valueArr = [[NSMutableArray alloc] init];
     //2,收集数据
     for (NSDictionary *memItem in memArr) {
+        //3,每条记忆都收集unknownData;
+        __block NSMutableArray *unknownWordArr = [[NSMutableArray alloc] init];
+        NSMutableArray *unknownObjArr = [[NSMutableArray alloc] init];
+        NSMutableArray *unknownDoArr = [[NSMutableArray alloc] init];
         //memItem结构:{do=[feelDoModel],obj=[10,12],text=@"asdf"}
         //条件1,取未理解元素和;不能>3
         if ([memItem objectForKey:@"obj"]) {
@@ -177,7 +178,7 @@
             }];
         }
     }
-    return valueArr;
+    return valueArr;//此处;每条记忆都找到有效数据;
 }
 
 
