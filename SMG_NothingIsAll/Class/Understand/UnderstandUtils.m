@@ -49,7 +49,7 @@
     //        }
     //    }
     //}
-    //2,循环找text中的新词
+    //2,循环找text中的新词(支持多字词分析)
     NSInteger curIndex = 0;//解析到的下标
     while (curIndex < text.length) {
         NSString *checkStr = [text substringFromIndex:curIndex];//找词字符串
@@ -71,18 +71,22 @@
                 for (NSDictionary *itemMem in allMem) {
                     NSString *memText = [itemMem objectForKey:@"text"];
                     if ([SMGUtils compareItemA:memText containsItemB:checkWord]) {
+                        //1,找词位置
                         NSRange range = [memText rangeOfString:checkWord];
-                        
+                        //2,左右撞击边缘
+                        BOOL hitLeft = (range.location <= 0 || [self checkLeftInsideIsWordWithText:memText index:range.location]);
+                        BOOL hitRight = (range.location + range.length >= memText.length || [self checkRightInsideIsWordWithText:memText index:range.location + range.length]);
+                        //3,累计词频
+                        if (hitLeft && hitRight) sumTwo ++;
+                        if (hitLeft || hitRight) sumOne ++;
+                        sumNone ++;
+                        //4,判断结果
+                        if (sumNone >= 10 || sumOne >= 6 || sumTwo >= 3) {
+                            [newArr addObject:checkWord];
+                            curIndex += i;
+                            break;
+                        }
                     }
-                }
-                
-                
-                
-                NSArray *findWordFromMem = [[SMG sharedInstance].store searchMemStoreContainerText:checkWord limit:3];
-                if (findWordFromMem && findWordFromMem.count >= 3) {//只有达到三次听到的词;才认为是一个词;
-                    [newArr addObject:checkWord];
-                    curIndex += i;
-                    break;
                 }
             }
         }
@@ -174,16 +178,39 @@
  *  MARK:--------------------private--------------------
  */
 //检测Index左侧是否为词
--(BOOL) checkLeftInsideIsWordWithText:(NSString*)text index:(NSInteger)index{
++(BOOL) checkLeftInsideIsWordWithText:(NSString*)text index:(NSInteger)index{
     text = STRTOOK(text);
-    //1,左侧没字了,是词
-    if (index == 0 || index > text.length) {
-        return true;
+    //1,左侧没字了,不是词 | index越界了,不是词
+    if (index <= 0 || index > text.length) {
+        return false;
     }
-    if () {
-        <#statements#>
+    //2,检查最长7个字范围是不是词
+    NSInteger maxLength = MIN(index, 7);
+    for (NSInteger i = 1; i <= maxLength; i++) {
+        NSString *checkWord = [text substringWithRange:NSMakeRange(index - i, i)];
+        if ([[SMG sharedInstance].store.mkStore containerWord:checkWord]) {
+            return true;
+        }
     }
-    
+    return false;
+}
+
+//检测Index右侧是否为词
++(BOOL) checkRightInsideIsWordWithText:(NSString*)text index:(NSInteger)index{
+    text = STRTOOK(text);
+    //1,左侧没字了,不是词 | index越界了,不是词
+    if (index >= text.length || index < 0) {
+        return false;
+    }
+    //2,检查最长7个字范围是不是词
+    NSInteger maxLength = MIN(text.length - index, 7);
+    for (NSInteger i = 1; i <= maxLength; i++) {
+        NSString *checkWord = [text substringWithRange:NSMakeRange(index, i)];
+        if ([[SMG sharedInstance].store.mkStore containerWord:checkWord]) {
+            return true;
+        }
+    }
+    return false;
 }
 
 @end
