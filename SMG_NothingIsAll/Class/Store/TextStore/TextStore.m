@@ -244,6 +244,7 @@
  *  MARK:--------------------add--------------------
  */
 -(NSDictionary*) addWord:(NSString*)word withObjId:(NSString*)objId withDoId:(NSString*)doId{
+    NSLog(@"保存Word分词:%@__objId:%@__doId:%@",word,objId,doId);
     if (!STRISOK(word)) {
         return nil;
     }
