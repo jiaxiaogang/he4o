@@ -19,7 +19,7 @@
 /**
  *  MARK:--------------------从text中找出生分词和已有分词--------------------
  */
-+(void) getWordArrAtText:(NSString*)text outBlock:(void(^)(NSArray *oldWordArr,NSArray *newWordArr))outBlock{
++(void) getWordArrAtText:(NSString*)text outBlock:(void(^)(NSArray *oldWordArr,NSArray *newWordArr ,NSInteger unknownCount))outBlock{
     //计算机器械;(5字4词)
     //是什么;(3字2词)(其中'是'为单字词)
     //要我说;(3字3词)单字词
@@ -28,13 +28,14 @@
     //1,数据
     if (!STRISOK(text)) {
         if (outBlock) {
-            outBlock(nil,nil);
+            outBlock(nil,nil,0);
         }
         return;
     }
     text = STRTOOK(text);
     NSMutableArray *oldArr = [[NSMutableArray alloc] init];
     NSMutableArray *newArr = [[NSMutableArray alloc] init];
+    NSInteger unknownCount = 0;
     ////2,循环找text中的新词
     //for (int i = 0; i < text.length - 1; i++) {
     //    //双字词分析;
@@ -96,11 +97,12 @@
         }
         if (!findWord) {
             curIndex ++;//未发现词,则下标加1;
+            unknownCount ++;
         }
     }
     //3,返回数据
     if (outBlock) {
-        outBlock(oldArr,newArr);
+        outBlock(oldArr,newArr,unknownCount);
     }
 
 }
@@ -161,8 +163,8 @@
         }
         if (unknownDoArr.count + unknownObjArr.count <= 3) {
             //条件2,不能有未分词的陌生词;
-            [UnderstandUtils getWordArrAtText:[memItem objectForKey:@"text"] outBlock:^(NSArray *oldWordArr, NSArray *newWordArr) {
-                if (!ARRISOK(newWordArr)) {
+            [UnderstandUtils getWordArrAtText:[memItem objectForKey:@"text"] outBlock:^(NSArray *oldWordArr, NSArray *newWordArr,NSInteger unknownCount) {
+                if (!ARRISOK(newWordArr) && unknownCount == 0) {
                     for (NSDictionary *oldWord in oldWordArr) {
                         if (![oldWord objectForKey:@"objId"] && ![oldWord objectForKey:@"doId"]) {
                             [unknownWordArr addObject:oldWord];
@@ -170,7 +172,8 @@
                     }
                     //条件3,未理解的分词数量差<2;
                     NSInteger diffCount = unknownWordArr.count - unknownDoArr.count - unknownObjArr.count;
-                    if (diffCount < 2 && diffCount > -2) {
+                    if (diffCount < 2 && diffCount > -2) {//xxx当"小赤吃苹果"中"苹果"为已知词时,"obj小赤"和"do吃"与"word小赤吃苹果"对应上了;导致把"小赤吃苹果"理解为"吃";
+                        //如:"text一手机器"对应"obj手机"时;"一手机器"依然是在描述"手机"不过并不是"手机"的名称;
                         NSDictionary *valueItem = [NSDictionary dictionaryWithObjectsAndKeys:unknownObjArr,@"unknowObjArr",unknownDoArr,@"unknowDoArr",unknownWordArr,@"unknowWordArr",nil];
                         [valueArr addObject:valueItem];
                     }

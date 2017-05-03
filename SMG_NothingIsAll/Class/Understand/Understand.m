@@ -201,7 +201,7 @@
     NSMutableArray *newWords = [[NSMutableArray alloc] init];
     for (int i = 0 ; i < memArr.count; i++) {
         NSDictionary *mem = memArr[memArr.count - i - 1];
-        [UnderstandUtils getWordArrAtText:[mem objectForKey:@"text"] outBlock:^(NSArray *oldWordArr, NSArray *newWordArr) {
+        [UnderstandUtils getWordArrAtText:[mem objectForKey:@"text"] outBlock:^(NSArray *oldWordArr, NSArray *newWordArr,NSInteger unknownCount) {
             [newWords addObjectsFromArray:newWordArr];
         }];
     }
@@ -265,7 +265,7 @@
         if ([model isKindOfClass:[FeelTextModel class]]) {//字符串输入
             //1,收集保存分词数据
             FeelTextModel *textModel = ((FeelTextModel*)model);
-            [UnderstandUtils getWordArrAtText:textModel.text outBlock:^(NSArray *oldWordArr, NSArray *newWordArr) {
+            [UnderstandUtils getWordArrAtText:textModel.text outBlock:^(NSArray *oldWordArr, NSArray *newWordArr,NSInteger unknownCount) {
                 [findOldWordArr addObjectsFromArray:oldWordArr];
                 NSArray *value = [[SMG sharedInstance].store.mkStore addWordArr:newWordArr];
                 [findNewWordArr addObjectsFromArray:value];

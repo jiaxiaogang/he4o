@@ -12,8 +12,11 @@
 
 /**
  *  MARK:--------------------从text中找出生分词和已有分词--------------------
+ *  @params oldWordArr:本来就有的词
+ *  @params newWordArr:新发现的词
+ *  @params unknownCount:不认识的字符数
  */
-+(void) getWordArrAtText:(NSString*)text outBlock:(void(^)(NSArray *oldWordArr,NSArray *newWordArr))outBlock;
++(void) getWordArrAtText:(NSString*)text outBlock:(void(^)(NSArray *oldWordArr,NSArray *newWordArr ,NSInteger unknownCount))outBlock;
 
 
 
