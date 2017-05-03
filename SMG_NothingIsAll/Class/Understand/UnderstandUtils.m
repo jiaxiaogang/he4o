@@ -54,13 +54,13 @@
     while (curIndex < text.length) {
         NSString *checkStr = [text substringFromIndex:curIndex];//找词字符串
         NSInteger maxWordLength = MIN(10, checkStr.length);     //词最长10个字
+        BOOL findWord = false;
         for (NSInteger i = maxWordLength; i > 0; i--) {
             NSString *checkWord = [checkStr substringToIndex:i];
             NSDictionary *findLocalWord = [[SMG sharedInstance].store.mkStore getWord:checkWord];
             if (findLocalWord) {//是旧词
                 [oldArr addObject:findLocalWord];
-                curIndex += i;
-                break;
+                findWord = true;
             }else{//不是旧词
                 NSInteger *sumNone = 0;//有0边是词,需要10次;
                 NSInteger *sumOne = 0;//有1边是词,需要6次;
@@ -82,13 +82,20 @@
                         sumNone ++;
                         //4,判断结果
                         if (sumNone >= 10 || sumOne >= 6 || sumTwo >= 3) {
+                            findWord = true;
                             [newArr addObject:checkWord];
-                            curIndex += i;
                             break;
                         }
                     }
                 }
             }
+            if (findWord) {//发现词,则退出循环;下标加i;
+                curIndex += i;
+                break;
+            }
+        }
+        if (!findWord) {
+            curIndex ++;//未发现词,则下标加1;
         }
     }
     //3,返回数据
