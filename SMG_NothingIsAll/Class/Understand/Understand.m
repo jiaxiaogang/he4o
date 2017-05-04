@@ -286,13 +286,22 @@
     //3,MK_Word理解分词并存储
     __block NSMutableArray *findNewWordArr = [[NSMutableArray alloc] init];
     __block NSMutableArray *findOldWordArr = [[NSMutableArray alloc] init];
+    NSMutableArray *forceWordArr = [[NSMutableArray alloc] init];//收集记忆中已成词
+    for (NSDictionary *item in findObjArr){
+        NSDictionary *where = [[NSDictionary alloc] initWithObjectsAndKeys:STRTOOK([item objectForKey:@"itemId"]),@"objId", nil];
+        NSMutableArray *wordArr = [[SMG sharedInstance].store.mkStore getWordArrWithWhere:where];
+        for (NSDictionary *wordDic in wordArr) {
+            [forceWordArr addObject:STRTOOK([wordDic objectForKey:@"word"])];
+        }
+    }
+    for (NSDictionary *item in findDoArr){
+        NSDictionary *where = [[NSDictionary alloc] initWithObjectsAndKeys:STRTOOK([item objectForKey:@"itemId"]),@"doId", nil];
+        NSMutableArray *wordArr = [[SMG sharedInstance].store.mkStore getWordArrWithWhere:where];
+        for (NSDictionary *wordDic in wordArr) {
+            [forceWordArr addObject:STRTOOK([wordDic objectForKey:@"word"])];
+        }
+    }
     for (NSString *text in findTextArr) {
-        //记忆中已成词
-        NSMutableArray *forceWordArr = [[NSMutableArray alloc] init];
-        for (NSDictionary *item in findObjArr)
-            [forceWordArr addObject:STRTOOK([item objectForKey:@"itemName"])];
-        for (NSDictionary *item in findDoArr)
-            [forceWordArr addObject:STRTOOK([item objectForKey:@"itemName"])];
         //收集保存分词数据
         [UnderstandUtils getWordArrAtText:text forceWordArr:forceWordArr outBlock:^(NSArray *oldWordArr, NSArray *newWordArr,NSInteger unknownCount){
             [findOldWordArr addObjectsFromArray:oldWordArr];
