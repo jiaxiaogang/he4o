@@ -151,7 +151,7 @@
     }
     //6,MK_对应逻辑(行为<-->文字)(把行为与文字同时出现的规律记下来;等下次再出现行为文字变化,或出现文字,行为变化时;再分析do<-->word的关系;)
     for (NSDictionary *findDoItem in findDoArr) {
-        [self understandDo:[findDoItem objectForKey:@"itemId"] outBlock:^(NSMutableDictionary *linkDic) {
+        [self understandDo:[findDoItem objectForKey:@"itemId"] atText:[memDic objectForKey:@"text"] outBlock:^(NSMutableDictionary *linkDic) {
             if (linkDic) {
                 for (NSString *key in linkDic.allKeys) {
                     NSDictionary *wordItem = [linkDic objectForKey:key];
@@ -235,13 +235,20 @@
 }
 
 //MARK:----------找do的对应Text----------
--(void) understandDo:(NSString*)doId outBlock:(void(^)(NSMutableDictionary *linkDic))outBlock{
+-(void) understandDo:(NSString*)doId atText:(NSString*)text outBlock:(void(^)(NSMutableDictionary *linkDic))outBlock{
     if (!STRISOK(doId)) return;
     NSMutableDictionary *valueDic = nil;
     //1,是否已被理解
     NSDictionary *where = [NSDictionary dictionaryWithObjectsAndKeys:doId,@"doId", nil];
-    if ([[SMG sharedInstance].store.mkStore containerWordWithWhere:where]) {
-        return;
+    NSArray *localWordArr = [[SMG sharedInstance].store.mkStore getWordArrWithWhere:where];
+    if (ARRISOK(localWordArr)) {
+        for (NSDictionary *localWord in localWordArr) {
+            if ([STRTOOK(text) containsString:[localWord objectForKey:@"word"]]) {
+                //已理解,并且对应词当前句子也有时,返回;(支持多义词)
+                return;
+                //改变数据结构;添加计数;(以后习惯系统加)
+            }
+        }
     }
     //2,找相关的记忆数据
     NSMutableArray *dataArr = [UnderstandUtils getNeedUnderstandMemoryWithDoId:doId];

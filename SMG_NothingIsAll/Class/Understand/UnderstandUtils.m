@@ -136,7 +136,7 @@
     if (STRISOK(objId)) {
         //2,取相关记忆
         NSDictionary *where = [NSDictionary dictionaryWithObjectsAndKeys:@[objId],@"obj", nil];
-        NSMutableArray *memArr = [[SMG sharedInstance].store.memStore getMemoryWithWhereDic:where];
+        NSMutableArray *memArr = [[SMG sharedInstance].store.memStore getMemoryContainsWhereDic:where limit:NSIntegerMax];
         return [self getNeedUnderstandMemoryWithMemArr:memArr];
     }
     return nil;
@@ -184,6 +184,7 @@
         if (unknownDoArr.count + unknownObjArr.count <= 3) {
             //条件2,不能有未分词的陌生词;
             [UnderstandUtils getWordArrAtText:[memItem objectForKey:@"text"] forceWordArr:nil outBlock:^(NSArray *oldWordArr, NSArray *newWordArr,NSInteger unknownCount) {
+                [[SMG sharedInstance].store.mkStore addWordArr:newWordArr];//存新词;
                 if (!ARRISOK(newWordArr) && unknownCount == 0) {
                     for (NSDictionary *oldWord in oldWordArr) {
                         if (![oldWord objectForKey:@"objId"] && ![oldWord objectForKey:@"doId"]) {

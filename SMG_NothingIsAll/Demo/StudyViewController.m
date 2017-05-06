@@ -191,6 +191,7 @@
 -(NSMutableArray *) testArr{
     if (_testArr == nil) {
         _testArr = [NSMutableArray arrayWithObjects:
+                    @{@"fromMKId":@"小刚",@"doType":@"给",@"toMKId":@"苹果",@"text":@"小刚给苹果"},
                     @{@"doType":@"吃",@"toMKId":@"桃",@"text":@"吃桃"},
                     @{@"text":@"苹果",@"obj":@"苹果"},
                     @{@"text":@"苹果",@"obj":@"苹果"},
