@@ -49,10 +49,33 @@
     //2,循环找text中的新词(支持多字词分析)
     NSInteger curIndex = 0;//解析到的下标
     while (curIndex < text.length) {
+        //2.1,数据
         NSString *checkStr = [text substringFromIndex:curIndex];//找词字符串
         NSInteger maxWordLength = MIN(10, checkStr.length);     //词最长10个字
+        //2.2,到forceWord找词;
+        SMGRange *findForceWord = nil;//距离10之内的SMGRange
+        for (SMGRange *range in forceRangeArr) {
+            NSInteger distance = range.location - curIndex;
+            if (distance >= 0 && distance <= maxWordLength) {
+                if (findForceWord == nil) {
+                    findForceWord = range;
+                }else if(findForceWord.location > range.location) {
+                    findForceWord = range;
+                }
+            }
+        }
+        //2.3,找到时,如果正好是forceWord,则break;  如果不是,则打断maxWordLength长度;
+        if (findForceWord) {
+            if (findForceWord.location == curIndex) {
+                curIndex += findForceWord.location + findForceWord.length;
+                break;
+            }else if(findForceWord.location > curIndex){
+                maxWordLength = MIN(maxWordLength, findForceWord.location - curIndex);
+            }
+        }
+        
+        //2.4,到MKWord里找词;
         BOOL findWord = false;
-        //xxx加上forceRangeArr的判断;
         for (NSInteger i = maxWordLength; i > 0; i--) {
             NSString *checkWord = [checkStr substringToIndex:i];
             NSDictionary *findLocalWord = [[SMG sharedInstance].store.mkStore getWord:checkWord];
