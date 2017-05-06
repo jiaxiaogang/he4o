@@ -37,7 +37,7 @@ static SMG *_instance;
 -(void) initData{
     self.store      = [[Store alloc] init];
     self.gc         = [[GC alloc] init];
-    self.mind       = [[Mind alloc] init];
+    self.mindControl= [[MindControl alloc] init];
     self.understand = [[Understand alloc] init];
     self.feel       = [[Feel alloc] init];
     self.output     = [[Output alloc] init];
@@ -51,7 +51,7 @@ static SMG *_instance;
 -(void) requestWithText:(NSString*)text withComplete:(void (^)(NSString* response))complete{
     text = STRTOOK(text);
     //1,心情不好时,不回答,(需要安慰加心情值再聊)
-    if (self.mind.sadHappyValue < -5) {
+    if (self.mindControl.mindAAA.sadHappyValue < -5) {
         if (complete)
             complete(@"🔥");
         return;
@@ -106,7 +106,7 @@ static SMG *_instance;
     //        }
     //    }
     //4,模糊无时,判断交流欲望(心情不好时,不回答)
-    if (self.mind.sadHappyValue < 0) {
+    if (self.mindControl.mindAAA.sadHappyValue < 0) {
         return @"(▭-▭)✧";//淡定;
     }
     //5,开心时,随机返回点东西;//xxx明天写;

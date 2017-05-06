@@ -1,14 +1,15 @@
 //
-//  Mind.m
+//  MindBase.m
 //  SMG_NothingIsAll
 //
-//  Created by 贾  on 2017/4/8.
+//  Created by 贾  on 2017/5/6.
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "Mind.h"
+#import "MindBase.h"
 
-@implementation Mind
+@implementation MindBase
+
 
 /**
  *  MARK:--------------------心情变化--------------------
@@ -22,6 +23,10 @@
     
     //2,lastChangeTime
     self.lastChangeTime = [NSDate date].timeIntervalSince1970;
+}
+
+-(void) refreshDecisionByOutputTask:(id)outputTask{
+    //某心理因素对输出决策的影响处理;
 }
 
 @end

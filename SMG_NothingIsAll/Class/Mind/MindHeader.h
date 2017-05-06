@@ -6,6 +6,9 @@
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "Mind.h"
+#import "MindBase.h"
 #import "MindEnum.h"
 #import "MindUtils.h"
+#import "MindControl.h"
+#import "MindAAA.h"
+#import "MindBBB.h"

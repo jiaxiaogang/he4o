@@ -1,12 +1,13 @@
 //
-//  Mind.h
+//  MindBase.h
 //  SMG_NothingIsAll
 //
-//  Created by 贾  on 2017/4/8.
+//  Created by 贾  on 2017/5/6.
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
+
 
 /**
  *  MARK:--------------------精神(七情六欲)--------------------
@@ -16,7 +17,7 @@
  *  注:目前只写喜怒哀乐;主要是用于人工智能的交流和学习功能;
  *  注:由Mind颜色Output的需求;
  */
-@interface Mind : NSObject
+@interface MindBase : NSObject
 
 
 
@@ -28,33 +29,11 @@
  *  MARK:--------------------心情变化--------------------
  */
 -(void) changeSadHappyValue:(int)value;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //@property (assign, nonatomic) int joyAngerValue;    //喜怒值(-10到10)
+
+
+
+-(void) refreshDecisionByOutputTask:(id)outputTask;
+
 
 @end

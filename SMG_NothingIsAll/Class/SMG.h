@@ -10,13 +10,13 @@
 #import "MindEnum.h"
 
 
-@class GC,Store,Understand,Feel,Input,Output,Mind;
+@class GC,Store,Understand,Feel,Input,Output,MindControl;
 @interface SMG : NSObject
 
 +(SMG*) sharedInstance;
 @property (strong,nonatomic) Store *store;          //记忆功能;
 @property (strong,nonatomic) GC *gc;                //回收器
-@property (strong,nonatomic) Mind *mind;            //当前心情
+@property (strong,nonatomic) MindControl *mindControl;            //心理控制器
 @property (strong,nonatomic) Understand *understand;//闲下时,开始理解分析自己的记忆和知识;
 @property (strong,nonatomic) Feel *feel;            //感觉系统
 @property (strong,nonatomic) Input *input;          //输入系统(计算机视觉,听觉,文字,触觉,网络等)
