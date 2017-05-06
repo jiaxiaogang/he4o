@@ -191,6 +191,7 @@
 -(NSMutableArray *) testArr{
     if (_testArr == nil) {
         _testArr = [NSMutableArray arrayWithObjects:
+                    @{@"doType":@"吃",@"toMKId":@"桃",@"text":@"吃桃"},
                     @{@"text":@"苹果",@"obj":@"苹果"},
                     @{@"text":@"苹果",@"obj":@"苹果"},
                     @{@"text":@"苹果",@"obj":@"苹果"},
@@ -209,6 +210,15 @@
                     @{@"fromMKId":@"小赤",@"doType":@"吃",@"toMKId":@"桃",@"text":@"小赤吃桃"},
                     @{@"fromMKId":@"小赤",@"doType":@"吃",@"toMKId":@"桃",@"text":@"小赤吃桃"},
                     @{@"fromMKId":@"小赤",@"doType":@"吃",@"toMKId":@"桃",@"text":@"小赤吃桃"},
+                    
+                    @{@"doType":@"吃",@"toMKId":@"桃",@"text":@"吃桃"},
+                    @{@"doType":@"吃",@"toMKId":@"桃",@"text":@"吃桃"},
+                    
+                    @{@"doType":@"吃",@"text":@"吃啊"},
+                    @{@"doType":@"吃",@"text":@"吃啊"},
+                    
+                    @{@"doType":@"吃",@"text":@"吃"},
+                    @{@"doType":@"吃",@"text":@"吃"},
                     
                     nil];
     }

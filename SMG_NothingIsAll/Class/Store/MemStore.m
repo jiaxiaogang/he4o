@@ -179,6 +179,7 @@
 
 -(void) addMemory:(NSDictionary*)mem{
     if (mem) {
+        NSLog(@"插入记忆__%@\n%@",[mem objectForKey:@"text"],mem);
         [self.memArr addObject:mem];
         [self saveToLocal];
     }
