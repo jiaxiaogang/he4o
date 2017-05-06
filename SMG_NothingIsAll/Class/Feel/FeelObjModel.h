@@ -34,12 +34,13 @@
 @end
 
 
-//1,需要使用双摄像头来构建3d图像立体;
+//1,需要使用双摄像头来构建3d图像立体;//性能问题(人类也不是3d方式,而是多图引用+记忆比较)
 //2,需要实现3d抠图;将目标的抠出;(考虑kinnet)
 //3,先使用假数据,来定义数据结构和接口;
 //4,等写好基于3d的计算机视觉系统后,再接入进来;
 
 
 
-static NSString *FeelImgModelAttributesKey_Line     = @"line";  //抽象线的path
-static NSString *FeelImgModelAttributesKey_Area     = @"area";  //抽象面的外形
+//注:其实并没有这些属性;这些属性都是使用时,从图中读取的;
+//static NSString *FeelImgModelAttributesKey_Line     = @"line";  //抽象线的path
+//static NSString *FeelImgModelAttributesKey_Area     = @"area";  //抽象面的外形

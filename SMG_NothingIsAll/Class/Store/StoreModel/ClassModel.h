@@ -11,10 +11,11 @@
 
 /**
  *  MARK:--------------------类模型--------------------
+ *  //搞清人类与"小赤"的关系;//xxx
  */
 @interface ClassModel : NSObject
 
 @property (assign, nonatomic) NSInteger itemId;
-@property (strong,nonatomic) NSString *itemName;//人类,苹果
+@property (strong,nonatomic) NSString *itemName;//人类,苹果4
 
 @end

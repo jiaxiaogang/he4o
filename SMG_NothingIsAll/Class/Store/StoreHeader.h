@@ -21,3 +21,13 @@
 #import "TextStoreUtils.h"
 #import "ObjStore.h"
 #import "DoStore.h"
+#import "TMCache.h"
+#import "SMGHeader.h"
+
+
+
+/**
+ *  MARK:--------------------PropertyKey--------------------
+ */
+#define AddPKey(a) ([[TMCache sharedCache] setObject:STRTOOK(a) forKey:STRFORMAT(@"PropertyKey_ExtensionKey_%@",a)])
+#define GetPKey(a, ...) [NSString stringWithFormat:a, ##__VA_ARGS__]
