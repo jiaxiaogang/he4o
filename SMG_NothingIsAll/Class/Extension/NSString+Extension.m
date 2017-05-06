@@ -29,6 +29,8 @@
             }
             [valueArr addObject:SMGRangeMake(range.location, range.length)];
             curIndex += range.location + range.length;
+        }else{
+            break;//找完了,退出循环;
         }
     }
     return valueArr;
