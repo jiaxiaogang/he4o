@@ -37,6 +37,7 @@
 		08C84A9C1E9A874C00897D8B /* InputModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A9B1E9A874C00897D8B /* InputModel.m */; };
 		08CBF4081EA84CE10066522A /* LogicStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08CBF4071EA84CE10066522A /* LogicStore.m */; };
 		08D322A91EBA28B0009D734A /* Foundation+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D322A81EBA28B0009D734A /* Foundation+Log.m */; };
+		08DACE951EBD805C00FDC0B6 /* NSString+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 08DACE941EBD805C00FDC0B6 /* NSString+Extension.m */; };
 		08E5B4101EAB68DD00999E65 /* TextStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E5B40D1EAB68DD00999E65 /* TextStore.m */; };
 		08E5B4111EAB68DD00999E65 /* TextStoreUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E5B40F1EAB68DD00999E65 /* TextStoreUtils.m */; };
 		08E5B4151EAB68ED00999E65 /* DoStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E5B4141EAB68ED00999E65 /* DoStore.m */; };
@@ -114,6 +115,8 @@
 		08CBF4071EA84CE10066522A /* LogicStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogicStore.m; sourceTree = "<group>"; };
 		08D322A71EBA2783009D734A /* SMGPrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMGPrefixHeader.pch; sourceTree = "<group>"; };
 		08D322A81EBA28B0009D734A /* Foundation+Log.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Foundation+Log.m"; sourceTree = "<group>"; };
+		08DACE931EBD805C00FDC0B6 /* NSString+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Extension.h"; sourceTree = "<group>"; };
+		08DACE941EBD805C00FDC0B6 /* NSString+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Extension.m"; sourceTree = "<group>"; };
 		08E5B40C1EAB68DD00999E65 /* TextStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextStore.h; sourceTree = "<group>"; };
 		08E5B40D1EAB68DD00999E65 /* TextStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextStore.m; sourceTree = "<group>"; };
 		08E5B40E1EAB68DD00999E65 /* TextStoreUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextStoreUtils.h; sourceTree = "<group>"; };
@@ -395,6 +398,8 @@
 				08F3AFD01E98B13B00747EDD /* SMGEnum.h */,
 				08FDCE8C1EAA4A8E00882ADC /* SMGRange.h */,
 				08FDCE8D1EAA4A8E00882ADC /* SMGRange.m */,
+				08DACE931EBD805C00FDC0B6 /* NSString+Extension.h */,
+				08DACE941EBD805C00FDC0B6 /* NSString+Extension.m */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -589,6 +594,7 @@
 				08F639891E9A2FF4003CD163 /* Feel.m in Sources */,
 				08D322A91EBA28B0009D734A /* Foundation+Log.m in Sources */,
 				081BCAB31EACEC6500D248E1 /* UnderstandUtils.m in Sources */,
+				08DACE951EBD805C00FDC0B6 /* NSString+Extension.m in Sources */,
 				08AF454A1E97D0B500377887 /* main.m in Sources */,
 				08AF456B1E97D80C00377887 /* MemStore.m in Sources */,
 				08CBF4081EA84CE10066522A /* LogicStore.m in Sources */,

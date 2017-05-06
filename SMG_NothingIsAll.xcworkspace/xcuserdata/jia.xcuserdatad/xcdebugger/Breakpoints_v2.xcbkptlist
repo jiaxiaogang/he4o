@@ -58,7 +58,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/jia/Desktop/temp/SMG_NothingIsAll_Local/SMG_NothingIsAll/SMG_NothingIsAll/Class/Understand/Understand.m"
-                  timestampString = "515731932.111563"
+                  timestampString = "515736370.929596"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "204"
@@ -73,7 +73,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/jia/Desktop/temp/SMG_NothingIsAll_Local/SMG_NothingIsAll/SMG_NothingIsAll/Class/Understand/Understand.m"
-                  timestampString = "515731932.113871"
+                  timestampString = "515736370.931785"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "204"
@@ -86,16 +86,32 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/Demo/StudyViewController.m"
-            timestampString = "515519131.785429"
+            filePath = "SMG_NothingIsAll/Class/Understand/UnderstandUtils.m"
+            timestampString = "515736369.871648"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "249"
-            endingLineNumber = "249"
-            landmarkName = "-testBtnOnClick:"
+            startingLineNumber = "43"
+            endingLineNumber = "43"
+            landmarkName = "+getWordArrAtText:forceWordArr:outBlock:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SMG_NothingIsAll/Class/Understand/UnderstandUtils.m"
+            timestampString = "515736340.112493"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "50"
+            endingLineNumber = "50"
+            landmarkName = "+getWordArrAtText:forceWordArr:outBlock:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

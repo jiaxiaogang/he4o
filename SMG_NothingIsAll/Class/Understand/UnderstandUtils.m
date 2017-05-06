@@ -10,6 +10,7 @@
 #import "SMGHeader.h"
 #import "StoreHeader.h"
 #import "FeelHeader.h"
+#import "NSString+Extension.h"
 
 @implementation UnderstandUtils
 
@@ -37,9 +38,11 @@
     NSMutableArray *newArr = [[NSMutableArray alloc] init];
     NSInteger unknownCount = 0;
     //2,forceWordArr->forceRangeArr
+    NSMutableArray *forceRangeArr = [[NSMutableArray alloc]init];
     if (ARRISOK(forceWordArr)) {
         for (NSString *word in forceWordArr) {
-            //xxx
+            NSMutableArray *rangeArr = [text rangeArrOfString:word];
+            [forceRangeArr addObjectsFromArray:rangeArr];
         }
     }
     
@@ -49,6 +52,7 @@
         NSString *checkStr = [text substringFromIndex:curIndex];//找词字符串
         NSInteger maxWordLength = MIN(10, checkStr.length);     //词最长10个字
         BOOL findWord = false;
+        //xxx加上forceRangeArr的判断;
         for (NSInteger i = maxWordLength; i > 0; i--) {
             NSString *checkWord = [checkStr substringToIndex:i];
             NSDictionary *findLocalWord = [[SMG sharedInstance].store.mkStore getWord:checkWord];
