@@ -30,6 +30,7 @@
 
 //NSNumber
 #define NSNUMBERISOK(a) (a  && [a isKindOfClass:[NSNumber class]])//是否有效NSNumber
+#define NSNUMBERTOOK(a) (a  && [a isKindOfClass:[NSNumber class]]) ? a : @(0)//NSNumber防闪
 
 
 /**

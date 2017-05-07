@@ -21,3 +21,8 @@
 #import "TextStoreUtils.h"
 #import "ObjStore.h"
 #import "DoStore.h"
+
+#import "LKDBHelper.h"
+#import "CharModel.h"
+#import "CharStore.h"
+#import "DBUtils.h"

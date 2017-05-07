@@ -16,6 +16,10 @@
 		082F9D5C1EB236AC0009F6A9 /* StudyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 082F9D5A1EB236AC0009F6A9 /* StudyViewController.m */; };
 		082F9D5D1EB236AC0009F6A9 /* StudyViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 082F9D5B1EB236AC0009F6A9 /* StudyViewController.xib */; };
 		082F9D601EB236E80009F6A9 /* SMGOutputDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 082F9D5F1EB236E80009F6A9 /* SMGOutputDelegate.m */; };
+		0831CF581EBEEE1200C020E6 /* CharModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0831CF571EBEEE1200C020E6 /* CharModel.m */; };
+		0831CF5B1EBEEF1200C020E6 /* CharStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 0831CF5A1EBEEF1200C020E6 /* CharStore.m */; };
+		0831CF5E1EBEF20500C020E6 /* DBUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0831CF5D1EBEF20500C020E6 /* DBUtils.m */; };
+		0831CF621EBEF33B00C020E6 /* MemStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 0831CF611EBEF33B00C020E6 /* MemStore.m */; };
 		083DA5EE1E99E37A0047A6DF /* Understand.m in Sources */ = {isa = PBXBuildFile; fileRef = 083DA5ED1E99E37A0047A6DF /* Understand.m */; };
 		088331C61E9BD3D00026DE23 /* FeelObjModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088331C51E9BD3D00026DE23 /* FeelObjModel.m */; };
 		088331C91E9BD59F0026DE23 /* FeelAudioModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088331C81E9BD59F0026DE23 /* FeelAudioModel.m */; };
@@ -29,7 +33,6 @@
 		08AF45551E97D0B500377887 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45541E97D0B500377887 /* Assets.xcassets */; };
 		08AF45581E97D0B500377887 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45561E97D0B500377887 /* LaunchScreen.storyboard */; };
 		08AF45631E97D6F200377887 /* GC.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF45621E97D6F200377887 /* GC.m */; };
-		08AF456B1E97D80C00377887 /* MemStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF456A1E97D80C00377887 /* MemStore.m */; };
 		08AF456E1E97DDF600377887 /* MKStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF456D1E97DDF600377887 /* MKStore.m */; };
 		08C84A8E1E9A866200897D8B /* Input.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A8D1E9A866200897D8B /* Input.m */; };
 		08C84A981E9A86C400897D8B /* StoreLogModel_Text.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A951E9A86C400897D8B /* StoreLogModel_Text.m */; };
@@ -78,6 +81,14 @@
 		082F9D5E1EB236E80009F6A9 /* SMGOutputDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMGOutputDelegate.h; sourceTree = "<group>"; };
 		082F9D5F1EB236E80009F6A9 /* SMGOutputDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMGOutputDelegate.m; sourceTree = "<group>"; };
 		082F9D611EB236FA0009F6A9 /* OutputHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OutputHeader.h; sourceTree = "<group>"; };
+		0831CF561EBEEE1200C020E6 /* CharModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharModel.h; sourceTree = "<group>"; };
+		0831CF571EBEEE1200C020E6 /* CharModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CharModel.m; sourceTree = "<group>"; };
+		0831CF591EBEEF1200C020E6 /* CharStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharStore.h; sourceTree = "<group>"; };
+		0831CF5A1EBEEF1200C020E6 /* CharStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CharStore.m; sourceTree = "<group>"; };
+		0831CF5C1EBEF20500C020E6 /* DBUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBUtils.h; sourceTree = "<group>"; };
+		0831CF5D1EBEF20500C020E6 /* DBUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBUtils.m; sourceTree = "<group>"; };
+		0831CF601EBEF33B00C020E6 /* MemStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemStore.h; sourceTree = "<group>"; };
+		0831CF611EBEF33B00C020E6 /* MemStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MemStore.m; sourceTree = "<group>"; };
 		083DA5EB1E99E36A0047A6DF /* UnderstandHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnderstandHeader.h; sourceTree = "<group>"; };
 		083DA5EC1E99E37A0047A6DF /* Understand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Understand.h; sourceTree = "<group>"; };
 		083DA5ED1E99E37A0047A6DF /* Understand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Understand.m; sourceTree = "<group>"; };
@@ -103,8 +114,6 @@
 		08AF45591E97D0B500377887 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		08AF45611E97D6F200377887 /* GC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GC.h; sourceTree = "<group>"; };
 		08AF45621E97D6F200377887 /* GC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GC.m; sourceTree = "<group>"; };
-		08AF45691E97D80C00377887 /* MemStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemStore.h; sourceTree = "<group>"; };
-		08AF456A1E97D80C00377887 /* MemStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MemStore.m; sourceTree = "<group>"; };
 		08AF456C1E97DDF600377887 /* MKStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKStore.h; sourceTree = "<group>"; };
 		08AF456D1E97DDF600377887 /* MKStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKStore.m; sourceTree = "<group>"; };
 		08C84A8B1E9A861900897D8B /* InputHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InputHeader.h; sourceTree = "<group>"; };
@@ -235,6 +244,26 @@
 			path = Demo;
 			sourceTree = "<group>";
 		};
+		0831CF551EBEEDED00C020E6 /* CharStore */ = {
+			isa = PBXGroup;
+			children = (
+				0831CF561EBEEE1200C020E6 /* CharModel.h */,
+				0831CF571EBEEE1200C020E6 /* CharModel.m */,
+				0831CF591EBEEF1200C020E6 /* CharStore.h */,
+				0831CF5A1EBEEF1200C020E6 /* CharStore.m */,
+			);
+			path = CharStore;
+			sourceTree = "<group>";
+		};
+		0831CF5F1EBEF31600C020E6 /* MemStore */ = {
+			isa = PBXGroup;
+			children = (
+				0831CF601EBEF33B00C020E6 /* MemStore.h */,
+				0831CF611EBEF33B00C020E6 /* MemStore.m */,
+			);
+			path = MemStore;
+			sourceTree = "<group>";
+		};
 		083DA5EA1E99E3530047A6DF /* Understand */ = {
 			isa = PBXGroup;
 			children = (
@@ -335,6 +364,8 @@
 		08AF45681E97D80C00377887 /* Store */ = {
 			isa = PBXGroup;
 			children = (
+				0831CF5F1EBEF31600C020E6 /* MemStore */,
+				0831CF551EBEEDED00C020E6 /* CharStore */,
 				081D96161EBC20C2008543EA /* ClassStore */,
 				081D96121EBC1E50008543EA /* StoreModel */,
 				081BCAAC1EAC7DD700D248E1 /* AudioStore */,
@@ -342,8 +373,6 @@
 				08E5B4121EAB68ED00999E65 /* DoStore */,
 				08E5B40B1EAB68DD00999E65 /* TextStore */,
 				083DA5EF1E99F2B50047A6DF /* temp */,
-				08AF45691E97D80C00377887 /* MemStore.h */,
-				08AF456A1E97D80C00377887 /* MemStore.m */,
 				08AF456C1E97DDF600377887 /* MKStore.h */,
 				08AF456D1E97DDF600377887 /* MKStore.m */,
 				08F3AFB91E98966E00747EDD /* Store.h */,
@@ -420,6 +449,8 @@
 		08F3AFC11E98A13200747EDD /* Extension */ = {
 			isa = PBXGroup;
 			children = (
+				0831CF5C1EBEF20500C020E6 /* DBUtils.h */,
+				0831CF5D1EBEF20500C020E6 /* DBUtils.m */,
 				08F3AFD01E98B13B00747EDD /* SMGEnum.h */,
 				08FDCE8C1EAA4A8E00882ADC /* SMGRange.h */,
 				08FDCE8D1EAA4A8E00882ADC /* SMGRange.m */,
@@ -606,11 +637,13 @@
 				08E99C421EBDCF5700A38FF5 /* Understand+OutPut.m in Sources */,
 				08AF456E1E97DDF600377887 /* MKStore.m in Sources */,
 				08F3AFBB1E98966E00747EDD /* Store.m in Sources */,
+				0831CF5B1EBEEF1200C020E6 /* CharStore.m in Sources */,
 				088331C91E9BD59F0026DE23 /* FeelAudioModel.m in Sources */,
 				08C84A9C1E9A874C00897D8B /* InputModel.m in Sources */,
 				08E99C481EBDD1C800A38FF5 /* MindControl.m in Sources */,
 				08E99C4E1EBDD21500A38FF5 /* MindAAA.m in Sources */,
 				08C84A8E1E9A866200897D8B /* Input.m in Sources */,
+				0831CF581EBEEE1200C020E6 /* CharModel.m in Sources */,
 				082F9D561EB234750009F6A9 /* Output.m in Sources */,
 				08F639831E9A2EC0003CD163 /* FeelValueModel.m in Sources */,
 				08E5B4111EAB68DD00999E65 /* TextStoreUtils.m in Sources */,
@@ -626,7 +659,6 @@
 				08E99C4B1EBDD1E000A38FF5 /* MindBase.m in Sources */,
 				08DACE951EBD805C00FDC0B6 /* NSString+Extension.m in Sources */,
 				08AF454A1E97D0B500377887 /* main.m in Sources */,
-				08AF456B1E97D80C00377887 /* MemStore.m in Sources */,
 				08CBF4081EA84CE10066522A /* LogicStore.m in Sources */,
 				082F9D5C1EB236AC0009F6A9 /* StudyViewController.m in Sources */,
 				08F3AFB21E98929C00747EDD /* MindUtils.m in Sources */,
@@ -635,6 +667,8 @@
 				08E5B4101EAB68DD00999E65 /* TextStore.m in Sources */,
 				088331CC1E9BD68C0026DE23 /* FeelTextModel.m in Sources */,
 				08E5B4151EAB68ED00999E65 /* DoStore.m in Sources */,
+				0831CF5E1EBEF20500C020E6 /* DBUtils.m in Sources */,
+				0831CF621EBEF33B00C020E6 /* MemStore.m in Sources */,
 				0895DAE61EB2D52D00E2B5C7 /* DataViewController.m in Sources */,
 				083DA5EE1E99E37A0047A6DF /* Understand.m in Sources */,
 			);

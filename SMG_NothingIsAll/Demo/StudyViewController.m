@@ -258,6 +258,12 @@
         
         //4,commit
         [[SMG sharedInstance].understand commitWithFeelModelArr:commitArr];
+        
+        
+        NSArray *a = [CharStore insertString:@"我爱你"];
+        NSLog(@"");
+        NSString *str = [CharStore searchString:a];
+        NSLog(@"");
     }
     else
     {
