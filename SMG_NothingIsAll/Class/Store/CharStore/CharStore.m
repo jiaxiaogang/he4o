@@ -33,20 +33,30 @@
         NSMutableArray *mArr = [[NSMutableArray alloc] init];
         for (NSInteger i = 0; i < string.length; i++) {
             NSString *value = [string substringWithRange:NSMakeRange(i,1)];
-            
             CharModel *localModel = [CharModel searchSingleWithWhere:[DBUtils sqlWhere_K:@"value" V:value] orderBy:nil];
-            if (localModel) {
-                [mArr addObject:STRFORMAT(@"%ld",(long)localModel.rowid)];
-            }else{
+            if (localModel == nil) {
                 CharModel *newModel = [[CharModel alloc] init];
                 newModel.value = value;
                 [CharModel insertToDB:newModel];
-                [mArr addObject:STRFORMAT(@"%ld",(long)newModel.rowid)];
             }
+            [mArr addObject:STRFORMAT(@"%ld",(long)localModel.rowid)];
         }
         return mArr;
     }
     return nil;
+}
+
+/**
+ *  MARK:--------------------创建本地单一的Model--------------------
+ */
++(CharModel*) createInstanceModel:(NSString*)value{
+    CharModel *model = [CharModel searchSingleWithWhere:[DBUtils sqlWhere_K:@"value" V:value] orderBy:nil];
+    if (model == nil) {
+        model = [[CharModel alloc] init];
+        model.value = value;
+        [CharModel insertToDB:model];
+    }
+    return model;
 }
 
 @end

@@ -26,4 +26,14 @@
 -(NSDictionary*) addItem:(NSString*)itemName;
 -(NSMutableArray*) addItemNameArr:(NSArray*)itemNameArr;
 
+
+
+
+
+/**
+ *  MARK:--------------------创建本地单一的DoModel--------------------
+ */
++(DoModel*) createInstanceModel:(NSString*)doType;
+
+
 @end

@@ -27,4 +27,12 @@
 -(NSMutableArray*) addItemNameArr:(NSArray*)itemNameArr;
 
 
+
+
+/**
+ *  MARK:--------------------创建本地单一的ObjModel--------------------
+ */
++(ObjModel*) createInstanceModel:(NSString*)itemName;
+
+
 @end

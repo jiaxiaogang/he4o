@@ -20,6 +20,11 @@
 		0831CF5B1EBEEF1200C020E6 /* CharStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 0831CF5A1EBEEF1200C020E6 /* CharStore.m */; };
 		0831CF5E1EBEF20500C020E6 /* DBUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0831CF5D1EBEF20500C020E6 /* DBUtils.m */; };
 		0831CF621EBEF33B00C020E6 /* MemStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 0831CF611EBEF33B00C020E6 /* MemStore.m */; };
+		0831CF651EBF0FCE00C020E6 /* MemModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0831CF641EBF0FCE00C020E6 /* MemModel.m */; };
+		0831CF691EBF11C800C020E6 /* LogicStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 0831CF681EBF11C800C020E6 /* LogicStore.m */; };
+		0831CF6C1EBF1D5600C020E6 /* ObjModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0831CF6B1EBF1D5600C020E6 /* ObjModel.m */; };
+		0831CF6F1EBF1D7800C020E6 /* DoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0831CF6E1EBF1D7800C020E6 /* DoModel.m */; };
+		0831CF721EBF1DB700C020E6 /* TextModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0831CF711EBF1DB700C020E6 /* TextModel.m */; };
 		083DA5EE1E99E37A0047A6DF /* Understand.m in Sources */ = {isa = PBXBuildFile; fileRef = 083DA5ED1E99E37A0047A6DF /* Understand.m */; };
 		088331C61E9BD3D00026DE23 /* FeelObjModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088331C51E9BD3D00026DE23 /* FeelObjModel.m */; };
 		088331C91E9BD59F0026DE23 /* FeelAudioModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088331C81E9BD59F0026DE23 /* FeelAudioModel.m */; };
@@ -38,7 +43,6 @@
 		08C84A981E9A86C400897D8B /* StoreLogModel_Text.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A951E9A86C400897D8B /* StoreLogModel_Text.m */; };
 		08C84A991E9A86C400897D8B /* StoreModel_Text.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A971E9A86C400897D8B /* StoreModel_Text.m */; };
 		08C84A9C1E9A874C00897D8B /* InputModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A9B1E9A874C00897D8B /* InputModel.m */; };
-		08CBF4081EA84CE10066522A /* LogicStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08CBF4071EA84CE10066522A /* LogicStore.m */; };
 		08D322A91EBA28B0009D734A /* Foundation+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D322A81EBA28B0009D734A /* Foundation+Log.m */; };
 		08DACE951EBD805C00FDC0B6 /* NSString+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 08DACE941EBD805C00FDC0B6 /* NSString+Extension.m */; };
 		08E5B4101EAB68DD00999E65 /* TextStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E5B40D1EAB68DD00999E65 /* TextStore.m */; };
@@ -89,6 +93,16 @@
 		0831CF5D1EBEF20500C020E6 /* DBUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBUtils.m; sourceTree = "<group>"; };
 		0831CF601EBEF33B00C020E6 /* MemStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemStore.h; sourceTree = "<group>"; };
 		0831CF611EBEF33B00C020E6 /* MemStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MemStore.m; sourceTree = "<group>"; };
+		0831CF631EBF0FCE00C020E6 /* MemModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemModel.h; sourceTree = "<group>"; };
+		0831CF641EBF0FCE00C020E6 /* MemModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MemModel.m; sourceTree = "<group>"; };
+		0831CF671EBF11C800C020E6 /* LogicStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogicStore.h; sourceTree = "<group>"; };
+		0831CF681EBF11C800C020E6 /* LogicStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogicStore.m; sourceTree = "<group>"; };
+		0831CF6A1EBF1D5600C020E6 /* ObjModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjModel.h; sourceTree = "<group>"; };
+		0831CF6B1EBF1D5600C020E6 /* ObjModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjModel.m; sourceTree = "<group>"; };
+		0831CF6D1EBF1D7800C020E6 /* DoModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoModel.h; sourceTree = "<group>"; };
+		0831CF6E1EBF1D7800C020E6 /* DoModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DoModel.m; sourceTree = "<group>"; };
+		0831CF701EBF1DB700C020E6 /* TextModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextModel.h; sourceTree = "<group>"; };
+		0831CF711EBF1DB700C020E6 /* TextModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextModel.m; sourceTree = "<group>"; };
 		083DA5EB1E99E36A0047A6DF /* UnderstandHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnderstandHeader.h; sourceTree = "<group>"; };
 		083DA5EC1E99E37A0047A6DF /* Understand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Understand.h; sourceTree = "<group>"; };
 		083DA5ED1E99E37A0047A6DF /* Understand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Understand.m; sourceTree = "<group>"; };
@@ -125,8 +139,6 @@
 		08C84A971E9A86C400897D8B /* StoreModel_Text.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoreModel_Text.m; sourceTree = "<group>"; };
 		08C84A9A1E9A874C00897D8B /* InputModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputModel.h; sourceTree = "<group>"; };
 		08C84A9B1E9A874C00897D8B /* InputModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputModel.m; sourceTree = "<group>"; };
-		08CBF4061EA84CE10066522A /* LogicStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogicStore.h; sourceTree = "<group>"; };
-		08CBF4071EA84CE10066522A /* LogicStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogicStore.m; sourceTree = "<group>"; };
 		08D322A71EBA2783009D734A /* SMGPrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMGPrefixHeader.pch; sourceTree = "<group>"; };
 		08D322A81EBA28B0009D734A /* Foundation+Log.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Foundation+Log.m"; sourceTree = "<group>"; };
 		08DACE931EBD805C00FDC0B6 /* NSString+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Extension.h"; sourceTree = "<group>"; };
@@ -201,6 +213,8 @@
 			children = (
 				081BCAAE1EAC7DF100D248E1 /* ObjStore.h */,
 				081BCAAF1EAC7DF100D248E1 /* ObjStore.m */,
+				0831CF6A1EBF1D5600C020E6 /* ObjModel.h */,
+				0831CF6B1EBF1D5600C020E6 /* ObjModel.m */,
 			);
 			path = ObjStore;
 			sourceTree = "<group>";
@@ -260,8 +274,19 @@
 			children = (
 				0831CF601EBEF33B00C020E6 /* MemStore.h */,
 				0831CF611EBEF33B00C020E6 /* MemStore.m */,
+				0831CF631EBF0FCE00C020E6 /* MemModel.h */,
+				0831CF641EBF0FCE00C020E6 /* MemModel.m */,
 			);
 			path = MemStore;
+			sourceTree = "<group>";
+		};
+		0831CF661EBF11C800C020E6 /* LogicStore */ = {
+			isa = PBXGroup;
+			children = (
+				0831CF671EBF11C800C020E6 /* LogicStore.h */,
+				0831CF681EBF11C800C020E6 /* LogicStore.m */,
+			);
+			path = LogicStore;
 			sourceTree = "<group>";
 		};
 		083DA5EA1E99E3530047A6DF /* Understand */ = {
@@ -364,6 +389,7 @@
 		08AF45681E97D80C00377887 /* Store */ = {
 			isa = PBXGroup;
 			children = (
+				0831CF661EBF11C800C020E6 /* LogicStore */,
 				0831CF5F1EBEF31600C020E6 /* MemStore */,
 				0831CF551EBEEDED00C020E6 /* CharStore */,
 				081D96161EBC20C2008543EA /* ClassStore */,
@@ -378,8 +404,6 @@
 				08F3AFB91E98966E00747EDD /* Store.h */,
 				08F3AFBA1E98966E00747EDD /* Store.m */,
 				08F3AFD21E98B63200747EDD /* StoreHeader.h */,
-				08CBF4061EA84CE10066522A /* LogicStore.h */,
-				08CBF4071EA84CE10066522A /* LogicStore.m */,
 			);
 			path = Store;
 			sourceTree = "<group>";
@@ -414,6 +438,8 @@
 				08E5B40D1EAB68DD00999E65 /* TextStore.m */,
 				08E5B40E1EAB68DD00999E65 /* TextStoreUtils.h */,
 				08E5B40F1EAB68DD00999E65 /* TextStoreUtils.m */,
+				0831CF701EBF1DB700C020E6 /* TextModel.h */,
+				0831CF711EBF1DB700C020E6 /* TextModel.m */,
 			);
 			path = TextStore;
 			sourceTree = "<group>";
@@ -423,6 +449,8 @@
 			children = (
 				08E5B4131EAB68ED00999E65 /* DoStore.h */,
 				08E5B4141EAB68ED00999E65 /* DoStore.m */,
+				0831CF6D1EBF1D7800C020E6 /* DoModel.h */,
+				0831CF6E1EBF1D7800C020E6 /* DoModel.m */,
 			);
 			path = DoStore;
 			sourceTree = "<group>";
@@ -626,6 +654,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				08F639861E9A2F6C003CD163 /* FeelModel.m in Sources */,
+				0831CF6C1EBF1D5600C020E6 /* ObjModel.m in Sources */,
 				081BCAB01EAC7DF100D248E1 /* ObjStore.m in Sources */,
 				0895DAEB1EB2D7EB00E2B5C7 /* DataCell.m in Sources */,
 				088331C61E9BD3D00026DE23 /* FeelObjModel.m in Sources */,
@@ -636,6 +665,7 @@
 				0803698D1EAC4C4400B4819C /* FeelDoModel.m in Sources */,
 				08E99C421EBDCF5700A38FF5 /* Understand+OutPut.m in Sources */,
 				08AF456E1E97DDF600377887 /* MKStore.m in Sources */,
+				0831CF651EBF0FCE00C020E6 /* MemModel.m in Sources */,
 				08F3AFBB1E98966E00747EDD /* Store.m in Sources */,
 				0831CF5B1EBEEF1200C020E6 /* CharStore.m in Sources */,
 				088331C91E9BD59F0026DE23 /* FeelAudioModel.m in Sources */,
@@ -645,6 +675,7 @@
 				08C84A8E1E9A866200897D8B /* Input.m in Sources */,
 				0831CF581EBEEE1200C020E6 /* CharModel.m in Sources */,
 				082F9D561EB234750009F6A9 /* Output.m in Sources */,
+				0831CF721EBF1DB700C020E6 /* TextModel.m in Sources */,
 				08F639831E9A2EC0003CD163 /* FeelValueModel.m in Sources */,
 				08E5B4111EAB68DD00999E65 /* TextStoreUtils.m in Sources */,
 				08F3AFB81E98963600747EDD /* SMG.m in Sources */,
@@ -658,8 +689,8 @@
 				081BCAB31EACEC6500D248E1 /* UnderstandUtils.m in Sources */,
 				08E99C4B1EBDD1E000A38FF5 /* MindBase.m in Sources */,
 				08DACE951EBD805C00FDC0B6 /* NSString+Extension.m in Sources */,
+				0831CF691EBF11C800C020E6 /* LogicStore.m in Sources */,
 				08AF454A1E97D0B500377887 /* main.m in Sources */,
-				08CBF4081EA84CE10066522A /* LogicStore.m in Sources */,
 				082F9D5C1EB236AC0009F6A9 /* StudyViewController.m in Sources */,
 				08F3AFB21E98929C00747EDD /* MindUtils.m in Sources */,
 				081D96191EBC20CE008543EA /* ClassStore.m in Sources */,
@@ -671,6 +702,7 @@
 				0831CF621EBEF33B00C020E6 /* MemStore.m in Sources */,
 				0895DAE61EB2D52D00E2B5C7 /* DataViewController.m in Sources */,
 				083DA5EE1E99E37A0047A6DF /* Understand.m in Sources */,
+				0831CF6F1EBF1D7800C020E6 /* DoModel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

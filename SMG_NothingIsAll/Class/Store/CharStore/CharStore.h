@@ -21,4 +21,11 @@
  */
 +(NSArray*) insertString:(NSString*)string;
 
+/**
+ *  MARK:--------------------创建本地单一的Model--------------------
+ */
++(CharModel*) createInstanceModel:(NSString*)value;
+
+
+
 @end

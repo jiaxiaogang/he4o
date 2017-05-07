@@ -213,4 +213,19 @@
     [[TMCache sharedCache] setObject:self.memArr forKey:@"MemStore_LocalArr_Key"];
 }
 
+
+
+
+
++(NSInteger) createGroupId{
+    NSInteger lastId = [[NSUserDefaults standardUserDefaults] integerForKey:@"MemStore_GroupId"];
+    [[NSUserDefaults standardUserDefaults] setInteger:lastId + 1 forKey:@"MemStore_GroupId"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    return lastId + 1;
+}
+
+
+
+
+
 @end

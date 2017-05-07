@@ -171,5 +171,31 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ *  MARK:--------------------创建本地单一的DoModel--------------------
+ */
++(DoModel*) createInstanceModel:(NSString*)doType{
+    DoModel *model = [DoModel searchSingleWithWhere:[DBUtils sqlWhere_K:@"doType" V:doType] orderBy:nil];
+    if (model == nil) {
+        model = [[DoModel alloc] init];
+        model.doType = doType;
+        [DoModel insertToDB:model];
+    }
+    return model;
+}
+
 @end
 

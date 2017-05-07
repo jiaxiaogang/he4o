@@ -171,4 +171,22 @@
 }
 
 
+
+
+
+/**
+ *  MARK:--------------------创建本地单一的ObjModel--------------------
+ */
++(ObjModel*) createInstanceModel:(NSString*)itemName{
+    ObjModel *model = [ObjModel searchSingleWithWhere:[DBUtils sqlWhere_K:@"itemName" V:itemName] orderBy:nil];
+    if (model == nil) {
+        model = [[ObjModel alloc] init];
+        model.itemName = itemName;
+        [ObjModel insertToDB:model];
+    }
+    return model;
+}
+
+
+
 @end

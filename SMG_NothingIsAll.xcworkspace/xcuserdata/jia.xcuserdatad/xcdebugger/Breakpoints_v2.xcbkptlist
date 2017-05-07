@@ -90,11 +90,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/Demo/StudyViewController.m"
-            timestampString = "515832557.58311"
+            timestampString = "515845542.802983"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "266"
-            endingLineNumber = "266"
+            startingLineNumber = "305"
+            endingLineNumber = "305"
             landmarkName = "-testBtnOnClick:"
             landmarkType = "7">
          </BreakpointContent>

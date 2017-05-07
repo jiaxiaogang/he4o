@@ -13,6 +13,7 @@
  *  1,MemStore.memArr是内存kv存储;
  *  2,MemStore的TMCache中有localKV存储;
  */
+@class MemModel;
 @interface MemStore : NSObject
 
 
@@ -30,5 +31,9 @@
 -(void) addMemory:(NSDictionary*)mem insertBackByMem:(NSDictionary*)byMem;             //新增mem到byMem后面;
 
 -(void) saveToLocal;
+
+
+
++(NSInteger) createGroupId;
 
 @end

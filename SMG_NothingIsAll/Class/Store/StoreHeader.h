@@ -10,6 +10,7 @@
 
 //Mem
 #import "MemStore.h"
+#import "MemModel.h"
 
 //Logic
 #import "LogicStore.h"
@@ -17,12 +18,24 @@
 
 //MK
 #import "MKStore.h"
+
+//Text
 #import "TextStore.h"
 #import "TextStoreUtils.h"
-#import "ObjStore.h"
-#import "DoStore.h"
+#import "TextModel.h"
 
-#import "LKDBHelper.h"
+//Obj
+#import "ObjStore.h"
+#import "ObjModel.h"
+
+//Do
+#import "DoStore.h"
+#import "DoModel.h"
+
+//Char
 #import "CharModel.h"
 #import "CharStore.h"
+
+//DB
+#import "LKDBHelper.h"
 #import "DBUtils.h"
