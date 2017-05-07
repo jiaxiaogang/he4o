@@ -103,6 +103,7 @@
 		0831CF6E1EBF1D7800C020E6 /* DoModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DoModel.m; sourceTree = "<group>"; };
 		0831CF701EBF1DB700C020E6 /* TextModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextModel.h; sourceTree = "<group>"; };
 		0831CF711EBF1DB700C020E6 /* TextModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextModel.m; sourceTree = "<group>"; };
+		0831CF731EBF584600C020E6 /* StoreEnum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoreEnum.h; sourceTree = "<group>"; };
 		083DA5EB1E99E36A0047A6DF /* UnderstandHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnderstandHeader.h; sourceTree = "<group>"; };
 		083DA5EC1E99E37A0047A6DF /* Understand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Understand.h; sourceTree = "<group>"; };
 		083DA5ED1E99E37A0047A6DF /* Understand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Understand.m; sourceTree = "<group>"; };
@@ -404,6 +405,7 @@
 				08F3AFB91E98966E00747EDD /* Store.h */,
 				08F3AFBA1E98966E00747EDD /* Store.m */,
 				08F3AFD21E98B63200747EDD /* StoreHeader.h */,
+				0831CF731EBF584600C020E6 /* StoreEnum.h */,
 			);
 			path = Store;
 			sourceTree = "<group>";

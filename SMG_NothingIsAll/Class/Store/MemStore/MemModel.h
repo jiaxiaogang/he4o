@@ -13,9 +13,11 @@
 
 @property (assign, nonatomic) NSInteger groupId;//当前分组id;
 
+@property (assign, nonatomic)  <#valName#>;
 @property (assign, nonatomic) NSInteger charRowId;
 @property (assign, nonatomic) NSInteger  objRowId;
 @property (assign, nonatomic) NSInteger  doRowId;
+@property (assign, nonatomic) NSInteger  targetObjRowId;
 //@property (assign, nonatomic) NSInteger groupModel;//记忆间的互相引用;如:(A看到B在看着A)
 
 @end
