@@ -4,6 +4,21 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>FMDB.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>LKDBHelper+Transaction.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>LKDBHelper.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Pods-SMG_NothingIsAll.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -22,17 +37,32 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>4B6F6FDBE21BE02F5A532B53B788448F</key>
+		<key>33E819790C1C3A608053D63EC1037766</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>92DA7BEBE00561BBFFF8A00FF41E3989</key>
+		<key>400BD6AD4D9CC69855E6DB770BA789B9</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>F9841B7CB1C8CEDDDCC29298C76AF5B0</key>
+		<key>8642CC820CE8C5B88C113D7F47AF4BC3</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>91A0F4E0051DF073F1E63B1C2249AEB5</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>B0972DFD58C918870F19C00FB1A7EF52</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>F1A57F063DAC9B33748B129DD30F145E</key>
 		<dict>
 			<key>primary</key>
 			<true/>
