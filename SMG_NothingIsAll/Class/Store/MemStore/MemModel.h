@@ -8,6 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
+
+
+/**
+ *  MARK:--------------------基于可类比推理的记忆结构复杂度较高--------------------
+ *  故:先研究类比推理的几大难题,研究下后,可能单独给类比推理开个项目;也可以在NothingIsAll上面继续开发;
+ *  有一种叫"无知识"学习的机器学习,估计在实现上与我的NothingIsAll是有异曲同工之处的;但他的理念只是"无知识"学习,并没有指出AI其它方面的"无";
+ */
 @class ObjModel,DoModel,CharModel;
 @interface MemModel : NSObject
 
