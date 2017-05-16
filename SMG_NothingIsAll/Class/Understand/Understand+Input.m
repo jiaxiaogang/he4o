@@ -168,163 +168,163 @@
     
 }
 
--(void) commitWithFeelModel:(FeelModel*)model{
-    //1,数据检查
-    if (model == nil) {
-        return;
-    }
-    
-    //2,收集数据
-    NSInteger groupId = [MemStore createGroupId];
-    if ([model isKindOfClass:[FeelTextModel class]]) {
-        NSString *text = ((FeelTextModel*)model).text;
-        for (NSInteger i = 0; i < text.length; i++) {
-            NSString *value = [text substringWithRange:NSMakeRange(i,1)];
-            CharModel *charModel = [CharStore createInstanceModel:value];
-            
-            MemModel *sayItemModel = [[MemModel alloc] init];
-            sayItemModel.groupId = groupId;
-            sayItemModel.objRowId = aObj.rowid;
-            sayItemModel.charRowId = charModel.rowid;
-            [MemModel insertToDB:sayItemModel];
-        }
-        
-    }else if ([model isKindOfClass:[FeelObjModel class]]) {
-        //图像输入物体
-        NSDictionary *value = [[SMG sharedInstance].store.mkStore addObj:((FeelObjModel*)model).name];
-        if (value) [findObjArr addObject:value];
-    }else if ([model isKindOfClass:[FeelDoModel class]]) {
-        //图像输入行为
-        NSDictionary *value = [[SMG sharedInstance].store.mkStore addDo:((FeelDoModel*)model).doType];
-        if (value) [findDoArr addObject:value];
-        
-        NSDictionary *fromObj = [[SMG sharedInstance].store.mkStore addObj:((FeelDoModel*)model).fromMKId];
-        if (fromObj) [findObjArr addObject:fromObj];
-        
-        NSDictionary *toObj = [[SMG sharedInstance].store.mkStore addObj:((FeelDoModel*)model).toMKId];
-        if (toObj) [findObjArr addObject:toObj];
-    }
-    
-    
-    //2,收集数据Text,Obj,Do(Obj和Do存储)
-    __block NSMutableArray *findObjArr = [[NSMutableArray alloc] init];
-    __block NSMutableArray *findDoArr = [[NSMutableArray alloc] init];
-    __block NSMutableArray *findTextArr = [[NSMutableArray alloc] init];
-    for (FeelModel *model in modelArr) {
-        if ([model isKindOfClass:[FeelTextModel class]]){
-            //字符串输入
-            NSString *text = ((FeelTextModel*)model).text;
-            [findTextArr addObject:STRTOOK(text)];
-        }else if ([model isKindOfClass:[FeelObjModel class]]) {
-            //图像输入物体
-            NSDictionary *value = [[SMG sharedInstance].store.mkStore addObj:((FeelObjModel*)model).name];
-            if (value) [findObjArr addObject:value];
-        }else if ([model isKindOfClass:[FeelDoModel class]]) {
-            //图像输入行为
-            NSDictionary *value = [[SMG sharedInstance].store.mkStore addDo:((FeelDoModel*)model).doType];
-            if (value) [findDoArr addObject:value];
-            
-            NSDictionary *fromObj = [[SMG sharedInstance].store.mkStore addObj:((FeelDoModel*)model).fromMKId];
-            if (fromObj) [findObjArr addObject:fromObj];
-            
-            NSDictionary *toObj = [[SMG sharedInstance].store.mkStore addObj:((FeelDoModel*)model).toMKId];
-            if (toObj) [findObjArr addObject:toObj];
-        }
-    }
-    
-    
-    //3,MK_Word理解分词并存储
-    __block NSMutableArray *findNewWordArr = [[NSMutableArray alloc] init];
-    __block NSMutableArray *findOldWordArr = [[NSMutableArray alloc] init];
-    NSMutableArray *forceWordArr = [[NSMutableArray alloc] init];//收集记忆中已成词
-    for (NSDictionary *item in findObjArr){
-        NSDictionary *where = [[NSDictionary alloc] initWithObjectsAndKeys:STRTOOK([item objectForKey:@"itemId"]),@"objId", nil];
-        NSMutableArray *wordArr = [[SMG sharedInstance].store.mkStore getWordArrWithWhere:where];
-        for (NSDictionary *wordDic in wordArr) {
-            [forceWordArr addObject:STRTOOK([wordDic objectForKey:@"word"])];
-        }
-    }
-    for (NSDictionary *item in findDoArr){
-        NSDictionary *where = [[NSDictionary alloc] initWithObjectsAndKeys:STRTOOK([item objectForKey:@"itemId"]),@"doId", nil];
-        NSMutableArray *wordArr = [[SMG sharedInstance].store.mkStore getWordArrWithWhere:where];
-        for (NSDictionary *wordDic in wordArr) {
-            [forceWordArr addObject:STRTOOK([wordDic objectForKey:@"word"])];
-        }
-    }
-    for (NSString *text in findTextArr) {
-        //收集保存分词数据
-        [UnderstandUtils getWordArrAtText:text forceWordArr:forceWordArr outBlock:^(NSArray *oldWordArr, NSArray *newWordArr,NSInteger unknownCount){
-            [findOldWordArr addObjectsFromArray:oldWordArr];
-            NSArray *value = [[SMG sharedInstance].store.mkStore addWordArr:newWordArr];
-            [findNewWordArr addObjectsFromArray:value];
-        }];
-    }
-    
-    //4,Mem数据和存储
-    NSMutableDictionary *memDic = [[NSMutableDictionary alloc] init];
-    NSMutableArray *memObjArr = [[NSMutableArray alloc] init];
-    NSMutableArray *memDoArr = [[NSMutableArray alloc] init];
-    for (FeelModel *model in modelArr) {
-        if ([model isKindOfClass:[FeelTextModel class]]){//文本
-            [memDic setObject:((FeelTextModel*)model).text forKey:@"text"];
-        }else if ([model isKindOfClass:[FeelDoModel class]]) {//图像输入行为(如果doModel的fromMKId和toMKId是指向的名字;则这里修正为itemId;)
-            FeelDoModel *doModel = (FeelDoModel*)model;
-            NSMutableDictionary *memDoItem = [[NSMutableDictionary alloc] init];
-            for (NSDictionary *objItem in findObjArr) {
-                if ([STRTOOK(doModel.fromMKId) isEqualToString:[objItem objectForKey:@"itemName"]]) {
-                    [memDoItem setObject:STRTOOK([objItem objectForKey:@"itemId"]) forKey:@"fromId"];
-                }
-                if ([STRTOOK(doModel.toMKId) isEqualToString:[objItem objectForKey:@"itemName"]]) {
-                    [memDoItem setObject:STRTOOK([objItem objectForKey:@"itemId"]) forKey:@"toId"];
-                }
-            }
-            for (NSDictionary *findDoItem in findDoArr) {
-                if ([STRTOOK(doModel.doType) isEqualToString:[findDoItem objectForKey:@"itemName"]]) {
-                    [memDoItem setObject:STRTOOK([findDoItem objectForKey:@"itemId"]) forKey:@"doId"];
-                }
-            }
-            [memDoArr addObject:memDoItem];
-        }
-    }
-    [memDic setObject:memDoArr forKey:@"do"];
-    for (NSDictionary *item in findObjArr) {//收集objId数组
-        [memObjArr addObject:[item objectForKey:@"itemId"]];
-    }
-    [memDic setObject:memObjArr forKey:@"obj"];
-    [[SMG sharedInstance].store.memStore addMemory:memDic];
-    
-    
-    //5,MK_对应逻辑(实物<-->文字)
-    for (NSString *objId in memObjArr) {
-        [self understandObj:objId atText:@"" outBlock:^(NSMutableDictionary *linkDic) {
-            if (linkDic) {
-                for (NSString *key in linkDic.allKeys) {
-                    NSDictionary *wordItem = [linkDic objectForKey:key];
-                    NSString *objId = key;
-                    NSString *word = [wordItem objectForKey:@"word"];
-                    [[SMG sharedInstance].store.mkStore addWord:word withObjId:objId withDoId:nil];
-                }
-            }
-        }];
-    }
-    //6,MK_对应逻辑(行为<-->文字)(把行为与文字同时出现的规律记下来;等下次再出现行为文字变化,或出现文字,行为变化时;再分析do<-->word的关系;)
-    for (NSDictionary *findDoItem in findDoArr) {
-        [self understandDo:[findDoItem objectForKey:@"itemId"] atText:[memDic objectForKey:@"text"] outBlock:^(NSMutableDictionary *linkDic) {
-            if (linkDic) {
-                for (NSString *key in linkDic.allKeys) {
-                    NSDictionary *wordItem = [linkDic objectForKey:key];
-                    NSString *doId = key;
-                    NSString *word = [wordItem objectForKey:@"word"];
-                    [[SMG sharedInstance].store.mkStore addWord:word withObjId:nil withDoId:doId];
-                }
-            }
-        }];
-    }
-    
-    //7,Logic逻辑;(MK<->因果)
-    
-    
-}
+//-(void) commitWithFeelModel:(FeelModel*)model{
+//    //1,数据检查
+//    if (model == nil) {
+//        return;
+//    }
+//    
+//    //2,收集数据
+//    NSInteger groupId = [MemStore createGroupId];
+//    if ([model isKindOfClass:[FeelTextModel class]]) {
+//        NSString *text = ((FeelTextModel*)model).text;
+//        for (NSInteger i = 0; i < text.length; i++) {
+//            NSString *value = [text substringWithRange:NSMakeRange(i,1)];
+//            CharModel *charModel = [CharStore createInstanceModel:value];
+//            
+//            MemModel *sayItemModel = [[MemModel alloc] init];
+//            sayItemModel.groupId = groupId;
+//            sayItemModel.objRowId = aObj.rowid;
+//            sayItemModel.charRowId = charModel.rowid;
+//            [MemModel insertToDB:sayItemModel];
+//        }
+//        
+//    }else if ([model isKindOfClass:[FeelObjModel class]]) {
+//        //图像输入物体
+//        NSDictionary *value = [[SMG sharedInstance].store.mkStore addObj:((FeelObjModel*)model).name];
+//        if (value) [findObjArr addObject:value];
+//    }else if ([model isKindOfClass:[FeelDoModel class]]) {
+//        //图像输入行为
+//        NSDictionary *value = [[SMG sharedInstance].store.mkStore addDo:((FeelDoModel*)model).doType];
+//        if (value) [findDoArr addObject:value];
+//        
+//        NSDictionary *fromObj = [[SMG sharedInstance].store.mkStore addObj:((FeelDoModel*)model).fromMKId];
+//        if (fromObj) [findObjArr addObject:fromObj];
+//        
+//        NSDictionary *toObj = [[SMG sharedInstance].store.mkStore addObj:((FeelDoModel*)model).toMKId];
+//        if (toObj) [findObjArr addObject:toObj];
+//    }
+//    
+//    
+//    //2,收集数据Text,Obj,Do(Obj和Do存储)
+//    __block NSMutableArray *findObjArr = [[NSMutableArray alloc] init];
+//    __block NSMutableArray *findDoArr = [[NSMutableArray alloc] init];
+//    __block NSMutableArray *findTextArr = [[NSMutableArray alloc] init];
+//    for (FeelModel *model in modelArr) {
+//        if ([model isKindOfClass:[FeelTextModel class]]){
+//            //字符串输入
+//            NSString *text = ((FeelTextModel*)model).text;
+//            [findTextArr addObject:STRTOOK(text)];
+//        }else if ([model isKindOfClass:[FeelObjModel class]]) {
+//            //图像输入物体
+//            NSDictionary *value = [[SMG sharedInstance].store.mkStore addObj:((FeelObjModel*)model).name];
+//            if (value) [findObjArr addObject:value];
+//        }else if ([model isKindOfClass:[FeelDoModel class]]) {
+//            //图像输入行为
+//            NSDictionary *value = [[SMG sharedInstance].store.mkStore addDo:((FeelDoModel*)model).doType];
+//            if (value) [findDoArr addObject:value];
+//            
+//            NSDictionary *fromObj = [[SMG sharedInstance].store.mkStore addObj:((FeelDoModel*)model).fromMKId];
+//            if (fromObj) [findObjArr addObject:fromObj];
+//            
+//            NSDictionary *toObj = [[SMG sharedInstance].store.mkStore addObj:((FeelDoModel*)model).toMKId];
+//            if (toObj) [findObjArr addObject:toObj];
+//        }
+//    }
+//    
+//    
+//    //3,MK_Word理解分词并存储
+//    __block NSMutableArray *findNewWordArr = [[NSMutableArray alloc] init];
+//    __block NSMutableArray *findOldWordArr = [[NSMutableArray alloc] init];
+//    NSMutableArray *forceWordArr = [[NSMutableArray alloc] init];//收集记忆中已成词
+//    for (NSDictionary *item in findObjArr){
+//        NSDictionary *where = [[NSDictionary alloc] initWithObjectsAndKeys:STRTOOK([item objectForKey:@"itemId"]),@"objId", nil];
+//        NSMutableArray *wordArr = [[SMG sharedInstance].store.mkStore getWordArrWithWhere:where];
+//        for (NSDictionary *wordDic in wordArr) {
+//            [forceWordArr addObject:STRTOOK([wordDic objectForKey:@"word"])];
+//        }
+//    }
+//    for (NSDictionary *item in findDoArr){
+//        NSDictionary *where = [[NSDictionary alloc] initWithObjectsAndKeys:STRTOOK([item objectForKey:@"itemId"]),@"doId", nil];
+//        NSMutableArray *wordArr = [[SMG sharedInstance].store.mkStore getWordArrWithWhere:where];
+//        for (NSDictionary *wordDic in wordArr) {
+//            [forceWordArr addObject:STRTOOK([wordDic objectForKey:@"word"])];
+//        }
+//    }
+//    for (NSString *text in findTextArr) {
+//        //收集保存分词数据
+//        [UnderstandUtils getWordArrAtText:text forceWordArr:forceWordArr outBlock:^(NSArray *oldWordArr, NSArray *newWordArr,NSInteger unknownCount){
+//            [findOldWordArr addObjectsFromArray:oldWordArr];
+//            NSArray *value = [[SMG sharedInstance].store.mkStore addWordArr:newWordArr];
+//            [findNewWordArr addObjectsFromArray:value];
+//        }];
+//    }
+//    
+//    //4,Mem数据和存储
+//    NSMutableDictionary *memDic = [[NSMutableDictionary alloc] init];
+//    NSMutableArray *memObjArr = [[NSMutableArray alloc] init];
+//    NSMutableArray *memDoArr = [[NSMutableArray alloc] init];
+//    for (FeelModel *model in modelArr) {
+//        if ([model isKindOfClass:[FeelTextModel class]]){//文本
+//            [memDic setObject:((FeelTextModel*)model).text forKey:@"text"];
+//        }else if ([model isKindOfClass:[FeelDoModel class]]) {//图像输入行为(如果doModel的fromMKId和toMKId是指向的名字;则这里修正为itemId;)
+//            FeelDoModel *doModel = (FeelDoModel*)model;
+//            NSMutableDictionary *memDoItem = [[NSMutableDictionary alloc] init];
+//            for (NSDictionary *objItem in findObjArr) {
+//                if ([STRTOOK(doModel.fromMKId) isEqualToString:[objItem objectForKey:@"itemName"]]) {
+//                    [memDoItem setObject:STRTOOK([objItem objectForKey:@"itemId"]) forKey:@"fromId"];
+//                }
+//                if ([STRTOOK(doModel.toMKId) isEqualToString:[objItem objectForKey:@"itemName"]]) {
+//                    [memDoItem setObject:STRTOOK([objItem objectForKey:@"itemId"]) forKey:@"toId"];
+//                }
+//            }
+//            for (NSDictionary *findDoItem in findDoArr) {
+//                if ([STRTOOK(doModel.doType) isEqualToString:[findDoItem objectForKey:@"itemName"]]) {
+//                    [memDoItem setObject:STRTOOK([findDoItem objectForKey:@"itemId"]) forKey:@"doId"];
+//                }
+//            }
+//            [memDoArr addObject:memDoItem];
+//        }
+//    }
+//    [memDic setObject:memDoArr forKey:@"do"];
+//    for (NSDictionary *item in findObjArr) {//收集objId数组
+//        [memObjArr addObject:[item objectForKey:@"itemId"]];
+//    }
+//    [memDic setObject:memObjArr forKey:@"obj"];
+//    [[SMG sharedInstance].store.memStore addMemory:memDic];
+//    
+//    
+//    //5,MK_对应逻辑(实物<-->文字)
+//    for (NSString *objId in memObjArr) {
+//        [self understandObj:objId atText:@"" outBlock:^(NSMutableDictionary *linkDic) {
+//            if (linkDic) {
+//                for (NSString *key in linkDic.allKeys) {
+//                    NSDictionary *wordItem = [linkDic objectForKey:key];
+//                    NSString *objId = key;
+//                    NSString *word = [wordItem objectForKey:@"word"];
+//                    [[SMG sharedInstance].store.mkStore addWord:word withObjId:objId withDoId:nil];
+//                }
+//            }
+//        }];
+//    }
+//    //6,MK_对应逻辑(行为<-->文字)(把行为与文字同时出现的规律记下来;等下次再出现行为文字变化,或出现文字,行为变化时;再分析do<-->word的关系;)
+//    for (NSDictionary *findDoItem in findDoArr) {
+//        [self understandDo:[findDoItem objectForKey:@"itemId"] atText:[memDic objectForKey:@"text"] outBlock:^(NSMutableDictionary *linkDic) {
+//            if (linkDic) {
+//                for (NSString *key in linkDic.allKeys) {
+//                    NSDictionary *wordItem = [linkDic objectForKey:key];
+//                    NSString *doId = key;
+//                    NSString *word = [wordItem objectForKey:@"word"];
+//                    [[SMG sharedInstance].store.mkStore addWord:word withObjId:nil withDoId:doId];
+//                }
+//            }
+//        }];
+//    }
+//    
+//    //7,Logic逻辑;(MK<->因果)
+//    
+//    
+//}
 
 
 

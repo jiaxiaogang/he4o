@@ -20,7 +20,7 @@
 
 @property (assign, nonatomic) NSInteger groupId;//当前分组id;
 
-@property (assign, nonatomic)  <#valName#>;
+//@property (assign, nonatomic)  <#valName#>;
 @property (assign, nonatomic) NSInteger charRowId;
 @property (assign, nonatomic) NSInteger  objRowId;
 @property (assign, nonatomic) NSInteger  doRowId;
