@@ -42,7 +42,7 @@
  *      2,分词已知时,与实物或行为对应;(记忆中实物行为和<3,未理解的分词数量与实物行为和差值<2)
  *
  */
--(void) commitWithFeelModelArrBak:(NSArray*)modelArr{
+-(void) commitWithFeelModelArr:(NSArray*)modelArr{
     //1,数据检查
     if (!ARRISOK(modelArr)) {
         return;
