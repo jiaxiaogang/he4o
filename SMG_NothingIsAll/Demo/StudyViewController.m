@@ -190,13 +190,59 @@
 
 - (IBAction)testBtnOnClick:(id)sender {
     
-    //[self understandA];
+    [self understandA];
     
-    [self understandB];
+    //[self understandB];
     
     //[self understandC];
 
 }
+
+
+
+/**
+ *  MARK:--------------------使用(定义好的对话),来教育SMG--------------------
+ */
+- (void)understandA {
+    if (ARRISOK(self.testArr))
+    {
+        NSDictionary *dic = self.testArr[0];
+        [self.testArr removeObjectAtIndex:0];
+        NSMutableArray *commitArr = [[NSMutableArray alloc] init];
+        
+        //1,doModel
+        if ([dic objectForKey:@"doType"]) {
+            FeelDoModel *doModel = [[FeelDoModel alloc] init];
+            doModel.fromMKId = [dic objectForKey:@"fromMKId"];
+            doModel.toMKId = [dic objectForKey:@"toMKId"];
+            doModel.doType = [dic objectForKey:@"doType"];
+            [commitArr addObject:doModel];
+        }
+        
+        //2,feelTextModel
+        if ([dic objectForKey:@"text"]) {
+            FeelTextModel *feelTextModel = [[FeelTextModel alloc] init];
+            feelTextModel.text = [dic objectForKey:@"text"];
+            [commitArr addObject:feelTextModel];
+        }
+        
+        //3,
+        if ([dic objectForKey:@"obj"]) {
+            FeelObjModel *objModel = [[FeelObjModel alloc] init];
+            objModel.name = [dic objectForKey:@"obj"];
+            [commitArr addObject:objModel];
+        }
+        
+        //4,commit
+        [[SMG sharedInstance].understand commitWithFeelModelArr:commitArr];
+    }
+    else
+    {
+        NSLog(@"测试完成....");
+    }
+}
+
+
 
 /**
  *  MARK:--------------------通过(自动生成语言)来教育SMG--------------------
@@ -298,110 +344,6 @@
     
     //4,commit
     [[SMG sharedInstance].understand commitWithFeelModelArr:commitArr];
-}
-
-
-/**
- *  MARK:--------------------使用(定义好的对话),来教育SMG--------------------
- */
-- (void)understandA {
-    if (ARRISOK(self.testArr))
-    {
-        NSDictionary *dic = self.testArr[0];
-        [self.testArr removeObjectAtIndex:0];
-        NSMutableArray *commitArr = [[NSMutableArray alloc] init];
-
-        //1,doModel
-        if ([dic objectForKey:@"doType"]) {
-            FeelDoModel *doModel = [[FeelDoModel alloc] init];
-            doModel.fromMKId = [dic objectForKey:@"fromMKId"];
-            doModel.toMKId = [dic objectForKey:@"toMKId"];
-            doModel.doType = [dic objectForKey:@"doType"];
-            [commitArr addObject:doModel];
-        }
-
-        //2,feelTextModel
-        if ([dic objectForKey:@"text"]) {
-            FeelTextModel *feelTextModel = [[FeelTextModel alloc] init];
-            feelTextModel.text = [dic objectForKey:@"text"];
-            [commitArr addObject:feelTextModel];
-        }
-
-        //3,
-        if ([dic objectForKey:@"obj"]) {
-            FeelObjModel *objModel = [[FeelObjModel alloc] init];
-            objModel.name = [dic objectForKey:@"obj"];
-            [commitArr addObject:objModel];
-        }
-
-        //4,commit
-        [[SMG sharedInstance].understand commitWithFeelModelArr:commitArr];
-
-
-
-        //ChatStore (Test)
-        NSArray *a = [CharStore insertString:@"我爱你"];
-        NSLog(@"");
-        NSString *str = [CharStore searchString:a];
-        NSLog(@"");
-
-
-
-
-        //MemMode (Test)
-        //A看见B,说:你好;
-        //1,数据
-        ObjModel *aObj = [ObjStore createInstanceModel:@"A"];
-        ObjModel *bObj = [ObjStore createInstanceModel:@"B"];
-        DoModel *see = [DoStore createInstanceModel:@"看见"];
-        DoModel *bySee = [DoStore createInstanceModel:@"被看见"];
-        DoModel *say = [DoStore createInstanceModel:@"说"];
-        DoModel *hear = [DoStore createInstanceModel:@"听"];
-
-        //2,A看见B;
-        MemModel *aSeeModel = [[MemModel alloc] init];
-        aSeeModel.groupId = [MemStore createGroupId];
-        aSeeModel.objRowId = aObj.rowid;
-        aSeeModel.doRowId = see.rowid;
-        [MemModel insertToDB:aSeeModel];
-
-        //2,B被看见;
-        MemModel *bBySee = [[MemModel alloc] init];
-        bBySee.groupId = aSeeModel.groupId;
-        bBySee.objRowId = bObj.rowid;
-        bBySee.doRowId = bySee.rowid;
-        [MemModel insertToDB:bBySee];
-
-
-        //3,A说
-        MemModel *aSayModel = [[MemModel alloc] init];
-        aSayModel.groupId = [MemStore createGroupId];
-        aSayModel.objRowId = aObj.rowid;
-        aSayModel.doRowId = say.rowid;
-        [MemModel insertToDB:aSayModel];
-
-        //3,A说内容
-        NSString *text = @"你好";
-        for (NSInteger i = 0; i < text.length; i++) {
-            NSString *value = [text substringWithRange:NSMakeRange(i,1)];
-            CharModel *charModel = [CharStore createInstanceModel:value];
-
-            MemModel *sayItemModel = [[MemModel alloc] init];
-            sayItemModel.groupId = aSayModel.groupId;
-            sayItemModel.objRowId = aObj.rowid;
-            sayItemModel.charRowId = charModel.rowid;
-            [MemModel insertToDB:sayItemModel];
-        }
-        NSLog(@"");
-
-        //4,commit
-        [[SMG sharedInstance].understand commitWithFeelModelArr:commitArr];
-
-    }
-    else
-    {
-        NSLog(@"测试完成....");
-    }
 }
 
 

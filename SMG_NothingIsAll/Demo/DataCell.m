@@ -12,7 +12,7 @@
 @interface DataCell ()
 
 @property (weak, nonatomic) IBOutlet UILabel *dataLab;
-@property (strong,nonatomic) NSDictionary *dic;
+@property (strong,nonatomic) NSObject *data;
 @property (assign, nonatomic) StoreType storeType;
 
 @end
@@ -35,18 +35,19 @@
 }
 
 
--(void) setData:(NSDictionary*)dic withStoreType:(StoreType)storeType{
-    self.dic = dic;
+-(void) setData:(NSObject*)data withStoreType:(StoreType)storeType{
+    self.data = data;
     self.storeType = storeType;
     [self refreshDisplay];
 }
 
 -(void) refreshDisplay{
-    if (self.dic) {
+    if (self.data) {
         if (self.storeType == StoreType_Mem) {
-            NSArray *doArr = [self.dic objectForKey:@"do"];
-            NSArray *objArr = [self.dic objectForKey:@"obj"];
-            NSString *text = [self.dic objectForKey:@"text"];
+            NSDictionary *dic = (NSDictionary*)self.data;
+            NSArray *doArr = [dic objectForKey:@"do"];
+            NSArray *objArr = [dic objectForKey:@"obj"];
+            NSString *text = [dic objectForKey:@"text"];
             
             NSMutableString *mStr = [[NSMutableString alloc] init];
             //Text
@@ -85,53 +86,57 @@
             
             [self.dataLab setText:mStr];
         }else if (self.storeType == StoreType_Do) {
-            
+            NSDictionary *dic = (NSDictionary*)self.data;
             NSMutableString *mStr = [[NSMutableString alloc] init];
             //itemId
             [mStr appendString:@"行为Id:"];
-            [mStr appendString:[self.dic objectForKey:@"itemId"]];
+            [mStr appendString:[dic objectForKey:@"itemId"]];
             [mStr appendString:@"\n"];
             
             //itemName
             [mStr appendString:@"行为名字:"];
-            [mStr appendString:[self.dic objectForKey:@"itemName"]];
+            [mStr appendString:[dic objectForKey:@"itemName"]];
             [mStr appendString:@"\n"];
             [self.dataLab setText:mStr];
             
         }else if (self.storeType == StoreType_Obj) {
+            NSDictionary *dic = (NSDictionary*)self.data;
             NSMutableString *mStr = [[NSMutableString alloc] init];
             //itemId
             [mStr appendString:@"实物Id:"];
-            [mStr appendString:[self.dic objectForKey:@"itemId"]];
+            [mStr appendString:[dic objectForKey:@"itemId"]];
             [mStr appendString:@"\n"];
             
             //itemName
             [mStr appendString:@"实物名字:"];
-            [mStr appendString:[self.dic objectForKey:@"itemName"]];
+            [mStr appendString:[dic objectForKey:@"itemName"]];
             [mStr appendString:@"\n"];
             [self.dataLab setText:mStr];
         }else if (self.storeType == StoreType_Text) {
+            TextModel *model = (TextModel*)self.data;
             NSMutableString *mStr = [[NSMutableString alloc] init];
             //itemId
             [mStr appendString:@"分词Id:"];
-            [mStr appendString:[self.dic objectForKey:@"itemId"]];
+            [mStr appendFormat:@"%ld",model.rowid];
             [mStr appendString:@"\n"];
             
             //itemName
             [mStr appendString:@"词汇:"];
-            [mStr appendString:[self.dic objectForKey:@"word"]];
+            [mStr appendString:model.text];
             [mStr appendString:@"\n"];
             [self.dataLab setText:mStr];
             
             //objId
             [mStr appendString:@"对应实物:"];
-            [mStr appendString:STRTOOK([self getObjName:[self.dic objectForKey:@"objId"]])];
+            NSInteger objId = [MapStore searchSingle_OtherIdWithClass:TextModel.class withClassId:model.rowid otherClass:ObjModel.class];
+            [mStr appendString:STRTOOK([self getObjName:STRFORMAT(@"%ld",objId)])];
             [mStr appendString:@"\n"];
             [self.dataLab setText:mStr];
             
             //doId
             [mStr appendString:@"对应行为:"];
-            [mStr appendString:STRTOOK([self getDoName:[self.dic objectForKey:@"doId"]])];
+            NSInteger doId = [MapStore searchSingle_OtherIdWithClass:TextModel.class withClassId:model.rowid otherClass:DoModel.class];
+            [mStr appendString:STRTOOK([self getDoName:STRFORMAT(@"%ld",doId)])];
             [mStr appendString:@"\n"];
             [self.dataLab setText:mStr];
             
@@ -145,7 +150,7 @@
  *  MARK:--------------------method--------------------
  */
 -(NSString*) getObjName:(NSString*)itemId{
-    NSDictionary *objDic = [[SMG sharedInstance].store.mkStore getObjWithWhere:[NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(itemId),@"itemId", nil]];
+    NSDictionary *objDic = [[SMG sharedInstance].store.mkStore.objStore getSingleItemWithWhere:[NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(itemId),@"itemId", nil]];
     if (objDic && [objDic objectForKey:@"itemName"]) {
         return STRTOOK([objDic objectForKey:@"itemName"]);
     }
@@ -153,7 +158,7 @@
 }
 
 -(NSString*) getDoName:(NSString*)itemId{
-    NSDictionary *objDic = [[SMG sharedInstance].store.mkStore getDoWithWhere:[NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(itemId),@"itemId", nil]];
+    NSDictionary *objDic = [[SMG sharedInstance].store.mkStore.doStore getSingleItemWithWhere:[NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(itemId),@"itemId", nil]];
     if (objDic && [objDic objectForKey:@"itemName"]) {
         return STRTOOK([objDic objectForKey:@"itemName"]);
     }
@@ -161,9 +166,9 @@
 }
 
 -(NSString*) getWordName:(NSString*)itemId{
-    NSDictionary *objDic = [[SMG sharedInstance].store.mkStore getWordWithWhere:[NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(itemId),@"itemId", nil]];
-    if (objDic && [objDic objectForKey:@"word"]) {
-        return STRTOOK([objDic objectForKey:@"word"]);
+    TextModel *model = [TextStore getSingleWordWithItemId:[STRTOOK(itemId) integerValue]];
+    if (model) {
+        return model.text;
     }
     return nil;
 }

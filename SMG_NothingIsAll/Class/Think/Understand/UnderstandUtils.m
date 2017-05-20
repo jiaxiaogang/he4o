@@ -78,7 +78,7 @@
         BOOL findWord = false;
         for (NSInteger i = maxWordLength; i > 0; i--) {
             NSString *checkWord = [checkStr substringToIndex:i];
-            NSDictionary *findLocalWord = [[SMG sharedInstance].store.mkStore getWord:checkWord];
+            NSDictionary *findLocalWord = [TextStore getSingleWordWithText:checkWord];
             if (findLocalWord) {//是旧词
                 [oldArr addObject:findLocalWord];
                 findWord = true;
@@ -167,16 +167,15 @@
         //条件1,取未理解元素和;不能>3
         if ([memItem objectForKey:@"obj"]) {
             for (NSString *objId in [memItem objectForKey:@"obj"]) {
-                NSDictionary *where = [NSDictionary dictionaryWithObjectsAndKeys:objId,@"objId", nil];
-                if(![[SMG sharedInstance].store.mkStore containerWordWithWhere:where]){
+                if(![TextStore getSingleWordWithObjId:[STRTOOK(objId) intValue]]){
                     [unknownObjArr addObject:objId];
                 }
             }
         }
         if ([memItem objectForKey:@"do"]) {
             for (NSDictionary *item in [memItem objectForKey:@"do"]) {
-                NSDictionary *where = [NSDictionary dictionaryWithObjectsAndKeys:[item objectForKey:@"doId"],@"doId", nil];
-                if(![[SMG sharedInstance].store.mkStore containerWordWithWhere:where]){
+                NSString *doId = STRTOOK([item objectForKey:@"doId"]);
+                if(![TextStore getSingleWordWithDoId:[doId integerValue]]) {
                     [unknownDoArr addObject:[item objectForKey:@"doId"]];
                 }
             }
@@ -184,11 +183,13 @@
         if (unknownDoArr.count + unknownObjArr.count <= 3) {
             //条件2,不能有未分词的陌生词;
             [UnderstandUtils getWordArrAtText:[memItem objectForKey:@"text"] forceWordArr:nil outBlock:^(NSArray *oldWordArr, NSArray *newWordArr,NSInteger unknownCount) {
-                [[SMG sharedInstance].store.mkStore addWordArr:newWordArr];//存新词;
+                [TextStore addWordWithTextArr:newWordArr];//存新词;
                 if (!ARRISOK(newWordArr) && unknownCount == 0) {
-                    for (NSDictionary *oldWord in oldWordArr) {
-                        if (![oldWord objectForKey:@"objId"] && ![oldWord objectForKey:@"doId"]) {
-                            [unknownWordArr addObject:oldWord];
+                    for (TextModel *oldModel in oldWordArr) {
+                        NSInteger objId = [MapStore searchSingle_OtherIdWithClass:TextModel.class withClassId:oldModel.rowid otherClass:ObjModel.class];
+                        NSInteger doId = [MapStore searchSingle_OtherIdWithClass:TextModel.class withClassId:oldModel.rowid otherClass:DoModel.class];
+                        if (objId == 0 && doId == 0) {
+                            [unknownWordArr addObject:oldModel];
                         }
                     }
                     //条件3,未理解的分词数量差<2;
@@ -220,7 +221,7 @@
     NSInteger maxLength = MIN(index, 7);
     for (NSInteger i = 1; i <= maxLength; i++) {
         NSString *checkWord = [text substringWithRange:NSMakeRange(index - i, i)];
-        if ([[SMG sharedInstance].store.mkStore containerWord:checkWord]) {
+        if ([TextStore getSingleWordWithText:checkWord]) {
             return true;
         }
     }
@@ -238,11 +239,62 @@
     NSInteger maxLength = MIN(text.length - index, 7);
     for (NSInteger i = 1; i <= maxLength; i++) {
         NSString *checkWord = [text substringWithRange:NSMakeRange(index, i)];
-        if ([[SMG sharedInstance].store.mkStore containerWord:checkWord]) {
+        if ([TextStore getSingleWordWithText:checkWord]) {
             return true;
         }
     }
     return false;
 }
+
+
+
+
+
+
+/**
+ *  MARK:--------------------预判词--------------------
+ *  参数:
+ *      1,limit:取几个
+ *      2,havThan:有没达到多少个结果
+ *
+ *  注:
+ *      1,目前仅支持用"一刀两"推出"一刀两断"从前至后预判;
+ *      2,词本身不作数 如:"计算" 只能判出"计算机"不能返回"计算";
+ */
+-(void) getInferenceWord:(NSString*)str withLimit:(NSInteger)limit withHavThan:(NSInteger)havThan withOutBlock:(void(^)(NSMutableArray *valueWords,BOOL havThan))outBlock {
+    //数据检查
+    NSMutableArray *wordArr = [TextStore getWordArr];
+    NSMutableArray *mArr = nil;
+    str = STRTOOK(str);
+    if (!STRISOK(str) || limit == 0 || wordArr == nil) {
+        if (outBlock) outBlock(mArr,havThan >= 0);
+    }
+    //找
+    NSInteger findCount = 0;
+    for (NSInteger i = wordArr.count - 1; i >= 0; i--) {
+        NSDictionary *item = wordArr[i];
+        NSString *itemText = [item objectForKey:@"text"];
+        if (itemText && itemText.length > str.length) {
+            if ([str isEqualToString:[itemText substringToIndex:str.length]]) {
+                if (mArr == nil) {
+                    mArr = [[NSMutableArray alloc] init];
+                }
+                //收集;
+                if (mArr.count < limit) {
+                    [mArr addObject:itemText];
+                }
+                //计数;
+                findCount ++;
+                //收集完毕;
+                if (findCount >= havThan && mArr.count >= limit) {
+                    break;
+                }
+            }
+        }
+    }
+    //送出
+    if (outBlock) outBlock(mArr,findCount >= havThan);
+}
+
 
 @end

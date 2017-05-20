@@ -27,49 +27,5 @@
 @property (strong,nonatomic) ObjStore *objStore;
 @property (strong,nonatomic) DoStore *doStore;
 
-/**
- *  MARK:--------------------Text--------------------
- *  调用转到Text;
- */
--(BOOL) containerWord:(NSString*)word;//图谱分词数组;包含某词;
--(BOOL) containerWordWithWhere:(NSDictionary*)where;//根据其它字段找某词;
--(NSDictionary*) getWord:(NSString*)word;//图谱分词数组;包含某词;
--(NSDictionary*) getWordWithWhere:(NSDictionary*)where;//根据其它字段找某词;
--(NSMutableArray*) getWordArrWithWhere:(NSDictionary*)where;//根据where找所有词
--(NSDictionary*) addWord:(NSString*)word;
--(NSMutableArray*) addWordArr:(NSArray*)wordArr;
--(NSDictionary*) addWord:(NSString*)word withObjId:(NSString*)objId withDoId:(NSString*)doId;
-
-/**
- *  MARK:--------------------objModel--------------------
- */
--(NSDictionary*) getObj:(NSString*)itemName;
--(NSDictionary*) getObjWithWhere:(NSDictionary*)where;
--(NSMutableArray*) getObjArrWithWhere:(NSDictionary*)where;//根据where找所有
--(NSDictionary*) addObj:(NSString*)itemName;
--(NSMutableArray*) addObjArr:(NSArray*)itemNameArr;
-
-
-/**
- *  MARK:--------------------doModel--------------------
- */
--(NSDictionary*) getDo:(NSString*)itemName;
--(NSDictionary*) getDoWithWhere:(NSDictionary*)where;
--(NSMutableArray*) getDoArrWithWhere:(NSDictionary*)where;//根据where找所有
--(NSDictionary*) addDo:(NSString*)itemName;
--(NSMutableArray*) addDoArr:(NSArray*)itemNameArr;
-
-
-
-
-/**
- *  MARK:--------------------分析知识图谱的归类--------------------
- *  1,先天不知道人类
- *  2,类并不是类;只是有相同特征的一些东西;(类,限制了灵活性,而人工智能要求最大的灵活性,所以);
- *  3,观察每个个体与共同点;
- *  思考:小说中出现小芳,思考,小说里的小芳是个人类;但不是我认识的那个小芳;
- */
--(void) addPerson;//临时,,随后删掉(3d图像对实物的描述)
-
 
 @end
