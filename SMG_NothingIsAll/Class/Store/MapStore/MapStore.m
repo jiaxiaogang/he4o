@@ -24,24 +24,54 @@
 +(MapModel*) searchSingle_MapModel:(Class)class withClassId:(NSInteger)classId {
     //找A
     NSDictionary *aWhere = [[NSDictionary alloc] initWithObjectsAndKeys:class,@"aClass",@(classId),@"aId", nil];
-    MapModel *aModel = [MapModel searchSingleWithWhere:aWhere orderBy:nil];
-    if (aModel) {
-        aModel.count ++;
-        [MapModel updateToDB:aModel where:[DBUtils sqlWhere_RowId:aModel.rowid]];//计数器+1并保存;
-        return aModel;
-    }
+    MapModel *aModel = [self searchSingle_MapModel:aWhere];
+    if (aModel) return aModel;
     //找B
     NSDictionary *bWhere = [[NSDictionary alloc] initWithObjectsAndKeys:class,@"bClass",@(classId),@"bId", nil];
-    MapModel *bModel = [MapModel searchSingleWithWhere:bWhere orderBy:nil];
-    if (bModel) {
-        bModel.count ++;
-        [MapModel updateToDB:bModel where:[DBUtils sqlWhere_RowId:bModel.rowid]];//计数器+1并保存;
-        return bModel;
-    }
+    MapModel *bModel = [self searchSingle_MapModel:bWhere];
+    if (bModel) return bModel;
     //未找到
     return nil;
 }
 
++(NSInteger) searchSingle_OtherIdWithClass:(Class)class withClassId:(NSInteger)classId otherClass:(Class)otherClass{
+    //找A
+    NSDictionary *aWhere = [[NSDictionary alloc] initWithObjectsAndKeys:class,@"aClass",@(classId),@"aId",otherClass,@"bClass", nil];
+    MapModel *aModel = [self searchSingle_MapModel:aWhere];
+    if (aModel) return aModel.bId;
+    //找B
+    NSDictionary *bWhere = [[NSDictionary alloc] initWithObjectsAndKeys:class,@"bClass",@(classId),@"bId",otherClass,@"aClass", nil];
+    MapModel *bModel = [self searchSingle_MapModel:bWhere];
+    if (bModel) return bModel.aId;
+    //未找到
+    return 0;
+}
+
++(MapModel*) searchSingle_MapModel:(Class)class withClassId:(NSInteger)classId otherClass:(Class)otherClass{
+    //找A
+    NSDictionary *aWhere = [[NSDictionary alloc] initWithObjectsAndKeys:class,@"aClass",@(classId),@"aId",otherClass,@"bClass", nil];
+    MapModel *aModel = [self searchSingle_MapModel:aWhere];
+    if (aModel) return aModel;
+    //找B
+    NSDictionary *bWhere = [[NSDictionary alloc] initWithObjectsAndKeys:class,@"bClass",@(classId),@"bId",otherClass,@"aClass", nil];
+    MapModel *bModel = [self searchSingle_MapModel:bWhere];
+    if (bModel) return bModel;
+    //未找到
+    return nil;
+}
+
+
++(MapModel*) searchSingle_MapModel:(NSDictionary*)where{
+    if (DICISOK(where)) {
+        MapModel *aModel = [MapModel searchSingleWithWhere:where orderBy:nil];
+        if (aModel) {
+            aModel.count ++;
+            [MapModel updateToDB:aModel where:[DBUtils sqlWhere_RowId:aModel.rowid]];//计数器+1并保存;
+            return aModel;
+        }
+    }
+    return nil;
+}
 
 
 @end

@@ -16,6 +16,8 @@
 
 +(MapModel*) insertToDB_MapModel:(MapModel*)model;
 +(MapModel*) searchSingle_MapModel:(Class)class withClassId:(NSInteger)classId;
-
++(MapModel*) searchSingle_MapModel:(Class)class withClassId:(NSInteger)classId otherClass:(Class)otherClass;
++(NSInteger) searchSingle_OtherIdWithClass:(Class)class withClassId:(NSInteger)classId otherClass:(Class)otherClass;
++(MapModel*) searchSingle_MapModel:(NSDictionary*)where;
 
 @end

@@ -141,14 +141,10 @@
         [self understandObj:objId atText:@"" outBlock:^(NSMutableDictionary *linkDic) {
             if (linkDic) {
                 for (NSString *key in linkDic.allKeys) {
-                    TextModel *wordItem = [linkDic objectForKey:key];
-                    NSString *objId = key;
-                    NSString *word = wordItem.text;
-                    
-                    TextModel *model = [[TextModel alloc] init];
-                    model.text = word;
-                    model.objId = [objId integerValue];
-                    [TextStore addWord:model];
+                    TextModel *textModel = [linkDic objectForKey:key];//本来就是本地的,不用再存;
+                    NSInteger objId = [key integerValue];
+                    MapModel *mapModel = [MapModel initWithAC:TextModel.class aI:textModel.rowid bC:ObjModel.class bI:objId];
+                    [MapStore insertToDB_MapModel:mapModel];
                 }
             }
         }];
@@ -158,14 +154,10 @@
         [self understandDo:[findDoItem objectForKey:@"itemId"] atText:[memDic objectForKey:@"text"] outBlock:^(NSMutableDictionary *linkDic) {
             if (linkDic) {
                 for (NSString *key in linkDic.allKeys) {
-                    TextModel *wordItem = [linkDic objectForKey:key];
-                    NSString *doId = key;
-                    NSString *word = wordItem.text;
-                    
-                    TextModel *model = [[TextModel alloc] init];
-                    model.text = word;
-                    model.doId = [doId integerValue];
-                    [TextStore addWord:model];
+                    TextModel *textModel = [linkDic objectForKey:key];//本来就是本地的,不用再存;
+                    NSInteger doId = [key integerValue];
+                    MapModel *mapModel = [MapModel initWithAC:TextModel.class aI:textModel.rowid bC:DoModel.class bI:doId];
+                    [MapStore insertToDB_MapModel:mapModel];
                 }
             }
         }];

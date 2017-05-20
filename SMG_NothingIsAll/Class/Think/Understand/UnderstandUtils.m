@@ -186,7 +186,9 @@
                 [TextStore addWordWithTextArr:newWordArr];//存新词;
                 if (!ARRISOK(newWordArr) && unknownCount == 0) {
                     for (TextModel *oldModel in oldWordArr) {
-                        if (oldModel.objId == 0 && oldModel.doId == 0) {
+                        NSInteger objId = [MapStore searchSingle_OtherIdWithClass:TextModel.class withClassId:oldModel.rowid otherClass:ObjModel.class];
+                        NSInteger doId = [MapStore searchSingle_OtherIdWithClass:TextModel.class withClassId:oldModel.rowid otherClass:DoModel.class];
+                        if (objId == 0 && doId == 0) {
                             [unknownWordArr addObject:oldModel];
                         }
                     }

@@ -198,6 +198,52 @@
 
 }
 
+
+
+/**
+ *  MARK:--------------------使用(定义好的对话),来教育SMG--------------------
+ */
+- (void)understandA {
+    if (ARRISOK(self.testArr))
+    {
+        NSDictionary *dic = self.testArr[0];
+        [self.testArr removeObjectAtIndex:0];
+        NSMutableArray *commitArr = [[NSMutableArray alloc] init];
+        
+        //1,doModel
+        if ([dic objectForKey:@"doType"]) {
+            FeelDoModel *doModel = [[FeelDoModel alloc] init];
+            doModel.fromMKId = [dic objectForKey:@"fromMKId"];
+            doModel.toMKId = [dic objectForKey:@"toMKId"];
+            doModel.doType = [dic objectForKey:@"doType"];
+            [commitArr addObject:doModel];
+        }
+        
+        //2,feelTextModel
+        if ([dic objectForKey:@"text"]) {
+            FeelTextModel *feelTextModel = [[FeelTextModel alloc] init];
+            feelTextModel.text = [dic objectForKey:@"text"];
+            [commitArr addObject:feelTextModel];
+        }
+        
+        //3,
+        if ([dic objectForKey:@"obj"]) {
+            FeelObjModel *objModel = [[FeelObjModel alloc] init];
+            objModel.name = [dic objectForKey:@"obj"];
+            [commitArr addObject:objModel];
+        }
+        
+        //4,commit
+        [[SMG sharedInstance].understand commitWithFeelModelArr:commitArr];
+    }
+    else
+    {
+        NSLog(@"测试完成....");
+    }
+}
+
+
+
 /**
  *  MARK:--------------------通过(自动生成语言)来教育SMG--------------------
  */
@@ -298,49 +344,6 @@
     
     //4,commit
     [[SMG sharedInstance].understand commitWithFeelModelArr:commitArr];
-}
-
-
-/**
- *  MARK:--------------------使用(定义好的对话),来教育SMG--------------------
- */
-- (void)understandA {
-    if (ARRISOK(self.testArr))
-    {
-        NSDictionary *dic = self.testArr[0];
-        [self.testArr removeObjectAtIndex:0];
-        NSMutableArray *commitArr = [[NSMutableArray alloc] init];
-
-        //1,doModel
-        if ([dic objectForKey:@"doType"]) {
-            FeelDoModel *doModel = [[FeelDoModel alloc] init];
-            doModel.fromMKId = [dic objectForKey:@"fromMKId"];
-            doModel.toMKId = [dic objectForKey:@"toMKId"];
-            doModel.doType = [dic objectForKey:@"doType"];
-            [commitArr addObject:doModel];
-        }
-
-        //2,feelTextModel
-        if ([dic objectForKey:@"text"]) {
-            FeelTextModel *feelTextModel = [[FeelTextModel alloc] init];
-            feelTextModel.text = [dic objectForKey:@"text"];
-            [commitArr addObject:feelTextModel];
-        }
-
-        //3,
-        if ([dic objectForKey:@"obj"]) {
-            FeelObjModel *objModel = [[FeelObjModel alloc] init];
-            objModel.name = [dic objectForKey:@"obj"];
-            [commitArr addObject:objModel];
-        }
-
-        //4,commit
-        [[SMG sharedInstance].understand commitWithFeelModelArr:commitArr];
-    }
-    else
-    {
-        NSLog(@"测试完成....");
-    }
 }
 
 
