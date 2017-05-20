@@ -1,5 +1,5 @@
 //
-//  MapModel.h
+//  LawModel.h
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/5/20.
@@ -11,8 +11,8 @@
 /**
  *  MARK:--------------------规律(同时)--------------------
  */
-@interface MapModel : NSObject
-+(MapModel*) initWithAC:(Class)aClass aI:(NSInteger)aId bC:(Class)bClass bI:(NSInteger)bId;
+@interface LawModel : NSObject
++(LawModel*) initWithAC:(Class)aClass aI:(NSInteger)aId bC:(Class)bClass bI:(NSInteger)bId;
 @property (assign,nonatomic) Class aClass;
 @property (assign, nonatomic) NSInteger aId;
 @property (assign,nonatomic) Class bClass;

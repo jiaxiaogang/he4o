@@ -143,8 +143,8 @@
                 for (NSString *key in linkDic.allKeys) {
                     TextModel *textModel = [linkDic objectForKey:key];//本来就是本地的,不用再存;
                     NSInteger objId = [key integerValue];
-                    MapModel *mapModel = [MapModel initWithAC:TextModel.class aI:textModel.rowid bC:ObjModel.class bI:objId];
-                    [MapStore insertToDB_MapModel:mapModel];
+                    LawModel *lawModel = [LawModel initWithAC:TextModel.class aI:textModel.rowid bC:ObjModel.class bI:objId];
+                    [LawStore insertToDB_LawModel:lawModel];
                 }
             }
         }];
@@ -156,8 +156,8 @@
                 for (NSString *key in linkDic.allKeys) {
                     TextModel *textModel = [linkDic objectForKey:key];//本来就是本地的,不用再存;
                     NSInteger doId = [key integerValue];
-                    MapModel *mapModel = [MapModel initWithAC:TextModel.class aI:textModel.rowid bC:DoModel.class bI:doId];
-                    [MapStore insertToDB_MapModel:mapModel];
+                    LawModel *lawModel = [LawModel initWithAC:TextModel.class aI:textModel.rowid bC:DoModel.class bI:doId];
+                    [LawStore insertToDB_LawModel:lawModel];
                 }
             }
         }];

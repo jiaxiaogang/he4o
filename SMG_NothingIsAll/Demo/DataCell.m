@@ -128,14 +128,14 @@
             
             //objId
             [mStr appendString:@"对应实物:"];
-            NSInteger objId = [MapStore searchSingle_OtherIdWithClass:TextModel.class withClassId:model.rowid otherClass:ObjModel.class];
+            NSInteger objId = [LawStore searchSingle_OtherIdWithClass:TextModel.class withClassId:model.rowid otherClass:ObjModel.class];
             [mStr appendString:STRTOOK([self getObjName:STRFORMAT(@"%ld",objId)])];
             [mStr appendString:@"\n"];
             [self.dataLab setText:mStr];
             
             //doId
             [mStr appendString:@"对应行为:"];
-            NSInteger doId = [MapStore searchSingle_OtherIdWithClass:TextModel.class withClassId:model.rowid otherClass:DoModel.class];
+            NSInteger doId = [LawStore searchSingle_OtherIdWithClass:TextModel.class withClassId:model.rowid otherClass:DoModel.class];
             [mStr appendString:STRTOOK([self getDoName:STRFORMAT(@"%ld",doId)])];
             [mStr appendString:@"\n"];
             [self.dataLab setText:mStr];

@@ -28,9 +28,10 @@
 		087753231ECFE1C400E7AD09 /* Understand+OutPut.m in Sources */ = {isa = PBXBuildFile; fileRef = 0877531C1ECFE1C400E7AD09 /* Understand+OutPut.m */; };
 		087753241ECFE1C400E7AD09 /* Understand.m in Sources */ = {isa = PBXBuildFile; fileRef = 0877531E1ECFE1C400E7AD09 /* Understand.m */; };
 		087753251ECFE1C400E7AD09 /* UnderstandUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 087753211ECFE1C400E7AD09 /* UnderstandUtils.m */; };
-		087753291ED0751000E7AD09 /* MapModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 087753281ED0751000E7AD09 /* MapModel.m */; };
-		0877532C1ED0767B00E7AD09 /* MapStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 0877532B1ED0767B00E7AD09 /* MapStore.m */; };
 		0877532F1ED076BE00E7AD09 /* LogicModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0877532E1ED076BE00E7AD09 /* LogicModel.m */; };
+		087753351ED09A9B00E7AD09 /* LawModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 087753321ED09A9B00E7AD09 /* LawModel.m */; };
+		087753361ED09A9B00E7AD09 /* LawStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 087753341ED09A9B00E7AD09 /* LawStore.m */; };
+		0877533C1ED09CFA00E7AD09 /* PointerModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0877533B1ED09CFA00E7AD09 /* PointerModel.m */; };
 		088331C61E9BD3D00026DE23 /* FeelObjModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088331C51E9BD3D00026DE23 /* FeelObjModel.m */; };
 		088331C91E9BD59F0026DE23 /* FeelAudioModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088331C81E9BD59F0026DE23 /* FeelAudioModel.m */; };
 		088331CC1E9BD68C0026DE23 /* FeelTextModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088331CB1E9BD68C0026DE23 /* FeelTextModel.m */; };
@@ -114,12 +115,14 @@
 		0877531F1ECFE1C400E7AD09 /* UnderstandHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnderstandHeader.h; sourceTree = "<group>"; };
 		087753201ECFE1C400E7AD09 /* UnderstandUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnderstandUtils.h; sourceTree = "<group>"; };
 		087753211ECFE1C400E7AD09 /* UnderstandUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UnderstandUtils.m; sourceTree = "<group>"; };
-		087753271ED0751000E7AD09 /* MapModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapModel.h; sourceTree = "<group>"; };
-		087753281ED0751000E7AD09 /* MapModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapModel.m; sourceTree = "<group>"; };
-		0877532A1ED0767B00E7AD09 /* MapStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapStore.h; sourceTree = "<group>"; };
-		0877532B1ED0767B00E7AD09 /* MapStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapStore.m; sourceTree = "<group>"; };
 		0877532D1ED076BE00E7AD09 /* LogicModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogicModel.h; sourceTree = "<group>"; };
 		0877532E1ED076BE00E7AD09 /* LogicModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogicModel.m; sourceTree = "<group>"; };
+		087753311ED09A9B00E7AD09 /* LawModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LawModel.h; sourceTree = "<group>"; };
+		087753321ED09A9B00E7AD09 /* LawModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LawModel.m; sourceTree = "<group>"; };
+		087753331ED09A9B00E7AD09 /* LawStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LawStore.h; sourceTree = "<group>"; };
+		087753341ED09A9B00E7AD09 /* LawStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LawStore.m; sourceTree = "<group>"; };
+		0877533A1ED09CFA00E7AD09 /* PointerModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PointerModel.h; sourceTree = "<group>"; };
+		0877533B1ED09CFA00E7AD09 /* PointerModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PointerModel.m; sourceTree = "<group>"; };
 		088331C41E9BD3D00026DE23 /* FeelObjModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeelObjModel.h; sourceTree = "<group>"; };
 		088331C51E9BD3D00026DE23 /* FeelObjModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeelObjModel.m; sourceTree = "<group>"; };
 		088331C71E9BD59F0026DE23 /* FeelAudioModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeelAudioModel.h; sourceTree = "<group>"; };
@@ -336,15 +339,17 @@
 			path = Understand;
 			sourceTree = "<group>";
 		};
-		087753261ED0750400E7AD09 /* MapStore */ = {
+		087753301ED09A9B00E7AD09 /* LawStore */ = {
 			isa = PBXGroup;
 			children = (
-				087753271ED0751000E7AD09 /* MapModel.h */,
-				087753281ED0751000E7AD09 /* MapModel.m */,
-				0877532A1ED0767B00E7AD09 /* MapStore.h */,
-				0877532B1ED0767B00E7AD09 /* MapStore.m */,
+				087753311ED09A9B00E7AD09 /* LawModel.h */,
+				087753321ED09A9B00E7AD09 /* LawModel.m */,
+				087753331ED09A9B00E7AD09 /* LawStore.h */,
+				087753341ED09A9B00E7AD09 /* LawStore.m */,
+				0877533A1ED09CFA00E7AD09 /* PointerModel.h */,
+				0877533B1ED09CFA00E7AD09 /* PointerModel.m */,
 			);
-			path = MapStore;
+			path = LawStore;
 			sourceTree = "<group>";
 		};
 		08AF453C1E97D0B500377887 = {
@@ -420,7 +425,7 @@
 		08AF45681E97D80C00377887 /* Store */ = {
 			isa = PBXGroup;
 			children = (
-				087753261ED0750400E7AD09 /* MapStore */,
+				087753301ED09A9B00E7AD09 /* LawStore */,
 				0831CF661EBF11C800C020E6 /* LogicStore */,
 				0831CF5F1EBEF31600C020E6 /* MemStore */,
 				0831CF551EBEEDED00C020E6 /* CharStore */,
@@ -686,6 +691,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				087753351ED09A9B00E7AD09 /* LawModel.m in Sources */,
 				08F639861E9A2F6C003CD163 /* FeelModel.m in Sources */,
 				0831CF6C1EBF1D5600C020E6 /* ObjModel.m in Sources */,
 				081BCAB01EAC7DF100D248E1 /* ObjStore.m in Sources */,
@@ -693,6 +699,7 @@
 				088331C61E9BD3D00026DE23 /* FeelObjModel.m in Sources */,
 				0877532F1ED076BE00E7AD09 /* LogicModel.m in Sources */,
 				08FDCE8E1EAA4A8E00882ADC /* SMGRange.m in Sources */,
+				0877533C1ED09CFA00E7AD09 /* PointerModel.m in Sources */,
 				082F9D601EB236E80009F6A9 /* SMGOutputDelegate.m in Sources */,
 				081D961C1EBC2107008543EA /* ClassModel.m in Sources */,
 				087753251ECFE1C400E7AD09 /* UnderstandUtils.m in Sources */,
@@ -724,10 +731,9 @@
 				08DACE951EBD805C00FDC0B6 /* NSString+Extension.m in Sources */,
 				0831CF691EBF11C800C020E6 /* LogicStore.m in Sources */,
 				08AF454A1E97D0B500377887 /* main.m in Sources */,
+				087753361ED09A9B00E7AD09 /* LawStore.m in Sources */,
 				082F9D5C1EB236AC0009F6A9 /* StudyViewController.m in Sources */,
 				08F3AFB21E98929C00747EDD /* MindUtils.m in Sources */,
-				087753291ED0751000E7AD09 /* MapModel.m in Sources */,
-				0877532C1ED0767B00E7AD09 /* MapStore.m in Sources */,
 				081D96191EBC20CE008543EA /* ClassStore.m in Sources */,
 				08C84A991E9A86C400897D8B /* StoreModel_Text.m in Sources */,
 				08E5B4101EAB68DD00999E65 /* TextStore.m in Sources */,

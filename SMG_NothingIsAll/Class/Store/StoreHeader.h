@@ -38,8 +38,8 @@
 #import "DBUtils.h"
 
 //Map(映射表/规律,同时)
-#import "MapModel.h"
-#import "MapStore.h"
+#import "LawModel.h"
+#import "LawStore.h"
 
 //Logic(逻辑表/因果,非同时)
 #import "LogicStore.h"
