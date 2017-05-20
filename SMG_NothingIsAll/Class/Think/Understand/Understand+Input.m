@@ -59,17 +59,17 @@
             [findTextArr addObject:STRTOOK(text)];
         }else if ([model isKindOfClass:[FeelObjModel class]]) {
             //图像输入物体
-            NSDictionary *value = [[SMG sharedInstance].store.mkStore addObj:((FeelObjModel*)model).name];
+            NSDictionary *value = [[SMG sharedInstance].store.mkStore.objStore addItem:((FeelObjModel*)model).name];
             if (value) [findObjArr addObject:value];
         }else if ([model isKindOfClass:[FeelDoModel class]]) {
             //图像输入行为
-            NSDictionary *value = [[SMG sharedInstance].store.mkStore addDo:((FeelDoModel*)model).doType];
+            NSDictionary *value = [[SMG sharedInstance].store.mkStore.doStore addItem:((FeelDoModel*)model).doType];
             if (value) [findDoArr addObject:value];
             
-            NSDictionary *fromObj = [[SMG sharedInstance].store.mkStore addObj:((FeelDoModel*)model).fromMKId];
+            NSDictionary *fromObj = [[SMG sharedInstance].store.mkStore.objStore addItem:((FeelDoModel*)model).fromMKId];
             if (fromObj) [findObjArr addObject:fromObj];
             
-            NSDictionary *toObj = [[SMG sharedInstance].store.mkStore addObj:((FeelDoModel*)model).toMKId];
+            NSDictionary *toObj = [[SMG sharedInstance].store.mkStore.objStore addItem:((FeelDoModel*)model).toMKId];
             if (toObj) [findObjArr addObject:toObj];
         }
     }

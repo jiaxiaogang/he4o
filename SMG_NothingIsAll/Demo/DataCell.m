@@ -145,7 +145,7 @@
  *  MARK:--------------------method--------------------
  */
 -(NSString*) getObjName:(NSString*)itemId{
-    NSDictionary *objDic = [[SMG sharedInstance].store.mkStore getObjWithWhere:[NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(itemId),@"itemId", nil]];
+    NSDictionary *objDic = [[SMG sharedInstance].store.mkStore.objStore getSingleItemWithWhere:[NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(itemId),@"itemId", nil]];
     if (objDic && [objDic objectForKey:@"itemName"]) {
         return STRTOOK([objDic objectForKey:@"itemName"]);
     }
@@ -153,7 +153,7 @@
 }
 
 -(NSString*) getDoName:(NSString*)itemId{
-    NSDictionary *objDic = [[SMG sharedInstance].store.mkStore getDoWithWhere:[NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(itemId),@"itemId", nil]];
+    NSDictionary *objDic = [[SMG sharedInstance].store.mkStore.doStore getSingleItemWithWhere:[NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(itemId),@"itemId", nil]];
     if (objDic && [objDic objectForKey:@"itemName"]) {
         return STRTOOK([objDic objectForKey:@"itemName"]);
     }

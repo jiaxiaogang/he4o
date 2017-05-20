@@ -7,15 +7,9 @@
 //
 
 #import "MKStore.h"
-#import "TMCache.h"
 #import "SMGHeader.h"
 #import "StoreHeader.h"
 
-@interface MKStore ()
-
-
-
-@end
 
 @implementation MKStore
 
@@ -27,45 +21,6 @@
         self.doStore = [[DoStore alloc] init];
     }
     return self;
-}
-
-
-/**
- *  MARK:--------------------objModel--------------------
- */
--(NSDictionary*) getObj:(NSString*)itemName{
-    return [self.objStore getSingleItemWithItemName:itemName];
-}
-
--(NSDictionary*) getObjWithWhere:(NSDictionary*)where{
-    return [self.objStore getSingleItemWithWhere:where];
-}
-
--(NSDictionary*) addObj:(NSString*)itemName{
-    return [self.objStore addItem:itemName];
-}
-
--(NSMutableArray*) addObjArr:(NSArray*)itemNameArr{
-    return [self.objStore addItemNameArr:itemNameArr];
-}
-
-/**
- *  MARK:--------------------doModel--------------------
- */
--(NSDictionary*) getDo:(NSString*)itemName{
-    return [self.doStore getSingleItemWithItemName:itemName];
-}
-
--(NSDictionary*) getDoWithWhere:(NSDictionary*)where{
-    return [self.doStore getSingleItemWithWhere:where];
-}
-
--(NSDictionary*) addDo:(NSString*)itemName{
-    return [self.doStore addItem:itemName];
-}
-
--(NSMutableArray*) addDoArr:(NSArray*)itemNameArr{
-    return [self.doStore addItemNameArr:itemNameArr];
 }
 
 @end
