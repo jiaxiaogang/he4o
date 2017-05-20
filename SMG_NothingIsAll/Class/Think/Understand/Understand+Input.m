@@ -97,7 +97,7 @@
         //收集保存分词数据
         [UnderstandUtils getWordArrAtText:text forceWordArr:forceWordArr outBlock:^(NSArray *oldWordArr, NSArray *newWordArr,NSInteger unknownCount){
             [findOldWordArr addObjectsFromArray:oldWordArr];
-            NSArray *value = [[SMG sharedInstance].store.mkStore.textStore addWordArr:newWordArr];
+            NSArray *value = [TextStore addWordWithTextArr:newWordArr];
             [findNewWordArr addObjectsFromArray:value];
         }];
     }
@@ -141,10 +141,14 @@
         [self understandObj:objId atText:@"" outBlock:^(NSMutableDictionary *linkDic) {
             if (linkDic) {
                 for (NSString *key in linkDic.allKeys) {
-                    NSDictionary *wordItem = [linkDic objectForKey:key];
+                    TextModel *wordItem = [linkDic objectForKey:key];
                     NSString *objId = key;
-                    NSString *word = [wordItem objectForKey:@"word"];
-                    [[SMG sharedInstance].store.mkStore.textStore addWord:word withObjId:objId withDoId:nil];
+                    NSString *word = wordItem.text;
+                    
+                    TextModel *model = [[TextModel alloc] init];
+                    model.text = word;
+                    model.objId = [objId integerValue];
+                    [TextStore addWord:model];
                 }
             }
         }];
@@ -154,10 +158,14 @@
         [self understandDo:[findDoItem objectForKey:@"itemId"] atText:[memDic objectForKey:@"text"] outBlock:^(NSMutableDictionary *linkDic) {
             if (linkDic) {
                 for (NSString *key in linkDic.allKeys) {
-                    NSDictionary *wordItem = [linkDic objectForKey:key];
+                    TextModel *wordItem = [linkDic objectForKey:key];
                     NSString *doId = key;
-                    NSString *word = [wordItem objectForKey:@"word"];
-                    [[SMG sharedInstance].store.mkStore.textStore addWord:word withObjId:nil withDoId:doId];
+                    NSString *word = wordItem.text;
+                    
+                    TextModel *model = [[TextModel alloc] init];
+                    model.text = word;
+                    model.doId = [doId integerValue];
+                    [TextStore addWord:model];
                 }
             }
         }];
@@ -405,8 +413,8 @@
     //1,是否已被理解
     NSArray *localWordArr = [TextStore getWordArrWithDoId:[STRTOOK(doId) integerValue]];
     if (ARRISOK(localWordArr)) {
-        for (NSDictionary *localWord in localWordArr) {
-            if ([STRTOOK(text) containsString:[localWord objectForKey:@"word"]]) {
+        for (TextModel *localModel in localWordArr) {
+            if ([STRTOOK(text) containsString:localModel.text]) {
                 //已理解,并且对应词当前句子也有时,返回;(支持多义词)
                 return;
                 //改变数据结构;添加计数;(以后习惯系统加)

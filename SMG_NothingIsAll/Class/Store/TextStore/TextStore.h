@@ -42,14 +42,13 @@
 
 /**
  *  MARK:--------------------addWord--------------------
-
  */
--(TextModel*) addWord:(NSString*)text;
--(NSMutableArray*) addWordArr:(NSArray*)wordArr;
--(NSDictionary*) addWord:(NSString*)word withObjId:(NSString*)objId withDoId:(NSString*)doId;
++(TextModel*) addWord:(TextModel*)model;
++(TextModel*) addWordWithText:(NSString*)text ;
++(NSMutableArray*) addWordWithTextArr:(NSArray*)wordArr ;
 
 
--(void) clear;
++(void) clear;
 
 @end
 

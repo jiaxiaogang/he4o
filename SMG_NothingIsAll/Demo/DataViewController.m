@@ -118,7 +118,7 @@
     [[SMG sharedInstance].store.memStore clear];
     [[SMG sharedInstance].store.mkStore.doStore clear];
     [[SMG sharedInstance].store.mkStore.objStore clear];
-    [[SMG sharedInstance].store.mkStore.textStore clear];
+    [TextStore clear];
     self.title = @"清空";
 }
 

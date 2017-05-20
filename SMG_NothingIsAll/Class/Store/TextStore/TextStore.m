@@ -36,31 +36,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
- *  MARK:--------------------private--------------------
- */
--(NSMutableArray *)wordArr{
-    return [TextModel searchWithWhere:nil];
-}
-
-
 /**
  *  MARK:--------------------public--------------------
  */
@@ -92,77 +67,35 @@
 }
 
 
-
-
 /**
  *  MARK:--------------------add--------------------
  */
--(NSDictionary*) addWord:(NSString*)word withObjId:(NSString*)objId withDoId:(NSString*)doId{
-    NSLog(@"保存Word分词:%@__objId:%@__doId:%@",word,objId,doId);
-    if (!STRISOK(word)) {
-        return nil;
++(TextModel*) addWord:(TextModel*)model{
+    if (model) {
+        [TextModel insertToDB:model];
     }
-    NSMutableDictionary *newItem = [[NSMutableDictionary alloc] init];
-    //1,找本地重复的
-    NSDictionary *localItem = [TextStore getSingleWordWithText:word];
-    //2,word,itemId
-    if (localItem) {
-        [newItem setDictionary:localItem];
-        [self.wordArr removeObject:localItem];
-    }else{
-        NSString *itemId = [NSString stringWithFormat:@"%ld",[self createItemId]];
-        [newItem setObject:word forKey:@"word"];
-        [newItem setObject:itemId forKey:@"itemId"];
-    }
-    //3,objId,doId
-    if (STRISOK(objId)) [newItem setObject:objId forKey:@"objId"];
-    if (STRISOK(doId)) [newItem setObject:doId forKey:@"doId"];
-    //4,存新 & 返回;
-    [self.wordArr addObject:newItem];
-    [self saveToLocal];
-    return newItem;
+    return model;
 }
--(TextModel*) addWord:(NSString*)text{
++(TextModel*) addWordWithText:(NSString*)text {
     TextModel *model = [[TextModel alloc] init];
     model.text = STRTOOK(text);
     [TextModel insertToDB:model];
     return model;
 }
 
--(NSMutableArray*) addWordArr:(NSArray*)wordArr{
++(NSMutableArray*) addWordWithTextArr:(NSArray*)wordArr {
     NSMutableArray *valueArr = nil;
     if (ARRISOK(wordArr)) {
         valueArr = [[NSMutableArray alloc] init];
         for (NSString *word in wordArr) {
-            [valueArr addObject:[self addWord:word]];
+            [valueArr addObject:[self addWordWithText:word]];
         }
     }
     return valueArr;
 }
 
-
-/**
- *  MARK:--------------------private--------------------
- */
--(void) saveToLocal{
-    [[TMCache sharedCache] setObject:self.wordArr forKey:@"MKStore_Text_WordArr_Key"];
-}
-
--(NSInteger) createItemId{
-    return [self createItemId:1];
-}
-
--(NSInteger) createItemId:(NSInteger)limit{
-    limit = MAX(0, limit);
-    NSInteger lastId = [[NSUserDefaults standardUserDefaults] integerForKey:@"MKStore_Text_WordId"];
-    [[NSUserDefaults standardUserDefaults] setInteger:lastId + limit forKey:@"MKStore_Text_WordId"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    return lastId + limit;
-}
-
--(void) clear{
-    [self.wordArr removeAllObjects];
-    [self saveToLocal];
++(void) clear{
+    [TextModel deleteWithWhere:nil];
 }
 
 @end
@@ -222,4 +155,32 @@
 //        }
 //    }
 //    return valArr;
+//}
+
+
+//addWord各属性 & 去重
+//-(NSDictionary*) addWord:(NSString*)word withObjId:(NSString*)objId withDoId:(NSString*)doId{
+//    NSLog(@"保存Word分词:%@__objId:%@__doId:%@",word,objId,doId);
+//    if (!STRISOK(word)) {
+//        return nil;
+//    }
+//    NSMutableDictionary *newItem = [[NSMutableDictionary alloc] init];
+//    //1,找本地重复的
+//    NSDictionary *localItem = [TextStore getSingleWordWithText:word];
+//    //2,word,itemId
+//    if (localItem) {
+//        [newItem setDictionary:localItem];
+//        [self.wordArr removeObject:localItem];
+//    }else{
+//        NSString *itemId = [NSString stringWithFormat:@"%ld",[self createItemId]];
+//        [newItem setObject:word forKey:@"word"];
+//        [newItem setObject:itemId forKey:@"itemId"];
+//    }
+//    //3,objId,doId
+//    if (STRISOK(objId)) [newItem setObject:objId forKey:@"objId"];
+//    if (STRISOK(doId)) [newItem setObject:doId forKey:@"doId"];
+//    //4,存新 & 返回;
+//    [self.wordArr addObject:newItem];
+//    [self saveToLocal];
+//    return newItem;
 //}
