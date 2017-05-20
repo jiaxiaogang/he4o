@@ -78,7 +78,7 @@
         BOOL findWord = false;
         for (NSInteger i = maxWordLength; i > 0; i--) {
             NSString *checkWord = [checkStr substringToIndex:i];
-            NSDictionary *findLocalWord = [[SMG sharedInstance].store.mkStore getWord:checkWord];
+            NSDictionary *findLocalWord = [[SMG sharedInstance].store.mkStore.textStore getSingleWordWithText:checkWord];
             if (findLocalWord) {//是旧词
                 [oldArr addObject:findLocalWord];
                 findWord = true;
@@ -168,7 +168,7 @@
         if ([memItem objectForKey:@"obj"]) {
             for (NSString *objId in [memItem objectForKey:@"obj"]) {
                 NSDictionary *where = [NSDictionary dictionaryWithObjectsAndKeys:objId,@"objId", nil];
-                if(![[SMG sharedInstance].store.mkStore containerWordWithWhere:where]){
+                if(![[SMG sharedInstance].store.mkStore.textStore getSingleWordWithWhere:where]){
                     [unknownObjArr addObject:objId];
                 }
             }
@@ -176,7 +176,7 @@
         if ([memItem objectForKey:@"do"]) {
             for (NSDictionary *item in [memItem objectForKey:@"do"]) {
                 NSDictionary *where = [NSDictionary dictionaryWithObjectsAndKeys:[item objectForKey:@"doId"],@"doId", nil];
-                if(![[SMG sharedInstance].store.mkStore containerWordWithWhere:where]){
+                if(![[SMG sharedInstance].store.mkStore.textStore getSingleWordWithWhere:where]) {
                     [unknownDoArr addObject:[item objectForKey:@"doId"]];
                 }
             }
@@ -220,7 +220,7 @@
     NSInteger maxLength = MIN(index, 7);
     for (NSInteger i = 1; i <= maxLength; i++) {
         NSString *checkWord = [text substringWithRange:NSMakeRange(index - i, i)];
-        if ([[SMG sharedInstance].store.mkStore containerWord:checkWord]) {
+        if ([[SMG sharedInstance].store.mkStore.textStore getSingleWordWithText:checkWord]) {
             return true;
         }
     }
@@ -238,11 +238,62 @@
     NSInteger maxLength = MIN(text.length - index, 7);
     for (NSInteger i = 1; i <= maxLength; i++) {
         NSString *checkWord = [text substringWithRange:NSMakeRange(index, i)];
-        if ([[SMG sharedInstance].store.mkStore containerWord:checkWord]) {
+        if ([[SMG sharedInstance].store.mkStore.textStore getSingleWordWithText:checkWord]) {
             return true;
         }
     }
     return false;
 }
+
+
+
+
+
+
+/**
+ *  MARK:--------------------预判词--------------------
+ *  参数:
+ *      1,limit:取几个
+ *      2,havThan:有没达到多少个结果
+ *
+ *  注:
+ *      1,目前仅支持用"一刀两"推出"一刀两断"从前至后预判;
+ *      2,词本身不作数 如:"计算" 只能判出"计算机"不能返回"计算";
+ */
+-(void) getInferenceWord:(NSString*)str withLimit:(NSInteger)limit withHavThan:(NSInteger)havThan withOutBlock:(void(^)(NSMutableArray *valueWords,BOOL havThan))outBlock {
+    //数据检查
+    NSMutableArray *wordArr = [[SMG sharedInstance].store.mkStore.textStore wordArr];
+    NSMutableArray *mArr = nil;
+    str = STRTOOK(str);
+    if (!STRISOK(str) || limit == 0 || wordArr == nil) {
+        if (outBlock) outBlock(mArr,havThan >= 0);
+    }
+    //找
+    NSInteger findCount = 0;
+    for (NSInteger i = wordArr.count - 1; i >= 0; i--) {
+        NSDictionary *item = wordArr[i];
+        NSString *itemText = [item objectForKey:@"text"];
+        if (itemText && itemText.length > str.length) {
+            if ([str isEqualToString:[itemText substringToIndex:str.length]]) {
+                if (mArr == nil) {
+                    mArr = [[NSMutableArray alloc] init];
+                }
+                //收集;
+                if (mArr.count < limit) {
+                    [mArr addObject:itemText];
+                }
+                //计数;
+                findCount ++;
+                //收集完毕;
+                if (findCount >= havThan && mArr.count >= limit) {
+                    break;
+                }
+            }
+        }
+    }
+    //送出
+    if (outBlock) outBlock(mArr,findCount >= havThan);
+}
+
 
 @end

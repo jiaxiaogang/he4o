@@ -31,30 +31,6 @@
 
 
 /**
- *  MARK:--------------------Text--------------------
- *  调用转到Text;
- */
--(BOOL) containerWord:(NSString*)word{
-    return [self getWord:word] != nil;
-}
-
--(BOOL) containerWordWithWhere:(NSDictionary*)where{
-    return [self getWordWithWhere:where] != nil;
-}
-
--(NSDictionary*) getWord:(NSString*)word{
-    return [self.textStore getSingleWordWithText:STRTOOK(word)];
-}
-
--(NSDictionary*) getWordWithWhere:(NSDictionary*)where{
-    return [self.textStore getSingleWordWithWhere:where];
-}
-
--(NSDictionary*) addWord:(NSString*)word{
-    return [self.textStore addWord:STRTOOK(word)];
-}
-
-/**
  *  MARK:--------------------objModel--------------------
  */
 -(NSDictionary*) getObj:(NSString*)itemName{

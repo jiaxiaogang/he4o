@@ -27,15 +27,6 @@
 @property (strong,nonatomic) ObjStore *objStore;
 @property (strong,nonatomic) DoStore *doStore;
 
-/**
- *  MARK:--------------------Text--------------------
- *  调用转到Text;
- */
--(BOOL) containerWord:(NSString*)word;//图谱分词数组;包含某词;
--(BOOL) containerWordWithWhere:(NSDictionary*)where;//根据其它字段找某词;
--(NSDictionary*) getWord:(NSString*)word;//图谱分词数组;包含某词;
--(NSDictionary*) getWordWithWhere:(NSDictionary*)where;//根据其它字段找某词;
--(NSDictionary*) addWord:(NSString*)word;
 
 /**
  *  MARK:--------------------objModel--------------------

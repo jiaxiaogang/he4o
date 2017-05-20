@@ -161,7 +161,7 @@
 }
 
 -(NSString*) getWordName:(NSString*)itemId{
-    NSDictionary *objDic = [[SMG sharedInstance].store.mkStore getWordWithWhere:[NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(itemId),@"itemId", nil]];
+    NSDictionary *objDic = [[SMG sharedInstance].store.mkStore.textStore getSingleWordWithWhere:[NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(itemId),@"itemId", nil]];
     if (objDic && [objDic objectForKey:@"word"]) {
         return STRTOOK([objDic objectForKey:@"word"]);
     }

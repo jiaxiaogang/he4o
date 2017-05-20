@@ -32,36 +32,7 @@
 
 
 
-/**
- *  MARK:--------------------给句子智能分词--------------------
- *
- *  (一个句子有可能有多种分法:[[indexPath0,indexPath1],[indexP0]],现在只作一种)
- *
- */
--(NSMutableArray*) getIntelligenceWordArrWithSentence:(NSString*)sentence;
-
-
-
-/**
- *  MARK:--------------------从句子中找出所有分词--------------------
- */
--(NSMutableArray*) getWordArrWithSentence:(NSString*)sentence;
-
-
-
-/**
- *  MARK:--------------------预判词--------------------
- *  参数:
- *      1,limit:取几个
- *      2,havThan:有没达到多少个结果
- *
- *  注:
- *      1,目前仅支持用"一刀两"推出"一刀两断"从前至后预判;
- *      2,词本身不作数 如:"计算" 只能判出"计算机"不能返回"计算";
- */
--(void) getInferenceWord:(NSString*)str withLimit:(NSInteger)limit withHavThan:(NSInteger)havThan withOutBlock:(void(^)(NSMutableArray *valueWords,BOOL havThan))outBlock;
-
-
+-(NSMutableArray *)wordArr;
 
 //精确匹配某词
 -(NSDictionary*) getSingleWordWithText:(NSString*)text;
@@ -84,3 +55,6 @@
 -(void) clear;
 
 @end
+
+
+

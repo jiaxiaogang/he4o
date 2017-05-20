@@ -348,7 +348,7 @@
     NSMutableDictionary *valueDic = nil;
     //1,是否已被理解
     NSDictionary *where = [NSDictionary dictionaryWithObjectsAndKeys:objId,@"objId", nil];
-    if ([[SMG sharedInstance].store.mkStore containerWordWithWhere:where]) {
+    if ([[SMG sharedInstance].store.mkStore.textStore getSingleWordWithWhere:where]) {
         return;
     }
     //2,找相关的记忆数据
@@ -477,7 +477,7 @@
     for (int i = 0; i < text.length - 1; i++) {
         //双字词分析;
         NSString *checkWord = [text substringWithRange:NSMakeRange(i, 2)];
-        if (![[SMG sharedInstance].store.mkStore containerWord:checkWord]) {
+        if (![[SMG sharedInstance].store.mkStore.textStore getSingleWordWithText:checkWord]) {
             NSArray *findWordFromMem = [[SMG sharedInstance].store searchMemStoreContainerText:checkWord limit:3];
             if (findWordFromMem && findWordFromMem.count >= 3) {//只有达到三次听到的词;才认为是一个词;
                 [mArr addObject:checkWord];
