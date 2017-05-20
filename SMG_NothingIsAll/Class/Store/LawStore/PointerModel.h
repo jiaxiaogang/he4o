@@ -9,7 +9,8 @@
 #import <Foundation/Foundation.h>
 
 /**
- *  MARK:--------------------一个指针,可以指向任何表的一项;--------------------
+ *  MARK:--------------------"数据指针"--------------------
+ *  可以指向任何表的任一项;
  */
 @interface PointerModel : NSObject
 
