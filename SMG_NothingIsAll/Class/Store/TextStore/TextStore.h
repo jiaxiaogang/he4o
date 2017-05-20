@@ -25,29 +25,26 @@
  *  4,不断提升Language对语言的组织输出能力;
  *  
  */
+@class TextModel;
 @interface TextStore : NSObject
 
-
-
-
-
-
--(NSMutableArray *)wordArr;
-
 //精确匹配某词
--(NSDictionary*) getSingleWordWithText:(NSString*)text;
-
-//获取where的最近一条;(精确匹配)
--(NSDictionary*) getSingleWordWithWhere:(NSDictionary*)whereDic;
++(TextModel*) getSingleWordWithText:(NSString*)text;
++(TextModel*) getSingleWordWithItemId:(NSInteger)itemId;
++(TextModel*) getSingleWordWithObjId:(NSInteger)objId;
++(TextModel*) getSingleWordWithDoId:(NSInteger)doId;
 
 //获取多条
--(NSMutableArray*) getWordArrWithWhere:(NSDictionary*)where;
++(NSMutableArray*) getWordArrWithText:(NSString*)text;
++(NSMutableArray*) getWordArrWithObjId:(NSInteger)objId;
++(NSMutableArray*) getWordArrWithDoId:(NSInteger)doId;
++(NSMutableArray*) getWordArr;
 
 /**
  *  MARK:--------------------addWord--------------------
 
  */
--(NSDictionary*) addWord:(NSString*)word;
++(TextModel*) addWord:(NSString*)text;
 -(NSMutableArray*) addWordArr:(NSArray*)wordArr;
 -(NSDictionary*) addWord:(NSString*)word withObjId:(NSString*)objId withDoId:(NSString*)doId;
 

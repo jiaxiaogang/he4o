@@ -13,6 +13,6 @@
 
 + (CGFloat) getCellHeight;
 + (NSString*)reuseIdentifier;
--(void) setData:(NSDictionary*)dic withStoreType:(StoreType)storeType;
+-(void) setData:(NSObject*)data withStoreType:(StoreType)storeType;
 
 @end

@@ -64,58 +64,31 @@
 /**
  *  MARK:--------------------public--------------------
  */
-//精确匹配某词
--(NSDictionary*) getSingleWordWithText:(NSString*)word{
-    return [TextModel searchSingleWithWhere:[DBUtils sqlWhere_K:@"word" V:STRTOOK(word)] orderBy:nil];
++(TextModel*) getSingleWordWithText:(NSString*)text{
+    return [TextModel searchSingleWithWhere:[DBUtils sqlWhere_K:@"text" V:STRTOOK(text)] orderBy:nil];
+}
++(TextModel*) getSingleWordWithItemId:(NSInteger)itemId{
+    return [TextModel searchSingleWithWhere:[DBUtils sqlWhere_RowId:itemId] orderBy:nil];
+}
++(TextModel*) getSingleWordWithObjId:(NSInteger)objId{
+    return [TextModel searchSingleWithWhere:[DBUtils sqlWhere_K:@"objId" V:@(objId)] orderBy:nil];
+}
++(TextModel*) getSingleWordWithDoId:(NSInteger)doId{
+    return [TextModel searchSingleWithWhere:[DBUtils sqlWhere_K:@"doId" V:@(doId)] orderBy:nil];
 }
 
-//获取where的最近一条;(精确匹配)
--(NSDictionary*) getSingleWordWithWhere:(NSDictionary*)whereDic{
-    //数据检查
-    if (whereDic == nil || whereDic.count == 0) {
-        return nil;
-    }
-    for (NSInteger i = self.wordArr.count - 1; i >= 0; i--) {
-        NSDictionary *item = self.wordArr[i];
-        BOOL isEqual = true;
-        //对比所有value;
-        for (NSString *key in whereDic.allKeys) {
-            if (![SMGUtils compareItemA:[item objectForKey:key] itemB:[whereDic objectForKey:key]]) {
-                isEqual = false;
-            }
-        }
-        //都一样,则返回;
-        if (isEqual) {
-            return item;
-        }
-    }
-    return nil;
-}
 
--(NSMutableArray*) getWordArrWithWhere:(NSDictionary*)where{
-    //数据检查
-    if (where == nil || where.count == 0) {
-        return self.wordArr;
-    }
-    NSMutableArray *valArr = nil;
-    for (NSInteger i = self.wordArr.count - 1; i >= 0; i--) {
-        NSDictionary *item = self.wordArr[i];
-        BOOL isEqual = true;
-        //对比所有value;
-        for (NSString *key in where.allKeys) {
-            if (![SMGUtils compareItemA:[item objectForKey:key] itemB:[where objectForKey:key]]) {
-                isEqual = false;
-            }
-        }
-        //都一样,则收集到valArr;
-        if (isEqual) {
-            if (valArr == nil) {
-                valArr = [[NSMutableArray alloc] init];
-            }
-            [valArr addObject:item];
-        }
-    }
-    return valArr;
++(NSMutableArray*) getWordArrWithText:(NSString*)text{
+    return [TextModel searchWithWhere:[DBUtils sqlWhere_K:@"text" V:STRTOOK(text)]];
+}
++(NSMutableArray*) getWordArrWithObjId:(NSInteger)objId{
+    return [TextModel searchWithWhere:[DBUtils sqlWhere_K:@"objId" V:@(objId)]];
+}
++(NSMutableArray*) getWordArrWithDoId:(NSInteger)doId{
+    return [TextModel searchWithWhere:[DBUtils sqlWhere_K:@"doId" V:@(doId)]];
+}
++(NSMutableArray*) getWordArr{
+    return [TextModel searchWithWhere:nil];
 }
 
 
@@ -131,7 +104,7 @@
     }
     NSMutableDictionary *newItem = [[NSMutableDictionary alloc] init];
     //1,找本地重复的
-    NSDictionary *localItem = [self getSingleWordWithText:word];
+    NSDictionary *localItem = [TextStore getSingleWordWithText:word];
     //2,word,itemId
     if (localItem) {
         [newItem setDictionary:localItem];
@@ -204,3 +177,56 @@
 
 
 
+
+
+
+////获取where的最近一条;(精确匹配)
+//-(NSDictionary*) getSingleWordWithWhere:(NSDictionary*)whereDic{
+//    //数据检查
+//    if (whereDic == nil || whereDic.count == 0) {
+//        return nil;
+//    }
+//    for (NSInteger i = self.wordArr.count - 1; i >= 0; i--) {
+//        NSDictionary *item = self.wordArr[i];
+//        BOOL isEqual = true;
+//        //对比所有value;
+//        for (NSString *key in whereDic.allKeys) {
+//            if (![SMGUtils compareItemA:[item objectForKey:key] itemB:[whereDic objectForKey:key]]) {
+//                isEqual = false;
+//            }
+//        }
+//        //都一样,则返回;
+//        if (isEqual) {
+//            return item;
+//        }
+//    }
+//    return nil;
+//}
+
+
+//获取多条
+//-(NSMutableArray*) getWordArrWithWhere:(NSDictionary*)where{
+//    //数据检查
+//    if (where == nil || where.count == 0) {
+//        return self.wordArr;
+//    }
+//    NSMutableArray *valArr = nil;
+//    for (NSInteger i = self.wordArr.count - 1; i >= 0; i--) {
+//        NSDictionary *item = self.wordArr[i];
+//        BOOL isEqual = true;
+//        //对比所有value;
+//        for (NSString *key in where.allKeys) {
+//            if (![SMGUtils compareItemA:[item objectForKey:key] itemB:[where objectForKey:key]]) {
+//                isEqual = false;
+//            }
+//        }
+//        //都一样,则收集到valArr;
+//        if (isEqual) {
+//            if (valArr == nil) {
+//                valArr = [[NSMutableArray alloc] init];
+//            }
+//            [valArr addObject:item];
+//        }
+//    }
+//    return valArr;
+//}

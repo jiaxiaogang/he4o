@@ -78,7 +78,7 @@
         BOOL findWord = false;
         for (NSInteger i = maxWordLength; i > 0; i--) {
             NSString *checkWord = [checkStr substringToIndex:i];
-            NSDictionary *findLocalWord = [[SMG sharedInstance].store.mkStore.textStore getSingleWordWithText:checkWord];
+            NSDictionary *findLocalWord = [TextStore getSingleWordWithText:checkWord];
             if (findLocalWord) {//是旧词
                 [oldArr addObject:findLocalWord];
                 findWord = true;
@@ -167,16 +167,15 @@
         //条件1,取未理解元素和;不能>3
         if ([memItem objectForKey:@"obj"]) {
             for (NSString *objId in [memItem objectForKey:@"obj"]) {
-                NSDictionary *where = [NSDictionary dictionaryWithObjectsAndKeys:objId,@"objId", nil];
-                if(![[SMG sharedInstance].store.mkStore.textStore getSingleWordWithWhere:where]){
+                if(![TextStore getSingleWordWithObjId:[STRTOOK(objId) intValue]]){
                     [unknownObjArr addObject:objId];
                 }
             }
         }
         if ([memItem objectForKey:@"do"]) {
             for (NSDictionary *item in [memItem objectForKey:@"do"]) {
-                NSDictionary *where = [NSDictionary dictionaryWithObjectsAndKeys:[item objectForKey:@"doId"],@"doId", nil];
-                if(![[SMG sharedInstance].store.mkStore.textStore getSingleWordWithWhere:where]) {
+                NSString *doId = STRTOOK([item objectForKey:@"doId"]);
+                if(![TextStore getSingleWordWithDoId:[doId integerValue]]) {
                     [unknownDoArr addObject:[item objectForKey:@"doId"]];
                 }
             }
@@ -220,7 +219,7 @@
     NSInteger maxLength = MIN(index, 7);
     for (NSInteger i = 1; i <= maxLength; i++) {
         NSString *checkWord = [text substringWithRange:NSMakeRange(index - i, i)];
-        if ([[SMG sharedInstance].store.mkStore.textStore getSingleWordWithText:checkWord]) {
+        if ([TextStore getSingleWordWithText:checkWord]) {
             return true;
         }
     }
@@ -238,7 +237,7 @@
     NSInteger maxLength = MIN(text.length - index, 7);
     for (NSInteger i = 1; i <= maxLength; i++) {
         NSString *checkWord = [text substringWithRange:NSMakeRange(index, i)];
-        if ([[SMG sharedInstance].store.mkStore.textStore getSingleWordWithText:checkWord]) {
+        if ([TextStore getSingleWordWithText:checkWord]) {
             return true;
         }
     }
@@ -262,7 +261,7 @@
  */
 -(void) getInferenceWord:(NSString*)str withLimit:(NSInteger)limit withHavThan:(NSInteger)havThan withOutBlock:(void(^)(NSMutableArray *valueWords,BOOL havThan))outBlock {
     //数据检查
-    NSMutableArray *wordArr = [[SMG sharedInstance].store.mkStore.textStore wordArr];
+    NSMutableArray *wordArr = [TextStore getWordArr];
     NSMutableArray *mArr = nil;
     str = STRTOOK(str);
     if (!STRISOK(str) || limit == 0 || wordArr == nil) {

@@ -103,7 +103,7 @@
 }
 
 - (IBAction)textBtnOnClick:(id)sender {
-    NSMutableArray *arr = [[SMG sharedInstance].store.mkStore.textStore getWordArrWithWhere:nil];
+    NSMutableArray *arr = [TextStore getWordArr];
     [self setDatas:arr withStoreType:StoreType_Text];
     self.title = @"分词";
 }
