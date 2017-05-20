@@ -51,7 +51,7 @@
     while (curIndex < text.length) {
         //2.1,数据
         NSString *checkStr = [text substringFromIndex:curIndex];//找词字符串
-        NSInteger maxWordLength = MIN(10, checkStr.length);     //词最长10个字
+        NSInteger maxWordLength = MIN(4, checkStr.length);     //词最长10个字
         //2.2,到forceWord找词;
         SMGRange *findForceWord = nil;//距离10之内的SMGRange
         for (SMGRange *range in forceRangeArr) {
