@@ -81,14 +81,14 @@
     NSMutableArray *forceWordArr = [[NSMutableArray alloc] init];//收集记忆中已成词
     for (NSDictionary *item in findObjArr){
         NSDictionary *where = [[NSDictionary alloc] initWithObjectsAndKeys:STRTOOK([item objectForKey:@"itemId"]),@"objId", nil];
-        NSMutableArray *wordArr = [[SMG sharedInstance].store.mkStore getWordArrWithWhere:where];
+        NSMutableArray *wordArr = [[SMG sharedInstance].store.mkStore.textStore getWordArrWithWhere:where];
         for (NSDictionary *wordDic in wordArr) {
             [forceWordArr addObject:STRTOOK([wordDic objectForKey:@"word"])];
         }
     }
     for (NSDictionary *item in findDoArr){
         NSDictionary *where = [[NSDictionary alloc] initWithObjectsAndKeys:STRTOOK([item objectForKey:@"itemId"]),@"doId", nil];
-        NSMutableArray *wordArr = [[SMG sharedInstance].store.mkStore getWordArrWithWhere:where];
+        NSMutableArray *wordArr = [[SMG sharedInstance].store.mkStore.textStore getWordArrWithWhere:where];
         for (NSDictionary *wordDic in wordArr) {
             [forceWordArr addObject:STRTOOK([wordDic objectForKey:@"word"])];
         }
@@ -97,7 +97,7 @@
         //收集保存分词数据
         [UnderstandUtils getWordArrAtText:text forceWordArr:forceWordArr outBlock:^(NSArray *oldWordArr, NSArray *newWordArr,NSInteger unknownCount){
             [findOldWordArr addObjectsFromArray:oldWordArr];
-            NSArray *value = [[SMG sharedInstance].store.mkStore addWordArr:newWordArr];
+            NSArray *value = [[SMG sharedInstance].store.mkStore.textStore addWordArr:newWordArr];
             [findNewWordArr addObjectsFromArray:value];
         }];
     }
@@ -144,7 +144,7 @@
                     NSDictionary *wordItem = [linkDic objectForKey:key];
                     NSString *objId = key;
                     NSString *word = [wordItem objectForKey:@"word"];
-                    [[SMG sharedInstance].store.mkStore addWord:word withObjId:objId withDoId:nil];
+                    [[SMG sharedInstance].store.mkStore.textStore addWord:word withObjId:objId withDoId:nil];
                 }
             }
         }];
@@ -157,7 +157,7 @@
                     NSDictionary *wordItem = [linkDic objectForKey:key];
                     NSString *doId = key;
                     NSString *word = [wordItem objectForKey:@"word"];
-                    [[SMG sharedInstance].store.mkStore addWord:word withObjId:nil withDoId:doId];
+                    [[SMG sharedInstance].store.mkStore.textStore addWord:word withObjId:nil withDoId:doId];
                 }
             }
         }];
@@ -247,14 +247,14 @@
 //    NSMutableArray *forceWordArr = [[NSMutableArray alloc] init];//收集记忆中已成词
 //    for (NSDictionary *item in findObjArr){
 //        NSDictionary *where = [[NSDictionary alloc] initWithObjectsAndKeys:STRTOOK([item objectForKey:@"itemId"]),@"objId", nil];
-//        NSMutableArray *wordArr = [[SMG sharedInstance].store.mkStore getWordArrWithWhere:where];
+//        NSMutableArray *wordArr = [[SMG sharedInstance].store.mkStore.textStore getWordArrWithWhere:where];
 //        for (NSDictionary *wordDic in wordArr) {
 //            [forceWordArr addObject:STRTOOK([wordDic objectForKey:@"word"])];
 //        }
 //    }
 //    for (NSDictionary *item in findDoArr){
 //        NSDictionary *where = [[NSDictionary alloc] initWithObjectsAndKeys:STRTOOK([item objectForKey:@"itemId"]),@"doId", nil];
-//        NSMutableArray *wordArr = [[SMG sharedInstance].store.mkStore getWordArrWithWhere:where];
+//        NSMutableArray *wordArr = [[SMG sharedInstance].store.mkStore.textStore getWordArrWithWhere::where];
 //        for (NSDictionary *wordDic in wordArr) {
 //            [forceWordArr addObject:STRTOOK([wordDic objectForKey:@"word"])];
 //        }
@@ -263,7 +263,7 @@
 //        //收集保存分词数据
 //        [UnderstandUtils getWordArrAtText:text forceWordArr:forceWordArr outBlock:^(NSArray *oldWordArr, NSArray *newWordArr,NSInteger unknownCount){
 //            [findOldWordArr addObjectsFromArray:oldWordArr];
-//            NSArray *value = [[SMG sharedInstance].store.mkStore addWordArr:newWordArr];
+//            NSArray *value = [[SMG sharedInstance].store.mkStore.textStore addWordArr:newWordArr];
 //            [findNewWordArr addObjectsFromArray:value];
 //        }];
 //    }
@@ -405,7 +405,7 @@
     NSMutableDictionary *valueDic = nil;
     //1,是否已被理解
     NSDictionary *where = [NSDictionary dictionaryWithObjectsAndKeys:doId,@"doId", nil];
-    NSArray *localWordArr = [[SMG sharedInstance].store.mkStore getWordArrWithWhere:where];
+    NSArray *localWordArr = [[SMG sharedInstance].store.mkStore.textStore getWordArrWithWhere:where];
     if (ARRISOK(localWordArr)) {
         for (NSDictionary *localWord in localWordArr) {
             if ([STRTOOK(text) containsString:[localWord objectForKey:@"word"]]) {

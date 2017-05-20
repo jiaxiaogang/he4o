@@ -49,7 +49,7 @@
         }];
     }
     //2,存MK
-    [[SMG sharedInstance].store.mkStore addWordArr:newWords];
+    [[SMG sharedInstance].store.mkStore.textStore addWordArr:newWords];
     //3,存Logic
     //...
 }

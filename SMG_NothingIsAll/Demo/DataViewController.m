@@ -91,19 +91,19 @@
 }
 
 - (IBAction)doBtnOnClick:(id)sender {
-    NSMutableArray *arr = [[SMG sharedInstance].store.mkStore getDoArrWithWhere:nil];
+    NSMutableArray *arr = [[SMG sharedInstance].store.mkStore.doStore getItemArrWithWhere:nil];
     [self setDatas:arr withStoreType:StoreType_Do];
     self.title = @"行为";
 }
 
 - (IBAction)objBtnOnClick:(id)sender {
-    NSMutableArray *arr = [[SMG sharedInstance].store.mkStore getObjArrWithWhere:nil];
+    NSMutableArray *arr = [[SMG sharedInstance].store.mkStore.objStore getItemArrWithWhere:nil];
     [self setDatas:arr withStoreType:StoreType_Obj];
     self.title = @"实物";
 }
 
 - (IBAction)textBtnOnClick:(id)sender {
-    NSMutableArray *arr = [[SMG sharedInstance].store.mkStore getWordArrWithWhere:nil];
+    NSMutableArray *arr = [[SMG sharedInstance].store.mkStore.textStore getWordArrWithWhere:nil];
     [self setDatas:arr withStoreType:StoreType_Text];
     self.title = @"分词";
 }

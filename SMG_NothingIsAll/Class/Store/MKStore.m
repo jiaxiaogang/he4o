@@ -50,20 +50,8 @@
     return [self.textStore getSingleWordWithWhere:where];
 }
 
--(NSMutableArray*) getWordArrWithWhere:(NSDictionary*)where{
-    return [self.textStore getWordArrWithWhere:where];
-}
-
 -(NSDictionary*) addWord:(NSString*)word{
     return [self.textStore addWord:STRTOOK(word)];
-}
-
--(NSMutableArray*) addWordArr:(NSArray*)wordArr{
-    return [self.textStore addWordArr:wordArr];
-}
-
--(NSDictionary*) addWord:(NSString*)word withObjId:(NSString*)objId withDoId:(NSString*)doId{
-    return [self.textStore addWord:word withObjId:objId withDoId:doId];
 }
 
 /**
@@ -75,10 +63,6 @@
 
 -(NSDictionary*) getObjWithWhere:(NSDictionary*)where{
     return [self.objStore getSingleItemWithWhere:where];
-}
-
--(NSMutableArray*) getObjArrWithWhere:(NSDictionary*)where{
-    return [self.objStore getItemArrWithWhere:where];
 }
 
 -(NSDictionary*) addObj:(NSString*)itemName{
@@ -98,10 +82,6 @@
 
 -(NSDictionary*) getDoWithWhere:(NSDictionary*)where{
     return [self.doStore getSingleItemWithWhere:where];
-}
-
--(NSMutableArray*) getDoArrWithWhere:(NSDictionary*)where{
-    return [self.doStore getItemArrWithWhere:where];
 }
 
 -(NSDictionary*) addDo:(NSString*)itemName{

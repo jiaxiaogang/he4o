@@ -35,17 +35,13 @@
 -(BOOL) containerWordWithWhere:(NSDictionary*)where;//根据其它字段找某词;
 -(NSDictionary*) getWord:(NSString*)word;//图谱分词数组;包含某词;
 -(NSDictionary*) getWordWithWhere:(NSDictionary*)where;//根据其它字段找某词;
--(NSMutableArray*) getWordArrWithWhere:(NSDictionary*)where;//根据where找所有词
 -(NSDictionary*) addWord:(NSString*)word;
--(NSMutableArray*) addWordArr:(NSArray*)wordArr;
--(NSDictionary*) addWord:(NSString*)word withObjId:(NSString*)objId withDoId:(NSString*)doId;
 
 /**
  *  MARK:--------------------objModel--------------------
  */
 -(NSDictionary*) getObj:(NSString*)itemName;
 -(NSDictionary*) getObjWithWhere:(NSDictionary*)where;
--(NSMutableArray*) getObjArrWithWhere:(NSDictionary*)where;//根据where找所有
 -(NSDictionary*) addObj:(NSString*)itemName;
 -(NSMutableArray*) addObjArr:(NSArray*)itemNameArr;
 
@@ -55,7 +51,6 @@
  */
 -(NSDictionary*) getDo:(NSString*)itemName;
 -(NSDictionary*) getDoWithWhere:(NSDictionary*)where;
--(NSMutableArray*) getDoArrWithWhere:(NSDictionary*)where;//根据where找所有
 -(NSDictionary*) addDo:(NSString*)itemName;
 -(NSMutableArray*) addDoArr:(NSArray*)itemNameArr;
 

@@ -29,16 +29,6 @@
 
 
 
-//MARK:--------------------用于分析语言输入,并且找出规律词和图谱词并返回--------------------
--(NSArray*) inputTextWithRequestText:(NSString*)requestText;
-
-
-
-
-
-
-
-
 
 
 

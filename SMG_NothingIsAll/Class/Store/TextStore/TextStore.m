@@ -11,15 +11,15 @@
 #import "StoreHeader.h"
 #import "SMGHeader.h"
 #import "TMCache.h"
+#import "TextModel.h"
 
-@interface TextStore ()
 
 /**
  *  MARK:--------------------分词数组--------------------
  *
  *  结构:
  *      (DIC | Key:word Value:str | Key:itemId Value:NSInteger | Key:doId Value:NSInteger | Key:objId Value:NSInteger )注:itemId为主键;
- *  
+ *
  *  元素:
  *      (有单字词:如:你我他的是啊)(有多字词:如:你好,人民,苹果)
  *
@@ -27,25 +27,13 @@
  *      1,功能:随后添加分词使用频率;使其更正确的工作;
  *
  */
-@property (strong,nonatomic) NSMutableArray *wordArr;
+@interface TextStore ()
 
 
 @end
 
 @implementation TextStore
 
-
-
-
-
-
-/**
- *  MARK:--------------------用于分析语言输入,并且找出规律词和图谱词并返回--------------------
- *
- */
--(NSArray*) inputTextWithRequestText:(NSString*)requestText{
-    return nil;
-}
 
 
 
@@ -69,15 +57,7 @@
  *  MARK:--------------------private--------------------
  */
 -(NSMutableArray *)wordArr{
-    if (_wordArr == nil) {
-        _wordArr = [[NSMutableArray alloc] initWithArray:[self getLocalArr]];
-    }
-    return _wordArr;
-}
-
-//硬盘存储;(不常调用,调用耗时)
--(NSArray*) getLocalArr{
-    return [[TMCache sharedCache] objectForKey:@"MKStore_Text_WordArr_Key"];
+    return [TextModel searchWithWhere:nil];
 }
 
 
@@ -141,31 +121,6 @@
     
     return mArr;
 }
-
-/**
- *  MARK:--------------------从句子中找出所有分词--------------------
- *  注:误区,这种方式将依赖于算法;
- */
--(NSMutableArray*) getWordArrWithSentence:(NSString*)sentence{
-    NSMutableArray *mArr = nil;
-    sentence = STRTOOK(sentence);
-    if (!STRISOK(sentence)) {
-        return mArr;
-    }
-    for (NSInteger loc = 0; loc < sentence.length; loc ++) {
-        for (NSInteger len = 1; len < sentence.length - loc; len ++) {
-            NSString *checkWord = [sentence substringWithRange:NSMakeRange(loc, len)];
-            if ([self getSingleWordWithText:checkWord]) {
-                if (mArr == nil) {
-                    mArr = [[NSMutableArray alloc] init];
-                }
-                [mArr addObject:SMGRangeMake(loc, len)];
-            }
-        }
-    }
-    return mArr;
-}
-
 
 /**
  *  MARK:--------------------预判词--------------------
