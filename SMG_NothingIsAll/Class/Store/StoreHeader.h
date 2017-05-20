@@ -13,10 +13,6 @@
 #import "MemStore.h"
 #import "MemModel.h"
 
-//Logic
-#import "LogicStore.h"
-
-
 //MK
 #import "MKStore.h"
 
@@ -40,3 +36,11 @@
 //DB
 #import "LKDBHelper.h"
 #import "DBUtils.h"
+
+//Map(映射表/规律,同时)
+#import "MapModel.h"
+#import "MapStore.h"
+
+//Logic(逻辑表/因果,非同时)
+#import "LogicStore.h"
+#import "LogicModel.h"
