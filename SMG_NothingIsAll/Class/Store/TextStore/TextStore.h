@@ -44,7 +44,7 @@
  *  MARK:--------------------addWord--------------------
 
  */
-+(TextModel*) addWord:(NSString*)text;
+-(TextModel*) addWord:(NSString*)text;
 -(NSMutableArray*) addWordArr:(NSArray*)wordArr;
 -(NSDictionary*) addWord:(NSString*)word withObjId:(NSString*)objId withDoId:(NSString*)doId;
 

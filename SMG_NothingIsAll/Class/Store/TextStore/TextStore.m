@@ -122,8 +122,11 @@
     [self saveToLocal];
     return newItem;
 }
--(NSDictionary*) addWord:(NSString*)word{
-    return [self addWord:word withObjId:nil withDoId:nil];
+-(TextModel*) addWord:(NSString*)text{
+    TextModel *model = [[TextModel alloc] init];
+    model.text = STRTOOK(text);
+    [TextModel insertToDB:model];
+    return model;
 }
 
 -(NSMutableArray*) addWordArr:(NSArray*)wordArr{
