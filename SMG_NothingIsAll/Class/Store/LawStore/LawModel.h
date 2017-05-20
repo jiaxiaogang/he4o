@@ -17,6 +17,12 @@
 @property (assign, nonatomic) NSInteger aId;
 @property (assign,nonatomic) Class bClass;
 @property (assign, nonatomic) NSInteger bId;
+
+
+
+
+@property (strong,nonatomic) NSMutableArray *pointerArr;    //指针数组
 @property (assign, nonatomic) NSInteger count;      //计数器
+
 
 @end
