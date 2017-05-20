@@ -133,16 +133,6 @@
         for (NSString *word in wordArr) {
             [valueArr addObject:[self addWord:word]];
         }
-//        NSInteger itemId = [self createItemId:wordArr.count];//申请wordArr.count个wordId
-//        for (NSString *word in wordArr) {
-//            if (valueArr == nil) valueArr = [[NSMutableArray alloc] init];
-//            NSDictionary *item = [NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(word),@"word",[NSString stringWithFormat:@"%ld",itemId],@"itemId", nil];
-//            [valueArr addObject:item];
-//            itemId ++;
-//        }
-//        //save
-//        [self.wordArr addObjectsFromArray:valueArr];
-//        [self saveToLocal];
     }
     return valueArr;
 }
