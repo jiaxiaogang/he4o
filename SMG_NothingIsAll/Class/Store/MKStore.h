@@ -18,8 +18,14 @@
  *      1,可以被GC从dic回收到local;甚至删掉;
  *      2,MK是被Understand生成,更可信,更稳定,明确mind值;
  */
+
+@class TextStore,ObjStore,DoStore;
 @interface MKStore : NSObject
 
+
+@property (strong,nonatomic) TextStore *textStore;       //字符串 处理能力
+@property (strong,nonatomic) ObjStore *objStore;
+@property (strong,nonatomic) DoStore *doStore;
 
 /**
  *  MARK:--------------------Text--------------------

@@ -209,6 +209,11 @@
     }
 }
 
+-(void) clear{
+    [self.memArr removeAllObjects];
+    [self saveToLocal];
+}
+
 -(void) saveToLocal{
     [[TMCache sharedCache] setObject:self.memArr forKey:@"MemStore_LocalArr_Key"];
 }

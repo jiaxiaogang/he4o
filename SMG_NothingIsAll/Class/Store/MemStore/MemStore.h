@@ -30,6 +30,8 @@
 -(void) addMemory:(NSDictionary*)mem insertFrontByMem:(NSDictionary*)byMem;            //新增mem到byMem前面;
 -(void) addMemory:(NSDictionary*)mem insertBackByMem:(NSDictionary*)byMem;             //新增mem到byMem后面;
 
+-(void) clear;//清除记忆
+
 -(void) saveToLocal;
 
 

@@ -28,7 +28,7 @@
                     <rect key="frame" x="0.0" y="618" width="375" height="49"/>
                     <subviews>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WO0-QM-2Vh">
-                            <rect key="frame" x="0.0" y="0.0" width="73.5" height="49"/>
+                            <rect key="frame" x="0.0" y="0.0" width="61" height="49"/>
                             <color key="backgroundColor" red="0.0" green="1" blue="1" alpha="0.29999999999999999" colorSpace="calibratedRGB"/>
                             <state key="normal" title="记忆"/>
                             <connections>
@@ -36,7 +36,7 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Gee-dF-KcD">
-                            <rect key="frame" x="75.5" y="0.0" width="73.5" height="49"/>
+                            <rect key="frame" x="63" y="0.0" width="61" height="49"/>
                             <color key="backgroundColor" red="0.0" green="0.0" blue="1" alpha="0.29999999999999999" colorSpace="calibratedRGB"/>
                             <state key="normal" title="行为"/>
                             <connections>
@@ -44,7 +44,7 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="itR-4G-BuJ">
-                            <rect key="frame" x="151" y="0.0" width="73" height="49"/>
+                            <rect key="frame" x="126" y="0.0" width="60.5" height="49"/>
                             <color key="backgroundColor" red="0.0" green="1" blue="0.0" alpha="0.29999999999999999" colorSpace="calibratedRGB"/>
                             <state key="normal" title="实物"/>
                             <connections>
@@ -52,7 +52,7 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yyp-Cw-g2A">
-                            <rect key="frame" x="226" y="0.0" width="73.5" height="49"/>
+                            <rect key="frame" x="188.5" y="0.0" width="60.5" height="49"/>
                             <color key="backgroundColor" red="1" green="0.0" blue="0.0" alpha="0.29999999999999999" colorSpace="calibratedRGB"/>
                             <state key="normal" title="分词"/>
                             <connections>
@@ -60,11 +60,20 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="spm-dH-7O1">
-                            <rect key="frame" x="301.5" y="0.0" width="73.5" height="49"/>
+                            <rect key="frame" x="251" y="0.0" width="61" height="49"/>
                             <color key="backgroundColor" red="1" green="1" blue="0.0" alpha="0.29999999999999999" colorSpace="calibratedRGB"/>
                             <state key="normal" title="逻辑"/>
                             <connections>
                                 <action selector="logicBtnOnClick:" destination="-1" eventType="touchUpInside" id="sNd-Kz-TJA"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CBp-jl-7jT">
+                            <rect key="frame" x="314" y="0.0" width="61" height="49"/>
+                            <color key="backgroundColor" red="1" green="0.0" blue="1" alpha="0.29999999999999999" colorSpace="calibratedRGB"/>
+                            <state key="normal" title="清除"/>
+                            <connections>
+                                <action selector="clearBtnOnClick:" destination="-1" eventType="touchUpInside" id="of9-wc-VVY"/>
+                                <action selector="logicBtnOnClick:" destination="-1" eventType="touchUpInside" id="9QU-XF-6d6"/>
                             </connections>
                         </button>
                     </subviews>
@@ -73,7 +82,9 @@
                         <constraint firstItem="yyp-Cw-g2A" firstAttribute="leading" secondItem="itR-4G-BuJ" secondAttribute="trailing" constant="2" id="3NX-dR-Wc0"/>
                         <constraint firstItem="spm-dH-7O1" firstAttribute="leading" secondItem="yyp-Cw-g2A" secondAttribute="trailing" constant="2" id="4fW-kR-FIA"/>
                         <constraint firstItem="Gee-dF-KcD" firstAttribute="leading" secondItem="WO0-QM-2Vh" secondAttribute="trailing" constant="2" id="6kI-sK-SA2"/>
+                        <constraint firstAttribute="bottom" secondItem="CBp-jl-7jT" secondAttribute="bottom" id="DKu-0f-RCE"/>
                         <constraint firstAttribute="bottom" secondItem="itR-4G-BuJ" secondAttribute="bottom" id="H0z-52-qhV"/>
+                        <constraint firstItem="CBp-jl-7jT" firstAttribute="top" secondItem="jP9-HK-mNP" secondAttribute="top" id="H2w-3L-yAi"/>
                         <constraint firstItem="Gee-dF-KcD" firstAttribute="top" secondItem="jP9-HK-mNP" secondAttribute="top" id="Id8-WZ-Wfu"/>
                         <constraint firstItem="itR-4G-BuJ" firstAttribute="leading" secondItem="Gee-dF-KcD" secondAttribute="trailing" constant="2" id="LIH-rb-x46"/>
                         <constraint firstItem="WO0-QM-2Vh" firstAttribute="top" secondItem="jP9-HK-mNP" secondAttribute="top" id="M7g-2H-vWO"/>
@@ -83,11 +94,13 @@
                         <constraint firstAttribute="bottom" secondItem="yyp-Cw-g2A" secondAttribute="bottom" id="Vlq-hH-g76"/>
                         <constraint firstItem="Gee-dF-KcD" firstAttribute="width" secondItem="WO0-QM-2Vh" secondAttribute="width" id="XJB-gx-3oQ"/>
                         <constraint firstItem="spm-dH-7O1" firstAttribute="width" secondItem="WO0-QM-2Vh" secondAttribute="width" id="XKr-oX-QRz"/>
+                        <constraint firstItem="CBp-jl-7jT" firstAttribute="leading" secondItem="spm-dH-7O1" secondAttribute="trailing" constant="2" id="ZDb-wO-tXM"/>
                         <constraint firstItem="itR-4G-BuJ" firstAttribute="width" secondItem="WO0-QM-2Vh" secondAttribute="width" id="fcV-tG-tQz"/>
+                        <constraint firstAttribute="trailing" secondItem="CBp-jl-7jT" secondAttribute="trailing" id="fok-iP-bCt"/>
                         <constraint firstItem="itR-4G-BuJ" firstAttribute="top" secondItem="jP9-HK-mNP" secondAttribute="top" id="kKu-rR-rag"/>
-                        <constraint firstAttribute="trailing" secondItem="spm-dH-7O1" secondAttribute="trailing" id="lxt-xb-nek"/>
                         <constraint firstItem="spm-dH-7O1" firstAttribute="top" secondItem="jP9-HK-mNP" secondAttribute="top" id="qOd-ni-mAk"/>
                         <constraint firstItem="yyp-Cw-g2A" firstAttribute="top" secondItem="jP9-HK-mNP" secondAttribute="top" id="rGc-qj-2pd"/>
+                        <constraint firstItem="CBp-jl-7jT" firstAttribute="width" secondItem="spm-dH-7O1" secondAttribute="width" id="sAX-IF-qGe"/>
                         <constraint firstAttribute="bottom" secondItem="WO0-QM-2Vh" secondAttribute="bottom" id="uHB-Cc-kDP"/>
                         <constraint firstAttribute="bottom" secondItem="Gee-dF-KcD" secondAttribute="bottom" id="vnv-zc-aEo"/>
                     </constraints>

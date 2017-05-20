@@ -27,6 +27,9 @@
 -(NSMutableArray*) addItemNameArr:(NSArray*)itemNameArr;
 
 
+-(void) clear;
+
+
 
 
 /**

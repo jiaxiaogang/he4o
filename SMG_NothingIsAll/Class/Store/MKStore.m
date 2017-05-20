@@ -13,9 +13,7 @@
 
 @interface MKStore ()
 
-@property (strong,nonatomic) TextStore *textStore;       //字符串 处理能力
-@property (strong,nonatomic) ObjStore *objStore;
-@property (strong,nonatomic) DoStore *doStore;
+
 
 @end
 

@@ -170,7 +170,10 @@
 }
 
 
-
+-(void) clear{
+    [self.dataArr removeAllObjects];
+    [self saveToLocal];
+}
 
 
 

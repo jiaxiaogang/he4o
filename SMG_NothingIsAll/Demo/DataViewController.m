@@ -42,6 +42,7 @@
 -(void) initDisplay{
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
+    [self memoryBtnOnClick:nil];
 }
 
 -(void) viewWillAppear:(BOOL)animated{
@@ -110,6 +111,15 @@
 - (IBAction)logicBtnOnClick:(id)sender {
     [self setDatas:nil withStoreType:StoreType_Logic];
     self.title = @"逻辑";
+}
+
+- (IBAction)clearBtnOnClick:(id)sender {
+    [self setDatas:nil withStoreType:StoreType_Mem];
+    [[SMG sharedInstance].store.memStore clear];
+    [[SMG sharedInstance].store.mkStore.doStore clear];
+    [[SMG sharedInstance].store.mkStore.objStore clear];
+    [[SMG sharedInstance].store.mkStore.textStore clear];
+    self.title = @"清空";
 }
 
 /**

@@ -91,4 +91,6 @@
 -(NSDictionary*) addWord:(NSString*)word withObjId:(NSString*)objId withDoId:(NSString*)doId;
 
 
+-(void) clear;
+
 @end

@@ -313,6 +313,9 @@
     return lastId + limit;
 }
 
-
+-(void) clear{
+    [self.wordArr removeAllObjects];
+    [self saveToLocal];
+}
 
 @end

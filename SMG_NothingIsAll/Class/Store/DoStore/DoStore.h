@@ -27,7 +27,7 @@
 -(NSMutableArray*) addItemNameArr:(NSArray*)itemNameArr;
 
 
-
+-(void) clear;//清空
 
 
 /**
