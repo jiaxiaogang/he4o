@@ -190,7 +190,9 @@
 
 - (IBAction)testBtnOnClick:(id)sender {
     
-    [self understandA];
+    [self tempTest];
+    
+    //[self understandA];
     
     //[self understandB];
     
@@ -198,6 +200,23 @@
 
 }
 
+
+-(void) tempTest{
+    TextModel *tModel = [[TextModel alloc] init];
+    tModel.text = @"哈";
+    [TextStore addWord:tModel];
+    
+    
+    //"哈哈"这个词经常出现
+    LawModel *lModel = [LawModel initWithModels:tModel,tModel,nil];
+    [LawStore insertToDB_LawModel:lModel];
+    
+    
+    
+    [lModel print];
+    NSLog(@"");
+    
+}
 
 
 /**

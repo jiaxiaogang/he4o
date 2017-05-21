@@ -12,7 +12,7 @@
 
 +(PointerModel*) initWithClass:(Class)c withId:(NSInteger)i {
     PointerModel *model = [[PointerModel alloc] init];
-    model.pointerClass = c;
+    model.pointerClass = NSStringFromClass(c);
     model.pointerId = i;
     return model;
 }

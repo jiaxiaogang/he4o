@@ -47,7 +47,6 @@
 +(TextModel*) addWordWithText:(NSString*)text ;
 +(NSMutableArray*) addWordWithTextArr:(NSArray*)wordArr ;
 
-
 +(void) clear;
 
 @end

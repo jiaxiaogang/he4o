@@ -10,7 +10,11 @@
 
 @implementation LawModel
 
-+ (LawModel*) initWithPointerModels:(PointerModel*)pModel,... {
+/**
+ *  MARK:--------------------初始化规律类--------------------
+ */
+
++ (LawModel*) initWithPointerModels:(PointerModel*)pModel,... NS_REQUIRES_NIL_TERMINATION NS_SWIFT_UNAVAILABLE("Use dictionary literals instead"){
     LawModel *lModel = [[LawModel alloc] init];
     lModel.pointerArr = [[NSMutableArray alloc] init];
     
@@ -32,5 +36,43 @@
     }
     return lModel;
 }
+
+/**
+ *  MARK:--------------------初始化规律类--------------------
+ *  注:model...必须是已在数据库中的数据
+ */
++ (LawModel*) initWithModels:(NSObject*)model,...  NS_REQUIRES_NIL_TERMINATION NS_SWIFT_UNAVAILABLE("Use dictionary literals instead"){
+    LawModel *lModel = [[LawModel alloc] init];
+    lModel.pointerArr = [[NSMutableArray alloc] init];
+    
+    va_list argList;
+    if (model) {
+        [lModel.pointerArr addObject:[PointerModel initWithClass:model.class withId:model.rowid]];
+        
+        va_start(argList, model);
+        NSObject* arg = va_arg(argList, id);
+        while (arg) {
+            [lModel.pointerArr addObject:[PointerModel initWithClass:arg.class withId:arg.rowid]];
+            arg = va_arg(argList, id);
+        }
+        va_end(argList);
+    }
+    return lModel;
+}
+
+- (void) print{
+    NSLog(@"------------打印Law数据\n");
+    if (ARRISOK(self.pointerArr)) {
+        for (NSInteger i = 0; i < self.pointerArr.count; i++) {
+            PointerModel *pModel = self.pointerArr[i];
+            NSLog(@"___%ld___(%@)\n",i,pModel.class);
+            NSLog(@"___%ld___(rowid:%ld)\n",i,(long)pModel.rowid);
+            NSLog(@"___%ld___(pointerClass:%@)\n",i,pModel.pointerClass);
+            NSLog(@"___%ld___(pointerId:%ld)\n\n",i,(long)pModel.pointerId);
+        }
+    }
+    NSLog(@"------------end\n\n");
+}
+
 
 @end

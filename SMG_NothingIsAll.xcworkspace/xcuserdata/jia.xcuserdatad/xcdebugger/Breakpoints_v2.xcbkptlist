@@ -42,12 +42,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/Class/Store/LawStore/LawStore.m"
-            timestampString = "517027599.254246"
+            timestampString = "517028043.44817"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "41"
-            endingLineNumber = "41"
-            landmarkName = "+searchSingle_OtherIdWithClass:withClassId:otherClass:"
+            startingLineNumber = "71"
+            endingLineNumber = "71"
+            landmarkName = "+searchSingle_LawModel:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
