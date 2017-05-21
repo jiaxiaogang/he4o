@@ -8,6 +8,10 @@
 
 #import "AIFObject.h"
 
+/**
+ *  MARK:--------------------字符串--------------------
+ *  //存AIFChar数组;
+ */
 @interface AIFString : AIFObject
 
 @end

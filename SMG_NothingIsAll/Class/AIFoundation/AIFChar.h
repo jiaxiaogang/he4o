@@ -10,4 +10,7 @@
 
 @interface AIFChar : AIFObject
 
+@property (strong,nonatomic) NSString *dd;
+-(BOOL) isEqual:(id)object;
+
 @end

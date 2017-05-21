@@ -10,4 +10,9 @@
 
 @implementation AIFChar
 
+
+-(BOOL) isEqual:(id)object{
+    return false;
+}
+
 @end

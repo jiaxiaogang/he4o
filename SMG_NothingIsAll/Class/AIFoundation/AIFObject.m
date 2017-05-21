@@ -11,14 +11,17 @@
 @implementation AIFObject
 
 
--(id) init_AIF{
+-(id) init{
     self = [super init];
     if (self) {
         self.pointer = [[PointerModel alloc] init];
+        self.pointer.pointerClass = NSStringFromClass(self.class);
     }
+    return self;
 }
--(void) print_AIF{
-    
+
+-(void) print{
+    NSLog(@"%@",self);
 }
 
 
