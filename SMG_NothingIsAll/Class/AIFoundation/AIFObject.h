@@ -10,4 +10,9 @@
 
 @interface AIFObject : NSObject
 
+@property (strong,nonatomic) PointerModel *pointer; //数据指针
+
+-(id) init_AIF;
+-(void) print_AIF;
+
 @end

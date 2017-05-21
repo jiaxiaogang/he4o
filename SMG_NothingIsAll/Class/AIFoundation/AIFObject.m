@@ -10,4 +10,16 @@
 
 @implementation AIFObject
 
+
+-(id) init_AIF{
+    self = [super init];
+    if (self) {
+        self.pointer = [[PointerModel alloc] init];
+    }
+}
+-(void) print_AIF{
+    
+}
+
+
 @end
