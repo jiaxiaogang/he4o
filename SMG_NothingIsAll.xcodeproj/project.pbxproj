@@ -50,6 +50,8 @@
 		08C84A991E9A86C400897D8B /* StoreModel_Text.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A971E9A86C400897D8B /* StoreModel_Text.m */; };
 		08C84A9C1E9A874C00897D8B /* InputModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A9B1E9A874C00897D8B /* InputModel.m */; };
 		08D322A91EBA28B0009D734A /* Foundation+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D322A81EBA28B0009D734A /* Foundation+Log.m */; };
+		08D7DA491ED149E8004B1018 /* AIFObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D7DA481ED149E8004B1018 /* AIFObject.m */; };
+		08D7DA4C1ED149F8004B1018 /* AIFString.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D7DA4B1ED149F8004B1018 /* AIFString.m */; };
 		08DACE951EBD805C00FDC0B6 /* NSString+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 08DACE941EBD805C00FDC0B6 /* NSString+Extension.m */; };
 		08E5B4101EAB68DD00999E65 /* TextStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E5B40D1EAB68DD00999E65 /* TextStore.m */; };
 		08E5B4111EAB68DD00999E65 /* TextStoreUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E5B40F1EAB68DD00999E65 /* TextStoreUtils.m */; };
@@ -158,6 +160,11 @@
 		08C84A9B1E9A874C00897D8B /* InputModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputModel.m; sourceTree = "<group>"; };
 		08D322A71EBA2783009D734A /* SMGPrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMGPrefixHeader.pch; sourceTree = "<group>"; };
 		08D322A81EBA28B0009D734A /* Foundation+Log.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Foundation+Log.m"; sourceTree = "<group>"; };
+		08D7DA411ED149B4004B1018 /* AIFHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIFHeader.h; sourceTree = "<group>"; };
+		08D7DA471ED149E8004B1018 /* AIFObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIFObject.h; sourceTree = "<group>"; };
+		08D7DA481ED149E8004B1018 /* AIFObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIFObject.m; sourceTree = "<group>"; };
+		08D7DA4A1ED149F8004B1018 /* AIFString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIFString.h; sourceTree = "<group>"; };
+		08D7DA4B1ED149F8004B1018 /* AIFString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIFString.m; sourceTree = "<group>"; };
 		08DACE931EBD805C00FDC0B6 /* NSString+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Extension.h"; sourceTree = "<group>"; };
 		08DACE941EBD805C00FDC0B6 /* NSString+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Extension.m"; sourceTree = "<group>"; };
 		08E5B40C1EAB68DD00999E65 /* TextStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextStore.h; sourceTree = "<group>"; };
@@ -396,6 +403,7 @@
 		08AF455F1E97D43C00377887 /* Class */ = {
 			isa = PBXGroup;
 			children = (
+				08D7DA401ED1499C004B1018 /* AIFoundation */,
 				08C84A8F1E9A86B900897D8B /* Output */,
 				08C84A8A1E9A85A600897D8B /* Input */,
 				08F639801E9A2DCE003CD163 /* Feel */,
@@ -467,6 +475,18 @@
 				082F9D611EB236FA0009F6A9 /* OutputHeader.h */,
 			);
 			path = Output;
+			sourceTree = "<group>";
+		};
+		08D7DA401ED1499C004B1018 /* AIFoundation */ = {
+			isa = PBXGroup;
+			children = (
+				08D7DA411ED149B4004B1018 /* AIFHeader.h */,
+				08D7DA471ED149E8004B1018 /* AIFObject.h */,
+				08D7DA481ED149E8004B1018 /* AIFObject.m */,
+				08D7DA4A1ED149F8004B1018 /* AIFString.h */,
+				08D7DA4B1ED149F8004B1018 /* AIFString.m */,
+			);
+			path = AIFoundation;
 			sourceTree = "<group>";
 		};
 		08E5B40B1EAB68DD00999E65 /* TextStore */ = {
@@ -718,6 +738,7 @@
 				087753231ECFE1C400E7AD09 /* Understand+OutPut.m in Sources */,
 				0831CF721EBF1DB700C020E6 /* TextModel.m in Sources */,
 				08F639831E9A2EC0003CD163 /* FeelValueModel.m in Sources */,
+				08D7DA4C1ED149F8004B1018 /* AIFString.m in Sources */,
 				08E5B4111EAB68DD00999E65 /* TextStoreUtils.m in Sources */,
 				08F3AFB81E98963600747EDD /* SMG.m in Sources */,
 				08AF45631E97D6F200377887 /* GC.m in Sources */,
@@ -727,6 +748,7 @@
 				08C84A981E9A86C400897D8B /* StoreLogModel_Text.m in Sources */,
 				08F639891E9A2FF4003CD163 /* Feel.m in Sources */,
 				08D322A91EBA28B0009D734A /* Foundation+Log.m in Sources */,
+				08D7DA491ED149E8004B1018 /* AIFObject.m in Sources */,
 				08E99C4B1EBDD1E000A38FF5 /* MindBase.m in Sources */,
 				08DACE951EBD805C00FDC0B6 /* NSString+Extension.m in Sources */,
 				0831CF691EBF11C800C020E6 /* LogicStore.m in Sources */,
