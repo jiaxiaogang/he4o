@@ -14,6 +14,7 @@
  */
 @interface PointerModel : NSObject
 
++(PointerModel*) initWithClass:(Class)c withId:(NSInteger)i ;
 @property (assign,nonatomic) Class pointerClass;    //指针类型
 @property (assign, nonatomic) NSInteger pointerId;  //指针地址(Id)
 

@@ -40,6 +40,7 @@
 //Map(映射表/规律,同时)
 #import "LawModel.h"
 #import "LawStore.h"
+#import "PointerModel.h"
 
 //Logic(逻辑表/因果,非同时)
 #import "LogicStore.h"

@@ -11,17 +11,11 @@
 /**
  *  MARK:--------------------规律(同时)--------------------
  */
+@class PointerModel;
 @interface LawModel : NSObject
-+(LawModel*) initWithAC:(Class)aClass aI:(NSInteger)aId bC:(Class)bClass bI:(NSInteger)bId;
-@property (assign,nonatomic) Class aClass;
-@property (assign, nonatomic) NSInteger aId;
-@property (assign,nonatomic) Class bClass;
-@property (assign, nonatomic) NSInteger bId;
 
-
-
-
-@property (strong,nonatomic) NSMutableArray *pointerArr;    //指针数组
++ (LawModel*) initWithPointerModels:(PointerModel*)pModel,... ;
+@property (strong,nonatomic) NSMutableArray *pointerArr;    //指针数组(存PointerModel)
 @property (assign, nonatomic) NSInteger count;      //计数器
 
 

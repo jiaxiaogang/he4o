@@ -38,11 +38,12 @@
     //找A
     NSDictionary *aWhere = [[NSDictionary alloc] initWithObjectsAndKeys:class,@"aClass",@(classId),@"aId",otherClass,@"bClass", nil];
     LawModel *aModel = [self searchSingle_LawModel:aWhere];
-    if (aModel) return aModel.bId;
+    NSLog(@"");
+    //if (aModel) return aModel.bId;
     //找B
     NSDictionary *bWhere = [[NSDictionary alloc] initWithObjectsAndKeys:class,@"bClass",@(classId),@"bId",otherClass,@"aClass", nil];
     LawModel *bModel = [self searchSingle_LawModel:bWhere];
-    if (bModel) return bModel.aId;
+    //if (bModel) return bModel.aId;
     //未找到
     return 0;
 }

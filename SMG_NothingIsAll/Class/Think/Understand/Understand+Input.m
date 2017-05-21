@@ -143,8 +143,14 @@
                 for (NSString *key in linkDic.allKeys) {
                     TextModel *textModel = [linkDic objectForKey:key];//本来就是本地的,不用再存;
                     NSInteger objId = [key integerValue];
-                    LawModel *lawModel = [LawModel initWithAC:TextModel.class aI:textModel.rowid bC:ObjModel.class bI:objId];
-                    [LawStore insertToDB_LawModel:lawModel];
+                    
+                    //创建两个指针
+                    PointerModel *textPoint = [PointerModel initWithClass:TextModel.class withId:textModel.rowid];
+                    PointerModel *objPoint = [PointerModel initWithClass:ObjModel.class withId:objId];
+                    
+                    //创建规律,并传入两个指针;
+                    LawModel *lModel = [LawModel initWithPointerModels:textPoint,objPoint];
+                    [LawStore insertToDB_LawModel:lModel];
                 }
             }
         }];
@@ -156,8 +162,14 @@
                 for (NSString *key in linkDic.allKeys) {
                     TextModel *textModel = [linkDic objectForKey:key];//本来就是本地的,不用再存;
                     NSInteger doId = [key integerValue];
-                    LawModel *lawModel = [LawModel initWithAC:TextModel.class aI:textModel.rowid bC:DoModel.class bI:doId];
-                    [LawStore insertToDB_LawModel:lawModel];
+                    
+                    //创建两个指针
+                    PointerModel *textPoint = [PointerModel initWithClass:TextModel.class withId:textModel.rowid];
+                    PointerModel *doPoint = [PointerModel initWithClass:DoModel.class withId:doId];
+                    
+                    //创建规律,并传入两个指针;
+                    LawModel *lModel = [LawModel initWithPointerModels:textPoint,doPoint];
+                    [LawStore insertToDB_LawModel:lModel];
                 }
             }
         }];
