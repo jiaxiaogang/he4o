@@ -10,15 +10,22 @@
 
 @implementation AIFObject
 
++(void)initialize{
+    [self removePropertyWithColumnName:@"pointer"];
+}
 
 -(id) init{
     self = [super init];
     if (self) {
+        [[self class] insertToDB:self];
         self.pointer = [[PointerModel alloc] init];
+        self.pointer.pointerId = self.rowid;
         self.pointer.pointerClass = NSStringFromClass(self.class);
     }
     return self;
 }
+
+
 
 -(void) print{
     NSLog(@"%@",self);

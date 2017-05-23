@@ -202,6 +202,7 @@
 
 
 -(void) tempTest{
+    
     TextModel *tModel = [[TextModel alloc] init];
     tModel.text = @"哈";
     [TextStore addWord:tModel];

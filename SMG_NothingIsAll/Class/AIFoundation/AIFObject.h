@@ -12,7 +12,6 @@
 
 @property (strong,nonatomic) PointerModel *pointer; //数据指针
 
--(id) init;
 -(void) print;
 
 @end

@@ -14,4 +14,6 @@
  */
 @interface AIFString : AIFObject
 
+@property (strong,nonatomic) NSMutableArray *content;//AIFChar数组;
+
 @end

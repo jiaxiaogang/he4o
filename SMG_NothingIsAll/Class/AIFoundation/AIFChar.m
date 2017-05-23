@@ -10,9 +10,22 @@
 
 @implementation AIFChar
 
++(id) initWithContent:(unichar)content{
+    AIFChar *c = [AIFChar searchSingleWithWhere:[DBUtils sqlWhere_K:@"content" V:@(content)] orderBy:nil];
+    if (c) {
+        return c;
+    }else{
+        c = [[AIFChar alloc] init];
+        return c;
+    }
+}
 
--(BOOL) isEqual:(id)object{
+-(BOOL) isEqual:(AIFChar*)obj{
+    if (obj && [obj isKindOfClass:[AIFChar class]]) {
+        return self.content == obj.content;
+    }
     return false;
 }
+
 
 @end
