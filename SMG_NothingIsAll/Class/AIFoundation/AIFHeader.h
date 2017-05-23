@@ -6,8 +6,7 @@
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
-@interface AIFHeader : NSObject
-
-@end
+#import "AIFObject.h"
+#import "AIFString.h"
+#import "AIFChar.h"
+#import "AIFArray.h"

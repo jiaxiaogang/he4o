@@ -14,18 +14,18 @@
     [self removePropertyWithColumnName:@"pointer"];
 }
 
--(id) init{
-    self = [super init];
-    if (self) {
-        [[self class] insertToDB:self];
-        self.pointer = [[PointerModel alloc] init];
-        self.pointer.pointerId = self.rowid;
-        self.pointer.pointerClass = NSStringFromClass(self.class);
-    }
-    return self;
++(id) initWithContent:(id)content{
+    return [[AIFObject alloc] init];
 }
 
-
+-(PointerModel*) pointer{
+    if (_pointer == nil) {
+        _pointer = [[PointerModel alloc] init];
+        _pointer.pointerClass = NSStringFromClass(self.class);
+        _pointer.pointerId = self.rowid;
+    }
+    return _pointer;
+}
 
 -(void) print{
     NSLog(@"%@",self);

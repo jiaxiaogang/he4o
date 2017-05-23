@@ -12,8 +12,10 @@
  *  MARK:--------------------字符串--------------------
  *  //存AIFChar数组;
  */
+@class AIFChar;
 @interface AIFString : AIFObject
 
-@property (strong,nonatomic) NSMutableArray *content;//AIFChar数组;
+@property (strong,nonatomic) NSMutableArray *content;//AIFChar.pointer数组;
+- (AIFChar*)characterAtIndex:(NSUInteger)index;
 
 @end

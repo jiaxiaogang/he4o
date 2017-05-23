@@ -11,12 +11,14 @@
 @implementation AIFChar
 
 +(id) initWithContent:(unichar)content{
-    AIFChar *c = [AIFChar searchSingleWithWhere:[DBUtils sqlWhere_K:@"content" V:@(content)] orderBy:nil];
-    if (c) {
-        return c;
+    AIFChar *value = [AIFChar searchSingleWithWhere:[DBUtils sqlWhere_K:@"content" V:@(content)] orderBy:nil];
+    if (value) {
+        return value;
     }else{
-        c = [[AIFChar alloc] init];
-        return c;
+        value = [[AIFChar alloc] init];
+        value.content = content;
+        [AIFChar insertToDB:value];
+        return value;
     }
 }
 

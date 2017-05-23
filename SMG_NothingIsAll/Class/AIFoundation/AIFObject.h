@@ -10,8 +10,8 @@
 
 @interface AIFObject : NSObject
 
++(id) initWithContent:(id)content;
 @property (strong,nonatomic) PointerModel *pointer; //数据指针
-
 -(void) print;
 
 @end

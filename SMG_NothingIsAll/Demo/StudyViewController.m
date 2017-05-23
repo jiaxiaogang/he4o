@@ -202,21 +202,32 @@
 
 
 -(void) tempTest{
+    //测试AIFoundation框架
+    NSString *s = @"a";
+    AIFChar *c = [AIFChar initWithContent:[s characterAtIndex:0]];
     
+    AIFString *str = [AIFString initWithContent:@"我爱你"];
+    
+    AIFChar *c2 = [str characterAtIndex:1];
+    
+    AIFArray *arr = [AIFArray initWithObjects:c,str,c2, nil];
+    
+    NSLog(@"");
+    
+    
+    
+    
+    
+    //"哈哈"这个词经常出现
     TextModel *tModel = [[TextModel alloc] init];
     tModel.text = @"哈";
     [TextStore addWord:tModel];
     
-    
-    //"哈哈"这个词经常出现
     LawModel *lModel = [LawModel initWithModels:tModel,tModel,nil];
     [LawStore insertToDB_LawModel:lModel];
     
-    
-    
     [lModel print];
     NSLog(@"");
-    
 }
 
 

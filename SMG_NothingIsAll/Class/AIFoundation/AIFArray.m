@@ -10,12 +10,24 @@
 
 @implementation AIFArray
 
--(id) init{
-    self = [super init];
-    if (self) {
-        self.content = [[NSMutableArray alloc] init];
++ (AIFArray*) initWithObjects:(AIFObject*)obj,...  NS_REQUIRES_NIL_TERMINATION NS_SWIFT_UNAVAILABLE("Use dictionary literals instead"){
+    AIFArray *value = [[AIFArray alloc] init];
+    value.content = [[NSMutableArray alloc] init];
+    
+    va_list argList;
+    if (obj) {
+        [value addObject:obj];
+        va_start(argList, obj);
+        AIFObject* arg = va_arg(argList, id);
+        while (arg) {
+            [value addObject:arg];
+            arg = va_arg(argList, id);
+        }
+        va_end(argList);
     }
-    return self;
+    
+    [AIFArray insertToDB:value];
+    return value;
 }
 
 -(void) addObject:(AIFObject*)obj{
