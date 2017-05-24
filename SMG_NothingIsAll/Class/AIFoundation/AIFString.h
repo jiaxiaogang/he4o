@@ -16,7 +16,7 @@
 @interface AIFString : AIFObject
 
 - (nonnull NSMutableArray*) content;
-- (AIFChar*_Nullable)characterAtIndex:(NSUInteger)index;
+- (AIFChar*)characterAtIndex:(NSUInteger)index;
 - (BOOL)isEqualToString:(AIFString*_Nullable)str;
 
 @end

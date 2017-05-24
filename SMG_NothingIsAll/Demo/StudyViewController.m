@@ -214,6 +214,10 @@
     
     AIFArray *arr = [AIFArray initWithObjects:c,str,c2,c3,c4, nil];
     
+    AIFChar *c5 = [AIFChar initWithContent:[str characterAtIndex:1].content];
+    
+    
+    AIFString *sr2 = AIFSTRFORMAT(@"%@",@"你好");
     NSLog(@"");
     
     

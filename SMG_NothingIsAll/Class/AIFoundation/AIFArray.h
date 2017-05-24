@@ -21,4 +21,5 @@
 -(void) removeObjectFromAtIndex:(NSUInteger)index;
 -(BOOL) containsObject:(AIFObject*)obj;
 -(id) objectAtIndex:(NSUInteger)index;
+
 @end
