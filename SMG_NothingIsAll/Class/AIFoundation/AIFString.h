@@ -15,7 +15,8 @@
 @class AIFChar;
 @interface AIFString : AIFObject
 
-@property (strong,nonatomic) NSMutableArray *content;//AIFChar.pointer数组;
-- (AIFChar*)characterAtIndex:(NSUInteger)index;
+- (nonnull NSMutableArray*) content;
+- (AIFChar*_Nullable)characterAtIndex:(NSUInteger)index;
+- (BOOL)isEqualToString:(AIFString*_Nullable)str;
 
 @end

@@ -22,12 +22,6 @@
     }
 }
 
--(BOOL) isEqual:(AIFChar*)obj{
-    if (obj && [obj isKindOfClass:[AIFChar class]]) {
-        return self.content == obj.content;
-    }
-    return false;
-}
 
 
 @end

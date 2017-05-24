@@ -27,6 +27,13 @@
     return _pointer;
 }
 
+-(BOOL) isEqual:(id)obj{
+    if (obj && [obj isKindOfClass:[AIFObject class]]) {
+        return [self.pointer isEqual:((AIFObject*)obj).pointer];//对比指针地址
+    }
+    return false;
+}
+
 -(void) print{
     NSLog(@"%@",self);
 }

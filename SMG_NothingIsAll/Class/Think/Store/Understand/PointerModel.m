@@ -17,4 +17,16 @@
     return model;
 }
 
+/**
+ *  MARK:--------------------public--------------------
+ */
+-(BOOL) isEqual:(id)object{//重写指针对比地址方法;
+    if (object && [object isKindOfClass:[PointerModel class]]) {
+        BOOL classIsEqual = [STRTOOK(self.pointerClass) isEqual:((PointerModel*)object).pointerClass];
+        BOOL idIsEqual = self.pointerId == ((PointerModel*)object).pointerId;
+        return classIsEqual && idIsEqual;
+    }
+    return true;
+}
+
 @end

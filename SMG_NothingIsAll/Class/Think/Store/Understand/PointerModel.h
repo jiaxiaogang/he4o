@@ -19,4 +19,5 @@
 @property (strong,nonatomic) NSString *pointerClass;    //指针类型
 @property (assign, nonatomic) NSInteger pointerId;  //指针地址(Id)
 
+
 @end

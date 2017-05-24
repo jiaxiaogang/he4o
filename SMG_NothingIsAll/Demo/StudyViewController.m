@@ -205,12 +205,14 @@
     //测试AIFoundation框架
     NSString *s = @"a";
     AIFChar *c = [AIFChar initWithContent:[s characterAtIndex:0]];
+    AIFChar *c2 = [AIFChar initWithContent:[s characterAtIndex:0]];
+    AIFChar *c3 = [AIFChar initWithContent:[s characterAtIndex:0]];
     
     AIFString *str = [AIFString initWithContent:@"我爱你"];
     
-    AIFChar *c2 = [str characterAtIndex:1];
+    AIFChar *c4 = [str characterAtIndex:1];
     
-    AIFArray *arr = [AIFArray initWithObjects:c,str,c2, nil];
+    AIFArray *arr = [AIFArray initWithObjects:c,str,c2,c3,c4, nil];
     
     NSLog(@"");
     

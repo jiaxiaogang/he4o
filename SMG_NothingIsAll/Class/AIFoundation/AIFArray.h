@@ -15,9 +15,10 @@
 @interface AIFArray : AIFObject
 
 + (AIFArray*) initWithObjects:(AIFObject*)obj,...  NS_REQUIRES_NIL_TERMINATION NS_SWIFT_UNAVAILABLE("Use dictionary literals instead");
-@property (strong,nonatomic) NSMutableArray *content;
+-(nonnull NSMutableArray*) content;
 -(void) addObject:(AIFObject*)obj;
 -(void) removeObject:(AIFObject*)obj;
 -(void) removeObjectFromAtIndex:(NSUInteger)index;
 -(BOOL) containsObject:(AIFObject*)obj;
+-(id) objectAtIndex:(NSUInteger)index;
 @end
