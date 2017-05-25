@@ -15,3 +15,13 @@
 @property (assign, nonatomic) unichar content;
 
 @end
+
+
+/**
+ *  MARK:--------------------本地存储--------------------
+ */
+@interface AIChar (Store)
+
+
+
+@end

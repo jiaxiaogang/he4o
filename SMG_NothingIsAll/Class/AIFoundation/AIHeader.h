@@ -10,6 +10,7 @@
 #import "AIString.h"
 #import "AIChar.h"
 #import "AIArray.h"
+#import "AILaw.h"
 
 
 /**
@@ -40,6 +41,9 @@
 
 //Array
 #define AIMakeArr(a, ...) [AIArray initWithObjects:a, ##__VA_ARGS__,nil]
+
+//Law
+#define AIMakeLaw(a, ...) [AILaw initWithObjects:a, ##__VA_ARGS__,nil]
 
 
 

@@ -32,6 +32,7 @@
 		08AF45581E97D0B500377887 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45561E97D0B500377887 /* LaunchScreen.storyboard */; };
 		08AF45631E97D6F200377887 /* GC.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF45621E97D6F200377887 /* GC.m */; };
 		08AF456E1E97DDF600377887 /* MKStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF456D1E97DDF600377887 /* MKStore.m */; };
+		08C0289A1ED7380700F3D03F /* AILaw.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C028991ED7380700F3D03F /* AILaw.m */; };
 		08C84A8E1E9A866200897D8B /* Input.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A8D1E9A866200897D8B /* Input.m */; };
 		08C84A981E9A86C400897D8B /* StoreLogModel_Text.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A951E9A86C400897D8B /* StoreLogModel_Text.m */; };
 		08C84A991E9A86C400897D8B /* StoreModel_Text.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A971E9A86C400897D8B /* StoreModel_Text.m */; };
@@ -125,6 +126,8 @@
 		08AF45621E97D6F200377887 /* GC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GC.m; sourceTree = "<group>"; };
 		08AF456C1E97DDF600377887 /* MKStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKStore.h; sourceTree = "<group>"; };
 		08AF456D1E97DDF600377887 /* MKStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKStore.m; sourceTree = "<group>"; };
+		08C028981ED7380700F3D03F /* AILaw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AILaw.h; sourceTree = "<group>"; };
+		08C028991ED7380700F3D03F /* AILaw.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AILaw.m; sourceTree = "<group>"; };
 		08C84A8B1E9A861900897D8B /* InputHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InputHeader.h; sourceTree = "<group>"; };
 		08C84A8C1E9A866200897D8B /* Input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Input.h; sourceTree = "<group>"; };
 		08C84A8D1E9A866200897D8B /* Input.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Input.m; sourceTree = "<group>"; };
@@ -422,6 +425,8 @@
 				08D7DA4E1ED14BC7004B1018 /* AIChar.m */,
 				081DA1391ED47CE000C8C531 /* AIArray.h */,
 				081DA13A1ED47CE000C8C531 /* AIArray.m */,
+				08C028981ED7380700F3D03F /* AILaw.h */,
+				08C028991ED7380700F3D03F /* AILaw.m */,
 			);
 			path = AIFoundation;
 			sourceTree = "<group>";
@@ -753,6 +758,7 @@
 				08F639831E9A2EC0003CD163 /* FeelValueModel.m in Sources */,
 				08E58DDF1ED3CE18008B0D76 /* CharStore.m in Sources */,
 				08D7DA4C1ED149F8004B1018 /* AIString.m in Sources */,
+				08C0289A1ED7380700F3D03F /* AILaw.m in Sources */,
 				08E58DE21ED3CE18008B0D76 /* DoStore.m in Sources */,
 				08E58DE81ED3CE18008B0D76 /* MemModel.m in Sources */,
 				08F3AFB81E98963600747EDD /* SMG.m in Sources */,

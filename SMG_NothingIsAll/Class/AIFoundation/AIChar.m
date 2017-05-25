@@ -17,7 +17,7 @@
     }else{
         value = [[AIChar alloc] init];
         value.content = content;
-        [AIChar insertToDB:value];
+        [AIChar ai_insertToDB:value];
         return value;
     }
 }
@@ -33,3 +33,15 @@
 
 
 @end
+
+
+/**
+ *  MARK:--------------------本地存储--------------------
+ */
+@implementation AIChar (Store)
+
+
+
+@end
+
+

@@ -15,3 +15,15 @@
 -(void) print;
 
 @end
+
+
+
+/**
+ *  MARK:--------------------本地存储--------------------
+ */
+@interface AIObject (Store)
+
++ (id) ai_searchSingleWithRowId:(NSInteger)rowid;
++ (void) ai_insertToDB:(id)obj;
+
+@end

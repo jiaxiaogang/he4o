@@ -12,9 +12,9 @@
  *  MARK:--------------------数组(可变)--------------------
  *  指针数组;元素为PointerModel
  */
-@interface AIArray : AIObject
+@interface AIArray : AIObject <NSCoding>
 
-+ (AIArray*) initWithObjects:(AIObject*)obj,...  NS_REQUIRES_NIL_TERMINATION NS_SWIFT_UNAVAILABLE("Use dictionary literals instead");
++ (id) initWithObjects:(AIObject*)obj,...  NS_REQUIRES_NIL_TERMINATION NS_SWIFT_UNAVAILABLE("Use dictionary literals instead");
 -(nonnull NSMutableArray*) content;
 -(void) addObject:(AIObject*)obj;
 -(void) removeObject:(AIObject*)obj;

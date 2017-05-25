@@ -12,7 +12,7 @@
  *  MARK:--------------------"数据指针"--------------------
  *  可以指向任何表的任一项;
  */
-@interface PointerModel : NSObject
+@interface PointerModel : NSObject <NSCoding>
 
 +(PointerModel*) initWithClass:(Class)c withId:(NSInteger)i ;
 

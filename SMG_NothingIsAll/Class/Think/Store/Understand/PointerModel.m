@@ -29,4 +29,21 @@
     return true;
 }
 
+/**
+ *  MARK:--------------------NSCoding--------------------
+ */
+- (void)encodeWithCoder:(NSCoder *)aCoder{
+    [aCoder encodeObject:self.pointerClass forKey:NSStringFromSelector(@selector(pointerClass))];
+    [aCoder encodeInteger:self.pointerId forKey:NSStringFromSelector(@selector(pointerId))];
+}
+
+- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder{
+    self = [super init];
+    if (self) {
+        self.pointerClass = [aDecoder decodeObjectForKey:NSStringFromSelector(@selector(pointerClass))];
+        self.pointerId = [aDecoder decodeIntegerForKey:NSStringFromSelector(@selector(pointerId))];
+    }
+    return self;
+}
+
 @end

@@ -40,3 +40,19 @@
 
 
 @end
+
+
+/**
+ *  MARK:--------------------本地存储--------------------
+ */
+@implementation AIObject (Store)
+
++ (id) ai_searchSingleWithRowId:(NSInteger)rowid {
+    return [self.class searchSingleWithWhere:[DBUtils sqlWhere_RowId:rowid] orderBy:nil];
+}
+
++ (void) ai_insertToDB:(id)obj{
+    [self.class insertToDB:obj];
+}
+
+@end

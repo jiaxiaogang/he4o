@@ -16,8 +16,9 @@
 
 @implementation AIArray
 
-+ (AIArray*) initWithObjects:(AIObject*)obj,...  NS_REQUIRES_NIL_TERMINATION NS_SWIFT_UNAVAILABLE("Use dictionary literals instead"){
-    AIArray *value = [[AIArray alloc] init];
++ (id) initWithObjects:(AIObject*)obj,...  NS_REQUIRES_NIL_TERMINATION NS_SWIFT_UNAVAILABLE("Use dictionary literals instead"){
+    Class arrClass = self.class;
+    AIArray *value = [[arrClass alloc] init];
     
     va_list argList;
     if (obj) {
@@ -30,8 +31,7 @@
         }
         va_end(argList);
     }
-    
-    [AIArray insertToDB:value];
+    [arrClass insertToDB:value];
     return value;
 }
 
@@ -80,6 +80,39 @@
         NSLog(@"!!!Index越界");
         return nil;
     }
+}
+
+/**
+ *  MARK:--------------------NSCoding--------------------
+ */
+- (void)encodeWithCoder:(NSCoder *)aCoder{
+    [aCoder encodeObject:self.content forKey:NSStringFromSelector(@selector(content))];
+}
+
+- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder{
+    self = [super init];
+    if (self) {
+        self.content = [aDecoder decodeObjectForKey:NSStringFromSelector(@selector(content))];
+    }
+    return self;
+}
+
+/**
+ *  MARK:--------------------DB--------------------
+ */
+-(id)userGetValueForModel:(LKDBProperty *)property
+{
+    if([property.propertyName isEqualToString:@"content"]){
+        NSCoder *enCoder = [[NSCoder alloc] init];
+        [self encodeWithCoder:enCoder];
+        return enCoder;
+    }
+    return [super userGetValueForModel:property];
+}
+
+-(void)userSetValueForModel:(LKDBProperty *)property value:(id)value
+{
+    [super userSetValueForModel:property value:value];
 }
 
 @end

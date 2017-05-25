@@ -205,26 +205,22 @@
     //测试AIoundation框架
     
     
-    AIChar *aChar = AIMakeCharByStr(@"a");
-    AIString *iLYStr = AIMakeStr(@"我爱你");
-    AIChar *loveChar = [iLYStr characterAtIndex:1];
-    AIArray *arr = AIMakeArr(aChar,iLYStr,loveChar);
-    AIString *hiStr = AISTRFORMAT(@"%@",@"你好");
-    NSLog(@"");
+//    AIChar *aChar = AIMakeCharByStr(@"a");
+//    AIString *iLYStr = AIMakeStr(@"我爱你");
+//    AIChar *loveChar = [iLYStr characterAtIndex:1];
+//    AIArray *arr = AIMakeArr(aChar,iLYStr,loveChar);
+//    AIString *hiStr = AISTRFORMAT(@"%@",@"你好");
+//    NSLog(@"");
     
     
     
     
     
     //"哈哈"这个词经常出现
-    TextModel *tModel = [[TextModel alloc] init];
-    tModel.text = @"哈";
-    [TextStore addWord:tModel];
+    AIChar *haChar = AIMakeCharByStr(@"哈");
+    AILaw *law = AIMakeLaw(haChar,haChar);
     
-    LawModel *lModel = [LawModel initWithModels:tModel,tModel,nil];
-    [LawStore insertToDB_LawModel:lModel];
-    
-    [lModel print];
+    [law print];
     NSLog(@"");
 }
 
