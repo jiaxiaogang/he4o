@@ -100,6 +100,10 @@
 /**
  *  MARK:--------------------DB--------------------
  */
++(void)initialize{
+    [self setUserCalculateForCN:@"content"];//这里不写,进不到userGetValueForModel方法;
+}
+
 -(id)userGetValueForModel:(LKDBProperty *)property
 {
     if([property.propertyName isEqualToString:@"content"]){
