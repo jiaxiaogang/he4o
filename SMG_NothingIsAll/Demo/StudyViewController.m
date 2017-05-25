@@ -202,22 +202,14 @@
 
 
 -(void) tempTest{
-    //测试AIFoundation框架
-    NSString *s = @"a";
-    AIFChar *c = [AIFChar initWithContent:[s characterAtIndex:0]];
-    AIFChar *c2 = [AIFChar initWithContent:[s characterAtIndex:0]];
-    AIFChar *c3 = [AIFChar initWithContent:[s characterAtIndex:0]];
-    
-    AIFString *str = [AIFString initWithContent:@"我爱你"];
-    
-    AIFChar *c4 = [str characterAtIndex:1];
-    
-    AIFArray *arr = [AIFArray initWithObjects:c,str,c2,c3,c4, nil];
-    
-    AIFChar *c5 = [AIFChar initWithContent:[str characterAtIndex:1].content];
+    //测试AIoundation框架
     
     
-    AIFString *sr2 = AIFSTRFORMAT(@"%@",@"你好");
+    AIChar *aChar = AIMakeCharByStr(@"a");
+    AIString *iLYStr = AIMakeStr(@"我爱你");
+    AIChar *loveChar = [iLYStr characterAtIndex:1];
+    AIArray *arr = AIMakeArr(aChar,iLYStr,loveChar);
+    AIString *hiStr = AISTRFORMAT(@"%@",@"你好");
     NSLog(@"");
     
     

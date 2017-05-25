@@ -1,29 +1,29 @@
 //
-//  AIFArray.m
+//  AIArray.m
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/5/23.
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "AIFArray.h"
+#import "AIArray.h"
 
-@interface AIFArray ()
+@interface AIArray ()
 
 @property (strong,nonatomic) NSMutableArray *content;
 
 @end
 
-@implementation AIFArray
+@implementation AIArray
 
-+ (AIFArray*) initWithObjects:(AIFObject*)obj,...  NS_REQUIRES_NIL_TERMINATION NS_SWIFT_UNAVAILABLE("Use dictionary literals instead"){
-    AIFArray *value = [[AIFArray alloc] init];
++ (AIArray*) initWithObjects:(AIObject*)obj,...  NS_REQUIRES_NIL_TERMINATION NS_SWIFT_UNAVAILABLE("Use dictionary literals instead"){
+    AIArray *value = [[AIArray alloc] init];
     
     va_list argList;
     if (obj) {
         [value addObject:obj];
         va_start(argList, obj);
-        AIFObject* arg = va_arg(argList, id);
+        AIObject* arg = va_arg(argList, id);
         while (arg) {
             [value addObject:arg];
             arg = va_arg(argList, id);
@@ -31,7 +31,7 @@
         va_end(argList);
     }
     
-    [AIFArray insertToDB:value];
+    [AIArray insertToDB:value];
     return value;
 }
 
@@ -48,7 +48,7 @@
 /**
  *  MARK:--------------------public--------------------
  */
--(void) addObject:(AIFObject*)obj{
+-(void) addObject:(AIObject*)obj{
     if (obj) {
         [self.content addObject:obj.pointer];
     }else{
@@ -56,7 +56,7 @@
     }
 }
 
--(void) removeObject:(AIFObject*)obj{
+-(void) removeObject:(AIObject*)obj{
     if (obj) {
         [self.content removeObject:obj.pointer];
     }
@@ -66,7 +66,7 @@
     [self.content removeObjectAtIndex:index];
 }
 
--(BOOL) containsObject:(AIFObject*)obj{
+-(BOOL) containsObject:(AIObject*)obj{
     if (obj) {
         return [self.content containsObject:obj.pointer];
     }

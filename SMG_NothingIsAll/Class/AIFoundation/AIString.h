@@ -1,22 +1,22 @@
 //
-//  AIFString.h
+//  AIString.h
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/5/21.
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "AIFObject.h"
+#import "AIObject.h"
 
 /**
  *  MARK:--------------------字符串--------------------
- *  //存AIFChar数组;
+ *  //存AIChar数组;
  */
-@class AIFChar;
-@interface AIFString : AIFObject
+@class AIChar;
+@interface AIString : AIObject
 
 - (nonnull NSMutableArray*) content;
-- (AIFChar*)characterAtIndex:(NSUInteger)index;
-- (BOOL)isEqualToString:(AIFString*_Nullable)str;
+- (AIChar*)characterAtIndex:(NSUInteger)index;
+- (BOOL)isEqualToString:(AIString*_Nullable)str;
 
 @end

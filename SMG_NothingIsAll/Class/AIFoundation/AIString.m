@@ -1,32 +1,32 @@
 //
-//  AIFString.m
+//  AIString.m
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/5/21.
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "AIFString.h"
+#import "AIString.h"
 
-@interface AIFString ()
+@interface AIString ()
 
-@property (strong,nonatomic) NSMutableArray *content;//AIFChar.pointer数组;
+@property (strong,nonatomic) NSMutableArray *content;//AIChar.pointer数组;
 
 @end
 
-@implementation AIFString
+@implementation AIString
 
 +(id)initWithContent:(id)content{
-    AIFString *value = [[AIFString alloc] init];
+    AIString *value = [[AIString alloc] init];
     
     NSString *contentStr = STRTOOK(content);
     for (NSInteger i = 0; i < contentStr.length; i++) {
         unichar c = [contentStr characterAtIndex:i];
-        AIFChar *aifChar = [AIFChar initWithContent:c];
-        [value.content addObject:aifChar.pointer];
+        AIChar *aiChar = [AIChar initWithContent:c];
+        [value.content addObject:aiChar.pointer];
     }
     
-    [AIFString insertToDB:value];
+    [AIString insertToDB:value];
     return value;
 }
 
@@ -43,7 +43,7 @@
 /**
  *  MARK:--------------------public--------------------
  */
-- (AIFChar*)characterAtIndex:(NSUInteger)index{
+- (AIChar*)characterAtIndex:(NSUInteger)index{
     if (index < self.content.count) {
         PointerModel *pointer = [self.content objectAtIndex:index];
         return [NSClassFromString(pointer.pointerClass) searchSingleWithWhere:[DBUtils sqlWhere_RowId:pointer.pointerId] orderBy:nil];
@@ -51,8 +51,8 @@
     return nil;
 }
 
-- (BOOL)isEqualToString:(AIFString*)str {
-    str = AIFSTRTOOK(str);
+- (BOOL)isEqualToString:(AIString*)str {
+    str = AISTRTOOK(str);
     if (self.content.count == str.content.count) {
         for (NSInteger i = 0; i < self.content.count; i++) {
             if(![self.content[i] isEqual:str.content[i]]){

@@ -1,21 +1,21 @@
 //
-//  AIFObject.m
+//  AIObject.m
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/5/21.
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "AIFObject.h"
+#import "AIObject.h"
 
-@implementation AIFObject
+@implementation AIObject
 
 +(void)initialize{
     [self removePropertyWithColumnName:@"pointer"];
 }
 
 +(id) initWithContent:(id)content{
-    return [[AIFObject alloc] init];
+    return [[AIObject alloc] init];
 }
 
 -(PointerModel*) pointer{
@@ -28,8 +28,8 @@
 }
 
 -(BOOL) isEqual:(id)obj{
-    if (obj && [obj isKindOfClass:[AIFObject class]]) {
-        return [self.pointer isEqual:((AIFObject*)obj).pointer];//对比指针地址
+    if (obj && [obj isKindOfClass:[AIObject class]]) {
+        return [self.pointer isEqual:((AIObject*)obj).pointer];//对比指针地址
     }
     return false;
 }

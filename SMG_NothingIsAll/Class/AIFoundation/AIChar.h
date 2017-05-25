@@ -1,16 +1,17 @@
 //
-//  AIFChar.h
+//  AIChar.h
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/5/21.
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "AIFObject.h"
+#import "AIObject.h"
 
-@interface AIFChar : AIFObject
+@interface AIChar : AIObject
 
-+(id) initWithContent:(unichar)content;
++(AIChar *) initWithContent:(unichar)content;
++(AIChar *) initWithContentByString:(NSString *)str;
 @property (assign, nonatomic) unichar content;
 
 @end

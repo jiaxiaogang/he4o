@@ -1,5 +1,5 @@
 //
-//  AIFObject.h
+//  AIObject.h
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/5/21.
@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface AIFObject : NSObject
+@interface AIObject : NSObject
 
 +(id) initWithContent:(id)content;
 @property (strong,nonatomic) PointerModel *pointer; //数据指针

@@ -1,25 +1,25 @@
 //
-//  AIFArray.h
+//  AIArray.h
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/5/23.
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "AIFObject.h"
+#import "AIObject.h"
 
 /**
  *  MARK:--------------------数组(可变)--------------------
  *  指针数组;元素为PointerModel
  */
-@interface AIFArray : AIFObject
+@interface AIArray : AIObject
 
-+ (AIFArray*) initWithObjects:(AIFObject*)obj,...  NS_REQUIRES_NIL_TERMINATION NS_SWIFT_UNAVAILABLE("Use dictionary literals instead");
++ (AIArray*) initWithObjects:(AIObject*)obj,...  NS_REQUIRES_NIL_TERMINATION NS_SWIFT_UNAVAILABLE("Use dictionary literals instead");
 -(nonnull NSMutableArray*) content;
--(void) addObject:(AIFObject*)obj;
--(void) removeObject:(AIFObject*)obj;
+-(void) addObject:(AIObject*)obj;
+-(void) removeObject:(AIObject*)obj;
 -(void) removeObjectFromAtIndex:(NSUInteger)index;
--(BOOL) containsObject:(AIFObject*)obj;
+-(BOOL) containsObject:(AIObject*)obj;
 -(id) objectAtIndex:(NSUInteger)index;
 
 @end
