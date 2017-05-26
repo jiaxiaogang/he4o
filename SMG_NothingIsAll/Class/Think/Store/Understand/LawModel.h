@@ -20,13 +20,13 @@
  *
  *
  */
-@class PointerModel;
+@class AIPointer;
 @interface LawModel : NSObject
 
 /**
  *  MARK:--------------------初始化规律类--------------------
  */
-+ (LawModel*) initWithPointerModels:(PointerModel*)pModel,... NS_REQUIRES_NIL_TERMINATION NS_SWIFT_UNAVAILABLE("Use dictionary literals instead");
++ (LawModel*) initWithAIPointers:(AIPointer*)pModel,... NS_REQUIRES_NIL_TERMINATION NS_SWIFT_UNAVAILABLE("Use dictionary literals instead");
 
 /**
  *  MARK:--------------------初始化规律类--------------------
@@ -34,7 +34,7 @@
  */
 + (LawModel*) initWithModels:(NSObject*)model,...  NS_REQUIRES_NIL_TERMINATION NS_SWIFT_UNAVAILABLE("Use dictionary literals instead");
 
-@property (strong,nonatomic) NSMutableArray *pointerArr;    //指针数组(存PointerModel)
+@property (strong,nonatomic) NSMutableArray *pointerArr;    //指针数组(存AIPointer)
 @property (assign, nonatomic) NSInteger count;      //计数器
 
 - (void) print;

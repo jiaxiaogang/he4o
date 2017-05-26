@@ -18,11 +18,9 @@
     return [[AIObject alloc] init];
 }
 
--(PointerModel*) pointer{
+-(AIPointer*) pointer{
     if (_pointer == nil) {
-        _pointer = [[PointerModel alloc] init];
-        _pointer.pointerClass = NSStringFromClass(self.class);
-        _pointer.pointerId = self.rowid;
+        _pointer = [AIPointer initWithClass:self.class withId:self.rowid];
     }
     return _pointer;
 }

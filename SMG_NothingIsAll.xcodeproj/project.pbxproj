@@ -58,11 +58,11 @@
 		08E58DEB1ED3CE18008B0D76 /* LawStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E58DD71ED3CE18008B0D76 /* LawStore.m */; };
 		08E58DEC1ED3CE18008B0D76 /* LogicModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E58DD91ED3CE18008B0D76 /* LogicModel.m */; };
 		08E58DED1ED3CE18008B0D76 /* LogicStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E58DDB1ED3CE18008B0D76 /* LogicStore.m */; };
-		08E58DEE1ED3CE18008B0D76 /* PointerModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E58DDD1ED3CE18008B0D76 /* PointerModel.m */; };
 		08E99C481EBDD1C800A38FF5 /* MindControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E99C471EBDD1C800A38FF5 /* MindControl.m */; };
 		08E99C4B1EBDD1E000A38FF5 /* MindBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E99C4A1EBDD1E000A38FF5 /* MindBase.m */; };
 		08E99C4E1EBDD21500A38FF5 /* MindAAA.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E99C4D1EBDD21500A38FF5 /* MindAAA.m */; };
 		08E99C511EBDD21F00A38FF5 /* MindBBB.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E99C501EBDD21F00A38FF5 /* MindBBB.m */; };
+		08F140CB1ED7B4BD00E3B4D0 /* AIPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F140CA1ED7B4BD00E3B4D0 /* AIPointer.m */; };
 		08F3AFB21E98929C00747EDD /* MindUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F3AFB11E98929C00747EDD /* MindUtils.m */; };
 		08F3AFB81E98963600747EDD /* SMG.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F3AFB71E98963600747EDD /* SMG.m */; };
 		08F3AFBB1E98966E00747EDD /* Store.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F3AFBA1E98966E00747EDD /* Store.m */; };
@@ -180,8 +180,6 @@
 		08E58DD91ED3CE18008B0D76 /* LogicModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogicModel.m; sourceTree = "<group>"; };
 		08E58DDA1ED3CE18008B0D76 /* LogicStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogicStore.h; sourceTree = "<group>"; };
 		08E58DDB1ED3CE18008B0D76 /* LogicStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogicStore.m; sourceTree = "<group>"; };
-		08E58DDC1ED3CE18008B0D76 /* PointerModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PointerModel.h; sourceTree = "<group>"; };
-		08E58DDD1ED3CE18008B0D76 /* PointerModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PointerModel.m; sourceTree = "<group>"; };
 		08E99C461EBDD1C800A38FF5 /* MindControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MindControl.h; sourceTree = "<group>"; };
 		08E99C471EBDD1C800A38FF5 /* MindControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MindControl.m; sourceTree = "<group>"; };
 		08E99C491EBDD1E000A38FF5 /* MindBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MindBase.h; sourceTree = "<group>"; };
@@ -190,6 +188,8 @@
 		08E99C4D1EBDD21500A38FF5 /* MindAAA.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MindAAA.m; sourceTree = "<group>"; };
 		08E99C4F1EBDD21F00A38FF5 /* MindBBB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MindBBB.h; sourceTree = "<group>"; };
 		08E99C501EBDD21F00A38FF5 /* MindBBB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MindBBB.m; sourceTree = "<group>"; };
+		08F140C91ED7B4BD00E3B4D0 /* AIPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIPointer.h; sourceTree = "<group>"; };
+		08F140CA1ED7B4BD00E3B4D0 /* AIPointer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIPointer.m; sourceTree = "<group>"; };
 		08F3AFAD1E988E2A00747EDD /* MindEnum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MindEnum.h; sourceTree = "<group>"; };
 		08F3AFB01E98929C00747EDD /* MindUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MindUtils.h; sourceTree = "<group>"; };
 		08F3AFB11E98929C00747EDD /* MindUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MindUtils.m; sourceTree = "<group>"; };
@@ -417,6 +417,8 @@
 			isa = PBXGroup;
 			children = (
 				08D7DA411ED149B4004B1018 /* AIHeader.h */,
+				08F140C91ED7B4BD00E3B4D0 /* AIPointer.h */,
+				08F140CA1ED7B4BD00E3B4D0 /* AIPointer.m */,
 				08D7DA471ED149E8004B1018 /* AIObject.h */,
 				08D7DA481ED149E8004B1018 /* AIObject.m */,
 				08D7DA4A1ED149F8004B1018 /* AIString.h */,
@@ -530,8 +532,6 @@
 				08E58DD91ED3CE18008B0D76 /* LogicModel.m */,
 				08E58DDA1ED3CE18008B0D76 /* LogicStore.h */,
 				08E58DDB1ED3CE18008B0D76 /* LogicStore.m */,
-				08E58DDC1ED3CE18008B0D76 /* PointerModel.h */,
-				08E58DDD1ED3CE18008B0D76 /* PointerModel.m */,
 			);
 			path = Understand;
 			sourceTree = "<group>";
@@ -739,7 +739,6 @@
 				0895DAEB1EB2D7EB00E2B5C7 /* DataCell.m in Sources */,
 				088331C61E9BD3D00026DE23 /* FeelObjModel.m in Sources */,
 				08FDCE8E1EAA4A8E00882ADC /* SMGRange.m in Sources */,
-				08E58DEE1ED3CE18008B0D76 /* PointerModel.m in Sources */,
 				082F9D601EB236E80009F6A9 /* SMGOutputDelegate.m in Sources */,
 				081D961C1EBC2107008543EA /* ClassModel.m in Sources */,
 				087753251ECFE1C400E7AD09 /* UnderstandUtils.m in Sources */,
@@ -750,6 +749,7 @@
 				08F3AFBB1E98966E00747EDD /* Store.m in Sources */,
 				088331C91E9BD59F0026DE23 /* FeelAudioModel.m in Sources */,
 				08C84A9C1E9A874C00897D8B /* InputModel.m in Sources */,
+				08F140CB1ED7B4BD00E3B4D0 /* AIPointer.m in Sources */,
 				08E99C481EBDD1C800A38FF5 /* MindControl.m in Sources */,
 				08E99C4E1EBDD21500A38FF5 /* MindAAA.m in Sources */,
 				08C84A8E1E9A866200897D8B /* Input.m in Sources */,

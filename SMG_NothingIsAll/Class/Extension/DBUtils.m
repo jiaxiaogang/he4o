@@ -16,9 +16,9 @@
 +(NSString*) sqlWhere_RowId:(NSInteger)rowid{
     return [NSString stringWithFormat:@"rowid='%ld'",(long)rowid];
 }
+
 +(NSString*) sqlWhere_K:(id)columnName V:(id)value{
     return [NSString stringWithFormat:@"%@='%@'",columnName,value];
 }
-
 
 @end

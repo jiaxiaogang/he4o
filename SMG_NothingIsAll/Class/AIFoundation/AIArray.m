@@ -82,41 +82,5 @@
     }
 }
 
-/**
- *  MARK:--------------------NSCoding--------------------
- */
-- (void)encodeWithCoder:(NSCoder *)aCoder{
-    [aCoder encodeObject:self.content forKey:NSStringFromSelector(@selector(content))];
-}
-
-- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder{
-    self = [super init];
-    if (self) {
-        self.content = [aDecoder decodeObjectForKey:NSStringFromSelector(@selector(content))];
-    }
-    return self;
-}
-
-/**
- *  MARK:--------------------DB--------------------
- */
-+(void)initialize{
-    [self setUserCalculateForCN:@"content"];//这里不写,进不到userGetValueForModel方法;
-}
-
--(id)userGetValueForModel:(LKDBProperty *)property
-{
-    if([property.propertyName isEqualToString:@"content"]){
-        NSCoder *enCoder = [[NSCoder alloc] init];
-        [self encodeWithCoder:enCoder];
-        return enCoder;
-    }
-    return [super userGetValueForModel:property];
-}
-
--(void)userSetValueForModel:(LKDBProperty *)property value:(id)value
-{
-    [super userSetValueForModel:property value:value];
-}
 
 @end

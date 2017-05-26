@@ -11,7 +11,7 @@
 @interface AIObject : NSObject
 
 +(id) initWithContent:(id)content;
-@property (strong,nonatomic) PointerModel *pointer; //数据指针
+@property (strong,nonatomic) AIPointer *pointer; //数据指针
 -(void) print;
 
 @end

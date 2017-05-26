@@ -1,5 +1,5 @@
 //
-//  PointerModel.h
+//  AIPointer.h
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/5/20.
@@ -12,12 +12,12 @@
  *  MARK:--------------------"数据指针"--------------------
  *  可以指向任何表的任一项;
  */
-@interface PointerModel : NSObject <NSCoding>
+@interface AIPointer : NSObject 
 
-+(PointerModel*) initWithClass:(Class)c withId:(NSInteger)i ;
++(AIPointer*) initWithClass:(Class)pC withId:(NSInteger)pI ;
 
-@property (strong,nonatomic) NSString *pointerClass;    //指针类型
-@property (assign, nonatomic) NSInteger pointerId;  //指针地址(Id)
+@property (strong,nonatomic) NSString *pClass;    //指针类型
+@property (assign, nonatomic) NSInteger pId;  //指针地址(Id)
 
 
 @end

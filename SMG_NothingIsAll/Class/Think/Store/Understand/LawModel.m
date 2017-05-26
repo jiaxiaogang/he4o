@@ -14,20 +14,20 @@
  *  MARK:--------------------初始化规律类--------------------
  */
 
-+ (LawModel*) initWithPointerModels:(PointerModel*)pModel,... NS_REQUIRES_NIL_TERMINATION NS_SWIFT_UNAVAILABLE("Use dictionary literals instead"){
++ (LawModel*) initWithAIPointers:(AIPointer*)pModel,... NS_REQUIRES_NIL_TERMINATION NS_SWIFT_UNAVAILABLE("Use dictionary literals instead"){
     LawModel *lModel = [[LawModel alloc] init];
     lModel.pointerArr = [[NSMutableArray alloc] init];
     
     //使用va_list定义一个argList指针变量，该指针变量指向可变参数列表
     va_list argList;
-    if (pModel && [pModel isMemberOfClass:[PointerModel class]]) {
+    if (pModel && [pModel isMemberOfClass:[AIPointer class]]) {
         [lModel.pointerArr addObject:pModel];
         
         //让argList指向第一个可变参数列表的第一个参数
         va_start(argList, pModel);
         //va_arg用于提取argList指针当前指向的参数，并将指针移动到指向下一个参数(arg变量用于保存当前获取的参数)
-        PointerModel* arg = va_arg(argList, id);
-        while (arg && [arg isMemberOfClass:[PointerModel class]]) {
+        AIPointer* arg = va_arg(argList, id);
+        while (arg && [arg isMemberOfClass:[AIPointer class]]) {
             [lModel.pointerArr addObject:arg];
             //再次提取下一个参数，并将指针移动到下一个参数
             arg = va_arg(argList, id);
@@ -47,12 +47,12 @@
     
     va_list argList;
     if (model) {
-        [lModel.pointerArr addObject:[PointerModel initWithClass:model.class withId:model.rowid]];
+        [lModel.pointerArr addObject:[AIPointer initWithClass:model.class withId:model.rowid]];
         
         va_start(argList, model);
         NSObject* arg = va_arg(argList, id);
         while (arg) {
-            [lModel.pointerArr addObject:[PointerModel initWithClass:arg.class withId:arg.rowid]];
+            [lModel.pointerArr addObject:[AIPointer initWithClass:arg.class withId:arg.rowid]];
             arg = va_arg(argList, id);
         }
         va_end(argList);
@@ -64,11 +64,11 @@
     NSLog(@"------------打印Law数据\n");
     if (ARRISOK(self.pointerArr)) {
         for (NSInteger i = 0; i < self.pointerArr.count; i++) {
-            PointerModel *pModel = self.pointerArr[i];
+            AIPointer *pModel = self.pointerArr[i];
             NSLog(@"___%ld___(%@)\n",i,pModel.class);
             NSLog(@"___%ld___(rowid:%ld)\n",i,(long)pModel.rowid);
-            NSLog(@"___%ld___(pointerClass:%@)\n",i,pModel.pointerClass);
-            NSLog(@"___%ld___(pointerId:%ld)\n\n",i,(long)pModel.pointerId);
+            NSLog(@"___%ld___(pClass:%@)\n",i,pModel.pClass);
+            NSLog(@"___%ld___(pId:%ld)\n\n",i,(long)pModel.pId);
         }
     }
     NSLog(@"------------end\n\n");

@@ -145,11 +145,11 @@
                     NSInteger objId = [key integerValue];
                     
                     //创建两个指针
-                    PointerModel *textPoint = [PointerModel initWithClass:TextModel.class withId:textModel.rowid];
-                    PointerModel *objPoint = [PointerModel initWithClass:ObjModel.class withId:objId];
+                    AIPointer *textPoint = [AIPointer initWithClass:TextModel.class withId:textModel.rowid];
+                    AIPointer *objPoint = [AIPointer initWithClass:ObjModel.class withId:objId];
                     
                     //创建规律,并传入两个指针;
-                    LawModel *lModel = [LawModel initWithPointerModels:textPoint,objPoint];
+                    LawModel *lModel = [LawModel initWithAIPointers:textPoint,objPoint];
                     [LawStore insertToDB_LawModel:lModel];
                 }
             }
@@ -164,11 +164,11 @@
                     NSInteger doId = [key integerValue];
                     
                     //创建两个指针
-                    PointerModel *textPoint = [PointerModel initWithClass:TextModel.class withId:textModel.rowid];
-                    PointerModel *doPoint = [PointerModel initWithClass:DoModel.class withId:doId];
+                    AIPointer *textPoint = [AIPointer initWithClass:TextModel.class withId:textModel.rowid];
+                    AIPointer *doPoint = [AIPointer initWithClass:DoModel.class withId:doId];
                     
                     //创建规律,并传入两个指针;
-                    LawModel *lModel = [LawModel initWithPointerModels:textPoint,doPoint];
+                    LawModel *lModel = [LawModel initWithAIPointers:textPoint,doPoint];
                     [LawStore insertToDB_LawModel:lModel];
                 }
             }
