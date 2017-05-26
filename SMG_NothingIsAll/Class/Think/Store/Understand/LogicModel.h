@@ -8,9 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-/**
- *  MARK:--------------------Logic(逻辑表/因果,非同时)--------------------
- */
+
 @interface LogicModel : NSObject
 
 @end
