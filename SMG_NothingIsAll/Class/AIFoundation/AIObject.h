@@ -25,5 +25,6 @@
 
 + (id) ai_searchSingleWithRowId:(NSInteger)rowid;
 + (void) ai_insertToDB:(id)obj;
++ (BOOL) ai_updateToDB:(NSObject *)model where:(id)where;
 
 @end

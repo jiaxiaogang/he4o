@@ -53,4 +53,8 @@
     [self.class insertToDB:obj];
 }
 
++ (BOOL) ai_updateToDB:(NSObject *)model where:(id)where {
+    return [self.class updateToDB:model where:where];
+}
+
 @end

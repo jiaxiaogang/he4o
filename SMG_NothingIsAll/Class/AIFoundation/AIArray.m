@@ -82,5 +82,18 @@
     }
 }
 
+- (void) print{
+    NSLog(@"------------打印AILaw数据\n");
+    if (ARRISOK(self.content)) {
+        for (NSInteger i = 0; i < self.content.count; i++) {
+            AIPointer *pModel = self.content[i];
+            NSLog(@"___%ld___(%@)\n",i,pModel.class);
+            NSLog(@"___%ld___(rowid:%ld)\n",i,(long)pModel.rowid);
+            NSLog(@"___%ld___(pClass:%@)\n",i,pModel.pClass);
+            NSLog(@"___%ld___(pId:%ld)\n\n",i,(long)pModel.pId);
+        }
+    }
+    NSLog(@"------------end\n\n");
+}
 
 @end
