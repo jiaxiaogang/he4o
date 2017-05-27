@@ -75,6 +75,8 @@
 		08F639831E9A2EC0003CD163 /* FeelValueModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F639821E9A2EC0003CD163 /* FeelValueModel.m */; };
 		08F639861E9A2F6C003CD163 /* FeelModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F639851E9A2F6C003CD163 /* FeelModel.m */; };
 		08F639891E9A2FF4003CD163 /* Feel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F639881E9A2FF4003CD163 /* Feel.m */; };
+		08F7823C1ED90F6E004884BE /* Understand+Second.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F7823B1ED90F6E004884BE /* Understand+Second.m */; };
+		08F782401ED91290004884BE /* Decision.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F7823F1ED91290004884BE /* Decision.m */; };
 		08FDCE8E1EAA4A8E00882ADC /* SMGRange.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FDCE8D1EAA4A8E00882ADC /* SMGRange.m */; };
 		2753D7CF7BAEDFEACAF9264A /* libPods-SMG_NothingIsAll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */; };
 /* End PBXBuildFile section */
@@ -226,6 +228,10 @@
 		08F639881E9A2FF4003CD163 /* Feel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Feel.m; sourceTree = "<group>"; };
 		08F6398A1E9A3316003CD163 /* FeelHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeelHeader.h; sourceTree = "<group>"; };
 		08F6398B1E9A3326003CD163 /* FeelEnum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeelEnum.h; sourceTree = "<group>"; };
+		08F7823A1ED90F6E004884BE /* Understand+Second.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Understand+Second.h"; sourceTree = "<group>"; };
+		08F7823B1ED90F6E004884BE /* Understand+Second.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Understand+Second.m"; sourceTree = "<group>"; };
+		08F7823E1ED91290004884BE /* Decision.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Decision.h; sourceTree = "<group>"; };
+		08F7823F1ED91290004884BE /* Decision.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Decision.m; sourceTree = "<group>"; };
 		08FDCE8C1EAA4A8E00882ADC /* SMGRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMGRange.h; sourceTree = "<group>"; };
 		08FDCE8D1EAA4A8E00882ADC /* SMGRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMGRange.m; sourceTree = "<group>"; };
 		DE79539824FEDBA53557ECCA /* Pods-SMG_NothingIsAll.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SMG_NothingIsAll.release.xcconfig"; path = "Pods/Target Support Files/Pods-SMG_NothingIsAll/Pods-SMG_NothingIsAll.release.xcconfig"; sourceTree = "<group>"; };
@@ -296,6 +302,7 @@
 		087753171ECFE1C400E7AD09 /* Think */ = {
 			isa = PBXGroup;
 			children = (
+				08F7823D1ED91282004884BE /* Decision */,
 				08E58DB31ED3CE18008B0D76 /* Store */,
 				087753181ECFE1C400E7AD09 /* Understand */,
 			);
@@ -314,6 +321,8 @@
 				0877531F1ECFE1C400E7AD09 /* UnderstandHeader.h */,
 				087753201ECFE1C400E7AD09 /* UnderstandUtils.h */,
 				087753211ECFE1C400E7AD09 /* UnderstandUtils.m */,
+				08F7823A1ED90F6E004884BE /* Understand+Second.h */,
+				08F7823B1ED90F6E004884BE /* Understand+Second.m */,
 			);
 			path = Understand;
 			sourceTree = "<group>";
@@ -641,6 +650,15 @@
 			path = Feel;
 			sourceTree = "<group>";
 		};
+		08F7823D1ED91282004884BE /* Decision */ = {
+			isa = PBXGroup;
+			children = (
+				08F7823E1ED91290004884BE /* Decision.h */,
+				08F7823F1ED91290004884BE /* Decision.m */,
+			);
+			path = Decision;
+			sourceTree = "<group>";
+		};
 		207E0C8ABC4501E50CC5D363 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -818,6 +836,7 @@
 				08E58DED1ED3CE18008B0D76 /* LogicStore.m in Sources */,
 				08F140DA1ED7C3BB00E3B4D0 /* AIValue.m in Sources */,
 				08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */,
+				08F782401ED91290004884BE /* Decision.m in Sources */,
 				08AF454D1E97D0B500377887 /* AppDelegate.m in Sources */,
 				08E99C511EBDD21F00A38FF5 /* MindBBB.m in Sources */,
 				08C84A981E9A86C400897D8B /* StoreLogModel_Text.m in Sources */,
@@ -847,6 +866,7 @@
 				08E58DE01ED3CE18008B0D76 /* ClassStore.m in Sources */,
 				08E58DE91ED3CE18008B0D76 /* MemStore.m in Sources */,
 				08E58DE61ED3CE18008B0D76 /* TextStore.m in Sources */,
+				08F7823C1ED90F6E004884BE /* Understand+Second.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
