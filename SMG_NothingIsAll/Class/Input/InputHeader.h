@@ -7,3 +7,8 @@
 //
 
 #import "Input.h"
+#import "InputModelBase.h"
+#import "InputObjModel.h"
+#import "InputAudioModel.h"
+#import "InputTextModel.h"
+#import "InputDoModel.h"

@@ -8,12 +8,6 @@
 
 #import "FeelEnum.h"
 #import "Feel.h"
-#import "InputModelBase.h"
 #import "FeelValueModel.h"
-#import "InputObjModel.h"
-#import "InputAudioModel.h"
-#import "InputTextModel.h"
-#import "InputDoModel.h"
-
 #import "FeelTextUtils.h"
 
