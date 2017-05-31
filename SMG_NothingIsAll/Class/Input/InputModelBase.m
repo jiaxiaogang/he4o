@@ -1,22 +1,22 @@
 //
-//  FeelModel.m
+//  InputModelBase.m
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/4/9.
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "FeelModel.h"
+#import "InputModelBase.h"
 #import "TMCache.h"
 #import "SMGHeader.h"
 
-@interface FeelModel ()
+@interface InputModelBase ()
 
 @property (strong,nonatomic) NSMutableArray *attributesKeys;    //属性的keys数组;
 
 @end
 
-@implementation FeelModel
+@implementation InputModelBase
 
 
 

@@ -16,7 +16,10 @@
 
 
 -(NSString*) feelForText:(NSString*)text{
-    //作数据检查,例如大于50字;则背不下来;只记部分;
+    
+    //取属性;
+    //[FeelTextUtils getLength:text];
+    
     return STRTOOK(text);
 }
 
@@ -31,61 +34,5 @@
     //先从本地找替代品;
     return nil;
 }
-
-
-
-
-
-@end
-
-
-
-
-/**
- *  MARK:--------------------输入部分--------------------
- *
- *
- */
-@implementation Feel (INPUT)
-
--(void) commitInputModel:(InputModel*)inputModel{
-    NSLog(@"感觉系统收到Input发来的多媒体数据");
-    if (inputModel) {
-        //1,图片感觉化
-        FeelObjModel *imgModel = [[FeelObjModel alloc] init];
-        imgModel.img = [self feelForImg:inputModel.img];
-        
-        //2,声音感觉化
-        FeelAudioModel *audioModel = [[FeelAudioModel alloc] init];
-        audioModel.audio = [self feelForAudio:inputModel.audio];
-        
-        //3,文本感觉化
-        FeelTextModel *textModel = [[FeelTextModel alloc] init];
-        textModel.text = [self feelForText:inputModel.text];
-        textModel.attributes = [[NSMutableDictionary alloc] init];
-        
-        [[SMG sharedInstance].understand commitWithFeelModelArr:@[imgModel,audioModel,textModel]];
-    }
-}
-
-
-//查找任务_提交收集来的原数据;
--(BOOL) commitInputModelForFindObject:(InputModel*)inputModel{
-    if ([STRTOOK(inputModel.text) isEqualToString:@"正确数据"]) {
-        return true;//直到找到正确的数据;或任务被打断;
-    }
-    return false;
-}
-
-@end
-
-
-/**
- *  MARK:--------------------输出部分--------------------
- *
- *
- */
-@implementation Feel (OUTPUT)
-
 
 @end

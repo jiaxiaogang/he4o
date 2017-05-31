@@ -52,14 +52,14 @@
     __block NSMutableArray *findObjArr = [[NSMutableArray alloc] init];
     __block NSMutableArray *findDoArr = [[NSMutableArray alloc] init];
     __block NSMutableArray *findTextArr = [[NSMutableArray alloc] init];
-    for (FeelModel *model in modelArr) {
-        if ([model isKindOfClass:[FeelTextModel class]]){
+    for (InputModelBase *model in modelArr) {
+        if ([model isKindOfClass:[InputTextModel class]]){
             //字符串输入
-            NSString *text = ((FeelTextModel*)model).text;
+            NSString *text = ((InputTextModel*)model).text;
             [findTextArr addObject:STRTOOK(text)];
-        }else if ([model isKindOfClass:[FeelObjModel class]]) {
+        }else if ([model isKindOfClass:[InputObjModel class]]) {
             //图像输入物体
-            NSDictionary *value = [[SMG sharedInstance].store.mkStore.objStore addItem:((FeelObjModel*)model).name];
+            NSDictionary *value = [[SMG sharedInstance].store.mkStore.objStore addItem:((InputObjModel*)model).name];
             if (value) [findObjArr addObject:value];
         }else if ([model isKindOfClass:[InputDoModel class]]) {
             //图像输入行为
@@ -106,9 +106,9 @@
     NSMutableDictionary *memDic = [[NSMutableDictionary alloc] init];
     NSMutableArray *memObjArr = [[NSMutableArray alloc] init];
     NSMutableArray *memDoArr = [[NSMutableArray alloc] init];
-    for (FeelModel *model in modelArr) {
-        if ([model isKindOfClass:[FeelTextModel class]]){//文本
-            [memDic setObject:((FeelTextModel*)model).text forKey:@"text"];
+    for (InputModelBase *model in modelArr) {
+        if ([model isKindOfClass:[InputTextModel class]]){//文本
+            [memDic setObject:((InputTextModel*)model).text forKey:@"text"];
         }else if ([model isKindOfClass:[InputDoModel class]]) {//图像输入行为(如果doModel的fromMKId和toMKId是指向的名字;则这里修正为itemId;)
             InputDoModel *doModel = (InputDoModel*)model;
             NSMutableDictionary *memDoItem = [[NSMutableDictionary alloc] init];
@@ -188,7 +188,7 @@
     
 }
 
-//-(void) commitWithFeelModel:(FeelModel*)model{
+//-(void) commitWithFeelModel:(InputModelBase*)model{
 //    //1,数据检查
 //    if (model == nil) {
 //        return;
@@ -196,8 +196,8 @@
 //    
 //    //2,收集数据
 //    NSInteger groupId = [MemStore createGroupId];
-//    if ([model isKindOfClass:[FeelTextModel class]]) {
-//        NSString *text = ((FeelTextModel*)model).text;
+//    if ([model isKindOfClass:[InputTextModel class]]) {
+//        NSString *text = ((InputTextModel*)model).text;
 //        for (NSInteger i = 0; i < text.length; i++) {
 //            NSString *value = [text substringWithRange:NSMakeRange(i,1)];
 //            CharModel *charModel = [CharStore createInstanceModel:value];
@@ -209,9 +209,9 @@
 //            [MemModel insertToDB:sayItemModel];
 //        }
 //        
-//    }else if ([model isKindOfClass:[FeelObjModel class]]) {
+//    }else if ([model isKindOfClass:[InputObjModel class]]) {
 //        //图像输入物体
-//        NSDictionary *value = [[SMG sharedInstance].store.mkStore addObj:((FeelObjModel*)model).name];
+//        NSDictionary *value = [[SMG sharedInstance].store.mkStore addObj:((InputObjModel*)model).name];
 //        if (value) [findObjArr addObject:value];
 //    }else if ([model isKindOfClass:[InputDoModel class]]) {
 //        //图像输入行为
@@ -230,14 +230,14 @@
 //    __block NSMutableArray *findObjArr = [[NSMutableArray alloc] init];
 //    __block NSMutableArray *findDoArr = [[NSMutableArray alloc] init];
 //    __block NSMutableArray *findTextArr = [[NSMutableArray alloc] init];
-//    for (FeelModel *model in modelArr) {
-//        if ([model isKindOfClass:[FeelTextModel class]]){
+//    for (InputModelBase *model in modelArr) {
+//        if ([model isKindOfClass:[InputTextModel class]]){
 //            //字符串输入
-//            NSString *text = ((FeelTextModel*)model).text;
+//            NSString *text = ((InputTextModel*)model).text;
 //            [findTextArr addObject:STRTOOK(text)];
-//        }else if ([model isKindOfClass:[FeelObjModel class]]) {
+//        }else if ([model isKindOfClass:[InputObjModel class]]) {
 //            //图像输入物体
-//            NSDictionary *value = [[SMG sharedInstance].store.mkStore addObj:((FeelObjModel*)model).name];
+//            NSDictionary *value = [[SMG sharedInstance].store.mkStore addObj:((InputObjModel*)model).name];
 //            if (value) [findObjArr addObject:value];
 //        }else if ([model isKindOfClass:[InputDoModel class]]) {
 //            //图像输入行为
@@ -284,9 +284,9 @@
 //    NSMutableDictionary *memDic = [[NSMutableDictionary alloc] init];
 //    NSMutableArray *memObjArr = [[NSMutableArray alloc] init];
 //    NSMutableArray *memDoArr = [[NSMutableArray alloc] init];
-//    for (FeelModel *model in modelArr) {
-//        if ([model isKindOfClass:[FeelTextModel class]]){//文本
-//            [memDic setObject:((FeelTextModel*)model).text forKey:@"text"];
+//    for (InputModelBase *model in modelArr) {
+//        if ([model isKindOfClass:[InputTextModel class]]){//文本
+//            [memDic setObject:((InputTextModel*)model).text forKey:@"text"];
 //        }else if ([model isKindOfClass:[InputDoModel class]]) {//图像输入行为(如果doModel的fromMKId和toMKId是指向的名字;则这里修正为itemId;)
 //            InputDoModel *doModel = (InputDoModel*)model;
 //            NSMutableDictionary *memDoItem = [[NSMutableDictionary alloc] init];

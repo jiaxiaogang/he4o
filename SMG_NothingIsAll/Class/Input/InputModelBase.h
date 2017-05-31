@@ -1,5 +1,5 @@
 //
-//  FeelModel.h
+//  InputModelBase.h
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/4/9.
@@ -11,8 +11,8 @@
 /**
  *  MARK:--------------------感觉码 模型--------------------
  */
-@class FeelValueModel,FeelAudioModel,FeelTextModel;
-@interface FeelModel : NSObject
+@class FeelValueModel,InputAudioModel,InputTextModel;
+@interface InputModelBase : NSObject
 
 @property (assign, nonatomic) NSInteger feelId;
 

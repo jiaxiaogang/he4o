@@ -1,5 +1,5 @@
 //
-//  FeelObjModel.h
+//  InputObjModel.h
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/4/10.
@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "FeelModel.h"
+#import "InputModelBase.h"
 
 
 /**
@@ -25,7 +25,7 @@
  *
  *
  */
-@interface FeelObjModel : FeelModel
+@interface InputObjModel : InputModelBase
 
 @property (strong,nonatomic) NSString *name;                    //实物名字
 @property (strong,nonatomic) UIImage *img;                      //图片

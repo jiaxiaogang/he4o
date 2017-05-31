@@ -168,11 +168,11 @@
     doModel.doType = self.doTypeTF.text;
     
     //2,feelTextModel
-    FeelTextModel *feelTextModel = [[FeelTextModel alloc] init];
+    InputTextModel *feelTextModel = [[InputTextModel alloc] init];
     feelTextModel.text = self.inputTV.text;
     
     //3,objModel
-    FeelObjModel *objModel = [[FeelObjModel alloc] init];
+    InputObjModel *objModel = [[InputObjModel alloc] init];
     objModel.name = self.targetTF.text;
     
     //3,commit
@@ -246,14 +246,14 @@
         
         //2,feelTextModel
         if ([dic objectForKey:@"text"]) {
-            FeelTextModel *feelTextModel = [[FeelTextModel alloc] init];
+            InputTextModel *feelTextModel = [[InputTextModel alloc] init];
             feelTextModel.text = [dic objectForKey:@"text"];
             [commitArr addObject:feelTextModel];
         }
         
         //3,
         if ([dic objectForKey:@"obj"]) {
-            FeelObjModel *objModel = [[FeelObjModel alloc] init];
+            InputObjModel *objModel = [[InputObjModel alloc] init];
             objModel.name = [dic objectForKey:@"obj"];
             [commitArr addObject:objModel];
         }
@@ -291,17 +291,17 @@
     [commitArr addObject:doModel];
     
     //2,feelTextModel
-    FeelTextModel *feelTextModel = [[FeelTextModel alloc] init];
+    InputTextModel *feelTextModel = [[InputTextModel alloc] init];
     feelTextModel.text = STRFORMAT(@"%@%@%@",personStr,doStr,targetStr);
     [commitArr addObject:feelTextModel];
     
     
     //3,
-    FeelObjModel *objModel = [[FeelObjModel alloc] init];
+    InputObjModel *objModel = [[InputObjModel alloc] init];
     objModel.name = personStr;
     [commitArr addObject:objModel];
     
-    FeelObjModel *objModel2 = [[FeelObjModel alloc] init];
+    InputObjModel *objModel2 = [[InputObjModel alloc] init];
     objModel2.name = targetStr;
     [commitArr addObject:objModel2];
     

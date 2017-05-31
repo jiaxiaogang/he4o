@@ -19,16 +19,9 @@
  *  3,收集用户输入的Text字符串(Text)
  *  4,收集摄像头视频do行为(视频行为)
  */
-@class InputModel,DoModel,FeelModel;
 @interface Input : NSObject
 
 
--(void) seeWorld:(id)property;//指定注意下某物的某属性;
 
-/**
- *  MARK:--------------------在视野查找某物--------------------
- *  attributes:确认唯一性的参数集;
- */
--(void) findAtWorld:(NSDictionary*)attributes;
 
 @end

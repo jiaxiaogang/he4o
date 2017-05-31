@@ -1,5 +1,5 @@
 //
-//  FeelTextModel.h
+//  InputTextModel.h
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/4/10.
@@ -7,13 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "FeelModel.h"
+#import "InputModelBase.h"
 
 /**
  *  MARK:--------------------Input_文字--------------------
  *
  */
-@interface FeelTextModel : FeelModel
+@interface InputTextModel : InputModelBase
 
 @property (strong,nonatomic) NSString *text;
 

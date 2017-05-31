@@ -7,4 +7,3 @@
 //
 
 #import "Input.h"
-#import "InputModel.h"
