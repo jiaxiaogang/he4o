@@ -10,10 +10,20 @@
 
 @implementation AIObject
 
+/**
+ *  MARK:--------------------Store--------------------
+ */
 +(void)initialize{
     [self removePropertyWithColumnName:@"pointer"];
 }
 
++(BOOL) isContainParent{
+    return true;
+}
+
+/**
+ *  MARK:--------------------method--------------------
+ */
 +(id) initWithContent:(id)content{
     return [[AIObject alloc] init];
 }

@@ -18,7 +18,7 @@
  *      3.2,行为间总结逻辑
  *  4,目前没有双目系统,所以这里使用"行为模型",以后有了双目后,这里费弃;
  */
-@interface FeelDoModel : NSObject<NSCoding>
+@interface InputDoModel : NSObject<NSCoding>
 
 @property (strong,nonatomic) NSString *fromMKId;
 @property (strong,nonatomic) NSString *doType;

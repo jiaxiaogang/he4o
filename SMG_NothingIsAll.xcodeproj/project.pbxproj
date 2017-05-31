@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0803698D1EAC4C4400B4819C /* FeelDoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0803698C1EAC4C4400B4819C /* FeelDoModel.m */; };
+		0803698D1EAC4C4400B4819C /* InputDoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0803698C1EAC4C4400B4819C /* InputDoModel.m */; };
+		0813D63E1EDF729F0089FA0C /* FeelTextUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0813D63D1EDF729F0089FA0C /* FeelTextUtils.m */; };
+		0813D6411EDF75CB0089FA0C /* FeelTextModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0813D6401EDF75CB0089FA0C /* FeelTextModel.m */; };
 		081D961C1EBC2107008543EA /* ClassModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 081D961B1EBC2107008543EA /* ClassModel.m */; };
 		081DA13B1ED47CE000C8C531 /* AIArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 081DA13A1ED47CE000C8C531 /* AIArray.m */; };
 		082F9D561EB234750009F6A9 /* Output.m in Sources */ = {isa = PBXBuildFile; fileRef = 082F9D551EB234750009F6A9 /* Output.m */; };
@@ -21,7 +23,6 @@
 		087753251ECFE1C400E7AD09 /* UnderstandUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 087753211ECFE1C400E7AD09 /* UnderstandUtils.m */; };
 		088331C61E9BD3D00026DE23 /* FeelObjModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088331C51E9BD3D00026DE23 /* FeelObjModel.m */; };
 		088331C91E9BD59F0026DE23 /* FeelAudioModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088331C81E9BD59F0026DE23 /* FeelAudioModel.m */; };
-		088331CC1E9BD68C0026DE23 /* FeelTextModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088331CB1E9BD68C0026DE23 /* FeelTextModel.m */; };
 		0895DAE61EB2D52D00E2B5C7 /* DataViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0895DAE41EB2D52D00E2B5C7 /* DataViewController.m */; };
 		0895DAE71EB2D52D00E2B5C7 /* DataViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0895DAE51EB2D52D00E2B5C7 /* DataViewController.xib */; };
 		0895DAEB1EB2D7EB00E2B5C7 /* DataCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0895DAE91EB2D7EB00E2B5C7 /* DataCell.m */; };
@@ -82,8 +83,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0803698B1EAC4C4400B4819C /* FeelDoModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeelDoModel.h; sourceTree = "<group>"; };
-		0803698C1EAC4C4400B4819C /* FeelDoModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeelDoModel.m; sourceTree = "<group>"; };
+		0803698B1EAC4C4400B4819C /* InputDoModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputDoModel.h; sourceTree = "<group>"; };
+		0803698C1EAC4C4400B4819C /* InputDoModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputDoModel.m; sourceTree = "<group>"; };
+		0813D63C1EDF729F0089FA0C /* FeelTextUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeelTextUtils.h; sourceTree = "<group>"; };
+		0813D63D1EDF729F0089FA0C /* FeelTextUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeelTextUtils.m; sourceTree = "<group>"; };
+		0813D63F1EDF75CB0089FA0C /* FeelTextModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeelTextModel.h; sourceTree = "<group>"; };
+		0813D6401EDF75CB0089FA0C /* FeelTextModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeelTextModel.m; sourceTree = "<group>"; };
 		081D961A1EBC2107008543EA /* ClassModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassModel.h; sourceTree = "<group>"; };
 		081D961B1EBC2107008543EA /* ClassModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClassModel.m; sourceTree = "<group>"; };
 		081DA1391ED47CE000C8C531 /* AIArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIArray.h; sourceTree = "<group>"; };
@@ -113,8 +118,6 @@
 		088331C51E9BD3D00026DE23 /* FeelObjModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeelObjModel.m; sourceTree = "<group>"; };
 		088331C71E9BD59F0026DE23 /* FeelAudioModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeelAudioModel.h; sourceTree = "<group>"; };
 		088331C81E9BD59F0026DE23 /* FeelAudioModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeelAudioModel.m; sourceTree = "<group>"; };
-		088331CA1E9BD68C0026DE23 /* FeelTextModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeelTextModel.h; sourceTree = "<group>"; };
-		088331CB1E9BD68C0026DE23 /* FeelTextModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeelTextModel.m; sourceTree = "<group>"; };
 		0895DAE31EB2D52D00E2B5C7 /* DataViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataViewController.h; sourceTree = "<group>"; };
 		0895DAE41EB2D52D00E2B5C7 /* DataViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataViewController.m; sourceTree = "<group>"; };
 		0895DAE51EB2D52D00E2B5C7 /* DataViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DataViewController.xib; sourceTree = "<group>"; };
@@ -251,6 +254,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0813D63A1EDF71AF0089FA0C /* Text */ = {
+			isa = PBXGroup;
+			children = (
+				0813D63C1EDF729F0089FA0C /* FeelTextUtils.h */,
+				0813D63D1EDF729F0089FA0C /* FeelTextUtils.m */,
+			);
+			path = Text;
+			sourceTree = "<group>";
+		};
 		081BCAAC1EAC7DD700D248E1 /* AudioStore */ = {
 			isa = PBXGroup;
 			children = (
@@ -630,6 +642,7 @@
 		08F639801E9A2DCE003CD163 /* Feel */ = {
 			isa = PBXGroup;
 			children = (
+				0813D63A1EDF71AF0089FA0C /* Text */,
 				08F639811E9A2EC0003CD163 /* FeelValueModel.h */,
 				08F639821E9A2EC0003CD163 /* FeelValueModel.m */,
 				08F639841E9A2F6C003CD163 /* FeelModel.h */,
@@ -638,14 +651,14 @@
 				08F639881E9A2FF4003CD163 /* Feel.m */,
 				08F6398A1E9A3316003CD163 /* FeelHeader.h */,
 				08F6398B1E9A3326003CD163 /* FeelEnum.h */,
+				0813D63F1EDF75CB0089FA0C /* FeelTextModel.h */,
+				0813D6401EDF75CB0089FA0C /* FeelTextModel.m */,
 				088331C41E9BD3D00026DE23 /* FeelObjModel.h */,
 				088331C51E9BD3D00026DE23 /* FeelObjModel.m */,
 				088331C71E9BD59F0026DE23 /* FeelAudioModel.h */,
 				088331C81E9BD59F0026DE23 /* FeelAudioModel.m */,
-				088331CA1E9BD68C0026DE23 /* FeelTextModel.h */,
-				088331CB1E9BD68C0026DE23 /* FeelTextModel.m */,
-				0803698B1EAC4C4400B4819C /* FeelDoModel.h */,
-				0803698C1EAC4C4400B4819C /* FeelDoModel.m */,
+				0803698B1EAC4C4400B4819C /* InputDoModel.h */,
+				0803698C1EAC4C4400B4819C /* InputDoModel.m */,
 			);
 			path = Feel;
 			sourceTree = "<group>";
@@ -813,7 +826,7 @@
 				087753251ECFE1C400E7AD09 /* UnderstandUtils.m in Sources */,
 				08E58DE41ED3CE18008B0D76 /* ObjStore.m in Sources */,
 				08E58DEC1ED3CE18008B0D76 /* LogicModel.m in Sources */,
-				0803698D1EAC4C4400B4819C /* FeelDoModel.m in Sources */,
+				0803698D1EAC4C4400B4819C /* InputDoModel.m in Sources */,
 				08AF456E1E97DDF600377887 /* MKStore.m in Sources */,
 				08F3AFBB1E98966E00747EDD /* Store.m in Sources */,
 				088331C91E9BD59F0026DE23 /* FeelAudioModel.m in Sources */,
@@ -829,11 +842,13 @@
 				08E58DDF1ED3CE18008B0D76 /* CharStore.m in Sources */,
 				08D7DA4C1ED149F8004B1018 /* AIString.m in Sources */,
 				08E58DE21ED3CE18008B0D76 /* DoStore.m in Sources */,
+				0813D63E1EDF729F0089FA0C /* FeelTextUtils.m in Sources */,
 				08E58DE81ED3CE18008B0D76 /* MemModel.m in Sources */,
 				08F3AFB81E98963600747EDD /* SMG.m in Sources */,
 				08AF45631E97D6F200377887 /* GC.m in Sources */,
 				081DA13B1ED47CE000C8C531 /* AIArray.m in Sources */,
 				08E58DED1ED3CE18008B0D76 /* LogicStore.m in Sources */,
+				0813D6411EDF75CB0089FA0C /* FeelTextModel.m in Sources */,
 				08F140DA1ED7C3BB00E3B4D0 /* AIValue.m in Sources */,
 				08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */,
 				08F782401ED91290004884BE /* Decision.m in Sources */,
@@ -854,7 +869,6 @@
 				082F9D5C1EB236AC0009F6A9 /* StudyViewController.m in Sources */,
 				08F3AFB21E98929C00747EDD /* MindUtils.m in Sources */,
 				08C84A991E9A86C400897D8B /* StoreModel_Text.m in Sources */,
-				088331CC1E9BD68C0026DE23 /* FeelTextModel.m in Sources */,
 				08E58DEB1ED3CE18008B0D76 /* LawStore.m in Sources */,
 				0831CF5E1EBEF20500C020E6 /* DBUtils.m in Sources */,
 				0895DAE61EB2D52D00E2B5C7 /* DataViewController.m in Sources */,

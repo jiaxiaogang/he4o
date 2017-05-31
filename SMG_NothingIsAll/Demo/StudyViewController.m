@@ -162,7 +162,7 @@
     }
     NSLog(@"------------\n发言人:%@\n%@\n------------\n行为人:%@\n%@_%@\n------------\n",self.sayPersonName,self.inputTV.text,self.doPersonName,self.doTypeTF.text,self.targetTF.text);
     //1,doModel
-    FeelDoModel *doModel = [[FeelDoModel alloc] init];
+    InputDoModel *doModel = [[InputDoModel alloc] init];
     doModel.fromMKId = self.doPersonName;
     doModel.toMKId = self.targetTF.text;
     doModel.doType = self.doTypeTF.text;
@@ -237,7 +237,7 @@
         
         //1,doModel
         if ([dic objectForKey:@"doType"]) {
-            FeelDoModel *doModel = [[FeelDoModel alloc] init];
+            InputDoModel *doModel = [[InputDoModel alloc] init];
             doModel.fromMKId = [dic objectForKey:@"fromMKId"];
             doModel.toMKId = [dic objectForKey:@"toMKId"];
             doModel.doType = [dic objectForKey:@"doType"];
@@ -284,7 +284,7 @@
     NSString *targetStr = targetArr[arc4random() % targetArr.count];
     
     //1,doModel
-    FeelDoModel *doModel = [[FeelDoModel alloc] init];
+    InputDoModel *doModel = [[InputDoModel alloc] init];
     doModel.fromMKId = personStr;
     doModel.toMKId = targetStr;
     doModel.doType = doStr;

@@ -13,5 +13,7 @@
 #import "FeelObjModel.h"
 #import "FeelAudioModel.h"
 #import "FeelTextModel.h"
-#import "FeelDoModel.h"
+#import "InputDoModel.h"
+
+#import "FeelTextUtils.h"
 

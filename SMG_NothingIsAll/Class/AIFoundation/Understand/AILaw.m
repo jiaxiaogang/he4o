@@ -10,10 +10,6 @@
 
 @implementation AILaw
 
-+(BOOL) isContainParent{
-    return true;
-}
-
 +(void) ai_insertToDB:(id)obj{
     if (obj && [obj isKindOfClass:[AILaw class]]) {
         ((AILaw*)obj).count ++;//存取时计数器+1;

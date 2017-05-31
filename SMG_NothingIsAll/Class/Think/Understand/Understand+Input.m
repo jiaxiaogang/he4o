@@ -61,15 +61,15 @@
             //图像输入物体
             NSDictionary *value = [[SMG sharedInstance].store.mkStore.objStore addItem:((FeelObjModel*)model).name];
             if (value) [findObjArr addObject:value];
-        }else if ([model isKindOfClass:[FeelDoModel class]]) {
+        }else if ([model isKindOfClass:[InputDoModel class]]) {
             //图像输入行为
-            NSDictionary *value = [[SMG sharedInstance].store.mkStore.doStore addItem:((FeelDoModel*)model).doType];
+            NSDictionary *value = [[SMG sharedInstance].store.mkStore.doStore addItem:((InputDoModel*)model).doType];
             if (value) [findDoArr addObject:value];
             
-            NSDictionary *fromObj = [[SMG sharedInstance].store.mkStore.objStore addItem:((FeelDoModel*)model).fromMKId];
+            NSDictionary *fromObj = [[SMG sharedInstance].store.mkStore.objStore addItem:((InputDoModel*)model).fromMKId];
             if (fromObj) [findObjArr addObject:fromObj];
             
-            NSDictionary *toObj = [[SMG sharedInstance].store.mkStore.objStore addItem:((FeelDoModel*)model).toMKId];
+            NSDictionary *toObj = [[SMG sharedInstance].store.mkStore.objStore addItem:((InputDoModel*)model).toMKId];
             if (toObj) [findObjArr addObject:toObj];
         }
     }
@@ -109,8 +109,8 @@
     for (FeelModel *model in modelArr) {
         if ([model isKindOfClass:[FeelTextModel class]]){//文本
             [memDic setObject:((FeelTextModel*)model).text forKey:@"text"];
-        }else if ([model isKindOfClass:[FeelDoModel class]]) {//图像输入行为(如果doModel的fromMKId和toMKId是指向的名字;则这里修正为itemId;)
-            FeelDoModel *doModel = (FeelDoModel*)model;
+        }else if ([model isKindOfClass:[InputDoModel class]]) {//图像输入行为(如果doModel的fromMKId和toMKId是指向的名字;则这里修正为itemId;)
+            InputDoModel *doModel = (InputDoModel*)model;
             NSMutableDictionary *memDoItem = [[NSMutableDictionary alloc] init];
             for (NSDictionary *objItem in findObjArr) {
                 if ([STRTOOK(doModel.fromMKId) isEqualToString:[objItem objectForKey:@"itemName"]]) {
@@ -213,15 +213,15 @@
 //        //图像输入物体
 //        NSDictionary *value = [[SMG sharedInstance].store.mkStore addObj:((FeelObjModel*)model).name];
 //        if (value) [findObjArr addObject:value];
-//    }else if ([model isKindOfClass:[FeelDoModel class]]) {
+//    }else if ([model isKindOfClass:[InputDoModel class]]) {
 //        //图像输入行为
-//        NSDictionary *value = [[SMG sharedInstance].store.mkStore addDo:((FeelDoModel*)model).doType];
+//        NSDictionary *value = [[SMG sharedInstance].store.mkStore addDo:((InputDoModel*)model).doType];
 //        if (value) [findDoArr addObject:value];
 //        
-//        NSDictionary *fromObj = [[SMG sharedInstance].store.mkStore addObj:((FeelDoModel*)model).fromMKId];
+//        NSDictionary *fromObj = [[SMG sharedInstance].store.mkStore addObj:((InputDoModel*)model).fromMKId];
 //        if (fromObj) [findObjArr addObject:fromObj];
 //        
-//        NSDictionary *toObj = [[SMG sharedInstance].store.mkStore addObj:((FeelDoModel*)model).toMKId];
+//        NSDictionary *toObj = [[SMG sharedInstance].store.mkStore addObj:((InputDoModel*)model).toMKId];
 //        if (toObj) [findObjArr addObject:toObj];
 //    }
 //    
@@ -239,15 +239,15 @@
 //            //图像输入物体
 //            NSDictionary *value = [[SMG sharedInstance].store.mkStore addObj:((FeelObjModel*)model).name];
 //            if (value) [findObjArr addObject:value];
-//        }else if ([model isKindOfClass:[FeelDoModel class]]) {
+//        }else if ([model isKindOfClass:[InputDoModel class]]) {
 //            //图像输入行为
-//            NSDictionary *value = [[SMG sharedInstance].store.mkStore addDo:((FeelDoModel*)model).doType];
+//            NSDictionary *value = [[SMG sharedInstance].store.mkStore addDo:((InputDoModel*)model).doType];
 //            if (value) [findDoArr addObject:value];
 //            
-//            NSDictionary *fromObj = [[SMG sharedInstance].store.mkStore addObj:((FeelDoModel*)model).fromMKId];
+//            NSDictionary *fromObj = [[SMG sharedInstance].store.mkStore addObj:((InputDoModel*)model).fromMKId];
 //            if (fromObj) [findObjArr addObject:fromObj];
 //            
-//            NSDictionary *toObj = [[SMG sharedInstance].store.mkStore addObj:((FeelDoModel*)model).toMKId];
+//            NSDictionary *toObj = [[SMG sharedInstance].store.mkStore addObj:((InputDoModel*)model).toMKId];
 //            if (toObj) [findObjArr addObject:toObj];
 //        }
 //    }
@@ -287,8 +287,8 @@
 //    for (FeelModel *model in modelArr) {
 //        if ([model isKindOfClass:[FeelTextModel class]]){//文本
 //            [memDic setObject:((FeelTextModel*)model).text forKey:@"text"];
-//        }else if ([model isKindOfClass:[FeelDoModel class]]) {//图像输入行为(如果doModel的fromMKId和toMKId是指向的名字;则这里修正为itemId;)
-//            FeelDoModel *doModel = (FeelDoModel*)model;
+//        }else if ([model isKindOfClass:[InputDoModel class]]) {//图像输入行为(如果doModel的fromMKId和toMKId是指向的名字;则这里修正为itemId;)
+//            InputDoModel *doModel = (InputDoModel*)model;
 //            NSMutableDictionary *memDoItem = [[NSMutableDictionary alloc] init];
 //            for (NSDictionary *objItem in findObjArr) {
 //                if ([STRTOOK(doModel.fromMKId) isEqualToString:[objItem objectForKey:@"itemName"]]) {
