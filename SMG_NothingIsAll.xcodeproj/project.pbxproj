@@ -21,7 +21,6 @@
 		082F9D601EB236E80009F6A9 /* SMGOutputDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 082F9D5F1EB236E80009F6A9 /* SMGOutputDelegate.m */; };
 		0831CF5E1EBEF20500C020E6 /* DBUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0831CF5D1EBEF20500C020E6 /* DBUtils.m */; };
 		087753221ECFE1C400E7AD09 /* Understand+Input.m in Sources */ = {isa = PBXBuildFile; fileRef = 0877531A1ECFE1C400E7AD09 /* Understand+Input.m */; };
-		087753231ECFE1C400E7AD09 /* Understand+OutPut.m in Sources */ = {isa = PBXBuildFile; fileRef = 0877531C1ECFE1C400E7AD09 /* Understand+OutPut.m */; };
 		087753241ECFE1C400E7AD09 /* Understand.m in Sources */ = {isa = PBXBuildFile; fileRef = 0877531E1ECFE1C400E7AD09 /* Understand.m */; };
 		087753251ECFE1C400E7AD09 /* UnderstandUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 087753211ECFE1C400E7AD09 /* UnderstandUtils.m */; };
 		0895DAE61EB2D52D00E2B5C7 /* DataViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0895DAE41EB2D52D00E2B5C7 /* DataViewController.m */; };
@@ -112,8 +111,6 @@
 		0831CF731EBF584600C020E6 /* StoreEnum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoreEnum.h; sourceTree = "<group>"; };
 		087753191ECFE1C400E7AD09 /* Understand+Input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Understand+Input.h"; sourceTree = "<group>"; };
 		0877531A1ECFE1C400E7AD09 /* Understand+Input.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Understand+Input.m"; sourceTree = "<group>"; };
-		0877531B1ECFE1C400E7AD09 /* Understand+OutPut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Understand+OutPut.h"; sourceTree = "<group>"; };
-		0877531C1ECFE1C400E7AD09 /* Understand+OutPut.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Understand+OutPut.m"; sourceTree = "<group>"; };
 		0877531D1ECFE1C400E7AD09 /* Understand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Understand.h; sourceTree = "<group>"; };
 		0877531E1ECFE1C400E7AD09 /* Understand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Understand.m; sourceTree = "<group>"; };
 		0877531F1ECFE1C400E7AD09 /* UnderstandHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnderstandHeader.h; sourceTree = "<group>"; };
@@ -323,8 +320,6 @@
 			children = (
 				087753191ECFE1C400E7AD09 /* Understand+Input.h */,
 				0877531A1ECFE1C400E7AD09 /* Understand+Input.m */,
-				0877531B1ECFE1C400E7AD09 /* Understand+OutPut.h */,
-				0877531C1ECFE1C400E7AD09 /* Understand+OutPut.m */,
 				0877531D1ECFE1C400E7AD09 /* Understand.h */,
 				0877531E1ECFE1C400E7AD09 /* Understand.m */,
 				0877531F1ECFE1C400E7AD09 /* UnderstandHeader.h */,
@@ -829,7 +824,6 @@
 				08C84A8E1E9A866200897D8B /* Input.m in Sources */,
 				082F9D561EB234750009F6A9 /* Output.m in Sources */,
 				0813D64E1EDF7B150089FA0C /* InputModelBase.m in Sources */,
-				087753231ECFE1C400E7AD09 /* Understand+OutPut.m in Sources */,
 				08F639831E9A2EC0003CD163 /* FeelValueModel.m in Sources */,
 				08E58DDF1ED3CE18008B0D76 /* CharStore.m in Sources */,
 				08D7DA4C1ED149F8004B1018 /* AIString.m in Sources */,

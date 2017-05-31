@@ -7,7 +7,23 @@
 //
 
 #import "Decision.h"
+#import "MindHeader.h"
 
 @implementation Decision
+
+
+/**
+ *  MARK:--------------------Mind->Understand->Feel->Output--------------------
+ */
+-(void) commitWithMindDemandModelArr:(NSArray*)modelArr{
+    NSLog(@"分析理解Mind需求,作出下步行为输出");
+    //1,心情影响输出
+    [[SMG sharedInstance].mindControl.mindAAA refreshDecisionByOutputTask:modelArr];
+    //2,偏好影响输出
+    [[SMG sharedInstance].mindControl.mindBBB refreshDecisionByOutputTask:modelArr];
+    //3,生理需求影响输出^_^!!
+    //[[SMG sharedInstance].mindControl.mindCCC refreshDecisionByOutputTask:modelArr];
+}
+
 
 @end
