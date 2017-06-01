@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		080D05961EE0C95C00DC62B5 /* Mine.m in Sources */ = {isa = PBXBuildFile; fileRef = 080D05951EE0C95C00DC62B5 /* Mine.m */; };
+		080D059A1EE0DC5C00DC62B5 /* DemandFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 080D05991EE0DC5C00DC62B5 /* DemandFactory.m */; };
 		0813D63E1EDF729F0089FA0C /* FeelTextUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0813D63D1EDF729F0089FA0C /* FeelTextUtils.m */; };
 		0813D64C1EDF7B150089FA0C /* InputAudioModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0813D6431EDF7B150089FA0C /* InputAudioModel.m */; };
 		0813D64D1EDF7B150089FA0C /* InputDoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0813D6451EDF7B150089FA0C /* InputDoModel.m */; };
@@ -80,6 +81,8 @@
 /* Begin PBXFileReference section */
 		080D05941EE0C95C00DC62B5 /* Mine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mine.h; sourceTree = "<group>"; };
 		080D05951EE0C95C00DC62B5 /* Mine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Mine.m; sourceTree = "<group>"; };
+		080D05981EE0DC5C00DC62B5 /* DemandFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemandFactory.h; sourceTree = "<group>"; };
+		080D05991EE0DC5C00DC62B5 /* DemandFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemandFactory.m; sourceTree = "<group>"; };
 		0813D63C1EDF729F0089FA0C /* FeelTextUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeelTextUtils.h; sourceTree = "<group>"; };
 		0813D63D1EDF729F0089FA0C /* FeelTextUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeelTextUtils.m; sourceTree = "<group>"; };
 		0813D6421EDF7B150089FA0C /* InputAudioModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputAudioModel.h; sourceTree = "<group>"; };
@@ -245,6 +248,15 @@
 				080D05951EE0C95C00DC62B5 /* Mine.m */,
 			);
 			path = Mine;
+			sourceTree = "<group>";
+		};
+		080D05971EE0DB4A00DC62B5 /* DemandFactory */ = {
+			isa = PBXGroup;
+			children = (
+				080D05981EE0DC5C00DC62B5 /* DemandFactory.h */,
+				080D05991EE0DC5C00DC62B5 /* DemandFactory.m */,
+			);
+			path = DemandFactory;
 			sourceTree = "<group>";
 		};
 		0813D63A1EDF71AF0089FA0C /* Text */ = {
@@ -567,6 +579,7 @@
 		08F3AF991E98883C00747EDD /* Mind */ = {
 			isa = PBXGroup;
 			children = (
+				080D05971EE0DB4A00DC62B5 /* DemandFactory */,
 				080D05931EE0C95300DC62B5 /* Mine */,
 				08F3AFAD1E988E2A00747EDD /* MindEnum.h */,
 				08E99C4C1EBDD21500A38FF5 /* MindAAA.h */,
@@ -793,6 +806,7 @@
 				081DA13B1ED47CE000C8C531 /* AIArray.m in Sources */,
 				08E58DED1ED3CE18008B0D76 /* LogicStore.m in Sources */,
 				08F140DA1ED7C3BB00E3B4D0 /* AIValue.m in Sources */,
+				080D059A1EE0DC5C00DC62B5 /* DemandFactory.m in Sources */,
 				08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */,
 				0813D64D1EDF7B150089FA0C /* InputDoModel.m in Sources */,
 				08F782401ED91290004884BE /* Decision.m in Sources */,
