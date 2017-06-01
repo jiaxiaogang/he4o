@@ -7,7 +7,6 @@
 //
 
 #import "Store.h"
-#import "StoreEnum.h"
 
 //Mem
 #import "MemStore.h"
