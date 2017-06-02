@@ -25,5 +25,11 @@
     //[[SMG sharedInstance].mindControl.mindCCC refreshDecisionByOutputTask:modelArr];
 }
 
+/**
+ *  MARK:--------------------Mind引擎的需求 分析 & 决策--------------------
+ */
++(void) commitFromMindWithDemand:(id)demand{
+    NSLog(@"分析决策 Mind的需求 ");
+}
 
 @end

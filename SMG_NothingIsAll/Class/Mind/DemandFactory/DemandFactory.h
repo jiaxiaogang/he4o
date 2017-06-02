@@ -16,4 +16,12 @@
  */
 @interface DemandFactory : NSObject
 
+/**
+ *  MARK:--------------------产生需求任务--------------------
+ *  return 任务
+ *  参数:任务类型
+ *  参数:任务...
+ */
++(id) createDemand;
+
 @end

@@ -83,6 +83,7 @@
 		080D05951EE0C95C00DC62B5 /* Mine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Mine.m; sourceTree = "<group>"; };
 		080D05981EE0DC5C00DC62B5 /* DemandFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemandFactory.h; sourceTree = "<group>"; };
 		080D05991EE0DC5C00DC62B5 /* DemandFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemandFactory.m; sourceTree = "<group>"; };
+		080D059B1EE0E18E00DC62B5 /* ThinkHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThinkHeader.h; sourceTree = "<group>"; };
 		0813D63C1EDF729F0089FA0C /* FeelTextUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeelTextUtils.h; sourceTree = "<group>"; };
 		0813D63D1EDF729F0089FA0C /* FeelTextUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeelTextUtils.m; sourceTree = "<group>"; };
 		0813D6421EDF7B150089FA0C /* InputAudioModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputAudioModel.h; sourceTree = "<group>"; };
@@ -112,7 +113,6 @@
 		0877531A1ECFE1C400E7AD09 /* Understand+Input.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Understand+Input.m"; sourceTree = "<group>"; };
 		0877531D1ECFE1C400E7AD09 /* Understand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Understand.h; sourceTree = "<group>"; };
 		0877531E1ECFE1C400E7AD09 /* Understand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Understand.m; sourceTree = "<group>"; };
-		0877531F1ECFE1C400E7AD09 /* UnderstandHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnderstandHeader.h; sourceTree = "<group>"; };
 		087753201ECFE1C400E7AD09 /* UnderstandUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnderstandUtils.h; sourceTree = "<group>"; };
 		087753211ECFE1C400E7AD09 /* UnderstandUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UnderstandUtils.m; sourceTree = "<group>"; };
 		0895DAE31EB2D52D00E2B5C7 /* DataViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataViewController.h; sourceTree = "<group>"; };
@@ -292,6 +292,7 @@
 		087753171ECFE1C400E7AD09 /* Think */ = {
 			isa = PBXGroup;
 			children = (
+				080D059B1EE0E18E00DC62B5 /* ThinkHeader.h */,
 				08F7823D1ED91282004884BE /* Decision */,
 				08E58DB31ED3CE18008B0D76 /* Store */,
 				087753181ECFE1C400E7AD09 /* Understand */,
@@ -306,7 +307,6 @@
 				0877531A1ECFE1C400E7AD09 /* Understand+Input.m */,
 				0877531D1ECFE1C400E7AD09 /* Understand.h */,
 				0877531E1ECFE1C400E7AD09 /* Understand.m */,
-				0877531F1ECFE1C400E7AD09 /* UnderstandHeader.h */,
 				087753201ECFE1C400E7AD09 /* UnderstandUtils.h */,
 				087753211ECFE1C400E7AD09 /* UnderstandUtils.m */,
 				08F7823A1ED90F6E004884BE /* Understand+Second.h */,

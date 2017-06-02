@@ -10,4 +10,12 @@
 
 @implementation DemandFactory
 
++(id) createDemand{
+    
+    //1,创建任务
+    //2,存到db
+    //3,优先级
+    return nil;
+}
+
 @end

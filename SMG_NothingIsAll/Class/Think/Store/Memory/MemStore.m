@@ -11,7 +11,7 @@
 #import "SMGHeader.h"
 #import "FeelHeader.h"
 #import "StoreHeader.h"
-#import "UnderstandHeader.h"
+#import "ThinkHeader.h"
 
 
 @interface MemStore ()

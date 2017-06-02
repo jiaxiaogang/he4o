@@ -8,7 +8,7 @@
 
 #import "StudyViewController.h"
 #import "SMGHeader.h"
-#import "UnderstandHeader.h"
+#import "ThinkHeader.h"
 #import "InputHeader.h"
 #import "FeelHeader.h"
 #import "DataViewController.h"

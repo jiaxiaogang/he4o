@@ -10,7 +10,7 @@
 #import "InputHeader.h"
 #import "SMGHeader.h"
 #import "FeelHeader.h"
-#import "UnderstandHeader.h"
+#import "ThinkHeader.h"
 
 @implementation Input
 

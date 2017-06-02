@@ -10,7 +10,7 @@
 #import "SMGHeader.h"
 #import "StoreHeader.h"
 #import "FeelHeader.h"
-#import "UnderstandHeader.h"
+#import "ThinkHeader.h"
 
 @implementation Understand
 

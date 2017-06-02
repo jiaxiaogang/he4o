@@ -12,3 +12,5 @@
 #import "MindControl.h"
 #import "MindAAA.h"
 #import "MindBBB.h"
+#import "Mine.h"
+#import "DemandFactory.h"

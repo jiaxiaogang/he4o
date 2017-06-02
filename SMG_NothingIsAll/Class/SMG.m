@@ -9,7 +9,7 @@
 #import "SMG.h"
 #import "SMGHeader.h"
 #import "StoreHeader.h"
-#import "UnderstandHeader.h"
+#import "ThinkHeader.h"
 #import "InputHeader.h"
 #import "FeelHeader.h"
 #import "OutputHeader.h"
