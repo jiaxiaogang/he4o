@@ -19,19 +19,19 @@
  */
 -(void) commitFromMineForHunger{
     HungerStatus status = [Mine getHungerStatus];
-    id demand;
+    id need;
     if (status == HungerStatus_LitterHunger) {
-        demand = [DemandFactory createDemand];
+        need = [NeedFactory createNeed];
     }else if (status == HungerStatus_Hunger) {
-        demand = [DemandFactory createDemand];
+        need = [NeedFactory createNeed];
     }else if (status == HungerStatus_VeryHunger) {
-        demand = [DemandFactory createDemand];
+        need = [NeedFactory createNeed];
     }else if (status == HungerStatus_VeryVeryHunger) {
-        demand = [DemandFactory createDemand];
+        need = [NeedFactory createNeed];
     }
     //执行任务分析决策
-    if (demand) {
-        [Decision commitFromMindWithDemand:demand];
+    if (need) {
+        [Decision commitFromMindWithNeed:need];
     }
 }
 

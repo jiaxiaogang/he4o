@@ -26,11 +26,11 @@
 @interface Decision : NSObject
 
 
--(void) commitWithMindDemandModelArr:(NSArray*)modelArr;
+-(void) commitWithMindNeedModelArr:(NSArray*)modelArr;
 
 /**
  *  MARK:--------------------Mind引擎的需求 分析 & 决策--------------------
  */
-+(void) commitFromMindWithDemand:(id)demand;
++(void) commitFromMindWithNeed:(id)need;
 
 @end
