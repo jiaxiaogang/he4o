@@ -15,7 +15,7 @@
 /**
  *  MARK:--------------------Mind->Understand->Feel->Output--------------------
  */
--(void) commitWithMindNeedModelArr:(NSArray*)modelArr{
+-(void) commitWithMindDemandModelArr:(NSArray*)modelArr{
     NSLog(@"分析理解Mind需求,作出下步行为输出");
     //1,心情影响输出
     [[SMG sharedInstance].mindControl.mindAAA refreshDecisionByOutputTask:modelArr];
@@ -28,7 +28,7 @@
 /**
  *  MARK:--------------------Mind引擎的需求 分析 & 决策--------------------
  */
-+(void) commitFromMindWithNeed:(id)need{
++(void) commitFromMindWithDemand:(id)demand{
     NSLog(@"分析决策 Mind的需求 ");
 }
 

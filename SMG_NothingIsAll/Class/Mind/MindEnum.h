@@ -16,10 +16,20 @@ typedef NS_ENUM(NSInteger, JoyAngerType) {
     JoyAngerType_Anger = 1,
 };
 
-
 /**
  *  MARK:--------------------心情哀乐(内)--------------------
  */
+
+
+/**
+ *  MARK:--------------------MindType--------------------
+ */
+typedef NS_ENUM(NSInteger, MindType) {
+    MindType_Hunger     =   0,//饥饿
+    MindType_Curiosity  =   1,//好奇心
+    
+};
+
 
 
 

@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		080D05961EE0C95C00DC62B5 /* Mine.m in Sources */ = {isa = PBXBuildFile; fileRef = 080D05951EE0C95C00DC62B5 /* Mine.m */; };
-		080D059F1EE0F0B200DC62B5 /* NeedFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 080D059E1EE0F0B200DC62B5 /* NeedFactory.m */; };
 		0813D63E1EDF729F0089FA0C /* FeelTextUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0813D63D1EDF729F0089FA0C /* FeelTextUtils.m */; };
 		0813D64C1EDF7B150089FA0C /* InputAudioModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0813D6431EDF7B150089FA0C /* InputAudioModel.m */; };
 		0813D64D1EDF7B150089FA0C /* InputDoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0813D6451EDF7B150089FA0C /* InputDoModel.m */; };
@@ -28,6 +27,8 @@
 		0895DAE71EB2D52D00E2B5C7 /* DataViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0895DAE51EB2D52D00E2B5C7 /* DataViewController.xib */; };
 		0895DAEB1EB2D7EB00E2B5C7 /* DataCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0895DAE91EB2D7EB00E2B5C7 /* DataCell.m */; };
 		0895DAEC1EB2D7EB00E2B5C7 /* DataCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0895DAEA1EB2D7EB00E2B5C7 /* DataCell.xib */; };
+		089D359E1EE2BA9200AA6622 /* DemandFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 089D359B1EE2BA9200AA6622 /* DemandFactory.m */; };
+		089D359F1EE2BA9200AA6622 /* DemandModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 089D359D1EE2BA9200AA6622 /* DemandModel.m */; };
 		08AF454A1E97D0B500377887 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF45491E97D0B500377887 /* main.m */; };
 		08AF454D1E97D0B500377887 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF454C1E97D0B500377887 /* AppDelegate.m */; };
 		08AF45551E97D0B500377887 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45541E97D0B500377887 /* Assets.xcassets */; };
@@ -82,8 +83,6 @@
 		080D05941EE0C95C00DC62B5 /* Mine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mine.h; sourceTree = "<group>"; };
 		080D05951EE0C95C00DC62B5 /* Mine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Mine.m; sourceTree = "<group>"; };
 		080D059B1EE0E18E00DC62B5 /* ThinkHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThinkHeader.h; sourceTree = "<group>"; };
-		080D059D1EE0F0B200DC62B5 /* NeedFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NeedFactory.h; sourceTree = "<group>"; };
-		080D059E1EE0F0B200DC62B5 /* NeedFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NeedFactory.m; sourceTree = "<group>"; };
 		0813D63C1EDF729F0089FA0C /* FeelTextUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeelTextUtils.h; sourceTree = "<group>"; };
 		0813D63D1EDF729F0089FA0C /* FeelTextUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeelTextUtils.m; sourceTree = "<group>"; };
 		0813D6421EDF7B150089FA0C /* InputAudioModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputAudioModel.h; sourceTree = "<group>"; };
@@ -122,6 +121,10 @@
 		0895DAE91EB2D7EB00E2B5C7 /* DataCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataCell.m; sourceTree = "<group>"; };
 		0895DAEA1EB2D7EB00E2B5C7 /* DataCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DataCell.xib; sourceTree = "<group>"; };
 		0895DAED1EB2DCBD00E2B5C7 /* AppEnum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppEnum.h; sourceTree = "<group>"; };
+		089D359A1EE2BA9200AA6622 /* DemandFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemandFactory.h; sourceTree = "<group>"; };
+		089D359B1EE2BA9200AA6622 /* DemandFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemandFactory.m; sourceTree = "<group>"; };
+		089D359C1EE2BA9200AA6622 /* DemandModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemandModel.h; sourceTree = "<group>"; };
+		089D359D1EE2BA9200AA6622 /* DemandModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemandModel.m; sourceTree = "<group>"; };
 		08AF45451E97D0B500377887 /* SMG_NothingIsAll.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SMG_NothingIsAll.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		08AF45491E97D0B500377887 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		08AF454B1E97D0B500377887 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -250,15 +253,6 @@
 			path = Mine;
 			sourceTree = "<group>";
 		};
-		080D059C1EE0F0B200DC62B5 /* NeedFactory */ = {
-			isa = PBXGroup;
-			children = (
-				080D059D1EE0F0B200DC62B5 /* NeedFactory.h */,
-				080D059E1EE0F0B200DC62B5 /* NeedFactory.m */,
-			);
-			path = NeedFactory;
-			sourceTree = "<group>";
-		};
 		0813D63A1EDF71AF0089FA0C /* Text */ = {
 			isa = PBXGroup;
 			children = (
@@ -313,6 +307,17 @@
 				08F7823B1ED90F6E004884BE /* Understand+Second.m */,
 			);
 			path = Understand;
+			sourceTree = "<group>";
+		};
+		089D35991EE2BA9200AA6622 /* Demand */ = {
+			isa = PBXGroup;
+			children = (
+				089D359A1EE2BA9200AA6622 /* DemandFactory.h */,
+				089D359B1EE2BA9200AA6622 /* DemandFactory.m */,
+				089D359C1EE2BA9200AA6622 /* DemandModel.h */,
+				089D359D1EE2BA9200AA6622 /* DemandModel.m */,
+			);
+			path = Demand;
 			sourceTree = "<group>";
 		};
 		08AF453C1E97D0B500377887 = {
@@ -579,7 +584,7 @@
 		08F3AF991E98883C00747EDD /* Mind */ = {
 			isa = PBXGroup;
 			children = (
-				080D059C1EE0F0B200DC62B5 /* NeedFactory */,
+				089D35991EE2BA9200AA6622 /* Demand */,
 				080D05931EE0C95300DC62B5 /* Mine */,
 				08F3AFAD1E988E2A00747EDD /* MindEnum.h */,
 				08E99C4C1EBDD21500A38FF5 /* MindAAA.h */,
@@ -787,14 +792,15 @@
 				08E58DEC1ED3CE18008B0D76 /* LogicModel.m in Sources */,
 				08AF456E1E97DDF600377887 /* MKStore.m in Sources */,
 				08F3AFBB1E98966E00747EDD /* Store.m in Sources */,
-				080D059F1EE0F0B200DC62B5 /* NeedFactory.m in Sources */,
 				08F140CB1ED7B4BD00E3B4D0 /* AIPointer.m in Sources */,
 				08E99C481EBDD1C800A38FF5 /* MindControl.m in Sources */,
 				0813D64C1EDF7B150089FA0C /* InputAudioModel.m in Sources */,
 				08E99C4E1EBDD21500A38FF5 /* MindAAA.m in Sources */,
 				08F140D51ED7C35C00E3B4D0 /* AILaw.m in Sources */,
+				089D359E1EE2BA9200AA6622 /* DemandFactory.m in Sources */,
 				08C84A8E1E9A866200897D8B /* Input.m in Sources */,
 				082F9D561EB234750009F6A9 /* Output.m in Sources */,
+				089D359F1EE2BA9200AA6622 /* DemandModel.m in Sources */,
 				0813D64E1EDF7B150089FA0C /* InputModelBase.m in Sources */,
 				08F639831E9A2EC0003CD163 /* FeelValueModel.m in Sources */,
 				08E58DDF1ED3CE18008B0D76 /* CharStore.m in Sources */,
