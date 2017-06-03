@@ -29,6 +29,28 @@
  */
 @interface DemandModel : NSObject
 
+/**
+ *  MARK:--------------------记忆数据--------------------
+ *  1,用Decision分析记忆中数据为mindShakeArr;将mindShakeArr交由Mind决断(Decision与Mind紧密关联)
+ *  2,Mind决断后,下达需求任务给FeelOut;
+ *  3,FeelOut决定如何输出;
+ *  注:(此处引出Decision的"分析决策阶段"和"FeelOut阶段"的不同)(因为我们有可能分析决策;但不行动)
+ *
+ *  如:早上起来喝牛奶:
+ *      1,早上起来,Input记忆时Understand联想到喝牛奶;
+ *      2,Understand交给Mind;
+ *      3,Mind交@"喝牛奶"给Decision找到喝牛奶找到关联记忆;并分析mindShakeArr交回给Mind;
+ *      4,Mind下令喝一个;并交给FeelOut;
+ *      5,FeelOut决定行动起来;喝一个走起;
+ *  如:饿了:
+ *      1,Mind饿了;
+ *      2,将找吃的交给Decision找到冰箱里有什么的关联记忆,并分析mindShakeArr交回给Mind;
+ *      3,Mind下令喝牛奶;并交给FeelOut;
+ *      4,FeelOut决定行动起来;喝一个走起;
+ */
+@property (strong,nonatomic) NSMutableArray *memArr;    //相关记忆数据;
+
+@property (strong,nonatomic) NSMutableArray *mindShakeArr;  //
 
 
 @end
