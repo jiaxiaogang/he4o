@@ -11,23 +11,14 @@
 @implementation Mood
 
 
-/**
- *  MARK:--------------------心情变化--------------------
- */
--(void) changeSadHappyValue:(int)value{
-    
-    //1,sadHappyValue
-    self.sadHappyValue += value;
-    self.sadHappyValue = MIN(self.sadHappyValue, 10);
-    self.sadHappyValue = MAX(self.sadHappyValue, -10);
-    
-    //2,lastChangeTime
-    self.lastChangeTime = [NSDate date].timeIntervalSince1970;
+-(void)setHappyValue:(int)happyValue{
+    _happyValue = MAX(-10, MIN(happyValue, 10));//值只能在-10到10之间;
 }
 
 -(void) refreshDecisionByOutputTask:(id)outputTask{
     //某心理因素对输出决策的影响处理;
 }
+
 
 
 @end
