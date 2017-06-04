@@ -15,6 +15,7 @@
 		0813D64F1EDF7B150089FA0C /* InputObjModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0813D6491EDF7B150089FA0C /* InputObjModel.m */; };
 		0813D6501EDF7B150089FA0C /* InputTextModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0813D64B1EDF7B150089FA0C /* InputTextModel.m */; };
 		081DA13B1ED47CE000C8C531 /* AIArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 081DA13A1ED47CE000C8C531 /* AIArray.m */; };
+		081E62FA1EE3A11500E8766E /* HobbyModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 081E62F91EE3A11500E8766E /* HobbyModel.m */; };
 		082F9D561EB234750009F6A9 /* Output.m in Sources */ = {isa = PBXBuildFile; fileRef = 082F9D551EB234750009F6A9 /* Output.m */; };
 		082F9D5C1EB236AC0009F6A9 /* StudyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 082F9D5A1EB236AC0009F6A9 /* StudyViewController.m */; };
 		082F9D5D1EB236AC0009F6A9 /* StudyViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 082F9D5B1EB236AC0009F6A9 /* StudyViewController.xib */; };
@@ -97,6 +98,8 @@
 		0813D64B1EDF7B150089FA0C /* InputTextModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputTextModel.m; sourceTree = "<group>"; };
 		081DA1391ED47CE000C8C531 /* AIArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIArray.h; sourceTree = "<group>"; };
 		081DA13A1ED47CE000C8C531 /* AIArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIArray.m; sourceTree = "<group>"; };
+		081E62F81EE3A11500E8766E /* HobbyModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HobbyModel.h; sourceTree = "<group>"; };
+		081E62F91EE3A11500E8766E /* HobbyModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HobbyModel.m; sourceTree = "<group>"; };
 		082F9D541EB234750009F6A9 /* Output.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Output.h; sourceTree = "<group>"; };
 		082F9D551EB234750009F6A9 /* Output.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Output.m; sourceTree = "<group>"; };
 		082F9D571EB235F30009F6A9 /* OutputDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OutputDelegate.h; sourceTree = "<group>"; };
@@ -260,6 +263,15 @@
 				0813D63D1EDF729F0089FA0C /* FeelTextUtils.m */,
 			);
 			path = Text;
+			sourceTree = "<group>";
+		};
+		081E62F71EE3A0D800E8766E /* Hobby */ = {
+			isa = PBXGroup;
+			children = (
+				081E62F81EE3A11500E8766E /* HobbyModel.h */,
+				081E62F91EE3A11500E8766E /* HobbyModel.m */,
+			);
+			path = Hobby;
 			sourceTree = "<group>";
 		};
 		082F9D581EB236AC0009F6A9 /* Demo */ = {
@@ -584,6 +596,7 @@
 		08F3AF991E98883C00747EDD /* Mind */ = {
 			isa = PBXGroup;
 			children = (
+				081E62F71EE3A0D800E8766E /* Hobby */,
 				089D35991EE2BA9200AA6622 /* Demand */,
 				080D05931EE0C95300DC62B5 /* Mine */,
 				08F3AFAD1E988E2A00747EDD /* MindEnum.h */,
@@ -795,6 +808,7 @@
 				08F140CB1ED7B4BD00E3B4D0 /* AIPointer.m in Sources */,
 				08E99C481EBDD1C800A38FF5 /* MindControl.m in Sources */,
 				0813D64C1EDF7B150089FA0C /* InputAudioModel.m in Sources */,
+				081E62FA1EE3A11500E8766E /* HobbyModel.m in Sources */,
 				08E99C4E1EBDD21500A38FF5 /* MindAAA.m in Sources */,
 				08F140D51ED7C35C00E3B4D0 /* AILaw.m in Sources */,
 				089D359E1EE2BA9200AA6622 /* DemandFactory.m in Sources */,
