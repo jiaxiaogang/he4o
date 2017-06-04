@@ -10,15 +10,17 @@
 
 
 /**
- *  MARK:--------------------Mind引擎--------------------
+ *  MARK:--------------------Mind引擎(七情六欲)--------------------
+ *
  *  驱动input
  *  驱动output
  */
-@class MindAAA,MindBBB;
+@class Mood,HobbyModel,Mine;
 @interface MindControl : NSObject
 
-@property (strong,nonatomic) MindAAA *mindAAA;
-@property (strong,nonatomic) MindBBB *mindBBB;
+@property (strong,nonatomic) Mood *mood;
+@property (strong,nonatomic) HobbyModel *hobbyModel;
+@property (strong,nonatomic) Mine *mine;
 
 /**
  *  MARK:--------------------mine饥饿--------------------

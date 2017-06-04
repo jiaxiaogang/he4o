@@ -26,8 +26,6 @@
 @interface Decision : NSObject
 
 
--(void) commitWithMindNeedModelArr:(NSArray*)modelArr;
-
 /**
  *  MARK:--------------------Mind引擎的需求 分析 & 决策--------------------
  */

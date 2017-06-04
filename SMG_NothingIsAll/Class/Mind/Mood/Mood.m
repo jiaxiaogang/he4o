@@ -1,14 +1,14 @@
 //
-//  MindBase.m
+//  Mood.m
 //  SMG_NothingIsAll
 //
-//  Created by 贾  on 2017/5/6.
+//  Created by 贾  on 2017/6/4.
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "MindBase.h"
+#import "Mood.h"
 
-@implementation MindBase
+@implementation Mood
 
 
 /**
@@ -28,5 +28,6 @@
 -(void) refreshDecisionByOutputTask:(id)outputTask{
     //某心理因素对输出决策的影响处理;
 }
+
 
 @end
