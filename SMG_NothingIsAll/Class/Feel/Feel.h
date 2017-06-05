@@ -8,6 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
+@protocol FeelDelegate <NSObject>
+
+-(void) feel_CommitToThink:(id)feelData;
+
+@end
+
 /**
  *  MARK:--------------------感觉系统--------------------
  *  1,Input信息的数字化(INPUT信息后->转化为感觉码->记忆系统)
@@ -18,5 +24,10 @@
 @class InputModel;
 @interface Feel : NSObject
 
+@property (weak, nonatomic) id<FeelDelegate> delegate;
+
+-(void) commitText:(NSString*)text;
+-(void) commitImg:(UIImage*)img;
+-(void) commitAudio:(NSObject*)audio;
 
 @end

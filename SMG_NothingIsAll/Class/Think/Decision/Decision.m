@@ -9,6 +9,14 @@
 #import "Decision.h"
 #import "MindHeader.h"
 
+
+@interface Decision ()
+
+@property (strong,nonatomic) NSMutableDictionary *mDic; //数据;
+
+@end
+
+
 @implementation Decision
 
 
@@ -16,11 +24,12 @@
  *  MARK:--------------------Mind引擎的需求 分析 & 决策--------------------
  *  Mind->Decision->FeelOut->Output
  */
-+(void) commitFromMindWithDemand:(id)demand{
-    NSLog(@"分析决策 Mind的需求 ");
+-(void) commitDemand:(id)demand withType:(MindType)type{
+    NSLog(@"1,提交需求...To...Decision");
     
     
-    NSLog(@"分析理解Mind需求,作出下步行为输出");
+    NSLog(@"2,分析决策 Mind的需求 ");
+    NSLog(@"3,分析理解Mind需求,作出下步行为输出");
     
     //1,从(记忆,经验和知识)里找到解决方式;
     //2,每一步都要受到(Mood,Hobby,Mine)的影响;

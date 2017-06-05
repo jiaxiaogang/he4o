@@ -31,10 +31,10 @@
     }
     //执行任务分析决策
     if (demand) {
-        [Decision commitFromMindWithDemand:demand];
+        if (self.delegate && [self.delegate respondsToSelector:@selector(mindControl_AddDemand:withType:)]) {
+            [self.delegate mindControl_AddDemand:demand withType:MindType_Hunger];
+        }
     }
-    
-    
     
     
     //思考2:当A在偷吃你的苹果时;你理解的重点是;他是不是吃的你的苹果;吃了多少;等相关信息;

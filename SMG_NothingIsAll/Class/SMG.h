@@ -10,6 +10,10 @@
 #import "MindEnum.h"
 
 
+/**
+ *  MARK:--------------------大脑控制器--------------------
+ *  用于控制Input,Feel,Think,Mind,Output之间的工作;
+ */
 @class Store,ThinkControl,Feel,Input,Output,MindControl;
 @interface SMG : NSObject
 

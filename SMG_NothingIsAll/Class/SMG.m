@@ -15,6 +15,11 @@
 #import "OutputHeader.h"
 #import "MindHeader.h"
 
+
+@interface SMG ()<FeelDelegate,MindControlDelegate,ThinkControlDelegate>
+
+@end
+
 @implementation SMG
 
 static SMG *_instance;
@@ -29,6 +34,7 @@ static SMG *_instance;
     self = [super init];
     if (self) {
         [self initData];
+        [self initRun];
     }
     return self;
 }
@@ -41,5 +47,32 @@ static SMG *_instance;
     self.output     = [[Output alloc] init];
 }
 
+-(void) initRun{
+    self.feel.delegate = self;
+    self.mindControl.delegate = self;
+    self.thinkControl.delegate = self;
+}
+
+/**
+ *  MARK:--------------------FeelDelegate--------------------
+ */
+-(void)feel_CommitToThink:(id)feelData{
+    NSLog(@"Feel_提交到SMG");
+}
+
+/**
+ *  MARK:--------------------MindControlDelegate--------------------
+ */
+-(void) mindControl_AddDemand:(id)demand withType:(MindType)type{
+    NSLog(@"Mind需求_提交到SMG");
+    [self.thinkControl commitDemand:demand withType:type];
+}
+
+/**
+ *  MARK:--------------------ThinkControlDelegate--------------------
+ */
+-(void)thinkControl_GetMoodValue:(AIPointer *)pointer{
+    NSLog(@"Think问Mind是否喜欢某物_提交到SMG");
+}
 
 @end

@@ -9,21 +9,41 @@
 #import "ThinkControl.h"
 #import "ThinkHeader.h"
 
+@interface ThinkControl ()
+
+
+
+@end
+
 @implementation ThinkControl
 
--(Understand *)understand{
-    if (!_understand) {
-        _understand = [[Understand alloc] init];
+-(id) init{
+    self = [super init];
+    if (self) {
+        [self initData];
     }
-    return _understand;
+    return self;
 }
 
+-(void) initData{
+    self.understand = [[Understand alloc] init];
+    self.decision = [[Decision alloc] init];
+}
 
--(Decision *)decision{
-    if (_decision == nil) {
-        _decision = [[Decision alloc] init];
-    }
-    return _decision;
+/**
+ *  MARK:--------------------method--------------------
+ */
+-(void) commitDemand:(id)demand withType:(MindType)type{
+    NSLog(@"提交需求...To...Think");
+    [self.decision commitDemand:demand withType:type];
+}
+
+-(void) commitUnderstandByShallow:(id)data{
+    NSLog(@"浅理解");
+}
+
+-(void) commitUnderstandByDeep:(id)data{
+    NSLog(@"深理解");
 }
 
 @end

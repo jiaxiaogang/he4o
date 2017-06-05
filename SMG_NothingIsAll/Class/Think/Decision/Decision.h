@@ -29,6 +29,6 @@
 /**
  *  MARK:--------------------Mind引擎的需求 分析 & 决策--------------------
  */
-+(void) commitFromMindWithDemand:(id)demand;
+-(void) commitDemand:(id)demand withType:(MindType)type;
 
 @end

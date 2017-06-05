@@ -15,24 +15,32 @@
 @implementation Feel
 
 
--(NSString*) feelForText:(NSString*)text{
+-(void) commitText:(NSString*)text{
+    
+    text = STRTOOK(text);
     
     //取属性;
     //[FeelTextUtils getLength:text];
-    
-    return STRTOOK(text);
+    if (self.delegate && [self.delegate respondsToSelector:@selector(feel_CommitToThink:)]) {
+        [self.delegate feel_CommitToThink:text];
+    }
 }
 
--(UIImage*) feelForImg:(UIImage*)img{
-    //解析出
-    //先从本地找替代品;取不到合适的;再解析img;
+-(void) commitImg:(UIImage*)img{
+    //1,解析出
+    //2,先从本地找替代品;取不到合适的;再解析img;
+    //3,压缩尺寸,压缩质量,压缩大小后返回;
     
-    return nil;//压缩尺寸,压缩质量,压缩大小后返回;
+    if (self.delegate && [self.delegate respondsToSelector:@selector(feel_CommitToThink:)]) {
+        [self.delegate feel_CommitToThink:img];
+    }
 }
 
--(NSObject*) feelForAudio:(NSObject*)audio{
+-(void) commitAudio:(NSObject*)audio{
     //先从本地找替代品;
-    return nil;
+    if (self.delegate && [self.delegate respondsToSelector:@selector(feel_CommitToThink:)]) {
+        [self.delegate feel_CommitToThink:audio];
+    }
 }
 
 @end

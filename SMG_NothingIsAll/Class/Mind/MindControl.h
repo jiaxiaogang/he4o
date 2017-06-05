@@ -9,6 +9,13 @@
 #import <Foundation/Foundation.h>
 
 
+@protocol MindControlDelegate <NSObject>
+
+
+-(void) mindControl_AddDemand:(id)demand withType:(MindType)type;//新增需求;
+
+@end
+
 /**
  *  MARK:--------------------Mind引擎(七情六欲)--------------------
  *
@@ -18,6 +25,7 @@
 @class Mood,HobbyModel,Mine;
 @interface MindControl : NSObject
 
+@property (weak, nonatomic) id<MindControlDelegate> delegate;
 @property (strong,nonatomic) Mood *mood;
 @property (strong,nonatomic) HobbyModel *hobbyModel;
 @property (strong,nonatomic) Mine *mine;

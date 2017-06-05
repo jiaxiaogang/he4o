@@ -12,6 +12,12 @@
 #import "FeelHeader.h"
 #import "ThinkHeader.h"
 
+@interface Understand ()
+
+@property (strong,nonatomic) NSMutableDictionary *mDic; //数据;
+
+@end
+
 @implementation Understand
 
 
