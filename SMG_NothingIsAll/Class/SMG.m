@@ -36,7 +36,7 @@ static SMG *_instance;
 -(void) initData{
     self.store      = [[Store alloc] init];
     self.mindControl= [[MindControl alloc] init];
-    self.understand = [[Understand alloc] init];
+    self.thinkControl = [[ThinkControl alloc] init];
     self.feel       = [[Feel alloc] init];
     self.output     = [[Output alloc] init];
 }

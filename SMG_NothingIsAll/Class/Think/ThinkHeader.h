@@ -11,3 +11,4 @@
 #import "Understand+Input.h"
 #import "Understand+Second.h"
 #import "Decision.h"
+#import "ThinkControl.h"

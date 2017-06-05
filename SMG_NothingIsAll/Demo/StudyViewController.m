@@ -176,7 +176,7 @@
     objModel.name = self.targetTF.text;
     
     //3,commit
-    [[SMG sharedInstance].understand commitWithFeelModelArr:@[doModel,feelTextModel,objModel]];
+    [[SMG sharedInstance].thinkControl.understand commitWithFeelModelArr:@[doModel,feelTextModel,objModel]];
     
     //4,clear
     [self clearAllContent];
@@ -259,7 +259,7 @@
         }
         
         //4,commit
-        [[SMG sharedInstance].understand commitWithFeelModelArr:commitArr];
+        [[SMG sharedInstance].thinkControl.understand commitWithFeelModelArr:commitArr];
     }
     else
     {
@@ -306,7 +306,7 @@
     [commitArr addObject:objModel2];
     
     //4,commit
-    [[SMG sharedInstance].understand commitWithFeelModelArr:commitArr];
+    [[SMG sharedInstance].thinkControl.understand commitWithFeelModelArr:commitArr];
 }
 
 /**
@@ -368,7 +368,7 @@
     NSLog(@"");
     
     //4,commit
-    [[SMG sharedInstance].understand commitWithFeelModelArr:commitArr];
+    [[SMG sharedInstance].thinkControl.understand commitWithFeelModelArr:commitArr];
 }
 
 

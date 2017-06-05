@@ -42,6 +42,7 @@
 		08D7DA4C1ED149F8004B1018 /* AIString.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D7DA4B1ED149F8004B1018 /* AIString.m */; };
 		08D7DA4F1ED14BC7004B1018 /* AIChar.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D7DA4E1ED14BC7004B1018 /* AIChar.m */; };
 		08DACE951EBD805C00FDC0B6 /* NSString+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 08DACE941EBD805C00FDC0B6 /* NSString+Extension.m */; };
+		08E3CCCA1EE60F8D002990FD /* ThinkControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E3CCC91EE60F8D002990FD /* ThinkControl.m */; };
 		08E58DDE1ED3CE18008B0D76 /* CharModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E58DB71ED3CE18008B0D76 /* CharModel.m */; };
 		08E58DDF1ED3CE18008B0D76 /* CharStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E58DB91ED3CE18008B0D76 /* CharStore.m */; };
 		08E58DE01ED3CE18008B0D76 /* ClassStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E58DBC1ED3CE18008B0D76 /* ClassStore.m */; };
@@ -151,6 +152,8 @@
 		08D7DA4E1ED14BC7004B1018 /* AIChar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIChar.m; sourceTree = "<group>"; };
 		08DACE931EBD805C00FDC0B6 /* NSString+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Extension.h"; sourceTree = "<group>"; };
 		08DACE941EBD805C00FDC0B6 /* NSString+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Extension.m"; sourceTree = "<group>"; };
+		08E3CCC81EE60F8D002990FD /* ThinkControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThinkControl.h; sourceTree = "<group>"; };
+		08E3CCC91EE60F8D002990FD /* ThinkControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThinkControl.m; sourceTree = "<group>"; };
 		08E58DB61ED3CE18008B0D76 /* CharModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharModel.h; sourceTree = "<group>"; };
 		08E58DB71ED3CE18008B0D76 /* CharModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CharModel.m; sourceTree = "<group>"; };
 		08E58DB81ED3CE18008B0D76 /* CharStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharStore.h; sourceTree = "<group>"; };
@@ -301,6 +304,8 @@
 		087753171ECFE1C400E7AD09 /* Think */ = {
 			isa = PBXGroup;
 			children = (
+				08E3CCC81EE60F8D002990FD /* ThinkControl.h */,
+				08E3CCC91EE60F8D002990FD /* ThinkControl.m */,
 				080D059B1EE0E18E00DC62B5 /* ThinkHeader.h */,
 				08F7823D1ED91282004884BE /* Decision */,
 				08E58DB31ED3CE18008B0D76 /* Store */,
@@ -800,6 +805,7 @@
 				082F9D601EB236E80009F6A9 /* SMGOutputDelegate.m in Sources */,
 				087753251ECFE1C400E7AD09 /* UnderstandUtils.m in Sources */,
 				08E58DE41ED3CE18008B0D76 /* ObjStore.m in Sources */,
+				08E3CCCA1EE60F8D002990FD /* ThinkControl.m in Sources */,
 				08E58DEC1ED3CE18008B0D76 /* LogicModel.m in Sources */,
 				08AF456E1E97DDF600377887 /* MKStore.m in Sources */,
 				08F3AFBB1E98966E00747EDD /* Store.m in Sources */,
