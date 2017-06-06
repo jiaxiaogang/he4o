@@ -22,19 +22,13 @@
  *  驱动input
  *  驱动output
  */
-@class Mood,HobbyModel,Mine;
+@class Mood,Hobby,Mine;
 @interface MindControl : NSObject
 
 @property (weak, nonatomic) id<MindControlDelegate> delegate;
 @property (strong,nonatomic) Mood *mood;
-@property (strong,nonatomic) HobbyModel *hobbyModel;
+@property (strong,nonatomic) Hobby *hobby;
 @property (strong,nonatomic) Mine *mine;
-
-/**
- *  MARK:--------------------mine饥饿--------------------
- *  产生充电需求
- */
--(void) commitFromMineForHunger;
 
 /**
  *  MARK:--------------------是否喜欢pointer--------------------

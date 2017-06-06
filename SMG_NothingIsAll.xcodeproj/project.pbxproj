@@ -75,6 +75,7 @@
 		08F639891E9A2FF4003CD163 /* Feel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F639881E9A2FF4003CD163 /* Feel.m */; };
 		08F7823C1ED90F6E004884BE /* Understand+Second.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F7823B1ED90F6E004884BE /* Understand+Second.m */; };
 		08F782401ED91290004884BE /* Decision.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F7823F1ED91290004884BE /* Decision.m */; };
+		08FBB8FE1EE76597000F9E80 /* Hobby.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FBB8FD1EE76597000F9E80 /* Hobby.m */; };
 		08FDCE8E1EAA4A8E00882ADC /* SMGRange.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FDCE8D1EAA4A8E00882ADC /* SMGRange.m */; };
 		2753D7CF7BAEDFEACAF9264A /* libPods-SMG_NothingIsAll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */; };
 /* End PBXBuildFile section */
@@ -225,6 +226,8 @@
 		08F7823B1ED90F6E004884BE /* Understand+Second.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Understand+Second.m"; sourceTree = "<group>"; };
 		08F7823E1ED91290004884BE /* Decision.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Decision.h; sourceTree = "<group>"; };
 		08F7823F1ED91290004884BE /* Decision.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Decision.m; sourceTree = "<group>"; };
+		08FBB8FC1EE76597000F9E80 /* Hobby.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hobby.h; sourceTree = "<group>"; };
+		08FBB8FD1EE76597000F9E80 /* Hobby.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Hobby.m; sourceTree = "<group>"; };
 		08FDCE8C1EAA4A8E00882ADC /* SMGRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMGRange.h; sourceTree = "<group>"; };
 		08FDCE8D1EAA4A8E00882ADC /* SMGRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMGRange.m; sourceTree = "<group>"; };
 		DE79539824FEDBA53557ECCA /* Pods-SMG_NothingIsAll.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SMG_NothingIsAll.release.xcconfig"; path = "Pods/Target Support Files/Pods-SMG_NothingIsAll/Pods-SMG_NothingIsAll.release.xcconfig"; sourceTree = "<group>"; };
@@ -267,6 +270,8 @@
 			children = (
 				081E62F81EE3A11500E8766E /* HobbyModel.h */,
 				081E62F91EE3A11500E8766E /* HobbyModel.m */,
+				08FBB8FC1EE76597000F9E80 /* Hobby.h */,
+				08FBB8FD1EE76597000F9E80 /* Hobby.m */,
 			);
 			path = Hobby;
 			sourceTree = "<group>";
@@ -855,6 +860,7 @@
 				087753241ECFE1C400E7AD09 /* Understand.m in Sources */,
 				08E58DEA1ED3CE18008B0D76 /* LawModel.m in Sources */,
 				08E58DE51ED3CE18008B0D76 /* TextModel.m in Sources */,
+				08FBB8FE1EE76597000F9E80 /* Hobby.m in Sources */,
 				08F140D61ED7C35C00E3B4D0 /* AILogic.m in Sources */,
 				08E58DE01ED3CE18008B0D76 /* ClassStore.m in Sources */,
 				08E58DE91ED3CE18008B0D76 /* MemStore.m in Sources */,

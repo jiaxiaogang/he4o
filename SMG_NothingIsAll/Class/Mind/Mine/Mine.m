@@ -19,8 +19,10 @@
 }
 
 -(void) observerHungerStateChanged{
-    NSLog(@"自我产生饥饿意识");
-    NSLog(@"传递给Mind产生充电需求");
+    NSLog(@"Mine_自我产生饥饿意识");
+    if (self.delegate && [self.delegate respondsToSelector:@selector(mine_HungerStateChanged:)]) {
+        [self.delegate mine_HungerStateChanged:[Mine getHungerStatus]];
+    }
 }
 
 +(HungerStatus) getHungerStatus{

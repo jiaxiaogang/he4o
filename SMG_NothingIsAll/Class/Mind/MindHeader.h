@@ -12,3 +12,6 @@
 #import "MindControl.h"
 #import "Mine.h"
 #import "DemandFactory.h"
+#import "Mood.h"
+#import "HobbyModel.h"
+#import "Hobby.h"

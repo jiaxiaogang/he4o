@@ -20,9 +20,15 @@ typedef NS_ENUM(NSInteger, HungerStatus) {
     HungerStatus_VeryVeryHunger = 6,//非常非常饿
 };
 
+@protocol MineDelegate <NSObject>
+
+-(void) mine_HungerStateChanged:(HungerStatus)status;
+
+@end
 
 @interface Mine : NSObject
 
+@property (weak, nonatomic) id<MineDelegate> delegate;
 +(HungerStatus) getHungerStatus;
 
 @end

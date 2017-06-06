@@ -10,11 +10,55 @@
 #import "MindHeader.h"
 #import "ThinkHeader.h"
 
+@interface MindControl ()<MineDelegate>
+
+@end
+
 @implementation MindControl
 
+-(id) init{
+    self = [super init];
+    if (self) {
+        [self initData];
+    }
+    return self;
+}
 
--(void) commitFromMineForHunger{
-    HungerStatus status = [Mine getHungerStatus];
+-(void) initData{
+    self.mine = [[Mine alloc] init];
+    self.mood = [[Mood alloc] init];
+    self.hobby = [[Hobby alloc] init];
+}
+
+-(void) initRun{
+    self.mine.delegate = self;
+}
+
+
+/**
+ *  MARK:--------------------method--------------------
+ */
+-(int) getMoodValue:(AIPointer*)pointer{
+    //xxx这个值还没存;
+    int moodValue = (random() % 2) - 1;
+    if (moodValue < 0) {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(mindControl_AddDemand:withType:)]) {
+            [self.delegate mindControl_AddDemand:@"怼他" withType:MindType_Angry];
+        }
+    }else{
+        if (self.delegate && [self.delegate respondsToSelector:@selector(mindControl_AddDemand:withType:)]) {
+            [self.delegate mindControl_AddDemand:@"大笑" withType:MindType_Happy];
+        }
+    }
+    return moodValue;
+}
+
+
+/**
+ *  MARK:--------------------MineDelegate--------------------
+ */
+-(void)mine_HungerStateChanged:(HungerStatus)status{
+    NSLog(@"Mind_产生充电需求");
     id demand;
     if (status == HungerStatus_LitterHunger) {
         demand = [DemandFactory createDemand];
@@ -37,28 +81,6 @@
     //注意力,
     //但Input输入A吃苹果时,Understand先理解并分析出苹果的归属及整个事件;然后交由Mind决定是不是打死他;(Mind需要的信息:A是谁,在作什么,吃了谁的什么);
     //假如是其它事情呢;我需要找到一种万能的方式去解决Mind的控制流程;而不是把数据全部传过来作处理;Mind从职责上;只负责送出自己的精神层面的值;分析结果应该是Think层的事;
-    
-    
-    
 }
-
-
-
--(int) getMoodValue:(AIPointer*)pointer{
-    //xxx这个值还没存;
-    int moodValue = (random() % 2) - 1;
-    if (moodValue < 0) {
-        if (self.delegate && [self.delegate respondsToSelector:@selector(mindControl_AddDemand:withType:)]) {
-            [self.delegate mindControl_AddDemand:@"怼他" withType:MindType_Angry];
-        }
-    }else{
-        if (self.delegate && [self.delegate respondsToSelector:@selector(mindControl_AddDemand:withType:)]) {
-            [self.delegate mindControl_AddDemand:@"大笑" withType:MindType_Happy];
-        }
-    }
-    return moodValue;
-}
-
-
 
 @end
