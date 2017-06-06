@@ -36,6 +36,9 @@
     if (type == MindType_Angry) {
         NSLog(@"我很生气!");
         NSLog(@"我要:%@",demand);
+    }else if (type == MindType_Happy) {
+        NSLog(@"我很开心!");
+        NSLog(@"我要:%@",demand);
     }
     
     //1,从(记忆,经验和知识)里找到解决方式;

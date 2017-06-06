@@ -45,10 +45,15 @@
 
 
 -(int) getMoodValue:(AIPointer*)pointer{
-    int moodValue = 0;//xxx这个值还没存;
+    //xxx这个值还没存;
+    int moodValue = (random() % 2) - 1;
     if (moodValue < 0) {
         if (self.delegate && [self.delegate respondsToSelector:@selector(mindControl_AddDemand:withType:)]) {
             [self.delegate mindControl_AddDemand:@"怼他" withType:MindType_Angry];
+        }
+    }else{
+        if (self.delegate && [self.delegate respondsToSelector:@selector(mindControl_AddDemand:withType:)]) {
+            [self.delegate mindControl_AddDemand:@"大笑" withType:MindType_Happy];
         }
     }
     return moodValue;
