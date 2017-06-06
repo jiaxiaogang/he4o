@@ -36,4 +36,9 @@
  */
 -(void) commitFromMineForHunger;
 
+/**
+ *  MARK:--------------------是否喜欢pointer--------------------
+ */
+-(int) getMoodValue:(AIPointer*)pointer;
+
 @end

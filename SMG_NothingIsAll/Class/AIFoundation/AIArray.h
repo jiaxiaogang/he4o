@@ -15,11 +15,15 @@
 @interface AIArray : AIObject 
 
 + (id) initWithObjects:(AIObject*)obj,...  NS_REQUIRES_NIL_TERMINATION NS_SWIFT_UNAVAILABLE("Use dictionary literals instead");
++ (id) initWithAIArray:(AIArray*)arr;
++ (id) initWithArray:(NSArray*)arr; //只收集IKO:AIObject的元素;
+
 -(nonnull NSMutableArray*) content;
 -(void) addObject:(AIObject*)obj;
 -(void) removeObject:(AIObject*)obj;
 -(void) removeObjectFromAtIndex:(NSUInteger)index;
 -(BOOL) containsObject:(AIObject*)obj;
 -(id) objectAtIndex:(NSUInteger)index;
+-(NSInteger) count;
 
 @end

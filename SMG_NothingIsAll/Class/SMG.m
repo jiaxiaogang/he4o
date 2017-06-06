@@ -58,6 +58,7 @@ static SMG *_instance;
  */
 -(void)feel_CommitToThink:(id)feelData{
     NSLog(@"Feel_提交到SMG");
+    [self.thinkControl commitUnderstandByShallow:feelData];//从input常规输入的浅度理解即可;
 }
 
 /**
@@ -71,8 +72,10 @@ static SMG *_instance;
 /**
  *  MARK:--------------------ThinkControlDelegate--------------------
  */
--(void)thinkControl_GetMoodValue:(AIPointer *)pointer{
+-(int)thinkControl_GetMoodValue:(AIPointer *)pointer{
     NSLog(@"Think问Mind是否喜欢某物_提交到SMG");
+    int moodValue = [self.mindControl getMoodValue:pointer];
+    return moodValue;
 }
 
 @end

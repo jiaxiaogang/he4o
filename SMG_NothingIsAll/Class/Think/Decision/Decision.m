@@ -31,6 +31,13 @@
     NSLog(@"2,分析决策 Mind的需求 ");
     NSLog(@"3,分析理解Mind需求,作出下步行为输出");
     
+    
+    
+    if (type == MindType_Angry) {
+        NSLog(@"我很生气!");
+        NSLog(@"我要:%@",demand);
+    }
+    
     //1,从(记忆,经验和知识)里找到解决方式;
     //2,每一步都要受到(Mood,Hobby,Mine)的影响;
     //3,最终决策再交由Mind作最后命令;

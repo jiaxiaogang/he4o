@@ -193,35 +193,30 @@
     [self tempTest];
     
     //[self understandA];
-    
     //[self understandB];
-    
     //[self understandC];
-
+    //[self testAIFoundation];
 }
 
-
--(void) tempTest{
+-(void) testAIFoundation{
     //测试AIoundation框架
     
-    
-//    AIChar *aChar = AIMakeCharByStr(@"a");
-//    AIString *iLYStr = AIMakeStr(@"我爱你");
-//    AIChar *loveChar = [iLYStr characterAtIndex:1];
-//    AIArray *arr = AIMakeArr(aChar,iLYStr,loveChar);
-//    AIString *hiStr = AISTRFORMAT(@"%@",@"你好");
-//    NSLog(@"");
-    
-    
-    
-    
+    //    AIChar *aChar = AIMakeCharByStr(@"a");
+    //    AIString *iLYStr = AIMakeStr(@"我爱你");
+    //    AIChar *loveChar = [iLYStr characterAtIndex:1];
+    //    AIArray *arr = AIMakeArr(aChar,iLYStr,loveChar);
+    //    AIString *hiStr = AISTRFORMAT(@"%@",@"你好");
+    //    NSLog(@"");
     
     //"哈哈"这个词经常出现
     AIChar *haChar = AIMakeCharByStr(@"哈");
     AILaw *law = AIMakeLaw(haChar,haChar);
     
     [law print];
-    NSLog(@"");
+}
+
+-(void) tempTest{
+    [[SMG sharedInstance].feel commitText:@"Hellow World!"];
 }
 
 

@@ -13,10 +13,6 @@
 @implementation MindControl
 
 
-/**
- *  MARK:--------------------mine饥饿--------------------
- *  产生充电需求
- */
 -(void) commitFromMineForHunger{
     HungerStatus status = [Mine getHungerStatus];
     id demand;
@@ -45,5 +41,19 @@
     
     
 }
+
+
+
+-(int) getMoodValue:(AIPointer*)pointer{
+    int moodValue = 0;//xxx这个值还没存;
+    if (moodValue < 0) {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(mindControl_AddDemand:withType:)]) {
+            [self.delegate mindControl_AddDemand:@"怼他" withType:MindType_Angry];
+        }
+    }
+    return moodValue;
+}
+
+
 
 @end

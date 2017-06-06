@@ -40,6 +40,23 @@
 
 -(void) commitUnderstandByShallow:(id)data{
     NSLog(@"浅理解");
+    //1,字符串时
+    if (data && [data isKindOfClass:[NSString class]]) {
+        //收集charArr
+        NSString *str = (NSString*)data;
+        NSMutableArray *charArr = [[NSMutableArray alloc] init];
+        for (NSInteger i = 0; i < str.length; i++) {
+            AIChar *c = AIMakeChar([str characterAtIndex:i]);
+            [charArr addObject:c];
+        }
+        //记录规律
+        AILaw *law = AIMakeLawByArr(charArr);
+        //问mind有没意见
+        int moodValue = 0;
+        if (self.delegate && [self.delegate respondsToSelector:@selector(thinkControl_GetMoodValue:)]) {
+            moodValue = [self.delegate thinkControl_GetMoodValue:law.pointer];
+        }
+    }
 }
 
 -(void) commitUnderstandByDeep:(id)data{

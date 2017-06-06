@@ -44,6 +44,8 @@
 
 //Law
 #define AIMakeLaw(a, ...) [AILaw initWithObjects:a, ##__VA_ARGS__,nil]
+#define AIMakeLawByArr(arr) [AILaw initWithArray:arr]
+#define AIMakeLawByAIArr(arr) [AILaw initWithAIArray:arr]
 
 
 

@@ -35,6 +35,30 @@
     return value;
 }
 
++ (id) initWithAIArray:(AIArray*)arr{
+    Class arrClass = self.class;
+    AIArray *value = [[arrClass alloc] init];
+    if (arr) {
+        for (NSInteger i = 0; i < arr.count; i++) {
+            [value addObject:[arr objectAtIndex:i]];
+        }
+    }
+    [arrClass insertToDB:value];
+    return value;
+}
+
++ (id) initWithArray:(NSArray*)arr{
+    Class arrClass = self.class;
+    AIArray *value = [[arrClass alloc] init];
+    if (arr) {
+        for (AIObject *item in arr) {
+            [value addObject:item];
+        }
+    }
+    [arrClass insertToDB:value];
+    return value;
+}
+
 /**
  *  MARK:--------------------private--------------------
  */
@@ -80,6 +104,10 @@
         NSLog(@"!!!Index越界");
         return nil;
     }
+}
+
+-(NSInteger) count{
+    return self.content.count;
 }
 
 - (void) print{

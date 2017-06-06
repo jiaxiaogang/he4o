@@ -10,7 +10,7 @@
 
 @protocol ThinkControlDelegate <NSObject>
 
--(void) thinkControl_GetMoodValue:(AIPointer*)pointer;
+-(int) thinkControl_GetMoodValue:(AIPointer*)pointer;
 
 @end
 
