@@ -19,15 +19,23 @@
 /**
  *  MARK:--------------------Mind引擎(七情六欲)--------------------
  *
- *  驱动input
- *  驱动output
+ *  <引擎>
+ *  1,驱动input
+ *  2,驱动output
+ *
+ *  <mind策略>
+ *  最简单策略(><=)依赖于博弈;
+ *
+ *  <各类>
+ *  1,欲望需求:(外界索取)
+ *      比较各mind元的minValue;并以此策略展开decision;
+ *  2,兴趣需求:(自身行动)
+ *      比较各mind元的maxValue;并以此策略展开decision;
  */
-@class Mood,Hobby,Mine;
+@class Mine;
 @interface MindControl : NSObject
 
 @property (weak, nonatomic) id<MindControlDelegate> delegate;
-@property (strong,nonatomic) Mood *mood;
-@property (strong,nonatomic) Hobby *hobby;
 @property (strong,nonatomic) Mine *mine;
 
 /**

@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 /**
- *  MARK:--------------------心情--------------------
+ *  MARK:--------------------mind元:"心情"--------------------
  *  受:Hobby,Demand,Mine所影响;三者各有其影响策略;
  */
 @interface Mood : NSObject

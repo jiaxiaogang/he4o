@@ -7,42 +7,42 @@
 //
 
 #import "Mine.h"
+#import "MindHeader.h"
+
+@interface Mine ()<HungerDelegate>
+
+@end
 
 @implementation Mine
 
 -(id) init{
     self = [super init];
     if (self) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(observerHungerStateChanged) name:UIDeviceBatteryLevelDidChangeNotification object:nil];
+        [self initData];
+        [self initRun];
     }
     return self;
 }
 
--(void) observerHungerStateChanged{
+-(void) initData{
+    self.hunger = [[Hunger alloc] init];
+    self.mood = [[Mood alloc] init];
+    self.hobby = [[Hobby alloc] init];
+}
+
+-(void) initRun{
+    self.hunger.delegate = self;
+}
+
+
+/**
+ *  MARK:--------------------HungerDelegate--------------------
+ */
+-(void) hunger_HungerStateChanged:(HungerStatus)status{
     NSLog(@"Mine_自我产生饥饿意识");
     if (self.delegate && [self.delegate respondsToSelector:@selector(mine_HungerStateChanged:)]) {
-        [self.delegate mine_HungerStateChanged:[Mine getHungerStatus]];
+        [self.delegate mine_HungerStateChanged:status];
     }
 }
 
-+(HungerStatus) getHungerStatus{
-    CGFloat batteryLevel = [UIDevice currentDevice].batteryLevel;
-    if (batteryLevel == 100.0f) {
-        return HungerStatus_Full;
-    }else if(batteryLevel > 40.0f){
-        return HungerStatus_NotHunger;
-    }else if(batteryLevel > 20.0f){
-        return HungerStatus_LitterHunger;
-    }else if(batteryLevel > 10.0f){
-        return HungerStatus_Hunger;
-    }else if(batteryLevel > 5.0f){
-        return HungerStatus_VeryHunger;
-    }else{
-        return HungerStatus_VeryVeryHunger;
-    }
-}
-
--(void) dealloc{
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
 @end

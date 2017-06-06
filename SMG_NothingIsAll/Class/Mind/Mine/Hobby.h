@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 /**
- *  MARK:--------------------爱好,喜好,偏好,审美--------------------
+ *  MARK:--------------------mind元:"爱好,喜好,偏好,审美"--------------------
  */
 @interface Hobby : NSObject
 
