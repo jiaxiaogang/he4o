@@ -8,13 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
+
+//将要废弃的类...
 /**
  *  MARK:--------------------mind元:"心情"--------------------
  *  受:Hobby,Demand,Mine所影响;三者各有其影响策略;
  */
 @interface Mood : NSObject
 
-@property (assign, nonatomic) int happyValue;        //哀乐值(-10到10) 探索行为+1,反馈怒-2;
--(void) refreshDecisionByOutputTask:(id)outputTask;
+@property (assign, nonatomic) int happyValue;        //happyValue只是一个值;描述各种
 
 @end
