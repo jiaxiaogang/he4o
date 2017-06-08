@@ -22,7 +22,7 @@
  *  3,由Mind判断要不要去理解;
  *  3,无注意力时,是不记忆的;
  */
-+(void) commitOutAttention:(id)data;
+-(AIPointer*) commitOutAttention:(id)data;
 
 
 /**
@@ -30,7 +30,7 @@
  *  1,由Mind驱动
  *  2,
  */
-+(void) commitInAttension:(id)data;
+-(void) commitInAttension:(id)data;
 
 
 

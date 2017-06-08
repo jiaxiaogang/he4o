@@ -10,15 +10,30 @@
 
 @implementation Understand (Second)
 
-+(void) commitOutAttention:(id)data{
+-(AIPointer*) commitOutAttention:(id)data{
     NSLog(@"无意分析");
+    //1,字符串时
+    if (data && [data isKindOfClass:[NSString class]]) {
+        //收集charArr
+        NSString *str = (NSString*)data;
+        NSMutableArray *charArr = [[NSMutableArray alloc] init];
+        for (NSInteger i = 0; i < str.length; i++) {
+            AIChar *c = AIMakeChar([str characterAtIndex:i]);
+            [charArr addObject:c];
+        }
+        //记录规律
+        AILaw *law = AIMakeLawByArr(charArr);
+        //问mind有没意见
+        return law.pointer;
+    }
+    return nil;
 }
 
-+(void) commitInAttension:(id)data{
+-(void) commitInAttension:(id)data{
     NSLog(@"有意分析");
 }
 
-+(void) commitInDream:(id)data{
+-(void) commitInDream:(id)data{
     NSLog(@"梦境整理分析");
 }
 

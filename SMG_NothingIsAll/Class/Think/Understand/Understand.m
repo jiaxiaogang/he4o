@@ -24,15 +24,8 @@
 -(id) init{
     self = [super init];
     if (self) {
-        
     }
     return self;
-}
-
--(void) initData{
-    self.timer = [NSTimer timerWithTimeInterval:10 target:self selector:@selector(startUnderstand) userInfo:nil repeats:YES];
-    [[NSRunLoop mainRunLoop] addTimer:_timer forMode:NSRunLoopCommonModes];
-    [_timer fire];
 }
 
 
@@ -60,10 +53,6 @@
     //...
 }
 
--(void)dealloc{
-    [self.timer invalidate];
-    self.timer = nil;
-}
 
 @end
 

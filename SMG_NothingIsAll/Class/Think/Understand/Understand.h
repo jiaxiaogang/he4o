@@ -31,7 +31,6 @@
  */
 @interface Understand : NSObject
 
-@property(strong,nonatomic)NSTimer* timer;//10秒思考一次;
 
 -(id) init;
 
