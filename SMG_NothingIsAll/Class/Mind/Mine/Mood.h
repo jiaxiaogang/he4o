@@ -14,8 +14,10 @@
  *  MARK:--------------------mind元:"心情"--------------------
  *  受:Hobby,Demand,Mine所影响;三者各有其影响策略;
  */
+@class MindStrategyModel;
 @interface Mood : NSObject
 
 @property (assign, nonatomic) int happyValue;        //happyValue只是一个值;描述各种
+-(MindStrategyModel*) getStrategyModel;
 
 @end

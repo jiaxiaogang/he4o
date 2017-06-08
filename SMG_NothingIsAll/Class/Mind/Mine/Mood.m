@@ -7,6 +7,7 @@
 //
 
 #import "Mood.h"
+#import "MindHeader.h"
 
 @implementation Mood
 
@@ -15,6 +16,8 @@
     _happyValue = MAX(-10, MIN(happyValue, 10));//值只能在-10到10之间;
 }
 
-
+-(MindStrategyModel*) getStrategyModel{
+    return [MindStrategy getModelWithMin:-10 withMax:10 withOriValue:self.happyValue withType:MindType_Mood];
+}
 
 @end

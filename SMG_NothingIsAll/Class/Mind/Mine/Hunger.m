@@ -7,7 +7,7 @@
 //
 
 #import "Hunger.h"
-
+#import "MindHeader.h"
 
 
 @implementation Hunger
@@ -21,6 +21,9 @@
     return self;
 }
 
+/**
+ *  MARK:--------------------method--------------------
+ */
 -(void) observerHungerStateChanged{
     NSLog(@"Hunger_自我产生饥饿意识");
     if (self.delegate && [self.delegate respondsToSelector:@selector(hunger_HungerStateChanged:)]) {
@@ -43,6 +46,11 @@
     }else{
         return HungerStatus_VeryVeryHunger;
     }
+}
+
+-(MindStrategyModel*) getStrategyModel{
+    NSInteger curBatteryLevel = (NSInteger)[UIDevice currentDevice].batteryLevel;
+    return [MindStrategy getModelWithMin:0 withMax:100 withOriValue:curBatteryLevel withType:MindType_Hunger];
 }
 
 -(void) dealloc{

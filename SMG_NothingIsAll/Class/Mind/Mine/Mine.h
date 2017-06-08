@@ -27,4 +27,9 @@
 @property (strong,nonatomic) Mood *mood;
 @property (strong,nonatomic) Hobby *hobby;
 
+/**
+ *  MARK:--------------------获取当前最迫切的自我需求数据--------------------
+ */
+-(MindStrategyModel*) getMindStrategyModelForDemand;
+
 @end

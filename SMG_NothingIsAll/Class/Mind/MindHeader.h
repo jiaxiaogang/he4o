@@ -16,3 +16,4 @@
 #import "HobbyModel.h"
 #import "Hobby.h"
 #import "Hunger.h"
+#import "MindStrategy.h"

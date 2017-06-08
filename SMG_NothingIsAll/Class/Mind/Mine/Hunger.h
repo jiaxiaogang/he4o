@@ -31,9 +31,11 @@ typedef NS_ENUM(NSInteger, HungerStatus) {
 /**
  *  MARK:--------------------Mind元:饥饿--------------------
  */
+@class MindStrategyModel;
 @interface Hunger : NSObject
 
 @property (weak, nonatomic) id<HungerDelegate> delegate;
 +(HungerStatus) getHungerStatus;
+-(MindStrategyModel*) getStrategyModel;
 
 @end
