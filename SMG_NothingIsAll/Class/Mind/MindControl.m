@@ -40,12 +40,12 @@
     //xxx这个值还没存;
     int moodValue = (random() % 2) - 1;//所有demand只是简单规则;即将value++;
     if (moodValue < 0) {
-        if (self.delegate && [self.delegate respondsToSelector:@selector(mindControl_AddDemand:withType:)]) {
-            [self.delegate mindControl_AddDemand:@"怼他" withType:MindType_Angry];
+        if (self.delegate && [self.delegate respondsToSelector:@selector(mindControl_CommitDecisionByDemand:withType:)]) {
+            [self.delegate mindControl_CommitDecisionByDemand:@"怼他" withType:MindType_Angry];
         }
     }else{
-        if (self.delegate && [self.delegate respondsToSelector:@selector(mindControl_AddDemand:withType:)]) {
-            [self.delegate mindControl_AddDemand:@"大笑" withType:MindType_Happy];
+        if (self.delegate && [self.delegate respondsToSelector:@selector(mindControl_CommitDecisionByDemand:withType:)]) {
+            [self.delegate mindControl_CommitDecisionByDemand:@"大笑" withType:MindType_Happy];
         }
     }
     
@@ -87,8 +87,8 @@
     }
     //执行任务分析决策
     if (demand) {
-        if (self.delegate && [self.delegate respondsToSelector:@selector(mindControl_AddDemand:withType:)]) {
-            [self.delegate mindControl_AddDemand:demand withType:MindType_Hunger];
+        if (self.delegate && [self.delegate respondsToSelector:@selector(mindControl_CommitDecisionByDemand:withType:)]) {
+            [self.delegate mindControl_CommitDecisionByDemand:demand withType:MindType_Hunger];
         }
     }
     

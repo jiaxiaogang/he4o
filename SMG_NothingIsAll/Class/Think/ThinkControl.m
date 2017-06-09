@@ -33,7 +33,7 @@
 /**
  *  MARK:--------------------method--------------------
  */
--(void) commitDemand:(id)demand withType:(MindType)type{
+-(void) commitDecisionByDemand:(id)demand withType:(MindType)type{
     NSLog(@"提交需求...To...Think");
     [self.decision commitDemand:demand withType:type];
 }

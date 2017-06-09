@@ -24,7 +24,7 @@
 @property (strong,nonatomic) Understand *understand;
 @property (strong,nonatomic) Decision *decision;
 
--(void) commitDemand:(id)demand withType:(MindType)type;
+-(void) commitDecisionByDemand:(id)demand withType:(MindType)type;
 -(void) commitUnderstandByShallow:(id)data;//浅理解
 -(void) commitUnderstandByDeep:(id)data;//深理解
 

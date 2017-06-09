@@ -64,9 +64,9 @@ static SMG *_instance;
 /**
  *  MARK:--------------------MindControlDelegate--------------------
  */
--(void) mindControl_AddDemand:(id)demand withType:(MindType)type{
+-(void) mindControl_CommitDecisionByDemand:(id)demand withType:(MindType)type{
     NSLog(@"Mind需求_提交到SMG");
-    [self.thinkControl commitDemand:demand withType:type];
+    [self.thinkControl commitDecisionByDemand:demand withType:type];
 }
 
 /**

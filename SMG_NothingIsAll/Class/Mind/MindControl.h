@@ -12,7 +12,7 @@
 @protocol MindControlDelegate <NSObject>
 
 
--(void) mindControl_AddDemand:(id)demand withType:(MindType)type;//新增需求;
+-(void) mindControl_CommitDecisionByDemand:(id)demand withType:(MindType)type;//新增需求;
 
 @end
 
