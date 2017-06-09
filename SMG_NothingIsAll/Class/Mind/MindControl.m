@@ -36,9 +36,9 @@
 /**
  *  MARK:--------------------method--------------------
  */
--(int) getMoodValue:(AIPointer*)pointer{
+-(void) commitOutAttention:(AIPointer*)pointer{
     //xxx这个值还没存;
-    int moodValue = (random() % 2) - 1;
+    int moodValue = (random() % 2) - 1;//所有demand只是简单规则;即将value++;
     if (moodValue < 0) {
         if (self.delegate && [self.delegate respondsToSelector:@selector(mindControl_AddDemand:withType:)]) {
             [self.delegate mindControl_AddDemand:@"怼他" withType:MindType_Angry];
@@ -48,7 +48,25 @@
             [self.delegate mindControl_AddDemand:@"大笑" withType:MindType_Happy];
         }
     }
-    return moodValue;
+    
+    
+    //1,交给decision决策
+    //2,decision找经验习惯,
+    //  2.1,找不到分析(转3)
+    //  2.2,找到则执行(转4)
+    //3,decision分析
+    //4,执行;
+    //5,反馈给mindControl;
+    
+    
+    //2,将mind的意见记到logic和law里;
+    //1,判断是否无聊;
+    //2,判断是否需要注意力;
+    //3,作为火花塞点燃mind;
+    //xxx
+    
+    
+    
 }
 
 

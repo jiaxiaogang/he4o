@@ -40,7 +40,8 @@
 
 /**
  *  MARK:--------------------是否喜欢pointer--------------------
+ *  参数:(应该是数组/model)
  */
--(int) getMoodValue:(AIPointer*)pointer;
+-(void) commitOutAttention:(AIPointer*)pointer;
 
 @end

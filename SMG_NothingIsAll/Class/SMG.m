@@ -72,10 +72,10 @@ static SMG *_instance;
 /**
  *  MARK:--------------------ThinkControlDelegate--------------------
  */
--(int)thinkControl_GetMoodValue:(AIPointer *)pointer{
+-(void)thinkControl_CommitOutAttention:(AIPointer *)pointer{
     NSLog(@"Think问Mind是否喜欢某物_提交到SMG");
-    int moodValue = [self.mindControl getMoodValue:pointer];
-    return moodValue;
+    [self.mindControl commitOutAttention:pointer];
 }
+
 
 @end

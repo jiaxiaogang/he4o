@@ -11,7 +11,7 @@
 @implementation Understand (Second)
 
 -(AIPointer*) commitOutAttention:(id)data{
-    NSLog(@"无意分析");
+    NSLog(@"无意分析");//只取obj,char等pointer传回去;
     //1,字符串时
     if (data && [data isKindOfClass:[NSString class]]) {
         //收集charArr
