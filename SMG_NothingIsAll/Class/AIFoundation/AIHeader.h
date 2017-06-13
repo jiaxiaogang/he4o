@@ -10,7 +10,13 @@
 #import "AIString.h"
 #import "AIChar.h"
 #import "AIArray.h"
+
 #import "AILaw.h"
+#import "AILogic.h"
+#import "AIValue.h"
+
+#import "AIDo.h"
+#import "AIObj.h"
 
 
 /**
