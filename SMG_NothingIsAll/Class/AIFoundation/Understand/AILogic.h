@@ -21,4 +21,9 @@
  */
 @interface AILogic : AIObject
 
+
+
+//logic表结构:mindType,mindValue,pointerArr;//xxx
+
+
 @end
