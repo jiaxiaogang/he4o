@@ -15,5 +15,7 @@
 @interface AIMemory : AIObject
 
 
+//xxx
+
 
 @end
