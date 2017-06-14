@@ -1,5 +1,15 @@
 # SMG_NothingIsAll(人工智能系统,代号:无即是有)
 
+===
+
+[![Build Status](https://www.github.com/jiaxiaogang)](https://www.github.com/jiaxiaogang)
+[![License](https://www.github.com/jiaxiaogang)](https://www.github.com/jiaxiaogang)
+[![Carthage compatible](https://www.github.com/jiaxiaogang)](https://www.github.com/jiaxiaogang)
+[![CocoaPods compatible](https://www.github.com/jiaxiaogang)](https://www.github.com/jiaxiaogang)
+[![Platform](https://www.github.com/jiaxiaogang)](https://www.github.com/jiaxiaogang)
+<img src="https://img.shields.io/badge/%20in-swift%203.0-orange.svg">
+[![Twitter Follow](https://www.github.com/jiaxiaogang)](https://www.github.com/jiaxiaogang)
+
 ##### 类人,通用型人工智能系统;
 
 ## 2017.06.01
