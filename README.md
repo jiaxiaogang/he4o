@@ -1,10 +1,7 @@
 # SMG_NothingIsAll(人工智能系统,代号:无即是有)
 
-<img src="https://img.shields.io/badge/%20in-oc%203.0-orange.svg">
-[![QQ Group](https://www.github.com/jiaxiaogang)](https://www.github.com/jiaxiaogang)
-<img src="https://img.shields.io/badge/%20528053635%203.0-orange.svg">
-[![WeChat Num](https://www.github.com/jiaxiaogang)](https://www.github.com/jiaxiaogang)
-<img src="https://img.shields.io/badge/%20jia2764894%203.0-orange.svg">
+<img src="https://img.shields.io/badge/%20in-iphone%203.0-orange.svg">
+<img src="https://img.shields.io/badge/%20QQGroup:528053635%203.0-orange.svg">
 
 ##### 类人,通用型人工智能系统;
 
