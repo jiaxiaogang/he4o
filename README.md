@@ -2,7 +2,6 @@
 
 <img src="https://img.shields.io/badge/%20in-iphone%20-orange.svg">
 <img src="https://img.shields.io/badge/%20QQGroup-528053635%20-orange.svg">
-[!]
 <img src="https://img.shields.io/badge/%20Wechat-jia2764894%20-orange.svg">
 
 ##### 类人,通用型人工智能系统;
