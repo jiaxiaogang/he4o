@@ -141,45 +141,6 @@
 }
 
 - (IBAction)commitBtnOnClick:(id)sender {
-    if (!STRISOK(self.inputTV.text)) {
-        [self showErrorTips:@"请输入原话"];
-        return;
-    }
-    if (!STRISOK(self.sayPersonName)) {
-        [self showErrorTips:@"请选择发言人"];
-        return;
-    }
-    if (!STRISOK(self.doPersonName)) {
-        [self showErrorTips:@"请选择行为人"];
-        return;
-    }
-    if (!STRISOK(self.doTypeTF.text)) {
-        [self showErrorTips:@"请输入行为"];
-    }
-    
-    if (!STRISOK(self.targetTF.text)) {
-        [self showErrorTips:@"请输入目标"];
-    }
-    NSLog(@"------------\n发言人:%@\n%@\n------------\n行为人:%@\n%@_%@\n------------\n",self.sayPersonName,self.inputTV.text,self.doPersonName,self.doTypeTF.text,self.targetTF.text);
-    //1,doModel
-    InputDoModel *doModel = [[InputDoModel alloc] init];
-    doModel.fromMKId = self.doPersonName;
-    doModel.toMKId = self.targetTF.text;
-    doModel.doType = self.doTypeTF.text;
-    
-    //2,feelTextModel
-    InputTextModel *feelTextModel = [[InputTextModel alloc] init];
-    feelTextModel.text = self.inputTV.text;
-    
-    //3,objModel
-    InputObjModel *objModel = [[InputObjModel alloc] init];
-    objModel.name = self.targetTF.text;
-    
-    //3,commit
-    [[SMG sharedInstance].thinkControl.understand commitWithFeelModelArr:@[doModel,feelTextModel,objModel]];
-    
-    //4,clear
-    [self clearAllContent];
     
 }
 
