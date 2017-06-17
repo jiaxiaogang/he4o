@@ -36,7 +36,7 @@
 /**
  *  MARK:--------------------method--------------------
  */
--(void) commitOutAttention:(AIPointer*)pointer{
+-(id) getMindValue:(AIPointer*)pointer{
     //xxx这个值还没存;
     int moodValue = (random() % 2) - 1;//所有demand只是简单规则;即将value++;
     if (moodValue < 0) {
@@ -48,6 +48,14 @@
             [self.delegate mindControl_CommitDecisionByDemand:@"大笑" withType:MindType_Happy];
         }
     }
+    
+    
+    //*  value:数据类型未定;
+    //*      1,从经验和长期记忆搜索有改变mindValue的记录;
+    //*      2,根据当前自己的状态;
+    //*      3,计算出一个值;并返回;
+    
+    return nil;
     
     
     //1,交给decision决策

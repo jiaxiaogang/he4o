@@ -10,7 +10,7 @@
 
 @protocol ThinkControlDelegate <NSObject>
 
--(void) thinkControl_CommitOutAttention:(AIPointer*)pointer;//对obj,char,或者其它复合的东西"偏好值";
+-(id) thinkControl_GetMindValue:(AIPointer*)pointer;//对obj,char,或者其它复合的东西"偏好值";
 
 @end
 

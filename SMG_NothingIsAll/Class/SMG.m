@@ -15,8 +15,7 @@
 #import "OutputHeader.h"
 #import "MindHeader.h"
 
-
-@interface SMG ()<FeelDelegate,MindControlDelegate,ThinkControlDelegate>
+@interface SMG ()<FeelDelegate,MindControlDelegate,ThinkControlDelegate,InputDelegate>
 
 @end
 
@@ -45,20 +44,29 @@ static SMG *_instance;
     self.thinkControl = [[ThinkControl alloc] init];
     self.feel       = [[Feel alloc] init];
     self.output     = [[Output alloc] init];
+    self.input = [[Input alloc] init];
 }
 
 -(void) initRun{
     self.feel.delegate = self;
     self.mindControl.delegate = self;
     self.thinkControl.delegate = self;
+    self.input.delegate = self;
+}
+
+/**
+ *  MARK:--------------------InputDelegate--------------------
+ */
+-(void)input_CommitToThink:(NSString *)text{
+    NSLog(@"Input->Think (CONTENT:(%@)",text);
+    [self.thinkControl commitUnderstandByShallow:text];//从input常规输入的浅度理解即可;
 }
 
 /**
  *  MARK:--------------------FeelDelegate--------------------
  */
 -(void)feel_CommitToThink:(id)feelData{
-    NSLog(@"Feel_提交到SMG");
-    [self.thinkControl commitUnderstandByShallow:feelData];//从input常规输入的浅度理解即可;
+    
 }
 
 /**
@@ -72,9 +80,9 @@ static SMG *_instance;
 /**
  *  MARK:--------------------ThinkControlDelegate--------------------
  */
--(void)thinkControl_CommitOutAttention:(AIPointer *)pointer{
+-(id)thinkControl_GetMindValue:(AIPointer *)pointer{
     NSLog(@"Think问Mind是否喜欢某物_提交到SMG");
-    [self.mindControl commitOutAttention:pointer];
+    return [self.mindControl getMindValue:pointer];
 }
 
 

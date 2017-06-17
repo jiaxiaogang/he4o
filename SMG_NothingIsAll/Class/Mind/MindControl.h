@@ -42,6 +42,6 @@
  *  MARK:--------------------是否喜欢pointer--------------------
  *  参数:(应该是数组/model)
  */
--(void) commitOutAttention:(AIPointer*)pointer;
+-(id) getMindValue:(AIPointer*)pointer;
 
 @end

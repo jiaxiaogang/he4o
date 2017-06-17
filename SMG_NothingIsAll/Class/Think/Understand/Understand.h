@@ -29,10 +29,37 @@
  *  注:找出逻辑关系的规律,将其记录;
  *
  */
+@protocol UnderstandDelegate <NSObject>
+
+-(id) understand_GetMindValue:(AIPointer*)pointer;//问mind对pointer的态度;
+
+@end
+
 @interface Understand : NSObject
 
+@property (weak, nonatomic) id<UnderstandDelegate> delegata;
 
--(id) init;
+/**
+ *  MARK:--------------------无注意力的--------------------
+ *  1,存回放池;
+ *  2,转Feel;(取属性,取Obj等但不存储;)
+ *  3,唯一性判断(如果大脑正在思考别的事;将不作判断 & 并中断执行下去)//此方法部分
+ *  4,由Mind判断要不要去理解;(由mind执行)
+ *  5,无注意力时,是不记忆的;(由mind决定)
+ */
+-(id) commitOutAttention:(id)data;
+
+
+/**
+ *  MARK:--------------------有注意力的--------------------
+ *  1,由Mind驱动
+ *  2,
+ */
+-(void) commitInAttension:(id)data;
+
+
+
+
 
 @end
 

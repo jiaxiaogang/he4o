@@ -14,6 +14,10 @@
 
 @implementation Input
 
-
+-(void) commitText:(NSString*)text{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(input_CommitToThink:)]) {
+        [self.delegate input_CommitToThink:STRTOOK(text)];
+    }
+}
 
 @end

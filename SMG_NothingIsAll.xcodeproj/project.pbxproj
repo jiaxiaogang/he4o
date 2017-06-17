@@ -19,7 +19,6 @@
 		082F9D5D1EB236AC0009F6A9 /* StudyViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 082F9D5B1EB236AC0009F6A9 /* StudyViewController.xib */; };
 		082F9D601EB236E80009F6A9 /* SMGOutputDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 082F9D5F1EB236E80009F6A9 /* SMGOutputDelegate.m */; };
 		0831CF5E1EBEF20500C020E6 /* DBUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0831CF5D1EBEF20500C020E6 /* DBUtils.m */; };
-		087753221ECFE1C400E7AD09 /* Understand+Input.m in Sources */ = {isa = PBXBuildFile; fileRef = 0877531A1ECFE1C400E7AD09 /* Understand+Input.m */; };
 		087753241ECFE1C400E7AD09 /* Understand.m in Sources */ = {isa = PBXBuildFile; fileRef = 0877531E1ECFE1C400E7AD09 /* Understand.m */; };
 		087753251ECFE1C400E7AD09 /* UnderstandUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 087753211ECFE1C400E7AD09 /* UnderstandUtils.m */; };
 		0895DAE61EB2D52D00E2B5C7 /* DataViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0895DAE41EB2D52D00E2B5C7 /* DataViewController.m */; };
@@ -70,7 +69,6 @@
 		08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F4C98D1EA7A03900F3EDA8 /* SMGUtils.m */; };
 		08F639831E9A2EC0003CD163 /* FeelValueModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F639821E9A2EC0003CD163 /* FeelValueModel.m */; };
 		08F639891E9A2FF4003CD163 /* Feel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F639881E9A2FF4003CD163 /* Feel.m */; };
-		08F7823C1ED90F6E004884BE /* Understand+Second.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F7823B1ED90F6E004884BE /* Understand+Second.m */; };
 		08F782401ED91290004884BE /* Decision.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F7823F1ED91290004884BE /* Decision.m */; };
 		08FBB9081EE76E78000F9E80 /* Hobby.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FBB9011EE76E78000F9E80 /* Hobby.m */; };
 		08FBB9091EE76E78000F9E80 /* HobbyModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FBB9031EE76E78000F9E80 /* HobbyModel.m */; };
@@ -109,8 +107,6 @@
 		082F9D611EB236FA0009F6A9 /* OutputHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OutputHeader.h; sourceTree = "<group>"; };
 		0831CF5C1EBEF20500C020E6 /* DBUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBUtils.h; sourceTree = "<group>"; };
 		0831CF5D1EBEF20500C020E6 /* DBUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBUtils.m; sourceTree = "<group>"; };
-		087753191ECFE1C400E7AD09 /* Understand+Input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Understand+Input.h"; sourceTree = "<group>"; };
-		0877531A1ECFE1C400E7AD09 /* Understand+Input.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Understand+Input.m"; sourceTree = "<group>"; };
 		0877531D1ECFE1C400E7AD09 /* Understand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Understand.h; sourceTree = "<group>"; };
 		0877531E1ECFE1C400E7AD09 /* Understand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Understand.m; sourceTree = "<group>"; };
 		087753201ECFE1C400E7AD09 /* UnderstandUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnderstandUtils.h; sourceTree = "<group>"; };
@@ -218,8 +214,6 @@
 		08F639881E9A2FF4003CD163 /* Feel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Feel.m; sourceTree = "<group>"; };
 		08F6398A1E9A3316003CD163 /* FeelHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeelHeader.h; sourceTree = "<group>"; };
 		08F6398B1E9A3326003CD163 /* FeelEnum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeelEnum.h; sourceTree = "<group>"; };
-		08F7823A1ED90F6E004884BE /* Understand+Second.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Understand+Second.h"; sourceTree = "<group>"; };
-		08F7823B1ED90F6E004884BE /* Understand+Second.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Understand+Second.m"; sourceTree = "<group>"; };
 		08F7823E1ED91290004884BE /* Decision.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Decision.h; sourceTree = "<group>"; };
 		08F7823F1ED91290004884BE /* Decision.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Decision.m; sourceTree = "<group>"; };
 		08FBB9001EE76E78000F9E80 /* Hobby.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hobby.h; sourceTree = "<group>"; };
@@ -299,14 +293,10 @@
 		087753181ECFE1C400E7AD09 /* Understand */ = {
 			isa = PBXGroup;
 			children = (
-				087753191ECFE1C400E7AD09 /* Understand+Input.h */,
-				0877531A1ECFE1C400E7AD09 /* Understand+Input.m */,
 				0877531D1ECFE1C400E7AD09 /* Understand.h */,
 				0877531E1ECFE1C400E7AD09 /* Understand.m */,
 				087753201ECFE1C400E7AD09 /* UnderstandUtils.h */,
 				087753211ECFE1C400E7AD09 /* UnderstandUtils.m */,
-				08F7823A1ED90F6E004884BE /* Understand+Second.h */,
-				08F7823B1ED90F6E004884BE /* Understand+Second.m */,
 			);
 			path = Understand;
 			sourceTree = "<group>";
@@ -853,7 +843,6 @@
 				08E58DEB1ED3CE18008B0D76 /* LawStore.m in Sources */,
 				0831CF5E1EBEF20500C020E6 /* DBUtils.m in Sources */,
 				0895DAE61EB2D52D00E2B5C7 /* DataViewController.m in Sources */,
-				087753221ECFE1C400E7AD09 /* Understand+Input.m in Sources */,
 				087753241ECFE1C400E7AD09 /* Understand.m in Sources */,
 				08E58DEA1ED3CE18008B0D76 /* LawModel.m in Sources */,
 				08E58DE51ED3CE18008B0D76 /* TextModel.m in Sources */,
@@ -862,7 +851,6 @@
 				08E58DE91ED3CE18008B0D76 /* MemStore.m in Sources */,
 				08E58DE61ED3CE18008B0D76 /* TextStore.m in Sources */,
 				0813D64F1EDF7B150089FA0C /* InputObjModel.m in Sources */,
-				08F7823C1ED90F6E004884BE /* Understand+Second.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

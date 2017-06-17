@@ -9,38 +9,6 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/Class/Think/Understand/Understand+Input.m"
-            timestampString = "517027632.532404"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "462"
-            endingLineNumber = "462"
-            landmarkName = "-understandDo:atText:outBlock:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/Class/Think/Understand/Understand+Input.m"
-            timestampString = "517027632.532404"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "399"
-            endingLineNumber = "399"
-            landmarkName = "-understandObj:atText:outBlock:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/Class/Store/LawStore/LawStore.m"
             timestampString = "517028043.44817"
             startingColumnNumber = "9223372036854775807"
@@ -57,44 +25,12 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/Class/Think/Understand/Understand+Second.m"
-            timestampString = "518577436.242955"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "37"
-            endingLineNumber = "37"
-            landmarkName = "-commitInDream:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/Class/Think/Understand/Understand+Second.m"
-            timestampString = "518577436.242955"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "33"
-            endingLineNumber = "33"
-            landmarkName = "-commitInAttension:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/Class/SMG.m"
-            timestampString = "518960918.237445"
+            timestampString = "519389168.386449"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "69"
-            endingLineNumber = "69"
+            startingLineNumber = "77"
+            endingLineNumber = "77"
             landmarkName = "-mindControl_CommitDecisionByDemand:withType:"
             landmarkType = "7">
          </BreakpointContent>
@@ -127,7 +63,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "44"
             endingLineNumber = "44"
-            landmarkName = "-commitOutAttention:"
+            landmarkName = "-getMindValue:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -143,7 +79,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "48"
             endingLineNumber = "48"
-            landmarkName = "-commitOutAttention:"
+            landmarkName = "-getMindValue:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -154,11 +90,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/Class/Think/ThinkControl.m"
-            timestampString = "518961003.186502"
+            timestampString = "519390423.016149"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "38"
-            endingLineNumber = "38"
+            startingLineNumber = "40"
+            endingLineNumber = "40"
             landmarkName = "-commitDecisionByDemand:withType:"
             landmarkType = "7">
          </BreakpointContent>

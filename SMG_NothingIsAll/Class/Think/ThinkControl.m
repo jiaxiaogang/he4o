@@ -9,10 +9,7 @@
 #import "ThinkControl.h"
 #import "ThinkHeader.h"
 
-@interface ThinkControl ()
-
-
-
+@interface ThinkControl ()<UnderstandDelegate>
 @end
 
 @implementation ThinkControl
@@ -21,6 +18,7 @@
     self = [super init];
     if (self) {
         [self initData];
+        [self initRun];
     }
     return self;
 }
@@ -28,6 +26,10 @@
 -(void) initData{
     self.understand = [[Understand alloc] init];
     self.decision = [[Decision alloc] init];
+}
+
+-(void) initRun{
+    self.understand.delegata = self;
 }
 
 /**
@@ -40,15 +42,23 @@
 
 -(void) commitUnderstandByShallow:(id)data{
     NSLog(@"浅理解");
-    AIPointer *pointer = [self.understand commitOutAttention:data];
-    //让SMG转交给mindControl;
-    if (self.delegate && [self.delegate respondsToSelector:@selector(thinkControl_CommitOutAttention:)]) {
-        [self.delegate thinkControl_CommitOutAttention:pointer];
-    }
+    id understandValue = [self.understand commitOutAttention:data];//返回理解的结果;
+    
 }
 
 -(void) commitUnderstandByDeep:(id)data{
     NSLog(@"深理解");
+}
+
+/**
+ *  MARK:--------------------UnderstandDelegate--------------------
+ */
+-(id)understand_GetMindValue:(AIPointer *)pointer{
+    //让SMG转交给mindControl;
+    if (self.delegate && [self.delegate respondsToSelector:@selector(thinkControl_GetMindValue:)]) {
+        return [self.delegate thinkControl_GetMindValue:pointer];
+    }
+    return nil;
 }
 
 @end
