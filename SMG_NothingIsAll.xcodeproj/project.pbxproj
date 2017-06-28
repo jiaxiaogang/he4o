@@ -20,6 +20,9 @@
 		082F9D5D1EB236AC0009F6A9 /* StudyViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 082F9D5B1EB236AC0009F6A9 /* StudyViewController.xib */; };
 		082F9D601EB236E80009F6A9 /* SMGOutputDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 082F9D5F1EB236E80009F6A9 /* SMGOutputDelegate.m */; };
 		0831CF5E1EBEF20500C020E6 /* DBUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0831CF5D1EBEF20500C020E6 /* DBUtils.m */; };
+		083F61251F046C96000330E1 /* AIPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 083F61241F046C96000330E1 /* AIPointer.m */; };
+		083F61281F046CE1000330E1 /* AIPointerStrong.m in Sources */ = {isa = PBXBuildFile; fileRef = 083F61271F046CE1000330E1 /* AIPointerStrong.m */; };
+		083F612B1F046D80000330E1 /* AIPointerDampingStrategy.m in Sources */ = {isa = PBXBuildFile; fileRef = 083F612A1F046D80000330E1 /* AIPointerDampingStrategy.m */; };
 		087753241ECFE1C400E7AD09 /* Understand.m in Sources */ = {isa = PBXBuildFile; fileRef = 0877531E1ECFE1C400E7AD09 /* Understand.m */; };
 		087753251ECFE1C400E7AD09 /* UnderstandUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 087753211ECFE1C400E7AD09 /* UnderstandUtils.m */; };
 		0895DAE61EB2D52D00E2B5C7 /* DataViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0895DAE41EB2D52D00E2B5C7 /* DataViewController.m */; };
@@ -58,7 +61,6 @@
 		08E58DEC1ED3CE18008B0D76 /* LogicModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E58DD91ED3CE18008B0D76 /* LogicModel.m */; };
 		08E58DED1ED3CE18008B0D76 /* LogicStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E58DDB1ED3CE18008B0D76 /* LogicStore.m */; };
 		08E99C481EBDD1C800A38FF5 /* MindControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E99C471EBDD1C800A38FF5 /* MindControl.m */; };
-		08F140CB1ED7B4BD00E3B4D0 /* AIPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F140CA1ED7B4BD00E3B4D0 /* AIPointer.m */; };
 		08F140D51ED7C35C00E3B4D0 /* AILaw.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F140D21ED7C35C00E3B4D0 /* AILaw.m */; };
 		08F140D61ED7C35C00E3B4D0 /* AILogic.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F140D41ED7C35C00E3B4D0 /* AILogic.m */; };
 		08F140DA1ED7C3BB00E3B4D0 /* AIValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F140D91ED7C3BB00E3B4D0 /* AIValue.m */; };
@@ -110,6 +112,12 @@
 		082F9D611EB236FA0009F6A9 /* OutputHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OutputHeader.h; sourceTree = "<group>"; };
 		0831CF5C1EBEF20500C020E6 /* DBUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBUtils.h; sourceTree = "<group>"; };
 		0831CF5D1EBEF20500C020E6 /* DBUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBUtils.m; sourceTree = "<group>"; };
+		083F61231F046C96000330E1 /* AIPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIPointer.h; sourceTree = "<group>"; };
+		083F61241F046C96000330E1 /* AIPointer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIPointer.m; sourceTree = "<group>"; };
+		083F61261F046CE1000330E1 /* AIPointerStrong.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIPointerStrong.h; sourceTree = "<group>"; };
+		083F61271F046CE1000330E1 /* AIPointerStrong.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIPointerStrong.m; sourceTree = "<group>"; };
+		083F61291F046D80000330E1 /* AIPointerDampingStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIPointerDampingStrategy.h; sourceTree = "<group>"; };
+		083F612A1F046D80000330E1 /* AIPointerDampingStrategy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIPointerDampingStrategy.m; sourceTree = "<group>"; };
 		0877531D1ECFE1C400E7AD09 /* Understand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Understand.h; sourceTree = "<group>"; };
 		0877531E1ECFE1C400E7AD09 /* Understand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Understand.m; sourceTree = "<group>"; };
 		087753201ECFE1C400E7AD09 /* UnderstandUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnderstandUtils.h; sourceTree = "<group>"; };
@@ -185,8 +193,6 @@
 		08E58DDB1ED3CE18008B0D76 /* LogicStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogicStore.m; sourceTree = "<group>"; };
 		08E99C461EBDD1C800A38FF5 /* MindControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MindControl.h; sourceTree = "<group>"; };
 		08E99C471EBDD1C800A38FF5 /* MindControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MindControl.m; sourceTree = "<group>"; };
-		08F140C91ED7B4BD00E3B4D0 /* AIPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIPointer.h; sourceTree = "<group>"; };
-		08F140CA1ED7B4BD00E3B4D0 /* AIPointer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIPointer.m; sourceTree = "<group>"; };
 		08F140D11ED7C35C00E3B4D0 /* AILaw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AILaw.h; sourceTree = "<group>"; };
 		08F140D21ED7C35C00E3B4D0 /* AILaw.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AILaw.m; sourceTree = "<group>"; };
 		08F140D31ED7C35C00E3B4D0 /* AILogic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AILogic.h; sourceTree = "<group>"; };
@@ -279,6 +285,19 @@
 				08D322A81EBA28B0009D734A /* Foundation+Log.m */,
 			);
 			path = Demo;
+			sourceTree = "<group>";
+		};
+		083F61221F046C96000330E1 /* AIPointer */ = {
+			isa = PBXGroup;
+			children = (
+				083F61231F046C96000330E1 /* AIPointer.h */,
+				083F61241F046C96000330E1 /* AIPointer.m */,
+				083F61261F046CE1000330E1 /* AIPointerStrong.h */,
+				083F61271F046CE1000330E1 /* AIPointerStrong.m */,
+				083F61291F046D80000330E1 /* AIPointerDampingStrategy.h */,
+				083F612A1F046D80000330E1 /* AIPointerDampingStrategy.m */,
+			);
+			path = AIPointer;
 			sourceTree = "<group>";
 		};
 		087753171ECFE1C400E7AD09 /* Think */ = {
@@ -424,12 +443,11 @@
 		08D7DA401ED1499C004B1018 /* AIFoundation */ = {
 			isa = PBXGroup;
 			children = (
+				083F61221F046C96000330E1 /* AIPointer */,
 				08F140D71ED7C37A00E3B4D0 /* Memory */,
 				08F140CF1ED7C35C00E3B4D0 /* MappingKnowledge */,
 				08F140D01ED7C35C00E3B4D0 /* Understand */,
 				08D7DA411ED149B4004B1018 /* AIHeader.h */,
-				08F140C91ED7B4BD00E3B4D0 /* AIPointer.h */,
-				08F140CA1ED7B4BD00E3B4D0 /* AIPointer.m */,
 				08D7DA471ED149E8004B1018 /* AIObject.h */,
 				08D7DA481ED149E8004B1018 /* AIObject.m */,
 				08D7DA4A1ED149F8004B1018 /* AIString.h */,
@@ -807,7 +825,7 @@
 				08AF456E1E97DDF600377887 /* MKStore.m in Sources */,
 				08FBB9091EE76E78000F9E80 /* HobbyModel.m in Sources */,
 				08F3AFBB1E98966E00747EDD /* Store.m in Sources */,
-				08F140CB1ED7B4BD00E3B4D0 /* AIPointer.m in Sources */,
+				083F612B1F046D80000330E1 /* AIPointerDampingStrategy.m in Sources */,
 				08E99C481EBDD1C800A38FF5 /* MindControl.m in Sources */,
 				0813D64C1EDF7B150089FA0C /* InputAudioModel.m in Sources */,
 				08F140D51ED7C35C00E3B4D0 /* AILaw.m in Sources */,
@@ -841,6 +859,8 @@
 				08E58DE31ED3CE18008B0D76 /* ObjModel.m in Sources */,
 				08D7DA491ED149E8004B1018 /* AIObject.m in Sources */,
 				08E58DDE1ED3CE18008B0D76 /* CharModel.m in Sources */,
+				083F61281F046CE1000330E1 /* AIPointerStrong.m in Sources */,
+				083F61251F046C96000330E1 /* AIPointer.m in Sources */,
 				08E58DE71ED3CE18008B0D76 /* TextStoreUtils.m in Sources */,
 				08DACE951EBD805C00FDC0B6 /* NSString+Extension.m in Sources */,
 				08E58DE11ED3CE18008B0D76 /* DoModel.m in Sources */,

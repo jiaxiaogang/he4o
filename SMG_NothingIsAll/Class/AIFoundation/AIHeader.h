@@ -18,6 +18,10 @@
 #import "AIDo.h"
 #import "AIObj.h"
 
+#import "AIPointer.h"
+#import "AIPointerStrong.h"
+#import "AIPointerDampingStrategy.h"
+
 
 /**
  *  MARK:--------------------数据检查--------------------
