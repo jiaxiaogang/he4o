@@ -10,7 +10,7 @@
 
 /**
  *  MARK:--------------------网线--------------------
- *  1,指向任何两个AIPointer
+ *  1,指向任何2+个AIPointer
  *  2,形成"神经网络"的网络线
  *  3,自带强度及衰减强化策略
  *  4,单独存表
@@ -19,6 +19,7 @@
 @class AILineStrong;
 @interface AILine : NSObject
 
+@property (strong,nonatomic) AIArray *pointers;     
 @property (strong,nonatomic) AILineStrong *strong;   //网络强度
 
 @end
