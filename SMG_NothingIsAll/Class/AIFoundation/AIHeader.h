@@ -19,8 +19,9 @@
 #import "AIObj.h"
 
 #import "AIPointer.h"
-#import "AIPointerStrong.h"
-#import "AIPointerDampingStrategy.h"
+#import "AILine.h"
+#import "AILineStrong.h"
+#import "AILineDampingStrategy.h"
 
 
 /**

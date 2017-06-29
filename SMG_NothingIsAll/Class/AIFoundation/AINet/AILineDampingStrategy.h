@@ -1,5 +1,5 @@
 //
-//  AIPointerDampingStrategy.h
+//  AILineDampingStrategy.h
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/6/29.
@@ -13,7 +13,7 @@
  *  1,时间衰减;
  *  2,衰减曲线;
  */
-@interface AIPointerDampingStrategy : NSObject
+@interface AILineDampingStrategy : NSObject
 
 
 
