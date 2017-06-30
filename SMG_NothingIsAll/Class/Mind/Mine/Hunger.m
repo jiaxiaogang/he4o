@@ -16,7 +16,10 @@
 -(id) init{
     self = [super init];
     if (self) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(observerHungerStateChanged) name:UIDeviceBatteryLevelDidChangeNotification object:nil];
+        [UIDevice currentDevice].batteryMonitoringEnabled = YES;
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(observerHungerLevelChanged:) name:UIDeviceBatteryLevelDidChangeNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(observerHungerStateChanged) name:UIDeviceBatteryStateDidChangeNotification object:nil];
+        
     }
     return self;
 }
@@ -24,10 +27,41 @@
 /**
  *  MARK:--------------------method--------------------
  */
--(void) observerHungerStateChanged{
+-(void) observerHungerLevelChanged:(id)i{
     NSLog(@"Hunger_自我产生饥饿意识");
     if (self.delegate && [self.delegate respondsToSelector:@selector(hunger_HungerStateChanged:)]) {
         [self.delegate hunger_HungerStateChanged:[Hunger getHungerStatus]];
+    }
+}
+
+-(void) observerHungerStateChanged{
+    UIDeviceBatteryState state = [UIDevice currentDevice].batteryState;
+    CGFloat batteryLevel = [UIDevice currentDevice].batteryLevel;
+    
+    if (state == UIDeviceBatteryStateUnplugged) {//未充电
+        if (batteryLevel == 1.0f) {
+            NSLog(@"饱了...");
+            //mindValue += 1
+        }else if(batteryLevel > 0.7f){
+            NSLog(@"好吧,下次再充...");
+            //mindValue ==
+        }else if(batteryLevel < 0.7f){
+            NSLog(@"还没饱呢!");
+            //mindValue -= x
+        }
+    }else if (state == UIDeviceBatteryStateCharging) {//充电中
+        if (batteryLevel == 1.0f) {
+            NSLog(@"饱了...");
+            //mindValue -= 1
+        }else if(batteryLevel > 0.7f){
+            NSLog(@"好吧,再充些...");
+            //mindValue ==
+        }else if(batteryLevel < 0.7f){
+            NSLog(@"谢谢呢!");
+            //mindValue += x
+        }
+    }else if (state == UIDeviceBatteryStateFull) {//满电
+        NSLog(@"满了,帮我拔下电线");
     }
 }
 
