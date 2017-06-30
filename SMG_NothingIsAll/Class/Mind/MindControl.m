@@ -9,6 +9,7 @@
 #import "MindControl.h"
 #import "MindHeader.h"
 #import "ThinkHeader.h"
+#import "MBProgressHUD+Add.h"
 
 @interface MindControl ()<MineDelegate>
 
@@ -125,9 +126,9 @@
     //1,记忆引起变化的原因;
     //2,分析决策 & 产生需求
     if (state == UIDeviceBatteryStateCharging) {
-        NSLog(@"饱一滴血!");
+        [MBProgressHUD showMessag:@"饱一滴血!" toView:nil];
     }else if (state == UIDeviceBatteryStateUnplugged) {
-        NSLog(@"饿一滴血!");
+        [MBProgressHUD showMessag:@"饿一滴血!" toView:nil];
     }
 }
 
@@ -136,22 +137,22 @@
     //2,分析决策 & 产生需求
     if (state == UIDeviceBatteryStateUnplugged) {//未充电
         if (level == 1.0f) {
-            NSLog(@"饱了...");
+            [MBProgressHUD showMessag:@"饱了..." toView:nil];
         }else if(level > 0.7f){
-            NSLog(@"好吧,下次再充...");
+            [MBProgressHUD showMessag:@"好吧,下次再充..." toView:nil];
         }else if(level < 0.7f){
-            NSLog(@"还没饱呢!");
+            [MBProgressHUD showMessag:@"还没饱呢" toView:nil];
         }
     }else if (state == UIDeviceBatteryStateCharging) {//充电中
         if (level == 1.0f) {
-            NSLog(@"饱了...");
+            [MBProgressHUD showMessag:@"饱了..." toView:nil];
         }else if(level > 0.7f){
-            NSLog(@"好吧,再充些...");
+            [MBProgressHUD showMessag:@"好吧,再充些..." toView:nil];
         }else if(level < 0.7f){
-            NSLog(@"谢谢呢!");
+            [MBProgressHUD showMessag:@"谢谢呢!" toView:nil];
         }
     }else if (state == UIDeviceBatteryStateFull) {//满电
-        NSLog(@"满了,帮我拔下电线");
+        [MBProgressHUD showMessag:@"满了,帮我拔下电线" toView:nil];
     }
 }
 

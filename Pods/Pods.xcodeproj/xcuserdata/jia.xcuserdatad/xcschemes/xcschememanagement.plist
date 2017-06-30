@@ -19,6 +19,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>MBProgressHUD.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Pods-SMG_NothingIsAll.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -42,7 +47,12 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>400BD6AD4D9CC69855E6DB770BA789B9</key>
+		<key>586F2DFA9BDCC6675C2546793A69E5CC</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>821EFF0F30842787A92D706205C365A4</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -52,17 +62,17 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>91A0F4E0051DF073F1E63B1C2249AEB5</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>B0972DFD58C918870F19C00FB1A7EF52</key>
+		<key>B8D01528EC0DE20D071E1965E9502EA6</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 		<key>F1A57F063DAC9B33748B129DD30F145E</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>FEB78F68DDE86CFF84D69DD17EF45446</key>
 		<dict>
 			<key>primary</key>
 			<true/>
