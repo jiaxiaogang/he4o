@@ -126,9 +126,9 @@
     //1,记忆引起变化的原因;
     //2,分析决策 & 产生需求
     if (state == UIDeviceBatteryStateCharging) {
-        [MBProgressHUD showMessag:@"饱一滴血!" toView:nil];
+        [MBProgressHUD showSuccess:@"饱一滴血!" toView:nil withHideDelay:10];
     }else if (state == UIDeviceBatteryStateUnplugged) {
-        [MBProgressHUD showMessag:@"饿一滴血!" toView:nil];
+        [MBProgressHUD showSuccess:@"饿一滴血!" toView:nil withHideDelay:10];
     }
 }
 
@@ -137,22 +137,22 @@
     //2,分析决策 & 产生需求
     if (state == UIDeviceBatteryStateUnplugged) {//未充电
         if (level == 1.0f) {
-            [MBProgressHUD showMessag:@"饱了..." toView:nil];
+            [MBProgressHUD showSuccess:@"饱了..." toView:nil withHideDelay:10];
         }else if(level > 0.7f){
-            [MBProgressHUD showMessag:@"好吧,下次再充..." toView:nil];
+            [MBProgressHUD showSuccess:@"好吧,下次再充..." toView:nil withHideDelay:10];
         }else if(level < 0.7f){
-            [MBProgressHUD showMessag:@"还没饱呢" toView:nil];
+            [MBProgressHUD showSuccess:@"还没饱呢" toView:nil withHideDelay:10];
         }
     }else if (state == UIDeviceBatteryStateCharging) {//充电中
         if (level == 1.0f) {
-            [MBProgressHUD showMessag:@"饱了..." toView:nil];
+            [MBProgressHUD showSuccess:@"饱了..." toView:nil withHideDelay:10];
         }else if(level > 0.7f){
-            [MBProgressHUD showMessag:@"好吧,再充些..." toView:nil];
+            [MBProgressHUD showSuccess:@"好吧,再充些..." toView:nil withHideDelay:10];
         }else if(level < 0.7f){
-            [MBProgressHUD showMessag:@"谢谢呢!" toView:nil];
+            [MBProgressHUD showSuccess:@"谢谢呢!" toView:nil withHideDelay:10];
         }
     }else if (state == UIDeviceBatteryStateFull) {//满电
-        [MBProgressHUD showMessag:@"满了,帮我拔下电线" toView:nil];
+        [MBProgressHUD showSuccess:@"满了,帮我拔下电线" toView:nil withHideDelay:10];
     }
 }
 
