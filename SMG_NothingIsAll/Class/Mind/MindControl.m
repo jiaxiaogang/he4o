@@ -20,6 +20,7 @@
     self = [super init];
     if (self) {
         [self initData];
+        [self initRun];
     }
     return self;
 }

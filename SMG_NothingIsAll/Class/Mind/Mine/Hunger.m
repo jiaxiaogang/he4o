@@ -16,12 +16,15 @@
 -(id) init{
     self = [super init];
     if (self) {
-        [UIDevice currentDevice].batteryMonitoringEnabled = YES;
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(observerHungerLevelChanged:) name:UIDeviceBatteryLevelDidChangeNotification object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(observerHungerStateChanged) name:UIDeviceBatteryStateDidChangeNotification object:nil];
-        
+        [self initRun];
     }
     return self;
+}
+
+-(void) initRun{
+    [UIDevice currentDevice].batteryMonitoringEnabled = YES;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(observerHungerLevelChanged:) name:UIDeviceBatteryLevelDidChangeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(observerHungerStateChanged) name:UIDeviceBatteryStateDidChangeNotification object:nil];
 }
 
 /**
