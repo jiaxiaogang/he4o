@@ -21,12 +21,16 @@
     NSArray * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSLog(@"_______DBPath:\n______________________________________\n\n%@\n\n______________________________________\n",paths[0]);
     
+    //初始化UI
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor whiteColor];
     StudyViewController *page = [[StudyViewController alloc] init];
     UINavigationController *naviC = [[UINavigationController alloc] initWithRootViewController:page];
     [self.window setRootViewController:naviC];
     [self.window makeKeyAndVisible];
+    
+    //初始化SMG
+    [SMG sharedInstance];
     
     return YES;
 }

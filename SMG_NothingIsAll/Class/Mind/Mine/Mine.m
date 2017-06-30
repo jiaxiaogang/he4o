@@ -54,6 +54,18 @@
     }
 }
 
+-(void) hunger_LevelChanged:(CGFloat)level State:(UIDeviceBatteryState)state mindValueDelta:(CGFloat)mVD{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(mine_HungerLevelChanged:State:mindValueDelta:)]) {
+        [self.delegate mine_HungerLevelChanged:level State:state mindValueDelta:mVD];
+    }
+}
+
+-(void) hunger_StateChanged:(UIDeviceBatteryState)state level:(CGFloat)level mindValueDelta:(CGFloat)mVD{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(hunger_StateChanged:level:mindValueDelta:)]) {
+        [self.delegate mine_HungerStateChanged:state level:level mindValueDelta:mVD];
+    }
+}
+
 
 
 @end

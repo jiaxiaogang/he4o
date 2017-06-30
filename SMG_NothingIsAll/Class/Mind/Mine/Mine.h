@@ -12,6 +12,8 @@
 @protocol MineDelegate <NSObject>
 
 -(void) mine_HungerStateChanged:(HungerStatus)status;
+-(void) mine_HungerLevelChanged:(CGFloat)level State:(UIDeviceBatteryState)state mindValueDelta:(CGFloat)mVD;
+-(void) mine_HungerStateChanged:(UIDeviceBatteryState)state level:(CGFloat)level mindValueDelta:(CGFloat)mVD;
 
 @end
 

@@ -27,41 +27,47 @@
 /**
  *  MARK:--------------------method--------------------
  */
--(void) observerHungerLevelChanged:(id)i{
-    NSLog(@"Hunger_自我产生饥饿意识");
-    if (self.delegate && [self.delegate respondsToSelector:@selector(hunger_HungerStateChanged:)]) {
-        [self.delegate hunger_HungerStateChanged:[Hunger getHungerStatus]];
+-(void) observerHungerLevelChanged:(NSNotification*)notification{
+    UIDeviceBatteryState state = [UIDevice currentDevice].batteryState;
+    CGFloat level = [UIDevice currentDevice].batteryLevel;
+    CGFloat mVD = 0;
+    if (state == UIDeviceBatteryStateUnplugged) {//未充电
+        mVD = (level - 1) * 10.0f;//mindValue -= x (饿一滴血)
+    }else if (state == UIDeviceBatteryStateCharging) {//充电中
+        mVD = (1 - level) * 10.0f;//mindValue += x (饱一滴血)
+    }
+    
+    if (self.delegate && [self.delegate respondsToSelector:@selector(hunger_LevelChanged:State:mindValueDelta:)]) {
+        [self.delegate hunger_LevelChanged:level State:state mindValueDelta:mVD];
     }
 }
 
 -(void) observerHungerStateChanged{
     UIDeviceBatteryState state = [UIDevice currentDevice].batteryState;
-    CGFloat batteryLevel = [UIDevice currentDevice].batteryLevel;
-    
+    CGFloat level = [UIDevice currentDevice].batteryLevel;
+    CGFloat mvD = 0;
     if (state == UIDeviceBatteryStateUnplugged) {//未充电
-        if (batteryLevel == 1.0f) {
-            NSLog(@"饱了...");
-            //mindValue += 1
-        }else if(batteryLevel > 0.7f){
-            NSLog(@"好吧,下次再充...");
-            //mindValue ==
-        }else if(batteryLevel < 0.7f){
-            NSLog(@"还没饱呢!");
-            //mindValue -= x
+        if (level == 1.0f) {
+            mvD = 1;//mindValue += 1 (饱了停充)
+        }else if(level > 0.7f){
+            mvD = 0;//mindValue == (7成饱停充)
+        }else if(level < 0.7f){
+            mvD = (level - 1) * 10.0f;//mindValue -= x (没饱停充)
         }
     }else if (state == UIDeviceBatteryStateCharging) {//充电中
-        if (batteryLevel == 1.0f) {
-            NSLog(@"饱了...");
-            //mindValue -= 1
-        }else if(batteryLevel > 0.7f){
-            NSLog(@"好吧,再充些...");
-            //mindValue ==
-        }else if(batteryLevel < 0.7f){
-            NSLog(@"谢谢呢!");
-            //mindValue += x
+        if (level == 1.0f) {
+            mvD = -1;//mindValue -= 1 (饱了)
+        }else if(level > 0.7f){
+            mvD = 0;//mindValue == (再充饱点)
+        }else if(level < 0.7f){
+            mvD = (1 - level) * 10.0f;//mindValue += x (未饱再吃点)
         }
     }else if (state == UIDeviceBatteryStateFull) {//满电
-        NSLog(@"满了,帮我拔下电线");
+        mvD = 1;//(充满了)
+    }
+    
+    if (self.delegate && [self.delegate respondsToSelector:@selector(hunger_StateChanged:level:mindValueDelta:)]) {
+        [self.delegate hunger_StateChanged:state level:level mindValueDelta:mvD];
     }
 }
 

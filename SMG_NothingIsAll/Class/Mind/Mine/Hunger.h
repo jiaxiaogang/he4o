@@ -25,6 +25,20 @@ typedef NS_ENUM(NSInteger, HungerStatus) {
 
 -(void) hunger_HungerStateChanged:(HungerStatus)status;
 
+/**
+ *  MARK:--------------------MindValueChanged & 变化 & 状态--------------------
+ *      1,充电中... & 电量变化+
+ *      2,未充电中... & 电量变化-
+ */
+-(void) hunger_LevelChanged:(CGFloat)level State:(UIDeviceBatteryState)state mindValueDelta:(CGFloat)mVD;
+
+/**
+ *  MARK:--------------------MindValueChanged & 变化 & 状态--------------------
+ *      1,开始充 & 当前电量
+ *      2,结束充 & 当前电量
+ */
+-(void) hunger_StateChanged:(UIDeviceBatteryState)state level:(CGFloat)level mindValueDelta:(CGFloat)mVD;
+
 @end
 
 
