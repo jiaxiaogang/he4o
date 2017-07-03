@@ -15,6 +15,6 @@
  */
 @interface AILineDampingStrategy : NSObject
 
-
++(CGFloat) getValue:(NSInteger)count lastCountTime:(long long)lastCountTime;
 
 @end

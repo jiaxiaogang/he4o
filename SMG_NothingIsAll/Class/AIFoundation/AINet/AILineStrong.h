@@ -11,11 +11,16 @@
 /**
  *  MARK:--------------------网线强度--------------------
  */
-@class AILineDampingStrategy;
 @interface AILineStrong : NSObject
 
-@property (assign, nonatomic) CGFloat value;                            //当前强度值
-@property (assign, nonatomic) NSInteger count;                          //计数器
-@property (strong, nonatomic) AILineDampingStrategy *dampingStrategy;   //衰减策略
+/**
+ *  MARK:--------------------更新计数器--------------------
+ */
+-(void) setCountDelta:(int)delta;
+
+/**
+ *  MARK:--------------------当前强度值--------------------
+ */
+-(CGFloat)value;
 
 @end
