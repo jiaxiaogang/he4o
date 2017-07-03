@@ -14,6 +14,7 @@
 		0813D64F1EDF7B150089FA0C /* InputObjModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0813D6491EDF7B150089FA0C /* InputObjModel.m */; };
 		0813D6501EDF7B150089FA0C /* InputTextModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0813D64B1EDF7B150089FA0C /* InputTextModel.m */; };
 		081DA13B1ED47CE000C8C531 /* AIArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 081DA13A1ED47CE000C8C531 /* AIArray.m */; };
+		08201E821F0B02A0000D7A46 /* AICommonSense.m in Sources */ = {isa = PBXBuildFile; fileRef = 08201E811F0B02A0000D7A46 /* AICommonSense.m */; };
 		0826EED41EF7619300400F08 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 0826EED31EF7619300400F08 /* README.md */; };
 		082F9D561EB234750009F6A9 /* Output.m in Sources */ = {isa = PBXBuildFile; fileRef = 082F9D551EB234750009F6A9 /* Output.m */; };
 		082F9D5C1EB236AC0009F6A9 /* StudyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 082F9D5A1EB236AC0009F6A9 /* StudyViewController.m */; };
@@ -102,6 +103,8 @@
 		0813D64B1EDF7B150089FA0C /* InputTextModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputTextModel.m; sourceTree = "<group>"; };
 		081DA1391ED47CE000C8C531 /* AIArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIArray.h; sourceTree = "<group>"; };
 		081DA13A1ED47CE000C8C531 /* AIArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIArray.m; sourceTree = "<group>"; };
+		08201E801F0B02A0000D7A46 /* AICommonSense.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AICommonSense.h; sourceTree = "<group>"; };
+		08201E811F0B02A0000D7A46 /* AICommonSense.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AICommonSense.m; sourceTree = "<group>"; };
 		0826EED31EF7619300400F08 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		082F9D541EB234750009F6A9 /* Output.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Output.h; sourceTree = "<group>"; };
 		082F9D551EB234750009F6A9 /* Output.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Output.m; sourceTree = "<group>"; };
@@ -601,6 +604,8 @@
 				08F140D41ED7C35C00E3B4D0 /* AILogic.m */,
 				08F140D81ED7C3BB00E3B4D0 /* AIValue.h */,
 				08F140D91ED7C3BB00E3B4D0 /* AIValue.m */,
+				08201E801F0B02A0000D7A46 /* AICommonSense.h */,
+				08201E811F0B02A0000D7A46 /* AICommonSense.m */,
 			);
 			path = Understand;
 			sourceTree = "<group>";
@@ -839,6 +844,7 @@
 				082F9D601EB236E80009F6A9 /* SMGOutputDelegate.m in Sources */,
 				087753251ECFE1C400E7AD09 /* UnderstandUtils.m in Sources */,
 				08E58DE41ED3CE18008B0D76 /* ObjStore.m in Sources */,
+				08201E821F0B02A0000D7A46 /* AICommonSense.m in Sources */,
 				08E3CCCA1EE60F8D002990FD /* ThinkControl.m in Sources */,
 				08E58DEC1ED3CE18008B0D76 /* LogicModel.m in Sources */,
 				08AF456E1E97DDF600377887 /* MKStore.m in Sources */,
