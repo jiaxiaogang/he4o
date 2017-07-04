@@ -142,6 +142,7 @@
             [MBProgressHUD showSuccess:@"好吧,下次再充..." toView:nil withHideDelay:10];
         }else if(level < 0.7f){
             [MBProgressHUD showSuccess:@"还没饱呢" toView:nil withHideDelay:10];
+            [self.delegate mindControl_CommitDecisionByDemand:@"" withType:MindType_Hunger];
         }
     }else if (state == UIDeviceBatteryStateCharging) {//充电中
         if (level == 1.0f) {
