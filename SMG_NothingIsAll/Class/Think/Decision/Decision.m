@@ -9,7 +9,6 @@
 #import "Decision.h"
 #import "MindHeader.h"
 
-
 @interface Decision ()
 
 @property (strong,nonatomic) NSMutableDictionary *mDic; //数据;
@@ -62,6 +61,14 @@
         //分析当前的饥饿状态 & 记到"意识流";
         //找相关记忆,如果找不到则直接表达情绪;
         //xxxx
+        
+        CGFloat mindValueDelta = [NUMTOOK(demand) floatValue];
+        if (fabsf(mindValueDelta) > 1) {
+            AIMindValue *mindValue = [[AIMindValue alloc] init];
+            mindValue.type = type;
+            mindValue.value = mindValueDelta;
+            [AIMindValue ai_insertToDB:mindValue];
+        }
         
         
         

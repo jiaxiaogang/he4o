@@ -23,6 +23,9 @@
 #import "AILineStrong.h"
 #import "AILineDampingStrategy.h"
 
+#import "AIMemory.h"
+#import "AIMindValue.h"
+
 
 /**
  *  MARK:--------------------数据检查--------------------
