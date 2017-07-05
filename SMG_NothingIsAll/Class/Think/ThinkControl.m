@@ -36,8 +36,14 @@
  *  MARK:--------------------method--------------------
  */
 -(void) commitDecisionByDemand:(id)demand withType:(MindType)type{
-    NSLog(@"提交需求...To...Think");
-    [self.decision commitDemand:demand withType:type];
+    //权衡当前的Task;并以mindValue来决定是否执行;
+    if (type == MindType_Hunger) {
+        CGFloat mindValueDelta = [NUMTOOK(demand) floatValue];
+        BOOL win = true;//实现插队;self.taskArr
+        if (win) {
+            [self.decision commitDemand:demand withType:type];
+        }
+    }
 }
 
 -(void) commitUnderstandByShallow:(id)data{

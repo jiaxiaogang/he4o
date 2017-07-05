@@ -129,7 +129,12 @@
         [MBProgressHUD showSuccess:@"饱一滴血!" toView:nil withHideDelay:1];
     }else if (state == UIDeviceBatteryStateUnplugged) {
         [MBProgressHUD showSuccess:@"饿一滴血!" toView:nil withHideDelay:1];
-        [self.delegate mindControl_CommitDecisionByDemand:@(mVD) withType:MindType_Hunger];
+        if (level < 0.3f) {
+            [self.delegate mindControl_CommitDecisionByDemand:@(mVD) withType:MindType_Hunger];//不能过度依赖noLogThink来执行,应更依赖logThink;
+            AIMemory *mem = [[AIMemory alloc] init];
+            //mem.
+            [AIMemory ai_insertToDB:mem];//logThink
+        }
     }
 }
 
@@ -159,7 +164,7 @@
 
 
 -(void) tmpTest{
-    CGFloat level = 0.6f;
+    CGFloat level = 0.23f;
     CGFloat mVD = (level - 1) * 10.0f;
     [self mine_HungerLevelChanged:level State:UIDeviceBatteryStateUnplugged mindValueDelta:mVD];
 }
