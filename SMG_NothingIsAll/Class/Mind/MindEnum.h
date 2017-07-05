@@ -22,7 +22,7 @@ typedef NS_ENUM(NSInteger, JoyAngerType) {
 
 
 /**
- *  MARK:--------------------MindType--------------------
+ *  MARK:--------------------MindType(最基础的需求)--------------------
  */
 typedef NS_ENUM(NSInteger, MindType) {
     MindType_Hunger     =   0,//饥饿

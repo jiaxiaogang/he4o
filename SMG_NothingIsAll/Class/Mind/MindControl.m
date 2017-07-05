@@ -126,9 +126,10 @@
     //1,记忆引起变化的原因;
     //2,分析决策 & 产生需求
     if (state == UIDeviceBatteryStateCharging) {
-        [MBProgressHUD showSuccess:@"饱一滴血!" toView:nil withHideDelay:10];
+        [MBProgressHUD showSuccess:@"饱一滴血!" toView:nil withHideDelay:1];
     }else if (state == UIDeviceBatteryStateUnplugged) {
-        [MBProgressHUD showSuccess:@"饿一滴血!" toView:nil withHideDelay:10];
+        [MBProgressHUD showSuccess:@"饿一滴血!" toView:nil withHideDelay:1];
+        [self.delegate mindControl_CommitDecisionByDemand:@(mVD) withType:MindType_Hunger];
     }
 }
 
@@ -142,7 +143,6 @@
             [MBProgressHUD showSuccess:@"好吧,下次再充..." toView:nil withHideDelay:10];
         }else if(level < 0.7f){
             [MBProgressHUD showSuccess:@"还没饱呢" toView:nil withHideDelay:10];
-            [self.delegate mindControl_CommitDecisionByDemand:@"" withType:MindType_Hunger];
         }
     }else if (state == UIDeviceBatteryStateCharging) {//充电中
         if (level == 1.0f) {
@@ -155,6 +155,13 @@
     }else if (state == UIDeviceBatteryStateFull) {//满电
         [MBProgressHUD showSuccess:@"满了,帮我拔下电线" toView:nil withHideDelay:10];
     }
+}
+
+
+-(void) tmpTest{
+    CGFloat level = 0.6f;
+    CGFloat mVD = (level - 1) * 10.0f;
+    [self mine_HungerLevelChanged:level State:UIDeviceBatteryStateUnplugged mindValueDelta:mVD];
 }
 
 @end

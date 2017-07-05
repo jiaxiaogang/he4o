@@ -150,7 +150,7 @@
 }
 
 - (IBAction)testBtnOnClick:(id)sender {
-    
+    [[SMG sharedInstance].mindControl tmpTest];//饥饿测试;
 }
 
 /**

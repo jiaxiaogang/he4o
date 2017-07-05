@@ -8,6 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
+
+//!!!(目前不使用,以后有时间把这里重命名为MindValueStrategy;然后变量到Hunger等类下面;
+
+
 /**
  *  MARK:--------------------精神策略--------------------
  *  1,用于描述每种精神的值;
@@ -34,6 +38,9 @@
 
 
 
+/**
+ *  MARK:--------------------mindValue模型--------------------
+ */
 @interface MindStrategyModel : NSObject
 
 @property (assign, nonatomic) NSInteger value;//饱合度(0-100)

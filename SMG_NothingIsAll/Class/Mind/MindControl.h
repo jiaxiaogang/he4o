@@ -44,4 +44,7 @@
  */
 -(id) getMindValue:(AIPointer*)pointer;
 
+
+-(void) tmpTest;
+
 @end

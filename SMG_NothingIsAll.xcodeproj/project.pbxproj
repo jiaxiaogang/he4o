@@ -13,6 +13,7 @@
 		0813D64E1EDF7B150089FA0C /* InputModelBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 0813D6471EDF7B150089FA0C /* InputModelBase.m */; };
 		0813D64F1EDF7B150089FA0C /* InputObjModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0813D6491EDF7B150089FA0C /* InputObjModel.m */; };
 		0813D6501EDF7B150089FA0C /* InputTextModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0813D64B1EDF7B150089FA0C /* InputTextModel.m */; };
+		081C436E1F0C67CF00DF6722 /* MindStrategy.m in Sources */ = {isa = PBXBuildFile; fileRef = 081C436D1F0C67CF00DF6722 /* MindStrategy.m */; };
 		081DA13B1ED47CE000C8C531 /* AIArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 081DA13A1ED47CE000C8C531 /* AIArray.m */; };
 		08201E821F0B02A0000D7A46 /* AICommonSense.m in Sources */ = {isa = PBXBuildFile; fileRef = 08201E811F0B02A0000D7A46 /* AICommonSense.m */; };
 		0826EED41EF7619300400F08 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 0826EED31EF7619300400F08 /* README.md */; };
@@ -82,7 +83,6 @@
 		08FBB90A1EE76E78000F9E80 /* Mine.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FBB9051EE76E78000F9E80 /* Mine.m */; };
 		08FBB90B1EE76E78000F9E80 /* Mood.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FBB9071EE76E78000F9E80 /* Mood.m */; };
 		08FBB90E1EE76E9D000F9E80 /* Hunger.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FBB90D1EE76E9D000F9E80 /* Hunger.m */; };
-		08FBB9111EE77FF9000F9E80 /* MindStrategy.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FBB9101EE77FF9000F9E80 /* MindStrategy.m */; };
 		08FDCE8E1EAA4A8E00882ADC /* SMGRange.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FDCE8D1EAA4A8E00882ADC /* SMGRange.m */; };
 		2753D7CF7BAEDFEACAF9264A /* libPods-SMG_NothingIsAll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */; };
 /* End PBXBuildFile section */
@@ -101,6 +101,8 @@
 		0813D6491EDF7B150089FA0C /* InputObjModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputObjModel.m; sourceTree = "<group>"; };
 		0813D64A1EDF7B150089FA0C /* InputTextModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputTextModel.h; sourceTree = "<group>"; };
 		0813D64B1EDF7B150089FA0C /* InputTextModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputTextModel.m; sourceTree = "<group>"; };
+		081C436C1F0C67CF00DF6722 /* MindStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MindStrategy.h; sourceTree = "<group>"; };
+		081C436D1F0C67CF00DF6722 /* MindStrategy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MindStrategy.m; sourceTree = "<group>"; };
 		081DA1391ED47CE000C8C531 /* AIArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIArray.h; sourceTree = "<group>"; };
 		081DA13A1ED47CE000C8C531 /* AIArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIArray.m; sourceTree = "<group>"; };
 		08201E801F0B02A0000D7A46 /* AICommonSense.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AICommonSense.h; sourceTree = "<group>"; };
@@ -245,8 +247,6 @@
 		08FBB9071EE76E78000F9E80 /* Mood.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Mood.m; sourceTree = "<group>"; };
 		08FBB90C1EE76E9D000F9E80 /* Hunger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hunger.h; sourceTree = "<group>"; };
 		08FBB90D1EE76E9D000F9E80 /* Hunger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Hunger.m; sourceTree = "<group>"; };
-		08FBB90F1EE77FF9000F9E80 /* MindStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MindStrategy.h; sourceTree = "<group>"; };
-		08FBB9101EE77FF9000F9E80 /* MindStrategy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MindStrategy.m; sourceTree = "<group>"; };
 		08FDCE8C1EAA4A8E00882ADC /* SMGRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMGRange.h; sourceTree = "<group>"; };
 		08FDCE8D1EAA4A8E00882ADC /* SMGRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMGRange.m; sourceTree = "<group>"; };
 		DE79539824FEDBA53557ECCA /* Pods-SMG_NothingIsAll.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SMG_NothingIsAll.release.xcconfig"; path = "Pods/Target Support Files/Pods-SMG_NothingIsAll/Pods-SMG_NothingIsAll.release.xcconfig"; sourceTree = "<group>"; };
@@ -273,6 +273,15 @@
 				0813D63D1EDF729F0089FA0C /* FeelTextUtils.m */,
 			);
 			path = Text;
+			sourceTree = "<group>";
+		};
+		081C436B1F0C67CF00DF6722 /* MindStrategy */ = {
+			isa = PBXGroup;
+			children = (
+				081C436C1F0C67CF00DF6722 /* MindStrategy.h */,
+				081C436D1F0C67CF00DF6722 /* MindStrategy.m */,
+			);
+			path = MindStrategy;
 			sourceTree = "<group>";
 		};
 		082F9D581EB236AC0009F6A9 /* Demo */ = {
@@ -675,6 +684,7 @@
 		08FBB8FF1EE76E78000F9E80 /* Mine */ = {
 			isa = PBXGroup;
 			children = (
+				081C436B1F0C67CF00DF6722 /* MindStrategy */,
 				08FBB9041EE76E78000F9E80 /* Mine.h */,
 				08FBB9051EE76E78000F9E80 /* Mine.m */,
 				08FBB9001EE76E78000F9E80 /* Hobby.h */,
@@ -685,8 +695,6 @@
 				08FBB9071EE76E78000F9E80 /* Mood.m */,
 				08FBB90C1EE76E9D000F9E80 /* Hunger.h */,
 				08FBB90D1EE76E9D000F9E80 /* Hunger.m */,
-				08FBB90F1EE77FF9000F9E80 /* MindStrategy.h */,
-				08FBB9101EE77FF9000F9E80 /* MindStrategy.m */,
 			);
 			path = Mine;
 			sourceTree = "<group>";
@@ -834,7 +842,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				08D7DA4F1ED14BC7004B1018 /* AIChar.m in Sources */,
-				08FBB9111EE77FF9000F9E80 /* MindStrategy.m in Sources */,
 				08F140DD1ED7C49C00E3B4D0 /* AIDo.m in Sources */,
 				08FBB90A1EE76E78000F9E80 /* Mine.m in Sources */,
 				083F61351F04830F000330E1 /* AILineStrong.m in Sources */,
@@ -897,6 +904,7 @@
 				0831CF5E1EBEF20500C020E6 /* DBUtils.m in Sources */,
 				0895DAE61EB2D52D00E2B5C7 /* DataViewController.m in Sources */,
 				087753241ECFE1C400E7AD09 /* Understand.m in Sources */,
+				081C436E1F0C67CF00DF6722 /* MindStrategy.m in Sources */,
 				08E58DEA1ED3CE18008B0D76 /* LawModel.m in Sources */,
 				08E58DE51ED3CE18008B0D76 /* TextModel.m in Sources */,
 				08F140D61ED7C35C00E3B4D0 /* AILogic.m in Sources */,
