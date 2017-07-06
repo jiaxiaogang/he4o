@@ -13,13 +13,15 @@
  *  1,记忆产生了需求,但这种需求不会存下来;只会实时读到记忆时去分析;
  *  2,闪念之间的思考,先存储为意识流;(频繁的存储保证了意识流的单条极简性)
  */
+@class AIMindValue;
 @interface AIMemory : AIObject
-
 
 //mindType
 //与mindValue的aiLine
 //空间
 //...
+@property (strong,nonatomic) AIMindValue *mindValue;
+
 
 
 @end

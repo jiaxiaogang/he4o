@@ -21,4 +21,11 @@
     return [NSString stringWithFormat:@"%@='%@'",columnName,value];
 }
 
++(NSDictionary*) sqlWhereDic_K:(id)columnName V:(id)value{
+    if (value) {
+        return [[NSDictionary alloc] initWithObjectsAndKeys:value,STRTOOK(columnName), nil];
+    }
+    return nil;
+}
+
 @end

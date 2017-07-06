@@ -15,5 +15,6 @@
  */
 +(NSString*) sqlWhere_RowId:(NSInteger)rowid;
 +(NSString*) sqlWhere_K:(id)columnName V:(id)value;
++(NSDictionary*) sqlWhereDic_K:(id)columnName V:(id)value;
 
 @end
