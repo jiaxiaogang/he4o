@@ -65,6 +65,7 @@
 		08E58DEB1ED3CE18008B0D76 /* LawStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E58DD71ED3CE18008B0D76 /* LawStore.m */; };
 		08E58DEC1ED3CE18008B0D76 /* LogicModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E58DD91ED3CE18008B0D76 /* LogicModel.m */; };
 		08E58DED1ED3CE18008B0D76 /* LogicStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E58DDB1ED3CE18008B0D76 /* LogicStore.m */; };
+		08E5DEB31F0F133900B3C844 /* AIAwareness.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E5DEB21F0F133900B3C844 /* AIAwareness.m */; };
 		08E99C481EBDD1C800A38FF5 /* MindControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E99C471EBDD1C800A38FF5 /* MindControl.m */; };
 		08F140D51ED7C35C00E3B4D0 /* AILaw.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F140D21ED7C35C00E3B4D0 /* AILaw.m */; };
 		08F140D61ED7C35C00E3B4D0 /* AILogic.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F140D41ED7C35C00E3B4D0 /* AILogic.m */; };
@@ -205,6 +206,8 @@
 		08E58DD91ED3CE18008B0D76 /* LogicModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogicModel.m; sourceTree = "<group>"; };
 		08E58DDA1ED3CE18008B0D76 /* LogicStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogicStore.h; sourceTree = "<group>"; };
 		08E58DDB1ED3CE18008B0D76 /* LogicStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogicStore.m; sourceTree = "<group>"; };
+		08E5DEB11F0F133900B3C844 /* AIAwareness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIAwareness.h; sourceTree = "<group>"; };
+		08E5DEB21F0F133900B3C844 /* AIAwareness.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIAwareness.m; sourceTree = "<group>"; };
 		08E99C461EBDD1C800A38FF5 /* MindControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MindControl.h; sourceTree = "<group>"; };
 		08E99C471EBDD1C800A38FF5 /* MindControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MindControl.m; sourceTree = "<group>"; };
 		08F140D11ED7C35C00E3B4D0 /* AILaw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AILaw.h; sourceTree = "<group>"; };
@@ -618,6 +621,8 @@
 				08F140D91ED7C3BB00E3B4D0 /* AIValue.m */,
 				08201E801F0B02A0000D7A46 /* AICommonSense.h */,
 				08201E811F0B02A0000D7A46 /* AICommonSense.m */,
+				08E5DEB11F0F133900B3C844 /* AIAwareness.h */,
+				08E5DEB21F0F133900B3C844 /* AIAwareness.m */,
 			);
 			path = Understand;
 			sourceTree = "<group>";
@@ -889,6 +894,7 @@
 				08F140DA1ED7C3BB00E3B4D0 /* AIValue.m in Sources */,
 				083F61381F048329000330E1 /* AILine.m in Sources */,
 				08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */,
+				08E5DEB31F0F133900B3C844 /* AIAwareness.m in Sources */,
 				0813D64D1EDF7B150089FA0C /* InputDoModel.m in Sources */,
 				08F782401ED91290004884BE /* Decision.m in Sources */,
 				0813D6501EDF7B150089FA0C /* InputTextModel.m in Sources */,
