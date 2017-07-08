@@ -10,6 +10,7 @@
 
 /**
  *  MARK:--------------------AIMindValue变化的意识流--------------------
+ *  与意识流相关联;
  */
 @interface AIMindValue : AIObject
 
