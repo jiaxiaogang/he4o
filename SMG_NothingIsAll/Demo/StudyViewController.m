@@ -12,6 +12,7 @@
 #import "InputHeader.h"
 #import "FeelHeader.h"
 #import "DataViewController.h"
+#import "TestHungryPage.h"
 
 @interface StudyViewController ()<UITableViewDelegate,UITableViewDataSource>
 
@@ -150,7 +151,8 @@
 }
 
 - (IBAction)testBtnOnClick:(id)sender {
-    [[SMG sharedInstance].mindControl tmpTest];//饥饿测试;
+    TestHungryPage *page = [[TestHungryPage alloc] init];
+    [self.navigationController pushViewController:page animated:true];
 }
 
 /**

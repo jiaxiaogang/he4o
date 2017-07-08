@@ -62,6 +62,8 @@
 		08D7DA4F1ED14BC7004B1018 /* AIChar.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D7DA4E1ED14BC7004B1018 /* AIChar.m */; };
 		08DACE951EBD805C00FDC0B6 /* NSString+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 08DACE941EBD805C00FDC0B6 /* NSString+Extension.m */; };
 		08DB40C71F11A075003162C8 /* AIStoreBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 08DB40C61F11A075003162C8 /* AIStoreBase.m */; };
+		08DB40CB1F11A65E003162C8 /* TestHungryPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 08DB40C91F11A65E003162C8 /* TestHungryPage.m */; };
+		08DB40CC1F11A65E003162C8 /* TestHungryPage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 08DB40CA1F11A65E003162C8 /* TestHungryPage.xib */; };
 		08E3CCCA1EE60F8D002990FD /* ThinkControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E3CCC91EE60F8D002990FD /* ThinkControl.m */; };
 		08E58DDE1ED3CE18008B0D76 /* CharModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E58DB71ED3CE18008B0D76 /* CharModel.m */; };
 		08E58DDF1ED3CE18008B0D76 /* CharStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E58DB91ED3CE18008B0D76 /* CharStore.m */; };
@@ -208,6 +210,9 @@
 		08DACE941EBD805C00FDC0B6 /* NSString+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Extension.m"; sourceTree = "<group>"; };
 		08DB40C51F11A075003162C8 /* AIStoreBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIStoreBase.h; sourceTree = "<group>"; };
 		08DB40C61F11A075003162C8 /* AIStoreBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIStoreBase.m; sourceTree = "<group>"; };
+		08DB40C81F11A65E003162C8 /* TestHungryPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestHungryPage.h; sourceTree = "<group>"; };
+		08DB40C91F11A65E003162C8 /* TestHungryPage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestHungryPage.m; sourceTree = "<group>"; };
+		08DB40CA1F11A65E003162C8 /* TestHungryPage.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TestHungryPage.xib; sourceTree = "<group>"; };
 		08E3CCC81EE60F8D002990FD /* ThinkControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThinkControl.h; sourceTree = "<group>"; };
 		08E3CCC91EE60F8D002990FD /* ThinkControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThinkControl.m; sourceTree = "<group>"; };
 		08E58DB61ED3CE18008B0D76 /* CharModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharModel.h; sourceTree = "<group>"; };
@@ -349,6 +354,9 @@
 				0895DAED1EB2DCBD00E2B5C7 /* AppEnum.h */,
 				08D322A71EBA2783009D734A /* SMGPrefixHeader.pch */,
 				08D322A81EBA28B0009D734A /* Foundation+Log.m */,
+				08DB40C81F11A65E003162C8 /* TestHungryPage.h */,
+				08DB40C91F11A65E003162C8 /* TestHungryPage.m */,
+				08DB40CA1F11A65E003162C8 /* TestHungryPage.xib */,
 			);
 			path = Demo;
 			sourceTree = "<group>";
@@ -822,6 +830,7 @@
 				08AF45581E97D0B500377887 /* LaunchScreen.storyboard in Resources */,
 				0895DAEC1EB2D7EB00E2B5C7 /* DataCell.xib in Resources */,
 				08AF45551E97D0B500377887 /* Assets.xcassets in Resources */,
+				08DB40CC1F11A65E003162C8 /* TestHungryPage.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -951,6 +960,7 @@
 				08E58DEB1ED3CE18008B0D76 /* LawStore.m in Sources */,
 				0831CF5E1EBEF20500C020E6 /* DBUtils.m in Sources */,
 				0895DAE61EB2D52D00E2B5C7 /* DataViewController.m in Sources */,
+				08DB40CB1F11A65E003162C8 /* TestHungryPage.m in Sources */,
 				087753241ECFE1C400E7AD09 /* Understand.m in Sources */,
 				081C436E1F0C67CF00DF6722 /* MindStrategy.m in Sources */,
 				08E58DEA1ED3CE18008B0D76 /* LawModel.m in Sources */,
