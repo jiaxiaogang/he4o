@@ -51,36 +51,22 @@
         }
     }
     
-    
     //*  value:数据类型未定;
     //*      1,从经验和长期记忆搜索有改变mindValue的记录;
     //*      2,根据当前自己的状态;
     //*      3,计算出一个值;并返回;
-    
-    
-    
     return nil;
-    
-    
-    //1,交给decision决策
-    //2,decision找经验习惯,
-    //  2.1,找不到分析(转3)
-    //  2.2,找到则执行(转4)
-    //3,decision分析
-    //4,执行;
-    //5,反馈给mindControl;
-    
-    
-    //2,将mind的意见记到logic和law里;
-    //1,判断是否无聊;
-    //2,判断是否需要注意力;
-    //3,作为火花塞点燃mind;
-    //xxx
-    
-    
-    
 }
 
+-(NSString*) turnDownDemand:(id)demand type:(MindType)type{
+    CGFloat mindValueDelta = [NUMTOOK(demand) floatValue];
+    if (mindValueDelta > 1) {
+        return @"😃";
+    }else if(mindValueDelta < -1){
+        return @"😭";
+    }
+    return nil;
+}
 
 /**
  *  MARK:--------------------MineDelegate--------------------

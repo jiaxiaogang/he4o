@@ -8,6 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-@interface AICommonSenseStore : NSObject<IAIStore>
+@interface AICommonSenseStore : AIStoreBase
 
 @end

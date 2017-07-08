@@ -73,7 +73,7 @@ static SMG *_instance;
  *  MARK:--------------------MindControlDelegate--------------------
  */
 -(void) mindControl_CommitDecisionByDemand:(id)demand withType:(MindType)type{
-    [self.thinkControl commitDecisionByDemand:demand withType:type];
+    [self.thinkControl commitDemand:demand withType:type];
 }
 
 /**
@@ -82,6 +82,10 @@ static SMG *_instance;
 -(id)thinkControl_GetMindValue:(AIPointer *)pointer{
     NSLog(@"Think问Mind是否喜欢某物_提交到SMG");
     return [self.mindControl getMindValue:pointer];
+}
+
+-(NSString*) thinkControl_TurnDownDemand:(id)demand type:(MindType)type{
+    return [self.mindControl turnDownDemand:demand type:type];
 }
 
 

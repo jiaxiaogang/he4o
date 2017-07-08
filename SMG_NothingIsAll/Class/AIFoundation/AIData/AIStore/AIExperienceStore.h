@@ -8,6 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-@interface AIExperienceStore : NSObject<IAIStore>
+@interface AIExperienceStore : AIStoreBase
 
 @end

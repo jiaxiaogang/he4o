@@ -61,6 +61,7 @@
 		08D7DA4C1ED149F8004B1018 /* AIString.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D7DA4B1ED149F8004B1018 /* AIString.m */; };
 		08D7DA4F1ED14BC7004B1018 /* AIChar.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D7DA4E1ED14BC7004B1018 /* AIChar.m */; };
 		08DACE951EBD805C00FDC0B6 /* NSString+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 08DACE941EBD805C00FDC0B6 /* NSString+Extension.m */; };
+		08DB40C71F11A075003162C8 /* AIStoreBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 08DB40C61F11A075003162C8 /* AIStoreBase.m */; };
 		08E3CCCA1EE60F8D002990FD /* ThinkControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E3CCC91EE60F8D002990FD /* ThinkControl.m */; };
 		08E58DDE1ED3CE18008B0D76 /* CharModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E58DB71ED3CE18008B0D76 /* CharModel.m */; };
 		08E58DDF1ED3CE18008B0D76 /* CharStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E58DB91ED3CE18008B0D76 /* CharStore.m */; };
@@ -107,7 +108,6 @@
 		0808DB4E1F10A2A80082F4AD /* AIMindValueStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIMindValueStore.h; sourceTree = "<group>"; };
 		0808DB4F1F10A2A80082F4AD /* AIMindValueStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIMindValueStore.m; sourceTree = "<group>"; };
 		0808DB521F10A3310082F4AD /* AIStoreHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIStoreHeader.h; sourceTree = "<group>"; };
-		0808DB551F10A3C60082F4AD /* IAIStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IAIStore.h; sourceTree = "<group>"; };
 		080D059B1EE0E18E00DC62B5 /* ThinkHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThinkHeader.h; sourceTree = "<group>"; };
 		0813D63C1EDF729F0089FA0C /* FeelTextUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeelTextUtils.h; sourceTree = "<group>"; };
 		0813D63D1EDF729F0089FA0C /* FeelTextUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeelTextUtils.m; sourceTree = "<group>"; };
@@ -206,6 +206,8 @@
 		08D7DA4E1ED14BC7004B1018 /* AIChar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIChar.m; sourceTree = "<group>"; };
 		08DACE931EBD805C00FDC0B6 /* NSString+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Extension.h"; sourceTree = "<group>"; };
 		08DACE941EBD805C00FDC0B6 /* NSString+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Extension.m"; sourceTree = "<group>"; };
+		08DB40C51F11A075003162C8 /* AIStoreBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIStoreBase.h; sourceTree = "<group>"; };
+		08DB40C61F11A075003162C8 /* AIStoreBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIStoreBase.m; sourceTree = "<group>"; };
 		08E3CCC81EE60F8D002990FD /* ThinkControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThinkControl.h; sourceTree = "<group>"; };
 		08E3CCC91EE60F8D002990FD /* ThinkControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThinkControl.m; sourceTree = "<group>"; };
 		08E58DB61ED3CE18008B0D76 /* CharModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharModel.h; sourceTree = "<group>"; };
@@ -306,7 +308,8 @@
 				0808DB4E1F10A2A80082F4AD /* AIMindValueStore.h */,
 				0808DB4F1F10A2A80082F4AD /* AIMindValueStore.m */,
 				0808DB521F10A3310082F4AD /* AIStoreHeader.h */,
-				0808DB551F10A3C60082F4AD /* IAIStore.h */,
+				08DB40C51F11A075003162C8 /* AIStoreBase.h */,
+				08DB40C61F11A075003162C8 /* AIStoreBase.m */,
 			);
 			path = AIStore;
 			sourceTree = "<group>";
@@ -916,6 +919,7 @@
 				0813D63E1EDF729F0089FA0C /* FeelTextUtils.m in Sources */,
 				08E58DE81ED3CE18008B0D76 /* MemModel.m in Sources */,
 				08FBB9081EE76E78000F9E80 /* Hobby.m in Sources */,
+				08DB40C71F11A075003162C8 /* AIStoreBase.m in Sources */,
 				083F61331F04830F000330E1 /* AIPointer.m in Sources */,
 				0808DB4A1F10A28C0082F4AD /* AIMemoryStore.m in Sources */,
 				08F3AFB81E98963600747EDD /* SMG.m in Sources */,

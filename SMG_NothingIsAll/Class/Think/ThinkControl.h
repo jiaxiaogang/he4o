@@ -11,6 +11,7 @@
 @protocol ThinkControlDelegate <NSObject>
 
 -(id) thinkControl_GetMindValue:(AIPointer*)pointer;//对obj,char,或者其它复合的东西"偏好值";
+-(NSString*) thinkControl_TurnDownDemand:(id)demand type:(MindType)type;  //驳回未能解决的demand;
 
 @end
 
@@ -24,8 +25,14 @@
 @property (strong,nonatomic) Understand *understand;
 @property (strong,nonatomic) Decision *decision;
 
--(void) commitDecisionByDemand:(id)demand withType:(MindType)type;
 -(void) commitUnderstandByShallow:(id)data;//浅理解
 -(void) commitUnderstandByDeep:(id)data;//深理解
+
+
+/**
+ *  MARK:--------------------Demand--------------------
+ */
+//分析
+-(void) commitDemand:(id)demand withType:(MindType)type;
 
 @end

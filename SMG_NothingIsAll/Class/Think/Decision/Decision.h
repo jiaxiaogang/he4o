@@ -13,7 +13,7 @@
  *
  *       (产生需求)            (产生可表达需求)      (生成表达方式及内容)
  *  Mind---------->Understand--------------->Feel------------------>Output
- *
+ *  Mind->Decision->FeelOut->Output
  *  1,理解分析需求
  *  2,任务队列(本地化)
  *
@@ -26,9 +26,6 @@
 @interface Decision : NSObject
 
 
-/**
- *  MARK:--------------------Mind引擎的需求 分析 & 决策--------------------
- */
--(void) commitDemand:(id)demand withType:(MindType)type;
+
 
 @end

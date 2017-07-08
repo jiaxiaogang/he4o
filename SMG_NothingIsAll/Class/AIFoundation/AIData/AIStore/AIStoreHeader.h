@@ -10,10 +10,11 @@
  *  MARK:--------------------AIStoreHeader--------------------
  *  封装AIStore层;用于各种数据的不同取数据方法;
  */
-#import "IAIStore.h"
+#import "AIStoreBase.h"
 
 #import "AIMemoryStore.h"
 #import "AIAwarenessStore.h"
 #import "AICommonSenseStore.h"
 #import "AIExperienceStore.h"
 #import "AIMindValueStore.h"
+
