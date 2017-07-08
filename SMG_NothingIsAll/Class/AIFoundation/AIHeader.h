@@ -29,6 +29,7 @@
 #import "AIAwareness.h"
 #import "AICommonSense.h"
 
+#import "AIStoreHeader.h"
 
 /**
  *  MARK:--------------------数据检查--------------------

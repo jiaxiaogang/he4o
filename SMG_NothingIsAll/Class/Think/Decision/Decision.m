@@ -40,7 +40,7 @@
             [AIMindValue ai_insertToDB:mindValue];//logThink
             
             //1,搜索强化经验(经验表)
-            BOOL experienceValue = true;
+            BOOL experienceValue = [self decisionByExperience];
             if (experienceValue) {
                 
                 //1),参照解决方式,
@@ -70,8 +70,14 @@
     }
 }
 
--(void) tryDecisionByExperience{
-    
+-(BOOL) decisionByExperience{
+    AIExperience *value = [AIExperienceStore search];
+    return value == nil;
+}
+
+-(BOOL) decisionByCommonSense{
+    AICommonSense *value = [AICommonSenseStore search];
+    return value == nil;
 }
 
 @end
