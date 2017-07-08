@@ -142,7 +142,7 @@
             
             //思考AIMemory上下的关联;(是不是应该给每个Think.task制定一个id);///xxx
         }
-    } 
+    }
 }
 
 -(void) mine_HungerStateChanged:(UIDeviceBatteryState)state level:(CGFloat)level mindValueDelta:(CGFloat)mVD{
