@@ -135,6 +135,7 @@
             mem.mindValue = [AIMindValue initWithType:MindType_Hunger value:mVD sourcePointer:nil];
             [AIMemory ai_insertToDB:mem];//logThink
             
+            
             AIMindValue *searchMV = [[AIMindValue searchWithWhere:[DBUtils sqlWhereDic_K:@"type" V:@(MindType_Hunger)]] lastObject];
             NSLog(@"");
             NSMutableArray *searchMem = [AIMemory searchWithWhere:[DBUtils sqlWhereDic_K:@"mindValue" V:@(searchMV.rowid)]];

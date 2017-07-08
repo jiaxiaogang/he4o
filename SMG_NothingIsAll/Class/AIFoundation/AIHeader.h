@@ -25,6 +25,9 @@
 
 #import "AIMemory.h"
 #import "AIMindValue.h"
+#import "AIExperience.h"
+#import "AIAwareness.h"
+#import "AICommonSense.h"
 
 
 /**
