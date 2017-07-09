@@ -193,7 +193,7 @@
     }else if(level < 0.7f){
         mvD = (level - 1) * 10.0f;//mindValue -= x (没饱停充)
     }
-    [self mine_HungerStateChanged:UIDeviceBatteryStateCharging level:0 mindValueDelta:0];
+    [self mine_HungerStateChanged:UIDeviceBatteryStateUnplugged level:0 mindValueDelta:0];
 }
 
 @end
