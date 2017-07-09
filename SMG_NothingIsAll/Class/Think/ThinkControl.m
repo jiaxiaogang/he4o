@@ -80,10 +80,32 @@
         BOOL win = true;//实现插队;self.taskArr
         if (win) {
             if (fabsf(mindValueDelta) > 1) {
+                
+                
+                //----------------------------------------------------------------------------------------------------------
+                //----------------------------------------------------------------------------------------------------------
+                
                 AIMindValue *mindValue = [[AIMindValue alloc] init];
                 mindValue.type = type;
                 mindValue.value = mindValueDelta;
                 [AIMindValue ai_insertToDB:mindValue];//logThink
+                
+                
+                //存意识流
+                AIAwareness *awareness = [[AIAwareness alloc] init];
+                [AIAwarenessStore search];
+                ////xxxx
+                //意识流没有固定数据格式;
+                //想到什么存什么;
+                //AIMindValue也是意识流的一种;
+                //所以意识流可能是一个指针;
+                //指向MK
+                //指向MindValue
+                
+                
+                //----------------------------------------------------------------------------------------------------------
+                //----------------------------------------------------------------------------------------------------------
+                
                 
                 //1,搜索强化经验(经验表)
                 BOOL experienceValue = [self decisionByExperience];

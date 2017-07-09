@@ -117,17 +117,6 @@
         [MBProgressHUD showSuccess:@"饿一滴血!" toView:nil withHideDelay:1];
         if (level < 0.3f) {
             [self.delegate mindControl_CommitDecisionByDemand:@(mVD) withType:MindType_Hunger];//不能过度依赖noLogThink来执行,应更依赖logThink;
-            AIMemory *mem = [[AIMemory alloc] init];
-            mem.mindValue = [AIMindValue initWithType:MindType_Hunger value:mVD sourcePointer:nil];
-            [AIMemory ai_insertToDB:mem];//logThink
-            
-            
-            AIMindValue *searchMV = [[AIMindValue searchWithWhere:[DBUtils sqlWhereDic_K:@"type" V:@(MindType_Hunger)]] lastObject];
-            NSLog(@"");
-            NSMutableArray *searchMem = [AIMemory searchWithWhere:[DBUtils sqlWhereDic_K:@"mindValue" V:@(searchMV.rowid)]];
-            NSLog(@"");
-            
-            //思考AIMemory上下的关联;(是不是应该给每个Think.task制定一个id);///xxx
         }
     }
 }
