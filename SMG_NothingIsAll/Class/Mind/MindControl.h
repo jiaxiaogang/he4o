@@ -45,6 +45,9 @@
 -(id) getMindValue:(AIPointer*)pointer;
 -(NSString*) turnDownDemand:(id)demand type:(MindType)type;
 
--(void) tmpTest;
+-(void) tmpTest_Add;
+-(void) tmpTest_Sub;
+-(void) tmpTest_Start;
+-(void) tmpTest_Stop;
 
 @end

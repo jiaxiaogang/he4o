@@ -10,8 +10,10 @@
 
 @interface TestHungryPage ()
 
-@property (weak, nonatomic) IBOutlet UIButton *hungerBtn;
-@property (weak, nonatomic) IBOutlet UIButton *chargeBtn;
+@property (weak, nonatomic) IBOutlet UIButton *addBtn;
+@property (weak, nonatomic) IBOutlet UIButton *subBtn;
+@property (weak, nonatomic) IBOutlet UIButton *eatStartBtn;
+@property (weak, nonatomic) IBOutlet UIButton *eatStopBtn;
 
 @end
 
@@ -22,15 +24,21 @@
     
 }
 
-- (IBAction)hungerBtnOnClick:(id)sender {
-    [[SMG sharedInstance].mindControl tmpTest];//饥饿测试;
+- (IBAction)addBtnOnClick:(id)sender {
+    [[SMG sharedInstance].mindControl tmpTest_Add];//饥饿测试;
 }
 
-- (IBAction)chargeBtnOnClick:(id)sender {
-    
+- (IBAction)subBtnOnClick:(id)sender {
+    [[SMG sharedInstance].mindControl tmpTest_Sub];
 }
 
+- (IBAction)eatStartBtnOnClick:(id)sender {
+    [[SMG sharedInstance].mindControl tmpTest_Start];
+}
 
+- (IBAction)eatStopBtnOnClick:(id)sender {
+    [[SMG sharedInstance].mindControl tmpTest_Stop];
+}
 
 
 @end

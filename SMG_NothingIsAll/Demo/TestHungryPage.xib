@@ -11,8 +11,10 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TestHungryPage">
             <connections>
-                <outlet property="chargeBtn" destination="IZR-BX-UWv" id="spy-Br-Ab4"/>
-                <outlet property="hungerBtn" destination="wrf-TN-CYy" id="8xk-DE-cor"/>
+                <outlet property="addBtn" destination="wrf-TN-CYy" id="CQA-Hd-7DS"/>
+                <outlet property="eatStartBtn" destination="pvS-0s-pdu" id="jNX-Li-457"/>
+                <outlet property="eatStopBtn" destination="kok-kC-AYn" id="s5E-Vk-9wM"/>
+                <outlet property="subBtn" destination="IZR-BX-UWv" id="Hpr-oS-iS8"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -78,25 +80,31 @@
                     <subviews>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wrf-TN-CYy">
                             <rect key="frame" x="0.0" y="0.0" width="94" height="120"/>
-                            <state key="normal" title="饿"/>
+                            <state key="normal" title="加"/>
                             <connections>
-                                <action selector="hungerBtnOnClick:" destination="-1" eventType="touchUpInside" id="6SO-e6-XWc"/>
+                                <action selector="addBtnOnClick:" destination="-1" eventType="touchUpInside" id="T85-UR-Ouh"/>
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IZR-BX-UWv">
                             <rect key="frame" x="94" y="0.0" width="93.5" height="120"/>
-                            <state key="normal" title="充"/>
+                            <state key="normal" title="减"/>
                             <connections>
-                                <action selector="chargeBtnOnClick:" destination="-1" eventType="touchUpInside" id="Iu7-Bx-r3O"/>
+                                <action selector="subBtnOnClick:" destination="-1" eventType="touchUpInside" id="eap-tb-uG9"/>
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pvS-0s-pdu">
                             <rect key="frame" x="187.5" y="0.0" width="94" height="120"/>
-                            <state key="normal" title="空"/>
+                            <state key="normal" title="充"/>
+                            <connections>
+                                <action selector="eatStartBtnOnClick:" destination="-1" eventType="touchUpInside" id="VUe-1U-0dm"/>
+                            </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kok-kC-AYn">
-                            <rect key="frame" x="281.5" y="0.0" width="93.5" height="120"/>
-                            <state key="normal" title="空"/>
+                            <rect key="frame" x="281" y="0.0" width="93.5" height="120"/>
+                            <state key="normal" title="停"/>
+                            <connections>
+                                <action selector="eatStopBtnOnClick:" destination="-1" eventType="touchUpInside" id="gjK-zT-NZY"/>
+                            </connections>
                         </button>
                     </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>

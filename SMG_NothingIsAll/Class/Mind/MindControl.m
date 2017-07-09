@@ -137,30 +137,63 @@
     //2,分析决策 & 产生需求
     if (state == UIDeviceBatteryStateUnplugged) {//未充电
         if (level == 1.0f) {
-            [MBProgressHUD showSuccess:@"饱了..." toView:nil withHideDelay:10];
+            [MBProgressHUD showSuccess:@"饱了..." toView:nil withHideDelay:1];
         }else if(level > 0.7f){
-            [MBProgressHUD showSuccess:@"好吧,下次再充..." toView:nil withHideDelay:10];
+            [MBProgressHUD showSuccess:@"好吧,下次再充..." toView:nil withHideDelay:1];
         }else if(level < 0.7f){
-            [MBProgressHUD showSuccess:@"还没饱呢" toView:nil withHideDelay:10];
+            [MBProgressHUD showSuccess:@"还没饱呢" toView:nil withHideDelay:1];
         }
     }else if (state == UIDeviceBatteryStateCharging) {//充电中
         if (level == 1.0f) {
-            [MBProgressHUD showSuccess:@"饱了..." toView:nil withHideDelay:10];
+            [MBProgressHUD showSuccess:@"饱了..." toView:nil withHideDelay:1];
         }else if(level > 0.7f){
-            [MBProgressHUD showSuccess:@"好吧,再充些..." toView:nil withHideDelay:10];
+            [MBProgressHUD showSuccess:@"好吧,再充些..." toView:nil withHideDelay:1];
         }else if(level < 0.7f){
-            [MBProgressHUD showSuccess:@"谢谢呢!" toView:nil withHideDelay:10];
+            [MBProgressHUD showSuccess:@"谢谢呢!" toView:nil withHideDelay:1];
         }
     }else if (state == UIDeviceBatteryStateFull) {//满电
-        [MBProgressHUD showSuccess:@"满了,帮我拔下电线" toView:nil withHideDelay:10];
+        [MBProgressHUD showSuccess:@"满了,帮我拔下电线" toView:nil withHideDelay:1];
     }
 }
 
 
--(void) tmpTest{
+-(void) tmpTest_Add{
+    CGFloat level = 0.23f;
+    CGFloat mVD = (level - 1) * 10.0f;
+    [self mine_HungerLevelChanged:level State:UIDeviceBatteryStateCharging mindValueDelta:mVD];
+}
+
+-(void) tmpTest_Sub{
     CGFloat level = 0.23f;
     CGFloat mVD = (level - 1) * 10.0f;
     [self mine_HungerLevelChanged:level State:UIDeviceBatteryStateUnplugged mindValueDelta:mVD];
+}
+
+-(void) tmpTest_Start{
+    CGFloat level = [UIDevice currentDevice].batteryLevel;
+    CGFloat mvD = 0;
+    if (level == 1.0f) {
+        mvD = -1;//mindValue -= 1 (饱了)
+    }else if(level > 0.7f){
+        mvD = 0;//mindValue == (再充饱点)
+    }else if(level < 0.7f){
+        mvD = (1 - level) * 10.0f;//mindValue += x (未饱再吃点)
+    }
+    
+    [self mine_HungerStateChanged:UIDeviceBatteryStateCharging level:0 mindValueDelta:0];
+}
+
+-(void) tmpTest_Stop {
+    CGFloat level = [UIDevice currentDevice].batteryLevel;
+    CGFloat mvD = 0;
+    if (level == 1.0f) {
+        mvD = 1;//mindValue += 1 (饱了停充)
+    }else if(level > 0.7f){
+        mvD = 0;//mindValue == (7成饱停充)
+    }else if(level < 0.7f){
+        mvD = (level - 1) * 10.0f;//mindValue -= x (没饱停充)
+    }
+    [self mine_HungerStateChanged:UIDeviceBatteryStateCharging level:0 mindValueDelta:0];
 }
 
 @end
