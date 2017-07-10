@@ -12,9 +12,11 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TestHungryPage">
             <connections>
                 <outlet property="addBtn" destination="wrf-TN-CYy" id="CQA-Hd-7DS"/>
+                <outlet property="confirmBtn" destination="Orx-ev-xWm" id="dHP-nA-y7A"/>
                 <outlet property="eatStartBtn" destination="pvS-0s-pdu" id="jNX-Li-457"/>
                 <outlet property="eatStopBtn" destination="kok-kC-AYn" id="s5E-Vk-9wM"/>
                 <outlet property="subBtn" destination="IZR-BX-UWv" id="Hpr-oS-iS8"/>
+                <outlet property="tf" destination="SX9-5m-1fK" id="ieb-IB-FwA"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -39,7 +41,7 @@
                             <nil key="highlightedColor"/>
                         </label>
                     </subviews>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <color key="backgroundColor" red="0.94901960784313721" green="0.95686274509803915" blue="0.96862745098039216" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
                         <constraint firstItem="79x-yb-iUd" firstAttribute="centerX" secondItem="onk-Dj-zRG" secondAttribute="centerX" id="97K-wk-ioH"/>
                         <constraint firstItem="93H-OP-ohb" firstAttribute="centerX" secondItem="onk-Dj-zRG" secondAttribute="centerX" id="Qub-0f-kM7"/>
@@ -63,15 +65,28 @@
                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                             <textInputTraits key="textInputTraits"/>
                         </textField>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Orx-ev-xWm">
+                            <rect key="frame" x="127" y="75" width="120" height="45"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="120" id="dcX-hu-jt6"/>
+                            </constraints>
+                            <state key="normal" title="confirm"/>
+                            <connections>
+                                <action selector="confirmBtnOnClick:" destination="-1" eventType="touchUpInside" id="WPr-zo-f7l"/>
+                            </connections>
+                        </button>
                     </subviews>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <color key="backgroundColor" red="0.94917022515527949" green="0.95773486024844723" blue="0.9676581909937888" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
+                        <constraint firstItem="Orx-ev-xWm" firstAttribute="top" secondItem="SX9-5m-1fK" secondAttribute="bottom" id="GLo-QF-hOi"/>
                         <constraint firstAttribute="height" constant="120" id="GzD-5M-nzk"/>
+                        <constraint firstAttribute="bottom" secondItem="Orx-ev-xWm" secondAttribute="bottom" id="OHY-Dg-sUK"/>
                         <constraint firstItem="pI6-B4-g2c" firstAttribute="top" secondItem="u6Z-hO-x4K" secondAttribute="top" id="QYP-Tc-hiz"/>
                         <constraint firstItem="SX9-5m-1fK" firstAttribute="leading" secondItem="u6Z-hO-x4K" secondAttribute="leading" constant="16" id="f7s-8L-Hce"/>
                         <constraint firstItem="SX9-5m-1fK" firstAttribute="centerX" secondItem="u6Z-hO-x4K" secondAttribute="centerX" id="hTi-XP-cKn"/>
                         <constraint firstAttribute="trailing" secondItem="SX9-5m-1fK" secondAttribute="trailing" constant="16" id="hdO-LT-vtg"/>
                         <constraint firstItem="SX9-5m-1fK" firstAttribute="centerY" secondItem="u6Z-hO-x4K" secondAttribute="centerY" id="jew-hj-qxf"/>
+                        <constraint firstItem="Orx-ev-xWm" firstAttribute="centerX" secondItem="u6Z-hO-x4K" secondAttribute="centerX" id="xj0-Ad-2yg"/>
                         <constraint firstItem="pI6-B4-g2c" firstAttribute="centerX" secondItem="u6Z-hO-x4K" secondAttribute="centerX" id="zZc-oE-HD1"/>
                     </constraints>
                 </view>
@@ -107,7 +122,7 @@
                             </connections>
                         </button>
                     </subviews>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <color key="backgroundColor" red="0.94901960784313721" green="0.95686274509803904" blue="0.97511764896175857" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
                         <constraint firstAttribute="bottom" secondItem="wrf-TN-CYy" secondAttribute="bottom" id="0AD-0Y-hVO"/>
                         <constraint firstItem="pvS-0s-pdu" firstAttribute="leading" secondItem="IZR-BX-UWv" secondAttribute="trailing" id="3mV-WN-Txv"/>

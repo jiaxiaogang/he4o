@@ -7,6 +7,7 @@
 //
 
 #import "TestHungryPage.h"
+#import "InputHeader.h"
 
 @interface TestHungryPage ()
 
@@ -14,6 +15,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *subBtn;
 @property (weak, nonatomic) IBOutlet UIButton *eatStartBtn;
 @property (weak, nonatomic) IBOutlet UIButton *eatStopBtn;
+@property (weak, nonatomic) IBOutlet UIButton *confirmBtn;
+@property (weak, nonatomic) IBOutlet UITextField *tf;
 
 @end
 
@@ -40,5 +43,8 @@
     [[SMG sharedInstance].mindControl tmpTest_Stop];
 }
 
+- (IBAction)confirmBtnOnClick:(id)sender {
+    [[SMG sharedInstance].input commitText:self.tf.text];
+}
 
 @end
