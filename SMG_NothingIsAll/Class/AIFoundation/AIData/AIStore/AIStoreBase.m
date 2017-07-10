@@ -12,4 +12,11 @@
 +(id) search{
     return nil;
 }
+
++(void) insert:(id)data{
+    if (data) {
+        NSLog(@"save");
+    }
+}
+
 @end

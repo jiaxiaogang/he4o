@@ -14,4 +14,6 @@
  */
 @interface AIAwareness : AIObject
 
+@property (strong,nonatomic) AIPointer *pointer;    //意识流可能只存一个指针
+
 @end

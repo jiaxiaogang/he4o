@@ -93,7 +93,9 @@
                 
                 //存意识流
                 AIAwareness *awareness = [[AIAwareness alloc] init];
-                [AIAwarenessStore search];
+                awareness.pointer = mindValue.pointer;
+                
+                [AIAwarenessStore insert:awareness];
                 ////xxxx
                 //意识流没有固定数据格式;
                 //想到什么存什么;
