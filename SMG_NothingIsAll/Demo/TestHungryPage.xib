@@ -12,6 +12,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TestHungryPage">
             <connections>
                 <outlet property="addBtn" destination="wrf-TN-CYy" id="CQA-Hd-7DS"/>
+                <outlet property="canceBtn" destination="SCF-Ji-vb2" id="6qC-dG-jVh"/>
                 <outlet property="confirmBtn" destination="Orx-ev-xWm" id="dHP-nA-y7A"/>
                 <outlet property="eatStartBtn" destination="pvS-0s-pdu" id="jNX-Li-457"/>
                 <outlet property="eatStopBtn" destination="kok-kC-AYn" id="s5E-Vk-9wM"/>
@@ -75,13 +76,26 @@
                                 <action selector="confirmBtnOnClick:" destination="-1" eventType="touchUpInside" id="WPr-zo-f7l"/>
                             </connections>
                         </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SCF-Ji-vb2">
+                            <rect key="frame" x="319" y="90" width="40" height="30"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="40" id="vDS-h9-wuD"/>
+                            </constraints>
+                            <state key="normal" title="X"/>
+                            <connections>
+                                <action selector="canceBtnOnClick:" destination="-1" eventType="touchUpInside" id="dj4-x6-rZh"/>
+                                <action selector="confirmBtnOnClick:" destination="-1" eventType="touchUpInside" id="7Wz-5U-ACt"/>
+                            </connections>
+                        </button>
                     </subviews>
                     <color key="backgroundColor" red="0.94917022515527949" green="0.95773486024844723" blue="0.9676581909937888" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
+                        <constraint firstAttribute="trailing" secondItem="SCF-Ji-vb2" secondAttribute="trailing" constant="16" id="FR0-Dz-zgM"/>
                         <constraint firstItem="Orx-ev-xWm" firstAttribute="top" secondItem="SX9-5m-1fK" secondAttribute="bottom" id="GLo-QF-hOi"/>
                         <constraint firstAttribute="height" constant="120" id="GzD-5M-nzk"/>
                         <constraint firstAttribute="bottom" secondItem="Orx-ev-xWm" secondAttribute="bottom" id="OHY-Dg-sUK"/>
                         <constraint firstItem="pI6-B4-g2c" firstAttribute="top" secondItem="u6Z-hO-x4K" secondAttribute="top" id="QYP-Tc-hiz"/>
+                        <constraint firstAttribute="bottom" secondItem="SCF-Ji-vb2" secondAttribute="bottom" id="VZ4-My-pps"/>
                         <constraint firstItem="SX9-5m-1fK" firstAttribute="leading" secondItem="u6Z-hO-x4K" secondAttribute="leading" constant="16" id="f7s-8L-Hce"/>
                         <constraint firstItem="SX9-5m-1fK" firstAttribute="centerX" secondItem="u6Z-hO-x4K" secondAttribute="centerX" id="hTi-XP-cKn"/>
                         <constraint firstAttribute="trailing" secondItem="SX9-5m-1fK" secondAttribute="trailing" constant="16" id="hdO-LT-vtg"/>
