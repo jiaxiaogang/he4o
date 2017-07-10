@@ -11,7 +11,7 @@
 @protocol IAIStore <NSObject>
 
 +(id) search;
-+(void) insert:(id)data;
++(void) insert:(NSObject*)data;
 
 @end
 

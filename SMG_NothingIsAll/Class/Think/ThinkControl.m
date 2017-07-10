@@ -88,22 +88,13 @@
                 AIMindValue *mindValue = [[AIMindValue alloc] init];
                 mindValue.type = type;
                 mindValue.value = mindValueDelta;
-                [AIMindValue ai_insertToDB:mindValue];//logThink
-                
+                [AIMindValueStore insert:mindValue];//logThink
                 
                 //存意识流
                 AIAwareness *awareness = [[AIAwareness alloc] init];
                 awareness.pointer = mindValue.pointer;
                 
                 [AIAwarenessStore insert:awareness];
-                ////xxxx
-                //意识流没有固定数据格式;
-                //想到什么存什么;
-                //AIMindValue也是意识流的一种;
-                //所以意识流可能是一个指针;
-                //指向MK
-                //指向MindValue
-                
                 
                 //----------------------------------------------------------------------------------------------------------
                 //----------------------------------------------------------------------------------------------------------

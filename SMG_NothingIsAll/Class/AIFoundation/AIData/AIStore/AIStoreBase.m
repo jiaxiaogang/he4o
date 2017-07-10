@@ -9,13 +9,14 @@
 #import "AIStoreBase.h"
 
 @implementation AIStoreBase
+
 +(id) search{
     return nil;
 }
 
-+(void) insert:(id)data{
++(void) insert:(NSObject*)data{
     if (data) {
-        NSLog(@"save");
+        [data.class insertToDB:data];
     }
 }
 

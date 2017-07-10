@@ -11,6 +11,7 @@
 /**
  *  MARK:--------------------意识流--------------------
  *  AIMemory的升层;(参考N3P5)
+ *  Think的指针流;
  */
 @interface AIAwareness : AIObject
 
