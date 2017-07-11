@@ -87,6 +87,7 @@
 		08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F4C98D1EA7A03900F3EDA8 /* SMGUtils.m */; };
 		08F639831E9A2EC0003CD163 /* FeelValueModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F639821E9A2EC0003CD163 /* FeelValueModel.m */; };
 		08F639891E9A2FF4003CD163 /* Feel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F639881E9A2FF4003CD163 /* Feel.m */; };
+		08F6F4531F145B5F00B4EE19 /* MoodDurationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F6F4521F145B5F00B4EE19 /* MoodDurationManager.m */; };
 		08FBB9081EE76E78000F9E80 /* Hobby.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FBB9011EE76E78000F9E80 /* Hobby.m */; };
 		08FBB9091EE76E78000F9E80 /* HobbyModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FBB9031EE76E78000F9E80 /* HobbyModel.m */; };
 		08FBB90A1EE76E78000F9E80 /* Mine.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FBB9051EE76E78000F9E80 /* Mine.m */; };
@@ -264,6 +265,8 @@
 		08F639881E9A2FF4003CD163 /* Feel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Feel.m; sourceTree = "<group>"; };
 		08F6398A1E9A3316003CD163 /* FeelHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeelHeader.h; sourceTree = "<group>"; };
 		08F6398B1E9A3326003CD163 /* FeelEnum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeelEnum.h; sourceTree = "<group>"; };
+		08F6F4511F145B5F00B4EE19 /* MoodDurationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoodDurationManager.h; sourceTree = "<group>"; };
+		08F6F4521F145B5F00B4EE19 /* MoodDurationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MoodDurationManager.m; sourceTree = "<group>"; };
 		08FBB9001EE76E78000F9E80 /* Hobby.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hobby.h; sourceTree = "<group>"; };
 		08FBB9011EE76E78000F9E80 /* Hobby.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Hobby.m; sourceTree = "<group>"; };
 		08FBB9021EE76E78000F9E80 /* HobbyModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HobbyModel.h; sourceTree = "<group>"; };
@@ -669,6 +672,7 @@
 		08F3AF991E98883C00747EDD /* Mind */ = {
 			isa = PBXGroup;
 			children = (
+				08F6F4501F145B5100B4EE19 /* Other */,
 				0826EED31EF7619300400F08 /* README.md */,
 				08FBB8FF1EE76E78000F9E80 /* Mine */,
 				089D35991EE2BA9200AA6622 /* Demand */,
@@ -708,6 +712,15 @@
 				08F6398B1E9A3326003CD163 /* FeelEnum.h */,
 			);
 			path = Feel;
+			sourceTree = "<group>";
+		};
+		08F6F4501F145B5100B4EE19 /* Other */ = {
+			isa = PBXGroup;
+			children = (
+				08F6F4511F145B5F00B4EE19 /* MoodDurationManager.h */,
+				08F6F4521F145B5F00B4EE19 /* MoodDurationManager.m */,
+			);
+			path = Other;
 			sourceTree = "<group>";
 		};
 		08FBB8FF1EE76E78000F9E80 /* Mine */ = {
@@ -920,6 +933,7 @@
 				08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */,
 				0813D64D1EDF7B150089FA0C /* InputDoModel.m in Sources */,
 				0813D6501EDF7B150089FA0C /* InputTextModel.m in Sources */,
+				08F6F4531F145B5F00B4EE19 /* MoodDurationManager.m in Sources */,
 				08AF454D1E97D0B500377887 /* AppDelegate.m in Sources */,
 				0826EED41EF7619300400F08 /* README.md in Sources */,
 				0808DB4D1F10A29A0082F4AD /* AIExperienceStore.m in Sources */,
