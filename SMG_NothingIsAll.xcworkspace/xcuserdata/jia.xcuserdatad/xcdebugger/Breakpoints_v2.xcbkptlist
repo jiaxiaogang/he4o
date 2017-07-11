@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/Class/Mind/MindControl.m"
-            timestampString = "521248407.178914"
+            timestampString = "521429846.639903"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "79"
-            endingLineNumber = "79"
+            startingLineNumber = "82"
+            endingLineNumber = "82"
             landmarkName = "-mine_HungerStateChanged:"
             landmarkType = "7">
          </BreakpointContent>
@@ -48,6 +48,22 @@
             startingLineNumber = "52"
             endingLineNumber = "52"
             landmarkName = "-observerHungerStateChanged"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SMG_NothingIsAll/Class/Mind/Other/MoodDurationManager.m"
+            timestampString = "521429955.805374"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "31"
+            endingLineNumber = "31"
+            landmarkName = "-checkAddMood:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

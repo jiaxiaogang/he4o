@@ -11,13 +11,23 @@
 
 @implementation Mood
 
+-(id) initWithType:(MoodType)type value:(int)value{
+    self = [super init];
+    if (self) {
+        _value = MAX(-10, MIN(value, 10));//值只能在-10到10之间;
+        _type = type;
+        
+        [self initRun];
+    }
+    return self;
+}
 
--(void)setHappyValue:(int)happyValue{
-    _happyValue = MAX(-10, MIN(happyValue, 10));//值只能在-10到10之间;
+-(void) initRun{
+    [[MoodDurationManager sharedInstance] checkAddMood:self];
 }
 
 -(MindStrategyModel*) getStrategyModel{
-    return [MindStrategy getModelWithMin:-10 withMax:10 withOriValue:self.happyValue withType:MindType_Mood];
+    return [MindStrategy getModelWithMin:-10 withMax:10 withOriValue:self.value withType:MindType_Mood];
 }
 
 @end

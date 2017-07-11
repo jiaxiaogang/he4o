@@ -20,7 +20,6 @@ typedef NS_ENUM(NSInteger, JoyAngerType) {
  *  MARK:--------------------心情哀乐(内)--------------------
  */
 
-
 /**
  *  MARK:--------------------MindType(最基础的需求)--------------------
  */
@@ -32,6 +31,10 @@ typedef NS_ENUM(NSInteger, MindType) {
     MindType_Happy      =   4,//开心....temp
 };
 
-
-
+/**
+ *  MARK:--------------------心情--------------------
+ */
+typedef NS_ENUM(NSInteger, MoodType) {
+    MoodType_Irritably2Calm  =   0,//急燥心静
+};
 

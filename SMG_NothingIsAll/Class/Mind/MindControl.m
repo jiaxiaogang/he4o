@@ -60,6 +60,9 @@
 
 -(NSString*) turnDownDemand:(id)demand type:(MindType)type{
     CGFloat mindValueDelta = [NUMTOOK(demand) floatValue];
+    
+    [[Mood alloc] initWithType:MoodType_Irritably2Calm value:-3];
+    
     if (mindValueDelta > 1) {
         return @"😃";
     }else if(mindValueDelta < -1){

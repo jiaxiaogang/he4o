@@ -17,7 +17,10 @@
 @class MindStrategyModel;
 @interface Mood : NSObject
 
-@property (assign, nonatomic) int happyValue;        //happyValue只是一个值;描述各种
+-(id) initWithType:(MoodType)type value:(int)value;
+@property (assign, nonatomic,readonly) int value;
+@property (assign, nonatomic,readonly) MoodType type;
+
 -(MindStrategyModel*) getStrategyModel;
 
 @end

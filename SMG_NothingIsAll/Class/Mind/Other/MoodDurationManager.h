@@ -14,4 +14,7 @@
  */
 @interface MoodDurationManager : NSObject
 
++ (MoodDurationManager *)sharedInstance;
+-(void) checkAddMood:(Mood*)mood;
+
 @end
