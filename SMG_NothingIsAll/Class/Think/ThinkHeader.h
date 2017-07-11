@@ -6,7 +6,5 @@
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "Understand.h"
 #import "UnderstandUtils.h"
-#import "Decision.h"
 #import "ThinkControl.h"

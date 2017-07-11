@@ -9,7 +9,7 @@
 #import "ThinkControl.h"
 #import "ThinkHeader.h"
 
-@interface ThinkControl ()<UnderstandDelegate>
+@interface ThinkControl ()
 @end
 
 @implementation ThinkControl
@@ -24,47 +24,65 @@
 }
 
 -(void) initData{
-    self.understand = [[Understand alloc] init];
-    self.decision = [[Decision alloc] init];
-}
-
--(void) initRun{
-    self.understand.delegata = self;
-}
-
-/**
- *  MARK:--------------------method--------------------
- */
--(void) commitUnderstandByShallow:(id)data{
-    NSLog(@"浅理解");
-    id understandValue = [self.understand commitOutAttention:data];//返回理解的结果;
     
 }
 
--(void) commitUnderstandByDeep:(id)data{
-    NSLog(@"深理解");
+-(void) initRun{
+    
 }
 
 /**
- *  MARK:--------------------UnderstandDelegate--------------------
+ *  MARK:--------------------Understand(Input->Think)--------------------
+ *  副引擎
+ *  浅理解/无意分析");//只取obj,char不存;
+ *  与预测作比较;
  */
--(id)understand_GetMindValue:(AIPointer *)pointer{
-    //让SMG转交给mindControl;
-    if (self.delegate && [self.delegate respondsToSelector:@selector(thinkControl_GetMindValue:)]) {
-        return [self.delegate thinkControl_GetMindValue:pointer];
+-(void) commitUnderstandByShallow:(id)data{
+    if (STRISOK(data)) {
+        [self commitUnderstandByDeep:data];//1,字符串每次都给予注意力;
+    }else if(true){
+        
+    }else{
+        
     }
-    return nil;
 }
 
-
-
-
-
-
-
+-(void) commitUnderstandByDeep:(id)data{
+    if (STRISOK(data)) {
+        //收集charArr
+        NSString *str = (NSString*)data;
+        NSMutableArray *charArr = [[NSMutableArray alloc] init];
+        for (NSInteger i = 0; i < str.length; i++) {
+            AIChar *c = AIMakeChar([str characterAtIndex:i]);
+            [charArr addObject:c];
+        }
+        
+        //记录规律
+        AILaw *law = AIMakeLawByArr(charArr);
+        
+        //问mind有没意见
+        if (self.delegate && [self.delegate respondsToSelector:@selector(thinkControl_GetMindValue:)]) {
+            id mindValue = [self.delegate thinkControl_GetMindValue:law.pointer];
+            NSLog(@"%@",mindValue);
+        }
+        
+        
+        //1,理解data
+            //1.1,通过关联网络取
+            //1.2,尝试理解;(return "理解结果",1+1=1+1 || 1+1=2)
+        //2,预测比较 || 经验比较
+            //2.1,比较"理解结果"
+        //3,mind界入干预
+            //3.1,先不考虑
+        
+        
+    }else{
+        
+    }
+}
 
 /**
- *  MARK:--------------------Demand--------------------
+ *  MARK:--------------------Demand(Mind->Think)--------------------
  */
 -(void) commitDemand:(id)demand withType:(MindType)type{
     //权衡当前的Task;并以mindValue来决定是否执行;

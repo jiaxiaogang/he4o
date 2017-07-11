@@ -18,19 +18,17 @@
 /**
  *  MARK:--------------------思考控制器--------------------
  */
-@class Decision,Understand;
 @interface ThinkControl : NSObject
 
 @property (weak, nonatomic) id<ThinkControlDelegate> delegate;
-@property (strong,nonatomic) Understand *understand;
-@property (strong,nonatomic) Decision *decision;
-
--(void) commitUnderstandByShallow:(id)data;//浅理解
--(void) commitUnderstandByDeep:(id)data;//深理解
-
 
 /**
- *  MARK:--------------------Demand--------------------
+ *  MARK:--------------------Understand(Input->Think)--------------------
+ */
+-(void) commitUnderstandByShallow:(id)data;//浅理解
+
+/**
+ *  MARK:--------------------Demand(Mind->Think)--------------------
  */
 //分析
 -(void) commitDemand:(id)demand withType:(MindType)type;
