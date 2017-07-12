@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface AIMoodModel : NSObject
+@interface AIMoodModel : AIObject
 
 -(id) initWithType:(MoodType)type value:(int)value;
 

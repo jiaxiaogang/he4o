@@ -11,29 +11,28 @@
 
 @implementation Mood
 
--(id) initWithType:(MoodType)type value:(int)value{
-    self = [super init];
-    if (self) {
-        [self setData:value type:type];
-    }
-    return self;
-}
-
--(void) setData:(int)value type:(MoodType)type {
-    _type = type;
-    _value = MAX(-10, MIN(value, 10));//值只能在-10到10之间;
-    
-    AIMoodModel *moodModel = [[AIMoodModel alloc] initWithType:self.type value:self.value];//logThink
-    [AIMoodStore insert:moodModel];
-    
+-(void) setData:(int)value type:(MoodType)type rateBlock:(void(^)(Mood *mood))rateBlock {
+    self.type = type;
+    self.value = MAX(-10, MIN(value, 10));//值只能在-10到10之间;
+    self.rateBlock = rateBlock;
     [self refreshRun];
 }
 
 -(void) refreshRun{
-    //两种设计:
-    //1,使用"心情持续"管理器;
-    //2,使用"神经网络"AILine的类型;
-    [[MoodDurationManager sharedInstance] checkAddMood:self];
+    
+    //1,存心情
+    AIMoodModel *moodModel = [[AIMoodModel alloc] initWithType:self.type value:self.value];//logThink
+    [AIMoodStore insert:moodModel];
+    
+    //2,存意识流
+    AIAwarenessModel *awareness = [[AIAwarenessModel alloc] init];
+    awareness.awarenessP = moodModel.pointer;
+    [AIAwarenessStore insert:awareness];
+    
+    //3,心情持续
+    [[MoodDurationManager sharedInstance] checkAddMood:self rateBlock:^(Mood *mood) {
+        if (self.rateBlock) self.rateBlock(mood);
+    }];
 }
 
 -(MindStrategyModel*) getStrategyModel{

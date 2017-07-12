@@ -10,28 +10,75 @@
 
 @interface MoodDurationManager ()
 
+@property (strong,nonatomic) Mood *mood;
+@property (strong,nonatomic) NSMutableArray *models;
+
 @end
 
 @implementation MoodDurationManager
 
 + (MoodDurationManager *)sharedInstance
 {
-    static MoodDurationManager *articleData = nil;
+    static MoodDurationManager *manager = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        articleData = [[MoodDurationManager alloc] init];
+        manager = [[MoodDurationManager alloc] init];
     });
-    return articleData;
+    return manager;
 }
 
--(void) checkAddMood:(Mood*)mood{
+-(id) init{
+    self = [super init];
+    if (self) {
+        [self initData];
+    }
+    return self;
+}
+
+-(void) initData{
+    self.models = [[NSMutableArray alloc] init];
+}
+
+-(void) checkAddMood:(Mood*)mood rateBlock:(void(^)(Mood *mood))rateBlock{
     if (mood) {
-        if (mood.type == MoodType_Irritably2Calm) {
-            if (mood.value < -3) {
-                NSLog(@"急十分钟");
-            }
+        MoodDurationManagerModel *model = [[MoodDurationManagerModel alloc] init];
+        model.rateBlock = rateBlock;
+        model.mood = mood;
+        [self.models addObject:model];
+        [self run:model];
+    }
+}
+
+-(void) checkRemoveMood:(Mood*)mood {
+    for (NSInteger i = 0 , max = self.models.count; i < max; i++) {
+        if ([self.models[i] isEqual:mood]) {
+            [self.models removeObjectAtIndex:i];
+            i--;
+            max--;
         }
     }
 }
 
+-(void) run:(MoodDurationManagerModel*)model{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if (model && [self.models containsObject:model]) {
+            if (model.mood.type == MoodType_Irritably2Calm) {//急躁恢复平静
+                if (model.mood.value < 0) {
+                    model.mood.value++;
+                    if (model.rateBlock) model.rateBlock(model.mood);
+                    [self run:model];
+                }
+            }
+        }
+    });
+}
+
+@end
+
+
+
+@interface MoodDurationManagerModel ()
+@end
+
+@implementation MoodDurationManagerModel
 @end

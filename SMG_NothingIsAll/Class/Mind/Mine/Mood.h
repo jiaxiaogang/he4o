@@ -17,9 +17,10 @@
 @class MindStrategyModel;
 @interface Mood : NSObject
 
--(id) initWithType:(MoodType)type value:(int)value;
-@property (assign, nonatomic,readonly) int value;
-@property (assign, nonatomic,readonly) MoodType type;
+@property (assign, nonatomic) int value;
+@property (assign, nonatomic) MoodType type;
+@property (strong,nonatomic) void(^ rateBlock)(Mood *mood);
+-(void) setData:(int)value type:(MoodType)type rateBlock:(void(^)(Mood *mood))rateBlock;
 
 -(MindStrategyModel*) getStrategyModel;
 

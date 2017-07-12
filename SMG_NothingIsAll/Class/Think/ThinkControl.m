@@ -110,7 +110,7 @@
                 
                 //存意识流
                 AIAwarenessModel *awareness = [[AIAwarenessModel alloc] init];
-                awareness.pointer = mindValue.pointer;
+                awareness.awarenessP = mindValue.pointer;
                 
                 [AIAwarenessStore insert:awareness];
                 
@@ -141,7 +141,6 @@
                         //1),取原始情绪表达方式(哭,笑)(是急哭的吗?)
                         if ([self.delegate respondsToSelector:@selector(thinkControl_TurnDownDemand:type:)]) {
                             NSString *outStr = [self.delegate thinkControl_TurnDownDemand:demand type:type];//2),执行输出;
-                            NSLog(@"%@",outStr);
                         }
                         //3),记忆(观察整个执行过程)
                     }
