@@ -1,5 +1,5 @@
 //
-//  AIObj.h
+//  AIDoModel.h
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/5/26.
@@ -9,8 +9,8 @@
 #import "AIObject.h"
 
 /**
- *  MARK:--------------------实物--------------------
+ *  MARK:--------------------行为--------------------
  */
-@interface AIObj : AIObject
+@interface AIDoModel : AIObject
 
 @end

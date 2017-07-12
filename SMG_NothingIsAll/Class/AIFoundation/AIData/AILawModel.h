@@ -1,5 +1,5 @@
 //
-//  AILaw.h
+//  AILawModel.h
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/5/26.
@@ -40,7 +40,7 @@
  *          思考:
  *
  */
-@interface AILaw : AIArray
+@interface AILawModel : AIArray
 
 @property (assign, nonatomic) NSInteger count;      //计数器(未必使用,先写这)
 

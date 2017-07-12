@@ -1,5 +1,5 @@
 //
-//  AILogic.h
+//  AILogicModel.h
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/5/26.
@@ -19,7 +19,7 @@
  *      1,可以被GC从dic回收到local;甚至删掉;
  *      2,Logic是被Understand生成,是习惯系统,推理,解决新问题能力的基础;
  */
-@interface AILogic : AIObject
+@interface AILogicModel : AIObject
 
 
 

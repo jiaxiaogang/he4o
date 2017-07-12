@@ -1,5 +1,5 @@
 //
-//  AIValue.h
+//  AIValueModel.h
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/5/26.
@@ -15,6 +15,6 @@
  *  作用:用于个体理解到一般;用于分析时,不需要依赖其它数据;
  *  例如:win10有4G
  */
-@interface AIValue : AIObject
+@interface AIValueModel : AIObject
 
 @end

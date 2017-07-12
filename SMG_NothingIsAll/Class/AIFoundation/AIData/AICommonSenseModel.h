@@ -1,5 +1,5 @@
 //
-//  AICommonSense.h
+//  AICommonSenseModel.h
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/7/4.
@@ -17,6 +17,6 @@
  *  注:以AIObj表等"知识图谱表"为基础使用;
  *  注:通过类比,来教给AI什么是颜色;然后通过"强化"来使AI确定颜色的概念;
  */
-@interface AICommonSense : NSObject
+@interface AICommonSenseModel : NSObject
 
 @end

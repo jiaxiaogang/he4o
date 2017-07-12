@@ -1,16 +1,13 @@
 //
-//  AIDo.h
+//  AIValueModel.m
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/5/26.
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "AIObject.h"
+#import "AIValueModel.h"
 
-/**
- *  MARK:--------------------行为--------------------
- */
-@interface AIDo : AIObject
+@implementation AIValueModel
 
 @end

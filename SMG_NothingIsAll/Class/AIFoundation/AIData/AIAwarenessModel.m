@@ -1,13 +1,13 @@
 //
-//  AIAwareness.m
+//  AIAwarenessModel.m
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/7/7.
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "AIAwareness.h"
+#import "AIAwarenessModel.h"
 
-@implementation AIAwareness
+@implementation AIAwarenessModel
 
 @end

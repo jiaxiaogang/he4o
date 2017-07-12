@@ -11,23 +11,24 @@
 #import "AIChar.h"
 #import "AIArray.h"
 
-#import "AILaw.h"
-#import "AILogic.h"
-#import "AIValue.h"
+#import "AILawModel.h"
+#import "AILogicModel.h"
+#import "AIValueModel.h"
 
-#import "AIDo.h"
-#import "AIObj.h"
+#import "AIDoModel.h"
+#import "AIObjModel.h"
 
 #import "AIPointer.h"
 #import "AILine.h"
 #import "AILineStrong.h"
 #import "AILineDampingStrategy.h"
 
-#import "AIMemory.h"
-#import "AIMindValue.h"
-#import "AIExperience.h"
-#import "AIAwareness.h"
-#import "AICommonSense.h"
+#import "AIMemoryModel.h"
+#import "AIMindValueModel.h"
+#import "AIExperienceModel.h"
+#import "AIAwarenessModel.h"
+#import "AICommonSenseModel.h"
+#import "AIMoodModel.h"
 
 #import "AIStoreHeader.h"
 
@@ -61,9 +62,9 @@
 #define AIMakeArr(a, ...) [AIArray initWithObjects:a, ##__VA_ARGS__,nil]
 
 //Law
-#define AIMakeLaw(a, ...) [AILaw initWithObjects:a, ##__VA_ARGS__,nil]
-#define AIMakeLawByArr(arr) [AILaw initWithArray:arr]
-#define AIMakeLawByAIArr(arr) [AILaw initWithAIArray:arr]
+#define AIMakeLaw(a, ...) [AILawModel initWithObjects:a, ##__VA_ARGS__,nil]
+#define AIMakeLawByArr(arr) [AILawModel initWithArray:arr]
+#define AIMakeLawByAIArr(arr) [AILawModel initWithAIArray:arr]
 
 
 

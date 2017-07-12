@@ -1,5 +1,5 @@
 //
-//  AIAwareness.h
+//  AIAwarenessModel.h
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/7/7.
@@ -10,10 +10,10 @@
 
 /**
  *  MARK:--------------------意识流--------------------
- *  AIMemory的升层;(参考N3P5)
+ *  AIMemoryModel的升层;(参考N3P5)
  *  Think的指针流;
  */
-@interface AIAwareness : AIObject
+@interface AIAwarenessModel : AIObject
 
 @property (strong,nonatomic) AIPointer *pointer;    //意识流可能只存一个指针
 

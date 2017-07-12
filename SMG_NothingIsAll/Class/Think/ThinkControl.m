@@ -58,7 +58,7 @@
         }
         
         //记录规律
-        AILaw *law = AIMakeLawByArr(charArr);
+        AILawModel *law = AIMakeLawByArr(charArr);
         
         //问mind有没意见
         if (self.delegate && [self.delegate respondsToSelector:@selector(thinkControl_GetMindValue:)]) {
@@ -103,13 +103,13 @@
                 //----------------------------------------------------------------------------------------------------------
                 //----------------------------------------------------------------------------------------------------------
                 
-                AIMindValue *mindValue = [[AIMindValue alloc] init];
+                AIMindValueModel *mindValue = [[AIMindValueModel alloc] init];
                 mindValue.type = type;
                 mindValue.value = mindValueDelta;
                 [AIMindValueStore insert:mindValue];//logThink
                 
                 //存意识流
-                AIAwareness *awareness = [[AIAwareness alloc] init];
+                AIAwarenessModel *awareness = [[AIAwarenessModel alloc] init];
                 awareness.pointer = mindValue.pointer;
                 
                 [AIAwarenessStore insert:awareness];
@@ -154,22 +154,22 @@
 }
 
 -(BOOL) decisionByExperience{
-    AIExperience *value = [AIExperienceStore search];
+    AIExperienceModel *value = [AIExperienceStore search];
     return value != nil;
 }
 
 -(BOOL) decisionByCommonSense{
-    AICommonSense *value = [AICommonSenseStore search];
+    AICommonSenseModel *value = [AICommonSenseStore search];
     return value != nil;
 }
 
 -(BOOL) decisionByAwareness{
-    AIAwareness *value = [AIAwarenessStore search];
+    AIAwarenessModel *value = [AIAwarenessStore search];
     return value != nil;
 }
 
 -(BOOL) decisionByMemory{
-    AIMemory *value = [AIMemoryStore search];
+    AIMemoryModel *value = [AIMemoryStore search];
     return value != nil;
 }
 

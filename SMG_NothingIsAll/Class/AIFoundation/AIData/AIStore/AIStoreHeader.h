@@ -17,4 +17,5 @@
 #import "AICommonSenseStore.h"
 #import "AIExperienceStore.h"
 #import "AIMindValueStore.h"
+#import "AIMoodStore.h"
 

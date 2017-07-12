@@ -1,5 +1,5 @@
 //
-//  AIExperience.h
+//  AIExperienceModel.h
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/7/8.
@@ -13,6 +13,6 @@
  *  对常识组织思考
  *  解决问题的经验
  */
-@interface AIExperience : AIObject
+@interface AIExperienceModel : AIObject
 
 @end

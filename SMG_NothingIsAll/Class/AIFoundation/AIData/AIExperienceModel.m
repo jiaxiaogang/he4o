@@ -1,13 +1,13 @@
 //
-//  AIExperience.m
+//  AIExperienceModel.m
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/7/8.
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "AIExperience.h"
+#import "AIExperienceModel.h"
 
-@implementation AIExperience
+@implementation AIExperienceModel
 
 @end

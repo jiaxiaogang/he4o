@@ -111,7 +111,7 @@
 }
 
 - (void) print{
-    NSLog(@"------------打印AILaw数据\n");
+    NSLog(@"------------打印AILawModel数据\n");
     if (ARRISOK(self.content)) {
         for (NSInteger i = 0; i < self.content.count; i++) {
             AIPointer *pModel = self.content[i];

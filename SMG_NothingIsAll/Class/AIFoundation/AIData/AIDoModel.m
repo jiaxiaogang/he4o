@@ -1,13 +1,13 @@
 //
-//  AIDo.m
+//  AIDoModel.m
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/5/26.
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "AIDo.h"
+#import "AIDoModel.h"
 
-@implementation AIDo
+@implementation AIDoModel
 
 @end
