@@ -178,3 +178,14 @@ Mind引擎产生理解系统,决策系统,Input和Output的原动力;
 
 
 ![image](https://github.com/jiaxiaogang/SMG_NothingIsAll/blob/master/README_ASSETS/Framework170530.png )  
+
+
+## 注:
+### 1,无@""声明的字符串;
+### 2,无db数据;
+
+## 2017.06.01左右
+### 三维架构(参考笔记/AI/架构)
+
+## 2017.07.10左右
+### BrainTree(参考N3P7,N3P8)
