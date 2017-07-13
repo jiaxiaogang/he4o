@@ -33,6 +33,8 @@
 		083F61341F04830F000330E1 /* AILineDampingStrategy.m in Sources */ = {isa = PBXBuildFile; fileRef = 083F61301F04830F000330E1 /* AILineDampingStrategy.m */; };
 		083F61351F04830F000330E1 /* AILineStrong.m in Sources */ = {isa = PBXBuildFile; fileRef = 083F61321F04830F000330E1 /* AILineStrong.m */; };
 		083F61381F048329000330E1 /* AILine.m in Sources */ = {isa = PBXBuildFile; fileRef = 083F61371F048329000330E1 /* AILine.m */; };
+		0840AA661F16FD6C000A528E /* AIOutputModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0840AA651F16FD6C000A528E /* AIOutputModel.m */; };
+		0840AA691F16FD7B000A528E /* AIOutputStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 0840AA681F16FD7B000A528E /* AIOutputStore.m */; };
 		087753251ECFE1C400E7AD09 /* UnderstandUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 087753211ECFE1C400E7AD09 /* UnderstandUtils.m */; };
 		0895DAE61EB2D52D00E2B5C7 /* DataViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0895DAE41EB2D52D00E2B5C7 /* DataViewController.m */; };
 		0895DAE71EB2D52D00E2B5C7 /* DataViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0895DAE51EB2D52D00E2B5C7 /* DataViewController.xib */; };
@@ -135,7 +137,6 @@
 		0826EED31EF7619300400F08 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		082F9D541EB234750009F6A9 /* Output.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Output.h; sourceTree = "<group>"; };
 		082F9D551EB234750009F6A9 /* Output.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Output.m; sourceTree = "<group>"; };
-		082F9D571EB235F30009F6A9 /* OutputDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OutputDelegate.h; sourceTree = "<group>"; };
 		082F9D591EB236AC0009F6A9 /* StudyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StudyViewController.h; sourceTree = "<group>"; };
 		082F9D5A1EB236AC0009F6A9 /* StudyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StudyViewController.m; sourceTree = "<group>"; };
 		082F9D5B1EB236AC0009F6A9 /* StudyViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StudyViewController.xib; sourceTree = "<group>"; };
@@ -154,6 +155,10 @@
 		083F61321F04830F000330E1 /* AILineStrong.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AILineStrong.m; sourceTree = "<group>"; };
 		083F61361F048329000330E1 /* AILine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AILine.h; sourceTree = "<group>"; };
 		083F61371F048329000330E1 /* AILine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AILine.m; sourceTree = "<group>"; };
+		0840AA641F16FD6C000A528E /* AIOutputModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIOutputModel.h; sourceTree = "<group>"; };
+		0840AA651F16FD6C000A528E /* AIOutputModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIOutputModel.m; sourceTree = "<group>"; };
+		0840AA671F16FD7B000A528E /* AIOutputStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIOutputStore.h; sourceTree = "<group>"; };
+		0840AA681F16FD7B000A528E /* AIOutputStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIOutputStore.m; sourceTree = "<group>"; };
 		087753201ECFE1C400E7AD09 /* UnderstandUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnderstandUtils.h; sourceTree = "<group>"; };
 		087753211ECFE1C400E7AD09 /* UnderstandUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UnderstandUtils.m; sourceTree = "<group>"; };
 		0895DAE31EB2D52D00E2B5C7 /* DataViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataViewController.h; sourceTree = "<group>"; };
@@ -320,6 +325,8 @@
 				08DB40C61F11A075003162C8 /* AIStoreBase.m */,
 				0806FB2F1F15997D00808B34 /* AIMoodStore.h */,
 				0806FB301F15997D00808B34 /* AIMoodStore.m */,
+				0840AA671F16FD7B000A528E /* AIOutputStore.h */,
+				0840AA681F16FD7B000A528E /* AIOutputStore.m */,
 			);
 			path = AIStore;
 			sourceTree = "<group>";
@@ -449,6 +456,8 @@
 				08A209681F1069040013ACC4 /* AIValueModel.m */,
 				0806FB2C1F15996800808B34 /* AIMoodModel.h */,
 				0806FB2D1F15996800808B34 /* AIMoodModel.m */,
+				0840AA641F16FD6C000A528E /* AIOutputModel.h */,
+				0840AA651F16FD6C000A528E /* AIOutputModel.m */,
 			);
 			path = AIData;
 			sourceTree = "<group>";
@@ -552,7 +561,6 @@
 			children = (
 				082F9D541EB234750009F6A9 /* Output.h */,
 				082F9D551EB234750009F6A9 /* Output.m */,
-				082F9D571EB235F30009F6A9 /* OutputDelegate.h */,
 				082F9D611EB236FA0009F6A9 /* OutputHeader.h */,
 			);
 			path = Output;
@@ -964,6 +972,7 @@
 				08AF454A1E97D0B500377887 /* main.m in Sources */,
 				082F9D5C1EB236AC0009F6A9 /* StudyViewController.m in Sources */,
 				08F3AFB21E98929C00747EDD /* MindUtils.m in Sources */,
+				0840AA691F16FD7B000A528E /* AIOutputStore.m in Sources */,
 				08E58DEB1ED3CE18008B0D76 /* LawStore.m in Sources */,
 				0831CF5E1EBEF20500C020E6 /* DBUtils.m in Sources */,
 				0895DAE61EB2D52D00E2B5C7 /* DataViewController.m in Sources */,
@@ -976,6 +985,7 @@
 				08E58DE91ED3CE18008B0D76 /* MemStore.m in Sources */,
 				08D42C9B1EFA066E00114DCD /* README.md in Sources */,
 				08E58DE61ED3CE18008B0D76 /* TextStore.m in Sources */,
+				0840AA661F16FD6C000A528E /* AIOutputModel.m in Sources */,
 				0813D64F1EDF7B150089FA0C /* InputObjModel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

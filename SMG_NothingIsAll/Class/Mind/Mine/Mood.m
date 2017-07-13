@@ -19,7 +19,21 @@
 }
 
 -(void) refreshRun{
-    
+    //1,logThink
+    [self saveLogThink];
+    if (self.rateBlock) {
+        self.rateBlock(self);
+    }
+    //2,心情持续
+    [[MoodDurationManager sharedInstance] checkAddMood:self rateBlock:^(Mood *mood) {
+        [self saveLogThink];
+        if (self.rateBlock) {
+            self.rateBlock(mood);
+        }
+    }];
+}
+
+-(void) saveLogThink{
     //1,存心情
     AIMoodModel *moodModel = [[AIMoodModel alloc] initWithType:self.type value:self.value];//logThink
     [AIMoodStore insert:moodModel];
@@ -28,11 +42,6 @@
     AIAwarenessModel *awareness = [[AIAwarenessModel alloc] init];
     awareness.awarenessP = moodModel.pointer;
     [AIAwarenessStore insert:awareness];
-    
-    //3,心情持续
-    [[MoodDurationManager sharedInstance] checkAddMood:self rateBlock:^(Mood *mood) {
-        if (self.rateBlock) self.rateBlock(mood);
-    }];
 }
 
 -(MindStrategyModel*) getStrategyModel{

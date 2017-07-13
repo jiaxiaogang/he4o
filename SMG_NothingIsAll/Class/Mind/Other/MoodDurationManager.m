@@ -60,7 +60,7 @@
 }
 
 -(void) run:(MoodDurationManagerModel*)model{
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         if (model && [self.models containsObject:model]) {
             if (model.mood.type == MoodType_Irritably2Calm) {//急躁恢复平静
                 if (model.mood.value < 0) {

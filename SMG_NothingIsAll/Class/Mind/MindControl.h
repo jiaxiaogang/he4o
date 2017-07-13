@@ -43,7 +43,7 @@
  *  参数:(应该是数组/model)
  */
 -(id) getMindValue:(AIPointer*)pointer;
--(NSString*) turnDownDemand:(id)demand type:(MindType)type;
+-(void) turnDownDemand:(id)demand type:(MindType)type;
 
 -(void) tmpTest_Add;
 -(void) tmpTest_Sub;

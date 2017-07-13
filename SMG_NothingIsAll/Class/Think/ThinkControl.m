@@ -140,7 +140,7 @@
                     }else{
                         //1),取原始情绪表达方式(哭,笑)(是急哭的吗?)
                         if ([self.delegate respondsToSelector:@selector(thinkControl_TurnDownDemand:type:)]) {
-                            NSString *outStr = [self.delegate thinkControl_TurnDownDemand:demand type:type];//2),执行输出;
+                            [self.delegate thinkControl_TurnDownDemand:demand type:type];//2),执行输出;
                         }
                         //3),记忆(观察整个执行过程)
                     }

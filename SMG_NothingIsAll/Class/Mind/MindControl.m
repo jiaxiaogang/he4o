@@ -10,6 +10,7 @@
 #import "MindHeader.h"
 #import "ThinkHeader.h"
 #import "MBProgressHUD+Add.h"
+#import "OutputHeader.h"
 
 @interface MindControl ()<MineDelegate>
 
@@ -58,21 +59,12 @@
     return nil;
 }
 
--(NSString*) turnDownDemand:(id)demand type:(MindType)type{
+-(void) turnDownDemand:(id)demand type:(MindType)type{
     CGFloat mindValueDelta = [NUMTOOK(demand) floatValue];
     
-    [[[Mood alloc] init] setData:-3 type:MoodType_Irritably2Calm rateBlock:^(Mood *mood) {
-        NSLog(@"😭");
+    [theMood setData:mindValueDelta type:MoodType_Irritably2Calm rateBlock:^(Mood *mood) {
+        [theOutput output_Face:MoodType_Irritably2Calm value:mood.value];
     }];
-    
-    if (mindValueDelta > 1) {
-        NSLog(@"😃");
-        return @"😃";
-    }else if(mindValueDelta < -1){
-        NSLog(@"😭");
-        return @"😭";
-    }
-    return nil;
 }
 
 /**

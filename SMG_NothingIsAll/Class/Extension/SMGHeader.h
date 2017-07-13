@@ -48,3 +48,17 @@
 #define SMGRangeMake(loc,len) [SMGRange rangeWithLocation:loc length:len]
 
 
+/**
+ *  MARK:--------------------快捷访问对象--------------------
+ */
+#define theOutput [SMG sharedInstance].output
+#define theThink [SMG sharedInstance].thinkControl
+#define theFeel [SMG sharedInstance].feel
+#define theInput [SMG sharedInstance].input
+
+#define theMind [SMG sharedInstance].mindControl
+#define theMine [SMG sharedInstance].mindControl.mine
+#define theMood [SMG sharedInstance].mindControl.mine.mood
+#define theHunger [SMG sharedInstance].mindControl.mine.hunger
+#define theHobby [SMG sharedInstance].mindControl.mine.hobby
+

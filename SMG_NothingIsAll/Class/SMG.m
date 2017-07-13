@@ -14,8 +14,9 @@
 #import "FeelHeader.h"
 #import "OutputHeader.h"
 #import "MindHeader.h"
+#import "MBProgressHUD+Add.h"
 
-@interface SMG ()<FeelDelegate,MindControlDelegate,ThinkControlDelegate,InputDelegate>
+@interface SMG ()<FeelDelegate,MindControlDelegate,ThinkControlDelegate,InputDelegate,OutputDelegate>
 
 @end
 
@@ -52,6 +53,7 @@ static SMG *_instance;
     self.mindControl.delegate = self;
     self.thinkControl.delegate = self;
     self.input.delegate = self;
+    self.output.delegate = self;
 }
 
 /**
@@ -70,6 +72,17 @@ static SMG *_instance;
 }
 
 /**
+ *  MARK:--------------------OutputDelegate--------------------
+ */
+-(void) output_Text:(NSString*)text{
+    [MBProgressHUD showSuccess:STRTOOK(text) toView:nil withHideDelay:0.2f];
+}
+
+-(void) output_Face:(NSString*)faceText{
+    [MBProgressHUD showSuccess:STRTOOK(faceText) toView:nil withHideDelay:0.2f];
+}
+
+/**
  *  MARK:--------------------MindControlDelegate--------------------
  */
 -(void) mindControl_CommitDecisionByDemand:(id)demand withType:(MindType)type{
@@ -84,8 +97,8 @@ static SMG *_instance;
     return [self.mindControl getMindValue:pointer];
 }
 
--(NSString*) thinkControl_TurnDownDemand:(id)demand type:(MindType)type{
-    return [self.mindControl turnDownDemand:demand type:type];
+-(void) thinkControl_TurnDownDemand:(id)demand type:(MindType)type{
+    [self.mindControl turnDownDemand:demand type:type];
 }
 
 

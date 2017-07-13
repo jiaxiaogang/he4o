@@ -11,7 +11,7 @@
 @protocol ThinkControlDelegate <NSObject>
 
 -(id) thinkControl_GetMindValue:(AIPointer*)pointer;//对obj,char,或者其它复合的东西"偏好值";
--(NSString*) thinkControl_TurnDownDemand:(id)demand type:(MindType)type;  //驳回未能解决的demand;
+-(void) thinkControl_TurnDownDemand:(id)demand type:(MindType)type;  //驳回未能解决的demand;
 
 @end
 

@@ -7,10 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "OutputDelegate.h"
 
 
+@protocol OutputDelegate <NSObject>
 
+-(void) output_Text:(NSString*)text;
+-(void) output_Face:(NSString*)faceText;
+
+@end
 
 /**
  *  MARK:--------------------输出--------------------
@@ -19,5 +23,7 @@
 @interface Output : NSObject
 
 @property (weak, nonatomic) id<OutputDelegate> delegate;
+-(void) output_Text:(NSString*)text;
+-(void) output_Face:(MoodType)type value:(int)value;
 
 @end

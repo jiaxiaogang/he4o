@@ -62,5 +62,16 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
+/**
+ *  MARK:--------------------method--------------------
+ */
+-(UIViewController*) getTopDisplayViewController{
+    UINavigationController *navC = (UINavigationController*)[self.window rootViewController];
+    
+    NSArray *controllers = navC.viewControllers;
+    UIViewController *controller = [controllers lastObject];
+    return controller;
+}
+
 
 @end
