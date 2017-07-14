@@ -47,22 +47,15 @@
 /**
  *  MARK:--------------------HungerDelegate--------------------
  */
--(void) hunger_HungerStateChanged:(HungerStatus)status{
-    NSLog(@"Mine_自我产生饥饿意识");
+-(void) hunger_LevelChanged:(AIHungerLevelChangedModel*)model{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(mine_HungerLevelChanged:)]) {
+        [self.delegate mine_HungerLevelChanged:model];
+    }
+}
+
+-(void) hunger_StateChanged:(AIHungerStateChangedModel*)model{
     if (self.delegate && [self.delegate respondsToSelector:@selector(mine_HungerStateChanged:)]) {
-        [self.delegate mine_HungerStateChanged:status];
-    }
-}
-
--(void) hunger_LevelChanged:(CGFloat)level State:(UIDeviceBatteryState)state mindValueDelta:(CGFloat)mVD{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(mine_HungerLevelChanged:State:mindValueDelta:)]) {
-        [self.delegate mine_HungerLevelChanged:level State:state mindValueDelta:mVD];
-    }
-}
-
--(void) hunger_StateChanged:(UIDeviceBatteryState)state level:(CGFloat)level mindValueDelta:(CGFloat)mVD{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(hunger_StateChanged:level:mindValueDelta:)]) {
-        [self.delegate mine_HungerStateChanged:state level:level mindValueDelta:mVD];
+        [self.delegate mine_HungerStateChanged:model];
     }
 }
 

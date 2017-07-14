@@ -12,7 +12,7 @@
 @protocol MindControlDelegate <NSObject>
 
 
--(void) mindControl_CommitDecisionByDemand:(id)demand withType:(MindType)type;//新增需求;
+-(void) mindControl_CommitDecisionByDemand:(AIMindValueModel*)model;//新增需求;
 
 @end
 
@@ -43,11 +43,6 @@
  *  参数:(应该是数组/model)
  */
 -(id) getMindValue:(AIPointer*)pointer;
--(void) turnDownDemand:(id)demand type:(MindType)type;
-
--(void) tmpTest_Add;
--(void) tmpTest_Sub;
--(void) tmpTest_Start;
--(void) tmpTest_Stop;
+-(void) turnDownDemand:(AIMindValueModel*)model;
 
 @end

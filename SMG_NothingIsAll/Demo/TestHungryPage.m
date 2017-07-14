@@ -37,19 +37,19 @@
  *  MARK:--------------------onclick--------------------
  */
 - (IBAction)addBtnOnClick:(id)sender {
-    [[SMG sharedInstance].mindControl tmpTest_Add];//饥饿测试;
+    [theHunger tmpTest_Add];
 }
 
 - (IBAction)subBtnOnClick:(id)sender {
-    [[SMG sharedInstance].mindControl tmpTest_Sub];
+    [theHunger tmpTest_Sub];
 }
 
 - (IBAction)eatStartBtnOnClick:(id)sender {
-    [[SMG sharedInstance].mindControl tmpTest_Start];
+    [theHunger tmpTest_Start];
 }
 
 - (IBAction)eatStopBtnOnClick:(id)sender {
-    [[SMG sharedInstance].mindControl tmpTest_Stop];
+    [theHunger tmpTest_Stop];
 }
 
 - (IBAction)confirmBtnOnClick:(id)sender {

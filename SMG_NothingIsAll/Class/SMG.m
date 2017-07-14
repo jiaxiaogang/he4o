@@ -85,8 +85,8 @@ static SMG *_instance;
 /**
  *  MARK:--------------------MindControlDelegate--------------------
  */
--(void) mindControl_CommitDecisionByDemand:(id)demand withType:(MindType)type{
-    [self.thinkControl commitDemand:demand withType:type];
+-(void) mindControl_CommitDecisionByDemand:(AIMindValueModel*)model{
+    [self.thinkControl commitDemand:model];
 }
 
 /**
@@ -97,8 +97,8 @@ static SMG *_instance;
     return [self.mindControl getMindValue:pointer];
 }
 
--(void) thinkControl_TurnDownDemand:(id)demand type:(MindType)type{
-    [self.mindControl turnDownDemand:demand type:type];
+-(void) thinkControl_TurnDownDemand:(AIMindValueModel*)model{
+    [self.mindControl turnDownDemand:model];
 }
 
 

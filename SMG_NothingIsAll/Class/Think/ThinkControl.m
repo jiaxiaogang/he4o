@@ -84,38 +84,19 @@
 /**
  *  MARK:--------------------Demand(Mind->Think)--------------------
  */
--(void) commitDemand:(id)demand withType:(MindType)type{
+-(void) commitDemand:(AIMindValueModel*)model{
+    if (model == nil) {
+        return;
+    }
     //权衡当前的Task;并以mindValue来决定是否执行;
-    
-    if (type == MindType_Angry)
-        NSLog(@"我很生气!...我要:%@",demand);
-    else if (type == MindType_Happy)
-        NSLog(@"我很开心!...我要:%@",demand);
-    
     //?解决饿的问题
-    if (type == MindType_Hunger) {
-        CGFloat mindValueDelta = [NUMTOOK(demand) floatValue];
+    if (model.type == MindType_Hunger) {
+        CGFloat mindValueDelta = model.value;
         BOOL win = true;//实现插队;self.taskArr
         if (win) {
             if (fabsf(mindValueDelta) > 1) {
                 
-                
-                //----------------------------------------------------------------------------------------------------------
-                //----------------------------------------------------------------------------------------------------------
-                
-                AIMindValueModel *mindValue = [[AIMindValueModel alloc] init];
-                mindValue.type = type;
-                mindValue.value = mindValueDelta;
-                [AIMindValueStore insert:mindValue];//logThink
-                
-                //存意识流
-                AIAwarenessModel *awareness = [[AIAwarenessModel alloc] init];
-                awareness.awarenessP = mindValue.pointer;
-                
-                [AIAwarenessStore insert:awareness];
-                
-                //----------------------------------------------------------------------------------------------------------
-                //----------------------------------------------------------------------------------------------------------
+                //LogThink开始思考问题;...........
                 
                 
                 //1,搜索强化经验(经验表)
@@ -139,8 +120,8 @@
                         //5),转移到经验表;
                     }else{
                         //1),取原始情绪表达方式(哭,笑)(是急哭的吗?)
-                        if ([self.delegate respondsToSelector:@selector(thinkControl_TurnDownDemand:type:)]) {
-                            [self.delegate thinkControl_TurnDownDemand:demand type:type];//2),执行输出;
+                        if ([self.delegate respondsToSelector:@selector(thinkControl_TurnDownDemand:)]) {
+                            [self.delegate thinkControl_TurnDownDemand:model];//2),执行输出;
                         }
                         //3),记忆(观察整个执行过程)
                     }

@@ -29,6 +29,11 @@
 		082F9D601EB236E80009F6A9 /* SMGOutputDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 082F9D5F1EB236E80009F6A9 /* SMGOutputDelegate.m */; };
 		083112F21F05E12600051DE6 /* MBProgressHUD+Add.m in Sources */ = {isa = PBXBuildFile; fileRef = 083112F11F05E12600051DE6 /* MBProgressHUD+Add.m */; };
 		0831CF5E1EBEF20500C020E6 /* DBUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0831CF5D1EBEF20500C020E6 /* DBUtils.m */; };
+		083BBDB41F1849DF000F694A /* AIHungerLevelChangedModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 083BBDB31F1849DF000F694A /* AIHungerLevelChangedModel.m */; };
+		083BBDB71F1849F1000F694A /* AIHungerStateChangedModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 083BBDB61F1849F1000F694A /* AIHungerStateChangedModel.m */; };
+		083BBDBA1F184A04000F694A /* AIHungerLevelChangedStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 083BBDB91F184A04000F694A /* AIHungerLevelChangedStore.m */; };
+		083BBDBD1F184A12000F694A /* AIHungerStateChangedStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 083BBDBC1F184A12000F694A /* AIHungerStateChangedStore.m */; };
+		083BBDC01F184C7D000F694A /* MathUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 083BBDBF1F184C7D000F694A /* MathUtils.m */; };
 		083F61331F04830F000330E1 /* AIPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 083F612E1F04830F000330E1 /* AIPointer.m */; };
 		083F61341F04830F000330E1 /* AILineDampingStrategy.m in Sources */ = {isa = PBXBuildFile; fileRef = 083F61301F04830F000330E1 /* AILineDampingStrategy.m */; };
 		083F61351F04830F000330E1 /* AILineStrong.m in Sources */ = {isa = PBXBuildFile; fileRef = 083F61321F04830F000330E1 /* AILineStrong.m */; };
@@ -116,7 +121,6 @@
 		0808DB4C1F10A29A0082F4AD /* AIExperienceStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIExperienceStore.m; sourceTree = "<group>"; };
 		0808DB4E1F10A2A80082F4AD /* AIMindValueStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIMindValueStore.h; sourceTree = "<group>"; };
 		0808DB4F1F10A2A80082F4AD /* AIMindValueStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIMindValueStore.m; sourceTree = "<group>"; };
-		0808DB521F10A3310082F4AD /* AIStoreHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIStoreHeader.h; sourceTree = "<group>"; };
 		080D059B1EE0E18E00DC62B5 /* ThinkHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThinkHeader.h; sourceTree = "<group>"; };
 		0813D63C1EDF729F0089FA0C /* FeelTextUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeelTextUtils.h; sourceTree = "<group>"; };
 		0813D63D1EDF729F0089FA0C /* FeelTextUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeelTextUtils.m; sourceTree = "<group>"; };
@@ -147,6 +151,16 @@
 		083112F11F05E12600051DE6 /* MBProgressHUD+Add.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MBProgressHUD+Add.m"; sourceTree = "<group>"; };
 		0831CF5C1EBEF20500C020E6 /* DBUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBUtils.h; sourceTree = "<group>"; };
 		0831CF5D1EBEF20500C020E6 /* DBUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBUtils.m; sourceTree = "<group>"; };
+		083BBDB21F1849DF000F694A /* AIHungerLevelChangedModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIHungerLevelChangedModel.h; sourceTree = "<group>"; };
+		083BBDB31F1849DF000F694A /* AIHungerLevelChangedModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIHungerLevelChangedModel.m; sourceTree = "<group>"; };
+		083BBDB51F1849F1000F694A /* AIHungerStateChangedModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIHungerStateChangedModel.h; sourceTree = "<group>"; };
+		083BBDB61F1849F1000F694A /* AIHungerStateChangedModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIHungerStateChangedModel.m; sourceTree = "<group>"; };
+		083BBDB81F184A04000F694A /* AIHungerLevelChangedStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIHungerLevelChangedStore.h; sourceTree = "<group>"; };
+		083BBDB91F184A04000F694A /* AIHungerLevelChangedStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIHungerLevelChangedStore.m; sourceTree = "<group>"; };
+		083BBDBB1F184A12000F694A /* AIHungerStateChangedStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIHungerStateChangedStore.h; sourceTree = "<group>"; };
+		083BBDBC1F184A12000F694A /* AIHungerStateChangedStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIHungerStateChangedStore.m; sourceTree = "<group>"; };
+		083BBDBE1F184C7D000F694A /* MathUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathUtils.h; sourceTree = "<group>"; };
+		083BBDBF1F184C7D000F694A /* MathUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MathUtils.m; sourceTree = "<group>"; };
 		083F612D1F04830F000330E1 /* AIPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIPointer.h; sourceTree = "<group>"; };
 		083F612E1F04830F000330E1 /* AIPointer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIPointer.m; sourceTree = "<group>"; };
 		083F612F1F04830F000330E1 /* AILineDampingStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AILineDampingStrategy.h; sourceTree = "<group>"; };
@@ -320,13 +334,16 @@
 				0808DB4C1F10A29A0082F4AD /* AIExperienceStore.m */,
 				0808DB4E1F10A2A80082F4AD /* AIMindValueStore.h */,
 				0808DB4F1F10A2A80082F4AD /* AIMindValueStore.m */,
-				0808DB521F10A3310082F4AD /* AIStoreHeader.h */,
 				08DB40C51F11A075003162C8 /* AIStoreBase.h */,
 				08DB40C61F11A075003162C8 /* AIStoreBase.m */,
 				0806FB2F1F15997D00808B34 /* AIMoodStore.h */,
 				0806FB301F15997D00808B34 /* AIMoodStore.m */,
 				0840AA671F16FD7B000A528E /* AIOutputStore.h */,
 				0840AA681F16FD7B000A528E /* AIOutputStore.m */,
+				083BBDB81F184A04000F694A /* AIHungerLevelChangedStore.h */,
+				083BBDB91F184A04000F694A /* AIHungerLevelChangedStore.m */,
+				083BBDBB1F184A12000F694A /* AIHungerStateChangedStore.h */,
+				083BBDBC1F184A12000F694A /* AIHungerStateChangedStore.m */,
 			);
 			path = AIStore;
 			sourceTree = "<group>";
@@ -458,6 +475,10 @@
 				0806FB2D1F15996800808B34 /* AIMoodModel.m */,
 				0840AA641F16FD6C000A528E /* AIOutputModel.h */,
 				0840AA651F16FD6C000A528E /* AIOutputModel.m */,
+				083BBDB21F1849DF000F694A /* AIHungerLevelChangedModel.h */,
+				083BBDB31F1849DF000F694A /* AIHungerLevelChangedModel.m */,
+				083BBDB51F1849F1000F694A /* AIHungerStateChangedModel.h */,
+				083BBDB61F1849F1000F694A /* AIHungerStateChangedModel.m */,
 			);
 			path = AIData;
 			sourceTree = "<group>";
@@ -714,6 +735,8 @@
 				08FDCE8D1EAA4A8E00882ADC /* SMGRange.m */,
 				08DACE931EBD805C00FDC0B6 /* NSString+Extension.h */,
 				08DACE941EBD805C00FDC0B6 /* NSString+Extension.m */,
+				083BBDBE1F184C7D000F694A /* MathUtils.h */,
+				083BBDBF1F184C7D000F694A /* MathUtils.m */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -922,6 +945,7 @@
 				0808DB441F10A24A0082F4AD /* AIAwarenessStore.m in Sources */,
 				08E99C481EBDD1C800A38FF5 /* MindControl.m in Sources */,
 				0813D64C1EDF7B150089FA0C /* InputAudioModel.m in Sources */,
+				083BBDB41F1849DF000F694A /* AIHungerLevelChangedModel.m in Sources */,
 				089D359E1EE2BA9200AA6622 /* DemandFactory.m in Sources */,
 				08C84A8E1E9A866200897D8B /* Input.m in Sources */,
 				082F9D561EB234750009F6A9 /* Output.m in Sources */,
@@ -948,6 +972,7 @@
 				08F3AFB81E98963600747EDD /* SMG.m in Sources */,
 				081DA13B1ED47CE000C8C531 /* AIArray.m in Sources */,
 				08E58DED1ED3CE18008B0D76 /* LogicStore.m in Sources */,
+				083BBDBD1F184A12000F694A /* AIHungerStateChangedStore.m in Sources */,
 				083F61381F048329000330E1 /* AILine.m in Sources */,
 				08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */,
 				0813D64D1EDF7B150089FA0C /* InputDoModel.m in Sources */,
@@ -957,6 +982,7 @@
 				0826EED41EF7619300400F08 /* README.md in Sources */,
 				0808DB4D1F10A29A0082F4AD /* AIExperienceStore.m in Sources */,
 				08F639891E9A2FF4003CD163 /* Feel.m in Sources */,
+				083BBDB71F1849F1000F694A /* AIHungerStateChangedModel.m in Sources */,
 				08A209701F1069040013ACC4 /* AIMindValueModel.m in Sources */,
 				0808DB471F10A25A0082F4AD /* AICommonSenseStore.m in Sources */,
 				08D322A91EBA28B0009D734A /* Foundation+Log.m in Sources */,
@@ -967,8 +993,10 @@
 				08E58DDE1ED3CE18008B0D76 /* CharModel.m in Sources */,
 				08A2096A1F1069040013ACC4 /* AICommonSenseModel.m in Sources */,
 				08E58DE71ED3CE18008B0D76 /* TextStoreUtils.m in Sources */,
+				083BBDBA1F184A04000F694A /* AIHungerLevelChangedStore.m in Sources */,
 				08DACE951EBD805C00FDC0B6 /* NSString+Extension.m in Sources */,
 				08E58DE11ED3CE18008B0D76 /* DoModel.m in Sources */,
+				083BBDC01F184C7D000F694A /* MathUtils.m in Sources */,
 				08AF454A1E97D0B500377887 /* main.m in Sources */,
 				082F9D5C1EB236AC0009F6A9 /* StudyViewController.m in Sources */,
 				08F3AFB21E98929C00747EDD /* MindUtils.m in Sources */,

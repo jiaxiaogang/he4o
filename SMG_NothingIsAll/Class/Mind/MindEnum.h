@@ -38,3 +38,11 @@ typedef NS_ENUM(NSInteger, MoodType) {
     MoodType_Irritably2Calm  =   0,//急燥心静
 };
 
+/**
+ *  MARK:--------------------充电状态--------------------
+ */
+typedef NS_ENUM(NSInteger, HungerState) {
+    HungerState_Unknown     = 0,
+    HungerState_Unplugged   = 1,//未充电
+    HungerState_Charging    = 2,//充电中
+};

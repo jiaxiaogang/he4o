@@ -23,21 +23,19 @@ typedef NS_ENUM(NSInteger, HungerStatus) {
 
 @protocol HungerDelegate <NSObject>
 
--(void) hunger_HungerStateChanged:(HungerStatus)status;
-
 /**
  *  MARK:--------------------MindValueChanged & 变化 & 状态--------------------
  *      1,充电中... & 电量变化+
  *      2,未充电中... & 电量变化-
  */
--(void) hunger_LevelChanged:(CGFloat)level State:(UIDeviceBatteryState)state mindValueDelta:(CGFloat)mVD;
+-(void) hunger_LevelChanged:(AIHungerLevelChangedModel*)model;
 
 /**
  *  MARK:--------------------MindValueChanged & 变化 & 状态--------------------
  *      1,开始充 & 当前电量
  *      2,结束充 & 当前电量
  */
--(void) hunger_StateChanged:(UIDeviceBatteryState)state level:(CGFloat)level mindValueDelta:(CGFloat)mVD;
+-(void) hunger_StateChanged:(AIHungerStateChangedModel*)model;
 
 @end
 
@@ -51,5 +49,11 @@ typedef NS_ENUM(NSInteger, HungerStatus) {
 @property (weak, nonatomic) id<HungerDelegate> delegate;
 +(HungerStatus) getHungerStatus;
 -(MindStrategyModel*) getStrategyModel;
+
+
+-(void) tmpTest_Add;
+-(void) tmpTest_Sub;
+-(void) tmpTest_Start;
+-(void) tmpTest_Stop;
 
 @end
