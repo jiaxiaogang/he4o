@@ -125,6 +125,7 @@
                 [MBProgressHUD showSuccess:@"好吧,再充些..." toView:nil withHideDelay:1];
             }else if(model.level < 7){
                 [MBProgressHUD showSuccess:@"谢谢呢!" toView:nil withHideDelay:1];
+                //1,查询当前未处理的需求;看有没被解决掉;
             }
         }
     }
