@@ -80,11 +80,7 @@
         AIMindValueModel *mindValue = [[AIMindValueModel alloc] init];
         mindValue.type = MindType_Hunger;
         mindValue.value = mVD;
-        [AIMindValueStore insert:mindValue];//logThink
-        
-        AIAwarenessModel *awareness = [[AIAwarenessModel alloc] init];
-        awareness.awarenessP = mindValue.pointer;
-        [AIAwarenessStore insert:awareness];
+        [AIMindValueStore insert:mindValue awareness:true];//logThink
         
         //2,分析决策 & 产生需求
         if (model.state == UIDeviceBatteryStateCharging) {
@@ -99,16 +95,6 @@
 
 -(void) mine_HungerStateChanged:(AIHungerStateChangedModel*)model{
     if (model) {
-        //2,LogThink
-        //        AIMindValueModel *mindValue = [[AIMindValueModel alloc] init];
-        //        mindValue.type = MindType_Hunger;
-        //        mindValue.value = mVD;
-        //        [AIMindValueStore insert:mindValue];//logThink
-        //
-        //        AIAwarenessModel *awareness = [[AIAwarenessModel alloc] init];
-        //        awareness.awarenessP = mindValue.pointer;
-        //        [AIAwarenessStore insert:awareness];
-        
         //2,分析决策 & 产生需求
         if (model.state == HungerState_Unplugged) {
             if (model.level > 9.5) {
@@ -126,6 +112,10 @@
             }else if(model.level < 7){
                 [MBProgressHUD showSuccess:@"谢谢呢!" toView:nil withHideDelay:1];
                 //1,查询当前未处理的需求;看有没被解决掉;
+                //2,思考充电状态与电量增加的逻辑关系;
+                
+                NSLog(@"_____%f",[UIDevice currentDevice].batteryLevel);
+                
             }
         }
     }

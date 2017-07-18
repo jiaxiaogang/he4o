@@ -44,11 +44,7 @@
     AIHungerLevelChangedModel *model = [[AIHungerLevelChangedModel alloc] init];//logThink
     model.level = level;
     model.state = state;
-    [AIHungerLevelChangedStore insert:model];
-    
-    AIAwarenessModel *awareModel = [[AIAwarenessModel alloc] init];
-    awareModel.awarenessP = model.pointer;
-    [AIAwarenessStore insert:awareModel];
+    [AIHungerLevelChangedStore insert:model awareness:true];
     
     //3,回调
     if (self.delegate && [self.delegate respondsToSelector:@selector(hunger_LevelChanged:)]) {
@@ -94,11 +90,7 @@
     AIHungerStateChangedModel *model = [[AIHungerStateChangedModel alloc] init];//logThink
     model.level = level;
     model.state = state;
-    [AIHungerStateChangedStore insert:model];
-    
-    AIAwarenessModel *awareModel = [[AIAwarenessModel alloc] init];
-    awareModel.awarenessP = model.pointer;
-    [AIAwarenessStore insert:awareModel];
+    [AIHungerStateChangedStore insert:model awareness:true];
     
     //3,回调
     if (self.delegate && [self.delegate respondsToSelector:@selector(hunger_StateChanged:)]) {
@@ -142,11 +134,7 @@
     AIHungerLevelChangedModel *model = [[AIHungerLevelChangedModel alloc] init];//logThink
     model.level = 2.3f;
     model.state = HungerState_Charging;
-    [AIHungerLevelChangedStore insert:model];
-    
-    AIAwarenessModel *awareModel = [[AIAwarenessModel alloc] init];
-    awareModel.awarenessP = model.pointer;
-    [AIAwarenessStore insert:awareModel];
+    [AIHungerLevelChangedStore insert:model awareness:true];
     
     //2,回调
     if (self.delegate && [self.delegate respondsToSelector:@selector(hunger_LevelChanged:)]) {
@@ -159,11 +147,7 @@
     AIHungerLevelChangedModel *model = [[AIHungerLevelChangedModel alloc] init];//logThink
     model.level = 2.3f;
     model.state = HungerState_Unplugged;
-    [AIHungerLevelChangedStore insert:model];
-    
-    AIAwarenessModel *awareModel = [[AIAwarenessModel alloc] init];
-    awareModel.awarenessP = model.pointer;
-    [AIAwarenessStore insert:awareModel];
+    [AIHungerLevelChangedStore insert:model awareness:true];
     
     //2,回调
     if (self.delegate && [self.delegate respondsToSelector:@selector(hunger_LevelChanged:)]) {
@@ -172,42 +156,26 @@
 }
 
 -(void) tmpTest_Start{
-    //1,取值
-    HungerState state = HungerState_Charging;
-    CGFloat level = 2.3f;
-    
-    //2,LogThink
+    //1,LogThink
     AIHungerStateChangedModel *model = [[AIHungerStateChangedModel alloc] init];//logThink
-    model.level = level;
-    model.state = state;
-    [AIHungerStateChangedStore insert:model];
+    model.level = 2.3f;
+    model.state = HungerState_Charging;
+    [AIHungerStateChangedStore insert:model awareness:true];
     
-    AIAwarenessModel *awareModel = [[AIAwarenessModel alloc] init];
-    awareModel.awarenessP = model.pointer;
-    [AIAwarenessStore insert:awareModel];
-    
-    //3,回调
+    //2,回调
     if (self.delegate && [self.delegate respondsToSelector:@selector(hunger_StateChanged:)]) {
         [self.delegate hunger_StateChanged:model];
     }
 }
 
 -(void) tmpTest_Stop {
-    //1,取值
-    HungerState state = HungerState_Unplugged;
-    CGFloat level = 2.3f;
-    
-    //2,LogThink
+    //1,LogThink
     AIHungerStateChangedModel *model = [[AIHungerStateChangedModel alloc] init];//logThink
-    model.level = level;
-    model.state = state;
-    [AIHungerStateChangedStore insert:model];
+    model.level = 2.3f;
+    model.state = HungerState_Unplugged;
+    [AIHungerStateChangedStore insert:model awareness:true];
     
-    AIAwarenessModel *awareModel = [[AIAwarenessModel alloc] init];
-    awareModel.awarenessP = model.pointer;
-    [AIAwarenessStore insert:awareModel];
-    
-    //3,回调
+    //2,回调
     if (self.delegate && [self.delegate respondsToSelector:@selector(hunger_StateChanged:)]) {
         [self.delegate hunger_StateChanged:model];
     }

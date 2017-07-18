@@ -14,9 +14,17 @@
     return nil;
 }
 
-+(void) insert:(NSObject*)data{
++(void) insert:(AIObject*)data awareness:(BOOL)awareness{
     if (data) {
+        //1,存data
         [data.class insertToDB:data];
+        
+        //2,存意识流
+        if (awareness) {
+            AIAwarenessModel *awareModel = [[AIAwarenessModel alloc] init];
+            awareModel.awarenessP = data.pointer;
+            [AIAwarenessStore insert:awareModel awareness:false];
+        }
     }
 }
 

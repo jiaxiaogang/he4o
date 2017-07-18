@@ -39,12 +39,7 @@
     AIOutputModel *model = [[AIOutputModel alloc] init];
     model.type = type;
     model.content = content;
-    [AIOutputStore insert:model];
-    
-    //2,存意识流
-    AIAwarenessModel *awareness = [[AIAwarenessModel alloc] init];
-    awareness.awarenessP = model.pointer;
-    [AIAwarenessStore insert:awareness];
+    [AIOutputStore insert:model awareness:true];
 }
 
 @end

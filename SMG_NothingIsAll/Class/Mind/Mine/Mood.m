@@ -36,12 +36,7 @@
 -(void) saveLogThink{
     //1,存心情
     AIMoodModel *moodModel = [[AIMoodModel alloc] initWithType:self.type value:self.value];//logThink
-    [AIMoodStore insert:moodModel];
-    
-    //2,存意识流
-    AIAwarenessModel *awareness = [[AIAwarenessModel alloc] init];
-    awareness.awarenessP = moodModel.pointer;
-    [AIAwarenessStore insert:awareness];
+    [AIMoodStore insert:moodModel awareness:true];
 }
 
 -(MindStrategyModel*) getStrategyModel{
