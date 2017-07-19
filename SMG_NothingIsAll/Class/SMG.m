@@ -86,7 +86,7 @@ static SMG *_instance;
  *  MARK:--------------------MindControlDelegate--------------------
  */
 -(void) mindControl_CommitDecisionByDemand:(AIMindValueModel*)model{
-    [self.thinkControl commitDemand:model];
+    [self.thinkControl commitMindValueChanged:model];
 }
 
 /**

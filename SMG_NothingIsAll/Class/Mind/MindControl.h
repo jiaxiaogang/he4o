@@ -10,10 +10,6 @@
 
 
 @protocol MindControlDelegate <NSObject>
-
-
--(void) mindControl_CommitDecisionByDemand:(AIMindValueModel*)model;//新增需求;
-
 @end
 
 /**

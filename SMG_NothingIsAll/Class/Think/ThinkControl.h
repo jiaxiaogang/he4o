@@ -31,7 +31,7 @@
  *  MARK:--------------------Demand(Mind->Think)--------------------
  */
 //分析
--(void) commitDemand:(AIMindValueModel*)model;
+-(void) commitMindValueChanged:(AIMindValueModel*)model;
 
 
 @end

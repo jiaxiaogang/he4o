@@ -10,6 +10,7 @@
 #import "ThinkHeader.h"
 
 @interface ThinkControl ()
+@property (strong,nonatomic) AIMindValueModel *currentTask;//当前任务;
 @end
 
 @implementation ThinkControl
@@ -84,11 +85,36 @@
 /**
  *  MARK:--------------------Demand(Mind->Think)--------------------
  */
--(void) commitDemand:(AIMindValueModel*)model{
+-(void) commitMindValueChanged:(AIMindValueModel*)model{
+    //1,数据检查
     if (model == nil) {
         return;
     }
-    //权衡当前的Task;并以mindValue来决定是否执行;
+    //2,更新task (1,现不考虑拆分任务等细节构:参考:AI/框架/Understand/Task任务  2,权衡当前的Task;并以mindValue来决定是否执行;)
+    if (self.currentTask) {
+        //A2.1,数据
+        BOOL sameType = self.currentTask.type == model.type;
+        BOOL sameValue = (self.currentTask.value > 0) == (model.value > 0);
+        //A2.2,失效
+        if (sameType && !sameValue) {
+            self.currentTask = nil;
+            return;
+        }
+        //A2.3,打断
+        else if(!sameType){
+            NSLog(@"由Think对数据思考自行决定");
+        }
+        
+    }else{
+        //B2.1,建立
+        NSLog(@"由Think对数据思考自行决定");
+    }
+    
+    
+    
+    
+    
+    
     //?解决饿的问题
     if (model.type == MindType_Hunger) {
         CGFloat mindValueDelta = model.value;
