@@ -69,24 +69,26 @@
 -(void) mine_HungerLevelChanged:(AIHungerLevelChangedModel*)model{
     if (model) {
         //1,取值
-        CGFloat mVD;
+        CGFloat mVD = 0;
         if (model.state == HungerState_Unplugged) {
             mVD = (model.level - 10);//mindValue -= x (饿一滴血)
         }else if (model.state == HungerState_Charging) {//充电中
             mVD = (10 - model.level);//mindValue += x (饱一滴血)
         }
         
-        //2,LogThink
-        AIMindValueModel *mindValue = [[AIMindValueModel alloc] init];
-        mindValue.type = MindType_Hunger;
-        mindValue.value = mVD;
-        [AIMindValueStore insert:mindValue awareness:true];//logThink
-        
         //2,分析决策 & 产生需求
         if (model.state == UIDeviceBatteryStateCharging) {
             [MBProgressHUD showSuccess:@"饱一滴血!" toView:nil withHideDelay:1];
+            AIMindValueModel *mindValue = [[AIMindValueModel alloc] init];
+            mindValue.type = MindType_Hunger;
+            mindValue.value = mVD;
+            [AIMindValueStore insert:mindValue awareness:true];//logThink
         }else if (model.state == UIDeviceBatteryStateUnplugged) {
-            if (mVD < 3) {
+            if (mVD < -3) {
+                AIMindValueModel *mindValue = [[AIMindValueModel alloc] init];
+                mindValue.type = MindType_Hunger;//产生饥饿感
+                mindValue.value = mVD;
+                [AIMindValueStore insert:mindValue awareness:true];//logThink
                 [self.delegate mindControl_CommitDecisionByDemand:mindValue];//不能过度依赖noLogThink来执行,应更依赖logThink;
             }
         }

@@ -18,6 +18,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *confirmBtn;
 @property (weak, nonatomic) IBOutlet UITextField *tf;
 @property (weak, nonatomic) IBOutlet UIButton *canceBtn;
+@property (weak, nonatomic) IBOutlet UISlider *hungerLevelSlider;
+@property (weak, nonatomic) IBOutlet UILabel *hungerLevelLab;
 
 @end
 
@@ -29,18 +31,26 @@
 }
 
 -(void) initView{
+    //1,tf
     self.tf.delegate = self;
     [self.tf setReturnKeyType:UIReturnKeyGo];
+    
+    //2,hungerLevelLab
+    [self.hungerLevelLab setText:STRFORMAT(@"%.2f",self.hungerLevelSlider.value)];
 }
 
 /**
  *  MARK:--------------------onclick--------------------
  */
 - (IBAction)addBtnOnClick:(id)sender {
+    self.hungerLevelSlider.value += 0.01f;
+    [self hungerLevelSliderValueChanged:self.hungerLevelSlider];
     [theHunger tmpTest_Add];
 }
 
 - (IBAction)subBtnOnClick:(id)sender {
+    self.hungerLevelSlider.value -= 0.01f;
+    [self hungerLevelSliderValueChanged:self.hungerLevelSlider];
     [theHunger tmpTest_Sub];
 }
 
@@ -62,6 +72,12 @@
 - (IBAction)canceBtnOnClick:(id)sender {
     [self.tf resignFirstResponder];
     self.tf.text = nil;
+}
+
+- (IBAction)hungerLevelSliderValueChanged:(id)sender {
+    NSString *value = STRFORMAT(@"%.2f",self.hungerLevelSlider.value);
+    [self.hungerLevelLab setText:value];
+    theHunger.tmpLevel = self.hungerLevelSlider.value;
 }
 
 /**

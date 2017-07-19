@@ -38,7 +38,7 @@
     }else if ([UIDevice currentDevice].batteryState == UIDeviceBatteryStateCharging) {//充电中
         state = HungerState_Charging;
     }
-    CGFloat level = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:[UIDevice currentDevice].batteryLevel];
+    CGFloat level = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:[self getCurrentLevel]];
     
     //2,LogThink
     AIHungerLevelChangedModel *model = [[AIHungerLevelChangedModel alloc] init];//logThink
@@ -54,7 +54,7 @@
 
 -(void) observerHungerStateChanged{
 //    UIDeviceBatteryState state = [UIDevice currentDevice].batteryState;
-//    CGFloat level = [UIDevice currentDevice].batteryLevel;
+//    CGFloat level = [self getCurrentLevel];
 //    CGFloat mvD = 0;
 //    if (state == UIDeviceBatteryStateUnplugged) {//未充电
 //        if (level == 1.0f) {
@@ -84,7 +84,7 @@
     }else if ([UIDevice currentDevice].batteryState == UIDeviceBatteryStateCharging) {//充电中
         state = HungerState_Charging;
     }
-    CGFloat level = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:[UIDevice currentDevice].batteryLevel];
+    CGFloat level = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:[self getCurrentLevel]];
     
     //2,LogThink
     AIHungerStateChangedModel *model = [[AIHungerStateChangedModel alloc] init];//logThink
@@ -98,41 +98,24 @@
     }
 }
 
-+(HungerStatus) getHungerStatus{
-    CGFloat batteryLevel = [UIDevice currentDevice].batteryLevel;
-    if (batteryLevel == 100.0f) {
-        return HungerStatus_Full;
-    }else if(batteryLevel > 40.0f){
-        return HungerStatus_NotHunger;
-    }else if(batteryLevel > 20.0f){
-        return HungerStatus_LitterHunger;
-    }else if(batteryLevel > 10.0f){
-        return HungerStatus_Hunger;
-    }else if(batteryLevel > 5.0f){
-        return HungerStatus_VeryHunger;
-    }else{
-        return HungerStatus_VeryVeryHunger;
-    }
-}
-
--(MindStrategyModel*) getStrategyModel{
-    NSInteger curBatteryLevel = (NSInteger)[UIDevice currentDevice].batteryLevel;
-    return [MindStrategy getModelWithMin:0 withMax:100 withOriValue:curBatteryLevel withType:MindType_Hunger];
-}
-
 -(void) dealloc{
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-
+-(CGFloat) getCurrentLevel{
+    return self.tmpLevel;
+    //return [UIDevice currentDevice].batteryLevel;
+}
 
 /**
  *  MARK:--------------------tmpTest--------------------
  */
 -(void) tmpTest_Add{
+    CGFloat level = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:[self getCurrentLevel]];
+    
     //1,LogThink
     AIHungerLevelChangedModel *model = [[AIHungerLevelChangedModel alloc] init];//logThink
-    model.level = 2.3f;
+    model.level = level;
     model.state = HungerState_Charging;
     [AIHungerLevelChangedStore insert:model awareness:true];
     
@@ -143,9 +126,11 @@
 }
 
 -(void) tmpTest_Sub{
+    CGFloat level = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:[self getCurrentLevel]];
+    
     //1,LogThink
     AIHungerLevelChangedModel *model = [[AIHungerLevelChangedModel alloc] init];//logThink
-    model.level = 2.3f;
+    model.level = level;
     model.state = HungerState_Unplugged;
     [AIHungerLevelChangedStore insert:model awareness:true];
     
@@ -156,9 +141,11 @@
 }
 
 -(void) tmpTest_Start{
+    CGFloat level = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:[self getCurrentLevel]];
+    
     //1,LogThink
     AIHungerStateChangedModel *model = [[AIHungerStateChangedModel alloc] init];//logThink
-    model.level = 2.3f;
+    model.level = level;
     model.state = HungerState_Charging;
     [AIHungerStateChangedStore insert:model awareness:true];
     
@@ -169,9 +156,11 @@
 }
 
 -(void) tmpTest_Stop {
+    CGFloat level = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:[self getCurrentLevel]];
+    
     //1,LogThink
     AIHungerStateChangedModel *model = [[AIHungerStateChangedModel alloc] init];//logThink
-    model.level = 2.3f;
+    model.level = level;
     model.state = HungerState_Unplugged;
     [AIHungerStateChangedStore insert:model awareness:true];
     

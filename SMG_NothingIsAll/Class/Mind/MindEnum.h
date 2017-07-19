@@ -29,6 +29,7 @@ typedef NS_ENUM(NSInteger, MindType) {
     MindType_Mood       =   2,//心情
     MindType_Angry      =   3,//生气....temp
     MindType_Happy      =   4,//开心....temp
+    MindType_Algesia    =   5,//痛觉
 };
 
 /**
