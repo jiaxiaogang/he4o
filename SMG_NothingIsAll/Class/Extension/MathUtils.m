@@ -22,7 +22,7 @@
     //2,checkValue所在的值
     CGFloat percent = 0;
     if (oriRange.minimum != oriValue) {
-        percent = (oriRange.maximum - oriRange.minimum) / (oriValue - oriRange.minimum);
+        percent = (oriValue - oriRange.minimum) / (oriRange.maximum - oriRange.minimum);
     }
     //3,返回变换值
     return (targetRange.maximum - targetRange.minimum) * percent + targetRange.minimum;
