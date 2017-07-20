@@ -91,11 +91,13 @@
         return;
     }
     //2,更新task (1,现不考虑拆分任务等细节构:参考:AI/框架/Understand/Task任务  2,权衡当前的Task;并以mindValue来决定是否执行;)
+    //注!!!:这里应只通过意识流的变化来动态分析Task的有效性;而不是代码;
     if (self.currentTask) {
         //A2.1,数据
         BOOL sameType = self.currentTask.type == model.type;
         BOOL sameValue = (self.currentTask.value > 0) == (model.value > 0);
         //A2.2,失效
+        //(哭的输出,也要每次读MoodModel的时候;读引起其的原因数据,数据失效时,则终止输出哭;)
         if (sameType && !sameValue) {
             self.currentTask = nil;
             return;
