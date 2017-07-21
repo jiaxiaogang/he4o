@@ -20,6 +20,8 @@
 		0813D64E1EDF7B150089FA0C /* InputModelBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 0813D6471EDF7B150089FA0C /* InputModelBase.m */; };
 		0813D64F1EDF7B150089FA0C /* InputObjModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0813D6491EDF7B150089FA0C /* InputObjModel.m */; };
 		0813D6501EDF7B150089FA0C /* InputTextModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0813D64B1EDF7B150089FA0C /* InputTextModel.m */; };
+		081816281F22B93E007DDB4D /* ThinkTask.m in Sources */ = {isa = PBXBuildFile; fileRef = 081816271F22B93E007DDB4D /* ThinkTask.m */; };
+		0818162C1F22BDF8007DDB4D /* AIMainThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 0818162B1F22BDF8007DDB4D /* AIMainThread.m */; };
 		081C436E1F0C67CF00DF6722 /* MindStrategy.m in Sources */ = {isa = PBXBuildFile; fileRef = 081C436D1F0C67CF00DF6722 /* MindStrategy.m */; };
 		081DA13B1ED47CE000C8C531 /* AIArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 081DA13A1ED47CE000C8C531 /* AIArray.m */; };
 		0826EED41EF7619300400F08 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 0826EED31EF7619300400F08 /* README.md */; };
@@ -134,6 +136,10 @@
 		0813D6491EDF7B150089FA0C /* InputObjModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputObjModel.m; sourceTree = "<group>"; };
 		0813D64A1EDF7B150089FA0C /* InputTextModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputTextModel.h; sourceTree = "<group>"; };
 		0813D64B1EDF7B150089FA0C /* InputTextModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputTextModel.m; sourceTree = "<group>"; };
+		081816261F22B93E007DDB4D /* ThinkTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThinkTask.h; sourceTree = "<group>"; };
+		081816271F22B93E007DDB4D /* ThinkTask.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThinkTask.m; sourceTree = "<group>"; };
+		0818162A1F22BDF8007DDB4D /* AIMainThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIMainThread.h; sourceTree = "<group>"; };
+		0818162B1F22BDF8007DDB4D /* AIMainThread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIMainThread.m; sourceTree = "<group>"; };
 		081C436C1F0C67CF00DF6722 /* MindStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MindStrategy.h; sourceTree = "<group>"; };
 		081C436D1F0C67CF00DF6722 /* MindStrategy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MindStrategy.m; sourceTree = "<group>"; };
 		081DA1391ED47CE000C8C531 /* AIArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIArray.h; sourceTree = "<group>"; };
@@ -357,6 +363,15 @@
 			path = Text;
 			sourceTree = "<group>";
 		};
+		081816291F22BDEC007DDB4D /* AIThread */ = {
+			isa = PBXGroup;
+			children = (
+				0818162A1F22BDF8007DDB4D /* AIMainThread.h */,
+				0818162B1F22BDF8007DDB4D /* AIMainThread.m */,
+			);
+			path = AIThread;
+			sourceTree = "<group>";
+		};
 		081C436B1F0C67CF00DF6722 /* MindStrategy */ = {
 			isa = PBXGroup;
 			children = (
@@ -417,12 +432,14 @@
 		087753171ECFE1C400E7AD09 /* Think */ = {
 			isa = PBXGroup;
 			children = (
+				08E58DB31ED3CE18008B0D76 /* Store */,
+				087753181ECFE1C400E7AD09 /* Understand */,
 				08D42C9A1EFA066E00114DCD /* README.md */,
 				08E3CCC81EE60F8D002990FD /* ThinkControl.h */,
 				08E3CCC91EE60F8D002990FD /* ThinkControl.m */,
 				080D059B1EE0E18E00DC62B5 /* ThinkHeader.h */,
-				08E58DB31ED3CE18008B0D76 /* Store */,
-				087753181ECFE1C400E7AD09 /* Understand */,
+				081816261F22B93E007DDB4D /* ThinkTask.h */,
+				081816271F22B93E007DDB4D /* ThinkTask.m */,
 			);
 			path = Think;
 			sourceTree = "<group>";
@@ -590,6 +607,7 @@
 		08D7DA401ED1499C004B1018 /* AIFoundation */ = {
 			isa = PBXGroup;
 			children = (
+				081816291F22BDEC007DDB4D /* AIThread */,
 				08A209541F1069040013ACC4 /* AIData */,
 				083F612C1F04830F000330E1 /* AINet */,
 				08D7DA411ED149B4004B1018 /* AIHeader.h */,
@@ -939,6 +957,7 @@
 				08E3CCCA1EE60F8D002990FD /* ThinkControl.m in Sources */,
 				08A209721F1069040013ACC4 /* AIValueModel.m in Sources */,
 				08E58DEC1ED3CE18008B0D76 /* LogicModel.m in Sources */,
+				081816281F22B93E007DDB4D /* ThinkTask.m in Sources */,
 				08AF456E1E97DDF600377887 /* MKStore.m in Sources */,
 				08FBB9091EE76E78000F9E80 /* HobbyModel.m in Sources */,
 				08F3AFBB1E98966E00747EDD /* Store.m in Sources */,
@@ -980,6 +999,7 @@
 				08F6F4531F145B5F00B4EE19 /* MoodDurationManager.m in Sources */,
 				08AF454D1E97D0B500377887 /* AppDelegate.m in Sources */,
 				0826EED41EF7619300400F08 /* README.md in Sources */,
+				0818162C1F22BDF8007DDB4D /* AIMainThread.m in Sources */,
 				0808DB4D1F10A29A0082F4AD /* AIExperienceStore.m in Sources */,
 				08F639891E9A2FF4003CD163 /* Feel.m in Sources */,
 				083BBDB71F1849F1000F694A /* AIHungerStateChangedModel.m in Sources */,

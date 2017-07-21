@@ -46,6 +46,8 @@
 #import "AIHungerLevelChangedStore.h"
 #import "AIHungerStateChangedStore.h"
 
+#import "AIMainThread.h"
+
 /**
  *  MARK:--------------------数据检查--------------------
  */
