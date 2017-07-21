@@ -8,10 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-
-@protocol MindControlDelegate <NSObject>
-@end
-
 /**
  *  MARK:--------------------Mind控制器(杏仁核)--------------------
  *
@@ -31,7 +27,6 @@
 @class Mine;
 @interface MindControl : NSObject
 
-@property (weak, nonatomic) id<MindControlDelegate> delegate;
 @property (strong,nonatomic) Mine *mine;
 
 /**

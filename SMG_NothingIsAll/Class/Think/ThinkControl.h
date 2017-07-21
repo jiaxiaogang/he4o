@@ -29,9 +29,10 @@
 
 /**
  *  MARK:--------------------Demand(Mind->Think)--------------------
+ *  所有需求都是异步的;所以这里只作通知;
  */
 //分析
--(void) commitMindValueChanged:(AIMindValueModel*)model;
+-(void) commitMindValueNotice:(AIMindValueModel*)model;
 
 
 @end

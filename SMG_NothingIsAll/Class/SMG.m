@@ -16,7 +16,7 @@
 #import "MindHeader.h"
 #import "MBProgressHUD+Add.h"
 
-@interface SMG ()<FeelDelegate,MindControlDelegate,ThinkControlDelegate,InputDelegate,OutputDelegate>
+@interface SMG ()<FeelDelegate,ThinkControlDelegate,InputDelegate,OutputDelegate>
 
 @end
 
@@ -50,7 +50,6 @@ static SMG *_instance;
 
 -(void) initRun{
     self.feel.delegate = self;
-    self.mindControl.delegate = self;
     self.thinkControl.delegate = self;
     self.input.delegate = self;
     self.output.delegate = self;
@@ -80,13 +79,6 @@ static SMG *_instance;
 
 -(void) output_Face:(NSString*)faceText{
     [MBProgressHUD showSuccess:STRTOOK(faceText) toView:nil withHideDelay:0.2f];
-}
-
-/**
- *  MARK:--------------------MindControlDelegate--------------------
- */
--(void) mindControl_CommitDecisionByDemand:(AIMindValueModel*)model{
-    [self.thinkControl commitMindValueChanged:model];
 }
 
 /**

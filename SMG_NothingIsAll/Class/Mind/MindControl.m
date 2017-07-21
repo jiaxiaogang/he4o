@@ -35,7 +35,6 @@
     self.mine.delegate = self;
 }
 
-
 /**
  *  MARK:--------------------method--------------------
  */
@@ -43,9 +42,9 @@
     //xxx这个值还没存;
     int moodValue = (random() % 2) - 1;//所有demand只是简单规则;即将value++;
     if (moodValue < 0) {
-        //[theThink commitMindValueChanged:nil withType:0];//@"怼他" withType:MindType_Angry
+        //[theThink commitMindValueNotice:nil withType:0];//@"怼他" withType:MindType_Angry
     }else{
-        //[theThink commitMindValueChanged:nil withType:0];//@"大笑" withType:MindType_Happy];
+        //[theThink commitMindValueNotice:nil withType:0];//@"大笑" withType:MindType_Happy];
     }
     
     //*  value:数据类型未定;
@@ -82,14 +81,14 @@
             mindValue.type = MindType_Hunger;
             mindValue.value = mVD;
             [AIMindValueStore insert:mindValue awareness:true];//logThink
-            [theThink commitMindValueChanged:mindValue];
+            [theThink commitMindValueNotice:mindValue];
         }else if (model.state == UIDeviceBatteryStateUnplugged) {
             if (mVD < -3) {
                 AIMindValueModel *mindValue = [[AIMindValueModel alloc] init];
                 mindValue.type = MindType_Hunger;//产生饥饿感
                 mindValue.value = mVD;
                 [AIMindValueStore insert:mindValue awareness:true];//logThink
-                [theThink commitMindValueChanged:mindValue];
+                [theThink commitMindValueNotice:mindValue];
             }
         }
     }

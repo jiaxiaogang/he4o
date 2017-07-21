@@ -85,78 +85,92 @@
 /**
  *  MARK:--------------------Demand(Mind->Think)--------------------
  */
--(void) commitMindValueChanged:(AIMindValueModel*)model{
+-(void) commitMindValueNotice:(AIMindValueModel*)model{
     //1,数据检查
     if (model == nil) {
         return;
     }
-    //2,更新task (1,现不考虑拆分任务等细节构:参考:AI/框架/Understand/Task任务  2,权衡当前的Task;并以mindValue来决定是否执行;)
-    //注!!!:这里应只通过意识流的变化来动态分析Task的有效性;而不是代码;
-    if (self.currentTask) {
-        //A2.1,数据
-        BOOL sameType = self.currentTask.type == model.type;
-        BOOL sameValue = (self.currentTask.value > 0) == (model.value > 0);
-        //A2.2,失效
-        //(哭的输出,也要每次读MoodModel的时候;读引起其的原因数据,数据失效时,则终止输出哭;)
-        if (sameType && !sameValue) {
-            self.currentTask = nil;
-            return;
-        }
-        //A2.3,打断
-        else if(!sameType){
-            NSLog(@"由Think对数据思考自行决定");
-        }
+    //2,通知时相应处理....(先不写)
+}
+
+/**
+ *  MARK:--------------------Task--------------------
+ */
+//开始异步搜索IO任务;
+-(void) runForCreateTask{
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        //多个覆盖;
+        //1,搜索意识流
+        //2,搜索习惯
+        //3,搜索其它
         
-    }else{
-        //B2.1,建立
-        NSLog(@"由Think对数据思考自行决定");
+        //一个策略;3短1长;
+        //1,搜10条task
+        //2,搜10000条task
+        dispatch_async(dispatch_get_main_queue(), ^{
+            //执行;
+        });
+    });
+}
+
+//执行前分析任务可行性;
+-(BOOL) checkTaskCanDecision:(AIMindValueModel*)model{
+    if (self.currentTask) {
+        //完全使用数据思考的方式来决定下一步;
+    }
+    return true;
+}
+
+/**
+ *  MARK:--------------------Decision--------------------
+ */
+-(void) decisionWithTask:(AIMindValueModel*)model{
+    //1,记录正在执行的任务;
+    self.currentTask = model;
+    //2,数据检查
+    if (model == nil) {
+        return;
     }
     
-    
-    
-    
-    
-    
-    //?解决饿的问题
-    if (model.type == MindType_Hunger) {
+    //3,分析问题;
+    if (model.type == MindType_Hunger) {//解决饿的问题
         CGFloat mindValueDelta = model.value;
-        BOOL win = true;//实现插队;self.taskArr
-        if (win) {
-            if (fabsf(mindValueDelta) > 1) {
+        
+        if (fabsf(mindValueDelta) > 1) {
+            
+            //LogThink开始思考问题;...........
+            
+            
+            //1,搜索强化经验(经验表)
+            BOOL experienceValue = [self decisionByExperience];
+            if (experienceValue) {
                 
-                //LogThink开始思考问题;...........
-                
-                
-                //1,搜索强化经验(经验表)
-                BOOL experienceValue = [self decisionByExperience];
-                if (experienceValue) {
-                    
-                    //1),参照解决方式,
-                    //2),类比其常识,
-                    //3),制定新的解决方式,
-                    //4),并分析其可行性, & 修正
-                    //5),预测其结果;(经验中上次的步骤对比)
-                    //6),执行输出;
+                //1),参照解决方式,
+                //2),类比其常识,
+                //3),制定新的解决方式,
+                //4),并分析其可行性, & 修正
+                //5),预测其结果;(经验中上次的步骤对比)
+                //6),执行输出;
+            }else{
+                //2,搜索未强化经历(意识流)
+                BOOL memValue = [self decisionByMemory];
+                if (memValue) {
+                    //1),参照记忆,
+                    //2),尝试执行输出;
+                    //3),反馈(观察整个执行过程)
+                    //4),强化(哪些步骤是必须,哪些步骤是有关,哪些步骤是无关)
+                    //5),转移到经验表;
                 }else{
-                    //2,搜索未强化经历(意识流)
-                    BOOL memValue = [self decisionByMemory];
-                    if (memValue) {
-                        //1),参照记忆,
-                        //2),尝试执行输出;
-                        //3),反馈(观察整个执行过程)
-                        //4),强化(哪些步骤是必须,哪些步骤是有关,哪些步骤是无关)
-                        //5),转移到经验表;
-                    }else{
-                        //1),取原始情绪表达方式(哭,笑)(是急哭的吗?)
-                        if ([self.delegate respondsToSelector:@selector(thinkControl_TurnDownDemand:)]) {
-                            [self.delegate thinkControl_TurnDownDemand:model];//2),执行输出;
-                        }
-                        //3),记忆(观察整个执行过程)
+                    //1),取原始情绪表达方式(哭,笑)(是急哭的吗?)
+                    if ([self.delegate respondsToSelector:@selector(thinkControl_TurnDownDemand:)]) {
+                        [self.delegate thinkControl_TurnDownDemand:model];//2),执行输出;
                     }
+                    //3),记忆(观察整个执行过程)
                 }
-                //注:执行输出并非执行结束,任务达成才是结果;(输出只是执行的一部分)
-                //注:当下AI只能输出文字;
             }
+            //注:执行输出并非执行结束,任务达成才是结果;(输出只是执行的一部分)
+            //注:当下AI只能输出文字;
         }
     }
 }
