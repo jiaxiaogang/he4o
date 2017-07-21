@@ -114,6 +114,15 @@
     });
 }
 
+//分析任务的重要性;
+-(CGFloat) checkTaskImportance:(AIMindValueModel*)model weightArr:(NSArray*)weightArr{
+    //1,收集权重
+    for (AIPointer *pointer in weightArr) {
+        
+    }
+    return 1000;
+}
+
 //执行前分析任务可行性;
 -(BOOL) checkTaskCanDecision:(AIMindValueModel*)model{
     if (self.currentTask) {
