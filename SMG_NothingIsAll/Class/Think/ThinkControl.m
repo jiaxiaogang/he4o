@@ -123,6 +123,11 @@
     return 1000;
 }
 
+//数据驱动的递归搜索;
+-(AIPointer*) getWeighTask:(AIMindValueModel*)model{
+    return nil;
+}
+
 //执行前分析任务可行性;
 -(BOOL) checkTaskCanDecision:(AIMindValueModel*)model{
     if (self.currentTask) {
