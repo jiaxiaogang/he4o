@@ -7,7 +7,6 @@
 //
 
 
-#import "MindEnum.h"
 #import "MindControl.h"
 #import "Mine.h"
 #import "Mood.h"

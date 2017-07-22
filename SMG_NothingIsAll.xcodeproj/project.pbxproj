@@ -261,7 +261,6 @@
 		08E58DDB1ED3CE18008B0D76 /* LogicStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogicStore.m; sourceTree = "<group>"; };
 		08E99C461EBDD1C800A38FF5 /* MindControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MindControl.h; sourceTree = "<group>"; };
 		08E99C471EBDD1C800A38FF5 /* MindControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MindControl.m; sourceTree = "<group>"; };
-		08F3AFAD1E988E2A00747EDD /* MindEnum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MindEnum.h; sourceTree = "<group>"; };
 		08F3AFB61E98963600747EDD /* SMG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMG.h; sourceTree = "<group>"; };
 		08F3AFB71E98963600747EDD /* SMG.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMG.m; sourceTree = "<group>"; };
 		08F3AFB91E98966E00747EDD /* Store.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Store.h; sourceTree = "<group>"; };
@@ -702,7 +701,6 @@
 				08F6F4501F145B5100B4EE19 /* Other */,
 				0826EED31EF7619300400F08 /* README.md */,
 				08FBB8FF1EE76E78000F9E80 /* Mine */,
-				08F3AFAD1E988E2A00747EDD /* MindEnum.h */,
 				08F3AFBC1E989B8F00747EDD /* MindHeader.h */,
 				08E99C461EBDD1C800A38FF5 /* MindControl.h */,
 				08E99C471EBDD1C800A38FF5 /* MindControl.m */,

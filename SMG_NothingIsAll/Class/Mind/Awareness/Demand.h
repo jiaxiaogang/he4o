@@ -10,10 +10,11 @@
 
 /**
  *  MARK:--------------------需求--------------------
- *  意识组织产生需求,决定当前去做什么(参考:AI/框架/Mind/Demand)
+ *  意识组织产生需求,决定当前去做什么(参考:AI/框架/Mind/Demand & AI/框架/Understand/Awareness->Demand->ThinkTask任务 & N3P11)
  */
 @interface Demand : NSObject
 
 -(void) runAnalyze:(NSInteger)count;
+-(void) stop;//打断
 
 @end

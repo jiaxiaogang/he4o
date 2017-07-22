@@ -11,5 +11,4 @@
 @implementation AIAwarenessStore
 
 
-
 @end
