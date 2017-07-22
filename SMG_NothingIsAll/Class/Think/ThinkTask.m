@@ -39,7 +39,7 @@
         AIMindValueModel *mindValueModel = nil;
         if (ARRISOK(aws)) {
             for (AIAwarenessModel *aw in aws) {
-                id content = [aw.pointer content];
+                id content = [aw.awarenessP content];
                 NSLog(@"");
             }
         }
