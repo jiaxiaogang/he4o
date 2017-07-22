@@ -34,7 +34,6 @@
         //2,搜索习惯(略)
         //3,搜索其它(略)
         
-        
         //4,处理"因为重要,所以选定"的逻辑;(此处逻辑:参见N3P11)
         AIMindValueModel *mindVM = nil;
         if (ARRISOK(aws)) {
@@ -42,6 +41,10 @@
                 NSObject *content = [aw.awarenessP content];
                 if ([content isKindOfClass:[AIMindValueModel class]]) {
                     AIMindValueModel *contentMVM = (AIMindValueModel*)content;
+                    //1,先判断value
+                    //2,再联想其权重(联想过程很主观,与"mind偏好"与"mind权重表"有很大影响;
+                    //3,"logThink"知道自己联想了什么,并且记录;
+                    //4,...交给think;结束流程;
                     if (mindVM == nil || mindVM.value < contentMVM.value) {
                         mindVM = contentMVM;
                     }
