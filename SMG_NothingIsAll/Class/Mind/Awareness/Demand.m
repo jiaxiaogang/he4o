@@ -102,6 +102,7 @@
                 }
             }
         }
+        self.lock = false;
         self.status = DemandStatus_Finish;
     }
 }

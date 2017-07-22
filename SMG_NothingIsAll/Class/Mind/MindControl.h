@@ -34,6 +34,6 @@
  *  参数:(应该是数组/model)
  */
 -(id) getMindValue:(AIPointer*)pointer;
--(void) turnDownDemand:(AIMindValueModel*)model;
+-(void) turnDownDemand:(AIDemandModel*)model;
 
 @end

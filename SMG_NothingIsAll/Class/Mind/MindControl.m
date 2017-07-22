@@ -58,7 +58,7 @@
     return nil;
 }
 
--(void) turnDownDemand:(AIMindValueModel*)model{
+-(void) turnDownDemand:(AIDemandModel*)model{
     if (model) {
         [theMood setData:model.value type:MoodType_Irritably2Calm rateBlock:^(Mood *mood) {
             [theOutput output_Face:MoodType_Irritably2Calm value:mood.value];

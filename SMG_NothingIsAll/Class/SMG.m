@@ -89,7 +89,7 @@ static SMG *_instance;
     return [self.mindControl getMindValue:pointer];
 }
 
--(void) thinkControl_TurnDownDemand:(AIMindValueModel*)model{
+-(void) thinkControl_TurnDownDemand:(AIDemandModel*)model{
     [self.mindControl turnDownDemand:model];
 }
 

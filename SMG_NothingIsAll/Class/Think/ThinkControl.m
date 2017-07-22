@@ -142,17 +142,15 @@
 /**
  *  MARK:--------------------Decision--------------------
  */
--(void) decisionWithTask:(AIMindValueModel*)model{
-    //1,记录正在执行的任务;
-    self.curDemand = [[AIDemandModel alloc] initWithAIMindValueModel:model];
-    //2,数据检查
-    if (model == nil) {
+-(void) decisionWithTask{
+    //1,数据检查
+    if (self.curDemand == nil) {
         return;
     }
     
     //3,分析问题;
-    if (model.type == MindType_Hunger) {//解决饿的问题
-        CGFloat mindValueDelta = model.value;
+    if (self.curDemand.type == MindType_Hunger) {//解决饿的问题
+        CGFloat mindValueDelta = self.curDemand.value;
         
         if (fabsf(mindValueDelta) > 1) {
             
@@ -181,7 +179,7 @@
                 }else{
                     //1),取原始情绪表达方式(哭,笑)(是急哭的吗?)
                     if ([self.delegate respondsToSelector:@selector(thinkControl_TurnDownDemand:)]) {
-                        [self.delegate thinkControl_TurnDownDemand:model];//2),执行输出;
+                        [self.delegate thinkControl_TurnDownDemand:self.curDemand];//2),执行输出;
                     }
                     //3),记忆(观察整个执行过程)
                 }
@@ -217,7 +215,9 @@
  */
 -(void) setCurDemand:(AIDemandModel *)curDemand{
     _curDemand = curDemand;
+    self.tmpBusy = true;
     [[NSNotificationCenter defaultCenter] postNotificationName:ObsKey_ThinkBusy object:nil];
+    [self decisionWithTask];
 }
 
 -(BOOL) isBusy{
