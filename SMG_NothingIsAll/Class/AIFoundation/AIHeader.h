@@ -32,6 +32,7 @@
 #import "AIOutputModel.h"
 #import "AIHungerLevelChangedModel.h"
 #import "AIHungerStateChangedModel.h"
+#import "AIDemandModel.h"
 
 
 //封装AIStore层;用于各种数据的不同取数据方法;
@@ -45,6 +46,7 @@
 #import "AIOutputStore.h"
 #import "AIHungerLevelChangedStore.h"
 #import "AIHungerStateChangedStore.h"
+#import "AIDemandStore.h"
 
 #import "AIMainThread.h"
 

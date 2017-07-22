@@ -7,6 +7,7 @@
 //
 
 #import "Demand.h"
+#import "ThinkHeader.h"
 
 @interface Demand ()
 
@@ -52,35 +53,57 @@
         }
         
         //5,分析重要性
+        self.status = theThink.curDemand ? DemandStatus_NoSub : DemandStatus_NoMain;
         [self checkTaskImportance:mindValueArr];
     });
 }
 
 //分析任务的重要性;
--(void) checkTaskImportance:(NSMutableArray*)modelArr {
-    if (self.status != DemandStatus_Finish) {
-        //2,再联想其权重(联想过程很主观,与"mind偏好"与"mind权重表"有很大影响;
-        
-        
-        //1,收集权重(马太效应,mindValue.value绝对值越大,则权重影响越大)
-        //2,"mindValue权重表"取mind偏好;
-        NSArray *weightArr;
-        for (AIPointer *pointer in weightArr) {
+-(void) checkTaskImportance:(NSMutableArray*)models {
+    if (self.status != DemandStatus_Finish && ARRISOK(models)) {
+        for (AIMindValueModel *model in models) {
+            //1,权重(参考:AI/框架/Understand/Awareness->Demand->ThinkTask任务/注:权重)(经验和习惯的知识表示全了再写这块代码)
+            NSArray *weightArr;
             
+            //2,"logThink"知道自己联想了什么,并且记录;
+            for (AIPointer *pointer in weightArr) {
+                
+            }
+            
+            //3,取阀值
+            CGFloat canValidValue = 0;
+            if (theThink.curDemand) {
+                canValidValue = theThink.curDemand.value;
+            }else{
+                CGFloat canBeMainValue = -3;
+                canValidValue = canBeMainValue;
+            }
+            
+            //4,生成think.curDemand
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (model.value < canValidValue) {
+                    if (self.status == DemandStatus_NoMain) {
+                        self.status = DemandStatus_MainCommit;
+                        
+                        //logThink
+                        AIDemandModel *demandModel = [[AIDemandModel alloc] initWithAIMindValueModel:model];
+                        [AIDemandStore insert:demandModel awareness:true];
+                        
+                        theThink.curDemand = demandModel;
+                    }else if(self.status == DemandStatus_NoSub){
+                        self.status = DemandStatus_SubCommit;
+                        
+                        //logThink
+                        AIDemandModel *demandModel = [[AIDemandModel alloc] initWithAIMindValueModel:model];
+                        [AIDemandStore insert:demandModel awareness:true];
+                        
+                        theThink.curDemand = demandModel;
+                    }
+                }
+            });
         }
-        //3,"logThink"知道自己联想了什么,并且记录;
-        
-        
-        //5,执行;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            //4,...交给think;结束流程;
-        });
+        self.status = DemandStatus_Finish;
     }
-}
-
-//数据驱动的递归搜索;
--(AIPointer*) getWeighTask:(AIMindValueModel*)model{
-    return nil;
 }
 
 -(void) stop{

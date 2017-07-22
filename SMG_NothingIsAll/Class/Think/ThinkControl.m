@@ -11,8 +11,6 @@
 
 @interface ThinkControl ()
 
-@property (strong,nonatomic) AIMindValueModel *currentTask;//当前任务;
-
 @end
 
 @implementation ThinkControl
@@ -134,7 +132,7 @@
 
 //执行前分析任务可行性;
 -(BOOL) checkTaskCanDecision:(AIMindValueModel*)model{
-    if (self.currentTask) {
+    if (self.curDemand) {
         //完全使用数据思考的方式来决定下一步;
     }
     return true;
@@ -145,7 +143,7 @@
  */
 -(void) decisionWithTask:(AIMindValueModel*)model{
     //1,记录正在执行的任务;
-    self.currentTask = model;
+    self.curDemand = [[AIDemandModel alloc] initWithAIMindValueModel:model];
     //2,数据检查
     if (model == nil) {
         return;

@@ -21,6 +21,7 @@
 @interface ThinkControl : NSObject
 
 @property (weak, nonatomic) id<ThinkControlDelegate> delegate;
+@property (strong,nonatomic) AIDemandModel *curDemand;//当前任务;
 
 /**
  *  MARK:--------------------Understand(Input->Think)--------------------
