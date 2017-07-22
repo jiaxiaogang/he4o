@@ -19,8 +19,9 @@
 		0813D64E1EDF7B150089FA0C /* InputModelBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 0813D6471EDF7B150089FA0C /* InputModelBase.m */; };
 		0813D64F1EDF7B150089FA0C /* InputObjModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0813D6491EDF7B150089FA0C /* InputObjModel.m */; };
 		0813D6501EDF7B150089FA0C /* InputTextModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0813D64B1EDF7B150089FA0C /* InputTextModel.m */; };
-		081816281F22B93E007DDB4D /* ThinkTask.m in Sources */ = {isa = PBXBuildFile; fileRef = 081816271F22B93E007DDB4D /* ThinkTask.m */; };
 		0818162C1F22BDF8007DDB4D /* AIMainThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 0818162B1F22BDF8007DDB4D /* AIMainThread.m */; };
+		081816301F22FEA6007DDB4D /* Awareness.m in Sources */ = {isa = PBXBuildFile; fileRef = 0818162F1F22FEA6007DDB4D /* Awareness.m */; };
+		081816331F22FED9007DDB4D /* Demand.m in Sources */ = {isa = PBXBuildFile; fileRef = 081816321F22FED9007DDB4D /* Demand.m */; };
 		081C436E1F0C67CF00DF6722 /* MindStrategy.m in Sources */ = {isa = PBXBuildFile; fileRef = 081C436D1F0C67CF00DF6722 /* MindStrategy.m */; };
 		081DA13B1ED47CE000C8C531 /* AIArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 081DA13A1ED47CE000C8C531 /* AIArray.m */; };
 		0826EED41EF7619300400F08 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 0826EED31EF7619300400F08 /* README.md */; };
@@ -44,8 +45,6 @@
 		0895DAE71EB2D52D00E2B5C7 /* DataViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0895DAE51EB2D52D00E2B5C7 /* DataViewController.xib */; };
 		0895DAEB1EB2D7EB00E2B5C7 /* DataCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0895DAE91EB2D7EB00E2B5C7 /* DataCell.m */; };
 		0895DAEC1EB2D7EB00E2B5C7 /* DataCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0895DAEA1EB2D7EB00E2B5C7 /* DataCell.xib */; };
-		089D359E1EE2BA9200AA6622 /* DemandFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 089D359B1EE2BA9200AA6622 /* DemandFactory.m */; };
-		089D359F1EE2BA9200AA6622 /* DemandModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 089D359D1EE2BA9200AA6622 /* DemandModel.m */; };
 		08A209691F1069040013ACC4 /* AIAwarenessModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08A209561F1069040013ACC4 /* AIAwarenessModel.m */; };
 		08A2096A1F1069040013ACC4 /* AICommonSenseModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08A209581F1069040013ACC4 /* AICommonSenseModel.m */; };
 		08A2096B1F1069040013ACC4 /* AIDoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08A2095A1F1069040013ACC4 /* AIDoModel.m */; };
@@ -129,10 +128,12 @@
 		0813D6491EDF7B150089FA0C /* InputObjModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputObjModel.m; sourceTree = "<group>"; };
 		0813D64A1EDF7B150089FA0C /* InputTextModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputTextModel.h; sourceTree = "<group>"; };
 		0813D64B1EDF7B150089FA0C /* InputTextModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputTextModel.m; sourceTree = "<group>"; };
-		081816261F22B93E007DDB4D /* ThinkTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThinkTask.h; sourceTree = "<group>"; };
-		081816271F22B93E007DDB4D /* ThinkTask.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThinkTask.m; sourceTree = "<group>"; };
 		0818162A1F22BDF8007DDB4D /* AIMainThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIMainThread.h; sourceTree = "<group>"; };
 		0818162B1F22BDF8007DDB4D /* AIMainThread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIMainThread.m; sourceTree = "<group>"; };
+		0818162E1F22FEA6007DDB4D /* Awareness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Awareness.h; sourceTree = "<group>"; };
+		0818162F1F22FEA6007DDB4D /* Awareness.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Awareness.m; sourceTree = "<group>"; };
+		081816311F22FED9007DDB4D /* Demand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Demand.h; sourceTree = "<group>"; };
+		081816321F22FED9007DDB4D /* Demand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Demand.m; sourceTree = "<group>"; };
 		081C436C1F0C67CF00DF6722 /* MindStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MindStrategy.h; sourceTree = "<group>"; };
 		081C436D1F0C67CF00DF6722 /* MindStrategy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MindStrategy.m; sourceTree = "<group>"; };
 		081DA1391ED47CE000C8C531 /* AIArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIArray.h; sourceTree = "<group>"; };
@@ -177,10 +178,6 @@
 		0895DAE91EB2D7EB00E2B5C7 /* DataCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataCell.m; sourceTree = "<group>"; };
 		0895DAEA1EB2D7EB00E2B5C7 /* DataCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DataCell.xib; sourceTree = "<group>"; };
 		0895DAED1EB2DCBD00E2B5C7 /* AppEnum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppEnum.h; sourceTree = "<group>"; };
-		089D359A1EE2BA9200AA6622 /* DemandFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemandFactory.h; sourceTree = "<group>"; };
-		089D359B1EE2BA9200AA6622 /* DemandFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemandFactory.m; sourceTree = "<group>"; };
-		089D359C1EE2BA9200AA6622 /* DemandModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemandModel.h; sourceTree = "<group>"; };
-		089D359D1EE2BA9200AA6622 /* DemandModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemandModel.m; sourceTree = "<group>"; };
 		08A209551F1069040013ACC4 /* AIAwarenessModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIAwarenessModel.h; sourceTree = "<group>"; };
 		08A209561F1069040013ACC4 /* AIAwarenessModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIAwarenessModel.m; sourceTree = "<group>"; };
 		08A209571F1069040013ACC4 /* AICommonSenseModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AICommonSenseModel.h; sourceTree = "<group>"; };
@@ -348,6 +345,17 @@
 			path = AIThread;
 			sourceTree = "<group>";
 		};
+		0818162D1F22FE3F007DDB4D /* Awareness */ = {
+			isa = PBXGroup;
+			children = (
+				0818162E1F22FEA6007DDB4D /* Awareness.h */,
+				0818162F1F22FEA6007DDB4D /* Awareness.m */,
+				081816311F22FED9007DDB4D /* Demand.h */,
+				081816321F22FED9007DDB4D /* Demand.m */,
+			);
+			path = Awareness;
+			sourceTree = "<group>";
+		};
 		081C436B1F0C67CF00DF6722 /* MindStrategy */ = {
 			isa = PBXGroup;
 			children = (
@@ -414,8 +422,6 @@
 				08E3CCC81EE60F8D002990FD /* ThinkControl.h */,
 				08E3CCC91EE60F8D002990FD /* ThinkControl.m */,
 				080D059B1EE0E18E00DC62B5 /* ThinkHeader.h */,
-				081816261F22B93E007DDB4D /* ThinkTask.h */,
-				081816271F22B93E007DDB4D /* ThinkTask.m */,
 			);
 			path = Think;
 			sourceTree = "<group>";
@@ -427,17 +433,6 @@
 				087753211ECFE1C400E7AD09 /* UnderstandUtils.m */,
 			);
 			path = Understand;
-			sourceTree = "<group>";
-		};
-		089D35991EE2BA9200AA6622 /* Demand */ = {
-			isa = PBXGroup;
-			children = (
-				089D359A1EE2BA9200AA6622 /* DemandFactory.h */,
-				089D359B1EE2BA9200AA6622 /* DemandFactory.m */,
-				089D359C1EE2BA9200AA6622 /* DemandModel.h */,
-				089D359D1EE2BA9200AA6622 /* DemandModel.m */,
-			);
-			path = Demand;
 			sourceTree = "<group>";
 		};
 		08A209541F1069040013ACC4 /* AIData */ = {
@@ -703,10 +698,10 @@
 		08F3AF991E98883C00747EDD /* Mind */ = {
 			isa = PBXGroup;
 			children = (
+				0818162D1F22FE3F007DDB4D /* Awareness */,
 				08F6F4501F145B5100B4EE19 /* Other */,
 				0826EED31EF7619300400F08 /* README.md */,
 				08FBB8FF1EE76E78000F9E80 /* Mine */,
-				089D35991EE2BA9200AA6622 /* Demand */,
 				08F3AFAD1E988E2A00747EDD /* MindEnum.h */,
 				08F3AFBC1E989B8F00747EDD /* MindHeader.h */,
 				08E99C461EBDD1C800A38FF5 /* MindControl.h */,
@@ -924,7 +919,6 @@
 				08E3CCCA1EE60F8D002990FD /* ThinkControl.m in Sources */,
 				08A209721F1069040013ACC4 /* AIValueModel.m in Sources */,
 				08E58DEC1ED3CE18008B0D76 /* LogicModel.m in Sources */,
-				081816281F22B93E007DDB4D /* ThinkTask.m in Sources */,
 				08AF456E1E97DDF600377887 /* MKStore.m in Sources */,
 				08FBB9091EE76E78000F9E80 /* HobbyModel.m in Sources */,
 				08F3AFBB1E98966E00747EDD /* Store.m in Sources */,
@@ -932,13 +926,11 @@
 				08E99C481EBDD1C800A38FF5 /* MindControl.m in Sources */,
 				0813D64C1EDF7B150089FA0C /* InputAudioModel.m in Sources */,
 				083BBDB41F1849DF000F694A /* AIHungerLevelChangedModel.m in Sources */,
-				089D359E1EE2BA9200AA6622 /* DemandFactory.m in Sources */,
 				08C84A8E1E9A866200897D8B /* Input.m in Sources */,
 				082F9D561EB234750009F6A9 /* Output.m in Sources */,
 				08FBB90B1EE76E78000F9E80 /* Mood.m in Sources */,
 				08FBB90E1EE76E9D000F9E80 /* Hunger.m in Sources */,
 				083F61341F04830F000330E1 /* AILineDampingStrategy.m in Sources */,
-				089D359F1EE2BA9200AA6622 /* DemandModel.m in Sources */,
 				0813D64E1EDF7B150089FA0C /* InputModelBase.m in Sources */,
 				08F639831E9A2EC0003CD163 /* FeelValueModel.m in Sources */,
 				083112F21F05E12600051DE6 /* MBProgressHUD+Add.m in Sources */,
@@ -951,6 +943,7 @@
 				08E58DE81ED3CE18008B0D76 /* MemModel.m in Sources */,
 				08FBB9081EE76E78000F9E80 /* Hobby.m in Sources */,
 				08DB40C71F11A075003162C8 /* AIStoreBase.m in Sources */,
+				081816331F22FED9007DDB4D /* Demand.m in Sources */,
 				083F61331F04830F000330E1 /* AIPointer.m in Sources */,
 				0806FB311F15997D00808B34 /* AIMoodStore.m in Sources */,
 				0808DB4A1F10A28C0082F4AD /* AIMemoryStore.m in Sources */,
@@ -985,6 +978,7 @@
 				082F9D5C1EB236AC0009F6A9 /* StudyViewController.m in Sources */,
 				0840AA691F16FD7B000A528E /* AIOutputStore.m in Sources */,
 				08E58DEB1ED3CE18008B0D76 /* LawStore.m in Sources */,
+				081816301F22FEA6007DDB4D /* Awareness.m in Sources */,
 				0895DAE61EB2D52D00E2B5C7 /* DataViewController.m in Sources */,
 				08DB40CB1F11A65E003162C8 /* TestHungryPage.m in Sources */,
 				081C436E1F0C67CF00DF6722 /* MindStrategy.m in Sources */,

@@ -10,10 +10,12 @@
 #import "MindEnum.h"
 #import "MindControl.h"
 #import "Mine.h"
-#import "DemandFactory.h"
 #import "Mood.h"
 #import "HobbyModel.h"
 #import "Hobby.h"
 #import "Hunger.h"
 #import "MindStrategy.h"
 #import "MoodDurationManager.h"
+
+#import "Awareness.h"
+#import "Demand.h"

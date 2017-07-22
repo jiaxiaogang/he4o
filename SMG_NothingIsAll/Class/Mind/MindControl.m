@@ -14,6 +14,8 @@
 
 @interface MindControl ()<MineDelegate>
 
+@property (strong,nonatomic) Awareness *awareness;
+
 @end
 
 @implementation MindControl
@@ -29,10 +31,12 @@
 
 -(void) initData{
     self.mine = [[Mine alloc] init];
+    self.awareness = [[Awareness alloc] init];
 }
 
 -(void) initRun{
     self.mine.delegate = self;
+    [self.awareness run];
 }
 
 /**

@@ -10,8 +10,9 @@
 #import "ThinkHeader.h"
 
 @interface ThinkControl ()
+
 @property (strong,nonatomic) AIMindValueModel *currentTask;//当前任务;
-@property (strong,nonatomic) ThinkTask *task;
+
 @end
 
 @implementation ThinkControl
@@ -26,11 +27,11 @@
 }
 
 -(void) initData{
-    self.task = [[ThinkTask alloc] init];
+    
 }
 
 -(void) initRun{
-    [self.task run];
+    
 }
 
 /**
