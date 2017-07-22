@@ -214,10 +214,15 @@
  *  MARK:--------------------Other--------------------
  */
 -(void) setCurDemand:(AIDemandModel *)curDemand{
-    _curDemand = curDemand;
-    self.tmpBusy = true;
-    [[NSNotificationCenter defaultCenter] postNotificationName:ObsKey_ThinkBusy object:nil];
-    [self decisionWithTask];
+    
+    if (_curDemand) {
+        //(2选1)(参考:N3P11);
+    }else{
+        _curDemand = curDemand;
+        self.tmpBusy = true;
+        [[NSNotificationCenter defaultCenter] postNotificationName:ObsKey_ThinkBusy object:nil];
+        [self decisionWithTask];
+    }
 }
 
 -(BOOL) isBusy{

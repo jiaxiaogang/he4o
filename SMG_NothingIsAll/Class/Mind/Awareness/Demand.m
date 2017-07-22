@@ -67,7 +67,7 @@
             
             //2,"logThink"知道自己联想了什么,并且记录;
             for (AIPointer *pointer in weightArr) {
-                
+                //此处多数是读的记忆,所以只是AILine.strong++;并且存到意识流;(参考:AI/框架/神经网络/读写)
             }
             
             //3,取阀值
