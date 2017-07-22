@@ -53,7 +53,7 @@
         }
         
         //5,分析重要性
-        self.status = theThink.curDemand ? DemandStatus_NoSub : DemandStatus_NoMain;
+        self.status = theThink.curDemand ? DemandStatus_MainCommit : DemandStatus_NoMain;
         [self checkTaskImportance:mindValueArr];
     });
 }
@@ -80,27 +80,27 @@
             }
             
             //4,生成think.curDemand
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if (model.value < canValidValue) {
-                    if (self.status == DemandStatus_NoMain) {
-                        self.status = DemandStatus_MainCommit;
-                        
-                        //logThink
-                        AIDemandModel *demandModel = [[AIDemandModel alloc] initWithAIMindValueModel:model];
-                        [AIDemandStore insert:demandModel awareness:true];
-                        
+            if (model.value < canValidValue) {
+                if (self.status == DemandStatus_NoMain) {
+                    self.status = DemandStatus_MainCommit;
+                    
+                    //logThink
+                    AIDemandModel *demandModel = [[AIDemandModel alloc] initWithAIMindValueModel:model];
+                    [AIDemandStore insert:demandModel awareness:true];
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
                         theThink.curDemand = demandModel;
-                    }else if(self.status == DemandStatus_NoSub){
-                        self.status = DemandStatus_SubCommit;
-                        
-                        //logThink
-                        AIDemandModel *demandModel = [[AIDemandModel alloc] initWithAIMindValueModel:model];
-                        [AIDemandStore insert:demandModel awareness:true];
-                        
+                    });
+                }else if(self.status == DemandStatus_MainCommit){
+                    //logThink
+                    AIDemandModel *demandModel = [[AIDemandModel alloc] initWithAIMindValueModel:model];
+                    [AIDemandStore insert:demandModel awareness:true];
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
                         theThink.curDemand = demandModel;
-                    }
+                    });
                 }
-            });
+            }
         }
         self.status = DemandStatus_Finish;
     }

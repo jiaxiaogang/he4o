@@ -84,7 +84,5 @@ typedef NS_ENUM(NSInteger, DemandStatus) {
     DemandStatus_NoMain     = 2,
     DemandStatus_MainWait   = 3,//主任务生成等待
     DemandStatus_MainCommit = 4,//主任务提交
-    DemandStatus_NoSub      = 5,
-    DemandStatus_SubCommit  = 6,//次任务提交
-    DemandStatus_Finish     = 7,//finish
+    DemandStatus_Finish     = 5,//finish
 };
