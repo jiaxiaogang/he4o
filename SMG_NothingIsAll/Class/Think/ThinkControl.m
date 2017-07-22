@@ -152,7 +152,7 @@
     if (self.curDemand.type == MindType_Hunger) {//解决饿的问题
         CGFloat mindValueDelta = self.curDemand.value;
         
-        if (fabsf(mindValueDelta) > 1) {
+        if (fabs(mindValueDelta) > 1) {
             
             //LogThink开始思考问题;...........
             
@@ -213,12 +213,19 @@
 /**
  *  MARK:--------------------Other--------------------
  */
--(void) setCurDemand:(AIDemandModel *)curDemand{
-    
-    if (_curDemand) {
-        //(2选1)(参考:N3P11);
+-(void) setData:(AIDemandModel *)demand{
+    //1,检查数据可替换
+    BOOL valid = false;
+    if (demand && self.curDemand) {
+        if (fabs(demand.value) > fabs(_curDemand.value * 2.0f)) {
+            valid = true;
+        }
     }else{
-        _curDemand = curDemand;
+        valid = true;
+    }
+    //2,替换
+    if (valid) {
+        _curDemand = demand;
         self.tmpBusy = true;
         [[NSNotificationCenter defaultCenter] postNotificationName:ObsKey_ThinkBusy object:nil];
         [self decisionWithTask];

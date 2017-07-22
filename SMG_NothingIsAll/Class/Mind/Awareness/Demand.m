@@ -89,7 +89,7 @@
                     [AIDemandStore insert:demandModel awareness:true];
                     
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        theThink.curDemand = demandModel;
+                        [theThink setData:demandModel];
                     });
                 }else if(self.status == DemandStatus_MainCommit){
                     //logThink
@@ -97,7 +97,7 @@
                     [AIDemandStore insert:demandModel awareness:true];
                     
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        theThink.curDemand = demandModel;
+                        [theThink setData:demandModel];
                     });
                 }
             }
