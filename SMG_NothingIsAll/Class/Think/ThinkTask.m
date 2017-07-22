@@ -35,12 +35,17 @@
         //3,搜索其它(略)
         
         
-        //4,处理"因为重要,所以选定"的逻辑;
-        AIMindValueModel *mindValueModel = nil;
+        //4,处理"因为重要,所以选定"的逻辑;(此处逻辑:参见N3P11)
+        AIMindValueModel *mindVM = nil;
         if (ARRISOK(aws)) {
             for (AIAwarenessModel *aw in aws) {
-                id content = [aw.awarenessP content];
-                NSLog(@"");
+                NSObject *content = [aw.awarenessP content];
+                if ([content isKindOfClass:[AIMindValueModel class]]) {
+                    AIMindValueModel *contentMVM = (AIMindValueModel*)content;
+                    if (mindVM == nil || mindVM.value < contentMVM.value) {
+                        mindVM = contentMVM;
+                    }
+                }
             }
         }
         
