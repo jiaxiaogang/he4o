@@ -11,6 +11,7 @@
 
 @interface ThinkControl ()
 @property (strong,nonatomic) AIMindValueModel *currentTask;//当前任务;
+@property (strong,nonatomic) ThinkTask *task;
 @end
 
 @implementation ThinkControl
@@ -25,11 +26,11 @@
 }
 
 -(void) initData{
-    
+    self.task = [[ThinkTask alloc] init];
 }
 
 -(void) initRun{
-    
+    [self.task run];
 }
 
 /**
@@ -91,6 +92,8 @@
         return;
     }
     //2,通知时相应处理....(先不写)
+    
+    
 }
 
 /**
@@ -190,22 +193,22 @@
 }
 
 -(BOOL) decisionByExperience{
-    AIExperienceModel *value = [AIExperienceStore search];
+    AIExperienceModel *value = [AIExperienceStore searchSingleRowId:1];
     return value != nil;
 }
 
 -(BOOL) decisionByCommonSense{
-    AICommonSenseModel *value = [AICommonSenseStore search];
+    AICommonSenseModel *value = [AICommonSenseStore searchSingleRowId:1];
     return value != nil;
 }
 
 -(BOOL) decisionByAwareness{
-    AIAwarenessModel *value = [AIAwarenessStore search];
+    AIAwarenessModel *value = [AIAwarenessStore searchSingleRowId:1];
     return value != nil;
 }
 
 -(BOOL) decisionByMemory{
-    AIMemoryModel *value = [AIMemoryStore search];
+    AIMemoryModel *value = [AIMemoryStore searchSingleRowId:1];
     return value != nil;
 }
 

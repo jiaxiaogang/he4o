@@ -14,17 +14,6 @@
 @interface ThinkTask : NSObject
 
 @property (strong,nonatomic) AIMindValueModel *currentTask;
-
-@end
-
-
-
-
-/**
- *  MARK:--------------------策略--------------------
- */
-@interface ThinkTaskStrategy : NSObject
-
-+(void) run;
+-(void) run;
 
 @end

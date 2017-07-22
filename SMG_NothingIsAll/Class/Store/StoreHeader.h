@@ -17,7 +17,6 @@
 
 //Text
 #import "TextStore.h"
-#import "TextStoreUtils.h"
 #import "TextModel.h"
 
 //Obj
@@ -34,7 +33,6 @@
 
 //DB
 #import "LKDBHelper.h"
-#import "DBUtils.h"
 
 //Map(映射表/规律,同时)
 #import "LawModel.h"

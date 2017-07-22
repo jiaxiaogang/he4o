@@ -8,22 +8,45 @@
 
 #import "ThinkTask.h"
 
+@interface ThinkTask ()
+
+@property (assign, nonatomic) NSInteger count;
+
+@end
+
 @implementation ThinkTask
 
 //开始异步搜索IO任务;
--(void) runForCreateTask{
-    
+-(void) run{
+    __block ThinkTask *weakSelf;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(60.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        weakSelf.count ++;
+        NSInteger analyzeCount = (weakSelf.count % 10 == 0) ? 1000 : 100;//9短1长;
+        [self runAnalyze:analyzeCount];
+        [self run];
+    });
+}
+
+-(void) runAnalyze:(NSInteger)count{
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        //多个覆盖;
         //1,搜索意识流
-        //2,搜索习惯
-        //3,搜索其它
+        NSMutableArray *aws = [AIAwarenessStore searchWhere:nil count:count];
+        //2,搜索习惯(略)
+        //3,搜索其它(略)
         
-        //一个策略;3短1长;
-        //1,搜10条task
-        //2,搜10000条task
+        
+        //4,处理"因为重要,所以选定"的逻辑;
+        AIMindValueModel *mindValueModel = nil;
+        if (ARRISOK(aws)) {
+            for (AIAwarenessModel *aw in aws) {
+                id content = [aw.pointer content];
+                NSLog(@"");
+            }
+        }
+        
+        //5,执行;
         dispatch_async(dispatch_get_main_queue(), ^{
-            //执行;
+            
         });
     });
 }
@@ -42,24 +65,6 @@
     return nil;
 }
 
-//执行前分析任务可行性;
--(BOOL) checkTaskCanDecision:(AIMindValueModel*)model{
-    if (self.currentTask) {
-        //完全使用数据思考的方式来决定下一步;
-    }
-    return true;
-}
-
 @end
 
 
-
-
-
-@implementation ThinkTaskStrategy : NSObject
-
-+(void) run{
-    
-}
-
-@end

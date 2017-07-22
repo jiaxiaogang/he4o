@@ -19,5 +19,9 @@
 @property (strong,nonatomic) NSString *pClass;    //指针类型
 @property (assign, nonatomic) NSInteger pId;  //指针地址(Id)
 
+/**
+ *  MARK:-------------------取指向的数据--------------------
+ */
+-(id) content;
 
 @end

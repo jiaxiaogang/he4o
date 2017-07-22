@@ -8,7 +8,6 @@
 
 #import "Hunger.h"
 #import "MindHeader.h"
-#import "MathUtils.h"
 
 @implementation Hunger
 

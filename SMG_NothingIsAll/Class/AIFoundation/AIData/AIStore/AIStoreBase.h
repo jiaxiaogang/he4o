@@ -10,11 +10,15 @@
 
 @protocol IAIStore <NSObject>
 
-+(id) search;
++(id) searchSingleRowId:(NSInteger)rowId;
++(id) searchSingleWhere:(id)where;
++(NSMutableArray*) searchWhere:(id)where count:(NSInteger)count;
 +(void) insert:(AIObject*)data awareness:(BOOL)awareness;
 
 @end
 
 @interface AIStoreBase : NSObject<IAIStore>
+
++(Class) getModelClass;
 
 @end

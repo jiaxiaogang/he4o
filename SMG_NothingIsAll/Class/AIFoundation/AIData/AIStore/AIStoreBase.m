@@ -10,8 +10,16 @@
 
 @implementation AIStoreBase
 
-+(id) search{
-    return nil;
++(id) searchSingleRowId:(NSInteger)rowId{
+    return [[self getModelClass] searchSingleWithWhere:[DBUtils sqlWhere_RowId:rowId] orderBy:nil];
+}
+
++(id) searchSingleWhere:(id)where{
+    return [[self getModelClass] searchSingleWithWhere:where orderBy:nil];
+}
+
++(NSMutableArray*) searchWhere:(id)where count:(NSInteger)count{
+    return [[self getModelClass] searchWithWhere:where orderBy:nil offset:0 count:count];
 }
 
 +(void) insert:(AIObject*)data awareness:(BOOL)awareness{
@@ -26,6 +34,16 @@
             [AIAwarenessStore insert:awareModel awareness:false];
         }
     }
+}
+
++(Class) getModelClass{
+    NSString *storeStr = NSStringFromClass([self class]);
+    if (STRISOK(storeStr) && storeStr.length > 5 && [@"Store" isEqualToString:[storeStr substringFromIndex:storeStr.length - 5]]) {
+        NSString *modelStr = STRFORMAT(@"%@Model",[storeStr substringToIndex:storeStr.length - 5]);
+        Class modelClass = NSClassFromString(modelStr);
+        return modelClass;
+    }
+    return nil;
 }
 
 @end
