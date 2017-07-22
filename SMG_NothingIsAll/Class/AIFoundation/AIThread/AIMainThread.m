@@ -10,4 +10,8 @@
 
 @implementation AIMainThread
 
+-(BOOL) isBusy{
+    return false;
+}
+
 @end

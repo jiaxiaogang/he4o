@@ -8,9 +8,10 @@
 
 #import "ThinkControl.h"
 #import "ThinkHeader.h"
+#import "TestHungryPage.h"
 
 @interface ThinkControl ()
-
+@property (assign, nonatomic) BOOL tmpBusy;
 @end
 
 @implementation ThinkControl
@@ -209,6 +210,24 @@
 -(BOOL) decisionByMemory{
     AIMemoryModel *value = [AIMemoryStore searchSingleRowId:1];
     return value != nil;
+}
+
+/**
+ *  MARK:--------------------Other--------------------
+ */
+-(void) setCurDemand:(AIDemandModel *)curDemand{
+    _curDemand = curDemand;
+    [[NSNotificationCenter defaultCenter] postNotificationName:ObsKey_ThinkBusy object:nil];
+}
+
+-(BOOL) isBusy{
+    //return self.curDemand != nil;
+    return self.tmpBusy;
+}
+
+-(void) tmpChangeBusy{
+    self.tmpBusy = !self.tmpBusy;
+    [[NSNotificationCenter defaultCenter] postNotificationName:ObsKey_ThinkBusy object:nil];
 }
 
 @end

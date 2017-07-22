@@ -35,5 +35,10 @@
 //分析
 -(void) commitMindValueNotice:(AIMindValueModel*)model;
 
+/**
+ *  MARK:--------------------Other--------------------
+ */
+-(BOOL) isBusy;
+-(void) tmpChangeBusy;
 
 @end

@@ -15,6 +15,11 @@
 #import "AIHeader.h"
 #import "MindHeader.h"
 
+/**
+ *  MARK:--------------------ObserverKEY--------------------
+ */
+#define ObsKey_ThinkBusy @"ObsKey_ThinkBusy"
+
 
 /**
  *  MARK:--------------------数据检查--------------------

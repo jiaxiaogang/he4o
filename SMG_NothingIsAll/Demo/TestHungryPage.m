@@ -8,6 +8,7 @@
 
 #import "TestHungryPage.h"
 #import "InputHeader.h"
+#import "ThinkHeader.h"
 
 @interface TestHungryPage ()<UITextFieldDelegate>
 
@@ -20,6 +21,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *canceBtn;
 @property (weak, nonatomic) IBOutlet UISlider *hungerLevelSlider;
 @property (weak, nonatomic) IBOutlet UILabel *hungerLevelLab;
+@property (weak, nonatomic) IBOutlet UIView *thinkStatusView;
 
 @end
 
@@ -28,6 +30,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self initView];
+    [self initDisplay];
 }
 
 -(void) initView{
@@ -37,6 +40,19 @@
     
     //2,hungerLevelLab
     [self.hungerLevelLab setText:STRFORMAT(@"%.2f",self.hungerLevelSlider.value)];
+    
+    //3,thinkStatusView
+    [self.thinkStatusView.layer setCornerRadius:5];
+    [self.thinkStatusView.layer setMasksToBounds:true];
+}
+
+-(void) initDisplay{
+    //1,Observer
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notificationThinkBusyChanged) name:
+     ObsKey_ThinkBusy object:nil];
+    
+    //2,thinkStatusView
+    [self.thinkStatusView setBackgroundColor:(theThink.isBusy ? [UIColor redColor] : [UIColor greenColor])];
 }
 
 /**
@@ -80,12 +96,27 @@
     theHunger.tmpLevel = self.hungerLevelSlider.value;
 }
 
+- (IBAction)thinkBtnOnClick:(id)sender {
+    [theThink tmpChangeBusy];
+}
+
+/**
+ *  MARK:--------------------method--------------------
+ */
+-(void) notificationThinkBusyChanged{
+    [self.thinkStatusView setBackgroundColor:(theThink.isBusy ? [UIColor redColor] : [UIColor greenColor])];
+}
+
 /**
  *  MARK:--------------------UITextFieldDelegate--------------------
  */
 - (BOOL)textFieldShouldReturn:(UITextField *)textField{
     [self confirmBtnOnClick:self.confirmBtn];
     return true;
+}
+
+-(void)dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end

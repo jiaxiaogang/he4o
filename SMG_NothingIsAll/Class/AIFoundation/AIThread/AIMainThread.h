@@ -18,6 +18,6 @@
  */
 @interface AIMainThread : NSObject
 
-
+-(BOOL) isBusy;
 
 @end

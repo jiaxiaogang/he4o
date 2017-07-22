@@ -20,6 +20,7 @@
                 <outlet property="hungerLevelSlider" destination="CsI-oO-3Fd" id="Ngr-wL-HNr"/>
                 <outlet property="subBtn" destination="IZR-BX-UWv" id="Hpr-oS-iS8"/>
                 <outlet property="tf" destination="SX9-5m-1fK" id="ieb-IB-FwA"/>
+                <outlet property="thinkStatusView" destination="toj-Hl-n5X" id="4f6-1A-NkX"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -180,17 +181,37 @@
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
                         </label>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="toj-Hl-n5X">
+                            <rect key="frame" x="349" y="38" width="10" height="10"/>
+                            <color key="backgroundColor" red="0.96862745100000003" green="0.29803921570000003" blue="0.19215686269999999" alpha="1" colorSpace="calibratedRGB"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="10" id="NM1-gc-MKj"/>
+                                <constraint firstAttribute="height" constant="10" id="Tqp-uU-A2d"/>
+                            </constraints>
+                        </view>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ial-MN-J4b">
+                            <rect key="frame" x="303" y="28.5" width="36" height="29"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <state key="normal" title="Think"/>
+                            <connections>
+                                <action selector="thinkBtnOnClick:" destination="-1" eventType="touchUpInside" id="rhY-yv-hvL"/>
+                            </connections>
+                        </button>
                     </subviews>
                     <color key="backgroundColor" red="0.93333333330000001" green="0.93333333330000001" blue="0.93333333330000001" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
                         <constraint firstItem="CsI-oO-3Fd" firstAttribute="top" secondItem="86Q-Zs-PUw" secondAttribute="top" id="05M-WG-uJb"/>
                         <constraint firstAttribute="height" constant="100" id="CH3-DZ-L9X"/>
                         <constraint firstItem="CsI-oO-3Fd" firstAttribute="leading" secondItem="yxc-FN-OK4" secondAttribute="trailing" constant="10" id="Hqa-Ns-m6z"/>
+                        <constraint firstItem="toj-Hl-n5X" firstAttribute="centerY" secondItem="ial-MN-J4b" secondAttribute="centerY" id="IPb-Cw-fcH"/>
                         <constraint firstAttribute="trailing" secondItem="CsI-oO-3Fd" secondAttribute="trailing" constant="60" id="MOW-BW-7fJ"/>
                         <constraint firstItem="CsI-oO-3Fd" firstAttribute="centerY" secondItem="yxc-FN-OK4" secondAttribute="centerY" id="Mot-7z-zlv"/>
                         <constraint firstItem="Zbl-8N-wYu" firstAttribute="centerY" secondItem="CsI-oO-3Fd" secondAttribute="centerY" id="PqR-VN-sNS"/>
                         <constraint firstItem="CsI-oO-3Fd" firstAttribute="leading" secondItem="86Q-Zs-PUw" secondAttribute="leading" constant="60" id="dx1-Ov-rkc"/>
                         <constraint firstItem="Zbl-8N-wYu" firstAttribute="leading" secondItem="CsI-oO-3Fd" secondAttribute="trailing" constant="10" id="eUT-pt-hjq"/>
+                        <constraint firstAttribute="trailing" secondItem="toj-Hl-n5X" secondAttribute="trailing" constant="16" id="i75-jR-PWX"/>
+                        <constraint firstItem="toj-Hl-n5X" firstAttribute="leading" secondItem="ial-MN-J4b" secondAttribute="trailing" constant="10" id="kaN-12-Ydc"/>
+                        <constraint firstItem="toj-Hl-n5X" firstAttribute="top" secondItem="CsI-oO-3Fd" secondAttribute="bottom" constant="8" id="mog-0x-zF7"/>
                     </constraints>
                 </view>
             </subviews>
@@ -209,6 +230,7 @@
                 <constraint firstItem="u6Z-hO-x4K" firstAttribute="top" secondItem="onk-Dj-zRG" secondAttribute="bottom" constant="10" id="qAK-ji-Brn"/>
                 <constraint firstItem="onk-Dj-zRG" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="70" id="uwl-r9-4pA"/>
             </constraints>
+            <point key="canvasLocation" x="34.5" y="54.5"/>
         </view>
     </objects>
 </document>
