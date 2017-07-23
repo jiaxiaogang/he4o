@@ -11,7 +11,7 @@
 #import "TestHungryPage.h"
 
 @interface ThinkControl ()
-@property (assign, nonatomic) BOOL tmpBusy;
+
 @end
 
 @implementation ThinkControl
@@ -194,20 +194,13 @@
     //2,替换
     if (valid) {
         _curDemand = demand;
-        self.tmpBusy = true;
         [[NSNotificationCenter defaultCenter] postNotificationName:ObsKey_ThinkBusy object:nil];
         [self decisionWithTask];
     }
 }
 
 -(BOOL) isBusy{
-    //return self.curDemand != nil;
-    return self.tmpBusy;
-}
-
--(void) tmpChangeBusy{
-    self.tmpBusy = !self.tmpBusy;
-    [[NSNotificationCenter defaultCenter] postNotificationName:ObsKey_ThinkBusy object:nil];
+    return self.curDemand != nil;
 }
 
 @end

@@ -40,6 +40,5 @@
  */
 -(void) setData:(AIDemandModel *)demand;
 -(BOOL) isBusy;
--(void) tmpChangeBusy;
 
 @end

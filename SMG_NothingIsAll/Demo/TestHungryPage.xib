@@ -190,9 +190,9 @@
                             </constraints>
                         </view>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ial-MN-J4b">
-                            <rect key="frame" x="303" y="28.5" width="36" height="29"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                            <state key="normal" title="Think"/>
+                            <rect key="frame" x="283" y="30" width="56" height="26"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                            <state key="normal" title="ClearThink"/>
                             <connections>
                                 <action selector="thinkBtnOnClick:" destination="-1" eventType="touchUpInside" id="rhY-yv-hvL"/>
                             </connections>

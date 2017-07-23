@@ -99,7 +99,7 @@
 }
 
 - (IBAction)thinkBtnOnClick:(id)sender {
-    [theThink tmpChangeBusy];
+    [theThink setData:nil];
 }
 
 /**
