@@ -186,8 +186,26 @@
     //1,检查数据可替换
     BOOL valid = false;
     if (demand && self.curDemand) {
-        if (fabs(demand.value) > fabs(_curDemand.value * 2.0f)) {
+        
+        //1,curDemand依专注度x权重(意识流密度和数量,相关的mindValue)
+        NSInteger curDemandV = self.curDemand.value;
+        curDemandV *= 2.0f;
+        
+        //2,四舍五入
+        NSInteger newDemandV = (int)(demand.value + 0.5f);
+        curDemandV = (int)(self.curDemand.value + 0.5f);
+        
+        //3,对比
+        if (newDemandV > curDemandV) {
             valid = true;
+        }else if(newDemandV == curDemandV){
+            //由Think决定:
+            //a.再次搜索权重;
+            //a.1;找不到时,思考解决方法;
+            //a.2;更多线索;
+            //a.3;随机挑一个;
+        }else{
+            
         }
     }else{
         valid = true;

@@ -73,10 +73,11 @@
     if (model) {
         //1,取值
         CGFloat mVD = 0;
+        CGFloat zero2hundred = sqrtf(10 - model.level);
         if (model.state == HungerState_Unplugged) {
-            mVD = (model.level - 10);//mindValue -= x (饿一滴血)
+            mVD = [MathUtils getValueWithOriRange:UIFloatRangeMake(0, 100) targetRange:UIFloatRangeMake(-10, 0) oriValue:zero2hundred];//(饿一滴血)
         }else if (model.state == HungerState_Charging) {//充电中
-            mVD = (10 - model.level);//mindValue += x (饱一滴血)
+            mVD = [MathUtils getValueWithOriRange:UIFloatRangeMake(0, 100) targetRange:UIFloatRangeMake(0, 10) oriValue:zero2hundred];//(饱一滴血)
         }
         
         //2,分析决策 & 产生需求

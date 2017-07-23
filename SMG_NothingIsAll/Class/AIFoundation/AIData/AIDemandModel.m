@@ -14,8 +14,8 @@
     self = [super init];
     if (self) {
         if (model) {
+            self.value = fabs(model.value);
             self.type = model.type;
-            self.value = model.value;
         }
     }
     return self;
