@@ -24,6 +24,7 @@
 		081816331F22FED9007DDB4D /* Demand.m in Sources */ = {isa = PBXBuildFile; fileRef = 081816321F22FED9007DDB4D /* Demand.m */; };
 		081816361F2355BD007DDB4D /* AIDemandModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 081816351F2355BD007DDB4D /* AIDemandModel.m */; };
 		081816391F235691007DDB4D /* AIDemandStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 081816381F235691007DDB4D /* AIDemandStore.m */; };
+		081828AE1F24BC6800BECCF0 /* AILineStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 081828AD1F24BC6800BECCF0 /* AILineStore.m */; };
 		081C436E1F0C67CF00DF6722 /* MindStrategy.m in Sources */ = {isa = PBXBuildFile; fileRef = 081C436D1F0C67CF00DF6722 /* MindStrategy.m */; };
 		081DA13B1ED47CE000C8C531 /* AIArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 081DA13A1ED47CE000C8C531 /* AIArray.m */; };
 		0826EED41EF7619300400F08 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 0826EED31EF7619300400F08 /* README.md */; };
@@ -140,6 +141,8 @@
 		081816351F2355BD007DDB4D /* AIDemandModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIDemandModel.m; sourceTree = "<group>"; };
 		081816371F235691007DDB4D /* AIDemandStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIDemandStore.h; sourceTree = "<group>"; };
 		081816381F235691007DDB4D /* AIDemandStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIDemandStore.m; sourceTree = "<group>"; };
+		081828AC1F24BC6800BECCF0 /* AILineStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AILineStore.h; sourceTree = "<group>"; };
+		081828AD1F24BC6800BECCF0 /* AILineStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AILineStore.m; sourceTree = "<group>"; };
 		081C436C1F0C67CF00DF6722 /* MindStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MindStrategy.h; sourceTree = "<group>"; };
 		081C436D1F0C67CF00DF6722 /* MindStrategy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MindStrategy.m; sourceTree = "<group>"; };
 		081DA1391ED47CE000C8C531 /* AIArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIArray.h; sourceTree = "<group>"; };
@@ -339,6 +342,8 @@
 				083BBDBC1F184A12000F694A /* AIHungerStateChangedStore.m */,
 				081816371F235691007DDB4D /* AIDemandStore.h */,
 				081816381F235691007DDB4D /* AIDemandStore.m */,
+				081828AC1F24BC6800BECCF0 /* AILineStore.h */,
+				081828AD1F24BC6800BECCF0 /* AILineStore.m */,
 			);
 			path = AIStore;
 			sourceTree = "<group>";
@@ -991,6 +996,7 @@
 				081816301F22FEA6007DDB4D /* Awareness.m in Sources */,
 				0895DAE61EB2D52D00E2B5C7 /* DataViewController.m in Sources */,
 				08DB40CB1F11A65E003162C8 /* TestHungryPage.m in Sources */,
+				081828AE1F24BC6800BECCF0 /* AILineStore.m in Sources */,
 				081C436E1F0C67CF00DF6722 /* MindStrategy.m in Sources */,
 				08E58DEA1ED3CE18008B0D76 /* LawModel.m in Sources */,
 				0808DB501F10A2A80082F4AD /* AIMindValueStore.m in Sources */,

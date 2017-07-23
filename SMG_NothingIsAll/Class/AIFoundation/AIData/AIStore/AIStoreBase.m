@@ -36,6 +36,20 @@
     }
 }
 
++(void) update:(AIObject*)data awareness:(BOOL)awareness{
+    if (data) {
+        //1,存data
+        [data.class updateToDB:data where:[DBUtils sqlWhere_RowId:data.rowid]];
+        
+        //2,存意识流
+        if (awareness) {
+            AIAwarenessModel *awareModel = [[AIAwarenessModel alloc] init];
+            awareModel.awarenessP = data.pointer;
+            [AIAwarenessStore insert:awareModel awareness:false];
+        }
+    }
+}
+
 +(Class) getModelClass{
     NSString *storeStr = NSStringFromClass([self class]);
     if (STRISOK(storeStr) && storeStr.length > 5 && [@"Store" isEqualToString:[storeStr substringFromIndex:storeStr.length - 5]]) {

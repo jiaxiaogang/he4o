@@ -14,7 +14,8 @@
 +(id) searchSingleWhere:(id)where;
 +(NSMutableArray*) searchWhere:(id)where count:(NSInteger)count;
 +(void) insert:(AIObject*)data awareness:(BOOL)awareness;
-
++(void) update:(AIObject*)data awareness:(BOOL)awareness;
+//注:没有remove;remove由GC策略决定;
 @end
 
 @interface AIStoreBase : NSObject<IAIStore>

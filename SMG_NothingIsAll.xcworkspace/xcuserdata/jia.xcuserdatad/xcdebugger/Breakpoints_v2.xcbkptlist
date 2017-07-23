@@ -57,38 +57,6 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/Class/Think/ThinkControl.m"
-            timestampString = "522492239.148473"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "195"
-            endingLineNumber = "195"
-            landmarkName = "-setData:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/Class/Think/ThinkControl.m"
-            timestampString = "522492276.510156"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "191"
-            endingLineNumber = "191"
-            landmarkName = "-setData:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/Class/Mind/Awareness/Demand.m"
             timestampString = "522492409.508319"
             startingColumnNumber = "9223372036854775807"
@@ -106,7 +74,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/jia/Desktop/temp/SMG/SMG_NothingIsAll/Demo/Foundation+Log.m"
-                  timestampString = "522492450.005028"
+                  timestampString = "522503943.032077"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "67"
@@ -121,7 +89,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/jia/Desktop/temp/SMG/SMG_NothingIsAll/Demo/Foundation+Log.m"
-                  timestampString = "522492450.007449"
+                  timestampString = "522503943.034266"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "67"

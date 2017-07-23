@@ -101,10 +101,18 @@
  *  MARK:--------------------Task--------------------
  */
 //执行前分析任务可行性;
--(BOOL) checkTaskCanDecision:(AIMindValueModel*)model{
-    if (self.curDemand) {
-        //完全使用数据思考的方式来决定下一步;
+-(BOOL) checkTaskCanDecision:(AIDemandModel*)model{
+    if (model) {
+        
+        //1,取AILine关联数据
+        //2,取当前状态等相关数据,进行分析;
+        
+        [AILineStore searchPointer:model.pointer count:1];//取多少呢?
+        
+        
+        
     }
+    
     return true;
 }
 
@@ -183,7 +191,10 @@
  *  MARK:--------------------Other--------------------
  */
 -(void) setData:(AIDemandModel *)demand{
-    //1,检查数据可替换
+    //1,检查demand有效性
+    if (![self checkTaskCanDecision:demand]) return;
+    
+    //2,检查数据可替换
     BOOL valid = false;
     if (demand && self.curDemand) {
         if (demand.type == self.curDemand.type) {
@@ -215,7 +226,7 @@
     }else{
         valid = true;
     }
-    //2,替换
+    //3,替换
     if (valid) {
         _curDemand = demand;
         [[NSNotificationCenter defaultCenter] postNotificationName:ObsKey_ThinkBusy object:nil];

@@ -17,9 +17,9 @@
  *  5,销毁时,通知GC;GC去回收已经没有指向的数据;
  */
 @class AILineStrong;
-@interface AILine : NSObject
+@interface AILine : AIObject
 
-@property (strong,nonatomic) AIArray *pointers;     
+@property (strong,nonatomic) NSMutableArray *pointers;
 @property (strong,nonatomic) AILineStrong *strong;   //网络强度
 
 @end

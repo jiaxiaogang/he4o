@@ -47,6 +47,7 @@
 #import "AIHungerLevelChangedStore.h"
 #import "AIHungerStateChangedStore.h"
 #import "AIDemandStore.h"
+#import "AILineStore.h"
 
 #import "AIMainThread.h"
 
