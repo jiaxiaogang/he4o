@@ -65,6 +65,11 @@
     [self.navigationController setNavigationBarHidden:true animated:true];
 }
 
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+    TestHungryPage *page = [[TestHungryPage alloc] init];
+    [self.navigationController pushViewController:page animated:true];
+}
 
 /**
  *  MARK:--------------------UITableViewDelegate,UITableViewDataSource--------------------
