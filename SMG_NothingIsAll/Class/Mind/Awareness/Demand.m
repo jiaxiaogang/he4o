@@ -12,7 +12,7 @@
 @interface Demand ()
 
 @property (assign, nonatomic) BOOL lock;    //单任务锁;
-@property (assign, nonatomic) DemandStatus status;
+@property (assign, nonatomic) Aw2DemandStatus status;
 
 @end
 
@@ -26,7 +26,7 @@
     self.lock = true;
     
     //2,状态
-    self.status = DemandStatus_IO;
+    self.status = Aw2DemandStatus_IO;
     
     //3,异步执行
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -53,14 +53,14 @@
         }
         
         //5,分析重要性
-        self.status = theThink.curDemand ? DemandStatus_MainCommit : DemandStatus_NoMain;
+        self.status = theThink.curDemand ? Aw2DemandStatus_MainCommit : Aw2DemandStatus_NoMain;
         [self checkTaskImportance:mindValueArr];
     });
 }
 
 //分析任务的重要性;
 -(void) checkTaskImportance:(NSMutableArray*)models {
-    if (self.status != DemandStatus_Finish && ARRISOK(models)) {
+    if (self.status != Aw2DemandStatus_Finish && ARRISOK(models)) {
         for (AIMindValueModel *model in models) {
             //1,权重(参考:AI/框架/Understand/Awareness->Demand->ThinkTask任务/注:权重)(经验和习惯的知识表示全了再写这块代码)
             NSArray *weightArr;
@@ -81,8 +81,8 @@
             
             //4,生成think.curDemand
             if (model.value < canValidValue) {
-                if (self.status == DemandStatus_NoMain) {
-                    self.status = DemandStatus_MainCommit;
+                if (self.status == Aw2DemandStatus_NoMain) {
+                    self.status = Aw2DemandStatus_MainCommit;
                     
                     //logThink
                     AIDemandModel *demandModel = [[AIDemandModel alloc] initWithAIMindValueModel:model];
@@ -91,7 +91,7 @@
                     dispatch_async(dispatch_get_main_queue(), ^{
                         [theThink setData:demandModel];
                     });
-                }else if(self.status == DemandStatus_MainCommit){
+                }else if(self.status == Aw2DemandStatus_MainCommit){
                     //logThink
                     AIDemandModel *demandModel = [[AIDemandModel alloc] initWithAIMindValueModel:model];
                     [AIDemandStore insert:demandModel awareness:true];
@@ -103,13 +103,13 @@
             }
         }
         self.lock = false;
-        self.status = DemandStatus_Finish;
+        self.status = Aw2DemandStatus_Finish;
     }
 }
 
 -(void) stop{
     self.lock = false;
-    self.status = DemandStatus_Finish;
+    self.status = Aw2DemandStatus_Finish;
     
 }
 

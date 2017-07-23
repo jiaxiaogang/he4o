@@ -76,13 +76,14 @@ typedef NS_ENUM(NSInteger, HungerState) {
 };
 
 /**
- *  MARK:--------------------DemandNavigation--------------------
+ *  MARK:--------------------Aw2DemandStatus--------------------
  */
-typedef NS_ENUM(NSInteger, DemandStatus) {
-    DemandStatus_None       = 0,
-    DemandStatus_IO         = 1,//IO
-    DemandStatus_NoMain     = 2,
-    DemandStatus_MainWait   = 3,//主任务生成等待
-    DemandStatus_MainCommit = 4,//主任务提交
-    DemandStatus_Finish     = 5,//finish
+typedef NS_ENUM(NSInteger, Aw2DemandStatus) {
+    Aw2DemandStatus_None       = 0,
+    Aw2DemandStatus_IO         = 1,//IO
+    Aw2DemandStatus_NoMain     = 2,
+    Aw2DemandStatus_MainWait   = 3,//主任务生成等待
+    Aw2DemandStatus_MainCommit = 4,//主任务提交
+    Aw2DemandStatus_Finish     = 5,//finish(Awareness->Demand的意识分析完成)
 };
+

@@ -110,6 +110,9 @@
         [AILineStore searchPointer:model.pointer count:1];//取多少呢?
         
         
+        //(参考:AI/框架/Understand/ThinkDemand的解)
+        
+        
         
     }
     
@@ -239,8 +242,6 @@
 }
 
 -(void) stopCurDemand{
-    //好了伤疤忘了疼;
-    _curDemand.value = 0;
     _curDemand = nil;
     [[NSNotificationCenter defaultCenter] postNotificationName:ObsKey_ThinkBusy object:nil];
 }
