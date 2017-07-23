@@ -11,7 +11,7 @@
 @interface AIDemandModel : AIObject
 
 -(id) initWithAIMindValueModel:(AIMindValueModel*)model;
-@property (assign, nonatomic) CGFloat value;    //任务紧迫度;(0->10越大越紧迫)
+@property (assign, nonatomic) CGFloat value;    //任务紧迫度;(-10->10绝对值越大越紧迫)
 @property (assign, nonatomic) MindType type;
 
 @end

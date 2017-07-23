@@ -186,26 +186,31 @@
     //1,检查数据可替换
     BOOL valid = false;
     if (demand && self.curDemand) {
-        
-        //1,curDemand依专注度x权重(意识流密度和数量,相关的mindValue)
-        NSInteger curDemandV = self.curDemand.value;
-        curDemandV *= 2.0f;
-        
-        //2,四舍五入
-        NSInteger newDemandV = (int)(demand.value + 0.5f);
-        curDemandV = (int)(self.curDemand.value + 0.5f);
-        
-        //3,对比
-        if (newDemandV > curDemandV) {
-            valid = true;
-        }else if(newDemandV == curDemandV){
-            //由Think决定:
-            //a.再次搜索权重;
-            //a.1;找不到时,思考解决方法;
-            //a.2;更多线索;
-            //a.3;随机挑一个;
+        if (demand.type == self.curDemand.type) {
+            if (demand.value > 0 != self.curDemand.value > 0) {
+                [self stopCurDemand];
+            }
         }else{
+            //1,curDemand依专注度x权重(意识流密度和数量,相关的mindValue)
+            NSInteger curDemandV = fabs(self.curDemand.value);
+            curDemandV *= 2.0f;
             
+            //2,四舍五入
+            NSInteger newDemandV = (int)(fabs(demand.value) + 0.5f);
+            curDemandV = (int)(curDemandV + 0.5f);
+            
+            //3,对比
+            if (newDemandV > curDemandV) {
+                valid = true;
+            }else if(newDemandV == curDemandV){
+                //由Think决定:
+                //a.再次搜索权重;
+                //a.1;找不到时,思考解决方法;
+                //a.2;更多线索;
+                //a.3;随机挑一个;
+            }else{
+                
+            }
         }
     }else{
         valid = true;
@@ -220,6 +225,13 @@
 
 -(BOOL) isBusy{
     return self.curDemand != nil;
+}
+
+-(void) stopCurDemand{
+    //好了伤疤忘了疼;
+    _curDemand.value = 0;
+    _curDemand = nil;
+    [[NSNotificationCenter defaultCenter] postNotificationName:ObsKey_ThinkBusy object:nil];
 }
 
 @end
