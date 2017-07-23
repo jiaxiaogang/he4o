@@ -91,9 +91,10 @@
     if (model == nil) {
         return;
     }
-    //2,通知时相应处理....(先不写)
-    
-    
+    //2,通知时2选1;
+    AIDemandModel *demandModel = [[AIDemandModel alloc] initWithAIMindValueModel:model];
+    [AIDemandStore insert:demandModel awareness:true];//logThink记忆
+    [self setData:demandModel];
 }
 
 /**

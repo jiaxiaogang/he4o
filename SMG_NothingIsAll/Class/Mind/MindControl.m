@@ -84,14 +84,14 @@
             AIMindValueModel *mindValue = [[AIMindValueModel alloc] init];
             mindValue.type = MindType_Hunger;
             mindValue.value = mVD;
-            [AIMindValueStore insert:mindValue awareness:true];//logThink
+            [AIMindValueStore insert:mindValue awareness:true];//logThink记忆饿的感觉
             [theThink commitMindValueNotice:mindValue];
         }else if (model.state == UIDeviceBatteryStateUnplugged) {
             if (mVD < -3) {
                 AIMindValueModel *mindValue = [[AIMindValueModel alloc] init];
                 mindValue.type = MindType_Hunger;//产生饥饿感
                 mindValue.value = mVD;
-                [AIMindValueStore insert:mindValue awareness:true];//logThink
+                [AIMindValueStore insert:mindValue awareness:true];//logThink记忆饿的感觉
                 [theThink commitMindValueNotice:mindValue];
             }
         }
