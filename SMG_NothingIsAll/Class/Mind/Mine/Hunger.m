@@ -9,6 +9,14 @@
 #import "Hunger.h"
 #import "MindHeader.h"
 
+
+@interface Hunger ()
+
+@property (assign, nonatomic) CGFloat tmpLevel;
+@property (assign, nonatomic) HungerState tmpState;
+
+@end
+
 @implementation Hunger
 
 
@@ -106,16 +114,30 @@
     //return [UIDevice currentDevice].batteryLevel;
 }
 
+-(HungerState) getState{
+    //return [[UIDevice currentDevice].batteryState == ing return hungerStateing;];
+    return self.tmpState;
+}
+
+-(void) setLevel:(CGFloat)level{
+    self.tmpLevel = level;
+}
+
+-(CGFloat)getLevel{
+    return self.tmpLevel;
+}
+
 /**
  *  MARK:--------------------tmpTest--------------------
  */
 -(void) tmpTest_Add{
+    self.tmpState = HungerState_Charging;
     CGFloat level = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:[self getCurrentLevel]];
     
     //1,LogThink
     AIHungerLevelChangedModel *model = [[AIHungerLevelChangedModel alloc] init];//logThink
     model.level = level;
-    model.state = HungerState_Charging;
+    model.state = self.tmpState;
     [AIHungerLevelChangedStore insert:model awareness:true];
     
     //2,回调
@@ -125,12 +147,13 @@
 }
 
 -(void) tmpTest_Sub{
+    self.tmpState = HungerState_Unplugged;
     CGFloat level = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:[self getCurrentLevel]];
     
     //1,LogThink
     AIHungerLevelChangedModel *model = [[AIHungerLevelChangedModel alloc] init];//logThink
     model.level = level;
-    model.state = HungerState_Unplugged;
+    model.state = self.tmpState;
     [AIHungerLevelChangedStore insert:model awareness:true];
     
     //2,回调
@@ -140,12 +163,13 @@
 }
 
 -(void) tmpTest_Start{
+    self.tmpState = HungerState_Charging;
     CGFloat level = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:[self getCurrentLevel]];
     
     //1,LogThink
     AIHungerStateChangedModel *model = [[AIHungerStateChangedModel alloc] init];//logThink
     model.level = level;
-    model.state = HungerState_Charging;
+    model.state = self.tmpState;
     [AIHungerStateChangedStore insert:model awareness:true];
     
     //2,回调
@@ -155,12 +179,13 @@
 }
 
 -(void) tmpTest_Stop {
+    self.tmpState = HungerState_Unplugged;
     CGFloat level = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:[self getCurrentLevel]];
     
     //1,LogThink
     AIHungerStateChangedModel *model = [[AIHungerStateChangedModel alloc] init];//logThink
     model.level = level;
-    model.state = HungerState_Unplugged;
+    model.state = self.tmpState;
     [AIHungerStateChangedStore insert:model awareness:true];
     
     //2,回调

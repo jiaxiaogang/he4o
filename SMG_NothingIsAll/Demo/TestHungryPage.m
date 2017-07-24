@@ -95,7 +95,7 @@
     NSString *value = STRFORMAT(@"%.2f",self.hungerLevelSlider.value);
     [self.hungerLevelLab setText:value];
     [self.hungerLevelLab setTextColor:self.hungerLevelSlider.value > 0.7 ? [UIColor greenColor] : [UIColor redColor]];
-    theHunger.tmpLevel = self.hungerLevelSlider.value;
+    [theHunger setLevel:self.hungerLevelSlider.value];
 }
 
 - (IBAction)thinkBtnOnClick:(id)sender {

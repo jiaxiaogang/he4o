@@ -39,14 +39,18 @@
         NSMutableArray *mindValueArr = [[NSMutableArray alloc] init];
         for (AIAwarenessModel *aw in ARRTOOK(aws)) {
             NSObject *content = [aw.awarenessP content];
+            //1,检查类型
             if ([content isKindOfClass:[AIMindValueModel class]]) {
                 AIMindValueModel *contentMVM = (AIMindValueModel*)content;
-                [mindValueArr addObject:contentMVM];
-                for (NSInteger i = 0; i < mindValueArr.count; i++) {
-                    AIMindValueModel *itemModel = mindValueArr[i];
-                    if (itemModel.value < contentMVM.value) {
-                        [mindValueArr insertObject:contentMVM atIndex:i];
-                        break;
+                //2,检查失效性(根据状态)
+                if ([self checkTaskValid:contentMVM]) {
+                    [mindValueArr addObject:contentMVM];
+                    for (NSInteger i = 0; i < mindValueArr.count; i++) {
+                        AIMindValueModel *itemModel = mindValueArr[i];
+                        if (itemModel.value < contentMVM.value) {
+                            [mindValueArr insertObject:contentMVM atIndex:i];
+                            break;
+                        }
                     }
                 }
             }
@@ -56,6 +60,24 @@
         self.status = theThink.curDemand ? Aw2DemandStatus_MainCommit : Aw2DemandStatus_NoMain;
         [self checkTaskImportance:mindValueArr];
     });
+}
+
+-(BOOL) checkTaskValid:(AIMindValueModel*)model{
+    if (model) {
+        if (model.type == MindType_Hunger) {
+            
+            //Awareness->Demand层会将意识流中大多数明显有问题的Demand过滤掉;
+            
+            if (model.value < 0 && theHunger.getState == HungerState_Charging) {
+                return false;
+            }
+            if (model.value > 0 && theHunger.getState == HungerState_Unplugged) {
+                return false;
+            }
+            
+        }
+    }
+    return true;
 }
 
 //分析任务的重要性;

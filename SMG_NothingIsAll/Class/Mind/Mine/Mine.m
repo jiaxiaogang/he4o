@@ -39,7 +39,7 @@
  */
 -(MindStrategyModel*) getMindStrategyModelForDemand{
     NSMutableArray *mArr = [[NSMutableArray alloc] init];
-    [mArr addObject:[self.hunger getStrategyModel]];
+    //[mArr addObject:[self.hunger getStrategyModel]];
     [mArr addObject:[self.mood getStrategyModel]];
     return [MindStrategy getModelForDemandWithArr:mArr];
 }

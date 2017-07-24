@@ -34,10 +34,12 @@
 @class MindStrategyModel;
 @interface Hunger : NSObject
 
-@property (assign, nonatomic) CGFloat tmpLevel;
-@property (weak, nonatomic) id<HungerDelegate> delegate;
--(MindStrategyModel*) getStrategyModel;
 
+
+@property (weak, nonatomic) id<HungerDelegate> delegate;
+-(HungerState) getState;
+-(CGFloat) getLevel;
+-(void) setLevel:(CGFloat)level;
 
 -(void) tmpTest_Add;
 -(void) tmpTest_Sub;
