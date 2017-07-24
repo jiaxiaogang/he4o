@@ -44,14 +44,18 @@
                 AIMindValueModel *contentMVM = (AIMindValueModel*)content;
                 //2,检查失效性(根据状态)
                 if ([self checkTaskValid:contentMVM]) {
-                    [mindValueArr addObject:contentMVM];
-                    for (NSInteger i = 0; i < mindValueArr.count; i++) {
-                        AIMindValueModel *itemModel = mindValueArr[i];
-                        if (itemModel.value < contentMVM.value) {
-                            [mindValueArr insertObject:contentMVM atIndex:i];
-                            break;
+                    if (ARRISOK(mindValueArr)) {
+                        for (NSInteger i = 0; i < mindValueArr.count; i++) {
+                            AIMindValueModel *itemModel = mindValueArr[i];
+                            //3,大->小排序;
+                            if (fabs(itemModel.value) < fabs(contentMVM.value)) {
+                                [mindValueArr insertObject:contentMVM atIndex:i];
+                                break;
+                            }
                         }
                     }
+                    //4,最小放最后;
+                    [mindValueArr addObject:contentMVM];
                 }
             }
         }
