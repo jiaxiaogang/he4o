@@ -104,13 +104,14 @@
 -(BOOL) checkTaskCanDecision:(AIDemandModel*)model{
     if (model) {
         
-        //1,取AILine关联数据
-        //2,取当前状态等相关数据,进行分析;
+        //失效验证1,取当前状态等相关数据,进行分析;
+        //link to Demand line69:-(BOOL) checkTaskValid:(AIMindValueModel*)model;
         
+        //失效验证2,取AILine关联数据
         [AILineStore searchPointer:model.pointer count:1];//取多少呢?
-        
-        
-        //(参考:AI/框架/Understand/ThinkDemand的解)
+        //必须先有解,才会有网络,才能分析认定这样的验证;(参考:AI/框架/Understand/ThinkDemand的解)
+        //2.1,根据AILine查找数据;
+        //2.2,带有目的性,只要找到已解的"意识流"数据;则中止;并返回false;
         
         
         
