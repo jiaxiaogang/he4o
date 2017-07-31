@@ -163,6 +163,9 @@
 }
 
 -(void) tmpTest_Start{
+    if (self.tmpState == HungerState_Charging) {
+        return;
+    }
     self.tmpState = HungerState_Charging;
     CGFloat level = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:[self getCurrentLevel]];
     
@@ -179,6 +182,9 @@
 }
 
 -(void) tmpTest_Stop {
+    if (self.tmpState == HungerState_Unplugged) {
+        return;
+    }
     self.tmpState = HungerState_Unplugged;
     CGFloat level = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:[self getCurrentLevel]];
     

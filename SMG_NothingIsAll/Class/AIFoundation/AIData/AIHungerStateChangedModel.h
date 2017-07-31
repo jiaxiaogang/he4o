@@ -10,7 +10,7 @@
 
 @interface AIHungerStateChangedModel : AIObject
 
-@property (assign, nonatomic) CGFloat level;    //电量
+@property (assign, nonatomic) CGFloat level;    //电量(0-10)
 @property (assign, nonatomic) HungerState state;
 
 @end

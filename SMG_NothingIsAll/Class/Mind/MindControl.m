@@ -71,27 +71,14 @@
  */
 -(void) mine_HungerLevelChanged:(AIHungerLevelChangedModel*)model{
     if (model) {
-        //1,取值
-        CGFloat mVD = 0;
-        CGFloat zero2hundred = sqrtf(10 - model.level);
-        if (model.state == HungerState_Unplugged) {
-            mVD = [MathUtils getValueWithOriRange:UIFloatRangeMake(0, 100) targetRange:UIFloatRangeMake(-10, 0) oriValue:zero2hundred];//(饿一滴血)
-        }else if (model.state == HungerState_Charging) {//充电中
-            mVD = [MathUtils getValueWithOriRange:UIFloatRangeMake(0, 100) targetRange:UIFloatRangeMake(0, 10) oriValue:zero2hundred];//(饱一滴血)
-        }
-        
+        //1,转换model;
+        AIMindValueModel *mindValue = [MindValueUtils getMindValue_HungerLevelChanged:model];
         //2,分析决策 & 产生需求
         if (model.state == UIDeviceBatteryStateCharging) {
-            AIMindValueModel *mindValue = [[AIMindValueModel alloc] init];
-            mindValue.type = MindType_Hunger;
-            mindValue.value = mVD;
             [AIMindValueStore insert:mindValue awareness:true];//logThink记忆饿的感觉
             [theThink commitMindValueNotice:mindValue];
         }else if (model.state == UIDeviceBatteryStateUnplugged) {
-            if (mVD < -3) {
-                AIMindValueModel *mindValue = [[AIMindValueModel alloc] init];
-                mindValue.type = MindType_Hunger;//产生饥饿感
-                mindValue.value = mVD;
+            if (mindValue.value < -3) {
                 [AIMindValueStore insert:mindValue awareness:true];//logThink记忆饿的感觉
                 [theThink commitMindValueNotice:mindValue];
             }
@@ -101,6 +88,12 @@
 
 -(void) mine_HungerStateChanged:(AIHungerStateChangedModel*)model{
     if (model) {
+        //1,转换model;
+        AIMindValueModel *mindValue = [MindValueUtils getMindValue_HungerStateChanged:model];
+        //1,查询当前未处理的需求;看有没被解决掉;
+        //2,思考充电状态与电量增加的逻辑关系;
+        [theThink commitMindValueNotice:mindValue];
+        
         //2,分析决策 & 产生需求
         if (model.state == HungerState_Unplugged) {
             if (model.level > 9.5) {
@@ -117,11 +110,6 @@
                 [MBProgressHUD showSuccess:@"好吧,再充些..." toView:nil withHideDelay:1];
             }else if(model.level < 7){
                 [MBProgressHUD showSuccess:@"谢谢呢!" toView:nil withHideDelay:1];
-                //1,查询当前未处理的需求;看有没被解决掉;
-                //2,思考充电状态与电量增加的逻辑关系;
-                
-                NSLog(@"_____%f",[UIDevice currentDevice].batteryLevel);
-                
             }
         }
     }
