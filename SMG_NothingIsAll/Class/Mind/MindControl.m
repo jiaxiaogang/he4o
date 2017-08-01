@@ -89,9 +89,11 @@
 -(void) mine_HungerStateChanged:(AIHungerStateChangedModel*)model{
     if (model) {
         //1,转换model;
-        AIMindValueModel *mindValue = [MindValueUtils getMindValue_HungerStateChanged:model];
+        AIMindValueModel *mindValue = [MindValueUtils getMindValue_HungerLevelChanged:model];
+        
         //1,查询当前未处理的需求;看有没被解决掉;
         //2,思考充电状态与电量增加的逻辑关系;
+        //3,充上电,只会记录状态变化;而充上电加电后,才会真正知道充上电与充电的逻辑关系;
         [theThink commitMindValueNotice:mindValue];
         
         //2,分析决策 & 产生需求

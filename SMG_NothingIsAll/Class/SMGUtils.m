@@ -313,26 +313,10 @@
 
 +(AIMindValueModel*) getMindValue_HungerLevelChanged:(AIHungerLevelChangedModel*)model{
     CGFloat mVD = 0;
-    CGFloat zero2hundred = sqrtf(10 - model.level);
     if (model.state == HungerState_Unplugged) {
-        mVD = [MathUtils getValueWithOriRange:UIFloatRangeMake(0, 100) targetRange:UIFloatRangeMake(-10, 0) oriValue:zero2hundred];//(饿一滴血)
+        mVD = [MathUtils getValueWithOriRange:UIFloatRangeMake(0, 100) targetRange:UIFloatRangeMake(-10, 0) oriValue:model.level * model.level];//(饿一滴血)
     }else if (model.state == HungerState_Charging) {//充电中
-        mVD = [MathUtils getValueWithOriRange:UIFloatRangeMake(0, 100) targetRange:UIFloatRangeMake(0, 10) oriValue:zero2hundred];//(饱一滴血)
-    }
-    
-    //2,分析决策 & 产生需求
-    AIMindValueModel *mindValue = [[AIMindValueModel alloc] init];
-    mindValue.type = MindType_Hunger;
-    mindValue.value = mVD;
-    return mindValue;
-}
-
-+(AIMindValueModel*) getMindValue_HungerStateChanged:(AIHungerStateChangedModel*)model{
-    CGFloat mVD = 0;
-    if (model.state == HungerState_Unplugged) {//停止充电(-10-0)
-        mVD = [MathUtils getValueWithOriRange:UIFloatRangeMake(0, 100) targetRange:UIFloatRangeMake(-10, 0) oriValue:sqrtf(model.level)];
-    }else if (model.state == HungerState_Charging) {//充上电(10-0)
-        mVD = [MathUtils getValueWithOriRange:UIFloatRangeMake(0, 100) targetRange:UIFloatRangeMake(10, 0) oriValue:sqrtf(model.level)];
+        mVD = [MathUtils getValueWithOriRange:UIFloatRangeMake(0, 100) targetRange:UIFloatRangeMake(10, 0) oriValue:model.level * model.level];//(饱一滴血)
     }
     
     //2,分析决策 & 产生需求
