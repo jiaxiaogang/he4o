@@ -210,6 +210,11 @@
         if (demand.type == self.curDemand.type) {
             if (demand.value > 0 != self.curDemand.value > 0) {
                 [self stopCurDemand];
+                //从意识流Demand的解决到"抽象出常识";
+                //"苹果可以吃"是有意识思考;//所以此处要产生一个有意识的思考;来抽象出"常识"数据;
+                //最原始的数据存储;我吃过苹果;而不是苹果可以吃;
+                //形成不同梯度的数据到底是AILine还是不同的表?
+                //有可能只是神经网络的强度组成了不同的抽象层级;而不是不同的表;但抽象后,肯定是有数据的;(这里需要再做些思考)
             }
         }else{
             //1,curDemand依专注度x权重(意识流密度和数量,相关的mindValue)
