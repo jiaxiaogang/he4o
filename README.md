@@ -1,5 +1,5 @@
 # SMG(强人工智能系统)
-> 参考:https://1drv.ms/u/s!AkpqBGfL4VaJqOFXd8fpMGLkZL93Cg
+> 参考笔记:[http://j2717.top/html/SMG_NOTE.html](http://j2717.top/html/SMG_NOTE.html)
 
 ![](https://img.shields.io/badge/%20QQGroup-528053635%20-orange.svg)
 ![](https://img.shields.io/badge/%20Wechat-jia2764894%20-orange.svg)
@@ -8,7 +8,9 @@
 #### -------------------引言-------------------
 
 > 第一梯队:1950年图灵提出"可思考的机器"和"图灵测试",他说:"放眼不远的将来,我们就有很多工作要做";  
+
 > 第二梯队:1956达特矛斯会议后,明斯基和麦卡锡等人穷其一生心血,虽未落地,却为AGI奠定了很多基础;  
+
 > 第三梯队:随着bigData,云计算等成熟,AI迎来DL热,但DL并不智能,故小僧希望通过此项目将AGI落地;  
 
 
@@ -43,6 +45,8 @@
 - 意识行为
 - 第6感
 - 潜意识
+- 参考:
+	- [https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note3.md#n3p15意识170801](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note3.md#n3p15意识170801)
 
 #### -------------------SMG架构-------------------
 
@@ -87,7 +91,9 @@
 12. 预测
 
 13. 知识表示
-> 数据拆分(在Memory->AIAwareness的过程中,自然而然的实现拆分与抽象;) 
+> 数据拆分(在Memory->AIAwareness的过程中,自然而然的实现拆分与抽象;)   
+> 参考:  
+	> [https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%A1%86%E6%9E%B6/%E7%9F%A5%E8%AF%86%E8%A1%A8%E7%A4%BA.md](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%A1%86%E6%9E%B6/%E7%9F%A5%E8%AF%86%E8%A1%A8%E7%A4%BA.md)
 
 
 ## -------------------时间线-------------------
@@ -107,4 +113,7 @@
 > - BrainTree(参考N3P7,N3P8)
 
 ### 2017.07.21
-> - ThinkTask(参考N3P11,AI/框架/Understand/Awareness->Demand->ThinkTask)
+> - ThinkTask(参考[N3P11](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note3.md#n3p11awareness-demand-thinktask---或旧资料demand)，[Awareness->Demand->ThinkTask](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%A1%86%E6%9E%B6/Understand.md#awareness-demand-thinktask任务))
+
+### 2017.08.01
+> - [意识](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note3.md#n3p15意识170801)
