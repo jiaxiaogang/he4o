@@ -85,5 +85,6 @@
 @interface MindValueUtils : NSObject
 
 +(AIMindValueModel*) getMindValue_HungerLevelChanged:(AIHungerLevelChangedModel*)model;
++(AIMindValueModel*) getMindValue_HungerStateChanged:(AIHungerStateChangedModel*)model;
 
 @end

@@ -66,55 +66,23 @@
     }
 }
 
+-(AIMindValueModel*) getMindValueWithHungerLevelChanged:(AIHungerLevelChangedModel*)model{
+    return [MindValueUtils getMindValue_HungerLevelChanged:model];
+}
+
+-(AIMindValueModel*) getMindValueWithHungerStateChanged:(AIHungerStateChangedModel*)model{
+    return [MindValueUtils getMindValue_HungerStateChanged:model];
+}
+
 /**
  *  MARK:--------------------MineDelegate--------------------
  */
 -(void) mine_HungerLevelChanged:(AIHungerLevelChangedModel*)model{
-    if (model) {
-        //1,转换model;
-        AIMindValueModel *mindValue = [MindValueUtils getMindValue_HungerLevelChanged:model];
-        //2,分析决策 & 产生需求
-        if (model.state == UIDeviceBatteryStateCharging) {
-            [AIMindValueStore insert:mindValue awareness:true];//logThink记忆饿的感觉
-            [theThink commitMindValueNotice:mindValue];
-        }else if (model.state == UIDeviceBatteryStateUnplugged) {
-            if (mindValue.value < -3) {
-                [AIMindValueStore insert:mindValue awareness:true];//logThink记忆饿的感觉
-                [theThink commitMindValueNotice:mindValue];
-            }
-        }
-    }
+    [theThink commitMindModel:model];
 }
 
 -(void) mine_HungerStateChanged:(AIHungerStateChangedModel*)model{
-    if (model) {
-        //1,转换model;
-        AIMindValueModel *mindValue = [MindValueUtils getMindValue_HungerLevelChanged:model];
-        
-        //1,查询当前未处理的需求;看有没被解决掉;
-        //2,思考充电状态与电量增加的逻辑关系;
-        //3,充上电,只会记录状态变化;而充上电加电后,才会真正知道充上电与充电的逻辑关系;
-        [theThink commitMindValueNotice:mindValue];
-        
-        //2,分析决策 & 产生需求
-        if (model.state == HungerState_Unplugged) {
-            if (model.level > 9.5) {
-                [MBProgressHUD showSuccess:@"饱了..." toView:nil withHideDelay:1];
-            }else if(model.level > 7){
-                [MBProgressHUD showSuccess:@"好吧,下次再充..." toView:nil withHideDelay:1];
-            }else if(model.level < 7){
-                [MBProgressHUD showSuccess:@"还没饱呢" toView:nil withHideDelay:1];
-            }
-        }else if (model.state == HungerState_Charging) {
-            if (model.level > 9.5) {
-                [MBProgressHUD showSuccess:@"饱了..." toView:nil withHideDelay:1];
-            }else if(model.level > 7){
-                [MBProgressHUD showSuccess:@"好吧,再充些..." toView:nil withHideDelay:1];
-            }else if(model.level < 7){
-                [MBProgressHUD showSuccess:@"谢谢呢!" toView:nil withHideDelay:1];
-            }
-        }
-    }
+    [theThink commitMindModel:model];
 }
 
 @end

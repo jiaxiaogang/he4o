@@ -160,6 +160,11 @@
     if (self.delegate && [self.delegate respondsToSelector:@selector(hunger_LevelChanged:)]) {
         [self.delegate hunger_LevelChanged:model];
     }
+    
+    //重构掉电的流程;
+    //1,掉电只是掉电;如果Awareness在忙;则不会意识到需求;(甚至有不会存到意识流)
+    //2,生理饥饿状态与心理饥饿需求是作了先天绑定的;(或者直接就是生理需求,与心理不一致)
+    //3,
 }
 
 -(void) tmpTest_Start{
