@@ -19,7 +19,7 @@
  *  MARK:--------------------ObserverKEY--------------------
  */
 #define ObsKey_ThinkBusy @"ObsKey_ThinkBusy"
-
+#define ObsKey_AwarenessModelChanged @"ObsKey_AwarenessModelChanged"
 
 /**
  *  MARK:--------------------数据检查--------------------
