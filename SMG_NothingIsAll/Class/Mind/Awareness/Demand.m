@@ -128,9 +128,9 @@
                 }
             }
         }
-        self.lock = false;
-        self.status = Aw2DemandStatus_Finish;
     }
+    self.lock = false;
+    self.status = Aw2DemandStatus_Finish;
 }
 
 -(void) stop{

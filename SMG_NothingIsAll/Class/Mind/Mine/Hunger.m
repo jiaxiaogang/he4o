@@ -51,7 +51,6 @@
     AIHungerLevelChangedModel *model = [[AIHungerLevelChangedModel alloc] init];//logThink
     model.level = level;
     model.state = state;
-    [AIHungerLevelChangedStore insert:model awareness:true];
     
     //3,回调
     if (self.delegate && [self.delegate respondsToSelector:@selector(hunger_LevelChanged:)]) {
@@ -97,7 +96,6 @@
     AIHungerStateChangedModel *model = [[AIHungerStateChangedModel alloc] init];//logThink
     model.level = level;
     model.state = state;
-    [AIHungerStateChangedStore insert:model awareness:true];
     
     //3,回调
     if (self.delegate && [self.delegate respondsToSelector:@selector(hunger_StateChanged:)]) {
@@ -138,7 +136,6 @@
     AIHungerLevelChangedModel *model = [[AIHungerLevelChangedModel alloc] init];//logThink
     model.level = level;
     model.state = self.tmpState;
-    [AIHungerLevelChangedStore insert:model awareness:true];
     
     //2,回调
     if (self.delegate && [self.delegate respondsToSelector:@selector(hunger_LevelChanged:)]) {
@@ -154,7 +151,6 @@
     AIHungerLevelChangedModel *model = [[AIHungerLevelChangedModel alloc] init];//logThink
     model.level = level;
     model.state = self.tmpState;
-    [AIHungerLevelChangedStore insert:model awareness:true];
     
     //2,回调
     if (self.delegate && [self.delegate respondsToSelector:@selector(hunger_LevelChanged:)]) {
@@ -178,7 +174,6 @@
     AIHungerStateChangedModel *model = [[AIHungerStateChangedModel alloc] init];//logThink
     model.level = level;
     model.state = self.tmpState;
-    [AIHungerStateChangedStore insert:model awareness:true];
     
     //2,回调
     if (self.delegate && [self.delegate respondsToSelector:@selector(hunger_StateChanged:)]) {
@@ -197,7 +192,6 @@
     AIHungerStateChangedModel *model = [[AIHungerStateChangedModel alloc] init];//logThink
     model.level = level;
     model.state = self.tmpState;
-    [AIHungerStateChangedStore insert:model awareness:true];
     
     //2,回调
     if (self.delegate && [self.delegate respondsToSelector:@selector(hunger_StateChanged:)]) {

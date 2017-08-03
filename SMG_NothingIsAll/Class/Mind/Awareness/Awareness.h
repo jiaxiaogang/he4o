@@ -11,5 +11,6 @@
 @interface Awareness : NSObject
 
 -(void) run;
+-(BOOL) tmpCheck:(AIMindValueModel*)model;
 
 @end

@@ -99,27 +99,8 @@
 
 -(void) commitMindModel:(id)m{
     if (!m) return;
-    if (self.isBusy) return;//主线程忙,直接返回;
-    
-    if ([m isKindOfClass:[AIHungerLevelChangedModel class]]) {
-        //1,取数据
-        AIHungerLevelChangedModel *model = (AIHungerLevelChangedModel*)m;
-        //AIMindValueModel *mindValue = [theMind getMindValueWithHungerLevelChanged:model];(参考N3P18)
-        //2,分析决策 & 产生需求
-        if (model.state == UIDeviceBatteryStateCharging || (model.state == UIDeviceBatteryStateUnplugged && model.level < 7)) {
-            [AIHungerLevelChangedStore insert:model awareness:true];//logThink记忆饿的意识流;
-        }
-    }else if ([m isKindOfClass:[AIHungerStateChangedModel class]]) {
-        //1,取数据
-        AIHungerStateChangedModel *model = (AIHungerStateChangedModel*)m;
-        //AIMindValueModel *mindValue = [theMind getMindValueWithHungerStateChanged:model];(参考N3P18)
-        //2,分析决策 & 产生需求
-        [AIHungerLevelChangedStore insert:model awareness:true];//logThink记忆充电状态变化的意识流;
-        
-        //1,查询当前未处理的需求;看有没被解决掉;
-        //2,思考充电状态与电量增加的逻辑关系;
-        //3,充上电,只会记录状态变化;而充上电加电后,才会真正知道充上电与充电的逻辑关系;
-    }
+    if (self.isBusy) return;//
+    //...
 }
 
 /**

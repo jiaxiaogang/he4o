@@ -46,6 +46,7 @@ static SMG *_instance;
     self.feel       = [[Feel alloc] init];
     self.output     = [[Output alloc] init];
     self.input = [[Input alloc] init];
+    self.mainThread = [[AIMainThread alloc] init];
 }
 
 -(void) initRun{

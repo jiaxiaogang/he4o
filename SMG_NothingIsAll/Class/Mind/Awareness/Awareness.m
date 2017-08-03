@@ -17,6 +17,10 @@
 
 @implementation Awareness
 
+-(BOOL) tmpCheck:(AIMindValueModel*)model{
+    return false;
+}
+
 -(void) run{
     //1,开始异步搜索IO任务;(xx秒一次的内省)
     __block Awareness *weakSelf;
