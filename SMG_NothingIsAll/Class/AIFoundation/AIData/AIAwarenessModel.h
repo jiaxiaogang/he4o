@@ -17,4 +17,4 @@
 
 @property (strong,nonatomic) AIPointer *awarenessP;    //意识流可能只存一个指针
 
-@end
+@end 
