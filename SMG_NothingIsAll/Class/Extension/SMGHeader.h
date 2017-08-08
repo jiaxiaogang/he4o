@@ -19,6 +19,7 @@
  *  MARK:--------------------ObserverKEY--------------------
  */
 #define ObsKey_ThinkBusy @"ObsKey_ThinkBusy"
+#define ObsKey_MainThreadBusy @"ObsKey_MainThreadBusy"
 #define ObsKey_AwarenessModelChanged @"ObsKey_AwarenessModelChanged"
 
 /**

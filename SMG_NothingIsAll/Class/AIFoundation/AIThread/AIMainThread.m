@@ -10,8 +10,9 @@
 
 @implementation AIMainThread
 
--(BOOL) isBusy{
-    return false;
+-(void)setIsBusy:(BOOL)isBusy{
+    _isBusy = isBusy;
+    [[NSNotificationCenter defaultCenter] postNotificationName:ObsKey_MainThreadBusy object:nil];
 }
 
 @end

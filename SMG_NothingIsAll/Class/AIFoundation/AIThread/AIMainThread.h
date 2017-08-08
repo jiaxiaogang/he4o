@@ -17,6 +17,6 @@
  */
 @interface AIMainThread : NSObject
 
--(BOOL) isBusy;
+@property (assign, nonatomic) BOOL isBusy;
 
 @end

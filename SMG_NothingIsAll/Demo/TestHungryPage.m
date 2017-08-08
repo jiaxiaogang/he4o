@@ -21,7 +21,9 @@
 @property (weak, nonatomic) IBOutlet UIButton *canceBtn;
 @property (weak, nonatomic) IBOutlet UISlider *hungerLevelSlider;
 @property (weak, nonatomic) IBOutlet UILabel *hungerLevelLab;
-@property (weak, nonatomic) IBOutlet UIView *thinkStatusView;
+@property (weak, nonatomic) IBOutlet UIButton *thinkStatusBtn;
+@property (weak, nonatomic) IBOutlet UIButton *mainThreadStatusBtn;
+@property (weak, nonatomic) IBOutlet UITextField *logCountTF;
 
 @end
 
@@ -42,18 +44,29 @@
     [self.hungerLevelLab setText:STRFORMAT(@"%.2f",self.hungerLevelSlider.value)];
     [self.hungerLevelLab setTextColor:self.hungerLevelSlider.value > 0.7 ? [UIColor greenColor] : [UIColor redColor]];
     
-    //3,thinkStatusView
-    [self.thinkStatusView.layer setCornerRadius:5];
-    [self.thinkStatusView.layer setMasksToBounds:true];
+    //3,mainThreadStatusBtn
+    [self.mainThreadStatusBtn.layer setCornerRadius:3];
+    [self.mainThreadStatusBtn.layer setMasksToBounds:true];
+    [self.mainThreadStatusBtn.layer setBorderColor:[UIColor grayColor].CGColor];
+    [self.mainThreadStatusBtn.layer setBorderWidth:1];
+    
+    //4,thinkStatusBtn
+    [self.thinkStatusBtn.layer setCornerRadius:3];
+    [self.thinkStatusBtn.layer setMasksToBounds:true];
+    [self.thinkStatusBtn.layer setBorderColor:[UIColor grayColor].CGColor];
+    [self.thinkStatusBtn.layer setBorderWidth:1];
 }
 
 -(void) initDisplay{
     //1,Observer
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notificationThinkBusyChanged) name:
-     ObsKey_ThinkBusy object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notificationThinkBusyChanged) name:ObsKey_ThinkBusy object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notificationMainThreadBusyChanged) name:ObsKey_MainThreadBusy object:nil];
     
-    //2,thinkStatusView
-    [self.thinkStatusView setBackgroundColor:(theThink.isBusy ? [UIColor redColor] : [UIColor greenColor])];
+    //2,thinkStatusBtn
+    [self.thinkStatusBtn setBackgroundColor:(theThink.isBusy ? [UIColor redColor] : [UIColor greenColor])];
+    
+    //3,mainThreadStatusBtn
+    [self.mainThreadStatusBtn setBackgroundColor:(theMainThread.isBusy ? [UIColor redColor] : [UIColor greenColor])];
 }
 
 /**
@@ -102,11 +115,28 @@
     [theThink setData:nil];
 }
 
+- (IBAction)mainThreadStatusBtnOnClick:(id)sender {
+    [theMainThread setIsBusy:!theMainThread.isBusy];
+}
+
+- (IBAction)awarenessLogBtnOnClick:(id)sender {
+    NSInteger count = [STRTOOK(self.logCountTF.text) integerValue];
+    NSMutableArray *arr = [AIAwarenessStore searchWhere:nil count:count];
+    for (AIAwarenessModel *aw in ARRTOOK(arr)) {
+        AIObject *content = [aw.awarenessP content];
+        [content print];
+    }
+}
+
 /**
  *  MARK:--------------------method--------------------
  */
 -(void) notificationThinkBusyChanged{
-    [self.thinkStatusView setBackgroundColor:(theThink.isBusy ? [UIColor redColor] : [UIColor greenColor])];
+    [self.thinkStatusBtn setBackgroundColor:(theThink.isBusy ? [UIColor redColor] : [UIColor greenColor])];
+}
+
+-(void) notificationMainThreadBusyChanged{
+    [self.mainThreadStatusBtn setBackgroundColor:(theMainThread.isBusy ? [UIColor redColor] : [UIColor greenColor])];
 }
 
 /**

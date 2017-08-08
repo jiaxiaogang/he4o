@@ -43,7 +43,38 @@
 }
 
 -(void) print{
-    NSLog(@"%@",self);
+    //1,data
+    NSMutableString *mStr = [self getAllPropertysString];
+    NSMutableString *logStr = [[NSMutableString alloc] init];
+    NSMutableArray *lines = [NSMutableArray arrayWithArray:[mStr componentsSeparatedByString:@"\n"]];
+    NSInteger maxLength = 0;
+    for (NSString *line in lines)
+        maxLength = MAX(maxLength, line.length);
+    
+    //2,top_______
+    [logStr appendString:@"\n"];
+    for (NSInteger i = 0; i < maxLength; i++) {
+        [logStr appendString:@"_"];
+    }
+    [logStr appendString:@"_\n"];
+    
+    //3,content    |
+    for (NSString *line in lines) {
+        [logStr appendString:line];
+        for (NSInteger i = line.length; i < maxLength; i++) {
+            [logStr appendString:@" "];
+        }
+        [logStr appendString:@"|\n"];
+    }
+    
+    //4,bottom_____
+    for (NSInteger i = 0; i < maxLength; i++) {
+        [logStr appendString:@"_"];
+    }
+    [logStr appendString:@"|\n\n\n"];
+    
+    //5,print
+    NSLog(@"%@",logStr);
 }
 
 
