@@ -7,6 +7,7 @@
 //
 
 #import "Awareness.h"
+#import "ThinkHeader.h"
 
 @interface Awareness ()
 
@@ -17,8 +18,43 @@
 
 @implementation Awareness
 
--(BOOL) tmpCheck:(AIMindValueModel*)model{
-    return false;
+-(void) commitMindModelToCheck:(id)model{
+    if (model) {
+        if ([model isKindOfClass:[AIHungerLevelChangedModel class]]) {
+            AIHungerLevelChangedModel *lModel = (AIHungerLevelChangedModel*)model;
+            //1,取数据
+            AIMindValueModel *mindValue = [theMind getMindValueWithHungerLevelChanged:lModel];//(参考N3P18)
+            //2,分析决策A_(可产生需求)
+            if (lModel.state == UIDeviceBatteryStateCharging || (lModel.state == UIDeviceBatteryStateUnplugged && lModel.level < 7)) {
+                [AIHungerLevelChangedStore insert:model awareness:true];//logThink记忆饿的意识流
+                [AIMindValueStore insert:mindValue awareness:true];
+                
+                //3,分析决策B_(需求分析)
+                [theThink commitMindModel:model];
+                
+                
+            }
+        }else if([model isKindOfClass:[AIHungerStateChangedModel class]]){
+            //1,取数据
+            AIHungerStateChangedModel *sModel = (AIHungerStateChangedModel*)model;
+            AIMindValueModel *mindValue = [theMind getMindValueWithHungerStateChanged:sModel];//(参考N3P18)
+            
+            //2,分析决策A_(是否产生需求)
+            [AIHungerLevelChangedStore insert:sModel awareness:true];//logThink记忆充电状态变化的意识流;
+            [AIMindValueStore insert:mindValue awareness:true];
+            
+            //3,分析决策B_(是否执行需求)
+            [theThink commitMindModel:model];
+            
+            
+            
+            //1,查询当前未处理的需求;看有没被解决掉;
+            //2,思考充电状态与电量增加的逻辑关系;
+            //3,充上电,只会记录状态变化;而充上电加电后,才会真正知道充上电与充电的逻辑关系;
+            
+            
+        }
+    }
 }
 
 -(void) run{

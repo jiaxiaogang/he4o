@@ -23,7 +23,7 @@
 @property (strong,nonatomic) Feel *feel;            //感觉系统
 @property (strong,nonatomic) Input *input;          //输入系统(计算机视觉,听觉,文字,触觉,网络等)
 @property (strong,nonatomic) Output *output;        //输出系统(肢体行为表情眼神,声音,文字等)
-@property (strong,nonatomic) AIMainThread *mainThread;
+@property (strong,nonatomic) AIMainThread *mainThread;//意识的主线程
 
 @end
 

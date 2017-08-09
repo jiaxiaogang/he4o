@@ -32,11 +32,37 @@
     [UIDevice currentDevice].batteryMonitoringEnabled = YES;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(observerHungerLevelChanged:) name:UIDeviceBatteryLevelDidChangeNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(observerHungerStateChanged) name:UIDeviceBatteryStateDidChangeNotification object:nil];
+    [self run];
 }
 
 /**
  *  MARK:--------------------method--------------------
  */
+-(void) run {//饥饿感是种持续的神经感觉;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if ([self getState] == HungerState_Charging) {
+            self.tmpLevel += 0.005f;
+        }else if([self getState] == HungerState_Unplugged){
+            self.tmpLevel -= 0.001f;
+        }
+        
+        CGFloat level = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:[self getCurrentLevel]];
+        
+        //1,LogThink
+        AIHungerLevelChangedModel *model = [[AIHungerLevelChangedModel alloc] init];//logThink
+        model.level = level;
+        model.state = self.tmpState;
+        
+        //2,回调
+        if (self.delegate && [self.delegate respondsToSelector:@selector(hunger_LevelChanged:)]) {
+            [self.delegate hunger_LevelChanged:model];
+        }
+        
+        //3,循环
+        [self run];
+    });
+}
+
 -(void) observerHungerLevelChanged:(NSNotification*)notification{
     //1,取值
     HungerState state;
@@ -112,6 +138,10 @@
     //return [UIDevice currentDevice].batteryLevel;
 }
 
+-(void)setState:(HungerState)state{
+    self.tmpState = state;
+}
+
 -(HungerState) getState{
     //return [[UIDevice currentDevice].batteryState == ing return hungerStateing;];
     return self.tmpState;
@@ -129,7 +159,7 @@
  *  MARK:--------------------tmpTest--------------------
  */
 -(void) tmpTest_Add{
-    self.tmpState = HungerState_Charging;
+    [self setState:HungerState_Charging];
     CGFloat level = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:[self getCurrentLevel]];
     
     //1,LogThink
@@ -143,8 +173,8 @@
     }
 }
 
--(void) tmpTest_Sub{
-    self.tmpState = HungerState_Unplugged;
+-(void) tmpTest_Sub {
+    [self setState:HungerState_Unplugged];
     CGFloat level = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:[self getCurrentLevel]];
     
     //1,LogThink
@@ -167,7 +197,7 @@
     if (self.tmpState == HungerState_Charging) {
         return;
     }
-    self.tmpState = HungerState_Charging;
+    [self setState:HungerState_Charging];
     CGFloat level = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:[self getCurrentLevel]];
     
     //1,LogThink
@@ -185,7 +215,7 @@
     if (self.tmpState == HungerState_Unplugged) {
         return;
     }
-    self.tmpState = HungerState_Unplugged;
+    [self setState:HungerState_Unplugged];
     CGFloat level = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:[self getCurrentLevel]];
     
     //1,LogThink
@@ -198,5 +228,6 @@
         [self.delegate hunger_StateChanged:model];
     }
 }
+
 
 @end
