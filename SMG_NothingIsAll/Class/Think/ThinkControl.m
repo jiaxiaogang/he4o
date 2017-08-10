@@ -97,7 +97,7 @@
     [self setData:demandModel];
 }
 
--(void) commitMindModel:(id)m{
+-(void) commitMindModel:(id)m mindValueModel:(AIMindValueModel*)mindValudModel{
     if (!m) return;
     if (self.isBusy) return;//
     //...

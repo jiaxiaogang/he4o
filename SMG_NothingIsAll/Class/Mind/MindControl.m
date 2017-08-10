@@ -70,9 +70,9 @@
     return [MindValueUtils getMindValue_HungerLevelChanged:model];
 }
 
--(AIMindValueModel*) getMindValueWithHungerStateChanged:(AIHungerStateChangedModel*)model{
-    return [MindValueUtils getMindValue_HungerStateChanged:model];
-}
+//-(AIMindValueModel*) getMindValueWithHungerStateChanged:(AIHungerStateChangedModel*)model{
+//    return [MindValueUtils getMindValue_HungerStateChanged:model];
+//}
 
 /**
  *  MARK:--------------------MineDelegate--------------------

@@ -30,28 +30,26 @@
                 [AIMindValueStore insert:mindValue awareness:true];
                 
                 //3,分析决策B_(需求分析)
-                [theThink commitMindModel:model];
-                
-                
+                [theThink commitMindModel:model mindValueModel:mindValue];
             }
         }else if([model isKindOfClass:[AIHungerStateChangedModel class]]){
             //1,取数据
             AIHungerStateChangedModel *sModel = (AIHungerStateChangedModel*)model;
-            AIMindValueModel *mindValue = [theMind getMindValueWithHungerStateChanged:sModel];//(参考N3P18)
             
             //2,分析决策A_(是否产生需求)
             [AIHungerLevelChangedStore insert:sModel awareness:true];//logThink记忆充电状态变化的意识流;
-            [AIMindValueStore insert:mindValue awareness:true];
             
             //3,分析决策B_(是否执行需求)
-            [theThink commitMindModel:model];
-            
-            
-            
-            //1,查询当前未处理的需求;看有没被解决掉;
-            //2,思考充电状态与电量增加的逻辑关系;
-            //3,充上电,只会记录状态变化;而充上电加电后,才会真正知道充上电与充电的逻辑关系;
-            
+            /**
+             *  //1,查询当前未处理的需求;看有没被解决掉;
+             *  //2,思考充电状态与电量增加的逻辑关系;
+             *  //3,充上电,只会记录状态变化;而充上电加电后,才会真正知道充上电与充电的逻辑关系;
+             *  //4,充上电后,到commitMindModel根据AILine查找关联的MindValueModel;如果找到,再计算AIMindValueModel.value产生需求;;
+             *
+             *  //AIMindValueModel *mindValue = [theMind getMindValueWithHungerStateChanged:sModel];//(参考N3P18)
+             *  //[AIMindValueStore insert:mindValue awareness:true];
+             */
+            [theThink commitMindModel:model mindValueModel:nil];
             
         }
     }
@@ -68,7 +66,7 @@
     });
     
     //2,监听意识流的数据变化
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(runByAwarnessModelNotice:) name:ObsKey_AwarenessModelChanged object:nil];
+    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(runByAwarnessModelNotice:) name:ObsKey_AwarenessModelChanged object:nil];
     
 }
 

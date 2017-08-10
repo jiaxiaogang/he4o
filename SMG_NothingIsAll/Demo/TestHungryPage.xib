@@ -166,13 +166,13 @@
                     <rect key="frame" x="0.0" y="460" width="375" height="100"/>
                     <subviews>
                         <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="CsI-oO-3Fd">
-                            <rect key="frame" x="58" y="0.0" width="279" height="31"/>
+                            <rect key="frame" x="58" y="0.0" width="269" height="31"/>
                             <connections>
                                 <action selector="hungerLevelSliderValueChanged:" destination="-1" eventType="valueChanged" id="73U-aC-icn"/>
                             </connections>
                         </slider>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0.00" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Zbl-8N-wYu">
-                            <rect key="frame" x="345" y="8" width="25.5" height="14.5"/>
+                            <rect key="frame" x="335" y="8" width="25.5" height="14.5"/>
                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                             <color key="textColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                             <nil key="highlightedColor"/>
@@ -221,7 +221,7 @@
                         <constraint firstAttribute="height" constant="100" id="CH3-DZ-L9X"/>
                         <constraint firstAttribute="bottom" secondItem="ial-MN-J4b" secondAttribute="bottom" id="HP0-ZY-G4V"/>
                         <constraint firstItem="CsI-oO-3Fd" firstAttribute="leading" secondItem="yxc-FN-OK4" secondAttribute="trailing" constant="10" id="Hqa-Ns-m6z"/>
-                        <constraint firstAttribute="trailing" secondItem="CsI-oO-3Fd" secondAttribute="trailing" constant="40" id="MOW-BW-7fJ"/>
+                        <constraint firstAttribute="trailing" secondItem="CsI-oO-3Fd" secondAttribute="trailing" constant="50" id="MOW-BW-7fJ"/>
                         <constraint firstItem="CsI-oO-3Fd" firstAttribute="centerY" secondItem="yxc-FN-OK4" secondAttribute="centerY" id="Mot-7z-zlv"/>
                         <constraint firstItem="Zbl-8N-wYu" firstAttribute="centerY" secondItem="CsI-oO-3Fd" secondAttribute="centerY" id="PqR-VN-sNS"/>
                         <constraint firstAttribute="trailing" secondItem="QPM-GY-EBb" secondAttribute="trailing" constant="8" id="VXJ-Id-crG"/>
@@ -263,6 +263,20 @@
                         <constraint firstAttribute="bottom" secondItem="lbs-bH-sma" secondAttribute="bottom" id="yp7-SU-6M1"/>
                     </constraints>
                 </view>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="&quot;让手机学会表达充电需求,并学会使用充电交流常用语&quot;" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Olr-MJ-zXA">
+                    <rect key="frame" x="0.0" y="54" width="375" height="16"/>
+                    <color key="backgroundColor" red="1" green="0.36729668090062112" blue="0.12433278338509317" alpha="1" colorSpace="calibratedRGB"/>
+                    <fontDescription key="fontDescription" type="system" weight="black" pointSize="13"/>
+                    <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="实例演示" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qtx-Qc-iTf">
+                    <rect key="frame" x="141.5" y="24.5" width="93.5" height="27.5"/>
+                    <color key="backgroundColor" red="0.0" green="0.74488062888198758" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                    <fontDescription key="fontDescription" type="system" weight="black" pointSize="23"/>
+                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <nil key="highlightedColor"/>
+                </label>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
@@ -271,16 +285,21 @@
                 <constraint firstItem="86Q-Zs-PUw" firstAttribute="top" secondItem="Fkz-sw-swS" secondAttribute="bottom" constant="10" id="IxF-v4-3hl"/>
                 <constraint firstItem="Fkz-sw-swS" firstAttribute="top" secondItem="u6Z-hO-x4K" secondAttribute="bottom" constant="10" id="LOg-o4-mjO"/>
                 <constraint firstItem="GJR-mB-ZKM" firstAttribute="top" secondItem="86Q-Zs-PUw" secondAttribute="bottom" constant="8" id="LZu-VP-hJH"/>
+                <constraint firstAttribute="trailing" secondItem="Olr-MJ-zXA" secondAttribute="trailing" id="NEb-JB-SzK"/>
                 <constraint firstAttribute="trailing" secondItem="onk-Dj-zRG" secondAttribute="trailing" id="Sts-8V-LbE"/>
                 <constraint firstItem="Fkz-sw-swS" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="Taa-0s-tcC"/>
                 <constraint firstItem="onk-Dj-zRG" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="W9R-QJ-CQD"/>
                 <constraint firstAttribute="trailing" secondItem="u6Z-hO-x4K" secondAttribute="trailing" id="Zuh-Dh-rjT"/>
+                <constraint firstItem="Olr-MJ-zXA" firstAttribute="top" secondItem="Qtx-Qc-iTf" secondAttribute="bottom" constant="2" id="cIQ-1Y-ZS5"/>
+                <constraint firstItem="Olr-MJ-zXA" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="kuQ-yr-074"/>
                 <constraint firstAttribute="trailing" secondItem="86Q-Zs-PUw" secondAttribute="trailing" id="lcO-83-5b9"/>
                 <constraint firstAttribute="trailing" secondItem="GJR-mB-ZKM" secondAttribute="trailing" id="pTH-LB-vvd"/>
                 <constraint firstAttribute="trailing" secondItem="Fkz-sw-swS" secondAttribute="trailing" id="piR-1x-iAA"/>
                 <constraint firstItem="86Q-Zs-PUw" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="pus-gW-Ely"/>
                 <constraint firstItem="u6Z-hO-x4K" firstAttribute="top" secondItem="onk-Dj-zRG" secondAttribute="bottom" constant="10" id="qAK-ji-Brn"/>
+                <constraint firstItem="onk-Dj-zRG" firstAttribute="top" secondItem="Olr-MJ-zXA" secondAttribute="bottom" id="rsv-k7-iaa"/>
                 <constraint firstItem="onk-Dj-zRG" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="70" id="uwl-r9-4pA"/>
+                <constraint firstItem="Qtx-Qc-iTf" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="y5I-r0-4fH"/>
             </constraints>
             <point key="canvasLocation" x="34.5" y="54.5"/>
         </view>

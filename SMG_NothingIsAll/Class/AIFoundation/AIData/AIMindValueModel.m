@@ -19,4 +19,30 @@
     return mindV;
 }
 
+-(void)print{
+    NSString *type;
+    
+    if (self.type == MindType_Hunger) {
+        type = @"饥饿";
+    }else if (self.type == MindType_Curiosity) {
+        type = @"好奇心";
+    }else if (self.type == MindType_Mood) {
+        type = @"心情";
+    }else if (self.type == MindType_Angry) {
+        type = @"生气";
+    }else if (self.type == MindType_Happy) {
+        type = @"开心";
+    }else if (self.type == MindType_Algesia) {
+        type = @"痛觉";
+    }
+    
+    NSLog(@"\n\
+________________________________________\n\
+                                       |\n\
+<AIMindValueModel> :                   |\n\
+type : %@\n\
+value : %f\n\
+_______________________________________|\n\n\n",type,_value);
+}
+
 @end

@@ -36,6 +36,6 @@
 -(id) getMindValue:(AIPointer*)pointer;
 -(void) turnDownDemand:(AIDemandModel*)model;
 -(AIMindValueModel*) getMindValueWithHungerLevelChanged:(AIHungerLevelChangedModel*)model;
--(AIMindValueModel*) getMindValueWithHungerStateChanged:(AIHungerStateChangedModel*)model;
+//-(AIMindValueModel*) getMindValueWithHungerStateChanged:(AIHungerStateChangedModel*)model;
 
 @end

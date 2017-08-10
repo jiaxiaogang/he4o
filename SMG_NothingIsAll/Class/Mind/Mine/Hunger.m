@@ -41,9 +41,17 @@
 -(void) run {//饥饿感是种持续的神经感觉;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         if ([self getState] == HungerState_Charging) {
-            self.tmpLevel += 0.005f;
+            if (self.getLevel < 1.0f) {
+                CGFloat value = self.tmpLevel + 0.003f;
+                value = MIN(1, value);
+                [self setLevel:value];
+            }
         }else if([self getState] == HungerState_Unplugged){
-            self.tmpLevel -= 0.001f;
+            if (self.getLevel > 0) {
+                CGFloat value = self.tmpLevel - 0.001f;
+                value = MAX(0, value);
+                [self setLevel:value];
+            }
         }
         
         CGFloat level = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:[self getCurrentLevel]];
@@ -149,6 +157,7 @@
 
 -(void) setLevel:(CGFloat)level{
     self.tmpLevel = level;
+    [[NSNotificationCenter defaultCenter] postNotificationName:ObsKey_HungerLevelChanged object:nil];
 }
 
 -(CGFloat)getLevel{

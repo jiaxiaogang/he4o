@@ -326,19 +326,19 @@
     return mindValue;
 }
 
-+(AIMindValueModel*) getMindValue_HungerStateChanged:(AIHungerStateChangedModel*)model{
-    CGFloat mVD = 0;
-    if (model.state == HungerState_Unplugged) {
-        mVD = [MathUtils getValueWithOriRange:UIFloatRangeMake(0, 100) targetRange:UIFloatRangeMake(-10, 0) oriValue:model.level * model.level];//(饿一滴血)
-    }else if (model.state == HungerState_Charging) {//充电中
-        mVD = [MathUtils getValueWithOriRange:UIFloatRangeMake(0, 100) targetRange:UIFloatRangeMake(10, 0) oriValue:model.level * model.level];//(饱一滴血)
-    }
-    
-    //2,分析决策 & 产生需求
-    AIMindValueModel *mindValue = [[AIMindValueModel alloc] init];
-    mindValue.type = MindType_Hunger;
-    mindValue.value = mVD;
-    return mindValue;
-}
+//+(AIMindValueModel*) getMindValue_HungerStateChanged:(AIHungerStateChangedModel*)model{
+//    CGFloat mVD = 0;
+//    if (model.state == HungerState_Unplugged) {
+//        mVD = [MathUtils getValueWithOriRange:UIFloatRangeMake(0, 100) targetRange:UIFloatRangeMake(-10, 0) oriValue:model.level * model.level];//(饿一滴血)
+//    }else if (model.state == HungerState_Charging) {//充电中
+//        mVD = [MathUtils getValueWithOriRange:UIFloatRangeMake(0, 100) targetRange:UIFloatRangeMake(10, 0) oriValue:model.level * model.level];//(饱一滴血)
+//    }
+//    
+//    //2,分析决策 & 产生需求
+//    AIMindValueModel *mindValue = [[AIMindValueModel alloc] init];
+//    mindValue.type = MindType_Hunger;
+//    mindValue.value = mVD;
+//    return mindValue;
+//}
 
 @end

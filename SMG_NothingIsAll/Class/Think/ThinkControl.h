@@ -34,7 +34,7 @@
  */
 //分析
 -(void) commitMindValueNotice:(AIMindValueModel*)model;
--(void) commitMindModel:(id)m;   //提交来自Mind的模型;
+-(void) commitMindModel:(id)m mindValueModel:(AIMindValueModel*)mindValudModel;   //提交来自Mind的模型;(mindValueModel Can Be Null)
 /**
  *  MARK:--------------------Other--------------------
  */

@@ -61,6 +61,7 @@
     //1,Observer
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notificationThinkBusyChanged) name:ObsKey_ThinkBusy object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notificationMainThreadBusyChanged) name:ObsKey_MainThreadBusy object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notificationHungerLevelChanged) name:ObsKey_HungerLevelChanged object:nil];
     
     //2,thinkStatusBtn
     [self.thinkStatusBtn setBackgroundColor:(theThink.isBusy ? [UIColor redColor] : [UIColor greenColor])];
@@ -69,18 +70,22 @@
     [self.mainThreadStatusBtn setBackgroundColor:(theMainThread.isBusy ? [UIColor redColor] : [UIColor greenColor])];
 }
 
+-(void) refreshDisplay_HungerLevelLab{
+    NSString *value = STRFORMAT(@"%.3f",self.hungerLevelSlider.value);
+    [self.hungerLevelLab setText:value];
+    [self.hungerLevelLab setTextColor:self.hungerLevelSlider.value > 0.7 ? [UIColor greenColor] : [UIColor redColor]];
+}
+
 /**
  *  MARK:--------------------onclick--------------------
  */
 - (IBAction)addBtnOnClick:(id)sender {
-    self.hungerLevelSlider.value += 0.01f;
-    [self hungerLevelSliderValueChanged:self.hungerLevelSlider];
+    [theHunger setLevel:self.hungerLevelSlider.value + 0.01f];
     [theHunger tmpTest_Add];
 }
 
 - (IBAction)subBtnOnClick:(id)sender {
-    self.hungerLevelSlider.value -= 0.01f;
-    [self hungerLevelSliderValueChanged:self.hungerLevelSlider];
+    [theHunger setLevel:self.hungerLevelSlider.value - 0.01f];
     [theHunger tmpTest_Sub];
 }
 
@@ -105,9 +110,6 @@
 }
 
 - (IBAction)hungerLevelSliderValueChanged:(id)sender {
-    NSString *value = STRFORMAT(@"%.2f",self.hungerLevelSlider.value);
-    [self.hungerLevelLab setText:value];
-    [self.hungerLevelLab setTextColor:self.hungerLevelSlider.value > 0.7 ? [UIColor greenColor] : [UIColor redColor]];
     [theHunger setLevel:self.hungerLevelSlider.value];
 }
 
@@ -131,12 +133,17 @@
 /**
  *  MARK:--------------------method--------------------
  */
--(void) notificationThinkBusyChanged{
+-(void) notificationThinkBusyChanged {
     [self.thinkStatusBtn setBackgroundColor:(theThink.isBusy ? [UIColor redColor] : [UIColor greenColor])];
 }
 
--(void) notificationMainThreadBusyChanged{
+-(void) notificationMainThreadBusyChanged {
     [self.mainThreadStatusBtn setBackgroundColor:(theMainThread.isBusy ? [UIColor redColor] : [UIColor greenColor])];
+}
+
+-(void) notificationHungerLevelChanged {
+    [self.hungerLevelSlider setValue:theHunger.getLevel animated:true];
+    [self refreshDisplay_HungerLevelLab];
 }
 
 /**

@@ -10,4 +10,23 @@
 
 @implementation AIHungerStateChangedModel
 
+-(void)print{
+    NSString *state;
+    if (self.state == HungerState_Charging) {
+        state = @"+++";
+    }else if (self.state == HungerState_Unplugged) {
+        state = @"---";
+    }else if (self.state == HungerState_Unknown) {
+        state = @"unknown";
+    }
+    
+    NSLog(@"\n\
+________________________________________\n\
+                                       |\n\
+<AIHungerStateChangedModel> :          |\n\
+state : %@\n\
+level : %f\n\
+_______________________________________|\n\n\n",state,_level);
+}
+
 @end

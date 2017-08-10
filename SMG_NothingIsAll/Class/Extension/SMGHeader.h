@@ -18,10 +18,10 @@
 /**
  *  MARK:--------------------ObserverKEY--------------------
  */
-#define ObsKey_ThinkBusy @"ObsKey_ThinkBusy"
-#define ObsKey_MainThreadBusy @"ObsKey_MainThreadBusy"
-#define ObsKey_AwarenessModelChanged @"ObsKey_AwarenessModelChanged"
-
+#define ObsKey_ThinkBusy @"ObsKey_ThinkBusy"                            //思考状改变
+#define ObsKey_MainThreadBusy @"ObsKey_MainThreadBusy"                  //意识线程状态改变
+#define ObsKey_AwarenessModelChanged @"ObsKey_AwarenessModelChanged"    //意识流新数据
+#define ObsKey_HungerLevelChanged @"ObsKey_HungerLevelChanged"          //电量改变
 /**
  *  MARK:--------------------数据检查--------------------
  */
