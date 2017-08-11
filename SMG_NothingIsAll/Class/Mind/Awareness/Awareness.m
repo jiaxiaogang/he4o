@@ -59,15 +59,7 @@
     //1,开始异步搜索IO任务;(xx秒一次的内省)
     __block Awareness *weakSelf;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(600.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        weakSelf.count ++;
-        NSInteger analyzeCount = (weakSelf.count % 10 == 0) ? 200 : 50;//9短1长;
-        
-        if (theMainThread.isBusy == false) {//意识线程处理;
-            [theMainThread setIsBusy:true];
-            [self.demand runAnalyze:analyzeCount];
-            [theMainThread setIsBusy:false];
-        }
-        
+        [self runByHeartbeat];
         [self run];
     });
     
@@ -90,7 +82,27 @@
 /**
  *  MARK:--------------------method--------------------
  */
+//600s/"意识心跳" 1,需求分析 2,整理抽象???
+-(void) runByHeartbeat{
+    self.count ++;
+    NSInteger analyzeCount = (self.count % 10 == 0) ? 200 : 50;//9短1长;
+    
+    if (theMainThread.isBusy == false) {//意识线程处理;
+        [theMainThread setIsBusy:true];
+        [self.demand runAnalyze:analyzeCount];
+        [theMainThread setIsBusy:false];
+    }
+}
+
+//意识流数据变化时"区域点亮"
 -(void) runByAwarnessModelNotice:(NSNotification*)notification{
+    //1. 区域点亮(根据不同IO性能点亮区域大小自定)
+    //2. 预测与真实的变化引发的注意力;
+    //3. 引起变化后的索引生成;
+    //4. 索引的搜索;
+    //5. 搜索结果的数据处理(类比分析与抽象等);
+    //6. "数据处理结果"的AILine生成与AILine.Strong;
+    //7.
     [self.demand runAnalyze:1];
 }
 
