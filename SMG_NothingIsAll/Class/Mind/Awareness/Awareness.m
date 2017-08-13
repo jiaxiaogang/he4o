@@ -61,7 +61,7 @@
     });
     
     //2,监听意识流的数据变化
-    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(runByAwarnessModelNotice:) name:ObsKey_AwarenessModelChanged object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(runByAwarnessModelNotice:) name:ObsKey_AwarenessModelChanged object:nil];
     
 }
 

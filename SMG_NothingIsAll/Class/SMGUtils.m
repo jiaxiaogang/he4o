@@ -10,6 +10,46 @@
 
 @implementation SMGUtils
 
+/**
+ *  MARK:--------------------联想AILine点亮区域--------------------
+ *  layerCount,节点层数;(0->自己)(1->自己和自己的抽象层)(2->自已,自己的抽象层,抽象层的其它实例,抽象层的抽象层)(>2:以此类推)
+ */
++(NSMutableArray*) lightArea_1:(AIPointer*)lightPointer{
+    return [self lightArea:lightPointer layerCount:1];
+}
++(NSMutableArray*) lightArea_2:(AIPointer*)lightPointer{
+    return [self lightArea:lightPointer layerCount:2];
+}
++(NSMutableArray*) lightArea_3:(AIPointer*)lightPointer{
+    return [self lightArea:lightPointer layerCount:3];
+}
++(NSMutableArray*) lightArea:(AIPointer*)lightPointer layerCount:(NSInteger)layerCount{
+    NSMutableArray *mArr = [[NSMutableArray alloc] init];
+    if (lightPointer) {
+        //0,取自己
+        if (layerCount >= 0) {
+            [mArr addObject:lightPointer];
+        }
+        
+        //1,纵向取自己的抽象层
+        if (layerCount >= 1) {
+            [AICommonSenseStore searchSingleWhere:nil];
+            
+            
+            [mArr addObject:lightPointer];
+        }
+        
+        //2,取抽象层的实例
+        if (layerCount >= 2) {
+            if ([AILineStore searchWithSQL:nil]) {
+                
+            }
+            [mArr addObject:lightPointer];
+        }
+    }
+    return mArr;
+}
+
 @end
 
 
