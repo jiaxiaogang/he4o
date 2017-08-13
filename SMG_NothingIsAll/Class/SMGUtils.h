@@ -17,7 +17,6 @@
  */
 +(NSMutableArray*) lightArea_1:(AIPointer*)lightPointer;
 +(NSMutableArray*) lightArea_2:(AIPointer*)lightPointer;
-+(NSMutableArray*) lightArea_3:(AIPointer*)lightPointer;
 +(NSMutableArray*) lightArea:(AIPointer*)lightPointer layerCount:(NSInteger)layerCount;
 
 @end

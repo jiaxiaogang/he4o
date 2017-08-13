@@ -20,9 +20,6 @@
 +(NSMutableArray*) lightArea_2:(AIPointer*)lightPointer{
     return [self lightArea:lightPointer layerCount:2];
 }
-+(NSMutableArray*) lightArea_3:(AIPointer*)lightPointer{
-    return [self lightArea:lightPointer layerCount:3];
-}
 +(NSMutableArray*) lightArea:(AIPointer*)lightPointer layerCount:(NSInteger)layerCount{
     NSMutableArray *mArr = [[NSMutableArray alloc] init];
     if (lightPointer) {

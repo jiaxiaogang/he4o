@@ -93,14 +93,7 @@
 
 //意识流数据变化时"区域点亮"
 -(void) runByAwarnessModelNotice:(NSNotification*)notification{
-    //1. 区域点亮(根据不同IO性能点亮区域大小自定)
-    //2. 预测与真实的变化引发的注意力;
-    //3. 引起变化后的索引生成;
-    //4. 索引的搜索;
-    //5. 搜索结果的数据处理(类比分析与抽象等);
-    //6. "数据处理结果"的AILine生成与AILine.Strong;
-    //7.
-    [self.demand runAnalyze:1];
+    [theThink commitUnderstandByShallowFromMind:nil];//浅思考
 }
 
 -(void)dealloc{

@@ -61,7 +61,7 @@ static SMG *_instance;
  */
 -(void)input_CommitToThink:(NSString *)text{
     NSLog(@"Input->Think (CONTENT:(%@)",text);
-    [self.thinkControl commitUnderstandByShallow:text];//从input常规输入的浅度理解即可;
+    [self.thinkControl commitUnderstandByShallowFromInput:text];//从input常规输入的浅度理解即可;(简单且错误,参考N4P2)
 }
 
 /**

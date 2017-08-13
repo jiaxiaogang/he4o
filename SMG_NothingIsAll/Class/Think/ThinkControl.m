@@ -39,7 +39,7 @@
  *  浅理解/无意分析");//只取obj,char不存;
  *  与预测作比较;
  */
--(void) commitUnderstandByShallow:(id)data{
+-(void) commitUnderstandByShallowFromInput:(id)data{
     if (STRISOK(data)) {
         [self commitUnderstandByDeep:data];//1,字符串每次都给予注意力;
     }else if(true){
@@ -49,8 +49,29 @@
     }
 }
 
+-(void) commitUnderstandByShallowFromMind:(AIPointer*)data {
+    if (data) {
+        //1,联想点亮区域
+        NSMutableArray *mArr = [SMGUtils lightArea_2:data];
+        
+        //2,无辐射思考(参考:N4P2)
+        
+        
+        //3,与当前curTask对比,
+        BOOL win = true;
+        
+        //4,调用深思考;
+        if (win) {
+            [self commitUnderstandByDeep:nil];
+        }
+    }
+}
+
 -(void) commitUnderstandByDeep:(id)data{
     if (STRISOK(data)) {
+        
+        //[theAwareness.demand runAnalyze:1];//生成需求(参考:N4P2)
+        
         //收集charArr
         NSString *str = (NSString*)data;
         NSMutableArray *charArr = [[NSMutableArray alloc] init];
