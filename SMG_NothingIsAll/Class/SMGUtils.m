@@ -30,6 +30,7 @@
         
         //1,纵向取自己的抽象层
         if (layerCount >= 1) {
+            //取是什么,能什么等常识知识;
             [AICommonSenseStore searchSingleWhere:nil];
             
             
@@ -38,6 +39,7 @@
         
         //2,取抽象层的实例
         if (layerCount >= 2) {
+            //根据AILine.Strong来取靠前的实例;
             if ([AILineStore searchWithSQL:nil]) {
                 
             }
