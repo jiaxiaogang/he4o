@@ -312,6 +312,8 @@
 @implementation MindValueUtils
 
 +(AIMindValueModel*) getMindValue_HungerLevelChanged:(AIHungerLevelChangedModel*)model{
+    if (model == nil) return nil;
+    
     CGFloat mVD = 0;
     if (model.state == HungerState_Unplugged) {
         mVD = [MathUtils getValueWithOriRange:UIFloatRangeMake(0, 100) targetRange:UIFloatRangeMake(-10, 0) oriValue:model.level * model.level];//(饿一滴血)
@@ -323,6 +325,7 @@
     AIMindValueModel *mindValue = [[AIMindValueModel alloc] init];
     mindValue.type = MindType_Hunger;
     mindValue.value = mVD;
+    mindValue.sourcePointer = model.pointer;
     return mindValue;
 }
 
