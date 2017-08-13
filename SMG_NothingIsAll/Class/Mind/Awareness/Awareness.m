@@ -28,9 +28,6 @@
             if (lModel.state == UIDeviceBatteryStateCharging || (lModel.state == UIDeviceBatteryStateUnplugged && lModel.level < 7)) {
                 [AIHungerLevelChangedStore insert:model awareness:true];//logThink记忆饿的意识流
                 [AIMindValueStore insert:mindValue awareness:true];
-                
-                //3,分析决策B_(需求分析)
-                [theThink commitMindModel:model mindValueModel:mindValue];
             }
         }else if([model isKindOfClass:[AIHungerStateChangedModel class]]){
             //1,取数据
