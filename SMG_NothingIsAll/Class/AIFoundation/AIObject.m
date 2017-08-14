@@ -32,6 +32,8 @@
     if (_pointer == nil) {
         _pointer = [AIPointer initWithClass:self.class withId:self.rowid];
     }
+    _pointer.pClass = NSStringFromClass(self.class);
+    _pointer.pId = self.rowid;
     return _pointer;
 }
 

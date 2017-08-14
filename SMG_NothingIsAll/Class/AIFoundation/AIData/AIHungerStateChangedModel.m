@@ -24,9 +24,10 @@
 ________________________________________\n\
                                        |\n\
 <AIHungerStateChangedModel> :          |\n\
+rowid : %ld\n\
 state : %@\n\
 level : %f\n\
-_______________________________________|\n\n\n",state,_level);
+_______________________________________|\n\n\n",self.rowid,state,_level);
 }
 
 @end

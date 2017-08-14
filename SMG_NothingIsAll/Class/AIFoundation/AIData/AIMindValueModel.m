@@ -40,9 +40,12 @@
 ________________________________________\n\
                                        |\n\
 <AIMindValueModel> :                   |\n\
+rowid : %ld\n\
 type : %@\n\
 value : %f\n\
-_______________________________________|\n\n\n",type,_value);
+sourcePointer : %@,%ld\n\
+_______________________________________|\n\n\n",self.rowid,type,_value,_sourcePointer.pClass,(long)_sourcePointer.pId);
+
 }
 
 @end

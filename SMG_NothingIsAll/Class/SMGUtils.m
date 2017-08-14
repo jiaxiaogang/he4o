@@ -14,13 +14,13 @@
  *  MARK:--------------------联想AILine点亮区域--------------------
  *  layerCount,节点层数;(0->自己)(1->自己和自己的抽象层)(2->自已,自己的抽象层,抽象层的其它实例,抽象层的抽象层)(>2:以此类推)
  */
-+(NSMutableArray*) lightArea_1:(AIPointer*)lightPointer{
-    return [self lightArea:lightPointer layerCount:1];
++(NSMutableArray*) lightArea_Vertical_1:(AIPointer*)lightPointer{
+    return [self lightArea_Vertical:lightPointer layerCount:1];
 }
-+(NSMutableArray*) lightArea_2:(AIPointer*)lightPointer{
-    return [self lightArea:lightPointer layerCount:2];
++(NSMutableArray*) lightArea_Vertical_2:(AIPointer*)lightPointer{
+    return [self lightArea_Vertical:lightPointer layerCount:2];
 }
-+(NSMutableArray*) lightArea:(AIPointer*)lightPointer layerCount:(NSInteger)layerCount{
++(NSMutableArray*) lightArea_Vertical:(AIPointer*)lightPointer layerCount:(NSInteger)layerCount{
     NSMutableArray *mArr = [[NSMutableArray alloc] init];
     if (lightPointer) {
         //0,取自己
@@ -48,6 +48,12 @@
     }
     return mArr;
 }
+
+//参考:N4P17-横向点亮
++(NSMutableArray*) lightArea_Horizontal:(AIPointer*)lightPointer{
+    return nil;
+}
+
 
 @end
 
