@@ -51,6 +51,7 @@
 
 //参考:N4P17-横向点亮
 +(NSMutableArray*) lightArea_Horizontal:(AIPointer*)lightPointer{
+    //参考:N4P18;通用的感觉算法
     return nil;
 }
 
