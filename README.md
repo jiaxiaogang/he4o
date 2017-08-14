@@ -1,5 +1,5 @@
 # SMG(强人工智能系统)
-> 参考笔记:[http://j2717.top/html/SMG_NOTE.html](http://j2717.top/html/SMG_NOTE.html)
+> 参考笔记:[https://github.com/jiaxiaogang/SMG_NOTE#smg_note](https://github.com/jiaxiaogang/SMG_NOTE#smg_note)
 
 ![](https://img.shields.io/badge/%20QQGroup-528053635%20-orange.svg)
 ![](https://img.shields.io/badge/%20Wechat-jia2764894%20-orange.svg)
@@ -30,6 +30,20 @@
 - 不过度依赖算法
 - Mind温和友善;
 
+#### -------------------系统的理念-------------------
+
+- [LOP编程思想](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note3.md#n4p13loplayer-oriented-programming170803)
+- [logThink与noLogThink](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%A1%86%E6%9E%B6/%E8%87%AA%E6%88%91.md#两个运算方式)
+- [基于理解的NLP](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/Light%E5%8F%8A%E5%BA%94%E7%94%A8/Light.md#nlp语言一定要以描述意思为核心才能达到100正确率)
+- [深理解与浅理解](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%A1%86%E6%9E%B6/%E6%B3%A8%E6%84%8F%E5%8A%9B.md)
+- [三维抽象架构](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%A1%86%E6%9E%B6/3%E7%BB%B4%E6%8A%BD%E8%B1%A1%E6%A6%82%E8%BF%B0.md)
+- [树形知识表示](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%A1%86%E6%9E%B6/3%E7%BB%B4%E6%8A%BD%E8%B1%A1%E6%A6%82%E8%BF%B0.md)
+- 类比,归纳与统计
+- 抽象与结构
+- 不过度依赖算法与大数据
+- 先天noData
+- 等等
+
 
 #### -------------------特征-------------------
 - 先天noData,需要像人类一样较长时间的学习与成长期;
@@ -40,13 +54,12 @@
 - 意识并不神秘,只是这个"词汇"含盖了大量的含义;所以这个词汇是泛化了很多含义;要分解分布到系统中...  
 - 意识是开发出来的,不是电影和小说里的觉醒那么玄幻;  
 - "意识"的分解  
-- 意识流
+- 意识流(AIAwarenessModel)
 - 意识层(logThink)
 - 意识行为
 - 第6感
 - 潜意识
-- 参考:
-	- [https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note3.md#n3p15意识170801](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note3.md#n3p15意识170801)
+- [点击查看相关笔记](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note4.md)
 
 #### -------------------SMG架构-------------------
 
@@ -81,6 +94,9 @@
 9. 神经网络
 > - AILine(Stong等)  
 > - AIPointer  
+> - [LightArea](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note4.md#n4p17lightarea)
+>	 - 纵向点亮
+> 	 - 横向点亮
 
 10. 想像力
 > 想像力:组合颜色,材质等，铺到模型上,GAN;
@@ -89,6 +105,7 @@
 > 参考:(见笔记:AI/框架/创造力)
 
 12. 预测
+> 基于常识CommonSence
 
 13. 知识表示
 > 数据拆分(在Memory->AIAwareness的过程中,自然而然的实现拆分与抽象;)   
@@ -117,3 +134,10 @@
 
 ### 2017.08.01
 > - [意识](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note3.md#n3p15意识170801)
+
+### 2017.08.13
+> - [思考流程整理](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note4.md#n4p2思维演化ai思维的本质170714)
+
+### 2017.08.14
+> - [LightArea-区域点亮](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note4.md#n4p17lightarea)
+> - [GeneralFeel-通用的感觉](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note4.md#n4p18通用的感觉)
