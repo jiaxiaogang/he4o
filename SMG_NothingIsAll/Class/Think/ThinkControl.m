@@ -49,11 +49,15 @@
     }
 }
 
--(void) commitUnderstandByShallowFromMind:(AIPointer*)data {
-    if (data) {
+-(void) commitUnderstandByShallowFromMind:(AIAwarenessModel*)model {
+    if (model) {
         //1,联想点亮区域
-        NSMutableArray *mArr = [SMGUtils lightArea_2:data];
+        NSMutableArray *mArr = [SMGUtils lightArea_Vertical_2:model];
         
+        if (mArr.count == 1) {
+            [SMGUtils lightArea_Horizontal:model];
+            return;
+        }
         //2,无辐射思考(参考:N4P2)
         
         

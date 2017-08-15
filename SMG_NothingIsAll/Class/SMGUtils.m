@@ -14,18 +14,18 @@
  *  MARK:--------------------联想AILine点亮区域--------------------
  *  layerCount,节点层数;(0->自己)(1->自己和自己的抽象层)(2->自已,自己的抽象层,抽象层的其它实例,抽象层的抽象层)(>2:以此类推)
  */
-+(NSMutableArray*) lightArea_Vertical_1:(AIPointer*)lightPointer{
-    return [self lightArea_Vertical:lightPointer layerCount:1];
++(NSMutableArray*) lightArea_Vertical_1:(AIAwarenessModel*)lightModel{
+    return [self lightArea_Vertical:lightModel layerCount:1];
 }
-+(NSMutableArray*) lightArea_Vertical_2:(AIPointer*)lightPointer{
-    return [self lightArea_Vertical:lightPointer layerCount:2];
++(NSMutableArray*) lightArea_Vertical_2:(AIAwarenessModel*)lightModel{
+    return [self lightArea_Vertical:lightModel layerCount:2];
 }
-+(NSMutableArray*) lightArea_Vertical:(AIPointer*)lightPointer layerCount:(NSInteger)layerCount{
++(NSMutableArray*) lightArea_Vertical:(AIAwarenessModel*)lightModel layerCount:(NSInteger)layerCount{
     NSMutableArray *mArr = [[NSMutableArray alloc] init];
-    if (lightPointer) {
+    if (lightModel) {
         //0,取自己
         if (layerCount >= 0) {
-            [mArr addObject:lightPointer];
+            [mArr addObject:lightModel.pointer];
         }
         
         //1,纵向取自己的抽象层
@@ -33,8 +33,6 @@
             //取是什么,能什么等常识知识;
             [AICommonSenseStore searchSingleWhere:nil];
             
-            
-            [mArr addObject:lightPointer];
         }
         
         //2,取抽象层的实例
@@ -43,15 +41,20 @@
             if ([AILineStore searchWithSQL:nil]) {
                 
             }
-            [mArr addObject:lightPointer];
         }
     }
     return mArr;
 }
 
 //参考:N4P17-横向点亮
-+(NSMutableArray*) lightArea_Horizontal:(AIPointer*)lightPointer{
++(NSMutableArray*) lightArea_Horizontal:(AIAwarenessModel*)lightModel{
     //参考:N4P18;通用的感觉算法
+    if (lightModel) {
+        AIAwarenessModel *backModel = [AIAwarenessStore searchSingleRowId:lightModel.pointer.pId - 1];
+        AIAwarenessModel *frontModel = [AIAwarenessStore searchSingleRowId:lightModel.pointer.pId + 1];
+        NSLog(@"");
+        
+    }
     return nil;
 }
 

@@ -93,7 +93,7 @@
 
 //意识流数据变化时"区域点亮"
 -(void) runByAwarnessModelNotice:(NSNotification*)notification{
-    [theThink commitUnderstandByShallowFromMind:nil];//浅思考
+    [theThink commitUnderstandByShallowFromMind:notification.object];//浅思考
 }
 
 -(void)dealloc{

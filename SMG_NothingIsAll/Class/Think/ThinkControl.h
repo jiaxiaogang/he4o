@@ -27,7 +27,7 @@
  *  MARK:--------------------Understand(Input->Think)--------------------
  */
 -(void) commitUnderstandByShallowFromInput:(id)data;//浅理解
--(void) commitUnderstandByShallowFromMind:(AIPointer*)data;
+-(void) commitUnderstandByShallowFromMind:(AIAwarenessModel*)model;
 
 /**
  *  MARK:--------------------Demand(Mind->Think)--------------------
