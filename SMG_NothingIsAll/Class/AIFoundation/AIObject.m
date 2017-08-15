@@ -14,7 +14,7 @@
  *  MARK:--------------------Store--------------------
  */
 +(void)initialize{
-    [self removePropertyWithColumnName:@"pointer"];
+    //[self removePropertyWithColumnName:@"pointer"];
 }
 
 +(BOOL) isContainParent{

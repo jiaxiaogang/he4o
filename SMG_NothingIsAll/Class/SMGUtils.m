@@ -50,8 +50,25 @@
 +(NSMutableArray*) lightArea_Horizontal:(AIAwarenessModel*)lightModel{
     //参考:N4P18;通用的感觉算法
     if (lightModel) {
+        //1,取10000个意识流数据
+        NSMutableArray *awareArr = [AIAwarenessStore searchWhere:nil count:10000];
+        
+        //2,找到当前类似的项
+        AIObject *lightTarget = lightModel.awarenessP.content;
+        for (AIAwarenessModel *horModel in awareArr) {
+            AIObject *horiTarget = horModel.awarenessP.content;
+            if (horModel.rowid != lightModel.rowid) {
+                if (lightTarget.class == horiTarget.class) {
+                    NSLog(@"");
+                }else{
+                    NSLog(@"");
+                }
+            }
+            
+        }
         AIAwarenessModel *backModel = [AIAwarenessStore searchSingleRowId:lightModel.pointer.pId - 1];
         AIAwarenessModel *frontModel = [AIAwarenessStore searchSingleRowId:lightModel.pointer.pId + 1];
+        
         NSLog(@"");
         
     }

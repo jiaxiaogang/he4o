@@ -33,7 +33,7 @@
         BOOL idIsEqual = self.pId == ((AIPointer*)object).pId;
         return classIsEqual && idIsEqual;
     }
-    return true;
+    return false;
 }
 
 -(id) content{
