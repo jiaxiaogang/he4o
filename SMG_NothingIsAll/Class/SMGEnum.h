@@ -87,3 +87,13 @@ typedef NS_ENUM(NSInteger, Aw2DemandStatus) {
     Aw2DemandStatus_Finish     = 5,//finish(Awareness->Demand的意识分析完成)
 };
 
+/**
+ *  MARK:--------------------AILineType--------------------
+ */
+typedef NS_ENUM(NSInteger, AILineType) {
+    AILineType_IsA      = 0,//isa静态是
+    AILineType_Can      = 1,//can动态能
+    AILineType_Law      = 2,//law静态规律
+    AILineType_Logic    = 3,//logic动态逻辑
+};
+

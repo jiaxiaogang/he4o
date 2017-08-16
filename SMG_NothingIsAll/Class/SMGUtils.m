@@ -60,6 +60,7 @@
             if (horModel.rowid != lightModel.rowid) {
                 if (lightTarget.class == horiTarget.class) {
                     NSLog(@"");
+                    //因为"知识表示"的泛化要求;必须简化"树形知识表示"结构;而更加依赖AILine;而AILaw和AILogic也可以使用AILine来代替;
                 }else{
                     NSLog(@"");
                 }

@@ -106,6 +106,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		08042E7D1F43CE9400A1FFCB /* SMGEnum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMGEnum.h; sourceTree = "<group>"; };
 		0806FB2C1F15996800808B34 /* AIMoodModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIMoodModel.h; sourceTree = "<group>"; };
 		0806FB2D1F15996800808B34 /* AIMoodModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIMoodModel.m; sourceTree = "<group>"; };
 		0806FB2F1F15997D00808B34 /* AIMoodStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIMoodStore.h; sourceTree = "<group>"; };
@@ -276,7 +277,6 @@
 		08F3AFBA1E98966E00747EDD /* Store.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Store.m; sourceTree = "<group>"; };
 		08F3AFBC1E989B8F00747EDD /* MindHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MindHeader.h; sourceTree = "<group>"; };
 		08F3AFCD1E98B12A00747EDD /* SMGHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SMGHeader.h; path = Extension/SMGHeader.h; sourceTree = "<group>"; };
-		08F3AFD01E98B13B00747EDD /* SMGEnum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMGEnum.h; sourceTree = "<group>"; };
 		08F3AFD21E98B63200747EDD /* StoreHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StoreHeader.h; sourceTree = "<group>"; };
 		08F4C98C1EA7A03900F3EDA8 /* SMGUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMGUtils.h; sourceTree = "<group>"; };
 		08F4C98D1EA7A03900F3EDA8 /* SMGUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMGUtils.m; sourceTree = "<group>"; };
@@ -540,6 +540,7 @@
 				08AF45681E97D80C00377887 /* Store */,
 				08F3AFB61E98963600747EDD /* SMG.h */,
 				08F3AFB71E98963600747EDD /* SMG.m */,
+				08042E7D1F43CE9400A1FFCB /* SMGEnum.h */,
 				08F3AFCD1E98B12A00747EDD /* SMGHeader.h */,
 				08F4C98C1EA7A03900F3EDA8 /* SMGUtils.h */,
 				08F4C98D1EA7A03900F3EDA8 /* SMGUtils.m */,
@@ -726,7 +727,6 @@
 		08F3AFC11E98A13200747EDD /* Extension */ = {
 			isa = PBXGroup;
 			children = (
-				08F3AFD01E98B13B00747EDD /* SMGEnum.h */,
 				08FDCE8C1EAA4A8E00882ADC /* SMGRange.h */,
 				08FDCE8D1EAA4A8E00882ADC /* SMGRange.m */,
 				08DACE931EBD805C00FDC0B6 /* NSString+Extension.h */,
