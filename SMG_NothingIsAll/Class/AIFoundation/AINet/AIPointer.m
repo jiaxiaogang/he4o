@@ -10,7 +10,9 @@
 
 @implementation AIPointer
 
-+(AIPointer*) initWithClass:(Class)pC withId:(NSInteger)pI {    
++(AIPointer*) initWithClass:(Class)pC withId:(NSInteger)pI {
+    
+    /*
     NSDictionary *where = [[NSDictionary alloc] initWithObjectsAndKeys:NSStringFromClass(pC),@"pClass",@(pI),@"pId", nil];
     AIPointer *value = [AIPointer searchSingleWithWhere:where orderBy:nil];
     if (value) {
@@ -22,6 +24,14 @@
         [AIPointer insertToDB:value];
         return value;
     }
+    */
+ 
+    //原先去重并insert了,但其实这个去重会自动作;不需要;并且这里直接insert会出问题;因为此时的PId很多是0;
+    AIPointer *pointer = [[AIPointer alloc] init];
+    pointer.pClass = NSStringFromClass(pC);
+    pointer.pId = pI;
+    return pointer;
+    
 }
 
 /**

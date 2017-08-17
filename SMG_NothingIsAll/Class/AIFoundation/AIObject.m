@@ -30,10 +30,10 @@
 
 -(AIPointer*) pointer{
     if (_pointer == nil) {
-        _pointer = [AIPointer initWithClass:self.class withId:self.rowid];
+        _pointer = [[AIPointer alloc] init];//initWithClass:withId方法里写了去重;所以它方法有冗余,以后有时间改掉;
     }
     _pointer.pClass = NSStringFromClass(self.class);
-    _pointer.pId = self.rowid;
+    _pointer.pId = self.rowid;//初次存入self时,pointer.Pid==0;所以这里重新赋值;保证每次读取pointer地址都是正确的;
     return _pointer;
 }
 
