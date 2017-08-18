@@ -12,5 +12,8 @@
 
 +(AILine*) searchSinglePointers:(NSArray*)pointers;
 +(NSMutableArray*) searchPointer:(AIPointer*)pointer count:(NSInteger)count;
++(NSMutableArray*) searchPointer:(AIPointer*)pointer energy:(NSInteger)energy;//根据"能量"以"pointer"为中心搜索;
+
++(void) insert:(AIObject *)data;
 
 @end

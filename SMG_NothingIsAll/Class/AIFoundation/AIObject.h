@@ -11,7 +11,7 @@
 @interface AIObject : NSObject
 
 //-(id) alloc_DB;
-+(id) initWithContent:(id)content;
++(id) newWithContent:(id)content;
 @property (strong,nonatomic) AIPointer *pointer; //数据指针
 -(void) print;
 

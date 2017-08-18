@@ -10,7 +10,7 @@
 
 @implementation AIChar
 
-+(AIChar *) initWithContent:(unichar)content{
++(AIChar *) newWithContent:(unichar)content{
     AIChar *value = [AIChar searchSingleWithWhere:[DBUtils sqlWhere_K:@"content" V:@(content)] orderBy:nil];
     if (value) {
         return value;
@@ -22,12 +22,12 @@
     }
 }
 
-+(AIChar *) initWithContentByString:(NSString *)str {
++(AIChar *) newWithContentByString:(NSString *)str {
     unichar content = 0;
     if (STRISOK(str)) {
         content = [str characterAtIndex:0];
     }
-    return [self initWithContent:content];
+    return [self newWithContent:content];
 }
 
 

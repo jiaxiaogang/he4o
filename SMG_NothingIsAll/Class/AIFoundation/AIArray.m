@@ -124,4 +124,17 @@
     NSLog(@"------------end\n\n");
 }
 
+-(void) forIn:(AILogicKeyType(^)(AIPointer*))block{
+    for (AIPointer *pointer in self.content) {
+        if (block && pointer && [pointer isKindOfClass:[AIPointer class]]) {
+            AILogicKeyType type = block(pointer);
+            if (type == AILogicKeyType_Break) {
+                break;
+            }else if(type == AILogicKeyType_Continue){
+                continue;
+            }
+        }
+    }
+}
+
 @end

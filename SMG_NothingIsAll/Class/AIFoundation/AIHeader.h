@@ -57,7 +57,7 @@
 
 //String
 #define AISTRISOK(a) (a  && [a isKindOfClass:[AIString class]] && a.content && [a.content isKindOfClass:[NSArray class]] && a.content.count > 0)
-#define AISTRTOOK(a) (a  && [a isKindOfClass:[AIString class]] ? a : [AIString initWithContent:@""])
+#define AISTRTOOK(a) (a  && [a isKindOfClass:[AIString class]] ? a : [AIString newWithContent:@""])
 
 //Array
 #define AIARRISOK(a) (a  && [a isKindOfClass:[AIArray class]] && a.content && [a.content isKindOfClass:[NSArray class]] && a.content.count > 0)
@@ -70,12 +70,12 @@
  *  MARK:--------------------快捷建对象--------------------
  */
 //Char
-#define AIMakeCharByStr(a) [AIChar initWithContentByString:a]
-#define AIMakeChar(a) [AIChar initWithContent:a]
+#define AIMakeCharByStr(a) [AIChar newWithContentByString:a]
+#define AIMakeChar(a) [AIChar newWithContent:a]
 
 //String
-#define AIMakeStr(a) [AIString initWithContent:a]
-#define AISTRFORMAT(a, ...) [AIString initWithContent:[NSString stringWithFormat:a, ##__VA_ARGS__]]
+#define AIMakeStr(a) [AIString newWithContent:a]
+#define AISTRFORMAT(a, ...) [AIString newWithContent:[NSString stringWithFormat:a, ##__VA_ARGS__]]
 
 //Array
 #define AIMakeArr(a, ...) [AIArray initWithObjects:a, ##__VA_ARGS__,nil]
@@ -85,6 +85,8 @@
 #define AIMakeLawByArr(arr) [AILawModel initWithArray:arr]
 #define AIMakeLawByAIArr(arr) [AILawModel initWithAIArray:arr]
 
+//AILine
+#define AIMakeLine(type,pointers) [AILine newWithType:type pointers:pointers]
 
 
 

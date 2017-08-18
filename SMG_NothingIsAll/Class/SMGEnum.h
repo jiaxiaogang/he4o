@@ -97,3 +97,12 @@ typedef NS_ENUM(NSInteger, AILineType) {
     AILineType_Logic    = 3,//logic动态逻辑
 };
 
+/**
+ *  MARK:--------------------AILogicKeyType--------------------
+ */
+typedef NS_ENUM(NSInteger, AILogicKeyType) {
+    AILogicKeyType_None = 0,//无
+    AILogicKeyType_Break = 1,//break;
+    AILogicKeyType_Continue = 2,
+};
+

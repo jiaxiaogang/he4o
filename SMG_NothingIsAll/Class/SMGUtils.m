@@ -20,6 +20,11 @@
 +(NSMutableArray*) lightArea_Vertical_2:(AIAwarenessModel*)lightModel{
     return [self lightArea_Vertical:lightModel layerCount:2];
 }
+
++(NSMutableArray*) lightArea_Vertical:(AIAwarenessModel*)lightModel energy:(NSInteger)energy{
+    return [AILineStore searchPointer:lightModel.pointer energy:energy];
+}
+
 +(NSMutableArray*) lightArea_Vertical:(AIAwarenessModel*)lightModel layerCount:(NSInteger)layerCount{
     NSMutableArray *mArr = [[NSMutableArray alloc] init];
     if (lightModel) {
@@ -392,7 +397,6 @@
     AIMindValueModel *mindValue = [[AIMindValueModel alloc] init];
     mindValue.type = MindType_Hunger;
     mindValue.value = mVD;
-    mindValue.sourcePointer = model.pointer;
     return mindValue;
 }
 

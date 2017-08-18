@@ -24,7 +24,7 @@
 /**
  *  MARK:--------------------method--------------------
  */
-+(id) initWithContent:(id)content{
++(id) newWithContent:(id)content{
     return [[AIObject alloc] init];
 }
 

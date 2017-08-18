@@ -13,6 +13,8 @@
  */
 @interface AILineStrong : NSObject
 
++(AILineStrong*) newWithCount:(int)count;
+
 /**
  *  MARK:--------------------更新计数器--------------------
  */

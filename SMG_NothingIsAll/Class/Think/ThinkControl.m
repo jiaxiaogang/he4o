@@ -10,6 +10,8 @@
 #import "ThinkHeader.h"
 #import "TestHungryPage.h"
 
+#define AreaLightEnergy_Shallow 100  //浅理解的区域点亮能量
+
 @interface ThinkControl ()
 
 @end
@@ -53,6 +55,7 @@
     if (model) {
         //1,联想点亮区域
         NSMutableArray *mArr = [SMGUtils lightArea_Vertical_2:model];
+        NSMutableArray *mArr2 = [SMGUtils lightArea_Vertical:model energy:AreaLightEnergy_Shallow];
         
         if (mArr.count == 1) {
             [SMGUtils lightArea_Horizontal:model];

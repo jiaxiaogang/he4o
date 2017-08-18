@@ -19,6 +19,12 @@
 @class AILineStrong;
 @interface AILine : AIObject
 
+/**
+ *  MARK:--------------------new--------------------
+ *  @param obj... : 需要传入obj是已存储过的
+ */
++ (AILine*) newWithType:(AILineType)type pointers:(AIArray*)pointers;
+
 @property (strong,nonatomic) NSMutableArray *pointers;
 @property (strong,nonatomic) AILineStrong *strong;   //网络强度
 @property (assign, nonatomic) AILineType type;       //因"知识表示"的泛化要求;必须简化"树形知识表示"结构;而更加依赖AILine;而AILaw和AILogic也可以使用AILine来代替;(参考N4P1)

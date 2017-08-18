@@ -10,11 +10,10 @@
 
 @implementation AIMindValueModel
 
-+(AIMindValueModel*) initWithType:(MindType)type value:(CGFloat)value sourcePointer:(AIPointer*)pointer{
++(AIMindValueModel*) initWithType:(MindType)type value:(CGFloat)value {
     AIMindValueModel *mindV = [[AIMindValueModel alloc] init];//注!!!:随后添加去重处理;
     mindV.type = type;
     mindV.value = value;
-    mindV.sourcePointer = pointer;
     return mindV;
 }
 
@@ -42,8 +41,7 @@ ________________________________________\n\
 rowid : %ld\n\
 type : %@\n\
 value : %f\n\
-sourcePointer : %@,%ld\n\
-_______________________________________|\n\n\n",self.rowid,type,_value,_sourcePointer.pClass,(long)_sourcePointer.pId);
+_______________________________________|\n\n\n",self.rowid,type,_value);
 
 }
 

@@ -21,13 +21,19 @@
 -(void) commitMindModelToCheck:(id)model{
     if (model) {
         if ([model isKindOfClass:[AIHungerLevelChangedModel class]]) {
-            AIHungerLevelChangedModel *lModel = (AIHungerLevelChangedModel*)model;
             //1,取数据
+            AIHungerLevelChangedModel *lModel = (AIHungerLevelChangedModel*)model;
             AIMindValueModel *mindValue = [theMind getMindValueWithHungerLevelChanged:lModel];//(参考N3P18)
+            
             //2,分析决策A_(可产生需求)
             if (lModel.state == UIDeviceBatteryStateCharging || (lModel.state == UIDeviceBatteryStateUnplugged && lModel.level < 7)) {
-                [AIHungerLevelChangedStore insert:model awareness:true];//logThink记忆饿的意识流
+                [AIHungerLevelChangedStore insert:model awareness:true];//logThink记忆饿的意识流//此时去区域点亮,是没有存AILine的;所以点亮会失败......//xxx
                 [AIMindValueStore insert:mindValue awareness:true];
+                
+                //3,神经网络关联
+                AIArray *pointers = AIMakeArr(lModel,mindValue);
+                AILine *line = AIMakeLine(AILineType_Law,pointers);
+                [AILineStore insert:line];
             }
         }else if([model isKindOfClass:[AIHungerStateChangedModel class]]){
             //1,取数据

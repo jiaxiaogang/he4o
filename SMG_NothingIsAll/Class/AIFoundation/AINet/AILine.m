@@ -10,4 +10,21 @@
 
 @implementation AILine
 
++ (AILine*) newWithType:(AILineType)type pointers:(AIArray*)pointers
+{
+    AILine *value = [[self.class alloc] init];
+    value.type = type;
+    value.strong = [AILineStrong newWithCount:1];
+    [value.pointers addObjectsFromArray:pointers.content];
+    
+    return value;
+}
+
+-(NSMutableArray *)pointers{
+    if (_pointers == nil) {
+        _pointers = [[NSMutableArray alloc] init];
+    }
+    return _pointers;
+}
+
 @end

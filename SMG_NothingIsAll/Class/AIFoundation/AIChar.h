@@ -10,8 +10,8 @@
 
 @interface AIChar : AIObject
 
-+(AIChar *) initWithContent:(unichar)content;
-+(AIChar *) initWithContentByString:(NSString *)str;
++(AIChar *) newWithContent:(unichar)content;
++(AIChar *) newWithContentByString:(NSString *)str;
 @property (assign, nonatomic) unichar content;
 
 @end

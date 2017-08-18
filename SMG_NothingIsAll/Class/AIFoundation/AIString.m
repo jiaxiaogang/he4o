@@ -16,13 +16,13 @@
 
 @implementation AIString
 
-+(id)initWithContent:(id)content{
++(id)newWithContent:(id)content{
     AIString *value = [[AIString alloc] init];
     
     NSString *contentStr = STRTOOK(content);
     for (NSInteger i = 0; i < contentStr.length; i++) {
         unichar c = [contentStr characterAtIndex:i];
-        AIChar *aiChar = [AIChar initWithContent:c];
+        AIChar *aiChar = [AIChar newWithContent:c];
         [value.content addObject:aiChar.pointer];
     }
     

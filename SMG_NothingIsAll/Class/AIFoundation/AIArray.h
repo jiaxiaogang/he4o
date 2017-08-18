@@ -25,5 +25,6 @@
 -(BOOL) containsObject:(AIObject*)obj;
 -(id) objectAtIndex:(NSUInteger)index;
 -(NSInteger) count;
+-(void) forIn:(AILogicKeyType(^)(AIPointer*))block;//遍历forin
 
 @end

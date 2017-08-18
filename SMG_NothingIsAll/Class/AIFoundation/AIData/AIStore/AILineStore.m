@@ -10,6 +10,9 @@
 
 @implementation AILineStore
 
+/**
+ *  MARK:--------------------IO--------------------
+ */
 +(AILine*) searchSinglePointers:(NSArray*)pointers{
     if (ARRISOK(pointers)) {
         NSArray *lines = ARRTOOK([[self getModelClass] searchWithWhere:nil]);
@@ -40,7 +43,39 @@
     return arr;
 }
 
++(NSMutableArray*) searchPointer:(AIPointer*)pointer energy:(NSInteger)energy{
+    NSMutableArray *havArr = [[NSMutableArray alloc] init];
+    NSMutableArray *validArr = [[NSMutableArray alloc] init];
+    
+    NSArray *lines = ARRTOOK([[self getModelClass] searchWithWhere:nil]);
+    for (AILine *line in lines) {
+        for (AIPointer *lP in ARRTOOK(line.pointers)) {
+            if ([STRTOOK(lP.pClass) isEqualToString:pointer.pClass] && lP.pId == pointer.pId) {
+                [havArr addObject:line];
+            }
+        }
+    }
+    for (AILine *line in havArr) {
+        //1,根据网络强度排序
+        
+        //2,将网络强度高的点亮
+        [validArr addObject:line];
+        
+        //3,将无限层的关联加入进来;
+        
+        //4,
+    }
+    
+    return validArr;
+}
 
++(void) insert:(AIObject *)data{
+    [self insert:data awareness:false];
+}
+
+/**
+ *  MARK:--------------------method--------------------
+ */
 +(Class)getModelClass{
     return [AILine class];
 }

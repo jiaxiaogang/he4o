@@ -17,6 +17,7 @@
  */
 +(NSMutableArray*) lightArea_Vertical_1:(AIAwarenessModel*)lightModel;
 +(NSMutableArray*) lightArea_Vertical_2:(AIAwarenessModel*)lightModel;
++(NSMutableArray*) lightArea_Vertical:(AIAwarenessModel*)lightModel energy:(NSInteger)energy;//使用能量点亮神经网络区域;(依赖AILine的强度)
 +(NSMutableArray*) lightArea_Vertical:(AIAwarenessModel*)lightModel layerCount:(NSInteger)layerCount;
 +(NSMutableArray*) lightArea_Horizontal:(AIAwarenessModel*)lightModel;
 

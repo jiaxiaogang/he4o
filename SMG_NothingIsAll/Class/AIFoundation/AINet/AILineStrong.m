@@ -19,6 +19,12 @@
 
 @implementation AILineStrong
 
++(AILineStrong*) newWithCount:(int)count{
+    AILineStrong *strong = [[AILineStrong alloc] init];
+    [strong setCountDelta:count];
+    return strong;
+}
+
 -(CGFloat)value{
     return [AILineDampingStrategy getValue:self.count lastCountTime:self.lastCountTime];
 }
