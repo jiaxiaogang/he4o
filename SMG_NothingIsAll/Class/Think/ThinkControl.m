@@ -51,9 +51,10 @@
     }
 }
 
--(void) commitUnderstandByShallowFromMind:(AIAwarenessModel*)model {
-    if (model) {
+-(void) commitUnderstandByShallowFromMind:(NSArray*)models {
+    if (ARRISOK(models)) {
         //1,联想点亮区域
+        AIObject *model = [models lastObject];
         NSMutableArray *mArr = [SMGUtils lightArea_Vertical_2:model];
         NSMutableArray *mArr2 = [SMGUtils lightArea_Vertical:model energy:AreaLightEnergy_Shallow];
         
@@ -121,7 +122,7 @@
     }
     //2,通知时2选1;
     AIDemandModel *demandModel = [[AIDemandModel alloc] initWithAIMindValueModel:model];
-    [AIDemandStore insert:demandModel awareness:true];//logThink记忆
+    [SMGUtils store_Insert:demandModel];//logThink记忆
     [self setData:demandModel];
 }
 

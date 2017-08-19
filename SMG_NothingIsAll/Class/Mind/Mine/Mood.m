@@ -36,7 +36,7 @@
 -(void) saveLogThink{
     //1,存心情
     AIMoodModel *moodModel = [[AIMoodModel alloc] initWithType:self.type value:self.value];//logThink
-    [AIMoodStore insert:moodModel awareness:true];
+    [SMGUtils store_Insert:moodModel];
 }
 
 -(MindStrategyModel*) getStrategyModel{

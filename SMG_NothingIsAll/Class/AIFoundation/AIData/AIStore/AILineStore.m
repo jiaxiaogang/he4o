@@ -43,7 +43,7 @@
     return arr;
 }
 
-+(NSMutableArray*) searchPointer:(AIPointer*)pointer energy:(NSInteger)energy{
++(NSMutableArray*) searchPointer:(AIPointer*)pointer energy:(CGFloat)energy{
     NSMutableArray *havArr = [[NSMutableArray alloc] init];
     NSMutableArray *validArr = [[NSMutableArray alloc] init];
     
@@ -55,15 +55,38 @@
             }
         }
     }
-    for (AILine *line in havArr) {
-        //1,根据网络强度排序
+    
+    //1,根据网络强度排序
+    NSArray *sortHavArr = [havArr sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+        AILine *aiLine1 = (AILine*)obj1;
+        AILine *aiLine2 = (AILine*)obj2;
+        if(aiLine1.type == AILineType_IsA){
+            return true;
+        }
+        if(aiLine2.type == AILineType_IsA){
+            return false;
+        }
         
-        //2,将网络强度高的点亮
-        [validArr addObject:line];
+        return aiLine1.strong.value > aiLine2.strong.value;
+    }];
+    
+    //2,将网络强度高的点亮
+    for (AILine *line in sortHavArr) {
         
-        //3,将无限层的关联加入进来;
+        //3,计算当前line需要能量值
+        CGFloat curNeedEnergy = 0;
+        if (line.type != AILineType_IsA) {
+            curNeedEnergy = [SMGUtils aiLine_GetLightEnergy:line.strong.value];
+        }
+        //4,点亮并消耗掉能量
+        if (energy > curNeedEnergy) {
+            [validArr addObject:line];
+            energy -= curNeedEnergy;
+        }
         
-        //4,
+        //5,将无限层的关联加入进来;
+        
+        //6,
     }
     
     return validArr;

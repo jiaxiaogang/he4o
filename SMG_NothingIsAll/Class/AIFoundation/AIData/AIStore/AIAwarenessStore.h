@@ -10,4 +10,6 @@
 
 @interface AIAwarenessStore : AIStoreBase
 
++(void) insert:(AIObject*)data;
+
 @end

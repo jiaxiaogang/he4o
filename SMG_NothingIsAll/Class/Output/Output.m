@@ -39,7 +39,7 @@
     AIOutputModel *model = [[AIOutputModel alloc] init];
     model.type = type;
     model.content = content;
-    [AIOutputStore insert:model awareness:true];
+    [SMGUtils store_Insert:model];
 }
 
 @end

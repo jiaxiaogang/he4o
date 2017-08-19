@@ -31,7 +31,7 @@
         if (awareness) {
             AIAwarenessModel *awareModel = [[AIAwarenessModel alloc] init];
             awareModel.awarenessP = data.pointer;
-            [AIAwarenessStore insert:awareModel awareness:false];
+            [AIAwarenessStore insert:awareModel];
         }
     }
 }
@@ -45,7 +45,7 @@
         if (awareness) {
             AIAwarenessModel *awareModel = [[AIAwarenessModel alloc] init];
             awareModel.awarenessP = data.pointer;
-            [AIAwarenessStore insert:awareModel awareness:false];
+            [AIAwarenessStore insert:awareModel];
         }
     }
 }

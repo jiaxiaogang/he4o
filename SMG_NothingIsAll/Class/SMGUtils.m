@@ -14,18 +14,18 @@
  *  MARK:--------------------联想AILine点亮区域--------------------
  *  layerCount,节点层数;(0->自己)(1->自己和自己的抽象层)(2->自已,自己的抽象层,抽象层的其它实例,抽象层的抽象层)(>2:以此类推)
  */
-+(NSMutableArray*) lightArea_Vertical_1:(AIAwarenessModel*)lightModel{
++(NSMutableArray*) lightArea_Vertical_1:(AIObject*)lightModel{
     return [self lightArea_Vertical:lightModel layerCount:1];
 }
-+(NSMutableArray*) lightArea_Vertical_2:(AIAwarenessModel*)lightModel{
++(NSMutableArray*) lightArea_Vertical_2:(AIObject*)lightModel{
     return [self lightArea_Vertical:lightModel layerCount:2];
 }
 
-+(NSMutableArray*) lightArea_Vertical:(AIAwarenessModel*)lightModel energy:(NSInteger)energy{
++(NSMutableArray*) lightArea_Vertical:(AIObject*)lightModel energy:(NSInteger)energy{
     return [AILineStore searchPointer:lightModel.pointer energy:energy];
 }
 
-+(NSMutableArray*) lightArea_Vertical:(AIAwarenessModel*)lightModel layerCount:(NSInteger)layerCount{
++(NSMutableArray*) lightArea_Vertical:(AIObject*)lightModel layerCount:(NSInteger)layerCount{
     NSMutableArray *mArr = [[NSMutableArray alloc] init];
     if (lightModel) {
         //0,取自己
@@ -52,18 +52,17 @@
 }
 
 //参考:N4P17-横向点亮
-+(NSMutableArray*) lightArea_Horizontal:(AIAwarenessModel*)lightModel{
++(NSMutableArray*) lightArea_Horizontal:(AIObject*)lightModel{
     //参考:N4P18;通用的感觉算法
     if (lightModel) {
         //1,取10000个意识流数据
         NSMutableArray *awareArr = [AIAwarenessStore searchWhere:nil count:10000];
         
         //2,找到当前类似的项
-        AIObject *lightTarget = lightModel.awarenessP.content;
         for (AIAwarenessModel *horModel in awareArr) {
             AIObject *horiTarget = horModel.awarenessP.content;
             if (horModel.rowid != lightModel.rowid) {
-                if (lightTarget.class == horiTarget.class) {
+                if (lightModel.class == horiTarget.class) {
                     NSLog(@"");
                     //因为"知识表示"的泛化要求;必须简化"树形知识表示"结构;而更加依赖AILine;而AILaw和AILogic也可以使用AILine来代替;
                 }else{
@@ -79,6 +78,49 @@
         
     }
     return nil;
+}
+
+/**
+ *  MARK:--------------------StoreGroup--------------------
+ */
++(void) store_Insert:(AIObject*)obj{
+    if (obj) {
+        [self store:^{
+            [AIStoreBase insert:obj awareness:true];
+        } aiLine:nil postNotice:true postObj:@[obj]];
+    }
+}
+
++(void) store:(void(^)(void))storeBlock aiLine:(void(^)(void))lineBlock postNotice:(BOOL)postN postObj:(NSArray*)postObj{
+    if (storeBlock) {
+        storeBlock();
+    }
+    if (lineBlock) {
+        lineBlock();
+    }
+    if (postN && ARRISOK(postObj)) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:ObsKey_AwarenessModelChanged object:postObj];
+    }
+}
+
+
+/**
+ *  MARK:--------------------AILine--------------------
+ */
++(CGFloat) aiLine_GetLightEnergy:(CGFloat)strongValue{
+    if (strongValue < 2) {
+        return 1000;
+    }else if(strongValue < 5){
+        return 5;
+    }else if(strongValue < 10){
+        return 2;
+    }else if(strongValue < 50){
+        return 0.1f;
+    }else if(strongValue < 100){
+        return 0.01f;
+    }else{
+        return 0.001f;
+    }
 }
 
 

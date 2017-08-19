@@ -10,12 +10,10 @@
 
 @implementation AIAwarenessStore
 
-+(void) insert:(AIObject*)data awareness:(BOOL)awareness{
-    [super insert:data awareness:awareness];
++(void) insert:(AIObject*)data{
+    [super insert:data awareness:false];
     //2,每次意识流数据变化引起意识的思考;
-    if (data) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:ObsKey_AwarenessModelChanged object:data];
-    }
+    //if (data) [[NSNotificationCenter defaultCenter] postNotificationName:ObsKey_AwarenessModelChanged object:data];
 }
 
 @end

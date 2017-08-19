@@ -27,7 +27,7 @@
  *  MARK:--------------------Understand(Input->Think)--------------------
  */
 -(void) commitUnderstandByShallowFromInput:(id)data;//浅理解
--(void) commitUnderstandByShallowFromMind:(AIAwarenessModel*)model;
+-(void) commitUnderstandByShallowFromMind:(NSArray*)models ;
 
 /**
  *  MARK:--------------------Demand(Mind->Think)--------------------

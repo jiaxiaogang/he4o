@@ -27,20 +27,22 @@
             
             //2,分析决策A_(可产生需求)
             if (lModel.state == UIDeviceBatteryStateCharging || (lModel.state == UIDeviceBatteryStateUnplugged && lModel.level < 7)) {
-                [AIHungerLevelChangedStore insert:model awareness:true];//logThink记忆饿的意识流//此时去区域点亮,是没有存AILine的;所以点亮会失败......//xxx
-                [AIMindValueStore insert:mindValue awareness:true];
-                
-                //3,神经网络关联
-                AIArray *pointers = AIMakeArr(lModel,mindValue);
-                AILine *line = AIMakeLine(AILineType_Law,pointers);
-                [AILineStore insert:line];
+                [SMGUtils store:^{
+                    [AIHungerLevelChangedStore insert:model awareness:true];//logThink记忆饿的意识流//此时去区域点亮,是没有存AILine的;所以点亮会失败......//xxx
+                    [AIMindValueStore insert:mindValue awareness:true];
+                } aiLine:^{
+                    //3,神经网络关联
+                    AIArray *pointers = AIMakeArr(lModel,mindValue);
+                    AILine *line = AIMakeLine(AILineType_Law,pointers);
+                    [AILineStore insert:line];
+                } postNotice:true postObj:@[lModel,mindValue]];
             }
         }else if([model isKindOfClass:[AIHungerStateChangedModel class]]){
             //1,取数据
             AIHungerStateChangedModel *sModel = (AIHungerStateChangedModel*)model;
             
             //2,分析决策A_(是否产生需求)
-            [AIHungerLevelChangedStore insert:sModel awareness:true];//logThink记忆充电状态变化的意识流;
+            [SMGUtils store_Insert:sModel];//logThink记忆充电状态变化的意识流;
             
             //3,分析决策B_(是否执行需求)
             /**

@@ -11,9 +11,8 @@
 
 @interface AILineStrong ()
 
-//@property (strong, nonatomic) AILineDampingStrategy *dampingStrategy;   //衰减策略
 @property (assign, nonatomic) long long lastCountTime;  //最后计数器变化时间
-@property (assign, nonatomic) NSInteger count;                          //计数器
+@property (assign, nonatomic) NSInteger count;          //计数器(0-100)
 
 @end
 
@@ -31,7 +30,7 @@
 
 -(void) setCountDelta:(int)delta{
     self.count += delta;
-    self.count = MAX(0, self.count);
+    self.count = MAX(0, MIN(100, self.count));//0-100
     self.lastCountTime = [[NSDate date] timeIntervalSince1970];
 }
 

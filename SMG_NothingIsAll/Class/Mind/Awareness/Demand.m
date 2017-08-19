@@ -112,7 +112,7 @@
                     
                     //logThink
                     AIDemandModel *demandModel = [[AIDemandModel alloc] initWithAIMindValueModel:model];
-                    [AIDemandStore insert:demandModel awareness:true];
+                    [SMGUtils store_Insert:demandModel];
                     
                     dispatch_async(dispatch_get_main_queue(), ^{
                         [theThink setData:demandModel];
@@ -120,7 +120,7 @@
                 }else if(self.status == Aw2DemandStatus_MainCommit){
                     //logThink
                     AIDemandModel *demandModel = [[AIDemandModel alloc] initWithAIMindValueModel:model];
-                    [AIDemandStore insert:demandModel awareness:true];
+                    [SMGUtils store_Insert:demandModel];
                     
                     dispatch_async(dispatch_get_main_queue(), ^{
                         [theThink setData:demandModel];
