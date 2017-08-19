@@ -10,7 +10,8 @@
 
 @interface AILineStore : AIStoreBase
 
-+(AILine*) searchSinglePointers:(NSArray*)pointers;
++(NSMutableArray*) searchPointers:(NSArray*)pointers count:(NSInteger)count;
++(NSMutableArray*) searchPointersByClass:(NSArray*)pointers count:(NSInteger)count;
 +(NSMutableArray*) searchPointer:(AIPointer*)pointer count:(NSInteger)count;
 +(NSMutableArray*) searchPointer:(AIPointer*)pointer energy:(CGFloat)energy;//根据"能量"以"pointer"为中心搜索;
 

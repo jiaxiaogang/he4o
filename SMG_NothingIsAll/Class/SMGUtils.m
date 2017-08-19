@@ -57,25 +57,77 @@
     if (lightModel) {
         //1,取10000个意识流数据
         NSMutableArray *awareArr = [AIAwarenessStore searchWhere:nil count:10000];
+        NSMutableArray *sameClassArr = [[NSMutableArray alloc] init];
+        NSArray *lines = [AILineStore searchPointer:lightModel.pointer count:10];
         
         //2,找到当前类似的项
         for (AIAwarenessModel *horModel in awareArr) {
             AIObject *horiTarget = horModel.awarenessP.content;
             if (horModel.rowid != lightModel.rowid) {
                 if (lightModel.class == horiTarget.class) {
-                    NSLog(@"");
-                    //因为"知识表示"的泛化要求;必须简化"树形知识表示"结构;而更加依赖AILine;而AILaw和AILogic也可以使用AILine来代替;
+                    [sameClassArr addObject:horiTarget];//数据收集;
                 }else{
                     NSLog(@"");
                 }
             }
-            
         }
-        AIAwarenessModel *backModel = [AIAwarenessStore searchSingleRowId:lightModel.pointer.pId - 1];
-        AIAwarenessModel *frontModel = [AIAwarenessStore searchSingleRowId:lightModel.pointer.pId + 1];
         
-        NSLog(@"");
+        //3,lightModel的AILine
+        if (ARRISOK(lines)) {
+            for (AILine *lightLine in lines) {
+                
+            }
+        }else{
+            //3,规律Law
+            for (AIObject *sameObj in sameClassArr) {
+                //AILineStore searchPointer:sameObj.pointer count:
+                
+                AIAwarenessModel *backModel = [AIAwarenessStore searchSingleRowId:lightModel.pointer.pId - 1];
+                AIAwarenessModel *frontModel = [AIAwarenessStore searchSingleRowId:lightModel.pointer.pId + 1];
+            }
+        }
+    }
+    return nil;
+}
+
++(NSMutableArray*) lightArea_AILineTypeIsLawWithLightModels:(NSArray*)lightModels{
+    
+    if (ARRISOK(lightModels)) {
+        //1,搜索其它相同网络
+        NSMutableArray *pointers = [[NSMutableArray alloc] init];
+        for (AIObject *lightModel in lightModels) {
+            [pointers addObject:lightModel.pointer];
+        }
+        NSArray *lines = [AILineStore searchPointersByClass:pointers count:10];
         
+        //2,生成抽象AILaw数据
+        if (ARRISOK(lines)) {
+            NSMutableArray *lineType_LawArr = [[NSMutableArray alloc] init];
+            for (AILine *line in lines) {
+                if (line.type == AILineType_Law) {
+                    [lineType_LawArr addObject:line];
+                }
+            }
+            
+            if (ARRISOK(lineType_LawArr)) {
+                NSLog(@"");
+            }
+            //抽象出来的"知识表示"如何定义表示?...//xxx
+        }
+        
+    }
+    return nil;
+}
+
++(NSMutableArray*) lightArea_LightModels:(NSArray*)lightModels{
+    
+    if (ARRISOK(lightModels)) {
+        //1,从CommonSence取包含的常识;
+        
+        //2,取10000个意识流数据
+        NSMutableArray *awareArr = [AIAwarenessStore searchWhere:nil count:10000];
+        
+        //3,......
     }
     return nil;
 }
@@ -449,7 +501,7 @@
 //    }else if (model.state == HungerState_Charging) {//充电中
 //        mVD = [MathUtils getValueWithOriRange:UIFloatRangeMake(0, 100) targetRange:UIFloatRangeMake(10, 0) oriValue:model.level * model.level];//(饱一滴血)
 //    }
-//    
+//
 //    //2,分析决策 & 产生需求
 //    AIMindValueModel *mindValue = [[AIMindValueModel alloc] init];
 //    mindValue.type = MindType_Hunger;

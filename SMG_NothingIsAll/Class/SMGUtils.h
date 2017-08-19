@@ -20,7 +20,8 @@
 +(NSMutableArray*) lightArea_Vertical:(AIObject*)lightModel energy:(NSInteger)energy;//使用能量点亮神经网络区域;(依赖AILine的强度)
 +(NSMutableArray*) lightArea_Vertical:(AIObject*)lightModel layerCount:(NSInteger)layerCount;
 +(NSMutableArray*) lightArea_Horizontal:(AIObject*)lightModel;
-
++(NSMutableArray*) lightArea_AILineTypeIsLawWithLightModels:(NSArray*)lightModels;
++(NSMutableArray*) lightArea_LightModels:(NSArray*)lightModels; //区域点亮
 
 /**
  *  MARK:--------------------StoreGroup--------------------

@@ -13,17 +13,18 @@
 /**
  *  MARK:--------------------IO--------------------
  */
-+(AILine*) searchSinglePointers:(NSArray*)pointers{
-    if (ARRISOK(pointers)) {
-        NSArray *lines = ARRTOOK([[self getModelClass] searchWithWhere:nil]);
-        for (AILine *line in lines) {
-            BOOL isEqual = [self isEqual:pointers bPointers:line.pointers];
-            if (isEqual) {
-                return line;
-            }
-        }
-    }
-    return nil;
++(NSMutableArray*) searchPointers:(NSArray*)pointers count:(NSInteger)count{
+    return [self searchPointers:pointers count:count complare:^BOOL(NSArray *aps, NSArray *bps) {
+        return [self isEqual:aps bPointers:bps];
+    }];
+}
+
++(NSMutableArray*) searchPointersByClass:(NSArray*)pointers count:(NSInteger)count{
+    return [self searchPointers:pointers count:count complare:^BOOL(NSArray *aps, NSArray *bps) {
+        return [self isEqual:aps bPointers:bps complare:^BOOL(AIPointer *ap, AIPointer *bp) {
+            return [STRTOOK(ap.pClass) isEqualToString:bp.pClass];
+        }];
+    }];
 }
 
 +(NSMutableArray*) searchPointer:(AIPointer*)pointer count:(NSInteger)count{
@@ -104,12 +105,18 @@
 }
 
 +(BOOL) isEqual:(NSArray*)aPointers bPointers:(NSArray*)bPointers{
+    return [AILineStore isEqual:aPointers bPointers:bPointers complare:^BOOL(AIPointer *ap, AIPointer *bp) {
+        return ([STRTOOK(ap.pClass) isEqualToString:bp.pClass] && ap.pId == bp.pId);
+    }];
+}
+
++(BOOL) isEqual:(NSArray*)aPointers bPointers:(NSArray*)bPointers complare:(BOOL(^)(AIPointer *ap,AIPointer *bp))complare{
     if (ARRISOK(aPointers) && ARRISOK(bPointers)) {
         BOOL isEqual = true;
         for (AIPointer *ap in ARRTOOK(aPointers)) {
             BOOL bsContainAP = false;
             for (AIPointer *bp in bPointers) {
-                if ([STRTOOK(ap.pClass) isEqualToString:bp.pClass] && ap.pId == bp.pId) {
+                if (complare && complare(ap,bp)) {
                     bsContainAP = true;
                     break;
                 }
@@ -122,6 +129,23 @@
         return isEqual;
     }
     return false;
+}
+
++(NSMutableArray*) searchPointers:(NSArray*)pointers count:(NSInteger)count complare:(BOOL(^)(NSArray *aps,NSArray *bps))complare{
+    NSMutableArray *mArr = [[NSMutableArray alloc] init];
+    if (ARRISOK(pointers)) {
+        NSArray *lines = ARRTOOK([[self getModelClass] searchWithWhere:nil]);
+        for (AILine *line in lines) {
+            BOOL isEqual = (complare && complare(pointers,line.pointers));
+            if (isEqual) {
+                [mArr addObject:line];
+                if (mArr.count >= count) {
+                    return mArr;
+                }
+            }
+        }
+    }
+    return mArr;
 }
 
 @end

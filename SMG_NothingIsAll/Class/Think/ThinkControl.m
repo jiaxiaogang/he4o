@@ -54,14 +54,17 @@
 -(void) commitUnderstandByShallowFromMind:(NSArray*)models {
     if (ARRISOK(models)) {
         //1,联想点亮区域
-        AIObject *model = [models lastObject];
-        NSMutableArray *mArr = [SMGUtils lightArea_Vertical_2:model];
-        NSMutableArray *mArr2 = [SMGUtils lightArea_Vertical:model energy:AreaLightEnergy_Shallow];
+//        NSArray *lightAreaArr = [SMGUtils lightArea_LightModels:models];
+//        AIObject *model = [models lastObject];
+//        NSMutableArray *mArr = [SMGUtils lightArea_Vertical_2:model];
+//        NSMutableArray *mArr2 = [SMGUtils lightArea_Vertical:model energy:AreaLightEnergy_Shallow];
+//        if (mArr.count == 1) {
+//            [SMGUtils lightArea_Horizontal:model];
+//            return;
+//        }
         
-        if (mArr.count == 1) {
-            [SMGUtils lightArea_Horizontal:model];
-            return;
-        }
+        [SMGUtils lightArea_AILineTypeIsLawWithLightModels:models];
+        
         //2,无辐射思考(参考:N4P2)
         
         
