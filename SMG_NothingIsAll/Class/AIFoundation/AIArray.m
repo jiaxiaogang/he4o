@@ -31,7 +31,7 @@
         }
         va_end(argList);
     }
-    [arrClass insertToDB:value];
+    //[arrClass insertToDB:value];
     return value;
 }
 
@@ -43,7 +43,7 @@
             [value addObject:[arr objectAtIndex:i]];
         }
     }
-    [arrClass insertToDB:value];
+    //[arrClass insertToDB:value];
     return value;
 }
 
@@ -55,7 +55,7 @@
             [value addObject:item];
         }
     }
-    [arrClass insertToDB:value];
+    //[arrClass insertToDB:value];
     return value;
 }
 

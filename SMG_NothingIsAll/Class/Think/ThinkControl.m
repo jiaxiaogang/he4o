@@ -108,6 +108,13 @@
                     
                 }
                 //4. 对isAPointers进行Law关联;//参考N5P3问题1>>执行步骤
+                [SMGUtils store:^{
+                } aiLine:^{
+                    AIArray *pointers = [AIArray initWithArray:isAPointers];
+                    AILine *line = AIMakeLine(AILineType_Law,pointers);
+                    [AILineStore insert:line];
+                } postNotice:false postObj:nil];
+                
                 NSLog(@"");
             }
         }
@@ -140,7 +147,7 @@
         }
         
         //记录规律
-        AILawModel *law = AIMakeLawByArr(charArr);
+        AILawModel *law = AIMakeLawByArr(charArr);//此处下次过来时,改掉;必须换用神经网络的方式来关联规律的;//xxx
         
         //问mind有没意见
         if (self.delegate && [self.delegate respondsToSelector:@selector(thinkControl_GetMindValue:)]) {
