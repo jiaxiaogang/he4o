@@ -63,7 +63,22 @@
 //            return;
 //        }
         
-        [SMGUtils lightArea_AILineTypeIsLawWithLightModels:models];
+        
+        //1,抽象"饥饿感神经"与电量变化的连接常识;
+        NSArray *LawArr = [SMGUtils lightArea_AILineTypeIsLawWithLightModels:models];
+       
+        if (ARRISOK(LawArr)) {
+            for (AILine *line in LawArr) {
+                for (AIPointer *pointer in line.pointers) {
+                    AIObject *obj = pointer.content;
+                    [obj print];
+                }
+                NSLog(@"________________________\n\n\n\n\n\n\n");
+            }
+            NSLog(@"");
+            //抽象出来的"知识表示"如何定义表示?...//xxx
+        }
+        
         
         //2,无辐射思考(参考:N4P2)
         

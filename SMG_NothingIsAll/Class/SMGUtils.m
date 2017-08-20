@@ -108,13 +108,8 @@
                     [lineType_LawArr addObject:line];
                 }
             }
-            
-            if (ARRISOK(lineType_LawArr)) {
-                NSLog(@"");
-            }
-            //抽象出来的"知识表示"如何定义表示?...//xxx
+            return lineType_LawArr;
         }
-        
     }
     return nil;
 }
