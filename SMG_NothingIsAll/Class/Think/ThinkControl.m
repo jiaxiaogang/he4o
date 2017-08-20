@@ -77,6 +77,9 @@
             }
             NSLog(@"");
             //抽象出来的"知识表示"如何定义表示?...//xxx
+            //1,查找obj1和obj2的归纳Base表示;
+            //2,如果两者没有LineType_IsA的关联;则实时生成一个xBase;
+            //3,将两者的LineType_IsA关联进行Law的关联;
         }
         
         
