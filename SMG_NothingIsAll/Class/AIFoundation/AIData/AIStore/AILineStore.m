@@ -16,7 +16,7 @@
 +(NSMutableArray*) searchPointers:(NSArray*)pointers count:(NSInteger)count{
     return [self searchPointers:pointers count:count complare:^BOOL(NSArray *aps, NSArray *bps) {
         return [self isEqual:aps bPointers:bps];
-    }];
+    } complareType:nil];
 }
 
 +(NSMutableArray*) searchPointersByClass:(NSArray*)pointers count:(NSInteger)count{
@@ -24,6 +24,16 @@
         return [self isEqual:aps bPointers:bps complare:^BOOL(AIPointer *ap, AIPointer *bp) {
             return [STRTOOK(ap.pClass) isEqualToString:bp.pClass];
         }];
+    } complareType:nil];
+}
+
++(NSMutableArray*) searchPointersByClass:(NSArray*)pointers type:(AILineType)type count:(NSInteger)count {
+    return [self searchPointers:pointers count:count complare:^BOOL(NSArray *aps, NSArray *bps) {
+        return [self isEqual:aps bPointers:bps complare:^BOOL(AIPointer *ap, AIPointer *bp) {
+            return [STRTOOK(ap.pClass) isEqualToString:bp.pClass];
+        }];
+    } complareType:^BOOL(AILineType curType) {
+        return type == curType;
     }];
 }
 
@@ -131,13 +141,23 @@
     return false;
 }
 
-+(NSMutableArray*) searchPointers:(NSArray*)pointers count:(NSInteger)count complare:(BOOL(^)(NSArray *aps,NSArray *bps))complare{
++(NSMutableArray*) searchPointers:(NSArray*)pointers count:(NSInteger)count complare:(BOOL(^)(NSArray *aps,NSArray *bps))complare complareType:(BOOL(^)(AILineType curType))complareType {
     NSMutableArray *mArr = [[NSMutableArray alloc] init];
     if (ARRISOK(pointers)) {
         NSArray *lines = ARRTOOK([[self getModelClass] searchWithWhere:nil]);
         for (AILine *line in lines) {
-            BOOL isEqual = (complare && complare(pointers,line.pointers));
-            if (isEqual) {
+            //对比指针数组
+            BOOL isEqual_Pointers = true;
+            if(complare){
+                isEqual_Pointers = complare(pointers,line.pointers);
+            }
+            //对比类型
+            BOOL isEqual_Type = true;
+            if(complareType){
+                isEqual_Type = complareType(line.type);
+            }
+            //收集有效神经网络
+            if (isEqual_Pointers && isEqual_Type) {
                 [mArr addObject:line];
                 if (mArr.count >= count) {
                     return mArr;

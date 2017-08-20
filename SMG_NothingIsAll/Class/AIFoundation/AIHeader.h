@@ -16,7 +16,6 @@
 #import "AIValueModel.h"
 
 #import "AIDoModel.h"
-#import "AIObjModel.h"
 
 #import "AIPointer.h"
 #import "AILine.h"
@@ -33,7 +32,7 @@
 #import "AIHungerLevelChangedModel.h"
 #import "AIHungerStateChangedModel.h"
 #import "AIDemandModel.h"
-
+#import "AIObjModel.h"
 
 //封装AIStore层;用于各种数据的不同取数据方法;
 #import "AIStoreBase.h"
@@ -48,6 +47,7 @@
 #import "AIHungerStateChangedStore.h"
 #import "AIDemandStore.h"
 #import "AILineStore.h"
+#import "AIObjStore.h"
 
 #import "AIMainThread.h"
 
@@ -79,6 +79,7 @@
 
 //Array
 #define AIMakeArr(a, ...) [AIArray initWithObjects:a, ##__VA_ARGS__,nil]
+//#define AIMakeArr_Pointer(a, ...) [AIArray initWithObjects:a, ##__VA_ARGS__,nil]
 
 //Law
 #define AIMakeLaw(a, ...) [AILawModel initWithObjects:a, ##__VA_ARGS__,nil]

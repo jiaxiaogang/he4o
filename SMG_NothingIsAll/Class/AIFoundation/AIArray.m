@@ -80,6 +80,14 @@
     }
 }
 
+-(void) addPointer:(AIPointer*)pointer{
+    if (pointer) {
+        [self.content addObject:pointer];
+    }else{
+        NSLog(@"!!!数据为空");
+    }
+}
+
 -(void) removeObject:(AIObject*)obj{
     if (obj) {
         [self.content removeObject:obj.pointer];

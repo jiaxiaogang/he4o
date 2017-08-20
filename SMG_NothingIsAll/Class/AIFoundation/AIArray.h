@@ -20,6 +20,7 @@
 
 -(nonnull NSMutableArray*) content;
 -(void) addObject:(AIObject*)obj;
+-(void) addPointer:(AIPointer*)pointer;
 -(void) removeObject:(AIObject*)obj;
 -(void) removeObjectFromAtIndex:(NSUInteger)index;
 -(BOOL) containsObject:(AIObject*)obj;

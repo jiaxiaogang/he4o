@@ -33,6 +33,7 @@
 		082F9D5D1EB236AC0009F6A9 /* StudyViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 082F9D5B1EB236AC0009F6A9 /* StudyViewController.xib */; };
 		082F9D601EB236E80009F6A9 /* SMGOutputDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 082F9D5F1EB236E80009F6A9 /* SMGOutputDelegate.m */; };
 		083112F21F05E12600051DE6 /* MBProgressHUD+Add.m in Sources */ = {isa = PBXBuildFile; fileRef = 083112F11F05E12600051DE6 /* MBProgressHUD+Add.m */; };
+		083934771F49814B003D49BD /* AIObjStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 083934761F49814B003D49BD /* AIObjStore.m */; };
 		083BBDB41F1849DF000F694A /* AIHungerLevelChangedModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 083BBDB31F1849DF000F694A /* AIHungerLevelChangedModel.m */; };
 		083BBDB71F1849F1000F694A /* AIHungerStateChangedModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 083BBDB61F1849F1000F694A /* AIHungerStateChangedModel.m */; };
 		083BBDBA1F184A04000F694A /* AIHungerLevelChangedStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 083BBDB91F184A04000F694A /* AIHungerLevelChangedStore.m */; };
@@ -159,6 +160,8 @@
 		082F9D611EB236FA0009F6A9 /* OutputHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OutputHeader.h; sourceTree = "<group>"; };
 		083112F01F05E12600051DE6 /* MBProgressHUD+Add.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MBProgressHUD+Add.h"; sourceTree = "<group>"; };
 		083112F11F05E12600051DE6 /* MBProgressHUD+Add.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MBProgressHUD+Add.m"; sourceTree = "<group>"; };
+		083934751F49814B003D49BD /* AIObjStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIObjStore.h; sourceTree = "<group>"; };
+		083934761F49814B003D49BD /* AIObjStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIObjStore.m; sourceTree = "<group>"; };
 		083BBDB21F1849DF000F694A /* AIHungerLevelChangedModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIHungerLevelChangedModel.h; sourceTree = "<group>"; };
 		083BBDB31F1849DF000F694A /* AIHungerLevelChangedModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIHungerLevelChangedModel.m; sourceTree = "<group>"; };
 		083BBDB51F1849F1000F694A /* AIHungerStateChangedModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIHungerStateChangedModel.h; sourceTree = "<group>"; };
@@ -344,6 +347,8 @@
 				081816381F235691007DDB4D /* AIDemandStore.m */,
 				081828AC1F24BC6800BECCF0 /* AILineStore.h */,
 				081828AD1F24BC6800BECCF0 /* AILineStore.m */,
+				083934751F49814B003D49BD /* AIObjStore.h */,
+				083934761F49814B003D49BD /* AIObjStore.m */,
 			);
 			path = AIStore;
 			sourceTree = "<group>";
@@ -947,6 +952,7 @@
 				083F61341F04830F000330E1 /* AILineDampingStrategy.m in Sources */,
 				0813D64E1EDF7B150089FA0C /* InputModelBase.m in Sources */,
 				08F639831E9A2EC0003CD163 /* FeelValueModel.m in Sources */,
+				083934771F49814B003D49BD /* AIObjStore.m in Sources */,
 				083112F21F05E12600051DE6 /* MBProgressHUD+Add.m in Sources */,
 				08E58DDF1ED3CE18008B0D76 /* CharStore.m in Sources */,
 				08A2096F1F1069040013ACC4 /* AIMemoryModel.m in Sources */,

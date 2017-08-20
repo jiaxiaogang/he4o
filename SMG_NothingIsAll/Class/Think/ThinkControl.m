@@ -64,7 +64,7 @@
 //        }
         
         
-        //1,抽象"饥饿感神经"与电量变化的连接常识;
+        //1. 抽象"饥饿感神经"与电量变化的连接常识;
         NSArray *LawArr = [SMGUtils lightArea_AILineTypeIsLawWithLightModels:models];
        
         if (ARRISOK(LawArr)) {
@@ -76,10 +76,40 @@
                 NSLog(@"________________________\n\n\n\n\n\n\n");
             }
             NSLog(@"");
-            //抽象出来的"知识表示"如何定义表示?...//xxx
-            //1,查找obj1和obj2的归纳Base表示;
-            //2,如果两者没有LineType_IsA的关联;则实时生成一个xBase;
-            //3,将两者的LineType_IsA关联进行Law的关联;
+            
+            
+            //2. count>1时有规律产生;//参考N5P3问题1>>执行步骤
+            if (LawArr.count > 1) {
+                //2.1. 归纳(依次生成.pointers下元素的归纳base;//参考N5P3问题1>>执行步骤
+                NSMutableArray *isAPointers = [[NSMutableArray alloc] init];
+                AILine *firstLine = LawArr[0];
+                if (ARRISOK(firstLine.pointers)) {
+                    for (AIPointer *pointer in firstLine.pointers) {
+                        NSArray *isALines = [AILineStore searchPointersByClass:@[pointer] type:AILineType_IsA count:1];//搜索pointer"isA";
+                        //2.1.1. 如果找不到则创建一个//参考N5P3问题1>>执行步骤
+                        if (ARRISOK(isALines)) {
+                            [isAPointers addObject:isALines[0]];
+                        }else{
+                            AIObjModel *isAObj = [[AIObjModel alloc] init];
+                            [SMGUtils store:^{
+                                [AIObjStore insert:isAObj awareness:false];
+                            } aiLine:^{
+                                AIArray *pointers = [[AIArray alloc] init];
+                                [pointers addPointer:pointer];//此处考虑加入isAObj.pointer;//xxx
+                                
+                                AILine *line = AIMakeLine(AILineType_IsA,pointers);
+                                [AILineStore insert:line];
+                                
+                                [isAPointers addObject:line];
+                            } postNotice:false postObj:nil];
+                        }
+                        
+                    }
+                    
+                }
+                //4. 对isAPointers进行Law关联;//参考N5P3问题1>>执行步骤
+                NSLog(@"");
+            }
         }
         
         
