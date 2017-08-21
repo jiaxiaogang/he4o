@@ -51,6 +51,10 @@
     }
 }
 
+/**
+ *  MARK:--------------------浅思考--------------------
+ *  @param models : 从mind精神层传来的自我感知
+ */
 -(void) commitUnderstandByShallowFromMind:(NSArray*)models {
     if (ARRISOK(models)) {
         //1,联想点亮区域
