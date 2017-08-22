@@ -20,6 +20,22 @@
     return value;
 }
 
++ (AILine*) newWithType:(AILineType)type aiObjs:(NSArray*)aiObjs
+{
+    AILine *value = [[self.class alloc] init];
+    value.type = type;
+    value.strong = [AILineStrong newWithCount:1];
+    if (ARRISOK(aiObjs)) {
+        for (AIObject *obj in aiObjs) {
+            if (ISOK(obj, AIObject.class) && POINTERISOK(obj.pointer)) {
+                [value.pointers addObject:obj.pointer];
+            }
+        }
+    }
+    
+    return value;
+}
+
 -(NSMutableArray *)pointers{
     if (_pointers == nil) {
         _pointers = [[NSMutableArray alloc] init];

@@ -37,8 +37,8 @@
 /**
  *  MARK:--------------------public--------------------
  */
--(BOOL) isEqual:(id)object{//重写指针对比地址方法;
-    if (object && [object isKindOfClass:[AIPointer class]]) {
+-(BOOL) isEqual:(AIPointer*)object{//重写指针对比地址方法;
+    if (POINTERISOK(object)) {
         BOOL classIsEqual = [STRTOOK(self.pClass) isEqual:((AIPointer*)object).pClass];
         BOOL idIsEqual = self.pId == ((AIPointer*)object).pId;
         return classIsEqual && idIsEqual;

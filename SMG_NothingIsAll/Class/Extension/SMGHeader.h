@@ -44,7 +44,14 @@
 #define DICISOK(a) (a  && [a isKindOfClass:[NSDictionary class]] && a.count)//是否空字典
 #define DICTOOK(a) (a  && [a isKindOfClass:[NSDictionary class]]) ?  a : [NSDictionary new]
 
+//AILine
+#define LINEISOK(a) (a  && [a isKindOfClass:[AILine class]])
 
+//AIPointer
+#define POINTERISOK(a) (a && [a isKindOfClass:[AIPointer class]] && a.pId > 0)
+
+//ISOK
+#define ISOK(a, c) (a && [a isKindOfClass:c])
 
 /**
  *  MARK:--------------------快捷建对象--------------------

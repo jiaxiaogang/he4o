@@ -10,10 +10,9 @@
 
 @implementation SMGUtils
 
-/**
- *  MARK:--------------------联想AILine点亮区域--------------------
- *  layerCount,节点层数;(0->自己)(1->自己和自己的抽象层)(2->自已,自己的抽象层,抽象层的其它实例,抽象层的抽象层)(>2:以此类推)
- */
+//MARK:===============================================================
+//MARK:                     < 联想AILine点亮区域 >
+//MARK:===============================================================
 +(NSMutableArray*) lightArea_Vertical_1:(AIObject*)lightModel{
     return [self lightArea_Vertical:lightModel layerCount:1];
 }
@@ -127,13 +126,17 @@
     return nil;
 }
 
-/**
- *  MARK:--------------------StoreGroup--------------------
- */
+//MARK:===============================================================
+//MARK:                     < StoreGroup >
+//MARK:===============================================================
 +(void) store_Insert:(AIObject*)obj{
+    [self store_Insert:obj awareness:false];
+}
+
++(void) store_Insert:(AIObject*)obj awareness:(BOOL)awareness{
     if (obj) {
         [self store:^{
-            [AIStoreBase insert:obj awareness:true];
+            [AIStoreBase insert:obj awareness:awareness];
         } aiLine:nil postNotice:true postObj:@[obj]];
     }
 }
@@ -150,10 +153,9 @@
     }
 }
 
-
-/**
- *  MARK:--------------------AILine--------------------
- */
+//MARK:===============================================================
+//MARK:                     < AILine >
+//MARK:===============================================================
 +(CGFloat) aiLine_GetLightEnergy:(CGFloat)strongValue{
     if (strongValue < 2) {
         return 1000;
@@ -167,6 +169,30 @@
         return 0.01f;
     }else{
         return 0.001f;
+    }
+}
+
+
+/**
+ *  MARK:--------------------生产神经网络--------------------
+ */
++(AILine*) ailine_CreateLine:(NSArray*)aiObjs type:(AILineType)type{
+    if (ARRISOK(aiObjs)) {
+        //1. 创建网线并存
+        AILine *line = AIMakeLine(type, aiObjs);
+        [AILineStore insert:line];
+        //2. 插网线
+        if (ARRISOK(aiObjs)) {
+            for (AIObject *obj in aiObjs) {
+                if (ISOK(obj, AIObject.class)) {
+                    [obj connectLine:line save:true];
+                }
+            }
+        }
+        return line;
+    }else{
+        NSLog(@"_______SMGUtils.CreateLine.ERROR (pointersIsNil!)");
+        return nil;
     }
 }
 

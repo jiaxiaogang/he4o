@@ -98,12 +98,7 @@
                             [SMGUtils store:^{
                                 [AIObjStore insert:isAObj awareness:false];
                             } aiLine:^{
-                                AIArray *pointers = [[AIArray alloc] init];
-                                [pointers addPointer:pointer];//此处考虑加入isAObj.pointer;//xxx
-                                
-                                AILine *line = AIMakeLine(AILineType_IsA,pointers);
-                                [AILineStore insert:line];
-                                
+                                AILine *line = [SMGUtils ailine_CreateLine:@[pointer] type:AILineType_IsA];//此处考虑加入isAObj.pointer;//xxx
                                 [isAPointers addObject:line];
                             } postNotice:false postObj:nil];
                         }
@@ -114,9 +109,7 @@
                 //4. 对isAPointers进行Law关联;//参考N5P3问题1>>执行步骤
                 [SMGUtils store:^{
                 } aiLine:^{
-                    AIArray *pointers = [AIArray initWithArray:isAPointers];
-                    AILine *line = AIMakeLine(AILineType_Law,pointers);
-                    [AILineStore insert:line];
+                    [SMGUtils ailine_CreateLine:@[isAPointers] type:AILineType_Law];
                 } postNotice:false postObj:nil];
                 
                 NSLog(@"");

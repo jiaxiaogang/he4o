@@ -87,7 +87,7 @@
 #define AIMakeLawByAIArr(arr) [AILawModel initWithAIArray:arr]
 
 //AILine
-#define AIMakeLine(type,pointers) [AILine newWithType:type pointers:pointers]
+#define AIMakeLine(type,objs) [AILine newWithType:type aiObjs:objs]
 
 
 

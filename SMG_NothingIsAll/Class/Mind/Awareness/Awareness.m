@@ -32,9 +32,7 @@
                     [AIMindValueStore insert:mindValue awareness:true];
                 } aiLine:^{
                     //3,神经网络关联
-                    AIArray *pointers = AIMakeArr(lModel,mindValue);
-                    AILine *line = AIMakeLine(AILineType_Law,pointers);
-                    [AILineStore insert:line];
+                    [SMGUtils ailine_CreateLine:@[lModel,mindValue] type:AILineType_Law];
                 } postNotice:true postObj:@[lModel,mindValue]];
             }
         }else if([model isKindOfClass:[AIHungerStateChangedModel class]]){

@@ -105,6 +105,7 @@
 
 +(void) insert:(AIObject *)data{
     [self insert:data awareness:false];
+    //可以考虑把SMGUtils里的createLine方法中插网口的操作移到这里;现在不移;今后再说;//xxx
 }
 
 /**

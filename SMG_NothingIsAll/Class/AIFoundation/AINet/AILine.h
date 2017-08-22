@@ -23,7 +23,7 @@
  *  MARK:--------------------new--------------------
  *  @param obj... : 需要传入obj是已存储过的
  */
-+ (AILine*) newWithType:(AILineType)type pointers:(AIArray*)pointers;
++ (AILine*) newWithType:(AILineType)type aiObjs:(NSArray*)aiObjs;
 
 @property (strong,nonatomic) NSMutableArray *pointers;
 @property (strong,nonatomic) AILineStrong *strong;   //网络强度

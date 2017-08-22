@@ -7,6 +7,13 @@
 //
 
 #import "AIObject.h"
+#import "SMGUtils.h"
+
+@interface AIObject ()
+
+@property (strong,nonatomic) NSMutableArray *linePointers;
+
+@end
 
 @implementation AIObject
 
@@ -35,6 +42,13 @@
     _pointer.pClass = NSStringFromClass(self.class);
     _pointer.pId = self.rowid;//初次存入self时,pointer.Pid==0;所以这里重新赋值;保证每次读取pointer地址都是正确的;
     return _pointer;
+}
+
+-(NSMutableArray *)linePointers{
+    if (_linePointers == nil) {
+        _linePointers = [[NSMutableArray alloc] init];
+    }
+    return _linePointers;
 }
 
 -(BOOL) isEqual:(id)obj{
@@ -79,6 +93,37 @@
     NSLog(@"%@",logStr);
 }
 
+/**
+ *  MARK:--------------------插网线--------------------
+ *  每次产生神经网络的时候,要把网线插在网口上;
+ */
+-(void) connectLine:(AILine*)line{
+    [self connectLine:line save:false];
+}
+
+-(void) connectLine:(AILine*)line save:(BOOL)save{
+    if (LINEISOK(line) && POINTERISOK(line.pointer) && ![self containsLine:line]) {
+        [self.linePointers addObject:line.pointer];
+        if (save)
+            [SMGUtils store_Insert:self awareness:false];
+    }
+}
+
+/**
+ *  MARK:--------------------判断是否插了某网线--------------------
+ */
+-(BOOL) containsLine:(AILine*)line{
+    if (LINEISOK(line)) {
+        for (AIPointer *pointer in self.linePointers) {
+            if (POINTERISOK(pointer)) {
+                if ([pointer isEqual:line.pointer]) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
 
 @end
 
