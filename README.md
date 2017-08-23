@@ -1,7 +1,9 @@
 # SMG(强人工智能系统)
 > 参考笔记:[https://github.com/jiaxiaogang/SMG_NOTE#smg_note](https://github.com/jiaxiaogang/SMG_NOTE#smg_note)
 
-![](https://img.shields.io/badge/%20QQGroup-528053635%20-orange.svg)
+[![](https://img.shields.io/badge/%20QQGroup-528053635%20-orange.svg)](tencent://message/?uin=283636001&Site=&Menu=yes)
+[![](https://img.shields.io/badge/%20QQ-在线交谈%20-orange.svg)](http://wpa.qq.com/msgrd?v=3&uin=283636001&site=qq&menu=yes)
+[![](https://img.shields.io/badge/%20QQ-客户端交谈%20-orange.svg)](tencent://message/?uin=283636001&Site=&Menu=yes)
 ![](https://img.shields.io/badge/%20Wechat-jia2764894%20-orange.svg)
 ![](https://img.shields.io/badge/%20in-iphone%20-orange.svg)
 [![License](https://img.shields.io/badge/license-GPL-blue.svg)](LICENSE)
