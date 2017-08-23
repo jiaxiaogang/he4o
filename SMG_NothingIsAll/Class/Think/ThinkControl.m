@@ -113,6 +113,9 @@
                 } postNotice:false postObj:nil];
                 
                 NSLog(@"");
+                //5,将剩下的9个也加入指向;
+                //5.1,将9个AIMindValue和LevelModel指向其IsA;
+                //5.2,无需将9个分支的strong累加到ABLaw常识.strong
             }
         }
         
