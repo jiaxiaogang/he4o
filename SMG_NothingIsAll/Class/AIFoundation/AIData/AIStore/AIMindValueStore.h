@@ -10,4 +10,10 @@
 
 @interface AIMindValueStore : AIStoreBase
 
+/**
+ *  MARK:--------------------存储MindValue--------------------
+ *  //默认不存至意识流(参考N4P11)
+ */
++(void) insert:(AIObject *)data;
+
 @end

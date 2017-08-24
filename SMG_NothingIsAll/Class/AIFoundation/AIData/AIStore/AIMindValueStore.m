@@ -10,4 +10,8 @@
 
 @implementation AIMindValueStore
 
++(void) insert:(AIObject *)data{
+    [super insert:data awareness:false];
+}
+
 @end

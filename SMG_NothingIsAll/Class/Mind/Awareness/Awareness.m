@@ -29,11 +29,11 @@
             if (lModel.state == UIDeviceBatteryStateCharging || (lModel.state == UIDeviceBatteryStateUnplugged && lModel.level < 7)) {
                 [SMGUtils store:^{
                     [AIHungerLevelChangedStore insert:model awareness:true];//logThink记忆饿的意识流//此时去区域点亮,是没有存AILine的;所以点亮会失败......//xxx
-                    [AIMindValueStore insert:mindValue awareness:true];
+                    [AIMindValueStore insert:mindValue];
                 } aiLine:^{
                     //3,神经网络关联//生成前要检查是否已经有了抽象层的Law;没有再建立;//xxx
                     [SMGUtils ailine_CreateLine:@[lModel,mindValue] type:AILineType_Law];
-                } postNotice:true postObj:@[lModel,mindValue]];
+                } postNotice:true postObj:@[lModel]];
             }
         }else if([model isKindOfClass:[AIHungerStateChangedModel class]]){
             //1,取数据

@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIObject,AIArray,AILine;
+@class AIObject,AIArray,AILine,ThinkModel;
 @interface SMGUtils : NSObject
 
 //MARK:===============================================================
@@ -26,7 +26,8 @@
 +(NSMutableArray*) lightArea_Vertical_2:(AIObject*)lightModel;
 +(NSMutableArray*) lightArea_Vertical:(AIObject*)lightModel energy:(NSInteger)energy;//使用能量点亮神经网络区域;(依赖AILine的强度)
 +(NSMutableArray*) lightArea_Horizontal:(AIObject*)lightModel;
-+(NSMutableArray*) lightArea_AILineTypeIsLawWithLightModels:(NSArray*)lightModels;
++(NSMutableArray*) lightArea_AILineTypeIsLawWithLightModels:(NSArray*)lightModels;  //横向点亮实例...
++(ThinkModel*) lightArea_AILineTypeIsLaw:(ThinkModel*)model;//纵向点亮实例...
 +(NSMutableArray*) lightArea_LightModels:(NSArray*)lightModels; //区域点亮
 
 //MARK:===============================================================

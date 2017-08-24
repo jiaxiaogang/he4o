@@ -27,6 +27,8 @@
 		081828AE1F24BC6800BECCF0 /* AILineStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 081828AD1F24BC6800BECCF0 /* AILineStore.m */; };
 		081C436E1F0C67CF00DF6722 /* MindStrategy.m in Sources */ = {isa = PBXBuildFile; fileRef = 081C436D1F0C67CF00DF6722 /* MindStrategy.m */; };
 		081DA13B1ED47CE000C8C531 /* AIArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 081DA13A1ED47CE000C8C531 /* AIArray.m */; };
+		081EA1641F4E503300D7B901 /* ThinkModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 081EA1631F4E503300D7B901 /* ThinkModel.m */; };
+		081EA16A1F4E520E00D7B901 /* ThinkElementModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 081EA1691F4E520E00D7B901 /* ThinkElementModel.m */; };
 		0826EED41EF7619300400F08 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 0826EED31EF7619300400F08 /* README.md */; };
 		082F9D561EB234750009F6A9 /* Output.m in Sources */ = {isa = PBXBuildFile; fileRef = 082F9D551EB234750009F6A9 /* Output.m */; };
 		082F9D5C1EB236AC0009F6A9 /* StudyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 082F9D5A1EB236AC0009F6A9 /* StudyViewController.m */; };
@@ -149,6 +151,10 @@
 		081C436D1F0C67CF00DF6722 /* MindStrategy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MindStrategy.m; sourceTree = "<group>"; };
 		081DA1391ED47CE000C8C531 /* AIArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIArray.h; sourceTree = "<group>"; };
 		081DA13A1ED47CE000C8C531 /* AIArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIArray.m; sourceTree = "<group>"; };
+		081EA1621F4E503300D7B901 /* ThinkModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThinkModel.h; sourceTree = "<group>"; };
+		081EA1631F4E503300D7B901 /* ThinkModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThinkModel.m; sourceTree = "<group>"; };
+		081EA1681F4E520E00D7B901 /* ThinkElementModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThinkElementModel.h; sourceTree = "<group>"; };
+		081EA1691F4E520E00D7B901 /* ThinkElementModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThinkElementModel.m; sourceTree = "<group>"; };
 		0826EED31EF7619300400F08 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		082F9D541EB234750009F6A9 /* Output.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Output.h; sourceTree = "<group>"; };
 		082F9D551EB234750009F6A9 /* Output.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Output.m; sourceTree = "<group>"; };
@@ -439,6 +445,10 @@
 				08E3CCC81EE60F8D002990FD /* ThinkControl.h */,
 				08E3CCC91EE60F8D002990FD /* ThinkControl.m */,
 				080D059B1EE0E18E00DC62B5 /* ThinkHeader.h */,
+				081EA1621F4E503300D7B901 /* ThinkModel.h */,
+				081EA1631F4E503300D7B901 /* ThinkModel.m */,
+				081EA1681F4E520E00D7B901 /* ThinkElementModel.h */,
+				081EA1691F4E520E00D7B901 /* ThinkElementModel.m */,
 			);
 			path = Think;
 			sourceTree = "<group>";
@@ -938,6 +948,7 @@
 				08E3CCCA1EE60F8D002990FD /* ThinkControl.m in Sources */,
 				08A209721F1069040013ACC4 /* AIValueModel.m in Sources */,
 				08E58DEC1ED3CE18008B0D76 /* LogicModel.m in Sources */,
+				081EA16A1F4E520E00D7B901 /* ThinkElementModel.m in Sources */,
 				08AF456E1E97DDF600377887 /* MKStore.m in Sources */,
 				08FBB9091EE76E78000F9E80 /* HobbyModel.m in Sources */,
 				08F3AFBB1E98966E00747EDD /* Store.m in Sources */,
@@ -1003,6 +1014,7 @@
 				0895DAE61EB2D52D00E2B5C7 /* DataViewController.m in Sources */,
 				08DB40CB1F11A65E003162C8 /* TestHungryPage.m in Sources */,
 				081828AE1F24BC6800BECCF0 /* AILineStore.m in Sources */,
+				081EA1641F4E503300D7B901 /* ThinkModel.m in Sources */,
 				081C436E1F0C67CF00DF6722 /* MindStrategy.m in Sources */,
 				08E58DEA1ED3CE18008B0D76 /* LawModel.m in Sources */,
 				0808DB501F10A2A80082F4AD /* AIMindValueStore.m in Sources */,

@@ -7,6 +7,7 @@
 //
 
 #import "SMGUtils.h"
+#import "ThinkHeader.h"
 
 @implementation SMGUtils
 
@@ -111,6 +112,33 @@
         }
     }
     return nil;
+}
+
++(ThinkModel*) lightArea_AILineTypeIsLaw:(ThinkModel*)model{
+    
+    if (model) {
+        //1,纵向点亮 (收集Law)
+        if (model.linePointer) {
+            //有初始方向
+            AILine *line = model.linePointer.content;
+            if (LINEISOK(line)) {
+                if (line.type == AILineType_Law) {
+                    [model.lightModels addObject:line];
+                }
+            }
+        }else if(model.model){
+            //无初始方向
+            for (AIPointer *pointer in model.model.linePointers) {
+                AILine *line = pointer.content;
+                if (LINEISOK(line)) {
+                    if (line.type == AILineType_Law) {
+                        [model.lightModels addObject:line];
+                    }
+                }
+            }
+        }
+    }
+    return model;
 }
 
 +(NSMutableArray*) lightArea_LightModels:(NSArray*)lightModels{
