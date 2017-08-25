@@ -123,6 +123,8 @@
  *  @param models : 从mind精神层传来的自我感知
  */
 -(void) commitUnderstandByShallowFromMind:(NSArray*)models {
+    [self commitUnderstandByShallowFromMind_TestThinkModel:models];
+    NSLog(@"");
     if (ARRISOK(models)) {
         //1,联想点亮区域
 //        NSArray *lightAreaArr = [SMGUtils lightArea_LightModels:models];
