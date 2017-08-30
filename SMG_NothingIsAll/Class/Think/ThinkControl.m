@@ -58,62 +58,12 @@
 -(void) commitUnderstandByShallowFromMind_TestThinkModel:(NSArray*)models {
     if (ARRISOK(models)) {
         //1. 抽象"饥饿感神经"与电量变化的连接常识;
-        ThinkModel *model = [[ThinkModel alloc] init];
-        model.model = ARR_INDEX(models, 0);
-        [SMGUtils lightArea_AILineTypeIsLaw:model];
+        ThinkModel *thinkModel = [[ThinkModel alloc] init];
+        thinkModel.model = ARR_INDEX(models, 0);
+        [SMGUtils lightArea_AILineTypeIsLaw:thinkModel];
         
-        
-        
-        
-        
-        
-        //MindValue和LevelChangedModel同时需要归纳;明天写;
-        
-        
-        
-        
-        
-        
-        
-        if (ARRISOK(model.lightModels)) {
-            for (AILine *line in model.lightModels) {
-                for (AIPointer *pointer in line.pointers) {
-                    AIObject *obj = pointer.content;
-                    [obj print];
-                }
-                NSLog(@"________________________\n\n\n\n\n\n\n");
-            }
-            
-            //2. count>1时有规律产生;//参考N5P3问题1>>执行步骤
-            if (model.lightModels.count > 0) {
-                //2.1. 归纳(依次生成.pointers下元素的归纳base;//参考N5P3问题1>>执行步骤
-                NSMutableArray *isAPointers = [[NSMutableArray alloc] init];
-                AILine *firstLine = model.lightModels[0];
-                if (ARRISOK(firstLine.pointers)) {
-                    for (AIPointer *pointer in firstLine.pointers) {
-                        NSArray *isALines = [AILineStore searchPointersByClass:@[pointer] type:AILineType_IsA count:1];//搜索pointer"isA";
-                        //2.1.1. 如果找不到则创建一个//参考N5P3问题1>>执行步骤
-                        if (ARRISOK(isALines)) {
-                            [isAPointers addObject:isALines[0]];
-                        }else{
-                            AIObjModel *isAObj = [[AIObjModel alloc] init];
-                            [SMGUtils store:^{
-                                [AIObjStore insert:isAObj awareness:false];
-                            } aiLine:^{
-                                AILine *line = [SMGUtils ailine_CreateLine:@[pointer] type:AILineType_IsA];//此处考虑加入isAObj.pointer;//xxx
-                                [isAPointers addObject:line];
-                            } postNotice:false postObj:nil];
-                        }
-                        
-                    }
-                    
-                }
-                //4. 对isAPointers进行Law关联;//参考N5P3问题1>>执行步骤
-                [SMGUtils store:^{
-                } aiLine:^{
-                    [SMGUtils ailine_CreateLine:@[isAPointers] type:AILineType_Law];
-                } postNotice:false postObj:nil];
-            }
+        if (ARRISOK(thinkModel.lightModels)) {
+            //纵向点亮测试完结;
         }
     }
 }

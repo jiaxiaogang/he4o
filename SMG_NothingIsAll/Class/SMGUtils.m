@@ -114,31 +114,29 @@
     return nil;
 }
 
-+(ThinkModel*) lightArea_AILineTypeIsLaw:(ThinkModel*)model{
-    
-    if (model) {
++(void) lightArea_AILineTypeIsLaw:(ThinkModel*)thinkModel{
+    if (thinkModel) {
         //1,纵向点亮 (收集Law)
-        if (model.linePointer) {
+        if (thinkModel.linePointer) {
             //有初始方向
-            AILine *line = model.linePointer.content;
+            AILine *line = thinkModel.linePointer.content;
             if (LINEISOK(line)) {
                 if (line.type == AILineType_Law) {
-                    [model.lightModels addObject:line];
+                    [thinkModel.lightModels addObject:line];
                 }
             }
-        }else if(model.model){
+        }else if(thinkModel.model){
             //无初始方向
-            for (AIPointer *pointer in model.model.linePointers) {
+            for (AIPointer *pointer in thinkModel.model.linePointers) {
                 AILine *line = pointer.content;
                 if (LINEISOK(line)) {
                     if (line.type == AILineType_Law) {
-                        [model.lightModels addObject:line];
+                        [thinkModel.lightModels addObject:line];
                     }
                 }
             }
         }
     }
-    return model;
 }
 
 +(NSMutableArray*) lightArea_LightModels:(NSArray*)lightModels{

@@ -96,6 +96,7 @@ typedef NS_ENUM(NSInteger, AILineType) {
     AILineType_Law      = 2,//law静态规律
     AILineType_Logic    = 3,//logic动态逻辑
     AILineType_Value    = 4,//属性(函数或算法的值)
+    AILineType_RName    = 5,//别名(苹果,apple)
 };
 
 /**

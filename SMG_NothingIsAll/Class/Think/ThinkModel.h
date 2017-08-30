@@ -10,6 +10,7 @@
 
 /**
  *  MARK:--------------------用户model化神经网络点亮的数据--------------------
+ *  //ThinkModel应该只是对神经网络AreaLight的映射，因为思考过程还需要对神经网络进行重建等操作(参考N5P8);
  */
 @interface ThinkModel : NSObject
 
