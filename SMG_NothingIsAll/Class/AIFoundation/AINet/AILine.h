@@ -22,6 +22,8 @@
 /**
  *  MARK:--------------------new--------------------
  *  @param obj... : 需要传入obj是已存储过的
+ *  //估计将要删掉AILineType;不灵活...AILineType本身应该也是一个抽象节点;
+ *  //准备开发多维网络(像多维数组的概念)
  */
 + (AILine*) newWithType:(AILineType)type aiObjs:(NSArray*)aiObjs;
 

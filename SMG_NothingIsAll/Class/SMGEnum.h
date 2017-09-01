@@ -89,6 +89,7 @@ typedef NS_ENUM(NSInteger, Aw2DemandStatus) {
 
 /**
  *  MARK:--------------------AILineType--------------------
+ *  //估计将要删掉AILineType;不灵活...AILineType本身应该也是一个抽象节点;
  */
 typedef NS_ENUM(NSInteger, AILineType) {
     AILineType_IsA      = 0,//isa静态是
