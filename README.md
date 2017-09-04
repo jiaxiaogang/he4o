@@ -9,6 +9,7 @@
 [![License](https://img.shields.io/badge/license-GPL-blue.svg)](LICENSE)
 [![Join the chat at https://gitter.im/jiaxiaogang/lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jiaxiaogang/lobby)
 
+## 大家有交流需求或问题请直接Issues我,在Issues,我知无不言,言无不尽,回复及时,用词流利!`(QQ/微信七天回复一次)`
 
 #### -------------------引言-------------------
 
@@ -156,3 +157,9 @@
 >   - [神经网络的抽象方式](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note5.md#n5p3神经网络的抽象方式)
 >   - [网口](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note5.md#n5p3网口)
 
+```
+注:
+	1. 大家有交流需求或问题请直接Issues我;
+	2. 在Issues,我知无不言,言无不尽,回复及时,用词流利!
+	3. (QQ/微信七天回复一次)
+```
