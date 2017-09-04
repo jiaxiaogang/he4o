@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @class AILine;
-@interface AIObject : NSObject
+@interface AIObject : NSObject<NSCoding>
 
 
 +(id) newWithContent:(id)content;

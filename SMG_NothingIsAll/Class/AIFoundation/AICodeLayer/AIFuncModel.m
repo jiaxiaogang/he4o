@@ -10,4 +10,26 @@
 
 @implementation AIFuncModel
 
+
+/**
+ *  MARK:--------------------NSCoding--------------------
+ */
+- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
+    self = [super init];
+    if (self) {
+        self.funcClass = NSClassFromString([aDecoder decodeObjectForKey:@"funcClass"]);
+        self.funcSel = NSSelectorFromString([aDecoder decodeObjectForKey:@"funcSel"]);
+    }
+    
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [super encodeWithCoder:aCoder];
+    
+    [aCoder encodeObject:NSStringFromClass(self.funcClass) forKey:@"funcClass"];
+    [aCoder encodeObject:NSStringFromSelector(self.funcSel) forKey:@"funcSel"];
+}
+
+
 @end

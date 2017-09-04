@@ -9,11 +9,34 @@
 #import "AIObject.h"
 
 /**
- *  MARK:--------------------Function算法函数等反射模型--------------------
+ *  MARK:--------------------Function算法函数等"反射节点"模型--------------------
  */
 @interface AIFuncModel : AIObject
 
-@property (strong,nonatomic) NSString *className;
-@property (strong,nonatomic) NSString *methodName;
+@property (assign, nonatomic) Class funcClass;
+@property (assign, nonatomic) SEL funcSel;
 
 @end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//@property (strong,nonatomic) NSString *className;
+//@property (strong,nonatomic) NSString *methodName;
