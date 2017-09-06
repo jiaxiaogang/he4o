@@ -24,17 +24,17 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>PINCache.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Pods-SMG_NothingIsAll.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
 		<key>SDWebImage.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>TMCache.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -52,7 +52,12 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>821EFF0F30842787A92D706205C365A4</key>
+		<key>6BA13B9C29327F33EDEFCEADB99458F7</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>78C2DE91AC6E56BA6EF260131F3CA481</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -62,17 +67,12 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>B8D01528EC0DE20D071E1965E9502EA6</key>
+		<key>B924312C4BF6259474315EA0A433DEB1</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 		<key>F1A57F063DAC9B33748B129DD30F145E</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>FEB78F68DDE86CFF84D69DD17EF45446</key>
 		<dict>
 			<key>primary</key>
 			<true/>

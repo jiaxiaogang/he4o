@@ -11,7 +11,7 @@
 /**
  *  MARK:--------------------记忆存储--------------------
  *  1,MemStore.memArr是内存kv存储;
- *  2,MemStore的TMCache中有localKV存储;
+ *  2,MemStore的PINCache中有localKV存储;
  */
 @class MemModel;
 @interface MemStore : NSObject

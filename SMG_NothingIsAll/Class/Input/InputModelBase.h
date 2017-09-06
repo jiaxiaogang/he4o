@@ -20,7 +20,7 @@
 /**
  *  MARK:--------------------追加属性--------------------
  *  feelValueModel:比较值
- *  key:比的是什么;(key来自tmcache存的"FeelModel_Attributes_Keys")
+ *  key:比的是什么;(key来自PINCache存的"FeelModel_Attributes_Keys")
  */
 @property (strong,nonatomic) NSMutableDictionary *attributes;   //可自由增减的属性池;
 -(void) appendFeelValueModel:(FeelValueModel*)feelValueModel withKEY:(NSString*)key;    //追加属性;

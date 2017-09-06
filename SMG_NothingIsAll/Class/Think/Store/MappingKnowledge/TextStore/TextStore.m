@@ -10,7 +10,7 @@
 #import "SMG.h"
 #import "StoreHeader.h"
 #import "SMGHeader.h"
-#import "TMCache.h"
+#import "PINCache.h"
 #import "TextModel.h"
 
 

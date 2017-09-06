@@ -10,7 +10,7 @@
 #import "SMG.h"
 #import "StoreHeader.h"
 #import "SMGHeader.h"
-#import "TMCache.h"
+#import "PINCache.h"
 
 @interface ObjStore ()
 
@@ -133,11 +133,11 @@
 
 //硬盘存储;(不常调用,调用耗时)
 -(NSArray*) getLocalArr{
-    return [[TMCache sharedCache] objectForKey:@"MKStore_Obj_DataArr_Key"];
+    return [[PINCache sharedCache] objectForKey:@"MKStore_Obj_DataArr_Key"];
 }
 
 -(void) saveToLocal{
-    [[TMCache sharedCache] setObject:self.dataArr forKey:@"MKStore_Obj_DataArr_Key"];
+    [[PINCache sharedCache] setObject:self.dataArr forKey:@"MKStore_Obj_DataArr_Key"];
 }
 
 -(NSInteger) createItemId{

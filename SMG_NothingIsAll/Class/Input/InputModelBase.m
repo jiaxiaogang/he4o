@@ -7,7 +7,7 @@
 //
 
 #import "InputModelBase.h"
-#import "TMCache.h"
+#import "PINCache.h"
 #import "SMGHeader.h"
 
 @interface InputModelBase ()
@@ -39,7 +39,7 @@
 /**
  *  MARK:--------------------追加属性--------------------
  *  feelValueModel:比较值
- *  key:比的是什么;(key来自tmcache存的"FeelModel_Attributes_Keys")
+ *  key:比的是什么;(key来自PINCache存的"FeelModel_Attributes_Keys")
  */
 -(void) appendFeelValueModel:(FeelValueModel*)feelValueModel withKEY:(NSString*)key{
     if (feelValueModel && [self.attributesKeys containsObject:STRTOOK(key)]) {
@@ -77,7 +77,7 @@
                            AttributesKey_TasteSalty,
                            AttributesKey_Speed, nil];
         //2,后天
-        [_attributesKeys addObjectsFromArray:[[TMCache sharedCache] objectForKey:@"FeelModel_Attributes_AcquiredKeys"]];
+        [_attributesKeys addObjectsFromArray:[[PINCache sharedCache] objectForKey:@"FeelModel_Attributes_AcquiredKeys"]];
     }
     return _attributesKeys;
 }
@@ -85,7 +85,7 @@
 -(void) addAttributesKey:(NSString*)key{
     if (![self.attributesKeys containsObject:STRTOOK(key)]) {
         [self.attributesKeys addObject:STRTOOK(key)];
-        [[TMCache sharedCache] setObject:self.attributesKeys forKey:@"FeelModel_Attributes_AcquiredKeys"];
+        [[PINCache sharedCache] setObject:self.attributesKeys forKey:@"FeelModel_Attributes_AcquiredKeys"];
     }
 }
 

@@ -14,25 +14,25 @@ PODS:
   - LKDBHelper+Transaction/Transaction (1.0.4):
     - LKDBHelper
   - MBProgressHUD (1.0.0)
+  - PINCache (2.3)
   - SDWebImage (4.0.0):
     - SDWebImage/Core (= 4.0.0)
   - SDWebImage/Core (4.0.0)
-  - TMCache (2.1.0)
 
 DEPENDENCIES:
   - LKDBHelper+Transaction (~> 1.0.4)
   - MBProgressHUD
+  - PINCache
   - SDWebImage (~> 4.0.0)
-  - TMCache (~> 2.1.0)
 
 SPEC CHECKSUMS:
   FMDB: 854a0341b4726e53276f2a8996f06f1b80f9259a
   LKDBHelper: 531581fa6a7d0f14236cc028ce0d277bca73436a
   LKDBHelper+Transaction: c15c7b038d6503505f9849ad6ff61377a767a795
   MBProgressHUD: 4890f671c94e8a0f3cf959aa731e9de2f036d71a
+  PINCache: ce36ed282031b92fc7733ffe831f474ff80fddc2
   SDWebImage: 76a6348bdc74eb5a55dd08a091ef298e56b55e41
-  TMCache: 95ebcc9b3c7e90fb5fd8fc3036cba3aa781c9bed
 
-PODFILE CHECKSUM: fba928e1243f32d8679617d79248bb0862a4b863
+PODFILE CHECKSUM: 4475f67fd3d2c9efcae77779dae70ad2cfde5aa5
 
 COCOAPODS: 1.2.0

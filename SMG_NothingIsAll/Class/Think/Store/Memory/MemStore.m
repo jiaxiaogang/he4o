@@ -7,7 +7,7 @@
 //
 
 #import "MemStore.h"
-#import "TMCache.h"
+#import "PINCache.h"
 #import "SMGHeader.h"
 #import "FeelHeader.h"
 #import "StoreHeader.h"
@@ -51,7 +51,7 @@
 
 //硬盘存储;(不常调用,调用耗时)
 -(NSArray*) getLocalArr{
-    return [[TMCache sharedCache] objectForKey:@"MemStore_LocalArr_Key"];
+    return [[PINCache sharedCache] objectForKey:@"MemStore_LocalArr_Key"];
 }
 
 
@@ -215,7 +215,7 @@
 }
 
 -(void) saveToLocal{
-    [[TMCache sharedCache] setObject:self.memArr forKey:@"MemStore_LocalArr_Key"];
+    [[PINCache sharedCache] setObject:self.memArr forKey:@"MemStore_LocalArr_Key"];
 }
 
 
