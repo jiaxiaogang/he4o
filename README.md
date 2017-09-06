@@ -1,5 +1,6 @@
 # SMG(强人工智能系统)
-> 参考笔记:[https://github.com/jiaxiaogang/SMG_NOTE#smg_note](https://github.com/jiaxiaogang/SMG_NOTE#smg_note)
+> 参考笔记:<https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E7%9B%AE%E5%BD%95.md>  
+> 参考文档:<https://github.com/jiaxiaogang/SMG_NOTE>
 
 [![](https://img.shields.io/badge/%20QQGroup-528053635%20-orange.svg)](tencent://message/?uin=283636001&Site=&Menu=yes)
 [![](https://img.shields.io/badge/%20QQ-在线交谈%20-orange.svg)](http://wpa.qq.com/msgrd?v=3&uin=283636001&site=qq&menu=yes)
@@ -163,3 +164,166 @@
 	2. 在Issues,我知无不言,言无不尽,回复及时,用词流利!
 	3. (QQ/微信七天回复一次)
 ```
+
+
+
+<br><br><br><br><br><br><br><br><br><br><br><br>
+
+
+
+# SMG (Strong artificial Intelligence system)
+
+> Reference notes:<https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E7%9B%AE%E5%BD%95.md>  
+> Reference documentation:<https://github.com/jiaxiaogang/SMG_NOTE>
+
+[![](https://img.shields.io/badge/%20QQGroup-528053635%20-orange.svg)](tencent://message/?uin=283636001&Site=&Menu=yes)
+[![](https://img.shields.io/badge/%20QQ-clickTalk%20-orange.svg)](http://wpa.qq.com/msgrd?v=3&uin=283636001&site=qq&menu=yes)
+[![](https://img.shields.io/badge/%20QQ-clientTalk%20-orange.svg)](tencent://message/?uin=283636001&Site=&Menu=yes)
+![](https://img.shields.io/badge/%20Wechat-jia2764894%20-orange.svg)
+![](https://img.shields.io/badge/%20in-iphone%20-orange.svg)
+[![License](https://img.shields.io/badge/license-GPL-blue.svg)](LICENSE)
+[![Join the chat at https://gitter.im/jiaxiaogang/lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jiaxiaogang/lobby)
+
+# # I have a communication needs or questions please directly I am, in the Issues, I know nothing, words endless, reply in time, words fluent! `(QQ / micro letter seven days to reply once)`
+
+#### ------------------- Introduction -------------------
+
+> The first echelon: 1950 Turing put forward the "think of the machine" and "Turing test", he said: "look forward to the near future, we have a lot of work to do";
+
+> Second echelon: 1956 Dartmouth meeting, Minsky and McCarthy and others poor life of their own efforts, although not landing, but for the AGI laid a lot of foundation;
+
+> The third echelon: With bigData, cloud computing and other mature, AI ushered in the DL heat, but DL is not smart, so the monk hopes to AGI landing through this project;
+
+
+#### ------------------- Architecture Design Introduction -------------------
+
+- abstract
+- structure
+
+
+#### ------------------- Advantage Analysis -------------------
+
+- no black box problem;
+- Universal
+- can run on a stand-alone terminal
+- can solve the bottleneck of the current NLP
+- do not rely on huge amounts of data
+- no overridden algorithm
+- gentle and friendly;
+
+#### ------------------- The concept of the system -------------------
+
+- [LOP programming ideas] (https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note4. md # n4p13loplayer-oriented-programming170803)
+- [logThink and noLogThink] (https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%A1%86%E6%9E%B6/%E8%87%AA%E6%88%91.md # Two operations)
+- [based on understanding NLP] (https://github.com/jiaxiaogang/SMG_NOTE/blob/master/Light%E5%8F%8A%E5%BA%94%E7%94%A8/Light.md#nlp language Be sure to describe the meaning of the core to achieve 100 correct rate)
+- [deep understanding and shallow understanding] (https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%A1%86%E6%9E%B6/%E6%B3%A8%E6%84%8F % E5% 8A% 9B.md)
+- [three-dimensional abstract architecture] (https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%A1%86%E6%9E%B6/3%E7%BB%B4%E6%8A%BD% E8% B1% A1% E6% A6% 82% E8% BF% B0.md)
+- [tree knowledge representation] (https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note3 .md # n3p7 data tree theory)
+- [analogy, induction and statistics] (https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/ Note5.md # n5p2 intelligent neural network)
+- abstraction and structure
+- No reliance on algorithms and large data
+- congenital noData
+- and many more
+
+
+#### ------------------- Features -------------------
+- naive noData, need to be as long as human learning and growth period;
+
+
+#### ------------------- awareness -------------------
+
+- consciousness is not mysterious, but this "vocabulary" contains a lot of meaning; so the vocabulary is generalized a lot of meaning; to decompose distributed to the system ...
+- consciousness is developed, not the film and the awakening of the novel so fantasy;
+- the decomposition of "consciousness"
+- A stream of consciousness (AIAwarenessModel)
+- consciousness layer (logThink)
+- Conscious behavior
+- the first six sense
+- Subconscious
+- [click to view related notes] (https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note4 .md)
+
+#### ------------------- SMG architecture -------------------
+
+1. Mind engine
+
+2. Data:
+> - data in the Input, from the bottom of the SMG structure to the high level;
+> - the process of understanding is actually the process of data processing;
+> - logThink and noLogThink
+> - AIMemory AIAwareness AIMK AIMindValue AIMind ...
+
+3. "performance tower" and "unique performance optimization" approach;
+> - performance tower: (see data flow) the bottom of the flow to the top;
+> - "Unique performance optimization": avoid duplication; good performance; based on: analogy, induction and statistical understanding system: (reverse substitution priority principle)
+> - the only analogy:
+> - from the available feature contrast; (such as night, according to the sound)
+> - from the most notable features began to contrast; (such as the color of the cup)
+
+3. Based on understanding
+> Only NLP based on understanding is possible to achieve the same level of human beings;
+
+4. Based on: analogy, induction and statistical understanding system;
+5. naive noData;
+6. Capacity-based development;
+7. acquired learning
+8. Flexibility
+> - Dynamic inheritance
+- Dynamic properties
+> - dynamic interface and so on
+> - based on the data to make it flexible, generic;
+
+9. Neural network
+> - AILine (Stong et al)
+> - AIPointer
+> - [LightArea] (https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note4.md # n4p17lightarea)
+> - vertical light
+> - Lights up
+
+Imagination
+> Imagination: combination of color, material, etc., spread to the model, GAN;
+
+11. Creativity
+> Reference: (see note: AI / frame / creativity)
+
+12. Forecast
+Based common sense
+
+13. Knowledge representation
+> Data split (in the Memory-> AIAwareness process, the natural implementation of the split and abstract;)
+> Reference:
+> [https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%A1%86%E6%9E%B6/%E7%9F%A5%E8%AF%86%E8%A1%A8 % E7% A4% BA.md] (https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%A1%86%E6%9E%B6/%E7%9F%A5%E8%AF% 86% E8% A1% A8% E7% A4% BA.md)
+
+
+## -------------------timeline-------------------
+
+### 2017,05,21
+> - redraw the new version of the composition;
+> - AIFoundation
+
+### 2017,05,22 (OOP2DataLanguage)
+> - subversion of existing programming methods
+> - knowledge representation (resolved)
+
+### 2017.06.01 around
+> - 3D architecture (reference notes / AI / framework)
+
+### 2017.07.10 or so
+> - BrainTree (see N3P7, N3P8)
+
+### 2017.07.21
+> - ThinkTask (refer to [N3P11] (https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/ Note3.md # n3p11awareness-demand-thinktask --- or old info demand), [Awareness-> Demand-> ThinkTask] (https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%A1%86 % E6% 9E% B6 / Understand.md # awareness-demand-thinktask task))
+
+### 2017.08.01
+> - [awareness] (https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note3.md # n3p15 awareness 170801)
+
+### 2017.08.13
+> - [thinking process finishing] (https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note4 .md # n4p2 thinking evolution of the essence of ai thinking 170714)
+
+### 2017.08.14
+> - [LightArea-area lit] (https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0 /Note4.md#n4p17lightarea)
+> - [GeneralFeel - general feeling] (https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0 /Note4.md#n4p18 general feeling)
+
+### 2017.08.23
+
+Neural network
+> - [AILine] (https: // gi
