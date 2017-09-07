@@ -82,8 +82,8 @@
             for (AIObject *sameObj in sameClassArr) {
                 //AILineStore searchPointer:sameObj.pointer count:
                 
-                AIAwarenessModel *backModel = [AIAwarenessStore searchSingleRowId:lightModel.pointer.pId - 1];
-                AIAwarenessModel *frontModel = [AIAwarenessStore searchSingleRowId:lightModel.pointer.pId + 1];
+                AIAwarenessModel *backModel = [AIAwarenessStore searchSingleRowId:lightModel.pointer.pointerId - 1];
+                AIAwarenessModel *frontModel = [AIAwarenessStore searchSingleRowId:lightModel.pointer.pointerId + 1];
             }
         }
     }
@@ -98,7 +98,7 @@
         for (AIObject *lightModel in lightModels) {
             [pointers addObject:lightModel.pointer];
         }
-        NSArray *lines = [AILineStore searchPointersByClass:pointers count:10];
+        NSArray *lines = [AILineStore searchPointersByClass:pointers count:10];//避免这样的搜索;用感觉系统来作快速的全局搜索替代此处;//xxx
         
         //2,生成抽象AILaw数据
         if (ARRISOK(lines)) {
@@ -222,6 +222,15 @@
     }
 }
 
+//MARK:===============================================================
+//MARK:                     < AIPointer >
+//MARK:===============================================================
++(NSInteger) aiPointer_CreatePointerId{
+    NSInteger lastPId = [[NSUserDefaults standardUserDefaults] integerForKey:@"AIPointer_LastPointerId_KEY"];
+    [[NSUserDefaults standardUserDefaults] setInteger:lastPId + 1 forKey:@"AIPointer_LastPointerId_KEY"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    return lastPId + 1;
+}
 
 @end
 

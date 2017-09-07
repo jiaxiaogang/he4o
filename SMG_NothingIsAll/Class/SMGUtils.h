@@ -53,6 +53,12 @@
  */
 +(AILine*) ailine_CreateLine:(NSArray*)aiObjs type:(AILineType)type;
 
+
+//MARK:===============================================================
+//MARK:                     < AIPointer >
+//MARK:===============================================================
++(NSInteger) aiPointer_CreatePointerId;
+
 @end
 
 

@@ -47,12 +47,12 @@
     
     va_list argList;
     if (model) {
-        [lModel.pointerArr addObject:[AIPointer initWithClass:model.class withId:model.rowid]];
+        [lModel.pointerArr addObject:[AISqlPointer initWithClass:model.class withId:model.rowid]];
         
         va_start(argList, model);
         NSObject* arg = va_arg(argList, id);
         while (arg) {
-            [lModel.pointerArr addObject:[AIPointer initWithClass:arg.class withId:arg.rowid]];
+            [lModel.pointerArr addObject:[AISqlPointer initWithClass:arg.class withId:arg.rowid]];
             arg = va_arg(argList, id);
         }
         va_end(argList);
@@ -67,8 +67,7 @@
             AIPointer *pModel = self.pointerArr[i];
             NSLog(@"___%ld___(%@)\n",i,pModel.class);
             NSLog(@"___%ld___(rowid:%ld)\n",i,(long)pModel.rowid);
-            NSLog(@"___%ld___(pClass:%@)\n",i,pModel.pClass);
-            NSLog(@"___%ld___(pId:%ld)\n\n",i,(long)pModel.pId);
+            NSLog(@"___%ld___(pId:%ld)\n\n",i,(long)pModel.pointerId);
         }
     }
     NSLog(@"------------end\n\n");

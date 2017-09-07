@@ -50,6 +50,10 @@
 #import "AIObjStore.h"
 
 #import "AIMainThread.h"
+#import "AINode.h"
+#import "AIPort.h"
+#import "AISqlPointer.h"
+#import "AIKVPointer.h"
 
 /**
  *  MARK:--------------------数据检查--------------------

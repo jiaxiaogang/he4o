@@ -45,7 +45,7 @@
  */
 - (AIChar*)characterAtIndex:(NSUInteger)index{
     if (index < self.content.count) {
-        AIPointer *pointer = [self.content objectAtIndex:index];
+        AISqlPointer *pointer = [self.content objectAtIndex:index];
         return [NSClassFromString(pointer.pClass) searchSingleWithWhere:[DBUtils sqlWhere_RowId:pointer.pId] orderBy:nil];
     }
     return nil;

@@ -48,7 +48,7 @@
 #define LINEISOK(a) (a  && [a isKindOfClass:[AILine class]])
 
 //AIPointer
-#define POINTERISOK(a) (a && [a isKindOfClass:[AIPointer class]] && a.pId > 0)
+#define POINTERISOK(a) (a && [a isKindOfClass:[AIPointer class]] && a.pointerId > 0)
 
 //ISOK
 #define ISOK(a, c) (a && [a isKindOfClass:c])

@@ -8,50 +8,48 @@
 
 #import "AIPointer.h"
 
-@implementation AIPointer
+@interface AIPointer ()
 
-+(AIPointer*) initWithClass:(Class)pC withId:(NSInteger)pI {
-    
-    /*
-    NSDictionary *where = [[NSDictionary alloc] initWithObjectsAndKeys:NSStringFromClass(pC),@"pClass",@(pI),@"pId", nil];
-    AIPointer *value = [AIPointer searchSingleWithWhere:where orderBy:nil];
-    if (value) {
-        return value;
-    }else{
-        value = [[AIPointer alloc] init];
-        value.pClass = NSStringFromClass(pC);
-        value.pId = pI;
-        [AIPointer insertToDB:value];
-        return value;
-    }
-    */
- 
-    //原先去重并insert了,但其实这个去重会自动作;不需要;并且这里直接insert会出问题;因为此时的PId很多是0;
-    AIPointer *pointer = [[AIPointer alloc] init];
-    pointer.pClass = NSStringFromClass(pC);
-    pointer.pId = pI;
-    return pointer;
-    
-}
+@property (assign, nonatomic) NSInteger pointerId;  //指针地址(Id)
+
+@end
+
+@implementation AIPointer
 
 /**
  *  MARK:--------------------public--------------------
  */
 -(BOOL) isEqual:(AIPointer*)object{//重写指针对比地址方法;
     if (POINTERISOK(object)) {
-        BOOL classIsEqual = [STRTOOK(self.pClass) isEqual:((AIPointer*)object).pClass];
-        BOOL idIsEqual = self.pId == ((AIPointer*)object).pId;
-        return classIsEqual && idIsEqual;
+        return (self.pointerId == ((AIPointer*)object).pointerId);
     }
     return false;
 }
 
 -(id) content{
-    Class class = NSClassFromString(STRTOOK(self.pClass));
-    if (class) {
-        return [class searchSingleWithWhere:[DBUtils sqlWhere_RowId:self.pId] orderBy:nil];
-    }
     return nil;
+}
+
+-(NSInteger)pointerId{
+    if (_pointerId == 0) {
+        _pointerId = [SMGUtils aiPointer_CreatePointerId];
+    }
+    return _pointerId;
+}
+
+/**
+ *  MARK:--------------------NSCoding--------------------
+ */
+- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
+    self = [super init];
+    if (self) {
+        self.pointerId = [aDecoder decodeIntegerForKey:@"pointerId"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [aCoder encodeInteger:self.pointerId forKey:@"pointerId"];
 }
 
 @end

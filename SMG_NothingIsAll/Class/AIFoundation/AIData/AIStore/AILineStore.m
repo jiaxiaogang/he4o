@@ -22,7 +22,12 @@
 +(NSMutableArray*) searchPointersByClass:(NSArray*)pointers count:(NSInteger)count{
     return [self searchPointers:pointers count:count complare:^BOOL(NSArray *aps, NSArray *bps) {
         return [self isEqual:aps bPointers:bps complare:^BOOL(AIPointer *ap, AIPointer *bp) {
-            return [STRTOOK(ap.pClass) isEqualToString:bp.pClass];
+            if ([ap isKindOfClass:[AISqlPointer class]] && [bp isKindOfClass:[AISqlPointer class]]) {
+                AISqlPointer *aSqlPointer = (AISqlPointer*)ap;
+                AISqlPointer *bSqlPointer = (AISqlPointer*)bp;
+                return [STRTOOK(aSqlPointer.pClass) isEqualToString:bSqlPointer.pClass];
+            }
+            return [ap isEqual:bp];
         }];
     } complareType:nil];
 }
@@ -30,7 +35,12 @@
 +(NSMutableArray*) searchPointersByClass:(NSArray*)pointers type:(AILineType)type count:(NSInteger)count {
     return [self searchPointers:pointers count:count complare:^BOOL(NSArray *aps, NSArray *bps) {
         return [self isEqual:aps bPointers:bps complare:^BOOL(AIPointer *ap, AIPointer *bp) {
-            return [STRTOOK(ap.pClass) isEqualToString:bp.pClass];
+            if ([ap isKindOfClass:[AISqlPointer class]] && [bp isKindOfClass:[AISqlPointer class]]) {
+                AISqlPointer *aSqlPointer = (AISqlPointer*)ap;
+                AISqlPointer *bSqlPointer = (AISqlPointer*)bp;
+                return [STRTOOK(aSqlPointer.pClass) isEqualToString:bSqlPointer.pClass];
+            }
+            return [ap isEqual:bp];
         }];
     } complareType:^BOOL(AILineType curType) {
         return type == curType;
@@ -42,7 +52,7 @@
     NSArray *lines = ARRTOOK([[self getModelClass] searchWithWhere:nil]);
     for (AILine *line in lines) {
         for (AIPointer *lP in ARRTOOK(line.pointers)) {
-            if ([STRTOOK(lP.pClass) isEqualToString:pointer.pClass] && lP.pId == pointer.pId) {
+            if ([lP isEqual:pointer]) {
                 [arr addObject:line];
                 if (arr.count >= count) {
                     return arr;
@@ -61,7 +71,7 @@
     NSArray *lines = ARRTOOK([[self getModelClass] searchWithWhere:nil]);
     for (AILine *line in lines) {
         for (AIPointer *lP in ARRTOOK(line.pointers)) {
-            if ([STRTOOK(lP.pClass) isEqualToString:pointer.pClass] && lP.pId == pointer.pId) {
+            if ([lP isEqual:pointer]) {
                 [havArr addObject:line];
             }
         }
@@ -117,7 +127,7 @@
 
 +(BOOL) isEqual:(NSArray*)aPointers bPointers:(NSArray*)bPointers{
     return [AILineStore isEqual:aPointers bPointers:bPointers complare:^BOOL(AIPointer *ap, AIPointer *bp) {
-        return ([STRTOOK(ap.pClass) isEqualToString:bp.pClass] && ap.pId == bp.pId);
+        return [ap isEqual:bp];
     }];
 }
 
