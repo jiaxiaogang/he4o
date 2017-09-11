@@ -11,6 +11,38 @@
 @implementation AIFuncModel
 
 
+//MARK:===============================================================
+//MARK:                     < Method >
+//MARK:===============================================================
+/**
+ *  MARK:--------------------参数类型--------------------
+ */
+-(Class) paramClass{
+    return nil;
+}
+
+
+/**
+ *  MARK:--------------------返回值类型--------------------
+ */
+-(Class) valueClass{
+    return nil;
+}
+
+
+/**
+ *  MARK:--------------------执行--------------------
+ */
+-(id) run:(id)param{
+    if (ISOK(param, self.paramClass)) {
+        //判断funcClass的返回值 & 参数 是否与paramClass和valueClass一致;
+        if (self.funcClass) {
+            
+        }
+    }
+    return nil;
+}
+
 /**
  *  MARK:--------------------NSCoding--------------------
  */
@@ -33,3 +65,7 @@
 
 
 @end
+
+
+//@property (assign, nonatomic) Class paramClass; //参数类型
+//@property (assign, nonatomic) Class valueClass; //返回值类型
