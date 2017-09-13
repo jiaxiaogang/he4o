@@ -47,6 +47,7 @@
 - [树形知识表示](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note3.md#n3p7数据树理论)
 - [类比,归纳与统计](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note5.md#n5p2智能神经网络)
 - 抽象与结构
+- [树形智能神经网络](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note5.md#n5p2树形智能神经网络)
 - 不过度依赖算法与大数据
 - 先天noData
 - 等等
@@ -154,9 +155,21 @@
 > - 神经网络
 >   - [AILine](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note4.md#n4p1神经网络-ailine)
 >   - [知识表示与神经网络](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note4.md#n4p19第4代知识表示与神经网络贴合)
->   - [智能神经网络](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note5.md#n5p2智能神经网络)
+>   - [树形智能神经网络](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note5.md#n5p2树形智能神经网络)
 >   - [神经网络的抽象方式](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note5.md#n5p3神经网络的抽象方式)
 >   - [网口](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note5.md#n5p3网口)
+
+### 2017.09.13
+
+> - 感觉体系
+>   - [内感觉](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note4.md#n4p18%E5%86%85%E6%84%9F%E8%A7%89)
+>   - [外感觉](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note5.md#n5p16-外感觉)
+>   - [感觉的知识表示](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note5.md#n5p19-感觉的知识表示)
+>   - [神经网络的全局搜索](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note5.md#n5p11-神经网络的全局搜索)
+
+
+<br><br><br><br>
+
 
 ```
 注:
@@ -325,5 +338,18 @@ Based common sense
 
 ### 2017.08.23
 
-Neural network
-> - [AILine] (https: // gi
+> - Neural network
+>   - [AILine](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note4.md#n4p1神经网络-ailine)
+>   - [knowledge representation and neural network](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note4.md#n4p19第4代知识表示与神经网络贴合)
+>   - [tree intelligent neural network](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note5.md#n5p2树形智能神经网络)
+>   - [neural network abstraction method](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note5.md#n5p3神经网络的抽象方式)
+>   - [network port](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note5.md#n5p3网口)
+
+
+### 2017.09.13
+
+> - sensory system
+>   - [inner feeling](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note4.md#n4p18%E5%86%85%E6%84%9F%E8%A7%89)
+>   - [outside feeling](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note5.md#n5p16-外感觉)
+>   - [knowledge of sensation](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note5.md#n5p19-感觉的知识表示)
+>   - [global search for neural networks](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note5.md#n5p11-神经网络的全局搜索)
