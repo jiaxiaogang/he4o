@@ -1,6 +1,5 @@
 # SMG(强人工智能系统)
-> 参考笔记:<https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E7%9B%AE%E5%BD%95.md>  
-> 参考文档:<https://github.com/jiaxiaogang/SMG_NOTE>
+> 参考文档:<https://github.com/jiaxiaogang/SMG_NOTE#点击查看>
 
 [![](https://img.shields.io/badge/%20QQGroup-528053635%20-orange.svg)](tencent://message/?uin=283636001&Site=&Menu=yes)
 [![](https://img.shields.io/badge/%20QQ-在线交谈%20-orange.svg)](http://wpa.qq.com/msgrd?v=3&uin=283636001&site=qq&menu=yes)
@@ -8,7 +7,7 @@
 ![](https://img.shields.io/badge/%20Wechat-jia2764894%20-orange.svg)
 ![](https://img.shields.io/badge/%20in-iphone%20-orange.svg)
 [![License](https://img.shields.io/badge/license-GPL-blue.svg)](LICENSE)
-[![Join the chat at https://gitter.im/jiaxiaogang/lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jiaxiaogang/lobby)
+[![Join the chat at https://gitter.im/jiaxiaogang/SMG](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jiaxiaogang/SMG)
 
 ## 大家有交流需求或问题请直接Issues我,在Issues,我知无不言,言无不尽,回复及时,用词流利!`(QQ/微信七天回复一次)`
 
@@ -186,16 +185,15 @@
 
 # SMG (Strong artificial Intelligence system)
 
-> Reference notes:<https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E7%9B%AE%E5%BD%95.md>  
-> Reference documentation:<https://github.com/jiaxiaogang/SMG_NOTE>
+> Reference documentation:<https://github.com/jiaxiaogang/SMG_NOTE#点击查看>
 
 [![](https://img.shields.io/badge/%20QQGroup-528053635%20-orange.svg)](tencent://message/?uin=283636001&Site=&Menu=yes)
-[![](https://img.shields.io/badge/%20QQ-clickTalk%20-orange.svg)](http://wpa.qq.com/msgrd?v=3&uin=283636001&site=qq&menu=yes)
-[![](https://img.shields.io/badge/%20QQ-clientTalk%20-orange.svg)](tencent://message/?uin=283636001&Site=&Menu=yes)
+[![](https://img.shields.io/badge/%20QQ-在线交谈%20-orange.svg)](http://wpa.qq.com/msgrd?v=3&uin=283636001&site=qq&menu=yes)
+[![](https://img.shields.io/badge/%20QQ-客户端交谈%20-orange.svg)](tencent://message/?uin=283636001&Site=&Menu=yes)
 ![](https://img.shields.io/badge/%20Wechat-jia2764894%20-orange.svg)
 ![](https://img.shields.io/badge/%20in-iphone%20-orange.svg)
 [![License](https://img.shields.io/badge/license-GPL-blue.svg)](LICENSE)
-[![Join the chat at https://gitter.im/jiaxiaogang/lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jiaxiaogang/lobby)
+[![Join the chat at https://gitter.im/jiaxiaogang/SMG](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jiaxiaogang/SMG)
 
 # # I have a communication needs or questions please directly I am, in the Issues, I know nothing, words endless, reply in time, words fluent! `(QQ / micro letter seven days to reply once)`
 
