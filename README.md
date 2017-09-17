@@ -1,4 +1,6 @@
 # SMG(强人工智能系统)
+
+[![Join the chat at https://gitter.im/jiaxiaogang/SMG](https://badges.gitter.im/jiaxiaogang/SMG.svg)](https://gitter.im/jiaxiaogang/SMG?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 > 参考笔记:<https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E7%9B%AE%E5%BD%95.md>  
 > 参考文档:<https://github.com/jiaxiaogang/SMG_NOTE>
 
