@@ -9,6 +9,7 @@
 #import "ThinkControl.h"
 #import "ThinkHeader.h"
 #import "TestHungryPage.h"
+#import "DataLayerHeader.h"
 
 #define AreaLightEnergy_Shallow 100  //浅理解的区域点亮能量
 
@@ -185,8 +186,8 @@
         
         
         
-        //1, 交给神经网络,并反射找到处理算法;
-        //2, 交给常用算法处理并返回值给神经网络;
+        [theNet commitString:data];//1, 交给神经网络,并反射找到处理算法;
+        
         //3, 神经网络构建成功;
         
     }else{

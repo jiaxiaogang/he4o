@@ -41,54 +41,6 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/Class/Think/ThinkControl.m"
-            timestampString = "525311314.950895"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "184"
-            endingLineNumber = "184"
-            landmarkName = "-commitUnderstandByDeep:"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[ThinkControl commitUnderstandByDeep:]"
-                  moduleName = "SMG_NothingIsAll"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jia/Desktop/temp/SMG/SMG_NothingIsAll/Class/Think/ThinkControl.m"
-                  timestampString = "527311883.255224"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "187"
-                  endingLineNumber = "187"
-                  offsetFromSymbolStart = "843">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[ThinkControl commitUnderstandByDeep:]"
-                  moduleName = "SMG_NothingIsAll"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jia/Desktop/temp/SMG/SMG_NothingIsAll/Class/Think/ThinkControl.m"
-                  timestampString = "527311883.257966"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "187"
-                  endingLineNumber = "187"
-                  offsetFromSymbolStart = "883">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/Class/AIFoundation/AIData/AIStore/AILineStore.m"
             timestampString = "526440482.801747"
             startingColumnNumber = "9223372036854775807"
@@ -106,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/Class/Think/ThinkControl.m"
-            timestampString = "525744708.963413"
+            timestampString = "527314450.123444"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "63"
-            endingLineNumber = "63"
+            startingLineNumber = "64"
+            endingLineNumber = "64"
             landmarkName = "-commitUnderstandByShallowFromMind_TestThinkModel:"
             landmarkType = "7">
          </BreakpointContent>
@@ -154,7 +106,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/jia/Desktop/temp/SMG/SMG_NothingIsAll/Class/SMGUtils.m"
-                  timestampString = "527311883.277055"
+                  timestampString = "527314565.052082"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "130"
@@ -169,7 +121,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/jia/Desktop/temp/SMG/SMG_NothingIsAll/Class/SMGUtils.m"
-                  timestampString = "527311883.279232"
+                  timestampString = "527314565.054577"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "130"
@@ -185,13 +137,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/Demo/TestHungryPage.m"
-            timestampString = "527312982.40273"
+            filePath = "SMG_NothingIsAll/Class/Think/ThinkControl.m"
+            timestampString = "527314563.965374"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "102"
-            endingLineNumber = "102"
-            landmarkName = "-confirmBtnOnClick:"
+            startingLineNumber = "188"
+            endingLineNumber = "188"
+            landmarkName = "-commitUnderstandByDeep:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

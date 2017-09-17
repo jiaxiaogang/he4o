@@ -69,6 +69,7 @@
 #define theFeel [SMG sharedInstance].feel
 #define theInput [SMG sharedInstance].input
 #define theMainThread [SMG sharedInstance].mainThread
+#define theNet [SMG sharedInstance].net
 
 #define theMind [SMG sharedInstance].mindControl
 #define theMine [SMG sharedInstance].mindControl.mine
