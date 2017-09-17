@@ -15,9 +15,7 @@
 @implementation Input
 
 -(void) commitText:(NSString*)text{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(input_CommitToThink:)]) {
-        [self.delegate input_CommitToThink:STRTOOK(text)];
-    }
+    [theThink commitUnderstandByShallowFromInput:text];//从input常规输入的浅度理解即可;(简单且错误,参考N4P2)
 }
 
 @end

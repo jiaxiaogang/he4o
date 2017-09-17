@@ -19,14 +19,8 @@
  *  3,收集用户输入的Text字符串(Text)
  *  4,收集摄像头视频do行为(视频行为)
  */
-@protocol InputDelegate <NSObject>
-
--(void) input_CommitToThink:(NSString*)text;
-
-@end
 @interface Input : NSObject
 
-@property (weak, nonatomic) id<InputDelegate> delegate;
 -(void) commitText:(NSString*)text;
 
 @end

@@ -30,7 +30,7 @@
 		081816391F235691007DDB4D /* AIDemandStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 081816381F235691007DDB4D /* AIDemandStore.m */; };
 		081828AE1F24BC6800BECCF0 /* AILineStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 081828AD1F24BC6800BECCF0 /* AILineStore.m */; };
 		081B3ACC1F6E2155008A7F36 /* AITime.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3ACB1F6E2155008A7F36 /* AITime.m */; };
-		081B3AD11F6E222E008A7F36 /* StringAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3AD01F6E222E008A7F36 /* StringAlgs.m */; };
+		081B3AD61F6E2994008A7F36 /* StringAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3AD51F6E2994008A7F36 /* StringAlgs.m */; };
 		081C436E1F0C67CF00DF6722 /* MindStrategy.m in Sources */ = {isa = PBXBuildFile; fileRef = 081C436D1F0C67CF00DF6722 /* MindStrategy.m */; };
 		081DA13B1ED47CE000C8C531 /* AIArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 081DA13A1ED47CE000C8C531 /* AIArray.m */; };
 		081EA1641F4E503300D7B901 /* ThinkModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 081EA1631F4E503300D7B901 /* ThinkModel.m */; };
@@ -164,8 +164,9 @@
 		081828AD1F24BC6800BECCF0 /* AILineStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AILineStore.m; sourceTree = "<group>"; };
 		081B3ACA1F6E2155008A7F36 /* AITime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AITime.h; sourceTree = "<group>"; };
 		081B3ACB1F6E2155008A7F36 /* AITime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AITime.m; sourceTree = "<group>"; };
-		081B3ACF1F6E222E008A7F36 /* StringAlgs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringAlgs.h; sourceTree = "<group>"; };
-		081B3AD01F6E222E008A7F36 /* StringAlgs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StringAlgs.m; sourceTree = "<group>"; };
+		081B3AD41F6E2994008A7F36 /* StringAlgs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringAlgs.h; sourceTree = "<group>"; };
+		081B3AD51F6E2994008A7F36 /* StringAlgs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StringAlgs.m; sourceTree = "<group>"; };
+		081B3AD71F6E29FA008A7F36 /* CodeLayerHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeLayerHeader.h; sourceTree = "<group>"; };
 		081C436C1F0C67CF00DF6722 /* MindStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MindStrategy.h; sourceTree = "<group>"; };
 		081C436D1F0C67CF00DF6722 /* MindStrategy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MindStrategy.m; sourceTree = "<group>"; };
 		081DA1391ED47CE000C8C531 /* AIArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIArray.h; sourceTree = "<group>"; };
@@ -422,11 +423,20 @@
 			path = AITime;
 			sourceTree = "<group>";
 		};
-		081B3ACE1F6E2213008A7F36 /* ALG */ = {
+		081B3AD21F6E295F008A7F36 /* CodeLayer */ = {
 			isa = PBXGroup;
 			children = (
-				081B3ACF1F6E222E008A7F36 /* StringAlgs.h */,
-				081B3AD01F6E222E008A7F36 /* StringAlgs.m */,
+				081B3AD31F6E2994008A7F36 /* ALG */,
+				081B3AD71F6E29FA008A7F36 /* CodeLayerHeader.h */,
+			);
+			path = CodeLayer;
+			sourceTree = "<group>";
+		};
+		081B3AD31F6E2994008A7F36 /* ALG */ = {
+			isa = PBXGroup;
+			children = (
+				081B3AD41F6E2994008A7F36 /* StringAlgs.h */,
+				081B3AD51F6E2994008A7F36 /* StringAlgs.m */,
 			);
 			path = ALG;
 			sourceTree = "<group>";
@@ -600,6 +610,7 @@
 		08AF455F1E97D43C00377887 /* Class */ = {
 			isa = PBXGroup;
 			children = (
+				081B3AD21F6E295F008A7F36 /* CodeLayer */,
 				08D7DA401ED1499C004B1018 /* AIFoundation */,
 				08C84A8F1E9A86B900897D8B /* Output */,
 				08C84A8A1E9A85A600897D8B /* Input */,
@@ -642,7 +653,6 @@
 		08C84A8A1E9A85A600897D8B /* Input */ = {
 			isa = PBXGroup;
 			children = (
-				081B3ACE1F6E2213008A7F36 /* ALG */,
 				0813D6421EDF7B150089FA0C /* InputAudioModel.h */,
 				0813D6431EDF7B150089FA0C /* InputAudioModel.m */,
 				0813D6441EDF7B150089FA0C /* InputDoModel.h */,
@@ -1033,7 +1043,6 @@
 				0813D64E1EDF7B150089FA0C /* InputModelBase.m in Sources */,
 				08F639831E9A2EC0003CD163 /* FeelValueModel.m in Sources */,
 				083934771F49814B003D49BD /* AIObjStore.m in Sources */,
-				081B3AD11F6E222E008A7F36 /* StringAlgs.m in Sources */,
 				083112F21F05E12600051DE6 /* MBProgressHUD+Add.m in Sources */,
 				08E58DDF1ED3CE18008B0D76 /* CharStore.m in Sources */,
 				08A2096F1F1069040013ACC4 /* AIMemoryModel.m in Sources */,
@@ -1093,6 +1102,7 @@
 				0808DB501F10A2A80082F4AD /* AIMindValueStore.m in Sources */,
 				08E58DE51ED3CE18008B0D76 /* TextModel.m in Sources */,
 				08E58DE01ED3CE18008B0D76 /* ClassStore.m in Sources */,
+				081B3AD61F6E2994008A7F36 /* StringAlgs.m in Sources */,
 				08E58DE91ED3CE18008B0D76 /* MemStore.m in Sources */,
 				08D42C9B1EFA066E00114DCD /* README.md in Sources */,
 				08E58DE61ED3CE18008B0D76 /* TextStore.m in Sources */,

@@ -16,7 +16,7 @@
 #import "MindHeader.h"
 #import "MBProgressHUD+Add.h"
 
-@interface SMG ()<FeelDelegate,ThinkControlDelegate,InputDelegate,OutputDelegate>
+@interface SMG ()<FeelDelegate,ThinkControlDelegate,OutputDelegate>
 
 @end
 
@@ -52,16 +52,7 @@ static SMG *_instance;
 -(void) initRun{
     self.feel.delegate = self;
     self.thinkControl.delegate = self;
-    self.input.delegate = self;
     self.output.delegate = self;
-}
-
-/**
- *  MARK:--------------------InputDelegate--------------------
- */
--(void)input_CommitToThink:(NSString *)text{
-    NSLog(@"Input->Think (CONTENT:(%@)",text);
-    [self.thinkControl commitUnderstandByShallowFromInput:text];//从input常规输入的浅度理解即可;(简单且错误,参考N4P2)
 }
 
 /**
