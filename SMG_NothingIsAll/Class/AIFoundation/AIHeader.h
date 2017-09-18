@@ -54,6 +54,7 @@
 #import "AIPort.h"
 #import "AISqlPointer.h"
 #import "AIKVPointer.h"
+#import "AIFuncModel.h"
 
 /**
  *  MARK:--------------------数据检查--------------------

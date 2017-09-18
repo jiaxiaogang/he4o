@@ -7,6 +7,7 @@
 //
 
 #import "StringAlgs.h"
+#import "AIFuncModel.h"
 
 @implementation StringAlgs
 
@@ -15,5 +16,16 @@
     return str.length;
 }
 
++(NSMutableArray*) algs{
+    NSMutableArray *arr = [[NSMutableArray alloc] init];
+    
+    //length:
+    AIFuncModel *model = [[AIFuncModel alloc] init];
+    model.funcClass = StringAlgs.class;
+    model.funcSel = @selector(length:);
+    [arr addObject:model];
+    
+    return arr;
+}
 
 @end
