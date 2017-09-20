@@ -7,6 +7,8 @@
 //
 
 #import "AIFuncModel.h"
+#import <objc/runtime.h>
+#import <objc/message.h>
 
 @implementation AIFuncModel
 
@@ -41,6 +43,28 @@
         }
     }
     return nil;
+}
+
+
+
+
+-(void) invoke{
+    ((void(*)(id,SEL, id,id))objc_msgSend)(self, self.funcSel, nil, nil);
+}
+
+
+typedef void*(*ObjcMsgSend)(id, SEL, ...);
+
+- (void *)invokeMethod:(id)param,...
+{
+    IMP imp = [self.funcClass instanceMethodForSelector:self.funcSel];
+    ObjcMsgSend objcMsgSend = (void *)imp;
+    va_list params;
+    va_start(params, param);
+    void *first = va_arg(params, void*);
+    void *result = objcMsgSend(self.class, self.funcSel, first, params);
+    va_end(params);
+    return result;
 }
 
 /**
