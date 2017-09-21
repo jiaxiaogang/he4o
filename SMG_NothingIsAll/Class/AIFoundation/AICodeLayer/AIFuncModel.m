@@ -12,6 +12,17 @@
 
 @implementation AIFuncModel
 
+-(id) init{
+    self = [super init];
+    if (self) {
+        [self initData];
+    }
+    return self;
+}
+
+-(void) initData{
+    //在init时检查此神经元是否存于神经网络,若没有,则存;
+}
 
 //MARK:===============================================================
 //MARK:                     < Method >
@@ -36,10 +47,11 @@
  *  MARK:--------------------执行--------------------
  */
 -(id) run:(id)param{
-    if (ISOK(param, self.paramClass)) {
+    if (/*ISOK(param, self.paramClass)*/true) {
         //判断funcClass的返回值 & 参数 是否与paramClass和valueClass一致;
         if (self.funcClass) {
-            
+            [self invoke];
+            //[self invokeMethod:param];
         }
     }
     return nil;
