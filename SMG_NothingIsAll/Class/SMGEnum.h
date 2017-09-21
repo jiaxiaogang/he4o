@@ -109,3 +109,11 @@ typedef NS_ENUM(NSInteger, AILogicKeyType) {
     AILogicKeyType_Continue = 2,
 };
 
+typedef NS_ENUM(NSInteger, AINodeType) {
+    AINodeType_Data         = 0,//单路神经元
+    AINodeType_Func         = 1,//双路神经元
+    AINodeType_MultiFunc    = 2,//多路神经元
+};
+
+
+

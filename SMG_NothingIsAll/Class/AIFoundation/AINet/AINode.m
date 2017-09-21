@@ -10,4 +10,21 @@
 
 @implementation AINode
 
+-(id) content{
+    return nil;
+}
+
+-(void) setContent:(id)content{
+    if (self.type == AINodeType_Data) {
+        
+    }else if (self.type == AINodeType_Func) {
+        
+    }else if (self.type == AINodeType_MultiFunc) {
+        
+    }else{
+        NSLog(@"AINodeType Is ERROR!!!");
+    }
+}
+
+
 @end

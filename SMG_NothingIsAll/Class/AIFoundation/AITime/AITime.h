@@ -13,6 +13,7 @@
  */
 @interface AITime : NSObject
 
-@property (assign, nonatomic) NSTimeInterval time;
+@property (assign, nonatomic) NSTimeInterval time;          //AI运行的时间
+@property (assign,nonatomic) NSTimeInterval *awarenessTime; //意识时间
 
 @end

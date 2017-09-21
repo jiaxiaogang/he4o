@@ -17,5 +17,10 @@
 
 @property (strong,nonatomic) NSMutableArray *ports;
 @property (strong,nonatomic) AIPointer *contentPointer;
+@property (assign, nonatomic) AINodeType type;
+
+
+-(id) content;
+-(void) setContent:(id)content;
 
 @end
