@@ -43,4 +43,20 @@
     return _pointers;
 }
 
+
+/**
+ *  MARK:--------------------取另一头--------------------
+ */
+-(NSArray*) otherPointers:(AIPointer*)pointer{
+    NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:self.pointers];
+    for (AIPointer *item in mArr) {
+        if (POINTERISOK(item) && [item isEqual:pointer]) {
+            [mArr removeObject:item];
+            return mArr;
+        }
+    }
+    return nil;
+}
+
+
 @end

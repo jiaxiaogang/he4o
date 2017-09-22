@@ -51,7 +51,7 @@
 #define POINTERISOK(a) (a && [a isKindOfClass:[AIPointer class]] && a.pointerId > 0)
 
 //ISOK
-#define ISOK(a, c) (a && [a isKindOfClass:c])
+#define ISOK(obj, class) (obj && [obj isKindOfClass:class])
 
 /**
  *  MARK:--------------------快捷建对象--------------------

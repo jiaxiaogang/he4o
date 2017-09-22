@@ -55,6 +55,7 @@
 #import "AISqlPointer.h"
 #import "AIKVPointer.h"
 #import "AIFuncModel.h"
+#import "NSObject+Extension.h"
 
 /**
  *  MARK:--------------------数据检查--------------------

@@ -15,11 +15,14 @@
  */
 @interface AINode : AIObject
 
-@property (strong,nonatomic) NSMutableArray *ports;
+@property (strong,nonatomic) NSMutableArray *ports;     //item为AILine.pointer
 @property (strong,nonatomic) AIPointer *contentPointer;
 @property (assign, nonatomic) AINodeType type;
 
 
+//MARK:===============================================================
+//MARK:                     < 内容传入传出 >
+//MARK:===============================================================
 -(id) content;
 -(void) setContent:(id)content;
 

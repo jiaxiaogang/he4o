@@ -18,6 +18,5 @@
  *  MARK:-------------------取指向的数据--------------------
  */
 -(NSInteger) pointerId;
--(id) content;
 
 @end
