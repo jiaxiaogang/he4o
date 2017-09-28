@@ -15,4 +15,6 @@
  */
 @interface AIFuncNode : AINode
 
++(AIFuncNode*) newWithFuncModelPointer:(AIPointer*)funcModelPointer;
+
 @end

@@ -13,4 +13,13 @@
  */
 @interface AINetEditor : NSObject
 
+/**
+ *  MARK:--------------------刷新网络--------------------
+ */
++(void) updateNet;
+
+
+
+
+
 @end

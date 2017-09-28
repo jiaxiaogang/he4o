@@ -10,6 +10,11 @@
 
 @implementation AIFuncNode
 
++(AIFuncNode*) newWithFuncModelPointer:(AIPointer*)funcModelPointer{
+    AIFuncNode *funcNode = [[AIFuncNode alloc] init];
+    funcNode.contentPointer = funcModelPointer;
+    return funcNode;
+}
 
 -(id) content{
     if (POINTERISOK(self.contentPointer)) {
