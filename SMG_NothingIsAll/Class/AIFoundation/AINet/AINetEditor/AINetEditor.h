@@ -16,8 +16,8 @@
 /**
  *  MARK:--------------------刷新网络--------------------
  */
-+(void) updateNet;
-
+-(void) initNet;
+-(void) refreshNet;
 
 
 

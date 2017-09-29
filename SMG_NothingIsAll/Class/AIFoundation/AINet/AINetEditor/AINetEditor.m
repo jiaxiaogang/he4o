@@ -7,29 +7,44 @@
 //
 
 #import "AINetEditor.h"
-#import "AINetEditor_Node.h"
-#import "AINetEditor_FuncModel.h"
+#import "NENode.h"
+#import "NEFuncNode.h"
+
+@interface AINetEditor ()
+
+@property (strong,nonatomic) NSMutableArray *elements;
+
+@end
 
 @implementation AINetEditor
 
-+(void) updateNet{
+-(id) init{
+    self = [super init];
+    if (self) {
+        [self initData];
+        [self initNet];
+    }
+    return self;
+}
 
-    //1. funcModel
-    AIFuncModel *funcModel = [[AIFuncModel alloc] init];
-    AINetEditor_FuncModel *eFuncModel = [[AINetEditor_FuncModel alloc] init];//
+-(void) initData{
+    self.elements = [[NSMutableArray alloc] init];
+}
+
+-(void) initNet{
     
-    //2. 存funcModel;
-    
-    //3. funcNode
-    AIFuncNode *funcNode = [AIFuncNode newWithFuncModelPointer:funcModel.pointer];
-    
-    //4. editorNode
-    AINetEditor_Node *eNode = [AINetEditor_Node newWithNode:funcNode eId:@"1"];
+    //1. editorNode
+    NEFuncNode *eFuncNode = [NEFuncNode newWithEId:@"EID_1" funcModelPointer:nil funcClass:NULL funcSel:NULL];
+    [self.elements addObject:eFuncNode];
     
     
 }
 
-
+-(void) refreshNet{
+    for (NEElement *element in self.elements) {
+        [element refreshNet];
+    }
+}
 
 @end
 

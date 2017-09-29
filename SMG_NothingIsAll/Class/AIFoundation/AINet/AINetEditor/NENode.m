@@ -1,17 +1,17 @@
 //
-//  AINetEditor_Node.m
+//  NENode.m
 //  SMG_NothingIsAll
 //
-//  Created by 贾  on 2017/9/28.
+//  Created by 贾  on 2017/9/29.
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "AINetEditor_Node.h"
+#import "NENode.h"
 
-@implementation AINetEditor_Node
+@implementation NENode
 
 +(id) newWithNode:(AINode*)node eId:(NSString*)eId{
-    AINetEditor_Node *value = [[AINetEditor_Node alloc] init];
+    NENode *value = [[NENode alloc] init];
     value.node = node;
     value.eId = STRTOOK(eId);
     return value;

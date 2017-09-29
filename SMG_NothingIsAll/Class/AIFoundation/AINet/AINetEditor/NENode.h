@@ -1,18 +1,18 @@
 //
-//  AINetEditor_Node.h
+//  NENode.h
 //  SMG_NothingIsAll
 //
-//  Created by 贾  on 2017/9/28.
+//  Created by 贾  on 2017/9/29.
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import "NEElement.h"
 
 
 //MARK:===============================================================
 //MARK:                     < AINetEditor_Node >
 //MARK:===============================================================
-@interface AINetEditor_Node : NSObject
+@interface NENode : NEElement
 
 @property (strong,nonatomic) AINode *node;
 @property (strong,nonatomic) NSString *eId;
