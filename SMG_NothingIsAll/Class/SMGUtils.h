@@ -59,6 +59,13 @@
 //MARK:===============================================================
 +(NSInteger) aiPointer_CreatePointerId;
 
+/**
+ *  MARK:--------------------NetNode_PointerId--------------------
+ */
++(NSInteger) getLastNetNodePointerId;
++(void) setNetNodePointerId:(NSInteger)count;
+
+
 @end
 
 

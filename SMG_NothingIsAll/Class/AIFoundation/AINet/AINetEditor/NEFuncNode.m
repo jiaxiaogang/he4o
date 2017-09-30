@@ -7,10 +7,11 @@
 //
 
 #import "NEFuncNode.h"
+#import "AINetStore.h"
 
 @interface NEFuncNode ()
 
-@property (strong,nonatomic) NSString *eId;
+@property (assign,nonatomic) NSInteger eId;
 @property (strong,nonatomic) AIPointer *funcModelPointer;
 @property (assign, nonatomic) Class funcClass;
 @property (assign, nonatomic) SEL funcSel;
@@ -21,7 +22,7 @@
 
 
 
-+(id) newWithEId:(NSString*)eId funcModelPointer:(AIPointer*)funcModelPointer funcClass:(Class)funcClass funcSel:(SEL)funcSel{
++(id) newWithEId:(NSInteger)eId funcModelPointer:(AIPointer*)funcModelPointer funcClass:(Class)funcClass funcSel:(SEL)funcSel{
     NEFuncNode *value = [[NEFuncNode alloc] init];
     value.eId = eId;
     value.funcModelPointer = funcModelPointer;
@@ -43,12 +44,19 @@
     }else if(self.class != nil && self.funcSel != nil){
         //1. model
         AIFuncModel *model = [[AIFuncModel alloc] init];
+        //model.save();
         
         //2. node
         AIFuncNode *node = [AIFuncNode newWithFuncModelPointer:model.pointer];
         
-        //3. 存node并建立id和node.pointer映射
+        //3. 存node
+        BOOL success = [[AINetStore sharedInstance] setObject_NetNode:node eId:self.eId];
         
+        //4. 建立id和node.pointer映射
+        if (success) {
+            
+            [[AINetStore sharedInstance] setObject_NetNode:node eId:self.eId];
+        }
         
     }else{
         NSLog(@"ERROR!!!_____(NEFuncNode Invalid)");

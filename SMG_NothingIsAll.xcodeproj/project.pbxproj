@@ -86,6 +86,7 @@
 		08DB40C71F11A075003162C8 /* AIStoreBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 08DB40C61F11A075003162C8 /* AIStoreBase.m */; };
 		08DB40CB1F11A65E003162C8 /* TestHungryPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 08DB40C91F11A65E003162C8 /* TestHungryPage.m */; };
 		08DB40CC1F11A65E003162C8 /* TestHungryPage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 08DB40CA1F11A65E003162C8 /* TestHungryPage.xib */; };
+		08DF0DC51F7F183B00B14D17 /* AINetStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08DF0DC41F7F183B00B14D17 /* AINetStore.m */; };
 		08E3CCCA1EE60F8D002990FD /* ThinkControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E3CCC91EE60F8D002990FD /* ThinkControl.m */; };
 		08E58DDE1ED3CE18008B0D76 /* CharModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E58DB71ED3CE18008B0D76 /* CharModel.m */; };
 		08E58DDF1ED3CE18008B0D76 /* CharStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E58DB91ED3CE18008B0D76 /* CharStore.m */; };
@@ -287,6 +288,8 @@
 		08DB40C81F11A65E003162C8 /* TestHungryPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestHungryPage.h; sourceTree = "<group>"; };
 		08DB40C91F11A65E003162C8 /* TestHungryPage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestHungryPage.m; sourceTree = "<group>"; };
 		08DB40CA1F11A65E003162C8 /* TestHungryPage.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TestHungryPage.xib; sourceTree = "<group>"; };
+		08DF0DC31F7F183B00B14D17 /* AINetStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AINetStore.h; sourceTree = "<group>"; };
+		08DF0DC41F7F183B00B14D17 /* AINetStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AINetStore.m; sourceTree = "<group>"; };
 		08E3CCC81EE60F8D002990FD /* ThinkControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThinkControl.h; sourceTree = "<group>"; };
 		08E3CCC91EE60F8D002990FD /* ThinkControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThinkControl.m; sourceTree = "<group>"; };
 		08E58DB61ED3CE18008B0D76 /* CharModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharModel.h; sourceTree = "<group>"; };
@@ -528,6 +531,7 @@
 		083F612C1F04830F000330E1 /* AINet */ = {
 			isa = PBXGroup;
 			children = (
+				08DF0DC21F7F182B00B14D17 /* AIStore */,
 				08F737FB1F7C714F005EAD56 /* AIPointer */,
 				08F737EE1F7C7131005EAD56 /* AINode */,
 				08F737EA1F7C70FD005EAD56 /* AINetEditor */,
@@ -745,6 +749,15 @@
 				081DA13A1ED47CE000C8C531 /* AIArray.m */,
 			);
 			path = AIFoundation;
+			sourceTree = "<group>";
+		};
+		08DF0DC21F7F182B00B14D17 /* AIStore */ = {
+			isa = PBXGroup;
+			children = (
+				08DF0DC31F7F183B00B14D17 /* AINetStore.h */,
+				08DF0DC41F7F183B00B14D17 /* AINetStore.m */,
+			);
+			path = AIStore;
 			sourceTree = "<group>";
 		};
 		08E58DB31ED3CE18008B0D76 /* Store */ = {
@@ -1174,6 +1187,7 @@
 				0818162C1F22BDF8007DDB4D /* AIMainThread.m in Sources */,
 				0808DB4D1F10A29A0082F4AD /* AIExperienceStore.m in Sources */,
 				08F639891E9A2FF4003CD163 /* Feel.m in Sources */,
+				08DF0DC51F7F183B00B14D17 /* AINetStore.m in Sources */,
 				083BBDB71F1849F1000F694A /* AIHungerStateChangedModel.m in Sources */,
 				08F737FA1F7C7131005EAD56 /* AINode.m in Sources */,
 				08A209701F1069040013ACC4 /* AIMindValueModel.m in Sources */,

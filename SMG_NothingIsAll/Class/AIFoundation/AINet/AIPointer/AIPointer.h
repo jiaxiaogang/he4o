@@ -14,9 +14,6 @@
  */
 @interface AIPointer : NSObject <NSCoding>
 
-/**
- *  MARK:-------------------取指向的数据--------------------
- */
--(NSInteger) pointerId;
+@property (assign, nonatomic) NSInteger pointerId;  //指针地址(Id)
 
 @end

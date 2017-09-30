@@ -232,6 +232,16 @@
     return lastPId + 1;
 }
 
++(NSInteger) getLastNetNodePointerId{
+    return [[NSUserDefaults standardUserDefaults] integerForKey:@"AIPointer_LastNetNodePointerId_KEY"];
+}
+
++(void) setNetNodePointerId:(NSInteger)count{
+    NSInteger lastPId = [self getLastNetNodePointerId];
+    [[NSUserDefaults standardUserDefaults] setInteger:lastPId + count forKey:@"AIPointer_LastNetNodePointerId_KEY"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
 @end
 
 

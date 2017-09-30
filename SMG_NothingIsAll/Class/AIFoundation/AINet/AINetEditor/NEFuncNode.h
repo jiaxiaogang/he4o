@@ -10,6 +10,6 @@
 
 @interface NEFuncNode : NEElement
 
-+(id) newWithEId:(NSString*)eId funcModelPointer:(AIPointer*)funcModelPointer funcClass:(Class)funcClass funcSel:(SEL)funcSel;
++(id) newWithEId:(NSInteger)eId funcModelPointer:(AIPointer*)funcModelPointer funcClass:(Class)funcClass funcSel:(SEL)funcSel;
 
 @end

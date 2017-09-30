@@ -10,7 +10,7 @@
 
 @interface AIPointer ()
 
-@property (assign, nonatomic) NSInteger pointerId;  //指针地址(Id)
+
 
 @end
 
@@ -30,12 +30,12 @@
     return nil;
 }
 
--(NSInteger)pointerId{
-    if (_pointerId == 0) {
-        _pointerId = [SMGUtils aiPointer_CreatePointerId];
-    }
-    return _pointerId;
-}
+//-(NSInteger)pointerId{
+//    if (_pointerId == 0) {
+//        _pointerId = [SMGUtils aiPointer_CreatePointerId];
+//    }
+//    return _pointerId;
+//}
 
 /**
  *  MARK:--------------------NSCoding--------------------

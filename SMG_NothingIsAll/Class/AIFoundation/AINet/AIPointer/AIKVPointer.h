@@ -10,6 +10,13 @@
 
 @interface AIKVPointer : AIPointer
 
+
+/**
+ *  MARK:--------------------根文件夹--------------------
+ */
+@property (strong,nonatomic) NSString *folderName;
+
+
 /**
  *  MARK:--------------------文件路径--------------------
  */
