@@ -15,6 +15,10 @@
  */
 @interface AIFuncNode : AINode
 
-+(AIFuncNode*) newWithFuncModelPointer:(AIPointer*)funcModelPointer;
+
+@property (strong,nonatomic) AIFuncModel *funcModel;
++(AIFuncNode*) newWithFuncModel:(AIFuncModel*)funcModel;
+
+
 
 @end

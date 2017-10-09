@@ -10,6 +10,9 @@
 #import "AIKVPointer.h"
 #import "PINCache.h"
 
+#define kNET_FUNCMODEL @"kNET_FUNCMODEL"
+#define kMAP_FUNCMODELPOINTER_ELEMENTID @"kMAP_FUNCMODELPOINTER_ELEMENTID"  //存FuncModel.Pointer和elementId的映射
+
 #define NET_NODE @"NET_NODE"  //网络;元素为AINode;
 #define MAP_NODEPOINTER_ELEMENTID @"MAP_NODEPOINTER_ELEMENTID"  //存节点指针和elementId的映射
 
@@ -45,11 +48,20 @@ static AINetStore *_instance;
 //MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
--(BOOL) setObject_NetNode:(AINode*)node{
+-(BOOL) setObjectWithNetNode:(AINode*)node{
     NSInteger lastId = [SMGUtils getLastNetNodePointerId];
     BOOL success = [self setObject:node folderName:NET_NODE pointerId:lastId + 1];
     if (success) {
         [SMGUtils setNetNodePointerId:lastId + 1];
+    }
+    return success;
+}
+
+-(BOOL) setObjectWithFuncModel:(AIFuncModel*)funcModel{
+    NSInteger lastId = [SMGUtils getLastNetFuncModelPointerId];
+    BOOL success = [self setObject:funcModel folderName:kNET_FUNCMODEL pointerId:lastId + 1];
+    if (success) {
+        [SMGUtils setNetFuncModelPointerId:lastId + 1];
     }
     return success;
 }
@@ -74,10 +86,56 @@ static AINetStore *_instance;
 /**
  *  MARK:--------------------存节点和elementId的映射--------------------
  */
--(BOOL) setObject_NodePointerEId:(AIKVPointer*)nodePointer eId:(NSInteger)eId{
-    return [self setObject:nodePointer folderName:MAP_NODEPOINTER_ELEMENTID pointerId:eId];///////////////估计AIObject.pointer是不需要的;因为path即pointer;并且指针即数据;没有指针;数据是无法操作的;
+-(BOOL) setMapWithNodePointer:(AIKVPointer*)nodePointer withEId:(NSInteger)eId{
+    return [self setMapWithPointer:nodePointer folderName:MAP_NODEPOINTER_ELEMENTID withEId:eId];
 }
 
+-(BOOL) setMapWithFuncModelPointer:(AIKVPointer*)nodePointer withEId:(NSInteger)eId{
+    return [self setMapWithPointer:nodePointer folderName:kMAP_FUNCMODELPOINTER_ELEMENTID withEId:eId];
+}
+
+-(BOOL) setMapWithPointer:(AIKVPointer*)pointer folderName:(NSString*)folderName withEId:(NSInteger)eId{
+    if (ISOK(pointer, AIKVPointer.class)) {
+        //1. 生成指针
+        AIKVPointer *kvPointer = [[AIKVPointer alloc] init];
+        kvPointer.pointerId = eId;
+        kvPointer.folderName = STRTOOK(folderName);
+        
+        //2. 存储
+        PINDiskCache *cache = [self getPinCache:kvPointer.filePath];
+        [cache setObject:pointer forKey:kvPointer.fileName];
+        return true;
+    }
+    return false;
+}
+
+
+/**
+ *  MARK:--------------------是否已存过ElementId下的Node--------------------
+ */
+-(BOOL) containsNodeWithEId:(NSInteger)eId{
+    return [self containsObjectWithEId:eId folderName:MAP_NODEPOINTER_ELEMENTID];
+}
+
+-(BOOL) containsFuncModelWithEId:(NSInteger)eId{
+    return [self containsObjectWithEId:eId folderName:kMAP_FUNCMODELPOINTER_ELEMENTID];
+}
+
+-(BOOL) containsObjectWithEId:(NSInteger)eId folderName:(NSString*)folderName{
+    //1. 生成指针
+    AIKVPointer *kvPointer = [[AIKVPointer alloc] init];
+    kvPointer.pointerId = eId;
+    kvPointer.folderName = STRTOOK(folderName);
+    
+    //2. 存储
+    PINDiskCache *cache = [self getPinCache:kvPointer.filePath];
+    AIKVPointer *nodePointer = [cache objectForKey:kvPointer.fileName];
+    return ISOK(nodePointer, AIKVPointer.class);
+}
+
+/**
+ *  MARK:--------------------PINCache缓存--------------------
+ */
 -(nonnull PINDiskCache*) getPinCache:(NSString*)filePath{
     for (NSString *key in self.pinCaches.allKeys) {
         if ([STRTOOK(key) isEqualToString:key]) {

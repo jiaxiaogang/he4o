@@ -45,6 +45,10 @@
 -(BOOL) containsLine:(AILine*)line;
 
 
+/**
+ *  MARK:--------------------判断是否有效指针--------------------
+ */
+-(BOOL) pointerValid;
 
 
 @end

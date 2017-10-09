@@ -7,17 +7,21 @@
 //
 
 #import "AIFuncNode.h"
+#import "AINetStore.h"
+
 
 @implementation AIFuncNode
 
-+(AIFuncNode*) newWithFuncModelPointer:(AIPointer*)funcModelPointer{
++(AIFuncNode*) newWithFuncModel:(AIFuncModel*)funcModel{
     AIFuncNode *funcNode = [[AIFuncNode alloc] init];
-    funcNode.contentPointer = funcModelPointer;
+    funcNode.funcModel = funcModel;
     return funcNode;
 }
 
 -(id) content{
-    if (POINTERISOK(self.contentPointer)) {
+    if (self.funcModel) {
+        return self.funcModel;
+    }else if (POINTERISOK(self.contentPointer)) {
         //1. 取节点指针
         AIFuncModel *funcModel = self.contentPointer.content;
         return funcModel;

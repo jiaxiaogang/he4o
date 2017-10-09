@@ -34,7 +34,7 @@
 -(void) initNet{
     
     //1. editorNode
-    NEFuncNode *eFuncNode = [NEFuncNode newWithEId:@"EID_1" funcModelPointer:nil funcClass:NULL funcSel:NULL];
+    NEFuncNode *eFuncNode = [NEFuncNode newWithEId:1 funcModel:nil funcClass:NSClassFromString(@"NSString") funcSel:NSSelectorFromString(@"length")];
     [self.elements addObject:eFuncNode];
     
     

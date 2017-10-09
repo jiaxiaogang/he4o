@@ -124,6 +124,15 @@
     return false;
 }
 
+
+/**
+ *  MARK:--------------------判断是否有效指针--------------------
+ */
+-(BOOL) pointerValid{
+    return POINTERISOK(self.pointer);
+}
+
+
 @end
 
 
