@@ -38,6 +38,11 @@
     [self.elements addObject:eFuncNode];
     
     
+    //1. 测试funcNode的调用;
+    //2. 添加NEMutilNode;
+    //3. 调用mutilNode
+    //4. 根据数据结果生成DataNode;
+    
 }
 
 -(void) refreshNet{
