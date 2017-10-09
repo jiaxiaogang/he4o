@@ -133,6 +133,19 @@
 }
 
 
+/**
+ *  MARK:--------------------NSCoding--------------------
+ */
+- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
+    self = [super init];
+    if (self) {}
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    
+}
+
 @end
 
 

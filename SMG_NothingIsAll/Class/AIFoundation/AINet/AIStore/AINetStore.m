@@ -138,7 +138,7 @@ static AINetStore *_instance;
  */
 -(nonnull PINDiskCache*) getPinCache:(NSString*)filePath{
     for (NSString *key in self.pinCaches.allKeys) {
-        if ([STRTOOK(key) isEqualToString:key]) {
+        if ([STRTOOK(key) isEqualToString:filePath]) {
             return [self.pinCaches objectForKey:STRTOOK(key)];
         }
     }

@@ -32,6 +32,12 @@
     //初始化SMG
     [SMG sharedInstance];
     
+    
+    AINetEditor *editor = [[AINetEditor alloc] init];
+    [editor refreshNet];
+    NSLog(@"");
+    
+    
     return YES;
 }
 
