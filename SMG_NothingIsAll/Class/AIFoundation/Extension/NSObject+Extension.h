@@ -16,6 +16,9 @@
 @end
 
 
+//MARK:===============================================================
+//MARK:                     < runtime >
+//MARK:===============================================================
 @interface NSObject (runtime)
 
 /* 获取对象的所有属性 */
@@ -29,5 +32,16 @@
 /* 获取对象的所有属性和属性内容 */
 + (NSDictionary *)getAllPropertiesAndVaules:(NSObject *)obj;
 
+
+@end
+
+
+
+//MARK:===============================================================
+//MARK:                     < Invocation >
+//MARK:===============================================================
+@interface NSObject (Invocation)
+
+- (id)performSelector:(SEL)aSelector withObjects:(NSArray*)objects;
 
 @end

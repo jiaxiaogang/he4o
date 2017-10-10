@@ -22,7 +22,7 @@
 
 
 //MARK:===============================================================
-//MARK:                     < NSObject+runtime >
+//MARK:                     < runtime >
 //MARK:===============================================================
 @implementation NSObject (runtime)
 
@@ -95,6 +95,55 @@
     }
     free(properties);
     return propsDic;
+}
+
+@end
+
+
+
+
+//MARK:===============================================================
+//MARK:                     < Invocation >
+//MARK:===============================================================
+@implementation NSObject (Invocation)
+
+- (id)performSelector:(SEL)aSelector withObjects:(NSArray *)objects {
+    
+    //1. 取方法签名
+    NSMethodSignature *signature = [[self class] instanceMethodSignatureForSelector:aSelector];
+    if (signature == nil) {
+        NSString * reason = [NSString stringWithFormat:@"- [%@ %@]:unrecognized selector sent to instance",
+                             [self class], NSStringFromSelector(aSelector)];
+        @throw [[NSException alloc] initWithName:@"Method doesn't exist." reason:reason userInfo:nil];
+        return nil;
+    }
+    
+    //2. 根据methodSignature生成Invocation
+    NSInvocation * invocation = [NSInvocation invocationWithMethodSignature:signature];
+    invocation.target = self;
+    invocation.selector = aSelector;
+    
+    //3. 检查形实参个数取MIN(a,b)
+    NSUInteger argumentsCount = signature.numberOfArguments - 2;
+    NSUInteger objectsCount = objects.count;
+    NSUInteger count = MIN(argumentsCount, objectsCount);
+    for (int i = 0; i < count; i++) {
+        NSObject * obj = objects[i];
+        if ([obj isMemberOfClass:[NSObject class]]) {
+            obj = nil;
+        }
+        [invocation setArgument:&obj atIndex:i + 2];
+    }
+    
+    //4. invoke
+    [invocation invoke];
+    
+    //5. result
+    id res = nil;
+    if (signature.methodReturnLength != 0) {
+        [invocation getReturnValue:&res];
+    }
+    return res;
 }
 
 @end
