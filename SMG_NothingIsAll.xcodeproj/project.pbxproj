@@ -55,6 +55,7 @@
 		083F61381F048329000330E1 /* AILine.m in Sources */ = {isa = PBXBuildFile; fileRef = 083F61371F048329000330E1 /* AILine.m */; };
 		0840AA661F16FD6C000A528E /* AIOutputModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0840AA651F16FD6C000A528E /* AIOutputModel.m */; };
 		0840AA691F16FD7B000A528E /* AIOutputStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 0840AA681F16FD7B000A528E /* AIOutputStore.m */; };
+		086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */ = {isa = PBXBuildFile; fileRef = 086D93361F8CA782002BAF3F /* RuntimeInvoker.m */; };
 		087753251ECFE1C400E7AD09 /* UnderstandUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 087753211ECFE1C400E7AD09 /* UnderstandUtils.m */; };
 		0895DAE61EB2D52D00E2B5C7 /* DataViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0895DAE41EB2D52D00E2B5C7 /* DataViewController.m */; };
 		0895DAE71EB2D52D00E2B5C7 /* DataViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0895DAE51EB2D52D00E2B5C7 /* DataViewController.xib */; };
@@ -228,6 +229,8 @@
 		0840AA651F16FD6C000A528E /* AIOutputModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIOutputModel.m; sourceTree = "<group>"; };
 		0840AA671F16FD7B000A528E /* AIOutputStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIOutputStore.h; sourceTree = "<group>"; };
 		0840AA681F16FD7B000A528E /* AIOutputStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIOutputStore.m; sourceTree = "<group>"; };
+		086D93351F8CA782002BAF3F /* RuntimeInvoker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RuntimeInvoker.h; sourceTree = "<group>"; };
+		086D93361F8CA782002BAF3F /* RuntimeInvoker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RuntimeInvoker.m; sourceTree = "<group>"; };
 		087753201ECFE1C400E7AD09 /* UnderstandUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnderstandUtils.h; sourceTree = "<group>"; };
 		087753211ECFE1C400E7AD09 /* UnderstandUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UnderstandUtils.m; sourceTree = "<group>"; };
 		0895DAE31EB2D52D00E2B5C7 /* DataViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataViewController.h; sourceTree = "<group>"; };
@@ -488,6 +491,8 @@
 		0825AFF01F748F67003B86C7 /* Extension */ = {
 			isa = PBXGroup;
 			children = (
+				086D93351F8CA782002BAF3F /* RuntimeInvoker.h */,
+				086D93361F8CA782002BAF3F /* RuntimeInvoker.m */,
 				0825AFF11F748F67003B86C7 /* NSObject+Extension.h */,
 				0825AFF21F748F67003B86C7 /* NSObject+Extension.m */,
 			);
@@ -1133,6 +1138,7 @@
 				087753251ECFE1C400E7AD09 /* UnderstandUtils.m in Sources */,
 				08F737F81F7C7131005EAD56 /* AIFuncNode.m in Sources */,
 				0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */,
+				086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */,
 				08E58DE41ED3CE18008B0D76 /* ObjStore.m in Sources */,
 				08E3CCCA1EE60F8D002990FD /* ThinkControl.m in Sources */,
 				08BD524E1F5AC94900B4D26A /* AIFuncModel.m in Sources */,

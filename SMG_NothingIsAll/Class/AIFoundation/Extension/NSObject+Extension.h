@@ -42,7 +42,7 @@
 //MARK:===============================================================
 @interface NSObject (Invocation)
 
-- (id)performSelector:(SEL)aSelector withObjects:(NSArray*)objects;
+- (id)performSelector:(SEL)aSelector withObjects:(NSArray *)objects;
 + (id)performSelector:(SEL)aSelector class:(Class)class withObjects:(NSArray *)objects;
 
 @end

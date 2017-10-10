@@ -108,13 +108,13 @@
 @implementation NSObject (Invocation)
 
 - (id)performSelector:(SEL)aSelector withObjects:(NSArray *)objects {
-    
     //1. 取方法签名
-    NSMethodSignature *signature = [[self class] instanceMethodSignatureForSelector:aSelector];
+    NSMethodSignature *signature = [self.class instanceMethodSignatureForSelector:aSelector];
+    
     if (signature == nil) {
         NSString * reason = [NSString stringWithFormat:@"- [%@ %@]:unrecognized selector sent to instance",
-                             [self class], NSStringFromSelector(aSelector)];
-        @throw [[NSException alloc] initWithName:@"Method doesn't exist." reason:reason userInfo:nil];
+                             self.class, NSStringFromSelector(aSelector)];
+        NSLog(@"Method doesn't exist.\n%@",reason);//@throw [[NSException alloc] initWithName:@"Method doesn't exist." reason:reason userInfo:nil];
         return nil;
     }
     
@@ -123,37 +123,19 @@
     invocation.target = self;
     invocation.selector = aSelector;
     
-    //3. 检查形实参个数取MIN(a,b)
-    NSUInteger argumentsCount = signature.numberOfArguments - 2;
-    NSUInteger objectsCount = objects.count;
-    NSUInteger count = MIN(argumentsCount, objectsCount);
-    for (int i = 0; i < count; i++) {
-        NSObject * obj = objects[i];
-        if ([obj isMemberOfClass:[NSObject class]]) {
-            obj = nil;
-        }
-        [invocation setArgument:&obj atIndex:i + 2];
-    }
-    
-    //4. invoke
-    [invocation invoke];
-    
-    //5. result
-    id res = nil;
-    if (signature.methodReturnLength != 0) {
-        [invocation getReturnValue:&res];
-    }
-    return res;
+    return [NSObject checkAndInvoke:invocation signature:signature objects:objects];
 }
 
-+ (id)performSelector:(SEL)aSelector class:(Class)class withObjects:(NSArray *)objects {
-    
++ (id)performSelector:(SEL)aSelector class:(Class)class withObjects:(NSArray *)objects{
     //1. 取方法签名
-    NSMethodSignature *signature = [class instanceMethodSignatureForSelector:aSelector];
+    if (class == NULL)
+        class = self.class;
+    NSMethodSignature *signature = [class methodSignatureForSelector:aSelector];
+    
     if (signature == nil) {
         NSString * reason = [NSString stringWithFormat:@"- [%@ %@]:unrecognized selector sent to instance",
                              class, NSStringFromSelector(aSelector)];
-        @throw [[NSException alloc] initWithName:@"Method doesn't exist." reason:reason userInfo:nil];
+        NSLog(@"Method doesn't exist.\n%@",reason);//@throw [[NSException alloc] initWithName:@"Method doesn't exist." reason:reason userInfo:nil];
         return nil;
     }
     
@@ -162,6 +144,17 @@
     invocation.target = class;
     invocation.selector = aSelector;
     
+    return [self checkAndInvoke:invocation signature:signature objects:objects];
+}
+
+
+/**
+ *  MARK:--------------------1,检查参数 2,执行 3,返回result--------------------
+ */
++(id) checkAndInvoke:(NSInvocation*)invocation signature:(NSMethodSignature*)signature objects:(NSArray*)objects{
+    if (invocation == nil || signature == nil) {
+        return nil;
+    }
     //3. 检查形实参个数取MIN(a,b)
     NSUInteger argumentsCount = signature.numberOfArguments - 2;
     NSUInteger objectsCount = objects.count;
@@ -177,12 +170,29 @@
     //4. invoke
     [invocation invoke];
     
-    //5. result
-    id res = nil;
-    if (signature.methodReturnLength != 0) {
-        [invocation getReturnValue:&res];
+    //5. 返回值
+    const char *returnType = signature.methodReturnType;//获得返回值类型
+    id returnValue;
+    if( !strcmp(returnType, @encode(void)) ){//void
+        returnValue =  nil;
+    }else if( !strcmp(returnType, @encode(id)) ){//返回为对象
+        [invocation getReturnValue:&returnValue];
+    }else{//值类型
+        NSUInteger length = [signature methodReturnLength];
+        void *buffer = (void *)malloc(length);//根据长度申请内存
+        [invocation getReturnValue:buffer];//为变量赋值
+        
+        if( !strcmp(returnType, @encode(BOOL)) ) {
+            returnValue = [NSNumber numberWithBool:*((BOOL*)buffer)];
+        }else if( !strcmp(returnType, @encode(NSInteger)) ){
+            returnValue = [NSNumber numberWithInteger:*((NSInteger*)buffer)];
+        }else{
+            returnValue = [NSValue valueWithBytes:buffer objCType:returnType];
+        }
     }
-    return res;
+    
+    return returnValue;
 }
+
 
 @end
