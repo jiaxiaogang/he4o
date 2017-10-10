@@ -37,29 +37,6 @@
 /**
  *  MARK:--------------------执行--------------------
  */
--(id) run:(id)param;
+-(id) invoke:(id)arg,...;
 
 @end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//@property (strong,nonatomic) NSString *className;
-//@property (strong,nonatomic) NSString *methodName;

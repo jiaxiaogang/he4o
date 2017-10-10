@@ -36,43 +36,40 @@
 
 
 -(void) refreshNet{
+    //1. 根据element参数创建model
+    AIFuncModel *model = nil;
     if (ISOK(self.funcModel, AIFuncModel.class)) {
-        //1. node
-        AIFuncNode *node = [AIFuncNode newWithFuncModel:self.funcModel];
-        //2. 存node并建立id和node.pointer映射
-        
-        
-        
+        model = self.funcModel;
     }else if(self.funcClass != nil && self.funcSel != nil){
-        //1. model
-        AIFuncModel *model = [[AIFuncModel alloc] init];
+        model = [[AIFuncModel alloc] init];
         model.funcClass = self.funcClass;
         model.funcSel = self.funcSel;
-        
-        //2. 存FuncModel;
-        BOOL success = [[AINetStore sharedInstance] setObjectWithFuncModel:model];
-        
-        //3. 存funcModel & eId映射
-        if (success) {
-            [[AINetStore sharedInstance] setMapWithFuncModelPointer:model.pointer withEId:self.eId];
+    }
+    
+    //2. 更新神经网络
+    if (model) {
+        //3. 存FuncModel;
+        if (![[AINetStore sharedInstance] containsFuncModelWithEId:self.eId]) {
+            BOOL success = [[AINetStore sharedInstance] setObjectWithFuncModel:model];
+            //4. 存funcModel & eId映射
+            if (success) {
+                [[AINetStore sharedInstance] setMapWithFuncModelPointer:model.pointer withEId:self.eId];
+            }
         }
         
-        //4. node
-        AIFuncNode *node = [AIFuncNode newWithFuncModel:model];
-        
-        //5. 存node
-        success = [[AINetStore sharedInstance] setObjectWithNetNode:node];
-        
-        //6. 建立node.pointer & eId映射
-        if (success) {
-            [[AINetStore sharedInstance] setMapWithNodePointer:node.pointer withEId:self.eId];
+        //5. 存node节点
+        if (![[AINetStore sharedInstance] containsNodeWithEId:self.eId]) {
+            AIFuncNode *node = [AIFuncNode newWithFuncModel:model];
+            BOOL success = [[AINetStore sharedInstance] setObjectWithNetNode:node];
+            
+            //6. 建立node.pointer & eId映射
+            if (success) {
+                [[AINetStore sharedInstance] setMapWithNodePointer:node.pointer withEId:self.eId];
+            }
         }
     }else{
         NSLog(@"ERROR!!!_____(NEFuncNode Invalid)");
     }
-    
-    
-    
 }
 
 /**
@@ -80,13 +77,13 @@
  */
 -(void) run{
     if (ISOK(self.funcModel, AIFuncModel.class)) {
-        [self.funcModel run:nil];
+        [self.funcModel invoke:nil];
     }else if(self.funcClass != nil && self.funcSel != nil){
         //1. model
         AIFuncModel *model = [[AIFuncModel alloc] init];
         model.funcClass = self.funcClass;
         model.funcSel = self.funcSel;
-        [model run:nil];
+        [model invoke:nil];
     }else{
         NSLog(@"ERROR!!!_____(FuncModel Invalid)");
     }

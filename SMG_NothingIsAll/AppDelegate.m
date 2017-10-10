@@ -32,12 +32,9 @@
     //初始化SMG
     [SMG sharedInstance];
     
-    
+    //刷新神经网络(只有Editor有变化时,才刷新(神经网络版本控制善未开发))
     AINetEditor *editor = [[AINetEditor alloc] init];
     [editor refreshNet];
-    [editor tmpRun];
-    
-    NSLog(@"");
     
     return YES;
 }

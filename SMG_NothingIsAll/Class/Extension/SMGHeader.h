@@ -60,6 +60,17 @@
 //SMGRange
 #define SMGRangeMake(loc,len) [SMGRange rangeWithLocation:loc length:len]
 
+//NSArray
+#define SMGArrayMake(arg) \
+NSMutableArray *array = [NSMutableArray arrayWithObject:arg];\
+va_list args;\
+va_start(args, arg);\
+id next = nil;\
+while ((next = va_arg(args,id))) {\
+[array addObject:next];\
+}\
+va_end(args);\
+
 
 /**
  *  MARK:--------------------快捷访问对象--------------------

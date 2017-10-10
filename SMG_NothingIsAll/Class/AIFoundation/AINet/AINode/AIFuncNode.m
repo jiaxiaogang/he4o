@@ -35,7 +35,7 @@
         AIFuncModel *funcModel = self.content;
         if (ISOK(funcModel, AIFuncModel.class)) {
             //b. 执行算法
-            id value = [funcModel run:content];
+            id value = [funcModel invoke:content,nil];
             //c. 存算法值
             //...此处需要取到另一个存储结果的神经元节点;而Func节点;必定关联了两个(1. 多功能节点; 2. 存算法结果Data节点);
             //...两种解决方式;1. 分写几个AINode的子类; 2. 将AIPort分成四部分(传入,传出,存入,关联); 3. 保持现状,丰富type,使用判断type的方式解决;
