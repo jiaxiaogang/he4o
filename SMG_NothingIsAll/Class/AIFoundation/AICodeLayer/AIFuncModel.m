@@ -9,6 +9,7 @@
 #import "AIFuncModel.h"
 #import <objc/runtime.h>
 #import <objc/message.h>
+#import "NSObject+Extension.h"
 
 @implementation AIFuncModel
 
@@ -110,6 +111,11 @@ typedef void*(*ObjcMsgSend)(id, SEL, ...);
         return result;
     } @catch (NSException *exception) {} @finally {}
     return nil;
+}
+
+
+-(void) checkParamsClassAndOther{
+    //........
 }
 
 /**
