@@ -10,6 +10,12 @@
 
 @interface NEFuncNode : NEElement
 
+
 +(id) newWithEId:(NSInteger)eId funcModel:(AIFuncModel*)funcModel funcClass:(Class)funcClass funcSel:(SEL)funcSel;
+
+/**
+ *  MARK:--------------------run--------------------
+ */
+-(void) run;
 
 @end

@@ -10,6 +10,8 @@
 #import "NENode.h"
 #import "NEFuncNode.h"
 
+#define StringAlgs @"StringAlgs"
+
 @interface AINetEditor ()
 
 @property (strong,nonatomic) NSMutableArray *elements;
@@ -34,7 +36,7 @@
 -(void) initNet{
     
     //1. editorNode
-    NEFuncNode *eFuncNode = [NEFuncNode newWithEId:1 funcModel:nil funcClass:NSClassFromString(@"NSString") funcSel:NSSelectorFromString(@"length")];
+    NEFuncNode *eFuncNode = [NEFuncNode newWithEId:1 funcModel:nil funcClass:NSClassFromString(StringAlgs) funcSel:NSSelectorFromString(@"length:")];
     [self.elements addObject:eFuncNode];
     
     
@@ -49,6 +51,16 @@
     for (NEElement *element in self.elements) {
         [element refreshNet];
     }
+}
+
+-(void) tmpRun{
+    for (NEElement *element in self.elements) {
+        if (element.eId == 1 && ISOK(element, NEFuncNode.class)) {
+            NEFuncNode *funcNode = (NEFuncNode*)element;
+            [funcNode run];
+        }
+    }
+    
 }
 
 @end

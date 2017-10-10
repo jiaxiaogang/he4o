@@ -10,6 +10,8 @@
 
 @interface NEElement : NSObject
 
+@property (assign,nonatomic) NSInteger eId;
+
 -(void) refreshNet;
 
 @end

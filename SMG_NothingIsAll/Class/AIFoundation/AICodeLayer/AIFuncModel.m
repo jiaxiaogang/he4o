@@ -61,22 +61,55 @@
 
 
 -(void) invoke{
-    ((void(*)(id,SEL, id,id))objc_msgSend)(self, self.funcSel, nil, nil);
+    if (self.funcClass && self.funcSel) {
+        @try {
+           ((void(*)(id,SEL, id,id))objc_msgSend)(self.funcClass, self.funcSel, nil, nil);
+            
+            
+            int returnInt = ((int (*)(id, SEL, NSString *, id))objc_msgSend)((id)self.funcClass, self.funcSel, @"参数1",nil);
+            
+            
+            
+            
+            
+            
+            
+            NSLog(@"");
+        } @catch (NSException *exception) {
+            NSLog(@"ERROR__!!___%@",exception.description);
+        } @finally {}
+    }
+    NSLog(@"");
 }
 
+- (void *)invokeClassMethodTuple:(id)param,...
+{
+    @try {
+        va_list params;
+        va_start(params, param);
+        void *first = va_arg(params, void*);
+        void *result = ((int (*)(id, SEL, ...))objc_msgSend)((id)self.funcClass, self.funcSel, first,params);
+        va_end(params);
+        return result;
+    } @catch (NSException *exception) {} @finally {}
+    return nil;
+}
 
 typedef void*(*ObjcMsgSend)(id, SEL, ...);
 
-- (void *)invokeMethod:(id)param,...
+- (void *)invokeObjMethodTuple:(id)param,...
 {
-    IMP imp = [self.funcClass instanceMethodForSelector:self.funcSel];
-    ObjcMsgSend objcMsgSend = (void *)imp;
-    va_list params;
-    va_start(params, param);
-    void *first = va_arg(params, void*);
-    void *result = objcMsgSend(self.class, self.funcSel, first, params);
-    va_end(params);
-    return result;
+    @try {
+        IMP imp = [self.funcClass instanceMethodForSelector:self.funcSel];
+        ObjcMsgSend objcMsgSend = (void *)imp;
+        va_list params;
+        va_start(params, param);
+        void *first = va_arg(params, void*);
+        void *result = objcMsgSend(self.funcClass, self.funcSel, first, params);
+        va_end(params);
+        return result;
+    } @catch (NSException *exception) {} @finally {}
+    return nil;
 }
 
 /**

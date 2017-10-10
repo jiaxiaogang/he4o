@@ -18,7 +18,7 @@
  */
 -(void) initNet;
 -(void) refreshNet;
-
+-(void) tmpRun;
 
 
 

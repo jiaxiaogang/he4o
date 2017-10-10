@@ -35,8 +35,9 @@
     
     AINetEditor *editor = [[AINetEditor alloc] init];
     [editor refreshNet];
-    NSLog(@"");
+    [editor tmpRun];
     
+    NSLog(@"");
     
     return YES;
 }

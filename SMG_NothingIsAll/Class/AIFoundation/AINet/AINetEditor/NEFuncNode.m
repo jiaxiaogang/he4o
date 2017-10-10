@@ -15,7 +15,6 @@
 
 @interface NEFuncNode ()
 
-@property (assign,nonatomic) NSInteger eId;
 @property (strong,nonatomic) AIFuncModel *funcModel;
 @property (assign, nonatomic) Class funcClass;
 @property (assign, nonatomic) SEL funcSel;
@@ -76,7 +75,22 @@
     
 }
 
-
+/**
+ *  MARK:--------------------run--------------------
+ */
+-(void) run{
+    if (ISOK(self.funcModel, AIFuncModel.class)) {
+        [self.funcModel run:nil];
+    }else if(self.funcClass != nil && self.funcSel != nil){
+        //1. model
+        AIFuncModel *model = [[AIFuncModel alloc] init];
+        model.funcClass = self.funcClass;
+        model.funcSel = self.funcSel;
+        [model run:nil];
+    }else{
+        NSLog(@"ERROR!!!_____(FuncModel Invalid)");
+    }
+}
 
 
 @end
