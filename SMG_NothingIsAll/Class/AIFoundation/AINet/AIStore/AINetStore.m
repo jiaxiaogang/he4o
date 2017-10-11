@@ -122,15 +122,32 @@ static AINetStore *_instance;
 }
 
 -(BOOL) containsObjectWithEId:(NSInteger)eId folderName:(NSString*)folderName{
-    //1. 生成指针
+    AIKVPointer *nodePointer = [self getPointerFromMapWithFolderName:folderName withEId:eId];
+    return ISOK(nodePointer, AIKVPointer.class);
+}
+
+
+/**
+ *  MARK:--------------------get节点pointer根据eId--------------------
+ */
+-(AIKVPointer*) getNodePointerFromMapWithEId:(NSInteger)eId{
+    return [self getPointerFromMapWithFolderName:MAP_NODEPOINTER_ELEMENTID withEId:eId];
+}
+
+-(AIKVPointer*) getFuncModelPointerFromMapWithEId:(NSInteger)eId{
+    return [self getPointerFromMapWithFolderName:kMAP_FUNCMODELPOINTER_ELEMENTID withEId:eId];
+}
+
+-(AIKVPointer*) getPointerFromMapWithFolderName:(NSString*)folderName withEId:(NSInteger)eId{
+    //1. 生成eId指针
     AIKVPointer *kvPointer = [[AIKVPointer alloc] init];
     kvPointer.pointerId = eId;
     kvPointer.folderName = STRTOOK(folderName);
     
-    //2. 存储
+    //2. 读硬件指针
     PINDiskCache *cache = [self getPinCache:kvPointer.filePath];
     AIKVPointer *nodePointer = [cache objectForKey:kvPointer.fileName];
-    return ISOK(nodePointer, AIKVPointer.class);
+    return nodePointer;
 }
 
 /**

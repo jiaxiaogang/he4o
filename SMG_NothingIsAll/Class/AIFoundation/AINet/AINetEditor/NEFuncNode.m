@@ -9,10 +9,6 @@
 #import "NEFuncNode.h"
 #import "AINetStore.h"
 
-
-
-
-
 @interface NEFuncNode ()
 
 @property (strong,nonatomic) AIFuncModel *funcModel;
@@ -23,8 +19,6 @@
 
 @implementation NEFuncNode
 
-
-
 +(id) newWithEId:(NSInteger)eId funcModel:(AIFuncModel*)funcModel funcClass:(Class)funcClass funcSel:(SEL)funcSel{
     NEFuncNode *value = [[NEFuncNode alloc] init];
     value.eId = eId;
@@ -33,7 +27,6 @@
     value.funcSel = funcSel;
     return value;
 }
-
 
 -(void) refreshNet{
     //1. 根据element参数创建model

@@ -34,5 +34,11 @@
 -(BOOL) containsFuncModelWithEId:(NSInteger)eId;
 -(BOOL) containsObjectWithEId:(NSInteger)eId folderName:(NSString*)folderName;
 
+/**
+ *  MARK:--------------------get节点pointer根据eId--------------------
+ */
+-(AIKVPointer*) getNodePointerFromMapWithEId:(NSInteger)eId;
+-(AIKVPointer*) getFuncModelPointerFromMapWithEId:(NSInteger)eId;
+-(AIKVPointer*) getPointerFromMapWithFolderName:(NSString*)folderName withEId:(NSInteger)eId;
 
 @end
