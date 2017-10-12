@@ -10,9 +10,23 @@
 
 @implementation AIMultiNode
 
+-(id) init{
+    self = [super init];
+    if (self) {
+        [self initData];
+    }
+    return self;
+}
+
+-(void) initData{
+    self.nodes = [[NSMutableArray alloc] init];
+}
+
 /**
  *  MARK:--------------------取出--------------------
  *  返回子节点组;
+ *  contentPointer是指针数组的指针;
+ *  content是指针数据;其中每个元素都是一个节点指针;
  */
 -(id) content{
     NSMutableArray *nodes = [[NSMutableArray alloc] init];
@@ -45,6 +59,22 @@
     }
 }
 
+
+/**
+ *  MARK:--------------------NSCoding--------------------
+ */
+- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
+    self = [super initWithCoder:aDecoder];
+    if (self) {
+        self.nodes = [aDecoder decodeObjectForKey:@"nodes"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [super encodeWithCoder:aCoder];
+    [aCoder encodeObject:self.nodes forKey:@"nodes"];
+}
 
 
 @end

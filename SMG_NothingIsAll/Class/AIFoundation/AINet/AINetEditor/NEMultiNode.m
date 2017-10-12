@@ -25,41 +25,25 @@
     return value;
 }
 
--(void) refreshNet{
+-(void) refreshNet {
+    AIMultiNode *multiNode = [[AIMultiNode alloc] init];
+    
     //1. 取子节点的kvPointer
     if (ARRISOK(self.arr)) {
         for (NEElement *element in self.arr) {
             if (ISOK(element, NEElement.class)) {
-                [element refreshNet];
+                [element refreshNet];//存子element
+                AIKVPointer *nodePointer = [element nodePointer];//收集nodePointer
+                [multiNode.nodes addObject:nodePointer];
             }
         }
     }
     
     //2. 存自身
-    
-    AIMultiNode *node = [AIMultiNode newWithContent:nil];
-    
-    //2. 更新神经网络
-    if (model) {
-        //3. 存FuncModel;
-        if (![[AINetStore sharedInstance] containsFuncModelWithEId:self.eId]) {
-            BOOL success = [[AINetStore sharedInstance] setObjectWithFuncModel:model];
-            //4. 存funcModel & eId映射
-            if (success) {
-                [[AINetStore sharedInstance] setMapWithFuncModelPointer:model.pointer withEId:self.eId];
-            }
-        }
-        
-        //5. 存node节点
-        if (![[AINetStore sharedInstance] containsNodeWithEId:self.eId]) {
-            AIFuncNode *node = [AIFuncNode newWithFuncModel:model];
-            BOOL success = [[AINetStore sharedInstance] setObjectWithNetNode:node];
-            
-            //6. 建立node.pointer & eId映射
-            if (success) {
-                [[AINetStore sharedInstance] setMapWithNodePointer:node.pointer withEId:self.eId];
-            }
-        }
+    BOOL success = [[AINetStore sharedInstance] setObjectWithNetNode:multiNode];
+    //4. 存multiNode & eId映射
+    if (success) {
+        [[AINetStore sharedInstance] setMapWithNodePointer:multiNode.pointer withEId:self.eId];
     }else{
         NSLog(@"ERROR!!!_____(NEFuncNode Invalid)");
     }

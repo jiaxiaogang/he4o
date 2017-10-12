@@ -13,4 +13,6 @@
  */
 @interface AIMultiNode : AINode
 
+@property (strong,nonatomic) NSMutableArray *nodes;  //指向的子节点(指针)数组;
+
 @end

@@ -46,7 +46,7 @@
             BOOL success = [[AINetStore sharedInstance] setObjectWithFuncModel:model];
             //4. 存funcModel & eId映射
             if (success) {
-                [[AINetStore sharedInstance] setMapWithFuncModelPointer:model.pointer withEId:self.eId];
+                [[AINetStore sharedInstance] setMapWithFuncModelPointer:model.pointer withEId:self.eId];//element的data指向会继用父eId;
             }
         }
         

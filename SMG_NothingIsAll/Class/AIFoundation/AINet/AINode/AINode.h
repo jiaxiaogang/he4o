@@ -15,7 +15,7 @@
  */
 @interface AINode : AIObject
 
-@property (strong,nonatomic) AIPointer *contentPointer;
+@property (strong,nonatomic) AIPointer *contentPointer;//明天删掉这个;废弃!
 
 
 //MARK:===============================================================
