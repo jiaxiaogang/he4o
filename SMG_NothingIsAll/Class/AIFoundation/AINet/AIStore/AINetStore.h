@@ -20,6 +20,13 @@
 -(BOOL) setObjectWithFuncModel:(AIFuncModel*)funcModel;//存神经网络的算法
 -(BOOL) setObject:(AIObject*)obj folderName:(NSString*)folderName pointerId:(NSInteger)pointerId;
 
+
+/**
+ *  MARK:--------------------根据节点指针取节点--------------------
+ */
+-(AIObject*) objectForKvPointer:(AIKVPointer*)kvPointer;
+
+
 /**
  *  MARK:--------------------存nodePointer和elementId的映射--------------------
  */
@@ -27,12 +34,14 @@
 -(BOOL) setMapWithFuncModelPointer:(AIKVPointer*)nodePointer withEId:(NSInteger)eId;
 -(BOOL) setMapWithPointer:(AIKVPointer*)pointer folderName:(NSString*)folderName withEId:(NSInteger)eId;
 
+
 /**
  *  MARK:--------------------是否已存过ElementId下的Node--------------------
  */
 -(BOOL) containsNodeWithEId:(NSInteger)eId;
 -(BOOL) containsFuncModelWithEId:(NSInteger)eId;
 -(BOOL) containsObjectWithEId:(NSInteger)eId folderName:(NSString*)folderName;
+
 
 /**
  *  MARK:--------------------get节点pointer根据eId--------------------

@@ -16,7 +16,9 @@
 -(void) commitString:(NSString*)str;
 
 
-
-
+//MARK:===============================================================
+//MARK:                     < 建设input对接net功能区 >
+//MARK:===============================================================
+-(void) addStringNode:(AIKVPointer*)kvPointer;
 
 @end

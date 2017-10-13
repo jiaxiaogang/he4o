@@ -8,6 +8,7 @@
 
 #import "AINet.h"
 #import "CodeLayerHeader.h"
+#import "AINetStore.h"
 
 @interface AINet ()
 
@@ -16,6 +17,18 @@
 @end
 
 @implementation AINet
+
+-(id) init{
+    self = [super init];
+    if (self) {
+        [self initData];
+    }
+    return self;
+}
+
+-(void) initData{
+    self.stringNodes = [[NSMutableArray alloc] init];
+}
 
 //MARK:===============================================================
 //MARK:                     < String反射区 >
@@ -26,8 +39,27 @@
     
     if (STRISOK(str)) {
         //1. 必调字符串算法;
-        [[[AINetEditor alloc] init] tmpRun];
+        //[[[AINetEditor alloc] init] tmpRun];
+        
+        for (AIKVPointer *nodePointer in self.stringNodes) {
+            AIMultiNode *multiNode = [[AINetStore sharedInstance] objectForKvPointer:nodePointer];
+            if (ISOK(multiNode, AIMultiNode.class)) {
+                [multiNode run:@[str]];
+            }
+        }
     }
 }
+
+
+//MARK:===============================================================
+//MARK:                     < 建设input对接net功能区 >
+//MARK:===============================================================
+-(void) addStringNode:(AIKVPointer*)kvPointer{
+    if (ISOK(kvPointer, AIKVPointer.class)) {
+        [self.stringNodes addObject:kvPointer];
+    }
+}
+
+
 
 @end

@@ -43,6 +43,12 @@
         }
 }
 
-
+-(void)run:(NSArray *)args{
+    if (ISOK(self.funcModel, AIFuncModel.class)) {
+        [self.funcModel run:args];
+    }else{
+        NSLog(@"ERROR!!!_____(FuncModel Invalid)");
+    }
+}
 
 @end

@@ -25,5 +25,10 @@
 -(void) setContent:(id)content;
 
 
+/**
+ *  MARK:--------------------run--------------------
+ */
+-(void) run:(NSArray*)args;
+
 
 @end

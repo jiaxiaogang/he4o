@@ -10,4 +10,6 @@
 
 @interface NEMultiNode : NEElement
 
++(id) newWithEId:(NSInteger)eId args:(NEElement*)arg,...;
+
 @end

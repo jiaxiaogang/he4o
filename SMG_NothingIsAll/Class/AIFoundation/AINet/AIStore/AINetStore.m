@@ -84,6 +84,19 @@ static AINetStore *_instance;
 
 
 /**
+ *  MARK:--------------------根据节点指针取节点--------------------
+ */
+-(AIObject*) objectForKvPointer:(AIKVPointer*)kvPointer{
+    if (ISOK(kvPointer, AIKVPointer.class)) {
+        NSLog(@"%@,%@",kvPointer.filePath,kvPointer.fileName);
+        PINDiskCache *cache = [self getPinCache:kvPointer.filePath];
+        return [cache objectForKey:kvPointer.fileName];
+    }
+    return nil;
+}
+
+
+/**
  *  MARK:--------------------存节点和elementId的映射--------------------
  */
 -(BOOL) setMapWithNodePointer:(AIKVPointer*)nodePointer withEId:(NSInteger)eId{
@@ -145,6 +158,9 @@ static AINetStore *_instance;
     kvPointer.folderName = STRTOOK(folderName);
     
     //2. 读硬件指针
+    NSLog(@"%@,%@",kvPointer.filePath,kvPointer.fileName);
+    
+    
     PINDiskCache *cache = [self getPinCache:kvPointer.filePath];
     AIKVPointer *nodePointer = [cache objectForKey:kvPointer.fileName];
     return nodePointer;

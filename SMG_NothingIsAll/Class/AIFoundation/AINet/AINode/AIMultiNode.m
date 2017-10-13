@@ -7,6 +7,7 @@
 //
 
 #import "AIMultiNode.h"
+#import "AINetStore.h"
 
 @implementation AIMultiNode
 
@@ -55,6 +56,20 @@
     for (AINode *node in ARRTOOK(nodes)) {
         if (ISOK(node, AINode.class)) {
             [node setContent:content];
+        }
+    }
+}
+
+
+/**
+ *  MARK:--------------------run--------------------
+ */
+-(void) run:(NSArray*)args{
+    //1. 将参数传递给子节点
+    for (AIKVPointer *pointer in self.nodes) {
+        AINode *node = [[AINetStore sharedInstance] objectForKvPointer:pointer];
+        if (ISOK(node, AINode.class)) {
+            [node run:args];
         }
     }
 }

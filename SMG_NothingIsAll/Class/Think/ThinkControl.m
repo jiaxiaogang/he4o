@@ -43,13 +43,14 @@
  *  与预测作比较;
  */
 -(void) commitUnderstandByShallowFromInput:(id)data{
-    if (STRISOK(data)) {
-        [self commitUnderstandByDeep:data];//1,字符串每次都给予注意力;
-    }else if(true){
-        
-    }else{
-        
-    }
+    //input接入应该是无意识调用神经网络反射算法,所以此处弃用;
+    //    if (STRISOK(data)) {
+    //        [self commitUnderstandByDeep:data];//1,字符串每次都给予注意力;
+    //    }else if(true){
+    //
+    //    }else{
+    //        
+    //    }
 }
 
 /**
@@ -186,7 +187,7 @@
         
         
         
-        [theNet commitString:data];//1, 交给神经网络,并反射找到处理算法;
+        [theNet commitString:data];//1, 交给神经网络,并反射找到处理算法;//错误!应改为,在神经网络作数据类比思考;
         
         //3, 神经网络构建成功;
         

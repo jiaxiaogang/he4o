@@ -9,6 +9,8 @@
 #import "AINetEditor.h"
 #import "NENode.h"
 #import "NEFuncNode.h"
+#import "NEMultiNode.h"
+#import "AINet.h"
 
 #define StringAlgs @"StringAlgs"
 
@@ -39,29 +41,29 @@
     NEFuncNode *eFuncNode = [NEFuncNode newWithEId:1 funcModel:nil funcClass:NSClassFromString(StringAlgs) funcSel:NSSelectorFromString(@"length:")];
     [self.elements addObject:eFuncNode];
     
-    
-    //1. 测试funcNode的调用;
     //2. 添加NEMutilNode;
+    NEMultiNode *multiNodeElement = [NEMultiNode newWithEId:2 args:eFuncNode,nil];
+    [self.elements addObject:multiNodeElement];
+    
     //3. 调用mutilNode
     //4. 根据数据结果生成DataNode;
     
 }
 
 -(void) refreshNet{
+    //存
     for (NEElement *element in self.elements) {
         [element refreshNet];
     }
-}
-
--(void) tmpRun{
+    
+    //AINet对接Input功能区
     for (NEElement *element in self.elements) {
-        if (element.eId == 1 && ISOK(element, NEFuncNode.class)) {
-            NEFuncNode *funcNode = (NEFuncNode*)element;
-            [funcNode run];
+        if (element.eId == 2) {
+            [theNet addStringNode:element.nodePointer];
         }
     }
-    
 }
+
 
 @end
 

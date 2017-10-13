@@ -21,6 +21,7 @@
  */
 @interface Input : NSObject
 
+
 -(void) commitText:(NSString*)text;
 
 @end

@@ -62,6 +62,12 @@
     
 }
 
+-(id) run:(NSArray*)args{
+    if (self.funcClass != NULL && self.funcSel != NULL) {
+        return [self.funcClass invoke:NSStringFromSelector(self.funcSel) arguments:args];
+    }
+    return nil;
+}
 /**
  *  MARK:--------------------NSCoding--------------------
  */
