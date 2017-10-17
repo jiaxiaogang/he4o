@@ -16,6 +16,8 @@
 #define NET_NODE @"NET_NODE"  //网络;元素为AINode;
 #define MAP_NODEPOINTER_ELEMENTID @"MAP_NODEPOINTER_ELEMENTID"  //存节点指针和elementId的映射
 
+#define NET_DATA @"NET_DATA"  //神经网络的数据;元素为AIObject;
+
 @interface AINetStore ()
 
 @property (strong,nonatomic) NSMutableDictionary *pinCaches;
@@ -57,6 +59,15 @@ static AINetStore *_instance;
     return success;
 }
 
+-(BOOL) setObjectWithNetData:(AIObject*)data{
+    NSInteger lastId = [SMGUtils getLastNetDataPointerId];
+    BOOL success = [self setObject:data folderName:NET_DATA pointerId:lastId + 1];
+    if (success) {
+        [SMGUtils setNetDataPointerId:lastId + 1];
+    }
+    return success;
+}
+
 -(BOOL) setObjectWithFuncModel:(AIFuncModel*)funcModel{
     NSInteger lastId = [SMGUtils getLastNetFuncModelPointerId];
     BOOL success = [self setObject:funcModel folderName:kNET_FUNCMODEL pointerId:lastId + 1];
@@ -86,9 +97,8 @@ static AINetStore *_instance;
 /**
  *  MARK:--------------------根据节点指针取节点--------------------
  */
--(AIObject*) objectForKvPointer:(AIKVPointer*)kvPointer{
+-(/*AIObject**/id) objectForKvPointer:(AIKVPointer*)kvPointer{
     if (ISOK(kvPointer, AIKVPointer.class)) {
-        NSLog(@"%@,%@",kvPointer.filePath,kvPointer.fileName);
         PINDiskCache *cache = [self getPinCache:kvPointer.filePath];
         return [cache objectForKey:kvPointer.fileName];
     }
@@ -158,9 +168,6 @@ static AINetStore *_instance;
     kvPointer.folderName = STRTOOK(folderName);
     
     //2. 读硬件指针
-    NSLog(@"%@,%@",kvPointer.filePath,kvPointer.fileName);
-    
-    
     PINDiskCache *cache = [self getPinCache:kvPointer.filePath];
     AIKVPointer *nodePointer = [cache objectForKey:kvPointer.fileName];
     return nodePointer;

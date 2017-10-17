@@ -70,6 +70,9 @@
 +(NSInteger) getLastNetNodePointerId;
 +(void) setNetNodePointerId:(NSInteger)count;
 
+//netData
++(NSInteger) getLastNetDataPointerId;
++(void) setNetDataPointerId:(NSInteger)count;
 
 @end
 

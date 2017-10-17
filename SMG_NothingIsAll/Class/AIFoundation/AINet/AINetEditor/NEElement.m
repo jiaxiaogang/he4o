@@ -20,7 +20,7 @@
  *  @return element对应的nodePointer的指针;
  *  注:如果element未refresh到Net;则先调用refreshNet再返回指针;
  */
--(AIPointer*) nodePointer{
+-(AIKVPointer*) nodePointer{
     AIKVPointer *pointer = [[AINetStore sharedInstance] getNodePointerFromMapWithEId:self.eId];
     if (!ISOK(pointer, AIKVPointer.class)) {
         [self refreshNet];

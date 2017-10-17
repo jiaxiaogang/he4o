@@ -254,6 +254,17 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
+//netData
++(NSInteger) getLastNetDataPointerId{
+    return [[NSUserDefaults standardUserDefaults] integerForKey:@"AIPointer_LastNetDataPointerId_KEY"];
+}
+
++(void) setNetDataPointerId:(NSInteger)count{
+    NSInteger lastPId = [self getLastNetDataPointerId];
+    [[NSUserDefaults standardUserDefaults] setInteger:lastPId + count forKey:@"AIPointer_LastNetDataPointerId_KEY"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
 @end
 
 

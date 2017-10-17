@@ -7,6 +7,7 @@
 //
 
 #import "AIDataNode.h"
+#import "AINetStore.h"
 
 @implementation AIDataNode
 
@@ -18,12 +19,28 @@
     return nil;
 }
 
--(void) setContent:(id)content{
-    //1. 生成pointer地址;
-    //2. 存content
-    //3. 存本节点;
+-(NSMutableArray *)ports{
+    if (_ports == nil) {
+        _ports = [[NSMutableArray alloc] init];
+    }
+    return _ports;
 }
 
+-(void)run:(NSArray *)args{
+    if (ARRISOK(args)) {
+        AIObject *obj = [args firstObject];
+        if (ISOK(obj, AIObject.class)) {
+            //1. 存data
+            [[AINetStore sharedInstance] setObjectWithNetData:obj];
+            self.dataPointer = obj.pointer;
+            
+            //2. 存本节点;
+            [[AINetStore sharedInstance] setObjectWithNetNode:self];
+        }else{
+            NSLog(@"AIDataNodeRunIsERROR!!!___(dataIsInValid)");
+        }
+    }
+}
 
 
 @end

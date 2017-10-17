@@ -15,10 +15,9 @@
  */
 @interface AIFuncNode : AINode
 
-
-@property (strong,nonatomic) AIFuncModel *funcModel;
-+(AIFuncNode*) newWithFuncModel:(AIFuncModel*)funcModel;
-
++(AIFuncNode*) newWithFuncPointer:(AIKVPointer*)funcPointer singleNodePointer:(AIKVPointer*)singleNodePointer;
+@property (strong,nonatomic) AIKVPointer *funcPointer;      //算法数据指针
+@property (strong,nonatomic) AIKVPointer *singleNodePointer;//存结果_单神经元节点指针
 
 
 @end

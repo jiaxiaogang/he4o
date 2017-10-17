@@ -8,14 +8,9 @@
 
 #import "NEElement.h"
 
+@class NESingleNode;
 @interface NEFuncNode : NEElement
 
-
-+(id) newWithEId:(NSInteger)eId funcModel:(AIFuncModel*)funcModel funcClass:(Class)funcClass funcSel:(SEL)funcSel;
-
-/**
- *  MARK:--------------------run--------------------
- */
--(void) run;
++(id) newWithEId:(NSInteger)eId funcModel:(AIFuncModel*)funcModel funcClass:(Class)funcClass funcSel:(SEL)funcSel singleNode:(NESingleNode*)singleNode;
 
 @end

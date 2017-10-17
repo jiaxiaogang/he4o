@@ -47,22 +47,8 @@
 /**
  *  MARK:--------------------执行--------------------
  */
--(id) invoke:(id)arg,...{
-    if (/*ISOK(param, self.paramClass)*/true) {
-        //判断funcClass的返回值 & 参数 是否与paramClass和valueClass一致;
-        if (self.funcClass != NULL && self.funcSel != NULL) {
-            if (self.funcClass && self.funcSel) {
-                NSUInteger length = [[self.funcClass invoke:NSStringFromSelector(self.funcSel) args:@"asDda",nil] unsignedIntegerValue];
-                NSLog(@"");
-            }
-        }
-    }
-    return nil;
-    
-    
-}
-
 -(id) run:(NSArray*)args{
+    //判断funcClass的返回值 & 参数 是否与paramClass和valueClass一致;
     if (self.funcClass != NULL && self.funcSel != NULL) {
         return [self.funcClass invoke:NSStringFromSelector(self.funcSel) arguments:args];
     }
@@ -90,7 +76,3 @@
 
 
 @end
-
-
-//@property (assign, nonatomic) Class paramClass; //参数类型
-//@property (assign, nonatomic) Class valueClass; //返回值类型

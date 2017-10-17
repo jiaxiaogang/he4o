@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		0806FB2E1F15996800808B34 /* AIMoodModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0806FB2D1F15996800808B34 /* AIMoodModel.m */; };
 		0806FB311F15997D00808B34 /* AIMoodStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 0806FB301F15997D00808B34 /* AIMoodStore.m */; };
+		0808112F1F958D6A00187E43 /* NESingleNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 0808112E1F958D6A00187E43 /* NESingleNode.m */; };
+		080811321F958F0D00187E43 /* AISingleNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 080811311F958F0D00187E43 /* AISingleNode.m */; };
 		0808DB441F10A24A0082F4AD /* AIAwarenessStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 0808DB431F10A24A0082F4AD /* AIAwarenessStore.m */; };
 		0808DB471F10A25A0082F4AD /* AICommonSenseStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 0808DB461F10A25A0082F4AD /* AICommonSenseStore.m */; };
 		0808DB4A1F10A28C0082F4AD /* AIMemoryStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 0808DB491F10A28C0082F4AD /* AIMemoryStore.m */; };
@@ -135,6 +137,10 @@
 		0806FB2D1F15996800808B34 /* AIMoodModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIMoodModel.m; sourceTree = "<group>"; };
 		0806FB2F1F15997D00808B34 /* AIMoodStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIMoodStore.h; sourceTree = "<group>"; };
 		0806FB301F15997D00808B34 /* AIMoodStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIMoodStore.m; sourceTree = "<group>"; };
+		0808112D1F958D6A00187E43 /* NESingleNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NESingleNode.h; sourceTree = "<group>"; };
+		0808112E1F958D6A00187E43 /* NESingleNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NESingleNode.m; sourceTree = "<group>"; };
+		080811301F958F0D00187E43 /* AISingleNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AISingleNode.h; sourceTree = "<group>"; };
+		080811311F958F0D00187E43 /* AISingleNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AISingleNode.m; sourceTree = "<group>"; };
 		0808DB421F10A24A0082F4AD /* AIAwarenessStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIAwarenessStore.h; sourceTree = "<group>"; };
 		0808DB431F10A24A0082F4AD /* AIAwarenessStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIAwarenessStore.m; sourceTree = "<group>"; };
 		0808DB451F10A25A0082F4AD /* AICommonSenseStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AICommonSenseStore.h; sourceTree = "<group>"; };
@@ -928,6 +934,8 @@
 				08319B431F7DCB2300532B62 /* NEDataNode.m */,
 				08319B451F7DCB2D00532B62 /* NEMultiNode.h */,
 				08319B461F7DCB2D00532B62 /* NEMultiNode.m */,
+				0808112D1F958D6A00187E43 /* NESingleNode.h */,
+				0808112E1F958D6A00187E43 /* NESingleNode.m */,
 			);
 			path = AINetEditor;
 			sourceTree = "<group>";
@@ -943,6 +951,8 @@
 				08F737F41F7C7131005EAD56 /* AIMultiNode.m */,
 				08F737F51F7C7131005EAD56 /* AINode.h */,
 				08F737F61F7C7131005EAD56 /* AINode.m */,
+				080811301F958F0D00187E43 /* AISingleNode.h */,
+				080811311F958F0D00187E43 /* AISingleNode.m */,
 			);
 			path = AINode;
 			sourceTree = "<group>";
@@ -1131,6 +1141,7 @@
 				08A209711F1069040013ACC4 /* AIObjModel.m in Sources */,
 				08F738041F7C714F005EAD56 /* AIFuncPointer.m in Sources */,
 				08FBB90A1EE76E78000F9E80 /* Mine.m in Sources */,
+				080811321F958F0D00187E43 /* AISingleNode.m in Sources */,
 				083F61351F04830F000330E1 /* AILineStrong.m in Sources */,
 				0895DAEB1EB2D7EB00E2B5C7 /* DataCell.m in Sources */,
 				08FDCE8E1EAA4A8E00882ADC /* SMGRange.m in Sources */,
@@ -1143,6 +1154,7 @@
 				08E3CCCA1EE60F8D002990FD /* ThinkControl.m in Sources */,
 				08BD524E1F5AC94900B4D26A /* AIFuncModel.m in Sources */,
 				08A209721F1069040013ACC4 /* AIValueModel.m in Sources */,
+				0808112F1F958D6A00187E43 /* NESingleNode.m in Sources */,
 				08E58DEC1ED3CE18008B0D76 /* LogicModel.m in Sources */,
 				081EA16A1F4E520E00D7B901 /* ThinkElementModel.m in Sources */,
 				08AF456E1E97DDF600377887 /* MKStore.m in Sources */,

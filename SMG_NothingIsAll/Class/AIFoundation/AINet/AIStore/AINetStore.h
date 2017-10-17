@@ -16,15 +16,16 @@
 /**
  *  MARK:--------------------存obj到神经网络--------------------
  */
--(BOOL) setObjectWithNetNode:(AINode*)node;//存神经网络的节点
--(BOOL) setObjectWithFuncModel:(AIFuncModel*)funcModel;//存神经网络的算法
+-(BOOL) setObjectWithNetNode:(AINode*)node;                         //存神经网络_节点
+-(BOOL) setObjectWithNetData:(AIObject*)data;                       //存神经网络_数据
+-(BOOL) setObjectWithFuncModel:(AIFuncModel*)funcModel;             //存神经网络_算法
 -(BOOL) setObject:(AIObject*)obj folderName:(NSString*)folderName pointerId:(NSInteger)pointerId;
 
 
 /**
  *  MARK:--------------------根据节点指针取节点--------------------
  */
--(AIObject*) objectForKvPointer:(AIKVPointer*)kvPointer;
+-(/*AIObject**/id) objectForKvPointer:(AIKVPointer*)kvPointer;
 
 
 /**
