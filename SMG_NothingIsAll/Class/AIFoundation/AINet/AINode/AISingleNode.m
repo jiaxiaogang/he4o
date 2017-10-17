@@ -25,7 +25,13 @@
     
     //2. 记录输出
     [self.dataNodePointers addObject:dataNode.pointer];
-    [[AINetStore sharedInstance] setObjectWithNetNode:self];//改成update;;;;//xxx
+    if (ISOK(self.pointer, AIKVPointer.class)) {
+        AIKVPointer *pointer = self.pointer;
+        [[AINetStore sharedInstance] setObject:self folderName:pointer.folderName pointerId:pointer.pointerId];
+    }else{
+        NSLog(@"AISingleNodeHavERROR!!!___PointerInValid");
+    }
+    
 }
 
 
@@ -33,7 +39,7 @@
  *  MARK:--------------------NSCoding--------------------
  */
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
-    self = [super init];
+    self = [super initWithCoder:aDecoder];
     if (self) {
         self.dataNodePointers = [aDecoder decodeObjectForKey:@"dataNodePointers"];
     }

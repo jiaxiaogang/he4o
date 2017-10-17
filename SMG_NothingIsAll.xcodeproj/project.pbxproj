@@ -118,7 +118,6 @@
 		08F737F81F7C7131005EAD56 /* AIFuncNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F737F21F7C7131005EAD56 /* AIFuncNode.m */; };
 		08F737F91F7C7131005EAD56 /* AIMultiNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F737F41F7C7131005EAD56 /* AIMultiNode.m */; };
 		08F737FA1F7C7131005EAD56 /* AINode.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F737F61F7C7131005EAD56 /* AINode.m */; };
-		08F738041F7C714F005EAD56 /* AIFuncPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F737FD1F7C714F005EAD56 /* AIFuncPointer.m */; };
 		08F738051F7C714F005EAD56 /* AIKVPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F737FF1F7C714F005EAD56 /* AIKVPointer.m */; };
 		08F738061F7C714F005EAD56 /* AIPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738011F7C714F005EAD56 /* AIPointer.m */; };
 		08F738071F7C714F005EAD56 /* AISqlPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738031F7C714F005EAD56 /* AISqlPointer.m */; };
@@ -360,8 +359,6 @@
 		08F737F41F7C7131005EAD56 /* AIMultiNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIMultiNode.m; sourceTree = "<group>"; };
 		08F737F51F7C7131005EAD56 /* AINode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AINode.h; sourceTree = "<group>"; };
 		08F737F61F7C7131005EAD56 /* AINode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AINode.m; sourceTree = "<group>"; };
-		08F737FC1F7C714F005EAD56 /* AIFuncPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIFuncPointer.h; sourceTree = "<group>"; };
-		08F737FD1F7C714F005EAD56 /* AIFuncPointer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIFuncPointer.m; sourceTree = "<group>"; };
 		08F737FE1F7C714F005EAD56 /* AIKVPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIKVPointer.h; sourceTree = "<group>"; };
 		08F737FF1F7C714F005EAD56 /* AIKVPointer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIKVPointer.m; sourceTree = "<group>"; };
 		08F738001F7C714F005EAD56 /* AIPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIPointer.h; sourceTree = "<group>"; };
@@ -960,8 +957,6 @@
 		08F737FB1F7C714F005EAD56 /* AIPointer */ = {
 			isa = PBXGroup;
 			children = (
-				08F737FC1F7C714F005EAD56 /* AIFuncPointer.h */,
-				08F737FD1F7C714F005EAD56 /* AIFuncPointer.m */,
 				08F737FE1F7C714F005EAD56 /* AIKVPointer.h */,
 				08F737FF1F7C714F005EAD56 /* AIKVPointer.m */,
 				08F738001F7C714F005EAD56 /* AIPointer.h */,
@@ -1139,7 +1134,6 @@
 				081816361F2355BD007DDB4D /* AIDemandModel.m in Sources */,
 				08319B381F7DC13E00532B62 /* NENode.m in Sources */,
 				08A209711F1069040013ACC4 /* AIObjModel.m in Sources */,
-				08F738041F7C714F005EAD56 /* AIFuncPointer.m in Sources */,
 				08FBB90A1EE76E78000F9E80 /* Mine.m in Sources */,
 				080811321F958F0D00187E43 /* AISingleNode.m in Sources */,
 				083F61351F04830F000330E1 /* AILineStrong.m in Sources */,

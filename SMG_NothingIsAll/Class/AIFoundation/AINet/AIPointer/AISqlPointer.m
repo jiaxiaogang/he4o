@@ -62,4 +62,24 @@
     return nil;
 }
 
+
+
+/**
+ *  MARK:--------------------NSCoding--------------------
+ */
+- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
+    self = [super initWithCoder:aDecoder];
+    if (self) {
+        self.pClass = [aDecoder decodeObjectForKey:@"pClass"];
+        self.pId = [aDecoder decodeIntegerForKey:@"pId"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [super encodeWithCoder:aCoder];
+    [aCoder encodeObject:self.pClass forKey:@"pClass"];
+    [aCoder encodeInteger:self.pId forKey:@"pId"];
+}
+
 @end

@@ -61,7 +61,7 @@
  *  MARK:--------------------NSCoding--------------------
  */
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
-    self = [super init];
+    self = [super initWithCoder:aDecoder];
     if (self) {
         self.funcPointer = [aDecoder decodeObjectForKey:@"funcPointer"];
         self.singleNodePointer = [aDecoder decodeObjectForKey:@"singleNodePointer"];

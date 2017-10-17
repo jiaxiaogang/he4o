@@ -58,7 +58,7 @@
  *  MARK:--------------------NSCoding--------------------
  */
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
-    self = [super init];
+    self = [super initWithCoder:aDecoder];
     if (self) {
         self.funcClass = NSClassFromString([aDecoder decodeObjectForKey:@"funcClass"]);
         self.funcSel = NSSelectorFromString([aDecoder decodeObjectForKey:@"funcSel"]);

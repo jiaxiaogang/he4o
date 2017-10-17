@@ -138,12 +138,14 @@
  */
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super init];
-    if (self) {}
+    if (self) {
+        self.pointer = [aDecoder decodeObjectForKey:@"pointer"];
+    }
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
-    
+    [aCoder encodeObject:self.pointer forKey:@"pointer"];
 }
 
 @end
