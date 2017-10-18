@@ -11,10 +11,11 @@
 /**
  *  MARK:--------------------String算法--------------------
  */
+@class AIValue;
 @interface StringAlgs : NSObject
 
 
-+(NSUInteger) length:(NSString*)str;
++(AIValue*) length:(NSString*)str;
 
 +(NSMutableArray*) algs;
 

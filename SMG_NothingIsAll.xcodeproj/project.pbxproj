@@ -127,6 +127,7 @@
 		08FBB90B1EE76E78000F9E80 /* Mood.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FBB9071EE76E78000F9E80 /* Mood.m */; };
 		08FBB90E1EE76E9D000F9E80 /* Hunger.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FBB90D1EE76E9D000F9E80 /* Hunger.m */; };
 		08FDCE8E1EAA4A8E00882ADC /* SMGRange.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FDCE8D1EAA4A8E00882ADC /* SMGRange.m */; };
+		08FEDE9A1F96D0F2003CAEAA /* AIValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FEDE991F96D0F2003CAEAA /* AIValue.m */; };
 		2753D7CF7BAEDFEACAF9264A /* libPods-SMG_NothingIsAll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */; };
 /* End PBXBuildFile section */
 
@@ -377,6 +378,8 @@
 		08FBB90D1EE76E9D000F9E80 /* Hunger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Hunger.m; sourceTree = "<group>"; };
 		08FDCE8C1EAA4A8E00882ADC /* SMGRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMGRange.h; sourceTree = "<group>"; };
 		08FDCE8D1EAA4A8E00882ADC /* SMGRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMGRange.m; sourceTree = "<group>"; };
+		08FEDE981F96D0F2003CAEAA /* AIValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIValue.h; sourceTree = "<group>"; };
+		08FEDE991F96D0F2003CAEAA /* AIValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIValue.m; sourceTree = "<group>"; };
 		DE79539824FEDBA53557ECCA /* Pods-SMG_NothingIsAll.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SMG_NothingIsAll.release.xcconfig"; path = "Pods/Target Support Files/Pods-SMG_NothingIsAll/Pods-SMG_NothingIsAll.release.xcconfig"; sourceTree = "<group>"; };
 		DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SMG_NothingIsAll.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E74E5256A45FDF9C80A280FD /* Pods-SMG_NothingIsAll.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SMG_NothingIsAll.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SMG_NothingIsAll/Pods-SMG_NothingIsAll.debug.xcconfig"; sourceTree = "<group>"; };
@@ -755,6 +758,8 @@
 				08D7DA4E1ED14BC7004B1018 /* AIChar.m */,
 				081DA1391ED47CE000C8C531 /* AIArray.h */,
 				081DA13A1ED47CE000C8C531 /* AIArray.m */,
+				08FEDE981F96D0F2003CAEAA /* AIValue.h */,
+				08FEDE991F96D0F2003CAEAA /* AIValue.m */,
 			);
 			path = AIFoundation;
 			sourceTree = "<group>";
@@ -1223,6 +1228,7 @@
 				0840AA691F16FD7B000A528E /* AIOutputStore.m in Sources */,
 				08E58DEB1ED3CE18008B0D76 /* LawStore.m in Sources */,
 				08319B471F7DCB2D00532B62 /* NEMultiNode.m in Sources */,
+				08FEDE9A1F96D0F2003CAEAA /* AIValue.m in Sources */,
 				080A74321F60C6490025DBA3 /* AIPort.m in Sources */,
 				081816301F22FEA6007DDB4D /* Awareness.m in Sources */,
 				08F737F91F7C7131005EAD56 /* AIMultiNode.m in Sources */,

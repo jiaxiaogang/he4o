@@ -8,12 +8,13 @@
 
 #import "StringAlgs.h"
 #import "AIFuncModel.h"
+#import "AIValue.h"
 
 @implementation StringAlgs
 
-+(NSUInteger) length:(NSString*)str{
++(AIValue*) length:(NSString*)str {
     str = STRTOOK(str);
-    return str.length;
+    return [AIValue newWithIntegerValue:str.length];
 }
 
 +(NSMutableArray*) algs{
