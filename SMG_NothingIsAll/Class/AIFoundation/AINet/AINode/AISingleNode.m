@@ -20,6 +20,7 @@
 
 -(void)run:(NSArray *)args{
     //1. 输出至dataNode
+    //此时,要作意识判断;如果是潜意识状态只能read不能write;//xxx
     AIDataNode *dataNode = [[AIDataNode alloc] init];
     [dataNode run:args];
     
