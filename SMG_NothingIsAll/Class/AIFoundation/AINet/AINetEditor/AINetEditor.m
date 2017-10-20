@@ -38,7 +38,6 @@
 }
 
 -(void) initNet{
-    
     //1. singleNode
     NESingleNode *singleNode = [[NESingleNode alloc] init];
     singleNode.eId = 1001;
@@ -54,12 +53,20 @@
 }
 
 -(void) refreshNet{
-    //存
+    //1. 存
     for (NEElement *element in self.elements) {
         [element refreshNet];
     }
     
-    //AINet对接Input功能区
+    //2. 分配
+    [self refreshAllotNodes];
+}
+
+
+/**
+ *  MARK:--------------------AINet对接Input功能区--------------------
+ */
+-(void) refreshAllotNodes{
     for (NEElement *element in self.elements) {
         if (element.eId == 3001) {
             [theNet addStringNode:element.nodePointer];
