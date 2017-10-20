@@ -91,6 +91,7 @@
 		08DB40CC1F11A65E003162C8 /* TestHungryPage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 08DB40CA1F11A65E003162C8 /* TestHungryPage.xib */; };
 		08DF0DC51F7F183B00B14D17 /* AINetStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08DF0DC41F7F183B00B14D17 /* AINetStore.m */; };
 		08E3CCCA1EE60F8D002990FD /* ThinkControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E3CCC91EE60F8D002990FD /* ThinkControl.m */; };
+		08E401421F9974B900C5AC36 /* AINetController.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E401411F9974B900C5AC36 /* AINetController.m */; };
 		08E58DDE1ED3CE18008B0D76 /* CharModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E58DB71ED3CE18008B0D76 /* CharModel.m */; };
 		08E58DDF1ED3CE18008B0D76 /* CharStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E58DB91ED3CE18008B0D76 /* CharStore.m */; };
 		08E58DE01ED3CE18008B0D76 /* ClassStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E58DBC1ED3CE18008B0D76 /* ClassStore.m */; };
@@ -301,6 +302,8 @@
 		08DF0DC41F7F183B00B14D17 /* AINetStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AINetStore.m; sourceTree = "<group>"; };
 		08E3CCC81EE60F8D002990FD /* ThinkControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThinkControl.h; sourceTree = "<group>"; };
 		08E3CCC91EE60F8D002990FD /* ThinkControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThinkControl.m; sourceTree = "<group>"; };
+		08E401401F9974B900C5AC36 /* AINetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AINetController.h; sourceTree = "<group>"; };
+		08E401411F9974B900C5AC36 /* AINetController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AINetController.m; sourceTree = "<group>"; };
 		08E58DB61ED3CE18008B0D76 /* CharModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharModel.h; sourceTree = "<group>"; };
 		08E58DB71ED3CE18008B0D76 /* CharModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CharModel.m; sourceTree = "<group>"; };
 		08E58DB81ED3CE18008B0D76 /* CharStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharStore.h; sourceTree = "<group>"; };
@@ -573,6 +576,8 @@
 				081EA1631F4E503300D7B901 /* ThinkModel.m */,
 				081EA1681F4E520E00D7B901 /* ThinkElementModel.h */,
 				081EA1691F4E520E00D7B901 /* ThinkElementModel.m */,
+				08E401401F9974B900C5AC36 /* AINetController.h */,
+				08E401411F9974B900C5AC36 /* AINetController.m */,
 			);
 			path = Think;
 			sourceTree = "<group>";
@@ -1214,6 +1219,7 @@
 				0806FB2E1F15996800808B34 /* AIMoodModel.m in Sources */,
 				08D7DA491ED149E8004B1018 /* AIObject.m in Sources */,
 				08A209691F1069040013ACC4 /* AIAwarenessModel.m in Sources */,
+				08E401421F9974B900C5AC36 /* AINetController.m in Sources */,
 				08E58DDE1ED3CE18008B0D76 /* CharModel.m in Sources */,
 				081816391F235691007DDB4D /* AIDemandStore.m in Sources */,
 				08A2096A1F1069040013ACC4 /* AICommonSenseModel.m in Sources */,
