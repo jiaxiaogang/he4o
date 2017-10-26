@@ -85,26 +85,18 @@
  *  MARK:--------------------onclick--------------------
  */
 - (IBAction)memoryBtnOnClick:(id)sender {
-    NSMutableArray *arr = [[SMG sharedInstance].store.memStore getMemoryWithWhereDic:nil];
-    [self setDatas:arr withStoreType:StoreType_Mem];
     self.title = @"记忆";
 }
 
 - (IBAction)doBtnOnClick:(id)sender {
-    NSMutableArray *arr = [[SMG sharedInstance].store.mkStore.doStore getItemArrWithWhere:nil];
-    [self setDatas:arr withStoreType:StoreType_Do];
     self.title = @"行为";
 }
 
 - (IBAction)objBtnOnClick:(id)sender {
-    NSMutableArray *arr = [[SMG sharedInstance].store.mkStore.objStore getItemArrWithWhere:nil];
-    [self setDatas:arr withStoreType:StoreType_Obj];
     self.title = @"实物";
 }
 
 - (IBAction)textBtnOnClick:(id)sender {
-    NSMutableArray *arr = [TextStore getWordArr];
-    [self setDatas:arr withStoreType:StoreType_Text];
     self.title = @"分词";
 }
 
@@ -114,11 +106,6 @@
 }
 
 - (IBAction)clearBtnOnClick:(id)sender {
-    [self setDatas:nil withStoreType:StoreType_Mem];
-    [[SMG sharedInstance].store.memStore clear];
-    [[SMG sharedInstance].store.mkStore.doStore clear];
-    [[SMG sharedInstance].store.mkStore.objStore clear];
-    [TextStore clear];
     self.title = @"清空";
 }
 

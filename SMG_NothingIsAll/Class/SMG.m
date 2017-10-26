@@ -8,7 +8,6 @@
 
 #import "SMG.h"
 #import "SMGHeader.h"
-#import "StoreHeader.h"
 #import "ThinkHeader.h"
 #import "InputHeader.h"
 #import "FeelHeader.h"
@@ -41,7 +40,6 @@ static SMG *_instance;
 }
 
 -(void) initData{
-    self.store      = [[Store alloc] init];
     self.mindControl= [[MindControl alloc] init];
     self.thinkControl = [[ThinkControl alloc] init];
     self.feel       = [[Feel alloc] init];

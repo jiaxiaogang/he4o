@@ -7,7 +7,6 @@
 //
 
 #import "DataCell.h"
-#import "StoreHeader.h"
 
 @interface DataCell ()
 
@@ -113,29 +112,29 @@
             [mStr appendString:@"\n"];
             [self.dataLab setText:mStr];
         }else if (self.storeType == StoreType_Text) {
-            TextModel *model = (TextModel*)self.data;
+            //TextModel *model = (TextModel*)self.data;
             NSMutableString *mStr = [[NSMutableString alloc] init];
             //itemId
             [mStr appendString:@"分词Id:"];
-            [mStr appendFormat:@"%ld",model.rowid];
+            //[mStr appendFormat:@"%ld",model.rowid];
             [mStr appendString:@"\n"];
             
             //itemName
             [mStr appendString:@"词汇:"];
-            [mStr appendString:model.text];
+            //[mStr appendString:model.text];
             [mStr appendString:@"\n"];
             [self.dataLab setText:mStr];
             
             //objId
             [mStr appendString:@"对应实物:"];
-            NSInteger objId = [LawStore searchSingle_OtherIdWithClass:TextModel.class withClassId:model.rowid otherClass:ObjModel.class];
+            NSInteger objId = 0;//[LawStore searchSingle_OtherIdWithClass:TextModel.class withClassId:model.rowid otherClass:ObjModel.class];
             [mStr appendString:STRTOOK([self getObjName:STRFORMAT(@"%ld",objId)])];
             [mStr appendString:@"\n"];
             [self.dataLab setText:mStr];
             
             //doId
             [mStr appendString:@"对应行为:"];
-            NSInteger doId = [LawStore searchSingle_OtherIdWithClass:TextModel.class withClassId:model.rowid otherClass:DoModel.class];
+            NSInteger doId = 0;//[LawStore searchSingle_OtherIdWithClass:TextModel.class withClassId:model.rowid otherClass:DoModel.class];
             [mStr appendString:STRTOOK([self getDoName:STRFORMAT(@"%ld",doId)])];
             [mStr appendString:@"\n"];
             [self.dataLab setText:mStr];
@@ -150,26 +149,14 @@
  *  MARK:--------------------method--------------------
  */
 -(NSString*) getObjName:(NSString*)itemId{
-    NSDictionary *objDic = [[SMG sharedInstance].store.mkStore.objStore getSingleItemWithWhere:[NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(itemId),@"itemId", nil]];
-    if (objDic && [objDic objectForKey:@"itemName"]) {
-        return STRTOOK([objDic objectForKey:@"itemName"]);
-    }
     return nil;
 }
 
 -(NSString*) getDoName:(NSString*)itemId{
-    NSDictionary *objDic = [[SMG sharedInstance].store.mkStore.doStore getSingleItemWithWhere:[NSDictionary dictionaryWithObjectsAndKeys:STRTOOK(itemId),@"itemId", nil]];
-    if (objDic && [objDic objectForKey:@"itemName"]) {
-        return STRTOOK([objDic objectForKey:@"itemName"]);
-    }
     return nil;
 }
 
 -(NSString*) getWordName:(NSString*)itemId{
-    TextModel *model = [TextStore getSingleWordWithItemId:[STRTOOK(itemId) integerValue]];
-    if (model) {
-        return model.text;
-    }
     return nil;
 }
 

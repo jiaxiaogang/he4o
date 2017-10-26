@@ -13,11 +13,10 @@
  *  MARK:--------------------大脑控制器--------------------
  *  用于控制Input,Feel,Think,Mind,Output之间的工作;
  */
-@class Store,ThinkControl,Feel,Input,Output,MindControl,AIMainThread,AINet;
+@class ThinkControl,Feel,Input,Output,MindControl,AIMainThread,AINet;
 @interface SMG : NSObject
 
 +(SMG*) sharedInstance;
-@property (strong,nonatomic) Store *store;          //记忆功能;
 @property (strong,nonatomic) MindControl *mindControl;            //心理控制器
 @property (strong,nonatomic) ThinkControl *thinkControl;//闲下时,开始理解分析自己的记忆和知识;
 @property (strong,nonatomic) Feel *feel;            //感觉系统

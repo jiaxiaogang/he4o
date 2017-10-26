@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AILine;
+@class AILine,AIPointer;
 @interface AIObject : NSObject<NSCoding>
 
 
