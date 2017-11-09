@@ -35,6 +35,9 @@
 		081DA13B1ED47CE000C8C531 /* AIArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 081DA13A1ED47CE000C8C531 /* AIArray.m */; };
 		081EA1641F4E503300D7B901 /* ThinkModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 081EA1631F4E503300D7B901 /* ThinkModel.m */; };
 		081EA16A1F4E520E00D7B901 /* ThinkElementModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 081EA1691F4E520E00D7B901 /* ThinkElementModel.m */; };
+		08216DD81FB3D0F400F509A1 /* AIThinkController.m in Sources */ = {isa = PBXBuildFile; fileRef = 08216DD71FB3D0F400F509A1 /* AIThinkController.m */; };
+		08216DDE1FB3D46900F509A1 /* AIAwareness.m in Sources */ = {isa = PBXBuildFile; fileRef = 08216DDD1FB3D46900F509A1 /* AIAwareness.m */; };
+		08216DE11FB3D8DF00F509A1 /* AIRootThinkController.m in Sources */ = {isa = PBXBuildFile; fileRef = 08216DE01FB3D8DF00F509A1 /* AIRootThinkController.m */; };
 		0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 0825AFF21F748F67003B86C7 /* NSObject+Extension.m */; };
 		0826EED41EF7619300400F08 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 0826EED31EF7619300400F08 /* README.md */; };
 		082F9D561EB234750009F6A9 /* Output.m in Sources */ = {isa = PBXBuildFile; fileRef = 082F9D551EB234750009F6A9 /* Output.m */; };
@@ -175,6 +178,12 @@
 		081EA1631F4E503300D7B901 /* ThinkModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThinkModel.m; sourceTree = "<group>"; };
 		081EA1681F4E520E00D7B901 /* ThinkElementModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThinkElementModel.h; sourceTree = "<group>"; };
 		081EA1691F4E520E00D7B901 /* ThinkElementModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThinkElementModel.m; sourceTree = "<group>"; };
+		08216DD61FB3D0F400F509A1 /* AIThinkController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIThinkController.h; sourceTree = "<group>"; };
+		08216DD71FB3D0F400F509A1 /* AIThinkController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIThinkController.m; sourceTree = "<group>"; };
+		08216DDC1FB3D46900F509A1 /* AIAwareness.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIAwareness.h; sourceTree = "<group>"; };
+		08216DDD1FB3D46900F509A1 /* AIAwareness.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIAwareness.m; sourceTree = "<group>"; };
+		08216DDF1FB3D8DF00F509A1 /* AIRootThinkController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIRootThinkController.h; sourceTree = "<group>"; };
+		08216DE01FB3D8DF00F509A1 /* AIRootThinkController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIRootThinkController.m; sourceTree = "<group>"; };
 		0825AFF11F748F67003B86C7 /* NSObject+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Extension.h"; sourceTree = "<group>"; };
 		0825AFF21F748F67003B86C7 /* NSObject+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Extension.m"; sourceTree = "<group>"; };
 		0826EED31EF7619300400F08 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -442,6 +451,19 @@
 			path = MindStrategy;
 			sourceTree = "<group>";
 		};
+		08216DD51FB3D0E100F509A1 /* AIAwarenessLayer */ = {
+			isa = PBXGroup;
+			children = (
+				08216DD61FB3D0F400F509A1 /* AIThinkController.h */,
+				08216DD71FB3D0F400F509A1 /* AIThinkController.m */,
+				08216DDC1FB3D46900F509A1 /* AIAwareness.h */,
+				08216DDD1FB3D46900F509A1 /* AIAwareness.m */,
+				08216DDF1FB3D8DF00F509A1 /* AIRootThinkController.h */,
+				08216DE01FB3D8DF00F509A1 /* AIRootThinkController.m */,
+			);
+			path = AIAwarenessLayer;
+			sourceTree = "<group>";
+		};
 		0825AFF01F748F67003B86C7 /* Extension */ = {
 			isa = PBXGroup;
 			children = (
@@ -670,6 +692,7 @@
 		08D7DA401ED1499C004B1018 /* AIFoundation */ = {
 			isa = PBXGroup;
 			children = (
+				08216DD51FB3D0E100F509A1 /* AIAwarenessLayer */,
 				081B3AC91F6E210E008A7F36 /* AITime */,
 				08BD524B1F5AC90E00B4D26A /* AICodeLayer */,
 				081816291F22BDEC007DDB4D /* AIThread */,
@@ -974,6 +997,7 @@
 				0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */,
 				086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */,
 				08E3CCCA1EE60F8D002990FD /* ThinkControl.m in Sources */,
+				08216DE11FB3D8DF00F509A1 /* AIRootThinkController.m in Sources */,
 				08BD524E1F5AC94900B4D26A /* AIFuncModel.m in Sources */,
 				08A209721F1069040013ACC4 /* AIValueModel.m in Sources */,
 				0808112F1F958D6A00187E43 /* NESingleNode.m in Sources */,
@@ -1028,6 +1052,7 @@
 				08D322A91EBA28B0009D734A /* Foundation+Log.m in Sources */,
 				0806FB2E1F15996800808B34 /* AIMoodModel.m in Sources */,
 				08D7DA491ED149E8004B1018 /* AIObject.m in Sources */,
+				08216DDE1FB3D46900F509A1 /* AIAwareness.m in Sources */,
 				08A209691F1069040013ACC4 /* AIAwarenessModel.m in Sources */,
 				08E401421F9974B900C5AC36 /* AINetController.m in Sources */,
 				081816391F235691007DDB4D /* AIDemandStore.m in Sources */,
@@ -1055,6 +1080,7 @@
 				08D42C9B1EFA066E00114DCD /* README.md in Sources */,
 				0840AA661F16FD6C000A528E /* AIOutputModel.m in Sources */,
 				08F738061F7C714F005EAD56 /* AIPointer.m in Sources */,
+				08216DD81FB3D0F400F509A1 /* AIThinkController.m in Sources */,
 				0813D64F1EDF7B150089FA0C /* InputObjModel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
