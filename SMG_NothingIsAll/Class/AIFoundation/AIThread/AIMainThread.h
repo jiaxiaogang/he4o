@@ -8,6 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
+
+@protocol AIMainThreadDelegate <NSObject>
+
+-(void) aiMainThread_StateChanged;
+
+@end
+
 /**
  *  MARK:--------------------智能主线程--------------------
  *  	• 智能分配cpu
@@ -17,6 +24,7 @@
  */
 @interface AIMainThread : NSObject
 
+@property (weak, nonatomic) id<AIMainThreadDelegate> delegate;
 @property (assign, nonatomic) BOOL isBusy;
 
 @end

@@ -14,4 +14,12 @@
 //MARK:===============================================================
 @interface AIAwareness : NSObject
 
+
+-(id) init;
+
+/**
+ *  MARK:--------------------入口--------------------
+ */
+-(void) commitInput:(id)data;
+
 @end

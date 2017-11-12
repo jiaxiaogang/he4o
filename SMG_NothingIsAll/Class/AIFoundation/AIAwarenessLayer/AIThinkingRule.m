@@ -10,4 +10,14 @@
 
 @implementation AIThinkingRule
 
+-(void) activityByShallow:(id)data{
+    
+}
+-(void) activityByDeep:(id)data{
+    
+}
+-(void) activityByNone:(id)data{
+    NSLog(@"创建后台任务");
+}
+
 @end
