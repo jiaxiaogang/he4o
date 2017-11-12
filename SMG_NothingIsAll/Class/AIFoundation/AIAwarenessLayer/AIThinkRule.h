@@ -1,17 +1,18 @@
 //
-//  AIThinkController.h
+//  AIThinkRule.h
 //  SMG_NothingIsAll
 //
-//  Created by 贾  on 2017/11/9.
+//  Created by 贾  on 2017/11/12.
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 
+
 //MARK:===============================================================
-//MARK:                     < ThinkController的Lift Cycle >
+//MARK:                     < ThinkRule的Lift Cycle >
 //MARK:===============================================================
-@protocol IThinkController <NSObject>
+@protocol IThinkRule <NSObject>
 
 /**
  *  MARK:--------------------初始化任务--------------------
@@ -47,8 +48,8 @@
 
 
 //MARK:===============================================================
-//MARK:                     < 思维控制器 >
+//MARK:                     < 思考 >
 //MARK:===============================================================
-@interface AIThinkController : NSObject <IThinkController>
+@interface AIThinkRule : NSObject <IThinkRule>
 
 @end
