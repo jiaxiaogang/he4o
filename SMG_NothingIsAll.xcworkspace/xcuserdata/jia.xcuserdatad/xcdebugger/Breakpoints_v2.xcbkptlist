@@ -106,12 +106,12 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/jia/Desktop/temp/SMG/SMG_NothingIsAll/Class/SMGUtils.m"
-                  timestampString = "532165567.095382"
+                  timestampString = "532226785.331378"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "130"
                   endingLineNumber = "130"
-                  offsetFromSymbolStart = "520">
+                  offsetFromSymbolStart = "567">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
@@ -121,12 +121,12 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/jia/Desktop/temp/SMG/SMG_NothingIsAll/Class/SMGUtils.m"
-                  timestampString = "532165567.097752"
+                  timestampString = "532226785.333872"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "130"
                   endingLineNumber = "130"
-                  offsetFromSymbolStart = "536">
+                  offsetFromSymbolStart = "575">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -160,22 +160,6 @@
             startingLineNumber = "40"
             endingLineNumber = "40"
             landmarkName = "-run:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/Class/Input/Input.m"
-            timestampString = "532225377.054995"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "38"
-            endingLineNumber = "38"
-            landmarkName = "-commitText:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

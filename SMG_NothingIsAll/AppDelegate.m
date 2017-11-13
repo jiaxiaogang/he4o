@@ -36,6 +36,10 @@
     AINetEditor *editor = [[AINetEditor alloc] init];
     [editor refreshNet];
     
+    //DOP规则版Awareness
+    AIAwareness *awareness = [AIAwareness shareInstance];
+    [awareness awake];
+    
     return YES;
 }
 

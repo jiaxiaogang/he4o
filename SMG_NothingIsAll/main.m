@@ -11,10 +11,6 @@
 #import "AIAwareness.h"
 
 int main(int argc, char * argv[]) {
-    
-    AIAwareness *awareness = [AIAwareness shareInstance];
-    [awareness awake];
-    
     @autoreleasepool {
         return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
     }

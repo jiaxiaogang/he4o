@@ -30,15 +30,21 @@ static AIAwareness *_instance;
     self = [super init];
     if (self) {
         [self initData];
+        [self initRun];
     }
     return self;
 }
 
+
+
 -(void) initData{
     self.mainThread = [[AIMainThread alloc] init];
-    self.mainThread.delegate = self;
+    self.thinkingRule = [[AIThinkingRule alloc] init];
 }
 
+-(void) initRun{
+    self.mainThread.delegate = self;
+}
 
 //MARK:===============================================================
 //MARK:                     < method >
@@ -54,6 +60,7 @@ static AIAwareness *_instance;
 -(void) commitInput:(id)data{
     NSLog(@"input传入");
     //1. 潜意识isBusy = false时,执行联想唯一性判断;等读取操作;
+    [self.thinkingRule activityByShallow:data];
     
     //2. 主意识isBusy = false时,获取传给思维,作主意识传入;
     if (!self.mainThread.isBusy) {
