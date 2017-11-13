@@ -14,9 +14,10 @@
 //MARK:===============================================================
 @interface AIAwareness : NSObject
 
-
++(AIAwareness*) shareInstance;
 -(id) init;
-
+-(void) awake;
+-(void) sleep;
 /**
  *  MARK:--------------------入口--------------------
  */

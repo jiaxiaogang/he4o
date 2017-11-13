@@ -15,4 +15,16 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:ObsKey_MainThreadBusy object:nil];
 }
 
+
+//MARK:===============================================================
+//MARK:                     < method >
+//MARK:===============================================================
+-(void) awake{
+    NSLog(@"定时器1秒一次");
+}
+-(void) sleep{
+    
+}
+
+
 @end

@@ -26,5 +26,8 @@
 
 @property (weak, nonatomic) id<AIMainThreadDelegate> delegate;
 @property (assign, nonatomic) BOOL isBusy;
+@property (assign, nonatomic) NSUInteger busyStatus;//0-100
+-(void) awake;
+-(void) sleep;
 
 @end

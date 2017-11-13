@@ -12,6 +12,7 @@
 #import "FeelHeader.h"
 #import "ThinkHeader.h"
 #import "AINet.h"
+#import "AIAwareness.h"
 
 @implementation Input
 
@@ -32,6 +33,9 @@
     
     //2017.10.13修正,input->aiNet->funcModel->aiNet->awareness作预测对比(参考n7p6)
     [theNet commitString:text];
+    
+    //2017.11.13修正,input->AIAwareness->AIThinkingRule->aiNet->...
+    [theAIAwareness commitInput:text];
 }
 
 @end

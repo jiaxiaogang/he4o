@@ -18,6 +18,14 @@
 
 @implementation AIAwareness
 
+static AIAwareness *_instance;
++(AIAwareness*) shareInstance{
+    if (_instance == nil) {
+        _instance = [[AIAwareness alloc] init];
+    }
+    return _instance;
+}
+
 -(id) init{
     self = [super init];
     if (self) {
@@ -35,6 +43,14 @@
 //MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
+-(void) awake{
+    [self.mainThread awake];
+}
+
+-(void) sleep{
+    [self.mainThread sleep];
+}
+
 -(void) commitInput:(id)data{
     NSLog(@"input传入");
     //1. 潜意识isBusy = false时,执行联想唯一性判断;等读取操作;
