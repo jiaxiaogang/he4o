@@ -8,6 +8,8 @@
 
 #import "AIThinkingRule.h"
 #import "AINet.h"
+#import "AIHungerLevelChangedModel.h"
+#import "AIHungerStateChangedModel.h"
 
 @interface AIThinkingRule()
 
@@ -36,6 +38,10 @@
 -(void) activityByShallow:(id)data{
     if (ISOK(data, NSString.class)) {
         [theNet commitString:data];//潜思维,识别;
+    }else if(ISOK(data, AIHungerLevelChangedModel.class)){
+        NSLog(@"");
+    }else if(ISOK(data, AIHungerStateChangedModel.class)){
+        NSLog(@"");
     }
 }
 -(void) activityByDeep:(id)data{
