@@ -116,4 +116,7 @@ typedef NS_ENUM(NSInteger, AINodeType) {
 };
 
 
+typedef NS_ENUM(NSInteger, AIMoodType) {
+    AIMoodType_Anxious      = 1,//焦急
+};
 

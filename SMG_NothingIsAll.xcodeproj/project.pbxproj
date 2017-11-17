@@ -81,6 +81,7 @@
 		08AF45581E97D0B500377887 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45561E97D0B500377887 /* LaunchScreen.storyboard */; };
 		08BD524E1F5AC94900B4D26A /* AIFuncModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08BD524D1F5AC94900B4D26A /* AIFuncModel.m */; };
 		08C84A8E1E9A866200897D8B /* Input.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A8D1E9A866200897D8B /* Input.m */; };
+		08CE858C1FBE6F2C006E6502 /* AIMidBrain.m in Sources */ = {isa = PBXBuildFile; fileRef = 08CE858B1FBE6F2C006E6502 /* AIMidBrain.m */; };
 		08D322A91EBA28B0009D734A /* Foundation+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D322A81EBA28B0009D734A /* Foundation+Log.m */; };
 		08D42C9B1EFA066E00114DCD /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 08D42C9A1EFA066E00114DCD /* README.md */; };
 		08D7DA491ED149E8004B1018 /* AIObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D7DA481ED149E8004B1018 /* AIObject.m */; };
@@ -268,6 +269,8 @@
 		08C84A8B1E9A861900897D8B /* InputHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InputHeader.h; sourceTree = "<group>"; };
 		08C84A8C1E9A866200897D8B /* Input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Input.h; sourceTree = "<group>"; };
 		08C84A8D1E9A866200897D8B /* Input.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Input.m; sourceTree = "<group>"; };
+		08CE858A1FBE6F2C006E6502 /* AIMidBrain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIMidBrain.h; sourceTree = "<group>"; };
+		08CE858B1FBE6F2C006E6502 /* AIMidBrain.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIMidBrain.m; sourceTree = "<group>"; };
 		08D322A71EBA2783009D734A /* SMGPrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMGPrefixHeader.pch; sourceTree = "<group>"; };
 		08D322A81EBA28B0009D734A /* Foundation+Log.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Foundation+Log.m"; sourceTree = "<group>"; };
 		08D42C9A1EFA066E00114DCD /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -460,6 +463,8 @@
 				084288E51FB7D02900A51AFA /* AIThinkRule.m */,
 				084288E71FB7D0BA00A51AFA /* AIThinkingRule.h */,
 				084288E81FB7D0BA00A51AFA /* AIThinkingRule.m */,
+				08CE858A1FBE6F2C006E6502 /* AIMidBrain.h */,
+				08CE858B1FBE6F2C006E6502 /* AIMidBrain.m */,
 			);
 			path = AIAwarenessLayer;
 			sourceTree = "<group>";
@@ -1012,6 +1017,7 @@
 				08FBB90B1EE76E78000F9E80 /* Mood.m in Sources */,
 				08FBB90E1EE76E9D000F9E80 /* Hunger.m in Sources */,
 				083F61341F04830F000330E1 /* AILineDampingStrategy.m in Sources */,
+				08CE858C1FBE6F2C006E6502 /* AIMidBrain.m in Sources */,
 				0813D64E1EDF7B150089FA0C /* InputModelBase.m in Sources */,
 				08F639831E9A2EC0003CD163 /* FeelValueModel.m in Sources */,
 				083934771F49814B003D49BD /* AIObjStore.m in Sources */,
