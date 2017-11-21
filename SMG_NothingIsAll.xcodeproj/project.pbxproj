@@ -108,6 +108,7 @@
 		08F738051F7C714F005EAD56 /* AIKVPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F737FF1F7C714F005EAD56 /* AIKVPointer.m */; };
 		08F738061F7C714F005EAD56 /* AIPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738011F7C714F005EAD56 /* AIPointer.m */; };
 		08F738071F7C714F005EAD56 /* AISqlPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738031F7C714F005EAD56 /* AISqlPointer.m */; };
+		08FA6C231FC3AD9F00E3C4EB /* AIThalamusRule.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FA6C221FC3AD9F00E3C4EB /* AIThalamusRule.m */; };
 		08FBB9081EE76E78000F9E80 /* Hobby.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FBB9011EE76E78000F9E80 /* Hobby.m */; };
 		08FBB9091EE76E78000F9E80 /* HobbyModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FBB9031EE76E78000F9E80 /* HobbyModel.m */; };
 		08FBB90A1EE76E78000F9E80 /* Mine.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FBB9051EE76E78000F9E80 /* Mine.m */; };
@@ -326,6 +327,8 @@
 		08F738011F7C714F005EAD56 /* AIPointer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIPointer.m; sourceTree = "<group>"; };
 		08F738021F7C714F005EAD56 /* AISqlPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AISqlPointer.h; sourceTree = "<group>"; };
 		08F738031F7C714F005EAD56 /* AISqlPointer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AISqlPointer.m; sourceTree = "<group>"; };
+		08FA6C211FC3AD9F00E3C4EB /* AIThalamusRule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIThalamusRule.h; sourceTree = "<group>"; };
+		08FA6C221FC3AD9F00E3C4EB /* AIThalamusRule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIThalamusRule.m; sourceTree = "<group>"; };
 		08FBB9001EE76E78000F9E80 /* Hobby.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hobby.h; sourceTree = "<group>"; };
 		08FBB9011EE76E78000F9E80 /* Hobby.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Hobby.m; sourceTree = "<group>"; };
 		08FBB9021EE76E78000F9E80 /* HobbyModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HobbyModel.h; sourceTree = "<group>"; };
@@ -465,6 +468,8 @@
 				084288E81FB7D0BA00A51AFA /* AIThinkingRule.m */,
 				08CE858A1FBE6F2C006E6502 /* AIMidBrain.h */,
 				08CE858B1FBE6F2C006E6502 /* AIMidBrain.m */,
+				08FA6C211FC3AD9F00E3C4EB /* AIThalamusRule.h */,
+				08FA6C221FC3AD9F00E3C4EB /* AIThalamusRule.m */,
 			);
 			path = AIAwarenessLayer;
 			sourceTree = "<group>";
@@ -1010,6 +1015,7 @@
 				0808DB441F10A24A0082F4AD /* AIAwarenessStore.m in Sources */,
 				08E99C481EBDD1C800A38FF5 /* MindControl.m in Sources */,
 				081B3ADB1F6E2CCD008A7F36 /* AINet.m in Sources */,
+				08FA6C231FC3AD9F00E3C4EB /* AIThalamusRule.m in Sources */,
 				0813D64C1EDF7B150089FA0C /* InputAudioModel.m in Sources */,
 				083BBDB41F1849DF000F694A /* AIHungerLevelChangedModel.m in Sources */,
 				08C84A8E1E9A866200897D8B /* Input.m in Sources */,
