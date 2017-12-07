@@ -12,7 +12,7 @@
 #import "FeelHeader.h"
 #import "ThinkHeader.h"
 #import "AINet.h"
-#import "AIAwareness.h"
+#import "AIAwarenessControl.h"
 
 @implementation Input
 
@@ -35,7 +35,7 @@
     [theNet commitString:text];
     
     //2017.11.13修正,input->AIAwareness->AIThinkingRule->aiNet->...
-    [theAIAwareness commitInput:text];
+    [theAIAwarenessControl commitInput:text];
 }
 
 @end

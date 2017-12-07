@@ -37,8 +37,7 @@
     [editor refreshNet];
     
     //DOP规则版Awareness
-    AIAwareness *awareness = [AIAwareness shareInstance];
-    [awareness awake];
+    [theAIAwarenessControl awake];
     
     return YES;
 }

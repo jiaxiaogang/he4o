@@ -1,27 +1,27 @@
 //
-//  AIAwareness.m
+//  AIAwarenessControl.m
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/11/9.
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "AIAwareness.h"
+#import "AIAwarenessControl.h"
 #import "AIThinkingRule.h"
 
-@interface AIAwareness()<AIMainThreadDelegate>
+@interface AIAwarenessControl()<AIMainThreadDelegate>
 
 @property (strong,nonatomic) AIMainThread *mainThread;      //主意识
 @property (strong,nonatomic) AIThinkingRule *thinkingRule;  //思维
 
 @end
 
-@implementation AIAwareness
+@implementation AIAwarenessControl
 
-static AIAwareness *_instance;
-+(AIAwareness*) shareInstance{
+static AIAwarenessControl *_instance;
++(AIAwarenessControl*) shareInstance{
     if (_instance == nil) {
-        _instance = [[AIAwareness alloc] init];
+        _instance = [[AIAwarenessControl alloc] init];
     }
     return _instance;
 }

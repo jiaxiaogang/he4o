@@ -1,14 +1,14 @@
 //
-//  AIMidBrain.m
+//  AIReactorControl.m
 //  SMG_NothingIsAll
 //
-//  Created by 贾  on 2017/11/17.
+//  Created by 贾  on 2017/12/7.
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "AIMidBrain.h"
+#import "AIReactorControl.h"
 
-@implementation AIMidBrain
+@implementation AIReactorControl
 
 -(void) createMindValue{
     //

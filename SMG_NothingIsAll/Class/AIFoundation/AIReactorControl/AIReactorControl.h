@@ -1,14 +1,14 @@
 //
-//  AIMidBrain.h
+//  AIReactorControl.h
 //  SMG_NothingIsAll
 //
-//  Created by 贾  on 2017/11/17.
+//  Created by 贾  on 2017/12/7.
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 
-@interface AIMidBrain : NSObject
+@interface AIReactorControl : NSObject
 
 /**
  *  MARK:--------------------先天mindValue工厂--------------------

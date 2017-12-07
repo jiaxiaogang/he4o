@@ -1,5 +1,5 @@
 //
-//  AIAwareness.h
+//  AIAwarenessControl.h
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/11/9.
@@ -12,9 +12,9 @@
 //MARK:===============================================================
 //MARK:                     < 意识器 >
 //MARK:===============================================================
-@interface AIAwareness : NSObject
+@interface AIAwarenessControl : NSObject
 
-+(AIAwareness*) shareInstance;
++(AIAwarenessControl*) shareInstance;
 -(id) init;
 -(void) awake;
 -(void) sleep;

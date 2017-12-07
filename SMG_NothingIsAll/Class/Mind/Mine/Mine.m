@@ -51,14 +51,14 @@
     if (self.delegate && [self.delegate respondsToSelector:@selector(mine_HungerLevelChanged:)]) {
         [self.delegate mine_HungerLevelChanged:model];
     }
-    [theAIAwareness commitInput:model];//传给新版AIAwareness
+    [theAIAwarenessControl commitInput:model];//传给新版AIAwareness
 }
 
 -(void) hunger_StateChanged:(AIHungerStateChangedModel*)model{
     if (self.delegate && [self.delegate respondsToSelector:@selector(mine_HungerStateChanged:)]) {
         [self.delegate mine_HungerStateChanged:model];
     }
-    [theAIAwareness commitInput:model];//传给新版AIAwareness
+    [theAIAwarenessControl commitInput:model];//传给新版AIAwareness
 }
 
 
