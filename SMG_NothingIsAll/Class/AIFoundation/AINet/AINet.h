@@ -8,7 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
+@class AIModel;
 @interface AINet : NSObject
+
++(AINet*) sharedInstance;
 
 //MARK:===============================================================
 //MARK:                     < String反射区 >
@@ -19,8 +22,7 @@
 //MARK:===============================================================
 //MARK:                     < AIObject反射区(内感) >
 //MARK:===============================================================
--(void) commitModel:(AIObject*)model;
-
+-(void) commitModel:(AIModel*)model;
 
 //MARK:===============================================================
 //MARK:                     < 建设input对接net功能区 >

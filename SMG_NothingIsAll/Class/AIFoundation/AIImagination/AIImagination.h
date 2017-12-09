@@ -10,4 +10,9 @@
 
 @interface AIImagination : NSObject
 
+/**
+ *  MARK:--------------------想像力--------------------
+ */
+-(void) imagination;
+
 @end

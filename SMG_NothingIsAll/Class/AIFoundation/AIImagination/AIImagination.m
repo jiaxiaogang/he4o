@@ -10,4 +10,8 @@
 
 @implementation AIImagination
 
+-(void) imagination{
+    
+}
+
 @end

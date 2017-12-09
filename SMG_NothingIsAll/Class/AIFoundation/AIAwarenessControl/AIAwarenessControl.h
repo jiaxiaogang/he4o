@@ -8,10 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
-
-//MARK:===============================================================
-//MARK:                     < 意识器 >
-//MARK:===============================================================
+/**
+ *  MARK:--------------------意识控制器--------------------
+ *  只作觉醒判断,真正的意识控制器由"思维控制器"接管;
+ */
 @interface AIAwarenessControl : NSObject
 
 +(AIAwarenessControl*) shareInstance;

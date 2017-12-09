@@ -120,3 +120,7 @@ typedef NS_ENUM(NSInteger, AIMoodType) {
     AIMoodType_Anxious      = 1,//焦急
 };
 
+typedef NS_ENUM(NSInteger, AINetDimension) {
+    AINetDimension_Str      = 1,//字符串
+};
+

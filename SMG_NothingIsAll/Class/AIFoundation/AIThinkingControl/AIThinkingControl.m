@@ -1,21 +1,29 @@
 //
-//  AIThinkingRule.m
+//  AIThinkingControl.m
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/11/12.
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "AIThinkingRule.h"
+#import "AIThinkingControl.h"
 #import "AINet.h"
 #import "AIHungerLevelChangedModel.h"
 #import "AIHungerStateChangedModel.h"
 
-@interface AIThinkingRule()
+@interface AIThinkingControl()
 
 @end
 
-@implementation AIThinkingRule
+@implementation AIThinkingControl
+
+static AIThinkingControl *_instance;
++(AIThinkingControl*) shareInstance{
+    if (_instance == nil) {
+        _instance = [[AIThinkingControl alloc] init];
+    }
+    return _instance;
+}
 
 -(id) init{
     self = [super init];

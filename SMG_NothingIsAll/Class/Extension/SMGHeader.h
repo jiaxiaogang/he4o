@@ -81,7 +81,6 @@ va_end(args);\
 #define theFeel [SMG sharedInstance].feel
 #define theInput [SMG sharedInstance].input
 #define theMainThread [SMG sharedInstance].mainThread
-#define theNet [SMG sharedInstance].net
 
 #define theMind [SMG sharedInstance].mindControl
 #define theMine [SMG sharedInstance].mindControl.mine
@@ -92,3 +91,4 @@ va_end(args);\
 
 //2017.11.13后启用N8规则DOP架构;
 #define theAIAwarenessControl [AIAwarenessControl shareInstance]
+#define theNet [AINet sharedInstance]

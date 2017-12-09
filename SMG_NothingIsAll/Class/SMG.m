@@ -14,7 +14,6 @@
 #import "OutputHeader.h"
 #import "MindHeader.h"
 #import "MBProgressHUD+Add.h"
-#import "AINet.h"
 
 @interface SMG ()<FeelDelegate,ThinkControlDelegate,OutputDelegate>
 
@@ -46,7 +45,6 @@ static SMG *_instance;
     self.output     = [[Output alloc] init];
     self.input = [[Input alloc] init];
     self.mainThread = [[AIMainThread alloc] init];
-    self.net = [[AINet alloc] init];
 }
 
 -(void) initRun{

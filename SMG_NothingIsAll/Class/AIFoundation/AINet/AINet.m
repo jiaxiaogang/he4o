@@ -18,6 +18,15 @@
 
 @implementation AINet
 
+static AINet *_instance;
++(AINet*) sharedInstance{
+    if (_instance == nil) {
+        _instance = [[AINet alloc] init];
+    }
+    return _instance;
+}
+
+
 -(id) init{
     self = [super init];
     if (self) {
@@ -35,7 +44,7 @@
 //MARK:===============================================================
 -(void) commitString:(NSString*)str{
     
-    //2, 调用反射算法处理并返回值给神经网络;
+    //2, 调用反射算法处理并返回值给临时神经网络缓存区;
     
     if (STRISOK(str)) {
         //1. 必调字符串算法;
@@ -54,7 +63,7 @@
 //MARK:===============================================================
 //MARK:                     < AIObject反射区(内感) >
 //MARK:===============================================================
--(void) commitModel:(AIObject*)model{
+-(void) commitModel:(AIModel*)model{
     NSLog(@"");
 }
 
