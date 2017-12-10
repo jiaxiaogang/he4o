@@ -31,6 +31,7 @@
 		081B3ACC1F6E2155008A7F36 /* AITime.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3ACB1F6E2155008A7F36 /* AITime.m */; };
 		081B3AD61F6E2994008A7F36 /* StringAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3AD51F6E2994008A7F36 /* StringAlgs.m */; };
 		081B3ADB1F6E2CCD008A7F36 /* AINet.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3ADA1F6E2CCD008A7F36 /* AINet.m */; };
+		081B3FB01FDCD53C00F088D6 /* AIMindValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3FAF1FDCD53C00F088D6 /* AIMindValue.m */; };
 		081C436E1F0C67CF00DF6722 /* MindStrategy.m in Sources */ = {isa = PBXBuildFile; fileRef = 081C436D1F0C67CF00DF6722 /* MindStrategy.m */; };
 		081DA13B1ED47CE000C8C531 /* AIArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 081DA13A1ED47CE000C8C531 /* AIArray.m */; };
 		081EA1641F4E503300D7B901 /* ThinkModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 081EA1631F4E503300D7B901 /* ThinkModel.m */; };
@@ -173,6 +174,8 @@
 		081B3AD91F6E2CCD008A7F36 /* AINet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AINet.h; sourceTree = "<group>"; };
 		081B3ADA1F6E2CCD008A7F36 /* AINet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AINet.m; sourceTree = "<group>"; };
 		081B3ADC1F6E2D72008A7F36 /* DataLayerHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataLayerHeader.h; sourceTree = "<group>"; };
+		081B3FAE1FDCD53C00F088D6 /* AIMindValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIMindValue.h; sourceTree = "<group>"; };
+		081B3FAF1FDCD53C00F088D6 /* AIMindValue.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIMindValue.m; sourceTree = "<group>"; };
 		081C436C1F0C67CF00DF6722 /* MindStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MindStrategy.h; sourceTree = "<group>"; };
 		081C436D1F0C67CF00DF6722 /* MindStrategy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MindStrategy.m; sourceTree = "<group>"; };
 		081DA1391ED47CE000C8C531 /* AIArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIArray.h; sourceTree = "<group>"; };
@@ -449,6 +452,15 @@
 				081B3ADC1F6E2D72008A7F36 /* DataLayerHeader.h */,
 			);
 			path = DataLayer;
+			sourceTree = "<group>";
+		};
+		081B3FAD1FDCD4E100F088D6 /* AIMindValue */ = {
+			isa = PBXGroup;
+			children = (
+				081B3FAE1FDCD53C00F088D6 /* AIMindValue.h */,
+				081B3FAF1FDCD53C00F088D6 /* AIMindValue.m */,
+			);
+			path = AIMindValue;
 			sourceTree = "<group>";
 		};
 		081C436B1F0C67CF00DF6722 /* MindStrategy */ = {
@@ -735,6 +747,7 @@
 		08D7DA401ED1499C004B1018 /* AIFoundation */ = {
 			isa = PBXGroup;
 			children = (
+				081B3FAD1FDCD4E100F088D6 /* AIMindValue */,
 				084219E81FD8CF64009DA6BC /* AIThinkingControl */,
 				084219DC1FD8CEE7009DA6BC /* AIActionControl */,
 				084219DE1FD8CEE8009DA6BC /* AIImagination */,
@@ -1129,6 +1142,7 @@
 				0808DB501F10A2A80082F4AD /* AIMindValueStore.m in Sources */,
 				081B3AD61F6E2994008A7F36 /* StringAlgs.m in Sources */,
 				08D42C9B1EFA066E00114DCD /* README.md in Sources */,
+				081B3FB01FDCD53C00F088D6 /* AIMindValue.m in Sources */,
 				0840AA661F16FD6C000A528E /* AIOutputModel.m in Sources */,
 				08F738061F7C714F005EAD56 /* AIPointer.m in Sources */,
 				0813D64F1EDF7B150089FA0C /* InputObjModel.m in Sources */,
