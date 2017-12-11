@@ -120,7 +120,26 @@ typedef NS_ENUM(NSInteger, AIMoodType) {
     AIMoodType_Anxious      = 1,//焦急
 };
 
-typedef NS_ENUM(NSInteger, AINetDimension) {
-    AINetDimension_Str      = 1,//字符串
+/**
+ *  MARK:--------------------网络多维类型--------------------
+ */
+typedef NS_ENUM(NSInteger, NetDimensionType) {
+    NetDimensionType_Str      = 1,//字符串
 };
 
+/**
+ *  MARK:--------------------MV规则类型--------------------
+ */
+typedef NS_ENUM(NSInteger, MVRuleType) {
+    MVRuleType_Back           = 1,//归零
+    MVRuleType_Loop           = 2,//重复
+    MVRuleType_Add            = 3,//增涨
+};
+
+/**
+ *  MARK:--------------------MVInput值与感受值的曲线算法类型--------------------
+ */
+typedef NS_ENUM(NSInteger, MVCurveType) {
+    MVCurveType_LinearH     = 1,//线性增高
+    MVCurveType_HAH         = 2,//越来越高
+};
