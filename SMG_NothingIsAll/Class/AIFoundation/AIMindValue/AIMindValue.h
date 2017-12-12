@@ -13,7 +13,9 @@
  */
 @interface AIMindValue : NSObject
 
--(id) initWithRuleType:(MVRuleType)ruleType duration:(CGFloat)duration curveType:(MVCurveType)curveType;
+-(id) initFromModel_RuleType:(MVRuleType)ruleType duration:(CGFloat)duration downType:(MVDownCurveType)downType;
+-(id) initFromInput_RuleType:(MVRuleType)ruleType duration:(CGFloat)duration upType:(MVUpCurveType)upType inputValue:(CGFloat)inputValue downType:(MVDownCurveType)downType;
+
 -(void) requestRule:(void(^)(CGFloat value))success failure:(void(^)())failure;
 
 @end
@@ -25,6 +27,6 @@
  */
 @interface AIMindValueCurve :NSObject
 
-+(CGFloat) getValueWithCurveType:(MVCurveType)curveType progress:(CGFloat)progress;
++(CGFloat) getValueWithType:(MVDownCurveType)downType progress:(CGFloat)progress;
 
 @end

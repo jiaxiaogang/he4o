@@ -10,25 +10,41 @@
 
 @interface AIMindValue()
 
-@property (assign, nonatomic) MVRuleType ruleType;
-@property (assign, nonatomic) CGFloat duration;
-@property (assign, nonatomic) MVCurveType curveType;
-@property (assign, nonatomic) double createTime;
+@property (assign, nonatomic) MVRuleType ruleType;      //mv规则(约束思维规则)
+@property (assign, nonatomic) CGFloat duration;         //持续时间(作用于思维的时间)
+@property (assign, nonatomic) MVUpCurveType upType;     //input->感受oriValue
+@property (assign, nonatomic) MVDownCurveType downType; //oriValue->curValue
+@property (assign, nonatomic) double createTime;        //
+@property (assign, nonatomic) CGFloat inputValue;
 
 @end
 
 @implementation AIMindValue
 
--(id) initWithRuleType:(MVRuleType)ruleType duration:(CGFloat)duration curveType:(MVCurveType)curveType{
+-(id) initFromModel_RuleType:(MVRuleType)ruleType duration:(CGFloat)duration downType:(MVDownCurveType)downType{
     self = [super init];
     if (self) {
         self.ruleType = ruleType;
         self.duration = MAX(CGFLOAT_MIN, duration);
-        self.curveType = curveType;
+        self.downType = downType;
         [self initData];
     }
     return self;
 }
+
+-(id) initFromInput_RuleType:(MVRuleType)ruleType duration:(CGFloat)duration upType:(MVUpCurveType)upType inputValue:(CGFloat)inputValue downType:(MVDownCurveType)downType{
+    self = [super init];
+    if (self) {
+        self.ruleType = ruleType;
+        self.duration = MAX(CGFLOAT_MIN, duration);
+        self.upType = upType;
+        self.inputValue = inputValue;
+        self.downType = downType;
+        [self initData];
+    }
+    return self;
+}
+
 
 -(void) initData{
     self.createTime = [[NSDate date] timeIntervalSince1970];
@@ -47,7 +63,7 @@
         }
     }else{
         if (success) {
-            CGFloat curValue = [AIMindValueCurve getValueWithCurveType:self.curveType progress:0];
+            CGFloat curValue = [AIMindValueCurve getValueWithType:self.downType progress:0];
             success(curValue);
         }
     }
@@ -61,11 +77,11 @@
  */
 @implementation AIMindValueCurve :NSObject
 
-+(CGFloat) getValueWithCurveType:(MVCurveType)curveType progress:(CGFloat)progress{
++(CGFloat) getValueWithType:(MVDownCurveType)downType progress:(CGFloat)progress{
     progress = MAX(0, MIN(1, progress));
-    if (curveType == MVCurveType_LinearH) {
+    if (downType == MVDownCurveType_LINEAR) {
         
-    }else if(curveType == MVCurveType_HAH){
+    }else if(downType == MVDownCurveType_AND){
         
     }
     return 0;

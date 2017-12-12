@@ -131,6 +131,7 @@ typedef NS_ENUM(NSInteger, NetDimensionType) {
  *  MARK:--------------------MV规则类型--------------------
  */
 typedef NS_ENUM(NSInteger, MVRuleType) {
+    MVRuleType_None           = 0,//None
     MVRuleType_Back           = 1,//归零
     MVRuleType_Loop           = 2,//重复
     MVRuleType_Add            = 3,//增涨
@@ -139,7 +140,15 @@ typedef NS_ENUM(NSInteger, MVRuleType) {
 /**
  *  MARK:--------------------MVInput值与感受值的曲线算法类型--------------------
  */
-typedef NS_ENUM(NSInteger, MVCurveType) {
-    MVCurveType_LinearH     = 1,//线性增高
-    MVCurveType_HAH         = 2,//越来越高
+typedef NS_ENUM(NSInteger, MVUpCurveType) {
+    MVUpCurveType_LINEAR    = 1,//线性
+    MVUpCurveType_AND       = 2,//越来越高
+};
+
+/**
+ *  MARK:--------------------MVValue值与衰减曲线算法类型--------------------
+ */
+typedef NS_ENUM(NSInteger, MVDownCurveType) {
+    MVDownCurveType_LINEAR     = 1,//线性
+    MVDownCurveType_AND        = 2,//越来越低
 };
