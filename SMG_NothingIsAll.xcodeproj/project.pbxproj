@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0802713E1FE0B13700A6F8E4 /* AIInputMindValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 0802713D1FE0B13700A6F8E4 /* AIInputMindValue.m */; };
+		080271411FE0BB1A00A6F8E4 /* AIChangeMindValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 080271401FE0BB1A00A6F8E4 /* AIChangeMindValue.m */; };
 		0806FB2E1F15996800808B34 /* AIMoodModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0806FB2D1F15996800808B34 /* AIMoodModel.m */; };
 		0806FB311F15997D00808B34 /* AIMoodStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 0806FB301F15997D00808B34 /* AIMoodStore.m */; };
 		0808112F1F958D6A00187E43 /* NESingleNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 0808112E1F958D6A00187E43 /* NESingleNode.m */; };
@@ -122,6 +124,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0802713C1FE0B13700A6F8E4 /* AIInputMindValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIInputMindValue.h; sourceTree = "<group>"; };
+		0802713D1FE0B13700A6F8E4 /* AIInputMindValue.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIInputMindValue.m; sourceTree = "<group>"; };
+		0802713F1FE0BB1A00A6F8E4 /* AIChangeMindValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIChangeMindValue.h; sourceTree = "<group>"; };
+		080271401FE0BB1A00A6F8E4 /* AIChangeMindValue.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIChangeMindValue.m; sourceTree = "<group>"; };
 		08042E7D1F43CE9400A1FFCB /* SMGEnum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMGEnum.h; sourceTree = "<group>"; };
 		0806FB2C1F15996800808B34 /* AIMoodModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIMoodModel.h; sourceTree = "<group>"; };
 		0806FB2D1F15996800808B34 /* AIMoodModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIMoodModel.m; sourceTree = "<group>"; };
@@ -459,6 +465,10 @@
 			children = (
 				081B3FAE1FDCD53C00F088D6 /* AIMindValue.h */,
 				081B3FAF1FDCD53C00F088D6 /* AIMindValue.m */,
+				0802713C1FE0B13700A6F8E4 /* AIInputMindValue.h */,
+				0802713D1FE0B13700A6F8E4 /* AIInputMindValue.m */,
+				0802713F1FE0BB1A00A6F8E4 /* AIChangeMindValue.h */,
+				080271401FE0BB1A00A6F8E4 /* AIChangeMindValue.m */,
 			);
 			path = AIMindValue;
 			sourceTree = "<group>";
@@ -1133,6 +1143,8 @@
 				08FEDE9A1F96D0F2003CAEAA /* AIValue.m in Sources */,
 				080A74321F60C6490025DBA3 /* AIPort.m in Sources */,
 				081816301F22FEA6007DDB4D /* Awareness.m in Sources */,
+				080271411FE0BB1A00A6F8E4 /* AIChangeMindValue.m in Sources */,
+				0802713E1FE0B13700A6F8E4 /* AIInputMindValue.m in Sources */,
 				08F737F91F7C7131005EAD56 /* AIMultiNode.m in Sources */,
 				0895DAE61EB2D52D00E2B5C7 /* DataViewController.m in Sources */,
 				08DB40CB1F11A65E003162C8 /* TestHungryPage.m in Sources */,
