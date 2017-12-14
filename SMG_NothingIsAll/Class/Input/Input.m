@@ -13,6 +13,7 @@
 #import "ThinkHeader.h"
 #import "AINet.h"
 #import "AIAwarenessControl.h"
+#import "AIInputMindValue.h"
 
 @implementation Input
 
@@ -36,6 +37,10 @@
     
     //2017.11.13修正,input->AIAwareness->AIThinkingControl->aiNet->...
     [theAIAwarenessControl commitInput:text];
+}
+
+-(void) commitModel:(AIInputMindValue*)model{
+    NSLog(@"_____________");
 }
 
 @end

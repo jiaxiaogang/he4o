@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ *  MARK:--------------------InputMindValue模型--------------------
+ */
 @interface AIInputMindValue : NSObject
 
 @end

@@ -9,6 +9,8 @@
 #import "TestHungryPage.h"
 #import "InputHeader.h"
 #import "ThinkHeader.h"
+#import "DemoHunger.h"
+#import "DemoCharge.h"
 
 @interface TestHungryPage ()<UITextFieldDelegate>
 
@@ -91,10 +93,12 @@
 
 - (IBAction)eatStartBtnOnClick:(id)sender {
     [theHunger tmpTest_Start];
+    [[[DemoCharge alloc] init] commit:HungerState_Charging];
 }
 
 - (IBAction)eatStopBtnOnClick:(id)sender {
     [theHunger tmpTest_Stop];
+    [[[DemoCharge alloc] init] commit:HungerState_Unplugged];
 }
 
 - (IBAction)confirmBtnOnClick:(id)sender {
@@ -111,6 +115,7 @@
 
 - (IBAction)hungerLevelSliderValueChanged:(id)sender {
     [theHunger setLevel:self.hungerLevelSlider.value];
+    [[[DemoHunger alloc] init] commit:self.hungerLevelSlider.value];
 }
 
 - (IBAction)thinkBtnOnClick:(id)sender {

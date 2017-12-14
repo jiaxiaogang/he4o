@@ -65,6 +65,10 @@
 		084219E41FD8CF08009DA6BC /* AIImagination.m in Sources */ = {isa = PBXBuildFile; fileRef = 084219E31FD8CF08009DA6BC /* AIImagination.m */; };
 		084219E71FD8CF11009DA6BC /* AIActionControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 084219E61FD8CF11009DA6BC /* AIActionControl.m */; };
 		084219ED1FD8CF81009DA6BC /* AIThinkingControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 084219EA1FD8CF81009DA6BC /* AIThinkingControl.m */; };
+		0842ADB81FE206230048ADDC /* AIIMVHunger.m in Sources */ = {isa = PBXBuildFile; fileRef = 0842ADB71FE206230048ADDC /* AIIMVHunger.m */; };
+		0842ADBD1FE207500048ADDC /* DemoHunger.m in Sources */ = {isa = PBXBuildFile; fileRef = 0842ADBC1FE207500048ADDC /* DemoHunger.m */; };
+		0842ADC01FE209700048ADDC /* DemoCharge.m in Sources */ = {isa = PBXBuildFile; fileRef = 0842ADBF1FE209700048ADDC /* DemoCharge.m */; };
+		0842ADC31FE20A6A0048ADDC /* AIIMVCharge.m in Sources */ = {isa = PBXBuildFile; fileRef = 0842ADC21FE20A6A0048ADDC /* AIIMVCharge.m */; };
 		086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */ = {isa = PBXBuildFile; fileRef = 086D93361F8CA782002BAF3F /* RuntimeInvoker.m */; };
 		0895DAE61EB2D52D00E2B5C7 /* DataViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0895DAE41EB2D52D00E2B5C7 /* DataViewController.m */; };
 		0895DAE71EB2D52D00E2B5C7 /* DataViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0895DAE51EB2D52D00E2B5C7 /* DataViewController.xib */; };
@@ -243,6 +247,14 @@
 		084219E61FD8CF11009DA6BC /* AIActionControl.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIActionControl.m; sourceTree = "<group>"; };
 		084219E91FD8CF80009DA6BC /* AIThinkingControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIThinkingControl.h; sourceTree = "<group>"; };
 		084219EA1FD8CF81009DA6BC /* AIThinkingControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIThinkingControl.m; sourceTree = "<group>"; };
+		0842ADB61FE206230048ADDC /* AIIMVHunger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIIMVHunger.h; sourceTree = "<group>"; };
+		0842ADB71FE206230048ADDC /* AIIMVHunger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIIMVHunger.m; sourceTree = "<group>"; };
+		0842ADBB1FE207500048ADDC /* DemoHunger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DemoHunger.h; sourceTree = "<group>"; };
+		0842ADBC1FE207500048ADDC /* DemoHunger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemoHunger.m; sourceTree = "<group>"; };
+		0842ADBE1FE209700048ADDC /* DemoCharge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DemoCharge.h; sourceTree = "<group>"; };
+		0842ADBF1FE209700048ADDC /* DemoCharge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemoCharge.m; sourceTree = "<group>"; };
+		0842ADC11FE20A6A0048ADDC /* AIIMVCharge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIIMVCharge.h; sourceTree = "<group>"; };
+		0842ADC21FE20A6A0048ADDC /* AIIMVCharge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIIMVCharge.m; sourceTree = "<group>"; };
 		086D93351F8CA782002BAF3F /* RuntimeInvoker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RuntimeInvoker.h; sourceTree = "<group>"; };
 		086D93361F8CA782002BAF3F /* RuntimeInvoker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RuntimeInvoker.m; sourceTree = "<group>"; };
 		0895DAE31EB2D52D00E2B5C7 /* DataViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataViewController.h; sourceTree = "<group>"; };
@@ -469,6 +481,10 @@
 				0802713D1FE0B13700A6F8E4 /* AIInputMindValue.m */,
 				0802713F1FE0BB1A00A6F8E4 /* AIChangeMindValue.h */,
 				080271401FE0BB1A00A6F8E4 /* AIChangeMindValue.m */,
+				0842ADB61FE206230048ADDC /* AIIMVHunger.h */,
+				0842ADB71FE206230048ADDC /* AIIMVHunger.m */,
+				0842ADC11FE20A6A0048ADDC /* AIIMVCharge.h */,
+				0842ADC21FE20A6A0048ADDC /* AIIMVCharge.m */,
 			);
 			path = AIMindValue;
 			sourceTree = "<group>";
@@ -506,6 +522,7 @@
 		082F9D581EB236AC0009F6A9 /* Demo */ = {
 			isa = PBXGroup;
 			children = (
+				0842ADBA1FE2072D0048ADDC /* Main */,
 				082F9D591EB236AC0009F6A9 /* StudyViewController.h */,
 				082F9D5A1EB236AC0009F6A9 /* StudyViewController.m */,
 				082F9D5B1EB236AC0009F6A9 /* StudyViewController.xib */,
@@ -591,6 +608,17 @@
 				084219EA1FD8CF81009DA6BC /* AIThinkingControl.m */,
 			);
 			path = AIThinkingControl;
+			sourceTree = "<group>";
+		};
+		0842ADBA1FE2072D0048ADDC /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				0842ADBB1FE207500048ADDC /* DemoHunger.h */,
+				0842ADBC1FE207500048ADDC /* DemoHunger.m */,
+				0842ADBE1FE209700048ADDC /* DemoCharge.h */,
+				0842ADBF1FE209700048ADDC /* DemoCharge.m */,
+			);
+			path = Main;
 			sourceTree = "<group>";
 		};
 		087753171ECFE1C400E7AD09 /* Think */ = {
@@ -1108,6 +1136,7 @@
 				0813D64D1EDF7B150089FA0C /* InputDoModel.m in Sources */,
 				084219E11FD8CEFD009DA6BC /* AIReactorControl.m in Sources */,
 				0813D6501EDF7B150089FA0C /* InputTextModel.m in Sources */,
+				0842ADBD1FE207500048ADDC /* DemoHunger.m in Sources */,
 				08F6F4531F145B5F00B4EE19 /* MoodDurationManager.m in Sources */,
 				08AF454D1E97D0B500377887 /* AppDelegate.m in Sources */,
 				08F738051F7C714F005EAD56 /* AIKVPointer.m in Sources */,
@@ -1128,8 +1157,10 @@
 				08D7DA491ED149E8004B1018 /* AIObject.m in Sources */,
 				08216DDE1FB3D46900F509A1 /* AIAwarenessControl.m in Sources */,
 				08A209691F1069040013ACC4 /* AIAwarenessModel.m in Sources */,
+				0842ADC31FE20A6A0048ADDC /* AIIMVCharge.m in Sources */,
 				08E401421F9974B900C5AC36 /* AINetController.m in Sources */,
 				081816391F235691007DDB4D /* AIDemandStore.m in Sources */,
+				0842ADB81FE206230048ADDC /* AIIMVHunger.m in Sources */,
 				08A2096A1F1069040013ACC4 /* AICommonSenseModel.m in Sources */,
 				083BBDBA1F184A04000F694A /* AIHungerLevelChangedStore.m in Sources */,
 				08319B411F7DCB1300532B62 /* NEFuncNode.m in Sources */,
@@ -1155,6 +1186,7 @@
 				081B3AD61F6E2994008A7F36 /* StringAlgs.m in Sources */,
 				08D42C9B1EFA066E00114DCD /* README.md in Sources */,
 				081B3FB01FDCD53C00F088D6 /* AIMindValue.m in Sources */,
+				0842ADC01FE209700048ADDC /* DemoCharge.m in Sources */,
 				0840AA661F16FD6C000A528E /* AIOutputModel.m in Sources */,
 				08F738061F7C714F005EAD56 /* AIPointer.m in Sources */,
 				0813D64F1EDF7B150089FA0C /* InputObjModel.m in Sources */,
