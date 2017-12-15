@@ -14,7 +14,6 @@
 #import "AIHeader.h"
 #import "MindHeader.h"
 #import "LKDBHelper.h"
-#import "AIAwarenessControl.h"
 
 /**
  *  MARK:--------------------ObserverKEY--------------------
@@ -90,5 +89,4 @@ va_end(args);\
 #define theHobby [SMG sharedInstance].mindControl.mine.hobby
 
 //2017.11.13后启用N8规则DOP架构;
-#define theAIAwarenessControl [AIAwarenessControl shareInstance]
 #define theNet [AINet sharedInstance]

@@ -38,7 +38,6 @@
 		081DA13B1ED47CE000C8C531 /* AIArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 081DA13A1ED47CE000C8C531 /* AIArray.m */; };
 		081EA1641F4E503300D7B901 /* ThinkModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 081EA1631F4E503300D7B901 /* ThinkModel.m */; };
 		081EA16A1F4E520E00D7B901 /* ThinkElementModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 081EA1691F4E520E00D7B901 /* ThinkElementModel.m */; };
-		08216DDE1FB3D46900F509A1 /* AIAwarenessControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 08216DDD1FB3D46900F509A1 /* AIAwarenessControl.m */; };
 		0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 0825AFF21F748F67003B86C7 /* NSObject+Extension.m */; };
 		0826EED41EF7619300400F08 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 0826EED31EF7619300400F08 /* README.md */; };
 		082F9D561EB234750009F6A9 /* Output.m in Sources */ = {isa = PBXBuildFile; fileRef = 082F9D551EB234750009F6A9 /* Output.m */; };
@@ -194,8 +193,6 @@
 		081EA1631F4E503300D7B901 /* ThinkModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThinkModel.m; sourceTree = "<group>"; };
 		081EA1681F4E520E00D7B901 /* ThinkElementModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThinkElementModel.h; sourceTree = "<group>"; };
 		081EA1691F4E520E00D7B901 /* ThinkElementModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThinkElementModel.m; sourceTree = "<group>"; };
-		08216DDC1FB3D46900F509A1 /* AIAwarenessControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIAwarenessControl.h; sourceTree = "<group>"; };
-		08216DDD1FB3D46900F509A1 /* AIAwarenessControl.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIAwarenessControl.m; sourceTree = "<group>"; };
 		0825AFF11F748F67003B86C7 /* NSObject+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Extension.h"; sourceTree = "<group>"; };
 		0825AFF21F748F67003B86C7 /* NSObject+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Extension.m"; sourceTree = "<group>"; };
 		0826EED31EF7619300400F08 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -498,15 +495,6 @@
 			path = MindStrategy;
 			sourceTree = "<group>";
 		};
-		08216DD51FB3D0E100F509A1 /* AIAwarenessControl */ = {
-			isa = PBXGroup;
-			children = (
-				08216DDC1FB3D46900F509A1 /* AIAwarenessControl.h */,
-				08216DDD1FB3D46900F509A1 /* AIAwarenessControl.m */,
-			);
-			path = AIAwarenessControl;
-			sourceTree = "<group>";
-		};
 		0825AFF01F748F67003B86C7 /* Extension */ = {
 			isa = PBXGroup;
 			children = (
@@ -790,7 +778,6 @@
 				084219DC1FD8CEE7009DA6BC /* AIActionControl */,
 				084219DE1FD8CEE8009DA6BC /* AIImagination */,
 				084219DD1FD8CEE8009DA6BC /* AIReactorControl */,
-				08216DD51FB3D0E100F509A1 /* AIAwarenessControl */,
 				081B3AC91F6E210E008A7F36 /* AITime */,
 				08BD524B1F5AC90E00B4D26A /* AICodeLayer */,
 				081816291F22BDEC007DDB4D /* AIThread */,
@@ -1155,7 +1142,6 @@
 				084219E41FD8CF08009DA6BC /* AIImagination.m in Sources */,
 				0806FB2E1F15996800808B34 /* AIMoodModel.m in Sources */,
 				08D7DA491ED149E8004B1018 /* AIObject.m in Sources */,
-				08216DDE1FB3D46900F509A1 /* AIAwarenessControl.m in Sources */,
 				08A209691F1069040013ACC4 /* AIAwarenessModel.m in Sources */,
 				0842ADC31FE20A6A0048ADDC /* AIIMVCharge.m in Sources */,
 				08E401421F9974B900C5AC36 /* AINetController.m in Sources */,

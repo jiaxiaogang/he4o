@@ -8,6 +8,7 @@
 
 #import "Mine.h"
 #import "MindHeader.h"
+#import "AIReactorControl.h"
 
 @interface Mine ()<HungerDelegate>
 
@@ -51,16 +52,23 @@
     if (self.delegate && [self.delegate respondsToSelector:@selector(mine_HungerLevelChanged:)]) {
         [self.delegate mine_HungerLevelChanged:model];
     }
-    [theAIAwarenessControl commitInput:model];//传给新版AIAwareness
+    [[AIReactorControl shareInstance] commitInput:model];//传给新版AIAwareness
 }
 
 -(void) hunger_StateChanged:(AIHungerStateChangedModel*)model{
     if (self.delegate && [self.delegate respondsToSelector:@selector(mine_HungerStateChanged:)]) {
         [self.delegate mine_HungerStateChanged:model];
     }
-    [theAIAwarenessControl commitInput:model];//传给新版AIAwareness
+    
+    [[AIReactorControl shareInstance] commitModel:model];//传给新版AIAwareness
+    //一个事务是否有意识要靠思维自行判断;
+    //    //1. 潜意识isBusy = false时,执行联想唯一性判断;等读取操作;
+    //    [[AIReactorControl shareInstance] activityByShallow:data];
+    //
+    //    //2. 主意识isBusy = false时,获取传给思维,作主意识传入;
+    //    if (!self.mainThread.isBusy) {
+    //        [[AIReactorControl shareInstance] activityByDeep:data];
+    //    }
 }
-
-
 
 @end

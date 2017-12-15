@@ -12,8 +12,8 @@
 #import "FeelHeader.h"
 #import "ThinkHeader.h"
 #import "AINet.h"
-#import "AIAwarenessControl.h"
 #import "AIInputMindValue.h"
+#import "AIReactorControl.h"
 
 @implementation Input
 
@@ -30,13 +30,17 @@
 }
 
 -(void) commitText:(NSString*)text{
-    [theThink commitUnderstandByShallowFromInput:text];//从input常规输入的浅度理解即可;(简单且错误,参考N4P2)
+    //2017.04
+    //[theThink commitUnderstandByShallowFromInput:text];//从input常规输入的浅度理解即可;(简单且错误,参考N4P2)
     
     //2017.10.13修正,input->aiNet->funcModel->aiNet->awareness作预测对比(参考n7p6)
-    [theNet commitString:text];
+    //[theNet commitString:text];
     
     //2017.11.13修正,input->AIAwareness->AIThinkingControl->aiNet->...
-    [theAIAwarenessControl commitInput:text];
+    //[theAIAwarenessControl commitInput:text];
+    
+    //2017.12.15修正,参考Note9SMG软件架构3
+    [[AIReactorControl shareInstance] commitInput:text];
 }
 
 -(void) commitModel:(AIInputMindValue*)model{
