@@ -87,6 +87,7 @@
 		08AF454D1E97D0B500377887 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF454C1E97D0B500377887 /* AppDelegate.m */; };
 		08AF45551E97D0B500377887 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45541E97D0B500377887 /* Assets.xcassets */; };
 		08AF45581E97D0B500377887 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45561E97D0B500377887 /* LaunchScreen.storyboard */; };
+		08B7B8D41FE35A70004EE9CC /* AIFuncMate.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B7B8D31FE35A70004EE9CC /* AIFuncMate.m */; };
 		08BB271A1FD624CC006E03DE /* AIModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08BB27191FD624CC006E03DE /* AIModel.m */; };
 		08BD524E1F5AC94900B4D26A /* AIFuncModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08BD524D1F5AC94900B4D26A /* AIFuncModel.m */; };
 		08C84A8E1E9A866200897D8B /* Input.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A8D1E9A866200897D8B /* Input.m */; };
@@ -288,6 +289,8 @@
 		08AF45541E97D0B500377887 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		08AF45571E97D0B500377887 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		08AF45591E97D0B500377887 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		08B7B8D21FE35A70004EE9CC /* AIFuncMate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIFuncMate.h; sourceTree = "<group>"; };
+		08B7B8D31FE35A70004EE9CC /* AIFuncMate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIFuncMate.m; sourceTree = "<group>"; };
 		08BB27181FD624CC006E03DE /* AIModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIModel.h; sourceTree = "<group>"; };
 		08BB27191FD624CC006E03DE /* AIModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIModel.m; sourceTree = "<group>"; };
 		08BD524C1F5AC94900B4D26A /* AIFuncModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIFuncModel.h; sourceTree = "<group>"; };
@@ -544,6 +547,7 @@
 		083F612C1F04830F000330E1 /* AINet */ = {
 			isa = PBXGroup;
 			children = (
+				08B7B8D11FE35A08004EE9CC /* AIFunc */,
 				08DF0DC21F7F182B00B14D17 /* AIStore */,
 				08F737FB1F7C714F005EAD56 /* AIPointer */,
 				08F737EE1F7C7131005EAD56 /* AINode */,
@@ -731,13 +735,15 @@
 			path = Class;
 			sourceTree = "<group>";
 		};
-		08BD524B1F5AC90E00B4D26A /* AICodeLayer */ = {
+		08B7B8D11FE35A08004EE9CC /* AIFunc */ = {
 			isa = PBXGroup;
 			children = (
 				08BD524C1F5AC94900B4D26A /* AIFuncModel.h */,
 				08BD524D1F5AC94900B4D26A /* AIFuncModel.m */,
+				08B7B8D21FE35A70004EE9CC /* AIFuncMate.h */,
+				08B7B8D31FE35A70004EE9CC /* AIFuncMate.m */,
 			);
-			path = AICodeLayer;
+			path = AIFunc;
 			sourceTree = "<group>";
 		};
 		08C84A8A1E9A85A600897D8B /* Input */ = {
@@ -779,7 +785,6 @@
 				084219DE1FD8CEE8009DA6BC /* AIImagination */,
 				084219DD1FD8CEE8009DA6BC /* AIReactorControl */,
 				081B3AC91F6E210E008A7F36 /* AITime */,
-				08BD524B1F5AC90E00B4D26A /* AICodeLayer */,
 				081816291F22BDEC007DDB4D /* AIThread */,
 				08A209541F1069040013ACC4 /* AIData */,
 				083F612C1F04830F000330E1 /* AINet */,
@@ -1100,6 +1105,7 @@
 				0813D64E1EDF7B150089FA0C /* InputModelBase.m in Sources */,
 				084219E71FD8CF11009DA6BC /* AIActionControl.m in Sources */,
 				08F639831E9A2EC0003CD163 /* FeelValueModel.m in Sources */,
+				08B7B8D41FE35A70004EE9CC /* AIFuncMate.m in Sources */,
 				083934771F49814B003D49BD /* AIObjStore.m in Sources */,
 				083112F21F05E12600051DE6 /* MBProgressHUD+Add.m in Sources */,
 				08A2096F1F1069040013ACC4 /* AIMemoryModel.m in Sources */,

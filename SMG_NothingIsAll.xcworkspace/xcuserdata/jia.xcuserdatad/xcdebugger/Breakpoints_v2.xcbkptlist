@@ -106,7 +106,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/Class/AIFoundation/AINet/AINet.m"
-            timestampString = "534990940.083786"
+            timestampString = "534994132.736039"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "67"
@@ -122,7 +122,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/jia/Desktop/temp/SMG/SMG_NothingIsAll/Demo/Foundation+Log.m"
-                  timestampString = "534990940.179055"
+                  timestampString = "534994132.852346"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "67"
@@ -137,7 +137,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/jia/Desktop/temp/SMG/SMG_NothingIsAll/Demo/Foundation+Log.m"
-                  timestampString = "534990940.182324"
+                  timestampString = "534994132.855397"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "67"
@@ -152,7 +152,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/jia/Desktop/temp/SMG/SMG_NothingIsAll/Class/AIFoundation/AINet/AINet.m"
-                  timestampString = "534990940.18622"
+                  timestampString = "534994132.859619"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "67"
@@ -169,7 +169,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/Class/AIFoundation/AINet/AINet.m"
-            timestampString = "534990940.083872"
+            timestampString = "534994132.73613"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "67"
@@ -185,7 +185,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/jia/Desktop/temp/SMG/SMG_NothingIsAll/Demo/Foundation+Log.m"
-                  timestampString = "534990940.194189"
+                  timestampString = "534994132.874164"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "67"
@@ -200,7 +200,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/jia/Desktop/temp/SMG/SMG_NothingIsAll/Demo/Foundation+Log.m"
-                  timestampString = "534990940.197004"
+                  timestampString = "534994132.877936"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "67"
@@ -215,7 +215,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/jia/Desktop/temp/SMG/SMG_NothingIsAll/Class/AIFoundation/AINet/AINet.m"
-                  timestampString = "534990940.199566"
+                  timestampString = "534994132.881604"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "67"
@@ -239,54 +239,6 @@
             endingLineNumber = "118"
             landmarkName = "-hungerLevelSliderValueChanged:"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/Class/AIFoundation/AINet/AINet.m"
-            timestampString = "534990940.083976"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "53"
-            endingLineNumber = "53"
-            landmarkName = "-commitString:"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[AINet commitString:]"
-                  moduleName = "SMG_NothingIsAll"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jia/Desktop/temp/SMG/SMG_NothingIsAll/Class/AIFoundation/AINet/AINet.m"
-                  timestampString = "534990940.216634"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "53"
-                  endingLineNumber = "53"
-                  offsetFromSymbolStart = "281">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[AINet commitString:]"
-                  moduleName = "SMG_NothingIsAll"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jia/Desktop/temp/SMG/SMG_NothingIsAll/Class/AIFoundation/AINet/AINet.m"
-                  timestampString = "534990940.219239"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "53"
-                  endingLineNumber = "53"
-                  offsetFromSymbolStart = "289">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
