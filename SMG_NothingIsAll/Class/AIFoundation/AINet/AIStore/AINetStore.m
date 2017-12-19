@@ -21,6 +21,7 @@
 @interface AINetStore ()
 
 @property (strong,nonatomic) NSMutableDictionary *pinCaches;
+@property (strong,nonatomic) NSMutableDictionary *pinMemoryCaches;
 
 @end
 
@@ -44,6 +45,7 @@ static AINetStore *_instance;
 
 -(void) initData{
     self.pinCaches = [[NSMutableDictionary alloc] init];
+    self.pinMemoryCaches = [[NSMutableDictionary alloc] init];
 }
 
 
@@ -184,6 +186,24 @@ static AINetStore *_instance;
     }
     PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:STRTOOK(filePath)];
     [self.pinCaches setObject:cache forKey:STRTOOK(filePath)];
+    return cache;
+}
+
+@end
+
+
+
+@implementation AINetStore (Memory)
+
+
+-(nonnull PINMemoryCache*) getPinMemoryCache:(NSString*)filePath{
+    for (NSString *key in self.pinMemoryCaches.allKeys) {
+        if ([STRTOOK(key) isEqualToString:filePath]) {
+            return [self.pinMemoryCaches objectForKey:STRTOOK(key)];
+        }
+    }
+    PINMemoryCache *cache = [PINMemoryCache sharedCache];//initWithName:@"" rootPath:STRTOOK(filePath)];
+    [self.pinMemoryCaches setObject:cache forKey:STRTOOK(filePath)];
     return cache;
 }
 

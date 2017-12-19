@@ -17,6 +17,8 @@
 
 @property (assign, nonatomic) Class funcClass;  //方法所在类名
 @property (assign, nonatomic) SEL funcSel;      //方法本体
+@property (assign, nonatomic) NSInteger version;//版本号
+@property (assign, nonatomic) NSString *ID;     //ClassName+方法序数 || 全局方法序数
 
 
 //MARK:===============================================================

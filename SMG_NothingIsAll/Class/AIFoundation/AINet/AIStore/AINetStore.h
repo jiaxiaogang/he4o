@@ -52,3 +52,10 @@
 -(AIKVPointer*) getPointerFromMapWithFolderName:(NSString*)folderName withEId:(NSInteger)eId;
 
 @end
+
+
+
+
+@interface AINetStore (Memory)
+
+@end
