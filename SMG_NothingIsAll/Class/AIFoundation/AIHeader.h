@@ -54,11 +54,9 @@
 #import "AIPort.h"
 #import "AISqlPointer.h"
 #import "AIKVPointer.h"
-#import "AIFuncModel.h"
 #import "NSObject+Extension.h"
 #import "AINode.h"
 #import "AIDataNode.h"
-#import "AIFuncNode.h"
 #import "AIMultiNode.h"
 #import "AINetEditor.h"
 

@@ -47,7 +47,6 @@
 		083112F21F05E12600051DE6 /* MBProgressHUD+Add.m in Sources */ = {isa = PBXBuildFile; fileRef = 083112F11F05E12600051DE6 /* MBProgressHUD+Add.m */; };
 		08319B381F7DC13E00532B62 /* NENode.m in Sources */ = {isa = PBXBuildFile; fileRef = 08319B371F7DC13E00532B62 /* NENode.m */; };
 		08319B3E1F7DC44400532B62 /* NEElement.m in Sources */ = {isa = PBXBuildFile; fileRef = 08319B3D1F7DC44400532B62 /* NEElement.m */; };
-		08319B411F7DCB1300532B62 /* NEFuncNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 08319B401F7DCB1300532B62 /* NEFuncNode.m */; };
 		08319B441F7DCB2300532B62 /* NEDataNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 08319B431F7DCB2300532B62 /* NEDataNode.m */; };
 		08319B471F7DCB2D00532B62 /* NEMultiNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 08319B461F7DCB2D00532B62 /* NEMultiNode.m */; };
 		083934771F49814B003D49BD /* AIObjStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 083934761F49814B003D49BD /* AIObjStore.m */; };
@@ -87,9 +86,7 @@
 		08AF454D1E97D0B500377887 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF454C1E97D0B500377887 /* AppDelegate.m */; };
 		08AF45551E97D0B500377887 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45541E97D0B500377887 /* Assets.xcassets */; };
 		08AF45581E97D0B500377887 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45561E97D0B500377887 /* LaunchScreen.storyboard */; };
-		08B7B8D41FE35A70004EE9CC /* AIFuncMate.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B7B8D31FE35A70004EE9CC /* AIFuncMate.m */; };
 		08BB271A1FD624CC006E03DE /* AIModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08BB27191FD624CC006E03DE /* AIModel.m */; };
-		08BD524E1F5AC94900B4D26A /* AIFuncModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08BD524D1F5AC94900B4D26A /* AIFuncModel.m */; };
 		08C84A8E1E9A866200897D8B /* Input.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A8D1E9A866200897D8B /* Input.m */; };
 		08D322A91EBA28B0009D734A /* Foundation+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D322A81EBA28B0009D734A /* Foundation+Log.m */; };
 		08D42C9B1EFA066E00114DCD /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 08D42C9A1EFA066E00114DCD /* README.md */; };
@@ -111,7 +108,6 @@
 		08F6F4531F145B5F00B4EE19 /* MoodDurationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F6F4521F145B5F00B4EE19 /* MoodDurationManager.m */; };
 		08F737ED1F7C70FD005EAD56 /* AINetEditor.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F737EC1F7C70FD005EAD56 /* AINetEditor.m */; };
 		08F737F71F7C7131005EAD56 /* AIDataNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F737F01F7C7131005EAD56 /* AIDataNode.m */; };
-		08F737F81F7C7131005EAD56 /* AIFuncNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F737F21F7C7131005EAD56 /* AIFuncNode.m */; };
 		08F737F91F7C7131005EAD56 /* AIMultiNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F737F41F7C7131005EAD56 /* AIMultiNode.m */; };
 		08F737FA1F7C7131005EAD56 /* AINode.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F737F61F7C7131005EAD56 /* AINode.m */; };
 		08F738051F7C714F005EAD56 /* AIKVPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F737FF1F7C714F005EAD56 /* AIKVPointer.m */; };
@@ -211,8 +207,6 @@
 		08319B371F7DC13E00532B62 /* NENode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NENode.m; sourceTree = "<group>"; };
 		08319B3C1F7DC44400532B62 /* NEElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NEElement.h; sourceTree = "<group>"; };
 		08319B3D1F7DC44400532B62 /* NEElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NEElement.m; sourceTree = "<group>"; };
-		08319B3F1F7DCB1300532B62 /* NEFuncNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NEFuncNode.h; sourceTree = "<group>"; };
-		08319B401F7DCB1300532B62 /* NEFuncNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NEFuncNode.m; sourceTree = "<group>"; };
 		08319B421F7DCB2300532B62 /* NEDataNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NEDataNode.h; sourceTree = "<group>"; };
 		08319B431F7DCB2300532B62 /* NEDataNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NEDataNode.m; sourceTree = "<group>"; };
 		08319B451F7DCB2D00532B62 /* NEMultiNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NEMultiNode.h; sourceTree = "<group>"; };
@@ -289,12 +283,8 @@
 		08AF45541E97D0B500377887 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		08AF45571E97D0B500377887 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		08AF45591E97D0B500377887 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		08B7B8D21FE35A70004EE9CC /* AIFuncMate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIFuncMate.h; sourceTree = "<group>"; };
-		08B7B8D31FE35A70004EE9CC /* AIFuncMate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIFuncMate.m; sourceTree = "<group>"; };
 		08BB27181FD624CC006E03DE /* AIModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIModel.h; sourceTree = "<group>"; };
 		08BB27191FD624CC006E03DE /* AIModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIModel.m; sourceTree = "<group>"; };
-		08BD524C1F5AC94900B4D26A /* AIFuncModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIFuncModel.h; sourceTree = "<group>"; };
-		08BD524D1F5AC94900B4D26A /* AIFuncModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIFuncModel.m; sourceTree = "<group>"; };
 		08C84A8B1E9A861900897D8B /* InputHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InputHeader.h; sourceTree = "<group>"; };
 		08C84A8C1E9A866200897D8B /* Input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Input.h; sourceTree = "<group>"; };
 		08C84A8D1E9A866200897D8B /* Input.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Input.m; sourceTree = "<group>"; };
@@ -341,8 +331,6 @@
 		08F737EC1F7C70FD005EAD56 /* AINetEditor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AINetEditor.m; sourceTree = "<group>"; };
 		08F737EF1F7C7131005EAD56 /* AIDataNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIDataNode.h; sourceTree = "<group>"; };
 		08F737F01F7C7131005EAD56 /* AIDataNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIDataNode.m; sourceTree = "<group>"; };
-		08F737F11F7C7131005EAD56 /* AIFuncNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIFuncNode.h; sourceTree = "<group>"; };
-		08F737F21F7C7131005EAD56 /* AIFuncNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIFuncNode.m; sourceTree = "<group>"; };
 		08F737F31F7C7131005EAD56 /* AIMultiNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIMultiNode.h; sourceTree = "<group>"; };
 		08F737F41F7C7131005EAD56 /* AIMultiNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIMultiNode.m; sourceTree = "<group>"; };
 		08F737F51F7C7131005EAD56 /* AINode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AINode.h; sourceTree = "<group>"; };
@@ -738,10 +726,6 @@
 		08B7B8D11FE35A08004EE9CC /* AIFunc */ = {
 			isa = PBXGroup;
 			children = (
-				08BD524C1F5AC94900B4D26A /* AIFuncModel.h */,
-				08BD524D1F5AC94900B4D26A /* AIFuncModel.m */,
-				08B7B8D21FE35A70004EE9CC /* AIFuncMate.h */,
-				08B7B8D31FE35A70004EE9CC /* AIFuncMate.m */,
 			);
 			path = AIFunc;
 			sourceTree = "<group>";
@@ -868,8 +852,6 @@
 				08319B371F7DC13E00532B62 /* NENode.m */,
 				08319B3C1F7DC44400532B62 /* NEElement.h */,
 				08319B3D1F7DC44400532B62 /* NEElement.m */,
-				08319B3F1F7DCB1300532B62 /* NEFuncNode.h */,
-				08319B401F7DCB1300532B62 /* NEFuncNode.m */,
 				08319B421F7DCB2300532B62 /* NEDataNode.h */,
 				08319B431F7DCB2300532B62 /* NEDataNode.m */,
 				08319B451F7DCB2D00532B62 /* NEMultiNode.h */,
@@ -885,8 +867,6 @@
 			children = (
 				08F737EF1F7C7131005EAD56 /* AIDataNode.h */,
 				08F737F01F7C7131005EAD56 /* AIDataNode.m */,
-				08F737F11F7C7131005EAD56 /* AIFuncNode.h */,
-				08F737F21F7C7131005EAD56 /* AIFuncNode.m */,
 				08F737F31F7C7131005EAD56 /* AIMultiNode.h */,
 				08F737F41F7C7131005EAD56 /* AIMultiNode.m */,
 				08F737F51F7C7131005EAD56 /* AINode.h */,
@@ -1083,11 +1063,9 @@
 				0895DAEB1EB2D7EB00E2B5C7 /* DataCell.m in Sources */,
 				08FDCE8E1EAA4A8E00882ADC /* SMGRange.m in Sources */,
 				082F9D601EB236E80009F6A9 /* SMGOutputDelegate.m in Sources */,
-				08F737F81F7C7131005EAD56 /* AIFuncNode.m in Sources */,
 				0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */,
 				086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */,
 				08E3CCCA1EE60F8D002990FD /* ThinkControl.m in Sources */,
-				08BD524E1F5AC94900B4D26A /* AIFuncModel.m in Sources */,
 				08A209721F1069040013ACC4 /* AIValueModel.m in Sources */,
 				0808112F1F958D6A00187E43 /* NESingleNode.m in Sources */,
 				081EA16A1F4E520E00D7B901 /* ThinkElementModel.m in Sources */,
@@ -1105,7 +1083,6 @@
 				0813D64E1EDF7B150089FA0C /* InputModelBase.m in Sources */,
 				084219E71FD8CF11009DA6BC /* AIActionControl.m in Sources */,
 				08F639831E9A2EC0003CD163 /* FeelValueModel.m in Sources */,
-				08B7B8D41FE35A70004EE9CC /* AIFuncMate.m in Sources */,
 				083934771F49814B003D49BD /* AIObjStore.m in Sources */,
 				083112F21F05E12600051DE6 /* MBProgressHUD+Add.m in Sources */,
 				08A2096F1F1069040013ACC4 /* AIMemoryModel.m in Sources */,
@@ -1155,7 +1132,6 @@
 				0842ADB81FE206230048ADDC /* AIIMVHunger.m in Sources */,
 				08A2096A1F1069040013ACC4 /* AICommonSenseModel.m in Sources */,
 				083BBDBA1F184A04000F694A /* AIHungerLevelChangedStore.m in Sources */,
-				08319B411F7DCB1300532B62 /* NEFuncNode.m in Sources */,
 				08DACE951EBD805C00FDC0B6 /* NSString+Extension.m in Sources */,
 				08F738071F7C714F005EAD56 /* AISqlPointer.m in Sources */,
 				08AF454A1E97D0B500377887 /* main.m in Sources */,

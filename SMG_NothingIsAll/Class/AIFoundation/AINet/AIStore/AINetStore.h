@@ -18,7 +18,6 @@
  */
 -(BOOL) setObjectWithNetNode:(AINode*)node;                         //存神经网络_节点
 -(BOOL) setObjectWithNetData:(AIObject*)data;                       //存神经网络_数据
--(BOOL) setObjectWithFuncModel:(AIFuncModel*)funcModel;             //存神经网络_算法
 -(BOOL) setObject:(AIObject*)obj folderName:(NSString*)folderName pointerId:(NSInteger)pointerId;
 
 

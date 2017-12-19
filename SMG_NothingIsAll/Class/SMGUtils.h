@@ -62,10 +62,6 @@
 /**
  *  MARK:--------------------NetNode_PointerId--------------------
  */
-//netFuncModel
-+(NSInteger) getLastNetFuncModelPointerId;
-+(void) setNetFuncModelPointerId:(NSInteger)count;
-
 //netNode
 +(NSInteger) getLastNetNodePointerId;
 +(void) setNetNodePointerId:(NSInteger)count;

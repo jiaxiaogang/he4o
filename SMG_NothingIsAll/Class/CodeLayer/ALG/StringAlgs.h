@@ -17,6 +17,5 @@
 
 +(AIValue*) length:(NSString*)str;
 
-+(NSMutableArray*) algs;
 
 @end

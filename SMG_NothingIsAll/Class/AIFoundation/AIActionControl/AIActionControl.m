@@ -8,6 +8,7 @@
 
 #import "AIActionControl.h"
 #import "AINet.h"
+#import "StringAlgs.h"
 
 @implementation AIActionControl
 
@@ -28,6 +29,8 @@ static AIActionControl *_instance;
         if (ISOK(input, [NSString class])) {
             [theNet commitString:input];
         }
+        
+        NSInteger length = [StringAlgs length:input];//给每个算法编一个id
     }
 }
 

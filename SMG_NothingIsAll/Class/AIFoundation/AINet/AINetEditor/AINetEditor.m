@@ -9,12 +9,9 @@
 #import "AINetEditor.h"
 #import "NENode.h"
 #import "NEDataNode.h"
-#import "NEFuncNode.h"
 #import "NEMultiNode.h"
 #import "NESingleNode.h"
 #import "AINet.h"
-
-#define StringAlgs @"StringAlgs"
 
 @interface AINetEditor ()
 
@@ -42,14 +39,6 @@
     NESingleNode *singleNode = [[NESingleNode alloc] init];
     singleNode.eId = 1001;
     [self.elements addObject:singleNode];
-    
-    //2. funcNode
-    NEFuncNode *eFuncNode = [NEFuncNode newWithEId:2001 funcModel:nil funcClass:NSClassFromString(StringAlgs) funcSel:NSSelectorFromString(@"length:") singleNode:singleNode];
-    [self.elements addObject:eFuncNode];
-    
-    //3. 添加NEMutilNode;
-    NEMultiNode *multiNodeElement = [NEMultiNode newWithEId:3001 args:eFuncNode,nil];
-    [self.elements addObject:multiNodeElement];
 }
 
 -(void) refreshNet{

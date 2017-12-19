@@ -70,15 +70,6 @@ static AINetStore *_instance;
     return success;
 }
 
--(BOOL) setObjectWithFuncModel:(AIFuncModel*)funcModel{
-    NSInteger lastId = [SMGUtils getLastNetFuncModelPointerId];
-    BOOL success = [self setObject:funcModel folderName:kNET_FUNCMODEL pointerId:lastId + 1];
-    if (success) {
-        [SMGUtils setNetFuncModelPointerId:lastId + 1];
-    }
-    return success;
-}
-
 -(BOOL) setObject:(AIObject*)obj folderName:(NSString*)folderName pointerId:(NSInteger)pointerId{
     if (ISOK(obj, AIObject.class)) {
         //1. 生成指针
