@@ -6,16 +6,20 @@
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "Input.h"
-#import "InputHeader.h"
-#import "SMGHeader.h"
-#import "FeelHeader.h"
-#import "ThinkHeader.h"
+#import "AIInput.h"
 #import "AINet.h"
 #import "AIInputMindValue.h"
 #import "AIReactorControl.h"
 
-@implementation Input
+@implementation AIInput
+
+static AIInput *_instance;
++(AIInput*) sharedInstance{
+    if (_instance == nil) {
+        _instance = [[AIInput alloc] init];
+    }
+    return _instance;
+}
 
 -(id) init{
     self = [super init];

@@ -9,7 +9,6 @@
 #import "SMG.h"
 #import "SMGHeader.h"
 #import "ThinkHeader.h"
-#import "InputHeader.h"
 #import "FeelHeader.h"
 #import "OutputHeader.h"
 #import "MindHeader.h"
@@ -43,7 +42,6 @@ static SMG *_instance;
     self.thinkControl = [[ThinkControl alloc] init];
     self.feel       = [[Feel alloc] init];
     self.output     = [[Output alloc] init];
-    self.input = [[Input alloc] init];
     self.mainThread = [[AIMainThread alloc] init];
 }
 

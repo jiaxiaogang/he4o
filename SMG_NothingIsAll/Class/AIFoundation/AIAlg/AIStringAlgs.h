@@ -11,12 +11,9 @@
 /**
  *  MARK:--------------------String算法--------------------
  */
-@class AIValue;
-@interface StringAlgs : NSObject
+@interface AIStringAlgs : NSObject
 
-
-+(AIValue*) length:(NSString*)str;
-
-+(NSMutableArray*) algs;
++(NSUInteger) length:(NSString*)str ;
++(void) commitInput:(NSString*)input;
 
 @end

@@ -232,17 +232,6 @@
     return lastPId + 1;
 }
 
-//netFuncModel
-+(NSInteger) getLastNetFuncModelPointerId{
-    return [[NSUserDefaults standardUserDefaults] integerForKey:@"AIPointer_LastNetFuncModelPointerId_KEY"];
-}
-
-+(void) setNetFuncModelPointerId:(NSInteger)count{
-    NSInteger lastPId = [self getLastNetFuncModelPointerId];
-    [[NSUserDefaults standardUserDefaults] setInteger:lastPId + count forKey:@"AIPointer_LastNetFuncModelPointerId_KEY"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
 //netNode
 +(NSInteger) getLastNetNodePointerId{
     return [[NSUserDefaults standardUserDefaults] integerForKey:@"AIPointer_LastNetNodePointerId_KEY"];

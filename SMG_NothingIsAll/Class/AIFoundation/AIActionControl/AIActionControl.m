@@ -8,6 +8,8 @@
 
 #import "AIActionControl.h"
 #import "AINet.h"
+#import "AIStringAlgs.h"
+#import "PINCache.h"
 
 @implementation AIActionControl
 
@@ -19,16 +21,17 @@ static AIActionControl *_instance;
     return _instance;
 }
 
--(void) commitModel:(AIModel*)model{
-    [theNet commitModel:model];
-}
-
 -(void) commitInput:(id)input{
     if (input) {
         if (ISOK(input, [NSString class])) {
-            [theNet commitString:input];
+            //1. 调用算法处理
+            [AIStringAlgs commitInput:input];
         }
     }
+}
+
+-(void) commitModel:(AIModel*)model{
+    [theNet commitModel:model];
 }
 
 @end

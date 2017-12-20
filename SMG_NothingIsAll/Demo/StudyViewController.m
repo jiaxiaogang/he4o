@@ -9,8 +9,8 @@
 #import "StudyViewController.h"
 #import "SMGHeader.h"
 #import "ThinkHeader.h"
-#import "InputHeader.h"
 #import "FeelHeader.h"
+#import "AIInput.h"
 #import "DataViewController.h"
 #import "TestHungryPage.h"
 
@@ -147,7 +147,7 @@
 }
 
 - (IBAction)commitBtnOnClick:(id)sender {
-    [[SMG sharedInstance].input commitText:@"Hello SMG!"];
+    [theInput commitText:@"Hello SMG!"];
 }
 
 - (IBAction)dataBtnOnClick:(id)sender {

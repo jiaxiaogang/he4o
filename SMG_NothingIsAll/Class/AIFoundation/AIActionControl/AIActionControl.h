@@ -22,8 +22,8 @@
  *  2. 任务目标:(一个mindValue方向 | 其它)
  *  3.
  */
--(void) commitModel:(AIModel*)model;
 -(void) commitInput:(id)input;
+-(void) commitModel:(AIModel*)model;
 
 
 @end

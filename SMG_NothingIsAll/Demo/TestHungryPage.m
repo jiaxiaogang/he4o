@@ -7,10 +7,10 @@
 //
 
 #import "TestHungryPage.h"
-#import "InputHeader.h"
 #import "ThinkHeader.h"
 #import "DemoHunger.h"
 #import "DemoCharge.h"
+#import "AIInput.h"
 
 @interface TestHungryPage ()<UITextFieldDelegate>
 
@@ -103,7 +103,7 @@
 
 - (IBAction)confirmBtnOnClick:(id)sender {
     if (STRISOK(self.tf.text)) {
-        [[SMG sharedInstance].input commitText:self.tf.text];
+        [theInput commitText:self.tf.text];
         self.tf.text = nil;
     }
 }
