@@ -32,6 +32,7 @@ static AIReactorControl *_instance;
 
 
 -(void) commitInput:(id)input{
+    [self createReactor:AIMoodType_Anxious];
     [[AIActionControl shareInstance] commitInput:input];
 }
 

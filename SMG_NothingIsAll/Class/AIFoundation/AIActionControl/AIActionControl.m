@@ -8,7 +8,8 @@
 
 #import "AIActionControl.h"
 #import "AINet.h"
-#import "StringAlgs.h"
+#import "AIStringAlgs.h"
+#import "PINCache.h"
 
 @implementation AIActionControl
 
@@ -20,17 +21,17 @@ static AIActionControl *_instance;
     return _instance;
 }
 
--(void) commitModel:(AIModel*)model{
-    [theNet commitModel:model];
-}
-
 -(void) commitInput:(id)input{
     if (input) {
         if (ISOK(input, [NSString class])) {
-            //2. 调用反射算法处理并返回值给临时神经网络缓存区;
-            NSUInteger length = [StringAlgs length:input];
+            //1. 调用算法处理
+            [AIStringAlgs commitInput:input];
         }
     }
+}
+
+-(void) commitModel:(AIModel*)model{
+    [theNet commitModel:model];
 }
 
 @end
