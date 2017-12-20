@@ -8,7 +8,7 @@
 
 #import "DemoHunger.h"
 #import "MindHeader.h"
-#import "Input.h"
+#import "AIInput.h"
 #import "AIIMVHunger.h"
 
 @interface DemoHunger ()

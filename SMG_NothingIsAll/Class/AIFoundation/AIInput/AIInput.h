@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 /**
- *  MARK:--------------------输入--------------------
+ *  MARK:--------------------输入(计算机视觉,听觉,文字,触觉,网络等)--------------------
  *
  *  注意力对象有可能是一颗树;或者两颗树;或者注意力仅仅是树的大小;
  *  注意力是可持续的;一次注意力,可以提交很多次数据;有时是声音;有时是图像;有时是大脑指定的属性值;
@@ -20,8 +20,9 @@
  *  4,收集摄像头视频do行为(视频行为)
  */
 @class AIInputMindValue;
-@interface Input : NSObject
+@interface AIInput : NSObject
 
++(AIInput*) sharedInstance;
 -(void) commitText:(NSString*)text;
 -(void) commitModel:(AIInputMindValue*)model;
 

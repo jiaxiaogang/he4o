@@ -7,7 +7,6 @@
 //
 
 #import "Feel.h"
-#import "InputHeader.h"
 #import "SMGHeader.h"
 #import "FeelHeader.h"
 #import "ThinkHeader.h"

@@ -8,7 +8,7 @@
 
 #import "DemoCharge.h"
 #import "MindHeader.h"
-#import "Input.h"
+#import "AIInput.h"
 #import "AIIMVCharge.h"
 
 @interface DemoCharge ()

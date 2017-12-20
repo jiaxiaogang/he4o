@@ -11,10 +11,11 @@
 
 @implementation StringAlgs
 
-+(AIValue*) length:(NSString*)str {
-    str = STRTOOK(str);
-    return [AIValue newWithIntegerValue:str.length];
++(NSUInteger) length:(NSString*)str {
+    if (STRISOK(str)) {
+        return str.length;
+    }
+    return 0;
 }
-
 
 @end
