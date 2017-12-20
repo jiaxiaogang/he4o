@@ -13,6 +13,6 @@
  */
 @interface StringAlgs : NSObject
 
-+(NSUInteger) length:(NSString*)str;
++(NSUInteger) length:(NSString*)str ;
 
 @end

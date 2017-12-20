@@ -27,10 +27,9 @@ static AIActionControl *_instance;
 -(void) commitInput:(id)input{
     if (input) {
         if (ISOK(input, [NSString class])) {
-            [theNet commitString:input];
+            //2. 调用反射算法处理并返回值给临时神经网络缓存区;
+            NSUInteger length = [StringAlgs length:input];
         }
-        
-        NSInteger length = [StringAlgs length:input];//给每个算法编一个id
     }
 }
 

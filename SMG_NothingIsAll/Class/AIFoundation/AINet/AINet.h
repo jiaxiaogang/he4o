@@ -14,19 +14,11 @@
 +(AINet*) sharedInstance;
 
 //MARK:===============================================================
-//MARK:                     < String反射区 >
+//MARK:                     < 事务对接区(AIObject内感) >
 //MARK:===============================================================
 -(void) commitString:(NSString*)str;
-
-
-//MARK:===============================================================
-//MARK:                     < AIObject反射区(内感) >
-//MARK:===============================================================
+-(void) commitInput:(id)input;
+-(void) commitProperty:(id)data rootPointer:(AIPointer*)rootPointer;
 -(void) commitModel:(AIModel*)model;
-
-//MARK:===============================================================
-//MARK:                     < 建设input对接net功能区 >
-//MARK:===============================================================
--(void) addStringNode:(AIKVPointer*)kvPointer;
 
 @end

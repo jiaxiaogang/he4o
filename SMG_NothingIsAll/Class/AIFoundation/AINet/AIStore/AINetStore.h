@@ -27,29 +27,6 @@
 -(/*AIObject**/id) objectForKvPointer:(AIKVPointer*)kvPointer;
 
 
-/**
- *  MARK:--------------------存nodePointer和elementId的映射--------------------
- */
--(BOOL) setMapWithNodePointer:(AIKVPointer*)nodePointer withEId:(NSInteger)eId;
--(BOOL) setMapWithFuncModelPointer:(AIKVPointer*)nodePointer withEId:(NSInteger)eId;
--(BOOL) setMapWithPointer:(AIKVPointer*)pointer folderName:(NSString*)folderName withEId:(NSInteger)eId;
-
-
-/**
- *  MARK:--------------------是否已存过ElementId下的Node--------------------
- */
--(BOOL) containsNodeWithEId:(NSInteger)eId;
--(BOOL) containsFuncModelWithEId:(NSInteger)eId;
--(BOOL) containsObjectWithEId:(NSInteger)eId folderName:(NSString*)folderName;
-
-
-/**
- *  MARK:--------------------get节点pointer根据eId--------------------
- */
--(AIKVPointer*) getNodePointerFromMapWithEId:(NSInteger)eId;
--(AIKVPointer*) getFuncModelPointerFromMapWithEId:(NSInteger)eId;
--(AIKVPointer*) getPointerFromMapWithFolderName:(NSString*)folderName withEId:(NSInteger)eId;
-
 @end
 
 
