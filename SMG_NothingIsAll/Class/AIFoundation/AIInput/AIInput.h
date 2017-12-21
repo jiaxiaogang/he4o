@@ -24,6 +24,6 @@
 
 +(AIInput*) sharedInstance;
 -(void) commitText:(NSString*)text;
--(void) commitModel:(AIInputMindValue*)model;
+-(void) commitIMV:(IMVType)type value:(NSInteger)value;
 
 @end

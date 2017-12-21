@@ -7,14 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "Hunger.h"
-
-@protocol MineDelegate <NSObject>
-
--(void) mine_HungerLevelChanged:(AIHungerLevelChangedModel*)model;
--(void) mine_HungerStateChanged:(AIHungerStateChangedModel*)model;
-
-@end
 
 
 /**
@@ -34,11 +26,9 @@
  *      5,对沟通和了解外界有永久好奇心;(nlp阶段这么搞)
  *      6,很容易产生无聊感;(产生主动"表述"行为)
  */
-@class Mood,Hobby;
+@class Mood,Hobby,MindStrategyModel;
 @interface Mine : NSObject
 
-@property (weak, nonatomic) id<MineDelegate> delegate;
-@property (strong,nonatomic) Hunger *hunger;
 @property (strong,nonatomic) Mood *mood;
 @property (strong,nonatomic) Hobby *hobby;
 

@@ -72,12 +72,7 @@
             //Awareness->Demand层会将意识流中大多数明显有问题的Demand过滤掉;
             
             //失效验证1,取当前状态等相关数据,进行分析;
-            if (model.value < 0 && theHunger.getState == HungerState_Charging) {
-                return false;
-            }
-            if (model.value > 0 && theHunger.getState == HungerState_Unplugged) {
-                return false;
-            }
+            
             
         }
     }

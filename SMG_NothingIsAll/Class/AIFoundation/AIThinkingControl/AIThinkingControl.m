@@ -10,6 +10,7 @@
 #import "AINet.h"
 #import "AIHungerLevelChangedModel.h"
 #import "AIHungerStateChangedModel.h"
+#import "AIInputMindValue.h"
 
 @interface AIThinkingControl()
 
@@ -53,6 +54,9 @@ static AIThinkingControl *_instance;
         //3. mindVaue能否被存储?(应该会存储自我的mindValue快乐状态,mindValue具有影响构建和可数据表示二象性,mindValue原本不是一条数据,但因被自我状态感知了,才变成数据)
     }else if(ISOK(data, AIHungerStateChangedModel.class)){
         [theNet commitModel:data];
+    }else if(ISOK(data, AIInputMindValue.class)){
+        NSLog(@"_________shadowForIMV");
+        //思维对imv发生时,前后4个左右的思维缓存区作分析与关联操作;
     }
 }
 -(void) activityByDeep:(id)data{

@@ -12,9 +12,7 @@
 #import "Mood.h"
 #import "HobbyModel.h"
 #import "Hobby.h"
-#import "Hunger.h"
 #import "MindStrategy.h"
 #import "MoodDurationManager.h"
-
 #import "Awareness.h"
 #import "Demand.h"

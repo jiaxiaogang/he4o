@@ -81,6 +81,7 @@
 		08CC99201FE9F0B300743ABE /* AIStringAlgsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08CC991F1FE9F0B300743ABE /* AIStringAlgsModel.m */; };
 		08D322A91EBA28B0009D734A /* Foundation+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D322A81EBA28B0009D734A /* Foundation+Log.m */; };
 		08D42C9B1EFA066E00114DCD /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 08D42C9A1EFA066E00114DCD /* README.md */; };
+		08D471DE1FEB3FFF00C61322 /* AIInputMindValueAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D471DD1FEB3FFF00C61322 /* AIInputMindValueAlgs.m */; };
 		08D7DA491ED149E8004B1018 /* AIObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D7DA481ED149E8004B1018 /* AIObject.m */; };
 		08D7DA4C1ED149F8004B1018 /* AIString.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D7DA4B1ED149F8004B1018 /* AIString.m */; };
 		08D7DA4F1ED14BC7004B1018 /* AIChar.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D7DA4E1ED14BC7004B1018 /* AIChar.m */; };
@@ -107,7 +108,6 @@
 		08FBB9091EE76E78000F9E80 /* HobbyModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FBB9031EE76E78000F9E80 /* HobbyModel.m */; };
 		08FBB90A1EE76E78000F9E80 /* Mine.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FBB9051EE76E78000F9E80 /* Mine.m */; };
 		08FBB90B1EE76E78000F9E80 /* Mood.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FBB9071EE76E78000F9E80 /* Mood.m */; };
-		08FBB90E1EE76E9D000F9E80 /* Hunger.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FBB90D1EE76E9D000F9E80 /* Hunger.m */; };
 		08FDCE8E1EAA4A8E00882ADC /* SMGRange.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FDCE8D1EAA4A8E00882ADC /* SMGRange.m */; };
 		08FEDE9A1F96D0F2003CAEAA /* AIValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FEDE991F96D0F2003CAEAA /* AIValue.m */; };
 		2753D7CF7BAEDFEACAF9264A /* libPods-SMG_NothingIsAll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */; };
@@ -261,6 +261,8 @@
 		08D322A71EBA2783009D734A /* SMGPrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMGPrefixHeader.pch; sourceTree = "<group>"; };
 		08D322A81EBA28B0009D734A /* Foundation+Log.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Foundation+Log.m"; sourceTree = "<group>"; };
 		08D42C9A1EFA066E00114DCD /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		08D471DC1FEB3FFF00C61322 /* AIInputMindValueAlgs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIInputMindValueAlgs.h; sourceTree = "<group>"; };
+		08D471DD1FEB3FFF00C61322 /* AIInputMindValueAlgs.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIInputMindValueAlgs.m; sourceTree = "<group>"; };
 		08D7DA411ED149B4004B1018 /* AIHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIHeader.h; sourceTree = "<group>"; };
 		08D7DA471ED149E8004B1018 /* AIObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIObject.h; sourceTree = "<group>"; };
 		08D7DA481ED149E8004B1018 /* AIObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIObject.m; sourceTree = "<group>"; };
@@ -317,8 +319,6 @@
 		08FBB9051EE76E78000F9E80 /* Mine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Mine.m; sourceTree = "<group>"; };
 		08FBB9061EE76E78000F9E80 /* Mood.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mood.h; sourceTree = "<group>"; };
 		08FBB9071EE76E78000F9E80 /* Mood.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Mood.m; sourceTree = "<group>"; };
-		08FBB90C1EE76E9D000F9E80 /* Hunger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hunger.h; sourceTree = "<group>"; };
-		08FBB90D1EE76E9D000F9E80 /* Hunger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Hunger.m; sourceTree = "<group>"; };
 		08FDCE8C1EAA4A8E00882ADC /* SMGRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMGRange.h; sourceTree = "<group>"; };
 		08FDCE8D1EAA4A8E00882ADC /* SMGRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMGRange.m; sourceTree = "<group>"; };
 		08FEDE981F96D0F2003CAEAA /* AIValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIValue.h; sourceTree = "<group>"; };
@@ -703,6 +703,8 @@
 				081B3AD51F6E2994008A7F36 /* AIStringAlgs.m */,
 				08CC991E1FE9F0B200743ABE /* AIStringAlgsModel.h */,
 				08CC991F1FE9F0B300743ABE /* AIStringAlgsModel.m */,
+				08D471DC1FEB3FFF00C61322 /* AIInputMindValueAlgs.h */,
+				08D471DD1FEB3FFF00C61322 /* AIInputMindValueAlgs.m */,
 			);
 			path = AIAlg;
 			sourceTree = "<group>";
@@ -832,8 +834,6 @@
 				08FBB9031EE76E78000F9E80 /* HobbyModel.m */,
 				08FBB9061EE76E78000F9E80 /* Mood.h */,
 				08FBB9071EE76E78000F9E80 /* Mood.m */,
-				08FBB90C1EE76E9D000F9E80 /* Hunger.h */,
-				08FBB90D1EE76E9D000F9E80 /* Hunger.m */,
 			);
 			path = Mine;
 			sourceTree = "<group>";
@@ -995,6 +995,7 @@
 				0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */,
 				086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */,
 				08E3CCCA1EE60F8D002990FD /* ThinkControl.m in Sources */,
+				08D471DE1FEB3FFF00C61322 /* AIInputMindValueAlgs.m in Sources */,
 				08A209721F1069040013ACC4 /* AIValueModel.m in Sources */,
 				081EA16A1F4E520E00D7B901 /* ThinkElementModel.m in Sources */,
 				08FBB9091EE76E78000F9E80 /* HobbyModel.m in Sources */,
@@ -1005,7 +1006,6 @@
 				08C84A8E1E9A866200897D8B /* AIInput.m in Sources */,
 				082F9D561EB234750009F6A9 /* Output.m in Sources */,
 				08FBB90B1EE76E78000F9E80 /* Mood.m in Sources */,
-				08FBB90E1EE76E9D000F9E80 /* Hunger.m in Sources */,
 				083F61341F04830F000330E1 /* AILineDampingStrategy.m in Sources */,
 				084219E71FD8CF11009DA6BC /* AIActionControl.m in Sources */,
 				08F639831E9A2EC0003CD163 /* FeelValueModel.m in Sources */,

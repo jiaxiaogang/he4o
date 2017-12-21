@@ -84,7 +84,6 @@ va_end(args);\
 #define theMine [SMG sharedInstance].mindControl.mine
 #define theAwareness [SMG sharedInstance].mindControl.awareness
 #define theMood [SMG sharedInstance].mindControl.mine.mood
-#define theHunger [SMG sharedInstance].mindControl.mine.hunger
 #define theHobby [SMG sharedInstance].mindControl.mine.hobby
 
 //2017.11.13后启用N8规则DOP架构;

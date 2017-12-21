@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIModel;
+@class AIModel,AIInputMindValue;
 @interface AIReactorControl : NSObject
 
 +(AIReactorControl*) shareInstance;
@@ -17,7 +17,7 @@
 /**
  *  MARK:--------------------先天mindValue工厂--------------------
  */
--(void) createMindValue;
+-(AIInputMindValue*) createMindValue:(IMVType)type value:(NSInteger)value;
 
 
 /**
@@ -25,8 +25,8 @@
  */
 -(void) createReactor:(AIMoodType)moodType;
 
-
 -(void) commitInput:(id)input;
+-(void) commitInputIMV:(IMVType)type value:(NSInteger)value;
 -(void) commitModel:(AIModel*)model;
 
 @end

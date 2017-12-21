@@ -152,3 +152,11 @@ typedef NS_ENUM(NSInteger, MVDownCurveType) {
     MVDownCurveType_LINEAR     = 1,//线性
     MVDownCurveType_AND        = 2,//越来越低
 };
+
+/**
+ *  MARK:--------------------IMVType--------------------
+ */
+typedef NS_ENUM(NSInteger, IMVType) {
+    IMVType_Charge     = 1,
+    IMVType_Hunger     = 2,
+};

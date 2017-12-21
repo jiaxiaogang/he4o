@@ -12,7 +12,7 @@
 #import "MBProgressHUD+Add.h"
 #import "OutputHeader.h"
 
-@interface MindControl ()<MineDelegate>
+@interface MindControl ()
 
 @property (strong,nonatomic) Awareness *awareness;
 
@@ -35,7 +35,6 @@
 }
 
 -(void) initRun{
-    self.mine.delegate = self;
     [self.awareness run];
 }
 

@@ -10,6 +10,8 @@
 #import "AINet.h"
 #import "AIStringAlgs.h"
 #import "PINCache.h"
+#import "AIInputMindValue.h"
+#import "AIInputMindValueAlgs.h"
 
 @implementation AIActionControl
 
@@ -23,9 +25,11 @@ static AIActionControl *_instance;
 
 -(void) commitInput:(id)input{
     if (input) {
+        //1. 调用算法处理
         if (ISOK(input, [NSString class])) {
-            //1. 调用算法处理
             [AIStringAlgs commitInput:input];
+        }else if(ISOK(input, [AIInputMindValue class])) {
+            [AIInputMindValueAlgs commitInput:input];
         }
     }
 }

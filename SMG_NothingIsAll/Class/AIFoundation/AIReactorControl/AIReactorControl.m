@@ -9,6 +9,9 @@
 #import "AIReactorControl.h"
 #import "AIActionControl.h"
 #import "AIModel.h"
+#import "AIInputMindValue.h"
+#import "AIIMVCharge.h"
+#import "AIIMVHunger.h"
 
 @implementation AIReactorControl
 
@@ -20,8 +23,21 @@ static AIReactorControl *_instance;
     return _instance;
 }
 
--(void) createMindValue{
-    //
+-(AIInputMindValue*) createMindValue:(IMVType)type value:(NSInteger)value {
+    if (type == IMVType_Charge) {
+        AIIMVCharge *model = [[AIIMVCharge alloc] init];
+        model.state = HungerState_Charging;
+        model.value = value;
+        return model;
+    }else if(type == IMVType_Hunger) {
+        AIIMVHunger *model = [[AIIMVHunger alloc] init];
+        model.level = value;
+        model.value = value;
+        return model;
+    }else{
+        
+    }
+    return nil;
 }
 
 -(void) createReactor:(AIMoodType)moodType{
@@ -34,6 +50,11 @@ static AIReactorControl *_instance;
 -(void) commitInput:(id)input{
     [self createReactor:AIMoodType_Anxious];
     [[AIActionControl shareInstance] commitInput:input];
+}
+
+-(void) commitInputIMV:(IMVType)type value:(NSInteger)value {
+    AIInputMindValue *model = [self createMindValue:type value:value];
+    [[AIActionControl shareInstance] commitInput:model];
 }
 
 -(void) commitModel:(AIModel*)model{

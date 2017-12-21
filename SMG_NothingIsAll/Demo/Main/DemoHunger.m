@@ -9,7 +9,6 @@
 #import "DemoHunger.h"
 #import "MindHeader.h"
 #import "AIInput.h"
-#import "AIIMVHunger.h"
 
 @interface DemoHunger ()
 
@@ -38,15 +37,11 @@
     CGFloat level = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:[UIDevice currentDevice].batteryLevel];
     
     //2,传给Input
-    AIIMVHunger *model = [[AIIMVHunger alloc] init];
-    model.level = level;
-    [theInput commitModel:model];
+    [theInput commitIMV:IMVType_Hunger value:level];
 }
 
 -(void) commit:(CGFloat)level {
-    AIIMVHunger *model = [[AIIMVHunger alloc] init];
-    model.level = level;
-    [theInput commitModel:model];
+    [theInput commitIMV:IMVType_Hunger value:level];
 }
 
 @end

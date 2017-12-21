@@ -9,7 +9,6 @@
 #import "DemoCharge.h"
 #import "MindHeader.h"
 #import "AIInput.h"
-#import "AIIMVCharge.h"
 
 @interface DemoCharge ()
 
@@ -42,9 +41,7 @@
         state = HungerState_Charging;
     }
     
-    AIIMVCharge *model = [[AIIMVCharge alloc] init];
-    model.state = state;
-    [theInput commitModel:model];
+    [theInput commitIMV:IMVType_Charge value:3];
 }
 
 -(void) dealloc{
@@ -52,9 +49,8 @@
 }
 
 -(void) commit:(HungerState)state {
-    AIIMVCharge *model = [[AIIMVCharge alloc] init];
-    model.state = state;
-    [theInput commitModel:model];
+    //为方便调试:假设:充一下;加一格电;
+    [theInput commitIMV:IMVType_Charge value:3];
 }
 
 @end

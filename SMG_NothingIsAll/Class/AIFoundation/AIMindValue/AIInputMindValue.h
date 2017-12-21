@@ -13,4 +13,6 @@
  */
 @interface AIInputMindValue : NSObject
 
+@property (assign, nonatomic)  NSInteger value;
+
 @end

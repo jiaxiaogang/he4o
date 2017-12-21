@@ -47,8 +47,8 @@ static AIInput *_instance;
     [[AIReactorControl shareInstance] commitInput:text];
 }
 
--(void) commitModel:(AIInputMindValue*)model{
-    NSLog(@"_____________");
+-(void) commitIMV:(IMVType)type value:(NSInteger)value{
+    [[AIReactorControl shareInstance] commitInputIMV:type value:value];
 }
 
 @end

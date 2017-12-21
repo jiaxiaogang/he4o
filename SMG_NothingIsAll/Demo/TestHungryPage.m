@@ -82,22 +82,18 @@
  *  MARK:--------------------onclick--------------------
  */
 - (IBAction)addBtnOnClick:(id)sender {
-    [theHunger setLevel:self.hungerLevelSlider.value + 0.01f];
-    [theHunger tmpTest_Add];
+    [[[DemoCharge alloc] init] commit:HungerState_Charging];
 }
 
 - (IBAction)subBtnOnClick:(id)sender {
-    [theHunger setLevel:self.hungerLevelSlider.value - 0.01f];
-    [theHunger tmpTest_Sub];
+    [[[DemoCharge alloc] init] commit:HungerState_Unplugged];
 }
 
 - (IBAction)eatStartBtnOnClick:(id)sender {
-    [theHunger tmpTest_Start];
     [[[DemoCharge alloc] init] commit:HungerState_Charging];
 }
 
 - (IBAction)eatStopBtnOnClick:(id)sender {
-    [theHunger tmpTest_Stop];
     [[[DemoCharge alloc] init] commit:HungerState_Unplugged];
 }
 
@@ -114,7 +110,6 @@
 }
 
 - (IBAction)hungerLevelSliderValueChanged:(id)sender {
-    [theHunger setLevel:self.hungerLevelSlider.value];
     [[[DemoHunger alloc] init] commit:self.hungerLevelSlider.value];
 }
 
@@ -147,7 +142,6 @@
 }
 
 -(void) notificationHungerLevelChanged {
-    [self.hungerLevelSlider setValue:theHunger.getLevel animated:true];
     [self refreshDisplay_HungerLevelLab];
 }
 
