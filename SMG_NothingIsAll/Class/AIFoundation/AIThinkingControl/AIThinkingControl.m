@@ -64,6 +64,8 @@ static AIThinkingControl *_instance;
         [[AIActionControl shareInstance] searchModel:data block:^(AINetModel *result) {
             [self actionControlBlockWithResult:result];
         }];
+        
+        //4. 从数据中发现cmv目标;并且从经验中寻找cmv的实现方式;形成思维的整个过程;(参考n9p20)
     }else if(ISOK(data, AIInputMindValueAlgsModel.class)) {
         NSLog(@"_________shadowForIMV");//有mv...
         //1. 思维对imv发生时,前后4个左右的思维缓存区作分析与关联操作;
