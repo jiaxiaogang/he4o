@@ -6,9 +6,9 @@
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import "AIModel.h"
 
-@interface AIStringAlgsModel : NSObject
+@interface AIStringAlgsModel : AIModel
 
 @property (strong,nonatomic) NSString *str;
 @property (assign, nonatomic) NSUInteger length;

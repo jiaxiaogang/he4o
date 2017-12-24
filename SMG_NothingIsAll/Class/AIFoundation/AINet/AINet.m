@@ -47,6 +47,7 @@ static AINet *_instance;
 
 -(void) insertModel:(AIModel*)model {
     NSLog(@"存储Model");
+    [[AINetStore sharedInstance] setObjectWithNetData:model];
 }
 
 
@@ -62,7 +63,7 @@ static AINet *_instance;
 //MARK:                     < search >
 //MARK:===============================================================
 -(AINetModel*) searchWithModel:(id)model{
-    //[AINetStore searchWithWhere:nil];
+    //[[AINetStore sharedInstance] objectForKvPointer:nil];
     return nil;
 }
 

@@ -26,7 +26,6 @@
  */
 -(/*AIObject**/id) objectForKvPointer:(AIKVPointer*)kvPointer;
 
-
 @end
 
 

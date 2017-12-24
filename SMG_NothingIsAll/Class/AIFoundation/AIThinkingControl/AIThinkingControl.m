@@ -15,6 +15,7 @@
 #import "AIInputMindValueAlgsModel.h"
 #import "AIActionControl.h"
 #import "AINetModel.h"
+#import "AIModel.h"
 
 @interface AIThinkingControl()
 
@@ -73,7 +74,11 @@ static AIThinkingControl *_instance;
         
         //3. 到Net检索相关;
         [[AIActionControl shareInstance] searchModel:data type:MultiNetType_String block:^(AINetModel *result) {
-            [self actionControlBlockWithResult:result];
+            if (result) {
+                [self actionControlBlockWithResult:result];
+            }else{
+                [[AIActionControl shareInstance] insertModel:data];
+            }
         }];
         
         //4. 从数据中发现cmv目标;并且从经验中寻找cmv的实现方式;形成思维的整个过程;(参考n9p20)
