@@ -9,11 +9,15 @@
 #import "AIInputMindValueAlgs.h"
 #import "AIInputMindValue.h"
 #import "AIThinkingControl.h"
+#import "AIInputMindValueAlgsModel.h"
 
 @implementation AIInputMindValueAlgs
 
-+(void) commitInput:(AIInputMindValue*)model{
-    if (ISOK(model, AIInputMindValue.class)) {
++(void) commitInput:(AIInputMindValue*)input{
+    if (ISOK(input, AIInputMindValue.class)) {
+        AIInputMindValueAlgsModel *model = [[AIInputMindValueAlgsModel alloc] init];
+        model.value = input.value;//temp
+        
         //1. 结果给Thinking
         [[AIThinkingControl shareInstance] activityByShallow:model];
     }

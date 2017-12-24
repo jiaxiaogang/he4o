@@ -11,6 +11,7 @@
 		080271411FE0BB1A00A6F8E4 /* AIChangeMindValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 080271401FE0BB1A00A6F8E4 /* AIChangeMindValue.m */; };
 		0806FB2E1F15996800808B34 /* AIMoodModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0806FB2D1F15996800808B34 /* AIMoodModel.m */; };
 		0806FB311F15997D00808B34 /* AIMoodStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 0806FB301F15997D00808B34 /* AIMoodStore.m */; };
+		0807287D1FEF29A20001136A /* AIInputMindValueAlgsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0807287C1FEF29A20001136A /* AIInputMindValueAlgsModel.m */; };
 		080811321F958F0D00187E43 /* AISingleNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 080811311F958F0D00187E43 /* AISingleNode.m */; };
 		0808DB441F10A24A0082F4AD /* AIAwarenessStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 0808DB431F10A24A0082F4AD /* AIAwarenessStore.m */; };
 		0808DB471F10A25A0082F4AD /* AICommonSenseStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 0808DB461F10A25A0082F4AD /* AICommonSenseStore.m */; };
@@ -123,6 +124,8 @@
 		0806FB2D1F15996800808B34 /* AIMoodModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIMoodModel.m; sourceTree = "<group>"; };
 		0806FB2F1F15997D00808B34 /* AIMoodStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIMoodStore.h; sourceTree = "<group>"; };
 		0806FB301F15997D00808B34 /* AIMoodStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIMoodStore.m; sourceTree = "<group>"; };
+		0807287B1FEF29A20001136A /* AIInputMindValueAlgsModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIInputMindValueAlgsModel.h; sourceTree = "<group>"; };
+		0807287C1FEF29A20001136A /* AIInputMindValueAlgsModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIInputMindValueAlgsModel.m; sourceTree = "<group>"; };
 		080811301F958F0D00187E43 /* AISingleNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AISingleNode.h; sourceTree = "<group>"; };
 		080811311F958F0D00187E43 /* AISingleNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AISingleNode.m; sourceTree = "<group>"; };
 		0808DB421F10A24A0082F4AD /* AIAwarenessStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIAwarenessStore.h; sourceTree = "<group>"; };
@@ -340,6 +343,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0807287A1FEF297F0001136A /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				08CC991E1FE9F0B200743ABE /* AIStringAlgsModel.h */,
+				08CC991F1FE9F0B300743ABE /* AIStringAlgsModel.m */,
+				0807287B1FEF29A20001136A /* AIInputMindValueAlgsModel.h */,
+				0807287C1FEF29A20001136A /* AIInputMindValueAlgsModel.m */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		0808DB411F10A20E0082F4AD /* AIStore */ = {
 			isa = PBXGroup;
 			children = (
@@ -699,10 +713,9 @@
 		08CC991C1FE9EDCA00743ABE /* AIAlg */ = {
 			isa = PBXGroup;
 			children = (
+				0807287A1FEF297F0001136A /* Model */,
 				081B3AD41F6E2994008A7F36 /* AIStringAlgs.h */,
 				081B3AD51F6E2994008A7F36 /* AIStringAlgs.m */,
-				08CC991E1FE9F0B200743ABE /* AIStringAlgsModel.h */,
-				08CC991F1FE9F0B300743ABE /* AIStringAlgsModel.m */,
 				08D471DC1FEB3FFF00C61322 /* AIInputMindValueAlgs.h */,
 				08D471DD1FEB3FFF00C61322 /* AIInputMindValueAlgs.m */,
 			);
@@ -994,6 +1007,7 @@
 				082F9D601EB236E80009F6A9 /* SMGOutputDelegate.m in Sources */,
 				0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */,
 				086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */,
+				0807287D1FEF29A20001136A /* AIInputMindValueAlgsModel.m in Sources */,
 				08E3CCCA1EE60F8D002990FD /* ThinkControl.m in Sources */,
 				08D471DE1FEB3FFF00C61322 /* AIInputMindValueAlgs.m in Sources */,
 				08A209721F1069040013ACC4 /* AIValueModel.m in Sources */,

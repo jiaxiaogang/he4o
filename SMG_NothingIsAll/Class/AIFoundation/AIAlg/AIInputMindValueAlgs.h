@@ -11,6 +11,6 @@
 @class AIInputMindValue;
 @interface AIInputMindValueAlgs : NSObject
 
-+(void) commitInput:(AIInputMindValue*)model;
++(void) commitInput:(AIInputMindValue*)input;
 
 @end

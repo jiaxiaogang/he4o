@@ -10,8 +10,9 @@
 #import "AINet.h"
 #import "AIHungerLevelChangedModel.h"
 #import "AIHungerStateChangedModel.h"
-#import "AIInputMindValue.h"
 #import "AIMindValue.h"
+#import "AIStringAlgsModel.h"
+#import "AIInputMindValueAlgsModel.h"
 
 @interface AIThinkingControl()
 
@@ -49,16 +50,16 @@ static AIThinkingControl *_instance;
 //MARK:                     < method >
 //MARK:===============================================================
 -(void) activityByShallow:(id)data{
-    if (ISOK(data, NSString.class)) {
+    if (ISOK(data, AIStringAlgsModel.class)) {
         NSLog(@"_________shadowForNoMV");//无mv
         //1. 尝试从caches取mv邻居;
         
         
         //2. 潜思维,识别;
-        [theNet commitString:data];
+        [self addObjectToCaches:data];
         
         
-    }else if(ISOK(data, AIInputMindValue.class)) {
+    }else if(ISOK(data, AIInputMindValueAlgsModel.class)) {
         NSLog(@"_________shadowForIMV");//有mv...
         //1. 思维对imv发生时,前后4个左右的思维缓存区作分析与关联操作;
         [self addObjectToCaches:data];
@@ -91,7 +92,7 @@ static AIThinkingControl *_instance;
 }
 
 -(BOOL) objectHavMV:(id)data{
-    return data && (ISOK(data, AIInputMindValue.class) || ISOK(data, AIMindValue.class));
+    return data && (ISOK(data, AIInputMindValueAlgsModel.class));//||MindValue.class
 }
 
 @end
