@@ -37,7 +37,7 @@ static AIActionControl *_instance;
     }
 }
 
--(void) searchModel:(id)model block:(void(^)(AINetModel *result))block {
+-(void) searchModel:(id)model type:(MultiNetType)type block:(void(^)(AINetModel *result))block {
     //1. 事务控制器负责协调action任务;
     
     //2. 将类比检索数据

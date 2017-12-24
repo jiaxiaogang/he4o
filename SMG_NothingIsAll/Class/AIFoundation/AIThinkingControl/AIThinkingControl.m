@@ -54,14 +54,25 @@ static AIThinkingControl *_instance;
 -(void) activityByShallow:(id)data{
     if (ISOK(data, AIStringAlgsModel.class)) {
         NSLog(@"_________shadowForNoMV");//无mv
-        //1. 尝试从caches取mv邻居;
         
+        
+        //1. 尝试从caches取mv邻居;
+        for (id cache in self.caches) {
+            if ([self objectHavMV:cache]) {
+                //发现最近有mv;
+                //1. 制定cmv目标;
+                //2. 查找其cmv经验;
+                [[AIActionControl shareInstance] searchModel:cache type:MultiNetType_Experience block:^(AINetModel *result) {
+                    
+                }];
+            }
+        }
         
         //2. 潜思维,识别;
         [self addObjectToCaches:data];
         
         //3. 到Net检索相关;
-        [[AIActionControl shareInstance] searchModel:data block:^(AINetModel *result) {
+        [[AIActionControl shareInstance] searchModel:data type:MultiNetType_String block:^(AINetModel *result) {
             [self actionControlBlockWithResult:result];
         }];
         

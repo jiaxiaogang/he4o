@@ -33,7 +33,7 @@
 /**
  *  MARK:--------------------thinking搜索--------------------
  */
--(void) searchModel:(id)model block:(void(^)(AINetModel *result))block;
+-(void) searchModel:(id)model type:(MultiNetType)type block:(void(^)(AINetModel *result))block;
 
 
 /**
