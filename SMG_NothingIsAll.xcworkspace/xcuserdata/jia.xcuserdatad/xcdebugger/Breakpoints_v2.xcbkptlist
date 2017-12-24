@@ -42,7 +42,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/Class/Think/ThinkControl.m"
-            timestampString = "534989763.166981"
+            timestampString = "535774701.708575"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "190"
@@ -170,11 +170,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/Class/AIFoundation/AIThinkingControl/AIThinkingControl.m"
-            timestampString = "535767861.411611"
+            timestampString = "535774701.708855"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "59"
-            endingLineNumber = "59"
+            startingLineNumber = "61"
+            endingLineNumber = "61"
             landmarkName = "-activityByShallow:"
             landmarkType = "7">
          </BreakpointContent>
@@ -185,13 +185,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/Class/AIFoundation/AIThinkingControl/AIThinkingControl.m"
-            timestampString = "535767861.412131"
+            filePath = "SMG_NothingIsAll/Class/AIFoundation/AIActionControl/AIActionControl.m"
+            timestampString = "535774701.709329"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "65"
-            endingLineNumber = "65"
-            landmarkName = "-activityByShallow:"
+            startingLineNumber = "54"
+            endingLineNumber = "54"
+            landmarkName = "-commitInput:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

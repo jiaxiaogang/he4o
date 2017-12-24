@@ -8,17 +8,27 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIModel;
+@class AIModel,AINetModel;
 @interface AINet : NSObject
 
 +(AINet*) sharedInstance;
 
 //MARK:===============================================================
-//MARK:                     < 事务对接区(AIObject内感) >
+//MARK:                     < insert >
 //MARK:===============================================================
--(void) commitString:(NSString*)str;
--(void) commitInput:(id)input;
--(void) commitProperty:(id)data rootPointer:(AIPointer*)rootPointer;
--(void) commitModel:(AIModel*)model;
+-(void) insertProperty:(id)data rootPointer:(AIPointer*)rootPointer;
+-(void) insertModel:(AIModel*)model;
+
+
+//MARK:===============================================================
+//MARK:                     < update >
+//MARK:===============================================================
+-(void) updateNetModel:(AINetModel*)model;
+
+
+//MARK:===============================================================
+//MARK:                     < search >
+//MARK:===============================================================
+-(AINetModel*) searchWithModel:(id)model;
 
 @end

@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIModel;
+@class AIModel,AINetModel;
 @interface AIActionControl : NSObject
 
 
@@ -20,10 +20,26 @@
  *  由`意识控制器`提交过来的任务只是:
  *  1. 任务源:(神经网络的数据)
  *  2. 任务目标:(一个mindValue方向 | 其它)
- *  3.
+ */
+
+
+
+/**
+ *  MARK:--------------------input输入--------------------
  */
 -(void) commitInput:(id)input;
--(void) commitModel:(AIModel*)model;
 
+
+/**
+ *  MARK:--------------------thinking搜索--------------------
+ */
+-(void) searchModel:(id)model block:(void(^)(AINetModel *result))block;
+
+
+/**
+ *  MARK:--------------------thinking存储--------------------
+ */
+-(void) updateNetModel:(AINetModel*)model;
+-(void) insertModel:(AIModel*)model;
 
 @end

@@ -8,6 +8,7 @@
 
 #import "AINet.h"
 #import "AINetStore.h"
+#import "AINetModel.h"
 
 @interface AINet ()
 
@@ -36,25 +37,34 @@ static AINet *_instance;
     
 }
 
-//MARK:===============================================================
-//MARK:                     < 事务对接区(AIObject内感) >
-//MARK:===============================================================
--(void) commitString:(NSString*)str{
-    if (STRISOK(str)) {
-        
-    }
-}
 
--(void) commitInput:(id)input{
+//MARK:===============================================================
+//MARK:                     < insert >
+//MARK:===============================================================
+-(void) insertProperty:(id)data rootPointer:(AIPointer*)rootPointer{
     
 }
 
--(void) commitProperty:(id)data rootPointer:(AIPointer*)rootPointer{
-    
+-(void) insertModel:(AIModel*)model {
+    NSLog(@"存储Model");
 }
 
--(void) commitModel:(AIModel*)model{
-    NSLog(@"");
+
+//MARK:===============================================================
+//MARK:                     < update >
+//MARK:===============================================================
+-(void) updateNetModel:(AINetModel*)model{
+    NSLog(@"更新存储AINetModel");
+}
+
+
+//MARK:===============================================================
+//MARK:                     < search >
+//MARK:===============================================================
+-(AINetModel*) searchWithModel:(id)model{
+    //[AINetStore searchWithWhere:nil];
+    return nil;
 }
 
 @end
+
