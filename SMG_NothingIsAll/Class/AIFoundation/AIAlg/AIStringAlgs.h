@@ -13,7 +13,6 @@
  */
 @interface AIStringAlgs : NSObject
 
-+(NSUInteger) length:(NSString*)str ;
 +(void) commitInput:(NSString*)input;
 
 @end

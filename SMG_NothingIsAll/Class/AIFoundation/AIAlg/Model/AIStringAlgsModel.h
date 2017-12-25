@@ -12,5 +12,6 @@
 
 @property (strong,nonatomic) NSString *str;
 @property (assign, nonatomic) NSUInteger length;
+@property (strong,nonatomic) NSArray *spell;
 
 @end
