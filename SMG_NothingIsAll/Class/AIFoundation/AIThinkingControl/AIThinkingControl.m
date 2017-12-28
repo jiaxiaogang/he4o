@@ -58,22 +58,23 @@ static AIThinkingControl *_instance;
     
     //2. check data hav mv;
     if ([self objectHavMV:data]) { //hav mv
-        [self activityByDeep:data];
+        [self activityByDeep:nil mvData:data];
         return;
     }
     
     //3. no mv,try find mindValue from caches;
     for (id cache in self.caches) {
         if ([self objectHavMV:cache]) {
-            [self activityByDeep:nil];
+            [self activityByDeep:nil mvData:cache];
             return;
         }
     }
     
     //4. if not find mv from caches,then try find actionControl;
     [[AIActionControl shareInstance] searchModel:data type:MultiNetType_Unknown block:^(AINetModel *result) {
-        if ([self objectForNetModelHavMV:result]) {
-            [self activityByDeep:result];
+        id mvResult = [self objectForNetModelConvertToMV:result];
+        if (mvResult) {
+            [self activityByDeep:result mvData:mvResult];
         }
     }];
 }
@@ -83,18 +84,16 @@ static AIThinkingControl *_instance;
  *  MARK:--------------------思维发现imv,制定cmv,分析实现cmv;--------------------
  *  参考:n9p20
  */
--(void) activityByDeep:(AINetModel*)netModel {
-    //1. 查找mv
-    if (netModel) {
-        
-    }else{
-        
+-(void) activityByDeep:(AINetModel*)netModel mvData:(id)mvData{
+    //1. check mvData;
+    if (mvData == nil) {
+        return;
     }
     
     //2. 制定cmv目标;
     
     //3. 查找其cmv经验;
-    [[AIActionControl shareInstance] searchModel:netModel type:MultiNetType_Experience block:^(AINetModel *result) {
+    [[AIActionControl shareInstance] searchModel:mvData type:MultiNetType_Experience block:^(AINetModel *result) {
         if (result) {
             
         }else{
@@ -128,11 +127,11 @@ static AIThinkingControl *_instance;
     return data && (ISOK(data, AIInputMindValueAlgsModel.class));//||MindValue.class
 }
 
--(BOOL) objectForNetModelHavMV:(AINetModel*)model{
+-(id) objectForNetModelConvertToMV:(AINetModel*)model{
     if (model) {
-        return true;
+        return model;
     }
-    return false;
+    return nil;
 }
 
 @end
