@@ -165,6 +165,7 @@ typedef NS_ENUM(NSInteger, IMVType) {
  *  MARK:--------------------MultiNetType--------------------
  */
 typedef NS_ENUM(NSInteger, MultiNetType) {
+    MultiNetType_Unknown        = 0,//UnKnown
     MultiNetType_Experience     = 1,//经验
     MultiNetType_String         = 2,//String
 };

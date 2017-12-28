@@ -15,7 +15,5 @@
 
 +(AIThinkingControl*) shareInstance;
 -(void) activityByShallow:(id)data;  //潜
--(void) activityByDeep:(id)data;     //主
-//-(void) activityByNone:(id)data;   //无(无在Thinking内即可创建,无需主观激活)
 
 @end
