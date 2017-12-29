@@ -52,21 +52,27 @@ static AINetStore *_instance;
 //MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
--(BOOL) setObjectWithNetNode:(AINode*)node{
+-(NSInteger) getPointerId{
+    return [self getPointerId:true];
+}
+
+-(NSInteger) getPointerId:(BOOL)updateLastId{
     NSInteger lastId = [SMGUtils getLastNetNodePointerId];
-    BOOL success = [self setObject:node folderName:NET_NODE pointerId:lastId + 1];
-    if (success) {
+    if (updateLastId) {
         [SMGUtils setNetNodePointerId:lastId + 1];
     }
+    return lastId + 1;
+}
+
+-(BOOL) setObjectWithNetNode:(AINode*)node{
+    NSInteger pointerId = [self getPointerId];
+    BOOL success = [self setObject:node folderName:NET_NODE pointerId:pointerId];
     return success;
 }
 
 -(BOOL) setObjectWithNetData:(AIObject*)data{
-    NSInteger lastId = [SMGUtils getLastNetDataPointerId];
-    BOOL success = [self setObject:data folderName:NET_DATA pointerId:lastId + 1];
-    if (success) {
-        [SMGUtils setNetDataPointerId:lastId + 1];
-    }
+    NSInteger pointerId = [self getPointerId];
+    BOOL success = [self setObject:data folderName:NET_DATA pointerId:pointerId];
     return success;
 }
 
@@ -98,6 +104,11 @@ static AINetStore *_instance;
     return nil;
 }
 
+-(BOOL) objectFor:(id)obj folderName:(NSString*)folderName {
+    //1. 根据"int"抽象节点找子节点;
+    //2. 判断子节点的值与obj相等;
+    return false;
+}
 
 /**
  *  MARK:--------------------PINCache缓存--------------------

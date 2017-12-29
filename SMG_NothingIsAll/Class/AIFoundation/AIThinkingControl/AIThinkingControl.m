@@ -92,6 +92,10 @@ static AIThinkingControl *_instance;
     
     //2. 制定cmv目标;
     
+    
+    //3. updateModel
+    [[AIActionControl shareInstance] insertModel:mvData];
+    
     //3. 查找其cmv经验;
     [[AIActionControl shareInstance] searchModel:mvData type:MultiNetType_Experience block:^(AINetModel *result) {
         if (result) {

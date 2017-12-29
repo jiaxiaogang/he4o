@@ -12,6 +12,12 @@
 
 +(AINetStore*) sharedInstance;
 
+//MARK:===============================================================
+//MARK:                     < method >
+//MARK:===============================================================
+-(NSInteger) getPointerId;
+-(NSInteger) getPointerId:(BOOL)updateLastId;
+
 
 /**
  *  MARK:--------------------存obj到神经网络--------------------
@@ -25,12 +31,11 @@
  *  MARK:--------------------根据节点指针取节点--------------------
  */
 -(/*AIObject**/id) objectForKvPointer:(AIKVPointer*)kvPointer;
+-(BOOL) objectFor:(id)obj folderName:(NSString*)folderName;
 
 @end
 
 
 
-
 @interface AINetStore (Memory)
-
 @end

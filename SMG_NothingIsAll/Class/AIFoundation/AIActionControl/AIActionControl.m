@@ -60,6 +60,9 @@ static AIActionControl *_instance;
 
 -(void) insertModel:(AIModel*)model{
     [theNet insertModel:model];
+    
+    [theNet insertInt:0];
+    NSLog(@"");
 }
 
 @end

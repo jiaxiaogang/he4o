@@ -16,6 +16,14 @@
 //MARK:===============================================================
 //MARK:                     < insert >
 //MARK:===============================================================
+-(AIModel*) insertInt:(int)data;
+-(AIModel*) insertFLoat:(float)data;
+-(AIModel*) insertString:(NSString*)data;
+-(AIModel*) insertChar:(char)data;
+-(AIModel*) insertObj:(id)data;
+-(AIModel*) insertArr:(NSArray*)data;
+-(AIModel*) insertLogic:(id)data;
+-(AIModel*) insertCan:(id)data;
 -(void) insertProperty:(id)data rootPointer:(AIPointer*)rootPointer;
 -(void) insertModel:(AIModel*)model;
 
@@ -29,6 +37,14 @@
 //MARK:===============================================================
 //MARK:                     < search >
 //MARK:===============================================================
+-(AIModel*) searchInt:(int)data;
+-(AIModel*) searchFLoat:(float)data;
+-(AIModel*) searchString:(NSString*)data;
+-(AIModel*) searchChar:(char)data;
+-(AIModel*) searchObj:(id)data;
+-(AIModel*) searchArr:(NSArray*)data;
+-(AIModel*) searchLogic:(id)data;
+-(AIModel*) searchCan:(id)data;
 -(AINetModel*) searchWithModel:(id)model;
 
 @end
