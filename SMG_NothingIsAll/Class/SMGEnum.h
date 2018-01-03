@@ -92,12 +92,13 @@ typedef NS_ENUM(NSInteger, Aw2DemandStatus) {
  *  //估计将要删掉AILineType;不灵活...AILineType本身应该也是一个抽象节点;
  */
 typedef NS_ENUM(NSInteger, AILineType) {
-    AILineType_IsA      = 0,//isa静态是
-    AILineType_Can      = 1,//can动态能
-    AILineType_Law      = 2,//law静态规律
-    AILineType_Logic    = 3,//logic动态逻辑
-    AILineType_Value    = 4,//属性(函数或算法的值)
-    AILineType_RName    = 5,//别名(苹果,apple)
+    AILineType_Property = 0,//属性
+    AILineType_ValueIs  = 1,//值
+    AILineType_IsA      = 2,//继承
+    AILineType_MLogic   = 3,//逻辑方法
+    AILineType_MCan     = 4,//接口方法
+    AILineType_Law      = 5,//规律
+    //AILineType_RName    = 5,//别名(苹果,apple)
 };
 
 /**
