@@ -15,8 +15,7 @@
  */
 @interface AINode : AIObject
 
-@property (strong,nonatomic) AIPointer *contentPointer;//明天删掉这个;废弃!
-
+@property (assign, nonatomic) AINodeDataType dataType;
 
 //MARK:===============================================================
 //MARK:                     < 内容传入传出 >

@@ -13,6 +13,6 @@
  */
 @interface AIPort : NSObject
 
-@property (strong,nonatomic) NSMutableArray *ports;
+@property (strong,nonatomic) NSMutableArray *pointers;
 
 @end

@@ -7,6 +7,7 @@
 //
 
 #import "AILineStore.h"
+#import "AIPort.h"
 
 @implementation AILineStore
 
@@ -51,7 +52,7 @@
     NSMutableArray *arr = [[NSMutableArray alloc] init];
     NSArray *lines = ARRTOOK([[self getModelClass] searchWithWhere:nil]);
     for (AILine *line in lines) {
-        for (AIPointer *lP in ARRTOOK(line.pointers)) {
+        for (AIPointer *lP in ARRTOOK(line.port.pointers)) {
             if ([lP isEqual:pointer]) {
                 [arr addObject:line];
                 if (arr.count >= count) {
@@ -70,7 +71,7 @@
     
     NSArray *lines = ARRTOOK([[self getModelClass] searchWithWhere:nil]);
     for (AILine *line in lines) {
-        for (AIPointer *lP in ARRTOOK(line.pointers)) {
+        for (AIPointer *lP in ARRTOOK(line.port.pointers)) {
             if ([lP isEqual:pointer]) {
                 [havArr addObject:line];
             }
@@ -160,7 +161,7 @@
             //对比指针数组
             BOOL isEqual_Pointers = true;
             if(complare){
-                isEqual_Pointers = complare(pointers,line.pointers);
+                isEqual_Pointers = complare(pointers,line.port.pointers);
             }
             //对比类型
             BOOL isEqual_Type = true;

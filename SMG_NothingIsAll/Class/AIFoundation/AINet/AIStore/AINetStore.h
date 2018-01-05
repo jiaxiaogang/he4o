@@ -8,16 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ *  MARK:--------------------AINetStore存储器--------------------
+ *  1. 自动进行AIPointer,AILine,AIPort,存储等操作;
+ */
 @interface AINetStore : NSObject
 
 +(AINetStore*) sharedInstance;
-
-//MARK:===============================================================
-//MARK:                     < method >
-//MARK:===============================================================
--(NSInteger) getPointerId;
--(NSInteger) getPointerId:(BOOL)updateLastId;
-
 
 /**
  *  MARK:--------------------存obj到神经网络--------------------

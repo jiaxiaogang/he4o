@@ -52,11 +52,11 @@ static AINetStore *_instance;
 //MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
--(NSInteger) getPointerId{
-    return [self getPointerId:true];
+-(NSInteger) createPointerId{
+    return [self createPointerId:true];
 }
 
--(NSInteger) getPointerId:(BOOL)updateLastId{
+-(NSInteger) createPointerId:(BOOL)updateLastId{
     NSInteger lastId = [SMGUtils getLastNetNodePointerId];
     if (updateLastId) {
         [SMGUtils setNetNodePointerId:lastId + 1];
@@ -65,13 +65,13 @@ static AINetStore *_instance;
 }
 
 -(BOOL) setObjectWithNetNode:(AINode*)node{
-    NSInteger pointerId = [self getPointerId];
+    NSInteger pointerId = [self createPointerId];
     BOOL success = [self setObject:node folderName:NET_NODE pointerId:pointerId];
     return success;
 }
 
 -(BOOL) setObjectWithNetData:(AIObject*)data{
-    NSInteger pointerId = [self getPointerId];
+    NSInteger pointerId = [self createPointerId];
     BOOL success = [self setObject:data folderName:NET_DATA pointerId:pointerId];
     return success;
 }
@@ -123,6 +123,30 @@ static AINetStore *_instance;
     [self.pinCaches setObject:cache forKey:STRTOOK(filePath)];
     return cache;
 }
+
+
+//MARK:===============================================================
+//MARK:                     < AILine >
+//MARK:===============================================================
+//+(AILine*) ailine_CreateLine:(NSArray*)aiObjs type:(AILineType)type{
+//    if (ARRISOK(aiObjs)) {
+//        //1. 创建网线并存
+//        AILine *line = AIMakeLine(type, aiObjs);
+//        [AILineStore insert:line];
+//        //2. 插网线
+//        if (ARRISOK(aiObjs)) {
+//            for (AIObject *obj in aiObjs) {
+//                if (ISOK(obj, AIObject.class)) {
+//                    [obj connectLine:line save:true];
+//                }
+//            }
+//        }
+//        return line;
+//    }else{
+//        NSLog(@"_______SMGUtils.CreateLine.ERROR (pointersIsNil!)");
+//        return nil;
+//    }
+//}
 
 @end
 

@@ -93,51 +93,6 @@
         NSArray *LawArr = [SMGUtils lightArea_AILineTypeIsLawWithLightModels:models];
        
         if (ARRISOK(LawArr)) {
-            for (AILine *line in LawArr) {
-                for (AIPointer *pointer in line.pointers) {
-                    AIObject *obj = pointer.content;
-                    [obj print];
-                }
-                NSLog(@"________________________\n\n\n\n\n\n\n");
-            }
-            NSLog(@"");
-            
-            
-            //2. count>1时有规律产生;//参考N5P3问题1>>执行步骤
-            if (LawArr.count > 1) {
-                //2.1. 归纳(依次生成.pointers下元素的归纳base;//参考N5P3问题1>>执行步骤
-                NSMutableArray *isAPointers = [[NSMutableArray alloc] init];
-                AILine *firstLine = LawArr[0];
-                if (ARRISOK(firstLine.pointers)) {
-                    for (AIPointer *pointer in firstLine.pointers) {
-                        NSArray *isALines = [AILineStore searchPointersByClass:@[pointer] type:AILineType_IsA count:1];//搜索pointer"isA";
-                        //2.1.1. 如果找不到则创建一个//参考N5P3问题1>>执行步骤
-                        if (ARRISOK(isALines)) {
-                            [isAPointers addObject:isALines[0]];
-                        }else{
-                            AIObjModel *isAObj = [[AIObjModel alloc] init];
-                            [SMGUtils store:^{
-                                [AIObjStore insert:isAObj awareness:false];
-                            } aiLine:^{
-                                AILine *line = [SMGUtils ailine_CreateLine:@[pointer] type:AILineType_IsA];//此处考虑加入isAObj.pointer;//xxx
-                                [isAPointers addObject:line];
-                            } postNotice:false postObj:nil];
-                        }
-                        
-                    }
-                    
-                }
-                //4. 对isAPointers进行Law关联;//参考N5P3问题1>>执行步骤
-                [SMGUtils store:^{
-                } aiLine:^{
-                    [SMGUtils ailine_CreateLine:@[isAPointers] type:AILineType_Law];
-                } postNotice:false postObj:nil];
-                
-                NSLog(@"");
-                //5,将剩下的9个也加入指向;
-                //5.1,将9个AIMindValue和LevelModel指向其IsA;
-                //5.2,无需将9个分支的strong累加到ABLaw常识.strong
-            }
         }
         
         
@@ -187,7 +142,7 @@
         
         
         
-        [theNet insertModel:data];//1, 交给神经网络,并反射找到处理算法;//错误!应改为,在神经网络作数据类比思考;
+        //[theNet insertModel:data];//1, 交给神经网络,并反射找到处理算法;//错误!应改为,在神经网络作数据类比思考;
         
         //3, 神经网络构建成功;
         

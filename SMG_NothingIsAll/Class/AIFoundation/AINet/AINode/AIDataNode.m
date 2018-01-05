@@ -11,14 +11,6 @@
 
 @implementation AIDataNode
 
-
--(id) content{
-    if (POINTERISOK(self.contentPointer)) {
-        return self.contentPointer.content;
-    }
-    return nil;
-}
-
 -(NSMutableArray *)ports{
     if (_ports == nil) {
         _ports = [[NSMutableArray alloc] init];

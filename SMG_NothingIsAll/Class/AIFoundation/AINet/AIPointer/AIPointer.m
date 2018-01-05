@@ -30,13 +30,6 @@
     return nil;
 }
 
-//-(NSInteger)pointerId{
-//    if (_pointerId == 0) {
-//        _pointerId = [SMGUtils aiPointer_CreatePointerId];
-//    }
-//    return _pointerId;
-//}
-
 /**
  *  MARK:--------------------NSCoding--------------------
  */
