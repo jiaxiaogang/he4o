@@ -21,7 +21,8 @@
  *  MARK:--------------------存obj到神经网络--------------------
  */
 -(BOOL) setObjectWithNetNode:(AINode*)node;                         //存神经网络_节点
--(BOOL) setObjectWithNetData:(AIObject*)data;                       //存神经网络_数据
+-(BOOL) setObject:(AIObject*)data;                       //存神经网络_数据
+-(BOOL) setObject:(AIObject*)obj folderName:(NSString*)folderName;
 -(BOOL) setObject:(AIObject*)obj folderName:(NSString*)folderName pointerId:(NSInteger)pointerId;
 
 

@@ -8,10 +8,7 @@
 
 #import "AppDelegate.h"
 #import "StudyViewController.h"
-
-@interface AppDelegate ()
-
-@end
+#import "AINet.h"
 
 @implementation AppDelegate
 
@@ -19,7 +16,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
     NSArray * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSLog(@"_______DBPath:\n______________________________________\n\n%@\n\n______________________________________\n",paths[0]);
+    NSLog(@"_______Path:\n______________________________________\n\n%@\n\n______________________________________\n",paths[0]);
     
     //初始化UI
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
@@ -28,6 +25,9 @@
     UINavigationController *naviC = [[UINavigationController alloc] initWithRootViewController:page];
     [self.window setRootViewController:naviC];
     [self.window makeKeyAndVisible];
+    
+    //模拟actionControl构建最简单的节点...
+    [[AINet sharedInstance] insertString:@"1234"];
     
     return YES;
 }

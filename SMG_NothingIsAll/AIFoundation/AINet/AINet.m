@@ -55,6 +55,9 @@ static AINet *_instance;
 }
 
 -(AIModel*) insertString:(NSString*)data{
+    [[AINetStore sharedInstance] setObject:nil folderName:@""];
+    
+    
     return nil;
 }
 
@@ -86,7 +89,7 @@ static AINet *_instance;
 
 -(void) insertModel:(AIModel*)model {
     NSLog(@"存储Model");
-    [[AINetStore sharedInstance] setObjectWithNetData:model];
+    [[AINetStore sharedInstance] setObject:model];
 }
 
 

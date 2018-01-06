@@ -70,10 +70,17 @@ static AINetStore *_instance;
     return success;
 }
 
--(BOOL) setObjectWithNetData:(AIObject*)data{
+-(BOOL) setObject:(AIObject*)data{
     NSInteger pointerId = [self createPointerId];
     BOOL success = [self setObject:data folderName:NET_DATA pointerId:pointerId];
     return success;
+}
+
+-(BOOL) setObject:(AIObject*)obj folderName:(NSString*)folderName {
+    PINDiskCache *cache = [self getPinCache:STRTOOK(folderName)];
+    //搜索重复...
+    [self setObject:obj folderName:folderName pointerId:[self createPointerId]];
+    return true;
 }
 
 -(BOOL) setObject:(AIObject*)obj folderName:(NSString*)folderName pointerId:(NSInteger)pointerId{
