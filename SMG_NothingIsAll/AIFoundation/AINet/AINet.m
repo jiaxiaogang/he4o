@@ -43,6 +43,41 @@ static AINet *_instance;
 //MARK:===============================================================
 //MARK:                     < insert >
 //MARK:===============================================================
+//MARK:--------------------构建属性--------------------
+-(void) insertProperty:(NSString*)propertyName{
+    
+}
+
+//MARK:--------------------构建值--------------------
+-(void) insertValue:(id)value{
+    
+}
+
+//MARK:--------------------构建变化--------------------
+-(void) insertChange:(id)change{
+    
+}
+
+//MARK:--------------------构建父类--------------------
+-(void) insertParent:(NSString*)parentName{
+    
+}
+
+//MARK:--------------------构建子类--------------------
+-(void) insertSubX:(id)subX{
+    
+}
+
+//MARK:--------------------构建实例--------------------
+-(void) insertInstance:(id)instance{
+    
+}
+
+//MARK:--------------------构建接口--------------------
+-(void) insertMethod:(NSString*)method{
+    
+}
+
 -(AIModel*) insertInt:(int)data{
     NSInteger lastId = [SMGUtils getLastNetDataPointerId];
     [[AINetStore sharedInstance] setObject:nil folderName:@"Induction_Int" pointerId:lastId + 1];
@@ -54,14 +89,9 @@ static AINet *_instance;
     return nil;
 }
 
--(AIModel*) insertString:(NSString*)data{
+-(AIModel*) insertChar:(char)data{
     [[AINetStore sharedInstance] setObject:nil folderName:@""];
     
-    
-    return nil;
-}
-
--(AIModel*) insertChar:(char)data{
     return nil;
 }
 
@@ -113,10 +143,6 @@ static AINet *_instance;
 }
 
 -(AIModel*) searchFLoat:(float)data{
-    return nil;
-}
-
--(AIModel*) searchString:(NSString*)data{
     return nil;
 }
 

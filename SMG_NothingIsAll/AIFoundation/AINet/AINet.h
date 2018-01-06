@@ -16,9 +16,29 @@
 //MARK:===============================================================
 //MARK:                     < insert >
 //MARK:===============================================================
+//MARK:--------------------构建属性--------------------
+-(void) insertProperty:(NSString*)propertyName;
+
+//MARK:--------------------构建值--------------------
+-(void) insertValue:(id)value;
+
+//MARK:--------------------构建变化--------------------
+-(void) insertChange:(id)change;
+
+//MARK:--------------------构建父类--------------------
+-(void) insertParent:(NSString*)parentName;
+
+//MARK:--------------------构建子类--------------------
+-(void) insertSubX:(id)subX;
+
+//MARK:--------------------构建实例--------------------
+-(void) insertInstance:(id)instance;
+
+//MARK:--------------------构建接口--------------------
+-(void) insertMethod:(NSString*)method;
+
 -(AIModel*) insertInt:(int)data;
 -(AIModel*) insertFLoat:(float)data;
--(AIModel*) insertString:(NSString*)data;
 -(AIModel*) insertChar:(char)data;
 -(AIModel*) insertObj:(id)data;
 -(AIModel*) insertArr:(NSArray*)data;
@@ -39,7 +59,6 @@
 //MARK:===============================================================
 -(AIModel*) searchInt:(int)data;
 -(AIModel*) searchFLoat:(float)data;
--(AIModel*) searchString:(NSString*)data;
 -(AIModel*) searchChar:(char)data;
 -(AIModel*) searchObj:(id)data;
 -(AIModel*) searchArr:(NSArray*)data;
