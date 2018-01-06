@@ -14,5 +14,6 @@
 @interface AIIMVHunger : AIInputMindValue
 
 @property (assign, nonatomic) CGFloat level;
+@property (assign, nonatomic) HungerState state;
 
 @end

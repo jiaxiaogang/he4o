@@ -29,9 +29,6 @@
         
         //2,存意识流
         if (awareness) {
-            AIAwarenessModel *awareModel = [[AIAwarenessModel alloc] init];
-            awareModel.awarenessP = data.pointer;
-            [AIAwarenessStore insert:awareModel];
         }
     }
 }
@@ -43,9 +40,6 @@
         
         //2,存意识流
         if (awareness) {
-            AIAwarenessModel *awareModel = [[AIAwarenessModel alloc] init];
-            awareModel.awarenessP = data.pointer;
-            [AIAwarenessStore insert:awareModel];
         }
     }
 }

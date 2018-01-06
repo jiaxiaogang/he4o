@@ -8,8 +8,6 @@
 
 #import "AIThinkingControl.h"
 #import "AINet.h"
-#import "AIHungerLevelChangedModel.h"
-#import "AIHungerStateChangedModel.h"
 #import "AIMindValue.h"
 #import "AIStringAlgsModel.h"
 #import "AIInputMindValueAlgsModel.h"

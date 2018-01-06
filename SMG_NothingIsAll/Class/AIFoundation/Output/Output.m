@@ -29,9 +29,6 @@
 
 -(void) saveLogThink:(OutputType)type content:(NSObject*)content{
     //1,存输出
-    AIOutputModel *model = [[AIOutputModel alloc] init];
-    model.type = type;
-    model.content = content;
 }
 
 @end

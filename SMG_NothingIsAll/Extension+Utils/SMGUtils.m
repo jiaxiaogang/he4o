@@ -35,8 +35,6 @@
         //1,纵向取自己的抽象层
         if (layerCount >= 1) {
             //取是什么,能什么等常识知识;
-            [AICommonSenseStore searchSingleWhere:nil];
-            
         }
         
         //2,取抽象层的实例
@@ -55,21 +53,10 @@
     //参考:N4P18;通用的感觉算法
     if (lightModel) {
         //1,取10000个意识流数据
-        NSMutableArray *awareArr = [AIAwarenessStore searchWhere:nil count:10000];
         NSMutableArray *sameClassArr = [[NSMutableArray alloc] init];
         NSArray *lines = [AILineStore searchPointer:lightModel.pointer count:10];
         
         //2,找到当前类似的项
-        for (AIAwarenessModel *horModel in awareArr) {
-            AIObject *horiTarget = horModel.awarenessP.content;
-            if (horModel.rowid != lightModel.rowid) {
-                if (lightModel.class == horiTarget.class) {
-                    [sameClassArr addObject:horiTarget];//数据收集;
-                }else{
-                    NSLog(@"");
-                }
-            }
-        }
         
         //3,lightModel的AILine
         if (ARRISOK(lines)) {
@@ -80,9 +67,6 @@
             //3,规律Law
             for (AIObject *sameObj in sameClassArr) {
                 //AILineStore searchPointer:sameObj.pointer count:
-                
-                AIAwarenessModel *backModel = [AIAwarenessStore searchSingleRowId:lightModel.pointer.pointerId - 1];
-                AIAwarenessModel *frontModel = [AIAwarenessStore searchSingleRowId:lightModel.pointer.pointerId + 1];
             }
         }
     }
@@ -127,7 +111,6 @@
         //1,从CommonSence取包含的常识;
         
         //2,取10000个意识流数据
-        NSMutableArray *awareArr = [AIAwarenessStore searchWhere:nil count:10000];
         
         //3,......
     }
@@ -380,57 +363,5 @@
     //3,返回变换值
     return (targetRange.maximum - targetRange.minimum) * percent + targetRange.minimum;
 }
-
-@end
-
-
-
-@implementation FeelTextUtils
-
-+(NSInteger) getLength:(NSString*)text{
-    if (STRISOK(text)) {
-        return text.length;
-    }
-    return 0;
-}
-
-@end
-
-
-
-
-@implementation MindValueUtils
-
-+(AIMindValueModel*) getMindValue_HungerLevelChanged:(AIHungerLevelChangedModel*)model{
-    if (model == nil) return nil;
-    
-    CGFloat mVD = 0;
-    if (model.state == HungerState_Unplugged) {
-        mVD = [MathUtils getValueWithOriRange:UIFloatRangeMake(0, 100) targetRange:UIFloatRangeMake(-10, 0) oriValue:model.level * model.level];//(饿一滴血)
-    }else if (model.state == HungerState_Charging) {//充电中
-        mVD = [MathUtils getValueWithOriRange:UIFloatRangeMake(0, 100) targetRange:UIFloatRangeMake(10, 0) oriValue:model.level * model.level];//(饱一滴血)
-    }
-    
-    //2,分析决策 & 产生需求
-    AIMindValueModel *mindValue = [[AIMindValueModel alloc] init];
-    mindValue.type = MindType_Hunger;
-    mindValue.value = mVD;
-    return mindValue;
-}
-
-//+(AIMindValueModel*) getMindValue_HungerStateChanged:(AIHungerStateChangedModel*)model{
-//    CGFloat mVD = 0;
-//    if (model.state == HungerState_Unplugged) {
-//        mVD = [MathUtils getValueWithOriRange:UIFloatRangeMake(0, 100) targetRange:UIFloatRangeMake(-10, 0) oriValue:model.level * model.level];//(饿一滴血)
-//    }else if (model.state == HungerState_Charging) {//充电中
-//        mVD = [MathUtils getValueWithOriRange:UIFloatRangeMake(0, 100) targetRange:UIFloatRangeMake(10, 0) oriValue:model.level * model.level];//(饱一滴血)
-//    }
-//
-//    //2,分析决策 & 产生需求
-//    AIMindValueModel *mindValue = [[AIMindValueModel alloc] init];
-//    mindValue.type = MindType_Hunger;
-//    mindValue.value = mVD;
-//    return mindValue;
-//}
 
 @end

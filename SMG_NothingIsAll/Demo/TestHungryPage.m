@@ -59,11 +59,6 @@
 }
 
 -(void) initDisplay{
-    //1,Observer
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notificationThinkBusyChanged) name:ObsKey_ThinkBusy object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notificationMainThreadBusyChanged) name:ObsKey_MainThreadBusy object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notificationHungerLevelChanged) name:ObsKey_HungerLevelChanged object:nil];
-    
     //2,thinkStatusBtn
     [self.thinkStatusBtn setBackgroundColor:[UIColor greenColor]];
     
@@ -121,27 +116,7 @@
 }
 
 - (IBAction)awarenessLogBtnOnClick:(id)sender {
-    NSInteger count = [STRTOOK(self.logCountTF.text) integerValue];
-    NSMutableArray *arr = [AIAwarenessStore searchWhere:nil count:count];
-    for (AIAwarenessModel *aw in ARRTOOK(arr)) {
-        AIObject *content = [aw.awarenessP content];
-        [content print];
-    }
-}
-
-/**
- *  MARK:--------------------method--------------------
- */
--(void) notificationThinkBusyChanged {
-    [self.thinkStatusBtn setBackgroundColor:[UIColor greenColor]];
-}
-
--(void) notificationMainThreadBusyChanged {
-    [self.mainThreadStatusBtn setBackgroundColor:[UIColor greenColor]];
-}
-
--(void) notificationHungerLevelChanged {
-    [self refreshDisplay_HungerLevelLab];
+    
 }
 
 /**
@@ -152,8 +127,5 @@
     return true;
 }
 
--(void)dealloc{
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
 
 @end

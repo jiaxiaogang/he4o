@@ -12,38 +12,20 @@
 #import "AIArray.h"
 
 #import "AILogicModel.h"
-#import "AIValueModel.h"
-
-#import "AIDoModel.h"
 
 #import "AIPointer.h"
 #import "AILine.h"
 #import "AILineStrong.h"
 #import "AILineDampingStrategy.h"
 
-#import "AIMemoryModel.h"
 #import "AIMindValueModel.h"
 #import "AIExperienceModel.h"
-#import "AIAwarenessModel.h"
-#import "AICommonSenseModel.h"
-#import "AIMoodModel.h"
-#import "AIOutputModel.h"
-#import "AIHungerLevelChangedModel.h"
-#import "AIHungerStateChangedModel.h"
 #import "AIObjModel.h"
 
 //封装AIStore层;用于各种数据的不同取数据方法;
 #import "AIStoreBase.h"
-#import "AIMemoryStore.h"
-#import "AIAwarenessStore.h"
-#import "AICommonSenseStore.h"
 #import "AIExperienceStore.h"
 #import "AIMindValueStore.h"
-#import "AIMoodStore.h"
-#import "AIOutputStore.h"
-#import "AIHungerLevelChangedStore.h"
-#import "AIHungerStateChangedStore.h"
-#import "AIDemandStore.h"
 #import "AILineStore.h"
 #import "AIObjStore.h"
 

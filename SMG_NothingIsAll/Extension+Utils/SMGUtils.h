@@ -95,25 +95,3 @@
 
 
 @end
-
-
-
-/**
- *  MARK:--------------------属性算法-Text--------------------
- */
-@interface FeelTextUtils : NSObject
-
-+(NSInteger) getLength:(NSString*)text;
-
-@end
-
-/**
- *  MARK:--------------------MindValue算法集--------------------
- */
-@class AIHungerLevelChangedModel,AIMindValueModel,AIHungerStateChangedModel;
-@interface MindValueUtils : NSObject
-
-+(AIMindValueModel*) getMindValue_HungerLevelChanged:(AIHungerLevelChangedModel*)model;
-//+(AIMindValueModel*) getMindValue_HungerStateChanged:(AIHungerStateChangedModel*)model;
-
-@end
