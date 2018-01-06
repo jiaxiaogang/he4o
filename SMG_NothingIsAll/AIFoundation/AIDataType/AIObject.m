@@ -8,6 +8,7 @@
 
 #import "AIObject.h"
 #import "SMGUtils.h"
+#import "AIPointer.h"
 
 @interface AIObject ()
 

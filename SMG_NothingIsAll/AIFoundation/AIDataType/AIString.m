@@ -7,6 +7,7 @@
 //
 
 #import "AIString.h"
+#import "AIChar.h"
 
 @interface AIString ()
 
@@ -45,8 +46,7 @@
  */
 - (AIChar*)characterAtIndex:(NSUInteger)index{
     if (index < self.content.count) {
-        AISqlPointer *pointer = [self.content objectAtIndex:index];
-        return [NSClassFromString(pointer.pClass) searchSingleWithWhere:[DBUtils sqlWhere_RowId:pointer.pId] orderBy:nil];
+        
     }
     return nil;
 }

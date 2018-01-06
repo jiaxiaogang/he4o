@@ -8,6 +8,9 @@
 
 #import "AILine.h"
 #import "AIPort.h"
+#import "AIPointer.h"
+#import "AILineStrong.h"
+#import "AIArray.h"
 
 @implementation AILine
 

@@ -8,6 +8,9 @@
 
 #import "AILineStore.h"
 #import "AIPort.h"
+#import "AISqlPointer.h"
+#import "AILine.h"
+#import "AILineStrong.h"
 
 @implementation AILineStore
 

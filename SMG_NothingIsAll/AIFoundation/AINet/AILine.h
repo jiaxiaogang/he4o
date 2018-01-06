@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "AIObject.h"
 
 /**
  *  MARK:--------------------网线--------------------
@@ -16,7 +17,7 @@
  *  4,单独存表
  *  5,销毁时,通知GC;GC去回收已经没有指向的数据;
  */
-@class AILineStrong,AIPort;
+@class AILineStrong,AIPort,AIPointer;
 @interface AILine : AIObject
 
 /**

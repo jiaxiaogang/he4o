@@ -9,6 +9,8 @@
 #import "AINet.h"
 #import "AINetStore.h"
 #import "AINetModel.h"
+#import "AIPointer.h"
+#import "AILine.h"
 
 @interface AINet ()
 

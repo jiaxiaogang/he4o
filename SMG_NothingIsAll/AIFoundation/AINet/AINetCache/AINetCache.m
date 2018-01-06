@@ -7,6 +7,7 @@
 //
 
 #import "AINetCache.h"
+#import "AIPointer.h"
 
 @interface AINetCache()
 

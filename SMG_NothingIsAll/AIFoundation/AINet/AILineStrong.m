@@ -7,7 +7,7 @@
 //
 
 #import "AILineStrong.h"
-#import "AIHeader.h"
+#import "AILineDampingStrategy.h"
 
 @interface AILineStrong ()
 

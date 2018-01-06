@@ -7,6 +7,7 @@
 //
 
 #import "SMGUtils.h"
+#import "AILineStore.h"
 
 @implementation SMGUtils
 
@@ -40,9 +41,6 @@
         //2,取抽象层的实例
         if (layerCount >= 2) {
             //根据AILine.Strong来取靠前的实例;
-            if ([AILineStore searchWithSQL:nil]) {
-                
-            }
         }
     }
     return mArr;

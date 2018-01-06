@@ -6,41 +6,9 @@
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "AIObject.h"
-#import "AIString.h"
-#import "AIChar.h"
-#import "AIArray.h"
-
-#import "AILogicModel.h"
-
-#import "AIPointer.h"
-#import "AILine.h"
-#import "AILineStrong.h"
-#import "AILineDampingStrategy.h"
-
-#import "AIMindValueModel.h"
-#import "AIExperienceModel.h"
-#import "AIObjModel.h"
-
-//封装AIStore层;用于各种数据的不同取数据方法;
-#import "AIStoreBase.h"
-#import "AIExperienceStore.h"
-#import "AIMindValueStore.h"
-#import "AILineStore.h"
-#import "AIObjStore.h"
-
-#import "AIMainThread.h"
-#import "AINode.h"
-#import "AIPort.h"
-#import "AISqlPointer.h"
-#import "AIKVPointer.h"
-#import "NSObject+Extension.h"
-#import "AINode.h"
-
 /**
  *  MARK:--------------------数据检查--------------------
  */
-
 //String
 #define AISTRISOK(a) (a  && [a isKindOfClass:[AIString class]] && a.content && [a.content isKindOfClass:[NSArray class]] && a.content.count > 0)
 #define AISTRTOOK(a) (a  && [a isKindOfClass:[AIString class]] ? a : [AIString newWithContent:@""])

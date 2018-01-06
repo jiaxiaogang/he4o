@@ -23,6 +23,7 @@
 #import "SMGEnum.h"
 #import "AIHeader.h"
 #import "LKDBHelper.h"
+#import "AILine.h"
 #endif
 
 

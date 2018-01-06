@@ -12,6 +12,7 @@
  *  MARK:--------------------AINetStore存储器--------------------
  *  1. 自动进行AIPointer,AILine,AIPort,存储等操作;
  */
+@class AINode,AIKVPointer;
 @interface AINetStore : NSObject
 
 +(AINetStore*) sharedInstance;
