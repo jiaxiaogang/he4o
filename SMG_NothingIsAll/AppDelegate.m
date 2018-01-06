@@ -29,9 +29,6 @@
     [self.window setRootViewController:naviC];
     [self.window makeKeyAndVisible];
     
-    //初始化SMG
-    [SMG sharedInstance];
-    
     return YES;
 }
 

@@ -7,7 +7,6 @@
 //
 
 #import "DemoHunger.h"
-#import "MindHeader.h"
 #import "AIInput.h"
 
 @interface DemoHunger ()

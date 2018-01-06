@@ -66,3 +66,7 @@ static AIActionControl *_instance;
 }
 
 @end
+
+//1. 联想点亮区域
+//NSArray *lightAreaArr = [SMGUtils lightArea_LightModels:models];
+//[SMGUtils lightArea_AILineTypeIsLaw:thinkModel];

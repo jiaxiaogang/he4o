@@ -10,6 +10,8 @@
 
 /**
  *  MARK:--------------------mindValue--------------------
+ *  MindType_Hunger     =   0,//饥饿
+ *  MindType_Happy      =   4,//开心
  */
 @interface AIMindValue : NSObject
 
@@ -17,6 +19,19 @@
 -(id) initFromInput_RuleType:(MVRuleType)ruleType duration:(CGFloat)duration upType:(MVUpCurveType)upType inputValue:(CGFloat)inputValue downType:(MVDownCurveType)downType;
 
 -(void) requestRule:(void(^)(CGFloat value))success failure:(void(^)())failure;
+
+
+/**
+ *  MARK:--------------------持续性处理--------------------
+ */
+//-(void) asdfasdf;
+
+
+
+/**
+ *  MARK:--------------------Method_规则部分--------------------
+ */
+//-(void) asdfasdf;
 
 @end
 

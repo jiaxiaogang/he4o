@@ -7,11 +7,7 @@
 //
 
 #import "StudyViewController.h"
-#import "SMGHeader.h"
-#import "ThinkHeader.h"
-#import "FeelHeader.h"
 #import "AIInput.h"
-#import "DataViewController.h"
 #import "TestHungryPage.h"
 
 @interface StudyViewController ()<UITableViewDelegate,UITableViewDataSource>
@@ -151,8 +147,7 @@
 }
 
 - (IBAction)dataBtnOnClick:(id)sender {
-    DataViewController *page = [[DataViewController alloc] init];
-    [self.navigationController pushViewController:page animated:true];
+    
 }
 
 - (IBAction)testBtnOnClick:(id)sender {
@@ -177,16 +172,4 @@
     [self.errorTipsLab setText:STRTOOK(tips)];
 }
 
-
-
-
 @end
-
-
-
-
-
-
-
-
-

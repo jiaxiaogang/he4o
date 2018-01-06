@@ -8,21 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
-
-@protocol OutputDelegate <NSObject>
-
--(void) output_Text:(NSString*)text;
--(void) output_Face:(NSString*)faceText;
-
-@end
-
 /**
  *  MARK:--------------------输出--------------------
- *  1,把
+ *  1,把OUTPUT有时间的话;融入到神经网络中...(小脑机制)
  */
 @interface Output : NSObject
 
-@property (weak, nonatomic) id<OutputDelegate> delegate;
 -(void) output_Text:(NSString*)text;
 -(void) output_Face:(MoodType)type value:(int)value;
 

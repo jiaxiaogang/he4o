@@ -142,5 +142,38 @@ static AINet *_instance;
     return nil;
 }
 
+
+/**
+ *  MARK:--------------------插网线--------------------
+ *  每次产生神经网络的时候,要把网线插在网口上;
+ */
+-(void) connectLine:(AILine*)line{
+    [self connectLine:line save:false];
+}
+
+-(void) connectLine:(AILine*)line save:(BOOL)save{
+    if (LINEISOK(line) && POINTERISOK(line.pointer) && ![self containsLine:line]) {
+        //[self.linePointers addObject:line.pointer];
+    }
+}
+
+/**
+ *  MARK:--------------------判断是否插了某网线--------------------
+ */
+-(BOOL) containsLine:(AILine*)line{
+    if (LINEISOK(line)) {
+//        for (AIPointer *pointer in self.linePointers) {
+//            if (POINTERISOK(pointer)) {
+//                if ([pointer isEqual:line.pointer]) {
+//                    return true;
+//                }
+//            }
+//        }
+    }
+    return false;
+}
+
 @end
+
+
 

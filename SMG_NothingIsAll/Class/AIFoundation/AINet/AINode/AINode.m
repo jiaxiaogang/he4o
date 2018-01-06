@@ -15,11 +15,7 @@
 }
 
 -(void) setContent:(id)content{
+    
 }
-
--(void)run:(NSArray *)args{
-    NSLog(@"调用神经元");
-}
-
 
 @end

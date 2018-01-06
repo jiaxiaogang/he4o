@@ -7,29 +7,22 @@
 //
 
 #import "Output.h"
-#import "SMGHeader.h"
 
 @implementation Output
 
 -(void) output_Text:(NSString*)text{
     [self saveLogThink:OutputType_Text content:STRTOOK(text)];
-    if (self.delegate && [self.delegate respondsToSelector:@selector(output_Text:)]) {
-        [self.delegate output_Text:STRTOOK(text)];
-    }
+    NSLog(@"%@",text);
 }
 
 -(void) output_Face:(MoodType)type value:(int)value{
     if (type == MoodType_Irritably2Calm) {
         if (value < 0) {
             [self saveLogThink:OutputType_Face content:@(OutputFaceType_Cry)];//logThink
-            if (self.delegate && [self.delegate respondsToSelector:@selector(output_Face:)]) {
-                [self.delegate output_Face:@"😭"];
-            }
+            NSLog(@"😭");
         }else if(value > 1) {
             [self saveLogThink:OutputType_Face content:@(OutputFaceType_Smile)];//logThink
-            if (self.delegate && [self.delegate respondsToSelector:@selector(output_Face:)]) {
-                [self.delegate output_Face:@"😃"];
-            }
+            NSLog(@"😃");
         }
     }
 }
@@ -39,7 +32,6 @@
     AIOutputModel *model = [[AIOutputModel alloc] init];
     model.type = type;
     model.content = content;
-    [SMGUtils store_Insert:model];
 }
 
 @end

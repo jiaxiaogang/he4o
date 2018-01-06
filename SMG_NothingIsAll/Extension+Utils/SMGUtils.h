@@ -30,16 +30,6 @@
 +(void) lightArea_AILineTypeIsLaw:(ThinkModel*)thinkModel;//纵向点亮实例...
 +(NSMutableArray*) lightArea_LightModels:(NSArray*)lightModels; //区域点亮
 
-//MARK:===============================================================
-//MARK:                     < StoreGroup >
-//MARK:===============================================================
-+(void) store_Insert:(AIObject*)obj;//默认insert,并awareness,并postNotice;
-+(void) store_Insert:(AIObject*)obj awareness:(BOOL)awareness;
-+(void) store:(void(^)(void))storeBlock aiLine:(void(^)(void))lineBlock postNotice:(BOOL)postN postObj:(NSArray*)postObj;
-
-
-
-
 
 //MARK:===============================================================
 //MARK:                     < AILine >
@@ -116,27 +106,6 @@
 +(NSInteger) getLength:(NSString*)text;
 
 @end
-
-
-@interface TextStoreUtils : NSObject
-
-/**
- *  MARK:--------------------获取句子中未知词数--------------------
- *
- *  参数:
- *      1,knowRangeArr: 扫描到的所有词
- *      2,fromIndex:    从哪里开始扫描(正反双向都扫)
- *      3,sentence:     句子
- *
- *  返回值:NSNumber数组
- *  注:这种算法式的理解,应该费弃;(语言功能是后天自主学习而来;先天算法局限性太大)
- *
- */
-//+(NSArray*) getUnknownWordCount:(NSArray*)knowRangeArr fromIndex:(NSInteger)fromIndex withSentence:(NSString*)sentence;
-
-
-@end
-
 
 /**
  *  MARK:--------------------MindValue算法集--------------------

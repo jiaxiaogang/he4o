@@ -22,12 +22,6 @@
     
     if (self.type == MindType_Hunger) {
         type = @"饥饿";
-    }else if (self.type == MindType_Curiosity) {
-        type = @"好奇心";
-    }else if (self.type == MindType_Mood) {
-        type = @"心情";
-    }else if (self.type == MindType_Angry) {
-        type = @"生气";
     }else if (self.type == MindType_Happy) {
         type = @"开心";
     }else if (self.type == MindType_Algesia) {

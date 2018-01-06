@@ -7,7 +7,6 @@
 //
 
 #import "TestHungryPage.h"
-#import "ThinkHeader.h"
 #import "DemoHunger.h"
 #import "DemoCharge.h"
 #import "AIInput.h"
@@ -66,10 +65,10 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notificationHungerLevelChanged) name:ObsKey_HungerLevelChanged object:nil];
     
     //2,thinkStatusBtn
-    [self.thinkStatusBtn setBackgroundColor:(theThink.isBusy ? [UIColor redColor] : [UIColor greenColor])];
+    [self.thinkStatusBtn setBackgroundColor:[UIColor greenColor]];
     
     //3,mainThreadStatusBtn
-    [self.mainThreadStatusBtn setBackgroundColor:(theMainThread.isBusy ? [UIColor redColor] : [UIColor greenColor])];
+    [self.mainThreadStatusBtn setBackgroundColor:[UIColor greenColor]];
 }
 
 -(void) refreshDisplay_HungerLevelLab{
@@ -114,11 +113,11 @@
 }
 
 - (IBAction)thinkBtnOnClick:(id)sender {
-    [theThink setData:nil];
+    
 }
 
 - (IBAction)mainThreadStatusBtnOnClick:(id)sender {
-    [theMainThread setIsBusy:!theMainThread.isBusy];
+    
 }
 
 - (IBAction)awarenessLogBtnOnClick:(id)sender {
@@ -134,11 +133,11 @@
  *  MARK:--------------------method--------------------
  */
 -(void) notificationThinkBusyChanged {
-    [self.thinkStatusBtn setBackgroundColor:(theThink.isBusy ? [UIColor redColor] : [UIColor greenColor])];
+    [self.thinkStatusBtn setBackgroundColor:[UIColor greenColor]];
 }
 
 -(void) notificationMainThreadBusyChanged {
-    [self.mainThreadStatusBtn setBackgroundColor:(theMainThread.isBusy ? [UIColor redColor] : [UIColor greenColor])];
+    [self.mainThreadStatusBtn setBackgroundColor:[UIColor greenColor]];
 }
 
 -(void) notificationHungerLevelChanged {

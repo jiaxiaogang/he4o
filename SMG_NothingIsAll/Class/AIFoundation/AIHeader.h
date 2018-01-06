@@ -11,7 +11,6 @@
 #import "AIChar.h"
 #import "AIArray.h"
 
-#import "AILawModel.h"
 #import "AILogicModel.h"
 #import "AIValueModel.h"
 
@@ -31,7 +30,6 @@
 #import "AIOutputModel.h"
 #import "AIHungerLevelChangedModel.h"
 #import "AIHungerStateChangedModel.h"
-#import "AIDemandModel.h"
 #import "AIObjModel.h"
 
 //封装AIStore层;用于各种数据的不同取数据方法;
@@ -56,8 +54,6 @@
 #import "AIKVPointer.h"
 #import "NSObject+Extension.h"
 #import "AINode.h"
-#import "AIDataNode.h"
-#import "AIMultiNode.h"
 
 /**
  *  MARK:--------------------数据检查--------------------
@@ -71,7 +67,6 @@
 #define AIARRISOK(a) (a  && [a isKindOfClass:[AIArray class]] && a.content && [a.content isKindOfClass:[NSArray class]] && a.content.count > 0)
 #define AIARRTOOK(a) (a  && [a isKindOfClass:[AIArray class]]) ?  a : [AIArray initWithObjects:nil]
 #define AIARR_INDEX(a,i) (a && [a isKindOfClass:[AIArray class]]) ?  [a objectAtIndex:i] : nil//数组取子防闪
-
 
 
 /**
@@ -89,13 +84,6 @@
 #define AIMakeArr(a, ...) [AIArray initWithObjects:a, ##__VA_ARGS__,nil]
 //#define AIMakeArr_Pointer(a, ...) [AIArray initWithObjects:a, ##__VA_ARGS__,nil]
 
-//Law
-#define AIMakeLaw(a, ...) [AILawModel initWithObjects:a, ##__VA_ARGS__,nil]
-#define AIMakeLawByArr(arr) [AILawModel initWithArray:arr]
-#define AIMakeLawByAIArr(arr) [AILawModel initWithAIArray:arr]
-
 //AILine
 #define AIMakeLine(type,objs) [AILine newWithType:type aiObjs:objs]
-
-
 
