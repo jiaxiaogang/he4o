@@ -123,42 +123,12 @@ typedef NS_ENUM(NSInteger, MultiNetType) {
 };
 
 /**
- *  MARK:--------------------AILineType--------------------
- *  //估计将要删掉AILineType;不灵活...AILineType本身应该也是一个抽象节点;
- */
-typedef NS_ENUM(NSInteger, AILineType) {
-    AILineType_Property = 0,//属性
-    AILineType_ValueIs  = 1,//值
-    AILineType_IsA      = 2,//继承
-    AILineType_MLogic   = 3,//逻辑方法
-    AILineType_MCan     = 4,//接口方法
-    AILineType_Law      = 5,//规律
-    //AILineType_RName    = 5,//别名(苹果,apple)
-};
-
-/**
  *  MARK:--------------------神经元类型--------------------
  */
 typedef NS_ENUM(NSInteger, AINodeType) {
     AINodeType_Data         = 0,//单路神经元
     AINodeType_Func         = 1,//双路神经元
     AINodeType_MultiFunc    = 2,//多路神经元
-};
-
-/**
- *  MARK:--------------------数据网络,节点类型--------------------
- */
-typedef NS_ENUM(NSInteger, AINodeDataType) {
-    ANDT_Str        = 0,
-    ANDT_Int        = 1,
-    ANDT_Char       = 2,
-    ANDT_Obj        = 3,
-    ANDT_Float      = 4,
-    ANDT_Arr        = 5,
-    ANDT_SubX       = 6,
-    ANDT_MCanOut    = 7,
-    ANDT_MCanIn     = 8,
-    ANDT_MLogic     = 9,
 };
 
 /**
@@ -177,4 +147,30 @@ typedef NS_ENUM(NSInteger, MindType) {
     MindType_Hunger     =   0,//饥饿
     MindType_Happy      =   1,//开心
     MindType_Algesia    =   2,//痛觉
+};
+
+/**
+ *  MARK:--------------------数据网络,节点类型--------------------
+ */
+typedef NS_ENUM(NSInteger, AINodeDataType) {
+    ANDT_Int        = 1,
+    ANDT_Float      = 2,
+    ANDT_Char       = 3,
+    ANDT_Arr        = 4,
+    ANDT_Obj        = 5,//SubX
+    ANDT_Change     = 6,
+};
+
+/**
+ *  MARK:--------------------AILineType--------------------
+ */
+typedef NS_ENUM(NSInteger, AILineType) {
+    ALT_Property    = 0,//包含关系 (RName)
+    ALT_ValueIs     = 1,//值关系
+    ALT_IsA         = 2,//继承关系
+    ALT_MBy         = 3,//被调用关系
+    ALT_MCan        = 4,//实现关系
+    ALT_MTarget     = 5,//逻辑(指向)关系
+    ALT_MResult     = 6,//逻辑(触发)关系
+    ALT_Instance    = 7,//实例关系
 };

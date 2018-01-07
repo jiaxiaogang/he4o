@@ -82,15 +82,6 @@
         NSArray *lines = [AILineStore searchPointersByClass:pointers count:10];//避免这样的搜索;用感觉系统来作快速的全局搜索替代此处;//xxx
         
         //2,生成抽象AILaw数据
-        if (ARRISOK(lines)) {
-            NSMutableArray *lineType_LawArr = [[NSMutableArray alloc] init];
-            for (AILine *line in lines) {
-                if (line.type == AILineType_Law) {
-                    [lineType_LawArr addObject:line];
-                }
-            }
-            return lineType_LawArr;
-        }
     }
     return nil;
 }

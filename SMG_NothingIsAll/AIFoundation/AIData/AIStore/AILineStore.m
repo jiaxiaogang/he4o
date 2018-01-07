@@ -85,10 +85,10 @@
     NSArray *sortHavArr = [havArr sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
         AILine *aiLine1 = (AILine*)obj1;
         AILine *aiLine2 = (AILine*)obj2;
-        if(aiLine1.type == AILineType_IsA){
+        if(aiLine1.type == ALT_IsA){
             return true;
         }
-        if(aiLine2.type == AILineType_IsA){
+        if(aiLine2.type == ALT_IsA){
             return false;
         }
         
@@ -100,7 +100,7 @@
         
         //3,计算当前line需要能量值
         CGFloat curNeedEnergy = 0;
-        if (line.type != AILineType_IsA) {
+        if (line.type != ALT_IsA) {
             curNeedEnergy = [SMGUtils aiLine_GetLightEnergy:line.strong.value];
         }
         //4,点亮并消耗掉能量
