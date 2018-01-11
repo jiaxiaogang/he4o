@@ -8,22 +8,61 @@
 
 #import "AIObject.h"
 
-/**
- *  MARK:--------------------节点--------------------
- *  
- *  每个节点包括一个指针,指向数据本体,一个AIPort指向其连接的AILine;
- */
+//MARK:===============================================================
+//MARK:                     < AINode >
+//MARK:参考:n10p14等;
+//MARK:===============================================================
 @class AIKVPointer;
 @interface AINode : AIObject
 
-@property (assign, nonatomic) AINodeDataType dataType;
-@property (strong,nonatomic) NSMutableArray *ports;     //item为AILine.pointer
-@property (strong,nonatomic) AIKVPointer *dataPointer;  //数据指针
+//@property (assign, nonatomic) AINodeDataType dataType;
+@property (strong,nonatomic) NSMutableArray *isAPorts;      //父类(多继承）
+@property (strong,nonatomic) NSMutableArray *subPorts;      //子类
+@property (strong,nonatomic) NSMutableArray *propertyPorts; //属性
+@property (strong,nonatomic) NSMutableArray *methodPorts;   //方法
+
+@end
+
 
 //MARK:===============================================================
-//MARK:                     < 内容传入传出 >
+//MARK:                     < AIIntanceNode >
 //MARK:===============================================================
--(id) content;
--(void) setContent:(id)content;
+@interface AIIntanceNode : AINode
+
+@property (strong,nonatomic) AIKVPointer *instanceOf;
+
+@end
+
+
+//MARK:===============================================================
+//MARK:                     < AIPropertyNode >
+//MARK:===============================================================
+@interface AIPropertyNode : AINode
+
+@property (strong,nonatomic) AIKVPointer *isClass;
+@property (strong,nonatomic) AIKVPointer *valueIs;
+
+@end
+
+
+//MARK:===============================================================
+//MARK:                     < AIMethodNode >
+//MARK:===============================================================
+@interface AIMethodNode : AINode
+
+@property (strong,nonatomic) NSMutableArray *resultPorts;
+@property (strong,nonatomic) AIKVPointer *target;
+
+@end
+
+
+//MARK:===============================================================
+//MARK:                     < AIChangeNode >
+//MARK:===============================================================
+@interface AIChangeNode : AINode
+
+@property (assign,nonatomic) CGFloat *fromValue;
+@property (assign,nonatomic) CGFloat *toValue;
+@property (strong,nonatomic) AIKVPointer *target;
 
 @end

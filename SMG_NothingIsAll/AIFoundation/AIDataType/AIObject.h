@@ -13,7 +13,7 @@
 
 
 +(id) newWithContent:(id)content;
-@property (strong,nonatomic) AIPointer *pointer; //数据指针
+@property (strong,nonatomic) AIPointer *pointer; //数据指针(自身指针地址)
 
 
 /**
