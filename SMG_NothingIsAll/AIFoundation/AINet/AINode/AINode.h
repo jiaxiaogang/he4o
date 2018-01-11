@@ -61,8 +61,8 @@
 //MARK:===============================================================
 @interface AIChangeNode : AINode
 
-@property (assign,nonatomic) CGFloat *fromValue;
-@property (assign,nonatomic) CGFloat *toValue;
+@property (assign,nonatomic) CGFloat fromValue;
+@property (assign,nonatomic) CGFloat toValue;
 @property (strong,nonatomic) AIKVPointer *target;
 
 @end
