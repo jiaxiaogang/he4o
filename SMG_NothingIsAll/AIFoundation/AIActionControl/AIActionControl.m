@@ -7,7 +7,7 @@
 //
 
 #import "AIActionControl.h"
-#import "AINetModel.h"
+#import "AINode.h"
 #import "AIStringAlgs.h"
 #import "PINCache.h"
 #import "AIInputMindValue.h"
@@ -37,24 +37,24 @@ static AIActionControl *_instance;
     }
 }
 
--(void) searchModel:(id)model type:(MultiNetType)type block:(void(^)(AINetModel *result))block {
+-(void) searchModel:(id)model type:(MultiNetType)type block:(void(^)(AINode *result))block {
     //1. 事务控制器负责协调action任务;
     
     //2. 将类比检索数据
     if (ISOK(model, AIStringAlgsModel.class)) {
-        AINetModel *result =  [theNet searchWithModel:model];
+        AINode *result =  [theNet searchWithModel:model];
         if (block) {
             block(result);
         }
     }else if(ISOK(model, AIInputMindValueAlgsModel.class)) {
-        AINetModel *result =  [theNet searchWithModel:model];
+        AINode *result =  [theNet searchWithModel:model];
         if (block) {
             block(result);
         }
     }
 }
 
--(void) updateNetModel:(AINetModel*)model{
+-(void) updateNetModel:(AINode*)model{
     [theNet updateNetModel:model];
 }
 

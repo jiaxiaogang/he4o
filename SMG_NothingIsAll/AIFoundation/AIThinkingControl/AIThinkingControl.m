@@ -12,12 +12,13 @@
 #import "AIStringAlgsModel.h"
 #import "AIInputMindValueAlgsModel.h"
 #import "AIActionControl.h"
-#import "AINetModel.h"
+#import "AINode.h"
 #import "AIModel.h"
 
 @interface AIThinkingControl()
 
-@property (strong,nonatomic) NSMutableArray *caches;
+@property (strong,nonatomic) NSMutableArray *cacheShort;//存AIModel(从Algs传入,待Thinking取用分析)(容量8);
+@property (strong,nonatomic) NSMutableArray *cacheLong;//存AINode(相当于Net的缓存区)(容量10000);
 
 @end
 
@@ -41,7 +42,8 @@ static AIThinkingControl *_instance;
 }
 
 -(void) initData{
-    self.caches = [[NSMutableArray alloc] init];
+    self.cacheShort = [[NSMutableArray alloc] init];
+    self.cacheLong = [[NSMutableArray alloc] init];
 }
 
 -(void) initRun{
@@ -60,8 +62,8 @@ static AIThinkingControl *_instance;
         return;
     }
     
-    //3. no mv,try find mindValue from caches;
-    for (id cache in self.caches) {
+    //3. no mv,try find mindValue from caches;//应该会删掉
+    for (id cache in self.cacheShort) {
         if ([self objectHavMV:cache]) {
             [self activityByDeep:nil mvData:cache];
             return;
@@ -69,7 +71,7 @@ static AIThinkingControl *_instance;
     }
     
     //4. if not find mv from caches,then try find actionControl;
-    [[AIActionControl shareInstance] searchModel:data type:MultiNetType_Unknown block:^(AINetModel *result) {
+    [[AIActionControl shareInstance] searchModel:data type:MultiNetType_Unknown block:^(AINode *result) {
         id mvResult = [self objectForNetModelConvertToMV:result];
         if (mvResult) {
             [self activityByDeep:result mvData:mvResult];
@@ -82,7 +84,7 @@ static AIThinkingControl *_instance;
  *  MARK:--------------------思维发现imv,制定cmv,分析实现cmv;--------------------
  *  参考:n9p20
  */
--(void) activityByDeep:(AINetModel*)netModel mvData:(id)mvData{
+-(void) activityByDeep:(AINode*)netModel mvData:(AIInputMindValueAlgsModel*)mvData{
     //1. check mvData;
     if (mvData == nil) {
         return;
@@ -95,7 +97,7 @@ static AIThinkingControl *_instance;
     [[AIActionControl shareInstance] insertModel:mvData];
     
     //3. 查找其cmv经验;
-    [[AIActionControl shareInstance] searchModel:mvData type:MultiNetType_Experience block:^(AINetModel *result) {
+    [[AIActionControl shareInstance] searchModel:mvData type:MultiNetType_Experience block:^(AINode *result) {
         if (result) {
             
         }else{
@@ -117,10 +119,10 @@ static AIThinkingControl *_instance;
 //MARK:===============================================================
 -(void) addObjectToCaches:(id)data{
     if (data) {
-        [self.caches addObject:data];
+        [self.cacheShort addObject:data];
     }
-    if (self.caches.count > 4) {
-        [self.caches removeObjectAtIndex:0];
+    if (self.cacheShort.count > 8) {
+        [self.cacheShort removeObjectAtIndex:0];
     }
 }
 
@@ -129,7 +131,7 @@ static AIThinkingControl *_instance;
     return data && (ISOK(data, AIInputMindValueAlgsModel.class));//||MindValue.class
 }
 
--(id) objectForNetModelConvertToMV:(AINetModel*)model{
+-(id) objectForNetModelConvertToMV:(AINode*)model{
     if (model) {
         return model;
     }

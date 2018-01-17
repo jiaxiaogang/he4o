@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIModel,AINetModel;
+@class AIModel,AINode;
 @interface AINet : NSObject
 
 +(AINet*) sharedInstance;
@@ -37,13 +37,13 @@
 //MARK:--------------------构建接口--------------------
 -(void) insertMethod:(NSString*)method;
 
--(AIModel*) insertInt:(int)data;
--(AIModel*) insertFLoat:(float)data;
--(AIModel*) insertChar:(char)data;
--(AIModel*) insertObj:(id)data;
--(AIModel*) insertArr:(NSArray*)data;
--(AIModel*) insertLogic:(id)data;
--(AIModel*) insertCan:(id)data;
+-(AINode*) insertInt:(int)data;
+-(AINode*) insertFLoat:(float)data;
+-(AINode*) insertChar:(char)data;
+-(AINode*) insertObj:(id)data;
+-(AINode*) insertArr:(NSArray*)data;
+-(AINode*) insertLogic:(id)data;
+-(AINode*) insertCan:(id)data;
 -(void) insertProperty:(id)data rootPointer:(AIPointer*)rootPointer;
 -(void) insertModel:(AIModel*)model;
 
@@ -51,19 +51,19 @@
 //MARK:===============================================================
 //MARK:                     < update >
 //MARK:===============================================================
--(void) updateNetModel:(AINetModel*)model;
+-(void) updateNetModel:(AINode*)model;
 
 
 //MARK:===============================================================
 //MARK:                     < search >
 //MARK:===============================================================
--(AIModel*) searchInt:(int)data;
--(AIModel*) searchFLoat:(float)data;
--(AIModel*) searchChar:(char)data;
--(AIModel*) searchObj:(id)data;
--(AIModel*) searchArr:(NSArray*)data;
--(AIModel*) searchLogic:(id)data;
--(AIModel*) searchCan:(id)data;
--(AINetModel*) searchWithModel:(id)model;
+-(AINode*) searchInt:(int)data;
+-(AINode*) searchFLoat:(float)data;
+-(AINode*) searchChar:(char)data;
+-(AINode*) searchObj:(id)data;
+-(AINode*) searchArr:(NSArray*)data;
+-(AINode*) searchLogic:(id)data;
+-(AINode*) searchCan:(id)data;
+-(AINode*) searchWithModel:(id)model;
 
 @end

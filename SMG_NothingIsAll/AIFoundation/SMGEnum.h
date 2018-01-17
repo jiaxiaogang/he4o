@@ -174,3 +174,12 @@ typedef NS_ENUM(NSInteger, AILineType) {
     ALT_MResult     = 6,//逻辑(触发)关系
     ALT_Instance    = 7,//实例关系
 };
+
+/**
+ *  MARK:--------------------MV目标类型--------------------
+ */
+typedef NS_ENUM(NSInteger, AITargetType) {
+    AITargetType_None   = 0,//不变
+    AITargetType_Up     = 1,//增涨
+    AITargetType_Down   = 2,//下降
+};

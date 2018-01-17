@@ -10,7 +10,7 @@
 
 /**
  *  MARK:--------------------存AIDataNode的数据模型--------------------
- *  AIModel是AINetModel的元素
+ *  AIModel是Algs的算法结果集Model;
  *  参考:n9p9 AINet(数据模型)
  */
 @interface AIModel : AIObject

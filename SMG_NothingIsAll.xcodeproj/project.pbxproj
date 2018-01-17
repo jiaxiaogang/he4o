@@ -10,7 +10,6 @@
 		0802713E1FE0B13700A6F8E4 /* AIInputMindValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 0802713D1FE0B13700A6F8E4 /* AIInputMindValue.m */; };
 		080271411FE0BB1A00A6F8E4 /* AIChangeMindValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 080271401FE0BB1A00A6F8E4 /* AIChangeMindValue.m */; };
 		0807287D1FEF29A20001136A /* AIInputMindValueAlgsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0807287C1FEF29A20001136A /* AIInputMindValueAlgsModel.m */; };
-		080728811FEF42710001136A /* AINetModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 080728801FEF42710001136A /* AINetModel.m */; };
 		0808DB4D1F10A29A0082F4AD /* AIExperienceStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 0808DB4C1F10A29A0082F4AD /* AIExperienceStore.m */; };
 		080A74321F60C6490025DBA3 /* AIPort.m in Sources */ = {isa = PBXBuildFile; fileRef = 080A74311F60C6490025DBA3 /* AIPort.m */; };
 		0818162C1F22BDF8007DDB4D /* AIMainThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 0818162B1F22BDF8007DDB4D /* AIMainThread.m */; };
@@ -79,8 +78,6 @@
 		08042E7D1F43CE9400A1FFCB /* SMGEnum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMGEnum.h; sourceTree = "<group>"; };
 		0807287B1FEF29A20001136A /* AIInputMindValueAlgsModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIInputMindValueAlgsModel.h; sourceTree = "<group>"; };
 		0807287C1FEF29A20001136A /* AIInputMindValueAlgsModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIInputMindValueAlgsModel.m; sourceTree = "<group>"; };
-		0807287F1FEF42710001136A /* AINetModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetModel.h; sourceTree = "<group>"; };
-		080728801FEF42710001136A /* AINetModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetModel.m; sourceTree = "<group>"; };
 		0808DB4B1F10A29A0082F4AD /* AIExperienceStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIExperienceStore.h; sourceTree = "<group>"; };
 		0808DB4C1F10A29A0082F4AD /* AIExperienceStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIExperienceStore.m; sourceTree = "<group>"; };
 		080A74301F60C6490025DBA3 /* AIPort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIPort.h; sourceTree = "<group>"; };
@@ -227,8 +224,6 @@
 			children = (
 				08BB27181FD624CC006E03DE /* AIModel.h */,
 				08BB27191FD624CC006E03DE /* AIModel.m */,
-				0807287F1FEF42710001136A /* AINetModel.h */,
-				080728801FEF42710001136A /* AINetModel.m */,
 				081F5A171FFF0EE700BD74F9 /* OOPModel.h */,
 				081F5A181FFF0EE700BD74F9 /* OOPModel.m */,
 			);
@@ -731,7 +726,6 @@
 				0807287D1FEF29A20001136A /* AIInputMindValueAlgsModel.m in Sources */,
 				08D471DE1FEB3FFF00C61322 /* AIInputMindValueAlgs.m in Sources */,
 				081B3ADB1F6E2CCD008A7F36 /* AINet.m in Sources */,
-				080728811FEF42710001136A /* AINetModel.m in Sources */,
 				08C84A8E1E9A866200897D8B /* AIInput.m in Sources */,
 				082F9D561EB234750009F6A9 /* Output.m in Sources */,
 				083F61341F04830F000330E1 /* AILineDampingStrategy.m in Sources */,

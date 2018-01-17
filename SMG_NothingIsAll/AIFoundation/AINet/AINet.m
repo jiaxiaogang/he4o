@@ -8,7 +8,7 @@
 
 #import "AINet.h"
 #import "AINetStore.h"
-#import "AINetModel.h"
+#import "AINode.h"
 #import "AIPointer.h"
 #import "AILine.h"
 
@@ -78,37 +78,37 @@ static AINet *_instance;
     
 }
 
--(AIModel*) insertInt:(int)data{
+-(AINode*) insertInt:(int)data{
     NSInteger lastId = [SMGUtils getLastNetDataPointerId];
     [[AINetStore sharedInstance] setObject:nil folderName:@"Induction_Int" pointerId:lastId + 1];
     [SMGUtils setNetDataPointerId:lastId + 1];
     return nil;
 }
 
--(AIModel*) insertFLoat:(float)data{
+-(AINode*) insertFLoat:(float)data{
     return nil;
 }
 
--(AIModel*) insertChar:(char)data{
+-(AINode*) insertChar:(char)data{
     [[AINetStore sharedInstance] setObject:nil folderName:@""];
     
     return nil;
 }
 
--(AIModel*) insertObj:(id)data{
+-(AINode*) insertObj:(id)data{
     return nil;
 }
 
--(AIModel*) insertArr:(NSArray*)data{
+-(AINode*) insertArr:(NSArray*)data{
     return nil;
 }
 
--(AIModel*) insertLogic:(id)data{
+-(AINode*) insertLogic:(id)data{
     //smg对logic的理解取决于:logic什么时候被触发,触发后,其实例执行了什么变化;
     return nil;
 }
 
--(AIModel*) insertCan:(id)data{
+-(AINode*) insertCan:(id)data{
     //smg对can的理解取决于:can什么时候被触发,及触发的目标是;
     return nil;
 }
@@ -126,15 +126,15 @@ static AINet *_instance;
 //MARK:===============================================================
 //MARK:                     < update >
 //MARK:===============================================================
--(void) updateNetModel:(AINetModel*)model{
-    NSLog(@"更新存储AINetModel");
+-(void) updateNetModel:(AINode*)model{
+    NSLog(@"更新存储AINode");
 }
 
 
 //MARK:===============================================================
 //MARK:                     < search >
 //MARK:===============================================================
--(AIModel*) searchInt:(int)data{
+-(AINode*) searchInt:(int)data{
     
     NSInteger lastId = [SMGUtils getLastNetDataPointerId];
     [[AINetStore sharedInstance] setObject:nil folderName:@"Induction_Int" pointerId:lastId + 1];
@@ -142,33 +142,33 @@ static AINet *_instance;
     return nil;
 }
 
--(AIModel*) searchFLoat:(float)data{
+-(AINode*) searchFLoat:(float)data{
     return nil;
 }
 
--(AIModel*) searchChar:(char)data{
+-(AINode*) searchChar:(char)data{
     return nil;
 }
 
--(AIModel*) searchObj:(id)data{
+-(AINode*) searchObj:(id)data{
     return nil;
 }
 
--(AIModel*) searchArr:(NSArray*)data{
+-(AINode*) searchArr:(NSArray*)data{
     return nil;
 }
 
--(AIModel*) searchLogic:(id)data{
+-(AINode*) searchLogic:(id)data{
     //smg对logic的理解取决于:logic什么时候被触发,触发后,其实例执行了什么变化;
     return nil;
 }
 
--(AIModel*) searchCan:(id)data{
+-(AINode*) searchCan:(id)data{
     //smg对can的理解取决于:can什么时候被触发,及触发的目标是;
     return nil;
 }
 
--(AINetModel*) searchWithModel:(id)model{
+-(AINode*) searchWithModel:(id)model{
     //[[AINetStore sharedInstance] objectForKvPointer:nil];
     return nil;
 }

@@ -10,6 +10,7 @@
 
 @interface AIInputMindValueAlgsModel : AIModel
 
-@property (assign, nonatomic)  NSInteger value; //经algs转化后的值;例如(饥饿状态向急切度的变化)
+@property (assign, nonatomic)  NSInteger urgentValue; //经algs转化后的值;例如(饥饿状态向急切度的变化)
+@property (assign, nonatomic) AITargetType targetType;
 
 @end
