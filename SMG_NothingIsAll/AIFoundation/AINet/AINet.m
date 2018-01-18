@@ -78,24 +78,11 @@ static AINet *_instance;
     
 }
 
--(AINode*) insertInt:(int)data{
+//insertInt Float Char都由obj表示;
+-(AINode*) insertObj:(id)data{
     NSInteger lastId = [SMGUtils getLastNetDataPointerId];
     [[AINetStore sharedInstance] setObject:nil folderName:@"Induction_Int" pointerId:lastId + 1];
     [SMGUtils setNetDataPointerId:lastId + 1];
-    return nil;
-}
-
--(AINode*) insertFLoat:(float)data{
-    return nil;
-}
-
--(AINode*) insertChar:(char)data{
-    [[AINetStore sharedInstance] setObject:nil folderName:@""];
-    
-    return nil;
-}
-
--(AINode*) insertObj:(id)data{
     return nil;
 }
 
@@ -117,9 +104,8 @@ static AINet *_instance;
     
 }
 
--(void) insertModel:(AIModel*)model {
-    NSLog(@"存储Model");
-    [[AINetStore sharedInstance] setObject:model];
+-(AINode*) insertModel:(AIModel*)model energy:(NSInteger)energy{
+    return [[AINetStore sharedInstance] setObject:model];
 }
 
 
@@ -134,22 +120,6 @@ static AINet *_instance;
 //MARK:===============================================================
 //MARK:                     < search >
 //MARK:===============================================================
--(AINode*) searchInt:(int)data{
-    
-    NSInteger lastId = [SMGUtils getLastNetDataPointerId];
-    [[AINetStore sharedInstance] setObject:nil folderName:@"Induction_Int" pointerId:lastId + 1];
-    [SMGUtils setNetDataPointerId:lastId + 1];
-    return nil;
-}
-
--(AINode*) searchFLoat:(float)data{
-    return nil;
-}
-
--(AINode*) searchChar:(char)data{
-    return nil;
-}
-
 -(AINode*) searchObj:(id)data{
     return nil;
 }

@@ -36,16 +36,12 @@
 
 //MARK:--------------------构建接口--------------------
 -(void) insertMethod:(NSString*)method;
-
--(AINode*) insertInt:(int)data;
--(AINode*) insertFLoat:(float)data;
--(AINode*) insertChar:(char)data;
 -(AINode*) insertObj:(id)data;
 -(AINode*) insertArr:(NSArray*)data;
 -(AINode*) insertLogic:(id)data;
 -(AINode*) insertCan:(id)data;
 -(void) insertProperty:(id)data rootPointer:(AIPointer*)rootPointer;
--(void) insertModel:(AIModel*)model;
+-(AINode*) insertModel:(AIModel*)model energy:(NSInteger)energy;
 
 
 //MARK:===============================================================
@@ -57,9 +53,6 @@
 //MARK:===============================================================
 //MARK:                     < search >
 //MARK:===============================================================
--(AINode*) searchInt:(int)data;
--(AINode*) searchFLoat:(float)data;
--(AINode*) searchChar:(char)data;
 -(AINode*) searchObj:(id)data;
 -(AINode*) searchArr:(NSArray*)data;
 -(AINode*) searchLogic:(id)data;

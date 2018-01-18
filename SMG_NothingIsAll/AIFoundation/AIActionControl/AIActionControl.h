@@ -40,6 +40,6 @@
  *  MARK:--------------------thinking存储--------------------
  */
 -(void) updateNetModel:(AINode*)model;
--(void) insertModel:(AIModel*)model;
+-(AINode*) insertModel:(AIModel*)model;
 
 @end

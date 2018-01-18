@@ -58,11 +58,9 @@ static AIActionControl *_instance;
     [theNet updateNetModel:model];
 }
 
--(void) insertModel:(AIModel*)model{
-    [theNet insertModel:model];
-    
-    [theNet insertInt:0];
-    NSLog(@"");
+-(AINode*) insertModel:(AIModel*)model{
+    //[theNet insertObj:@(0)];//测试插入obj;
+    return [theNet insertModel:model energy:10];
 }
 
 @end

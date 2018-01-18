@@ -9,12 +9,8 @@
 #import "AINetStore.h"
 #import "AIKVPointer.h"
 #import "PINCache.h"
-
-#define kNET_FUNCMODEL @"kNET_FUNCMODEL"
-#define kMAP_FUNCMODELPOINTER_ELEMENTID @"kMAP_FUNCMODELPOINTER_ELEMENTID"  //存FuncModel.Pointer和elementId的映射
-
-#define NET_NODE @"NET_NODE"  //网络;元素为AINode;
-#define MAP_NODEPOINTER_ELEMENTID @"MAP_NODEPOINTER_ELEMENTID"  //存节点指针和elementId的映射
+#import "AINode.h"
+#import "AIModel.h"
 
 #define NET_DATA @"NET_DATA"  //神经网络的数据;元素为AIObject;
 
@@ -64,39 +60,28 @@ static AINetStore *_instance;
     return lastId + 1;
 }
 
--(BOOL) setObjectWithNetNode:(AINode*)node{
-    NSInteger pointerId = [self createPointerId];
-    BOOL success = [self setObject:node folderName:NET_NODE pointerId:pointerId];
-    return success;
+-(AINode*) setObject:(AIModel*)data{
+    return [self setObject:data folderName:NET_DATA pointerId:[self createPointerId]];
 }
 
--(BOOL) setObject:(AIObject*)data{
-    NSInteger pointerId = [self createPointerId];
-    BOOL success = [self setObject:data folderName:NET_DATA pointerId:pointerId];
-    return success;
-}
-
--(BOOL) setObject:(AIObject*)obj folderName:(NSString*)folderName {
-    PINDiskCache *cache = [self getPinCache:STRTOOK(folderName)];
-    //搜索重复...
-    [self setObject:obj folderName:folderName pointerId:[self createPointerId]];
-    return true;
-}
-
--(BOOL) setObject:(AIObject*)obj folderName:(NSString*)folderName pointerId:(NSInteger)pointerId{
-    if (ISOK(obj, AIObject.class)) {
+-(AINode*) setObject:(AIModel*)data folderName:(NSString*)folderName pointerId:(NSInteger)pointerId{
+    if (ISOK(data, AIModel.class)) {
         //1. 生成指针
         AIKVPointer *kvPointer = [[AIKVPointer alloc] init];
         kvPointer.pointerId = pointerId;
         kvPointer.folderName = STRTOOK(folderName);
         
+        //2. 将AINode与AIModel各自存为pointerPath下的一个文件;(命名为node和data)
+        AINode *node = [[AINode alloc] init];
+        node.pointer = kvPointer;
+        
         //2. 存储
-        obj.pointer = kvPointer;
         PINDiskCache *cache = [self getPinCache:kvPointer.filePath];
-        [cache setObject:obj forKey:kvPointer.fileName];
-        return true;
+        [cache setObject:data forKey:@"data"];
+        [cache setObject:node forKey:@"node"];
+        return node;
     }
-    return false;
+    return nil;
 }
 
 
@@ -106,7 +91,7 @@ static AINetStore *_instance;
 -(/*AIObject**/id) objectForKvPointer:(AIKVPointer*)kvPointer{
     if (ISOK(kvPointer, AIKVPointer.class)) {
         PINDiskCache *cache = [self getPinCache:kvPointer.filePath];
-        return [cache objectForKey:kvPointer.fileName];
+        return [cache objectForKey:@"data"];
     }
     return nil;
 }

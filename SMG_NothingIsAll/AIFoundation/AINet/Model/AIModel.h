@@ -13,6 +13,6 @@
  *  AIModel是Algs的算法结果集Model;
  *  参考:n9p9 AINet(数据模型)
  */
-@interface AIModel : AIObject
+@interface AIModel : NSObject<NSCoding>
 
 @end

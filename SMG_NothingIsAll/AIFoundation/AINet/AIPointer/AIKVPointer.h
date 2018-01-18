@@ -22,10 +22,4 @@
  */
 -(NSString*) filePath;
 
-
-/**
- *  MARK:--------------------文件名--------------------
- */
--(NSString*) fileName;
-
 @end

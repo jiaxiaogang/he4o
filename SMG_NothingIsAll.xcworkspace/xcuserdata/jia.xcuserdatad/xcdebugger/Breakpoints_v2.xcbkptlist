@@ -231,29 +231,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/AIFoundation/AINet/AINet.m"
-            timestampString = "537846333.506207"
+            filePath = "SMG_NothingIsAll/AIFoundation/AINet/AIStore/AINetStore.m"
+            timestampString = "537931898.084042"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "122"
-            endingLineNumber = "122"
-            landmarkName = "-insertModel:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/AIFoundation/AIActionControl/AIActionControl.m"
-            timestampString = "537846333.506307"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "50"
-            endingLineNumber = "50"
-            landmarkName = "-searchModel:type:block:"
+            startingLineNumber = "82"
+            endingLineNumber = "82"
+            landmarkName = "-setObject:folderName:pointerId:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

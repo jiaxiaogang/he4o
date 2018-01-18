@@ -12,7 +12,7 @@
  *  MARK:--------------------AINetStore存储器--------------------
  *  1. 自动进行AIPointer,AILine,AIPort,存储等操作;
  */
-@class AINode,AIKVPointer;
+@class AINode,AIKVPointer,AIModel;
 @interface AINetStore : NSObject
 
 +(AINetStore*) sharedInstance;
@@ -20,10 +20,8 @@
 /**
  *  MARK:--------------------存obj到神经网络--------------------
  */
--(BOOL) setObjectWithNetNode:(AINode*)node;                         //存神经网络_节点
--(BOOL) setObject:(AIObject*)data;                       //存神经网络_数据
--(BOOL) setObject:(AIObject*)obj folderName:(NSString*)folderName;
--(BOOL) setObject:(AIObject*)obj folderName:(NSString*)folderName pointerId:(NSInteger)pointerId;
+-(AINode*) setObject:(AIModel*)data;                       //存神经网络_数据
+-(AINode*) setObject:(AIModel*)obj folderName:(NSString*)folderName pointerId:(NSInteger)pointerId;
 
 
 /**
