@@ -12,8 +12,6 @@
 
 @interface AIObject ()
 
-@property (strong,nonatomic) NSMutableArray *linePointers;
-
 @end
 
 @implementation AIObject
@@ -42,13 +40,6 @@
     }
     //初次存入self时,pointer.Pid==0;所以这里重新赋值;保证每次读取pointer地址都是正确的;
     return _pointer;
-}
-
--(NSMutableArray *)linePointers{
-    if (_linePointers == nil) {
-        _linePointers = [[NSMutableArray alloc] init];
-    }
-    return _linePointers;
 }
 
 -(BOOL) isEqual:(id)obj{
