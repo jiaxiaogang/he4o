@@ -62,16 +62,8 @@ static AIThinkingControl *_instance;
         return;
     }
     
-    //3. no mv,try find mindValue from caches;//应该会删掉
-    for (id cache in self.cacheShort) {
-        if ([self objectHavMV:cache]) {
-            [self activityByDeep:nil mvData:cache];
-            return;
-        }
-    }
-    
-    //4. if not find mv from caches,then try find actionControl;
-    [[AIActionControl shareInstance] searchModel:data type:MultiNetType_Unknown block:^(AINode *result) {
+    //3. if not find mv from caches,then try find actionControl;(充mv)
+    [[AIActionControl shareInstance] searchModel_Induction:data block:^(AINode *result) {
         id mvResult = [self objectForNetModelConvertToMV:result];
         if (mvResult) {
             [self activityByDeep:result mvData:mvResult];
@@ -90,14 +82,11 @@ static AIThinkingControl *_instance;
         return;
     }
     
-    //2. 制定cmv目标;
-    
-    
-    //3. updateModel
+    //2. updateModel
     [[AIActionControl shareInstance] insertModel:mvData];
     
-    //3. 查找其cmv经验;
-    [[AIActionControl shareInstance] searchModel:mvData type:MultiNetType_Experience block:^(AINode *result) {
+    //3. find cmvLogic;
+    [[AIActionControl shareInstance] searchModel_Logic:mvData block:^(AINode *result) {
         if (result) {
             
         }else{

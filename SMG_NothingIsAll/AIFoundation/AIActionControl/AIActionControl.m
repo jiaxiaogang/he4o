@@ -37,7 +37,7 @@ static AIActionControl *_instance;
     }
 }
 
--(void) searchModel:(id)model type:(MultiNetType)type block:(void(^)(AINode *result))block {
+-(void) searchModel_Induction:(id)model block:(void(^)(AINode *result))block {
     //1. 事务控制器负责协调action任务;
     
     //2. 将类比检索数据
@@ -46,11 +46,15 @@ static AIActionControl *_instance;
         if (block) {
             block(result);
         }
-    }else if(ISOK(model, AIInputMindValueAlgsModel.class)) {
-        AINode *result =  [theNet searchWithModel:model];
-        if (block) {
-            block(result);
-        }
+    }
+}
+
+-(void) searchModel_Logic:(AIInputMindValueAlgsModel*)model block:(void(^)(AINode *result))block {
+    //1. 事务控制器负责协调action任务;
+    //2. 将类比检索数据
+    AINode *result =  [theNet searchLogic:model];
+    if (block) {
+        block(result);
     }
 }
 

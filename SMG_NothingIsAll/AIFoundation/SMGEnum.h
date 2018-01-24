@@ -118,7 +118,7 @@ typedef NS_ENUM(NSInteger, IMVType) {
  */
 typedef NS_ENUM(NSInteger, MultiNetType) {
     MultiNetType_Unknown        = 0,//UnKnown
-    MultiNetType_Experience     = 1,//经验
+    MultiNetType_Logic          = 1,//Logic
     MultiNetType_String         = 2,//String
 };
 

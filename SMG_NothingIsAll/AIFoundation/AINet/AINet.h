@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIModel,AINode;
+@class AIModel,AINode,AIInputMindValueAlgsModel;
 @interface AINet : NSObject
 
 +(AINet*) sharedInstance;
@@ -38,7 +38,7 @@
 -(void) insertMethod:(NSString*)method;
 -(AINode*) insertObj:(id)data;
 -(AINode*) insertArr:(NSArray*)data;
--(AINode*) insertLogic:(id)data;
+-(AINode*) insertLogic:(AIInputMindValueAlgsModel*)data;
 -(AINode*) insertCan:(id)data;
 -(void) insertProperty:(id)data rootPointer:(AIPointer*)rootPointer;
 -(AINode*) insertModel:(AIModel*)model energy:(NSInteger)energy;

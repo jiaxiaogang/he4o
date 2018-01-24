@@ -8,20 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIModel,AINode;
+@class AIModel,AINode,AIInputMindValueAlgsModel;
 @interface AIActionControl : NSObject
 
 
 +(AIActionControl*) shareInstance;
-
-
-/**
- *  MARK:--------------------新事务--------------------
- *  由`意识控制器`提交过来的任务只是:
- *  1. 任务源:(神经网络的数据)
- *  2. 任务目标:(一个mindValue方向 | 其它)
- */
-
 
 
 /**
@@ -33,8 +24,8 @@
 /**
  *  MARK:--------------------thinking搜索--------------------
  */
--(void) searchModel:(id)model type:(MultiNetType)type block:(void(^)(AINode *result))block;
-
+-(void) searchModel_Induction:(id)model block:(void(^)(AINode *result))block;
+-(void) searchModel_Logic:(AIInputMindValueAlgsModel*)model block:(void(^)(AINode *result))block;
 
 /**
  *  MARK:--------------------thinking存储--------------------

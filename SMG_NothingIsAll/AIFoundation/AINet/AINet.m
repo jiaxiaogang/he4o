@@ -128,8 +128,13 @@ static AINet *_instance;
     return nil;
 }
 
--(AINode*) searchLogic:(id)data{
+-(AINode*) searchLogic:(AIInputMindValueAlgsModel*)data{
     //smg对logic的理解取决于:logic什么时候被触发,触发后,其实例执行了什么变化;
+    
+    
+    //向net存储一个logic;然后在此检索到...//xxx
+    
+    
     return nil;
 }
 
