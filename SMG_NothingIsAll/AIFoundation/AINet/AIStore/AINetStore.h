@@ -29,6 +29,7 @@
  */
 -(/*AIObject**/id) objectForKvPointer:(AIKVPointer*)kvPointer;
 -(BOOL) objectFor:(id)obj folderName:(NSString*)folderName;
+-(AINode*) nodeForClass:(Class)c;//从根部开始找Class节点;
 
 @end
 

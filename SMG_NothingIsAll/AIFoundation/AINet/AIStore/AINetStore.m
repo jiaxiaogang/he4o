@@ -72,14 +72,24 @@ static AINetStore *_instance;
         kvPointer.folderName = STRTOOK(folderName);
         
         //2. 将AINode与AIModel各自存为pointerPath下的一个文件;(命名为node和data)
-        AINode *node = [[AINode alloc] init];
-        node.pointer = kvPointer;
+        AINode *modelNode = [[AINode alloc] init];
+        modelNode.pointer = kvPointer;
         
-        //2. 存储
-        PINDiskCache *cache = [self getPinCache:kvPointer.filePath];
+        //3. 继承关系(所有AIModel存储初期都继承自AINode)
+        AINode *superNode = [self nodeForClass:AINode.class];
+        [modelNode.isAPorts addObject:superNode.pointer];
+        [superNode.subPorts addObject:modelNode.pointer];
+        
+        //4. 存superNode
+        PINDiskCache *cache = [self getPinCache:superNode.pointer.filePath];
+        [cache setObject:superNode forKey:@"node"];
+        
+        //5. 存储modelNode
+        cache = [self getPinCache:kvPointer.filePath];
         [cache setObject:data forKey:@"data"];
-        [cache setObject:node forKey:@"node"];
-        return node;
+        [cache setObject:modelNode forKey:@"node"];
+        
+        return modelNode;
     }
     return nil;
 }
@@ -100,6 +110,12 @@ static AINetStore *_instance;
     //1. 根据"int"抽象节点找子节点;
     //2. 判断子节点的值与obj相等;
     return false;
+}
+
+//从根部开始找Class节点;
+-(AINode*) nodeForClass:(Class)c{
+    
+    return nil;
 }
 
 /**

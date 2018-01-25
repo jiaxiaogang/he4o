@@ -9,14 +9,14 @@
 #import "AINode.h"
 
 //MARK:===============================================================
-//MARK:                     < AINode >
+//MARK:                     < AINodeBase >
 //MARK:===============================================================
-@implementation AINode
+@implementation AINodeBase
 
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super init];
     if (self) {
-        self.isAPorts = [aDecoder decodeObjectForKey:@"isAPorts"];
+        self.pointer = [aDecoder decodeObjectForKey:@"pointer"];
         self.subPorts = [aDecoder decodeObjectForKey:@"subPorts"];
         self.propertyPorts = [aDecoder decodeObjectForKey:@"propertyPorts"];
         self.methodPorts = [aDecoder decodeObjectForKey:@"methodPorts"];
@@ -25,15 +25,62 @@
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:self.isAPorts forKey:@"isAPorts"];
+    [aCoder encodeObject:self.pointer forKey:@"pointer"];
     [aCoder encodeObject:self.subPorts forKey:@"subPorts"];
     [aCoder encodeObject:self.propertyPorts forKey:@"propertyPorts"];
     [aCoder encodeObject:self.methodPorts forKey:@"methodPorts"];
 }
 
+-(NSMutableArray *)subPorts{
+    if (_subPorts == nil) {
+        _subPorts = [[NSMutableArray alloc] init];
+    }
+    return _subPorts;
+}
+
+-(NSMutableArray *)propertyPorts{
+    if (_propertyPorts == nil) {
+        _propertyPorts = [[NSMutableArray alloc] init];
+    }
+    return _propertyPorts;
+}
+
+-(NSMutableArray *)methodPorts{
+    if (_methodPorts == nil) {
+        _methodPorts = [[NSMutableArray alloc] init];
+    }
+    return _methodPorts;
+}
+
 @end
 
+
+//MARK:===============================================================
+//MARK:                     < AINode >
+//MARK:===============================================================
+@implementation AINode
+
+- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
+    self = [super init];
+    if (self) {
+        self.isAPorts = [aDecoder decodeObjectForKey:@"isAPorts"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [super encodeWithCoder:aCoder];
+    [aCoder encodeObject:self.isAPorts forKey:@"isAPorts"];
+}
+
+-(NSMutableArray *)isAPorts{
+    if (_isAPorts == nil) {
+        _isAPorts = [[NSMutableArray alloc] init];
+    }
+    return _isAPorts;
+}
+
+@end
 
 
 //MARK:===============================================================
@@ -60,7 +107,7 @@
 //MARK:===============================================================
 //MARK:                     < AIPropertyNode >
 //MARK:===============================================================
-@implementation AIPropertyNode : AINode
+@implementation AIPropertyNode
 
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super init];
@@ -83,7 +130,7 @@
 //MARK:===============================================================
 //MARK:                     < AIMethodNode >
 //MARK:===============================================================
-@implementation AIMethodNode : AINode
+@implementation AIMethodNode
 
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super init];
@@ -106,7 +153,7 @@
 //MARK:===============================================================
 //MARK:                     < AIChangeNode >
 //MARK:===============================================================
-@implementation AIChangeNode : AINode
+@implementation AIChangeNode
 
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super init];
