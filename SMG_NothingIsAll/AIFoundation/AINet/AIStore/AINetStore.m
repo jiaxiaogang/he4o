@@ -55,11 +55,15 @@ static AINetStore *_instance;
 -(NSInteger) createPointerId:(BOOL)updateLastId{
     NSInteger lastId = [SMGUtils getLastNetNodePointerId];
     if (updateLastId) {
-        [SMGUtils setNetNodePointerId:lastId + 1];
+        [SMGUtils setNetNodePointerId:1];
     }
     return lastId + 1;
 }
 
+
+//MARK:===============================================================
+//MARK:                     < setObject >
+//MARK:===============================================================
 -(AINode*) setObject:(AIModel*)data{
     return [self setObject:data folderName:NET_DATA pointerId:[self createPointerId]];
 }
@@ -75,29 +79,39 @@ static AINetStore *_instance;
         AINode *modelNode = [[AINode alloc] init];
         modelNode.pointer = kvPointer;
         
-        //3. 继承关系(所有AIModel存储初期都继承自AINode)
-        AINode *superNode = [self nodeForClass:AINode.class];
-        [modelNode.isAPorts addObject:superNode.pointer];
-        [superNode.subPorts addObject:modelNode.pointer];
+        //3. 继承关系(所有AIModel存储初期都继承自AINodeBase)
+        AINodeBase *root = [self objectRootNode];
+        [modelNode.isAPorts addObject:root.pointer];
+        [root.subPorts addObject:modelNode.pointer];
         
-        //4. 存superNode
-        PINDiskCache *cache = [self getPinCache:superNode.pointer.filePath];
-        [cache setObject:superNode forKey:@"node"];
-        
-        //5. 存储modelNode
-        cache = [self getPinCache:kvPointer.filePath];
-        [cache setObject:data forKey:@"data"];
-        [cache setObject:modelNode forKey:@"node"];
+        //4. 存
+        [self setObjectNode:root];//root
+        [self setObjectData:data pointer:kvPointer];//model.Data
+        [self setObjectNode:modelNode];//model.node
         
         return modelNode;
     }
     return nil;
 }
 
+-(void) setObjectNode:(AINodeBase*)node{
+    if (ISOK(node, AINodeBase.class) && node.pointer) {
+        PINDiskCache *cache = [self getPinCache:node.pointer.filePath];
+        [cache setObject:node forKey:@"node"];
+    }
+}
 
-/**
- *  MARK:--------------------根据节点指针取节点--------------------
- */
+-(void) setObjectData:(id)data pointer:(AIKVPointer*)pointer{
+    if (data && ISOK(pointer, AIKVPointer.class)) {
+        PINDiskCache *cache = [self getPinCache:pointer.filePath];
+        [cache setObject:data forKey:@"data"];
+    }
+}
+
+
+//MARK:===============================================================
+//MARK:                     < objectForKey >
+//MARK:===============================================================
 -(/*AIObject**/id) objectForKvPointer:(AIKVPointer*)kvPointer{
     if (ISOK(kvPointer, AIKVPointer.class)) {
         PINDiskCache *cache = [self getPinCache:kvPointer.filePath];
@@ -112,11 +126,45 @@ static AINetStore *_instance;
     return false;
 }
 
+-(AINodeBase*) objectNodeForPointer:(AIKVPointer*)kvPointer{
+    if (ISOK(kvPointer, AIKVPointer.class)) {
+        PINDiskCache *cache = [self getPinCache:kvPointer.filePath];
+        id node = [cache objectForKey:@"node"];
+        if (ISOK(node, AINodeBase.class)) {
+            return node;
+        }
+    }
+    return nil;
+}
+
 //从根部开始找Class节点;
--(AINode*) nodeForClass:(Class)c{
+-(AINode*) objectNodeForClass:(Class)c{
+    AINodeBase *root = [self objectRootNode];
+    for (AIKVPointer *p in root.subPorts) {
+        NSLog(@"");
+    }
     
     return nil;
 }
+
+-(nonnull AINodeBase*) objectRootNode{
+    //1. root.pointer;
+    AIKVPointer *p = [[AIKVPointer alloc] init];
+    p.pointerId = 0;//将0定义为"我";
+    p.folderName = NET_DATA;
+    
+    //2. 取rootNode
+    AINodeBase *root = [self objectNodeForPointer:p];
+    
+    //3. 无则存
+    if (!ISOK(root, AINodeBase.class)) {
+        root = [[AINodeBase alloc] init];
+        root.pointer = p;
+        [self setObjectNode:root];
+    }
+    return root;
+}
+
 
 /**
  *  MARK:--------------------PINCache缓存--------------------

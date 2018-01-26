@@ -12,24 +12,29 @@
  *  MARK:--------------------AINetStore存储器--------------------
  *  1. 自动进行AIPointer,AILine,AIPort,存储等操作;
  */
-@class AINode,AIKVPointer,AIModel;
+@class AINode,AIKVPointer,AIModel,AINodeBase;
 @interface AINetStore : NSObject
 
 +(AINetStore*) sharedInstance;
 
-/**
- *  MARK:--------------------存obj到神经网络--------------------
- */
+
+//MARK:===============================================================
+//MARK:                     < setObject >
+//MARK:===============================================================
 -(AINode*) setObject:(AIModel*)data;                       //存神经网络_数据
--(AINode*) setObject:(AIModel*)obj folderName:(NSString*)folderName pointerId:(NSInteger)pointerId;
+-(AINode*) setObject:(AIModel*)data folderName:(NSString*)folderName pointerId:(NSInteger)pointerId;
+-(void) setObjectNode:(AINodeBase*)node;
+-(void) setObjectData:(id)data pointer:(AIKVPointer*)pointer;
 
 
-/**
- *  MARK:--------------------根据节点指针取节点--------------------
- */
+//MARK:===============================================================
+//MARK:                     < objectFor >
+//MARK:===============================================================
 -(/*AIObject**/id) objectForKvPointer:(AIKVPointer*)kvPointer;
 -(BOOL) objectFor:(id)obj folderName:(NSString*)folderName;
--(AINode*) nodeForClass:(Class)c;//从根部开始找Class节点;
+-(AINodeBase*) objectNodeForPointer:(AIKVPointer*)kvPointer;
+-(AINode*) objectNodeForClass:(Class)c;
+-(AINodeBase*) objectRootNode;
 
 @end
 
