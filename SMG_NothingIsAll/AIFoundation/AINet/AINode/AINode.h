@@ -9,27 +9,19 @@
 #import "AIObject.h"
 
 //MARK:===============================================================
-//MARK:                     < AINodeBase >
+//MARK:                     < AINode >
 //MARK:参考:n10p14等;
 //MARK:===============================================================
 @class AIKVPointer;
-@interface AINodeBase : NSObject<NSCoding>
+@interface AINode : NSObject<NSCoding>
 
-//@property (assign, nonatomic) AINodeDataType dataType;
-@property (strong,nonatomic) AIKVPointer *pointer; //数据指针(自身指针地址)
-@property (strong,nonatomic) NSMutableArray *subPorts;      //子类
+@property (strong,nonatomic) AIKVPointer *pointer;          //数据指针(自身指针地址)
+@property (strong,nonatomic) NSString *dataType;            //data的数据类型
+@property (strong,nonatomic) NSMutableArray *absPorts;      //抽象指向(多继承,接口等）
+@property (strong,nonatomic) NSMutableArray *conPorts; //具象指向
 @property (strong,nonatomic) NSMutableArray *propertyPorts; //属性
-@property (strong,nonatomic) NSMutableArray *methodPorts;   //方法
-
-@end
-
-
-//MARK:===============================================================
-//MARK:                     < AINode >
-//MARK:===============================================================
-@interface AINode : AINodeBase
-
-@property (strong,nonatomic) NSMutableArray *isAPorts;      //父类(多继承）
+@property (strong,nonatomic) NSMutableArray *changePorts;   //变化
+@property (strong,nonatomic) NSMutableArray *logicPorts;    //方法
 
 @end
 
@@ -37,7 +29,7 @@
 //MARK:===============================================================
 //MARK:                     < AIIntanceNode >
 //MARK:===============================================================
-@interface AIIntanceNode : AINodeBase
+@interface AIIntanceNode : AINode
 
 @property (strong,nonatomic) AIKVPointer *instanceOf;
 
@@ -47,7 +39,7 @@
 //MARK:===============================================================
 //MARK:                     < AIPropertyNode >
 //MARK:===============================================================
-@interface AIPropertyNode : AINodeBase
+@interface AIPropertyNode : AINode
 
 @property (strong,nonatomic) AIKVPointer *isClass;//指向subNode
 @property (strong,nonatomic) AIKVPointer *valueIs;//指向instanceNode
@@ -56,9 +48,9 @@
 
 
 //MARK:===============================================================
-//MARK:                     < AIMethodNode >
+//MARK:                     < AILogicNode >
 //MARK:===============================================================
-@interface AIMethodNode : AINodeBase
+@interface AILogicNode : AINode
 
 @property (strong,nonatomic) NSMutableArray *resultPorts;
 @property (strong,nonatomic) AIKVPointer *target;
@@ -69,10 +61,14 @@
 //MARK:===============================================================
 //MARK:                     < AIChangeNode >
 //MARK:===============================================================
-@interface AIChangeNode : AINodeBase
+@interface AIChangeNode : AINode
 
 @property (assign,nonatomic) CGFloat fromValue;
 @property (assign,nonatomic) CGFloat toValue;
 @property (strong,nonatomic) AIKVPointer *target;
 
 @end
+
+
+
+//@property (assign, nonatomic) AINodeDataType dataType;

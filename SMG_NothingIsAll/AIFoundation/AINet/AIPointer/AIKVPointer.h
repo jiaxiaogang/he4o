@@ -11,6 +11,9 @@
 @interface AIKVPointer : AIPointer
 
 
++(AIKVPointer*) newWithPointerId:(NSInteger)pointerId folderName:(NSString*)folderName;
+
+
 /**
  *  MARK:--------------------根文件夹--------------------
  */

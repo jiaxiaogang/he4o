@@ -65,24 +65,23 @@ static AINetStore *_instance;
 //MARK:                     < setObject >
 //MARK:===============================================================
 -(AINode*) setObject:(AIModel*)data{
-    return [self setObject:data folderName:NET_DATA pointerId:[self createPointerId]];
+    return [self setObject:data folderName:NET_DATA];
 }
 
--(AINode*) setObject:(AIModel*)data folderName:(NSString*)folderName pointerId:(NSInteger)pointerId{
+-(AINode*) setObject:(AIModel*)data folderName:(NSString*)folderName{
     if (ISOK(data, AIModel.class)) {
         //1. 生成指针
-        AIKVPointer *kvPointer = [[AIKVPointer alloc] init];
-        kvPointer.pointerId = pointerId;
-        kvPointer.folderName = STRTOOK(folderName);
+        AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:[self createPointerId] folderName:folderName];
         
         //2. 将AINode与AIModel各自存为pointerPath下的一个文件;(命名为node和data)
         AINode *modelNode = [[AINode alloc] init];
         modelNode.pointer = kvPointer;
+        modelNode.dataType = NSStringFromClass(data.class);
         
-        //3. 继承关系(所有AIModel存储初期都继承自AINodeBase)
-        AINodeBase *root = [self objectRootNode];
-        [modelNode.isAPorts addObject:root.pointer];
-        [root.subPorts addObject:modelNode.pointer];
+        //3. 继承关系(所有类型默认继承自AINode)
+        AINode *root = [self objectRootNode];
+        [modelNode.absPorts addObject:root.pointer];
+        [root.conPorts addObject:modelNode.pointer];
         
         //4. 存
         [self setObjectNode:root];//root
@@ -94,8 +93,8 @@ static AINetStore *_instance;
     return nil;
 }
 
--(void) setObjectNode:(AINodeBase*)node{
-    if (ISOK(node, AINodeBase.class) && node.pointer) {
+-(void) setObjectNode:(AINode*)node{
+    if (ISOK(node, AINode.class) && node.pointer) {
         PINDiskCache *cache = [self getPinCache:node.pointer.filePath];
         [cache setObject:node forKey:@"node"];
     }
@@ -126,11 +125,11 @@ static AINetStore *_instance;
     return false;
 }
 
--(AINodeBase*) objectNodeForPointer:(AIKVPointer*)kvPointer{
+-(AINode*) objectNodeForPointer:(AIKVPointer*)kvPointer{
     if (ISOK(kvPointer, AIKVPointer.class)) {
         PINDiskCache *cache = [self getPinCache:kvPointer.filePath];
         id node = [cache objectForKey:@"node"];
-        if (ISOK(node, AINodeBase.class)) {
+        if (ISOK(node, AINode.class)) {
             return node;
         }
     }
@@ -139,30 +138,63 @@ static AINetStore *_instance;
 
 //从根部开始找Class节点;
 -(AINode*) objectNodeForClass:(Class)c{
-    AINodeBase *root = [self objectRootNode];
-    for (AIKVPointer *p in root.subPorts) {
+    AINode *root = [self objectRootNode];
+    for (AIKVPointer *p in root.conPorts) {
         NSLog(@"");
     }
     
     return nil;
 }
 
--(nonnull AINodeBase*) objectRootNode{
+-(nonnull AINode*) objectRootNode{
     //1. root.pointer;
     AIKVPointer *p = [[AIKVPointer alloc] init];
     p.pointerId = 0;//将0定义为"我";
     p.folderName = NET_DATA;
     
     //2. 取rootNode
-    AINodeBase *root = [self objectNodeForPointer:p];
+    AINode *root = [self objectNodeForPointer:p];
     
     //3. 无则存
-    if (!ISOK(root, AINodeBase.class)) {
-        root = [[AINodeBase alloc] init];
+    if (!ISOK(root, AINode.class)) {
+        root = [[AINode alloc] init];
         root.pointer = p;
         [self setObjectNode:root];
     }
     return root;
+}
+
+
+//MARK:===============================================================
+//MARK:                     < update >
+//MARK:===============================================================
+-(void) updateNode:(AINode*)node abs:(AINode*)absNode{
+    if (ISOK(node, AINode.class)) {
+        //1. 父类传入空则新建
+        if (!ISOK(absNode, AINode.class)) {
+            //1.1. get root
+            AINode *root = [self objectRootNode];
+            //1.2. new absNode
+            absNode = [[AINode alloc] init];
+            absNode.pointer = [AIKVPointer newWithPointerId:[self createPointerId] folderName:node.pointer.folderName];
+            [absNode.absPorts addObject:root.pointer];
+            //1.3. save root
+            [root.conPorts addObject:absNode];
+            [self setObjectNode:root];
+        }
+        
+        //2. 指定继承关系
+        [node.absPorts addObject:absNode.pointer];
+        [absNode.conPorts addObject:node.pointer];
+        
+        //3. 从子类向父类融信息(属性值范围)
+        absNode.dataType = STRTOOK(node.dataType);
+        //...
+        
+        //4.存
+        [self setObjectNode:node];
+        [self setObjectNode:absNode];
+    }
 }
 
 

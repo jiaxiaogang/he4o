@@ -80,10 +80,7 @@ static AINet *_instance;
 
 //insertInt Float Char都由obj表示;
 -(AINode*) insertObj:(id)data{
-    NSInteger lastId = [SMGUtils getLastNetDataPointerId];
-    [[AINetStore sharedInstance] setObject:nil folderName:@"Induction_Int" pointerId:lastId + 1];
-    [SMGUtils setNetDataPointerId:lastId + 1];
-    return nil;
+    return [[AINetStore sharedInstance] setObject:data folderName:@"Induction_Int"];
 }
 
 -(AINode*) insertArr:(NSArray*)data{

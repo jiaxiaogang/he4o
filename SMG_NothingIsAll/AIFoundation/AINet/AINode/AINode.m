@@ -9,33 +9,46 @@
 #import "AINode.h"
 
 //MARK:===============================================================
-//MARK:                     < AINodeBase >
+//MARK:                     < AINode >
 //MARK:===============================================================
-@implementation AINodeBase
+@implementation AINode
 
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super init];
     if (self) {
         self.pointer = [aDecoder decodeObjectForKey:@"pointer"];
-        self.subPorts = [aDecoder decodeObjectForKey:@"subPorts"];
+        self.dataType = [aDecoder decodeObjectForKey:@"dataType"];
+        self.absPorts = [aDecoder decodeObjectForKey:@"absPorts"];
+        self.conPorts = [aDecoder decodeObjectForKey:@"conPorts"];
         self.propertyPorts = [aDecoder decodeObjectForKey:@"propertyPorts"];
-        self.methodPorts = [aDecoder decodeObjectForKey:@"methodPorts"];
+        self.changePorts = [aDecoder decodeObjectForKey:@"changePorts"];
+        self.logicPorts = [aDecoder decodeObjectForKey:@"logicPorts"];
     }
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [aCoder encodeObject:self.pointer forKey:@"pointer"];
-    [aCoder encodeObject:self.subPorts forKey:@"subPorts"];
+    [aCoder encodeObject:self.dataType forKey:@"dataType"];
+    [aCoder encodeObject:self.absPorts forKey:@"absPorts"];
+    [aCoder encodeObject:self.conPorts forKey:@"conPorts"];
     [aCoder encodeObject:self.propertyPorts forKey:@"propertyPorts"];
-    [aCoder encodeObject:self.methodPorts forKey:@"methodPorts"];
+    [aCoder encodeObject:self.changePorts forKey:@"changePorts"];
+    [aCoder encodeObject:self.logicPorts forKey:@"logicPorts"];
 }
 
--(NSMutableArray *)subPorts{
-    if (_subPorts == nil) {
-        _subPorts = [[NSMutableArray alloc] init];
+-(NSMutableArray *)absPorts{
+    if (_absPorts == nil) {
+        _absPorts = [[NSMutableArray alloc] init];
     }
-    return _subPorts;
+    return _absPorts;
+}
+
+-(NSMutableArray *)conPorts{
+    if (_conPorts == nil) {
+        _conPorts = [[NSMutableArray alloc] init];
+    }
+    return _conPorts;
 }
 
 -(NSMutableArray *)propertyPorts{
@@ -45,39 +58,18 @@
     return _propertyPorts;
 }
 
--(NSMutableArray *)methodPorts{
-    if (_methodPorts == nil) {
-        _methodPorts = [[NSMutableArray alloc] init];
+-(NSMutableArray *)changePorts{
+    if (_changePorts == nil) {
+        _changePorts = [[NSMutableArray alloc] init];
     }
-    return _methodPorts;
+    return _changePorts;
 }
 
-@end
-
-
-//MARK:===============================================================
-//MARK:                     < AINode >
-//MARK:===============================================================
-@implementation AINode
-
-- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
-    self = [super init];
-    if (self) {
-        self.isAPorts = [aDecoder decodeObjectForKey:@"isAPorts"];
+-(NSMutableArray *)logicPorts{
+    if (_logicPorts == nil) {
+        _logicPorts = [[NSMutableArray alloc] init];
     }
-    return self;
-}
-
-- (void)encodeWithCoder:(NSCoder *)aCoder {
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:self.isAPorts forKey:@"isAPorts"];
-}
-
--(NSMutableArray *)isAPorts{
-    if (_isAPorts == nil) {
-        _isAPorts = [[NSMutableArray alloc] init];
-    }
-    return _isAPorts;
+    return _logicPorts;
 }
 
 @end
@@ -128,9 +120,9 @@
 
 
 //MARK:===============================================================
-//MARK:                     < AIMethodNode >
+//MARK:                     < AILogicNode >
 //MARK:===============================================================
-@implementation AIMethodNode
+@implementation AILogicNode
 
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super init];

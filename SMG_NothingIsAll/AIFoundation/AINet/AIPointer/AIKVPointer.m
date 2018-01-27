@@ -10,6 +10,12 @@
 
 @implementation AIKVPointer
 
++(AIKVPointer*) newWithPointerId:(NSInteger)pointerId folderName:(NSString*)folderName{
+    AIKVPointer *pointer = [[AIKVPointer alloc] init];
+    pointer.pointerId = pointerId;
+    pointer.folderName = STRTOOK(folderName);
+    return pointer;
+}
 
 -(NSString*) filePath{
     NSString *pIdStr = STRFORMAT(@"%ld",self.pointerId);
