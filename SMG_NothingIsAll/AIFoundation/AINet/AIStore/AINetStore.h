@@ -21,8 +21,9 @@
 //MARK:===============================================================
 //MARK:                     < setObject >
 //MARK:===============================================================
--(AINode*) setObject:(AIModel*)data;                       //存神经网络_数据
--(AINode*) setObject:(AIModel*)data folderName:(NSString*)folderName;
+-(AINode*) setObject_Define:(AIModel*)data;     //存思维结果_定义
+-(AINode*) setObject_Define:(AIModel*)data folderName:(NSString*)folderName;
+-(void) setObject_Value:(id)model;              //存思维结果_值
 -(void) setObjectNode:(AINode*)node;
 -(void) setObjectData:(id)data pointer:(AIKVPointer*)pointer;
 

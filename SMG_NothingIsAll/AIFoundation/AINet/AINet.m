@@ -80,7 +80,7 @@ static AINet *_instance;
 
 //insertInt Float Char都由obj表示;
 -(AINode*) insertObj:(id)data{
-    return [[AINetStore sharedInstance] setObject:data folderName:@"Induction_Int"];
+    return [[AINetStore sharedInstance] setObject_Define:data folderName:@"Induction_Int"];
 }
 
 -(AINode*) insertArr:(NSArray*)data{
@@ -102,7 +102,7 @@ static AINet *_instance;
 }
 
 -(AINode*) insertModel:(AIModel*)model energy:(NSInteger)energy{
-    return [[AINetStore sharedInstance] setObject:model];
+    return [[AINetStore sharedInstance] setObject_Define:model];
 }
 
 

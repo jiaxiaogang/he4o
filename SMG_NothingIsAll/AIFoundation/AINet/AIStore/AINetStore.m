@@ -64,11 +64,11 @@ static AINetStore *_instance;
 //MARK:===============================================================
 //MARK:                     < setObject >
 //MARK:===============================================================
--(AINode*) setObject:(AIModel*)data{
-    return [self setObject:data folderName:NET_DATA];
+-(AINode*) setObject_Define:(AIModel*)data{
+    return [self setObject_Define:data folderName:NET_DATA];
 }
 
--(AINode*) setObject:(AIModel*)data folderName:(NSString*)folderName{
+-(AINode*) setObject_Define:(AIModel*)data folderName:(NSString*)folderName{
     if (ISOK(data, AIModel.class)) {
         //1. 生成指针
         AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:[self createPointerId] folderName:folderName];
@@ -91,6 +91,11 @@ static AINetStore *_instance;
         return modelNode;
     }
     return nil;
+}
+
+-(void) setObject_Value:(id)model {
+    AIValueNode *valueNode = [[AIValueNode alloc] init];
+    //xxx
 }
 
 -(void) setObjectNode:(AINode*)node{
@@ -204,7 +209,7 @@ static AINetStore *_instance;
 //4. 更新属性;(同3);
 -(void) updateNode:(AINode *)node propertyNode:(AINode *)propertyNode{
     //代码层不进行信息迁移;
-    
+    //xxx
 }
 
 

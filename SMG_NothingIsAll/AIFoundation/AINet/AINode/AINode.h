@@ -12,7 +12,7 @@
 //MARK:                     < AINode >
 //MARK:参考:n10p14等;
 //MARK:===============================================================
-@class AIKVPointer;
+@class AIKVPointer,AIAlgsPointer;
 @interface AINode : NSObject<NSCoding>
 
 @property (strong,nonatomic) AIKVPointer *pointer;          //数据指针(自身指针地址)
@@ -37,6 +37,7 @@
 
 @property (assign,nonatomic) CGFloat from;
 @property (assign,nonatomic) CGFloat to;
+@property (strong,nonatomic) AIAlgsPointer *algs;   
 
 @end
 

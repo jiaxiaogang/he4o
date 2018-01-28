@@ -55,6 +55,7 @@
 		08D7DA491ED149E8004B1018 /* AIObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D7DA481ED149E8004B1018 /* AIObject.m */; };
 		08D7DA4C1ED149F8004B1018 /* AIString.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D7DA4B1ED149F8004B1018 /* AIString.m */; };
 		08D7DA4F1ED14BC7004B1018 /* AIChar.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D7DA4E1ED14BC7004B1018 /* AIChar.m */; };
+		08D8C525201DEA4300FC1265 /* AIAlgsPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D8C524201DEA4300FC1265 /* AIAlgsPointer.m */; };
 		08DACE951EBD805C00FDC0B6 /* NSString+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 08DACE941EBD805C00FDC0B6 /* NSString+Extension.m */; };
 		08DB40C71F11A075003162C8 /* AIStoreBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 08DB40C61F11A075003162C8 /* AIStoreBase.m */; };
 		08DB40CB1F11A65E003162C8 /* TestHungryPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 08DB40C91F11A65E003162C8 /* TestHungryPage.m */; };
@@ -168,6 +169,8 @@
 		08D7DA4B1ED149F8004B1018 /* AIString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIString.m; sourceTree = "<group>"; };
 		08D7DA4D1ED14BC7004B1018 /* AIChar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIChar.h; sourceTree = "<group>"; };
 		08D7DA4E1ED14BC7004B1018 /* AIChar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIChar.m; sourceTree = "<group>"; };
+		08D8C523201DEA4300FC1265 /* AIAlgsPointer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIAlgsPointer.h; sourceTree = "<group>"; };
+		08D8C524201DEA4300FC1265 /* AIAlgsPointer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIAlgsPointer.m; sourceTree = "<group>"; };
 		08DACE931EBD805C00FDC0B6 /* NSString+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Extension.h"; sourceTree = "<group>"; };
 		08DACE941EBD805C00FDC0B6 /* NSString+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Extension.m"; sourceTree = "<group>"; };
 		08DB40C51F11A075003162C8 /* AIStoreBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIStoreBase.h; sourceTree = "<group>"; };
@@ -572,6 +575,8 @@
 				08F738011F7C714F005EAD56 /* AIPointer.m */,
 				08F738021F7C714F005EAD56 /* AISqlPointer.h */,
 				08F738031F7C714F005EAD56 /* AISqlPointer.m */,
+				08D8C523201DEA4300FC1265 /* AIAlgsPointer.h */,
+				08D8C524201DEA4300FC1265 /* AIAlgsPointer.m */,
 			);
 			path = AIPointer;
 			sourceTree = "<group>";
@@ -740,6 +745,7 @@
 				081DA13B1ED47CE000C8C531 /* AIArray.m in Sources */,
 				083F61381F048329000330E1 /* AILine.m in Sources */,
 				08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */,
+				08D8C525201DEA4300FC1265 /* AIAlgsPointer.m in Sources */,
 				081F5A101FFF01A500BD74F9 /* AINetCache.m in Sources */,
 				084219E11FD8CEFD009DA6BC /* AIReactorControl.m in Sources */,
 				0842ADBD1FE207500048ADDC /* DemoHunger.m in Sources */,
