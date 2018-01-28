@@ -27,11 +27,12 @@
 
 
 //MARK:===============================================================
-//MARK:                     < AIIntanceNode >
+//MARK:                     < AIValueNode >
 //MARK:===============================================================
-@interface AIIntanceNode : AINode
+@interface AIValueNode : AINode
 
-@property (strong,nonatomic) AIKVPointer *instanceOf;
+@property (assign,nonatomic) CGFloat from;
+@property (assign,nonatomic) CGFloat to;
 
 @end
 
@@ -42,7 +43,7 @@
 @interface AIPropertyNode : AINode
 
 @property (strong,nonatomic) AIKVPointer *isClass;//指向subNode
-@property (strong,nonatomic) AIKVPointer *valueIs;//指向instanceNode
+@property (strong,nonatomic) AIKVPointer *valueIs;//指向aiNode(对象类型)或valueNode(值类型)
 
 @end
 

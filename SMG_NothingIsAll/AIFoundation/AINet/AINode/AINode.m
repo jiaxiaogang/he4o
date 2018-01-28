@@ -76,21 +76,23 @@
 
 
 //MARK:===============================================================
-//MARK:                     < AIIntanceNode >
+//MARK:                     < AIValueNode >
 //MARK:===============================================================
-@implementation AIIntanceNode
+@implementation AIValueNode
 
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super init];
     if (self) {
-        self.instanceOf = [aDecoder decodeObjectForKey:@"instanceOf"];
+        self.from = [aDecoder decodeFloatForKey:@"from"];
+        self.to = [aDecoder decodeFloatForKey:@"to"];
     }
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:self.instanceOf forKey:@"instanceOf"];
+    [aCoder encodeFloat:self.from forKey:@"from"];
+    [aCoder encodeFloat:self.to forKey:@"to"];
 }
 
 @end
