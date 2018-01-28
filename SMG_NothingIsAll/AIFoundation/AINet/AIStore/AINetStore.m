@@ -197,6 +197,16 @@ static AINetStore *_instance;
     }
 }
 
+//*. 发现规律后,
+//1. 新建节点;
+//2. 新建属性;(需propertyNode)
+//3. 更新节点;(中间继承层)
+//4. 更新属性;(同3);
+-(void) updateNode:(AINode *)node propertyNode:(AINode *)propertyNode{
+    //代码层不进行信息迁移;
+    
+}
+
 
 /**
  *  MARK:--------------------PINCache缓存--------------------
