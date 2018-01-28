@@ -21,6 +21,7 @@
         self.absPorts = [aDecoder decodeObjectForKey:@"absPorts"];
         self.conPorts = [aDecoder decodeObjectForKey:@"conPorts"];
         self.propertyPorts = [aDecoder decodeObjectForKey:@"propertyPorts"];
+        self.bePropertyPorts = [aDecoder decodeObjectForKey:@"bePropertyPorts"];
         self.changePorts = [aDecoder decodeObjectForKey:@"changePorts"];
         self.logicPorts = [aDecoder decodeObjectForKey:@"logicPorts"];
     }
@@ -33,6 +34,7 @@
     [aCoder encodeObject:self.absPorts forKey:@"absPorts"];
     [aCoder encodeObject:self.conPorts forKey:@"conPorts"];
     [aCoder encodeObject:self.propertyPorts forKey:@"propertyPorts"];
+    [aCoder encodeObject:self.bePropertyPorts forKey:@"bePropertyPorts"];
     [aCoder encodeObject:self.changePorts forKey:@"changePorts"];
     [aCoder encodeObject:self.logicPorts forKey:@"logicPorts"];
 }
@@ -56,6 +58,13 @@
         _propertyPorts = [[NSMutableArray alloc] init];
     }
     return _propertyPorts;
+}
+
+-(NSMutableArray *)bePropertyPorts{
+    if (_bePropertyPorts == nil) {
+        _bePropertyPorts = [[NSMutableArray alloc] init];
+    }
+    return _bePropertyPorts;
 }
 
 -(NSMutableArray *)changePorts{
@@ -93,29 +102,6 @@
     [super encodeWithCoder:aCoder];
     [aCoder encodeFloat:self.from forKey:@"from"];
     [aCoder encodeFloat:self.to forKey:@"to"];
-}
-
-@end
-
-
-//MARK:===============================================================
-//MARK:                     < AIPropertyNode >
-//MARK:===============================================================
-@implementation AIPropertyNode
-
-- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
-    self = [super init];
-    if (self) {
-        self.isClass = [aDecoder decodeObjectForKey:@"isClass"];
-        self.valueIs = [aDecoder decodeObjectForKey:@"valueIs"];
-    }
-    return self;
-}
-
-- (void)encodeWithCoder:(NSCoder *)aCoder {
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:self.isClass forKey:@"isClass"];
-    [aCoder encodeObject:self.valueIs forKey:@"valueIs"];
 }
 
 @end

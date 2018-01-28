@@ -17,9 +17,13 @@
 
 @property (strong,nonatomic) AIKVPointer *pointer;          //数据指针(自身指针地址)
 @property (strong,nonatomic) NSString *dataType;            //data的数据类型
+//是(定义)
 @property (strong,nonatomic) NSMutableArray *absPorts;      //抽象指向(多继承,接口等）
-@property (strong,nonatomic) NSMutableArray *conPorts; //具象指向
+@property (strong,nonatomic) NSMutableArray *conPorts;      //具象指向
+//的(关系)
 @property (strong,nonatomic) NSMutableArray *propertyPorts; //属性
+@property (strong,nonatomic) NSMutableArray *bePropertyPorts; //属性
+//能(变化)
 @property (strong,nonatomic) NSMutableArray *changePorts;   //变化
 @property (strong,nonatomic) NSMutableArray *logicPorts;    //方法
 
@@ -33,17 +37,6 @@
 
 @property (assign,nonatomic) CGFloat from;
 @property (assign,nonatomic) CGFloat to;
-
-@end
-
-
-//MARK:===============================================================
-//MARK:                     < AIPropertyNode >
-//MARK:===============================================================
-@interface AIPropertyNode : AINode
-
-@property (strong,nonatomic) AIKVPointer *isClass;//指向subNode
-@property (strong,nonatomic) AIKVPointer *valueIs;//指向aiNode(对象类型)或valueNode(值类型)
 
 @end
 
