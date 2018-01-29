@@ -31,10 +31,10 @@
 //MARK:===============================================================
 //MARK:                     < objectFor >
 //MARK:===============================================================
--(/*AIObject**/id) objectForKvPointer:(AIKVPointer*)kvPointer;
--(BOOL) objectFor:(id)obj folderName:(NSString*)folderName;
+-(/*AIObject**/id) objectDataForPointer:(AIKVPointer*)pointer;
+-(AINode*) objectNodeForData:(id)obj;
 -(AINode*) objectNodeForPointer:(AIKVPointer*)kvPointer;
--(AINode*) objectNodeForClass:(Class)c;
+-(AINode*) objectNodeForDataType:(NSString*)dataType;//找(String,char,int,imv)的根节点;
 -(AINode*) objectRootNode;
 
 

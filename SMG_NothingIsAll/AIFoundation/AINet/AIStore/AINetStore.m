@@ -116,17 +116,35 @@ static AINetStore *_instance;
 //MARK:===============================================================
 //MARK:                     < objectForKey >
 //MARK:===============================================================
--(/*AIObject**/id) objectForKvPointer:(AIKVPointer*)kvPointer{
-    if (ISOK(kvPointer, AIKVPointer.class)) {
-        PINDiskCache *cache = [self getPinCache:kvPointer.filePath];
+-(/*AIObject**/id) objectDataForPointer:(AIKVPointer*)pointer{
+    if (ISOK(pointer, AIKVPointer.class)) {
+        PINDiskCache *cache = [self getPinCache:pointer.filePath];
         return [cache objectForKey:@"data"];
     }
     return nil;
 }
 
--(BOOL) objectFor:(id)obj folderName:(NSString*)folderName {
+-(AINode*) objectNodeForData:(id)obj {
     //1. 根据"int"抽象节点找子节点;
     //2. 判断子节点的值与obj相等;
+    if (obj) {
+        if([obj isKindOfClass:[NSNumber class]]){
+            if (strcmp([obj objCType], @encode(char)) == 0){
+                char c = [(NSNumber*)obj charValue];
+                AINode *charNode = [self objectNodeForDataType:@"char"];
+                for (AIKVPointer *pointer in charNode.conPorts) {
+                    id data = [self objectDataForPointer:pointer];
+                    if (data) {
+                        NSLog(@"");
+                    }
+                }
+            }else if (strcmp([obj objCType], @encode(int)) == 0){
+                
+            }
+        }else {
+            
+        }
+    }
     return false;
 }
 
@@ -141,13 +159,16 @@ static AINetStore *_instance;
     return nil;
 }
 
-//从根部开始找Class节点;
--(AINode*) objectNodeForClass:(Class)c{
+-(AINode*) objectNodeForDataType:(NSString*)dataType{
     AINode *root = [self objectRootNode];
     for (AIKVPointer *p in root.conPorts) {
-        NSLog(@"");
+        AINode *itemNode = [self objectNodeForPointer:p];
+        if (itemNode) {
+            if ([STRTOOK(dataType) isEqualToString:itemNode.dataType]) {
+                return itemNode;
+            }
+        }
     }
-    
     return nil;
 }
 

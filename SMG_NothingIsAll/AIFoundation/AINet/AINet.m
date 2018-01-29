@@ -141,8 +141,7 @@ static AINet *_instance;
 }
 
 -(AINode*) searchWithModel:(id)model{
-    //[[AINetStore sharedInstance] objectForKvPointer:nil];
-    return nil;
+    return [[AINetStore sharedInstance] objectNodeForData:@('t')];
 }
 
 
