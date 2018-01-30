@@ -31,7 +31,7 @@
 //MARK:===============================================================
 //MARK:                     < objectFor >
 //MARK:===============================================================
--(/*AIObject**/id) objectDataForPointer:(AIKVPointer*)pointer;
+-(id) objectDataForPointer:(AIKVPointer*)pointer;
 -(AINode*) objectNodeForData:(id)obj;
 -(AINode*) objectNodeForPointer:(AIKVPointer*)kvPointer;
 -(AINode*) objectNodeForDataType:(NSString*)dataType;//找(String,char,int,imv)的根节点;
@@ -42,10 +42,9 @@
 //MARK:                     < update >
 //MARK:===============================================================
 -(void) updateNode:(AINode*)node abs:(AINode*)absNode;
-
+-(void) updateNode:(AINode *)node propertyNode:(AINode *)propertyNode;
 
 @end
-
 
 
 @interface AINetStore (Memory)

@@ -116,10 +116,21 @@ static AINetStore *_instance;
 //MARK:===============================================================
 //MARK:                     < objectForKey >
 //MARK:===============================================================
--(/*AIObject**/id) objectDataForPointer:(AIKVPointer*)pointer{
+-(id) objectDataForPointer:(AIKVPointer*)pointer{
     if (ISOK(pointer, AIKVPointer.class)) {
         PINDiskCache *cache = [self getPinCache:pointer.filePath];
         return [cache objectForKey:@"data"];
+    }
+    return nil;
+}
+
+-(AINode*) objectNodeForPointer:(AIKVPointer*)kvPointer{
+    if (ISOK(kvPointer, AIKVPointer.class)) {
+        PINDiskCache *cache = [self getPinCache:kvPointer.filePath];
+        id node = [cache objectForKey:@"node"];
+        if (ISOK(node, AINode.class)) {
+            return node;
+        }
     }
     return nil;
 }
@@ -132,10 +143,14 @@ static AINetStore *_instance;
             if (strcmp([obj objCType], @encode(char)) == 0){
                 char c = [(NSNumber*)obj charValue];
                 AINode *charNode = [self objectNodeForDataType:@"char"];
-                for (AIKVPointer *pointer in charNode.conPorts) {
-                    id data = [self objectDataForPointer:pointer];
-                    if (data) {
-                        NSLog(@"");
+                if (charNode) {
+                    for (AIKVPointer *pointer in charNode.conPorts) {
+                        NSNumber *data = [self objectDataForPointer:pointer];//随后接入发音算法(参考n10p9)
+                        if (ISOK(data, NSNumber.class)) {
+                            if ([data charValue] == c) {
+                                return [self objectNodeForPointer:pointer];
+                            }
+                        }
                     }
                 }
             }else if (strcmp([obj objCType], @encode(int)) == 0){
@@ -146,17 +161,6 @@ static AINetStore *_instance;
         }
     }
     return false;
-}
-
--(AINode*) objectNodeForPointer:(AIKVPointer*)kvPointer{
-    if (ISOK(kvPointer, AIKVPointer.class)) {
-        PINDiskCache *cache = [self getPinCache:kvPointer.filePath];
-        id node = [cache objectForKey:@"node"];
-        if (ISOK(node, AINode.class)) {
-            return node;
-        }
-    }
-    return nil;
 }
 
 -(AINode*) objectNodeForDataType:(NSString*)dataType{
@@ -230,7 +234,18 @@ static AINetStore *_instance;
 //4. 更新属性;(同3);
 -(void) updateNode:(AINode *)node propertyNode:(AINode *)propertyNode{
     //代码层不进行信息迁移;
-    //xxx
+    if (ISOK(node, AINode.class) && ISOK(propertyNode, AINode.class)) {
+        //1. 指定属性关系
+        [node.propertyPorts addObject:propertyNode.pointer];
+        [propertyNode.bePropertyPorts addObject:node.pointer];
+        
+        //2. 从node的父类向融信息(属性及属性值范围)(模糊关系)(参考n10p22)
+        //...
+        
+        //3.存
+        [self setObjectNode:node];
+        [self setObjectNode:propertyNode];
+    }
 }
 
 
