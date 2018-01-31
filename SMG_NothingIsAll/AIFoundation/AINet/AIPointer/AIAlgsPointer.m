@@ -14,8 +14,7 @@
     AIAlgsPointer *pointer = [[AIAlgsPointer alloc] init];
     pointer.algsClass = NSStringFromClass(algsClass);
     pointer.algsName = STRTOOK(algsName);
-    return pointer;
-    
+    return pointer;    
 }
 
 
@@ -34,7 +33,7 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [super encodeWithCoder:aCoder];
     [aCoder encodeObject:self.algsClass forKey:@"algsClass"];
-    [aCoder encodeInteger:self.algsName forKey:@"algsName"];
+    [aCoder encodeObject:self.algsName forKey:@"algsName"];
 }
 
 @end

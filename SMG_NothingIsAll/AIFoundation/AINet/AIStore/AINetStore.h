@@ -23,7 +23,6 @@
 //MARK:===============================================================
 -(AINode*) setObject_Define:(AIModel*)data;     //存思维结果_定义
 -(AINode*) setObject_Define:(AIModel*)data folderName:(NSString*)folderName;
--(void) setObject_Value:(id)model;              //存思维结果_值
 -(void) setObjectNode:(AINode*)node;
 -(void) setObjectData:(id)data pointer:(AIKVPointer*)pointer;
 

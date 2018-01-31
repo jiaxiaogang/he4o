@@ -85,29 +85,6 @@
 
 
 //MARK:===============================================================
-//MARK:                     < AIValueNode >
-//MARK:===============================================================
-@implementation AIValueNode
-
-- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
-    self = [super init];
-    if (self) {
-        self.from = [aDecoder decodeFloatForKey:@"from"];
-        self.to = [aDecoder decodeFloatForKey:@"to"];
-    }
-    return self;
-}
-
-- (void)encodeWithCoder:(NSCoder *)aCoder {
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeFloat:self.from forKey:@"from"];
-    [aCoder encodeFloat:self.to forKey:@"to"];
-}
-
-@end
-
-
-//MARK:===============================================================
 //MARK:                     < AILogicNode >
 //MARK:===============================================================
 @implementation AILogicNode
@@ -129,27 +106,3 @@
 
 @end
 
-
-//MARK:===============================================================
-//MARK:                     < AIChangeNode >
-//MARK:===============================================================
-@implementation AIChangeNode
-
-- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
-    self = [super init];
-    if (self) {
-        self.fromValue = [aDecoder decodeFloatForKey:@"fromValue"];
-        self.toValue = [aDecoder decodeFloatForKey:@"toValue"];
-        self.target = [aDecoder decodeObjectForKey:@"target"];
-    }
-    return self;
-}
-
-- (void)encodeWithCoder:(NSCoder *)aCoder {
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeFloat:self.fromValue forKey:@"fromValue"];
-    [aCoder encodeFloat:self.toValue forKey:@"toValue"];
-    [aCoder encodeObject:self.target forKey:@"target"];
-}
-
-@end

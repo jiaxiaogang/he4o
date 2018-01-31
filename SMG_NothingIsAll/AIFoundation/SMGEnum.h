@@ -152,13 +152,15 @@ typedef NS_ENUM(NSInteger, MindType) {
 /**
  *  MARK:--------------------数据网络,节点类型--------------------
  */
-typedef NS_ENUM(NSInteger, AINodeDataType) {
-    ANDT_Int        = 1,
-    ANDT_Float      = 2,
-    ANDT_Char       = 3,
-    ANDT_Arr        = 4,
-    ANDT_Obj        = 5,//SubX
-    ANDT_Change     = 6,
+typedef NS_ENUM(NSInteger, AIDataType) {
+    AIDataType_Int      = 1,
+    AIDataType_Float    = 2,
+    AIDataType_Change   = 3,
+    AIDataType_File     = 4,
+    AIDataType_Char     = 4,
+    AIDataType_String   = 4,
+    AIDataType_Mp3      = 5,//SubX
+    AIDataType_Mp4      = 6,
 };
 
 /**

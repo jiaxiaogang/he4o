@@ -8,6 +8,7 @@
 
 #import "AIObject.h"
 
+
 //MARK:===============================================================
 //MARK:                     < AINode >
 //MARK:参考:n10p14等;
@@ -16,28 +17,34 @@
 @interface AINode : NSObject<NSCoding>
 
 @property (strong,nonatomic) AIKVPointer *pointer;          //数据指针(自身指针地址)
-@property (strong,nonatomic) NSString *dataType;            //data的数据类型
+
+
+/**
+ *  MARK:--------------------data的数据类型--------------------
+ *  int     //from to algs
+ *  float   //from to algs
+ *  change  //from to
+ *  file    //二进制文件
+ *  char
+ *  string  //char的pointer组成的数组
+ *  mp3
+ *  mp4
+ *  imv     //所有imv定义的子类...
+ */
+@property (strong,nonatomic) NSString *dataType;            //AIDataType
+
+
 //是(定义)
 @property (strong,nonatomic) NSMutableArray *absPorts;      //抽象指向(多继承,接口等）
 @property (strong,nonatomic) NSMutableArray *conPorts;      //具象指向
 //的(关系)
 @property (strong,nonatomic) NSMutableArray *propertyPorts; //属性
-@property (strong,nonatomic) NSMutableArray *bePropertyPorts; //属性
+@property (strong,nonatomic) NSMutableArray *bePropertyPorts;
 //能(变化)
 @property (strong,nonatomic) NSMutableArray *changePorts;   //变化
+@property (strong,nonatomic) NSMutableArray *beChangePorts;
+
 @property (strong,nonatomic) NSMutableArray *logicPorts;    //方法
-
-@end
-
-
-//MARK:===============================================================
-//MARK:                     < AIValueNode >
-//MARK:===============================================================
-@interface AIValueNode : AINode
-
-@property (assign,nonatomic) CGFloat from;
-@property (assign,nonatomic) CGFloat to;
-@property (strong,nonatomic) AIAlgsPointer *algs;   
 
 @end
 
@@ -51,19 +58,3 @@
 @property (strong,nonatomic) AIKVPointer *target;
 
 @end
-
-
-//MARK:===============================================================
-//MARK:                     < AIChangeNode >
-//MARK:===============================================================
-@interface AIChangeNode : AINode
-
-@property (assign,nonatomic) CGFloat fromValue;
-@property (assign,nonatomic) CGFloat toValue;
-@property (strong,nonatomic) AIKVPointer *target;
-
-@end
-
-
-
-//@property (assign, nonatomic) AINodeDataType dataType;

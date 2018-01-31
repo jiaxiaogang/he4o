@@ -93,11 +93,6 @@ static AINetStore *_instance;
     return nil;
 }
 
--(void) setObject_Value:(id)model {
-    AIValueNode *valueNode = [[AIValueNode alloc] init];
-    //xxx
-}
-
 -(void) setObjectNode:(AINode*)node{
     if (ISOK(node, AINode.class) && node.pointer) {
         PINDiskCache *cache = [self getPinCache:node.pointer.filePath];

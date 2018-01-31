@@ -61,6 +61,7 @@
 		08DB40CB1F11A65E003162C8 /* TestHungryPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 08DB40C91F11A65E003162C8 /* TestHungryPage.m */; };
 		08DB40CC1F11A65E003162C8 /* TestHungryPage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 08DB40CA1F11A65E003162C8 /* TestHungryPage.xib */; };
 		08DF0DC51F7F183B00B14D17 /* AINetStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08DF0DC41F7F183B00B14D17 /* AINetStore.m */; };
+		08ED228420214CD400D56A00 /* AIInputModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08ED228320214CD400D56A00 /* AIInputModel.m */; };
 		08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F4C98D1EA7A03900F3EDA8 /* SMGUtils.m */; };
 		08F737FA1F7C7131005EAD56 /* AINode.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F737F61F7C7131005EAD56 /* AINode.m */; };
 		08F738051F7C714F005EAD56 /* AIKVPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F737FF1F7C714F005EAD56 /* AIKVPointer.m */; };
@@ -180,6 +181,8 @@
 		08DB40CA1F11A65E003162C8 /* TestHungryPage.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TestHungryPage.xib; sourceTree = "<group>"; };
 		08DF0DC31F7F183B00B14D17 /* AINetStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AINetStore.h; sourceTree = "<group>"; };
 		08DF0DC41F7F183B00B14D17 /* AINetStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AINetStore.m; sourceTree = "<group>"; };
+		08ED228220214CD400D56A00 /* AIInputModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIInputModel.h; sourceTree = "<group>"; };
+		08ED228320214CD400D56A00 /* AIInputModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIInputModel.m; sourceTree = "<group>"; };
 		08F4C98C1EA7A03900F3EDA8 /* SMGUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMGUtils.h; sourceTree = "<group>"; };
 		08F4C98D1EA7A03900F3EDA8 /* SMGUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMGUtils.m; sourceTree = "<group>"; };
 		08F737F51F7C7131005EAD56 /* AINode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AINode.h; sourceTree = "<group>"; };
@@ -211,18 +214,7 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0807287A1FEF297F0001136A /* Model */ = {
-			isa = PBXGroup;
-			children = (
-				08CC991E1FE9F0B200743ABE /* AIStringAlgsModel.h */,
-				08CC991F1FE9F0B300743ABE /* AIStringAlgsModel.m */,
-				0807287B1FEF29A20001136A /* AIInputMindValueAlgsModel.h */,
-				0807287C1FEF29A20001136A /* AIInputMindValueAlgsModel.m */,
-			);
-			path = Model;
-			sourceTree = "<group>";
-		};
-		0807287E1FEF42640001136A /* Model */ = {
+		0807287E1FEF42640001136A /* AIModel */ = {
 			isa = PBXGroup;
 			children = (
 				08BB27181FD624CC006E03DE /* AIModel.h */,
@@ -230,7 +222,7 @@
 				081F5A171FFF0EE700BD74F9 /* OOPModel.h */,
 				081F5A181FFF0EE700BD74F9 /* OOPModel.m */,
 			);
-			path = Model;
+			path = AIModel;
 			sourceTree = "<group>";
 		};
 		0808DB411F10A20E0082F4AD /* AIStore */ = {
@@ -375,7 +367,7 @@
 			isa = PBXGroup;
 			children = (
 				081F5A0D1FFF015500BD74F9 /* AINetCache */,
-				0807287E1FEF42640001136A /* Model */,
+				0807287E1FEF42640001136A /* AIModel */,
 				08DF0DC21F7F182B00B14D17 /* AIStore */,
 				08F737FB1F7C714F005EAD56 /* AIPointer */,
 				08F737EE1F7C7131005EAD56 /* AINode */,
@@ -518,7 +510,7 @@
 		08CC991C1FE9EDCA00743ABE /* AIAlg */ = {
 			isa = PBXGroup;
 			children = (
-				0807287A1FEF297F0001136A /* Model */,
+				08ED228120214CB000D56A00 /* Model */,
 				081B3AD41F6E2994008A7F36 /* AIStringAlgs.h */,
 				081B3AD51F6E2994008A7F36 /* AIStringAlgs.m */,
 				08D471DC1FEB3FFF00C61322 /* AIInputMindValueAlgs.h */,
@@ -555,6 +547,19 @@
 				08DF0DC41F7F183B00B14D17 /* AINetStore.m */,
 			);
 			path = AIStore;
+			sourceTree = "<group>";
+		};
+		08ED228120214CB000D56A00 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				08ED228220214CD400D56A00 /* AIInputModel.h */,
+				08ED228320214CD400D56A00 /* AIInputModel.m */,
+				08CC991E1FE9F0B200743ABE /* AIStringAlgsModel.h */,
+				08CC991F1FE9F0B300743ABE /* AIStringAlgsModel.m */,
+				0807287B1FEF29A20001136A /* AIInputMindValueAlgsModel.h */,
+				0807287C1FEF29A20001136A /* AIInputMindValueAlgsModel.m */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		08F737EE1F7C7131005EAD56 /* AINode */ = {
@@ -772,6 +777,7 @@
 				080A74321F60C6490025DBA3 /* AIPort.m in Sources */,
 				080271411FE0BB1A00A6F8E4 /* AIChangeMindValue.m in Sources */,
 				0802713E1FE0B13700A6F8E4 /* AIInputMindValue.m in Sources */,
+				08ED228420214CD400D56A00 /* AIInputModel.m in Sources */,
 				081F5A191FFF0EE700BD74F9 /* OOPModel.m in Sources */,
 				08DB40CB1F11A65E003162C8 /* TestHungryPage.m in Sources */,
 				081828AE1F24BC6800BECCF0 /* AILineStore.m in Sources */,
