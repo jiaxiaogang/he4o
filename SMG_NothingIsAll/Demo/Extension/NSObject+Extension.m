@@ -19,8 +19,6 @@
 
 
 
-
-
 //MARK:===============================================================
 //MARK:                     < runtime >
 //MARK:===============================================================
@@ -194,5 +192,98 @@
     return returnValue;
 }
 
+@end
+
+
+
+//MARK:===============================================================
+//MARK:                     < Print转Dic或Json >
+//MARK:===============================================================
+@implementation NSObject (PrintConvertDicOrJson)
+
++ (void) dictionaryToEntity:(NSDictionary *)dict entity:(NSObject*)entity {
+    if (dict && entity) {
+        for (NSString *keyName in [dict allKeys]) {
+            //构建出属性的set方法
+            NSString *destMethodName = [NSString stringWithFormat:@"set%@:",[keyName capitalizedString]]; //capitalizedString返回每个单词首字母大写的字符串（每个单词的其余字母转换为小写）
+            SEL destMethodSelector = NSSelectorFromString(destMethodName);
+            
+            if ([entity respondsToSelector:destMethodSelector]) {
+                [entity performSelector:destMethodSelector withObject:[dict objectForKey:keyName]];
+            }
+        }
+    }
+}
+
++ (NSDictionary*)getObjectData:(id)obj
+{
+    NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+    unsigned int propsCount;
+    objc_property_t *props = class_copyPropertyList([obj class], &propsCount);
+    for(int i = 0;i < propsCount; i++) {
+        objc_property_t prop = props[i];
+        id value = nil;
+        
+        @try {
+            NSString *propName = [NSString stringWithUTF8String:property_getName(prop)];
+            value = [self getObjectInternal:[obj valueForKey:propName]];
+            if(value != nil) {
+                [dic setObject:value forKey:propName];
+            }
+        }
+        @catch (NSException *exception) {
+            [self logError:exception];
+        }
+        
+    }
+    return dic;
+}
+
++ (void)print:(id)obj {
+    NSLog(@"%@", [self getObjectData:obj]);
+}
+
+
++ (NSData*)getJSON:(id)obj options:(NSJSONWritingOptions)options error:(NSError**)error
+{
+    return [NSJSONSerialization dataWithJSONObject:[self getObjectData:obj] options:options error:error];
+    
+}
+
++ (id)getObjectInternal:(id)obj
+{
+    if(!obj
+       || [obj isKindOfClass:[NSString class]]
+       || [obj isKindOfClass:[NSNumber class]]
+       || [obj isKindOfClass:[NSNull class]]) {
+        return obj;
+    }
+    
+    if([obj isKindOfClass:[NSArray class]]) {
+        NSArray *objarr = obj;
+        NSMutableArray *arr = [NSMutableArray arrayWithCapacity:objarr.count];
+        for(int i = 0;i < objarr.count; i++) {
+            [arr setObject:[self getObjectInternal:[objarr objectAtIndex:i]] atIndexedSubscript:i];
+        }
+        return arr;
+    }
+    
+    if([obj isKindOfClass:[NSDictionary class]]) {
+        NSDictionary *objdic = obj;
+        NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithCapacity:[objdic count]];
+        for(NSString *key in objdic.allKeys) {
+            [dic setObject:[self getObjectInternal:[objdic objectForKey:key]] forKey:key];
+        }
+        return dic;
+    }
+    return [self getObjectData:obj];
+}
+
++ (void)logError:(NSException*)exp
+{
+#if PRINT_OBJ_LOGGING
+    NSLog(@"PrintObject Error: %@", exp);
+#endif
+}
 
 @end

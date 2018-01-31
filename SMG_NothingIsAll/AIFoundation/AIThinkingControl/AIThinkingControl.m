@@ -14,6 +14,7 @@
 #import "AIActionControl.h"
 #import "AINode.h"
 #import "AIModel.h"
+#import "NSObject+Extension.h"
 
 @interface AIThinkingControl()
 
@@ -83,7 +84,12 @@ static AIThinkingControl *_instance;
     }
     
     //2. updateModel
-    [[AIActionControl shareInstance] insertModel:mvData];
+    [[AIActionControl shareInstance] insertModel:mvData];//xxx作inputModel到aiModel的转换...
+    NSDictionary *dic = [NSObject getObjectData:mvData];
+    NSLog(@"");
+    
+    
+    
     
     //3. find cmvLogic;
     [[AIActionControl shareInstance] searchModel_Logic:mvData block:^(AINode *result) {
