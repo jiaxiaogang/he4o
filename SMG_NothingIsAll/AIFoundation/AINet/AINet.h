@@ -58,5 +58,6 @@
 -(AINode*) searchLogic:(id)data;
 -(AINode*) searchCan:(id)data;
 -(AINode*) searchWithModel:(id)model;
+-(AINode*) searchAbstract_Induction:(NSString*)className;
 
 @end

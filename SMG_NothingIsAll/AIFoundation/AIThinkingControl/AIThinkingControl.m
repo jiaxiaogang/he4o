@@ -18,7 +18,7 @@
 
 @interface AIThinkingControl()
 
-@property (strong,nonatomic) NSMutableArray *cacheShort;//存AIModel(从Algs传入,待Thinking取用分析)(容量8);
+@property (strong,nonatomic) NSMutableDictionary *cacheShort;//存AIModel(从Algs传入,待Thinking取用分析)(容量8);
 @property (strong,nonatomic) NSMutableArray *cacheLong;//存AINode(相当于Net的缓存区)(容量10000);
 
 @end
@@ -43,7 +43,7 @@ static AIThinkingControl *_instance;
 }
 
 -(void) initData{
-    self.cacheShort = [[NSMutableArray alloc] init];
+    self.cacheShort = [[NSMutableDictionary alloc] init];
     self.cacheLong = [[NSMutableArray alloc] init];
 }
 
@@ -53,22 +53,21 @@ static AIThinkingControl *_instance;
 //MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
--(void) activityByShallow:(id)data{
+-(void) activityByShallow:(NSObject*)data{
     //1. update Caches;
-    [self addObjectToCaches:data];
+    NSDictionary *dic = [NSObject getDic:data];
+    NSString *key = NSStringFromClass(data.class);
+    [self setObject_Caches:key value:dic];
     
     //2. check data hav mv;
-    if ([self objectHavMV:data]) { //hav mv
-        [self activityByDeep:nil mvData:data];
+    if ([self checkHavMV:dic]) { //hav mv
+        [self activityByDeep:key mvDic:dic];
         return;
     }
     
     //3. if not find mv from caches,then try find actionControl;(充mv)
     [[AIActionControl shareInstance] searchModel_Induction:data block:^(AINode *result) {
-        id mvResult = [self objectForNetModelConvertToMV:result];
-        if (mvResult) {
-            [self activityByDeep:result mvData:mvResult];
-        }
+        NSLog(@"_____根据aiNode取到aiData(urgentValue)的值...");
     }];
 }
 
@@ -77,28 +76,19 @@ static AIThinkingControl *_instance;
  *  MARK:--------------------思维发现imv,制定cmv,分析实现cmv;--------------------
  *  参考:n9p20
  */
--(void) activityByDeep:(AINode*)netModel mvData:(AIInputMindValueAlgsModel*)mvData{
-    //1. check mvData;
-    if (mvData == nil) {
-        return;
-    }
+-(void) activityByDeep:(NSString*)key mvDic:(NSDictionary*)mvDic {
+    //1. 识别key
+    [[AIActionControl shareInstance] searchAbstract_Induction:key];
     
+    NSLog(@"");//数据类型model的前后整理,参考n10p23
     //2. updateModel
-    [[AIActionControl shareInstance] insertModel:mvData];//xxx作inputModel到aiModel的转换...
-    NSDictionary *dic = [NSObject getObjectData:mvData];
-    NSLog(@"");
-    
-    
+    //[[AIActionControl shareInstance] insertModel:mvDic];//xxx作inputModel到aiModel的转换...
     
     
     //3. find cmvLogic;
-    [[AIActionControl shareInstance] searchModel_Logic:mvData block:^(AINode *result) {
-        if (result) {
-            
-        }else{
-            
-        }
-    }];
+    //    [[AIActionControl shareInstance] searchModel_Logic:mvData block:^(AINode *result) {
+    //        if (result) {}else{}
+    //    }];
     
     //4. 关联分析caches和netModel等当前数据;
     
@@ -112,25 +102,18 @@ static AIThinkingControl *_instance;
 //MARK:===============================================================
 //MARK:                     < caches >
 //MARK:===============================================================
--(void) addObjectToCaches:(id)data{
-    if (data) {
-        [self.cacheShort addObject:data];
-    }
+-(void) setObject_Caches:(NSString*)k value:(NSDictionary*)v {
+    [self.cacheShort setObject:DICTOOK(v) forKey:k];
+    
     if (self.cacheShort.count > 8) {
-        [self.cacheShort removeObjectAtIndex:0];
+        NSString *removeKey = ARR_INDEX(self.cacheShort.allKeys, 0);
+        [self.cacheShort removeObjectForKey:removeKey];
     }
 }
 
 //found mv;
--(BOOL) objectHavMV:(id)data{
-    return data && (ISOK(data, AIInputMindValueAlgsModel.class));//||MindValue.class
-}
-
--(id) objectForNetModelConvertToMV:(AINode*)model{
-    if (model) {
-        return model;
-    }
-    return nil;
+-(BOOL) checkHavMV:(NSDictionary*)dic{
+    return [STRTOOK([DICTOOK(dic) objectForKey:@"urgentValue"]) floatValue] > 0;
 }
 
 @end

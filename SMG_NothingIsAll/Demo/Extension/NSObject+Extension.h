@@ -54,12 +54,9 @@
 //MARK:===============================================================
 @interface NSObject (PrintConvertDicOrJson)
 
-//实体对象转为字典对象
-+ (NSDictionary *) entityToDictionary:(id)entity;
-
-//字典对象转为实体对象
-+ (NSDictionary*)getObjectData:(id)obj;
++ (void) dictionaryToEntity:(NSDictionary *)dict entity:(NSObject*)entity;              //DIC2Model
++ (NSDictionary*)getDic:(id)obj;                                                        //Model2DIC
 + (void)print:(id)obj;
-+ (NSData*)getJSON:(id)obj options:(NSJSONWritingOptions)options error:(NSError**)error;
++ (NSData*)getJSON:(id)obj options:(NSJSONWritingOptions)options error:(NSError**)error;//Model2JSON
 
 @end

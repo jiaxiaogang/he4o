@@ -215,8 +215,7 @@
     }
 }
 
-+ (NSDictionary*)getObjectData:(id)obj
-{
++ (NSDictionary*)getDic:(id)obj {
     NSMutableDictionary *dic = [NSMutableDictionary dictionary];
     unsigned int propsCount;
     objc_property_t *props = class_copyPropertyList([obj class], &propsCount);
@@ -240,13 +239,13 @@
 }
 
 + (void)print:(id)obj {
-    NSLog(@"%@", [self getObjectData:obj]);
+    NSLog(@"%@", [self getDic:obj]);
 }
 
 
 + (NSData*)getJSON:(id)obj options:(NSJSONWritingOptions)options error:(NSError**)error
 {
-    return [NSJSONSerialization dataWithJSONObject:[self getObjectData:obj] options:options error:error];
+    return [NSJSONSerialization dataWithJSONObject:[self getDic:obj] options:options error:error];
     
 }
 
@@ -276,7 +275,7 @@
         }
         return dic;
     }
-    return [self getObjectData:obj];
+    return [self getDic:obj];
 }
 
 + (void)logError:(NSException*)exp

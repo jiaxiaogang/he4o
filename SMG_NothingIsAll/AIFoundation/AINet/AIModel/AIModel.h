@@ -76,7 +76,16 @@
 //MARK:===============================================================
 @interface AIStringModel : AIModel
 
-@property (strong,nonatomic) NSMutableArray *string;//char的pointer组成的数组
+@property (strong,nonatomic) NSMutableArray *charPointers;//char的pointer组成的数组
+
+@end
+
+//MARK:===============================================================
+//MARK:                     < AIIdentifierModel >
+//MARK:===============================================================
+@interface AIIdentifierModel : AIModel
+
+@property (strong,nonatomic) NSString *identifier;//自定义类类别标记
 
 @end
 

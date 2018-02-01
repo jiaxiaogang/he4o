@@ -144,6 +144,9 @@ static AINet *_instance;
     return [[AINetStore sharedInstance] objectNodeForData:@('t')];
 }
 
+-(AINode*) searchAbstract_Induction:(NSString*)className{
+    return [[AINetStore sharedInstance] objectNodeForDataType:className];
+}
 
 /**
  *  MARK:--------------------插网线--------------------

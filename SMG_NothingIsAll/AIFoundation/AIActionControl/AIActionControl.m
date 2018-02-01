@@ -37,6 +37,10 @@ static AIActionControl *_instance;
     }
 }
 
+-(AINode*) searchAbstract_Induction:(NSString*)className{
+    return [[AINet sharedInstance] searchAbstract_Induction:className];
+}
+
 -(void) searchModel_Induction:(id)model block:(void(^)(AINode *result))block {
     //1. 事务控制器负责协调action任务;
     

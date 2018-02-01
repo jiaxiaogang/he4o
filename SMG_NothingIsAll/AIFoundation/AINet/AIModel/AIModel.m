@@ -147,21 +147,42 @@
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     if (self) {
-        self.string = [aDecoder decodeObjectForKey:@"string"];
+        self.charPointers = [aDecoder decodeObjectForKey:@"charPointers"];
     }
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:self.string forKey:@"string"];
+    [aCoder encodeObject:self.charPointers forKey:@"charPointers"];
 }
 
--(NSMutableArray *)string{
-    if (_string == nil) {
-        _string = [[NSMutableArray alloc] init];
+-(NSMutableArray *)charPointers{
+    if (_charPointers == nil) {
+        _charPointers = [[NSMutableArray alloc] init];
     }
-    return _string;
+    return _charPointers;
+}
+
+@end
+
+
+//MARK:===============================================================
+//MARK:                     < AIIdentifierModel >
+//MARK:===============================================================
+@implementation AIIdentifierModel
+
+- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
+    self = [super initWithCoder:aDecoder];
+    if (self) {
+        self.identifier = [aDecoder decodeObjectForKey:@"identifier"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [super encodeWithCoder:aCoder];
+    [aCoder encodeObject:self.identifier forKey:@"identifier"];
 }
 
 @end

@@ -14,6 +14,6 @@
 @interface AIThinkingControl : NSObject
 
 +(AIThinkingControl*) shareInstance;
--(void) activityByShallow:(id)data;  //潜
+-(void) activityByShallow:(NSObject*)data;  //潜
 
 @end

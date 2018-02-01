@@ -24,6 +24,7 @@
 /**
  *  MARK:--------------------thinking搜索--------------------
  */
+-(AINode*) searchAbstract_Induction:(NSString*)className;
 -(void) searchModel_Induction:(id)model block:(void(^)(AINode *result))block;
 -(void) searchModel_Logic:(AIInputMindValueAlgsModel*)model block:(void(^)(AINode *result))block;
 
