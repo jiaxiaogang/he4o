@@ -93,9 +93,19 @@ static AIThinkingControl *_instance;
     }
     
     //4. think中,优先构建cmv有关的信息;
+    AIIntModel *tTModel = [[AIIntModel alloc] init];
+    tTModel.from = targetType;
+    tTModel.to = targetType;
+    AINode *tTNode = [[AIActionControl shareInstance] insertModel:tTModel dataSource:@"targetType"];
+    [[AIActionControl shareInstance] updateNode:tTNode propertyNode:identNode];
     
+    AIFloatModel *uVModel = [[AIFloatModel alloc] init];
+    uVModel.from = urgentValue;
+    uVModel.to = urgentValue;
+    AINode *uVNode = [[AIActionControl shareInstance] insertModel:uVModel dataSource:@"urgentValue"];
+    [[AIActionControl shareInstance] updateNode:uVNode propertyNode:identNode];
     
-    //5. 后根据cmv查找解决问题;
+    //5. 后根据cmv查找解决问题;(查找同cmv经验,并将tTNode和uVNode指定abs)
     [[AIActionControl shareInstance] searchModel_Logic:nil block:^(AINode *result) {
         if (result) {}else{}
     }];

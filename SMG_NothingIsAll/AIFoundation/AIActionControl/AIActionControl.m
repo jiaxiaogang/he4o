@@ -77,6 +77,10 @@ static AIActionControl *_instance;
     [[AINet sharedInstance] updateNode:node abs:abs];
 }
 
+-(void) updateNode:(AINode *)node propertyNode:(AINode *)propertyNode{
+    [[AINet sharedInstance] updateNode:node propertyNode:propertyNode];
+}
+
 @end
 
 //1. 联想点亮区域

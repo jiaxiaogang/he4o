@@ -112,6 +112,10 @@ static AINet *_instance;
     [[AINetStore sharedInstance] updateNode:node abs:abs];
 }
 
+-(void) updateNode:(AINode *)node propertyNode:(AINode *)propertyNode{
+    [[AINetStore sharedInstance] updateNode:node propertyNode:propertyNode];
+}
+
 
 //MARK:===============================================================
 //MARK:                     < search >
