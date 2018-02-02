@@ -8,10 +8,19 @@
 
 #import "AIObject.h"
 
+
 /**
- *  MARK:--------------------存AIDataNode的数据模型--------------------
- *  AIModel是Algs的算法结果集Model;
- *  参考:n9p9 AINet(数据模型)
+ *  MARK:--------------------Net.data的数据类型--------------------
+ *  int     //from to algs
+ *  float   //from to algs
+ *  change  //from to
+ *  file    //二进制文件
+ *  char
+ *  string  //char的pointer组成的数组
+ *  mp3
+ *  mp4
+ *  imv     //所有imv定义的子类...
+ *  参考:n9p9 n10p23
  */
 @interface AIModel : NSObject<NSCoding>
 
@@ -24,8 +33,8 @@
 @class AIAlgsPointer;
 @interface AIIntModel : AIModel
 
-@property (assign,nonatomic) CGFloat from;
-@property (assign,nonatomic) CGFloat to;
+@property (assign,nonatomic) int from;
+@property (assign,nonatomic) int to;
 @property (strong,nonatomic) AIAlgsPointer *algs;
 
 @end
@@ -37,7 +46,7 @@
 
 @property (assign,nonatomic) CGFloat from;
 @property (assign,nonatomic) CGFloat to;
-@property (strong,nonatomic) AIAlgsPointer *algs;
+@property (strong,nonatomic) AIAlgsPointer *algs;//随后删掉(由AINode.dataSource标记AIInputModel.PropertyName替代,并且algs的pointer不应出现在存储层)
 
 @end
 
@@ -85,7 +94,7 @@
 //MARK:===============================================================
 @interface AIIdentifierModel : AIModel
 
-@property (strong,nonatomic) NSString *identifier;//自定义类类别标记
+@property (strong,nonatomic) NSString *identifier;//自定义类类别标记(如AIInputMindValueAlgsModel)
 
 @end
 

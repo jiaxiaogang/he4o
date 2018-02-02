@@ -18,6 +18,7 @@
     if (self) {
         self.pointer = [aDecoder decodeObjectForKey:@"pointer"];
         self.dataType = [aDecoder decodeObjectForKey:@"dataType"];
+        self.dataSource = [aDecoder decodeObjectForKey:@"dataSource"];
         self.absPorts = [aDecoder decodeObjectForKey:@"absPorts"];
         self.conPorts = [aDecoder decodeObjectForKey:@"conPorts"];
         self.propertyPorts = [aDecoder decodeObjectForKey:@"propertyPorts"];
@@ -31,6 +32,7 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [aCoder encodeObject:self.pointer forKey:@"pointer"];
     [aCoder encodeObject:self.dataType forKey:@"dataType"];
+    [aCoder encodeObject:self.dataSource forKey:@"dataSource"];
     [aCoder encodeObject:self.absPorts forKey:@"absPorts"];
     [aCoder encodeObject:self.conPorts forKey:@"conPorts"];
     [aCoder encodeObject:self.propertyPorts forKey:@"propertyPorts"];

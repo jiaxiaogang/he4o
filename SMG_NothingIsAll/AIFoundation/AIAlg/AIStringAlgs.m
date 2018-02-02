@@ -22,7 +22,7 @@
         model.spell = [self spell:input];
         
         //2. 结果给Thinking
-        [[AIThinkingControl shareInstance] activityByShallow:model];
+        [[AIThinkingControl shareInstance] inputByShallow:model];
     }
 }
 

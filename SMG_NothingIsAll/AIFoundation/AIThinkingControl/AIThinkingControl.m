@@ -53,7 +53,7 @@ static AIThinkingControl *_instance;
 //MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
--(void) activityByShallow:(NSObject*)data{
+-(void) inputByShallow:(NSObject*)data{
     //1. update Caches;
     NSDictionary *dic = [NSObject getDic:data];
     NSString *key = NSStringFromClass(data.class);
@@ -61,7 +61,7 @@ static AIThinkingControl *_instance;
     
     //2. check data hav mv;
     if ([self checkHavMV:dic]) { //hav mv
-        [self activityByDeep:key mvDic:dic];
+        [self inputByDeep:key mvDic:dic];
         return;
     }
     
@@ -76,21 +76,35 @@ static AIThinkingControl *_instance;
  *  MARK:--------------------思维发现imv,制定cmv,分析实现cmv;--------------------
  *  参考:n9p20
  */
--(void) activityByDeep:(NSString*)key mvDic:(NSDictionary*)mvDic {
+-(void) inputByDeep:(NSString*)key mvDic:(NSDictionary*)mvDic {
     //1. 识别key
-    [[AIActionControl shareInstance] searchAbstract_Induction:key];
+    AINode *absNode = [[AIActionControl shareInstance] searchAbstract_Induction:key];
     
-    NSLog(@"");//数据类型model的前后整理,参考n10p23
-    //2. updateModel
-    //[[AIActionControl shareInstance] insertModel:mvDic];//xxx作inputModel到aiModel的转换...
+    //2. 取mv & targetType
+    CGFloat urgentValue = [NUMTOOK([DICTOOK(mvDic) objectForKey:@"urgentValue"]) floatValue];
+    AITargetType targetType = [NUMTOOK([DICTOOK(mvDic) objectForKey:@"targetType"]) intValue];
+    
+    //3. think前,先构建思维对象本体
+    AIIdentifierModel *identModel = [[AIIdentifierModel alloc] init];
+    identModel.identifier = STRTOOK(key);
+    AINode *identNode = [[AIActionControl shareInstance] insertModel:identModel dataSource:key];
+    if (absNode) {
+        [[AIActionControl shareInstance] updateNode:identNode abs:absNode];
+    }
+    
+    //4. think中,优先构建cmv有关的信息;
     
     
-    //3. find cmvLogic;
-    //    [[AIActionControl shareInstance] searchModel_Logic:mvData block:^(AINode *result) {
-    //        if (result) {}else{}
-    //    }];
+    //5. 后根据cmv查找解决问题;
+    [[AIActionControl shareInstance] searchModel_Logic:nil block:^(AINode *result) {
+        if (result) {}else{}
+    }];
     
-    //4. 关联分析caches和netModel等当前数据;
+    //6. 对查找结果进行类比 (类比符合度从100%->0%,经验优先,分析+多事务次之,猜测或感觉再次,cachesShort数据瞎想最终)
+    
+    
+    //7. 将类比到的数据构建与关联;
+    
     
 }
 

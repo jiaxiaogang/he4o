@@ -17,22 +17,8 @@
 @interface AINode : NSObject<NSCoding>
 
 @property (strong,nonatomic) AIKVPointer *pointer;          //数据指针(自身指针地址)
-
-
-/**
- *  MARK:--------------------data的数据类型--------------------
- *  int     //from to algs
- *  float   //from to algs
- *  change  //from to
- *  file    //二进制文件
- *  char
- *  string  //char的pointer组成的数组
- *  mp3
- *  mp4
- *  imv     //所有imv定义的子类...
- */
-@property (strong,nonatomic) NSString *dataType;            //AIDataType
-
+@property (strong,nonatomic) NSString *dataType;            //AIData的Type(一般为AIIntModel,AIIndentifier等)
+@property (strong,nonatomic) NSString *dataSource;          //AIData的来源(一般为inputModel中的某属性)
 
 //是(定义)
 @property (strong,nonatomic) NSMutableArray *absPorts;      //抽象指向(多继承,接口等）

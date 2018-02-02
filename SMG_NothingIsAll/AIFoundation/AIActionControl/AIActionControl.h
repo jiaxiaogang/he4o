@@ -31,7 +31,18 @@
 /**
  *  MARK:--------------------thinking存储--------------------
  */
+-(AINode*) insertModel:(AIModel*)model dataSource:(NSString*)dataSource;
+
+
+//MARK:===============================================================
+//MARK:                     < update >
+//MARK:===============================================================
 -(void) updateNetModel:(AINode*)model;
--(AINode*) insertModel:(AIModel*)model;
+-(void) updateNode:(AINode*)node abs:(AINode*)abs;
 
 @end
+
+
+
+
+

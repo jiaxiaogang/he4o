@@ -20,7 +20,7 @@
         model.targetType = [self getAlgsTargetType:model.urgentValue];
         
         //1. 结果给Thinking
-        [[AIThinkingControl shareInstance] activityByShallow:model];
+        [[AIThinkingControl shareInstance] inputByShallow:model];
     }
 }
 

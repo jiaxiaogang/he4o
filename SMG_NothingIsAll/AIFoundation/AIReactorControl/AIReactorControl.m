@@ -60,7 +60,7 @@ static AIReactorControl *_instance;
 -(void) commitModel:(AIModel*)model{
     //1. 根据model判断是否createMindValue();
     //2. 根据model判断是否作Reactor();
-    [[AIActionControl shareInstance] insertModel:model];
+    //[[AIActionControl shareInstance] insertModel:model];
 }
 
 @end

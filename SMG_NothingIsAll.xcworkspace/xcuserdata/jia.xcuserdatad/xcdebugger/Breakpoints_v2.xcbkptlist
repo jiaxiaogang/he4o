@@ -231,29 +231,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/AIFoundation/AINet/AINet.m"
-            timestampString = "539140831.35549"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "83"
-            endingLineNumber = "83"
-            landmarkName = "-insertObj:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/AIFoundation/AINet/AIStore/AINetStore.m"
-            timestampString = "539140831.355577"
+            timestampString = "539227406.905465"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "91"
-            endingLineNumber = "91"
-            landmarkName = "-setObject_Define:folderName:"
+            startingLineNumber = "93"
+            endingLineNumber = "93"
+            landmarkName = "-setObject_Define:dataSource:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -264,7 +248,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/AIFoundation/AIActionControl/AIActionControl.m"
-            timestampString = "539140831.355634"
+            timestampString = "539227406.9055409"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "50"
@@ -280,11 +264,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/AIFoundation/AINet/AIStore/AINetStore.m"
-            timestampString = "539140831.355684"
+            timestampString = "539227406.905612"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "135"
-            endingLineNumber = "135"
+            startingLineNumber = "137"
+            endingLineNumber = "137"
             landmarkName = "-objectNodeForData:"
             landmarkType = "7">
          </BreakpointContent>
@@ -296,27 +280,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/AIFoundation/AINet/AIStore/AINetStore.m"
-            timestampString = "539140831.355729"
+            timestampString = "539227406.905689"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "167"
-            endingLineNumber = "167"
-            landmarkName = "-objectNodeForDataType:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/AIFoundation/AINet/AIStore/AINetStore.m"
-            timestampString = "539140831.355773"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "171"
-            endingLineNumber = "171"
+            startingLineNumber = "169"
+            endingLineNumber = "169"
             landmarkName = "-objectNodeForDataType:"
             landmarkType = "7">
          </BreakpointContent>
@@ -328,12 +296,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/AIThinkingControl.m"
-            timestampString = "539140831.3558199"
+            timestampString = "539227406.905742"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "83"
-            endingLineNumber = "83"
-            landmarkName = "-activityByDeep:mvDic:"
+            startingLineNumber = "107"
+            endingLineNumber = "107"
+            landmarkName = "-inputByDeep:mvDic:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

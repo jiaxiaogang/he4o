@@ -36,18 +36,18 @@
 
 //MARK:--------------------构建接口--------------------
 -(void) insertMethod:(NSString*)method;
--(AINode*) insertObj:(id)data;
 -(AINode*) insertArr:(NSArray*)data;
 -(AINode*) insertLogic:(AIInputMindValueAlgsModel*)data;
 -(AINode*) insertCan:(id)data;
 -(void) insertProperty:(id)data rootPointer:(AIPointer*)rootPointer;
--(AINode*) insertModel:(AIModel*)model energy:(NSInteger)energy;
+-(AINode*) insertModel:(AIModel*)model dataSource:(NSString*)dataSource energy:(NSInteger)energy;
 
 
 //MARK:===============================================================
 //MARK:                     < update >
 //MARK:===============================================================
 -(void) updateNetModel:(AINode*)model;
+-(void) updateNode:(AINode*)node abs:(AINode*)abs;
 
 
 //MARK:===============================================================

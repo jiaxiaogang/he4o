@@ -62,13 +62,19 @@ static AIActionControl *_instance;
     }
 }
 
+-(AINode*) insertModel:(AIModel*)model dataSource:(NSString*)dataSource{
+    return [theNet insertModel:model dataSource:dataSource energy:10];
+}
+
+//MARK:===============================================================
+//MARK:                     < update >
+//MARK:===============================================================
 -(void) updateNetModel:(AINode*)model{
     [theNet updateNetModel:model];
 }
 
--(AINode*) insertModel:(AIModel*)model{
-    //[theNet insertObj:@(0)];//测试插入obj;
-    return [theNet insertModel:model energy:10];
+-(void) updateNode:(AINode*)node abs:(AINode*)abs{
+    [[AINet sharedInstance] updateNode:node abs:abs];
 }
 
 @end

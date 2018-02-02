@@ -78,11 +78,6 @@ static AINet *_instance;
     
 }
 
-//insertInt Float Char都由obj表示;
--(AINode*) insertObj:(id)data{
-    return [[AINetStore sharedInstance] setObject_Define:data folderName:@"Induction_Int"];
-}
-
 -(AINode*) insertArr:(NSArray*)data{
     return nil;
 }
@@ -101,8 +96,8 @@ static AINet *_instance;
     
 }
 
--(AINode*) insertModel:(AIModel*)model energy:(NSInteger)energy{
-    return [[AINetStore sharedInstance] setObject_Define:model];
+-(AINode*) insertModel:(AIModel*)model dataSource:(NSString*)dataSource energy:(NSInteger)energy{
+    return [[AINetStore sharedInstance] setObject_Define:model dataSource:dataSource];
 }
 
 
@@ -111,6 +106,10 @@ static AINet *_instance;
 //MARK:===============================================================
 -(void) updateNetModel:(AINode*)model{
     NSLog(@"更新存储AINode");
+}
+
+-(void) updateNode:(AINode*)node abs:(AINode*)abs{
+    [[AINetStore sharedInstance] updateNode:node abs:abs];
 }
 
 

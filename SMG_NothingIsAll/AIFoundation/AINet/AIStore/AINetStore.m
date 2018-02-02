@@ -12,7 +12,7 @@
 #import "AINode.h"
 #import "AIModel.h"
 
-#define NET_DATA @"NET_DATA"  //神经网络的数据;元素为AIObject;
+#define NET_DATA @"NET_DATA"  //神经网络根目录;
 
 @interface AINetStore ()
 
@@ -64,19 +64,21 @@ static AINetStore *_instance;
 //MARK:===============================================================
 //MARK:                     < setObject >
 //MARK:===============================================================
--(AINode*) setObject_Define:(AIModel*)data{
-    return [self setObject_Define:data folderName:NET_DATA];
-}
-
--(AINode*) setObject_Define:(AIModel*)data folderName:(NSString*)folderName{
-    if (ISOK(data, AIModel.class)) {
+-(AINode*) setObject_Define:(AIModel*)model dataSource:(NSString*)dataSource{
+    if (ISOK(model, AIModel.class)) {
         //1. 生成指针
-        AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:[self createPointerId] folderName:folderName];
+        AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:[self createPointerId] folderName:NET_DATA];
         
         //2. 将AINode与AIModel各自存为pointerPath下的一个文件;(命名为node和data)
         AINode *modelNode = [[AINode alloc] init];
         modelNode.pointer = kvPointer;
-        modelNode.dataType = NSStringFromClass(data.class);
+        if ([model isKindOfClass:AIIdentifierModel.class]) {
+            AIIdentifierModel *identModel = (AIIdentifierModel*)model;
+            modelNode.dataType = identModel.identifier;
+        }else{
+            modelNode.dataType = NSStringFromClass(model.class);
+        }
+        modelNode.dataSource = STRTOOK(dataSource);
         
         //3. 继承关系(所有类型默认继承自AINode)
         AINode *root = [self objectRootNode];
@@ -84,9 +86,9 @@ static AINetStore *_instance;
         [root.conPorts addObject:modelNode.pointer];
         
         //4. 存
-        [self setObjectNode:root];//root
-        [self setObjectData:data pointer:kvPointer];//model.Data
-        [self setObjectNode:modelNode];//model.node
+        [self setObjectNode:root];                      //root
+        [self setObjectData:model pointer:kvPointer];   //model.Data
+        [self setObjectNode:modelNode];                 //model.node
         
         return modelNode;
     }

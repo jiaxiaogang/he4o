@@ -31,8 +31,8 @@
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     if (self) {
-        self.from = [aDecoder decodeFloatForKey:@"from"];
-        self.to = [aDecoder decodeFloatForKey:@"to"];
+        self.from = [aDecoder decodeIntegerForKey:@"from"];
+        self.to = [aDecoder decodeIntegerForKey:@"to"];
         self.algs = [aDecoder decodeObjectForKey:@"algs"];
     }
     return self;
