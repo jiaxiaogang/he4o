@@ -105,7 +105,9 @@ static AIThinkingControl *_instance;
     
     //7. 将类比到的数据构建与关联;
     
+    //8. 进行思维mv循环
     
+    //9. 进行决策输出
 }
 
 
