@@ -129,7 +129,7 @@ static AIThinkingControl *_instance;
  *  2. 符合度;(99%->1%)
  */
 -(void) thinkLoop {
-    //
+    //类比原则:先用dataType和dataSource取,后存,再类比后作update结构化;
 }
 
 //MARK:===============================================================
