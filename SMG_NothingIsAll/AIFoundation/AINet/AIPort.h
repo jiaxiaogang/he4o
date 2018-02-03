@@ -11,7 +11,7 @@
 /**
  *  MARK:--------------------网络端口类--------------------
  */
-@class AIKVPointer,AIPortStrong;
+@class AIKVPointer,AIPortStrong,AINode;
 @interface AIPort : NSObject <NSCoding>
 
 
@@ -20,12 +20,13 @@
 //MARK:===============================================================
 @property (strong,nonatomic) AIKVPointer *pointer;
 @property (strong,nonatomic) AIPortStrong *strong;
-
+@property (strong,nonatomic) NSString *dataType;
+@property (strong,nonatomic) NSString *dataSource;
 
 //MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
-+(AIPort*) newWithPointer:(AIKVPointer*)pointer;
++(AIPort*) newWithNode:(AINode*)node;
 
 
 @end

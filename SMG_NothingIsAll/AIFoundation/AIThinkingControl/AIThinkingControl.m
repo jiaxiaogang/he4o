@@ -56,19 +56,22 @@ static AIThinkingControl *_instance;
 -(void) inputByShallow:(NSObject*)data{
     //1. update Caches;
     NSDictionary *dic = [NSObject getDic:data];
-    NSString *key = NSStringFromClass(data.class);
-    [self setObject_Caches:key value:dic];
+    NSString *dataType = NSStringFromClass(data.class);
+    [self setObject_Caches:dataType value:dic];
     
     //2. check data hav mv;
     if ([self checkHavMV:dic]) { //hav mv
-        [self inputByDeep:key mvDic:dic];
+        [self inputByDeep:dataType mvDic:dic];
         return;
     }
     
     //3. if not find mv from caches,then try find actionControl;(充mv)
-    [[AIActionControl shareInstance] searchModel_Induction:data block:^(AINode *result) {
+    for (NSString *dataSource in dic.allKeys) {
+        id objValue = [dic objectForKey:dataSource];
+        //AINode *dataSourceRoot = [[AIActionControl shareInstance] searchNodeForDataType:nil dataSource:dataSource];
+        //AINode *objValueRoot = [[AIActionControl shareInstance] searchNodeForDataObj:objValue];
         NSLog(@"_____根据aiNode取到aiData(urgentValue)的值...");
-    }];
+    }
 }
 
 
@@ -76,9 +79,9 @@ static AIThinkingControl *_instance;
  *  MARK:--------------------思维发现imv,制定cmv,分析实现cmv;--------------------
  *  参考:n9p20
  */
--(void) inputByDeep:(NSString*)key mvDic:(NSDictionary*)mvDic {
-    //1. 识别key
-    AINode *absNode = [[AIActionControl shareInstance] searchAbstract_Induction:key];
+-(void) inputByDeep:(NSString*)dataType mvDic:(NSDictionary*)mvDic {
+    //1. 识别dataType
+    AINode *absNode = [[AIActionControl shareInstance] searchNodeForDataType:dataType dataSource:nil];
     
     //2. 取mv & targetType
     CGFloat urgentValue = [NUMTOOK([DICTOOK(mvDic) objectForKey:@"urgentValue"]) floatValue];
@@ -86,8 +89,8 @@ static AIThinkingControl *_instance;
     
     //3. think前,先构建思维对象本体
     AIIdentifierModel *identModel = [[AIIdentifierModel alloc] init];
-    identModel.identifier = STRTOOK(key);
-    AINode *identNode = [[AIActionControl shareInstance] insertModel:identModel dataSource:key];
+    identModel.identifier = STRTOOK(dataType);
+    AINode *identNode = [[AIActionControl shareInstance] insertModel:identModel dataSource:nil];
     if (absNode) {
         [[AIActionControl shareInstance] updateNode:identNode abs:absNode];
     }
@@ -106,9 +109,9 @@ static AIThinkingControl *_instance;
     [[AIActionControl shareInstance] updateNode:uVNode propertyNode:identNode];
     
     //5. 后根据cmv查找解决问题;(查找同cmv经验,并将tTNode和uVNode指定abs)
-    [[AIActionControl shareInstance] searchModel_Logic:nil block:^(AINode *result) {
-        if (result) {}else{}
-    }];
+    AINode *tTNodeRoot = [[AIActionControl shareInstance] searchNodeForDataType:@"AIIntModel" dataSource:@"targetType"];
+    AINode *uVNodeRoot = [[AIActionControl shareInstance] searchNodeForDataType:@"AIFloatModel" dataSource:@"urgentValue"];
+    NSLog(@"");
     
     //6. 对查找结果进行类比 (类比符合度从100%->0%,经验优先,分析+多事务次之,猜测或感觉再次,cachesShort数据瞎想最终)
     [self thinkLoop];

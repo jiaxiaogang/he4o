@@ -12,25 +12,24 @@
 @interface AIActionControl : NSObject
 
 
+//MARK:===============================================================
+//MARK:                     < method >
+//MARK:===============================================================
 +(AIActionControl*) shareInstance;
-
-
-/**
- *  MARK:--------------------input输入--------------------
- */
 -(void) commitInput:(id)input;
 
 
-/**
- *  MARK:--------------------thinking搜索--------------------
- */
--(AINode*) searchAbstract_Induction:(NSString*)className;
--(void) searchModel_Induction:(id)model block:(void(^)(AINode *result))block;
--(void) searchModel_Logic:(AIInputMindValueAlgsModel*)model block:(void(^)(AINode *result))block;
+//MARK:===============================================================
+//MARK:                     < search >
+//MARK:===============================================================
+-(AINode*) searchNodeForDataType:(NSString*)dataType dataSource:(NSString *)dataSource;
+-(AINode*) searchNodeForDataModel:(AIModel*)model;
+-(AINode*) searchNodeForDataObj:(id)obj;
 
-/**
- *  MARK:--------------------thinking存储--------------------
- */
+
+//MARK:===============================================================
+//MARK:                     < insert >
+//MARK:===============================================================
 -(AINode*) insertModel:(AIModel*)model dataSource:(NSString*)dataSource;
 
 

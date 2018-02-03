@@ -96,7 +96,7 @@ static AINet *_instance;
 }
 
 -(AINode*) insertModel:(AIModel*)model dataSource:(NSString*)dataSource energy:(NSInteger)energy{
-    return [[AINetStore sharedInstance] setObject_Define:model dataSource:dataSource];
+    return [[AINetStore sharedInstance] setObjectModel:model dataSource:dataSource];
 }
 
 
@@ -127,27 +127,21 @@ static AINet *_instance;
     return nil;
 }
 
--(AINode*) searchLogic:(AIInputMindValueAlgsModel*)data{
-    //smg对logic的理解取决于:logic什么时候被触发,触发后,其实例执行了什么变化;
-    
-    
-    //向net存储一个logic;然后在此检索到...//xxx
-    
-    
-    return nil;
-}
-
 -(AINode*) searchCan:(id)data{
     //smg对can的理解取决于:can什么时候被触发,及触发的目标是;
     return nil;
 }
 
--(AINode*) searchWithModel:(id)model{
-    return [[AINetStore sharedInstance] objectNodeForData:@('t')];
+-(AINode*) searchNodeForDataModel:(AIModel*)model{
+    return nil;
 }
 
--(AINode*) searchAbstract_Induction:(NSString*)className{
-    return [[AINetStore sharedInstance] objectNodeForDataType:className];
+-(AINode*) searchNodeForDataObj:(id)obj{
+    return [[AINetStore sharedInstance] objectNodeForDataObj:obj];
+}
+
+-(AINode*) searchNodeForDataType:(NSString*)dataType dataSource:(NSString*)dataSource{
+    return [[AINetStore sharedInstance] objectNodeForDataType:dataType dataSource:dataSource];
 }
 
 @end

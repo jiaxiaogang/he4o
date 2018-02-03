@@ -37,34 +37,32 @@ static AIActionControl *_instance;
     }
 }
 
--(AINode*) searchAbstract_Induction:(NSString*)className{
-    return [[AINet sharedInstance] searchAbstract_Induction:className];
+
+//MARK:===============================================================
+//MARK:                     < search >
+//MARK:===============================================================
+//1. 事务控制器负责协调action任务;
+//2. 将类比检索数据
+-(AINode*) searchNodeForDataType:(NSString*)dataType dataSource:(NSString *)dataSource{
+    return [[AINet sharedInstance] searchNodeForDataType:dataType dataSource:dataSource];
 }
 
--(void) searchModel_Induction:(id)model block:(void(^)(AINode *result))block {
-    //1. 事务控制器负责协调action任务;
-    
-    //2. 将类比检索数据
-    if (ISOK(model, AIStringAlgsModel.class)) {
-        AINode *result =  [theNet searchWithModel:model];
-        if (block) {
-            block(result);
-        }
-    }
+-(AINode*) searchNodeForDataModel:(AIModel*)model {
+    return [[AINet sharedInstance] searchNodeForDataModel:model];
 }
 
--(void) searchModel_Logic:(AIInputMindValueAlgsModel*)model block:(void(^)(AINode *result))block {
-    //1. 事务控制器负责协调action任务;
-    //2. 将类比检索数据
-    AINode *result =  [theNet searchLogic:model];
-    if (block) {
-        block(result);
-    }
+-(AINode*) searchNodeForDataObj:(id)obj {
+    return [[AINet sharedInstance] searchNodeForDataObj:obj];
 }
 
+
+//MARK:===============================================================
+//MARK:                     < insert >
+//MARK:===============================================================
 -(AINode*) insertModel:(AIModel*)model dataSource:(NSString*)dataSource{
     return [theNet insertModel:model dataSource:dataSource energy:10];
 }
+
 
 //MARK:===============================================================
 //MARK:                     < update >

@@ -56,9 +56,9 @@
 //MARK:===============================================================
 -(AINode*) searchObj:(id)data;
 -(AINode*) searchArr:(NSArray*)data;
--(AINode*) searchLogic:(id)data;
 -(AINode*) searchCan:(id)data;
--(AINode*) searchWithModel:(id)model;
--(AINode*) searchAbstract_Induction:(NSString*)className;
+-(AINode*) searchNodeForDataModel:(AIModel*)model;
+-(AINode*) searchNodeForDataObj:(id)obj;
+-(AINode*) searchNodeForDataType:(NSString*)dataType dataSource:(NSString*)dataSource;
 
 @end

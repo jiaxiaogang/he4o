@@ -65,7 +65,7 @@ static AINetStore *_instance;
 //MARK:===============================================================
 //MARK:                     < setObject >
 //MARK:===============================================================
--(AINode*) setObject_Define:(AIModel*)model dataSource:(NSString*)dataSource{
+-(AINode*) setObjectModel:(AIModel*)model dataSource:(NSString*)dataSource{
     if (ISOK(model, AIModel.class)) {
         //1. 生成指针
         AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:[self createPointerId] folderName:NET_DATA];
@@ -83,8 +83,8 @@ static AINetStore *_instance;
         
         //3. 继承关系(所有类型默认继承自AINode)
         AINode *root = [self objectRootNode];
-        [modelNode.absPorts addObject:[AIPort newWithPointer:root.pointer]];
-        [root.conPorts addObject:[AIPort newWithPointer:modelNode.pointer]];
+        [modelNode.absPorts addObject:[AIPort newWithNode:root]];
+        [root.conPorts addObject:[AIPort newWithNode:modelNode]];
         
         //4. 存
         [self setObjectNode:root];                      //root
@@ -133,20 +133,24 @@ static AINetStore *_instance;
     return nil;
 }
 
--(AINode*) objectNodeForData:(id)obj {
+-(AINode*) objectNodeForDataModel:(AIModel*)model{
+    return nil;
+}
+
+-(AINode*) objectNodeForDataObj:(id)obj {
     //1. 根据"int"抽象节点找子节点;
     //2. 判断子节点的值与obj相等;
     if (obj) {
         if([obj isKindOfClass:[NSNumber class]]){
             if (strcmp([obj objCType], @encode(char)) == 0){
                 char c = [(NSNumber*)obj charValue];
-                AINode *charNode = [self objectNodeForDataType:@"char"];
+                AINode *charNode = [self objectNodeForDataType:@"char" dataSource:nil];
                 if (charNode) {
-                    for (AIKVPointer *pointer in charNode.conPorts) {
-                        NSNumber *data = [self objectDataForPointer:pointer];//随后接入发音算法(参考n10p9)
+                    for (AIPort *port in charNode.conPorts) {
+                        NSNumber *data = [self objectDataForPointer:port.pointer];//随后接入发音算法(参考n10p9)
                         if (ISOK(data, NSNumber.class)) {
                             if ([data charValue] == c) {
-                                return [self objectNodeForPointer:pointer];
+                                return [self objectNodeForPointer:port.pointer];
                             }
                         }
                     }
@@ -161,14 +165,12 @@ static AINetStore *_instance;
     return false;
 }
 
--(AINode*) objectNodeForDataType:(NSString*)dataType{
+-(AINode*) objectNodeForDataType:(NSString*)dataType dataSource:(NSString*)dataSource {
     AINode *root = [self objectRootNode];
-    for (AIKVPointer *p in root.conPorts) {
-        AINode *itemNode = [self objectNodeForPointer:p];
-        if (itemNode) {
-            if ([STRTOOK(dataType) isEqualToString:itemNode.dataType]) {
-                return itemNode;
-            }
+    for (AIPort *port in root.conPorts) {
+        //dataType与dataSource相符判断
+        if ((!STRISOK(dataType) || [STRTOOK(port.dataType) isEqualToString:dataType]) && (!STRISOK(dataSource) || [STRTOOK(port.dataSource) isEqualToString:dataSource])) {
+            return [self objectNodeForPointer:port.pointer];
         }
     }
     return nil;
@@ -205,15 +207,15 @@ static AINetStore *_instance;
             //1.2. new absNode
             absNode = [[AINode alloc] init];
             absNode.pointer = [AIKVPointer newWithPointerId:[self createPointerId] folderName:node.pointer.folderName];
-            [absNode.absPorts addObject:[AIPort newWithPointer:root.pointer]];
+            [absNode.absPorts addObject:[AIPort newWithNode:root]];
             //1.3. save root
-            [root.conPorts addObject:[AIPort newWithPointer:absNode]];
+            [root.conPorts addObject:[AIPort newWithNode:absNode]];
             [self setObjectNode:root];
         }
         
         //2. 指定继承关系
-        [node.absPorts addObject:[AIPort newWithPointer:absNode.pointer]];
-        [absNode.conPorts addObject:[AIPort newWithPointer:node.pointer]];
+        [node.absPorts addObject:[AIPort newWithNode:absNode]];
+        [absNode.conPorts addObject:[AIPort newWithNode:node]];
         
         //3. 从子类向父类融信息(属性值范围)
         absNode.dataType = STRTOOK(node.dataType);
@@ -234,8 +236,8 @@ static AINetStore *_instance;
     //代码层不进行信息迁移;
     if (ISOK(node, AINode.class) && ISOK(propertyNode, AINode.class)) {
         //1. 指定属性关系
-        [node.propertyPorts addObject:[AIPort newWithPointer:propertyNode.pointer]];
-        [propertyNode.bePropertyPorts addObject:[AIPort newWithPointer:node.pointer]];
+        [node.propertyPorts addObject:[AIPort newWithNode:propertyNode]];
+        [propertyNode.bePropertyPorts addObject:[AIPort newWithNode:node]];
         
         //2. 从node的父类向融信息(属性及属性值范围)(模糊关系)(参考n10p22)
         //...

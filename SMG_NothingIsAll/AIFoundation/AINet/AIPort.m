@@ -7,6 +7,7 @@
 //
 
 #import "AIPort.h"
+#import "AINode.h"
 
 @implementation AIPort
 
@@ -19,6 +20,8 @@
     if (self) {
         self.pointer = [coder decodeObjectForKey:@"pointer"];
         self.strong = [coder decodeObjectForKey:@"strong"];
+        self.dataType = [coder decodeObjectForKey:@"dataType"];
+        self.dataSource = [coder decodeObjectForKey:@"dataSource"];
     }
     return self;
 }
@@ -26,15 +29,21 @@
 - (void)encodeWithCoder:(NSCoder *)coder {
     [coder encodeObject:self.pointer forKey:@"pointer"];
     [coder encodeObject:self.strong forKey:@"strong"];
+    [coder encodeObject:self.dataType forKey:@"dataType"];
+    [coder encodeObject:self.dataSource forKey:@"dataSource"];
 }
 
 
 //MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
-+(AIPort*) newWithPointer:(AIKVPointer*)pointer{
++(AIPort*) newWithNode:(AINode*)node{
     AIPort *port = [[AIPort alloc] init];
-    port.pointer = pointer;
+    if (node) {
+        port.pointer = node.pointer;
+        port.dataType = node.dataType;
+        port.dataSource = node.dataSource;
+    }
     return port;
 }
 
