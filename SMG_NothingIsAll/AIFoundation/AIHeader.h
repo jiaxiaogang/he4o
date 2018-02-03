@@ -34,6 +34,3 @@
 #define AIMakeArr(a, ...) [AIArray initWithObjects:a, ##__VA_ARGS__,nil]
 //#define AIMakeArr_Pointer(a, ...) [AIArray initWithObjects:a, ##__VA_ARGS__,nil]
 
-//AILine
-#define AIMakeLine(type,objs) [AILine newWithType:type aiObjs:objs]
-

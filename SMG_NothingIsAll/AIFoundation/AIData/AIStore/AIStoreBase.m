@@ -7,6 +7,7 @@
 //
 
 #import "AIStoreBase.h"
+#import "AIObject.h"
 
 @implementation AIStoreBase
 

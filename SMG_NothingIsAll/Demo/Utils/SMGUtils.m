@@ -8,6 +8,7 @@
 
 #import "SMGUtils.h"
 #import "AILineStore.h"
+#import "AIObject.h"
 
 @implementation SMGUtils
 
@@ -129,25 +130,25 @@
 /**
  *  MARK:--------------------生产神经网络--------------------
  */
-+(AILine*) ailine_CreateLine:(NSArray*)aiObjs type:(AILineType)type{
-    if (ARRISOK(aiObjs)) {
-        //1. 创建网线并存
-        AILine *line = AIMakeLine(type, aiObjs);
-        [AILineStore insert:line];
-        //2. 插网线
-        if (ARRISOK(aiObjs)) {
-            for (AIObject *obj in aiObjs) {
-                if (ISOK(obj, AIObject.class)) {
-                    [obj connectLine:line save:true];
-                }
-            }
-        }
-        return line;
-    }else{
-        NSLog(@"_______SMGUtils.CreateLine.ERROR (pointersIsNil!)");
-        return nil;
-    }
-}
+//+(AILine*) ailine_CreateLine:(NSArray*)aiObjs type:(AILineType)type{
+//    if (ARRISOK(aiObjs)) {
+//        //1. 创建网线并存
+//        AILine *line = AIMakeLine(type, aiObjs);
+//        [AILineStore insert:line];
+//        //2. 插网线
+//        if (ARRISOK(aiObjs)) {
+//            for (AIObject *obj in aiObjs) {
+//                if (ISOK(obj, AIObject.class)) {
+//                    [obj connectLine:line save:true];
+//                }
+//            }
+//        }
+//        return line;
+//    }else{
+//        NSLog(@"_______SMGUtils.CreateLine.ERROR (pointersIsNil!)");
+//        return nil;
+//    }
+//}
 
 //MARK:===============================================================
 //MARK:                     < AIPointer >

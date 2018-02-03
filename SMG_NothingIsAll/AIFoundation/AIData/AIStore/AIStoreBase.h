@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+@class AIObject;
 @protocol IAIStore <NSObject>
 
 +(id) searchSingleRowId:(NSInteger)rowId;

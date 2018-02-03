@@ -111,7 +111,7 @@ static AIThinkingControl *_instance;
     }];
     
     //6. 对查找结果进行类比 (类比符合度从100%->0%,经验优先,分析+多事务次之,猜测或感觉再次,cachesShort数据瞎想最终)
-    
+    [self thinkLoop];
     
     //7. 将类比到的数据构建与关联;
     
@@ -120,9 +120,13 @@ static AIThinkingControl *_instance;
     //9. 进行决策输出
 }
 
-
--(void) activityByNone:(id)data{
-    NSLog(@"创建后台任务");
+/**
+ *  MARK:--------------------思维循环--------------------
+ *  1. 优化级;(经验->多事务分析->感觉猜测->cacheShort瞎关联)
+ *  2. 符合度;(99%->1%)
+ */
+-(void) thinkLoop {
+    //
 }
 
 //MARK:===============================================================
@@ -143,14 +147,6 @@ static AIThinkingControl *_instance;
 }
 
 @end
-
-
-//1. 抽象"饥饿感神经"与电量变化的连接常识;(类比操作)
-//NSArray *LawArr = [SMGUtils lightArea_AILineTypeIsLawWithLightModels:models];
-
-
-//2. 与当前curTask对比,是否解决,是否继续,是否...
-//BOOL win = true;
 
 
 //3. ThinkDemand的解;

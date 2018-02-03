@@ -11,6 +11,7 @@
 #import "PINCache.h"
 #import "AINode.h"
 #import "AIModel.h"
+#import "AIPort.h"
 
 #define NET_DATA @"NET_DATA"  //神经网络根目录;
 
@@ -82,8 +83,8 @@ static AINetStore *_instance;
         
         //3. 继承关系(所有类型默认继承自AINode)
         AINode *root = [self objectRootNode];
-        [modelNode.absPorts addObject:root.pointer];
-        [root.conPorts addObject:modelNode.pointer];
+        [modelNode.absPorts addObject:[AIPort newWithPointer:root.pointer]];
+        [root.conPorts addObject:[AIPort newWithPointer:modelNode.pointer]];
         
         //4. 存
         [self setObjectNode:root];                      //root
@@ -204,15 +205,15 @@ static AINetStore *_instance;
             //1.2. new absNode
             absNode = [[AINode alloc] init];
             absNode.pointer = [AIKVPointer newWithPointerId:[self createPointerId] folderName:node.pointer.folderName];
-            [absNode.absPorts addObject:root.pointer];
+            [absNode.absPorts addObject:[AIPort newWithPointer:root.pointer]];
             //1.3. save root
-            [root.conPorts addObject:absNode];
+            [root.conPorts addObject:[AIPort newWithPointer:absNode]];
             [self setObjectNode:root];
         }
         
         //2. 指定继承关系
-        [node.absPorts addObject:absNode.pointer];
-        [absNode.conPorts addObject:node.pointer];
+        [node.absPorts addObject:[AIPort newWithPointer:absNode.pointer]];
+        [absNode.conPorts addObject:[AIPort newWithPointer:node.pointer]];
         
         //3. 从子类向父类融信息(属性值范围)
         absNode.dataType = STRTOOK(node.dataType);
@@ -233,8 +234,8 @@ static AINetStore *_instance;
     //代码层不进行信息迁移;
     if (ISOK(node, AINode.class) && ISOK(propertyNode, AINode.class)) {
         //1. 指定属性关系
-        [node.propertyPorts addObject:propertyNode.pointer];
-        [propertyNode.bePropertyPorts addObject:node.pointer];
+        [node.propertyPorts addObject:[AIPort newWithPointer:propertyNode.pointer]];
+        [propertyNode.bePropertyPorts addObject:[AIPort newWithPointer:node.pointer]];
         
         //2. 从node的父类向融信息(属性及属性值范围)(模糊关系)(参考n10p22)
         //...

@@ -8,6 +8,7 @@
 
 #import "AIStoreBase.h"
 
+@class AIPointer;
 @interface AILineStore : AIStoreBase
 
 

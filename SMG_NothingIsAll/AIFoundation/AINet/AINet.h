@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIModel,AINode,AIInputMindValueAlgsModel;
+@class AIModel,AINode,AIInputMindValueAlgsModel,AIPointer;
 @interface AINet : NSObject
 
 +(AINet*) sharedInstance;

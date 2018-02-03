@@ -11,6 +11,7 @@
 /**
  *  MARK:--------------------内存缓存--------------------
  */
+@class AIPointer;
 @interface AINetCache : NSObject
 
 +(AINetCache*) sharedInstance;

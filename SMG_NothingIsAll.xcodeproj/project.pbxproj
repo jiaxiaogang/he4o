@@ -27,8 +27,6 @@
 		082F9D5D1EB236AC0009F6A9 /* StudyViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 082F9D5B1EB236AC0009F6A9 /* StudyViewController.xib */; };
 		083112F21F05E12600051DE6 /* MBProgressHUD+Add.m in Sources */ = {isa = PBXBuildFile; fileRef = 083112F11F05E12600051DE6 /* MBProgressHUD+Add.m */; };
 		083934771F49814B003D49BD /* AIObjStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 083934761F49814B003D49BD /* AIObjStore.m */; };
-		083F61341F04830F000330E1 /* AILineDampingStrategy.m in Sources */ = {isa = PBXBuildFile; fileRef = 083F61301F04830F000330E1 /* AILineDampingStrategy.m */; };
-		083F61351F04830F000330E1 /* AILineStrong.m in Sources */ = {isa = PBXBuildFile; fileRef = 083F61321F04830F000330E1 /* AILineStrong.m */; };
 		083F61381F048329000330E1 /* AILine.m in Sources */ = {isa = PBXBuildFile; fileRef = 083F61371F048329000330E1 /* AILine.m */; };
 		084219E11FD8CEFD009DA6BC /* AIReactorControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 084219E01FD8CEFD009DA6BC /* AIReactorControl.m */; };
 		084219E41FD8CF08009DA6BC /* AIImagination.m in Sources */ = {isa = PBXBuildFile; fileRef = 084219E31FD8CF08009DA6BC /* AIImagination.m */; };
@@ -113,10 +111,6 @@
 		083112F11F05E12600051DE6 /* MBProgressHUD+Add.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MBProgressHUD+Add.m"; sourceTree = "<group>"; };
 		083934751F49814B003D49BD /* AIObjStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIObjStore.h; sourceTree = "<group>"; };
 		083934761F49814B003D49BD /* AIObjStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIObjStore.m; sourceTree = "<group>"; };
-		083F612F1F04830F000330E1 /* AILineDampingStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AILineDampingStrategy.h; sourceTree = "<group>"; };
-		083F61301F04830F000330E1 /* AILineDampingStrategy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AILineDampingStrategy.m; sourceTree = "<group>"; };
-		083F61311F04830F000330E1 /* AILineStrong.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AILineStrong.h; sourceTree = "<group>"; };
-		083F61321F04830F000330E1 /* AILineStrong.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AILineStrong.m; sourceTree = "<group>"; };
 		083F61361F048329000330E1 /* AILine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AILine.h; sourceTree = "<group>"; };
 		083F61371F048329000330E1 /* AILine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AILine.m; sourceTree = "<group>"; };
 		084219DF1FD8CEFD009DA6BC /* AIReactorControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIReactorControl.h; sourceTree = "<group>"; };
@@ -371,10 +365,6 @@
 				08DF0DC21F7F182B00B14D17 /* AIStore */,
 				08F737FB1F7C714F005EAD56 /* AIPointer */,
 				08F737EE1F7C7131005EAD56 /* AINode */,
-				083F612F1F04830F000330E1 /* AILineDampingStrategy.h */,
-				083F61301F04830F000330E1 /* AILineDampingStrategy.m */,
-				083F61311F04830F000330E1 /* AILineStrong.h */,
-				083F61321F04830F000330E1 /* AILineStrong.m */,
 				083F61361F048329000330E1 /* AILine.h */,
 				083F61371F048329000330E1 /* AILine.m */,
 				080A74301F60C6490025DBA3 /* AIPort.h */,
@@ -729,7 +719,6 @@
 			files = (
 				08D7DA4F1ED14BC7004B1018 /* AIChar.m in Sources */,
 				08A209711F1069040013ACC4 /* AIObjModel.m in Sources */,
-				083F61351F04830F000330E1 /* AILineStrong.m in Sources */,
 				08FDCE8E1EAA4A8E00882ADC /* SMGRange.m in Sources */,
 				0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */,
 				086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */,
@@ -738,7 +727,6 @@
 				081B3ADB1F6E2CCD008A7F36 /* AINet.m in Sources */,
 				08C84A8E1E9A866200897D8B /* AIInput.m in Sources */,
 				082F9D561EB234750009F6A9 /* Output.m in Sources */,
-				083F61341F04830F000330E1 /* AILineDampingStrategy.m in Sources */,
 				084219E71FD8CF11009DA6BC /* AIActionControl.m in Sources */,
 				083934771F49814B003D49BD /* AIObjStore.m in Sources */,
 				083112F21F05E12600051DE6 /* MBProgressHUD+Add.m in Sources */,
