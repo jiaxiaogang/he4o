@@ -47,6 +47,16 @@ static AIActionControl *_instance;
     return [[AINet sharedInstance] searchNodeForDataType:dataType dataSource:dataSource];
 }
 
+-(AINode*) searchNodeForDataType:(NSString*)dataType dataSource:(NSString *)dataSource autoCreate:(AIModel*)createModel{
+    AINode *absNode = [self searchNodeForDataType:dataType dataSource:dataSource];
+    if (absNode && !ARRISOK(absNode.conPorts)) {
+        AINode *newAbsNode = [self insertModel:createModel dataSource:nil];//构建抽象点仅指定dataType
+        [self updateNode:absNode abs:newAbsNode];
+        return newAbsNode;
+    }
+    return absNode;
+}
+
 -(AINode*) searchNodeForDataModel:(AIModel*)model {
     return [[AINet sharedInstance] searchNodeForDataModel:model];
 }

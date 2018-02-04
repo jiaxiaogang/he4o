@@ -23,6 +23,7 @@
 //MARK:                     < search >
 //MARK:===============================================================
 -(AINode*) searchNodeForDataType:(NSString*)dataType dataSource:(NSString *)dataSource;
+-(AINode*) searchNodeForDataType:(NSString*)dataType dataSource:(NSString *)dataSource autoCreate:(AIModel*)createModel;//类比时自动构建abs
 -(AINode*) searchNodeForDataModel:(AIModel*)model;
 -(AINode*) searchNodeForDataObj:(id)obj;
 

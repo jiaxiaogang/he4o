@@ -28,11 +28,18 @@
 //MARK:===============================================================
 @implementation AIIntModel
 
++(AIIntModel*) newWithFrom:(int)from to:(int)to{
+    AIIntModel *model = [[AIIntModel alloc] init];
+    model.from = from;
+    model.to = to;
+    return model;
+}
+
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     if (self) {
-        self.from = [aDecoder decodeIntegerForKey:@"from"];
-        self.to = [aDecoder decodeIntegerForKey:@"to"];
+        self.from = [aDecoder decodeIntForKey:@"from"];
+        self.to = [aDecoder decodeIntForKey:@"to"];
         self.algs = [aDecoder decodeObjectForKey:@"algs"];
     }
     return self;
@@ -40,8 +47,8 @@
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [super encodeWithCoder:aCoder];
-    [aCoder encodeFloat:self.from forKey:@"from"];
-    [aCoder encodeFloat:self.to forKey:@"to"];
+    [aCoder encodeInt:self.from forKey:@"from"];
+    [aCoder encodeInt:self.to forKey:@"to"];
     [aCoder encodeObject:self.algs forKey:@"algs"];
 }
 
@@ -52,6 +59,13 @@
 //MARK:                     < AIFloatModel >
 //MARK:===============================================================
 @implementation AIFloatModel
+
++(AIFloatModel*) newWithFrom:(CGFloat)from to:(CGFloat)to{
+    AIFloatModel *model = [[AIFloatModel alloc] init];
+    model.from = from;
+    model.to = to;
+    return model;
+}
 
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
@@ -171,6 +185,12 @@
 //MARK:                     < AIIdentifierModel >
 //MARK:===============================================================
 @implementation AIIdentifierModel
+
++(AIIdentifierModel*) newWithIdentifier:(NSString*)identifier{
+    AIIdentifierModel *model = [[AIIdentifierModel alloc] init];
+    model.identifier = identifier;
+    return model;
+}
 
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];

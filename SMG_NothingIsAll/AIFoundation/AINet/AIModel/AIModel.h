@@ -33,6 +33,7 @@
 @class AIAlgsPointer;
 @interface AIIntModel : AIModel
 
++(AIIntModel*) newWithFrom:(int)from to:(int)to;
 @property (assign,nonatomic) int from;
 @property (assign,nonatomic) int to;
 @property (strong,nonatomic) AIAlgsPointer *algs;
@@ -44,6 +45,7 @@
 //MARK:===============================================================
 @interface AIFloatModel : AIModel
 
++(AIFloatModel*) newWithFrom:(CGFloat)from to:(CGFloat)to;
 @property (assign,nonatomic) CGFloat from;
 @property (assign,nonatomic) CGFloat to;
 @property (strong,nonatomic) AIAlgsPointer *algs;//随后删掉(由AINode.dataSource标记AIInputModel.PropertyName替代,并且algs的pointer不应出现在存储层)
@@ -94,6 +96,7 @@
 //MARK:===============================================================
 @interface AIIdentifierModel : AIModel
 
++(AIIdentifierModel*) newWithIdentifier:(NSString*)identifier;
 @property (strong,nonatomic) NSString *identifier;//自定义类类别标记(如AIInputMindValueAlgsModel)
 
 @end

@@ -80,41 +80,36 @@ static AIThinkingControl *_instance;
  *  参考:n9p20
  */
 -(void) inputByDeep:(NSString*)dataType mvDic:(NSDictionary*)mvDic {
-    //1. 识别dataType
-    AINode *absNode = [[AIActionControl shareInstance] searchNodeForDataType:dataType dataSource:nil];
+    //1. 数据
+    AIIdentifierModel *identModel = [AIIdentifierModel newWithIdentifier:STRTOOK(dataType)];//AIModel对象
+    CGFloat urgentValue = [NUMTOOK([DICTOOK(mvDic) objectForKey:@"urgentValue"]) floatValue];//取mv
+    AITargetType targetType = [NUMTOOK([DICTOOK(mvDic) objectForKey:@"targetType"]) intValue];//取targetType
+    AIIntModel *targetTypeModel = [AIIntModel newWithFrom:targetType to:targetType];//targetType属性
+    AIFloatModel *urgentValueModel = [AIFloatModel newWithFrom:urgentValue to:urgentValue];//urgentValue属性
+    AIActionControl *ac = [AIActionControl shareInstance];
     
-    //2. 取mv & targetType
-    CGFloat urgentValue = [NUMTOOK([DICTOOK(mvDic) objectForKey:@"urgentValue"]) floatValue];
-    AITargetType targetType = [NUMTOOK([DICTOOK(mvDic) objectForKey:@"targetType"]) intValue];
+    //2. 类比到identAbsNode
+    AINode *identAbsNode = [ac searchNodeForDataType:dataType dataSource:nil autoCreate:identModel];
+    AINode *targetTypeAbsNode = [ac searchNodeForDataType:@"AIIntModel" dataSource:@"targetType" autoCreate:targetTypeModel];
+    AINode *urgentValueAbsNode = [ac searchNodeForDataType:@"AIFloatModel" dataSource:@"urgentValue" autoCreate:urgentValueModel];
     
-    //3. think前,先构建思维对象本体
-    AIIdentifierModel *identModel = [[AIIdentifierModel alloc] init];
-    identModel.identifier = STRTOOK(dataType);
-    AINode *identNode = [[AIActionControl shareInstance] insertModel:identModel dataSource:nil];
-    if (absNode) {
-        [[AIActionControl shareInstance] updateNode:identNode abs:absNode];
-    }
+    //3. 构建对象和属性
+    AINode *identNode = [ac insertModel:identModel dataSource:nil];
+    AINode *targetTypeNode = [ac insertModel:targetTypeModel dataSource:@"targetType"];
+    AINode *urgentValueNode = [ac insertModel:urgentValueModel dataSource:@"urgentValue"];
     
-    //4. think中,优先构建cmv有关的信息;
-    AIIntModel *tTModel = [[AIIntModel alloc] init];
-    tTModel.from = targetType;
-    tTModel.to = targetType;
-    AINode *tTNode = [[AIActionControl shareInstance] insertModel:tTModel dataSource:@"targetType"];
-    [[AIActionControl shareInstance] updateNode:tTNode propertyNode:identNode];
+    //4. 指定属性
+    [[AIActionControl shareInstance] updateNode:identNode propertyNode:targetTypeNode];
+    [[AIActionControl shareInstance] updateNode:identNode propertyNode:urgentValueNode];
     
-    AIFloatModel *uVModel = [[AIFloatModel alloc] init];
-    uVModel.from = urgentValue;
-    uVModel.to = urgentValue;
-    AINode *uVNode = [[AIActionControl shareInstance] insertModel:uVModel dataSource:@"urgentValue"];
-    [[AIActionControl shareInstance] updateNode:uVNode propertyNode:identNode];
+    //5. 指定抽象点
+    if (identAbsNode) [[AIActionControl shareInstance] updateNode:identNode abs:identAbsNode];
+    if (targetTypeAbsNode) [[AIActionControl shareInstance] updateNode:targetTypeNode abs:targetTypeAbsNode];
+    if (urgentValueAbsNode) [[AIActionControl shareInstance] updateNode:urgentValueNode abs:urgentValueAbsNode];
     
-    //5. 后根据cmv查找解决问题;(查找同cmv经验,并将tTNode和uVNode指定abs)
-    AINode *tTNodeRoot = [[AIActionControl shareInstance] searchNodeForDataType:@"AIIntModel" dataSource:@"targetType"];
-    AINode *uVNodeRoot = [[AIActionControl shareInstance] searchNodeForDataType:@"AIFloatModel" dataSource:@"urgentValue"];
-    NSLog(@"");
-    
-    //6. 对查找结果进行类比 (类比符合度从100%->0%,经验优先,分析+多事务次之,猜测或感觉再次,cachesShort数据瞎想最终)
+    //6. 根据cmv查找结果进行类比解决问题 对 (类比符合度从100%->0%,经验优先,分析+多事务次之,猜测或感觉再次,cachesShort数据瞎想最终)
     [self thinkLoop];
+    NSLog(@"");
     
     //7. 将类比到的数据构建与关联;
     
