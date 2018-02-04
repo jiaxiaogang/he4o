@@ -185,3 +185,17 @@ typedef NS_ENUM(NSInteger, AITargetType) {
     AITargetType_Up     = 1,//增涨
     AITargetType_Down   = 2,//下降
 };
+
+/**
+ *  MARK:--------------------PortType--------------------
+ */
+typedef NS_ENUM(NSInteger, PortType) {
+    PortType_Abs        = 1,
+    PortType_Con        = 2,
+    PortType_Property   = 3,
+    PortType_BeProperty = 4,
+    PortType_Change     = 5,
+    PortType_BeChange   = 6,
+    PortType_Logic      = 7,
+    PortType_BeLogic    = 8,
+};

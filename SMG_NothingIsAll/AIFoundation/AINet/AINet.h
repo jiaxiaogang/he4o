@@ -49,6 +49,8 @@
 -(void) updateNetModel:(AINode*)model;
 -(void) updateNode:(AINode*)node abs:(AINode*)abs;
 -(void) updateNode:(AINode *)node propertyNode:(AINode *)propertyNode;
+-(void) updateNode:(AINode *)node changeNode:(AINode *)changeNode;
+-(void) updateNode:(AINode *)node logicNode:(AINode *)logicNode;
 
 
 //MARK:===============================================================

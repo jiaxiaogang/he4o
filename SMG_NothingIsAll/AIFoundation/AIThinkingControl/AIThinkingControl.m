@@ -99,16 +99,18 @@ static AIThinkingControl *_instance;
     AINode *urgentValueNode = [ac insertModel:urgentValueModel dataSource:@"urgentValue"];
     
     //4. 指定属性
-    [[AIActionControl shareInstance] updateNode:identNode propertyNode:targetTypeNode];
-    [[AIActionControl shareInstance] updateNode:identNode propertyNode:urgentValueNode];
+    [ac updateNode:identNode propertyNode:targetTypeNode];
+    [ac updateNode:identNode propertyNode:urgentValueNode];
     
     //5. 指定抽象点
-    if (identAbsNode) [[AIActionControl shareInstance] updateNode:identNode abs:identAbsNode];
-    if (targetTypeAbsNode) [[AIActionControl shareInstance] updateNode:targetTypeNode abs:targetTypeAbsNode];
-    if (urgentValueAbsNode) [[AIActionControl shareInstance] updateNode:urgentValueNode abs:urgentValueAbsNode];
+    if (identAbsNode) [ac updateNode:identNode abs:identAbsNode];
+    if (targetTypeAbsNode) [ac updateNode:targetTypeNode abs:targetTypeAbsNode];
+    if (urgentValueAbsNode) [ac updateNode:urgentValueNode abs:urgentValueAbsNode];
     
     //6. 根据cmv查找结果进行类比解决问题 对 (类比符合度从100%->0%,经验优先,分析+多事务次之,猜测或感觉再次,cachesShort数据瞎想最终)
     [self thinkLoop];
+    
+    //存change,logic,取change,logic;xxxxxxxxxx
     NSLog(@"");
     
     //7. 将类比到的数据构建与关联;

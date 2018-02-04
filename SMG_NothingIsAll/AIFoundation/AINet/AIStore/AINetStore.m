@@ -227,11 +227,6 @@ static AINetStore *_instance;
     }
 }
 
-//*. 发现规律后,
-//1. 新建节点;
-//2. 新建属性;(需propertyNode)
-//3. 更新节点;(中间继承层)
-//4. 更新属性;(同3);
 -(void) updateNode:(AINode *)node propertyNode:(AINode *)propertyNode{
     //代码层不进行信息迁移;
     if (ISOK(node, AINode.class) && ISOK(propertyNode, AINode.class)) {
@@ -248,6 +243,29 @@ static AINetStore *_instance;
     }
 }
 
+-(void) updateNode:(AINode *)node changeNode:(AINode *)changeNode{
+    if (ISOK(node, AINode.class) && ISOK(changeNode, AINode.class)) {
+        //1. 指定关系
+        [node.changePorts addObject:[AIPort newWithNode:changeNode]];
+        [changeNode.beChangePorts addObject:[AIPort newWithNode:node]];
+        
+        //2.存
+        [self setObjectNode:node];
+        [self setObjectNode:changeNode];
+    }
+}
+
+-(void) updateNode:(AINode *)node logicNode:(AINode *)logicNode{
+    if (ISOK(node, AINode.class) && ISOK(logicNode, AINode.class)) {
+        //1. 指定关系
+        [node.logicPorts addObject:[AIPort newWithNode:logicNode]];
+        [logicNode.beLogicPorts addObject:[AIPort newWithNode:node]];
+        
+        //2.存
+        [self setObjectNode:node];
+        [self setObjectNode:logicNode];
+    }
+}
 
 /**
  *  MARK:--------------------PINCache缓存--------------------
