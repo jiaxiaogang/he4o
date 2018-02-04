@@ -20,27 +20,18 @@
 @property (strong,nonatomic) NSString *dataType;            //AIData的Type(一般为AIIntModel,AIIndentifier等)
 @property (strong,nonatomic) NSString *dataSource;          //AIData的来源(一般为inputModel中的某属性)
 
-//是(定义)
+//是什么(定义)
 @property (strong,nonatomic) NSMutableArray *absPorts;      //抽象指向(多继承,接口等）
 @property (strong,nonatomic) NSMutableArray *conPorts;      //具象指向
-//的(关系)
+//的什么(关系)
 @property (strong,nonatomic) NSMutableArray *propertyPorts; //属性
 @property (strong,nonatomic) NSMutableArray *bePropertyPorts;
-//能(变化)
+//能什么(变化)
 @property (strong,nonatomic) NSMutableArray *changePorts;   //变化
 @property (strong,nonatomic) NSMutableArray *beChangePorts;
-
-@property (strong,nonatomic) NSMutableArray *logicPorts;    //方法
-
-@end
-
-
-//MARK:===============================================================
-//MARK:                     < AILogicNode >
-//MARK:===============================================================
-@interface AILogicNode : AINode
-
-@property (strong,nonatomic) NSMutableArray *resultPorts;
-@property (strong,nonatomic) AIKVPointer *target;
+//干什么(先后)
+@property (strong,nonatomic) NSMutableArray *logicPorts;    //时因指向
+@property (strong,nonatomic) NSMutableArray *beLogicPorts;  //后果指向
 
 @end
+

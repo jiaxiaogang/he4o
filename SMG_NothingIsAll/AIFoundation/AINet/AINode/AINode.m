@@ -25,6 +25,7 @@
         self.bePropertyPorts = [aDecoder decodeObjectForKey:@"bePropertyPorts"];
         self.changePorts = [aDecoder decodeObjectForKey:@"changePorts"];
         self.logicPorts = [aDecoder decodeObjectForKey:@"logicPorts"];
+        self.beLogicPorts = [aDecoder decodeObjectForKey:@"beLogicPorts"];
     }
     return self;
 }
@@ -39,6 +40,7 @@
     [aCoder encodeObject:self.bePropertyPorts forKey:@"bePropertyPorts"];
     [aCoder encodeObject:self.changePorts forKey:@"changePorts"];
     [aCoder encodeObject:self.logicPorts forKey:@"logicPorts"];
+    [aCoder encodeObject:self.beLogicPorts forKey:@"beLogicPorts"];
 }
 
 -(NSMutableArray *)absPorts{
@@ -83,27 +85,11 @@
     return _logicPorts;
 }
 
-@end
-
-
-//MARK:===============================================================
-//MARK:                     < AILogicNode >
-//MARK:===============================================================
-@implementation AILogicNode
-
-- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
-    self = [super init];
-    if (self) {
-        self.resultPorts = [aDecoder decodeObjectForKey:@"resultPorts"];
-        self.target = [aDecoder decodeObjectForKey:@"target"];
+-(NSMutableArray *)beLogicPorts{
+    if (_beLogicPorts == nil) {
+        _beLogicPorts = [[NSMutableArray alloc] init];
     }
-    return self;
-}
-
-- (void)encodeWithCoder:(NSCoder *)aCoder {
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:self.resultPorts forKey:@"resultPorts"];
-    [aCoder encodeObject:self.target forKey:@"target"];
+    return _beLogicPorts;
 }
 
 @end
