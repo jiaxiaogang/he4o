@@ -18,7 +18,7 @@
 
 @interface AIThinkingControl()
 
-@property (strong,nonatomic) NSMutableDictionary *cacheShort;//存AIModel(从Algs传入,待Thinking取用分析)(容量8);
+@property (strong,nonatomic) NSMutableArray *cacheShort;//存AIModel(从Algs传入,待Thinking取用分析)(容量8);
 @property (strong,nonatomic) NSMutableArray *cacheLong;//存AINode(相当于Net的缓存区)(容量10000);
 
 @end
@@ -43,7 +43,7 @@ static AIThinkingControl *_instance;
 }
 
 -(void) initData{
-    self.cacheShort = [[NSMutableDictionary alloc] init];
+    self.cacheShort = [[NSMutableArray alloc] init];
     self.cacheLong = [[NSMutableArray alloc] init];
 }
 
@@ -53,11 +53,11 @@ static AIThinkingControl *_instance;
 //MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
--(void) inputByShallow:(NSObject*)data{
+-(void) inputByShallow:(AIInputModel*)model{
     //1. update Caches;
-    NSDictionary *dic = [NSObject getDic:data];
-    NSString *dataType = NSStringFromClass(data.class);
-    [self setObject_Caches:dataType value:dic];
+    NSDictionary *dic = [NSObject getDic:model];
+    NSString *dataType = NSStringFromClass(model.class);
+    [self setObject_Caches:model];
     
     //2. check data hav mv;
     if ([self checkHavMV:dic]) { //hav mv
@@ -111,6 +111,18 @@ static AIThinkingControl *_instance;
     [self thinkLoop];
     
     //存change,logic,取change,logic;xxxxxxxxxx
+    AIIntModel *changeModel = [AIIntModel newWithFrom:1 to:9];
+    AINode *changeNode = [ac insertModel:changeModel dataSource:@"urgentValue"];
+    [ac updateNode:identNode changeNode:changeNode];
+    
+    //对各种dataSource的记录;
+    if ([mvDic objectForKey:@""]) {
+        //对各种change,用潜意识流logic串起来;
+        //对导致cmv变化的change,进行类比缩小范围;
+        //对缩小范围的change用显意识流logic串起来;
+    }
+    
+    
     NSLog(@"");
     
     //7. 将类比到的数据构建与关联;
@@ -132,12 +144,11 @@ static AIThinkingControl *_instance;
 //MARK:===============================================================
 //MARK:                     < caches >
 //MARK:===============================================================
--(void) setObject_Caches:(NSString*)k value:(NSDictionary*)v {
-    [self.cacheShort setObject:DICTOOK(v) forKey:k];
+-(void) setObject_Caches:(AIInputModel*)model {
+    [self.cacheShort addObject:model];
     
     if (self.cacheShort.count > 8) {
-        NSString *removeKey = ARR_INDEX(self.cacheShort.allKeys, 0);
-        [self.cacheShort removeObjectForKey:removeKey];
+        [self.cacheShort subarrayWithRange:NSMakeRange(self.cacheShort.count - 8, 8)];
     }
 }
 
