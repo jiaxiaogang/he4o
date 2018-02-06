@@ -1,14 +1,14 @@
 //
-//  AIIMVCharge.h
+//  ImvChargeModel.h
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/12/14.
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "AIInputMindValue.h"
+#import "ImvModelBase.h"
 
-@interface AIIMVCharge : AIInputMindValue
+@interface ImvChargeModel : ImvModelBase
 
 @property (assign, nonatomic) HungerState state;
 

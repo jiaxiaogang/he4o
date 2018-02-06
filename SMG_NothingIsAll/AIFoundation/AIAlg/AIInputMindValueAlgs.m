@@ -7,15 +7,15 @@
 //
 
 #import "AIInputMindValueAlgs.h"
-#import "AIInputMindValue.h"
+#import "ImvModelBase.h"
 #import "AIThinkingControl.h"
-#import "AIInputMindValueAlgsModel.h"
+#import "ImvAlgsModelBase.h"
 
 @implementation AIInputMindValueAlgs
 
-+(void) commitInput:(AIInputMindValue*)input{
-    if (ISOK(input, AIInputMindValue.class)) {
-        AIInputMindValueAlgsModel *model = [[AIInputMindValueAlgsModel alloc] init];
++(void) commitInput:(ImvModelBase*)input{
+    if (ISOK(input, ImvModelBase.class)) {
+        ImvAlgsModelBase *model = [[ImvAlgsModelBase alloc] init];
         model.urgentValue = [self getAlgsUrgentValue:input.value];
         model.targetType = [self getAlgsTargetType:model.urgentValue];
         

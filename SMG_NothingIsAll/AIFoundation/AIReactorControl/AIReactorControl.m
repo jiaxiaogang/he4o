@@ -9,9 +9,9 @@
 #import "AIReactorControl.h"
 #import "AIActionControl.h"
 #import "AIModel.h"
-#import "AIInputMindValue.h"
-#import "AIIMVCharge.h"
-#import "AIIMVHunger.h"
+#import "ImvModelBase.h"
+#import "ImvChargeModel.h"
+#import "ImvHungerModel.h"
 
 @implementation AIReactorControl
 
@@ -23,14 +23,14 @@ static AIReactorControl *_instance;
     return _instance;
 }
 
--(AIInputMindValue*) createMindValue:(IMVType)type value:(NSInteger)value {
+-(ImvModelBase*) createMindValue:(IMVType)type value:(NSInteger)value {
     if (type == IMVType_Charge) {
-        AIIMVCharge *model = [[AIIMVCharge alloc] init];
+        ImvChargeModel *model = [[ImvChargeModel alloc] init];
         model.state = HungerState_Charging;
         model.value = value;
         return model;
     }else if(type == IMVType_Hunger) {
-        AIIMVHunger *model = [[AIIMVHunger alloc] init];
+        ImvHungerModel *model = [[ImvHungerModel alloc] init];
         model.level = value;
         model.value = value;
         return model;
@@ -53,7 +53,7 @@ static AIReactorControl *_instance;
 }
 
 -(void) commitInputIMV:(IMVType)type value:(NSInteger)value {
-    AIInputMindValue *model = [self createMindValue:type value:value];
+    ImvModelBase *model = [self createMindValue:type value:value];
     [[AIActionControl shareInstance] commitInput:model];
 }
 

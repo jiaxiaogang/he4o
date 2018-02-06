@@ -1,13 +1,13 @@
 //
-//  AIIMVHunger.m
+//  ImvChargeModel.m
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/12/14.
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "AIIMVHunger.h"
+#import "ImvChargeModel.h"
 
-@implementation AIIMVHunger
+@implementation ImvChargeModel
 
 @end

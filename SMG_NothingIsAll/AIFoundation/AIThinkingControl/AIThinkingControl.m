@@ -8,9 +8,8 @@
 
 #import "AIThinkingControl.h"
 #import "AINet.h"
-#import "AIMindValue.h"
 #import "AIStringAlgsModel.h"
-#import "AIInputMindValueAlgsModel.h"
+#import "ImvAlgsModelBase.h"
 #import "AIActionControl.h"
 #import "AINode.h"
 #import "AIModel.h"
@@ -53,7 +52,7 @@ static AIThinkingControl *_instance;
 //MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
--(void) inputByShallow:(AIInputModel*)model{
+-(void) inputByShallow:(ImvAlgsModelBase*)model{
     //1. update Caches;
     NSDictionary *dic = [NSObject getDic:model];
     NSString *dataType = NSStringFromClass(model.class);
@@ -144,7 +143,7 @@ static AIThinkingControl *_instance;
 //MARK:===============================================================
 //MARK:                     < caches >
 //MARK:===============================================================
--(void) setObject_Caches:(AIInputModel*)model {
+-(void) setObject_Caches:(ImvAlgsModelBase*)model {
     [self.cacheShort addObject:model];
     
     if (self.cacheShort.count > 8) {

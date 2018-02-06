@@ -8,7 +8,7 @@
 
 #import "AIInput.h"
 #import "AINet.h"
-#import "AIInputMindValue.h"
+#import "ImvModelBase.h"
 #import "AIReactorControl.h"
 
 @implementation AIInput

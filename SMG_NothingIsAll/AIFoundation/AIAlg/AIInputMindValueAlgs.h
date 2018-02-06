@@ -8,9 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIInputMindValue;
+@class ImvModelBase;
 @interface AIInputMindValueAlgs : NSObject
 
-+(void) commitInput:(AIInputMindValue*)input;
++(void) commitInput:(ImvModelBase*)input;
 
 @end

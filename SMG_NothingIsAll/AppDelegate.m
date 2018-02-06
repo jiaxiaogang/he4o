@@ -9,7 +9,7 @@
 #import "AppDelegate.h"
 #import "StudyViewController.h"
 #import "AINet.h"
-#import "AIIMVHunger.h"
+#import "ImvHungerModel.h"
 
 @implementation AppDelegate
 
@@ -56,7 +56,7 @@
 
 -(void) testBuildDataNet{
     //1. 饥饿感知
-    AIIMVHunger *hungerModel = [[AIIMVHunger alloc] init];
+    ImvHungerModel *hungerModel = [[ImvHungerModel alloc] init];
     //....思维model设计...
     [[AINet sharedInstance] insertProperty:nil];
 }

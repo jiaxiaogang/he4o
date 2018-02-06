@@ -19,7 +19,7 @@
  *  3,收集用户输入的Text字符串(Text)
  *  4,收集摄像头视频do行为(视频行为)
  */
-@class AIInputMindValue;
+@class ImvModelBase;
 @interface AIInput : NSObject
 
 +(AIInput*) sharedInstance;
