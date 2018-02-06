@@ -52,11 +52,11 @@ static AIThinkingControl *_instance;
 //MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
--(void) inputByShallow:(ImvAlgsModelBase*)model{
+-(void) inputByShallow:(NSObject*)algsModel{
     //1. update Caches;
-    NSDictionary *dic = [NSObject getDic:model];
-    NSString *dataType = NSStringFromClass(model.class);
-    [self setObject_Caches:model];
+    NSDictionary *dic = [NSObject getDic:algsModel containParent:true];
+    NSString *dataType = NSStringFromClass(algsModel.class);
+    [self setObject_Caches:algsModel];
     
     //2. check data hav mv;
     if ([self checkHavMV:dic]) { //hav mv
@@ -143,8 +143,8 @@ static AIThinkingControl *_instance;
 //MARK:===============================================================
 //MARK:                     < caches >
 //MARK:===============================================================
--(void) setObject_Caches:(ImvAlgsModelBase*)model {
-    [self.cacheShort addObject:model];
+-(void) setObject_Caches:(NSObject*)algsModel {
+    [self.cacheShort addObject:algsModel];
     
     if (self.cacheShort.count > 8) {
         [self.cacheShort subarrayWithRange:NSMakeRange(self.cacheShort.count - 8, 8)];

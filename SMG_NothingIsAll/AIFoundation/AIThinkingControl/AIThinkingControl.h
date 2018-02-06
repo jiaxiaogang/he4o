@@ -14,6 +14,6 @@
 @interface AIThinkingControl : NSObject
 
 +(AIThinkingControl*) shareInstance;
--(void) inputByShallow:(NSObject*)data;  //潜
+-(void) inputByShallow:(NSObject*)algsModel;  //潜
 
 @end

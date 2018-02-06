@@ -56,7 +56,7 @@
 
 + (void) dictionaryToEntity:(NSDictionary *)dict entity:(NSObject*)entity;              //DIC2Model
 + (NSDictionary*)getDic:(id)obj;                                                        //Model2DIC
-+ (void)print:(id)obj;
 + (NSData*)getJSON:(id)obj options:(NSJSONWritingOptions)options error:(NSError**)error;//Model2JSON
++ (NSDictionary*) getDic:(NSObject*)obj containParent:(BOOL)containParent;
 
 @end

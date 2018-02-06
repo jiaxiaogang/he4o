@@ -231,15 +231,11 @@
             }
         }
         @catch (NSException *exception) {
-            [self logError:exception];
+            NSLog(@"%@",exception);
         }
         
     }
     return dic;
-}
-
-+ (void)print:(id)obj {
-    NSLog(@"%@", [self getDic:obj]);
 }
 
 
@@ -278,11 +274,33 @@
     return [self getDic:obj];
 }
 
-+ (void)logError:(NSException*)exp
+/**
+ *  MARK:--------------------引自LKDB中LKModel--------------------
+ */
++ (NSDictionary*) getDic:(NSObject*)obj containParent:(BOOL)containParent{
+    NSMutableDictionary *mDic = [[NSMutableDictionary alloc] init];
+    if (obj) {
+        [obj getDic:mDic appendPropertyStringWithClass:obj.class containParent:containParent];
+    }
+    return mDic;
+}
+
+- (void)getDic:(NSMutableDictionary *)outDic appendPropertyStringWithClass:(Class)clazz containParent:(BOOL)containParent
 {
-#if PRINT_OBJ_LOGGING
-    NSLog(@"PrintObject Error: %@", exp);
-#endif
+    if (clazz == [NSObject class] || outDic == nil) {
+        return;
+    }
+    unsigned int outCount = 0, i = 0;
+    objc_property_t *properties = class_copyPropertyList(clazz, &outCount);
+    for (i = 0; i < outCount; i++) {
+        objc_property_t property = properties[i];
+        NSString *propertyName = [NSString stringWithCString:property_getName(property) encoding:NSUTF8StringEncoding];
+        [outDic setObject:[self valueForKey:propertyName] forKey:propertyName];
+    }
+    free(properties);
+    if (containParent) {
+        [self getDic:outDic appendPropertyStringWithClass:clazz.superclass containParent:containParent];
+    }
 }
 
 @end
