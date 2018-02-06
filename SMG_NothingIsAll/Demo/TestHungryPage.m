@@ -76,11 +76,11 @@
  *  MARK:--------------------onclick--------------------
  */
 - (IBAction)addBtnOnClick:(id)sender {
-    [[[DemoCharge alloc] init] commit:HungerState_Charging];
+    [[[DemoHunger alloc] init] commit:9];
 }
 
 - (IBAction)subBtnOnClick:(id)sender {
-    [[[DemoCharge alloc] init] commit:HungerState_Unplugged];
+    [[[DemoHunger alloc] init] commit:1];
 }
 
 - (IBAction)eatStartBtnOnClick:(id)sender {

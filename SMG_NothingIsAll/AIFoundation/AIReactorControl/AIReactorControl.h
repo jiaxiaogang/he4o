@@ -27,6 +27,6 @@
 
 -(void) commitInput:(id)input;
 -(void) commitInputIMV:(IMVType)type value:(NSInteger)value;
--(void) commitModel:(AIModel*)model;
+-(void) commitCustom:(CustomInputType)type value:(NSInteger)value;
 
 @end

@@ -40,7 +40,7 @@
         state = HungerState_Charging;
     }
     
-    [theInput commitIMV:IMVType_Charge value:3];
+    [[AIInput sharedInstance] commitCustom:CustomInputType_Charge value:3];
 }
 
 -(void) dealloc{
@@ -49,7 +49,7 @@
 
 -(void) commit:(HungerState)state {
     //为方便调试:假设:充一下;加一格电;
-    [theInput commitIMV:IMVType_Charge value:3];
+    [[AIInput sharedInstance] commitCustom:CustomInputType_Charge value:3];
 }
 
 @end

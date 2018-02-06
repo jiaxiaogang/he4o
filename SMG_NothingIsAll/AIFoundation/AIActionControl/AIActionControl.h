@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIModel,AINode,AIInputMindValueAlgsModel;
+@class AIModel,AINode,AIImvAlgsModel;
 @interface AIActionControl : NSObject
 
 
@@ -17,6 +17,8 @@
 //MARK:===============================================================
 +(AIActionControl*) shareInstance;
 -(void) commitInput:(id)input;
+-(void) commitInputIMV:(IMVType)type value:(NSInteger)value;
+-(void) commitCustom:(CustomInputType)type value:(NSInteger)value;
 
 
 //MARK:===============================================================

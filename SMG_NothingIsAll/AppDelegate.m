@@ -9,7 +9,6 @@
 #import "AppDelegate.h"
 #import "StudyViewController.h"
 #import "AINet.h"
-#import "ImvHungerModel.h"
 
 @implementation AppDelegate
 
@@ -26,9 +25,6 @@
     UINavigationController *naviC = [[UINavigationController alloc] initWithRootViewController:page];
     [self.window setRootViewController:naviC];
     [self.window makeKeyAndVisible];
-    
-    //3. 假数据模拟actionControl构建节点...
-    [self testBuildDataNet];
     
     return YES;
 }
@@ -52,13 +48,6 @@
     NSArray *controllers = navC.viewControllers;
     UIViewController *controller = [controllers lastObject];
     return controller;
-}
-
--(void) testBuildDataNet{
-    //1. 饥饿感知
-    ImvHungerModel *hungerModel = [[ImvHungerModel alloc] init];
-    //....思维model设计...
-    [[AINet sharedInstance] insertProperty:nil];
 }
 
 @end

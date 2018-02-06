@@ -10,8 +10,8 @@
 #import "AINode.h"
 #import "AIStringAlgs.h"
 #import "PINCache.h"
-#import "ImvModelBase.h"
-#import "AIInputMindValueAlgs.h"
+#import "AIImvAlgs.h"
+#import "AICustomAlgs.h"
 #import "AIStringAlgsModel.h"
 #import "ImvAlgsModelBase.h"
 #import "AINet.h"
@@ -27,14 +27,17 @@ static AIActionControl *_instance;
 }
 
 -(void) commitInput:(id)input{
-    if (input) {
-        //1. 调用算法处理
-        if (ISOK(input, [NSString class])) {
-            [AIStringAlgs commitInput:input];
-        }else if(ISOK(input, [ImvModelBase class])) {
-            [AIInputMindValueAlgs commitInput:input];
-        }
+    if (ISOK(input, [NSString class])) {
+        [AIStringAlgs commitInput:input];
     }
+}
+
+-(void) commitInputIMV:(IMVType)type value:(NSInteger)value{
+    [AIImvAlgs commitInputIMV:type value:value];
+}
+
+-(void) commitCustom:(CustomInputType)type value:(NSInteger)value{
+    [AICustomAlgs commitCustom:type value:value];
 }
 
 

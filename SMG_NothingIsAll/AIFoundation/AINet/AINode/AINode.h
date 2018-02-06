@@ -6,7 +6,7 @@
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "AIObject.h"
+#import <Foundation/Foundation.h>
 
 
 //MARK:===============================================================

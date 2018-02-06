@@ -8,7 +8,6 @@
 
 #import "AIInput.h"
 #import "AINet.h"
-#import "ImvModelBase.h"
 #import "AIReactorControl.h"
 
 @implementation AIInput
@@ -49,6 +48,10 @@ static AIInput *_instance;
 
 -(void) commitIMV:(IMVType)type value:(NSInteger)value{
     [[AIReactorControl shareInstance] commitInputIMV:type value:value];
+}
+
+-(void) commitCustom:(CustomInputType)type value:(NSInteger)value{
+    [[AIReactorControl shareInstance] commitCustom:type value:value];
 }
 
 @end

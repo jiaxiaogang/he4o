@@ -1,5 +1,5 @@
 //
-//  ImvModelBase.h
+//  AICustomAlgs.h
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2018/2/6.
@@ -8,11 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
-@interface ImvModelBase : NSObject
+@interface AICustomAlgs : NSObject
 
-@property (assign, nonatomic)  NSInteger value;
-
--(CGFloat) duration;
--(NSInteger) tagIdentifier;
++(void) commitCustom:(CustomInputType)type value:(NSInteger)value;
 
 @end

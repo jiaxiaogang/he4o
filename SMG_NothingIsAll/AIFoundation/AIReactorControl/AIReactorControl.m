@@ -9,9 +9,6 @@
 #import "AIReactorControl.h"
 #import "AIActionControl.h"
 #import "AIModel.h"
-#import "ImvModelBase.h"
-#import "ImvChargeModel.h"
-#import "ImvHungerModel.h"
 
 @implementation AIReactorControl
 
@@ -24,19 +21,8 @@ static AIReactorControl *_instance;
 }
 
 -(ImvModelBase*) createMindValue:(IMVType)type value:(NSInteger)value {
-    if (type == IMVType_Charge) {
-        ImvChargeModel *model = [[ImvChargeModel alloc] init];
-        model.state = HungerState_Charging;
-        model.value = value;
-        return model;
-    }else if(type == IMVType_Hunger) {
-        ImvHungerModel *model = [[ImvHungerModel alloc] init];
-        model.level = value;
-        model.value = value;
-        return model;
-    }else{
-        
-    }
+    //1. 根据model判断是否createMindValue();
+    //2. 根据model判断是否作Reactor();
     return nil;
 }
 
@@ -48,19 +34,15 @@ static AIReactorControl *_instance;
 
 
 -(void) commitInput:(id)input{
-    [self createReactor:AIMoodType_Anxious];
     [[AIActionControl shareInstance] commitInput:input];
 }
 
 -(void) commitInputIMV:(IMVType)type value:(NSInteger)value {
-    ImvModelBase *model = [self createMindValue:type value:value];
-    [[AIActionControl shareInstance] commitInput:model];
+    [[AIActionControl shareInstance] commitInputIMV:type value:value];
 }
 
--(void) commitModel:(AIModel*)model{
-    //1. 根据model判断是否createMindValue();
-    //2. 根据model判断是否作Reactor();
-    //[[AIActionControl shareInstance] insertModel:model];
+-(void) commitCustom:(CustomInputType)type value:(NSInteger)value{
+    [[AIActionControl shareInstance] commitCustom:type value:value];
 }
 
 @end

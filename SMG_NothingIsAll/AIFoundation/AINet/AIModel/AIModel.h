@@ -6,7 +6,7 @@
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "AIObject.h"
+#import <Foundation/Foundation.h>
 
 
 /**
@@ -97,7 +97,7 @@
 @interface AIIdentifierModel : AIModel
 
 +(AIIdentifierModel*) newWithIdentifier:(NSString*)identifier;
-@property (strong,nonatomic) NSString *identifier;//自定义类类别标记(如AIInputMindValueAlgsModel)
+@property (strong,nonatomic) NSString *identifier;//自定义类类别标记(如AIImvAlgsModel)
 
 @end
 

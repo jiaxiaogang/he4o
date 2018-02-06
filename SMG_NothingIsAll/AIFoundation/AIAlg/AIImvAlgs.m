@@ -1,22 +1,22 @@
 //
-//  AIInputMindValueAlgs.m
+//  AIImvAlgs.m
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/12/21.
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import "AIInputMindValueAlgs.h"
-#import "ImvModelBase.h"
+#import "AIImvAlgs.h"
+#import "ImvAlgsHungerModel.h"
 #import "AIThinkingControl.h"
 #import "ImvAlgsModelBase.h"
 
-@implementation AIInputMindValueAlgs
+@implementation AIImvAlgs
 
-+(void) commitInput:(ImvModelBase*)input{
-    if (ISOK(input, ImvModelBase.class)) {
-        ImvAlgsModelBase *model = [[ImvAlgsModelBase alloc] init];
-        model.urgentValue = [self getAlgsUrgentValue:input.value];
++(void) commitInputIMV:(IMVType)type value:(NSInteger)value{
+    if (type == IMVType_Hunger) {
+        ImvAlgsHungerModel *model = [[ImvAlgsHungerModel alloc] init];
+        model.urgentValue = [self getAlgsUrgentValue:value];
         model.targetType = [self getAlgsTargetType:model.urgentValue];
         
         //1. 结果给Thinking

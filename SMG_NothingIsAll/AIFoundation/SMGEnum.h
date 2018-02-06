@@ -106,11 +106,17 @@ typedef NS_ENUM(NSInteger, MVDownCurveType) {
 };
 
 /**
- *  MARK:--------------------IMVType--------------------
+ *  MARK:--------------------IMVType(输入imv信号)--------------------
  */
 typedef NS_ENUM(NSInteger, IMVType) {
-    IMVType_Charge     = 1,
-    IMVType_Hunger     = 2,
+    IMVType_Hunger     = 1,
+};
+
+/**
+ *  MARK:--------------------CustomInputType(自定义输入信号)--------------------
+ */
+typedef NS_ENUM(NSInteger, CustomInputType) {
+    CustomInputType_Charge     = 1,
 };
 
 /**

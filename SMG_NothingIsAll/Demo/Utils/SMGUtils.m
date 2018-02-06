@@ -7,8 +7,6 @@
 //
 
 #import "SMGUtils.h"
-#import "AILineStore.h"
-#import "AIObject.h"
 
 @implementation SMGUtils
 
@@ -23,7 +21,7 @@
 }
 
 +(NSMutableArray*) lightArea_Vertical:(AIObject*)lightModel energy:(NSInteger)energy{
-    return [AILineStore searchPointer:lightModel.pointer energy:energy];
+    return nil;
 }
 
 +(NSMutableArray*) lightArea_Vertical:(AIObject*)lightModel layerCount:(NSInteger)layerCount{
@@ -31,7 +29,7 @@
     if (lightModel) {
         //0,取自己
         if (layerCount >= 0) {
-            [mArr addObject:lightModel.pointer];
+            
         }
         
         //1,纵向取自己的抽象层
@@ -53,7 +51,7 @@
     if (lightModel) {
         //1,取10000个意识流数据
         NSMutableArray *sameClassArr = [[NSMutableArray alloc] init];
-        NSArray *lines = [AILineStore searchPointer:lightModel.pointer count:10];
+        NSArray *lines = nil;
         
         //2,找到当前类似的项
         
@@ -78,9 +76,9 @@
         //1,搜索其它相同网络
         NSMutableArray *pointers = [[NSMutableArray alloc] init];
         for (AIObject *lightModel in lightModels) {
-            [pointers addObject:lightModel.pointer];
+            [pointers addObject:nil];
         }
-        NSArray *lines = [AILineStore searchPointersByClass:pointers count:10];//避免这样的搜索;用感觉系统来作快速的全局搜索替代此处;//xxx
+        NSArray *lines = nil;
         
         //2,生成抽象AILaw数据
     }

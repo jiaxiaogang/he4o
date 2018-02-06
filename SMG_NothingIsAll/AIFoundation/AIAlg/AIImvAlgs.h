@@ -1,5 +1,5 @@
 //
-//  AIInputMindValueAlgs.h
+//  AIImvAlgs.h
 //  SMG_NothingIsAll
 //
 //  Created by 贾  on 2017/12/21.
@@ -8,9 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
-@class ImvModelBase;
-@interface AIInputMindValueAlgs : NSObject
+@interface AIImvAlgs : NSObject
 
-+(void) commitInput:(ImvModelBase*)input;
++(void) commitInputIMV:(IMVType)type value:(NSInteger)value;
 
 @end
