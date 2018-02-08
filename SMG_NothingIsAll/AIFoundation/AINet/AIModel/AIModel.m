@@ -20,6 +20,14 @@
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {}
 
+-(NSString*) getDataType{
+    if ([self isKindOfClass:[AIIdentifierModel class]]) {
+        return ((AIIdentifierModel*)self).identifier;
+    }else{
+        return NSStringFromClass(self.class);
+    }
+}
+
 @end
 
 

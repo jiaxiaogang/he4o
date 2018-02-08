@@ -65,43 +65,14 @@ static AIThinkingControl *_instance;
     }
     
     //3. 构建identModel
-    AIActionControl *ac = [AIActionControl shareInstance];
-    AIIdentifierModel *identModel = [AIIdentifierModel newWithIdentifier:STRTOOK(dataType)];//AIModel对象
-    AINode *identAbsNode = [ac searchNodeForDataType:dataType dataSource:nil autoCreate:identModel];
-    AINode *identNode = [ac insertModel:identModel dataSource:nil];
-    if (identAbsNode) [ac updateNode:identNode abs:identAbsNode];
+    AINode *identNode = [self createIdentNode:dataType];
     
     //4. 构建propertyModel
     for (NSString *dataSource in dic.allKeys) {
-        //4.1 根据类型取aiModel
-        id pptObj = [dic objectForKey:dataSource];
-        AIModel *pptModel = nil;
-        if (pptObj) {
-            if([pptObj isKindOfClass:[NSNumber class]]){
-                if (strcmp([pptObj objCType], @encode(char)) == 0){
-                    AICharModel *charModel = [[AICharModel alloc] init];
-                    charModel.c = [(NSNumber*)pptObj charValue];
-                    pptModel = charModel;
-                }else if (strcmp([pptObj objCType], @encode(int)) == 0 || strcmp([pptObj objCType], @encode(NSInteger)) == 0){
-                    int value = [(NSNumber*)pptObj intValue];
-                    pptModel = [AIIntModel newWithFrom:value to:value];
-                }else if (strcmp([pptObj objCType], @encode(float)) == 0){
-                    float value = [(NSNumber*)pptObj floatValue];
-                    pptModel = [AIFloatModel newWithFrom:value to:value];
-                }
-            }
-        }
-        //4.2 构建网络
-        if (pptModel) {
-            AINode *pptAbsNode = [ac searchNodeForDataType:NSStringFromClass(pptModel.class) dataSource:dataSource autoCreate:pptModel];
-            AINode *pptNode = [ac insertModel:pptModel dataSource:dataSource];
-            [ac updateNode:identNode propertyNode:pptNode];
-            if (pptAbsNode) [ac updateNode:pptNode abs:pptAbsNode];
-        }else{
-            NSLog(@"_________输入了其它类型:%s",[pptObj objCType]);
-        }
+        //4.1 构建网络
+        [self createPropertyNode:[dic objectForKey:dataSource] dataSource:dataSource identNode:identNode];
         
-        //5. 联想mv
+        //4.2 联想mv
         
     }
 }
@@ -113,55 +84,72 @@ static AIThinkingControl *_instance;
  */
 -(void) inputByDeep:(NSString*)dataType mvDic:(NSDictionary*)mvDic {
     //1. 数据
-    AIIdentifierModel *identModel = [AIIdentifierModel newWithIdentifier:STRTOOK(dataType)];//AIModel对象
-    CGFloat urgentValue = [NUMTOOK([DICTOOK(mvDic) objectForKey:@"urgentValue"]) floatValue];//取mv
-    AITargetType targetType = [NUMTOOK([DICTOOK(mvDic) objectForKey:@"targetType"]) intValue];//取targetType
-    AIIntModel *targetTypeModel = [AIIntModel newWithFrom:targetType to:targetType];//targetType属性
-    AIFloatModel *urgentValueModel = [AIFloatModel newWithFrom:urgentValue to:urgentValue];//urgentValue属性
-    AIActionControl *ac = [AIActionControl shareInstance];
-    
-    //2. 类比到identAbsNode
-    AINode *identAbsNode = [ac searchNodeForDataType:dataType dataSource:nil autoCreate:identModel];
-    AINode *targetTypeAbsNode = [ac searchNodeForDataType:@"AIIntModel" dataSource:@"targetType" autoCreate:targetTypeModel];
-    AINode *urgentValueAbsNode = [ac searchNodeForDataType:@"AIFloatModel" dataSource:@"urgentValue" autoCreate:urgentValueModel];
-    
-    //3. 构建对象和属性
-    AINode *identNode = [ac insertModel:identModel dataSource:nil];
-    AINode *targetTypeNode = [ac insertModel:targetTypeModel dataSource:@"targetType"];
-    AINode *urgentValueNode = [ac insertModel:urgentValueModel dataSource:@"urgentValue"];
-    
-    //4. 指定属性
-    [ac updateNode:identNode propertyNode:targetTypeNode];
-    [ac updateNode:identNode propertyNode:urgentValueNode];
-    
-    //5. 指定抽象点
-    if (identAbsNode) [ac updateNode:identNode abs:identAbsNode];
-    if (targetTypeAbsNode) [ac updateNode:targetTypeNode abs:targetTypeAbsNode];
-    if (urgentValueAbsNode) [ac updateNode:urgentValueNode abs:urgentValueAbsNode];
-    
-    //6. 根据cmv查找结果进行类比解决问题 对 (类比符合度从100%->0%,经验优先,分析+多事务次之,猜测或感觉再次,cachesShort数据瞎想最终)
-    [self thinkLoop];
-    
-    //存change,logic,取change,logic;xxxxxxxxxx
-    AIIntModel *changeModel = [AIIntModel newWithFrom:1 to:9];
-    AINode *changeNode = [ac insertModel:changeModel dataSource:@"urgentValue"];
-    [ac updateNode:identNode changeNode:changeNode];
-    
-    //对各种dataSource的记录;
-    if ([mvDic objectForKey:@""]) {
-        //对各种change,用潜意识流logic串起来;
-        //对导致cmv变化的change,进行类比缩小范围;
-        //对缩小范围的change用显意识流logic串起来;
+    if (mvDic) {
+        AINode *identNode = [self createIdentNode:dataType];
+        
+        int energy = 0;
+        
+        for (NSString *dataSource in mvDic.allKeys) {
+            if ([@"urgentValue" isEqualToString:dataSource]) {
+                energy = 10;
+            }else if([@"targetType" isEqualToString:dataSource]) {
+                energy = 20;
+            }
+            //[self createPropertyNode:[mvDic objectForKey:@""] dataSource:@"" identNode:identNode];
+            //明天继续......(将deep方法中代码使用复用以下三个create方法来构建,并且最终将deep与shallow方法合并;
+        }
+        
+        
+        CGFloat urgentValue = [NUMTOOK([DICTOOK(mvDic) objectForKey:@"urgentValue"]) floatValue];//取mv
+        AITargetType targetType = [NUMTOOK([DICTOOK(mvDic) objectForKey:@"targetType"]) intValue];//取targetType
+        AIIntModel *targetTypeModel = [AIIntModel newWithFrom:targetType to:targetType];//targetType属性
+        AIFloatModel *urgentValueModel = [AIFloatModel newWithFrom:urgentValue to:urgentValue];//urgentValue属性
+        AIActionControl *ac = [AIActionControl shareInstance];
+        
+        //2. 类比到identAbsNode
+        
+        AINode *targetTypeAbsNode = [ac searchNodeForDataType:@"AIIntModel" dataSource:@"targetType" autoCreate:targetTypeModel];
+        AINode *urgentValueAbsNode = [ac searchNodeForDataType:@"AIFloatModel" dataSource:@"urgentValue" autoCreate:urgentValueModel];
+        
+        //3. 构建对象和属性
+        
+        AINode *targetTypeNode = [ac insertModel:targetTypeModel dataSource:@"targetType"];
+        AINode *urgentValueNode = [ac insertModel:urgentValueModel dataSource:@"urgentValue"];
+        
+        //4. 指定属性
+        [ac updateNode:identNode propertyNode:targetTypeNode];
+        [ac updateNode:identNode propertyNode:urgentValueNode];
+        
+        //5. 指定抽象点
+        if (targetTypeAbsNode) [ac updateNode:targetTypeNode abs:targetTypeAbsNode];
+        if (urgentValueAbsNode) [ac updateNode:urgentValueNode abs:urgentValueAbsNode];
+        
+        //6. 根据cmv查找结果进行类比解决问题 对 (类比符合度从100%->0%,经验优先,分析+多事务次之,猜测或感觉再次,cachesShort数据瞎想最终)
+        [self thinkLoop];
+        
+        //存change,logic,取change,logic;xxxxxxxxxx
+        AIIntModel *changeModel = [AIIntModel newWithFrom:1 to:9];
+        AINode *changeNode = [ac insertModel:changeModel dataSource:@"urgentValue"];
+        [ac updateNode:identNode changeNode:changeNode];
+        
+        //对各种dataSource的记录;
+        if ([mvDic objectForKey:@""]) {
+            //对各种change,用潜意识流logic串起来;
+            //对导致cmv变化的change,进行类比缩小范围;
+            //对缩小范围的change用显意识流logic串起来;
+        }
+        
+        
+        NSLog(@"");
+        
+        //7. 将类比到的数据构建与关联;
+        
+        //8. 进行思维mv循环
+        
+        //9. 进行决策输出
+        
+        
     }
-    
-    
-    NSLog(@"");
-    
-    //7. 将类比到的数据构建与关联;
-    
-    //8. 进行思维mv循环
-    
-    //9. 进行决策输出
 }
 
 /**
@@ -171,6 +159,55 @@ static AIThinkingControl *_instance;
  */
 -(void) thinkLoop {
     //类比原则:先用dataType和dataSource取,后存,再类比后作update结构化;
+}
+
+-(AIModel*) createPropertyModel:(id)propertyObj{
+    AIModel *pptModel = nil;
+    if (propertyObj) {
+        if([propertyObj isKindOfClass:[NSNumber class]]){
+            if (strcmp([propertyObj objCType], @encode(char)) == 0){
+                AICharModel *charModel = [[AICharModel alloc] init];
+                charModel.c = [(NSNumber*)propertyObj charValue];
+                pptModel = charModel;
+            }else if (strcmp([propertyObj objCType], @encode(int)) == 0 || strcmp([propertyObj objCType], @encode(NSInteger)) == 0){
+                int value = [(NSNumber*)propertyObj intValue];
+                pptModel = [AIIntModel newWithFrom:value to:value];
+            }else if (strcmp([propertyObj objCType], @encode(float)) == 0){
+                float value = [(NSNumber*)propertyObj floatValue];
+                pptModel = [AIFloatModel newWithFrom:value to:value];
+            }else{
+                NSLog(@"_________输入了其它类型:%s",[propertyObj objCType]);
+            }
+        }
+    }
+    return pptModel;
+}
+
+-(AINode*) createIdentNode:(NSString*)dataType{
+    AIIdentifierModel *identModel = [AIIdentifierModel newWithIdentifier:STRTOOK(dataType)];//AIModel对象
+    return [self createNode:identModel dataSource:nil];
+}
+
+-(AINode*) createPropertyNode:(id)pptObj dataSource:(NSString*)dataSource identNode:(AINode*)identNode{
+    if (pptObj && identNode) {
+        AIActionControl *ac = [AIActionControl shareInstance];
+        AIModel *pptModel = [self createPropertyModel:pptObj];
+        AINode *pptNode = [self createNode:pptModel dataSource:dataSource];
+        [ac updateNode:identNode propertyNode:pptNode];
+        return pptNode;
+    }
+    return nil;
+}
+
+-(AINode*) createNode:(AIModel*)model dataSource:(NSString*)dataSource{
+    if (model) {
+        AIActionControl *ac = [AIActionControl shareInstance];
+        AINode *absNode = [ac searchNodeForDataType:model.getDataType dataSource:dataSource autoCreate:model];
+        AINode *node = [ac insertModel:model dataSource:dataSource];
+        if (absNode) [ac updateNode:node abs:absNode];
+        return node;
+    }
+    return nil;
 }
 
 //MARK:===============================================================

@@ -24,6 +24,8 @@
  */
 @interface AIModel : NSObject<NSCoding>
 
+-(NSString*) getDataType;
+
 @end
 
 
