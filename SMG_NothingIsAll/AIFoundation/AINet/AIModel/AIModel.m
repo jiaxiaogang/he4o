@@ -40,7 +40,6 @@
     if (self) {
         self.from = [aDecoder decodeIntForKey:@"from"];
         self.to = [aDecoder decodeIntForKey:@"to"];
-        self.algs = [aDecoder decodeObjectForKey:@"algs"];
     }
     return self;
 }
@@ -49,7 +48,6 @@
     [super encodeWithCoder:aCoder];
     [aCoder encodeInt:self.from forKey:@"from"];
     [aCoder encodeInt:self.to forKey:@"to"];
-    [aCoder encodeObject:self.algs forKey:@"algs"];
 }
 
 @end
@@ -72,7 +70,6 @@
     if (self) {
         self.from = [aDecoder decodeFloatForKey:@"from"];
         self.to = [aDecoder decodeFloatForKey:@"to"];
-        self.algs = [aDecoder decodeObjectForKey:@"algs"];
     }
     return self;
 }
@@ -81,7 +78,6 @@
     [super encodeWithCoder:aCoder];
     [aCoder encodeFloat:self.from forKey:@"from"];
     [aCoder encodeFloat:self.to forKey:@"to"];
-    [aCoder encodeObject:self.algs forKey:@"algs"];
 }
 
 @end

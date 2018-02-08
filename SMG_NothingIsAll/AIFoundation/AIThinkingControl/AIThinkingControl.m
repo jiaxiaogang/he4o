@@ -59,17 +59,50 @@ static AIThinkingControl *_instance;
     [self setObject_Caches:algsModel];
     
     //2. check data hav mv;
-    if ([self checkHavMV:dic]) { //hav mv
+    if ([self checkHavMV:dic]) {
         [self inputByDeep:dataType mvDic:dic];
         return;
     }
     
-    //3. if not find mv from caches,then try find actionControl;(充mv)
+    //3. 构建identModel
+    AIActionControl *ac = [AIActionControl shareInstance];
+    AIIdentifierModel *identModel = [AIIdentifierModel newWithIdentifier:STRTOOK(dataType)];//AIModel对象
+    AINode *identAbsNode = [ac searchNodeForDataType:dataType dataSource:nil autoCreate:identModel];
+    AINode *identNode = [ac insertModel:identModel dataSource:nil];
+    if (identAbsNode) [ac updateNode:identNode abs:identAbsNode];
+    
+    //4. 构建propertyModel
     for (NSString *dataSource in dic.allKeys) {
-        id objValue = [dic objectForKey:dataSource];
-        //AINode *dataSourceRoot = [[AIActionControl shareInstance] searchNodeForDataType:nil dataSource:dataSource];
-        //AINode *objValueRoot = [[AIActionControl shareInstance] searchNodeForDataObj:objValue];
-        NSLog(@"_____根据aiNode取到aiData(urgentValue)的值...");
+        //4.1 根据类型取aiModel
+        id pptObj = [dic objectForKey:dataSource];
+        AIModel *pptModel = nil;
+        if (pptObj) {
+            if([pptObj isKindOfClass:[NSNumber class]]){
+                if (strcmp([pptObj objCType], @encode(char)) == 0){
+                    AICharModel *charModel = [[AICharModel alloc] init];
+                    charModel.c = [(NSNumber*)pptObj charValue];
+                    pptModel = charModel;
+                }else if (strcmp([pptObj objCType], @encode(int)) == 0 || strcmp([pptObj objCType], @encode(NSInteger)) == 0){
+                    int value = [(NSNumber*)pptObj intValue];
+                    pptModel = [AIIntModel newWithFrom:value to:value];
+                }else if (strcmp([pptObj objCType], @encode(float)) == 0){
+                    float value = [(NSNumber*)pptObj floatValue];
+                    pptModel = [AIFloatModel newWithFrom:value to:value];
+                }
+            }
+        }
+        //4.2 构建网络
+        if (pptModel) {
+            AINode *pptAbsNode = [ac searchNodeForDataType:NSStringFromClass(pptModel.class) dataSource:dataSource autoCreate:pptModel];
+            AINode *pptNode = [ac insertModel:pptModel dataSource:dataSource];
+            [ac updateNode:identNode propertyNode:pptNode];
+            if (pptAbsNode) [ac updateNode:pptNode abs:pptAbsNode];
+        }else{
+            NSLog(@"_________输入了其它类型:%s",[pptObj objCType]);
+        }
+        
+        //5. 联想mv
+        
     }
 }
 

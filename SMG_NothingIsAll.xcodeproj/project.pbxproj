@@ -13,7 +13,6 @@
 		081B3AD61F6E2994008A7F36 /* AIStringAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3AD51F6E2994008A7F36 /* AIStringAlgs.m */; };
 		081B3ADB1F6E2CCD008A7F36 /* AINet.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3ADA1F6E2CCD008A7F36 /* AINet.m */; };
 		081F5A101FFF01A500BD74F9 /* AINetCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 081F5A0F1FFF01A500BD74F9 /* AINetCache.m */; };
-		081F5A191FFF0EE700BD74F9 /* OOPModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 081F5A181FFF0EE700BD74F9 /* OOPModel.m */; };
 		0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 0825AFF21F748F67003B86C7 /* NSObject+Extension.m */; };
 		082F9D561EB234750009F6A9 /* Output.m in Sources */ = {isa = PBXBuildFile; fileRef = 082F9D551EB234750009F6A9 /* Output.m */; };
 		082F9D5C1EB236AC0009F6A9 /* StudyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 082F9D5A1EB236AC0009F6A9 /* StudyViewController.m */; };
@@ -68,8 +67,6 @@
 		081B3ADA1F6E2CCD008A7F36 /* AINet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AINet.m; sourceTree = "<group>"; };
 		081F5A0E1FFF01A500BD74F9 /* AINetCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetCache.h; sourceTree = "<group>"; };
 		081F5A0F1FFF01A500BD74F9 /* AINetCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetCache.m; sourceTree = "<group>"; };
-		081F5A171FFF0EE700BD74F9 /* OOPModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OOPModel.h; sourceTree = "<group>"; };
-		081F5A181FFF0EE700BD74F9 /* OOPModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OOPModel.m; sourceTree = "<group>"; };
 		0825AFF11F748F67003B86C7 /* NSObject+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Extension.h"; sourceTree = "<group>"; };
 		0825AFF21F748F67003B86C7 /* NSObject+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Extension.m"; sourceTree = "<group>"; };
 		082F9D541EB234750009F6A9 /* Output.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Output.h; sourceTree = "<group>"; };
@@ -165,8 +162,6 @@
 			children = (
 				08BB27181FD624CC006E03DE /* AIModel.h */,
 				08BB27191FD624CC006E03DE /* AIModel.m */,
-				081F5A171FFF0EE700BD74F9 /* OOPModel.h */,
-				081F5A181FFF0EE700BD74F9 /* OOPModel.m */,
 			);
 			path = AIModel;
 			sourceTree = "<group>";
@@ -656,7 +651,6 @@
 				082F9D5C1EB236AC0009F6A9 /* StudyViewController.m in Sources */,
 				081B3ACC1F6E2155008A7F36 /* AITime.m in Sources */,
 				080A74321F60C6490025DBA3 /* AIPort.m in Sources */,
-				081F5A191FFF0EE700BD74F9 /* OOPModel.m in Sources */,
 				08DB40CB1F11A65E003162C8 /* TestHungryPage.m in Sources */,
 				081B3AD61F6E2994008A7F36 /* AIStringAlgs.m in Sources */,
 				0842ADC01FE209700048ADDC /* DemoCharge.m in Sources */,

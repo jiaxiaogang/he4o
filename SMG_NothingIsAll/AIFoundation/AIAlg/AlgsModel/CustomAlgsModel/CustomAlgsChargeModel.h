@@ -10,6 +10,6 @@
 
 @interface CustomAlgsChargeModel : NSObject
 
-@property (assign,nonatomic) CGFloat value;
+@property (assign,nonatomic) float value;
 
 @end
