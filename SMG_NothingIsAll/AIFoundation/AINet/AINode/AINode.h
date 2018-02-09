@@ -17,8 +17,6 @@
 @interface AINode : NSObject<NSCoding>
 
 @property (strong,nonatomic) AIKVPointer *pointer;          //数据指针(自身指针地址)
-@property (strong,nonatomic) NSString *dataType;            //AIData的Type(一般为AIIntModel,AIIndentifier等)
-@property (strong,nonatomic) NSString *dataSource;          //AIData的来源(一般为inputModel中的某属性)
 
 //是什么(定义)
 @property (strong,nonatomic) NSMutableArray *absPorts;      //抽象指向(多继承,接口等）

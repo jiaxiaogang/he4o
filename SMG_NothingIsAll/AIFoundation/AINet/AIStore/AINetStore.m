@@ -49,14 +49,14 @@ static AINetStore *_instance;
 //MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
--(NSInteger) createPointerId{
-    return [self createPointerId:true];
+-(NSInteger) createPointerId:(NSString*)dataType dataSource:(NSString*)dataSource{
+    return [self createPointerId:true dataType:dataType dataSource:dataSource];
 }
 
--(NSInteger) createPointerId:(BOOL)updateLastId{
-    NSInteger lastId = [SMGUtils getLastNetNodePointerId];
+-(NSInteger) createPointerId:(BOOL)updateLastId dataType:(NSString*)dataType dataSource:(NSString*)dataSource{
+    NSInteger lastId = [SMGUtils getLastNetNodePointerId:dataType dataSource:dataSource];
     if (updateLastId) {
-        [SMGUtils setNetNodePointerId:1];
+        [SMGUtils setNetNodePointerId:1 dataType:dataType dataSource:dataSource];
     }
     return lastId + 1;
 }
@@ -67,22 +67,23 @@ static AINetStore *_instance;
 //MARK:===============================================================
 -(AINode*) setObjectModel:(AIModel*)model dataSource:(NSString*)dataSource{
     if (ISOK(model, AIModel.class)) {
+        NSString *dataType = nil;
+        if ([model isKindOfClass:AIIdentifierModel.class]) {
+            dataType = ((AIIdentifierModel*)model).identifier;
+        }else{
+            dataType = NSStringFromClass(model.class);
+        }
+        
         //1. 生成指针
-        AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:[self createPointerId] folderName:NET_DATA];
+        NSInteger pointerId = [self createPointerId:dataType dataSource:dataSource];
+        AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:NET_DATA dataType:dataType dataSource:dataSource];
         
         //2. 将AINode与AIModel各自存为pointerPath下的一个文件;(命名为node和data)
         AINode *modelNode = [[AINode alloc] init];
         modelNode.pointer = kvPointer;
-        if ([model isKindOfClass:AIIdentifierModel.class]) {
-            AIIdentifierModel *identModel = (AIIdentifierModel*)model;
-            modelNode.dataType = identModel.identifier;
-        }else{
-            modelNode.dataType = NSStringFromClass(model.class);
-        }
-        modelNode.dataSource = STRTOOK(dataSource);
         
         //3. 继承关系(所有类型默认继承自AINode)
-        AINode *root = [self objectRootNode];
+        AINode *root = [self objectRootNode:dataType dataSource:dataSource];
         [modelNode.absPorts addObject:[AIPort newWithNode:root]];
         [root.conPorts addObject:[AIPort newWithNode:modelNode]];
         
@@ -166,21 +167,13 @@ static AINetStore *_instance;
 }
 
 -(AINode*) objectNodeForDataType:(NSString*)dataType dataSource:(NSString*)dataSource {
-    AINode *root = [self objectRootNode];
-    for (AIPort *port in root.conPorts) {
-        //dataType与dataSource相符判断
-        if ((!STRISOK(dataType) || [STRTOOK(port.dataType) isEqualToString:dataType]) && (!STRISOK(dataSource) || [STRTOOK(port.dataSource) isEqualToString:dataSource])) {
-            return [self objectNodeForPointer:port.pointer];
-        }
-    }
-    return nil;
+    AINode *root = [self objectRootNode:dataType dataSource:dataSource];
+    return root;
 }
 
--(nonnull AINode*) objectRootNode{
+-(nonnull AINode*) objectRootNode:(NSString*)dataType dataSource:(NSString*)dataSource{
     //1. root.pointer;
-    AIKVPointer *p = [[AIKVPointer alloc] init];
-    p.pointerId = 0;//将0定义为"我";
-    p.folderName = NET_DATA;
+    AIKVPointer *p = [AIKVPointer newWithPointerId:0 folderName:NET_DATA dataType:dataType dataSource:dataSource];//将0定义为root;
     
     //2. 取rootNode
     AINode *root = [self objectNodeForPointer:p];
@@ -203,10 +196,12 @@ static AINetStore *_instance;
         //1. 父类传入空则新建
         if (!ISOK(absNode, AINode.class)) {
             //1.1. get root
-            AINode *root = [self objectRootNode];
+            NSString *dataType = node.pointer.dataType;
+            NSString *dataSource = node.pointer.dataSource;
+            AINode *root = [self objectRootNode:dataType dataSource:dataSource];
             //1.2. new absNode
             absNode = [[AINode alloc] init];
-            absNode.pointer = [AIKVPointer newWithPointerId:[self createPointerId] folderName:node.pointer.folderName];
+            absNode.pointer = [AIKVPointer newWithPointerId:[self createPointerId:dataType dataSource:dataSource] folderName:NET_DATA dataType:dataType dataSource:dataSource];
             [absNode.absPorts addObject:[AIPort newWithNode:root]];
             //1.3. save root
             [root.conPorts addObject:[AIPort newWithNode:absNode]];
@@ -218,7 +213,6 @@ static AINetStore *_instance;
         [absNode.conPorts addObject:[AIPort newWithNode:node]];
         
         //3. 从子类向父类融信息(属性值范围)
-        absNode.dataType = STRTOOK(node.dataType);
         //...
         
         //4.存

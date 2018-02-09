@@ -53,8 +53,8 @@
  *  MARK:--------------------NetNode_PointerId--------------------
  */
 //netNode
-+(NSInteger) getLastNetNodePointerId;
-+(void) setNetNodePointerId:(NSInteger)count;
++(NSInteger) getLastNetNodePointerId:(NSString*)dataType dataSource:(NSString*)dataSource;
++(void) setNetNodePointerId:(NSInteger)count dataType:(NSString*)dataType dataSource:(NSString*)dataSource;
 
 //netData
 +(NSInteger) getLastNetDataPointerId;

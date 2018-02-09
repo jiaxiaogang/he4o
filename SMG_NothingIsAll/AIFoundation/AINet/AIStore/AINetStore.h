@@ -34,7 +34,7 @@
 -(AINode*) objectNodeForDataObj:(id)obj;
 -(AINode*) objectNodeForPointer:(AIKVPointer*)kvPointer;
 -(AINode*) objectNodeForDataType:(NSString*)dataType dataSource:(NSString*)dataSource;//找条件dataType(String,char,int,imv)与dataSource(inputModel的属性名)的根节点;(不判断则传nil)
--(AINode*) objectRootNode;
+-(nonnull AINode*) objectRootNode:(NSString*)dataType dataSource:(NSString*)dataSource;
 
 
 //MARK:===============================================================

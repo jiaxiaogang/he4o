@@ -20,8 +20,6 @@
 //MARK:===============================================================
 @property (strong,nonatomic) AIKVPointer *pointer;
 @property (strong,nonatomic) AIPortStrong *strong;
-@property (strong,nonatomic) NSString *dataType;
-@property (strong,nonatomic) NSString *dataSource;
 
 //MARK:===============================================================
 //MARK:                     < method >

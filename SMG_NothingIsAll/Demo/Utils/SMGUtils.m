@@ -159,12 +159,12 @@
 }
 
 //netNode
-+(NSInteger) getLastNetNodePointerId{
-    return [[NSUserDefaults standardUserDefaults] integerForKey:@"AIPointer_LastNetNodePointerId_KEY"];
++(NSInteger) getLastNetNodePointerId:(NSString*)dataType dataSource:(NSString*)dataSource{
+    return [[NSUserDefaults standardUserDefaults] integerForKey:STRFORMAT(@"AIPointer_LastNetNodePointerId_KEY_%@_%@",dataType,dataSource)];
 }
 
-+(void) setNetNodePointerId:(NSInteger)count{
-    NSInteger lastPId = [self getLastNetNodePointerId];
++(void) setNetNodePointerId:(NSInteger)count dataType:(NSString*)dataType dataSource:(NSString*)dataSource{
+    NSInteger lastPId = [self getLastNetNodePointerId:dataType dataSource:dataSource];
     [[NSUserDefaults standardUserDefaults] setInteger:lastPId + count forKey:@"AIPointer_LastNetNodePointerId_KEY"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }

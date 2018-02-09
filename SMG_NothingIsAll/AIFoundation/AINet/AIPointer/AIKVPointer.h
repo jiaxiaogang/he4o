@@ -11,13 +11,15 @@
 @interface AIKVPointer : AIPointer
 
 
-+(AIKVPointer*) newWithPointerId:(NSInteger)pointerId folderName:(NSString*)folderName;
++(AIKVPointer*) newWithPointerId:(NSInteger)pointerId folderName:(NSString*)folderName dataType:(NSString*)dataType dataSource:(NSString*)dataSource;
 
 
 /**
  *  MARK:--------------------根文件夹--------------------
  */
 @property (strong,nonatomic) NSString *folderName;
+@property (strong,nonatomic) NSString *dataType;    //数据类型(AIData的Type:如AIIntModel,AIIndentifier等)
+@property (strong,nonatomic) NSString *dataSource;  //数据源(AIData的来源:如inputModel中的某属性targetType等)
 
 
 /**
