@@ -21,7 +21,7 @@
         model.spell = [self spell:input];
         
         //2. 结果给Thinking
-        [[AIThinkingControl shareInstance] inputByShallow:model];
+        [[AIThinkingControl shareInstance] commitInput:model];
     }
 }
 
