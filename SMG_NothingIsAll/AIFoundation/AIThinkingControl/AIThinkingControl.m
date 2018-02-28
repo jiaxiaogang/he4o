@@ -85,6 +85,11 @@ static AIThinkingControl *_instance;
         
     }
     
+    
+    //因algsDic定义只是存储结构,并非归纳结构,所以应类比Law,并thinkingRIN后,再产生归纳结构网络;//xxx
+    //shortCaches和longCaches中存储的也是RIN后的数据,而非algsDic;//xxx
+    
+    
     //3. 存cacheShort
     [self setObject_Caches:nodeDic];
     
