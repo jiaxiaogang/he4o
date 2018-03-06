@@ -18,7 +18,6 @@
 @interface AIThinkingControl()
 
 @property (strong,nonatomic) NSMutableArray *cacheShort;//存AIModel(从Algs传入,待Thinking取用分析)(容量8);
-@property (strong,nonatomic) NSMutableArray *cacheLong;//存AINode(相当于Net的缓存区)(容量10000);
 
 @end
 
@@ -43,7 +42,6 @@ static AIThinkingControl *_instance;
 
 -(void) initData{
     self.cacheShort = [[NSMutableArray alloc] init];
-    self.cacheLong = [[NSMutableArray alloc] init];
 }
 
 -(void) initRun{
@@ -56,12 +54,13 @@ static AIThinkingControl *_instance;
     //1. 数据
     NSDictionary *algsDic = [NSObject getDic:algsModel containParent:true];
     NSMutableDictionary *nodeDic = [[NSMutableDictionary alloc] init];
+    AIActionControl *ac = [[AIActionControl alloc] init];
     
     //2. 构建algsModel并收集node;
     if (algsDic) {
         //2.1 构建节点
         NSString *dataType = NSStringFromClass(algsModel.class);
-        AINode *identNode = [self createIdentNode:dataType];
+        AINode *identNode = [ac createIdentNode:dataType];
         if (identNode) [nodeDic setObject:identNode forKey:@"identNode"];
         
         //2.2 构建属性
@@ -76,24 +75,33 @@ static AIThinkingControl *_instance;
                 energy = 20;
             }
             
-            AINode *pptNode = [self createPropertyNode:[algsDic objectForKey:dataSource] dataSource:dataSource identNode:identNode];
+            AINode *pptNode = [ac createPropertyNode:[algsDic objectForKey:dataSource] dataSource:dataSource identNode:identNode];
             if (pptNode) [pptNodes addObject:pptNode];
         }
         [nodeDic setObject:pptNodes forKey:@"pptNodes"];
         
         //2.3 构建change和logic链 (对各种change,用潜意识流logic串起来)
+     
+        
+        
+        
+        
+        //因algsDic定义只是存储结构,并非归纳结构,所以应类比Law,并thinkingRIN后,再产生归纳结构网络;//xxx
+        //shortCaches和longCaches中存储的也是RIN后的数据,而非algsDic;//xxx
+        
+        //1. 对比value并找到规律,生成第一个RIN;参考n11p9(生成第一个RIN-代码例)
+        //2. 完全以类比的结果为依据创建结构化网络;
+        [ac searchNodeForDataObj:nil];
+        
+        for (NSDictionary *pptNode in pptNodes) {
+            NSLog(@"");
+            //逐个类比input中的信息单元(如char)等;找出law;
+        }
+        
+        
+        
         
     }
-    
-    
-    //因algsDic定义只是存储结构,并非归纳结构,所以应类比Law,并thinkingRIN后,再产生归纳结构网络;//xxx
-    //shortCaches和longCaches中存储的也是RIN后的数据,而非algsDic;//xxx
-    
-    //1. 对比value并找到规律,生成第一个RIN;参考n11p9(生成第一个RIN-代码例)
-    //2. 完全以类比的结果为依据创建结构化网络;
-    
-    
-    
     
     //3. 存cacheShort
     [self setObject_Caches:nodeDic];
@@ -129,81 +137,13 @@ static AIThinkingControl *_instance;
     }
 }
 
--(AIModel*) createPropertyModel:(id)propertyObj{
-    AIModel *pptModel = nil;
-    if (propertyObj) {
-        if([propertyObj isKindOfClass:[NSNumber class]]){
-            if (strcmp([propertyObj objCType], @encode(char)) == 0){
-                AICharModel *charModel = [[AICharModel alloc] init];
-                charModel.c = [(NSNumber*)propertyObj charValue];
-                pptModel = charModel;
-            }else if (strcmp([propertyObj objCType], @encode(int)) == 0 || strcmp([propertyObj objCType], @encode(NSInteger)) == 0){
-                int value = [(NSNumber*)propertyObj intValue];
-                pptModel = [AIIntModel newWithFrom:value to:value];
-            }else if (strcmp([propertyObj objCType], @encode(float)) == 0){
-                float value = [(NSNumber*)propertyObj floatValue];
-                pptModel = [AIFloatModel newWithFrom:value to:value];
-            }else{
-                NSLog(@"_________输入了其它类型:%s",[propertyObj objCType]);
-            }
-        }
-    }
-    return pptModel;
-}
-
--(AINode*) createIdentNode:(NSString*)dataType{
-    AIIdentifierModel *identModel = [AIIdentifierModel newWithIdentifier:STRTOOK(dataType)];//AIModel对象
-    return [self createNode:identModel dataSource:nil];
-}
-
--(AINode*) createPropertyNode:(id)pptObj dataSource:(NSString*)dataSource identNode:(AINode*)identNode{
-    if (pptObj && identNode) {
-        AIActionControl *ac = [AIActionControl shareInstance];
-        //1. 转换为aiModel
-        AIModel *pptModel = [self createPropertyModel:pptObj];
-        //2. 构建节点
-        AINode *pptNode = [self createNode:pptModel dataSource:dataSource];
-        //3. 指定属性
-        [ac updateNode:identNode propertyNode:pptNode];
-        return pptNode;
-    }
-    return nil;
-}
-
--(AINode*) createChangeNode:(id)changeObj dataSource:(NSString*)dataSource identNode:(AINode*)identNode{
-    if (changeObj && identNode) {
-        AIActionControl *ac = [AIActionControl shareInstance];
-        //1. 转换为aiModel
-        AIChangeModel *changeModel = [[AIChangeModel alloc] init];//临时,随后补上;
-        //2. 构建节点
-        AINode *changeNode = [self createNode:changeModel dataSource:dataSource];
-        //3. 指定属性
-        [ac updateNode:identNode changeNode:changeNode];
-        return changeNode;
-    }
-    return nil;
-}
-
--(AINode*) createNode:(AIModel*)model dataSource:(NSString*)dataSource{
-    if (model) {
-        AIActionControl *ac = [AIActionControl shareInstance];
-        //1. 取抽象节点
-        AINode *absNode = [ac searchNodeForDataType:model.getDataType dataSource:dataSource autoCreate:model];
-        //2. 构建节点
-        AINode *node = [ac insertModel:model dataSource:dataSource];
-        //3. 指定抽象
-        if (absNode) [ac updateNode:node abs:absNode];
-        return node;
-    }
-    return nil;
-}
 
 //MARK:===============================================================
 //MARK:                     < caches >
 //MARK:===============================================================
 -(void) setObject_Caches:(NSObject*)algsModel {
+    //cacheShort
     [self.cacheShort addObject:algsModel];
-    
     if (self.cacheShort.count > 8) {
         [self.cacheShort subarrayWithRange:NSMakeRange(self.cacheShort.count - 8, 8)];
     }

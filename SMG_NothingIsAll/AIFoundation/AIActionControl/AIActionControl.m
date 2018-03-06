@@ -15,6 +15,7 @@
 #import "AIStringAlgsModel.h"
 #import "ImvAlgsModelBase.h"
 #import "AINet.h"
+#import "AIModel.h"
 
 @implementation AIActionControl
 
@@ -98,6 +99,76 @@ static AIActionControl *_instance;
 
 -(void) updateNode:(AINode *)node logicNode:(AINode *)logicNode{
     [[AINet sharedInstance] updateNode:node logicNode:logicNode];
+}
+
+
+//MARK:===============================================================
+//MARK:                     < create >
+//MARK:===============================================================
+-(AIModel*) createPropertyModel:(id)propertyObj{
+    AIModel *pptModel = nil;
+    if (propertyObj) {
+        if([propertyObj isKindOfClass:[NSNumber class]]){
+            if (strcmp([propertyObj objCType], @encode(char)) == 0){
+                AICharModel *charModel = [[AICharModel alloc] init];
+                charModel.c = [(NSNumber*)propertyObj charValue];
+                pptModel = charModel;
+            }else if (strcmp([propertyObj objCType], @encode(int)) == 0 || strcmp([propertyObj objCType], @encode(NSInteger)) == 0){
+                int value = [(NSNumber*)propertyObj intValue];
+                pptModel = [AIIntModel newWithFrom:value to:value];
+            }else if (strcmp([propertyObj objCType], @encode(float)) == 0){
+                float value = [(NSNumber*)propertyObj floatValue];
+                pptModel = [AIFloatModel newWithFrom:value to:value];
+            }else{
+                NSLog(@"_________输入了其它类型:%s",[propertyObj objCType]);
+            }
+        }
+    }
+    return pptModel;
+}
+
+-(AINode*) createIdentNode:(NSString*)dataType{
+    AIIdentifierModel *identModel = [AIIdentifierModel newWithIdentifier:STRTOOK(dataType)];//AIModel对象
+    return [self createNode:identModel dataSource:nil];
+}
+
+-(AINode*) createPropertyNode:(id)pptObj dataSource:(NSString*)dataSource identNode:(AINode*)identNode{
+    if (pptObj && identNode) {
+        //1. 转换为aiModel
+        AIModel *pptModel = [self createPropertyModel:pptObj];
+        //2. 构建节点
+        AINode *pptNode = [self createNode:pptModel dataSource:dataSource];
+        //3. 指定属性
+        [self updateNode:identNode propertyNode:pptNode];
+        return pptNode;
+    }
+    return nil;
+}
+
+-(AINode*) createChangeNode:(id)changeObj dataSource:(NSString*)dataSource identNode:(AINode*)identNode{
+    if (changeObj && identNode) {
+        //1. 转换为aiModel
+        AIChangeModel *changeModel = [[AIChangeModel alloc] init];//临时,随后补上;
+        //2. 构建节点
+        AINode *changeNode = [self createNode:changeModel dataSource:dataSource];
+        //3. 指定属性
+        [self updateNode:identNode changeNode:changeNode];
+        return changeNode;
+    }
+    return nil;
+}
+
+-(AINode*) createNode:(AIModel*)model dataSource:(NSString*)dataSource{
+    if (model) {
+        //1. 取抽象节点
+        AINode *absNode = [self searchNodeForDataType:model.getDataType dataSource:dataSource autoCreate:model];
+        //2. 构建节点
+        AINode *node = [self insertModel:model dataSource:dataSource];
+        //3. 指定抽象
+        if (absNode) [self updateNode:node abs:absNode];
+        return node;
+    }
+    return nil;
 }
 
 @end

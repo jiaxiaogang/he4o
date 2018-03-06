@@ -45,6 +45,17 @@
 -(void) updateNode:(AINode *)node changeNode:(AINode *)changeNode;
 -(void) updateNode:(AINode *)node logicNode:(AINode *)logicNode;
 
+
+//MARK:===============================================================
+//MARK:                     < create >
+//MARK:===============================================================
+-(AIModel*) createPropertyModel:(id)propertyObj;
+-(AINode*) createIdentNode:(NSString*)dataType;
+-(AINode*) createPropertyNode:(id)pptObj dataSource:(NSString*)dataSource identNode:(AINode*)identNode;
+-(AINode*) createChangeNode:(id)changeObj dataSource:(NSString*)dataSource identNode:(AINode*)identNode;
+-(AINode*) createNode:(AIModel*)model dataSource:(NSString*)dataSource;
+
+
 @end
 
 

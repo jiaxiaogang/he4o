@@ -13,6 +13,13 @@
 
 @interface AINet ()
 
+/**
+ *  MARK:--------------------cacheLong--------------------
+ *  存AINode(相当于Net的缓存区)(容量10000);
+ *  改为内存缓存,存node和指向的data的缓存;关机时清除;
+ */
+@property (strong,nonatomic) NSMutableArray *cacheLong;
+
 @end
 
 @implementation AINet
@@ -35,7 +42,7 @@ static AINet *_instance;
 }
 
 -(void) initData{
-    
+    self.cacheLong = [[NSMutableArray alloc] init];
 }
 
 
@@ -96,7 +103,9 @@ static AINet *_instance;
 }
 
 -(AINode*) insertModel:(AIModel*)model dataSource:(NSString*)dataSource energy:(NSInteger)energy{
-    return [[AINetStore sharedInstance] setObjectModel:model dataSource:dataSource];
+    AINode *node = [[AINetStore sharedInstance] setObjectModel:model dataSource:dataSource];
+    [self setObject_Caches:node];
+    return node;
 }
 
 
@@ -144,11 +153,41 @@ static AINet *_instance;
 }
 
 -(AINode*) searchNodeForDataObj:(id)obj{
-    return [[AINetStore sharedInstance] objectNodeForDataObj:obj];
+    //1. 从cacheLong搜索
+    for (AINode *node in self.cacheLong) {
+        
+    }
+    
+    //2. 从store搜索
+    AINode *node = [[AINetStore sharedInstance] objectNodeForDataObj:obj];
+    [self setObject_Caches:node];
+    return node;
 }
 
 -(AINode*) searchNodeForDataType:(NSString*)dataType dataSource:(NSString*)dataSource{
-    return [[AINetStore sharedInstance] objectNodeForDataType:dataType dataSource:dataSource];
+    //1. 从cacheLong搜索
+    for (AINode *node in self.cacheLong) {
+        
+    }
+    
+    //2. 从store搜索
+    AINode *node = [[AINetStore sharedInstance] objectNodeForDataType:dataType dataSource:dataSource];
+    [self setObject_Caches:node];
+    return node;
+}
+
+
+//MARK:===============================================================
+//MARK:                     < method >
+//MARK:===============================================================
+-(void) setObject_Caches:(AINode*)node {
+    //cacheLong
+    if (ISOK(node, AINode.class)) {
+        [self.cacheLong addObject:node];
+        if (self.cacheLong.count > 10000) {
+            [self.cacheLong subarrayWithRange:NSMakeRange(self.cacheLong.count - 10000, 10000)];
+        }
+    }
 }
 
 @end
