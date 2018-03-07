@@ -91,6 +91,15 @@
 @end
 
 //MARK:===============================================================
+//MARK:                     < AIArrayModel >
+//MARK:===============================================================
+@interface AIArrayModel : AIModel
+
+@property (strong,nonatomic) NSMutableArray *itemPointers;//item的pointer组成的数组
+
+@end
+
+//MARK:===============================================================
 //MARK:                     < AIIdentifierModel >
 //MARK:===============================================================
 @interface AIIdentifierModel : AIModel

@@ -58,13 +58,12 @@ static AIThinkingControl *_instance;
     
     //2. 构建algsModel并收集node;
     if (algsDic) {
-        //2.1 构建节点
+        //3. 构建key节点
         NSString *dataType = NSStringFromClass(algsModel.class);
         AINode *identNode = [ac createIdentNode:dataType];
         if (identNode) [nodeDic setObject:identNode forKey:@"identNode"];
         
-        //2.2 构建属性
-        NSMutableArray *pptNodes = [[NSMutableArray alloc] init];
+        //4. 取energy
         int energy = 0;
         for (NSString *dataSource in algsDic.allKeys) {
             if ([@"urgentValue" isEqualToString:dataSource]) {//imv检查
@@ -74,13 +73,26 @@ static AIThinkingControl *_instance;
                 AITargetType targetType = [NUMTOOK([algsDic objectForKey:@"targetType"]) intValue];
                 energy = 20;
             }
+        }
+        
+        //5. 构建key属性
+        NSMutableArray *pptNodes = [[NSMutableArray alloc] init];
+        for (NSString *dataSource in algsDic.allKeys) {
+            id propertyObj = [algsDic objectForKey:dataSource];
             
-            AINode *pptNode = [ac createPropertyNode:[algsDic objectForKey:dataSource] dataSource:dataSource identNode:identNode];
+            //6. value为数组时,转换为node数组;
+            if ([propertyObj isKindOfClass:NSArray.class]) {
+                NSArray *items = [ac createPropertyNodes:propertyObj dataSource:dataSource identNode:identNode];
+                propertyObj = items;
+            }
+            
+            //7. 构建属性node;
+            AINode *pptNode = [ac createPropertyNode:propertyObj dataSource:dataSource identNode:identNode];
             if (pptNode) [pptNodes addObject:pptNode];
         }
         [nodeDic setObject:pptNodes forKey:@"pptNodes"];
         
-        //2.3 构建change和logic链 (对各种change,用潜意识流logic串起来)
+        //8. 构建change和logic链 (对各种change,用潜意识流logic串起来)
      
         
         

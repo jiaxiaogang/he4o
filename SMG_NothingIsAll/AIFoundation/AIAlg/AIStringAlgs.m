@@ -35,8 +35,11 @@
 +(NSArray*) spell:(NSString*)str{
     NSMutableArray *mArr = [[NSMutableArray alloc] init];
     str = STRTOOK(str);
+    const char *chars = [str UTF8String];
     for (NSInteger i = 0; i < str.length; i ++) {
-        [mArr addObject:[str substringWithRange:NSMakeRange(i, 1)]];
+        //unichar c = [str characterAtIndex:i];
+        char c = chars[i];
+        [mArr addObject:@(c)];
     }
     return mArr;
 }

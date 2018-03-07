@@ -122,6 +122,10 @@ static AIActionControl *_instance;
             }else{
                 NSLog(@"_________输入了其它类型:%s",[propertyObj objCType]);
             }
+        }else if([propertyObj isKindOfClass:[NSArray class]]){
+            AIArrayModel *arrayModel = [[AIArrayModel alloc] init];
+            arrayModel.itemPointers = [[NSMutableArray alloc] initWithArray:propertyObj];
+            pptModel = arrayModel;
         }
     }
     return pptModel;
@@ -143,6 +147,18 @@ static AIActionControl *_instance;
         return pptNode;
     }
     return nil;
+}
+
+-(NSArray*) createPropertyNodes:(NSArray*)pptObjs dataSource:(NSString*)dataSource identNode:(AINode*)identNode{
+    NSMutableArray *pptNodes = [[NSMutableArray alloc] init];
+    for (id pptObj in ARRTOOK(pptObjs)) {
+        //1. 构建节点
+        AINode *pptNode = [self createPropertyNode:pptObj dataSource:dataSource identNode:identNode];
+        if (pptNode) {
+            [pptNodes addObject:pptNode];
+        }
+    }
+    return pptNodes;
 }
 
 -(AINode*) createChangeNode:(id)changeObj dataSource:(NSString*)dataSource identNode:(AINode*)identNode{

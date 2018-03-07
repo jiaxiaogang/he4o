@@ -186,6 +186,34 @@
 
 
 //MARK:===============================================================
+//MARK:                     < AIArrayModel >
+//MARK:===============================================================
+@implementation AIArrayModel
+
+- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
+    self = [super initWithCoder:aDecoder];
+    if (self) {
+        self.itemPointers = [aDecoder decodeObjectForKey:@"itemPointers"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [super encodeWithCoder:aCoder];
+    [aCoder encodeObject:self.itemPointers forKey:@"itemPointers"];
+}
+
+-(NSMutableArray *)charPointers{
+    if (_itemPointers == nil) {
+        _itemPointers = [[NSMutableArray alloc] init];
+    }
+    return _itemPointers;
+}
+
+@end
+
+
+//MARK:===============================================================
 //MARK:                     < AIIdentifierModel >
 //MARK:===============================================================
 @implementation AIIdentifierModel
