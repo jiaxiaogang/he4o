@@ -30,6 +30,7 @@
 		08AF454D1E97D0B500377887 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF454C1E97D0B500377887 /* AppDelegate.m */; };
 		08AF45551E97D0B500377887 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45541E97D0B500377887 /* Assets.xcassets */; };
 		08AF45581E97D0B500377887 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45561E97D0B500377887 /* LaunchScreen.storyboard */; };
+		08B31E7E20648C3700FD96EA /* ThinkingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B31E7D20648C3700FD96EA /* ThinkingUtils.m */; };
 		08BB271A1FD624CC006E03DE /* AIModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08BB27191FD624CC006E03DE /* AIModel.m */; };
 		08C84A8E1E9A866200897D8B /* AIInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A8D1E9A866200897D8B /* AIInput.m */; };
 		08CC99201FE9F0B300743ABE /* AIStringAlgsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08CC991F1FE9F0B300743ABE /* AIStringAlgsModel.m */; };
@@ -100,6 +101,8 @@
 		08AF45541E97D0B500377887 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		08AF45571E97D0B500377887 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		08AF45591E97D0B500377887 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		08B31E7C20648C3700FD96EA /* ThinkingUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThinkingUtils.h; sourceTree = "<group>"; };
+		08B31E7D20648C3700FD96EA /* ThinkingUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ThinkingUtils.m; sourceTree = "<group>"; };
 		08BB27181FD624CC006E03DE /* AIModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIModel.h; sourceTree = "<group>"; };
 		08BB27191FD624CC006E03DE /* AIModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIModel.m; sourceTree = "<group>"; };
 		08C84A8C1E9A866200897D8B /* AIInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIInput.h; sourceTree = "<group>"; };
@@ -305,6 +308,8 @@
 			children = (
 				084219E91FD8CF80009DA6BC /* AIThinkingControl.h */,
 				084219EA1FD8CF81009DA6BC /* AIThinkingControl.m */,
+				08B31E7C20648C3700FD96EA /* ThinkingUtils.h */,
+				08B31E7D20648C3700FD96EA /* ThinkingUtils.m */,
 			);
 			path = AIThinkingControl;
 			sourceTree = "<group>";
@@ -631,6 +636,7 @@
 				08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */,
 				08D8C525201DEA4300FC1265 /* AIAlgsPointer.m in Sources */,
 				081F5A101FFF01A500BD74F9 /* AINetCache.m in Sources */,
+				08B31E7E20648C3700FD96EA /* ThinkingUtils.m in Sources */,
 				084219E11FD8CEFD009DA6BC /* AIReactorControl.m in Sources */,
 				08EA48CE202932B80038B982 /* CustomAlgsChargeModel.m in Sources */,
 				0842ADBD1FE207500048ADDC /* DemoHunger.m in Sources */,
