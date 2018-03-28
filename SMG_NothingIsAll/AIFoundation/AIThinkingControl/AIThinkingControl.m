@@ -166,6 +166,25 @@ static AIThinkingControl *_instance;
     return [STRTOOK([DICTOOK(dic) objectForKey:@"urgentValue"]) floatValue] > 0;
 }
 
+
+
+//MARK:===============================================================
+//MARK:                     < dataIn >
+//MARK:===============================================================
+-(void) dataIn_CheckMV{
+    //输入时,检测mv
+}
+
+-(void) dataIn_AnalogyData{
+    //从网络中找已有知识
+}
+
+-(void) dataIn_BuildNet{
+    //构建
+}
+
+
+
 @end
 
 
