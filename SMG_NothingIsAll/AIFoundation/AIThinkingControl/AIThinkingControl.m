@@ -93,7 +93,7 @@ static AIThinkingControl *_instance;
         [nodeDic setObject:pptNodes forKey:@"pptNodes"];
         
         //8. 构建change和logic链 (对各种change,用潜意识流logic串起来)
-     
+        
         
         
         
@@ -171,16 +171,58 @@ static AIThinkingControl *_instance;
 //MARK:===============================================================
 //MARK:                     < dataIn >
 //MARK:===============================================================
--(void) dataIn_CheckMV{
-    //输入时,检测mv
+//输入时,检测mv(饿或不饿)
+-(void) dataIn_CheckMV:(NSObject*)algsModel{
+    //1. 数据
+    NSDictionary *algsDic = DICTOOK([NSObject getDic:algsModel containParent:true]);
+    NSString *dataType = NSStringFromClass(algsModel.class);
+    
+    //2. 取mv
+    if ([algsDic objectForKey:@"urgentValue"] && [algsDic objectForKey:@"targetType"]) {
+        NSInteger urgentValue = [NUMTOOK([algsDic objectForKey:@"urgentValue"]) integerValue];
+        AITargetType targetType = [NUMTOOK([algsDic objectForKey:@"targetType"]) intValue];
+        [self dataIn_AssociativeExperience:urgentValue targetType:targetType];
+    }else{
+        [self dataIn_AssociativeData:algsDic dataType:dataType];
+    }
+    
+    //3. 取energy
+    int energy = 0;
+    energy = 10;
+    energy = 20;
+    
 }
 
--(void) dataIn_AnalogyData{
-    //从网络中找已有知识
+//联想相关数据(看到西瓜会开心)
+-(void) dataIn_AssociativeData:(NSDictionary*)algsDic dataType:(NSString*)dataType{
+    if (DICISOK(algsDic) && dataType) {
+        //2. 取mv
+        for (NSString *dataSource in algsDic.allKeys) {
+            //NSDictionary *assDic = [[AINet sharedInstance] searchNodeForDataType:dataType dataSource:dataSource];
+            //        if ([assDic objectForKey:@"urgentValue"] && [assDic objectForKey:@"targetType"]) {
+            //            NSInteger urgentValue = [NUMTOOK([algsDic objectForKey:@"urgentValue"]) integerValue];
+            //            AITargetType targetType = [NUMTOOK([algsDic objectForKey:@"targetType"]) intValue];
+            //            [self dataIn_AssociativeExperience:urgentValue targetType:targetType];
+        }
+    }
 }
 
+//从网络中找已有cmv经验(饿了找瓜)
+-(void) dataIn_AssociativeExperience:(NSInteger)urgentValue targetType:(AITargetType)targetType{
+    
+}
+
+//类比处理(瓜是瓜)
+-(void) dataIn_AnalogyData:(NSDictionary*)algsDic dataType:(NSString*)dataType{
+    if (DICISOK(algsDic) && dataType) {
+        
+    }
+    
+}
+
+//构建(想啥存啥)
 -(void) dataIn_BuildNet{
-    //构建
+    
 }
 
 
