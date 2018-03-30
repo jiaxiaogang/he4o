@@ -174,6 +174,9 @@ static AIThinkingControl *_instance;
 //转为指针数组(每个值都是指针)
 -(void) dataIn_ConvertPointer:(NSObject*)algsModel{
     
+    
+    
+    
 }
 
 //输入时,检测mv(饿或不饿)
