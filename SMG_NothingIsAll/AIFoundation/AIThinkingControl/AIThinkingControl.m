@@ -171,6 +171,11 @@ static AIThinkingControl *_instance;
 //MARK:===============================================================
 //MARK:                     < dataIn >
 //MARK:===============================================================
+//转为指针数组(每个值都是指针)
+-(void) dataIn_ConvertPointer:(NSObject*)algsModel{
+    
+}
+
 //输入时,检测mv(饿或不饿)
 -(void) dataIn_CheckMV:(NSObject*)algsModel{
     //1. 数据
