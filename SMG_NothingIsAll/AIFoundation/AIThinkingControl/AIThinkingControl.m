@@ -172,7 +172,7 @@ static AIThinkingControl *_instance;
 //MARK:                     < dataIn >
 //MARK:===============================================================
 //输入时,检测是否mv输入(饿或不饿)
--(void) dataIn_CheckMV:(NSObject*)algsModel{
+-(void) dataIn_CheckMV:(NSObject*)algsModel {
     //1. 数据
     NSDictionary *algsDic = DICTOOK([NSObject getDic:algsModel containParent:true]);
     NSString *dataType = NSStringFromClass(algsModel.class);
@@ -181,7 +181,7 @@ static AIThinkingControl *_instance;
     if ([algsDic objectForKey:@"urgentValue"] && [algsDic objectForKey:@"targetType"]) {
         NSInteger urgentValue = [NUMTOOK([algsDic objectForKey:@"urgentValue"]) integerValue];
         AITargetType targetType = [NUMTOOK([algsDic objectForKey:@"targetType"]) intValue];
-        [self dataIn_AssociativeExperience:urgentValue targetType:targetType];
+        [self dataIn_AssociativeExperience:urgentValue targetType:targetType dataType:dataType];
     }else{
         [self dataIn_AssociativeData:algsDic dataType:dataType];
     }
@@ -221,7 +221,9 @@ static AIThinkingControl *_instance;
 }
 
 //从网络中找已有cmv经验(饿了找瓜)
--(void) dataIn_AssociativeExperience:(NSInteger)urgentValue targetType:(AITargetType)targetType{
+-(void) dataIn_AssociativeExperience:(NSInteger)urgentValue targetType:(AITargetType)targetType dataType:(NSString*)dataType{
+    [[AINet sharedInstance] searchNodeForDataType:dataType dataSource:@"urgentValue"];
+    //1.
     
 }
 
