@@ -13,7 +13,7 @@
 //MARK:                     < AINode >
 //MARK:参考:n10p14等;
 //MARK:===============================================================
-@class AIKVPointer,AIAlgsPointer;
+@class AIKVPointer,AIAlgsPointer,AICMVModel;
 @interface AINode : NSObject<NSCoding>
 
 @property (strong,nonatomic) AIKVPointer *pointer;          //数据指针(自身指针地址)
@@ -33,3 +33,13 @@
 
 @end
 
+
+//MARK:===============================================================
+//MARK:                     < AICMVNode >
+//MARK:===============================================================
+@interface AICMVNode : AINode
+
+@property (strong,nonatomic) AICMVModel *cmvModel;
+@property (strong,nonatomic) NSMutableArray *changePorts;
+
+@end

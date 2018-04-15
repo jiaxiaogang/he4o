@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		080A74321F60C6490025DBA3 /* AIPort.m in Sources */ = {isa = PBXBuildFile; fileRef = 080A74311F60C6490025DBA3 /* AIPort.m */; };
 		0818162C1F22BDF8007DDB4D /* AIMainThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 0818162B1F22BDF8007DDB4D /* AIMainThread.m */; };
+		081A5B8E20834CC40048D6C1 /* AICMVModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 081A5B8D20834CC40048D6C1 /* AICMVModel.m */; };
 		081B3ACC1F6E2155008A7F36 /* AITime.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3ACB1F6E2155008A7F36 /* AITime.m */; };
 		081B3AD61F6E2994008A7F36 /* AIStringAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3AD51F6E2994008A7F36 /* AIStringAlgs.m */; };
 		081B3ADB1F6E2CCD008A7F36 /* AINet.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3ADA1F6E2CCD008A7F36 /* AINet.m */; };
@@ -60,6 +61,8 @@
 		080A74311F60C6490025DBA3 /* AIPort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIPort.m; sourceTree = "<group>"; };
 		0818162A1F22BDF8007DDB4D /* AIMainThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIMainThread.h; sourceTree = "<group>"; };
 		0818162B1F22BDF8007DDB4D /* AIMainThread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIMainThread.m; sourceTree = "<group>"; };
+		081A5B8C20834CC40048D6C1 /* AICMVModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AICMVModel.h; sourceTree = "<group>"; };
+		081A5B8D20834CC40048D6C1 /* AICMVModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AICMVModel.m; sourceTree = "<group>"; };
 		081B3ACA1F6E2155008A7F36 /* AITime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AITime.h; sourceTree = "<group>"; };
 		081B3ACB1F6E2155008A7F36 /* AITime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AITime.m; sourceTree = "<group>"; };
 		081B3AD41F6E2994008A7F36 /* AIStringAlgs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIStringAlgs.h; sourceTree = "<group>"; };
@@ -165,6 +168,8 @@
 			children = (
 				08BB27181FD624CC006E03DE /* AIModel.h */,
 				08BB27191FD624CC006E03DE /* AIModel.m */,
+				081A5B8C20834CC40048D6C1 /* AICMVModel.h */,
+				081A5B8D20834CC40048D6C1 /* AICMVModel.m */,
 			);
 			path = AIModel;
 			sourceTree = "<group>";
@@ -632,6 +637,7 @@
 				084219E71FD8CF11009DA6BC /* AIActionControl.m in Sources */,
 				083112F21F05E12600051DE6 /* MBProgressHUD+Add.m in Sources */,
 				084219ED1FD8CF81009DA6BC /* AIThinkingControl.m in Sources */,
+				081A5B8E20834CC40048D6C1 /* AICMVModel.m in Sources */,
 				083F61381F048329000330E1 /* AILine.m in Sources */,
 				08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */,
 				08D8C525201DEA4300FC1265 /* AIAlgsPointer.m in Sources */,

@@ -90,3 +90,26 @@
 
 @end
 
+
+
+//MARK:===============================================================
+//MARK:                     < AICMVNode >
+//MARK:===============================================================
+@implementation AICMVNode : AINode
+
+- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
+    self = [super initWithCoder:aDecoder];
+    if (self) {
+        self.cmvModel = [aDecoder decodeObjectForKey:@"cmvModel"];
+        self.changePorts = [aDecoder decodeObjectForKey:@"changePorts"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [super encodeWithCoder:aCoder];
+    [aCoder encodeObject:self.cmvModel forKey:@"cmvModel"];
+    [aCoder encodeObject:self.changePorts forKey:@"changePorts"];
+}
+
+@end
