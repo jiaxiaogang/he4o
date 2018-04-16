@@ -238,3 +238,22 @@
 }
 
 @end
+
+
+//MARK:===============================================================
+//MARK:                     < AICMVModel >
+//MARK:===============================================================
+@implementation AICMVModel
+
+- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
+    self = [super initWithCoder:aDecoder];
+    if (self) {
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [super encodeWithCoder:aCoder];
+}
+
+@end

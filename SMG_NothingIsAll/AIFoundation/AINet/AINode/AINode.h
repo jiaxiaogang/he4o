@@ -27,19 +27,8 @@
 //能什么(变化)
 @property (strong,nonatomic) NSMutableArray *changePorts;   //变化
 @property (strong,nonatomic) NSMutableArray *beChangePorts;
-//干什么(先后)
-@property (strong,nonatomic) NSMutableArray *logicPorts;    //时因指向
-@property (strong,nonatomic) NSMutableArray *beLogicPorts;  //后果指向
-
-@end
-
-
-//MARK:===============================================================
-//MARK:                     < AICMVNode >
-//MARK:===============================================================
-@interface AICMVNode : AINode
-
-@property (strong,nonatomic) AICMVModel *cmvModel;
-@property (strong,nonatomic) NSMutableArray *changePorts;
+//动因模型,的前序列(判断:判断dT&dS) (有logicPorts的node必然其data是AICMVModel类型的)
+@property (strong,nonatomic) NSMutableArray *logicPorts;    //前因
+@property (strong,nonatomic) NSMutableArray *beLogicPorts;  //导致了cmv变化
 
 @end
