@@ -25,7 +25,6 @@
 		084219ED1FD8CF81009DA6BC /* AIThinkingControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 084219EA1FD8CF81009DA6BC /* AIThinkingControl.m */; };
 		0842ADBD1FE207500048ADDC /* DemoHunger.m in Sources */ = {isa = PBXBuildFile; fileRef = 0842ADBC1FE207500048ADDC /* DemoHunger.m */; };
 		0842ADC01FE209700048ADDC /* DemoCharge.m in Sources */ = {isa = PBXBuildFile; fileRef = 0842ADBF1FE209700048ADDC /* DemoCharge.m */; };
-		084BD1A2208578BB00910842 /* AINetDataSort.m in Sources */ = {isa = PBXBuildFile; fileRef = 084BD1A1208578BB00910842 /* AINetDataSort.m */; };
 		086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */ = {isa = PBXBuildFile; fileRef = 086D93361F8CA782002BAF3F /* RuntimeInvoker.m */; };
 		08AF454A1E97D0B500377887 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF45491E97D0B500377887 /* main.m */; };
 		08AF454D1E97D0B500377887 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF454C1E97D0B500377887 /* AppDelegate.m */; };
@@ -53,6 +52,7 @@
 		08F738071F7C714F005EAD56 /* AISqlPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738031F7C714F005EAD56 /* AISqlPointer.m */; };
 		08FDCE8E1EAA4A8E00882ADC /* SMGRange.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FDCE8D1EAA4A8E00882ADC /* SMGRange.m */; };
 		2753D7CF7BAEDFEACAF9264A /* libPods-SMG_NothingIsAll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */; };
+		88988524208979E6001D1ADC /* AINetIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = 88988523208979E6001D1ADC /* AINetIndex.m */; };
 		88B365FB208811E7000112CF /* HEActionControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 88B365FA208811E7000112CF /* HEActionControl.m */; };
 		88B365FE208811F3000112CF /* HEThinkControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 88B365FD208811F3000112CF /* HEThinkControl.m */; };
 /* End PBXBuildFile section */
@@ -94,8 +94,6 @@
 		0842ADBC1FE207500048ADDC /* DemoHunger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemoHunger.m; sourceTree = "<group>"; };
 		0842ADBE1FE209700048ADDC /* DemoCharge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DemoCharge.h; sourceTree = "<group>"; };
 		0842ADBF1FE209700048ADDC /* DemoCharge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemoCharge.m; sourceTree = "<group>"; };
-		084BD1A0208578BB00910842 /* AINetDataSort.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetDataSort.h; sourceTree = "<group>"; };
-		084BD1A1208578BB00910842 /* AINetDataSort.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetDataSort.m; sourceTree = "<group>"; };
 		086D93351F8CA782002BAF3F /* RuntimeInvoker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RuntimeInvoker.h; sourceTree = "<group>"; };
 		086D93361F8CA782002BAF3F /* RuntimeInvoker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RuntimeInvoker.m; sourceTree = "<group>"; };
 		0895DAED1EB2DCBD00E2B5C7 /* AppEnum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppEnum.h; sourceTree = "<group>"; };
@@ -148,6 +146,8 @@
 		08F738031F7C714F005EAD56 /* AISqlPointer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AISqlPointer.m; sourceTree = "<group>"; };
 		08FDCE8C1EAA4A8E00882ADC /* SMGRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMGRange.h; sourceTree = "<group>"; };
 		08FDCE8D1EAA4A8E00882ADC /* SMGRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMGRange.m; sourceTree = "<group>"; };
+		88988522208979E6001D1ADC /* AINetIndex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetIndex.h; sourceTree = "<group>"; };
+		88988523208979E6001D1ADC /* AINetIndex.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetIndex.m; sourceTree = "<group>"; };
 		88B365F9208811E7000112CF /* HEActionControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HEActionControl.h; sourceTree = "<group>"; };
 		88B365FA208811E7000112CF /* HEActionControl.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HEActionControl.m; sourceTree = "<group>"; };
 		88B365FC208811F3000112CF /* HEThinkControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HEThinkControl.h; sourceTree = "<group>"; };
@@ -219,8 +219,6 @@
 			children = (
 				081F5A0E1FFF01A500BD74F9 /* AINetCache.h */,
 				081F5A0F1FFF01A500BD74F9 /* AINetCache.m */,
-				084BD1A0208578BB00910842 /* AINetDataSort.h */,
-				084BD1A1208578BB00910842 /* AINetDataSort.m */,
 			);
 			path = AINetCache;
 			sourceTree = "<group>";
@@ -272,6 +270,7 @@
 		083F612C1F04830F000330E1 /* AINet */ = {
 			isa = PBXGroup;
 			children = (
+				88988521208979AF001D1ADC /* AINetIndex */,
 				081F5A0D1FFF015500BD74F9 /* AINetCache */,
 				0807287E1FEF42640001136A /* AIModel */,
 				08DF0DC21F7F182B00B14D17 /* AIStore */,
@@ -500,6 +499,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		88988521208979AF001D1ADC /* AINetIndex */ = {
+			isa = PBXGroup;
+			children = (
+				88988522208979E6001D1ADC /* AINetIndex.h */,
+				88988523208979E6001D1ADC /* AINetIndex.m */,
+			);
+			path = AINetIndex;
+			sourceTree = "<group>";
+		};
 		88B365F52088115F000112CF /* HEFoundation */ = {
 			isa = PBXGroup;
 			children = (
@@ -680,7 +688,6 @@
 				084219E71FD8CF11009DA6BC /* AIActionControl.m in Sources */,
 				083112F21F05E12600051DE6 /* MBProgressHUD+Add.m in Sources */,
 				084219ED1FD8CF81009DA6BC /* AIThinkingControl.m in Sources */,
-				084BD1A2208578BB00910842 /* AINetDataSort.m in Sources */,
 				88B365FE208811F3000112CF /* HEThinkControl.m in Sources */,
 				083F61381F048329000330E1 /* AILine.m in Sources */,
 				08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */,
@@ -704,6 +711,7 @@
 				08DACE951EBD805C00FDC0B6 /* NSString+Extension.m in Sources */,
 				08F738071F7C714F005EAD56 /* AISqlPointer.m in Sources */,
 				08AF454A1E97D0B500377887 /* main.m in Sources */,
+				88988524208979E6001D1ADC /* AINetIndex.m in Sources */,
 				082F9D5C1EB236AC0009F6A9 /* StudyViewController.m in Sources */,
 				081B3ACC1F6E2155008A7F36 /* AITime.m in Sources */,
 				080A74321F60C6490025DBA3 /* AIPort.m in Sources */,

@@ -1,8 +1,8 @@
 //
-//  AINetDataSort.h
+//  AINetIndex.h
 //  SMG_NothingIsAll
 //
-//  Created by jia on 2018/4/17.
+//  Created by iMac on 2018/4/20.
 //  Copyright © 2018年 XiaoGang. All rights reserved.
 //
 
@@ -12,7 +12,7 @@
 //MARK:===============================================================
 //MARK:                     < 内存DataSort >
 //MARK:===============================================================
-@interface AINetDataSort : NSObject
+@interface AINetIndex : NSObject
 
 @end
 
@@ -20,6 +20,6 @@
 //MARK:===============================================================
 //MARK:                     < 内存DataSortModel >
 //MARK:===============================================================
-@interface AINetDataSortModel : NSObject <NSCoding>
+@interface AINetIndexModel : NSObject <NSCoding>
 
 @end

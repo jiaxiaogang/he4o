@@ -1,22 +1,22 @@
 //
-//  AINetDataSort.m
+//  AINetIndex.m
 //  SMG_NothingIsAll
 //
-//  Created by jia on 2018/4/17.
+//  Created by iMac on 2018/4/20.
 //  Copyright © 2018年 XiaoGang. All rights reserved.
 //
 
-#import "AINetDataSort.h"
+#import "AINetIndex.h"
 #import "AIKVPointer.h"
 #import "AIModel.h"
 
-@interface AINetDataSort ()
+@interface AINetIndex ()
 
 @property (strong,nonatomic) NSMutableDictionary *mDic;
 
 @end
 
-@implementation AINetDataSort
+@implementation AINetIndex
 
 -(id) init{
     self = [super init];
@@ -44,9 +44,9 @@
 
 
 //MARK:===============================================================
-//MARK:                     < 内存DataSortModel >
+//MARK:                     < AINetIndexModel >
 //MARK:===============================================================
-@interface AINetDataSortModel ()
+@interface AINetIndexModel ()
 
 @property (strong,nonatomic) AIKVPointer *pointer;
 @property (strong,nonatomic) NSString *dataType;
@@ -54,7 +54,7 @@
 
 @end
 
-@implementation AINetDataSortModel : NSObject
+@implementation AINetIndexModel : NSObject
 
 /**
  *  MARK:--------------------NSCoding--------------------
