@@ -63,4 +63,10 @@
 -(AINode*) searchNodeForDataObj:(id)obj;
 -(AINode*) searchNodeForDataType:(NSString*)dataType dataSource:(NSString*)dataSource;
 
+
+//MARK:===============================================================
+//MARK:                     < index >
+//MARK:===============================================================
+-(NSMutableArray*) getAlgsArr:(NSObject*)algsModel;  //转变algsModel为装箱后的dic;
+
 @end

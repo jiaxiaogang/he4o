@@ -171,6 +171,16 @@ static AIThinkingControl *_instance;
 //MARK:===============================================================
 //MARK:                     < dataIn >
 //MARK:===============================================================
+//转为指针数组(每个值都是指针)(在dataIn后第一件事就是装箱)
+-(void) dataIn_ConvertPointer:(NSObject*)algsModel{
+    NSArray *algsArr = [[AINet sharedInstance] getAlgsArr:algsModel];
+    //1. 根据性能,此处只将algsDic中,3条信息尝试作为索引提交给actionControl联想;
+    
+    //2. 并将algsDic存到shortCache;
+    
+    //3. 联想到mv时,可对shortCache数据作类比操作;
+}
+
 //输入时,检测是否mv输入(饿或不饿)
 -(void) dataIn_CheckMV:(NSObject*)algsModel {
     //1. 数据
@@ -190,19 +200,6 @@ static AIThinkingControl *_instance;
     int energy = 0;
     energy = 10;
     energy = 20;
-    
-}
-
-//转为指针数组(每个值都是指针)
--(void) dataIn_ConvertPointer:(NSObject*)algsModel{
-    //1. 根据性能,此处只将algsDic中,3条信息尝试作为索引提交给actionControl联想;
-    
-    //2. 并将algsDic存到shortCache;
-    
-    //3. 联想到mv时,可对shortCache数据作类比操作;
-    
-    
-    
     
 }
 

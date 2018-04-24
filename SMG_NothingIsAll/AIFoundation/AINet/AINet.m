@@ -10,6 +10,8 @@
 #import "AINetStore.h"
 #import "AINode.h"
 #import "AIPointer.h"
+#import "NSObject+Extension.h"
+#import "AINetIndex.h"
 
 @interface AINet ()
 
@@ -19,6 +21,7 @@
  *  改为内存缓存,存node和指向的data的缓存;关机时清除;
  */
 @property (strong,nonatomic) NSMutableArray *cacheLong;
+@property (strong, nonatomic) AINetIndex *netIndex;
 
 @end
 
@@ -43,6 +46,7 @@ static AINet *_instance;
 
 -(void) initData{
     self.cacheLong = [[NSMutableArray alloc] init];
+    self.netIndex = [[AINetIndex alloc] init];
 }
 
 
@@ -188,6 +192,30 @@ static AINet *_instance;
             [self.cacheLong subarrayWithRange:NSMakeRange(self.cacheLong.count - 10000, 10000)];
         }
     }
+}
+
+//MARK:===============================================================
+//MARK:                     < index >
+//MARK:===============================================================
+-(NSMutableArray*) getAlgsArr:(NSObject*)algsModel {
+    if (algsModel) {
+        NSDictionary *modelDic = [NSObject getDic:algsModel containParent:true];
+        NSMutableArray *algsArr = [[NSMutableArray alloc] init];
+        NSString *algsType = NSStringFromClass(algsModel.class);
+        
+        //1. algsType & dataSource
+        for (NSString *dataSource in modelDic.allKeys) {
+            //1. 转换AIModel&dataType;//废弃!(参考n12p12)
+            //2. 存储索引;
+            NSObject *data = [modelDic objectForKey:dataSource];
+            AIKVPointer *pointer = [self.netIndex setObject:data algsType:algsType dataSource:dataSource];
+            if (pointer) {
+                [algsArr addObject:pointer];
+            }
+        }
+        return algsArr;
+    }
+    return nil;
 }
 
 @end

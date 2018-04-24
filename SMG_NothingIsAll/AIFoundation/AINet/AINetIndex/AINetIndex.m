@@ -31,11 +31,12 @@
     //加载本地xxx
 }
 
--(void) setObject:(AIModel*)aiModel dataSource:(NSString*)dataSource kvPointer:(AIKVPointer*)kvPointer{
+-(AIKVPointer*) setObject:(NSObject*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource {
     //根据dT&dS为key有序存到mDic;
+    return nil;
 }
 
--(AIKVPointer*) objectForModel:(AIModel*)model dataSource:(NSString*)dataSource{
+-(AIKVPointer*) objectForModel:(NSObject*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource{
     //根据dT&dS为key从mDic取出相应值的pointer
     return nil;
 }
@@ -49,6 +50,7 @@
 @interface AINetIndexModel ()
 
 @property (strong,nonatomic) AIKVPointer *pointer;
+@property (strong,nonatomic) NSString *algsType;
 @property (strong,nonatomic) NSString *dataType;
 @property (strong,nonatomic) NSString *dataSource;
 
@@ -63,6 +65,7 @@
     self = [super init];
     if (self) {
         self.pointer = [aDecoder decodeObjectForKey:@"pointer"];
+        self.algsType = [aDecoder decodeObjectForKey:@"algsType"];
         self.dataType = [aDecoder decodeObjectForKey:@"dataType"];
         self.dataSource = [aDecoder decodeObjectForKey:@"dataSource"];
     }
@@ -71,6 +74,7 @@
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [aCoder encodeObject:self.pointer forKey:@"pointer"];
+    [aCoder encodeObject:self.algsType forKey:@"algsType"];
     [aCoder encodeObject:self.dataType forKey:@"dataType"];
     [aCoder encodeObject:self.dataSource forKey:@"dataSource"];
 }
