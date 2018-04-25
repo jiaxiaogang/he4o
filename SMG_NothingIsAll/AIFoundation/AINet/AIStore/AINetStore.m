@@ -76,7 +76,7 @@ static AINetStore *_instance;
         
         //1. 生成指针
         NSInteger pointerId = [self createPointerId:dataType dataSource:dataSource];
-        AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:NET_DATA dataType:dataType dataSource:dataSource];
+        AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:NET_DATA algsType:@"" dataSource:dataSource];
         
         //2. 将AINode与AIModel各自存为pointerPath下的一个文件;(命名为node和data)
         AINode *modelNode = [[AINode alloc] init];
@@ -173,7 +173,7 @@ static AINetStore *_instance;
 
 -(nonnull AINode*) objectRootNode:(NSString*)dataType dataSource:(NSString*)dataSource{
     //1. root.pointer;
-    AIKVPointer *p = [AIKVPointer newWithPointerId:0 folderName:NET_DATA dataType:dataType dataSource:dataSource];//将0定义为root;
+    AIKVPointer *p = [AIKVPointer newWithPointerId:0 folderName:NET_DATA algsType:@"" dataSource:dataSource];//将0定义为root;
     
     //2. 取rootNode
     AINode *root = [self objectNodeForPointer:p];
@@ -196,12 +196,11 @@ static AINetStore *_instance;
         //1. 父类传入空则新建
         if (!ISOK(absNode, AINode.class)) {
             //1.1. get root
-            NSString *dataType = node.pointer.dataType;
             NSString *dataSource = node.pointer.dataSource;
-            AINode *root = [self objectRootNode:dataType dataSource:dataSource];
+            AINode *root = [self objectRootNode:@"" dataSource:dataSource];
             //1.2. new absNode
             absNode = [[AINode alloc] init];
-            absNode.pointer = [AIKVPointer newWithPointerId:[self createPointerId:dataType dataSource:dataSource] folderName:NET_DATA dataType:dataType dataSource:dataSource];
+            absNode.pointer = [AIKVPointer newWithPointerId:[self createPointerId:@"" dataSource:dataSource] folderName:NET_DATA algsType:@"" dataSource:dataSource];
             [absNode.absPorts addObject:[AIPort newWithNode:root]];
             //1.3. save root
             [root.conPorts addObject:[AIPort newWithNode:absNode]];

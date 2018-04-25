@@ -25,4 +25,9 @@
 //MARK:                     < 内存DataSortModel >
 //MARK:===============================================================
 @interface AINetIndexModel : NSObject <NSCoding>
+
+@property (strong,nonatomic) NSMutableArray *pointerIds;
+@property (strong,nonatomic) NSString *algsType;
+@property (strong,nonatomic) NSString *dataSource;
+
 @end

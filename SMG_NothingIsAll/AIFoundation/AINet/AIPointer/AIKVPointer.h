@@ -11,20 +11,19 @@
 @interface AIKVPointer : AIPointer
 
 
-+(AIKVPointer*) newWithPointerId:(NSInteger)pointerId folderName:(NSString*)folderName dataType:(NSString*)dataType dataSource:(NSString*)dataSource;
++(AIKVPointer*) newWithPointerId:(NSInteger)pointerId folderName:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
 
 
 /**
  *  MARK:--------------------根文件夹--------------------
  */
-@property (strong,nonatomic) NSString *folderName;
-@property (strong,nonatomic) NSString *dataType;    //数据类型(AIData的Type:如AIIntModel,AIIndentifier等)
-@property (strong,nonatomic) NSString *dataSource;  //数据源(AIData的来源:如inputModel中的某属性targetType等)
-
+-(NSString*) folderName;    //神经网络根目录 | 索引根目录
+-(NSString*) algsType;      //算法类型_分区
+-(NSString*) dataSource;    //数据源(AIData的来源:如inputModel中的某属性targetType等)
 
 /**
- *  MARK:--------------------文件路径--------------------
+ *  MARK:--------------------key--------------------
  */
--(NSString*) filePath;
+-(NSString*) filePath;  //存硬盘时,文件路径
 
 @end

@@ -10,8 +10,6 @@
 
 @interface AIPointer ()
 
-
-
 @end
 
 @implementation AIPointer
@@ -21,13 +19,28 @@
  */
 -(BOOL) isEqual:(AIPointer*)object{//重写指针对比地址方法;
     if (POINTERISOK(object)) {
-        return (self.pointerId == ((AIPointer*)object).pointerId);
+        //1. 对比pointerId
+        BOOL pointerIdEqual = (self.pointerId == object.pointerId);
+        //2. 对比params
+        if (pointerIdEqual && self.params.count == object.params.count) {
+            for (NSString *key in self.params.allKeys) {
+                BOOL itemEqual = [STRTOOK([self.params objectForKey:key]) isEqualToString:[object.params objectForKey:key]];
+                if (!itemEqual) {
+                    return false;//发现不同
+                }
+            }
+        }
+        //3. params相同时返回pointerIdEqual
+        return pointerIdEqual;
     }
     return false;
 }
 
--(id) content{
-    return nil;
+-(NSMutableDictionary *)params{
+    if (_params == nil) {
+        _params = [[NSMutableDictionary alloc] init];
+    }
+    return _params;
 }
 
 /**
@@ -37,12 +50,14 @@
     self = [super init];
     if (self) {
         self.pointerId = [aDecoder decodeIntegerForKey:@"pointerId"];
+        self.params = [aDecoder decodeObjectForKey:@"params"];
     }
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [aCoder encodeInteger:self.pointerId forKey:@"pointerId"];
+    [aCoder encodeObject:self.params forKey:@"params"];
 }
 
 @end

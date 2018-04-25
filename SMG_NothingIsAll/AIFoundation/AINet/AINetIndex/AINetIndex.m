@@ -12,7 +12,7 @@
 
 @interface AINetIndex ()
 
-@property (strong,nonatomic) NSMutableDictionary *mDic;
+@property (strong,nonatomic) NSMutableArray *models;
 
 @end
 
@@ -27,11 +27,46 @@
 }
 
 -(void) initData{
-    self.mDic = [[NSMutableDictionary alloc] init];
+    self.models = [[NSMutableArray alloc] init];
     //加载本地xxx
 }
 
--(AIKVPointer*) setObject:(NSObject*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource {
+-(AIKVPointer*) setObject:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource {
+    //1. 查找model
+    AINetIndexModel *model = nil;
+    for (AINetIndexModel *itemModel in self.models) {
+        if ([STRTOOK(algsType) isEqualToString:itemModel.algsType] && [STRTOOK(dataSource) isEqualToString:itemModel.dataSource]) {
+            model = itemModel;
+            break;
+        }
+    }
+    if (model == nil) {
+        model = [[AINetIndexModel alloc] init];
+        model.algsType = algsType;
+        model.dataSource = dataSource;
+    }
+    
+    //2. 使用二分法查找data
+    
+    if (model.pointerIds.count) {
+        NSInteger startIndex = 0;
+        NSInteger endIndex = model.pointerIds.count - 1;
+        NSInteger checkIndex = (startIndex + endIndex) / 2;
+        if (abs(startIndex - endIndex) == 1) {
+            //与start和end分别对比
+        }else if(startIndex == endIndex){
+            //与start对比
+        }else{
+            //与check对比,
+            
+            //1. 相同时,返回checkIndex
+            //2. >时,检查check到endIndex
+            //3. <时,检查startIndex到check
+        }
+    }
+    
+    
+    
     //根据dT&dS为key有序存到mDic;
     return nil;
 }
@@ -48,15 +83,19 @@
 //MARK:                     < AINetIndexModel >
 //MARK:===============================================================
 @interface AINetIndexModel ()
-
-@property (strong,nonatomic) AIKVPointer *pointer;
-@property (strong,nonatomic) NSString *algsType;
-@property (strong,nonatomic) NSString *dataType;
-@property (strong,nonatomic) NSString *dataSource;
-
 @end
 
 @implementation AINetIndexModel : NSObject
+
+//MARK:===============================================================
+//MARK:                     < method >
+//MARK:===============================================================
+-(NSMutableArray *)pointerIds{
+    if (_pointerIds == nil) {
+        _pointerIds = [NSMutableArray new];
+    }
+    return _pointerIds;
+}
 
 /**
  *  MARK:--------------------NSCoding--------------------
@@ -64,18 +103,16 @@
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super init];
     if (self) {
-        self.pointer = [aDecoder decodeObjectForKey:@"pointer"];
+        self.pointerIds = [aDecoder decodeObjectForKey:@"pointerIds"];
         self.algsType = [aDecoder decodeObjectForKey:@"algsType"];
-        self.dataType = [aDecoder decodeObjectForKey:@"dataType"];
         self.dataSource = [aDecoder decodeObjectForKey:@"dataSource"];
     }
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
-    [aCoder encodeObject:self.pointer forKey:@"pointer"];
+    [aCoder encodeObject:self.pointerIds forKey:@"pointerIds"];
     [aCoder encodeObject:self.algsType forKey:@"algsType"];
-    [aCoder encodeObject:self.dataType forKey:@"dataType"];
     [aCoder encodeObject:self.dataSource forKey:@"dataSource"];
 }
 

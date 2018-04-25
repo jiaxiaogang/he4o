@@ -10,49 +10,38 @@
 
 @implementation AIKVPointer
 
-+(AIKVPointer*) newWithPointerId:(NSInteger)pointerId folderName:(NSString*)folderName dataType:(NSString*)dataType dataSource:(NSString*)dataSource{
++(AIKVPointer*) newWithPointerId:(NSInteger)pointerId folderName:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource{
     AIKVPointer *pointer = [[AIKVPointer alloc] init];
     pointer.pointerId = pointerId;
-    pointer.folderName = STRTOOK(folderName);
-    pointer.dataType = STRTOOK(dataType);
-    pointer.dataSource = STRTOOK(dataSource);
+    [pointer.params setObject:STRTOOK(folderName) forKey:@"folderName"];
+    [pointer.params setObject:STRTOOK(algsType) forKey:@"algsType"];
+    [pointer.params setObject:STRTOOK(dataSource) forKey:@"dataSource"];
     return pointer;
 }
 
+//MARK:===============================================================
+//MARK:                     < method >
+//MARK:===============================================================
 -(NSString*) filePath{
     NSString *pIdStr = STRFORMAT(@"%ld",self.pointerId);
     NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSMutableString *fileRootPath = [[NSMutableString alloc] initWithFormat:@"%@/%@/%@/%@",cachePath,STRTOOK(self.folderName),STRTOOK(self.dataType),STRTOOK(self.dataSource)];
+    NSMutableString *fileRootPath = [[NSMutableString alloc] initWithFormat:@"%@/%@/%@/%@",cachePath,STRTOOK(self.folderName),STRTOOK(self.algsType),STRTOOK(self.dataSource)];
     for (NSInteger j = 0; j < pIdStr.length; j++) {
         [fileRootPath appendFormat:@"/%@",[pIdStr substringWithRange:NSMakeRange(j, 1)]];
     }
     return fileRootPath;
 }
 
-/**
- *  MARK:--------------------NSCoding--------------------
- */
-- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
-    self = [super initWithCoder:aDecoder];
-    if (self) {
-        self.folderName = [aDecoder decodeObjectForKey:@"folderName"];
-        self.dataType = [aDecoder decodeObjectForKey:@"dataType"];
-        self.dataSource = [aDecoder decodeObjectForKey:@"dataSource"];
-    }
-    return self;
+-(NSString*) folderName{
+    return [self.params objectForKey:@"folderName"];
 }
 
-- (void)encodeWithCoder:(NSCoder *)aCoder {
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:self.folderName forKey:@"folderName"];
-    [aCoder encodeObject:self.dataType forKey:@"dataType"];
-    [aCoder encodeObject:self.dataSource forKey:@"dataSource"];
+-(NSString*) algsType{
+    return [self.params objectForKey:@"algsType"];
+}
+
+-(NSString*) dataSource{
+    return [self.params objectForKey:@"dataSource"];
 }
 
 @end
-
-
-//-(NSString*) fileName{
-//    NSString *pIdStr = STRFORMAT(@"%ld",self.pointerId);
-//    return [pIdStr substringFromIndex:pIdStr.length - 1];
-//}
