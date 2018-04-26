@@ -12,11 +12,10 @@
 //MARK:===============================================================
 //MARK:                     < 内存DataSort >
 //MARK:===============================================================
-@class AIKVPointer;
+@class AIPointer;
 @interface AINetIndex : NSObject
 
--(AIKVPointer*) setObject:(NSObject*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
--(AIKVPointer*) objectForModel:(NSObject*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
+-(AIPointer*) getPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
 
 @end
 

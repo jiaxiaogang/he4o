@@ -36,6 +36,15 @@
 #define ObsKey_ThinkBusy @"ObsKey_ThinkBusy"                            //思考状改变
 #define ObsKey_MainThreadBusy @"ObsKey_MainThreadBusy"                  //意识线程状态改变
 #define ObsKey_AwarenessModelChanged @"ObsKey_AwarenessModelChanged"    //意识流新数据
+
+
+/**
+ *  MARK:--------------------PathKey--------------------
+ */
+#define PATH_NET_NODE @"NET_NODE"    //神经网络根目录;
+#define PATH_NET_INDEX @"NET_INDEX"  //神经网络索引根目录;
+
+
 /**
  *  MARK:--------------------数据检查--------------------
  */

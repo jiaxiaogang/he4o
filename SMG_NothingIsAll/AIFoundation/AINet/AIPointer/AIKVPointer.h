@@ -21,9 +21,4 @@
 -(NSString*) algsType;      //算法类型_分区
 -(NSString*) dataSource;    //数据源(AIData的来源:如inputModel中的某属性targetType等)
 
-/**
- *  MARK:--------------------key--------------------
- */
--(NSString*) filePath;  //存硬盘时,文件路径
-
 @end

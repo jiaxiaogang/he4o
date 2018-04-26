@@ -43,6 +43,10 @@
     return _params;
 }
 
+-(NSString*) filePath{
+    return STRFORMAT(@"%@_%ld",self.params,(long)self.pointerId);
+}
+
 /**
  *  MARK:--------------------NSCoding--------------------
  */

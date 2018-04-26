@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+
 @class AIObject,AIArray,AILine,ThinkModel;
 @interface SMGUtils : NSObject
 
@@ -47,14 +48,16 @@
 //MARK:===============================================================
 //MARK:                     < AIPointer >
 //MARK:===============================================================
++(NSInteger) createPointerId:(NSString*)algsType dataSource:(NSString*)dataSource;
++(NSInteger) createPointerId:(BOOL)updateLastId algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
 +(NSInteger) aiPointer_CreatePointerId;
 
 /**
  *  MARK:--------------------NetNode_PointerId--------------------
  */
 //netNode
-+(NSInteger) getLastNetNodePointerId:(NSString*)dataType dataSource:(NSString*)dataSource;
-+(void) setNetNodePointerId:(NSInteger)count dataType:(NSString*)dataType dataSource:(NSString*)dataSource;
++(NSInteger) getLastNetNodePointerId:(NSString*)algsType dataSource:(NSString*)dataSource;
++(void) setNetNodePointerId:(NSInteger)count algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
 
 //netData
 +(NSInteger) getLastNetDataPointerId;

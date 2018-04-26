@@ -9,6 +9,7 @@
 #import "AINetIndex.h"
 #import "AIKVPointer.h"
 #import "AIModel.h"
+#import "SMGUtils.h"
 
 @interface AINetIndex ()
 
@@ -31,8 +32,15 @@
     //加载本地xxx
 }
 
--(AIKVPointer*) setObject:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource {
-    //1. 查找model
+//MARK:===============================================================
+//MARK:                     < method >
+//MARK:===============================================================
+-(AIPointer*) getPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource {
+    if (!ISOK(data, NSNumber.class)) {
+        return nil;
+    }
+    
+    //1. 查找model,没则new
     AINetIndexModel *model = nil;
     for (AINetIndexModel *itemModel in self.models) {
         if ([STRTOOK(algsType) isEqualToString:itemModel.algsType] && [STRTOOK(dataSource) isEqualToString:itemModel.dataSource]) {
@@ -47,33 +55,91 @@
     }
     
     //2. 使用二分法查找data
-    
-    if (model.pointerIds.count) {
-        NSInteger startIndex = 0;
-        NSInteger endIndex = model.pointerIds.count - 1;
-        NSInteger checkIndex = (startIndex + endIndex) / 2;
-        if (abs(startIndex - endIndex) == 1) {
-            //与start和end分别对比
-        }else if(startIndex == endIndex){
-            //与start对比
-        }else{
-            //与check对比,
-            
-            //1. 相同时,返回checkIndex
-            //2. >时,检查check到endIndex
-            //3. <时,检查startIndex到check
+    __block AIPointer *resultPointer;
+    [self search:data fromIds:model.pointerIds startIndex:0 endIndex:model.pointerIds.count - 1 success:^(AIPointer *pointer) {
+        resultPointer = pointer;
+    } failure:^(NSInteger index) {
+        NSLog(@"");//根据dT&dS为key有序存到mDic;
+        if (model.pointerIds.count <= index) {
+            NSInteger pointerId = [SMGUtils createPointerId:algsType dataSource:dataSource];
+            AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_INDEX algsType:algsType dataSource:dataSource];
+            [[NSUserDefaults standardUserDefaults] setObject:data forKey:kvPointer.filePath];
+            [model.pointerIds addObject:@(pointerId)];
+            resultPointer = kvPointer;
         }
-    }
+    }];
     
-    
-    
-    //根据dT&dS为key有序存到mDic;
-    return nil;
+    return resultPointer;
 }
 
--(AIKVPointer*) objectForModel:(NSObject*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource{
-    //根据dT&dS为key从mDic取出相应值的pointer
-    return nil;
+/**
+ *  MARK:--------------------二分查找--------------------
+ *  success:找到则返回相应AIPointer
+ *  failure:失败则返回data可排到的下标
+ *  要求:ids指向的值是正序的;(即数组下标越大,值越大)
+ */
+-(void) search:(NSNumber*)data fromIds:(NSArray*)ids startIndex:(NSInteger)startIndex endIndex:(NSInteger)endIndex success:(void(^)(AIPointer *pointer))success failure:(void(^)(NSInteger index))failure{
+    if (ARRISOK(ids)) {
+        //1. index越界检查
+        startIndex = MAX(0, startIndex);
+        endIndex = MIN(ids.count - 1, endIndex);
+        
+        //2. io方法
+        typedef void(^ GetDataAndCompareCompletion)(NSComparisonResult result,AIPointer *pointer);
+        void (^ getDataAndCompare)(NSInteger,GetDataAndCompareCompletion) = ^(NSInteger index,GetDataAndCompareCompletion completion){
+            AIPointer *pointer = ARR_INDEX(ids, index);
+            NSNumber *value = [[NSUserDefaults standardUserDefaults] objectForKey:pointer.filePath];
+            NSComparisonResult compare = [data compare:value];
+            completion(compare,pointer);
+        };
+        
+        if (labs(startIndex - endIndex) <= 1) {
+            //3. 与start对比
+            AIPointer *startPointer = ARR_INDEX(ids, startIndex);
+            NSNumber *startValue = [[NSUserDefaults standardUserDefaults] objectForKey:startPointer.filePath];
+            NSComparisonResult compareStart = [data compare:startValue];
+            
+            getDataAndCompare(startIndex,^(NSComparisonResult result,AIPointer *pointer){
+                                  NSLog(@"");
+                              }
+            );
+            
+            if (compareStart == NSOrderedDescending) {      //比小的小
+                if (failure) failure(startIndex);
+            }else if (compareStart == NSOrderedSame){       //相等
+                if (success) success(startPointer);
+            }else {                                         //比小的大
+                if(startIndex == endIndex) {
+                    if (failure) failure(startIndex + 1);
+                }else{
+                    //4. 与end对比
+                    AIPointer *endPointer = ARR_INDEX(ids, endIndex);
+                    NSNumber *endValue = [[NSUserDefaults standardUserDefaults] objectForKey:endPointer.filePath];
+                    NSComparisonResult compareEnd = [data compare:endValue];
+                    if (compareEnd == NSOrderedAscending) { //比大的大
+                        if (failure) failure(endIndex + 1);
+                    }else if (compareEnd == NSOrderedSame){ //相等
+                        if (success) success(endPointer);
+                    }else {                                 //比大的小
+                        if (failure) failure(endIndex);
+                    }
+                }
+            }
+        }else{
+            //5. 与mid对比
+            NSInteger midIndex = (startIndex + endIndex) / 2;
+            AIPointer *midPointer = ARR_INDEX(ids, midIndex);
+            NSNumber *midValue = [[NSUserDefaults standardUserDefaults] objectForKey:midPointer.filePath];
+            NSComparisonResult compareMid = [data compare:midValue];
+            if (compareMid == NSOrderedAscending) { //比中心大(检查mid到endIndex)
+                [self search:data fromIds:ids startIndex:midIndex endIndex:endIndex success:success failure:failure];
+            }else if (compareMid == NSOrderedSame){ //相等
+                if (success) success(midPointer);
+            }else {                                 //比中心小(检查startIndex到mid)
+                [self search:data fromIds:ids startIndex:startIndex endIndex:midIndex success:success failure:failure];
+            }
+        }
+    }
 }
 
 @end

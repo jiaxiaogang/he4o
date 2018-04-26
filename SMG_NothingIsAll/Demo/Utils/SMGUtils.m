@@ -151,6 +151,18 @@
 //MARK:===============================================================
 //MARK:                     < AIPointer >
 //MARK:===============================================================
++(NSInteger) createPointerId:(NSString*)algsType dataSource:(NSString*)dataSource{
+    return [self createPointerId:true algsType:algsType dataSource:dataSource];
+}
+
++(NSInteger) createPointerId:(BOOL)updateLastId algsType:(NSString*)algsType dataSource:(NSString*)dataSource{
+    NSInteger lastId = [SMGUtils getLastNetNodePointerId:algsType dataSource:dataSource];
+    if (updateLastId) {
+        [SMGUtils setNetNodePointerId:1 algsType:algsType dataSource:dataSource];
+    }
+    return lastId + 1;
+}
+
 +(NSInteger) aiPointer_CreatePointerId{
     NSInteger lastPId = [[NSUserDefaults standardUserDefaults] integerForKey:@"AIPointer_LastPointerId_KEY"];
     [[NSUserDefaults standardUserDefaults] setInteger:lastPId + 1 forKey:@"AIPointer_LastPointerId_KEY"];
@@ -159,12 +171,12 @@
 }
 
 //netNode
-+(NSInteger) getLastNetNodePointerId:(NSString*)dataType dataSource:(NSString*)dataSource{
-    return [[NSUserDefaults standardUserDefaults] integerForKey:STRFORMAT(@"AIPointer_LastNetNodePointerId_KEY_%@_%@",dataType,dataSource)];
++(NSInteger) getLastNetNodePointerId:(NSString*)algsType dataSource:(NSString*)dataSource{
+    return [[NSUserDefaults standardUserDefaults] integerForKey:STRFORMAT(@"AIPointer_LastNetNodePointerId_KEY_%@_%@",algsType,dataSource)];
 }
 
-+(void) setNetNodePointerId:(NSInteger)count dataType:(NSString*)dataType dataSource:(NSString*)dataSource{
-    NSInteger lastPId = [self getLastNetNodePointerId:dataType dataSource:dataSource];
++(void) setNetNodePointerId:(NSInteger)count algsType:(NSString*)algsType dataSource:(NSString*)dataSource{
+    NSInteger lastPId = [self getLastNetNodePointerId:algsType dataSource:dataSource];
     [[NSUserDefaults standardUserDefaults] setInteger:lastPId + count forKey:@"AIPointer_LastNetNodePointerId_KEY"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }

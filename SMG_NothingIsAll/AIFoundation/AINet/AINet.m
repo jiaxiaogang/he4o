@@ -208,7 +208,7 @@ static AINet *_instance;
             //1. 转换AIModel&dataType;//废弃!(参考n12p12)
             //2. 存储索引;
             NSObject *data = [modelDic objectForKey:dataSource];
-            AIKVPointer *pointer = [self.netIndex setObject:data algsType:algsType dataSource:dataSource];
+            AIPointer *pointer = [self.netIndex getPointerWithData:data algsType:algsType dataSource:dataSource];
             if (pointer) {
                 [algsArr addObject:pointer];
             }

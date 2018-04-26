@@ -13,8 +13,6 @@
 #import "AIModel.h"
 #import "AIPort.h"
 
-#define NET_DATA @"NET_DATA"  //神经网络根目录;
-
 @interface AINetStore ()
 
 @property (strong,nonatomic) NSMutableDictionary *pinCaches;
@@ -49,17 +47,7 @@ static AINetStore *_instance;
 //MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
--(NSInteger) createPointerId:(NSString*)dataType dataSource:(NSString*)dataSource{
-    return [self createPointerId:true dataType:dataType dataSource:dataSource];
-}
 
--(NSInteger) createPointerId:(BOOL)updateLastId dataType:(NSString*)dataType dataSource:(NSString*)dataSource{
-    NSInteger lastId = [SMGUtils getLastNetNodePointerId:dataType dataSource:dataSource];
-    if (updateLastId) {
-        [SMGUtils setNetNodePointerId:1 dataType:dataType dataSource:dataSource];
-    }
-    return lastId + 1;
-}
 
 
 //MARK:===============================================================
@@ -75,8 +63,8 @@ static AINetStore *_instance;
         }
         
         //1. 生成指针
-        NSInteger pointerId = [self createPointerId:dataType dataSource:dataSource];
-        AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:NET_DATA algsType:@"" dataSource:dataSource];
+        NSInteger pointerId = [SMGUtils createPointerId:dataType dataSource:dataSource];
+        AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_NODE algsType:@"" dataSource:dataSource];
         
         //2. 将AINode与AIModel各自存为pointerPath下的一个文件;(命名为node和data)
         AINode *modelNode = [[AINode alloc] init];
@@ -173,7 +161,7 @@ static AINetStore *_instance;
 
 -(nonnull AINode*) objectRootNode:(NSString*)dataType dataSource:(NSString*)dataSource{
     //1. root.pointer;
-    AIKVPointer *p = [AIKVPointer newWithPointerId:0 folderName:NET_DATA algsType:@"" dataSource:dataSource];//将0定义为root;
+    AIKVPointer *p = [AIKVPointer newWithPointerId:0 folderName:PATH_NET_NODE algsType:@"" dataSource:dataSource];//将0定义为root;
     
     //2. 取rootNode
     AINode *root = [self objectNodeForPointer:p];
@@ -200,7 +188,7 @@ static AINetStore *_instance;
             AINode *root = [self objectRootNode:@"" dataSource:dataSource];
             //1.2. new absNode
             absNode = [[AINode alloc] init];
-            absNode.pointer = [AIKVPointer newWithPointerId:[self createPointerId:@"" dataSource:dataSource] folderName:NET_DATA algsType:@"" dataSource:dataSource];
+            absNode.pointer = [AIKVPointer newWithPointerId:[SMGUtils createPointerId:@"" dataSource:dataSource] folderName:PATH_NET_NODE algsType:@"" dataSource:dataSource];
             [absNode.absPorts addObject:[AIPort newWithNode:root]];
             //1.3. save root
             [root.conPorts addObject:[AIPort newWithNode:absNode]];
