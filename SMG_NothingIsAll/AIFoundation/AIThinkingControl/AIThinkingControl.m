@@ -51,6 +51,10 @@ static AIThinkingControl *_instance;
 //MARK:                     < method >
 //MARK:===============================================================
 -(void) commitInput:(NSObject*)algsModel{
+    NSArray *algsArr = [self dataIn_ConvertPointer:algsModel];
+    NSLog(@"");
+    
+    
     //1. 数据
     NSDictionary *algsDic = [NSObject getDic:algsModel containParent:true];
     NSMutableDictionary *nodeDic = [[NSMutableDictionary alloc] init];
@@ -172,9 +176,11 @@ static AIThinkingControl *_instance;
 //MARK:                     < dataIn >
 //MARK:===============================================================
 //转为指针数组(每个值都是指针)(在dataIn后第一件事就是装箱)
--(void) dataIn_ConvertPointer:(NSObject*)algsModel{
+-(NSArray*) dataIn_ConvertPointer:(NSObject*)algsModel{
     NSArray *algsArr = [[AINet sharedInstance] getAlgsArr:algsModel];
-    //1. 根据性能,此处只将algsDic中,3条信息尝试作为索引提交给actionControl联想;
+    return algsArr;
+    
+    //1. 将索引的第二序列,提交给actionControl联想 (1. 作匹配测试  2. 只从强度最强往下);
     
     //2. 并将algsDic存到shortCache;
     

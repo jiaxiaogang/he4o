@@ -163,32 +163,13 @@
     return lastId + 1;
 }
 
-+(NSInteger) aiPointer_CreatePointerId{
-    NSInteger lastPId = [[NSUserDefaults standardUserDefaults] integerForKey:@"AIPointer_LastPointerId_KEY"];
-    [[NSUserDefaults standardUserDefaults] setInteger:lastPId + 1 forKey:@"AIPointer_LastPointerId_KEY"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    return lastPId + 1;
-}
-
-//netNode
 +(NSInteger) getLastNetNodePointerId:(NSString*)algsType dataSource:(NSString*)dataSource{
     return [[NSUserDefaults standardUserDefaults] integerForKey:STRFORMAT(@"AIPointer_LastNetNodePointerId_KEY_%@_%@",algsType,dataSource)];
 }
 
 +(void) setNetNodePointerId:(NSInteger)count algsType:(NSString*)algsType dataSource:(NSString*)dataSource{
     NSInteger lastPId = [self getLastNetNodePointerId:algsType dataSource:dataSource];
-    [[NSUserDefaults standardUserDefaults] setInteger:lastPId + count forKey:@"AIPointer_LastNetNodePointerId_KEY"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
-//netData
-+(NSInteger) getLastNetDataPointerId{
-    return [[NSUserDefaults standardUserDefaults] integerForKey:@"AIPointer_LastNetDataPointerId_KEY"];
-}
-
-+(void) setNetDataPointerId:(NSInteger)count{
-    NSInteger lastPId = [self getLastNetDataPointerId];
-    [[NSUserDefaults standardUserDefaults] setInteger:lastPId + count forKey:@"AIPointer_LastNetDataPointerId_KEY"];
+    [[NSUserDefaults standardUserDefaults] setInteger:lastPId + count forKey:STRFORMAT(@"AIPointer_LastNetNodePointerId_KEY_%@_%@",algsType,dataSource)];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 

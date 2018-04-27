@@ -11,6 +11,15 @@
 #import "AIModel.h"
 #import "SMGUtils.h"
 
+
+/**
+ *  MARK:--------------------索引数据分文件--------------------
+ *  每个AIPointer只表示一个地址,为了性能优化,pointer指向的数据需要拆分存储;
+ *  在索引的存储中,将值与 `第二序列` 分开;(第二序列是索引值的引用节点集合,按强度排序)
+ */
+#define FILENAME_Value @"value"
+#define FILENAME_Ports @"ports"
+
 @interface AINetIndex ()
 
 @property (strong,nonatomic) NSMutableArray *models;
@@ -52,20 +61,25 @@
         model = [[AINetIndexModel alloc] init];
         model.algsType = algsType;
         model.dataSource = dataSource;
+        [self.models addObject:model];
     }
     
     //2. 使用二分法查找data
     __block AIPointer *resultPointer;
     [self search:data fromIds:model.pointerIds startIndex:0 endIndex:model.pointerIds.count - 1 success:^(AIPointer *pointer) {
+        //3. 找到;
         resultPointer = pointer;
     } failure:^(NSInteger index) {
-        NSLog(@"");//根据dT&dS为key有序存到mDic;
+        //4. 未找到;创建一个;
+        NSInteger pointerId = [SMGUtils createPointerId:algsType dataSource:dataSource];
+        AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_INDEX algsType:algsType dataSource:dataSource];
+        [[NSUserDefaults standardUserDefaults] setObject:data forKey:kvPointer.filePath];
+        resultPointer = kvPointer;
+        
         if (model.pointerIds.count <= index) {
-            NSInteger pointerId = [SMGUtils createPointerId:algsType dataSource:dataSource];
-            AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_INDEX algsType:algsType dataSource:dataSource];
-            [[NSUserDefaults standardUserDefaults] setObject:data forKey:kvPointer.filePath];
             [model.pointerIds addObject:@(pointerId)];
-            resultPointer = kvPointer;
+        }else{
+            [model.pointerIds insertObject:@(pointerId) atIndex:index];
         }
     }];
     
@@ -139,6 +153,8 @@
                 [self search:data fromIds:ids startIndex:startIndex endIndex:midIndex success:success failure:failure];
             }
         }
+    }else{
+        if (failure) failure(0);
     }
 }
 

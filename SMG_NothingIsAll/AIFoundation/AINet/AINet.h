@@ -67,6 +67,6 @@
 //MARK:===============================================================
 //MARK:                     < index >
 //MARK:===============================================================
--(NSMutableArray*) getAlgsArr:(NSObject*)algsModel;  //转变algsModel为装箱后的dic;
+-(NSMutableArray*) getAlgsArr:(NSObject*)algsModel;  //装箱 (algsModel to indexPointerArr);
 
 @end

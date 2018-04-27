@@ -46,22 +46,12 @@
 
 
 //MARK:===============================================================
-//MARK:                     < AIPointer >
+//MARK:                     < AIPointer & PointerId >
 //MARK:===============================================================
 +(NSInteger) createPointerId:(NSString*)algsType dataSource:(NSString*)dataSource;
 +(NSInteger) createPointerId:(BOOL)updateLastId algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
-+(NSInteger) aiPointer_CreatePointerId;
-
-/**
- *  MARK:--------------------NetNode_PointerId--------------------
- */
-//netNode
 +(NSInteger) getLastNetNodePointerId:(NSString*)algsType dataSource:(NSString*)dataSource;
 +(void) setNetNodePointerId:(NSInteger)count algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
-
-//netData
-+(NSInteger) getLastNetDataPointerId;
-+(void) setNetDataPointerId:(NSInteger)count;
 
 @end
 
