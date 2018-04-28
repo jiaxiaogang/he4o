@@ -16,3 +16,27 @@
 +(void) commitInput:(NSString*)input;
 
 @end
+
+
+
+//MARK:===============================================================
+//MARK:                     < String算法结果模型 >
+//MARK:===============================================================
+@interface AIStringAlgsModel : NSObject
+
+@property (strong,nonatomic) NSString *str;
+@property (assign, nonatomic) NSUInteger length;
+@property (strong,nonatomic) NSArray *spell;
+
+@end
+
+
+
+//MARK:===============================================================
+//MARK:                     < char算法结果模型 >
+//MARK:===============================================================
+@interface AICharAlgsModel : NSObject
+
+@property (assign,nonatomic) char c;
+
+@end

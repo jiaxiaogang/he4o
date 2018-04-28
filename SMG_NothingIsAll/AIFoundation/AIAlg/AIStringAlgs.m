@@ -8,20 +8,26 @@
 
 #import "AIStringAlgs.h"
 #import "AIThinkingControl.h"
-#import "AIStringAlgsModel.h"
 
 @implementation AIStringAlgs
 
 +(void) commitInput:(NSString*)input{
     if (STRISOK(input)) {
         //1. 算法运算
-        AIStringAlgsModel *model = [[AIStringAlgsModel alloc] init];
-        model.str = input;
-        model.length = [self length:input];
-        model.spell = [self spell:input];
-        
         //2. 结果给Thinking
-        [[AIThinkingControl shareInstance] commitInput:model];
+        
+        //AIStringAlgsModel *model = [[AIStringAlgsModel alloc] init];
+        //model.str = input;
+        //model.length = [self length:input];
+        //model.spell = [self spell:input];
+        //[[AIThinkingControl shareInstance] commitInput:model];
+        
+        const char *chars = [input UTF8String];
+        for (NSInteger i = 0; i < input.length; i ++) {
+            AICharAlgsModel *model = [AICharAlgsModel new];
+            model.c = chars[i];
+            [[AIThinkingControl shareInstance] commitInput:model];
+        }
     }
 }
 
@@ -43,5 +49,25 @@
     }
     return mArr;
 }
+
+@end
+
+
+
+
+//MARK:===============================================================
+//MARK:                     < String算法结果模型 >
+//MARK:===============================================================
+@implementation AIStringAlgsModel
+
+@end
+
+
+
+
+//MARK:===============================================================
+//MARK:                     < char算法结果模型 >
+//MARK:===============================================================
+@implementation AICharAlgsModel : NSObject
 
 @end

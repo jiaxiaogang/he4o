@@ -8,7 +8,6 @@
 
 #import "AIThinkingControl.h"
 #import "AINet.h"
-#import "AIStringAlgsModel.h"
 #import "ImvAlgsModelBase.h"
 #import "AIActionControl.h"
 #import "AINode.h"
@@ -51,10 +50,11 @@ static AIThinkingControl *_instance;
 //MARK:                     < method >
 //MARK:===============================================================
 -(void) commitInput:(NSObject*)algsModel{
-    NSArray *algsArr = [self dataIn_ConvertPointer:algsModel];
-    NSLog(@"");
-    
-    
+    //[self dataIn_V1:algsModel];
+    [self dataIn:algsModel];
+}
+
+-(void) dataIn_V1:(NSObject*)algsModel{
     //1. 数据
     NSDictionary *algsDic = [NSObject getDic:algsModel containParent:true];
     NSMutableDictionary *nodeDic = [[NSMutableDictionary alloc] init];
@@ -99,9 +99,6 @@ static AIThinkingControl *_instance;
         //8. 构建change和logic链 (对各种change,用潜意识流logic串起来)
         
         
-        
-        
-        
         //因algsDic定义只是存储结构,并非归纳结构,所以应类比Law,并thinkingRIN后,再产生归纳结构网络;//xxx
         //shortCaches和longCaches中存储的也是RIN后的数据,而非algsDic;//xxx
         
@@ -113,10 +110,6 @@ static AIThinkingControl *_instance;
             NSLog(@"");
             //逐个类比input中的信息单元(如char)等;找出law;
         }
-        
-        
-        
-        
     }
     
     //3. 存cacheShort
@@ -175,6 +168,11 @@ static AIThinkingControl *_instance;
 //MARK:===============================================================
 //MARK:                     < dataIn >
 //MARK:===============================================================
+-(void) dataIn:(NSObject*)algsModel{
+    NSArray *algsArr = [self dataIn_ConvertPointer:algsModel];
+    NSLog(@"");
+}
+
 //转为指针数组(每个值都是指针)(在dataIn后第一件事就是装箱)
 -(NSArray*) dataIn_ConvertPointer:(NSObject*)algsModel{
     NSArray *algsArr = [[AINet sharedInstance] getAlgsArr:algsModel];
