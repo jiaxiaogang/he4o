@@ -21,7 +21,7 @@
 
 
 //MARK:===============================================================
-//MARK:                     < 内存DataSortModel >
+//MARK:                     < 内存DataSortModel (一组index) >
 //MARK:===============================================================
 @interface AINetIndexModel : NSObject <NSCoding>
 

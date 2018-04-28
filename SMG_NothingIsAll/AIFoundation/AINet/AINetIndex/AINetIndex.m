@@ -66,7 +66,7 @@
     
     //2. 使用二分法查找data
     __block AIPointer *resultPointer;
-    [self search:data fromIds:model.pointerIds startIndex:0 endIndex:model.pointerIds.count - 1 success:^(AIPointer *pointer) {
+    [self search:data from:model startIndex:0 endIndex:model.pointerIds.count - 1 success:^(AIPointer *pointer) {
         //3. 找到;
         resultPointer = pointer;
     } failure:^(NSInteger index) {
@@ -92,66 +92,62 @@
  *  failure:失败则返回data可排到的下标
  *  要求:ids指向的值是正序的;(即数组下标越大,值越大)
  */
--(void) search:(NSNumber*)data fromIds:(NSArray*)ids startIndex:(NSInteger)startIndex endIndex:(NSInteger)endIndex success:(void(^)(AIPointer *pointer))success failure:(void(^)(NSInteger index))failure{
-    if (ARRISOK(ids)) {
+-(void) search:(NSNumber*)data from:(AINetIndexModel*)model startIndex:(NSInteger)startIndex endIndex:(NSInteger)endIndex success:(void(^)(AIPointer *pointer))success failure:(void(^)(NSInteger index))failure{
+    if (ISOK(model, AINetIndexModel.class) && ARRISOK(model.pointerIds)) {
         //1. index越界检查
+        NSArray *ids = model.pointerIds;
         startIndex = MAX(0, startIndex);
         endIndex = MIN(ids.count - 1, endIndex);
         
         //2. io方法
-        typedef void(^ GetDataAndCompareCompletion)(NSComparisonResult result,AIPointer *pointer);
-        void (^ getDataAndCompare)(NSInteger,GetDataAndCompareCompletion) = ^(NSInteger index,GetDataAndCompareCompletion completion){
-            AIPointer *pointer = ARR_INDEX(ids, index);
+        typedef void(^ GetDataAndCompareCompletion)(NSComparisonResult compareResult,AIPointer *pointer);
+        void (^ getDataAndCompare)(NSInteger,GetDataAndCompareCompletion) = ^(NSInteger index,GetDataAndCompareCompletion completion)
+        {
+            NSNumber *pointerIdNumber = ARR_INDEX(ids, index);
+            long pointerId = [NUMTOOK(pointerIdNumber) longValue];
+            AIKVPointer *pointer = [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_INDEX algsType:model.algsType dataSource:model.dataSource];
             NSNumber *value = [[NSUserDefaults standardUserDefaults] objectForKey:pointer.filePath];
-            NSComparisonResult compare = [data compare:value];
-            completion(compare,pointer);
+            NSComparisonResult compareResult = [value compare:data];
+            completion(compareResult,pointer);
         };
         
         if (labs(startIndex - endIndex) <= 1) {
             //3. 与start对比
-            AIPointer *startPointer = ARR_INDEX(ids, startIndex);
-            NSNumber *startValue = [[NSUserDefaults standardUserDefaults] objectForKey:startPointer.filePath];
-            NSComparisonResult compareStart = [data compare:startValue];
-            
-            getDataAndCompare(startIndex,^(NSComparisonResult result,AIPointer *pointer){
-                                  NSLog(@"");
-                              }
-            );
-            
-            if (compareStart == NSOrderedDescending) {      //比小的小
-                if (failure) failure(startIndex);
-            }else if (compareStart == NSOrderedSame){       //相等
-                if (success) success(startPointer);
-            }else {                                         //比小的大
-                if(startIndex == endIndex) {
-                    if (failure) failure(startIndex + 1);
-                }else{
-                    //4. 与end对比
-                    AIPointer *endPointer = ARR_INDEX(ids, endIndex);
-                    NSNumber *endValue = [[NSUserDefaults standardUserDefaults] objectForKey:endPointer.filePath];
-                    NSComparisonResult compareEnd = [data compare:endValue];
-                    if (compareEnd == NSOrderedAscending) { //比大的大
-                        if (failure) failure(endIndex + 1);
-                    }else if (compareEnd == NSOrderedSame){ //相等
-                        if (success) success(endPointer);
-                    }else {                                 //比大的小
-                        if (failure) failure(endIndex);
+            getDataAndCompare(startIndex,^(NSComparisonResult compareResult,AIPointer *pointer){
+                if (compareResult == NSOrderedDescending) {      //比小的小
+                    if (failure) failure(startIndex);
+                }else if (compareResult == NSOrderedSame){       //相等
+                    if (success) success(pointer);
+                }else {                                         //比小的大
+                    if(startIndex == endIndex) {
+                        if (failure) failure(startIndex + 1);
+                    }else{
+                        //4. 与end对比
+                        getDataAndCompare(endIndex,^(NSComparisonResult compareResult,AIPointer *pointer){
+                            if (compareResult == NSOrderedAscending) { //比大的大
+                                if (failure) failure(endIndex + 1);
+                            }else if (compareResult == NSOrderedSame){ //相等
+                                if (success) success(pointer);
+                            }else {                                 //比大的小
+                                if (failure) failure(endIndex);
+                            }
+                        });
                     }
                 }
-            }
+            });
         }else{
             //5. 与mid对比
             NSInteger midIndex = (startIndex + endIndex) / 2;
-            AIPointer *midPointer = ARR_INDEX(ids, midIndex);
-            NSNumber *midValue = [[NSUserDefaults standardUserDefaults] objectForKey:midPointer.filePath];
-            NSComparisonResult compareMid = [data compare:midValue];
-            if (compareMid == NSOrderedAscending) { //比中心大(检查mid到endIndex)
-                [self search:data fromIds:ids startIndex:midIndex endIndex:endIndex success:success failure:failure];
-            }else if (compareMid == NSOrderedSame){ //相等
-                if (success) success(midPointer);
-            }else {                                 //比中心小(检查startIndex到mid)
-                [self search:data fromIds:ids startIndex:startIndex endIndex:midIndex success:success failure:failure];
-            }
+            
+            getDataAndCompare(midIndex,^(NSComparisonResult compareResult,AIPointer *pointer){
+                if (compareResult == NSOrderedAscending) { //比中心大(检查mid到endIndex)
+                    [self search:data from:model startIndex:midIndex endIndex:endIndex success:success failure:failure];
+                }else if (compareResult == NSOrderedSame){ //相等
+                    if (success) success(pointer);
+                }else {                                     //比中心小(检查startIndex到mid)
+                    [self search:data from:model startIndex:startIndex endIndex:midIndex success:success failure:failure];
+                }
+            });
         }
     }else{
         if (failure) failure(0);
@@ -162,11 +158,8 @@
 
 
 //MARK:===============================================================
-//MARK:                     < AINetIndexModel >
+//MARK:                     < 内存DataSortModel (一组index) >
 //MARK:===============================================================
-@interface AINetIndexModel ()
-@end
-
 @implementation AINetIndexModel : NSObject
 
 //MARK:===============================================================
