@@ -11,15 +11,6 @@
 #import "AIModel.h"
 #import "SMGUtils.h"
 
-
-/**
- *  MARK:--------------------索引数据分文件--------------------
- *  每个AIPointer只表示一个地址,为了性能优化,pointer指向的数据需要拆分存储;
- *  在索引的存储中,将值与 `第二序列` 分开;(第二序列是索引值的引用节点集合,按强度排序)
- */
-#define FILENAME_Value @"value"
-#define FILENAME_Ports @"ports"
-
 @interface AINetIndex ()
 
 @property (strong,nonatomic) NSMutableArray *models;

@@ -41,8 +41,10 @@
 /**
  *  MARK:--------------------PathKey--------------------
  */
-#define PATH_NET_NODE @"NET_NODE"    //神经网络根目录;
-#define PATH_NET_INDEX @"NET_INDEX"  //神经网络索引根目录;
+#define PATH_NET_NODE       @"NET_NODE"     //神经网络根目录;
+#define PATH_NET_INDEX      @"NET_INDEX"    //神经网络"索引"根目录;
+#define PATH_NET_DATA       @"NET_DATA"     //神经网络"数据"根目录;
+#define PATH_NET_REFERENCE  @"NET_REFERENCE"//神经网络"引用序列"根目录;
 
 
 /**
