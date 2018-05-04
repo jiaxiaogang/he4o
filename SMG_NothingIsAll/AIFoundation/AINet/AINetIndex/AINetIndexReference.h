@@ -1,8 +1,8 @@
 //
-//  AINetData.h
+//  AINetIndexReference.h
 //  SMG_NothingIsAll
 //
-//  Created by iMac on 2018/5/3.
+//  Created by iMac on 2018/5/4.
 //  Copyright © 2018年 XiaoGang. All rights reserved.
 //
 
@@ -11,20 +11,25 @@
 //MARK:===============================================================
 //MARK:                     < itemData区(第二序列) >
 //MARK:===============================================================
-@class AIPointer,AINetDataModel;
-@interface AINetData : NSObject
+@class AIKVPointer,AIPort;
+@interface AINetIndexReference : NSObject
 
 
 /**
  *  MARK:--------------------存入数据,由Index调用--------------------
+ *  @param indexPointer 索引地址
+ *  @param port         插入端口
  */
--(void) setObject:(NSNumber*)value algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
--(NSNumber*) valueForPointerId:(NSInteger)pointerId algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
+-(void) setReference:(AIKVPointer*)indexPointer port:(AIPort*)port difValue:(int)difValue;
+
 
 /**
- *  MARK:--------------------更新强度,由net构建时调用--------------------
+ *  MARK:--------------------获取强度靠前的limit个地址--------------------
+ *  @param indexPointer  索引地址
+ *  @result Return NSArray(元素为AIPointer)
  */
--(void) updateObject:(AIPointer*)pointer;
+-(NSArray*) getReference:(AIKVPointer*)indexPointer limit:(NSInteger)limit;
+
 
 @end
 
@@ -32,9 +37,8 @@
 //MARK:===============================================================
 //MARK:                     < itemDataModel (一条数据) >
 //MARK:===============================================================
-@interface AINetDataModel : NSObject <NSCoding>
+@interface AINetIndexReferenceModel : NSObject <NSCoding>
 
-@property (strong, nonatomic) NSNumber *value;
 @property (strong,nonatomic) NSMutableArray *ports;
 
 @end

@@ -22,6 +22,14 @@
 //MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
+-(NSString*) filePath:(NSString*)customFolderName{
+    NSString *bakFolderName = [self.params objectForKey:@"folderName"];
+    [self.params setObject:STRTOOK(customFolderName) forKey:@"folderName"];
+    NSString *filePath = [self filePath];
+    [self.params setObject:STRTOOK(bakFolderName) forKey:@"folderName"];
+    return filePath;
+}
+
 -(NSString*) filePath{
     NSString *pIdStr = STRFORMAT(@"%ld",self.pointerId);
     NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
