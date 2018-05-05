@@ -218,6 +218,10 @@ static AINet *_instance;
     return nil;
 }
 
+-(NSArray*) getItemAlgsReference:(AIKVPointer*)pointer limit:(NSInteger)limit {
+    return [self.netIndex getIndexReference:pointer limit:limit];
+}
+
 @end
 
 

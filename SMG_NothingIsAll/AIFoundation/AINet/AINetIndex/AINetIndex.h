@@ -12,10 +12,12 @@
 //MARK:===============================================================
 //MARK:                     < Index索引 (第一序列) >
 //MARK:===============================================================
-@class AIPointer;
+@class AIPointer,AIKVPointer,AIPort;
 @interface AINetIndex : NSObject
 
 -(AIPointer*) getPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
+-(void) setIndexReference:(AIKVPointer*)indexPointer port:(AIPort*)port difValue:(int)difValue;
+-(NSArray*) getIndexReference:(AIKVPointer*)indexPointer limit:(NSInteger)limit;
 
 @end
 

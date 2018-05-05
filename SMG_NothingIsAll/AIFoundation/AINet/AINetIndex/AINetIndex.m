@@ -10,10 +10,12 @@
 #import "AIKVPointer.h"
 #import "AIModel.h"
 #import "SMGUtils.h"
+#import "AINetIndexReference.h"
 
 @interface AINetIndex ()
 
 @property (strong,nonatomic) NSMutableArray *models;
+@property (strong, nonatomic) AINetIndexReference *reference;
 
 @end
 
@@ -143,6 +145,24 @@
     }else{
         if (failure) failure(0);
     }
+}
+
+//MARK:===============================================================
+//MARK:                     < itemIndex指向相关 >
+//MARK:===============================================================
+-(AINetIndexReference *)reference{
+    if (_reference == nil) {
+        _reference = [[AINetIndexReference alloc] init];
+    }
+    return _reference;
+}
+
+-(void) setIndexReference:(AIKVPointer*)indexPointer port:(AIPort*)port difValue:(int)difValue{
+    [self.reference setReference:indexPointer port:port difValue:difValue];
+}
+
+-(NSArray*) getIndexReference:(AIKVPointer*)indexPointer limit:(NSInteger)limit{
+    return [self.reference getReference:indexPointer limit:limit];
 }
 
 @end

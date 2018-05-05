@@ -13,6 +13,7 @@
 #import "AINode.h"
 #import "AIModel.h"
 #import "NSObject+Extension.h"
+#import "AIKVPointer.h"
 
 @interface AIThinkingControl()
 
@@ -170,6 +171,12 @@ static AIThinkingControl *_instance;
 //MARK:===============================================================
 -(void) dataIn:(NSObject*)algsModel{
     NSArray *algsArr = [self dataIn_ConvertPointer:algsModel];
+    for (AIKVPointer *pointer in algsArr) {
+        if (ISOK(pointer, AIKVPointer.class)) {
+            NSArray *referenceArr = [[AINet sharedInstance] getItemAlgsReference:pointer limit:3];
+            NSLog(@"");
+        }
+    }
     NSLog(@"");
 }
 
