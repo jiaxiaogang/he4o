@@ -11,6 +11,10 @@
 #import "AIModel.h"
 #import "SMGUtils.h"
 #import "AINetIndexReference.h"
+#import "PINCache.h"
+
+#define FILENAME_Value @"value"
+#define FILENAME_Index @"index"
 
 @interface AINetIndex ()
 
@@ -30,14 +34,14 @@
 }
 
 -(void) initData{
-    self.models = [[NSMutableArray alloc] init];
-    //加载本地xxx
+    NSArray *localModels = [[PINCache sharedCache] objectForKey:FILENAME_Index];
+    self.models = [[NSMutableArray alloc] initWithArray:localModels];
 }
 
 //MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
--(AIPointer*) getPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource {
+-(AIPointer*) getDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource {
     if (!ISOK(data, NSNumber.class)) {
         return nil;
     }
@@ -65,8 +69,10 @@
     } failure:^(NSInteger index) {
         //4. 未找到;创建一个;
         NSInteger pointerId = [SMGUtils createPointerId:algsType dataSource:dataSource];
-        AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_INDEX algsType:algsType dataSource:dataSource];
-        [[NSUserDefaults standardUserDefaults] setObject:data forKey:kvPointer.filePath];
+        AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_VALUE algsType:algsType dataSource:dataSource];
+        PINDiskCache *pinCache = [[PINDiskCache alloc] initWithName:@"" rootPath:kvPointer.filePath];
+        [pinCache setObject:data forKey:FILENAME_Value];
+        //[[NSUserDefaults standardUserDefaults] setObject:data forKey:kvPointer.filePath];
         resultPointer = kvPointer;
         
         if (model.pointerIds.count <= index) {
@@ -74,6 +80,9 @@
         }else{
             [model.pointerIds insertObject:@(pointerId) atIndex:index];
         }
+        
+        //5. 存
+        [[PINCache sharedCache] setObject:self.models forKey:FILENAME_Index];
     }];
     
     return resultPointer;
@@ -98,8 +107,10 @@
         {
             NSNumber *pointerIdNumber = ARR_INDEX(ids, index);
             long pointerId = [NUMTOOK(pointerIdNumber) longValue];
-            AIKVPointer *pointer = [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_INDEX algsType:model.algsType dataSource:model.dataSource];
-            NSNumber *value = [[NSUserDefaults standardUserDefaults] objectForKey:pointer.filePath];
+            AIKVPointer *pointer = [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_VALUE algsType:model.algsType dataSource:model.dataSource];
+            PINDiskCache *pinCache = [[PINDiskCache alloc] initWithName:@"" rootPath:pointer.filePath];
+            NSNumber *value = [pinCache objectForKey:FILENAME_Value];
+            //NSNumber *value = [[NSUserDefaults standardUserDefaults] objectForKey:pointer.filePath];
             NSComparisonResult compareResult = [value compare:data];
             completion(compareResult,pointer);
         };

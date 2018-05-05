@@ -43,7 +43,6 @@
 @property (assign,nonatomic) int value;
 @property (assign, nonatomic) double updateTime;  //更新值时间
 
-
 //MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================

@@ -17,38 +17,50 @@
  *  每个AIPointer只表示一个地址,为了性能优化,pointer指向的数据需要拆分存储;
  *  在索引的存储中,将值与 `第二序列` 分开;(第二序列是索引值的引用节点集合,按强度排序)
  */
-//#define FILENAME_Value @"value"
 //#define FILENAME_Ports @"ports"//目前采用分区的方式,未采用分文件的方式;
-
+#define FILENAME_Reference @"reference"
 
 @implementation AINetIndexReference
 
 
 -(void) setReference:(AIKVPointer*)indexPointer port:(AIPort*)port difValue:(int)difValue {
-    if (ISOK(indexPointer, AIKVPointer.class) && ISOK(port, AIPort.class)) {
+    if (ISOK(indexPointer, AIKVPointer.class) && ISOK(port, AIPort.class) && difValue != 0) {
         //1. 取出referenceModel
         NSString *filePath = [indexPointer filePath:PATH_NET_REFERENCE];
         PINDiskCache *pinCache = [[PINDiskCache alloc] initWithName:@"" rootPath:filePath];
-        AINetIndexReferenceModel *referenceModel = [pinCache objectForKey:@""];
-        
-        //2. 二分法查找port,未找到则插入;
-        if (ISOK(referenceModel, AINetIndexReferenceModel.class)) {
-            [self search:port from:referenceModel.ports startIndex:0 endIndex:referenceModel.ports.count - 1 success:^(NSInteger index) {
-                //3. 找到;
-                AIPort *findPort = ARR_INDEX(referenceModel.ports, index);
-                findPort.strong.value += difValue;
-            } failure:^(NSInteger index) {
-                //4. 未找到;插入队列
-                if (referenceModel.ports.count <= index) {
-                    [referenceModel.ports addObject:port];
-                }else{
-                    [referenceModel.ports insertObject:port atIndex:index];
-                }
-            }];
+        AINetIndexReferenceModel *referenceModel = [pinCache objectForKey:FILENAME_Reference];
+        if (!ISOK(referenceModel, AINetIndexReferenceModel.class)) {
+            referenceModel = [[AINetIndexReferenceModel alloc] init];
         }
         
-        //5. 保存队列
-        [pinCache setObject:referenceModel forKey:@""];
+        //2. 二分法查找port,移除旧的;
+        __block NSInteger findOldIndex = 0;
+        [self search:port from:referenceModel.ports startIndex:0 endIndex:referenceModel.ports.count - 1 success:^(NSInteger index) {
+            if (index >= 0 && index < referenceModel.ports.count) {
+                [referenceModel.ports removeObjectAtIndex:index];//找到;则移除
+            }
+            findOldIndex = index;
+        } failure:^(NSInteger index) {
+            findOldIndex = index;
+        }];
+        
+        //3. 更新strongValue & 插入队列
+        BOOL insertDirection = difValue > 0; //是否往后查
+        NSInteger insertStartIndex = insertDirection ? findOldIndex : 0;
+        NSInteger insertEndIndex = insertDirection ? referenceModel.ports.count - 1 : findOldIndex;
+        port.strong.value += difValue;
+        [self search:port from:referenceModel.ports startIndex:insertStartIndex endIndex:insertEndIndex success:^(NSInteger index) {
+            NSLog(@"警告!!! bug:在第二序列的ports中发现了两次port目标___pointerId为:%ld",(long)port.pointer.pointerId);
+        } failure:^(NSInteger index) {
+            if (referenceModel.ports.count <= index) {
+                [referenceModel.ports addObject:port];
+            }else{
+                [referenceModel.ports insertObject:port atIndex:index];
+            }
+        }];
+        
+        //4. 保存队列
+        [pinCache setObject:referenceModel forKey:FILENAME_Reference];
     }
 }
 
@@ -57,8 +69,9 @@
     if (ISOK(indexPointer, AIKVPointer.class)) {
         NSString *filePath = [indexPointer filePath:PATH_NET_REFERENCE];
         PINDiskCache *pinCache = [[PINDiskCache alloc] initWithName:@"" rootPath:filePath];
-        AINetIndexReferenceModel *referenceModel = [pinCache objectForKey:@""];
+        AINetIndexReferenceModel *referenceModel = [pinCache objectForKey:FILENAME_Reference];
         if (ISOK(referenceModel, AINetIndexReferenceModel.class)) {
+            limit = MAX(0, MIN(limit, referenceModel.ports.count));
             [mArr addObjectsFromArray:[referenceModel.ports subarrayWithRange:NSMakeRange(referenceModel.ports.count - limit, limit)]];
         }
     }

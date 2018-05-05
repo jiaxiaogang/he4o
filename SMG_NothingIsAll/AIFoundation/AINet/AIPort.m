@@ -35,7 +35,7 @@
 //MARK:                     < method >
 //MARK:===============================================================
 -(AIPortStrong *)strong{
-    if (_strong) {
+    if (_strong == nil) {
         _strong = [[AIPortStrong alloc] init];
     }
     return _strong;
@@ -51,11 +51,11 @@
 
 -(NSComparisonResult) compare:(AIPort*)port{
     if (ISOK(port, AIPort.class)) {
-        if (self.strong.value) {
+        if (self.strong) {
             NSComparisonResult strongResult = [self.strong compare:port.strong];
             if (strongResult == NSOrderedSame) {
                 if (ISOK(self.pointer, AIKVPointer.class)) {
-                    if (ISOK(port, AIKVPointer.class)) {
+                    if (ISOK(port.pointer, AIKVPointer.class)) {
                         if (self.pointer.pointerId > port.pointer.pointerId) {
                             return NSOrderedAscending;
                         }else if(self.pointer.pointerId < port.pointer.pointerId){
@@ -127,6 +127,5 @@
     [coder encodeInt:self.value forKey:@"value"];
     [coder encodeDouble:self.updateTime forKey:@"updateTime"];
 }
-
 
 @end

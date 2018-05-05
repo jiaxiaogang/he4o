@@ -208,7 +208,7 @@ static AINet *_instance;
             //1. 转换AIModel&dataType;//废弃!(参考n12p12)
             //2. 存储索引;
             NSObject *data = [modelDic objectForKey:dataSource];
-            AIPointer *pointer = [self.netIndex getPointerWithData:data algsType:algsType dataSource:dataSource];
+            AIPointer *pointer = [self.netIndex getDataPointerWithData:data algsType:algsType dataSource:dataSource];
             if (pointer) {
                 [algsArr addObject:pointer];
             }
@@ -216,6 +216,10 @@ static AINet *_instance;
         return algsArr;
     }
     return nil;
+}
+
+-(void) setItemAlgsReference:(AIKVPointer*)indexPointer port:(AIPort*)port difValue:(int)difValue{
+    [self.netIndex setIndexReference:indexPointer port:port difValue:difValue];
 }
 
 -(NSArray*) getItemAlgsReference:(AIKVPointer*)pointer limit:(NSInteger)limit {

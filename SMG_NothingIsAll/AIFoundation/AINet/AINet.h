@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIModel,AINode,AIImvAlgsModel,AIPointer,AIKVPointer;
+@class AIModel,AINode,AIImvAlgsModel,AIPointer,AIKVPointer,AIPort;
 @interface AINet : NSObject
 
 +(AINet*) sharedInstance;
@@ -68,6 +68,8 @@
 //MARK:                     < index >
 //MARK:===============================================================
 -(NSMutableArray*) getAlgsArr:(NSObject*)algsModel;  //装箱 (algsModel to indexPointerArr);
+
+-(void) setItemAlgsReference:(AIKVPointer*)indexPointer port:(AIPort*)port difValue:(int)difValue;
 -(NSArray*) getItemAlgsReference:(AIKVPointer*)pointer limit:(NSInteger)limit;  //获取算法单结果的第二序列联想;
 
 @end

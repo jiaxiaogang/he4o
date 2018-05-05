@@ -15,7 +15,7 @@
 @class AIPointer,AIKVPointer,AIPort;
 @interface AINetIndex : NSObject
 
--(AIPointer*) getPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
+-(AIPointer*) getDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
 -(void) setIndexReference:(AIKVPointer*)indexPointer port:(AIPort*)port difValue:(int)difValue;
 -(NSArray*) getIndexReference:(AIKVPointer*)indexPointer limit:(NSInteger)limit;
 

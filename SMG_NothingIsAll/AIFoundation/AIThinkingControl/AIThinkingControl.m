@@ -14,6 +14,7 @@
 #import "AIModel.h"
 #import "NSObject+Extension.h"
 #import "AIKVPointer.h"
+#import "AIPort.h"
 
 @interface AIThinkingControl()
 
@@ -173,11 +174,38 @@ static AIThinkingControl *_instance;
     NSArray *algsArr = [self dataIn_ConvertPointer:algsModel];
     for (AIKVPointer *pointer in algsArr) {
         if (ISOK(pointer, AIKVPointer.class)) {
+            
+            AIPort* (^ CreatePort)(NSInteger,NSInteger) = ^(NSInteger strongValue,NSInteger pointerId){
+                AIPortStrong *s1 = [[AIPortStrong alloc] init];
+                s1.value = strongValue;
+                
+                AIPort *p1 = [AIPort newWithNode:[[AIActionControl shareInstance] insertModel:[AIIntModel newWithFrom:1 to:1] dataSource:@"testDS"]];
+                p1.strong = s1;
+                p1.pointer.pointerId = pointerId;
+                return p1;
+            };
+            
+            AIPort *port46 = CreatePort(1,7);
+            [[AINet sharedInstance] setItemAlgsReference:pointer port:port46 difValue:1];
+            NSLog(@"");
+            
+            //AIPort *port11 = CreatePort(1,1);
+            //AIPort *port12 = CreatePort(1,2);
+            //AIPort *port23 = CreatePort(2,3);
+            //AIPort *port34 = CreatePort(3,4);
+            //AIPort *port35 = CreatePort(3,5);
+            //AIPort *port36 = CreatePort(3,6);
+            //[[AINet sharedInstance] setItemAlgsReference:pointer port:port11 difValue:1];
+            //[[AINet sharedInstance] setItemAlgsReference:pointer port:port12 difValue:1];
+            //[[AINet sharedInstance] setItemAlgsReference:pointer port:port23 difValue:1];
+            //[[AINet sharedInstance] setItemAlgsReference:pointer port:port34 difValue:1];
+            //[[AINet sharedInstance] setItemAlgsReference:pointer port:port35 difValue:1];
+            //[[AINet sharedInstance] setItemAlgsReference:pointer port:port36 difValue:1];
+            
             NSArray *referenceArr = [[AINet sharedInstance] getItemAlgsReference:pointer limit:3];
             NSLog(@"");
         }
     }
-    NSLog(@"");
 }
 
 //转为指针数组(每个值都是指针)(在dataIn后第一件事就是装箱)
