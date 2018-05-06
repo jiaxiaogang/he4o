@@ -12,6 +12,9 @@
 //MARK:===============================================================
 //MARK:                     < cmv基本模型 >
 //MARK:===============================================================
+@class AIKVPointer;
 @interface AINetCMV : NSObject
+
+-(void) setCMV:(AIKVPointer*)imv order:(NSArray*)order;
 
 @end

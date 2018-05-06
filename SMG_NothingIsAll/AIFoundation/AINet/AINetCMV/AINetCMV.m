@@ -7,7 +7,20 @@
 //
 
 #import "AINetCMV.h"
+#import "PINCache.h"
+#import "AIKVPointer.h"
 
 @implementation AINetCMV
+
+-(void) setCMV:(AIKVPointer*)imv order:(NSArray*)order{
+    //1. 将Pointer打包成node;
+    
+    //2.
+    
+    
+    
+    
+    
+}
 
 @end
