@@ -55,6 +55,8 @@
 		88988524208979E6001D1ADC /* AINetIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = 88988523208979E6001D1ADC /* AINetIndex.m */; };
 		88B365FB208811E7000112CF /* HEActionControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 88B365FA208811E7000112CF /* HEActionControl.m */; };
 		88B365FE208811F3000112CF /* HEThinkControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 88B365FD208811F3000112CF /* HEThinkControl.m */; };
+		88B59BCD209FDD3500E54F88 /* AICMVNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 88B59BCC209FDD3500E54F88 /* AICMVNode.m */; };
+		88B59BD0209FDDD700E54F88 /* AIOrderNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 88B59BCF209FDDD700E54F88 /* AIOrderNode.m */; };
 		88C258C1209E99B00042CB6A /* AINetCMV.m in Sources */ = {isa = PBXBuildFile; fileRef = 88C258C0209E99B00042CB6A /* AINetCMV.m */; };
 		88C258C4209E9A820042CB6A /* AINetCmvOrder.m in Sources */ = {isa = PBXBuildFile; fileRef = 88C258C3209E9A820042CB6A /* AINetCmvOrder.m */; };
 /* End PBXBuildFile section */
@@ -154,6 +156,10 @@
 		88B365FA208811E7000112CF /* HEActionControl.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HEActionControl.m; sourceTree = "<group>"; };
 		88B365FC208811F3000112CF /* HEThinkControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HEThinkControl.h; sourceTree = "<group>"; };
 		88B365FD208811F3000112CF /* HEThinkControl.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HEThinkControl.m; sourceTree = "<group>"; };
+		88B59BCB209FDD3500E54F88 /* AICMVNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AICMVNode.h; sourceTree = "<group>"; };
+		88B59BCC209FDD3500E54F88 /* AICMVNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AICMVNode.m; sourceTree = "<group>"; };
+		88B59BCE209FDDD700E54F88 /* AIOrderNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIOrderNode.h; sourceTree = "<group>"; };
+		88B59BCF209FDDD700E54F88 /* AIOrderNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIOrderNode.m; sourceTree = "<group>"; };
 		88C258BF209E99B00042CB6A /* AINetCMV.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetCMV.h; sourceTree = "<group>"; };
 		88C258C0209E99B00042CB6A /* AINetCMV.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetCMV.m; sourceTree = "<group>"; };
 		88C258C2209E9A820042CB6A /* AINetCmvOrder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetCmvOrder.h; sourceTree = "<group>"; };
@@ -557,6 +563,10 @@
 				88C258C0209E99B00042CB6A /* AINetCMV.m */,
 				88C258C2209E9A820042CB6A /* AINetCmvOrder.h */,
 				88C258C3209E9A820042CB6A /* AINetCmvOrder.m */,
+				88B59BCB209FDD3500E54F88 /* AICMVNode.h */,
+				88B59BCC209FDD3500E54F88 /* AICMVNode.m */,
+				88B59BCE209FDDD700E54F88 /* AIOrderNode.h */,
+				88B59BCF209FDDD700E54F88 /* AIOrderNode.m */,
 			);
 			path = AINetCMV;
 			sourceTree = "<group>";
@@ -702,12 +712,14 @@
 				081B3ADB1F6E2CCD008A7F36 /* AINet.m in Sources */,
 				08C84A8E1E9A866200897D8B /* AIInput.m in Sources */,
 				08EA48BF2029242B0038B982 /* ImvAlgsHungerModel.m in Sources */,
+				88B59BD0209FDDD700E54F88 /* AIOrderNode.m in Sources */,
 				082F9D561EB234750009F6A9 /* Output.m in Sources */,
 				084219E71FD8CF11009DA6BC /* AIActionControl.m in Sources */,
 				083112F21F05E12600051DE6 /* MBProgressHUD+Add.m in Sources */,
 				084219ED1FD8CF81009DA6BC /* AIThinkingControl.m in Sources */,
 				88B365FE208811F3000112CF /* HEThinkControl.m in Sources */,
 				083F61381F048329000330E1 /* AILine.m in Sources */,
+				88B59BCD209FDD3500E54F88 /* AICMVNode.m in Sources */,
 				08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */,
 				08D8C525201DEA4300FC1265 /* AIAlgsPointer.m in Sources */,
 				081F5A101FFF01A500BD74F9 /* AINetCache.m in Sources */,
