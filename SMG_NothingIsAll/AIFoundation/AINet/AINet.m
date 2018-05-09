@@ -12,6 +12,7 @@
 #import "AIPointer.h"
 #import "NSObject+Extension.h"
 #import "AINetIndex.h"
+#import "AINetCMV.h"
 
 @interface AINet ()
 
@@ -21,7 +22,8 @@
  *  改为内存缓存,存node和指向的data的缓存;关机时清除;
  */
 @property (strong,nonatomic) NSMutableArray *cacheLong;
-@property (strong, nonatomic) AINetIndex *netIndex;
+@property (strong, nonatomic) AINetIndex *netIndex; //索引区(海马)
+@property (strong, nonatomic) AINetCMV *netCMV;     //网络树根(杏仁核)
 
 @end
 
@@ -47,6 +49,7 @@ static AINet *_instance;
 -(void) initData{
     self.cacheLong = [[NSMutableArray alloc] init];
     self.netIndex = [[AINetIndex alloc] init];
+    self.netCMV = [[AINetCMV alloc] init];
 }
 
 
@@ -224,6 +227,14 @@ static AINet *_instance;
 
 -(NSArray*) getItemAlgsReference:(AIKVPointer*)pointer limit:(NSInteger)limit {
     return [self.netIndex getIndexReference:pointer limit:limit];
+}
+
+
+//MARK:===============================================================
+//MARK:                     < cmv >
+//MARK:===============================================================
+-(void) createCMV:(NSArray*)imvAlgsArr order:(NSArray*)order{
+    [self.netCMV create:imvAlgsArr order:order];
 }
 
 @end

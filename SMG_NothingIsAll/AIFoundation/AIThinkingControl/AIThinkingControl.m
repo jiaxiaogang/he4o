@@ -15,6 +15,7 @@
 #import "NSObject+Extension.h"
 #import "AIKVPointer.h"
 #import "AIPort.h"
+#import "ImvAlgsModelBase.h"
 
 @interface AIThinkingControl()
 
@@ -148,10 +149,6 @@ static AIThinkingControl *_instance;
     }
 }
 
-
-//MARK:===============================================================
-//MARK:                     < caches >
-//MARK:===============================================================
 -(void) setObject_Caches:(NSObject*)algsModel {
     //cacheShort
     [self.cacheShort addObject:algsModel];
@@ -171,40 +168,17 @@ static AIThinkingControl *_instance;
 //MARK:                     < dataIn >
 //MARK:===============================================================
 -(void) dataIn:(NSObject*)algsModel{
+    //1. 装箱
     NSArray *algsArr = [self dataIn_ConvertPointer:algsModel];
-    for (AIKVPointer *pointer in algsArr) {
-        if (ISOK(pointer, AIKVPointer.class)) {
-            
-            AIPort* (^ CreatePort)(NSInteger,NSInteger) = ^(NSInteger strongValue,NSInteger pointerId){
-                AIPortStrong *s1 = [[AIPortStrong alloc] init];
-                s1.value = strongValue;
-                
-                AIPort *p1 = [AIPort newWithNode:[[AIActionControl shareInstance] insertModel:[AIIntModel newWithFrom:1 to:1] dataSource:@"testDS"]];
-                p1.strong = s1;
-                p1.pointer.pointerId = pointerId;
-                return p1;
-            };
-            
-            AIPort *port46 = CreatePort(1,7);
-            [[AINet sharedInstance] setItemAlgsReference:pointer port:port46 difValue:1];
-            NSLog(@"");
-            
-            //AIPort *port11 = CreatePort(1,1);
-            //AIPort *port12 = CreatePort(1,2);
-            //AIPort *port23 = CreatePort(2,3);
-            //AIPort *port34 = CreatePort(3,4);
-            //AIPort *port35 = CreatePort(3,5);
-            //AIPort *port36 = CreatePort(3,6);
-            //[[AINet sharedInstance] setItemAlgsReference:pointer port:port11 difValue:1];
-            //[[AINet sharedInstance] setItemAlgsReference:pointer port:port12 difValue:1];
-            //[[AINet sharedInstance] setItemAlgsReference:pointer port:port23 difValue:1];
-            //[[AINet sharedInstance] setItemAlgsReference:pointer port:port34 difValue:1];
-            //[[AINet sharedInstance] setItemAlgsReference:pointer port:port35 difValue:1];
-            //[[AINet sharedInstance] setItemAlgsReference:pointer port:port36 difValue:1];
-            
-            NSArray *referenceArr = [[AINet sharedInstance] getItemAlgsReference:pointer limit:3];
-            NSLog(@"");
-        }
+    
+    //2. 检测imv
+    BOOL findMV = [self dataIn_CheckMV:algsArr];
+    
+    //3. 分流
+    if (findMV) {
+        [self dataIn_CreateCMVModel:algsArr];
+    }else{
+        [self dataIn_ToShortCache:algsArr];
     }
 }
 
@@ -212,35 +186,84 @@ static AIThinkingControl *_instance;
 -(NSArray*) dataIn_ConvertPointer:(NSObject*)algsModel{
     NSArray *algsArr = [[AINet sharedInstance] getAlgsArr:algsModel];
     return algsArr;
-    
     //1. 将索引的第二序列,提交给actionControl联想 (1. 作匹配测试  2. 只从强度最强往下);
-    
-    //2. 并将algsDic存到shortCache;
-    
-    //3. 联想到mv时,可对shortCache数据作类比操作;
+}
+
+-(void) testIndexReference{
+//    for (AIKVPointer *pointer in algsArr) {
+//        if (ISOK(pointer, AIKVPointer.class)) {
+//
+//            AIPort* (^ CreatePort)(NSInteger,NSInteger) = ^(NSInteger strongValue,NSInteger pointerId){
+//                AIPortStrong *s1 = [[AIPortStrong alloc] init];
+//                s1.value = strongValue;
+//
+//                AIPort *p1 = [AIPort newWithNode:[[AIActionControl shareInstance] insertModel:[AIIntModel newWithFrom:1 to:1] dataSource:@"testDS"]];
+//                p1.strong = s1;
+//                p1.pointer.pointerId = pointerId;
+//                return p1;
+//            };
+//
+//            AIPort *port46 = CreatePort(1,7);
+//            [[AINet sharedInstance] setItemAlgsReference:pointer port:port46 difValue:1];
+//            NSLog(@"");
+//
+//            //AIPort *port11 = CreatePort(1,1);
+//            //AIPort *port12 = CreatePort(1,2);
+//            //AIPort *port23 = CreatePort(2,3);
+//            //AIPort *port34 = CreatePort(3,4);
+//            //AIPort *port35 = CreatePort(3,5);
+//            //AIPort *port36 = CreatePort(3,6);
+//            //[[AINet sharedInstance] setItemAlgsReference:pointer port:port11 difValue:1];
+//            //[[AINet sharedInstance] setItemAlgsReference:pointer port:port12 difValue:1];
+//            //[[AINet sharedInstance] setItemAlgsReference:pointer port:port23 difValue:1];
+//            //[[AINet sharedInstance] setItemAlgsReference:pointer port:port34 difValue:1];
+//            //[[AINet sharedInstance] setItemAlgsReference:pointer port:port35 difValue:1];
+//            //[[AINet sharedInstance] setItemAlgsReference:pointer port:port36 difValue:1];
+//
+//            NSArray *referenceArr = [[AINet sharedInstance] getItemAlgsReference:pointer limit:3];
+//            NSLog(@"");
+//        }
+//    }
 }
 
 //输入时,检测是否mv输入(饿或不饿)
--(void) dataIn_CheckMV:(NSObject*)algsModel {
-    //1. 数据
-    NSDictionary *algsDic = DICTOOK([NSObject getDic:algsModel containParent:true]);
-    NSString *dataType = NSStringFromClass(algsModel.class);
-    
-    //2. 取mv
-    if ([algsDic objectForKey:@"urgentValue"] && [algsDic objectForKey:@"targetType"]) {
-        NSInteger urgentValue = [NUMTOOK([algsDic objectForKey:@"urgentValue"]) integerValue];
-        AITargetType targetType = [NUMTOOK([algsDic objectForKey:@"targetType"]) intValue];
-        [self dataIn_AssociativeExperience:urgentValue targetType:targetType dataType:dataType];
-    }else{
-        [self dataIn_AssociativeData:algsDic dataType:dataType];
+-(BOOL) dataIn_CheckMV:(NSArray*)algsArr {
+    BOOL findMV_UrgentValue = false;
+    BOOL findMV_TargetType = false;
+    for (AIKVPointer *pointer in algsArr) {
+        if ([NSClassFromString(pointer.algsType) isSubclassOfClass:ImvAlgsModelBase.class]) {
+            if ([@"urgentValue" isEqualToString:pointer.dataSource]) {
+                findMV_UrgentValue = true;
+            }else if ([@"targetType" isEqualToString:pointer.dataSource]) {
+                findMV_TargetType = true;
+            }
+        }
     }
-    
-    //3. 取energy
-    int energy = 0;
-    energy = 10;
-    energy = 20;
-    
+    return findMV_UrgentValue && findMV_TargetType;
 }
+
+//存到shortCache;
+-(void) dataIn_ToShortCache:(NSArray*)algsArr{
+    [self.cacheShort addObject:algsArr];
+    if (self.cacheShort.count > 8) {
+        [self.cacheShort subarrayWithRange:NSMakeRange(self.cacheShort.count - 8, 8)];
+    }
+}
+
+//联想到mv时,构建cmv模型;
+-(void) dataIn_CreateCMVModel:(NSArray*)algsArr {
+    [[AINet sharedInstance] createCMV:algsArr order:self.cacheShort];
+    [self.cacheShort removeAllObjects];
+}
+
+
+
+
+
+-(void) dataIn_Decision___Temp{
+    //可对shortCache数据作类比操作;
+}
+
 
 //联想相关数据(看到西瓜会开心)
 -(void) dataIn_AssociativeData:(NSDictionary*)algsDic dataType:(NSString*)dataType{

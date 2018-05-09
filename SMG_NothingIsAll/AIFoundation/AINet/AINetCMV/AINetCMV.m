@@ -12,10 +12,12 @@
 
 @implementation AINetCMV
 
--(void) setCMV:(AIKVPointer*)imv order:(NSArray*)order{
+-(void) create:(NSArray*)imvAlgsArr order:(NSArray*)order{
     //1. 将Pointer打包成node;
-    
+    NSLog(@"____将order构建成node");
     //2.
+    
+    NSLog(@"____生成cmv模型,并存储");
     
     //3. order与mv都打包成node;
     
@@ -27,5 +29,13 @@
     
     
 }
+
+@end
+
+
+//MARK:===============================================================
+//MARK:                     < cmv基本模型节点 >
+//MARK:===============================================================
+@implementation AINetCMVNode
 
 @end
