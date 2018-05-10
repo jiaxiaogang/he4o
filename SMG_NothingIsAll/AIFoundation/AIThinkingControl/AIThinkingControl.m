@@ -246,7 +246,7 @@ static AIThinkingControl *_instance;
 -(void) dataIn_ToShortCache:(NSArray*)algsArr{
     [self.cacheShort addObject:algsArr];
     if (self.cacheShort.count > 8) {
-        [self.cacheShort subarrayWithRange:NSMakeRange(self.cacheShort.count - 8, 8)];
+        [self.cacheShort removeObjectAtIndex:0];
     }
 }
 

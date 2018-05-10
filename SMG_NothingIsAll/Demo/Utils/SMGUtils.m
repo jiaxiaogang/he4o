@@ -7,6 +7,7 @@
 //
 
 #import "SMGUtils.h"
+#import "AIKVPointer.h"
 
 @implementation SMGUtils
 
@@ -171,6 +172,12 @@
     NSInteger lastPId = [self getLastNetNodePointerId:algsType dataSource:dataSource];
     [[NSUserDefaults standardUserDefaults] setInteger:lastPId + count forKey:STRFORMAT(@"AIPointer_LastNetNodePointerId_KEY_%@_%@",algsType,dataSource)];
     [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
++(AIKVPointer*) createPointer:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource{
+    NSInteger pointerId = [SMGUtils createPointerId:algsType dataSource:dataSource];
+    AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:folderName algsType:algsType dataSource:dataSource];
+    return kvPointer;
 }
 
 @end

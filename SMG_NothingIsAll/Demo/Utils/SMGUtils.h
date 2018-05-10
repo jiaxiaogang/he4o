@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 
-@class AIObject,AIArray,AILine,ThinkModel;
+@class AIObject,AIArray,AILine,ThinkModel,AIKVPointer;
 @interface SMGUtils : NSObject
 
 //MARK:===============================================================
@@ -52,6 +52,7 @@
 +(NSInteger) createPointerId:(BOOL)updateLastId algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
 +(NSInteger) getLastNetNodePointerId:(NSString*)algsType dataSource:(NSString*)dataSource;
 +(void) setNetNodePointerId:(NSInteger)count algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
++(AIKVPointer*) createPointer:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
 
 @end
 

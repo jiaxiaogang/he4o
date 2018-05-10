@@ -17,6 +17,7 @@
 @interface AINode : NSObject<NSCoding>
 
 @property (strong,nonatomic) AIKVPointer *pointer;          //数据指针(自身指针地址)
+@property (strong, nonatomic) AIKVPointer *dataPointer;     //在index中,数据的位置
 
 //是什么(定义)
 @property (strong,nonatomic) NSMutableArray *absPorts;      //抽象指向(多继承,接口等）

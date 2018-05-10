@@ -26,7 +26,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/imac/Desktop/temp/SMG/SMG_NothingIsAll/Demo/Foundation+Log.m"
-                  timestampString = "547521905.506317"
+                  timestampString = "547607752.489262"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "93"
@@ -41,7 +41,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/imac/Desktop/temp/SMG/SMG_NothingIsAll/AIFoundation/AINet/AIPort.m"
-                  timestampString = "547521905.514414"
+                  timestampString = "547607752.492246"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "93"
@@ -58,11 +58,27 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/AIFoundation/AINet/AINetCMV/AINetCMV.m"
-            timestampString = "547521905.450298"
+            timestampString = "547607752.422454"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "22"
-            endingLineNumber = "22"
+            startingLineNumber = "51"
+            endingLineNumber = "51"
+            landmarkName = "-create:order:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SMG_NothingIsAll/AIFoundation/AINet/AINetCMV/AINetCMV.m"
+            timestampString = "547607752.423022"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "35"
+            endingLineNumber = "35"
             landmarkName = "-create:order:"
             landmarkType = "7">
          </BreakpointContent>
