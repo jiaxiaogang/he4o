@@ -13,31 +13,41 @@
 //MARK:                     < 杏仁核 >
 //MARK:===============================================================
 @class AIKVPointer;
+@protocol AINetCMVDelegate <NSObject>
+
+-(void) aiNetCMV_CreatedNode:(AIKVPointer*)indexPointer nodePointer:(AIKVPointer*)nodePointer;
+
+@end
+
 @interface AINetCMV : NSObject
 
+@property (weak, nonatomic) id<AINetCMVDelegate> delegate;
 -(void) create:(NSArray*)imvAlgsArr order:(NSArray*)order;
 
 @end
 
 
 
+
+
 //MARK:===============================================================
 //MARK:                     < cmv基本模型 >
 //MARK:===============================================================
-@class AIKVPointer;
 @interface AINetCMVModel : NSObject <NSCoding>
 
-@property (strong, nonatomic) NSMutableArray *algsArrOrder; //在imv前发生的noMV的algs数据序列;(前因序列)
+@property (strong, nonatomic) NSMutableArray *orders_kvp; //在imv前发生的noMV的algs数据序列;(前因序列)(使用kvp而不是port的原因是cmvModel的强度不变:参考n12p16)
+
 @property (strong, nonatomic) AIKVPointer *cmvPointer;      //
 
 @end
 
 
 
+
+
 //MARK:===============================================================
 //MARK:                     < cmv节点 >
 //MARK:===============================================================
-@class AIKVPointer;
 @interface AINetCMVNode : NSObject <NSCoding>
 
 @property (strong, nonatomic) AIKVPointer *pointer;             //自身存储地址

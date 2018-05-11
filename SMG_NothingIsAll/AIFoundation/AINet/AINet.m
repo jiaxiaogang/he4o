@@ -14,7 +14,7 @@
 #import "AINetIndex.h"
 #import "AINetCMV.h"
 
-@interface AINet ()
+@interface AINet () <AINetCMVDelegate>
 
 /**
  *  MARK:--------------------cacheLong--------------------
@@ -50,6 +50,7 @@ static AINet *_instance;
     self.cacheLong = [[NSMutableArray alloc] init];
     self.netIndex = [[AINetIndex alloc] init];
     self.netCMV = [[AINetCMV alloc] init];
+    self.netCMV.delegate = self;
 }
 
 
@@ -235,6 +236,15 @@ static AINet *_instance;
 //MARK:===============================================================
 -(void) createCMV:(NSArray*)imvAlgsArr order:(NSArray*)order{
     [self.netCMV create:imvAlgsArr order:order];
+}
+
+
+/**
+ *  MARK:--------------------AINetCMVDelegate--------------------
+ */
+-(void)aiNetCMV_CreatedNode:(AIKVPointer *)indexPointer nodePointer:(AIKVPointer *)nodePointer{
+    NSLog(@"停住了,去完成此处的代码");
+    //[self setItemAlgsReference:indexPointer port:nil difValue:1];
 }
 
 @end

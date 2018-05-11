@@ -16,59 +16,58 @@
 @implementation AINetCMV
 
 -(void) create:(NSArray*)imvAlgsArr order:(NSArray*)order{
-    //1. 将orderPointer打包成node;
-    NSMutableArray *orderPointers = [[NSMutableArray alloc] init];
-    for (NSArray *itemOrder in ARRTOOK(order)) {
-        for (AIKVPointer *dataPointer in itemOrder) {
-            if (ISOK(dataPointer, AIKVPointer.class)) {
-                AINode *node = [[AINode alloc] init];
-                node.dataPointer = dataPointer;
-                node.pointer = [SMGUtils createPointer:PATH_NET_NODE algsType:dataPointer.algsType dataSource:dataPointer.dataSource];
-                PINDiskCache *pinCache = [[PINDiskCache alloc] initWithName:@"" rootPath:node.pointer.filePath];
+    //1. 打包orderNodes;
+    NSMutableArray *orders_kvp = [[NSMutableArray alloc] init];
+    for (NSArray *algsArr_kvp in ARRTOOK(order)) {
+        for (AIKVPointer *data_kvp in algsArr_kvp) {
+            if (ISOK(data_kvp, AIKVPointer.class)) {
+                AINode *node = [[AINode alloc] init];//node
+                node.dataPointer = data_kvp;
+                node.pointer = [SMGUtils createPointer:PATH_NET_NODE algsType:data_kvp.algsType dataSource:data_kvp.dataSource];
+                PINDiskCache *pinCache = [[PINDiskCache alloc] initWithName:@"" rootPath:node.pointer.filePath];//save
                 [pinCache setObject:node forKey:FILENAME_Node];
-                [orderPointers addObject:node.pointer];
+                [self createdNode:data_kvp nodePointer:node.pointer];//reference
+                [orders_kvp addObject:node.pointer];
             }
         }
     }
     
-    //2. 将imvAlgsArr打包成node;
-    AINetCMVNode *cmvNode = [[AINetCMVNode alloc] init];
+    //2. 打包cmvNode;
+    AINetCMVNode *cmvNode = [[AINetCMVNode alloc] init];//node
     NSString *cmvNodeAlgsType = @"cmv";
-    for (AIKVPointer *mvPointer in ARRTOOK(imvAlgsArr)) {
-        if (ISOK(mvPointer, AIKVPointer.class)) {
-            if ([@"targetType" isEqualToString:mvPointer.dataSource]) {
-                cmvNode.targetTypePointer = mvPointer;
-                cmvNodeAlgsType = mvPointer.algsType;
-            }else if([@"urgentValue" isEqualToString:mvPointer.dataSource]) {
-                cmvNode.urgentValuePointer = mvPointer;
+    for (AIKVPointer *itemIMV_kvp in ARRTOOK(imvAlgsArr)) {
+        if (ISOK(itemIMV_kvp, AIKVPointer.class)) {
+            if ([@"targetType" isEqualToString:itemIMV_kvp.dataSource]) {
+                cmvNode.targetTypePointer = itemIMV_kvp;
+                cmvNodeAlgsType = itemIMV_kvp.algsType;
+            }else if([@"urgentValue" isEqualToString:itemIMV_kvp.dataSource]) {
+                cmvNode.urgentValuePointer = itemIMV_kvp;
             }
         }
     }
     cmvNode.pointer = [SMGUtils createPointer:PATH_NET_NODE algsType:cmvNodeAlgsType dataSource:@"cmv"];
-    PINDiskCache *pinCache = [[PINDiskCache alloc] initWithName:@"" rootPath:cmvNode.pointer.filePath];
+    PINDiskCache *pinCache = [[PINDiskCache alloc] initWithName:@"" rootPath:cmvNode.pointer.filePath];//save
     [pinCache setObject:cmvNode forKey:FILENAME_Node];
+    [self createdNode:cmvNode.targetTypePointer nodePointer:cmvNode.pointer];//reference
+    [self createdNode:cmvNode.urgentValuePointer nodePointer:cmvNode.pointer];
     
     //3. 生成cmv模型,并存储
     AINetCMVModel *cmvModel = [[AINetCMVModel alloc] init];
     cmvModel.cmvPointer = cmvNode.pointer;
-    [cmvModel.algsArrOrder addObjectsFromArray:orderPointers];
+    [cmvModel.orders_kvp addObjectsFromArray:orders_kvp];
 //    pinCache = [PINDiskCache alloc] initWithName:@"" rootPath:
-    //存到指定位置,并且返回给thinking,
-    //cmvModel引用了的每个orderNode;都要加入itemOrderNode的ports中;
-    //按照现在的方式,每次cmvModel的构建,reference中的强度也要变化;
-    
-    //明天lv清这些数据的存储位置,并且lv清这些关联间,各指针的指向及强度问题;
     
     
     
+    //4. 明日提示:将AINode分开类;此处使用为BaseNode;即:有dataPointer和rootPointer的Node;
     
-    //4. order与mv都可以独立抽象;
-    
-    //5. 可以考虑将order作为mvNode的一个 "orderArr"存在;(或者说以timeWeight和strongWeight)存两个不同的排序方案
-    
-    
-    
-    
+    //5. 存到指定位置,并且返回给thinking,
+}
+
+-(void) createdNode:(AIKVPointer*)indexPointer nodePointer:(AIKVPointer*)nodePointer{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(aiNetCMV_CreatedNode:nodePointer:)]) {
+        [self.delegate aiNetCMV_CreatedNode:indexPointer nodePointer:nodePointer];
+    }
 }
 
 @end
@@ -79,11 +78,11 @@
 //MARK:===============================================================
 @implementation AINetCMVModel
 
--(NSMutableArray *)algsArrOrder{
-    if (_algsArrOrder == nil) {
-        _algsArrOrder = [[NSMutableArray alloc] init];
+-(NSMutableArray *)orders_kvp{
+    if (_orders_kvp == nil) {
+        _orders_kvp = [[NSMutableArray alloc] init];
     }
-    return _algsArrOrder;
+    return _orders_kvp;
 }
 
 /**
@@ -92,14 +91,14 @@
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super init];
     if (self) {
-        self.algsArrOrder = [aDecoder decodeObjectForKey:@"algsArrOrder"];
+        self.orders_kvp = [aDecoder decodeObjectForKey:@"orders_kvp"];
         self.cmvPointer = [aDecoder decodeObjectForKey:@"cmvPointer"];
     }
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
-    [aCoder encodeObject:self.algsArrOrder forKey:@"algsArrOrder"];
+    [aCoder encodeObject:self.orders_kvp forKey:@"orders_kvp"];
     [aCoder encodeObject:self.cmvPointer forKey:@"cmvPointer"];
 }
 
