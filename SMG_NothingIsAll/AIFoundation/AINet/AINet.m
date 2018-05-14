@@ -13,6 +13,7 @@
 #import "NSObject+Extension.h"
 #import "AINetIndex.h"
 #import "AINetCMV.h"
+#import "AIPort.h"
 
 @interface AINet () <AINetCMVDelegate>
 
@@ -243,8 +244,10 @@ static AINet *_instance;
  *  MARK:--------------------AINetCMVDelegate--------------------
  */
 -(void)aiNetCMV_CreatedNode:(AIKVPointer *)indexPointer nodePointer:(AIKVPointer *)nodePointer{
-    NSLog(@"停住了,去完成此处的代码");
-    //[self setItemAlgsReference:indexPointer port:nil difValue:1];
+    AIPort *port = [[AIPort alloc] init];
+    port.pointer = nodePointer;
+    port.strong = [[AIPortStrong alloc] init];
+    [self setItemAlgsReference:indexPointer port:port difValue:1];
 }
 
 @end
