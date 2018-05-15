@@ -39,6 +39,8 @@
 @property (strong, nonatomic) NSMutableArray *orders_kvp; //在imv前发生的noMV的algs数据序列;(前因序列)(使用kvp而不是port的原因是cmvModel的强度不变:参考n12p16)
 @property (strong, nonatomic) AIKVPointer *cmvPointer;      //
 
+-(void) create;
+
 @end
 
 
