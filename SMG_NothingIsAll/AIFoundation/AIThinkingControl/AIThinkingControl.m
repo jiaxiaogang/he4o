@@ -16,6 +16,7 @@
 #import "AIKVPointer.h"
 #import "AIPort.h"
 #import "ImvAlgsModelBase.h"
+#import "AINetCMV.h"
 
 @interface AIThinkingControl()
 
@@ -175,10 +176,18 @@ static AIThinkingControl *_instance;
     BOOL findMV = [self dataIn_CheckMV:algsArr];
     
     //3. 分流
+    AINetCMVModel *cmvModel;
     if (findMV) {
-        [self dataIn_CreateCMVModel:algsArr];
+        cmvModel = [self dataIn_CreateCMVModel:algsArr];
     }else{
         [self dataIn_ToShortCache:algsArr];
+    }
+    
+    //4. 联想
+    if (findMV) {
+        [self dataIn_AssociativeExperience:cmvModel];
+    }else{
+        [self dataIn_AssociativeData:algsArr];
     }
 }
 
@@ -251,9 +260,10 @@ static AIThinkingControl *_instance;
 }
 
 //联想到mv时,构建cmv模型;
--(void) dataIn_CreateCMVModel:(NSArray*)algsArr {
-    [[AINet sharedInstance] createCMV:algsArr order:self.cacheShort];
+-(AINetCMVModel*) dataIn_CreateCMVModel:(NSArray*)algsArr {
+    AINetCMVModel *cmvModel = [[AINet sharedInstance] createCMV:algsArr order:self.cacheShort];
     [self.cacheShort removeAllObjects];
+    return cmvModel;
 }
 
 
@@ -266,32 +276,25 @@ static AIThinkingControl *_instance;
 
 
 //联想相关数据(看到西瓜会开心)
--(void) dataIn_AssociativeData:(NSDictionary*)algsDic dataType:(NSString*)dataType{
-    if (DICISOK(algsDic) && dataType) {
-        //2. 取mv
-        for (NSString *dataSource in algsDic.allKeys) {
-            //NSDictionary *assDic = [[AINet sharedInstance] searchNodeForDataType:dataType dataSource:dataSource];
-            //        if ([assDic objectForKey:@"urgentValue"] && [assDic objectForKey:@"targetType"]) {
-            //            NSInteger urgentValue = [NUMTOOK([algsDic objectForKey:@"urgentValue"]) integerValue];
-            //            AITargetType targetType = [NUMTOOK([algsDic objectForKey:@"targetType"]) intValue];
-            //            [self dataIn_AssociativeExperience:urgentValue targetType:targetType];
-        }
+-(void) dataIn_AssociativeData:(NSArray*)algsArr {
+    if (ISOK(algsArr, NSArray.class)) {
+        
     }
 }
 
 //从网络中找已有cmv经验(饿了找瓜)
--(void) dataIn_AssociativeExperience:(NSInteger)urgentValue targetType:(AITargetType)targetType dataType:(NSString*)dataType{
-    [[AINet sharedInstance] searchNodeForDataType:dataType dataSource:@"urgentValue"];
-    //1.
-    
+-(void) dataIn_AssociativeExperience:(AINetCMVModel*)cmvModel {
+    if (ISOK(cmvModel, AINetCMVModel.class)) {
+        NSLog(@"cmv模型已形成,可取cmv的欲望值和迫切度值;");
+    }
+    //[[AINet sharedInstance] searchNodeForDataType:nil dataSource:@"urgentValue"];
 }
 
 //类比处理(瓜是瓜)
 -(void) dataIn_AnalogyData:(NSDictionary*)algsDic dataType:(NSString*)dataType{
     if (DICISOK(algsDic) && dataType) {
-        
+        NSLog(@"noMv信号已输入完毕,联想");
     }
-    
 }
 
 //构建(想啥存啥)

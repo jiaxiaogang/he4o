@@ -273,6 +273,7 @@
 		083F612C1F04830F000330E1 /* AINet */ = {
 			isa = PBXGroup;
 			children = (
+				8887E62520ABB02600F3D5E1 /* AINetAbs */,
 				88C258BE209E99110042CB6A /* AINetCMV */,
 				88988521208979AF001D1ADC /* AINetIndex */,
 				081F5A0D1FFF015500BD74F9 /* AINetCache */,
@@ -499,6 +500,13 @@
 				DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		8887E62520ABB02600F3D5E1 /* AINetAbs */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = AINetAbs;
 			sourceTree = "<group>";
 		};
 		88988521208979AF001D1ADC /* AINetIndex */ = {

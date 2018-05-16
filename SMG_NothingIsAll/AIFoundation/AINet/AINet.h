@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIModel,AINode,AIImvAlgsModel,AIPointer,AIKVPointer,AIPort;
+@class AIModel,AINode,AIImvAlgsModel,AIPointer,AIKVPointer,AIPort,AINetCMVModel;
 @interface AINet : NSObject
 
 +(AINet*) sharedInstance;
@@ -76,6 +76,6 @@
 //MARK:===============================================================
 //MARK:                     < cmv >
 //MARK:===============================================================
--(void) createCMV:(NSArray*)imvAlgsArr order:(NSArray*)order;
+-(AINetCMVModel*) createCMV:(NSArray*)imvAlgsArr order:(NSArray*)order;
 
 @end

@@ -235,8 +235,8 @@ static AINet *_instance;
 //MARK:===============================================================
 //MARK:                     < cmv >
 //MARK:===============================================================
--(void) createCMV:(NSArray*)imvAlgsArr order:(NSArray*)order{
-    [self.netCMV create:imvAlgsArr order:order];
+-(AINetCMVModel*) createCMV:(NSArray*)imvAlgsArr order:(NSArray*)order{
+    return [self.netCMV create:imvAlgsArr order:order];
 }
 
 
