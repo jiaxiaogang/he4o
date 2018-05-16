@@ -1,5 +1,10 @@
 # SMG(强人工智能系统)
-> 参考文档:<https://github.com/jiaxiaogang/SMG_NOTE#点击查看>
+
+<br>
+
+> 相关文档:
+
+<https://github.com/jiaxiaogang/SMG_NOTE/tree/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0>
 
 [![](https://img.shields.io/badge/%20QQGroup-528053635%20-orange.svg)](tencent://message/?uin=283636001&Site=&Menu=yes)
 [![](https://img.shields.io/badge/%20QQ-在线交谈%20-orange.svg)](http://wpa.qq.com/msgrd?v=3&uin=283636001&site=qq&menu=yes)
@@ -9,7 +14,10 @@
 [![License](https://img.shields.io/badge/license-GPL-blue.svg)](LICENSE)
 [![Join the chat at https://gitter.im/jiaxiaogang/SMG](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jiaxiaogang/SMG)
 
-## 大家有交流需求或问题请直接Issues我,在Issues,我知无不言,言无不尽,回复及时,用词流利!`(QQ/微信七天回复一次)`
+## 大家有交流需求或问题请直接Issues我;
+
+***
+
 
 #### -------------------引言-------------------
 
@@ -20,30 +28,21 @@
 > 第三梯队:随着bigData,云计算等成熟,AI迎来DL热,但DL并不智能,故小僧希望通过此项目将AGI落地;
 
 
-#### -------------------构架设计介绍-------------------
+#### -------------------关键字-------------------
 
-- 抽象
-- 结构
-
-
-#### -------------------优点分析-------------------
-
-- 解决 `知识表示难题`
+- 抽象,结构
+- 知识表示
 - 通用智能
-- 无黑盒问题;
 - 可运行于单机终端
-- 极致的数据处理技术
+- 信息处理系统
 - 迁移学习,强化学习
-- 基于理解的NLP
-- 面向数据编程DOP
-
-#### -------------------系统的理念-------------------
-
-- [DOP编程思想](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note4.md#n4p13loplayer-oriented-programming170803)
-- [类比,归纳与统计](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note5.md#n5p2智能神经网络)
-- [树形多维神经网络](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note5.md#n5p2树形智能神经网络)
-- 思维与神经网络融合
-- 先天noData(最简算法结合思维与事务控制器等动态构建神经网络,后天学习)
+- GNOP (面向生成式数据网络编程)
+- 可思考的系统
+- 神经+网络
+- 类脑架构
+- 宏微信息
+- 三层循环
+- mindValue
 
 
 #### -------------------SMG架构-------------------
@@ -51,10 +50,7 @@
 | ![](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/assets/19.png?raw=true) |
 | --- |
 | 注:将 `思维` `决策` `记忆` `mind` `联想` `想像力` `创造力` `预测`集成到神经网络; |
-| 注:将 OOP中的 `属性`,`继承`,`多态`,`接口`,`抽象`等集成到神经网络中,(灵活性,简单,拆分与融合);用节点指向的数据作 `知识表示`; |
-| 注:将 `思维` 与 `意识控制器` `反应控制器` 和 `事务控制器` 等进行异维交互,达到欺骗smg使其 `产生情感真实感` 与 `自认为有意识`; |
-| 注:图中将架构各部分进行了颜色区分,箭头完成各自的流向及循环; |
-| 注:图中各部分在SMG_NOTE中都有展开细节,并且代码完成其中33%左右; |
+| 注:将 `思维活在数据网络中,以三层循环达到欺骗smg使其`,`产生情感真实感` 与 `自认为有意识`; |
 
 
 
@@ -65,62 +61,36 @@
 > -  AIFoundation
 
 ### 2017,05,22(OOP2DataLanguage)
-> - 颠覆现有的编程方式
-> - 知识表示(已解决)
 
-### 2017.06.01左右
+> - OOP编程思想
+
+### 2017.06.01
+
 > - 三维架构(参考笔记/AI/框架)
 
-### 2017.07.10左右
+### 2017.07.10
+
 > - BrainTree(参考N3P7,N3P8)
 
-### 2017.07.21
-> - ThinkTask(参考[N3P11](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note3.md#n3p11awareness-demand-thinktask---或旧资料demand)，[Awareness->Demand->ThinkTask](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%A1%86%E6%9E%B6/Understand.md#awareness-demand-thinktask任务))
+### 2017.08.02
 
-### 2017.08.01
-> - [意识](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note3.md#n3p15意识170801)
-
-### 2017.08.13
-> - [思考流程整理](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note4.md#n4p2思维演化ai思维的本质170714)
-
-### 2017.08.14
-> - [LightArea-区域点亮](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note4.md#n4p17lightarea)
-> - [GeneralFeel-通用的感觉](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note4.md#n4p18通用的感觉)
+> - MindValue
 
 ### 2017.08.23
 
 > - 神经网络
->   - [AILine](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note4.md#n4p1神经网络-ailine)
->   - [知识表示与神经网络](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note4.md#n4p19第4代知识表示与神经网络贴合)
->   - [树形智能神经网络](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note5.md#n5p2树形智能神经网络)
->   - [神经网络的抽象方式](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note5.md#n5p3神经网络的抽象方式)
->   - [网口](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note5.md#n5p3网口)
 
-### 2017.09.13
+### 2017.11.10
 
-> - 感觉体系
->   - [内感觉](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note4.md#n4p18%E5%86%85%E6%84%9F%E8%A7%89)
->   - [外感觉](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note5.md#n5p16-外感觉)
->   - [感觉的知识表示](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note5.md#n5p19-感觉的知识表示)
->   - [神经网络的全局搜索](https://github.com/jiaxiaogang/SMG_NOTE/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/Note5.md#n5p11-神经网络的全局搜索)
-
+> - 规则
 
 ### 2017.12.09
 
-> 很久没有更新readme.md了,所有更新都在SMG_NOTE的手写笔记中和代码中...
-> 代码7万行,完成度33%,架构在SMG_NOTE有各部分展开细节;
+> - 定义
 
+### 2018.02.01
 
-
-<br><br><br><br>
-
-```
-注:
-	1. 大家有交流需求或问题请直接Issues我;
-	2. 在Issues,我知无不言,言无不尽,回复及时,用词流利!
-	3. (QQ/微信七天回复一次)
-```
-
+> - 宏微
 
 
 <br><br><br><br><br><br><br><br><br><br><br><br>

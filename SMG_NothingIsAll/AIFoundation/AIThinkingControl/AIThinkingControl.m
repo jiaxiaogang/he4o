@@ -278,7 +278,7 @@ static AIThinkingControl *_instance;
 //联想相关数据(看到西瓜会开心)
 -(void) dataIn_AssociativeData:(NSArray*)algsArr {
     if (ISOK(algsArr, NSArray.class)) {
-        
+        NSLog(@"noMv信号已输入完毕,联想");
     }
 }
 
@@ -293,7 +293,7 @@ static AIThinkingControl *_instance;
 //类比处理(瓜是瓜)
 -(void) dataIn_AnalogyData:(NSDictionary*)algsDic dataType:(NSString*)dataType{
     if (DICISOK(algsDic) && dataType) {
-        NSLog(@"noMv信号已输入完毕,联想");
+        
     }
 }
 
