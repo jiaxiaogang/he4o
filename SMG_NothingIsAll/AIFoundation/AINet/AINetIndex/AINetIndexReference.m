@@ -18,7 +18,7 @@
  *  在索引的存储中,将值与 `第二序列` 分开;(第二序列是索引值的引用节点集合,按强度排序)
  */
 //#define FILENAME_Ports @"ports"//目前采用分区的方式,未采用分文件的方式;
-#define FILENAME_Reference @"reference"
+
 
 @implementation AINetIndexReference
 

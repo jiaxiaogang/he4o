@@ -11,9 +11,6 @@
 #import "AIKVPointer.h"
 #import "AINode.h"
 
-#define FILENAME_Node @"node"
-#define FILENAME_CMVModel @"cmvModel"
-
 @implementation AINetCMV
 
 -(AINetCMVModel*) create:(NSArray*)imvAlgsArr order:(NSArray*)order{

@@ -36,13 +36,7 @@
 //MARK:                     < AILine >
 //MARK:===============================================================
 +(CGFloat) aiLine_GetLightEnergy:(CGFloat)strongValue;//点亮某神经元所需要的能量值;strongValue为0-100,返回为1-0;
-
-
-/**
- *  MARK:--------------------生产神经网络--------------------
- *  @param aiObjs : 神经网络连接的AIObject组;
- */
-+(AILine*) ailine_CreateLine:(NSArray*)aiObjs type:(AILineType)type;
++(AILine*) ailine_CreateLine:(NSArray*)aiObjs type:(AILineType)type;//生产神经网络 (aiObjs:神经网络连接的AIObject组)
 
 
 //MARK:===============================================================
@@ -57,16 +51,18 @@
 @end
 
 
-/**
- *  MARK:--------------------比较--------------------
- */
+//MARK:===============================================================
+//MARK:                     < SMGUtils (Compare) >
+//MARK:===============================================================
 @interface SMGUtils (Compare)
 +(BOOL) compareItemA:(id)itemA itemB:(id)itemB;
 +(BOOL) compareItemA:(id)itemA containsItemB:(id)itemB;
 @end
 
 
-
+//MARK:===============================================================
+//MARK:                     < DBUtils >
+//MARK:===============================================================
 @interface DBUtils : NSObject
 /**
  *  MARK:--------------------SQL语句之rowId--------------------
@@ -74,15 +70,17 @@
 +(NSString*) sqlWhere_RowId:(NSInteger)rowid;
 +(NSString*) sqlWhere_K:(id)columnName V:(id)value;
 +(NSDictionary*) sqlWhereDic_K:(id)columnName V:(id)value;
++(id) searchObjectForPointer:(AIKVPointer*)pointer fileName:(NSString*)fileName;
 
 @end
 
 
+//MARK:===============================================================
+//MARK:                     < MathUtils >
+//MARK:===============================================================
 @interface MathUtils : NSObject
 
-/**
- *  MARK:--------------------数据范围变换--------------------
- */
+//数据范围变换
 +(CGFloat) getNegativeTen2TenWithOriRange:(UIFloatRange)oriRange oriValue:(CGFloat)oriValue;
 +(CGFloat) getZero2TenWithOriRange:(UIFloatRange)oriRange oriValue:(CGFloat)oriValue;
 +(CGFloat) getValueWithOriRange:(UIFloatRange)oriRange targetRange:(UIFloatRange)targetRange oriValue:(CGFloat)oriValue;

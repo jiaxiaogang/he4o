@@ -13,9 +13,6 @@
 #import "AINetIndexReference.h"
 #import "PINCache.h"
 
-#define FILENAME_Value @"value"
-#define FILENAME_Index @"index"
-
 @interface AINetIndex ()
 
 @property (strong,nonatomic) NSMutableArray *models;

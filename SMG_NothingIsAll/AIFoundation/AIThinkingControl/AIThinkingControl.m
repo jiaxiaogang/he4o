@@ -279,6 +279,20 @@ static AIThinkingControl *_instance;
 -(void) dataIn_AssociativeData:(NSArray*)algsArr {
     if (ISOK(algsArr, NSArray.class)) {
         NSLog(@"noMv信号已输入完毕,联想");
+        for (AIKVPointer *algs_kvp in algsArr) {
+            NSArray *referPorts = [[AINet sharedInstance] getItemAlgsReference:algs_kvp limit:3];//在第二序列指向节点的端口;
+            for (AIPort *referPort in referPorts) {
+                if (ISOK(referPort, AIPort.class)) {
+                    AINode *referNode = [DBUtils searchObjectForPointer:referPort.pointer fileName:FILENAME_Node];
+                    NSLog(@"");
+                    
+                    //1. foNode.cmvModel_kvp为空  (bug)
+                    //2. reference到底是指向foNode还是指向cmvModel.orders_kvp
+                    //3. 
+                    
+                }
+            }
+        }
     }
 }
 

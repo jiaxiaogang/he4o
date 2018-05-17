@@ -8,6 +8,7 @@
 
 #import "SMGUtils.h"
 #import "AIKVPointer.h"
+#import "PINCache.h"
 
 @implementation SMGUtils
 
@@ -328,10 +329,21 @@
     return nil;
 }
 
++(id) searchObjectForPointer:(AIKVPointer*)pointer fileName:(NSString*)fileName{
+    if (ISOK(pointer, AIKVPointer.class)) {
+        PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:pointer.filePath];
+        return [cache objectForKey:fileName];
+    }
+    return nil;
+}
+
 @end
 
 
 
+//MARK:===============================================================
+//MARK:                     < MathUtils >
+//MARK:===============================================================
 @implementation MathUtils
 
 +(CGFloat) getNegativeTen2TenWithOriRange:(UIFloatRange)oriRange oriValue:(CGFloat)oriValue{

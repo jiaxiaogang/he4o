@@ -51,6 +51,17 @@
 #define PATH_NET_REFERENCE  @"NET_REFERENCE"//神经网络"引用序列"根目录;(海马体)
 #define PATH_NET_CMVMODEL  @"NET_CMVMODEL"  //神经网络"cmv模型"根目录;(杏仁核)
 
+
+/**
+ *  MARK:--------------------fileNameKey--------------------
+ */
+#define FILENAME_Node @"node"
+#define FILENAME_CMVModel @"cmvModel"
+#define FILENAME_Value @"value"
+#define FILENAME_Index @"index"
+#define FILENAME_Reference @"reference"
+
+
 /**
  *  MARK:--------------------数据检查--------------------
  */
