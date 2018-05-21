@@ -283,12 +283,27 @@ static AIThinkingControl *_instance;
             NSArray *referPorts = [[AINet sharedInstance] getItemAlgsReference:algs_kvp limit:3];//在第二序列指向节点的端口;
             for (AIPort *referPort in referPorts) {
                 if (ISOK(referPort, AIPort.class)) {
-                    AINode *referNode = [DBUtils searchObjectForPointer:referPort.pointer fileName:FILENAME_Node];
+                    id referNode = [DBUtils searchObjectForPointer:referPort.pointer fileName:FILENAME_Node];
+                    if (ISOK(referNode, AIFrontOrderNode.class)) {
+                        //联想到cmv模型前因
+                        AIFrontOrderNode *foNode = (AIFrontOrderNode*)referNode;
+                        AINetCMVModel *cmvModel = [DBUtils searchObjectForPointer:foNode.cmvModel_kvp fileName:FILENAME_CMVModel];
+                        AICMVNode *cmvNode = [DBUtils searchObjectForPointer:cmvModel.cmvPointer fileName:FILENAME_Node];
+                        NSLog(@"____联想结果:%@",cmvNode.pointer.algsType);
+                    }else if(ISOK(referNode, AINode.class)){
+                        //联想到数据网络节点
+                        AINode *node = (AINode*)referNode;
+                        
+                    }
+                    
                     NSLog(@"");
                     
                     //1. foNode.cmvModel_kvp为空  (bug)
                     //2. reference到底是指向foNode还是指向cmvModel.orders_kvp
                     //3. 
+                    
+                    
+                    
                     
                 }
             }
@@ -300,6 +315,8 @@ static AIThinkingControl *_instance;
 -(void) dataIn_AssociativeExperience:(AINetCMVModel*)cmvModel {
     if (ISOK(cmvModel, AINetCMVModel.class)) {
         NSLog(@"cmv模型已形成,可取cmv的欲望值和迫切度值;");
+        //尝试抽象
+        //尝试找imv的解决方案
     }
     //[[AINet sharedInstance] searchNodeForDataType:nil dataSource:@"urgentValue"];
 }

@@ -14,23 +14,7 @@
 @implementation AINetCMV
 
 -(AINetCMVModel*) create:(NSArray*)imvAlgsArr order:(NSArray*)order{
-    //1. 打包orderNodes;
-    NSMutableArray *orders_kvp = [[NSMutableArray alloc] init];
-    for (NSArray *algsArr_kvp in ARRTOOK(order)) {
-        for (AIKVPointer *data_kvp in algsArr_kvp) {
-            if (ISOK(data_kvp, AIKVPointer.class)) {
-                AIFrontOrderNode *foNode = [[AIFrontOrderNode alloc] init];//node
-                foNode.data_kvp = data_kvp;
-                foNode.pointer = [SMGUtils createPointer:PATH_NET_FONODE algsType:data_kvp.algsType dataSource:data_kvp.dataSource];
-                PINDiskCache *pinCache = [[PINDiskCache alloc] initWithName:@"" rootPath:foNode.pointer.filePath];//save
-                [pinCache setObject:foNode forKey:FILENAME_Node];
-                [self createdNode:data_kvp nodePointer:foNode.pointer];//reference
-                [orders_kvp addObject:foNode.pointer];
-            }
-        }
-    }
-    
-    //2. 打包cmvNode;
+    //1. 打包cmvNode;
     AICMVNode *cmvNode = [[AICMVNode alloc] init];//node
     NSString *cmvNodeAlgsType = @"cmv";
     for (AIKVPointer *itemIMV_kvp in ARRTOOK(imvAlgsArr)) {
@@ -49,11 +33,28 @@
     [self createdNode:cmvNode.targetTypePointer nodePointer:cmvNode.pointer];//reference
     [self createdNode:cmvNode.urgentValuePointer nodePointer:cmvNode.pointer];
     
-    //3. 生成cmv模型,并存储
+    //2. 生成cmv模型
     AINetCMVModel *cmvModel = [[AINetCMVModel alloc] init];
     cmvModel.cmvPointer = cmvNode.pointer;
-    [cmvModel.orders_kvp addObjectsFromArray:orders_kvp];
     cmvModel.pointer = [SMGUtils createPointer:PATH_NET_CMVMODEL algsType:cmvNodeAlgsType dataSource:@""];
+    
+    //3. 打包orderNodes;
+    for (NSArray *algsArr_kvp in ARRTOOK(order)) {
+        for (AIKVPointer *data_kvp in algsArr_kvp) {
+            if (ISOK(data_kvp, AIKVPointer.class)) {
+                AIFrontOrderNode *foNode = [[AIFrontOrderNode alloc] init];//node
+                foNode.data_kvp = data_kvp;
+                foNode.pointer = [SMGUtils createPointer:PATH_NET_FONODE algsType:data_kvp.algsType dataSource:data_kvp.dataSource];
+                foNode.cmvModel_kvp = cmvModel.pointer;
+                PINDiskCache *pinCache = [[PINDiskCache alloc] initWithName:@"" rootPath:foNode.pointer.filePath];//save
+                [pinCache setObject:foNode forKey:FILENAME_Node];
+                [self createdNode:data_kvp nodePointer:foNode.pointer];//reference
+                [cmvModel.orders_kvp addObject:foNode.pointer];
+            }
+        }
+    }
+    
+    //4. 存储cmv模型
     pinCache = [[PINDiskCache alloc] initWithName:@"" rootPath:cmvModel.pointer.filePath];//save
     [pinCache setObject:cmvModel forKey:FILENAME_CMVModel];
     
@@ -135,7 +136,6 @@
 }
 
 @end
-
 
 
 //MARK:===============================================================
