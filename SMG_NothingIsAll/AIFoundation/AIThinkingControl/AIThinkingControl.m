@@ -293,7 +293,7 @@ static AIThinkingControl *_instance;
                     }else if(ISOK(referNode, AINode.class)){
                         //联想到数据网络节点
                         AINode *node = (AINode*)referNode;
-                        
+                        NSLog(@"");
                     }
                     
                     NSLog(@"");
@@ -314,9 +314,32 @@ static AIThinkingControl *_instance;
 //从网络中找已有cmv经验(饿了找瓜)
 -(void) dataIn_AssociativeExperience:(AINetCMVModel*)cmvModel {
     if (ISOK(cmvModel, AINetCMVModel.class)) {
-        NSLog(@"cmv模型已形成,可取cmv的欲望值和迫切度值;");
+        //cmv模型已形成,可取cmv的欲望值和迫切度值;
         //尝试抽象
         //尝试找imv的解决方案
+        //1. 取cmvNode
+        AICMVNode *cmvNode = [DBUtils searchObjectForPointer:cmvModel.cmvPointer fileName:FILENAME_Node];
+        
+        //2. 找到同样targetType的引用者
+        if (ISOK(cmvNode, AICMVNode.class)) {
+            NSArray *targetTypePorts = [[AINet sharedInstance] getItemAlgsReference:cmvNode.targetTypePointer limit:3];
+            
+            //3. 联想cmv模型
+            for (AIPort *port in targetTypePorts) {
+                id referNode = [DBUtils searchObjectForPointer:port.pointer fileName:FILENAME_Node];
+                if (ISOK(referNode, AICMVNode.class)) {
+                    AICMVNode *assCmvNode = (AICMVNode*)referNode;
+                    
+                    //4. 排除联想自己(随后写到reference中)
+                    if (![cmvNode.pointer isEqual:assCmvNode.pointer]) {
+                        AINetCMVModel *assCmvModel = [DBUtils searchObjectForPointer:assCmvNode.cmvModel_kvp fileName:FILENAME_CMVModel];
+                        NSLog(@"____联想到cmv模型>>>\ncmvModel:%ld,%@ \n assCmvModel:%ld,%@",(long)cmvModel.pointer.pointerId,cmvModel.pointer.params,(long)assCmvModel.pointer.pointerId,assCmvModel.pointer.params);
+                    }
+                }else if(ISOK(referNode, AINode.class)){
+                    AINode *node = (AINode*)referNode;
+                }
+            }
+        }
     }
     //[[AINet sharedInstance] searchNodeForDataType:nil dataSource:@"urgentValue"];
 }

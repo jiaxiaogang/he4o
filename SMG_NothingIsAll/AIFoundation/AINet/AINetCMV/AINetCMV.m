@@ -14,31 +14,37 @@
 @implementation AINetCMV
 
 -(AINetCMVModel*) create:(NSArray*)imvAlgsArr order:(NSArray*)order{
-    //1. 打包cmvNode;
-    AICMVNode *cmvNode = [[AICMVNode alloc] init];//node
+    //1. 数据
     NSString *cmvNodeAlgsType = @"cmv";
+    AIKVPointer *targetTypePointer = nil;
+    AIKVPointer *urgentValuePointer = nil;
     for (AIKVPointer *itemIMV_kvp in ARRTOOK(imvAlgsArr)) {
         if (ISOK(itemIMV_kvp, AIKVPointer.class)) {
             if ([@"targetType" isEqualToString:itemIMV_kvp.dataSource]) {
-                cmvNode.targetTypePointer = itemIMV_kvp;
+                targetTypePointer = itemIMV_kvp;
                 cmvNodeAlgsType = itemIMV_kvp.algsType;
             }else if([@"urgentValue" isEqualToString:itemIMV_kvp.dataSource]) {
-                cmvNode.urgentValuePointer = itemIMV_kvp;
+                urgentValuePointer = itemIMV_kvp;
             }
         }
     }
+    
+    //2. 生成cmv模型
+    AINetCMVModel *cmvModel = [[AINetCMVModel alloc] init];
+    cmvModel.pointer = [SMGUtils createPointer:PATH_NET_CMVMODEL algsType:cmvNodeAlgsType dataSource:@""];
+    
+    //3. 打包cmvNode;
+    AICMVNode *cmvNode = [[AICMVNode alloc] init];
     cmvNode.pointer = [SMGUtils createPointer:PATH_NET_CMVNODE algsType:cmvNodeAlgsType dataSource:@""];
+    cmvNode.cmvModel_kvp = cmvModel.pointer;
+    cmvNode.targetTypePointer = targetTypePointer;
+    cmvNode.urgentValuePointer = urgentValuePointer;
     PINDiskCache *pinCache = [[PINDiskCache alloc] initWithName:@"" rootPath:cmvNode.pointer.filePath];//save
     [pinCache setObject:cmvNode forKey:FILENAME_Node];
     [self createdNode:cmvNode.targetTypePointer nodePointer:cmvNode.pointer];//reference
     [self createdNode:cmvNode.urgentValuePointer nodePointer:cmvNode.pointer];
     
-    //2. 生成cmv模型
-    AINetCMVModel *cmvModel = [[AINetCMVModel alloc] init];
-    cmvModel.cmvPointer = cmvNode.pointer;
-    cmvModel.pointer = [SMGUtils createPointer:PATH_NET_CMVMODEL algsType:cmvNodeAlgsType dataSource:@""];
-    
-    //3. 打包orderNodes;
+    //4. 打包orderNodes;
     for (NSArray *algsArr_kvp in ARRTOOK(order)) {
         for (AIKVPointer *data_kvp in algsArr_kvp) {
             if (ISOK(data_kvp, AIKVPointer.class)) {
@@ -54,11 +60,12 @@
         }
     }
     
-    //4. 存储cmv模型
+    //5. 存储cmv模型
+    cmvModel.cmvPointer = cmvNode.pointer;
     pinCache = [[PINDiskCache alloc] initWithName:@"" rootPath:cmvModel.pointer.filePath];//save
     [pinCache setObject:cmvModel forKey:FILENAME_CMVModel];
     
-    //5. 返回给thinking
+    //6. 返回给thinking
     return cmvModel;
 }
 
@@ -125,6 +132,7 @@
         self.pointer = [aDecoder decodeObjectForKey:@"pointer"];
         self.targetTypePointer = [aDecoder decodeObjectForKey:@"targetTypePointer"];
         self.urgentValuePointer = [aDecoder decodeObjectForKey:@"urgentValuePointer"];
+        self.cmvModel_kvp = [aDecoder decodeObjectForKey:@"cmvModel_kvp"];
     }
     return self;
 }
@@ -133,6 +141,7 @@
     [aCoder encodeObject:self.pointer forKey:@"pointer"];
     [aCoder encodeObject:self.targetTypePointer forKey:@"targetTypePointer"];
     [aCoder encodeObject:self.urgentValuePointer forKey:@"urgentValuePointer"];
+    [aCoder encodeObject:self.cmvModel_kvp forKey:@"cmvModel_kvp"];
 }
 
 @end
