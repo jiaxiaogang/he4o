@@ -53,8 +53,9 @@
 		2753D7CF7BAEDFEACAF9264A /* libPods-SMG_NothingIsAll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */; };
 		88960C6B209BDA2B004EF419 /* AINetIndexReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 88960C6A209BDA2B004EF419 /* AINetIndexReference.m */; };
 		88988524208979E6001D1ADC /* AINetIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = 88988523208979E6001D1ADC /* AINetIndex.m */; };
-		88B365FB208811E7000112CF /* HEActionControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 88B365FA208811E7000112CF /* HEActionControl.m */; };
-		88B365FE208811F3000112CF /* HEThinkControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 88B365FD208811F3000112CF /* HEThinkControl.m */; };
+		88BC09D720B4EB920006ABEF /* XGRedis.m in Sources */ = {isa = PBXBuildFile; fileRef = 88BC09D620B4EB920006ABEF /* XGRedis.m */; };
+		88BC09DA20B4ECAB0006ABEF /* XGRedisUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 88BC09D920B4ECAB0006ABEF /* XGRedisUtil.m */; };
+		88BC09DD20B4F67E0006ABEF /* XGRedisDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 88BC09DC20B4F67E0006ABEF /* XGRedisDictionary.m */; };
 		88C258C1209E99B00042CB6A /* AINetCMV.m in Sources */ = {isa = PBXBuildFile; fileRef = 88C258C0209E99B00042CB6A /* AINetCMV.m */; };
 /* End PBXBuildFile section */
 
@@ -149,10 +150,12 @@
 		88960C6A209BDA2B004EF419 /* AINetIndexReference.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetIndexReference.m; sourceTree = "<group>"; };
 		88988522208979E6001D1ADC /* AINetIndex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetIndex.h; sourceTree = "<group>"; };
 		88988523208979E6001D1ADC /* AINetIndex.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetIndex.m; sourceTree = "<group>"; };
-		88B365F9208811E7000112CF /* HEActionControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HEActionControl.h; sourceTree = "<group>"; };
-		88B365FA208811E7000112CF /* HEActionControl.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HEActionControl.m; sourceTree = "<group>"; };
-		88B365FC208811F3000112CF /* HEThinkControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HEThinkControl.h; sourceTree = "<group>"; };
-		88B365FD208811F3000112CF /* HEThinkControl.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HEThinkControl.m; sourceTree = "<group>"; };
+		88BC09D520B4EB920006ABEF /* XGRedis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XGRedis.h; sourceTree = "<group>"; };
+		88BC09D620B4EB920006ABEF /* XGRedis.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XGRedis.m; sourceTree = "<group>"; };
+		88BC09D820B4ECAB0006ABEF /* XGRedisUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XGRedisUtil.h; sourceTree = "<group>"; };
+		88BC09D920B4ECAB0006ABEF /* XGRedisUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XGRedisUtil.m; sourceTree = "<group>"; };
+		88BC09DB20B4F67E0006ABEF /* XGRedisDictionary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XGRedisDictionary.h; sourceTree = "<group>"; };
+		88BC09DC20B4F67E0006ABEF /* XGRedisDictionary.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XGRedisDictionary.m; sourceTree = "<group>"; };
 		88C258BF209E99B00042CB6A /* AINetCMV.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetCMV.h; sourceTree = "<group>"; };
 		88C258C0209E99B00042CB6A /* AINetCMV.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetCMV.m; sourceTree = "<group>"; };
 		DE79539824FEDBA53557ECCA /* Pods-SMG_NothingIsAll.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SMG_NothingIsAll.release.xcconfig"; path = "Pods/Target Support Files/Pods-SMG_NothingIsAll/Pods-SMG_NothingIsAll.release.xcconfig"; sourceTree = "<group>"; };
@@ -343,6 +346,7 @@
 		08AF453C1E97D0B500377887 = {
 			isa = PBXGroup;
 			children = (
+				88BC09D320B4EAA70006ABEF /* ThirdParty */,
 				08AF45471E97D0B500377887 /* SMG_NothingIsAll */,
 				08AF45461E97D0B500377887 /* Products */,
 				C2C394C172413FE5FD49262C /* Pods */,
@@ -361,7 +365,6 @@
 		08AF45471E97D0B500377887 /* SMG_NothingIsAll */ = {
 			isa = PBXGroup;
 			children = (
-				88B365F52088115F000112CF /* HEFoundation */,
 				082F9D581EB236AC0009F6A9 /* Demo */,
 				08D7DA401ED1499C004B1018 /* AIFoundation */,
 				08AF454B1E97D0B500377887 /* AppDelegate.h */,
@@ -520,39 +523,25 @@
 			path = AINetIndex;
 			sourceTree = "<group>";
 		};
-		88B365F52088115F000112CF /* HEFoundation */ = {
+		88BC09D320B4EAA70006ABEF /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
-				88B365F8208811D0000112CF /* HEAction */,
-				88B365F7208811BE000112CF /* HEThink */,
-				88B365F6208811B7000112CF /* HENet */,
+				88BC09D420B4EABE0006ABEF /* XGRedis */,
 			);
-			path = HEFoundation;
+			path = ThirdParty;
 			sourceTree = "<group>";
 		};
-		88B365F6208811B7000112CF /* HENet */ = {
+		88BC09D420B4EABE0006ABEF /* XGRedis */ = {
 			isa = PBXGroup;
 			children = (
+				88BC09D520B4EB920006ABEF /* XGRedis.h */,
+				88BC09D620B4EB920006ABEF /* XGRedis.m */,
+				88BC09D820B4ECAB0006ABEF /* XGRedisUtil.h */,
+				88BC09D920B4ECAB0006ABEF /* XGRedisUtil.m */,
+				88BC09DB20B4F67E0006ABEF /* XGRedisDictionary.h */,
+				88BC09DC20B4F67E0006ABEF /* XGRedisDictionary.m */,
 			);
-			path = HENet;
-			sourceTree = "<group>";
-		};
-		88B365F7208811BE000112CF /* HEThink */ = {
-			isa = PBXGroup;
-			children = (
-				88B365FC208811F3000112CF /* HEThinkControl.h */,
-				88B365FD208811F3000112CF /* HEThinkControl.m */,
-			);
-			path = HEThink;
-			sourceTree = "<group>";
-		};
-		88B365F8208811D0000112CF /* HEAction */ = {
-			isa = PBXGroup;
-			children = (
-				88B365F9208811E7000112CF /* HEActionControl.h */,
-				88B365FA208811E7000112CF /* HEActionControl.m */,
-			);
-			path = HEAction;
+			path = XGRedis;
 			sourceTree = "<group>";
 		};
 		88C258BE209E99110042CB6A /* AINetCMV */ = {
@@ -697,24 +686,25 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				88B365FB208811E7000112CF /* HEActionControl.m in Sources */,
 				08FDCE8E1EAA4A8E00882ADC /* SMGRange.m in Sources */,
 				0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */,
 				086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */,
 				08D471DE1FEB3FFF00C61322 /* AIImvAlgs.m in Sources */,
 				081B3ADB1F6E2CCD008A7F36 /* AINet.m in Sources */,
+				88BC09DD20B4F67E0006ABEF /* XGRedisDictionary.m in Sources */,
 				08C84A8E1E9A866200897D8B /* AIInput.m in Sources */,
 				08EA48BF2029242B0038B982 /* ImvAlgsHungerModel.m in Sources */,
 				082F9D561EB234750009F6A9 /* Output.m in Sources */,
+				88BC09DA20B4ECAB0006ABEF /* XGRedisUtil.m in Sources */,
 				084219E71FD8CF11009DA6BC /* AIActionControl.m in Sources */,
 				083112F21F05E12600051DE6 /* MBProgressHUD+Add.m in Sources */,
 				084219ED1FD8CF81009DA6BC /* AIThinkingControl.m in Sources */,
-				88B365FE208811F3000112CF /* HEThinkControl.m in Sources */,
 				083F61381F048329000330E1 /* AILine.m in Sources */,
 				08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */,
 				08D8C525201DEA4300FC1265 /* AIAlgsPointer.m in Sources */,
 				081F5A101FFF01A500BD74F9 /* AINetCache.m in Sources */,
 				08B31E7E20648C3700FD96EA /* ThinkingUtils.m in Sources */,
+				88BC09D720B4EB920006ABEF /* XGRedis.m in Sources */,
 				084219E11FD8CEFD009DA6BC /* AIReactorControl.m in Sources */,
 				08EA48CE202932B80038B982 /* CustomAlgsChargeModel.m in Sources */,
 				0842ADBD1FE207500048ADDC /* DemoHunger.m in Sources */,

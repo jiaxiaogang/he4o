@@ -1,13 +1,13 @@
 //
-//  HEActionControl.h
+//  XGRedis.h
 //  SMG_NothingIsAll
 //
-//  Created by iMac on 2018/4/19.
+//  Created by iMac on 2018/5/23.
 //  Copyright © 2018年 XiaoGang. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 
-@interface HEActionControl : NSObject
+@interface XGRedis : NSObject
 
 @end

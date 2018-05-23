@@ -333,6 +333,13 @@ static AIThinkingControl *_instance;
                     //4. 排除联想自己(随后写到reference中)
                     if (![cmvNode.pointer isEqual:assCmvNode.pointer]) {
                         AINetCMVModel *assCmvModel = [DBUtils searchObjectForPointer:assCmvNode.cmvModel_kvp fileName:FILENAME_CMVModel];
+                        
+//                        for (AIKVPointer *foNode_p in <#collection#>) {
+//                            <#statements#>
+//                        }
+//                        
+//                        assCmvModel.orders_kvp
+                        
                         NSLog(@"____联想到cmv模型>>>\ncmvModel:%ld,%@ \n assCmvModel:%ld,%@",(long)cmvModel.pointer.pointerId,cmvModel.pointer.params,(long)assCmvModel.pointer.pointerId,assCmvModel.pointer.params);
                     }
                 }else if(ISOK(referNode, AINode.class)){
