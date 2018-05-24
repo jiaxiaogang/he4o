@@ -26,13 +26,17 @@
     return self;
 }
 
--(void) setObject:(NSObject*)obj forKey:(NSString*)key{
+-(void) setObject:(NSObject*)obj forKey:(NSString*)key {
+    [self setObject:obj forKey:key time:NSNotFound];
+}
+
+-(void) setObject:(NSObject*)obj forKey:(NSString*)key time:(double)time{
     //1. 二分查找index;
     __block NSInteger findOldIndex = 0;
     [XGRedisUtil searchIndexWithCompare:^NSComparisonResult(NSInteger checkIndex) {
         NSString *checkKey = [self.dic keyForIndex:checkIndex];
         return [XGRedisUtil compareStrA:key strB:checkKey];
-    } startIndex:0 endIndex:self.dic.count success:^(NSInteger index) {
+    } startIndex:0 endIndex:self.dic.count - 1 success:^(NSInteger index) {
         [self.dic removeObjectAtIndex:index];
         findOldIndex = index;
     } failure:^(NSInteger index) {
@@ -41,9 +45,9 @@
     
      //2. 插入数据
      if(self.dic.count <= findOldIndex) {
-         [self.dic addObject:obj forKey:key];
+         [self.dic addObject:obj forKey:key time:time];
      }else{
-         [self.dic insertObject:obj key:key atIndex:findOldIndex];
+         [self.dic insertObject:obj key:key atIndex:findOldIndex time:time];
      }
 }
 
@@ -54,7 +58,7 @@
         [XGRedisUtil searchIndexWithCompare:^NSComparisonResult(NSInteger checkIndex) {
             NSString *checkKey = [self.dic keyForIndex:checkIndex];
             return [XGRedisUtil compareStrA:key strB:checkKey];
-        } startIndex:0 endIndex:self.dic.count success:^(NSInteger index) {
+        } startIndex:0 endIndex:self.dic.count - 1 success:^(NSInteger index) {
             obj = [self.dic valueForIndex:index];
         } failure:nil];
     }

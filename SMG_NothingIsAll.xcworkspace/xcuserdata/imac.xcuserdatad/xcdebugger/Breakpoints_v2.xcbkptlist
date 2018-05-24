@@ -26,7 +26,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/imac/Desktop/temp/SMG/SMG_NothingIsAll/Demo/Foundation+Log.m"
-                  timestampString = "548732508.318678"
+                  timestampString = "548815935.3533961"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "93"
@@ -41,7 +41,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/imac/Desktop/temp/SMG/SMG_NothingIsAll/AIFoundation/AINet/AIPort.m"
-                  timestampString = "548732508.321485"
+                  timestampString = "548815935.357996"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "93"
@@ -81,6 +81,22 @@
             endingLineNumber = "343"
             landmarkName = "-dataIn_AssociativeExperience:"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ThirdParty/XGRedis/XGRedisDictionary.m"
+            timestampString = "548815935.279852"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1"
+            endingLineNumber = "1"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

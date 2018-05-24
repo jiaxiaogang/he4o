@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import "StudyViewController.h"
 #import "AINet.h"
+#import "XGRedis.h"
 
 @implementation AppDelegate
 
@@ -25,6 +26,17 @@
     UINavigationController *naviC = [[UINavigationController alloc] initWithRootViewController:page];
     [self.window setRootViewController:naviC];
     [self.window makeKeyAndVisible];
+    
+    XGRedis *redis = [[XGRedis alloc] init];
+    
+    [redis setObject:@"test1" forKey:@"key1"];
+    NSObject *v1 = [redis objectForKey:@"key1"];
+    [redis setObject:@"test2" forKey:@"key2" time:5];
+    [redis setObject:@"test3" forKey:@"key3" time:10];
+    [redis setObject:@"test3" forKey:@"key3" time:40];
+    
+    NSLog(@"");
+    
     
     return YES;
 }
