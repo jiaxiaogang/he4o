@@ -144,9 +144,6 @@ static XGRedisDictionary *_instance;
     
     //3. 并将已销毁的除出gcMarks
     [self.gcMarks removeObjectsInRange:NSMakeRange(0, findCount)];
-    if (findCount > 0) {
-        NSLog(@"_____timer_共gc %ld,现keys:%@ 现marks:%@",(long)findCount,self.keys,self.gcMarks);
-    }
 }
 
 -(void) createGCMark:(NSString*)key time:(double)time{
@@ -171,7 +168,6 @@ static XGRedisDictionary *_instance;
     mark.time = gcTime;
     mark.key = key;
     [self.gcMarks insertObject:mark atIndex:findOldIndex];
-    NSLog(@"_____createGcMark__%f后的%lld销毁;",time,gcTime);
 }
 
 @end

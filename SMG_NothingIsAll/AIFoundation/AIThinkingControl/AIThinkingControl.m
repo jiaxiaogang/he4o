@@ -334,8 +334,10 @@ static AIThinkingControl *_instance;
                     if (![cmvNode.pointer isEqual:assCmvNode.pointer]) {
                         AINetCMVModel *assCmvModel = [DBUtils searchObjectForPointer:assCmvNode.cmvModel_kvp fileName:FILENAME_CMVModel];
                         
-//                        for (AIKVPointer *foNode_p in <#collection#>) {
-//                            <#statements#>
+//                        for (AIKVPointer *foNode_p in cmvModel.orders_kvp) {
+//                            for (AIKVPointer *assFoNode in assCmvModel.orders_kvp) {
+//                                
+//                            }
 //                        }
 //                        
 //                        assCmvModel.orders_kvp

@@ -9,15 +9,14 @@
 #import "AppDelegate.h"
 #import "StudyViewController.h"
 #import "AINet.h"
-#import "XGRedis.h"
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     //1. Path
-    NSArray * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSLog(@"_______Path:\n______________________________________\n\n%@\n\n______________________________________\n",paths[0]);
+    NSArray * paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+    NSLog(@"\n______________________________________\n\n%@\n______________________________________\n\n",paths[0]);
     
     //2. 初始化UI
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
@@ -26,17 +25,6 @@
     UINavigationController *naviC = [[UINavigationController alloc] initWithRootViewController:page];
     [self.window setRootViewController:naviC];
     [self.window makeKeyAndVisible];
-    
-    XGRedis *redis = [[XGRedis alloc] init];
-    
-    [redis setObject:@"test1" forKey:@"key1"];
-    NSObject *v1 = [redis objectForKey:@"key1"];
-    [redis setObject:@"test2" forKey:@"key2" time:5];
-    [redis setObject:@"test3" forKey:@"key3" time:10];
-    [redis setObject:@"test3" forKey:@"key3" time:40];
-    
-    NSLog(@"");
-    
     
     return YES;
 }
