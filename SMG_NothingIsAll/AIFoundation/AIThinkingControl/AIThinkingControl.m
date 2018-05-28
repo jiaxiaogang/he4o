@@ -334,15 +334,35 @@ static AIThinkingControl *_instance;
                     if (![cmvNode.pointer isEqual:assCmvNode.pointer]) {
                         AINetCMVModel *assCmvModel = [DBUtils searchObjectForPointer:assCmvNode.cmvModel_kvp fileName:FILENAME_CMVModel];
                         
-//                        for (AIKVPointer *foNode_p in cmvModel.orders_kvp) {
-//                            for (AIKVPointer *assFoNode in assCmvModel.orders_kvp) {
-//                                
-//                            }
-//                        }
-//                        
-//                        assCmvModel.orders_kvp
-                        
                         NSLog(@"____联想到cmv模型>>>\ncmvModel:%ld,%@ \n assCmvModel:%ld,%@",(long)cmvModel.pointer.pointerId,cmvModel.pointer.params,(long)assCmvModel.pointer.pointerId,assCmvModel.pointer.params);
+                        
+                        //5. 类比规律,并abs;
+                        NSMutableArray *sames = [[NSMutableArray alloc] init];
+                        for (AIKVPointer *foNode_p in cmvModel.orders_kvp) {
+                            //6. 是否已收集
+                            BOOL already = false;
+                            for (AIKVPointer *same_p in sames) {
+                                if ([same_p isEqual:foNode_p]) {
+                                    already = true;
+                                    break;
+                                }
+                            }
+                            //7. 未收集过,则查找是否有一致微信息(有则收集)
+                            if (!already) {
+                                for (AIKVPointer *assFoNode_p in assCmvModel.orders_kvp) {
+                                    if ([foNode_p isEqual:assFoNode_p]) {
+                                        [sames addObject:assFoNode_p];
+                                        break;
+                                    }
+                                }
+                            }
+                            
+                        }
+                        
+                        NSLog(@"____类比到规律>>>\n %@",sames);
+                        for (AIKVPointer *same in sames) {
+                            NSLog(@"\n____>%ld",(long)same.pointerId);
+                        }
                     }
                 }else if(ISOK(referNode, AINode.class)){
                     AINode *node = (AINode*)referNode;
