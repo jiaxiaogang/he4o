@@ -44,7 +44,7 @@
     [self createdNode:cmvNode.targetTypePointer nodePointer:cmvNode.pointer];//reference
     [self createdNode:cmvNode.urgentValuePointer nodePointer:cmvNode.pointer];
     
-    //4. 打包orders;
+    //4. 打包foNode;
     AIFrontOrderNode *foNode = [[AIFrontOrderNode alloc] init];//node
     foNode.pointer = [SMGUtils createPointer:PATH_NET_FRONT_ORDER_NODE algsType:@"" dataSource:@""];
     foNode.cmvModel_kvp = cmvModel.pointer;
@@ -62,6 +62,7 @@
     [pinCache setObject:foNode forKey:FILENAME_Node];
     
     //5. 存储cmv模型
+    cmvModel.foNode_p = foNode.pointer;
     cmvModel.cmvNode_p = cmvNode.pointer;
     pinCache = [[PINDiskCache alloc] initWithName:@"" rootPath:cmvModel.pointer.filePath];//save
     [pinCache setObject:cmvModel forKey:FILENAME_CMVModel];

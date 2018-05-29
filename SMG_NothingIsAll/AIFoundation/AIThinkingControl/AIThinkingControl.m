@@ -361,7 +361,7 @@ static AIThinkingControl *_instance;
                             
                         }
                         
-                        NSLog(@"____类比到规律>>>\n %@",sames);
+                        NSLog(@"____类比到规律——————————");
                         for (AIKVPointer *same in sames) {
                             NSLog(@"\n____>%ld",(long)same.pointerId);
                         }
