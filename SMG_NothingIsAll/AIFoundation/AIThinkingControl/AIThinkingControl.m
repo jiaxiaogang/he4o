@@ -288,7 +288,7 @@ static AIThinkingControl *_instance;
                         //联想到cmv模型前因
                         AIFrontOrderNode *foNode = (AIFrontOrderNode*)referNode;
                         AINetCMVModel *cmvModel = [DBUtils searchObjectForPointer:foNode.cmvModel_kvp fileName:FILENAME_CMVModel];
-                        AICMVNode *cmvNode = [DBUtils searchObjectForPointer:cmvModel.cmvPointer fileName:FILENAME_Node];
+                        AICMVNode *cmvNode = [DBUtils searchObjectForPointer:cmvModel.cmvNode_p fileName:FILENAME_Node];
                         NSLog(@"____联想结果:%@",cmvNode.pointer.algsType);
                     }else if(ISOK(referNode, AINode.class)){
                         //联想到数据网络节点
@@ -318,7 +318,8 @@ static AIThinkingControl *_instance;
         //尝试抽象
         //尝试找imv的解决方案
         //1. 取cmvNode
-        AICMVNode *cmvNode = [DBUtils searchObjectForPointer:cmvModel.cmvPointer fileName:FILENAME_Node];
+        AICMVNode *cmvNode = [DBUtils searchObjectForPointer:cmvModel.cmvNode_p fileName:FILENAME_Node];
+        AIFrontOrderNode *foNode = [DBUtils searchObjectForPointer:cmvModel.foNode_p fileName:FILENAME_Node];
         
         //2. 找到同样targetType的引用者
         if (ISOK(cmvNode, AICMVNode.class)) {
@@ -333,25 +334,26 @@ static AIThinkingControl *_instance;
                     //4. 排除联想自己(随后写到reference中)
                     if (![cmvNode.pointer isEqual:assCmvNode.pointer]) {
                         AINetCMVModel *assCmvModel = [DBUtils searchObjectForPointer:assCmvNode.cmvModel_kvp fileName:FILENAME_CMVModel];
+                        AIFrontOrderNode *assFoNode = [DBUtils searchObjectForPointer:assCmvModel.foNode_p fileName:FILENAME_Node];
                         
                         NSLog(@"____联想到cmv模型>>>\ncmvModel:%ld,%@ \n assCmvModel:%ld,%@",(long)cmvModel.pointer.pointerId,cmvModel.pointer.params,(long)assCmvModel.pointer.pointerId,assCmvModel.pointer.params);
                         
-                        //5. 类比规律,并abs;
+                        //5. 类比orders的规律,并abs;
                         NSMutableArray *sames = [[NSMutableArray alloc] init];
-                        for (AIKVPointer *foNode_p in cmvModel.orders_kvp) {
+                        for (AIKVPointer *data_p in foNode.orders_kvp) {
                             //6. 是否已收集
                             BOOL already = false;
                             for (AIKVPointer *same_p in sames) {
-                                if ([same_p isEqual:foNode_p]) {
+                                if ([same_p isEqual:data_p]) {
                                     already = true;
                                     break;
                                 }
                             }
                             //7. 未收集过,则查找是否有一致微信息(有则收集)
                             if (!already) {
-                                for (AIKVPointer *assFoNode_p in assCmvModel.orders_kvp) {
-                                    if ([foNode_p isEqual:assFoNode_p]) {
-                                        [sames addObject:assFoNode_p];
+                                for (AIKVPointer *assData_p in assFoNode.orders_kvp) {
+                                    if ([data_p isEqual:assData_p]) {
+                                        [sames addObject:assData_p];
                                         break;
                                     }
                                 }

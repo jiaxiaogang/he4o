@@ -20,9 +20,7 @@
 -(NSInteger) count;
 -(BOOL) removeObjectAtIndex:(NSInteger)index;
 -(BOOL) addObject:(NSObject*)obj forKey:(NSString*)key;
--(BOOL) addObject:(NSObject*)obj forKey:(NSString*)key time:(double)time;
 -(BOOL) insertObject:(NSObject*)obj key:(NSString*)key atIndex:(NSInteger)index;
--(BOOL) insertObject:(NSObject*)obj key:(NSString*)key atIndex:(NSInteger)index time:(double)time;
 -(NSString*) keyForIndex:(NSInteger)index;
 -(NSObject*) valueForIndex:(NSInteger)index;
 

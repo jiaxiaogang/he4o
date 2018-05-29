@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#define kXGRedisGCObserver @"kXGRedisGCObserver"    //xgRedis在GC时,会发送广播
+
 /**
  *  MARK:--------------------XGRedis--------------------
  *  注:time只针对设置时的key,并在倒计时后,找到key并remove;(设置time后,不可撤销)

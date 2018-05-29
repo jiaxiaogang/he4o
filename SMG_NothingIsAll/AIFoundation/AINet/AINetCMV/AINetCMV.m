@@ -35,7 +35,7 @@
     
     //3. 打包cmvNode;
     AICMVNode *cmvNode = [[AICMVNode alloc] init];
-    cmvNode.pointer = [SMGUtils createPointer:PATH_NET_CMVNODE algsType:cmvNodeAlgsType dataSource:@""];
+    cmvNode.pointer = [SMGUtils createPointer:PATH_NET_CMV_NODE algsType:cmvNodeAlgsType dataSource:@""];
     cmvNode.cmvModel_kvp = cmvModel.pointer;
     cmvNode.targetTypePointer = targetTypePointer;
     cmvNode.urgentValuePointer = urgentValuePointer;
@@ -44,24 +44,25 @@
     [self createdNode:cmvNode.targetTypePointer nodePointer:cmvNode.pointer];//reference
     [self createdNode:cmvNode.urgentValuePointer nodePointer:cmvNode.pointer];
     
-    //4. 打包orderNodes;
+    //4. 打包orders;
+    AIFrontOrderNode *foNode = [[AIFrontOrderNode alloc] init];//node
+    foNode.pointer = [SMGUtils createPointer:PATH_NET_FRONT_ORDER_NODE algsType:@"" dataSource:@""];
+    foNode.cmvModel_kvp = cmvModel.pointer;
+    
     for (NSArray *algsArr_kvp in ARRTOOK(order)) {
         for (AIKVPointer *data_kvp in algsArr_kvp) {
             if (ISOK(data_kvp, AIKVPointer.class)) {
-                AIFrontOrderNode *foNode = [[AIFrontOrderNode alloc] init];//node
-                foNode.data_kvp = data_kvp;
-                foNode.pointer = [SMGUtils createPointer:PATH_NET_FONODE algsType:data_kvp.algsType dataSource:data_kvp.dataSource];
-                foNode.cmvModel_kvp = cmvModel.pointer;
-                PINDiskCache *pinCache = [[PINDiskCache alloc] initWithName:@"" rootPath:foNode.pointer.filePath];//save
-                [pinCache setObject:foNode forKey:FILENAME_Node];
+                [foNode.orders_kvp addObject:data_kvp];
                 [self createdNode:data_kvp nodePointer:foNode.pointer];//reference
-                [cmvModel.orders_kvp addObject:foNode.pointer];
             }
         }
     }
     
+    pinCache = [[PINDiskCache alloc] initWithName:@"" rootPath:foNode.pointer.filePath];//save
+    [pinCache setObject:foNode forKey:FILENAME_Node];
+    
     //5. 存储cmv模型
-    cmvModel.cmvPointer = cmvNode.pointer;
+    cmvModel.cmvNode_p = cmvNode.pointer;
     pinCache = [[PINDiskCache alloc] initWithName:@"" rootPath:cmvModel.pointer.filePath];//save
     [pinCache setObject:cmvModel forKey:FILENAME_CMVModel];
     
@@ -83,13 +84,6 @@
 //MARK:===============================================================
 @implementation AINetCMVModel
 
--(NSMutableArray *)orders_kvp{
-    if (_orders_kvp == nil) {
-        _orders_kvp = [[NSMutableArray alloc] init];
-    }
-    return _orders_kvp;
-}
-
 -(void) create{
     //1. 构建抽象node;
     //2. 抽象node由微信息组成;
@@ -103,16 +97,16 @@
     self = [super init];
     if (self) {
         self.pointer = [aDecoder decodeObjectForKey:@"pointer"];
-        self.orders_kvp = [aDecoder decodeObjectForKey:@"orders_kvp"];
-        self.cmvPointer = [aDecoder decodeObjectForKey:@"cmvPointer"];
+        self.foNode_p = [aDecoder decodeObjectForKey:@"foNode_p"];
+        self.cmvNode_p = [aDecoder decodeObjectForKey:@"cmvNode_p"];
     }
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [aCoder encodeObject:self.pointer forKey:@"pointer"];
-    [aCoder encodeObject:self.orders_kvp forKey:@"orders_kvp"];
-    [aCoder encodeObject:self.cmvPointer forKey:@"cmvPointer"];
+    [aCoder encodeObject:self.foNode_p forKey:@"foNode_p"];
+    [aCoder encodeObject:self.cmvNode_p forKey:@"cmvNode_p"];
 }
 
 @end
@@ -152,6 +146,14 @@
 //MARK:===============================================================
 @implementation AIFrontOrderNode
 
+
+-(NSMutableArray *)orders_kvp{
+    if (_orders_kvp == nil) {
+        _orders_kvp = [[NSMutableArray alloc] init];
+    }
+    return _orders_kvp;
+}
+
 /**
  *  MARK:--------------------NSCoding--------------------
  */
@@ -159,7 +161,7 @@
     self = [super init];
     if (self) {
         self.pointer = [aDecoder decodeObjectForKey:@"pointer"];
-        self.data_kvp = [aDecoder decodeObjectForKey:@"data_kvp"];
+        self.orders_kvp = [aDecoder decodeObjectForKey:@"orders_kvp"];
         self.cmvModel_kvp = [aDecoder decodeObjectForKey:@"cmvModel_kvp"];
     }
     return self;
@@ -167,7 +169,7 @@
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [aCoder encodeObject:self.pointer forKey:@"pointer"];
-    [aCoder encodeObject:self.data_kvp forKey:@"data_kvp"];
+    [aCoder encodeObject:self.orders_kvp forKey:@"orders_kvp"];
     [aCoder encodeObject:self.cmvModel_kvp forKey:@"cmvModel_kvp"];
 }
 
