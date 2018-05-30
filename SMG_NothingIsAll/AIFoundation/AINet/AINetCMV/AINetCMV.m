@@ -164,6 +164,7 @@
         self.pointer = [aDecoder decodeObjectForKey:@"pointer"];
         self.orders_kvp = [aDecoder decodeObjectForKey:@"orders_kvp"];
         self.cmvModel_kvp = [aDecoder decodeObjectForKey:@"cmvModel_kvp"];
+        self.absPorts = [aDecoder decodeObjectForKey:@"absPorts"];
     }
     return self;
 }
@@ -172,6 +173,7 @@
     [aCoder encodeObject:self.pointer forKey:@"pointer"];
     [aCoder encodeObject:self.orders_kvp forKey:@"orders_kvp"];
     [aCoder encodeObject:self.cmvModel_kvp forKey:@"cmvModel_kvp"];
+    [aCoder encodeObject:self.absPorts forKey:@"absPorts"];
 }
 
 @end

@@ -175,6 +175,10 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
++(AIKVPointer*) createPointerForNode:(NSString*)folderName {
+    return [self createPointer:folderName algsType:@"" dataSource:@""];
+}
+
 +(AIKVPointer*) createPointer:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource{
     NSInteger pointerId = [SMGUtils createPointerId:algsType dataSource:dataSource];
     AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:folderName algsType:algsType dataSource:dataSource];

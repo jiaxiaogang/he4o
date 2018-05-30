@@ -340,30 +340,36 @@ static AIThinkingControl *_instance;
                         
                         //5. 类比orders的规律,并abs;
                         NSMutableArray *sames = [[NSMutableArray alloc] init];
-                        for (AIKVPointer *data_p in foNode.orders_kvp) {
-                            //6. 是否已收集
-                            BOOL already = false;
-                            for (AIKVPointer *same_p in sames) {
-                                if ([same_p isEqual:data_p]) {
-                                    already = true;
-                                    break;
-                                }
-                            }
-                            //7. 未收集过,则查找是否有一致微信息(有则收集)
-                            if (!already) {
-                                for (AIKVPointer *assData_p in assFoNode.orders_kvp) {
-                                    if ([data_p isEqual:assData_p]) {
-                                        [sames addObject:assData_p];
+                        if (ISOK(foNode, AIFrontOrderNode.class) && ISOK(assFoNode, AIFrontOrderNode.class)) {
+                            for (AIKVPointer *data_p in foNode.orders_kvp) {
+                                //6. 是否已收集
+                                BOOL already = false;
+                                for (AIKVPointer *same_p in sames) {
+                                    if ([same_p isEqual:data_p]) {
+                                        already = true;
                                         break;
                                     }
                                 }
+                                //7. 未收集过,则查找是否有一致微信息(有则收集)
+                                if (!already) {
+                                    for (AIKVPointer *assData_p in assFoNode.orders_kvp) {
+                                        if ([data_p isEqual:assData_p]) {
+                                            [sames addObject:assData_p];
+                                            break;
+                                        }
+                                    }
+                                }
+                                
                             }
                             
-                        }
-                        
-                        NSLog(@"____类比到规律——————————");
-                        for (AIKVPointer *same in sames) {
-                            NSLog(@"\n____>%ld",(long)same.pointerId);
+                            //8. 构建absNode
+                            NSLog(@"____类比到规律——————————");
+                            for (AIKVPointer *same in sames) {
+                                NSLog(@"\n____>%ld",(long)same.pointerId);
+                            }
+                            AINetAbsNode *absNode = [[AINet sharedInstance] create:@[foNode,assFoNode] refs_p:sames];
+                            
+                            NSLog(@"构建抽象节点成功.....");
                         }
                     }
                 }else if(ISOK(referNode, AINode.class)){
@@ -387,38 +393,4 @@ static AIThinkingControl *_instance;
     
 }
 
-
-
 @end
-
-
-//3. ThinkDemand的解;
-//1,依赖于经验等数据;
-//2,依赖与常识的简单解决方案;(类比)
-//3,复杂的问题分析(多事务,加缓存,加分析)
-
-
-//4. 老旧思维解决问题方式
-//A. 搜索强化经验(经验表)
-    //1),参照解决方式,
-    //2),类比其常识,
-    //3),制定新的解决方式,
-    //4),并分析其可行性, & 修正
-    //5),预测其结果;(经验中上次的步骤对比)
-    //6),执行输出;
-//B. 搜索未强化经历(意识流)
-    //1),参照记忆,
-    //2),尝试执行输出;
-    //3),反馈(观察整个执行过程)
-    //4),强化(哪些步骤是必须,哪些步骤是有关,哪些步骤是无关)
-    //5),转移到经验表;
-//C. 无
-    //1),取原始情绪表达方式(哭,笑)(是急哭的吗?)
-    //3),记忆(观察整个执行过程)
-
-
-//5. 忙碌状态;
-//-(BOOL) isBusy{return false;}
-
-//6. 单次为比的结果;
-//@property (assign, nonatomic) ComparisonType comparisonType;    //比较结果(toFeelId/fromFeelId)

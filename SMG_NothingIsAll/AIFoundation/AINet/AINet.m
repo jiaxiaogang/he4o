@@ -14,6 +14,7 @@
 #import "AINetIndex.h"
 #import "AINetCMV.h"
 #import "AIPort.h"
+#import "AINetAbs.h"
 
 @interface AINet () <AINetCMVDelegate>
 
@@ -25,6 +26,7 @@
 @property (strong,nonatomic) NSMutableArray *cacheLong;
 @property (strong, nonatomic) AINetIndex *netIndex; //索引区(海马)
 @property (strong, nonatomic) AINetCMV *netCMV;     //网络树根(杏仁核)
+@property (strong, nonatomic) AINetAbs *netAbs;     //抽具象序列
 
 @end
 
@@ -52,6 +54,7 @@ static AINet *_instance;
     self.netIndex = [[AINetIndex alloc] init];
     self.netCMV = [[AINetCMV alloc] init];
     self.netCMV.delegate = self;
+    self.netAbs = [[AINetAbs alloc] init];
 }
 
 
@@ -248,6 +251,13 @@ static AINet *_instance;
     port.pointer = nodePointer;
     port.strong = [[AIPortStrong alloc] init];
     [self setItemAlgsReference:indexPointer port:port difValue:1];
+}
+
+//MARK:===============================================================
+//MARK:                     < abs >
+//MARK:===============================================================
+-(AINetAbsNode*) create:(NSArray*)foNodes refs_p:(NSArray*)refs_p{
+    return [self.netAbs create:foNodes refs_p:refs_p];
 }
 
 @end
