@@ -35,4 +35,6 @@
 @property (strong, nonatomic) NSMutableArray *conPorts; //具象关联端口
 @property (strong, nonatomic) NSMutableArray *refs_p;   //微信息组
 
+-(void) print;
+
 @end

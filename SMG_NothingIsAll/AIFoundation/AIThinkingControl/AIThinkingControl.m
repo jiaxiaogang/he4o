@@ -17,6 +17,7 @@
 #import "AIPort.h"
 #import "ImvAlgsModelBase.h"
 #import "AINetCMV.h"
+#import "AINetAbs.h"
 
 @interface AIThinkingControl()
 
@@ -370,6 +371,7 @@ static AIThinkingControl *_instance;
                             AINetAbsNode *absNode = [[AINet sharedInstance] create:@[foNode,assFoNode] refs_p:sames];
                             
                             NSLog(@"构建抽象节点成功.....");
+                            [absNode print];
                         }
                     }
                 }else if(ISOK(referNode, AINode.class)){

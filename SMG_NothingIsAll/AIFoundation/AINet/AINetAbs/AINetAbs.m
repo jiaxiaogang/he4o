@@ -84,4 +84,18 @@
     [aCoder encodeObject:self.refs_p forKey:@"refs_p"];
 }
 
+-(void) print{
+    NSLog(@"________ABSNODE:%d_______\n",self.pointer.pointerId);
+    NSLog(@"___conNode\n");
+    for (AIPort *conPort in self.conPorts) {
+        id con = [DBUtils searchObjectForPointer:conPort.pointer fileName:FILENAME_Node];
+        NSLog(@"%@\n",con);
+    }
+    NSLog(@"___ref\n");
+    for (AIKVPointer *ref_p in self.refs_p) {
+        NSLog(@"%@\n",[DBUtils searchObjectForPointer:ref_p fileName:FILENAME_Value]);
+    }
+    NSLog(@"\n\n\n");
+}
+
 @end
