@@ -81,6 +81,6 @@
 //MARK:===============================================================
 //MARK:                     < abs >
 //MARK:===============================================================
--(AINetAbsNode*) create:(NSArray*)foNodes refs_p:(NSArray*)refs_p;
+-(AINetAbsNode*) createAbs:(NSArray*)foNodes refs_p:(NSArray*)refs_p;
 
 @end

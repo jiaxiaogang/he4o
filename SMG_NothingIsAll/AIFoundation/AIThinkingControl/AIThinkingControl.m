@@ -368,7 +368,7 @@ static AIThinkingControl *_instance;
                             for (AIKVPointer *same in sames) {
                                 NSLog(@"\n____>%ld",(long)same.pointerId);
                             }
-                            AINetAbsNode *absNode = [[AINet sharedInstance] create:@[foNode,assFoNode] refs_p:sames];
+                            AINetAbsNode *absNode = [[AINet sharedInstance] createAbs:@[foNode,assFoNode] refs_p:sames];
                             
                             NSLog(@"构建抽象节点成功.....");
                             [absNode print];

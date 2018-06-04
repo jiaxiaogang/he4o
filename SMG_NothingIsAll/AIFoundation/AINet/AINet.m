@@ -256,7 +256,7 @@ static AINet *_instance;
 //MARK:===============================================================
 //MARK:                     < abs >
 //MARK:===============================================================
--(AINetAbsNode*) create:(NSArray*)foNodes refs_p:(NSArray*)refs_p{
+-(AINetAbsNode*) createAbs:(NSArray*)foNodes refs_p:(NSArray*)refs_p{
     return [self.netAbs create:foNodes refs_p:refs_p];
 }
 

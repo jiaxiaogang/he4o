@@ -15,6 +15,9 @@
 @implementation AINetAbs
 
 -(AINetAbsNode*) create:(NSArray*)foNodes refs_p:(NSArray*)refs_p{
+    //从foNodes中,查找是否已经存在针对refs_p的抽象;有则复用,无则创建;
+    
+    
     //1. 构建absNode;
     AINetAbsNode *absNode = [[AINetAbsNode alloc] init];
     absNode.pointer = [SMGUtils createPointerForNode:PATH_NET_NODE];
