@@ -56,8 +56,11 @@
 //MARK:                     < SMGUtils (Compare) >
 //MARK:===============================================================
 @interface SMGUtils (Compare)
+
 +(BOOL) compareItemA:(id)itemA itemB:(id)itemB;
++(BOOL) compareArrayA:(NSArray*)arrA arrayB:(NSArray*)arrB;
 +(BOOL) compareItemA:(id)itemA containsItemB:(id)itemB;
+
 @end
 
 

@@ -11,11 +11,32 @@
 #import "AIPort.h"
 #import "PINCache.h"
 #import "AIKVPointer.h"
+#import "SMGUtils.h"
 
 @implementation AINetAbs
 
 -(AINetAbsNode*) create:(NSArray*)foNodes refs_p:(NSArray*)refs_p{
-    //从foNodes中,查找是否已经存在针对refs_p的抽象;有则复用,无则创建;
+    //1. 从foNodes中,查找是否已经存在针对refs_p的抽象;
+    AIKVPointer *findAbsNode_p = nil;
+    for (AIFrontOrderNode *foNode in ARRTOOK(foNodes)) {
+        for (AIAbsPort *absPort in foNode.absPorts) {
+            if ([SMGUtils compareArrayA:absPort.refs_p arrayB:refs_p]) {
+                findAbsNode_p = absPort.pointer;
+                break;
+            }
+        }
+        if (findAbsNode_p) {
+            break;
+        }
+    }
+    
+    //2. 有则复用,无则创建;
+    if (findAbsNode_p) {
+        
+    }else{
+        
+    }
+    
     
     
     //1. 构建absNode;
@@ -29,8 +50,9 @@
         [absNode.conPorts addObject:conPort];
         
         //3. 给foNode插上absPorts
-        AIPort *absPort = [[AIPort alloc] init];
+        AIAbsPort *absPort = [[AIAbsPort alloc] init];
         absPort.pointer = absNode.pointer;
+        [absPort.refs_p addObjectsFromArray:refs_p];
         [foNode.absPorts addObject:absPort];
     }
     

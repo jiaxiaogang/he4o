@@ -235,6 +235,27 @@
     }
 }
 
++(BOOL) compareArrayA:(NSArray*)arrA arrayB:(NSArray*)arrB{
+    if (arrA == nil && arrB == nil) {
+        return true;
+    }else if(!ARRISOK(arrA) || !ARRISOK(arrB)){
+        return false;
+    }else{
+        for (NSObject *itemA in arrA) {
+            BOOL find = false;
+            for (NSObject *itemB in arrB) {
+                if ([itemA isEqual:itemB]) {
+                    find = true;
+                    break;
+                }
+            }
+            if (!find) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
 
 +(BOOL) compareItemA:(id)itemA containsItemB:(id)itemB{
     if (itemB == nil) {
