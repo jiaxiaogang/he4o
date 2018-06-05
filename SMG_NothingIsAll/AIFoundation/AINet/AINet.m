@@ -15,6 +15,7 @@
 #import "AINetCMV.h"
 #import "AIPort.h"
 #import "AINetAbs.h"
+#import "AINetAbsIndex.h"
 
 @interface AINet () <AINetCMVDelegate>
 
@@ -24,9 +25,10 @@
  *  改为内存缓存,存node和指向的data的缓存;关机时清除;
  */
 @property (strong,nonatomic) NSMutableArray *cacheLong;
-@property (strong, nonatomic) AINetIndex *netIndex; //索引区(海马)
+@property (strong, nonatomic) AINetIndex *netIndex; //索引区(皮层/海马)
 @property (strong, nonatomic) AINetCMV *netCMV;     //网络树根(杏仁核)
 @property (strong, nonatomic) AINetAbs *netAbs;     //抽具象序列
+@property (strong, nonatomic) AINetAbsIndex *netAbsIndex;//宏信息索引区(海马)
 
 @end
 
@@ -55,6 +57,7 @@ static AINet *_instance;
     self.netCMV = [[AINetCMV alloc] init];
     self.netCMV.delegate = self;
     self.netAbs = [[AINetAbs alloc] init];
+    self.netAbsIndex = [[AINetAbsIndex alloc] init];
 }
 
 
@@ -253,12 +256,27 @@ static AINet *_instance;
     [self setItemAlgsReference:indexPointer port:port difValue:1];
 }
 
+
 //MARK:===============================================================
 //MARK:                     < abs >
 //MARK:===============================================================
 -(AINetAbsNode*) createAbs:(NSArray*)foNodes refs_p:(NSArray*)refs_p{
     return [self.netAbs create:foNodes refs_p:refs_p];
 }
+
+
+//MARK:===============================================================
+//MARK:                     < absIndex >
+//MARK:===============================================================
+-(AIKVPointer*) getNetAbsIndex_AbsPointer:(NSArray*)refs_p{
+    return [self.netAbsIndex getAbsPointer:refs_p];
+}
+
+-(void) setNetAbsIndex_AbsNode:(AINetAbsNode*)absNode{
+    [self.netAbsIndex setAbsNode:absNode];
+}
+
+
 
 @end
 

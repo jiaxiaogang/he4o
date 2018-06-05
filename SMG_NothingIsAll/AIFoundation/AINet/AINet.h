@@ -83,4 +83,11 @@
 //MARK:===============================================================
 -(AINetAbsNode*) createAbs:(NSArray*)foNodes refs_p:(NSArray*)refs_p;
 
+
+//MARK:===============================================================
+//MARK:                     < absIndex >
+//MARK:===============================================================
+-(AIKVPointer*) getNetAbsIndex_AbsPointer:(NSArray*)refs_p;
+-(void) setNetAbsIndex_AbsNode:(AINetAbsNode*)absNode;
+
 @end

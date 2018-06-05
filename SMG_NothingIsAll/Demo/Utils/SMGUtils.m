@@ -330,11 +330,37 @@
     }
 }
 
+/**
+ *  MARK:--------------------比较refsA是否比refsB大--------------------
+ */
++(NSComparisonResult) compareRefsA_p:(NSArray*)refsA_p refsB_p:(NSArray*)refsB_p{
+    //1. 数据检查 & 准备
+    refsA_p = ARRTOOK(refsA_p);
+    refsB_p = ARRTOOK(refsB_p);
+    NSInteger aLength = refsA_p.count;
+    NSInteger bLength = refsB_p.count;
+    
+    //2. 比较大小
+    for (NSInteger i = 0; i < MIN(aLength, bLength); i++) {
+        AIKVPointer *itemA = ARR_INDEX(refsA_p, i);
+        AIKVPointer *itemB = ARR_INDEX(refsB_p, i);
+        NSNumber *aNum = [SMGUtils searchObjectForPointer:itemA fileName:FILENAME_Value];
+        NSNumber *bNum = [SMGUtils searchObjectForPointer:itemB fileName:FILENAME_Value];
+        NSComparisonResult result = [NUMTOOK(aNum) compare:bNum];
+        if (result != NSOrderedSame) {
+            return result;
+        }
+    }
+    
+    //3. 前面都一样
+    return aLength > bLength ? NSOrderedAscending : aLength < bLength ? NSOrderedDescending : NSOrderedSame;
+}
+
 @end
 
 
 
-@implementation DBUtils
+@implementation SMGUtils (DB)
 
 /**
  *  MARK:--------------------SQL语句之rowId--------------------

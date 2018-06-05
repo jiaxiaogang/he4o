@@ -284,12 +284,12 @@ static AIThinkingControl *_instance;
             NSArray *referPorts = [[AINet sharedInstance] getItemAlgsReference:algs_kvp limit:3];//在第二序列指向节点的端口;
             for (AIPort *referPort in referPorts) {
                 if (ISOK(referPort, AIPort.class)) {
-                    id referNode = [DBUtils searchObjectForPointer:referPort.pointer fileName:FILENAME_Node];
+                    id referNode = [SMGUtils searchObjectForPointer:referPort.pointer fileName:FILENAME_Node];
                     if (ISOK(referNode, AIFrontOrderNode.class)) {
                         //联想到cmv模型前因
                         AIFrontOrderNode *foNode = (AIFrontOrderNode*)referNode;
-                        AINetCMVModel *cmvModel = [DBUtils searchObjectForPointer:foNode.cmvModel_kvp fileName:FILENAME_CMVModel];
-                        AICMVNode *cmvNode = [DBUtils searchObjectForPointer:cmvModel.cmvNode_p fileName:FILENAME_Node];
+                        AINetCMVModel *cmvModel = [SMGUtils searchObjectForPointer:foNode.cmvModel_kvp fileName:FILENAME_CMVModel];
+                        AICMVNode *cmvNode = [SMGUtils searchObjectForPointer:cmvModel.cmvNode_p fileName:FILENAME_Node];
                         NSLog(@"____联想结果:%@",cmvNode.pointer.algsType);
                     }else if(ISOK(referNode, AINode.class)){
                         //联想到数据网络节点
@@ -319,8 +319,8 @@ static AIThinkingControl *_instance;
         //尝试抽象
         //尝试找imv的解决方案
         //1. 取cmvNode
-        AICMVNode *cmvNode = [DBUtils searchObjectForPointer:cmvModel.cmvNode_p fileName:FILENAME_Node];
-        AIFrontOrderNode *foNode = [DBUtils searchObjectForPointer:cmvModel.foNode_p fileName:FILENAME_Node];
+        AICMVNode *cmvNode = [SMGUtils searchObjectForPointer:cmvModel.cmvNode_p fileName:FILENAME_Node];
+        AIFrontOrderNode *foNode = [SMGUtils searchObjectForPointer:cmvModel.foNode_p fileName:FILENAME_Node];
         
         //2. 找到同样targetType的引用者
         if (ISOK(cmvNode, AICMVNode.class)) {
@@ -328,14 +328,14 @@ static AIThinkingControl *_instance;
             
             //3. 联想cmv模型
             for (AIPort *port in targetTypePorts) {
-                id referNode = [DBUtils searchObjectForPointer:port.pointer fileName:FILENAME_Node];
+                id referNode = [SMGUtils searchObjectForPointer:port.pointer fileName:FILENAME_Node];
                 if (ISOK(referNode, AICMVNode.class)) {
                     AICMVNode *assCmvNode = (AICMVNode*)referNode;
                     
                     //4. 排除联想自己(随后写到reference中)
                     if (![cmvNode.pointer isEqual:assCmvNode.pointer]) {
-                        AINetCMVModel *assCmvModel = [DBUtils searchObjectForPointer:assCmvNode.cmvModel_kvp fileName:FILENAME_CMVModel];
-                        AIFrontOrderNode *assFoNode = [DBUtils searchObjectForPointer:assCmvModel.foNode_p fileName:FILENAME_Node];
+                        AINetCMVModel *assCmvModel = [SMGUtils searchObjectForPointer:assCmvNode.cmvModel_kvp fileName:FILENAME_CMVModel];
+                        AIFrontOrderNode *assFoNode = [SMGUtils searchObjectForPointer:assCmvModel.foNode_p fileName:FILENAME_Node];
                         
                         NSLog(@"____联想到cmv模型>>>\ncmvModel:%ld,%@ \n assCmvModel:%ld,%@",(long)cmvModel.pointer.pointerId,cmvModel.pointer.params,(long)assCmvModel.pointer.pointerId,assCmvModel.pointer.params);
                         

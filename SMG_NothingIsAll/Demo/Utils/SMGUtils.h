@@ -61,13 +61,15 @@
 +(BOOL) compareArrayA:(NSArray*)arrA arrayB:(NSArray*)arrB;
 +(BOOL) compareItemA:(id)itemA containsItemB:(id)itemB;
 
++(NSComparisonResult) compareRefsA_p:(NSArray*)refsA_p refsB_p:(NSArray*)refsB_p;//比较refsA是否比refsB大
+
 @end
 
 
 //MARK:===============================================================
-//MARK:                     < DBUtils >
+//MARK:                     < @SMGUtils (DB) >
 //MARK:===============================================================
-@interface DBUtils : NSObject
+@interface SMGUtils (DB)
 /**
  *  MARK:--------------------SQL语句之rowId--------------------
  */

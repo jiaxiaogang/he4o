@@ -24,14 +24,14 @@
 
 
 
-/**
- *  MARK:--------------------抽象端口--------------------
- */
-@interface AIAbsPort : AIPort <NSCoding>
-
-@property (strong, nonatomic) NSMutableArray *refs_p;//抽象端口(知道自身中哪些微信息被抽象了)
-
-@end
+///**
+// *  MARK:--------------------抽象端口--------------------
+// */
+//@interface AIAbsPort : AIPort <NSCoding>
+//
+//@property (strong, nonatomic) NSMutableArray *refs_p;//抽象端口(知道自身中哪些微信息被抽象了)
+//
+//@end
 
 
 

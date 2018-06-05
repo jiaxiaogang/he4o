@@ -57,7 +57,7 @@
 -(id) content{
     Class class = NSClassFromString(STRTOOK(self.pClass));
     if (class) {
-        return [class searchSingleWithWhere:[DBUtils sqlWhere_RowId:self.pId] orderBy:nil];
+        return [class searchSingleWithWhere:[SMGUtils sqlWhere_RowId:self.pId] orderBy:nil];
     }
     return nil;
 }

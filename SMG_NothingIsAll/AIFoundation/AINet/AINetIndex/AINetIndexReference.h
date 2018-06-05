@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 //MARK:===============================================================
-//MARK:                     < itemData区(第二序列) >
+//MARK:                     < 微信息引用_itemData区(第二序列) >
 //MARK:===============================================================
 @class AIKVPointer,AIPort;
 @interface AINetIndexReference : NSObject

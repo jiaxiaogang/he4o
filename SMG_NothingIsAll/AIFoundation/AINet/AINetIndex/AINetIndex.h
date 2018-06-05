@@ -10,7 +10,7 @@
 
 
 //MARK:===============================================================
-//MARK:                     < Index索引 (第一序列) >
+//MARK:                     < 微信息索引 (第一序列) >
 //MARK:===============================================================
 @class AIPointer,AIKVPointer,AIPort;
 @interface AINetIndex : NSObject

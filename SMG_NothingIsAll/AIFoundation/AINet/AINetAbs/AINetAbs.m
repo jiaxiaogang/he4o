@@ -12,31 +12,30 @@
 #import "PINCache.h"
 #import "AIKVPointer.h"
 #import "SMGUtils.h"
+#import "XGRedisUtil.h"
+#import "AINet.h"
 
 @implementation AINetAbs
 
 -(AINetAbsNode*) create:(NSArray*)foNodes refs_p:(NSArray*)refs_p{
-    //1. 从foNodes中,查找是否已经存在针对refs_p的抽象;
-    AIKVPointer *findAbsNode_p = nil;
-    for (AIFrontOrderNode *foNode in ARRTOOK(foNodes)) {
-        for (AIAbsPort *absPort in foNode.absPorts) {
-            if ([SMGUtils compareArrayA:absPort.refs_p arrayB:refs_p]) {
-                findAbsNode_p = absPort.pointer;
-                break;
-            }
-        }
-        if (findAbsNode_p) {
-            break;
-        }
+    //1. 从宏信息索引中,查找是否已经存在针对refs_p的抽象;(有则复用)
+    AIKVPointer *oldAbsNode_p = [[AINet sharedInstance] getNetAbsIndex_AbsPointer:refs_p];
+    AINetAbsNode *findAbsNode = [SMGUtils searchObjectForPointer:oldAbsNode_p fileName:FILENAME_Node];
+    
+    //2. absNode:无则创建;
+    if (findAbsNode == nil) {
+        findAbsNode = [[AINetAbsNode alloc] init];
+        findAbsNode.pointer = [SMGUtils createPointerForNode:PATH_NET_NODE];
     }
     
-    //2. 有则复用,无则创建;
-    if (findAbsNode_p) {
+    //3. 关联:有则强化,无则创建;
+    if (findAbsNode) {
         
     }else{
         
     }
     
+    ////////////////////////////////////////////////////////////////////////////////////////
     
     
     //1. 构建absNode;
@@ -50,9 +49,8 @@
         [absNode.conPorts addObject:conPort];
         
         //3. 给foNode插上absPorts
-        AIAbsPort *absPort = [[AIAbsPort alloc] init];
+        AIPort *absPort = [[AIPort alloc] init];
         absPort.pointer = absNode.pointer;
-        [absPort.refs_p addObjectsFromArray:refs_p];
         [foNode.absPorts addObject:absPort];
     }
     
@@ -113,12 +111,12 @@
     NSLog(@"________ABSNODE:%d_______\n",self.pointer.pointerId);
     NSLog(@"___conNode\n");
     for (AIPort *conPort in self.conPorts) {
-        id con = [DBUtils searchObjectForPointer:conPort.pointer fileName:FILENAME_Node];
+        id con = [SMGUtils searchObjectForPointer:conPort.pointer fileName:FILENAME_Node];
         NSLog(@"%@\n",con);
     }
     NSLog(@"___ref\n");
     for (AIKVPointer *ref_p in self.refs_p) {
-        NSLog(@"%@\n",[DBUtils searchObjectForPointer:ref_p fileName:FILENAME_Value]);
+        NSLog(@"%@\n",[SMGUtils searchObjectForPointer:ref_p fileName:FILENAME_Value]);
     }
     NSLog(@"\n\n\n");
 }

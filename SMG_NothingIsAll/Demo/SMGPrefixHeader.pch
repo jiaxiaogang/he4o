@@ -56,11 +56,12 @@
 /**
  *  MARK:--------------------fileNameKey--------------------
  */
-#define FILENAME_Node @"node"
-#define FILENAME_CMVModel @"cmvModel"
-#define FILENAME_Value @"value"
-#define FILENAME_Index @"index"
-#define FILENAME_Reference @"reference"
+#define FILENAME_Node @"node"               //节点
+#define FILENAME_CMVModel @"cmvModel"       //cmv模型
+#define FILENAME_Value @"value"             //微信息
+#define FILENAME_Index @"index"             //微信息索引
+#define FILENAME_Reference @"reference"     //微信息引用
+#define FILENAME_AbsIndex @"absIndex"       //宏节点索引
 
 
 /**
