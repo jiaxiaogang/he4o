@@ -19,6 +19,7 @@
 
 +(AIPort*) newWithNode:(AINode*)node;
 -(NSComparisonResult) compare:(AIPort*)port;//类比port:1级强度,2级pointerId;
+-(void) strongPlus;
 
 @end
 

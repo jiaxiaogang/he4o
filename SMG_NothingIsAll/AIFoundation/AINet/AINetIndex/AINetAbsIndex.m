@@ -77,6 +77,9 @@
             AINetAbsNode *checkAbsNode = [SMGUtils searchObjectForPointer:check_p fileName:FILENAME_Node];
             return [SMGUtils compareRefsA_p:absNode.refs_p refsB_p:checkAbsNode.refs_p];
         } startIndex:0 endIndex:indexArr_p.count success:^(NSInteger index) {
+            if (ARR_INDEXISOK(absNode.refs_p,index)) {
+                [absNode.refs_p removeObjectAtIndex:index];
+            }
             findOldIndex = index;
         } failure:^(NSInteger index) {
             findOldIndex = index;
@@ -91,6 +94,9 @@
         NSArray *newArr = @[absNode.pointer];
         [self.dic setObject:newArr forKey:key];
     }
+    
+    //7. 更新存储(后续加异步策略)
+    [[PINCache sharedCache] setObject:self.dic forKey:FILENAME_AbsIndex];
 }
 
 //MARK:===============================================================

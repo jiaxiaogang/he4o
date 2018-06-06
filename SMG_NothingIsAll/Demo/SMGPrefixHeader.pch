@@ -77,6 +77,7 @@
 #define ARRISOK(a) (a  && [a isKindOfClass:[NSArray class]] && a.count)//是否空数组
 #define ARRTOOK(a) (a  && [a isKindOfClass:[NSArray class]]) ?  a : [NSArray new]
 #define ARR_INDEX(a,i) (a && [a isKindOfClass:[NSArray class]] && a.count > i) ?  a[i] : nil//数组取子防闪
+#define ARR_INDEXISOK(a,i) (a && [a isKindOfClass:[NSArray class]] && a.count > i && i >= 0)//数组可移除i
 
 //NSNumber
 #define NUMISOK(a) (a  && [a isKindOfClass:[NSNumber class]])//是否有效NSNumber

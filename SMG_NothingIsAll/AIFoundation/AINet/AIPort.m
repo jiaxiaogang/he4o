@@ -76,6 +76,10 @@
     return NSOrderedAscending;
 }
 
+-(void) strongPlus{
+    self.strong.value ++;
+}
+
 @end
 
 

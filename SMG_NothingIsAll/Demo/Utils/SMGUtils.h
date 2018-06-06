@@ -60,7 +60,7 @@
 +(BOOL) compareItemA:(id)itemA itemB:(id)itemB;
 +(BOOL) compareArrayA:(NSArray*)arrA arrayB:(NSArray*)arrB;
 +(BOOL) compareItemA:(id)itemA containsItemB:(id)itemB;
-
++(NSComparisonResult) comparePointerA:(AIKVPointer*)pA pointerB:(AIKVPointer*)pB;
 +(NSComparisonResult) compareRefsA_p:(NSArray*)refsA_p refsB_p:(NSArray*)refsB_p;//比较refsA是否比refsB大
 
 @end
@@ -77,6 +77,7 @@
 +(NSString*) sqlWhere_K:(id)columnName V:(id)value;
 +(NSDictionary*) sqlWhereDic_K:(id)columnName V:(id)value;
 +(id) searchObjectForPointer:(AIKVPointer*)pointer fileName:(NSString*)fileName;
++(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName;
 
 @end
 

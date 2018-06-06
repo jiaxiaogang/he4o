@@ -9,6 +9,7 @@
 #import "SMGUtils.h"
 #import "AIKVPointer.h"
 #import "PINCache.h"
+#import "XGRedisUtil.h"
 
 @implementation SMGUtils
 
@@ -331,6 +332,31 @@
 }
 
 /**
+ *  MARK:--------------------比较pA是否比pB大--------------------
+ */
++(NSComparisonResult) comparePointerA:(AIKVPointer*)pA pointerB:(AIKVPointer*)pB{
+    //1. 数据检查
+    BOOL aIsOk = ISOK(pA, AIKVPointer.class);
+    BOOL bIsOk = ISOK(pB, AIKVPointer.class);
+    if (!aIsOk || !bIsOk) {
+        return (aIsOk == bIsOk) ? NSOrderedSame : (aIsOk ? NSOrderedAscending : NSOrderedDescending);
+    }
+    
+    //2. 比较大小(一级比pointerId,二级比algsType,三级比dataSource)
+    if ([pA isEqual:pB]) {
+        return NSOrderedSame;
+    }else{
+        if (pA.pointerId > pB.pointerId) {
+            return NSOrderedAscending;
+        }else if(pA.pointerId < pB.pointerId){
+            return NSOrderedDescending;
+        }else{
+            return [XGRedisUtil compareStrA:[NSString stringWithFormat:@"%@%@",pA.algsType,pA.dataSource] strB:[NSString stringWithFormat:@"%@%@",pB.algsType,pB.dataSource]];
+        }
+    }
+}
+
+/**
  *  MARK:--------------------比较refsA是否比refsB大--------------------
  */
 +(NSComparisonResult) compareRefsA_p:(NSArray*)refsA_p refsB_p:(NSArray*)refsB_p{
@@ -387,6 +413,13 @@
     }
     return nil;
 }
+
++(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName{
+    PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:STRTOOK(rootPath)];
+    [cache setObject:obj forKey:STRTOOK(fileName)];
+}
+
+
 
 @end
 
