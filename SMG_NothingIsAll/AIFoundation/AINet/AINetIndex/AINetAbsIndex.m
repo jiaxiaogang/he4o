@@ -87,7 +87,11 @@
         
         //5. 插入到index
         NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:indexArr_p];
-        [mArr insertObject:absNode.pointer atIndex:findOldIndex];
+        if (ARR_INDEXISOK(mArr, findOldIndex)) {
+            [mArr insertObject:absNode.pointer atIndex:findOldIndex];
+        }else{
+            [mArr addObject:absNode.pointer];
+        }
         [self.dic setObject:mArr forKey:key];
     }else{
         //6. 无分区,则创建;

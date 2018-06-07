@@ -364,14 +364,16 @@ static AIThinkingControl *_instance;
                             }
                             
                             //8. 构建absNode
-                            NSLog(@"____类比到规律——————————");
-                            for (AIKVPointer *same in sames) {
-                                NSLog(@"\n____>%ld",(long)same.pointerId);
+                            if (ARRISOK(sames)) {
+                                NSLog(@"____类比到规律——————————");
+                                for (AIKVPointer *same in sames) {
+                                    NSLog(@"\n____>%ld",(long)same.pointerId);
+                                }
+                                AINetAbsNode *absNode = [[AINet sharedInstance] createAbs:@[foNode,assFoNode] refs_p:sames];
+                                
+                                NSLog(@"构建抽象节点成功.....");
+                                [absNode print];
                             }
-                            AINetAbsNode *absNode = [[AINet sharedInstance] createAbs:@[foNode,assFoNode] refs_p:sames];
-                            
-                            NSLog(@"构建抽象节点成功.....");
-                            [absNode print];
                         }
                     }
                 }else if(ISOK(referNode, AINode.class)){

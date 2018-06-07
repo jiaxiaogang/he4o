@@ -155,6 +155,13 @@
     return _orders_kvp;
 }
 
+-(NSMutableArray *)absPorts{
+    if (_absPorts == nil) {
+        _absPorts = [NSMutableArray new];
+    }
+    return _absPorts;
+}
+
 /**
  *  MARK:--------------------NSCoding--------------------
  */
