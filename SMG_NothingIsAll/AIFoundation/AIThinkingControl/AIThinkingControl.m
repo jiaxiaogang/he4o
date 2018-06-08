@@ -295,6 +295,10 @@ static AIThinkingControl *_instance;
                         //联想到数据网络节点
                         AINode *node = (AINode*)referNode;
                         NSLog(@"");
+                    }else if(ISOK(referNode, AINetAbsNode.class)){
+                        //1. 删除absNode下的refs_p;并指向absReference;////////////////////////////////////////
+                        //2. 
+                        
                     }
                     
                     NSLog(@"");
