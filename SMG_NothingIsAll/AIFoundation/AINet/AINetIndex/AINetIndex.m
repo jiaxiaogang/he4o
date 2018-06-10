@@ -165,8 +165,8 @@
     return _reference;
 }
 
--(void) setIndexReference:(AIKVPointer*)indexPointer port:(AIPort*)port difValue:(int)difValue{
-    [self.reference setReference:indexPointer port:port difValue:difValue];
+-(void) setIndexReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue{
+    [self.reference setReference:indexPointer target_p:target_p difValue:difValue];
 }
 
 -(NSArray*) getIndexReference:(AIKVPointer*)indexPointer limit:(NSInteger)limit{

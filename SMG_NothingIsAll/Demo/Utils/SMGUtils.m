@@ -10,6 +10,7 @@
 #import "AIKVPointer.h"
 #import "PINCache.h"
 #import "XGRedisUtil.h"
+#import "AIPort.h"
 
 @implementation SMGUtils
 
@@ -183,6 +184,16 @@
 +(AIKVPointer*) createPointer:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource{
     NSInteger pointerId = [SMGUtils createPointerId:algsType dataSource:dataSource];
     AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:folderName algsType:algsType dataSource:dataSource];
+    return kvPointer;
+}
+
++(AIKVPointer*) createPointerForAbsValue:(NSString*)key{
+    NSInteger pointerId = [SMGUtils createPointerId:@"" dataSource:STRTOOK(key)];
+    return [self createPointerForAbsValue:key pointerId:pointerId];
+}
+
++(AIKVPointer*) createPointerForAbsValue:(NSString*)key pointerId:(NSInteger)pointerId{
+    AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_ABSVALUE algsType:@"" dataSource:STRTOOK(key)];
     return kvPointer;
 }
 
@@ -380,6 +391,39 @@
     
     //3. 前面都一样
     return aLength > bLength ? NSOrderedAscending : aLength < bLength ? NSOrderedDescending : NSOrderedSame;
+}
+
+//类比port:1级强度,2级pointerId;
++(NSComparisonResult) comparePortA:(AIPort*)pA portB:(AIPort*)pB{
+    //1. 数据检查
+    BOOL aIsOk = ISOK(pA, AIPort.class);
+    BOOL bIsOk = ISOK(pB, AIPort.class);
+    if (!aIsOk || !bIsOk) {
+        return (aIsOk == bIsOk) ? NSOrderedSame : (aIsOk ? NSOrderedAscending : NSOrderedDescending);
+    }
+    
+    //2. 比较大小(一级比pointerId,二级比algsType,三级比dataSource)
+    if (pA.strong) {
+        NSComparisonResult strongResult = [pA.strong compare:pB.strong];
+        if (strongResult == NSOrderedSame) {
+            if (ISOK(pA.pointer, AIKVPointer.class)) {
+                if (ISOK(pB.pointer, AIKVPointer.class)) {
+                    if (pA.pointer.pointerId > pB.pointer.pointerId) {
+                        return NSOrderedAscending;
+                    }else if(pA.pointer.pointerId < pB.pointer.pointerId){
+                        return NSOrderedDescending;
+                    }else{
+                        return NSOrderedSame;
+                    }
+                }
+            }else{
+                return strongResult;
+            }
+        }else{
+            return strongResult;
+        }
+    }
+    return NSOrderedAscending;
 }
 
 @end

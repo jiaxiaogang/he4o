@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 
-@class AIObject,AIArray,AILine,ThinkModel,AIKVPointer;
+@class AIObject,AIArray,AILine,ThinkModel,AIKVPointer,AIPort;
 @interface SMGUtils : NSObject
 
 //MARK:===============================================================
@@ -48,6 +48,8 @@
 +(void) setNetNodePointerId:(NSInteger)count algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
 +(AIKVPointer*) createPointerForNode:(NSString*)folderName;
 +(AIKVPointer*) createPointer:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
++(AIKVPointer*) createPointerForAbsValue:(NSString*)key;//AbsValue地址,key作为dataSource;
++(AIKVPointer*) createPointerForAbsValue:(NSString*)key pointerId:(NSInteger)pointerId;//AbsValue地址 & key作为dataSource; & 指定pointerId
 
 @end
 
@@ -62,6 +64,7 @@
 +(BOOL) compareItemA:(id)itemA containsItemB:(id)itemB;
 +(NSComparisonResult) comparePointerA:(AIKVPointer*)pA pointerB:(AIKVPointer*)pB;
 +(NSComparisonResult) compareRefsA_p:(NSArray*)refsA_p refsB_p:(NSArray*)refsB_p;//比较refsA是否比refsB大
++(NSComparisonResult) comparePortA:(AIPort*)pA portB:(AIPort*)pB;
 
 @end
 

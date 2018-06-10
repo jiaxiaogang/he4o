@@ -20,8 +20,7 @@
  *  @param indexPointer 索引地址
  *  @param port         插入端口
  */
--(void) setReference:(AIKVPointer*)indexPointer port:(AIPort*)port difValue:(int)difValue;
-
+-(void) setReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue;
 
 /**
  *  MARK:--------------------获取强度靠前的limit个地址--------------------

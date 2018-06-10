@@ -11,6 +11,8 @@
 #import "AIKVPointer.h"
 #import "PINCache.h"
 #import "AIPort.h"
+#import "SMGUtils.h"
+#import "XGRedisUtil.h"
 
 /**
  *  MARK:--------------------索引数据分文件--------------------
@@ -23,8 +25,8 @@
 @implementation AINetIndexReference
 
 
--(void) setReference:(AIKVPointer*)indexPointer port:(AIPort*)port difValue:(int)difValue {
-    if (ISOK(indexPointer, AIKVPointer.class) && ISOK(port, AIPort.class) && difValue != 0) {
+-(void) setReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue {
+    if (ISOK(indexPointer, AIKVPointer.class) && ISOK(target_p, AIKVPointer.class) && difValue != 0) {
         //1. 取出referenceModel
         NSString *filePath = [indexPointer filePath:PATH_NET_REFERENCE];
         PINDiskCache *pinCache = [[PINDiskCache alloc] initWithName:@"" rootPath:filePath];
@@ -33,33 +35,48 @@
             referenceModel = [[AINetIndexReferenceModel alloc] init];
         }
         
-        //2. 二分法查找port,移除旧的;
+        //2. 二分法查找target_p
         __block NSInteger findOldIndex = 0;
-        [self search:port from:referenceModel.ports startIndex:0 endIndex:referenceModel.ports.count - 1 success:^(NSInteger index) {
-            if (index >= 0 && index < referenceModel.ports.count) {
-                [referenceModel.ports removeObjectAtIndex:index];//找到;则移除
-            }
+        [XGRedisUtil searchIndexWithCompare:^NSComparisonResult(NSInteger checkIndex) {
+            AIPort *checkPort = ARR_INDEX(referenceModel.ports, checkIndex);
+            return [SMGUtils comparePointerA:target_p pointerB:checkPort.pointer];
+        } startIndex:0 endIndex:referenceModel.ports.count - 1 success:^(NSInteger index) {
             findOldIndex = index;
         } failure:^(NSInteger index) {
             findOldIndex = index;
         }];
         
-        //3. 更新strongValue & 插入队列
+        //3. 找到,则移除旧的
+        AIPort *findPort = ARR_INDEX(referenceModel.ports, findOldIndex);
+        if (ARR_INDEXISOK(referenceModel.ports, findOldIndex)) {
+            [referenceModel.ports removeObjectAtIndex:findOldIndex];//找到;则移除
+        }
+        
+        //4. 未找到,则new
+        if (ISOK(findPort, AIPort.class)) {
+            findPort = [[AIPort alloc] init];
+            findPort.pointer = target_p;
+        }
+        
+        //5. 更新strongValue & 插入队列
         BOOL insertDirection = difValue > 0; //是否往后查
         NSInteger insertStartIndex = insertDirection ? findOldIndex : 0;
         NSInteger insertEndIndex = insertDirection ? referenceModel.ports.count - 1 : findOldIndex;
-        port.strong.value += difValue;
-        [self search:port from:referenceModel.ports startIndex:insertStartIndex endIndex:insertEndIndex success:^(NSInteger index) {
-            NSLog(@"警告!!! bug:在第二序列的ports中发现了两次port目标___pointerId为:%ld",(long)port.pointer.pointerId);
+        findPort.strong.value += difValue;
+        [XGRedisUtil searchIndexWithCompare:^NSComparisonResult(NSInteger checkIndex) {
+            AIPort *checkPort = ARR_INDEX(referenceModel.ports, checkIndex);
+            return [SMGUtils comparePointerA:target_p pointerB:checkPort.pointer];
+        } startIndex:insertStartIndex endIndex:insertEndIndex success:^(NSInteger index) {
+            NSLog(@"警告!!! bug:在第二序列的ports中发现了两次port目标___pointerId为:%ld",(long)findPort.pointer.pointerId);
         } failure:^(NSInteger index) {
             if (referenceModel.ports.count <= index) {
-                [referenceModel.ports addObject:port];
+                [referenceModel.ports addObject:findPort];
             }else{
-                [referenceModel.ports insertObject:port atIndex:index];
+                [referenceModel.ports insertObject:findPort atIndex:index];
             }
         }];
         
-        //4. 保存队列
+        //6. 保存队列
         [pinCache setObject:referenceModel forKey:FILENAME_Reference];
     }
 }
@@ -76,69 +93,6 @@
         }
     }
     return mArr;
-}
-
-/**
- *  MARK:--------------------二分查找--------------------
- *  success:找到则返回相应index
- *  failure:失败则返回可排到的index
- *  要求:ports指向的值是正序的;(即数组下标越大,值越大)
- */
--(void) search:(AIPort*)port from:(NSArray*)ports startIndex:(NSInteger)startIndex endIndex:(NSInteger)endIndex success:(void(^)(NSInteger index))success failure:(void(^)(NSInteger index))failure{
-    if (ISOK(port, AIPort.class) && ARRISOK(ports)) {
-        //1. index越界检查
-        startIndex = MAX(0, startIndex);
-        endIndex = MIN(ports.count - 1, endIndex);
-        
-        //2. 类比
-        typedef void(^ GetDataAndCompareCompletion)(NSComparisonResult compareResult);
-        void (^ getDataAndCompare)(NSInteger,GetDataAndCompareCompletion) = ^(NSInteger index,GetDataAndCompareCompletion completion)
-        {
-            AIPort *checkPort = ARR_INDEX(ports, index);
-            NSComparisonResult compareResult = [port compare:checkPort];
-            completion(compareResult);
-        };
-        
-        if (labs(startIndex - endIndex) <= 1) {
-            //3. 与start对比
-            getDataAndCompare(startIndex,^(NSComparisonResult compareResult){
-                if (compareResult == NSOrderedDescending) {      //比小的小
-                    if (failure) failure(startIndex);
-                }else if (compareResult == NSOrderedSame){       //相等
-                    if (success) success(startIndex);
-                }else {                                         //比小的大
-                    if(startIndex == endIndex) {
-                        if (failure) failure(startIndex + 1);
-                    }else{
-                        //4. 与end对比
-                        getDataAndCompare(endIndex,^(NSComparisonResult compareResult){
-                            if (compareResult == NSOrderedAscending) { //比大的大
-                                if (failure) failure(endIndex + 1);
-                            }else if (compareResult == NSOrderedSame){ //相等
-                                if (success) success(endIndex);
-                            }else {                                 //比大的小
-                                if (failure) failure(endIndex);
-                            }
-                        });
-                    }
-                }
-            });
-        }else{
-            //5. 与mid对比
-            NSInteger midIndex = (startIndex + endIndex) / 2;
-            getDataAndCompare(midIndex,^(NSComparisonResult compareResult){
-                if (compareResult == NSOrderedAscending) { //比中心大(检查mid到endIndex)
-                    [self search:port from:ports startIndex:midIndex endIndex:endIndex success:success failure:failure];
-                }else if (compareResult == NSOrderedSame){ //相等
-                    if (success) success(midIndex);
-                }else {                                     //比中心小(检查startIndex到mid)
-                    [self search:port from:ports startIndex:startIndex endIndex:midIndex success:success failure:failure];
-                }
-            });
-        }
-    }else{
-        if (failure) failure(0);
-    }
 }
 
 @end
@@ -172,3 +126,69 @@
 }
 
 @end
+
+
+
+///**
+// *  MARK:--------------------二分查找--------------------
+// *  success:找到则返回相应index
+// *  failure:失败则返回可排到的index
+// *  要求:ports指向的值是正序的;(即数组下标越大,值越大)
+// */
+////[self search:port from:referenceModel.ports startIndex:insertStartIndex endIndex:insertEndIndex success:^(NSInteger index) {} failure:^(NSInteger index) {}];
+//-(void) search:(AIPort*)port from:(NSArray*)ports startIndex:(NSInteger)startIndex endIndex:(NSInteger)endIndex success:(void(^)(NSInteger index))success failure:(void(^)(NSInteger index))failure{
+//    if (ISOK(port, AIPort.class) && ARRISOK(ports)) {
+//        //1. index越界检查
+//        startIndex = MAX(0, startIndex);
+//        endIndex = MIN(ports.count - 1, endIndex);
+//
+//        //2. 类比
+//        typedef void(^ GetDataAndCompareCompletion)(NSComparisonResult compareResult);
+//        void (^ getDataAndCompare)(NSInteger,GetDataAndCompareCompletion) = ^(NSInteger index,GetDataAndCompareCompletion completion)
+//        {
+//            AIPort *checkPort = ARR_INDEX(ports, index);
+//            NSComparisonResult compareResult = [port compare:checkPort];
+//            completion(compareResult);
+//        };
+//
+//        if (labs(startIndex - endIndex) <= 1) {
+//            //3. 与start对比
+//            getDataAndCompare(startIndex,^(NSComparisonResult compareResult){
+//                if (compareResult == NSOrderedDescending) {      //比小的小
+//                    if (failure) failure(startIndex);
+//                }else if (compareResult == NSOrderedSame){       //相等
+//                    if (success) success(startIndex);
+//                }else {                                         //比小的大
+//                    if(startIndex == endIndex) {
+//                        if (failure) failure(startIndex + 1);
+//                    }else{
+//                        //4. 与end对比
+//                        getDataAndCompare(endIndex,^(NSComparisonResult compareResult){
+//                            if (compareResult == NSOrderedAscending) { //比大的大
+//                                if (failure) failure(endIndex + 1);
+//                            }else if (compareResult == NSOrderedSame){ //相等
+//                                if (success) success(endIndex);
+//                            }else {                                 //比大的小
+//                                if (failure) failure(endIndex);
+//                            }
+//                        });
+//                    }
+//                }
+//            });
+//        }else{
+//            //5. 与mid对比
+//            NSInteger midIndex = (startIndex + endIndex) / 2;
+//            getDataAndCompare(midIndex,^(NSComparisonResult compareResult){
+//                if (compareResult == NSOrderedAscending) { //比中心大(检查mid到endIndex)
+//                    [self search:port from:ports startIndex:midIndex endIndex:endIndex success:success failure:failure];
+//                }else if (compareResult == NSOrderedSame){ //相等
+//                    if (success) success(midIndex);
+//                }else {                                     //比中心小(检查startIndex到mid)
+//                    [self search:port from:ports startIndex:startIndex endIndex:midIndex success:success failure:failure];
+//                }
+//            });
+//        }
+//    }else{
+//        if (failure) failure(0);
+//    }
+//}

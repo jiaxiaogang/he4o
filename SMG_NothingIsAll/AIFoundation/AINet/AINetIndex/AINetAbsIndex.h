@@ -11,13 +11,16 @@
 //MARK:===============================================================
 //MARK:                     < 宏信息索引 >
 //MARK:===============================================================
-@class AIKVPointer,AINetAbsNode;
+@class AIKVPointer,AINetAbsNode,AIPort;
 @interface AINetAbsIndex : NSObject
 
-//创建absNode前,要先查是否已存在;
--(AIKVPointer*) getAbsPointer:(NSArray*)refs_p;
+//根据refs_p(查找或创建)absValue,并返回地址;
+-(AIKVPointer*) getAbsValuePointer:(NSArray*)refs_p;
 
-//创建absNode后,要建索引;
--(void) setAbsNode:(AINetAbsNode*)absNode;
+//根据absValuePointer操作其被引用的相关;
+-(void) setIndexReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue;
+
+//获取absValue所被引用的absNode地址;
+-(AIKVPointer*) getAbsNodePointer:(AIKVPointer*)absValue_p;
 
 @end

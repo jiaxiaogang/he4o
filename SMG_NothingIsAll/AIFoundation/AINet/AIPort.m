@@ -49,35 +49,17 @@
     return port;
 }
 
-//类比port:1级强度,2级pointerId;
--(NSComparisonResult) compare:(AIPort*)port{
-    if (ISOK(port, AIPort.class)) {
-        if (self.strong) {
-            NSComparisonResult strongResult = [self.strong compare:port.strong];
-            if (strongResult == NSOrderedSame) {
-                if (ISOK(self.pointer, AIKVPointer.class)) {
-                    if (ISOK(port.pointer, AIKVPointer.class)) {
-                        if (self.pointer.pointerId > port.pointer.pointerId) {
-                            return NSOrderedAscending;
-                        }else if(self.pointer.pointerId < port.pointer.pointerId){
-                            return NSOrderedDescending;
-                        }else{
-                            return NSOrderedSame;
-                        }
-                    }
-                }else{
-                    return strongResult;
-                }
-            }else{
-                return strongResult;
-            }
-        }
-    }
-    return NSOrderedAscending;
-}
-
 -(void) strongPlus{
     self.strong.value ++;
+}
+
+-(BOOL) isEqual:(AIPort*)object{
+    if (ISOK(object, AIPort.class)) {
+        if (self.pointer) {
+            return [self.pointer isEqual:object.pointer];
+        }
+    }
+    return false;
 }
 
 @end

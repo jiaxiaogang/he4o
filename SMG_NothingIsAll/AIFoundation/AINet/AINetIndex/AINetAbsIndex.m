@@ -12,10 +12,13 @@
 #import "AIKVPointer.h"
 #import "XGRedisUtil.h"
 #import "AINetAbs.h"
+#import "AINetIndexReference.h"
+#import "AIPort.h"
 
 @interface AINetAbsIndex()
 
-@property (strong, nonatomic) NSMutableDictionary *dic;//key为宏信息的分区标识,value为该分区下的有序指针数组;
+@property (strong, nonatomic) AINetIndexReference *reference;
+@property (strong, nonatomic) NSMutableArray *models;//元素:(指针)  有序:(按指针数组排序)
 
 @end
 
@@ -30,78 +33,74 @@
 }
 
 -(void) initData{
-    NSDictionary *localDic = [[PINCache sharedCache] objectForKey:FILENAME_AbsIndex];
-    self.dic = [[NSMutableDictionary alloc] initWithDictionary:localDic];
+    NSArray *localModels = [[PINCache sharedCache] objectForKey:FILENAME_AbsIndex];
+    self.models = [[NSMutableArray alloc] initWithArray:localModels];
 }
      
 //MARK:===============================================================
 //MARK:                     < publicMethod >
 //MARK:===============================================================
 
-//创建absNode前,要先查是否已存在;
--(AIKVPointer*) getAbsPointer:(NSArray*)refs_p{
-    //1. 拼接key
+-(AIKVPointer*) getAbsValuePointer:(NSArray*)refs_p {
+    //1. 数据检查
+    if (!ARRISOK(refs_p)) {
+        return nil;
+    }
+    
+    //2. 拼接key
     NSString *key = [self getKey:refs_p];
     
-    //2. 二分法查找(从小到大)
-    NSArray *indexArr_p = ARRTOOK([self.dic objectForKey:key]);
-    __block AIKVPointer *absNode_p = nil;
+    //3. 使用二分法查找absValue指针(找到,则返回,找不到,则新建并存储refs_p)
+    __block AIKVPointer *resultPointer;
     [XGRedisUtil searchIndexWithCompare:^NSComparisonResult(NSInteger checkIndex) {
-        AIKVPointer *check_p = ARR_INDEX(indexArr_p, checkIndex);
-        AINetAbsNode *checkAbsNode = [SMGUtils searchObjectForPointer:check_p fileName:FILENAME_Node];
-        return [SMGUtils compareRefsA_p:refs_p refsB_p:checkAbsNode.refs_p];
-    } startIndex:0 endIndex:indexArr_p.count success:^(NSInteger index) {
-        absNode_p = ARR_INDEX(indexArr_p, index);
-    } failure:nil];
+        NSNumber *checkNum = ARR_INDEX(self.models, checkIndex);
+        NSInteger checkPointerId = [NUMTOOK(checkNum) integerValue];
+        AIKVPointer *checkValue_p = [SMGUtils createPointerForAbsValue:key pointerId:checkPointerId];
+        NSArray *checkRefs_p = [SMGUtils searchObjectForPointer:checkValue_p fileName:FILENAME_AbsValue];
+        return [SMGUtils compareRefsA_p:refs_p refsB_p:checkRefs_p];
+    } startIndex:0 endIndex:self.models.count - 1 success:^(NSInteger index) {
+        NSNumber *num = ARR_INDEX(self.models, index);
+        NSInteger pId = [NUMTOOK(num) integerValue];
+        resultPointer = [SMGUtils createPointerForAbsValue:key pointerId:pId];
+    } failure:^(NSInteger index) {
+        AIKVPointer *kvPointer = [SMGUtils createPointerForAbsValue:key];
+        PINDiskCache *pinCache = [[PINDiskCache alloc] initWithName:@"" rootPath:kvPointer.filePath];
+        [pinCache setObject:refs_p forKey:FILENAME_AbsValue];
+        resultPointer = kvPointer;
+        
+        if (ARR_INDEXISOK(self.models, index)) {
+            [self.models insertObject:@(kvPointer.pointerId) atIndex:index];
+        }else{
+            [self.models addObject:@(kvPointer.pointerId)];
+        }
+        
+        //5. 存
+        [[PINCache sharedCache] setObject:self.models forKey:FILENAME_AbsIndex];
+    }];
     
-    //3. return
-    return absNode_p;
+    return resultPointer;
 }
 
-//创建absNode后,要建索引;
--(void) setAbsNode:(AINetAbsNode*)absNode{
-    //1. 数据检查
-    if (!ISOK(absNode, AINetAbsNode.class)) {
-        return;
+-(AINetIndexReference *)reference{
+    if (_reference == nil) {
+        _reference = [[AINetIndexReference alloc] init];
     }
-    //2. 拼接key
-    NSString *key = [self getKey:absNode.refs_p];
-    
-    //3. 分区检查
-    NSArray *indexArr_p = [self.dic objectForKey:key];
-    if (ARRISOK(indexArr_p)) {
-        //4. 有分区,则二分法插入;(从小到大)
-        __block NSInteger findOldIndex;
-        [XGRedisUtil searchIndexWithCompare:^NSComparisonResult(NSInteger checkIndex) {
-            AIKVPointer *check_p = ARR_INDEX(indexArr_p, checkIndex);
-            AINetAbsNode *checkAbsNode = [SMGUtils searchObjectForPointer:check_p fileName:FILENAME_Node];
-            return [SMGUtils compareRefsA_p:absNode.refs_p refsB_p:checkAbsNode.refs_p];
-        } startIndex:0 endIndex:indexArr_p.count success:^(NSInteger index) {
-            if (ARR_INDEXISOK(absNode.refs_p,index)) {
-                [absNode.refs_p removeObjectAtIndex:index];
-            }
-            findOldIndex = index;
-        } failure:^(NSInteger index) {
-            findOldIndex = index;
-        }];
-        
-        //5. 插入到index
-        NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:indexArr_p];
-        if (ARR_INDEXISOK(mArr, findOldIndex)) {
-            [mArr insertObject:absNode.pointer atIndex:findOldIndex];
-        }else{
-            [mArr addObject:absNode.pointer];
-        }
-        [self.dic setObject:mArr forKey:key];
-    }else{
-        //6. 无分区,则创建;
-        NSArray *newArr = @[absNode.pointer];
-        [self.dic setObject:newArr forKey:key];
-    }
-    
-    //7. 更新存储(后续加异步策略)
-    [[PINCache sharedCache] setObject:self.dic forKey:FILENAME_AbsIndex];
+    return _reference;
 }
+
+-(void) setIndexReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue{
+    [self.reference setReference:indexPointer target_p:target_p difValue:difValue];
+}
+
+-(AIKVPointer*) getAbsNodePointer:(AIKVPointer*)absValue_p{
+    NSArray *ports = [self.reference getReference:absValue_p limit:1];
+    AIPort *port = ARR_INDEX(ports, 0);
+    if (ISOK(port, AIPort.class)) {
+        return port.pointer;
+    }
+    return nil;
+}
+
 
 //MARK:===============================================================
 //MARK:                     < privateMethod >

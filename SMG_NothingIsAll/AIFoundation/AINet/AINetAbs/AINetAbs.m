@@ -19,16 +19,17 @@
 @implementation AINetAbs
 
 -(AINetAbsNode*) create:(NSArray*)foNodes refs_p:(NSArray*)refs_p{
-    //1. 从宏信息索引中,查找是否已经存在针对refs_p的抽象;(有则复用)
-    AIKVPointer *oldAbsNode_p = [[AINet sharedInstance] getNetAbsIndex_AbsPointer:refs_p];
-    AINetAbsNode *absNode = [SMGUtils searchObjectForPointer:oldAbsNode_p fileName:FILENAME_Node];
+    //1. 从宏信息索引中,查找是否已经存在针对refs_p的抽象;(有则复用)(无则创建)
+    AIKVPointer *absValue_p = [[AINet sharedInstance] getNetAbsIndex_AbsPointer:refs_p];
+    AIKVPointer *absNode_p = [[AINet sharedInstance] getItemAbsNodePointer:absValue_p];
+    AINetAbsNode *absNode = [SMGUtils searchObjectForPointer:absNode_p fileName:FILENAME_Node];
     
     //2. absNode:无则创建;
     if (absNode == nil) {
         absNode = [[AINetAbsNode alloc] init];
         absNode.pointer = [SMGUtils createPointerForNode:PATH_NET_NODE];
-        [absNode.refs_p addObjectsFromArray:refs_p];//指定微信息
-        [[AINet sharedInstance] setNetAbsIndex_AbsNode:absNode];//建索引
+        absNode.absValue_p = absValue_p;//指定微信息
+        [[AINet sharedInstance] setAbsIndexReference:absValue_p target_p:absNode_p difValue:1];//引用插线
     }
     
     //3. 关联
@@ -80,13 +81,6 @@
     return _conPorts;
 }
 
--(NSMutableArray *)refs_p{
-    if (_refs_p == nil) {
-        _refs_p = [[NSMutableArray alloc] init];
-    }
-    return _refs_p;
-}
-
 //废弃此方法,按强度排序
 -(void) addConPort:(AIPort*)conPort{
     if (ISOK(conPort, AIPort.class) && ISOK(conPort.pointer, AIKVPointer.class)) {
@@ -109,7 +103,7 @@
     if (self) {
         self.pointer = [aDecoder decodeObjectForKey:@"pointer"];
         self.conPorts = [aDecoder decodeObjectForKey:@"conPorts"];
-        self.refs_p = [aDecoder decodeObjectForKey:@"refs_p"];
+        self.absValue_p = [aDecoder decodeObjectForKey:@"absValue_p"];
     }
     return self;
 }
@@ -117,7 +111,7 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [aCoder encodeObject:self.pointer forKey:@"pointer"];
     [aCoder encodeObject:self.conPorts forKey:@"conPorts"];
-    [aCoder encodeObject:self.refs_p forKey:@"refs_p"];
+    [aCoder encodeObject:self.absValue_p forKey:@"absValue_p"];
 }
 
 -(void) print{
@@ -129,30 +123,26 @@
     
     for (AIPort *conPort in self.conPorts) {
         id con = [SMGUtils searchObjectForPointer:conPort.pointer fileName:FILENAME_Node];
-        NSArray *conRefs_p = nil;
+        NSMutableString *micDesc = [NSMutableString new];
         NSString *conPath = nil;
         if (ISOK(con, AIFrontOrderNode.class)) {
             AIFrontOrderNode *foNode = (AIFrontOrderNode*)con;
-            conRefs_p = foNode.orders_kvp;
+            for (AIKVPointer *foValue_p in ARRTOOK(foNode.orders_kvp)) {
+                [micDesc appendString:[SMGUtils searchObjectForPointer:foValue_p fileName:FILENAME_Value]];
+            }
             conPath = STRFORMAT(@"%@/%@/%@/%ld",foNode.pointer.folderName,foNode.pointer.algsType,foNode.pointer.dataSource,(long)foNode.pointer.pointerId);
         }else if(ISOK(con, AINetAbsNode.class)){
             AINetAbsNode *absNode = (AINetAbsNode*)con;
-            conRefs_p = absNode.refs_p;
+            [micDesc appendString:[SMGUtils searchObjectForPointer:absNode.absValue_p fileName:FILENAME_AbsValue]];
             conPath = STRFORMAT(@"%@/%@/%@/%ld",absNode.pointer.folderName,absNode.pointer.algsType,absNode.pointer.dataSource,(long)absNode.pointer.pointerId);
         }
-        [conDesc appendFormat:@"\n> 具象地址:%@\n> 微信息:",conPath];
-        
-        for (AIKVPointer *conRef_p in ARRTOOK(conRefs_p)) {
-            [conDesc appendFormat:@"%@ ",[SMGUtils searchObjectForPointer:conRef_p fileName:FILENAME_Value]];
-        }
+        [conDesc appendFormat:@"\n> 具象地址:%@\n> 微信息:%@\n",conPath,micDesc];
     }
     NSLog(@"conNode>>>\n%@\n",conDesc);
     
     //3. refs
     NSMutableString *refsDesc = [[NSMutableString alloc] init];
-    for (AIKVPointer *ref_p in self.refs_p) {
-        [refsDesc appendFormat:@"%@ ",[SMGUtils searchObjectForPointer:ref_p fileName:FILENAME_Value]];
-    }
+    [refsDesc appendFormat:@"%@ ",[SMGUtils searchObjectForPointer:self.absValue_p fileName:FILENAME_Value]];
     NSLog(@"refs>>>\n> %@",refsDesc);
     
     //4. footer

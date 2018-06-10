@@ -229,8 +229,8 @@ static AINet *_instance;
     return nil;
 }
 
--(void) setItemAlgsReference:(AIKVPointer*)indexPointer port:(AIPort*)port difValue:(int)difValue{
-    [self.netIndex setIndexReference:indexPointer port:port difValue:difValue];
+-(void) setItemAlgsReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue{
+    [self.netIndex setIndexReference:indexPointer target_p:target_p difValue:difValue];
 }
 
 -(NSArray*) getItemAlgsReference:(AIKVPointer*)pointer limit:(NSInteger)limit {
@@ -250,10 +250,7 @@ static AINet *_instance;
  *  MARK:--------------------AINetCMVDelegate--------------------
  */
 -(void)aiNetCMV_CreatedNode:(AIKVPointer *)indexPointer nodePointer:(AIKVPointer *)nodePointer{
-    AIPort *port = [[AIPort alloc] init];
-    port.pointer = nodePointer;
-    port.strong = [[AIPortStrong alloc] init];
-    [self setItemAlgsReference:indexPointer port:port difValue:1];
+    [self setItemAlgsReference:indexPointer target_p:nodePointer difValue:1];
 }
 
 
@@ -269,11 +266,13 @@ static AINet *_instance;
 //MARK:                     < absIndex >
 //MARK:===============================================================
 -(AIKVPointer*) getNetAbsIndex_AbsPointer:(NSArray*)refs_p{
-    return [self.netAbsIndex getAbsPointer:refs_p];
+    return [self.netAbsIndex getAbsValuePointer:refs_p];
 }
-
--(void) setNetAbsIndex_AbsNode:(AINetAbsNode*)absNode{
-    [self.netAbsIndex setAbsNode:absNode];
+-(void) setAbsIndexReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue{
+    [self.netAbsIndex setIndexReference:indexPointer target_p:target_p difValue:difValue];
+}
+-(AIKVPointer*) getItemAbsNodePointer:(AIKVPointer*)absValue_p{
+    return [self.netAbsIndex getAbsNodePointer:absValue_p];
 }
 
 

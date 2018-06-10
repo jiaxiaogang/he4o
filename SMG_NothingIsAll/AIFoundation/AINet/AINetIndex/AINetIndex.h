@@ -12,11 +12,11 @@
 //MARK:===============================================================
 //MARK:                     < 微信息索引 (第一序列) >
 //MARK:===============================================================
-@class AIPointer,AIKVPointer,AIPort;
+@class AIPointer,AIKVPointer;
 @interface AINetIndex : NSObject
 
 -(AIPointer*) getDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
--(void) setIndexReference:(AIKVPointer*)indexPointer port:(AIPort*)port difValue:(int)difValue;
+-(void) setIndexReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue;
 -(NSArray*) getIndexReference:(AIKVPointer*)indexPointer limit:(NSInteger)limit;
 
 @end
