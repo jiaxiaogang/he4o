@@ -29,7 +29,7 @@
         absNode = [[AINetAbsNode alloc] init];
         absNode.pointer = [SMGUtils createPointerForNode:PATH_NET_NODE];
         absNode.absValue_p = absValue_p;//指定微信息
-        [[AINet sharedInstance] setAbsIndexReference:absValue_p target_p:absNode_p difValue:1];//引用插线
+        [[AINet sharedInstance] setAbsIndexReference:absValue_p target_p:absNode.pointer difValue:1];//引用插线
     }
     
     //3. 关联
@@ -128,7 +128,7 @@
         if (ISOK(con, AIFrontOrderNode.class)) {
             AIFrontOrderNode *foNode = (AIFrontOrderNode*)con;
             for (AIKVPointer *foValue_p in ARRTOOK(foNode.orders_kvp)) {
-                [micDesc appendString:[SMGUtils searchObjectForPointer:foValue_p fileName:FILENAME_Value]];
+                [micDesc appendFormat:@"%@ ",[SMGUtils searchObjectForPointer:foValue_p fileName:FILENAME_Value]];
             }
             conPath = STRFORMAT(@"%@/%@/%@/%ld",foNode.pointer.folderName,foNode.pointer.algsType,foNode.pointer.dataSource,(long)foNode.pointer.pointerId);
         }else if(ISOK(con, AINetAbsNode.class)){

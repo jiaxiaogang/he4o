@@ -53,10 +53,10 @@
         }
         
         //4. 未找到,则new
-        if (ISOK(findPort, AIPort.class)) {
+        if (!ISOK(findPort, AIPort.class)) {
             findPort = [[AIPort alloc] init];
             findPort.pointer = target_p;
-        }
+        } 
         
         //5. 更新strongValue & 插入队列
         BOOL insertDirection = difValue > 0; //是否往后查
