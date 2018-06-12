@@ -22,6 +22,7 @@
 @interface AIThinkingControl()
 
 @property (strong,nonatomic) NSMutableArray *cacheShort;//存AIModel(从Algs传入,待Thinking取用分析)(容量8);
+@property (strong,nonatomic) NSMutableArray *cacheThinkFeed;  //思维流
 
 @end
 
@@ -46,6 +47,7 @@ static AIThinkingControl *_instance;
 
 -(void) initData{
     self.cacheShort = [[NSMutableArray alloc] init];
+    self.cacheThinkFeed = [[NSMutableArray alloc] init];
 }
 
 -(void) initRun{
@@ -199,43 +201,6 @@ static AIThinkingControl *_instance;
     //1. 将索引的第二序列,提交给actionControl联想 (1. 作匹配测试  2. 只从强度最强往下);
 }
 
--(void) testIndexReference{
-//    for (AIKVPointer *pointer in algsArr) {
-//        if (ISOK(pointer, AIKVPointer.class)) {
-//
-//            AIPort* (^ CreatePort)(NSInteger,NSInteger) = ^(NSInteger strongValue,NSInteger pointerId){
-//                AIPortStrong *s1 = [[AIPortStrong alloc] init];
-//                s1.value = strongValue;
-//
-//                AIPort *p1 = [AIPort newWithNode:[[AIActionControl shareInstance] insertModel:[AIIntModel newWithFrom:1 to:1] dataSource:@"testDS"]];
-//                p1.strong = s1;
-//                p1.pointer.pointerId = pointerId;
-//                return p1;
-//            };
-//
-//            AIPort *port46 = CreatePort(1,7);
-//            [[AINet sharedInstance] setItemAlgsReference:pointer port:port46 difValue:1];
-//            NSLog(@"");
-//
-//            //AIPort *port11 = CreatePort(1,1);
-//            //AIPort *port12 = CreatePort(1,2);
-//            //AIPort *port23 = CreatePort(2,3);
-//            //AIPort *port34 = CreatePort(3,4);
-//            //AIPort *port35 = CreatePort(3,5);
-//            //AIPort *port36 = CreatePort(3,6);
-//            //[[AINet sharedInstance] setItemAlgsReference:pointer port:port11 difValue:1];
-//            //[[AINet sharedInstance] setItemAlgsReference:pointer port:port12 difValue:1];
-//            //[[AINet sharedInstance] setItemAlgsReference:pointer port:port23 difValue:1];
-//            //[[AINet sharedInstance] setItemAlgsReference:pointer port:port34 difValue:1];
-//            //[[AINet sharedInstance] setItemAlgsReference:pointer port:port35 difValue:1];
-//            //[[AINet sharedInstance] setItemAlgsReference:pointer port:port36 difValue:1];
-//
-//            NSArray *referenceArr = [[AINet sharedInstance] getItemAlgsReference:pointer limit:3];
-//            NSLog(@"");
-//        }
-//    }
-}
-
 //输入时,检测是否mv输入(饿或不饿)
 -(BOOL) dataIn_CheckMV:(NSArray*)algsArr {
     BOOL findMV_UrgentValue = false;
@@ -267,15 +232,6 @@ static AIThinkingControl *_instance;
     return cmvModel;
 }
 
-
-
-
-
--(void) dataIn_Decision___Temp{
-    //可对shortCache数据作类比操作;
-}
-
-
 //联想相关数据(看到西瓜会开心)
 -(void) dataIn_AssociativeData:(NSArray*)algsArr {
     if (ISOK(algsArr, NSArray.class)) {
@@ -291,14 +247,20 @@ static AIThinkingControl *_instance;
                         AINetCMVModel *cmvModel = [SMGUtils searchObjectForPointer:foNode.cmvModel_kvp fileName:FILENAME_CMVModel];
                         AICMVNode *cmvNode = [SMGUtils searchObjectForPointer:cmvModel.cmvNode_p fileName:FILENAME_Node];
                         NSLog(@"____联想结果:%@",cmvNode.pointer.algsType);
+                        
+                        
+                        //此处,卡在cmvRule,必须先写完cmvRule,再来继续;
+                        //此处,另需要把cmv的完整模型写完;(目前,真正的change还没有构建到模型中)
+                        
+                        
                     }else if(ISOK(referNode, AINode.class)){
                         //联想到数据网络节点
                         AINode *node = (AINode*)referNode;
                         NSLog(@"");
                     }else if(ISOK(referNode, AINetAbsNode.class)){
-                        //1. 删除absNode下的refs_p;并指向absReference;////////////////////////////////////////
-                        //2. 
+                        NSLog(@"");
                         
+                        //将结果存到cacheThinkFeed;
                     }
                     
                     NSLog(@"");
