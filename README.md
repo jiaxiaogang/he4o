@@ -1,4 +1,4 @@
-# SMG(强人工智能系统)
+# SMG (一款AGI系统内核)
 
 <br>
 
@@ -14,7 +14,7 @@
 [![License](https://img.shields.io/badge/license-GPL-blue.svg)](LICENSE)
 [![Join the chat at https://gitter.im/jiaxiaogang/SMG](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jiaxiaogang/SMG)
 
-## 大家有交流需求或问题请直接Issues我;
+## 交流或问题可Issues;
 
 ***
 
@@ -91,6 +91,15 @@
 ### 2018.02.01
 
 > - 宏微
+
+### 2018.05.01
+
+> - 相对
+
+
+
+
+
 
 
 <br><br><br><br><br><br><br><br><br><br><br><br>
