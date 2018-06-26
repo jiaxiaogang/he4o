@@ -48,13 +48,10 @@
     AIFrontOrderNode *foNode = [[AIFrontOrderNode alloc] init];//node
     foNode.pointer = [SMGUtils createPointer:PATH_NET_FRONT_ORDER_NODE algsType:@"" dataSource:@""];
     foNode.cmvModel_kvp = cmvModel.pointer;
-    
-    for (NSArray *algsArr_kvp in ARRTOOK(order)) {
-        for (AIKVPointer *data_kvp in algsArr_kvp) {
-            if (ISOK(data_kvp, AIKVPointer.class)) {
-                [foNode.orders_kvp addObject:data_kvp];
-                [self createdNode:data_kvp nodePointer:foNode.pointer];//reference
-            }
+    for (AIKVPointer *data_kvp in ARRTOOK(order)) {
+        if (ISOK(data_kvp, AIKVPointer.class)) {
+            [foNode.orders_kvp addObject:data_kvp];
+            [self createdNode:data_kvp nodePointer:foNode.pointer];//reference
         }
     }
     

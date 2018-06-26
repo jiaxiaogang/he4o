@@ -172,7 +172,7 @@ static AIThinkingControl *_instance;
 //MARK:                     < dataIn >
 //MARK:===============================================================
 -(void) dataIn:(NSObject*)algsModel{
-    //1. 装箱
+    //1. 装箱(除mv有两个元素外一般仅有一个元素)
     NSArray *algsArr = [self dataIn_ConvertPointer:algsModel];
     
     //2. 检测imv
@@ -183,7 +183,9 @@ static AIThinkingControl *_instance;
     if (findMV) {
         cmvModel = [self dataIn_CreateCMVModel:algsArr];
     }else{
-        [self dataIn_ToShortCache:algsArr];
+        for (AIKVPointer *algs_p in ARRTOOK(algsArr)) {
+            [self dataIn_ToShortCache:algs_p];
+        }
     }
     
     //4. 联想
@@ -217,11 +219,17 @@ static AIThinkingControl *_instance;
     return findMV_UrgentValue && findMV_TargetType;
 }
 
-//存到shortCache;
--(void) dataIn_ToShortCache:(NSArray*)algsArr{
-    [self.cacheShort addObject:algsArr];
-    if (self.cacheShort.count > 8) {
-        [self.cacheShort removeObjectAtIndex:0];
+/**
+ *  MARK:--------------------shortCache瞬时记忆--------------------
+ *  1. 存algsDic中的每个inputIndexPointer;
+ *  2. 存absNode指向的absIndexPointer;
+ */
+-(void) dataIn_ToShortCache:(AIKVPointer*)pointer{
+    if (ISOK(pointer, AIKVPointer.class)) {
+        [self.cacheShort addObject:pointer];
+        if (self.cacheShort.count > 8) {
+            [self.cacheShort removeObjectAtIndex:0];
+        }
     }
 }
 
@@ -329,14 +337,14 @@ static AIThinkingControl *_instance;
                                 
                             }
                             
-                            //8. 构建absNode
+                            //8. 构建absNode & 并把absValue添加到瞬时记忆
                             if (ARRISOK(sames)) {
                                 NSLog(@"____类比到规律——————————");
                                 for (AIKVPointer *same in sames) {
                                     NSLog(@"\n____>%ld",(long)same.pointerId);
                                 }
                                 AINetAbsNode *absNode = [[AINet sharedInstance] createAbs:@[foNode,assFoNode] refs_p:sames];
-                                
+                                [self dataIn_ToShortCache:absNode.absValue_p];
                                 NSLog(@"构建抽象节点成功.....");
                                 [absNode print];
                             }

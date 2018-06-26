@@ -208,7 +208,7 @@ static AINet *_instance;
 //MARK:===============================================================
 //MARK:                     < index >
 //MARK:===============================================================
--(NSMutableArray*) getAlgsArr:(NSObject*)algsModel {
+-(NSMutableArray*)   getAlgsArr:(NSObject*)algsModel {
     if (algsModel) {
         NSDictionary *modelDic = [NSObject getDic:algsModel containParent:true];
         NSMutableArray *algsArr = [[NSMutableArray alloc] init];
