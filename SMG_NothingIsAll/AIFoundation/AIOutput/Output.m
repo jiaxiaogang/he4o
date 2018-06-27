@@ -10,25 +10,28 @@
 
 @implementation Output
 
--(void) output_Text:(NSString*)text{
-    [self saveLogThink:OutputType_Text content:STRTOOK(text)];
-    NSLog(@"%@",text);
+static Output *_instance;
++(Output*) sharedInstance{
+    if (_instance == nil) {
+        _instance = [[Output alloc] init];
+    }
+    return _instance;
 }
 
--(void) output_Face:(MoodType)type value:(int)value{
-    if (type == MoodType_Irritably2Calm) {
-        if (value < 0) {
-            [self saveLogThink:OutputType_Face content:@(OutputFaceType_Cry)];//logThink
-            NSLog(@"😭");
-        }else if(value > 1) {
-            [self saveLogThink:OutputType_Face content:@(OutputFaceType_Smile)];//logThink
-            NSLog(@"😃");
-        }
+-(void) output_Text:(NSString*)text{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(output_Text:)]) {
+        [self.delegate output_Text:text];
     }
 }
 
--(void) saveLogThink:(OutputType)type content:(NSObject*)content{
-    //1,存输出
+-(void) output_Face:(OutputFaceType)type{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(output_Text:)]) {
+        if (type == OutputFaceType_Cry) {
+            [self.delegate output_Text:@"😭"];
+        }else if(type == OutputFaceType_Smile){
+            [self.delegate output_Text:@"😃"];
+        }
+    }
 }
 
 @end

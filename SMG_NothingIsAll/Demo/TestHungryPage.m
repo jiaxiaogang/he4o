@@ -10,8 +10,9 @@
 #import "DemoHunger.h"
 #import "DemoCharge.h"
 #import "AIInput.h"
+#import "Output.h"
 
-@interface TestHungryPage ()<UITextFieldDelegate>
+@interface TestHungryPage ()<UITextFieldDelegate,OutputDelegate>
 
 @property (weak, nonatomic) IBOutlet UIButton *addBtn;
 @property (weak, nonatomic) IBOutlet UIButton *subBtn;
@@ -25,6 +26,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *thinkStatusBtn;
 @property (weak, nonatomic) IBOutlet UIButton *mainThreadStatusBtn;
 @property (weak, nonatomic) IBOutlet UITextField *logCountTF;
+@property (weak, nonatomic) IBOutlet UILabel *aiOutputLab;
 
 @end
 
@@ -33,6 +35,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self initView];
+    [self initData];
     [self initDisplay];
 }
 
@@ -56,6 +59,10 @@
     [self.thinkStatusBtn.layer setMasksToBounds:true];
     [self.thinkStatusBtn.layer setBorderColor:[UIColor grayColor].CGColor];
     [self.thinkStatusBtn.layer setBorderWidth:1];
+}
+
+-(void) initData{
+    [Output sharedInstance].delegate = self;
 }
 
 -(void) initDisplay{
@@ -127,5 +134,11 @@
     return true;
 }
 
+/**
+ *  MARK:--------------------OutputDelegate--------------------
+ */
+-(void)output_Text:(NSString *)text{
+    [self.aiOutputLab setText:STRTOOK(text)];
+}
 
 @end
