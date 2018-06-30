@@ -21,8 +21,9 @@
 
 @interface AIThinkingControl()
 
-@property (strong,nonatomic) NSMutableArray *cacheShort;//存AIModel(从Algs传入,待Thinking取用分析)(容量8);
-@property (strong,nonatomic) NSMutableArray *cacheThinkFeed;  //思维流
+@property (strong,nonatomic) NSMutableArray *shortCache;//存AIModel(从Algs传入,待Thinking取用分析)(容量8);
+@property (strong,nonatomic) NSMutableArray *thinkFeedCache;  //思维流
+@property (strong,nonatomic) NSMutableArray *imvCache;  //当前imv状态序列(注:所有cmv只与cacheImv中作匹配)(思考,是否可将imvCache与shortCache合为一起)
 
 @end
 
@@ -46,8 +47,9 @@ static AIThinkingControl *_instance;
 }
 
 -(void) initData{
-    self.cacheShort = [[NSMutableArray alloc] init];
-    self.cacheThinkFeed = [[NSMutableArray alloc] init];
+    self.shortCache = [[NSMutableArray alloc] init];
+    self.thinkFeedCache = [[NSMutableArray alloc] init];
+    self.imvCache = [[NSMutableArray alloc] init];
 }
 
 -(void) initRun{
@@ -119,7 +121,7 @@ static AIThinkingControl *_instance;
         }
     }
     
-    //3. 存cacheShort
+    //3. 存shortCache
     [self setObject_Caches:nodeDic];
     
     //4. 提交思维循环
@@ -129,7 +131,7 @@ static AIThinkingControl *_instance;
 
 /**
  *  MARK:--------------------思维循环--------------------
- *  1. 优化级;(经验->多事务分析->感觉猜测->cacheShort瞎关联)
+ *  1. 优化级;(经验->多事务分析->感觉猜测->shortCache瞎关联)
  *  2. 符合度;(99%->1%)
  *  3. 类比原则:先用dataType和dataSource取,后存,再类比后作update结构化;
  */
@@ -154,10 +156,10 @@ static AIThinkingControl *_instance;
 }
 
 -(void) setObject_Caches:(NSObject*)algsModel {
-    //cacheShort
-    [self.cacheShort addObject:algsModel];
-    if (self.cacheShort.count > 8) {
-        [self.cacheShort subarrayWithRange:NSMakeRange(self.cacheShort.count - 8, 8)];
+    //shortCache
+    [self.shortCache addObject:algsModel];
+    if (self.shortCache.count > 8) {
+        [self.shortCache subarrayWithRange:NSMakeRange(self.shortCache.count - 8, 8)];
     }
 }
 
@@ -226,17 +228,17 @@ static AIThinkingControl *_instance;
  */
 -(void) dataIn_ToShortCache:(AIKVPointer*)pointer{
     if (ISOK(pointer, AIKVPointer.class)) {
-        [self.cacheShort addObject:pointer];
-        if (self.cacheShort.count > 8) {
-            [self.cacheShort removeObjectAtIndex:0];
+        [self.shortCache addObject:pointer];
+        if (self.shortCache.count > 8) {
+            [self.shortCache removeObjectAtIndex:0];
         }
     }
 }
 
 //联想到mv时,构建cmv模型;
 -(AINetCMVModel*) dataIn_CreateCMVModel:(NSArray*)algsArr {
-    AINetCMVModel *cmvModel = [[AINet sharedInstance] createCMV:algsArr order:self.cacheShort];
-    [self.cacheShort removeAllObjects];
+    AINetCMVModel *cmvModel = [[AINet sharedInstance] createCMV:algsArr order:self.shortCache];
+    [self.shortCache removeAllObjects];
     return cmvModel;
 }
 
@@ -268,7 +270,7 @@ static AIThinkingControl *_instance;
                     }else if(ISOK(referNode, AINetAbsNode.class)){
                         NSLog(@"");
                         
-                        //将结果存到cacheThinkFeed;
+                        //将结果存到thinkFeedCache;
                     }
                     
                     NSLog(@"");
@@ -370,5 +372,22 @@ static AIThinkingControl *_instance;
 -(void) dataIn_BuildNet{
     
 }
+
+
+//MARK:===============================================================
+//MARK:                     < decision >
+//MARK:===============================================================
+
+//输出front的入网;
+-(void) decision_InNet{
+    
+}
+
+//输出
+-(void) decision_Out{
+    
+}
+
+
 
 @end
