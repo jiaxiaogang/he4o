@@ -13,7 +13,7 @@
  */
 @interface DemoHunger : NSObject
 
--(void) commit:(CGFloat)level;
+-(void) commit:(CGFloat)level state:(UIDeviceBatteryState)state;
 
 @end
 

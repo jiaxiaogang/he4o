@@ -9,6 +9,7 @@
 #import "AIReactorControl.h"
 #import "AIActionControl.h"
 #import "AIModel.h"
+#import "AIImvAlgs.h"
 
 @implementation AIReactorControl
 
@@ -20,7 +21,7 @@ static AIReactorControl *_instance;
     return _instance;
 }
 
--(ImvModelBase*) createMindValue:(IMVType)type value:(NSInteger)value {
+-(ImvModelBase*) createMindValue:(MVType)type value:(NSInteger)value {
     //1. 根据model判断是否createMindValue();
     //2. 根据model判断是否作Reactor();
     return nil;
@@ -37,8 +38,10 @@ static AIReactorControl *_instance;
     [[AIActionControl shareInstance] commitInput:input];
 }
 
--(void) commitInputIMV:(IMVType)type value:(NSInteger)value {
-    [[AIActionControl shareInstance] commitInputIMV:type value:value];
+-(void) commitIMV:(MVType)type from:(NSInteger)from to:(NSInteger)to {
+    //目前smg不支持,在mvType的某些情况下的,肢体反射反应;
+    
+    [AIImvAlgs commitIMV:type from:from to:to];
 }
 
 -(void) commitCustom:(CustomInputType)type value:(NSInteger)value{

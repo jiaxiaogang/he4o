@@ -32,15 +32,20 @@
  *  MARK:--------------------method--------------------
  */
 -(void) observerHungerLevelChanged:(NSNotification*)notification{
-    //1,取值
-    CGFloat level = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:[UIDevice currentDevice].batteryLevel];
-    
-    //2,传给Input
-    [theInput commitIMV:IMVType_Hunger value:level];
+    [self commit:[UIDevice currentDevice].batteryLevel state:[UIDevice currentDevice].batteryState];
 }
 
--(void) commit:(CGFloat)level {
-    [theInput commitIMV:IMVType_Hunger value:level];
+-(void) commit:(CGFloat)level state:(UIDeviceBatteryState)state{
+    //1,取值
+    CGFloat toLevel = MIN(1, MAX(0, level));
+    CGFloat fromLevel = state == UIDeviceBatteryStateCharging ? toLevel + 0.01f : toLevel - 0.01f;
+    
+    //2. 转换0-10;
+    CGFloat from = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:fromLevel];
+    CGFloat to = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:toLevel];
+    
+    //3. 传给Input
+    [theInput commitIMV:MVType_Hunger from:from to:to];
 }
 
 @end

@@ -28,6 +28,8 @@
 @property (weak, nonatomic) IBOutlet UITextField *logCountTF;
 @property (weak, nonatomic) IBOutlet UILabel *aiOutputLab;
 
+@property (assign, nonatomic) CGFloat lastSliderValue;
+
 @end
 
 @implementation TestHungryPage
@@ -83,11 +85,11 @@
  *  MARK:--------------------onclick--------------------
  */
 - (IBAction)addBtnOnClick:(id)sender {
-    [[[DemoHunger alloc] init] commit:9];
+    [[[DemoHunger alloc] init] commit:9 state:UIDeviceBatteryStateCharging];
 }
 
 - (IBAction)subBtnOnClick:(id)sender {
-    [[[DemoHunger alloc] init] commit:1];
+    [[[DemoHunger alloc] init] commit:1 state:UIDeviceBatteryStateUnplugged];
 }
 
 - (IBAction)eatStartBtnOnClick:(id)sender {
@@ -111,7 +113,15 @@
 }
 
 - (IBAction)hungerLevelSliderValueChanged:(id)sender {
-    [[[DemoHunger alloc] init] commit:self.hungerLevelSlider.value];
+    //1. 数据
+    CGFloat curValue = self.hungerLevelSlider.value;
+    UIDeviceBatteryState state = self.lastSliderValue > curValue ? UIDeviceBatteryStateUnplugged : UIDeviceBatteryStateCharging;
+    
+    //2. 提交变化
+    [[[DemoHunger alloc] init] commit:curValue state:state];
+    
+    //3. 记录当前值
+    self.lastSliderValue = curValue;
 }
 
 - (IBAction)thinkBtnOnClick:(id)sender {

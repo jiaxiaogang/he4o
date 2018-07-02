@@ -17,7 +17,7 @@
 /**
  *  MARK:--------------------先天mindValue工厂--------------------
  */
--(ImvModelBase*) createMindValue:(IMVType)type value:(NSInteger)value;
+-(ImvModelBase*) createMindValue:(MVType)type value:(NSInteger)value;
 
 
 /**
@@ -26,7 +26,7 @@
 -(void) createReactor:(AIMoodType)moodType;
 
 -(void) commitInput:(id)input;
--(void) commitInputIMV:(IMVType)type value:(NSInteger)value;
+-(void) commitIMV:(MVType)type from:(NSInteger)from to:(NSInteger)to;
 -(void) commitCustom:(CustomInputType)type value:(NSInteger)value;
 
 @end

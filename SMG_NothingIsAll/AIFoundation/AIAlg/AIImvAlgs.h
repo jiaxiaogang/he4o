@@ -10,6 +10,10 @@
 
 @interface AIImvAlgs : NSObject
 
-+(void) commitInputIMV:(IMVType)type value:(NSInteger)value;
+/**
+ *  MARK:--------------------输入mindValue--------------------
+ *  所有值域,转换为0-10;(例如:hunger时0为不饿,10为非常饿)
+ */
++(void) commitIMV:(MVType)type from:(NSInteger)from to:(NSInteger)to;
 
 @end

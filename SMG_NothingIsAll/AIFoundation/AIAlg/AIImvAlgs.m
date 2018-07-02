@@ -13,33 +13,30 @@
 
 @implementation AIImvAlgs
 
-+(void) commitInputIMV:(IMVType)type value:(NSInteger)value{
-    if (type == IMVType_Hunger) {
-        ImvAlgsHungerModel *model = [[ImvAlgsHungerModel alloc] init];
-        model.urgentValue = [self getAlgsUrgentValue:value];
-        model.targetType = [self getAlgsTargetType:model.urgentValue];
-        
-        //1. 结果给Thinking
-        [[AIThinkingControl shareInstance] commitInput:model];
-    }
+/**
+ *  MARK:--------------------输入mindValue--------------------
+ *  所有值域,转换为0-10;(例如:hunger时0为不饿,10为非常饿)
+ */
++(void) commitIMV:(MVType)type from:(NSInteger)from to:(NSInteger)to{
+    //1. 生成imvModel
+    ImvAlgsModelBase *imvModel = [[ImvAlgsModelBase alloc] init];
+    imvModel.urgentValue = [self getAlgsUrgentValue:to];
+    imvModel.targetType = [self getAlgsTargetType:type];
+    imvModel.type = type;
+    
+    //2. 结果给Thinking
+    [[AIThinkingControl shareInstance] commitInput:imvModel];
 }
 
-+(CGFloat) getAlgsUrgentValue:(CGFloat)inputValue{
-    CGFloat algsValue = inputValue * inputValue;
-    if (inputValue < 0) {
-        algsValue = -algsValue;
-    }
-    return algsValue;
++(CGFloat) getAlgsUrgentValue:(CGFloat)to{
+    return to * to;
 }
 
-+(AITargetType) getAlgsTargetType:(CGFloat)urgentValue{
-    if (urgentValue < 0) {
-        return AITargetType_Up;
-    }else if(urgentValue > 0) {
++(AITargetType) getAlgsTargetType:(MVType)type{
+    if (type == MVType_Hunger || type == MVType_Anxious) {
         return AITargetType_Down;
-    }else{
-        return AITargetType_None;
     }
+    return AITargetType_Down;
 }
 
 @end

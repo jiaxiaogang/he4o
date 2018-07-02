@@ -10,7 +10,6 @@
 #import "AINode.h"
 #import "AIStringAlgs.h"
 #import "PINCache.h"
-#import "AIImvAlgs.h"
 #import "AICustomAlgs.h"
 #import "ImvAlgsModelBase.h"
 #import "AINet.h"
@@ -30,10 +29,6 @@ static AIActionControl *_instance;
     if (ISOK(input, [NSString class])) {
         [AIStringAlgs commitInput:input];
     }
-}
-
--(void) commitInputIMV:(IMVType)type value:(NSInteger)value{
-    [AIImvAlgs commitInputIMV:type value:value];
 }
 
 -(void) commitCustom:(CustomInputType)type value:(NSInteger)value{

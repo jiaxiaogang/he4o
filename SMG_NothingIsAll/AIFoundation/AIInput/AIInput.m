@@ -46,8 +46,8 @@ static AIInput *_instance;
     [[AIReactorControl shareInstance] commitInput:text];
 }
 
--(void) commitIMV:(IMVType)type value:(NSInteger)value{
-    [[AIReactorControl shareInstance] commitInputIMV:type value:value];
+-(void) commitIMV:(MVType)type from:(NSInteger)from to:(NSInteger)to{
+    [[AIReactorControl shareInstance] commitIMV:type from:from to:to];
 }
 
 -(void) commitCustom:(CustomInputType)type value:(NSInteger)value{

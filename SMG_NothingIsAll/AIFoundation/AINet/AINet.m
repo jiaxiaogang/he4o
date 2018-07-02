@@ -223,7 +223,7 @@ static AINet *_instance;
             if (pointer) {
                 [algsArr addObject:pointer];
             }
-        }
+        } 
         return algsArr;
     }
     return nil;
