@@ -183,6 +183,11 @@ static AIThinkingControl *_instance;
     //3. 分流
     AINetCMVModel *cmvModel;
     if (findMV) {
+        //4. 抵消 | 合并
+        [self dataIn_ConvertMVValue:algsArr success:^(NSInteger urgentValue, AITargetType targetType, MVType type) {
+            //改AlgsIMVBase...imv与cmv需要整合成一个;
+        }];
+        
         cmvModel = [self dataIn_CreateCMVModel:algsArr];
     }else{
         for (AIKVPointer *algs_p in ARRTOOK(algsArr)) {
@@ -206,19 +211,36 @@ static AIThinkingControl *_instance;
 }
 
 //输入时,检测是否mv输入(饿或不饿)
--(BOOL) dataIn_CheckMV:(NSArray*)algsArr {
-    BOOL findMV_UrgentValue = false;
-    BOOL findMV_TargetType = false;
+-(BOOL) dataIn_CheckMV:(NSArray*)algsArr{
+    for (AIKVPointer *pointer in algsArr) {
+        if ([NSClassFromString(pointer.algsType) isSubclassOfClass:ImvAlgsModelBase.class]) {
+            return true;
+        }
+    }
+    return false;
+}
+
+-(void) dataIn_ConvertMVValue:(NSArray*)algsArr success:(void(^)(NSInteger urgentValue,AITargetType targetType,MVType type))success{
+    //1. 数据
+    NSInteger urgentValue = 0;
+    AITargetType targetType = AITargetType_None;
+    MVType type = MVType_None;
+    
+    //2. 数据检查
     for (AIKVPointer *pointer in algsArr) {
         if ([NSClassFromString(pointer.algsType) isSubclassOfClass:ImvAlgsModelBase.class]) {
             if ([@"urgentValue" isEqualToString:pointer.dataSource]) {
-                findMV_UrgentValue = true;
+                urgentValue = [NUMTOOK([SMGUtils searchObjectForPointer:pointer fileName:FILENAME_Value]) integerValue];
             }else if ([@"targetType" isEqualToString:pointer.dataSource]) {
-                findMV_TargetType = true;
+                targetType = [NUMTOOK([SMGUtils searchObjectForPointer:pointer fileName:FILENAME_Value]) integerValue];
+            }else if ([@"type" isEqualToString:pointer.dataSource]) {
+                type = [NUMTOOK([SMGUtils searchObjectForPointer:pointer fileName:FILENAME_Value]) integerValue];
             }
         }
     }
-    return findMV_UrgentValue && findMV_TargetType;
+    
+    //3. 逻辑执行
+    if (success) success(urgentValue,targetType,type);
 }
 
 /**

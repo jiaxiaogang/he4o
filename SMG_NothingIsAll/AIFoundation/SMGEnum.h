@@ -109,6 +109,7 @@ typedef NS_ENUM(NSInteger, MVDownCurveType) {
  *  MARK:--------------------IMVType(输入imv信号)--------------------
  */
 typedef NS_ENUM(NSInteger, MVType) {
+    MVType_None     = 0,
     MVType_Hunger   = 1,
     MVType_Anxious  = 2,
 };

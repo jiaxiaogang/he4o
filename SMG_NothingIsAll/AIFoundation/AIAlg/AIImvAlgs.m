@@ -36,7 +36,7 @@
     if (type == MVType_Hunger || type == MVType_Anxious) {
         return AITargetType_Down;
     }
-    return AITargetType_Down;
+    return AITargetType_None;
 }
 
 @end
