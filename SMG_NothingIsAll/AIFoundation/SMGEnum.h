@@ -190,8 +190,9 @@ typedef NS_ENUM(NSInteger, AILineType) {
  */
 typedef NS_ENUM(NSInteger, AITargetType) {
     AITargetType_None   = 0,//不变
-    AITargetType_Up     = 1,//增涨
-    AITargetType_Down   = 2,//下降
+    AITargetType_Up     = 1,//增涨(欲望)
+    AITargetType_Down   = 2,//下降(饥饿,焦急)
+    AITargetType_Repeat = 3,//重复(快乐)
 };
 
 /**

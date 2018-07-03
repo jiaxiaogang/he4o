@@ -11,6 +11,7 @@
 #import "PINCache.h"
 #import "XGRedisUtil.h"
 #import "AIPort.h"
+#import "XGRedis.h"
 
 @implementation SMGUtils
 
@@ -451,19 +452,44 @@
 }
 
 +(id) searchObjectForPointer:(AIKVPointer*)pointer fileName:(NSString*)fileName{
+    return [self searchObjectForPointer:pointer fileName:fileName time:0];
+}
+
++(id) searchObjectForPointer:(AIKVPointer*)pointer fileName:(NSString*)fileName time:(double)time{
     if (ISOK(pointer, AIKVPointer.class)) {
+        //1. 优先取redis
+        NSString *redisKey = STRFORMAT(@"%@/%@",pointer.filePath,fileName);
+        if (time > 0) {
+            id redisObj = [[XGRedis sharedInstance] objectForKey:redisKey];
+            if (redisObj != nil) {
+                return redisObj;
+            }
+        }
+        
+        //2. 再取disk
         PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:pointer.filePath];
-        return [cache objectForKey:fileName];
+        id diskObj = [cache objectForKey:fileName];
+        if (time > 0) {
+            [[XGRedis sharedInstance] setObject:diskObj forKey:redisKey time:time];
+        }
+        return diskObj;
     }
     return nil;
 }
 
 +(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName{
+    [self insertObject:obj rootPath:rootPath fileName:fileName time:0];
+}
++(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName time:(double)time{
+    //1. 存disk
     PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:STRTOOK(rootPath)];
     [cache setObject:obj forKey:STRTOOK(fileName)];
+    
+    //2. 存redis
+    if (time > 0) {
+        [[XGRedis sharedInstance] setObject:obj forKey:STRFORMAT(@"%@/%@",rootPath,fileName) time:time];
+    }
 }
-
-
 
 @end
 

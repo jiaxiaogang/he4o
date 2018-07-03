@@ -19,14 +19,6 @@
 
 @implementation XGRedisDictionary
 
-static XGRedisDictionary *_instance;
-+(XGRedisDictionary*) sharedInstance{
-    if (_instance == nil) {
-        _instance = [[XGRedisDictionary alloc] init];
-    }
-    return _instance;
-}
-
 -(id) init{
     self = [super init];
     if (self) {

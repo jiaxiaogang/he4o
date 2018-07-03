@@ -80,7 +80,9 @@
 +(NSString*) sqlWhere_K:(id)columnName V:(id)value;
 +(NSDictionary*) sqlWhereDic_K:(id)columnName V:(id)value;
 +(id) searchObjectForPointer:(AIKVPointer*)pointer fileName:(NSString*)fileName;
++(id) searchObjectForPointer:(AIKVPointer*)pointer fileName:(NSString*)fileName time:(double)time;//找到后,缓存到redis,time秒;
 +(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName;
++(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName time:(double)time;//同时插入到redis,time秒
 
 @end
 

@@ -15,7 +15,6 @@
  */
 @interface XGRedisDictionary : NSObject
 
-+(XGRedisDictionary*) sharedInstance;
 -(NSArray*) allKeys;//copy keys;
 -(NSInteger) count;
 -(BOOL) removeObjectAtIndex:(NSInteger)index;

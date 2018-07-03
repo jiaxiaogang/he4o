@@ -20,6 +20,14 @@
 
 @implementation XGRedis
 
+static XGRedis *_instance;
++(XGRedis*) sharedInstance{
+    if (_instance == nil) {
+        _instance = [[XGRedis alloc] init];
+    }
+    return _instance;
+}
+
 -(id) init{
     self = [super init];
     if (self) {
@@ -29,7 +37,7 @@
 }
 
 -(void) initData{
-    self.dic = [XGRedisDictionary sharedInstance];
+    self.dic = [[XGRedisDictionary alloc] init];
     self.timer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
     self.gcMarks = [[NSMutableArray alloc] init];
 }

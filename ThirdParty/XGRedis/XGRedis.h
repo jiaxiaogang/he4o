@@ -17,6 +17,7 @@
  */
 @interface XGRedis : NSObject
 
++(XGRedis*) sharedInstance;
 -(void) setObject:(NSObject*)obj forKey:(NSString*)key;
 -(void) setObject:(NSObject*)obj forKey:(NSString*)key time:(double)time;
 -(NSObject*) objectForKey:(NSString*)key;

@@ -21,9 +21,9 @@
 
 @interface AIThinkingControl()
 
-@property (strong,nonatomic) NSMutableArray *shortCache;//存AIModel(从Algs传入,待Thinking取用分析)(容量8);
-@property (strong,nonatomic) NSMutableArray *thinkFeedCache;  //思维流
-@property (strong,nonatomic) NSMutableArray *imvCache;  //当前imv状态序列(注:所有cmv只与cacheImv中作匹配)(思考,是否可将imvCache与shortCache合为一起)
+@property (strong,nonatomic) NSMutableArray *shortCache;        //瞬时记忆_存AIModel(从Algs传入,待Thinking取用分析)(容量8);
+@property (strong,nonatomic) NSMutableArray *thinkFeedCache;    //短时记忆_思维流(包括shortCache和cmvCache,10分钟内都会存在此处(人类可能一天或几小时))
+@property (strong,nonatomic) NSMutableArray *cmvCache;          //思维因子_当前cmv序列(注:所有cmv只与cacheImv中作匹配)
 
 @end
 
@@ -49,7 +49,7 @@ static AIThinkingControl *_instance;
 -(void) initData{
     self.shortCache = [[NSMutableArray alloc] init];
     self.thinkFeedCache = [[NSMutableArray alloc] init];
-    self.imvCache = [[NSMutableArray alloc] init];
+    self.cmvCache = [[NSMutableArray alloc] init];
 }
 
 -(void) initRun{
@@ -122,7 +122,7 @@ static AIThinkingControl *_instance;
     }
     
     //3. 存shortCache
-    [self setObject_Caches:nodeDic];
+    //[self setObject_Caches:nodeDic];
     
     //4. 提交思维循环
     [self thinkLoop:nodeDic];
@@ -155,20 +155,6 @@ static AIThinkingControl *_instance;
     }
 }
 
--(void) setObject_Caches:(NSObject*)algsModel {
-    //shortCache
-    [self.shortCache addObject:algsModel];
-    if (self.shortCache.count > 8) {
-        [self.shortCache subarrayWithRange:NSMakeRange(self.shortCache.count - 8, 8)];
-    }
-}
-
-//found mv;
--(BOOL) checkHavMV:(NSDictionary*)dic{
-    return [STRTOOK([DICTOOK(dic) objectForKey:@"urgentValue"]) floatValue] > 0;
-}
-
-
 
 //MARK:===============================================================
 //MARK:                     < dataIn >
@@ -184,10 +170,18 @@ static AIThinkingControl *_instance;
     AINetCMVModel *cmvModel;
     if (findMV) {
         //4. 抵消 | 合并
-        [self dataIn_ConvertMVValue:algsArr success:^(NSInteger urgentValue, AITargetType targetType, MVType type) {
-            //改AlgsIMVBase...imv与cmv需要整合成一个;
+        [self dataIn_ConvertMVValue:algsArr success:^(NSInteger urgentFrom, NSInteger urgentTo, AITargetType targetType, MVType type) {
+            
+            for (NSInteger i = self.cmvCache.count - 1; i >= 0; i--) {
+                NSArray *cmvAlgsArr = self.cmvCache[i];
+                //.........
+            }
         }];
         
+        //5. 重新排序cmvCache
+        
+        
+        //6. 创建NetCmvModel;
         cmvModel = [self dataIn_CreateCMVModel:algsArr];
     }else{
         for (AIKVPointer *algs_p in ARRTOOK(algsArr)) {
@@ -220,27 +214,30 @@ static AIThinkingControl *_instance;
     return false;
 }
 
--(void) dataIn_ConvertMVValue:(NSArray*)algsArr success:(void(^)(NSInteger urgentValue,AITargetType targetType,MVType type))success{
+-(void) dataIn_ConvertMVValue:(NSArray*)algsArr success:(void(^)(NSInteger urgentFrom,NSInteger urgentTo,AITargetType targetType,MVType type))success{
     //1. 数据
-    NSInteger urgentValue = 0;
+    NSInteger urgentFrom = 0;
+    NSInteger urgentTo = 0;
     AITargetType targetType = AITargetType_None;
     MVType type = MVType_None;
     
     //2. 数据检查
     for (AIKVPointer *pointer in algsArr) {
         if ([NSClassFromString(pointer.algsType) isSubclassOfClass:ImvAlgsModelBase.class]) {
-            if ([@"urgentValue" isEqualToString:pointer.dataSource]) {
-                urgentValue = [NUMTOOK([SMGUtils searchObjectForPointer:pointer fileName:FILENAME_Value]) integerValue];
+            if ([@"urgentFrom" isEqualToString:pointer.dataSource]) {
+                urgentFrom = [NUMTOOK([SMGUtils searchObjectForPointer:pointer fileName:FILENAME_Value time:30]) integerValue];
+            }else if ([@"targetTo" isEqualToString:pointer.dataSource]) {
+                urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:pointer fileName:FILENAME_Value time:30]) integerValue];
             }else if ([@"targetType" isEqualToString:pointer.dataSource]) {
-                targetType = [NUMTOOK([SMGUtils searchObjectForPointer:pointer fileName:FILENAME_Value]) integerValue];
+                targetType = [NUMTOOK([SMGUtils searchObjectForPointer:pointer fileName:FILENAME_Value time:30]) integerValue];
             }else if ([@"type" isEqualToString:pointer.dataSource]) {
-                type = [NUMTOOK([SMGUtils searchObjectForPointer:pointer fileName:FILENAME_Value]) integerValue];
+                type = [NUMTOOK([SMGUtils searchObjectForPointer:pointer fileName:FILENAME_Value time:30]) integerValue];
             }
         }
     }
     
     //3. 逻辑执行
-    if (success) success(urgentValue,targetType,type);
+    if (success) success(urgentFrom,urgentTo,targetType,type);
 }
 
 /**

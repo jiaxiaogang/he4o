@@ -20,7 +20,8 @@
 +(void) commitIMV:(MVType)type from:(NSInteger)from to:(NSInteger)to{
     //1. 生成imvModel
     ImvAlgsModelBase *imvModel = [[ImvAlgsModelBase alloc] init];
-    imvModel.urgentValue = [self getAlgsUrgentValue:to];
+    imvModel.urgentFrom = [self getAlgsUrgentValue:from];
+    imvModel.urgentTo = [self getAlgsUrgentValue:to];
     imvModel.targetType = [self getAlgsTargetType:type];
     imvModel.type = type;
     
