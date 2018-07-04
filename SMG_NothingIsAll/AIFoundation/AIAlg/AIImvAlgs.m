@@ -17,12 +17,11 @@
  *  MARK:--------------------输入mindValue--------------------
  *  所有值域,转换为0-10;(例如:hunger时0为不饿,10为非常饿)
  */
-+(void) commitIMV:(MVType)type from:(NSInteger)from to:(NSInteger)to{
++(void) commitIMV:(MVType)type from:(CGFloat)from to:(CGFloat)to{
     //1. 生成imvModel
     ImvAlgsModelBase *imvModel = [[ImvAlgsModelBase alloc] init];
     imvModel.urgentFrom = [self getAlgsUrgentValue:from];
     imvModel.urgentTo = [self getAlgsUrgentValue:to];
-    imvModel.targetType = [self getAlgsTargetType:type];
     imvModel.type = type;
     
     //2. 结果给Thinking
@@ -31,13 +30,6 @@
 
 +(CGFloat) getAlgsUrgentValue:(CGFloat)to{
     return to * to;
-}
-
-+(AITargetType) getAlgsTargetType:(MVType)type{
-    if (type == MVType_Hunger || type == MVType_Anxious) {
-        return AITargetType_Down;
-    }
-    return AITargetType_None;
 }
 
 @end

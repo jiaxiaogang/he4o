@@ -85,11 +85,11 @@
  *  MARK:--------------------onclick--------------------
  */
 - (IBAction)addBtnOnClick:(id)sender {
-    [[[DemoHunger alloc] init] commit:9 state:UIDeviceBatteryStateCharging];
+    [[[DemoHunger alloc] init] commit:0.9 state:UIDeviceBatteryStateCharging];
 }
 
 - (IBAction)subBtnOnClick:(id)sender {
-    [[[DemoHunger alloc] init] commit:1 state:UIDeviceBatteryStateUnplugged];
+    [[[DemoHunger alloc] init] commit:0.1 state:UIDeviceBatteryStateUnplugged];
 }
 
 - (IBAction)eatStartBtnOnClick:(id)sender {

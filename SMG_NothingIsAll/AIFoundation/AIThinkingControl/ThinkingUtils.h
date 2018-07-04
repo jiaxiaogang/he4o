@@ -20,4 +20,16 @@
 
 +(BOOL) analogyCharA:(char)a b:(char)b;
 
++(void) analogyCMVA:(NSArray*)a b:(NSArray*)b;
+
+@end
+
+
+//MARK:===============================================================
+//MARK:                     < ThinkingUtils (CMV) >
+//MARK:===============================================================
+@interface ThinkingUtils (CMV)
+
++(AITargetType) getTargetType:(MVType)type;
+
 @end

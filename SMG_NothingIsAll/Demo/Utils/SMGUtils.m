@@ -459,11 +459,9 @@
     if (ISOK(pointer, AIKVPointer.class)) {
         //1. 优先取redis
         NSString *redisKey = STRFORMAT(@"%@/%@",pointer.filePath,fileName);
-        if (time > 0) {
-            id redisObj = [[XGRedis sharedInstance] objectForKey:redisKey];
-            if (redisObj != nil) {
-                return redisObj;
-            }
+        id redisObj = [[XGRedis sharedInstance] objectForKey:redisKey];
+        if (redisObj != nil) {
+            return redisObj;
         }
         
         //2. 再取disk

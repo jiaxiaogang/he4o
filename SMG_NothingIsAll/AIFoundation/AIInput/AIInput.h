@@ -24,7 +24,7 @@
 
 +(AIInput*) sharedInstance;
 -(void) commitText:(NSString*)text;
--(void) commitIMV:(MVType)type from:(NSInteger)from to:(NSInteger)to;
+-(void) commitIMV:(MVType)type from:(CGFloat)from to:(CGFloat)to;
 -(void) commitCustom:(CustomInputType)type value:(NSInteger)value;
 
 @end

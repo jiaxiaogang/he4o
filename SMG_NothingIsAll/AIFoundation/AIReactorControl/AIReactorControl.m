@@ -38,7 +38,7 @@ static AIReactorControl *_instance;
     [[AIActionControl shareInstance] commitInput:input];
 }
 
--(void) commitIMV:(MVType)type from:(NSInteger)from to:(NSInteger)to {
+-(void) commitIMV:(MVType)type from:(CGFloat)from to:(CGFloat)to {
     //目前smg不支持,在mvType的某些情况下的,肢体反射反应;
     
     [AIImvAlgs commitIMV:type from:from to:to];
