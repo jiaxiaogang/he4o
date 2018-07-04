@@ -32,4 +32,7 @@
 
 +(AITargetType) getTargetType:(MVType)type;
 
+//cmvAlgsArr->mvValue
++(void) parserAlgsMVArr:(NSArray*)algsArr success:(void(^)(NSInteger delta,NSInteger urgentTo,NSString *algsType))success;
+
 @end

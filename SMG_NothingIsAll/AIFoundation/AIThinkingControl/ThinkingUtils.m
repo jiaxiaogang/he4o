@@ -7,6 +7,9 @@
 //
 
 #import "ThinkingUtils.h"
+#import "AIKVPointer.h"
+#import "ImvAlgsModelBase.h"
+#import "ImvAlgsHungerModel.h"
 
 @implementation ThinkingUtils
 
@@ -52,6 +55,30 @@
     }else{
         return AITargetType_None;
     }
+}
+
+
+//cmvAlgsArr->mvValue
++(void) parserAlgsMVArr:(NSArray*)algsArr success:(void(^)(NSInteger delta,NSInteger urgentTo,NSString *algsType))success{
+    //1. 数据
+    NSInteger delta = 0;
+    NSInteger urgentTo = 0;
+    NSString *algsType = @"";
+    
+    //2. 数据检查
+    for (AIKVPointer *pointer in algsArr) {
+        if ([NSClassFromString(pointer.algsType) isSubclassOfClass:ImvAlgsModelBase.class]) {
+            if ([@"delta" isEqualToString:pointer.dataSource]) {
+                delta = [NUMTOOK([SMGUtils searchObjectForPointer:pointer fileName:FILENAME_Value time:30]) integerValue];
+            }else if ([@"urgentTo" isEqualToString:pointer.dataSource]) {
+                urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:pointer fileName:FILENAME_Value time:30]) integerValue];
+            }
+        }
+        algsType = pointer.algsType;
+    }
+    
+    //3. 逻辑执行
+    if (success) success(delta,urgentTo,algsType);
 }
 
 @end

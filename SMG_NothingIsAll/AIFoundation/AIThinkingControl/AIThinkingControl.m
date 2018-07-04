@@ -18,6 +18,7 @@
 #import "ImvAlgsModelBase.h"
 #import "AINetCMV.h"
 #import "AINetAbs.h"
+#import "ThinkingUtils.h"
 
 @interface AIThinkingControl()
 
@@ -209,16 +210,16 @@ static AIThinkingControl *_instance;
 //输入新的cmvAlgsArr
 -(void) dataIn_CMVAlgsArr:(NSArray*)algsArr{
     //1. 抵消 | 合并
-    [self dataIn_ConvertMVValue:algsArr success:^(NSInteger urgentFrom, NSInteger urgentTo, MVType type) {
+    [ThinkingUtils parserAlgsMVArr:algsArr success:^(NSInteger delta, NSInteger urgentTo, NSString *algsType) {
         __block BOOL findSeemType = false;
         for (NSArray *item in self.cmvCache) {
-            [self dataIn_ConvertMVValue:item success:^(NSInteger itemUrgentFrom, NSInteger itemUrgentTo, MVType itemType) {
-                if (type == itemType) {
+            [ThinkingUtils parserAlgsMVArr:item success:^(NSInteger itemDelta, NSInteger itemUrgentTo, NSString *itemAlgsType) {
+                if ([STRTOOK(algsType) isEqualToString:itemAlgsType]) {
                     //2. 同向且更迫切时,替换到合适位置
-                    if ((itemUrgentFrom > itemUrgentTo) == (urgentFrom > urgentTo)) {
-                        if (labs(urgentFrom - urgentTo) > labs(itemUrgentFrom - itemUrgentTo)) {
+                    if ((itemDelta > 0) == (delta > 0)) {
+                        if (labs(delta) > labs(itemDelta)) {
                             [self.cmvCache removeObject:item];
-                            [self dataIn_ToCMVCache:algsArr urgentFrom:urgentFrom urgentTo:urgentTo];
+                            [self dataIn_ToCMVCache:algsArr delta:delta];
                         }
                     }else{//3. 异向抵消
                         [self.cmvCache removeObject:item];
@@ -233,33 +234,9 @@ static AIThinkingControl *_instance;
         
         //4. 未找到相同类型,加到cmvCache中
         if (!findSeemType) {
-            [self dataIn_ToCMVCache:algsArr urgentFrom:urgentFrom urgentTo:urgentTo];
+            [self dataIn_ToCMVCache:algsArr delta:delta];
         }
     }];
-}
-
-//cmvAlgsArr->mvValue
--(void) dataIn_ConvertMVValue:(NSArray*)algsArr success:(void(^)(NSInteger urgentFrom,NSInteger urgentTo,MVType type))success{
-    //1. 数据
-    NSInteger urgentFrom = 0;
-    NSInteger urgentTo = 0;
-    MVType type = MVType_None;
-    
-    //2. 数据检查
-    for (AIKVPointer *pointer in algsArr) {
-        if ([NSClassFromString(pointer.algsType) isSubclassOfClass:ImvAlgsModelBase.class]) {
-            if ([@"urgentFrom" isEqualToString:pointer.dataSource]) {
-                urgentFrom = [NUMTOOK([SMGUtils searchObjectForPointer:pointer fileName:FILENAME_Value time:30]) integerValue];
-            }else if ([@"urgentTo" isEqualToString:pointer.dataSource]) {
-                urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:pointer fileName:FILENAME_Value time:30]) integerValue];
-            }else if ([@"type" isEqualToString:pointer.dataSource]) {
-                type = [NUMTOOK([SMGUtils searchObjectForPointer:pointer fileName:FILENAME_Value time:30]) integerValue];
-            }
-        }
-    }
-    
-    //3. 逻辑执行
-    if (success) success(urgentFrom,urgentTo,type);
 }
 
 /**
@@ -277,12 +254,12 @@ static AIThinkingControl *_instance;
 }
 
 //添加到cmvCache;
--(void) dataIn_ToCMVCache:(NSArray*)algsArr urgentFrom:(NSInteger)urgentFrom urgentTo:(NSInteger)urgentTo{
+-(void) dataIn_ToCMVCache:(NSArray*)algsArr delta:(NSInteger)delta{
     __block BOOL success = false;
     for (NSInteger i = 0; i < self.cmvCache.count; i++) {
         NSArray *checkItem = self.cmvCache[i];
-        [self dataIn_ConvertMVValue:checkItem success:^(NSInteger checkUrgentFrom, NSInteger checkUrgentTo, MVType checkType) {
-            if (labs(urgentFrom - urgentTo) > labs(checkUrgentFrom - checkUrgentTo)) {
+        [ThinkingUtils parserAlgsMVArr:checkItem success:^(NSInteger checkDelta, NSInteger checkUrgentTo, NSString *checkAlgsType) {
+            if (labs(delta) > labs(checkDelta)) {
                 [self.cmvCache insertObject:algsArr atIndex:i];
                 success = true;
             }
