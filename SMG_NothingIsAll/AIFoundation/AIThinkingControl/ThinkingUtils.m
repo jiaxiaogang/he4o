@@ -57,6 +57,16 @@
     }
 }
 
++(AITargetType) getTargetTypeWithAlgsType:(NSString*)algsType{
+    algsType = STRTOOK(algsType);
+    if([algsType isEqualToString:NSStringFromClass(ImvAlgsHungerModel.class)]){
+        return AITargetType_Down;
+    }
+    return AITargetType_None;
+}
+
+
+
 //cmvAlgsArr->mvValue
 +(void) parserAlgsMVArrWithoutValue:(NSArray*)algsArr success:(void(^)(AIKVPointer *delta_p,AIKVPointer *urgentTo_p,NSString *algsType))success{
     //1. 数据

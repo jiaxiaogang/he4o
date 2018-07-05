@@ -30,9 +30,12 @@
 //MARK:===============================================================
 @interface ThinkingUtils (CMV)
 
+//取mvType或algsType对应的targetType
 +(AITargetType) getTargetType:(MVType)type;
++(AITargetType) getTargetTypeWithAlgsType:(NSString*)algsType;
 
-//cmvAlgsArr->mvValue
+
+//解析algsMVArr
 +(void) parserAlgsMVArr:(NSArray*)algsArr success:(void(^)(NSInteger delta,NSInteger urgentTo,NSString *algsType))success;
 +(void) parserAlgsMVArrWithoutValue:(NSArray*)algsArr success:(void(^)(AIKVPointer *delta_p,AIKVPointer *urgentTo_p,NSString *algsType))success;
 

@@ -338,6 +338,22 @@ static AIThinkingControl *_instance;
         
         //2. 找到同样targetType的引用者
         if (ISOK(cmvNode, AICMVNode.class)) {
+            AITargetType targetType = [ThinkingUtils getTargetTypeWithAlgsType:cmvNode.urgentTo_p.algsType];
+            if (targetType == AITargetType_Down) {
+                //取delta的负值进行经验查找;
+            }else if(targetType == AITargetType_Up){
+                //取delta的正值进行经验查找;
+            }
+            
+            //1. 实现快速根据delta+或-,从index找到相对应的pointer;
+            //2. 根据delta+或-的经历,快速实现absDeltaIndex的构建;
+            
+            
+            
+            
+            
+            
+            
             NSArray *targetTypePorts = [[AINet sharedInstance] getItemAlgsReference:cmvNode.targetTypePointer limit:3];
             
             //3. 联想cmv模型
