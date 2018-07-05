@@ -34,5 +34,6 @@
 
 //cmvAlgsArr->mvValue
 +(void) parserAlgsMVArr:(NSArray*)algsArr success:(void(^)(NSInteger delta,NSInteger urgentTo,NSString *algsType))success;
++(void) parserAlgsMVArrWithoutValue:(NSArray*)algsArr success:(void(^)(AIKVPointer *delta_p,AIKVPointer *urgentTo_p,NSString *algsType))success;
 
 @end

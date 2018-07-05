@@ -15,7 +15,7 @@
 @class AIKVPointer,AINetCMVModel;
 @protocol AINetCMVDelegate <NSObject>
 
--(void) aiNetCMV_CreatedNode:(AIKVPointer*)indexPointer nodePointer:(AIKVPointer*)nodePointer;
+-(void) aiNetCMV_CreatedNode:(AIKVPointer*)indexPointer nodePointer:(AIKVPointer*)nodePointer;//被引用报告
 
 @end
 
@@ -53,13 +53,8 @@
 @interface AICMVNode : NSObject <NSCoding>
 
 @property (strong, nonatomic) AIKVPointer *pointer;             //自身存储地址
-@property (strong, nonatomic) AIKVPointer *targetTypePointer;   //目标类型数据指针;(指向targetType的值存储地址)
-@property (strong, nonatomic) AIKVPointer *urgentValuePointer;  //迫切度数据指针;(指向urgentValue的值存储地址)
-
-
-@property (strong, nonatomic) AIKVPointer *urgentToValue_p;//对cmvNode进行改版,可以对absCMVNode,进行+-变化的抽象;/////xxxx
-
-
+@property (strong, nonatomic) AIKVPointer *urgentTo_p;//迫切度数据指针;(指向urgentValue的值存储地址)
+@property (strong, nonatomic) AIKVPointer *delta_p;     //变化指针;(指向变化值存储地址)
 @property (strong, nonatomic) AIKVPointer *cmvModel_kvp;        //被引用的cmvModel;
 
 @end

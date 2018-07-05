@@ -10,24 +10,20 @@
 #import "PINCache.h"
 #import "AIKVPointer.h"
 #import "AINode.h"
+#import "ThinkingUtils.h"
 
 @implementation AINetCMV
 
 -(AINetCMVModel*) create:(NSArray*)imvAlgsArr order:(NSArray*)order{
     //1. 数据
-    NSString *cmvNodeAlgsType = @"cmv";
-    AIKVPointer *targetTypePointer = nil;
-    AIKVPointer *urgentValuePointer = nil;
-    for (AIKVPointer *itemIMV_kvp in ARRTOOK(imvAlgsArr)) {
-        if (ISOK(itemIMV_kvp, AIKVPointer.class)) {
-            if ([@"targetType" isEqualToString:itemIMV_kvp.dataSource]) {
-                targetTypePointer = itemIMV_kvp;
-                cmvNodeAlgsType = itemIMV_kvp.algsType;
-            }else if([@"urgentValue" isEqualToString:itemIMV_kvp.dataSource]) {
-                urgentValuePointer = itemIMV_kvp;
-            }
-        }
-    }
+    __block NSString *cmvNodeAlgsType = @"cmv";
+    __block AIKVPointer *deltaPointer = nil;
+    __block AIKVPointer *urgentToPointer = nil;
+    [ThinkingUtils parserAlgsMVArrWithoutValue:imvAlgsArr success:^(AIKVPointer *delta_p, AIKVPointer *urgentTo_p, NSString *algsType) {
+        deltaPointer = delta_p;
+        cmvNodeAlgsType = algsType;
+        urgentToPointer = urgentTo_p;
+    }];
     
     //2. 生成cmv模型
     AINetCMVModel *cmvModel = [[AINetCMVModel alloc] init];
@@ -37,12 +33,12 @@
     AICMVNode *cmvNode = [[AICMVNode alloc] init];
     cmvNode.pointer = [SMGUtils createPointer:PATH_NET_CMV_NODE algsType:cmvNodeAlgsType dataSource:@""];
     cmvNode.cmvModel_kvp = cmvModel.pointer;
-    cmvNode.targetTypePointer = targetTypePointer;
-    cmvNode.urgentValuePointer = urgentValuePointer;
+    cmvNode.delta_p = deltaPointer;
+    cmvNode.urgentTo_p = urgentToPointer;
     PINDiskCache *pinCache = [[PINDiskCache alloc] initWithName:@"" rootPath:cmvNode.pointer.filePath];//save
     [pinCache setObject:cmvNode forKey:FILENAME_Node];
-    [self createdNode:cmvNode.targetTypePointer nodePointer:cmvNode.pointer];//reference
-    [self createdNode:cmvNode.urgentValuePointer nodePointer:cmvNode.pointer];
+    [self createdNode:cmvNode.delta_p nodePointer:cmvNode.pointer];//reference
+    [self createdNode:cmvNode.urgentTo_p nodePointer:cmvNode.pointer];
     
     //4. 打包foNode;
     AIFrontOrderNode *foNode = [[AIFrontOrderNode alloc] init];//node
@@ -122,8 +118,8 @@
     self = [super init];
     if (self) {
         self.pointer = [aDecoder decodeObjectForKey:@"pointer"];
-        self.targetTypePointer = [aDecoder decodeObjectForKey:@"targetTypePointer"];
-        self.urgentValuePointer = [aDecoder decodeObjectForKey:@"urgentValuePointer"];
+        self.delta_p = [aDecoder decodeObjectForKey:@"delta_p"];
+        self.urgentTo_p = [aDecoder decodeObjectForKey:@"urgentTo_p"];
         self.cmvModel_kvp = [aDecoder decodeObjectForKey:@"cmvModel_kvp"];
     }
     return self;
@@ -131,8 +127,8 @@
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [aCoder encodeObject:self.pointer forKey:@"pointer"];
-    [aCoder encodeObject:self.targetTypePointer forKey:@"targetTypePointer"];
-    [aCoder encodeObject:self.urgentValuePointer forKey:@"urgentValuePointer"];
+    [aCoder encodeObject:self.delta_p forKey:@"delta_p"];
+    [aCoder encodeObject:self.urgentTo_p forKey:@"urgentTo_p"];
     [aCoder encodeObject:self.cmvModel_kvp forKey:@"cmvModel_kvp"];
 }
 

@@ -57,25 +57,42 @@
     }
 }
 
-
 //cmvAlgsArr->mvValue
-+(void) parserAlgsMVArr:(NSArray*)algsArr success:(void(^)(NSInteger delta,NSInteger urgentTo,NSString *algsType))success{
++(void) parserAlgsMVArrWithoutValue:(NSArray*)algsArr success:(void(^)(AIKVPointer *delta_p,AIKVPointer *urgentTo_p,NSString *algsType))success{
     //1. 数据
-    NSInteger delta = 0;
-    NSInteger urgentTo = 0;
+    AIKVPointer *delta_p = nil;
+    AIKVPointer *urgentTo_p = 0;
     NSString *algsType = @"";
     
     //2. 数据检查
     for (AIKVPointer *pointer in algsArr) {
         if ([NSClassFromString(pointer.algsType) isSubclassOfClass:ImvAlgsModelBase.class]) {
             if ([@"delta" isEqualToString:pointer.dataSource]) {
-                delta = [NUMTOOK([SMGUtils searchObjectForPointer:pointer fileName:FILENAME_Value time:30]) integerValue];
+                delta_p = pointer;
             }else if ([@"urgentTo" isEqualToString:pointer.dataSource]) {
-                urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:pointer fileName:FILENAME_Value time:30]) integerValue];
+                urgentTo_p = pointer;
             }
         }
         algsType = pointer.algsType;
     }
+    
+    //3. 逻辑执行
+    if (success) success(delta_p,urgentTo_p,algsType);
+}
+
+//cmvAlgsArr->mvValue
++(void) parserAlgsMVArr:(NSArray*)algsArr success:(void(^)(NSInteger delta,NSInteger urgentTo,NSString *algsType))success{
+    //1. 数据
+    __block NSInteger delta = 0;
+    __block NSInteger urgentTo = 0;
+    __block NSString *algsType = @"";
+    
+    //2. 数据检查
+    [self parserAlgsMVArrWithoutValue:algsArr success:^(AIKVPointer *delta_p, AIKVPointer *urgentTo_p, NSString *findAlgsType) {
+        delta = [NUMTOOK([SMGUtils searchObjectForPointer:delta_p fileName:FILENAME_Value time:30]) integerValue];
+        urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:urgentTo_p fileName:FILENAME_Value time:30]) integerValue];
+        algsType = findAlgsType;
+    }];
     
     //3. 逻辑执行
     if (success) success(delta,urgentTo,algsType);
