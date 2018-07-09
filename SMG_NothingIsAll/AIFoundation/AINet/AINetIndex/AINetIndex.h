@@ -19,15 +19,6 @@
 -(void) setIndexReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue;
 -(NSArray*) getIndexReference:(AIKVPointer*)indexPointer limit:(NSInteger)limit;
 
-
-
-
-//用于mv变化,等动态的值范围数据索引;
-//不仅要找到"解决问题"的delta;还要根据其它数据进行联想;///参考n13p14
--(AIKVPointer*) getDeltaIndexValuePointer_Front:(NSInteger)limit;
-
-
-
 @end
 
 

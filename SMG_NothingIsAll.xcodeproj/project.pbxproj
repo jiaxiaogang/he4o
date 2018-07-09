@@ -55,6 +55,7 @@
 		88988524208979E6001D1ADC /* AINetIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = 88988523208979E6001D1ADC /* AINetIndex.m */; };
 		88B23BE620BE20BC00BE8AF6 /* AINetAbs.m in Sources */ = {isa = PBXBuildFile; fileRef = 88B23BE520BE20BC00BE8AF6 /* AINetAbs.m */; };
 		88B3865D20C6130E009553B5 /* AINetAbsIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = 88B3865C20C6130E009553B5 /* AINetAbsIndex.m */; };
+		88B4EFA320F4268C000A67A0 /* AINetDirectionIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = 88B4EFA220F4268C000A67A0 /* AINetDirectionIndex.m */; };
 		88BC09D720B4EB920006ABEF /* XGRedis.m in Sources */ = {isa = PBXBuildFile; fileRef = 88BC09D620B4EB920006ABEF /* XGRedis.m */; };
 		88BC09DA20B4ECAB0006ABEF /* XGRedisUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 88BC09D920B4ECAB0006ABEF /* XGRedisUtil.m */; };
 		88BC09DD20B4F67E0006ABEF /* XGRedisDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 88BC09DC20B4F67E0006ABEF /* XGRedisDictionary.m */; };
@@ -157,6 +158,8 @@
 		88B23BE520BE20BC00BE8AF6 /* AINetAbs.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetAbs.m; sourceTree = "<group>"; };
 		88B3865B20C6130E009553B5 /* AINetAbsIndex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetAbsIndex.h; sourceTree = "<group>"; };
 		88B3865C20C6130E009553B5 /* AINetAbsIndex.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetAbsIndex.m; sourceTree = "<group>"; };
+		88B4EFA120F4268C000A67A0 /* AINetDirectionIndex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetDirectionIndex.h; sourceTree = "<group>"; };
+		88B4EFA220F4268C000A67A0 /* AINetDirectionIndex.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetDirectionIndex.m; sourceTree = "<group>"; };
 		88BC09D520B4EB920006ABEF /* XGRedis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XGRedis.h; sourceTree = "<group>"; };
 		88BC09D620B4EB920006ABEF /* XGRedis.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XGRedis.m; sourceTree = "<group>"; };
 		88BC09D820B4ECAB0006ABEF /* XGRedisUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XGRedisUtil.h; sourceTree = "<group>"; };
@@ -534,6 +537,8 @@
 				88960C6A209BDA2B004EF419 /* AINetIndexReference.m */,
 				88B3865B20C6130E009553B5 /* AINetAbsIndex.h */,
 				88B3865C20C6130E009553B5 /* AINetAbsIndex.m */,
+				88B4EFA120F4268C000A67A0 /* AINetDirectionIndex.h */,
+				88B4EFA220F4268C000A67A0 /* AINetDirectionIndex.m */,
 			);
 			path = AINetIndex;
 			sourceTree = "<group>";
@@ -739,6 +744,7 @@
 				084219E41FD8CF08009DA6BC /* AIImagination.m in Sources */,
 				88960C6B209BDA2B004EF419 /* AINetIndexReference.m in Sources */,
 				08DACE951EBD805C00FDC0B6 /* NSString+Extension.m in Sources */,
+				88B4EFA320F4268C000A67A0 /* AINetDirectionIndex.m in Sources */,
 				08F738071F7C714F005EAD56 /* AISqlPointer.m in Sources */,
 				08AF454A1E97D0B500377887 /* main.m in Sources */,
 				88988524208979E6001D1ADC /* AINetIndex.m in Sources */,
