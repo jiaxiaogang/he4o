@@ -208,3 +208,11 @@ typedef NS_ENUM(NSInteger, PortType) {
     PortType_Logic      = 7,
     PortType_BeLogic    = 8,
 };
+
+/**
+ *  MARK:--------------------顺逆方向--------------------
+ */
+typedef NS_ENUM(NSInteger, MVDirection) {
+    MVDirection_Negative    = 0,//负
+    MVDirection_Positive    = 1,//正
+};
