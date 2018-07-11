@@ -71,3 +71,15 @@
 @property (strong, nonatomic) NSMutableArray *absPorts;         //抽象插口
 
 @end
+
+
+//MARK:===============================================================
+//MARK:                     < AIAbsCMVNode >
+//MARK:===============================================================
+@interface AIAbsCMVNode : NSObject <NSCoding>
+
+@property (strong, nonatomic) AIKVPointer *pointer;         //自身地址
+@property (assign, nonatomic) MVDirection direction;        //方向是升还是降
+@property (strong, nonatomic) NSMutableArray *conPorts;     //具象方向_cmvNode;
+
+@end
