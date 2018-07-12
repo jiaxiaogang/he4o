@@ -14,8 +14,8 @@
 
 +(AIPort*) searchPortWithTargetP:(AIKVPointer*)target_p fromPorts:(NSArray*)ports{
     for (AIPort *checkPort in ARRTOOK(ports)) {
-        if (ISOK(checkPort, AIPort.class) && ISOK(checkPort.pointer, AIKVPointer.class)) {
-            if ([checkPort.pointer isEqual:target_p]) {
+        if (ISOK(checkPort, AIPort.class) && ISOK(checkPort.target_p, AIKVPointer.class)) {
+            if ([checkPort.target_p isEqual:target_p]) {
                 return checkPort;
             }
         }

@@ -50,7 +50,7 @@
 #define PATH_NET_REFERENCE          @"NET_REFERENCE"//神经网络"引用序列"根目录;(海马体)
 #define PATH_NET_CMVMODEL           @"NET_CMVMODEL" //神经网络"cmv模型"根目录;(杏仁核)
 #define PATH_NET_ABSVALUE           @"NET_ABSVALUE" //"抽象值数据"根目录;
-
+#define PATH_NET_DIRECTION(mvDirection) STRFORMAT(@"NET_DIRECTION_%ld",mvDirection) //mv的顺逆方向引用序列地址(以Path为各mv的分区,cmvNode和absCMVNode都指向此direction)
 //#define PATH_NET_DATA             @"NET_DATA"     //神经网络"数据"根目录;(海马体)
 
 

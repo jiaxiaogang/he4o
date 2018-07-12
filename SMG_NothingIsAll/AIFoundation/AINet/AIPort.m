@@ -19,14 +19,14 @@
 - (instancetype)initWithCoder:(NSCoder *)coder {
     self = [super init];
     if (self) {
-        self.pointer = [coder decodeObjectForKey:@"pointer"];
+        self.target_p = [coder decodeObjectForKey:@"target_p"];
         self.strong = [coder decodeObjectForKey:@"strong"];
     }
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder {
-    [coder encodeObject:self.pointer forKey:@"pointer"];
+    [coder encodeObject:self.target_p forKey:@"target_p"];
     [coder encodeObject:self.strong forKey:@"strong"];
 }
 
@@ -44,7 +44,7 @@
 +(AIPort*) newWithNode:(AINode*)node{
     AIPort *port = [[AIPort alloc] init];
     if (node) {
-        port.pointer = node.pointer;
+        port.target_p = node.pointer;
     }
     return port;
 }
@@ -55,8 +55,8 @@
 
 -(BOOL) isEqual:(AIPort*)object{
     if (ISOK(object, AIPort.class)) {
-        if (self.pointer) {
-            return [self.pointer isEqual:object.pointer];
+        if (self.target_p) {
+            return [self.target_p isEqual:object.target_p];
         }
     }
     return false;

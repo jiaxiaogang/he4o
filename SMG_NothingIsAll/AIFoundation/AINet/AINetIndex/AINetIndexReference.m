@@ -39,7 +39,7 @@
         __block NSInteger findOldIndex = 0;
         [XGRedisUtil searchIndexWithCompare:^NSComparisonResult(NSInteger checkIndex) {
             AIPort *checkPort = ARR_INDEX(referenceModel.ports, checkIndex);
-            return [SMGUtils comparePointerA:target_p pointerB:checkPort.pointer];
+            return [SMGUtils comparePointerA:target_p pointerB:checkPort.target_p];
         } startIndex:0 endIndex:referenceModel.ports.count - 1 success:^(NSInteger index) {
             findOldIndex = index;
         } failure:^(NSInteger index) {
@@ -55,7 +55,7 @@
         //4. 未找到,则new
         if (!ISOK(findPort, AIPort.class)) {
             findPort = [[AIPort alloc] init];
-            findPort.pointer = target_p;
+            findPort.target_p = target_p;
         } 
         
         //5. 更新strongValue & 插入队列
@@ -65,9 +65,9 @@
         findPort.strong.value += difValue;
         [XGRedisUtil searchIndexWithCompare:^NSComparisonResult(NSInteger checkIndex) {
             AIPort *checkPort = ARR_INDEX(referenceModel.ports, checkIndex);
-            return [SMGUtils comparePointerA:target_p pointerB:checkPort.pointer];
+            return [SMGUtils comparePointerA:target_p pointerB:checkPort.target_p];
         } startIndex:insertStartIndex endIndex:insertEndIndex success:^(NSInteger index) {
-            NSLog(@"警告!!! bug:在第二序列的ports中发现了两次port目标___pointerId为:%ld",(long)findPort.pointer.pointerId);
+            NSLog(@"警告!!! bug:在第二序列的ports中发现了两次port目标___pointerId为:%ld",(long)findPort.target_p.pointerId);
         } failure:^(NSInteger index) {
             if (referenceModel.ports.count <= index) {
                 [referenceModel.ports addObject:findPort];

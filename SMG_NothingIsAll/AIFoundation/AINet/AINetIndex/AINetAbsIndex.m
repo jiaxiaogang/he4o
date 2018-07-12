@@ -96,7 +96,7 @@
     NSArray *ports = [self.reference getReference:absValue_p limit:1];
     AIPort *port = ARR_INDEX(ports, 0);
     if (ISOK(port, AIPort.class)) {
-        return port.pointer;
+        return port.target_p;
     }
     return nil;
 }

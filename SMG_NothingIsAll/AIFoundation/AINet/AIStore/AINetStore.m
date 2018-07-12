@@ -136,10 +136,10 @@ static AINetStore *_instance;
                 AINode *charNode = [self objectNodeForDataType:@"char" dataSource:nil];
                 if (charNode) {
                     for (AIPort *port in charNode.conPorts) {
-                        NSNumber *data = [self objectDataForPointer:port.pointer];//随后接入发音算法(参考n10p9)
+                        NSNumber *data = [self objectDataForPointer:port.target_p];//随后接入发音算法(参考n10p9)
                         if (ISOK(data, NSNumber.class)) {
                             if ([data charValue] == c) {
-                                return [self objectNodeForPointer:port.pointer];
+                                return [self objectNodeForPointer:port.target_p];
                             }
                         }
                     }

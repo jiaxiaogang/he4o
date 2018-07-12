@@ -14,7 +14,7 @@
 @class AIKVPointer,AIPortStrong,AINode;
 @interface AIPort : NSObject <NSCoding>
 
-@property (strong,nonatomic) AIKVPointer *pointer;
+@property (strong,nonatomic) AIKVPointer *target_p;   //指向目标的地址
 @property (strong,nonatomic) AIPortStrong *strong;
 
 +(AIPort*) newWithNode:(AINode*)node;

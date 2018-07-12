@@ -198,6 +198,13 @@
     return kvPointer;
 }
 
+//Direction的mv分区pointer;(存引用序列)
++(AIKVPointer*) createPointerForDirection:(NSString*)mvAlgsType direction:(MVDirection)direction{
+    NSInteger pointerId = 0;
+    AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_DIRECTION(direction) algsType:mvAlgsType dataSource:nil];
+    return kvPointer;
+}
+
 @end
 
 
@@ -407,11 +414,11 @@
     if (pA.strong) {
         NSComparisonResult strongResult = [pA.strong compare:pB.strong];
         if (strongResult == NSOrderedSame) {
-            if (ISOK(pA.pointer, AIKVPointer.class)) {
-                if (ISOK(pB.pointer, AIKVPointer.class)) {
-                    if (pA.pointer.pointerId > pB.pointer.pointerId) {
+            if (ISOK(pA.target_p, AIKVPointer.class)) {
+                if (ISOK(pB.target_p, AIKVPointer.class)) {
+                    if (pA.target_p.pointerId > pB.target_p.pointerId) {
                         return NSOrderedAscending;
-                    }else if(pA.pointer.pointerId < pB.pointer.pointerId){
+                    }else if(pA.target_p.pointerId < pB.target_p.pointerId){
                         return NSOrderedDescending;
                     }else{
                         return NSOrderedSame;

@@ -288,7 +288,7 @@ static AIThinkingControl *_instance;
             NSArray *referPorts = [[AINet sharedInstance] getItemAlgsReference:algs_kvp limit:3];//在第二序列指向节点的端口;
             for (AIPort *referPort in referPorts) {
                 if (ISOK(referPort, AIPort.class)) {
-                    id referNode = [SMGUtils searchObjectForPointer:referPort.pointer fileName:FILENAME_Node];
+                    id referNode = [SMGUtils searchObjectForPointer:referPort.target_p fileName:FILENAME_Node];
                     if (ISOK(referNode, AIFrontOrderNode.class)) {
                         //联想到cmv模型前因
                         AIFrontOrderNode *foNode = (AIFrontOrderNode*)referNode;
@@ -358,7 +358,7 @@ static AIThinkingControl *_instance;
             
             //3. 联想cmv模型
             for (AIPort *port in targetTypePorts) {
-                id referNode = [SMGUtils searchObjectForPointer:port.pointer fileName:FILENAME_Node];
+                id referNode = [SMGUtils searchObjectForPointer:port.target_p fileName:FILENAME_Node];
                 if (ISOK(referNode, AICMVNode.class)) {
                     AICMVNode *assCmvNode = (AICMVNode*)referNode;
                     

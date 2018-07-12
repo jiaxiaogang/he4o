@@ -40,7 +40,7 @@
             [findConPort strongPlus];
         }else{
             AIPort *conPort = [[AIPort alloc] init];
-            conPort.pointer = foNode.pointer;
+            conPort.target_p = foNode.pointer;
             [absNode.conPorts addObject:conPort];
         }
         
@@ -50,7 +50,7 @@
             [findAbsPort strongPlus];
         }else{
             AIPort *absPort = [[AIPort alloc] init];
-            absPort.pointer = absNode.pointer;
+            absPort.target_p = absNode.pointer;
             [foNode.absPorts addObject:absPort];
         }
         
@@ -83,10 +83,10 @@
 
 //废弃此方法,按强度排序
 -(void) addConPort:(AIPort*)conPort{
-    if (ISOK(conPort, AIPort.class) && ISOK(conPort.pointer, AIKVPointer.class)) {
+    if (ISOK(conPort, AIPort.class) && ISOK(conPort.target_p, AIKVPointer.class)) {
         [XGRedisUtil searchIndexWithCompare:^NSComparisonResult(NSInteger checkIndex) {
             AIPort *checkPort = ARR_INDEX(self.conPorts, checkIndex);
-            return [SMGUtils comparePointerA:conPort.pointer pointerB:checkPort.pointer];
+            return [SMGUtils comparePointerA:conPort.target_p pointerB:checkPort.target_p];
         } startIndex:0 endIndex:self.conPorts.count success:^(NSInteger index) {
             //省略
         } failure:^(NSInteger index) {
@@ -122,7 +122,7 @@
     NSMutableString *conDesc = [[NSMutableString alloc] init];
     
     for (AIPort *conPort in self.conPorts) {
-        id con = [SMGUtils searchObjectForPointer:conPort.pointer fileName:FILENAME_Node];
+        id con = [SMGUtils searchObjectForPointer:conPort.target_p fileName:FILENAME_Node];
         NSMutableString *micDesc = [NSMutableString new];
         NSString *conPath = nil;
         if (ISOK(con, AIFrontOrderNode.class)) {
