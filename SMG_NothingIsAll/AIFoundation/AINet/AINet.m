@@ -16,6 +16,7 @@
 #import "AIPort.h"
 #import "AINetAbs.h"
 #import "AINetAbsIndex.h"
+#import "AINetDirectionReference.h"
 
 @interface AINet () <AINetCMVDelegate>
 
@@ -29,6 +30,7 @@
 @property (strong, nonatomic) AINetCMV *netCMV;     //网络树根(杏仁核)
 @property (strong, nonatomic) AINetAbs *netAbs;     //抽具象序列
 @property (strong, nonatomic) AINetAbsIndex *netAbsIndex;//宏信息索引区(海马)
+@property (strong, nonatomic) AINetDirectionReference *netDirectionReference;
 
 @end
 
@@ -58,6 +60,7 @@ static AINet *_instance;
     self.netCMV.delegate = self;
     self.netAbs = [[AINetAbs alloc] init];
     self.netAbsIndex = [[AINetAbsIndex alloc] init];
+    self.netDirectionReference = [[AINetDirectionReference alloc] init];
 }
 
 
@@ -276,6 +279,16 @@ static AINet *_instance;
 }
 
 
+//MARK:===============================================================
+//MARK:                     < directionReference >
+//MARK:===============================================================
+-(NSArray*) getNetNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction limit:(int)limit{
+    return [self.netDirectionReference getNodePointersFromDirectionReference:mvAlgsType direction:direction limit:limit];
+}
+
+-(void) setNetNodePointerToDirectionReference:(AIKVPointer*)cmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction difStrong:(int)difStrong{
+    [self.netDirectionReference setNodePointerToDirectionReference:cmvNode_p mvAlgsType:mvAlgsType direction:direction difStrong:difStrong];
+}
 
 @end
 

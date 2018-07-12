@@ -347,17 +347,10 @@ static AIThinkingControl *_instance;
             
             //1. 实现快速根据delta+或-,从index找到相对应的pointer;
             //2. 根据delta+或-的经历,快速实现absDeltaIndex的构建;
-            
-            
-            
-            
-            
-            
-            
-            NSArray *targetTypePorts = [[AINet sharedInstance] getItemAlgsReference:cmvNode.targetTypePointer limit:3];
+            NSArray *mvPorts = [[AINet sharedInstance] getNetNodePointersFromDirectionReference:cmvNode.pointer.algsType direction:MVDirection_Negative limit:3];
             
             //3. 联想cmv模型
-            for (AIPort *port in targetTypePorts) {
+            for (AIPort *port in mvPorts) {
                 id referNode = [SMGUtils searchObjectForPointer:port.target_p fileName:FILENAME_Node];
                 if (ISOK(referNode, AICMVNode.class)) {
                     AICMVNode *assCmvNode = (AICMVNode*)referNode;

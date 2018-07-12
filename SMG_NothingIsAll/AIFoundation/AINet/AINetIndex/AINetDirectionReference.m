@@ -30,7 +30,7 @@
 //MARK:                     < publicMethod >
 //MARK:===============================================================
 
--(void) setNodePointerToDirectionIndex:(AIKVPointer*)cmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction difStrong:(int)difStrong{
+-(void) setNodePointerToDirectionReference:(AIKVPointer*)cmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction difStrong:(int)difStrong{
     //1. 数据检查
     if (!ISOK(cmvNode_p, AIKVPointer.class)) {
         return;
@@ -76,7 +76,7 @@
     [SMGUtils insertObject:mArr rootPath:mvReference_p.filePath fileName:FILENAME_Reference time:300];
 }
 
--(NSArray*) getNodePointerFromDirectionIndex:(NSString*)mvAlgsType direction:(MVDirection)direction limit:(NSInteger)limit{
+-(NSArray*) getNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction limit:(NSInteger)limit{
     //1. 取mv分区的引用序列文件;
     AIKVPointer *mvReference_p = [SMGUtils createPointerForDirection:mvAlgsType direction:direction];
     NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:mvReference_p fileName:FILENAME_Reference time:300]];

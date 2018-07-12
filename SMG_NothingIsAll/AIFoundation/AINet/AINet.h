@@ -91,5 +91,12 @@
 -(void) setAbsIndexReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue;
 -(AIKVPointer*) getItemAbsNodePointer:(AIKVPointer*)absValue_p;
 
+//MARK:===============================================================
+//MARK:                     < directionReference >
+//MARK:===============================================================
+-(NSArray*) getNetNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction limit:(int)limit;
+-(void) setNetNodePointerToDirectionReference:(AIKVPointer*)cmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction difStrong:(int)difStrong;
 
 @end
+
+
