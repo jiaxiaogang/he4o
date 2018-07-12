@@ -30,7 +30,7 @@
 //MARK:                     < publicMethod >
 //MARK:===============================================================
 
--(void) setNodePointerToDirectionReference:(AIKVPointer*)cmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction difStrong:(int)difStrong{
+-(void) setNodePointerToDirectionReference:(AIKVPointer*)cmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction difStrong:(NSInteger)difStrong{
     //1. 数据检查
     if (!ISOK(cmvNode_p, AIKVPointer.class)) {
         return;
@@ -41,7 +41,7 @@
     NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:mvReference_p fileName:FILENAME_Reference time:300]];
     
     //3. 移除旧的
-    __block int oldStrong = 0;
+    __block NSInteger oldStrong = 0;
     [XGRedisUtil searchIndexWithCompare:^NSComparisonResult(NSInteger checkIndex) {
         AIPort *checkPort = ARR_INDEX(mArr, checkIndex);
         return [SMGUtils comparePointerA:cmvNode_p pointerB:checkPort.target_p];

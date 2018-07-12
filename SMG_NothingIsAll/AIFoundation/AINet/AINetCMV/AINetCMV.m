@@ -16,22 +16,24 @@
 
 -(AINetCMVModel*) create:(NSArray*)imvAlgsArr order:(NSArray*)order{
     //1. 数据
-    __block NSString *cmvNodeAlgsType = @"cmv";
+    __block NSString *mvAlgsType = @"cmv";
     __block AIKVPointer *deltaPointer = nil;
     __block AIKVPointer *urgentToPointer = nil;
-    [ThinkingUtils parserAlgsMVArrWithoutValue:imvAlgsArr success:^(AIKVPointer *delta_p, AIKVPointer *urgentTo_p, NSString *algsType) {
+    __block NSInteger deltaValue = 0;
+    __block NSInteger urgentToValue = 0;
+    [ThinkingUtils parserAlgsMVArr:imvAlgsArr success:^(AIKVPointer *delta_p, AIKVPointer *urgentTo_p, NSInteger delta, NSInteger urgentTo, NSString *algsType) {
         deltaPointer = delta_p;
-        cmvNodeAlgsType = algsType;
+        mvAlgsType = algsType;
         urgentToPointer = urgentTo_p;
     }];
     
     //2. 生成cmv模型
     AINetCMVModel *cmvModel = [[AINetCMVModel alloc] init];
-    cmvModel.pointer = [SMGUtils createPointer:PATH_NET_CMVMODEL algsType:cmvNodeAlgsType dataSource:@""];
+    cmvModel.pointer = [SMGUtils createPointer:PATH_NET_CMVMODEL algsType:mvAlgsType dataSource:@""];
     
     //3. 打包cmvNode;
     AICMVNode *cmvNode = [[AICMVNode alloc] init];
-    cmvNode.pointer = [SMGUtils createPointer:PATH_NET_CMV_NODE algsType:cmvNodeAlgsType dataSource:@""];
+    cmvNode.pointer = [SMGUtils createPointer:PATH_NET_CMV_NODE algsType:mvAlgsType dataSource:@""];
     cmvNode.cmvModel_kvp = cmvModel.pointer;
     cmvNode.delta_p = deltaPointer;
     cmvNode.urgentTo_p = urgentToPointer;
@@ -39,6 +41,7 @@
     [pinCache setObject:cmvNode forKey:FILENAME_Node];
     [self createdNode:cmvNode.delta_p nodePointer:cmvNode.pointer];//reference
     [self createdNode:cmvNode.urgentTo_p nodePointer:cmvNode.pointer];
+    [self createdCMVNode:cmvNode.pointer delta:deltaValue urgentTo:urgentToValue];
     
     //4. 打包foNode;
     AIFrontOrderNode *foNode = [[AIFrontOrderNode alloc] init];//node
@@ -67,6 +70,16 @@
 -(void) createdNode:(AIKVPointer*)indexPointer nodePointer:(AIKVPointer*)nodePointer{
     if (self.delegate && [self.delegate respondsToSelector:@selector(aiNetCMV_CreatedNode:nodePointer:)]) {
         [self.delegate aiNetCMV_CreatedNode:indexPointer nodePointer:nodePointer];
+    }
+}
+
+-(void) createdCMVNode:(AIKVPointer*)cmvNode_p delta:(NSInteger)delta urgentTo:(NSInteger)urgentTo{
+    MVDirection direction = delta < 0 ? MVDirection_Negative : MVDirection_Positive;
+    NSInteger difStrong = urgentTo;//暂时先相等;
+    if (ISOK(cmvNode_p, AIKVPointer.class)) {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(aiNetCMV_CreatedCMVNode:mvAlgsType:direction:difStrong:)]) {
+            [self.delegate aiNetCMV_CreatedCMVNode:cmvNode_p mvAlgsType:cmvNode_p.algsType direction:direction difStrong:difStrong];
+        }
     }
 }
 
@@ -140,7 +153,6 @@
 //MARK:===============================================================
 @implementation AIFrontOrderNode
 
-
 -(NSMutableArray *)orders_kvp{
     if (_orders_kvp == nil) {
         _orders_kvp = [[NSMutableArray alloc] init];
@@ -174,6 +186,42 @@
     [aCoder encodeObject:self.orders_kvp forKey:@"orders_kvp"];
     [aCoder encodeObject:self.cmvModel_kvp forKey:@"cmvModel_kvp"];
     [aCoder encodeObject:self.absPorts forKey:@"absPorts"];
+}
+
+@end
+
+
+//MARK:===============================================================
+//MARK:                     < AIAbsCMVNode >
+//MARK:===============================================================
+@implementation AIAbsCMVNode
+
+- (NSMutableArray *)conPorts{
+    if (_conPorts == nil) {
+        _conPorts = [NSMutableArray new];
+    }
+    return _conPorts;
+}
+
+/**
+ *  MARK:--------------------NSCoding--------------------
+ */
+- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
+    self = [super init];
+    if (self) {
+        self.pointer = [aDecoder decodeObjectForKey:@"pointer"];
+        self.urgentTo_p = [aDecoder decodeObjectForKey:@"urgentTo_p"];
+        self.delta_p = [aDecoder decodeObjectForKey:@"delta_p"];
+        self.conPorts = [aDecoder decodeObjectForKey:@"conPorts"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [aCoder encodeObject:self.pointer forKey:@"pointer"];
+    [aCoder encodeObject:self.urgentTo_p forKey:@"urgentTo_p"];
+    [aCoder encodeObject:self.delta_p forKey:@"delta_p"];
+    [aCoder encodeObject:self.conPorts forKey:@"conPorts"];
 }
 
 @end

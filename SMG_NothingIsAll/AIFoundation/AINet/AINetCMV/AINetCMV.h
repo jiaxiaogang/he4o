@@ -17,6 +17,13 @@
 
 -(void) aiNetCMV_CreatedNode:(AIKVPointer*)indexPointer nodePointer:(AIKVPointer*)nodePointer;//被引用报告
 
+/**
+ *  MARK:--------------------cmvNode或absCMVNode构建时,报告net生成directionReference--------------------
+ *  @param difStrong : mv的迫切度越高,越强;
+ *  @param direction : 方向(delta的正负)
+ */
+-(void) aiNetCMV_CreatedCMVNode:(AIKVPointer*)cmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction difStrong:(NSInteger)difStrong;
+
 @end
 
 @interface AINetCMV : NSObject
@@ -52,10 +59,11 @@
 //MARK:===============================================================
 @interface AICMVNode : NSObject <NSCoding>
 
-@property (strong, nonatomic) AIKVPointer *pointer;             //自身存储地址
-@property (strong, nonatomic) AIKVPointer *urgentTo_p;//迫切度数据指针;(指向urgentValue的值存储地址)
+@property (strong, nonatomic) AIKVPointer *pointer;     //自身存储地址
+@property (strong, nonatomic) AIKVPointer *urgentTo_p;  //迫切度数据指针;(指向urgentValue的值存储地址)
 @property (strong, nonatomic) AIKVPointer *delta_p;     //变化指针;(指向变化值存储地址)
-@property (strong, nonatomic) AIKVPointer *cmvModel_kvp;        //被引用的cmvModel;
+@property (strong, nonatomic) AIKVPointer *cmvModel_kvp;//被引用的cmvModel;
+@property (strong, nonatomic) NSMutableArray *absPorts; //抽象方向的端口;
 
 @end
 
@@ -78,8 +86,9 @@
 //MARK:===============================================================
 @interface AIAbsCMVNode : NSObject <NSCoding>
 
-@property (strong, nonatomic) AIKVPointer *pointer;         //自身地址
-@property (assign, nonatomic) MVDirection direction;        //方向是升还是降
-@property (strong, nonatomic) NSMutableArray *conPorts;     //具象方向_cmvNode;
+@property (strong, nonatomic) AIKVPointer *pointer;     //自身地址
+@property (strong, nonatomic) AIKVPointer *urgentTo_p;  //迫切度数据指针;(指向urgentValue的值存储地址)
+@property (strong, nonatomic) AIKVPointer *delta_p;     //变化指针;(指向变化值存储地址)
+@property (strong, nonatomic) NSMutableArray *conPorts; //具象方向端口;
 
 @end

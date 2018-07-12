@@ -134,14 +134,14 @@
 - (instancetype)initWithCoder:(NSCoder *)coder {
     self = [super init];
     if (self) {
-        self.value = [coder decodeIntForKey:@"value"];
+        self.value = [coder decodeIntegerForKey:@"value"];
         self.updateTime = [coder decodeDoubleForKey:@"updateTime"];
     }
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder {
-    [coder encodeInt:self.value forKey:@"value"];
+    [coder encodeInteger:self.value forKey:@"value"];
     [coder encodeDouble:self.updateTime forKey:@"updateTime"];
 }
 

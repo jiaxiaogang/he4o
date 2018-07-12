@@ -210,10 +210,10 @@ static AIThinkingControl *_instance;
 //输入新的cmvAlgsArr
 -(void) dataIn_CMVAlgsArr:(NSArray*)algsArr{
     //1. 抵消 | 合并
-    [ThinkingUtils parserAlgsMVArr:algsArr success:^(NSInteger delta, NSInteger urgentTo, NSString *algsType) {
+    [ThinkingUtils parserAlgsMVArr:algsArr success:^(AIKVPointer *delta_p, AIKVPointer *urgentTo_p, NSInteger delta, NSInteger urgentTo, NSString *algsType) {
         __block BOOL findSeemType = false;
         for (NSArray *item in self.cmvCache) {
-            [ThinkingUtils parserAlgsMVArr:item success:^(NSInteger itemDelta, NSInteger itemUrgentTo, NSString *itemAlgsType) {
+            [ThinkingUtils parserAlgsMVArr:item success:^(AIKVPointer *delta_p, AIKVPointer *urgentTo_p,NSInteger itemDelta, NSInteger itemUrgentTo, NSString *itemAlgsType) {
                 if ([STRTOOK(algsType) isEqualToString:itemAlgsType]) {
                     //2. 同向且更迫切时,替换到合适位置
                     if ((itemDelta > 0) == (delta > 0)) {
@@ -258,7 +258,7 @@ static AIThinkingControl *_instance;
     __block BOOL success = false;
     for (NSInteger i = 0; i < self.cmvCache.count; i++) {
         NSArray *checkItem = self.cmvCache[i];
-        [ThinkingUtils parserAlgsMVArr:checkItem success:^(NSInteger checkDelta, NSInteger checkUrgentTo, NSString *checkAlgsType) {
+        [ThinkingUtils parserAlgsMVArr:checkItem success:^(AIKVPointer *delta_p, AIKVPointer *urgentTo_p,NSInteger checkDelta, NSInteger checkUrgentTo, NSString *checkAlgsType) {
             if (labs(delta) > labs(checkDelta)) {
                 [self.cmvCache insertObject:algsArr atIndex:i];
                 success = true;

@@ -91,21 +91,25 @@
 }
 
 //cmvAlgsArr->mvValue
-+(void) parserAlgsMVArr:(NSArray*)algsArr success:(void(^)(NSInteger delta,NSInteger urgentTo,NSString *algsType))success{
++(void) parserAlgsMVArr:(NSArray*)algsArr success:(void(^)(AIKVPointer *delta_p,AIKVPointer *urgentTo_p,NSInteger delta,NSInteger urgentTo,NSString *algsType))success{
     //1. 数据
+    __block AIKVPointer *delta_p = nil;
+    __block AIKVPointer *urgentTo_p = nil;
     __block NSInteger delta = 0;
     __block NSInteger urgentTo = 0;
     __block NSString *algsType = @"";
     
     //2. 数据检查
-    [self parserAlgsMVArrWithoutValue:algsArr success:^(AIKVPointer *delta_p, AIKVPointer *urgentTo_p, NSString *findAlgsType) {
+    [self parserAlgsMVArrWithoutValue:algsArr success:^(AIKVPointer *findDelta_p, AIKVPointer *findUrgentTo_p, NSString *findAlgsType) {
+        delta_p = findDelta_p;
+        urgentTo_p = findUrgentTo_p;
         delta = [NUMTOOK([SMGUtils searchObjectForPointer:delta_p fileName:FILENAME_Value time:30]) integerValue];
         urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:urgentTo_p fileName:FILENAME_Value time:30]) integerValue];
         algsType = findAlgsType;
     }];
     
     //3. 逻辑执行
-    if (success) success(delta,urgentTo,algsType);
+    if (success) success(delta_p,urgentTo_p,delta,urgentTo,algsType);
 }
 
 @end

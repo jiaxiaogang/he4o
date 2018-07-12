@@ -24,7 +24,7 @@
  *  @param cmvNode_p : 指cmvNode或absCMVNode的节点地址;
  *  @param mvAlgsType : 引用序列的分区标识
  */
--(void) setNodePointerToDirectionReference:(AIKVPointer*)cmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction difStrong:(int)difStrong;
+-(void) setNodePointerToDirectionReference:(AIKVPointer*)cmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction difStrong:(NSInteger)difStrong;
 
 
 /**

@@ -256,6 +256,9 @@ static AINet *_instance;
     [self setItemAlgsReference:indexPointer target_p:nodePointer difValue:1];
 }
 
+-(void) aiNetCMV_CreatedCMVNode:(AIKVPointer*)cmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction difStrong:(NSInteger)difStrong{
+    [self.netDirectionReference setNodePointerToDirectionReference:cmvNode_p mvAlgsType:mvAlgsType direction:direction difStrong:difStrong];
+}
 
 //MARK:===============================================================
 //MARK:                     < abs >
