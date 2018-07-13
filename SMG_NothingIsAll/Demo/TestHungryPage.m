@@ -89,7 +89,7 @@
 }
 
 - (IBAction)subBtnOnClick:(id)sender {
-    [[[DemoHunger alloc] init] commit:0.1 state:UIDeviceBatteryStateUnplugged];
+    [[[DemoHunger alloc] init] commit:0.7 state:UIDeviceBatteryStateUnplugged];
 }
 
 - (IBAction)eatStartBtnOnClick:(id)sender {

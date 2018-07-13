@@ -46,7 +46,7 @@
 
 
 @property (assign,nonatomic) NSInteger value;
-@property (assign, nonatomic) double updateTime;  //更新值时间
+@property (assign, nonatomic) double updateTime;  //更新值时间(18.07.13目前未工作,随后补上)
 
 //(警告!!!强度不能在strong内部自行改变,不然会影响到第二序列的工作,所以应由第二序列读取到内存时,统一调用处理;)
 -(void) updateValue;//更新衰减值(1,时间衰减; 2,衰减曲线;)(目前先每天减1;)

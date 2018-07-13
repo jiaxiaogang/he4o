@@ -20,17 +20,19 @@
 +(void) commitIMV:(MVType)type from:(CGFloat)from to:(CGFloat)to{
     //1. 生成imvModel
     if (type == MVType_Hunger) {
-        ImvAlgsModelBase *imvModel = [[ImvAlgsModelBase alloc] init];
-        imvModel.urgentTo = [self getAlgsUrgentValue:to];
-        imvModel.delta = imvModel.urgentTo - [self getAlgsUrgentValue:from];
+        ImvAlgsHungerModel *imvModel = [[ImvAlgsHungerModel alloc] init];
+        imvModel.urgentTo = [self getHungerAlgsUrgentValue:to];
+        CGFloat urgentFrom = [self getHungerAlgsUrgentValue:from];
+        imvModel.delta = imvModel.urgentTo - urgentFrom;
         [[AIThinkingControl shareInstance] commitInput:imvModel];
     }else if(type == MVType_Anxious){
         
     }
 }
 
-+(CGFloat) getAlgsUrgentValue:(CGFloat)to{
-    return to * to;
++(CGFloat) getHungerAlgsUrgentValue:(CGFloat)to{
+    to = MAX(0, MIN(10,to));
+    return 100 - to * to;
 }
 
 @end

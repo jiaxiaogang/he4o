@@ -15,10 +15,16 @@
 @class AIKVPointer,AINetCMVModel;
 @protocol AINetCMVDelegate <NSObject>
 
--(void) aiNetCMV_CreatedNode:(AIKVPointer*)indexPointer nodePointer:(AIKVPointer*)nodePointer;//被引用报告
 
 /**
- *  MARK:--------------------cmvNode或absCMVNode构建时,报告net生成directionReference--------------------
+ *  MARK:--------------------新的微信息被引用,报告引用--------------------
+ *  @param indexPointer : 微信息值的指针;
+ *  @param nodePointer : 宏节点的指针;
+ */
+-(void) aiNetCMV_CreatedNode:(AIKVPointer*)indexPointer nodePointer:(AIKVPointer*)nodePointer;
+
+/**
+ *  MARK:--------------------cmvNode或absCMVNode构建时,报告directionReference--------------------
  *  @param difStrong : mv的迫切度越高,越强;
  *  @param direction : 方向(delta的正负)
  */
@@ -26,13 +32,15 @@
 
 @end
 
+
+
+
 @interface AINetCMV : NSObject
 
 @property (weak, nonatomic) id<AINetCMVDelegate> delegate;
 -(AINetCMVModel*) create:(NSArray*)imvAlgsArr order:(NSArray*)order;
 
 @end
-
 
 
 
@@ -53,7 +61,6 @@
 
 
 
-
 //MARK:===============================================================
 //MARK:                     < AINode之: cmv节点 >
 //MARK:===============================================================
@@ -68,6 +75,8 @@
 @end
 
 
+
+
 //MARK:===============================================================
 //MARK:                     < AINode之: 前因序列_节点 >
 //MARK:===============================================================
@@ -79,6 +88,8 @@
 @property (strong, nonatomic) NSMutableArray *absPorts;         //抽象插口
 
 @end
+
+
 
 
 //MARK:===============================================================

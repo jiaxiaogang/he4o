@@ -329,78 +329,96 @@ static AIThinkingControl *_instance;
 //从网络中找已有cmv经验(饿了找瓜)
 -(void) dataIn_AssociativeExperience:(AINetCMVModel*)cmvModel {
     if (ISOK(cmvModel, AINetCMVModel.class)) {
-        //cmv模型已形成,可取cmv的欲望值和迫切度值;
         //尝试抽象
-        //尝试找imv的解决方案
         //1. 取cmvNode
         AICMVNode *cmvNode = [SMGUtils searchObjectForPointer:cmvModel.cmvNode_p fileName:FILENAME_Node];
         AIFrontOrderNode *foNode = [SMGUtils searchObjectForPointer:cmvModel.foNode_p fileName:FILENAME_Node];
         
-        //2. 找到同样targetType的引用者
         if (ISOK(cmvNode, AICMVNode.class)) {
+            //2. 根据cmv模型,取cmv的迫切度值和欲望方向;求出需求
+            NSNumber *deltaNum = [SMGUtils searchObjectForPointer:cmvNode.delta_p fileName:FILENAME_Value time:30];
+            NSNumber *urgentToNum = [SMGUtils searchObjectForPointer:cmvNode.urgentTo_p fileName:FILENAME_Value time:30];
             AITargetType targetType = [ThinkingUtils getTargetTypeWithAlgsType:cmvNode.urgentTo_p.algsType];
-            if (targetType == AITargetType_Down) {
-                //取delta的负值进行经验查找;
-            }else if(targetType == AITargetType_Up){
-                //取delta的正值进行经验查找;
+            NSInteger delta = [NUMTOOK(deltaNum) integerValue];
+            BOOL downDemand = targetType == AITargetType_Down && delta > 0;
+            BOOL upDemand = targetType == AITargetType_Up && delta < 0;
+            
+            //3. 有需求时,找出imv解决经验,尝试决策并解决;
+            if (downDemand || upDemand ) {
+                MVDirection direction = downDemand ? MVDirection_Negative : MVDirection_Positive;
+                NSArray *mvPorts = [[AINet sharedInstance] getNetNodePointersFromDirectionReference:cmvNode.pointer.algsType direction:direction limit:1];
+                
+                
+                
+                //xxxxxxxx联想以往解决时,都发生了什么,尝试复现;
+                
+                
+                
             }
-            
-            //1. 实现快速根据delta+或-,从index找到相对应的pointer;
-            //2. 根据delta+或-的经历,快速实现absDeltaIndex的构建;
-            NSArray *mvPorts = [[AINet sharedInstance] getNetNodePointersFromDirectionReference:cmvNode.pointer.algsType direction:MVDirection_Negative limit:3];
-            
-            //3. 联想cmv模型
-            for (AIPort *port in mvPorts) {
-                id referNode = [SMGUtils searchObjectForPointer:port.target_p fileName:FILENAME_Node];
-                if (ISOK(referNode, AICMVNode.class)) {
-                    AICMVNode *assCmvNode = (AICMVNode*)referNode;
-                    
-                    //4. 排除联想自己(随后写到reference中)
-                    if (![cmvNode.pointer isEqual:assCmvNode.pointer]) {
-                        AINetCMVModel *assCmvModel = [SMGUtils searchObjectForPointer:assCmvNode.cmvModel_kvp fileName:FILENAME_CMVModel];
-                        AIFrontOrderNode *assFoNode = [SMGUtils searchObjectForPointer:assCmvModel.foNode_p fileName:FILENAME_Node];
+            //4. 无需求时,找出以往同样经历,类比规律,抽象出更确切的意义;
+            else{
+                MVDirection direction = downDemand ? MVDirection_Positive : MVDirection_Negative;
+                NSArray *mvPorts = [[AINet sharedInstance] getNetNodePointersFromDirectionReference:cmvNode.pointer.algsType direction:direction limit:1];
+                
+                //3. 联想cmv模型
+                for (AIPort *port in mvPorts) {
+                    id referNode = [SMGUtils searchObjectForPointer:port.target_p fileName:FILENAME_Node];
+                    if (ISOK(referNode, AICMVNode.class)) {
+                        AICMVNode *assCmvNode = (AICMVNode*)referNode;
                         
-                        NSLog(@"____联想到cmv模型>>>\ncmvModel:%ld,%@ \n assCmvModel:%ld,%@",(long)cmvModel.pointer.pointerId,cmvModel.pointer.params,(long)assCmvModel.pointer.pointerId,assCmvModel.pointer.params);
-                        
-                        //5. 类比orders的规律,并abs;
-                        NSMutableArray *sames = [[NSMutableArray alloc] init];
-                        if (ISOK(foNode, AIFrontOrderNode.class) && ISOK(assFoNode, AIFrontOrderNode.class)) {
-                            for (AIKVPointer *data_p in foNode.orders_kvp) {
-                                //6. 是否已收集
-                                BOOL already = false;
-                                for (AIKVPointer *same_p in sames) {
-                                    if ([same_p isEqual:data_p]) {
-                                        already = true;
-                                        break;
-                                    }
-                                }
-                                //7. 未收集过,则查找是否有一致微信息(有则收集)
-                                if (!already) {
-                                    for (AIKVPointer *assData_p in assFoNode.orders_kvp) {
-                                        if ([data_p isEqual:assData_p]) {
-                                            [sames addObject:assData_p];
+                        //4. 排除联想自己(随后写到reference中)
+                        if (![cmvNode.pointer isEqual:assCmvNode.pointer]) {
+                            AINetCMVModel *assCmvModel = [SMGUtils searchObjectForPointer:assCmvNode.cmvModel_kvp fileName:FILENAME_CMVModel];
+                            AIFrontOrderNode *assFoNode = [SMGUtils searchObjectForPointer:assCmvModel.foNode_p fileName:FILENAME_Node];
+                            
+                            NSLog(@"____联想到cmv模型>>>\ncmvModel:%ld,%@ \n assCmvModel:%ld,%@",(long)cmvModel.pointer.pointerId,cmvModel.pointer.params,(long)assCmvModel.pointer.pointerId,assCmvModel.pointer.params);
+                            
+                            
+                            
+                            //xxxxxxxx联想到同样经历的mv时,尝试抽象出absCMVNode;
+                            
+                            
+                            
+                            //5. 类比orders的规律,并abs;
+                            NSMutableArray *sames = [[NSMutableArray alloc] init];
+                            if (ISOK(foNode, AIFrontOrderNode.class) && ISOK(assFoNode, AIFrontOrderNode.class)) {
+                                for (AIKVPointer *data_p in foNode.orders_kvp) {
+                                    //6. 是否已收集
+                                    BOOL already = false;
+                                    for (AIKVPointer *same_p in sames) {
+                                        if ([same_p isEqual:data_p]) {
+                                            already = true;
                                             break;
                                         }
                                     }
+                                    //7. 未收集过,则查找是否有一致微信息(有则收集)
+                                    if (!already) {
+                                        for (AIKVPointer *assData_p in assFoNode.orders_kvp) {
+                                            if ([data_p isEqual:assData_p]) {
+                                                [sames addObject:assData_p];
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    
                                 }
                                 
-                            }
-                            
-                            //8. 构建absNode & 并把absValue添加到瞬时记忆
-                            if (ARRISOK(sames)) {
-                                NSLog(@"____类比到规律——————————");
-                                for (AIKVPointer *same in sames) {
-                                    NSLog(@"\n____>%ld",(long)same.pointerId);
+                                //8. 构建absNode & 并把absValue添加到瞬时记忆
+                                if (ARRISOK(sames)) {
+                                    NSLog(@"____类比到规律——————————");
+                                    for (AIKVPointer *same in sames) {
+                                        NSLog(@"\n____>%ld",(long)same.pointerId);
+                                    }
+                                    AINetAbsNode *absNode = [[AINet sharedInstance] createAbs:@[foNode,assFoNode] refs_p:sames];
+                                    [self dataIn_ToShortCache:absNode.absValue_p];
+                                    NSLog(@"构建抽象节点成功.....");
+                                    [absNode print];
                                 }
-                                AINetAbsNode *absNode = [[AINet sharedInstance] createAbs:@[foNode,assFoNode] refs_p:sames];
-                                [self dataIn_ToShortCache:absNode.absValue_p];
-                                NSLog(@"构建抽象节点成功.....");
-                                [absNode print];
                             }
                         }
+                    }else if(ISOK(referNode, AINode.class)){
+                        AINode *node = (AINode*)referNode;
                     }
-                }else if(ISOK(referNode, AINode.class)){
-                    AINode *node = (AINode*)referNode;
                 }
             }
         }

@@ -38,7 +38,7 @@
 -(void) commit:(CGFloat)level state:(UIDeviceBatteryState)state{
     //1,取值
     CGFloat toLevel = MIN(1, MAX(0, level));
-    CGFloat fromLevel = state == UIDeviceBatteryStateCharging ? toLevel + 0.01f : toLevel - 0.01f;
+    CGFloat fromLevel = state == UIDeviceBatteryStateCharging ? toLevel - 0.03f : toLevel + 0.03f;
     
     //2. 转换0-10;
     CGFloat from = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:fromLevel];

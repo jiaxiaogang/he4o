@@ -25,6 +25,8 @@
         deltaPointer = delta_p;
         mvAlgsType = algsType;
         urgentToPointer = urgentTo_p;
+        deltaValue = delta;
+        urgentToValue = urgentTo;
     }];
     
     //2. 生成cmv模型
@@ -124,6 +126,13 @@
 //MARK:===============================================================
 @implementation AICMVNode
 
+-(NSMutableArray *)absPorts{
+    if (_absPorts == nil) {
+        _absPorts = [NSMutableArray new];
+    }
+    return _absPorts;
+}
+
 /**
  *  MARK:--------------------NSCoding--------------------
  */
@@ -134,6 +143,7 @@
         self.delta_p = [aDecoder decodeObjectForKey:@"delta_p"];
         self.urgentTo_p = [aDecoder decodeObjectForKey:@"urgentTo_p"];
         self.cmvModel_kvp = [aDecoder decodeObjectForKey:@"cmvModel_kvp"];
+        self.absPorts = [aDecoder decodeObjectForKey:@"absPorts"];
     }
     return self;
 }
@@ -143,6 +153,7 @@
     [aCoder encodeObject:self.delta_p forKey:@"delta_p"];
     [aCoder encodeObject:self.urgentTo_p forKey:@"urgentTo_p"];
     [aCoder encodeObject:self.cmvModel_kvp forKey:@"cmvModel_kvp"];
+    [aCoder encodeObject:self.absPorts forKey:@"absPorts"];
 }
 
 @end

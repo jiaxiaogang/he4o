@@ -465,7 +465,7 @@
 +(id) searchObjectForPointer:(AIKVPointer*)pointer fileName:(NSString*)fileName time:(double)time{
     if (ISOK(pointer, AIKVPointer.class)) {
         //1. 优先取redis
-        NSString *redisKey = STRFORMAT(@"%@/%@",pointer.filePath,fileName);
+        NSString *redisKey = STRFORMAT(@"%@/%@",pointer.filePath,fileName);//随后去掉前辍
         id redisObj = [[XGRedis sharedInstance] objectForKey:redisKey];
         if (redisObj != nil) {
             return redisObj;
@@ -474,7 +474,7 @@
         //2. 再取disk
         PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:pointer.filePath];
         id diskObj = [cache objectForKey:fileName];
-        if (time > 0) {
+        if (time > 0 && diskObj) {
             [[XGRedis sharedInstance] setObject:diskObj forKey:redisKey time:time];
         }
         return diskObj;
@@ -492,7 +492,7 @@
     
     //2. 存redis
     if (time > 0) {
-        [[XGRedis sharedInstance] setObject:obj forKey:STRFORMAT(@"%@/%@",rootPath,fileName) time:time];
+        [[XGRedis sharedInstance] setObject:obj forKey:STRFORMAT(@"%@/%@",rootPath,fileName) time:time];//随后去掉(redisKey)前辍
     }
 }
 
