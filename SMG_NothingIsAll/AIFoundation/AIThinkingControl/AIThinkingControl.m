@@ -25,6 +25,7 @@
 @property (strong,nonatomic) NSMutableArray *shortCache;        //瞬时记忆_存AIModel(从Algs传入,待Thinking取用分析)(容量8);
 @property (strong,nonatomic) NSMutableArray *thinkFeedCache;    //短时记忆_思维流(包括shortCache和cmvCache,10分钟内都会存在此处(人类可能一天或几小时))
 @property (strong,nonatomic) NSMutableArray *cmvCache;          //思维因子_当前cmv序列(注:所有cmv只与cacheImv中作匹配)(正序,urgent越大,排越前)
+@property (assign, nonatomic) NSInteger energy;                 //当前能量值;(在循环中动态更新)
 
 @end
 
@@ -351,6 +352,9 @@ static AIThinkingControl *_instance;
                 
                 
                 //xxxxxxxx联想以往解决时,都发生了什么,尝试复现;
+                NSLog(@"1. 如果未找到复现方式,或解决方式,则产生情绪:急");
+                
+                NSLog(@"2. 通过急,输出output表情哭");
                 
                 
                 
