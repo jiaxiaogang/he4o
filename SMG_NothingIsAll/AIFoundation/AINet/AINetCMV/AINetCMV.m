@@ -36,7 +36,7 @@
     //3. 打包cmvNode;
     AICMVNode *cmvNode = [[AICMVNode alloc] init];
     cmvNode.pointer = [SMGUtils createPointer:PATH_NET_CMV_NODE algsType:mvAlgsType dataSource:@""];
-    cmvNode.cmvModel_kvp = cmvModel.pointer;
+    cmvNode.cmvModel_p = cmvModel.pointer;
     cmvNode.delta_p = deltaPointer;
     cmvNode.urgentTo_p = urgentToPointer;
     PINDiskCache *pinCache = [[PINDiskCache alloc] initWithName:@"" rootPath:cmvNode.pointer.filePath];//save
@@ -142,7 +142,7 @@
         self.pointer = [aDecoder decodeObjectForKey:@"pointer"];
         self.delta_p = [aDecoder decodeObjectForKey:@"delta_p"];
         self.urgentTo_p = [aDecoder decodeObjectForKey:@"urgentTo_p"];
-        self.cmvModel_kvp = [aDecoder decodeObjectForKey:@"cmvModel_kvp"];
+        self.cmvModel_p = [aDecoder decodeObjectForKey:@"cmvModel_p"];
         self.absPorts = [aDecoder decodeObjectForKey:@"absPorts"];
     }
     return self;
@@ -152,7 +152,7 @@
     [aCoder encodeObject:self.pointer forKey:@"pointer"];
     [aCoder encodeObject:self.delta_p forKey:@"delta_p"];
     [aCoder encodeObject:self.urgentTo_p forKey:@"urgentTo_p"];
-    [aCoder encodeObject:self.cmvModel_kvp forKey:@"cmvModel_kvp"];
+    [aCoder encodeObject:self.cmvModel_p forKey:@"cmvModel_p"];
     [aCoder encodeObject:self.absPorts forKey:@"absPorts"];
 }
 
