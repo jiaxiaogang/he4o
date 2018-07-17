@@ -105,7 +105,12 @@
 //MARK:===============================================================
 @implementation NSObject (Invocation)
 
-- (id)performSelector:(SEL)aSelector withObjects:(NSArray *)objects {
+- (id)invocationMethodName:(NSString*)methodName withObjects:(NSArray *)objects{
+    SEL sel = NSSelectorFromString(methodName);
+    return [self invocationSelector:sel withObjects:objects];
+}
+
+- (id)invocationSelector:(SEL)aSelector withObjects:(NSArray *)objects {
     //1. 取方法签名
     NSMethodSignature *signature = [self.class instanceMethodSignatureForSelector:aSelector];
     
@@ -124,7 +129,13 @@
     return [NSObject checkAndInvoke:invocation signature:signature objects:objects];
 }
 
-+ (id)performSelector:(SEL)aSelector class:(Class)class withObjects:(NSArray *)objects{
++ (id)invocationMethodName:(NSString*)methodName className:(NSString*)className withObjects:(NSArray *)objects{
+    Class clazz = NSClassFromString(className);
+    SEL sel = NSSelectorFromString(methodName);
+    return [self invocationSelector:sel class:clazz withObjects:objects];
+}
+
++ (id)invocationSelector:(SEL)aSelector class:(Class)class withObjects:(NSArray *)objects{
     //1. 取方法签名
     if (class == NULL)
         class = self.class;

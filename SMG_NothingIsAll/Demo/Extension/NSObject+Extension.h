@@ -42,8 +42,13 @@
 //MARK:===============================================================
 @interface NSObject (Invocation)
 
-- (id)performSelector:(SEL)aSelector withObjects:(NSArray *)objects;
-+ (id)performSelector:(SEL)aSelector class:(Class)class withObjects:(NSArray *)objects;
+/*调用实例方法*/
+- (id)invocationMethodName:(NSString*)methodName withObjects:(NSArray *)objects;
+- (id)invocationSelector:(SEL)aSelector withObjects:(NSArray *)objects;
+
+/*调用静态方法*/
++ (id)invocationMethodName:(NSString*)methodName className:(NSString*)className withObjects:(NSArray *)objects;
++ (id)invocationSelector:(SEL)aSelector class:(Class)class withObjects:(NSArray *)objects;
 
 @end
 
