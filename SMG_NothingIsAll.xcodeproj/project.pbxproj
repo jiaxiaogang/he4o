@@ -35,7 +35,6 @@
 		08C84A8E1E9A866200897D8B /* AIInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A8D1E9A866200897D8B /* AIInput.m */; };
 		08D322A91EBA28B0009D734A /* Foundation+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D322A81EBA28B0009D734A /* Foundation+Log.m */; };
 		08D471DE1FEB3FFF00C61322 /* AIImvAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D471DD1FEB3FFF00C61322 /* AIImvAlgs.m */; };
-		08D8C525201DEA4300FC1265 /* AIAlgsPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D8C524201DEA4300FC1265 /* AIAlgsPointer.m */; };
 		08DACE951EBD805C00FDC0B6 /* NSString+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 08DACE941EBD805C00FDC0B6 /* NSString+Extension.m */; };
 		08DB40CB1F11A65E003162C8 /* TestHungryPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 08DB40C91F11A65E003162C8 /* TestHungryPage.m */; };
 		08DB40CC1F11A65E003162C8 /* TestHungryPage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 08DB40CA1F11A65E003162C8 /* TestHungryPage.xib */; };
@@ -54,7 +53,7 @@
 		8822852020F58BDA009884DC /* AINetDirectionReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 8822851F20F58BDA009884DC /* AINetDirectionReference.m */; };
 		88960C6B209BDA2B004EF419 /* AINetIndexReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 88960C6A209BDA2B004EF419 /* AINetIndexReference.m */; };
 		88988524208979E6001D1ADC /* AINetIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = 88988523208979E6001D1ADC /* AINetIndex.m */; };
-		88A15CE920FEB260001A0310 /* OutputStringAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 88A15CE820FEB260001A0310 /* OutputStringAlgs.m */; };
+		88A15CEC20FEC997001A0310 /* AIOutputKVPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 88A15CEB20FEC997001A0310 /* AIOutputKVPointer.m */; };
 		88B23BE620BE20BC00BE8AF6 /* AINetAbs.m in Sources */ = {isa = PBXBuildFile; fileRef = 88B23BE520BE20BC00BE8AF6 /* AINetAbs.m */; };
 		88B3865D20C6130E009553B5 /* AINetAbsIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = 88B3865C20C6130E009553B5 /* AINetAbsIndex.m */; };
 		88BC09D720B4EB920006ABEF /* XGRedis.m in Sources */ = {isa = PBXBuildFile; fileRef = 88BC09D620B4EB920006ABEF /* XGRedis.m */; };
@@ -122,8 +121,6 @@
 		08D471DC1FEB3FFF00C61322 /* AIImvAlgs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIImvAlgs.h; sourceTree = "<group>"; };
 		08D471DD1FEB3FFF00C61322 /* AIImvAlgs.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIImvAlgs.m; sourceTree = "<group>"; };
 		08D7DA411ED149B4004B1018 /* AIHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIHeader.h; sourceTree = "<group>"; };
-		08D8C523201DEA4300FC1265 /* AIAlgsPointer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIAlgsPointer.h; sourceTree = "<group>"; };
-		08D8C524201DEA4300FC1265 /* AIAlgsPointer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIAlgsPointer.m; sourceTree = "<group>"; };
 		08DACE931EBD805C00FDC0B6 /* NSString+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Extension.h"; sourceTree = "<group>"; };
 		08DACE941EBD805C00FDC0B6 /* NSString+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Extension.m"; sourceTree = "<group>"; };
 		08DB40C81F11A65E003162C8 /* TestHungryPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestHungryPage.h; sourceTree = "<group>"; };
@@ -157,8 +154,8 @@
 		88960C6A209BDA2B004EF419 /* AINetIndexReference.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetIndexReference.m; sourceTree = "<group>"; };
 		88988522208979E6001D1ADC /* AINetIndex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetIndex.h; sourceTree = "<group>"; };
 		88988523208979E6001D1ADC /* AINetIndex.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetIndex.m; sourceTree = "<group>"; };
-		88A15CE720FEB260001A0310 /* OutputStringAlgs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OutputStringAlgs.h; sourceTree = "<group>"; };
-		88A15CE820FEB260001A0310 /* OutputStringAlgs.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OutputStringAlgs.m; sourceTree = "<group>"; };
+		88A15CEA20FEC997001A0310 /* AIOutputKVPointer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIOutputKVPointer.h; sourceTree = "<group>"; };
+		88A15CEB20FEC997001A0310 /* AIOutputKVPointer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIOutputKVPointer.m; sourceTree = "<group>"; };
 		88B23BE420BE20BC00BE8AF6 /* AINetAbs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetAbs.h; sourceTree = "<group>"; };
 		88B23BE520BE20BC00BE8AF6 /* AINetAbs.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetAbs.m; sourceTree = "<group>"; };
 		88B3865B20C6130E009553B5 /* AINetAbsIndex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetAbsIndex.h; sourceTree = "<group>"; };
@@ -405,8 +402,6 @@
 			children = (
 				082F9D541EB234750009F6A9 /* Output.h */,
 				082F9D551EB234750009F6A9 /* Output.m */,
-				88A15CE720FEB260001A0310 /* OutputStringAlgs.h */,
-				88A15CE820FEB260001A0310 /* OutputStringAlgs.m */,
 			);
 			path = AIOutput;
 			sourceTree = "<group>";
@@ -508,8 +503,8 @@
 				08F738011F7C714F005EAD56 /* AIPointer.m */,
 				08F738021F7C714F005EAD56 /* AISqlPointer.h */,
 				08F738031F7C714F005EAD56 /* AISqlPointer.m */,
-				08D8C523201DEA4300FC1265 /* AIAlgsPointer.h */,
-				08D8C524201DEA4300FC1265 /* AIAlgsPointer.m */,
+				88A15CEA20FEC997001A0310 /* AIOutputKVPointer.h */,
+				88A15CEB20FEC997001A0310 /* AIOutputKVPointer.m */,
 			);
 			path = AIPointer;
 			sourceTree = "<group>";
@@ -727,9 +722,7 @@
 				083112F21F05E12600051DE6 /* MBProgressHUD+Add.m in Sources */,
 				084219ED1FD8CF81009DA6BC /* AIThinkingControl.m in Sources */,
 				083F61381F048329000330E1 /* AILine.m in Sources */,
-				88A15CE920FEB260001A0310 /* OutputStringAlgs.m in Sources */,
 				08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */,
-				08D8C525201DEA4300FC1265 /* AIAlgsPointer.m in Sources */,
 				081F5A101FFF01A500BD74F9 /* AINetCache.m in Sources */,
 				08B31E7E20648C3700FD96EA /* ThinkingUtils.m in Sources */,
 				88BC09D720B4EB920006ABEF /* XGRedis.m in Sources */,
@@ -755,6 +748,7 @@
 				08AF454A1E97D0B500377887 /* main.m in Sources */,
 				88988524208979E6001D1ADC /* AINetIndex.m in Sources */,
 				082F9D5C1EB236AC0009F6A9 /* StudyViewController.m in Sources */,
+				88A15CEC20FEC997001A0310 /* AIOutputKVPointer.m in Sources */,
 				081B3ACC1F6E2155008A7F36 /* AITime.m in Sources */,
 				080A74321F60C6490025DBA3 /* AIPort.m in Sources */,
 				08DB40CB1F11A65E003162C8 /* TestHungryPage.m in Sources */,

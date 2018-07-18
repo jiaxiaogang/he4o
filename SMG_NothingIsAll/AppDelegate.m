@@ -27,16 +27,6 @@
     [self.window setRootViewController:naviC];
     [self.window makeKeyAndVisible];
     
-    SEL runSEL = NSSelectorFromString(@"run:");
-    SEL staticRunSEL = NSSelectorFromString(@"staticRun:");
-    [self invocationMethodName:@"run:" withObjects:@[@(1)]];
-    
-    NSLog(@"____");
-    
-    
-    
-    [NSObject invocationMethodName:@"staticRun:" className:@"AppDelegate" withObjects:@[@(3)]];
-    
     return YES;
 }
 
@@ -59,14 +49,6 @@
     NSArray *controllers = navC.viewControllers;
     UIViewController *controller = [controllers lastObject];
     return controller;
-}
-
-+(void) staticRun:(NSNumber*)param{
-    NSLog(@"staticRun>>%@",param);
-}
-
--(void) run:(NSNumber*)param{
-    NSLog(@"run>>%@",param);
 }
 
 @end
