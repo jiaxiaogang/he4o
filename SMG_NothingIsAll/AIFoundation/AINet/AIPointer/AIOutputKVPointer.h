@@ -15,6 +15,9 @@
  */
 @interface AIOutputKVPointer : AIPointer
 
-@property (strong,nonatomic) NSString *dataTo;    //算法名
++(AIOutputKVPointer*) newWithPointerId:(NSInteger)pointerId folderName:(NSString*)folderName algsType:(NSString*)algsType dataTo:(NSString*)dataTo;
+-(NSString*) folderName;//神经网络根目录 | 索引根目录
+-(NSString*) algsType;  //输出算法类型_分区
+-(NSString*) dataTo;    //输出算法函数名
 
 @end
