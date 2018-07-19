@@ -47,6 +47,10 @@
     return STRFORMAT(@"%@_%ld",self.params,(long)self.pointerId);
 }
 
+-(NSString*) identifier{
+    return STRFORMAT(@"%@",self.params);
+}
+
 /**
  *  MARK:--------------------NSCoding--------------------
  */

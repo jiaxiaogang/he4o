@@ -17,6 +17,7 @@
 #import "AINetAbs.h"
 #import "AINetAbsIndex.h"
 #import "AINetDirectionReference.h"
+#import "AIOutputReference.h"
 
 @interface AINet () <AINetCMVDelegate>
 
@@ -31,6 +32,7 @@
 @property (strong, nonatomic) AINetAbs *netAbs;     //抽具象序列
 @property (strong, nonatomic) AINetAbsIndex *netAbsIndex;//宏信息索引区(海马)
 @property (strong, nonatomic) AINetDirectionReference *netDirectionReference;
+@property (strong, nonatomic) AIOutputReference *outputReference;
 
 @end
 
@@ -297,7 +299,19 @@ static AINet *_instance;
     [self.netDirectionReference setNodePointerToDirectionReference:cmvNode_p mvAlgsType:mvAlgsType direction:direction difStrong:difStrong];
 }
 
+//MARK:===============================================================
+//MARK:                     < AIOutputReference >
+//MARK:===============================================================
+-(void) setNetNodePointerToOutputReference:(AIOutputKVPointer*)outputNode_p algsType:(NSString*)algsType dataTo:(NSString*)dataTo difStrong:(NSInteger)difStrong{
+    [self.outputReference setNodePointerToOutputReference:outputNode_p algsType:algsType dataTo:dataTo difStrong:difStrong];
+}
+
+-(AIPort*) getNetNodePointersFromOutputReference_Single:(NSString*)algsType dataTo:(NSString*)dataTo limit:(NSInteger)limit{
+    return ARR_INDEX([self getNetNodePointersFromOutputReference:algsType dataTo:dataTo limit:1], 0);
+}
+
+-(NSArray*) getNetNodePointersFromOutputReference:(NSString*)algsType dataTo:(NSString*)dataTo limit:(NSInteger)limit{
+    return [self.outputReference getNodePointersFromOutputReference:algsType dataTo:dataTo limit:limit];
+}
+
 @end
-
-
-

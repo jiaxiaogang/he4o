@@ -40,6 +40,10 @@
     return fileRootPath;
 }
 
+-(NSString*) identifier{
+    return STRFORMAT(@"%@_%@",self.algsType,self.dataSource);
+}
+
 -(NSString*) folderName{
     return [self.params objectForKey:@"folderName"];
 }

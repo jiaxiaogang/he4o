@@ -78,6 +78,7 @@
 //MARK:===============================================================
 -(AINetCMVModel*) createCMV:(NSArray*)imvAlgsArr order:(NSArray*)order;
 
+
 //MARK:===============================================================
 //MARK:                     < abs >
 //MARK:===============================================================
@@ -91,12 +92,22 @@
 -(void) setAbsIndexReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue;
 -(AIKVPointer*) getItemAbsNodePointer:(AIKVPointer*)absValue_p;
 
+
 //MARK:===============================================================
 //MARK:                     < directionReference >
 //MARK:===============================================================
 -(AIPort*) getNetNodePointersFromDirectionReference_Single:(NSString*)mvAlgsType direction:(MVDirection)direction;
 -(NSArray*) getNetNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction limit:(int)limit;
 -(void) setNetNodePointerToDirectionReference:(AIKVPointer*)cmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction difStrong:(int)difStrong;
+
+
+//MARK:===============================================================
+//MARK:                     < AIOutputReference >
+//MARK:===============================================================
+-(void) setNetNodePointerToOutputReference:(AIOutputKVPointer*)outputNode_p algsType:(NSString*)algsType dataTo:(NSString*)dataTo difStrong:(NSInteger)difStrong;
+-(AIPort*) getNetNodePointersFromOutputReference_Single:(NSString*)algsType dataTo:(NSString*)dataTo limit:(NSInteger)limit;
+-(NSArray*) getNetNodePointersFromOutputReference:(NSString*)algsType dataTo:(NSString*)dataTo limit:(NSInteger)limit;
+
 
 @end
 

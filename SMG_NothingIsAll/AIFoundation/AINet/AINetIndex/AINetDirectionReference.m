@@ -89,18 +89,4 @@
     return nil;
 }
 
-//MARK:===============================================================
-//MARK:                     < privateMethod >
-//MARK:===============================================================
-
-//根据algsType&dataSource&direction拼接成key
--(NSString*) getKey:(AIKVPointer*)node_p{
-    NSMutableString *mStr = [[NSMutableString alloc] init];
-    if (ISOK(node_p, AIKVPointer.class)) {
-        [mStr appendString:node_p.algsType];
-        [mStr appendString:node_p.dataSource];
-    }
-    return mStr;
-}
-
 @end

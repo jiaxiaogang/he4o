@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 
-@class AIObject,AIArray,AILine,ThinkModel,AIKVPointer,AIPort;
+@class AIPointer,AIKVPointer,AIOutputKVPointer,AIObject,AIArray,AILine,ThinkModel,AIPort;
 @interface SMGUtils : NSObject
 
 //MARK:===============================================================
@@ -54,6 +54,10 @@
 //Direction的mv分区pointer;(存引用序列)
 +(AIKVPointer*) createPointerForDirection:(NSString*)mvAlgsType direction:(MVDirection)direction;
 
+//outputReference的"分区算法标识";(存引用序列)
++(AIOutputKVPointer*) createPointerForOutputReference:(NSString*)algsType dataTo:(NSString*)dataTo;
+
+
 @end
 
 
@@ -65,7 +69,7 @@
 +(BOOL) compareItemA:(id)itemA itemB:(id)itemB;
 +(BOOL) compareArrayA:(NSArray*)arrA arrayB:(NSArray*)arrB;
 +(BOOL) compareItemA:(id)itemA containsItemB:(id)itemB;
-+(NSComparisonResult) comparePointerA:(AIKVPointer*)pA pointerB:(AIKVPointer*)pB;
++(NSComparisonResult) comparePointerA:(AIPointer*)pA pointerB:(AIPointer*)pB;
 +(NSComparisonResult) compareRefsA_p:(NSArray*)refsA_p refsB_p:(NSArray*)refsB_p;//比较refsA是否比refsB大
 +(NSComparisonResult) comparePortA:(AIPort*)pA portB:(AIPort*)pB;
 
@@ -82,8 +86,8 @@
 +(NSString*) sqlWhere_RowId:(NSInteger)rowid;
 +(NSString*) sqlWhere_K:(id)columnName V:(id)value;
 +(NSDictionary*) sqlWhereDic_K:(id)columnName V:(id)value;
-+(id) searchObjectForPointer:(AIKVPointer*)pointer fileName:(NSString*)fileName;
-+(id) searchObjectForPointer:(AIKVPointer*)pointer fileName:(NSString*)fileName time:(double)time;//找到后,缓存到redis,time秒;
++(id) searchObjectForPointer:(AIPointer*)pointer fileName:(NSString*)fileName;
++(id) searchObjectForPointer:(AIPointer*)pointer fileName:(NSString*)fileName time:(double)time;//找到后,缓存到redis,time秒;
 +(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName;
 +(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName time:(double)time;//同时插入到redis,time秒
 

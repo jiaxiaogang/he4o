@@ -12,6 +12,8 @@
 #import "XGRedisUtil.h"
 #import "AIPort.h"
 #import "XGRedis.h"
+#import "AIOutputKVPointer.h"
+#import "AIPointer.h"
 
 @implementation SMGUtils
 
@@ -205,6 +207,11 @@
     return kvPointer;
 }
 
+//outputReference的"分区算法标识";(存引用序列)
++(AIOutputKVPointer*) createPointerForOutputReference:(NSString*)algsType dataTo:(NSString*)dataTo{
+    return [AIOutputKVPointer newWithPointerId:0 folderName:PATH_NET_OUTPUT_REFERENCE algsType:algsType dataTo:dataTo];
+}
+
 @end
 
 
@@ -353,7 +360,7 @@
 /**
  *  MARK:--------------------比较pA是否比pB大--------------------
  */
-+(NSComparisonResult) comparePointerA:(AIKVPointer*)pA pointerB:(AIKVPointer*)pB{
++(NSComparisonResult) comparePointerA:(AIPointer*)pA pointerB:(AIPointer*)pB{
     //1. 数据检查
     BOOL aIsOk = ISOK(pA, AIKVPointer.class);
     BOOL bIsOk = ISOK(pB, AIKVPointer.class);
@@ -370,7 +377,7 @@
         }else if(pA.pointerId < pB.pointerId){
             return NSOrderedDescending;
         }else{
-            return [XGRedisUtil compareStrA:[NSString stringWithFormat:@"%@%@",pA.algsType,pA.dataSource] strB:[NSString stringWithFormat:@"%@%@",pB.algsType,pB.dataSource]];
+            return [XGRedisUtil compareStrA:pA.identifier strB:pB.identifier];
         }
     }
 }
@@ -458,11 +465,11 @@
     return nil;
 }
 
-+(id) searchObjectForPointer:(AIKVPointer*)pointer fileName:(NSString*)fileName{
++(id) searchObjectForPointer:(AIPointer*)pointer fileName:(NSString*)fileName{
     return [self searchObjectForPointer:pointer fileName:fileName time:0];
 }
 
-+(id) searchObjectForPointer:(AIKVPointer*)pointer fileName:(NSString*)fileName time:(double)time{
++(id) searchObjectForPointer:(AIPointer*)pointer fileName:(NSString*)fileName time:(double)time{
     if (ISOK(pointer, AIKVPointer.class)) {
         //1. 优先取redis
         NSString *redisKey = STRFORMAT(@"%@/%@",pointer.filePath,fileName);//随后去掉前辍
