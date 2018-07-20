@@ -112,4 +112,10 @@
     return nil;
 }
 
++(BOOL) checkCanOutput:(NSString*)algsType dataTo:(NSString*)dataTo{
+    AIOutputKVPointer *reference_p = [SMGUtils createPointerForOutputReference:algsType dataTo:dataTo];
+    NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:reference_p fileName:FILENAME_Reference_ByPointer time:300]];
+    return ARRISOK(mArr);
+}
+
 @end

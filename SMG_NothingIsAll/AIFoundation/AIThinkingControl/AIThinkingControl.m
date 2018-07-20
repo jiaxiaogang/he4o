@@ -19,6 +19,7 @@
 #import "AINetCMV.h"
 #import "AINetAbs.h"
 #import "ThinkingUtils.h"
+#import "OutputUtils.h"
 
 @interface AIThinkingControl()
 
@@ -382,8 +383,10 @@ static AIThinkingControl *_instance;
                 //xxxxxxxx联想以往解决时,都发生了什么,尝试复现;
                 
                 //1. 检查order_p是否是"输出";
-                //2. 检查order_p是否可以"被输出";
-                if (true) {
+                
+                //2. 假如order_p足够确切,尝试检查并输出;
+                BOOL invoked = [OutputUtils checkAndInvoke:order_p];
+                if (invoked) {
                     tryOutSuccess = true;
                 }
                 

@@ -62,6 +62,7 @@
 		88BC09DD20B4F67E0006ABEF /* XGRedisDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 88BC09DC20B4F67E0006ABEF /* XGRedisDictionary.m */; };
 		88C20B8220C7696A0076BB52 /* AINetAbsUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 88C20B8120C7696A0076BB52 /* AINetAbsUtils.m */; };
 		88C258C1209E99B00042CB6A /* AINetCMV.m in Sources */ = {isa = PBXBuildFile; fileRef = 88C258C0209E99B00042CB6A /* AINetCMV.m */; };
+		88E87A6721016EAA0071513F /* OutputUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 88E87A6621016EAA0071513F /* OutputUtils.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -173,6 +174,8 @@
 		88C20B8120C7696A0076BB52 /* AINetAbsUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetAbsUtils.m; sourceTree = "<group>"; };
 		88C258BF209E99B00042CB6A /* AINetCMV.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetCMV.h; sourceTree = "<group>"; };
 		88C258C0209E99B00042CB6A /* AINetCMV.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetCMV.m; sourceTree = "<group>"; };
+		88E87A6521016EAA0071513F /* OutputUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OutputUtils.h; sourceTree = "<group>"; };
+		88E87A6621016EAA0071513F /* OutputUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OutputUtils.m; sourceTree = "<group>"; };
 		DE79539824FEDBA53557ECCA /* Pods-SMG_NothingIsAll.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SMG_NothingIsAll.release.xcconfig"; path = "Pods/Target Support Files/Pods-SMG_NothingIsAll/Pods-SMG_NothingIsAll.release.xcconfig"; sourceTree = "<group>"; };
 		DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SMG_NothingIsAll.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E74E5256A45FDF9C80A280FD /* Pods-SMG_NothingIsAll.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SMG_NothingIsAll.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SMG_NothingIsAll/Pods-SMG_NothingIsAll.debug.xcconfig"; sourceTree = "<group>"; };
@@ -405,6 +408,8 @@
 			children = (
 				082F9D541EB234750009F6A9 /* Output.h */,
 				082F9D551EB234750009F6A9 /* Output.m */,
+				88E87A6521016EAA0071513F /* OutputUtils.h */,
+				88E87A6621016EAA0071513F /* OutputUtils.m */,
 			);
 			path = AIOutput;
 			sourceTree = "<group>";
@@ -756,6 +761,7 @@
 				082F9D5C1EB236AC0009F6A9 /* StudyViewController.m in Sources */,
 				88A15CEC20FEC997001A0310 /* AIOutputKVPointer.m in Sources */,
 				081B3ACC1F6E2155008A7F36 /* AITime.m in Sources */,
+				88E87A6721016EAA0071513F /* OutputUtils.m in Sources */,
 				080A74321F60C6490025DBA3 /* AIPort.m in Sources */,
 				08DB40CB1F11A65E003162C8 /* TestHungryPage.m in Sources */,
 				081B3AD61F6E2994008A7F36 /* AIStringAlgs.m in Sources */,

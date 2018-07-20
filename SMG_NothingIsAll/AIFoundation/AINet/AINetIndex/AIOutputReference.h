@@ -31,4 +31,12 @@
  */
 -(NSArray*) getNodePointersFromOutputReference:(NSString*)algsType dataTo:(NSString*)dataTo limit:(NSInteger)limit;
 
+
+/**
+ *  MARK:--------------------检查是否可以输出algsType&dataTo--------------------
+ *  1. 有过输出记录,即可输出;
+ */
++(BOOL) checkCanOutput:(NSString*)algsType dataTo:(NSString*)dataTo;
+
+
 @end
