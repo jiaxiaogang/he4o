@@ -18,18 +18,20 @@ static Output *_instance;
     return _instance;
 }
 
--(void) output_Text:(NSString*)text{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(output_Text:)]) {
-        [self.delegate output_Text:text];
++(void) output_Text:(NSString*)text{
+    Output *op = [Output sharedInstance];
+    if (op.delegate && [op.delegate respondsToSelector:@selector(output_Text:)]) {
+        [op.delegate output_Text:text];
     }
 }
 
--(void) output_Face:(OutputFaceType)type{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(output_Text:)]) {
++(void) output_Face:(OutputFaceType)type{
+    Output *op = [Output sharedInstance];
+    if (op.delegate && [op.delegate respondsToSelector:@selector(output_Text:)]) {
         if (type == OutputFaceType_Cry) {
-            [self.delegate output_Text:@"😭"];
+            [op.delegate output_Text:@"😭"];
         }else if(type == OutputFaceType_Smile){
-            [self.delegate output_Text:@"😃"];
+            [op.delegate output_Text:@"😃"];
         }
     }
 }

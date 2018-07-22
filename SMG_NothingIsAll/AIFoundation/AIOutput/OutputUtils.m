@@ -42,7 +42,7 @@
     //2. 检查是否可输出"某数据类型"
     if ([AIOutputReference checkCanOutput:algsType dataTo:dataTo]) {
         id microData = [SMGUtils searchObjectForPointer:micro_p fileName:FILENAME_Value time:30];
-        [NSObject invocationMethodName:algsType className:dataTo withObjects:@[microData]];
+        [NSObject invocationMethodName:dataTo className:algsType withObjects:@[microData]];
         return true;
     }
     return false;
