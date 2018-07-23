@@ -70,6 +70,7 @@ typedef NS_ENUM(NSInteger, AILogicKeyType) {
 
 typedef NS_ENUM(NSInteger, AIMoodType) {
     AIMoodType_Anxious      = 1,//焦急
+    AIMoodType_Satisfy      = 2,//满意
 };
 
 /**

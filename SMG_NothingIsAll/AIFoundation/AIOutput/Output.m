@@ -7,6 +7,7 @@
 //
 
 #import "Output.h"
+#import "AIThinkingControl.h"
 
 @implementation Output
 
@@ -23,16 +24,16 @@ static Output *_instance;
     if (op.delegate && [op.delegate respondsToSelector:@selector(output_Text:)]) {
         [op.delegate output_Text:text];
     }
+    
+    //2. 将输出入网;
+    [[AIThinkingControl shareInstance] commitOutputLog:NSStringFromClass(self) dataTo:@"output_Text:" outputObj:text];
 }
 
-+(void) output_Face:(OutputFaceType)type{
-    Output *op = [Output sharedInstance];
-    if (op.delegate && [op.delegate respondsToSelector:@selector(output_Text:)]) {
-        if (type == OutputFaceType_Cry) {
-            [op.delegate output_Text:@"😭"];
-        }else if(type == OutputFaceType_Smile){
-            [op.delegate output_Text:@"😃"];
-        }
++(void) output_Face:(AIMoodType)type{
+    if (type == AIMoodType_Anxious) {
+        [self output_Text:@"😭"];
+    }else if(type == AIMoodType_Satisfy){
+        [self output_Text:@"😃"];
     }
 }
 

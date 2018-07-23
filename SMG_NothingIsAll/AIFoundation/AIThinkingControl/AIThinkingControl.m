@@ -20,6 +20,7 @@
 #import "AINetAbs.h"
 #import "ThinkingUtils.h"
 #import "OutputUtils.h"
+#import "Output.h"
 
 @interface AIThinkingControl()
 
@@ -395,13 +396,16 @@ static AIThinkingControl *_instance;
         
         if (!tryOutSuccess) {
             
-            //3. 产生"心急mv";
+            //3. 产生"心急mv";(心急产生只是"urgent.energy x 2")
             //4. 输出反射表情;
-            //5. 记录log到foOrders;
+            //5. 记录log到foOrders;(记录log应该到output中执行)
+            
             
             NSLog(@"1. 如果未找到复现方式,或解决方式,则产生情绪:急");
             
             NSLog(@"2. 通过急,输出output表情哭");
+            
+            [Output output_Face:AIMoodType_Anxious];
         }
     }
 }
@@ -509,6 +513,16 @@ static AIThinkingControl *_instance;
 
 //输出
 -(void) decision_Out{
+    
+}
+
+/**
+ *  MARK:--------------------输出的日志入网--------------------
+ *  @param algsType  : 输出算法分区(目前仅有Output)
+ *  @param dataTo    : 输出算法函数(如output_Text:)
+ *  @param outputObj : 输出内容(如:饿死爹了)
+ */
+-(void) commitOutputLog:(NSString*)algsType dataTo:(NSString*)dataTo outputObj:(id)outputObj{
     
 }
 

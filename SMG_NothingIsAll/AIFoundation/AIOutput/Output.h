@@ -24,6 +24,6 @@
 
 +(Output*) sharedInstance;
 +(void) output_Text:(NSString*)text;
-+(void) output_Face:(OutputFaceType)type;
++(void) output_Face:(AIMoodType)type;
 
 @end
