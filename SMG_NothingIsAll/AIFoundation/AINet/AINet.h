@@ -109,6 +109,13 @@
 -(NSArray*) getNetNodePointersFromOutputReference:(NSString*)algsType dataTo:(NSString*)dataTo limit:(NSInteger)limit;
 
 
+//MARK:===============================================================
+//MARK:                     < AINetOutputIndex >
+//MARK:===============================================================
+
+//小脑索引
+-(AIOutputKVPointer*) getOutputIndex:(NSString*)algsType dataTo:(NSString*)dataTo outputObj:(NSNumber*)outputObj;
+
 @end
 
 

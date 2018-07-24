@@ -23,11 +23,11 @@
 
 
 /**
- *  MARK:--------------------输出的日志入网--------------------
+ *  MARK:--------------------输出的日志入网(输入小脑)--------------------
  *  @param algsType  : 输出算法分区(目前仅有Output)
  *  @param dataTo    : 输出算法函数(如output_Text:)
  *  @param outputObj : 输出内容(如:饿死爹了)
  */
--(void) commitOutputLog:(NSString*)algsType dataTo:(NSString*)dataTo outputObj:(id)outputObj;
+-(void) commitOutputLog:(NSString*)algsType dataTo:(NSString*)dataTo outputObj:(NSNumber*)outputObj;
 
 @end

@@ -212,6 +212,23 @@
     return [AIOutputKVPointer newWithPointerId:0 folderName:PATH_NET_OUTPUT_REFERENCE algsType:algsType dataTo:dataTo];
 }
 
++(AIOutputKVPointer*) createPointerForOutputNode:(NSString*)algsType dataTo:(NSString*)dataTo{
+    NSInteger pointerId = [SMGUtils createPointerId:algsType dataSource:dataTo];
+    AIOutputKVPointer *pointer = [AIOutputKVPointer newWithPointerId:pointerId folderName:PATH_NET_NODE algsType:algsType dataTo:dataTo];
+    return pointer;
+}
+
++(AIOutputKVPointer*) createPointerForOutputValue:(NSString*)algsType dataTo:(NSString*)dataTo{
+    NSInteger pointerId = [self createPointerId:algsType dataSource:dataTo];
+    return [AIOutputKVPointer newWithPointerId:pointerId folderName:PATH_NET_VALUE algsType:algsType dataTo:dataTo];
+}
+
++(AIOutputKVPointer*) createPointerForOutputValue:(NSInteger)pointerId algsType:(NSString*)algsType dataTo:(NSString*)dataTo{
+    return [AIOutputKVPointer newWithPointerId:pointerId folderName:PATH_NET_VALUE algsType:algsType dataTo:dataTo];
+}
+
+
+
 @end
 
 

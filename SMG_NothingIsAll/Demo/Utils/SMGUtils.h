@@ -57,6 +57,12 @@
 //outputReference的"分区算法标识";(存引用序列)
 +(AIOutputKVPointer*) createPointerForOutputReference:(NSString*)algsType dataTo:(NSString*)dataTo;
 
+//生成小脑node指针;
++(AIOutputKVPointer*) createPointerForOutputNode:(NSString*)algsType dataTo:(NSString*)dataTo;
+
+//生成小脑索引指针
++(AIOutputKVPointer*) createPointerForOutputValue:(NSString*)algsType dataTo:(NSString*)dataTo;
++(AIOutputKVPointer*) createPointerForOutputValue:(NSInteger)pointerId algsType:(NSString*)algsType dataTo:(NSString*)dataTo;
 
 @end
 

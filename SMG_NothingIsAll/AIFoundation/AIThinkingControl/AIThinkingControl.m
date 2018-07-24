@@ -21,6 +21,7 @@
 #import "ThinkingUtils.h"
 #import "OutputUtils.h"
 #import "Output.h"
+#import "AIOutputKVPointer.h"
 
 @interface AIThinkingControl()
 
@@ -247,8 +248,8 @@ static AIThinkingControl *_instance;
  *  1. 存algsDic中的每个inputIndexPointer;
  *  2. 存absNode指向的absIndexPointer;
  */
--(void) dataIn_ToShortCache:(AIKVPointer*)pointer{
-    if (ISOK(pointer, AIKVPointer.class)) {
+-(void) dataIn_ToShortCache:(AIPointer*)pointer{
+    if (ISOK(pointer, AIPointer.class)) {
         [self.shortCache addObject:pointer];
         if (self.shortCache.count > 8) {
             [self.shortCache removeObjectAtIndex:0];
@@ -517,15 +518,20 @@ static AIThinkingControl *_instance;
 }
 
 /**
- *  MARK:--------------------输出的日志入网--------------------
+ *  MARK:--------------------输出的日志入网(输入小脑)--------------------
  *  @param algsType  : 输出算法分区(目前仅有Output)
  *  @param dataTo    : 输出算法函数(如output_Text:)
  *  @param outputObj : 输出内容(如:饿死爹了)
  */
--(void) commitOutputLog:(NSString*)algsType dataTo:(NSString*)dataTo outputObj:(id)outputObj{
+-(void) commitOutputLog:(NSString*)algsType dataTo:(NSString*)dataTo outputObj:(NSNumber*)outputObj{
+    //1. 装箱
+    AIOutputKVPointer *output_p = [theNet getOutputIndex:algsType dataTo:dataTo outputObj:outputObj];
     
+    //2. 记录可输出reference
+    [theNet setNetNodePointerToOutputReference:output_p algsType:algsType dataTo:dataTo difStrong:1];
+    
+    //3. 加瞬时记忆
+    [self dataIn_ToShortCache:output_p];
 }
-
-
 
 @end

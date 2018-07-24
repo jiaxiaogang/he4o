@@ -18,6 +18,7 @@
 #import "AINetAbsIndex.h"
 #import "AINetDirectionReference.h"
 #import "AIOutputReference.h"
+#import "AINetOutputIndex.h"
 
 @interface AINet () <AINetCMVDelegate>
 
@@ -33,6 +34,7 @@
 @property (strong, nonatomic) AINetAbsIndex *netAbsIndex;//宏信息索引区(海马)
 @property (strong, nonatomic) AINetDirectionReference *netDirectionReference;
 @property (strong, nonatomic) AIOutputReference *outputReference;
+@property (strong, nonatomic) AINetOutputIndex *outputIndex;
 
 @end
 
@@ -63,6 +65,7 @@ static AINet *_instance;
     self.netAbs = [[AINetAbs alloc] init];
     self.netAbsIndex = [[AINetAbsIndex alloc] init];
     self.netDirectionReference = [[AINetDirectionReference alloc] init];
+    self.outputIndex = [[AINetOutputIndex alloc] init];
 }
 
 
@@ -312,6 +315,19 @@ static AINet *_instance;
 
 -(NSArray*) getNetNodePointersFromOutputReference:(NSString*)algsType dataTo:(NSString*)dataTo limit:(NSInteger)limit{
     return [self.outputReference getNodePointersFromOutputReference:algsType dataTo:dataTo limit:limit];
+}
+
+
+//MARK:===============================================================
+//MARK:                     < AINetOutputIndex >
+//MARK:===============================================================
+
+//小脑索引
+-(AIOutputKVPointer*) getOutputIndex:(NSString*)algsType dataTo:(NSString*)dataTo outputObj:(NSNumber*)outputObj {
+    if (outputObj) {
+        return [self.outputIndex getDataPointerWithData:outputObj algsType:algsType dataTo:dataTo];
+    }
+    return nil;
 }
 
 @end

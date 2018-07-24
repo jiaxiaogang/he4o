@@ -23,7 +23,7 @@
 @property (weak, nonatomic) id<OutputDelegate> delegate;
 
 +(Output*) sharedInstance;
-+(void) output_Text:(NSString*)text;
++(void) output_Text:(char)c;
 +(void) output_Face:(AIMoodType)type;
 
 @end

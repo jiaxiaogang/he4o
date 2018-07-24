@@ -66,8 +66,9 @@
 #define FILENAME_AbsIndex @"absIndex"       //宏节点索引序列地址
 #define FILENAME_DirectionIndex(mvDirection) STRFORMAT(@"directionIndex_%ld",mvDirection) //mv的顺逆方向索引序列地址
 
-#define FILENAME_Reference_ByPointer @"reference_ByPointer"     //微信息引用(pointer序)
-#define FILENAME_Reference_ByPort @"reference_ByPort"     //微信息引用(port序)
+#define FILENAME_Reference_ByPointer @"reference_ByPointer" //微信息引用(pointer序)
+#define FILENAME_Reference_ByPort @"reference_ByPort"       //微信息引用(port序)
+#define FILENAME_OutputIndex @"outputIndex"                 //小脑微信息
 
 /**
  *  MARK:--------------------数据检查--------------------
