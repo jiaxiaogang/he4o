@@ -29,6 +29,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *aiOutputLab;
 
 @property (assign, nonatomic) CGFloat lastSliderValue;
+@property (strong,nonatomic) NSTimer *timer;            //计时器
+@property (strong, nonatomic) NSMutableString *outputMStr;
 
 @end
 
@@ -65,6 +67,8 @@
 
 -(void) initData{
     [Output sharedInstance].delegate = self;
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:0.03f target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
+    self.outputMStr = [[NSMutableString alloc] init];
 }
 
 -(void) initDisplay{
@@ -75,10 +79,22 @@
     [self.mainThreadStatusBtn setBackgroundColor:[UIColor greenColor]];
 }
 
+//MARK:===============================================================
+//MARK:                     < method >
+//MARK:===============================================================
 -(void) refreshDisplay_HungerLevelLab{
     NSString *value = STRFORMAT(@"%.3f",self.hungerLevelSlider.value);
     [self.hungerLevelLab setText:value];
     [self.hungerLevelLab setTextColor:self.hungerLevelSlider.value > 0.7 ? [UIColor greenColor] : [UIColor redColor]];
+}
+
+- (void)notificationTimer{
+    NSString *oldText = self.aiOutputLab.text;
+    if (oldText.length < self.outputMStr.length) {
+        [self.aiOutputLab setText:[self.outputMStr substringToIndex:oldText.length + 1]];
+    }else{
+        [self.aiOutputLab setText:self.outputMStr];
+    }
 }
 
 /**
@@ -148,9 +164,11 @@
  *  MARK:--------------------OutputDelegate--------------------
  */
 -(void)output_Text:(char)c{
-    NSMutableString *mStr = [[NSMutableString alloc] initWithString:self.aiOutputLab.text];
-    [mStr appendFormat:@"%c",c];
-    [self.aiOutputLab setText:mStr];
+    [self.outputMStr appendFormat:@"%c",c];
+    if (self.outputMStr.length > 100) {
+        NSString *subStr = [self.outputMStr substringFromIndex:self.outputMStr.length - 100];
+        self.outputMStr = [[NSMutableString alloc] initWithString:subStr];
+    }
 }
 
 @end

@@ -41,8 +41,8 @@
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
                         </label>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="79x-yb-iUd">
-                            <rect key="frame" x="187" y="60" width="0.0" height="0.0"/>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="79x-yb-iUd">
+                            <rect key="frame" x="10" y="60" width="355" height="0.0"/>
                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
@@ -50,10 +50,12 @@
                     </subviews>
                     <color key="backgroundColor" red="0.94901960784313721" green="0.95686274509803915" blue="0.96862745098039216" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
+                        <constraint firstAttribute="trailing" secondItem="79x-yb-iUd" secondAttribute="trailing" constant="10" id="5bq-Df-dWQ"/>
                         <constraint firstItem="79x-yb-iUd" firstAttribute="centerX" secondItem="onk-Dj-zRG" secondAttribute="centerX" id="97K-wk-ioH"/>
                         <constraint firstItem="93H-OP-ohb" firstAttribute="centerX" secondItem="onk-Dj-zRG" secondAttribute="centerX" id="Qub-0f-kM7"/>
                         <constraint firstItem="93H-OP-ohb" firstAttribute="top" secondItem="onk-Dj-zRG" secondAttribute="top" id="R6b-kT-ty3"/>
                         <constraint firstAttribute="height" constant="120" id="XXL-CE-vP9"/>
+                        <constraint firstItem="79x-yb-iUd" firstAttribute="leading" secondItem="onk-Dj-zRG" secondAttribute="leading" constant="10" id="Zjr-4G-H9q"/>
                         <constraint firstItem="79x-yb-iUd" firstAttribute="centerY" secondItem="onk-Dj-zRG" secondAttribute="centerY" id="xa1-1W-lNd"/>
                     </constraints>
                 </view>

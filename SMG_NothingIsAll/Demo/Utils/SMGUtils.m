@@ -382,7 +382,7 @@
     BOOL aIsOk = ISOK(pA, AIKVPointer.class);
     BOOL bIsOk = ISOK(pB, AIKVPointer.class);
     if (!aIsOk || !bIsOk) {
-        return (aIsOk == bIsOk) ? NSOrderedSame : (aIsOk ? NSOrderedAscending : NSOrderedDescending);
+        return (aIsOk == bIsOk) ? NSOrderedAscending : (aIsOk ? NSOrderedAscending : NSOrderedDescending);
     }
     
     //2. 比较大小(一级比pointerId,二级比algsType,三级比dataSource)
@@ -487,7 +487,7 @@
 }
 
 +(id) searchObjectForPointer:(AIPointer*)pointer fileName:(NSString*)fileName time:(double)time{
-    if (ISOK(pointer, AIKVPointer.class)) {
+    if (ISOK(pointer, AIPointer.class)) {
         //1. 优先取redis
         NSString *redisKey = STRFORMAT(@"%@/%@",pointer.filePath,fileName);//随后去掉前辍
         id redisObj = [[XGRedis sharedInstance] objectForKey:redisKey];

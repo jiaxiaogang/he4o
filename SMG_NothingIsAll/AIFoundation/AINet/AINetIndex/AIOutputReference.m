@@ -53,7 +53,7 @@
             oldPort = findPort;
         }
     } failure:^(NSInteger index) {
-        AIPort *oldPort = [[AIPort alloc] init];
+        oldPort = [[AIPort alloc] init];
         oldPort.target_p = outputNode_p;
         oldPort.strong.value = 1;
         if (ARR_INDEXISOK(mArrByPointer, index)) {

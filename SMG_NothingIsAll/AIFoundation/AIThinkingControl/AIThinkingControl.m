@@ -373,8 +373,14 @@ static AIThinkingControl *_instance;
     //2. 联想相关"解决经验";(取曾经历的最强解决;)
     AIPort *mvPort = [[AINet sharedInstance] getNetNodePointersFromDirectionReference_Single:cmvNode.pointer.algsType direction:direction];
     if (mvPort) {
+        
+        //2.1 取"解决经验"对应的cmvNode;
         AICMVNode *expMvNode = [SMGUtils searchObjectForPointer:mvPort.target_p fileName:FILENAME_Node time:30];
+        
+        //2.2 取"解决经验"对应的cmv基本模型;
         AINetCMVModel *expCmvModel = [SMGUtils searchObjectForPointer:expMvNode.cmvModel_p fileName:FILENAME_CMVModel time:30];
+        
+        //2.3 取"解决经验"对应的前因时序列;
         AIFrontOrderNode *expFoNode = [SMGUtils searchObjectForPointer:expCmvModel.foNode_p fileName:FILENAME_Node time:30];
         
         //3. 尝试找到解决问题的实际操作

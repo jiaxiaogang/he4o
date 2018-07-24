@@ -65,6 +65,7 @@ static AINet *_instance;
     self.netAbs = [[AINetAbs alloc] init];
     self.netAbsIndex = [[AINetAbsIndex alloc] init];
     self.netDirectionReference = [[AINetDirectionReference alloc] init];
+    self.outputReference = [[AIOutputReference alloc] init];
     self.outputIndex = [[AINetOutputIndex alloc] init];
 }
 

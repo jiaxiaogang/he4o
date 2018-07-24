@@ -25,13 +25,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/AIThinkingControl.m"
-            timestampString = "554088566.5718139"
+            filePath = "SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AIOutputReference.m"
+            timestampString = "554167539.472193"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "391"
-            endingLineNumber = "391"
-            landmarkName = "-dataIn_AssExp_HavDemand:direction:"
+            startingLineNumber = "69"
+            endingLineNumber = "69"
+            landmarkName = "-setNodePointerToOutputReference:algsType:dataTo:difStrong:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
