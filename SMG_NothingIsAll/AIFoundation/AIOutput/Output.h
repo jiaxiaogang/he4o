@@ -14,7 +14,7 @@
  */
 @protocol OutputDelegate <NSObject>
 
--(void) output_Text:(NSString*)text;
+-(void) output_Text:(char)c;
 
 @end
 

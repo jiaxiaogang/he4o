@@ -147,8 +147,10 @@
 /**
  *  MARK:--------------------OutputDelegate--------------------
  */
--(void)output_Text:(NSString *)text{
-    [self.aiOutputLab setText:STRTOOK(text)];
+-(void)output_Text:(char)c{
+    NSMutableString *mStr = [[NSMutableString alloc] initWithString:self.aiOutputLab.text];
+    [mStr appendFormat:@"%c",c];
+    [self.aiOutputLab setText:mStr];
 }
 
 @end

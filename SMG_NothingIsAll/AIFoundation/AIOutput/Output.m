@@ -22,8 +22,7 @@ static Output *_instance;
 +(void) output_Text:(char)c{
     Output *op = [Output sharedInstance];
     if (op.delegate && [op.delegate respondsToSelector:@selector(output_Text:)]) {
-        NSString *text = STRFORMAT(@"%d",c);
-        [op.delegate output_Text:text];
+        [op.delegate output_Text:c];
     }
     
     //2. 将输出入网;
@@ -31,12 +30,16 @@ static Output *_instance;
 }
 
 +(void) output_Face:(AIMoodType)type{
+    const char *chars = nil;
     if (type == AIMoodType_Anxious) {
-        const char *chars = [@"😭" UTF8String];
-        [self output_Text:chars[0]];
+        chars = [@"T_T" UTF8String];
     }else if(type == AIMoodType_Satisfy){
-        const char *chars = [@"😃" UTF8String];
+        chars = [@"^_^" UTF8String];
+    }
+    if (chars) {
         [self output_Text:chars[0]];
+        [self output_Text:chars[1]];
+        [self output_Text:chars[2]];
     }
 }
 
