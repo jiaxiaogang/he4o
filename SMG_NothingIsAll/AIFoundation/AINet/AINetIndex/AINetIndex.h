@@ -16,6 +16,12 @@
 @interface AINetIndex : NSObject
 
 -(AIPointer*) getDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
+
+/**
+ *  MARK:--------------------引用序列--------------------
+ *  @param indexPointer : value地址
+ *  @param target_p : 引用者地址(如:xxNode.pointer)
+ */
 -(void) setIndexReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue;
 -(NSArray*) getIndexReference:(AIKVPointer*)indexPointer limit:(NSInteger)limit;
 

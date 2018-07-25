@@ -68,4 +68,8 @@
     [aCoder encodeObject:self.params forKey:@"params"];
 }
 
+-(id) paramForKey:(NSString*)key{
+    return [DICTOOK(self.params) objectForKey:STRTOOK(key)];
+}
+
 @end

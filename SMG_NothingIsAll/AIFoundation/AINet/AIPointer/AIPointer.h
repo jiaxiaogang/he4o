@@ -19,5 +19,6 @@
 @property (strong, nonatomic) NSMutableDictionary *params;  //用于分区(在二分查巨量队列,params越细分,越有利性能)
 -(NSString*) filePath;                                      //文件路径(可以是key,或者path,或者sql表和行号等)
 -(NSString*) identifier;    //一般由 "algsType" + "dataTo/Source" 组成;
+-(id) paramForKey:(NSString*)key;
 
 @end

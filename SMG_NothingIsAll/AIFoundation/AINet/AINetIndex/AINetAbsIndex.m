@@ -88,12 +88,22 @@
     return _reference;
 }
 
+
+/**
+ *  MARK:--------------------根据absValuePointer操作其被引用的相关;--------------------
+ *  @param indexPointer : value地址
+ *  @param target_p : 引用者地址(如:xxAbsNode.pointer)
+ */
 -(void) setIndexReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue{
     [self.reference setReference:indexPointer target_p:target_p difValue:difValue];
 }
 
+
+/**
+ *  MARK:--------------------获取absValue所被引用的absNode地址;--------------------
+ */
 -(AIKVPointer*) getAbsNodePointer:(AIKVPointer*)absValue_p{
-    NSArray *ports = [self.reference getReference:absValue_p limit:1];
+    NSArray *ports = [self.reference getReference_JustAbsResult:absValue_p limit:1];
     AIPort *port = ARR_INDEX(ports, 0);
     if (ISOK(port, AIPort.class)) {
         return port.target_p;

@@ -20,14 +20,14 @@
 
 -(AINetAbsNode*) create:(NSArray*)foNodes refs_p:(NSArray*)refs_p{
     //1. 从宏信息索引中,查找是否已经存在针对refs_p的抽象;(有则复用)(无则创建)
-    AIKVPointer *absValue_p = [[AINet sharedInstance] getNetAbsIndex_AbsPointer:refs_p];
-    AIKVPointer *absNode_p = [[AINet sharedInstance] getItemAbsNodePointer:absValue_p];
+    AIKVPointer *absValue_p = [theNet getNetAbsIndex_AbsPointer:refs_p];
+    AIKVPointer *absNode_p = [theNet getItemAbsNodePointer:absValue_p];
     AINetAbsNode *absNode = [SMGUtils searchObjectForPointer:absNode_p fileName:FILENAME_Node];
     
     //2. absNode:无则创建;
     if (absNode == nil) {
         absNode = [[AINetAbsNode alloc] init];
-        absNode.pointer = [SMGUtils createPointerForNode:PATH_NET_NODE];
+        absNode.pointer = [SMGUtils createPointerForNode:PATH_NET_ABSNODE];
         absNode.absValue_p = absValue_p;//指定微信息
         [[AINet sharedInstance] setAbsIndexReference:absValue_p target_p:absNode.pointer difValue:1];//引用插线
     }
