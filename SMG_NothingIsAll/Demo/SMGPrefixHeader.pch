@@ -24,6 +24,7 @@
 #import "AIHeader.h"
 #import "LKDBHelper.h"
 #import "AILine.h"
+#import "SMGConfig.h"
 #endif
 
 

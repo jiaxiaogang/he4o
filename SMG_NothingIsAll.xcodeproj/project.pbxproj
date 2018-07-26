@@ -161,6 +161,7 @@
 		88988523208979E6001D1ADC /* AINetIndex.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetIndex.m; sourceTree = "<group>"; };
 		88A15CEA20FEC997001A0310 /* AIOutputKVPointer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIOutputKVPointer.h; sourceTree = "<group>"; };
 		88A15CEB20FEC997001A0310 /* AIOutputKVPointer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIOutputKVPointer.m; sourceTree = "<group>"; };
+		88A43F3521094BF900281348 /* SMGConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMGConfig.h; sourceTree = "<group>"; };
 		88B23BE420BE20BC00BE8AF6 /* AINetAbs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetAbs.h; sourceTree = "<group>"; };
 		88B23BE520BE20BC00BE8AF6 /* AINetAbs.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetAbs.m; sourceTree = "<group>"; };
 		88B3865B20C6130E009553B5 /* AINetAbsIndex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetAbsIndex.h; sourceTree = "<group>"; };
@@ -454,6 +455,7 @@
 				083F612C1F04830F000330E1 /* AINet */,
 				08D7DA411ED149B4004B1018 /* AIHeader.h */,
 				08042E7D1F43CE9400A1FFCB /* SMGEnum.h */,
+				88A43F3521094BF900281348 /* SMGConfig.h */,
 			);
 			path = AIFoundation;
 			sourceTree = "<group>";

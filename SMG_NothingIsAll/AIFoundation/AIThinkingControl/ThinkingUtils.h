@@ -10,6 +10,11 @@
 
 @interface ThinkingUtils : NSObject
 
+/**
+ *  MARK:--------------------更新能量值--------------------
+ */
++(NSInteger) updateEnergy:(NSInteger)oriEnergy delta:(NSInteger)delta;
+
 @end
 
 

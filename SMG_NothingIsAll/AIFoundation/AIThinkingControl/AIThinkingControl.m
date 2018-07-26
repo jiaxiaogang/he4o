@@ -28,7 +28,7 @@
 @property (strong,nonatomic) NSMutableArray *shortCache;        //瞬时记忆_存AIModel(从Algs传入,待Thinking取用分析)(容量8);
 @property (strong,nonatomic) NSMutableArray *thinkFeedCache;    //短时记忆_思维流(包括shortCache和cmvCache,10分钟内都会存在此处(人类可能一天或几小时))
 @property (strong,nonatomic) NSMutableArray *cmvCache;          //思维因子_当前cmv序列(注:所有cmv只与cacheImv中作匹配)(正序,urgent越大,排越前)
-@property (assign, nonatomic) NSInteger energy;                 //当前能量值;(在循环中动态更新)
+@property (assign, nonatomic) NSInteger energy;                 //当前能量值;(在循环中动态更新)(0-2)
 
 @end
 
@@ -287,22 +287,28 @@ static AIThinkingControl *_instance;
 //联想相关数据(看到西瓜会开心)
 -(void) dataIn_AssociativeData:(NSArray*)algsArr {
     if (ISOK(algsArr, NSArray.class)) {
-        NSLog(@"noMv信号已输入完毕,联想");
+        //1. noMv信号已输入完毕,联想
         for (AIKVPointer *algs_kvp in algsArr) {
-            NSArray *referPorts = [[AINet sharedInstance] getItemAlgsReference:algs_kvp limit:3];//在第二序列指向节点的端口;
+            //2. 在第二序列指向节点的端口;
+            NSArray *referPorts = [[AINet sharedInstance] getItemAlgsReference:algs_kvp limit:cAssDataLimit];
             for (AIPort *referPort in referPorts) {
                 if (ISOK(referPort, AIPort.class)) {
                     id referNode = [SMGUtils searchObjectForPointer:referPort.target_p fileName:FILENAME_Node];
                     if (ISOK(referNode, AIFrontOrderNode.class)) {
-                        //联想到cmv模型前因
+                        //3. 联想到cmv模型前因
                         AIFrontOrderNode *foNode = (AIFrontOrderNode*)referNode;
                         AINetCMVModel *cmvModel = [SMGUtils searchObjectForPointer:foNode.cmvModel_kvp fileName:FILENAME_CMVModel];
                         AICMVNode *cmvNode = [SMGUtils searchObjectForPointer:cmvModel.cmvNode_p fileName:FILENAME_Node];
+                        
+                        //4. 联想到cmv (根据urgentTo更新energy)
+                        NSInteger urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
+                        self.energy = [ThinkingUtils updateEnergy:self.energy delta:urgentTo/10];
+                        
+                        //5. 判断需求;(如饿,主动取当前状态,是否饿)
+                        
+                        
                         NSLog(@"____联想结果:%@",cmvNode.pointer.algsType);
                         
-                        
-                        //此处,卡在cmvRule,必须先写完cmvRule,再来继续;
-                        //此处,另需要把cmv的完整模型写完;(目前,真正的change还没有构建到模型中)
                         
                         
                     }else if(ISOK(referNode, AINode.class)){
@@ -338,8 +344,8 @@ static AIThinkingControl *_instance;
         
         if (ISOK(cmvNode, AICMVNode.class)) {
             //2. 根据cmv模型,取cmv的迫切度值和欲望方向;求出需求
-            NSNumber *deltaNum = [SMGUtils searchObjectForPointer:cmvNode.delta_p fileName:FILENAME_Value time:30];
-            NSNumber *urgentToNum = [SMGUtils searchObjectForPointer:cmvNode.urgentTo_p fileName:FILENAME_Value time:30];
+            NSNumber *deltaNum = [SMGUtils searchObjectForPointer:cmvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime];
+            NSNumber *urgentToNum = [SMGUtils searchObjectForPointer:cmvNode.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime];
             AITargetType targetType = [ThinkingUtils getTargetTypeWithAlgsType:cmvNode.urgentTo_p.algsType];
             NSInteger delta = [NUMTOOK(deltaNum) integerValue];
             BOOL downDemand = targetType == AITargetType_Down && delta > 0;
@@ -375,13 +381,13 @@ static AIThinkingControl *_instance;
     if (mvPort) {
         
         //2.1 取"解决经验"对应的cmvNode;
-        AICMVNode *expMvNode = [SMGUtils searchObjectForPointer:mvPort.target_p fileName:FILENAME_Node time:30];
+        AICMVNode *expMvNode = [SMGUtils searchObjectForPointer:mvPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
         
         //2.2 取"解决经验"对应的cmv基本模型;
-        AINetCMVModel *expCmvModel = [SMGUtils searchObjectForPointer:expMvNode.cmvModel_p fileName:FILENAME_CMVModel time:30];
+        AINetCMVModel *expCmvModel = [SMGUtils searchObjectForPointer:expMvNode.cmvModel_p fileName:FILENAME_CMVModel time:cRedisNodeTime];
         
         //2.3 取"解决经验"对应的前因时序列;
-        AIFrontOrderNode *expFoNode = [SMGUtils searchObjectForPointer:expCmvModel.foNode_p fileName:FILENAME_Node time:30];
+        AIFrontOrderNode *expFoNode = [SMGUtils searchObjectForPointer:expCmvModel.foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
         
         //3. 尝试找到解决问题的实际操作
         //>>>此处需要得到的最好是absNode;但目前"抽象cmv基本模型"善未重构,所以只好先取foNode.orders;

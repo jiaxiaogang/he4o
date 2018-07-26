@@ -66,7 +66,7 @@
         NSNumber *checkPointerIdNumber = ARR_INDEX(model.pointerIds, checkIndex);
         long checkPointerId = [NUMTOOK(checkPointerIdNumber) longValue];
         AIOutputKVPointer *checkOutput_p = [SMGUtils createPointerForOutputValue:checkPointerId algsType:algsType dataTo:dataTo];
-        NSNumber *checkValue = [SMGUtils searchObjectForPointer:checkOutput_p fileName:FILENAME_Value time:30];
+        NSNumber *checkValue = [SMGUtils searchObjectForPointer:checkOutput_p fileName:FILENAME_Value time:cRedisValueTime];
         NSComparisonResult compareResult = [NUMTOOK(checkValue) compare:data];
         return compareResult;
     } startIndex:0 endIndex:model.pointerIds.count - 1 success:^(NSInteger index) {
@@ -77,7 +77,7 @@
     } failure:^(NSInteger index) {
         //4. 未找到;创建一个;
         AIOutputKVPointer *output_p = [SMGUtils createPointerForOutputValue:algsType dataTo:dataTo];
-        [SMGUtils insertObject:data rootPath:output_p.filePath fileName:FILENAME_Value time:30];
+        [SMGUtils insertObject:data rootPath:output_p.filePath fileName:FILENAME_Value time:cRedisValueTime];
         resultPointer = output_p;
         
         if (model.pointerIds.count <= index) {

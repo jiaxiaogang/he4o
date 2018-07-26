@@ -39,8 +39,8 @@
     
     //2. 取identifier分区的引用序列文件;
     AIOutputKVPointer *reference_p = [SMGUtils createPointerForOutputReference:algsType dataTo:dataTo];
-    NSMutableArray *mArrByPointer = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:reference_p fileName:FILENAME_Reference_ByPointer time:300]];
-    NSMutableArray *mArrByPort = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:reference_p fileName:FILENAME_Reference_ByPort time:300]];
+    NSMutableArray *mArrByPointer = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:reference_p fileName:FILENAME_Reference_ByPointer time:cRedisReferenceTime]];
+    NSMutableArray *mArrByPort = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:reference_p fileName:FILENAME_Reference_ByPort time:cRedisReferenceTime]];
     
     //3. 找到旧的mArrByPointer;
     __block AIPort *oldPort = nil;
@@ -61,7 +61,7 @@
         }else{
             [mArrByPointer addObject:oldPort];
         }
-        [SMGUtils insertObject:mArrByPointer rootPath:reference_p.filePath fileName:FILENAME_Reference_ByPointer time:300];
+        [SMGUtils insertObject:mArrByPointer rootPath:reference_p.filePath fileName:FILENAME_Reference_ByPointer time:cRedisReferenceTime];
     }];
     
     //4. 搜索旧port并去掉_mArrByPort;
@@ -95,14 +95,14 @@
         }else{
             [mArrByPort addObject:newPort];
         }
-        [SMGUtils insertObject:mArrByPort rootPath:reference_p.filePath fileName:FILENAME_Reference_ByPort time:300];
+        [SMGUtils insertObject:mArrByPort rootPath:reference_p.filePath fileName:FILENAME_Reference_ByPort time:cRedisReferenceTime];
     }];
 }
 
 -(NSArray*) getNodePointersFromOutputReference:(NSString*)algsType dataTo:(NSString*)dataTo limit:(NSInteger)limit{
     //1. 取mv分区的引用序列文件;
     AIOutputKVPointer *reference_p = [SMGUtils createPointerForOutputReference:algsType dataTo:dataTo];
-    NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:reference_p fileName:FILENAME_Reference_ByPort time:300]];
+    NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:reference_p fileName:FILENAME_Reference_ByPort time:cRedisReferenceTime]];
     
     //2. 根据limit返回limit个结果;
     if (ARRISOK(mArr)) {
@@ -114,7 +114,7 @@
 
 +(BOOL) checkCanOutput:(NSString*)algsType dataTo:(NSString*)dataTo{
     AIOutputKVPointer *reference_p = [SMGUtils createPointerForOutputReference:algsType dataTo:dataTo];
-    NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:reference_p fileName:FILENAME_Reference_ByPointer time:300]];
+    NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:reference_p fileName:FILENAME_Reference_ByPointer time:cRedisReferenceTime]];
     return ARRISOK(mArr);
 }
 

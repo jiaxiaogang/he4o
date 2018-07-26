@@ -13,6 +13,14 @@
 
 @implementation ThinkingUtils
 
+/**
+ *  MARK:--------------------更新能量值--------------------
+ */
++(NSInteger) updateEnergy:(NSInteger)oriEnergy delta:(NSInteger)delta{
+    oriEnergy += delta;
+    return MAX(cMinEnergy, MIN(cMaxEnergy, oriEnergy));
+}
+
 @end
 
 
@@ -103,8 +111,8 @@
     [self parserAlgsMVArrWithoutValue:algsArr success:^(AIKVPointer *findDelta_p, AIKVPointer *findUrgentTo_p, NSString *findAlgsType) {
         delta_p = findDelta_p;
         urgentTo_p = findUrgentTo_p;
-        delta = [NUMTOOK([SMGUtils searchObjectForPointer:delta_p fileName:FILENAME_Value time:30]) integerValue];
-        urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:urgentTo_p fileName:FILENAME_Value time:30]) integerValue];
+        delta = [NUMTOOK([SMGUtils searchObjectForPointer:delta_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
+        urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:urgentTo_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
         algsType = findAlgsType;
     }];
     
