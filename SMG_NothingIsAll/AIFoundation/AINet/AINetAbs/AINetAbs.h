@@ -23,18 +23,3 @@
 -(AINetAbsNode*) create:(NSArray*)foNodes refs_p:(NSArray*)refs_p;
 
 @end
-
-
-//MARK:===============================================================
-//MARK:                     < AbsNode类(双级神经元) >
-//MARK:===============================================================
-@class AIKVPointer;
-@interface AINetAbsNode : NSObject <NSCoding>
-
-@property (strong, nonatomic) AIKVPointer *pointer;
-@property (strong, nonatomic) NSMutableArray *conPorts; //具象关联端口
-@property (strong, nonatomic) AIKVPointer *absValue_p;   //微信息组
-
--(void) print;
-
-@end

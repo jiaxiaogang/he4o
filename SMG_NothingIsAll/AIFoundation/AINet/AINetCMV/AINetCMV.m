@@ -11,6 +11,8 @@
 #import "AIKVPointer.h"
 #import "AINode.h"
 #import "ThinkingUtils.h"
+#import "AIFrontOrderNode.h"
+#import "AICMVNode.h"
 
 @implementation AINetCMV
 
@@ -116,123 +118,6 @@
     [aCoder encodeObject:self.pointer forKey:@"pointer"];
     [aCoder encodeObject:self.foNode_p forKey:@"foNode_p"];
     [aCoder encodeObject:self.cmvNode_p forKey:@"cmvNode_p"];
-}
-
-@end
-
-
-//MARK:===============================================================
-//MARK:                     < cmv节点 >
-//MARK:===============================================================
-@implementation AICMVNode
-
--(NSMutableArray *)absPorts{
-    if (_absPorts == nil) {
-        _absPorts = [NSMutableArray new];
-    }
-    return _absPorts;
-}
-
-/**
- *  MARK:--------------------NSCoding--------------------
- */
-- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
-    self = [super init];
-    if (self) {
-        self.pointer = [aDecoder decodeObjectForKey:@"pointer"];
-        self.delta_p = [aDecoder decodeObjectForKey:@"delta_p"];
-        self.urgentTo_p = [aDecoder decodeObjectForKey:@"urgentTo_p"];
-        self.cmvModel_p = [aDecoder decodeObjectForKey:@"cmvModel_p"];
-        self.absPorts = [aDecoder decodeObjectForKey:@"absPorts"];
-    }
-    return self;
-}
-
-- (void)encodeWithCoder:(NSCoder *)aCoder {
-    [aCoder encodeObject:self.pointer forKey:@"pointer"];
-    [aCoder encodeObject:self.delta_p forKey:@"delta_p"];
-    [aCoder encodeObject:self.urgentTo_p forKey:@"urgentTo_p"];
-    [aCoder encodeObject:self.cmvModel_p forKey:@"cmvModel_p"];
-    [aCoder encodeObject:self.absPorts forKey:@"absPorts"];
-}
-
-@end
-
-
-//MARK:===============================================================
-//MARK:                     < 前因序列_节点(多级神经元) >
-//MARK:===============================================================
-@implementation AIFrontOrderNode
-
--(NSMutableArray *)orders_kvp{
-    if (_orders_kvp == nil) {
-        _orders_kvp = [[NSMutableArray alloc] init];
-    }
-    return _orders_kvp;
-}
-
--(NSMutableArray *)absPorts{
-    if (_absPorts == nil) {
-        _absPorts = [NSMutableArray new];
-    }
-    return _absPorts;
-}
-
-/**
- *  MARK:--------------------NSCoding--------------------
- */
-- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
-    self = [super init];
-    if (self) {
-        self.pointer = [aDecoder decodeObjectForKey:@"pointer"];
-        self.orders_kvp = [aDecoder decodeObjectForKey:@"orders_kvp"];
-        self.cmvModel_kvp = [aDecoder decodeObjectForKey:@"cmvModel_kvp"];
-        self.absPorts = [aDecoder decodeObjectForKey:@"absPorts"];
-    }
-    return self;
-}
-
-- (void)encodeWithCoder:(NSCoder *)aCoder {
-    [aCoder encodeObject:self.pointer forKey:@"pointer"];
-    [aCoder encodeObject:self.orders_kvp forKey:@"orders_kvp"];
-    [aCoder encodeObject:self.cmvModel_kvp forKey:@"cmvModel_kvp"];
-    [aCoder encodeObject:self.absPorts forKey:@"absPorts"];
-}
-
-@end
-
-
-//MARK:===============================================================
-//MARK:                     < AIAbsCMVNode >
-//MARK:===============================================================
-@implementation AIAbsCMVNode
-
-- (NSMutableArray *)conPorts{
-    if (_conPorts == nil) {
-        _conPorts = [NSMutableArray new];
-    }
-    return _conPorts;
-}
-
-/**
- *  MARK:--------------------NSCoding--------------------
- */
-- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
-    self = [super init];
-    if (self) {
-        self.pointer = [aDecoder decodeObjectForKey:@"pointer"];
-        self.urgentTo_p = [aDecoder decodeObjectForKey:@"urgentTo_p"];
-        self.delta_p = [aDecoder decodeObjectForKey:@"delta_p"];
-        self.conPorts = [aDecoder decodeObjectForKey:@"conPorts"];
-    }
-    return self;
-}
-
-- (void)encodeWithCoder:(NSCoder *)aCoder {
-    [aCoder encodeObject:self.pointer forKey:@"pointer"];
-    [aCoder encodeObject:self.urgentTo_p forKey:@"urgentTo_p"];
-    [aCoder encodeObject:self.delta_p forKey:@"delta_p"];
-    [aCoder encodeObject:self.conPorts forKey:@"conPorts"];
 }
 
 @end

@@ -22,6 +22,9 @@
 #import "OutputUtils.h"
 #import "Output.h"
 #import "AIOutputKVPointer.h"
+#import "AIFrontOrderNode.h"
+#import "AINetAbsNode.h"
+#import "AICMVNode.h"
 
 @interface AIThinkingControl()
 
