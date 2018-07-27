@@ -17,8 +17,8 @@
 
 /**
  *  MARK:--------------------在foNode基础上构建抽象--------------------
- *  @params foNodes: 具象节点
- *  @params refs_p: 微信息组
+ *  @params foNodes : 具象节点
+ *  @params refs_p : 微信息组
  */
 -(AINetAbsNode*) create:(NSArray*)foNodes refs_p:(NSArray*)refs_p;
 

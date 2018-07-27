@@ -25,6 +25,7 @@
 #import "AIFrontOrderNode.h"
 #import "AINetAbsNode.h"
 #import "AICMVNode.h"
+#import "AIAbsCMVNode.h"
 
 @interface AIThinkingControl()
 
@@ -492,10 +493,15 @@ static AIThinkingControl *_instance;
                         }
                         AINetAbsNode *absNode = [[AINet sharedInstance] createAbs:@[foNode,assFoNode] refs_p:sames];
                         [self dataIn_ToShortCache:absNode.absValue_p];
-                        NSLog(@"构建抽象节点成功.....");
-                        //>>>此处改为抽象整个cmv基本模型,
-                        
                         [absNode print];
+                        //>>>此处改为抽象整个cmv基本模型,
+                        NSLog(@"构建抽象节点成功.....");
+                        
+                        
+                        
+//                        AIAbsCMVNode *absCmvNode =
+                        
+                        
                     }
                 }
             }

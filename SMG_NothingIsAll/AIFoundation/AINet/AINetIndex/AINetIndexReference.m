@@ -128,7 +128,7 @@
         if (ISOK(referenceModel, AINetIndexReferenceModel.class)) {
             for (NSInteger i = 0; i < referenceModel.ports.count; i++) {
                 AIPort *item = ARR_INDEX(referenceModel.ports, referenceModel.ports.count - i - 1);
-                if (item && item.target_p && [PATH_NET_ABSNODE isEqualToString:[item.target_p paramForKey:@"folderName"]]) {
+                if (item && item.target_p && [PATH_NET_ABS_NODE isEqualToString:[item.target_p paramForKey:@"folderName"]]) {
                     [mArr addObject:item];
                     if (mArr.count >= limit) {
                         return mArr;

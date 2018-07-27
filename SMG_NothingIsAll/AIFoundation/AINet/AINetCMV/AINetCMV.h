@@ -10,7 +10,7 @@
 
 
 //MARK:===============================================================
-//MARK:                     < 杏仁核 >
+//MARK:                     < cmv基本模型 >
 //MARK:===============================================================
 @class AIKVPointer,AINetCMVModel;
 @protocol AINetCMVDelegate <NSObject>

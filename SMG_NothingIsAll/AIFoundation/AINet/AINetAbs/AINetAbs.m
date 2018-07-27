@@ -29,7 +29,7 @@
     //2. absNode:无则创建;
     if (absNode == nil) {
         absNode = [[AINetAbsNode alloc] init];
-        absNode.pointer = [SMGUtils createPointerForNode:PATH_NET_ABSNODE];
+        absNode.pointer = [SMGUtils createPointerForNode:PATH_NET_ABS_NODE];
         absNode.absValue_p = absValue_p;//指定微信息
         [[AINet sharedInstance] setAbsIndexReference:absValue_p target_p:absNode.pointer difValue:1];//引用插线
     }

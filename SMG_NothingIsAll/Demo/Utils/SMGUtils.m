@@ -214,7 +214,7 @@
 
 +(AIOutputKVPointer*) createPointerForOutputNode:(NSString*)algsType dataTo:(NSString*)dataTo{
     NSInteger pointerId = [SMGUtils createPointerId:algsType dataSource:dataTo];
-    AIOutputKVPointer *pointer = [AIOutputKVPointer newWithPointerId:pointerId folderName:PATH_NET_ABSNODE algsType:algsType dataTo:dataTo];
+    AIOutputKVPointer *pointer = [AIOutputKVPointer newWithPointerId:pointerId folderName:PATH_NET_ABS_NODE algsType:algsType dataTo:dataTo];
     return pointer;
 }
 

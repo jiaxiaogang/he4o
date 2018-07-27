@@ -68,7 +68,7 @@
 //MARK:                     < index >
 //MARK:===============================================================
 -(NSMutableArray*) getAlgsArr:(NSObject*)algsModel;  //装箱 (algsModel to indexPointerArr);
-
+-(AIPointer*) getNetDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource;//单data装箱
 -(void) setItemAlgsReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue;
 -(NSArray*) getItemAlgsReference:(AIKVPointer*)pointer limit:(NSInteger)limit;  //获取算法单结果的第二序列联想;
 

@@ -64,7 +64,7 @@ static AINetStore *_instance;
         
         //1. 生成指针
         NSInteger pointerId = [SMGUtils createPointerId:dataType dataSource:dataSource];
-        AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_ABSNODE algsType:@"" dataSource:dataSource];
+        AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_ABS_NODE algsType:@"" dataSource:dataSource];
         
         //2. 将AINode与AIModel各自存为pointerPath下的一个文件;(命名为node和data)
         AINode *modelNode = [[AINode alloc] init];
@@ -161,7 +161,7 @@ static AINetStore *_instance;
 
 -(nonnull AINode*) objectRootNode:(NSString*)dataType dataSource:(NSString*)dataSource{
     //1. root.pointer;
-    AIKVPointer *p = [AIKVPointer newWithPointerId:0 folderName:PATH_NET_ABSNODE algsType:@"" dataSource:dataSource];//将0定义为root;
+    AIKVPointer *p = [AIKVPointer newWithPointerId:0 folderName:PATH_NET_ABS_NODE algsType:@"" dataSource:dataSource];//将0定义为root;
     
     //2. 取rootNode
     AINode *root = [self objectNodeForPointer:p];
@@ -188,7 +188,7 @@ static AINetStore *_instance;
             AINode *root = [self objectRootNode:@"" dataSource:dataSource];
             //1.2. new absNode
             absNode = [[AINode alloc] init];
-            absNode.pointer = [AIKVPointer newWithPointerId:[SMGUtils createPointerId:@"" dataSource:dataSource] folderName:PATH_NET_ABSNODE algsType:@"" dataSource:dataSource];
+            absNode.pointer = [AIKVPointer newWithPointerId:[SMGUtils createPointerId:@"" dataSource:dataSource] folderName:PATH_NET_ABS_NODE algsType:@"" dataSource:dataSource];
             [absNode.absPorts addObject:[AIPort newWithNode:root]];
             //1.3. save root
             [root.conPorts addObject:[AIPort newWithNode:absNode]];

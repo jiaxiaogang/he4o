@@ -217,7 +217,7 @@ static AINet *_instance;
 //MARK:===============================================================
 //MARK:                     < index >
 //MARK:===============================================================
--(NSMutableArray*)   getAlgsArr:(NSObject*)algsModel {
+-(NSMutableArray*) getAlgsArr:(NSObject*)algsModel {
     if (algsModel) {
         NSDictionary *modelDic = [NSObject getDic:algsModel containParent:true];
         NSMutableArray *algsArr = [[NSMutableArray alloc] init];
@@ -227,7 +227,7 @@ static AINet *_instance;
         for (NSString *dataSource in modelDic.allKeys) {
             //1. 转换AIModel&dataType;//废弃!(参考n12p12)
             //2. 存储索引;
-            NSObject *data = [modelDic objectForKey:dataSource];
+            NSNumber *data = NUMTOOK([modelDic objectForKey:dataSource]);
             AIPointer *pointer = [self.netIndex getDataPointerWithData:data algsType:algsType dataSource:dataSource];
             if (pointer) {
                 [algsArr addObject:pointer];
@@ -236,6 +236,11 @@ static AINet *_instance;
         return algsArr;
     }
     return nil;
+}
+
+//单data装箱
+-(AIPointer*) getNetDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource{
+    return [self.netIndex getDataPointerWithData:data algsType:algsType dataSource:dataSource];
 }
 
 -(void) setItemAlgsReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue{

@@ -15,7 +15,7 @@
 @class AIPointer,AIOutputKVPointer;
 @interface AINetOutputIndex : NSObject
 
--(AIPointer*) getDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataTo:(NSString*)dataTo ;
+-(AIOutputKVPointer*) getDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataTo:(NSString*)dataTo ;
 -(void) setIndexReference:(AIOutputKVPointer*)indexPointer target_p:(AIOutputKVPointer*)target_p difValue:(int)difValue;
 -(NSArray*) getIndexReference:(AIOutputKVPointer*)indexPointer limit:(NSInteger)limit;
 

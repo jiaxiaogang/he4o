@@ -40,7 +40,7 @@
 //MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
--(AIPointer*) getDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataTo:(NSString*)dataTo {
+-(AIOutputKVPointer*) getDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataTo:(NSString*)dataTo {
     if (!ISOK(data, NSNumber.class)) {
         return nil;
     }
