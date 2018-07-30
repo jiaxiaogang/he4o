@@ -80,9 +80,26 @@
     [SMGUtils insertObject:aMv rootPath:aMv.pointer.filePath fileName:FILENAME_Node];
     [SMGUtils insertObject:bMv rootPath:bMv.pointer.filePath fileName:FILENAME_Node];
     
-    //7. 存储absNode并返回
+    //7. 报告添加direction引用
+    [self createdAbsCMVNode:absN.pointer delta:absDelta urgentTo:absUrgentTo];
+    
+    //8. 存储absNode并返回
     [SMGUtils insertObject:absN rootPath:absN.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
     return absN;
+}
+
+
+//MARK:===============================================================
+//MARK:                     < private_Method >
+//MARK:===============================================================
+-(void) createdAbsCMVNode:(AIKVPointer*)absCmvNode_p delta:(NSInteger)delta urgentTo:(NSInteger)urgentTo{
+    MVDirection direction = delta < 0 ? MVDirection_Negative : MVDirection_Positive;
+    NSInteger difStrong = urgentTo * 2;//暂时先x2;(因为一般是两个相抽象)
+    if (ISOK(absCmvNode_p, AIKVPointer.class)) {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(aiNetCMVNode_createdAbsCMVNode:mvAlgsType:direction:difStrong:)]) {
+            [self.delegate aiNetCMVNode_createdAbsCMVNode:absCmvNode_p mvAlgsType:absCmvNode_p.algsType direction:direction difStrong:difStrong];
+        }
+    }
 }
 
 @end

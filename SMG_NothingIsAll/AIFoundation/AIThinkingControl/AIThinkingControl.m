@@ -26,6 +26,7 @@
 #import "AINetAbsNode.h"
 #import "AICMVNode.h"
 #import "AIAbsCMVNode.h"
+#import "AINetAbsCMV.h"
 
 @interface AIThinkingControl()
 
@@ -439,14 +440,14 @@ static AIThinkingControl *_instance;
     }
     
     //2. 联想相关数据
-    NSArray *mvPorts = [[AINet sharedInstance] getNetNodePointersFromDirectionReference:cmvNode.pointer.algsType direction:direction limit:2];
+    NSArray *assDirectionPorts = [[AINet sharedInstance] getNetNodePointersFromDirectionReference:cmvNode.pointer.algsType direction:direction limit:2];
     AIFrontOrderNode *foNode = [SMGUtils searchObjectForPointer:cmvModel.foNode_p fileName:FILENAME_Node];
     
     //3. 联想cmv模型
-    for (AIPort *port in mvPorts) {
-        id referNode = [SMGUtils searchObjectForPointer:port.target_p fileName:FILENAME_Node];
-        if (ISOK(referNode, AICMVNode.class)) {
-            AICMVNode *assCmvNode = (AICMVNode*)referNode;
+    for (AIPort *assDirectionPort in assDirectionPorts) {
+        id assDirectionNode = [SMGUtils searchObjectForPointer:assDirectionPort.target_p fileName:FILENAME_Node];
+        if (ISOK(assDirectionNode, AICMVNode.class)) {
+            AICMVNode *assCmvNode = (AICMVNode*)assDirectionNode;
             
             //4. 排除联想自己(随后写到reference中)
             if (![cmvNode.pointer isEqual:assCmvNode.pointer]) {
@@ -454,12 +455,6 @@ static AIThinkingControl *_instance;
                 AIFrontOrderNode *assFoNode = [SMGUtils searchObjectForPointer:assCmvModel.foNode_p fileName:FILENAME_Node];
                 
                 NSLog(@"____联想到cmv模型>>>\ncmvModel:%ld,%@ \n assCmvModel:%ld,%@",(long)cmvModel.pointer.pointerId,cmvModel.pointer.params,(long)assCmvModel.pointer.pointerId,assCmvModel.pointer.params);
-                
-                
-                
-                //xxxxxxxx联想到同样经历的mv时,尝试抽象出absCMVNode;
-                
-                
                 
                 //5. 类比orders的规律,并abs;
                 NSMutableArray *sames = [[NSMutableArray alloc] init];
@@ -487,26 +482,22 @@ static AIThinkingControl *_instance;
                     
                     //8. 构建absNode & 并把absValue添加到瞬时记忆
                     if (ARRISOK(sames)) {
-                        NSLog(@"____类比到规律——————————");
-                        for (AIKVPointer *same in sames) {
-                            NSLog(@"\n____>%ld",(long)same.pointerId);
-                        }
+                        
+                        //9. createAbsNode
                         AINetAbsNode *absNode = [[AINet sharedInstance] createAbs:@[foNode,assFoNode] refs_p:sames];
                         [self dataIn_ToShortCache:absNode.absValue_p];
+                        
+                        //10. createAbsCmvNode
+                        [theNet createAbsCMVNode:absNode.pointer aMv_p:cmvModel.cmvNode_p bMv_p:assCmvModel.cmvNode_p];
+                        
+                        NSLog(@"____类比到规律 >> 进行抽象;——————————START\n");
                         [absNode print];
-                        //>>>此处改为抽象整个cmv基本模型,
-                        NSLog(@"构建抽象节点成功.....");
-                        
-                        
-                        
-//                        AIAbsCMVNode *absCmvNode =
-                        
-                        
+                        NSLog(@"____类比到规律 >> 进行抽象;——————————END\n");
                     }
                 }
             }
-        }else if(ISOK(referNode, AINode.class)){
-            AINode *node = (AINode*)referNode;
+        }else if(ISOK(assDirectionPort, AINode.class)){
+            AINode *node = (AINode*)assDirectionPort;
         }
     }
 }

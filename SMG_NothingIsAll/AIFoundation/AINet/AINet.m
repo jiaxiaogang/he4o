@@ -19,8 +19,10 @@
 #import "AINetDirectionReference.h"
 #import "AIOutputReference.h"
 #import "AINetOutputIndex.h"
+#import "AINetAbsCMV.h"
+#import "AIAbsCMVNode.h"
 
-@interface AINet () <AINetCMVDelegate>
+@interface AINet () <AINetCMVDelegate,AINetAbsCMVDelegate>
 
 /**
  *  MARK:--------------------cacheLong--------------------
@@ -35,6 +37,7 @@
 @property (strong, nonatomic) AINetDirectionReference *netDirectionReference;
 @property (strong, nonatomic) AIOutputReference *outputReference;
 @property (strong, nonatomic) AINetOutputIndex *outputIndex;
+@property (strong, nonatomic) AINetAbsCMV *netAbsCMV;//网络cmv的抽象;
 
 @end
 
@@ -67,6 +70,8 @@ static AINet *_instance;
     self.netDirectionReference = [[AINetDirectionReference alloc] init];
     self.outputReference = [[AIOutputReference alloc] init];
     self.outputIndex = [[AINetOutputIndex alloc] init];
+    self.netAbsCMV = [[AINetAbsCMV alloc] init];
+    self.netAbsCMV.delegate = self;
 }
 
 
@@ -334,6 +339,21 @@ static AINet *_instance;
         return [self.outputIndex getDataPointerWithData:outputObj algsType:algsType dataTo:dataTo];
     }
     return nil;
+}
+
+
+//MARK:===============================================================
+//MARK:                     < absCmv >
+//MARK:===============================================================
+-(AIAbsCMVNode*) createAbsCMVNode:(AIKVPointer*)absNode_p aMv_p:(AIKVPointer*)aMv_p bMv_p:(AIKVPointer*)bMv_p{
+    return [self.netAbsCMV create:absNode_p aMv_p:aMv_p bMv_p:bMv_p];
+}
+
+/**
+ *  MARK:--------------------AINetAbsCMVDelegate--------------------
+ */
+-(void) aiNetCMVNode_createdAbsCMVNode:(AIKVPointer*)absCmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction difStrong:(NSInteger)difStrong{
+    [self.netDirectionReference setNodePointerToDirectionReference:absCmvNode_p mvAlgsType:mvAlgsType direction:direction difStrong:difStrong];
 }
 
 @end

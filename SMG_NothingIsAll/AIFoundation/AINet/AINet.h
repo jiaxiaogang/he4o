@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIModel,AINode,AIImvAlgsModel,AIPointer,AIKVPointer,AIPort,AINetCMVModel,AINetAbsNode;
+@class AIModel,AINode,AIImvAlgsModel,AIPointer,AIKVPointer,AIPort,AINetCMVModel,AINetAbsNode,AIAbsCMVNode;
 @interface AINet : NSObject
 
 +(AINet*) sharedInstance;
@@ -115,6 +115,13 @@
 
 //小脑索引
 -(AIOutputKVPointer*) getOutputIndex:(NSString*)algsType dataTo:(NSString*)dataTo outputObj:(NSNumber*)outputObj;
+
+
+//MARK:===============================================================
+//MARK:                     < absCmv >
+//MARK:===============================================================
+-(AIAbsCMVNode*) createAbsCMVNode:(AIKVPointer*)absNode_p aMv_p:(AIKVPointer*)aMv_p bMv_p:(AIKVPointer*)bMv_p;
+
 
 @end
 

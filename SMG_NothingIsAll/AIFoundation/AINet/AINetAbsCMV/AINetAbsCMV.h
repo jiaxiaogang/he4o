@@ -8,6 +8,21 @@
 
 #import <Foundation/Foundation.h>
 
+
+@protocol AINetAbsCMVDelegate <NSObject>
+
+
+/**
+ *  MARK:--------------------absCmvNode构建时,报告directionReference--------------------
+ *  @param difStrong : mv的迫切度越高,越强;
+ *  @param direction : 方向(delta的正负)
+ */
+-(void) aiNetCMVNode_createdAbsCMVNode:(AIKVPointer*)absCmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction difStrong:(NSInteger)difStrong;
+
+@end
+
+
+
 /**
  *  MARK:--------------------生成AINetAbsCMVNode--------------------
  *  1. 抽象cmv节点不需要去重,(昨天三分饿和今天三分饿,是两个节点)
@@ -21,6 +36,7 @@
 @class AIAbsCMVNode,AIKVPointer;
 @interface AINetAbsCMV : NSObject
 
+@property (weak, nonatomic) id<AINetAbsCMVDelegate> delegate;
 
 /**
  *  MARK:--------------------在两个cmvNode基础上构建抽象--------------------
