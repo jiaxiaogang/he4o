@@ -387,6 +387,12 @@ static AIThinkingControl *_instance;
         
         //2.1 取"解决经验"对应的cmvNode;
         AICMVNode *expMvNode = [SMGUtils searchObjectForPointer:mvPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
+
+        if (ISOK(expMvNode, AICMVNode.class)) {
+            NSLog(@"mvNode经验");
+        }else if(ISOK(expMvNode, AIAbsCMVNode.class)){
+            NSLog(@"absMvNode经验");
+        }
         
         //2.2 取"解决经验"对应的cmv基本模型;
         AINetCMVModel *expCmvModel = [SMGUtils searchObjectForPointer:expMvNode.cmvModel_p fileName:FILENAME_CMVModel time:cRedisNodeTime];
