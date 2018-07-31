@@ -130,31 +130,6 @@ static AIActionControl *_instance;
     return [self createNode:identModel dataSource:nil];
 }
 
--(AINode*) createPropertyNode:(id)pptObj dataSource:(NSString*)dataSource identNode:(AINode*)identNode{
-    if (pptObj && identNode) {
-        //1. 转换为aiModel
-        AIModel *pptModel = [self createPropertyModel:pptObj];
-        //2. 构建节点
-        AINode *pptNode = [self createNode:pptModel dataSource:dataSource];
-        //3. 指定属性
-        [self updateNode:identNode propertyNode:pptNode];
-        return pptNode;
-    }
-    return nil;
-}
-
--(NSArray*) createPropertyNodes:(NSArray*)pptObjs dataSource:(NSString*)dataSource identNode:(AINode*)identNode{
-    NSMutableArray *pptNodes = [[NSMutableArray alloc] init];
-    for (id pptObj in ARRTOOK(pptObjs)) {
-        //1. 构建节点
-        AINode *pptNode = [self createPropertyNode:pptObj dataSource:dataSource identNode:identNode];
-        if (pptNode) {
-            [pptNodes addObject:pptNode];
-        }
-    }
-    return pptNodes;
-}
-
 -(AINode*) createChangeNode:(id)changeObj dataSource:(NSString*)dataSource identNode:(AINode*)identNode{
     if (changeObj && identNode) {
         //1. 转换为aiModel

@@ -50,8 +50,6 @@
 //MARK:===============================================================
 -(AIModel*) createPropertyModel:(id)propertyObj;
 -(AINode*) createIdentNode:(NSString*)dataType;
--(AINode*) createPropertyNode:(id)pptObj dataSource:(NSString*)dataSource identNode:(AINode*)identNode;
--(NSArray*) createPropertyNodes:(NSArray*)pptObjs dataSource:(NSString*)dataSource identNode:(AINode*)identNode;
 -(AINode*) createChangeNode:(id)changeObj dataSource:(NSString*)dataSource identNode:(AINode*)identNode;
 -(AINode*) createNode:(AIModel*)model dataSource:(NSString*)dataSource;
 

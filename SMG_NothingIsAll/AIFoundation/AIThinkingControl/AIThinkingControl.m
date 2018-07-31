@@ -51,7 +51,6 @@ static AIThinkingControl *_instance;
     self = [super init];
     if (self) {
         [self initData];
-        [self initRun];
     }
     return self;
 }
@@ -62,107 +61,12 @@ static AIThinkingControl *_instance;
     self.cmvCache = [[NSMutableArray alloc] init];
 }
 
--(void) initRun{
-}
 
 //MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
 -(void) commitInput:(NSObject*)algsModel{
-    //[self dataIn_V1:algsModel];
     [self dataIn:algsModel];
-}
-
--(void) dataIn_V1:(NSObject*)algsModel{
-    //1. 数据
-    NSDictionary *algsDic = [NSObject getDic:algsModel containParent:true];
-    NSMutableDictionary *nodeDic = [[NSMutableDictionary alloc] init];
-    AIActionControl *ac = [[AIActionControl alloc] init];
-    
-    //2. 构建algsModel并收集node;
-    if (algsDic) {
-        //3. 构建key节点
-        NSString *dataType = NSStringFromClass(algsModel.class);
-        AINode *identNode = [ac createIdentNode:dataType];
-        if (identNode) [nodeDic setObject:identNode forKey:@"identNode"];
-        
-        //4. 取energy
-        int energy = 0;
-        for (NSString *dataSource in algsDic.allKeys) {
-            if ([@"urgentValue" isEqualToString:dataSource]) {//imv检查
-                NSInteger urgentValue = [NUMTOOK([algsDic objectForKey:@"urgentValue"]) integerValue];
-                energy = 10;
-            }else if([@"targetType" isEqualToString:dataSource]) {
-                AITargetType targetType = [NUMTOOK([algsDic objectForKey:@"targetType"]) intValue];
-                energy = 20;
-            }
-        }
-        
-        //5. 构建key属性
-        NSMutableArray *pptNodes = [[NSMutableArray alloc] init];
-        for (NSString *dataSource in algsDic.allKeys) {
-            id propertyObj = [algsDic objectForKey:dataSource];
-            
-            //6. value为数组时,转换为node数组;
-            if ([propertyObj isKindOfClass:NSArray.class]) {
-                NSArray *items = [ac createPropertyNodes:propertyObj dataSource:dataSource identNode:identNode];
-                propertyObj = items;
-            }
-            
-            //7. 构建属性node;
-            AINode *pptNode = [ac createPropertyNode:propertyObj dataSource:dataSource identNode:identNode];
-            if (pptNode) [pptNodes addObject:pptNode];
-        }
-        [nodeDic setObject:pptNodes forKey:@"pptNodes"];
-        
-        //8. 构建change和logic链 (对各种change,用潜意识流logic串起来)
-        
-        
-        //因algsDic定义只是存储结构,并非归纳结构,所以应类比Law,并thinkingRIN后,再产生归纳结构网络;//xxx
-        //shortCaches和longCaches中存储的也是RIN后的数据,而非algsDic;//xxx
-        
-        //1. 对比value并找到规律,生成第一个RIN;参考n11p9(生成第一个RIN-代码例)
-        //2. 完全以类比的结果为依据创建结构化网络;
-        [ac searchNodeForDataObj:nil];
-        
-        for (NSDictionary *pptNode in pptNodes) {
-            NSLog(@"");
-            //逐个类比input中的信息单元(如char)等;找出law;
-        }
-    }
-    
-    //3. 存shortCache
-    //[self setObject_Caches:nodeDic];
-    
-    //4. 提交思维循环
-    [self thinkLoop:nodeDic];
-}
-
-
-/**
- *  MARK:--------------------思维循环--------------------
- *  1. 优化级;(经验->多事务分析->感觉猜测->shortCache瞎关联)
- *  2. 符合度;(99%->1%)
- *  3. 类比原则:先用dataType和dataSource取,后存,再类比后作update结构化;
- */
--(void) thinkLoop:(NSDictionary*)nodeDic {
-    if (nodeDic) {
-        //1. 取mv
-        
-        //2. 联想mv
-        
-        //3. 根据cmv查找结果进行类比解决问题 (对导致cmv变化的change,进行类比缩小范围)
-        
-        //4. 对缩小范围的change用显意识流logic串起来;
-        
-        //5. 将类比到的数据构建与关联;
-        
-        //6. 进行思维mv循环
-        
-        //7. 进行决策输出
-        
-        
-    }
 }
 
 
@@ -191,7 +95,7 @@ static AIThinkingControl *_instance;
         }
     }
     
-    //4. 联想
+    //7. 联想
     if (findMV) {
         [self dataIn_AssociativeExperience:cmvModel];
     }else{
@@ -307,7 +211,7 @@ static AIThinkingControl *_instance;
                         
                         //4. 联想到cmv (根据urgentTo更新energy)
                         NSInteger urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
-                        self.energy = [ThinkingUtils updateEnergy:self.energy delta:urgentTo/10];
+                        self.energy = [ThinkingUtils updateEnergy:self.energy delta:(urgentTo + 9)/10];
                         
                         //5. 判断需求;(如饿,主动取当前状态,是否饿)
                         
@@ -385,71 +289,11 @@ static AIThinkingControl *_instance;
     //2. 联想相关"解决经验";(取曾经历的最强解决;)
     AIPort *mvPort = [[AINet sharedInstance] getNetNodePointersFromDirectionReference_Single:cmvNode.pointer.algsType direction:direction];
     if (mvPort) {
-        
         //3. 取"解决经验"对应的cmvNode;
         NSObject *expMvNode = [SMGUtils searchObjectForPointer:mvPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
 
-        //4. 判断具象 | 抽象cmv节点 并 收集可输出的信息
-        NSMutableArray *outMArr = [[NSMutableArray alloc] init];
-        if (ISOK(expMvNode, AICMVNode.class)) {
-            //5. 具象mv
-            AICMVNode *expConCmvNode = (AICMVNode*)expMvNode;
-            
-            //5.1 取"解决经验"对应的cmv基本模型;
-            AINetCMVModel *expCmvModel = [SMGUtils searchObjectForPointer:expConCmvNode.cmvModel_p fileName:FILENAME_CMVModel time:cRedisNodeTime];
-            
-            //5.2 取"解决经验"对应的前因时序列;
-            AIFrontOrderNode *expFoNode = [SMGUtils searchObjectForPointer:expCmvModel.foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
-            
-            //5.3 收集
-            [outMArr addObjectsFromArray:expFoNode.orders_kvp];//out是不能以数组处理foNode.orders_p的,下版本改)
-        }else if(ISOK(expMvNode, AIAbsCMVNode.class)){
-            //6. 抽象mv
-            AIAbsCMVNode *expAbsCmvNode = (AIAbsCMVNode*)expMvNode;
-            
-            //6.1 取"解决经验"的前因抽象节点
-            AINetAbsNode *expFoAbsNode = [SMGUtils searchObjectForPointer:expAbsCmvNode.absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
-            
-            //6.2 取宏信息指向的"微信息"数组
-            NSArray *microArr_p = ARRTOOK([SMGUtils searchObjectForPointer:expFoAbsNode.absValue_p fileName:FILENAME_AbsValue]);
-            
-            //6.3 收集
-            for (AIKVPointer *micro_p in microArr_p) {
-                if (ISOK(micro_p, AIKVPointer.class)) {
-                    [outMArr addObject:micro_p];
-                }
-            }
-        }
-        
-        //7. 尝试输出找到解决问题的实际操作
-        BOOL tryOutSuccess = false;
-        if (ARRISOK(outMArr)) {
-            for (AIKVPointer *micro_p in outMArr) {
-                //xxxxxxxx联想以往解决时,都发生了什么,尝试复现;
-                
-                //1. 检查micro_p是否是"输出";
-                
-                //2. 假如order_p足够确切,尝试检查并输出;
-                BOOL invoked = [OutputUtils checkAndInvoke:micro_p];
-                if (invoked) {
-                    tryOutSuccess = true;
-                }
-            }
-        }
-        
-        if (!tryOutSuccess) {
-            
-            //3. 产生"心急mv";(心急产生只是"urgent.energy x 2")
-            //4. 输出反射表情;
-            //5. 记录log到foOrders;(记录log应该到output中执行)
-            
-            
-            NSLog(@"1. 如果未找到复现方式,或解决方式,则产生情绪:急");
-            
-            NSLog(@"2. 通过急,输出output表情哭");
-            
-            [Output output_Face:AIMoodType_Anxious];
-        }
+        //4. 决策输出
+        [self decision_Out:expMvNode];
     }
 }
 
@@ -482,43 +326,21 @@ static AIThinkingControl *_instance;
                 NSLog(@"____联想到cmv模型>>>\ncmvModel:%ld,%@ \n assCmvModel:%ld,%@",(long)cmvModel.pointer.pointerId,cmvModel.pointer.params,(long)assCmvModel.pointer.pointerId,assCmvModel.pointer.params);
                 
                 //5. 类比orders的规律,并abs;
-                NSMutableArray *sames = [[NSMutableArray alloc] init];
-                if (ISOK(foNode, AIFrontOrderNode.class) && ISOK(assFoNode, AIFrontOrderNode.class)) {
-                    for (AIKVPointer *data_p in foNode.orders_kvp) {
-                        //6. 是否已收集
-                        BOOL already = false;
-                        for (AIKVPointer *same_p in sames) {
-                            if ([same_p isEqual:data_p]) {
-                                already = true;
-                                break;
-                            }
-                        }
-                        //7. 未收集过,则查找是否有一致微信息(有则收集)
-                        if (!already) {
-                            for (AIKVPointer *assData_p in assFoNode.orders_kvp) {
-                                if ([data_p isEqual:assData_p]) {
-                                    [sames addObject:assData_p];
-                                    break;
-                                }
-                            }
-                        }
-                        
-                    }
+                NSArray *sames = [ThinkingUtils analogyFoNode_A:foNode foNode_B:assFoNode];
                     
-                    //8. 构建absNode & 并把absValue添加到瞬时记忆
-                    if (ARRISOK(sames)) {
-                        
-                        //9. createAbsNode
-                        AINetAbsNode *absNode = [[AINet sharedInstance] createAbs:@[foNode,assFoNode] refs_p:sames];
-                        [self dataIn_ToShortCache:absNode.absValue_p];
-                        
-                        //10. createAbsCmvNode
-                        [theNet createAbsCMVNode:absNode.pointer aMv_p:cmvModel.cmvNode_p bMv_p:assCmvModel.cmvNode_p];
-                        
-                        NSLog(@"____类比到规律 >> 进行抽象;——————————START\n");
-                        [absNode print];
-                        NSLog(@"____类比到规律 >> 进行抽象;——————————END\n");
-                    }
+                //6. 构建absNode & 并把absValue添加到瞬时记忆
+                if (ARRISOK(sames)) {
+                    
+                    //9. createAbsNode
+                    AINetAbsNode *absNode = [[AINet sharedInstance] createAbs:@[foNode,assFoNode] refs_p:sames];
+                    [self dataIn_ToShortCache:absNode.absValue_p];
+                    
+                    //10. createAbsCmvNode
+                    [theNet createAbsCMVNode:absNode.pointer aMv_p:cmvModel.cmvNode_p bMv_p:assCmvModel.cmvNode_p];
+                    
+                    NSLog(@"____类比到规律 >> 进行抽象;——————————START\n");
+                    [absNode print];
+                    NSLog(@"____类比到规律 >> 进行抽象;——————————END\n");
                 }
             }
         }else if(ISOK(assDirectionPort, AINode.class)){
@@ -527,31 +349,76 @@ static AIThinkingControl *_instance;
     }
 }
 
-//类比处理(瓜是瓜)
--(void) dataIn_AnalogyData:(NSDictionary*)algsDic dataType:(NSString*)dataType{
-    if (DICISOK(algsDic) && dataType) {
-        
-    }
-}
-
-//构建(想啥存啥)
--(void) dataIn_BuildNet{
-    
-}
-
 
 //MARK:===============================================================
 //MARK:                     < decision >
 //MARK:===============================================================
 
-//输出front的入网;
--(void) decision_InNet{
-    
-}
 
-//输出
--(void) decision_Out{
+/**
+ *  MARK:--------------------决策输出--------------------
+ *  @param expMvNode : mv节点经验(有可能是AICMVNode也有可能是AIAbsCMVNode)
+ */
+-(void) decision_Out:(NSObject*)expMvNode{
+    //1. 判断具象 | 抽象cmv节点 并 收集可输出的信息
+    NSMutableArray *outMArr = [[NSMutableArray alloc] init];
+    if (ISOK(expMvNode, AICMVNode.class)) {
+        //2. 具象mv
+        AICMVNode *expConCmvNode = (AICMVNode*)expMvNode;
+        
+        //>1 取"解决经验"对应的cmv基本模型;
+        AINetCMVModel *expCmvModel = [SMGUtils searchObjectForPointer:expConCmvNode.cmvModel_p fileName:FILENAME_CMVModel time:cRedisNodeTime];
+        
+        //>2 取"解决经验"对应的前因时序列;
+        AIFrontOrderNode *expFoNode = [SMGUtils searchObjectForPointer:expCmvModel.foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+        
+        //>3 收集
+        [outMArr addObjectsFromArray:expFoNode.orders_kvp];//out是不能以数组处理foNode.orders_p的,下版本改)
+    }else if(ISOK(expMvNode, AIAbsCMVNode.class)){
+        //3. 抽象mv
+        AIAbsCMVNode *expAbsCmvNode = (AIAbsCMVNode*)expMvNode;
+        
+        //>1 取"解决经验"的前因抽象节点
+        AINetAbsNode *expFoAbsNode = [SMGUtils searchObjectForPointer:expAbsCmvNode.absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+        
+        //>2 取宏信息指向的"微信息"数组
+        NSArray *microArr_p = ARRTOOK([SMGUtils searchObjectForPointer:expFoAbsNode.absValue_p fileName:FILENAME_AbsValue]);
+        
+        //>3 收集
+        for (AIKVPointer *micro_p in microArr_p) {
+            if (ISOK(micro_p, AIKVPointer.class)) {
+                [outMArr addObject:micro_p];
+            }
+        }
+    }
     
+    //4. 尝试输出找到解决问题的实际操作
+    BOOL tryOutSuccess = false;
+    if (ARRISOK(outMArr)) {
+        for (AIKVPointer *micro_p in outMArr) {
+            //xxxxxxxx联想以往解决时,都发生了什么,尝试复现;
+            
+            //>1 检查micro_p是否是"输出";
+            
+            //>2 假如order_p足够确切,尝试检查并输出;
+            BOOL invoked = [OutputUtils checkAndInvoke:micro_p];
+            if (invoked) {
+                tryOutSuccess = true;
+            }
+        }
+    }
+    
+    //5. 无法解决时,反射一些情绪变化,并增加额外输出;
+    if (!tryOutSuccess) {
+        //>1 产生"心急mv";(心急产生只是"urgent.energy x 2")
+        //>2 输出反射表情;
+        //>3 记录log到foOrders;(记录log应该到output中执行)
+        
+        NSLog(@"1. 如果未找到复现方式,或解决方式,则产生情绪:急");
+        NSLog(@"2. 通过急,输出output表情哭");
+        
+        [Output output_Face:AIMoodType_Anxious];
+    }
 }
 
 /**

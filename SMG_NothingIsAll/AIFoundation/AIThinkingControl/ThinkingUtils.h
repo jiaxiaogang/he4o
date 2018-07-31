@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+@class AIFrontOrderNode;
 @interface ThinkingUtils : NSObject
 
 /**
@@ -26,6 +27,9 @@
 +(BOOL) analogyCharA:(char)a b:(char)b;
 
 +(void) analogyCMVA:(NSArray*)a b:(NSArray*)b;
+
+//类比处理(瓜是瓜)
++(NSArray*) analogyFoNode_A:(AIFrontOrderNode*)foNode_A foNode_B:(AIFrontOrderNode*)foNode_B;
 
 @end
 
