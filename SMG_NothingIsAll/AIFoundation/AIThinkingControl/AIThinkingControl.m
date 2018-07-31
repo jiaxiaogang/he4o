@@ -374,6 +374,7 @@ static AIThinkingControl *_instance;
 /**
  *  MARK:--------------------有需求思考解决--------------------
  *  1. 有需求时,找出imv解决经验,尝试决策并解决;
+ *  2. TODO:明天扩展对out_p的支持
  */
 -(void) dataIn_AssExp_HavDemand:(AICMVNode*)cmvNode direction:(MVDirection)direction{
     //1. 数据检查
@@ -385,36 +386,54 @@ static AIThinkingControl *_instance;
     AIPort *mvPort = [[AINet sharedInstance] getNetNodePointersFromDirectionReference_Single:cmvNode.pointer.algsType direction:direction];
     if (mvPort) {
         
-        //2.1 取"解决经验"对应的cmvNode;
-        AICMVNode *expMvNode = [SMGUtils searchObjectForPointer:mvPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
+        //3. 取"解决经验"对应的cmvNode;
+        NSObject *expMvNode = [SMGUtils searchObjectForPointer:mvPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
 
+        //4. 判断具象 | 抽象cmv节点 并 收集可输出的信息
+        NSMutableArray *outMArr = [[NSMutableArray alloc] init];
         if (ISOK(expMvNode, AICMVNode.class)) {
-            NSLog(@"mvNode经验");
+            //5. 具象mv
+            AICMVNode *expConCmvNode = (AICMVNode*)expMvNode;
+            
+            //5.1 取"解决经验"对应的cmv基本模型;
+            AINetCMVModel *expCmvModel = [SMGUtils searchObjectForPointer:expConCmvNode.cmvModel_p fileName:FILENAME_CMVModel time:cRedisNodeTime];
+            
+            //5.2 取"解决经验"对应的前因时序列;
+            AIFrontOrderNode *expFoNode = [SMGUtils searchObjectForPointer:expCmvModel.foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+            
+            //5.3 收集
+            [outMArr addObjectsFromArray:expFoNode.orders_kvp];//out是不能以数组处理foNode.orders_p的,下版本改)
         }else if(ISOK(expMvNode, AIAbsCMVNode.class)){
-            NSLog(@"absMvNode经验");
+            //6. 抽象mv
+            AIAbsCMVNode *expAbsCmvNode = (AIAbsCMVNode*)expMvNode;
+            
+            //6.1 取"解决经验"的前因抽象节点
+            AINetAbsNode *expFoAbsNode = [SMGUtils searchObjectForPointer:expAbsCmvNode.absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+            
+            //6.2 取宏信息指向的"微信息"数组
+            NSArray *microArr_p = ARRTOOK([SMGUtils searchObjectForPointer:expFoAbsNode.absValue_p fileName:FILENAME_AbsValue]);
+            
+            //6.3 收集
+            for (AIKVPointer *micro_p in microArr_p) {
+                if (ISOK(micro_p, AIKVPointer.class)) {
+                    [outMArr addObject:micro_p];
+                }
+            }
         }
         
-        //2.2 取"解决经验"对应的cmv基本模型;
-        AINetCMVModel *expCmvModel = [SMGUtils searchObjectForPointer:expMvNode.cmvModel_p fileName:FILENAME_CMVModel time:cRedisNodeTime];
-        
-        //2.3 取"解决经验"对应的前因时序列;
-        AIFrontOrderNode *expFoNode = [SMGUtils searchObjectForPointer:expCmvModel.foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
-        
-        //3. 尝试找到解决问题的实际操作
-        //>>>此处需要得到的最好是absNode;但目前"抽象cmv基本模型"善未重构,所以只好先取foNode.orders;
+        //7. 尝试输出找到解决问题的实际操作
         BOOL tryOutSuccess = false;
-        if (expFoNode) {
-            for (AIKVPointer *order_p in expFoNode.orders_kvp) {
+        if (ARRISOK(outMArr)) {
+            for (AIKVPointer *micro_p in outMArr) {
                 //xxxxxxxx联想以往解决时,都发生了什么,尝试复现;
                 
-                //1. 检查order_p是否是"输出";
+                //1. 检查micro_p是否是"输出";
                 
                 //2. 假如order_p足够确切,尝试检查并输出;
-                BOOL invoked = [OutputUtils checkAndInvoke:order_p];
+                BOOL invoked = [OutputUtils checkAndInvoke:micro_p];
                 if (invoked) {
                     tryOutSuccess = true;
                 }
-                
             }
         }
         
