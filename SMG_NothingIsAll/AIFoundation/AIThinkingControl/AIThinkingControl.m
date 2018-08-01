@@ -193,7 +193,11 @@ static AIThinkingControl *_instance;
     return cmvModel;
 }
 
-//联想相关数据(看到西瓜会开心)
+/**
+ *  MARK:--------------------联想相关数据(看到西瓜会开心)--------------------
+ *  1. 注:直至desicionOut前,assCmv都会真实作用于thinkingControl
+ *  2. assCmv首先会通过energy和cmvCache表现在thinkingControl中,影响思维循环;
+ */
 -(void) dataIn_AssociativeData:(NSArray*)algsArr {
     if (ISOK(algsArr, NSArray.class)) {
         //1. noMv信号已输入完毕,联想
@@ -209,11 +213,18 @@ static AIThinkingControl *_instance;
                         AINetCMVModel *cmvModel = [SMGUtils searchObjectForPointer:foNode.cmvModel_kvp fileName:FILENAME_CMVModel];
                         AICMVNode *cmvNode = [SMGUtils searchObjectForPointer:cmvModel.cmvNode_p fileName:FILENAME_Node];
                         
-                        //4. 联想到cmv (根据urgentTo更新energy)
+                        //4. 将联想到的cmv更新energy和cmvCache
                         NSInteger urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
+                        NSInteger delta = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
                         self.energy = [ThinkingUtils updateEnergy:self.energy delta:(urgentTo + 9)/10];
+                        [self dataIn_ToCMVCache:@[cmvNode.delta_p,cmvNode.urgentTo_p] delta:delta];
                         
                         //5. 判断需求;(如饿,主动取当前状态,是否饿)
+                        
+                        
+                        
+                        //xxxxx形成循环,根据当前最前排mv和energy,再进行思维;
+                        [self dataLoop_AssociativeExperience:cmvModel];
                         
                         
                         NSLog(@"____联想结果:%@",cmvNode.pointer.algsType);
@@ -245,8 +256,51 @@ static AIThinkingControl *_instance;
     }
 }
 
-//从网络中找已有cmv经验(饿了找瓜)
+
+//MARK:===============================================================
+//MARK:                     < assExp >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------dataIn潜意识assExp--------------------
+ *  1. 无条件
+ *  2. 有尝(energy-1)
+ *  3. 指定model
+ */
 -(void) dataIn_AssociativeExperience:(AINetCMVModel*)cmvModel {
+    [self associativeExperience:cmvModel];
+}
+
+/**
+ *  MARK:--------------------dataLoop联想--------------------
+ *  注:loopAssExp中本身已经是内心活动联想到的mv
+ *  1. 有条件(energy>0)
+ *  2. 有尝(energy-1)
+ *  3. 指定model
+ */
+-(void) dataLoop_AssociativeExperience:(AINetCMVModel*)cmvModel {
+    if (self.energy > 0) {
+        [self associativeExperience:cmvModel];
+    }
+}
+
+/**
+ *  MARK:--------------------dataCmv联想assExp--------------------
+ *  1. 有条件(energy>0)
+ *  2. 有尝(energy-1)
+ *  3. 不指定model (从cmvCache取)
+ */
+-(void) dataCmvCache_AssociativeExperience{
+    if (self.energy > 0 && ARRISOK(self.cmvCache)) {
+        
+    }
+}
+
+/**
+ *  MARK:--------------------assExp联想经验(饿了找瓜)--------------------
+ *  注:总调用入口;所有重载调用此方法;
+ */
+-(void) associativeExperience:(AINetCMVModel*)cmvModel {
     if (ISOK(cmvModel, AINetCMVModel.class)) {
         //1. 取cmvNode
         AICMVNode *cmvNode = [SMGUtils searchObjectForPointer:cmvModel.cmvNode_p fileName:FILENAME_Node];
@@ -272,7 +326,8 @@ static AIThinkingControl *_instance;
             }
         }
     }
-    //[[AINet sharedInstance] searchNodeForDataType:nil dataSource:@"urgentValue"];
+    //5. 消耗energy
+    self.energy = [ThinkingUtils updateEnergy:self.energy delta:-1];
 }
 
 /**
@@ -419,6 +474,9 @@ static AIThinkingControl *_instance;
         
         [Output output_Face:AIMoodType_Anxious];
     }
+    
+    //6. 消耗energy
+    self.energy = [ThinkingUtils updateEnergy:self.energy delta:-1];
 }
 
 /**
