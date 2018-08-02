@@ -27,6 +27,7 @@
 #import "AICMVNode.h"
 #import "AIAbsCMVNode.h"
 #import "AINetAbsCMV.h"
+#import "ThinkingCmvCacheModel.h"
 
 @interface AIThinkingControl()
 
