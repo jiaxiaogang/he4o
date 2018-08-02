@@ -125,30 +125,27 @@ static AIThinkingControl *_instance;
 -(void) dataIn_CMVAlgsArr:(NSArray*)algsArr{
     //1. 抵消 | 合并
     [ThinkingUtils parserAlgsMVArr:algsArr success:^(AIKVPointer *delta_p, AIKVPointer *urgentTo_p, NSInteger delta, NSInteger urgentTo, NSString *algsType) {
-        __block BOOL findSeemType = false;
-        for (NSArray *item in self.cmvCache) {
-            [ThinkingUtils parserAlgsMVArr:item success:^(AIKVPointer *delta_p, AIKVPointer *urgentTo_p,NSInteger itemDelta, NSInteger itemUrgentTo, NSString *itemAlgsType) {
-                if ([STRTOOK(algsType) isEqualToString:itemAlgsType]) {
-                    //2. 同向且更迫切时,替换到合适位置
-                    if ((itemDelta > 0) == (delta > 0)) {
-                        if (labs(delta) > labs(itemDelta)) {
-                            [self.cmvCache removeObject:item];
-                            [self dataIn_ToCMVCache:algsArr delta:delta];
-                        }
-                    }else{//3. 异向抵消
-                        [self.cmvCache removeObject:item];
+        BOOL findSeemType = false;
+        for (NSInteger i = 0 ; i < self.cmvCache.count; i++) {
+            ThinkingCmvCacheModel *checkItem = self.cmvCache[i];
+            if ([STRTOOK(algsType) isEqualToString:checkItem.algsType]) {
+                //2. 同向且更迫切时,替换到合适位置
+                if ((checkItem.delta > 0) == (delta > 0)) {
+                    if (labs(delta) > labs(checkItem.delta)) {
+                        [self.cmvCache removeObject:checkItem];
+                        [self addToCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
                     }
-                    findSeemType = true;
+                }else{//3. 异向抵消
+                    [self.cmvCache removeObject:checkItem];
                 }
-            }];
-            if (findSeemType) {
+                findSeemType = true;
                 break;
             }
         }
         
         //4. 未找到相同类型,加到cmvCache中
         if (!findSeemType) {
-            [self dataIn_ToCMVCache:algsArr delta:delta];
+            [self addToCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
         }
     }];
 }
@@ -164,26 +161,6 @@ static AIThinkingControl *_instance;
         if (self.shortCache.count > 8) {
             [self.shortCache removeObjectAtIndex:0];
         }
-    }
-}
-
-//添加到cmvCache;
--(void) dataIn_ToCMVCache:(NSArray*)algsArr delta:(NSInteger)delta{
-    __block BOOL success = false;
-    for (NSInteger i = 0; i < self.cmvCache.count; i++) {
-        NSArray *checkItem = self.cmvCache[i];
-        [ThinkingUtils parserAlgsMVArr:checkItem success:^(AIKVPointer *delta_p, AIKVPointer *urgentTo_p,NSInteger checkDelta, NSInteger checkUrgentTo, NSString *checkAlgsType) {
-            if (labs(delta) > labs(checkDelta)) {
-                [self.cmvCache insertObject:algsArr atIndex:i];
-                success = true;
-            }
-        }];
-        if (success) {
-            break;
-        }
-    }
-    if (!success) {
-        [self.cmvCache addObject:algsArr];
     }
 }
 
@@ -215,10 +192,11 @@ static AIThinkingControl *_instance;
                         AICMVNode *cmvNode = [SMGUtils searchObjectForPointer:cmvModel.cmvNode_p fileName:FILENAME_Node];
                         
                         //4. 将联想到的cmv更新energy和cmvCache
+                        NSString *algsType = cmvNode.urgentTo_p.algsType;
                         NSInteger urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
                         NSInteger delta = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
                         self.energy = [ThinkingUtils updateEnergy:self.energy delta:(urgentTo + 9)/10];
-                        [self dataIn_ToCMVCache:@[cmvNode.delta_p,cmvNode.urgentTo_p] delta:delta];
+                        [self addToCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
                         
                         //5. 判断需求;(如饿,主动取当前状态,是否饿)
                         
@@ -496,5 +474,47 @@ static AIThinkingControl *_instance;
     //3. 加瞬时记忆
     [self dataIn_ToShortCache:output_p];
 }
+
+//MARK:===============================================================
+//MARK:                     < cmvCache >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------joinToCMVCache--------------------
+ *  1. 添加新的cmv到cache,并且自动撤消掉相对较弱的同类同向mv;
+ *  2. 在assData等(内心活动,不抵消cmvCache中旧任务)
+ *  3. 在dataIn时,抵消旧任务,并生成新任务;
+ */
+-(void) addToCMVCache:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta order:(NSInteger)order{
+    //1. 同类同向较弱的被撤消
+    for (NSInteger i = 0; i < self.cmvCache.count; i++) {
+        ThinkingCmvCacheModel *checkItem = self.cmvCache[i];
+        if ([STRTOOK(algsType) isEqualToString:checkItem.algsType] && labs(delta) > labs(checkItem.delta) && (delta > 0 == checkItem.delta > 0)) {
+            [self.cmvCache removeObjectAtIndex:i];
+            break;
+        }
+    }
+    
+    //2. 加入新的;
+    ThinkingCmvCacheModel *newItem = [[ThinkingCmvCacheModel alloc] init];
+    newItem.algsType = algsType;
+    newItem.delta = delta;
+    newItem.urgentTo = urgentTo;
+    newItem.order = order;
+    [self.cmvCache addObject:newItem];
+    
+    //3. 排序
+    [self refreshCmvCacheSort];
+}
+
+//重排序cmvCache
+-(void) refreshCmvCacheSort{
+    [self.cmvCache sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+        ThinkingCmvCacheModel *itemA = (ThinkingCmvCacheModel*)obj1;
+        ThinkingCmvCacheModel *itemB = (ThinkingCmvCacheModel*)obj2;
+        return [SMGUtils compareIntA:itemA.order intB:itemB.order];
+    }];
+}
+
 
 @end

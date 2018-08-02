@@ -458,6 +458,14 @@
     return NSOrderedAscending;
 }
 
+/**
+ *  MARK:--------------------比较intA是否比intB大--------------------
+ */
++(NSComparisonResult) compareIntA:(NSInteger)intA intB:(NSInteger)intB{
+    return intA > intB ? NSOrderedAscending : intA < intB ? NSOrderedDescending : NSOrderedSame;
+}
+
+
 @end
 
 

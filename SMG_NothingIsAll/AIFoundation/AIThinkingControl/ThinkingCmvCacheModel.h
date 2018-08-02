@@ -17,6 +17,7 @@
 
 @property (assign, nonatomic) NSInteger urgentTo;
 @property (assign, nonatomic) NSInteger delta;
+@property (strong, nonatomic) NSString *algsType;
 
 /**
  *  MARK:--------------------order排序因子--------------------
