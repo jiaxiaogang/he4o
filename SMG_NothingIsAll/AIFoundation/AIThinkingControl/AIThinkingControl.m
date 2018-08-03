@@ -171,10 +171,15 @@ static AIThinkingControl *_instance;
     return cmvModel;
 }
 
+//MARK:===============================================================
+//MARK:                     < dataIn_Ass >
+//MARK:===============================================================
+
 /**
  *  MARK:--------------------联想相关数据(看到西瓜会开心)--------------------
  *  1. 注:直至desicionOut前,assCmv都会真实作用于thinkingControl
  *  2. assCmv首先会通过energy和cmvCache表现在thinkingControl中,影响思维循环;
+ *  3. dataIn负责护送一次指定信息的ass(随后进入递归循环)
  */
 -(void) dataIn_AssociativeData:(NSArray*)algsArr {
     if (ISOK(algsArr, NSArray.class)) {
@@ -203,7 +208,7 @@ static AIThinkingControl *_instance;
                         
                         
                         //xxxxx形成循环,根据当前最前排mv和energy,再进行思维;
-                        [self dataLoop_AssociativeExperience:cmvModel];
+                        [self dataLoop_AssociativeExperience];
                         
                         
                         NSLog(@"____联想结果:%@",cmvNode.pointer.algsType);
@@ -235,45 +240,47 @@ static AIThinkingControl *_instance;
     }
 }
 
-
-//MARK:===============================================================
-//MARK:                     < assExp >
-//MARK:===============================================================
-
 /**
  *  MARK:--------------------dataIn潜意识assExp--------------------
  *  1. 无条件
  *  2. 有尝(energy-1)
  *  3. 指定model
+ *  注: dataIn负责护送一次指定信息的ass(随后进入递归循环)
+ *  注: dataIn_assExp可直接跳过检查点一次;
  */
 -(void) dataIn_AssociativeExperience:(AINetCMVModel*)cmvModel {
     [self associativeExperience:cmvModel];
 }
 
+
+//MARK:===============================================================
+//MARK:                     < dataLoop_Ass检查点 >
+//MARK:===============================================================
+
 /**
- *  MARK:--------------------dataLoop联想--------------------
+ *  MARK:--------------------dataLoop联想(每次循环的检查点)--------------------
  *  注:loopAssExp中本身已经是内心活动联想到的mv
  *  1. 有条件(energy>0)
  *  2. 有尝(energy-1)
- *  3. 指定model
+ *  3. 不指定model (从cmvCache取)
+ *
  */
--(void) dataLoop_AssociativeExperience:(AINetCMVModel*)cmvModel {
-    if (self.energy > 0) {
-        [self associativeExperience:cmvModel];
+-(void) dataLoop_AssociativeExperience {
+    if (self.energy > 0 && ARRISOK(self.cmvCache)) {
+        //[self associativeExperience:cmvModel];//xxx
     }
 }
 
-/**
- *  MARK:--------------------dataCmv联想assExp--------------------
- *  1. 有条件(energy>0)
- *  2. 有尝(energy-1)
- *  3. 不指定model (从cmvCache取)
- */
--(void) dataCmvCache_AssociativeExperience{
-    if (self.energy > 0 && ARRISOK(self.cmvCache)) {
-        
+-(void) dataLoop_AssociativeData:(NSArray*)assDataArr{
+    if (self.energy > 0) {
+        //
     }
 }
+
+
+//MARK:===============================================================
+//MARK:                     < ass执行部分(只管执行) >
+//MARK:===============================================================
 
 /**
  *  MARK:--------------------assExp联想经验(饿了找瓜)--------------------
