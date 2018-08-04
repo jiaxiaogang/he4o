@@ -27,7 +27,8 @@
 #import "AICMVNode.h"
 #import "AIAbsCMVNode.h"
 #import "AINetAbsCMV.h"
-#import "ThinkingCmvCacheModel.h"
+#import "TCLoopModel.h"
+#import "TCLoopManager.h"
 
 /**
  *  MARK:--------------------思维控制器--------------------
@@ -49,8 +50,7 @@
 
 @property (strong,nonatomic) NSMutableArray *shortCache;        //瞬时记忆_存AIModel(从Algs传入,待Thinking取用分析)(容量8);
 @property (strong,nonatomic) NSMutableArray *thinkFeedCache;    //短时记忆_思维流(包括shortCache和cmvCache,10分钟内都会存在此处(人类可能一天或几小时))
-@property (strong,nonatomic) NSMutableArray *cmvCache;          //思维因子_当前cmv序列(注:所有cmv只与cacheImv中作匹配)(正序,urgent越大,排越前)
-@property (assign, nonatomic) NSInteger energy;                 //当前能量值;(在循环中动态更新)(0-2)
+@property (strong, nonatomic) TCLoopManager *loopManager;
 
 @end
 
@@ -75,7 +75,7 @@ static AIThinkingControl *_instance;
 -(void) initData{
     self.shortCache = [[NSMutableArray alloc] init];
     self.thinkFeedCache = [[NSMutableArray alloc] init];
-    self.cmvCache = [[NSMutableArray alloc] init];
+    self.loopManager = [[TCLoopManager alloc] init];
 }
 
 
@@ -139,31 +139,7 @@ static AIThinkingControl *_instance;
 
 //输入新的cmvAlgsArr
 -(void) dataIn_CMVAlgsArr:(NSArray*)algsArr{
-    //1. 抵消 | 合并
-    [ThinkingUtils parserAlgsMVArr:algsArr success:^(AIKVPointer *delta_p, AIKVPointer *urgentTo_p, NSInteger delta, NSInteger urgentTo, NSString *algsType) {
-        BOOL findSeemType = false;
-        for (NSInteger i = 0 ; i < self.cmvCache.count; i++) {
-            ThinkingCmvCacheModel *checkItem = self.cmvCache[i];
-            if ([STRTOOK(algsType) isEqualToString:checkItem.algsType]) {
-                //2. 同向且更迫切时,替换到合适位置
-                if ((checkItem.delta > 0) == (delta > 0)) {
-                    if (labs(delta) > labs(checkItem.delta)) {
-                        [self.cmvCache removeObject:checkItem];
-                        [self addToCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
-                    }
-                }else{//3. 异向抵消
-                    [self.cmvCache removeObject:checkItem];
-                }
-                findSeemType = true;
-                break;
-            }
-        }
-        
-        //4. 未找到相同类型,加到cmvCache中
-        if (!findSeemType) {
-            [self addToCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
-        }
-    }];
+    [self.loopManager dataIn_CmvAlgsArr:algsArr];
 }
 
 /**
@@ -217,11 +193,11 @@ static AIThinkingControl *_instance;
                         NSString *algsType = cmvNode.urgentTo_p.algsType;
                         NSInteger urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
                         NSInteger delta = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
-                        self.energy = [ThinkingUtils updateEnergy:self.energy delta:(urgentTo + 9)/10];
-                        [self addToCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
+                        [self.loopManager updateEnergy:(urgentTo + 9)/10];
+                        [self.loopManager addToCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
                         
                         //5. 形成循环,根据当前最前排mv和energy,再进行思维;
-                        [self dataLoop_AssociativeExperience];
+                        [self.loopManager dataLoop_AssociativeExperience];
                         NSLog(@"____联想结果:%@",cmvNode.pointer.algsType);
                     }else if(ISOK(referNode, AINode.class)){
                         //联想到数据网络节点
@@ -279,10 +255,10 @@ static AIThinkingControl *_instance;
         }
     }
     //5. 消耗energy
-    self.energy = [ThinkingUtils updateEnergy:self.energy delta:-1];
+    [self.loopManager updateEnergy:-1];
     
     //6. 递归
-    [self dataLoop_AssociativeExperience];
+    [self.loopManager dataLoop_AssociativeExperience];
 }
 
 /**
@@ -362,39 +338,6 @@ static AIThinkingControl *_instance;
     }
 }
 
-//MARK:===============================================================
-//MARK:                     < dataLoop_Ass检查与执行 >
-//MARK:===============================================================
-
-/**
- *  MARK:--------------------dataLoop联想(每次循环的检查点)--------------------
- *  注:assExp联想经验(饿了找瓜)(递归)
- *  注:loopAssExp中本身已经是内心活动联想到的mv
- *  1. 有条件(energy>0)
- *  2. 有尝(energy-1)
- *  3. 不指定model (从cmvCache取)
- *
- */
--(void) dataLoop_AssociativeExperience {
-    if (self.energy > 0 && ARRISOK(self.cmvCache)) {
-        //1. 重排序 & 取当前序列最前;
-        [self refreshCmvCacheSort];
-        ThinkingCmvCacheModel *mvCacheModel = self.cmvCache.lastObject;
-        
-        //2. 联想经验...
-        self.energy = [ThinkingUtils updateEnergy:self.energy delta:-1];
-        
-        //3. 决策输出...
-        
-        //4. 记录思考mv结果到叠加mvCacheModel.order;
-        
-        //5. 记录思考data结果到thinkFeedCache;
-        
-        
-        [self dataLoop_AssociativeExperience];
-    }
-}
-
 
 //MARK:===============================================================
 //MARK:                     < decision >
@@ -467,7 +410,7 @@ static AIThinkingControl *_instance;
     }
     
     //6. 消耗energy
-    self.energy = [ThinkingUtils updateEnergy:self.energy delta:-1];
+    [self.loopManager updateEnergy:-1];
 }
 
 /**
@@ -485,47 +428,6 @@ static AIThinkingControl *_instance;
     
     //3. 加瞬时记忆
     [self dataIn_ToShortCache:output_p];
-}
-
-//MARK:===============================================================
-//MARK:                     < cmvCache >
-//MARK:===============================================================
-
-/**
- *  MARK:--------------------joinToCMVCache--------------------
- *  1. 添加新的cmv到cache,并且自动撤消掉相对较弱的同类同向mv;
- *  2. 在assData等(内心活动,不抵消cmvCache中旧任务)
- *  3. 在dataIn时,抵消旧任务,并生成新任务;
- */
--(void) addToCMVCache:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta order:(NSInteger)order{
-    //1. 同类同向较弱的被撤消
-    for (NSInteger i = 0; i < self.cmvCache.count; i++) {
-        ThinkingCmvCacheModel *checkItem = self.cmvCache[i];
-        if ([STRTOOK(algsType) isEqualToString:checkItem.algsType] && labs(delta) > labs(checkItem.delta) && (delta > 0 == checkItem.delta > 0)) {
-            [self.cmvCache removeObjectAtIndex:i];
-            break;
-        }
-    }
-    
-    //2. 加入新的;
-    ThinkingCmvCacheModel *newItem = [[ThinkingCmvCacheModel alloc] init];
-    newItem.algsType = algsType;
-    newItem.delta = delta;
-    newItem.urgentTo = urgentTo;
-    newItem.order = order;
-    [self.cmvCache addObject:newItem];
-    
-    //3. 排序
-    [self refreshCmvCacheSort];
-}
-
-//重排序cmvCache
--(void) refreshCmvCacheSort{
-    [self.cmvCache sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-        ThinkingCmvCacheModel *itemA = (ThinkingCmvCacheModel*)obj1;
-        ThinkingCmvCacheModel *itemB = (ThinkingCmvCacheModel*)obj2;
-        return [SMGUtils compareIntA:itemA.order intB:itemB.order];
-    }];
 }
 
 
