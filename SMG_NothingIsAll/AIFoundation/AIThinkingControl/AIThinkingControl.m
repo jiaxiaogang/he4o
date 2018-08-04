@@ -29,6 +29,22 @@
 #import "AINetAbsCMV.h"
 #import "ThinkingCmvCacheModel.h"
 
+/**
+ *  MARK:--------------------思维控制器--------------------
+ *
+ *  >> dataIn
+ *  1.
+ *  2.
+ *
+ *  >> assExp
+ *  1. 在联想中,遇到的数据,都存到thinkFeedCache;
+ *  2. 在联想中,遇到的mv,都叠加到当前demand下;
+ *
+ *  >> decisionOut
+ *  1.
+ *  2.
+ *
+ */
 @interface AIThinkingControl()
 
 @property (strong,nonatomic) NSMutableArray *shortCache;        //瞬时记忆_存AIModel(从Algs传入,待Thinking取用分析)(容量8);
@@ -168,6 +184,7 @@ static AIThinkingControl *_instance;
 -(AINetCMVModel*) dataIn_CreateNetCMVModel:(NSArray*)algsArr {
     AINetCMVModel *cmvModel = [[AINet sharedInstance] createCMV:algsArr order:self.shortCache];
     [self.shortCache removeAllObjects];
+    //TODO:>>>>>将shortCache销毁时也放到thinkFeedCache;
     return cmvModel;
 }
 
@@ -203,35 +220,20 @@ static AIThinkingControl *_instance;
                         self.energy = [ThinkingUtils updateEnergy:self.energy delta:(urgentTo + 9)/10];
                         [self addToCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
                         
-                        //5. 判断需求;(如饿,主动取当前状态,是否饿)
-                        
-                        
-                        
-                        //xxxxx形成循环,根据当前最前排mv和energy,再进行思维;
+                        //5. 形成循环,根据当前最前排mv和energy,再进行思维;
                         [self dataLoop_AssociativeExperience];
-                        
-                        
                         NSLog(@"____联想结果:%@",cmvNode.pointer.algsType);
-                        
-                        
-                        
                     }else if(ISOK(referNode, AINode.class)){
                         //联想到数据网络节点
                         AINode *node = (AINode*)referNode;
-                        NSLog(@"");
+                        //TODO>>>>将结果存到shortCache或thinkFeedCache//或先不添加,随后有需要时,再说;
                     }else if(ISOK(referNode, AINetAbsNode.class)){
-                        NSLog(@"");
-                        
-                        //将结果存到thinkFeedCache;
+                        //TODO>>>>将结果存到shortCache或thinkFeedCache//或先不添加,随后有需要时,再说;
                     }
-                    
-                    NSLog(@"");
                     
                     //1. foNode.cmvModel_kvp为空  (bug)
                     //2. reference到底是指向foNode还是指向cmvModel.orders_kvp
                     //3. 
-                    
-                    
                     
                     
                 }
@@ -249,44 +251,6 @@ static AIThinkingControl *_instance;
  *  注: dataIn_assExp可直接跳过检查点一次;
  */
 -(void) dataIn_AssociativeExperience:(AINetCMVModel*)cmvModel {
-    [self associativeExperience:cmvModel];
-}
-
-
-//MARK:===============================================================
-//MARK:                     < dataLoop_Ass检查点 >
-//MARK:===============================================================
-
-/**
- *  MARK:--------------------dataLoop联想(每次循环的检查点)--------------------
- *  注:loopAssExp中本身已经是内心活动联想到的mv
- *  1. 有条件(energy>0)
- *  2. 有尝(energy-1)
- *  3. 不指定model (从cmvCache取)
- *
- */
--(void) dataLoop_AssociativeExperience {
-    if (self.energy > 0 && ARRISOK(self.cmvCache)) {
-        //[self associativeExperience:cmvModel];//xxx
-    }
-}
-
--(void) dataLoop_AssociativeData:(NSArray*)assDataArr{
-    if (self.energy > 0) {
-        //
-    }
-}
-
-
-//MARK:===============================================================
-//MARK:                     < ass执行部分(只管执行) >
-//MARK:===============================================================
-
-/**
- *  MARK:--------------------assExp联想经验(饿了找瓜)--------------------
- *  注:总调用入口;所有重载调用此方法;
- */
--(void) associativeExperience:(AINetCMVModel*)cmvModel {
     if (ISOK(cmvModel, AINetCMVModel.class)) {
         //1. 取cmvNode
         AICMVNode *cmvNode = [SMGUtils searchObjectForPointer:cmvModel.cmvNode_p fileName:FILENAME_Node];
@@ -299,6 +263,8 @@ static AIThinkingControl *_instance;
             NSInteger delta = [NUMTOOK(deltaNum) integerValue];
             BOOL downDemand = targetType == AITargetType_Down && delta > 0;
             BOOL upDemand = targetType == AITargetType_Up && delta < 0;
+            
+            //TODO:>>>>判断需求;(如饿,主动取当前状态,是否饿)
             
             //3. 有需求思考解决
             if (downDemand || upDemand ) {
@@ -314,12 +280,16 @@ static AIThinkingControl *_instance;
     }
     //5. 消耗energy
     self.energy = [ThinkingUtils updateEnergy:self.energy delta:-1];
+    
+    //6. 递归
+    [self dataLoop_AssociativeExperience];
 }
 
 /**
  *  MARK:--------------------有需求思考解决--------------------
  *  1. 有需求时,找出imv解决经验,尝试决策并解决;
  *  2. TODO:明天扩展对out_p的支持
+ *  3. TODO:>>>>>此处,不应直接交由decision,而是交给mvCache序列,并由loop决定是否优先执行此mv;
  */
 -(void) dataIn_AssExp_HavDemand:(AICMVNode*)cmvNode direction:(MVDirection)direction{
     //1. 数据检查
@@ -332,7 +302,7 @@ static AIThinkingControl *_instance;
     if (mvPort) {
         //3. 取"解决经验"对应的cmvNode;
         NSObject *expMvNode = [SMGUtils searchObjectForPointer:mvPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
-
+        
         //4. 决策输出
         [self decision_Out:expMvNode];
     }
@@ -368,7 +338,7 @@ static AIThinkingControl *_instance;
                 
                 //5. 类比orders的规律,并abs;
                 NSArray *sames = [ThinkingUtils analogyFoNode_A:foNode foNode_B:assFoNode];
-                    
+                
                 //6. 构建absNode & 并把absValue添加到瞬时记忆
                 if (ARRISOK(sames)) {
                     
@@ -382,11 +352,46 @@ static AIThinkingControl *_instance;
                     NSLog(@"____类比到规律 >> 进行抽象;——————————START\n");
                     [absNode print];
                     NSLog(@"____类比到规律 >> 进行抽象;——————————END\n");
+                    
+                    //TODO:>>>>>将absNode和absCmvNode存到thinkFeedCache;
                 }
             }
         }else if(ISOK(assDirectionPort, AINode.class)){
             AINode *node = (AINode*)assDirectionPort;
         }
+    }
+}
+
+//MARK:===============================================================
+//MARK:                     < dataLoop_Ass检查与执行 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------dataLoop联想(每次循环的检查点)--------------------
+ *  注:assExp联想经验(饿了找瓜)(递归)
+ *  注:loopAssExp中本身已经是内心活动联想到的mv
+ *  1. 有条件(energy>0)
+ *  2. 有尝(energy-1)
+ *  3. 不指定model (从cmvCache取)
+ *
+ */
+-(void) dataLoop_AssociativeExperience {
+    if (self.energy > 0 && ARRISOK(self.cmvCache)) {
+        //1. 重排序 & 取当前序列最前;
+        [self refreshCmvCacheSort];
+        ThinkingCmvCacheModel *mvCacheModel = self.cmvCache.lastObject;
+        
+        //2. 联想经验...
+        self.energy = [ThinkingUtils updateEnergy:self.energy delta:-1];
+        
+        //3. 决策输出...
+        
+        //4. 记录思考mv结果到叠加mvCacheModel.order;
+        
+        //5. 记录思考data结果到thinkFeedCache;
+        
+        
+        [self dataLoop_AssociativeExperience];
     }
 }
 
