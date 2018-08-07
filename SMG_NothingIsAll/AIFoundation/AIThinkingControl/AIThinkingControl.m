@@ -46,7 +46,7 @@
  *  2.
  *
  */
-@interface AIThinkingControl()
+@interface AIThinkingControl()<TCLoopManagerDelegate>
 
 @property (strong,nonatomic) NSMutableArray *shortCache;        //瞬时记忆_存AIModel(从Algs传入,待Thinking取用分析)(容量8);
 @property (strong,nonatomic) NSMutableArray *thinkFeedCache;    //短时记忆_思维流(包括shortCache和cmvCache,10分钟内都会存在此处(人类可能一天或几小时))
@@ -76,6 +76,7 @@ static AIThinkingControl *_instance;
     self.shortCache = [[NSMutableArray alloc] init];
     self.thinkFeedCache = [[NSMutableArray alloc] init];
     self.loopManager = [[TCLoopManager alloc] init];
+    self.loopManager.delegate = self;
 }
 
 
@@ -235,22 +236,17 @@ static AIThinkingControl *_instance;
             //2. 根据cmv模型,取cmv的迫切度值和欲望方向;求出需求
             NSNumber *deltaNum = [SMGUtils searchObjectForPointer:cmvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime];
             NSNumber *urgentToNum = [SMGUtils searchObjectForPointer:cmvNode.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime];
-            AITargetType targetType = [ThinkingUtils getTargetTypeWithAlgsType:cmvNode.urgentTo_p.algsType];
             NSInteger delta = [NUMTOOK(deltaNum) integerValue];
-            BOOL downDemand = targetType == AITargetType_Down && delta > 0;
-            BOOL upDemand = targetType == AITargetType_Up && delta < 0;
             
             //TODO:>>>>判断需求;(如饿,主动取当前状态,是否饿)
-            
             //3. 有需求思考解决
-            if (downDemand || upDemand ) {
-                MVDirection direction = downDemand ? MVDirection_Negative : MVDirection_Positive;
-                [self dataIn_AssExp_HavDemand:cmvNode direction:direction];
+            BOOL havDemand = [ThinkingUtils getDemand:cmvNode.urgentTo_p.algsType delta:delta complete:nil];
+            if (havDemand) {
+                [self dataIn_AssExp_HavDemand:cmvNode];
             }
             //4. 无需求经验思考
             else{
-                MVDirection direction = downDemand ? MVDirection_Positive : MVDirection_Negative;
-                [self dataIn_AssExp_NoDemand:cmvModel cmvNode:cmvNode direction:direction];
+                [self dataIn_AssExp_NoDemand:cmvModel cmvNode:cmvNode];
             }
         }
     }
@@ -267,21 +263,21 @@ static AIThinkingControl *_instance;
  *  2. TODO:明天扩展对out_p的支持
  *  3. TODO:>>>>>此处,不应直接交由decision,而是交给mvCache序列,并由loop决定是否优先执行此mv;
  */
--(void) dataIn_AssExp_HavDemand:(AICMVNode*)cmvNode direction:(MVDirection)direction{
+-(void) dataIn_AssExp_HavDemand:(AICMVNode*)cmvNode {
     //1. 数据检查
     if (cmvNode == nil) {
         return;
     }
     
-    //2. 联想相关"解决经验";(取曾经历的最强解决;)
-    AIPort *mvPort = [[AINet sharedInstance] getNetNodePointersFromDirectionReference_Single:cmvNode.pointer.algsType direction:direction];
-    if (mvPort) {
-        //3. 取"解决经验"对应的cmvNode;
-        NSObject *expMvNode = [SMGUtils searchObjectForPointer:mvPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
-        
-        //4. 决策输出
-        [self decision_Out:expMvNode];
-    }
+    //2. 将联想到的cmv更新energy和cmvCache
+    NSString *algsType = cmvNode.urgentTo_p.algsType;
+    NSInteger urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
+    NSInteger delta = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
+    [self.loopManager updateEnergy:(urgentTo + 9)/10];
+    [self.loopManager addToCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
+    
+    //3. 形成循环,根据当前最前排mv和energy,再进行思维;
+    [self.loopManager dataLoop_AssociativeExperience];
 }
 
 
@@ -289,14 +285,19 @@ static AIThinkingControl *_instance;
  *  MARK:--------------------无需求经验思考--------------------
  *  1. 无需求时,找出以往同样经历,类比规律,抽象出更确切的意义;
  */
--(void) dataIn_AssExp_NoDemand:(AINetCMVModel*)cmvModel cmvNode:(AICMVNode*)cmvNode direction:(MVDirection)direction {
+-(void) dataIn_AssExp_NoDemand:(AINetCMVModel*)cmvModel cmvNode:(AICMVNode*)cmvNode {
     //1. 数据检查
     if (cmvModel == nil || cmvNode == nil) {
         return;
     }
     
     //2. 联想相关数据
-    NSArray *assDirectionPorts = [[AINet sharedInstance] getNetNodePointersFromDirectionReference:cmvNode.pointer.algsType direction:direction limit:2];
+    NSMutableArray *assDirectionPorts = [NSMutableArray new];
+    NSArray *assDirectionPorts_Nag = [[AINet sharedInstance] getNetNodePointersFromDirectionReference:cmvNode.pointer.algsType direction:MVDirection_Negative limit:2];
+    NSArray *assDirectionPorts_Pos = [[AINet sharedInstance] getNetNodePointersFromDirectionReference:cmvNode.pointer.algsType direction:MVDirection_Positive limit:2];
+    [assDirectionPorts addObjectsFromArray:ARRTOOK(assDirectionPorts_Nag)];
+    [assDirectionPorts addObjectsFromArray:ARRTOOK(assDirectionPorts_Pos)];
+    
     AIFrontOrderNode *foNode = [SMGUtils searchObjectForPointer:cmvModel.foNode_p fileName:FILENAME_Node];
     
     //3. 联想cmv模型
@@ -347,6 +348,9 @@ static AIThinkingControl *_instance;
 /**
  *  MARK:--------------------决策输出--------------------
  *  @param expMvNode : mv节点经验(有可能是AICMVNode也有可能是AIAbsCMVNode)
+ *  TODO:加上预测功能
+ *  TODO:加上联想到mv时,传回给loopManager;
+ *  注:每一次输出,只是决策与预测上的一环;并不意味着结束;
  */
 -(void) decision_Out:(NSObject*)expMvNode{
     //1. 判断具象 | 抽象cmv节点 并 收集可输出的信息
@@ -430,5 +434,12 @@ static AIThinkingControl *_instance;
     [self dataIn_ToShortCache:output_p];
 }
 
+
+/**
+ *  MARK:--------------------TCLoopManagerDelegate--------------------
+ */
+-(void)tcLoopManager_decisionOut:(NSObject *)expMvNode{
+    [self decision_Out:expMvNode];
+}
 
 @end

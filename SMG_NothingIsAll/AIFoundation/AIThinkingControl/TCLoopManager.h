@@ -8,11 +8,19 @@
 
 #import <Foundation/Foundation.h>
 
+@protocol TCLoopManagerDelegate <NSObject>
+
+-(void) tcLoopManager_decisionOut:(NSObject*)expMvNode;
+
+@end
+
+
 /**
  *  MARK:--------------------思维控制器-循环管理器--------------------
  */
 @interface TCLoopManager : NSObject
 
+@property (weak, nonatomic) id<TCLoopManagerDelegate> delegate;
 
 /**
  *  MARK:--------------------joinToCMVCache--------------------

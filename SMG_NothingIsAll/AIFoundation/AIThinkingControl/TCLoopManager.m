@@ -9,6 +9,8 @@
 #import "TCLoopManager.h"
 #import "TCLoopModel.h"
 #import "ThinkingUtils.h"
+#import "AINet.h"
+#import "AIPort.h"
 
 @interface TCLoopManager()
 
@@ -93,10 +95,23 @@
         [self refreshCmvCacheSort];
         TCLoopModel *mvCacheModel = self.loopCache.lastObject;
         
-        //2. 联想经验...
-        [self updateEnergy:-1];
+        //2. 联想相关"解决经验";(取曾经历的最强解决;)
+        [ThinkingUtils getDemand:mvCacheModel.algsType delta:mvCacheModel.delta complete:^(BOOL upDemand, BOOL downDemand) {
+            MVDirection direction = downDemand ? MVDirection_Negative : MVDirection_Positive;
+            AIPort *mvPort = [[AINet sharedInstance] getNetNodePointersFromDirectionReference_Single:mvCacheModel.algsType direction:direction];
+            if (mvPort) {
+                //3. 取"解决经验"对应的cmvNode;
+                NSObject *expMvNode = [SMGUtils searchObjectForPointer:mvPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
+                
+                //4. 决策输出
+                if (self.delegate && [self.delegate respondsToSelector:@selector(tcLoopManager_decisionOut:)]) {
+                    [self.delegate tcLoopManager_decisionOut:expMvNode];
+                }
+            }
+        }];
         
-        //3. 决策输出...
+        //3. 思考与决策消耗能量;
+        [self updateEnergy:-1];
         
         //4. 记录思考mv结果到叠加mvCacheModel.order;
         

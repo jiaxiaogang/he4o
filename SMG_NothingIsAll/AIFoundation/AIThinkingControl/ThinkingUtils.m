@@ -103,8 +103,23 @@
 }
 
 
++(BOOL) getDemand:(NSString*)algsType delta:(NSInteger)delta complete:(void(^)(BOOL upDemand,BOOL downDemand))complete{
+    //1. 数据
+    AITargetType targetType = [ThinkingUtils getTargetTypeWithAlgsType:algsType];
+    BOOL downDemand = targetType == AITargetType_Down && delta > 0;
+    BOOL upDemand = targetType == AITargetType_Up && delta < 0;
+    //2. 有需求思考解决
+    if (complete) {
+        complete(upDemand,downDemand);
+    }
+    return downDemand || upDemand;
+}
 
-//cmvAlgsArr->mvValue
+
+/**
+ *  MARK:--------------------解析algsMVArr--------------------
+ *  cmvAlgsArr->mvValue
+ */
 +(void) parserAlgsMVArrWithoutValue:(NSArray*)algsArr success:(void(^)(AIKVPointer *delta_p,AIKVPointer *urgentTo_p,NSString *algsType))success{
     //1. 数据
     AIKVPointer *delta_p = nil;

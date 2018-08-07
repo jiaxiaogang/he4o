@@ -42,9 +42,13 @@
 //取mvType或algsType对应的targetType
 +(AITargetType) getTargetType:(MVType)type;
 +(AITargetType) getTargetTypeWithAlgsType:(NSString*)algsType;
++(BOOL) getDemand:(NSString*)algsType delta:(NSInteger)delta complete:(void(^)(BOOL upDemand,BOOL downDemand))complete;
 
 
-//解析algsMVArr
+/**
+ *  MARK:--------------------解析algsMVArr--------------------
+ *  cmvAlgsArr->mvValue
+ */
 +(void) parserAlgsMVArrWithoutValue:(NSArray*)algsArr success:(void(^)(AIKVPointer *delta_p,AIKVPointer *urgentTo_p,NSString *algsType))success;
 +(void) parserAlgsMVArr:(NSArray*)algsArr success:(void(^)(AIKVPointer *delta_p,AIKVPointer *urgentTo_p,NSInteger delta,NSInteger urgentTo,NSString *algsType))success;
 
