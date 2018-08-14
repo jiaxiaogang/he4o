@@ -27,7 +27,7 @@ static Output *_instance;
             [op.delegate output_Text:c];
         }
         
-        //2. 将输出入网;
+        //2. 将输出入网;(TODO:将入网改到tc处,dataOut处应该自行入网)
         [[AIThinkingControl shareInstance] commitOutputLog:NSStringFromClass(self) dataTo:NSStringFromSelector(@selector(output_Text:)) outputObj:charNum];
     }
 }

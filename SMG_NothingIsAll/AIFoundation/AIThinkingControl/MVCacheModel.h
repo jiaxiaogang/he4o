@@ -1,5 +1,5 @@
 //
-//  TCLoopModel.h
+//  MVCacheModel.h
 //  SMG_NothingIsAll
 //
 //  Created by iMac on 2018/8/2.
@@ -13,7 +13,7 @@
  *
  *
  */
-@interface TCLoopModel : NSObject
+@interface MVCacheModel : NSObject
 
 @property (assign, nonatomic) NSInteger urgentTo;
 @property (assign, nonatomic) NSInteger delta;

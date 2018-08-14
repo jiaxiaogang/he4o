@@ -27,8 +27,8 @@
 #import "AICMVNode.h"
 #import "AIAbsCMVNode.h"
 #import "AINetAbsCMV.h"
-#import "TCLoopModel.h"
-#import "TCLoopManager.h"
+#import "MVCacheModel.h"
+#import "MVCacheManager.h"
 
 /**
  *  MARK:--------------------思维控制器--------------------
@@ -46,11 +46,12 @@
  *  2.
  *
  */
-@interface AIThinkingControl()<TCLoopManagerDelegate>
+@interface AIThinkingControl()
 
 @property (strong,nonatomic) NSMutableArray *shortCache;        //瞬时记忆_存AIModel(从Algs传入,待Thinking取用分析)(容量8);
 @property (strong,nonatomic) NSMutableArray *thinkFeedCache;    //短时记忆_思维流(包括shortCache和cmvCache,10分钟内都会存在此处(人类可能一天或几小时))
-@property (strong, nonatomic) TCLoopManager *loopManager;
+@property (strong, nonatomic) MVCacheManager *loopManager;
+@property (assign, nonatomic) NSInteger energy;                 //当前能量值;(在循环中动态更新)(0-2)
 
 @end
 
@@ -75,8 +76,7 @@ static AIThinkingControl *_instance;
 -(void) initData{
     self.shortCache = [[NSMutableArray alloc] init];
     self.thinkFeedCache = [[NSMutableArray alloc] init];
-    self.loopManager = [[TCLoopManager alloc] init];
-    self.loopManager.delegate = self;
+    self.loopManager = [[MVCacheManager alloc] init];
 }
 
 
@@ -85,6 +85,31 @@ static AIThinkingControl *_instance;
 //MARK:===============================================================
 -(void) commitInput:(NSObject*)algsModel{
     [self dataIn:algsModel];
+}
+
+/**
+ *  MARK:--------------------更新energy--------------------
+ */
+-(void) updateEnergy:(NSInteger)delta{
+    self.energy = [ThinkingUtils updateEnergy:self.energy delta:delta];
+}
+
+
+/**
+ *  MARK:--------------------输出的日志入网(输入小脑)--------------------
+ *  @param algsType  : 输出算法分区(目前仅有Output)
+ *  @param dataTo    : 输出算法函数(如output_Text:)
+ *  @param outputObj : 输出内容(如:饿死爹了)
+ */
+-(void) commitOutputLog:(NSString*)algsType dataTo:(NSString*)dataTo outputObj:(NSNumber*)outputObj{
+    //1. 装箱
+    AIOutputKVPointer *output_p = [theNet getOutputIndex:algsType dataTo:dataTo outputObj:outputObj];
+    
+    //2. 记录可输出reference
+    [theNet setNetNodePointerToOutputReference:output_p algsType:algsType dataTo:dataTo difStrong:1];
+    
+    //3. 加瞬时记忆
+    [self dataIn_ToShortCache:output_p];
 }
 
 
@@ -194,11 +219,11 @@ static AIThinkingControl *_instance;
                         NSString *algsType = cmvNode.urgentTo_p.algsType;
                         NSInteger urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
                         NSInteger delta = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
-                        [self.loopManager updateEnergy:(urgentTo + 9)/10];
+                        [self updateEnergy:(urgentTo + 9)/10];
                         [self.loopManager addToCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
                         
                         //5. 形成循环,根据当前最前排mv和energy,再进行思维;
-                        [self.loopManager dataLoop_AssociativeExperience];
+                        [self dataIn_AssociativeData:nil];//TODO
                         NSLog(@"____联想结果:%@",cmvNode.pointer.algsType);
                     }else if(ISOK(referNode, AINode.class)){
                         //联想到数据网络节点
@@ -224,7 +249,7 @@ static AIThinkingControl *_instance;
  *  1. 无条件
  *  2. 有尝(energy-1)
  *  3. 指定model
- *  注: dataIn负责护送一次指定信息的ass(随后进入递归循环)
+ *  注: dataIn负责护送一次指定信息的ass(随后进入dataOut递归循环)
  *  注: dataIn_assExp可直接跳过检查点一次;
  */
 -(void) dataIn_AssociativeExperience:(AINetCMVModel*)cmvModel {
@@ -251,10 +276,7 @@ static AIThinkingControl *_instance;
         }
     }
     //5. 消耗energy
-    [self.loopManager updateEnergy:-1];
-    
-    //6. 递归
-    [self.loopManager dataLoop_AssociativeExperience];
+    [self updateEnergy:-1];
 }
 
 /**
@@ -273,17 +295,18 @@ static AIThinkingControl *_instance;
     NSString *algsType = cmvNode.urgentTo_p.algsType;
     NSInteger urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
     NSInteger delta = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
-    [self.loopManager updateEnergy:(urgentTo + 9)/10];
+    [self updateEnergy:(urgentTo + 9)/10];
     [self.loopManager addToCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
     
     //3. 形成循环,根据当前最前排mv和energy,再进行思维;
-    [self.loopManager dataLoop_AssociativeExperience];
+    [self dataOut_AssociativeExperience];
 }
 
 
 /**
  *  MARK:--------------------无需求经验思考--------------------
  *  1. 无需求时,找出以往同样经历,类比规律,抽象出更确切的意义;
+ *  2. 注:此方法为abs方向的思维方法总入口;(与其相对的决策处
  */
 -(void) dataIn_AssExp_NoDemand:(AINetCMVModel*)cmvModel cmvNode:(AICMVNode*)cmvNode {
     //1. 数据检查
@@ -341,7 +364,7 @@ static AIThinkingControl *_instance;
 
 
 //MARK:===============================================================
-//MARK:                     < decision >
+//MARK:                     < dataOut >
 //MARK:===============================================================
 
 
@@ -351,8 +374,10 @@ static AIThinkingControl *_instance;
  *  TODO:加上预测功能
  *  TODO:加上联想到mv时,传回给loopManager;
  *  注:每一次输出,只是决策与预测上的一环;并不意味着结束;
+ *  //4. 记录思考mv结果到叠加mvCacheModel.order;
+ *  //5. 记录思考data结果到thinkFeedCache;
  */
--(void) decision_Out:(NSObject*)expMvNode{
+-(void) dataOut_AssociativeConcreteData:(NSObject*)expMvNode{
     //1. 判断具象 | 抽象cmv节点 并 收集可输出的信息
     NSMutableArray *outMArr = [[NSMutableArray alloc] init];
     if (ISOK(expMvNode, AICMVNode.class)) {
@@ -386,9 +411,21 @@ static AIThinkingControl *_instance;
     }
     
     //4. 尝试输出找到解决问题的实际操作
+    [self dataOut_TryOut:outMArr];
+    
+    //6. 消耗energy
+    [self updateEnergy:-1];
+}
+
+
+/**
+ *  MARK:--------------------尝试输出信息--------------------
+ */
+-(void) dataOut_TryOut:(NSArray*)outArr{
+    //4. 尝试输出找到解决问题的实际操作
     BOOL tryOutSuccess = false;
-    if (ARRISOK(outMArr)) {
-        for (AIKVPointer *micro_p in outMArr) {
+    if (ARRISOK(outArr)) {
+        for (AIKVPointer *micro_p in outArr) {
             //xxxxxxxx联想以往解决时,都发生了什么,尝试复现;
             
             //>1 检查micro_p是否是"输出";
@@ -410,36 +447,55 @@ static AIThinkingControl *_instance;
         NSLog(@"1. 如果未找到复现方式,或解决方式,则产生情绪:急");
         NSLog(@"2. 通过急,输出output表情哭");
         
-        [Output output_Face:AIMoodType_Anxious];
+        [self dataOut_Reflex:AIMoodType_Anxious];
     }
-    
-    //6. 消耗energy
-    [self.loopManager updateEnergy:-1];
-}
-
-/**
- *  MARK:--------------------输出的日志入网(输入小脑)--------------------
- *  @param algsType  : 输出算法分区(目前仅有Output)
- *  @param dataTo    : 输出算法函数(如output_Text:)
- *  @param outputObj : 输出内容(如:饿死爹了)
- */
--(void) commitOutputLog:(NSString*)algsType dataTo:(NSString*)dataTo outputObj:(NSNumber*)outputObj{
-    //1. 装箱
-    AIOutputKVPointer *output_p = [theNet getOutputIndex:algsType dataTo:dataTo outputObj:outputObj];
-    
-    //2. 记录可输出reference
-    [theNet setNetNodePointerToOutputReference:output_p algsType:algsType dataTo:dataTo difStrong:1];
-    
-    //3. 加瞬时记忆
-    [self dataIn_ToShortCache:output_p];
 }
 
 
 /**
- *  MARK:--------------------TCLoopManagerDelegate--------------------
+ *  MARK:--------------------反射输出--------------------
  */
--(void)tcLoopManager_decisionOut:(NSObject *)expMvNode{
-    [self decision_Out:expMvNode];
+-(void) dataOut_Reflex:(AIMoodType)moodType{
+    [Output output_Face:moodType];
+}
+
+
+/**
+ *  MARK:--------------------dataLoop联想(每次循环的检查执行点)--------------------
+ *  注:assExp联想经验(饿了找瓜)(递归)
+ *  注:loopAssExp中本身已经是内心活动联想到的mv
+ *  1. 有条件(energy>0)
+ *  2. 有尝(energy-1)
+ *  3. 不指定model (从cmvCache取)
+ *
+ */
+-(void) dataOut_AssociativeExperience {
+    if (self.energy > 0) {
+        //1. 重排序 & 取当前序列最前;
+        MVCacheModel *mvCacheModel = [self.loopManager getCurrentDemand];
+        if (mvCacheModel == nil) {
+            return;
+        }
+        
+        //2. 联想相关"解决经验";(取曾经历的最强解决;)
+        [ThinkingUtils getDemand:mvCacheModel.algsType delta:mvCacheModel.delta complete:^(BOOL upDemand, BOOL downDemand) {
+            MVDirection direction = downDemand ? MVDirection_Negative : MVDirection_Positive;
+            AIPort *mvPort = [[AINet sharedInstance] getNetNodePointersFromDirectionReference_Single:mvCacheModel.algsType direction:direction];
+            if (mvPort) {
+                //3. 取"解决经验"对应的cmvNode;
+                NSObject *expMvNode = [SMGUtils searchObjectForPointer:mvPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
+                
+                //4. 决策输出
+                [self dataOut_AssociativeConcreteData:expMvNode];
+            }else{
+                //5. 无解决经验,反射输出;
+                [self dataOut_Reflex:AIMoodType_Anxious];
+            }
+        }];
+        
+        //3. 思考与决策消耗能量;
+        [self updateEnergy:-1];
+    }
 }
 
 @end
