@@ -223,8 +223,10 @@ static AIThinkingControl *_instance;
                         [self.loopManager addToCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
                         
                         //5. 形成循环,根据当前最前排mv和energy,再进行思维;
-                        [self dataIn_AssociativeData:nil];//TODO
-                        NSLog(@"____联想结果:%@",cmvNode.pointer.algsType);
+                        [self dataIn_AssociativeData:nil];//TODO(将联想到的foOrder时序列,再进行二次联想)
+                        
+                        //6. log
+                        NSLog(@"____联想结果:%@ delta:%ld urgentTo:%ld",cmvNode.pointer.algsType,(long)delta,(long)urgentTo);
                     }else if(ISOK(referNode, AINode.class)){
                         //联想到数据网络节点
                         AINode *node = (AINode*)referNode;
