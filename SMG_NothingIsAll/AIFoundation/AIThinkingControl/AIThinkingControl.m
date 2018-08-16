@@ -412,6 +412,16 @@ static AIThinkingControl *_instance;
         }
     }
     
+    
+    
+    
+    //1. 在输出前,联想一下将要输出的outMArr,看是否有导致mv-的情况;
+    //2. 如果有,可以再尝试下一个getNetNodePointersFromDirectionReference_Single;找到更好的解决方法;
+    //3. 更好的解决方法被输出,并且解决问题后,被加强;
+    
+    
+    
+    
     //4. 尝试输出找到解决问题的实际操作
     [self dataOut_TryOut:outMArr];
     
