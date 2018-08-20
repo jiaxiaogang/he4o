@@ -349,7 +349,13 @@ static AIThinkingControl *_instance;
                     [self dataIn_ToShortCache:absNode.absValue_p];
                     
                     //10. createAbsCmvNode
-                    [theNet createAbsCMVNode:absNode.pointer aMv_p:cmvModel.cmvNode_p bMv_p:assCmvModel.cmvNode_p];
+                    AIAbsCMVNode *absCmvNode = [theNet createAbsCMVNode:absNode.pointer aMv_p:cmvModel.cmvNode_p bMv_p:assCmvModel.cmvNode_p];
+                    
+                    //11. cmv模型连接;
+                    if (ISOK(absCmvNode, AIAbsCMVNode.class)) {
+                        absNode.absCmvNode_p = absCmvNode.pointer;
+                        [SMGUtils insertObject:absNode rootPath:absNode.pointer.filePath fileName:FILENAME_Node];
+                    }
                     
                     NSLog(@"____类比到规律 >> 进行抽象;——————————START\n");
                     [absNode print];
@@ -414,8 +420,26 @@ static AIThinkingControl *_instance;
     
     
     
+
     
-    //1. 在输出前,联想一下将要输出的outMArr,看是否有导致mv-的情况;
+    //4. 在输出前,联想一下将要输出的outMArr,看是否有导致mv-的情况;
+    AIKVPointer *absValue_p = [theNet getNetAbsIndex_AbsPointer:outMArr];
+    AIKVPointer *absNode_p = [theNet getItemAbsNodePointer:absValue_p];
+    AINetAbsNode *absNode = [SMGUtils searchObjectForPointer:absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+    
+    //5. 取absCmvNode
+    if (ISOK(absNode, AINetAbsNode.class)) {
+        AIAbsCMVNode *absCmvNode = [SMGUtils searchObjectForPointer:absNode.absCmvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+        if (ISOK(absCmvNode, AIAbsCMVNode.class)) {
+            //absCmvNode.urgentTo_p
+            
+            
+            
+        }
+    }
+    
+    NSLog(@"");
+    
     //2. 如果有,可以再尝试下一个getNetNodePointersFromDirectionReference_Single;找到更好的解决方法;
     //3. 更好的解决方法被输出,并且解决问题后,被加强;
     

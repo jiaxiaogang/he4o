@@ -61,8 +61,7 @@
     }
     
     //7. 存储absNode并返回
-    PINDiskCache *pinCache = [[PINDiskCache alloc] initWithName:@"" rootPath:absNode.pointer.filePath];
-    [pinCache setObject:absNode forKey:FILENAME_Node];
+    [SMGUtils insertObject:absNode rootPath:absNode.pointer.filePath fileName:FILENAME_Node];
     return absNode;
 }
 
