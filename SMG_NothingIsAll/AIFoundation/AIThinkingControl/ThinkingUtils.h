@@ -39,9 +39,22 @@
 //MARK:===============================================================
 @interface ThinkingUtils (CMV)
 
-//取mvType或algsType对应的targetType
+
+/**
+ *  MARK:--------------------取mvType或algsType对应的targetType--------------------
+ */
 +(AITargetType) getTargetType:(MVType)type;
 +(AITargetType) getTargetTypeWithAlgsType:(NSString*)algsType;
+
+/**
+ *  MARK:--------------------检查是否顺心--------------------
+ */
++(MindHappyType) checkMindHappy:(NSString*)algsType delta:(NSInteger)delta;
+
+
+/**
+ *  MARK:--------------------检查有没需求--------------------
+ */
 +(BOOL) getDemand:(NSString*)algsType delta:(NSInteger)delta complete:(void(^)(BOOL upDemand,BOOL downDemand))complete;
 
 

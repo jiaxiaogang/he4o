@@ -102,6 +102,18 @@
     return AITargetType_None;
 }
 
++(MindHappyType) checkMindHappy:(NSString*)algsType delta:(NSInteger)delta{
+    //1. 数据
+    AITargetType targetType = [ThinkingUtils getTargetTypeWithAlgsType:algsType];
+    
+    //2. 判断返回结果
+    if (targetType == AITargetType_Down) {
+        return delta < 0 ? MindHappyType_Yes : delta > 0 ? MindHappyType_No : MindHappyType_None;
+    }else if(targetType == AITargetType_Up){
+        return delta > 0 ? MindHappyType_Yes : delta < 0 ? MindHappyType_No : MindHappyType_None;
+    }
+    return MindHappyType_None;
+}
 
 +(BOOL) getDemand:(NSString*)algsType delta:(NSInteger)delta complete:(void(^)(BOOL upDemand,BOOL downDemand))complete{
     //1. 数据

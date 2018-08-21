@@ -49,6 +49,7 @@
 		08F738071F7C714F005EAD56 /* AISqlPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738031F7C714F005EAD56 /* AISqlPointer.m */; };
 		08FDCE8E1EAA4A8E00882ADC /* SMGRange.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FDCE8D1EAA4A8E00882ADC /* SMGRange.m */; };
 		2753D7CF7BAEDFEACAF9264A /* libPods-SMG_NothingIsAll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */; };
+		8806D888212B8EB100C442CA /* ExpCacheModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8806D887212B8EB100C442CA /* ExpCacheModel.m */; };
 		8822852020F58BDA009884DC /* AINetDirectionReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 8822851F20F58BDA009884DC /* AINetDirectionReference.m */; };
 		8868F6EB210A946A000EAC9B /* AINetAbsCMV.m in Sources */ = {isa = PBXBuildFile; fileRef = 8868F6EA210A946A000EAC9B /* AINetAbsCMV.m */; };
 		8868F6EE210AA00B000EAC9B /* AINetAbsCMVUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 8868F6ED210AA00B000EAC9B /* AINetAbsCMVUtil.m */; };
@@ -156,6 +157,8 @@
 		08F738031F7C714F005EAD56 /* AISqlPointer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AISqlPointer.m; sourceTree = "<group>"; };
 		08FDCE8C1EAA4A8E00882ADC /* SMGRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMGRange.h; sourceTree = "<group>"; };
 		08FDCE8D1EAA4A8E00882ADC /* SMGRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMGRange.m; sourceTree = "<group>"; };
+		8806D886212B8EB100C442CA /* ExpCacheModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExpCacheModel.h; sourceTree = "<group>"; };
+		8806D887212B8EB100C442CA /* ExpCacheModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExpCacheModel.m; sourceTree = "<group>"; };
 		8822851E20F58BDA009884DC /* AINetDirectionReference.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetDirectionReference.h; sourceTree = "<group>"; };
 		8822851F20F58BDA009884DC /* AINetDirectionReference.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetDirectionReference.m; sourceTree = "<group>"; };
 		8868F6E9210A946A000EAC9B /* AINetAbsCMV.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetAbsCMV.h; sourceTree = "<group>"; };
@@ -366,6 +369,8 @@
 				88E1F84D211591D80036B616 /* MVCacheManager.m */,
 				88E1F84F211591E50036B616 /* MVCacheModel.h */,
 				88E1F850211591E50036B616 /* MVCacheModel.m */,
+				8806D886212B8EB100C442CA /* ExpCacheModel.h */,
+				8806D887212B8EB100C442CA /* ExpCacheModel.m */,
 			);
 			path = AIThinkingControl;
 			sourceTree = "<group>";
@@ -778,6 +783,7 @@
 				083112F21F05E12600051DE6 /* MBProgressHUD+Add.m in Sources */,
 				084219ED1FD8CF81009DA6BC /* AIThinkingControl.m in Sources */,
 				083F61381F048329000330E1 /* AILine.m in Sources */,
+				8806D888212B8EB100C442CA /* ExpCacheModel.m in Sources */,
 				08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */,
 				08B31E7E20648C3700FD96EA /* ThinkingUtils.m in Sources */,
 				88BC09D720B4EB920006ABEF /* XGRedis.m in Sources */,

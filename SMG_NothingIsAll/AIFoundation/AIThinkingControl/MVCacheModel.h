@@ -18,6 +18,7 @@
 @property (assign, nonatomic) NSInteger urgentTo;
 @property (assign, nonatomic) NSInteger delta;
 @property (strong, nonatomic) NSString *algsType;
+@property (strong, nonatomic) NSMutableArray *expCache;
 
 
 /**
@@ -39,5 +40,11 @@
  *  注: 后续添加对时间衰减的支持
  */
 @property (assign, nonatomic) NSInteger order;
+
+
+/**
+ *  MARK:--------------------添加解决经验到当前思维任务--------------------
+ */
+-(void) addExpCacheModel:(MindHappyType)type urgentTo:(NSInteger)urgentTo outArr:(NSArray*)outArr exp_p:(AIPointer*)exp_p;
 
 @end

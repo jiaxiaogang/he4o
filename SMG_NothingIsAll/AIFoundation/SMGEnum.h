@@ -217,3 +217,13 @@ typedef NS_ENUM(NSInteger, MVDirection) {
     MVDirection_Negative    = 0,//负
     MVDirection_Positive    = 1,//正
 };
+
+/**
+ *  MARK:--------------------顺心类型--------------------
+ */
+typedef NS_ENUM(NSInteger, MindHappyType) {
+    MindHappyType_None    = 0,//没影响
+    MindHappyType_Yes    = 1,//顺心
+    MindHappyType_No    = 2,//不顺心
+    
+};
