@@ -518,7 +518,7 @@ static AIThinkingControl *_instance;
         
         //1. 如果energy<=0;
         //2. 则直接从expCache中,排序并取到首个,并执行;
-        
+        //ExpCacheModel *expModel = [mvCacheModel getCurrentExpCacheModel];
         
         
         
@@ -540,6 +540,8 @@ static AIThinkingControl *_instance;
                     //无论是思考的方向,还是思考的能量,还是思考的目标,都是以mv为准的;
                     //而mv的一切关联,又是以数据为规律进行关联的;
                     
+                    
+                    //主观意志,可以影响score;
                     
                     
                     //43. 加入待判断区;

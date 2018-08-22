@@ -79,6 +79,7 @@
 +(NSComparisonResult) compareRefsA_p:(NSArray*)refsA_p refsB_p:(NSArray*)refsB_p;//比较refsA是否比refsB大
 +(NSComparisonResult) comparePortA:(AIPort*)pA portB:(AIPort*)pB;
 +(NSComparisonResult) compareIntA:(NSInteger)intA intB:(NSInteger)intB;
++(NSComparisonResult) compareFloatA:(CGFloat)floatA floatB:(CGFloat)floatB;
 
 @end
 
