@@ -507,6 +507,21 @@ static AIThinkingControl *_instance;
         return;
     }
     if (self.energy > 0) {
+        
+        
+        //1. expCache排序;
+        //2. 从expCache下,根据可行性,选定一个解决方案;
+        //3. 如果,选定到一个可行可直接输出;
+        //4. 如果,没有一个想可行的,则重新assDirectionRefSingle;
+        //5. 并重新循环下去;
+        
+        
+        //1. 如果energy<=0;
+        //2. 则直接从expCache中,排序并取到首个,并执行;
+        
+        
+        
+        
         //2. 联想相关"解决经验";(取曾经历的最强解决;)
         [ThinkingUtils getDemand:mvCacheModel.algsType delta:mvCacheModel.delta complete:^(BOOL upDemand, BOOL downDemand) {
             MVDirection direction = downDemand ? MVDirection_Negative : MVDirection_Positive;
