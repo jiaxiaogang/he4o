@@ -29,6 +29,7 @@
 #import "AINetAbsCMV.h"
 #import "MVCacheModel.h"
 #import "MVCacheManager.h"
+#import "ExpCacheModel.h"
 
 /**
  *  MARK:--------------------思维控制器--------------------
@@ -377,15 +378,16 @@ static AIThinkingControl *_instance;
 
 
 /**
- *  MARK:--------------------决策输出--------------------
+ *  MARK:--------------------联想具象数据 (可行性判定)--------------------
  *  @param expMvNode : mv节点经验(有可能是AICMVNode也有可能是AIAbsCMVNode)
  *  TODO:加上预测功能
  *  TODO:加上联想到mv时,传回给mvCacheManager;
  *  注:每一次输出,只是决策与预测上的一环;并不意味着结束;
- *  //4. 记录思考mv结果到叠加mvCacheModel.order;
- *  //5. 记录思考data结果到thinkFeedCache;
- *  //2. 如果mindHappy_No,可以再尝试下一个getNetNodePointersFromDirectionReference_Single;找到更好的解决方法;
- *  //3. 最终更好的解决方法被输出,并且解决问题后,被加强;
+ *  //1. 记录思考mv结果到叠加mvCacheModel.order;
+ *  //2. 记录思考data结果到thinkFeedCache;
+ *  //3. 如果mindHappy_No,可以再尝试下一个getNetNodePointersFromDirectionReference_Single;找到更好的解决方法;
+ *  //4. 最终更好的解决方法被输出,并且解决问题后,被加强;
+ *  //5. 是数据决定了下一轮循环思维想什么,但数据仅能通过mv来决定,无论是思考的方向,还是思考的能量,还是思考的目标,都是以mv为准的;而mv的一切关联,又是以数据为规律进行关联的;
  */
 -(void) dataOut_AssociativeConcreteData:(NSObject*)expMvNode complete:(void(^)(MindHappyType type,NSInteger urgentTo,NSArray *outArr))complete{
     //1. 判断具象 | 抽象cmv节点 并 收集可输出的信息
@@ -452,11 +454,11 @@ static AIThinkingControl *_instance;
 /**
  *  MARK:--------------------尝试输出信息--------------------
  */
--(void) dataOut_TryOut:(NSArray*)outArr{
-    //4. 尝试输出找到解决问题的实际操作
+-(void) dataOut_TryOut:(ExpCacheModel*)expModel{
+    //1. 尝试输出找到解决问题的实际操作 (取到当前cacheModel中的最佳决策,并进行输出;)
     BOOL tryOutSuccess = false;
-    if (ARRISOK(outArr)) {
-        for (AIKVPointer *micro_p in outArr) {
+    if (expModel && ARRISOK(expModel.outArr)) {
+        for (AIKVPointer *micro_p in expModel.outArr) {
             //xxxxxxxx联想以往解决时,都发生了什么,尝试复现;
             
             //>1 检查micro_p是否是"输出";
@@ -469,15 +471,15 @@ static AIThinkingControl *_instance;
         }
     }
     
-    //5. 无法解决时,反射一些情绪变化,并增加额外输出;
+    //2. 无法解决时,反射一些情绪变化,并增加额外输出;
     if (!tryOutSuccess) {
         //>1 产生"心急mv";(心急产生只是"urgent.energy x 2")
         //>2 输出反射表情;
         //>3 记录log到foOrders;(记录log应该到output中执行)
         
-        NSLog(@"1. 如果未找到复现方式,或解决方式,则产生情绪:急");
-        NSLog(@"2. 通过急,输出output表情哭");
-        
+        //1. 如果未找到复现方式,或解决方式,则产生情绪:急
+        //2. 通过急,输出output表情哭
+        NSLog(@"反射输出 >>");
         [self dataOut_Reflex:AIMoodType_Anxious];
     }
 }
@@ -498,6 +500,8 @@ static AIThinkingControl *_instance;
  *  1. 有条件(energy>0)
  *  2. 有尝(energy-1)
  *  3. 不指定model (从cmvCache取)
+ *  4. 每一轮循环不仅是想下一个singleMvPort;也有可能在当前port上,进行二次思考;
+ *  5. 从expCache下,根据可行性,选定一个解决方案;
  *
  */
 -(void) dataOut_AssociativeExperience {
@@ -506,69 +510,64 @@ static AIThinkingControl *_instance;
     if (mvCacheModel == nil) {
         return;
     }
+    
+    //2. 从expCache中,排序并取到首个值得思考的expModel;
+    ExpCacheModel *expModel = [mvCacheModel getCurrentExpCacheModel];
+    
+    //3. energy判断;
     if (self.energy > 0) {
         
+        //4. 如果expModel可行性善可,则继续深挖联想;
+        if (expModel && expModel.score > 0) {
+            NSLog(@"对已有expModel可行性善可的,进行二次联想,避免smg做出傻事");
+            
+            //TMRTODO:
+            //2. 在判定可行性时,outLog节点的优先级更高;
+            
+            
+            return;
+        }
         
-        //1. expCache排序;
-        //2. 从expCache下,根据可行性,选定一个解决方案;
-        //3. 如果,选定到一个可行可直接输出;
-        //4. 如果,没有一个想可行的,则重新assDirectionRefSingle;
-        //5. 并重新循环下去;
-        
-        
-        //1. 如果energy<=0;
-        //2. 则直接从expCache中,排序并取到首个,并执行;
-        //ExpCacheModel *expModel = [mvCacheModel getCurrentExpCacheModel];
-        
-        
-        
-        //2. 联想相关"解决经验";(取曾经历的最强解决;)
+        //5. 如果,没有一个想可行的,则再联想一个新的相关"解决经验";并重新循环下去;
         [ThinkingUtils getDemand:mvCacheModel.algsType delta:mvCacheModel.delta complete:^(BOOL upDemand, BOOL downDemand) {
             MVDirection direction = downDemand ? MVDirection_Negative : MVDirection_Positive;
-            AIPort *mvPort = [[AINet sharedInstance] getNetNodePointersFromDirectionReference_Single:mvCacheModel.algsType direction:direction];
+            
+            //6. filter筛选器取曾经历的除已有expModels之外的最强解决;
+            NSArray *mvRefs = [theNet getNetNodePointersFromDirectionReference:mvCacheModel.algsType direction:direction filter:^NSArray *(NSArray *protoArr) {
+                for (AIPort *port in ARRTOOK(protoArr)) {
+                    for (ExpCacheModel *expCacheItem in mvCacheModel.expCache) {
+                        if (port.target_p && ![port.target_p isEqual:expCacheItem.exp_p]) {
+                            return @[port];
+                        }
+                    }
+                }
+                return nil;
+            }];
+            AIPort *mvPort = ARR_INDEX(mvRefs, 0);
             if (mvPort) {
-                //3. 取"解决经验"对应的cmvNode;
+                //7. 取"解决经验"对应的cmvNode;
                 NSObject *expMvNode = [SMGUtils searchObjectForPointer:mvPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
                 
-                //4. 决策输出
+                //8. 联想具象数据,并取到决策关键信息;(可行性判定)
                 [self dataOut_AssociativeConcreteData:expMvNode complete:^(MindHappyType type, NSInteger urgentTo, NSArray *outArr) {
                     
-                    
-                    //是数据决定了下一轮循环思维想什么,
-                    //但数据仅能通过mv来决定,
-                    //下一轮不仅是想下一个singleMvPort;也有可能在当前port上,进行二次思考;
-                    //无论是思考的方向,还是思考的能量,还是思考的目标,都是以mv为准的;
-                    //而mv的一切关联,又是以数据为规律进行关联的;
-                    
-                    
-                    //主观意志,可以影响score;
-                    
-                    
-                    //43. 加入待判断区;
+                    //1). 加入待判断区;
                     [mvCacheModel addExpCacheModel:type urgentTo:urgentTo outArr:outArr exp_p:mvPort.target_p];
                     
-                    //42. 中止,并进入下一决策;
+                    //2). 中止,并进入下一决策;(递归)
                     [self dataOut_AssociativeExperience];
-                    
-                    
-                    
-                    
                 }];
             }else{
-                //5. 无解决经验,反射输出;
+                //9. 无解决经验,反射输出;//V2TODO:此处不应放弃联想,应该先看下当前有哪些信息,是可以联想分析出解决方案的; (跳出递归)
                 [self dataOut_Reflex:AIMoodType_Anxious];
             }
         }];
         
-        //3. 思考与决策消耗能量;
+        //10. 思考与决策消耗能量;
         [self updateEnergy:-1];
     }else{
-        //4. 尝试输出找到解决问题的实际操作
-        
-        //取到当前cacheModel中的最佳决策,并进行输出;
-        
-        
-        //[self dataOut_TryOut:outArr];
+        //11. 如果energy<=0,尝试输出"可行性之首" 并 找到实际操作 (跳出递归)
+        [self dataOut_TryOut:expModel];
     }
 }
 

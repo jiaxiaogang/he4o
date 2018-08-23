@@ -35,4 +35,13 @@
  */
 -(NSArray*) getNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction limit:(NSInteger)limit;
 
+
+/**
+ *  MARK:--------------------根据筛选器,将方向mv的port返回--------------------
+ *  @param filter : 指定筛选器
+ *  @param mvAlgsType : 分区标识(mv类型)
+ *  @param direction : mv变化方向
+ */
+-(NSArray*) getNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction filter:(NSArray*(^)(NSArray *protoArr))filter;
+
 @end

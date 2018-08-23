@@ -76,17 +76,29 @@
     [SMGUtils insertObject:mArr rootPath:mvReference_p.filePath fileName:FILENAME_Reference time:cRedisReferenceTime];
 }
 
+
 -(NSArray*) getNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction limit:(NSInteger)limit{
+    return [self getNodePointersFromDirectionReference:mvAlgsType direction:direction filter:^NSArray *(NSArray *protoArr) {
+        if (ARRISOK(protoArr)) {
+            NSInteger subLimit = MAX(0, MIN(limit, protoArr.count));
+            return [protoArr subarrayWithRange:NSMakeRange(protoArr.count - subLimit, subLimit)];
+        }
+        return nil;
+    }];
+}
+
+
+-(NSArray*) getNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction filter:(NSArray*(^)(NSArray *protoArr))filter{
     //1. 取mv分区的引用序列文件;
     AIKVPointer *mvReference_p = [SMGUtils createPointerForDirection:mvAlgsType direction:direction];
     NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:mvReference_p fileName:FILENAME_Reference time:cRedisReferenceTime]];
     
-    //2. 根据limit返回limit个结果;
-    if (ARRISOK(mArr)) {
-        limit = MAX(0, MIN(limit, mArr.count));
-        return [mArr subarrayWithRange:NSMakeRange(mArr.count - limit, limit)];
+    //2. 筛选器
+    if (filter) {
+        return filter(mArr);
     }
     return nil;
 }
+
 
 @end
