@@ -390,6 +390,26 @@ static AIThinkingControl *_instance;
  *  //5. 是数据决定了下一轮循环思维想什么,但数据仅能通过mv来决定,无论是思考的方向,还是思考的能量,还是思考的目标,都是以mv为准的;而mv的一切关联,又是以数据为规律进行关联的;
  */
 -(void) dataOut_AssociativeConcreteData:(NSObject*)expMvNode complete:(void(^)(MindHappyType type,NSInteger urgentTo,NSArray *outArr))complete{
+    
+    
+    //TMRTODO:判定执行方案可行性
+    //1). expModelscore>0时,分析具象方向的outLog的可行性,然后再输出;...
+    
+    //1. mv-时,根据横向找foOrder来找outLog
+    //2. 或mv-时,根据纵向找conMvNode来找它的foOrder中的outLog;
+    
+    //3. 给找到的outLog来评定可行性;
+    //4. 如果找不到,就把最absNode.foOrder.outArr去tryOut();
+    //5. 如果找到,且具有非常好的可执行性,
+    
+    //6. 此方法可能对应1个expModel;并对每个con方向的outLog进行综合评分score,并将最佳的outArr和score传出去;
+    
+    
+    
+    
+    
+    
+    
     //1. 判断具象 | 抽象cmv节点 并 收集可输出的信息
     NSMutableArray *outMArr = [[NSMutableArray alloc] init];
     if (ISOK(expMvNode, AICMVNode.class)) {
@@ -453,6 +473,10 @@ static AIThinkingControl *_instance;
 
 /**
  *  MARK:--------------------尝试输出信息--------------------
+ *  三种输出方式:
+ *  1. 反射输出 : reflexOut
+ *  2. 激活输出 : absNode信息无conPorts方向的outPointer信息时,将absNode的宏信息尝试输出;
+ *  3. 经验输出 : expOut指在absNode或conPort方向有outPointer信息;
  */
 -(void) dataOut_TryOut:(ExpCacheModel*)expModel{
     //1. 尝试输出找到解决问题的实际操作 (取到当前cacheModel中的最佳决策,并进行输出;)
@@ -517,14 +541,9 @@ static AIThinkingControl *_instance;
     //3. energy判断;
     if (self.energy > 0) {
         
-        //4. 如果expModel可行性善可,则继续深挖联想;
+        //4. 如果expModel可行性善可,则执行; (将执行方案部分放到assConData()中了...)
         if (expModel && expModel.score > 0) {
-            NSLog(@"对已有expModel可行性善可的,进行二次联想,避免smg做出傻事");
-            
-            //TMRTODO:
-            //2. 在判定可行性时,outLog节点的优先级更高;
-            
-            
+            [self dataOut_TryOut:expModel];
             return;
         }
         
@@ -535,10 +554,15 @@ static AIThinkingControl *_instance;
             //6. filter筛选器取曾经历的除已有expModels之外的最强解决;
             NSArray *mvRefs = [theNet getNetNodePointersFromDirectionReference:mvCacheModel.algsType direction:direction filter:^NSArray *(NSArray *protoArr) {
                 for (AIPort *port in ARRTOOK(protoArr)) {
+                    BOOL cacheContains = false;
                     for (ExpCacheModel *expCacheItem in mvCacheModel.expCache) {
-                        if (port.target_p && ![port.target_p isEqual:expCacheItem.exp_p]) {
-                            return @[port];
+                        if (port.target_p && [port.target_p isEqual:expCacheItem.exp_p]) {
+                            cacheContains = true;
+                            break;
                         }
+                    }
+                    if (!cacheContains) {
+                        return @[port];
                     }
                 }
                 return nil;
