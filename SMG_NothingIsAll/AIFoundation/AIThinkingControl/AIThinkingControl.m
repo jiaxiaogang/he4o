@@ -391,25 +391,6 @@ static AIThinkingControl *_instance;
  */
 -(void) dataOut_AssociativeConcreteData:(NSObject*)expMvNode complete:(void(^)(MindHappyType type,NSInteger urgentTo,NSArray *outArr))complete{
     
-    
-    //TMRTODO:判定执行方案可行性
-    //1). expModelscore>0时,分析具象方向的outLog的可行性,然后再输出;...
-    
-    //1. mv-时,根据横向找foOrder来找outLog
-    //2. 或mv-时,根据纵向找conMvNode来找它的foOrder中的outLog;
-    
-    //3. 给找到的outLog来评定可行性;
-    //4. 如果找不到,就把最absNode.foOrder.outArr去tryOut();
-    //5. 如果找到,且具有非常好的可执行性,
-    
-    //6. 此方法可能对应1个expModel;并对每个con方向的outLog进行综合评分score,并将最佳的outArr和score传出去;
-    
-    
-    
-    
-    
-    
-    
     //1. 判断具象 | 抽象cmv节点 并 收集可输出的信息
     NSMutableArray *outMArr = [[NSMutableArray alloc] init];
     if (ISOK(expMvNode, AICMVNode.class)) {
@@ -446,6 +427,37 @@ static AIThinkingControl *_instance;
     AIKVPointer *absValue_p = [theNet getNetAbsIndex_AbsPointer:outMArr];
     AIKVPointer *absNode_p = [theNet getItemAbsNodePointer:absValue_p];
     AINetAbsNode *absNode = [SMGUtils searchObjectForPointer:absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+    
+    
+    
+    a
+    //TMRTODO:判定执行方案可行性
+    //1). expModelscore>0时,分析具象方向的outLog的可行性,然后再输出;...
+    
+    for (AIPointer *pointer in outMArr) {
+        if ([pointer isKindOfClass:AIOutputKVPointer]) {
+            
+        }
+    }
+    
+    //1. mv-时,根据横向找foOrder来找outLog
+    //2. 或mv-时,根据纵向找conMvNode来找它的foOrder中的outLog;
+    
+    //3. 给找到的outLog来评定可行性;
+    //4. 如果找不到,就把最absNode.foOrder.outArr去tryOut();
+    //5. 如果找到,且具有非常好的可执行性,
+    
+    //6. 此方法可能对应1个expModel;并对每个con方向的outLog进行综合评分score,并将最佳的outArr和score传出去;
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     //5. 取absCmvNode & 并取到mindHappy影响决策cacheModel;
     MindHappyType type = MindHappyType_None;
