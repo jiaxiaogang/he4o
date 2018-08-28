@@ -415,6 +415,11 @@ static AIThinkingControl *_instance;
         //>2 取宏信息指向的"微信息"数组
         NSArray *microArr_p = ARRTOOK([SMGUtils searchObjectForPointer:expFoAbsNode.absValue_p fileName:FILENAME_AbsValue]);
         
+        
+        //为absNode添加outPointer;
+        //1. 从sames开始,增加outPointer的(微信息组)
+        
+        
         //>3 收集
         for (AIKVPointer *micro_p in microArr_p) {
             if (ISOK(micro_p, AIKVPointer.class)) {
@@ -430,15 +435,20 @@ static AIThinkingControl *_instance;
     
     
     
-    a
     //TMRTODO:判定执行方案可行性
     //1). expModelscore>0时,分析具象方向的outLog的可行性,然后再输出;...
     
-    for (AIPointer *pointer in outMArr) {
-        if ([pointer isKindOfClass:AIOutputKVPointer]) {
-            
-        }
-    }
+    NSArray *out_ps = [ThinkingUtils filterOutPointers:outMArr];
+    //A:根据out_ps联想(分析可行性)
+    // >assHavResult : 其有没有导致mv-和mv+;
+    //  > mv-则:联想conPort,思考具象;
+    //  > mv+则:score+分;
+    // >assNoResult :
+    
+    
+    
+    
+    
     
     //1. mv-时,根据横向找foOrder来找outLog
     //2. 或mv-时,根据纵向找conMvNode来找它的foOrder中的outLog;

@@ -11,6 +11,7 @@
 #import "ImvAlgsModelBase.h"
 #import "ImvAlgsHungerModel.h"
 #import "AIFrontOrderNode.h"
+#import "AIOutputKVPointer.h"
 
 @implementation ThinkingUtils
 
@@ -20,6 +21,16 @@
 +(NSInteger) updateEnergy:(NSInteger)oriEnergy delta:(NSInteger)delta{
     oriEnergy += delta;
     return MAX(cMinEnergy, MIN(cMaxEnergy, oriEnergy));
+}
+
++(NSArray*) filterOutPointers:(NSArray*)proto_ps{
+    NSMutableArray *out_ps = [[NSMutableArray alloc] init];
+    for (AIPointer *pointer in ARRTOOK(proto_ps)) {
+        if (ISOK(pointer, AIOutputKVPointer.class)) {
+            [out_ps addObject:pointer];
+        }
+    }
+    return out_ps;
 }
 
 @end

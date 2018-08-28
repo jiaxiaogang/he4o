@@ -16,6 +16,11 @@
  */
 +(NSInteger) updateEnergy:(NSInteger)oriEnergy delta:(NSInteger)delta;
 
+/**
+ *  MARK:--------------------筛选出outPointers--------------------
+ */
++(NSArray*) filterOutPointers:(NSArray*)proto_ps;
+
 @end
 
 
