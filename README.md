@@ -1,5 +1,8 @@
-# SMG (AGI系统内核)
+# SMG
+> ### 一款AGI系统内核,是HELIX理论的实践项目
 
+
+***
 <br>
 
 > 相关文档:
@@ -13,8 +16,6 @@
 ![](https://img.shields.io/badge/%20in-iphone%20-orange.svg)
 [![License](https://img.shields.io/badge/license-GPL-blue.svg)](LICENSE)
 [![Join the chat at https://gitter.im/jiaxiaogang/SMG](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jiaxiaogang/SMG)
-
-## 交流或问题可Issues;
 
 ***
 
@@ -45,6 +46,8 @@
 - 三层循环
 - mindValue
 - 相对宏微与思维方式
+- 横向相对:双双相对
+- 螺旋HELIX理论
 
 
 #### -------------------SMG架构-------------------
@@ -120,7 +123,13 @@
 
 > - 定义、相对和循环呈现的螺旋型
 
+### 2018.08.01
 
+> - MIL & MOL (重构中层动循环)
+
+### 2018.08.29
+
+> - MOL
 
 
 <br><br><br><br><br><br><br><br><br><br><br><br>

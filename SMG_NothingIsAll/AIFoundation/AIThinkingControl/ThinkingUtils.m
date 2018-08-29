@@ -12,6 +12,8 @@
 #import "ImvAlgsHungerModel.h"
 #import "AIFrontOrderNode.h"
 #import "AIOutputKVPointer.h"
+#import "AICMVNode.h"
+#import "AINetCMV.h"
 
 @implementation ThinkingUtils
 
@@ -185,6 +187,29 @@
     
     //3. 逻辑执行
     if (success) success(delta_p,urgentTo_p,delta,urgentTo,algsType);
+}
+
+@end
+
+
+//MARK:===============================================================
+//MARK:                     < ThinkingUtils (Association) >
+//MARK:===============================================================
+@implementation ThinkingUtils (Association)
+
++(NSArray*) getFrontOrdersFromCmvNode:(AICMVNode*)cmvNode{
+    NSMutableArray *mArr = [[NSMutableArray alloc] init];
+    
+    //>1 取"解决经验"对应的cmv基本模型;
+    AINetCMVModel *expCmvModel = [SMGUtils searchObjectForPointer:cmvNode.cmvModel_p fileName:FILENAME_CMVModel time:cRedisNodeTime];
+    
+    //>2 取"解决经验"对应的前因时序列;
+    AIFrontOrderNode *expFoNode = [SMGUtils searchObjectForPointer:expCmvModel.foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+    
+    //>3 收集
+    [mArr addObjectsFromArray:expFoNode.orders_kvp];//out是不能以数组处理foNode.orders_p的,下版本改)
+    
+    return mArr;
 }
 
 @end

@@ -71,3 +71,14 @@
 +(void) parserAlgsMVArr:(NSArray*)algsArr success:(void(^)(AIKVPointer *delta_p,AIKVPointer *urgentTo_p,NSInteger delta,NSInteger urgentTo,NSString *algsType))success;
 
 @end
+
+
+//MARK:===============================================================
+//MARK:                     < ThinkingUtils (Association) >
+//MARK:===============================================================
+@class AICMVNode;
+@interface ThinkingUtils (Association)
+
++(NSArray*) getFrontOrdersFromCmvNode:(AICMVNode*)cmvNode;
+
+@end

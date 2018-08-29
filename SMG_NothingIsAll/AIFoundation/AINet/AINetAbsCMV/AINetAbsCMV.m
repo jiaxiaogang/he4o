@@ -66,11 +66,11 @@
     //5. 关联conPorts插口
     AIPort *aConPort = [[AIPort alloc] init];
     aConPort.target_p = aMv_p;
-    [absN.conPorts addObject:aConPort];
+    [absN addConPorts:aConPort];
     
     AIPort *bConPort = [[AIPort alloc] init];
     bConPort.target_p = bMv_p;
-    [absN.conPorts addObject:bConPort];
+    [absN addConPorts:bConPort];
     
     //6. 关联absPort插口
     AIPort *absNPort = [[AIPort alloc] init];

@@ -395,19 +395,18 @@ static AIThinkingControl *_instance;
     NSMutableArray *outMArr = [[NSMutableArray alloc] init];
     if (ISOK(expMvNode, AICMVNode.class)) {
         //2. 具象mv
-        AICMVNode *expConCmvNode = (AICMVNode*)expMvNode;
+        NSArray *frontOrders = [ThinkingUtils getFrontOrdersFromCmvNode:expMvNode];
+        NSArray *out_ps = [ThinkingUtils filterOutPointers:frontOrders];
         
-        //>1 取"解决经验"对应的cmv基本模型;
-        AINetCMVModel *expCmvModel = [SMGUtils searchObjectForPointer:expConCmvNode.cmvModel_p fileName:FILENAME_CMVModel time:cRedisNodeTime];
         
-        //>2 取"解决经验"对应的前因时序列;
-        AIFrontOrderNode *expFoNode = [SMGUtils searchObjectForPointer:expCmvModel.foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
-        
-        //>3 收集
-        [outMArr addObjectsFromArray:expFoNode.orders_kvp];//out是不能以数组处理foNode.orders_p的,下版本改)
     }else if(ISOK(expMvNode, AIAbsCMVNode.class)){
         //3. 抽象mv
         AIAbsCMVNode *expAbsCmvNode = (AIAbsCMVNode*)expMvNode;
+        AIPort *firstConPort = [expAbsCmvNode getConPort:0];
+        NSObject *conMvNode = [SMGUtils searchObjectForPointer:firstConPort.target_p fileName:FILENAME_Node];
+        
+        NSLog(@"如果conMvNode取到数据,,,则可以尝试递归...");
+        
         
         //>1 取"解决经验"的前因抽象节点
         AINetAbsNode *expFoAbsNode = [SMGUtils searchObjectForPointer:expAbsCmvNode.absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
