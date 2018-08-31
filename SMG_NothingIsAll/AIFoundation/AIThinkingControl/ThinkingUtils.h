@@ -79,6 +79,17 @@
 @class AICMVNode;
 @interface ThinkingUtils (Association)
 
+
+/**
+ *  MARK:--------------------根据cmvNode联想其对应的前因时序列;--------------------
+ */
 +(NSArray*) getFrontOrdersFromCmvNode:(AICMVNode*)cmvNode;
+
+
+/**
+ *  MARK:--------------------根据cmvNode联想其对应的foNode--------------------
+ */
++(AIFrontOrderNode*) getFoNodeFromCmvNode:(AICMVNode*)cmvNode;
+
 
 @end

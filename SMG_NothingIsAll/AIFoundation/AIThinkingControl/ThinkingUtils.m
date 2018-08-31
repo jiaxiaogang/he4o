@@ -197,19 +197,26 @@
 //MARK:===============================================================
 @implementation ThinkingUtils (Association)
 
+
 +(NSArray*) getFrontOrdersFromCmvNode:(AICMVNode*)cmvNode{
-    NSMutableArray *mArr = [[NSMutableArray alloc] init];
-    
-    //>1 取"解决经验"对应的cmv基本模型;
-    AINetCMVModel *expCmvModel = [SMGUtils searchObjectForPointer:cmvNode.cmvModel_p fileName:FILENAME_CMVModel time:cRedisNodeTime];
-    
-    //>2 取"解决经验"对应的前因时序列;
-    AIFrontOrderNode *expFoNode = [SMGUtils searchObjectForPointer:expCmvModel.foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
-    
-    //>3 收集
-    [mArr addObjectsFromArray:expFoNode.orders_kvp];//out是不能以数组处理foNode.orders_p的,下版本改)
-    
-    return mArr;
+    AIFrontOrderNode *foNode = [self getFoNodeFromCmvNode:cmvNode];
+    if (foNode) {
+        return foNode.orders_kvp;//out是不能以数组处理foNode.orders_p的,下版本改)
+    }
+    return nil;
+}
+
++(AIFrontOrderNode*) getFoNodeFromCmvNode:(AICMVNode*)cmvNode{
+    if (cmvNode && cmvNode.cmvModel_p) {
+        //1. 取"解决经验"对应的cmv基本模型;
+        AINetCMVModel *cmvModel = [SMGUtils searchObjectForPointer:cmvNode.cmvModel_p fileName:FILENAME_CMVModel time:cRedisNodeTime];
+        if (cmvModel && cmvModel.foNode_p) {
+            //2. 取"解决经验"对应的前因时序列;
+            AIFrontOrderNode *foNode = [SMGUtils searchObjectForPointer:cmvModel.foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+            return foNode;
+        }
+    }
+    return nil;
 }
 
 @end

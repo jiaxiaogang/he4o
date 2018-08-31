@@ -44,13 +44,6 @@
 
 
 /**
- *  MARK:--------------------添加解决经验到当前思维任务--------------------
- */
--(void) addExpCacheModel:(MindHappyType)type urgentTo:(NSInteger)urgentTo outArr:(NSArray*)outArr exp_p:(AIPointer*)exp_p;
-
-
-
-/**
  *  MARK:--------------------获取当前最强的expModel--------------------
  */
 -(ExpCacheModel*) getCurrentExpCacheModel;

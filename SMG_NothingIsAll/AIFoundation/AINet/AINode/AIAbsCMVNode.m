@@ -68,6 +68,22 @@
     return ARR_INDEX(self.conPorts, index);
 }
 
+-(AIPort*) getConPortWithExcept:(NSArray*)except_ps{
+    for (AIPort *conPort in self.conPorts) {
+        BOOL excepted = false;
+        for (AIPointer *except_p in ARRTOOK(except_ps)) {
+            if ([except_p isEqual:conPort.target_p]) {
+                excepted = true;
+                break;
+            }
+        }
+        if (!excepted) {
+            return conPort;
+        }
+    }
+    return nil;
+}
+
 
 /**
  *  MARK:--------------------NSCoding--------------------

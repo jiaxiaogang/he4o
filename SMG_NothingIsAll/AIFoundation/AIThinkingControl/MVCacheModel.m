@@ -23,17 +23,6 @@
     return _expCache;
 }
 
--(void) addExpCacheModel:(MindHappyType)type urgentTo:(NSInteger)urgentTo outArr:(NSArray*)outArr exp_p:(AIPointer*)exp_p{
-    ExpCacheModel *expModel = [[ExpCacheModel alloc] init];
-    expModel.outArr = outArr;
-    if (type == MindHappyType_Yes) {
-        expModel.score = (CGFloat)urgentTo / 2.0f;//v2TODO:此处,暂时这么写score;但这是伪精度;
-    }else if (type == MindHappyType_No){
-        expModel.score = -(CGFloat)urgentTo / 2.0f;
-    }
-    expModel.exp_p = exp_p;
-    [self.expCache addObject:expModel];
-}
 
 /**
  *  MARK:--------------------重排序cmvCache--------------------

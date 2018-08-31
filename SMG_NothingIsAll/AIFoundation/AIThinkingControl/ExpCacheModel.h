@@ -13,8 +13,22 @@
  */
 @interface ExpCacheModel : NSObject
 
-@property (strong, nonatomic) AIPointer *exp_p;   //经验指针;
-@property (strong, nonatomic) NSArray *outArr;      //输出信息;
-@property (assign, nonatomic) CGFloat score;        //因mindHappy和urgentTo算出的可行性;//V2TODO:后续增加主观意志,对score的影响;从而使expCacheModel的思考更加灵活;
+
+/**
+ *  MARK:--------------------newWith--------------------
+ *  @param exp_p : referencePort对应的absMvNode地址;
+ */
++(ExpCacheModel*) newWithExp_p:(AIPointer*)exp_p;
+
+@property (strong, nonatomic) AIPointer *exp_p;   //经验指针;用以absNode,联想具象,并找到执行方案;
+
+
+/**
+ *  MARK:--------------------执行性初始分--------------------
+ *  因mindHappy和urgentTo算出的可行性;
+ *  //V2TODO:后续增加主观意志,对score的影响;从而使expCacheModel的思考更加灵活;
+ */
+@property (assign, nonatomic) CGFloat score;
+@property (strong, nonatomic) NSMutableArray *except_ps;
 
 @end
