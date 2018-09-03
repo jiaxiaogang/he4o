@@ -21,11 +21,19 @@
     return expModel;
 }
 
-- (NSMutableArray *)except_ps{
-    if (_except_ps == nil) {
-        _except_ps = [[NSMutableArray alloc] init];
+
+- (NSMutableArray *)exceptExpOut_ps{
+    if (_exceptExpOut_ps == nil) {
+        _exceptExpOut_ps = [[NSMutableArray alloc] init];
     }
-    return _except_ps;
+    return _exceptExpOut_ps;
+}
+
+- (NSMutableArray *)exceptTryOut_ps{
+    if (_exceptTryOut_ps == nil) {
+        _exceptTryOut_ps = [[NSMutableArray alloc] init];
+    }
+    return _exceptTryOut_ps;
 }
 
 @end

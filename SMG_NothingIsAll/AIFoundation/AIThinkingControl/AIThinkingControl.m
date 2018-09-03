@@ -373,7 +373,7 @@ static AIThinkingControl *_instance;
 
 
 //MARK:===============================================================
-//MARK:                     < dataOut >
+//MARK:                     < dataOut (回归具象之旅) >
 //MARK:===============================================================
 
 /**
@@ -485,17 +485,17 @@ static AIThinkingControl *_instance;
                 [mvCacheModel.expCache addObject:expModel];
                 
                 //8. 联想具象数据,并取到决策关键信息;(可行性判定)
-                AIFrontOrderNode *foNode = [self dataOut_AssociativeConcreteData:expMvNode except_ps:expModel.except_ps];
+                AIFrontOrderNode *foNode = [self dataOut_AssociativeConcreteData_ExpOut:expMvNode except_ps:expModel.exceptExpOut_ps];
                 
                 //9. 没有执行方案,则对抽象宏节点进行尝试输出;
                 if (foNode == nil) {
-                    
+                    AINetAbsNode *absNode = [self dataOut_AssociativeConcreteData_TryOut:expMvNode exceptTryOut_ps:expModel.exceptTryOut_ps];
                 }
                 //10. 有执行方案,则对执行方案进行反思检查;
                 else{
-                    [self dataOut_FoNodeCheckScore:foNode];
+                    [self dataOut_CheckScore_ExpOut:foNode];
                 }
-                BOOL foCanDo = [self dataOut_FoNodeCheckScore:foNode];
+                BOOL foCanDo = [self dataOut_CheckScore_ExpOut:foNode];
                 
                 if (foCanDo) {
                     //尝试执行;
@@ -526,8 +526,9 @@ static AIThinkingControl *_instance;
 
 
 /**
- *  MARK:--------------------联想具象数据 (回归具象之旅)--------------------
+ *  MARK:--------------------联想具象 (从上往下找foNode)--------------------
  *  @param expMvNode : mv节点经验(有可能是AICMVNode也有可能是AIAbsCMVNode)
+ *  功能 : 找到曾输出经验;
  *  TODO:加上预测功能
  *  TODO:加上联想到mv时,传回给mvCacheManager;
  *  注:每一次输出,只是决策与预测上的一环;并不意味着结束;
@@ -538,11 +539,11 @@ static AIThinkingControl *_instance;
  *  //5. 是数据决定了下一轮循环思维想什么,但数据仅能通过mv来决定,无论是思考的方向,还是思考的能量,还是思考的目标,都是以mv为准的;而mv的一切关联,又是以数据为规律进行关联的;
  *
  */
--(AIFrontOrderNode*) dataOut_AssociativeConcreteData:(NSObject*)expMvNode except_ps:(nonnull NSMutableArray*)except_ps {
+-(AIFrontOrderNode*) dataOut_AssociativeConcreteData_ExpOut:(NSObject*)expMvNode except_ps:(nonnull NSMutableArray*)except_ps {
     //1. 判断具象
     if (ISOK(expMvNode, AICMVNode.class)) {
         //2. 具象mv
-        AIFrontOrderNode *foNode = [ThinkingUtils getFoNodeFromCmvNode:expMvNode];
+        AIFrontOrderNode *foNode = [ThinkingUtils getFoNodeFromCmvNode:(AICMVNode*)expMvNode];
         return foNode;
     }else if(ISOK(expMvNode, AIAbsCMVNode.class)){
         //3. 抽象mv
@@ -551,11 +552,11 @@ static AIThinkingControl *_instance;
         if (!findConPort) {
             //4. 所有conPort都已排除,则expAbsCmvNode本身也被排除;并递归;
             [except_ps addObject:expAbsCmvNode.pointer];
-            return [self dataOut_AssociativeConcreteData:expMvNode except_ps:except_ps];
+            return [self dataOut_AssociativeConcreteData_ExpOut:expMvNode except_ps:except_ps];
         }else{
             //5. 找到conPort,则递归判断类型是否foNode;
             NSObject *findConNode = [SMGUtils searchObjectForPointer:findConPort.target_p fileName:FILENAME_Node];
-            return [self dataOut_AssociativeConcreteData:findConNode except_ps:except_ps];
+            return [self dataOut_AssociativeConcreteData_ExpOut:findConNode except_ps:except_ps];
         }
     }
     
@@ -564,18 +565,16 @@ static AIThinkingControl *_instance;
 
 
 /**
- *  MARK:--------------------联想可尝试输出抽象节点--------------------
- *  @param expMvNode : mv节点经验(有可能是AICMVNode也有可能是AIAbsCMVNode)
- *  @result : 返回前因节点地址(可能是foNode_p也有可能是absNode_p)
+ *  MARK:--------------------联想具象 (从下往上找absNode)--------------------
+ *  @param expMvNode :  当前在判断的mv节点经验(有可能是AICMVNode也有可能是AIAbsCMVNode)
+ *  @result : 返回前因节点地址(仅absNode_p,不要foNode_p)
+ *  功能 : 找可尝试输出 (激活输出);
  *  1. 从上至下的联想absNode;
+ *  注:目前仅支持每层1个,与最分支向下联想,即abs的最强关联的下层前1;
  */
--(AIKVPointer*) dataOut_AssociativeConcreteData_TryOut:(NSObject*)expMvNode exceptTryOut_ps:(nonnull NSMutableArray*)exceptTryOut_ps{
-    //1. 判断具象
-    if (ISOK(expMvNode, AICMVNode.class)) {
-        //2. 具象mv
-        return [ThinkingUtils getFoNodePointerFromCmvNode:expMvNode];
-    }else if(ISOK(expMvNode, AIAbsCMVNode.class)){
-        //3. 判断是否已排除
+-(AINetAbsNode*) dataOut_AssociativeConcreteData_TryOut:(NSObject*)expMvNode exceptTryOut_ps:(nonnull NSMutableArray*)exceptTryOut_ps{
+    if(ISOK(expMvNode, AIAbsCMVNode.class)){
+        //1. 判断是否已排除
         AIAbsCMVNode *expAbsCmvNode = (AIAbsCMVNode*)expMvNode;
         BOOL excepted = false;
         for (AIPointer *except_p in exceptTryOut_ps) {
@@ -585,40 +584,27 @@ static AIThinkingControl *_instance;
             }
         }
         
-        //4.
+        //2. 未排除,返回;
         if (!excepted) {
             [exceptTryOut_ps addObject:expAbsCmvNode.absNode_p];
-            return expAbsCmvNode.absNode_p;
+            AINetAbsNode *result = [SMGUtils searchObjectForPointer:expAbsCmvNode.absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+            return result;
         }else{
-            AIPort *findConPort = [expAbsCmvNode getConPortWithExcept:exceptTryOut_ps];
-            return self dataOut_AssociativeConcreteData_TryOut:<#(NSObject *)#> exceptTryOut_ps:<#(nonnull NSMutableArray *)#>
-        }
-        
-        
-        
-        
-        
-        
-        
-        
-        if (!findConPort) {
-            //4. 所有conPort都已排除,则expAbsCmvNode本身也被排除;并递归;
-            [except_ps addObject:expAbsCmvNode.pointer];
-            return [self dataOut_AssociativeConcreteData:expMvNode except_ps:except_ps];
-        }else{
-            //5. 找到conPort,则递归判断类型是否foNode;
-            NSObject *findConNode = [SMGUtils searchObjectForPointer:findConPort.target_p fileName:FILENAME_Node];
-            return [self dataOut_AssociativeConcreteData:findConNode except_ps:except_ps];
+            //3. 已排除,递归下一层;
+            AIPort *firstConPort = [expAbsCmvNode getConPort:0];
+            if (firstConPort != nil) {
+                NSObject *firstConNode = [SMGUtils searchObjectForPointer:firstConPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
+                return [self dataOut_AssociativeConcreteData_TryOut:firstConNode exceptTryOut_ps:exceptTryOut_ps];
+            }
         }
     }
-    
     return nil;
 }
 
 /**
  *  MARK:--------------------foNode的可行性判定--------------------
  */
--(BOOL) dataOut_FoNodeCheckScore:(AIFrontOrderNode*)foNode{
+-(BOOL) dataOut_CheckScore_ExpOut:(AIFrontOrderNode*)foNode{
     if (!foNode) {
         return false;
     }

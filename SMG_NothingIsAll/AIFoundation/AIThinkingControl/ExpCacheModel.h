@@ -29,6 +29,7 @@
  *  //V2TODO:后续增加主观意志,对score的影响;从而使expCacheModel的思考更加灵活;
  */
 @property (assign, nonatomic) CGFloat score;
-@property (strong, nonatomic) NSMutableArray *except_ps;
+@property (nonnull, strong, nonatomic) NSMutableArray *exceptExpOut_ps;
+@property (nonnull, strong, nonatomic) NSMutableArray *exceptTryOut_ps;
 
 @end

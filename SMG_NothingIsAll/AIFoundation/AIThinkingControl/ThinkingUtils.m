@@ -210,7 +210,7 @@
     AIKVPointer *foNode_p = [self getFoNodePointerFromCmvNode:cmvNode];
     if (foNode_p) {
         //2. 取"解决经验"对应的前因时序列;
-        AIFrontOrderNode *foNode = [SMGUtils searchObjectForPointer:cmvModel.foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+        AIFrontOrderNode *foNode = [SMGUtils searchObjectForPointer:foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
         return foNode;
     }
     return nil;
