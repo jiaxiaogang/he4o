@@ -92,4 +92,10 @@
 +(AIFrontOrderNode*) getFoNodeFromCmvNode:(AICMVNode*)cmvNode;
 
 
+/**
+ *  MARK:--------------------根据cmvNode联想其对应的foNode_p--------------------
+ */
++(AIKVPointer*) getFoNodePointerFromCmvNode:(AICMVNode*)cmvNode;
+
+
 @end

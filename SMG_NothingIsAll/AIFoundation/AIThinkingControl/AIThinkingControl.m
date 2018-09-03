@@ -376,47 +376,6 @@ static AIThinkingControl *_instance;
 //MARK:                     < dataOut >
 //MARK:===============================================================
 
-
-/**
- *  MARK:--------------------联想具象数据 (回归具象之旅)--------------------
- *  @param expMvNode : mv节点经验(有可能是AICMVNode也有可能是AIAbsCMVNode)
- *  TODO:加上预测功能
- *  TODO:加上联想到mv时,传回给mvCacheManager;
- *  注:每一次输出,只是决策与预测上的一环;并不意味着结束;
- *  //1. 记录思考mv结果到叠加mvCacheModel.order;
- *  //2. 记录思考data结果到thinkFeedCache;
- *  //3. 如果mindHappy_No,可以再尝试下一个getNetNodePointersFromDirectionReference_Single;找到更好的解决方法;
- *  //4. 最终更好的解决方法被输出,并且解决问题后,被加强;
- *  //5. 是数据决定了下一轮循环思维想什么,但数据仅能通过mv来决定,无论是思考的方向,还是思考的能量,还是思考的目标,都是以mv为准的;而mv的一切关联,又是以数据为规律进行关联的;
- *
- */
--(AIFrontOrderNode*) dataOut_AssociativeConcreteData:(NSObject*)expMvNode except_ps:(nonnull NSMutableArray*)except_ps {
-    
-    //1. 判断具象 | 抽象cmv节点 并 收集可输出的信息
-    NSMutableArray *outMArr = [[NSMutableArray alloc] init];
-    if (ISOK(expMvNode, AICMVNode.class)) {
-        //2. 具象mv
-        AIFrontOrderNode *foNode = [ThinkingUtils getFoNodeFromCmvNode:expMvNode];
-        return foNode;
-    }else if(ISOK(expMvNode, AIAbsCMVNode.class)){
-        //3. 抽象mv
-        AIAbsCMVNode *expAbsCmvNode = (AIAbsCMVNode*)expMvNode;
-        AIPort *findConPort = [expAbsCmvNode getConPortWithExcept:except_ps];
-        if (!findConPort) {
-            //所有conPort都已排除,则expAbsCmvNode本身也被排除;并递归;
-            [except_ps addObject:expAbsCmvNode.pointer];
-            return [self dataOut_AssociativeConcreteData:expMvNode except_ps:except_ps];
-        }else{
-            //找到conPort,则递归判断类型是否foNode;
-            NSObject *findConNode = [SMGUtils searchObjectForPointer:findConPort.target_p fileName:FILENAME_Node];
-            return [self dataOut_AssociativeConcreteData:findConNode except_ps:except_ps];
-        }
-    }
-    
-    return nil;
-}
-
-
 /**
  *  MARK:--------------------尝试输出信息--------------------
  *  三种输出方式:
@@ -528,13 +487,21 @@ static AIThinkingControl *_instance;
                 //8. 联想具象数据,并取到决策关键信息;(可行性判定)
                 AIFrontOrderNode *foNode = [self dataOut_AssociativeConcreteData:expMvNode except_ps:expModel.except_ps];
                 
-                //9. 中止,并进入下一决策;(递归)
+                //9. 没有执行方案,则对抽象宏节点进行尝试输出;
+                if (foNode == nil) {
+                    
+                }
+                //10. 有执行方案,则对执行方案进行反思检查;
+                else{
+                    [self dataOut_FoNodeCheckScore:foNode];
+                }
                 BOOL foCanDo = [self dataOut_FoNodeCheckScore:foNode];
                 
                 if (foCanDo) {
                     //尝试执行;
                 }else{
-                    //递归到最初;
+                    
+                    //递归到最初;(中止,并进入下一决策)
                     [self dataOut_AssociativeExperience];
                     
                     //如果最终全都不行,则反射输出;
@@ -557,6 +524,97 @@ static AIThinkingControl *_instance;
     }
 }
 
+
+/**
+ *  MARK:--------------------联想具象数据 (回归具象之旅)--------------------
+ *  @param expMvNode : mv节点经验(有可能是AICMVNode也有可能是AIAbsCMVNode)
+ *  TODO:加上预测功能
+ *  TODO:加上联想到mv时,传回给mvCacheManager;
+ *  注:每一次输出,只是决策与预测上的一环;并不意味着结束;
+ *  //1. 记录思考mv结果到叠加mvCacheModel.order;
+ *  //2. 记录思考data结果到thinkFeedCache;
+ *  //3. 如果mindHappy_No,可以再尝试下一个getNetNodePointersFromDirectionReference_Single;找到更好的解决方法;
+ *  //4. 最终更好的解决方法被输出,并且解决问题后,被加强;
+ *  //5. 是数据决定了下一轮循环思维想什么,但数据仅能通过mv来决定,无论是思考的方向,还是思考的能量,还是思考的目标,都是以mv为准的;而mv的一切关联,又是以数据为规律进行关联的;
+ *
+ */
+-(AIFrontOrderNode*) dataOut_AssociativeConcreteData:(NSObject*)expMvNode except_ps:(nonnull NSMutableArray*)except_ps {
+    //1. 判断具象
+    if (ISOK(expMvNode, AICMVNode.class)) {
+        //2. 具象mv
+        AIFrontOrderNode *foNode = [ThinkingUtils getFoNodeFromCmvNode:expMvNode];
+        return foNode;
+    }else if(ISOK(expMvNode, AIAbsCMVNode.class)){
+        //3. 抽象mv
+        AIAbsCMVNode *expAbsCmvNode = (AIAbsCMVNode*)expMvNode;
+        AIPort *findConPort = [expAbsCmvNode getConPortWithExcept:except_ps];
+        if (!findConPort) {
+            //4. 所有conPort都已排除,则expAbsCmvNode本身也被排除;并递归;
+            [except_ps addObject:expAbsCmvNode.pointer];
+            return [self dataOut_AssociativeConcreteData:expMvNode except_ps:except_ps];
+        }else{
+            //5. 找到conPort,则递归判断类型是否foNode;
+            NSObject *findConNode = [SMGUtils searchObjectForPointer:findConPort.target_p fileName:FILENAME_Node];
+            return [self dataOut_AssociativeConcreteData:findConNode except_ps:except_ps];
+        }
+    }
+    
+    return nil;
+}
+
+
+/**
+ *  MARK:--------------------联想可尝试输出抽象节点--------------------
+ *  @param expMvNode : mv节点经验(有可能是AICMVNode也有可能是AIAbsCMVNode)
+ *  @result : 返回前因节点地址(可能是foNode_p也有可能是absNode_p)
+ *  1. 从上至下的联想absNode;
+ */
+-(AIKVPointer*) dataOut_AssociativeConcreteData_TryOut:(NSObject*)expMvNode exceptTryOut_ps:(nonnull NSMutableArray*)exceptTryOut_ps{
+    //1. 判断具象
+    if (ISOK(expMvNode, AICMVNode.class)) {
+        //2. 具象mv
+        return [ThinkingUtils getFoNodePointerFromCmvNode:expMvNode];
+    }else if(ISOK(expMvNode, AIAbsCMVNode.class)){
+        //3. 判断是否已排除
+        AIAbsCMVNode *expAbsCmvNode = (AIAbsCMVNode*)expMvNode;
+        BOOL excepted = false;
+        for (AIPointer *except_p in exceptTryOut_ps) {
+            if ([except_p isEqual:expAbsCmvNode.pointer]) {
+                excepted = true;
+                break;
+            }
+        }
+        
+        //4.
+        if (!excepted) {
+            [exceptTryOut_ps addObject:expAbsCmvNode.absNode_p];
+            return expAbsCmvNode.absNode_p;
+        }else{
+            AIPort *findConPort = [expAbsCmvNode getConPortWithExcept:exceptTryOut_ps];
+            return self dataOut_AssociativeConcreteData_TryOut:<#(NSObject *)#> exceptTryOut_ps:<#(nonnull NSMutableArray *)#>
+        }
+        
+        
+        
+        
+        
+        
+        
+        
+        if (!findConPort) {
+            //4. 所有conPort都已排除,则expAbsCmvNode本身也被排除;并递归;
+            [except_ps addObject:expAbsCmvNode.pointer];
+            return [self dataOut_AssociativeConcreteData:expMvNode except_ps:except_ps];
+        }else{
+            //5. 找到conPort,则递归判断类型是否foNode;
+            NSObject *findConNode = [SMGUtils searchObjectForPointer:findConPort.target_p fileName:FILENAME_Node];
+            return [self dataOut_AssociativeConcreteData:findConNode except_ps:except_ps];
+        }
+    }
+    
+    return nil;
+}
+
 /**
  *  MARK:--------------------foNode的可行性判定--------------------
  */
@@ -565,27 +623,33 @@ static AIThinkingControl *_instance;
         return false;
     }
     return true;
-//    NSArray *frontOrders = [ThinkingUtils getFrontOrdersFromCmvNode:expMvNode];
-//    NSArray *out_ps = [ThinkingUtils filterOutPointers:frontOrders];
+    
+    //抽象cmv节点 并 收集可输出的信息
+    NSMutableArray *outMArr = [[NSMutableArray alloc] init];
+    
+    //
+    NSArray *out_ps = [ThinkingUtils filterOutPointers:foNode.orders_kvp];
     
 
-//    //>1 取"解决经验"的前因抽象节点
-//    AINetAbsNode *expFoAbsNode = [SMGUtils searchObjectForPointer:expAbsCmvNode.absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
-//
-//    //>2 取宏信息指向的"微信息"数组
-//    NSArray *microArr_p = ARRTOOK([SMGUtils searchObjectForPointer:expFoAbsNode.absValue_p fileName:FILENAME_AbsValue]);
-//
-//
-//    //为absNode添加outPointer;
-//    //1. 从sames开始,增加outPointer的(微信息组)
-//
-//
-//    //>3 收集
-//    for (AIKVPointer *micro_p in microArr_p) {
-//        if (ISOK(micro_p, AIKVPointer.class)) {
-//            [outMArr addObject:micro_p];
-//        }
-//    }
+    
+    
+    //>1 取"解决经验"的前因抽象节点
+    AINetAbsNode *expFoAbsNode = [SMGUtils searchObjectForPointer:expAbsCmvNode.absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+
+    //>2 取宏信息指向的"微信息"数组
+    NSArray *microArr_p = ARRTOOK([SMGUtils searchObjectForPointer:expFoAbsNode.absValue_p fileName:FILENAME_AbsValue]);
+
+
+    //为absNode添加outPointer;
+    //1. 从sames开始,增加outPointer的(微信息组)
+
+
+    //>3 收集
+    for (AIKVPointer *micro_p in microArr_p) {
+        if (ISOK(micro_p, AIKVPointer.class)) {
+            [outMArr addObject:micro_p];
+        }
+    }
     
     
 //    //4. 在输出前,联想一下将要输出的outMArr,看是否有导致mv-的情况;
