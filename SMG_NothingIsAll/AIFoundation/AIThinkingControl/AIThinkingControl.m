@@ -485,17 +485,22 @@ static AIThinkingControl *_instance;
                 [mvCacheModel.expCache addObject:expModel];
                 
                 //8. 联想具象数据,并取到决策关键信息;(可行性判定)
-                AIFrontOrderNode *foNode = [self dataOut_AssociativeConcreteData_ExpOut:expMvNode except_ps:expModel.exceptExpOut_ps];
+                AIFrontOrderNode *expOutFoNode = [self dataOut_AssociativeConcreteData_ExpOut:expMvNode except_ps:expModel.exceptExpOut_ps];
                 
                 //9. 没有执行方案,则对抽象宏节点进行尝试输出;
-                if (foNode == nil) {
-                    AINetAbsNode *absNode = [self dataOut_AssociativeConcreteData_TryOut:expMvNode exceptTryOut_ps:expModel.exceptTryOut_ps];
+                if (expOutFoNode == nil) {
+                    AINetAbsNode *tryOutAbsNode = [self dataOut_AssociativeConcreteData_TryOut:expMvNode exceptTryOut_ps:expModel.exceptTryOut_ps];
+                    if (tryOutAbsNode == nil) {
+                        
+                    }else{
+                        CGFloat score = [self dataOut_CheckScore_TryOut:tryOutAbsNode];
+                    }
                 }
                 //10. 有执行方案,则对执行方案进行反思检查;
                 else{
-                    [self dataOut_CheckScore_ExpOut:foNode];
+                    [self dataOut_CheckScore_ExpOut:expOutFoNode];
                 }
-                BOOL foCanDo = [self dataOut_CheckScore_ExpOut:foNode];
+                BOOL foCanDo = [self dataOut_CheckScore_ExpOut:expOutFoNode];
                 
                 if (foCanDo) {
                     //尝试执行;
@@ -537,6 +542,7 @@ static AIThinkingControl *_instance;
  *  //3. 如果mindHappy_No,可以再尝试下一个getNetNodePointersFromDirectionReference_Single;找到更好的解决方法;
  *  //4. 最终更好的解决方法被输出,并且解决问题后,被加强;
  *  //5. 是数据决定了下一轮循环思维想什么,但数据仅能通过mv来决定,无论是思考的方向,还是思考的能量,还是思考的目标,都是以mv为准的;而mv的一切关联,又是以数据为规律进行关联的;
+ *  注: 先从最强关联的最底层foNode开始,逐个取用;直到energy<=0,或其它原因中止;
  *
  */
 -(AIFrontOrderNode*) dataOut_AssociativeConcreteData_ExpOut:(NSObject*)expMvNode except_ps:(nonnull NSMutableArray*)except_ps {
@@ -552,6 +558,7 @@ static AIThinkingControl *_instance;
         if (!findConPort) {
             //4. 所有conPort都已排除,则expAbsCmvNode本身也被排除;并递归;
             [except_ps addObject:expAbsCmvNode.pointer];
+            NSLog(@"此处有可能导致死循环...");
             return [self dataOut_AssociativeConcreteData_ExpOut:expMvNode except_ps:except_ps];
         }else{
             //5. 找到conPort,则递归判断类型是否foNode;
@@ -602,18 +609,15 @@ static AIThinkingControl *_instance;
 }
 
 /**
- *  MARK:--------------------foNode的可行性判定--------------------
+ *  MARK:--------------------可行性判定 (经验执行方案)--------------------
+ *  注:目前outLog在absNode和index中,无法区分,所以此方法仅对foNode的foNode.out_ps直接抽象部分进行联想,作为可行性判定原由;
  */
--(BOOL) dataOut_CheckScore_ExpOut:(AIFrontOrderNode*)foNode{
+-(CGFloat) dataOut_CheckScore_ExpOut:(AIFrontOrderNode*)foNode{
     if (!foNode) {
-        return false;
+        return 0;
     }
-    return true;
     
-    //抽象cmv节点 并 收集可输出的信息
-    NSMutableArray *outMArr = [[NSMutableArray alloc] init];
-    
-    //
+    //1.
     NSArray *out_ps = [ThinkingUtils filterOutPointers:foNode.orders_kvp];
     
 
@@ -695,5 +699,41 @@ static AIThinkingControl *_instance;
 //        complete(type,urgentTo,outMArr);
 //    }
 }
+
+/**
+ *  MARK:--------------------可行性判定 (尝试激活执行方案)--------------------
+ */
+-(CGFloat) dataOut_CheckScore_TryOut:(AINetAbsNode*)absNode{
+    if (!absNode) {
+        return 0;
+    }
+    //1. 取宏信息指向的"微信息"数组
+    NSArray *microArr_p = ARRTOOK([SMGUtils searchObjectForPointer:absNode.absValue_p fileName:FILENAME_AbsValue]);
+    
+    //2. 根据microArr_p联想到对应的assAbsCmvNode;
+    AIKVPointer *absValue_p = [theNet getNetAbsIndex_AbsPointer:microArr_p];
+    AIKVPointer *absNode_p = [theNet getItemAbsNodePointer:absValue_p];
+    AINetAbsNode *assAbsNode = [SMGUtils searchObjectForPointer:absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+    AIAbsCMVNode *assAbsCmvNode = [SMGUtils searchObjectForPointer:assAbsNode.absCmvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+    
+    //3. 看assAbsCmvNode是否有导致mv+-的情况 (检查absCmvNode是否顺心)
+    if (!assAbsCmvNode) {
+        return 0;
+    }
+    NSString *algsType = assAbsCmvNode.pointer.algsType;
+    NSInteger urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:assAbsCmvNode.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
+    NSInteger delta = [NUMTOOK([SMGUtils searchObjectForPointer:assAbsCmvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
+    MindHappyType type = [ThinkingUtils checkMindHappy:algsType delta:delta];
+    
+    //4. 根据检查到的数据取到score;
+    if (type == MindHappyType_Yes) {
+        return urgentTo * 0.5f;
+    }else if(type == MindHappyType_No){
+        return -urgentTo * 0.5f;
+    }else{
+        return 0;
+    }
+}
+
 
 @end
