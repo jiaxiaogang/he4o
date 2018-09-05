@@ -18,6 +18,7 @@
 
 /**
  *  MARK:--------------------筛选出outPointers--------------------
+ *  注:未判定是否连续;
  */
 +(NSArray*) filterOutPointers:(NSArray*)proto_ps;
 

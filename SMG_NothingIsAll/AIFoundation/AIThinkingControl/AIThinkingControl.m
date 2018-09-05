@@ -611,93 +611,59 @@ static AIThinkingControl *_instance;
 /**
  *  MARK:--------------------可行性判定 (经验执行方案)--------------------
  *  注:目前outLog在absNode和index中,无法区分,所以此方法仅对foNode的foNode.out_ps直接抽象部分进行联想,作为可行性判定原由;
+ *  A:根据out_ps联想(分析可行性)
+ *  >assHavResult : 其有没有导致mv-和mv+;
+ *    > mv-则:联想conPort,思考具象;
+ *    > mv+则:score+分;
+ *  >assNoResult :
  */
 -(CGFloat) dataOut_CheckScore_ExpOut:(AIFrontOrderNode*)foNode{
     if (!foNode) {
         return 0;
     }
+    CGFloat score = 0;
     
-    //1.
+    //1. 取出outLog;
     NSArray *out_ps = [ThinkingUtils filterOutPointers:foNode.orders_kvp];
     
-
+    //2. 判断out_ps本身有没有宏节点;
+    AIKVPointer *absValue_p = [theNet getNetAbsIndex_AbsPointer:out_ps];
+    AIKVPointer *absNode_p = [theNet getItemAbsNodePointer:absValue_p];
+    AINetAbsNode *assOutAbsNode = [SMGUtils searchObjectForPointer:absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
     
-    
-    //>1 取"解决经验"的前因抽象节点
-    AINetAbsNode *expFoAbsNode = [SMGUtils searchObjectForPointer:expAbsCmvNode.absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
-
-    //>2 取宏信息指向的"微信息"数组
-    NSArray *microArr_p = ARRTOOK([SMGUtils searchObjectForPointer:expFoAbsNode.absValue_p fileName:FILENAME_AbsValue]);
-
-
-    //为absNode添加outPointer;
-    //1. 从sames开始,增加outPointer的(微信息组)
-
-
-    //>3 收集
-    for (AIKVPointer *micro_p in microArr_p) {
-        if (ISOK(micro_p, AIKVPointer.class)) {
-            [outMArr addObject:micro_p];
+    //3. 检查assOutAbsNode对应的mv & 并取到mindHappy影响决策cacheModel;
+    if (assOutAbsNode) {
+        AIAbsCMVNode *absCmvNode = [SMGUtils searchObjectForPointer:assOutAbsNode.absCmvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+        if (ISOK(absCmvNode, AIAbsCMVNode.class)) {
+            //4. 检查absCmvNode是否顺心
+            NSString *algsType = absCmvNode.pointer.algsType;
+            NSInteger urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:absCmvNode.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
+            NSInteger delta = [NUMTOOK([SMGUtils searchObjectForPointer:absCmvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
+            MindHappyType type = [ThinkingUtils checkMindHappy:algsType delta:delta];
+            
+            //5. 根据检查到的数据取到score;
+            if (type == MindHappyType_Yes) {
+                score += urgentTo * 0.5f;
+            }else if(type == MindHappyType_No){
+                score -= urgentTo * 0.5f;
+            }
         }
     }
     
+    //6. 取foNode的抽象节点absNodes;
+    for (AIPort *absPort in ARRTOOK(foNode.absPorts)) {
+        //7. 判断是否包含outLog;
+        AINetAbsNode *absNode = [SMGUtils searchObjectForPointer:absPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
+        if (absNode) {
+            //8. 取宏信息指向的"微信息"数组
+            NSArray *microArr_p = ARRTOOK([SMGUtils searchObjectForPointer:absNode.absValue_p fileName:FILENAME_AbsValue]);
+            for (AIKVPointer *micro_p in ARRTOOK(microArr_p)) {
+                //判断microArr是否包含out_ps;
+            }
+        }
+    }
     
-//    //4. 在输出前,联想一下将要输出的outMArr,看是否有导致mv-的情况;
-//    AIKVPointer *absValue_p = [theNet getNetAbsIndex_AbsPointer:outMArr];
-//    AIKVPointer *absNode_p = [theNet getItemAbsNodePointer:absValue_p];
-//    AINetAbsNode *absNode = [SMGUtils searchObjectForPointer:absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
-//
-//
-//
-//    //TMRTODO:判定执行方案可行性
-//    //1). expModelscore>0时,分析具象方向的outLog的可行性,然后再输出;...
-//
-//    NSArray *out_ps = [ThinkingUtils filterOutPointers:outMArr];
-//    //A:根据out_ps联想(分析可行性)
-//    // >assHavResult : 其有没有导致mv-和mv+;
-//    //  > mv-则:联想conPort,思考具象;
-//    //  > mv+则:score+分;
-//    // >assNoResult :
-//
-//
-//
-//
-//
-//
-//    //1. mv-时,根据横向找foOrder来找outLog
-//    //2. 或mv-时,根据纵向找conMvNode来找它的foOrder中的outLog;
-//
-//    //3. 给找到的outLog来评定可行性;
-//    //4. 如果找不到,就把最absNode.foOrder.outArr去tryOut();
-//    //5. 如果找到,且具有非常好的可执行性,
-//
-//    //6. 此方法可能对应1个expModel;并对每个con方向的outLog进行综合评分score,并将最佳的outArr和score传出去;
-//
-//
-//
-//
-//
-//    //5. 取absCmvNode & 并取到mindHappy影响决策cacheModel;
-//    MindHappyType type = MindHappyType_None;
-//    NSInteger urgentTo = 0;
-//    if (ISOK(absNode, AINetAbsNode.class)) {
-//        AIAbsCMVNode *absCmvNode = [SMGUtils searchObjectForPointer:absNode.absCmvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
-//        if (ISOK(absCmvNode, AIAbsCMVNode.class)) {
-//            //6. 检查absCmvNode是否顺心
-//            NSString *algsType = absCmvNode.pointer.algsType;
-//            urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:absCmvNode.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
-//            NSInteger delta = [NUMTOOK([SMGUtils searchObjectForPointer:absCmvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
-//            type = [ThinkingUtils checkMindHappy:algsType delta:delta];
-//        }
-//    }
-//
-//    //7. 消耗energy
-//    [self updateEnergy:-1];
-//
-//    //8. 联想判断具象完成;
-//    if (complete) {
-//        complete(type,urgentTo,outMArr);
-//    }
+    return score;
 }
 
 /**
