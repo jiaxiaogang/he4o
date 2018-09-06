@@ -114,3 +114,14 @@
 
 
 @end
+
+
+//MARK:===============================================================
+//MARK:                     < SMGUtils (Contains) >
+//MARK:===============================================================
+@interface SMGUtils (Contains)
+
++(BOOL) containsSub_ps:(NSArray*)sub_ps parent_ps:(NSArray*)parent_ps;
++(BOOL) containsSub_p:(AIPointer*)sub_p parent_ps:(NSArray*)parent_ps;
+
+@end

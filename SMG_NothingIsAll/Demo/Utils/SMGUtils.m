@@ -564,3 +564,31 @@
 }
 
 @end
+
+//MARK:===============================================================
+//MARK:                     < SMGUtils (Contains) >
+//MARK:===============================================================
+@implementation SMGUtils (Contains)
+
++(BOOL) containsSub_ps:(NSArray*)sub_ps parent_ps:(NSArray*)parent_ps{
+    sub_ps = ARRTOOK(sub_ps);
+    for (AIPointer *sub_p in sub_ps) {
+        if (![self containsSub_p:sub_p parent_ps:parent_ps]) {
+            return false;
+        }
+    }
+    return true;
+}
+
++(BOOL) containsSub_p:(AIPointer*)sub_p parent_ps:(NSArray*)parent_ps{
+    if (ISOK(sub_p, AIPointer.class) && ARRISOK(parent_ps)) {
+        for (AIPointer *parent_p in parent_ps) {
+            if ([sub_p isEqual:parent_p]) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+@end

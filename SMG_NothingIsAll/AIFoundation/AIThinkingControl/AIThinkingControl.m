@@ -658,6 +658,7 @@ static AIThinkingControl *_instance;
             //8. 取宏信息指向的"微信息"数组
             NSArray *microArr_p = ARRTOOK([SMGUtils searchObjectForPointer:absNode.absValue_p fileName:FILENAME_AbsValue]);
             for (AIKVPointer *micro_p in ARRTOOK(microArr_p)) {
+                //SMGUtils containsSub_ps:<#(NSArray *)#> parent_ps:<#(NSArray *)#>
                 //判断microArr是否包含out_ps;
             }
         }
