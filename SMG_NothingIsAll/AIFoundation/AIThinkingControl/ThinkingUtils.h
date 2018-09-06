@@ -71,6 +71,14 @@
 +(void) parserAlgsMVArrWithoutValue:(NSArray*)algsArr success:(void(^)(AIKVPointer *delta_p,AIKVPointer *urgentTo_p,NSString *algsType))success;
 +(void) parserAlgsMVArr:(NSArray*)algsArr success:(void(^)(AIKVPointer *delta_p,AIKVPointer *urgentTo_p,NSInteger delta,NSInteger urgentTo,NSString *algsType))success;
 
+
+/**
+ *  MARK:--------------------获取到cmvNode的评价力--------------------
+ */
++(CGFloat) getScoreForce:(AIPointer*)absCmvNode_p ratio:(CGFloat)ratio;//仅支持absCmv指针的语法糖;
++(CGFloat) getScoreForce:(NSString*)algsType urgentTo_p:(AIPointer*)urgentTo_p delta_p:(AIPointer*)delta_p ratio:(CGFloat)ratio;
+
+
 @end
 
 

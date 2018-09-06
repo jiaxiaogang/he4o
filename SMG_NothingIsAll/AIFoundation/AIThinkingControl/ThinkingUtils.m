@@ -14,6 +14,7 @@
 #import "AIOutputKVPointer.h"
 #import "AICMVNode.h"
 #import "AINetCMV.h"
+#import "AIAbsCMVNode.h"
 
 @implementation ThinkingUtils
 
@@ -189,7 +190,34 @@
     if (success) success(delta_p,urgentTo_p,delta,urgentTo,algsType);
 }
 
++(CGFloat) getScoreForce:(AIPointer*)absCmvNode_p ratio:(CGFloat)ratio{
+    AIAbsCMVNode *absCmvNode = [SMGUtils searchObjectForPointer:absCmvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+    if (ISOK(absCmvNode, AIAbsCMVNode.class)) {
+        return [ThinkingUtils getScoreForce:absCmvNode.pointer.algsType urgentTo_p:absCmvNode.urgentTo_p delta_p:absCmvNode.delta_p ratio:ratio];
+    }
+    return 0;
+}
+
++(CGFloat) getScoreForce:(NSString*)algsType urgentTo_p:(AIPointer*)urgentTo_p delta_p:(AIPointer*)delta_p ratio:(CGFloat)ratio{
+    //1. 检查absCmvNode是否顺心
+    NSInteger urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:urgentTo_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
+    NSInteger delta = [NUMTOOK([SMGUtils searchObjectForPointer:delta_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
+    MindHappyType type = [ThinkingUtils checkMindHappy:algsType delta:delta];
+    
+    //2. 根据检查到的数据取到score;
+    ratio = MIN(1,MAX(ratio,0));
+    if (type == MindHappyType_Yes) {
+        return urgentTo * ratio;
+    }else if(type == MindHappyType_No){
+        return  -urgentTo * ratio;
+    }
+    return 0;
+}
+
+
 @end
+
+
 
 
 //MARK:===============================================================
