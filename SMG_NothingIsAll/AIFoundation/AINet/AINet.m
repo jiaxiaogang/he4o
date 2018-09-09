@@ -7,7 +7,6 @@
 //
 
 #import "AINet.h"
-#import "AINetStore.h"
 #import "AINode.h"
 #import "AIPointer.h"
 #import "NSObject+Extension.h"
@@ -24,12 +23,6 @@
 
 @interface AINet () <AINetCMVDelegate,AINetAbsCMVDelegate>
 
-/**
- *  MARK:--------------------cacheLong--------------------
- *  存AINode(相当于Net的缓存区)(容量10000);
- *  改为内存缓存,存node和指向的data的缓存;关机时清除;
- */
-@property (strong,nonatomic) NSMutableArray *cacheLong;
 @property (strong, nonatomic) AINetIndex *netIndex; //索引区(皮层/海马)
 @property (strong, nonatomic) AINetCMV *netCMV;     //网络树根(杏仁核)
 @property (strong, nonatomic) AINetAbs *netAbs;     //抽具象序列
@@ -61,7 +54,6 @@ static AINet *_instance;
 }
 
 -(void) initData{
-    self.cacheLong = [[NSMutableArray alloc] init];
     self.netIndex = [[AINetIndex alloc] init];
     self.netCMV = [[AINetCMV alloc] init];
     self.netCMV.delegate = self;
@@ -74,150 +66,6 @@ static AINet *_instance;
     self.netAbsCMV.delegate = self;
 }
 
-
-//MARK:===============================================================
-//MARK:                     < insert >
-//MARK:===============================================================
-//MARK:--------------------构建属性--------------------
--(void) insertProperty:(NSString*)propertyName{
-    
-}
-
-//MARK:--------------------构建值--------------------
--(void) insertValue:(id)value{
-    
-}
-
-//MARK:--------------------构建变化--------------------
--(void) insertChange:(id)change{
-    
-}
-
-//MARK:--------------------构建父类--------------------
--(void) insertParent:(NSString*)parentName{
-    
-}
-
-//MARK:--------------------构建子类--------------------
--(void) insertSubX:(id)subX{
-    
-}
-
-//MARK:--------------------构建实例--------------------
--(void) insertInstance:(id)instance{
-    
-}
-
-//MARK:--------------------构建接口--------------------
--(void) insertMethod:(NSString*)method{
-    
-}
-
--(AINode*) insertArr:(NSArray*)data{
-    return nil;
-}
-
--(AINode*) insertLogic:(id)data{
-    //smg对logic的理解取决于:logic什么时候被触发,触发后,其实例执行了什么变化;
-    return nil;
-}
-
--(AINode*) insertCan:(id)data{
-    //smg对can的理解取决于:can什么时候被触发,及触发的目标是;
-    return nil;
-}
-
--(void) insertProperty:(id)data rootPointer:(AIPointer*)rootPointer{
-    
-}
-
--(AINode*) insertModel:(AIModel*)model dataSource:(NSString*)dataSource energy:(NSInteger)energy{
-    AINode *node = [[AINetStore sharedInstance] setObjectModel:model dataSource:dataSource];
-    [self setObject_Caches:node];
-    return node;
-}
-
-
-//MARK:===============================================================
-//MARK:                     < update >
-//MARK:===============================================================
--(void) updateNetModel:(AINode*)model{
-    NSLog(@"更新存储AINode");
-}
-
--(void) updateNode:(AINode*)node abs:(AINode*)abs{
-    [[AINetStore sharedInstance] updateNode:node abs:abs];
-}
-
--(void) updateNode:(AINode *)node propertyNode:(AINode *)propertyNode{
-    [[AINetStore sharedInstance] updateNode:node propertyNode:propertyNode];
-}
-
--(void) updateNode:(AINode *)node changeNode:(AINode *)changeNode{
-    [[AINetStore sharedInstance] updateNode:node changeNode:changeNode];
-}
-
--(void) updateNode:(AINode *)node logicNode:(AINode *)logicNode{
-    [[AINetStore sharedInstance] updateNode:node logicNode:logicNode];
-}
-
-//MARK:===============================================================
-//MARK:                     < search >
-//MARK:===============================================================
--(AINode*) searchObj:(id)data{
-    return nil;
-}
-
--(AINode*) searchArr:(NSArray*)data{
-    return nil;
-}
-
--(AINode*) searchCan:(id)data{
-    //smg对can的理解取决于:can什么时候被触发,及触发的目标是;
-    return nil;
-}
-
--(AINode*) searchNodeForDataModel:(AIModel*)model{
-    return nil;
-}
-
--(AINode*) searchNodeForDataObj:(id)obj{
-    //1. 从cacheLong搜索
-    for (AINode *node in self.cacheLong) {
-        
-    }
-    
-    //2. 从store搜索
-    AINode *node = [[AINetStore sharedInstance] objectNodeForDataObj:obj];
-    [self setObject_Caches:node];
-    return node;
-}
-
--(AINode*) searchNodeForDataType:(NSString*)dataType dataSource:(NSString*)dataSource{
-    //1. 从cacheLong搜索
-    for (AINode *node in self.cacheLong) {
-        
-    }
-    
-    //2. 从store搜索
-    AINode *node = [[AINetStore sharedInstance] objectNodeForDataType:dataType dataSource:dataSource];
-    [self setObject_Caches:node];
-    return node;
-}
-
-
-//MARK:===============================================================
-//MARK:                     < method >
-//MARK:===============================================================
--(void) setObject_Caches:(AINode*)node {
-    //cacheLong
-    if (ISOK(node, AINode.class)) {
-        [self.cacheLong addObject:node];
-        if (self.cacheLong.count > 10000) {
-            [self.cacheLong subarrayWithRange:NSMakeRange(self.cacheLong.count - 10000, 10000)];
-        }
-    }
-}
 
 //MARK:===============================================================
 //MARK:                     < index >

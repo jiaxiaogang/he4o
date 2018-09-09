@@ -172,19 +172,6 @@ typedef NS_ENUM(NSInteger, AIDataType) {
     AIDataType_Mp4      = 6,
 };
 
-/**
- *  MARK:--------------------AILineType--------------------
- */
-typedef NS_ENUM(NSInteger, AILineType) {
-    ALT_Property    = 0,//包含关系 (RName)
-    ALT_ValueIs     = 1,//值关系
-    ALT_IsA         = 2,//继承关系
-    ALT_MBy         = 3,//被调用关系
-    ALT_MCan        = 4,//实现关系
-    ALT_MTarget     = 5,//逻辑(指向)关系
-    ALT_MResult     = 6,//逻辑(触发)关系
-    ALT_Instance    = 7,//实例关系
-};
 
 /**
  *  MARK:--------------------MV目标类型--------------------

@@ -8,7 +8,6 @@
 
 #import "AIReactorControl.h"
 #import "AIActionControl.h"
-#import "AIModel.h"
 #import "AIImvAlgs.h"
 
 @implementation AIReactorControl

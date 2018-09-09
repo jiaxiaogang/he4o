@@ -30,14 +30,12 @@
 		08AF45551E97D0B500377887 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45541E97D0B500377887 /* Assets.xcassets */; };
 		08AF45581E97D0B500377887 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45561E97D0B500377887 /* LaunchScreen.storyboard */; };
 		08B31E7E20648C3700FD96EA /* ThinkingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B31E7D20648C3700FD96EA /* ThinkingUtils.m */; };
-		08BB271A1FD624CC006E03DE /* AIModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08BB27191FD624CC006E03DE /* AIModel.m */; };
 		08C84A8E1E9A866200897D8B /* AIInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A8D1E9A866200897D8B /* AIInput.m */; };
 		08D322A91EBA28B0009D734A /* Foundation+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D322A81EBA28B0009D734A /* Foundation+Log.m */; };
 		08D471DE1FEB3FFF00C61322 /* AIImvAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D471DD1FEB3FFF00C61322 /* AIImvAlgs.m */; };
 		08DACE951EBD805C00FDC0B6 /* NSString+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 08DACE941EBD805C00FDC0B6 /* NSString+Extension.m */; };
 		08DB40CB1F11A65E003162C8 /* TestHungryPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 08DB40C91F11A65E003162C8 /* TestHungryPage.m */; };
 		08DB40CC1F11A65E003162C8 /* TestHungryPage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 08DB40CA1F11A65E003162C8 /* TestHungryPage.xib */; };
-		08DF0DC51F7F183B00B14D17 /* AINetStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08DF0DC41F7F183B00B14D17 /* AINetStore.m */; };
 		08EA48BF2029242B0038B982 /* ImvAlgsHungerModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08EA48BE2029242B0038B982 /* ImvAlgsHungerModel.m */; };
 		08EA48C7202929A40038B982 /* ImvAlgsModelBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 08EA48C6202929A40038B982 /* ImvAlgsModelBase.m */; };
 		08EA48CE202932B80038B982 /* CustomAlgsChargeModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08EA48CD202932B80038B982 /* CustomAlgsChargeModel.m */; };
@@ -121,8 +119,6 @@
 		08AF45591E97D0B500377887 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		08B31E7C20648C3700FD96EA /* ThinkingUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThinkingUtils.h; sourceTree = "<group>"; };
 		08B31E7D20648C3700FD96EA /* ThinkingUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ThinkingUtils.m; sourceTree = "<group>"; };
-		08BB27181FD624CC006E03DE /* AIModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIModel.h; sourceTree = "<group>"; };
-		08BB27191FD624CC006E03DE /* AIModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIModel.m; sourceTree = "<group>"; };
 		08C84A8C1E9A866200897D8B /* AIInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIInput.h; sourceTree = "<group>"; };
 		08C84A8D1E9A866200897D8B /* AIInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIInput.m; sourceTree = "<group>"; };
 		08D322A71EBA2783009D734A /* SMGPrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMGPrefixHeader.pch; sourceTree = "<group>"; };
@@ -135,8 +131,6 @@
 		08DB40C81F11A65E003162C8 /* TestHungryPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestHungryPage.h; sourceTree = "<group>"; };
 		08DB40C91F11A65E003162C8 /* TestHungryPage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestHungryPage.m; sourceTree = "<group>"; };
 		08DB40CA1F11A65E003162C8 /* TestHungryPage.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TestHungryPage.xib; sourceTree = "<group>"; };
-		08DF0DC31F7F183B00B14D17 /* AINetStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AINetStore.h; sourceTree = "<group>"; };
-		08DF0DC41F7F183B00B14D17 /* AINetStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AINetStore.m; sourceTree = "<group>"; };
 		08EA48BD2029242B0038B982 /* ImvAlgsHungerModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImvAlgsHungerModel.h; sourceTree = "<group>"; };
 		08EA48BE2029242B0038B982 /* ImvAlgsHungerModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImvAlgsHungerModel.m; sourceTree = "<group>"; };
 		08EA48C5202929A40038B982 /* ImvAlgsModelBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImvAlgsModelBase.h; sourceTree = "<group>"; };
@@ -221,15 +215,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0807287E1FEF42640001136A /* AIModel */ = {
-			isa = PBXGroup;
-			children = (
-				08BB27181FD624CC006E03DE /* AIModel.h */,
-				08BB27191FD624CC006E03DE /* AIModel.m */,
-			);
-			path = AIModel;
-			sourceTree = "<group>";
-		};
 		081816291F22BDEC007DDB4D /* AIThread */ = {
 			isa = PBXGroup;
 			children = (
@@ -317,8 +302,6 @@
 				8887E62520ABB02600F3D5E1 /* AINetAbs */,
 				88C258BE209E99110042CB6A /* AINetCMV */,
 				88988521208979AF001D1ADC /* AINetIndex */,
-				0807287E1FEF42640001136A /* AIModel */,
-				08DF0DC21F7F182B00B14D17 /* AIStore */,
 				08F737FB1F7C714F005EAD56 /* AIPointer */,
 				08F737EE1F7C7131005EAD56 /* AINode */,
 				083F61361F048329000330E1 /* AILine.h */,
@@ -479,15 +462,6 @@
 				88A43F3521094BF900281348 /* SMGConfig.h */,
 			);
 			path = AIFoundation;
-			sourceTree = "<group>";
-		};
-		08DF0DC21F7F182B00B14D17 /* AIStore */ = {
-			isa = PBXGroup;
-			children = (
-				08DF0DC31F7F183B00B14D17 /* AINetStore.h */,
-				08DF0DC41F7F183B00B14D17 /* AINetStore.m */,
-			);
-			path = AIStore;
 			sourceTree = "<group>";
 		};
 		08EA48C4202929860038B982 /* ImvAlgsModel */ = {
@@ -796,9 +770,7 @@
 				88A43F3D2109576D00281348 /* AIFrontOrderNode.m in Sources */,
 				88E1F84E211591D80036B616 /* MVCacheManager.m in Sources */,
 				88C258C1209E99B00042CB6A /* AINetCMV.m in Sources */,
-				08BB271A1FD624CC006E03DE /* AIModel.m in Sources */,
 				08EA48D1202932E70038B982 /* AICustomAlgs.m in Sources */,
-				08DF0DC51F7F183B00B14D17 /* AINetStore.m in Sources */,
 				08F737FA1F7C7131005EAD56 /* AINode.m in Sources */,
 				88A43F3A2109571300281348 /* AIAbsCMVNode.m in Sources */,
 				08D322A91EBA28B0009D734A /* Foundation+Log.m in Sources */,
