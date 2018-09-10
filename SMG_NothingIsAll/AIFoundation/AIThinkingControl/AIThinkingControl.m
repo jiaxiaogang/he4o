@@ -375,51 +375,6 @@ static AIThinkingControl *_instance;
 //MARK:                     < dataOut (回归具象之旅) >
 //MARK:===============================================================
 
-/**
- *  MARK:--------------------尝试输出信息--------------------
- *  三种输出方式:
- *  1. 反射输出 : reflexOut
- *  2. 激活输出 : absNode信息无conPorts方向的outPointer信息时,将absNode的宏信息尝试输出;
- *  3. 经验输出 : expOut指在absNode或conPort方向有outPointer信息;
- */
--(void) dataOut_TryOut:(ExpCacheModel*)expModel outArr:(NSArray*)outArr{
-    //1. 尝试输出找到解决问题的实际操作 (取到当前cacheModel中的最佳决策,并进行输出;)
-    BOOL tryOutSuccess = false;
-    if (expModel && ARRISOK(outArr)) {
-        for (AIKVPointer *micro_p in outArr) {
-            //xxxxxxxx联想以往解决时,都发生了什么,尝试复现;
-            
-            //>1 检查micro_p是否是"输出";
-            
-            //>2 假如order_p足够确切,尝试检查并输出;
-            BOOL invoked = [OutputUtils checkAndInvoke:micro_p];
-            if (invoked) {
-                tryOutSuccess = true;
-            }
-        }
-    }
-    
-    //2. 无法解决时,反射一些情绪变化,并增加额外输出;
-    if (!tryOutSuccess) {
-        //>1 产生"心急mv";(心急产生只是"urgent.energy x 2")
-        //>2 输出反射表情;
-        //>3 记录log到foOrders;(记录log应该到output中执行)
-        
-        //1. 如果未找到复现方式,或解决方式,则产生情绪:急
-        //2. 通过急,输出output表情哭
-        NSLog(@"反射输出 >>");
-        [self dataOut_Reflex:AIMoodType_Anxious];
-    }
-}
-
-
-/**
- *  MARK:--------------------反射输出--------------------
- */
--(void) dataOut_Reflex:(AIMoodType)moodType{
-    [Output output_Face:moodType];
-}
-
 
 /**
  *  MARK:--------------------dataLoop联想(每次循环的检查执行点)--------------------
@@ -483,37 +438,37 @@ static AIThinkingControl *_instance;
                 ExpCacheModel *expModel = [ExpCacheModel newWithExp_p:referenceMvPort.target_p];
                 [mvCacheModel.expCache addObject:expModel];
                 
-                //8. 联想具象数据,并取到决策关键信息;(可行性判定)
+                //9. 联想具象数据,并取到决策关键信息;(可行性判定)
                 AIFrontOrderNode *expOutFoNode = [self dataOut_AssociativeConcreteData_ExpOut:expMvNode except_ps:expModel.exceptExpOut_ps];
                 
-                //9. 没有执行方案,则对抽象宏节点进行尝试输出;
-                if (expOutFoNode == nil) {
-                    AINetAbsNode *tryOutAbsNode = [self dataOut_AssociativeConcreteData_TryOut:expMvNode exceptTryOut_ps:expModel.exceptTryOut_ps];
-                    if (tryOutAbsNode == nil) {
-                        
+                //10. 有执行方案,则对执行方案进行反思检查;
+                if (expOutFoNode != nil) {
+                    CGFloat expOutScore = [self dataOut_CheckScore_ExpOut:expOutFoNode];
+                    if (expOutScore > 10) {
+                        NSLog(@" >> 执行经验输出");
+                        //[self dataOut_TryOut:expModel outArr:nil];
                     }else{
-                        CGFloat score = [self dataOut_CheckScore_TryOut:tryOutAbsNode];
+                        NSLog(@" >> 本次经验输出不过关,toLoop...");
+                        [self dataOut_AssociativeExperience];
+                    }
+                }else{
+                    //11. 没有执行方案,转向对抽象宏节点进行尝试输出;
+                    AINetAbsNode *tryOutAbsNode = [self dataOut_AssociativeConcreteData_TryOut:expMvNode exceptTryOut_ps:expModel.exceptTryOut_ps];
+                    if (tryOutAbsNode != nil) {
+                        CGFloat tryOutScore = [self dataOut_CheckScore_TryOut:tryOutAbsNode];
+                        if (tryOutScore > 10) {
+                            NSLog(@" >> 执行尝试输出");
+                            //[self dataOut_TryOut:expModel outArr:nil];
+                        }else{
+                            NSLog(@" >> 本次尝试输出不过关,toLoop...");
+                            //递归到最初;(中止,并进入下一决策)
+                            [self dataOut_AssociativeExperience];
+                        }
+                    }else{
+                        //12. 没有可尝试输出的节点,转向反射输出;
+                        [self dataOut_Reflex:AIMoodType_Anxious];
                     }
                 }
-                //10. 有执行方案,则对执行方案进行反思检查;
-                else{
-                    [self dataOut_CheckScore_ExpOut:expOutFoNode];
-                }
-                BOOL foCanDo = [self dataOut_CheckScore_ExpOut:expOutFoNode];
-                
-                if (foCanDo) {
-                    //尝试执行;
-                }else{
-                    
-                    //递归到最初;(中止,并进入下一决策)
-                    [self dataOut_AssociativeExperience];
-                    
-                    //如果最终全都不行,则反射输出;
-                    
-                    
-                }
-                
-                    
             }else{
                 //9. 无解决经验,反射输出;//V2TODO:此处不应放弃联想,应该先看下当前有哪些信息,是可以联想分析出解决方案的; (跳出递归)
                 [self dataOut_Reflex:AIMoodType_Anxious];
@@ -524,7 +479,7 @@ static AIThinkingControl *_instance;
         [self updateEnergy:-1];
     }else{
         //11. 如果energy<=0,尝试输出"可行性之首" 并 找到实际操作 (跳出递归)
-        [self dataOut_TryOut:expModel outArr:nil];//TODO:输出信息...
+        //[self dataOut_TryOut:expModel outArr:nil];
     }
 }
 
@@ -681,5 +636,50 @@ static AIThinkingControl *_instance;
     return score;
 }
 
+
+/**
+ *  MARK:--------------------尝试输出信息--------------------
+ *  三种输出方式:
+ *  1. 反射输出 : reflexOut
+ *  2. 激活输出 : absNode信息无conPorts方向的outPointer信息时,将absNode的宏信息尝试输出;
+ *  3. 经验输出 : expOut指在absNode或conPort方向有outPointer信息;
+ */
+-(void) dataOut_TryOut:(ExpCacheModel*)expModel outArr:(NSArray*)outArr{
+    //1. 尝试输出找到解决问题的实际操作 (取到当前cacheModel中的最佳决策,并进行输出;)
+    BOOL tryOutSuccess = false;
+    if (expModel && ARRISOK(outArr)) {
+        for (AIKVPointer *micro_p in outArr) {
+            //xxxxxxxx联想以往解决时,都发生了什么,尝试复现;
+            
+            //>1 检查micro_p是否是"输出";
+            
+            //>2 假如order_p足够确切,尝试检查并输出;
+            BOOL invoked = [OutputUtils checkAndInvoke:micro_p];
+            if (invoked) {
+                tryOutSuccess = true;
+            }
+        }
+    }
+    
+    //2. 无法解决时,反射一些情绪变化,并增加额外输出;
+    if (!tryOutSuccess) {
+        //>1 产生"心急mv";(心急产生只是"urgent.energy x 2")
+        //>2 输出反射表情;
+        //>3 记录log到foOrders;(记录log应该到output中执行)
+        
+        //1. 如果未找到复现方式,或解决方式,则产生情绪:急
+        //2. 通过急,输出output表情哭
+        NSLog(@"反射输出 >>");
+        [self dataOut_Reflex:AIMoodType_Anxious];
+    }
+}
+
+
+/**
+ *  MARK:--------------------反射输出--------------------
+ */
+-(void) dataOut_Reflex:(AIMoodType)moodType{
+    [Output output_Face:moodType];
+}
 
 @end
