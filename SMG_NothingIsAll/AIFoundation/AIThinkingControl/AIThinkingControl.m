@@ -438,7 +438,8 @@ static AIThinkingControl *_instance;
                 if (canOut) {
                     [self dataOut_TryOut:expModel outArr:out_ps];
                 }else{
-                    [self dataOut_AssociativeExperience];//递归到最初;
+                    [mvCacheModel.exceptExpModels addObject:expModel];  //排除无效的expModel;
+                    [self dataOut_AssociativeExperience];               //并递归到最初;
                 }
             }];
         }else{
