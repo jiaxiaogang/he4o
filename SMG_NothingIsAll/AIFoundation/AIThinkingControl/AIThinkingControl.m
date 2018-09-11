@@ -398,7 +398,7 @@ static AIThinkingControl *_instance;
     if (self.energy > 0) {
         
         //3. 从expCache中,排序并取到首个值得思考的expModel;
-        ExpCacheModel *expModel = [mvCacheModel getCurrentExpCacheModel];
+        __block ExpCacheModel *expModel = [mvCacheModel getCurrentExpCacheModel];
         
         //4. 如果,没有一个想可行的,则再联想一个新的相关"解决经验";并重新循环下去;
         if (!expModel) {
@@ -425,8 +425,8 @@ static AIThinkingControl *_instance;
                 //6. 加入待判断区;
                 AIPort *referenceMvPort = ARR_INDEX(mvRefs, 0);
                 if (referenceMvPort) {
-                    ExpCacheModel *expModel = [ExpCacheModel newWithExp_p:referenceMvPort.target_p];
-                    [mvCacheModel.expCache addObject:expModel];
+                    expModel = [ExpCacheModel newWithExp_p:referenceMvPort.target_p];
+                    [mvCacheModel addToExpCache:expModel];
                 }
             }];
         }

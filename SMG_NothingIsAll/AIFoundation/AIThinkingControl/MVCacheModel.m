@@ -63,5 +63,10 @@
     return nil;
 }
 
+-(void) addToExpCache:(ExpCacheModel*)expModel{
+    if (expModel) {
+        [self.expCache insertObject:expModel atIndex:0];
+    }
+}
 
 @end

@@ -50,4 +50,9 @@
 -(ExpCacheModel*) getCurrentExpCacheModel;
 
 
+/**
+ *  MARK:--------------------新增expModel--------------------
+ */
+-(void) addToExpCache:(ExpCacheModel*)expModel;
+
 @end

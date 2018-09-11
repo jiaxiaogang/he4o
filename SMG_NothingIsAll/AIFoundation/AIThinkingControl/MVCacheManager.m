@@ -48,21 +48,28 @@
  */
 -(void) addToCMVCache:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta order:(NSInteger)order{
     //1. 同类同向较弱的被撤消
+    BOOL needAdd = true;
     for (NSInteger i = 0; i < self.loopCache.count; i++) {
         MVCacheModel *checkItem = self.loopCache[i];
-        if ([STRTOOK(algsType) isEqualToString:checkItem.algsType] && labs(delta) > labs(checkItem.delta) && (delta > 0 == checkItem.delta > 0)) {
-            [self.loopCache removeObjectAtIndex:i];
+        if ([STRTOOK(algsType) isEqualToString:checkItem.algsType] && (delta > 0 == checkItem.delta > 0)) {
+            if (labs(delta) > labs(checkItem.delta)) {
+                [self.loopCache removeObjectAtIndex:i];
+            }else{
+                needAdd = false;
+            }
             break;
         }
     }
     
     //2. 加入新的;
-    MVCacheModel *newItem = [[MVCacheModel alloc] init];
-    newItem.algsType = algsType;
-    newItem.delta = delta;
-    newItem.urgentTo = urgentTo;
-    newItem.order = order;
-    [self.loopCache addObject:newItem];
+    if (needAdd) {
+        MVCacheModel *newItem = [[MVCacheModel alloc] init];
+        newItem.algsType = algsType;
+        newItem.delta = delta;
+        newItem.urgentTo = urgentTo;
+        newItem.order = order;
+        [self.loopCache addObject:newItem];
+    }
 }
 
 /**
