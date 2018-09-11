@@ -19,7 +19,8 @@
 @property (assign, nonatomic) NSInteger urgentTo;
 @property (assign, nonatomic) NSInteger delta;
 @property (strong, nonatomic) NSString *algsType;
-@property (strong, nonatomic) NSMutableArray *expCache;
+@property (strong, nonatomic) NSMutableArray *expCache;         //缓存的几种expModel;(order从大到小排序)
+@property (strong, nonatomic) NSMutableArray *exceptExpModels;  //已排除的expModels;
 
 
 /**

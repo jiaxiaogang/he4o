@@ -394,92 +394,104 @@ static AIThinkingControl *_instance;
         return;
     }
     
-    //2. 从expCache中,排序并取到首个值得思考的expModel;
-    ExpCacheModel *expModel = [mvCacheModel getCurrentExpCacheModel];
-    
-    //3. energy判断;
+    //2. energy判断;
     if (self.energy > 0) {
         
-        //4. 如果expModel可行性善可,则执行; (将执行方案部分放到assConData()中了...)
-        if (expModel && expModel.score > 0) {
-            [self dataOut_TryOut:expModel outArr:nil];//TODO:输出信息...
-            return;
+        //3. 从expCache中,排序并取到首个值得思考的expModel;
+        ExpCacheModel *expModel = [mvCacheModel getCurrentExpCacheModel];
+        
+        //4. 如果,没有一个想可行的,则再联想一个新的相关"解决经验";并重新循环下去;
+        if (!expModel) {
+            [ThinkingUtils getDemand:mvCacheModel.algsType delta:mvCacheModel.delta complete:^(BOOL upDemand, BOOL downDemand) {
+                MVDirection direction = downDemand ? MVDirection_Negative : MVDirection_Positive;
+                
+                //5. filter筛选器取曾经历的除已有expModels之外的最强解决;
+                NSArray *mvRefs = [theNet getNetNodePointersFromDirectionReference:mvCacheModel.algsType direction:direction filter:^NSArray *(NSArray *protoArr) {
+                    for (AIPort *port in ARRTOOK(protoArr)) {
+                        BOOL cacheContains = false;
+                        for (ExpCacheModel *expCacheItem in mvCacheModel.expCache) {
+                            if (port.target_p && [port.target_p isEqual:expCacheItem.exp_p]) {
+                                cacheContains = true;
+                                break;
+                            }
+                        }
+                        if (!cacheContains) {
+                            return @[port];
+                        }
+                    }
+                    return nil;
+                }];
+                
+                //6. 加入待判断区;
+                AIPort *referenceMvPort = ARR_INDEX(mvRefs, 0);
+                if (referenceMvPort) {
+                    ExpCacheModel *expModel = [ExpCacheModel newWithExp_p:referenceMvPort.target_p];
+                    [mvCacheModel.expCache addObject:expModel];
+                }
+            }];
         }
         
-        //5. 如果,没有一个想可行的,则再联想一个新的相关"解决经验";并重新循环下去;
-        [ThinkingUtils getDemand:mvCacheModel.algsType delta:mvCacheModel.delta complete:^(BOOL upDemand, BOOL downDemand) {
-            MVDirection direction = downDemand ? MVDirection_Negative : MVDirection_Positive;
-            
-            //6. filter筛选器取曾经历的除已有expModels之外的最强解决;
-            NSArray *mvRefs = [theNet getNetNodePointersFromDirectionReference:mvCacheModel.algsType direction:direction filter:^NSArray *(NSArray *protoArr) {
-                for (AIPort *port in ARRTOOK(protoArr)) {
-                    BOOL cacheContains = false;
-                    for (ExpCacheModel *expCacheItem in mvCacheModel.expCache) {
-                        if (port.target_p && [port.target_p isEqual:expCacheItem.exp_p]) {
-                            cacheContains = true;
-                            break;
-                        }
-                    }
-                    if (!cacheContains) {
-                        return @[port];
-                    }
-                }
-                return nil;
-            }];
-            AIPort *referenceMvPort = ARR_INDEX(mvRefs, 0);
-            if (referenceMvPort) {
-                //7. 取"解决经验"对应的cmvNode;
-                NSObject *expMvNode = [SMGUtils searchObjectForPointer:referenceMvPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
-                if (expMvNode == nil) {
-                    return;
-                }
-                
-                //8. 加入待判断区;
-                ExpCacheModel *expModel = [ExpCacheModel newWithExp_p:referenceMvPort.target_p];
-                [mvCacheModel.expCache addObject:expModel];
-                
-                //9. 联想具象数据,并取到决策关键信息;(可行性判定)
-                AIFrontOrderNode *expOutFoNode = [self dataOut_AssociativeConcreteData_ExpOut:expMvNode except_ps:expModel.exceptExpOut_ps];
-                
-                //10. 有执行方案,则对执行方案进行反思检查;
-                if (expOutFoNode != nil) {
-                    CGFloat expOutScore = [self dataOut_CheckScore_ExpOut:expOutFoNode];
-                    if (expOutScore > 10) {
-                        NSLog(@" >> 执行经验输出");
-                        //[self dataOut_TryOut:expModel outArr:nil];
-                    }else{
-                        NSLog(@" >> 本次经验输出不过关,toLoop...");
-                        [self dataOut_AssociativeExperience];
-                    }
+        //7. 有可具象思考的expModel则执行;
+        if (expModel) {
+            [self updateEnergy:-1]; //思考与决策消耗能量;
+            [self dataOut_AssociativeConcreteData:expModel complete:^(BOOL canOut, NSArray *out_ps) {
+                if (canOut) {
+                    [self dataOut_TryOut:expModel outArr:out_ps];
                 }else{
-                    //11. 没有执行方案,转向对抽象宏节点进行尝试输出;
-                    AINetAbsNode *tryOutAbsNode = [self dataOut_AssociativeConcreteData_TryOut:expMvNode exceptTryOut_ps:expModel.exceptTryOut_ps];
-                    if (tryOutAbsNode != nil) {
-                        CGFloat tryOutScore = [self dataOut_CheckScore_TryOut:tryOutAbsNode];
-                        if (tryOutScore > 10) {
-                            NSLog(@" >> 执行尝试输出");
-                            //[self dataOut_TryOut:expModel outArr:nil];
-                        }else{
-                            NSLog(@" >> 本次尝试输出不过关,toLoop...");
-                            //递归到最初;(中止,并进入下一决策)
-                            [self dataOut_AssociativeExperience];
-                        }
-                    }else{
-                        //12. 没有可尝试输出的节点,转向反射输出;
-                        [self dataOut_Reflex:AIMoodType_Anxious];
-                    }
+                    [self dataOut_AssociativeExperience];//递归到最初;
                 }
-            }else{
-                //9. 无解决经验,反射输出;//V2TODO:此处不应放弃联想,应该先看下当前有哪些信息,是可以联想分析出解决方案的; (跳出递归)
-                [self dataOut_Reflex:AIMoodType_Anxious];
-            }
-        }];
-        
-        //10. 思考与决策消耗能量;
-        [self updateEnergy:-1];
+            }];
+        }else{
+            //8. 无解决经验,反射输出;//V2TODO:此处不应放弃联想,应该先看下当前有哪些信息,是可以联想分析出解决方案的; (跳出递归)
+            [self dataOut_Reflex:AIMoodType_Anxious];
+        }
     }else{
-        //11. 如果energy<=0,尝试输出"可行性之首" 并 找到实际操作 (跳出递归)
-        //[self dataOut_TryOut:expModel outArr:nil];
+        //9. 如果energy<=0,(未找到可行性,直接反射输出 || 尝试输出"可行性之首"并找到实际操作)
+        [self dataOut_Reflex:AIMoodType_Anxious];
+    }
+}
+
+
+/**
+ *  MARK:--------------------联想具象 (从上往下找foNode)--------------------
+ *  @param expModel : 从expModel下查找具象可输出;
+ */
+-(void) dataOut_AssociativeConcreteData:(ExpCacheModel*)expModel complete:(void(^)(BOOL canOut,NSArray *out_ps))complete{
+    __block BOOL invokedComplete = false;
+    if (expModel) {
+        //1. 联想"解决经验"对应的cmvNode & 联想具象数据,并取到决策关键信息;(可行性判定)
+        NSObject *expMvNode = [SMGUtils searchObjectForPointer:expModel.exp_p fileName:FILENAME_Node time:cRedisNodeTime];
+        AIFrontOrderNode *expOutFoNode = [self dataOut_AssociativeConcreteData_ExpOut:expMvNode except_ps:expModel.exceptExpOut_ps];
+        
+        //2. 有执行方案,则对执行方案进行反思检查;
+        if (expOutFoNode != nil) {
+            [self dataOut_CheckScore_ExpOut:expOutFoNode complete:^(CGFloat score, NSArray *out_ps) {
+                expModel.order += score;//联想对当前expModel的order影响;
+                if (score > 10) {
+                    NSLog(@" >> 执行经验输出");
+                    complete(true,out_ps);
+                    invokedComplete = true;
+                }
+            }];
+        }else{
+            //4. 没有执行方案,转向对抽象宏节点进行尝试输出;
+            AINetAbsNode *tryOutAbsNode = [self dataOut_AssociativeConcreteData_TryOut:expMvNode exceptTryOut_ps:expModel.exceptTryOut_ps];
+            if (tryOutAbsNode != nil) {
+                [self dataOut_CheckScore_TryOut:tryOutAbsNode complete:^(CGFloat score, NSArray *out_ps) {
+                    expModel.order += score;//联想对当前expModel的order影响;
+                    if (score > 10) {
+                        NSLog(@" >> 执行尝试输出");
+                        complete(true,out_ps);
+                        invokedComplete = true;
+                    }
+                }];
+            }
+        }
+    }
+    
+    if (!invokedComplete) {
+        NSLog(@" >> 本次输出不过关,toLoop...");
+        complete(false,nil);
     }
 }
 
@@ -574,9 +586,9 @@ static AIThinkingControl *_instance;
  *  >assNoResult :
  *
  */
--(CGFloat) dataOut_CheckScore_ExpOut:(AIFrontOrderNode*)foNode{
+-(void) dataOut_CheckScore_ExpOut:(AIFrontOrderNode*)foNode complete:(void(^)(CGFloat score,NSArray *out_ps))complete{
     if (!foNode) {
-        return 0;
+        complete(0,nil);
     }
     CGFloat score = 0;
     
@@ -611,16 +623,16 @@ static AIThinkingControl *_instance;
         }
     }
     
-    return score;
+    complete(score,out_ps);
 }
 
 /**
  *  MARK:--------------------可行性判定 (尝试激活执行方案)--------------------
  */
--(CGFloat) dataOut_CheckScore_TryOut:(AINetAbsNode*)absNode{
+-(void) dataOut_CheckScore_TryOut:(AINetAbsNode*)absNode complete:(void(^)(CGFloat score,NSArray *out_ps))complete{
     CGFloat score = 0;
     if (!absNode) {
-        return score;
+        complete(0,nil);
     }
     //1. 取宏信息指向的"微信息"数组
     NSArray *microArr_p = ARRTOOK([SMGUtils searchObjectForPointer:absNode.absValue_p fileName:FILENAME_AbsValue]);
@@ -633,7 +645,7 @@ static AIThinkingControl *_instance;
     //3. 处理assAbsNode评价影响力;(系数0.8)
     CGFloat scoreForce = [ThinkingUtils getScoreForce:assAbsNode.absCmvNode_p ratio:0.8f];
     score += scoreForce;
-    return score;
+    complete(score,microArr_p);
 }
 
 

@@ -7,6 +7,7 @@
 //
 
 #import "ExpCacheModel.h"
+#import "AIPointer.h"
 
 @implementation ExpCacheModel
 
@@ -34,6 +35,13 @@
         _exceptTryOut_ps = [[NSMutableArray alloc] init];
     }
     return _exceptTryOut_ps;
+}
+
+-(BOOL) isEqual:(ExpCacheModel*)object{
+    if (object) {
+        return [self.exp_p isEqual:object.exp_p];
+    }
+    return false;
 }
 
 @end

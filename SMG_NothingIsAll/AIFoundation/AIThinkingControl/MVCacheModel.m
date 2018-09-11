@@ -23,6 +23,12 @@
     return _expCache;
 }
 
+-(NSMutableArray*) exceptExpModels{
+    if (_exceptExpModels == nil) {
+        _exceptExpModels = [[NSMutableArray alloc] init];
+    }
+    return _exceptExpModels;
+}
 
 /**
  *  MARK:--------------------重排序cmvCache--------------------
@@ -32,15 +38,27 @@
     [self.expCache sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
         ExpCacheModel *itemA = (ExpCacheModel*)obj1;
         ExpCacheModel *itemB = (ExpCacheModel*)obj2;
-        return [SMGUtils compareFloatA:itemA.score floatB:itemB.score];
+        return [SMGUtils compareFloatA:itemB.order floatB:itemA.order];
     }];
+    NSLog(@"!!!测试下expCache是否是以order从大到小排序的...");
 }
 
 -(ExpCacheModel*) getCurrentExpCacheModel{
     if (ARRISOK(self.expCache)) {
         //1. 重排序 & 取当前序列最前;
         [self refreshExpCacheSort];
-        return self.expCache.lastObject;
+        for (ExpCacheModel *cacheModel in self.expCache) {
+            BOOL contains = false;
+            for (ExpCacheModel *exceptModel in self.exceptExpModels) {
+                if ([cacheModel isEqual:exceptModel]) {
+                    contains = true;
+                    break;
+                }
+            }
+            if (!contains) {
+                return cacheModel;
+            }
+        }
     }
     return nil;
 }

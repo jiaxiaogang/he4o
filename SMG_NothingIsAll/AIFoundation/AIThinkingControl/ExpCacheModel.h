@@ -26,10 +26,12 @@
 /**
  *  MARK:--------------------执行性初始分--------------------
  *  因mindHappy和urgentTo算出的可行性;
- *  //V2TODO:后续增加主观意志,对score的影响;从而使expCacheModel的思考更加灵活;
+ *  //V2TODO:后续增加主观意志,对order的影响;从而使expCacheModel的思考更加灵活;
  */
-@property (assign, nonatomic) CGFloat score;
+@property (assign, nonatomic) CGFloat order;
 @property (nonnull, strong, nonatomic) NSMutableArray *exceptExpOut_ps;
 @property (nonnull, strong, nonatomic) NSMutableArray *exceptTryOut_ps;
+
+-(BOOL) isEqual:(ExpCacheModel*)object;
 
 @end
