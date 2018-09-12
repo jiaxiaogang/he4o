@@ -436,11 +436,13 @@ static AIThinkingControl *_instance;
         //7. 有可具象思考的expModel则执行;
         if (expModel) {
             [self updateEnergy:-1]; //思考与决策消耗能量;
-            [self dataOut_AssociativeConcreteData:expModel complete:^(BOOL canOut, NSArray *out_ps) {
+            [self dataOut_AssociativeConcreteData:expModel complete:^(BOOL canOut, NSArray *out_ps,BOOL expModelInvalid) {
                 if (canOut) {
                     [self dataOut_TryOut:expModel outArr:out_ps];
                 }else{
-                    [mvCacheModel.exceptExpModels addObject:expModel];  //排除无效的expModel;
+                    if (expModelInvalid) {
+                        [mvCacheModel.exceptExpModels addObject:expModel];  //排除无效的expModel;(一次无效,不表示永远无效,所以彻底无效时,再排除)
+                    }
                     [self dataOut_AssociativeExperience];               //并递归到最初;
                 }
             }];
@@ -459,8 +461,9 @@ static AIThinkingControl *_instance;
  *  MARK:--------------------联想具象 (从上往下找foNode)--------------------
  *  @param expModel : 从expModel下查找具象可输出;
  */
--(void) dataOut_AssociativeConcreteData:(ExpCacheModel*)expModel complete:(void(^)(BOOL canOut,NSArray *out_ps))complete{
+-(void) dataOut_AssociativeConcreteData:(ExpCacheModel*)expModel complete:(void(^)(BOOL canOut,NSArray *out_ps,BOOL expModelInvalid))complete{
     __block BOOL invokedComplete = false;
+    __block BOOL expModelInvalid = false;
     if (expModel) {
         //1. 联想"解决经验"对应的cmvNode & 联想具象数据,并取到决策关键信息;(可行性判定)
         NSObject *expMvNode = [SMGUtils searchObjectForPointer:expModel.exp_p fileName:FILENAME_Node time:cRedisNodeTime];
@@ -472,7 +475,7 @@ static AIThinkingControl *_instance;
                 expModel.order += score;//联想对当前expModel的order影响;
                 if (score >= 3) {
                     NSLog(@" >> 执行经验输出");
-                    complete(true,out_ps);
+                    complete(true,out_ps,expModelInvalid);
                     invokedComplete = true;
                 }
             }];
@@ -484,17 +487,20 @@ static AIThinkingControl *_instance;
                     expModel.order += score;//联想对当前expModel的order影响;
                     if (score > 10) {
                         NSLog(@" >> 执行尝试输出");
-                        complete(true,out_ps);
+                        complete(true,out_ps,expModelInvalid);
                         invokedComplete = true;
                     }
                 }];
+            }else{
+                //5. 本expModel彻底无效,
+                expModelInvalid = true;
             }
         }
     }
     
     if (!invokedComplete) {
         NSLog(@" >> 本次输出不过关,toLoop...");
-        complete(false,nil);
+        complete(false,nil,expModelInvalid);
     }
 }
 
