@@ -407,7 +407,9 @@ static AIThinkingControl *_instance;
                 
                 //5. filter筛选器取曾经历的除已有expModels之外的最强解决;
                 NSArray *mvRefs = [theNet getNetNodePointersFromDirectionReference:mvCacheModel.algsType direction:direction filter:^NSArray *(NSArray *protoArr) {
-                    for (AIPort *port in ARRTOOK(protoArr)) {
+                    protoArr = ARRTOOK(protoArr);
+                    for (NSInteger i = 0; i < protoArr.count; i++) {
+                        AIPort *port = ARR_INDEX(protoArr, protoArr.count - i - 1);
                         BOOL cacheContains = false;
                         for (ExpCacheModel *expCacheItem in mvCacheModel.expCache) {
                             if (port.target_p && [port.target_p isEqual:expCacheItem.exp_p]) {
@@ -468,7 +470,7 @@ static AIThinkingControl *_instance;
         if (expOutFoNode != nil) {
             [self dataOut_CheckScore_ExpOut:expOutFoNode complete:^(CGFloat score, NSArray *out_ps) {
                 expModel.order += score;//联想对当前expModel的order影响;
-                if (score > 10) {
+                if (score >= 3) {
                     NSLog(@" >> 执行经验输出");
                     complete(true,out_ps);
                     invokedComplete = true;
