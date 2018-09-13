@@ -21,7 +21,7 @@
  *  @param indexPointer : 微信息值的指针;
  *  @param nodePointer : 宏节点的指针;
  */
--(void) aiNetCMV_CreatedNode:(AIKVPointer*)indexPointer nodePointer:(AIKVPointer*)nodePointer;
+-(void) aiNetCMV_CreatedNode:(AIPointer*)indexPointer nodePointer:(AIKVPointer*)nodePointer;
 
 /**
  *  MARK:--------------------cmvNode或absCMVNode构建时,报告directionReference--------------------

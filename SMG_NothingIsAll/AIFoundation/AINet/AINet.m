@@ -20,6 +20,8 @@
 #import "AINetOutputIndex.h"
 #import "AINetAbsCMV.h"
 #import "AIAbsCMVNode.h"
+#import "AIOutputKVPointer.h"
+#import "AIKVPointer.h"
 
 @interface AINet () <AINetCMVDelegate,AINetAbsCMVDelegate>
 
@@ -116,8 +118,15 @@ static AINet *_instance;
 /**
  *  MARK:--------------------AINetCMVDelegate--------------------
  */
--(void)aiNetCMV_CreatedNode:(AIKVPointer *)indexPointer nodePointer:(AIKVPointer *)nodePointer{
-    [self setItemAlgsReference:indexPointer target_p:nodePointer difValue:1];
+-(void)aiNetCMV_CreatedNode:(AIPointer *)indexPointer nodePointer:(AIKVPointer *)nodePointer{
+    if (ISOK(indexPointer, AIKVPointer.class)) {
+        //kv_p时,记录node对index的引用;
+        [self setItemAlgsReference:(AIKVPointer*)indexPointer target_p:nodePointer difValue:1];
+    }else if(ISOK(indexPointer, AIOutputKVPointer.class)){
+        //op时,strong+1 & 记录可输出;
+        AIOutputKVPointer *index_op = (AIOutputKVPointer*)indexPointer;
+        [self.outputReference setNodePointerToOutputReference:index_op algsType:index_op.algsType dataTo:index_op.dataTo difStrong:1];
+    }
 }
 
 -(void) aiNetCMV_CreatedCMVNode:(AIKVPointer*)cmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction difStrong:(NSInteger)difStrong{

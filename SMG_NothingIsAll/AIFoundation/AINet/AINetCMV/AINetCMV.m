@@ -51,8 +51,8 @@
     AIFrontOrderNode *foNode = [[AIFrontOrderNode alloc] init];//node
     foNode.pointer = [SMGUtils createPointer:PATH_NET_FRONT_ORDER_NODE algsType:@"" dataSource:@""];
     foNode.cmvModel_kvp = cmvModel.pointer;
-    for (AIKVPointer *data_kvp in ARRTOOK(order)) {
-        if (ISOK(data_kvp, AIKVPointer.class)) {
+    for (AIPointer *data_kvp in ARRTOOK(order)) {
+        if (ISOK(data_kvp, AIPointer.class)) {
             [foNode.orders_kvp addObject:data_kvp];
             [self createdNode:data_kvp nodePointer:foNode.pointer];//reference
         }
@@ -71,7 +71,11 @@
     return cmvModel;
 }
 
--(void) createdNode:(AIKVPointer*)indexPointer nodePointer:(AIKVPointer*)nodePointer{
+
+/**
+ *  MARK:--------------------用于,创建node后,将其插线到引用序列;--------------------
+ */
+-(void) createdNode:(AIPointer*)indexPointer nodePointer:(AIKVPointer*)nodePointer{
     if (self.delegate && [self.delegate respondsToSelector:@selector(aiNetCMV_CreatedNode:nodePointer:)]) {
         [self.delegate aiNetCMV_CreatedNode:indexPointer nodePointer:nodePointer];
     }
