@@ -507,7 +507,10 @@ static AIThinkingControl *_instance;
 
 /**
  *  MARK:--------------------联想具象 (从上往下找foNode)--------------------
- *  @param expMvNode : mv节点经验(有可能是AICMVNode也有可能是AIAbsCMVNode)
+ *  @param baseMvNode : mv节点经验(有可能是AICMVNode也有可能是AIAbsCMVNode)
+ *  @param checkMvNode : 当前正在检查的节点 (初始状态下=baseMvNode)
+ *  @param checkMvNode_p : 当前正在检查的节点地址 (初始状态下=nil,然后=checkMvNode.pointer) (用于当网络中mv或mv指向foNode为null的情况下,能够继续执行下去)
+ *  @param except_ps : 当前已排除的;
  *  功能 : 找到曾输出经验;
  *  TODO:加上预测功能
  *  TODO:加上联想到mv时,传回给mvCacheManager;
@@ -520,28 +523,57 @@ static AIThinkingControl *_instance;
  *  注: 先从最强关联的最底层foNode开始,逐个取用;直到energy<=0,或其它原因中止;
  *
  */
--(AIFrontOrderNode*) dataOut_AssociativeConcreteData_ExpOut:(NSObject*)expMvNode except_ps:(nonnull NSMutableArray*)except_ps {
-    //1. 判断具象
-    if (ISOK(expMvNode, AICMVNode.class)) {
-        //2. 具象mv
-        AIFrontOrderNode *foNode = [ThinkingUtils getFoNodeFromCmvNode:(AICMVNode*)expMvNode];
-        return foNode;
-    }else if(ISOK(expMvNode, AIAbsCMVNode.class)){
-        //3. 抽象mv
-        AIAbsCMVNode *expAbsCmvNode = (AIAbsCMVNode*)expMvNode;
-        AIPort *findConPort = [expAbsCmvNode getConPortWithExcept:except_ps];
-        if (!findConPort) {
-            //4. 所有conPort都已排除,则expAbsCmvNode本身也被排除;并递归;
-            [except_ps addObject:expAbsCmvNode.pointer];
-            NSLog(@"此处有可能导致死循环...");
-            return [self dataOut_AssociativeConcreteData_ExpOut:expMvNode except_ps:except_ps];
-        }else{
-            //5. 找到conPort,则递归判断类型是否foNode;
-            NSObject *findConNode = [SMGUtils searchObjectForPointer:findConPort.target_p fileName:FILENAME_Node];
-            return [self dataOut_AssociativeConcreteData_ExpOut:findConNode except_ps:except_ps];
+-(AIFrontOrderNode*) dataOut_AssociativeConcreteData_ExpOut:(NSObject*)baseMvNode except_ps:(nonnull NSMutableArray*)except_ps{
+    return [self dataOut_AssociativeConcreteData_ExpOut:baseMvNode checkMvNode:baseMvNode checkMvNode_p:nil except_ps:except_ps];
+}
+-(AIFrontOrderNode*) dataOut_AssociativeConcreteData_ExpOut:(NSObject*)baseMvNode checkMvNode:(NSObject*)checkMvNode checkMvNode_p:(AIPointer*)checkMvNode_p except_ps:(nonnull NSMutableArray*)except_ps {
+    
+    //1. 当前神经元异常时,回归到checkBase; 注:(异常判定: <(类型无效 | null) & checkMvNode!=nil>);
+    __block AIFrontOrderNode *foNode = nil;
+    AIFrontOrderNode* (^ CheckIsNullOrException)() = ^{
+        BOOL nullOrException = (checkMvNode_p != nil);
+        if (nullOrException) {
+            [except_ps addObject:checkMvNode_p];
+            foNode = [self dataOut_AssociativeConcreteData_ExpOut:baseMvNode except_ps:except_ps];
         }
+        return foNode;
+    };
+    
+    //2. 具象mv
+    if (ISOK(checkMvNode, AICMVNode.class)) {
+        AICMVNode *cmvNode = (AICMVNode*)checkMvNode;
+        AIFrontOrderNode *foNode = [ThinkingUtils getFoNodeFromCmvNode:cmvNode];
+        if (foNode) {
+            [except_ps addObject:cmvNode.pointer];
+            NSLog(@"dataOut_AssConData_ExpOut找到: %ld_%ld",(long)cmvNode.pointer.pointerId,foNode.pointer.pointerId);
+            return foNode;
+        }else{
+            //3. 前因时序列为null的异常;
+            return CheckIsNullOrException();
+        }
+    }else if(ISOK(checkMvNode, AIAbsCMVNode.class)){
+        //4. 抽象mv
+        AIAbsCMVNode *checkAbsMvNode = (AIAbsCMVNode*)checkMvNode;
+        AIPort *findConPort = [checkAbsMvNode getConPortWithExcept:except_ps];
+        if (!findConPort) {
+            //5. 没找到conPort,说明checkMvNode的所有conPort都已排除,则checkMvNode本身也被排除;
+            [except_ps addObject:checkAbsMvNode.pointer];
+            
+            //6. 被排除的不是base才可以递归回checkBase;
+            if (![baseMvNode isEqual:checkMvNode]) {
+                return [self dataOut_AssociativeConcreteData_ExpOut:baseMvNode except_ps:except_ps];
+            }
+        }else{
+            //7. 找到conPort,则递归判断类型是否foNode;
+            NSObject *findConNode = [SMGUtils searchObjectForPointer:findConPort.target_p fileName:FILENAME_Node];
+            return [self dataOut_AssociativeConcreteData_ExpOut:baseMvNode checkMvNode:findConNode checkMvNode_p:findConPort.target_p except_ps:except_ps];
+        }
+    }else{
+        //8. 类型异常
+        return CheckIsNullOrException();
     }
     
+    //9. 连base自己也被排除了,还未找到foNode,就只能返回nil了;
     return nil;
 }
 
