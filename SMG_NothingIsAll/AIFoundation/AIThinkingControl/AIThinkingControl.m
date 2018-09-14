@@ -636,16 +636,16 @@ static AIThinkingControl *_instance;
     //1. 取出outLog;
     NSArray *out_ps = [ThinkingUtils filterOutPointers:foNode.orders_kvp];
     
-    //2. 判断out_ps本身有没有宏节点;
-    AIKVPointer *absValue_p = [theNet getNetAbsIndex_AbsPointer:out_ps];
-    AIKVPointer *absNode_p = [theNet getItemAbsNodePointer:absValue_p];
-    AINetAbsNode *assOutAbsNode = [SMGUtils searchObjectForPointer:absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
-    
-    //3. 检查assOutAbsNode对应的mv & 处理absCmvNode评价影响力;(系数0.5)
-    if (assOutAbsNode) {
-        CGFloat scoreForce = [ThinkingUtils getScoreForce:assOutAbsNode.absCmvNode_p ratio:0.5f];
-        score += scoreForce;
-    }
+    //2. 判断out_ps本身有没有宏节点; (目前对output_p不做absIndex)
+    //AIKVPointer *absValue_p = [theNet getNetAbsIndex_AbsPointer:out_ps];
+    //AIKVPointer *absNode_p = [theNet getItemAbsNodePointer:absValue_p];
+    //AINetAbsNode *assOutAbsNode = [SMGUtils searchObjectForPointer:absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+
+    //3. 检查assOutAbsNode对应的mv & 处理absCmvNode评价影响力;(系数0.5) (目前对output_p不做absIndex)
+    //if (assOutAbsNode) {
+    //    CGFloat scoreForce = [ThinkingUtils getScoreForce:assOutAbsNode.absCmvNode_p ratio:0.5f];
+    //    score += scoreForce;
+    //}
     
     //4. 取foNode的抽象节点absNodes;
     for (AIPort *absPort in ARRTOOK(foNode.absPorts)) {
