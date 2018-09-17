@@ -11,7 +11,6 @@
 #import "ImvAlgsModelBase.h"
 #import "ImvAlgsHungerModel.h"
 #import "AIFrontOrderNode.h"
-#import "AIKVPointer.h"
 #import "AICMVNode.h"
 #import "AINetCMV.h"
 #import "AIAbsCMVNode.h"
@@ -28,8 +27,8 @@
 
 +(NSArray*) filterOutPointers:(NSArray*)proto_ps{
     NSMutableArray *out_ps = [[NSMutableArray alloc] init];
-    for (AIPointer *pointer in ARRTOOK(proto_ps)) {
-        if (ISOK(pointer, AIKVPointer.class)) {
+    for (AIKVPointer *pointer in ARRTOOK(proto_ps)) {
+        if (ISOK(pointer, AIKVPointer.class) && pointer.isOut) {
             [out_ps addObject:pointer];
         }
     }

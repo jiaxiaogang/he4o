@@ -12,7 +12,6 @@
 #import "XGRedisUtil.h"
 #import "AIPort.h"
 #import "XGRedis.h"
-#import "AIKVPointer.h"
 #import "AIPointer.h"
 
 @implementation SMGUtils
@@ -77,17 +76,17 @@
 
 +(AIKVPointer*) createPointerForOutputNode:(NSString*)algsType dataSource:(NSString*)dataSource{
     NSInteger pointerId = [SMGUtils createPointerId:algsType dataSource:dataSource];
-    AIKVPointer *pointer = [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_ABS_NODE algsType:algsType dataSource:dataSource];
+    AIKVPointer *pointer = [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_ABS_NODE algsType:algsType dataSource:dataSource isOut:true];
     return pointer;
 }
 
 +(AIKVPointer*) createPointerForOutputValue:(NSString*)algsType dataSource:(NSString*)dataSource{
     NSInteger pointerId = [self createPointerId:algsType dataSource:dataSource];
-    return [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_VALUE algsType:algsType dataSource:dataSource];
+    return [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_VALUE algsType:algsType dataSource:dataSource isOut:true];
 }
 
 +(AIKVPointer*) createPointerForOutputValue:(NSInteger)pointerId algsType:(NSString*)algsType dataSource:(NSString*)dataSource{
-    return [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_VALUE algsType:algsType dataSource:dataSource];
+    return [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_VALUE algsType:algsType dataSource:dataSource isOut:true];
 }
 
 

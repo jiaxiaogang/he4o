@@ -124,8 +124,7 @@ static AINet *_instance;
             [self setItemAlgsReference:(AIKVPointer*)indexPointer target_p:nodePointer difValue:1];
         }else{
             //op时,strong+1 & 记录可输出;
-            AIKVPointer *index_op = (AIKVPointer*)indexPointer;
-            [self.outputReference setNodePointerToOutputReference:index_op algsType:index_op.algsType dataSource:index_op.dataSource difStrong:1];
+            [self.outputReference setNodePointerToOutputReference:indexPointer algsType:indexPointer.algsType dataSource:indexPointer.dataSource difStrong:1];
         }
     }
 }

@@ -38,7 +38,7 @@
 -(NSString*) filePath{
     NSString *pIdStr = STRFORMAT(@"%ld",self.pointerId);
     NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSMutableString *fileRootPath = [[NSMutableString alloc] initWithFormat:@"%@/%@/%@/%@",cachePath,STRTOOK(self.folderName),STRTOOK(self.algsType),STRTOOK(self.dataSource)];
+    NSMutableString *fileRootPath = [[NSMutableString alloc] initWithFormat:@"%@/%@/%@/%@/%d",cachePath,self.folderName,self.algsType,self.dataSource,self.isOut];
     for (NSInteger j = 0; j < pIdStr.length; j++) {
         [fileRootPath appendFormat:@"/%@",[pIdStr substringWithRange:NSMakeRange(j, 1)]];
     }
@@ -46,7 +46,7 @@
 }
 
 -(NSString*) identifier{
-    return STRFORMAT(@"%@_%@",self.algsType,self.dataSource);
+    return STRFORMAT(@"%@_%@_%d",self.algsType,self.dataSource,self.isOut);
 }
 
 -(NSString*) folderName{
