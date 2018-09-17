@@ -54,9 +54,9 @@
 //MARK:===============================================================
 //MARK:                     < AIOutputReference >
 //MARK:===============================================================
--(void) setNetNodePointerToOutputReference:(AIOutputKVPointer*)outputNode_p algsType:(NSString*)algsType dataTo:(NSString*)dataTo difStrong:(NSInteger)difStrong;
--(AIPort*) getNetNodePointersFromOutputReference_Single:(NSString*)algsType dataTo:(NSString*)dataTo limit:(NSInteger)limit;
--(NSArray*) getNetNodePointersFromOutputReference:(NSString*)algsType dataTo:(NSString*)dataTo limit:(NSInteger)limit;
+-(void) setNetNodePointerToOutputReference:(AIKVPointer*)outputNode_p algsType:(NSString*)algsType dataSource:(NSString*)dataSource difStrong:(NSInteger)difStrong;
+-(AIPort*) getNetNodePointersFromOutputReference_Single:(NSString*)algsType dataSource:(NSString*)dataSource limit:(NSInteger)limit;
+-(NSArray*) getNetNodePointersFromOutputReference:(NSString*)algsType dataSource:(NSString*)dataSource limit:(NSInteger)limit;
 
 
 //MARK:===============================================================
@@ -64,7 +64,7 @@
 //MARK:===============================================================
 
 //小脑索引
--(AIOutputKVPointer*) getOutputIndex:(NSString*)algsType dataTo:(NSString*)dataTo outputObj:(NSNumber*)outputObj;
+-(AIKVPointer*) getOutputIndex:(NSString*)algsType dataSource:(NSString*)dataSource outputObj:(NSNumber*)outputObj;
 
 
 //MARK:===============================================================

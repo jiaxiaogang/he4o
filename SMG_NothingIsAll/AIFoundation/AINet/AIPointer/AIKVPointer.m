@@ -11,11 +11,16 @@
 @implementation AIKVPointer
 
 +(AIKVPointer*) newWithPointerId:(NSInteger)pointerId folderName:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource{
+    return [self newWithPointerId:pointerId folderName:folderName algsType:algsType dataSource:dataSource isOut:false];
+}
+
++(AIKVPointer*) newWithPointerId:(NSInteger)pointerId folderName:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut{
     AIKVPointer *pointer = [[AIKVPointer alloc] init];
     pointer.pointerId = pointerId;
     [pointer.params setObject:STRTOOK(folderName) forKey:@"folderName"];
     [pointer.params setObject:STRTOOK(algsType) forKey:@"algsType"];
     [pointer.params setObject:STRTOOK(dataSource) forKey:@"dataSource"];
+    [pointer.params setObject:@(isOut) forKey:@"isOut"];
     return pointer;
 }
 
@@ -54,6 +59,10 @@
 
 -(NSString*) dataSource{
     return [self.params objectForKey:@"dataSource"];
+}
+
+-(BOOL) isOut{
+    return [NUMTOOK([self.params objectForKey:@"isOut"]) boolValue];
 }
 
 @end

@@ -15,7 +15,7 @@
  *  MARK:--------------------转换数据类型为"输出算法标识"--------------------
  *  注:目前仅支持一一对应,随后支持多个后,return改为Array;
  */
-+(NSString*) convertOutType2DataTo:(NSString*)dataType;
++(NSString*) convertOutType2dataSource:(NSString*)dataType;
 
 
 /**

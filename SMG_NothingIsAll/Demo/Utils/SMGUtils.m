@@ -12,7 +12,7 @@
 #import "XGRedisUtil.h"
 #import "AIPort.h"
 #import "XGRedis.h"
-#import "AIOutputKVPointer.h"
+#import "AIKVPointer.h"
 #import "AIPointer.h"
 
 @implementation SMGUtils
@@ -71,23 +71,23 @@
 }
 
 //outputReference的"分区算法标识";(存引用序列)
-+(AIOutputKVPointer*) createPointerForOutputReference:(NSString*)algsType dataTo:(NSString*)dataTo{
-    return [AIOutputKVPointer newWithPointerId:0 folderName:PATH_NET_OUTPUT_REFERENCE algsType:algsType dataTo:dataTo];
++(AIKVPointer*) createPointerForOutputReference:(NSString*)algsType dataSource:(NSString*)dataSource{
+    return [AIKVPointer newWithPointerId:0 folderName:PATH_NET_OUTPUT_REFERENCE algsType:algsType dataSource:dataSource isOut:true];
 }
 
-+(AIOutputKVPointer*) createPointerForOutputNode:(NSString*)algsType dataTo:(NSString*)dataTo{
-    NSInteger pointerId = [SMGUtils createPointerId:algsType dataSource:dataTo];
-    AIOutputKVPointer *pointer = [AIOutputKVPointer newWithPointerId:pointerId folderName:PATH_NET_ABS_NODE algsType:algsType dataTo:dataTo];
++(AIKVPointer*) createPointerForOutputNode:(NSString*)algsType dataSource:(NSString*)dataSource{
+    NSInteger pointerId = [SMGUtils createPointerId:algsType dataSource:dataSource];
+    AIKVPointer *pointer = [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_ABS_NODE algsType:algsType dataSource:dataSource];
     return pointer;
 }
 
-+(AIOutputKVPointer*) createPointerForOutputValue:(NSString*)algsType dataTo:(NSString*)dataTo{
-    NSInteger pointerId = [self createPointerId:algsType dataSource:dataTo];
-    return [AIOutputKVPointer newWithPointerId:pointerId folderName:PATH_NET_VALUE algsType:algsType dataTo:dataTo];
++(AIKVPointer*) createPointerForOutputValue:(NSString*)algsType dataSource:(NSString*)dataSource{
+    NSInteger pointerId = [self createPointerId:algsType dataSource:dataSource];
+    return [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_VALUE algsType:algsType dataSource:dataSource];
 }
 
-+(AIOutputKVPointer*) createPointerForOutputValue:(NSInteger)pointerId algsType:(NSString*)algsType dataTo:(NSString*)dataTo{
-    return [AIOutputKVPointer newWithPointerId:pointerId folderName:PATH_NET_VALUE algsType:algsType dataTo:dataTo];
++(AIKVPointer*) createPointerForOutputValue:(NSInteger)pointerId algsType:(NSString*)algsType dataSource:(NSString*)dataSource{
+    return [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_VALUE algsType:algsType dataSource:dataSource];
 }
 
 

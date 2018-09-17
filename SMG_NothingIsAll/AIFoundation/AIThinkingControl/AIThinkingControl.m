@@ -20,7 +20,7 @@
 #import "ThinkingUtils.h"
 #import "OutputUtils.h"
 #import "Output.h"
-#import "AIOutputKVPointer.h"
+#import "AIKVPointer.h"
 #import "AIFrontOrderNode.h"
 #import "AINetAbsNode.h"
 #import "AICMVNode.h"
@@ -98,15 +98,15 @@ static AIThinkingControl *_instance;
 /**
  *  MARK:--------------------输出的日志入网(输入小脑)--------------------
  *  @param algsType  : 输出算法分区(目前仅有Output)
- *  @param dataTo    : 输出算法函数(如output_Text:)
+ *  @param dataSource    : 输出算法函数(如output_Text:)
  *  @param outputObj : 输出内容(如:饿死爹了)
  */
--(void) commitOutputLog:(NSString*)algsType dataTo:(NSString*)dataTo outputObj:(NSNumber*)outputObj{
+-(void) commitOutputLog:(NSString*)algsType dataSource:(NSString*)dataSource outputObj:(NSNumber*)outputObj{
     //1. 装箱
-    AIOutputKVPointer *output_p = [theNet getOutputIndex:algsType dataTo:dataTo outputObj:outputObj];
+    AIKVPointer *output_p = [theNet getOutputIndex:algsType dataSource:dataSource outputObj:outputObj];
     
     //2. 记录可输出reference
-    [theNet setNetNodePointerToOutputReference:output_p algsType:algsType dataTo:dataTo difStrong:1];
+    [theNet setNetNodePointerToOutputReference:output_p algsType:algsType dataSource:dataSource difStrong:1];
     
     //3. 加瞬时记忆
     [self dataIn_ToShortCache:output_p];

@@ -54,7 +54,6 @@
 		8881982F21000DD5006D2218 /* AIOutputReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 8881982E21000DD5006D2218 /* AIOutputReference.m */; };
 		88960C6B209BDA2B004EF419 /* AINetIndexReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 88960C6A209BDA2B004EF419 /* AINetIndexReference.m */; };
 		88988524208979E6001D1ADC /* AINetIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = 88988523208979E6001D1ADC /* AINetIndex.m */; };
-		88A15CEC20FEC997001A0310 /* AIOutputKVPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 88A15CEB20FEC997001A0310 /* AIOutputKVPointer.m */; };
 		88A43F3A2109571300281348 /* AIAbsCMVNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 88A43F392109571300281348 /* AIAbsCMVNode.m */; };
 		88A43F3D2109576D00281348 /* AIFrontOrderNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 88A43F3C2109576D00281348 /* AIFrontOrderNode.m */; };
 		88A43F40210957C300281348 /* AINetAbsNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 88A43F3F210957C300281348 /* AINetAbsNode.m */; };
@@ -165,8 +164,6 @@
 		88960C6A209BDA2B004EF419 /* AINetIndexReference.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetIndexReference.m; sourceTree = "<group>"; };
 		88988522208979E6001D1ADC /* AINetIndex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetIndex.h; sourceTree = "<group>"; };
 		88988523208979E6001D1ADC /* AINetIndex.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetIndex.m; sourceTree = "<group>"; };
-		88A15CEA20FEC997001A0310 /* AIOutputKVPointer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIOutputKVPointer.h; sourceTree = "<group>"; };
-		88A15CEB20FEC997001A0310 /* AIOutputKVPointer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIOutputKVPointer.m; sourceTree = "<group>"; };
 		88A43F3521094BF900281348 /* SMGConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMGConfig.h; sourceTree = "<group>"; };
 		88A43F382109571300281348 /* AIAbsCMVNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIAbsCMVNode.h; sourceTree = "<group>"; };
 		88A43F392109571300281348 /* AIAbsCMVNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIAbsCMVNode.m; sourceTree = "<group>"; };
@@ -519,8 +516,6 @@
 				08F738011F7C714F005EAD56 /* AIPointer.m */,
 				08F738021F7C714F005EAD56 /* AISqlPointer.h */,
 				08F738031F7C714F005EAD56 /* AISqlPointer.m */,
-				88A15CEA20FEC997001A0310 /* AIOutputKVPointer.h */,
-				88A15CEB20FEC997001A0310 /* AIOutputKVPointer.m */,
 			);
 			path = AIPointer;
 			sourceTree = "<group>";
@@ -786,7 +781,6 @@
 				88988524208979E6001D1ADC /* AINetIndex.m in Sources */,
 				8868F6EB210A946A000EAC9B /* AINetAbsCMV.m in Sources */,
 				082F9D5C1EB236AC0009F6A9 /* StudyViewController.m in Sources */,
-				88A15CEC20FEC997001A0310 /* AIOutputKVPointer.m in Sources */,
 				081B3ACC1F6E2155008A7F36 /* AITime.m in Sources */,
 				88E87A6721016EAA0071513F /* OutputUtils.m in Sources */,
 				080A74321F60C6490025DBA3 /* AIPort.m in Sources */,
