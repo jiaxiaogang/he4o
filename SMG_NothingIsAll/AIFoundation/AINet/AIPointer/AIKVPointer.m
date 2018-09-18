@@ -20,7 +20,7 @@
     [pointer.params setObject:STRTOOK(folderName) forKey:@"folderName"];
     [pointer.params setObject:STRTOOK(algsType) forKey:@"algsType"];
     [pointer.params setObject:STRTOOK(dataSource) forKey:@"dataSource"];
-    [pointer.params setObject:@(isOut) forKey:@"isOut"];
+    [pointer.params setObject:STRFORMAT(@"%d",isOut) forKey:@"isOut"];
     return pointer;
 }
 
@@ -62,7 +62,7 @@
 }
 
 -(BOOL) isOut{
-    return [NUMTOOK([self.params objectForKey:@"isOut"]) boolValue];
+    return [STRTOOK([self.params objectForKey:@"isOut"]) boolValue];
 }
 
 @end

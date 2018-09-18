@@ -36,7 +36,11 @@
     if (!ISOK(micro_p, AIKVPointer.class)) {
         return false;
     }
-    NSString *dataSource = [self convertOutType2dataSource:micro_p.algsType];
+    
+    NSString *dataSource = micro_p.dataSource;
+    if (!micro_p.isOut) {
+        dataSource = [self convertOutType2dataSource:micro_p.algsType];
+    }
     NSString *algsType = NSStringFromClass(Output.class);
     
     //2. 检查是否可输出"某数据类型"

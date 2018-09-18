@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 
-@class AIPointer,AIKVPointer,AIKVPointer,AIObject,AIArray,AILine,ThinkModel,AIPort;
+@class AIPointer,AIKVPointer,AIObject,AIArray,AILine,ThinkModel,AIPort;
 @interface SMGUtils : NSObject
 
 

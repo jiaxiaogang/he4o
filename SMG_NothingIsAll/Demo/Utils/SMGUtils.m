@@ -277,7 +277,7 @@
         AIKVPointer *itemB = ARR_INDEX(refsB_p, i);
         NSNumber *aNum = [SMGUtils searchObjectForPointer:itemA fileName:FILENAME_Value];
         NSNumber *bNum = [SMGUtils searchObjectForPointer:itemB fileName:FILENAME_Value];
-        NSComparisonResult result = [NUMTOOK(aNum) compare:bNum];
+        NSComparisonResult result = [NUMTOOK(aNum) compare:NUMTOOK(bNum)] ;
         if (result != NSOrderedSame) {
             return result;
         }
