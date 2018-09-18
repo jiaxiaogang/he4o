@@ -24,7 +24,7 @@
         //2. 对比params
         if (pointerIdEqual && self.params.count == object.params.count) {
             for (NSString *key in self.params.allKeys) {
-                BOOL itemEqual = [STRTOOK([self.params objectForKey:key]) isEqualToString:[object.params objectForKey:key]];
+                BOOL itemEqual = [STRTOOK([self.params objectForKey:key]) isEqualToString:STRTOOK([object.params objectForKey:key])];
                 if (!itemEqual) {
                     return false;//发现不同
                 }

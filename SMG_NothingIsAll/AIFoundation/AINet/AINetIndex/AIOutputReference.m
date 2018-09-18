@@ -11,7 +11,7 @@
 #import "XGRedisUtil.h"
 #import "AIKVPointer.h"
 #import "AIPort.h"
-#import "AIOutputKVPointer.h"
+#import "AIKVPointer.h"
 
 @implementation AIOutputReference
 
@@ -31,14 +31,14 @@
 //MARK:                     < publicMethod >
 //MARK:===============================================================
 
--(void) setNodePointerToOutputReference:(AIOutputKVPointer*)outputNode_p algsType:(NSString*)algsType dataTo:(NSString*)dataTo difStrong:(NSInteger)difStrong{
+-(void) setNodePointerToOutputReference:(AIKVPointer*)outputNode_p algsType:(NSString*)algsType dataSource:(NSString*)dataSource difStrong:(NSInteger)difStrong{
     //1. 数据检查
-    if (!ISOK(outputNode_p, AIOutputKVPointer.class)) {
+    if (!ISOK(outputNode_p, AIKVPointer.class)) {
         return;
     }
     
     //2. 取identifier分区的引用序列文件;
-    AIOutputKVPointer *reference_p = [SMGUtils createPointerForOutputReference:algsType dataTo:dataTo];
+    AIKVPointer *reference_p = [SMGUtils createPointerForOutputReference:algsType dataSource:dataSource];
     NSMutableArray *mArrByPointer = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:reference_p fileName:FILENAME_Reference_ByPointer time:cRedisReferenceTime]];
     NSMutableArray *mArrByPort = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:reference_p fileName:FILENAME_Reference_ByPort time:cRedisReferenceTime]];
     
@@ -99,9 +99,9 @@
     }];
 }
 
--(NSArray*) getNodePointersFromOutputReference:(NSString*)algsType dataTo:(NSString*)dataTo limit:(NSInteger)limit{
+-(NSArray*) getNodePointersFromOutputReference:(NSString*)algsType dataSource:(NSString*)dataSource limit:(NSInteger)limit{
     //1. 取mv分区的引用序列文件;
-    AIOutputKVPointer *reference_p = [SMGUtils createPointerForOutputReference:algsType dataTo:dataTo];
+    AIKVPointer *reference_p = [SMGUtils createPointerForOutputReference:algsType dataSource:dataSource];
     NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:reference_p fileName:FILENAME_Reference_ByPort time:cRedisReferenceTime]];
     
     //2. 根据limit返回limit个结果;
@@ -112,8 +112,8 @@
     return nil;
 }
 
-+(BOOL) checkCanOutput:(NSString*)algsType dataTo:(NSString*)dataTo{
-    AIOutputKVPointer *reference_p = [SMGUtils createPointerForOutputReference:algsType dataTo:dataTo];
++(BOOL) checkCanOutput:(NSString*)algsType dataSource:(NSString*)dataSource{
+    AIKVPointer *reference_p = [SMGUtils createPointerForOutputReference:algsType dataSource:dataSource];
     NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:reference_p fileName:FILENAME_Reference_ByPointer time:cRedisReferenceTime]];
     return ARRISOK(mArr);
 }

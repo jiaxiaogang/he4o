@@ -20,7 +20,6 @@
 #import "AINetOutputIndex.h"
 #import "AINetAbsCMV.h"
 #import "AIAbsCMVNode.h"
-#import "AIOutputKVPointer.h"
 #import "AIKVPointer.h"
 
 @interface AINet () <AINetCMVDelegate,AINetAbsCMVDelegate>
@@ -118,14 +117,15 @@ static AINet *_instance;
 /**
  *  MARK:--------------------AINetCMVDelegate--------------------
  */
--(void)aiNetCMV_CreatedNode:(AIPointer *)indexPointer nodePointer:(AIKVPointer *)nodePointer{
+-(void)aiNetCMV_CreatedNode:(AIKVPointer *)indexPointer nodePointer:(AIKVPointer *)nodePointer{
     if (ISOK(indexPointer, AIKVPointer.class)) {
-        //kv_p时,记录node对index的引用;
-        [self setItemAlgsReference:(AIKVPointer*)indexPointer target_p:nodePointer difValue:1];
-    }else if(ISOK(indexPointer, AIOutputKVPointer.class)){
-        //op时,strong+1 & 记录可输出;
-        AIOutputKVPointer *index_op = (AIOutputKVPointer*)indexPointer;
-        [self.outputReference setNodePointerToOutputReference:index_op algsType:index_op.algsType dataTo:index_op.dataTo difStrong:1];
+        if (indexPointer.isOut) {
+            //kv_p时,记录node对index的引用;
+            [self setItemAlgsReference:(AIKVPointer*)indexPointer target_p:nodePointer difValue:1];
+        }else{
+            //op时,strong+1 & 记录可输出;
+            [self.outputReference setNodePointerToOutputReference:indexPointer algsType:indexPointer.algsType dataSource:indexPointer.dataSource difStrong:1];
+        }
     }
 }
 
@@ -177,16 +177,16 @@ static AINet *_instance;
 //MARK:===============================================================
 //MARK:                     < AIOutputReference >
 //MARK:===============================================================
--(void) setNetNodePointerToOutputReference:(AIOutputKVPointer*)outputNode_p algsType:(NSString*)algsType dataTo:(NSString*)dataTo difStrong:(NSInteger)difStrong{
-    [self.outputReference setNodePointerToOutputReference:outputNode_p algsType:algsType dataTo:dataTo difStrong:difStrong];
+-(void) setNetNodePointerToOutputReference:(AIKVPointer*)outputNode_p algsType:(NSString*)algsType dataSource:(NSString*)dataSource difStrong:(NSInteger)difStrong{
+    [self.outputReference setNodePointerToOutputReference:outputNode_p algsType:algsType dataSource:dataSource difStrong:difStrong];
 }
 
--(AIPort*) getNetNodePointersFromOutputReference_Single:(NSString*)algsType dataTo:(NSString*)dataTo limit:(NSInteger)limit{
-    return ARR_INDEX([self getNetNodePointersFromOutputReference:algsType dataTo:dataTo limit:1], 0);
+-(AIPort*) getNetNodePointersFromOutputReference_Single:(NSString*)algsType dataSource:(NSString*)dataSource limit:(NSInteger)limit{
+    return ARR_INDEX([self getNetNodePointersFromOutputReference:algsType dataSource:dataSource limit:1], 0);
 }
 
--(NSArray*) getNetNodePointersFromOutputReference:(NSString*)algsType dataTo:(NSString*)dataTo limit:(NSInteger)limit{
-    return [self.outputReference getNodePointersFromOutputReference:algsType dataTo:dataTo limit:limit];
+-(NSArray*) getNetNodePointersFromOutputReference:(NSString*)algsType dataSource:(NSString*)dataSource limit:(NSInteger)limit{
+    return [self.outputReference getNodePointersFromOutputReference:algsType dataSource:dataSource limit:limit];
 }
 
 
@@ -195,9 +195,9 @@ static AINet *_instance;
 //MARK:===============================================================
 
 //小脑索引
--(AIOutputKVPointer*) getOutputIndex:(NSString*)algsType dataTo:(NSString*)dataTo outputObj:(NSNumber*)outputObj {
+-(AIKVPointer*) getOutputIndex:(NSString*)algsType dataSource:(NSString*)dataSource outputObj:(NSNumber*)outputObj {
     if (outputObj) {
-        return [self.outputIndex getDataPointerWithData:outputObj algsType:algsType dataTo:dataTo];
+        return [self.outputIndex getDataPointerWithData:outputObj algsType:algsType dataSource:dataSource];
     }
     return nil;
 }

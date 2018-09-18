@@ -12,7 +12,7 @@
 #import "PINCache.h"
 #import "AIOutputReference.h"
 #import "XGRedisUtil.h"
-#import "AIOutputKVPointer.h"
+#import "AIKVPointer.h"
 
 @interface AINetOutputIndex ()
 
@@ -39,7 +39,7 @@
 //MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
--(AIOutputKVPointer*) getDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataTo:(NSString*)dataTo {
+-(AIKVPointer*) getDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource {
     if (!ISOK(data, NSNumber.class)) {
         return nil;
     }
@@ -47,7 +47,7 @@
     //1. 查找model,没则new
     AINetOutputIndexModel *model = nil;
     for (AINetOutputIndexModel *itemModel in self.models) {
-        if ([STRTOOK(algsType) isEqualToString:itemModel.algsType] && [STRTOOK(dataTo) isEqualToString:itemModel.dataTo]) {
+        if ([STRTOOK(algsType) isEqualToString:itemModel.algsType] && [STRTOOK(dataSource) isEqualToString:itemModel.dataSource]) {
             model = itemModel;
             break;
         }
@@ -55,27 +55,27 @@
     if (model == nil) {
         model = [[AINetOutputIndexModel alloc] init];
         model.algsType = algsType;
-        model.dataTo = dataTo;
+        model.dataSource = dataSource;
         [self.models addObject:model];
     }
     
     //2. 使用二分法查找data
-    __block AIOutputKVPointer *resultPointer;
+    __block AIKVPointer *resultPointer;
     [XGRedisUtil searchIndexWithCompare:^NSComparisonResult(NSInteger checkIndex) {
         NSNumber *checkPointerIdNumber = ARR_INDEX(model.pointerIds, checkIndex);
         long checkPointerId = [NUMTOOK(checkPointerIdNumber) longValue];
-        AIOutputKVPointer *checkOutput_p = [SMGUtils createPointerForOutputValue:checkPointerId algsType:algsType dataTo:dataTo];
+        AIKVPointer *checkOutput_p = [SMGUtils createPointerForOutputValue:checkPointerId algsType:algsType dataSource:dataSource];
         NSNumber *checkValue = [SMGUtils searchObjectForPointer:checkOutput_p fileName:FILENAME_Value time:cRedisValueTime];
         NSComparisonResult compareResult = [NUMTOOK(checkValue) compare:data];
         return compareResult;
     } startIndex:0 endIndex:model.pointerIds.count - 1 success:^(NSInteger index) {
         NSNumber *pointerIdNum = ARR_INDEX(model.pointerIds, index);
         long pointerId = [NUMTOOK(pointerIdNum) longValue];
-        AIOutputKVPointer *output_p = [SMGUtils createPointerForOutputValue:pointerId algsType:algsType dataTo:dataTo];
+        AIKVPointer *output_p = [SMGUtils createPointerForOutputValue:pointerId algsType:algsType dataSource:dataSource];
         resultPointer = output_p;
     } failure:^(NSInteger index) {
         //4. 未找到;创建一个;
-        AIOutputKVPointer *output_p = [SMGUtils createPointerForOutputValue:algsType dataTo:dataTo];
+        AIKVPointer *output_p = [SMGUtils createPointerForOutputValue:algsType dataSource:dataSource];
         [SMGUtils insertObject:data rootPath:output_p.filePath fileName:FILENAME_Value time:cRedisValueTime];
         resultPointer = output_p;
         
@@ -104,13 +104,13 @@
 
 //暂时不实现小脑网络;
 -(void) setIndexReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue{
-//    [self.reference setNodePointerToOutputReference:nil algsType:nil dataTo:nil difStrong:0];
+//    [self.reference setNodePointerToOutputReference:nil algsType:nil dataSource:nil difStrong:0];
 //    [self.reference setReference:indexPointer target_p:target_p difValue:difValue];
 }
 
 //暂时不实现小脑网络;
 -(NSArray*) getIndexReference:(AIKVPointer*)indexPointer limit:(NSInteger)limit{
-//    self.reference getNodePointersFromOutputReference:algsType dataTo:<#(NSString *)#> limit:<#(NSInteger)#>
+//    self.reference getNodePointersFromOutputReference:algsType dataSource:<#(NSString *)#> limit:<#(NSInteger)#>
 //    return [self.reference getReference:indexPointer limit:limit];
     return nil;
 }
@@ -142,7 +142,7 @@
     if (self) {
         self.pointerIds = [aDecoder decodeObjectForKey:@"pointerIds"];
         self.algsType = [aDecoder decodeObjectForKey:@"algsType"];
-        self.dataTo = [aDecoder decodeObjectForKey:@"dataTo"];
+        self.dataSource = [aDecoder decodeObjectForKey:@"dataSource"];
     }
     return self;
 }
@@ -150,7 +150,7 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [aCoder encodeObject:self.pointerIds forKey:@"pointerIds"];
     [aCoder encodeObject:self.algsType forKey:@"algsType"];
-    [aCoder encodeObject:self.dataTo forKey:@"dataTo"];
+    [aCoder encodeObject:self.dataSource forKey:@"dataSource"];
 }
 
 @end

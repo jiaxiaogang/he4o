@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 
-@class AIPointer,AIKVPointer,AIOutputKVPointer,AIObject,AIArray,AILine,ThinkModel,AIPort;
+@class AIPointer,AIKVPointer,AIObject,AIArray,AILine,ThinkModel,AIPort;
 @interface SMGUtils : NSObject
 
 
@@ -29,14 +29,14 @@
 +(AIKVPointer*) createPointerForDirection:(NSString*)mvAlgsType direction:(MVDirection)direction;
 
 //outputReference的"分区算法标识";(存引用序列)
-+(AIOutputKVPointer*) createPointerForOutputReference:(NSString*)algsType dataTo:(NSString*)dataTo;
++(AIKVPointer*) createPointerForOutputReference:(NSString*)algsType dataSource:(NSString*)dataSource;
 
 //生成小脑node指针;
-+(AIOutputKVPointer*) createPointerForOutputNode:(NSString*)algsType dataTo:(NSString*)dataTo;
++(AIKVPointer*) createPointerForOutputNode:(NSString*)algsType dataSource:(NSString*)dataSource;
 
 //生成小脑索引指针
-+(AIOutputKVPointer*) createPointerForOutputValue:(NSString*)algsType dataTo:(NSString*)dataTo;
-+(AIOutputKVPointer*) createPointerForOutputValue:(NSInteger)pointerId algsType:(NSString*)algsType dataTo:(NSString*)dataTo;
++(AIKVPointer*) createPointerForOutputValue:(NSString*)algsType dataSource:(NSString*)dataSource;
++(AIKVPointer*) createPointerForOutputValue:(NSInteger)pointerId algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
 
 @end
 

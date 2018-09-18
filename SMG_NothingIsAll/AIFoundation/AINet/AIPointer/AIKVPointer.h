@@ -12,11 +12,13 @@
 
 
 +(AIKVPointer*) newWithPointerId:(NSInteger)pointerId folderName:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
++(AIKVPointer*) newWithPointerId:(NSInteger)pointerId folderName:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut;
 
 
 -(NSString*) folderName;    //神经网络根目录 | 索引根目录
 -(NSString*) algsType;      //算法类型_分区
 -(NSString*) dataSource;    //数据源(AIData的来源:如inputModel中的某属性targetType等)
+-(BOOL) isOut;              //是否outPointer(默认false);
 -(NSString*) filePath:(NSString*)customFolderName;  //取自定义folderName的filePath;
 
 @end

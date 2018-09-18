@@ -12,12 +12,12 @@
 /**
  *  MARK:--------------------微信息Output索引 (小脑)--------------------
  *  1. 装箱 (用于将outLog信息进行装索引)
- *  AIOutputKVPointer *output_p = [theNet getOutputIndex:algsType dataTo:dataTo outputObj:outputObj];
+ *  AIKVPointer *output_p = [theNet getOutputIndex:algsType dataSource:dataSource outputObj:outputObj];
  *
  *  2. 记录可输出reference (用于将指针,索引到引用序列)
- *  [theNet setNetNodePointerToOutputReference:output_p algsType:algsType dataTo:dataTo difStrong:1];
+ *  [theNet setNetNodePointerToOutputReference:output_p algsType:algsType dataSource:dataSource difStrong:1];
  */
-@class AIPointer,AIOutputKVPointer;
+@class AIPointer,AIKVPointer;
 @interface AINetOutputIndex : NSObject
 
 
@@ -25,9 +25,9 @@
  *  MARK:--------------------根据data直接查找output_p--------------------
  *  1. 如果未找到,则创建一个,并返回;
  */
--(AIOutputKVPointer*) getDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataTo:(NSString*)dataTo ;
--(void) setIndexReference:(AIOutputKVPointer*)indexPointer target_p:(AIOutputKVPointer*)target_p difValue:(int)difValue;
--(NSArray*) getIndexReference:(AIOutputKVPointer*)indexPointer limit:(NSInteger)limit;
+-(AIKVPointer*) getDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource ;
+-(void) setIndexReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue;
+-(NSArray*) getIndexReference:(AIKVPointer*)indexPointer limit:(NSInteger)limit;
 
 @end
 
@@ -41,6 +41,6 @@
 
 @property (strong,nonatomic) NSMutableArray *pointerIds;
 @property (strong,nonatomic) NSString *algsType;
-@property (strong,nonatomic) NSString *dataTo;
+@property (strong,nonatomic) NSString *dataSource;
 
 @end
