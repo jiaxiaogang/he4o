@@ -14,14 +14,6 @@ typedef NS_ENUM(NSInteger, OutputFaceType) {
     OutputFaceType_Smile    = 1,
 };
 
-/**
- *  MARK:--------------------输出类型--------------------
- */
-typedef NS_ENUM(NSInteger, OutputType) {
-    OutputType_Face     = 0,
-    OutputType_Text     = 1,
-};
-
 
 /**
  *  MARK:--------------------表情喜怒(外)--------------------
@@ -29,13 +21,6 @@ typedef NS_ENUM(NSInteger, OutputType) {
 typedef NS_ENUM(NSInteger, JoyAngerType) {
     JoyAngerType_Joy = 0,
     JoyAngerType_Anger = 1,
-};
-
-/**
- *  MARK:--------------------心情--------------------
- */
-typedef NS_ENUM(NSInteger, MoodType) {
-    MoodType_Irritably2Calm  =   0,//急燥心静
 };
 
 /**
@@ -47,38 +32,12 @@ typedef NS_ENUM(NSInteger, HungerState) {
     HungerState_Charging    = 2,//充电中
 };
 
-/**
- *  MARK:--------------------Aw2DemandStatus--------------------
- */
-typedef NS_ENUM(NSInteger, Aw2DemandStatus) {
-    Aw2DemandStatus_None       = 0,
-    Aw2DemandStatus_IO         = 1,//IO
-    Aw2DemandStatus_NoMain     = 2,
-    Aw2DemandStatus_MainWait   = 3,//主任务生成等待
-    Aw2DemandStatus_MainCommit = 4,//主任务提交
-    Aw2DemandStatus_Finish     = 5,//finish(Awareness->Demand的意识分析完成)
-};
-
-/**
- *  MARK:--------------------AILogicKeyType--------------------
- */
-typedef NS_ENUM(NSInteger, AILogicKeyType) {
-    AILogicKeyType_None = 0,//无
-    AILogicKeyType_Break = 1,//break;
-    AILogicKeyType_Continue = 2,
-};
 
 typedef NS_ENUM(NSInteger, AIMoodType) {
     AIMoodType_Anxious      = 1,//焦急
     AIMoodType_Satisfy      = 2,//满意
 };
 
-/**
- *  MARK:--------------------网络多维类型--------------------
- */
-typedef NS_ENUM(NSInteger, NetDimensionType) {
-    NetDimensionType_Str      = 1,//字符串
-};
 
 /**
  *  MARK:--------------------MV规则类型--------------------
@@ -113,6 +72,7 @@ typedef NS_ENUM(NSInteger, MVType) {
     MVType_None     = 0,
     MVType_Hunger   = 1,
     MVType_Anxious  = 2,
+    MVType_Algesia  = 3,//痛觉
 };
 
 /**
@@ -122,55 +82,15 @@ typedef NS_ENUM(NSInteger, CustomInputType) {
     CustomInputType_Charge     = 1,
 };
 
-/**
- *  MARK:--------------------MultiNetType--------------------
- */
-typedef NS_ENUM(NSInteger, MultiNetType) {
-    MultiNetType_Unknown        = 0,//UnKnown
-    MultiNetType_Logic          = 1,//Logic
-    MultiNetType_String         = 2,//String
-};
 
 /**
- *  MARK:--------------------神经元类型--------------------
+ *  MARK:--------------------神经元类型(废弃)--------------------
  */
-typedef NS_ENUM(NSInteger, AINodeType) {
-    AINodeType_Data         = 0,//单路神经元
-    AINodeType_Func         = 1,//双路神经元
-    AINodeType_MultiFunc    = 2,//多路神经元
-};
-
-/**
- *  MARK:--------------------ComparisonType--------------------
- */
-typedef NS_ENUM(NSInteger, ComparisonType) {
-    ComparisonType_Than     = 0,
-    ComparisonType_Equal    = 1,
-    ComparisonType_Less     = 2,
-};
-
-/**
- *  MARK:--------------------MindType(最基础的需求)--------------------
- */
-typedef NS_ENUM(NSInteger, MindType) {
-    MindType_Hunger     =   0,//饥饿
-    MindType_Happy      =   1,//开心
-    MindType_Algesia    =   2,//痛觉
-};
-
-/**
- *  MARK:--------------------数据网络,节点类型--------------------
- */
-typedef NS_ENUM(NSInteger, AIDataType) {
-    AIDataType_Int      = 1,
-    AIDataType_Float    = 2,
-    AIDataType_Change   = 3,
-    AIDataType_File     = 4,
-    AIDataType_Char     = 4,
-    AIDataType_String   = 4,
-    AIDataType_Mp3      = 5,//SubX
-    AIDataType_Mp4      = 6,
-};
+//typedef NS_ENUM(NSInteger, AINodeType) {
+//    AINodeType_Data         = 0,//单路神经元
+//    AINodeType_Func         = 1,//双路神经元
+//    AINodeType_MultiFunc    = 2,//多路神经元
+//};
 
 
 /**
@@ -183,19 +103,6 @@ typedef NS_ENUM(NSInteger, AITargetType) {
     AITargetType_Repeat = 3,//重复(快乐)
 };
 
-/**
- *  MARK:--------------------PortType--------------------
- */
-typedef NS_ENUM(NSInteger, PortType) {
-    PortType_Abs        = 1,
-    PortType_Con        = 2,
-    PortType_Property   = 3,
-    PortType_BeProperty = 4,
-    PortType_Change     = 5,
-    PortType_BeChange   = 6,
-    PortType_Logic      = 7,
-    PortType_BeLogic    = 8,
-};
 
 /**
  *  MARK:--------------------顺逆方向--------------------

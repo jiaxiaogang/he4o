@@ -6,31 +6,104 @@
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
+#import "SMGEnum.h"
+#import "SMGUtils.h"
+#import "SMGConfig.h"
+
+
+/**
+ *  MARK:--------------------PathKey--------------------
+ */
+
+//node
+#define PATH_NET_FRONT_ORDER_NODE   @"NET_FRONT_ORDER_NODE"                 //frontOrder节点根目录;(白质)
+#define PATH_NET_ABS_NODE           @"NET_ABS_NODE"                         //神经网络根目录;(白质)
+
+//cmv
+#define PATH_NET_CMV_NODE           @"NET_CMV_NODE"                         //cmv节点根目录;(白质)
+#define PATH_NET_ABS_CMV_NODE       @"NET_ABS_CMV_NODE"                     //cmv抽象节点根目录;(白质)
+#define PATH_NET_DIRECTION(mvDir)   STRFORMAT(@"NET_DIRECTION_%ld",mvDir)   //mv顺逆方向引用序列(以Path为各mv的分区,cmvNode和absCMVNode都指向此direction)
+
+//cmvModel
+#define PATH_NET_CMVMODEL           @"NET_CMVMODEL"                         //神经网络"cmv模型"根目录;(杏仁核)
+
+//index
+#define PATH_NET_VALUE              @"NET_VALUE"                            //神经网络"值数据"根目录;(海马体)
+#define PATH_NET_ABSVALUE           @"NET_ABSVALUE"                         //"抽象值数据"根目录;
+#define FOLDER_NET_INDEX            @"NET_INDEX"                            //神经网络"索引"根文件夹名;(海马体)
+
+//reference
+#define PATH_NET_REFERENCE          @"NET_REFERENCE"                        //神经网络"引用序列"根目录;(海马体)
+#define PATH_NET_OUTPUT_REFERENCE   @"NET_OUTPUT_REFERENCE"                 //输出引用序列
+
+
+/**
+ *  MARK:--------------------fileNameKey--------------------
+ */
+#define FILENAME_Node @"node"               //节点
+#define FILENAME_CMVModel @"cmvModel"       //cmv模型
+#define FILENAME_Value @"value"             //微信息
+#define FILENAME_Index @"index"             //微信息索引(数组)
+#define FILENAME_Reference @"reference"     //微信息引用
+#define FILENAME_AbsValue @"absValue"       //宏节点的值存储地址
+#define FILENAME_AbsIndex @"absIndex"       //宏节点索引序列地址
+#define FILENAME_DirectionIndex(mvDirection) STRFORMAT(@"directionIndex_%ld",mvDirection) //mv的顺逆方向索引序列地址
+
+#define FILENAME_Reference_ByPointer @"reference_ByPointer" //微信息引用(pointer序)
+#define FILENAME_Reference_ByPort @"reference_ByPort"       //微信息引用(port序)
+#define FILENAME_OutputIndex @"outputIndex"                 //小脑微信息
+
 /**
  *  MARK:--------------------数据检查--------------------
  */
+
 //String
-#define AISTRISOK(a) (a  && [a isKindOfClass:[AIString class]] && a.content && [a.content isKindOfClass:[NSArray class]] && a.content.count > 0)
-#define AISTRTOOK(a) (a  && [a isKindOfClass:[AIString class]] ? a : [AIString newWithContent:@""])
+#define STRISOK(a) (a  && ![a isKindOfClass:[NSNull class]] && [a isKindOfClass:[NSString class]] && ![a isEqualToString:@""])//是否空字符串
+#define STRTOOK(a) (a  && ![a isKindOfClass:[NSNull class]]) ? ([a isKindOfClass:[NSString class]] ? a : [NSString stringWithFormat:@"%@", a]) : @""
+#define STRFORMAT(a, ...) [NSString stringWithFormat:a, ##__VA_ARGS__]//String.format
 
 //Array
-#define AIARRISOK(a) (a  && [a isKindOfClass:[AIArray class]] && a.content && [a.content isKindOfClass:[NSArray class]] && a.content.count > 0)
-#define AIARRTOOK(a) (a  && [a isKindOfClass:[AIArray class]]) ?  a : [AIArray initWithObjects:nil]
-#define AIARR_INDEX(a,i) (a && [a isKindOfClass:[AIArray class]]) ?  [a objectAtIndex:i] : nil//数组取子防闪
+#define ARRISOK(a) (a  && [a isKindOfClass:[NSArray class]] && a.count)//是否空数组
+#define ARRTOOK(a) (a  && [a isKindOfClass:[NSArray class]]) ?  a : [NSArray new]
+#define ARR_INDEX(a,i) (a && [a isKindOfClass:[NSArray class]] && a.count > i) ?  a[i] : nil//数组取子防闪
+#define ARR_INDEXISOK(a,i) (a && [a isKindOfClass:[NSArray class]] && a.count > i && i >= 0)//数组可移除i
 
+//NSNumber
+#define NUMISOK(a) (a  && [a isKindOfClass:[NSNumber class]])//是否有效NSNumber
+#define NUMTOOK(a) (a  && [a isKindOfClass:[NSNumber class]]) ? a : @(0)
+
+//Dic
+#define DICISOK(a) (a  && [a isKindOfClass:[NSDictionary class]] && a.count)//是否空字典
+#define DICTOOK(a) (a  && [a isKindOfClass:[NSDictionary class]]) ?  a : [NSDictionary new]
+
+//AILine
+#define LINEISOK(a) (a  && [a isKindOfClass:[AILine class]])
+
+//AIPointer
+#define POINTERISOK(a) (a && [a isKindOfClass:[AIPointer class]] && a.pointerId > 0)
+
+//ISOK
+#define ISOK(obj, class) (obj && [obj isKindOfClass:class])
 
 /**
  *  MARK:--------------------快捷建对象--------------------
  */
-//Char
-#define AIMakeCharByStr(a) [AIChar newWithContentByString:a]
-#define AIMakeChar(a) [AIChar newWithContent:a]
 
-//String
-#define AIMakeStr(a) [AIString newWithContent:a]
-#define AISTRFORMAT(a, ...) [AIString newWithContent:[NSString stringWithFormat:a, ##__VA_ARGS__]]
+//NSArray
+#define SMGArrayMake(arg) \
+NSMutableArray *array = [NSMutableArray arrayWithObject:arg];\
+va_list args;\
+va_start(args, arg);\
+id next = nil;\
+while ((next = va_arg(args,id))) {\
+[array addObject:next];\
+}\
+va_end(args);\
 
-//Array
-#define AIMakeArr(a, ...) [AIArray initWithObjects:a, ##__VA_ARGS__,nil]
-//#define AIMakeArr_Pointer(a, ...) [AIArray initWithObjects:a, ##__VA_ARGS__,nil]
 
+/**
+ *  MARK:--------------------快捷访问对象--------------------
+ */
+//2017.11.13后启用N8规则DOP架构;
+#define theNet [AINet sharedInstance]
+#define theInput [AIInput sharedInstance]
