@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0700"
+   LastUpgradeVersion = "0930"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -13,11 +13,11 @@
             buildForProfiling = "YES"
             buildForArchiving = "YES">
             <BuildableReference
-               BuildableIdentifier = 'primary'
-               BlueprintIdentifier = 'F1A57F063DAC9B33748B129DD30F145E'
-               BlueprintName = 'LKDBHelper'
-               ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'libLKDBHelper.a'>
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "844B3FE2C62E05F0A6872914B9C0FC8A"
+               BlueprintName = "LKDBHelper"
+               ReferencedContainer = "container:Pods.xcodeproj"
+               BuildableName = "libLKDBHelper.a">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
