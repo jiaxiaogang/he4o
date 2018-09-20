@@ -47,7 +47,15 @@
  *  3. 在dataIn时,抵消旧任务,并生成新任务;
  */
 -(void) addToCMVCache:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta order:(NSInteger)order{
-    //1. 同类同向较弱的被撤消
+    //1. 反向的被抵消
+    
+    //BOOL havDemand = [ThinkingUtils getDemand:cmvNode.urgentTo_p.algsType delta:delta complete:nil];
+    
+    
+    
+    
+    
+    //2. 有需求时_同类同向较弱的被撤消
     BOOL needAdd = true;
     for (NSInteger i = 0; i < self.loopCache.count; i++) {
         MVCacheModel *checkItem = self.loopCache[i];
@@ -61,7 +69,7 @@
         }
     }
     
-    //2. 加入新的;
+    //3. 有需求时_加入新的
     if (needAdd) {
         MVCacheModel *newItem = [[MVCacheModel alloc] init];
         newItem.algsType = algsType;

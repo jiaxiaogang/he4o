@@ -261,19 +261,17 @@ static AIThinkingControl *_instance;
         if (ISOK(cmvNode, AICMVNode.class)) {
             //2. 根据cmv模型,取cmv的迫切度值和欲望方向;求出需求
             NSNumber *deltaNum = [SMGUtils searchObjectForPointer:cmvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime];
-            NSNumber *urgentToNum = [SMGUtils searchObjectForPointer:cmvNode.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime];
             NSInteger delta = [NUMTOOK(deltaNum) integerValue];
             
+            //3. 思考mv
+            //BOOL havDemand = [ThinkingUtils getDemand:cmvNode.urgentTo_p.algsType delta:delta complete:nil];
             //TODO:>>>>判断需求;(如饿,主动取当前状态,是否饿)
-            //3. 有需求思考解决
-            BOOL havDemand = [ThinkingUtils getDemand:cmvNode.urgentTo_p.algsType delta:delta complete:nil];
-            if (havDemand) {
-                [self dataIn_AssExp_HavDemand:cmvNode];
+            if (delta != 0) {
+                [self dataIn_AssExp_ForMV:cmvNode];
             }
-            //4. 无需求经验思考
-            else{
-                [self dataIn_AssExp_NoDemand:cmvModel cmvNode:cmvNode];
-            }
+            
+            //4. 思考数据
+            [self dataIn_AssExp_ForData:cmvModel cmvNode:cmvNode];
         }
     }
     //5. 消耗energy
@@ -286,7 +284,7 @@ static AIThinkingControl *_instance;
  *  2. TODO:明天扩展对out_p的支持
  *  3. TODO:>>>>>此处,不应直接交由decision,而是交给mvCache序列,并由loop决定是否优先执行此mv;
  */
--(void) dataIn_AssExp_HavDemand:(AICMVNode*)cmvNode {
+-(void) dataIn_AssExp_ForMV:(AICMVNode*)cmvNode {
     //1. 数据检查
     if (cmvNode == nil) {
         return;
@@ -309,7 +307,7 @@ static AIThinkingControl *_instance;
  *  1. 无需求时,找出以往同样经历,类比规律,抽象出更确切的意义;
  *  2. 注:此方法为abs方向的思维方法总入口;(与其相对的决策处
  */
--(void) dataIn_AssExp_NoDemand:(AINetCMVModel*)cmvModel cmvNode:(AICMVNode*)cmvNode {
+-(void) dataIn_AssExp_ForData:(AINetCMVModel*)cmvModel cmvNode:(AICMVNode*)cmvNode {
     //1. 数据检查
     if (cmvModel == nil || cmvNode == nil) {
         return;
