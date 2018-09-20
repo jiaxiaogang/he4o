@@ -46,31 +46,39 @@
  *  2. 在assData等(内心活动,不抵消cmvCache中旧任务)
  *  3. 在dataIn时,抵消旧任务,并生成新任务;
  */
--(void) addToCMVCache:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta order:(NSInteger)order{
-    //1. 反向的被抵消
+-(void) updateCMVCache:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta order:(NSInteger)order{
+    //1. 数据检查
+    if (delta == 0) {
+        return;
+    }
     
-    //BOOL havDemand = [ThinkingUtils getDemand:cmvNode.urgentTo_p.algsType delta:delta complete:nil];
-    
-    
-    
-    
-    
-    //2. 有需求时_同类同向较弱的被撤消
-    BOOL needAdd = true;
-    for (NSInteger i = 0; i < self.loopCache.count; i++) {
+    //2. 去重_同向撤弱,反向抵消;
+    BOOL canNeed = true;
+    NSInteger limit = self.loopCache.count;
+    for (NSInteger i = 0; i < limit; i++) {
         MVCacheModel *checkItem = self.loopCache[i];
-        if ([STRTOOK(algsType) isEqualToString:checkItem.algsType] && (delta > 0 == checkItem.delta > 0)) {
-            if (labs(delta) > labs(checkItem.delta)) {
-                [self.loopCache removeObjectAtIndex:i];
+        if ([STRTOOK(algsType) isEqualToString:checkItem.algsType]) {
+            if ((delta > 0 == checkItem.delta > 0)) {
+                //1) 同向较弱的撤消
+                if (labs(urgentTo) > labs(checkItem.urgentTo)) {
+                    [self.loopCache removeObjectAtIndex:i];
+                    limit--;
+                    i--;
+                }else{
+                    canNeed = false;
+                }
             }else{
-                needAdd = false;
+                //2) 反向抵消
+                [self.loopCache removeObjectAtIndex:i];
+                limit--;
+                i--;
             }
-            break;
         }
     }
     
-    //3. 有需求时_加入新的
-    if (needAdd) {
+    //3. 有需求时且可加入时_加入新的
+    BOOL havDemand = [ThinkingUtils getDemand:algsType delta:delta complete:nil];
+    if (canNeed && havDemand) {
         MVCacheModel *newItem = [[MVCacheModel alloc] init];
         newItem.algsType = algsType;
         newItem.delta = delta;
@@ -97,30 +105,8 @@
  *  MARK:--------------------dataIn_Mv时及时加到manager--------------------
  */
 -(void) dataIn_CmvAlgsArr:(NSArray*)algsArr{
-    //1. 抵消 | 合并
     [ThinkingUtils parserAlgsMVArr:algsArr success:^(AIKVPointer *delta_p, AIKVPointer *urgentTo_p, NSInteger delta, NSInteger urgentTo, NSString *algsType) {
-        BOOL findSeemType = false;
-        for (NSInteger i = 0 ; i < self.loopCache.count; i++) {
-            MVCacheModel *checkItem = self.loopCache[i];
-            if ([STRTOOK(algsType) isEqualToString:checkItem.algsType]) {
-                //2. 同向且更迫切时,替换到合适位置
-                if ((checkItem.delta > 0) == (delta > 0)) {
-                    if (labs(delta) > labs(checkItem.delta)) {
-                        [self.loopCache removeObject:checkItem];
-                        [self addToCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
-                    }
-                }else{//3. 异向抵消
-                    [self.loopCache removeObject:checkItem];
-                }
-                findSeemType = true;
-                break;
-            }
-        }
-        
-        //4. 未找到相同类型,加到cmvCache中
-        if (!findSeemType) {
-            [self addToCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
-        }
+        [self updateCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
     }];
 }
 

@@ -125,8 +125,8 @@ static AIThinkingControl *_instance;
     //3. 分流
     AINetCMVModel *cmvModel;
     if (findMV) {
-        //4. 输入新的cmvAlgsArr
-        [self dataIn_CMVAlgsArr:algsArr];
+        //4. 输入新的cmvAlgsArr//TODO:(下面已有assExp中,有mv方向的添加mvCache代码,此处是否可以去掉!!!)
+        [self.mvCacheManager dataIn_CmvAlgsArr:algsArr];
         
         //5. 创建NetCmvModel;
         cmvModel = [self dataIn_CreateNetCMVModel:algsArr];
@@ -160,11 +160,6 @@ static AIThinkingControl *_instance;
         }
     }
     return false;
-}
-
-//输入新的cmvAlgsArr
--(void) dataIn_CMVAlgsArr:(NSArray*)algsArr{
-    [self.mvCacheManager dataIn_CmvAlgsArr:algsArr];
 }
 
 /**
@@ -219,10 +214,11 @@ static AIThinkingControl *_instance;
                         NSInteger urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
                         NSInteger delta = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
                         [self updateEnergy:(urgentTo + 9)/10];
-                        [self.mvCacheManager addToCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
+                        [self.mvCacheManager updateCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
                         
                         //5. 形成循环,根据当前最前排mv和energy,再进行思维;
-                        [self dataIn_AssociativeData:nil];//TODO(将联想到的foOrder时序列,再进行二次联想)
+                        //[self dataIn_AssociativeData:nil];//TODO(将联想到的foOrder时序列,再进行二次联想)
+                        [self dataOut_AssociativeExperience];
                         
                         //6. log
                         NSLog(@"____联想结果:%@ delta:%ld urgentTo:%ld",cmvNode.pointer.algsType,(long)delta,(long)urgentTo);
@@ -267,11 +263,11 @@ static AIThinkingControl *_instance;
             //BOOL havDemand = [ThinkingUtils getDemand:cmvNode.urgentTo_p.algsType delta:delta complete:nil];
             //TODO:>>>>判断需求;(如饿,主动取当前状态,是否饿)
             if (delta != 0) {
-                [self dataIn_AssExp_ForMV:cmvNode];
+                [self dataIn_AssExp_ToOutLoop:cmvNode];
             }
             
             //4. 思考数据
-            [self dataIn_AssExp_ForData:cmvModel cmvNode:cmvNode];
+            [self dataIn_AssExp_ToLawAbsData:cmvModel cmvNode:cmvNode];
         }
     }
     //5. 消耗energy
@@ -279,12 +275,12 @@ static AIThinkingControl *_instance;
 }
 
 /**
- *  MARK:--------------------有需求思考解决--------------------
+ *  MARK:--------------------对输入的mv更新mvCache并进入outLoop--------------------
  *  1. 有需求时,找出imv解决经验,尝试决策并解决;
  *  2. TODO:明天扩展对out_p的支持
  *  3. TODO:>>>>>此处,不应直接交由decision,而是交给mvCache序列,并由loop决定是否优先执行此mv;
  */
--(void) dataIn_AssExp_ForMV:(AICMVNode*)cmvNode {
+-(void) dataIn_AssExp_ToOutLoop:(AICMVNode*)cmvNode {
     //1. 数据检查
     if (cmvNode == nil) {
         return;
@@ -295,7 +291,7 @@ static AIThinkingControl *_instance;
     NSInteger urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
     NSInteger delta = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
     [self updateEnergy:(urgentTo + 9)/10];
-    [self.mvCacheManager addToCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
+    [self.mvCacheManager updateCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
     
     //3. 形成循环,根据当前最前排mv和energy,再进行思维;
     [self dataOut_AssociativeExperience];
@@ -303,11 +299,11 @@ static AIThinkingControl *_instance;
 
 
 /**
- *  MARK:--------------------无需求经验思考--------------------
+ *  MARK:--------------------输出数据的规律和抽象方向思考--------------------
  *  1. 无需求时,找出以往同样经历,类比规律,抽象出更确切的意义;
  *  2. 注:此方法为abs方向的思维方法总入口;(与其相对的决策处
  */
--(void) dataIn_AssExp_ForData:(AINetCMVModel*)cmvModel cmvNode:(AICMVNode*)cmvNode {
+-(void) dataIn_AssExp_ToLawAbsData:(AINetCMVModel*)cmvModel cmvNode:(AICMVNode*)cmvNode {
     //1. 数据检查
     if (cmvModel == nil || cmvNode == nil) {
         return;

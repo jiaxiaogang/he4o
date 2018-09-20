@@ -21,7 +21,7 @@
  *  2. 在assData等(内心活动,不抵消cmvCache中旧任务)
  *  3. 在dataIn时,抵消旧任务,并生成新任务;
  */
--(void) addToCMVCache:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta order:(NSInteger)order;
+-(void) updateCMVCache:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta order:(NSInteger)order;
 
 
 
