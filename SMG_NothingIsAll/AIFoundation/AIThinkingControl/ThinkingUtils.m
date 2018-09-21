@@ -109,7 +109,7 @@
 
 +(AITargetType) getTargetTypeWithAlgsType:(NSString*)algsType{
     algsType = STRTOOK(algsType);
-    if([algsType isEqualToString:NSStringFromClass(ImvAlgsHungerModel.class)]){
+    if([algsType isEqualToString:NSStringFromClass(ImvAlgsHungerModel.class)]){//饥饿感
         return AITargetType_Down;
     }
     return AITargetType_None;

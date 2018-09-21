@@ -104,11 +104,11 @@
 /**
  *  MARK:--------------------dataIn_Mv时及时加到manager--------------------
  */
--(void) dataIn_CmvAlgsArr:(NSArray*)algsArr{
-    [ThinkingUtils parserAlgsMVArr:algsArr success:^(AIKVPointer *delta_p, AIKVPointer *urgentTo_p, NSInteger delta, NSInteger urgentTo, NSString *algsType) {
-        [self updateCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
-    }];
-}
+//-(void) dataIn_CmvAlgsArr:(NSArray*)algsArr{
+//    [ThinkingUtils parserAlgsMVArr:algsArr success:^(AIKVPointer *delta_p, AIKVPointer *urgentTo_p, NSInteger delta, NSInteger urgentTo, NSString *algsType) {
+//        [self updateCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
+//    }];
+//}
 
 
 /**

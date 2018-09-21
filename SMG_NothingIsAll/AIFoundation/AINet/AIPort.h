@@ -10,30 +10,18 @@
 
 /**
  *  MARK:--------------------网络端口类--------------------
+ *  用来替代AILine+AIStrong
  */
-@class AIKVPointer,AIPortStrong,AINode;
+@class AIKVPointer,AIPortStrong;
 @interface AIPort : NSObject <NSCoding>
 
 @property (strong,nonatomic) AIPointer *target_p;   //指向目标的地址
 @property (strong,nonatomic) AIPortStrong *strong;
 
-+(AIPort*) newWithNode:(AINode*)node;
 -(NSComparisonResult) compare:(AIPort*)port;//类比port:1级强度,2级pointerId;
 -(void) strongPlus;
 
 @end
-
-
-
-///**
-// *  MARK:--------------------抽象端口--------------------
-// */
-//@interface AIAbsPort : AIPort <NSCoding>
-//
-//@property (strong, nonatomic) NSMutableArray *refs_p;//抽象端口(知道自身中哪些微信息被抽象了)
-//
-//@end
-
 
 
 /**

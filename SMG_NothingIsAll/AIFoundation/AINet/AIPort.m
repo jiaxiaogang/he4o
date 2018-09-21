@@ -7,7 +7,6 @@
 //
 
 #import "AIPort.h"
-#import "AINode.h"
 #import "AIKVPointer.h"
 
 @implementation AIPort
@@ -41,14 +40,6 @@
     return _strong;
 }
 
-+(AIPort*) newWithNode:(AINode*)node{
-    AIPort *port = [[AIPort alloc] init];
-    if (node) {
-        port.target_p = node.pointer;
-    }
-    return port;
-}
-
 -(void) strongPlus{
     self.strong.value ++;
 }
@@ -63,38 +54,6 @@
 }
 
 @end
-
-
-///**
-// *  MARK:--------------------抽象端口--------------------
-// */
-//@implementation AIAbsPort
-//
-//-(NSMutableArray *)refs_p{
-//    if (_refs_p == nil) {
-//        _refs_p = [[NSMutableArray alloc] init];
-//    }
-//    return _refs_p;
-//}
-//
-///**
-// *  MARK:--------------------NSCoding--------------------
-// */
-//- (instancetype)initWithCoder:(NSCoder *)coder {
-//    self = [super initWithCoder:coder];
-//    if (self) {
-//        self.refs_p = [coder decodeObjectForKey:@"refs_p"];
-//    }
-//    return self;
-//}
-//
-//- (void)encodeWithCoder:(NSCoder *)coder {
-//    [super encodeWithCoder:coder];
-//    [coder encodeObject:self.refs_p forKey:@"refs_p"];
-//}
-//
-//@end
-
 
 
 //MARK:===============================================================

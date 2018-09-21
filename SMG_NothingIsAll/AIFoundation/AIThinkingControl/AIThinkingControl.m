@@ -10,7 +10,6 @@
 #import "AINet.h"
 #import "ImvAlgsModelBase.h"
 #import "AIActionControl.h"
-#import "AINode.h"
 #import "NSObject+Extension.h"
 #import "AIKVPointer.h"
 #import "AIPort.h"
@@ -125,8 +124,8 @@ static AIThinkingControl *_instance;
     //3. 分流
     AINetCMVModel *cmvModel;
     if (findMV) {
-        //4. 输入新的cmvAlgsArr//TODO:(下面已有assExp中,有mv方向的添加mvCache代码,此处是否可以去掉!!!)
-        [self.mvCacheManager dataIn_CmvAlgsArr:algsArr];
+        //4. 输入新的cmvAlgsArr(下面已有assExp中,有mv方向的添加mvCache代码,此处去掉)
+        //[self.mvCacheManager dataIn_CmvAlgsArr:algsArr];
         
         //5. 创建NetCmvModel;
         cmvModel = [self dataIn_CreateNetCMVModel:algsArr];
@@ -222,11 +221,8 @@ static AIThinkingControl *_instance;
                         
                         //6. log
                         NSLog(@"____联想结果:%@ delta:%ld urgentTo:%ld",cmvNode.pointer.algsType,(long)delta,(long)urgentTo);
-                    }else if(ISOK(referNode, AINode.class)){
-                        //联想到数据网络节点
-                        AINode *node = (AINode*)referNode;
-                        //TODO>>>>将结果存到shortCache或thinkFeedCache//或先不添加,随后有需要时,再说;
                     }else if(ISOK(referNode, AINetAbsNode.class)){
+                        //联想到数据网络节点
                         //TODO>>>>将结果存到shortCache或thinkFeedCache//或先不添加,随后有需要时,再说;
                     }
                     
@@ -329,7 +325,7 @@ static AIThinkingControl *_instance;
                 AINetCMVModel *assCmvModel = [SMGUtils searchObjectForPointer:assCmvNode.cmvModel_p fileName:FILENAME_CMVModel];
                 AIFrontOrderNode *assFoNode = [SMGUtils searchObjectForPointer:assCmvModel.foNode_p fileName:FILENAME_Node];
                 
-                NSLog(@"____联想到cmv模型>>>\ncmvModel:%ld,%@ \n assCmvModel:%ld,%@",(long)cmvModel.pointer.pointerId,cmvModel.pointer.params,(long)assCmvModel.pointer.pointerId,assCmvModel.pointer.params);
+                NSLog(@"____absData1 > 联想到cmv模型>>>\ncmvModel:%ld,%@ \n assCmvModel:%ld,%@",(long)cmvModel.pointer.pointerId,cmvModel.pointer.params,(long)assCmvModel.pointer.pointerId,assCmvModel.pointer.params);
                 
                 //5. 类比orders的规律,并abs;
                 NSArray *sames = [ThinkingUtils analogyFoNode_A:foNode foNode_B:assFoNode];
@@ -350,15 +346,25 @@ static AIThinkingControl *_instance;
                         [SMGUtils insertObject:absNode rootPath:absNode.pointer.filePath fileName:FILENAME_Node];
                     }
                     
-                    NSLog(@"____类比到规律 >> 进行抽象;——————————START\n");
+                    NSLog(@"____absData > 类比到规律 >> 进行抽象;——————————START\n");
                     [absNode print];
-                    NSLog(@"____类比到规律 >> 进行抽象;——————————END\n");
                     
                     //TODO:>>>>>将absNode和absCmvNode存到thinkFeedCache;
                 }
             }
-        }else if(ISOK(assDirectionPort, AINode.class)){
-            AINode *node = (AINode*)assDirectionPort;
+        }else if(ISOK(assDirectionNode, AIAbsCMVNode.class)){
+            AIAbsCMVNode *assAbsCmvNode = (AIAbsCMVNode*)assDirectionNode;
+            //4. 排除联想自己(随后写到reference中)
+            if (![cmvNode.pointer isEqual:assAbsCmvNode.pointer]) {
+                AINetAbsNode *assAbsNode = [SMGUtils searchObjectForPointer:assAbsCmvNode.absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+                if (assAbsNode) {
+                    
+                    //(对assAbsNode 和 foNode) 找sames;
+                    
+                    //考虑删掉,cmvModel;直接类似abs这种,互相指向...(更简单)
+                    
+                }
+            }
         }
     }
 }

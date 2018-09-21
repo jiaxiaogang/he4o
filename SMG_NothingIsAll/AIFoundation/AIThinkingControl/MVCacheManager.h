@@ -28,7 +28,7 @@
 /**
  *  MARK:--------------------dataIn_Mv时及时加到manager--------------------
  */
--(void) dataIn_CmvAlgsArr:(NSArray*)algsArr;
+//-(void) dataIn_CmvAlgsArr:(NSArray*)algsArr;
 
 
 

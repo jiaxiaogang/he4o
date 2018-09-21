@@ -38,7 +38,6 @@
 		08EA48CE202932B80038B982 /* CustomAlgsChargeModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08EA48CD202932B80038B982 /* CustomAlgsChargeModel.m */; };
 		08EA48D1202932E70038B982 /* AICustomAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 08EA48D0202932E70038B982 /* AICustomAlgs.m */; };
 		08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F4C98D1EA7A03900F3EDA8 /* SMGUtils.m */; };
-		08F737FA1F7C7131005EAD56 /* AINode.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F737F61F7C7131005EAD56 /* AINode.m */; };
 		08F738051F7C714F005EAD56 /* AIKVPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F737FF1F7C714F005EAD56 /* AIKVPointer.m */; };
 		08F738061F7C714F005EAD56 /* AIPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738011F7C714F005EAD56 /* AIPointer.m */; };
 		08F738071F7C714F005EAD56 /* AISqlPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738031F7C714F005EAD56 /* AISqlPointer.m */; };
@@ -129,8 +128,6 @@
 		08EA48D0202932E70038B982 /* AICustomAlgs.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AICustomAlgs.m; sourceTree = "<group>"; };
 		08F4C98C1EA7A03900F3EDA8 /* SMGUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMGUtils.h; sourceTree = "<group>"; };
 		08F4C98D1EA7A03900F3EDA8 /* SMGUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMGUtils.m; sourceTree = "<group>"; };
-		08F737F51F7C7131005EAD56 /* AINode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AINode.h; sourceTree = "<group>"; };
-		08F737F61F7C7131005EAD56 /* AINode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AINode.m; sourceTree = "<group>"; };
 		08F737FE1F7C714F005EAD56 /* AIKVPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIKVPointer.h; sourceTree = "<group>"; };
 		08F737FF1F7C714F005EAD56 /* AIKVPointer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIKVPointer.m; sourceTree = "<group>"; };
 		08F738001F7C714F005EAD56 /* AIPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIPointer.h; sourceTree = "<group>"; };
@@ -463,8 +460,6 @@
 		08F737EE1F7C7131005EAD56 /* AINode */ = {
 			isa = PBXGroup;
 			children = (
-				08F737F51F7C7131005EAD56 /* AINode.h */,
-				08F737F61F7C7131005EAD56 /* AINode.m */,
 				88A43F3B2109576D00281348 /* AIFrontOrderNode.h */,
 				88A43F3C2109576D00281348 /* AIFrontOrderNode.m */,
 				88A43F3E210957C300281348 /* AINetAbsNode.h */,
@@ -705,7 +700,6 @@
 				88E1F84E211591D80036B616 /* MVCacheManager.m in Sources */,
 				88C258C1209E99B00042CB6A /* AINetCMV.m in Sources */,
 				08EA48D1202932E70038B982 /* AICustomAlgs.m in Sources */,
-				08F737FA1F7C7131005EAD56 /* AINode.m in Sources */,
 				88A43F3A2109571300281348 /* AIAbsCMVNode.m in Sources */,
 				08D322A91EBA28B0009D734A /* Foundation+Log.m in Sources */,
 				88A43F40210957C300281348 /* AINetAbsNode.m in Sources */,
