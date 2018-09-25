@@ -43,29 +43,26 @@
 //MARK:===============================================================
 @implementation ThinkingUtils (Analogy)
 
-+(BOOL) analogyCharA:(char)a b:(char)b{
-    return a == b;
-}
 
-+(void) analogyCMVA:(NSArray*)a b:(NSArray*)b{
-    //1. 忽略
-    //2. 
-}
-
-+(void) test{
-    //1. 连续信号中,找重复;(连续也是拆分,多事务处理的)
-    //2. 两条信息中,找交集;
-    //3. 在连续信号的处理中,实时将拆分单信号存储到内存区,并提供可检索等,其形态与最终存硬盘是一致的;
-    
-    //类比的处理,是足够细化的,对思维每个信号作类比操作;(而将类比到的最基本的结果,输出给thinking,以供为构建网络的依据,最终是以网络为目的的)
-}
-
-//类比处理(瓜是瓜)
+/**
+ *  MARK:--------------------类比处理(瓜是瓜)--------------------
+ *  1. 连续信号中,找重复;(连续也是拆分,多事务处理的)
+ *  2. 两条信息中,找交集;
+ *  3. 在连续信号的处理中,实时将拆分单信号存储到内存区,并提供可检索等,其形态与最终存硬盘是一致的;
+ *  类比的处理,是足够细化的,对思维每个信号作类比操作;(而将类比到的最基本的结果,输出给thinking,以供为构建网络的依据,最终是以网络为目的的)
+ */
 +(NSArray*) analogyFoNode_A:(AIFrontOrderNode*)foNode_A foNode_B:(AIFrontOrderNode*)foNode_B{
+    if (ISOK(foNode_A, AIFrontOrderNode.class) && ISOK(foNode_B, AIFrontOrderNode.class)) {
+        return [self analogyOrdersA:foNode_A.orders_kvp ordersB:foNode_B.orders_kvp];
+    }
+    return nil;
+}
+
++(NSArray*) analogyOrdersA:(NSArray*)ordersA ordersB:(NSArray*)ordersB{
     //1. 类比orders的规律
     NSMutableArray *sames = [[NSMutableArray alloc] init];
-    if (ISOK(foNode_A, AIFrontOrderNode.class) && ISOK(foNode_B, AIFrontOrderNode.class)) {
-        for (AIKVPointer *dataA_p in foNode_A.orders_kvp) {
+    if (ARRISOK(ordersA) && ARRISOK(ordersB)) {
+        for (AIKVPointer *dataA_p in ordersA) {
             //6. 是否已收集
             BOOL already = false;
             for (AIKVPointer *same_p in sames) {
@@ -76,7 +73,7 @@
             }
             //7. 未收集过,则查找是否有一致微信息(有则收集)
             if (!already) {
-                for (AIKVPointer *dataB_p in foNode_B.orders_kvp) {
+                for (AIKVPointer *dataB_p in ordersB) {
                     if ([dataA_p isEqual:dataB_p]) {
                         [sames addObject:dataB_p];
                         break;

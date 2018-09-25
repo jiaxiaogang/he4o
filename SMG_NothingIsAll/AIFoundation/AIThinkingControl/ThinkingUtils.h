@@ -30,12 +30,9 @@
 //MARK:===============================================================
 @interface ThinkingUtils (Analogy)
 
-+(BOOL) analogyCharA:(char)a b:(char)b;
-
-+(void) analogyCMVA:(NSArray*)a b:(NSArray*)b;
-
 //类比处理(瓜是瓜)
 +(NSArray*) analogyFoNode_A:(AIFrontOrderNode*)foNode_A foNode_B:(AIFrontOrderNode*)foNode_B;
++(NSArray*) analogyOrdersA:(NSArray*)ordersA ordersB:(NSArray*)ordersB;
 
 @end
 
