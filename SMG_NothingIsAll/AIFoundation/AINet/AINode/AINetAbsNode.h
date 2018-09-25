@@ -12,10 +12,8 @@
 //MARK:                     < AbsNode类(抽象神经元(多级和双级合并)) >
 //MARK:===============================================================
 @class AIKVPointer;
-@interface AINetAbsNode : NSObject <NSCoding>
+@interface AINetAbsNode : AIAbsNodeBase
 
-@property (strong, nonatomic) AIKVPointer *pointer;
-@property (strong, nonatomic) NSMutableArray *conPorts; //具象关联端口
 @property (strong, nonatomic) AIKVPointer *absValue_p;  //微信息组
 @property (strong, nonatomic) AIKVPointer *absCmvNode_p;//抽象cmv指向;
 

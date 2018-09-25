@@ -20,32 +20,22 @@
     return _orders_kvp;
 }
 
--(NSMutableArray *)absPorts{
-    if (_absPorts == nil) {
-        _absPorts = [NSMutableArray new];
-    }
-    return _absPorts;
-}
-
 /**
  *  MARK:--------------------NSCoding--------------------
  */
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
-    self = [super init];
+    self = [super initWithCoder:aDecoder];
     if (self) {
-        self.pointer = [aDecoder decodeObjectForKey:@"pointer"];
         self.orders_kvp = [aDecoder decodeObjectForKey:@"orders_kvp"];
         self.cmvModel_kvp = [aDecoder decodeObjectForKey:@"cmvModel_kvp"];
-        self.absPorts = [aDecoder decodeObjectForKey:@"absPorts"];
     }
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
-    [aCoder encodeObject:self.pointer forKey:@"pointer"];
+    [super encodeWithCoder:aCoder];
     [aCoder encodeObject:self.orders_kvp forKey:@"orders_kvp"];
     [aCoder encodeObject:self.cmvModel_kvp forKey:@"cmvModel_kvp"];
-    [aCoder encodeObject:self.absPorts forKey:@"absPorts"];
 }
 
 @end
