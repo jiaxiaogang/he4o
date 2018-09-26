@@ -35,56 +35,30 @@
     }
     
     //3. 关联
-    for (NSObject *con_node in ARRTOOK(con_nodes)) {
-        if (ISOK(con_node, AIFrontOrderNode.class)) {
-            AIFrontOrderNode *foNode = (AIFrontOrderNode*)con_node;
+    for (AINodeBase *con_node in ARRTOOK(con_nodes)) {
+        if (ISOK(con_node, AINodeBase.class)) {
             //4. conPorts插口(有则强化 & 无则创建)
-            AIPort *findConPort = [AINetAbsUtils searchPortWithTargetP:foNode.pointer fromPorts:absNode.conPorts];
+            AIPort *findConPort = [AINetAbsUtils searchPortWithTargetP:con_node.pointer fromPorts:absNode.conPorts];
             if (findConPort) {
                 [findConPort strongPlus];
             }else{
                 AIPort *conPort = [[AIPort alloc] init];
-                conPort.target_p = foNode.pointer;
+                conPort.target_p = con_node.pointer;
                 [absNode.conPorts addObject:conPort];
             }
             
             //5. absPorts插口(有则强化 & 无则创建)
-            AIPort *findAbsPort = [AINetAbsUtils searchPortWithTargetP:absNode.pointer fromPorts:foNode.absPorts];
+            AIPort *findAbsPort = [AINetAbsUtils searchPortWithTargetP:absNode.pointer fromPorts:con_node.absPorts];
             if (findAbsPort) {
                 [findAbsPort strongPlus];
             }else{
                 AIPort *absPort = [[AIPort alloc] init];
                 absPort.target_p = absNode.pointer;
-                [foNode.absPorts addObject:absPort];
+                [con_node.absPorts addObject:absPort];
             }
             
             //6. 存foNode
-            [SMGUtils insertObject:foNode rootPath:foNode.pointer.filePath fileName:FILENAME_Node];
-        }else if(ISOK(con_node, AINetAbsNode.class)){
-            AINetAbsNode *con_absNode = (AINetAbsNode*)con_node;
-            
-            //4. conPorts插口(有则强化 & 无则创建)
-            AIPort *findConPort = [AINetAbsUtils searchPortWithTargetP:con_absNode.pointer fromPorts:absNode.conPorts];
-            if (findConPort) {
-                [findConPort strongPlus];
-            }else{
-                AIPort *conPort = [[AIPort alloc] init];
-                conPort.target_p = con_absNode.pointer;
-                [absNode.conPorts addObject:conPort];
-            }
-            
-            //5. absPorts插口(有则强化 & 无则创建)
-            AIPort *findAbsPort = [AINetAbsUtils searchPortWithTargetP:absNode.pointer fromPorts:con_absNode.absPorts];
-            if (findAbsPort) {
-                [findAbsPort strongPlus];
-            }else{
-                AIPort *absPort = [[AIPort alloc] init];
-                absPort.target_p = absNode.pointer;
-                [con_absNode.absPorts addObject:absPort];
-            }
-            
-            //6. 存foNode
-            [SMGUtils insertObject:con_absNode rootPath:con_absNode.pointer.filePath fileName:FILENAME_Node];
+            [SMGUtils insertObject:con_node rootPath:con_node.pointer.filePath fileName:FILENAME_Node];
         }
     }
     

@@ -10,7 +10,7 @@
 #import "SMGUtils.h"
 #import "SMGConfig.h"
 #import "AINodeBase.h"
-#import "AIAbsNodeBase.h"
+#import "AICMVNodeBase.h"
 
 
 /**

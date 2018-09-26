@@ -13,12 +13,6 @@
 //MARK:===============================================================
 //MARK:                     < AIAbsCMVNode >
 //MARK:===============================================================
-@interface AIAbsCMVNode()
-
-@property (strong, nonatomic) NSMutableArray *conPorts; //具象方向端口;
-
-@end
-
 @implementation AIAbsCMVNode
 
 - (NSMutableArray *)conPorts{
@@ -89,11 +83,8 @@
  *  MARK:--------------------NSCoding--------------------
  */
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
-    self = [super init];
+    self = [super initWithCoder:aDecoder];
     if (self) {
-        self.pointer = [aDecoder decodeObjectForKey:@"pointer"];
-        self.urgentTo_p = [aDecoder decodeObjectForKey:@"urgentTo_p"];
-        self.delta_p = [aDecoder decodeObjectForKey:@"delta_p"];
         self.conPorts = [aDecoder decodeObjectForKey:@"conPorts"];
         self.absNode_p = [aDecoder decodeObjectForKey:@"absNode_p"];
     }
@@ -101,9 +92,7 @@
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
-    [aCoder encodeObject:self.pointer forKey:@"pointer"];
-    [aCoder encodeObject:self.urgentTo_p forKey:@"urgentTo_p"];
-    [aCoder encodeObject:self.delta_p forKey:@"delta_p"];
+    [super encodeWithCoder:aCoder];
     [aCoder encodeObject:self.conPorts forKey:@"conPorts"];
     [aCoder encodeObject:self.absNode_p forKey:@"absNode_p"];
 }

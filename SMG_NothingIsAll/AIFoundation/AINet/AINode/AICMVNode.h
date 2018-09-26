@@ -12,10 +12,8 @@
 //MARK:===============================================================
 //MARK:                     < AINode之: cmv节点 >
 //MARK:===============================================================
-@interface AICMVNode : AINodeBase
+@interface AICMVNode : AICMVNodeBase
 
-@property (strong, nonatomic) AIKVPointer *urgentTo_p;  //迫切度数据指针;(指向urgentValue的值存储地址)
-@property (strong, nonatomic) AIKVPointer *delta_p;     //变化指针;(指向变化值存储地址)
 @property (strong, nonatomic) AIKVPointer *cmvModel_p;//被引用的cmvModel;
 
 @end

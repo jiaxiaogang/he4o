@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0808927A215AF5F400710636 /* AINodeBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 08089279215AF5F400710636 /* AINodeBase.m */; };
-		0808927D215AF62400710636 /* AIAbsNodeBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 0808927C215AF62400710636 /* AIAbsNodeBase.m */; };
+		08089280215B07FC00710636 /* AICMVNodeBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 0808927F215B07FC00710636 /* AICMVNodeBase.m */; };
 		080A74321F60C6490025DBA3 /* AIPort.m in Sources */ = {isa = PBXBuildFile; fileRef = 080A74311F60C6490025DBA3 /* AIPort.m */; };
 		081B3ACC1F6E2155008A7F36 /* AITime.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3ACB1F6E2155008A7F36 /* AITime.m */; };
 		081B3AD61F6E2994008A7F36 /* AIStringAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3AD51F6E2994008A7F36 /* AIStringAlgs.m */; };
@@ -72,8 +72,8 @@
 		08042E7D1F43CE9400A1FFCB /* SMGEnum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMGEnum.h; sourceTree = "<group>"; };
 		08089278215AF5F400710636 /* AINodeBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINodeBase.h; sourceTree = "<group>"; };
 		08089279215AF5F400710636 /* AINodeBase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINodeBase.m; sourceTree = "<group>"; };
-		0808927B215AF62400710636 /* AIAbsNodeBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIAbsNodeBase.h; sourceTree = "<group>"; };
-		0808927C215AF62400710636 /* AIAbsNodeBase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIAbsNodeBase.m; sourceTree = "<group>"; };
+		0808927E215B07FC00710636 /* AICMVNodeBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AICMVNodeBase.h; sourceTree = "<group>"; };
+		0808927F215B07FC00710636 /* AICMVNodeBase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AICMVNodeBase.m; sourceTree = "<group>"; };
 		080A74301F60C6490025DBA3 /* AIPort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIPort.h; sourceTree = "<group>"; };
 		080A74311F60C6490025DBA3 /* AIPort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIPort.m; sourceTree = "<group>"; };
 		081B3ACA1F6E2155008A7F36 /* AITime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AITime.h; sourceTree = "<group>"; };
@@ -476,8 +476,8 @@
 				88A43F392109571300281348 /* AIAbsCMVNode.m */,
 				08089278215AF5F400710636 /* AINodeBase.h */,
 				08089279215AF5F400710636 /* AINodeBase.m */,
-				0808927B215AF62400710636 /* AIAbsNodeBase.h */,
-				0808927C215AF62400710636 /* AIAbsNodeBase.m */,
+				0808927E215B07FC00710636 /* AICMVNodeBase.h */,
+				0808927F215B07FC00710636 /* AICMVNodeBase.m */,
 			);
 			path = AINode;
 			sourceTree = "<group>";
@@ -699,8 +699,8 @@
 				083F61381F048329000330E1 /* AILine.m in Sources */,
 				8806D888212B8EB100C442CA /* ExpCacheModel.m in Sources */,
 				08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */,
+				08089280215B07FC00710636 /* AICMVNodeBase.m in Sources */,
 				08B31E7E20648C3700FD96EA /* ThinkingUtils.m in Sources */,
-				0808927D215AF62400710636 /* AIAbsNodeBase.m in Sources */,
 				88BC09D720B4EB920006ABEF /* XGRedis.m in Sources */,
 				084219E11FD8CEFD009DA6BC /* AIReactorControl.m in Sources */,
 				08EA48CE202932B80038B982 /* CustomAlgsChargeModel.m in Sources */,

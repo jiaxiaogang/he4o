@@ -19,6 +19,12 @@
 //MARK:                     < method >
 //MARK:===============================================================
 
+-(NSMutableArray *)conPorts{
+    if (_conPorts == nil) {
+        _conPorts = [[NSMutableArray alloc] init];
+    }
+    return _conPorts;
+}
 
 //废弃此方法,按强度排序
 //-(void) addConPort:(AIPort*)conPort{
@@ -40,6 +46,7 @@
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     if (self) {
+        self.conPorts = [aDecoder decodeObjectForKey:@"conPorts"];
         self.absValue_p = [aDecoder decodeObjectForKey:@"absValue_p"];
         self.absCmvNode_p = [aDecoder decodeObjectForKey:@"absCmvNode_p"];
     }
@@ -48,6 +55,7 @@
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [super encodeWithCoder:aCoder];
+    [aCoder encodeObject:self.conPorts forKey:@"conPorts"];
     [aCoder encodeObject:self.absValue_p forKey:@"absValue_p"];
     [aCoder encodeObject:self.absCmvNode_p forKey:@"absCmvNode_p"];
 }

@@ -356,9 +356,9 @@ static AIThinkingControl *_instance;
             AIAbsCMVNode *assAbsCmvNode = (AIAbsCMVNode*)assDirectionNode;
             //4. 排除联想自己(随后写到reference中)
             if (![cmvNode.pointer isEqual:assAbsCmvNode.pointer]) {
-                AINetAbsNode *assAbsNode = [SMGUtils searchObjectForPointer:assAbsCmvNode.absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
-                if (assAbsNode) {
-                    NSArray *absValues = [SMGUtils searchObjectForPointer:assAbsNode.absValue_p fileName:FILENAME_AbsValue time:cRedisValueTime];
+                AINetAbsNode *ass_an = [SMGUtils searchObjectForPointer:assAbsCmvNode.absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+                if (ass_an) {
+                    NSArray *absValues = [SMGUtils searchObjectForPointer:ass_an.absValue_p fileName:FILENAME_AbsValue time:cRedisValueTime];
                     
                     //5. 类比orders的规律,并abs;
                     NSArray *sames = [ThinkingUtils analogyOrdersA:foNode.orders_kvp ordersB:absValues];
@@ -366,21 +366,21 @@ static AIThinkingControl *_instance;
                     //6. 构建absNode & 并把absValue添加到瞬时记忆
                     if (ARRISOK(sames) && ARRISOK(absValues) && sames.count != absValues.count) {
                         
-                        //9. createAbsNode //扩展支持assAbsNode...
-                        AINetAbsNode *absNode = [[AINet sharedInstance] createAbs:@[foNode,assAbsNode] refs_p:sames];
-                        [self dataIn_ToShortCache:absNode.absValue_p];
+                        //9. createAbsNode
+                        AINetAbsNode *create_an = [[AINet sharedInstance] createAbs:@[foNode,ass_an] refs_p:sames];
+                        [self dataIn_ToShortCache:create_an.absValue_p];
                         
                         //10. createAbsCmvNode //扩展支持absCmvNode...
-                        AIAbsCMVNode *absCmvNode = [theNet createAbsCMVNode:absNode.pointer aMv_p:cmvModel.cmvNode_p bMv_p:assAbsNode.absCmvNode_p];
+                        AIAbsCMVNode *absCmvNode = [theNet createAbsCMVNode:create_an.pointer aMv_p:cmvModel.cmvNode_p bMv_p:ass_an.absCmvNode_p];
                         
                         //11. cmv模型连接;
                         if (ISOK(absCmvNode, AIAbsCMVNode.class)) {
-                            absNode.absCmvNode_p = absCmvNode.pointer;
-                            [SMGUtils insertObject:absNode rootPath:absNode.pointer.filePath fileName:FILENAME_Node];
+                            create_an.absCmvNode_p = absCmvNode.pointer;
+                            [SMGUtils insertObject:create_an rootPath:create_an.pointer.filePath fileName:FILENAME_Node];
                         }
                         
                         NSLog(@"____absData > 类比到规律 >> 进行抽象;——————————START\n");
-                        [absNode print];
+                        [create_an print];
                     }
                     
                     //(对assAbsNode 和 foNode) 找sames;

@@ -11,14 +11,11 @@
 
 /**
  *  MARK:--------------------AIAbsCMVNode--------------------
- *  1. 今后可考虑将conPorts拆分,(注意封装,外界不需要知道有这样的拆分)
+ *  1. 今后可考虑将conPorts拆分,(注意,外界不需要知道有这样的拆分)(封装个毛,麻烦)
  */
-@interface AIAbsCMVNode : NSObject <NSCoding>
+@interface AIAbsCMVNode : AICMVNodeBase
 
-@property (strong, nonatomic) AIKVPointer *pointer;     //自身地址
-@property (strong, nonatomic) AIKVPointer *urgentTo_p;  //迫切度数据指针;(指向urgentValue的值存储地址)
-@property (strong, nonatomic) AIKVPointer *delta_p;     //变化指针;(指向变化值存储地址)
-//@property (strong, nonatomic) NSMutableArray *conPorts; //具象方向端口;
+@property (strong, nonatomic) NSMutableArray *conPorts; //具象方向端口;
 @property (strong, nonatomic) AIKVPointer *absNode_p;   //前因节点
 
 
