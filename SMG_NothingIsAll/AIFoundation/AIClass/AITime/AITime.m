@@ -1,13 +1,13 @@
+////
+////  AITime.m
+////  SMG_NothingIsAll
+////
+////  Created by 贾  on 2017/9/17.
+////  Copyright © 2017年 XiaoGang. All rights reserved.
+////
 //
-//  AITime.m
-//  SMG_NothingIsAll
+//#import "AITime.h"
 //
-//  Created by 贾  on 2017/9/17.
-//  Copyright © 2017年 XiaoGang. All rights reserved.
+//@implementation AITime
 //
-
-#import "AITime.h"
-
-@implementation AITime
-
-@end
+//@end

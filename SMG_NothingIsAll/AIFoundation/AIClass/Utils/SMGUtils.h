@@ -66,8 +66,8 @@
  *  MARK:--------------------SQL语句之rowId--------------------
  */
 +(NSString*) sqlWhere_RowId:(NSInteger)rowid;
-+(NSString*) sqlWhere_K:(id)columnName V:(id)value;
-+(NSDictionary*) sqlWhereDic_K:(id)columnName V:(id)value;
+//+(NSString*) sqlWhere_K:(id)columnName V:(id)value;
+//+(NSDictionary*) sqlWhereDic_K:(id)columnName V:(id)value;
 +(id) searchObjectForPointer:(AIPointer*)pointer fileName:(NSString*)fileName;
 +(id) searchObjectForPointer:(AIPointer*)pointer fileName:(NSString*)fileName time:(double)time;//找到后,缓存到redis,time秒;
 +(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName;

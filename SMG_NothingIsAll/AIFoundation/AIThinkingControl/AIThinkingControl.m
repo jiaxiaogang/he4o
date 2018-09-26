@@ -317,61 +317,34 @@ static AIThinkingControl *_instance;
     //3. 联想cmv模型
     for (AIPort *assDirectionPort in assDirectionPorts) {
         id assDirectionNode = [SMGUtils searchObjectForPointer:assDirectionPort.target_p fileName:FILENAME_Node];
-        if (ISOK(assDirectionNode, AICMVNode.class)) {
-            AICMVNode *assCmvNode = (AICMVNode*)assDirectionNode;
-            
+        
+        if (ISOK(assDirectionNode, AICMVNodeBase.class)) {
+            AICMVNodeBase *ass_cn = (AICMVNodeBase*)assDirectionNode;
             //4. 排除联想自己(随后写到reference中)
-            if (![cmvNode.pointer isEqual:assCmvNode.pointer]) {
-                AINetCMVModel *assCmvModel = [SMGUtils searchObjectForPointer:assCmvNode.cmvModel_p fileName:FILENAME_CMVModel];
-                AIFrontOrderNode *assFoNode = [SMGUtils searchObjectForPointer:assCmvModel.foNode_p fileName:FILENAME_Node];
+            if (![cmvNode.pointer isEqual:ass_cn.pointer]) {
+                AIKVPointer *assFrontNode_p = [ThinkingUtils getFrontNodePointerFromCmvNode:ass_cn];
+                AINodeBase *assFrontNode = [SMGUtils searchObjectForPointer:assFrontNode_p fileName:FILENAME_Node time:cRedisNodeTime];
                 
-                NSLog(@"____absData1 > 联想到cmv模型>>>\ncmvModel:%ld,%@ \n assCmvModel:%ld,%@",(long)cmvModel.pointer.pointerId,cmvModel.pointer.params,(long)assCmvModel.pointer.pointerId,assCmvModel.pointer.params);
-                
-                //5. 类比orders的规律,并abs;
-                NSArray *sames = [ThinkingUtils analogyFoNode_A:foNode foNode_B:assFoNode];
-                
-                //6. 构建absNode & 并把absValue添加到瞬时记忆
-                if (ARRISOK(sames)) {
+                if (ISOK(assFrontNode, AINodeBase.class)) {
+                    //5. 取微信息组
+                    NSArray *assMicroValue_ps = [ThinkingUtils getNodeMicroValuePointersFromFrontNode:assFrontNode];
+                    NSLog(@"____dataIn_抽象前 > 联想到前因节点 : %ld,%@",(long)assFrontNode_p.pointerId,NSStringFromClass(assFrontNode.class));
                     
-                    //9. createAbsNode
-                    AINetAbsNode *absNode = [[AINet sharedInstance] createAbs:@[foNode,assFoNode] refs_p:sames];
-                    [self dataIn_ToShortCache:absNode.absValue_p];
+                    //6. 类比orders的规律,并abs;
+                    NSArray *sames = [ThinkingUtils analogyOrdersA:foNode.orders_kvp ordersB:assMicroValue_ps];
                     
-                    //10. createAbsCmvNode
-                    AIAbsCMVNode *absCmvNode = [theNet createAbsCMVNode:absNode.pointer aMv_p:cmvModel.cmvNode_p bMv_p:assCmvModel.cmvNode_p];
-                    
-                    //11. cmv模型连接;
-                    if (ISOK(absCmvNode, AIAbsCMVNode.class)) {
-                        absNode.absCmvNode_p = absCmvNode.pointer;
-                        [SMGUtils insertObject:absNode rootPath:absNode.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
-                    }
-                    
-                    NSLog(@"____absData > 类比到规律 >> 进行抽象;——————————START\n");
-                    [absNode print];
-                    
-                    //TODO:>>>>>将absNode和absCmvNode存到thinkFeedCache;
-                }
-            }
-        }else if(ISOK(assDirectionNode, AIAbsCMVNode.class)){
-            AIAbsCMVNode *assAbsCmvNode = (AIAbsCMVNode*)assDirectionNode;
-            //4. 排除联想自己(随后写到reference中)
-            if (![cmvNode.pointer isEqual:assAbsCmvNode.pointer]) {
-                AINetAbsNode *ass_an = [SMGUtils searchObjectForPointer:assAbsCmvNode.absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
-                if (ass_an) {
-                    NSArray *absValues = [SMGUtils searchObjectForPointer:ass_an.absValue_p fileName:FILENAME_AbsValue time:cRedisValueTime];
-                    
-                    //5. 类比orders的规律,并abs;
-                    NSArray *sames = [ThinkingUtils analogyOrdersA:foNode.orders_kvp ordersB:absValues];
-                    
-                    //6. 构建absNode & 并把absValue添加到瞬时记忆
-                    if (ARRISOK(sames) && ARRISOK(absValues) && sames.count != absValues.count) {
+                    //7. 已存在抽象节点或sames无效时跳过;
+                    BOOL jumpForAbsAlreadyHav = (ISOK(assFrontNode, AINetAbsNode.class) && ARRISOK(assMicroValue_ps) && ARRISOK(sames) && sames.count == assMicroValue_ps.count);
+                    if (ARRISOK(sames) && !jumpForAbsAlreadyHav) {
                         
-                        //9. createAbsNode
-                        AINetAbsNode *create_an = [[AINet sharedInstance] createAbs:@[foNode,ass_an] refs_p:sames];
+                        //8. 构建absNode
+                        AINetAbsNode *create_an = [[AINet sharedInstance] createAbs:@[foNode,assFrontNode] refs_p:sames];
+                        
+                        //9. 并把抽象节点的信息_添加到瞬时记忆
                         [self dataIn_ToShortCache:create_an.absValue_p];
                         
                         //10. createAbsCmvNode
-                        AIAbsCMVNode *create_acn = [theNet createAbsCMVNode:create_an.pointer aMv_p:cmvModel.cmvNode_p bMv_p:ass_an.absCmvNode_p];
+                        AIAbsCMVNode *create_acn = [theNet createAbsCMVNode:create_an.pointer aMv_p:cmvModel.cmvNode_p bMv_p:ass_cn.pointer];
                         
                         //11. cmv模型连接;
                         if (ISOK(create_acn, AIAbsCMVNode.class)) {
@@ -381,12 +354,9 @@ static AIThinkingControl *_instance;
                         
                         NSLog(@"____absData > 类比到规律 >> 进行抽象;——————————START\n");
                         [create_an print];
+                        
+                        //TODO:>>>>>将absNode和absCmvNode存到thinkFeedCache;
                     }
-                    
-                    //(对assAbsNode 和 foNode) 找sames;
-                    
-                    //考虑删掉,cmvModel;直接类似abs这种,互相指向...(更简单)
-                    
                 }
             }
         }

@@ -89,7 +89,7 @@
 /**
  *  MARK:--------------------根据cmvNode联想其对应的前因时序列;--------------------
  */
-+(NSArray*) getFrontOrdersFromCmvNode:(AICMVNode*)cmvNode;
+//+(NSArray*) getFrontOrdersFromCmvNode:(AICMVNode*)cmvNode;
 
 
 /**
@@ -102,6 +102,20 @@
  *  MARK:--------------------根据cmvNode联想其对应的foNode_p--------------------
  */
 +(AIKVPointer*) getFoNodePointerFromCmvNode:(AICMVNode*)cmvNode;
+
+
+/**
+ *  MARK:--------------------根据cmvNodeBase联想其对应的foNode或absNode--------------------
+ */
++(AIKVPointer*) getFrontNodePointerFromCmvNode:(AICMVNodeBase*)cmvNode;
+
+
+/**
+ *  MARK:--------------------根据frontNode数据节点,取其微信息指针序列--------------------
+ *  1. foNode取orders
+ *  2. absNode取组微信息values
+ */
++(NSArray*) getNodeMicroValuePointersFromFrontNode:(AINodeBase*)frontNode;
 
 
 @end

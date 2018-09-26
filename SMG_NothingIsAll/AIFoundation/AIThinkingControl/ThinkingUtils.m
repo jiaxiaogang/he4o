@@ -14,6 +14,7 @@
 #import "AICMVNode.h"
 #import "AINetCMV.h"
 #import "AIAbsCMVNode.h"
+#import "AINetAbsNode.h"
 
 @implementation ThinkingUtils
 
@@ -222,13 +223,13 @@
 @implementation ThinkingUtils (Association)
 
 
-+(NSArray*) getFrontOrdersFromCmvNode:(AICMVNode*)cmvNode{
-    AIFrontOrderNode *foNode = [self getFoNodeFromCmvNode:cmvNode];
-    if (foNode) {
-        return foNode.orders_kvp;//out是不能以数组处理foNode.orders_p的,下版本改)
-    }
-    return nil;
-}
+//+(NSArray*) getFrontOrdersFromCmvNode:(AICMVNode*)cmvNode{
+//    AIFrontOrderNode *foNode = [self getFoNodeFromCmvNode:cmvNode];
+//    if (foNode) {
+//        return foNode.orders_kvp;//out是不能以数组处理foNode.orders_p的,下版本改)
+//    }
+//    return nil;
+//}
 
 +(AIFrontOrderNode*) getFoNodeFromCmvNode:(AICMVNode*)cmvNode{
     AIKVPointer *foNode_p = [self getFoNodePointerFromCmvNode:cmvNode];
@@ -250,5 +251,26 @@
     }
     return nil;
 }
+
++(AIKVPointer*) getFrontNodePointerFromCmvNode:(AICMVNodeBase*)cmvNode{
+    if (ISOK(cmvNode, AICMVNode.class)) {
+        return [self getFoNodePointerFromCmvNode:(AICMVNode*)cmvNode];
+    }else if(ISOK(cmvNode, AIAbsCMVNode.class)){
+        return ((AIAbsCMVNode*)cmvNode).absNode_p;
+    }
+    return nil;
+}
+
++(NSArray*) getNodeMicroValuePointersFromFrontNode:(AINodeBase*)frontNode{
+    if (ISOK(frontNode, AIFrontOrderNode.class)) {
+        return ((AIFrontOrderNode*)frontNode).orders_kvp;
+    }else if(ISOK(frontNode, AINetAbsNode.class)){
+        AINetAbsNode *absNode = (AINetAbsNode*)frontNode;
+        NSArray *absValue_ps = [SMGUtils searchObjectForPointer:absNode.absValue_p fileName:FILENAME_AbsValue time:cRedisValueTime];
+        return absValue_ps;
+    }
+    return nil;
+}
+
 
 @end

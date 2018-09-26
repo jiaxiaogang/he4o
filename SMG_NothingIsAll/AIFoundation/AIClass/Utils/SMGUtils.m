@@ -136,8 +136,6 @@
         }else{
             return [itemA isEqual:itemB];                           //不识别的类型
         }
-        //这里随后补上自定义的数据类型;例如feelModel 图片,声音等;
-        //在自定义Model中实现重写isEqual:
     }
 }
 
@@ -207,8 +205,6 @@
         }else{
             return [SMGUtils compareItemA:itemA itemB:itemB];       //不识别的类型
         }
-        //这里随后补上自定义的数据类型;例如feelModel 图片,声音等;
-        //在自定义Model中实现重写isEqual:
     }
 }
 
@@ -349,16 +345,16 @@
     return [NSString stringWithFormat:@"rowid='%ld'",(long)rowid];
 }
 
-+(NSString*) sqlWhere_K:(id)columnName V:(id)value{
-    return [NSString stringWithFormat:@"%@='%@'",columnName,value];
-}
-
-+(NSDictionary*) sqlWhereDic_K:(id)columnName V:(id)value{
-    if (value) {
-        return [[NSDictionary alloc] initWithObjectsAndKeys:value,STRTOOK(columnName), nil];
-    }
-    return nil;
-}
+//+(NSString*) sqlWhere_K:(id)columnName V:(id)value{
+//    return [NSString stringWithFormat:@"%@='%@'",columnName,value];
+//}
+//
+//+(NSDictionary*) sqlWhereDic_K:(id)columnName V:(id)value{
+//    if (value) {
+//        return [[NSDictionary alloc] initWithObjectsAndKeys:value,STRTOOK(columnName), nil];
+//    }
+//    return nil;
+//}
 
 +(id) searchObjectForPointer:(AIPointer*)pointer fileName:(NSString*)fileName{
     return [self searchObjectForPointer:pointer fileName:fileName time:0];
