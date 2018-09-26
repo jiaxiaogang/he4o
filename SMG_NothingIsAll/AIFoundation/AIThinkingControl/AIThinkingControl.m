@@ -343,7 +343,7 @@ static AIThinkingControl *_instance;
                     //11. cmv模型连接;
                     if (ISOK(absCmvNode, AIAbsCMVNode.class)) {
                         absNode.absCmvNode_p = absCmvNode.pointer;
-                        [SMGUtils insertObject:absNode rootPath:absNode.pointer.filePath fileName:FILENAME_Node];
+                        [SMGUtils insertObject:absNode rootPath:absNode.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
                     }
                     
                     NSLog(@"____absData > 类比到规律 >> 进行抽象;——————————START\n");
@@ -370,13 +370,13 @@ static AIThinkingControl *_instance;
                         AINetAbsNode *create_an = [[AINet sharedInstance] createAbs:@[foNode,ass_an] refs_p:sames];
                         [self dataIn_ToShortCache:create_an.absValue_p];
                         
-                        //10. createAbsCmvNode //扩展支持absCmvNode...
-                        AIAbsCMVNode *absCmvNode = [theNet createAbsCMVNode:create_an.pointer aMv_p:cmvModel.cmvNode_p bMv_p:ass_an.absCmvNode_p];
+                        //10. createAbsCmvNode
+                        AIAbsCMVNode *create_acn = [theNet createAbsCMVNode:create_an.pointer aMv_p:cmvModel.cmvNode_p bMv_p:ass_an.absCmvNode_p];
                         
                         //11. cmv模型连接;
-                        if (ISOK(absCmvNode, AIAbsCMVNode.class)) {
-                            create_an.absCmvNode_p = absCmvNode.pointer;
-                            [SMGUtils insertObject:create_an rootPath:create_an.pointer.filePath fileName:FILENAME_Node];
+                        if (ISOK(create_acn, AIAbsCMVNode.class)) {
+                            create_an.absCmvNode_p = create_acn.pointer;
+                            [SMGUtils insertObject:create_an rootPath:create_an.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
                         }
                         
                         NSLog(@"____absData > 类比到规律 >> 进行抽象;——————————START\n");

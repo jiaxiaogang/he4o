@@ -8,7 +8,6 @@
 
 #import "AINetAbsCMVUtil.h"
 #import "AIKVPointer.h"
-#import "AICMVNode.h"
 
 @implementation AINetAbsCMVUtil
 
@@ -16,7 +15,7 @@
 /**
  *  MARK:--------------------取aNode和bNode的抽象urgentTo值--------------------
  */
-+(NSInteger) getAbsUrgentTo:(AICMVNode*)aMv bMv_p:(AICMVNode*)bMv{
++(NSInteger) getAbsUrgentTo:(AICMVNodeBase*)aMv bMv_p:(AICMVNodeBase*)bMv{
     //1. 数据检查
     if (!aMv || !bMv) {
         return 0;
@@ -35,7 +34,7 @@
 /**
  *  MARK:--------------------取aNode和bNode的抽象delta值--------------------
  */
-+(NSInteger) getAbsDelta:(AICMVNode*)aMv bMv_p:(AICMVNode*)bMv{
++(NSInteger) getAbsDelta:(AICMVNodeBase*)aMv bMv_p:(AICMVNodeBase*)bMv{
     //1. 数据检查
     if (!aMv || !bMv) {
         return 0;

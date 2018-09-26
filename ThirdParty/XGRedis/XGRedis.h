@@ -18,8 +18,21 @@
 @interface XGRedis : NSObject
 
 +(XGRedis*) sharedInstance;
+
+/**
+ *  MARK:--------------------setObject--------------------
+ *  @param obj : 数据
+ *  @param key : 唯一识别符
+ */
 -(void) setObject:(NSObject*)obj forKey:(NSString*)key;
+
+/**
+ *  MARK:--------------------setObject--------------------
+ *  @param time : 当time <= 0时,会移除旧的obj,并且不会添加新的;
+ */
 -(void) setObject:(NSObject*)obj forKey:(NSString*)key time:(double)time;
+
+
 -(NSObject*) objectForKey:(NSString*)key;
 
 @end

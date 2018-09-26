@@ -36,56 +36,56 @@
     NSString *dataSource = aMv_p.dataSource;
     
     //2. 取cmvNode
-    AICMVNode *aMv = [SMGUtils searchObjectForPointer:aMv_p fileName:FILENAME_Node time:cRedisNodeTime];
-    AICMVNode *bMv = [SMGUtils searchObjectForPointer:bMv_p fileName:FILENAME_Node time:cRedisNodeTime];
-    if (!ISOK(aMv, AICMVNode.class) || !ISOK(bMv, AICMVNode.class)) {
+    AICMVNodeBase *aMv = [SMGUtils searchObjectForPointer:aMv_p fileName:FILENAME_Node time:cRedisNodeTime];
+    AICMVNodeBase *bMv = [SMGUtils searchObjectForPointer:bMv_p fileName:FILENAME_Node time:cRedisNodeTime];
+    if (!ISOK(aMv, AICMVNodeBase.class) || !ISOK(bMv, AICMVNodeBase.class)) {
         return nil;
     }
     
     //2. 创建absCMVNode;
-    AIAbsCMVNode *absN = [[AIAbsCMVNode alloc] init];
-    absN.pointer = [SMGUtils createPointer:PATH_NET_ABS_CMV_NODE algsType:algsType dataSource:dataSource];
-    absN.absNode_p = absNode_p;
+    AIAbsCMVNode *result_acn = [[AIAbsCMVNode alloc] init];
+    result_acn.pointer = [SMGUtils createPointer:PATH_NET_ABS_CMV_NODE algsType:algsType dataSource:dataSource];
+    result_acn.absNode_p = absNode_p;
     
     //3. absUrgentTo
     NSInteger absUrgentTo = [AINetAbsCMVUtil getAbsUrgentTo:aMv bMv_p:bMv];
     AIPointer *urgentTo_p = [theNet getNetDataPointerWithData:@(absUrgentTo) algsType:algsType dataSource:dataSource];
     if (ISOK(urgentTo_p, AIKVPointer.class)) {
-        absN.urgentTo_p = (AIKVPointer*)urgentTo_p;
-        [theNet setAbsIndexReference:absN.urgentTo_p target_p:absN.pointer difValue:1];//引用插线
+        result_acn.urgentTo_p = (AIKVPointer*)urgentTo_p;
+        [theNet setAbsIndexReference:result_acn.urgentTo_p target_p:result_acn.pointer difValue:1];//引用插线
     }
     
     //4. absDelta
     NSInteger absDelta = [AINetAbsCMVUtil getAbsDelta:aMv bMv_p:bMv];
     AIPointer *delta_p = [theNet getNetDataPointerWithData:@(absDelta) algsType:algsType dataSource:dataSource];
     if (ISOK(delta_p, AIKVPointer.class)) {
-        absN.delta_p = (AIKVPointer*)delta_p;
-        [theNet setAbsIndexReference:absN.delta_p target_p:absN.pointer difValue:1];//引用插线
+        result_acn.delta_p = (AIKVPointer*)delta_p;
+        [theNet setAbsIndexReference:result_acn.delta_p target_p:result_acn.pointer difValue:1];//引用插线
     }
     
     //5. 关联conPorts插口
     AIPort *aConPort = [[AIPort alloc] init];
     aConPort.target_p = aMv_p;
-    [absN addConPorts:aConPort];
+    [result_acn addConPorts:aConPort];
     
     AIPort *bConPort = [[AIPort alloc] init];
     bConPort.target_p = bMv_p;
-    [absN addConPorts:bConPort];
+    [result_acn addConPorts:bConPort];
     
     //6. 关联absPort插口
     AIPort *absNPort = [[AIPort alloc] init];
-    absNPort.target_p = absN.pointer;
+    absNPort.target_p = result_acn.pointer;
     [aMv.absPorts addObject:absNPort];
     [bMv.absPorts addObject:absNPort];
     [SMGUtils insertObject:aMv rootPath:aMv.pointer.filePath fileName:FILENAME_Node];
     [SMGUtils insertObject:bMv rootPath:bMv.pointer.filePath fileName:FILENAME_Node];
     
     //7. 报告添加direction引用
-    [self createdAbsCMVNode:absN.pointer delta:absDelta urgentTo:absUrgentTo];
+    [self createdAbsCMVNode:result_acn.pointer delta:absDelta urgentTo:absUrgentTo];
     
     //8. 存储absNode并返回
-    [SMGUtils insertObject:absN rootPath:absN.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
-    return absN;
+    [SMGUtils insertObject:result_acn rootPath:result_acn.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
+    return result_acn;
 }
 
 

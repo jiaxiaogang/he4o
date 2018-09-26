@@ -8,20 +8,19 @@
 
 #import <Foundation/Foundation.h>
 
-@class AICMVNode;
 @interface AINetAbsCMVUtil : NSObject
 
 
 /**
  *  MARK:--------------------取aNode和bNode的抽象urgentTo值--------------------
  */
-+(NSInteger) getAbsUrgentTo:(AICMVNode*)aMv bMv_p:(AICMVNode*)bMv;
++(NSInteger) getAbsUrgentTo:(AICMVNodeBase*)aMv bMv_p:(AICMVNodeBase*)bMv;
 
 
 /**
  *  MARK:--------------------取aNode和bNode的抽象delta值--------------------
  */
-+(NSInteger) getAbsDelta:(AICMVNode*)aMv bMv_p:(AICMVNode*)bMv;
++(NSInteger) getAbsDelta:(AICMVNodeBase*)aMv bMv_p:(AICMVNodeBase*)bMv;
 
 
 @end

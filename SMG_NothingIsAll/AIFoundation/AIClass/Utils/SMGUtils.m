@@ -393,9 +393,7 @@
     [cache setObject:obj forKey:STRTOOK(fileName)];
     
     //2. 存redis
-    if (time > 0) {
-        [[XGRedis sharedInstance] setObject:obj forKey:STRFORMAT(@"%@/%@",rootPath,fileName) time:time];//随后去掉(redisKey)前辍
-    }
+    [[XGRedis sharedInstance] setObject:obj forKey:STRFORMAT(@"%@/%@",rootPath,fileName) time:time];//随后去掉(redisKey)前辍
 }
 
 @end

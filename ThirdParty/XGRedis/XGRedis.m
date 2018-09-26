@@ -63,17 +63,19 @@ static XGRedis *_instance;
         findOldIndex = index;
     }];
     
-     //2. 插入数据
-    BOOL success = false;
-    if(self.dic.count <= findOldIndex) {
-        success = [self.dic addObject:obj forKey:key];
-    }else{
-        success = [self.dic insertObject:obj key:key atIndex:findOldIndex];
-    }
-    
-    //3. 插入gcMark
-    if (success && time!= NSNotFound) {
-        [self createGCMark:key time:time];
+    if (time > 0) {
+        //2. 插入数据
+        BOOL success = false;
+        if(self.dic.count <= findOldIndex) {
+            success = [self.dic addObject:obj forKey:key];
+        }else{
+            success = [self.dic insertObject:obj key:key atIndex:findOldIndex];
+        }
+        
+        //3. 插入gcMark
+        if (success && time!= NSNotFound) {
+            [self createGCMark:key time:time];
+        }
     }
 }
 
