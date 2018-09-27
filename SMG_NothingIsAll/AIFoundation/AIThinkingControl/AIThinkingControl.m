@@ -48,8 +48,8 @@
 
 @property (strong,nonatomic) NSMutableArray *shortCache;        //瞬时记忆_存AIModel(从Algs传入,待Thinking取用分析)(容量8);
 @property (strong,nonatomic) NSMutableArray *thinkFeedCache;    //短时记忆_思维流(包括shortCache和cmvCache,10分钟内都会存在此处(人类可能一天或几小时))
-@property (strong, nonatomic) MVCacheManager *mvCacheManager;
-@property (assign, nonatomic) NSInteger energy;                 //当前能量值;(在循环中动态更新)(0-2)
+@property (strong, nonatomic) MVCacheManager *mvCacheManager;   //输出循环所用到的数据管理器;
+@property (assign, nonatomic) NSInteger energy;                 //当前能量值;(mv输入时激活,思维的循环中消耗)
 
 @end
 
@@ -352,7 +352,6 @@ static AIThinkingControl *_instance;
                             [SMGUtils insertObject:create_an rootPath:create_an.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
                         }
                         
-                        NSLog(@"____absData > 类比到规律 >> 进行抽象;——————————START\n");
                         [create_an print];
                         
                         //TODO:>>>>>将absNode和absCmvNode存到thinkFeedCache;
@@ -366,6 +365,14 @@ static AIThinkingControl *_instance;
 
 //MARK:===============================================================
 //MARK:                     < dataOut (回归具象之旅) >
+//MARK:
+//MARK: 说明: 在smg内核的决策中,smg经历了5个关键节点;
+//MARK:     1. mv需求(input或其它状态触发)
+//MARK:     2. mv经验查找(从网络索引找)
+//MARK:     3. 经验模型(从网络关联找)
+//MARK:     4. 执行方案(从网络具体经历单位找(时序等))
+//MARK:     5. 正式输出(这里会用到小脑,helix未实现小脑网络);
+//MARK: 总结: 这整个过程算是smg的具象之旅,也是output循环的几个关键节点
 //MARK:===============================================================
 
 
