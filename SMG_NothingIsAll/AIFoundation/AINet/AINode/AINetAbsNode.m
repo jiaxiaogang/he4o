@@ -60,39 +60,4 @@
     [aCoder encodeObject:self.absCmvNode_p forKey:@"absCmvNode_p"];
 }
 
--(void) print{
-    //1. header
-    NSLog(@"________ABSNODE:%d_______\n",self.pointer.pointerId);
-    
-    //2. conNode
-    NSMutableString *conDesc = [[NSMutableString alloc] init];
-    
-    for (AIPort *conPort in self.conPorts) {
-        id con = [SMGUtils searchObjectForPointer:conPort.target_p fileName:FILENAME_Node];
-        NSMutableString *micDesc = [NSMutableString new];
-        NSString *conPath = nil;
-        if (ISOK(con, AIFrontOrderNode.class)) {
-            AIFrontOrderNode *foNode = (AIFrontOrderNode*)con;
-            for (AIKVPointer *foValue_p in ARRTOOK(foNode.orders_kvp)) {
-                [micDesc appendFormat:@"%@ ",[SMGUtils searchObjectForPointer:foValue_p fileName:FILENAME_Value]];
-            }
-            conPath = STRFORMAT(@"%@/%@/%@/%ld",foNode.pointer.folderName,foNode.pointer.algsType,foNode.pointer.dataSource,(long)foNode.pointer.pointerId);
-        }else if(ISOK(con, AINetAbsNode.class)){
-            AINetAbsNode *absNode = (AINetAbsNode*)con;
-            [micDesc appendString:[SMGUtils searchObjectForPointer:absNode.absValue_p fileName:FILENAME_AbsValue]];
-            conPath = STRFORMAT(@"%@/%@/%@/%ld",absNode.pointer.folderName,absNode.pointer.algsType,absNode.pointer.dataSource,(long)absNode.pointer.pointerId);
-        }
-        [conDesc appendFormat:@"\n> 具象地址:%@\n> 微信息:%@\n",conPath,micDesc];
-    }
-    NSLog(@"conNode>>>\n%@\n",conDesc);
-    
-    //3. refs
-    NSMutableString *refsDesc = [[NSMutableString alloc] init];
-    [refsDesc appendFormat:@"%@ ",[SMGUtils searchObjectForPointer:self.absValue_p fileName:FILENAME_Value]];
-    NSLog(@"refs>>>\n> %@",refsDesc);
-    
-    //4. footer
-    NSLog(@"________ABSNODEEND_______\n\n");
-}
-
 @end

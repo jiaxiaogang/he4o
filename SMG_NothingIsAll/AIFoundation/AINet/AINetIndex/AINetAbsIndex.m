@@ -122,6 +122,7 @@
     for (AIKVPointer *p in ARRTOOK(refs_p)) {
         [mStr appendString:p.algsType];
         [mStr appendString:p.dataSource];
+        [mStr appendFormat:@"%d",p.isOut];
     }
     return mStr;
 }

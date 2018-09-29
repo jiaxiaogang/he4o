@@ -333,6 +333,11 @@ static AIThinkingControl *_instance;
                     //6. 类比orders的规律,并abs;
                     NSArray *sames = [ThinkingUtils analogyOrdersA:foNode.orders_kvp ordersB:assMicroValue_ps];
                     
+                    NSString *foOrderStr = [NVUtils convertValuePs2Str:foNode.orders_kvp];
+                    NSString *assMicroStr = [NVUtils convertValuePs2Str:assMicroValue_ps];
+                    NSString *samesStr = [NVUtils convertValuePs2Str:sames];
+                    NSLog(@"(%@) 联想到 (%@) = (%@)",foOrderStr,assMicroStr,samesStr);
+                    
                     //7. 已存在抽象节点或sames无效时跳过;
                     BOOL jumpForAbsAlreadyHav = (ISOK(assFrontNode, AINetAbsNode.class) && ARRISOK(assMicroValue_ps) && ARRISOK(sames) && sames.count == assMicroValue_ps.count);
                     if (ARRISOK(sames) && !jumpForAbsAlreadyHav) {
@@ -352,7 +357,7 @@ static AIThinkingControl *_instance;
                             [SMGUtils insertObject:create_an rootPath:create_an.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
                         }
                         
-                        [create_an print];
+                        NSLog(@"%@",[NVUtils getAbsNodeDesc:create_an]);
                         
                         //TODO:>>>>>将absNode和absCmvNode存到thinkFeedCache;
                     }

@@ -43,6 +43,7 @@
 		08F738051F7C714F005EAD56 /* AIKVPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F737FF1F7C714F005EAD56 /* AIKVPointer.m */; };
 		08F738061F7C714F005EAD56 /* AIPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738011F7C714F005EAD56 /* AIPointer.m */; };
 		08F738071F7C714F005EAD56 /* AISqlPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738031F7C714F005EAD56 /* AISqlPointer.m */; };
+		08FAEC94215EED39004DCEAD /* NVUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FAEC93215EED39004DCEAD /* NVUtils.m */; };
 		2753D7CF7BAEDFEACAF9264A /* libPods-SMG_NothingIsAll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */; };
 		8806D888212B8EB100C442CA /* ExpCacheModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8806D887212B8EB100C442CA /* ExpCacheModel.m */; };
 		8822852020F58BDA009884DC /* AINetDirectionReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 8822851F20F58BDA009884DC /* AINetDirectionReference.m */; };
@@ -140,6 +141,9 @@
 		08F738011F7C714F005EAD56 /* AIPointer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIPointer.m; sourceTree = "<group>"; };
 		08F738021F7C714F005EAD56 /* AISqlPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AISqlPointer.h; sourceTree = "<group>"; };
 		08F738031F7C714F005EAD56 /* AISqlPointer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AISqlPointer.m; sourceTree = "<group>"; };
+		08FAEC92215EED39004DCEAD /* NVUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVUtils.h; sourceTree = "<group>"; };
+		08FAEC93215EED39004DCEAD /* NVUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NVUtils.m; sourceTree = "<group>"; };
+		08FAEC95215EED48004DCEAD /* NVHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVHeader.h; sourceTree = "<group>"; };
 		8806D886212B8EB100C442CA /* ExpCacheModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExpCacheModel.h; sourceTree = "<group>"; };
 		8806D887212B8EB100C442CA /* ExpCacheModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExpCacheModel.m; sourceTree = "<group>"; };
 		8822851E20F58BDA009884DC /* AINetDirectionReference.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetDirectionReference.h; sourceTree = "<group>"; };
@@ -495,6 +499,16 @@
 			path = AIPointer;
 			sourceTree = "<group>";
 		};
+		08FAEC91215EEC98004DCEAD /* SMGNetVision */ = {
+			isa = PBXGroup;
+			children = (
+				08FAEC92215EED39004DCEAD /* NVUtils.h */,
+				08FAEC93215EED39004DCEAD /* NVUtils.m */,
+				08FAEC95215EED48004DCEAD /* NVHeader.h */,
+			);
+			path = SMGNetVision;
+			sourceTree = "<group>";
+		};
 		207E0C8ABC4501E50CC5D363 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -547,6 +561,7 @@
 		88BC09D320B4EAA70006ABEF /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
+				08FAEC91215EEC98004DCEAD /* SMGNetVision */,
 				88BC09D420B4EABE0006ABEF /* XGRedis */,
 			);
 			path = ThirdParty;
@@ -684,6 +699,7 @@
 				086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */,
 				08D471DE1FEB3FFF00C61322 /* AIImvAlgs.m in Sources */,
 				081B3ADB1F6E2CCD008A7F36 /* AINet.m in Sources */,
+				08FAEC94215EED39004DCEAD /* NVUtils.m in Sources */,
 				88BC09DD20B4F67E0006ABEF /* XGRedisDictionary.m in Sources */,
 				88BA3EDD2106A876001CC330 /* AINetOutputIndex.m in Sources */,
 				8868F6EE210AA00B000EAC9B /* AINetAbsCMVUtil.m in Sources */,

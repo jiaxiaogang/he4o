@@ -11,6 +11,7 @@
 #import "SMGConfig.h"
 #import "AINodeBase.h"
 #import "AICMVNodeBase.h"
+#import "NVHeader.h"
 
 
 /**
