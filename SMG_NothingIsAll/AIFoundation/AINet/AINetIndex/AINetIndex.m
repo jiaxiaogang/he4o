@@ -9,17 +9,13 @@
 #import "AINetIndex.h"
 #import "AIKVPointer.h"
 #import "SMGUtils.h"
-#import "AINetIndexReference.h"
 #import "PINCache.h"
-#import "AIOutputReference.h"
 #import "XGRedisUtil.h"
 
 @interface AINetIndex ()
 
 @property (strong,nonatomic) NSMutableArray *inModels;
 @property (strong,nonatomic) NSMutableArray *outModels;
-@property (strong, nonatomic) AINetIndexReference *inReference;
-@property (strong, nonatomic) AIOutputReference *outReference;
 
 @end
 
@@ -99,34 +95,8 @@
 
 
 //MARK:===============================================================
-//MARK:                     < itemIndex指向相关 >
-//MARK:===============================================================
--(AINetIndexReference *)inReference{
-    if (_inReference == nil) {
-        _inReference = [[AINetIndexReference alloc] init];
-    }
-    return _inReference;
-}
-
--(void) setIndexReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue{
-    [self.inReference setReference:indexPointer target_p:target_p difValue:difValue];
-}
-
--(NSArray*) getIndexReference:(AIKVPointer*)indexPointer limit:(NSInteger)limit{
-    return [self.inReference getReference:indexPointer limit:limit];
-}
-
-
-
-//MARK:===============================================================
 //MARK:                     < output >
 //MARK:===============================================================
--(AIOutputReference *)outReference{
-    if (_outReference == nil) {
-        _outReference = [[AIOutputReference alloc] init];
-    }
-    return _outReference;
-}
 
 //暂时不实现小脑网络;
 //-(void) setIndexReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue{

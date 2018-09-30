@@ -198,7 +198,7 @@ static AIThinkingControl *_instance;
         //1. noMv信号已输入完毕,联想
         for (AIKVPointer *algs_kvp in algsArr) {
             //2. 在第二序列指向节点的端口;
-            NSArray *referPorts = [[AINet sharedInstance] getItemAlgsReference:algs_kvp limit:cAssDataLimit];
+            NSArray *referPorts = [[AINet sharedInstance] getNetReference:algs_kvp limit:cAssDataLimit];
             for (AIPort *referPort in referPorts) {
                 if (ISOK(referPort, AIPort.class)) {
                     id referNode = [SMGUtils searchObjectForPointer:referPort.target_p fileName:FILENAME_Node];

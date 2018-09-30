@@ -33,6 +33,7 @@
 		08C84A8E1E9A866200897D8B /* AIInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A8D1E9A866200897D8B /* AIInput.m */; };
 		08D322A91EBA28B0009D734A /* Foundation+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D322A81EBA28B0009D734A /* Foundation+Log.m */; };
 		08D471DE1FEB3FFF00C61322 /* AIImvAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D471DD1FEB3FFF00C61322 /* AIImvAlgs.m */; };
+		08D4EC512160501000DA646B /* AINetUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D4EC502160501000DA646B /* AINetUtils.m */; };
 		08DB40CB1F11A65E003162C8 /* TestHungryPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 08DB40C91F11A65E003162C8 /* TestHungryPage.m */; };
 		08DB40CC1F11A65E003162C8 /* TestHungryPage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 08DB40CA1F11A65E003162C8 /* TestHungryPage.xib */; };
 		08EA48BF2029242B0038B982 /* ImvAlgsHungerModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08EA48BE2029242B0038B982 /* ImvAlgsHungerModel.m */; };
@@ -49,7 +50,6 @@
 		8822852020F58BDA009884DC /* AINetDirectionReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 8822851F20F58BDA009884DC /* AINetDirectionReference.m */; };
 		8868F6EB210A946A000EAC9B /* AINetAbsCMV.m in Sources */ = {isa = PBXBuildFile; fileRef = 8868F6EA210A946A000EAC9B /* AINetAbsCMV.m */; };
 		8868F6EE210AA00B000EAC9B /* AINetAbsCMVUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 8868F6ED210AA00B000EAC9B /* AINetAbsCMVUtil.m */; };
-		8881982F21000DD5006D2218 /* AIOutputReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 8881982E21000DD5006D2218 /* AIOutputReference.m */; };
 		88960C6B209BDA2B004EF419 /* AINetIndexReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 88960C6A209BDA2B004EF419 /* AINetIndexReference.m */; };
 		88988524208979E6001D1ADC /* AINetIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = 88988523208979E6001D1ADC /* AINetIndex.m */; };
 		88A43F3A2109571300281348 /* AIAbsCMVNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 88A43F392109571300281348 /* AIAbsCMVNode.m */; };
@@ -120,6 +120,8 @@
 		08D322A81EBA28B0009D734A /* Foundation+Log.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Foundation+Log.m"; sourceTree = "<group>"; };
 		08D471DC1FEB3FFF00C61322 /* AIImvAlgs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIImvAlgs.h; sourceTree = "<group>"; };
 		08D471DD1FEB3FFF00C61322 /* AIImvAlgs.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIImvAlgs.m; sourceTree = "<group>"; };
+		08D4EC4F2160501000DA646B /* AINetUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetUtils.h; sourceTree = "<group>"; };
+		08D4EC502160501000DA646B /* AINetUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetUtils.m; sourceTree = "<group>"; };
 		08D7DA411ED149B4004B1018 /* AIHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIHeader.h; sourceTree = "<group>"; };
 		08DB40C81F11A65E003162C8 /* TestHungryPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestHungryPage.h; sourceTree = "<group>"; };
 		08DB40C91F11A65E003162C8 /* TestHungryPage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestHungryPage.m; sourceTree = "<group>"; };
@@ -151,8 +153,6 @@
 		8868F6EA210A946A000EAC9B /* AINetAbsCMV.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetAbsCMV.m; sourceTree = "<group>"; };
 		8868F6EC210AA00B000EAC9B /* AINetAbsCMVUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetAbsCMVUtil.h; sourceTree = "<group>"; };
 		8868F6ED210AA00B000EAC9B /* AINetAbsCMVUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetAbsCMVUtil.m; sourceTree = "<group>"; };
-		8881982D21000DD5006D2218 /* AIOutputReference.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIOutputReference.h; sourceTree = "<group>"; };
-		8881982E21000DD5006D2218 /* AIOutputReference.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIOutputReference.m; sourceTree = "<group>"; };
 		88960C69209BDA2B004EF419 /* AINetIndexReference.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetIndexReference.h; sourceTree = "<group>"; };
 		88960C6A209BDA2B004EF419 /* AINetIndexReference.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetIndexReference.m; sourceTree = "<group>"; };
 		88988522208979E6001D1ADC /* AINetIndex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetIndex.h; sourceTree = "<group>"; };
@@ -281,6 +281,8 @@
 				080A74311F60C6490025DBA3 /* AIPort.m */,
 				081B3AD91F6E2CCD008A7F36 /* AINet.h */,
 				081B3ADA1F6E2CCD008A7F36 /* AINet.m */,
+				08D4EC4F2160501000DA646B /* AINetUtils.h */,
+				08D4EC502160501000DA646B /* AINetUtils.m */,
 			);
 			path = AINet;
 			sourceTree = "<group>";
@@ -547,8 +549,6 @@
 				88B3865C20C6130E009553B5 /* AINetAbsIndex.m */,
 				8822851E20F58BDA009884DC /* AINetDirectionReference.h */,
 				8822851F20F58BDA009884DC /* AINetDirectionReference.m */,
-				8881982D21000DD5006D2218 /* AIOutputReference.h */,
-				8881982E21000DD5006D2218 /* AIOutputReference.m */,
 			);
 			path = AINetIndex;
 			sourceTree = "<group>";
@@ -690,7 +690,6 @@
 			files = (
 				0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */,
 				88E1F851211591E50036B616 /* MVCacheModel.m in Sources */,
-				8881982F21000DD5006D2218 /* AIOutputReference.m in Sources */,
 				086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */,
 				08D471DE1FEB3FFF00C61322 /* AIImvAlgs.m in Sources */,
 				081B3ADB1F6E2CCD008A7F36 /* AINet.m in Sources */,
@@ -722,6 +721,7 @@
 				88C258C1209E99B00042CB6A /* AINetCMV.m in Sources */,
 				08EA48D1202932E70038B982 /* AICustomAlgs.m in Sources */,
 				88A43F3A2109571300281348 /* AIAbsCMVNode.m in Sources */,
+				08D4EC512160501000DA646B /* AINetUtils.m in Sources */,
 				08D322A91EBA28B0009D734A /* Foundation+Log.m in Sources */,
 				88A43F40210957C300281348 /* AINetAbsNode.m in Sources */,
 				08EA48C7202929A40038B982 /* ImvAlgsModelBase.m in Sources */,

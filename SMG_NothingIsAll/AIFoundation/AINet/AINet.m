@@ -15,10 +15,10 @@
 #import "AINetAbs.h"
 #import "AINetAbsIndex.h"
 #import "AINetDirectionReference.h"
-#import "AIOutputReference.h"
 #import "AINetAbsCMV.h"
 #import "AIAbsCMVNode.h"
 #import "AIKVPointer.h"
+#import "AINetIndexReference.h"
 
 @interface AINet () <AINetCMVDelegate,AINetAbsCMVDelegate>
 
@@ -27,10 +27,11 @@
 @property (strong, nonatomic) AINetAbs *netAbs;     //抽具象序列
 @property (strong, nonatomic) AINetAbsIndex *netAbsIndex;//宏信息索引区(海马)
 @property (strong, nonatomic) AINetDirectionReference *netDirectionReference;
-@property (strong, nonatomic) AIOutputReference *outputReference;
 @property (strong, nonatomic) AINetAbsCMV *netAbsCMV;//网络cmv的抽象;
+@property (strong, nonatomic) AINetIndexReference *reference;
 
 @end
+
 
 @implementation AINet
 
@@ -58,7 +59,7 @@ static AINet *_instance;
     self.netAbs = [[AINetAbs alloc] init];
     self.netAbsIndex = [[AINetAbsIndex alloc] init];
     self.netDirectionReference = [[AINetDirectionReference alloc] init];
-    self.outputReference = [[AIOutputReference alloc] init];
+    self.reference = [[AINetIndexReference alloc] init];
     self.netAbsCMV = [[AINetAbsCMV alloc] init];
     self.netAbsCMV.delegate = self;
 }
@@ -93,20 +94,32 @@ static AINet *_instance;
     return [self.netIndex getDataPointerWithData:data algsType:algsType dataSource:dataSource isOut:false];
 }
 
--(void) setItemAlgsReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue{
-    [self.netIndex setIndexReference:indexPointer target_p:target_p difValue:difValue];
-}
-
--(NSArray*) getItemAlgsReference:(AIKVPointer*)pointer limit:(NSInteger)limit {
-    return [self.netIndex getIndexReference:pointer limit:limit];
-}
-
 //小脑索引
 -(AIKVPointer*) getOutputIndex:(NSString*)algsType dataSource:(NSString*)dataSource outputObj:(NSNumber*)outputObj {
     if (outputObj) {
         return [self.netIndex getDataPointerWithData:outputObj algsType:algsType dataSource:dataSource isOut:true];
     }
     return nil;
+}
+
+
+//MARK:===============================================================
+//MARK:                     < reference >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------引用序列--------------------
+ *  @param indexPointer : value地址
+ *  @param target_p : 引用者地址(如:xxNode.pointer)
+ *
+ *  注: 暂不支持output;
+ */
+-(void) setNetReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue{
+    [self.reference setReference:indexPointer target_p:target_p difValue:difValue];
+}
+
+-(NSArray*) getNetReference:(AIKVPointer*)pointer limit:(NSInteger)limit {
+    return [self.reference getReference:pointer limit:limit];
 }
 
 
@@ -125,10 +138,10 @@ static AINet *_instance;
     if (ISOK(indexPointer, AIKVPointer.class)) {
         if (indexPointer.isOut) {
             //kv_p时,记录node对index的引用;
-            [self setItemAlgsReference:(AIKVPointer*)indexPointer target_p:nodePointer difValue:1];
+            [self setNetReference:indexPointer target_p:nodePointer difValue:1];
         }else{
             //op时,strong+1 & 记录可输出;
-            [self.outputReference setNodePointerToOutputReference:indexPointer algsType:indexPointer.algsType dataSource:indexPointer.dataSource difStrong:1];
+            [self.reference setNodePointerToOutputReference:indexPointer algsType:indexPointer.algsType dataSource:indexPointer.dataSource difStrong:1];
         }
     }
 }
@@ -182,7 +195,7 @@ static AINet *_instance;
 //MARK:                     < AIOutputReference >
 //MARK:===============================================================
 -(void) setNetNodePointerToOutputReference:(AIKVPointer*)outputNode_p algsType:(NSString*)algsType dataSource:(NSString*)dataSource difStrong:(NSInteger)difStrong{
-    [self.outputReference setNodePointerToOutputReference:outputNode_p algsType:algsType dataSource:dataSource difStrong:difStrong];
+    [self.reference setNodePointerToOutputReference:outputNode_p algsType:algsType dataSource:dataSource difStrong:difStrong];
 }
 
 -(AIPort*) getNetNodePointersFromOutputReference_Single:(NSString*)algsType dataSource:(NSString*)dataSource limit:(NSInteger)limit{
@@ -190,7 +203,7 @@ static AINet *_instance;
 }
 
 -(NSArray*) getNetNodePointersFromOutputReference:(NSString*)algsType dataSource:(NSString*)dataSource limit:(NSInteger)limit{
-    return [self.outputReference getNodePointersFromOutputReference:algsType dataSource:dataSource limit:limit];
+    return [self.reference getNodePointersFromOutputReference:algsType dataSource:dataSource limit:limit];
 }
 
 

@@ -7,7 +7,7 @@
 //
 
 #import "OutputUtils.h"
-#import "AIOutputReference.h"
+#import "AINetUtils.h"
 #import "Output.h"
 #import "NSObject+Extension.h"
 #import "AIKVPointer.h"
@@ -44,7 +44,7 @@
     NSString *algsType = NSStringFromClass(Output.class);
     
     //2. 检查是否可输出"某数据类型"
-    if ([AIOutputReference checkCanOutput:algsType dataSource:dataSource]) {
+    if ([AINetUtils checkCanOutput:algsType dataSource:dataSource]) {
         id microData = [SMGUtils searchObjectForPointer:micro_p fileName:FILENAME_Value time:cRedisValueTime];
         [NSObject invocationMethodName:dataSource className:algsType withObjects:@[microData]];
         return true;

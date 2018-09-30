@@ -33,17 +33,6 @@
 -(AIKVPointer*) getDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut;
 
 
-/**
- *  MARK:--------------------引用序列--------------------
- *  @param indexPointer : value地址
- *  @param target_p : 引用者地址(如:xxNode.pointer)
- *
- *  注: 暂不支持output;
- */
--(void) setIndexReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue;
--(NSArray*) getIndexReference:(AIKVPointer*)indexPointer limit:(NSInteger)limit;
-
-
 @end
 
 
