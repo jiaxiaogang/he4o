@@ -45,13 +45,3 @@
 
 
 @end
-
-
-//MARK:===============================================================
-//MARK:                     < itemDataModel (一条数据) >
-//MARK:===============================================================
-@interface AINetIndexReferenceModel : NSObject <NSCoding>
-
-@property (strong,nonatomic) NSMutableArray *ports;
-
-@end
