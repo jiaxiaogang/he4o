@@ -58,7 +58,6 @@
 		88A43F432109589600281348 /* AICMVNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 88A43F422109589600281348 /* AICMVNode.m */; };
 		88B23BE620BE20BC00BE8AF6 /* AINetAbs.m in Sources */ = {isa = PBXBuildFile; fileRef = 88B23BE520BE20BC00BE8AF6 /* AINetAbs.m */; };
 		88B3865D20C6130E009553B5 /* AINetAbsIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = 88B3865C20C6130E009553B5 /* AINetAbsIndex.m */; };
-		88BA3EDD2106A876001CC330 /* AINetOutputIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = 88BA3EDC2106A876001CC330 /* AINetOutputIndex.m */; };
 		88BC09D720B4EB920006ABEF /* XGRedis.m in Sources */ = {isa = PBXBuildFile; fileRef = 88BC09D620B4EB920006ABEF /* XGRedis.m */; };
 		88BC09DA20B4ECAB0006ABEF /* XGRedisUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 88BC09D920B4ECAB0006ABEF /* XGRedisUtil.m */; };
 		88BC09DD20B4F67E0006ABEF /* XGRedisDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 88BC09DC20B4F67E0006ABEF /* XGRedisDictionary.m */; };
@@ -171,8 +170,6 @@
 		88B23BE520BE20BC00BE8AF6 /* AINetAbs.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetAbs.m; sourceTree = "<group>"; };
 		88B3865B20C6130E009553B5 /* AINetAbsIndex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetAbsIndex.h; sourceTree = "<group>"; };
 		88B3865C20C6130E009553B5 /* AINetAbsIndex.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetAbsIndex.m; sourceTree = "<group>"; };
-		88BA3EDB2106A876001CC330 /* AINetOutputIndex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetOutputIndex.h; sourceTree = "<group>"; };
-		88BA3EDC2106A876001CC330 /* AINetOutputIndex.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetOutputIndex.m; sourceTree = "<group>"; };
 		88BC09D520B4EB920006ABEF /* XGRedis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XGRedis.h; sourceTree = "<group>"; };
 		88BC09D620B4EB920006ABEF /* XGRedis.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XGRedis.m; sourceTree = "<group>"; };
 		88BC09D820B4ECAB0006ABEF /* XGRedisUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XGRedisUtil.h; sourceTree = "<group>"; };
@@ -552,8 +549,6 @@
 				8822851F20F58BDA009884DC /* AINetDirectionReference.m */,
 				8881982D21000DD5006D2218 /* AIOutputReference.h */,
 				8881982E21000DD5006D2218 /* AIOutputReference.m */,
-				88BA3EDB2106A876001CC330 /* AINetOutputIndex.h */,
-				88BA3EDC2106A876001CC330 /* AINetOutputIndex.m */,
 			);
 			path = AINetIndex;
 			sourceTree = "<group>";
@@ -701,7 +696,6 @@
 				081B3ADB1F6E2CCD008A7F36 /* AINet.m in Sources */,
 				08FAEC94215EED39004DCEAD /* NVUtils.m in Sources */,
 				88BC09DD20B4F67E0006ABEF /* XGRedisDictionary.m in Sources */,
-				88BA3EDD2106A876001CC330 /* AINetOutputIndex.m in Sources */,
 				8868F6EE210AA00B000EAC9B /* AINetAbsCMVUtil.m in Sources */,
 				88B3865D20C6130E009553B5 /* AINetAbsIndex.m in Sources */,
 				88B23BE620BE20BC00BE8AF6 /* AINetAbs.m in Sources */,
