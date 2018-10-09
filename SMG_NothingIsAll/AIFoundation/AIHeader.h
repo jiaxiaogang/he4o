@@ -37,7 +37,7 @@
 
 //reference
 #define PATH_NET_REFERENCE          @"NET_REFERENCE"                        //神经网络"引用序列"根目录;(海马体)
-#define PATH_NET_OUTPUT_REFERENCE   @"NET_OUTPUT_REFERENCE"                 //输出引用序列
+#define PATH_NET_CEREBEL_CANOUT     @"PATH_NET_CEREBEL_CANOUT"              //小脑可输出标识序列
 
 
 /**

@@ -11,7 +11,7 @@
 @implementation AINetUtils
 
 +(BOOL) checkCanOutput:(NSString*)algsType dataSource:(NSString*)dataSource{
-    AIKVPointer *reference_p = [SMGUtils createPointerForOutputReference:algsType dataSource:dataSource];
+    AIKVPointer *reference_p = [SMGUtils createPointerForCerebel:algsType dataSource:dataSource];
     NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:reference_p fileName:FILENAME_Reference_ByPointer time:cRedisReferenceTime]];
     return ARRISOK(mArr);
 }

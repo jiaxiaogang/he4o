@@ -19,6 +19,7 @@
 		082F9D5D1EB236AC0009F6A9 /* StudyViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 082F9D5B1EB236AC0009F6A9 /* StudyViewController.xib */; };
 		083112F21F05E12600051DE6 /* MBProgressHUD+Add.m in Sources */ = {isa = PBXBuildFile; fileRef = 083112F11F05E12600051DE6 /* MBProgressHUD+Add.m */; };
 		083F61381F048329000330E1 /* AILine.m in Sources */ = {isa = PBXBuildFile; fileRef = 083F61371F048329000330E1 /* AILine.m */; };
+		08412CA3216C324300483B6B /* AICerebel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08412CA2216C324300483B6B /* AICerebel.m */; };
 		084219E11FD8CEFD009DA6BC /* AIReactorControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 084219E01FD8CEFD009DA6BC /* AIReactorControl.m */; };
 		084219E71FD8CF11009DA6BC /* AIActionControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 084219E61FD8CF11009DA6BC /* AIActionControl.m */; };
 		084219ED1FD8CF81009DA6BC /* AIThinkingControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 084219EA1FD8CF81009DA6BC /* AIThinkingControl.m */; };
@@ -93,6 +94,8 @@
 		083112F11F05E12600051DE6 /* MBProgressHUD+Add.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MBProgressHUD+Add.m"; sourceTree = "<group>"; };
 		083F61361F048329000330E1 /* AILine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AILine.h; sourceTree = "<group>"; };
 		083F61371F048329000330E1 /* AILine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AILine.m; sourceTree = "<group>"; };
+		08412CA1216C324300483B6B /* AICerebel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AICerebel.h; sourceTree = "<group>"; };
+		08412CA2216C324300483B6B /* AICerebel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AICerebel.m; sourceTree = "<group>"; };
 		084219DF1FD8CEFD009DA6BC /* AIReactorControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIReactorControl.h; sourceTree = "<group>"; };
 		084219E01FD8CEFD009DA6BC /* AIReactorControl.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIReactorControl.m; sourceTree = "<group>"; };
 		084219E51FD8CF11009DA6BC /* AIActionControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIActionControl.h; sourceTree = "<group>"; };
@@ -269,6 +272,7 @@
 		083F612C1F04830F000330E1 /* AINet */ = {
 			isa = PBXGroup;
 			children = (
+				08412CA0216C322100483B6B /* AICerebel */,
 				8868F6E8210A9457000EAC9B /* AINetAbsCMV */,
 				8887E62520ABB02600F3D5E1 /* AINetAbs */,
 				88C258BE209E99110042CB6A /* AINetCMV */,
@@ -285,6 +289,15 @@
 				08D4EC502160501000DA646B /* AINetUtils.m */,
 			);
 			path = AINet;
+			sourceTree = "<group>";
+		};
+		08412CA0216C322100483B6B /* AICerebel */ = {
+			isa = PBXGroup;
+			children = (
+				08412CA1216C324300483B6B /* AICerebel.h */,
+				08412CA2216C324300483B6B /* AICerebel.m */,
+			);
+			path = AICerebel;
 			sourceTree = "<group>";
 		};
 		084219DC1FD8CEE7009DA6BC /* AIActionControl */ = {
@@ -741,6 +754,7 @@
 				88A43F432109589600281348 /* AICMVNode.m in Sources */,
 				081B3AD61F6E2994008A7F36 /* AIStringAlgs.m in Sources */,
 				0842ADC01FE209700048ADDC /* DemoCharge.m in Sources */,
+				08412CA3216C324300483B6B /* AICerebel.m in Sources */,
 				08F738061F7C714F005EAD56 /* AIPointer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -115,7 +115,7 @@ static AINet *_instance;
  *  注: 暂不支持output;
  */
 -(void) setNetReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue{
-    [self.reference setReference:indexPointer target_p:target_p difValue:difValue];
+    [self.reference setReference:indexPointer target_p:target_p difStrong:difValue];
 }
 
 -(NSArray*) getNetReference:(AIKVPointer*)pointer limit:(NSInteger)limit {
@@ -136,13 +136,13 @@ static AINet *_instance;
  */
 -(void)aiNetCMV_CreatedNode:(AIKVPointer *)indexPointer nodePointer:(AIKVPointer *)nodePointer{
     if (ISOK(indexPointer, AIKVPointer.class)) {
-        if (indexPointer.isOut) {
-            //kv_p时,记录node对index的引用;
-            [self setNetReference:indexPointer target_p:nodePointer difValue:1];
-        }else{
-            //op时,strong+1 & 记录可输出;
-            [self.reference setNodePointerToOutputReference:indexPointer algsType:indexPointer.algsType dataSource:indexPointer.dataSource difStrong:1];
-        }
+        //1. kv_p时,记录node对index的引用;
+        //2. op时,strong+1 & 记录输出的引用 & 记录可输出;
+        [self setNetReference:indexPointer target_p:nodePointer difValue:1];
+        
+        //if (indexPointer.isOut) {
+        //  [self.cerebel 记录可输出];
+        //}
     }
 }
 
@@ -194,10 +194,6 @@ static AINet *_instance;
 //MARK:===============================================================
 //MARK:                     < AIOutputReference >
 //MARK:===============================================================
--(void) setNetNodePointerToOutputReference:(AIKVPointer*)outputNode_p algsType:(NSString*)algsType dataSource:(NSString*)dataSource difStrong:(NSInteger)difStrong{
-    [self.reference setNodePointerToOutputReference:outputNode_p algsType:algsType dataSource:dataSource difStrong:difStrong];
-}
-
 -(AIPort*) getNetNodePointersFromOutputReference_Single:(NSString*)algsType dataSource:(NSString*)dataSource limit:(NSInteger)limit{
     return ARR_INDEX([self getNetNodePointersFromOutputReference:algsType dataSource:dataSource limit:1], 0);
 }

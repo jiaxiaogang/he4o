@@ -28,9 +28,6 @@
 //Direction的mv分区pointer;(存引用序列)
 +(AIKVPointer*) createPointerForDirection:(NSString*)mvAlgsType direction:(MVDirection)direction;
 
-//outputReference的"分区算法标识";(存引用序列)
-+(AIKVPointer*) createPointerForOutputReference:(NSString*)algsType dataSource:(NSString*)dataSource;
-
 //生成小脑node指针;
 +(AIKVPointer*) createPointerForOutputNode:(NSString*)algsType dataSource:(NSString*)dataSource;
 
@@ -41,6 +38,9 @@
 //生成indexValue的指针;
 +(AIKVPointer*) createPointerForValue:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut;
 +(AIKVPointer*) createPointerForValue:(NSInteger)pointerId algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut;
+
+//小脑的可输出"标识序列";
++(AIKVPointer*) createPointerForCerebel:(NSString*)algsType dataSource:(NSString*)dataSource;
 
 @end
 
@@ -74,6 +74,7 @@
 //+(NSDictionary*) sqlWhereDic_K:(id)columnName V:(id)value;
 +(id) searchObjectForPointer:(AIPointer*)pointer fileName:(NSString*)fileName;
 +(id) searchObjectForPointer:(AIPointer*)pointer fileName:(NSString*)fileName time:(double)time;//找到后,缓存到redis,time秒;
++(id) searchObjectForFilePath:(NSString*)filePath fileName:(NSString*)fileName time:(double)time;
 +(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName;
 +(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName time:(double)time;//同时插入到redis,time秒
 

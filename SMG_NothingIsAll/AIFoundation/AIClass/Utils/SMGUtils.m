@@ -69,11 +69,6 @@
     return kvPointer;
 }
 
-//outputReference的"分区算法标识";(存引用序列)
-+(AIKVPointer*) createPointerForOutputReference:(NSString*)algsType dataSource:(NSString*)dataSource{
-    return [AIKVPointer newWithPointerId:0 folderName:PATH_NET_OUTPUT_REFERENCE algsType:algsType dataSource:dataSource isOut:true];
-}
-
 //生成小脑node指针;
 +(AIKVPointer*) createPointerForOutputNode:(NSString*)algsType dataSource:(NSString*)dataSource{
     NSInteger pointerId = [SMGUtils createPointerId:algsType dataSource:dataSource];
@@ -99,6 +94,11 @@
 
 +(AIKVPointer*) createPointerForValue:(NSInteger)pointerId algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut{
     return [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_VALUE algsType:algsType dataSource:dataSource isOut:isOut];
+}
+
+//小脑的可输出"标识序列";
++(AIKVPointer*) createPointerForCerebel:(NSString*)algsType dataSource:(NSString*)dataSource{
+    return [AIKVPointer newWithPointerId:0 folderName:PATH_NET_CEREBEL_CANOUT algsType:algsType dataSource:dataSource isOut:true];
 }
 
 @end
@@ -372,22 +372,29 @@
 
 +(id) searchObjectForPointer:(AIPointer*)pointer fileName:(NSString*)fileName time:(double)time{
     if (ISOK(pointer, AIPointer.class)) {
-        //1. 优先取redis
-        NSString *redisKey = STRFORMAT(@"%@/%@",pointer.filePath,fileName);//随后去掉前辍
-        id redisObj = [[XGRedis sharedInstance] objectForKey:redisKey];
-        if (redisObj != nil) {
-            return redisObj;
-        }
-        
-        //2. 再取disk
-        PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:pointer.filePath];
-        id diskObj = [cache objectForKey:fileName];
-        if (time > 0 && diskObj) {
-            [[XGRedis sharedInstance] setObject:diskObj forKey:redisKey time:time];
-        }
-        return diskObj;
+        return [self searchObjectForFilePath:pointer.filePath fileName:fileName time:time];
     }
     return nil;
+}
+
++(id) searchObjectForFilePath:(NSString*)filePath fileName:(NSString*)fileName time:(double)time{
+    //1. 数据检查
+    filePath = STRTOOK(filePath);
+    
+    //2. 优先取redis
+    NSString *redisKey = STRFORMAT(@"%@/%@",filePath,fileName);//随后去掉前辍
+    id redisObj = [[XGRedis sharedInstance] objectForKey:redisKey];
+    if (redisObj != nil) {
+        return redisObj;
+    }
+    
+    //3. 再取disk
+    PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:filePath];
+    id diskObj = [cache objectForKey:fileName];
+    if (time > 0 && diskObj) {
+        [[XGRedis sharedInstance] setObject:diskObj forKey:redisKey time:time];
+    }
+    return diskObj;
 }
 
 +(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName{

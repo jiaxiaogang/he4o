@@ -95,7 +95,7 @@
  *  @param target_p : 引用者地址(如:xxAbsNode.pointer)
  */
 -(void) setIndexReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue{
-    [self.reference setReference:indexPointer target_p:target_p difValue:difValue];
+    [self.reference setReference:indexPointer target_p:target_p difStrong:difValue];
 }
 
 

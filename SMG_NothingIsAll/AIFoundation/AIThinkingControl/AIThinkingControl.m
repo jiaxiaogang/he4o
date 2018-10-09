@@ -96,15 +96,15 @@ static AIThinkingControl *_instance;
 /**
  *  MARK:--------------------输出的日志入网(输入小脑)--------------------
  *  @param algsType  : 输出算法分区(目前仅有Output)
- *  @param dataSource    : 输出算法函数(如output_Text:)
+ *  @param dataSource: 输出算法函数(如output_Text:)
  *  @param outputObj : 输出内容(如:饿死爹了)
  */
 -(void) commitOutputLog:(NSString*)algsType dataSource:(NSString*)dataSource outputObj:(NSNumber*)outputObj{
     //1. 装箱
     AIKVPointer *output_p = [theNet getOutputIndex:algsType dataSource:dataSource outputObj:outputObj];
     
-    //2. 记录可输出reference
-    [theNet setNetNodePointerToOutputReference:output_p algsType:algsType dataSource:dataSource difStrong:1];
+    //2. 记录可输出reference // 当前善未形成node,所以无法建议索引;(检查一下,当outLog形成node后,索引的建立);
+    //[theNet setNetNodePointerToOutputReference:output_p algsType:algsType dataSource:dataSource difStrong:1];
     
     //3. 加瞬时记忆
     [self dataIn_ToShortCache:output_p];
