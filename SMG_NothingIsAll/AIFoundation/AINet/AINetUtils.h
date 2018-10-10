@@ -18,5 +18,12 @@
 +(BOOL) checkCanOutput:(NSString*)algsType dataSource:(NSString*)dataSource;
 
 
+/**
+ *  MARK:--------------------标记canout--------------------
+ *  @param algsType     : 分区标识
+ *  @param dataSource   : 算法标识
+ */
++(void) setCanOutput:(NSString*)algsType dataSource:(NSString*)dataSource ;
+
 @end
 

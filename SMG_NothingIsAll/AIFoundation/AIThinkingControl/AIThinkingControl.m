@@ -27,6 +27,7 @@
 #import "MVCacheModel.h"
 #import "MVCacheManager.h"
 #import "ExpCacheModel.h"
+#import "AINetUtils.h"
 
 /**
  *  MARK:--------------------思维控制器--------------------
@@ -103,8 +104,8 @@ static AIThinkingControl *_instance;
     //1. 装箱
     AIKVPointer *output_p = [theNet getOutputIndex:algsType dataSource:dataSource outputObj:outputObj];
     
-    //2. 记录可输出reference // 当前善未形成node,所以无法建议索引;(检查一下,当outLog形成node后,索引的建立);
-    //[theNet setNetNodePointerToOutputReference:output_p algsType:algsType dataSource:dataSource difStrong:1];
+    //2. 记录可输出canout (当前善未形成node,所以无法建议索引;(检查一下,当outLog形成node后,索引的建立))
+    [AINetUtils setCanOutput:algsType dataSource:dataSource];
     
     //3. 加瞬时记忆
     [self dataIn_ToShortCache:output_p];

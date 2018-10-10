@@ -15,23 +15,15 @@
     return ARRISOK(arr) && [arr containsObject:STRFORMAT(@"%@_%@",algsType,dataSource)];
 }
 
-/**
- *  MARK:--------------------根据"分区和算法标识"查找引用节点的node_p地址--------------------
- *  @param limit : 最多少个
- *  @param algsType : 分区标识
- *  @param dataSource   : 算法标识
- */
-//-(NSArray*) getNodePointersFromOutputReference:(NSString*)algsType dataSource:(NSString*)dataSource limit:(NSInteger)limit{
-//    //1. 取mv分区的引用序列文件;
-//    AIKVPointer *reference_p = [SMGUtils createPointerForCerebel:algsType dataSource:dataSource];
-//    NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:reference_p fileName:FILENAME_Reference_ByPort time:cRedisReferenceTime]];
-//    
-//    //2. 根据limit返回limit个结果;
-//    if (ARRISOK(mArr)) {
-//        limit = MAX(0, MIN(limit, mArr.count));
-//        return [mArr subarrayWithRange:NSMakeRange(mArr.count - limit, limit)];
-//    }
-//    return nil;
-//}
+
++(void) setCanOutput:(NSString*)algsType dataSource:(NSString*)dataSource {
+    //1. 取mv分区的引用序列文件;
+    NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForFilePath:PATH_NET_CEREBEL_CANOUT fileName:FILENAME_Default time:cRedisDefaultTime]];
+    NSString *identifier = STRFORMAT(@"%@_%@",algsType,dataSource);
+    if (![mArr containsObject:identifier]) {
+        [mArr addObject:identifier];
+        [SMGUtils insertObject:mArr rootPath:PATH_NET_CEREBEL_CANOUT fileName:FILENAME_Default time:cRedisDefaultTime];
+    }
+}
 
 @end

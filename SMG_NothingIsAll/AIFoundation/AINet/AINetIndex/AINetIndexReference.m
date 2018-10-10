@@ -103,12 +103,13 @@
  *  @desc : 2.当indexPointer为普通value时,则有可能搜索到除absNode之外的所有其它node(如:frontNode或mvNode等)
  */
 -(NSArray*) getReference:(AIKVPointer*)indexPointer limit:(NSInteger)limit {
+    //1. 数据检查
     NSMutableArray *mArr = [[NSMutableArray alloc] init];
     if (ISOK(indexPointer, AIKVPointer.class)) {
+        
+        //2. 取identifier分区的引用序列文件;
         NSString *filePath = [indexPointer filePath:PATH_NET_REFERENCE];
-        PINDiskCache *pinCache = [[PINDiskCache alloc] initWithName:@"" rootPath:filePath];
-        NSArray *localPorts = [pinCache objectForKey:FILENAME_Reference];
-        localPorts = ARRTOOK(localPorts);
+        NSArray *localPorts = ARRTOOK([SMGUtils searchObjectForFilePath:filePath fileName:FILENAME_Reference_ByPort time:cRedisReferenceTime]);
         
         limit = MAX(0, MIN(limit, localPorts.count));
         [mArr addObjectsFromArray:[localPorts subarrayWithRange:NSMakeRange(localPorts.count - limit, limit)]];
@@ -125,12 +126,13 @@
  *  @desc : 1.当indexPointer为absValue时,则只有absNode会被搜索到;
  */
 -(NSArray*) getReference_JustAbsResult:(AIKVPointer*)absValue_p limit:(NSInteger)limit {
+    //1. 数据检查
     NSMutableArray *mArr = [[NSMutableArray alloc] init];
     if (ISOK(absValue_p, AIKVPointer.class) && [PATH_NET_ABSVALUE isEqualToString:absValue_p.folderName]) {
+        
+        //2. 取identifier分区的引用序列文件;
         NSString *filePath = [absValue_p filePath:PATH_NET_REFERENCE];
-        PINDiskCache *pinCache = [[PINDiskCache alloc] initWithName:@"" rootPath:filePath];
-        NSArray *localPorts = [pinCache objectForKey:FILENAME_Reference];
-        localPorts = ARRTOOK(localPorts);
+        NSArray *localPorts = ARRTOOK([SMGUtils searchObjectForFilePath:filePath fileName:FILENAME_Reference_ByPort time:cRedisReferenceTime]);
     
         for (NSInteger i = 0; i < localPorts.count; i++) {
             AIPort *item = ARR_INDEX(localPorts, localPorts.count - i - 1);
