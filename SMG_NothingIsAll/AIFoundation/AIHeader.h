@@ -54,6 +54,7 @@
 
 #define FILENAME_Reference_ByPointer @"reference_ByPointer" //微信息引用(pointer序)
 #define FILENAME_Reference_ByPort @"reference_ByPort"       //微信息引用(port序)
+#define FILENAME_Default @" "                               //默认文件名; (例如:小脑canout序列)
 
 
 /**

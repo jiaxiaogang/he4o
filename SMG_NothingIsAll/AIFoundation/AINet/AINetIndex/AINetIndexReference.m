@@ -145,23 +145,4 @@
     return mArr;
 }
 
-
-//MARK:===============================================================
-//MARK:                     < output >
-//MARK:===============================================================
-
-
--(NSArray*) getNodePointersFromOutputReference:(NSString*)algsType dataSource:(NSString*)dataSource limit:(NSInteger)limit{
-    //1. 取mv分区的引用序列文件;
-    AIKVPointer *reference_p = [SMGUtils createPointerForCerebel:algsType dataSource:dataSource];
-    NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:reference_p fileName:FILENAME_Reference_ByPort time:cRedisReferenceTime]];
-    
-    //2. 根据limit返回limit个结果;
-    if (ARRISOK(mArr)) {
-        limit = MAX(0, MIN(limit, mArr.count));
-        return [mArr subarrayWithRange:NSMakeRange(mArr.count - limit, limit)];
-    }
-    return nil;
-}
-
 @end

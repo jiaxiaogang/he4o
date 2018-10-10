@@ -96,11 +96,6 @@
     return [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_VALUE algsType:algsType dataSource:dataSource isOut:isOut];
 }
 
-//小脑的可输出"标识序列";
-+(AIKVPointer*) createPointerForCerebel:(NSString*)algsType dataSource:(NSString*)dataSource{
-    return [AIKVPointer newWithPointerId:0 folderName:PATH_NET_CEREBEL_CANOUT algsType:algsType dataSource:dataSource isOut:true];
-}
-
 @end
 
 

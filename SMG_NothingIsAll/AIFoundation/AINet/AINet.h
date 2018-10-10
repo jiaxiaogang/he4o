@@ -59,13 +59,6 @@
 
 
 //MARK:===============================================================
-//MARK:                     < AIOutputReference >
-//MARK:===============================================================
--(AIPort*) getNetNodePointersFromOutputReference_Single:(NSString*)algsType dataSource:(NSString*)dataSource limit:(NSInteger)limit;
--(NSArray*) getNetNodePointersFromOutputReference:(NSString*)algsType dataSource:(NSString*)dataSource limit:(NSInteger)limit;
-
-
-//MARK:===============================================================
 //MARK:                     < AINetOutputIndex >
 //MARK:===============================================================
 

@@ -39,9 +39,6 @@
 +(AIKVPointer*) createPointerForValue:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut;
 +(AIKVPointer*) createPointerForValue:(NSInteger)pointerId algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut;
 
-//小脑的可输出"标识序列";
-+(AIKVPointer*) createPointerForCerebel:(NSString*)algsType dataSource:(NSString*)dataSource;
-
 @end
 
 

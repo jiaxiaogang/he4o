@@ -191,17 +191,6 @@ static AINet *_instance;
     [self.netDirectionReference setNodePointerToDirectionReference:cmvNode_p mvAlgsType:mvAlgsType direction:direction difStrong:difStrong];
 }
 
-//MARK:===============================================================
-//MARK:                     < AIOutputReference >
-//MARK:===============================================================
--(AIPort*) getNetNodePointersFromOutputReference_Single:(NSString*)algsType dataSource:(NSString*)dataSource limit:(NSInteger)limit{
-    return ARR_INDEX([self getNetNodePointersFromOutputReference:algsType dataSource:dataSource limit:1], 0);
-}
-
--(NSArray*) getNetNodePointersFromOutputReference:(NSString*)algsType dataSource:(NSString*)dataSource limit:(NSInteger)limit{
-    return [self.reference getNodePointersFromOutputReference:algsType dataSource:dataSource limit:limit];
-}
-
 
 //MARK:===============================================================
 //MARK:                     < absCmv >

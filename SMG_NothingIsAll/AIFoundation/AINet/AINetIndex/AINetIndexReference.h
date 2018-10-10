@@ -54,24 +54,4 @@
 -(NSArray*) getReference_JustAbsResult:(AIKVPointer*)absValue_p limit:(NSInteger)limit;
 
 
-
-
-//MARK:===============================================================
-//MARK:                     < output >
-//MARK:===============================================================
-
-
-
-
-/**
- *  MARK:--------------------根据"分区和算法标识"查找引用节点的node_p地址--------------------
- *  @param limit : 最多少个
- *  @param algsType : 分区标识
- *  @param dataSource   : 算法标识
- */
--(NSArray*) getNodePointersFromOutputReference:(NSString*)algsType dataSource:(NSString*)dataSource limit:(NSInteger)limit;
-
-
-
-
 @end
