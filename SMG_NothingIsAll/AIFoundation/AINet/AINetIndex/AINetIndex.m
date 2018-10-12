@@ -72,8 +72,8 @@
     } startIndex:0 endIndex:model.pointerIds.count - 1 success:^(NSInteger index) {
         NSNumber *pointerIdNum = ARR_INDEX(model.pointerIds, index);
         long pointerId = [NUMTOOK(pointerIdNum) longValue];
-        AIKVPointer *output_p = [SMGUtils createPointerForOutputValue:pointerId algsType:algsType dataSource:dataSource];
-        resultPointer = output_p;
+        AIKVPointer *value_p = [SMGUtils createPointerForValue:pointerId algsType:algsType dataSource:dataSource isOut:isOut];
+        resultPointer = value_p;
     } failure:^(NSInteger index) {
         //4. 未找到;创建一个;
         AIKVPointer *value_p = [SMGUtils createPointerForValue:algsType dataSource:dataSource isOut:isOut];

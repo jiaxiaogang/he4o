@@ -70,21 +70,11 @@
 }
 
 //生成小脑node指针;
-+(AIKVPointer*) createPointerForOutputNode:(NSString*)algsType dataSource:(NSString*)dataSource{
-    NSInteger pointerId = [SMGUtils createPointerId:algsType dataSource:dataSource];
-    AIKVPointer *pointer = [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_ABS_NODE algsType:algsType dataSource:dataSource isOut:true];
-    return pointer;
-}
-
-//生成小脑索引指针
-+(AIKVPointer*) createPointerForOutputValue:(NSString*)algsType dataSource:(NSString*)dataSource{
-    NSInteger pointerId = [self createPointerId:algsType dataSource:dataSource];
-    return [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_VALUE algsType:algsType dataSource:dataSource isOut:true];
-}
-
-+(AIKVPointer*) createPointerForOutputValue:(NSInteger)pointerId algsType:(NSString*)algsType dataSource:(NSString*)dataSource{
-    return [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_VALUE algsType:algsType dataSource:dataSource isOut:true];
-}
+//+(AIKVPointer*) createPointerForOutputNode:(NSString*)algsType dataSource:(NSString*)dataSource{
+//    NSInteger pointerId = [SMGUtils createPointerId:algsType dataSource:dataSource];
+//    AIKVPointer *pointer = [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_ABS_NODE algsType:algsType dataSource:dataSource isOut:true];
+//    return pointer;
+//}
 
 //生成indexValue的指针;
 +(AIKVPointer*) createPointerForValue:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut{
