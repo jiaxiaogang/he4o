@@ -18,8 +18,15 @@
 //MARK:===============================================================
 -(NSMutableArray*) getAlgsArr:(NSObject*)algsModel;  //装箱 (algsModel to indexPointerArr);
 -(AIPointer*) getNetDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource;//单data装箱
--(void) setItemAlgsReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue;
--(NSArray*) getItemAlgsReference:(AIKVPointer*)pointer limit:(NSInteger)limit;  //获取算法单结果的第二序列联想;
+
+
+//MARK:===============================================================
+//MARK:                     < reference >
+//MARK:===============================================================
+-(void) setNetReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue;
+
+//获取算法单结果的第二序列联想;
+-(NSArray*) getNetReference:(AIKVPointer*)pointer limit:(NSInteger)limit;
 
 
 //MARK:===============================================================
@@ -49,14 +56,6 @@
 -(NSArray*) getNetNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction limit:(int)limit;
 -(NSArray*) getNetNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction filter:(NSArray*(^)(NSArray*))filter;
 -(void) setNetNodePointerToDirectionReference:(AIKVPointer*)cmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction difStrong:(int)difStrong;
-
-
-//MARK:===============================================================
-//MARK:                     < AIOutputReference >
-//MARK:===============================================================
--(void) setNetNodePointerToOutputReference:(AIKVPointer*)outputNode_p algsType:(NSString*)algsType dataSource:(NSString*)dataSource difStrong:(NSInteger)difStrong;
--(AIPort*) getNetNodePointersFromOutputReference_Single:(NSString*)algsType dataSource:(NSString*)dataSource limit:(NSInteger)limit;
--(NSArray*) getNetNodePointersFromOutputReference:(NSString*)algsType dataSource:(NSString*)dataSource limit:(NSInteger)limit;
 
 
 //MARK:===============================================================

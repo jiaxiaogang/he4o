@@ -15,6 +15,7 @@
 #define cRedisReferenceTime 300
 #define cRedisValueTime 30
 #define cRedisNodeTime 30
+#define cRedisDefaultTime 30    //默认,例如:小脑canout序列;
 
 
 //MARK:===============================================================

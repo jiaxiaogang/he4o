@@ -15,11 +15,10 @@
 #import "AINetAbs.h"
 #import "AINetAbsIndex.h"
 #import "AINetDirectionReference.h"
-#import "AIOutputReference.h"
-#import "AINetOutputIndex.h"
 #import "AINetAbsCMV.h"
 #import "AIAbsCMVNode.h"
 #import "AIKVPointer.h"
+#import "AINetIndexReference.h"
 
 @interface AINet () <AINetCMVDelegate,AINetAbsCMVDelegate>
 
@@ -28,11 +27,11 @@
 @property (strong, nonatomic) AINetAbs *netAbs;     //抽具象序列
 @property (strong, nonatomic) AINetAbsIndex *netAbsIndex;//宏信息索引区(海马)
 @property (strong, nonatomic) AINetDirectionReference *netDirectionReference;
-@property (strong, nonatomic) AIOutputReference *outputReference;
-@property (strong, nonatomic) AINetOutputIndex *outputIndex;
 @property (strong, nonatomic) AINetAbsCMV *netAbsCMV;//网络cmv的抽象;
+@property (strong, nonatomic) AINetIndexReference *reference;
 
 @end
+
 
 @implementation AINet
 
@@ -60,8 +59,7 @@ static AINet *_instance;
     self.netAbs = [[AINetAbs alloc] init];
     self.netAbsIndex = [[AINetAbsIndex alloc] init];
     self.netDirectionReference = [[AINetDirectionReference alloc] init];
-    self.outputReference = [[AIOutputReference alloc] init];
-    self.outputIndex = [[AINetOutputIndex alloc] init];
+    self.reference = [[AINetIndexReference alloc] init];
     self.netAbsCMV = [[AINetAbsCMV alloc] init];
     self.netAbsCMV.delegate = self;
 }
@@ -81,7 +79,7 @@ static AINet *_instance;
             //1. 转换AIModel&dataType;//废弃!(参考n12p12)
             //2. 存储索引;
             NSNumber *data = NUMTOOK([modelDic objectForKey:dataSource]);
-            AIPointer *pointer = [self.netIndex getDataPointerWithData:data algsType:algsType dataSource:dataSource];
+            AIPointer *pointer = [self.netIndex getDataPointerWithData:data algsType:algsType dataSource:dataSource isOut:false];
             if (pointer) {
                 [algsArr addObject:pointer];
             }
@@ -93,15 +91,35 @@ static AINet *_instance;
 
 //单data装箱
 -(AIPointer*) getNetDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource{
-    return [self.netIndex getDataPointerWithData:data algsType:algsType dataSource:dataSource];
+    return [self.netIndex getDataPointerWithData:data algsType:algsType dataSource:dataSource isOut:false];
 }
 
--(void) setItemAlgsReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue{
-    [self.netIndex setIndexReference:indexPointer target_p:target_p difValue:difValue];
+//小脑索引
+-(AIKVPointer*) getOutputIndex:(NSString*)algsType dataSource:(NSString*)dataSource outputObj:(NSNumber*)outputObj {
+    if (outputObj) {
+        return [self.netIndex getDataPointerWithData:outputObj algsType:algsType dataSource:dataSource isOut:true];
+    }
+    return nil;
 }
 
--(NSArray*) getItemAlgsReference:(AIKVPointer*)pointer limit:(NSInteger)limit {
-    return [self.netIndex getIndexReference:pointer limit:limit];
+
+//MARK:===============================================================
+//MARK:                     < reference >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------引用序列--------------------
+ *  @param indexPointer : value地址
+ *  @param target_p : 引用者地址(如:xxNode.pointer)
+ *
+ *  注: 暂不支持output;
+ */
+-(void) setNetReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue{
+    [self.reference setReference:indexPointer target_p:target_p difStrong:difValue];
+}
+
+-(NSArray*) getNetReference:(AIKVPointer*)pointer limit:(NSInteger)limit {
+    return [self.reference getReference:pointer limit:limit];
 }
 
 
@@ -118,13 +136,13 @@ static AINet *_instance;
  */
 -(void)aiNetCMV_CreatedNode:(AIKVPointer *)indexPointer nodePointer:(AIKVPointer *)nodePointer{
     if (ISOK(indexPointer, AIKVPointer.class)) {
-        if (indexPointer.isOut) {
-            //kv_p时,记录node对index的引用;
-            [self setItemAlgsReference:(AIKVPointer*)indexPointer target_p:nodePointer difValue:1];
-        }else{
-            //op时,strong+1 & 记录可输出;
-            [self.outputReference setNodePointerToOutputReference:indexPointer algsType:indexPointer.algsType dataSource:indexPointer.dataSource difStrong:1];
-        }
+        //1. kv_p时,记录node对index的引用;
+        //2. op时,strong+1 & 记录输出的引用 & 记录可输出;
+        [self setNetReference:indexPointer target_p:nodePointer difValue:1];
+        
+        //if (indexPointer.isOut) {
+        //  [self.cerebel 记录可输出];
+        //}
     }
 }
 
@@ -171,34 +189,6 @@ static AINet *_instance;
 
 -(void) setNetNodePointerToDirectionReference:(AIKVPointer*)cmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction difStrong:(int)difStrong{
     [self.netDirectionReference setNodePointerToDirectionReference:cmvNode_p mvAlgsType:mvAlgsType direction:direction difStrong:difStrong];
-}
-
-//MARK:===============================================================
-//MARK:                     < AIOutputReference >
-//MARK:===============================================================
--(void) setNetNodePointerToOutputReference:(AIKVPointer*)outputNode_p algsType:(NSString*)algsType dataSource:(NSString*)dataSource difStrong:(NSInteger)difStrong{
-    [self.outputReference setNodePointerToOutputReference:outputNode_p algsType:algsType dataSource:dataSource difStrong:difStrong];
-}
-
--(AIPort*) getNetNodePointersFromOutputReference_Single:(NSString*)algsType dataSource:(NSString*)dataSource limit:(NSInteger)limit{
-    return ARR_INDEX([self getNetNodePointersFromOutputReference:algsType dataSource:dataSource limit:1], 0);
-}
-
--(NSArray*) getNetNodePointersFromOutputReference:(NSString*)algsType dataSource:(NSString*)dataSource limit:(NSInteger)limit{
-    return [self.outputReference getNodePointersFromOutputReference:algsType dataSource:dataSource limit:limit];
-}
-
-
-//MARK:===============================================================
-//MARK:                     < AINetOutputIndex >
-//MARK:===============================================================
-
-//小脑索引
--(AIKVPointer*) getOutputIndex:(NSString*)algsType dataSource:(NSString*)dataSource outputObj:(NSNumber*)outputObj {
-    if (outputObj) {
-        return [self.outputIndex getDataPointerWithData:outputObj algsType:algsType dataSource:dataSource];
-    }
-    return nil;
 }
 
 

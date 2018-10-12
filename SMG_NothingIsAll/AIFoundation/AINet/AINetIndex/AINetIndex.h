@@ -9,28 +9,38 @@
 #import <Foundation/Foundation.h>
 
 
-//MARK:===============================================================
-//MARK:                     < 微信息索引 (第一序列) >
-//MARK:===============================================================
+/**
+ *  MARK:--------------------微信息索引--------------------
+ *  1. Input索引 (海马)
+ *      >
+ *      >
+ *
+ *  2. Output索引 (小脑)
+ *      > 装箱 (用于将outLog信息进行装索引)
+ *          AIKVPointer *output_p = [theNet getOutputIndex:algsType dataSource:dataSource outputObj:outputObj];
+ *
+ *      > 记录可输出reference (用于将指针,索引到引用序列)
+ *          [theNet setNetNodePointerToOutputReference:output_p algsType:algsType dataSource:dataSource difStrong:1];
+ */
 @class AIPointer,AIKVPointer;
 @interface AINetIndex : NSObject
 
--(AIPointer*) getDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
 
 /**
- *  MARK:--------------------引用序列--------------------
- *  @param indexPointer : value地址
- *  @param target_p : 引用者地址(如:xxNode.pointer)
+ *  MARK:--------------------根据data直接查找value_p--------------------
+ *  1. 如果未找到,则创建一个,并返回;
  */
--(void) setIndexReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue;
--(NSArray*) getIndexReference:(AIKVPointer*)indexPointer limit:(NSInteger)limit;
+-(AIKVPointer*) getDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut;
+
 
 @end
 
 
-//MARK:===============================================================
-//MARK:                     < 内存DataSortModel (一组index) >
-//MARK:===============================================================
+/**
+ *  MARK:--------------------内存DataSortModel (一组index)--------------------
+ *  1. 排序是根据"值"大小排;
+ *  2. pointerIds里存的是"值的指针"的pointerId;
+ */
 @interface AINetIndexModel : NSObject <NSCoding>
 
 @property (strong,nonatomic) NSMutableArray *pointerIds;

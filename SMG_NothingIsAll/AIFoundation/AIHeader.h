@@ -37,7 +37,7 @@
 
 //reference
 #define PATH_NET_REFERENCE          @"NET_REFERENCE"                        //神经网络"引用序列"根目录;(海马体)
-#define PATH_NET_OUTPUT_REFERENCE   @"NET_OUTPUT_REFERENCE"                 //输出引用序列
+#define PATH_NET_CEREBEL_CANOUT     @"PATH_NET_CEREBEL_CANOUT"              //小脑可输出标识序列
 
 
 /**
@@ -46,7 +46,7 @@
 #define FILENAME_Node @"node"               //节点
 #define FILENAME_CMVModel @"cmvModel"       //cmv模型
 #define FILENAME_Value @"value"             //微信息
-#define FILENAME_Index @"index"             //微信息索引(数组)
+#define FILENAME_Index(isOut) STRFORMAT(@"index_%d",isOut) //in微信息索引(数组) / out小脑微信息(数组)
 #define FILENAME_Reference @"reference"     //微信息引用
 #define FILENAME_AbsValue @"absValue"       //宏节点的值存储地址
 #define FILENAME_AbsIndex @"absIndex"       //宏节点索引序列地址
@@ -54,7 +54,8 @@
 
 #define FILENAME_Reference_ByPointer @"reference_ByPointer" //微信息引用(pointer序)
 #define FILENAME_Reference_ByPort @"reference_ByPort"       //微信息引用(port序)
-#define FILENAME_OutputIndex @"outputIndex"                 //小脑微信息
+#define FILENAME_Default @" "                               //默认文件名; (例如:小脑canout序列)
+
 
 /**
  *  MARK:--------------------数据检查--------------------

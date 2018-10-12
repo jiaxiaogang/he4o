@@ -27,6 +27,7 @@
 #import "MVCacheModel.h"
 #import "MVCacheManager.h"
 #import "ExpCacheModel.h"
+#import "AINetUtils.h"
 
 /**
  *  MARK:--------------------思维控制器--------------------
@@ -96,15 +97,15 @@ static AIThinkingControl *_instance;
 /**
  *  MARK:--------------------输出的日志入网(输入小脑)--------------------
  *  @param algsType  : 输出算法分区(目前仅有Output)
- *  @param dataSource    : 输出算法函数(如output_Text:)
+ *  @param dataSource: 输出算法函数(如output_Text:)
  *  @param outputObj : 输出内容(如:饿死爹了)
  */
 -(void) commitOutputLog:(NSString*)algsType dataSource:(NSString*)dataSource outputObj:(NSNumber*)outputObj{
     //1. 装箱
     AIKVPointer *output_p = [theNet getOutputIndex:algsType dataSource:dataSource outputObj:outputObj];
     
-    //2. 记录可输出reference
-    [theNet setNetNodePointerToOutputReference:output_p algsType:algsType dataSource:dataSource difStrong:1];
+    //2. 记录可输出canout (当前善未形成node,所以无法建议索引;(检查一下,当outLog形成node后,索引的建立))
+    [AINetUtils setCanOutput:algsType dataSource:dataSource];
     
     //3. 加瞬时记忆
     [self dataIn_ToShortCache:output_p];
@@ -198,7 +199,7 @@ static AIThinkingControl *_instance;
         //1. noMv信号已输入完毕,联想
         for (AIKVPointer *algs_kvp in algsArr) {
             //2. 在第二序列指向节点的端口;
-            NSArray *referPorts = [[AINet sharedInstance] getItemAlgsReference:algs_kvp limit:cAssDataLimit];
+            NSArray *referPorts = [[AINet sharedInstance] getNetReference:algs_kvp limit:cAssDataLimit];
             for (AIPort *referPort in referPorts) {
                 if (ISOK(referPort, AIPort.class)) {
                     id referNode = [SMGUtils searchObjectForPointer:referPort.target_p fileName:FILENAME_Node];
