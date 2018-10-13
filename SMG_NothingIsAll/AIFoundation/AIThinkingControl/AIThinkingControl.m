@@ -123,13 +123,13 @@ static AIThinkingControl *_instance;
     BOOL findMV = [self dataIn_CheckMV:algsArr];
     
     //3. 分流
-    AINetCMVModel *cmvModel;
+    AIFrontOrderNode *foNode;
     if (findMV) {
         //4. 输入新的cmvAlgsArr(下面已有assExp中,有mv方向的添加mvCache代码,此处去掉)
         //[self.mvCacheManager dataIn_CmvAlgsArr:algsArr];
         
         //5. 创建NetCmvModel;
-        cmvModel = [self dataIn_CreateNetCMVModel:algsArr];
+        foNode = [self dataIn_CreateNetCMVModel:algsArr];
     }else{
         //6. 加入瞬时记忆
         for (AIKVPointer *algs_p in ARRTOOK(algsArr)) {
@@ -139,7 +139,7 @@ static AIThinkingControl *_instance;
     
     //7. 联想
     if (findMV) {
-        [self dataIn_AssociativeExperience:cmvModel];
+        [self dataIn_AssociativeExperience:foNode];
     }else{
         [self dataIn_AssociativeData:algsArr];
     }
@@ -177,11 +177,11 @@ static AIThinkingControl *_instance;
 }
 
 //联想到mv时,构建cmv模型;
--(AINetCMVModel*) dataIn_CreateNetCMVModel:(NSArray*)algsArr {
-    AINetCMVModel *cmvModel = [[AINet sharedInstance] createCMV:algsArr order:self.shortCache];
+-(AIFrontOrderNode*) dataIn_CreateNetCMVModel:(NSArray*)algsArr {
+    AIFrontOrderNode *foNode = [[AINet sharedInstance] createCMV:algsArr order:self.shortCache];
     [self.shortCache removeAllObjects];
     //TODO:>>>>>将shortCache销毁时也放到thinkFeedCache;
-    return cmvModel;
+    return foNode;
 }
 
 //MARK:===============================================================
@@ -206,8 +206,7 @@ static AIThinkingControl *_instance;
                     if (ISOK(referNode, AIFrontOrderNode.class)) {
                         //3. 联想到cmv模型前因
                         AIFrontOrderNode *foNode = (AIFrontOrderNode*)referNode;
-                        AINetCMVModel *cmvModel = [SMGUtils searchObjectForPointer:foNode.cmvModel_kvp fileName:FILENAME_CMVModel];
-                        AICMVNode *cmvNode = [SMGUtils searchObjectForPointer:cmvModel.cmvNode_p fileName:FILENAME_Node];
+                        AICMVNode *cmvNode = [SMGUtils searchObjectForPointer:foNode.cmvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
                         
                         //4. 将联想到的cmv更新energy和cmvCache
                         NSString *algsType = cmvNode.urgentTo_p.algsType;
@@ -246,10 +245,10 @@ static AIThinkingControl *_instance;
  *  注: dataIn负责护送一次指定信息的ass(随后进入dataOut递归循环)
  *  注: dataIn_assExp可直接跳过检查点一次;
  */
--(void) dataIn_AssociativeExperience:(AINetCMVModel*)cmvModel {
-    if (ISOK(cmvModel, AINetCMVModel.class)) {
+-(void) dataIn_AssociativeExperience:(AIFrontOrderNode*)foNode {
+    if (ISOK(foNode, AIFrontOrderNode.class)) {
         //1. 取cmvNode
-        AICMVNode *cmvNode = [SMGUtils searchObjectForPointer:cmvModel.cmvNode_p fileName:FILENAME_Node];
+        AICMVNode *cmvNode = [SMGUtils searchObjectForPointer:foNode.cmvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
         
         if (ISOK(cmvNode, AICMVNode.class)) {
             //2. 根据cmv模型,取cmv的迫切度值和欲望方向;求出需求
@@ -264,7 +263,7 @@ static AIThinkingControl *_instance;
             }
             
             //4. 思考数据
-            [self dataIn_AssExp_ToLawAbsData:cmvModel cmvNode:cmvNode];
+            [self dataIn_AssExp_ToLawAbsData:foNode cmvNode:cmvNode];
         }
     }
     //5. 消耗energy
@@ -300,9 +299,9 @@ static AIThinkingControl *_instance;
  *  1. 无需求时,找出以往同样经历,类比规律,抽象出更确切的意义;
  *  2. 注:此方法为abs方向的思维方法总入口;(与其相对的决策处
  */
--(void) dataIn_AssExp_ToLawAbsData:(AINetCMVModel*)cmvModel cmvNode:(AICMVNode*)cmvNode {
+-(void) dataIn_AssExp_ToLawAbsData:(AIFrontOrderNode*)foNode cmvNode:(AICMVNode*)cmvNode {
     //1. 数据检查
-    if (cmvModel == nil || cmvNode == nil) {
+    if (foNode == nil || cmvNode == nil) {
         return;
     }
     
@@ -312,8 +311,6 @@ static AIThinkingControl *_instance;
     NSArray *assDirectionPorts_Pos = [[AINet sharedInstance] getNetNodePointersFromDirectionReference:cmvNode.pointer.algsType direction:MVDirection_Positive limit:2];
     [assDirectionPorts addObjectsFromArray:ARRTOOK(assDirectionPorts_Nag)];
     [assDirectionPorts addObjectsFromArray:ARRTOOK(assDirectionPorts_Pos)];
-    
-    AIFrontOrderNode *foNode = [SMGUtils searchObjectForPointer:cmvModel.foNode_p fileName:FILENAME_Node];
     
     //3. 联想cmv模型
     for (AIPort *assDirectionPort in assDirectionPorts) {
@@ -350,7 +347,7 @@ static AIThinkingControl *_instance;
                         [self dataIn_ToShortCache:create_an.absValue_p];
                         
                         //10. createAbsCmvNode
-                        AIAbsCMVNode *create_acn = [theNet createAbsCMVNode:create_an.pointer aMv_p:cmvModel.cmvNode_p bMv_p:ass_cn.pointer];
+                        AIAbsCMVNode *create_acn = [theNet createAbsCMVNode:create_an.pointer aMv_p:foNode.cmvNode_p bMv_p:ass_cn.pointer];
                         
                         //11. cmv模型连接;
                         if (ISOK(create_acn, AIAbsCMVNode.class)) {

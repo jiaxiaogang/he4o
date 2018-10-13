@@ -20,14 +20,14 @@
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     if (self) {
-        self.cmvModel_p = [aDecoder decodeObjectForKey:@"cmvModel_p"];
+        self.foNode_p = [aDecoder decodeObjectForKey:@"foNode_p"];
     }
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:self.cmvModel_p forKey:@"cmvModel_p"];
+    [aCoder encodeObject:self.foNode_p forKey:@"foNode_p"];
 }
 
 @end

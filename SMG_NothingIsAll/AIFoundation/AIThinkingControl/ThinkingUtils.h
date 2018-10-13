@@ -99,12 +99,6 @@
 
 
 /**
- *  MARK:--------------------根据cmvNode联想其对应的foNode_p--------------------
- */
-+(AIKVPointer*) getFoNodePointerFromCmvNode:(AICMVNode*)cmvNode;
-
-
-/**
  *  MARK:--------------------根据cmvNodeBase联想其对应的foNode或absNode--------------------
  */
 +(AIKVPointer*) getFrontNodePointerFromCmvNode:(AICMVNodeBase*)cmvNode;

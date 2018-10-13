@@ -232,29 +232,17 @@
 //}
 
 +(AIFrontOrderNode*) getFoNodeFromCmvNode:(AICMVNode*)cmvNode{
-    AIKVPointer *foNode_p = [self getFoNodePointerFromCmvNode:cmvNode];
-    if (foNode_p) {
+    if (ISOK(cmvNode, AICMVNode.class)) {
         //2. 取"解决经验"对应的前因时序列;
-        AIFrontOrderNode *foNode = [SMGUtils searchObjectForPointer:foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+        AIFrontOrderNode *foNode = [SMGUtils searchObjectForPointer:cmvNode.foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
         return foNode;
-    }
-    return nil;
-}
-
-+(AIKVPointer*) getFoNodePointerFromCmvNode:(AICMVNode*)cmvNode{
-    if (cmvNode && cmvNode.cmvModel_p) {
-        //1. 取"解决经验"对应的cmv基本模型;
-        AINetCMVModel *cmvModel = [SMGUtils searchObjectForPointer:cmvNode.cmvModel_p fileName:FILENAME_CMVModel time:cRedisNodeTime];
-        if (cmvModel) {
-            return cmvModel.foNode_p;
-        }
     }
     return nil;
 }
 
 +(AIKVPointer*) getFrontNodePointerFromCmvNode:(AICMVNodeBase*)cmvNode{
     if (ISOK(cmvNode, AICMVNode.class)) {
-        return [self getFoNodePointerFromCmvNode:(AICMVNode*)cmvNode];
+        return ((AICMVNode*)cmvNode).foNode_p;
     }else if(ISOK(cmvNode, AIAbsCMVNode.class)){
         return ((AIAbsCMVNode*)cmvNode).absNode_p;
     }

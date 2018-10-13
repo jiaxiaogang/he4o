@@ -14,6 +14,6 @@
 //MARK:===============================================================
 @interface AICMVNode : AICMVNodeBase
 
-@property (strong, nonatomic) AIKVPointer *cmvModel_p;//被引用的cmvModel;
+@property (strong, nonatomic) AIKVPointer *foNode_p;      //前因数据
 
 @end
