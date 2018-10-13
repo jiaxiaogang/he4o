@@ -19,6 +19,7 @@
 #import "AIAbsCMVNode.h"
 #import "AIKVPointer.h"
 #import "AINetIndexReference.h"
+#import "AIFrontOrderNode.h"
 
 @interface AINet () <AINetCMVDelegate,AINetAbsCMVDelegate>
 
@@ -126,7 +127,7 @@ static AINet *_instance;
 //MARK:===============================================================
 //MARK:                     < cmv >
 //MARK:===============================================================
--(AINetCMVModel*) createCMV:(NSArray*)imvAlgsArr order:(NSArray*)order{
+-(AIFrontOrderNode*) createCMV:(NSArray*)imvAlgsArr order:(NSArray*)order{
     return [self.netCMV create:imvAlgsArr order:order];
 }
 

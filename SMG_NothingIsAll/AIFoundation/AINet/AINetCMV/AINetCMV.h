@@ -12,7 +12,7 @@
 //MARK:===============================================================
 //MARK:                     < cmv基本模型 >
 //MARK:===============================================================
-@class AIKVPointer,AINetCMVModel;
+@class AIKVPointer,AIFrontOrderNode;
 @protocol AINetCMVDelegate <NSObject>
 
 
@@ -34,26 +34,17 @@
 
 
 
-
+/**
+ *  MARK:--------------------foNode->cmvNode的模型--------------------
+ */
 @interface AINetCMV : NSObject
 
 @property (weak, nonatomic) id<AINetCMVDelegate> delegate;
--(AINetCMVModel*) create:(NSArray*)imvAlgsArr order:(NSArray*)order;
 
-@end
-
-
-
-
-//MARK:===============================================================
-//MARK:                     < cmv基本模型 >
-//MARK:===============================================================
-@interface AINetCMVModel : NSObject <NSCoding>
-
-@property (strong, nonatomic) AIKVPointer *pointer;         //自身存储地址
-@property (strong, nonatomic) AIKVPointer *foNode_p;      //前因数据
-@property (strong, nonatomic) AIKVPointer *cmvNode_p;      //
-
--(void) create;
+/**
+ *  MARK:--------------------create foNode->cmvNode 基本模型--------------------
+ *  @result : 返回foNode;
+ */
+-(AIFrontOrderNode*) create:(NSArray*)imvAlgsArr order:(NSArray*)order;
 
 @end
