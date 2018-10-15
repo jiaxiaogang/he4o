@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AINetAbsNode;
+@class AINetAbsNode,AICMVNode,AIFrontOrderNode;
 @interface NVUtils : NSObject
 
 /**
@@ -21,6 +21,21 @@
  *  MARK:--------------------获取某absNode的描述--------------------
  */
 +(NSString*) getAbsNodeDesc:(AINetAbsNode*)absNode;
+
+
+
+//MARK:===============================================================
+//MARK:                     < cmv基本模型之 (foOrder->cmvNode)模型 >
+//MARK:===============================================================
+
+//根据foNode的描述
++(NSString*) getFoNodeDesc:(AIFrontOrderNode*)foNode;
+
+//根据cmvNode的描述
++(NSString*) getCmvNodeDesc:(AICMVNode*)cmvNode;
+
+//根据cmvModel的描述
++(NSString*) getCmvModelDesc:(AIFrontOrderNode*)foNode cmvNode:(AICMVNode*)cmvNode;
 
 @end
 

@@ -11,6 +11,8 @@
 #import "AIPort.h"
 #import "AIFrontOrderNode.h"
 #import "AIKVPointer.h"
+#import "AICMVNode.h"
+#import "ThinkingUtils.h"
 
 @implementation NVUtils
 
@@ -57,5 +59,45 @@
     }
     return mStr;
 }
+
+
+//MARK:===============================================================
+//MARK:                     < cmv基本模型之 (foOrder->cmvNode)模型 >
+//MARK:===============================================================
++(NSString*) getFoNodeDesc:(AIFrontOrderNode*)foNode{
+    AICMVNode *cmvNode = nil;
+    if (foNode) {
+        cmvNode = [SMGUtils searchObjectForPointer:foNode.cmvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+    }
+    return [self getCmvModelDesc:foNode cmvNode:cmvNode];
+}
+
++(NSString*) getCmvNodeDesc:(AICMVNode*)cmvNode{
+    AIFrontOrderNode *foNode = [ThinkingUtils getFoNodeFromCmvNode:cmvNode];
+    return [self getCmvModelDesc:foNode cmvNode:cmvNode];
+}
+
++(NSString*) getCmvModelDesc:(AIFrontOrderNode*)foNode cmvNode:(AICMVNode*)cmvNode{
+    //1. 前因时序列描述
+    NSString *foDesc = nil;
+    if (foNode) {
+        foDesc = [NVUtils convertValuePs2Str:foNode.orders_kvp];
+    }
+    
+    //2. cmv描述
+    NSString *cmvDesc = nil;
+    if (cmvNode) {
+        NSNumber *urgentToNum = [SMGUtils searchObjectForPointer:cmvNode.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime];
+        NSNumber *deltaNum = [SMGUtils searchObjectForPointer:cmvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime];
+        cmvDesc = STRFORMAT(@"ur%@_de%@",urgentToNum,deltaNum);
+    }
+    
+    //3. 拼desc返回
+    NSMutableString *desc = [[NSMutableString alloc] init];
+    [desc appendFormat:@"(fo: %@ => cmv: %@)",foDesc,cmvDesc];
+    
+    return desc;
+}
+
 
 @end

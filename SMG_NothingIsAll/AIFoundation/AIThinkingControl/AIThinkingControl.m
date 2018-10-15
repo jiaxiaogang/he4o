@@ -548,7 +548,7 @@ static AIThinkingControl *_instance;
         AIFrontOrderNode *foNode = [ThinkingUtils getFoNodeFromCmvNode:cmvNode];
         if (foNode) {
             [except_ps addObject:cmvNode.pointer];
-            NSLog(@"dataOut_AssConData_ExpOut找到: %ld_%ld",(long)cmvNode.pointer.pointerId,foNode.pointer.pointerId);
+            NSLog(@"dataOut_AssConData_ExpOut找到:\ncmv模型 >> %@",[NVUtils getCmvModelDesc:foNode cmvNode:cmvNode]);
             return foNode;
         }else{
             //3. 前因时序列为null的异常;
