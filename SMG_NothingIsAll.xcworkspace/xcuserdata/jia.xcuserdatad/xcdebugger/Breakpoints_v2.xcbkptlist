@@ -231,22 +231,6 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/MVCacheManager.m"
-            timestampString = "559183068.365132"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "66"
-            endingLineNumber = "66"
-            landmarkName = "-updateCMVCache:urgentTo:delta:order:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetDirectionReference.m"
             timestampString = "560843554.010995"
             startingColumnNumber = "9223372036854775807"
@@ -264,28 +248,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/AIThinkingControl.m"
-            timestampString = "561256577.694162"
+            timestampString = "561337993.475528"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "612"
             endingLineNumber = "612"
             landmarkName = "-dataOut_AssociativeConcreteData_TryOut:exceptTryOut_ps:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/AIThinkingControl.m"
-            timestampString = "561256577.69463"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "563"
-            endingLineNumber = "563"
-            landmarkName = "-dataOut_AssociativeConcreteData_ExpOut:checkMvNode:checkMvNode_p:except_ps:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

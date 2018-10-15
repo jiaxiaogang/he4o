@@ -20,12 +20,9 @@
 @property (weak, nonatomic) IBOutlet UIButton *eatStopBtn;
 @property (weak, nonatomic) IBOutlet UIButton *confirmBtn;
 @property (weak, nonatomic) IBOutlet UITextField *tf;
-@property (weak, nonatomic) IBOutlet UIButton *canceBtn;
 @property (weak, nonatomic) IBOutlet UISlider *hungerLevelSlider;
 @property (weak, nonatomic) IBOutlet UILabel *hungerLevelLab;
 @property (weak, nonatomic) IBOutlet UIButton *thinkStatusBtn;
-@property (weak, nonatomic) IBOutlet UIButton *mainThreadStatusBtn;
-@property (weak, nonatomic) IBOutlet UITextField *logCountTF;
 @property (weak, nonatomic) IBOutlet UILabel *aiOutputLab;
 
 @property (assign, nonatomic) CGFloat lastSliderValue;
@@ -52,17 +49,9 @@
     [self.hungerLevelLab setText:STRFORMAT(@"%.2f",self.hungerLevelSlider.value)];
     [self.hungerLevelLab setTextColor:self.hungerLevelSlider.value > 0.7 ? [UIColor greenColor] : [UIColor redColor]];
     
-    //3,mainThreadStatusBtn
-    [self.mainThreadStatusBtn.layer setCornerRadius:3];
-    [self.mainThreadStatusBtn.layer setMasksToBounds:true];
-    [self.mainThreadStatusBtn.layer setBorderColor:[UIColor grayColor].CGColor];
-    [self.mainThreadStatusBtn.layer setBorderWidth:1];
-    
     //4,thinkStatusBtn
-    [self.thinkStatusBtn.layer setCornerRadius:3];
+    [self.thinkStatusBtn.layer setCornerRadius:5];
     [self.thinkStatusBtn.layer setMasksToBounds:true];
-    [self.thinkStatusBtn.layer setBorderColor:[UIColor grayColor].CGColor];
-    [self.thinkStatusBtn.layer setBorderWidth:1];
 }
 
 -(void) initData{
@@ -74,9 +63,6 @@
 -(void) initDisplay{
     //2,thinkStatusBtn
     [self.thinkStatusBtn setBackgroundColor:[UIColor greenColor]];
-    
-    //3,mainThreadStatusBtn
-    [self.mainThreadStatusBtn setBackgroundColor:[UIColor greenColor]];
 }
 
 //MARK:===============================================================
@@ -123,11 +109,6 @@
     }
 }
 
-- (IBAction)canceBtnOnClick:(id)sender {
-    [self.tf resignFirstResponder];
-    self.tf.text = nil;
-}
-
 - (IBAction)hungerLevelSliderValueChanged:(id)sender {
     //1. 数据
     CGFloat curValue = self.hungerLevelSlider.value;
@@ -141,14 +122,6 @@
 }
 
 - (IBAction)thinkBtnOnClick:(id)sender {
-    
-}
-
-- (IBAction)mainThreadStatusBtnOnClick:(id)sender {
-    
-}
-
-- (IBAction)awarenessLogBtnOnClick:(id)sender {
     
 }
 
