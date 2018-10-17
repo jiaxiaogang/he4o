@@ -16,6 +16,10 @@
 
 @implementation NVUtils
 
+//MARK:===============================================================
+//MARK:                     < value的可视化 >
+//MARK:===============================================================
+
 +(NSString*) convertValuePs2Str:(NSArray*)value_ps{
     value_ps = ARRTOOK(value_ps);
     NSMutableString *mStr = [NSMutableString new];
@@ -23,12 +27,16 @@
         NSNumber *valueNum = [SMGUtils searchObjectForPointer:value_p fileName:FILENAME_Value];
         if (valueNum) {
             char c = [valueNum charValue];
-            [mStr appendFormat:@"%c",c];
+            [mStr appendFormat:@"%@%c ", value_p.isOut ? @"O" : @"I", c];
         }
     }
     return mStr;
 }
 
+
+//MARK:===============================================================
+//MARK:                       < node的可视化 >
+//MARK:===============================================================
 
 +(NSString*) getAbsNodeDesc:(AINetAbsNode*)absNode {
     //1. 数据检查
@@ -62,8 +70,9 @@
 
 
 //MARK:===============================================================
-//MARK:                     < cmv基本模型之 (foOrder->cmvNode)模型 >
+//MARK:           < cmvModel的可视化(foOrder->cmvNode) >
 //MARK:===============================================================
+
 +(NSString*) getFoNodeDesc:(AIFrontOrderNode*)foNode{
     AICMVNode *cmvNode = nil;
     if (foNode) {

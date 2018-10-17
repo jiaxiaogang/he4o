@@ -28,9 +28,8 @@
 //Direction的mv分区pointer;(存引用序列)
 +(AIKVPointer*) createPointerForDirection:(NSString*)mvAlgsType direction:(MVDirection)direction;
 
-//生成小脑node指针;
-//生成小脑索引指针;
-//+(AIKVPointer*) createPointerForOutputNode:(NSString*)algsType dataSource:(NSString*)dataSource;
+//生成小脑CanOut指针;
++(AIKVPointer*) createPointerForCerebelCanOut;
 
 //生成indexValue的指针;
 +(AIKVPointer*) createPointerForValue:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut;

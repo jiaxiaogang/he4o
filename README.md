@@ -1,4 +1,4 @@
-# SMG
+# he4o
 > ### 一款AGI系统内核,是HELIX理论的实践项目
 
 
@@ -7,7 +7,7 @@
 
 > 相关文档:
 
-<https://github.com/jiaxiaogang/SMG_NOTE/tree/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0>
+<https://github.com/jiaxiaogang/HELIX_THEORY/tree/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0>
 
 [![](https://img.shields.io/badge/%20QQGroup-528053635%20-orange.svg)](tencent://message/?uin=283636001&Site=&Menu=yes)
 [![](https://img.shields.io/badge/%20QQ-在线交谈%20-orange.svg)](http://wpa.qq.com/msgrd?v=3&uin=283636001&site=qq&menu=yes)
@@ -15,7 +15,7 @@
 ![](https://img.shields.io/badge/%20Wechat-jia2764894%20-orange.svg)
 ![](https://img.shields.io/badge/%20in-iphone%20-orange.svg)
 [![License](https://img.shields.io/badge/license-GPL-blue.svg)](LICENSE)
-[![Join the chat at https://gitter.im/jiaxiaogang/SMG](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jiaxiaogang/SMG)
+[![Join the chat at https://gitter.im/jiaxiaogang/he4o](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jiaxiaogang/he4o)
 
 ***
 
@@ -26,7 +26,7 @@
 
 > 第二梯队:1956达特矛斯会议后,明斯基和麦卡锡等人穷其一生心血,虽未落地,却为AGI奠定了很多基础;
 
-> 第三梯队:随着bigData,云计算等成熟,AI迎来DL热,但DL并不智能,smg旨在实现一款AGI系统内核;(类似计算机时代的linux内核)
+> 第三梯队:随着bigData,云计算等成熟,AI迎来DL热,但DL并不智能,he4o旨在实现一款AGI系统内核;(类似计算机时代的linux内核)
 
 
 #### -------------------关键字-------------------
@@ -50,12 +50,12 @@
 - 螺旋HELIX理论
 
 
-#### -------------------SMG架构-------------------
+#### -------------------he4o架构-------------------
 
 | ![](https://raw.githubusercontent.com/jiaxiaogang/SMG_NOTE/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/assets/%E5%BD%92%E7%BA%B3%E7%BB%93%E6%9E%84.png?raw=true) |
 | --- |
 | 注:将 `思维` `决策` `记忆` `mind` `联想` `想像力` `创造力` `预测`集成到神经网络; |
-| 注:将 `思维活在数据网络中,以三层循环达到欺骗smg使其`,`产生情感真实感` 与 `自认为有意识`; |
+| 注:将 `思维活在数据网络中,以三层循环达到欺骗he4o使其`,`产生情感真实感` 与 `自认为有意识`; |
 
 
 
@@ -113,7 +113,7 @@
 
 ### 2018.05.01
 
-> - 相对(smg实现定义)
+> - 相对(he4o实现定义)
 
 ### 2018.06.01
 

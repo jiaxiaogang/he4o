@@ -69,12 +69,11 @@
     return kvPointer;
 }
 
-//生成小脑node指针;
-//+(AIKVPointer*) createPointerForOutputNode:(NSString*)algsType dataSource:(NSString*)dataSource{
-//    NSInteger pointerId = [SMGUtils createPointerId:algsType dataSource:dataSource];
-//    AIKVPointer *pointer = [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_ABS_NODE algsType:algsType dataSource:dataSource isOut:true];
-//    return pointer;
-//}
+//生成小脑CanOut指针;
++(AIKVPointer*) createPointerForCerebelCanOut{
+    AIKVPointer *pointer = [AIKVPointer newWithPointerId:0 folderName:PATH_NET_CEREBEL_CANOUT algsType:@"" dataSource:@"" isOut:false];
+    return pointer;
+}
 
 //生成indexValue的指针;
 +(AIKVPointer*) createPointerForValue:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut{

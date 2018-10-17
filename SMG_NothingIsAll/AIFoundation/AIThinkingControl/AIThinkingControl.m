@@ -273,8 +273,8 @@ static AIThinkingControl *_instance;
 /**
  *  MARK:--------------------对输入的mv更新mvCache并进入outLoop--------------------
  *  1. 有需求时,找出imv解决经验,尝试决策并解决;
- *  2. TODO:明天扩展对out_p的支持
- *  3. TODO:>>>>>此处,不应直接交由decision,而是交给mvCache序列,并由loop决定是否优先执行此mv;
+ *  2. 已扩展对out_p的支持
+ *  3. 此处交给mvCache序列,并由loop决定是否优先执行此mv;
  */
 -(void) dataIn_AssExp_ToOutLoop:(AICMVNode*)cmvNode {
     //1. 数据检查
@@ -334,7 +334,7 @@ static AIThinkingControl *_instance;
                     NSString *foOrderStr = [NVUtils convertValuePs2Str:foNode.orders_kvp];
                     NSString *assMicroStr = [NVUtils convertValuePs2Str:assMicroValue_ps];
                     NSString *samesStr = [NVUtils convertValuePs2Str:sames];
-                    NSLog(@"(%@) 联想到 (%@) = (%@)",foOrderStr,assMicroStr,samesStr);
+                    NSLog(@"类比sames: (%@) & (%@) = (%@)",foOrderStr,assMicroStr,samesStr);
                     
                     //7. 已存在抽象节点或sames无效时跳过;
                     BOOL jumpForAbsAlreadyHav = (ISOK(assFrontNode, AINetAbsNode.class) && ARRISOK(assMicroValue_ps) && ARRISOK(sames) && sames.count == assMicroValue_ps.count);
@@ -548,7 +548,7 @@ static AIThinkingControl *_instance;
         AIFrontOrderNode *foNode = [ThinkingUtils getFoNodeFromCmvNode:cmvNode];
         if (foNode) {
             [except_ps addObject:cmvNode.pointer];
-            NSLog(@"dataOut_AssConData_ExpOut找到:\ncmv模型 >> %@",[NVUtils getCmvModelDesc:foNode cmvNode:cmvNode]);
+            NSLog(@"具象之旅_经验输出_foCmv模型: %@",[NVUtils getCmvModelDesc:foNode cmvNode:cmvNode]);
             return foNode;
         }else{
             //3. 前因时序列为null的异常;
@@ -705,10 +705,7 @@ static AIThinkingControl *_instance;
     BOOL tryOutSuccess = false;
     if (expModel && ARRISOK(outArr)) {
         for (AIKVPointer *micro_p in outArr) {
-            //xxxxxxxx联想以往解决时,都发生了什么,尝试复现;
-            
             //>1 检查micro_p是否是"输出";
-            
             //>2 假如order_p足够确切,尝试检查并输出;
             BOOL invoked = [OutputUtils checkAndInvoke:micro_p];
             if (invoked) {

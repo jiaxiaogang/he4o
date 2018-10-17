@@ -7,22 +7,25 @@
 //
 
 #import "AINetUtils.h"
+#import "AIKVPointer.h"
 
 @implementation AINetUtils
 
 +(BOOL) checkCanOutput:(NSString*)algsType dataSource:(NSString*)dataSource {
-    NSArray *arr = [SMGUtils searchObjectForFilePath:PATH_NET_CEREBEL_CANOUT fileName:FILENAME_Default time:cRedisDefaultTime];
+    AIKVPointer *canout_p = [SMGUtils createPointerForCerebelCanOut];
+    NSArray *arr = [SMGUtils searchObjectForFilePath:canout_p.filePath fileName:FILENAME_Default time:cRedisDefaultTime];
     return ARRISOK(arr) && [arr containsObject:STRFORMAT(@"%@_%@",algsType,dataSource)];
 }
 
 
 +(void) setCanOutput:(NSString*)algsType dataSource:(NSString*)dataSource {
     //1. 取mv分区的引用序列文件;
-    NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForFilePath:PATH_NET_CEREBEL_CANOUT fileName:FILENAME_Default time:cRedisDefaultTime]];
+    AIKVPointer *canout_p = [SMGUtils createPointerForCerebelCanOut];
+    NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForFilePath:canout_p.filePath fileName:FILENAME_Default time:cRedisDefaultTime]];
     NSString *identifier = STRFORMAT(@"%@_%@",algsType,dataSource);
     if (![mArr containsObject:identifier]) {
         [mArr addObject:identifier];
-        [SMGUtils insertObject:mArr rootPath:PATH_NET_CEREBEL_CANOUT fileName:FILENAME_Default time:cRedisDefaultTime];
+        [SMGUtils insertObject:mArr rootPath:canout_p.filePath fileName:FILENAME_Default time:cRedisDefaultTime];
     }
 }
 
