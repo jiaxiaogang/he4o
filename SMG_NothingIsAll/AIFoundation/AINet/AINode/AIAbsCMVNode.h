@@ -16,7 +16,6 @@
 @interface AIAbsCMVNode : AICMVNodeBase
 
 @property (strong, nonatomic) NSMutableArray *conPorts; //具象方向端口;
-@property (strong, nonatomic) AIKVPointer *absNode_p;   //前因节点
 
 
 /**

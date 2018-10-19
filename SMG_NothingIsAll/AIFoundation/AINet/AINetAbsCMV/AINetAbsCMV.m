@@ -45,7 +45,7 @@
     //2. 创建absCMVNode;
     AIAbsCMVNode *result_acn = [[AIAbsCMVNode alloc] init];
     result_acn.pointer = [SMGUtils createPointer:PATH_NET_ABS_CMV_NODE algsType:algsType dataSource:dataSource];
-    result_acn.absNode_p = absNode_p;
+    result_acn.foNode_p = absNode_p;
     
     //3. absUrgentTo
     NSInteger absUrgentTo = [AINetAbsCMVUtil getAbsUrgentTo:aMv bMv_p:bMv];

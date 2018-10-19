@@ -240,15 +240,6 @@
     return nil;
 }
 
-+(AIKVPointer*) getFrontNodePointerFromCmvNode:(AICMVNodeBase*)cmvNode{
-    if (ISOK(cmvNode, AICMVNode.class)) {
-        return ((AICMVNode*)cmvNode).foNode_p;
-    }else if(ISOK(cmvNode, AIAbsCMVNode.class)){
-        return ((AIAbsCMVNode*)cmvNode).absNode_p;
-    }
-    return nil;
-}
-
 +(NSArray*) getNodeMicroValuePointersFromFrontNode:(AINodeBase*)frontNode{
     if (ISOK(frontNode, AIFrontOrderNode.class)) {
         return ((AIFrontOrderNode*)frontNode).orders_kvp;

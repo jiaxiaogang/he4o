@@ -13,6 +13,7 @@
 #import "AIKVPointer.h"
 #import "AICMVNode.h"
 #import "ThinkingUtils.h"
+#import "AIAbsCMVNode.h"
 
 @implementation NVUtils
 
@@ -68,45 +69,58 @@
     return mStr;
 }
 
-
-//MARK:===============================================================
-//MARK:           < cmvModel的可视化(foOrder->cmvNode) >
-//MARK:===============================================================
-
-+(NSString*) getFoNodeDesc:(AIFrontOrderNode*)foNode{
-    AICMVNode *cmvNode = nil;
-    if (foNode) {
-        cmvNode = [SMGUtils searchObjectForPointer:foNode.cmvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
-    }
-    return [self getCmvModelDesc:foNode cmvNode:cmvNode];
-}
-
-+(NSString*) getCmvNodeDesc:(AICMVNode*)cmvNode{
-    AIFrontOrderNode *foNode = [ThinkingUtils getFoNodeFromCmvNode:cmvNode];
-    return [self getCmvModelDesc:foNode cmvNode:cmvNode];
-}
-
-+(NSString*) getCmvModelDesc:(AIFrontOrderNode*)foNode cmvNode:(AICMVNode*)cmvNode{
-    //1. 前因时序列描述
+//foNode前时序列的描述 (i3 o4)
++(NSString*) getFoNodeDesc:(AIFoNodeBase*)foNode {
     NSString *foDesc = nil;
-    if (foNode) {
-        foDesc = [NVUtils convertValuePs2Str:foNode.orders_kvp];
+    if (ISOK(foNode, AIFrontOrderNode.class)) {
+        foDesc = [NVUtils convertValuePs2Str:((AIFrontOrderNode*)foNode).orders_kvp];
+    }else if(ISOK(foNode, AINetAbsNode.class)){
+        NSArray *value_ps = [SMGUtils searchObjectForPointer:((AINetAbsNode*)foNode).absValue_p fileName:FILENAME_AbsValue time:cRedisValueTime];
+        foDesc = [NVUtils convertValuePs2Str:value_ps];
     }
-    
-    //2. cmv描述
+    return foDesc;
+}
+
+//cmvNode的描述 ("ur0_de0"格式)
++(NSString*) getCmvNodeDesc:(AICMVNodeBase*)cmvNode {
     NSString *cmvDesc = nil;
     if (cmvNode) {
         NSNumber *urgentToNum = [SMGUtils searchObjectForPointer:cmvNode.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime];
         NSNumber *deltaNum = [SMGUtils searchObjectForPointer:cmvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime];
         cmvDesc = STRFORMAT(@"ur%@_de%@",urgentToNum,deltaNum);
     }
-    
-    //3. 拼desc返回
-    NSMutableString *desc = [[NSMutableString alloc] init];
-    [desc appendFormat:@"(fo: %@ => cmv: %@)",foDesc,cmvDesc];
-    
-    return desc;
+    return cmvDesc;
 }
 
+//MARK:===============================================================
+//MARK:           < cmvModel的可视化(foOrder->cmvNode) >
+//MARK:===============================================================
+
++(NSString*) getCmvModelDesc_ByFoNode:(AIFoNodeBase*)foNode{
+    if (foNode) {
+        AICMVNodeBase *cmvNode = [SMGUtils searchObjectForPointer:foNode.cmvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+        return [self getCmvModelDesc:foNode cmvNode:cmvNode];
+    }
+    return nil;
+}
+
++(NSString*) getCmvModelDesc_ByCmvNode:(AICMVNodeBase*)cmvNode{
+    if (cmvNode) {
+        AIFoNodeBase *foNode = [SMGUtils searchObjectForPointer:cmvNode.foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+        return [self getCmvModelDesc:foNode cmvNode:cmvNode];
+    }
+    return nil;
+}
+
++(NSString*) getCmvModelDesc:(AIFoNodeBase*)absNode cmvNode:(AICMVNodeBase*)cmvNode{
+    //1. 前因时序列描述
+    NSString *foDesc = [self getFoNodeDesc:absNode];
+    
+    //2. cmv描述
+    NSString *cmvDesc = [self getCmvNodeDesc:cmvNode];
+    
+    //3. 拼desc返回
+    return STRFORMAT(@"(fo: %@ => cmv: %@)",foDesc,cmvDesc);
+}
 
 @end

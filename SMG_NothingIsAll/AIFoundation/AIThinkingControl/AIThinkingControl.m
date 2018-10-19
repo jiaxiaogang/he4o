@@ -13,17 +13,13 @@
 #import "NSObject+Extension.h"
 #import "AIKVPointer.h"
 #import "AIPort.h"
-#import "ImvAlgsModelBase.h"
-#import "AINetCMV.h"
-#import "AINetAbs.h"
+#import "AINetAbsNode.h"
 #import "ThinkingUtils.h"
 #import "OutputUtils.h"
 #import "Output.h"
 #import "AIFrontOrderNode.h"
-#import "AINetAbsNode.h"
 #import "AICMVNode.h"
 #import "AIAbsCMVNode.h"
-#import "AINetAbsCMV.h"
 #import "MVCacheModel.h"
 #import "MVCacheManager.h"
 #import "ExpCacheModel.h"
@@ -320,13 +316,12 @@ static AIThinkingControl *_instance;
             AICMVNodeBase *ass_cn = (AICMVNodeBase*)assDirectionNode;
             //4. 排除联想自己(随后写到reference中)
             if (![cmvNode.pointer isEqual:ass_cn.pointer]) {
-                AIKVPointer *assFrontNode_p = [ThinkingUtils getFrontNodePointerFromCmvNode:ass_cn];
-                AINodeBase *assFrontNode = [SMGUtils searchObjectForPointer:assFrontNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+                AIFoNodeBase *assFrontNode = [SMGUtils searchObjectForPointer:ass_cn.foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
                 
                 if (ISOK(assFrontNode, AINodeBase.class)) {
                     //5. 取微信息组
                     NSArray *assMicroValue_ps = [ThinkingUtils getNodeMicroValuePointersFromFrontNode:assFrontNode];
-                    NSLog(@"____dataIn_抽象前 > 联想到前因节点 : %ld,%@",(long)assFrontNode_p.pointerId,NSStringFromClass(assFrontNode.class));
+                    NSLog(@"抽象前 > 联想到前因节点 : %@",[NVUtils getCmvModelDesc_ByFoNode:assFrontNode]);
                     
                     //6. 类比orders的规律,并abs;
                     NSArray *sames = [ThinkingUtils analogyOrdersA:foNode.orders_kvp ordersB:assMicroValue_ps];
@@ -334,7 +329,7 @@ static AIThinkingControl *_instance;
                     NSString *foOrderStr = [NVUtils convertValuePs2Str:foNode.orders_kvp];
                     NSString *assMicroStr = [NVUtils convertValuePs2Str:assMicroValue_ps];
                     NSString *samesStr = [NVUtils convertValuePs2Str:sames];
-                    NSLog(@"类比sames: (%@) & (%@) = (%@)",foOrderStr,assMicroStr,samesStr);
+                    NSLog(@"抽象中 > 类比sames: (%@) & (%@) = (%@)",foOrderStr,assMicroStr,samesStr);
                     
                     //7. 已存在抽象节点或sames无效时跳过;
                     BOOL jumpForAbsAlreadyHav = (ISOK(assFrontNode, AINetAbsNode.class) && ARRISOK(assMicroValue_ps) && ARRISOK(sames) && sames.count == assMicroValue_ps.count);
@@ -351,11 +346,11 @@ static AIThinkingControl *_instance;
                         
                         //11. cmv模型连接;
                         if (ISOK(create_acn, AIAbsCMVNode.class)) {
-                            create_an.absCmvNode_p = create_acn.pointer;
+                            create_an.cmvNode_p = create_acn.pointer;
                             [SMGUtils insertObject:create_an rootPath:create_an.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
                         }
                         
-                        NSLog(@"%@",[NVUtils getAbsNodeDesc:create_an]);
+                        NSLog(@"抽象后 > 结果: %@",[NVUtils getAbsNodeDesc:create_an]);
                         
                         //TODO:>>>>>将absNode和absCmvNode存到thinkFeedCache;
                     }
@@ -603,8 +598,8 @@ static AIThinkingControl *_instance;
         
         //2. 未排除,返回;
         if (!excepted) {
-            [exceptTryOut_ps addObject:expAbsCmvNode.absNode_p];
-            AINetAbsNode *result = [SMGUtils searchObjectForPointer:expAbsCmvNode.absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+            [exceptTryOut_ps addObject:expAbsCmvNode.foNode_p];
+            AINetAbsNode *result = [SMGUtils searchObjectForPointer:expAbsCmvNode.foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
             return result;
         }else{
             //3. 已排除,递归下一层;
@@ -661,7 +656,7 @@ static AIThinkingControl *_instance;
             
             //6. 根据当前absNode的mv果,处理absCmvNode评价影响力;(系数0.2)
             if (fromOut_ps) {
-                CGFloat scoreForce = [ThinkingUtils getScoreForce:absNode.absCmvNode_p ratio:0.2f];
+                CGFloat scoreForce = [ThinkingUtils getScoreForce:absNode.cmvNode_p ratio:0.2f];
                 score += scoreForce;
             }
         }
@@ -687,7 +682,7 @@ static AIThinkingControl *_instance;
     AINetAbsNode *assAbsNode = [SMGUtils searchObjectForPointer:absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
     
     //3. 处理assAbsNode评价影响力;(系数0.8)
-    CGFloat scoreForce = [ThinkingUtils getScoreForce:assAbsNode.absCmvNode_p ratio:0.8f];
+    CGFloat scoreForce = [ThinkingUtils getScoreForce:assAbsNode.cmvNode_p ratio:0.8f];
     score += scoreForce;
     complete(score,microArr_p);
 }

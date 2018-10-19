@@ -86,7 +86,6 @@
     self = [super initWithCoder:aDecoder];
     if (self) {
         self.conPorts = [aDecoder decodeObjectForKey:@"conPorts"];
-        self.absNode_p = [aDecoder decodeObjectForKey:@"absNode_p"];
     }
     return self;
 }
@@ -94,7 +93,6 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [super encodeWithCoder:aCoder];
     [aCoder encodeObject:self.conPorts forKey:@"conPorts"];
-    [aCoder encodeObject:self.absNode_p forKey:@"absNode_p"];
 }
 
 @end

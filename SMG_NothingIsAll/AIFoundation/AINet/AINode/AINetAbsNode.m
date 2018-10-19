@@ -48,7 +48,6 @@
     if (self) {
         self.conPorts = [aDecoder decodeObjectForKey:@"conPorts"];
         self.absValue_p = [aDecoder decodeObjectForKey:@"absValue_p"];
-        self.absCmvNode_p = [aDecoder decodeObjectForKey:@"absCmvNode_p"];
     }
     return self;
 }
@@ -57,7 +56,6 @@
     [super encodeWithCoder:aCoder];
     [aCoder encodeObject:self.conPorts forKey:@"conPorts"];
     [aCoder encodeObject:self.absValue_p forKey:@"absValue_p"];
-    [aCoder encodeObject:self.absCmvNode_p forKey:@"absCmvNode_p"];
 }
 
 @end

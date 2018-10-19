@@ -14,6 +14,4 @@
 //MARK:===============================================================
 @interface AICMVNode : AICMVNodeBase
 
-@property (strong, nonatomic) AIKVPointer *foNode_p;      //前因数据
-
 @end

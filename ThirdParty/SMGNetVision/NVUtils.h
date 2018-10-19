@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AINetAbsNode,AICMVNode,AIFrontOrderNode;
+@class AINetAbsNode,AICMVNode,AIFrontOrderNode,AIAbsCMVNode;
 @interface NVUtils : NSObject
 
 
@@ -20,7 +20,6 @@
 +(NSString*) convertValuePs2Str:(NSArray*)value_ps;
 
 
-
 //MARK:===============================================================
 //MARK:                       < node的可视化 >
 //MARK:===============================================================
@@ -28,6 +27,11 @@
 //根据absNode描述
 +(NSString*) getAbsNodeDesc:(AINetAbsNode*)absNode;
 
+//foNode前时序列的描述 (i3 o4)
++(NSString*) getFoNodeDesc:(AIFoNodeBase*)foNode;
+
+//cmvNode的描述 ("ur0_de0")
++(NSString*) getCmvNodeDesc:(AICMVNodeBase*)cmvNode;
 
 
 //MARK:===============================================================
@@ -35,13 +39,13 @@
 //MARK:===============================================================
 
 //根据foNode的描述
-+(NSString*) getFoNodeDesc:(AIFrontOrderNode*)foNode;
++(NSString*) getCmvModelDesc_ByFoNode:(AIFoNodeBase*)foNode;
 
 //根据cmvNode的描述
-+(NSString*) getCmvNodeDesc:(AICMVNode*)cmvNode;
++(NSString*) getCmvModelDesc_ByCmvNode:(AICMVNodeBase*)cmvNode;
 
-//根据cmvModel的描述
-+(NSString*) getCmvModelDesc:(AIFrontOrderNode*)foNode cmvNode:(AICMVNode*)cmvNode;
+//根据cmvModel的描述 (fo: %@ => cmv: %@)
++(NSString*) getCmvModelDesc:(AIFoNodeBase*)absNode cmvNode:(AICMVNodeBase*)cmvNode;;
 
 @end
 

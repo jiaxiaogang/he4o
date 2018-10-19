@@ -27,7 +27,6 @@
     self = [super initWithCoder:aDecoder];
     if (self) {
         self.orders_kvp = [aDecoder decodeObjectForKey:@"orders_kvp"];
-        self.cmvNode_p = [aDecoder decodeObjectForKey:@"cmvNode_p"];
     }
     return self;
 }
@@ -35,7 +34,6 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [super encodeWithCoder:aCoder];
     [aCoder encodeObject:self.orders_kvp forKey:@"orders_kvp"];
-    [aCoder encodeObject:self.cmvNode_p forKey:@"cmvNode_p"];
 }
 
 @end
