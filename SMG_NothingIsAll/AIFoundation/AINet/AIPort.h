@@ -18,7 +18,7 @@
 @property (strong,nonatomic) AIPointer *target_p;   //指向目标的地址
 @property (strong,nonatomic) AIPortStrong *strong;
 
--(NSComparisonResult) compare:(AIPort*)port;//类比port:1级强度,2级pointerId;
+//-(NSComparisonResult) compare:(AIPort*)port;//类比port:1级强度,2级pointerId;
 -(void) strongPlus;
 
 @end

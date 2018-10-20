@@ -216,7 +216,7 @@ static AIThinkingControl *_instance;
                         [self dataOut_AssociativeExperience];
                         
                         //6. log
-                        NSLog(@"____联想结果:%@ delta:%ld urgentTo:%ld",cmvNode.pointer.algsType,(long)delta,(long)urgentTo);
+                        NSLog(@"联想到cmvNode: %@",[NVUtils getCmvModelDesc_ByCmvNode:cmvNode]);
                     }else if(ISOK(referNode, AINetAbsNode.class)){
                         //联想到数据网络节点
                         //TODO>>>>将结果存到shortCache或thinkFeedCache//或先不添加,随后有需要时,再说;
@@ -473,8 +473,8 @@ static AIThinkingControl *_instance;
         if (expOutFoNode != nil) {
             [self dataOut_CheckScore_ExpOut:expOutFoNode complete:^(CGFloat score, NSArray *out_ps) {
                 expModel.order += score;//联想对当前expModel的order影响;
+                NSLog(@" >> 执行经验输出: (%@) (%f) (%@)",score >= 3 ? @"成功" : @"失败",score,[NVUtils convertValuePs2Str:out_ps]);
                 if (score >= 3) {
-                    NSLog(@" >> 执行经验输出");
                     complete(true,out_ps,expModelInvalid);
                     invokedComplete = true;
                 }
@@ -485,8 +485,8 @@ static AIThinkingControl *_instance;
             if (tryOutAbsNode != nil) {
                 [self dataOut_CheckScore_TryOut:tryOutAbsNode complete:^(CGFloat score, NSArray *out_ps) {
                     expModel.order += score;//联想对当前expModel的order影响;
+                    NSLog(@" >> 执行尝试输出: (%@) (%f) (%@)",score > 10 ? @"成功" : @"失败",score,[NVUtils convertValuePs2Str:out_ps]);
                     if (score > 10) {
-                        NSLog(@" >> 执行尝试输出");
                         complete(true,out_ps,expModelInvalid);
                         invokedComplete = true;
                     }
@@ -545,7 +545,7 @@ static AIThinkingControl *_instance;
         AIFrontOrderNode *foNode = [ThinkingUtils getFoNodeFromCmvNode:cmvNode];
         if (foNode) {
             [except_ps addObject:cmvNode.pointer];
-            NSLog(@"具象之旅_经验输出_foCmv模型: %@",[NVUtils getCmvModelDesc:foNode cmvNode:cmvNode]);
+            NSLog(@" >> 找到经验cmvModel: %@",[NVUtils getCmvModelDesc:foNode cmvNode:cmvNode]);
             return foNode;
         }else{
             //3. 前因时序列为null的异常;
@@ -565,7 +565,8 @@ static AIThinkingControl *_instance;
             }
         }else{
             //7. 找到conPort,则递归判断类型是否foNode;
-            NSObject *findConNode = [SMGUtils searchObjectForPointer:findConPort.target_p fileName:FILENAME_Node];
+            AICMVNodeBase *findConNode = [SMGUtils searchObjectForPointer:findConPort.target_p fileName:FILENAME_Node];
+            NSLog(@" >> 找到经验cmvNode: %@ 强度: %ld",[NVUtils getCmvNodeDesc:findConNode],(long)findConPort.strong.value);
             return [self dataOut_AssociativeConcreteData_ExpOut:baseMvNode checkMvNode:findConNode checkMvNode_p:findConPort.target_p except_ps:except_ps];
         }
     }else{
