@@ -29,6 +29,7 @@
  *  注:为简化设计;
  *  1. 由AINode.xxxPorts替代了AILineType
  *  2. 由AIPortStrong替代了AILineStrong
+ *  3. 互相关联,不表示强度值一致,所以A与B关联,有可能A的强度为3,B却为100;
  */
 @interface AIPortStrong : NSObject <NSCoding>
 

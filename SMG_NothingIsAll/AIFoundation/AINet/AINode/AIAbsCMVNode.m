@@ -26,11 +26,12 @@
  *  MARK:--------------------添加具象关联--------------------
  *  注:从大到小(5,4,3,2,1)
  */
--(void) addConPorts:(AIPort*)conPort{
+-(void) addConPorts:(AIPort*)conPort difValue:(NSInteger)difValue{
     //1. 数据检查
     if (conPort == nil) {
         return;
     }
+    conPort.strong.value += difValue;
     
     //2. 去重
     for (NSInteger i = 0; i < self.conPorts.count; i++) {
@@ -72,6 +73,7 @@
             }
         }
         if (!excepted) {
+            conPort.strong.value += 1;//被激活强度+1;
             return conPort;
         }
     }
