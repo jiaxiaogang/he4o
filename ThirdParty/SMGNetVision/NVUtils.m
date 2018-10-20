@@ -39,36 +39,6 @@
 //MARK:                       < node的可视化 >
 //MARK:===============================================================
 
-+(NSString*) getAbsNodeDesc:(AINetAbsNode*)absNode {
-    //1. 数据检查
-    NSMutableString *mStr = [NSMutableString new];
-    if (!absNode) {
-        return mStr;
-    }
-    
-    //2. absNode.desc
-    NSArray *value_ps = [SMGUtils searchObjectForPointer:absNode.absValue_p fileName:FILENAME_AbsValue];
-    [mStr appendFormat:@"\npointerId : %d content: %@\n",absNode.pointer.pointerId,[NVUtils convertValuePs2Str:value_ps]];
-        
-    //3. absNode.conPorts.desc
-    for (AIPort *conPort in absNode.conPorts) {
-        id con = [SMGUtils searchObjectForPointer:conPort.target_p fileName:FILENAME_Node];
-        NSMutableString *micDesc = [NSMutableString new];
-        NSString *conPath = nil;
-        if (ISOK(con, AIFrontOrderNode.class)) {
-            AIFrontOrderNode *foNode = (AIFrontOrderNode*)con;
-            NSString *content = [NVUtils convertValuePs2Str:foNode.orders_kvp];
-            [mStr appendFormat:@"con %@/%@/%@/%ld content:%@",foNode.pointer.folderName,foNode.pointer.algsType,foNode.pointer.dataSource,(long)foNode.pointer.pointerId,content];
-        }else if(ISOK(con, AINetAbsNode.class)){
-            AINetAbsNode *conAbsNode = (AINetAbsNode*)con;
-            NSArray *value_ps = [SMGUtils searchObjectForPointer:conAbsNode.absValue_p fileName:FILENAME_AbsValue];
-            NSString *content = [NVUtils convertValuePs2Str:value_ps];
-            [mStr appendFormat:@"con %@/%@/%@/%ld content:%@",conAbsNode.pointer.folderName,conAbsNode.pointer.algsType,conAbsNode.pointer.dataSource,(long)conAbsNode.pointer.pointerId,content];
-        }
-    }
-    return mStr;
-}
-
 //foNode前时序列的描述 (i3 o4)
 +(NSString*) getFoNodeDesc:(AIFoNodeBase*)foNode {
     NSString *foDesc = nil;
@@ -121,6 +91,42 @@
     
     //3. 拼desc返回
     return STRFORMAT(@"(fo: %@ => cmv: %@)",foDesc,cmvDesc);
+}
+
+//MARK:===============================================================
+//MARK:                     < conPorts & absPorts >
+//MARK:===============================================================
+
+//conPorts的描述 (conPorts >>\n > 1\n > 2)
++(NSString*) getFoNodeConPortsDesc:(AINetAbsNode*)absNode{
+    //1. 数据检查
+    if (absNode) {
+        NSMutableString *mStr = [NSMutableString new];
+        
+        //2. absNode.conPorts.desc
+        for (AIPort *conPort in absNode.conPorts) {
+            AIFoNodeBase *conNode = [SMGUtils searchObjectForPointer:conPort.target_p fileName:FILENAME_Node];
+            [mStr appendFormat:@"\n > %@",[self getFoNodeDesc:conNode]];
+        }
+        return mStr;
+    }
+    return nil;
+}
+
+//absPorts的描述 (absPorts >>\n > 1\n > 2)
++(NSString*) getFoNodeAbsPortsDesc:(AIFoNodeBase*)foNode{
+    //1. 数据检查
+    if (foNode) {
+        NSMutableString *mStr = [NSMutableString new];
+        
+        //2. absNode.absPorts.desc
+        for (AIPort *conPort in foNode.absPorts) {
+            AIFoNodeBase *conNode = [SMGUtils searchObjectForPointer:conPort.target_p fileName:FILENAME_Node];
+            [mStr appendFormat:@"\n > %@",[self getFoNodeDesc:conNode]];
+        }
+        return mStr;
+    }
+    return nil;
 }
 
 @end

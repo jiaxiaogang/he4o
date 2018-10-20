@@ -143,7 +143,7 @@
 }
 
 - (IBAction)commitBtnOnClick:(id)sender {
-    [theInput commitText:@"Hello SMG!"];
+    [theInput commitText:@"Hello HELIX!"];
 }
 
 - (IBAction)dataBtnOnClick:(id)sender {

@@ -24,9 +24,6 @@
 //MARK:                       < node的可视化 >
 //MARK:===============================================================
 
-//根据absNode描述
-+(NSString*) getAbsNodeDesc:(AINetAbsNode*)absNode;
-
 //foNode前时序列的描述 (i3 o4)
 +(NSString*) getFoNodeDesc:(AIFoNodeBase*)foNode;
 
@@ -46,6 +43,18 @@
 
 //根据cmvModel的描述 (fo: %@ => cmv: %@)
 +(NSString*) getCmvModelDesc:(AIFoNodeBase*)absNode cmvNode:(AICMVNodeBase*)cmvNode;;
+
+
+//MARK:===============================================================
+//MARK:                     < conPorts & absPorts >
+//MARK:===============================================================
+
+//conPorts的描述 (conPorts >>\n > 1\n > 2)
++(NSString*) getFoNodeConPortsDesc:(AINetAbsNode*)absNode;
+
+//absPorts的描述 (absPorts >>\n > 1\n > 2)
++(NSString*) getFoNodeAbsPortsDesc:(AIFoNodeBase*)foNode;
+
 
 @end
 

@@ -350,7 +350,9 @@ static AIThinkingControl *_instance;
                             [SMGUtils insertObject:create_an rootPath:create_an.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
                         }
                         
-                        NSLog(@"抽象后 > 结果: %@",[NVUtils getAbsNodeDesc:create_an]);
+                        NSLog(@"抽象后 > 结果: %@",[NVUtils getFoNodeDesc:create_an]);
+                        NSLog(@"\nconPorts%@",[NVUtils getFoNodeConPortsDesc:create_an]);
+                        NSLog(@"\nabsPorts%@",[NVUtils getFoNodeAbsPortsDesc:create_an]);
                         
                         //TODO:>>>>>将absNode和absCmvNode存到thinkFeedCache;
                     }
@@ -364,13 +366,13 @@ static AIThinkingControl *_instance;
 //MARK:===============================================================
 //MARK:                     < dataOut (回归具象之旅) >
 //MARK:
-//MARK: 说明: 在smg内核的决策中,smg经历了5个关键节点;
+//MARK: 说明: 在helix内核的决策中,helix经历了5个关键节点;
 //MARK:     1. mv需求(input或其它状态触发)
 //MARK:     2. mv经验查找(从网络索引找)
 //MARK:     3. 经验模型(从网络关联找)
 //MARK:     4. 执行方案(从网络具体经历单位找(时序等))
 //MARK:     5. 正式输出(这里会用到小脑,helix未实现小脑网络);
-//MARK: 总结: 这整个过程算是smg的具象之旅,也是output循环的几个关键节点
+//MARK: 总结: 这整个过程算是helix的具象之旅,也是output循环的几个关键节点
 //MARK:===============================================================
 
 
