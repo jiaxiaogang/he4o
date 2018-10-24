@@ -15,9 +15,9 @@
 		081B3ADB1F6E2CCD008A7F36 /* AINet.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3ADA1F6E2CCD008A7F36 /* AINet.m */; };
 		0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 0825AFF21F748F67003B86C7 /* NSObject+Extension.m */; };
 		082F9D561EB234750009F6A9 /* Output.m in Sources */ = {isa = PBXBuildFile; fileRef = 082F9D551EB234750009F6A9 /* Output.m */; };
-		082F9D5C1EB236AC0009F6A9 /* StudyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 082F9D5A1EB236AC0009F6A9 /* StudyViewController.m */; };
-		082F9D5D1EB236AC0009F6A9 /* StudyViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 082F9D5B1EB236AC0009F6A9 /* StudyViewController.xib */; };
 		083112F21F05E12600051DE6 /* MBProgressHUD+Add.m in Sources */ = {isa = PBXBuildFile; fileRef = 083112F11F05E12600051DE6 /* MBProgressHUD+Add.m */; };
+		083352F521800AB1003931E5 /* MainPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 083352F321800AB1003931E5 /* MainPage.m */; };
+		083352F621800AB1003931E5 /* MainPage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 083352F421800AB1003931E5 /* MainPage.xib */; };
 		083F61381F048329000330E1 /* AILine.m in Sources */ = {isa = PBXBuildFile; fileRef = 083F61371F048329000330E1 /* AILine.m */; };
 		08412CA3216C324300483B6B /* AICerebel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08412CA2216C324300483B6B /* AICerebel.m */; };
 		084219E11FD8CEFD009DA6BC /* AIReactorControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 084219E01FD8CEFD009DA6BC /* AIReactorControl.m */; };
@@ -26,6 +26,8 @@
 		0842ADBD1FE207500048ADDC /* DemoHunger.m in Sources */ = {isa = PBXBuildFile; fileRef = 0842ADBC1FE207500048ADDC /* DemoHunger.m */; };
 		0842ADC01FE209700048ADDC /* DemoCharge.m in Sources */ = {isa = PBXBuildFile; fileRef = 0842ADBF1FE209700048ADDC /* DemoCharge.m */; };
 		086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */ = {isa = PBXBuildFile; fileRef = 086D93361F8CA782002BAF3F /* RuntimeInvoker.m */; };
+		0881965F21800F2B00D5DB36 /* RavenTotemPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 0881965D21800F2B00D5DB36 /* RavenTotemPage.m */; };
+		0881966021800F2B00D5DB36 /* RavenTotemPage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0881965E21800F2B00D5DB36 /* RavenTotemPage.xib */; };
 		08AF454A1E97D0B500377887 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF45491E97D0B500377887 /* main.m */; };
 		08AF454D1E97D0B500377887 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF454C1E97D0B500377887 /* AppDelegate.m */; };
 		08AF45551E97D0B500377887 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45541E97D0B500377887 /* Assets.xcassets */; };
@@ -88,11 +90,11 @@
 		0825AFF21F748F67003B86C7 /* NSObject+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Extension.m"; sourceTree = "<group>"; };
 		082F9D541EB234750009F6A9 /* Output.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Output.h; sourceTree = "<group>"; };
 		082F9D551EB234750009F6A9 /* Output.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Output.m; sourceTree = "<group>"; };
-		082F9D591EB236AC0009F6A9 /* StudyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StudyViewController.h; sourceTree = "<group>"; };
-		082F9D5A1EB236AC0009F6A9 /* StudyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StudyViewController.m; sourceTree = "<group>"; };
-		082F9D5B1EB236AC0009F6A9 /* StudyViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StudyViewController.xib; sourceTree = "<group>"; };
 		083112F01F05E12600051DE6 /* MBProgressHUD+Add.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MBProgressHUD+Add.h"; sourceTree = "<group>"; };
 		083112F11F05E12600051DE6 /* MBProgressHUD+Add.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MBProgressHUD+Add.m"; sourceTree = "<group>"; };
+		083352F221800AB1003931E5 /* MainPage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainPage.h; sourceTree = "<group>"; };
+		083352F321800AB1003931E5 /* MainPage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainPage.m; sourceTree = "<group>"; };
+		083352F421800AB1003931E5 /* MainPage.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainPage.xib; sourceTree = "<group>"; };
 		083F61361F048329000330E1 /* AILine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AILine.h; sourceTree = "<group>"; };
 		083F61371F048329000330E1 /* AILine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AILine.m; sourceTree = "<group>"; };
 		08412CA1216C324300483B6B /* AICerebel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AICerebel.h; sourceTree = "<group>"; };
@@ -109,6 +111,9 @@
 		0842ADBF1FE209700048ADDC /* DemoCharge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemoCharge.m; sourceTree = "<group>"; };
 		086D93351F8CA782002BAF3F /* RuntimeInvoker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RuntimeInvoker.h; sourceTree = "<group>"; };
 		086D93361F8CA782002BAF3F /* RuntimeInvoker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RuntimeInvoker.m; sourceTree = "<group>"; };
+		0881965C21800F2B00D5DB36 /* RavenTotemPage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RavenTotemPage.h; sourceTree = "<group>"; };
+		0881965D21800F2B00D5DB36 /* RavenTotemPage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RavenTotemPage.m; sourceTree = "<group>"; };
+		0881965E21800F2B00D5DB36 /* RavenTotemPage.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RavenTotemPage.xib; sourceTree = "<group>"; };
 		08AF45451E97D0B500377887 /* SMG_NothingIsAll.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SMG_NothingIsAll.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		08AF45491E97D0B500377887 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		08AF454B1E97D0B500377887 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -236,29 +241,16 @@
 			path = AITime;
 			sourceTree = "<group>";
 		};
-		0825AFF01F748F67003B86C7 /* Class */ = {
-			isa = PBXGroup;
-			children = (
-				086D93351F8CA782002BAF3F /* RuntimeInvoker.h */,
-				086D93361F8CA782002BAF3F /* RuntimeInvoker.m */,
-			);
-			path = Class;
-			sourceTree = "<group>";
-		};
 		082F9D581EB236AC0009F6A9 /* Demo */ = {
 			isa = PBXGroup;
 			children = (
+				083352F721800B53003931E5 /* TestHungryPage */,
+				083352F121800A88003931E5 /* MainPage */,
+				083352F0218008F0003931E5 /* RavenTotemPage */,
 				083112EF1F05E11D00051DE6 /* Extension */,
-				0825AFF01F748F67003B86C7 /* Class */,
-				0842ADBA1FE2072D0048ADDC /* Main */,
-				082F9D591EB236AC0009F6A9 /* StudyViewController.h */,
-				082F9D5A1EB236AC0009F6A9 /* StudyViewController.m */,
-				082F9D5B1EB236AC0009F6A9 /* StudyViewController.xib */,
-				08D322A71EBA2783009D734A /* SMGPrefixHeader.pch */,
+				0842ADBA1FE2072D0048ADDC /* Adapter */,
 				08D322A81EBA28B0009D734A /* Foundation+Log.m */,
-				08DB40C81F11A65E003162C8 /* TestHungryPage.h */,
-				08DB40C91F11A65E003162C8 /* TestHungryPage.m */,
-				08DB40CA1F11A65E003162C8 /* TestHungryPage.xib */,
+				08D322A71EBA2783009D734A /* SMGPrefixHeader.pch */,
 			);
 			path = Demo;
 			sourceTree = "<group>";
@@ -266,10 +258,42 @@
 		083112EF1F05E11D00051DE6 /* Extension */ = {
 			isa = PBXGroup;
 			children = (
+				086D93351F8CA782002BAF3F /* RuntimeInvoker.h */,
+				086D93361F8CA782002BAF3F /* RuntimeInvoker.m */,
 				083112F01F05E12600051DE6 /* MBProgressHUD+Add.h */,
 				083112F11F05E12600051DE6 /* MBProgressHUD+Add.m */,
 			);
 			path = Extension;
+			sourceTree = "<group>";
+		};
+		083352F0218008F0003931E5 /* RavenTotemPage */ = {
+			isa = PBXGroup;
+			children = (
+				0881965C21800F2B00D5DB36 /* RavenTotemPage.h */,
+				0881965D21800F2B00D5DB36 /* RavenTotemPage.m */,
+				0881965E21800F2B00D5DB36 /* RavenTotemPage.xib */,
+			);
+			path = RavenTotemPage;
+			sourceTree = "<group>";
+		};
+		083352F121800A88003931E5 /* MainPage */ = {
+			isa = PBXGroup;
+			children = (
+				083352F221800AB1003931E5 /* MainPage.h */,
+				083352F321800AB1003931E5 /* MainPage.m */,
+				083352F421800AB1003931E5 /* MainPage.xib */,
+			);
+			path = MainPage;
+			sourceTree = "<group>";
+		};
+		083352F721800B53003931E5 /* TestHungryPage */ = {
+			isa = PBXGroup;
+			children = (
+				08DB40C81F11A65E003162C8 /* TestHungryPage.h */,
+				08DB40C91F11A65E003162C8 /* TestHungryPage.m */,
+				08DB40CA1F11A65E003162C8 /* TestHungryPage.xib */,
+			);
+			path = TestHungryPage;
 			sourceTree = "<group>";
 		};
 		083F612C1F04830F000330E1 /* AINet */ = {
@@ -338,7 +362,7 @@
 			path = AIThinkingControl;
 			sourceTree = "<group>";
 		};
-		0842ADBA1FE2072D0048ADDC /* Main */ = {
+		0842ADBA1FE2072D0048ADDC /* Adapter */ = {
 			isa = PBXGroup;
 			children = (
 				0842ADBB1FE207500048ADDC /* DemoHunger.h */,
@@ -346,7 +370,7 @@
 				0842ADBE1FE209700048ADDC /* DemoCharge.h */,
 				0842ADBF1FE209700048ADDC /* DemoCharge.m */,
 			);
-			path = Main;
+			path = Adapter;
 			sourceTree = "<group>";
 		};
 		08AF453C1E97D0B500377887 = {
@@ -671,10 +695,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				082F9D5D1EB236AC0009F6A9 /* StudyViewController.xib in Resources */,
+				083352F621800AB1003931E5 /* MainPage.xib in Resources */,
 				08AF45581E97D0B500377887 /* LaunchScreen.storyboard in Resources */,
 				08AF45551E97D0B500377887 /* Assets.xcassets in Resources */,
 				08DB40CC1F11A65E003162C8 /* TestHungryPage.xib in Resources */,
+				0881966021800F2B00D5DB36 /* RavenTotemPage.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -708,6 +733,7 @@
 			files = (
 				0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */,
 				88E1F851211591E50036B616 /* MVCacheModel.m in Sources */,
+				0881965F21800F2B00D5DB36 /* RavenTotemPage.m in Sources */,
 				086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */,
 				08D471DE1FEB3FFF00C61322 /* AIImvAlgs.m in Sources */,
 				081B3ADB1F6E2CCD008A7F36 /* AINet.m in Sources */,
@@ -724,6 +750,7 @@
 				083112F21F05E12600051DE6 /* MBProgressHUD+Add.m in Sources */,
 				084219ED1FD8CF81009DA6BC /* AIThinkingControl.m in Sources */,
 				083F61381F048329000330E1 /* AILine.m in Sources */,
+				083352F521800AB1003931E5 /* MainPage.m in Sources */,
 				8806D888212B8EB100C442CA /* ExpCacheModel.m in Sources */,
 				08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */,
 				08089280215B07FC00710636 /* AICMVNodeBase.m in Sources */,
@@ -752,7 +779,6 @@
 				88988524208979E6001D1ADC /* AINetIndex.m in Sources */,
 				8868F6EB210A946A000EAC9B /* AINetAbsCMV.m in Sources */,
 				0808927A215AF5F400710636 /* AINodeBase.m in Sources */,
-				082F9D5C1EB236AC0009F6A9 /* StudyViewController.m in Sources */,
 				081B3ACC1F6E2155008A7F36 /* AITime.m in Sources */,
 				88E87A6721016EAA0071513F /* OutputUtils.m in Sources */,
 				080A74321F60C6490025DBA3 /* AIPort.m in Sources */,

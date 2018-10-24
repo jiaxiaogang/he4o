@@ -7,7 +7,7 @@
 //
 
 #import "AppDelegate.h"
-#import "StudyViewController.h"
+#import "MainPage.h"
 #import "AINet.h"
 #import "NSObject+Extension.h"
 
@@ -17,12 +17,12 @@
 
     //1. Path
     NSArray * paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
-    NSLog(@"\n______________________________________\n\n%@\n______________________________________\n\n",paths[0]);
+    NSLog(@"%@",paths[0]);
     
     //2. 初始化UI
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor whiteColor];
-    StudyViewController *page = [[StudyViewController alloc] init];
+    MainPage *page = [[MainPage alloc] init];
     UINavigationController *naviC = [[UINavigationController alloc] initWithRootViewController:page];
     [self.window setRootViewController:naviC];
     [self.window makeKeyAndVisible];
