@@ -1,5 +1,5 @@
 //
-//  RavenTotemPage.h
+//  CrowTotemPage.h
 //  SMG_NothingIsAll
 //
 //  Created by jiaxiaogang on 2018/10/24.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface RavenTotemPage : UIViewController
+@interface CrowTotemPage : UIViewController
 
 @end

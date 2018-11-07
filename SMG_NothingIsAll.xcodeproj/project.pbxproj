@@ -25,9 +25,11 @@
 		084219ED1FD8CF81009DA6BC /* AIThinkingControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 084219EA1FD8CF81009DA6BC /* AIThinkingControl.m */; };
 		0842ADBD1FE207500048ADDC /* DemoHunger.m in Sources */ = {isa = PBXBuildFile; fileRef = 0842ADBC1FE207500048ADDC /* DemoHunger.m */; };
 		0842ADC01FE209700048ADDC /* DemoCharge.m in Sources */ = {isa = PBXBuildFile; fileRef = 0842ADBF1FE209700048ADDC /* DemoCharge.m */; };
+		084C3A6B21926D5700DAA08A /* CrowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 084C3A6A21926D5700DAA08A /* CrowView.m */; };
+		084C3A6D21926D7800DAA08A /* CrowView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 084C3A6C21926D7800DAA08A /* CrowView.xib */; };
 		086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */ = {isa = PBXBuildFile; fileRef = 086D93361F8CA782002BAF3F /* RuntimeInvoker.m */; };
-		0881965F21800F2B00D5DB36 /* RavenTotemPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 0881965D21800F2B00D5DB36 /* RavenTotemPage.m */; };
-		0881966021800F2B00D5DB36 /* RavenTotemPage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0881965E21800F2B00D5DB36 /* RavenTotemPage.xib */; };
+		0881965F21800F2B00D5DB36 /* CrowTotemPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 0881965D21800F2B00D5DB36 /* CrowTotemPage.m */; };
+		0881966021800F2B00D5DB36 /* CrowTotemPage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0881965E21800F2B00D5DB36 /* CrowTotemPage.xib */; };
 		08AF454A1E97D0B500377887 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF45491E97D0B500377887 /* main.m */; };
 		08AF454D1E97D0B500377887 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF454C1E97D0B500377887 /* AppDelegate.m */; };
 		08AF45551E97D0B500377887 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45541E97D0B500377887 /* Assets.xcassets */; };
@@ -109,11 +111,14 @@
 		0842ADBC1FE207500048ADDC /* DemoHunger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemoHunger.m; sourceTree = "<group>"; };
 		0842ADBE1FE209700048ADDC /* DemoCharge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DemoCharge.h; sourceTree = "<group>"; };
 		0842ADBF1FE209700048ADDC /* DemoCharge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemoCharge.m; sourceTree = "<group>"; };
+		084C3A6921926D5700DAA08A /* CrowView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CrowView.h; sourceTree = "<group>"; };
+		084C3A6A21926D5700DAA08A /* CrowView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CrowView.m; sourceTree = "<group>"; };
+		084C3A6C21926D7800DAA08A /* CrowView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CrowView.xib; sourceTree = "<group>"; };
 		086D93351F8CA782002BAF3F /* RuntimeInvoker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RuntimeInvoker.h; sourceTree = "<group>"; };
 		086D93361F8CA782002BAF3F /* RuntimeInvoker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RuntimeInvoker.m; sourceTree = "<group>"; };
-		0881965C21800F2B00D5DB36 /* RavenTotemPage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RavenTotemPage.h; sourceTree = "<group>"; };
-		0881965D21800F2B00D5DB36 /* RavenTotemPage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RavenTotemPage.m; sourceTree = "<group>"; };
-		0881965E21800F2B00D5DB36 /* RavenTotemPage.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RavenTotemPage.xib; sourceTree = "<group>"; };
+		0881965C21800F2B00D5DB36 /* CrowTotemPage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CrowTotemPage.h; sourceTree = "<group>"; };
+		0881965D21800F2B00D5DB36 /* CrowTotemPage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CrowTotemPage.m; sourceTree = "<group>"; };
+		0881965E21800F2B00D5DB36 /* CrowTotemPage.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CrowTotemPage.xib; sourceTree = "<group>"; };
 		08AF45451E97D0B500377887 /* SMG_NothingIsAll.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SMG_NothingIsAll.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		08AF45491E97D0B500377887 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		08AF454B1E97D0B500377887 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -246,7 +251,7 @@
 			children = (
 				083352F721800B53003931E5 /* TestHungryPage */,
 				083352F121800A88003931E5 /* MainPage */,
-				083352F0218008F0003931E5 /* RavenTotemPage */,
+				083352F0218008F0003931E5 /* CrowTotemPage */,
 				083112EF1F05E11D00051DE6 /* Extension */,
 				0842ADBA1FE2072D0048ADDC /* Adapter */,
 				08D322A81EBA28B0009D734A /* Foundation+Log.m */,
@@ -266,14 +271,15 @@
 			path = Extension;
 			sourceTree = "<group>";
 		};
-		083352F0218008F0003931E5 /* RavenTotemPage */ = {
+		083352F0218008F0003931E5 /* CrowTotemPage */ = {
 			isa = PBXGroup;
 			children = (
-				0881965C21800F2B00D5DB36 /* RavenTotemPage.h */,
-				0881965D21800F2B00D5DB36 /* RavenTotemPage.m */,
-				0881965E21800F2B00D5DB36 /* RavenTotemPage.xib */,
+				084C3A6821926D2B00DAA08A /* View */,
+				0881965C21800F2B00D5DB36 /* CrowTotemPage.h */,
+				0881965D21800F2B00D5DB36 /* CrowTotemPage.m */,
+				0881965E21800F2B00D5DB36 /* CrowTotemPage.xib */,
 			);
-			path = RavenTotemPage;
+			path = CrowTotemPage;
 			sourceTree = "<group>";
 		};
 		083352F121800A88003931E5 /* MainPage */ = {
@@ -371,6 +377,16 @@
 				0842ADBF1FE209700048ADDC /* DemoCharge.m */,
 			);
 			path = Adapter;
+			sourceTree = "<group>";
+		};
+		084C3A6821926D2B00DAA08A /* View */ = {
+			isa = PBXGroup;
+			children = (
+				084C3A6921926D5700DAA08A /* CrowView.h */,
+				084C3A6A21926D5700DAA08A /* CrowView.m */,
+				084C3A6C21926D7800DAA08A /* CrowView.xib */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 		08AF453C1E97D0B500377887 = {
@@ -699,7 +715,8 @@
 				08AF45581E97D0B500377887 /* LaunchScreen.storyboard in Resources */,
 				08AF45551E97D0B500377887 /* Assets.xcassets in Resources */,
 				08DB40CC1F11A65E003162C8 /* TestHungryPage.xib in Resources */,
-				0881966021800F2B00D5DB36 /* RavenTotemPage.xib in Resources */,
+				0881966021800F2B00D5DB36 /* CrowTotemPage.xib in Resources */,
+				084C3A6D21926D7800DAA08A /* CrowView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -733,7 +750,7 @@
 			files = (
 				0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */,
 				88E1F851211591E50036B616 /* MVCacheModel.m in Sources */,
-				0881965F21800F2B00D5DB36 /* RavenTotemPage.m in Sources */,
+				0881965F21800F2B00D5DB36 /* CrowTotemPage.m in Sources */,
 				086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */,
 				08D471DE1FEB3FFF00C61322 /* AIImvAlgs.m in Sources */,
 				081B3ADB1F6E2CCD008A7F36 /* AINet.m in Sources */,
@@ -758,6 +775,7 @@
 				88BC09D720B4EB920006ABEF /* XGRedis.m in Sources */,
 				084219E11FD8CEFD009DA6BC /* AIReactorControl.m in Sources */,
 				08EA48CE202932B80038B982 /* CustomAlgsChargeModel.m in Sources */,
+				084C3A6B21926D5700DAA08A /* CrowView.m in Sources */,
 				08E8F7B221798AEE004F51DE /* AIFoNodeBase.m in Sources */,
 				0842ADBD1FE207500048ADDC /* DemoHunger.m in Sources */,
 				08AF454D1E97D0B500377887 /* AppDelegate.m in Sources */,
