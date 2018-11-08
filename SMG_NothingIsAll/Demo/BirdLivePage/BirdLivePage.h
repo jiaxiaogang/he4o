@@ -1,5 +1,5 @@
 //
-//  CrowTotemPage.h
+//  BirdLivePage.h
 //  SMG_NothingIsAll
 //
 //  Created by jiaxiaogang on 2018/10/24.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface CrowTotemPage : UIViewController
+@interface BirdLivePage : UIViewController
 
 @end

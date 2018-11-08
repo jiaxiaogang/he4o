@@ -40,11 +40,11 @@
                         <constraint firstAttribute="height" constant="100" id="y7f-W6-gL7"/>
                     </constraints>
                     <fontDescription key="fontDescription" type="system" pointSize="26"/>
-                    <state key="normal" title="乌鸦图腾演示">
+                    <state key="normal" title="小鸟生存演示">
                         <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </state>
                     <connections>
-                        <action selector="ravenTotemOnClick:" destination="-1" eventType="touchUpInside" id="qQo-je-qqM"/>
+                        <action selector="ravenLiveOnClick:" destination="-1" eventType="touchUpInside" id="qQo-je-qqM"/>
                     </connections>
                 </button>
             </subviews>

@@ -15,6 +15,7 @@
 #import "AppDelegate.h"
 #import <CoreText/CoreText.h>
 #import "Foundation+Log.m"
+#import "UIView+Extension.h"
 #import "LKDBHelper.h"
 
 #import "AIHeader.h"

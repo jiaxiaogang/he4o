@@ -8,7 +8,7 @@
 
 #import "MainPage.h"
 #import "TestHungryPage.h"
-#import "CrowTotemPage.h"
+#import "BirdLivePage.h"
 
 @implementation MainPage
 
@@ -20,8 +20,8 @@
     [self.navigationController pushViewController:page animated:true];
 }
 
-- (IBAction)ravenTotemOnClick:(id)sender {
-    CrowTotemPage *page = [[CrowTotemPage alloc] init];
+- (IBAction)ravenLiveOnClick:(id)sender {
+    BirdLivePage *page = [[BirdLivePage alloc] init];
     [self.navigationController pushViewController:page animated:true];
 }
 
