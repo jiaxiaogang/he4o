@@ -7,6 +7,8 @@
 //
 
 #import "BirdView.h"
+#import "MASConstraint.h"
+#import "View+MASAdditions.h"
 
 @interface BirdView ()
 
@@ -25,13 +27,19 @@
 }
 
 -(void) initView{
+    //self
+    [self setBackgroundColor:[UIColor clearColor]];
+    [self setFrame:CGRectMake(0, 0, 30, 30)];
+    
     //containerView
     [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];
     [self addSubview:self.containerView];
-    
-    //self
-    [self setBackgroundColor:[UIColor clearColor]];
-    [self setFrame:CGRectMake(0, 0, ScreenWidth, 59)];
+    [self.containerView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.leading.mas_equalTo(self);
+        make.trailing.mas_equalTo(self);
+        make.top.mas_equalTo(self);
+        make.bottom.mas_equalTo(self);
+    }];
 }
 
 -(void) fly:(CGFloat)x y:(CGFloat)y{
