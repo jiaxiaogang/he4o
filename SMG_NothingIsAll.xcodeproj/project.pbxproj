@@ -42,6 +42,10 @@
 		0858C5D82194FAC200951BA5 /* RoadView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0858C5D72194FAC200951BA5 /* RoadView.xib */; };
 		0858C5DB2194FB3F00951BA5 /* LightView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0858C5DA2194FB3F00951BA5 /* LightView.m */; };
 		0858C5DD2194FB4600951BA5 /* LightView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0858C5DC2194FB4600951BA5 /* LightView.xib */; };
+		0858C5E021950BB300951BA5 /* TreeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0858C5DF21950BB300951BA5 /* TreeView.m */; };
+		0858C5E421950BC700951BA5 /* TreeView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0858C5E321950BC700951BA5 /* TreeView.xib */; };
+		0858C5E721950CA300951BA5 /* FoodView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0858C5E621950CA300951BA5 /* FoodView.m */; };
+		0858C5E921950CAA00951BA5 /* FoodView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0858C5E821950CAA00951BA5 /* FoodView.xib */; };
 		086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */ = {isa = PBXBuildFile; fileRef = 086D93361F8CA782002BAF3F /* RuntimeInvoker.m */; };
 		0881965F21800F2B00D5DB36 /* BirdLivePage.m in Sources */ = {isa = PBXBuildFile; fileRef = 0881965D21800F2B00D5DB36 /* BirdLivePage.m */; };
 		0881966021800F2B00D5DB36 /* BirdLivePage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0881965E21800F2B00D5DB36 /* BirdLivePage.xib */; };
@@ -162,6 +166,12 @@
 		0858C5D92194FB3F00951BA5 /* LightView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LightView.h; sourceTree = "<group>"; };
 		0858C5DA2194FB3F00951BA5 /* LightView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LightView.m; sourceTree = "<group>"; };
 		0858C5DC2194FB4600951BA5 /* LightView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LightView.xib; sourceTree = "<group>"; };
+		0858C5DE21950BB300951BA5 /* TreeView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TreeView.h; sourceTree = "<group>"; };
+		0858C5DF21950BB300951BA5 /* TreeView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TreeView.m; sourceTree = "<group>"; };
+		0858C5E321950BC700951BA5 /* TreeView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TreeView.xib; sourceTree = "<group>"; };
+		0858C5E521950CA300951BA5 /* FoodView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FoodView.h; sourceTree = "<group>"; };
+		0858C5E621950CA300951BA5 /* FoodView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FoodView.m; sourceTree = "<group>"; };
+		0858C5E821950CAA00951BA5 /* FoodView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FoodView.xib; sourceTree = "<group>"; };
 		086D93351F8CA782002BAF3F /* RuntimeInvoker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RuntimeInvoker.h; sourceTree = "<group>"; };
 		086D93361F8CA782002BAF3F /* RuntimeInvoker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RuntimeInvoker.m; sourceTree = "<group>"; };
 		0881965C21800F2B00D5DB36 /* BirdLivePage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BirdLivePage.h; sourceTree = "<group>"; };
@@ -446,6 +456,12 @@
 				0858C5D92194FB3F00951BA5 /* LightView.h */,
 				0858C5DA2194FB3F00951BA5 /* LightView.m */,
 				0858C5DC2194FB4600951BA5 /* LightView.xib */,
+				0858C5DE21950BB300951BA5 /* TreeView.h */,
+				0858C5DF21950BB300951BA5 /* TreeView.m */,
+				0858C5E321950BC700951BA5 /* TreeView.xib */,
+				0858C5E521950CA300951BA5 /* FoodView.h */,
+				0858C5E621950CA300951BA5 /* FoodView.m */,
+				0858C5E821950CAA00951BA5 /* FoodView.xib */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -805,7 +821,9 @@
 			files = (
 				0858C5DD2194FB4600951BA5 /* LightView.xib in Resources */,
 				083352F621800AB1003931E5 /* MainPage.xib in Resources */,
+				0858C5E421950BC700951BA5 /* TreeView.xib in Resources */,
 				08AF45581E97D0B500377887 /* LaunchScreen.storyboard in Resources */,
+				0858C5E921950CAA00951BA5 /* FoodView.xib in Resources */,
 				0858C5B02194F5E400951BA5 /* CarView.xib in Resources */,
 				08AF45551E97D0B500377887 /* Assets.xcassets in Resources */,
 				08DB40CC1F11A65E003162C8 /* TestHungryPage.xib in Resources */,
@@ -851,6 +869,7 @@
 				08D471DE1FEB3FFF00C61322 /* AIImvAlgs.m in Sources */,
 				081B3ADB1F6E2CCD008A7F36 /* AINet.m in Sources */,
 				08FAEC94215EED39004DCEAD /* NVUtils.m in Sources */,
+				0858C5E021950BB300951BA5 /* TreeView.m in Sources */,
 				88BC09DD20B4F67E0006ABEF /* XGRedisDictionary.m in Sources */,
 				0858C5D32194F8B000951BA5 /* View+MASAdditions.m in Sources */,
 				8868F6EE210AA00B000EAC9B /* AINetAbsCMVUtil.m in Sources */,
@@ -870,6 +889,7 @@
 				08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */,
 				08089280215B07FC00710636 /* AICMVNodeBase.m in Sources */,
 				08B31E7E20648C3700FD96EA /* ThinkingUtils.m in Sources */,
+				0858C5E721950CA300951BA5 /* FoodView.m in Sources */,
 				0858C5CF2194F8B000951BA5 /* MASViewAttribute.m in Sources */,
 				88BC09D720B4EB920006ABEF /* XGRedis.m in Sources */,
 				084219E11FD8CEFD009DA6BC /* AIReactorControl.m in Sources */,

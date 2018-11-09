@@ -47,5 +47,17 @@
     [self setY:self.y + y];
 }
 
+-(void) eat{
+    
+}
+
+-(void) dropUp{
+    
+}
+
+-(void) dropDown{
+    
+}
+
 @end
 
