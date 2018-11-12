@@ -11,6 +11,7 @@
 @protocol CarViewDelegate <NSObject>
 
 -(BOOL) carView_CanRun;
+-(NSArray*) carView_GetFoodInLoad;  //获取在路上的坚果;
 
 @end
 

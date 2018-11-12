@@ -16,11 +16,23 @@
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="iN0-l3-epB">
-            <rect key="frame" x="0.0" y="0.0" width="328" height="280"/>
+            <rect key="frame" x="0.0" y="0.0" width="171" height="36"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="坚果树" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vGt-x5-z1s">
+                    <rect key="frame" x="53.5" y="5.5" width="64.5" height="25.5"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="21"/>
+                    <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
             <color key="backgroundColor" red="0.0" green="0.5" blue="0.321044921875" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="vGt-x5-z1s" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="WkA-1b-mR0"/>
+                <constraint firstItem="vGt-x5-z1s" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="jXD-Xs-OxO"/>
+            </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <point key="canvasLocation" x="100.8" y="-34.182908545727138"/>
+            <point key="canvasLocation" x="-24.800000000000001" y="-143.92803598200899"/>
         </view>
     </objects>
 </document>

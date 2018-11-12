@@ -9,6 +9,7 @@
 #import "CarView.h"
 #import "MASConstraint.h"
 #import "View+MASAdditions.h"
+#import "FoodView.h"
 
 @interface CarView ()
 
@@ -53,6 +54,7 @@
 -(void) run{
     if (self.delegate && [self.delegate respondsToSelector:@selector(carView_CanRun)]) {
         if ([self.delegate carView_CanRun]) {
+            //1. 行驶
             [UIView animateWithDuration:2.0f delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
                 self.x += ScreenWidth * 0.5f;
             } completion:^(BOOL finished) {
@@ -63,6 +65,18 @@
                     [self run];
                 }];
             }];
+            
+            //2. 碾压
+            if ([self.delegate respondsToSelector:@selector(carView_GetFoodInLoad)]) {
+                NSArray *foods = [self.delegate carView_GetFoodInLoad];
+                if (ARRISOK(foods)) {
+                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                        for (FoodView *food in foods) {
+                            [food hit];
+                        }
+                    });
+                }
+            }
         }
     }
 }

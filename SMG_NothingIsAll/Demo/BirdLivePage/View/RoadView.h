@@ -8,6 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol RoadViewDelegate <NSObject>
+
+-(NSArray*) roadView_GetFoodInLoad;
+
+@end
+
 @interface RoadView : UIView
+
+@property (weak,nonatomic) id<RoadViewDelegate> delegate;
 
 @end

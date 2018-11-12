@@ -30,8 +30,8 @@
 
 -(void) initView{
     //self
-    [self setFrame:CGRectMake(ScreenWidth - 25, 60, 30, 30)];
-    [self.layer setCornerRadius:15];
+    [self setFrame:CGRectMake(ScreenWidth * 0.25f - 2.5f, 50, 5, 5)];
+    [self.layer setCornerRadius:2.5f];
     [self.layer setMasksToBounds:true];
     
     //containerView
@@ -43,12 +43,11 @@
         make.top.mas_equalTo(self);
         make.bottom.mas_equalTo(self);
     }];
-    [self.containerView.layer setBorderWidth:2];
-    [self.containerView.layer setBorderColor:[UIColor redColor].CGColor];
+    [self.containerView.layer setBorderColor:[UIColor grayColor].CGColor];
 }
 
 -(void) initData{
-    
+    self.status = FoodStatus_Border;
 }
 
 -(void) initDisplay{
@@ -59,11 +58,18 @@
 //MARK:                     < method >
 //MARK:===============================================================
 -(void) refreshDisplay{
-    
+    if (self.status == FoodStatus_Border) {
+        [self.containerView.layer setBorderWidth:2];
+    }else if(self.status == FoodStatus_Eat){
+        [self.containerView.layer setBorderWidth:0];
+    }else if(self.status == FoodStatus_Remove){
+        [self removeFromSuperview];
+    }
 }
 
--(void) removePeel{
-    [self.containerView.layer setBorderColor:[UIColor clearColor].CGColor];
+-(void) hit{
+    self.status ++;
+    [self refreshDisplay];
 }
 
 @end

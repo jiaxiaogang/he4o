@@ -9,11 +9,15 @@
 #import "BirdLivePage.h"
 #import "BirdView.h"
 #import "RoadView.h"
+#import "TreeView.h"
+#import "FoodView.h"
+#import "UIView+Extension.h"
 
-@interface BirdLivePage ()
+@interface BirdLivePage ()<RoadViewDelegate>
 
 @property (strong,nonatomic) BirdView *birdView;
 @property (strong,nonatomic) RoadView *roadView;
+@property (strong,nonatomic) TreeView *treeView;
 
 @end
 
@@ -27,12 +31,23 @@
 -(void) initView{
     //1. birdView
     self.birdView = [[BirdView alloc] init];
-    [self.birdView setOrigin:CGPointMake(100, 100)];
     [self.view addSubview:self.birdView];
     
     //2. roadView
     self.roadView = [[RoadView alloc] init];
     [self.view addSubview:self.roadView];
+    self.roadView.delegate = self;
+    
+    //3. treeView
+    self.treeView = [[TreeView alloc] init];
+    [self.view addSubview:self.treeView];
+}
+
+/**
+ *  MARK:--------------------RoadViewDelegate--------------------
+ */
+-(NSArray *)roadView_GetFoodInLoad{
+    return [self.treeView subViews_AllDeepWithClass:FoodView.class];
 }
 
 @end

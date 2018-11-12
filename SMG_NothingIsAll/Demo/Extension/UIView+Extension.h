@@ -10,17 +10,22 @@
 
 @interface UIView (Extension)
 
+//MARK:===============================================================
+//MARK:                     < frame >
+//MARK:===============================================================
 @property (nonatomic) CGFloat x;
-
 @property (nonatomic) CGFloat y;
-
 @property (nonatomic) CGFloat width;
-
 @property (nonatomic) CGFloat height;
-
 @property (nonatomic) CGPoint origin;
-
 @property (nonatomic) CGSize size;
+
+
+//MARK:===============================================================
+//MARK:                     < subView >
+//MARK:===============================================================
+-(NSMutableArray*) subViews_AllDeep;
+-(NSMutableArray*) subViews_AllDeepWithClass:(Class)aClass;
 
 @end
 

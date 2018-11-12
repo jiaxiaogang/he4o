@@ -81,6 +81,19 @@
     return self.lightView.curLightIsGreen;
 }
 
+-(NSArray*) carView_GetFoodInLoad{
+    NSMutableArray *mArr = [[NSMutableArray alloc] init];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(roadView_GetFoodInLoad)]) {
+        NSArray *foods = ARRTOOK([self.delegate roadView_GetFoodInLoad]);
+        for (UIView *food in foods) {
+            if (food.y >= 200 && food.y <= 345) {
+                [mArr addObject:food];
+            }
+        }
+    }
+    return mArr;
+}
+
 /**
  *  MARK:--------------------LightViewDelegate--------------------
  */

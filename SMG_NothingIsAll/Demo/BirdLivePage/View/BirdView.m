@@ -29,7 +29,7 @@
 -(void) initView{
     //self
     [self setBackgroundColor:[UIColor clearColor]];
-    [self setFrame:CGRectMake(0, 0, 30, 30)];
+    [self setFrame:CGRectMake(100, 100, 30, 30)];
     
     //containerView
     [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];
