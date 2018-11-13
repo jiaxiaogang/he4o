@@ -9,6 +9,7 @@
 #import "MainPage.h"
 #import "TestHungryPage.h"
 #import "BirdLivePage.h"
+#import "BirdGrowPage.h"
 
 @implementation MainPage
 
@@ -20,8 +21,13 @@
     [self.navigationController pushViewController:page animated:true];
 }
 
-- (IBAction)ravenLiveOnClick:(id)sender {
+- (IBAction)birdLiveOnClick:(id)sender {
     BirdLivePage *page = [[BirdLivePage alloc] init];
+    [self.navigationController pushViewController:page animated:true];
+}
+
+- (IBAction)birdGrowBtnOnClick:(id)sender {
+    BirdGrowPage *page = [[BirdGrowPage alloc] init];
     [self.navigationController pushViewController:page animated:true];
 }
 

@@ -49,6 +49,8 @@
 		086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */ = {isa = PBXBuildFile; fileRef = 086D93361F8CA782002BAF3F /* RuntimeInvoker.m */; };
 		0881965F21800F2B00D5DB36 /* BirdLivePage.m in Sources */ = {isa = PBXBuildFile; fileRef = 0881965D21800F2B00D5DB36 /* BirdLivePage.m */; };
 		0881966021800F2B00D5DB36 /* BirdLivePage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0881965E21800F2B00D5DB36 /* BirdLivePage.xib */; };
+		089614A9219A4D5200343FAC /* BirdGrowPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 089614A7219A4D5200343FAC /* BirdGrowPage.m */; };
+		089614AA219A4D5200343FAC /* BirdGrowPage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 089614A8219A4D5200343FAC /* BirdGrowPage.xib */; };
 		08A1E57C2193BAFA0046C4AC /* UIView+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 08A1E57B2193BAFA0046C4AC /* UIView+Extension.m */; };
 		08AF454A1E97D0B500377887 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF45491E97D0B500377887 /* main.m */; };
 		08AF454D1E97D0B500377887 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF454C1E97D0B500377887 /* AppDelegate.m */; };
@@ -177,6 +179,9 @@
 		0881965C21800F2B00D5DB36 /* BirdLivePage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BirdLivePage.h; sourceTree = "<group>"; };
 		0881965D21800F2B00D5DB36 /* BirdLivePage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BirdLivePage.m; sourceTree = "<group>"; };
 		0881965E21800F2B00D5DB36 /* BirdLivePage.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BirdLivePage.xib; sourceTree = "<group>"; };
+		089614A6219A4D5200343FAC /* BirdGrowPage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BirdGrowPage.h; sourceTree = "<group>"; };
+		089614A7219A4D5200343FAC /* BirdGrowPage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BirdGrowPage.m; sourceTree = "<group>"; };
+		089614A8219A4D5200343FAC /* BirdGrowPage.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BirdGrowPage.xib; sourceTree = "<group>"; };
 		08A1E57A2193BAFA0046C4AC /* UIView+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+Extension.h"; sourceTree = "<group>"; };
 		08A1E57B2193BAFA0046C4AC /* UIView+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+Extension.m"; sourceTree = "<group>"; };
 		08AF45451E97D0B500377887 /* SMG_NothingIsAll.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SMG_NothingIsAll.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -309,6 +314,7 @@
 		082F9D581EB236AC0009F6A9 /* Demo */ = {
 			isa = PBXGroup;
 			children = (
+				089614A5219A4D3400343FAC /* BirdGrowPage */,
 				083352F721800B53003931E5 /* TestHungryPage */,
 				083352F121800A88003931E5 /* MainPage */,
 				083352F0218008F0003931E5 /* BirdLivePage */,
@@ -494,6 +500,16 @@
 				0858C5CA2194F8B000951BA5 /* View+MASShorthandAdditions.h */,
 			);
 			path = Masonry;
+			sourceTree = "<group>";
+		};
+		089614A5219A4D3400343FAC /* BirdGrowPage */ = {
+			isa = PBXGroup;
+			children = (
+				089614A6219A4D5200343FAC /* BirdGrowPage.h */,
+				089614A7219A4D5200343FAC /* BirdGrowPage.m */,
+				089614A8219A4D5200343FAC /* BirdGrowPage.xib */,
+			);
+			path = BirdGrowPage;
 			sourceTree = "<group>";
 		};
 		08AF453C1E97D0B500377887 = {
@@ -829,6 +845,7 @@
 				08DB40CC1F11A65E003162C8 /* TestHungryPage.xib in Resources */,
 				0881966021800F2B00D5DB36 /* BirdLivePage.xib in Resources */,
 				0858C5D82194FAC200951BA5 /* RoadView.xib in Resources */,
+				089614AA219A4D5200343FAC /* BirdGrowPage.xib in Resources */,
 				084C3A6D21926D7800DAA08A /* BirdView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -883,6 +900,7 @@
 				084219E71FD8CF11009DA6BC /* AIActionControl.m in Sources */,
 				083112F21F05E12600051DE6 /* MBProgressHUD+Add.m in Sources */,
 				084219ED1FD8CF81009DA6BC /* AIThinkingControl.m in Sources */,
+				089614A9219A4D5200343FAC /* BirdGrowPage.m in Sources */,
 				083F61381F048329000330E1 /* AILine.m in Sources */,
 				083352F521800AB1003931E5 /* MainPage.m in Sources */,
 				8806D888212B8EB100C442CA /* ExpCacheModel.m in Sources */,

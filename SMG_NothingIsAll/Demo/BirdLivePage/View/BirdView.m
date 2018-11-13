@@ -47,8 +47,10 @@
     [self setY:self.y + y];
 }
 
+//吃(坚果)
 -(void) eat{
-    
+    //1. 将坚果,的一些信息输入大脑;
+    //2. 产生HungerMindValue;
 }
 
 -(void) dropUp{

@@ -13,4 +13,7 @@
 //飞
 -(void) fly:(CGFloat)x y:(CGFloat)y;
 
+//吃(坚果)
+-(void) eat;
+
 @end
