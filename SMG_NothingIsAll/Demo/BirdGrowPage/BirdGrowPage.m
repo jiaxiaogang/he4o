@@ -32,16 +32,23 @@
 - (IBAction)farFeedingBtnOnClick:(id)sender {
     FoodView *foodView = [[FoodView alloc] init];
     [foodView hit];
-    [foodView setOrigin:CGPointMake(ScreenWidth * 0.75f, ScreenHeight - 66)];
+    [foodView setOrigin:CGPointMake(ScreenWidth * 0.25f, ScreenHeight - 66)];
     [self.view addSubview:foodView];
-    CGPoint targetPoint = self.birdView.origin;
+    CGPoint targetPoint = CGPointMake(ScreenWidth * 0.5f, ScreenHeight * 0.5f);
     [UIView animateWithDuration:1.0f animations:^{
         [foodView setOrigin:targetPoint];
     }];
 }
 
 - (IBAction)nearFeedingBtnOnClick:(id)sender {
-    
+    FoodView *foodView = [[FoodView alloc] init];
+    [foodView hit];
+    [foodView setOrigin:CGPointMake(ScreenWidth * 0.75f, ScreenHeight - 66)];
+    [self.view addSubview:foodView];
+    CGPoint targetPoint = self.birdView.center;
+    [UIView animateWithDuration:2.0f animations:^{
+        [foodView setOrigin:targetPoint];
+    }];
 }
 
 

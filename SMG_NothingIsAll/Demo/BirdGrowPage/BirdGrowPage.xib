@@ -26,7 +26,7 @@
                         <constraint firstAttribute="height" constant="50" id="FDh-pK-Jop"/>
                     </constraints>
                     <fontDescription key="fontDescription" type="system" pointSize="23"/>
-                    <state key="normal" title="直投">
+                    <state key="normal" title="远投">
                         <color key="titleColor" white="0.44867621527777779" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </state>
                     <connections>
@@ -40,7 +40,7 @@
                         <constraint firstAttribute="height" constant="50" id="rho-Kh-mT6"/>
                     </constraints>
                     <fontDescription key="fontDescription" type="system" pointSize="23"/>
-                    <state key="normal" title="远投">
+                    <state key="normal" title="直投">
                         <color key="titleColor" white="0.44867621530000001" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </state>
                     <connections>

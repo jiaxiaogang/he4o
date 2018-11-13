@@ -30,7 +30,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="onk-Dj-zRG">
-                    <rect key="frame" x="0.0" y="109.5" width="375" height="120"/>
+                    <rect key="frame" x="0.0" y="108" width="375" height="120"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="AI" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="93H-OP-ohb">
                             <rect key="frame" x="180" y="0.0" width="15.5" height="21"/>
@@ -74,10 +74,10 @@
                     </constraints>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="u6Z-hO-x4K">
-                    <rect key="frame" x="0.0" y="239.5" width="375" height="120"/>
+                    <rect key="frame" x="0.0" y="238" width="375" height="120"/>
                     <subviews>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="I" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pI6-B4-g2c">
-                            <rect key="frame" x="185.5" y="0.0" width="4.5" height="21"/>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Human" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pI6-B4-g2c">
+                            <rect key="frame" x="160" y="0.0" width="55" height="21"/>
                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
@@ -114,7 +114,7 @@
                     </constraints>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Fkz-sw-swS">
-                    <rect key="frame" x="0.0" y="369.5" width="375" height="120"/>
+                    <rect key="frame" x="0.0" y="368" width="375" height="120"/>
                     <subviews>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wrf-TN-CYy">
                             <rect key="frame" x="0.0" y="0.0" width="94" height="120"/>
@@ -167,7 +167,7 @@
                     </constraints>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="86Q-Zs-PUw">
-                    <rect key="frame" x="0.0" y="499.5" width="375" height="50"/>
+                    <rect key="frame" x="0.0" y="498" width="375" height="50"/>
                     <subviews>
                         <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="CsI-oO-3Fd">
                             <rect key="frame" x="58" y="0.0" width="269" height="31"/>
@@ -200,10 +200,10 @@
                         <constraint firstItem="Zbl-8N-wYu" firstAttribute="leading" secondItem="CsI-oO-3Fd" secondAttribute="trailing" constant="10" id="eUT-pt-hjq"/>
                     </constraints>
                 </view>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="&quot;让手机学会表达充电需求,并学会使用充电交流常用语&quot;" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Olr-MJ-zXA">
-                    <rect key="frame" x="0.0" y="93.5" width="375" height="16"/>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="&quot;让手机学会:充电相关常识,并表达充电需求,以解决充电问题&quot;" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Olr-MJ-zXA">
+                    <rect key="frame" x="0.0" y="93.5" width="375" height="14.5"/>
                     <color key="backgroundColor" red="1" green="0.36729668090062112" blue="0.12433278338509317" alpha="1" colorSpace="calibratedRGB"/>
-                    <fontDescription key="fontDescription" type="system" weight="black" pointSize="13"/>
+                    <fontDescription key="fontDescription" type="system" weight="black" pointSize="12"/>
                     <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
