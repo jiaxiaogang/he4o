@@ -13,6 +13,7 @@
 #import "AIFoNodeBase.h"
 #import "AICMVNodeBase.h"
 #import "NVHeader.h"
+#import "AIInput.h"
 
 /**
  *  MARK:--------------------PathKey--------------------

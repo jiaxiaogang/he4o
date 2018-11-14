@@ -10,9 +10,11 @@
 #import "BirdView.h"
 #import "FoodView.h"
 
-@interface BirdGrowPage ()
+@interface BirdGrowPage ()<UIGestureRecognizerDelegate>
 
 @property (strong,nonatomic) BirdView *birdView;
+@property (strong,nonatomic) UITapGestureRecognizer *farTapRecognizer;
+@property (weak, nonatomic) IBOutlet UILabel *farLab;
 
 @end
 
@@ -27,8 +29,16 @@
     //birdView
     self.birdView = [[BirdView alloc] init];
     [self.view addSubview:self.birdView];
+    
+    //farTapRecognizer
+    self.farTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(farTapAction:)];
+    [self.farLab addGestureRecognizer:self.farTapRecognizer];
+    self.farTapRecognizer.delegate = self;
 }
 
+//MARK:===============================================================
+//MARK:                     < onclick >
+//MARK:===============================================================
 - (IBAction)farFeedingBtnOnClick:(id)sender {
     FoodView *foodView = [[FoodView alloc] init];
     [foodView hit];
@@ -48,8 +58,22 @@
     CGPoint targetPoint = self.birdView.center;
     [UIView animateWithDuration:2.0f animations:^{
         [foodView setOrigin:targetPoint];
+    }completion:^(BOOL finished) {
+        //1. 视觉输入
+        
+        
+        //2. 吃掉;
+        [theInput commitIMV:MVType_Hunger from:1.0f to:9.0f];
     }];
 }
 
+
+//MARK:===============================================================
+//MARK:                     < method >
+//MARK:===============================================================
+- (void)farTapAction:(UITapGestureRecognizer *)tapRecognizer{
+    NSLog(@"远投");
+    //CGPoint point = [tapRecognizer locationInView:tapRecognizer.view];
+}
 
 @end

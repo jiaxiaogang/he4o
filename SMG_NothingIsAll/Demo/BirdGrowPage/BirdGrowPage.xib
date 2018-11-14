@@ -11,6 +11,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="BirdGrowPage">
             <connections>
+                <outlet property="farLab" destination="2QI-et-DGo" id="W07-nI-ZFG"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -41,18 +42,32 @@
                     </constraints>
                     <fontDescription key="fontDescription" type="system" pointSize="23"/>
                     <state key="normal" title="直投">
-                        <color key="titleColor" white="0.44867621530000001" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="titleColor" red="0.37254901960784315" green="0.37254901960784315" blue="0.37254901960784315" alpha="1" colorSpace="calibratedRGB"/>
                     </state>
                     <connections>
                         <action selector="nearFeedingBtnOnClick:" destination="-1" eventType="touchUpInside" id="Ith-1L-2iS"/>
                     </connections>
                 </button>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="远投" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2QI-et-DGo">
+                    <rect key="frame" x="16" y="457" width="167.5" height="50"/>
+                    <color key="backgroundColor" white="0.84480794270000004" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="50" id="cwg-t1-i98"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="23"/>
+                    <color key="textColor" red="0.37254901960784315" green="0.37254901960784315" blue="0.37254901960784315" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
                 <constraint firstAttribute="bottom" secondItem="pLF-3A-dzq" secondAttribute="bottom" constant="16" id="7iQ-yM-bhF"/>
+                <constraint firstItem="a5Y-T0-lOj" firstAttribute="leading" secondItem="2QI-et-DGo" secondAttribute="trailing" constant="8" id="Jrk-KV-xV9"/>
+                <constraint firstItem="a5Y-T0-lOj" firstAttribute="width" secondItem="2QI-et-DGo" secondAttribute="width" id="LC7-TL-VrW"/>
+                <constraint firstItem="2QI-et-DGo" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="16" id="PM8-aj-nYE"/>
                 <constraint firstAttribute="trailing" secondItem="a5Y-T0-lOj" secondAttribute="trailing" constant="16" id="e8z-8A-jlO"/>
                 <constraint firstAttribute="bottom" secondItem="a5Y-T0-lOj" secondAttribute="bottom" constant="16" id="fQq-vx-9iY"/>
+                <constraint firstAttribute="bottom" secondItem="2QI-et-DGo" secondAttribute="bottom" constant="160" id="fhf-Rc-GCZ"/>
                 <constraint firstItem="pLF-3A-dzq" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="16" id="jc5-RA-XbE"/>
                 <constraint firstItem="a5Y-T0-lOj" firstAttribute="leading" secondItem="pLF-3A-dzq" secondAttribute="trailing" constant="8" id="qru-pp-pqP"/>
                 <constraint firstItem="a5Y-T0-lOj" firstAttribute="width" secondItem="pLF-3A-dzq" secondAttribute="width" id="z9h-aX-Qln"/>
