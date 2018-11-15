@@ -47,4 +47,8 @@ static AIReactorControl *_instance;
     [[AIActionControl shareInstance] commitCustom:type value:value];
 }
 
+-(void) commitView:(UIView*)selfView targetView:(UIView*)targetView{
+    [[AIActionControl shareInstance] commitView:selfView targetView:targetView];
+}
+
 @end

@@ -29,16 +29,19 @@
 }
 
 -(void) initView{
-    //1. birdView
+    //1. self
+    self.title = @"小鸟生存演示";
+    
+    //2. birdView
     self.birdView = [[BirdView alloc] init];
     [self.view addSubview:self.birdView];
     
-    //2. roadView
+    //3. roadView
     self.roadView = [[RoadView alloc] init];
     [self.view addSubview:self.roadView];
     self.roadView.delegate = self;
     
-    //3. treeView
+    //4. treeView
     self.treeView = [[TreeView alloc] init];
     [self.view addSubview:self.treeView];
 }

@@ -12,6 +12,7 @@
 #import "AICustomAlgs.h"
 #import "ImvAlgsModelBase.h"
 #import "AINet.h"
+#import "AIVisionAlgs.h"
 
 @implementation AIActionControl
 
@@ -31,6 +32,10 @@ static AIActionControl *_instance;
 
 -(void) commitCustom:(CustomInputType)type value:(NSInteger)value{
     [AICustomAlgs commitCustom:type value:value];
+}
+
+-(void) commitView:(UIView*)selfView targetView:(UIView*)targetView{
+    [AIVisionAlgs commitView:selfView targetView:targetView];
 }
 
 @end

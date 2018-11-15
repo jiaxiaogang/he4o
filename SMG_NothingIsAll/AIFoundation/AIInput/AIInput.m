@@ -54,4 +54,8 @@ static AIInput *_instance;
     [[AIReactorControl shareInstance] commitCustom:type value:value];
 }
 
+-(void) commitView:(UIView*)selfView targetView:(UIView*)targetView{
+    [[AIReactorControl shareInstance] commitView:selfView targetView:targetView];
+}
+
 @end

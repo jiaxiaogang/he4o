@@ -41,15 +41,18 @@
 }
 
 -(void) initView{
-    //1,tf
+    //1. self
+    self.title = @"充电演示";
+    
+    //2. tf
     self.tf.delegate = self;
     [self.tf setReturnKeyType:UIReturnKeyGo];
     
-    //2,hungerLevelLab
+    //3. hungerLevelLab
     [self.hungerLevelLab setText:STRFORMAT(@"%.2f",self.hungerLevelSlider.value)];
     [self.hungerLevelLab setTextColor:self.hungerLevelSlider.value > 0.7 ? [UIColor greenColor] : [UIColor redColor]];
     
-    //4,thinkStatusBtn
+    //4. thinkStatusBtn
     [self.thinkStatusBtn.layer setCornerRadius:5];
     [self.thinkStatusBtn.layer setMasksToBounds:true];
 }

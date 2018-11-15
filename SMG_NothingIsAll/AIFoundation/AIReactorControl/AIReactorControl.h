@@ -28,5 +28,6 @@
 -(void) commitInput:(id)input;
 -(void) commitIMV:(MVType)type from:(CGFloat)from to:(CGFloat)to;
 -(void) commitCustom:(CustomInputType)type value:(NSInteger)value;
+-(void) commitView:(UIView*)selfView targetView:(UIView*)targetView;
 
 @end

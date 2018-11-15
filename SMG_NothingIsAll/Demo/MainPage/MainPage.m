@@ -13,6 +13,16 @@
 
 @implementation MainPage
 
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    [self initView];
+}
+
+-(void) initView{
+    //1. self
+    self.title = @"和";
+}
+
 //MARK:===============================================================
 //MARK:                     < onclick >
 //MARK:===============================================================

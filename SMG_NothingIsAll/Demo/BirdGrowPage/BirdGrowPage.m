@@ -13,7 +13,7 @@
 @interface BirdGrowPage ()<UIGestureRecognizerDelegate>
 
 @property (strong,nonatomic) BirdView *birdView;
-@property (strong,nonatomic) UITapGestureRecognizer *farTapRecognizer;
+@property (strong,nonatomic) UITapGestureRecognizer *tapRecognizer;
 @property (weak, nonatomic) IBOutlet UIView *farView;
 @property (weak, nonatomic) IBOutlet UIView *borderView;
 
@@ -27,16 +27,19 @@
 }
 
 -(void) initView{
-    //birdView
+    //1. self
+    self.title = @"小鸟成长演示";
+    
+    //2. birdView
     self.birdView = [[BirdView alloc] init];
     [self.view addSubview:self.birdView];
     
-    //farTapRecognizer
-    self.farTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(customTapAction:)];
-    [self.farView addGestureRecognizer:self.farTapRecognizer];
-    self.farTapRecognizer.delegate = self;
+    //3. farTapRecognizer
+    self.tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(customTapAction:)];
+    [self.farView addGestureRecognizer:self.tapRecognizer];
+    self.tapRecognizer.delegate = self;
     
-    //borderView
+    //4. borderView
     [self.borderView.layer setBorderColor:[UIColor grayColor].CGColor];
     [self.borderView.layer setBorderWidth:30];
 }
@@ -50,7 +53,7 @@
     [foodView setOrigin:CGPointMake(ScreenWidth * 0.75f, ScreenHeight - 66)];
     [self.view addSubview:foodView];
     CGPoint targetPoint = self.birdView.center;
-    [UIView animateWithDuration:2.0f animations:^{
+    [UIView animateWithDuration:1.5f animations:^{
         [foodView setOrigin:targetPoint];
     }completion:^(BOOL finished) {
         //1. 视觉输入
@@ -82,6 +85,9 @@
     
     [UIView animateWithDuration:1.0f animations:^{
         [foodView setOrigin:targetPoint];
+    }completion:^(BOOL finished) {
+        //1. 视觉输入
+        
     }];
 }
 

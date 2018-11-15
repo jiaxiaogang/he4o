@@ -18,5 +18,6 @@
 +(AIActionControl*) shareInstance;
 -(void) commitInput:(id)input;
 -(void) commitCustom:(CustomInputType)type value:(NSInteger)value;
+-(void) commitView:(UIView*)selfView targetView:(UIView*)targetView;
 
 @end
