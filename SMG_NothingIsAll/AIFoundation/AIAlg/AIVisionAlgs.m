@@ -7,6 +7,8 @@
 //
 
 #import "AIVisionAlgs.h"
+#import "AIVisionAlgsModel.h"
+#import "AIThinkingControl.h"
 
 float lastDistance = CGFLOAT_MAX;//以max表示无值;
 
@@ -14,6 +16,20 @@ float lastDistance = CGFLOAT_MAX;//以max表示无值;
 
 +(void) commitView:(UIView*)selfView targetView:(UIView*)targetView{
     NSLog(@"对小鸟的视觉进行算法处理");
+    //1. 生成model
+    AIVisionAlgsModel *model = [[AIVisionAlgsModel alloc] init];
+    model.sizeWidth = [self sizeWidth:targetView];
+    model.sizeHeight = [self sizeHeight:targetView];
+    model.colorRed = [self colorRed:targetView];
+    model.colorGreen = [self colorGreen:targetView];
+    model.colorBlue = [self colorBlue:targetView];
+    model.radius = [self radius:targetView];
+    model.originX = [self originX:selfView target:targetView];
+    model.originY = [self originY:selfView target:targetView];
+    model.speed = [self speed:selfView target:targetView];
+    
+    //2. 传给thinkingControl
+    [[AIThinkingControl shareInstance] commitInput:model];
 }
 
 
@@ -34,15 +50,17 @@ float lastDistance = CGFLOAT_MAX;//以max表示无值;
 //MARK:                     < color >
 //MARK:===============================================================
 +(NSInteger) colorRed:(UIView*)target{
-    if (target) return target.backgroundColor.red * 255;
+    if (target) return target.backgroundColor.red * 255.0f;
     return 0;
 }
 +(NSInteger) colorGreen:(UIView*)target{
-    if (target) return target.backgroundColor.green * 255;
+    if (target){
+        return target.backgroundColor.green * 255.0f;
+    }
     return 0;
 }
 +(NSInteger) colorBlue:(UIView*)target{
-    if (target) return target.backgroundColor.blue * 255;
+    if (target) return target.backgroundColor.blue * 255.0f;
     return 0;
 }
 

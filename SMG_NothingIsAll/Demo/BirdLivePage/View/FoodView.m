@@ -33,6 +33,8 @@
     [self setFrame:CGRectMake(ScreenWidth * 0.25f - 2.5f, 50, 5, 5)];
     [self.layer setCornerRadius:2.5f];
     [self.layer setMasksToBounds:true];
+    [self.layer setBorderColor:[UIColor grayColor].CGColor];
+    [self setBackgroundColor:[UIColor greenColor]];
     
     //containerView
     [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];
@@ -43,7 +45,6 @@
         make.top.mas_equalTo(self);
         make.bottom.mas_equalTo(self);
     }];
-    [self.containerView.layer setBorderColor:[UIColor grayColor].CGColor];
 }
 
 -(void) initData{
@@ -59,9 +60,9 @@
 //MARK:===============================================================
 -(void) refreshDisplay{
     if (self.status == FoodStatus_Border) {
-        [self.containerView.layer setBorderWidth:2];
+        [self.layer setBorderWidth:1];
     }else if(self.status == FoodStatus_Eat){
-        [self.containerView.layer setBorderWidth:0];
+        [self.layer setBorderWidth:0];
     }else if(self.status == FoodStatus_Remove){
         [self removeFromSuperview];
     }
