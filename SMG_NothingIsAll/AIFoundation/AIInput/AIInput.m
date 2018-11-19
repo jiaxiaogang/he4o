@@ -46,6 +46,11 @@ static AIInput *_instance;
     [[AIReactorControl shareInstance] commitInput:text];
 }
 
+/**
+ *  MARK:--------------------提交mvType--------------------
+ *  @params from : 0-10
+ *  @params to : 0-10
+ */
 -(void) commitIMV:(MVType)type from:(CGFloat)from to:(CGFloat)to{
     [[AIReactorControl shareInstance] commitIMV:type from:from to:to];
 }

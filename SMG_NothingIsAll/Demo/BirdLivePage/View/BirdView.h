@@ -8,12 +8,16 @@
 
 #import <UIKit/UIKit.h>
 
+@class FoodView;
 @interface BirdView : UIView
 
 //飞
 -(void) fly:(CGFloat)x y:(CGFloat)y;
 
+//视觉
+-(void) see:(UIView*)view;
+
 //吃(坚果)
--(void) eat;
+-(void) eat:(FoodView*)foodView;
 
 @end

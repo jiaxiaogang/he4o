@@ -9,6 +9,7 @@
 #import "BirdView.h"
 #import "MASConstraint.h"
 #import "View+MASAdditions.h"
+#import "FoodView.h"
 
 @interface BirdView ()
 
@@ -47,10 +48,21 @@
     [self setY:self.y + y];
 }
 
-//吃(坚果)
--(void) eat{
+//视觉
+-(void) see:(UIView*)view{
     //1. 将坚果,的一些信息输入大脑;
-    //2. 产生HungerMindValue;
+    [theInput commitView:self targetView:view];
+}
+
+//吃(坚果)
+-(void) eat:(FoodView*)foodView{
+    if (foodView) {
+        //1. 吃掉
+        [foodView removeFromSuperview];
+        
+        //2. 产生HungerMindValue; (0-10)
+        [theInput commitIMV:MVType_Hunger from:1.0f to:9.0f];
+    }
 }
 
 -(void) dropUp{

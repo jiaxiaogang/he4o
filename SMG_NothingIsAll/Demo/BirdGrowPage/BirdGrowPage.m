@@ -57,10 +57,10 @@
         [foodView setOrigin:targetPoint];
     }completion:^(BOOL finished) {
         //1. 视觉输入
-        [theInput commitView:self.birdView targetView:foodView];
+        [self.birdView see:foodView];
         
         //2. 吃掉;
-        [theInput commitIMV:MVType_Hunger from:1.0f to:9.0f];
+        [self.birdView eat:foodView];
     }];
 }
 
