@@ -100,4 +100,21 @@
     }
 }
 
+
+//MARK:===============================================================
+//MARK:                     < convert坐标 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------转换世界坐标--------------------
+ *  @result 世界坐标 : NotNull
+ */
++(CGPoint) convertWorldPoint:(UIView*)selfView{
+    if(selfView && selfView.superview){
+        return [selfView.superview convertPoint:selfView.center toView:theApp.window];
+    }
+    return CGPointZero;
+}
+
+
 @end

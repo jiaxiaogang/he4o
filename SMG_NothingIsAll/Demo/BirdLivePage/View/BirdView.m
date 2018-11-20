@@ -48,7 +48,13 @@
     [self setY:self.y + y];
 }
 
-//视觉
+
+/**
+ *  MARK:--------------------视觉--------------------
+ *  1. 目前是被动视觉,
+ *  2. 随后有需要可以改为主动视觉 (0.3s每桢)
+ *  3. 主动视觉可以采用计时器和代理scan来实现;
+ */
 -(void) see:(UIView*)view{
     //1. 将坚果,的一些信息输入大脑;
     [theInput commitView:self targetView:view];

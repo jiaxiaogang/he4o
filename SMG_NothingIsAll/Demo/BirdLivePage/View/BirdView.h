@@ -14,8 +14,15 @@
 //飞
 -(void) fly:(CGFloat)x y:(CGFloat)y;
 
-//视觉
+
+/**
+ *  MARK:--------------------视觉--------------------
+ *  1. 目前是被动视觉,
+ *  2. 随后有需要可以改为主动视觉 (0.3s每桢)
+ *  3. 主动视觉可以采用计时器和代理scan来实现;
+ */
 -(void) see:(UIView*)view;
+
 
 //吃(坚果)
 -(void) eat:(FoodView*)foodView;

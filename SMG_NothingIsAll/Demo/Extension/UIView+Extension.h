@@ -27,6 +27,18 @@
 -(NSMutableArray*) subViews_AllDeep;
 -(NSMutableArray*) subViews_AllDeepWithClass:(Class)aClass;
 
+
+//MARK:===============================================================
+//MARK:                     < convert坐标 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------转换世界坐标--------------------
+ *  @result 世界坐标 : NotNull
+ */
++(CGPoint) convertWorldPoint:(UIView*)selfView;
+
+
 @end
 
 

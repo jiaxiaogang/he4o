@@ -54,7 +54,7 @@
     [self.view addSubview:foodView];
     CGPoint targetPoint = self.birdView.center;
     [UIView animateWithDuration:1.5f animations:^{
-        [foodView setOrigin:targetPoint];
+        [foodView setCenter:targetPoint];
     }completion:^(BOOL finished) {
         //1. 视觉输入
         [self.birdView see:foodView];
@@ -87,7 +87,7 @@
         [foodView setOrigin:targetPoint];
     }completion:^(BOOL finished) {
         //1. 视觉输入
-        
+        [self.birdView see:foodView];
     }];
 }
 

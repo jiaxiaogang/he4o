@@ -9,8 +9,7 @@
 #import "AIVisionAlgs.h"
 #import "AIVisionAlgsModel.h"
 #import "AIThinkingControl.h"
-
-float lastDistance = CGFLOAT_MAX;//以max表示无值;
+#import "XGRedis.h"
 
 @implementation AIVisionAlgs
 
@@ -78,30 +77,35 @@ float lastDistance = CGFLOAT_MAX;//以max表示无值;
 //MARK:                     < origin >
 //MARK:===============================================================
 +(CGFloat) originX:(UIView*)selfView target:(UIView*)target{
-    if (target && selfView) return target.x - selfView.x;
-    return 0;
+    return [UIView convertWorldPoint:target].x - [UIView convertWorldPoint:selfView].x;
 }
 +(CGFloat) originY:(UIView*)selfView target:(UIView*)target{
-    if (target && selfView) return target.y - selfView.y;
-    return 0;
+    return [UIView convertWorldPoint:target].y - [UIView convertWorldPoint:selfView].y;
 }
 
 
 //MARK:===============================================================
 //MARK:                     < speed >
 //MARK:===============================================================
+
+//目前简单粗暴两桢差值 (随后有需要改用微积分)
 +(CGFloat) speed:(UIView*)selfView target:(UIView*)target{
-    CGFloat result = 0;
-    if (target && selfView){
-        CGFloat distanceX = (target.x - selfView.x);
-        CGFloat distanceY = (target.y - selfView.y);
-        CGFloat distance = sqrt(powf(distanceX, 2) + powf(distanceY, 2));
-        if (lastDistance != CGFLOAT_MAX) {
-            result = distance - lastDistance;
-        }
-        lastDistance = distance;
+    CGFloat speed = 0;
+    CGPoint targetPoint = [UIView convertWorldPoint:target];
+    CGPoint selfPoint = [UIView convertWorldPoint:selfView];
+    CGFloat distanceX = (targetPoint.x - selfPoint.x);
+    CGFloat distanceY = (targetPoint.y - selfPoint.y);
+    CGFloat distance = sqrt(powf(distanceX, 2) + powf(distanceY, 2));
+    
+    NSString *key = STRFORMAT(@"%p_%p",selfView,target);
+    NSObject *lastDistanceNum = [[XGRedis sharedInstance] objectForKey:key];
+    if (ISOK(lastDistanceNum, NSNumber.class)) {
+        CGFloat lastDistance = [((NSNumber*)lastDistanceNum) floatValue];
+        speed = distance - lastDistance;
     }
-    return result;
+    [[XGRedis sharedInstance] setObject:[NSNumber numberWithFloat:distance] forKey:key time:cRedisDefaultTime];
+    return speed;
 }
+
 
 @end
