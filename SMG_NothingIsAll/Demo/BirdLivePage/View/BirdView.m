@@ -63,8 +63,14 @@
 //吃(坚果)
 -(void) eat:(FoodView*)foodView{
     if (foodView) {
-        //1. 吃掉
+        //1. 吃掉 (让he以吸吮反射的方式,去主动吃;并将out入网,以抽象出"吃"的节点;参考n15p6-QT1)
         [foodView removeFromSuperview];
+        //1) 刺激引发he反射;
+        //2) 反射后开吃 (he主动调用eat());
+        //3) eat()中, 销毁food,并将产生的mv传回给he;
+        
+        
+        
         
         //2. 产生HungerMindValue; (0-10)
         [theInput commitIMV:MVType_Hunger from:1.0f to:9.0f];
