@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIModel,ImvModelBase;
+@class ImvAlgsModelBase;
 @interface AIReactorControl : NSObject
 
 +(AIReactorControl*) shareInstance;
@@ -17,7 +17,7 @@
 /**
  *  MARK:--------------------先天mindValue工厂--------------------
  */
--(ImvModelBase*) createMindValue:(MVType)type value:(NSInteger)value;
+-(ImvAlgsModelBase*) createMindValue:(MVType)type value:(NSInteger)value;
 
 
 /**

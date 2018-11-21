@@ -23,7 +23,6 @@
 		083F61381F048329000330E1 /* AILine.m in Sources */ = {isa = PBXBuildFile; fileRef = 083F61371F048329000330E1 /* AILine.m */; };
 		08412CA3216C324300483B6B /* AICerebel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08412CA2216C324300483B6B /* AICerebel.m */; };
 		084219E11FD8CEFD009DA6BC /* AIReactorControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 084219E01FD8CEFD009DA6BC /* AIReactorControl.m */; };
-		084219E71FD8CF11009DA6BC /* AIActionControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 084219E61FD8CF11009DA6BC /* AIActionControl.m */; };
 		084219ED1FD8CF81009DA6BC /* AIThinkingControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 084219EA1FD8CF81009DA6BC /* AIThinkingControl.m */; };
 		0842ADBD1FE207500048ADDC /* DemoHunger.m in Sources */ = {isa = PBXBuildFile; fileRef = 0842ADBC1FE207500048ADDC /* DemoHunger.m */; };
 		0842ADC01FE209700048ADDC /* DemoCharge.m in Sources */ = {isa = PBXBuildFile; fileRef = 0842ADBF1FE209700048ADDC /* DemoCharge.m */; };
@@ -132,8 +131,6 @@
 		08412CA2216C324300483B6B /* AICerebel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AICerebel.m; sourceTree = "<group>"; };
 		084219DF1FD8CEFD009DA6BC /* AIReactorControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIReactorControl.h; sourceTree = "<group>"; };
 		084219E01FD8CEFD009DA6BC /* AIReactorControl.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIReactorControl.m; sourceTree = "<group>"; };
-		084219E51FD8CF11009DA6BC /* AIActionControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIActionControl.h; sourceTree = "<group>"; };
-		084219E61FD8CF11009DA6BC /* AIActionControl.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIActionControl.m; sourceTree = "<group>"; };
 		084219E91FD8CF80009DA6BC /* AIThinkingControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIThinkingControl.h; sourceTree = "<group>"; };
 		084219EA1FD8CF81009DA6BC /* AIThinkingControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIThinkingControl.m; sourceTree = "<group>"; };
 		0842ADBB1FE207500048ADDC /* DemoHunger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DemoHunger.h; sourceTree = "<group>"; };
@@ -412,15 +409,6 @@
 			path = AICerebel;
 			sourceTree = "<group>";
 		};
-		084219DC1FD8CEE7009DA6BC /* AIActionControl */ = {
-			isa = PBXGroup;
-			children = (
-				084219E51FD8CF11009DA6BC /* AIActionControl.h */,
-				084219E61FD8CF11009DA6BC /* AIActionControl.m */,
-			);
-			path = AIActionControl;
-			sourceTree = "<group>";
-		};
 		084219DD1FD8CEE8009DA6BC /* AIReactorControl */ = {
 			isa = PBXGroup;
 			children = (
@@ -619,7 +607,6 @@
 				08CC991C1FE9EDCA00743ABE /* AIAlg */,
 				08CC99181FE9E2A100743ABE /* AIInput */,
 				084219E81FD8CF64009DA6BC /* AIThinkingControl */,
-				084219DC1FD8CEE7009DA6BC /* AIActionControl */,
 				084219DD1FD8CEE8009DA6BC /* AIReactorControl */,
 				083F612C1F04830F000330E1 /* AINet */,
 				08D7DA411ED149B4004B1018 /* AIHeader.h */,
@@ -912,7 +899,6 @@
 				082F9D561EB234750009F6A9 /* Output.m in Sources */,
 				0858C5CD2194F8B000951BA5 /* MASConstraintMaker.m in Sources */,
 				88BC09DA20B4ECAB0006ABEF /* XGRedisUtil.m in Sources */,
-				084219E71FD8CF11009DA6BC /* AIActionControl.m in Sources */,
 				083112F21F05E12600051DE6 /* MBProgressHUD+Add.m in Sources */,
 				084219ED1FD8CF81009DA6BC /* AIThinkingControl.m in Sources */,
 				089614A9219A4D5200343FAC /* BirdGrowPage.m in Sources */,
