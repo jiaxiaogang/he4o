@@ -65,11 +65,16 @@
     if (foodView) {
         //1. 吃掉 (让he以吸吮反射的方式,去主动吃;并将out入网,以抽象出"吃"的节点;参考n15p6-QT1)
         [foodView removeFromSuperview];
+        
+        //代码思路...
         //1) 刺激引发he反射;
         //2) 反射后开吃 (he主动调用eat());
         //3) eat()中, 销毁food,并将产生的mv传回给he;
         
-        
+        //代码实践...
+        //1) 定义一个"反射码";
+        //2) 在output中,写eat()的调用; (参考outputText())
+        //3) "反射码"可被canOut判定true,并指向output.eat();
         
         
         //2. 产生HungerMindValue; (0-10)
