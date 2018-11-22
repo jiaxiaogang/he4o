@@ -55,4 +55,18 @@ static AIReactorControl *_instance;
     [AIVisionAlgs commitView:selfView targetView:targetView];
 }
 
+/**
+ *  MARK:--------------------提交反射反应--------------------
+ *  1. 由外围神经提交一个反射信号;
+ *  2. ReactorControl在收到信号后,响应反射;
+ *  3. 并把反射执行的outLog构建到网络中;
+ *
+ *  目的: 是让he学会自主使用某外围功能;
+ *  备注: 目前支持1个float参数; (也可以暂不支持参数)
+ *  备注: 目前仅支持algsType+dataSource为标识,不支持别名;
+ */
+-(void) commitReactor:(NSObject*)outPointer{
+    //1.
+}
+
 @end

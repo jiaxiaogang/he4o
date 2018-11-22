@@ -8,6 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ *  MARK:--------------------反应控制器 (中脑)--------------------
+ *  1. 主要负责信息向算法皮层传递;
+ *  2. 及对信息的反射做出处理;
+ */
 @class ImvAlgsModelBase;
 @interface AIReactorControl : NSObject
 
@@ -29,5 +34,6 @@
 -(void) commitIMV:(MVType)type from:(CGFloat)from to:(CGFloat)to;
 -(void) commitCustom:(CustomInputType)type value:(NSInteger)value;
 -(void) commitView:(UIView*)selfView targetView:(UIView*)targetView;
+-(void) commitReactor:(NSObject*)outPointer;
 
 @end
