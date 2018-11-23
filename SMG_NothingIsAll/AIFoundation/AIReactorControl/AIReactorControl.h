@@ -34,6 +34,6 @@
 -(void) commitIMV:(MVType)type from:(CGFloat)from to:(CGFloat)to;
 -(void) commitCustom:(CustomInputType)type value:(NSInteger)value;
 -(void) commitView:(UIView*)selfView targetView:(UIView*)targetView;
--(void) commitReactor:(NSObject*)outPointer;
+-(void) commitReactor:(NSString*)reactorId runBlock:(void(^)(NSNumber* paramNum))runBlock;
 
 @end

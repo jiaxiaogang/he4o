@@ -10,6 +10,9 @@
 #import "MASConstraint.h"
 #import "View+MASAdditions.h"
 #import "FoodView.h"
+#import "AIReactorControl.h"
+
+#define EAT_REACTORID @"eatReactorId" //吸吮反射标识
 
 @interface BirdView ()
 
@@ -63,8 +66,6 @@
 //吃(坚果)
 -(void) eat:(FoodView*)foodView{
     if (foodView) {
-        //1. 吃掉 (让he以吸吮反射的方式,去主动吃;并将out入网,以抽象出"吃"的节点;参考n15p6-QT1)
-        [foodView removeFromSuperview];
         
         //代码思路...
         //1) 刺激引发he反射;
@@ -72,13 +73,18 @@
         //3) eat()中, 销毁food,并将产生的mv传回给he;
         
         //代码实践...
-        //1) 定义一个"反射码"; (目前不支持自定义,at&ds就是反射码)
+        //1) 定义一个"反射标识";
         //2) 在output中,写eat()的调用; (参考outputText())
         //3) "反射码"可被canOut判定true,并指向output.eat();
         
         
-        //2. 产生HungerMindValue; (0-10)
-        [theInput commitIMV:MVType_Hunger from:1.0f to:9.0f];
+        [[AIReactorControl shareInstance] commitReactor:EAT_REACTORID runBlock:^(NSNumber *paramNum) {
+            //1. 吃掉 (让he以吸吮反射的方式,去主动吃;并将out入网,以抽象出"吃"的节点;参考n15p6-QT1)
+            [foodView removeFromSuperview];
+            
+            //2. 产生HungerMindValue; (0-10)
+            [theInput commitIMV:MVType_Hunger from:1.0f to:9.0f];
+        }];
     }
 }
 

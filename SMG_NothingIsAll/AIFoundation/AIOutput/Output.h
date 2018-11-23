@@ -15,6 +15,7 @@
 @protocol OutputDelegate <NSObject>
 
 -(void) output_Text:(char)c;
+-(void) output_Reactor:(NSString*)reactorId paramNum:(NSNumber*)paramNum;
 
 @end
 
@@ -25,5 +26,6 @@
 +(Output*) sharedInstance;
 +(void) output_Text:(NSNumber*)charNum;
 +(void) output_Face:(AIMoodType)type;
++(void) output_Reactor:(NSString*)reactorId paramNum:(NSNumber*)paramNum runBlock:(void(^)())runBlock;
 
 @end
