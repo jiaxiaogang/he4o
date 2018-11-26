@@ -12,7 +12,7 @@
 #import "FoodView.h"
 #import "AIReactorControl.h"
 
-#define EAT_REACTORID @"eatReactorId" //吸吮反射标识
+#define EAT_RDS @"eatReactorDataSource" //吸吮反射标识
 
 @interface BirdView ()
 
@@ -26,6 +26,7 @@
     self = [super init];
     if(self != nil){
         [self initView];
+        [self initDisplay];
     }
     return self;
 }
@@ -46,6 +47,14 @@
     }];
 }
 
+-(void) initDisplay{
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(outputObserver:) name:kOutputObserver object:nil];
+}
+
+//MARK:===============================================================
+//MARK:                     < method >
+//MARK:===============================================================
+
 -(void) fly:(CGFloat)x y:(CGFloat)y{
     [self setX:self.x + x];
     [self setY:self.y + y];
@@ -63,29 +72,18 @@
     [theInput commitView:self targetView:view];
 }
 
-//吃(坚果)
--(void) eat:(FoodView*)foodView{
-    if (foodView) {
-        
-        //代码思路...
-        //1) 刺激引发he反射;
-        //2) 反射后开吃 (he主动调用eat());
-        //3) eat()中, 销毁food,并将产生的mv传回给he;
-        
-        //代码实践...
-        //1) 定义一个"反射标识";
-        //2) 在output中,写eat()的调用; (参考outputText())
-        //3) "反射码"可被canOut判定true,并指向output.eat();
-        
-        
-        [[AIReactorControl shareInstance] commitReactor:EAT_REACTORID runBlock:^(NSNumber *paramNum) {
-            //1. 吃掉 (让he以吸吮反射的方式,去主动吃;并将out入网,以抽象出"吃"的节点;参考n15p6-QT1)
-            [foodView removeFromSuperview];
-            
-            //2. 产生HungerMindValue; (0-10)
-            [theInput commitIMV:MVType_Hunger from:1.0f to:9.0f];
-        }];
-    }
+-(void) touchMouth{
+    //代码思路...
+    //1) 刺激引发he反射;
+    //2) 反射后开吃 (he主动调用eat());
+    //3) eat()中, 销毁food,并将产生的mv传回给he;
+    
+    //代码实践...
+    //1) 定义一个"反射标识";
+    //2) 在output中,写eat()的调用; (参考outputText())
+    //3) "反射码"可被canOut判定true,并指向output.eat();
+    
+    [[AIReactorControl shareInstance] commitReactor:EAT_RDS];
 }
 
 -(void) dropUp{
@@ -94,6 +92,49 @@
 
 -(void) dropDown{
     
+}
+
+-(void) dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+-(void) eat{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(birdView_GetFoodOnMouth)]) {
+        //1. 嘴附近的食物
+        FoodView *foodView = [self.delegate birdView_GetFoodOnMouth];
+        if (!foodView) return;
+        
+        //2. 视觉输入
+        [self see:foodView];
+        
+        //3. 吃掉 (让he以吸吮反射的方式,去主动吃;并将out入网,以抽象出"吃"的节点;参考n15p6-QT1)
+        [foodView removeFromSuperview];
+        
+        //4. 产生HungerMindValue; (0-10)
+        [theInput commitIMV:MVType_Hunger from:1.0f to:9.0f];
+    }
+    
+    
+    
+}
+
+//MARK:===============================================================
+//MARK:                     < outputObserver >
+//MARK:===============================================================
+-(void) outputObserver:(NSNotification*)notification{
+    if (notification) {
+        //1. 取数据
+        NSDictionary *obj = DICTOOK(notification.object);
+        NSString *rds = STRTOOK([obj objectForKey:@"rds"]);
+        NSNumber *paramNum = NUMTOOK([obj objectForKey:@"paramNum"]);
+        
+        //2. 吸吮反射
+        if ([EAT_RDS isEqualToString:rds]) {
+            [self eat];
+        }
+        
+        
+    }
 }
 
 @end

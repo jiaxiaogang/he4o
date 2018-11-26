@@ -9,8 +9,9 @@
 #import "BirdGrowPage.h"
 #import "BirdView.h"
 #import "FoodView.h"
+#import "UIView+Extension.h"
 
-@interface BirdGrowPage ()<UIGestureRecognizerDelegate>
+@interface BirdGrowPage ()<UIGestureRecognizerDelegate,BirdViewDelegate>
 
 @property (strong,nonatomic) BirdView *birdView;
 @property (strong,nonatomic) UITapGestureRecognizer *tapRecognizer;
@@ -33,6 +34,7 @@
     //2. birdView
     self.birdView = [[BirdView alloc] init];
     [self.view addSubview:self.birdView];
+    self.birdView.delegate = self;
     
     //3. farTapRecognizer
     self.tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(customTapAction:)];
@@ -56,11 +58,8 @@
     [UIView animateWithDuration:1.5f animations:^{
         [foodView setCenter:targetPoint];
     }completion:^(BOOL finished) {
-        //1. 视觉输入
-        [self.birdView see:foodView];
-        
-        //2. 吃掉;
-        [self.birdView eat:foodView];
+        //1. 触碰到鸟嘴;
+        [self.birdView touchMouth];
     }];
 }
 
@@ -89,6 +88,20 @@
         //1. 视觉输入
         [self.birdView see:foodView];
     }];
+}
+
+/**
+ *  MARK:--------------------BirdViewDelegate--------------------
+ */
+-(FoodView *)birdView_GetFoodOnMouth{
+    NSArray *foods = ARRTOOK([self.view subViews_AllDeepWithClass:FoodView.class]);
+    for (FoodView *food in foods) {
+        //判断触碰到的食物 & 并返回;
+        if (fabs(food.center.x - self.birdView.center.x) < 15.0f && fabs(food.center.y - self.birdView.center.y) < 15.0f) {
+            return food;
+        }
+    }
+    return nil;
 }
 
 @end

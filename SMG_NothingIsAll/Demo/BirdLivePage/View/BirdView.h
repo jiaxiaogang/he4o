@@ -9,10 +9,18 @@
 #import <UIKit/UIKit.h>
 
 @class FoodView;
+@protocol BirdViewDelegate <NSObject>
+
+-(FoodView*) birdView_GetFoodOnMouth;
+
+@end
+
+@class FoodView;
 @interface BirdView : UIView
 
-//飞
--(void) fly:(CGFloat)x y:(CGFloat)y;
+@property (weak,nonatomic) id<BirdViewDelegate> delegate;
+
+-(void) fly:(CGFloat)x y:(CGFloat)y;//飞
 
 
 /**
@@ -24,7 +32,7 @@
 -(void) see:(UIView*)view;
 
 
-//吃(坚果)
--(void) eat:(FoodView*)foodView;
+//触碰嘴
+-(void) touchMouth;
 
 @end

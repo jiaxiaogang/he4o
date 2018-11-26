@@ -26,6 +26,6 @@
 +(Output*) sharedInstance;
 +(void) output_Text:(NSNumber*)charNum;
 +(void) output_Face:(AIMoodType)type;
-+(void) output_Reactor:(NSString*)reactorId paramNum:(NSNumber*)paramNum runBlock:(void(^)())runBlock;
++(void) output_Reactor:(NSString*)rds paramNum:(NSNumber*)paramNum;
 
 @end

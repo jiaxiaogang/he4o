@@ -107,3 +107,9 @@ va_end(args);\
 //2017.11.13后启用N8规则DOP架构;
 #define theNet [AINet sharedInstance]
 #define theInput [AIInput sharedInstance]
+
+
+/**
+ *  MARK:--------------------ObserverKey--------------------
+ */
+#define kOutputObserver   @"kOutputObserver"

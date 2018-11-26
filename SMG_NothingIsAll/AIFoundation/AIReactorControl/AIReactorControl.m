@@ -65,16 +65,12 @@ static AIReactorControl *_instance;
  *  目的: 是让he学会自主使用某外围功能;
  *  备注: 目前支持1个nsnumber参数; (也可以暂不支持参数)
  *
- *  @params reactorId   : 反射标识
- *  @params runBlock    : block执行回调
+ *  @params rds   : 反射标识
  */
--(void) commitReactor:(NSString*)reactorId runBlock:(void(^)(NSNumber* paramNum))runBlock{
+-(void) commitReactor:(NSString*)rds{
     //1. 传递到output执行
     NSNumber *paramNum = @(1);
-    [Output output_Reactor:reactorId paramNum:paramNum runBlock:^{
-        //2. 回调runBlock();
-        if (runBlock) runBlock(paramNum);
-    }];
+    [Output output_Reactor:rds paramNum:paramNum];
 }
 
 @end
