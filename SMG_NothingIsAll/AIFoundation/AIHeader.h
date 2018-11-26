@@ -113,3 +113,9 @@ va_end(args);\
  *  MARK:--------------------ObserverKey--------------------
  */
 #define kOutputObserver   @"kOutputObserver"
+
+
+/**
+ *  MARK:--------------------RDS (ReactorDataSource)--------------------
+ */
+#define TEXT_RDS @"TEXT_RDS" //字符输出反射标识

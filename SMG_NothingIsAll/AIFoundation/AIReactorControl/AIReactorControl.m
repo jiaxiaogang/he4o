@@ -66,6 +66,7 @@ static AIReactorControl *_instance;
  *  备注: 目前支持1个nsnumber参数; (也可以暂不支持参数)
  *
  *  @params rds   : 反射标识
+ *
  */
 -(void) commitReactor:(NSString*)rds{
     //1. 传递到output执行

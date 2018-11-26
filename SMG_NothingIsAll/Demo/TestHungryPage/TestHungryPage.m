@@ -12,7 +12,7 @@
 #import "AIInput.h"
 #import "Output.h"
 
-@interface TestHungryPage ()<UITextFieldDelegate,OutputDelegate>
+@interface TestHungryPage ()<UITextFieldDelegate>
 
 @property (weak, nonatomic) IBOutlet UIButton *addBtn;
 @property (weak, nonatomic) IBOutlet UIButton *subBtn;
@@ -58,14 +58,23 @@
 }
 
 -(void) initData{
-    [Output sharedInstance].delegate = self;
     self.timer = [NSTimer scheduledTimerWithTimeInterval:0.03f target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
     self.outputMStr = [[NSMutableString alloc] init];
 }
 
 -(void) initDisplay{
-    //2,thinkStatusBtn
+    //1,thinkStatusBtn
     [self.thinkStatusBtn setBackgroundColor:[UIColor greenColor]];
+}
+
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(outputObserver:) name:kOutputObserver object:nil];
+}
+
+-(void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 //MARK:===============================================================
@@ -136,14 +145,25 @@
     return true;
 }
 
-/**
- *  MARK:--------------------OutputDelegate--------------------
- */
--(void)output_Text:(char)c{
-    [self.outputMStr appendFormat:@"%c",c];
-    if (self.outputMStr.length > 100) {
-        NSString *subStr = [self.outputMStr substringFromIndex:self.outputMStr.length - 100];
-        self.outputMStr = [[NSMutableString alloc] initWithString:subStr];
+//MARK:===============================================================
+//MARK:                     < outputObserver >
+//MARK:===============================================================
+-(void) outputObserver:(NSNotification*)notification{
+    if (notification) {
+        //1. 取数据
+        NSDictionary *obj = DICTOOK(notification.object);
+        NSString *rds = STRTOOK([obj objectForKey:@"rds"]);
+        NSNumber *paramNum = NUMTOOK([obj objectForKey:@"paramNum"]);
+        
+        //2. 吸吮反射
+        if ([TEXT_RDS isEqualToString:rds]) {
+            char c = [paramNum charValue];
+            [self.outputMStr appendFormat:@"%c",c];
+            if (self.outputMStr.length > 100) {
+                NSString *subStr = [self.outputMStr substringFromIndex:self.outputMStr.length - 100];
+                self.outputMStr = [[NSMutableString alloc] initWithString:subStr];
+            }
+        }
     }
 }
 
