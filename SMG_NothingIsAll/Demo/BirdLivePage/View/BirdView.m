@@ -62,11 +62,11 @@
 
 -(void) see:(UIView*)view{
     //1. 将坚果,的一些信息输入大脑;
-    [theInput commitView:self targetView:view];
+    [AIInput commitView:self targetView:view];
 }
 
 -(void) touchMouth{
-    [[AIReactorControl shareInstance] commitReactor:EAT_RDS];
+    [AIReactorControl commitReactor:EAT_RDS];
 }
 
 -(void) dropUp{
@@ -94,7 +94,7 @@
         [foodView removeFromSuperview];
         
         //4. 产生HungerMindValue; (0-10)
-        [theInput commitIMV:MVType_Hunger from:1.0f to:9.0f];
+        [AIInput commitIMV:MVType_Hunger from:1.0f to:9.0f];
     }
 }
 

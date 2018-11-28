@@ -16,24 +16,22 @@
 @class ImvAlgsModelBase;
 @interface AIReactorControl : NSObject
 
-+(AIReactorControl*) shareInstance;
-
 
 /**
  *  MARK:--------------------先天mindValue工厂--------------------
  */
--(ImvAlgsModelBase*) createMindValue:(MVType)type value:(NSInteger)value;
++(ImvAlgsModelBase*) createMindValue:(MVType)type value:(NSInteger)value;
 
 
 /**
  *  MARK:--------------------反射情绪--------------------
  */
--(void) createReactor:(AIMoodType)moodType;
++(void) createReactor:(AIMoodType)moodType;
 
--(void) commitInput:(id)input;
--(void) commitIMV:(MVType)type from:(CGFloat)from to:(CGFloat)to;
--(void) commitCustom:(CustomInputType)type value:(NSInteger)value;
--(void) commitView:(UIView*)selfView targetView:(UIView*)targetView;
--(void) commitReactor:(NSString*)rds;
++(void) commitInput:(id)input;
++(void) commitIMV:(MVType)type from:(CGFloat)from to:(CGFloat)to;
++(void) commitCustom:(CustomInputType)type value:(NSInteger)value;
++(void) commitView:(UIView*)selfView targetView:(UIView*)targetView;
++(void) commitReactor:(NSString*)rds;
 
 @end

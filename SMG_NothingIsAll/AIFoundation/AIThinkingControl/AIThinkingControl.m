@@ -79,6 +79,13 @@ static AIThinkingControl *_instance;
 //MARK:===============================================================
 -(void) commitInput:(NSObject*)algsModel{
     [self dataIn:algsModel];
+    
+    //明日计划
+    //1. 增加TC对algsModel的应对量;
+    //2. 思考"多组数据间"的分析类比; (比如视觉算法)
+    
+    
+    
 }
 
 /**

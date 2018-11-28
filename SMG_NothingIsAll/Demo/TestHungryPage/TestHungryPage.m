@@ -116,7 +116,7 @@
 
 - (IBAction)confirmBtnOnClick:(id)sender {
     if (STRISOK(self.tf.text)) {
-        [theInput commitText:self.tf.text];
+        [AIInput commitText:self.tf.text];
         self.tf.text = nil;
     }
 }

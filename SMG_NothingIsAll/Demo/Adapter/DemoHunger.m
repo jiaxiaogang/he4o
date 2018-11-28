@@ -44,7 +44,7 @@
     CGFloat to = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:toLevel];
     
     //3. 传给Input
-    [theInput commitIMV:MVType_Hunger from:from to:to];
+    [AIInput commitIMV:MVType_Hunger from:from to:to];
 }
 
 @end
