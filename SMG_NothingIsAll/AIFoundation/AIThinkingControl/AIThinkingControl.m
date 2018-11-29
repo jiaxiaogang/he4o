@@ -136,6 +136,23 @@ static AIThinkingControl *_instance;
         //6. 加入瞬时记忆
         for (AIKVPointer *algs_p in ARRTOOK(algsArr)) {
             [self dataIn_ToShortCache:algs_p];
+            
+            
+            
+            
+            
+            //因algsArr.lengeh > 8;
+            //所以,需要对algsArr中的元素,进行实时的联想,并将已抽象的微信息取回,来以组替分;
+            //TODOTMR: (2,5) 以组替分
+            //1. convert2Pointer; (已经ok)
+            //2. checkConvertAbsPointer; (节约瞬时记忆占用长度,同时为认知升级提供部分支撑)
+            //3. assData; (对dataIn_AssociativeData()方法进行拆分重构;先不搞)
+            //4. assMv; (对dataIn_AssociativeData()方法进行拆分重构;先不搞)
+            //5. ThinkingUtils.analogyOrdersA()方法,扩展对"微信息"信息本身的类比,而非只是pointer;
+            
+            
+            
+            
         }
     }
     
@@ -162,6 +179,27 @@ static AIThinkingControl *_instance;
         }
     }
     return false;
+}
+
+//检查微信息序列,并将有"组微信息"的进行转换;
+-(NSArray*) dataIn_CheckConvertAbsPointer:(NSArray*)algsArr{
+    //1. 数据检查;
+    algsArr = ARRTOOK(algsArr);
+    
+    //2. 到index里找组微信息;
+    
+    //1) 如果微信息指向,组微信息; (不太可能)
+    //首先在index索引序列中查找algsArr的微信息;
+    //然后
+    
+    //2) 如果微信息未指向组微信息; (从12345678长的往短的查)
+    //首先12,123,1234,12345,123456,1234567,12345678;
+    //23,234,2345,23456,234567,2345678;
+    //34,345,3456,34567...
+    //...
+    
+    
+    return algsArr;
 }
 
 /**
@@ -325,7 +363,7 @@ static AIThinkingControl *_instance;
                 AIFoNodeBase *assFrontNode = [SMGUtils searchObjectForPointer:ass_cn.foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
                 
                 if (ISOK(assFrontNode, AINodeBase.class)) {
-                    //5. 取微信息组
+                    //5. 取foNode.orders微信息组;
                     NSArray *assMicroValue_ps = [ThinkingUtils getNodeMicroValuePointersFromFrontNode:assFrontNode];
                     NSLog(@"抽象前 > 联想到前因节点 : %@",[NVUtils getCmvModelDesc_ByFoNode:assFrontNode]);
                     
