@@ -23,7 +23,7 @@
 -(AINetAbsNode*) create:(NSArray*)con_nodes refs_p:(NSArray*)refs_p{
     //1. 从宏信息索引中,查找是否已经存在针对refs_p的抽象;(有则复用)(无则创建)
     AIKVPointer *absValue_p = [theNet getNetAbsIndex_AbsPointer:refs_p];
-    AIKVPointer *absNode_p = [theNet getItemAbsNodePointer:absValue_p];
+    AIPointer *absNode_p = [theNet getItemAbsNodePointer:absValue_p];
     AINetAbsNode *absNode = [SMGUtils searchObjectForPointer:absNode_p fileName:FILENAME_Node];
     
     //2. absNode:无则创建;

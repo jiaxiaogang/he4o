@@ -151,6 +151,12 @@ static AIThinkingControl *_instance;
             //5. ThinkingUtils.analogyOrdersA()方法,扩展对"微信息"信息本身的类比,而非只是pointer;
             
             
+            //>>>>认知循环;
+            //1. 单组放开8条限制;
+            //2. 共最多8组; (难点在于如何使用)
+            //3. 单组临时存在,并在处理后,丢失一些细节; (将指向明确的,进行存瞬时记忆为一组);
+            //4. 多组间,再进行抽象认知; (这整个过程,被称为认知循环)
+            
             
             
         }
@@ -187,6 +193,7 @@ static AIThinkingControl *_instance;
     algsArr = ARRTOOK(algsArr);
     
     //2. 到index里找组微信息;
+    AIAbsIndex
     
     //1) 如果微信息指向,组微信息; (不太可能)
     //首先在index索引序列中查找algsArr的微信息;
@@ -725,7 +732,7 @@ static AIThinkingControl *_instance;
     
     //2. 根据microArr_p联想到对应的assAbsCmvNode;
     AIKVPointer *absValue_p = [theNet getNetAbsIndex_AbsPointer:microArr_p];
-    AIKVPointer *absNode_p = [theNet getItemAbsNodePointer:absValue_p];
+    AIPointer *absNode_p = [theNet getItemAbsNodePointer:absValue_p];
     AINetAbsNode *assAbsNode = [SMGUtils searchObjectForPointer:absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
     
     //3. 处理assAbsNode评价影响力;(系数0.8)

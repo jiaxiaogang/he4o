@@ -29,6 +29,6 @@
 /**
  *  MARK:--------------------获取absValue所被引用的absNode地址;--------------------
  */
--(AIKVPointer*) getAbsNodePointer:(AIKVPointer*)absValue_p;
+-(AIPointer*) getAbsNodePointer:(AIKVPointer*)absValue_p;
 
 @end

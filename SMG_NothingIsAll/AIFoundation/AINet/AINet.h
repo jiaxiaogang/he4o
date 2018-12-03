@@ -46,7 +46,7 @@
 //MARK:===============================================================
 -(AIKVPointer*) getNetAbsIndex_AbsPointer:(NSArray*)refs_p;
 -(void) setAbsIndexReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue;
--(AIKVPointer*) getItemAbsNodePointer:(AIKVPointer*)absValue_p;
+-(AIPointer*) getItemAbsNodePointer:(AIKVPointer*)absValue_p;
 
 
 //MARK:===============================================================

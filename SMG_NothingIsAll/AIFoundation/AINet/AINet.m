@@ -168,7 +168,7 @@ static AINet *_instance;
 -(void) setAbsIndexReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue{
     [self.netAbsIndex setIndexReference:indexPointer target_p:target_p difValue:difValue];
 }
--(AIKVPointer*) getItemAbsNodePointer:(AIKVPointer*)absValue_p{
+-(AIPointer*) getItemAbsNodePointer:(AIKVPointer*)absValue_p{
     return [self.netAbsIndex getAbsNodePointer:absValue_p];
 }
 

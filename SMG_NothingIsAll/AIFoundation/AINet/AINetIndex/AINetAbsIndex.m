@@ -102,7 +102,7 @@
 /**
  *  MARK:--------------------获取absValue所被引用的absNode地址;--------------------
  */
--(AIKVPointer*) getAbsNodePointer:(AIKVPointer*)absValue_p{
+-(AIPointer*) getAbsNodePointer:(AIKVPointer*)absValue_p{
     NSArray *ports = [self.reference getReference_JustAbsResult:absValue_p limit:1];
     AIPort *port = ARR_INDEX(ports, 0);
     if (ISOK(port, AIPort.class)) {
