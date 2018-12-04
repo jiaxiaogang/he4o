@@ -193,7 +193,7 @@ static AIThinkingControl *_instance;
     algsArr = ARRTOOK(algsArr);
     
     //2. 到index里找组微信息;
-    AIAbsIndex
+    //AIAbsIndex
     
     //1) 如果微信息指向,组微信息; (不太可能)
     //首先在index索引序列中查找algsArr的微信息;
