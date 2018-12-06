@@ -242,6 +242,17 @@ static AIThinkingControl *_instance;
  *  3. dataIn负责护送一次指定信息的ass(随后进入递归循环)
  */
 -(void) dataIn_AssociativeData:(NSArray*)algsArr {
+    
+    //1. TODO_Tomorrow写一个无mv的节点出来;
+    
+    
+    //1) algsArr中元素进行装索引,生成抽象节点;
+    //2) 再根据algsArr所生成的所有抽象节点,打包生成具象节点;
+    
+    
+    
+    
+    
     if (ISOK(algsArr, NSArray.class)) {
         //1. noMv信号已输入完毕,联想
         for (AIKVPointer *algs_kvp in algsArr) {
