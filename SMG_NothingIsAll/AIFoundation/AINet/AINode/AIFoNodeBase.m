@@ -10,6 +10,13 @@
 
 @implementation AIFoNodeBase
 
+-(NSMutableArray *)absPorts{
+    if (_absPorts == nil) {
+        _absPorts = [NSMutableArray new];
+    }
+    return _absPorts;
+}
+
 /**
  *  MARK:--------------------NSCoding--------------------
  */
@@ -17,6 +24,7 @@
     self = [super initWithCoder:aDecoder];
     if (self) {
         self.cmvNode_p = [aDecoder decodeObjectForKey:@"cmvNode_p"];
+        self.absPorts = [aDecoder decodeObjectForKey:@"absPorts"];
     }
     return self;
 }
@@ -24,6 +32,7 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [super encodeWithCoder:aCoder];
     [aCoder encodeObject:self.cmvNode_p forKey:@"cmvNode_p"];
+    [aCoder encodeObject:self.absPorts forKey:@"absPorts"];
 }
 
 @end

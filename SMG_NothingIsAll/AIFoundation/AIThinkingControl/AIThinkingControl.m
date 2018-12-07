@@ -12,7 +12,7 @@
 #import "NSObject+Extension.h"
 #import "AIKVPointer.h"
 #import "AIPort.h"
-#import "AINetAbsNode.h"
+#import "AINetAbsFoNode.h"
 #import "ThinkingUtils.h"
 #import "OutputUtils.h"
 #import "Output.h"
@@ -279,7 +279,7 @@ static AIThinkingControl *_instance;
                         
                         //6. log
                         NSLog(@"联想到cmvNode: %@",[NVUtils getCmvModelDesc_ByCmvNode:cmvNode]);
-                    }else if(ISOK(referNode, AINetAbsNode.class)){
+                    }else if(ISOK(referNode, AINetAbsFoNode.class)){
                         //联想到数据网络节点
                         //TODO>>>>将结果存到shortCache或thinkFeedCache//或先不添加,随后有需要时,再说;
                     }
@@ -394,11 +394,11 @@ static AIThinkingControl *_instance;
                     NSLog(@"抽象中 > 类比sames: (%@) & (%@) = (%@)",foOrderStr,assMicroStr,samesStr);
                     
                     //7. 已存在抽象节点或sames无效时跳过;
-                    BOOL jumpForAbsAlreadyHav = (ISOK(assFrontNode, AINetAbsNode.class) && ARRISOK(assMicroValue_ps) && ARRISOK(sames) && sames.count == assMicroValue_ps.count);
+                    BOOL jumpForAbsAlreadyHav = (ISOK(assFrontNode, AINetAbsFoNode.class) && ARRISOK(assMicroValue_ps) && ARRISOK(sames) && sames.count == assMicroValue_ps.count);
                     if (ARRISOK(sames) && !jumpForAbsAlreadyHav) {
                         
                         //8. 构建absNode
-                        AINetAbsNode *create_an = [[AINet sharedInstance] createAbs:@[foNode,assFrontNode] refs_p:sames];
+                        AINetAbsFoNode *create_an = [[AINet sharedInstance] createAbs:@[foNode,assFrontNode] refs_p:sames];
                         
                         //9. 并把抽象节点的信息_添加到瞬时记忆
                         [self dataIn_ToShortCache:create_an.absValue_p];
@@ -543,7 +543,7 @@ static AIThinkingControl *_instance;
             }];
         }else{
             //4. 没有执行方案,转向对抽象宏节点进行尝试输出;
-            AINetAbsNode *tryOutAbsNode = [self dataOut_AssociativeConcreteData_TryOut:expMvNode exceptTryOut_ps:expModel.exceptTryOut_ps];
+            AINetAbsFoNode *tryOutAbsNode = [self dataOut_AssociativeConcreteData_TryOut:expMvNode exceptTryOut_ps:expModel.exceptTryOut_ps];
             if (tryOutAbsNode != nil) {
                 [self dataOut_CheckScore_TryOut:tryOutAbsNode complete:^(CGFloat score, NSArray *out_ps) {
                     expModel.order += score;//联想对当前expModel的order影响;
@@ -649,7 +649,7 @@ static AIThinkingControl *_instance;
  *  1. 从上至下的联想absNode;
  *  注:目前仅支持每层1个,与最分支向下联想,即abs的最强关联的下层前1;
  */
--(AINetAbsNode*) dataOut_AssociativeConcreteData_TryOut:(NSObject*)expMvNode exceptTryOut_ps:(nonnull NSMutableArray*)exceptTryOut_ps{
+-(AINetAbsFoNode*) dataOut_AssociativeConcreteData_TryOut:(NSObject*)expMvNode exceptTryOut_ps:(nonnull NSMutableArray*)exceptTryOut_ps{
     if(ISOK(expMvNode, AIAbsCMVNode.class)){
         //1. 判断是否已排除
         AIAbsCMVNode *expAbsCmvNode = (AIAbsCMVNode*)expMvNode;
@@ -664,7 +664,7 @@ static AIThinkingControl *_instance;
         //2. 未排除,返回;
         if (!excepted) {
             [exceptTryOut_ps addObject:expAbsCmvNode.foNode_p];
-            AINetAbsNode *result = [SMGUtils searchObjectForPointer:expAbsCmvNode.foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+            AINetAbsFoNode *result = [SMGUtils searchObjectForPointer:expAbsCmvNode.foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
             return result;
         }else{
             //3. 已排除,递归下一层;
@@ -702,7 +702,7 @@ static AIThinkingControl *_instance;
     //2. 判断out_ps本身有没有宏节点; (目前对output_p不做absIndex)
     //AIKVPointer *absValue_p = [theNet getNetAbsIndex_AbsPointer:out_ps];
     //AIKVPointer *absNode_p = [theNet getItemAbsNodePointer:absValue_p];
-    //AINetAbsNode *assOutAbsNode = [SMGUtils searchObjectForPointer:absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+    //AINetAbsFoNode *assOutAbsNode = [SMGUtils searchObjectForPointer:absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
 
     //3. 检查assOutAbsNode对应的mv & 处理absCmvNode评价影响力;(系数0.5) (目前对output_p不做absIndex)
     //if (assOutAbsNode) {
@@ -714,7 +714,7 @@ static AIThinkingControl *_instance;
     for (AIPort *absPort in ARRTOOK(foNode.absPorts)) {
         
         //5. 判断absNode是否是由out_ps抽象的 (根据"微信息"组)
-        AINetAbsNode *absNode = [SMGUtils searchObjectForPointer:absPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
+        AINetAbsFoNode *absNode = [SMGUtils searchObjectForPointer:absPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
         if (absNode) {
             NSArray *microArr_p = ARRTOOK([SMGUtils searchObjectForPointer:absNode.absValue_p fileName:FILENAME_AbsValue]);
             BOOL fromOut_ps = [SMGUtils containsSub_ps:microArr_p parent_ps:out_ps];
@@ -733,7 +733,7 @@ static AIThinkingControl *_instance;
 /**
  *  MARK:--------------------可行性判定 (尝试激活执行方案)--------------------
  */
--(void) dataOut_CheckScore_TryOut:(AINetAbsNode*)absNode complete:(void(^)(CGFloat score,NSArray *out_ps))complete{
+-(void) dataOut_CheckScore_TryOut:(AINetAbsFoNode*)absNode complete:(void(^)(CGFloat score,NSArray *out_ps))complete{
     CGFloat score = 0;
     if (!absNode) {
         complete(0,nil);
@@ -744,7 +744,7 @@ static AIThinkingControl *_instance;
     //2. 根据microArr_p联想到对应的assAbsCmvNode;
     AIKVPointer *absValue_p = [theNet getNetAbsIndex_AbsPointer:microArr_p];
     AIPointer *absNode_p = [theNet getItemAbsNodePointer:absValue_p];
-    AINetAbsNode *assAbsNode = [SMGUtils searchObjectForPointer:absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+    AINetAbsFoNode *assAbsNode = [SMGUtils searchObjectForPointer:absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
     
     //3. 处理assAbsNode评价影响力;(系数0.8)
     CGFloat scoreForce = [ThinkingUtils getScoreForce:assAbsNode.cmvNode_p ratio:0.8f];

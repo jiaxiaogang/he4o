@@ -1,18 +1,18 @@
 //
-//  AINetAbsNode.m
+//  AINetAbsFoNode.m
 //  SMG_NothingIsAll
 //
 //  Created by iMac on 2018/7/26.
 //  Copyright © 2018年 XiaoGang. All rights reserved.
 //
 
-#import "AINetAbsNode.h"
+#import "AINetAbsFoNode.h"
 #import "XGRedisUtil.h"
 #import "AIPort.h"
 #import "AIKVPointer.h"
 #import "AIFrontOrderNode.h"
 
-@implementation AINetAbsNode
+@implementation AINetAbsFoNode
 
 
 //MARK:===============================================================

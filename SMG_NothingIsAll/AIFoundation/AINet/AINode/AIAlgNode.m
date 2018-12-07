@@ -1,14 +1,14 @@
 //
-//  AICMVNodeBase.m
+//  AIAlgNode.m
 //  SMG_NothingIsAll
 //
-//  Created by jiaxiaogang on 2018/9/26.
+//  Created by jia on 2018/12/7.
 //  Copyright © 2018年 XiaoGang. All rights reserved.
 //
 
-#import "AICMVNodeBase.h"
+#import "AIAlgNode.h"
 
-@implementation AICMVNodeBase
+@implementation AIAlgNode
 
 -(NSMutableArray *)absPorts{
     if (_absPorts == nil) {
@@ -17,26 +17,31 @@
     return _absPorts;
 }
 
+-(NSMutableArray *)values_p{
+    if (_values_p == nil) {
+        _values_p = [NSMutableArray new];
+    }
+    return _values_p;
+}
+
+
+
 /**
  *  MARK:--------------------NSCoding--------------------
  */
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     if (self) {
-        self.urgentTo_p = [aDecoder decodeObjectForKey:@"urgentTo_p"];
-        self.delta_p = [aDecoder decodeObjectForKey:@"delta_p"];
-        self.foNode_p = [aDecoder decodeObjectForKey:@"foNode_p"];
         self.absPorts = [aDecoder decodeObjectForKey:@"absPorts"];
+        self.values_p = [aDecoder decodeObjectForKey:@"values_p"];
     }
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:self.urgentTo_p forKey:@"urgentTo_p"];
-    [aCoder encodeObject:self.delta_p forKey:@"delta_p"];
-    [aCoder encodeObject:self.foNode_p forKey:@"foNode_p"];
     [aCoder encodeObject:self.absPorts forKey:@"absPorts"];
+    [aCoder encodeObject:self.values_p forKey:@"values_p"];
 }
 
 @end

@@ -16,26 +16,26 @@
 #import "AINet.h"
 #import "AINetAbsUtils.h"
 #import "AIFrontOrderNode.h"
-#import "AINetAbsNode.h"
+#import "AINetAbsFoNode.h"
 
 @implementation AINetAbs
 
--(AINetAbsNode*) create:(NSArray*)con_nodes refs_p:(NSArray*)refs_p{
+-(AINetAbsFoNode*) create:(NSArray*)conFoNodes refs_p:(NSArray*)refs_p{
     //1. 从宏信息索引中,查找是否已经存在针对refs_p的抽象;(有则复用)(无则创建)
     AIKVPointer *absValue_p = [theNet getNetAbsIndex_AbsPointer:refs_p];
     AIPointer *absNode_p = [theNet getItemAbsNodePointer:absValue_p];
-    AINetAbsNode *absNode = [SMGUtils searchObjectForPointer:absNode_p fileName:FILENAME_Node];
+    AINetAbsFoNode *absNode = [SMGUtils searchObjectForPointer:absNode_p fileName:FILENAME_Node];
     
     //2. absNode:无则创建;
     if (absNode == nil) {
-        absNode = [[AINetAbsNode alloc] init];
+        absNode = [[AINetAbsFoNode alloc] init];
         absNode.pointer = [SMGUtils createPointerForNode:PATH_NET_ABS_NODE];
         absNode.absValue_p = absValue_p;//指定微信息
         [[AINet sharedInstance] setAbsIndexReference:absValue_p target_p:absNode.pointer difValue:1];//引用插线
     }
     
     //3. 关联
-    for (AINodeBase *con_node in ARRTOOK(con_nodes)) {
+    for (AIFoNodeBase *con_node in ARRTOOK(conFoNodes)) {
         if (ISOK(con_node, AINodeBase.class)) {
             //4. conPorts插口(有则强化 & 无则创建)
             AIPort *findConPort = [AINetAbsUtils searchPortWithTargetP:con_node.pointer fromPorts:absNode.conPorts];

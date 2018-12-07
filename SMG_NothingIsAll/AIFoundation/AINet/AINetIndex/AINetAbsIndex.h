@@ -11,7 +11,7 @@
 //MARK:===============================================================
 //MARK:                     < 宏信息索引 >
 //MARK:===============================================================
-@class AIKVPointer,AINetAbsNode,AIPort;
+@class AIKVPointer,AINetAbsFoNode,AIPort;
 @interface AINetAbsIndex : NSObject
 
 //根据refs_p(查找或创建)absValue,并返回地址;

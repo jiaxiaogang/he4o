@@ -7,7 +7,7 @@
 //
 
 #import "NVUtils.h"
-#import "AINetAbsNode.h"
+#import "AINetAbsFoNode.h"
 #import "AIPort.h"
 #import "AIFrontOrderNode.h"
 #import "AIKVPointer.h"
@@ -44,8 +44,8 @@
     NSString *foDesc = nil;
     if (ISOK(foNode, AIFrontOrderNode.class)) {
         foDesc = [NVUtils convertValuePs2Str:((AIFrontOrderNode*)foNode).orders_kvp];
-    }else if(ISOK(foNode, AINetAbsNode.class)){
-        NSArray *value_ps = [SMGUtils searchObjectForPointer:((AINetAbsNode*)foNode).absValue_p fileName:FILENAME_AbsValue time:cRedisValueTime];
+    }else if(ISOK(foNode, AINetAbsFoNode.class)){
+        NSArray *value_ps = [SMGUtils searchObjectForPointer:((AINetAbsFoNode*)foNode).absValue_p fileName:FILENAME_AbsValue time:cRedisValueTime];
         foDesc = [NVUtils convertValuePs2Str:value_ps];
     }
     return foDesc;
@@ -98,7 +98,7 @@
 //MARK:===============================================================
 
 //conPorts的描述 (conPorts >>\n > 1\n > 2)
-+(NSString*) getFoNodeConPortsDesc:(AINetAbsNode*)absNode{
++(NSString*) getFoNodeConPortsDesc:(AINetAbsFoNode*)absNode{
     //1. 数据检查
     if (absNode) {
         NSMutableString *mStr = [NSMutableString new];

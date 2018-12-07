@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AINetAbsNode,AICMVNode,AIFrontOrderNode,AIAbsCMVNode;
+@class AINetAbsFoNode,AICMVNode,AIFrontOrderNode,AIAbsCMVNode;
 @interface NVUtils : NSObject
 
 
@@ -50,7 +50,7 @@
 //MARK:===============================================================
 
 //conPorts的描述 (conPorts >>\n > 1\n > 2)
-+(NSString*) getFoNodeConPortsDesc:(AINetAbsNode*)absNode;
++(NSString*) getFoNodeConPortsDesc:(AINetAbsFoNode*)absNode;
 
 //absPorts的描述 (absPorts >>\n > 1\n > 2)
 +(NSString*) getFoNodeAbsPortsDesc:(AIFoNodeBase*)foNode;

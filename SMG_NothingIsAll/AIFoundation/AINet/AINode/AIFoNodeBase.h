@@ -15,5 +15,6 @@
 @interface AIFoNodeBase : AINodeBase
 
 @property (strong, nonatomic) AIKVPointer *cmvNode_p;        //cmvNode_p结果;
+@property (strong, nonatomic) NSMutableArray *absPorts; //抽象方向的端口;
 
 @end

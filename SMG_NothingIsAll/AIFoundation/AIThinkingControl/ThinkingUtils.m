@@ -14,7 +14,7 @@
 #import "AICMVNode.h"
 #import "AINetCMV.h"
 #import "AIAbsCMVNode.h"
-#import "AINetAbsNode.h"
+#import "AINetAbsFoNode.h"
 
 @implementation ThinkingUtils
 
@@ -243,8 +243,8 @@
 +(NSArray*) getNodeMicroValuePointersFromFrontNode:(AINodeBase*)frontNode{
     if (ISOK(frontNode, AIFrontOrderNode.class)) {
         return ((AIFrontOrderNode*)frontNode).orders_kvp;
-    }else if(ISOK(frontNode, AINetAbsNode.class)){
-        AINetAbsNode *absNode = (AINetAbsNode*)frontNode;
+    }else if(ISOK(frontNode, AINetAbsFoNode.class)){
+        AINetAbsFoNode *absNode = (AINetAbsFoNode*)frontNode;
         NSArray *absValue_ps = [SMGUtils searchObjectForPointer:absNode.absValue_p fileName:FILENAME_AbsValue time:cRedisValueTime];
         return absValue_ps;
     }
