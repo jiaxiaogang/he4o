@@ -11,6 +11,5 @@
 @interface AIAlgNode : AINodeBase
 
 @property (strong, nonatomic) NSMutableArray *absPorts;
-@property (strong, nonatomic) NSMutableArray *values_p;
 
 @end

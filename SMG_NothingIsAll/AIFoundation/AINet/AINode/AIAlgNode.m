@@ -17,14 +17,6 @@
     return _absPorts;
 }
 
--(NSMutableArray *)values_p{
-    if (_values_p == nil) {
-        _values_p = [NSMutableArray new];
-    }
-    return _values_p;
-}
-
-
 
 /**
  *  MARK:--------------------NSCoding--------------------
@@ -33,7 +25,6 @@
     self = [super initWithCoder:aDecoder];
     if (self) {
         self.absPorts = [aDecoder decodeObjectForKey:@"absPorts"];
-        self.values_p = [aDecoder decodeObjectForKey:@"values_p"];
     }
     return self;
 }
@@ -41,7 +32,6 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [super encodeWithCoder:aCoder];
     [aCoder encodeObject:self.absPorts forKey:@"absPorts"];
-    [aCoder encodeObject:self.values_p forKey:@"values_p"];
 }
 
 @end

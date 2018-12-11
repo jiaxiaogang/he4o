@@ -120,6 +120,7 @@ static AIThinkingControl *_instance;
 -(void) dataIn:(NSObject*)algsModel{
     //1. 装箱(除mv有两个元素外一般仅有一个元素)
     NSArray *algsArr = [self dataIn_ConvertPointer:algsModel];
+    AIPointer *algNode = [self dataIn_ConvertAlgNode:algsArr];
     
     //2. 检测imv
     BOOL findMV = [self dataIn_CheckMV:algsArr];
@@ -136,29 +137,6 @@ static AIThinkingControl *_instance;
         //6. 加入瞬时记忆
         for (AIKVPointer *algs_p in ARRTOOK(algsArr)) {
             [self dataIn_ToShortCache:algs_p];
-            
-            
-            
-            
-            
-            //因algsArr.lengeh > 8;
-            //所以,需要对algsArr中的元素,进行实时的联想,并将已抽象的微信息取回,来以组替分;
-            //TODOTMR: (2,5) 以组替分
-            //1. convert2Pointer; (已经ok)
-            //2. checkConvertAbsPointer; (节约瞬时记忆占用长度,同时为认知升级提供部分支撑)
-            //3. assData; (对dataIn_AssociativeData()方法进行拆分重构;先不搞)
-            //4. assMv; (对dataIn_AssociativeData()方法进行拆分重构;先不搞)
-            //5. ThinkingUtils.analogyOrdersA()方法,扩展对"微信息"信息本身的类比,而非只是pointer;
-            
-            
-            //>>>>认知循环;
-            //1. 单组放开8条限制;
-            //2. 共最多8组; (难点在于如何使用)
-            //3. 单组临时存在,并在处理后,丢失一些细节; (将指向明确的,进行存瞬时记忆为一组);
-            //4. 多组间,再进行抽象认知; (这整个过程,被称为认知循环)
-            
-            
-            
         }
     }
     
@@ -188,25 +166,16 @@ static AIThinkingControl *_instance;
 }
 
 //检查微信息序列,并将有"组微信息"的进行转换;
--(NSArray*) dataIn_CheckConvertAbsPointer:(NSArray*)algsArr{
+-(AIPointer*) dataIn_ConvertAlgNode:(NSArray*)algsArr{
     //1. 数据检查;
     algsArr = ARRTOOK(algsArr);
     
-    //2. 到index里找组微信息;
-    //AIAbsIndex
-    
-    //1) 如果微信息指向,组微信息; (不太可能)
-    //首先在index索引序列中查找algsArr的微信息;
-    //然后
-    
-    //2) 如果微信息未指向组微信息; (从12345678长的往短的查)
-    //首先12,123,1234,12345,123456,1234567,12345678;
-    //23,234,2345,23456,234567,2345678;
-    //34,345,3456,34567...
-    //...
+    //1. 打包成algTypeNode并加入瞬时序列;
     
     
-    return algsArr;
+    
+    
+    return nil;
 }
 
 /**
@@ -242,17 +211,6 @@ static AIThinkingControl *_instance;
  *  3. dataIn负责护送一次指定信息的ass(随后进入递归循环)
  */
 -(void) dataIn_AssociativeData:(NSArray*)algsArr {
-    
-    //1. TODO_Tomorrow写一个无mv的节点出来;
-    
-    
-    //1) algsArr中元素进行装索引,生成抽象节点;
-    //2) 再根据algsArr所生成的所有抽象节点,打包生成具象节点;
-    
-    
-    
-    
-    
     if (ISOK(algsArr, NSArray.class)) {
         //1. noMv信号已输入完毕,联想
         for (AIKVPointer *algs_kvp in algsArr) {
