@@ -8,6 +8,8 @@
 
 #import "AINetUtils.h"
 #import "AIKVPointer.h"
+#import "AIAlgNode.h"
+#import "AIAbsAlgNode.h"
 
 @implementation AINetUtils
 
@@ -27,6 +29,21 @@
         [mArr addObject:identifier];
         [SMGUtils insertObject:mArr rootPath:canout_p.filePath fileName:FILENAME_Default time:cRedisDefaultTime];
     }
+}
+
+//MARK:===============================================================
+//MARK:                     < algTypeNodeUtils >
+//MARK:===============================================================
++(AIAlgNode*) createAlgNode:(NSArray*)algsArr{
+    NSMutableArray *absAlgNodes = [[NSMutableArray alloc] init];
+    for (AIKVPointer *alg_p in ARRTOOK(algsArr)) {
+        AIAbsAlgNode *absNode = [[AIAbsAlgNode alloc] init];
+        
+        
+        
+        
+    }
+    return nil;
 }
 
 @end

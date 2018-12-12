@@ -23,6 +23,8 @@
 #import "MVCacheManager.h"
 #import "ExpCacheModel.h"
 #import "AINetUtils.h"
+#import "AIAbsAlgNode.h"
+#import "AIAlgNode.h"
 
 /**
  *  MARK:--------------------思维控制器--------------------
@@ -120,30 +122,36 @@ static AIThinkingControl *_instance;
 -(void) dataIn:(NSObject*)algsModel{
     //1. 装箱(除mv有两个元素外一般仅有一个元素)
     NSArray *algsArr = [self dataIn_ConvertPointer:algsModel];
-    AIPointer *algNode = [self dataIn_ConvertAlgNode:algsArr];
     
     //2. 检测imv
     BOOL findMV = [self dataIn_CheckMV:algsArr];
     
     //3. 分流
-    AIFrontOrderNode *foNode;
     if (findMV) {
         //4. 输入新的cmvAlgsArr(下面已有assExp中,有mv方向的添加mvCache代码,此处去掉)
         //[self.mvCacheManager dataIn_CmvAlgsArr:algsArr];
         
         //5. 创建NetCmvModel;
-        foNode = [self dataIn_CreateNetCMVModel:algsArr];
+        AIFrontOrderNode *foNode = [self dataIn_CreateNetCMVModel:algsArr];
+    
+        //7. 联想经验
+        [self dataIn_AssociativeExperience:foNode];
     }else{
+        
+        //1. 打包成algTypeNode;
+        AIPointer *algNode = [self dataIn_ConvertAlgNode:algsArr];
+        
+        
+        //TODO
+        
+        
+        
         //6. 加入瞬时记忆
         for (AIKVPointer *algs_p in ARRTOOK(algsArr)) {
             [self dataIn_ToShortCache:algs_p];
         }
-    }
-    
-    //7. 联想
-    if (findMV) {
-        [self dataIn_AssociativeExperience:foNode];
-    }else{
+        
+        //7. 联想信息
         [self dataIn_AssociativeData:algsArr];
     }
 }
@@ -167,14 +175,10 @@ static AIThinkingControl *_instance;
 
 //检查微信息序列,并将有"组微信息"的进行转换;
 -(AIPointer*) dataIn_ConvertAlgNode:(NSArray*)algsArr{
-    //1. 数据检查;
-    algsArr = ARRTOOK(algsArr);
-    
-    //1. 打包成algTypeNode并加入瞬时序列;
-    
-    
-    
-    
+    AIAlgNode *algNode = [theNet createAlgNode:algsArr];
+    if (algNode) {
+        return algNode.pointer;
+    }
     return nil;
 }
 

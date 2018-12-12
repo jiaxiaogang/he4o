@@ -8,6 +8,9 @@
 
 #import "AINodeBase.h"
 
+/**
+ *  MARK:--------------------算法类型具象节点--------------------
+ */
 @interface AIAlgNode : AINodeBase
 
 @property (strong, nonatomic) NSMutableArray *absPorts;

@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-
+@class AIAlgNode;
 @interface AINetUtils : NSObject
 
 /**
@@ -25,5 +25,21 @@
  */
 +(void) setCanOutput:(NSString*)algsType dataSource:(NSString*)dataSource ;
 
-@end
 
+//MARK:===============================================================
+//MARK:                     < algTypeNodeUtils >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------构建algNode--------------------
+ *  1. 自动将algsArr中的元素分别生成absAlgNode
+ *  2. absAlgNode根据索引的去重而去重;
+ *  3. 具象algNode根据网络中联想而去重; (for(abs1.cons) & for(abs2.cons))
+ *  4. abs和con都要有关联强度序列;
+ *
+ *  @param algsArr   : 算法值的装箱数组;
+ *  @result 具象algNode
+ */
++(AIAlgNode*) createAlgNode:(NSArray*)algsArr;
+
+@end

@@ -20,6 +20,7 @@
 #import "AIKVPointer.h"
 #import "AINetIndexReference.h"
 #import "AIFrontOrderNode.h"
+#import "AINetUtils.h"
 
 @interface AINet () <AINetCMVDelegate,AINetAbsCMVDelegate>
 
@@ -205,6 +206,14 @@ static AINet *_instance;
  */
 -(void) aiNetCMVNode_createdAbsCMVNode:(AIKVPointer*)absCmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction difStrong:(NSInteger)difStrong{
     [self.netDirectionReference setNodePointerToDirectionReference:absCmvNode_p mvAlgsType:mvAlgsType direction:direction difStrong:difStrong];
+}
+
+
+//MARK:===============================================================
+//MARK:                     < algNode >
+//MARK:===============================================================
+-(AIAlgNode*) createAlgNode:(NSArray*)algsArr{
+    return [AINetUtils createAlgNode:algsArr];
 }
 
 @end

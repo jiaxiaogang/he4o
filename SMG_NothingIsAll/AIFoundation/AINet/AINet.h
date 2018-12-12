@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIModel,AINode,AIImvAlgsModel,AIPointer,AIKVPointer,AIPort,AIFrontOrderNode,AINetAbsFoNode,AIAbsCMVNode;
+@class AIModel,AINode,AIImvAlgsModel,AIPointer,AIKVPointer,AIPort,AIFrontOrderNode,AINetAbsFoNode,AIAbsCMVNode,AIAlgNode;
 @interface AINet : NSObject
 
 +(AINet*) sharedInstance;
@@ -71,6 +71,11 @@
 //MARK:===============================================================
 -(AIAbsCMVNode*) createAbsCMVNode:(AIKVPointer*)absNode_p aMv_p:(AIKVPointer*)aMv_p bMv_p:(AIKVPointer*)bMv_p;
 
+
+//MARK:===============================================================
+//MARK:                     < algNode >
+//MARK:===============================================================
+-(AIAlgNode*) createAlgNode:(NSArray*)algsArr;
 
 @end
 
