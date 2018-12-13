@@ -136,7 +136,7 @@
     
         for (NSInteger i = 0; i < localPorts.count; i++) {
             AIPort *item = ARR_INDEX(localPorts, localPorts.count - i - 1);
-            if (item && item.target_p && [PATH_NET_ABS_NODE isEqualToString:[item.target_p paramForKey:@"folderName"]]) {
+            if (item && item.target_p && [PATH_NET_FO_ABS_NODE isEqualToString:[item.target_p paramForKey:@"folderName"]]) {
                 [mArr addObject:item];
                 if (mArr.count >= limit) {
                     return mArr;

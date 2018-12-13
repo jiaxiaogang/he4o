@@ -19,9 +19,13 @@
  *  MARK:--------------------PathKey--------------------
  */
 
-//node
+//algNode
+#define PATH_NET_ALG_NODE           @"NET_ALG_NODE"                         //Alg节点根目录;(白质)
+#define PATH_NET_ALG_ABS_NODE       @"NET_ALG_ABS_NODE"                     //AbsAlg节点根目录;(白质)
+
+//foNode
 #define PATH_NET_FRONT_ORDER_NODE   @"NET_FRONT_ORDER_NODE"                 //frontOrder节点根目录;(白质)
-#define PATH_NET_ABS_NODE           @"NET_ABS_NODE"                         //神经网络根目录;(白质)
+#define PATH_NET_FO_ABS_NODE        @"NET_FO_ABS_NODE"                      //神经网络根目录;(白质)
 
 //cmv
 #define PATH_NET_CMV_NODE           @"NET_CMV_NODE"                         //cmv节点根目录;(白质)
