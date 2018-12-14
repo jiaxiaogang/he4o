@@ -1,5 +1,5 @@
 //
-//  AINetCMV.h
+//  AICMVManager.h
 //  SMG_NothingIsAll
 //
 //  Created by iMac on 2018/5/6.
@@ -13,7 +13,7 @@
 //MARK:                     < cmv基本模型 >
 //MARK:===============================================================
 @class AIKVPointer,AIFrontOrderNode;
-@protocol AINetCMVDelegate <NSObject>
+@protocol AICMVManagerDelegate <NSObject>
 
 
 /**
@@ -37,9 +37,9 @@
 /**
  *  MARK:--------------------foNode->cmvNode的模型--------------------
  */
-@interface AINetCMV : NSObject
+@interface AICMVManager : NSObject
 
-@property (weak, nonatomic) id<AINetCMVDelegate> delegate;
+@property (weak, nonatomic) id<AICMVManagerDelegate> delegate;
 
 /**
  *  MARK:--------------------create foNode->cmvNode 基本模型--------------------

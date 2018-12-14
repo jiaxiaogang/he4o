@@ -10,12 +10,12 @@
 #import "AIPointer.h"
 #import "NSObject+Extension.h"
 #import "AINetIndex.h"
-#import "AINetCMV.h"
+#import "AICMVManager.h"
 #import "AIPort.h"
-#import "AINetAbs.h"
+#import "AIAbsManager.h"
 #import "AINetAbsIndex.h"
 #import "AINetDirectionReference.h"
-#import "AINetAbsCMV.h"
+#import "AIAbsCMVManager.h"
 #import "AIAbsCMVNode.h"
 #import "AIKVPointer.h"
 #import "AINetIndexReference.h"
@@ -23,14 +23,14 @@
 #import "AINetUtils.h"
 #import "AIAlgNodeManager.h"
 
-@interface AINet () <AINetCMVDelegate,AINetAbsCMVDelegate>
+@interface AINet () <AICMVManagerDelegate,AIAbsCMVManagerDelegate>
 
 @property (strong, nonatomic) AINetIndex *netIndex; //索引区(皮层/海马)
-@property (strong, nonatomic) AINetCMV *netCMV;     //网络树根(杏仁核)
-@property (strong, nonatomic) AINetAbs *netAbs;     //抽具象序列
+@property (strong, nonatomic) AICMVManager *cmvManager;     //网络树根(杏仁核)
+@property (strong, nonatomic) AIAbsManager *absManager;     //抽具象序列
 @property (strong, nonatomic) AINetAbsIndex *netAbsIndex;//宏信息索引区(海马)
 @property (strong, nonatomic) AINetDirectionReference *netDirectionReference;
-@property (strong, nonatomic) AINetAbsCMV *netAbsCMV;//网络cmv的抽象;
+@property (strong, nonatomic) AIAbsCMVManager *absCmvManager;//网络cmv的抽象;
 @property (strong, nonatomic) AINetIndexReference *reference;
 
 @end
@@ -57,14 +57,14 @@ static AINet *_instance;
 
 -(void) initData{
     self.netIndex = [[AINetIndex alloc] init];
-    self.netCMV = [[AINetCMV alloc] init];
-    self.netCMV.delegate = self;
-    self.netAbs = [[AINetAbs alloc] init];
+    self.cmvManager = [[AICMVManager alloc] init];
+    self.cmvManager.delegate = self;
+    self.absManager = [[AIAbsManager alloc] init];
     self.netAbsIndex = [[AINetAbsIndex alloc] init];
     self.netDirectionReference = [[AINetDirectionReference alloc] init];
     self.reference = [[AINetIndexReference alloc] init];
-    self.netAbsCMV = [[AINetAbsCMV alloc] init];
-    self.netAbsCMV.delegate = self;
+    self.absCmvManager = [[AIAbsCMVManager alloc] init];
+    self.absCmvManager.delegate = self;
 }
 
 
@@ -130,12 +130,12 @@ static AINet *_instance;
 //MARK:                     < cmv >
 //MARK:===============================================================
 -(AIFrontOrderNode*) createCMV:(NSArray*)imvAlgsArr order:(NSArray*)order{
-    return [self.netCMV create:imvAlgsArr order:order];
+    return [self.cmvManager create:imvAlgsArr order:order];
 }
 
 
 /**
- *  MARK:--------------------AINetCMVDelegate--------------------
+ *  MARK:--------------------AICMVManagerDelegate--------------------
  */
 -(void)aiNetCMV_CreatedNode:(AIKVPointer *)indexPointer nodePointer:(AIKVPointer *)nodePointer{
     if (ISOK(indexPointer, AIKVPointer.class)) {
@@ -157,7 +157,7 @@ static AINet *_instance;
 //MARK:                     < abs >
 //MARK:===============================================================
 -(AINetAbsFoNode*) createAbs:(NSArray*)foNodes refs_p:(NSArray*)refs_p{
-    return [self.netAbs create:foNodes refs_p:refs_p];
+    return [self.absManager create:foNodes refs_p:refs_p];
 }
 
 
@@ -199,11 +199,11 @@ static AINet *_instance;
 //MARK:                     < absCmv >
 //MARK:===============================================================
 -(AIAbsCMVNode*) createAbsCMVNode:(AIKVPointer*)absNode_p aMv_p:(AIKVPointer*)aMv_p bMv_p:(AIKVPointer*)bMv_p{
-    return [self.netAbsCMV create:absNode_p aMv_p:aMv_p bMv_p:bMv_p];
+    return [self.absCmvManager create:absNode_p aMv_p:aMv_p bMv_p:bMv_p];
 }
 
 /**
- *  MARK:--------------------AINetAbsCMVDelegate--------------------
+ *  MARK:--------------------AIAbsCMVManagerDelegate--------------------
  */
 -(void) aiNetCMVNode_createdAbsCMVNode:(AIKVPointer*)absCmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction difStrong:(NSInteger)difStrong{
     [self.netDirectionReference setNodePointerToDirectionReference:absCmvNode_p mvAlgsType:mvAlgsType direction:direction difStrong:difStrong];

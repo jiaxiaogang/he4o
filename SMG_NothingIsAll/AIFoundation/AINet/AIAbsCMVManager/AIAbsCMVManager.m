@@ -1,12 +1,12 @@
 //
-//  AINetAbsCMV.m
+//  AIAbsCMVManager.m
 //  SMG_NothingIsAll
 //
 //  Created by iMac on 2018/7/27.
 //  Copyright © 2018年 XiaoGang. All rights reserved.
 //
 
-#import "AINetAbsCMV.h"
+#import "AIAbsCMVManager.h"
 #import "AIAbsCMVNode.h"
 #import "AICMVNode.h"
 #import "AIKVPointer.h"
@@ -17,7 +17,7 @@
 /**
  *  MARK:--------------------生成AINetAbsCMVNode--------------------
  */
-@implementation AINetAbsCMV
+@implementation AIAbsCMVManager
 
 
 /**

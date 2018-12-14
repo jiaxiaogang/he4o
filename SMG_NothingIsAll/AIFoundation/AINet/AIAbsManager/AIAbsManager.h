@@ -1,5 +1,5 @@
 //
-//  AINetAbs.h
+//  AIAbsManager.h
 //  SMG_NothingIsAll
 //
 //  Created by iMac on 2018/5/30.
@@ -12,7 +12,7 @@
 //MARK:                     < AINetAbs管理器 >
 //MARK:===============================================================
 @class AINetAbsFoNode;
-@interface AINetAbs : NSObject
+@interface AIAbsManager : NSObject
 
 
 /**

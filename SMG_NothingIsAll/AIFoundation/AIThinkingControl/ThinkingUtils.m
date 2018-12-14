@@ -12,7 +12,7 @@
 #import "ImvAlgsHungerModel.h"
 #import "AIFrontOrderNode.h"
 #import "AICMVNode.h"
-#import "AINetCMV.h"
+#import "AICMVManager.h"
 #import "AIAbsCMVNode.h"
 #import "AINetAbsFoNode.h"
 

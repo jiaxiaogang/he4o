@@ -6,8 +6,8 @@
 //  Copyright © 2018年 XiaoGang. All rights reserved.
 //
 
-#import "AINetAbs.h"
-#import "AINetCMV.h"
+#import "AIAbsManager.h"
+#import "AICMVManager.h"
 #import "AIPort.h"
 #import "PINCache.h"
 #import "AIKVPointer.h"
@@ -18,7 +18,7 @@
 #import "AIFrontOrderNode.h"
 #import "AINetAbsFoNode.h"
 
-@implementation AINetAbs
+@implementation AIAbsManager
 
 -(AINetAbsFoNode*) create:(NSArray*)conFoNodes refs_p:(NSArray*)refs_p{
     //1. 从宏信息索引中,查找是否已经存在针对refs_p的抽象;(有则复用)(无则创建)

@@ -11,7 +11,7 @@
 #import "PINCache.h"
 #import "AIKVPointer.h"
 #import "XGRedisUtil.h"
-#import "AINetAbs.h"
+#import "AIAbsManager.h"
 #import "AINetIndexReference.h"
 #import "AIPort.h"
 

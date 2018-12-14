@@ -1,5 +1,5 @@
 //
-//  AINetAbsCMV.h
+//  AIAbsCMVManager.h
 //  SMG_NothingIsAll
 //
 //  Created by iMac on 2018/7/27.
@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 
-@protocol AINetAbsCMVDelegate <NSObject>
+@protocol AIAbsCMVManagerDelegate <NSObject>
 
 
 /**
@@ -34,9 +34,9 @@
  *  > 3. 所以,absCmvNode的抽象是依托于"前因时序节点"的抽象的;
  */
 @class AIAbsCMVNode,AIKVPointer;
-@interface AINetAbsCMV : NSObject
+@interface AIAbsCMVManager : NSObject
 
-@property (weak, nonatomic) id<AINetAbsCMVDelegate> delegate;
+@property (weak, nonatomic) id<AIAbsCMVManagerDelegate> delegate;
 
 /**
  *  MARK:--------------------在两个cmvNode基础上构建抽象--------------------
