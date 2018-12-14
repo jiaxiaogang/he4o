@@ -21,6 +21,7 @@
 #import "AINetIndexReference.h"
 #import "AIFrontOrderNode.h"
 #import "AINetUtils.h"
+#import "AIAlgNodeManager.h"
 
 @interface AINet () <AINetCMVDelegate,AINetAbsCMVDelegate>
 
@@ -213,7 +214,7 @@ static AINet *_instance;
 //MARK:                     < algNode >
 //MARK:===============================================================
 -(AIAlgNode*) createAlgNode:(NSArray*)algsArr{
-    return [AINetUtils createAlgNode:algsArr];
+    return [AIAlgNodeManager createAlgNode:algsArr];
 }
 
 @end

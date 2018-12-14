@@ -26,6 +26,7 @@
 		084219ED1FD8CF81009DA6BC /* AIThinkingControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 084219EA1FD8CF81009DA6BC /* AIThinkingControl.m */; };
 		0842ADBD1FE207500048ADDC /* DemoHunger.m in Sources */ = {isa = PBXBuildFile; fileRef = 0842ADBC1FE207500048ADDC /* DemoHunger.m */; };
 		0842ADC01FE209700048ADDC /* DemoCharge.m in Sources */ = {isa = PBXBuildFile; fileRef = 0842ADBF1FE209700048ADDC /* DemoCharge.m */; };
+		08497A9921C32E17009E7D69 /* AIAlgNodeManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 08497A9821C32E17009E7D69 /* AIAlgNodeManager.m */; };
 		084C3A6B21926D5700DAA08A /* BirdView.m in Sources */ = {isa = PBXBuildFile; fileRef = 084C3A6A21926D5700DAA08A /* BirdView.m */; };
 		084C3A6D21926D7800DAA08A /* BirdView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 084C3A6C21926D7800DAA08A /* BirdView.xib */; };
 		0858C5AE2194F5DA00951BA5 /* CarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0858C5AD2194F5DA00951BA5 /* CarView.m */; };
@@ -139,6 +140,8 @@
 		0842ADBC1FE207500048ADDC /* DemoHunger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemoHunger.m; sourceTree = "<group>"; };
 		0842ADBE1FE209700048ADDC /* DemoCharge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DemoCharge.h; sourceTree = "<group>"; };
 		0842ADBF1FE209700048ADDC /* DemoCharge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemoCharge.m; sourceTree = "<group>"; };
+		08497A9721C32E17009E7D69 /* AIAlgNodeManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIAlgNodeManager.h; sourceTree = "<group>"; };
+		08497A9821C32E17009E7D69 /* AIAlgNodeManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIAlgNodeManager.m; sourceTree = "<group>"; };
 		084C3A6921926D5700DAA08A /* BirdView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BirdView.h; sourceTree = "<group>"; };
 		084C3A6A21926D5700DAA08A /* BirdView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BirdView.m; sourceTree = "<group>"; };
 		084C3A6C21926D7800DAA08A /* BirdView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BirdView.xib; sourceTree = "<group>"; };
@@ -387,6 +390,7 @@
 		083F612C1F04830F000330E1 /* AINet */ = {
 			isa = PBXGroup;
 			children = (
+				08497A9021C3228E009E7D69 /* AIAlgNodeManager */,
 				08412CA0216C322100483B6B /* AICerebel */,
 				8868F6E8210A9457000EAC9B /* AINetAbsCMV */,
 				8887E62520ABB02600F3D5E1 /* AINetAbs */,
@@ -450,6 +454,15 @@
 				0842ADBF1FE209700048ADDC /* DemoCharge.m */,
 			);
 			path = Adapter;
+			sourceTree = "<group>";
+		};
+		08497A9021C3228E009E7D69 /* AIAlgNodeManager */ = {
+			isa = PBXGroup;
+			children = (
+				08497A9721C32E17009E7D69 /* AIAlgNodeManager.h */,
+				08497A9821C32E17009E7D69 /* AIAlgNodeManager.m */,
+			);
+			path = AIAlgNodeManager;
 			sourceTree = "<group>";
 		};
 		084C3A6821926D2B00DAA08A /* View */ = {
@@ -902,6 +915,7 @@
 				88BC09DD20B4F67E0006ABEF /* XGRedisDictionary.m in Sources */,
 				0858C5D32194F8B000951BA5 /* View+MASAdditions.m in Sources */,
 				8868F6EE210AA00B000EAC9B /* AINetAbsCMVUtil.m in Sources */,
+				08497A9921C32E17009E7D69 /* AIAlgNodeManager.m in Sources */,
 				88B3865D20C6130E009553B5 /* AINetAbsIndex.m in Sources */,
 				88B23BE620BE20BC00BE8AF6 /* AINetAbs.m in Sources */,
 				08C84A8E1E9A866200897D8B /* AIInput.m in Sources */,

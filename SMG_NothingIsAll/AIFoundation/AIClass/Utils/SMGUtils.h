@@ -98,3 +98,14 @@
 +(BOOL) containsSub_p:(AIPointer*)sub_p parent_ps:(NSArray*)parent_ps;
 
 @end
+
+
+//MARK:===============================================================
+//MARK:                     < SMGUtils (convert) >
+//MARK:===============================================================
+@interface SMGUtils (Convert)
+
+//将ports端口中指向转换为指针数组返回;
++(NSArray*) convertPointersFromPorts:(NSArray*)ports;
+
+@end
