@@ -21,10 +21,13 @@
     for (AIKVPointer *alg_p in ARRTOOK(algsArr)) {
         AIAbsAlgNode *absNode = [[AIAbsAlgNode alloc] init];
         absNode.pointer = [SMGUtils createPointerForNode:PATH_NET_ALG_ABS_NODE];
-        absNode.value_p = alg_p;/////TODO引用序列去重给用上;
+        absNode.value_p = alg_p;
         
+        /////TODO引用序列去重给用上;
         
-        
+        //1. AINet中有单data装箱;
+        //2. algsArr中本来就是装箱的;
+        //3. 此处要将reference中引用序列中,查找到absNode去重;
         
         
         
