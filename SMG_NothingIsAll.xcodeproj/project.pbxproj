@@ -187,6 +187,7 @@
 		086D93361F8CA782002BAF3F /* RuntimeInvoker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RuntimeInvoker.m; sourceTree = "<group>"; };
 		087268DE219CF3B500B5490F /* AIVisionAlgs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIVisionAlgs.h; sourceTree = "<group>"; };
 		087268DF219CF3B500B5490F /* AIVisionAlgs.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIVisionAlgs.m; sourceTree = "<group>"; };
+		0877A86B21C721A90049F810 /* AINetHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetHeader.h; sourceTree = "<group>"; };
 		0881965C21800F2B00D5DB36 /* BirdLivePage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BirdLivePage.h; sourceTree = "<group>"; };
 		0881965D21800F2B00D5DB36 /* BirdLivePage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BirdLivePage.m; sourceTree = "<group>"; };
 		0881965E21800F2B00D5DB36 /* BirdLivePage.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BirdLivePage.xib; sourceTree = "<group>"; };
@@ -406,6 +407,7 @@
 				081B3ADA1F6E2CCD008A7F36 /* AINet.m */,
 				08D4EC4F2160501000DA646B /* AINetUtils.h */,
 				08D4EC502160501000DA646B /* AINetUtils.m */,
+				0877A86B21C721A90049F810 /* AINetHeader.h */,
 			);
 			path = AINet;
 			sourceTree = "<group>";
