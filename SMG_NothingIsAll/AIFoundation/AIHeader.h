@@ -46,6 +46,7 @@
  */
 #define FILENAME_Node @"node"               //节点
 #define FILENAME_Value @"value"             //微信息
+#define FILENAME_ValueReference @"valueReference"   //微信息对应的absAlgNode地址;
 #define FILENAME_Index(isOut) STRFORMAT(@"index_%d",isOut) //in微信息索引(数组) / out小脑微信息(数组)
 #define FILENAME_Reference @"reference"     //微信息引用
 #define FILENAME_AbsValue @"absValue"       //宏节点的值存储地址

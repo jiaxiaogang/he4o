@@ -19,18 +19,19 @@
     //1. 构建抽象节点 (微信息"Alg引用序列"去重)
     NSMutableArray *absAlgNodes = [[NSMutableArray alloc] init];
     for (AIKVPointer *alg_p in ARRTOOK(algsArr)) {
-        AIAbsAlgNode *absNode = [[AIAbsAlgNode alloc] init];
-        absNode.pointer = [SMGUtils createPointerForNode:PATH_NET_ALG_ABS_NODE];
-        absNode.value_p = alg_p;
+        ///1. 查找本地即有absNode_p引用
+        AIKVPointer *localAbsNode_p = [SMGUtils searchObjectForPointer:alg_p fileName:FILENAME_ValueReference time:cRedisValueTime];
+        AIAbsAlgNode *absNode = [SMGUtils searchObjectForPointer:localAbsNode_p fileName:FILENAME_Node time:cRedisNodeTime];
         
-        /////TODO引用序列去重给用上;
+        ///2. 无则创建并存储
+        if (!absNode) {
+            absNode = [[AIAbsAlgNode alloc] init];
+            absNode.pointer = [SMGUtils createPointerForNode:PATH_NET_ALG_ABS_NODE];
+            absNode.value_p = alg_p;
+            [SMGUtils insertObject:absNode.pointer rootPath:alg_p.filePath fileName:FILENAME_ValueReference time:cRedisValueTime];//存索引区引用;
+        }
         
-        //1. AINet中有单data装箱;
-        //2. algsArr中本来就是装箱的;
-        //3. 此处要将reference中引用序列中,查找到absNode去重;
-        
-        
-        
+        ///3. 收集
         [absAlgNodes addObject:absNode];
     }
     
