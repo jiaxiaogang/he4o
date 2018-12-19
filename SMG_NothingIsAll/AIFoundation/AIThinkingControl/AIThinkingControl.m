@@ -126,33 +126,25 @@ static AIThinkingControl *_instance;
     //2. 检测imv
     BOOL findMV = [self dataIn_CheckMV:algsArr];
     
-    //3. 分流
+    //3. 分流_mv时
     if (findMV) {
-        //4. 输入新的cmvAlgsArr(下面已有assExp中,有mv方向的添加mvCache代码,此处去掉)
+        ///输入新的cmvAlgsArr(下面已有assExp中,有mv方向的添加mvCache代码,此处去掉)
         //[self.mvCacheManager dataIn_CmvAlgsArr:algsArr];
         
-        //5. 创建NetCmvModel;
+        ///1. 创建NetCmvModel;
         AIFrontOrderNode *foNode = [self dataIn_CreateNetCMVModel:algsArr];
     
-        //7. 联想经验
+        ///2. 联想经验
         [self dataIn_AssociativeExperience:foNode];
     }else{
+        ///1. 打包成algTypeNode;
+        AIPointer *algNode_p = [self dataIn_ConvertAlgNode:algsArr];
         
-        //1. 打包成algTypeNode;
-        AIPointer *algNode = [self dataIn_ConvertAlgNode:algsArr];
+        ///2. 加入瞬时记忆
+        [self dataIn_ToShortCache:algNode_p];
         
-        
-        //TODO
-        
-        
-        
-        //6. 加入瞬时记忆
-        for (AIKVPointer *algs_p in ARRTOOK(algsArr)) {
-            [self dataIn_ToShortCache:algs_p];
-        }
-        
-        //7. 联想信息
-        [self dataIn_AssociativeData:algsArr];
+        ///3. 联想信息
+        [self dataIn_AssociativeData:algNode_p];
     }
 }
 
@@ -214,7 +206,10 @@ static AIThinkingControl *_instance;
  *  2. assCmv首先会通过energy和cmvCache表现在thinkingControl中,影响思维循环;
  *  3. dataIn负责护送一次指定信息的ass(随后进入递归循环)
  */
--(void) dataIn_AssociativeData:(NSArray*)algsArr {
+-(void) dataIn_AssociativeData:(AIPointer*)algNode_p {
+    [self dataIn_AssociativeData:algNode_p temp:nil];
+}
+-(void) dataIn_AssociativeData:(AIPointer*)algNode_p temp:(NSArray*)algsArr {
     if (ISOK(algsArr, NSArray.class)) {
         //1. noMv信号已输入完毕,联想
         for (AIKVPointer *algs_kvp in algsArr) {
