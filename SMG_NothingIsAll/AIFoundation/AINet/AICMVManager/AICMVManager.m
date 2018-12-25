@@ -12,6 +12,7 @@
 #import "ThinkingUtils.h"
 #import "AIFrontOrderNode.h"
 #import "AICMVNode.h"
+#import "AIAlgNode.h"
 
 @implementation AICMVManager
 
@@ -42,10 +43,25 @@
     //3. 打包foNode;
     AIFrontOrderNode *foNode = [[AIFrontOrderNode alloc] init];//node
     foNode.pointer = [SMGUtils createPointer:PATH_NET_FRONT_ORDER_NODE algsType:@"" dataSource:@""];
-    for (AIPointer *data_kvp in ARRTOOK(order)) {
-        if (ISOK(data_kvp, AIPointer.class)) {
-            [foNode.orders_kvp addObject:data_kvp];
-            [self createdNode:data_kvp nodePointer:foNode.pointer];//reference
+    for (AIPointer *conAlgNode_p in ARRTOOK(order)) {
+        if (ISOK(conAlgNode_p, AIPointer.class)) {
+            [foNode.orders_kvp addObject:conAlgNode_p];
+            
+            AIAlgNode *algNode = [SMGUtils searchObjectForPointer:conAlgNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+            
+            
+            //1. 根据引用强度排序;//已有代码复用;
+            //2. 根据指针序列去重;
+            
+            
+            //[algNode.refPorts addObject:foNode.pointer deltaStrongValue:1];
+            
+            
+            
+            
+            
+            
+            
         }
     }
     
