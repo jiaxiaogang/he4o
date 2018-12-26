@@ -340,6 +340,14 @@ static AIThinkingControl *_instance;
                 if (ISOK(assFrontNode, AINodeBase.class)) {
                     //5. 取foNode.orders微信息组;
                     NSArray *assMicroValue_ps = [ThinkingUtils getNodeMicroValuePointersFromFrontNode:assFrontNode];
+                    
+                    
+                    //1. 删掉微信息组的概念....
+                    //2. analogyOrdersA要深入到absAlgNode;
+                    //3. 钱塘江大桥很帅;  江大桥你牛逼;
+                    
+                    
+                    
                     NSLog(@"抽象前 > 联想到前因节点 : %@",[NVUtils getCmvModelDesc_ByFoNode:assFrontNode]);
                     
                     //6. 类比orders的规律,并abs;
