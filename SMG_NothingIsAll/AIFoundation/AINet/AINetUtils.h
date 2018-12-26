@@ -31,4 +31,15 @@
 +(void) insertPointer:(AIPointer*)pointer toPorts:(NSMutableArray*)ports;
 
 
+/**
+ *  MARK:--------------------插线到ports (分文件优化)--------------------
+ *  @param pointerFileName : 指针序列文件名,如FILENAME_Reference_ByPointer
+ *  @param portFileName : 强度序列文件名,如FILENAME_Reference_ByPort
+ *
+ *  1. 各种神经元中只保留"指针"和"类型";
+ *  2. 其它absPorts,conPorts,refPorts都使用单独文件的方式;
+ *  3. 暂不使用 (未完成)
+ */
+-(void) insertPointer:(AIKVPointer*)node_p target_p:(AIKVPointer*)target_p difStrong:(int)difStrong pointerFileName:(NSString*)pointerFileName portFileName:(NSString*)portFileName;
+
 @end

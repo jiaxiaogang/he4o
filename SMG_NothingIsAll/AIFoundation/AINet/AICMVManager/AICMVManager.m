@@ -13,6 +13,7 @@
 #import "AIFrontOrderNode.h"
 #import "AICMVNode.h"
 #import "AIAlgNode.h"
+#import "AINetUtils.h"
 
 @implementation AICMVManager
 
@@ -47,21 +48,10 @@
         if (ISOK(conAlgNode_p, AIPointer.class)) {
             [foNode.orders_kvp addObject:conAlgNode_p];
             
+            ///1. foNode引用报备;
             AIAlgNode *algNode = [SMGUtils searchObjectForPointer:conAlgNode_p fileName:FILENAME_Node time:cRedisNodeTime];
-            
-            
-            //1. 根据引用强度排序;//已有代码复用;
-            //2. 根据指针序列去重;
-            
-            
-            //[algNode.refPorts addObject:foNode.pointer deltaStrongValue:1];
-            
-            
-            
-            
-            
-            
-            
+            [AINetUtils insertPointer:foNode.pointer toPorts:algNode.refPorts];
+            [SMGUtils insertObject:algNode rootPath:algNode.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
         }
     }
     
