@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIFrontOrderNode;
+@class AIFrontOrderNode,AIAbsAlgNode;
 @interface ThinkingUtils : NSObject
 
 /**
@@ -30,9 +30,14 @@
 //MARK:===============================================================
 @interface ThinkingUtils (Analogy)
 
-//类比处理(瓜是瓜)
-+(NSArray*) analogyFoNode_A:(AIFrontOrderNode*)foNode_A foNode_B:(AIFrontOrderNode*)foNode_B;
-+(NSArray*) analogyOrdersA:(NSArray*)ordersA ordersB:(NSArray*)ordersB;
+/**
+ *  MARK:--------------------类比处理(瓜是瓜)--------------------
+ *  1. 连续信号中,找重复;(连续也是拆分,多事务处理的)
+ *  2. 两条信息中,找交集;
+ *  3. 在连续信号的处理中,实时将拆分单信号存储到内存区,并提供可检索等,其形态与最终存硬盘是一致的;
+ *  类比的处理,是足够细化的,对思维每个信号作类比操作;(而将类比到的最基本的结果,输出给thinking,以供为构建网络的依据,最终是以网络为目的的)
+ */
++(NSArray*) analogyOrdersA:(NSArray*)ordersA ordersB:(NSArray*)ordersB canAss:(BOOL(^)())canAssBlock buildAlgNode:(AIAbsAlgNode*(^)(NSArray* algSames))buildAlgNodeBlock;
 
 @end
 
@@ -96,14 +101,6 @@
  *  MARK:--------------------根据cmvNode联想其对应的foNode--------------------
  */
 +(AIFrontOrderNode*) getFoNodeFromCmvNode:(AICMVNode*)cmvNode;
-
-
-/**
- *  MARK:--------------------根据frontNode数据节点,取其微信息指针序列--------------------
- *  1. foNode取orders
- *  2. absNode取组微信息values
- */
-+(NSArray*) getNodeMicroValuePointersFromFrontNode:(AINodeBase*)frontNode;
 
 
 @end

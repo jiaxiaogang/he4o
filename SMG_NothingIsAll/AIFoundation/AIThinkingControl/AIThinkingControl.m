@@ -181,9 +181,16 @@ static AIThinkingControl *_instance;
  */
 -(void) dataIn_ToShortCache:(AIPointer*)pointer{
     if (ISOK(pointer, AIPointer.class)) {
-        [self.shortCache addObject:pointer];
-        if (self.shortCache.count > 8) {
-            [self.shortCache removeObjectAtIndex:0];
+        [self dataIn_ToShortCache_Ps:@[pointer]];
+    }
+}
+-(void) dataIn_ToShortCache_Ps:(NSArray*)ps{
+    if (ARRISOK(ps)) {
+        for (AIPointer *pointer in ps) {
+            [self.shortCache addObject:pointer];
+            if (self.shortCache.count > 8) {
+                [self.shortCache removeObjectAtIndex:0];
+            }
         }
     }
 }
@@ -338,35 +345,44 @@ static AIThinkingControl *_instance;
                 AIFoNodeBase *assFrontNode = [SMGUtils searchObjectForPointer:ass_cn.foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
                 
                 if (ISOK(assFrontNode, AINodeBase.class)) {
-                    //5. 取foNode.orders微信息组;
-                    NSArray *assMicroValue_ps = [ThinkingUtils getNodeMicroValuePointersFromFrontNode:assFrontNode];
-                    
-                    
-                    //1. 删掉微信息组的概念....
-                    //2. analogyOrdersA要深入到absAlgNode;
-                    //3. 钱塘江大桥很帅;  江大桥你牛逼;
-                    
-                    
-                    
                     NSLog(@"抽象前 > 联想到前因节点 : %@",[NVUtils getCmvModelDesc_ByFoNode:assFrontNode]);
                     
                     //6. 类比orders的规律,并abs;
-                    NSArray *sames = [ThinkingUtils analogyOrdersA:foNode.orders_kvp ordersB:assMicroValue_ps];
+                    NSArray *orderSames = [ThinkingUtils analogyOrdersA:foNode.orders_kvp ordersB:assFrontNode.orders_kvp canAss:^BOOL{
+                        return false;
+                    } buildAlgNode:^AIAbsAlgNode *(NSArray *algSames) {
+                        return nil;
+                    }];
+                    
+                    
+                    
+                    
+                    //1. 删掉微信息组的概念.... (仅完成删了1/3)
+                    //2. analogyOrdersA要深入到absAlgNode;
+                    //3. 钱塘江大桥很帅;  江大桥你牛逼;
+                    
+                    //明日计划:
+                    //1. ThinkingUtils analogyOrdersA的两个block;
+                    //2. analogyOrdersA改完;
+                    //3. createAbs对orderSames的使用,不要建组微信息...
+                    //4. 删掉组微信息的另外2/3;
+                    
+                    
                     
                     NSString *foOrderStr = [NVUtils convertValuePs2Str:foNode.orders_kvp];
-                    NSString *assMicroStr = [NVUtils convertValuePs2Str:assMicroValue_ps];
-                    NSString *samesStr = [NVUtils convertValuePs2Str:sames];
+                    NSString *assMicroStr = [NVUtils convertValuePs2Str:assFrontNode.orders_kvp];
+                    NSString *samesStr = [NVUtils convertValuePs2Str:orderSames];
                     NSLog(@"抽象中 > 类比sames: (%@) & (%@) = (%@)",foOrderStr,assMicroStr,samesStr);
                     
                     //7. 已存在抽象节点或sames无效时跳过;
-                    BOOL jumpForAbsAlreadyHav = (ISOK(assFrontNode, AINetAbsFoNode.class) && ARRISOK(assMicroValue_ps) && ARRISOK(sames) && sames.count == assMicroValue_ps.count);
-                    if (ARRISOK(sames) && !jumpForAbsAlreadyHav) {
+                    BOOL jumpForAbsAlreadyHav = (ISOK(assFrontNode, AINetAbsFoNode.class) && ARRISOK(orderSames) && orderSames.count == assFrontNode.orders_kvp.count);
+                    if (ARRISOK(orderSames) && !jumpForAbsAlreadyHav) {
                         
                         //8. 构建absNode
-                        AINetAbsFoNode *create_an = [[AINet sharedInstance] createAbs:@[foNode,assFrontNode] refs_p:sames];
+                        AINetAbsFoNode *create_an = [[AINet sharedInstance] createAbs:@[foNode,assFrontNode] refs_p:orderSames];
                         
                         //9. 并把抽象节点的信息_添加到瞬时记忆
-                        [self dataIn_ToShortCache:create_an.absValue_p];
+                        [self dataIn_ToShortCache_Ps:create_an.orders_kvp];
                         
                         //10. createAbsCmvNode
                         AIAbsCMVNode *create_acn = [theNet createAbsCMVNode:create_an.pointer aMv_p:foNode.cmvNode_p bMv_p:ass_cn.pointer];

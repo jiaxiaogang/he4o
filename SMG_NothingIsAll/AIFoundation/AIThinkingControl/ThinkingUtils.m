@@ -15,6 +15,7 @@
 #import "AICMVManager.h"
 #import "AIAbsCMVNode.h"
 #import "AINetAbsFoNode.h"
+#import "AIAbsAlgNode.h"
 
 @implementation ThinkingUtils
 
@@ -44,46 +45,41 @@
 //MARK:===============================================================
 @implementation ThinkingUtils (Analogy)
 
-
-/**
- *  MARK:--------------------类比处理(瓜是瓜)--------------------
- *  1. 连续信号中,找重复;(连续也是拆分,多事务处理的)
- *  2. 两条信息中,找交集;
- *  3. 在连续信号的处理中,实时将拆分单信号存储到内存区,并提供可检索等,其形态与最终存硬盘是一致的;
- *  类比的处理,是足够细化的,对思维每个信号作类比操作;(而将类比到的最基本的结果,输出给thinking,以供为构建网络的依据,最终是以网络为目的的)
- */
-+(NSArray*) analogyFoNode_A:(AIFrontOrderNode*)foNode_A foNode_B:(AIFrontOrderNode*)foNode_B{
-    if (ISOK(foNode_A, AIFrontOrderNode.class) && ISOK(foNode_B, AIFrontOrderNode.class)) {
-        return [self analogyOrdersA:foNode_A.orders_kvp ordersB:foNode_B.orders_kvp];
-    }
-    return nil;
-}
-
-+(NSArray*) analogyOrdersA:(NSArray*)ordersA ordersB:(NSArray*)ordersB{
++(NSArray*) analogyOrdersA:(NSArray*)ordersA ordersB:(NSArray*)ordersB canAss:(BOOL(^)())canAssBlock buildAlgNode:(AIAbsAlgNode*(^)(NSArray* algSames))buildAlgNodeBlock{
     //1. 类比orders的规律
-    NSMutableArray *sames = [[NSMutableArray alloc] init];
+    NSMutableArray *orderSames = [[NSMutableArray alloc] init];
     if (ARRISOK(ordersA) && ARRISOK(ordersB)) {
-        for (AIKVPointer *dataA_p in ordersA) {
+        for (AIKVPointer *algNodeA_p in ordersA) {
             //6. 是否已收集
             BOOL already = false;
-            for (AIKVPointer *same_p in sames) {
-                if ([same_p isEqual:dataA_p]) {
+            for (AIKVPointer *same_p in orderSames) {
+                if ([same_p isEqual:algNodeA_p]) {
                     already = true;
                     break;
                 }
             }
             //7. 未收集过,则查找是否有一致微信息(有则收集)
             if (!already) {
-                for (AIKVPointer *dataB_p in ordersB) {
-                    if ([dataA_p isEqual:dataB_p]) {
-                        [sames addObject:dataB_p];
+                for (AIKVPointer *algNodeB_p in ordersB) {
+                    
+                    
+                    //1. 取出algNodeA和algNodeB
+                    //2. 类比他俩的absPorts;(联想一层一层abs的过程需要消耗energy) (写个回调向tc询问一次是否允许联想)
+                    //3. 如果a与b一模一样,则直接添加进orderSames;
+                    //4. 如果有部分abs一样,则把algSames构建成中间祖母节点(回调tc构建),并添加到orderSames;
+                    //5. 如果彻底不一样,则跳过;
+                    
+                    
+                    
+                    if ([algNodeA_p isEqual:algNodeB_p]) {
+                        [orderSames addObject:algNodeB_p];
                         break;
                     }
                 }
             }
         }
     }
-    return sames;
+    return orderSames;
 }
 
 @end
@@ -239,17 +235,5 @@
     }
     return nil;
 }
-
-+(NSArray*) getNodeMicroValuePointersFromFrontNode:(AINodeBase*)frontNode{
-    if (ISOK(frontNode, AIFrontOrderNode.class)) {
-        return ((AIFrontOrderNode*)frontNode).orders_kvp;
-    }else if(ISOK(frontNode, AINetAbsFoNode.class)){
-        AINetAbsFoNode *absNode = (AINetAbsFoNode*)frontNode;
-        NSArray *absValue_ps = [SMGUtils searchObjectForPointer:absNode.absValue_p fileName:FILENAME_AbsValue time:cRedisValueTime];
-        return absValue_ps;
-    }
-    return nil;
-}
-
 
 @end

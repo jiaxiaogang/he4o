@@ -41,14 +41,10 @@
 
 //foNode前时序列的描述 (i3 o4)
 +(NSString*) getFoNodeDesc:(AIFoNodeBase*)foNode {
-    NSString *foDesc = nil;
-    if (ISOK(foNode, AIFrontOrderNode.class)) {
-        foDesc = [NVUtils convertValuePs2Str:((AIFrontOrderNode*)foNode).orders_kvp];
-    }else if(ISOK(foNode, AINetAbsFoNode.class)){
-        NSArray *value_ps = [SMGUtils searchObjectForPointer:((AINetAbsFoNode*)foNode).absValue_p fileName:FILENAME_AbsValue time:cRedisValueTime];
-        foDesc = [NVUtils convertValuePs2Str:value_ps];
+    if (ISOK(foNode, AIFoNodeBase.class)) {
+        return [NVUtils convertValuePs2Str:((AIFrontOrderNode*)foNode).orders_kvp];
     }
-    return foDesc;
+    return nil;
 }
 
 //cmvNode的描述 ("ur0_de0"格式)

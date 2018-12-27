@@ -17,6 +17,13 @@
     return _absPorts;
 }
 
+-(NSMutableArray *)orders_kvp{
+    if (_orders_kvp == nil) {
+        _orders_kvp = [[NSMutableArray alloc] init];
+    }
+    return _orders_kvp;
+}
+
 /**
  *  MARK:--------------------NSCoding--------------------
  */
@@ -25,6 +32,7 @@
     if (self) {
         self.cmvNode_p = [aDecoder decodeObjectForKey:@"cmvNode_p"];
         self.absPorts = [aDecoder decodeObjectForKey:@"absPorts"];
+        self.orders_kvp = [aDecoder decodeObjectForKey:@"orders_kvp"];
     }
     return self;
 }
@@ -33,6 +41,7 @@
     [super encodeWithCoder:aCoder];
     [aCoder encodeObject:self.cmvNode_p forKey:@"cmvNode_p"];
     [aCoder encodeObject:self.absPorts forKey:@"absPorts"];
+    [aCoder encodeObject:self.orders_kvp forKey:@"orders_kvp"];
 }
 
 @end
