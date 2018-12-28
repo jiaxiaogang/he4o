@@ -124,4 +124,26 @@
     return result;
 }
 
++(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)algSames algA:(AIAlgNode*)algA algB:(AIAlgNode*)algB{
+    if (ARRISOK(algSames) && algA && algB) {
+        
+        //如何知道algA或algB是否已经有了匹配algSames的抽象节点;
+        
+        
+        //algA -> absPortsHeader...
+        //存单header序列,还是将header存在每一个absPort里;
+        
+        
+        
+        
+        
+    }
+    AIAbsAlgNode *result = [[AIAbsAlgNode alloc] init];
+    
+    
+    
+    
+    return result;
+}
+
 @end

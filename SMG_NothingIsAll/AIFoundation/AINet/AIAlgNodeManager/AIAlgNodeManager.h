@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIAlgNode;
+@class AIAlgNode,AIAbsAlgNode;
 @interface AIAlgNodeManager : NSObject
 
 
@@ -23,5 +23,11 @@
  *  @result 具象algNode
  */
 +(AIAlgNode*) createAlgNode:(NSArray*)algsArr;
+
+
+/**
+ *  MARK:--------------------构建absAlgNode中间祖母节点--------------------
+ */
++(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)algSames algA:(AIAlgNode*)algA algB:(AIAlgNode*)algB;
 
 @end

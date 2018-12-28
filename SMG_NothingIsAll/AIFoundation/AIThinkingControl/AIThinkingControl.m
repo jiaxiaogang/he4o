@@ -349,9 +349,13 @@ static AIThinkingControl *_instance;
                     
                     //6. 类比orders的规律,并abs;
                     NSArray *orderSames = [ThinkingUtils analogyOrdersA:foNode.orders_kvp ordersB:assFrontNode.orders_kvp canAss:^BOOL{
+                        if (self.energy > 0) {
+                            self.energy --;
+                            return true;
+                        }
                         return false;
-                    } buildAlgNode:^AIAbsAlgNode *(NSArray *algSames) {
-                        return nil;
+                    } buildAlgNode:^AIAbsAlgNode *(NSArray *algSames, AIAlgNode *algA, AIAlgNode *algB) {
+                        return [theNet createAbsAlgNode:algSames algA:algA algB:algB];
                     }];
                     
                     

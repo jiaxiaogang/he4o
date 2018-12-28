@@ -16,6 +16,7 @@
 #import "AIAbsCMVNode.h"
 #import "AINetAbsFoNode.h"
 #import "AIAbsAlgNode.h"
+#import "AIAlgNode.h"
 
 @implementation ThinkingUtils
 
@@ -45,7 +46,7 @@
 //MARK:===============================================================
 @implementation ThinkingUtils (Analogy)
 
-+(NSArray*) analogyOrdersA:(NSArray*)ordersA ordersB:(NSArray*)ordersB canAss:(BOOL(^)())canAssBlock buildAlgNode:(AIAbsAlgNode*(^)(NSArray* algSames))buildAlgNodeBlock{
++(NSArray*) analogyOrdersA:(NSArray*)ordersA ordersB:(NSArray*)ordersB canAss:(BOOL(^)())canAssBlock buildAlgNode:(AIAbsAlgNode*(^)(NSArray* algSames,AIAlgNode *algA,AIAlgNode *algB))buildAlgNodeBlock{
     //1. 类比orders的规律
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
     if (ARRISOK(ordersA) && ARRISOK(ordersB)) {
@@ -62,6 +63,14 @@
             if (!already) {
                 for (AIKVPointer *algNodeB_p in ordersB) {
                     
+                    AIAlgNode *algNodeA = [SMGUtils searchObjectForPointer:algNodeA_p fileName:FILENAME_Node time:cRedisNodeTime];
+                    AIAlgNode *algNodeB = [SMGUtils searchObjectForPointer:algNodeB_p fileName:FILENAME_Node time:cRedisNodeTime];
+                    NSMutableArray *algSames = [[NSMutableArray alloc] init];
+
+                    
+                    if (buildAlgNodeBlock) {
+                        buildAlgNodeBlock(algSames,algNodeA,algNodeB);
+                    }
                     
                     //1. 取出algNodeA和algNodeB
                     //2. 类比他俩的absPorts;(联想一层一层abs的过程需要消耗energy) (写个回调向tc询问一次是否允许联想)

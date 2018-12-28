@@ -217,4 +217,8 @@ static AINet *_instance;
     return [AIAlgNodeManager createAlgNode:algsArr];
 }
 
+-(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)algSames algA:(AIAlgNode*)algA algB:(AIAlgNode*)algB{
+    return [AIAlgNodeManager createAbsAlgNode:algSames algA:algA algB:algB];
+}
+
 @end
