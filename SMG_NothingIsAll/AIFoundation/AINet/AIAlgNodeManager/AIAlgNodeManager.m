@@ -36,6 +36,55 @@
 }
 
 
+
+//-(void) insertPointer:(AIKVPointer*)node_p target_p:(AIKVPointer*)target_p difStrong:(int)difStrong pointerFileName:(NSString*)pointerFileName portFileName:(NSString*)portFileName
+//value索引中,加上refPorts;类似algNode.refPorts的方式使用;并且使用单文件的方式存储和插线;
+
+//+(AIAlgNode*) oldCreateAlgNode:(NSArray*)algsArr{
+//    //1. 构建抽象节点 (微信息"Alg引用序列"去重)
+//    NSMutableArray *absAlgNodes = [[NSMutableArray alloc] init];
+//    for (AIKVPointer *alg_p in ARRTOOK(algsArr)) {
+//        ///1. 查找本地即有absNode_p引用
+//        AIKVPointer *localAbsNode_p = [SMGUtils searchObjectForPointer:alg_p fileName:FILENAME_ValueReference time:cRedisValueTime];
+//        AIAbsAlgNode *absNode = [SMGUtils searchObjectForPointer:localAbsNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+//
+//        ///2. 无则创建并存储
+//        if (!absNode) {
+//            absNode = [[AIAbsAlgNode alloc] init];
+//            absNode.pointer = [SMGUtils createPointerForNode:PATH_NET_ALG_ABS_NODE];
+//            absNode.value_p = alg_p;
+//            [SMGUtils insertObject:absNode.pointer rootPath:alg_p.filePath fileName:FILENAME_ValueReference time:cRedisValueTime];//存索引区引用;
+//        }
+//
+//        ///3. 收集
+//        [absAlgNodes addObject:absNode];
+//    }
+//
+//    //2. 构建具象节点 (优先用本地已有,否则new)
+//    AIAlgNode *conNode = [self findLocalConNode:absAlgNodes];
+//    if (!conNode) {
+//        conNode = [[AIAlgNode alloc] init];
+//        conNode.pointer = [SMGUtils createPointerForNode:PATH_NET_ALG_NODE];
+//    }
+//
+//    //3. 关联
+//    for (AIAbsAlgNode *absNode in absAlgNodes) {
+//        [AINetUtils insertPointer:absNode.pointer toPorts:conNode.absPorts];
+//        [AINetUtils insertPointer:conNode.pointer toPorts:absNode.conPorts];
+//    }
+//
+//    //4. 存储抽象节点
+//    for (AIAbsAlgNode *absNode in absAlgNodes) {
+//        [SMGUtils insertObject:absNode rootPath:absNode.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
+//    }
+//
+//    //5. 存储具象节点
+//    [SMGUtils insertObject:conNode rootPath:conNode.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
+//
+//    return conNode;
+//}
+
+
 //MARK:===============================================================
 //MARK:                     < private_Method >
 //MARK:===============================================================
