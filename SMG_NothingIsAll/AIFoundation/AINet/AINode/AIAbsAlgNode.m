@@ -25,7 +25,7 @@
     self = [super initWithCoder:aDecoder];
     if (self) {
         self.conPorts = [aDecoder decodeObjectForKey:@"conPorts"];
-        self.value_p = [aDecoder decodeObjectForKey:@"value_p"];
+        self.value_ps = [aDecoder decodeObjectForKey:@"value_ps"];
     }
     return self;
 }
@@ -33,7 +33,7 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [super encodeWithCoder:aCoder];
     [aCoder encodeObject:self.conPorts forKey:@"conPorts"];
-    [aCoder encodeObject:self.value_p forKey:@"value_p"];
+    [aCoder encodeObject:self.value_ps forKey:@"value_ps"];
 }
 
 @end

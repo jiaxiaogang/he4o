@@ -69,6 +69,7 @@
 +(id) searchObjectForPointer:(AIPointer*)pointer fileName:(NSString*)fileName time:(double)time;//找到后,缓存到redis,time秒;
 +(id) searchObjectForFilePath:(NSString*)filePath fileName:(NSString*)fileName time:(double)time;
 +(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName;
++(void) insertObject:(NSObject*)obj pointer:(AIPointer*)pointer fileName:(NSString*)fileName time:(double)time;
 +(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName time:(double)time;//同时插入到redis,time秒
 
 @end
@@ -107,5 +108,19 @@
 
 //将ports端口中指向转换为指针数组返回;
 +(NSArray*) convertPointersFromPorts:(NSArray*)ports;
+
+//将pointers转字符串;
++(NSString*) convertPointers2String:(NSArray*)pointers;
+
+@end
+
+
+//MARK:===============================================================
+//MARK:                     < SMGUtils (Sort) >
+//MARK:===============================================================
+@interface SMGUtils (Sort)
+
+//对ps进行从大到小的排序
++(NSArray*) sortPointers:(NSArray*)ps;
 
 @end

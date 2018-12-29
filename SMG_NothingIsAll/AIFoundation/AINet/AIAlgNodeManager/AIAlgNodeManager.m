@@ -12,48 +12,24 @@
 #import "AIPort.h"
 #import "AIKVPointer.h"
 #import "AINetUtils.h"
+#import "NSString+Extension.h"
 
 @implementation AIAlgNodeManager
 
+
+////把这个方法中的引用部分加回来;现在的AlgNode太孤立了...无意义;"明日完成"(对比一下删掉的旧代码和现在代码)
 +(AIAlgNode*) createAlgNode:(NSArray*)algsArr{
-    //1. 构建抽象节点 (微信息"Alg引用序列"去重)
-    NSMutableArray *absAlgNodes = [[NSMutableArray alloc] init];
-    for (AIKVPointer *alg_p in ARRTOOK(algsArr)) {
-        ///1. 查找本地即有absNode_p引用
-        AIKVPointer *localAbsNode_p = [SMGUtils searchObjectForPointer:alg_p fileName:FILENAME_ValueReference time:cRedisValueTime];
-        AIAbsAlgNode *absNode = [SMGUtils searchObjectForPointer:localAbsNode_p fileName:FILENAME_Node time:cRedisNodeTime];
-        
-        ///2. 无则创建并存储
-        if (!absNode) {
-            absNode = [[AIAbsAlgNode alloc] init];
-            absNode.pointer = [SMGUtils createPointerForNode:PATH_NET_ALG_ABS_NODE];
-            absNode.value_p = alg_p;
-            [SMGUtils insertObject:absNode.pointer rootPath:alg_p.filePath fileName:FILENAME_ValueReference time:cRedisValueTime];//存索引区引用;
-        }
-        
-        ///3. 收集
-        [absAlgNodes addObject:absNode];
-    }
+    //1. 数据
+    algsArr = ARRTOOK(algsArr);
     
     //2. 构建具象节点 (优先用本地已有,否则new)
-    AIAlgNode *conNode = [self findLocalConNode:absAlgNodes];
-    if (!conNode) {
-        conNode = [[AIAlgNode alloc] init];
-        conNode.pointer = [SMGUtils createPointerForNode:PATH_NET_ALG_NODE];
-    }
+    AIAlgNode *conNode = [[AIAlgNode alloc] init];
+    conNode.pointer = [SMGUtils createPointerForNode:PATH_NET_ALG_NODE];
     
-    //3. 关联
-    for (AIAbsAlgNode *absNode in absAlgNodes) {
-        [AINetUtils insertPointer:absNode.pointer toPorts:conNode.absPorts];
-        [AINetUtils insertPointer:conNode.pointer toPorts:absNode.conPorts];
-    }
+    //3. 指定value_ps
+    conNode.value_ps = [SMGUtils sortPointers:algsArr];
     
-    //4. 存储抽象节点
-    for (AIAbsAlgNode *absNode in absAlgNodes) {
-        [SMGUtils insertObject:absNode rootPath:absNode.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
-    }
-    
-    //5. 存储具象节点
+    //4. 存储
     [SMGUtils insertObject:conNode rootPath:conNode.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
     
     return conNode;
@@ -126,6 +102,43 @@
 
 +(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)algSames algA:(AIAlgNode*)algA algB:(AIAlgNode*)algB{
     if (ARRISOK(algSames) && algA && algB) {
+        //1. 数据准备
+        NSArray *sortSames = ARRTOOK([SMGUtils sortPointers:algSames]);
+        NSString *samesStr = [SMGUtils convertPointers2String:sortSames];
+        NSString *samesMd5 = STRTOOK([NSString md5:samesStr]);
+        
+        //2. 判断algA.absPorts和absB.absPorts中的header,是否已存在algSames的抽象节点;
+        AIAbsAlgNode *findAbsNode = nil;
+        NSMutableArray *allAbsPorts = [[NSMutableArray alloc] init];
+        [allAbsPorts addObjectsFromArray:algA.absPorts];
+        [allAbsPorts addObjectsFromArray:algB.absPorts];
+        for (AIPort *port in allAbsPorts) {
+            if ([samesMd5 isEqualToString:port.header]) {
+                findAbsNode = [SMGUtils searchObjectForPointer:port.target_p fileName:FILENAME_Node time:cRedisNodeTime];
+                break;
+            }
+        }
+        
+        //3. 无则创建
+        if (!findAbsNode) {
+            findAbsNode = [[AIAbsAlgNode alloc] init];
+            findAbsNode.pointer = [SMGUtils createPointerForNode:PATH_NET_ALG_ABS_NODE];
+            findAbsNode.value_ps = sortSames;
+            ///////absNode的引用问题,随后TODO;"明日完成"
+        }
+        
+        //3. 关联
+        [AINetUtils insertPointer:findAbsNode.pointer toPorts:algA.absPorts];
+        [AINetUtils insertPointer:findAbsNode.pointer toPorts:algB.absPorts];
+        [AINetUtils insertPointer:algA.pointer toPorts:findAbsNode.conPorts];
+        [AINetUtils insertPointer:algB.pointer toPorts:findAbsNode.conPorts];
+        
+        //4. 存储
+        [SMGUtils insertObject:findAbsNode pointer:findAbsNode.pointer fileName:FILENAME_Node time:cRedisNodeTime];
+        [SMGUtils insertObject:algA pointer:algA.pointer fileName:FILENAME_Node time:cRedisNodeTime];
+        [SMGUtils insertObject:algB pointer:algB.pointer fileName:FILENAME_Node time:cRedisNodeTime];
+        
+        
         
         //如何知道algA或algB是否已经有了匹配algSames的抽象节点;
         
@@ -134,16 +147,11 @@
         //存单header序列,还是将header存在每一个absPort里;
         
         
+        //在netUtils中写convertValue_psToHeader(){value_ps -> string -> md5}
         
-        
-        
+        return findAbsNode;
     }
-    AIAbsAlgNode *result = [[AIAbsAlgNode alloc] init];
-    
-    
-    
-    
-    return result;
+    return nil;
 }
 
 @end

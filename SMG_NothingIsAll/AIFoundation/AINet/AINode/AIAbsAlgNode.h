@@ -16,6 +16,6 @@
 @interface AIAbsAlgNode : AINodeBase
 
 @property (strong, nonatomic) NSMutableArray *conPorts;
-@property (strong, nonatomic) AIKVPointer *value_p;
+@property (strong, nonatomic) NSArray *value_ps;
 
 @end

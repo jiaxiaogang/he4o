@@ -18,7 +18,13 @@
 @property (strong,nonatomic) AIPointer *target_p;   //指向目标的地址
 @property (strong,nonatomic) AIPortStrong *strong;
 
-//-(NSComparisonResult) compare:(AIPort*)port;//类比port:1级强度,2级pointerId;
+/**
+ *  MARK:--------------------指向节点的header--------------------
+ *  1. 如algNode.absPorts时,就是抽象节点value_ps的md5值
+ */
+@property (strong,nonatomic) NSString *header;
+
+
 -(void) strongPlus;
 
 @end

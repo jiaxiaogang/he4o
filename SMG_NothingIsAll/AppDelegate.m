@@ -10,6 +10,7 @@
 #import "MainPage.h"
 #import "AINet.h"
 #import "NSObject+Extension.h"
+#import "AIKVPointer.h"
 
 @implementation AppDelegate
 

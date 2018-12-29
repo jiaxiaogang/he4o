@@ -20,6 +20,7 @@
     if (self) {
         self.target_p = [coder decodeObjectForKey:@"target_p"];
         self.strong = [coder decodeObjectForKey:@"strong"];
+        self.header = [coder decodeObjectForKey:@"header"];
     }
     return self;
 }
@@ -27,6 +28,7 @@
 - (void)encodeWithCoder:(NSCoder *)coder {
     [coder encodeObject:self.target_p forKey:@"target_p"];
     [coder encodeObject:self.strong forKey:@"strong"];
+    [coder encodeObject:self.header forKey:@"header"];
 }
 
 

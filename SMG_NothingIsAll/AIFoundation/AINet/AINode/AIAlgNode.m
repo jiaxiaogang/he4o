@@ -33,6 +33,7 @@
     if (self) {
         self.absPorts = [aDecoder decodeObjectForKey:@"absPorts"];
         self.refPorts = [aDecoder decodeObjectForKey:@"refPorts"];
+        self.value_ps = [aDecoder decodeObjectForKey:@"value_ps"];
     }
     return self;
 }
@@ -41,6 +42,7 @@
     [super encodeWithCoder:aCoder];
     [aCoder encodeObject:self.absPorts forKey:@"absPorts"];
     [aCoder encodeObject:self.refPorts forKey:@"refPorts"];
+    [aCoder encodeObject:self.value_ps forKey:@"value_ps"];
 }
 
 @end

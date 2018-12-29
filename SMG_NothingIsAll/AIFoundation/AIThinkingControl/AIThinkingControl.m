@@ -372,6 +372,9 @@ static AIThinkingControl *_instance;
                     //4. 删掉组微信息的另外2/3;
                     
                     
+                    //针对单条value微信息的引用序列,不可删除;"明日完成"
+                    
+                    
                     
                     NSString *foOrderStr = [NVUtils convertValuePs2Str:foNode.orders_kvp];
                     NSString *assMicroStr = [NVUtils convertValuePs2Str:assFrontNode.orders_kvp];

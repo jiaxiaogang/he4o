@@ -384,6 +384,11 @@
 +(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName{
     [self insertObject:obj rootPath:rootPath fileName:fileName time:0];
 }
++(void) insertObject:(NSObject*)obj pointer:(AIPointer*)pointer fileName:(NSString*)fileName time:(double)time{
+    if (ISOK(pointer, AIPointer.class)) {
+        [self insertObject:obj rootPath:pointer.filePath fileName:fileName time:time];
+    }
+}
 +(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName time:(double)time{
     //1. 存disk
     PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:STRTOOK(rootPath)];
@@ -464,6 +469,29 @@
         }
     }
     return result;
+}
+
++(NSString*) convertPointers2String:(NSArray*)pointers{
+    NSMutableString *mStr = [[NSMutableString alloc] init];
+    for (AIPointer *p in ARRTOOK(pointers)) {
+        [mStr appendFormat:@"%@_%ld,",p.identifier,p.pointerId];
+    }
+    return mStr;
+}
+
+@end
+
+
+//MARK:===============================================================
+//MARK:                     < SMGUtils (Sort) >
+//MARK:===============================================================
+@implementation SMGUtils (Sort)
+
++(NSArray*) sortPointers:(NSArray*)ps{
+    ps = ARRTOOK(ps);
+    return [ps sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+        return [SMGUtils comparePointerA:obj1 pointerB:obj2];
+    }];
 }
 
 @end

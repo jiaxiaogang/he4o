@@ -39,6 +39,7 @@
         for (AIPort *port in ports) {
             if ([pointer isEqual:port.target_p]) {
                 findPort = port;
+                [ports removeObject:port];
                 break;
             }
         }
@@ -47,6 +48,7 @@
         if (!findPort) {
             findPort = [[AIPort alloc] init];
             findPort.target_p = pointer;
+            findPort.header = @"明日完成";
         }
         
         //3. 强度更新

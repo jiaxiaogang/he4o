@@ -15,5 +15,6 @@
 
 @property (strong, nonatomic) NSMutableArray *absPorts;
 @property (strong, nonatomic) NSMutableArray *refPorts; //引用序列
+@property (strong, nonatomic) NSArray *value_ps;        //微信息组 (以pointer默认排序)
 
 @end

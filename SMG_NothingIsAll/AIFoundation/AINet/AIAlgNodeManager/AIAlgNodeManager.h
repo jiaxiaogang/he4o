@@ -27,6 +27,7 @@
 
 /**
  *  MARK:--------------------构建absAlgNode中间祖母节点--------------------
+ *  注: TODO:判断algSames是否就是algsA或algB本身; (等conAlgNode和absAlgNode统一不区分后,再判断本身)
  */
 +(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)algSames algA:(AIAlgNode*)algA algB:(AIAlgNode*)algB;
 
