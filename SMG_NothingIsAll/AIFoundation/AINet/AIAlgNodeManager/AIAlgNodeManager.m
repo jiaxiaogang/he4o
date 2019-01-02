@@ -16,8 +16,6 @@
 
 @implementation AIAlgNodeManager
 
-
-////把这个方法中的引用部分加回来;现在的AlgNode太孤立了...无意义;"明日完成"(对比一下删掉的旧代码和现在代码)
 +(AIAlgNode*) createAlgNode:(NSArray*)algsArr{
     //1. 数据
     algsArr = ARRTOOK(algsArr);
@@ -28,61 +26,19 @@
     
     //3. 指定value_ps
     conNode.value_ps = [SMGUtils sortPointers:algsArr];
+ 
+    //4. value.refPorts (更新引用序列)
+    for (AIPointer *value_p in algsArr) {
+        NSMutableArray *refPorts = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForFilePath:value_p.filePath fileName:FILENAME_RefPorts time:cRedisReferenceTime]];
+        [AINetUtils insertPointer:conNode.pointer toPorts:refPorts ps:conNode.value_ps];
+        [SMGUtils insertObject:refPorts rootPath:value_p.filePath fileName:FILENAME_RefPorts time:cRedisReferenceTime];
+    }
     
-    //4. 存储
+    //5. 存储
     [SMGUtils insertObject:conNode rootPath:conNode.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
     
     return conNode;
 }
-
-
-
-//-(void) insertPointer:(AIKVPointer*)node_p target_p:(AIKVPointer*)target_p difStrong:(int)difStrong pointerFileName:(NSString*)pointerFileName portFileName:(NSString*)portFileName
-//value索引中,加上refPorts;类似algNode.refPorts的方式使用;并且使用单文件的方式存储和插线;
-
-//+(AIAlgNode*) oldCreateAlgNode:(NSArray*)algsArr{
-//    //1. 构建抽象节点 (微信息"Alg引用序列"去重)
-//    NSMutableArray *absAlgNodes = [[NSMutableArray alloc] init];
-//    for (AIKVPointer *alg_p in ARRTOOK(algsArr)) {
-//        ///1. 查找本地即有absNode_p引用
-//        AIKVPointer *localAbsNode_p = [SMGUtils searchObjectForPointer:alg_p fileName:FILENAME_ValueReference time:cRedisValueTime];
-//        AIAbsAlgNode *absNode = [SMGUtils searchObjectForPointer:localAbsNode_p fileName:FILENAME_Node time:cRedisNodeTime];
-//
-//        ///2. 无则创建并存储
-//        if (!absNode) {
-//            absNode = [[AIAbsAlgNode alloc] init];
-//            absNode.pointer = [SMGUtils createPointerForNode:PATH_NET_ALG_ABS_NODE];
-//            absNode.value_p = alg_p;
-//            [SMGUtils insertObject:absNode.pointer rootPath:alg_p.filePath fileName:FILENAME_ValueReference time:cRedisValueTime];//存索引区引用;
-//        }
-//
-//        ///3. 收集
-//        [absAlgNodes addObject:absNode];
-//    }
-//
-//    //2. 构建具象节点 (优先用本地已有,否则new)
-//    AIAlgNode *conNode = [self findLocalConNode:absAlgNodes];
-//    if (!conNode) {
-//        conNode = [[AIAlgNode alloc] init];
-//        conNode.pointer = [SMGUtils createPointerForNode:PATH_NET_ALG_NODE];
-//    }
-//
-//    //3. 关联
-//    for (AIAbsAlgNode *absNode in absAlgNodes) {
-//        [AINetUtils insertPointer:absNode.pointer toPorts:conNode.absPorts];
-//        [AINetUtils insertPointer:conNode.pointer toPorts:absNode.conPorts];
-//    }
-//
-//    //4. 存储抽象节点
-//    for (AIAbsAlgNode *absNode in absAlgNodes) {
-//        [SMGUtils insertObject:absNode rootPath:absNode.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
-//    }
-//
-//    //5. 存储具象节点
-//    [SMGUtils insertObject:conNode rootPath:conNode.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
-//
-//    return conNode;
-//}
 
 
 //MARK:===============================================================
@@ -173,16 +129,22 @@
             findAbsNode = [[AIAbsAlgNode alloc] init];
             findAbsNode.pointer = [SMGUtils createPointerForNode:PATH_NET_ALG_ABS_NODE];
             findAbsNode.value_ps = sortSames;
-            ///////absNode的引用问题,随后TODO;"明日完成"
+            
+            //4. value.refPorts (更新微信息的引用序列)
+            for (AIPointer *value_p in sortSames) {
+                NSMutableArray *refPorts = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForFilePath:value_p.filePath fileName:FILENAME_RefPorts time:cRedisReferenceTime]];
+                [AINetUtils insertPointer:findAbsNode.pointer toPorts:refPorts ps:findAbsNode.value_ps];
+                [SMGUtils insertObject:refPorts rootPath:value_p.filePath fileName:FILENAME_RefPorts time:cRedisReferenceTime];
+            }
         }
         
-        //3. 关联
-        [AINetUtils insertPointer:findAbsNode.pointer toPorts:algA.absPorts];
-        [AINetUtils insertPointer:findAbsNode.pointer toPorts:algB.absPorts];
-        [AINetUtils insertPointer:algA.pointer toPorts:findAbsNode.conPorts];
-        [AINetUtils insertPointer:algB.pointer toPorts:findAbsNode.conPorts];
+        //5. 关联
+        [AINetUtils insertPointer:findAbsNode.pointer toPorts:algA.absPorts ps:findAbsNode.value_ps];
+        [AINetUtils insertPointer:findAbsNode.pointer toPorts:algB.absPorts ps:findAbsNode.value_ps];
+        [AINetUtils insertPointer:algA.pointer toPorts:findAbsNode.conPorts ps:algA.value_ps];
+        [AINetUtils insertPointer:algB.pointer toPorts:findAbsNode.conPorts ps:algA.value_ps];
         
-        //4. 存储
+        //6. 存储
         [SMGUtils insertObject:findAbsNode pointer:findAbsNode.pointer fileName:FILENAME_Node time:cRedisNodeTime];
         [SMGUtils insertObject:algA pointer:algA.pointer fileName:FILENAME_Node time:cRedisNodeTime];
         [SMGUtils insertObject:algB pointer:algB.pointer fileName:FILENAME_Node time:cRedisNodeTime];

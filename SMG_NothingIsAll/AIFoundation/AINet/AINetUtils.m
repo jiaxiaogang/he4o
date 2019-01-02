@@ -10,6 +10,7 @@
 #import "AIKVPointer.h"
 #import "AIPort.h"
 #import "XGRedisUtil.h"
+#import "NSString+Extension.h"
 
 @implementation AINetUtils
 
@@ -32,7 +33,7 @@
 }
 
 
-+(void) insertPointer:(AIPointer*)pointer toPorts:(NSMutableArray*)ports{
++(void) insertPointer:(AIPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps{
     if (ISOK(pointer, AIPointer.class) && ISOK(ports, NSMutableArray.class)) {
         //1. 找出旧有;
         AIPort *findPort = nil;
@@ -48,7 +49,7 @@
         if (!findPort) {
             findPort = [[AIPort alloc] init];
             findPort.target_p = pointer;
-            findPort.header = @"明日完成";
+            findPort.header = [NSString md5:[SMGUtils convertPointers2String:ps]];
         }
         
         //3. 强度更新

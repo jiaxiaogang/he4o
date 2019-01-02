@@ -27,8 +27,9 @@
 
 /**
  *  MARK:--------------------插线到ports--------------------
+ *  @param ps : value->alg时,传value_ps | alg->fo时,传orders;
  */
-+(void) insertPointer:(AIPointer*)pointer toPorts:(NSMutableArray*)ports;
++(void) insertPointer:(AIPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps;
 
 
 /**

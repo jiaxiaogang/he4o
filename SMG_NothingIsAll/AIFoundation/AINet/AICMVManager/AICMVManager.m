@@ -50,7 +50,7 @@
             
             ///1. foNode引用报备;
             AIAlgNode *algNode = [SMGUtils searchObjectForPointer:conAlgNode_p fileName:FILENAME_Node time:cRedisNodeTime];
-            [AINetUtils insertPointer:foNode.pointer toPorts:algNode.refPorts];
+            [AINetUtils insertPointer:foNode.pointer toPorts:algNode.refPorts ps:foNode.orders_kvp];
             [SMGUtils insertObject:algNode rootPath:algNode.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
         }
     }
