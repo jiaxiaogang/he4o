@@ -43,4 +43,24 @@
  */
 -(void) insertPointer:(AIKVPointer*)node_p target_p:(AIKVPointer*)target_p difStrong:(int)difStrong pointerFileName:(NSString*)pointerFileName portFileName:(NSString*)portFileName;
 
+
+/**
+ *  MARK:--------------------对微信息引用进行关联--------------------
+ *  @desc               : 将algNode插线到value_ps的refPorts
+ *  @param algNode_p    : 引用微信息的algNode
+ *  @param value_ps     : 微信息组
+ *  @param ps           : 生成md5的ps
+ */
++(void) insertPointer:(AIPointer*)algNode_p toRefPortsByValues:(NSArray*)value_ps ps:(NSArray*)ps;
+
+/**
+ *  MARK:--------------------对algNode引用进行关联--------------------
+ *  @desc               : 将algNode插线到value_ps的refPorts
+ *  @param foNode_p     : 引用algNode的foNode
+ *  @param order_ps     : orders节点组
+ *  @param ps           : 生成md5的ps
+ */
++(void) insertPointer:(AIPointer*)foNode_p toRefPortsByOrders:(NSArray*)order_ps ps:(NSArray*)ps;
+
+
 @end

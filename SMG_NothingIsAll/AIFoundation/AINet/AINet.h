@@ -38,7 +38,7 @@
 //MARK:===============================================================
 //MARK:                     < abs >
 //MARK:===============================================================
--(AINetAbsFoNode*) createAbs:(NSArray*)foNodes refs_p:(NSArray*)refs_p;
+-(AINetAbsFoNode*) createAbs:(AIFoNodeBase*)foA foB:(AIFoNodeBase*)foB orderSames:(NSArray*)orderSames;
 
 
 //MARK:===============================================================

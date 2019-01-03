@@ -11,6 +11,7 @@
 #import "AIPort.h"
 #import "XGRedisUtil.h"
 #import "NSString+Extension.h"
+#import "AIAlgNodeBase.h"
 
 @implementation AINetUtils
 
@@ -138,5 +139,22 @@
 //    }];
 }
 
++(void) insertPointer:(AIPointer*)algNode_p toRefPortsByValues:(NSArray*)value_ps ps:(NSArray*)ps{
+    for (AIPointer *value_p in ARRTOOK(value_ps)) {
+        NSMutableArray *refPorts = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForFilePath:value_p.filePath fileName:FILENAME_RefPorts time:cRedisReferenceTime]];
+        [AINetUtils insertPointer:algNode_p toPorts:refPorts ps:ps];
+        [SMGUtils insertObject:refPorts rootPath:value_p.filePath fileName:FILENAME_RefPorts time:cRedisReferenceTime];
+    }
+}
+
++(void) insertPointer:(AIPointer*)foNode_p toRefPortsByOrders:(NSArray*)order_ps ps:(NSArray*)ps{
+    for (AIPointer *order_p in ARRTOOK(order_ps)) {
+        AIAlgNodeBase *algNode = [SMGUtils searchObjectForPointer:order_p fileName:FILENAME_Node time:cRedisNodeTime];
+        if (ISOK(algNode, AIAlgNodeBase.class)) {
+            [AINetUtils insertPointer:foNode_p toPorts:algNode.refPorts ps:ps];
+            [SMGUtils insertObject:algNode pointer:algNode.pointer fileName:FILENAME_Node time:cRedisNodeTime];
+        }
+    }
+}
 
 @end

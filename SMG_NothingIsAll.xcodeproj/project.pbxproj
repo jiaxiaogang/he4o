@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		08081DD821DD8BDC005B867F /* AIAlgNodeBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 08081DD721DD8BDC005B867F /* AIAlgNodeBase.m */; };
 		0808927A215AF5F400710636 /* AINodeBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 08089279215AF5F400710636 /* AINodeBase.m */; };
 		08089280215B07FC00710636 /* AICMVNodeBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 0808927F215B07FC00710636 /* AICMVNodeBase.m */; };
 		080A74321F60C6490025DBA3 /* AIPort.m in Sources */ = {isa = PBXBuildFile; fileRef = 080A74311F60C6490025DBA3 /* AIPort.m */; };
@@ -104,6 +105,8 @@
 
 /* Begin PBXFileReference section */
 		08042E7D1F43CE9400A1FFCB /* SMGEnum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMGEnum.h; sourceTree = "<group>"; };
+		08081DD621DD8BDC005B867F /* AIAlgNodeBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIAlgNodeBase.h; sourceTree = "<group>"; };
+		08081DD721DD8BDC005B867F /* AIAlgNodeBase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIAlgNodeBase.m; sourceTree = "<group>"; };
 		08089278215AF5F400710636 /* AINodeBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINodeBase.h; sourceTree = "<group>"; };
 		08089279215AF5F400710636 /* AINodeBase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINodeBase.m; sourceTree = "<group>"; };
 		0808927E215B07FC00710636 /* AICMVNodeBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AICMVNodeBase.h; sourceTree = "<group>"; };
@@ -694,6 +697,8 @@
 				089E66B021B9F5D100ECA28A /* AIAbsAlgNode.m */,
 				089E66B221B9F84500ECA28A /* AIAlgNode.h */,
 				089E66B321B9F84500ECA28A /* AIAlgNode.m */,
+				08081DD621DD8BDC005B867F /* AIAlgNodeBase.h */,
+				08081DD721DD8BDC005B867F /* AIAlgNodeBase.m */,
 			);
 			path = AINode;
 			sourceTree = "<group>";
@@ -940,6 +945,7 @@
 				0817D6AB219E3CC7000E45AB /* UIColor+expanded.m in Sources */,
 				08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */,
 				08089280215B07FC00710636 /* AICMVNodeBase.m in Sources */,
+				08081DD821DD8BDC005B867F /* AIAlgNodeBase.m in Sources */,
 				08B31E7E20648C3700FD96EA /* ThinkingUtils.m in Sources */,
 				0858C5E721950CA300951BA5 /* FoodView.m in Sources */,
 				08236CEC21A23439008D8761 /* AIVisionAlgsModel.m in Sources */,

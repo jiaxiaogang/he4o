@@ -11,16 +11,16 @@
 //MARK:===============================================================
 //MARK:                     < AINetAbs管理器 >
 //MARK:===============================================================
-@class AINetAbsFoNode;
+@class AINetAbsFoNode,AIFoNodeBase;
 @interface AIAbsManager : NSObject
 
 
 /**
  *  MARK:--------------------在foNode基础上构建抽象--------------------
- *  @params conFoNodes : 具象节点 (item类型为AIFoNodeBase)
- *  @params refs_p : 微信息组
+ *  @params foA         : conFoA (item类型为AIFoNodeBase)
+ *  @params orderSames  : algNode组
  *  @result : notnull
  */
--(AINetAbsFoNode*) create:(NSArray*)conFoNodes refs_p:(NSArray*)refs_p;
+-(AINetAbsFoNode*) create:(AIFoNodeBase*)foA foB:(AIFoNodeBase*)foB orderSames:(NSArray*)orderSames;
 
 @end

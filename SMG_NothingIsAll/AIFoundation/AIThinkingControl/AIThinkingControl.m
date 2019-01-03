@@ -386,7 +386,7 @@ static AIThinkingControl *_instance;
                     if (ARRISOK(orderSames) && !jumpForAbsAlreadyHav) {
                         
                         //8. 构建absNode
-                        AINetAbsFoNode *create_an = [[AINet sharedInstance] createAbs:@[foNode,assFrontNode] refs_p:orderSames];
+                        AINetAbsFoNode *create_an = [[AINet sharedInstance] createAbs:foNode foB:foNode orderSames:orderSames];
                         
                         //9. 并把抽象节点的信息_添加到瞬时记忆
                         [self dataIn_ToShortCache_Ps:create_an.orders_kvp];
@@ -704,8 +704,7 @@ static AIThinkingControl *_instance;
         //5. 判断absNode是否是由out_ps抽象的 (根据"微信息"组)
         AINetAbsFoNode *absNode = [SMGUtils searchObjectForPointer:absPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
         if (absNode) {
-            NSArray *microArr_p = ARRTOOK([SMGUtils searchObjectForPointer:absNode.absValue_p fileName:FILENAME_AbsValue]);
-            BOOL fromOut_ps = [SMGUtils containsSub_ps:microArr_p parent_ps:out_ps];
+            BOOL fromOut_ps = [SMGUtils containsSub_ps:absNode.orders_kvp parent_ps:out_ps];
             
             //6. 根据当前absNode的mv果,处理absCmvNode评价影响力;(系数0.2)
             if (fromOut_ps) {
@@ -721,13 +720,23 @@ static AIThinkingControl *_instance;
 /**
  *  MARK:--------------------可行性判定 (尝试激活执行方案)--------------------
  */
--(void) dataOut_CheckScore_TryOut:(AINetAbsFoNode*)absNode complete:(void(^)(CGFloat score,NSArray *out_ps))complete{
+-(void) dataOut_CheckScore_TryOut:(AINetAbsFoNode*)absFoNode complete:(void(^)(CGFloat score,NSArray *out_ps))complete{
     CGFloat score = 0;
-    if (!absNode) {
+    if (!absFoNode) {
         complete(0,nil);
     }
     //1. 取宏信息指向的"微信息"数组
-    NSArray *microArr_p = ARRTOOK([SMGUtils searchObjectForPointer:absNode.absValue_p fileName:FILENAME_AbsValue]);
+    NSArray *microArr_p = ARRTOOK([SMGUtils searchObjectForPointer:absFoNode.absValue_p fileName:FILENAME_AbsValue]);
+    
+    
+    //明日计划;
+    //this方法;
+    
+    //删除 >>>
+    //1. getNetAbsIndex_AbsPointer
+    //2. setAbsIndexReference
+    //3. FILENAME_AbsValue
+    
     
     //2. 根据microArr_p联想到对应的assAbsCmvNode;
     AIKVPointer *absValue_p = [theNet getNetAbsIndex_AbsPointer:microArr_p];

@@ -156,8 +156,8 @@ static AINet *_instance;
 //MARK:===============================================================
 //MARK:                     < abs >
 //MARK:===============================================================
--(AINetAbsFoNode*) createAbs:(NSArray*)foNodes refs_p:(NSArray*)refs_p{
-    return [self.absManager create:foNodes refs_p:refs_p];
+-(AINetAbsFoNode*) createAbs:(AIFoNodeBase*)foA foB:(AIFoNodeBase*)foB orderSames:(NSArray*)orderSames{
+    return [self.absManager create:foA foB:foB orderSames:orderSames];
 }
 
 
