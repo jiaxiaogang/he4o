@@ -23,6 +23,14 @@
 //MARK:===============================================================
 //MARK:                     < reference >
 //MARK:===============================================================
+
+/**
+ *  MARK:--------------------引用序列--------------------
+ *  @param indexPointer : value地址
+ *  @param target_p : 引用者地址(如:xxNode.pointer)
+ *
+ *  注: 暂不支持output;
+ */
 -(void) setNetReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue;
 
 //获取算法单结果的第二序列联想;
@@ -39,14 +47,6 @@
 //MARK:                     < abs >
 //MARK:===============================================================
 -(AINetAbsFoNode*) createAbs:(AIFoNodeBase*)foA foB:(AIFoNodeBase*)foB orderSames:(NSArray*)orderSames;
-
-
-//MARK:===============================================================
-//MARK:                     < absIndex >
-//MARK:===============================================================
--(AIKVPointer*) getNetAbsIndex_AbsPointer:(NSArray*)refs_p;
--(void) setAbsIndexReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue;
--(AIPointer*) getItemAbsNodePointer:(AIKVPointer*)absValue_p;
 
 
 //MARK:===============================================================

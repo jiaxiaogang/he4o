@@ -49,8 +49,6 @@
 #define FILENAME_RefPorts @"refPorts"       //微信息的reference序列文件名;
 #define FILENAME_Index(isOut) STRFORMAT(@"index_%d",isOut) //in微信息索引(数组) / out小脑微信息(数组)
 #define FILENAME_Reference @"reference"     //微信息引用序列
-#define FILENAME_AbsValue @"absValue"       //宏节点的值存储地址
-#define FILENAME_AbsIndex @"absIndex"       //宏节点索引序列地址
 #define FILENAME_DirectionIndex(mvDirection) STRFORMAT(@"directionIndex_%ld",mvDirection) //mv的顺逆方向索引序列地址
 
 #define FILENAME_Reference_ByPointer @"reference_ByPointer" //微信息引用(pointer序)

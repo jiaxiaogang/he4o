@@ -13,7 +13,6 @@
 #import "AICMVManager.h"
 #import "AIPort.h"
 #import "AIAbsManager.h"
-#import "AINetAbsIndex.h"
 #import "AINetDirectionReference.h"
 #import "AIAbsCMVManager.h"
 #import "AIAbsCMVNode.h"
@@ -28,7 +27,6 @@
 @property (strong, nonatomic) AINetIndex *netIndex; //索引区(皮层/海马)
 @property (strong, nonatomic) AICMVManager *cmvManager;     //网络树根(杏仁核)
 @property (strong, nonatomic) AIAbsManager *absManager;     //抽具象序列
-@property (strong, nonatomic) AINetAbsIndex *netAbsIndex;//宏信息索引区(海马)
 @property (strong, nonatomic) AINetDirectionReference *netDirectionReference;
 @property (strong, nonatomic) AIAbsCMVManager *absCmvManager;//网络cmv的抽象;
 @property (strong, nonatomic) AINetIndexReference *reference;
@@ -60,7 +58,6 @@ static AINet *_instance;
     self.cmvManager = [[AICMVManager alloc] init];
     self.cmvManager.delegate = self;
     self.absManager = [[AIAbsManager alloc] init];
-    self.netAbsIndex = [[AINetAbsIndex alloc] init];
     self.netDirectionReference = [[AINetDirectionReference alloc] init];
     self.reference = [[AINetIndexReference alloc] init];
     self.absCmvManager = [[AIAbsCMVManager alloc] init];
@@ -110,13 +107,6 @@ static AINet *_instance;
 //MARK:                     < reference >
 //MARK:===============================================================
 
-/**
- *  MARK:--------------------引用序列--------------------
- *  @param indexPointer : value地址
- *  @param target_p : 引用者地址(如:xxNode.pointer)
- *
- *  注: 暂不支持output;
- */
 -(void) setNetReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue{
     [self.reference setReference:indexPointer target_p:target_p difStrong:difValue];
 }
@@ -159,21 +149,6 @@ static AINet *_instance;
 -(AINetAbsFoNode*) createAbs:(AIFoNodeBase*)foA foB:(AIFoNodeBase*)foB orderSames:(NSArray*)orderSames{
     return [self.absManager create:foA foB:foB orderSames:orderSames];
 }
-
-
-//MARK:===============================================================
-//MARK:                     < absIndex >
-//MARK:===============================================================
--(AIKVPointer*) getNetAbsIndex_AbsPointer:(NSArray*)refs_p{
-    return [self.netAbsIndex getAbsValuePointer:refs_p];
-}
--(void) setAbsIndexReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue{
-    [self.netAbsIndex setIndexReference:indexPointer target_p:target_p difValue:difValue];
-}
--(AIPointer*) getItemAbsNodePointer:(AIKVPointer*)absValue_p{
-    return [self.netAbsIndex getAbsNodePointer:absValue_p];
-}
-
 
 //MARK:===============================================================
 //MARK:                     < directionReference >

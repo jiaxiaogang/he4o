@@ -373,7 +373,11 @@ static AIThinkingControl *_instance;
                     
                     
                     //针对单条value微信息的引用序列,不可删除;"明日完成"
+
                     
+                    //明日计划;
+                    //删除 >>>
+                    //4. getItemAbsNodePointer
                     
                     
                     NSString *foOrderStr = [NVUtils convertValuePs2Str:foNode.orders_kvp];
@@ -725,28 +729,16 @@ static AIThinkingControl *_instance;
     if (!absFoNode) {
         complete(0,nil);
     }
-    //1. 取宏信息指向的"微信息"数组
-    NSArray *microArr_p = ARRTOOK([SMGUtils searchObjectForPointer:absFoNode.absValue_p fileName:FILENAME_AbsValue]);
     
-    
-    //明日计划;
-    //this方法;
-    
-    //删除 >>>
-    //1. getNetAbsIndex_AbsPointer
-    //2. setAbsIndexReference
-    //3. FILENAME_AbsValue
-    
-    
-    //2. 根据microArr_p联想到对应的assAbsCmvNode;
-    AIKVPointer *absValue_p = [theNet getNetAbsIndex_AbsPointer:microArr_p];
-    AIPointer *absNode_p = [theNet getItemAbsNodePointer:absValue_p];
-    AINetAbsFoNode *assAbsNode = [SMGUtils searchObjectForPointer:absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+    //2. 根据microArr_p联想到对应的assAbsCmvNode; (去除组微信息absValue,并且此处如果联想最强引用的absValue,会导致 跨全网区执行的bug)
+    //AIKVPointer *absValue_p = [theNet getNetAbsIndex_AbsPointer:absFoNode.absValue_p];
+    //AIPointer *absNode_p = [theNet getItemAbsNodePointer:absValue_p];
+    //AINetAbsFoNode *assAbsNode = [SMGUtils searchObjectForPointer:absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
     
     //3. 处理assAbsNode评价影响力;(系数0.8)
-    CGFloat scoreForce = [ThinkingUtils getScoreForce:assAbsNode.cmvNode_p ratio:0.8f];
+    CGFloat scoreForce = [ThinkingUtils getScoreForce:absFoNode.cmvNode_p ratio:0.8f];
     score += scoreForce;
-    complete(score,microArr_p);
+    complete(score,absFoNode.orders_kvp);
 }
 
 

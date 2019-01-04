@@ -52,7 +52,7 @@
     AIPointer *urgentTo_p = [theNet getNetDataPointerWithData:@(absUrgentTo) algsType:algsType dataSource:dataSource];
     if (ISOK(urgentTo_p, AIKVPointer.class)) {
         result_acn.urgentTo_p = (AIKVPointer*)urgentTo_p;
-        [theNet setAbsIndexReference:result_acn.urgentTo_p target_p:result_acn.pointer difValue:1];//引用插线
+        [theNet setNetReference:result_acn.urgentTo_p target_p:result_acn.pointer difValue:1];//引用插线
     }
     
     //4. absDelta
@@ -60,7 +60,7 @@
     AIPointer *delta_p = [theNet getNetDataPointerWithData:@(absDelta) algsType:algsType dataSource:dataSource];
     if (ISOK(delta_p, AIKVPointer.class)) {
         result_acn.delta_p = (AIKVPointer*)delta_p;
-        [theNet setAbsIndexReference:result_acn.delta_p target_p:result_acn.pointer difValue:1];//引用插线
+        [theNet setNetReference:result_acn.delta_p target_p:result_acn.pointer difValue:1];//引用插线
     }
     
     //5. 关联conPorts插口
