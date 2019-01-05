@@ -52,16 +52,6 @@
     return kvPointer;
 }
 
-+(AIKVPointer*) createPointerForAbsValue:(NSString*)key{
-    NSInteger pointerId = [SMGUtils createPointerId:@"" dataSource:STRTOOK(key)];
-    return [self createPointerForAbsValue:key pointerId:pointerId];
-}
-
-+(AIKVPointer*) createPointerForAbsValue:(NSString*)key pointerId:(NSInteger)pointerId{
-    AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_ABSVALUE algsType:@"" dataSource:STRTOOK(key)];
-    return kvPointer;
-}
-
 //Direction的mv分区pointer;(存引用序列)
 +(AIKVPointer*) createPointerForDirection:(NSString*)mvAlgsType direction:(MVDirection)direction{
     NSInteger pointerId = 0;

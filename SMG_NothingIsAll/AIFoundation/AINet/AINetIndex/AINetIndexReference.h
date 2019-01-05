@@ -8,9 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
-//MARK:===============================================================
-//MARK:                     < 微信息引用_itemData区(第二序列) >
-//MARK:===============================================================
+/**
+ *  MARK:--------------------mv的微信息引用_itemData区(第二序列)--------------------
+ *  注: 目前引用序列仅用于mv,整个fo的已由algNode替代;而algNode的引用微信息由value.refPorts文件替代;
+ */
 @class AIKVPointer,AIPort;
 @interface AINetIndexReference : NSObject
 
@@ -42,16 +43,5 @@
  *  @desc : 2.当indexPointer为普通value时,则有可能搜索到除absNode之外的所有其它node(如:frontNode或mvNode等)
  */
 -(NSArray*) getReference:(AIKVPointer*)indexPointer limit:(NSInteger)limit;
-
-
-/**
- *  MARK:--------------------获取value被引用的absNode地址;--------------------
- *  @param absValue_p : value_p地址
- *  @param limit : 最多结果个数
- *  @result Return NSArray(元素为AIPort)
- *  @desc : 1.当indexPointer为absValue时,则只有absNode会被搜索到;
- */
--(NSArray*) getReference_JustAbsResult:(AIKVPointer*)absValue_p limit:(NSInteger)limit;
-
 
 @end

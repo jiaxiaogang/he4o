@@ -22,8 +22,6 @@
 +(void) setNetNodePointerId:(NSInteger)count algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
 +(AIKVPointer*) createPointerForNode:(NSString*)folderName;
 +(AIKVPointer*) createPointer:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
-+(AIKVPointer*) createPointerForAbsValue:(NSString*)key;//AbsValue地址,key作为dataSource;
-+(AIKVPointer*) createPointerForAbsValue:(NSString*)key pointerId:(NSInteger)pointerId;//AbsValue地址 & key作为dataSource; & 指定pointerId
 
 //Direction的mv分区pointer;(存引用序列)
 +(AIKVPointer*) createPointerForDirection:(NSString*)mvAlgsType direction:(MVDirection)direction;

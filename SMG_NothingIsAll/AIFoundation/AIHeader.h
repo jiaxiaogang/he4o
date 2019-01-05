@@ -34,7 +34,6 @@
 
 //index
 #define PATH_NET_VALUE              @"NET_VALUE"                            //神经网络"值数据"根目录;(海马体)(杏仁核)
-#define PATH_NET_ABSVALUE           @"NET_ABSVALUE"                         //"抽象值数据"根目录;
 
 //reference
 #define PATH_NET_REFERENCE          @"NET_REFERENCE"                        //神经网络"引用序列"根目录;(海马体)

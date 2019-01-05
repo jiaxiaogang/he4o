@@ -17,6 +17,7 @@
 #import "AINetAbsFoNode.h"
 #import "AIAbsAlgNode.h"
 #import "AIAlgNode.h"
+#import "AIPort.h"
 
 @implementation ThinkingUtils
 
@@ -51,38 +52,45 @@
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
     if (ARRISOK(ordersA) && ARRISOK(ordersB)) {
         for (AIKVPointer *algNodeA_p in ordersA) {
-            //6. 是否已收集
-            BOOL already = false;
-            for (AIKVPointer *same_p in orderSames) {
-                if ([same_p isEqual:algNodeA_p]) {
-                    already = true;
+            for (AIKVPointer *algNodeB_p in ordersB) {
+                //2. A与B直接一致则直接添加 & 不一致则如下代码;
+                if ([algNodeA_p isEqual:algNodeB_p]) {
+                    [orderSames addObject:algNodeA_p];
                     break;
-                }
-            }
-            //7. 未收集过,则查找是否有一致微信息(有则收集)
-            if (!already) {
-                for (AIKVPointer *algNodeB_p in ordersB) {
-                    
-                    AIAlgNode *algNodeA = [SMGUtils searchObjectForPointer:algNodeA_p fileName:FILENAME_Node time:cRedisNodeTime];
-                    AIAlgNode *algNodeB = [SMGUtils searchObjectForPointer:algNodeB_p fileName:FILENAME_Node time:cRedisNodeTime];
-                    NSMutableArray *algSames = [[NSMutableArray alloc] init];
-
-                    
-                    if (buildAlgNodeBlock) {
-                        buildAlgNodeBlock(algSames,algNodeA,algNodeB);
+                }else{
+                    ///1. 则检查能量值;
+                    if (!canAssBlock || !canAssBlock()) {
+                        break;
                     }
                     
-                    //1. 取出algNodeA和algNodeB
-                    //2. 类比他俩的absPorts;(联想一层一层abs的过程需要消耗energy) (写个回调向tc询问一次是否允许联想)
-                    //3. 如果a与b一模一样,则直接添加进orderSames;
-                    //4. 如果有部分abs一样,则把algSames构建成中间祖母节点(回调tc构建),并添加到orderSames;
-                    //5. 如果彻底不一样,则跳过;
+                    ///2. 能量值足够,则取出algNodeA & algNodeB
+                    AIAlgNode *algNodeA = [SMGUtils searchObjectForPointer:algNodeA_p fileName:FILENAME_Node time:cRedisNodeTime];
+                    AIAlgNode *algNodeB = [SMGUtils searchObjectForPointer:algNodeB_p fileName:FILENAME_Node time:cRedisNodeTime];
                     
+                    ///3. values->absPorts的认知过程
+                    if (algNodeA && algNodeB) {
+                        NSMutableArray *algSames = [[NSMutableArray alloc] init];
+                        for (AIKVPointer *valueA_p in algNodeA.value_ps) {
+                            for (AIKVPointer *valueB_p in algNodeB.value_ps) {
+                                if ([valueA_p isEqual:valueB_p] && ![algSames containsObject:valueB_p]) {
+                                    [algSames addObject:valueB_p];
+                                    break;
+                                }
+                            }
+                        }
+                        if (buildAlgNodeBlock) {
+                            buildAlgNodeBlock(algSames,algNodeA,algNodeB);
+                        }
+                    }
                     
-                    
-                    if ([algNodeA_p isEqual:algNodeB_p]) {
-                        [orderSames addObject:algNodeB_p];
-                        break;
+                    ///4. absPorts->orderSames (根据强度优先)
+                    for (AIPort *aPort in algNodeA.absPorts) {
+                        for (AIPort *bPort in algNodeB.absPorts) {
+                            if ([aPort.target_p isEqual:bPort.target_p]) {
+                                [orderSames addObject:bPort.target_p];
+                                break;
+                            }
+                        }
                     }
                 }
             }

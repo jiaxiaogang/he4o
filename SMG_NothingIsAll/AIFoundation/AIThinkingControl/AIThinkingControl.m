@@ -358,28 +358,6 @@ static AIThinkingControl *_instance;
                         return [theNet createAbsAlgNode:algSames algA:algA algB:algB];
                     }];
                     
-                    
-                    
-                    
-                    //1. 删掉微信息组的概念.... (仅完成删了1/3)
-                    //2. analogyOrdersA要深入到absAlgNode;
-                    //3. 钱塘江大桥很帅;  江大桥你牛逼;
-                    
-                    //明日计划:
-                    //1. ThinkingUtils analogyOrdersA的两个block;
-                    //2. analogyOrdersA改完;
-                    //3. createAbs对orderSames的使用,不要建组微信息...
-                    //4. 删掉组微信息的另外2/3;
-                    
-                    
-                    //针对单条value微信息的引用序列,不可删除;"明日完成"
-
-                    
-                    //明日计划;
-                    //删除 >>>
-                    //4. getItemAbsNodePointer
-                    
-                    
                     NSString *foOrderStr = [NVUtils convertValuePs2Str:foNode.orders_kvp];
                     NSString *assMicroStr = [NVUtils convertValuePs2Str:assFrontNode.orders_kvp];
                     NSString *samesStr = [NVUtils convertValuePs2Str:orderSames];
