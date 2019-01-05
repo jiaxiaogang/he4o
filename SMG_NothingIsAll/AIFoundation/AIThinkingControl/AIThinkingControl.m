@@ -25,6 +25,7 @@
 #import "AINetUtils.h"
 #import "AIAbsAlgNode.h"
 #import "AIAlgNode.h"
+#import "NSString+Extension.h"
 
 /**
  *  MARK:--------------------思维控制器--------------------
@@ -208,15 +209,43 @@ static AIThinkingControl *_instance;
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------联想相关数据(看到西瓜会开心)--------------------
+ *  MARK:--------------------联想相关数据(看到西瓜会开心)(识别)--------------------
  *  1. 注:直至desicionOut前,assCmv都会真实作用于thinkingControl
  *  2. assCmv首先会通过energy和cmvCache表现在thinkingControl中,影响思维循环;
  *  3. dataIn负责护送一次指定信息的ass(随后进入递归循环)
  */
 -(void) dataIn_AssociativeData:(AIPointer*)algNode_p {
-    [self dataIn_AssociativeData:algNode_p temp:nil];
-}
--(void) dataIn_AssociativeData:(AIPointer*)algNode_p temp:(NSArray*)algsArr {
+    AIAlgNodeBase *algNode = [SMGUtils searchObjectForPointer:algNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+    if (ISOK(algNode, AIAlgNodeBase.class)) {
+        //对value.refPorts进行检查识别;
+        //1. 绝对匹配 -> (strong++ & assFo)
+        NSString *valuesMD5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:[SMGUtils sortPointers:algNode.value_ps]]]);
+        for (AIPointer *value_p in algNode.value_ps) {
+            NSArray *refPorts = ARRTOOK([SMGUtils searchObjectForFilePath:value_p.filePath fileName:FILENAME_RefPorts time:cRedisReferenceTime]);
+            for (AIPort *refPort in refPorts) {
+                if ([valuesMD5 isEqualToString:refPort.header]) {
+                    
+                    
+                    return;
+                }
+            }
+            
+            
+        }
+        
+        
+        //2. 无绝对匹配 -> (从values的8个value.refPorts找前3个, 3*8=24   (我们怎样识别出一个陌生人是人类)
+        ////1. 如何来做这个模糊范围 使其可匹配;
+        
+        ////2. 支持对(常变信息的类比出规律);
+        
+        
+        
+        
+        
+    }
+    
+    
     if (ISOK(algsArr, NSArray.class)) {
         //1. noMv信号已输入完毕,联想
         for (AIKVPointer *algs_kvp in algsArr) {
