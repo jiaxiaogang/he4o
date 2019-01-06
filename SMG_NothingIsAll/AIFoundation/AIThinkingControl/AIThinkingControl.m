@@ -215,76 +215,92 @@ static AIThinkingControl *_instance;
  *  3. dataIn负责护送一次指定信息的ass(随后进入递归循环)
  */
 -(void) dataIn_AssociativeData:(AIPointer*)algNode_p {
+    //1. 数据准备
     AIAlgNodeBase *algNode = [SMGUtils searchObjectForPointer:algNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+    AIAlgNodeBase *assAlgNode = nil;
+    
+    //2. 对value.refPorts进行检查识别; (noMv信号已输入完毕,联想)
     if (ISOK(algNode, AIAlgNodeBase.class)) {
-        //对value.refPorts进行检查识别;
-        //1. 绝对匹配 -> (strong++ & assFo)
+        ///1. 绝对匹配 -> (header匹配)
         NSString *valuesMD5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:[SMGUtils sortPointers:algNode.value_ps]]]);
         for (AIPointer *value_p in algNode.value_ps) {
             NSArray *refPorts = ARRTOOK([SMGUtils searchObjectForFilePath:value_p.filePath fileName:FILENAME_RefPorts time:cRedisReferenceTime]);
             for (AIPort *refPort in refPorts) {
-                if ([valuesMD5 isEqualToString:refPort.header]) {
-                    
-                    
-                    return;
+                
+                ///2. 依次绝对匹配header,找到则break;
+                if (![refPort.target_p isEqual:algNode.pointer] && [valuesMD5 isEqualToString:refPort.header]) {
+                    assAlgNode = [SMGUtils searchObjectForPointer:refPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
+                    break;
+                }
+            }
+            if (assAlgNode) {
+                break;
+            }
+        }
+        
+        ///3. 局部匹配 -> (从values的8个value.refPorts找前3个, 3*8=24)
+        if (assAlgNode == nil) {
+            
+            ///4. 计数器对强度前3进行计数
+            NSMutableDictionary *countDic = [[NSMutableDictionary alloc] init];
+            for (AIPointer *value_p in algNode.value_ps) {
+                NSArray *refPorts = ARRTOOK([SMGUtils searchObjectForFilePath:value_p.filePath fileName:FILENAME_RefPorts time:cRedisReferenceTime]);
+                refPorts = [refPorts subarrayWithRange:NSMakeRange(0, MIN(cAssDataLimit, refPorts.count))];
+                for (AIPort *refPort in refPorts) {
+                    if (![refPort.target_p isEqual:algNode.pointer]) {
+                        NSData *key = [NSKeyedArchiver archivedDataWithRootObject:refPort.target_p];
+                        int oldCount = [NUMTOOK([countDic objectForKey:key]) intValue];
+                        [countDic setObject:@(oldCount + 1) forKey:key];
+                    }
                 }
             }
             
+            ///5. 找出计数最大的key
+            NSData *maxKey = nil;
+            for (NSData *key in countDic.allKeys) {
+                if (maxKey == nil || ([NUMTOOK([countDic objectForKey:maxKey]) intValue] < [NUMTOOK([countDic objectForKey:key]) intValue])) {
+                    maxKey = key;
+                }
+            }
             
+            ///6. 取出对应的assAlgNode
+            if (maxKey) {
+                AIKVPointer *max_p = [NSKeyedUnarchiver unarchiveObjectWithData:maxKey];
+                assAlgNode = [SMGUtils searchObjectForPointer:max_p fileName:FILENAME_Node time:cRedisNodeTime];
+            }
         }
-        
-        
-        //2. 无绝对匹配 -> (从values的8个value.refPorts找前3个, 3*8=24   (我们怎样识别出一个陌生人是人类)
-        ////1. 如何来做这个模糊范围 使其可匹配;
-        
-        ////2. 支持对(常变信息的类比出规律);
-        
-        
-        
-        
-        
     }
     
-    
-    if (ISOK(algsArr, NSArray.class)) {
-        //1. noMv信号已输入完毕,联想
-        for (AIKVPointer *algs_kvp in algsArr) {
-            //2. 在第二序列指向节点的端口;
-            NSArray *referPorts = [[AINet sharedInstance] getNetReference:algs_kvp limit:cAssDataLimit];
-            for (AIPort *referPort in referPorts) {
-                if (ISOK(referPort, AIPort.class)) {
-                    id referNode = [SMGUtils searchObjectForPointer:referPort.target_p fileName:FILENAME_Node];
-                    if (ISOK(referNode, AIFrontOrderNode.class)) {
-                        //3. 联想到cmv模型前因
-                        AIFrontOrderNode *foNode = (AIFrontOrderNode*)referNode;
-                        AICMVNode *cmvNode = [SMGUtils searchObjectForPointer:foNode.cmvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
-                        
-                        //4. 将联想到的cmv更新energy和cmvCache
-                        NSString *algsType = cmvNode.urgentTo_p.algsType;
-                        NSInteger urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
-                        NSInteger delta = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
-                        [self updateEnergy:(urgentTo + 9)/10];
-                        [self.mvCacheManager updateCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
-                        
-                        //5. 形成循环,根据当前最前排mv和energy,再进行思维;
-                        //[self dataIn_AssociativeData:nil];//TODO(将联想到的foOrder时序列,再进行二次联想)
-                        [self dataOut_AssociativeExperience];
-                        
-                        //6. log
-                        NSLog(@"联想到cmvNode: %@",[NVUtils getCmvModelDesc_ByCmvNode:cmvNode]);
-                    }else if(ISOK(referNode, AINetAbsFoNode.class)){
-                        //联想到数据网络节点
-                        //TODO>>>>将结果存到shortCache或thinkFeedCache//或先不添加,随后有需要时,再说;
-                    }
-                    
-                    //1. foNode.cmvModel_kvp为空  (bug)
-                    //2. reference到底是指向foNode还是指向cmvModel.orders_kvp
-                    //3. 
-                    
-                    
-                }
-            }
+    //3. strong++ & assFo & mvCache
+    if (ISOK(assAlgNode, AIAlgNodeBase.class)) {
+        ///1. strong++
+        [AINetUtils insertPointer:assAlgNode.pointer toRefPortsByValues:assAlgNode.value_ps ps:assAlgNode.value_ps];
+        
+        ///2. assAlgNode的引用序列联想assFo
+        AIPort *firstPort = ARR_INDEX(assAlgNode.refPorts, 0);
+        if (!firstPort) {
+            return;
         }
+        AIFoNodeBase *foNode = [SMGUtils searchObjectForPointer:firstPort.target_p fileName:FILENAME_Node];
+        if (ISOK(foNode, AIFoNodeBase.class)) {
+            ///3. 联想到cmv模型前因
+            AICMVNode *cmvNode = [SMGUtils searchObjectForPointer:foNode.cmvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+            
+            ///4. 将联想到的cmv更新energy和cmvCache
+            NSString *algsType = cmvNode.urgentTo_p.algsType;
+            NSInteger urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
+            NSInteger delta = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
+            [self updateEnergy:(urgentTo + 9)/10];
+            [self.mvCacheManager updateCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
+            
+            ///5. 形成循环,根据当前最前排mv和energy,再进行思维;
+            [self dataOut_AssociativeExperience];
+            
+            ///6. log
+            NSLog(@"联想到cmvNode: %@",[NVUtils getCmvModelDesc_ByCmvNode:cmvNode]);
+        }
+        //联想到数据网络节点
+        //TODO:将结果存到shortCache(目前以看到的为主,想到的没存)或thinkFeedCache(人脑有短中长时缓存)//需要时,再说;
     }
 }
 

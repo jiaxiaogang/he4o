@@ -22,6 +22,6 @@
 //MARK:===============================================================
 //MARK:                     < thinkingControl >
 //MARK:===============================================================
-#define cAssDataLimit 2 //应以当前整体思维活跃度,变化为1-3左右;
+#define cAssDataLimit 3 //应以当前整体思维活跃度,变化为1-3左右;
 #define cMinEnergy 0
 #define cMaxEnergy 5

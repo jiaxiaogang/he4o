@@ -15,6 +15,5 @@
 @interface AINetAbsFoNode : AIFoNodeBase
 
 @property (strong, nonatomic) NSMutableArray *conPorts; //具象关联端口
-//@property (strong, nonatomic) AIKVPointer *absValue_p;  //微信息组//xxxTODOTOMORROW临时存在;随后干掉;
 
 @end
