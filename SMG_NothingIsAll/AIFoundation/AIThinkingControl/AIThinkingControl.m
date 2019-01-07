@@ -82,13 +82,6 @@ static AIThinkingControl *_instance;
 //MARK:===============================================================
 -(void) commitInput:(NSObject*)algsModel{
     [self dataIn:algsModel];
-    
-    //明日计划
-    //1. 增加TC对algsModel的应对量;
-    //2. 思考"多组数据间"的分析类比; (比如视觉算法)
-    
-    
-    
 }
 
 /**
@@ -213,6 +206,7 @@ static AIThinkingControl *_instance;
  *  1. 注:直至desicionOut前,assCmv都会真实作用于thinkingControl
  *  2. assCmv首先会通过energy和cmvCache表现在thinkingControl中,影响思维循环;
  *  3. dataIn负责护送一次指定信息的ass(随后进入递归循环)
+ *  注: 局部匹配_后面通过调整参数,来达到99%以上的识别率;
  */
 -(void) dataIn_AssociativeData:(AIPointer*)algNode_p {
     //1. 数据准备

@@ -31,11 +31,11 @@
 
 +(void) output_Reactor:(NSString*)rds paramNum:(NSNumber*)paramNum{
     if (paramNum) {
-        //1. 广播执行;
-        [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:@{@"rds":STRTOOK(rds),@"paramNum":NUMTOOK(paramNum)}];
-        
-        //2. 将输出入网;(TODO:将入网改到tc处,dataOut处应该自行入网)
+        //1. 将输出入网;(TODO:将入网改到tc处,dataOut处应该自行入网)
         [[AIThinkingControl shareInstance] commitOutputLog:NSStringFromClass(self) dataSource:STRTOOK(rds) outputObj:paramNum];
+        
+        //2. 广播执行;
+        [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:@{@"rds":STRTOOK(rds),@"paramNum":NUMTOOK(paramNum)}];
     }
 }
 
