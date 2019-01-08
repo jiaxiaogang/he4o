@@ -30,6 +30,6 @@
  *  @param dataSource    : 输出算法函数(如output_Text:)
  *  @param outputObj : 输出内容(如:饿死爹了)
  */
--(void) commitOutputLog:(NSString*)algsType dataSource:(NSString*)dataSource outputObj:(NSNumber*)outputObj;
+-(void) commitOutputLog:(NSArray*)validsDic;
 
 @end

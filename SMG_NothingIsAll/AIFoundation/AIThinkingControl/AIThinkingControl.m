@@ -14,7 +14,6 @@
 #import "AIPort.h"
 #import "AINetAbsFoNode.h"
 #import "ThinkingUtils.h"
-#import "OutputUtils.h"
 #import "Output.h"
 #import "AIFrontOrderNode.h"
 #import "AICMVNode.h"
@@ -98,9 +97,11 @@ static AIThinkingControl *_instance;
  *  @param dataSource   : 输出算法函数的标识(rds)
  *  @param outputObj    : 输出内容(如:饿死爹了)
  */
--(void) commitOutputLog:(NSString*)algsType dataSource:(NSString*)dataSource outputObj:(NSNumber*)outputObj{
+-(void) commitOutputLog:(NSArray*)validsDic{
     //1. 装箱
     AIKVPointer *output_p = [theNet getOutputIndex:algsType dataSource:dataSource outputObj:outputObj];
+    
+    [self dataIn_ConvertAlgNode:@[output_p]];
     
     //2. 记录可输出canout (当前善未形成node,所以无法建议索引;(检查一下,当outLog形成node后,索引的建立))
     [AINetUtils setCanOutput:algsType dataSource:dataSource];
@@ -761,6 +762,8 @@ static AIThinkingControl *_instance;
 
 /**
  *  MARK:--------------------尝试输出信息--------------------
+ *  @param outArr : orders里筛选出来的algNode组;
+ *
  *  三种输出方式:
  *  1. 反射输出 : reflexOut
  *  2. 激活输出 : absNode信息无conPorts方向的outPointer信息时,将absNode的宏信息尝试输出;
@@ -770,10 +773,10 @@ static AIThinkingControl *_instance;
     //1. 尝试输出找到解决问题的实际操作 (取到当前cacheModel中的最佳决策,并进行输出;)
     BOOL tryOutSuccess = false;
     if (expModel && ARRISOK(outArr)) {
-        for (AIKVPointer *micro_p in outArr) {
+        for (AIKVPointer *algNode_p in outArr) {
             //>1 检查micro_p是否是"输出";
             //>2 假如order_p足够确切,尝试检查并输出;
-            BOOL invoked = [OutputUtils checkAndInvoke:micro_p];
+            BOOL invoked = [Output checkAndInvoke:algNode_p];
             if (invoked) {
                 tryOutSuccess = true;
             }

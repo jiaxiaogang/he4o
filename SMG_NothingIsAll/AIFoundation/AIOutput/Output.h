@@ -15,6 +15,7 @@
  *  3. 输出从 "反射输出" 到 "主动输出";
  *
  */
+@class AIKVPointer;
 @interface Output : NSObject
 
 
@@ -34,9 +35,17 @@
 
 /**
  *  MARK:--------------------反射输出器--------------------
- *  @params rds         : 先天反射标识 (作为dataSource的后辍);
- *  @params paramNum    : 参数值 (目前仅支持1个)
+ *  @param rds         : 先天反射标识 (作为dataSource的后辍);
+ *  @param paramNum    : 参数值 (目前仅支持1个)
  */
 +(void) output_Reactor:(NSString*)rds paramNum:(NSNumber*)paramNum;
+
+
+/**
+ *  MARK:--------------------后天检查执行输出--------------------
+ *  @param algNode_p : 祖母节点指针
+ @  @result 输出有效(>1条)时,返回true;
+ */
++(BOOL) checkAndInvoke:(AIKVPointer*)algNode_p;
 
 @end
