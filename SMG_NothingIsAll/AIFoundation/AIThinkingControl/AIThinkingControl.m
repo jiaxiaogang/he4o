@@ -15,6 +15,7 @@
 #import "AINetAbsFoNode.h"
 #import "ThinkingUtils.h"
 #import "Output.h"
+#import "OutputUtils.h"
 #import "AIFrontOrderNode.h"
 #import "AICMVNode.h"
 #import "AIAbsCMVNode.h"
@@ -90,24 +91,31 @@ static AIThinkingControl *_instance;
     self.energy = [ThinkingUtils updateEnergy:self.energy delta:delta];
 }
 
-
 /**
  *  MARK:--------------------输出的日志入网(输入小脑)--------------------
- *  @param algsType     : 输出算法分区(目前仅有Output)
- *  @param dataSource   : 输出算法函数的标识(rds)
- *  @param outputObj    : 输出内容(如:饿死爹了)
+ *  @param dics : 输出内容(如:eat) {@"ds":@"反射标识rds",@"data",@"微信息"}
  */
--(void) commitOutputLog:(NSArray*)validsDic{
-    //1. 装箱
-    AIKVPointer *output_p = [theNet getOutputIndex:algsType dataSource:dataSource outputObj:outputObj];
+-(void) commitOutputLog:(NSArray*)dics{
+    //1. 数据
+    NSMutableArray *value_ps = [[NSMutableArray alloc] init];
+    for (NSDictionary *dic in ARRTOOK(dics)) {
+        //2. 取值
+        NSString *rds = STRTOOK([dic objectForKey:@"ds"]);
+        NSNumber *data = NUMTOOK([dic objectForKey:@"data"]);
+        
+        //3. 装箱
+        AIKVPointer *output_p = [theNet getOutputIndex:rds outputObj:data];
+        [value_ps addObject:output_p];
+        
+        //4. 记录可输出canout (当前善未形成node,所以无法建议索引;(检查一下,当outLog形成node后,索引的建立))
+        [AINetUtils setCanOutput:rds];
+    }
     
-    [self dataIn_ConvertAlgNode:@[output_p]];
+    //5. 祖母
+    AIPointer *algNode_p = [self dataIn_ConvertAlgNode:value_ps];
     
-    //2. 记录可输出canout (当前善未形成node,所以无法建议索引;(检查一下,当outLog形成node后,索引的建立))
-    [AINetUtils setCanOutput:algsType dataSource:dataSource];
-    
-    //3. 加瞬时记忆
-    [self dataIn_ToShortCache:output_p];
+    //6. 加瞬时记忆
+    [self dataIn_ToShortCache:algNode_p];
 }
 
 
@@ -776,7 +784,7 @@ static AIThinkingControl *_instance;
         for (AIKVPointer *algNode_p in outArr) {
             //>1 检查micro_p是否是"输出";
             //>2 假如order_p足够确切,尝试检查并输出;
-            BOOL invoked = [Output checkAndInvoke:algNode_p];
+            BOOL invoked = [Output output_TC:algNode_p];
             if (invoked) {
                 tryOutSuccess = true;
             }
@@ -801,7 +809,7 @@ static AIThinkingControl *_instance;
  *  MARK:--------------------反射输出--------------------
  */
 -(void) dataOut_Reflex:(AIMoodType)moodType{
-    [Output output_Face:moodType];
+    [OutputUtils output_Face:moodType];
 }
 
 @end

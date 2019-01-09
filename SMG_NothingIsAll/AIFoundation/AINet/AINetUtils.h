@@ -14,15 +14,15 @@
  *  MARK:--------------------检查是否可以输出algsType&dataSource--------------------
  *  1. 有过输出记录,即可输出;
  */
-+(BOOL) checkCanOutput:(NSString*)algsType dataSource:(NSString*)dataSource;
++(BOOL) checkCanOutput:(NSString*)dataSource;
 
 
 /**
  *  MARK:--------------------标记canout--------------------
- *  @param algsType     : 分区标识
+ *  @param algsType     : 分区标识 (algsType不需要,因为都是Output)
  *  @param dataSource   : 算法标识
  */
-+(void) setCanOutput:(NSString*)algsType dataSource:(NSString*)dataSource ;
++(void) setCanOutput:(NSString*)dataSource ;
 
 
 /**

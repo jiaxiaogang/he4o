@@ -63,7 +63,7 @@
 //MARK:===============================================================
 
 //小脑索引
--(AIKVPointer*) getOutputIndex:(NSString*)algsType dataSource:(NSString*)dataSource outputObj:(NSNumber*)outputObj;
+-(AIKVPointer*) getOutputIndex:(NSString*)dataSource outputObj:(NSNumber*)outputObj;
 
 
 //MARK:===============================================================

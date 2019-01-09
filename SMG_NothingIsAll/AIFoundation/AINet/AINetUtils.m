@@ -15,18 +15,18 @@
 
 @implementation AINetUtils
 
-+(BOOL) checkCanOutput:(NSString*)algsType dataSource:(NSString*)dataSource {
++(BOOL) checkCanOutput:(NSString*)dataSource {
     AIKVPointer *canout_p = [SMGUtils createPointerForCerebelCanOut];
     NSArray *arr = [SMGUtils searchObjectForFilePath:canout_p.filePath fileName:FILENAME_Default time:cRedisDefaultTime];
-    return ARRISOK(arr) && [arr containsObject:STRFORMAT(@"%@_%@",algsType,dataSource)];
+    return ARRISOK(arr) && [arr containsObject:STRTOOK(dataSource)];
 }
 
 
-+(void) setCanOutput:(NSString*)algsType dataSource:(NSString*)dataSource {
++(void) setCanOutput:(NSString*)dataSource {
     //1. 取mv分区的引用序列文件;
     AIKVPointer *canout_p = [SMGUtils createPointerForCerebelCanOut];
     NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForFilePath:canout_p.filePath fileName:FILENAME_Default time:cRedisDefaultTime]];
-    NSString *identifier = STRFORMAT(@"%@_%@",algsType,dataSource);
+    NSString *identifier = STRTOOK(dataSource);
     if (![mArr containsObject:identifier]) {
         [mArr addObject:identifier];
         [SMGUtils insertObject:mArr rootPath:canout_p.filePath fileName:FILENAME_Default time:cRedisDefaultTime];

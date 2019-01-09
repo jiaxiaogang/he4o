@@ -18,4 +18,11 @@
  */
 +(NSString*) convertOutType2dataSource:(NSString*)dataType;
 
+
+/**
+ *  MARK:--------------------内部反射封装--------------------
+ *  1. 例如:对Anxious情绪,testHungryDemo与birdGrowDemo的反应肯定就不是一样的;
+ */
++(void) output_Face:(AIMoodType)type;
+
 @end

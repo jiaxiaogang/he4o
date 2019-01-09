@@ -13,47 +13,21 @@
 #import "AIKVPointer.h"
 #import "AIAlgNodeBase.h"
 #import "OutputUtils.h"
+#import "OutputModel.h"
 
 @implementation Output
 
-+(NSString*) getReactorMethodName{
-    return NSStringFromSelector(@selector(output_Reactor:paramNum:));
-}
-
-+(void) output_Face:(AIMoodType)type{
-    //1. 数据
-    const char *chars = nil;
-    if (type == AIMoodType_Anxious) {
-        chars = [@"T_T" UTF8String];
-    }else if(type == AIMoodType_Satisfy){
-        chars = [@"^_^" UTF8String];
-    }
-    if (chars) {
-        //2. 将输出入网
-        NSMutableArray *valids = [[NSMutableArray alloc] init];
-        [valids addObject:@{@"ds":TEXT_RDS,@"at":NSStringFromClass(Output.class),@"data":@(chars[0])}];
-        [valids addObject:@{@"ds":TEXT_RDS,@"at":NSStringFromClass(Output.class),@"data":@(chars[1])}];
-        [valids addObject:@{@"ds":TEXT_RDS,@"at":NSStringFromClass(Output.class),@"data":@(chars[2])}];
-        [[AIThinkingControl shareInstance] commitOutputLog:valids];
-        
-        //3. 执行输出
-        [self output_Reactor:TEXT_RDS paramNum:@(chars[0])];
-        [self output_Reactor:TEXT_RDS paramNum:@(chars[1])];
-        [self output_Reactor:TEXT_RDS paramNum:@(chars[2])];
++(void) output_Reactor:(NSArray*)outputModels{
+    //1. 将输出入网
+    [[AIThinkingControl shareInstance] commitOutputLog:outputModels];
+    
+    //2. 广播执行输出;
+    for (OutputModel *model in ARRTOOK(outputModels)) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:@{@"rds":STRTOOK(model.rds),@"paramNum":NUMTOOK(model.data)}];
     }
 }
 
-+(void) output_Reactor:(NSString*)rds paramNum:(NSNumber*)paramNum{
-    if (paramNum) {
-        //广播执行;
-        [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:@{@"rds":STRTOOK(rds),@"paramNum":NUMTOOK(paramNum)}];
-    }
-}
-
-/**
- *  MARK:--------------------检查执行微信息的输出--------------------
- */
-+(BOOL) checkAndInvoke:(AIKVPointer*)algNode_p{
++(BOOL) output_TC:(AIKVPointer*)algNode_p{
     //1. 数据
     AIAlgNodeBase *algNode = [SMGUtils searchObjectForPointer:algNode_p fileName:FILENAME_Node time:cRedisNodeTime];
     if (!ISOK(algNode, AIAlgNodeBase.class)) {
@@ -69,27 +43,19 @@
         if (!value_p.isOut) {
             dataSource = [OutputUtils convertOutType2dataSource:value_p.algsType];
         }
-        NSString *algsType = NSStringFromClass(Output.class);
         
         //4. 检查可输出"某数据类型"并收集
-        if ([AINetUtils checkCanOutput:algsType dataSource:dataSource]) {
-            NSNumber *microData = NUMTOOK([SMGUtils searchObjectForPointer:value_p fileName:FILENAME_Value time:cRedisValueTime]);
-            [valids addObject:@{@"ds":STRTOOK(dataSource),@"at":algsType,@"data":microData}];
+        if ([AINetUtils checkCanOutput:dataSource]) {
+            OutputModel *model = [[OutputModel alloc] init];
+            model.rds = dataSource;
+            model.data = NUMTOOK([SMGUtils searchObjectForPointer:value_p fileName:FILENAME_Value time:cRedisValueTime]);
+            [valids addObject:model];
         }
     }
     
+    //5. 执行输出
     if (ARRISOK(valids)) {
-        //5. 将输出入网
-        [[AIThinkingControl shareInstance] commitOutputLog:valids];
-        
-        //6. 执行输出
-        for (NSDictionary *dic in valids) {
-            NSString *methodName = [Output getReactorMethodName];
-            NSString *algsType = STRTOOK([dic objectForKey:@"at"]);
-            NSString *dataSource = STRTOOK([dic objectForKey:@"ds"]);
-            NSNumber *data = NUMTOOK([dic objectForKey:@"data"]);
-            [NSObject invocationMethodName:methodName className:algsType withObjects:@[dataSource,data]];
-        }
+        [self output_Reactor:valids];
         return true;
     }
     

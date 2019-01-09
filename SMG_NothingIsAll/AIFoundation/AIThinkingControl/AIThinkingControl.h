@@ -26,10 +26,8 @@
 
 /**
  *  MARK:--------------------输出的日志入网(输入小脑)--------------------
- *  @param algsType  : 输出算法分区(目前仅有Output)
- *  @param dataSource    : 输出算法函数(如output_Text:)
- *  @param outputObj : 输出内容(如:饿死爹了)
+ *  @param dics : 输出内容(如:eat) {@"ds":@"反射标识rds",@"data",@"微信息"}
  */
--(void) commitOutputLog:(NSArray*)validsDic;
+-(void) commitOutputLog:(NSArray*)dics;
 
 @end

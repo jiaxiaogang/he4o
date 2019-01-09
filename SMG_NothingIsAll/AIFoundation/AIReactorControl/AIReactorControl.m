@@ -13,6 +13,7 @@
 #import "AIVisionAlgs.h"
 #import "AICustomAlgs.h"
 #import "Output.h"
+#import "OutputModel.h"
 
 @implementation AIReactorControl
 
@@ -62,8 +63,10 @@
  */
 +(void) commitReactor:(NSString*)rds{
     //1. 传递到output执行
-    NSNumber *paramNum = @(1);
-    [Output output_Reactor:rds paramNum:paramNum];
+    OutputModel *model = [[OutputModel alloc] init];
+    model.rds = STRTOOK(rds);
+    model.data = @(1);
+    [Output output_Reactor:@[model]];
 }
 
 @end

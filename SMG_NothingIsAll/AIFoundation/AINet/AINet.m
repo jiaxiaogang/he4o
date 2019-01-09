@@ -21,6 +21,7 @@
 #import "AIFrontOrderNode.h"
 #import "AINetUtils.h"
 #import "AIAlgNodeManager.h"
+#import "Output.h"
 
 @interface AINet () <AICMVManagerDelegate,AIAbsCMVManagerDelegate>
 
@@ -95,9 +96,9 @@ static AINet *_instance;
 }
 
 //小脑索引
--(AIKVPointer*) getOutputIndex:(NSString*)algsType dataSource:(NSString*)dataSource outputObj:(NSNumber*)outputObj {
+-(AIKVPointer*) getOutputIndex:(NSString*)dataSource outputObj:(NSNumber*)outputObj {
     if (outputObj) {
-        return [self.netIndex getDataPointerWithData:outputObj algsType:algsType dataSource:dataSource isOut:true];
+        return [self.netIndex getDataPointerWithData:outputObj algsType:NSStringFromClass(Output.class) dataSource:dataSource isOut:true];
     }
     return nil;
 }
