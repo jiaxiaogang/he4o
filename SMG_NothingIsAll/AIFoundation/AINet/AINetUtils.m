@@ -15,6 +15,10 @@
 
 @implementation AINetUtils
 
+//MARK:===============================================================
+//MARK:                     < CanOutput >
+//MARK:===============================================================
+
 +(BOOL) checkCanOutput:(NSString*)dataSource {
     AIKVPointer *canout_p = [SMGUtils createPointerForCerebelCanOut];
     NSArray *arr = [SMGUtils searchObjectForFilePath:canout_p.filePath fileName:FILENAME_Default time:cRedisDefaultTime];
@@ -33,6 +37,10 @@
     }
 }
 
+
+//MARK:===============================================================
+//MARK:                     < insertPointer >
+//MARK:===============================================================
 
 +(void) insertPointer:(AIPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps{
     if (ISOK(pointer, AIPointer.class) && ISOK(ports, NSMutableArray.class)) {
@@ -155,6 +163,22 @@
             [SMGUtils insertObject:algNode pointer:algNode.pointer fileName:FILENAME_Node time:cRedisNodeTime];
         }
     }
+}
+
+//MARK:===============================================================
+//MARK:                     < Other >
+//MARK:===============================================================
+
++(BOOL) checkAllOfOut:(NSArray*)value_ps{
+    if (ARRISOK(value_ps)) {
+        for (AIKVPointer *value_p in value_ps) {
+            if (!value_p.isOut) {
+                return false;
+            }
+        }
+        return true;
+    }
+    return false;
 }
 
 @end

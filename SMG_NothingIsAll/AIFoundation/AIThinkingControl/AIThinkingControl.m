@@ -26,6 +26,7 @@
 #import "AIAbsAlgNode.h"
 #import "AIAlgNode.h"
 #import "NSString+Extension.h"
+#import "OutputModel.h"
 
 /**
  *  MARK:--------------------思维控制器--------------------
@@ -93,22 +94,20 @@ static AIThinkingControl *_instance;
 
 /**
  *  MARK:--------------------输出的日志入网(输入小脑)--------------------
- *  @param dics : 输出内容(如:eat) {@"ds":@"反射标识rds",@"data",@"微信息"}
+ *  @param outputModels : 输出内容(如:eat)
  */
--(void) commitOutputLog:(NSArray*)dics{
+-(void) commitOutputLog:(NSArray*)outputModels{
     //1. 数据
     NSMutableArray *value_ps = [[NSMutableArray alloc] init];
-    for (NSDictionary *dic in ARRTOOK(dics)) {
-        //2. 取值
-        NSString *rds = STRTOOK([dic objectForKey:@"ds"]);
-        NSNumber *data = NUMTOOK([dic objectForKey:@"data"]);
-        
-        //3. 装箱
-        AIKVPointer *output_p = [theNet getOutputIndex:rds outputObj:data];
-        [value_ps addObject:output_p];
+    for (OutputModel *model in ARRTOOK(outputModels)) {
+        //2. 装箱
+        AIKVPointer *output_p = [theNet getOutputIndex:model.rds outputObj:model.data];
+        if (output_p) {
+            [value_ps addObject:output_p];
+        }
         
         //4. 记录可输出canout (当前善未形成node,所以无法建议索引;(检查一下,当outLog形成node后,索引的建立))
-        [AINetUtils setCanOutput:rds];
+        [AINetUtils setCanOutput:model.rds];
     }
     
     //5. 祖母

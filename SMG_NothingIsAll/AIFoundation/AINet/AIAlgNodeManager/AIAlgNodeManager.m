@@ -19,10 +19,11 @@
 +(AIAlgNode*) createAlgNode:(NSArray*)algsArr{
     //1. 数据
     algsArr = ARRTOOK(algsArr);
+    BOOL isOut = [AINetUtils checkAllOfOut:algsArr];
     
     //2. 构建具象节点 (优先用本地已有,否则new)
     AIAlgNode *conNode = [[AIAlgNode alloc] init];
-    conNode.pointer = [SMGUtils createPointerForNode:PATH_NET_ALG_NODE];
+    conNode.pointer = [SMGUtils createPointer:PATH_NET_ALG_NODE algsType:@"" dataSource:@"" isOut:isOut];
     
     //3. 指定value_ps
     conNode.value_ps = [SMGUtils sortPointers:algsArr];
@@ -123,7 +124,8 @@
         //3. 无则创建
         if (!findAbsNode) {
             findAbsNode = [[AIAbsAlgNode alloc] init];
-            findAbsNode.pointer = [SMGUtils createPointerForNode:PATH_NET_ALG_ABS_NODE];
+            BOOL isOut = [AINetUtils checkAllOfOut:sortSames];
+            findAbsNode.pointer = [SMGUtils createPointer:PATH_NET_ALG_ABS_NODE algsType:@"" dataSource:@"" isOut:isOut];
             findAbsNode.value_ps = sortSames;
             
             //4. value.refPorts (更新微信息的引用序列)

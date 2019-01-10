@@ -18,7 +18,7 @@
 
 
 //MARK:===============================================================
-//MARK:                     < AIPointer >
+//MARK:                     < PointerId >
 //MARK:===============================================================
 +(NSInteger) createPointerId:(NSString*)algsType dataSource:(NSString*)dataSource{
     return [self createPointerId:true algsType:algsType dataSource:dataSource];
@@ -42,20 +42,24 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-+(AIKVPointer*) createPointerForNode:(NSString*)folderName {
-    return [self createPointer:folderName algsType:@"" dataSource:@""];
-}
+//MARK:===============================================================
+//MARK:                     < AIPointer >
+//MARK:===============================================================
 
-+(AIKVPointer*) createPointer:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource{
+//Node
++(AIKVPointer*) createPointerForNode:(NSString*)folderName{
+    return [self createPointer:folderName algsType:@"" dataSource:@"" isOut:false];
+}
++(AIKVPointer*) createPointer:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut{
     NSInteger pointerId = [SMGUtils createPointerId:algsType dataSource:dataSource];
-    AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:folderName algsType:algsType dataSource:dataSource];
+    AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:folderName algsType:algsType dataSource:dataSource isOut:isOut];
     return kvPointer;
 }
 
 //Direction的mv分区pointer;(存引用序列)
 +(AIKVPointer*) createPointerForDirection:(NSString*)mvAlgsType direction:(MVDirection)direction{
     NSInteger pointerId = 0;
-    AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_DIRECTION(direction) algsType:mvAlgsType dataSource:nil];
+    AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_DIRECTION(direction) algsType:mvAlgsType dataSource:nil isOut:false];
     return kvPointer;
 }
 

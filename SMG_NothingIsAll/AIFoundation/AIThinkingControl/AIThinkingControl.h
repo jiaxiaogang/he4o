@@ -26,8 +26,8 @@
 
 /**
  *  MARK:--------------------输出的日志入网(输入小脑)--------------------
- *  @param dics : 输出内容(如:eat) {@"ds":@"反射标识rds",@"data",@"微信息"}
+ *  @param dics : 输出内容(如:eat)
  */
--(void) commitOutputLog:(NSArray*)dics;
+-(void) commitOutputLog:(NSArray*)outputModels;
 
 @end

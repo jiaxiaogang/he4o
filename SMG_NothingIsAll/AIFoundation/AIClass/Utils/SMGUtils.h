@@ -14,14 +14,19 @@
 
 
 //MARK:===============================================================
-//MARK:                     < AIPointer & PointerId >
+//MARK:                     < PointerId >
 //MARK:===============================================================
 +(NSInteger) createPointerId:(NSString*)algsType dataSource:(NSString*)dataSource;
 +(NSInteger) createPointerId:(BOOL)updateLastId algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
 +(NSInteger) getLastNetNodePointerId:(NSString*)algsType dataSource:(NSString*)dataSource;
 +(void) setNetNodePointerId:(NSInteger)count algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
+
+//MARK:===============================================================
+//MARK:                     < AIPointer >
+//MARK:===============================================================
+//Node
 +(AIKVPointer*) createPointerForNode:(NSString*)folderName;
-+(AIKVPointer*) createPointer:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
++(AIKVPointer*) createPointer:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut;
 
 //Direction的mv分区pointer;(存引用序列)
 +(AIKVPointer*) createPointerForDirection:(NSString*)mvAlgsType direction:(MVDirection)direction;
