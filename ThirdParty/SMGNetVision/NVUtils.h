@@ -8,21 +8,26 @@
 
 #import <Foundation/Foundation.h>
 
-@class AINetAbsFoNode,AICMVNode,AIFrontOrderNode,AIAbsCMVNode;
+@class AINetAbsFoNode,AICMVNode,AIFrontOrderNode,AIAbsCMVNode,AIAlgNodeBase;
 @interface NVUtils : NSObject
 
 
 //MARK:===============================================================
-//MARK:                     < value的可视化 >
+//MARK:                     < 组可视化 >
 //MARK:===============================================================
 
 //根据value指针数组描述 (i3 o4)
 +(NSString*) convertValuePs2Str:(NSArray*)value_ps;
 
+//根据orders指针数组描述;
++(NSString*) convertOrderPs2Str:(NSArray*)order_ps;
 
 //MARK:===============================================================
 //MARK:                       < node的可视化 >
 //MARK:===============================================================
+
+//algNode的描述
++(NSString*) getAlgNodeDesc:(AIAlgNodeBase*)algNode;
 
 //foNode前时序列的描述 (i3 o4)
 +(NSString*) getFoNodeDesc:(AIFoNodeBase*)foNode;

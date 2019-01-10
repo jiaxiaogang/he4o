@@ -405,10 +405,10 @@ static AIThinkingControl *_instance;
                         return [theNet createAbsAlgNode:algSames algA:algA algB:algB];
                     }];
                     
-                    NSString *foOrderStr = [NVUtils convertValuePs2Str:foNode.orders_kvp];
-                    NSString *assMicroStr = [NVUtils convertValuePs2Str:assFrontNode.orders_kvp];
-                    NSString *samesStr = [NVUtils convertValuePs2Str:orderSames];
-                    NSLog(@"抽象中 > 类比sames: (%@) & (%@) = (%@)",foOrderStr,assMicroStr,samesStr);
+                    NSString *foOrderStr = [NVUtils convertOrderPs2Str:foNode.orders_kvp];
+                    NSString *assMicroStr = [NVUtils convertOrderPs2Str:assFrontNode.orders_kvp];
+                    NSString *samesStr = [NVUtils convertOrderPs2Str:orderSames];
+                    NSLog(@"\n抽象中 > 类比sames: %@ \n& %@ \n= %@",foOrderStr,assMicroStr,samesStr);
                     
                     //7. 已存在抽象节点或sames无效时跳过;
                     BOOL jumpForAbsAlreadyHav = (ISOK(assFrontNode, AINetAbsFoNode.class) && ARRISOK(orderSames) && orderSames.count == assFrontNode.orders_kvp.count);
@@ -552,7 +552,7 @@ static AIThinkingControl *_instance;
         if (expOutFoNode != nil) {
             [self dataOut_CheckScore_ExpOut:expOutFoNode complete:^(CGFloat score, NSArray *out_ps) {
                 expModel.order += score;//联想对当前expModel的order影响;
-                NSLog(@" >> 执行经验输出: (%@) (%f) (%@)",score >= 3 ? @"成功" : @"失败",score,[NVUtils convertValuePs2Str:out_ps]);
+                NSLog(@" >> 执行经验输出: (%@) (%f) (%@)",score >= 3 ? @"成功" : @"失败",score,[NVUtils convertOrderPs2Str:out_ps]);
                 if (score >= 3) {
                     complete(true,out_ps,expModelInvalid);
                     invokedComplete = true;
@@ -564,7 +564,7 @@ static AIThinkingControl *_instance;
             if (tryOutAbsNode != nil) {
                 [self dataOut_CheckScore_TryOut:tryOutAbsNode complete:^(CGFloat score, NSArray *out_ps) {
                     expModel.order += score;//联想对当前expModel的order影响;
-                    NSLog(@" >> 执行尝试输出: (%@) (%f) (%@)",score > 10 ? @"成功" : @"失败",score,[NVUtils convertValuePs2Str:out_ps]);
+                    NSLog(@" >> 执行尝试输出: (%@) (%f) (%@)",score > 10 ? @"成功" : @"失败",score,[NVUtils convertOrderPs2Str:out_ps]);
                     if (score > 10) {
                         complete(true,out_ps,expModelInvalid);
                         invokedComplete = true;

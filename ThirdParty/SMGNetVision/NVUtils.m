@@ -14,11 +14,12 @@
 #import "AICMVNode.h"
 #import "ThinkingUtils.h"
 #import "AIAbsCMVNode.h"
+#import "AIAlgNodeBase.h"
 
 @implementation NVUtils
 
 //MARK:===============================================================
-//MARK:                     < value的可视化 >
+//MARK:                     < 组可视化 >
 //MARK:===============================================================
 
 +(NSString*) convertValuePs2Str:(NSArray*)value_ps{
@@ -27,8 +28,19 @@
     for (AIKVPointer *value_p in value_ps) {
         NSNumber *valueNum = [SMGUtils searchObjectForPointer:value_p fileName:FILENAME_Value];
         if (valueNum) {
-            char c = [valueNum charValue];
-            [mStr appendFormat:@"%@%c ", value_p.isOut ? @"O" : @"I", c];
+            [mStr appendFormat:@"%@%@:%@ ", value_p.dataSource,(value_p.isOut ? @"^" : @"ˇ"), valueNum];
+        }
+    }
+    return mStr;
+}
+
++(NSString*) convertOrderPs2Str:(NSArray*)order_ps{
+    order_ps = ARRTOOK(order_ps);
+    NSMutableString *mStr = [NSMutableString new];
+    for (AIKVPointer *algNode_p in order_ps) {
+        AIAlgNodeBase *algNode = [SMGUtils searchObjectForPointer:algNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+        if (ISOK(algNode, AIAlgNodeBase.class)) {
+            [mStr appendFormat:@"%@%@",(mStr.length == 0 ? @"\n":@""),[self convertValuePs2Str:algNode.value_ps]];
         }
     }
     return mStr;
@@ -39,10 +51,17 @@
 //MARK:                       < node的可视化 >
 //MARK:===============================================================
 
++(NSString*) getAlgNodeDesc:(AIAlgNodeBase*)algNode {
+    if (ISOK(algNode, AIAlgNodeBase.class)) {
+        return [NVUtils convertValuePs2Str:((AIAlgNodeBase*)algNode).value_ps];
+    }
+    return nil;
+}
+
 //foNode前时序列的描述 (i3 o4)
 +(NSString*) getFoNodeDesc:(AIFoNodeBase*)foNode {
     if (ISOK(foNode, AIFoNodeBase.class)) {
-        return [NVUtils convertValuePs2Str:((AIFrontOrderNode*)foNode).orders_kvp];
+        return [NVUtils convertOrderPs2Str:((AIFrontOrderNode*)foNode).orders_kvp];
     }
     return nil;
 }
