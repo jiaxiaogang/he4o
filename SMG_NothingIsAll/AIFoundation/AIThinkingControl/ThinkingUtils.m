@@ -78,7 +78,7 @@
                                 }
                             }
                         }
-                        if (buildAlgNodeBlock) {
+                        if (buildAlgNodeBlock && ARRISOK(algSames)) {
                             buildAlgNodeBlock(algSames,algNodeA,algNodeB);
                         }
                     }

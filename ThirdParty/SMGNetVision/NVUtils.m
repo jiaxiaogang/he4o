@@ -40,7 +40,7 @@
     for (AIKVPointer *algNode_p in order_ps) {
         AIAlgNodeBase *algNode = [SMGUtils searchObjectForPointer:algNode_p fileName:FILENAME_Node time:cRedisNodeTime];
         if (ISOK(algNode, AIAlgNodeBase.class)) {
-            [mStr appendFormat:@"%@%@",(mStr.length == 0 ? @"\n":@""),[self convertValuePs2Str:algNode.value_ps]];
+            [mStr appendFormat:@"%@%@",(mStr.length == 0 ? @"":@"\n"),[self convertValuePs2Str:algNode.value_ps]];
         }
     }
     return mStr;
@@ -105,7 +105,7 @@
     NSString *cmvDesc = [self getCmvNodeDesc:cmvNode];
     
     //3. 拼desc返回
-    return STRFORMAT(@"(fo: %@ => cmv: %@)",foDesc,cmvDesc);
+    return STRFORMAT(@"\nFO>>>>\n%@\nCMV>>>>\n%@",foDesc,cmvDesc);
 }
 
 //MARK:===============================================================
@@ -121,7 +121,7 @@
         //2. absNode.conPorts.desc
         for (AIPort *conPort in absNode.conPorts) {
             AIFoNodeBase *conNode = [SMGUtils searchObjectForPointer:conPort.target_p fileName:FILENAME_Node];
-            [mStr appendFormat:@"\n > %@",[self getFoNodeDesc:conNode]];
+            [mStr appendFormat:@"具象FO:\n%@",[self getFoNodeDesc:conNode]];
         }
         return mStr;
     }
@@ -137,7 +137,7 @@
         //2. absNode.absPorts.desc
         for (AIPort *conPort in foNode.absPorts) {
             AIFoNodeBase *conNode = [SMGUtils searchObjectForPointer:conPort.target_p fileName:FILENAME_Node];
-            [mStr appendFormat:@"\n > %@",[self getFoNodeDesc:conNode]];
+            [mStr appendFormat:@"抽象FO:\n%@",[self getFoNodeDesc:conNode]];
         }
         return mStr;
     }

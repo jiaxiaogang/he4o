@@ -392,7 +392,7 @@ static AIThinkingControl *_instance;
                 AIFoNodeBase *assFrontNode = [SMGUtils searchObjectForPointer:ass_cn.foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
                 
                 if (ISOK(assFrontNode, AINodeBase.class)) {
-                    NSLog(@"抽象前 > 联想到前因节点 : %@",[NVUtils getCmvModelDesc_ByFoNode:assFrontNode]);
+                    NSLog(@"\n抽象前========== %@",[NVUtils getCmvModelDesc_ByFoNode:assFrontNode]);
                     
                     //6. 类比orders的规律,并abs;
                     NSArray *orderSames = [ThinkingUtils analogyOrdersA:foNode.orders_kvp ordersB:assFrontNode.orders_kvp canAss:^BOOL{
@@ -408,32 +408,38 @@ static AIThinkingControl *_instance;
                     NSString *foOrderStr = [NVUtils convertOrderPs2Str:foNode.orders_kvp];
                     NSString *assMicroStr = [NVUtils convertOrderPs2Str:assFrontNode.orders_kvp];
                     NSString *samesStr = [NVUtils convertOrderPs2Str:orderSames];
-                    NSLog(@"\n抽象中 > 类比sames: %@ \n& %@ \n= %@",foOrderStr,assMicroStr,samesStr);
+                    NSLog(@"\n抽象中========== 类比sames:\n%@\n&\n%@\n=\n%@",foOrderStr,assMicroStr,samesStr);
                     
                     //7. 已存在抽象节点或sames无效时跳过;
-                    BOOL jumpForAbsAlreadyHav = (ISOK(assFrontNode, AINetAbsFoNode.class) && ARRISOK(orderSames) && orderSames.count == assFrontNode.orders_kvp.count);
-                    if (ARRISOK(orderSames) && !jumpForAbsAlreadyHav) {
-                        
-                        //8. 构建absNode
-                        AINetAbsFoNode *create_an = [[AINet sharedInstance] createAbs:foNode foB:foNode orderSames:orderSames];
-                        
-                        //9. 并把抽象节点的信息_添加到瞬时记忆
-                        [self dataIn_ToShortCache_Ps:create_an.orders_kvp];
-                        
-                        //10. createAbsCmvNode
-                        AIAbsCMVNode *create_acn = [theNet createAbsCMVNode:create_an.pointer aMv_p:foNode.cmvNode_p bMv_p:ass_cn.pointer];
-                        
-                        //11. cmv模型连接;
-                        if (ISOK(create_acn, AIAbsCMVNode.class)) {
-                            create_an.cmvNode_p = create_acn.pointer;
-                            [SMGUtils insertObject:create_an rootPath:create_an.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
+                    if (ARRISOK(orderSames)) {
+                        BOOL samesEqualAssFo = orderSames.count == assFrontNode.orders_kvp.count && [SMGUtils containsSub_ps:orderSames parent_ps:assFrontNode.orders_kvp];
+                        BOOL jumpForAbsAlreadyHav = (ISOK(assFrontNode, AINetAbsFoNode.class) && samesEqualAssFo);
+                        if (jumpForAbsAlreadyHav) {
+                            ///1. 直接关联即可
+                            AINetAbsFoNode *assAbsFo = (AINetAbsFoNode*)assFrontNode;
+                            [AINetUtils insertPointer:foNode.pointer toPorts:assAbsFo.conPorts ps:foNode.orders_kvp];
+                            [AINetUtils insertPointer:assAbsFo.pointer toPorts:foNode.absPorts ps:assAbsFo.orders_kvp];
+                        }else{
+                            //8. 构建absNode
+                            AINetAbsFoNode *create_an = [[AINet sharedInstance] createAbs:foNode foB:foNode orderSames:orderSames];
+                            
+                            //9. 并把抽象节点的信息_添加到瞬时记忆
+                            [self dataIn_ToShortCache_Ps:create_an.orders_kvp];
+                            
+                            //10. createAbsCmvNode
+                            AIAbsCMVNode *create_acn = [theNet createAbsCMVNode:create_an.pointer aMv_p:foNode.cmvNode_p bMv_p:ass_cn.pointer];
+                            
+                            //11. cmv模型连接;
+                            if (ISOK(create_acn, AIAbsCMVNode.class)) {
+                                create_an.cmvNode_p = create_acn.pointer;
+                                [SMGUtils insertObject:create_an rootPath:create_an.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
+                            }
+                            
+                            NSLog(@"\n抽象后==========\n%@",[NVUtils getFoNodeDesc:create_an]);
+                            NSLog(@"\nconPorts\n%@",[NVUtils getFoNodeConPortsDesc:create_an]);
+                            NSLog(@"\nabsPorts\n%@",[NVUtils getFoNodeAbsPortsDesc:create_an]);
+                            //TODO:>>>>>将absNode和absCmvNode存到thinkFeedCache;
                         }
-                        
-                        NSLog(@"抽象后 > 结果: %@",[NVUtils getFoNodeDesc:create_an]);
-                        NSLog(@"\nconPorts%@",[NVUtils getFoNodeConPortsDesc:create_an]);
-                        NSLog(@"\nabsPorts%@",[NVUtils getFoNodeAbsPortsDesc:create_an]);
-                        
-                        //TODO:>>>>>将absNode和absCmvNode存到thinkFeedCache;
                     }
                 }
             }
