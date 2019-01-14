@@ -232,16 +232,11 @@
     }
     
     //2. 比较大小(一级比pointerId,二级比algsType,三级比dataSource)
-    if ([pA isEqual:pB]) {
-        return NSOrderedSame;
+    NSComparisonResult comResult = [pA compare:pB];
+    if (comResult == NSOrderedSame) {
+        return [XGRedisUtil compareStrA:pA.identifier strB:pB.identifier];
     }else{
-        if (pA.pointerId > pB.pointerId) {
-            return NSOrderedAscending;
-        }else if(pA.pointerId < pB.pointerId){
-            return NSOrderedDescending;
-        }else{
-            return [XGRedisUtil compareStrA:pA.identifier strB:pB.identifier];
-        }
+        return comResult;
     }
 }
 
@@ -286,13 +281,7 @@
         if (strongResult == NSOrderedSame) {
             if (ISOK(pA.target_p, AIKVPointer.class)) {
                 if (ISOK(pB.target_p, AIKVPointer.class)) {
-                    if (pA.target_p.pointerId > pB.target_p.pointerId) {
-                        return NSOrderedAscending;
-                    }else if(pA.target_p.pointerId < pB.target_p.pointerId){
-                        return NSOrderedDescending;
-                    }else{
-                        return NSOrderedSame;
-                    }
+                    return [pA.target_p compare:pB.target_p];
                 }
             }else{
                 return strongResult;

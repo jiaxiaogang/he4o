@@ -47,6 +47,6 @@
 
 //(警告!!!强度不能在strong内部自行改变,不然会影响到第二序列的工作,所以应由第二序列读取到内存时,统一调用处理;)
 -(void) updateValue;//更新衰减值(1,时间衰减; 2,衰减曲线;)(目前先每天减1;)
--(NSComparisonResult) compare:(AIPortStrong*)strong;
+-(NSComparisonResult) compare:(AIPortStrong*)strong;//默认按StrongValue从大到小排序 (self.strongValue越大越排前面)
 
 @end
