@@ -12,7 +12,8 @@
 #import "FoodView.h"
 #import "AIReactorControl.h"
 
-#define EAT_RDS @"EAT_RDS" //吸吮反射标识
+#define EAT_RDS @"EAT_RDS"  //吸吮反射标识
+#define FLY_RDS @"FLY_RDS"  //扇翅膀反射标识 (类似人类的抓握反射)
 
 @interface BirdView ()
 
@@ -55,9 +56,13 @@
 //MARK:                     < method >
 //MARK:===============================================================
 
--(void) fly:(CGFloat)x y:(CGFloat)y{
-    [self setX:self.x + x];
-    [self setY:self.y + y];
+-(void) fly:(CGFloat)value{
+    value = MAX(MIN(1, value), 0);
+    value = value * 2 - 1;
+    CGFloat angle = value * M_PI;
+    NSLog(@"以右为0度,逆时针为正,顺时针为负结果 >>对边Y_sin:%f 邻边X_cos:%f y/x_tan:%f",sin(angle),cos(angle),tan(angle));
+    [self setX:self.x + (cos(angle) * 10.0f)];
+    [self setY:self.y + (sin(angle) * 10.0f)];
 }
 
 -(void) see:(UIView*)view{
@@ -67,6 +72,10 @@
 
 -(void) touchMouth{
     [AIReactorControl commitReactor:EAT_RDS];
+}
+
+-(void) touchWing{
+    [AIReactorControl commitReactor:FLY_RDS];
 }
 
 -(void) dropUp{
@@ -111,6 +120,9 @@
         //2. 吸吮反射
         if ([EAT_RDS isEqualToString:rds]) {
             [self eat:[paramNum floatValue]];
+        }else if([FLY_RDS isEqualToString:rds]){
+            //3. 扇翅膀反射
+            [self fly:[paramNum floatValue]];
         }
     }
 }

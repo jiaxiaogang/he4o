@@ -20,7 +20,7 @@
 
 @property (weak,nonatomic) id<BirdViewDelegate> delegate;
 
--(void) fly:(CGFloat)x y:(CGFloat)y;//飞
+-(void) fly:(CGFloat)value;//飞
 
 
 /**
@@ -48,5 +48,6 @@
  *
  */
 -(void) touchMouth;
+-(void) touchWing;
 
 @end

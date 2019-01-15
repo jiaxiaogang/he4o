@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -22,7 +22,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a5Y-T0-lOj">
-                    <rect key="frame" x="191.5" y="610" width="167.5" height="50"/>
+                    <rect key="frame" x="104" y="610" width="79.5" height="50"/>
                     <color key="backgroundColor" white="0.84480794270000004" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="50" id="rho-Kh-mT6"/>
@@ -35,11 +35,25 @@
                         <action selector="nearFeedingBtnOnClick:" destination="-1" eventType="touchUpInside" id="Ith-1L-2iS"/>
                     </connections>
                 </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eQV-9R-5hK">
+                    <rect key="frame" x="191.5" y="610" width="80" height="50"/>
+                    <color key="backgroundColor" white="0.84480794270000004" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="50" id="muv-o8-a55"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="23"/>
+                    <state key="normal" title="马上饿">
+                        <color key="titleColor" red="0.37254901959999998" green="0.37254901959999998" blue="0.37254901959999998" alpha="1" colorSpace="calibratedRGB"/>
+                    </state>
+                    <connections>
+                        <action selector="hungerBtnOnClick:" destination="-1" eventType="touchUpInside" id="rxa-nJ-Lj7"/>
+                    </connections>
+                </button>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OTZ-lH-pjg">
-                    <rect key="frame" x="16" y="610" width="167.5" height="50"/>
+                    <rect key="frame" x="16" y="610" width="80" height="50"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="乱投" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2QI-et-DGo">
-                            <rect key="frame" x="60.5" y="11.5" width="47" height="27.5"/>
+                            <rect key="frame" x="16.5" y="11.5" width="47" height="27.5"/>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <fontDescription key="fontDescription" type="system" pointSize="23"/>
                             <color key="textColor" red="0.37254901960784315" green="0.37254901960784315" blue="0.37254901960784315" alpha="1" colorSpace="calibratedRGB"/>
@@ -57,6 +71,20 @@
                     <rect key="frame" x="0.0" y="64" width="375" height="539"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 </view>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5LO-kV-wX3">
+                    <rect key="frame" x="279.5" y="610" width="79.5" height="50"/>
+                    <color key="backgroundColor" white="0.84480794270000004" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="50" id="qRn-Xa-CJS"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="23"/>
+                    <state key="normal" title="摸翅膀">
+                        <color key="titleColor" red="0.37254901959999998" green="0.37254901959999998" blue="0.37254901959999998" alpha="1" colorSpace="calibratedRGB"/>
+                    </state>
+                    <connections>
+                        <action selector="touchWingBtnOnClick:" destination="-1" eventType="touchUpInside" id="PWm-gh-DCb"/>
+                    </connections>
+                </button>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
@@ -66,9 +94,15 @@
                 <constraint firstAttribute="bottom" secondItem="OTZ-lH-pjg" secondAttribute="bottom" constant="7" id="KzK-L1-Sgb"/>
                 <constraint firstItem="OTZ-lH-pjg" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="16" id="LkX-VH-mGn"/>
                 <constraint firstItem="a5Y-T0-lOj" firstAttribute="leading" secondItem="OTZ-lH-pjg" secondAttribute="trailing" constant="8" id="OsG-4s-af0"/>
-                <constraint firstAttribute="trailing" secondItem="a5Y-T0-lOj" secondAttribute="trailing" constant="16" id="e8z-8A-jlO"/>
+                <constraint firstItem="5LO-kV-wX3" firstAttribute="width" secondItem="a5Y-T0-lOj" secondAttribute="width" id="RhE-kv-g7c"/>
+                <constraint firstAttribute="bottom" secondItem="eQV-9R-5hK" secondAttribute="bottom" constant="7" id="SRQ-5w-s97"/>
+                <constraint firstItem="eQV-9R-5hK" firstAttribute="leading" secondItem="a5Y-T0-lOj" secondAttribute="trailing" constant="8" id="W3Y-Nf-WTl"/>
+                <constraint firstItem="eQV-9R-5hK" firstAttribute="width" secondItem="a5Y-T0-lOj" secondAttribute="width" id="XEP-d8-lfh"/>
                 <constraint firstAttribute="bottom" secondItem="a5Y-T0-lOj" secondAttribute="bottom" constant="7" id="fQq-vx-9iY"/>
+                <constraint firstItem="5LO-kV-wX3" firstAttribute="leading" secondItem="eQV-9R-5hK" secondAttribute="trailing" constant="8" id="fXx-hc-557"/>
                 <constraint firstAttribute="trailing" secondItem="Rkf-2Q-xj9" secondAttribute="trailing" id="hgc-Jp-DXl"/>
+                <constraint firstAttribute="trailing" secondItem="5LO-kV-wX3" secondAttribute="trailing" constant="16" id="jht-pf-dXn"/>
+                <constraint firstAttribute="bottom" secondItem="5LO-kV-wX3" secondAttribute="bottom" constant="7" id="pB7-ys-UTp"/>
                 <constraint firstItem="a5Y-T0-lOj" firstAttribute="width" secondItem="OTZ-lH-pjg" secondAttribute="width" id="rYV-EG-w6C"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>

@@ -10,6 +10,7 @@
 #import "BirdView.h"
 #import "FoodView.h"
 #import "UIView+Extension.h"
+#import "DemoHunger.h"
 
 @interface BirdGrowPage ()<UIGestureRecognizerDelegate,BirdViewDelegate>
 
@@ -88,6 +89,16 @@
         //1. 视觉输入
         [self.birdView see:foodView];
     }];
+}
+
+- (IBAction)hungerBtnOnClick:(id)sender {
+    NSLog(@"马上饿onClick");
+    [[[DemoHunger alloc] init] commit:0.7 state:UIDeviceBatteryStateUnplugged];
+}
+
+- (IBAction)touchWingBtnOnClick:(id)sender {
+    NSLog(@"摸翅膀onClick");
+    [self.birdView touchWing];
 }
 
 /**

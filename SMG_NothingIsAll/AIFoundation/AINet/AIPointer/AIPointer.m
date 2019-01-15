@@ -72,17 +72,4 @@
     return [DICTOOK(self.params) objectForKey:STRTOOK(key)];
 }
 
--(NSComparisonResult) compare:(AIPointer*)b_p{
-    if (ISOK(b_p, AIPointer.class)) {
-        if (self.pointerId > b_p.pointerId) {
-            return NSOrderedAscending;
-        }else if(self.pointerId < b_p.pointerId){
-            return NSOrderedDescending;
-        }else{
-            return NSOrderedSame;
-        }
-    }
-    return NSOrderedAscending;
-}
-
 @end

@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 
-@class AIPointer,AIKVPointer,AIObject,AIArray,AILine,ThinkModel,AIPort;
+@class AIPointer,AIKVPointer,AIObject,AIArray,ThinkModel,AIPort;
 @interface SMGUtils : NSObject
 
 
@@ -46,11 +46,16 @@
 //MARK:===============================================================
 @interface SMGUtils (Compare)
 
-+(BOOL) compareItemA:(id)itemA itemB:(id)itemB;
-+(BOOL) compareArrayA:(NSArray*)arrA arrayB:(NSArray*)arrB;
-+(BOOL) compareItemA:(id)itemA containsItemB:(id)itemB;
+//+(BOOL) compareItemA:(id)itemA itemB:(id)itemB;
+//+(BOOL) compareArrayA:(NSArray*)arrA arrayB:(NSArray*)arrB;
+//+(BOOL) compareItemA:(id)itemA containsItemB:(id)itemB;
+//+(NSComparisonResult) compareRefsA_p:(NSArray*)refsA_p refsB_p:(NSArray*)refsB_p;//比较refsA是否比refsB大
+
+
+//比较pA是否比pB大 (1级pId,2级identifier)
 +(NSComparisonResult) comparePointerA:(AIPointer*)pA pointerB:(AIPointer*)pB;
-+(NSComparisonResult) compareRefsA_p:(NSArray*)refsA_p refsB_p:(NSArray*)refsB_p;//比较refsA是否比refsB大
+
+//类比port (1级强度,2级pointer)
 +(NSComparisonResult) comparePortA:(AIPort*)pA portB:(AIPort*)pB;
 +(NSComparisonResult) compareIntA:(NSInteger)intA intB:(NSInteger)intB;
 +(NSComparisonResult) compareFloatA:(CGFloat)floatA floatB:(CGFloat)floatB;

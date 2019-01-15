@@ -20,5 +20,5 @@
 -(NSString*) filePath;                                      //文件路径(可以是key,或者path,或者sql表和行号等)
 -(NSString*) identifier;    //一般由 "algsType" + "dataSource/Source" 组成;
 -(id) paramForKey:(NSString*)key;
--(NSComparisonResult) compare:(AIPointer*)b_p;//PointerId越小越排前面
+
 @end

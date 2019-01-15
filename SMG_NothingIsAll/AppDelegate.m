@@ -45,8 +45,7 @@
  *  MARK:--------------------method--------------------
  */
 -(UIViewController*) getTopDisplayViewController{
-    UINavigationController *navC = (UINavigationController*)[self.window rootViewController];
-    
+    UINavigationController *navC = (UINavigationController*)[self.window rootViewController];    
     NSArray *controllers = navC.viewControllers;
     UIViewController *controller = [controllers lastObject];
     return controller;

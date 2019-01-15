@@ -75,19 +75,6 @@
     self.updateTime = nowTime;
 }
 
--(NSComparisonResult) compare:(AIPortStrong*)strong{
-    if (ISOK(strong, AIPortStrong.class)) {
-        if (self.value > strong.value) {
-            return NSOrderedDescending;
-        }else if(self.value < strong.value){
-            return NSOrderedAscending;
-        }else{
-            return NSOrderedSame;
-        }
-    }
-    return NSOrderedDescending;
-}
-
 
 /**
  *  MARK:--------------------NSCoding--------------------
