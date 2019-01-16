@@ -82,7 +82,7 @@
 /**
  *  MARK:--------------------获取到cmvNode的评价力--------------------
  */
-+(CGFloat) getScoreForce:(AIPointer*)absCmvNode_p ratio:(CGFloat)ratio;//仅支持absCmv指针的语法糖;
++(CGFloat) getScoreForce:(AIPointer*)cmvNode_p ratio:(CGFloat)ratio;
 +(CGFloat) getScoreForce:(NSString*)algsType urgentTo_p:(AIPointer*)urgentTo_p delta_p:(AIPointer*)delta_p ratio:(CGFloat)ratio;
 
 

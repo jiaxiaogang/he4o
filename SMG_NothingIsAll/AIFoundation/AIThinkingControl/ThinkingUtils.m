@@ -200,10 +200,10 @@
     if (success) success(delta_p,urgentTo_p,delta,urgentTo,algsType);
 }
 
-+(CGFloat) getScoreForce:(AIPointer*)absCmvNode_p ratio:(CGFloat)ratio{
-    AIAbsCMVNode *absCmvNode = [SMGUtils searchObjectForPointer:absCmvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
-    if (ISOK(absCmvNode, AIAbsCMVNode.class)) {
-        return [ThinkingUtils getScoreForce:absCmvNode.pointer.algsType urgentTo_p:absCmvNode.urgentTo_p delta_p:absCmvNode.delta_p ratio:ratio];
++(CGFloat) getScoreForce:(AIPointer*)cmvNode_p ratio:(CGFloat)ratio{
+    AICMVNodeBase *cmvNode = [SMGUtils searchObjectForPointer:cmvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+    if (ISOK(cmvNode, AICMVNodeBase.class)) {
+        return [ThinkingUtils getScoreForce:cmvNode.pointer.algsType urgentTo_p:cmvNode.urgentTo_p delta_p:cmvNode.delta_p ratio:ratio];
     }
     return 0;
 }

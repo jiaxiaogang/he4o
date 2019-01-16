@@ -703,7 +703,6 @@ static AIThinkingControl *_instance;
 
 /**
  *  MARK:--------------------可行性判定 (经验执行方案)--------------------
- *  注:目前outLog在absNode和index中,无法区分,所以此方法仅对foNode的foNode.out_ps直接抽象部分进行联想,作为可行性判定原由;
  *  注:TODO:后续可以增加energy的值,并在此方法中每一次scoreForce就energy--;以达到更加精细的思维控制;
  *
  *  A:根据out_ps联想(分析可行性)
@@ -722,32 +721,25 @@ static AIThinkingControl *_instance;
     //1. 取出outLog;
     NSArray *out_ps = [ThinkingUtils filterOutPointers:foNode.orders_kvp];
     
-    //2. 判断out_ps本身有没有宏节点; (目前对output_p不做absIndex)
-    //AIKVPointer *absValue_p = [theNet getNetAbsIndex_AbsPointer:out_ps];
-    //AIKVPointer *absNode_p = [theNet getItemAbsNodePointer:absValue_p];
-    //AINetAbsFoNode *assOutAbsNode = [SMGUtils searchObjectForPointer:absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
-
-    //3. 检查assOutAbsNode对应的mv & 处理absCmvNode评价影响力;(系数0.5) (目前对output_p不做absIndex)
-    //if (assOutAbsNode) {
-    //    CGFloat scoreForce = [ThinkingUtils getScoreForce:assOutAbsNode.absCmvNode_p ratio:0.5f];
-    //    score += scoreForce;
-    //}
+    //2. 评价 (根据当前foNode的mv果,处理cmvNode评价影响力;(系数0.2))
+    score = [ThinkingUtils getScoreForce:foNode.cmvNode_p ratio:0.2f];
     
-    //4. 取foNode的抽象节点absNodes;
-    for (AIPort *absPort in ARRTOOK(foNode.absPorts)) {
-        
-        //5. 判断absNode是否是由out_ps抽象的 (根据"微信息"组)
-        AINetAbsFoNode *absNode = [SMGUtils searchObjectForPointer:absPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
-        if (absNode) {
-            BOOL fromOut_ps = [SMGUtils containsSub_ps:absNode.orders_kvp parent_ps:out_ps];
-            
-            //6. 根据当前absNode的mv果,处理absCmvNode评价影响力;(系数0.2)
-            if (fromOut_ps) {
-                CGFloat scoreForce = [ThinkingUtils getScoreForce:absNode.cmvNode_p ratio:0.2f];
-                score += scoreForce;
-            }
-        }
-    }
+    ////4. v1.0评价方式: (目前outLog在foAbsNode和index中,无法区分,所以此方法仅对foNode的foNode.out_ps直接抽象部分进行联想,作为可行性判定原由)
+    /////1. 取foNode的抽象节点absNodes;
+    //for (AIPort *absPort in ARRTOOK(foNode.absPorts)) {
+    //
+    //    ///2. 判断absNode是否是由out_ps抽象的 (根据"微信息"组)
+    //    AINetAbsFoNode *absNode = [SMGUtils searchObjectForPointer:absPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
+    //    if (absNode) {
+    //        BOOL fromOut_ps = [SMGUtils containsSub_ps:absNode.orders_kvp parent_ps:out_ps];
+    //
+    //        ///3. 根据当前absNode的mv果,处理absCmvNode评价影响力;(系数0.2)
+    //        if (fromOut_ps) {
+    //            CGFloat scoreForce = [ThinkingUtils getScoreForce:absNode.cmvNode_p ratio:0.2f];
+    //            score += scoreForce;
+    //        }
+    //    }
+    //}
     
     complete(score,out_ps);
 }
