@@ -15,7 +15,6 @@
 #import "AINetAbsFoNode.h"
 #import "ThinkingUtils.h"
 #import "Output.h"
-#import "OutputUtils.h"
 #import "AIFrontOrderNode.h"
 #import "AICMVNode.h"
 #import "AIAbsCMVNode.h"
@@ -221,7 +220,7 @@ static AIThinkingControl *_instance;
     AIAlgNodeBase *algNode = [SMGUtils searchObjectForPointer:algNode_p fileName:FILENAME_Node time:cRedisNodeTime];
     AIAlgNodeBase *assAlgNode = nil;
     
-    //2. 对value.refPorts进行检查识别; (noMv信号已输入完毕,联想)
+    //2. 对value.refPorts进行检查识别; (noMv信号已输入完毕,识别联想)
     if (ISOK(algNode, AIAlgNodeBase.class)) {
         ///1. 绝对匹配 -> (header匹配)
         NSString *valuesMD5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:[SMGUtils sortPointers:algNode.value_ps]]]);
@@ -273,7 +272,7 @@ static AIThinkingControl *_instance;
         }
     }
     
-    //3. strong++ & assFo & mvCache
+    //3. strong++ & assFo & mvCache (识别到的信息,是否可以激活mv与思维)
     if (ISOK(assAlgNode, AIAlgNodeBase.class)) {
         ///1. strong++
         [AINetUtils insertPointer:assAlgNode.pointer toRefPortsByValues:assAlgNode.value_ps ps:assAlgNode.value_ps];
@@ -806,7 +805,7 @@ static AIThinkingControl *_instance;
  *  MARK:--------------------反射输出--------------------
  */
 -(void) dataOut_Reflex:(AIMoodType)moodType{
-    [OutputUtils output_Face:moodType];
+    [Output output_Mood:moodType];
 }
 
 @end

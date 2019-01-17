@@ -11,6 +11,7 @@
 #import "DemoCharge.h"
 #import "AIInput.h"
 #import "Output.h"
+#import "AIReactorControl.h"
 
 @interface TestHungryPage ()<UITextFieldDelegate>
 
@@ -155,7 +156,7 @@
         NSString *rds = STRTOOK([obj objectForKey:@"rds"]);
         NSNumber *paramNum = NUMTOOK([obj objectForKey:@"paramNum"]);
         
-        //2. 吸吮反射
+        //2. 字符串反射
         if ([TEXT_RDS isEqualToString:rds]) {
             char c = [paramNum charValue];
             [self.outputMStr appendFormat:@"%c",c];
@@ -163,6 +164,14 @@
                 NSString *subStr = [self.outputMStr substringFromIndex:self.outputMStr.length - 100];
                 self.outputMStr = [[NSMutableString alloc] initWithString:subStr];
             }
+        }else if([ANXIOUS_RDS isEqualToString:rds]){
+            const char *chars = [@"T_T" UTF8String];
+            NSMutableArray *datas = [[NSMutableArray alloc] init];
+            for (NSInteger i = 0; i < 3; i++) {
+                [datas addObject:@(chars[i])];
+            }
+            [AIReactorControl commitReactor:TEXT_RDS datas:datas];
+            //chars = [@"^_^" UTF8String];
         }
     }
 }

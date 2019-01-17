@@ -49,24 +49,23 @@
     [AIVisionAlgs commitView:selfView targetView:targetView];
 }
 
-/**
- *  MARK:--------------------提交反射反应--------------------
- *  1. 由外围神经提交一个反射信号;
- *  2. ReactorControl在收到信号后,响应反射;
- *  3. 并把反射执行的outLog构建到网络中;
- *
- *  目的: 是让he学会自主使用某外围功能;
- *  备注: 目前支持1个nsnumber参数; (也可以暂不支持参数)
- *
- *  @params rds   : 反射标识
- *
- */
 +(void) commitReactor:(NSString*)rds{
-    //1. 传递到output执行
-    OutputModel *model = [[OutputModel alloc] init];
-    model.rds = STRTOOK(rds);
-    model.data = @(1);
-    [Output output_Reactor:@[model]];
+    [self commitReactor:rds datas:@[@(1)]];
+}
++(void) commitReactor:(NSString*)rds datas:(NSArray*)datas{
+    //1. 转为outModel
+    NSMutableArray *models = [[NSMutableArray alloc] init];
+    for (NSNumber *data in ARRTOOK(datas)) {
+        OutputModel *model = [[OutputModel alloc] init];
+        model.rds = STRTOOK(rds);
+        model.data = NUMTOOK(data);
+        [models addObject:model];
+    }
+    
+    //2. 传递到output执行
+    if (ARRISOK(models)) {
+        [Output output_Reactor:models];
+    }
 }
 
 @end

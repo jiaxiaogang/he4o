@@ -62,4 +62,13 @@
     return false;
 }
 
+
++(void) output_Mood:(AIMoodType)type{
+    if (type == AIMoodType_Anxious) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:@{@"rds":ANXIOUS_RDS}];
+    }else if(type == AIMoodType_Satisfy){
+        [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:@{@"rds":SATISFY_RDS}];
+    }
+}
+
 @end
