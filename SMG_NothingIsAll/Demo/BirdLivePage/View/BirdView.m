@@ -124,13 +124,10 @@
             //3. 扇翅膀反射
             [self fly:[paramNum floatValue]];
         }else if([ANXIOUS_RDS isEqualToString:rds]){
-            //明日写小鸟焦急时,,,,扇翅膀;
-            //const char *chars = [@"T_T" UTF8String];
-            //NSMutableArray *datas = [[NSMutableArray alloc] init];
-            //for (NSInteger i = 0; i < 3; i++) {
-            //    [datas addObject:@(chars[i])];
-            //}
-            //[AIReactorControl commitReactor:TEXT_RDS datas:datas];
+            //4. 小鸟焦急时_扇翅膀;
+            int random = arc4random();
+            CGFloat data = (random % 100) / 100.0f;
+            [AIReactorControl commitReactor:FLY_RDS datas:@[@(data)]];
         }
     }
 }
