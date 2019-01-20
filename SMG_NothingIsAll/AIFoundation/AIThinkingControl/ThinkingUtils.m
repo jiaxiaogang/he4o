@@ -99,6 +99,23 @@
     return orderSames;
 }
 
++(BOOL) analogySubWithExpOrder:(NSArray*)expOrder checkOrder:(NSArray*)checkOrder canAss:(BOOL(^)())canAssBlock checkAlgNode:(BOOL(^)(NSArray* algSames,AIAlgNode *algA,AIAlgNode *algB))checkAlgNodeBlock{
+    
+    
+    //1. 对当前解决方案的时序信息expOrder,与当前已有的条件checkOrder进行类比;
+    
+    //2. 将未能达到的条件,进行checkAlgNode,并进行联想解决方式; (微信息a=1,飞行,微信息a=2);
+    
+    //3. 直到所有的条件,都可以转换为out行为时;返回true;
+    
+    //4. 当中途有一个canAss为false时,则整体失败,返回false;
+    
+    //5. 当中途有一个条件无法转换为out行为时,则整体失败,返回false;
+    
+    
+    return false;
+}
+
 @end
 
 
