@@ -1,15 +1,15 @@
 //
-//  MVCacheModel.m
+//  DemandModel.m
 //  SMG_NothingIsAll
 //
 //  Created by iMac on 2018/8/2.
 //  Copyright © 2018年 XiaoGang. All rights reserved.
 //
 
-#import "MVCacheModel.h"
-#import "ExpCacheModel.h"
+#import "DemandModel.h"
+#import "ExpModel.h"
 
-@implementation MVCacheModel
+@implementation DemandModel
 
 -(NSInteger)order{
     _order = _order;//TODO:>>>>>进行时间衰减
@@ -36,20 +36,20 @@
  */
 -(void) refreshExpCacheSort{
     [self.expCache sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-        ExpCacheModel *itemA = (ExpCacheModel*)obj1;
-        ExpCacheModel *itemB = (ExpCacheModel*)obj2;
+        ExpModel *itemA = (ExpModel*)obj1;
+        ExpModel *itemB = (ExpModel*)obj2;
         return [SMGUtils compareFloatA:itemB.order floatB:itemA.order];
     }];
     NSLog(@"!!!测试下expCache是否是以order从大到小排序的...");
 }
 
--(ExpCacheModel*) getCurrentExpCacheModel{
+-(ExpModel*) getCurrentExpModel{
     if (ARRISOK(self.expCache)) {
         //1. 重排序 & 取当前序列最前;
         [self refreshExpCacheSort];
-        for (ExpCacheModel *cacheModel in self.expCache) {
+        for (ExpModel *cacheModel in self.expCache) {
             BOOL contains = false;
-            for (ExpCacheModel *exceptModel in self.exceptExpModels) {
+            for (ExpModel *exceptModel in self.exceptExpModels) {
                 if ([cacheModel isEqual:exceptModel]) {
                     contains = true;
                     break;
@@ -63,7 +63,7 @@
     return nil;
 }
 
--(void) addToExpCache:(ExpCacheModel*)expModel{
+-(void) addToExpCache:(ExpModel*)expModel{
     if (expModel) {
         [self.expCache insertObject:expModel atIndex:0];
     }

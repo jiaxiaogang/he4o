@@ -17,6 +17,7 @@
 		081B3ADB1F6E2CCD008A7F36 /* AINet.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3ADA1F6E2CCD008A7F36 /* AINet.m */; };
 		08236CEC21A23439008D8761 /* AIVisionAlgsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08236CEB21A23439008D8761 /* AIVisionAlgsModel.m */; };
 		0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 0825AFF21F748F67003B86C7 /* NSObject+Extension.m */; };
+		082ABC3521F7E864002E544C /* AIThinkShortMemory.m in Sources */ = {isa = PBXBuildFile; fileRef = 082ABC3421F7E864002E544C /* AIThinkShortMemory.m */; };
 		082F9D561EB234750009F6A9 /* Output.m in Sources */ = {isa = PBXBuildFile; fileRef = 082F9D551EB234750009F6A9 /* Output.m */; };
 		0830DAB721D6E8AD003065CD /* NSString+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 0830DAB621D6E8AD003065CD /* NSString+Extension.m */; };
 		083112F21F05E12600051DE6 /* MBProgressHUD+Add.m in Sources */ = {isa = PBXBuildFile; fileRef = 083112F11F05E12600051DE6 /* MBProgressHUD+Add.m */; };
@@ -82,7 +83,7 @@
 		08F738071F7C714F005EAD56 /* AISqlPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738031F7C714F005EAD56 /* AISqlPointer.m */; };
 		08FAEC94215EED39004DCEAD /* NVUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FAEC93215EED39004DCEAD /* NVUtils.m */; };
 		2753D7CF7BAEDFEACAF9264A /* libPods-SMG_NothingIsAll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */; };
-		8806D888212B8EB100C442CA /* ExpCacheModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8806D887212B8EB100C442CA /* ExpCacheModel.m */; };
+		8806D888212B8EB100C442CA /* ExpModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8806D887212B8EB100C442CA /* ExpModel.m */; };
 		8822852020F58BDA009884DC /* AINetDirectionReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 8822851F20F58BDA009884DC /* AINetDirectionReference.m */; };
 		8868F6EB210A946A000EAC9B /* AIAbsCMVManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8868F6EA210A946A000EAC9B /* AIAbsCMVManager.m */; };
 		8868F6EE210AA00B000EAC9B /* AINetAbsCMVUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 8868F6ED210AA00B000EAC9B /* AINetAbsCMVUtil.m */; };
@@ -98,8 +99,8 @@
 		88BC09DD20B4F67E0006ABEF /* XGRedisDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 88BC09DC20B4F67E0006ABEF /* XGRedisDictionary.m */; };
 		88C20B8220C7696A0076BB52 /* AINetAbsUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 88C20B8120C7696A0076BB52 /* AINetAbsUtils.m */; };
 		88C258C1209E99B00042CB6A /* AICMVManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 88C258C0209E99B00042CB6A /* AICMVManager.m */; };
-		88E1F84E211591D80036B616 /* MVCacheManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 88E1F84D211591D80036B616 /* MVCacheManager.m */; };
-		88E1F851211591E50036B616 /* MVCacheModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 88E1F850211591E50036B616 /* MVCacheModel.m */; };
+		88E1F84E211591D80036B616 /* DemandManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 88E1F84D211591D80036B616 /* DemandManager.m */; };
+		88E1F851211591E50036B616 /* DemandModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 88E1F850211591E50036B616 /* DemandModel.m */; };
 		88E87A6721016EAA0071513F /* OutputUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 88E87A6621016EAA0071513F /* OutputUtils.m */; };
 /* End PBXBuildFile section */
 
@@ -125,6 +126,8 @@
 		08236CEB21A23439008D8761 /* AIVisionAlgsModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIVisionAlgsModel.m; sourceTree = "<group>"; };
 		0825AFF11F748F67003B86C7 /* NSObject+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Extension.h"; sourceTree = "<group>"; };
 		0825AFF21F748F67003B86C7 /* NSObject+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Extension.m"; sourceTree = "<group>"; };
+		082ABC3321F7E864002E544C /* AIThinkShortMemory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIThinkShortMemory.h; sourceTree = "<group>"; };
+		082ABC3421F7E864002E544C /* AIThinkShortMemory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIThinkShortMemory.m; sourceTree = "<group>"; };
 		082F9D541EB234750009F6A9 /* Output.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Output.h; sourceTree = "<group>"; };
 		082F9D551EB234750009F6A9 /* Output.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Output.m; sourceTree = "<group>"; };
 		0830DAB521D6E8AD003065CD /* NSString+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+Extension.h"; sourceTree = "<group>"; };
@@ -250,8 +253,8 @@
 		08FAEC92215EED39004DCEAD /* NVUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVUtils.h; sourceTree = "<group>"; };
 		08FAEC93215EED39004DCEAD /* NVUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NVUtils.m; sourceTree = "<group>"; };
 		08FAEC95215EED48004DCEAD /* NVHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVHeader.h; sourceTree = "<group>"; };
-		8806D886212B8EB100C442CA /* ExpCacheModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExpCacheModel.h; sourceTree = "<group>"; };
-		8806D887212B8EB100C442CA /* ExpCacheModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExpCacheModel.m; sourceTree = "<group>"; };
+		8806D886212B8EB100C442CA /* ExpModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExpModel.h; sourceTree = "<group>"; };
+		8806D887212B8EB100C442CA /* ExpModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExpModel.m; sourceTree = "<group>"; };
 		8822851E20F58BDA009884DC /* AINetDirectionReference.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetDirectionReference.h; sourceTree = "<group>"; };
 		8822851F20F58BDA009884DC /* AINetDirectionReference.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetDirectionReference.m; sourceTree = "<group>"; };
 		8868F6E9210A946A000EAC9B /* AIAbsCMVManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIAbsCMVManager.h; sourceTree = "<group>"; };
@@ -283,10 +286,10 @@
 		88C20B8120C7696A0076BB52 /* AINetAbsUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetAbsUtils.m; sourceTree = "<group>"; };
 		88C258BF209E99B00042CB6A /* AICMVManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AICMVManager.h; sourceTree = "<group>"; };
 		88C258C0209E99B00042CB6A /* AICMVManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AICMVManager.m; sourceTree = "<group>"; };
-		88E1F84C211591D80036B616 /* MVCacheManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MVCacheManager.h; sourceTree = "<group>"; };
-		88E1F84D211591D80036B616 /* MVCacheManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MVCacheManager.m; sourceTree = "<group>"; };
-		88E1F84F211591E50036B616 /* MVCacheModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MVCacheModel.h; sourceTree = "<group>"; };
-		88E1F850211591E50036B616 /* MVCacheModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MVCacheModel.m; sourceTree = "<group>"; };
+		88E1F84C211591D80036B616 /* DemandManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DemandManager.h; sourceTree = "<group>"; };
+		88E1F84D211591D80036B616 /* DemandManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemandManager.m; sourceTree = "<group>"; };
+		88E1F84F211591E50036B616 /* DemandModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DemandModel.h; sourceTree = "<group>"; };
+		88E1F850211591E50036B616 /* DemandModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemandModel.m; sourceTree = "<group>"; };
 		88E87A6521016EAA0071513F /* OutputUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OutputUtils.h; sourceTree = "<group>"; };
 		88E87A6621016EAA0071513F /* OutputUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OutputUtils.m; sourceTree = "<group>"; };
 		DE79539824FEDBA53557ECCA /* Pods-SMG_NothingIsAll.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SMG_NothingIsAll.release.xcconfig"; path = "Pods/Target Support Files/Pods-SMG_NothingIsAll/Pods-SMG_NothingIsAll.release.xcconfig"; sourceTree = "<group>"; };
@@ -443,12 +446,14 @@
 				084219EA1FD8CF81009DA6BC /* AIThinkingControl.m */,
 				08B31E7C20648C3700FD96EA /* ThinkingUtils.h */,
 				08B31E7D20648C3700FD96EA /* ThinkingUtils.m */,
-				88E1F84C211591D80036B616 /* MVCacheManager.h */,
-				88E1F84D211591D80036B616 /* MVCacheManager.m */,
-				88E1F84F211591E50036B616 /* MVCacheModel.h */,
-				88E1F850211591E50036B616 /* MVCacheModel.m */,
-				8806D886212B8EB100C442CA /* ExpCacheModel.h */,
-				8806D887212B8EB100C442CA /* ExpCacheModel.m */,
+				88E1F84C211591D80036B616 /* DemandManager.h */,
+				88E1F84D211591D80036B616 /* DemandManager.m */,
+				88E1F84F211591E50036B616 /* DemandModel.h */,
+				88E1F850211591E50036B616 /* DemandModel.m */,
+				8806D886212B8EB100C442CA /* ExpModel.h */,
+				8806D887212B8EB100C442CA /* ExpModel.m */,
+				082ABC3321F7E864002E544C /* AIThinkShortMemory.h */,
+				082ABC3421F7E864002E544C /* AIThinkShortMemory.m */,
 			);
 			path = AIThinkingControl;
 			sourceTree = "<group>";
@@ -917,7 +922,7 @@
 			files = (
 				0858C5D62194FABA00951BA5 /* RoadView.m in Sources */,
 				0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */,
-				88E1F851211591E50036B616 /* MVCacheModel.m in Sources */,
+				88E1F851211591E50036B616 /* DemandModel.m in Sources */,
 				0881965F21800F2B00D5DB36 /* BirdLivePage.m in Sources */,
 				086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */,
 				08D471DE1FEB3FFF00C61322 /* AIImvAlgs.m in Sources */,
@@ -940,7 +945,7 @@
 				089614A9219A4D5200343FAC /* BirdGrowPage.m in Sources */,
 				083F61381F048329000330E1 /* AILine.m in Sources */,
 				083352F521800AB1003931E5 /* MainPage.m in Sources */,
-				8806D888212B8EB100C442CA /* ExpCacheModel.m in Sources */,
+				8806D888212B8EB100C442CA /* ExpModel.m in Sources */,
 				0817D6AB219E3CC7000E45AB /* UIColor+expanded.m in Sources */,
 				08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */,
 				08089280215B07FC00710636 /* AICMVNodeBase.m in Sources */,
@@ -961,10 +966,11 @@
 				08F738051F7C714F005EAD56 /* AIKVPointer.m in Sources */,
 				88A43F3D2109576D00281348 /* AIFrontOrderNode.m in Sources */,
 				0858C5CB2194F8B000951BA5 /* MASCompositeConstraint.m in Sources */,
-				88E1F84E211591D80036B616 /* MVCacheManager.m in Sources */,
+				88E1F84E211591D80036B616 /* DemandManager.m in Sources */,
 				88C258C1209E99B00042CB6A /* AICMVManager.m in Sources */,
 				08EF706421E5743F009B5194 /* OutputModel.m in Sources */,
 				08EA48D1202932E70038B982 /* AICustomAlgs.m in Sources */,
+				082ABC3521F7E864002E544C /* AIThinkShortMemory.m in Sources */,
 				88A43F3A2109571300281348 /* AIAbsCMVNode.m in Sources */,
 				08D4EC512160501000DA646B /* AINetUtils.m in Sources */,
 				08D322A91EBA28B0009D734A /* Foundation+Log.m in Sources */,

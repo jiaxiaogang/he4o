@@ -18,6 +18,7 @@
 #import "AIAbsAlgNode.h"
 #import "AIAlgNode.h"
 #import "AIPort.h"
+#import "AINet.h"
 
 @implementation ThinkingUtils
 
@@ -37,6 +38,28 @@
         }
     }
     return out_ps;
+}
+
++(BOOL) dataIn_CheckMV:(NSArray*)algResult_ps{
+    for (AIKVPointer *pointer in ARRTOOK(algResult_ps)) {
+        if ([NSClassFromString(pointer.algsType) isSubclassOfClass:ImvAlgsModelBase.class]) {
+            return true;
+        }
+    }
+    return false;
+}
+
++(NSArray*) algModelConvert2Pointers:(NSObject*)algsModel{
+    NSArray *algsArr = [[AINet sharedInstance] getAlgsArr:algsModel];
+    return algsArr;
+}
+
++(AIPointer*) createAlgNodeWithValue_ps:(NSArray*)value_ps{
+    AIAlgNode *algNode = [theNet createAlgNode:value_ps];
+    if (algNode) {
+        return algNode.pointer;
+    }
+    return nil;
 }
 
 @end

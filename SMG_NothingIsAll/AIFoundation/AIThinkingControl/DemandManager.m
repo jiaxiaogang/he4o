@@ -1,28 +1,28 @@
 //
-//  MVCacheManager.m
+//  DemandManager.m
 //  SMG_NothingIsAll
 //
 //  Created by iMac on 2018/8/4.
 //  Copyright © 2018年 XiaoGang. All rights reserved.
 //
 
-#import "MVCacheManager.h"
-#import "MVCacheModel.h"
+#import "DemandManager.h"
+#import "DemandModel.h"
 #import "ThinkingUtils.h"
 
-@interface MVCacheManager()
+@interface DemandManager()
 
 
 /**
  *  MARK:--------------------实时序列--------------------
- *  元素 : <MVCacheModel.class>
+ *  元素 : <DemandModel.class>
  *  思维因子_当前cmv序列(注:所有cmv只与cacheImv中作匹配)(正序,order越大,排越前)
  */
 @property (strong,nonatomic) NSMutableArray *loopCache;
 
 @end
 
-@implementation MVCacheManager
+@implementation DemandManager
 
 -(id) init{
     self = [super init];
@@ -56,7 +56,7 @@
     BOOL canNeed = true;
     NSInteger limit = self.loopCache.count;
     for (NSInteger i = 0; i < limit; i++) {
-        MVCacheModel *checkItem = self.loopCache[i];
+        DemandModel *checkItem = self.loopCache[i];
         if ([STRTOOK(algsType) isEqualToString:checkItem.algsType]) {
             if ((delta > 0 == checkItem.delta > 0)) {
                 //1) 同向较弱的撤消
@@ -79,7 +79,7 @@
     //3. 有需求时且可加入时_加入新的
     BOOL havDemand = [ThinkingUtils getDemand:algsType delta:delta complete:nil];
     if (canNeed && havDemand) {
-        MVCacheModel *newItem = [[MVCacheModel alloc] init];
+        DemandModel *newItem = [[DemandModel alloc] init];
         newItem.algsType = algsType;
         newItem.delta = delta;
         newItem.urgentTo = urgentTo;
@@ -94,8 +94,8 @@
  */
 -(void) refreshCmvCacheSort{
     [self.loopCache sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-        MVCacheModel *itemA = (MVCacheModel*)obj1;
-        MVCacheModel *itemB = (MVCacheModel*)obj2;
+        DemandModel *itemA = (DemandModel*)obj1;
+        DemandModel *itemB = (DemandModel*)obj2;
         return [SMGUtils compareIntA:itemA.order intB:itemB.order];
     }];
 }
@@ -114,7 +114,7 @@
 /**
  *  MARK:--------------------获取当前最紧急out任务--------------------
  */
--(MVCacheModel*) getCurrentDemand{
+-(DemandModel*) getCurrentDemand{
     if (ARRISOK(self.loopCache)) {
         //1. 重排序 & 取当前序列最前;
         [self refreshCmvCacheSort];

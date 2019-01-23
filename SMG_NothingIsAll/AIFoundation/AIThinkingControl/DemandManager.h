@@ -1,5 +1,5 @@
 //
-//  MVCacheManager.h
+//  DemandManager.h
 //  SMG_NothingIsAll
 //
 //  Created by iMac on 2018/8/4.
@@ -12,8 +12,8 @@
 /**
  *  MARK:--------------------思维控制器-循环管理器--------------------
  */
-@class MVCacheModel;
-@interface MVCacheManager : NSObject
+@class DemandModel;
+@interface DemandManager : NSObject
 
 /**
  *  MARK:--------------------joinToCMVCache--------------------
@@ -35,7 +35,7 @@
 /**
  *  MARK:--------------------获取当前最紧急out任务--------------------
  */
--(MVCacheModel*) getCurrentDemand;
+-(DemandModel*) getCurrentDemand;
 
 
 @end

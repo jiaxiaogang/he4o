@@ -18,14 +18,15 @@
 #import "AIFrontOrderNode.h"
 #import "AICMVNode.h"
 #import "AIAbsCMVNode.h"
-#import "MVCacheModel.h"
-#import "MVCacheManager.h"
-#import "ExpCacheModel.h"
+#import "DemandModel.h"
+#import "DemandManager.h"
+#import "ExpModel.h"
 #import "AINetUtils.h"
 #import "AIAbsAlgNode.h"
 #import "AIAlgNode.h"
 #import "NSString+Extension.h"
 #import "OutputModel.h"
+#import "AIThinkShortMemory.h"
 
 /**
  *  MARK:--------------------思维控制器--------------------
@@ -45,9 +46,9 @@
  */
 @interface AIThinkingControl()
 
-@property (strong,nonatomic) NSMutableArray *shortCache;        //瞬时记忆_存AIModel(从Algs传入,待Thinking取用分析)(容量8);
+@property (strong,nonatomic) AIThinkShortMemory *shortMemory;
 @property (strong,nonatomic) NSMutableArray *thinkFeedCache;    //短时记忆_思维流(包括shortCache和cmvCache,10分钟内都会存在此处(人类可能一天或几小时))
-@property (strong, nonatomic) MVCacheManager *mvCacheManager;   //输出循环所用到的数据管理器;
+@property (strong, nonatomic) DemandManager *demandManager;   //输出循环所用到的数据管理器;
 @property (assign, nonatomic) NSInteger energy;                 //当前能量值;(mv输入时激活,思维的循环中消耗)
 
 @end
@@ -71,9 +72,9 @@ static AIThinkingControl *_instance;
 }
 
 -(void) initData{
-    self.shortCache = [[NSMutableArray alloc] init];
+    self.shortMemory = [[AIThinkShortMemory alloc] init];
     self.thinkFeedCache = [[NSMutableArray alloc] init];
-    self.mvCacheManager = [[MVCacheManager alloc] init];
+    self.demandManager = [[DemandManager alloc] init];
 }
 
 
@@ -81,7 +82,32 @@ static AIThinkingControl *_instance;
 //MARK:                     < method >
 //MARK:===============================================================
 -(void) commitInput:(NSObject*)algsModel{
-    [self dataIn:algsModel];
+    //1. 装箱(除mv有两个元素外一般仅有一个元素)
+    NSArray *algsArr = [ThinkingUtils algModelConvert2Pointers:algsModel];
+    
+    //2. 检测imv
+    BOOL findMV = [ThinkingUtils dataIn_CheckMV:algsArr];
+    
+    //3. 分流_mv时
+    if (findMV) {
+        ///输入新的cmvAlgsArr(下面已有assExp中,有mv方向的添加mvCache代码,此处去掉)
+        //[self.demandManager dataIn_CmvAlgsArr:algsArr];
+        
+        ///1. 创建NetCmvModel;
+        AIFrontOrderNode *foNode = [self dataIn_CreateNetCMVModel:algsArr];
+        
+        ///2. 联想经验
+        [self dataIn_AssociativeExperience:foNode];
+    }else{
+        ///1. 打包成algTypeNode;
+        AIPointer *algNode_p = [ThinkingUtils createAlgNodeWithValue_ps:algsArr];
+        
+        ///2. 加入瞬时记忆
+        [self.shortMemory addToShortCache:algNode_p];
+        
+        ///3. 联想信息
+        [self dataIn_AssociativeData:algNode_p];
+    }
 }
 
 /**
@@ -110,97 +136,21 @@ static AIThinkingControl *_instance;
     }
     
     //5. 祖母
-    AIPointer *algNode_p = [self dataIn_ConvertAlgNode:value_ps];
+    AIPointer *algNode_p = [ThinkingUtils createAlgNodeWithValue_ps:value_ps];
     
     //6. 加瞬时记忆
-    [self dataIn_ToShortCache:algNode_p];
+    [self.shortMemory addToShortCache:algNode_p];
 }
 
 
 //MARK:===============================================================
 //MARK:                     < dataIn >
 //MARK:===============================================================
--(void) dataIn:(NSObject*)algsModel{
-    //1. 装箱(除mv有两个元素外一般仅有一个元素)
-    NSArray *algsArr = [self dataIn_ConvertPointer:algsModel];
-    
-    //2. 检测imv
-    BOOL findMV = [self dataIn_CheckMV:algsArr];
-    
-    //3. 分流_mv时
-    if (findMV) {
-        ///输入新的cmvAlgsArr(下面已有assExp中,有mv方向的添加mvCache代码,此处去掉)
-        //[self.mvCacheManager dataIn_CmvAlgsArr:algsArr];
-        
-        ///1. 创建NetCmvModel;
-        AIFrontOrderNode *foNode = [self dataIn_CreateNetCMVModel:algsArr];
-    
-        ///2. 联想经验
-        [self dataIn_AssociativeExperience:foNode];
-    }else{
-        ///1. 打包成algTypeNode;
-        AIPointer *algNode_p = [self dataIn_ConvertAlgNode:algsArr];
-        
-        ///2. 加入瞬时记忆
-        [self dataIn_ToShortCache:algNode_p];
-        
-        ///3. 联想信息
-        [self dataIn_AssociativeData:algNode_p];
-    }
-}
-
-//转为指针数组(每个值都是指针)(在dataIn后第一件事就是装箱)
--(NSArray*) dataIn_ConvertPointer:(NSObject*)algsModel{
-    NSArray *algsArr = [[AINet sharedInstance] getAlgsArr:algsModel];
-    return algsArr;
-    //1. 将索引的第二序列,提交给actionControl联想 (1. 作匹配测试  2. 只从强度最强往下);
-}
-
-//输入时,检测是否mv输入(饿或不饿)
--(BOOL) dataIn_CheckMV:(NSArray*)algsArr{
-    for (AIKVPointer *pointer in algsArr) {
-        if ([NSClassFromString(pointer.algsType) isSubclassOfClass:ImvAlgsModelBase.class]) {
-            return true;
-        }
-    }
-    return false;
-}
-
-//检查微信息序列,并将有"组微信息"的进行转换;
--(AIPointer*) dataIn_ConvertAlgNode:(NSArray*)algsArr{
-    AIAlgNode *algNode = [theNet createAlgNode:algsArr];
-    if (algNode) {
-        return algNode.pointer;
-    }
-    return nil;
-}
-
-/**
- *  MARK:--------------------shortCache瞬时记忆--------------------
- *  1. 存algsDic中的每个inputIndexPointer;
- *  2. 存absNode指向的absIndexPointer;
- */
--(void) dataIn_ToShortCache:(AIPointer*)pointer{
-    if (ISOK(pointer, AIPointer.class)) {
-        [self dataIn_ToShortCache_Ps:@[pointer]];
-    }
-}
--(void) dataIn_ToShortCache_Ps:(NSArray*)ps{
-    if (ARRISOK(ps)) {
-        for (AIPointer *pointer in ps) {
-            [self.shortCache addObject:pointer];
-            if (self.shortCache.count > 8) {
-                [self.shortCache removeObjectAtIndex:0];
-            }
-        }
-    }
-}
 
 //联想到mv时,构建cmv模型;
 -(AIFrontOrderNode*) dataIn_CreateNetCMVModel:(NSArray*)algsArr {
-    AIFrontOrderNode *foNode = [[AINet sharedInstance] createCMV:algsArr order:self.shortCache];
-    [self.shortCache removeAllObjects];
-    //TODO:>>>>>将shortCache销毁时也放到thinkFeedCache;
+    AIFrontOrderNode *foNode = [[AINet sharedInstance] createCMV:algsArr order:self.shortMemory.shortCache];
+    [self.shortMemory clear];
     return foNode;
 }
 
@@ -292,7 +242,7 @@ static AIThinkingControl *_instance;
             NSInteger urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
             NSInteger delta = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
             [self updateEnergy:(urgentTo + 9)/10];
-            [self.mvCacheManager updateCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
+            [self.demandManager updateCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
             
             ///5. 形成循环,根据当前最前排mv和energy,再进行思维;
             [self dataOut_AssociativeExperience];
@@ -355,7 +305,7 @@ static AIThinkingControl *_instance;
     NSInteger urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
     NSInteger delta = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
     [self updateEnergy:(urgentTo + 9)/10];
-    [self.mvCacheManager updateCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
+    [self.demandManager updateCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
     
     //3. 形成循环,根据当前最前排mv和energy,再进行思维;
     [self dataOut_AssociativeExperience];
@@ -423,7 +373,7 @@ static AIThinkingControl *_instance;
                             AINetAbsFoNode *create_an = [[AINet sharedInstance] createAbs:foNode foB:foNode orderSames:orderSames];
                             
                             //9. 并把抽象节点的信息_添加到瞬时记忆
-                            [self dataIn_ToShortCache_Ps:create_an.orders_kvp];
+                            [self.shortMemory addToShortCache_Ps:create_an.orders_kvp];
                             
                             //10. createAbsCmvNode
                             AIAbsCMVNode *create_acn = [theNet createAbsCMVNode:create_an.pointer aMv_p:foNode.cmvNode_p bMv_p:ass_cn.pointer];
@@ -473,8 +423,8 @@ static AIThinkingControl *_instance;
  */
 -(void) dataOut_AssociativeExperience {
     //1. 重排序 & 取当前序列最前;
-    MVCacheModel *mvCacheModel = [self.mvCacheManager getCurrentDemand];
-    if (mvCacheModel == nil) {
+    DemandModel *demandModel = [self.demandManager getCurrentDemand];
+    if (demandModel == nil) {
         return;
     }
     
@@ -482,20 +432,20 @@ static AIThinkingControl *_instance;
     if (self.energy > 0) {
         
         //3. 从expCache中,排序并取到首个值得思考的expModel;
-        __block ExpCacheModel *expModel = [mvCacheModel getCurrentExpCacheModel];
+        __block ExpModel *expModel = [demandModel getCurrentExpModel];
         
         //4. 如果,没有一个想可行的,则再联想一个新的相关"解决经验";并重新循环下去;
         if (!expModel) {
-            [ThinkingUtils getDemand:mvCacheModel.algsType delta:mvCacheModel.delta complete:^(BOOL upDemand, BOOL downDemand) {
+            [ThinkingUtils getDemand:demandModel.algsType delta:demandModel.delta complete:^(BOOL upDemand, BOOL downDemand) {
                 MVDirection direction = downDemand ? MVDirection_Negative : MVDirection_Positive;
                 
                 //5. filter筛选器取曾经历的除已有expModels之外的最强解决;
-                NSArray *mvRefs = [theNet getNetNodePointersFromDirectionReference:mvCacheModel.algsType direction:direction filter:^NSArray *(NSArray *protoArr) {
+                NSArray *mvRefs = [theNet getNetNodePointersFromDirectionReference:demandModel.algsType direction:direction filter:^NSArray *(NSArray *protoArr) {
                     protoArr = ARRTOOK(protoArr);
                     for (NSInteger i = 0; i < protoArr.count; i++) {
                         AIPort *port = ARR_INDEX(protoArr, protoArr.count - i - 1);
                         BOOL cacheContains = false;
-                        for (ExpCacheModel *expCacheItem in mvCacheModel.expCache) {
+                        for (ExpModel *expCacheItem in demandModel.expCache) {
                             if (port.target_p && [port.target_p isEqual:expCacheItem.exp_p]) {
                                 cacheContains = true;
                                 break;
@@ -511,8 +461,8 @@ static AIThinkingControl *_instance;
                 //6. 加入待判断区;
                 AIPort *referenceMvPort = ARR_INDEX(mvRefs, 0);
                 if (referenceMvPort) {
-                    expModel = [ExpCacheModel newWithExp_p:referenceMvPort.target_p];
-                    [mvCacheModel addToExpCache:expModel];
+                    expModel = [ExpModel newWithExp_p:referenceMvPort.target_p];
+                    [demandModel addToExpCache:expModel];
                 }
             }];
         }
@@ -525,7 +475,7 @@ static AIThinkingControl *_instance;
                     [self dataOut_TryOut:expModel outArr:out_ps];
                 }else{
                     if (expModelInvalid) {
-                        [mvCacheModel.exceptExpModels addObject:expModel];  //排除无效的expModel;(一次无效,不表示永远无效,所以彻底无效时,再排除)
+                        [demandModel.exceptExpModels addObject:expModel];  //排除无效的expModel;(一次无效,不表示永远无效,所以彻底无效时,再排除)
                     }
                     [self dataOut_AssociativeExperience];               //并递归到最初;
                 }
@@ -545,7 +495,7 @@ static AIThinkingControl *_instance;
  *  MARK:--------------------联想具象 (从上往下找foNode)--------------------
  *  @param expModel : 从expModel下查找具象可输出;
  */
--(void) dataOut_AssociativeConcreteData:(ExpCacheModel*)expModel complete:(void(^)(BOOL canOut,NSArray *out_ps,BOOL expModelInvalid))complete{
+-(void) dataOut_AssociativeConcreteData:(ExpModel*)expModel complete:(void(^)(BOOL canOut,NSArray *out_ps,BOOL expModelInvalid))complete{
     __block BOOL invokedComplete = false;
     __block BOOL expModelInvalid = false;
     if (expModel) {
@@ -597,9 +547,9 @@ static AIThinkingControl *_instance;
  *  @param except_ps : 当前已排除的;
  *  功能 : 找到曾输出经验;
  *  TODO:加上预测功能
- *  TODO:加上联想到mv时,传回给mvCacheManager;
+ *  TODO:加上联想到mv时,传回给demandManager;
  *  注:每一次输出,只是决策与预测上的一环;并不意味着结束;
- *  //1. 记录思考mv结果到叠加mvCacheModel.order;
+ *  //1. 记录思考mv结果到叠加demandModel.order;
  *  //2. 记录思考data结果到thinkFeedCache;
  *  //3. 如果mindHappy_No,可以再尝试下一个getNetNodePointersFromDirectionReference_Single;找到更好的解决方法;
  *  //4. 最终更好的解决方法被输出,并且解决问题后,被加强;
@@ -773,7 +723,7 @@ static AIThinkingControl *_instance;
  *  2. 激活输出 : absNode信息无conPorts方向的outPointer信息时,将absNode的宏信息尝试输出;
  *  3. 经验输出 : expOut指在absNode或conPort方向有outPointer信息;
  */
--(void) dataOut_TryOut:(ExpCacheModel*)expModel outArr:(NSArray*)outArr{
+-(void) dataOut_TryOut:(ExpModel*)expModel outArr:(NSArray*)outArr{
     //1. 尝试输出找到解决问题的实际操作 (取到当前cacheModel中的最佳决策,并进行输出;)
     BOOL tryOutSuccess = false;
     if (expModel && ARRISOK(outArr)) {

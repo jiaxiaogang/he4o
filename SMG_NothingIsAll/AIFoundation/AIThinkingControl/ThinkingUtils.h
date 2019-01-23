@@ -16,11 +16,33 @@
  */
 +(NSInteger) updateEnergy:(NSInteger)oriEnergy delta:(NSInteger)delta;
 
+
 /**
  *  MARK:--------------------筛选出outPointers--------------------
  *  注:未判定是否连续;
  */
 +(NSArray*) filterOutPointers:(NSArray*)proto_ps;
+
+
+/**
+ *  MARK:--------------------检测算法结果的result_ps是否为mv输入--------------------
+ *  (饿或不饿)
+ */
++(BOOL) dataIn_CheckMV:(NSArray*)algResult_ps;
+
+
+/**
+ *  MARK:--------------------算法模型的装箱--------------------
+ *  转为指针数组(每个值都是指针)(在dataIn后第一件事就是装箱)
+ */
++(NSArray*) algModelConvert2Pointers:(NSObject*)algsModel;
+
+
+/**
+ *  MARK:--------------------创建祖母节点--------------------
+ *  将微信息组,转换成祖母节点;
+ */
++(AIPointer*) createAlgNodeWithValue_ps:(NSArray*)value_ps;
 
 @end
 

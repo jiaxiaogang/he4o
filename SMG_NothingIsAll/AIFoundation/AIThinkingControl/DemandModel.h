@@ -1,5 +1,5 @@
 //
-//  MVCacheModel.h
+//  DemandModel.h
 //  SMG_NothingIsAll
 //
 //  Created by iMac on 2018/8/2.
@@ -13,8 +13,8 @@
  *
  *
  */
-@class ExpCacheModel;
-@interface MVCacheModel : NSObject
+@class ExpModel;
+@interface DemandModel : NSObject
 
 @property (assign, nonatomic) NSInteger urgentTo;
 @property (assign, nonatomic) NSInteger delta;
@@ -47,12 +47,12 @@
 /**
  *  MARK:--------------------获取当前最强的expModel--------------------
  */
--(ExpCacheModel*) getCurrentExpCacheModel;
+-(ExpModel*) getCurrentExpModel;
 
 
 /**
  *  MARK:--------------------新增expModel--------------------
  */
--(void) addToExpCache:(ExpCacheModel*)expModel;
+-(void) addToExpCache:(ExpModel*)expModel;
 
 @end
