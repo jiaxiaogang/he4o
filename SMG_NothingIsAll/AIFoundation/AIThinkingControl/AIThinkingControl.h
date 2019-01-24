@@ -26,7 +26,8 @@
 
 /**
  *  MARK:--------------------输出的日志入网(输入小脑)--------------------
- *  @param dics : 输出内容(如:eat)
+ *  @param outputModels : 输出内容(如:eat)
+ *  注: 大脑为引,小脑为行
  */
 -(void) commitOutputLog:(NSArray*)outputModels;
 

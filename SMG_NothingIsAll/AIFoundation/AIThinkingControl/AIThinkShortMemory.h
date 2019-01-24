@@ -25,7 +25,6 @@
  *  MARK:--------------------shortCache瞬时记忆--------------------
  *  1. 存由algsDic生成的algNode_p;
  */
--(void) addToShortCache:(AIPointer*)pointer;
 -(void) addToShortCache_Ps:(NSArray*)ps;
 
 /**

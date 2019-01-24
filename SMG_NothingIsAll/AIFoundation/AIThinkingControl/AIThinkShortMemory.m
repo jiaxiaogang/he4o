@@ -27,11 +27,7 @@
     }
     return _shortCache;
 }
--(void) addToShortCache:(AIPointer*)pointer{
-    if (ISOK(pointer, AIPointer.class)) {
-        [self addToShortCache_Ps:@[pointer]];
-    }
-}
+
 -(void) addToShortCache_Ps:(NSArray*)ps{
     if (ARRISOK(ps)) {
         for (AIPointer *pointer in ps) {
