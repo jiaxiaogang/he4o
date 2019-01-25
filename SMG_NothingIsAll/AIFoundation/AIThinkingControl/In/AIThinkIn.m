@@ -21,6 +21,7 @@
 
 @implementation AIThinkIn
 
+
 -(void) dataIn:(NSObject*)algsModel{
     //1. 装箱(除mv有两个元素外一般仅有一个元素)
     NSArray *algsArr = [ThinkingUtils algModelConvert2Pointers:algsModel];
@@ -30,77 +31,45 @@
     
     //3. 分流_mv时
     if (findMV) {
-        ///输入新的cmvAlgsArr(下面已有assExp中,有mv方向的添加mvCache代码,此处去掉)
-        //[self.demandManager dataIn_CmvAlgsArr:algsArr];
-        
-        ///1. 联想到mv时,创建NetCmvModel;
-        if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_CreateCMVModel:)]) {
-            AIFrontOrderNode *foNode = [self.delegate aiThinkIn_CreateCMVModel:algsArr];
-            
-            ///2. 联想经验
-            [self dataIn_AssociativeExperience:foNode];
-        }
+        [self dataIn_FindMV:algsArr];
     }else{
-        ///1. 打包成algTypeNode;
-        AIPointer *algNode_p = [ThinkingUtils createAlgNodeWithValue_ps:algsArr];
-        
-        ///2. 加入瞬时记忆
-        if (algNode_p && self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_AddToShortMemory:)]) {
-            [self.delegate aiThinkIn_AddToShortMemory:@[algNode_p]];
-        }
-        
-        ///3. 联想信息
-        [self dataIn_AssociativeData:algNode_p];
-    }
-}
-
-/**
- *  MARK:--------------------dataIn潜意识assExp--------------------
- *  1. 无条件
- *  2. 有尝(energy-1)
- *  3. 指定model
- *  注: dataIn负责护送一次指定信息的ass(随后进入dataOut递归循环)
- *  注: dataIn_assExp可直接跳过检查点一次;
- */
--(void) dataIn_AssociativeExperience:(AIFrontOrderNode*)foNode {
-    if (ISOK(foNode, AIFrontOrderNode.class)) {
-        //1. 取cmvNode
-        AICMVNode *cmvNode = [SMGUtils searchObjectForPointer:foNode.cmvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
-        
-        if (ISOK(cmvNode, AICMVNode.class)) {
-            //2. 根据cmv模型,取cmv的迫切度值和欲望方向;求出需求
-            NSNumber *deltaNum = [SMGUtils searchObjectForPointer:cmvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime];
-            NSInteger delta = [NUMTOOK(deltaNum) integerValue];
-            
-            //3. 思考mv
-            //BOOL havDemand = [ThinkingUtils getDemand:cmvNode.urgentTo_p.algsType delta:delta complete:nil];
-            //TODO:>>>>判断需求;(如饿,主动取当前状态,是否饿)
-            if (delta != 0) {
-                [self dataIn_AssExp_ToOutLoop:cmvNode];
-            }
-            
-            //4. 思考数据
-            [self dataIn_AssExp_ToLawAbsData:foNode cmvNode:cmvNode];
-        }
-    }
-    //5. 消耗energy
-    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_UpdateEnergy:)]) {
-        [self.delegate aiThinkIn_UpdateEnergy:-1];
+        [self dataIn_NoMV:algsArr];
     }
 }
 
 //MARK:===============================================================
-//MARK:                     < dataIn_Ass >
+//MARK:                     < NoMV >
 //MARK:===============================================================
 
+-(void) dataIn_NoMV:(NSArray*)algsArr{
+    //1. 打包成algTypeNode;
+    AIPointer *algNode_p = [ThinkingUtils createAlgNodeWithValue_ps:algsArr];
+    
+    //2. 加入瞬时记忆
+    if (algNode_p && self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_AddToShortMemory:)]) {
+        [self.delegate aiThinkIn_AddToShortMemory:@[algNode_p]];
+    }
+    
+    //3. 识别
+    AIAlgNodeBase *recognitionAlgNode = [self dataIn_NoMV_RecognitionIs:algNode_p];
+    
+    //4. 识别做什么用
+    AICMVNodeBase *mvNode = [self dataIn_NoMV_RecognitionUse:recognitionAlgNode];
+    
+    //5. 看到西瓜会开心
+    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_CommitMvNode:)]) {
+        [self.delegate aiThinkIn_CommitMvNode:mvNode];
+    }
+}
+
+
 /**
- *  MARK:--------------------联想相关数据(看到西瓜会开心)(识别)--------------------
- *  1. 注:直至desicionOut前,assCmv都会真实作用于thinkingControl
- *  2. assCmv首先会通过energy和cmvCache表现在thinkingControl中,影响思维循环;
- *  3. dataIn负责护送一次指定信息的ass(随后进入递归循环)
+ *  MARK:--------------------识别是什么(这是西瓜)--------------------
+ *  注: 无条件 & 目前无能量消耗 (以后有基础思维活力值后可energy-1)
  *  注: 局部匹配_后面通过调整参数,来达到99%以上的识别率;
+ *  问题: 看到的algNode与识别到的,未必是正确的,但我们应该保持使用protoAlgNode而不是recognitionAlgNode;
  */
--(void) dataIn_AssociativeData:(AIPointer*)algNode_p {
+-(AIAlgNodeBase*) dataIn_NoMV_RecognitionIs:(AIPointer*)algNode_p {
     //1. 数据准备
     AIAlgNodeBase *algNode = [SMGUtils searchObjectForPointer:algNode_p fileName:FILENAME_Node time:cRedisNodeTime];
     AIAlgNodeBase *assAlgNode = nil;
@@ -157,81 +126,87 @@
         }
     }
     
-    //3. strong++ & assFo & mvCache (识别到的信息,是否可以激活mv与思维)
+    //3. strong++
     if (ISOK(assAlgNode, AIAlgNodeBase.class)) {
-        ///1. strong++
         [AINetUtils insertPointer:assAlgNode.pointer toRefPortsByValues:assAlgNode.value_ps ps:assAlgNode.value_ps];
         
-        ///2. assAlgNode的引用序列联想assFo
-        AIPort *firstPort = ARR_INDEX(assAlgNode.refPorts, 0);
-        if (!firstPort) {
-            return;
-        }
-        AIFoNodeBase *foNode = [SMGUtils searchObjectForPointer:firstPort.target_p fileName:FILENAME_Node];
-        if (ISOK(foNode, AIFoNodeBase.class)) {
-            ///3. 联想到cmv模型前因
-            AICMVNode *cmvNode = [SMGUtils searchObjectForPointer:foNode.cmvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
-            
-            ///4. 将联想到的cmv更新energy和cmvCache
-            NSString *algsType = cmvNode.urgentTo_p.algsType;
-            NSInteger urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
-            NSInteger delta = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
-            if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_UpdateEnergy:)]) {
-                [self.delegate aiThinkIn_UpdateEnergy:((urgentTo + 9)/10)];
-            }
-            if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_UpdateCMVCache:urgentTo:delta:order:)]) {
-                [self.delegate aiThinkIn_UpdateCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
-            }
-            
-            ///5. 形成循环,根据当前最前排mv和energy,再进行思维;
-            if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_ToThinkOut)]) {
-                [self.delegate aiThinkIn_ToThinkOut];
-            }
-            
-            ///6. log
-            NSLog(@"联想到cmvNode: %@",[NVUtils getCmvModelDesc_ByCmvNode:cmvNode]);
-        }
-        //联想到数据网络节点
-        //TODO:将结果存到shortCache(目前以看到的为主,想到的没存)或thinkFeedCache(人脑有短中长时缓存)//需要时,再说;
     }
+    return assAlgNode;
 }
 
+
 /**
- *  MARK:--------------------对输入的mv更新mvCache并进入outLoop--------------------
- *  1. 有需求时,找出imv解决经验,尝试决策并解决;
- *  2. 已扩展对out_p的支持
- *  3. 此处交给mvCache序列,并由loop决定是否优先执行此mv;
+ *  MARK:--------------------识别有什么用(西瓜能吃)--------------------
+ *  1. assCmv首先会通过energy和cmvCache表现在thinkingControl中,影响思维循环;
+ *  2. dataIn负责护送一次指定信息的ass(随后进入递归循环)
+ *
+ *  注: 直至desicionOut前,assCmv都会真实作用于thinkingControl
+ *  注: dataIn负责护送一次指定信息的ass(随后进入dataOut递归循环)
+ *  注: dataIn_assExp可直接跳过检查点一次;
+ *  TODO:将结果存到shortCache(目前以看到的为主,想到的没存)或thinkFeedCache(人脑有短中长时缓存)//需要时,再说;
  */
--(void) dataIn_AssExp_ToOutLoop:(AICMVNode*)cmvNode {
-    //1. 数据检查
-    if (cmvNode == nil) {
+-(AICMVNode*) dataIn_NoMV_RecognitionUse:(AIAlgNodeBase*)recognitionAlgNode{
+    
+    //1. assFo & mvCache (识别到的信息,是否可以激活mv与思维)
+    if (!ISOK(recognitionAlgNode, AIAlgNodeBase.class)) {
+        return nil;
+    }
+    
+    //2. assAlgNode的引用序列联想assFo
+    AIPort *firstPort = ARR_INDEX(recognitionAlgNode.refPorts, 0);
+    if (!firstPort) {
+        return nil;
+    }
+    
+    //3. 取到最强引用节点
+    AIFoNodeBase *foNode = [SMGUtils searchObjectForPointer:firstPort.target_p fileName:FILENAME_Node];
+    if (!ISOK(foNode, AIFoNodeBase.class)) {
+        return nil;
+    }
+        
+    //4. 联想mvNode返回;
+    AICMVNode *cmvNode = [SMGUtils searchObjectForPointer:foNode.cmvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+    NSLog(@"联想到cmvNode: %@",[NVUtils getCmvModelDesc_ByCmvNode:cmvNode]);
+    return cmvNode;
+}
+
+
+//MARK:===============================================================
+//MARK:                     < FindMV >
+//MARK:===============================================================
+
+-(void) dataIn_FindMV:(NSArray*)algsArr{
+    //1. 联想到mv时,创建CmvModel取到FoNode;
+    AIFrontOrderNode *foNode = nil;
+    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_CreateCMVModel:)]) {
+        foNode = [self.delegate aiThinkIn_CreateCMVModel:algsArr];
+    }
+    if (!ISOK(foNode, AIFrontOrderNode.class)) {
         return;
     }
     
-    //2. 将联想到的cmv更新energy和cmvCache
-    NSString *algsType = cmvNode.urgentTo_p.algsType;
-    NSInteger urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
-    NSInteger delta = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
-    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_UpdateEnergy:)]) {
-        [self.delegate aiThinkIn_UpdateEnergy:((urgentTo + 9)/10)];
-    }
-    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_UpdateCMVCache:urgentTo:delta:order:)]) {
-        [self.delegate aiThinkIn_UpdateCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
+    //2. 取cmvNode
+    AICMVNode *cmvNode = [SMGUtils searchObjectForPointer:foNode.cmvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+    if (!ISOK(cmvNode, AICMVNode.class)) {
+        return;
     }
     
-    //3. 形成循环,根据当前最前排mv和energy,再进行思维;
-    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_ToThinkOut)]) {
-        [self.delegate aiThinkIn_ToThinkOut];
+    //3. 思考mv,需求处理
+    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_CommitMvNode:)]) {
+        [self.delegate aiThinkIn_CommitMvNode:cmvNode];
     }
+    
+    //4. 学习
+    [self dataIn_FindMV_Learning:foNode cmvNode:cmvNode];
 }
 
-
 /**
- *  MARK:--------------------输出数据的规律和抽象方向思考--------------------
+ *  MARK:--------------------学习--------------------
  *  1. 无需求时,找出以往同样经历,类比规律,抽象出更确切的意义;
  *  2. 注:此方法为abs方向的思维方法总入口;(与其相对的决策处
+ *  步骤: 联想->类比->规律->抽象->关联->网络
  */
--(void) dataIn_AssExp_ToLawAbsData:(AIFrontOrderNode*)foNode cmvNode:(AICMVNode*)cmvNode {
+-(void) dataIn_FindMV_Learning:(AIFrontOrderNode*)foNode cmvNode:(AICMVNode*)cmvNode {
     //1. 数据检查
     if (foNode == nil || cmvNode == nil) {
         return;

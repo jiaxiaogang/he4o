@@ -126,7 +126,21 @@ static AIThinkingControl *_instance;
     return foNode;
 }
 
--(void) aiThinkIn_ToThinkOut{
+-(void) aiThinkIn_CommitMvNode:(AICMVNodeBase*)cmvNode{
+    //1. 数据检查
+    if (!ISOK(cmvNode, AICMVNodeBase.class)) {
+        return;
+    }
+    NSString *algsType = cmvNode.urgentTo_p.algsType;
+    NSInteger urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
+    NSInteger delta = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
+    if (delta == 0) {
+        return;
+    }
+    
+    //2. 将联想到的cmv更新energy & 更新demandManager & decisionLoop
+    [self updateEnergy:((urgentTo + 9)/10)];
+    [self.demandManager updateCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
     [self.thinkOut dataOut_AssociativeExperience];
 }
 
@@ -136,10 +150,6 @@ static AIThinkingControl *_instance;
 
 -(BOOL) aiThinkIn_EnergyValid{
     return self.energy > 0;
-}
-
--(void) aiThinkIn_UpdateCMVCache:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta order:(NSInteger)order{
-    [self.demandManager updateCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
 }
 
 

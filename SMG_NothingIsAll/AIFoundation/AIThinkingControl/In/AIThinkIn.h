@@ -8,15 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIPointer;
+@class AIPointer,AICMVNodeBase;
 @protocol AIThinkInDelegate <NSObject>
 
 -(void) aiThinkIn_AddToShortMemory:(NSArray*)algNode_ps;        //将祖母节点添加到瞬时记忆
 -(AIFrontOrderNode*) aiThinkIn_CreateCMVModel:(NSArray*)algsArr;//构建cmv模型;
--(void) aiThinkIn_ToThinkOut;                                   //由in转换到out;
+-(void) aiThinkIn_CommitMvNode:(AICMVNodeBase*)cmvNode;         //提交mv进行需求处理;
 -(void) aiThinkIn_UpdateEnergy:(NSInteger)delta;                //更新思维能量值;
 -(BOOL) aiThinkIn_EnergyValid;                                  //能量值是否>0;
--(void) aiThinkIn_UpdateCMVCache:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta order:(NSInteger)order;                    //更新demandManager
 
 @end
 

@@ -77,6 +77,7 @@
     }
     
     //3. 有需求时且可加入时_加入新的
+    //TODO:>>>>判断需求;(如饿,主动取当前状态,是否饿)
     BOOL havDemand = [ThinkingUtils getDemand:algsType delta:delta complete:nil];
     if (canNeed && havDemand) {
         DemandModel *newItem = [[DemandModel alloc] init];
