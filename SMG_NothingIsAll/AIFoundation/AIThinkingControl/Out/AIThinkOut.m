@@ -25,7 +25,7 @@
 //MARK:                     < publicMethod >
 //MARK:===============================================================
 
--(void) dataOut_AssociativeExperience {
+-(void) dataOut {
     //1. 重排序 & 取当前序列最前;
     if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkOut_GetCurrentDemand)] && [self.delegate respondsToSelector:@selector(aiThinkOut_EnergyValid)]) {
         DemandModel *demandModel = [self.delegate aiThinkOut_GetCurrentDemand];
@@ -36,52 +36,28 @@
                 //3. 从expCache中,排序并取到首个值得思考的expModel;
                 __block ExpModel *expModel = [demandModel getCurrentExpModel];
                 
-                //4. 如果,没有一个想可行的,则再联想一个新的相关"解决经验";并重新循环下去;
+                //4. mvScheme (如果,没有一个想可行的,则再联想一个新的相关"解决经验";并重新循环下去;)
                 if (!expModel) {
-                    [ThinkingUtils getDemand:demandModel.algsType delta:demandModel.delta complete:^(BOOL upDemand, BOOL downDemand) {
-                        MVDirection direction = downDemand ? MVDirection_Negative : MVDirection_Positive;
-                        
-                        //5. filter筛选器取曾经历的除已有expModels之外的最强解决;
-                        NSArray *mvRefs = [theNet getNetNodePointersFromDirectionReference:demandModel.algsType direction:direction filter:^NSArray *(NSArray *protoArr) {
-                            protoArr = ARRTOOK(protoArr);
-                            for (NSInteger i = 0; i < protoArr.count; i++) {
-                                AIPort *port = ARR_INDEX(protoArr, protoArr.count - i - 1);
-                                BOOL cacheContains = false;
-                                for (ExpModel *expCacheItem in demandModel.expCache) {
-                                    if (port.target_p && [port.target_p isEqual:expCacheItem.exp_p]) {
-                                        cacheContains = true;
-                                        break;
-                                    }
-                                }
-                                if (!cacheContains) {
-                                    return @[port];
-                                }
-                            }
-                            return nil;
-                        }];
-                        
-                        //6. 加入待判断区;
-                        AIPort *referenceMvPort = ARR_INDEX(mvRefs, 0);
-                        if (referenceMvPort) {
-                            expModel = [ExpModel newWithExp_p:referenceMvPort.target_p];
-                            [demandModel addToExpCache:expModel];
-                        }
-                    }];
+                    expModel = [self dataOut_MvScheme:demandModel];
                 }
                 
-                //7. 有可具象思考的expModel则执行;
+                //5. 有可具象思考的expModel则执行;
                 if (expModel) {
                     if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkOut_UpdateEnergy:)]) {
                         [self.delegate aiThinkOut_UpdateEnergy:-1];//思考与决策消耗能量;
                     }
-                    [self dataOut_AssociativeConcreteData:expModel complete:^(BOOL canOut, NSArray *out_ps,BOOL expModelInvalid) {
+                    
+                    //6. foScheme (联想"解决经验"对应的cmvNode & 联想具象数据,并取到决策关键信息;(可行性判定))
+                    [self dataOut_FoScheme:expModel complete:^(BOOL canOut, NSArray *out_ps,BOOL expModelInvalid) {
                         if (canOut) {
-                            [self dataOut_TryOut:expModel outArr:out_ps];
+                            
+                            //7. actionScheme (行为方案输出)
+                            [self dataOut_ActionScheme:expModel outArr:out_ps];
                         }else{
                             if (expModelInvalid) {
                                 [demandModel.exceptExpModels addObject:expModel];  //排除无效的expModel;(一次无效,不表示永远无效,所以彻底无效时,再排除)
                             }
-                            [self dataOut_AssociativeExperience];               //并递归到最初;
+                            [self dataOut];               //并递归到最初;
                         }
                     }];
                 }else{
@@ -101,16 +77,56 @@
 //MARK:===============================================================
 
 /**
+ *  MARK:--------------------mvScheme--------------------
+ *  用于找到新的mv经验;
+ */
+-(ExpModel*) dataOut_MvScheme:(DemandModel*)demandModel{
+    //1. 判断mv方向
+    __block ExpModel *expModel = nil;
+    [ThinkingUtils getDemand:demandModel.algsType delta:demandModel.delta complete:^(BOOL upDemand, BOOL downDemand) {
+        MVDirection direction = downDemand ? MVDirection_Negative : MVDirection_Positive;
+        
+        //2. filter筛选器取曾经历的除已有expModels之外的最强解决;
+        NSArray *mvRefs = [theNet getNetNodePointersFromDirectionReference:demandModel.algsType direction:direction filter:^NSArray *(NSArray *protoArr) {
+            protoArr = ARRTOOK(protoArr);
+            for (NSInteger i = 0; i < protoArr.count; i++) {
+                AIPort *port = ARR_INDEX(protoArr, protoArr.count - i - 1);
+                BOOL cacheContains = false;
+                for (ExpModel *expCacheItem in demandModel.expCache) {
+                    if (port.target_p && [port.target_p isEqual:expCacheItem.exp_p]) {
+                        cacheContains = true;
+                        break;
+                    }
+                }
+                if (!cacheContains) {
+                    return @[port];
+                }
+            }
+            return nil;
+        }];
+        
+        //3. 加入待判断区;
+        AIPort *referenceMvPort = ARR_INDEX(mvRefs, 0);
+        if (referenceMvPort) {
+            expModel = [ExpModel newWithExp_p:referenceMvPort.target_p];
+            [demandModel addToExpCache:expModel];
+        }
+    }];
+    return expModel;
+}
+
+
+/**
  *  MARK:--------------------联想具象 (从上往下找foNode)--------------------
  *  @param expModel : 从expModel下查找具象可输出;
  */
--(void) dataOut_AssociativeConcreteData:(ExpModel*)expModel complete:(void(^)(BOOL canOut,NSArray *out_ps,BOOL expModelInvalid))complete{
+-(void) dataOut_FoScheme:(ExpModel*)expModel complete:(void(^)(BOOL canOut,NSArray *out_ps,BOOL expModelInvalid))complete{
     __block BOOL invokedComplete = false;
     __block BOOL expModelInvalid = false;
     if (expModel) {
         //1. 联想"解决经验"对应的cmvNode & 联想具象数据,并取到决策关键信息;(可行性判定)
         NSObject *expMvNode = [SMGUtils searchObjectForPointer:expModel.exp_p fileName:FILENAME_Node time:cRedisNodeTime];
-        AIFrontOrderNode *expOutFoNode = [self dataOut_AssociativeConcreteData_ExpOut:expMvNode except_ps:expModel.exceptExpOut_ps];
+        AIFrontOrderNode *expOutFoNode = [self dataOut_ConFoScheme:expMvNode except_ps:expModel.exceptExpOut_ps];
         
         //2. 有执行方案,则对执行方案进行反思检查;
         if (expOutFoNode != nil) {
@@ -124,7 +140,7 @@
             }];
         }else{
             //4. 没有执行方案,转向对抽象宏节点进行尝试输出;
-            AINetAbsFoNode *tryOutAbsNode = [self dataOut_AssociativeConcreteData_TryOut:expMvNode exceptTryOut_ps:expModel.exceptTryOut_ps];
+            AINetAbsFoNode *tryOutAbsNode = [self dataOut_AbsFoScheme:expMvNode exceptTryOut_ps:expModel.exceptTryOut_ps];
             if (tryOutAbsNode != nil) {
                 [self dataOut_CheckScore_TryOut:tryOutAbsNode complete:^(CGFloat score, NSArray *out_ps) {
                     expModel.order += score;//联想对当前expModel的order影响;
@@ -166,10 +182,10 @@
  *  注: 先从最强关联的最底层foNode开始,逐个取用;直到energy<=0,或其它原因中止;
  *
  */
--(AIFrontOrderNode*) dataOut_AssociativeConcreteData_ExpOut:(NSObject*)baseMvNode except_ps:(nonnull NSMutableArray*)except_ps{
-    return [self dataOut_AssociativeConcreteData_ExpOut:baseMvNode checkMvNode:baseMvNode checkMvNode_p:nil except_ps:except_ps];
+-(AIFrontOrderNode*) dataOut_ConFoScheme:(NSObject*)baseMvNode except_ps:(nonnull NSMutableArray*)except_ps{
+    return [self dataOut_ConFoScheme:baseMvNode checkMvNode:baseMvNode checkMvNode_p:nil except_ps:except_ps];
 }
--(AIFrontOrderNode*) dataOut_AssociativeConcreteData_ExpOut:(NSObject*)baseMvNode checkMvNode:(NSObject*)checkMvNode checkMvNode_p:(AIPointer*)checkMvNode_p except_ps:(nonnull NSMutableArray*)except_ps {
+-(AIFrontOrderNode*) dataOut_ConFoScheme:(NSObject*)baseMvNode checkMvNode:(NSObject*)checkMvNode checkMvNode_p:(AIPointer*)checkMvNode_p except_ps:(nonnull NSMutableArray*)except_ps {
     
     //1. 当前神经元异常时,回归到checkBase; 注:(异常判定: <(类型无效 | null) & checkMvNode!=nil>);
     __block AIFrontOrderNode *foNode = nil;
@@ -177,7 +193,7 @@
         BOOL nullOrException = (checkMvNode_p != nil);
         if (nullOrException) {
             [except_ps addObject:checkMvNode_p];
-            foNode = [self dataOut_AssociativeConcreteData_ExpOut:baseMvNode except_ps:except_ps];
+            foNode = [self dataOut_ConFoScheme:baseMvNode except_ps:except_ps];
         }
         return foNode;
     };
@@ -204,13 +220,13 @@
             
             //6. 被排除的不是base才可以递归回checkBase;
             if (![baseMvNode isEqual:checkMvNode]) {
-                return [self dataOut_AssociativeConcreteData_ExpOut:baseMvNode except_ps:except_ps];
+                return [self dataOut_ConFoScheme:baseMvNode except_ps:except_ps];
             }
         }else{
             //7. 找到conPort,则递归判断类型是否foNode;
             AICMVNodeBase *findConNode = [SMGUtils searchObjectForPointer:findConPort.target_p fileName:FILENAME_Node];
             NSLog(@" >> 找到经验cmvNode: %@ 强度: %ld",[NVUtils getCmvNodeDesc:findConNode],(long)findConPort.strong.value);
-            return [self dataOut_AssociativeConcreteData_ExpOut:baseMvNode checkMvNode:findConNode checkMvNode_p:findConPort.target_p except_ps:except_ps];
+            return [self dataOut_ConFoScheme:baseMvNode checkMvNode:findConNode checkMvNode_p:findConPort.target_p except_ps:except_ps];
         }
     }else{
         //8. 类型异常
@@ -230,7 +246,7 @@
  *  1. 从上至下的联想absNode;
  *  注:目前仅支持每层1个,与最分支向下联想,即abs的最强关联的下层前1;
  */
--(AINetAbsFoNode*) dataOut_AssociativeConcreteData_TryOut:(NSObject*)expMvNode exceptTryOut_ps:(nonnull NSMutableArray*)exceptTryOut_ps{
+-(AINetAbsFoNode*) dataOut_AbsFoScheme:(NSObject*)expMvNode exceptTryOut_ps:(nonnull NSMutableArray*)exceptTryOut_ps{
     if(ISOK(expMvNode, AIAbsCMVNode.class)){
         //1. 判断是否已排除
         AIAbsCMVNode *expAbsCmvNode = (AIAbsCMVNode*)expMvNode;
@@ -252,7 +268,7 @@
             AIPort *firstConPort = [expAbsCmvNode getConPort:0];
             if (firstConPort != nil) {
                 NSObject *firstConNode = [SMGUtils searchObjectForPointer:firstConPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
-                return [self dataOut_AssociativeConcreteData_TryOut:firstConNode exceptTryOut_ps:exceptTryOut_ps];
+                return [self dataOut_AbsFoScheme:firstConNode exceptTryOut_ps:exceptTryOut_ps];
             }
         }
     }
@@ -332,7 +348,7 @@
  *  2. 激活输出 : absNode信息无conPorts方向的outPointer信息时,将absNode的宏信息尝试输出;
  *  3. 经验输出 : expOut指在absNode或conPort方向有outPointer信息;
  */
--(void) dataOut_TryOut:(ExpModel*)expModel outArr:(NSArray*)outArr{
+-(void) dataOut_ActionScheme:(ExpModel*)expModel outArr:(NSArray*)outArr{
     //1. 尝试输出找到解决问题的实际操作 (取到当前cacheModel中的最佳决策,并进行输出;)
     BOOL tryOutSuccess = false;
     if (expModel && ARRISOK(outArr)) {

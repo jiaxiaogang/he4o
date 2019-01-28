@@ -141,7 +141,7 @@ static AIThinkingControl *_instance;
     //2. 将联想到的cmv更新energy & 更新demandManager & decisionLoop
     [self updateEnergy:((urgentTo + 9)/10)];
     [self.demandManager updateCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
-    [self.thinkOut dataOut_AssociativeExperience];
+    [self.thinkOut dataOut];
 }
 
 -(void) aiThinkIn_UpdateEnergy:(NSInteger)delta{

@@ -44,7 +44,7 @@
  *  6. 有需求时,找出expModel,尝试决策并解决;
  *
  */
--(void) dataOut_AssociativeExperience ;
+-(void) dataOut;
 
 
 @end
