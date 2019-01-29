@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 /**
- *  MARK:--------------------解决经验model--------------------
+ *  MARK:--------------------解决经验model(OMV)--------------------
  */
 @interface ExpModel : NSObject
 

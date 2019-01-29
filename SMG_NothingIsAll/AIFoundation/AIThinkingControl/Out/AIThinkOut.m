@@ -52,7 +52,7 @@
                         if (canOut) {
                             
                             //7. actionScheme (行为方案输出)
-                            [self dataOut_ActionScheme:expModel outArr:out_ps];
+                            [self dataOut_ActionScheme:out_ps];
                         }else{
                             if (expModelInvalid) {
                                 [demandModel.exceptExpModels addObject:expModel];  //排除无效的expModel;(一次无效,不表示永远无效,所以彻底无效时,再排除)
@@ -62,11 +62,11 @@
                     }];
                 }else{
                     //8. 无解决经验,反射输出;//V2TODO:此处不应放弃联想,应该先看下当前有哪些信息,是可以联想分析出解决方案的; (跳出递归)
-                    [self dataOut_Reflex:AIMoodType_Anxious];
+                    [self dataOut_ActionScheme:nil];
                 }
             }else{
                 //9. 如果energy<=0,(未找到可行性,直接反射输出 || 尝试输出"可行性之首"并找到实际操作)
-                [self dataOut_Reflex:AIMoodType_Anxious];
+                [self dataOut_ActionScheme:nil];
             }
         }
     }
@@ -121,6 +121,16 @@
  *  @param expModel : 从expModel下查找具象可输出;
  */
 -(void) dataOut_FoScheme:(ExpModel*)expModel complete:(void(^)(BOOL canOut,NSArray *out_ps,BOOL expModelInvalid))complete{
+    
+    //1. 从抽象方向找到fo节点;
+    //2. 评价fo节点;
+    //3. 筛选出out_ps和 "条件"
+    //4. 注: 目前条件为"视觉看到的坚果" (已抽象的,如无距离)
+    //5. 难点: 在于如何去满足这个条件;
+    //6. 在外界去找到"条件";
+    
+    
+    
     __block BOOL invokedComplete = false;
     __block BOOL expModelInvalid = false;
     if (expModel) {
@@ -348,10 +358,10 @@
  *  2. 激活输出 : absNode信息无conPorts方向的outPointer信息时,将absNode的宏信息尝试输出;
  *  3. 经验输出 : expOut指在absNode或conPort方向有outPointer信息;
  */
--(void) dataOut_ActionScheme:(ExpModel*)expModel outArr:(NSArray*)outArr{
+-(void) dataOut_ActionScheme:(NSArray*)outArr{
     //1. 尝试输出找到解决问题的实际操作 (取到当前cacheModel中的最佳决策,并进行输出;)
     BOOL tryOutSuccess = false;
-    if (expModel && ARRISOK(outArr)) {
+    if (ARRISOK(outArr)) {
         for (AIKVPointer *algNode_p in outArr) {
             //>1 检查micro_p是否是"输出";
             //>2 假如order_p足够确切,尝试检查并输出;
@@ -371,15 +381,8 @@
         //1. 如果未找到复现方式,或解决方式,则产生情绪:急
         //2. 通过急,输出output表情哭
         NSLog(@"反射输出 >>");
-        [self dataOut_Reflex:AIMoodType_Anxious];
+        [Output output_Mood:AIMoodType_Anxious];
     }
-}
-
-/**
- *  MARK:--------------------反射输出--------------------
- */
--(void) dataOut_Reflex:(AIMoodType)moodType{
-    [Output output_Mood:moodType];
 }
 
 @end
