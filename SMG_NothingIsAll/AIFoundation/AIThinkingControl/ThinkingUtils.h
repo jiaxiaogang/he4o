@@ -23,27 +23,6 @@
  */
 +(NSArray*) filterOutPointers:(NSArray*)proto_ps;
 
-
-/**
- *  MARK:--------------------检测算法结果的result_ps是否为mv输入--------------------
- *  (饿或不饿)
- */
-+(BOOL) dataIn_CheckMV:(NSArray*)algResult_ps;
-
-
-/**
- *  MARK:--------------------算法模型的装箱--------------------
- *  转为指针数组(每个值都是指针)(在dataIn后第一件事就是装箱)
- */
-+(NSArray*) algModelConvert2Pointers:(NSObject*)algsModel;
-
-
-/**
- *  MARK:--------------------创建祖母节点--------------------
- *  将微信息组,转换成祖母节点;
- */
-+(AIPointer*) createAlgNodeWithValue_ps:(NSArray*)value_ps;
-
 @end
 
 
@@ -135,5 +114,59 @@
  */
 +(AIFrontOrderNode*) getFoNodeFromCmvNode:(AICMVNode*)cmvNode;
 
+
+@end
+
+
+//MARK:===============================================================
+//MARK:                     < ThinkingUtils (In) >
+//MARK:===============================================================
+@interface ThinkingUtils (In)
+
+/**
+ *  MARK:--------------------检测算法结果的result_ps是否为mv输入--------------------
+ *  (饿或不饿)
+ */
++(BOOL) dataIn_CheckMV:(NSArray*)algResult_ps;
+
+
+/**
+ *  MARK:--------------------算法模型的装箱--------------------
+ *  转为指针数组(每个值都是指针)(在dataIn后第一件事就是装箱)
+ */
++(NSArray*) algModelConvert2Pointers:(NSObject*)algsModel;
+
+
+/**
+ *  MARK:--------------------创建祖母节点--------------------
+ *  将微信息组,转换成祖母节点;
+ */
++(AIPointer*) createAlgNodeWithValue_ps:(NSArray*)value_ps;
+
+@end
+
+
+//MARK:===============================================================
+//MARK:                     < ThinkingUtils (Out) >
+//MARK:===============================================================
+@interface ThinkingUtils (Out)
+
+/**
+ *  MARK:--------------------可行性判定 (经验执行方案)--------------------
+ *  注:TODO:后续可以增加energy的值,并在此方法中每一次scoreForce就energy--;以达到更加精细的思维控制;
+ *
+ *  A:根据out_ps联想(分析可行性)
+ *  >assHavResult : 其有没有导致mv-和mv+;
+ *    > mv-则:联想conPort,思考具象;
+ *    > mv+则:score+分;
+ *  >assNoResult :
+ *
+ */
++(void) dataOut_CheckScore_ExpOut:(AIFrontOrderNode*)foNode complete:(void(^)(CGFloat score,NSArray *out_ps))complete;
+
+/**
+ *  MARK:--------------------可行性判定 (尝试激活执行方案)--------------------
+ */
++(void) dataOut_CheckScore_TryOut:(AINetAbsFoNode*)absFoNode complete:(void(^)(CGFloat score,NSArray *out_ps))complete;
 
 @end

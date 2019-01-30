@@ -13,14 +13,14 @@
  *
  *
  */
-@class ExpModel;
+@class AIThinkOutMvModel;
 @interface DemandModel : NSObject
 
 @property (assign, nonatomic) NSInteger urgentTo;
 @property (assign, nonatomic) NSInteger delta;
 @property (strong, nonatomic) NSString *algsType;
-@property (strong, nonatomic) NSMutableArray *expCache;         //缓存的几种expModel;(order从大到小排序)
-@property (strong, nonatomic) NSMutableArray *exceptExpModels;  //已排除的expModels;
+@property (strong, nonatomic) NSMutableArray *outMvModels;  //缓存的几种outMvModel;(order从大到小排序)
+@property (strong, nonatomic) NSMutableArray *exceptOutMvModels;  //已排除的outMvModels;
 
 
 /**
@@ -45,14 +45,14 @@
 
 
 /**
- *  MARK:--------------------获取当前最强的expModel--------------------
+ *  MARK:--------------------获取当前最强的outMvModel--------------------
  */
--(ExpModel*) getCurrentExpModel;
+-(AIThinkOutMvModel*) getCurrentAIThinkOutMvModel;
 
 
 /**
- *  MARK:--------------------新增expModel--------------------
+ *  MARK:--------------------新增outMvModel--------------------
  */
--(void) addToExpCache:(ExpModel*)expModel;
+-(void) addToExpCache:(AIThinkOutMvModel*)outMvModel;
 
 @end

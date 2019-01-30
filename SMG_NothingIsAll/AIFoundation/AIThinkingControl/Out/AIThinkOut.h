@@ -41,7 +41,7 @@
  *  3. 不指定model (从cmvCache取)
  *  4. 每一轮循环不仅是想下一个singleMvPort;也有可能在当前port上,进行二次思考;
  *  5. 从expCache下,根据可行性,选定一个解决方案;
- *  6. 有需求时,找出expModel,尝试决策并解决;
+ *  6. 有需求时,找出outMvModel,尝试决策并解决;
  *
  */
 -(void) dataOut;

@@ -57,6 +57,7 @@
 		087268E0219CF3B500B5490F /* AIVisionAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 087268DF219CF3B500B5490F /* AIVisionAlgs.m */; };
 		0881965F21800F2B00D5DB36 /* BirdLivePage.m in Sources */ = {isa = PBXBuildFile; fileRef = 0881965D21800F2B00D5DB36 /* BirdLivePage.m */; };
 		0881966021800F2B00D5DB36 /* BirdLivePage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0881965E21800F2B00D5DB36 /* BirdLivePage.xib */; };
+		088DD7232201216500E0A786 /* AIThinkOutFoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088DD7222201216500E0A786 /* AIThinkOutFoModel.m */; };
 		089614A9219A4D5200343FAC /* BirdGrowPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 089614A7219A4D5200343FAC /* BirdGrowPage.m */; };
 		089614AA219A4D5200343FAC /* BirdGrowPage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 089614A8219A4D5200343FAC /* BirdGrowPage.xib */; };
 		089E66B121B9F5D100ECA28A /* AIAbsAlgNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 089E66B021B9F5D100ECA28A /* AIAbsAlgNode.m */; };
@@ -85,7 +86,7 @@
 		08F738071F7C714F005EAD56 /* AISqlPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738031F7C714F005EAD56 /* AISqlPointer.m */; };
 		08FAEC94215EED39004DCEAD /* NVUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FAEC93215EED39004DCEAD /* NVUtils.m */; };
 		2753D7CF7BAEDFEACAF9264A /* libPods-SMG_NothingIsAll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */; };
-		8806D888212B8EB100C442CA /* ExpModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8806D887212B8EB100C442CA /* ExpModel.m */; };
+		8806D888212B8EB100C442CA /* AIThinkOutMvModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8806D887212B8EB100C442CA /* AIThinkOutMvModel.m */; };
 		8822852020F58BDA009884DC /* AINetDirectionReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 8822851F20F58BDA009884DC /* AINetDirectionReference.m */; };
 		8868F6EB210A946A000EAC9B /* AIAbsCMVManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8868F6EA210A946A000EAC9B /* AIAbsCMVManager.m */; };
 		8868F6EE210AA00B000EAC9B /* AINetAbsCMVUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 8868F6ED210AA00B000EAC9B /* AINetAbsCMVUtil.m */; };
@@ -205,6 +206,8 @@
 		0881965C21800F2B00D5DB36 /* BirdLivePage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BirdLivePage.h; sourceTree = "<group>"; };
 		0881965D21800F2B00D5DB36 /* BirdLivePage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BirdLivePage.m; sourceTree = "<group>"; };
 		0881965E21800F2B00D5DB36 /* BirdLivePage.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BirdLivePage.xib; sourceTree = "<group>"; };
+		088DD7212201216500E0A786 /* AIThinkOutFoModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIThinkOutFoModel.h; sourceTree = "<group>"; };
+		088DD7222201216500E0A786 /* AIThinkOutFoModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIThinkOutFoModel.m; sourceTree = "<group>"; };
 		089614A6219A4D5200343FAC /* BirdGrowPage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BirdGrowPage.h; sourceTree = "<group>"; };
 		089614A7219A4D5200343FAC /* BirdGrowPage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BirdGrowPage.m; sourceTree = "<group>"; };
 		089614A8219A4D5200343FAC /* BirdGrowPage.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BirdGrowPage.xib; sourceTree = "<group>"; };
@@ -258,8 +261,8 @@
 		08FAEC92215EED39004DCEAD /* NVUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVUtils.h; sourceTree = "<group>"; };
 		08FAEC93215EED39004DCEAD /* NVUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NVUtils.m; sourceTree = "<group>"; };
 		08FAEC95215EED48004DCEAD /* NVHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVHeader.h; sourceTree = "<group>"; };
-		8806D886212B8EB100C442CA /* ExpModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExpModel.h; sourceTree = "<group>"; };
-		8806D887212B8EB100C442CA /* ExpModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExpModel.m; sourceTree = "<group>"; };
+		8806D886212B8EB100C442CA /* AIThinkOutMvModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIThinkOutMvModel.h; sourceTree = "<group>"; };
+		8806D887212B8EB100C442CA /* AIThinkOutMvModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIThinkOutMvModel.m; sourceTree = "<group>"; };
 		8822851E20F58BDA009884DC /* AINetDirectionReference.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetDirectionReference.h; sourceTree = "<group>"; };
 		8822851F20F58BDA009884DC /* AINetDirectionReference.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetDirectionReference.m; sourceTree = "<group>"; };
 		8868F6E9210A946A000EAC9B /* AIAbsCMVManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIAbsCMVManager.h; sourceTree = "<group>"; };
@@ -456,8 +459,6 @@
 				88E1F84D211591D80036B616 /* DemandManager.m */,
 				88E1F84F211591E50036B616 /* DemandModel.h */,
 				88E1F850211591E50036B616 /* DemandModel.m */,
-				8806D886212B8EB100C442CA /* ExpModel.h */,
-				8806D887212B8EB100C442CA /* ExpModel.m */,
 				082ABC3321F7E864002E544C /* AIThinkShortMemory.h */,
 				082ABC3421F7E864002E544C /* AIThinkShortMemory.m */,
 			);
@@ -553,6 +554,10 @@
 			children = (
 				0860617421F92F5200113366 /* AIThinkOut.h */,
 				0860617521F92F5200113366 /* AIThinkOut.m */,
+				8806D886212B8EB100C442CA /* AIThinkOutMvModel.h */,
+				8806D887212B8EB100C442CA /* AIThinkOutMvModel.m */,
+				088DD7212201216500E0A786 /* AIThinkOutFoModel.h */,
+				088DD7222201216500E0A786 /* AIThinkOutFoModel.m */,
 			);
 			path = Out;
 			sourceTree = "<group>";
@@ -969,7 +974,7 @@
 				089614A9219A4D5200343FAC /* BirdGrowPage.m in Sources */,
 				083F61381F048329000330E1 /* AILine.m in Sources */,
 				083352F521800AB1003931E5 /* MainPage.m in Sources */,
-				8806D888212B8EB100C442CA /* ExpModel.m in Sources */,
+				8806D888212B8EB100C442CA /* AIThinkOutMvModel.m in Sources */,
 				0817D6AB219E3CC7000E45AB /* UIColor+expanded.m in Sources */,
 				08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */,
 				08089280215B07FC00710636 /* AICMVNodeBase.m in Sources */,
@@ -982,6 +987,7 @@
 				084219E11FD8CEFD009DA6BC /* AIReactorControl.m in Sources */,
 				08EA48CE202932B80038B982 /* CustomAlgsChargeModel.m in Sources */,
 				084C3A6B21926D5700DAA08A /* BirdView.m in Sources */,
+				088DD7232201216500E0A786 /* AIThinkOutFoModel.m in Sources */,
 				0858C5DB2194FB3F00951BA5 /* LightView.m in Sources */,
 				08E8F7B221798AEE004F51DE /* AIFoNodeBase.m in Sources */,
 				0842ADBD1FE207500048ADDC /* DemoHunger.m in Sources */,

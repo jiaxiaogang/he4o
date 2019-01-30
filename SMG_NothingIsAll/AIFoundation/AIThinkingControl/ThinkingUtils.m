@@ -40,28 +40,6 @@
     return out_ps;
 }
 
-+(BOOL) dataIn_CheckMV:(NSArray*)algResult_ps{
-    for (AIKVPointer *pointer in ARRTOOK(algResult_ps)) {
-        if ([NSClassFromString(pointer.algsType) isSubclassOfClass:ImvAlgsModelBase.class]) {
-            return true;
-        }
-    }
-    return false;
-}
-
-+(NSArray*) algModelConvert2Pointers:(NSObject*)algsModel{
-    NSArray *algsArr = [[AINet sharedInstance] getAlgsArr:algsModel];
-    return algsArr;
-}
-
-+(AIPointer*) createAlgNodeWithValue_ps:(NSArray*)value_ps{
-    AIAlgNode *algNode = [theNet createAlgNode:value_ps];
-    if (algNode) {
-        return algNode.pointer;
-    }
-    return nil;
-}
-
 @end
 
 
@@ -291,6 +269,93 @@
         return foNode;
     }
     return nil;
+}
+
+@end
+
+
+//MARK:===============================================================
+//MARK:                     < ThinkingUtils (In) >
+//MARK:===============================================================
+@implementation ThinkingUtils (In)
+
++(BOOL) dataIn_CheckMV:(NSArray*)algResult_ps{
+    for (AIKVPointer *pointer in ARRTOOK(algResult_ps)) {
+        if ([NSClassFromString(pointer.algsType) isSubclassOfClass:ImvAlgsModelBase.class]) {
+            return true;
+        }
+    }
+    return false;
+}
+
++(NSArray*) algModelConvert2Pointers:(NSObject*)algsModel{
+    NSArray *algsArr = [[AINet sharedInstance] getAlgsArr:algsModel];
+    return algsArr;
+}
+
++(AIPointer*) createAlgNodeWithValue_ps:(NSArray*)value_ps{
+    AIAlgNode *algNode = [theNet createAlgNode:value_ps];
+    if (algNode) {
+        return algNode.pointer;
+    }
+    return nil;
+}
+
+@end
+
+
+//MARK:===============================================================
+//MARK:                     < ThinkingUtils (Out) >
+//MARK:===============================================================
+@implementation ThinkingUtils (Out)
+
++(void) dataOut_CheckScore_ExpOut:(AIFrontOrderNode*)foNode complete:(void(^)(CGFloat score,NSArray *out_ps))complete{
+    if (!foNode) {
+        complete(0,nil);
+    }
+    CGFloat score = 0;
+    
+    //1. 取出outLog;
+    NSArray *out_ps = [ThinkingUtils filterOutPointers:foNode.orders_kvp];
+    
+    //2. 评价 (根据当前foNode的mv果,处理cmvNode评价影响力;(系数0.2))
+    score = [ThinkingUtils getScoreForce:foNode.cmvNode_p ratio:0.2f];
+    
+    ////4. v1.0评价方式: (目前outLog在foAbsNode和index中,无法区分,所以此方法仅对foNode的foNode.out_ps直接抽象部分进行联想,作为可行性判定原由)
+    /////1. 取foNode的抽象节点absNodes;
+    //for (AIPort *absPort in ARRTOOK(foNode.absPorts)) {
+    //
+    //    ///2. 判断absNode是否是由out_ps抽象的 (根据"微信息"组)
+    //    AINetAbsFoNode *absNode = [SMGUtils searchObjectForPointer:absPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
+    //    if (absNode) {
+    //        BOOL fromOut_ps = [SMGUtils containsSub_ps:absNode.orders_kvp parent_ps:out_ps];
+    //
+    //        ///3. 根据当前absNode的mv果,处理absCmvNode评价影响力;(系数0.2)
+    //        if (fromOut_ps) {
+    //            CGFloat scoreForce = [ThinkingUtils getScoreForce:absNode.cmvNode_p ratio:0.2f];
+    //            score += scoreForce;
+    //        }
+    //    }
+    //}
+    
+    complete(score,out_ps);
+}
+
++(void) dataOut_CheckScore_TryOut:(AINetAbsFoNode*)absFoNode complete:(void(^)(CGFloat score,NSArray *out_ps))complete{
+    CGFloat score = 0;
+    if (!absFoNode) {
+        complete(0,nil);
+    }
+    
+    //2. 根据microArr_p联想到对应的assAbsCmvNode; (去除组微信息absValue,并且此处如果联想最强引用的absValue,会导致 跨全网区执行的bug)
+    //AIKVPointer *absValue_p = [theNet getNetAbsIndex_AbsPointer:absFoNode.absValue_p];
+    //AIPointer *absNode_p = [theNet getItemAbsNodePointer:absValue_p];
+    //AINetAbsFoNode *assAbsNode = [SMGUtils searchObjectForPointer:absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+    
+    //3. 处理assAbsNode评价影响力;(系数0.8)
+    CGFloat scoreForce = [ThinkingUtils getScoreForce:absFoNode.cmvNode_p ratio:0.8f];
+    score += scoreForce;
+    complete(score,absFoNode.orders_kvp);
 }
 
 @end

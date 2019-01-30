@@ -10,7 +10,7 @@
 #import "DemandModel.h"
 #import "ThinkingUtils.h"
 #import "AIPort.h"
-#import "ExpModel.h"
+#import "AIThinkOutMvModel.h"
 #import "AINet.h"
 #import "AIKVPointer.h"
 #import "AICMVNode.h"
@@ -33,29 +33,29 @@
             
             //2. energy判断;
             if ([self.delegate aiThinkOut_EnergyValid]) {
-                //3. 从expCache中,排序并取到首个值得思考的expModel;
-                __block ExpModel *expModel = [demandModel getCurrentExpModel];
+                //3. 从expCache中,排序并取到首个值得思考的outMvModel;
+                __block AIThinkOutMvModel *outMvModel = [demandModel getCurrentAIThinkOutMvModel];
                 
                 //4. mvScheme (如果,没有一个想可行的,则再联想一个新的相关"解决经验";并重新循环下去;)
-                if (!expModel) {
-                    expModel = [self dataOut_MvScheme:demandModel];
+                if (!outMvModel) {
+                    outMvModel = [self dataOut_MvScheme:demandModel];
                 }
                 
-                //5. 有可具象思考的expModel则执行;
-                if (expModel) {
+                //5. 有可具象思考的outMvModel则执行;
+                if (outMvModel) {
                     if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkOut_UpdateEnergy:)]) {
                         [self.delegate aiThinkOut_UpdateEnergy:-1];//思考与决策消耗能量;
                     }
                     
                     //6. foScheme (联想"解决经验"对应的cmvNode & 联想具象数据,并取到决策关键信息;(可行性判定))
-                    [self dataOut_FoScheme:expModel complete:^(BOOL canOut, NSArray *out_ps,BOOL expModelInvalid) {
+                    [self dataOut_FoScheme:outMvModel complete:^(BOOL canOut, NSArray *out_ps,BOOL outMvModelInvalid) {
                         if (canOut) {
                             
                             //7. actionScheme (行为方案输出)
                             [self dataOut_ActionScheme:out_ps];
                         }else{
-                            if (expModelInvalid) {
-                                [demandModel.exceptExpModels addObject:expModel];  //排除无效的expModel;(一次无效,不表示永远无效,所以彻底无效时,再排除)
+                            if (outMvModelInvalid) {
+                                [demandModel.exceptOutMvModels addObject:outMvModel];  //排除无效的outMvModel;(一次无效,不表示永远无效,所以彻底无效时,再排除)
                             }
                             [self dataOut];               //并递归到最初;
                         }
@@ -80,20 +80,20 @@
  *  MARK:--------------------mvScheme--------------------
  *  用于找到新的mv经验;
  */
--(ExpModel*) dataOut_MvScheme:(DemandModel*)demandModel{
+-(AIThinkOutMvModel*) dataOut_MvScheme:(DemandModel*)demandModel{
     //1. 判断mv方向
-    __block ExpModel *expModel = nil;
+    __block AIThinkOutMvModel *outMvModel = nil;
     [ThinkingUtils getDemand:demandModel.algsType delta:demandModel.delta complete:^(BOOL upDemand, BOOL downDemand) {
         MVDirection direction = downDemand ? MVDirection_Negative : MVDirection_Positive;
         
-        //2. filter筛选器取曾经历的除已有expModels之外的最强解决;
+        //2. filter筛选器取曾经历的除已有outMvModels之外的最强解决;
         NSArray *mvRefs = [theNet getNetNodePointersFromDirectionReference:demandModel.algsType direction:direction filter:^NSArray *(NSArray *protoArr) {
             protoArr = ARRTOOK(protoArr);
             for (NSInteger i = 0; i < protoArr.count; i++) {
                 AIPort *port = ARR_INDEX(protoArr, protoArr.count - i - 1);
                 BOOL cacheContains = false;
-                for (ExpModel *expCacheItem in demandModel.expCache) {
-                    if (port.target_p && [port.target_p isEqual:expCacheItem.exp_p]) {
+                for (AIThinkOutMvModel *expCacheItem in demandModel.outMvModels) {
+                    if (port.target_p && [port.target_p isEqual:expCacheItem.mvNode_p]) {
                         cacheContains = true;
                         break;
                     }
@@ -108,19 +108,19 @@
         //3. 加入待判断区;
         AIPort *referenceMvPort = ARR_INDEX(mvRefs, 0);
         if (referenceMvPort) {
-            expModel = [ExpModel newWithExp_p:referenceMvPort.target_p];
-            [demandModel addToExpCache:expModel];
+            outMvModel = [AIThinkOutMvModel newWithExp_p:referenceMvPort.target_p];
+            [demandModel addToExpCache:outMvModel];
         }
     }];
-    return expModel;
+    return outMvModel;
 }
 
 
 /**
  *  MARK:--------------------联想具象 (从上往下找foNode)--------------------
- *  @param expModel : 从expModel下查找具象可输出;
+ *  @param outMvModel : 从outMvModel下查找具象可输出;
  */
--(void) dataOut_FoScheme:(ExpModel*)expModel complete:(void(^)(BOOL canOut,NSArray *out_ps,BOOL expModelInvalid))complete{
+-(void) dataOut_FoScheme:(AIThinkOutMvModel*)outMvModel complete:(void(^)(BOOL canOut,NSArray *out_ps,BOOL outMvModelInvalid))complete{
     
     //1. 从抽象方向找到fo节点;
     //2. 评价fo节点;
@@ -132,44 +132,57 @@
     
     
     __block BOOL invokedComplete = false;
-    __block BOOL expModelInvalid = false;
-    if (expModel) {
+    __block BOOL outMvModelInvalid = false;
+    if (outMvModel) {
         //1. 联想"解决经验"对应的cmvNode & 联想具象数据,并取到决策关键信息;(可行性判定)
-        NSObject *expMvNode = [SMGUtils searchObjectForPointer:expModel.exp_p fileName:FILENAME_Node time:cRedisNodeTime];
-        AIFrontOrderNode *expOutFoNode = [self dataOut_ConFoScheme:expMvNode except_ps:expModel.exceptExpOut_ps];
+        NSObject *expMvNode = [SMGUtils searchObjectForPointer:outMvModel.mvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+        
+        
+        
+        //明日计划;
+        //1. 从抽象方向开始找foNode (而不是当前的具象方向);
+        //2. 对找到的absFoNode装成outFoModel & 对条件进行判定;
+        
+        //3. 与现实世界的交互; (可通过内存out模型的方式来解决) (以后必须再回归到网络中,而不是太多模型)
+        
+        
+        
+        
+        
+        AIFrontOrderNode *expOutFoNode = [self dataOut_ConFoScheme:expMvNode except_ps:outMvModel.exceptExpOut_ps];
         
         //2. 有执行方案,则对执行方案进行反思检查;
         if (expOutFoNode != nil) {
-            [self dataOut_CheckScore_ExpOut:expOutFoNode complete:^(CGFloat score, NSArray *out_ps) {
-                expModel.order += score;//联想对当前expModel的order影响;
+            [ThinkingUtils dataOut_CheckScore_ExpOut:expOutFoNode complete:^(CGFloat score, NSArray *out_ps) {
+                outMvModel.order += score;//联想对当前outMvModel的order影响;
                 NSLog(@" >> 执行经验输出: (%@) (%f) (%@)",score >= 3 ? @"成功" : @"失败",score,[NVUtils convertOrderPs2Str:out_ps]);
                 if (score >= 3) {
-                    complete(true,out_ps,expModelInvalid);
+                    complete(true,out_ps,outMvModelInvalid);
                     invokedComplete = true;
                 }
             }];
         }else{
             //4. 没有执行方案,转向对抽象宏节点进行尝试输出;
-            AINetAbsFoNode *tryOutAbsNode = [self dataOut_AbsFoScheme:expMvNode exceptTryOut_ps:expModel.exceptTryOut_ps];
+            AINetAbsFoNode *tryOutAbsNode = [self dataOut_AbsFoScheme:expMvNode exceptTryOut_ps:outMvModel.exceptTryOut_ps];
             if (tryOutAbsNode != nil) {
-                [self dataOut_CheckScore_TryOut:tryOutAbsNode complete:^(CGFloat score, NSArray *out_ps) {
-                    expModel.order += score;//联想对当前expModel的order影响;
+                [ThinkingUtils dataOut_CheckScore_TryOut:tryOutAbsNode complete:^(CGFloat score, NSArray *out_ps) {
+                    outMvModel.order += score;//联想对当前outMvModel的order影响;
                     NSLog(@" >> 执行尝试输出: (%@) (%f) (%@)",score > 10 ? @"成功" : @"失败",score,[NVUtils convertOrderPs2Str:out_ps]);
                     if (score > 10) {
-                        complete(true,out_ps,expModelInvalid);
+                        complete(true,out_ps,outMvModelInvalid);
                         invokedComplete = true;
                     }
                 }];
             }else{
-                //5. 本expModel彻底无效,
-                expModelInvalid = true;
+                //5. 本outMvModel彻底无效,
+                outMvModelInvalid = true;
             }
         }
     }
     
     if (!invokedComplete) {
         NSLog(@" >> 本次输出不过关,toLoop...");
-        complete(false,nil,expModelInvalid);
+        complete(false,nil,outMvModelInvalid);
     }
 }
 
@@ -285,67 +298,13 @@
     return nil;
 }
 
-/**
- *  MARK:--------------------可行性判定 (经验执行方案)--------------------
- *  注:TODO:后续可以增加energy的值,并在此方法中每一次scoreForce就energy--;以达到更加精细的思维控制;
- *
- *  A:根据out_ps联想(分析可行性)
- *  >assHavResult : 其有没有导致mv-和mv+;
- *    > mv-则:联想conPort,思考具象;
- *    > mv+则:score+分;
- *  >assNoResult :
- *
- */
--(void) dataOut_CheckScore_ExpOut:(AIFrontOrderNode*)foNode complete:(void(^)(CGFloat score,NSArray *out_ps))complete{
-    if (!foNode) {
-        complete(0,nil);
-    }
-    CGFloat score = 0;
-    
-    //1. 取出outLog;
-    NSArray *out_ps = [ThinkingUtils filterOutPointers:foNode.orders_kvp];
-    
-    //2. 评价 (根据当前foNode的mv果,处理cmvNode评价影响力;(系数0.2))
-    score = [ThinkingUtils getScoreForce:foNode.cmvNode_p ratio:0.2f];
-    
-    ////4. v1.0评价方式: (目前outLog在foAbsNode和index中,无法区分,所以此方法仅对foNode的foNode.out_ps直接抽象部分进行联想,作为可行性判定原由)
-    /////1. 取foNode的抽象节点absNodes;
-    //for (AIPort *absPort in ARRTOOK(foNode.absPorts)) {
-    //
-    //    ///2. 判断absNode是否是由out_ps抽象的 (根据"微信息"组)
-    //    AINetAbsFoNode *absNode = [SMGUtils searchObjectForPointer:absPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
-    //    if (absNode) {
-    //        BOOL fromOut_ps = [SMGUtils containsSub_ps:absNode.orders_kvp parent_ps:out_ps];
-    //
-    //        ///3. 根据当前absNode的mv果,处理absCmvNode评价影响力;(系数0.2)
-    //        if (fromOut_ps) {
-    //            CGFloat scoreForce = [ThinkingUtils getScoreForce:absNode.cmvNode_p ratio:0.2f];
-    //            score += scoreForce;
-    //        }
-    //    }
-    //}
-    
-    complete(score,out_ps);
-}
 
 /**
- *  MARK:--------------------可行性判定 (尝试激活执行方案)--------------------
+ *  MARK:--------------------algScheme--------------------
+ *  1. 对祖母条件进行判定;
  */
--(void) dataOut_CheckScore_TryOut:(AINetAbsFoNode*)absFoNode complete:(void(^)(CGFloat score,NSArray *out_ps))complete{
-    CGFloat score = 0;
-    if (!absFoNode) {
-        complete(0,nil);
-    }
+-(void) dataOut_AlgScheme{
     
-    //2. 根据microArr_p联想到对应的assAbsCmvNode; (去除组微信息absValue,并且此处如果联想最强引用的absValue,会导致 跨全网区执行的bug)
-    //AIKVPointer *absValue_p = [theNet getNetAbsIndex_AbsPointer:absFoNode.absValue_p];
-    //AIPointer *absNode_p = [theNet getItemAbsNodePointer:absValue_p];
-    //AINetAbsFoNode *assAbsNode = [SMGUtils searchObjectForPointer:absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
-    
-    //3. 处理assAbsNode评价影响力;(系数0.8)
-    CGFloat scoreForce = [ThinkingUtils getScoreForce:absFoNode.cmvNode_p ratio:0.8f];
-    score += scoreForce;
-    complete(score,absFoNode.orders_kvp);
 }
 
 

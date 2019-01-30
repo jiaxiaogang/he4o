@@ -1,24 +1,24 @@
 //
-//  ExpModel.m
+//  AIThinkOutMvModel.m
 //  SMG_NothingIsAll
 //
 //  Created by iMac on 2018/8/21.
 //  Copyright © 2018年 XiaoGang. All rights reserved.
 //
 
-#import "ExpModel.h"
+#import "AIThinkOutMvModel.h"
 #import "AIPointer.h"
 
-@implementation ExpModel
+@implementation AIThinkOutMvModel
 
-+(ExpModel*) newWithExp_p:(AIPointer*)exp_p{
-    ExpModel *expModel = [[ExpModel alloc] init];
++(AIThinkOutMvModel*) newWithExp_p:(AIPointer*)mvNode_p{
+    AIThinkOutMvModel *expModel = [[AIThinkOutMvModel alloc] init];
     //if (type == MindHappyType_Yes) {
     //    expModel.score = (CGFloat)urgentTo / 2.0f;//v2TODO:此处,暂时这么写score;但这是伪精度;
     //}else if (type == MindHappyType_No){
     //    expModel.score = -(CGFloat)urgentTo / 2.0f;
     //}
-    expModel.exp_p = exp_p;
+    expModel.mvNode_p = mvNode_p;
     return expModel;
 }
 
@@ -37,9 +37,9 @@
     return _exceptTryOut_ps;
 }
 
--(BOOL) isEqual:(ExpModel*)object{
+-(BOOL) isEqual:(AIThinkOutMvModel*)object{
     if (object) {
-        return [self.exp_p isEqual:object.exp_p];
+        return [self.mvNode_p isEqual:object.mvNode_p];
     }
     return false;
 }
