@@ -135,7 +135,7 @@
     __block BOOL outMvModelInvalid = false;
     if (outMvModel) {
         //1. 联想"解决经验"对应的cmvNode & 联想具象数据,并取到决策关键信息;(可行性判定)
-        NSObject *expMvNode = [SMGUtils searchObjectForPointer:outMvModel.mvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+        AICMVNodeBase *expMvNode = [SMGUtils searchObjectForPointer:outMvModel.mvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
         
         
         
@@ -143,9 +143,16 @@
         //1. 从抽象方向开始找foNode (而不是当前的具象方向);
         //2. 对找到的absFoNode装成outFoModel & 对条件进行判定;
         
-        //3. 与现实世界的交互; (可通过内存out模型的方式来解决) (以后必须再回归到网络中,而不是太多模型)
         
         
+        //明日计划;
+        //1. 找到抽象foNode;
+        //2. 把absFoNode中isOut部分跳过,其他为所需条件部分;
+        //3. 到祖母中,对所需条件和已有条件进行类比,并分析出不同 (如距离)
+        //4. 回归到fo找出能够让 "距离变化" 的时序,并找到行为方式 (如飞行)
+        //5. 执行输出;
+        //6. 视觉输入,(对outModel中的数据进行判定效果,继续执行决策)
+        //先写一些伪代码;把以上步骤定义好结构架子;
         
         
         
@@ -205,10 +212,10 @@
  *  注: 先从最强关联的最底层foNode开始,逐个取用;直到energy<=0,或其它原因中止;
  *
  */
--(AIFrontOrderNode*) dataOut_ConFoScheme:(NSObject*)baseMvNode except_ps:(nonnull NSMutableArray*)except_ps{
+-(AIFrontOrderNode*) dataOut_ConFoScheme:(AICMVNodeBase*)baseMvNode except_ps:(nonnull NSMutableArray*)except_ps{
     return [self dataOut_ConFoScheme:baseMvNode checkMvNode:baseMvNode checkMvNode_p:nil except_ps:except_ps];
 }
--(AIFrontOrderNode*) dataOut_ConFoScheme:(NSObject*)baseMvNode checkMvNode:(NSObject*)checkMvNode checkMvNode_p:(AIPointer*)checkMvNode_p except_ps:(nonnull NSMutableArray*)except_ps {
+-(AIFrontOrderNode*) dataOut_ConFoScheme:(AICMVNodeBase*)baseMvNode checkMvNode:(AICMVNodeBase*)checkMvNode checkMvNode_p:(AIPointer*)checkMvNode_p except_ps:(nonnull NSMutableArray*)except_ps {
     
     //1. 当前神经元异常时,回归到checkBase; 注:(异常判定: <(类型无效 | null) & checkMvNode!=nil>);
     __block AIFrontOrderNode *foNode = nil;
@@ -269,7 +276,7 @@
  *  1. 从上至下的联想absNode;
  *  注:目前仅支持每层1个,与最分支向下联想,即abs的最强关联的下层前1;
  */
--(AINetAbsFoNode*) dataOut_AbsFoScheme:(NSObject*)expMvNode exceptTryOut_ps:(nonnull NSMutableArray*)exceptTryOut_ps{
+-(AINetAbsFoNode*) dataOut_AbsFoScheme:(AICMVNodeBase*)expMvNode exceptTryOut_ps:(nonnull NSMutableArray*)exceptTryOut_ps{
     if(ISOK(expMvNode, AIAbsCMVNode.class)){
         //1. 判断是否已排除
         AIAbsCMVNode *expAbsCmvNode = (AIAbsCMVNode*)expMvNode;
@@ -290,7 +297,7 @@
             //3. 已排除,递归下一层;
             AIPort *firstConPort = [expAbsCmvNode getConPort:0];
             if (firstConPort != nil) {
-                NSObject *firstConNode = [SMGUtils searchObjectForPointer:firstConPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
+                AIAbsCMVNode *firstConNode = [SMGUtils searchObjectForPointer:firstConPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
                 return [self dataOut_AbsFoScheme:firstConNode exceptTryOut_ps:exceptTryOut_ps];
             }
         }
