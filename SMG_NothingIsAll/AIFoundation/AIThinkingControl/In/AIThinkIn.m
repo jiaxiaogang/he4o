@@ -213,14 +213,13 @@
     }
     
     //2. 联想相关数据
-    NSMutableArray *assDirectionPorts = [NSMutableArray new];
-    NSArray *assDirectionPorts_Nag = [[AINet sharedInstance] getNetNodePointersFromDirectionReference:cmvNode.pointer.algsType direction:MVDirection_Negative limit:2];
-    NSArray *assDirectionPorts_Pos = [[AINet sharedInstance] getNetNodePointersFromDirectionReference:cmvNode.pointer.algsType direction:MVDirection_Positive limit:2];
-    [assDirectionPorts addObjectsFromArray:ARRTOOK(assDirectionPorts_Nag)];
-    [assDirectionPorts addObjectsFromArray:ARRTOOK(assDirectionPorts_Pos)];
+    NSInteger delta = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
+    MVDirection direction = delta < 0 ? MVDirection_Negative : MVDirection_Positive;
+    //NSArray *assDirectionPorts_Nag = [[AINet sharedInstance] getNetNodePointersFromDirectionReference:cmvNode.pointer.algsType direction:MVDirection_Negative limit:2];//由双方向都取改为只取同方向;
+    NSArray *directionPorts = [[AINet sharedInstance] getNetNodePointersFromDirectionReference:cmvNode.pointer.algsType direction:direction limit:2];
     
     //3. 联想cmv模型
-    for (AIPort *assDirectionPort in assDirectionPorts) {
+    for (AIPort *assDirectionPort in ARRTOOK(directionPorts)) {
         id assDirectionNode = [SMGUtils searchObjectForPointer:assDirectionPort.target_p fileName:FILENAME_Node];
         
         if (ISOK(assDirectionNode, AICMVNodeBase.class)) {
