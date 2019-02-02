@@ -38,7 +38,7 @@
                 
                 //4. mvScheme (如果,没有一个想可行的,则再联想一个新的相关"解决经验";并重新循环下去;)
                 if (!outMvModel) {
-                    outMvModel = [self dataOut_MvScheme:demandModel];
+                    outMvModel = [self dataOut_IndexScheme:demandModel];
                 }
                 
                 //5. 有可具象思考的outMvModel则执行;
@@ -48,7 +48,7 @@
                     }
                     
                     //6. foScheme (联想"解决经验"对应的cmvNode & 联想具象数据,并取到决策关键信息;(可行性判定))
-                    [self dataOut_FoScheme:outMvModel complete:^(BOOL canOut, NSArray *out_ps,BOOL outMvModelInvalid) {
+                    [self dataOut_MvFoScheme:outMvModel complete:^(BOOL canOut, NSArray *out_ps,BOOL outMvModelInvalid) {
                         if (canOut) {
                             
                             //7. actionScheme (行为方案输出)
@@ -77,10 +77,10 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------mvScheme--------------------
- *  用于找到新的mv经验;
+ *  MARK:--------------------indexScheme--------------------
+ *  用于找到新的mv经验; (根据index索引找到outMvModel)
  */
--(AIThinkOutMvModel*) dataOut_MvScheme:(DemandModel*)demandModel{
+-(AIThinkOutMvModel*) dataOut_IndexScheme:(DemandModel*)demandModel{
     //1. 判断mv方向
     __block AIThinkOutMvModel *outMvModel = nil;
     [ThinkingUtils getDemand:demandModel.algsType delta:demandModel.delta complete:^(BOOL upDemand, BOOL downDemand) {
@@ -117,10 +117,11 @@
 
 
 /**
- *  MARK:--------------------联想具象 (从上往下找foNode)--------------------
+ *  MARK:--------------------MvFoScheme--------------------
  *  @param outMvModel : 从outMvModel下查找具象可输出;
+ *  联想具象 (从上往下找foNode)
  */
--(void) dataOut_FoScheme:(AIThinkOutMvModel*)outMvModel complete:(void(^)(BOOL canOut,NSArray *out_ps,BOOL outMvModelInvalid))complete{
+-(void) dataOut_MvFoScheme:(AIThinkOutMvModel*)outMvModel complete:(void(^)(BOOL canOut,NSArray *out_ps,BOOL outMvModelInvalid))complete{
     
     //1. 从抽象方向找到fo节点;
     //2. 评价fo节点;
@@ -156,7 +157,8 @@
         
         
         
-        AIFrontOrderNode *expOutFoNode = [self dataOut_ConFoScheme:expMvNode except_ps:outMvModel.exceptExpOut_ps];
+        //TODONextYear: 从抽象往具象,往alg两个方向找实现方式与条件;
+        AIFrontOrderNode *expOutFoNode = nil;
         
         //2. 有执行方案,则对执行方案进行反思检查;
         if (expOutFoNode != nil) {
@@ -196,76 +198,16 @@
 
 /**
  *  MARK:--------------------联想具象 (从上往下找foNode)--------------------
- *  @param baseMvNode : mv节点经验(有可能是AICMVNode也有可能是AIAbsCMVNode)
- *  @param checkMvNode : 当前正在检查的节点 (初始状态下=baseMvNode)
- *  @param checkMvNode_p : 当前正在检查的节点地址 (初始状态下=nil,然后=checkMvNode.pointer) (用于当网络中mv或mv指向foNode为null的情况下,能够继续执行下去)
- *  @param except_ps : 当前已排除的;
- *  功能 : 找到曾输出经验;
- *  TODO:加上预测功能
  *  TODO:加上联想到mv时,传回给demandManager;
  *  注:每一次输出,只是决策与预测上的一环;并不意味着结束;
  *  //1. 记录思考mv结果到叠加demandModel.order;
- *  //2. 记录思考data结果到thinkFeedCache;
  *  //3. 如果mindHappy_No,可以再尝试下一个getNetNodePointersFromDirectionReference_Single;找到更好的解决方法;
  *  //4. 最终更好的解决方法被输出,并且解决问题后,被加强;
  *  //5. 是数据决定了下一轮循环思维想什么,但数据仅能通过mv来决定,无论是思考的方向,还是思考的能量,还是思考的目标,都是以mv为准的;而mv的一切关联,又是以数据为规律进行关联的;
  *  注: 先从最强关联的最底层foNode开始,逐个取用;直到energy<=0,或其它原因中止;
  *
  */
--(AIFrontOrderNode*) dataOut_ConFoScheme:(AICMVNodeBase*)baseMvNode except_ps:(nonnull NSMutableArray*)except_ps{
-    return [self dataOut_ConFoScheme:baseMvNode checkMvNode:baseMvNode checkMvNode_p:nil except_ps:except_ps];
-}
--(AIFrontOrderNode*) dataOut_ConFoScheme:(AICMVNodeBase*)baseMvNode checkMvNode:(AICMVNodeBase*)checkMvNode checkMvNode_p:(AIPointer*)checkMvNode_p except_ps:(nonnull NSMutableArray*)except_ps {
-    
-    //1. 当前神经元异常时,回归到checkBase; 注:(异常判定: <(类型无效 | null) & checkMvNode!=nil>);
-    __block AIFrontOrderNode *foNode = nil;
-    AIFrontOrderNode* (^ CheckIsNullOrException)() = ^{
-        BOOL nullOrException = (checkMvNode_p != nil);
-        if (nullOrException) {
-            [except_ps addObject:checkMvNode_p];
-            foNode = [self dataOut_ConFoScheme:baseMvNode except_ps:except_ps];
-        }
-        return foNode;
-    };
-    
-    //2. 具象mv
-    if (ISOK(checkMvNode, AICMVNode.class)) {
-        AICMVNode *cmvNode = (AICMVNode*)checkMvNode;
-        AIFrontOrderNode *foNode = [ThinkingUtils getFoNodeFromCmvNode:cmvNode];
-        if (foNode) {
-            [except_ps addObject:cmvNode.pointer];
-            NSLog(@" >> 找到经验cmvModel: %@",[NVUtils getCmvModelDesc:foNode cmvNode:cmvNode]);
-            return foNode;
-        }else{
-            //3. 前因时序列为null的异常;
-            return CheckIsNullOrException();
-        }
-    }else if(ISOK(checkMvNode, AIAbsCMVNode.class)){
-        //4. 抽象mv
-        AIAbsCMVNode *checkAbsMvNode = (AIAbsCMVNode*)checkMvNode;
-        AIPort *findConPort = [checkAbsMvNode getConPortWithExcept:except_ps];
-        if (!findConPort) {
-            //5. 没找到conPort,说明checkMvNode的所有conPort都已排除,则checkMvNode本身也被排除;
-            [except_ps addObject:checkAbsMvNode.pointer];
-            
-            //6. 被排除的不是base才可以递归回checkBase;
-            if (![baseMvNode isEqual:checkMvNode]) {
-                return [self dataOut_ConFoScheme:baseMvNode except_ps:except_ps];
-            }
-        }else{
-            //7. 找到conPort,则递归判断类型是否foNode;
-            AICMVNodeBase *findConNode = [SMGUtils searchObjectForPointer:findConPort.target_p fileName:FILENAME_Node];
-            NSLog(@" >> 找到经验cmvNode: %@ 强度: %ld",[NVUtils getCmvNodeDesc:findConNode],(long)findConPort.strong.value);
-            return [self dataOut_ConFoScheme:baseMvNode checkMvNode:findConNode checkMvNode_p:findConPort.target_p except_ps:except_ps];
-        }
-    }else{
-        //8. 类型异常
-        return CheckIsNullOrException();
-    }
-    
-    //9. 连base自己也被排除了,还未找到foNode,就只能返回nil了;
-    return nil;
-}
+
 
 
 /**
