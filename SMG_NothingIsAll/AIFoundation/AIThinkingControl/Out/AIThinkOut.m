@@ -218,24 +218,34 @@
  *  1. 从上至下的联想absNode;
  *  注:目前仅支持每层1个,与最分支向下联想,即abs的最强关联的下层前1;
  */
--(AINetAbsFoNode*) dataOut_AbsFoScheme:(AICMVNodeBase*)expMvNode exceptTryOut_ps:(nonnull NSMutableArray*)exceptTryOut_ps{
-    if(ISOK(expMvNode, AIAbsCMVNode.class)){
-        //1. 判断是否已排除
-        AIAbsCMVNode *expAbsCmvNode = (AIAbsCMVNode*)expMvNode;
-        BOOL excepted = false;
-        for (AIPointer *except_p in exceptTryOut_ps) {
-            if ([except_p isEqual:expAbsCmvNode.pointer]) {
-                excepted = true;
-                break;
+-(AINetAbsFoNode*) dataOut_AbsFoScheme:(NSArray*)checkMvNodes exceptTryOut_ps:(nonnull NSMutableArray*)exceptTryOut_ps{
+    if (!ARRISOK(checkMvNodes)) {
+        return nil;
+    }
+    
+    //1. 判断是否已排除
+    for (AIAbsCMVNode *checkMvNode in checkMvNodes) {
+        if(ISOK(checkMvNode, AIAbsCMVNode.class)){
+            //2. 未排除,返回;
+            if ([SMGUtils containsSub_p:checkMvNode.pointer parent_ps:exceptTryOut_ps]) {
+                [exceptTryOut_ps addObject:checkMvNode.foNode_p];
+                AINetAbsFoNode *result = [SMGUtils searchObjectForPointer:checkMvNode.foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+                return result;
             }
         }
-        
-        //2. 未排除,返回;
-        if (!excepted) {
-            [exceptTryOut_ps addObject:expAbsCmvNode.foNode_p];
-            AINetAbsFoNode *result = [SMGUtils searchObjectForPointer:expAbsCmvNode.foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
-            return result;
-        }else{
+    }
+    
+    AIAbsCMVNode *expAbsCmvNode = (AIAbsCMVNode*)checkMvNode;
+    
+    //TODOTOMORROW:取checkMvNodes中所有元素的5条具象吗?
+    
+    
+    
+    
+    
+    
+    
+    
             //3. 已排除,递归下一层;
             AIPort *firstConPort = [expAbsCmvNode getConPort:0];
             if (firstConPort != nil) {
