@@ -169,4 +169,16 @@
  */
 +(void) dataOut_CheckScore_TryOut:(AINetAbsFoNode*)absFoNode complete:(void(^)(CGFloat score,NSArray *out_ps))complete;
 
+/**
+ *  MARK:--------------------获取可激活的有效foNode--------------------
+ */
++(AINetAbsFoNode*) foScheme_GetFoNode:(NSArray*)checkFo_ps exceptMv_ps:(NSMutableArray*)exceptFo_ps;
+
+/**
+ *  MARK:--------------------获取下一层具象时序--------------------
+ *  @result : 将下一层具象的foNode的指针数组返回;
+ *  注: 每一个conPorts取前3条;
+ */
++(NSArray*) foScheme_GetNextLayerPs:(NSArray*)curLayerFo_ps;
+
 @end

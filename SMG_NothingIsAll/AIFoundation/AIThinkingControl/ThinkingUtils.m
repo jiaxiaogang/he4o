@@ -358,4 +358,41 @@
     complete(score,absFoNode.orders_kvp);
 }
 
++(AINetAbsFoNode*) foScheme_GetFoNode:(NSArray*)checkFo_ps exceptMv_ps:(NSMutableArray*)exceptFo_ps{
+    //1. 数据检查
+    if (!ARRISOK(checkFo_ps) || !ARRISOK(exceptFo_ps)) {
+        return nil;
+    }
+    
+    //2. 依次判断是否已排除
+    for (AIPointer *fo_p in checkFo_ps) {
+        if ([SMGUtils containsSub_p:fo_p parent_ps:exceptFo_ps]) {
+            
+            //3. 未排除,返回;
+            [exceptFo_ps addObject:fo_p];
+            AINetAbsFoNode *result = [SMGUtils searchObjectForPointer:fo_p fileName:FILENAME_Node time:cRedisNodeTime];
+            if (result) {
+                return result;
+            }
+        }
+    }
+    return nil;
+}
+
++(NSArray*) foScheme_GetNextLayerPs:(NSArray*)curLayerFo_ps{
+    //1. 数据准备
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    curLayerFo_ps = ARRTOOK(curLayerFo_ps);
+    
+    //2. 每层向具象取前3条
+    for (AIPointer *fo_p in curLayerFo_ps) {
+        AINetAbsFoNode *foNode = [SMGUtils searchObjectForPointer:fo_p fileName:FILENAME_Node time:cRedisNodeTime];
+        if (ISOK(foNode, AINetAbsFoNode.class)) {
+            NSArray *con_ps = [SMGUtils convertPointersFromPorts:ARR_SUB(foNode.conPorts, 0, 3)];
+            [result addObjectsFromArray:con_ps];
+        }
+    }
+    return result;
+}
+
 @end

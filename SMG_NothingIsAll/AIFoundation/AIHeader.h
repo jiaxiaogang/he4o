@@ -69,6 +69,7 @@
 #define ARRTOOK(a) (a  && [a isKindOfClass:[NSArray class]]) ?  a : [NSArray new]
 #define ARR_INDEX(a,i) (a && [a isKindOfClass:[NSArray class]] && a.count > i) ?  a[i] : nil//数组取子防闪
 #define ARR_INDEXISOK(a,i) (a && [a isKindOfClass:[NSArray class]] && a.count > i && i >= 0)//数组可移除i
+#define ARR_SUB(a,s,e) (ARRISOK(a) ? [a subarrayWithRange:NSMakeRange(MAX(0, MIN(s,a.count)), MAX(0, MIN(a.count - s, e)))] : nil)//数组截取
 
 //NSNumber
 #define NUMISOK(a) (a  && [a isKindOfClass:[NSNumber class]])//是否有效NSNumber

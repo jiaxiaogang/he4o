@@ -7,10 +7,6 @@
 //
 
 #import "AINetAbsFoNode.h"
-#import "XGRedisUtil.h"
-#import "AIPort.h"
-#import "AIKVPointer.h"
-#import "AIFrontOrderNode.h"
 
 @implementation AINetAbsFoNode
 

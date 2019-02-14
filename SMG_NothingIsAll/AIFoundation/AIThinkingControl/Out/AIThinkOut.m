@@ -172,7 +172,7 @@
             }];
         }else{
             //4. 没有执行方案,转向对抽象宏节点进行尝试输出;
-            AINetAbsFoNode *tryOutAbsNode = [self dataOut_AbsFoScheme:expMvNode exceptTryOut_ps:outMvModel.exceptTryOut_ps];
+            AINetAbsFoNode *tryOutAbsNode = [self dataOut_FoScheme:expMvNode exceptFo_ps:outMvModel.exceptTryOut_ps];
             if (tryOutAbsNode != nil) {
                 [ThinkingUtils dataOut_CheckScore_TryOut:tryOutAbsNode complete:^(CGFloat score, NSArray *out_ps) {
                     outMvModel.order += score;//联想对当前outMvModel的order影响;
@@ -218,44 +218,62 @@
  *  1. 从上至下的联想absNode;
  *  注:目前仅支持每层1个,与最分支向下联想,即abs的最强关联的下层前1;
  */
--(AINetAbsFoNode*) dataOut_AbsFoScheme:(NSArray*)checkMvNodes exceptTryOut_ps:(nonnull NSMutableArray*)exceptTryOut_ps{
-    if (!ARRISOK(checkMvNodes)) {
+-(AINetAbsFoNode*) dataOut_FoScheme:(AICMVNodeBase*)checkMvNode exceptFo_ps:(nonnull NSMutableArray*)exceptTryOut_ps{
+    
+    
+    //1. 从checkMvNodes获取有效一条并返回;
+    //    AINetAbsFoNode*(^ getFoNode)(NSArray* checkMvNodes,NSArray *exceptMv_ps) = ^(NSArray* checkMvNodes,NSArray *exceptMv_ps){
+    //        ///1. 数据检查
+    //        if (!ARRISOK(checkMvNodes)) {
+    //            return nil;
+    //        }
+    //
+    //        ///2. 判断是否已排除
+    //        for (AIAbsCMVNode *checkMvNode in checkMvNodes) {
+    //            if(ISOK(checkMvNode, AIAbsCMVNode.class)){
+    //                //2. 未排除,返回;
+    //                if ([SMGUtils containsSub_p:checkMvNode.pointer parent_ps:exceptTryOut_ps]) {
+    //                    [exceptTryOut_ps addObject:checkMvNode.foNode_p];
+    //                    AINetAbsFoNode *result = [SMGUtils searchObjectForPointer:checkMvNode.foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+    //                    return result;
+    //                }
+    //            }
+    //        }
+    //        return nil;
+    //    };
+    
+    //1. 数据准备
+    if (!ISOK(checkMvNode, AICMVNodeBase.class)) {
         return nil;
     }
-    
-    //1. 判断是否已排除
-    for (AIAbsCMVNode *checkMvNode in checkMvNodes) {
-        if(ISOK(checkMvNode, AIAbsCMVNode.class)){
-            //2. 未排除,返回;
-            if ([SMGUtils containsSub_p:checkMvNode.pointer parent_ps:exceptTryOut_ps]) {
-                [exceptTryOut_ps addObject:checkMvNode.foNode_p];
-                AINetAbsFoNode *result = [SMGUtils searchObjectForPointer:checkMvNode.foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
-                return result;
-            }
+    if (checkMvNode.foNode_p) {
+        AINetAbsFoNode *result = [ThinkingUtils foScheme_GetFoNode:@[checkMvNode.foNode_p] exceptMv_ps:exceptTryOut_ps];
+        
+        if (result) {
+            return result;
+        }else{
+            NSArray *nextFo_ps = [ThinkingUtils foScheme_GetNextLayerPs:@[checkMvNode.foNode_p]];
+            
+            
+            //TODOTOMORROW:改成3层for循环;
+            
+            
+            
+            
+            
+            
+            
+            
         }
+        
     }
     
-    AIAbsCMVNode *expAbsCmvNode = (AIAbsCMVNode*)checkMvNode;
-    
-    //TODOTOMORROW:取checkMvNodes中所有元素的5条具象吗?
-    
-    
-    
-    
-    
-    
-    
-    
-            //3. 已排除,递归下一层;
-            AIPort *firstConPort = [expAbsCmvNode getConPort:0];
-            if (firstConPort != nil) {
-                AIAbsCMVNode *firstConNode = [SMGUtils searchObjectForPointer:firstConPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
-                return [self dataOut_AbsFoScheme:firstConNode exceptTryOut_ps:exceptTryOut_ps];
-            }
-        }
-    }
     return nil;
 }
+
+
+
+    
 
 
 /**
