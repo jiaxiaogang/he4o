@@ -25,3 +25,9 @@
 #define cAssDataLimit 3 //应以当前整体思维活跃度,变化为1-3左右;
 #define cMinEnergy 0
 #define cMaxEnergy 5
+
+//MARK:===============================================================
+//MARK:                     < ThinkOut >
+//MARK:===============================================================
+#define cDataOutAssFoCount 3    //在决策过程中,foScheme横向最大条数;
+#define cDataOutAssFoDeep 3     //在决策过程中,foScheme纵向最大深度;

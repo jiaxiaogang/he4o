@@ -309,7 +309,7 @@
 //MARK:===============================================================
 @implementation ThinkingUtils (Out)
 
-+(void) dataOut_CheckScore_ExpOut:(AIFrontOrderNode*)foNode complete:(void(^)(CGFloat score,NSArray *out_ps))complete{
++(void) dataOut_CheckScore_ExpOut:(AIFoNodeBase*)foNode complete:(void(^)(CGFloat score,NSArray *out_ps))complete{
     if (!foNode) {
         complete(0,nil);
     }
@@ -341,24 +341,8 @@
     complete(score,out_ps);
 }
 
-+(void) dataOut_CheckScore_TryOut:(AINetAbsFoNode*)absFoNode complete:(void(^)(CGFloat score,NSArray *out_ps))complete{
-    CGFloat score = 0;
-    if (!absFoNode) {
-        complete(0,nil);
-    }
-    
-    //2. 根据microArr_p联想到对应的assAbsCmvNode; (去除组微信息absValue,并且此处如果联想最强引用的absValue,会导致 跨全网区执行的bug)
-    //AIKVPointer *absValue_p = [theNet getNetAbsIndex_AbsPointer:absFoNode.absValue_p];
-    //AIPointer *absNode_p = [theNet getItemAbsNodePointer:absValue_p];
-    //AINetAbsFoNode *assAbsNode = [SMGUtils searchObjectForPointer:absNode_p fileName:FILENAME_Node time:cRedisNodeTime];
-    
-    //3. 处理assAbsNode评价影响力;(系数0.8)
-    CGFloat scoreForce = [ThinkingUtils getScoreForce:absFoNode.cmvNode_p ratio:0.8f];
-    score += scoreForce;
-    complete(score,absFoNode.orders_kvp);
-}
 
-+(AINetAbsFoNode*) foScheme_GetFoNode:(NSArray*)checkFo_ps exceptMv_ps:(NSMutableArray*)exceptFo_ps{
++(AIFoNodeBase*) foScheme_GetAValidFoNode:(NSArray*)checkFo_ps exceptMv_ps:(NSMutableArray*)exceptFo_ps{
     //1. 数据检查
     if (!ARRISOK(checkFo_ps) || !ARRISOK(exceptFo_ps)) {
         return nil;
@@ -370,7 +354,7 @@
             
             //3. 未排除,返回;
             [exceptFo_ps addObject:fo_p];
-            AINetAbsFoNode *result = [SMGUtils searchObjectForPointer:fo_p fileName:FILENAME_Node time:cRedisNodeTime];
+            AIFoNodeBase *result = [SMGUtils searchObjectForPointer:fo_p fileName:FILENAME_Node time:cRedisNodeTime];
             if (result) {
                 return result;
             }
@@ -388,7 +372,7 @@
     for (AIPointer *fo_p in curLayerFo_ps) {
         AINetAbsFoNode *foNode = [SMGUtils searchObjectForPointer:fo_p fileName:FILENAME_Node time:cRedisNodeTime];
         if (ISOK(foNode, AINetAbsFoNode.class)) {
-            NSArray *con_ps = [SMGUtils convertPointersFromPorts:ARR_SUB(foNode.conPorts, 0, 3)];
+            NSArray *con_ps = [SMGUtils convertPointersFromPorts:ARR_SUB(foNode.conPorts, 0, cDataOutAssFoCount)];
             [result addObjectsFromArray:con_ps];
         }
     }

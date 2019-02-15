@@ -158,7 +158,16 @@
         
         
         //TODONextYear: 从抽象往具象,往alg两个方向找实现方式与条件;
-        AIFrontOrderNode *expOutFoNode = nil;
+        
+        //对实现方式foScheme已完成;
+        
+        //TODOTOMORROW: 写条件部分;(祖母)
+        
+        
+        
+        
+        
+        AIFoNodeBase *expOutFoNode = [self dataOut_FoScheme:expMvNode exceptFo_ps:outMvModel.exceptTryOut_ps];
         
         //2. 有执行方案,则对执行方案进行反思检查;
         if (expOutFoNode != nil) {
@@ -170,22 +179,6 @@
                     invokedComplete = true;
                 }
             }];
-        }else{
-            //4. 没有执行方案,转向对抽象宏节点进行尝试输出;
-            AINetAbsFoNode *tryOutAbsNode = [self dataOut_FoScheme:expMvNode exceptFo_ps:outMvModel.exceptTryOut_ps];
-            if (tryOutAbsNode != nil) {
-                [ThinkingUtils dataOut_CheckScore_TryOut:tryOutAbsNode complete:^(CGFloat score, NSArray *out_ps) {
-                    outMvModel.order += score;//联想对当前outMvModel的order影响;
-                    NSLog(@" >> 执行尝试输出: (%@) (%f) (%@)",score > 10 ? @"成功" : @"失败",score,[NVUtils convertOrderPs2Str:out_ps]);
-                    if (score > 10) {
-                        complete(true,out_ps,outMvModelInvalid);
-                        invokedComplete = true;
-                    }
-                }];
-            }else{
-                //5. 本outMvModel彻底无效,
-                outMvModelInvalid = true;
-            }
         }
     }
     
@@ -197,83 +190,44 @@
 
 
 /**
- *  MARK:--------------------联想具象 (从上往下找foNode)--------------------
+ *  MARK:--------------------联想具象foNode--------------------
+ *  @param checkMvNode : 当前mvNode (具象之旅的出发点);
+ *  @param exceptFo_ps : 已排除的foNode_p (不应期)
+ *  @result : 返回时序节点地址
+ *  1. 从上至下的联想foNode;
+ *  注:目前支持每层3个(关联强度前3个),最多3层(具象方向3层);
+ *
  *  TODO:加上联想到mv时,传回给demandManager;
  *  注:每一次输出,只是决策与预测上的一环;并不意味着结束;
  *  //1. 记录思考mv结果到叠加demandModel.order;
  *  //3. 如果mindHappy_No,可以再尝试下一个getNetNodePointersFromDirectionReference_Single;找到更好的解决方法;
  *  //4. 最终更好的解决方法被输出,并且解决问题后,被加强;
  *  //5. 是数据决定了下一轮循环思维想什么,但数据仅能通过mv来决定,无论是思考的方向,还是思考的能量,还是思考的目标,都是以mv为准的;而mv的一切关联,又是以数据为规律进行关联的;
- *  注: 先从最强关联的最底层foNode开始,逐个取用;直到energy<=0,或其它原因中止;
  *
  */
-
-
-
-/**
- *  MARK:--------------------联想具象 (从下往上找absNode)--------------------
- *  @param expMvNode :  当前在判断的mv节点经验(有可能是AICMVNode也有可能是AIAbsCMVNode)
- *  @result : 返回前因节点地址(仅absNode_p,不要foNode_p)
- *  功能 : 找可尝试输出 (激活输出);
- *  1. 从上至下的联想absNode;
- *  注:目前仅支持每层1个,与最分支向下联想,即abs的最强关联的下层前1;
- */
--(AINetAbsFoNode*) dataOut_FoScheme:(AICMVNodeBase*)checkMvNode exceptFo_ps:(nonnull NSMutableArray*)exceptTryOut_ps{
-    
-    
-    //1. 从checkMvNodes获取有效一条并返回;
-    //    AINetAbsFoNode*(^ getFoNode)(NSArray* checkMvNodes,NSArray *exceptMv_ps) = ^(NSArray* checkMvNodes,NSArray *exceptMv_ps){
-    //        ///1. 数据检查
-    //        if (!ARRISOK(checkMvNodes)) {
-    //            return nil;
-    //        }
-    //
-    //        ///2. 判断是否已排除
-    //        for (AIAbsCMVNode *checkMvNode in checkMvNodes) {
-    //            if(ISOK(checkMvNode, AIAbsCMVNode.class)){
-    //                //2. 未排除,返回;
-    //                if ([SMGUtils containsSub_p:checkMvNode.pointer parent_ps:exceptTryOut_ps]) {
-    //                    [exceptTryOut_ps addObject:checkMvNode.foNode_p];
-    //                    AINetAbsFoNode *result = [SMGUtils searchObjectForPointer:checkMvNode.foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
-    //                    return result;
-    //                }
-    //            }
-    //        }
-    //        return nil;
-    //    };
-    
+-(AIFoNodeBase*) dataOut_FoScheme:(AICMVNodeBase*)checkMvNode exceptFo_ps:(nonnull NSMutableArray*)exceptFo_ps{
     //1. 数据准备
     if (!ISOK(checkMvNode, AICMVNodeBase.class)) {
         return nil;
     }
     if (checkMvNode.foNode_p) {
-        AINetAbsFoNode *result = [ThinkingUtils foScheme_GetFoNode:@[checkMvNode.foNode_p] exceptMv_ps:exceptTryOut_ps];
+        NSArray *checkFo_ps = @[checkMvNode.foNode_p];
         
-        if (result) {
-            return result;
-        }else{
-            NSArray *nextFo_ps = [ThinkingUtils foScheme_GetNextLayerPs:@[checkMvNode.foNode_p]];
+        //2. 最多往具象循环三层
+        for (NSInteger i = 0; i < cDataOutAssFoDeep; i++) {
+            AIFoNodeBase *result = [ThinkingUtils foScheme_GetAValidFoNode:checkFo_ps exceptMv_ps:exceptFo_ps];
             
-            
-            //TODOTOMORROW:改成3层for循环;
-            
-            
-            
-            
-            
-            
-            
-            
+            //3. 有效则返回,无效则循环到下一层
+            if (result) {
+                return result;
+            }else{
+                checkFo_ps = [ThinkingUtils foScheme_GetNextLayerPs:checkFo_ps];
+            }
         }
-        
     }
     
     return nil;
 }
-
-
-
-    
 
 
 /**

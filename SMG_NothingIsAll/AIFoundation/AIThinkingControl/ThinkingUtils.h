@@ -162,17 +162,13 @@
  *  >assNoResult :
  *
  */
-+(void) dataOut_CheckScore_ExpOut:(AIFrontOrderNode*)foNode complete:(void(^)(CGFloat score,NSArray *out_ps))complete;
++(void) dataOut_CheckScore_ExpOut:(AIFoNodeBase*)foNode complete:(void(^)(CGFloat score,NSArray *out_ps))complete;
+
 
 /**
- *  MARK:--------------------可行性判定 (尝试激活执行方案)--------------------
+ *  MARK:--------------------获取一条不在不应期的foNode--------------------
  */
-+(void) dataOut_CheckScore_TryOut:(AINetAbsFoNode*)absFoNode complete:(void(^)(CGFloat score,NSArray *out_ps))complete;
-
-/**
- *  MARK:--------------------获取可激活的有效foNode--------------------
- */
-+(AINetAbsFoNode*) foScheme_GetFoNode:(NSArray*)checkFo_ps exceptMv_ps:(NSMutableArray*)exceptFo_ps;
++(AIFoNodeBase*) foScheme_GetAValidFoNode:(NSArray*)checkFo_ps exceptMv_ps:(NSMutableArray*)exceptFo_ps;
 
 /**
  *  MARK:--------------------获取下一层具象时序--------------------
