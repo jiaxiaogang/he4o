@@ -26,50 +26,124 @@
 //MARK:===============================================================
 
 -(void) dataOut {
-    //1. 重排序 & 取当前序列最前;
-    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkOut_GetCurrentDemand)] && [self.delegate respondsToSelector:@selector(aiThinkOut_EnergyValid)]) {
-        DemandModel *demandModel = [self.delegate aiThinkOut_GetCurrentDemand];
-        if (demandModel != nil) {
-            
-            //2. energy判断;
-            if ([self.delegate aiThinkOut_EnergyValid]) {
-                //3. 从expCache中,排序并取到首个值得思考的outMvModel;
-                __block AIThinkOutMvModel *outMvModel = [demandModel getCurrentAIThinkOutMvModel];
-                
-                //4. mvScheme (如果,没有一个想可行的,则再联想一个新的相关"解决经验";并重新循环下去;)
-                if (!outMvModel) {
-                    outMvModel = [self dataOut_IndexScheme:demandModel];
-                }
-                
-                //5. 有可具象思考的outMvModel则执行;
-                if (outMvModel) {
-                    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkOut_UpdateEnergy:)]) {
-                        [self.delegate aiThinkOut_UpdateEnergy:-1];//思考与决策消耗能量;
-                    }
-                    
-                    //6. foScheme (联想"解决经验"对应的cmvNode & 联想具象数据,并取到决策关键信息;(可行性判定))
-                    [self dataOut_MvFoScheme:outMvModel complete:^(BOOL canOut, NSArray *out_ps,BOOL outMvModelInvalid) {
-                        if (canOut) {
-                            
-                            //7. actionScheme (行为方案输出)
-                            [self dataOut_ActionScheme:out_ps];
-                        }else{
-                            if (outMvModelInvalid) {
-                                [demandModel.exceptOutMvModels addObject:outMvModel];  //排除无效的outMvModel;(一次无效,不表示永远无效,所以彻底无效时,再排除)
-                            }
-                            [self dataOut];               //并递归到最初;
-                        }
-                    }];
-                }else{
-                    //8. 无解决经验,反射输出;//V2TODO:此处不应放弃联想,应该先看下当前有哪些信息,是可以联想分析出解决方案的; (跳出递归)
-                    [self dataOut_ActionScheme:nil];
-                }
-            }else{
-                //9. 如果energy<=0,(未找到可行性,直接反射输出 || 尝试输出"可行性之首"并找到实际操作)
-                [self dataOut_ActionScheme:nil];
-            }
+    //1. 重排序 & 取当前序列最前的demandModel
+    DemandModel *demandModel = nil;
+    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkOut_GetCurrentDemand)]) {
+        demandModel = [self.delegate aiThinkOut_GetCurrentDemand];
+    }
+    if (!demandModel) return;
+    
+    //2. energy判断;
+    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkOut_EnergyValid)]) {
+        if (![self.delegate aiThinkOut_EnergyValid]) {
+            ///1. 如果energy<=0,(未找到可行性,直接反射输出)
+            [self dataOut_ActionScheme:nil];
+            return;
         }
     }
+    
+    //3. 从expCache中,排序并取到首个值得思考的可行outMvModel, 没有则用mvScheme联想一个新的;
+    __block AIThinkOutMvModel *outMvModel = [demandModel getCurrentAIThinkOutMvModel];
+    if (!outMvModel) {
+        outMvModel = [self dataOut_MvScheme:demandModel];
+    }
+    if (!outMvModel) {
+        ///1. 无解决经验,反射输出;
+        [self dataOut_ActionScheme:nil];
+        return;
+    }
+    
+    
+    //4. 有可具象思考的outMvModel则执行;
+    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkOut_UpdateEnergy:)]) {
+        [self.delegate aiThinkOut_UpdateEnergy:-1];//思考与决策消耗能量;
+    }
+    
+    //5. 联想"解决经验"对应的cmvNode & 联想具象数据,并取到决策关键信息 (foScheme);
+    AICMVNodeBase *expMvNode = [SMGUtils searchObjectForPointer:outMvModel.mvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+    AIFoNodeBase *expOutFoNode = [self dataOut_FoScheme:expMvNode exceptFo_ps:outMvModel.exceptTryOut_ps];
+    if (!expOutFoNode) return;
+    
+    //6. 有执行方案,则对执行方案进行反思检查; (父可行性判定)
+    CGFloat score = [ThinkingUtils dataOut_CheckScore_ExpOut:expOutFoNode];
+    outMvModel.order += score;//联想对当前outMvModel的order影响;
+    if (score < 3) {
+        NSLog(@" >> 本次输出不过关,toLoop...");
+        [demandModel.exceptOutMvModels addObject:outMvModel];//排除无效的outMvModel;
+        [self dataOut];//并递归到最初;
+        return;
+    }
+    
+    //7. 尝试输出"可行性之首"并找到实际操作 (子可行性判定) (algScheme)
+    ///1. 取出outLog;
+    NSArray *out_ps = [ThinkingUtils filterOutPointers:expOutFoNode.orders_kvp];
+    NSLog(@" >> 执行经验输出: (%f) (%@)",score,[NVUtils convertOrderPs2Str:out_ps]);
+    
+    //1. 根据foNode取到条件;
+    //2. 使用AIThinkOutFoModel将条件 (最多两个)记录到outFoModel;
+    //3. 对outFoModel进行algModel条件的行为化;
+    ///1. 比如找到坚果;
+    ///2. 找到的坚果与fo中进行类比;
+    ///3. 找出坚果距离的不同,或者坚果带皮儿的不同;
+    ///4. 将距离与带皮转化成行为; (如飞行,或去皮);
+    ///5. 达成条件;
+    
+    
+    
+    
+    //8. actionScheme (行为方案输出)
+    [self dataOut_ActionScheme:out_ps];
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //6. foScheme (联想"解决经验"对应的cmvNode & 联想具象数据,并取到决策关键信息;(可行性判定))
+    //1. 从抽象方向找到fo节点;
+    //2. 评价fo节点;
+    //3. 筛选出out_ps和 "条件"
+    //4. 注: 目前条件为"视觉看到的坚果" (已抽象的,如无距离)
+    //5. 难点: 在于如何去满足这个条件;
+    //6. 在外界去找到"条件";
+    
+    
+    
+    
+    
+    //明日计划;
+    //1. 从抽象方向开始找foNode (而不是当前的具象方向);
+    //2. 对找到的absFoNode装成outFoModel & 对条件进行判定;
+    
+    
+    
+    
+    
+    //明日计划;
+    //1. 找到抽象foNode;
+    //2. 把absFoNode中isOut部分跳过,其他为所需条件部分;
+    //3. 到祖母中,对所需条件和已有条件进行类比,并分析出不同 (如距离)
+    //4. 回归到fo找出能够让 "距离变化" 的时序,并找到行为方式 (如飞行)
+    //5. 执行输出;
+    //6. 视觉输入,(对outModel中的数据进行判定效果,继续执行决策)
+    //先写一些伪代码;把以上步骤定义好结构架子;
+    
+    
+    
+    //TODONextYear: 从抽象往具象,往alg两个方向找实现方式与条件;
+    
+    //对实现方式foScheme已完成;
+    
+    //TODOTOMORROW: 写条件部分;(祖母)
+    
+    
+    
+    
 }
 
 //MARK:===============================================================
@@ -77,10 +151,10 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------indexScheme--------------------
+ *  MARK:--------------------MvScheme--------------------
  *  用于找到新的mv经验; (根据index索引找到outMvModel)
  */
--(AIThinkOutMvModel*) dataOut_IndexScheme:(DemandModel*)demandModel{
+-(AIThinkOutMvModel*) dataOut_MvScheme:(DemandModel*)demandModel{
     //1. 判断mv方向
     __block AIThinkOutMvModel *outMvModel = nil;
     [ThinkingUtils getDemand:demandModel.algsType delta:demandModel.delta complete:^(BOOL upDemand, BOOL downDemand) {
@@ -113,79 +187,6 @@
         }
     }];
     return outMvModel;
-}
-
-
-/**
- *  MARK:--------------------MvFoScheme--------------------
- *  @param outMvModel : 从outMvModel下查找具象可输出;
- *  联想具象 (从上往下找foNode)
- */
--(void) dataOut_MvFoScheme:(AIThinkOutMvModel*)outMvModel complete:(void(^)(BOOL canOut,NSArray *out_ps,BOOL outMvModelInvalid))complete{
-    
-    //1. 从抽象方向找到fo节点;
-    //2. 评价fo节点;
-    //3. 筛选出out_ps和 "条件"
-    //4. 注: 目前条件为"视觉看到的坚果" (已抽象的,如无距离)
-    //5. 难点: 在于如何去满足这个条件;
-    //6. 在外界去找到"条件";
-    
-    
-    
-    __block BOOL invokedComplete = false;
-    __block BOOL outMvModelInvalid = false;
-    if (outMvModel) {
-        //1. 联想"解决经验"对应的cmvNode & 联想具象数据,并取到决策关键信息;(可行性判定)
-        AICMVNodeBase *expMvNode = [SMGUtils searchObjectForPointer:outMvModel.mvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
-        
-        
-        
-        //明日计划;
-        //1. 从抽象方向开始找foNode (而不是当前的具象方向);
-        //2. 对找到的absFoNode装成outFoModel & 对条件进行判定;
-        
-        
-        
-        //明日计划;
-        //1. 找到抽象foNode;
-        //2. 把absFoNode中isOut部分跳过,其他为所需条件部分;
-        //3. 到祖母中,对所需条件和已有条件进行类比,并分析出不同 (如距离)
-        //4. 回归到fo找出能够让 "距离变化" 的时序,并找到行为方式 (如飞行)
-        //5. 执行输出;
-        //6. 视觉输入,(对outModel中的数据进行判定效果,继续执行决策)
-        //先写一些伪代码;把以上步骤定义好结构架子;
-        
-        
-        
-        //TODONextYear: 从抽象往具象,往alg两个方向找实现方式与条件;
-        
-        //对实现方式foScheme已完成;
-        
-        //TODOTOMORROW: 写条件部分;(祖母)
-        
-        
-        
-        
-        
-        AIFoNodeBase *expOutFoNode = [self dataOut_FoScheme:expMvNode exceptFo_ps:outMvModel.exceptTryOut_ps];
-        
-        //2. 有执行方案,则对执行方案进行反思检查;
-        if (expOutFoNode != nil) {
-            [ThinkingUtils dataOut_CheckScore_ExpOut:expOutFoNode complete:^(CGFloat score, NSArray *out_ps) {
-                outMvModel.order += score;//联想对当前outMvModel的order影响;
-                NSLog(@" >> 执行经验输出: (%@) (%f) (%@)",score >= 3 ? @"成功" : @"失败",score,[NVUtils convertOrderPs2Str:out_ps]);
-                if (score >= 3) {
-                    complete(true,out_ps,outMvModelInvalid);
-                    invokedComplete = true;
-                }
-            }];
-        }
-    }
-    
-    if (!invokedComplete) {
-        NSLog(@" >> 本次输出不过关,toLoop...");
-        complete(false,nil,outMvModelInvalid);
-    }
 }
 
 

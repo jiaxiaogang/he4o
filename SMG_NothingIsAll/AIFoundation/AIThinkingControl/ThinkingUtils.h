@@ -153,6 +153,7 @@
 
 /**
  *  MARK:--------------------可行性判定 (经验执行方案)--------------------
+ *  作用: 评价,评分;
  *  注:TODO:后续可以增加energy的值,并在此方法中每一次scoreForce就energy--;以达到更加精细的思维控制;
  *
  *  A:根据out_ps联想(分析可行性)
@@ -162,7 +163,7 @@
  *  >assNoResult :
  *
  */
-+(void) dataOut_CheckScore_ExpOut:(AIFoNodeBase*)foNode complete:(void(^)(CGFloat score,NSArray *out_ps))complete;
++(CGFloat) dataOut_CheckScore_ExpOut:(AIFoNodeBase*)foNode;
 
 
 /**

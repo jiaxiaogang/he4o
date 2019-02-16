@@ -309,17 +309,13 @@
 //MARK:===============================================================
 @implementation ThinkingUtils (Out)
 
-+(void) dataOut_CheckScore_ExpOut:(AIFoNodeBase*)foNode complete:(void(^)(CGFloat score,NSArray *out_ps))complete{
-    if (!foNode) {
-        complete(0,nil);
-    }
++(CGFloat) dataOut_CheckScore_ExpOut:(AIFoNodeBase*)foNode {
+    //1. 评价 (根据当前foNode的mv果,处理cmvNode评价影响力;(系数0.2))
     CGFloat score = 0;
-    
-    //1. 取出outLog;
-    NSArray *out_ps = [ThinkingUtils filterOutPointers:foNode.orders_kvp];
-    
-    //2. 评价 (根据当前foNode的mv果,处理cmvNode评价影响力;(系数0.2))
-    score = [ThinkingUtils getScoreForce:foNode.cmvNode_p ratio:0.2f];
+    if (foNode) {
+        score = [ThinkingUtils getScoreForce:foNode.cmvNode_p ratio:0.2f];
+    }
+    return score;
     
     ////4. v1.0评价方式: (目前outLog在foAbsNode和index中,无法区分,所以此方法仅对foNode的foNode.out_ps直接抽象部分进行联想,作为可行性判定原由)
     /////1. 取foNode的抽象节点absNodes;
@@ -337,8 +333,6 @@
     //        }
     //    }
     //}
-    
-    complete(score,out_ps);
 }
 
 

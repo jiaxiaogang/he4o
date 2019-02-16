@@ -27,6 +27,7 @@
 //MARK:     4. 执行方案(从网络具体经历单位找(时序等))
 //MARK:     5. 正式输出(这里会用到小脑,helix未实现小脑网络);
 //MARK: 总结: 这整个过程算是helix的具象之旅,也是output循环的几个关键节点
+//MARK:
 //MARK:===============================================================
 @interface AIThinkOut : NSObject
 
@@ -42,6 +43,8 @@
  *  4. 每一轮循环不仅是想下一个singleMvPort;也有可能在当前port上,进行二次思考;
  *  5. 从expCache下,根据可行性,选定一个解决方案;
  *  6. 有需求时,找出outMvModel,尝试决策并解决;
+ *
+ *  框架: index -> mvNode -> foNode -> algNode -> action
  *
  */
 -(void) dataOut;

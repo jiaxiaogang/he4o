@@ -1,13 +1,13 @@
 //
-//  AIThinkOutFoModel.h
+//  AIThinkOutAlgModel.h
 //  SMG_NothingIsAll
 //
-//  Created by jia on 2019/1/30.
+//  Created by jia on 2019/2/16.
 //  Copyright © 2019年 XiaoGang. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 
-@interface AIThinkOutFoModel : NSObject
+@interface AIThinkOutAlgModel : NSObject
 
 @end
