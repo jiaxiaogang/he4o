@@ -23,8 +23,9 @@
 //MARK:                     < thinkingControl >
 //MARK:===============================================================
 #define cAssDataLimit 3 //应以当前整体思维活跃度,变化为1-3左右;
-#define cMinEnergy 0
-#define cMaxEnergy 5
+#define cMinEnergy 0 //思维活力限低
+#define cMaxEnergy 5 //思维活力限高
+#define cShortMemoryLimit 8 //瞬时记忆最多8条
 
 //MARK:===============================================================
 //MARK:                     < ThinkOut >

@@ -23,7 +23,7 @@
  *  @param algsArr   : 算法值的装箱数组;
  *  @result 具象algNode
  */
-+(AIAlgNode*) createAlgNode:(NSArray*)algsArr;
++(AIAlgNode*) createAlgNode:(NSArray*)algsArr isOut:(BOOL)isOut;
 
 
 /**

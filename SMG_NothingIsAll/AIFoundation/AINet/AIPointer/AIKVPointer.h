@@ -8,6 +8,10 @@
 
 #import "AIPointer.h"
 
+/**
+ *  MARK:--------------------KVPointer--------------------
+ *  1. TODO: 将isOut去除,以大小脑网络区分微信息是否输出; (以广播标识符来标识canOut);
+ */
 @interface AIKVPointer : AIPointer
 
 

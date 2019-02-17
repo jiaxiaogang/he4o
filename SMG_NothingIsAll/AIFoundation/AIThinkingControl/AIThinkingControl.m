@@ -7,7 +7,7 @@
 //
 
 #import "AIThinkingControl.h"
-#import "AIThinkShortMemory.h"
+#import "AIShortMemory.h"
 #import "DemandManager.h"
 #import "AIThinkIn.h"
 #import "AIThinkOut.h"
@@ -30,7 +30,7 @@
  */
 @interface AIThinkingControl() <AIThinkInDelegate,AIThinkOutDelegate>
 
-@property (strong,nonatomic) AIThinkShortMemory *shortMemory;
+@property (strong,nonatomic) AIShortMemory *shortMemory;
 @property (strong,nonatomic) NSMutableArray *thinkFeedCache;    //短时记忆_思维流(包括shortCache和cmvCache,10分钟内都会存在此处(人类可能一天或几小时))
 @property (strong, nonatomic) DemandManager *demandManager;   //输出循环所用到的数据管理器;
 @property (assign, nonatomic) NSInteger energy;                 //当前能量值;(mv输入时激活,思维的循环中消耗)
@@ -59,7 +59,7 @@ static AIThinkingControl *_instance;
 }
 
 -(void) initData{
-    self.shortMemory = [[AIThinkShortMemory alloc] init];
+    self.shortMemory = [[AIShortMemory alloc] init];
     self.thinkFeedCache = [[NSMutableArray alloc] init];
     self.demandManager = [[DemandManager alloc] init];
     self.thinkIn = [[AIThinkIn alloc] init];
@@ -92,7 +92,7 @@ static AIThinkingControl *_instance;
     }
     
     //5. 祖母
-    AIPointer *algNode_p = [ThinkingUtils createAlgNodeWithValue_ps:value_ps];
+    AIPointer *algNode_p = [ThinkingUtils createAlgNodeWithValue_ps:value_ps isOut:true];
     
     //6. 加瞬时记忆
     if (ISOK(algNode_p, AIPointer.class)) {

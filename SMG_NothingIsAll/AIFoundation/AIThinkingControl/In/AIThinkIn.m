@@ -43,7 +43,7 @@
 
 -(void) dataIn_NoMV:(NSArray*)algsArr{
     //1. 打包成algTypeNode;
-    AIPointer *algNode_p = [ThinkingUtils createAlgNodeWithValue_ps:algsArr];
+    AIPointer *algNode_p = [ThinkingUtils createAlgNodeWithValue_ps:algsArr isOut:false];
     
     //2. 加入瞬时记忆
     if (algNode_p && self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_AddToShortMemory:)]) {

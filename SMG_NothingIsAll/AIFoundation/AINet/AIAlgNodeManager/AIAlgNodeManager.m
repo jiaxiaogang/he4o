@@ -16,10 +16,9 @@
 
 @implementation AIAlgNodeManager
 
-+(AIAlgNode*) createAlgNode:(NSArray*)algsArr{
++(AIAlgNode*) createAlgNode:(NSArray*)algsArr isOut:(BOOL)isOut{
     //1. 数据
     algsArr = ARRTOOK(algsArr);
-    BOOL isOut = [AINetUtils checkAllOfOut:algsArr];
     
     //2. 构建具象节点 (优先用本地已有,否则new)
     AIAlgNode *conNode = [[AIAlgNode alloc] init];

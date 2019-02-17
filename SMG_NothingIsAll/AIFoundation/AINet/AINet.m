@@ -189,8 +189,8 @@ static AINet *_instance;
 //MARK:===============================================================
 //MARK:                     < algNode >
 //MARK:===============================================================
--(AIAlgNode*) createAlgNode:(NSArray*)algsArr{
-    return [AIAlgNodeManager createAlgNode:algsArr];
+-(AIAlgNode*) createAlgNode:(NSArray*)algsArr isOut:(BOOL)isOut{
+    return [AIAlgNodeManager createAlgNode:algsArr isOut:isOut];
 }
 
 -(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)algSames algA:(AIAlgNode*)algA algB:(AIAlgNode*)algB{

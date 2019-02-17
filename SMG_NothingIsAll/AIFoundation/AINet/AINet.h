@@ -75,7 +75,7 @@
 //MARK:===============================================================
 //MARK:                     < algNode >
 //MARK:===============================================================
--(AIAlgNode*) createAlgNode:(NSArray*)algsArr;
+-(AIAlgNode*) createAlgNode:(NSArray*)algsArr isOut:(BOOL)isOut;
 -(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)algSames algA:(AIAlgNode*)algA algB:(AIAlgNode*)algB;
 
 @end

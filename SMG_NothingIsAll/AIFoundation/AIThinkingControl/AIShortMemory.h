@@ -1,5 +1,5 @@
 //
-//  AIThinkShortMemory.h
+//  AIShortMemory.h
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2019/1/23.
@@ -13,7 +13,7 @@
  *  1. 存最多8条algNode_p;
  */
 @class AIPointer;
-@interface AIThinkShortMemory : NSObject
+@interface AIShortMemory : NSObject
 
 
 /**

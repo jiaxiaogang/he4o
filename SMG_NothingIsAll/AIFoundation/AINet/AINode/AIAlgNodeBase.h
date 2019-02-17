@@ -8,6 +8,10 @@
 
 #import "AINodeBase.h"
 
+/**
+ *  MARK:--------------------祖母Base节点--------------------
+ *  1. TODO: 将祖母添加isOut,或将foNode.orders中添加每个元素的isOut;
+ */
 @interface AIAlgNodeBase : AINodeBase
 
 @property (strong, nonatomic) NSMutableArray *absPorts;

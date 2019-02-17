@@ -1,21 +1,21 @@
 //
-//  AIThinkShortMemory.m
+//  AIShortMemory.m
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2019/1/23.
 //  Copyright © 2019年 XiaoGang. All rights reserved.
 //
 
-#import "AIThinkShortMemory.h"
+#import "AIShortMemory.h"
 #import "AIPointer.h"
 
-@interface AIThinkShortMemory ()
+@interface AIShortMemory ()
 
 @property (strong,nonatomic) NSMutableArray *shortCache;//瞬时记忆 (容量8)
 
 @end
 
-@implementation AIThinkShortMemory
+@implementation AIShortMemory
 
 
 //MARK:===============================================================
@@ -32,7 +32,7 @@
     if (ARRISOK(ps)) {
         for (AIPointer *pointer in ps) {
             [self.shortCache addObject:pointer];
-            if (self.shortCache.count > 8) {
+            if (self.shortCache.count > cShortMemoryLimit) {
                 [self.shortCache removeObjectAtIndex:0];
             }
         }
