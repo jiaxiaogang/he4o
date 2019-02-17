@@ -23,6 +23,9 @@
  */
 +(NSArray*) filterOutPointers:(NSArray*)proto_ps;
 
+//筛选出非out的pointers
++(NSArray*) filterNotOutPointers:(NSArray*)proto_ps;
+
 @end
 
 
@@ -164,7 +167,7 @@
  *  >assNoResult :
  *
  */
-+(CGFloat) dataOut_CheckScore_ExpOut:(AIFoNodeBase*)foNode;
++(CGFloat) dataOut_CheckScore_ExpOut:(AIPointer*)foNode_p;
 
 
 /**

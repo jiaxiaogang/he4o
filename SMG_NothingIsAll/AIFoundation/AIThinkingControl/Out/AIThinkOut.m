@@ -18,6 +18,7 @@
 #import "AIFrontOrderNode.h"
 #import "AINetAbsFoNode.h"
 #import "Output.h"
+#import "AIThinkOutFoModel.h"
 
 @implementation AIThinkOut
 
@@ -60,12 +61,11 @@
     }
     
     //5. 联想"解决经验"对应的cmvNode & 联想具象数据,并取到决策关键信息 (foScheme);
-    AICMVNodeBase *expMvNode = [SMGUtils searchObjectForPointer:outMvModel.mvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
-    AIFoNodeBase *expOutFoNode = [self dataOut_FoScheme:expMvNode exceptFo_ps:outMvModel.exceptTryOut_ps];
-    if (!expOutFoNode) return;
+    AIThinkOutFoModel *outFoModel = [self dataOut_FoScheme:outMvModel];
+    if (!outFoModel) return;
     
     //6. 有执行方案,则对执行方案进行反思检查; (父可行性判定)
-    CGFloat score = [ThinkingUtils dataOut_CheckScore_ExpOut:expOutFoNode];
+    CGFloat score = [ThinkingUtils dataOut_CheckScore_ExpOut:outFoModel.content_p];
     outMvModel.order += score;//联想对当前outMvModel的order影响;
     if (score < 3) {
         NSLog(@" >> 本次输出不过关,toLoop...");
@@ -76,25 +76,13 @@
     
     //7. 尝试输出"可行性之首"并找到实际操作 (子可行性判定) (algScheme)
     ///1. 取出outLog;
-    NSArray *out_ps = [ThinkingUtils filterOutPointers:expOutFoNode.orders_kvp];
-    NSLog(@" >> 执行经验输出: (%f) (%@)",score,[NVUtils convertOrderPs2Str:out_ps]);
-    
-    //1. 根据foNode取到条件;
-    //2. 使用AIThinkOutFoModel将条件 (最多两个)记录到outFoModel;
-    //3. 对outFoModel进行algModel条件的行为化;
-    
-    ///1. 比如找到坚果;
-    ///2. 找到的坚果与fo中进行类比;
-    ///3. 找出坚果距离的不同,或者坚果带皮儿的不同;
-    ///4. 将距离与带皮转化成行为; (如飞行,或去皮);
-    ///5. 达成条件;
-    
+    [self dataOut_AlgScheme:outFoModel];
     
     
     
     
     //8. actionScheme (行为方案输出)
-    [self dataOut_ActionScheme:out_ps];
+    [self dataOut_ActionScheme:nil];
     
     
     
@@ -194,8 +182,7 @@
 
 /**
  *  MARK:--------------------联想具象foNode--------------------
- *  @param checkMvNode : 当前mvNode (具象之旅的出发点);
- *  @param exceptFo_ps : 已排除的foNode_p (不应期)
+ *  @param outMvModel : 当前mvModel (具象之旅的出发点);
  *  @result : 返回时序节点地址
  *  1. 从上至下的联想foNode;
  *  注:目前支持每层3个(关联强度前3个),最多3层(具象方向3层);
@@ -208,20 +195,27 @@
  *  //5. 是数据决定了下一轮循环思维想什么,但数据仅能通过mv来决定,无论是思考的方向,还是思考的能量,还是思考的目标,都是以mv为准的;而mv的一切关联,又是以数据为规律进行关联的;
  *
  */
--(AIFoNodeBase*) dataOut_FoScheme:(AICMVNodeBase*)checkMvNode exceptFo_ps:(nonnull NSMutableArray*)exceptFo_ps{
+-(AIThinkOutFoModel*) dataOut_FoScheme:(AIThinkOutMvModel*)outMvModel{
     //1. 数据准备
-    if (!ISOK(checkMvNode, AICMVNodeBase.class)) {
+    if (!ISOK(outMvModel, AIThinkOutMvModel.class)) {
         return nil;
     }
+    AICMVNodeBase *checkMvNode = [SMGUtils searchObjectForPointer:outMvModel.mvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+    if (!checkMvNode) {
+        return nil;
+    }
+    
     if (checkMvNode.foNode_p) {
         NSArray *checkFo_ps = @[checkMvNode.foNode_p];
         
         //2. 最多往具象循环三层
         for (NSInteger i = 0; i < cDataOutAssFoDeep; i++) {
-            AIFoNodeBase *result = [ThinkingUtils foScheme_GetAValidFoNode:checkFo_ps exceptMv_ps:exceptFo_ps];
+            AIFoNodeBase *validFoNode = [ThinkingUtils foScheme_GetAValidFoNode:checkFo_ps exceptMv_ps:outMvModel.except_ps];
             
             //3. 有效则返回,无效则循环到下一层
-            if (result) {
+            if (validFoNode) {
+                AIThinkOutFoModel *result = [[AIThinkOutFoModel alloc] init];
+                result.content_p = validFoNode.pointer;
                 return result;
             }else{
                 checkFo_ps = [ThinkingUtils foScheme_GetNextLayerPs:checkFo_ps];
@@ -237,7 +231,47 @@
  *  MARK:--------------------algScheme--------------------
  *  1. 对祖母条件进行判定;
  */
--(void) dataOut_AlgScheme{
+-(void) dataOut_AlgScheme:(AIThinkOutFoModel*)outFoModel{
+    //1. 数据准备
+    if (!ISOK(outFoModel, AIThinkOutFoModel.class)) {
+        return;
+    }
+    
+    //2. 筛选出所需条件
+    AIFoNodeBase *foNode = [SMGUtils searchObjectForPointer:outFoModel.content_p fileName:FILENAME_Node time:cRedisNodeTime];
+    if (!foNode) {
+        return;
+    }
+    NSArray *notOutAlg_ps = [ThinkingUtils filterNotOutPointers:foNode.orders_kvp];
+    NSLog(@" >> 所需条件: (%@)",[NVUtils convertOrderPs2Str:notOutAlg_ps]);
+    
+    
+    for (AIPointer *alg_p in notOutAlg_ps) {
+        
+    }
+    
+    //关于条件的获取方式;
+    //1. 从瞬时记忆来判定找;
+    //2. 由其它时序来执行得到; (打车是祖母,而不是时序) (根据"距离变化"祖母,转化为行走才是时序,如走到路边)
+    
+    //////某条微信息的值的变化, (如距离)
+    
+    
+    
+    
+    
+    
+    
+    //1. 根据foNode取到条件;
+    //2. 使用AIThinkOutFoModel将条件 (最多两个)记录到outFoModel;
+    //3. 对outFoModel进行algModel条件的行为化;
+    
+    ///1. 比如找到坚果;
+    ///2. 找到的坚果与fo中进行类比;
+    ///3. 找出坚果距离的不同,或者坚果带皮儿的不同;
+    ///4. 将距离与带皮转化成行为; (如飞行,或去皮);
+    ///5. 达成条件;
+    
     
 }
 

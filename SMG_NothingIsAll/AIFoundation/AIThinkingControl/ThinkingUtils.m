@@ -40,6 +40,16 @@
     return out_ps;
 }
 
++(NSArray*) filterNotOutPointers:(NSArray*)proto_ps{
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    for (AIKVPointer *pointer in ARRTOOK(proto_ps)) {
+        if (ISOK(pointer, AIKVPointer.class) && !pointer.isOut) {
+            [result addObject:pointer];
+        }
+    }
+    return result;
+}
+
 @end
 
 
@@ -309,8 +319,11 @@
 //MARK:===============================================================
 @implementation ThinkingUtils (Out)
 
-+(CGFloat) dataOut_CheckScore_ExpOut:(AIFoNodeBase*)foNode {
-    //1. 评价 (根据当前foNode的mv果,处理cmvNode评价影响力;(系数0.2))
++(CGFloat) dataOut_CheckScore_ExpOut:(AIPointer*)foNode_p {
+    //1. 数据
+    AIFoNodeBase *foNode = [SMGUtils searchObjectForPointer:foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+    
+    //2. 评价 (根据当前foNode的mv果,处理cmvNode评价影响力;(系数0.2))
     CGFloat score = 0;
     if (foNode) {
         score = [ThinkingUtils getScoreForce:foNode.cmvNode_p ratio:0.2f];

@@ -10,4 +10,6 @@
 
 @interface AIThinkOutAlgModel : NSObject
 
+@property (strong, nonatomic) AIPointer *content_p;//对应的数据 (存AIAlgNodeBase)
+
 @end

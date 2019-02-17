@@ -10,4 +10,11 @@
 
 @implementation AIThinkOutFoModel
 
+-(NSMutableArray *)algModels{
+    if (!_algModels) {
+        _algModels = [[NSMutableArray alloc] init];
+    }
+    return _algModels;
+}
+
 @end

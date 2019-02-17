@@ -10,4 +10,7 @@
 
 @interface AIThinkOutFoModel : NSObject
 
+@property (strong, nonatomic) AIPointer *content_p;//对应的数据 (存AIFoNodeBase)
+@property (strong, nonatomic) NSMutableArray *algModels;
+
 @end

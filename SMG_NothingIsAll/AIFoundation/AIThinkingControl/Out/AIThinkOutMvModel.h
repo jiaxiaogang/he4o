@@ -29,8 +29,7 @@
  *  //V2TODO:后续增加主观意志,对order的影响;从而使AIThinkOutMvModel的思考更加灵活;
  */
 @property (assign, nonatomic) CGFloat order;
-@property (nonnull, strong, nonatomic) NSMutableArray *exceptExpOut_ps;
-@property (nonnull, strong, nonatomic) NSMutableArray *exceptTryOut_ps;
+@property (nonnull, strong, nonatomic) NSMutableArray *except_ps;//已排除的foNode_p (不应期)
 
 -(BOOL) isEqual:(AIThinkOutMvModel*)object;
 
