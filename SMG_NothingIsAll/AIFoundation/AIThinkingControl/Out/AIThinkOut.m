@@ -19,6 +19,8 @@
 #import "AINetAbsFoNode.h"
 #import "Output.h"
 #import "AIThinkOutFoModel.h"
+#import "AIAbsAlgNode.h"
+#import "AIAlgNode.h"
 
 @implementation AIThinkOut
 
@@ -229,26 +231,35 @@
 
 /**
  *  MARK:--------------------algScheme--------------------
- *  1. 对祖母条件进行判定;
+ *  1. 对条件祖母进行判定;
+ *  2. 对条件祖母取最具象 (目前仅支持1层);
  */
 -(void) dataOut_AlgScheme:(AIThinkOutFoModel*)outFoModel{
     //1. 数据准备
     if (!ISOK(outFoModel, AIThinkOutFoModel.class)) {
         return;
     }
-    
-    //2. 筛选出所需条件
     AIFoNodeBase *foNode = [SMGUtils searchObjectForPointer:outFoModel.content_p fileName:FILENAME_Node time:cRedisNodeTime];
     if (!foNode) {
         return;
     }
-    NSArray *notOutAlg_ps = [ThinkingUtils filterNotOutPointers:foNode.orders_kvp];
-    NSLog(@" >> 所需条件: (%@)",[NVUtils convertOrderPs2Str:notOutAlg_ps]);
     
-    
-    for (AIPointer *alg_p in notOutAlg_ps) {
-        
+    //2. 取条件祖母的最具象,得出memOrder;
+    //NSLog(@" >> 所需条件: (%@)",[NVUtils convertOrderPs2Str:notOutAlg_ps]);
+    for (AIKVPointer *pointer in foNode.orders_kvp) {
+        if (ISOK(pointer, AIKVPointer.class) && !pointer.isOut) {
+            AIAlgNodeBase *algNode = [SMGUtils searchObjectForPointer:pointer fileName:FILENAME_Node time:cRedisNodeTime];
+            if (ISOK(algNode, AIAbsAlgNode.class)) {
+                AIAbsAlgNode *absAlgNode = (AIAbsAlgNode*)algNode;
+                //absAlgNode.conPorts
+            }else if(ISOK(algNode, AIAlgNode.class)){
+                AIAlgNode *conAlgNode = (AIAlgNode*)algNode;
+                //
+            }
+        }
     }
+    
+    
     
     //关于条件的获取方式;
     //1. 从瞬时记忆来判定找;

@@ -10,11 +10,18 @@
 
 @implementation AIThinkOutFoModel
 
--(NSMutableArray *)algModels{
-    if (!_algModels) {
-        _algModels = [[NSMutableArray alloc] init];
+-(NSMutableArray *)except_ps{
+    if (!_except_ps) {
+        _except_ps = [[NSMutableArray alloc] init];
     }
-    return _algModels;
+    return _except_ps;
+}
+
+-(NSMutableArray *)memOrder{
+    if (!_memOrder) {
+        _memOrder = [[NSMutableArray alloc] init];
+    }
+    return _memOrder;
 }
 
 @end
