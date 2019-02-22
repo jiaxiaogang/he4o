@@ -212,10 +212,10 @@
         
         //2. 最多往具象循环三层
         for (NSInteger i = 0; i < cDataOutAssFoDeep; i++) {
-            AIFoNodeBase *validFoNode = [ThinkingUtils foScheme_GetAValidFoNode:checkFo_ps exceptMv_ps:outMvModel.except_ps];
+            AIFoNodeBase *validFoNode = [ThinkingUtils scheme_GetAValidNode:checkFo_ps except_ps:outMvModel.except_ps checkBlock:nil];
             
             //3. 有效则返回,无效则循环到下一层
-            if (validFoNode) {
+            if (ISOK(validFoNode, AIFoNodeBase.class)) {
                 AIThinkOutFoModel *result = [[AIThinkOutFoModel alloc] init];
                 result.content_p = validFoNode.pointer;
                 return result;
@@ -243,22 +243,42 @@
     if (!foNode) {
         return;
     }
+    [outFoModel.memOrder removeAllObjects];
     
     //2. 取条件祖母的最具象,得出memOrder;
     //NSLog(@" >> 所需条件: (%@)",[NVUtils convertOrderPs2Str:notOutAlg_ps]);
     for (AIKVPointer *pointer in foNode.orders_kvp) {
-        if (ISOK(pointer, AIKVPointer.class) && !pointer.isOut) {
-            AIAlgNodeBase *algNode = [SMGUtils searchObjectForPointer:pointer fileName:FILENAME_Node time:cRedisNodeTime];
-            if (ISOK(algNode, AIAbsAlgNode.class)) {
-                AIAbsAlgNode *absAlgNode = (AIAbsAlgNode*)algNode;
-                //absAlgNode.conPorts
-            }else if(ISOK(algNode, AIAlgNode.class)){
-                AIAlgNode *conAlgNode = (AIAlgNode*)algNode;
-                //
+        if (pointer.isOut) {
+            AIAlgNodeBase *outAlgNode = [SMGUtils searchObjectForPointer:pointer fileName:FILENAME_Node time:cRedisNodeTime];
+            if (outAlgNode) {
+                [outFoModel.memOrder addObject:outAlgNode];
+            }
+        }else{
+            //2. 最多往具象循环2层
+            NSArray *check_ps = @[pointer];
+            for (NSInteger i = 0; i < cDataOutAssAlgDeep; i++) {
+                AIAlgNode *validAlgNode = [ThinkingUtils scheme_GetAValidNode:check_ps except_ps:outFoModel.except_ps checkBlock:^BOOL(id checkNode) {
+                    return ISOK(checkNode, AIAlgNode.class);
+                }];
+                
+                //3. 有效则返回,无效则循环到下一层
+                if (ISOK(validAlgNode, AIAlgNode.class)) {
+                    [outFoModel.memOrder addObject:validAlgNode];
+                }else{
+                    check_ps = [ThinkingUtils algScheme_GetNextLayerPs:check_ps];
+                }
             }
         }
     }
     
+    //3. 对memOrder有效性初步检查
+    if (outFoModel.memOrder.count == foNode.orders_kvp.count) {
+        
+        //数据合法;
+        
+    }else{
+        [self dataOut];
+    }
     
     
     //关于条件的获取方式;

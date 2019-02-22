@@ -348,21 +348,24 @@
     //}
 }
 
-
-+(AIFoNodeBase*) foScheme_GetAValidFoNode:(NSArray*)checkFo_ps exceptMv_ps:(NSMutableArray*)exceptFo_ps{
++(id) scheme_GetAValidNode:(NSArray*)check_ps except_ps:(NSMutableArray*)except_ps checkBlock:(BOOL(^)(id checkNode))checkBlock{
     //1. 数据检查
-    if (!ARRISOK(checkFo_ps) || !ARRISOK(exceptFo_ps)) {
+    if (!ARRISOK(check_ps) || !ARRISOK(except_ps)) {
         return nil;
     }
     
     //2. 依次判断是否已排除
-    for (AIPointer *fo_p in checkFo_ps) {
-        if ([SMGUtils containsSub_p:fo_p parent_ps:exceptFo_ps]) {
+    for (AIPointer *fo_p in check_ps) {
+        if (![SMGUtils containsSub_p:fo_p parent_ps:except_ps]) {
             
             //3. 未排除,返回;
-            [exceptFo_ps addObject:fo_p];
-            AIFoNodeBase *result = [SMGUtils searchObjectForPointer:fo_p fileName:FILENAME_Node time:cRedisNodeTime];
-            if (result) {
+            [except_ps addObject:fo_p];
+            id result = [SMGUtils searchObjectForPointer:fo_p fileName:FILENAME_Node time:cRedisNodeTime];
+            if (checkBlock) {
+                if (checkBlock(result)) {
+                    return result;
+                }
+            }else if(result){
                 return result;
             }
         }
@@ -370,16 +373,34 @@
     return nil;
 }
 
-+(NSArray*) foScheme_GetNextLayerPs:(NSArray*)curLayerFo_ps{
++(NSArray*) foScheme_GetNextLayerPs:(NSArray*)curLayer_ps{
+    return [self scheme_GetNextLayerPs:curLayer_ps getConPsBlock:^NSArray *(id curNode) {
+        if (ISOK(curNode, AINetAbsFoNode.class)) {
+            return [SMGUtils convertPointersFromPorts:ARR_SUB(((AINetAbsFoNode*)curNode).conPorts, 0, cDataOutAssFoCount)];
+        }
+        return nil;
+    }];
+}
+
++(NSArray*) algScheme_GetNextLayerPs:(NSArray*)curLayer_ps{
+    return [self scheme_GetNextLayerPs:curLayer_ps getConPsBlock:^NSArray *(id curNode) {
+        if (ISOK(curNode, AIAbsAlgNode.class)) {
+            return [SMGUtils convertPointersFromPorts:ARR_SUB(((AIAbsAlgNode*)curNode).conPorts, 0, cDataOutAssAlgCount)];
+        }
+        return nil;
+    }];
+}
+
++(NSArray*) scheme_GetNextLayerPs:(NSArray*)curLayer_ps getConPsBlock:(NSArray*(^)(id))getConPsBlock{
     //1. 数据准备
     NSMutableArray *result = [[NSMutableArray alloc] init];
-    curLayerFo_ps = ARRTOOK(curLayerFo_ps);
+    curLayer_ps = ARRTOOK(curLayer_ps);
     
     //2. 每层向具象取前3条
-    for (AIPointer *fo_p in curLayerFo_ps) {
-        AINetAbsFoNode *foNode = [SMGUtils searchObjectForPointer:fo_p fileName:FILENAME_Node time:cRedisNodeTime];
-        if (ISOK(foNode, AINetAbsFoNode.class)) {
-            NSArray *con_ps = [SMGUtils convertPointersFromPorts:ARR_SUB(foNode.conPorts, 0, cDataOutAssFoCount)];
+    for (AIPointer *fo_p in curLayer_ps) {
+        id curNode = [SMGUtils searchObjectForPointer:fo_p fileName:FILENAME_Node time:cRedisNodeTime];
+        if (getConPsBlock) {
+            NSArray *con_ps = ARRTOOK(getConPsBlock(curNode));
             [result addObjectsFromArray:con_ps];
         }
     }

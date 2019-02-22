@@ -32,3 +32,6 @@
 //MARK:===============================================================
 #define cDataOutAssFoCount 3    //在决策过程中,foScheme横向最大条数;
 #define cDataOutAssFoDeep 3     //在决策过程中,foScheme纵向最大深度;
+
+#define cDataOutAssAlgCount 5    //在决策过程中,algScheme横向最大条数;
+#define cDataOutAssAlgDeep 2     //在决策过程中,algScheme纵向最大深度;

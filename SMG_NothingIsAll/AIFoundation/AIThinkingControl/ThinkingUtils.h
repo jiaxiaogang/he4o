@@ -171,15 +171,17 @@
 
 
 /**
- *  MARK:--------------------获取一条不在不应期的foNode--------------------
+ *  MARK:--------------------获取一条不在不应期的foNode/algNode--------------------
+ *  @param checkBlock : 对结果进行检查,有效则返回,无效则循环至下一条; (checkBlock为nil时,只要result不为nil,即有效)
  */
-+(AIFoNodeBase*) foScheme_GetAValidFoNode:(NSArray*)checkFo_ps exceptMv_ps:(NSMutableArray*)exceptFo_ps;
++(id) scheme_GetAValidNode:(NSArray*)check_ps except_ps:(NSMutableArray*)except_ps checkBlock:(BOOL(^)(id checkNode))checkBlock;
 
 /**
  *  MARK:--------------------获取下一层具象时序--------------------
  *  @result : 将下一层具象的foNode的指针数组返回;
  *  注: 每一个conPorts取前3条;
  */
-+(NSArray*) foScheme_GetNextLayerPs:(NSArray*)curLayerFo_ps;
++(NSArray*) foScheme_GetNextLayerPs:(NSArray*)curLayer_ps;
++(NSArray*) algScheme_GetNextLayerPs:(NSArray*)curLayer_ps;
 
 @end
