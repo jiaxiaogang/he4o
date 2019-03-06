@@ -110,6 +110,10 @@
     return orderSames;
 }
 
++(void) analogyInnerOrders:(NSArray*)orders buildAbsAlgBlock:(AIAbsAlgNode*(^)(NSArray* algSames,AIAlgNode *conAlg))buildAbsAlgBlock buildAbsFoBlock:(AINetAbsFoNode*(^)(NSArray* orderSames))buildAbsFoBlock{
+    
+}
+
 +(BOOL) analogySubWithExpOrder:(NSArray*)expOrder checkOrder:(NSArray*)checkOrder canAss:(BOOL(^)())canAssBlock checkAlgNode:(BOOL(^)(NSArray* algSames,AIAlgNode *algA,AIAlgNode *algB))checkAlgNodeBlock{
     
     

@@ -38,7 +38,7 @@
  *  MARK:--------------------类比处理(瓜是瓜)--------------------
  *  @param canAssBlock          : 向tc询问一次是否允许联想 (一层层联想abs的过程需要消耗energy)
  *  @param buildAlgNodeBlock    : 类比到规律,进行抽象节点的构建;
- *  @result notnull
+ *  @result notnull             : 返回orderSames用于构建absFo
  *
  *  1. 连续信号中,找重复;(连续也是拆分,多事务处理的)
  *  2. 两条信息中,找交集;
@@ -48,6 +48,17 @@
  */
 +(NSArray*) analogyOrdersA:(NSArray*)ordersA ordersB:(NSArray*)ordersB canAss:(BOOL(^)())canAssBlock buildAlgNode:(AIAbsAlgNode*(^)(NSArray* algSames,AIAlgNode *algA,AIAlgNode *algB))buildAlgNodeBlock;
 
+/**
+ *  MARK:--------------------fo内类比--------------------
+ *  @param orders           : 要处理的fo.orders;
+ *  @param buildAbsAlgBlock : 构建抽象祖母回调;
+ *  @param buildAbsFoBlock  : 构建抽象时序回调;
+ *
+ *  1. 此方法对一个fo内的orders进行内类比,并将找到的变化进行抽象构建网络;
+ *  2. 如: 绿瓜变红瓜,如远坚果变近坚果;
+ *  3. 每发现一个有效变化目标,则构建2个absAlg和2个absFo; (参考n15p18内类比构建图)
+ */
++(void) analogyInnerOrders:(NSArray*)orders buildAbsAlgBlock:(AIAbsAlgNode*(^)(NSArray* algSames,AIAlgNode *conAlg))buildAbsAlgBlock buildAbsFoBlock:(AINetAbsFoNode*(^)(NSArray* orderSames))buildAbsFoBlock;
 
 /**
  *  MARK:--------------------类比相减 得出解决方案的条件判定--------------------
