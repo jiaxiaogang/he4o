@@ -35,7 +35,7 @@
 @interface ThinkingUtils (Analogy)
 
 /**
- *  MARK:--------------------类比处理(瓜是瓜)--------------------
+ *  MARK:--------------------fo外类比 (外中有内)--------------------
  *  @param canAssBlock          : 向tc询问一次是否允许联想 (一层层联想abs的过程需要消耗energy)
  *  @param buildAlgNodeBlock    : 类比到规律,进行抽象节点的构建;
  *  @result notnull             : 返回orderSames用于构建absFo
@@ -43,13 +43,14 @@
  *  1. 连续信号中,找重复;(连续也是拆分,多事务处理的)
  *  2. 两条信息中,找交集;
  *  3. 在连续信号的处理中,实时将拆分单信号存储到内存区,并提供可检索等,其形态与最终存硬盘是一致的;
+ *  4. 类比处理(瓜是瓜)
  *  注: 类比的处理,是足够细化的,对思维每个信号作类比操作;(而将类比到的最基本的结果,输出给thinking,以供为构建网络的依据,最终是以网络为目的的)
  *  注: 随后可以由一个sames改为多个sames并实时使用block抽象 (并消耗energy);
  */
 +(NSArray*) analogyOrdersA:(NSArray*)ordersA ordersB:(NSArray*)ordersB canAss:(BOOL(^)())canAssBlock buildAlgNode:(AIAbsAlgNode*(^)(NSArray* algSames,AIAlgNode *algA,AIAlgNode *algB))buildAlgNodeBlock;
 
 /**
- *  MARK:--------------------fo内类比--------------------
+ *  MARK:--------------------fo内类比 (内中有外)--------------------
  *  @param orders           : 要处理的fo.orders;
  *  @param buildAbsAlgBlock : 构建抽象祖母回调;
  *  @param buildAbsFoBlock  : 构建抽象时序回调;

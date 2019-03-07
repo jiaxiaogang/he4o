@@ -111,6 +111,24 @@
 }
 
 +(void) analogyInnerOrders:(NSArray*)orders buildAbsAlgBlock:(AIAbsAlgNode*(^)(NSArray* algSames,AIAlgNode *conAlg))buildAbsAlgBlock buildAbsFoBlock:(AINetAbsFoNode*(^)(NSArray* orderSames))buildAbsFoBlock{
+    //1. 内类比的去重;`祖母引用联想的方式去重`
+    //2. 内中有外,通过祖母引用联想assFo,后进行两者外类比,发现更确切的时序;
+    
+    
+    //将内类比的类比部分代码,进行单独PrivateMethod,然后与外类比中调用的进行复用;
+    
+    
+    //1. 数据检查
+    orders = ARRTOOK(orders);
+    
+    //2. 内类比 (每个元素,分别与orders后面所有元素进行类比)
+    for (NSInteger i = 0; i < orders.count; i++) {
+        for (NSInteger j = i + 1; j < orders.count; j++) {
+            
+        }
+    }
+    
+    
     
 }
 
