@@ -124,12 +124,53 @@
     //2. 内类比 (每个元素,分别与orders后面所有元素进行类比)
     for (NSInteger i = 0; i < orders.count; i++) {
         for (NSInteger j = i + 1; j < orders.count; j++) {
+            ///1. 取出两个祖母;
+            AIKVPointer *algA_p = ARR_INDEX(orders, i);
+            AIKVPointer *algB_p = ARR_INDEX(orders, j);
+            AIAlgNode *algNodeA = [SMGUtils searchObjectForPointer:algA_p fileName:FILENAME_Node time:cRedisNodeTime];
+            AIAlgNode *algNodeB = [SMGUtils searchObjectForPointer:algB_p fileName:FILENAME_Node time:cRedisNodeTime];
             
+            ///2. 找不同
+            NSMutableDictionary *findDiffs = [[NSMutableDictionary alloc] init];
+            if (algNodeA && algNodeB && algNodeA.value_ps.count == algNodeB.value_ps.count) {
+                for (AIKVPointer *valueA_p in algNodeA.value_ps) {
+                    for (AIKVPointer *valueB_p in algNodeB.value_ps) {
+                        
+                        ///3. 对比相同算法标识的两个指针 (如,颜色,距离等)
+                        if ([valueA_p.identifier isEqualToString:valueB_p.identifier]) {
+                            
+                            ///4. 对比微信息是否不同 (MARK_VALUE:如微信息去重功能去掉,此处要取值再进行对比)
+                            if (valueA_p.pointerId != valueB_p.pointerId) {
+                                NSData *aKey = [NSKeyedArchiver archivedDataWithRootObject:valueA_p];
+                                [findDiffs setObject:valueB_p forKey:aKey];
+                            }
+                        }
+                    }
+                }
+            }
+            
+            ///3. 有效时 (有且仅有1条微信息不同),
+            if (findDiffs.count == 1) {
+                //发现规律时,构建祖母,(去重,关联增强或新建);
+                //发现规律时,构建时序,(去重,关联增强或新建);
+                for (NSData *aKey in findDiffs.allKeys) {
+                    AIKVPointer *valueA_p = [NSKeyedUnarchiver unarchiveObjectWithData:aKey];
+                    AIKVPointer *valueB_p = [findDiffs objectForKey:aKey];
+                    
+                    //1. 对algNodeA构建抽象祖母;微信息为valueA_p;
+                    //2. 对algNodeB构建抽象祖母;微信息为valueB_p;
+                    //3. 对algNodeA->algNodeB (orders其它信息要全) 进行构建时序; (问题,此处和orders有啥区别);
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                }
+            }
         }
     }
-    
-    
-    
 }
 
 +(BOOL) analogySubWithExpOrder:(NSArray*)expOrder checkOrder:(NSArray*)checkOrder canAss:(BOOL(^)())canAssBlock checkAlgNode:(BOOL(^)(NSArray* algSames,AIAlgNode *algA,AIAlgNode *algB))checkAlgNodeBlock{

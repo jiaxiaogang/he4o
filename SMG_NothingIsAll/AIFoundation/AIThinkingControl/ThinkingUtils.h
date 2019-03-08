@@ -35,7 +35,7 @@
 @interface ThinkingUtils (Analogy)
 
 /**
- *  MARK:--------------------fo外类比 (外中有内)--------------------
+ *  MARK:--------------------fo外类比 (外中有内,找相同算法)--------------------
  *  @param canAssBlock          : 向tc询问一次是否允许联想 (一层层联想abs的过程需要消耗energy)
  *  @param buildAlgNodeBlock    : 类比到规律,进行抽象节点的构建;
  *  @result notnull             : 返回orderSames用于构建absFo
@@ -50,7 +50,7 @@
 +(NSArray*) analogyOrdersA:(NSArray*)ordersA ordersB:(NSArray*)ordersB canAss:(BOOL(^)())canAssBlock buildAlgNode:(AIAbsAlgNode*(^)(NSArray* algSames,AIAlgNode *algA,AIAlgNode *algB))buildAlgNodeBlock;
 
 /**
- *  MARK:--------------------fo内类比 (内中有外)--------------------
+ *  MARK:--------------------fo内类比 (内中有外,找不同算法)--------------------
  *  @param orders           : 要处理的fo.orders;
  *  @param buildAbsAlgBlock : 构建抽象祖母回调;
  *  @param buildAbsFoBlock  : 构建抽象时序回调;
@@ -58,6 +58,7 @@
  *  1. 此方法对一个fo内的orders进行内类比,并将找到的变化进行抽象构建网络;
  *  2. 如: 绿瓜变红瓜,如远坚果变近坚果;
  *  3. 每发现一个有效变化目标,则构建2个absAlg和2个absFo; (参考n15p18内类比构建图)
+ *  注: 目前仅支持一个微信息变化的规律;
  */
 +(void) analogyInnerOrders:(NSArray*)orders buildAbsAlgBlock:(AIAbsAlgNode*(^)(NSArray* algSames,AIAlgNode *conAlg))buildAbsAlgBlock buildAbsFoBlock:(AINetAbsFoNode*(^)(NSArray* orderSames))buildAbsFoBlock;
 

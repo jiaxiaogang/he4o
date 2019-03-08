@@ -24,6 +24,12 @@
     return _refPorts;
 }
 
+-(NSArray *)value_ps{
+    if (_value_ps == nil) {
+        _value_ps = [NSArray new];
+    }
+    return _value_ps;
+}
 
 /**
  *  MARK:--------------------NSCoding--------------------
