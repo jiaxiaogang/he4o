@@ -35,3 +35,6 @@
 
 #define cDataOutAssAlgCount 5    //在决策过程中,algScheme横向最大条数;
 #define cDataOutAssAlgDeep 2     //在决策过程中,algScheme纵向最大深度;
+
+#define cGreater NSIntegerMax  //表示内类比算法中,比大小时的大;
+#define cLess NSIntegerMin     //表示内类比算法中,比大小时的大;

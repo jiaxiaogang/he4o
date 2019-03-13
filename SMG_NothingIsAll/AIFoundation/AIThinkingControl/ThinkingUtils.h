@@ -59,6 +59,7 @@
  *  2. 如: 绿瓜变红瓜,如远坚果变近坚果;
  *  3. 每发现一个有效变化目标,则构建2个absAlg和2个absFo; (参考n15p18内类比构建图)
  *  注: 目前仅支持一个微信息变化的规律;
+ *  TODO: 将内类比的类比部分代码,进行单独PrivateMethod,然后与外类比中调用的进行复用;
  */
 +(void) analogyInnerOrders:(NSArray*)orders buildAbsAlgBlock:(AIAbsAlgNode*(^)(NSArray* algSames,AIAlgNode *conAlg))buildAbsAlgBlock buildAbsFoBlock:(AINetAbsFoNode*(^)(NSArray* orderSames))buildAbsFoBlock;
 

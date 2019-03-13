@@ -111,17 +111,11 @@
 }
 
 +(void) analogyInnerOrders:(NSArray*)orders buildAbsAlgBlock:(AIAbsAlgNode*(^)(NSArray* algSames,AIAlgNode *conAlg))buildAbsAlgBlock buildAbsFoBlock:(AINetAbsFoNode*(^)(NSArray* orderSames))buildAbsFoBlock{
-    //1. 内类比的去重;`祖母引用联想的方式去重`
-    //2. 内中有外,通过祖母引用联想assFo,后进行两者外类比,发现更确切的时序;
-    
-    
-    //将内类比的类比部分代码,进行单独PrivateMethod,然后与外类比中调用的进行复用;
-    
-    
     //1. 数据检查
     orders = ARRTOOK(orders);
     
     //2. 内类比 (每个元素,分别与orders后面所有元素进行类比)
+    NSMutableDictionary *findDiffs = [[NSMutableDictionary alloc] init];
     for (NSInteger i = 0; i < orders.count; i++) {
         for (NSInteger j = i + 1; j < orders.count; j++) {
             ///1. 取出两个祖母;
@@ -130,8 +124,7 @@
             AIAlgNode *algNodeA = [SMGUtils searchObjectForPointer:algA_p fileName:FILENAME_Node time:cRedisNodeTime];
             AIAlgNode *algNodeB = [SMGUtils searchObjectForPointer:algB_p fileName:FILENAME_Node time:cRedisNodeTime];
             
-            ///2. 找不同
-            NSMutableDictionary *findDiffs = [[NSMutableDictionary alloc] init];
+            ///2. 找不同 (同区不同值)
             if (algNodeA && algNodeB && algNodeA.value_ps.count == algNodeB.value_ps.count) {
                 for (AIKVPointer *valueA_p in algNodeA.value_ps) {
                     for (AIKVPointer *valueB_p in algNodeB.value_ps) {
@@ -148,29 +141,42 @@
                     }
                 }
             }
-            
-            ///3. 有效时 (有且仅有1条微信息不同),
-            if (findDiffs.count == 1) {
-                //发现规律时,构建祖母,(去重,关联增强或新建);
-                //发现规律时,构建时序,(去重,关联增强或新建);
-                for (NSData *aKey in findDiffs.allKeys) {
-                    AIKVPointer *valueA_p = [NSKeyedUnarchiver unarchiveObjectWithData:aKey];
-                    AIKVPointer *valueB_p = [findDiffs objectForKey:aKey];
-                    
-                    //1. 对algNodeA构建抽象祖母;微信息为valueA_p;
-                    //2. 对algNodeB构建抽象祖母;微信息为valueB_p;
-                    //3. 对algNodeA->algNodeB (orders其它信息要全) 进行构建时序; (问题,此处和orders有啥区别);
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                }
-            }
         }
     }
+    
+    //3. 有效时 (有且仅有1条微信息不同),
+    if (findDiffs.count == 1) {
+        for (NSData *aKey in findDiffs.allKeys) {
+            ///1. 类比
+            AIKVPointer *valueA_p = [NSKeyedUnarchiver unarchiveObjectWithData:aKey];
+            AIKVPointer *valueB_p = [findDiffs objectForKey:aKey];
+            NSNumber *numA = [SMGUtils searchObjectForPointer:valueA_p fileName:FILENAME_Value time:cRedisValueTime];
+            NSNumber *numB = [SMGUtils searchObjectForPointer:valueB_p fileName:FILENAME_Value time:cRedisValueTime];
+            NSComparisonResult compareResult = [NUMTOOK(numA) compare:numB];
+            
+            ///2. 构建相对祖母; (变小构建less | 变大构建greater相对祖母)
+            if (compareResult == NSOrderedDescending) {
+                ///(去重,关联增强或新建) `祖母引用联想的方式去重`
+                ///1. 对algNodeA构建抽象祖母;微信息为valueA_p;
+                
+                
+            }else if(compareResult == NSOrderedAscending){
+                
+            }
+            
+            ///3. 构建抽象时序absFo;
+            //对algNodeA->algNodeB (less与greater之间的信息截进来) 进行构建时序;
+            //(去重,关联增强或新建);
+            
+            
+        }
+    }
+    
+    //4. 内中有外_根据absFo联想assAbsFo并进行外类比;
+    //通过祖母引用联想assFo,后进行两者外类比
+    
+    
+    
 }
 
 +(BOOL) analogySubWithExpOrder:(NSArray*)expOrder checkOrder:(NSArray*)checkOrder canAss:(BOOL(^)())canAssBlock checkAlgNode:(BOOL(^)(NSArray* algSames,AIAlgNode *algA,AIAlgNode *algB))checkAlgNodeBlock{
