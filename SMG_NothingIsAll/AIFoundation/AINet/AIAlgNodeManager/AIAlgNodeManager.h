@@ -28,8 +28,11 @@
 
 /**
  *  MARK:--------------------构建absAlgNode中间祖母节点--------------------
+ *  @param algSames 微信息组algSames不能为空;
+ *  @param conAlgs : 具象AIAlgNode数组:(外类比时的algA&algB / 内类比时仅有一个元素) //不可为空数组
+ *
  *  注: TODO:判断algSames是否就是algsA或algB本身; (等conAlgNode和absAlgNode统一不区分后,再判断本身)
  */
-+(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)algSames algA:(AIAlgNode*)algA algB:(AIAlgNode*)algB;
++(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)algSames conAlgs:(NSArray*)conAlgs;
 
 @end

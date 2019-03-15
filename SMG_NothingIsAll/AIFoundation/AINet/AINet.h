@@ -76,7 +76,16 @@
 //MARK:                     < algNode >
 //MARK:===============================================================
 -(AIAlgNode*) createAlgNode:(NSArray*)algsArr isOut:(BOOL)isOut;
+
+//外类比调用
 -(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)algSames algA:(AIAlgNode*)algA algB:(AIAlgNode*)algB;
+
+//内类比调用
+-(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps alg:(AIAlgNode*)alg;
+
+//获取绝对匹配到value_ps的algNode
+-(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps;
+-(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps exceptAlg_p:(AIPointer*)exceptAlg_p;
 
 @end
 

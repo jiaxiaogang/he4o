@@ -10,6 +10,13 @@
 
 @implementation AINodeBase
 
+-(NSMutableArray *)absPorts{
+    if (_absPorts == nil) {
+        _absPorts = [NSMutableArray new];
+    }
+    return _absPorts;
+}
+
 /**
  *  MARK:--------------------NSCoding--------------------
  */
@@ -17,12 +24,14 @@
     self = [super init];
     if (self) {
         self.pointer = [aDecoder decodeObjectForKey:@"pointer"];
+        self.absPorts = [aDecoder decodeObjectForKey:@"absPorts"];
     }
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [aCoder encodeObject:self.pointer forKey:@"pointer"];
+    [aCoder encodeObject:self.absPorts forKey:@"absPorts"];
 }
 
 @end

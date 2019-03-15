@@ -101,8 +101,8 @@
 //    return result;
 //}
 
-+(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)algSames algA:(AIAlgNode*)algA algB:(AIAlgNode*)algB{
-    if (ARRISOK(algSames) && algA && algB) {
++(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)algSames conAlgs:(NSArray*)conAlgs{
+    if (ARRISOK(algSames) && ARRISOK(conAlgs)) {
         //1. 数据准备
         NSArray *sortSames = ARRTOOK([SMGUtils sortPointers:algSames]);
         NSString *samesStr = [SMGUtils convertPointers2String:sortSames];
@@ -111,8 +111,9 @@
         //2. 判断algA.absPorts和absB.absPorts中的header,是否已存在algSames的抽象节点;
         AIAbsAlgNode *findAbsNode = nil;
         NSMutableArray *allAbsPorts = [[NSMutableArray alloc] init];
-        [allAbsPorts addObjectsFromArray:algA.absPorts];
-        [allAbsPorts addObjectsFromArray:algB.absPorts];
+        for (AIAlgNode *item in conAlgs) {
+            [allAbsPorts addObjectsFromArray:item.absPorts];
+        }
         for (AIPort *port in allAbsPorts) {
             if ([samesMd5 isEqualToString:port.header]) {
                 findAbsNode = [SMGUtils searchObjectForPointer:port.target_p fileName:FILENAME_Node time:cRedisNodeTime];
@@ -131,17 +132,8 @@
             [AINetUtils insertPointer:findAbsNode.pointer toRefPortsByValues:findAbsNode.value_ps ps:findAbsNode.value_ps];
         }
         
-        //5. 关联
-        [AINetUtils insertPointer:findAbsNode.pointer toPorts:algA.absPorts ps:findAbsNode.value_ps];
-        [AINetUtils insertPointer:findAbsNode.pointer toPorts:algB.absPorts ps:findAbsNode.value_ps];
-        [AINetUtils insertPointer:algA.pointer toPorts:findAbsNode.conPorts ps:algA.value_ps];
-        [AINetUtils insertPointer:algB.pointer toPorts:findAbsNode.conPorts ps:algA.value_ps];
-        
-        //6. 存储
-        [SMGUtils insertObject:findAbsNode pointer:findAbsNode.pointer fileName:FILENAME_Node time:cRedisNodeTime];
-        [SMGUtils insertObject:algA pointer:algA.pointer fileName:FILENAME_Node time:cRedisNodeTime];
-        [SMGUtils insertObject:algB pointer:algB.pointer fileName:FILENAME_Node time:cRedisNodeTime];
-        
+        //5. 关联 & 存储
+        [AINetUtils relateAbs:findAbsNode conNodes:conAlgs save:true];
         return findAbsNode;
     }
     return nil;

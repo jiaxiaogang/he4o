@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+@class AIAbsAlgNode;
 @interface AINetUtils : NSObject
 
 //MARK:===============================================================
@@ -81,5 +82,18 @@
  *  MARK:--------------------检查value_ps指针isOut都是true--------------------
  */
 +(BOOL) checkAllOfOut:(NSArray*)value_ps;
+
+
+//MARK:===============================================================
+//MARK:                     < Relate >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------关联抽具象祖母--------------------
+ *  @param absNode : 抽象祖母
+ *  @param conNodes : 具象祖母们
+ *  @param save : 是否保存
+ */
++(void) relateAbs:(AIAbsAlgNode*)absNode conNodes:(NSArray*)conNodes save:(BOOL)save;
 
 @end

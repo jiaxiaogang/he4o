@@ -10,13 +10,6 @@
 
 @implementation AIAlgNodeBase
 
--(NSMutableArray *)absPorts{
-    if (_absPorts == nil) {
-        _absPorts = [NSMutableArray new];
-    }
-    return _absPorts;
-}
-
 -(NSMutableArray *)refPorts{
     if (_refPorts == nil) {
         _refPorts = [NSMutableArray new];
@@ -37,7 +30,6 @@
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     if (self) {
-        self.absPorts = [aDecoder decodeObjectForKey:@"absPorts"];
         self.refPorts = [aDecoder decodeObjectForKey:@"refPorts"];
         self.value_ps = [aDecoder decodeObjectForKey:@"value_ps"];
     }
@@ -46,7 +38,6 @@
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:self.absPorts forKey:@"absPorts"];
     [aCoder encodeObject:self.refPorts forKey:@"refPorts"];
     [aCoder encodeObject:self.value_ps forKey:@"value_ps"];
 }

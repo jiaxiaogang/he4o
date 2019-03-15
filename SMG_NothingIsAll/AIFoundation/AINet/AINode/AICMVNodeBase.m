@@ -10,13 +10,6 @@
 
 @implementation AICMVNodeBase
 
--(NSMutableArray *)absPorts{
-    if (_absPorts == nil) {
-        _absPorts = [NSMutableArray new];
-    }
-    return _absPorts;
-}
-
 /**
  *  MARK:--------------------NSCoding--------------------
  */
@@ -26,7 +19,6 @@
         self.urgentTo_p = [aDecoder decodeObjectForKey:@"urgentTo_p"];
         self.delta_p = [aDecoder decodeObjectForKey:@"delta_p"];
         self.foNode_p = [aDecoder decodeObjectForKey:@"foNode_p"];
-        self.absPorts = [aDecoder decodeObjectForKey:@"absPorts"];
     }
     return self;
 }
@@ -36,7 +28,6 @@
     [aCoder encodeObject:self.urgentTo_p forKey:@"urgentTo_p"];
     [aCoder encodeObject:self.delta_p forKey:@"delta_p"];
     [aCoder encodeObject:self.foNode_p forKey:@"foNode_p"];
-    [aCoder encodeObject:self.absPorts forKey:@"absPorts"];
 }
 
 @end

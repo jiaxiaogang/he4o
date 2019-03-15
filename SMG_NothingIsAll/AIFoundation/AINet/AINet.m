@@ -22,6 +22,8 @@
 #import "AINetUtils.h"
 #import "AIAlgNodeManager.h"
 #import "Output.h"
+#import "AIAlgNode.h"
+#import "NSString+Extension.h"
 
 @interface AINet () <AICMVManagerDelegate,AIAbsCMVManagerDelegate>
 
@@ -194,7 +196,38 @@ static AINet *_instance;
 }
 
 -(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)algSames algA:(AIAlgNode*)algA algB:(AIAlgNode*)algB{
-    return [AIAlgNodeManager createAbsAlgNode:algSames algA:algA algB:algB];
+    if (ISOK(algA, AIAlgNode.class) && ISOK(algB, AIAlgNode.class)) {
+        return [AIAlgNodeManager createAbsAlgNode:algSames conAlgs:@[algA,algB]];
+    }
+    return nil;
+}
+
+-(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps alg:(AIAlgNode*)alg{
+    if (ISOK(alg, AIAlgNode.class)) {
+        return [AIAlgNodeManager createAbsAlgNode:value_ps conAlgs:@[alg]];
+    }
+    return nil;
+}
+
+-(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps{
+    return [self getAbsoluteMatchingAlgNodeWithValuePs:value_ps exceptAlg_p:nil];
+}
+-(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps exceptAlg_p:(AIPointer*)exceptAlg_p{
+    ///1. 绝对匹配 -> (header匹配)
+    value_ps = ARRTOOK(value_ps);
+    NSString *valuesMD5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:[SMGUtils sortPointers:value_ps]]]);
+    for (AIPointer *value_p in value_ps) {
+        NSArray *refPorts = ARRTOOK([SMGUtils searchObjectForFilePath:value_p.filePath fileName:FILENAME_RefPorts time:cRedisReferenceTime]);
+        for (AIPort *refPort in refPorts) {
+            
+            ///2. 依次绝对匹配header,找到则返回;
+            if (![refPort.target_p isEqual:exceptAlg_p] && [valuesMD5 isEqualToString:refPort.header]) {
+                AIAlgNodeBase *result = [SMGUtils searchObjectForPointer:refPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
+                return result;
+            }
+        }
+    }
+    return nil;
 }
 
 @end
