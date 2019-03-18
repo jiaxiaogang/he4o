@@ -186,18 +186,20 @@
 //MARK:===============================================================
 
 +(void) relateAbs:(AIAbsAlgNode*)absNode conNodes:(NSArray*)conNodes save:(BOOL)save{
-    //1. 具象节点的 关联&存储
-    for (AIAlgNodeBase *item in conNodes) {
-        [AINetUtils insertPointer:absNode.pointer toPorts:item.absPorts ps:absNode.value_ps];
-        [AINetUtils insertPointer:item.pointer toPorts:absNode.conPorts ps:item.value_ps];
-        if (save) {
-            [SMGUtils insertObject:item pointer:item.pointer fileName:FILENAME_Node time:cRedisNodeTime];
+    if (ISOK(absNode, AIAbsAlgNode.class) && ARRISOK(conNodes)) {
+        //1. 具象节点的 关联&存储
+        for (AIAlgNodeBase *item in conNodes) {
+            [AINetUtils insertPointer:absNode.pointer toPorts:item.absPorts ps:absNode.value_ps];
+            [AINetUtils insertPointer:item.pointer toPorts:absNode.conPorts ps:item.value_ps];
+            if (save) {
+                [SMGUtils insertObject:item pointer:item.pointer fileName:FILENAME_Node time:cRedisNodeTime];
+            }
         }
-    }
-    
-    //2. 抽象节点的 关联&存储
-    if (save) {
-        [SMGUtils insertObject:absNode pointer:absNode.pointer fileName:FILENAME_Node time:cRedisNodeTime];
+        
+        //2. 抽象节点的 关联&存储
+        if (save) {
+            [SMGUtils insertObject:absNode pointer:absNode.pointer fileName:FILENAME_Node time:cRedisNodeTime];
+        }
     }
 }
 

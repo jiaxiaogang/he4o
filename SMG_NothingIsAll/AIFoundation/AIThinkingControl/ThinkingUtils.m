@@ -178,58 +178,56 @@
 
 //内类比的构建方法
 +(void)analogyInnerOrders_Creater:(AIKVPointer*)valueA_p valueB_p:(AIKVPointer*)valueB_p algA:(AIAlgNode*)algA algB:(AIAlgNode*)algB{
-    //1. 数据准备
+    //1. 数据检查
     if (valueA_p && valueB_p && algA && algB) {
+        
+        //2. 取出dynamic抽象祖母 (祖母引用联想的方式去重)
         AIPointer *less_p = [theNet getNetDataPointerWithData:@(cLess) algsType:valueA_p.algsType dataSource:valueA_p.dataSource];
         AIPointer *greater_p = [theNet getNetDataPointerWithData:@(cGreater) algsType:valueA_p.algsType dataSource:valueA_p.dataSource];
+        if (!less_p && !greater_p) {
+            return;
+        }
+        AIAlgNodeBase *lessAlg = [theNet getAbsoluteMatchingAlgNodeWithValuePs:@[less_p]];
+        AIAlgNodeBase *greaterAlg = [theNet getAbsoluteMatchingAlgNodeWithValuePs:@[greater_p]];
         
-        //2. 类比
+        //3. 类比
         NSNumber *numA = [SMGUtils searchObjectForPointer:valueA_p fileName:FILENAME_Value time:cRedisValueTime];
         NSNumber *numB = [SMGUtils searchObjectForPointer:valueB_p fileName:FILENAME_Value time:cRedisValueTime];
         NSComparisonResult compareResult = [NUMTOOK(numA) compare:numB];
         
-        //3. `祖母引用联想的方式去重`
-        AIAlgNodeBase *lessAlg = [theNet getAbsoluteMatchingAlgNodeWithValuePs:@[less_p]];
-        AIAlgNodeBase *greaterAlg = [theNet getAbsoluteMatchingAlgNodeWithValuePs:@[greater_p]];
+        //4. 构建&关联器
+        void (^RelateDynamicAlgBlock)(AIAlgNodeBase*, AIAlgNode*,AIPointer*) = ^(AIAlgNodeBase *dynamicAbsNode, AIAlgNode *conNode,AIPointer *value_p){
+            if (ISOK(dynamicAbsNode, AIAbsAlgNode.class)) {
+                ///1. 有效时,关联;
+                [AINetUtils relateAbs:(AIAbsAlgNode*)dynamicAbsNode conNodes:@[conNode] save:true];
+            }else{
+                ///2. 无效时,构建;
+                if (value_p) {
+                    [theNet createAbsAlgNode:@[value_p] alg:conNode];
+                }
+            }
+        };
         
-        //3. 构建动态祖母; (变小构建less | 变大构建greater相对祖母)
+        //5. 构建动态祖母; (变小构建less | 变大构建greater相对祖母)
         if (compareResult == NSOrderedDescending) {
-            
-            if (ISOK(lessAlg, AIAbsAlgNode.class)) {
-                [AINetUtils relateAbs:(AIAbsAlgNode*)lessAlg conNodes:@[algA] save:true];
-            }else{
-                ///1. 对algNodeA构建抽象祖母;微信息为valueA_p;
-                [theNet createAbsAlgNode:@[less_p] alg:algA];
-            }
-            
-            if (ISOK(greaterAlg, AIAbsAlgNode.class)) {
-                [AINetUtils relateAbs:(AIAbsAlgNode*)greaterAlg conNodes:@[algB] save:true];
-            }else{
-                ///1. 对algNodeA构建抽象祖母;微信息为valueA_p;
-                [theNet createAbsAlgNode:@[greater_p] alg:algB];
-            }
-            
+            RelateDynamicAlgBlock(lessAlg,algA,less_p);
+            RelateDynamicAlgBlock(greaterAlg,algB,greater_p);
         }else if(compareResult == NSOrderedAscending){
-            
-            if (ISOK(lessAlg, AIAbsAlgNode.class)) {
-                [AINetUtils relateAbs:(AIAbsAlgNode*)lessAlg conNodes:@[algB] save:true];
-            }else{
-                ///1. 对algNodeA构建抽象祖母;微信息为valueA_p;
-                [theNet createAbsAlgNode:@[less_p] alg:algB];
-            }
-            
-            if (ISOK(greaterAlg, AIAbsAlgNode.class)) {
-                [AINetUtils relateAbs:(AIAbsAlgNode*)greaterAlg conNodes:@[algA] save:true];
-            }else{
-                ///1. 对algNodeA构建抽象祖母;微信息为valueA_p;
-                [theNet createAbsAlgNode:@[greater_p] alg:algA];
-            }
+            RelateDynamicAlgBlock(lessAlg,algB,less_p);
+            RelateDynamicAlgBlock(greaterAlg,algA,greater_p);
         }
     
         //4. 构建抽象时序absFo;
         //对algNodeA->algNodeB (less与greater之间的信息截进来) 进行构建时序;
         //(去重,关联增强或新建);
-    
+        
+        //////TODOTOMORROW:构建70->80间,a1->a2间的,部分时序的,fo节点;
+        
+        
+        
+        
+        
+        
     
     }
 }
