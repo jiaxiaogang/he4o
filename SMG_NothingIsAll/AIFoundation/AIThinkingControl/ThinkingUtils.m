@@ -60,7 +60,7 @@
 //MARK:===============================================================
 @implementation ThinkingUtils (Analogy)
 
-+(NSArray*) analogyOrdersA:(NSArray*)ordersA ordersB:(NSArray*)ordersB canAss:(BOOL(^)())canAssBlock buildAlgNode:(AIAbsAlgNode*(^)(NSArray* algSames,AIAlgNode *algA,AIAlgNode *algB))buildAlgNodeBlock{
++(NSArray*) analogyOutsideOrdersA:(NSArray*)ordersA ordersB:(NSArray*)ordersB canAss:(BOOL(^)())canAssBlock buildAlgNode:(AIAbsAlgNode*(^)(NSArray* algSames,AIAlgNode *algA,AIAlgNode *algB))buildAlgNodeBlock{
     //1. 类比orders的规律
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
     if (ARRISOK(ordersA) && ARRISOK(ordersB)) {
@@ -112,12 +112,14 @@
     return orderSames;
 }
 
-+(void) analogyInnerOrders:(NSArray*)orders buildAbsAlgBlock:(AIAbsAlgNode*(^)(NSArray* algSames,AIAlgNode *conAlg))buildAbsAlgBlock buildAbsFoBlock:(AINetAbsFoNode*(^)(NSArray* orderSames))buildAbsFoBlock{
++(void) analogyInnerOrders:(AIFoNodeBase*)checkFo{
     //1. 数据检查
-    orders = ARRTOOK(orders);
+    if (!ISOK(checkFo, AIFoNodeBase.class)) {
+        return;
+    }
+    NSArray *orders = ARRTOOK(checkFo.orders_kvp);
     
     //2. 内类比 (每个元素,分别与orders后面所有元素进行类比)
-    NSMutableDictionary *findDiffs = [[NSMutableDictionary alloc] init];
     for (NSInteger i = 0; i < orders.count; i++) {
         for (NSInteger j = i + 1; j < orders.count; j++) {
             ///1. 取出两个祖母;
@@ -127,6 +129,7 @@
             AIAlgNode *algNodeB = [SMGUtils searchObjectForPointer:algB_p fileName:FILENAME_Node time:cRedisNodeTime];
             
             ///2. 找不同 (同区不同值)
+            NSMutableArray *findDiffs = [[NSMutableArray alloc] init];
             if (algNodeA && algNodeB && algNodeA.value_ps.count == algNodeB.value_ps.count) {
                 for (AIKVPointer *valueA_p in algNodeA.value_ps) {
                     for (AIKVPointer *valueB_p in algNodeB.value_ps) {
@@ -136,28 +139,39 @@
                             
                             ///4. 对比微信息是否不同 (MARK_VALUE:如微信息去重功能去掉,此处要取值再进行对比)
                             if (valueA_p.pointerId != valueB_p.pointerId) {
-                                NSData *aKey = [NSKeyedArchiver archivedDataWithRootObject:valueA_p];
-                                [findDiffs setObject:valueB_p forKey:aKey];
-                                
-                                
+                                NSDictionary *diffItem = @{@"ap":valueA_p,@"bp":valueB_p,@"an":algNodeA,@"bn":algNodeB};
+                                [findDiffs addObject:diffItem];
                             }
                         }
                     }
                 }
             }
+            
+            ///5. 有效时进行内类比构建 (有且仅有1条微信息不同);
+            if (findDiffs.count == 1) {
+                NSInteger start = i + 1;
+                NSInteger length = j - start;
+                NSDictionary *diffItem = ARR_INDEX(findDiffs, 0);
+                [self analogyInnerOrders_Creater:[diffItem objectForKey:@"ap"]
+                                        valueB_p:[diffItem objectForKey:@"bp"]
+                                            algA:[diffItem objectForKey:@"an"]
+                                            algB:[diffItem objectForKey:@"bp"]
+                                     rangeOrders:ARR_SUB(orders, start, length)
+                                           conFo:checkFo];
+                
+            }
         }
     }
-    
-    //3. 有效时 (有且仅有1条微信息不同),
-    
-    
     
     //4. 内中有外_根据absFo联想assAbsFo并进行外类比;
     //通过祖母引用联想assFo,后进行两者外类比
     
+    //TODOTOMORROW: 对外类比进行复用,
     
     
 }
+    
+
 
 +(BOOL) analogySubWithExpOrder:(NSArray*)expOrder checkOrder:(NSArray*)checkOrder canAss:(BOOL(^)())canAssBlock checkAlgNode:(BOOL(^)(NSArray* algSames,AIAlgNode *algA,AIAlgNode *algB))checkAlgNodeBlock{
     
@@ -176,9 +190,14 @@
     return false;
 }
 
-//内类比的构建方法
-+(void)analogyInnerOrders_Creater:(AIKVPointer*)valueA_p valueB_p:(AIKVPointer*)valueB_p algA:(AIAlgNode*)algA algB:(AIAlgNode*)algB{
+/**
+ *  MARK:--------------------内类比的构建方法--------------------
+ *  @param rangeOrders : 在i-j之间的orders; (如 "a1 balabala a2" 中,balabala就是rangeOrders)
+ *  @param conFo : 用来构建抽象具象时序时,作为具象节点使用;
+ */
++(void)analogyInnerOrders_Creater:(AIKVPointer*)valueA_p valueB_p:(AIKVPointer*)valueB_p algA:(AIAlgNode*)algA algB:(AIAlgNode*)algB rangeOrders:(NSArray*)rangeOrders conFo:(AIFoNodeBase*)conFo{
     //1. 数据检查
+    rangeOrders = ARRTOOK(rangeOrders);
     if (valueA_p && valueB_p && algA && algB) {
         
         //2. 取出dynamic抽象祖母 (祖母引用联想的方式去重)
@@ -194,41 +213,37 @@
         NSNumber *numA = [SMGUtils searchObjectForPointer:valueA_p fileName:FILENAME_Value time:cRedisValueTime];
         NSNumber *numB = [SMGUtils searchObjectForPointer:valueB_p fileName:FILENAME_Value time:cRedisValueTime];
         NSComparisonResult compareResult = [NUMTOOK(numA) compare:numB];
+        if (compareResult == NSOrderedSame) {
+            return;
+        }
         
-        //4. 构建&关联器
-        void (^RelateDynamicAlgBlock)(AIAlgNodeBase*, AIAlgNode*,AIPointer*) = ^(AIAlgNodeBase *dynamicAbsNode, AIAlgNode *conNode,AIPointer *value_p){
+        //4. 祖母_构建&关联器
+        AIAlgNodeBase* (^RelateDynamicAlgBlock)(AIAlgNodeBase*, AIAlgNode*,AIPointer*) = ^AIAlgNodeBase* (AIAlgNodeBase *dynamicAbsNode, AIAlgNode *conNode,AIPointer *value_p){
             if (ISOK(dynamicAbsNode, AIAbsAlgNode.class)) {
                 ///1. 有效时,关联;
                 [AINetUtils relateAbs:(AIAbsAlgNode*)dynamicAbsNode conNodes:@[conNode] save:true];
             }else{
                 ///2. 无效时,构建;
                 if (value_p) {
-                    [theNet createAbsAlgNode:@[value_p] alg:conNode];
+                    dynamicAbsNode = [theNet createAbsAlgNode:@[value_p] alg:conNode];
                 }
             }
+            return dynamicAbsNode;
         };
         
-        //5. 构建动态祖母; (变小构建less | 变大构建greater相对祖母)
-        if (compareResult == NSOrderedDescending) {
-            RelateDynamicAlgBlock(lessAlg,algA,less_p);
-            RelateDynamicAlgBlock(greaterAlg,algB,greater_p);
-        }else if(compareResult == NSOrderedAscending){
-            RelateDynamicAlgBlock(lessAlg,algB,less_p);
-            RelateDynamicAlgBlock(greaterAlg,algA,greater_p);
+        //5. 构建动态抽象祖母; (从小到大 / 从大到小)
+        BOOL aThan = (compareResult == NSOrderedAscending);
+        lessAlg = RelateDynamicAlgBlock(lessAlg,(aThan ? algB : algA),less_p);
+        greaterAlg = RelateDynamicAlgBlock(greaterAlg,(aThan ? algA : algB),greater_p);
+    
+        //6. 构建抽象时序; (小动致大 / 大动致小) (之间的信息为balabala)
+        if (lessAlg && greaterAlg) {
+            NSMutableArray *absOrders = [[NSMutableArray alloc] init];
+            [absOrders addObject:(aThan ? greaterAlg.pointer : lessAlg.pointer)];
+            [absOrders addObjectsFromArray:rangeOrders];
+            [absOrders addObject:(aThan ? lessAlg.pointer : greaterAlg.pointer)];
+            [theNet createAbsFo_Inner:conFo orderSames:absOrders];
         }
-    
-        //4. 构建抽象时序absFo;
-        //对algNodeA->algNodeB (less与greater之间的信息截进来) 进行构建时序;
-        //(去重,关联增强或新建);
-        
-        //////TODOTOMORROW:构建70->80间,a1->a2间的,部分时序的,fo节点;
-        
-        
-        
-        
-        
-        
-    
     }
 }
 

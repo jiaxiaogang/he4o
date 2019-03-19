@@ -44,9 +44,10 @@
 
 
 //MARK:===============================================================
-//MARK:                     < abs >
+//MARK:                     < absFo >
 //MARK:===============================================================
--(AINetAbsFoNode*) createAbs:(AIFoNodeBase*)foA foB:(AIFoNodeBase*)foB orderSames:(NSArray*)orderSames;
+-(AINetAbsFoNode*) createAbsFo_Outside:(AIFoNodeBase*)foA foB:(AIFoNodeBase*)foB orderSames:(NSArray*)orderSames;
+-(AINetAbsFoNode*) createAbsFo_Inner:(AIFoNodeBase*)conFo orderSames:(NSArray*)orderSames;
 
 
 //MARK:===============================================================

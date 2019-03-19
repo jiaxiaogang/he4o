@@ -147,10 +147,19 @@ static AINet *_instance;
 }
 
 //MARK:===============================================================
-//MARK:                     < abs >
+//MARK:                     < absFo >
 //MARK:===============================================================
--(AINetAbsFoNode*) createAbs:(AIFoNodeBase*)foA foB:(AIFoNodeBase*)foB orderSames:(NSArray*)orderSames{
-    return [self.absManager create:foA foB:foB orderSames:orderSames];
+-(AINetAbsFoNode*) createAbsFo_Outside:(AIFoNodeBase*)foA foB:(AIFoNodeBase*)foB orderSames:(NSArray*)orderSames{
+    if (ISOK(foA, AIFoNodeBase.class) && ISOK(foB, AIFoNodeBase.class)) {
+        return [self.absManager create:@[foA,foB] orderSames:orderSames];
+    }
+    return nil;
+}
+-(AINetAbsFoNode*) createAbsFo_Inner:(AIFoNodeBase*)conFo orderSames:(NSArray*)orderSames{
+    if (ISOK(conFo, AIFoNodeBase.class)) {
+        return [self.absManager create:@[conFo] orderSames:orderSames];
+    }
+    return nil;
 }
 
 //MARK:===============================================================

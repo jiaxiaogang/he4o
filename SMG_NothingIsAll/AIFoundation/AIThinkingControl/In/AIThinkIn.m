@@ -232,7 +232,7 @@
                     NSLog(@"\n抽象前========== %@",[NVUtils getCmvModelDesc_ByFoNode:assFrontNode]);
                     
                     //6. 类比orders的规律,并abs;
-                    NSArray *orderSames = [ThinkingUtils analogyOrdersA:foNode.orders_kvp ordersB:assFrontNode.orders_kvp canAss:^BOOL{
+                    NSArray *orderSames = [ThinkingUtils analogyOutsideOrdersA:foNode.orders_kvp ordersB:assFrontNode.orders_kvp canAss:^BOOL{
                         if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_EnergyValid)] && [self.delegate respondsToSelector:@selector(aiThinkIn_UpdateEnergy:)]) {
                             if ([self.delegate aiThinkIn_EnergyValid]) {
                                 [self.delegate aiThinkIn_UpdateEnergy:-1];
@@ -255,12 +255,12 @@
                         BOOL jumpForAbsAlreadyHav = (ISOK(assFrontNode, AINetAbsFoNode.class) && samesEqualAssFo);
                         if (jumpForAbsAlreadyHav) {
                             ///1. 直接关联即可
-                            AINetAbsFoNode *assAbsFo = (AINetAbsFoNode*)assFrontNode;
+                            AINetAbsFoNode *assAbsFo = (AINetAbsFoNode*)assFrontNode;//有可能类型转错误;
                             [AINetUtils insertPointer:foNode.pointer toPorts:assAbsFo.conPorts ps:foNode.orders_kvp];
                             [AINetUtils insertPointer:assAbsFo.pointer toPorts:foNode.absPorts ps:assAbsFo.orders_kvp];
                         }else{
                             //8. 构建absNode
-                            AINetAbsFoNode *create_an = [[AINet sharedInstance] createAbs:foNode foB:foNode orderSames:orderSames];
+                            AINetAbsFoNode *create_an = [theNet createAbsFo_Outside:foNode foB:assFrontNode orderSames:orderSames];
                             
                             //9. 并把抽象节点的信息_添加到瞬时记忆
                             if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_AddToShortMemory:)]) {

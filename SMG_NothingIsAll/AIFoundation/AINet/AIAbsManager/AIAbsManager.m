@@ -23,8 +23,11 @@
 
 @implementation AIAbsManager
 
--(AINetAbsFoNode*) create:(AIFoNodeBase*)foA foB:(AIFoNodeBase*)foB orderSames:(NSArray*)orderSames{
+-(AINetAbsFoNode*) create:(NSArray*)conFos orderSames:(NSArray*)orderSames{
     //1. 数据准备
+    if (!ARRISOK(conFos)) {
+        return nil;
+    }
     NSArray *sortSames = ARRTOOK([SMGUtils sortPointers:orderSames]);
     NSString *samesStr = [SMGUtils convertPointers2String:sortSames];
     NSString *samesMd5 = STRTOOK([NSString md5:samesStr]);
@@ -32,8 +35,9 @@
     //2. 判断algA.absPorts和absB.absPorts中的header,是否已存在algSames的抽象节点;
     AINetAbsFoNode *findAbsNode = nil;
     NSMutableArray *allAbsPorts = [[NSMutableArray alloc] init];
-    [allAbsPorts addObjectsFromArray:foA.absPorts];
-    [allAbsPorts addObjectsFromArray:foB.absPorts];
+    for (AIFoNodeBase *conItem in conFos) {
+        [allAbsPorts addObjectsFromArray:conItem.absPorts];
+    }
     for (AIPort *port in allAbsPorts) {
         if ([samesMd5 isEqualToString:port.header]) {
             findAbsNode = [SMGUtils searchObjectForPointer:port.target_p fileName:FILENAME_Node time:cRedisNodeTime];
@@ -51,16 +55,15 @@
         [AINetUtils insertPointer:findAbsNode.pointer toRefPortsByOrders:findAbsNode.orders_kvp ps:findAbsNode.orders_kvp];
     }
     
-    //5. 关联
-    [AINetUtils insertPointer:findAbsNode.pointer toPorts:foA.absPorts ps:findAbsNode.orders_kvp];
-    [AINetUtils insertPointer:findAbsNode.pointer toPorts:foB.absPorts ps:findAbsNode.orders_kvp];
-    [AINetUtils insertPointer:foA.pointer toPorts:findAbsNode.conPorts ps:foA.orders_kvp];
-    [AINetUtils insertPointer:foB.pointer toPorts:findAbsNode.conPorts ps:foB.orders_kvp];
+    //5. 具象节点_关联&存储
+    for (AIFoNodeBase *conItem in conFos) {
+        [AINetUtils insertPointer:findAbsNode.pointer toPorts:conItem.absPorts ps:findAbsNode.orders_kvp];
+        [AINetUtils insertPointer:conItem.pointer toPorts:findAbsNode.conPorts ps:conItem.orders_kvp];
+        [SMGUtils insertObject:conItem pointer:conItem.pointer fileName:FILENAME_Node time:cRedisNodeTime];
+    }
     
-    //6. 存储
+    //6. 抽象节点_存储
     [SMGUtils insertObject:findAbsNode pointer:findAbsNode.pointer fileName:FILENAME_Node time:cRedisNodeTime];
-    [SMGUtils insertObject:foA pointer:foA.pointer fileName:FILENAME_Node time:cRedisNodeTime];
-    [SMGUtils insertObject:foB pointer:foB.pointer fileName:FILENAME_Node time:cRedisNodeTime];
     
     return findAbsNode;
 }

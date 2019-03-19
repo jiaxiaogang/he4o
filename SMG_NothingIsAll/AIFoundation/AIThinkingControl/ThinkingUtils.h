@@ -47,13 +47,11 @@
  *  注: 类比的处理,是足够细化的,对思维每个信号作类比操作;(而将类比到的最基本的结果,输出给thinking,以供为构建网络的依据,最终是以网络为目的的)
  *  注: 随后可以由一个sames改为多个sames并实时使用block抽象 (并消耗energy);
  */
-+(NSArray*) analogyOrdersA:(NSArray*)ordersA ordersB:(NSArray*)ordersB canAss:(BOOL(^)())canAssBlock buildAlgNode:(AIAbsAlgNode*(^)(NSArray* algSames,AIAlgNode *algA,AIAlgNode *algB))buildAlgNodeBlock;
++(NSArray*) analogyOutsideOrdersA:(NSArray*)ordersA ordersB:(NSArray*)ordersB canAss:(BOOL(^)())canAssBlock buildAlgNode:(AIAbsAlgNode*(^)(NSArray* algSames,AIAlgNode *algA,AIAlgNode *algB))buildAlgNodeBlock;
 
 /**
  *  MARK:--------------------fo内类比 (内中有外,找不同算法)--------------------
- *  @param orders           : 要处理的fo.orders;
- *  @param buildAbsAlgBlock : 构建抽象祖母回调;
- *  @param buildAbsFoBlock  : 构建抽象时序回调;
+ *  @param checkFo           : 要处理的fo.orders;
  *
  *  1. 此方法对一个fo内的orders进行内类比,并将找到的变化进行抽象构建网络;
  *  2. 如: 绿瓜变红瓜,如远坚果变近坚果;
@@ -61,7 +59,7 @@
  *  注: 目前仅支持一个微信息变化的规律;
  *  TODO: 将内类比的类比部分代码,进行单独PrivateMethod,然后与外类比中调用的进行复用;
  */
-+(void) analogyInnerOrders:(NSArray*)orders buildAbsAlgBlock:(AIAbsAlgNode*(^)(NSArray* algSames,AIAlgNode *conAlg))buildAbsAlgBlock buildAbsFoBlock:(AINetAbsFoNode*(^)(NSArray* orderSames))buildAbsFoBlock;
++(void) analogyInnerOrders:(AIFoNodeBase*)checkFo;
 
 /**
  *  MARK:--------------------类比相减 得出解决方案的条件判定--------------------
