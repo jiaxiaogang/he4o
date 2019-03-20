@@ -18,6 +18,7 @@
 #import "AINet.h"
 #import "AINetAbsFoNode.h"
 #import "AIAbsCMVNode.h"
+#import "AIThinkInAnalogy.h"
 
 @implementation AIThinkIn
 
@@ -232,7 +233,7 @@
                     NSLog(@"\n抽象前========== %@",[NVUtils getCmvModelDesc_ByFoNode:assFrontNode]);
                     
                     //6. 类比orders的规律,并abs;
-                    NSArray *orderSames = [ThinkingUtils analogyOutsideOrdersA:foNode.orders_kvp ordersB:assFrontNode.orders_kvp canAss:^BOOL{
+                    NSArray *orderSames = [AIThinkInAnalogy analogyOutsideOrdersA:foNode.orders_kvp ordersB:assFrontNode.orders_kvp canAss:^BOOL{
                         if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_EnergyValid)] && [self.delegate respondsToSelector:@selector(aiThinkIn_UpdateEnergy:)]) {
                             if ([self.delegate aiThinkIn_EnergyValid]) {
                                 [self.delegate aiThinkIn_UpdateEnergy:-1];
