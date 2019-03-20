@@ -112,32 +112,31 @@
     return orderSames;
 }
 
-+(void) analogyInnerOrders:(AIFoNodeBase*)checkFo{
++(void) analogyInnerOrders:(AIFoNodeBase*)checkFo canAss:(BOOL(^)())canAssBlock{
     //1. 数据检查
     if (!ISOK(checkFo, AIFoNodeBase.class)) {
         return;
     }
     NSArray *orders = ARRTOOK(checkFo.orders_kvp);
     
-    //2. 内类比 (每个元素,分别与orders后面所有元素进行类比)
+    //2. 取出两个祖母 (每个元素,分别与orders后面所有元素进行类比)
     for (NSInteger i = 0; i < orders.count; i++) {
         for (NSInteger j = i + 1; j < orders.count; j++) {
-            ///1. 取出两个祖母;
             AIKVPointer *algA_p = ARR_INDEX(orders, i);
             AIKVPointer *algB_p = ARR_INDEX(orders, j);
             AIAlgNode *algNodeA = [SMGUtils searchObjectForPointer:algA_p fileName:FILENAME_Node time:cRedisNodeTime];
             AIAlgNode *algNodeB = [SMGUtils searchObjectForPointer:algB_p fileName:FILENAME_Node time:cRedisNodeTime];
             
-            ///2. 找不同 (同区不同值)
+            //3. 内类比找不同 (同区不同值)
             NSMutableArray *findDiffs = [[NSMutableArray alloc] init];
             if (algNodeA && algNodeB && algNodeA.value_ps.count == algNodeB.value_ps.count) {
                 for (AIKVPointer *valueA_p in algNodeA.value_ps) {
                     for (AIKVPointer *valueB_p in algNodeB.value_ps) {
                         
-                        ///3. 对比相同算法标识的两个指针 (如,颜色,距离等)
+                        ///1. 对比相同算法标识的两个指针 (如,颜色,距离等)
                         if ([valueA_p.identifier isEqualToString:valueB_p.identifier]) {
                             
-                            ///4. 对比微信息是否不同 (MARK_VALUE:如微信息去重功能去掉,此处要取值再进行对比)
+                            ///2. 对比微信息是否不同 (MARK_VALUE:如微信息去重功能去掉,此处要取值再进行对比)
                             if (valueA_p.pointerId != valueB_p.pointerId) {
                                 NSDictionary *diffItem = @{@"ap":valueA_p,@"bp":valueB_p,@"an":algNodeA,@"bn":algNodeB};
                                 [findDiffs addObject:diffItem];
@@ -147,28 +146,56 @@
                 }
             }
             
-            ///5. 有效时进行内类比构建 (有且仅有1条微信息不同);
-            if (findDiffs.count == 1) {
-                NSInteger start = i + 1;
-                NSInteger length = j - start;
-                NSDictionary *diffItem = ARR_INDEX(findDiffs, 0);
-                [self analogyInnerOrders_Creater:[diffItem objectForKey:@"ap"]
-                                        valueB_p:[diffItem objectForKey:@"bp"]
-                                            algA:[diffItem objectForKey:@"an"]
-                                            algB:[diffItem objectForKey:@"bp"]
-                                     rangeOrders:ARR_SUB(orders, start, length)
-                                           conFo:checkFo];
+            //4. 内类比构建 (有且仅有1条微信息不同);
+            if (findDiffs.count != 1) {
+                continue;
+            }
+            NSInteger start = i + 1;
+            NSInteger length = j - start;
+            NSDictionary *diffItem = ARR_INDEX(findDiffs, 0);
+            AINetAbsFoNode *abFo = [self analogyInnerOrders_Creater:[diffItem objectForKey:@"ap"]
+                                    valueB_p:[diffItem objectForKey:@"bp"]
+                                        algA:[diffItem objectForKey:@"an"]
+                                        algB:[diffItem objectForKey:@"bp"]
+                                 rangeOrders:ARR_SUB(orders, start, length)
+                                       conFo:checkFo];
+            
+            //5. 内中有外 (根据abFo联想assAbFo并进行外类比) (尽量对外类比进行复用)
+            if (ISOK(abFo, AINetAbsFoNode.class)) {
+                ///1. 取用来联想的aAlg;
+                AIPointer *a_p = ARR_INDEX(abFo.orders_kvp, 0);
+                AIAlgNodeBase *aAlg = [SMGUtils searchObjectForPointer:a_p fileName:FILENAME_Node time:cRedisNodeTime];
+                if (!aAlg) {
+                    return;
+                }
                 
+                ///2. 根据aAlg联想到的assAbFo时序; (不能与abFo重复 & 必须符合aAlg在orders前面)
+                AIFoNodeBase *assAbFo = nil;
+                for (AIPort *refPort in aAlg.refPorts) {
+                    if (![aAlg.pointer isEqual:refPort.target_p]) {
+                        AIFoNodeBase *refFo = [SMGUtils searchObjectForPointer:refPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
+                        if (ISOK(refFo, AIFoNodeBase.class)) {
+                            AIPointer *firstAlg_p = ARR_INDEX(refFo.orders_kvp, 0);
+                            if ([a_p isEqual:firstAlg_p]) {
+                                assAbFo = refFo;
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                ///3. 对abFo和assAbFo进行类比;
+                
+                
+                
+                
+                //6. 对energy消耗;
+                if (!canAssBlock || !canAssBlock()) {
+                    return;
+                }
             }
         }
     }
-    
-    //4. 内中有外_根据absFo联想assAbsFo并进行外类比;
-    //通过祖母引用联想assFo,后进行两者外类比
-    
-    //TODOTOMORROW: 对外类比进行复用,
-    
-    
 }
     
 
@@ -195,7 +222,7 @@
  *  @param rangeOrders : 在i-j之间的orders; (如 "a1 balabala a2" 中,balabala就是rangeOrders)
  *  @param conFo : 用来构建抽象具象时序时,作为具象节点使用;
  */
-+(void)analogyInnerOrders_Creater:(AIKVPointer*)valueA_p valueB_p:(AIKVPointer*)valueB_p algA:(AIAlgNode*)algA algB:(AIAlgNode*)algB rangeOrders:(NSArray*)rangeOrders conFo:(AIFoNodeBase*)conFo{
++(AINetAbsFoNode*)analogyInnerOrders_Creater:(AIKVPointer*)valueA_p valueB_p:(AIKVPointer*)valueB_p algA:(AIAlgNode*)algA algB:(AIAlgNode*)algB rangeOrders:(NSArray*)rangeOrders conFo:(AIFoNodeBase*)conFo{
     //1. 数据检查
     rangeOrders = ARRTOOK(rangeOrders);
     if (valueA_p && valueB_p && algA && algB) {
@@ -203,8 +230,8 @@
         //2. 取出dynamic抽象祖母 (祖母引用联想的方式去重)
         AIPointer *less_p = [theNet getNetDataPointerWithData:@(cLess) algsType:valueA_p.algsType dataSource:valueA_p.dataSource];
         AIPointer *greater_p = [theNet getNetDataPointerWithData:@(cGreater) algsType:valueA_p.algsType dataSource:valueA_p.dataSource];
-        if (!less_p && !greater_p) {
-            return;
+        if (!less_p || !greater_p) {
+            return nil;
         }
         AIAlgNodeBase *lessAlg = [theNet getAbsoluteMatchingAlgNodeWithValuePs:@[less_p]];
         AIAlgNodeBase *greaterAlg = [theNet getAbsoluteMatchingAlgNodeWithValuePs:@[greater_p]];
@@ -214,7 +241,7 @@
         NSNumber *numB = [SMGUtils searchObjectForPointer:valueB_p fileName:FILENAME_Value time:cRedisValueTime];
         NSComparisonResult compareResult = [NUMTOOK(numA) compare:numB];
         if (compareResult == NSOrderedSame) {
-            return;
+            return nil;
         }
         
         //4. 祖母_构建&关联器
@@ -242,9 +269,10 @@
             [absOrders addObject:(aThan ? greaterAlg.pointer : lessAlg.pointer)];
             [absOrders addObjectsFromArray:rangeOrders];
             [absOrders addObject:(aThan ? lessAlg.pointer : greaterAlg.pointer)];
-            [theNet createAbsFo_Inner:conFo orderSames:absOrders];
+            return [theNet createAbsFo_Inner:conFo orderSames:absOrders];
         }
     }
+    return nil;
 }
 
 @end

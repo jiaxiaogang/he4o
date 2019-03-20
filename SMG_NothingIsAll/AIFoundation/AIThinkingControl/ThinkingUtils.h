@@ -51,7 +51,8 @@
 
 /**
  *  MARK:--------------------fo内类比 (内中有外,找不同算法)--------------------
- *  @param checkFo           : 要处理的fo.orders;
+ *  @param checkFo      : 要处理的fo.orders;
+ *  @param canAssBlock  : energy判断消耗器;
  *
  *  1. 此方法对一个fo内的orders进行内类比,并将找到的变化进行抽象构建网络;
  *  2. 如: 绿瓜变红瓜,如远坚果变近坚果;
@@ -59,7 +60,7 @@
  *  注: 目前仅支持一个微信息变化的规律;
  *  TODO: 将内类比的类比部分代码,进行单独PrivateMethod,然后与外类比中调用的进行复用;
  */
-+(void) analogyInnerOrders:(AIFoNodeBase*)checkFo;
++(void) analogyInnerOrders:(AIFoNodeBase*)checkFo canAss:(BOOL(^)())canAssBlock;
 
 /**
  *  MARK:--------------------类比相减 得出解决方案的条件判定--------------------
