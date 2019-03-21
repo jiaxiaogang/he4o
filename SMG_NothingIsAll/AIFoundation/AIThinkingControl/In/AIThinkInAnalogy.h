@@ -16,8 +16,8 @@
 
 /**
  *  MARK:--------------------fo外类比 (外中有内,找相同算法)--------------------
- *  @param canAssBlock          : 向tc询问一次是否允许联想 (一层层联想abs的过程需要消耗energy)
- *  @param buildAlgNodeBlock    : 类比到规律,进行抽象节点的构建;
+ *  @param canAssBlock      : energy判断器 (为null时,无限能量);
+ *  @param updateEnergy     : energy消耗器 (为null时,不消耗能量值);
  *  @result notnull             : 返回orderSames用于构建absFo
  *
  *  1. 连续信号中,找重复;(连续也是拆分,多事务处理的)
@@ -27,13 +27,14 @@
  *  注: 类比的处理,是足够细化的,对思维每个信号作类比操作;(而将类比到的最基本的结果,输出给thinking,以供为构建网络的依据,最终是以网络为目的的)
  *  注: 随后可以由一个sames改为多个sames并实时使用block抽象 (并消耗energy);
  */
-+(NSArray*) analogyOutsideOrdersA:(NSArray*)ordersA ordersB:(NSArray*)ordersB canAss:(BOOL(^)())canAssBlock buildAlgNode:(AIAbsAlgNode*(^)(NSArray* algSames,AIAlgNode *algA,AIAlgNode *algB))buildAlgNodeBlock;
++(NSArray*) analogyOutsideOrdersA:(NSArray*)ordersA ordersB:(NSArray*)ordersB canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)())updateEnergy;
 
 
 /**
  *  MARK:--------------------fo内类比 (内中有外,找不同算法)--------------------
  *  @param checkFo      : 要处理的fo.orders;
- *  @param canAssBlock  : energy判断消耗器;
+ *  @param canAssBlock  : energy判断器 (为null时,无限能量);
+ *  @param updateEnergy : energy消耗器 (为null时,不消耗能量值);
  *
  *  1. 此方法对一个fo内的orders进行内类比,并将找到的变化进行抽象构建网络;
  *  2. 如: 绿瓜变红瓜,如远坚果变近坚果;
@@ -41,6 +42,6 @@
  *  注: 目前仅支持一个微信息变化的规律;
  *  TODO: 将内类比的类比部分代码,进行单独PrivateMethod,然后与外类比中调用的进行复用;
  */
-+(void) analogyInnerOrders:(AIFoNodeBase*)checkFo canAss:(BOOL(^)())canAssBlock;
++(void) analogyInnerOrders:(AIFoNodeBase*)checkFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)())updateEnergy;
 
 @end

@@ -216,7 +216,6 @@
     //2. 联想相关数据
     NSInteger delta = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
     MVDirection direction = delta < 0 ? MVDirection_Negative : MVDirection_Positive;
-    //NSArray *assDirectionPorts_Nag = [[AINet sharedInstance] getNetNodePointersFromDirectionReference:cmvNode.pointer.algsType direction:MVDirection_Negative limit:2];//由双方向都取改为只取同方向;
     NSArray *directionPorts = [[AINet sharedInstance] getNetNodePointersFromDirectionReference:cmvNode.pointer.algsType direction:direction limit:2];
     
     //3. 联想cmv模型
@@ -232,17 +231,11 @@
                 if (ISOK(assFrontNode, AINodeBase.class)) {
                     NSLog(@"\n抽象前========== %@",[NVUtils getCmvModelDesc_ByFoNode:assFrontNode]);
                     
-                    //6. 类比orders的规律,并abs;
+                    //5. 类比orders的规律,并abs;
                     NSArray *orderSames = [AIThinkInAnalogy analogyOutsideOrdersA:foNode.orders_kvp ordersB:assFrontNode.orders_kvp canAss:^BOOL{
-                        if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_EnergyValid)] && [self.delegate respondsToSelector:@selector(aiThinkIn_UpdateEnergy:)]) {
-                            if ([self.delegate aiThinkIn_EnergyValid]) {
-                                [self.delegate aiThinkIn_UpdateEnergy:-1];
-                                return true;
-                            }
-                        }
-                        return false;
-                    } buildAlgNode:^AIAbsAlgNode *(NSArray *algSames, AIAlgNode *algA, AIAlgNode *algB) {
-                        return [theNet createAbsAlgNode:algSames algA:algA algB:algB];
+                        return [self canAss];
+                    } updateEnergy:^{
+                        [self updateEnergy];
                     }];
                     
                     NSString *foOrderStr = [NVUtils convertOrderPs2Str:foNode.orders_kvp];
@@ -250,12 +243,12 @@
                     NSString *samesStr = [NVUtils convertOrderPs2Str:orderSames];
                     NSLog(@"\n抽象中========== 类比sames:\n%@\n&\n%@\n=\n%@",foOrderStr,assMicroStr,samesStr);
                     
-                    //7. 已存在抽象节点或sames无效时跳过;
+                    //6. 已存在抽象节点或sames无效时跳过;
                     if (ARRISOK(orderSames)) {
                         BOOL samesEqualAssFo = orderSames.count == assFrontNode.orders_kvp.count && [SMGUtils containsSub_ps:orderSames parent_ps:assFrontNode.orders_kvp];
                         BOOL jumpForAbsAlreadyHav = (ISOK(assFrontNode, AINetAbsFoNode.class) && samesEqualAssFo);
                         if (jumpForAbsAlreadyHav) {
-                            ///1. 直接关联即可
+                            //7. 直接关联即可
                             AINetAbsFoNode *assAbsFo = (AINetAbsFoNode*)assFrontNode;//有可能类型转错误;
                             [AINetUtils insertPointer:foNode.pointer toPorts:assAbsFo.conPorts ps:foNode.orders_kvp];
                             [AINetUtils insertPointer:assAbsFo.pointer toPorts:foNode.absPorts ps:assAbsFo.orders_kvp];
@@ -263,11 +256,9 @@
                             //8. 构建absNode
                             AINetAbsFoNode *create_an = [theNet createAbsFo_Outside:foNode foB:assFrontNode orderSames:orderSames];
                             
-                            //9. 并把抽象节点的信息_添加到瞬时记忆
-                            if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_AddToShortMemory:)]) {
-                                [self.delegate aiThinkIn_AddToShortMemory:create_an.orders_kvp];
-                            }
-                            
+                            //9. 并把抽象节点的信息_添加到瞬时记忆 (此处不应添加 & 由意识流双序列替代)
+                            //[self.delegate aiThinkIn_AddToShortMemory:create_an.orders_kvp];
+                        
                             //10. createAbsCmvNode
                             AIAbsCMVNode *create_acn = [theNet createAbsCMVNode:create_an.pointer aMv_p:foNode.cmvNode_p bMv_p:ass_cn.pointer];
                             
@@ -286,6 +277,32 @@
                 }
             }
         }
+    }
+    
+    //12. 内类比
+    [AIThinkInAnalogy analogyInnerOrders:foNode canAss:^BOOL{
+        return [self canAss];
+    } updateEnergy:^{
+        [self updateEnergy];
+    }];
+}
+
+//MARK:===============================================================
+//MARK:                     < private_Method >
+//MARK:===============================================================
+
+//联想前判断;
+-(BOOL) canAss{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_EnergyValid)]) {
+        return [self.delegate aiThinkIn_EnergyValid];
+    }
+    return false;
+}
+
+//消耗能量值 (目前仅在构建后);
+-(void) updateEnergy{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_UpdateEnergy:)]) {
+        [self.delegate aiThinkIn_UpdateEnergy:-1];
     }
 }
 
