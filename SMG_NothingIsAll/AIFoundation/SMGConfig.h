@@ -38,3 +38,8 @@
 
 #define cGreater NSIntegerMax  //表示内类比算法中,比大小时的大;
 #define cLess NSIntegerMin     //表示内类比算法中,比大小时的大;
+
+//MARK:===============================================================
+//MARK:                     < ThinkIn >
+//MARK:===============================================================
+#define cMvNoneIdent @"mvNone"     //mv的默认标识
