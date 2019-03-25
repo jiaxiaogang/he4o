@@ -189,9 +189,9 @@ static AINet *_instance;
     return [self.absCmvManager create:absFo_p aMv_p:aMv_p bMv_p:bMv_p];
 }
 
--(AIAbsCMVNode*) createAbsCMVNode_Inner:(AIKVPointer*)absFo_p mv_p:(AIKVPointer*)mv_p{
-    if (POINTERISOK(mv_p)) {
-        return [self.absCmvManager create:absFo_p conMvPs:@[mv_p]];
+-(AIAbsCMVNode*) createAbsCMVNode_Inner:(AIKVPointer*)absFo_p conMv_p:(AIKVPointer*)conMv_p{
+    if (POINTERISOK(conMv_p)) {
+        return [self.absCmvManager create:absFo_p conMvPs:@[conMv_p]];
     }
     return nil;
 }

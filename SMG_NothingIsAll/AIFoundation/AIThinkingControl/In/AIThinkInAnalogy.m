@@ -198,12 +198,6 @@
             
             //8. 内中有外
             [self analogyInner_Outside:abFo canAss:canAssBlock updateEnergy:updateEnergy];
-            
-            
-            
-            
-            //TODOTOMORROW:
-            //3. 对于abFoNode->cmv基本模型的思考;(即abFo指向的mvNode如何生成)
         }
     }
 }
@@ -218,6 +212,7 @@
  *  1. 构建动态微信息;
  *  2. 构建动态祖母;
  *  3. 构建abFoNode时序;
+ *  4. 构建mv节点;
  */
 +(AINetAbsFoNode*)analogyInner_Creater:(AIKVPointer*)valueA_p valueB_p:(AIKVPointer*)valueB_p algA:(AIAlgNode*)algA algB:(AIAlgNode*)algB rangeOrders:(NSArray*)rangeOrders conFo:(AIFoNodeBase*)conFo{
     //1. 数据检查
@@ -266,7 +261,21 @@
             [absOrders addObject:(aThan ? greaterAlg.pointer : lessAlg.pointer)];
             [absOrders addObjectsFromArray:rangeOrders];
             [absOrders addObject:(aThan ? lessAlg.pointer : greaterAlg.pointer)];
-            return [theNet createAbsFo_Inner:conFo orderSames:absOrders];
+            AINetAbsFoNode *createrFo = [theNet createAbsFo_Inner:conFo orderSames:absOrders];
+            
+            if (!createrFo) {
+                return nil;
+            }
+            
+            //7. 构建mv节点,形成mv基本模型;
+            AIAbsCMVNode * createrMv = [theNet createAbsCMVNode_Inner:createrFo.pointer conMv_p:conFo.cmvNode_p];
+            
+            //8. cmv模型连接;
+            if (ISOK(createrMv, AIAbsCMVNode.class)) {
+                createrFo.cmvNode_p = createrMv.pointer;
+                [SMGUtils insertObject:createrFo pointer:createrFo.pointer fileName:FILENAME_Node time:cRedisNodeTime];
+            }
+            return createrFo;
         }
     }
     return nil;

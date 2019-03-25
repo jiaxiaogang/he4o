@@ -71,7 +71,7 @@
 //MARK:                     < absCmv >
 //MARK:===============================================================
 -(AIAbsCMVNode*) createAbsCMVNode_Outside:(AIKVPointer*)absFo_p aMv_p:(AIKVPointer*)aMv_p bMv_p:(AIKVPointer*)bMv_p;
--(AIAbsCMVNode*) createAbsCMVNode_Inner:(AIKVPointer*)absFo_p mv_p:(AIKVPointer*)mv_p;
+-(AIAbsCMVNode*) createAbsCMVNode_Inner:(AIKVPointer*)absFo_p conMv_p:(AIKVPointer*)conMv_p;
 
 
 //MARK:===============================================================
