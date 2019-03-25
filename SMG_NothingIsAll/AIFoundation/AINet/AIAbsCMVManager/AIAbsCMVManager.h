@@ -40,10 +40,12 @@
 
 /**
  *  MARK:--------------------在两个cmvNode基础上构建抽象--------------------
- *  @params absNode_p : 抽象宏节点(前因)
+ *  @params absFo_p : 抽象宏节点(前因)
  *  @params aMv_p : cmv节点A
  *  @params bMv_p : cmv节点B
+ *  注: 融合方式,可参考:n16p1
  */
--(AIAbsCMVNode*) create:(AIKVPointer*)absNode_p aMv_p:(AIKVPointer*)aMv_p bMv_p:(AIKVPointer*)bMv_p;
+-(AIAbsCMVNode*) create:(AIKVPointer*)absFo_p aMv_p:(AIKVPointer*)aMv_p bMv_p:(AIKVPointer*)bMv_p ;
+-(AIAbsCMVNode*) create:(AIKVPointer*)absFo_p conMvPs:(NSArray*)conMv_ps;
 
 @end

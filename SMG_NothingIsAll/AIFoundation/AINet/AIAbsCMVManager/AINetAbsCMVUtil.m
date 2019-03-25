@@ -12,43 +12,60 @@
 @implementation AINetAbsCMVUtil
 
 
+//MARK:===============================================================
+//MARK:                     < publicMethod >
+//MARK:===============================================================
+
 /**
  *  MARK:--------------------取aNode和bNode的抽象urgentTo值--------------------
  */
-+(NSInteger) getAbsUrgentTo:(AICMVNodeBase*)aMv bMv_p:(AICMVNodeBase*)bMv{
-    //1. 数据检查
-    if (!aMv || !bMv) {
++(NSInteger) getAbsUrgentTo:(NSArray*)mvNodes {
+    return [self getAbsValue:mvNodes singleValueBlock:^NSInteger(AICMVNodeBase *mvNode) {
+        if (ISOK(mvNode, AICMVNodeBase.class)) {
+            return [NUMTOOK([SMGUtils searchObjectForPointer:mvNode.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
+        }
         return 0;
-    }
-    
-    //2. 取urgentTo
-    NSInteger aUrgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:aMv.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
-    NSInteger bUrgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:bMv.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
-    
-    //3. 取absUrgentTo;
-    NSInteger absUrgentTo = MIN(aUrgentTo, bUrgentTo);
-    return absUrgentTo;
+    }];
 }
 
 
 /**
  *  MARK:--------------------取aNode和bNode的抽象delta值--------------------
  */
-+(NSInteger) getAbsDelta:(AICMVNodeBase*)aMv bMv_p:(AICMVNodeBase*)bMv{
++(NSInteger) getAbsDelta:(NSArray*)mvNodes {
+    return [self getAbsValue:mvNodes singleValueBlock:^NSInteger(AICMVNodeBase *mvNode) {
+        if (ISOK(mvNode, AICMVNodeBase.class)) {
+            return [NUMTOOK([SMGUtils searchObjectForPointer:mvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
+        }
+        return 0;
+    }];
+}
+
+
+//MARK:===============================================================
+//MARK:                     < privateMethod >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------获取平均值方法--------------------
+ */
++(NSInteger) getAbsValue:(NSArray*)mvNodes singleValueBlock:(NSInteger(^)(AICMVNodeBase*))singleValueBlock{
     //1. 数据检查
-    if (!aMv || !bMv) {
+    if (!ARRISOK(mvNodes) || !singleValueBlock) {
         return 0;
     }
     
-    //2. 取delta
-    NSInteger aDelta = [NUMTOOK([SMGUtils searchObjectForPointer:aMv.delta_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
-    NSInteger bDelta = [NUMTOOK([SMGUtils searchObjectForPointer:bMv.delta_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
+    //2. 取SUM(urgentTo | delta)
+    NSInteger sum = 0;
+    for (AICMVNodeBase *mvNode in mvNodes) {
+        NSInteger singleValue = singleValueBlock(mvNode);
+        sum += singleValue;
+    }
     
-    //3. 取absDelta值;
-    NSInteger absDelta = MIN(aDelta, bDelta);
-    return absDelta;
+    //3. 取absUrgentTo | absDelta; (//由MIN(aUrgentTo, bUrgentTo)改为平均)
+    NSInteger absValue = sum / mvNodes.count;
+    return absValue;
 }
-
 
 
 @end

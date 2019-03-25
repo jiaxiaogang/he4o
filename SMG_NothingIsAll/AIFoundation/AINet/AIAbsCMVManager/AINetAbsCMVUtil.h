@@ -14,13 +14,13 @@
 /**
  *  MARK:--------------------取aNode和bNode的抽象urgentTo值--------------------
  */
-+(NSInteger) getAbsUrgentTo:(AICMVNodeBase*)aMv bMv_p:(AICMVNodeBase*)bMv;
++(NSInteger) getAbsUrgentTo:(NSArray*)mvNodes;
 
 
 /**
  *  MARK:--------------------取aNode和bNode的抽象delta值--------------------
  */
-+(NSInteger) getAbsDelta:(AICMVNodeBase*)aMv bMv_p:(AICMVNodeBase*)bMv;
++(NSInteger) getAbsDelta:(NSArray*)mvNodes;
 
 
 @end

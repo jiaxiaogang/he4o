@@ -14,18 +14,20 @@
 #import "AIPort.h"
 #import "AINet.h"
 #import "AINetUtils.h"
+#import "AIFrontOrderNode.h"
+#import "AIAbsCMVNode.h"
 
 @implementation AIThinkInAnalogy
 
 //MARK:===============================================================
 //MARK:                     < 外类比部分 >
 //MARK:===============================================================
-+(NSArray*) analogyOutsideOrdersA:(NSArray*)ordersA ordersB:(NSArray*)ordersB canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)())updateEnergy{
++(void) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)())updateEnergy{
     //1. 类比orders的规律
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
-    if (ARRISOK(ordersA) && ARRISOK(ordersB)) {
-        for (AIKVPointer *algNodeA_p in ordersA) {
-            for (AIKVPointer *algNodeB_p in ordersB) {
+    if (fo && assFo) {
+        for (AIKVPointer *algNodeA_p in fo.orders_kvp) {
+            for (AIKVPointer *algNodeB_p in assFo.orders_kvp) {
                 //2. A与B直接一致则直接添加 & 不一致则如下代码;
                 if ([algNodeA_p isEqual:algNodeB_p]) {
                     [orderSames addObject:algNodeA_p];
@@ -61,7 +63,7 @@
                         }
                     }
                     
-                    ///4. absPorts->orderSames (根据强度优先)
+                    ///5. absPorts->orderSames (根据强度优先)
                     for (AIPort *aPort in algNodeA.absPorts) {
                         for (AIPort *bPort in algNodeB.absPorts) {
                             if ([aPort.target_p isEqual:bPort.target_p]) {
@@ -74,14 +76,64 @@
             }
         }
     }
-    return orderSames;
+
+    //3. 外类比构建
+    [self analogyOutside_Creater:orderSames fo:fo assFo:assFo];
+}
+
+/**
+ *  MARK:--------------------外类比的构建器--------------------
+ *  1. 构建absFo
+ *  2. 构建absCmv
+ */
++(void)analogyOutside_Creater:(NSArray*)orderSames fo:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo{
+    
+    //1. 外类比构建前日志;
+    NSString *foOrderStr = [NVUtils convertOrderPs2Str:fo.orders_kvp];
+    NSString *assMicroStr = [NVUtils convertOrderPs2Str:assFo.orders_kvp];
+    NSString *samesStr = [NVUtils convertOrderPs2Str:orderSames];
+    NSLog(@"\n抽象中========== 类比sames:\n%@\n&\n%@\n=\n%@",foOrderStr,assMicroStr,samesStr);
+    
+    //2. 数据检查;
+    if (ARRISOK(orderSames) && ISOK(fo, AIFoNodeBase.class) && ISOK(assFo, AIFoNodeBase.class)) {
+        
+        //3. fo和assFo本来就是抽象关系时_直接关联即可;
+        BOOL samesEqualAssFo = orderSames.count == assFo.orders_kvp.count && [SMGUtils containsSub_ps:orderSames parent_ps:assFo.orders_kvp];
+        BOOL jumpForAbsAlreadyHav = (ISOK(assFo, AINetAbsFoNode.class) && samesEqualAssFo);
+        if (jumpForAbsAlreadyHav) {
+            AINetAbsFoNode *assAbsFo = (AINetAbsFoNode*)assFo;
+            [AINetUtils insertPointer:fo.pointer toPorts:assAbsFo.conPorts ps:fo.orders_kvp];
+            [AINetUtils insertPointer:assAbsFo.pointer toPorts:fo.absPorts ps:assAbsFo.orders_kvp];
+        }else{
+            //4. 构建absFoNode
+            AINetAbsFoNode *createAbsFo = [theNet createAbsFo_Outside:fo foB:assFo orderSames:orderSames];
+
+            //5. createAbsCmvNode
+            AICMVNodeBase *assMv = [SMGUtils searchObjectForPointer:assFo.cmvNode_p fileName:FILENAME_Node];
+            if (assMv) {
+                AIAbsCMVNode *createAbsCmv = [theNet createAbsCMVNode_Outside:createAbsFo.pointer aMv_p:fo.cmvNode_p bMv_p:assMv.pointer];
+                
+                //6. cmv模型连接;
+                if (ISOK(createAbsCmv, AIAbsCMVNode.class)) {
+                    createAbsFo.cmvNode_p = createAbsCmv.pointer;
+                    [SMGUtils insertObject:createAbsFo rootPath:createAbsFo.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
+                }
+            }
+            
+            //7. 外类比构建后日志;
+            NSLog(@"\n抽象后==========\n%@",[NVUtils getFoNodeDesc:createAbsFo]);
+            NSLog(@"\nconPorts\n%@",[NVUtils getFoNodeConPortsDesc:createAbsFo]);
+            NSLog(@"\nabsPorts\n%@",[NVUtils getFoNodeAbsPortsDesc:createAbsFo]);
+            //TODO:>>>>>将absNode和absCmvNode存到thinkFeedCache;
+        }
+    }
 }
 
 
 //MARK:===============================================================
 //MARK:                     < 内类比部分 >
 //MARK:===============================================================
-+(void) analogyInnerOrders:(AIFoNodeBase*)checkFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)())updateEnergy{
++(void) analogyInner:(AIFoNodeBase*)checkFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)())updateEnergy{
     //1. 数据检查
     if (!ISOK(checkFo, AIFoNodeBase.class)) {
         return;
@@ -129,12 +181,12 @@
             NSInteger start = i + 1;
             NSInteger length = j - start;
             NSDictionary *diffItem = ARR_INDEX(findDiffs, 0);
-            AINetAbsFoNode *abFo = [self analogyInnerOrders_Creater:[diffItem objectForKey:@"ap"]
-                                                           valueB_p:[diffItem objectForKey:@"bp"]
-                                                               algA:[diffItem objectForKey:@"an"]
-                                                               algB:[diffItem objectForKey:@"bp"]
-                                                        rangeOrders:ARR_SUB(orders, start, length)
-                                                              conFo:checkFo];
+            AINetAbsFoNode *abFo = [self analogyInner_Creater:[diffItem objectForKey:@"ap"]
+                                                     valueB_p:[diffItem objectForKey:@"bp"]
+                                                         algA:[diffItem objectForKey:@"an"]
+                                                         algB:[diffItem objectForKey:@"bp"]
+                                                  rangeOrders:ARR_SUB(orders, start, length)
+                                                        conFo:checkFo];
             if (ISOK(abFo, AINetAbsFoNode.class)) {
                 return;
             }
@@ -167,7 +219,7 @@
  *  2. 构建动态祖母;
  *  3. 构建abFoNode时序;
  */
-+(AINetAbsFoNode*)analogyInnerOrders_Creater:(AIKVPointer*)valueA_p valueB_p:(AIKVPointer*)valueB_p algA:(AIAlgNode*)algA algB:(AIAlgNode*)algB rangeOrders:(NSArray*)rangeOrders conFo:(AIFoNodeBase*)conFo{
++(AINetAbsFoNode*)analogyInner_Creater:(AIKVPointer*)valueA_p valueB_p:(AIKVPointer*)valueB_p algA:(AIAlgNode*)algA algB:(AIAlgNode*)algB rangeOrders:(NSArray*)rangeOrders conFo:(AIFoNodeBase*)conFo{
     //1. 数据检查
     rangeOrders = ARRTOOK(rangeOrders);
     if (valueA_p && valueB_p && algA && algB) {
@@ -225,14 +277,14 @@
  *  1. 根据abFo联想assAbFo并进行外类比
  *  2. 复用外类比方法;
  */
-+(AINetAbsFoNode*)analogyInner_Outside:(AINetAbsFoNode*)abFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)())updateEnergy{
++(void)analogyInner_Outside:(AINetAbsFoNode*)abFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)())updateEnergy{
     //1. 数据检查
     if (ISOK(abFo, AINetAbsFoNode.class)) {
         //2. 取用来联想的aAlg;
         AIPointer *a_p = ARR_INDEX(abFo.orders_kvp, 0);
         AIAlgNodeBase *aAlg = [SMGUtils searchObjectForPointer:a_p fileName:FILENAME_Node time:cRedisNodeTime];
         if (!aAlg) {
-            return nil;
+            return;
         }
         
         //3. 根据aAlg联想到的assAbFo时序;
@@ -252,17 +304,12 @@
             }
         }
         if (!ISOK(assAbFo, AIFoNodeBase.class)) {
-            return nil;
+            return;
         }
         
         //4. 对abFo和assAbFo进行类比;
-        NSArray *orderSames = [self analogyOutsideOrdersA:abFo.orders_kvp ordersB:assAbFo.orders_kvp canAss:canAssBlock updateEnergy:updateEnergy];
-        
-        //5. 构建absAbFo
-        AINetAbsFoNode *absAbFo = [theNet createAbsFo_Outside:abFo foB:assAbFo orderSames:orderSames];
-        return absAbFo;
+        [self analogyOutside:abFo assFo:assAbFo canAss:canAssBlock updateEnergy:updateEnergy];
     }
-    return nil;
 }
 
 

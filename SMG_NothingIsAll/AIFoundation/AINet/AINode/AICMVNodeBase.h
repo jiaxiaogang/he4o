@@ -13,6 +13,7 @@
  *  1. 有指针地址;
  *  2. 有迫切度;
  *  3. 有变化;
+ *  TODO: 可考虑将cmv的抽具象去掉;
  */
 @interface AICMVNodeBase : AINodeBase
 

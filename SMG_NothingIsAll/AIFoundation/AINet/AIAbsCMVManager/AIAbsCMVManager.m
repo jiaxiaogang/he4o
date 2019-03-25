@@ -20,83 +20,24 @@
 @implementation AIAbsCMVManager
 
 
-/**
- *  MARK:--------------------在两个cmvNode基础上构建抽象--------------------
- *  @params absNode_p : 抽象宏节点(前因)
- *  @params aMv_p : cmv节点A
- *  @params bMv_p : cmv节点B
- *  注: 融合方式,可参考:n16p1
- */
--(AIAbsCMVNode*) create:(AIKVPointer*)absNode_p aMv_p:(AIKVPointer*)aMv_p bMv_p:(AIKVPointer*)bMv_p {
+-(AIAbsCMVNode*) create:(AIKVPointer*)absFo_p aMv_p:(AIKVPointer*)aMv_p bMv_p:(AIKVPointer*)bMv_p {
     //1. 数据
-    BOOL valid = ISOK(aMv_p, AIKVPointer.class) && ISOK(bMv_p, AIKVPointer.class) && [STRTOOK(aMv_p.algsType) isEqualToString:bMv_p.algsType] && ISOK(absNode_p, AIKVPointer.class);
+    BOOL valid = ISOK(aMv_p, AIKVPointer.class) && ISOK(bMv_p, AIKVPointer.class) && [STRTOOK(aMv_p.algsType) isEqualToString:bMv_p.algsType] && ISOK(absFo_p, AIKVPointer.class);
     if (!valid) {
         return nil;
     }
-    NSString *algsType = aMv_p.algsType;
-    NSString *dataSource = aMv_p.dataSource;
     
-    //2. 取cmvNode
-    AICMVNodeBase *aMv = [SMGUtils searchObjectForPointer:aMv_p fileName:FILENAME_Node time:cRedisNodeTime];
-    AICMVNodeBase *bMv = [SMGUtils searchObjectForPointer:bMv_p fileName:FILENAME_Node time:cRedisNodeTime];
-    if (!ISOK(aMv, AICMVNodeBase.class) || !ISOK(bMv, AICMVNodeBase.class)) {
-        return nil;
-    }
-    
-    //2. 创建absCMVNode;
-    AIAbsCMVNode *result_acn = [[AIAbsCMVNode alloc] init];
-    result_acn.pointer = [SMGUtils createPointer:PATH_NET_ABS_CMV_NODE algsType:algsType dataSource:dataSource isOut:false];
-    result_acn.foNode_p = absNode_p;
-    
-    //3. absUrgentTo
-    NSInteger absUrgentTo = [AINetAbsCMVUtil getAbsUrgentTo:aMv bMv_p:bMv];
-    AIPointer *urgentTo_p = [theNet getNetDataPointerWithData:@(absUrgentTo) algsType:algsType dataSource:dataSource];
-    if (ISOK(urgentTo_p, AIKVPointer.class)) {
-        result_acn.urgentTo_p = (AIKVPointer*)urgentTo_p;
-        [theNet setNetReference:result_acn.urgentTo_p target_p:result_acn.pointer difValue:1];//引用插线
-    }
-    
-    //4. absDelta
-    NSInteger absDelta = [AINetAbsCMVUtil getAbsDelta:aMv bMv_p:bMv];
-    AIPointer *delta_p = [theNet getNetDataPointerWithData:@(absDelta) algsType:algsType dataSource:dataSource];
-    if (ISOK(delta_p, AIKVPointer.class)) {
-        result_acn.delta_p = (AIKVPointer*)delta_p;
-        [theNet setNetReference:result_acn.delta_p target_p:result_acn.pointer difValue:1];//引用插线
-    }
-    
-    //5. 关联conPorts插口
-    AIPort *aConPort = [[AIPort alloc] init];
-    aConPort.target_p = aMv_p;
-    [result_acn addConPorts:aConPort difValue:1];
-    
-    AIPort *bConPort = [[AIPort alloc] init];
-    bConPort.target_p = bMv_p;
-    [result_acn addConPorts:bConPort difValue:1];
-    
-    //6. 关联absPort插口
-    AIPort *absNPort = [[AIPort alloc] init];
-    absNPort.target_p = result_acn.pointer;
-    [aMv.absPorts addObject:absNPort];
-    [bMv.absPorts addObject:absNPort];
-    [SMGUtils insertObject:aMv rootPath:aMv.pointer.filePath fileName:FILENAME_Node];
-    [SMGUtils insertObject:bMv rootPath:bMv.pointer.filePath fileName:FILENAME_Node];
-    
-    //7. 报告添加direction引用
-    [self createdAbsCMVNode:result_acn.pointer delta:absDelta urgentTo:absUrgentTo];
-    
-    //8. 存储absNode并返回
-    [SMGUtils insertObject:result_acn rootPath:result_acn.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
-    return result_acn;
+    return [self create:absFo_p conMvPs:@[aMv_p,bMv_p]];
 }
 
 
--(AIAbsCMVNode*) create:(AIKVPointer*)absNode_p conMvPs:(NSArray*)conMv_ps{
+-(AIAbsCMVNode*) create:(AIKVPointer*)absFo_p conMvPs:(NSArray*)conMv_ps{
     //1. 数据
     if (!ARRISOK(conMv_ps)) {
         return nil;
     }
     
-    //2. 取algsType & dataSource
+    //2. 取algsType & dataSource (每一个conMv都一致,则继承,否则使用cMvNoneIdent)
     NSString *algsType = nil;
     NSString *dataSource = nil;
     for (AIKVPointer *mv_p in conMv_ps) {
@@ -113,65 +54,54 @@
     }
     
     //3. 将conMv_ps转换为conMvs
+    NSMutableArray *conMvs = [[NSMutableArray alloc] init];
     for (AIKVPointer *mv_p in conMv_ps) {
-        ///////////TODOTOMORROW FROM HERE!!!
+        AICMVNodeBase *conMvNode = [SMGUtils searchObjectForPointer:mv_p fileName:FILENAME_Node time:cRedisNodeTime];
+        if (!ISOK(conMvNode, AICMVNodeBase.class)){
+            [conMvs addObject:conMvNode];
+        }
     }
     
+    //4. 创建absCMVNode;
+    AIAbsCMVNode *result = [[AIAbsCMVNode alloc] init];
+    result.pointer = [SMGUtils createPointer:PATH_NET_ABS_CMV_NODE algsType:algsType dataSource:dataSource isOut:false];
+    result.foNode_p = absFo_p;
     
-    
-    
-    
-    //2. 取cmvNode
-    AICMVNodeBase *aMv = [SMGUtils searchObjectForPointer:aMv_p fileName:FILENAME_Node time:cRedisNodeTime];
-    AICMVNodeBase *bMv = [SMGUtils searchObjectForPointer:bMv_p fileName:FILENAME_Node time:cRedisNodeTime];
-    if (!ISOK(aMv, AICMVNodeBase.class) || !ISOK(bMv, AICMVNodeBase.class)) {
-        return nil;
-    }
-    
-    //2. 创建absCMVNode;
-    AIAbsCMVNode *result_acn = [[AIAbsCMVNode alloc] init];
-    result_acn.pointer = [SMGUtils createPointer:PATH_NET_ABS_CMV_NODE algsType:algsType dataSource:dataSource isOut:false];
-    result_acn.foNode_p = absNode_p;
-    
-    //3. absUrgentTo
-    NSInteger absUrgentTo = [AINetAbsCMVUtil getAbsUrgentTo:aMv bMv_p:bMv];
+    //5. absUrgentTo
+    NSInteger absUrgentTo = [AINetAbsCMVUtil getAbsUrgentTo:conMvs];
     AIPointer *urgentTo_p = [theNet getNetDataPointerWithData:@(absUrgentTo) algsType:algsType dataSource:dataSource];
     if (ISOK(urgentTo_p, AIKVPointer.class)) {
-        result_acn.urgentTo_p = (AIKVPointer*)urgentTo_p;
-        [theNet setNetReference:result_acn.urgentTo_p target_p:result_acn.pointer difValue:1];//引用插线
+        result.urgentTo_p = (AIKVPointer*)urgentTo_p;
+        [theNet setNetReference:result.urgentTo_p target_p:result.pointer difValue:1];//引用插线
     }
     
-    //4. absDelta
-    NSInteger absDelta = [AINetAbsCMVUtil getAbsDelta:aMv bMv_p:bMv];
+    //6. absDelta
+    NSInteger absDelta = [AINetAbsCMVUtil getAbsDelta:conMvs];
     AIPointer *delta_p = [theNet getNetDataPointerWithData:@(absDelta) algsType:algsType dataSource:dataSource];
     if (ISOK(delta_p, AIKVPointer.class)) {
-        result_acn.delta_p = (AIKVPointer*)delta_p;
-        [theNet setNetReference:result_acn.delta_p target_p:result_acn.pointer difValue:1];//引用插线
+        result.delta_p = (AIKVPointer*)delta_p;
+        [theNet setNetReference:result.delta_p target_p:result.pointer difValue:1];//引用插线
     }
     
-    //5. 关联conPorts插口
-    AIPort *aConPort = [[AIPort alloc] init];
-    aConPort.target_p = aMv_p;
-    [result_acn addConPorts:aConPort difValue:1];
+    //7. 关联absPort插口 & 存储具象节点;
+    AIPort *absPort = [[AIPort alloc] init];
+    absPort.target_p = result.pointer;
+    for (AICMVNodeBase *conMv in conMvs) {
+        [conMv.absPorts addObject:absPort];
+        [SMGUtils insertObject:conMv rootPath:conMv.pointer.filePath fileName:FILENAME_Node];
+    }
     
-    AIPort *bConPort = [[AIPort alloc] init];
-    bConPort.target_p = bMv_p;
-    [result_acn addConPorts:bConPort difValue:1];
+    //8. 报告添加direction引用
+    [self createdAbsCMVNode:result.pointer delta:absDelta urgentTo:absUrgentTo];
     
-    //6. 关联absPort插口
-    AIPort *absNPort = [[AIPort alloc] init];
-    absNPort.target_p = result_acn.pointer;
-    [aMv.absPorts addObject:absNPort];
-    [bMv.absPorts addObject:absNPort];
-    [SMGUtils insertObject:aMv rootPath:aMv.pointer.filePath fileName:FILENAME_Node];
-    [SMGUtils insertObject:bMv rootPath:bMv.pointer.filePath fileName:FILENAME_Node];
-    
-    //7. 报告添加direction引用
-    [self createdAbsCMVNode:result_acn.pointer delta:absDelta urgentTo:absUrgentTo];
-    
-    //8. 存储absNode并返回
-    [SMGUtils insertObject:result_acn rootPath:result_acn.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
-    return result_acn;
+    //9. 关联conPorts插口 & 存储抽象节点;
+    for (AIPointer *conMv_p in conMv_ps) {
+        AIPort *conPort = [[AIPort alloc] init];
+        conPort.target_p = conMv_p;
+        [result addConPorts:conPort difValue:1];
+    }
+    [SMGUtils insertObject:result rootPath:result.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
+    return result;
 }
 
 //MARK:===============================================================
