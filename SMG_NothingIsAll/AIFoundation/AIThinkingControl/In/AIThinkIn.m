@@ -203,9 +203,14 @@
 
 /**
  *  MARK:--------------------学习--------------------
- *  1. 无需求时,找出以往同样经历,类比规律,抽象出更确切的意义;
- *  2. 注:此方法为abs方向的思维方法总入口;(与其相对的决策处
- *  步骤: 联想->类比->规律->抽象->关联->网络
+ *  分为:
+ *   1. 外类比
+ *   2. 内类比
+ *  解释:
+ *   1. 无需求时,找出以往同样经历,类比规律,抽象出更确切的意义;
+ *   2. 注:此方法为abs方向的思维方法总入口;(与其相对的决策处
+ *  步骤:
+ *   > 联想->类比->规律->抽象->关联->网络
  */
 -(void) dataIn_FindMV_Learning:(AIFrontOrderNode*)foNode cmvNode:(AICMVNode*)cmvNode {
     //1. 数据检查
@@ -218,7 +223,7 @@
     MVDirection direction = delta < 0 ? MVDirection_Negative : MVDirection_Positive;
     NSArray *directionPorts = [[AINet sharedInstance] getNetNodePointersFromDirectionReference:cmvNode.pointer.algsType direction:direction limit:2];
     
-    //3. 联想cmv模型
+    //3. 外类比_以mv为方向,联想assFo
     for (AIPort *assDirectionPort in ARRTOOK(directionPorts)) {
         id assDirectionNode = [SMGUtils searchObjectForPointer:assDirectionPort.target_p fileName:FILENAME_Node];
         
@@ -231,7 +236,7 @@
                 if (ISOK(assFrontNode, AINodeBase.class)) {
                     NSLog(@"\n抽象前========== %@",[NVUtils getCmvModelDesc_ByFoNode:assFrontNode]);
                     
-                    //5. 类比orders的规律,并abs;
+                    //5. 执行外类比;
                     [AIThinkInAnalogy analogyOutside:foNode assFo:assFrontNode canAss:^BOOL{
                         return [self canAss];
                     } updateEnergy:^{
