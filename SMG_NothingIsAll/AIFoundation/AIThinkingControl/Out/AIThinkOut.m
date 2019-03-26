@@ -56,7 +56,6 @@
         return;
     }
     
-    
     //4. 有可具象思考的outMvModel则执行;
     if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkOut_UpdateEnergy:)]) {
         [self.delegate aiThinkOut_UpdateEnergy:-1];//思考与决策消耗能量;
@@ -273,6 +272,13 @@
     
     //3. 对memOrder有效性初步检查
     if (outFoModel.memOrder.count == foNode.orders_kvp.count) {
+        
+        //>> 得到真实坚果的方法: (参考n16p2)
+        
+        
+        
+        
+        
         
         //数据合法;
         
