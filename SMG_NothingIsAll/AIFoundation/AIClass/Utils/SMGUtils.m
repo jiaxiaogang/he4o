@@ -468,3 +468,31 @@
 }
 
 @end
+
+
+//MARK:===============================================================
+//MARK:                     < SMGUtils (Remove) >
+//MARK:===============================================================
+@implementation SMGUtils (Remove)
+
++(NSMutableArray*) removeSub_ps:(NSArray*)sub_ps parent_ps:(NSMutableArray*)parent_ps{
+    sub_ps = ARRTOOK(sub_ps);
+    for (AIPointer *sub_p in sub_ps) {
+        parent_ps = [self removeSub_p:sub_p parent_ps:parent_ps];
+    }
+    return parent_ps;
+}
+
++(NSMutableArray*) removeSub_p:(AIPointer*)sub_p parent_ps:(NSMutableArray*)parent_ps{
+    if (ISOK(sub_p, AIPointer.class) && ARRISOK(parent_ps)) {
+        for (AIPointer *parent_p in parent_ps) {
+            if ([sub_p isEqual:parent_p]) {
+                [parent_ps removeObject:parent_p];
+                return parent_ps;
+            }
+        }
+    }
+    return parent_ps;
+}
+
+@end

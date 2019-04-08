@@ -104,6 +104,7 @@
 +(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)algSames conAlgs:(NSArray*)conAlgs{
     if (ARRISOK(algSames) && ARRISOK(conAlgs)) {
         //1. 数据准备
+        algSames = ARRTOOK(algSames);
         NSArray *sortSames = ARRTOOK([SMGUtils sortPointers:algSames]);
         NSString *samesStr = [SMGUtils convertPointers2String:sortSames];
         NSString *samesMd5 = STRTOOK([NSString md5:samesStr]);
@@ -128,18 +129,21 @@
             findAbsNode.pointer = [SMGUtils createPointer:PATH_NET_ALG_ABS_NODE algsType:@"" dataSource:@"" isOut:isOut];
             findAbsNode.value_ps = sortSames;
             
-            //4. value.refPorts (更新微信息的引用序列)
+            ///1. value.refPorts (更新微信息的引用序列)
             [AINetUtils insertPointer:findAbsNode.pointer toRefPortsByValues:findAbsNode.value_ps ps:findAbsNode.value_ps];
         }
         
-        //5. 祖母的嵌套
+        //4. 祖母的嵌套
         for (AIAlgNode *item in conAlgs) {
-            ///1. 目前仅支持连续信息的嵌套问题... (外类比中,仅支持连续sames)
-            
-            //item.value_ps
+            ///1. 可替换时,逐个进行替换; (比如cLess/cGreater时,就不可替换)
+            if ([SMGUtils containsSub_ps:algSames parent_ps:item.value_ps]) {
+                NSMutableArray *newValue_ps = [SMGUtils removeSub_ps:algSames parent_ps:[[NSMutableArray alloc] initWithArray:item.value_ps]];
+                [newValue_ps addObject:findAbsNode.pointer];
+                item.value_ps = [SMGUtils sortPointers:newValue_ps];
+            }
         }
         
-        //6. 关联 & 存储
+        //5. 关联 & 存储
         [AINetUtils relateAbs:findAbsNode conNodes:conAlgs save:true];
         return findAbsNode;
     }

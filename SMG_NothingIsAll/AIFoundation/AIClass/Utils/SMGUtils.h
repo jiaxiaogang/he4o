@@ -132,3 +132,15 @@
 +(NSArray*) sortPointers:(NSArray*)ps;
 
 @end
+
+
+//MARK:===============================================================
+//MARK:                     < SMGUtils (Remove) >
+//MARK:===============================================================
+@interface SMGUtils (Remove)
+
++(NSMutableArray*) removeSub_ps:(NSArray*)sub_ps parent_ps:(NSMutableArray*)parent_ps;
+
++(NSMutableArray*) removeSub_p:(AIPointer*)sub_p parent_ps:(NSMutableArray*)parent_ps;
+
+@end
