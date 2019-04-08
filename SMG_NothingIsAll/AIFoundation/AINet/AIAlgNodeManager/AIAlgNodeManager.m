@@ -132,7 +132,14 @@
             [AINetUtils insertPointer:findAbsNode.pointer toRefPortsByValues:findAbsNode.value_ps ps:findAbsNode.value_ps];
         }
         
-        //5. 关联 & 存储
+        //5. 祖母的嵌套
+        for (AIAlgNode *item in conAlgs) {
+            ///1. 目前仅支持连续信息的嵌套问题... (外类比中,仅支持连续sames)
+            
+            //item.value_ps
+        }
+        
+        //6. 关联 & 存储
         [AINetUtils relateAbs:findAbsNode conNodes:conAlgs save:true];
         return findAbsNode;
     }
