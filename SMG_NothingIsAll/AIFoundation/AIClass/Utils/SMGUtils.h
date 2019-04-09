@@ -120,6 +120,9 @@
 //将pointers转字符串;
 +(NSString*) convertPointers2String:(NSArray*)pointers;
 
+//将祖母中的value_ps展开成纯微信息的组; @result : notnull
++(NSMutableArray*) convertValuePs2MicroValuePs:(NSArray*)value_ps;
+
 @end
 
 

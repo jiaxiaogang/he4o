@@ -220,6 +220,7 @@
     if (valueA_p && valueB_p && algA && algB) {
         
         //2. 类比
+        /////TODOTOMORROW20190409:
         NSNumber *numA = [SMGUtils searchObjectForPointer:valueA_p fileName:FILENAME_Value time:cRedisValueTime];
         NSNumber *numB = [SMGUtils searchObjectForPointer:valueB_p fileName:FILENAME_Value time:cRedisValueTime];
         NSComparisonResult compareResult = [NUMTOOK(numA) compare:numB];

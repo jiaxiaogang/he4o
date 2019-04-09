@@ -149,6 +149,12 @@
 
 +(void) insertPointer:(AIPointer*)algNode_p toRefPortsByValues:(NSArray*)value_ps ps:(NSArray*)ps{
     for (AIPointer *value_p in ARRTOOK(value_ps)) {
+        if (ISOK(value_p, AIKVPointer.class)) {
+            AIKVPointer *value_kvp = (AIKVPointer*)value_p;
+            if ([PATH_NET_ALG_ABS_NODE isEqualToString:value_kvp.folderName]) {
+                NSLog(@"______ERROR!!!!此处需要将algNode.refPorts改为独立文件形式存储!!!");
+            }
+        }
         NSMutableArray *refPorts = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForFilePath:value_p.filePath fileName:FILENAME_RefPorts time:cRedisReferenceTime]];
         [AINetUtils insertPointer:algNode_p toPorts:refPorts ps:ps];
         [SMGUtils insertObject:refPorts rootPath:value_p.filePath fileName:FILENAME_RefPorts time:cRedisReferenceTime];

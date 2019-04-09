@@ -13,6 +13,7 @@
 #import "AIPort.h"
 #import "XGRedis.h"
 #import "AIPointer.h"
+#import "AIAlgNodeBase.h"
 
 @implementation SMGUtils
 
@@ -451,6 +452,30 @@
     }
     return mStr;
 }
+
++(NSMutableArray*) convertValuePs2MicroValuePs:(NSArray*)value_ps{
+    //1. 数据准备
+    NSMutableArray *mic_ps = [[NSMutableArray alloc] init];
+    
+    //2. 逐个收集
+    for (AIKVPointer *value_p in value_ps) {
+        
+        //3. 祖母嵌套时
+        if ([PATH_NET_ALG_ABS_NODE isEqualToString:value_p.folderName]) {
+            AIAlgNodeBase *algNode = [SMGUtils searchObjectForPointer:value_p fileName:FILENAME_Node time:cRedisNodeTime];
+            
+            //4. 递归取嵌套的value_ps
+            if (ISOK(algNode, AIAlgNodeBase.class)) {
+                [mic_ps addObjectsFromArray:[self convertValuePs2DataPs:algNode.value_ps]];
+            }
+        }
+        
+        //5. 非祖母嵌套时,直接收集;
+        [mic_ps addObject:value_p];
+    }
+    return mic_ps;
+}
+
 
 @end
 

@@ -69,6 +69,7 @@
  *  注: 无条件 & 目前无能量消耗 (以后有基础思维活力值后可energy-1)
  *  注: 局部匹配_后面通过调整参数,来达到99%以上的识别率;
  *  问题: 看到的algNode与识别到的,未必是正确的,但我们应该保持使用protoAlgNode而不是recognitionAlgNode;
+ *  TODOV1.1:祖母的嵌套,有可能会导致识别上的一些问题; (我们需要支持结构化识别,而不仅是绝对识别和模糊识别)
  */
 -(AIAlgNodeBase*) dataIn_NoMV_RecognitionIs:(AIPointer*)algNode_p {
     //1. 数据准备

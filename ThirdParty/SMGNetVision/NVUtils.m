@@ -23,9 +23,13 @@
 //MARK:===============================================================
 
 +(NSString*) convertValuePs2Str:(NSArray*)value_ps{
+    //1. 数据准备
     value_ps = ARRTOOK(value_ps);
     NSMutableString *mStr = [NSMutableString new];
-    for (AIKVPointer *value_p in value_ps) {
+    
+    //2. 将祖母嵌套展开
+    NSMutableArray *mic_ps = [SMGUtils convertValuePs2MicroValuePs:value_ps];
+    for (AIKVPointer *value_p in mic_ps) {
         NSNumber *valueNum = [SMGUtils searchObjectForPointer:value_p fileName:FILENAME_Value];
         if (valueNum) {
             [mStr appendFormat:@"%@%@:%@ ", value_p.dataSource,(value_p.isOut ? @"^" : @"ˇ"), valueNum];

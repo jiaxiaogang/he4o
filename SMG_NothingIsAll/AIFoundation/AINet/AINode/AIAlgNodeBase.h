@@ -11,6 +11,7 @@
 /**
  *  MARK:--------------------祖母Base节点--------------------
  *  1. TODO: 将祖母添加isOut,或将foNode.orders中添加每个元素的isOut;
+ *  2. TODOV1.1: 将refPorts独立成文件;
  */
 @interface AIAlgNodeBase : AINodeBase
 
