@@ -155,21 +155,38 @@
             AIAlgNode *algNodeA = [SMGUtils searchObjectForPointer:algA_p fileName:FILENAME_Node time:cRedisNodeTime];
             AIAlgNode *algNodeB = [SMGUtils searchObjectForPointer:algB_p fileName:FILENAME_Node time:cRedisNodeTime];
             
-            //5. 内类比找不同 (同区不同值)
+            //5. 内类比找不同 (比大小:同区不同值 / 有无)
             NSMutableArray *findDiffs = [[NSMutableArray alloc] init];
-            if (algNodeA && algNodeB && algNodeA.value_ps.count == algNodeB.value_ps.count) {
-                for (AIKVPointer *valueA_p in algNodeA.value_ps) {
-                    for (AIKVPointer *valueB_p in algNodeB.value_ps) {
-                        
-                        ///1. 对比相同算法标识的两个指针 (如,颜色,距离等)
-                        if ([valueA_p.identifier isEqualToString:valueB_p.identifier]) {
-                            
-                            ///2. 对比微信息是否不同 (MARK_VALUE:如微信息去重功能去掉,此处要取值再进行对比)
-                            if (valueA_p.pointerId != valueB_p.pointerId) {
-                                NSDictionary *diffItem = @{@"ap":valueA_p,@"bp":valueB_p,@"an":algNodeA,@"bn":algNodeB};
-                                [findDiffs addObject:diffItem];
-                            }
+            if (algNodeA && algNodeB){
+                ///1. 取a差集和b差集;
+                NSArray *aSub_ps = [SMGUtils removeSub_ps:algNodeB.value_ps parent_ps:[[NSMutableArray alloc] initWithArray:algNodeA.value_ps]];
+                NSArray *bSub_ps = [SMGUtils removeSub_ps:algNodeA.value_ps parent_ps:[[NSMutableArray alloc] initWithArray:algNodeB.value_ps]];
+                
+                ///2. 三种情况;
+                if (aSub_ps.count == 1 && bSub_ps.count == 1) {
+                    //1) 当长度都为1时,比大小:同区不同值; (对比相同算法标识的两个指针 (如,颜色,距离等))
+                    AIKVPointer *a_p = ARR_INDEX(aSub_ps, 0);
+                    AIKVPointer *b_p = ARR_INDEX(bSub_ps, 0);
+                    if ([a_p.identifier isEqualToString:b_p.identifier]) {
+                        //注: 对比微信息是否不同 (MARK_VALUE:如微信息去重功能去掉,此处要取值再进行对比)
+                        if (a_p.pointerId != b_p.pointerId) {
+                            NSDictionary *diffItem = @{@"ap":a_p,@"bp":b_p,@"an":algNodeA,@"bn":algNodeB};
+                            [findDiffs addObject:diffItem];
                         }
+                    }
+                }else if(aSub_ps.count == 1 && bSub_ps.count == 0){
+                    //2) 当长度各A=1和B=0时,判定A0是否为祖母: 无;
+                    AIKVPointer *a_p = ARR_INDEX(aSub_ps, 0);
+                    if ([PATH_NET_ALG_ABS_NODE isEqualToString:a_p.folderName]) {
+                        NSDictionary *diffItem = @{@"ap":a_p,@"an":algNodeA,@"bn":algNodeB};
+                        [findDiffs addObject:diffItem];
+                    }
+                }else if(aSub_ps.count == 0 && bSub_ps.count == 1){
+                    //3) 当长度各A=0和B=1时,判定B0是否为祖母: 有;
+                    AIKVPointer *b_p = ARR_INDEX(bSub_ps, 0);
+                    if ([PATH_NET_ALG_ABS_NODE isEqualToString:b_p.folderName]) {
+                        NSDictionary *diffItem = @{@"bp":b_p,@"an":algNodeA,@"bn":algNodeB};
+                        [findDiffs addObject:diffItem];
                     }
                 }
             }
