@@ -466,7 +466,7 @@
             
             //4. 递归取嵌套的value_ps
             if (ISOK(algNode, AIAlgNodeBase.class)) {
-                [mic_ps addObjectsFromArray:[self convertValuePs2DataPs:algNode.value_ps]];
+                [mic_ps addObjectsFromArray:[self convertValuePs2MicroValuePs:algNode.value_ps]];
             }
         }
         

@@ -156,13 +156,14 @@
             AIAlgNode *algNodeB = [SMGUtils searchObjectForPointer:algB_p fileName:FILENAME_Node time:cRedisNodeTime];
             
             //5. 内类比找不同 (比大小:同区不同值 / 有无)
-            NSMutableArray *findDiffs = [[NSMutableArray alloc] init];
+            AINetAbsFoNode *abFo = nil;
             if (algNodeA && algNodeB){
                 ///1. 取a差集和b差集;
                 NSArray *aSub_ps = [SMGUtils removeSub_ps:algNodeB.value_ps parent_ps:[[NSMutableArray alloc] initWithArray:algNodeA.value_ps]];
                 NSArray *bSub_ps = [SMGUtils removeSub_ps:algNodeA.value_ps parent_ps:[[NSMutableArray alloc] initWithArray:algNodeB.value_ps]];
+                NSArray *rangeOrders = ARR_SUB(orders, i + 1, j - i + 1);
                 
-                ///2. 三种情况;
+                ///2. 四种情况; (有且仅有1条微信息不同,进行内类比构建)
                 if (aSub_ps.count == 1 && bSub_ps.count == 1) {
                     //1) 当长度都为1时,比大小:同区不同值; (对比相同算法标识的两个指针 (如,颜色,距离等))
                     AIKVPointer *a_p = ARR_INDEX(aSub_ps, 0);
@@ -170,55 +171,138 @@
                     if ([a_p.identifier isEqualToString:b_p.identifier]) {
                         //注: 对比微信息是否不同 (MARK_VALUE:如微信息去重功能去掉,此处要取值再进行对比)
                         if (a_p.pointerId != b_p.pointerId) {
-                            NSDictionary *diffItem = @{@"ap":a_p,@"bp":b_p,@"an":algNodeA,@"bn":algNodeB};
-                            [findDiffs addObject:diffItem];
+                            NSNumber *numA = [SMGUtils searchObjectForPointer:a_p fileName:FILENAME_Value time:cRedisValueTime];
+                            NSNumber *numB = [SMGUtils searchObjectForPointer:b_p fileName:FILENAME_Value time:cRedisValueTime];
+                            NSComparisonResult compareResult = [NUMTOOK(numA) compare:numB];
+                            if (compareResult == NSOrderedAscending) {
+                                abFo = [self analogyInner_Creater:AnalogyInnerType_Less target_p:a_p algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
+                            }else if (compareResult == NSOrderedDescending) {
+                                abFo = [self analogyInner_Creater:AnalogyInnerType_Greater target_p:a_p algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
+                            }
                         }
                     }
                 }else if(aSub_ps.count == 1 && bSub_ps.count == 0){
                     //2) 当长度各A=1和B=0时,判定A0是否为祖母: 无;
                     AIKVPointer *a_p = ARR_INDEX(aSub_ps, 0);
                     if ([PATH_NET_ALG_ABS_NODE isEqualToString:a_p.folderName]) {
-                        NSDictionary *diffItem = @{@"ap":a_p,@"an":algNodeA,@"bn":algNodeB};
-                        [findDiffs addObject:diffItem];
+                        abFo = [self analogyInner_Creater:AnalogyInnerType_None target_p:a_p algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
                     }
                 }else if(aSub_ps.count == 0 && bSub_ps.count == 1){
                     //3) 当长度各A=0和B=1时,判定B0是否为祖母: 有;
                     AIKVPointer *b_p = ARR_INDEX(bSub_ps, 0);
                     if ([PATH_NET_ALG_ABS_NODE isEqualToString:b_p.folderName]) {
-                        NSDictionary *diffItem = @{@"bp":b_p,@"an":algNodeA,@"bn":algNodeB};
-                        [findDiffs addObject:diffItem];
+                        abFo = [self analogyInner_Creater:AnalogyInnerType_Hav target_p:b_p algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
                     }
                 }
             }
             
-            //6. 内类比构建 (有且仅有1条微信息不同);
-            if (findDiffs.count != 1) {
-                continue;
-            }
-            NSInteger start = i + 1;
-            NSInteger length = j - start;
-            NSDictionary *diffItem = ARR_INDEX(findDiffs, 0);
-            AINetAbsFoNode *abFo = [self analogyInner_Creater:[diffItem objectForKey:@"ap"]
-                                                     valueB_p:[diffItem objectForKey:@"bp"]
-                                                         algA:[diffItem objectForKey:@"an"]
-                                                         algB:[diffItem objectForKey:@"bp"]
-                                                  rangeOrders:ARR_SUB(orders, start, length)
-                                                        conFo:checkFo];
-            if (ISOK(abFo, AINetAbsFoNode.class)) {
+            //6. 对energy消耗;
+            if (!ISOK(abFo, AINetAbsFoNode.class)) {
                 return;
             }
-            
-            //7. 对energy消耗;
             if (updateEnergy) {
                 updateEnergy();
             }
             
-            //8. 内中有外
+            //7. 内中有外
             [self analogyInner_Outside:abFo canAss:canAssBlock updateEnergy:updateEnergy];
         }
     }
 }
 
+
+/**
+ *  MARK:--------------------内类比的构建方法--------------------
+ *  @param type : 内类比类型,大小有无;
+ *  @param target_p : 目前正在操作的指针; (可能是微信息指针,也可能是被嵌套的祖母指针)
+ *  @param rangeOrders : 在i-j之间的orders; (如 "a1 balabala a2" 中,balabala就是rangeOrders)
+ *  @param conFo : 用来构建抽象具象时序时,作为具象节点使用;
+ *
+ *  > 作用
+ *  1. 构建动态微信息;
+ *  2. 构建动态祖母;
+ *  3. 构建abFoNode时序;
+ *  4. 构建mv节点;
+ */
++(AINetAbsFoNode*)analogyInner_Creater:(AnalogyInnerType)type target_p:(AIKVPointer*)target_p algA:(AIAlgNode*)algA algB:(AIAlgNode*)algB rangeOrders:(NSArray*)rangeOrders conFo:(AIFoNodeBase*)conFo{
+    //1. 数据检查
+    rangeOrders = ARRTOOK(rangeOrders);
+    if (target_p && algA && algB) {
+        
+        //1. 根据type来构建微信息,和祖母;
+        //2. 将a和b改成,前和后命名;
+        //TODOTOROMMOW from here:
+        if (type == AnalogyInnerType_Greater) {
+            
+            
+            
+        }else if (type == AnalogyInnerType_Less) {
+            
+            
+            
+        }else if (type == AnalogyInnerType_Hav) {
+            
+            
+            
+        }else if (type == AnalogyInnerType_None) {
+            
+            
+            
+        }
+        
+        //3. 构建动态微信息
+        AIPointer *less_p = [theNet getNetDataPointerWithData:@(cLess) algsType:target_p.algsType dataSource:target_p.dataSource];
+        AIPointer *greater_p = [theNet getNetDataPointerWithData:@(cGreater) algsType:target_p.algsType dataSource:target_p.dataSource];
+        if (!less_p || !greater_p) {
+            return nil;
+        }
+        
+        //4. 取出绝对匹配的dynamic抽象祖母
+        AIAlgNodeBase *lessAlg = [theNet getAbsoluteMatchingAlgNodeWithValuePs:@[less_p]];
+        AIAlgNodeBase *greaterAlg = [theNet getAbsoluteMatchingAlgNodeWithValuePs:@[greater_p]];
+        
+        //5. 构建动态抽象祖母;
+        AIAlgNodeBase* (^RelateDynamicAlgBlock)(AIAlgNodeBase*, AIAlgNode*,AIPointer*) = ^AIAlgNodeBase* (AIAlgNodeBase *dynamicAbsNode, AIAlgNode *conNode,AIPointer *value_p){
+            if (ISOK(dynamicAbsNode, AIAbsAlgNode.class)) {
+                ///1. 有效时,关联;
+                [AINetUtils relateAbs:(AIAbsAlgNode*)dynamicAbsNode conNodes:@[conNode] save:true];
+            }else{
+                ///2. 无效时,构建;
+                if (value_p) {
+                    dynamicAbsNode = [theNet createAbsAlgNode:@[value_p] alg:conNode];
+                }
+            }
+            return dynamicAbsNode;
+        };
+        BOOL aThan = (compareResult == NSOrderedAscending);
+        lessAlg = RelateDynamicAlgBlock(lessAlg,(aThan ? algB : algA),less_p);//从小到大
+        greaterAlg = RelateDynamicAlgBlock(greaterAlg,(aThan ? algA : algB),greater_p);//从大到小
+        
+        //6. 构建抽象时序; (小动致大 / 大动致小) (之间的信息为balabala)
+        if (lessAlg && greaterAlg) {
+            NSMutableArray *absOrders = [[NSMutableArray alloc] init];
+            [absOrders addObject:(aThan ? greaterAlg.pointer : lessAlg.pointer)];
+            [absOrders addObjectsFromArray:rangeOrders];
+            [absOrders addObject:(aThan ? lessAlg.pointer : greaterAlg.pointer)];
+            AINetAbsFoNode *createrFo = [theNet createAbsFo_Inner:conFo orderSames:absOrders];
+            
+            if (!createrFo) {
+                return nil;
+            }
+            
+            //7. 构建mv节点,形成mv基本模型;
+            AIAbsCMVNode * createrMv = [theNet createAbsCMVNode_Inner:createrFo.pointer conMv_p:conFo.cmvNode_p];
+            
+            //8. cmv模型连接;
+            if (ISOK(createrMv, AIAbsCMVNode.class)) {
+                createrFo.cmvNode_p = createrMv.pointer;
+                [SMGUtils insertObject:createrFo pointer:createrFo.pointer fileName:FILENAME_Node time:cRedisNodeTime];
+            }
+            return createrFo;
+        }
+    }
+    return nil;
+}
 
 /**
  *  MARK:--------------------内类比的构建方法--------------------
