@@ -213,7 +213,7 @@
 
 /**
  *  MARK:--------------------内类比的构建方法--------------------
- *  @param type : 内类比类型,大小有无;
+ *  @param type : 内类比类型,大小有无; (必须为四值之一,否则构建未知节点)
  *  @param target_p : 目前正在操作的指针; (可能是微信息指针,也可能是被嵌套的祖母指针)
  *  @param rangeOrders : 在i-j之间的orders; (如 "a1 balabala a2" 中,balabala就是rangeOrders)
  *  @param conFo : 用来构建抽象具象时序时,作为具象节点使用;
@@ -229,37 +229,34 @@
     rangeOrders = ARRTOOK(rangeOrders);
     if (target_p && algA && algB) {
         
-        //1. 根据type来构建微信息,和祖母;
-        //2. 将a和b改成,前和后命名;
-        //TODOTOROMMOW from here:
+        //2. 根据type来构建微信息,和祖母; (将a和b改成前和后)
+        NSInteger frontData = 0,backData = 0;
         if (type == AnalogyInnerType_Greater) {
-            
-            
-            
+            frontData = cLess;
+            backData = cGreater;
         }else if (type == AnalogyInnerType_Less) {
-            
-            
-            
+            frontData = cGreater;
+            backData = cLess;
         }else if (type == AnalogyInnerType_Hav) {
-            
-            
-            
+            frontData = cNone;
+            backData = cHav;
         }else if (type == AnalogyInnerType_None) {
-            
-            
-            
+            frontData = cHav;
+            backData = cNone;
+        }else{
+            return nil;
         }
         
         //3. 构建动态微信息
-        AIPointer *less_p = [theNet getNetDataPointerWithData:@(cLess) algsType:target_p.algsType dataSource:target_p.dataSource];
-        AIPointer *greater_p = [theNet getNetDataPointerWithData:@(cGreater) algsType:target_p.algsType dataSource:target_p.dataSource];
-        if (!less_p || !greater_p) {
+        AIPointer *front_p = [theNet getNetDataPointerWithData:@(frontData) algsType:target_p.algsType dataSource:target_p.dataSource];
+        AIPointer *back_p = [theNet getNetDataPointerWithData:@(backData) algsType:target_p.algsType dataSource:target_p.dataSource];
+        if (!front_p || !back_p) {
             return nil;
         }
         
         //4. 取出绝对匹配的dynamic抽象祖母
-        AIAlgNodeBase *lessAlg = [theNet getAbsoluteMatchingAlgNodeWithValuePs:@[less_p]];
-        AIAlgNodeBase *greaterAlg = [theNet getAbsoluteMatchingAlgNodeWithValuePs:@[greater_p]];
+        AIAlgNodeBase *frontAlg = [theNet getAbsoluteMatchingAlgNodeWithValuePs:@[front_p]];
+        AIAlgNodeBase *backAlg = [theNet getAbsoluteMatchingAlgNodeWithValuePs:@[back_p]];
         
         //5. 构建动态抽象祖母;
         AIAlgNodeBase* (^RelateDynamicAlgBlock)(AIAlgNodeBase*, AIAlgNode*,AIPointer*) = ^AIAlgNodeBase* (AIAlgNodeBase *dynamicAbsNode, AIAlgNode *conNode,AIPointer *value_p){
@@ -274,16 +271,15 @@
             }
             return dynamicAbsNode;
         };
-        BOOL aThan = (compareResult == NSOrderedAscending);
-        lessAlg = RelateDynamicAlgBlock(lessAlg,(aThan ? algB : algA),less_p);//从小到大
-        greaterAlg = RelateDynamicAlgBlock(greaterAlg,(aThan ? algA : algB),greater_p);//从大到小
+        frontAlg = RelateDynamicAlgBlock(frontAlg,algA,front_p);//从小到大
+        backAlg = RelateDynamicAlgBlock(backAlg,algB,back_p);//从大到小
         
         //6. 构建抽象时序; (小动致大 / 大动致小) (之间的信息为balabala)
-        if (lessAlg && greaterAlg) {
+        if (frontAlg && backAlg) {
             NSMutableArray *absOrders = [[NSMutableArray alloc] init];
-            [absOrders addObject:(aThan ? greaterAlg.pointer : lessAlg.pointer)];
+            [absOrders addObject:frontAlg.pointer];
             [absOrders addObjectsFromArray:rangeOrders];
-            [absOrders addObject:(aThan ? lessAlg.pointer : greaterAlg.pointer)];
+            [absOrders addObject:backAlg.pointer];
             AINetAbsFoNode *createrFo = [theNet createAbsFo_Inner:conFo orderSames:absOrders];
             
             if (!createrFo) {
@@ -304,84 +300,6 @@
     return nil;
 }
 
-/**
- *  MARK:--------------------内类比的构建方法--------------------
- *  @param rangeOrders : 在i-j之间的orders; (如 "a1 balabala a2" 中,balabala就是rangeOrders)
- *  @param conFo : 用来构建抽象具象时序时,作为具象节点使用;
- *
- *  > 作用
- *  1. 构建动态微信息;
- *  2. 构建动态祖母;
- *  3. 构建abFoNode时序;
- *  4. 构建mv节点;
- */
-+(AINetAbsFoNode*)analogyInner_Creater:(AIKVPointer*)valueA_p valueB_p:(AIKVPointer*)valueB_p algA:(AIAlgNode*)algA algB:(AIAlgNode*)algB rangeOrders:(NSArray*)rangeOrders conFo:(AIFoNodeBase*)conFo{
-    //1. 数据检查
-    rangeOrders = ARRTOOK(rangeOrders);
-    if (valueA_p && valueB_p && algA && algB) {
-        
-        //2. 类比
-        /////TODOTOMORROW20190409:
-        NSNumber *numA = [SMGUtils searchObjectForPointer:valueA_p fileName:FILENAME_Value time:cRedisValueTime];
-        NSNumber *numB = [SMGUtils searchObjectForPointer:valueB_p fileName:FILENAME_Value time:cRedisValueTime];
-        NSComparisonResult compareResult = [NUMTOOK(numA) compare:numB];
-        if (compareResult == NSOrderedSame) {
-            return nil;
-        }
-        
-        //3. 构建动态微信息
-        AIPointer *less_p = [theNet getNetDataPointerWithData:@(cLess) algsType:valueA_p.algsType dataSource:valueA_p.dataSource];
-        AIPointer *greater_p = [theNet getNetDataPointerWithData:@(cGreater) algsType:valueA_p.algsType dataSource:valueA_p.dataSource];
-        if (!less_p || !greater_p) {
-            return nil;
-        }
-        
-        //4. 取出绝对匹配的dynamic抽象祖母
-        AIAlgNodeBase *lessAlg = [theNet getAbsoluteMatchingAlgNodeWithValuePs:@[less_p]];
-        AIAlgNodeBase *greaterAlg = [theNet getAbsoluteMatchingAlgNodeWithValuePs:@[greater_p]];
-        
-        //5. 构建动态抽象祖母;
-        AIAlgNodeBase* (^RelateDynamicAlgBlock)(AIAlgNodeBase*, AIAlgNode*,AIPointer*) = ^AIAlgNodeBase* (AIAlgNodeBase *dynamicAbsNode, AIAlgNode *conNode,AIPointer *value_p){
-            if (ISOK(dynamicAbsNode, AIAbsAlgNode.class)) {
-                ///1. 有效时,关联;
-                [AINetUtils relateAbs:(AIAbsAlgNode*)dynamicAbsNode conNodes:@[conNode] save:true];
-            }else{
-                ///2. 无效时,构建;
-                if (value_p) {
-                    dynamicAbsNode = [theNet createAbsAlgNode:@[value_p] alg:conNode];
-                }
-            }
-            return dynamicAbsNode;
-        };
-        BOOL aThan = (compareResult == NSOrderedAscending);
-        lessAlg = RelateDynamicAlgBlock(lessAlg,(aThan ? algB : algA),less_p);//从小到大
-        greaterAlg = RelateDynamicAlgBlock(greaterAlg,(aThan ? algA : algB),greater_p);//从大到小
-        
-        //6. 构建抽象时序; (小动致大 / 大动致小) (之间的信息为balabala)
-        if (lessAlg && greaterAlg) {
-            NSMutableArray *absOrders = [[NSMutableArray alloc] init];
-            [absOrders addObject:(aThan ? greaterAlg.pointer : lessAlg.pointer)];
-            [absOrders addObjectsFromArray:rangeOrders];
-            [absOrders addObject:(aThan ? lessAlg.pointer : greaterAlg.pointer)];
-            AINetAbsFoNode *createrFo = [theNet createAbsFo_Inner:conFo orderSames:absOrders];
-            
-            if (!createrFo) {
-                return nil;
-            }
-            
-            //7. 构建mv节点,形成mv基本模型;
-            AIAbsCMVNode * createrMv = [theNet createAbsCMVNode_Inner:createrFo.pointer conMv_p:conFo.cmvNode_p];
-            
-            //8. cmv模型连接;
-            if (ISOK(createrMv, AIAbsCMVNode.class)) {
-                createrFo.cmvNode_p = createrMv.pointer;
-                [SMGUtils insertObject:createrFo pointer:createrFo.pointer fileName:FILENAME_Node time:cRedisNodeTime];
-            }
-            return createrFo;
-        }
-    }
-    return nil;
-}
 
 /**
  *  MARK:--------------------内类比的内中有外--------------------
