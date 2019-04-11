@@ -247,13 +247,14 @@
     //2. 取条件祖母的最具象,得出memOrder;
     //NSLog(@" >> 所需条件: (%@)",[NVUtils convertOrderPs2Str:notOutAlg_ps]);
     for (AIKVPointer *pointer in foNode.orders_kvp) {
+        ///1. 本身为输出节点的话,直接收集到memOrder
         if (pointer.isOut) {
             AIAlgNodeBase *outAlgNode = [SMGUtils searchObjectForPointer:pointer fileName:FILENAME_Node time:cRedisNodeTime];
             if (outAlgNode) {
                 [outFoModel.memOrder addObject:outAlgNode];
             }
         }else{
-            //2. 最多往具象循环2层
+            ///2. 非输出时,找出条件祖母,并收集到memOrder (最多往具象循环2层)
             NSArray *check_ps = @[pointer];
             for (NSInteger i = 0; i < cDataOutAssAlgDeep; i++) {
                 AIAlgNode *validAlgNode = [ThinkingUtils scheme_GetAValidNode:check_ps except_ps:outFoModel.except_ps checkBlock:^BOOL(id checkNode) {
@@ -270,56 +271,17 @@
         }
     }
     
-    //3. 对memOrder有效性初步检查
+    //3. 对memOrder有效性初步检查 (memOrder和fo.orders长度要一致)
     if (outFoModel.memOrder.count == foNode.orders_kvp.count) {
         
-        //>> 得到真实坚果的方法: (参考n16p2)
-        
-        
-        
-        
-        
-        
-        //数据合法;
-        
-        //分析: 祖母的先抽象,后具象,把食物的发现问题,变成了距离问题,再由距离问题,变成了飞行问题;
-        
-        //1. 以上两层具象联想过程不需要; (删掉代码)
-        //2. 根据memOrder中的抽象祖母,取抽象,再具象;取到n个不符合的具象祖母;//正确
-        //5. 根据此时序的mv来判定可行性;//正确
-        //6. 实例: fo吃坚果 -> alg抽象坚果 -> alg具象坚果(强度最强的,需写双序列) -> 找不同,发现距离问题(视觉的距离祖母) -> doChange模型,飞行导致距离变化 -> 输出飞行行为
-        
-        
-        
-        //>>>1. 关于精度的范围匹配问题,应该在祖母层后天完成;但不影响小鸟核心智能演示,所以可暂使用一些算法层实现 (比如方向精度为10);
-        //>>>2. 解决"条件祖母"的判定问题; (从祖母方向的 cLess/cGreater 来联想)
-        
-        
-        
-        
-        
+        //TODOTOMMROWW:
+        //*****代码步骤: (发现->距离->飞行)
+        ///1. 比如找到坚果,由有无时序来解决"有无"问题; (cNone,cHav) (有无)
+        ///2. 找到的坚果与fo中进行类比;(找出坚果距离的不同,或者坚果带皮儿的不同) (cLess,cGreater) (变化)
+        ///3. 将距离与带皮转化成行为,条件的行为化; (如飞行,或去皮); (actionScheme) (行为)
     }else{
         [self dataOut];
     }
-    
-    
-    //关于条件的获取方式;20190217
-    //1. 从瞬时记忆来判定找;
-    //2. 由其它时序来执行得到; (打车是祖母,而不是时序) (根据"距离变化"祖母,转化为行走才是时序,如走到路边)
-    
-    //////某条微信息的值的变化, (如距离)
-    
-    //1. 根据foNode取到条件;
-    //2. 使用AIThinkOutFoModel将条件 (最多两个)记录到outFoModel;
-    //3. 对outFoModel进行algModel条件的行为化;
-    
-    ///1. 比如找到坚果;
-    ///2. 找到的坚果与fo中进行类比;
-    ///3. 找出坚果距离的不同,或者坚果带皮儿的不同;
-    ///4. 将距离与带皮转化成行为; (如飞行,或去皮);
-    ///5. 达成条件;
-    
-    
 }
 
 
