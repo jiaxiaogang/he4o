@@ -10,7 +10,7 @@
 #import "DemandModel.h"
 #import "ThinkingUtils.h"
 #import "AIPort.h"
-#import "AIThinkOutMvModel.h"
+#import "TOMvModel.h"
 #import "AINet.h"
 #import "AIKVPointer.h"
 #import "AICMVNode.h"
@@ -18,7 +18,7 @@
 #import "AIFrontOrderNode.h"
 #import "AINetAbsFoNode.h"
 #import "Output.h"
-#import "AIThinkOutFoModel.h"
+#import "TOFoModel.h"
 #import "AIAbsAlgNode.h"
 #import "AIAlgNode.h"
 
@@ -46,7 +46,7 @@
     }
     
     //3. 从expCache中,排序并取到首个值得思考的可行outMvModel, 没有则用mvScheme联想一个新的;
-    __block AIThinkOutMvModel *outMvModel = [demandModel getCurrentAIThinkOutMvModel];
+    __block TOMvModel *outMvModel = [demandModel getCurrentTOMvModel];
     if (!outMvModel) {
         outMvModel = [self dataOut_MvScheme:demandModel];
     }
@@ -62,7 +62,7 @@
     }
     
     //5. 联想"解决经验"对应的cmvNode & 联想具象数据,并取到决策关键信息 (foScheme);
-    AIThinkOutFoModel *outFoModel = [self dataOut_FoScheme:outMvModel];
+    TOFoModel *outFoModel = [self dataOut_FoScheme:outMvModel];
     if (!outFoModel) return;
     
     //6. 有执行方案,则对执行方案进行反思检查; (父可行性判定)
@@ -145,9 +145,9 @@
  *  MARK:--------------------MvScheme--------------------
  *  用于找到新的mv经验; (根据index索引找到outMvModel)
  */
--(AIThinkOutMvModel*) dataOut_MvScheme:(DemandModel*)demandModel{
+-(TOMvModel*) dataOut_MvScheme:(DemandModel*)demandModel{
     //1. 判断mv方向
-    __block AIThinkOutMvModel *outMvModel = nil;
+    __block TOMvModel *outMvModel = nil;
     [ThinkingUtils getDemand:demandModel.algsType delta:demandModel.delta complete:^(BOOL upDemand, BOOL downDemand) {
         MVDirection direction = downDemand ? MVDirection_Negative : MVDirection_Positive;
         
@@ -157,7 +157,7 @@
             for (NSInteger i = 0; i < protoArr.count; i++) {
                 AIPort *port = ARR_INDEX(protoArr, protoArr.count - i - 1);
                 BOOL cacheContains = false;
-                for (AIThinkOutMvModel *expCacheItem in demandModel.outMvModels) {
+                for (TOMvModel *expCacheItem in demandModel.outMvModels) {
                     if (port.target_p && [port.target_p isEqual:expCacheItem.mvNode_p]) {
                         cacheContains = true;
                         break;
@@ -173,7 +173,7 @@
         //3. 加入待判断区;
         AIPort *referenceMvPort = ARR_INDEX(mvRefs, 0);
         if (referenceMvPort) {
-            outMvModel = [AIThinkOutMvModel newWithExp_p:referenceMvPort.target_p];
+            outMvModel = [TOMvModel newWithExp_p:referenceMvPort.target_p];
             [demandModel addToExpCache:outMvModel];
         }
     }];
@@ -196,9 +196,9 @@
  *  //5. 是数据决定了下一轮循环思维想什么,但数据仅能通过mv来决定,无论是思考的方向,还是思考的能量,还是思考的目标,都是以mv为准的;而mv的一切关联,又是以数据为规律进行关联的;
  *
  */
--(AIThinkOutFoModel*) dataOut_FoScheme:(AIThinkOutMvModel*)outMvModel{
+-(TOFoModel*) dataOut_FoScheme:(TOMvModel*)outMvModel{
     //1. 数据准备
-    if (!ISOK(outMvModel, AIThinkOutMvModel.class)) {
+    if (!ISOK(outMvModel, TOMvModel.class)) {
         return nil;
     }
     AICMVNodeBase *checkMvNode = [SMGUtils searchObjectForPointer:outMvModel.mvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
@@ -215,7 +215,7 @@
             
             //3. 有效则返回,无效则循环到下一层
             if (ISOK(validFoNode, AIFoNodeBase.class)) {
-                AIThinkOutFoModel *result = [[AIThinkOutFoModel alloc] init];
+                TOFoModel *result = [[TOFoModel alloc] init];
                 result.content_p = validFoNode.pointer;
                 return result;
             }else{
@@ -233,9 +233,9 @@
  *  1. 对条件祖母进行判定;
  *  2. 对条件祖母取最具象 (目前仅支持1层);
  */
--(void) dataOut_AlgScheme:(AIThinkOutFoModel*)outFoModel{
+-(void) dataOut_AlgScheme:(TOFoModel*)outFoModel{
     //1. 数据准备
-    if (!ISOK(outFoModel, AIThinkOutFoModel.class)) {
+    if (!ISOK(outFoModel, TOFoModel.class)) {
         return;
     }
     AIFoNodeBase *foNode = [SMGUtils searchObjectForPointer:outFoModel.content_p fileName:FILENAME_Node time:cRedisNodeTime];

@@ -13,7 +13,7 @@
  *
  *
  */
-@class AIThinkOutMvModel;
+@class TOMvModel;
 @interface DemandModel : NSObject
 
 @property (assign, nonatomic) NSInteger urgentTo;
@@ -47,12 +47,12 @@
 /**
  *  MARK:--------------------获取当前最强的outMvModel--------------------
  */
--(AIThinkOutMvModel*) getCurrentAIThinkOutMvModel;
+-(TOMvModel*) getCurrentTOMvModel;
 
 
 /**
  *  MARK:--------------------新增outMvModel--------------------
  */
--(void) addToExpCache:(AIThinkOutMvModel*)outMvModel;
+-(void) addToExpCache:(TOMvModel*)outMvModel;
 
 @end

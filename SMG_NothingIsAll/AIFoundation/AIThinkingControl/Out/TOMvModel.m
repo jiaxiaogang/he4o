@@ -1,18 +1,18 @@
 //
-//  AIThinkOutMvModel.m
+//  TOMvModel.m
 //  SMG_NothingIsAll
 //
 //  Created by iMac on 2018/8/21.
 //  Copyright © 2018年 XiaoGang. All rights reserved.
 //
 
-#import "AIThinkOutMvModel.h"
+#import "TOMvModel.h"
 #import "AIPointer.h"
 
-@implementation AIThinkOutMvModel
+@implementation TOMvModel
 
-+(AIThinkOutMvModel*) newWithExp_p:(AIPointer*)mvNode_p{
-    AIThinkOutMvModel *expModel = [[AIThinkOutMvModel alloc] init];
++(TOMvModel*) newWithExp_p:(AIPointer*)mvNode_p{
+    TOMvModel *expModel = [[TOMvModel alloc] init];
     //if (type == MindHappyType_Yes) {
     //    expModel.score = (CGFloat)urgentTo / 2.0f;//v2TODO:此处,暂时这么写score;但这是伪精度;
     //}else if (type == MindHappyType_No){
@@ -29,7 +29,7 @@
     return _except_ps;
 }
 
--(BOOL) isEqual:(AIThinkOutMvModel*)object{
+-(BOOL) isEqual:(TOMvModel*)object{
     if (object) {
         return [self.mvNode_p isEqual:object.mvNode_p];
     }

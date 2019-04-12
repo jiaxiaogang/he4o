@@ -1,14 +1,14 @@
 //
-//  AIThinkOutFoModel.m
+//  TOFoModel.m
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2019/1/30.
 //  Copyright © 2019年 XiaoGang. All rights reserved.
 //
 
-#import "AIThinkOutFoModel.h"
+#import "TOFoModel.h"
 
-@implementation AIThinkOutFoModel
+@implementation TOFoModel
 
 -(NSMutableArray *)except_ps{
     if (!_except_ps) {

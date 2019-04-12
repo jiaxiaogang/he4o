@@ -7,7 +7,7 @@
 //
 
 #import "DemandModel.h"
-#import "AIThinkOutMvModel.h"
+#import "TOMvModel.h"
 
 @implementation DemandModel
 
@@ -36,20 +36,20 @@
  */
 -(void) refreshExpCacheSort{
     [self.outMvModels sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-        AIThinkOutMvModel *itemA = (AIThinkOutMvModel*)obj1;
-        AIThinkOutMvModel *itemB = (AIThinkOutMvModel*)obj2;
+        TOMvModel *itemA = (TOMvModel*)obj1;
+        TOMvModel *itemB = (TOMvModel*)obj2;
         return [SMGUtils compareFloatA:itemB.order floatB:itemA.order];
     }];
     NSLog(@"!!!测试下expCache是否是以order从大到小排序的...");
 }
 
--(AIThinkOutMvModel*) getCurrentAIThinkOutMvModel{
+-(TOMvModel*) getCurrentTOMvModel{
     if (ARRISOK(self.outMvModels)) {
         //1. 重排序 & 取当前序列最前;
         [self refreshExpCacheSort];
-        for (AIThinkOutMvModel *cacheModel in self.outMvModels) {
+        for (TOMvModel *cacheModel in self.outMvModels) {
             BOOL contains = false;
-            for (AIThinkOutMvModel *exceptModel in self.exceptOutMvModels) {
+            for (TOMvModel *exceptModel in self.exceptOutMvModels) {
                 if ([cacheModel isEqual:exceptModel]) {
                     contains = true;
                     break;
@@ -63,7 +63,7 @@
     return nil;
 }
 
--(void) addToExpCache:(AIThinkOutMvModel*)outMvModel{
+-(void) addToExpCache:(TOMvModel*)outMvModel{
     if (outMvModel) {
         [self.outMvModels insertObject:outMvModel atIndex:0];
     }

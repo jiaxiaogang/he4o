@@ -1,5 +1,5 @@
 //
-//  AIThinkOutFoModel.h
+//  TOFoModel.h
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2019/1/30.
@@ -14,7 +14,7 @@
  *  2. 再通过algScheme联想把具象可执行的具体任务存到memOrder;
  *  3. 其间,如果有执行失败,无效等祖母节点,存到except_ps不应期;
  */
-@interface AIThinkOutFoModel : NSObject
+@interface TOFoModel : NSObject
 
 @property (strong, nonatomic) AIPointer *content_p;//对应的数据 (存AIFoNodeBase)
 @property (strong, nonatomic) NSMutableArray *except_ps;
