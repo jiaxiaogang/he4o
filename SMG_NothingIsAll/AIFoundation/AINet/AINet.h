@@ -86,7 +86,7 @@
 -(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps alg:(AIAlgNode*)alg;
 
 //获取绝对匹配到value_ps的algNode (祖母引用联想的方式去重)
--(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps;
+-(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValueP:(AIPointer*)value_p;
 -(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps exceptAlg_p:(AIPointer*)exceptAlg_p;
 
 @end

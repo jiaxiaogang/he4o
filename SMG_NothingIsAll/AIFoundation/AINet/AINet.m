@@ -225,8 +225,11 @@ static AINet *_instance;
     return nil;
 }
 
--(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps{
-    return [self getAbsoluteMatchingAlgNodeWithValuePs:value_ps exceptAlg_p:nil];
+-(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValueP:(AIPointer*)value_p{
+    if (value_p) {
+        return [self getAbsoluteMatchingAlgNodeWithValuePs:@[value_p] exceptAlg_p:nil];
+    }
+    return nil;
 }
 -(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps exceptAlg_p:(AIPointer*)exceptAlg_p{
     ///1. 绝对匹配 -> (header匹配)

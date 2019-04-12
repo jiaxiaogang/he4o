@@ -255,8 +255,8 @@
         }
         
         //4. 取出绝对匹配的dynamic抽象祖母
-        AIAlgNodeBase *frontAlg = [theNet getAbsoluteMatchingAlgNodeWithValuePs:@[front_p]];
-        AIAlgNodeBase *backAlg = [theNet getAbsoluteMatchingAlgNodeWithValuePs:@[back_p]];
+        AIAlgNodeBase *frontAlg = [theNet getAbsoluteMatchingAlgNodeWithValueP:front_p];
+        AIAlgNodeBase *backAlg = [theNet getAbsoluteMatchingAlgNodeWithValueP:back_p];
         
         //5. 构建动态抽象祖母;
         AIAlgNodeBase* (^RelateDynamicAlgBlock)(AIAlgNodeBase*, AIAlgNode*,AIPointer*) = ^AIAlgNodeBase* (AIAlgNodeBase *dynamicAbsNode, AIAlgNode *conNode,AIPointer *value_p){

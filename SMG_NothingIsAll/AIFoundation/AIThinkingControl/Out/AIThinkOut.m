@@ -254,7 +254,7 @@
                 [outFoModel.memOrder addObject:outAlgNode];
             }
         }else{
-            ///2. 非输出时,找出条件祖母,并收集到memOrder (最多往具象循环2层)
+            ///2. 非输出时,找出条件祖母,并收集到memOrder (最多往具象循环2层) (最具象不表示真实,所以此处可以考虑去掉)
             NSArray *check_ps = @[pointer];
             for (NSInteger i = 0; i < cDataOutAssAlgDeep; i++) {
                 AIAlgNode *validAlgNode = [ThinkingUtils scheme_GetAValidNode:check_ps except_ps:outFoModel.except_ps checkBlock:^BOOL(id checkNode) {
@@ -274,6 +274,52 @@
     //3. 对memOrder有效性初步检查 (memOrder和fo.orders长度要一致)
     if (outFoModel.memOrder.count == foNode.orders_kvp.count) {
         
+        //4. 进行行为化; (通过有无,变化,等方式,将结构中所有条件祖母行为化);
+        for (AIAlgNodeBase *curAlg in outFoModel.memOrder) {
+            if (!curAlg.pointer.isOut) {
+                
+                ///1. 对条件祖母行为化
+                AIPointer *hav_p = [theNet getNetDataPointerWithData:@(cHav) algsType:curAlg.pointer.algsType dataSource:curAlg.pointer.dataSource];
+                AIAlgNodeBase *havAlg = [theNet getAbsoluteMatchingAlgNodeWithValueP:hav_p];
+                if (havAlg == nil) {
+                    NSLog(@"祖母不可实现!!! 此TOFoModel失败!!! DESC:找不到cHav祖母");
+                }
+                
+                ///2. 根据havAlg构建成ThinkOutAlgModel
+                
+                
+                ///3. 根据havAlg联想时序,并找出新的解决方案,与新的行为化的祖母,与新的条件祖母;
+                AIPointer *havAlgRef = ARR_INDEX(havAlg.refPorts, 0);
+                
+                
+                AIFoNodeBase *havFo = [SMGUtils searchObjectForPointer:havAlgRef fileName:FILENAME_Node time:cRedisNodeTime];
+                if (havFo == nil) {
+                    NSLog(@"祖母不可实现!!! 此TOFoModel失败!!! DESC:找不到cHav时序");
+                }
+                
+                ///4. 取出havFo除第一个和最后一个之外的中间rangeOrder
+                if (havFo.orders_kvp.count > 2) {
+                    NSArray *rangeOrder = ARR_SUB(havFo.orders_kvp, 1, havFo.orders_kvp.count - 2);
+                    
+                    //5. 递归,对rangeOrder进行类似memOrder的祖母行为化;
+                    
+                    
+                    
+                    //TODO明日计划:
+                    //1. 将以上代码进行封装为独立方法,可递归执行;
+                    //2. 将DemandModel->TOMvModel->TOFoModel->TOAlgModel的模型结构化关系整理清晰;
+                    
+                    
+                    
+                }else{
+                    NSLog(@"祖母不可实现!!! 此TOFoModel失败!!! DESC:cHav时序无效");
+                }
+                
+                
+                
+            }
+            
+        }
         //TODOTOMMROWW:
         //*****代码步骤: (发现->距离->飞行)
         ///1. 比如找到坚果,由有无时序来解决"有无"问题; (cNone,cHav) (有无)
