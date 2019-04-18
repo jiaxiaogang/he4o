@@ -79,8 +79,8 @@
     //2. 对value.refPorts进行检查识别; (noMv信号已输入完毕,识别联想)
     if (ISOK(algNode, AIAlgNodeBase.class)) {
         ///1. 绝对匹配 -> (header匹配)
-        NSString *valuesMD5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:[SMGUtils sortPointers:algNode.value_ps]]]);
-        for (AIPointer *value_p in algNode.value_ps) {
+        NSString *valuesMD5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:[SMGUtils sortPointers:algNode.content_ps]]]);
+        for (AIPointer *value_p in algNode.content_ps) {
             NSArray *refPorts = ARRTOOK([SMGUtils searchObjectForFilePath:value_p.filePath fileName:FILENAME_RefPorts time:cRedisReferenceTime]);
             for (AIPort *refPort in refPorts) {
                 
@@ -100,7 +100,7 @@
             
             ///4. 计数器对强度前3进行计数
             NSMutableDictionary *countDic = [[NSMutableDictionary alloc] init];
-            for (AIPointer *value_p in algNode.value_ps) {
+            for (AIPointer *value_p in algNode.content_ps) {
                 NSArray *refPorts = ARRTOOK([SMGUtils searchObjectForFilePath:value_p.filePath fileName:FILENAME_RefPorts time:cRedisReferenceTime]);
                 refPorts = [refPorts subarrayWithRange:NSMakeRange(0, MIN(cAssDataLimit, refPorts.count))];
                 for (AIPort *refPort in refPorts) {
@@ -130,7 +130,7 @@
     
     //3. strong++
     if (ISOK(assAlgNode, AIAlgNodeBase.class)) {
-        [AINetUtils insertPointer:assAlgNode.pointer toRefPortsByValues:assAlgNode.value_ps ps:assAlgNode.value_ps];
+        [AINetUtils insertPointer:assAlgNode.pointer toRefPortsByValues:assAlgNode.content_ps ps:assAlgNode.content_ps];
         
     }
     return assAlgNode;

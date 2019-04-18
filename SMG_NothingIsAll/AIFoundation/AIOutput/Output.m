@@ -36,7 +36,7 @@
     
     //2. 循环微信息组
     NSMutableArray *valids = [[NSMutableArray alloc] init];
-    NSArray *mic_ps = [SMGUtils convertValuePs2MicroValuePs:algNode.value_ps];
+    NSArray *mic_ps = [SMGUtils convertValuePs2MicroValuePs:algNode.content_ps];
     for (AIKVPointer *value_p in mic_ps) {
         
         //3. 取dataSource & algsType

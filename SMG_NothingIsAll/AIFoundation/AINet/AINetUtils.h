@@ -38,7 +38,7 @@
  *  MARK:--------------------插线到ports--------------------
  *  @param pointer  : 把这个插到ports
  *  @param ports    : 把pointer插到这儿;
- *  @param ps       : pointer是alg时,传alg.value_ps | pointer是fo时,传fo.orders;
+ *  @param ps       : pointer是alg时,传alg.content_ps | pointer是fo时,传fo.orders;
  */
 +(void) insertPointer:(AIPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps;
 

@@ -195,8 +195,8 @@
     if (ISOK(absNode, AIAbsAlgNode.class) && ARRISOK(conNodes)) {
         //1. 具象节点的 关联&存储
         for (AIAlgNodeBase *item in conNodes) {
-            [AINetUtils insertPointer:absNode.pointer toPorts:item.absPorts ps:absNode.value_ps];
-            [AINetUtils insertPointer:item.pointer toPorts:absNode.conPorts ps:item.value_ps];
+            [AINetUtils insertPointer:absNode.pointer toPorts:item.absPorts ps:absNode.content_ps];
+            [AINetUtils insertPointer:item.pointer toPorts:absNode.conPorts ps:item.content_ps];
             if (save) {
                 [SMGUtils insertObject:item pointer:item.pointer fileName:FILENAME_Node time:cRedisNodeTime];
             }

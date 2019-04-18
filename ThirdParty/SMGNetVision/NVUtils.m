@@ -44,7 +44,7 @@
     for (AIKVPointer *algNode_p in order_ps) {
         AIAlgNodeBase *algNode = [SMGUtils searchObjectForPointer:algNode_p fileName:FILENAME_Node time:cRedisNodeTime];
         if (ISOK(algNode, AIAlgNodeBase.class)) {
-            [mStr appendFormat:@"%@%@",(mStr.length == 0 ? @"":@"\n"),[self convertValuePs2Str:algNode.value_ps]];
+            [mStr appendFormat:@"%@%@",(mStr.length == 0 ? @"":@"\n"),[self convertValuePs2Str:algNode.content_ps]];
         }
     }
     return mStr;
@@ -57,7 +57,7 @@
 
 +(NSString*) getAlgNodeDesc:(AIAlgNodeBase*)algNode {
     if (ISOK(algNode, AIAlgNodeBase.class)) {
-        return [NVUtils convertValuePs2Str:((AIAlgNodeBase*)algNode).value_ps];
+        return [NVUtils convertValuePs2Str:((AIAlgNodeBase*)algNode).content_ps];
     }
     return nil;
 }

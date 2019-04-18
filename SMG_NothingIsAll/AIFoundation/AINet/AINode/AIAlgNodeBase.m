@@ -17,11 +17,11 @@
     return _refPorts;
 }
 
--(NSArray *)value_ps{
-    if (_value_ps == nil) {
-        _value_ps = [NSArray new];
+-(NSArray *)content_ps{
+    if (_content_ps == nil) {
+        _content_ps = [NSArray new];
     }
-    return _value_ps;
+    return _content_ps;
 }
 
 /**
@@ -31,7 +31,7 @@
     self = [super initWithCoder:aDecoder];
     if (self) {
         self.refPorts = [aDecoder decodeObjectForKey:@"refPorts"];
-        self.value_ps = [aDecoder decodeObjectForKey:@"value_ps"];
+        self.content_ps = [aDecoder decodeObjectForKey:@"content_ps"];
     }
     return self;
 }
@@ -39,7 +39,7 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [super encodeWithCoder:aCoder];
     [aCoder encodeObject:self.refPorts forKey:@"refPorts"];
-    [aCoder encodeObject:self.value_ps forKey:@"value_ps"];
+    [aCoder encodeObject:self.content_ps forKey:@"content_ps"];
 }
 
 @end

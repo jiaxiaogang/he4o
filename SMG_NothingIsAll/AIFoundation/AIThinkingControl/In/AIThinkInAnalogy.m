@@ -45,8 +45,8 @@
                     ///3. values->absPorts的认知过程
                     if (algNodeA && algNodeB) {
                         NSMutableArray *algSames = [[NSMutableArray alloc] init];
-                        for (AIKVPointer *valueA_p in algNodeA.value_ps) {
-                            for (AIKVPointer *valueB_p in algNodeB.value_ps) {
+                        for (AIKVPointer *valueA_p in algNodeA.content_ps) {
+                            for (AIKVPointer *valueB_p in algNodeB.content_ps) {
                                 if ([valueA_p isEqual:valueB_p] && ![algSames containsObject:valueB_p]) {
                                     [algSames addObject:valueB_p];
                                     break;
@@ -159,8 +159,8 @@
             AINetAbsFoNode *abFo = nil;
             if (algNodeA && algNodeB){
                 ///1. 取a差集和b差集;
-                NSArray *aSub_ps = [SMGUtils removeSub_ps:algNodeB.value_ps parent_ps:[[NSMutableArray alloc] initWithArray:algNodeA.value_ps]];
-                NSArray *bSub_ps = [SMGUtils removeSub_ps:algNodeA.value_ps parent_ps:[[NSMutableArray alloc] initWithArray:algNodeB.value_ps]];
+                NSArray *aSub_ps = [SMGUtils removeSub_ps:algNodeB.content_ps parent_ps:[[NSMutableArray alloc] initWithArray:algNodeA.content_ps]];
+                NSArray *bSub_ps = [SMGUtils removeSub_ps:algNodeA.content_ps parent_ps:[[NSMutableArray alloc] initWithArray:algNodeB.content_ps]];
                 NSArray *rangeOrders = ARR_SUB(orders, i + 1, j - i + 1);
                 
                 ///2. 四种情况; (有且仅有1条微信息不同,进行内类比构建)

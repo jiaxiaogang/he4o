@@ -21,7 +21,7 @@
 /**
  *  MARK:--------------------指向节点的header--------------------
  *  1. 如algNode.absPorts时,就是抽象节点value_ps的md5值
- *  作用: 用来快速匹配port指向的节点的值:(如指向node.value_ps)
+ *  作用: 用来快速匹配port指向的节点的值:(如指向node.content_ps)
  *  替代方案: 也可以用value_ps的值序列来作有序,然后二分法匹配;
  */
 @property (strong,nonatomic) NSString *header;

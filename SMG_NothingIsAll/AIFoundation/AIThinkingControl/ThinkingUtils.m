@@ -331,4 +331,110 @@
     return result;
 }
 
+
++(AIAlgNodeBase*) dataOut_GetCHavAlgNode:(NSString*)algsType dataSource:(NSString*)dataSource{
+    AIPointer *hav_p = [theNet getNetDataPointerWithData:@(cHav) algsType:algsType dataSource:dataSource];
+    return [theNet getAbsoluteMatchingAlgNodeWithValueP:hav_p];
+}
+
++(NSArray*) dataOut_SingleAlgScheme_Convert2Out:(AIAlgNodeBase*)curAlg failure:(void(^)())failure{
+    //1. 进行行为化;
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    if (curAlg.pointer.isOut) {
+        [result addObject:curAlg];
+    }else{
+        //2. 直接对当前祖母进行cHav
+        AIAlgNodeBase *havAlg = [ThinkingUtils dataOut_GetCHavAlgNode:curAlg.pointer.algsType dataSource:curAlg.pointer.dataSource];
+        if (havAlg) {
+            
+            //success >> 根据havAlg去查找对应fo,并找到行为;
+            
+            
+            
+        }else{
+            
+            //3. 对当前祖母下的嵌套祖母和微信息进行依次行为化; (目前仅支持a2+v1各一个)
+            if (curAlg.content_ps.count == 2) {
+                AIKVPointer *first_p = ARR_INDEX(curAlg.content_ps, 0);
+                AIKVPointer *second_p = ARR_INDEX(curAlg.content_ps, 1);
+                AIKVPointer *subAlg_p = nil;
+                AIKVPointer *subValue_p = nil;
+                if ([PATH_NET_ALG_ABS_NODE isEqualToString:first_p.folderName]) {
+                    subAlg_p = first_p;
+                }else if([PATH_NET_VALUE isEqualToString:first_p.folderName]){
+                    subValue_p = first_p;
+                }else if([PATH_NET_ALG_ABS_NODE isEqualToString:second_p.folderName]){
+                    subAlg_p = second_p;
+                }else if([PATH_NET_VALUE isEqualToString:second_p.folderName]){
+                    subValue_p = second_p;
+                }
+                
+                //4. 两个值各自分配成功则进入下一步;
+                if (subAlg_p && subValue_p) {
+                    
+                    //5. 对subAlg进行cHav
+                    AIAlgNodeBase *subHavAlg = [ThinkingUtils dataOut_GetCHavAlgNode:subAlg_p.algsType dataSource:subAlg_p.dataSource];
+                    if (subHavAlg) {
+                        
+                        //6. 对subValue进行cGreater/cLess
+                        //此处我们需要变大还是变小呢? (找出对比的两者,并得出答案);
+                        
+                        //此处还未发现具象坚果,所以只需先判定,subValue的cGreater和cLess是可以被变化的,即可;
+                        
+                        
+                    }else{
+                        failure();
+                    }
+                }else{
+                    failure();
+                }
+                
+                
+            }
+            
+        }
+        
+        
+        
+        ///2. 根据havAlg构建成ThinkOutAlgModel
+        ///3. 根据havAlg联想时序,并找出新的解决方案,与新的行为化的祖母,与新的条件祖母;
+        AIPointer *havAlgRef = ARR_INDEX(havAlg.refPorts, 0);
+        
+        
+        AIFoNodeBase *havFo = [SMGUtils searchObjectForPointer:havAlgRef fileName:FILENAME_Node time:cRedisNodeTime];
+        if (havFo == nil) {
+            NSLog(@"祖母不可实现!!! 此TOFoModel失败!!! DESC:找不到cHav时序");
+        }
+        
+        ///4. 取出havFo除第一个和最后一个之外的中间rangeOrder
+        if (havFo.orders_kvp.count > 2) {
+            NSArray *rangeOrder = ARR_SUB(havFo.orders_kvp, 1, havFo.orders_kvp.count - 2);
+            for (AIKVPointer *rangeAlg_p in rangeOrder) {
+                
+                //对当前再递归进行条件祖母行为化;
+                AIAlgNodeBase *rangeAlg = [SMGUtils searchObjectForPointer:rangeAlg_p fileName:FILENAME_Node time:cRedisNodeTime];
+                NSArray *rangeResult = [ThinkingUtils dataOut_SingleAlgScheme_Convert2Out:rangeAlg_p failure:failure];
+                
+                [result addObjectsFromArray:rangeResult];
+                
+                
+                
+                
+                
+            }
+            
+            
+            //5. 递归,对rangeOrder进行类似memOrder的祖母行为化;
+            //TODO明日计划:
+            //1. 将以上代码进行封装为独立方法,可递归执行;
+            //2. 将DemandModel->TOMvModel->TOFoModel->TOAlgModel的模型结构化关系整理清晰;
+        }else{
+            NSLog(@"祖母不可实现!!! 此TOFoModel失败!!! DESC:cHav时序无效");
+        }
+    }
+    
+    return result;
+}
+
+
 @end

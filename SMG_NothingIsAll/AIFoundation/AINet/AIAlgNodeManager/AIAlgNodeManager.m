@@ -25,10 +25,10 @@
     conNode.pointer = [SMGUtils createPointer:PATH_NET_ALG_NODE algsType:@"" dataSource:@"" isOut:isOut];
     
     //3. 指定value_ps
-    conNode.value_ps = [SMGUtils sortPointers:algsArr];
+    conNode.content_ps = [SMGUtils sortPointers:algsArr];
  
     //4. value.refPorts (更新引用序列)
-    [AINetUtils insertPointer:conNode.pointer toRefPortsByValues:conNode.value_ps ps:conNode.value_ps];
+    [AINetUtils insertPointer:conNode.pointer toRefPortsByValues:conNode.content_ps ps:conNode.content_ps];
     
     //5. 存储
     [SMGUtils insertObject:conNode rootPath:conNode.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
@@ -127,19 +127,19 @@
             findAbsNode = [[AIAbsAlgNode alloc] init];
             BOOL isOut = [AINetUtils checkAllOfOut:sortSames];
             findAbsNode.pointer = [SMGUtils createPointer:PATH_NET_ALG_ABS_NODE algsType:@"" dataSource:@"" isOut:isOut];
-            findAbsNode.value_ps = sortSames;
+            findAbsNode.content_ps = sortSames;
             
             ///1. value.refPorts (更新微信息的引用序列)
-            [AINetUtils insertPointer:findAbsNode.pointer toRefPortsByValues:findAbsNode.value_ps ps:findAbsNode.value_ps];
+            [AINetUtils insertPointer:findAbsNode.pointer toRefPortsByValues:findAbsNode.content_ps ps:findAbsNode.content_ps];
         }
         
         //4. 祖母的嵌套
         for (AIAlgNode *item in conAlgs) {
             ///1. 可替换时,逐个进行替换; (比如cLess/cGreater时,就不可替换)
-            if ([SMGUtils containsSub_ps:algSames parent_ps:item.value_ps]) {
-                NSMutableArray *newValue_ps = [SMGUtils removeSub_ps:algSames parent_ps:[[NSMutableArray alloc] initWithArray:item.value_ps]];
+            if ([SMGUtils containsSub_ps:algSames parent_ps:item.content_ps]) {
+                NSMutableArray *newValue_ps = [SMGUtils removeSub_ps:algSames parent_ps:[[NSMutableArray alloc] initWithArray:item.content_ps]];
                 [newValue_ps addObject:findAbsNode.pointer];
-                item.value_ps = [SMGUtils sortPointers:newValue_ps];
+                item.content_ps = [SMGUtils sortPointers:newValue_ps];
             }
         }
         
