@@ -42,6 +42,8 @@
 #define cHav NSIntegerMax - 1  //表示内类比算法中,祖母的有
 #define cNone NSIntegerMin + 1 //表示内类比算法中,祖母的无
 
+#define cHavNoneAssFoCount 5    //Hav和None在联想其fo时,最大条数;
+
 //MARK:===============================================================
 //MARK:                     < ThinkIn >
 //MARK:===============================================================

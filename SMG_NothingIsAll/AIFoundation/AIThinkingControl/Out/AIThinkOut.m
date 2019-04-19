@@ -288,9 +288,6 @@
     //1. 进行行为化; (通过有无,变化,等方式,将结构中所有条件祖母行为化);
     for (AIAlgNodeBase *curAlg in outFoModel.memOrder) {
         
-        [ThinkingUtils dataOut_SingleAlgScheme_Convert2Out:curAlg failure:^{
-            NSLog(@">> algScheme_failure");
-        }];
     }
 }
 
