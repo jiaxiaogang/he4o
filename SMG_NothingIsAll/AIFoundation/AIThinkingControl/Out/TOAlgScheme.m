@@ -92,11 +92,15 @@
                         [result addObjectsFromArray:subHavResult];
                         
                         
+                        //TODOTOMORROW:
                         //8. 对subValue进行cGreater/cLess
-                        //此处我们需要变大还是变小呢? (找出对比的两者,并得出答案);
-                        
+                        //简单暴力方案:
                         //此处还未发现具象坚果,所以只需先判定,subValue的cGreater和cLess是可以被变化的,即可;
                         
+                        //精细靠谱方案:
+                        //1. 我们从subFo中,读取到我们所得到的结果,便是 "预测信息";
+                        //2. 将 "预测信息" 中的对应标识的"预测subValue",与 "诉求信息" subValue进行对比;
+                        //3. 将此两者信息进行类比,得出一个cGreater/cLess,后判定其行为化可行与否;
                         
                     }
                 }
