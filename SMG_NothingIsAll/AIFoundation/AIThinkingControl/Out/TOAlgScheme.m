@@ -62,11 +62,13 @@
         if (ARRISOK(havAlgResult)) {
             [result addObjectsFromArray:havAlgResult];
         }else{
-            //5. hav行为化失败,则对curAlg的subAlg & subValue分别判定; (目前仅支持a2+v1各一个)
+            //5. hav行为化失败,则对curAlg的(subAlg&subValue)分别判定; (目前仅支持a2+v1各一个)
             AIAlgNodeBase *curAlg = [SMGUtils searchObjectForPointer:curAlg_p fileName:FILENAME_Node time:cRedisNodeTime];
             if (!curAlg) {
                 return nil;
             }
+            
+            //6. 将curAlg.content_ps提取为subAlg_p和subValue_p;
             if (curAlg.content_ps.count == 2) {
                 AIKVPointer *first_p = ARR_INDEX(curAlg.content_ps, 0);
                 AIKVPointer *second_p = ARR_INDEX(curAlg.content_ps, 1);
@@ -74,35 +76,30 @@
                 AIKVPointer *subValue_p = nil;
                 if ([PATH_NET_ALG_ABS_NODE isEqualToString:first_p.folderName]) {
                     subAlg_p = first_p;
-                }else if([PATH_NET_VALUE isEqualToString:first_p.folderName]){
-                    subValue_p = first_p;
                 }else if([PATH_NET_ALG_ABS_NODE isEqualToString:second_p.folderName]){
                     subAlg_p = second_p;
+                }
+                if([PATH_NET_VALUE isEqualToString:first_p.folderName]){
+                    subValue_p = first_p;
                 }else if([PATH_NET_VALUE isEqualToString:second_p.folderName]){
                     subValue_p = second_p;
                 }
+                if (!subAlg_p || !subValue_p) {
+                    return nil;
+                }
                 
-                //6. 两个值各自分配成功则进入下一步;
-                if (subAlg_p && subValue_p) {
+                //7. 两个值各自分配成功,对subHavAlg行为化; (坚果树会掉坚果);
+                AIAlgNodeBase *subHavAlg = [ThinkingUtils dataOut_GetCHavAlgNode:subAlg_p.algsType dataSource:subAlg_p.dataSource];
+                NSArray *subHavResult = [self convert2Out_HavAlg:subHavAlg];
+                if (ARRISOK(subHavResult)) {
+                    [result addObjectsFromArray:subHavResult];
                     
-                    //7. 对subHavAlg行为化; (成功则收集,并开始进行 "变化" 行为化);
-                    AIAlgNodeBase *subHavAlg = [ThinkingUtils dataOut_GetCHavAlgNode:subAlg_p.algsType dataSource:subAlg_p.dataSource];
-                    NSArray *subHavResult = [self convert2Out_HavAlg:subHavAlg];
-                    if (ARRISOK(subHavResult)) {
-                        [result addObjectsFromArray:subHavResult];
-                        
-                        
-                        //TODOTOMORROW:
-                        //8. 对subValue进行cGreater/cLess
-                        //简单暴力方案:
-                        //此处还未发现具象坚果,所以只需先判定,subValue的cGreater和cLess是可以被变化的,即可;
-                        
-                        //精细靠谱方案:
-                        //1. 我们从subFo中,读取到我们所得到的结果,便是 "预测信息";
-                        //2. 将 "预测信息" 中的对应标识的"预测subValue",与 "诉求信息" subValue进行对比;
-                        //3. 将此两者信息进行类比,得出一个cGreater/cLess,后判定其行为化可行与否;
-                        
-                    }
+                    //8. 两个值各自分配成功,对subValue行为化; (坚果会掉到树下,我们可以飞过去吃;)
+                    ///1. 从subHavAlg联想其"引用序列"的时序:subHavFo;
+                    ///2. 从subHavFo联想其"具象序列":conSubHavFo;
+                    ///3. 从conSubHavFo中,找到与conSubHavFo.subValue作为预测信息;
+                    ///4. 将诉求信息:subValue与预测信息:conSubHavFo.subValue进行类比,并得出cLess/cGreater;
+                    
                 }
             }
         }
