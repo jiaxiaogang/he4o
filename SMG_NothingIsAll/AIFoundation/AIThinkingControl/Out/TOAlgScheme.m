@@ -9,8 +9,8 @@
 #import "TOAlgScheme.h"
 #import "ThinkingUtils.h"
 #import "AIKVPointer.h"
-#import "AIAlgNodeBase.h"
-#import "AIFoNodeBase.h"
+#import "AIAbsAlgNode.h"
+#import "AINetAbsFoNode.h"
 #import "AIPort.h"
 
 @implementation TOAlgScheme
@@ -42,7 +42,13 @@
 //MARK:                     < privateMethod >
 //MARK:===============================================================
 
-//单个祖母的行为化
+
+/**
+ *  MARK:--------------------单个祖母的行为化--------------------
+ *  第1级: 直接判定curAlg_p为输出则收集;
+ *  第2级: 直接对curAlg的cHav来行为化,成功则收集;
+ *  第3级: 对curAlg下subValue和subAlg进行依次行为化,成功则收集;
+ */
 +(NSArray*) convert2Out_Single:(AIKVPointer*)curAlg_p{
     //1. 数据准备;
     if (!curAlg_p) {
@@ -50,22 +56,20 @@
     }
     NSMutableArray *result = [[NSMutableArray alloc] init];
     
-    //2. 本身即是isOut时,直接行为化返回;
+    //2. 第1级: 本身即是isOut时,直接行为化返回;
     if (curAlg_p.isOut) {
         [result addObject:curAlg_p];
     }else{
-        //3. 直接对当前祖母进行cHav并行为化;
+        //3. 第2级: 直接对当前祖母进行cHav并行为化;
         AIAlgNodeBase *havAlg = [ThinkingUtils dataOut_GetCHavAlgNode:curAlg_p.algsType dataSource:curAlg_p.dataSource];
-        NSArray *havAlgResult = [self convert2Out_HavAlg:havAlg];
-        
-        //4. hav行为化成功;
-        if (ARRISOK(havAlgResult)) {
-            [result addObjectsFromArray:havAlgResult];
-        }else{
-            //5. hav行为化失败,则对curAlg的(subAlg&subValue)分别判定; (目前仅支持a2+v1各一个)
+        [self convert2Out_HavAlg:havAlg success:^(AIFoNodeBase *havFo, NSArray *actions) {
+            //4. hav行为化成功;
+            [result addObjectsFromArray:actions];
+        } failure:^{
+            //5. 第3级: 对curAlg的(subAlg&subValue)分别判定; (目前仅支持a2+v1各一个)
             AIAlgNodeBase *curAlg = [SMGUtils searchObjectForPointer:curAlg_p fileName:FILENAME_Node time:cRedisNodeTime];
             if (!curAlg) {
-                return nil;
+                return;
             }
             
             //6. 将curAlg.content_ps提取为subAlg_p和subValue_p;
@@ -85,24 +89,50 @@
                     subValue_p = second_p;
                 }
                 if (!subAlg_p || !subValue_p) {
-                    return nil;
+                    return;
                 }
                 
                 //7. 两个值各自分配成功,对subHavAlg行为化; (坚果树会掉坚果);
                 AIAlgNodeBase *subHavAlg = [ThinkingUtils dataOut_GetCHavAlgNode:subAlg_p.algsType dataSource:subAlg_p.dataSource];
-                NSArray *subHavResult = [self convert2Out_HavAlg:subHavAlg];
-                if (ARRISOK(subHavResult)) {
-                    [result addObjectsFromArray:subHavResult];
+                [self convert2Out_HavAlg:subHavAlg success:^(AIFoNodeBase *havFo, NSArray *subHavActions) {
+                    [result addObjectsFromArray:subHavActions];
                     
-                    //8. 两个值各自分配成功,对subValue行为化; (坚果会掉到树下,我们可以飞过去吃;)
-                    ///1. 从subHavAlg联想其"引用序列"的时序:subHavFo;
-                    ///2. 从subHavFo联想其"具象序列":conSubHavFo;
-                    ///3. 从conSubHavFo中,找到与conSubHavFo.subValue作为预测信息;
-                    ///4. 将诉求信息:subValue与预测信息:conSubHavFo.subValue进行类比,并得出cLess/cGreater;
-                    
-                }
+                    //8. 两个值各自分配成功,对subValue行为化; (坚果会掉到树下,我们可以飞过去吃) 参考图109_subView行为化;
+                    if (ISOK(havFo, AINetAbsFoNode.class)) {
+                        AINetAbsFoNode *subHavFo = (AINetAbsFoNode*)havFo;
+                        
+                        //9. 从subHavFo联想其"具象序列":conSubHavFo; (仅支持一个)
+                        AIFoNodeBase *conSubHavFo = [ThinkingUtils getNodeFromPort:ARR_INDEX(subHavFo.conPorts, 0)];
+                        if (ISOK(conSubHavFo, AIFoNodeBase.class)) {
+                            
+                            //10. 从conSubHavFo中,找到与conSubHavFo.subValue作为预测信息;
+                            for (AIKVPointer *order_p in conSubHavFo.orders_kvp) {
+                                
+                                if ([ThinkingUtils checkHavConAlg:order_p absAlg:subAlg_p]) {
+                                    AIAlgNodeBase *forecastAlg = [SMGUtils searchObjectForPointer:order_p fileName:FILENAME_Node time:cRedisNodeTime];
+                                    if (forecastAlg) {
+                                        for (AIKVPointer *forecast_p in forecastAlg.content_ps) {
+                                            if ([STRTOOK(forecast_p.identifier) isEqualToString:subValue_p.identifier]) {
+                                                //11. 将诉求信息:subValue与预测信息:conSubHavFo.subValue进行类比,并得出cLess/cGreater;
+                                                [SMGUtils searchObjectForPointer:subValue_p fileName:FILENAME_Value time:cRedisValueTime];
+                                                
+                                                
+                                                [SMGUtils searchObjectForPointer:forecast_p fileName:FILENAME_Value time:cRedisValueTime];
+                                                
+                                                
+                                                //对以上两个值进行对比,并得出是要找cLess或cGreater;
+                                                
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } failure:nil];
             }
-        }
+        }];
+        
         
         ////1. 根据havAlg构建成ThinkOutAlgModel
         ////2. 将DemandModel->TOMvModel->TOFoModel->TOAlgModel的模型结构化关系整理清晰;
@@ -112,11 +142,17 @@
     return result;
 }
 
-//对单个havAlg进行行为化
-+(NSArray*) convert2Out_HavAlg:(AIAlgNodeBase*)havAlg{
+/**
+ *  MARK:--------------------对单个havAlg进行行为化--------------------
+ *  1. 先根据havAlg取到havFo;
+ *  2. 再判断havFo中的rangeOrder的行为化;
+ *  @param success : 行为化成功则返回(havFo + 行为序列); (havFo notnull, actions notnull)
+ */
++(void) convert2Out_HavAlg:(AIAlgNodeBase*)havAlg success:(void(^)(AIFoNodeBase *havFo,NSArray *actions))success failure:(void(^)())failure{
     //1. 数据检查
     if (!havAlg) {
-        return nil;
+        failure();
+        return;
     }
     
     //2. 根据havAlg联想时序,并找出新的解决方案,与新的行为化的祖母,与新的条件祖母;
@@ -129,11 +165,12 @@
             NSArray *foRangeOrder = ARR_SUB(havFo.orders_kvp, 1, havFo.orders_kvp.count - 2);
             NSArray *foResult = [TOAlgScheme convert2Out:foRangeOrder];
             if (ARRISOK(foResult)) {
-                return foResult;
+                success(havFo,foResult);
+                return;
             }
         }
     }
-    return nil;
+    failure();
 }
 
 @end

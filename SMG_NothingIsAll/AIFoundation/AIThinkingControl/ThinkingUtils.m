@@ -205,6 +205,13 @@
     return nil;
 }
 
++(id) getNodeFromPort:(AIPort*)port{
+    if (port) {
+        return [SMGUtils searchObjectForPointer:port.target_p fileName:FILENAME_Node time:cRedisNodeTime];
+    }
+    return nil;
+}
+
 @end
 
 
@@ -335,6 +342,32 @@
 +(AIAlgNodeBase*) dataOut_GetCHavAlgNode:(NSString*)algsType dataSource:(NSString*)dataSource{
     AIPointer *hav_p = [theNet getNetDataPointerWithData:@(cHav) algsType:algsType dataSource:dataSource];
     return [theNet getAbsoluteMatchingAlgNodeWithValueP:hav_p];
+}
+
+@end
+
+
+//MARK:===============================================================
+//MARK:                     < ThinkingUtils (General) >
+//MARK:===============================================================
+@implementation ThinkingUtils (General)
+
++(BOOL) checkHavConAlg:(AIKVPointer*)conAlg_p absAlg:(AIPointer*)absAlg_p{
+    //1. 判定有效
+    if (conAlg_p && absAlg_p) {
+        
+        //2. 取出absAlg.conPorts
+        AIAbsAlgNode *absAlg = [SMGUtils searchObjectForPointer:absAlg_p fileName:FILENAME_Node time:cRedisNodeTime];
+        if (ISOK(absAlg, AIAbsAlgNode.class)) {
+            NSArray *absAlgCon_ps = [SMGUtils convertPointersFromPorts:absAlg.conPorts];
+            
+            //3. 判断"坚果"具象有指向:conAlg_p;
+            if ([SMGUtils containsSub_p:conAlg_p parent_ps:absAlgCon_ps]) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 @end

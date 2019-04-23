@@ -89,6 +89,9 @@
  */
 +(AIFrontOrderNode*) getFoNodeFromCmvNode:(AICMVNode*)cmvNode;
 
+//根据端口,获取到target指向的节点;
++(id) getNodeFromPort:(AIPort*)port;
+
 
 @end
 
@@ -161,5 +164,15 @@
  *  MARK:--------------------获取到某标识下的cHav祖母--------------------
  */
 +(AIAlgNodeBase*) dataOut_GetCHavAlgNode:(NSString*)algsType dataSource:(NSString*)dataSource;
+
+@end
+
+
+//MARK:===============================================================
+//MARK:                     < ThinkingUtils (General) >
+//MARK:===============================================================
+@interface ThinkingUtils (General)
+
++(BOOL) checkHavConAlg:(AIKVPointer*)conAlg_p absAlg:(AIPointer*)absAlg_p;
 
 @end
