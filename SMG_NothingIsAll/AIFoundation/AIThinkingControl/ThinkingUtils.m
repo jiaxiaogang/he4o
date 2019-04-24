@@ -338,10 +338,23 @@
     return result;
 }
 
++(AIAlgNodeBase*) dataOut_GetAlgNodeWithInnerType:(AnalogyInnerType)type algsType:(NSString*)algsType dataSource:(NSString*)dataSource{
+    NSInteger typeValue = [self getInnerTypeValue:type];
+    AIPointer *value_p = [theNet getNetDataPointerWithData:@(typeValue) algsType:algsType dataSource:dataSource];
+    return [theNet getAbsoluteMatchingAlgNodeWithValueP:value_p];
+}
 
-+(AIAlgNodeBase*) dataOut_GetCHavAlgNode:(NSString*)algsType dataSource:(NSString*)dataSource{
-    AIPointer *hav_p = [theNet getNetDataPointerWithData:@(cHav) algsType:algsType dataSource:dataSource];
-    return [theNet getAbsoluteMatchingAlgNodeWithValueP:hav_p];
++(NSInteger) getInnerTypeValue:(AnalogyInnerType)type{
+    if (type == AnalogyInnerType_Hav) {
+        return cHav;
+    }else if (type == AnalogyInnerType_None) {
+        return cNone;
+    }else if (type == AnalogyInnerType_Greater) {
+        return cGreater;
+    }else if (type == AnalogyInnerType_Less) {
+        return cLess;
+    }
+    return 0;
 }
 
 @end

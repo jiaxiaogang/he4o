@@ -161,9 +161,9 @@
 
 
 /**
- *  MARK:--------------------获取到某标识下的cHav祖母--------------------
+ *  MARK:--------------------获取到某标识下的cHav/cNone/cGreater/cLess祖母--------------------
  */
-+(AIAlgNodeBase*) dataOut_GetCHavAlgNode:(NSString*)algsType dataSource:(NSString*)dataSource;
++(AIAlgNodeBase*) dataOut_GetAlgNodeWithInnerType:(AnalogyInnerType)type algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
 
 @end
 
@@ -173,6 +173,7 @@
 //MARK:===============================================================
 @interface ThinkingUtils (General)
 
+//判断absAlg是否具象指向conAlg;
 +(BOOL) checkHavConAlg:(AIKVPointer*)conAlg_p absAlg:(AIPointer*)absAlg_p;
 
 @end
