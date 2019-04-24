@@ -383,4 +383,15 @@
     return false;
 }
 
++(AIKVPointer*) getSameIdentifierPointer:(AIKVPointer*)check_p from_ps:(NSArray*)from_ps{
+    if (ARRISOK(from_ps) && check_p) {
+        for (AIKVPointer *from_p in from_ps) {
+            if ([STRTOOK(from_p.identifier) isEqualToString:check_p.identifier]) {
+                return from_p;
+            }
+        }
+    }
+    return nil;
+}
+
 @end

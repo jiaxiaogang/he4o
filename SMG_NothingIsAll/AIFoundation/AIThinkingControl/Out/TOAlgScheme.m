@@ -63,96 +63,105 @@
             [result addObjectsFromArray:actions];
         } failure:^{
             //5. 第3级: 对curAlg的(subAlg&subValue)分别判定; (目前仅支持a2+v1各一个)
-            AIAlgNodeBase *curAlg = [SMGUtils searchObjectForPointer:curAlg_p fileName:FILENAME_Node time:cRedisNodeTime];
-            if (!curAlg) {
-                return;
-            }
-            
-            //6. 将curAlg.content_ps提取为subAlg_p和subValue_p;
-            if (curAlg.content_ps.count == 2) {
-                AIKVPointer *first_p = ARR_INDEX(curAlg.content_ps, 0);
-                AIKVPointer *second_p = ARR_INDEX(curAlg.content_ps, 1);
-                AIKVPointer *subAlg_p = nil;
-                AIKVPointer *subValue_p = nil;
-                if ([PATH_NET_ALG_ABS_NODE isEqualToString:first_p.folderName]) {
-                    subAlg_p = first_p;
-                }else if([PATH_NET_ALG_ABS_NODE isEqualToString:second_p.folderName]){
-                    subAlg_p = second_p;
-                }
-                if([PATH_NET_VALUE isEqualToString:first_p.folderName]){
-                    subValue_p = first_p;
-                }else if([PATH_NET_VALUE isEqualToString:second_p.folderName]){
-                    subValue_p = second_p;
-                }
-                if (!subAlg_p || !subValue_p) {
-                    return;
-                }
-                
-                //7. 两个值各自分配成功,对subHavAlg行为化; (坚果树会掉坚果);
-                AIAlgNodeBase *subHavAlg = [ThinkingUtils dataOut_GetAlgNodeWithInnerType:AnalogyInnerType_Hav algsType:subAlg_p.algsType dataSource:subAlg_p.dataSource];
-                [self convert2Out_RelativeAlg:subHavAlg success:^(AIFoNodeBase *havFo, NSArray *subHavActions) {
-                    [result addObjectsFromArray:subHavActions];
-                    
-                    //8. 两个值各自分配成功,对subValue行为化; (坚果会掉到树下,我们可以飞过去吃) 参考图109_subView行为化;
-                    if (ISOK(havFo, AINetAbsFoNode.class)) {
-                        AINetAbsFoNode *subHavFo = (AINetAbsFoNode*)havFo;
-                        
-                        //9. 从subHavFo联想其"具象序列":conSubHavFo; (仅支持一个)
-                        AIFoNodeBase *conSubHavFo = [ThinkingUtils getNodeFromPort:ARR_INDEX(subHavFo.conPorts, 0)];
-                        if (!ISOK(conSubHavFo, AIFoNodeBase.class)) {
-                            return;
-                        }
-                        
-                        //10. 从conSubHavFo中,找到与conSubHavFo.subValue作为预测信息;
-                        for (AIKVPointer *item_p in conSubHavFo.orders_kvp) {
-                            
-                            //11. item_p不是subAlg的具象节点,则跳过 / 否则取出"预测"信息;
-                            if (![ThinkingUtils checkHavConAlg:item_p absAlg:subAlg_p]) {
-                                continue;
-                            }
-                            AIAlgNodeBase *forecastAlg = [SMGUtils searchObjectForPointer:item_p fileName:FILENAME_Node time:cRedisNodeTime];
-                            if (!forecastAlg) {
-                                continue;
-                            }
-                            
-                            //12. 对预测信息筛选出与subValue对应的那个微信息;
-                            for (AIKVPointer *forecast_p in forecastAlg.content_ps) {
-                                if ([STRTOOK(forecast_p.identifier) isEqualToString:subValue_p.identifier]) {
-                                    
-                                    //13. 将诉求信息:subValue与预测信息:forecastValue进行类比,并得出cLess/cGreater;
-                                    NSNumber *subValue = NUMTOOK([SMGUtils searchObjectForPointer:subValue_p fileName:FILENAME_Value time:cRedisValueTime]);
-                                    NSNumber *forecastValue = NUMTOOK([SMGUtils searchObjectForPointer:forecast_p fileName:FILENAME_Value time:cRedisValueTime]);
-                                    
-                                    //对以上两个值进行对比,并得出是要找cLess或cGreater;
-                                    NSComparisonResult compareResult = [subValue compare:forecastValue];
-                                    
-                                    BOOL canAction = false;
-                                    if (compareResult != NSOrderedSame) {
-                                        AnalogyInnerType type = (compareResult == NSOrderedAscending) ? AnalogyInnerType_Greater : AnalogyInnerType_Less;
-                                        AIAlgNodeBase *glAlg = [ThinkingUtils dataOut_GetAlgNodeWithInnerType:type algsType:subValue_p.algsType dataSource:subValue_p.dataSource];
-                                        [self convert2Out_RelativeAlg:glAlg success:^(AIFoNodeBase *havFo, NSArray *actions) {
-                                            //TODO:有些预测确定,有些不那么确定;
-                                            [result addObjectsFromArray:actions];
-                                        } failure:^{
-                                            [result removeAllObjects];
-                                        }];
-                                    }else{
-                                        canAction = true;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } failure:nil];
-            }
+            NSArray *subResult = ARRTOOK([self convert2Out_Single_Sub:curAlg_p]);
+            [result addObjectsFromArray:subResult];
         }];
+        
+        
         
         
         ////1. 根据havAlg构建成ThinkOutAlgModel
         ////2. 将DemandModel->TOMvModel->TOFoModel->TOAlgModel的模型结构化关系整理清晰;
         
+        //TOMORROW: 添加energy消耗;
+        
     }
     
+    return result;
+}
+
+/**
+ *  MARK:--------------------对单个祖母的sub拆分行为化--------------------
+ *  1. 对curAlg的(subAlg&subValue)分别判定;
+ *  2. 目前仅支持 1 x subAlg + 1 x subValue (目前仅支持a2+v1各一个);
+ */
++(NSArray*) convert2Out_Single_Sub:(AIKVPointer*)curAlg_p{
+    //1. 数据检查准备;
+    AIAlgNodeBase *curAlg = [SMGUtils searchObjectForPointer:curAlg_p fileName:FILENAME_Node time:cRedisNodeTime];
+    if (!curAlg) return nil;
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    
+    //2. 将curAlg.content_ps提取为subAlg_p和subValue_p;
+    if (curAlg.content_ps.count == 2) {
+        AIKVPointer *first_p = ARR_INDEX(curAlg.content_ps, 0);
+        AIKVPointer *second_p = ARR_INDEX(curAlg.content_ps, 1);
+        AIKVPointer *subAlg_p = nil;
+        AIKVPointer *subValue_p = nil;
+        if ([PATH_NET_ALG_ABS_NODE isEqualToString:first_p.folderName]) {
+            subAlg_p = first_p;
+        }else if([PATH_NET_ALG_ABS_NODE isEqualToString:second_p.folderName]){
+            subAlg_p = second_p;
+        }
+        if([PATH_NET_VALUE isEqualToString:first_p.folderName]){
+            subValue_p = first_p;
+        }else if([PATH_NET_VALUE isEqualToString:second_p.folderName]){
+            subValue_p = second_p;
+        }
+        if (!subAlg_p || !subValue_p) return nil;
+        
+        //3. 先对subHavAlg行为化; (坚果树会掉坚果);
+        AIAlgNodeBase *subHavAlg = [ThinkingUtils dataOut_GetAlgNodeWithInnerType:AnalogyInnerType_Hav algsType:subAlg_p.algsType dataSource:subAlg_p.dataSource];
+        [self convert2Out_RelativeAlg:subHavAlg success:^(AIFoNodeBase *havFo, NSArray *subHavActions) {
+            
+            //4. 再对subValue行为化; (坚果会掉到树下,我们可以飞过去吃) 参考图109_subValue行为化;
+            if (!ISOK(havFo, AINetAbsFoNode.class)) return;
+            AINetAbsFoNode *subHavFo = (AINetAbsFoNode*)havFo;
+            
+            //5. 从subHavFo联想其"具象序列":conSubHavFo;
+            //TODO: 目前仅支持一个,随后要支持三个左右;
+            AIFoNodeBase *conSubHavFo = [ThinkingUtils getNodeFromPort:ARR_INDEX(subHavFo.conPorts, 0)];
+            if (!ISOK(conSubHavFo, AIFoNodeBase.class)) return;
+            
+            //6. 从conSubHavFo中,找到与forecastAlg_p预测祖母指针;
+            AIKVPointer *forecastAlg_p = nil;
+            for (AIKVPointer *item_p in conSubHavFo.orders_kvp) {
+                
+                //7. 判断item_p是subAlg的具象节点;
+                if ([ThinkingUtils checkHavConAlg:item_p absAlg:subAlg_p]) {
+                    forecastAlg_p = item_p;
+                    break;
+                }
+            }
+            if (!forecastAlg_p) return;
+            
+            //8. 取出"预测"祖母信息;
+            AIAlgNodeBase *forecastAlg = [SMGUtils searchObjectForPointer:forecastAlg_p fileName:FILENAME_Node time:cRedisNodeTime];
+            if (!forecastAlg) return;
+            
+            //8. 进一步取出预测微信息;
+            AIKVPointer *forecastValue_p = [ThinkingUtils getSameIdentifierPointer:subValue_p from_ps:forecastAlg.content_ps];
+            if (!forecastValue_p) return;
+            
+            //9. 将诉求信息:subValue与预测信息:forecastValue进行类比;
+            NSNumber *subValue = NUMTOOK([SMGUtils searchObjectForPointer:subValue_p fileName:FILENAME_Value time:cRedisValueTime]);
+            NSNumber *forecastValue = NUMTOOK([SMGUtils searchObjectForPointer:forecastValue_p fileName:FILENAME_Value time:cRedisValueTime]);
+            NSComparisonResult compareResult = [subValue compare:forecastValue];
+            
+            //10. 得出是要找cLess或cGreater;
+            if (compareResult == NSOrderedSame) {
+                [result addObjectsFromArray:subHavActions];//成功A;
+                return;
+            }else{
+                AnalogyInnerType type = (compareResult == NSOrderedAscending) ? AnalogyInnerType_Greater : AnalogyInnerType_Less;
+                AIAlgNodeBase *glAlg = [ThinkingUtils dataOut_GetAlgNodeWithInnerType:type algsType:subValue_p.algsType dataSource:subValue_p.dataSource];
+                [self convert2Out_RelativeAlg:glAlg success:^(AIFoNodeBase *havFo, NSArray *actions) {
+                    //TODO:有些预测确定,有些不那么确定;(未必就可以直接添加到行为中)
+                    [result addObjectsFromArray:subHavActions];
+                    [result addObjectsFromArray:actions];//成功B;
+                } failure:nil];
+            }
+        } failure:nil];
+    }
     return result;
 }
 

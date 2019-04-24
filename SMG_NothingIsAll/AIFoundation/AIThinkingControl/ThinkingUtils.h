@@ -176,4 +176,7 @@
 //判断absAlg是否具象指向conAlg;
 +(BOOL) checkHavConAlg:(AIKVPointer*)conAlg_p absAlg:(AIPointer*)absAlg_p;
 
+//从from_ps中查找与check_p同标识区的指针并返回;
++(AIKVPointer*) getSameIdentifierPointer:(AIKVPointer*)check_p from_ps:(NSArray*)from_ps;
+
 @end
