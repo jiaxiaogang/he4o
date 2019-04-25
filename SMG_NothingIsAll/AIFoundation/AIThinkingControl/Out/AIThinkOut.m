@@ -21,6 +21,7 @@
 #import "TOFoModel.h"
 #import "AIAbsAlgNode.h"
 #import "AIAlgNode.h"
+#import "TOAlgScheme.h"
 
 @implementation AIThinkOut
 
@@ -45,49 +46,46 @@
         }
     }
     
-    //3. 从expCache中,排序并取到首个值得思考的可行outMvModel, 没有则用mvScheme联想一个新的;
+    //3. 取mvModel_从expCache中,排序并取到首个值得思考的可行outMvModel, 没有则用mvScheme联想一个新的;
     __block TOMvModel *outMvModel = [demandModel getCurrentTOMvModel];
     if (!outMvModel) {
         outMvModel = [self dataOut_MvScheme:demandModel];
     }
+    
+    //4. 评价mvModel_无解决经验,则反射输出;
     if (!outMvModel) {
-        ///1. 无解决经验,反射输出;
         [self dataOut_ActionScheme:nil];
-        return;
+    }else{
+        //4. 有可具象思考的outMvModel则执行;
+        if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkOut_UpdateEnergy:)]) {
+            [self.delegate aiThinkOut_UpdateEnergy:-1];//思考与决策消耗能量;
+        }
+        
+        //5. 取foModel_联想"解决经验"对应的cmvNode & 联想具象数据,并取到决策关键信息 (foScheme);
+        TOFoModel *outFoModel = [self dataOut_FoScheme:outMvModel];
+        if (!outFoModel) {
+            [demandModel.exceptOutMvModels addObject:outMvModel];//排除无效的outMvModel;
+            [self dataOut];
+        }else{
+            //6. 评价outFo_有执行方案,则对执行方案进行反思检查; (父可行性判定)
+            CGFloat score = [ThinkingUtils dataOut_CheckScore_ExpOut:outFoModel.content_p];
+            outMvModel.order += score;//联想对当前outMvModel的order影响;
+            if (score < 3) {
+                [self dataOut];//并递归到最初;
+            }else{
+                //7. 取行为化_尝试输出"可行性之首"并找到实际操作 (子可行性判定) (algScheme)
+                NSArray *algActions = [self dataOut_AlgScheme:outFoModel];
+                
+                //8. 评价行为化_actions无效则递归;
+                if (!ARRISOK(algActions)) {
+                    [self dataOut];
+                }else{
+                    //9. actionScheme (行为方案输出)
+                    [self dataOut_ActionScheme:algActions];
+                }
+            }
+        }
     }
-    
-    //4. 有可具象思考的outMvModel则执行;
-    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkOut_UpdateEnergy:)]) {
-        [self.delegate aiThinkOut_UpdateEnergy:-1];//思考与决策消耗能量;
-    }
-    
-    //5. 联想"解决经验"对应的cmvNode & 联想具象数据,并取到决策关键信息 (foScheme);
-    TOFoModel *outFoModel = [self dataOut_FoScheme:outMvModel];
-    if (!outFoModel) return;
-    
-    //6. 有执行方案,则对执行方案进行反思检查; (父可行性判定)
-    CGFloat score = [ThinkingUtils dataOut_CheckScore_ExpOut:outFoModel.content_p];
-    outMvModel.order += score;//联想对当前outMvModel的order影响;
-    if (score < 3) {
-        NSLog(@" >> 本次输出不过关,toLoop...");
-        [demandModel.exceptOutMvModels addObject:outMvModel];//排除无效的outMvModel;
-        [self dataOut];//并递归到最初;
-        return;
-    }
-    
-    //7. 尝试输出"可行性之首"并找到实际操作 (子可行性判定) (algScheme)
-    ///1. 取出outLog;
-    [self dataOut_AlgScheme:outFoModel];
-    
-    
-    
-    
-    //8. actionScheme (行为方案输出)
-    [self dataOut_ActionScheme:nil];
-    
-    
-    
-    
     
     
     
@@ -230,65 +228,21 @@
 
 /**
  *  MARK:--------------------algScheme--------------------
- *  1. 将fo.orders转换为memOrder;
- *  2. 对条件祖母取最具象 (目前仅支持1层);
- *  注: 最具象不表示真实,所以此方法可考虑去掉;
+ *  1. 对条件祖母进行判定 (行为化);
  */
--(void) dataOut_AlgScheme_Front:(TOFoModel*)outFoModel{
+-(NSArray*) dataOut_AlgScheme:(TOFoModel*)outFoModel{
     //1. 数据准备
     if (!ISOK(outFoModel, TOFoModel.class)) {
-        return;
+        return nil;
     }
     AIFoNodeBase *foNode = [SMGUtils searchObjectForPointer:outFoModel.content_p fileName:FILENAME_Node time:cRedisNodeTime];
     if (!foNode) {
-        return;
-    }
-    [outFoModel.memOrder removeAllObjects];
-    
-    //2. 取条件祖母的最具象,得出memOrder;
-    //NSLog(@" >> 所需条件: (%@)",[NVUtils convertOrderPs2Str:notOutAlg_ps]);
-    for (AIKVPointer *pointer in foNode.orders_kvp) {
-        ///1. 本身为输出节点的话,直接收集到memOrder
-        if (pointer.isOut) {
-            AIAlgNodeBase *outAlgNode = [SMGUtils searchObjectForPointer:pointer fileName:FILENAME_Node time:cRedisNodeTime];
-            if (outAlgNode) {
-                [outFoModel.memOrder addObject:outAlgNode];
-            }
-        }else{
-            ///2. 非输出时,找出条件祖母,并收集到memOrder (最多往具象循环2层) (最具象不表示真实,所以此处可以考虑去掉)
-            NSArray *check_ps = @[pointer];
-            for (NSInteger i = 0; i < cDataOutAssAlgDeep; i++) {
-                AIAlgNode *validAlgNode = [ThinkingUtils scheme_GetAValidNode:check_ps except_ps:outFoModel.except_ps checkBlock:^BOOL(id checkNode) {
-                    return ISOK(checkNode, AIAlgNode.class);
-                }];
-                
-                //3. 有效则返回,无效则循环到下一层
-                if (ISOK(validAlgNode, AIAlgNode.class)) {
-                    [outFoModel.memOrder addObject:validAlgNode];
-                }else{
-                    check_ps = [ThinkingUtils algScheme_GetNextLayerPs:check_ps];
-                }
-            }
-        }
+        return nil;
     }
     
-    //3. 对memOrder有效性初步检查 (memOrder和fo.orders长度要一致)
-    if (outFoModel.memOrder.count == foNode.orders_kvp.count) {
-        [self dataOut_AlgScheme:outFoModel];
-    }else{
-        [self dataOut];
-    }
-}
-
-/**
- *  MARK:--------------------algScheme--------------------
- *  1. 对条件祖母进行判定 (行为化);
- */
--(void) dataOut_AlgScheme:(TOFoModel*)outFoModel{
-    //1. 进行行为化; (通过有无,变化,等方式,将结构中所有条件祖母行为化);
-    for (AIAlgNodeBase *curAlg in outFoModel.memOrder) {
-        
-    }
+    //2. 进行行为化; (通过有无,变化,等方式,将结构中所有条件祖母行为化);
+    NSArray *actions = [TOAlgScheme convert2Out:foNode.orders_kvp];
+    return actions;
 }
 
 
@@ -300,6 +254,10 @@
  *  1. 反射输出 : reflexOut
  *  2. 激活输出 : absNode信息无conPorts方向的outPointer信息时,将absNode的宏信息尝试输出;
  *  3. 经验输出 : expOut指在absNode或conPort方向有outPointer信息;
+ *
+ *  功能: 将行为祖母组成的长时序,转化为真实输出;
+ *  1. 找到行为的具象;
+ *  2. 正式执行行为 (小脑);
  */
 -(void) dataOut_ActionScheme:(NSArray*)outArr{
     //1. 尝试输出找到解决问题的实际操作 (取到当前cacheModel中的最佳决策,并进行输出;)
@@ -329,3 +287,60 @@
 }
 
 @end
+
+
+/**
+ *  MARK:--------------------algScheme--------------------
+ *  1. 将fo.orders转换为memOrder;
+ *  2. 对条件祖母取最具象 (目前仅支持1层);
+ *
+ *  注: 最具象不表示真实,所以此方法可考虑去掉;
+ *  注: 190425,废弃"memOrder"和"最具象祖母"后备份于此;
+ */
+//-(void) dataOut_AlgScheme_Front:(TOFoModel*)outFoModel{
+//    //1. 数据准备
+//    if (!ISOK(outFoModel, TOFoModel.class)) {
+//        return;
+//    }
+//    AIFoNodeBase *foNode = [SMGUtils searchObjectForPointer:outFoModel.content_p fileName:FILENAME_Node time:cRedisNodeTime];
+//    if (!foNode) {
+//        return;
+//    }
+//
+//    //废弃"memOrder"和"最具象祖母"
+//    [outFoModel.memOrder removeAllObjects];
+//
+//    2. 取条件祖母的最具象,得出memOrder;
+//    //NSLog(@" >> 所需条件: (%@)",[NVUtils convertOrderPs2Str:notOutAlg_ps]);
+//    for (AIKVPointer *pointer in foNode.orders_kvp) {
+//        ///1. 本身为输出节点的话,直接收集到memOrder
+//        if (pointer.isOut) {
+//            AIAlgNodeBase *outAlgNode = [SMGUtils searchObjectForPointer:pointer fileName:FILENAME_Node time:cRedisNodeTime];
+//            if (outAlgNode) {
+//                [outFoModel.memOrder addObject:outAlgNode];
+//            }
+//        }else{
+//            ///2. 非输出时,找出条件祖母,并收集到memOrder (最多往具象循环2层) (最具象不表示真实,所以此处可以考虑去掉)
+//            NSArray *check_ps = @[pointer];
+//            for (NSInteger i = 0; i < cDataOutAssAlgDeep; i++) {
+//                AIAlgNode *validAlgNode = [ThinkingUtils scheme_GetAValidNode:check_ps except_ps:outFoModel.except_ps checkBlock:^BOOL(id checkNode) {
+//                    return ISOK(checkNode, AIAlgNode.class);
+//                }];
+//
+//                //3. 有效则返回,无效则循环到下一层
+//                if (ISOK(validAlgNode, AIAlgNode.class)) {
+//                    [outFoModel.memOrder addObject:validAlgNode];
+//                }else{
+//                    check_ps = [ThinkingUtils algScheme_GetNextLayerPs:check_ps];
+//                }
+//            }
+//        }
+//    }
+//
+//    //3. 对memOrder有效性初步检查 (memOrder和fo.orders长度要一致)
+//    if (outFoModel.memOrder.count == foNode.orders_kvp.count) {
+//        [self dataOut_AlgScheme:outFoModel];
+//    }else{
+//        [self dataOut];
+//    }
+//}

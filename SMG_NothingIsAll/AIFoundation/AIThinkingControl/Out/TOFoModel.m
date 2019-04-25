@@ -17,11 +17,11 @@
     return _except_ps;
 }
 
--(NSMutableArray *)memOrder{
-    if (!_memOrder) {
-        _memOrder = [[NSMutableArray alloc] init];
-    }
-    return _memOrder;
-}
+//-(NSMutableArray *)memOrder{
+//    if (!_memOrder) {
+//        _memOrder = [[NSMutableArray alloc] init];
+//    }
+//    return _memOrder;
+//}
 
 @end

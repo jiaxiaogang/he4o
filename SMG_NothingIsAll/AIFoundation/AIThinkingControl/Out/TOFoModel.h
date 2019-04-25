@@ -18,6 +18,6 @@
 
 @property (strong, nonatomic) AIPointer *content_p;//对应的数据 (存AIFoNodeBase)
 @property (strong, nonatomic) NSMutableArray *except_ps;
-@property (strong, nonatomic) NSMutableArray *memOrder; //当前要执行的内存时序 (最终要转换为行为化后的outOrder)
+//@property (strong, nonatomic) NSMutableArray *memOrder; //当前要执行的内存时序 (最终要转换为行为化后的outOrder)
 
 @end

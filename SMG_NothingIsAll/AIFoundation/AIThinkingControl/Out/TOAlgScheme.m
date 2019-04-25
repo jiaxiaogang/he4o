@@ -84,6 +84,7 @@
  *  MARK:--------------------对单个祖母的sub拆分行为化--------------------
  *  1. 对curAlg的(subAlg&subValue)分别判定;
  *  2. 目前仅支持 1 x subAlg + 1 x subValue (目前仅支持a2+v1各一个);
+ *  3. TODO:支持"多个祖母+多个value",建议"两个祖母+两个value",然后,更复杂的情况用"抽象精简"和"具象展开"来解决;
  */
 +(NSArray*) convert2Out_Single_Sub:(AIKVPointer*)curAlg_p{
     //1. 数据检查准备;

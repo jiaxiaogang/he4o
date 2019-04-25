@@ -71,6 +71,7 @@
 		08AF45581E97D0B500377887 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45561E97D0B500377887 /* LaunchScreen.storyboard */; };
 		08B31E7E20648C3700FD96EA /* ThinkingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B31E7D20648C3700FD96EA /* ThinkingUtils.m */; };
 		08C84A8E1E9A866200897D8B /* AIInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A8D1E9A866200897D8B /* AIInput.m */; };
+		08D1743B22712D50009A5586 /* TOActionModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D1743A22712D50009A5586 /* TOActionModel.m */; };
 		08D322A91EBA28B0009D734A /* Foundation+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D322A81EBA28B0009D734A /* Foundation+Log.m */; };
 		08D471DE1FEB3FFF00C61322 /* AIImvAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D471DD1FEB3FFF00C61322 /* AIImvAlgs.m */; };
 		08D4EC512160501000DA646B /* AINetUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D4EC502160501000DA646B /* AINetUtils.m */; };
@@ -236,6 +237,8 @@
 		08C84A8C1E9A866200897D8B /* AIInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIInput.h; sourceTree = "<group>"; };
 		08C84A8D1E9A866200897D8B /* AIInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIInput.m; sourceTree = "<group>"; };
 		08CB89B82231EAB200EC1181 /* ReadMe.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReadMe.h; sourceTree = "<group>"; };
+		08D1743922712D50009A5586 /* TOActionModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOActionModel.h; sourceTree = "<group>"; };
+		08D1743A22712D50009A5586 /* TOActionModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOActionModel.m; sourceTree = "<group>"; };
 		08D322A71EBA2783009D734A /* SMGPrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMGPrefixHeader.pch; sourceTree = "<group>"; };
 		08D322A81EBA28B0009D734A /* Foundation+Log.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Foundation+Log.m"; sourceTree = "<group>"; };
 		08D471DC1FEB3FFF00C61322 /* AIImvAlgs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIImvAlgs.h; sourceTree = "<group>"; };
@@ -574,6 +577,8 @@
 				0899CD012260150800F698FA /* TOAlgModel.m */,
 				088070A022693C2D00E9E21F /* TOAlgScheme.h */,
 				088070A122693C2D00E9E21F /* TOAlgScheme.m */,
+				08D1743922712D50009A5586 /* TOActionModel.h */,
+				08D1743A22712D50009A5586 /* TOActionModel.m */,
 			);
 			path = Out;
 			sourceTree = "<group>";
@@ -1012,6 +1017,7 @@
 				0842ADBD1FE207500048ADDC /* DemoHunger.m in Sources */,
 				08AF454D1E97D0B500377887 /* AppDelegate.m in Sources */,
 				08F3E9312241B6E800545795 /* AIThinkInAnalogy.m in Sources */,
+				08D1743B22712D50009A5586 /* TOActionModel.m in Sources */,
 				087268E0219CF3B500B5490F /* AIVisionAlgs.m in Sources */,
 				08F738051F7C714F005EAD56 /* AIKVPointer.m in Sources */,
 				88A43F3D2109576D00281348 /* AIFrontOrderNode.m in Sources */,
