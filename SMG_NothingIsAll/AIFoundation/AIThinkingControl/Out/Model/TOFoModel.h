@@ -20,4 +20,6 @@
 @property (strong, nonatomic) NSMutableArray *except_ps;
 //@property (strong, nonatomic) NSMutableArray *memOrder; //当前要执行的内存时序 (最终要转换为行为化后的outOrder)
 
+@property (assign, nonatomic) CGFloat score;
+
 @end

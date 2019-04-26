@@ -38,12 +38,8 @@
     if (!demandModel) return;
     
     //2. energy判断;
-    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkOut_EnergyValid)]) {
-        if (![self.delegate aiThinkOut_EnergyValid]) {
-            ///1. 如果energy<=0,(未找到可行性,直接反射输出)
-            [self dataOut_ActionScheme:nil];
-            return;
-        }
+    if (![self havEnergy]) {
+        return;
     }
     
     //3. 取mvModel_从expCache中,排序并取到首个值得思考的可行outMvModel, 没有则用mvScheme联想一个新的;
@@ -57,9 +53,7 @@
         [self dataOut_ActionScheme:nil];
     }else{
         //4. 有可具象思考的outMvModel则执行;
-        if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkOut_UpdateEnergy:)]) {
-            [self.delegate aiThinkOut_UpdateEnergy:-1];//思考与决策消耗能量;
-        }
+        [self useEnergy];
         
         //5. 取foModel_联想"解决经验"对应的cmvNode & 联想具象数据,并取到决策关键信息 (foScheme);
         TOFoModel *outFoModel = [self dataOut_FoScheme:outMvModel];
@@ -69,20 +63,17 @@
         }else{
             //6. 评价outFo_有执行方案,则对执行方案进行反思检查; (父可行性判定)
             CGFloat score = [ThinkingUtils dataOut_CheckScore_ExpOut:outFoModel.content_p];
-            outMvModel.order += score;//联想对当前outMvModel的order影响;
-            if (score < 3) {
-                [self dataOut];//并递归到最初;
+            outFoModel.score = score;//当前outFoModel的score;
+            
+            //7. 取行为化_尝试输出"可行性之首"并找到实际操作 (子可行性判定) (algScheme)
+            NSArray *algActions = [self dataOut_AlgScheme:outFoModel];
+            
+            //8. 评价行为化_actions无效则递归;
+            if (!ARRISOK(algActions)) {
+                [self dataOut];
             }else{
-                //7. 取行为化_尝试输出"可行性之首"并找到实际操作 (子可行性判定) (algScheme)
-                NSArray *algActions = [self dataOut_AlgScheme:outFoModel];
-                
-                //8. 评价行为化_actions无效则递归;
-                if (!ARRISOK(algActions)) {
-                    [self dataOut];
-                }else{
-                    //9. actionScheme (行为方案输出)
-                    [self dataOut_ActionScheme:algActions];
-                }
+                //9. actionScheme (行为方案输出)
+                [self dataOut_ActionScheme:algActions];
             }
         }
     }
@@ -284,6 +275,24 @@
         NSLog(@"反射输出 >>");
         [Output output_Mood:AIMoodType_Anxious];
     }
+}
+
+//MARK:===============================================================
+//MARK:                     < private_Method >
+//MARK:===============================================================
+//使用能量
+-(void) useEnergy{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkOut_UpdateEnergy:)]) {
+        [self.delegate aiThinkOut_UpdateEnergy:-1];//思考与决策消耗能量;
+    }
+}
+
+//拥有能量
+-(BOOL) havEnergy{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkOut_EnergyValid)]) {
+        return [self.delegate aiThinkOut_EnergyValid];
+    }
+    return false;
 }
 
 @end

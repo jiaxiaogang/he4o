@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		080228E1227282F80087FE69 /* TOModelBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 080228E0227282F80087FE69 /* TOModelBase.m */; };
 		08081DD821DD8BDC005B867F /* AIAlgNodeBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 08081DD721DD8BDC005B867F /* AIAlgNodeBase.m */; };
 		0808927A215AF5F400710636 /* AINodeBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 08089279215AF5F400710636 /* AINodeBase.m */; };
 		08089280215B07FC00710636 /* AICMVNodeBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 0808927F215B07FC00710636 /* AICMVNodeBase.m */; };
@@ -112,6 +113,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		080228DF227282F80087FE69 /* TOModelBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOModelBase.h; sourceTree = "<group>"; };
+		080228E0227282F80087FE69 /* TOModelBase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOModelBase.m; sourceTree = "<group>"; };
 		08042E7D1F43CE9400A1FFCB /* SMGEnum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMGEnum.h; sourceTree = "<group>"; };
 		08081DD621DD8BDC005B867F /* AIAlgNodeBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIAlgNodeBase.h; sourceTree = "<group>"; };
 		08081DD721DD8BDC005B867F /* AIAlgNodeBase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIAlgNodeBase.m; sourceTree = "<group>"; };
@@ -330,6 +333,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		080228E2227282FF0087FE69 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				080228DF227282F80087FE69 /* TOModelBase.h */,
+				080228E0227282F80087FE69 /* TOModelBase.m */,
+				8806D886212B8EB100C442CA /* TOMvModel.h */,
+				8806D887212B8EB100C442CA /* TOMvModel.m */,
+				088DD7212201216500E0A786 /* TOFoModel.h */,
+				088DD7222201216500E0A786 /* TOFoModel.m */,
+				0899CD002260150800F698FA /* TOAlgModel.h */,
+				0899CD012260150800F698FA /* TOAlgModel.m */,
+				08D1743922712D50009A5586 /* TOActionModel.h */,
+				08D1743A22712D50009A5586 /* TOActionModel.m */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		08196B80200073FF007B72C5 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
@@ -567,18 +587,11 @@
 		0860617321F92F3E00113366 /* Out */ = {
 			isa = PBXGroup;
 			children = (
+				080228E2227282FF0087FE69 /* Model */,
 				0860617421F92F5200113366 /* AIThinkOut.h */,
 				0860617521F92F5200113366 /* AIThinkOut.m */,
-				8806D886212B8EB100C442CA /* TOMvModel.h */,
-				8806D887212B8EB100C442CA /* TOMvModel.m */,
-				088DD7212201216500E0A786 /* TOFoModel.h */,
-				088DD7222201216500E0A786 /* TOFoModel.m */,
-				0899CD002260150800F698FA /* TOAlgModel.h */,
-				0899CD012260150800F698FA /* TOAlgModel.m */,
 				088070A022693C2D00E9E21F /* TOAlgScheme.h */,
 				088070A122693C2D00E9E21F /* TOAlgScheme.m */,
-				08D1743922712D50009A5586 /* TOActionModel.h */,
-				08D1743A22712D50009A5586 /* TOActionModel.m */,
 			);
 			path = Out;
 			sourceTree = "<group>";
@@ -1022,6 +1035,7 @@
 				08F738051F7C714F005EAD56 /* AIKVPointer.m in Sources */,
 				88A43F3D2109576D00281348 /* AIFrontOrderNode.m in Sources */,
 				0858C5CB2194F8B000951BA5 /* MASCompositeConstraint.m in Sources */,
+				080228E1227282F80087FE69 /* TOModelBase.m in Sources */,
 				88E1F84E211591D80036B616 /* DemandManager.m in Sources */,
 				88C258C1209E99B00042CB6A /* AICMVManager.m in Sources */,
 				08EF706421E5743F009B5194 /* OutputModel.m in Sources */,
