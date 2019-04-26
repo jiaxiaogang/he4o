@@ -29,11 +29,4 @@
     return _except_ps;
 }
 
--(BOOL) isEqual:(TOMvModel*)object{
-    if (object) {
-        return [self.mvNode_p isEqual:object.mvNode_p];
-    }
-    return false;
-}
-
 @end

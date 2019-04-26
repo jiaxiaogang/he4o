@@ -10,18 +10,4 @@
 
 @implementation TOFoModel
 
--(NSMutableArray *)except_ps{
-    if (!_except_ps) {
-        _except_ps = [[NSMutableArray alloc] init];
-    }
-    return _except_ps;
-}
-
-//-(NSMutableArray *)memOrder{
-//    if (!_memOrder) {
-//        _memOrder = [[NSMutableArray alloc] init];
-//    }
-//    return _memOrder;
-//}
-
 @end

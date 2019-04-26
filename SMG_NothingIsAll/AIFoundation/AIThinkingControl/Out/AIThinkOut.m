@@ -70,6 +70,7 @@
             
             //8. 评价行为化_actions无效则递归;
             if (!ARRISOK(algActions)) {
+                [outMvModel.except_ps addObject:outFoModel];
                 [self dataOut];
             }else{
                 //9. actionScheme (行为方案输出)
