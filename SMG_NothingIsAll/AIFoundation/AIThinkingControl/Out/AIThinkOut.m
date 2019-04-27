@@ -43,10 +43,10 @@
     }
     
     //3. 取mvModel_从expCache中,排序并取到首个值得思考的可行outMvModel, 没有则用mvScheme联想一个新的;
-    __block TOMvModel *outMvModel = [demandModel getCurrentTOMvModel];
+    __block TOMvModel *outMvModel = [demandModel getCurSubModel];
     
     //3. 为空,取新的
-    if (!outMvModel && demandModel.outMvModels.count < cTOSubModelLimit) {
+    if (!outMvModel && demandModel.subModels.count < cTOSubModelLimit) {
         outMvModel = [self dataOut_MvScheme:demandModel];
     }
     
@@ -67,7 +67,7 @@
         
         //5. 再为空,反馈上一级被不应期;
         if (!outFoModel) {
-            [demandModel.exceptOutMvModels addObject:outMvModel];//排除无效的outMvModel;
+            [demandModel.except_ps addObject:outMvModel.content_p];//排除无效的outMvModel;
             [self dataOut];
         }else{
             if (ISOK(outFoModel, TOFoModel.class)) {
@@ -157,8 +157,8 @@
             for (NSInteger i = 0; i < protoArr.count; i++) {
                 AIPort *port = ARR_INDEX(protoArr, protoArr.count - i - 1);
                 BOOL cacheContains = false;
-                for (TOMvModel *expCacheItem in demandModel.outMvModels) {
-                    if (port.target_p && [port.target_p isEqual:expCacheItem.mvNode_p]) {
+                for (TOMvModel *expCacheItem in demandModel.subModels) {
+                    if (port.target_p && [port.target_p isEqual:expCacheItem.content_p]) {
                         cacheContains = true;
                         break;
                     }
@@ -174,7 +174,7 @@
         AIPort *referenceMvPort = ARR_INDEX(mvRefs, 0);
         if (referenceMvPort) {
             outMvModel = [[TOMvModel alloc] initWithContent_p:referenceMvPort.target_p];
-            [demandModel addToExpCache:outMvModel];
+            [demandModel.subModels addObject:outMvModel];
         }
     }];
     return outMvModel;
@@ -201,7 +201,7 @@
     if (!ISOK(outMvModel, TOMvModel.class)) {
         return nil;
     }
-    AICMVNodeBase *checkMvNode = [SMGUtils searchObjectForPointer:outMvModel.mvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+    AICMVNodeBase *checkMvNode = [SMGUtils searchObjectForPointer:outMvModel.content_p fileName:FILENAME_Node time:cRedisNodeTime];
     if (!checkMvNode) {
         return nil;
     }

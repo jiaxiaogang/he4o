@@ -84,7 +84,7 @@
         newItem.algsType = algsType;
         newItem.delta = delta;
         newItem.urgentTo = urgentTo;
-        newItem.order = order;
+        newItem.score = order;
         [self.loopCache addObject:newItem];
     }
 }
@@ -97,7 +97,7 @@
     [self.loopCache sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
         DemandModel *itemA = (DemandModel*)obj1;
         DemandModel *itemB = (DemandModel*)obj2;
-        return [SMGUtils compareIntA:itemA.order intB:itemB.order];
+        return [SMGUtils compareIntA:itemA.score intB:itemB.score];
     }];
 }
 
@@ -124,6 +124,4 @@
     return nil;
 }
 
-    
-    
 @end
