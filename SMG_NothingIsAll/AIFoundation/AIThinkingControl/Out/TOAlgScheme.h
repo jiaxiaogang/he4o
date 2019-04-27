@@ -11,6 +11,9 @@
 /**
  *  MARK:--------------------TO中,对于祖母的判定部分--------------------
  *  作用: 以时序与祖母的协作,来做理性判定;
+ *  TODO1: 随后对TOAlgScheme添加energy消耗,以精确控制;
+ *  TODO2: 根据havAlg构建成ThinkOutAlgModel (暂时不需要)
+ *  TODO3: 将DemandModel->TOMvModel->TOFoModel->TOAlgModel->TOActionModel的模型结构化关系整理清晰; (前三个已用,后两个暂不需要)
  */
 @interface TOAlgScheme : NSObject
 

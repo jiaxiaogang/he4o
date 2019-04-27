@@ -66,15 +66,6 @@
             NSArray *subResult = ARRTOOK([self convert2Out_Single_Sub:curAlg_p]);
             [result addObjectsFromArray:subResult];
         }];
-        
-        
-        
-        
-        ////1. 根据havAlg构建成ThinkOutAlgModel
-        ////2. 将DemandModel->TOMvModel->TOFoModel->TOAlgModel的模型结构化关系整理清晰;
-        
-        //TOMORROW: 添加energy消耗;
-        
     }
     
     return result;
