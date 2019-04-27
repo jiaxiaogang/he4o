@@ -16,6 +16,6 @@
  */
 @interface TOFoModel : TOModelBase
 
-//@property (strong, nonatomic) NSMutableArray *memOrder; //当前要执行的内存时序 (最终要转换为行为化后的outOrder)
+@property (strong, nonatomic) NSArray *actions;//行为化数据;
 
 @end

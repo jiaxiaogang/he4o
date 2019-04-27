@@ -44,11 +44,13 @@
     
     //3. 取mvModel_从expCache中,排序并取到首个值得思考的可行outMvModel, 没有则用mvScheme联想一个新的;
     __block TOMvModel *outMvModel = [demandModel getCurrentTOMvModel];
-    if (!outMvModel) {
+    
+    //3. 为空,取新的
+    if (!outMvModel && demandModel.outMvModels.count < cTOSubModelLimit) {
         outMvModel = [self dataOut_MvScheme:demandModel];
     }
     
-    //4. 评价mvModel_无解决经验,则反射输出;
+    //3. 再为空,评价mvModel_无解决经验,则反射输出;
     if (!outMvModel) {
         [self dataOut_ActionScheme:nil];
     }else{
@@ -56,25 +58,33 @@
         [self useEnergy];
         
         //5. 取foModel_联想"解决经验"对应的cmvNode & 联想具象数据,并取到决策关键信息 (foScheme);
-        TOFoModel *outFoModel = [self dataOut_FoScheme:outMvModel];
+        TOModelBase *outFoModel = outMvModel.getCurSubModel;
+        
+        //5. 为空,取新的
+        if (!outFoModel && outMvModel.subModels.count < cTOSubModelLimit) {
+            outFoModel = [self dataOut_FoScheme:outMvModel];
+        }
+        
+        //5. 再为空,反馈上一级被不应期;
         if (!outFoModel) {
             [demandModel.exceptOutMvModels addObject:outMvModel];//排除无效的outMvModel;
             [self dataOut];
         }else{
-            //6. 评价outFo_有执行方案,则对执行方案进行反思检查; (父可行性判定)
-            CGFloat score = [ThinkingUtils dataOut_CheckScore_ExpOut:outFoModel.content_p];
-            outFoModel.score = score;//当前outFoModel的score;
-            
-            //7. 取行为化_尝试输出"可行性之首"并找到实际操作 (子可行性判定) (algScheme)
-            NSArray *algActions = [self dataOut_AlgScheme:outFoModel];
-            
-            //8. 评价行为化_actions无效则递归;
-            if (!ARRISOK(algActions)) {
-                [outMvModel.except_ps addObject:outFoModel];
-                [self dataOut];
-            }else{
-                //9. actionScheme (行为方案输出)
-                [self dataOut_ActionScheme:algActions];
+            if (ISOK(outFoModel, TOFoModel.class)) {
+                TOFoModel *foModel = (TOFoModel*)outFoModel;
+                //7. 为空,进行行为化_尝试输出"可行性之首"并找到实际操作 (子可行性判定) (algScheme)
+                if (!ARRISOK(foModel.actions)) {
+                    [self dataOut_AlgScheme:foModel];
+                }
+                
+                //7. 再为空,反馈上一级被不应期;
+                if (!ARRISOK(foModel.actions)) {
+                    [outMvModel.except_ps addObject:foModel.content_p];
+                    [self dataOut];
+                }else{
+                    //8. actionScheme (行为方案输出)
+                    [self dataOut_ActionScheme:foModel.actions];
+                }
             }
         }
     }
@@ -163,7 +173,7 @@
         //3. 加入待判断区;
         AIPort *referenceMvPort = ARR_INDEX(mvRefs, 0);
         if (referenceMvPort) {
-            outMvModel = [TOMvModel newWithExp_p:referenceMvPort.target_p];
+            outMvModel = [[TOMvModel alloc] initWithContent_p:referenceMvPort.target_p];
             [demandModel addToExpCache:outMvModel];
         }
     }];
@@ -205,8 +215,9 @@
             
             //3. 有效则返回,无效则循环到下一层
             if (ISOK(validFoNode, AIFoNodeBase.class)) {
-                TOFoModel *result = [[TOFoModel alloc] init];
-                result.content_p = validFoNode.pointer;
+                TOFoModel *result = [[TOFoModel alloc] initWithContent_p:validFoNode.pointer];
+                result.score = [ThinkingUtils dataOut_CheckScore_ExpOut:result.content_p];
+                [outMvModel.subModels addObject:result];
                 return result;
             }else{
                 checkFo_ps = [ThinkingUtils foScheme_GetNextLayerPs:checkFo_ps];
@@ -221,20 +232,20 @@
 /**
  *  MARK:--------------------algScheme--------------------
  *  1. 对条件祖母进行判定 (行为化);
+ *  2. 理性判定;
  */
--(NSArray*) dataOut_AlgScheme:(TOFoModel*)outFoModel{
+-(void) dataOut_AlgScheme:(TOFoModel*)outFoModel{
     //1. 数据准备
     if (!ISOK(outFoModel, TOFoModel.class)) {
-        return nil;
+        return;
     }
     AIFoNodeBase *foNode = [SMGUtils searchObjectForPointer:outFoModel.content_p fileName:FILENAME_Node time:cRedisNodeTime];
     if (!foNode) {
-        return nil;
+        return;
     }
     
     //2. 进行行为化; (通过有无,变化,等方式,将结构中所有条件祖母行为化);
-    NSArray *actions = [TOAlgScheme convert2Out:foNode.orders_kvp];
-    return actions;
+    outFoModel.actions = [TOAlgScheme convert2Out:foNode.orders_kvp];
 }
 
 

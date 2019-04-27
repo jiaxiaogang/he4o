@@ -290,7 +290,6 @@
         if (![SMGUtils containsSub_p:fo_p parent_ps:except_ps]) {
             
             //3. 未排除,返回;
-            [except_ps addObject:fo_p];
             id result = [SMGUtils searchObjectForPointer:fo_p fileName:FILENAME_Node time:cRedisNodeTime];
             if (checkBlock) {
                 if (checkBlock(result)) {

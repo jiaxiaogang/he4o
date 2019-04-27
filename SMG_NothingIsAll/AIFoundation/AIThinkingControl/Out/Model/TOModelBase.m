@@ -11,7 +11,7 @@
 
 @implementation TOModelBase
 
--(id) initWithContent_p:(AIKVPointer*)content_p{
+-(id) initWithContent_p:(AIPointer*)content_p{
     self = [super init];
     if (self) {
         self.content_p = content_p;
@@ -48,6 +48,14 @@
         return [object.content_p isEqual:self.content_p];
     }
     return false;
+}
+
+-(CGFloat) allNiceScore{
+    TOModelBase *subModel = [self getCurSubModel];
+    if (subModel) {
+        return self.score + [subModel allNiceScore];
+    }
+    return self.score;
 }
 
 @end

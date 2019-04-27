@@ -19,7 +19,7 @@
 @property (assign, nonatomic) NSInteger urgentTo;
 @property (assign, nonatomic) NSInteger delta;
 @property (strong, nonatomic) NSString *algsType;
-@property (strong, nonatomic) NSMutableArray *outMvModels;  //缓存的几种outMvModel;(order从大到小排序)
+@property (strong, nonatomic) NSMutableArray *outMvModels;  //缓存的几种outMvModel;(order从大到小排序) (相当于base.subModels)
 @property (strong, nonatomic) NSMutableArray *exceptOutMvModels;  //已排除的outMvModels;
 
 
