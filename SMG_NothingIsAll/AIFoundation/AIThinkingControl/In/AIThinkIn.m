@@ -42,6 +42,10 @@
 //MARK:                     < NoMV >
 //MARK:===============================================================
 
+/**
+ *  MARK:--------------------输入非mv信息时--------------------
+ *  1. 看到西瓜会开心 : TODO: 对自身状态的判断, (比如,看到西瓜,想吃,那么当前状态是否饿)
+ */
 -(void) dataIn_NoMV:(NSArray*)algsArr{
     //1. 打包成algTypeNode;
     AIPointer *algNode_p = [ThinkingUtils createAlgNodeWithValue_ps:algsArr isOut:false];

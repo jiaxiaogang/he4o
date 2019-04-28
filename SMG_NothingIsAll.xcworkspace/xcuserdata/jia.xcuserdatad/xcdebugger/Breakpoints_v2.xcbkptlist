@@ -263,13 +263,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/Demo/BirdLivePage/View/BirdView.m"
-            timestampString = "569463991.752782"
+            filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/AIThinkInAnalogy.m"
+            timestampString = "578104556.0440069"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "130"
-            endingLineNumber = "130"
-            landmarkName = "-outputObserver:"
+            startingLineNumber = "119"
+            endingLineNumber = "119"
+            landmarkName = "+analogyOutside_Creater:fo:assFo:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -279,13 +279,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/Demo/BirdLivePage/View/BirdView.m"
-            timestampString = "569463991.753219"
+            filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/AIThinkInAnalogy.m"
+            timestampString = "578104556.0441149"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "65"
-            endingLineNumber = "65"
-            landmarkName = "-fly:"
+            startingLineNumber = "295"
+            endingLineNumber = "295"
+            landmarkName = "+analogyInner_Creater:target_p:algA:algB:rangeOrders:conFo:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -295,13 +295,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/Demo/BirdLivePage/View/BirdView.m"
-            timestampString = "569463991.7535239"
+            filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/AIThinkInAnalogy.m"
+            timestampString = "578104556.04421"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "125"
-            endingLineNumber = "125"
-            landmarkName = "-outputObserver:"
+            startingLineNumber = "314"
+            endingLineNumber = "314"
+            landmarkName = "+analogyInner_Outside:canAss:updateEnergy:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -311,13 +311,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/Demo/BirdLivePage/View/BirdView.m"
-            timestampString = "569463991.753795"
+            filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/AIThinkInAnalogy.m"
+            timestampString = "578104556.044283"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "61"
-            endingLineNumber = "61"
-            landmarkName = "-fly:"
+            startingLineNumber = "324"
+            endingLineNumber = "324"
+            landmarkName = "+analogyInner_Outside:canAss:updateEnergy:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -327,13 +327,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/Demo/BirdLivePage/View/BirdView.m"
-            timestampString = "569463991.7540621"
+            filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/AIThinkInAnalogy.m"
+            timestampString = "578104556.044349"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "62"
-            endingLineNumber = "62"
-            landmarkName = "-fly:"
+            startingLineNumber = "112"
+            endingLineNumber = "112"
+            landmarkName = "+analogyOutside_Creater:fo:assFo:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -343,13 +343,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/Demo/BirdLivePage/View/BirdView.m"
-            timestampString = "569463991.754328"
+            filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/AIThinkingControl.m"
+            timestampString = "578104556.044416"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "106"
-            endingLineNumber = "106"
-            landmarkName = "-eat:"
+            startingLineNumber = "144"
+            endingLineNumber = "144"
+            landmarkName = "-aiThinkIn_CommitMvNode:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -359,13 +359,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/Demo/BirdLivePage/View/BirdView.m"
-            timestampString = "569463991.754593"
+            filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/ThinkingUtils.m"
+            timestampString = "578101052.758255"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "122"
-            endingLineNumber = "122"
-            landmarkName = "-outputObserver:"
+            startingLineNumber = "238"
+            endingLineNumber = "238"
+            landmarkName = "+createAlgNodeWithValue_ps:isOut:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -375,13 +375,29 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/Demo/BirdLivePage/View/BirdView.m"
-            timestampString = "569464495.198944"
+            filePath = "SMG_NothingIsAll/AIFoundation/AINet/AIAlgNodeManager/AIAlgNodeManager.m"
+            timestampString = "578101195.932292"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "97"
-            endingLineNumber = "97"
-            landmarkName = "-eat:"
+            startingLineNumber = "34"
+            endingLineNumber = "34"
+            landmarkName = "+createAlgNode:isOut:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SMG_NothingIsAll/AIFoundation/AINet/AIAlgNodeManager/AIAlgNodeManager.m"
+            timestampString = "578101231.062043"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "36"
+            endingLineNumber = "36"
+            landmarkName = "+createAlgNode:isOut:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -161,7 +161,7 @@
                 ///1. 取a差集和b差集;
                 NSArray *aSub_ps = [SMGUtils removeSub_ps:algNodeB.content_ps parent_ps:[[NSMutableArray alloc] initWithArray:algNodeA.content_ps]];
                 NSArray *bSub_ps = [SMGUtils removeSub_ps:algNodeA.content_ps parent_ps:[[NSMutableArray alloc] initWithArray:algNodeB.content_ps]];
-                NSArray *rangeOrders = ARR_SUB(orders, i + 1, j - i + 1);
+                NSArray *rangeOrders = ARR_SUB(orders, i + 1, j - i - 1);
                 
                 ///2. 四种情况; (有且仅有1条微信息不同,进行内类比构建)
                 if (aSub_ps.count == 1 && bSub_ps.count == 1) {
