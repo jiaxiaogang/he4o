@@ -76,6 +76,15 @@ static AIThinkingControl *_instance;
     [self.thinkIn dataIn:algsModel];
 }
 
+-(void) commitInputWithModels:(NSArray*)models{
+    //TODO TOMORROW:
+    
+    //1. 小鸟不能仅传入foodView
+    //2. 此处构建祖母嵌套
+    //3. 识别
+    //4. ...
+}
+
 
 -(void) commitOutputLog:(NSArray*)outputModels{
     //1. 数据

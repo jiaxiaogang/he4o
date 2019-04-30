@@ -22,6 +22,7 @@
  *  MARK:--------------------流入input--------------------
  */
 -(void) commitInput:(NSObject*)algsModel;
+-(void) commitInputWithModels:(NSArray*)models;
 
 
 /**

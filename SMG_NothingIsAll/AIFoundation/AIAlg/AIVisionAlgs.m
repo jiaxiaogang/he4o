@@ -10,25 +10,35 @@
 #import "AIVisionAlgsModel.h"
 #import "AIThinkingControl.h"
 #import "XGRedis.h"
+#import "UIView+Extension.h"
 
 @implementation AIVisionAlgs
 
 +(void) commitView:(UIView*)selfView targetView:(UIView*)targetView{
-    NSLog(@"对小鸟的视觉进行算法处理");
-    //1. 生成model
-    AIVisionAlgsModel *model = [[AIVisionAlgsModel alloc] init];
-    model.sizeWidth = [self sizeWidth:targetView];
-    model.sizeHeight = [self sizeHeight:targetView];
-    model.colorRed = [self colorRed:targetView];
-    model.colorGreen = [self colorGreen:targetView];
-    model.colorBlue = [self colorBlue:targetView];
-    model.radius = [self radius:targetView];
-    model.originX = [self originX:selfView target:targetView];
-    model.originY = [self originY:selfView target:targetView];
-    model.speed = [self speed:selfView target:targetView];
+    //1. 数据准备;
+    if (!selfView || !targetView) {
+        return;
+    }
+    NSMutableArray *models = [[NSMutableArray alloc] init];
+    NSMutableArray *views = [targetView subViews_AllDeep];
     
-    //2. 传给thinkingControl
-    [[AIThinkingControl shareInstance] commitInput:model];
+    //2. 生成model
+    for (UIView *curView in views) {
+        AIVisionAlgsModel *model = [[AIVisionAlgsModel alloc] init];
+        model.sizeWidth = [self sizeWidth:curView];
+        model.sizeHeight = [self sizeHeight:curView];
+        model.colorRed = [self colorRed:curView];
+        model.colorGreen = [self colorGreen:curView];
+        model.colorBlue = [self colorBlue:curView];
+        model.radius = [self radius:curView];
+        model.originX = [self originX:selfView target:curView];
+        model.originY = [self originY:selfView target:curView];
+        model.speed = [self speed:selfView target:curView];
+        [models addObject:model];
+    }
+    
+    //3. 传给thinkingControl
+    [[AIThinkingControl shareInstance] commitInputWithModels:models];
 }
 
 

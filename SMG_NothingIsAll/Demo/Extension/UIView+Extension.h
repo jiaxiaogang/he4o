@@ -24,6 +24,11 @@
 //MARK:===============================================================
 //MARK:                     < subView >
 //MARK:===============================================================
+
+/**
+ *  MARK:--------------------返回指定subViews--------------------
+ *  @result : notnull
+ */
 -(NSMutableArray*) subViews_AllDeep;
 -(NSMutableArray*) subViews_AllDeepWithClass:(Class)aClass;
 
