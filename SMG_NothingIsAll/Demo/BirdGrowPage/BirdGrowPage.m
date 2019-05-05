@@ -87,7 +87,7 @@
         [foodView setOrigin:targetPoint];
     }completion:^(BOOL finished) {
         //1. 视觉输入
-        [self.birdView see:foodView];
+        [self.birdView see:self.view];
     }];
 }
 
@@ -113,6 +113,10 @@
         }
     }
     return nil;
+}
+
+-(UIView*) birdView_GetPageView{
+    return self.view;
 }
 
 @end

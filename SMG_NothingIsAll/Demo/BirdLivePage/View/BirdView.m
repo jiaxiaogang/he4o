@@ -93,14 +93,16 @@
 -(void) eat:(CGFloat)value{
     if (self.delegate && [self.delegate respondsToSelector:@selector(birdView_GetFoodOnMouth)]) {
         //1. 嘴附近的食物
+        UIView *pageView = [self.delegate birdView_GetPageView];
         FoodView *foodView = [self.delegate birdView_GetFoodOnMouth];
         if (!foodView) return;
         
         //2. 视觉输入
-        [self see:foodView];
+        [self see:pageView];
         
         //3. 吃掉 (让he以吸吮反射的方式,去主动吃;并将out入网,以抽象出"吃"的节点;参考n15p6-QT1)
         [foodView removeFromSuperview];
+        [self see:pageView];
         
         //4. 产生HungerMindValue; (0-10)
         [AIInput commitIMV:MVType_Hunger from:1.0f to:9.0f];

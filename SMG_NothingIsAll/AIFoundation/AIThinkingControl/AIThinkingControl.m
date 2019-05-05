@@ -79,10 +79,11 @@ static AIThinkingControl *_instance;
 -(void) commitInputWithModels:(NSArray*)models{
     //TODO TOMORROW:
     
-    //1. 小鸟不能仅传入foodView
+    //1. 小鸟不能仅传入foodView T
     //2. 此处构建祖母嵌套
     //3. 识别
     //4. ...
+    //...是否需要一个连续的瞬时记忆,而不是总清空;
 }
 
 

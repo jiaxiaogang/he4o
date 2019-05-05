@@ -12,6 +12,7 @@
 @protocol BirdViewDelegate <NSObject>
 
 -(FoodView*) birdView_GetFoodOnMouth;
+-(UIView*) birdView_GetPageView;
 
 @end
 
