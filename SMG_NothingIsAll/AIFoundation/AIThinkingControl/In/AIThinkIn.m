@@ -49,15 +49,6 @@
         //5. NoMv处理;
         [self dataIn_NoMV:subAlgNode.pointer];
     }
-    
-    
-    ////修改部分,对识别后,增加类比操作 (对subView与识别到的alg类比,并构建关联到网络);
-    
-    ////通过祖母的内类比,从而按颜色分组,按边缘分组;
-    
-    ////目标: 先构建具象节点,再构建抽象节点;
-    
-    
 }
 
 -(void) dataIn:(NSObject*)algsModel{
@@ -99,7 +90,8 @@
     //3. 识别
     AIAlgNodeBase *recognitionAlgNode = [self dataIn_NoMV_RecognitionIs:algNode_p];
     
-    //4. 识别后,要进行类比,并构建网络关联;
+    //TODOWAIT:
+    //4. 识别后,要进行类比,并构建网络关联; (参考n16p7)
     
     //4. 识别做什么用
     AICMVNodeBase *mvNode = [self dataIn_NoMV_RecognitionUse:recognitionAlgNode];

@@ -31,6 +31,13 @@
 /**
  *  MARK:--------------------数据输入--------------------
  *  @param models : 多model (models仅含普通算法model -> 目前没有imv和普通信息掺杂在models中的情况;)
+ *  步骤说明:
+ *  1. 先构建具象parent节点,再构建抽象sub节点;
+ *  2. 仅parent添加到瞬时记忆;
+ *  3. 每个subAlg都要单独进行识别操作;
+ *
+ *  TODOWAIT:
+ *  1. 默认为按边缘(ios的view层级)分组,随后可扩展祖母内类比,按别的维度分组; 参考: n16p7
  */
 -(void) dataInWithModels:(NSArray*)models;
 
