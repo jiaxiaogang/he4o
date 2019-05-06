@@ -21,7 +21,7 @@
  *  5. 微信息引用处理: value索引中,加上refPorts;类似algNode.refPorts的方式使用;并且使用单文件的方式存储和插线;
  *
  *  @param algsArr   : 算法值的装箱数组;
- *  @result 具象algNode
+ *  @result 具象algNode : notnull
  */
 +(AIAlgNode*) createAlgNode:(NSArray*)algsArr isOut:(BOOL)isOut;
 

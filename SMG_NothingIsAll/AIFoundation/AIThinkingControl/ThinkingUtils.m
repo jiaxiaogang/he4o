@@ -234,14 +234,6 @@
     return algsArr;
 }
 
-+(AIPointer*) createAlgNodeWithValue_ps:(NSArray*)value_ps isOut:(BOOL)isOut{
-    AIAlgNode *algNode = [theNet createAlgNode:value_ps isOut:isOut];
-    if (algNode) {
-        return algNode.pointer;
-    }
-    return nil;
-}
-
 @end
 
 

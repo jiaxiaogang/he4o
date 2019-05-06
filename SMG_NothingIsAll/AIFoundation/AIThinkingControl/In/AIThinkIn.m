@@ -11,7 +11,6 @@
 #import "AIFrontOrderNode.h"
 #import "AICMVNode.h"
 #import "AIKVPointer.h"
-#import "AIAlgNodeBase.h"
 #import "NSString+Extension.h"
 #import "AINetUtils.h"
 #import "AIPort.h"
@@ -19,6 +18,8 @@
 #import "AINetAbsFoNode.h"
 #import "AIAbsCMVNode.h"
 #import "AIThinkInAnalogy.h"
+#import "AIAlgNode.h"
+#import "AIAbsAlgNode.h"
 
 @implementation AIThinkIn
 
@@ -26,19 +27,35 @@
     //1. 数据检查 (小鸟不能仅传入foodView,而要传入整个视角场景)
     models = ARRTOOK(models);
     
-    //2. 此处构建祖母嵌套
-    ///1. 先构建一个conAlgNode,然后逐个添加item到content_ps;
-    ///2. 逐个处理item,并添加到conAlgNode.content_ps;
+    //2. 收集所有具象父祖母的value_ps
+    NSMutableArray *parentValue_ps = [[NSMutableArray alloc] init];
+    NSMutableArray *subValuePsArr = [[NSMutableArray alloc] init];//2维数组
     for (NSObject *item in models) {
-        ///3. 修改部分:
-        ///a. 对添加瞬时记忆,改为conAlgNode.pointer;
-        ///b. 对识别后,增加类比操作;
+        NSArray *item_ps = ARRTOOK([ThinkingUtils algModelConvert2Pointers:item]);
+        [parentValue_ps addObjectsFromArray:item_ps];
+        [subValuePsArr addObject:item_ps];
+    }
+    
+    //3. 构建父祖母 & 将父祖母加入瞬时记忆;
+    AIAlgNode *parentAlgNode = [theNet createAlgNode:parentValue_ps isOut:false];
+    if (parentAlgNode && self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_AddToShortMemory:)]) {
+        [self.delegate aiThinkIn_AddToShortMemory:@[parentAlgNode.pointer]];
+    }
+    
+    //4. 构建子祖母 (抽象祖母,并嵌套);
+    for (NSArray *subValue_ps in subValuePsArr) {
+        AIAbsAlgNode *subAlgNode = [theNet createAbsAlgNode:subValue_ps alg:parentAlgNode];
+        
+        //5. NoMv处理;
+        [self dataIn_NoMV:subAlgNode.pointer];
     }
     
     
-    //3. 识别 (对subView与识别到的alg类比,并构建关联到网络)
+    ////修改部分,对识别后,增加类比操作 (对subView与识别到的alg类比,并构建关联到网络);
     
+    ////通过祖母的内类比,从而按颜色分组,按边缘分组;
     
+    ////目标: 先构建具象节点,再构建抽象节点;
     
     
 }
@@ -54,7 +71,15 @@
     if (findMV) {
         [self dataIn_FindMV:algsArr];
     }else{
-        [self dataIn_NoMV:algsArr];
+        //1. 打包成algTypeNode;
+        AIAlgNodeBase *algNode = [theNet createAlgNode:algsArr isOut:false];
+        
+        //2. 加入瞬时记忆
+        if (algNode && self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_AddToShortMemory:)]) {
+            [self.delegate aiThinkIn_AddToShortMemory:@[algNode.pointer]];
+        }
+        
+        [self dataIn_NoMV:algNode.pointer];
     }
 }
 
@@ -66,13 +91,9 @@
  *  MARK:--------------------输入非mv信息时--------------------
  *  1. 看到西瓜会开心 : TODO: 对自身状态的判断, (比如,看到西瓜,想吃,那么当前状态是否饿)
  */
--(void) dataIn_NoMV:(NSArray*)algsArr{
-    //1. 打包成algTypeNode;
-    AIPointer *algNode_p = [ThinkingUtils createAlgNodeWithValue_ps:algsArr isOut:false];
-    
-    //2. 加入瞬时记忆
-    if (algNode_p && self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_AddToShortMemory:)]) {
-        [self.delegate aiThinkIn_AddToShortMemory:@[algNode_p]];
+-(void) dataIn_NoMV:(AIPointer*)algNode_p{
+    if (!algNode_p) {
+        return;
     }
     
     //3. 识别

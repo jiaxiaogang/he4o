@@ -16,6 +16,7 @@
 #import "AINetUtils.h"
 #import "ThinkingUtils.h"
 #import "AIKVPointer.h"
+#import "AIAlgNode.h"
 
 
 /**
@@ -95,12 +96,10 @@ static AIThinkingControl *_instance;
     }
     
     //5. 祖母
-    AIPointer *algNode_p = [ThinkingUtils createAlgNodeWithValue_ps:value_ps isOut:true];
+    AIAlgNode *algNode = [theNet createAlgNode:value_ps isOut:true];
     
     //6. 加瞬时记忆
-    if (ISOK(algNode_p, AIPointer.class)) {
-        [self.shortMemory addToShortCache_Ps:@[algNode_p]];
-    }
+    [self.shortMemory addToShortCache_Ps:@[algNode.pointer]];
 }
 
 

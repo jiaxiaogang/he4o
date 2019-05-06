@@ -30,9 +30,15 @@
 
 /**
  *  MARK:--------------------数据输入--------------------
- *  @param models : 目前没有imv和普通信息掺杂在models中的情况;
+ *  @param models : 多model (models仅含普通算法model -> 目前没有imv和普通信息掺杂在models中的情况;)
  */
 -(void) dataInWithModels:(NSArray*)models;
+
+
+/**
+ *  MARK:--------------------数据输入--------------------
+ *  说明: 单model (普通算法模型 或 imv模型)
+ */
 -(void) dataIn:(NSObject*)algsModel;
 
 

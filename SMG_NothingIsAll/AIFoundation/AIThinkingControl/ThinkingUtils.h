@@ -115,13 +115,6 @@
 +(NSArray*) algModelConvert2Pointers:(NSObject*)algsModel;
 
 
-/**
- *  MARK:--------------------创建祖母节点--------------------
- *  将微信息组,转换成祖母节点;
- *  需要对祖母节点指定当前的isOut状态; (思维控制器知道它是行为还是认知)
- */
-+(AIPointer*) createAlgNodeWithValue_ps:(NSArray*)value_ps isOut:(BOOL)isOut;
-
 @end
 
 
