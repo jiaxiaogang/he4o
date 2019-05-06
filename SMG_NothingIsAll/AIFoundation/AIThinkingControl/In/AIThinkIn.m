@@ -22,6 +22,26 @@
 
 @implementation AIThinkIn
 
+-(void) dataInWithModels:(NSArray*)models{
+    //1. 数据检查 (小鸟不能仅传入foodView,而要传入整个视角场景)
+    models = ARRTOOK(models);
+    
+    //2. 此处构建祖母嵌套
+    ///1. 先构建一个conAlgNode,然后逐个添加item到content_ps;
+    ///2. 逐个处理item,并添加到conAlgNode.content_ps;
+    for (NSObject *item in models) {
+        ///3. 修改部分:
+        ///a. 对添加瞬时记忆,改为conAlgNode.pointer;
+        ///b. 对识别后,增加类比操作;
+    }
+    
+    
+    //3. 识别 (对subView与识别到的alg类比,并构建关联到网络)
+    
+    
+    
+    
+}
 
 -(void) dataIn:(NSObject*)algsModel{
     //1. 装箱(除mv有两个元素外一般仅有一个元素)
@@ -57,6 +77,8 @@
     
     //3. 识别
     AIAlgNodeBase *recognitionAlgNode = [self dataIn_NoMV_RecognitionIs:algNode_p];
+    
+    //4. 识别后,要进行类比,并构建网络关联;
     
     //4. 识别做什么用
     AICMVNodeBase *mvNode = [self dataIn_NoMV_RecognitionUse:recognitionAlgNode];

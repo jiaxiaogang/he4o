@@ -30,7 +30,9 @@
 
 /**
  *  MARK:--------------------数据输入--------------------
+ *  @param models : 目前没有imv和普通信息掺杂在models中的情况;
  */
+-(void) dataInWithModels:(NSArray*)models;
 -(void) dataIn:(NSObject*)algsModel;
 
 
