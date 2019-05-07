@@ -17,6 +17,7 @@
 		081B3AD61F6E2994008A7F36 /* AIStringAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3AD51F6E2994008A7F36 /* AIStringAlgs.m */; };
 		081B3ADB1F6E2CCD008A7F36 /* AINet.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3ADA1F6E2CCD008A7F36 /* AINet.m */; };
 		08236CEC21A23439008D8761 /* AIVisionAlgsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08236CEB21A23439008D8761 /* AIVisionAlgsModel.m */; };
+		08250AE0228112C000FC497C /* XGWedis.m in Sources */ = {isa = PBXBuildFile; fileRef = 08250ADF228112C000FC497C /* XGWedis.m */; };
 		0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 0825AFF21F748F67003B86C7 /* NSObject+Extension.m */; };
 		082ABC3521F7E864002E544C /* AIShortMemory.m in Sources */ = {isa = PBXBuildFile; fileRef = 082ABC3421F7E864002E544C /* AIShortMemory.m */; };
 		082F9D561EB234750009F6A9 /* Output.m in Sources */ = {isa = PBXBuildFile; fileRef = 082F9D551EB234750009F6A9 /* Output.m */; };
@@ -134,6 +135,8 @@
 		081B3ADA1F6E2CCD008A7F36 /* AINet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AINet.m; sourceTree = "<group>"; };
 		08236CEA21A23439008D8761 /* AIVisionAlgsModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIVisionAlgsModel.h; sourceTree = "<group>"; };
 		08236CEB21A23439008D8761 /* AIVisionAlgsModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIVisionAlgsModel.m; sourceTree = "<group>"; };
+		08250ADE228112C000FC497C /* XGWedis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XGWedis.h; sourceTree = "<group>"; };
+		08250ADF228112C000FC497C /* XGWedis.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XGWedis.m; sourceTree = "<group>"; };
 		0825AFF11F748F67003B86C7 /* NSObject+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Extension.h"; sourceTree = "<group>"; };
 		0825AFF21F748F67003B86C7 /* NSObject+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Extension.m"; sourceTree = "<group>"; };
 		082ABC3321F7E864002E544C /* AIShortMemory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIShortMemory.h; sourceTree = "<group>"; };
@@ -375,6 +378,15 @@
 				081B3ACB1F6E2155008A7F36 /* AITime.m */,
 			);
 			path = AITime;
+			sourceTree = "<group>";
+		};
+		08250ADD2281129300FC497C /* XGWedis */ = {
+			isa = PBXGroup;
+			children = (
+				08250ADE228112C000FC497C /* XGWedis.h */,
+				08250ADF228112C000FC497C /* XGWedis.m */,
+			);
+			path = XGWedis;
 			sourceTree = "<group>";
 		};
 		082F9D581EB236AC0009F6A9 /* Demo */ = {
@@ -843,6 +855,7 @@
 		88BC09D320B4EAA70006ABEF /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
+				08250ADD2281129300FC497C /* XGWedis */,
 				0858C5B32194F8B000951BA5 /* Masonry */,
 				08FAEC91215EEC98004DCEAD /* SMGNetVision */,
 				88BC09D420B4EABE0006ABEF /* XGRedis */,
@@ -1069,6 +1082,7 @@
 				88E87A6721016EAA0071513F /* OutputUtils.m in Sources */,
 				080A74321F60C6490025DBA3 /* AIPort.m in Sources */,
 				08DB40CB1F11A65E003162C8 /* TestHungryPage.m in Sources */,
+				08250AE0228112C000FC497C /* XGWedis.m in Sources */,
 				88A43F432109589600281348 /* AICMVNode.m in Sources */,
 				081B3AD61F6E2994008A7F36 /* AIStringAlgs.m in Sources */,
 				0842ADC01FE209700048ADDC /* DemoCharge.m in Sources */,

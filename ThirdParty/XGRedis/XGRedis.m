@@ -56,7 +56,6 @@ static XGRedis *_instance;
         NSString *checkKey = [self.dic keyForIndex:checkIndex];
         return [XGRedisUtil compareStrA:key strB:checkKey];
     } startIndex:0 endIndex:self.dic.count - 1 success:^(NSInteger index) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:kXGRedisGCObserver object:[self.dic keyForIndex:index]];
         [self.dic removeObjectAtIndex:index];
         findOldIndex = index;
     } failure:^(NSInteger index) {
@@ -109,6 +108,7 @@ static XGRedis *_instance;
                 NSString *checkKey = [self.dic keyForIndex:checkIndex];
                 return [XGRedisUtil compareStrA:mark.key strB:checkKey];
             } startIndex:0 endIndex:self.dic.count - 1 success:^(NSInteger index) {
+                [[NSNotificationCenter defaultCenter] postNotificationName:kXGRedisGCObserver object:[self.dic keyForIndex:index]];
                 [self.dic removeObjectAtIndex:index];
             } failure:nil];
         }else{
