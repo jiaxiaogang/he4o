@@ -63,6 +63,7 @@
 #define STRISOK(a) (a  && ![a isKindOfClass:[NSNull class]] && [a isKindOfClass:[NSString class]] && ![a isEqualToString:@""])//是否空字符串
 #define STRTOOK(a) (a  && ![a isKindOfClass:[NSNull class]]) ? ([a isKindOfClass:[NSString class]] ? a : [NSString stringWithFormat:@"%@", a]) : @""
 #define STRFORMAT(a, ...) [NSString stringWithFormat:a, ##__VA_ARGS__]//String.format
+#define SUBSTR2INDEX(str,index) (STRISOK(str) ? [str substringToIndex:MIN(str.length, MAX(0, index))] : @"")//subStr_toIndex
 
 //Array
 #define ARRISOK(a) (a  && [a isKindOfClass:[NSArray class]] && a.count)//是否空数组

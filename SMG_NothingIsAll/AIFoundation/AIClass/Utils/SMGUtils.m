@@ -14,6 +14,7 @@
 #import "XGRedis.h"
 #import "AIPointer.h"
 #import "AIAlgNodeBase.h"
+#import "XGWedis.h"
 
 @implementation SMGUtils
 
@@ -340,19 +341,25 @@
     filePath = STRTOOK(filePath);
     
     //2. 优先取redis
-    NSString *redisKey = STRFORMAT(@"%@/%@",filePath,fileName);//随后去掉前辍
-    id redisObj = [[XGRedis sharedInstance] objectForKey:redisKey];
-    if (redisObj != nil) {
-        return redisObj;
-    }
+    NSString *key = STRFORMAT(@"%@/%@",filePath,fileName);//随后去掉前辍
+    id result = [[XGRedis sharedInstance] objectForKey:key];
     
-    //3. 再取disk
-    PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:filePath];
-    id diskObj = [cache objectForKey:fileName];
-    if (time > 0 && diskObj) {
-        [[XGRedis sharedInstance] setObject:diskObj forKey:redisKey time:time];
+    //3. 再取wedis
+    if (result == nil) {
+        result = [[XGWedis sharedInstance] objectForKey:key];
+        
+        //4. 最后取disk
+        if (result == nil) {
+            PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:filePath];
+            result = [cache objectForKey:fileName];
+        }
+        
+        //5. 存到redis (wedis/disk)
+        if (time > 0 && result) {
+            [[XGRedis sharedInstance] setObject:result forKey:key time:time];
+        }
     }
-    return diskObj;
+    return result;
 }
 
 +(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName{
@@ -364,12 +371,26 @@
     }
 }
 +(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName time:(double)time{
-    //1. 存disk
-    PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:STRTOOK(rootPath)];
-    [cache setObject:obj forKey:STRTOOK(fileName)];
+    //1. 存disk (异步持久化)
+    NSString *key = STRFORMAT(@"%@/%@",rootPath,fileName);
+    [[XGWedis sharedInstance] setObject:obj forKey:key];
+    [[XGWedis sharedInstance] setSaveBlock:^(NSDictionary *dic) {
+        dic = DICTOOK(dic);
+        for (NSString *saveKey in dic.allKeys) {
+            NSObject *saveObj = [dic objectForKey:saveKey];
+            
+            NSArray *saveKeyArr = ARRTOOK([saveKey componentsSeparatedByString:@"/"]);
+            NSString *saveFileName = ARR_INDEX(saveKeyArr, saveKeyArr.count - 1);
+            saveFileName = STRTOOK(saveFileName);
+            //[saveKey substringToIndex:MIN(saveKey.length, MAX(0, toIndex))];
+            NSString *saveRootPath = STRTOOK(SUBSTR2INDEX(saveKey, (saveKey.length - saveFileName.length - 1)));
+            PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:saveRootPath];
+            [cache setObject:saveObj forKey:saveFileName];
+        }
+    }];
     
     //2. 存redis
-    [[XGRedis sharedInstance] setObject:obj forKey:STRFORMAT(@"%@/%@",rootPath,fileName) time:time];//随后去掉(redisKey)前辍
+    [[XGRedis sharedInstance] setObject:obj forKey:key time:time];//随后去掉(redisKey)前辍
 }
 
 @end
