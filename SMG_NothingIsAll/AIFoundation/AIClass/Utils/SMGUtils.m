@@ -382,7 +382,6 @@
             NSArray *saveKeyArr = ARRTOOK([saveKey componentsSeparatedByString:@"/"]);
             NSString *saveFileName = ARR_INDEX(saveKeyArr, saveKeyArr.count - 1);
             saveFileName = STRTOOK(saveFileName);
-            //[saveKey substringToIndex:MIN(saveKey.length, MAX(0, toIndex))];
             NSString *saveRootPath = STRTOOK(SUBSTR2INDEX(saveKey, (saveKey.length - saveFileName.length - 1)));
             PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:saveRootPath];
             [cache setObject:saveObj forKey:saveFileName];

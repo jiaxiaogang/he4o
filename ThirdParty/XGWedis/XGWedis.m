@@ -38,7 +38,7 @@ static XGWedis *_instance;
 
 -(void) initData{
     self.dic = [[NSMutableDictionary alloc] init];
-    self.timer = [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
 }
 
 //MARK:===============================================================
