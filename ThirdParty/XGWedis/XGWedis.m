@@ -63,13 +63,16 @@ static XGWedis *_instance;
 //MARK:===============================================================
 - (void)notificationTimer{
     NSMutableDictionary *saveDic = [self.dic copy];
-    [[NSNotificationCenter defaultCenter] postNotificationName:kXGWedisSaveObserver object:saveDic];
-    if (self.delegate && [self.delegate respondsToSelector:@selector(xgWedis_Save:)]) {
-        [self.delegate xgWedis_Save:saveDic];
-    }
-    if (self.saveBlock) {
-        self.saveBlock(saveDic);
-    }
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:kXGWedisSaveObserver object:saveDic];
+        if (self.delegate && [self.delegate respondsToSelector:@selector(xgWedis_Save:)]) {
+            [self.delegate xgWedis_Save:saveDic];
+        }
+        if (self.saveBlock) {
+            self.saveBlock(saveDic);
+        }
+        //dispatch_async(dispatch_get_main_queue(), ^{});
+    });
     [self.dic removeAllObjects];
 }
 

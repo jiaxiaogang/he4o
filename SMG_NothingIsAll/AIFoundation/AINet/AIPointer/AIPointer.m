@@ -8,10 +8,6 @@
 
 #import "AIPointer.h"
 
-@interface AIPointer ()
-
-@end
-
 @implementation AIPointer
 
 /**
@@ -70,6 +66,16 @@
 
 -(id) paramForKey:(NSString*)key{
     return [DICTOOK(self.params) objectForKey:STRTOOK(key)];
+}
+
+/**
+ *  MARK:--------------------NSCopying--------------------
+ */
+- (id)copyWithZone:(NSZone __unused *)zone {
+    AIPointer *copy = [[AIPointer alloc] init];
+    copy.pointerId = self.pointerId;
+    copy.params = self.params;
+    return copy;
 }
 
 @end

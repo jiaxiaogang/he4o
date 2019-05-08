@@ -16,6 +16,8 @@
 
 @property (strong,nonatomic) NSMutableArray *inModels;
 @property (strong,nonatomic) NSMutableArray *outModels;
+@property (strong, nonatomic) NSMutableDictionary *inDataDic;
+@property (strong, nonatomic) NSMutableDictionary *outDataDic;
 
 @end
 
@@ -30,10 +32,21 @@
 }
 
 -(void) initData{
-    NSArray *inLocalModels = [[PINCache sharedCache] objectForKey:FILENAME_Index(false)];
-    self.inModels = [[NSMutableArray alloc] initWithArray:inLocalModels];
-    NSArray *outLocalModels = [[PINCache sharedCache] objectForKey:FILENAME_Index(true)];
-    self.outModels = [[NSMutableArray alloc] initWithArray:outLocalModels];
+    
+    //TODOTOMORROW:
+    //1. 将此处inModels等,直接放redis中,而不是在这儿独立的字段;
+    //2. 将所有调用Value的,都取[dic objectForKey:data_p];
+    
+    
+    
+    
+    //1. 加载索引序列
+    self.inModels = [[NSMutableArray alloc] initWithArray:ARRTOOK([SMGUtils searchObjectForPointer:[SMGUtils createPointerForIndex] fileName:FILENAME_Index(false)])];
+    self.outModels = [[NSMutableArray alloc] initWithArray:ARRTOOK([SMGUtils searchObjectForPointer:[SMGUtils createPointerForIndex] fileName:FILENAME_Index(true)])];
+    
+    //2. 加载微信息值字典
+    self.inDataDic = [[NSMutableDictionary alloc] initWithDictionary:DICTOOK([SMGUtils searchObjectForPointer:[SMGUtils createPointerForData] fileName:FILENAME_Data(false)])];
+    self.outDataDic = [[NSMutableDictionary alloc] initWithDictionary:DICTOOK([SMGUtils searchObjectForPointer:[SMGUtils createPointerForData] fileName:FILENAME_Data(true)])];
 }
 
 //MARK:===============================================================
@@ -46,7 +59,7 @@
     
     //1. 查找model,没则new
     AINetIndexModel *model = nil;
-    NSMutableArray *models = [self getModels:isOut];
+    NSMutableArray *models = [self getIndexModels:isOut];
     for (AINetIndexModel *itemModel in models) {
         if ([STRTOOK(algsType) isEqualToString:itemModel.algsType] && [STRTOOK(dataSource) isEqualToString:itemModel.dataSource]) {
             model = itemModel;
@@ -60,13 +73,16 @@
         [models addObject:model];
     }
     
-    //2. 使用二分法查找data
+    //2. 取dataDic
+    NSMutableDictionary *dataDic = [self getDataDic:isOut];
+    
+    //3. 使用二分法查找data
     __block AIKVPointer *resultPointer;
     [XGRedisUtil searchIndexWithCompare:^NSComparisonResult(NSInteger checkIndex) {
         NSNumber *checkPointerIdNumber = ARR_INDEX(model.pointerIds, checkIndex);
         long checkPointerId = [NUMTOOK(checkPointerIdNumber) longValue];
         AIKVPointer *checkValue_p = [SMGUtils createPointerForValue:checkPointerId algsType:algsType dataSource:dataSource isOut:isOut];
-        NSNumber *checkValue = [SMGUtils searchObjectForPointer:checkValue_p fileName:FILENAME_Value time:cRedisValueTime];
+        NSNumber *checkValue = [dataDic objectForKey:checkValue_p];
         NSComparisonResult compareResult = [NUMTOOK(checkValue) compare:data];
         return compareResult;
     } startIndex:0 endIndex:model.pointerIds.count - 1 success:^(NSInteger index) {
@@ -77,7 +93,7 @@
     } failure:^(NSInteger index) {
         //4. 未找到;创建一个;
         AIKVPointer *value_p = [SMGUtils createPointerForValue:algsType dataSource:dataSource isOut:isOut];
-        [SMGUtils insertObject:data rootPath:value_p.filePath fileName:FILENAME_Value time:cRedisValueTime];
+        [dataDic setObject:data forKey:value_p];
         resultPointer = value_p;
         
         if (model.pointerIds.count <= index) {
@@ -87,7 +103,8 @@
         }
         
         //5. 存
-        [[PINCache sharedCache] setObject:models forKey:FILENAME_Index(isOut)];
+        [SMGUtils insertObject:models rootPath:[SMGUtils createPointerForIndex].filePath fileName:FILENAME_Index(isOut)];
+        [SMGUtils insertObject:dataDic rootPath:[SMGUtils createPointerForData].filePath fileName:FILENAME_Data(isOut)];
     }];
     
     return resultPointer;
@@ -112,8 +129,16 @@
 //MARK:===============================================================
 //MARK:                     < private_Method >
 //MARK:===============================================================
--(NSMutableArray*) getModels:(BOOL)isOut{
+-(NSMutableArray*) getIndexModels:(BOOL)isOut{
     return isOut ? self.outModels : self.inModels;
+}
+
+/**
+ *  MARK:--------------------取微信息值字典--------------------
+ *  @result notnull
+ */
+-(NSMutableDictionary*) getDataDic:(BOOL)isOut{
+    return isOut ? self.outDataDic : self.inDataDic;
 }
 
 @end

@@ -39,6 +39,8 @@
 #define PATH_NET_REFERENCE          @"NET_REFERENCE"                        //神经网络"引用序列"根目录;(海马体)
 #define PATH_NET_CEREBEL_CANOUT     @"PATH_NET_CEREBEL_CANOUT"              //小脑可输出标识序列
 
+#define PATH_NET_INDEX              @"NET_INDEX"    //索引序列
+#define PATH_NET_DATA               @"NET_DATA"     //微信息值字典
 
 /**
  *  MARK:--------------------fileNameKey--------------------
@@ -47,6 +49,7 @@
 #define FILENAME_Value @"value"             //微信息
 #define FILENAME_RefPorts @"refPorts"       //微信息的reference序列文件名;
 #define FILENAME_Index(isOut) STRFORMAT(@"index_%d",isOut) //in微信息索引(数组) / out小脑微信息(数组)
+#define FILENAME_Data(isOut) STRFORMAT(@"data_%d",isOut) //in微信息值 / out小脑微信息值 (dic)
 #define FILENAME_Reference @"reference"     //微信息引用序列
 #define FILENAME_DirectionIndex(mvDirection) STRFORMAT(@"directionIndex_%ld",mvDirection) //mv的顺逆方向索引序列地址
 

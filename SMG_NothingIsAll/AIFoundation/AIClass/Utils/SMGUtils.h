@@ -38,6 +38,9 @@
 +(AIKVPointer*) createPointerForValue:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut;
 +(AIKVPointer*) createPointerForValue:(NSInteger)pointerId algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut;
 
++(AIKVPointer*) createPointerForIndex;  //索引指针
++(AIKVPointer*) createPointerForData;   //微信息值指针
+
 @end
 
 

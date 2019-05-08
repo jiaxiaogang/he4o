@@ -81,6 +81,16 @@
     return [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_VALUE algsType:algsType dataSource:dataSource isOut:isOut];
 }
 
++(AIKVPointer*) createPointerForIndex{
+    NSInteger pointerId = 0;
+    return [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_INDEX algsType:@"" dataSource:@"" isOut:false];
+}
+
++(AIKVPointer*) createPointerForData{
+    NSInteger pointerId = 0;
+    return [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_DATA algsType:@"" dataSource:@"" isOut:false];
+}
+
 @end
 
 
@@ -352,6 +362,7 @@
         if (result == nil) {
             PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:filePath];
             result = [cache objectForKey:fileName];
+            NSLog(@">>>>>>>>>>>>>>>>>>>ReadDisk");
         }
         
         //5. 存到redis (wedis/disk)
@@ -386,6 +397,7 @@
             PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:saveRootPath];
             [cache setObject:saveObj forKey:saveFileName];
         }
+        NSLog(@">>>>>>>>>>>>>>>>>>>WriteDisk");
     }];
     
     //2. 存redis

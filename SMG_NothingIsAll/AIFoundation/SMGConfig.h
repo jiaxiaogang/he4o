@@ -11,20 +11,21 @@
 //MARK:===============================================================
 //MARK:                     < redisTime >
 //MARK:===============================================================
-#define cRedisIndexTime 300
-#define cRedisReferenceTime 300
-#define cRedisValueTime 30
-#define cRedisNodeTime 30
-#define cRedisDefaultTime 30    //默认,例如:小脑canout序列;
-#define cRedisPortTime 30
+//#define cRedisIndexTime 600   //常驻内存
+//#define cRedisDataTime 600    //常驻内存
+#define cRedisReferenceTime 600
+#define cRedisValueTime 200
+#define cRedisNodeTime 200
+#define cRedisDefaultTime 60    //默认,例如:小脑canout序列;
+#define cRedisPortTime 200
 
 
 //MARK:===============================================================
 //MARK:                     < thinkingControl >
 //MARK:===============================================================
-#define cAssDataLimit 3 //应以当前整体思维活跃度,变化为1-3左右;
+#define cAssDataLimit 2 //应以当前整体思维活跃度,变化为1-3左右;
 #define cMinEnergy 0 //思维活力限低
-#define cMaxEnergy 5 //思维活力限高
+#define cMaxEnergy 20 //思维活力限高
 #define cShortMemoryLimit 8 //瞬时记忆最多8条
 
 //MARK:===============================================================
