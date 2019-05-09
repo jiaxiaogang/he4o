@@ -33,6 +33,11 @@
 -(AIKVPointer*) getDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut;
 
 
+/**
+ *  MARK:--------------------取微信息值--------------------
+ */
++(NSNumber*) getData:(AIKVPointer*)data_p;
+
 @end
 
 

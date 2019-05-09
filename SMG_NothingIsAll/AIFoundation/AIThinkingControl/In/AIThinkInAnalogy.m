@@ -16,6 +16,7 @@
 #import "AINetUtils.h"
 #import "AIFrontOrderNode.h"
 #import "AIAbsCMVNode.h"
+#import "AINetIndex.h"
 
 @implementation AIThinkInAnalogy
 
@@ -171,8 +172,8 @@
                     if ([a_p.identifier isEqualToString:b_p.identifier]) {
                         //注: 对比微信息是否不同 (MARK_VALUE:如微信息去重功能去掉,此处要取值再进行对比)
                         if (a_p.pointerId != b_p.pointerId) {
-                            NSNumber *numA = [SMGUtils searchObjectForPointer:a_p fileName:FILENAME_Value time:cRedisValueTime];
-                            NSNumber *numB = [SMGUtils searchObjectForPointer:b_p fileName:FILENAME_Value time:cRedisValueTime];
+                            NSNumber *numA = [AINetIndex getData:a_p];
+                            NSNumber *numB = [AINetIndex getData:b_p];
                             NSComparisonResult compareResult = [NUMTOOK(numA) compare:numB];
                             if (compareResult == NSOrderedAscending) {
                                 abFo = [self analogyInner_Creater:AnalogyInnerType_Less target_p:a_p algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];

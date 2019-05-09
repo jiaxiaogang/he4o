@@ -12,6 +12,7 @@
 #import "AIAbsAlgNode.h"
 #import "AINetAbsFoNode.h"
 #import "AIPort.h"
+#import "AINetIndex.h"
 
 @implementation TOAlgScheme
 
@@ -135,8 +136,8 @@
             if (!forecastValue_p) return;
             
             //9. 将诉求信息:subValue与预测信息:forecastValue进行类比;
-            NSNumber *subValue = NUMTOOK([SMGUtils searchObjectForPointer:subValue_p fileName:FILENAME_Value time:cRedisValueTime]);
-            NSNumber *forecastValue = NUMTOOK([SMGUtils searchObjectForPointer:forecastValue_p fileName:FILENAME_Value time:cRedisValueTime]);
+            NSNumber *subValue = NUMTOOK([AINetIndex getData:subValue_p]);
+            NSNumber *forecastValue = NUMTOOK([AINetIndex getData:forecastValue_p]);
             NSComparisonResult compareResult = [subValue compare:forecastValue];
             
             //10. 得出是要找cLess或cGreater;

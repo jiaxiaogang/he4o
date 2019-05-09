@@ -8,6 +8,7 @@
 
 #import "AINetAbsCMVUtil.h"
 #import "AIKVPointer.h"
+#import "AINetIndex.h"
 
 @implementation AINetAbsCMVUtil
 
@@ -22,7 +23,7 @@
 +(NSInteger) getAbsUrgentTo:(NSArray*)mvNodes {
     return [self getAbsValue:mvNodes singleValueBlock:^NSInteger(AICMVNodeBase *mvNode) {
         if (ISOK(mvNode, AICMVNodeBase.class)) {
-            return [NUMTOOK([SMGUtils searchObjectForPointer:mvNode.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
+            return [NUMTOOK([AINetIndex getData:mvNode.urgentTo_p]) integerValue];
         }
         return 0;
     }];
@@ -35,7 +36,7 @@
 +(NSInteger) getAbsDelta:(NSArray*)mvNodes {
     return [self getAbsValue:mvNodes singleValueBlock:^NSInteger(AICMVNodeBase *mvNode) {
         if (ISOK(mvNode, AICMVNodeBase.class)) {
-            return [NUMTOOK([SMGUtils searchObjectForPointer:mvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
+            return [NUMTOOK([AINetIndex getData:mvNode.delta_p]) integerValue];
         }
         return 0;
     }];

@@ -17,7 +17,7 @@
 #import "ThinkingUtils.h"
 #import "AIKVPointer.h"
 #import "AIAlgNode.h"
-
+#import "AINetIndex.h"
 
 /**
  *  MARK:--------------------思维控制器--------------------
@@ -134,8 +134,8 @@ static AIThinkingControl *_instance;
         return;
     }
     NSString *algsType = cmvNode.urgentTo_p.algsType;
-    NSInteger urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
-    NSInteger delta = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
+    NSInteger urgentTo = [NUMTOOK([AINetIndex getData:cmvNode.urgentTo_p]) integerValue];
+    NSInteger delta = [NUMTOOK([AINetIndex getData:cmvNode.delta_p]) integerValue];
     if (delta == 0) {
         return;
     }

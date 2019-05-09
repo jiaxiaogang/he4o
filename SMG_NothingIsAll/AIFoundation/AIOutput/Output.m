@@ -14,6 +14,7 @@
 #import "AIAlgNodeBase.h"
 #import "OutputUtils.h"
 #import "OutputModel.h"
+#import "AINetIndex.h"
 
 @implementation Output
 
@@ -49,7 +50,7 @@
         if ([AINetUtils checkCanOutput:dataSource]) {
             OutputModel *model = [[OutputModel alloc] init];
             model.rds = dataSource;
-            model.data = NUMTOOK([SMGUtils searchObjectForPointer:value_p fileName:FILENAME_Value time:cRedisValueTime]);
+            model.data = NUMTOOK([AINetIndex getData:value_p]);
             [valids addObject:model];
         }
     }

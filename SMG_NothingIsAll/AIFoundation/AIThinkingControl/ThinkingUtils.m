@@ -21,6 +21,7 @@
 #import "AINet.h"
 #import "NSString+Extension.h"
 #import "AINetUtils.h"
+#import "AINetIndex.h"
 
 @implementation ThinkingUtils
 
@@ -143,8 +144,8 @@
     [self parserAlgsMVArrWithoutValue:algsArr success:^(AIKVPointer *findDelta_p, AIKVPointer *findUrgentTo_p, NSString *findAlgsType) {
         delta_p = findDelta_p;
         urgentTo_p = findUrgentTo_p;
-        delta = [NUMTOOK([SMGUtils searchObjectForPointer:delta_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
-        urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:urgentTo_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
+        delta = [NUMTOOK([AINetIndex getData:delta_p]) integerValue];
+        urgentTo = [NUMTOOK([AINetIndex getData:urgentTo_p]) integerValue];
         algsType = findAlgsType;
     }];
     
@@ -162,8 +163,8 @@
 
 +(CGFloat) getScoreForce:(NSString*)algsType urgentTo_p:(AIPointer*)urgentTo_p delta_p:(AIPointer*)delta_p ratio:(CGFloat)ratio{
     //1. 检查absCmvNode是否顺心
-    NSInteger urgentTo = [NUMTOOK([SMGUtils searchObjectForPointer:urgentTo_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
-    NSInteger delta = [NUMTOOK([SMGUtils searchObjectForPointer:delta_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
+    NSInteger delta = [NUMTOOK([AINetIndex getData:delta_p]) integerValue];
+    NSInteger urgentTo = [NUMTOOK([AINetIndex getData:urgentTo_p]) integerValue];
     MindHappyType type = [ThinkingUtils checkMindHappy:algsType delta:delta];
     
     //2. 根据检查到的数据取到score;

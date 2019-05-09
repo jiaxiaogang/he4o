@@ -12,55 +12,22 @@
 #import "PINCache.h"
 #import "XGRedisUtil.h"
 
-@interface AINetIndex ()
-
-@property (strong,nonatomic) NSMutableArray *inModels;
-@property (strong,nonatomic) NSMutableArray *outModels;
-@property (strong, nonatomic) NSMutableDictionary *inDataDic;
-@property (strong, nonatomic) NSMutableDictionary *outDataDic;
-
-@end
-
 @implementation AINetIndex
-
--(id) init{
-    self = [super init];
-    if (self) {
-        [self initData];
-    }
-    return self;
-}
-
--(void) initData{
-    
-    //TODOTOMORROW:
-    //1. 将此处inModels等,直接放redis中,而不是在这儿独立的字段;
-    //2. 将所有调用Value的,都取[dic objectForKey:data_p];
-    
-    
-    
-    
-    //1. 加载索引序列
-    self.inModels = [[NSMutableArray alloc] initWithArray:ARRTOOK([SMGUtils searchObjectForPointer:[SMGUtils createPointerForIndex] fileName:FILENAME_Index(false)])];
-    self.outModels = [[NSMutableArray alloc] initWithArray:ARRTOOK([SMGUtils searchObjectForPointer:[SMGUtils createPointerForIndex] fileName:FILENAME_Index(true)])];
-    
-    //2. 加载微信息值字典
-    self.inDataDic = [[NSMutableDictionary alloc] initWithDictionary:DICTOOK([SMGUtils searchObjectForPointer:[SMGUtils createPointerForData] fileName:FILENAME_Data(false)])];
-    self.outDataDic = [[NSMutableDictionary alloc] initWithDictionary:DICTOOK([SMGUtils searchObjectForPointer:[SMGUtils createPointerForData] fileName:FILENAME_Data(true)])];
-}
 
 //MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
 -(AIKVPointer*) getDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut{
+    //1. 数据准备
     if (!ISOK(data, NSNumber.class)) {
         return nil;
     }
+    NSMutableArray *indexModels = [[NSMutableArray alloc] initWithArray:ARRTOOK([SMGUtils searchObjectForPointer:[SMGUtils createPointerForIndex] fileName:FILENAME_Index(isOut) time:cRedisIndexTime])];//加载索引序列
+    NSMutableDictionary *dataDic = [[NSMutableDictionary alloc] initWithDictionary:DICTOOK([SMGUtils searchObjectForPointer:[SMGUtils createPointerForData] fileName:FILENAME_Data(isOut) time:cRedisDataTime])];//加载微信息值字典
     
-    //1. 查找model,没则new
+    //2. 查找model,没则new
     AINetIndexModel *model = nil;
-    NSMutableArray *models = [self getIndexModels:isOut];
-    for (AINetIndexModel *itemModel in models) {
+    for (AINetIndexModel *itemModel in indexModels) {
         if ([STRTOOK(algsType) isEqualToString:itemModel.algsType] && [STRTOOK(dataSource) isEqualToString:itemModel.dataSource]) {
             model = itemModel;
             break;
@@ -70,11 +37,8 @@
         model = [[AINetIndexModel alloc] init];
         model.algsType = algsType;
         model.dataSource = dataSource;
-        [models addObject:model];
+        [indexModels addObject:model];
     }
-    
-    //2. 取dataDic
-    NSMutableDictionary *dataDic = [self getDataDic:isOut];
     
     //3. 使用二分法查找data
     __block AIKVPointer *resultPointer;
@@ -103,13 +67,17 @@
         }
         
         //5. 存
-        [SMGUtils insertObject:models rootPath:[SMGUtils createPointerForIndex].filePath fileName:FILENAME_Index(isOut)];
+        [SMGUtils insertObject:indexModels rootPath:[SMGUtils createPointerForIndex].filePath fileName:FILENAME_Index(isOut)];
         [SMGUtils insertObject:dataDic rootPath:[SMGUtils createPointerForData].filePath fileName:FILENAME_Data(isOut)];
     }];
     
     return resultPointer;
 }
 
++(NSNumber*) getData:(AIKVPointer*)data_p{
+    NSDictionary *dataDic = DICTOOK([SMGUtils searchObjectForPointer:[SMGUtils createPointerForData] fileName:FILENAME_Data(data_p.isOut) time:cRedisDataTime]);
+    return [dataDic objectForKey:data_p];
+}
 
 //MARK:===============================================================
 //MARK:                     < output >
@@ -125,21 +93,6 @@
 //    //    return [self.outReference getReference:indexPointer limit:limit];
 //    return nil;
 //}
-
-//MARK:===============================================================
-//MARK:                     < private_Method >
-//MARK:===============================================================
--(NSMutableArray*) getIndexModels:(BOOL)isOut{
-    return isOut ? self.outModels : self.inModels;
-}
-
-/**
- *  MARK:--------------------取微信息值字典--------------------
- *  @result notnull
- */
--(NSMutableDictionary*) getDataDic:(BOOL)isOut{
-    return isOut ? self.outDataDic : self.inDataDic;
-}
 
 @end
 

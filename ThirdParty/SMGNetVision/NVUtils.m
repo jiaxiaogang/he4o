@@ -15,6 +15,7 @@
 #import "ThinkingUtils.h"
 #import "AIAbsCMVNode.h"
 #import "AIAlgNodeBase.h"
+#import "AINetIndex.h"
 
 @implementation NVUtils
 
@@ -30,7 +31,7 @@
     //2. 将祖母嵌套展开
     NSMutableArray *mic_ps = [SMGUtils convertValuePs2MicroValuePs:value_ps];
     for (AIKVPointer *value_p in mic_ps) {
-        NSNumber *valueNum = [SMGUtils searchObjectForPointer:value_p fileName:FILENAME_Value];
+        NSNumber *valueNum = [AINetIndex getData:value_p];
         if (valueNum) {
             [mStr appendFormat:@"%@%@:%@ ", value_p.dataSource,(value_p.isOut ? @"^" : @"ˇ"), valueNum];
         }
@@ -74,8 +75,8 @@
 +(NSString*) getCmvNodeDesc:(AICMVNodeBase*)cmvNode {
     NSString *cmvDesc = nil;
     if (cmvNode) {
-        NSNumber *urgentToNum = [SMGUtils searchObjectForPointer:cmvNode.urgentTo_p fileName:FILENAME_Value time:cRedisValueTime];
-        NSNumber *deltaNum = [SMGUtils searchObjectForPointer:cmvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime];
+        NSNumber *urgentToNum = [AINetIndex getData:cmvNode.urgentTo_p];
+        NSNumber *deltaNum = [AINetIndex getData:cmvNode.delta_p];
         cmvDesc = STRFORMAT(@"ur%@_de%@",urgentToNum,deltaNum);
     }
     return cmvDesc;

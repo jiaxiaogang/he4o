@@ -20,6 +20,7 @@
 #import "AIThinkInAnalogy.h"
 #import "AIAlgNode.h"
 #import "AIAbsAlgNode.h"
+#import "AINetIndex.h"
 
 @implementation AIThinkIn
 
@@ -259,7 +260,7 @@
     }
     
     //2. 联想相关数据
-    NSInteger delta = [NUMTOOK([SMGUtils searchObjectForPointer:cmvNode.delta_p fileName:FILENAME_Value time:cRedisValueTime]) integerValue];
+    NSInteger delta = [NUMTOOK([AINetIndex getData:cmvNode.delta_p]) integerValue];
     MVDirection direction = delta < 0 ? MVDirection_Negative : MVDirection_Positive;
     NSArray *directionPorts = [[AINet sharedInstance] getNetNodePointersFromDirectionReference:cmvNode.pointer.algsType direction:direction limit:2];
     

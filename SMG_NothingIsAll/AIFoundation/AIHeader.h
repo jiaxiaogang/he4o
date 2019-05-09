@@ -32,21 +32,19 @@
 #define PATH_NET_ABS_CMV_NODE       @"NET_ABS_CMV_NODE"                     //cmv抽象节点根目录;(白质)
 #define PATH_NET_DIRECTION(mvDir)   STRFORMAT(@"NET_DIRECTION_%ld",mvDir)   //mv顺逆方向引用序列(以Path为各mv的分区,cmvNode和absCMVNode都指向此direction)
 
-//index
-#define PATH_NET_VALUE              @"NET_VALUE"                            //神经网络"值数据"根目录;(海马体)(杏仁核)
-
 //reference
 #define PATH_NET_REFERENCE          @"NET_REFERENCE"                        //神经网络"引用序列"根目录;(海马体)
 #define PATH_NET_CEREBEL_CANOUT     @"PATH_NET_CEREBEL_CANOUT"              //小脑可输出标识序列
 
 #define PATH_NET_INDEX              @"NET_INDEX"    //索引序列
 #define PATH_NET_DATA               @"NET_DATA"     //微信息值字典
+#define PATH_NET_VALUE              @"NET_VALUE"    //微信息单条值
 
 /**
  *  MARK:--------------------fileNameKey--------------------
  */
 #define FILENAME_Node @"node"               //节点
-#define FILENAME_Value @"value"             //微信息
+//#define FILENAME_Value @"value"             //微信息
 #define FILENAME_RefPorts @"refPorts"       //微信息的reference序列文件名;
 #define FILENAME_Index(isOut) STRFORMAT(@"index_%d",isOut) //in微信息索引(数组) / out小脑微信息(数组)
 #define FILENAME_Data(isOut) STRFORMAT(@"data_%d",isOut) //in微信息值 / out小脑微信息值 (dic)
