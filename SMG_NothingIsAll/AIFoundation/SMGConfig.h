@@ -11,8 +11,8 @@
 //MARK:===============================================================
 //MARK:                     < redisTime >
 //MARK:===============================================================
-#define cRedisIndexTime NSIntegerMax   //常驻内存
-#define cRedisDataTime NSIntegerMax    //常驻内存
+#define cRedisIndexTime 315360000   //常驻内存(十年)
+#define cRedisDataTime 315360000    //常驻内存(十年)
 #define cRedisReferenceTime 600
 #define cRedisNodeTime 200
 #define cRedisDefaultTime 60    //默认,例如:小脑canout序列;

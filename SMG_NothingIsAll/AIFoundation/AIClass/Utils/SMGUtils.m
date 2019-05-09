@@ -50,7 +50,7 @@
 
 //Node
 +(AIKVPointer*) createPointerForNode:(NSString*)folderName{
-    return [self createPointer:folderName algsType:@"" dataSource:@"" isOut:false];
+    return [self createPointer:folderName algsType:@" " dataSource:@" " isOut:false];
 }
 +(AIKVPointer*) createPointer:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut{
     NSInteger pointerId = [SMGUtils createPointerId:algsType dataSource:dataSource];
@@ -67,7 +67,7 @@
 
 //生成小脑CanOut指针;
 +(AIKVPointer*) createPointerForCerebelCanOut{
-    AIKVPointer *pointer = [AIKVPointer newWithPointerId:0 folderName:PATH_NET_CEREBEL_CANOUT algsType:@"" dataSource:@"" isOut:false];
+    AIKVPointer *pointer = [AIKVPointer newWithPointerId:0 folderName:PATH_NET_CEREBEL_CANOUT algsType:@" " dataSource:@" " isOut:false];
     return pointer;
 }
 
@@ -83,12 +83,12 @@
 
 +(AIKVPointer*) createPointerForIndex{
     NSInteger pointerId = 0;
-    return [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_INDEX algsType:@"" dataSource:@"" isOut:false];
+    return [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_INDEX algsType:@" " dataSource:@" " isOut:false];
 }
 
 +(AIKVPointer*) createPointerForData{
     NSInteger pointerId = 0;
-    return [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_DATA algsType:@"" dataSource:@"" isOut:false];
+    return [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_DATA algsType:@" " dataSource:@" " isOut:false];
 }
 
 @end
@@ -362,7 +362,7 @@
         if (result == nil) {
             PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:filePath];
             result = [cache objectForKey:fileName];
-            NSLog(@">>>>>>>>>>>>>>>>>>>ReadDisk");
+            NSLog(@">>>>>>>>>>>>>>>>>>>ReadDisk,%@",fileName);
         }
         
         //5. 存到redis (wedis/disk)
@@ -397,7 +397,7 @@
             PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:saveRootPath];
             [cache setObject:saveObj forKey:saveFileName];
         }
-        NSLog(@">>>>>>>>>>>>>>>>>>>WriteDisk");
+        NSLog(@">>>>>>>>>>>>>>>>>>>WriteDisk,%@",fileName);
     }];
     
     //2. 存redis
