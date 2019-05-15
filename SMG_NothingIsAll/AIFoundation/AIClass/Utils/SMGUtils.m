@@ -373,32 +373,34 @@
     return result;
 }
 
-+(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName{
-    [self insertObject:obj rootPath:rootPath fileName:fileName time:0];
++(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName saveDB:(BOOL)saveDB{
+    [self insertObject:obj rootPath:rootPath fileName:fileName time:0 saveDB:saveDB];
 }
-+(void) insertObject:(NSObject*)obj pointer:(AIPointer*)pointer fileName:(NSString*)fileName time:(double)time{
++(void) insertObject:(NSObject*)obj pointer:(AIPointer*)pointer fileName:(NSString*)fileName time:(double)time saveDB:(BOOL)saveDB{
     if (ISOK(pointer, AIPointer.class)) {
-        [self insertObject:obj rootPath:pointer.filePath fileName:fileName time:time];
+        [self insertObject:obj rootPath:pointer.filePath fileName:fileName time:time saveDB:saveDB];
     }
 }
-+(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName time:(double)time{
++(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName time:(double)time saveDB:(BOOL)saveDB{
     //1. 存disk (异步持久化)
     NSString *key = STRFORMAT(@"%@/%@",rootPath,fileName);
-    [[XGWedis sharedInstance] setObject:obj forKey:key];
-    [[XGWedis sharedInstance] setSaveBlock:^(NSDictionary *dic) {
-        dic = DICTOOK(dic);
-        for (NSString *saveKey in dic.allKeys) {
-            NSObject *saveObj = [dic objectForKey:saveKey];
-            
-            NSArray *saveKeyArr = ARRTOOK([saveKey componentsSeparatedByString:@"/"]);
-            NSString *saveFileName = ARR_INDEX(saveKeyArr, saveKeyArr.count - 1);
-            saveFileName = STRTOOK(saveFileName);
-            NSString *saveRootPath = STRTOOK(SUBSTR2INDEX(saveKey, (saveKey.length - saveFileName.length - 1)));
-            PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:saveRootPath];
-            [cache setObject:saveObj forKey:saveFileName];
-        }
-        NSLog(@">>>>>>>>>>>>>>>>>>>WriteDisk,%@",fileName);
-    }];
+    if (saveDB) {
+        [[XGWedis sharedInstance] setObject:obj forKey:key];
+        [[XGWedis sharedInstance] setSaveBlock:^(NSDictionary *dic) {
+            dic = DICTOOK(dic);
+            for (NSString *saveKey in dic.allKeys) {
+                NSObject *saveObj = [dic objectForKey:saveKey];
+                
+                NSArray *saveKeyArr = ARRTOOK([saveKey componentsSeparatedByString:@"/"]);
+                NSString *saveFileName = ARR_INDEX(saveKeyArr, saveKeyArr.count - 1);
+                saveFileName = STRTOOK(saveFileName);
+                NSString *saveRootPath = STRTOOK(SUBSTR2INDEX(saveKey, (saveKey.length - saveFileName.length - 1)));
+                PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:saveRootPath];
+                [cache setObject:saveObj forKey:saveFileName];
+            }
+            NSLog(@">>>>>>>>>>>>>>>>>>>WriteDisk,%@",fileName);
+        }];
+    }
     
     //2. 存redis
     [[XGRedis sharedInstance] setObject:obj forKey:key time:time];//随后去掉(redisKey)前辍

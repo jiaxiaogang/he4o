@@ -191,21 +191,36 @@
 //MARK:                     < Relate >
 //MARK:===============================================================
 
-+(void) relateAbs:(AIAbsAlgNode*)absNode conNodes:(NSArray*)conNodes save:(BOOL)save{
++(void) relateAbs:(AIAbsAlgNode*)absNode conNodes:(NSArray*)conNodes saveDB:(BOOL)saveDB{
     if (ISOK(absNode, AIAbsAlgNode.class) && ARRISOK(conNodes)) {
         //1. 具象节点的 关联&存储
-        for (AIAlgNodeBase *item in conNodes) {
-            [AINetUtils insertPointer:absNode.pointer toPorts:item.absPorts ps:absNode.content_ps];
-            [AINetUtils insertPointer:item.pointer toPorts:absNode.conPorts ps:item.content_ps];
-            if (save) {
-                [SMGUtils insertObject:item pointer:item.pointer fileName:FILENAME_Node time:cRedisNodeTime];
+        for (AIAlgNodeBase *conNode in conNodes) {
+            if (saveDB) {
+                [AINetUtils insertPointer:absNode.pointer toPorts:conNode.absPorts ps:absNode.content_ps];//具象节点插"抽象端口";
+                [AINetUtils insertPointer:conNode.pointer toPorts:absNode.conPorts ps:conNode.content_ps];//抽象节点插"具象端口";
+                [SMGUtils insertObject:conNode pointer:conNode.pointer fileName:FILENAME_Node time:cRedisNodeTime saveDB:saveDB];//存储
+            }else{
+                //具象节点插"抽象端口";
+                NSMutableArray *memAbsPorts = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:conNode.pointer fileName:FILENAME_MemAbsPorts]];
+                [AINetUtils insertPointer:absNode.pointer toPorts:memAbsPorts ps:absNode.content_ps];
+                [SMGUtils insertObject:memAbsPorts rootPath:conNode.pointer.filePath fileName:FILENAME_MemAbsPorts saveDB:false];//存储
+                
+                //抽象节点插"具象端口";
+                NSMutableArray *memConPorts = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:conNode.pointer fileName:FILENAME_MemConPorts]];
+                [AINetUtils insertPointer:conNode.pointer toPorts:memConPorts ps:conNode.content_ps];
+                [SMGUtils insertObject:memConPorts rootPath:conNode.pointer.filePath fileName:FILENAME_MemConPorts saveDB:false];//存储
+                
+                //TODOTOMORROW:
+                //继续写意识流双序列:
+                //有三处"//xxxx",可以采用意识流双序列方式;
+                
+                
+                
             }
         }
         
         //2. 抽象节点的 关联&存储
-        if (save) {
-            [SMGUtils insertObject:absNode pointer:absNode.pointer fileName:FILENAME_Node time:cRedisNodeTime];
-        }
+        [SMGUtils insertObject:absNode pointer:absNode.pointer fileName:FILENAME_Node time:cRedisNodeTime saveDB:saveDB];
     }
 }
 

@@ -60,9 +60,9 @@
     foNode.cmvNode_p = cmvNode.pointer;
     
     //5. 存储foNode & cmvNode
-    [SMGUtils insertObject:cmvNode rootPath:cmvNode.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
+    [SMGUtils insertObject:cmvNode rootPath:cmvNode.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];//xxxx
     
-    [SMGUtils insertObject:foNode rootPath:foNode.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
+    [SMGUtils insertObject:foNode rootPath:foNode.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];//xxxx
     
     //6. 返回给thinking
     return foNode;

@@ -89,8 +89,13 @@
 //外类比调用
 -(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)algSames algA:(AIAlgNode*)algA algB:(AIAlgNode*)algB;
 
-//内类比调用
--(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps alg:(AIAlgNode*)alg;
+
+/**
+ *  MARK:--------------------构建抽象祖母--------------------
+ *  1. 内类比调用 (saveDB=true)
+ *  2. thinkIn调用 (saveDB=false)
+ */
+-(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps alg:(AIAlgNode*)alg saveDB:(BOOL)saveDB;
 
 //获取绝对匹配到value_ps的algNode (祖母引用联想的方式去重)
 -(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValueP:(AIPointer*)value_p;

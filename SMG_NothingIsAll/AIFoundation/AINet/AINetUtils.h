@@ -38,7 +38,7 @@
  *  MARK:--------------------插线到ports--------------------
  *  @param pointer  : 把这个插到ports
  *  @param ports    : 把pointer插到这儿;
- *  @param ps       : pointer是alg时,传alg.content_ps | pointer是fo时,传fo.orders;
+ *  @param ps       : pointer是alg时,传alg.content_ps | pointer是fo时,传fo.orders; (用来计算md5.header)
  */
 +(void) insertPointer:(AIPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps;
 
@@ -94,6 +94,6 @@
  *  @param conNodes : 具象祖母们
  *  @param save : 是否保存
  */
-+(void) relateAbs:(AIAbsAlgNode*)absNode conNodes:(NSArray*)conNodes save:(BOOL)save;
++(void) relateAbs:(AIAbsAlgNode*)absNode conNodes:(NSArray*)conNodes saveDB:(BOOL)saveDB;
 
 @end

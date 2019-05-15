@@ -45,7 +45,7 @@
     
     //4. 构建子祖母 (抽象祖母,并嵌套);
     for (NSArray *subValue_ps in subValuePsArr) {
-        AIAbsAlgNode *subAlgNode = [theNet createAbsAlgNode:subValue_ps alg:parentAlgNode];
+        AIAbsAlgNode *subAlgNode = [theNet createAbsAlgNode:subValue_ps alg:parentAlgNode saveDB:false];
         
         //5. NoMv处理;
         [self dataIn_NoMV:subAlgNode.pointer];

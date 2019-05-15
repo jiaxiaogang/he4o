@@ -213,14 +213,14 @@ static AINet *_instance;
 
 -(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)algSames algA:(AIAlgNode*)algA algB:(AIAlgNode*)algB{
     if (ISOK(algA, AIAlgNode.class) && ISOK(algB, AIAlgNode.class)) {
-        return [AIAlgNodeManager createAbsAlgNode:algSames conAlgs:@[algA,algB]];
+        return [AIAlgNodeManager createAbsAlgNode:algSames conAlgs:@[algA,algB] saveDB:true];
     }
     return nil;
 }
 
--(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps alg:(AIAlgNode*)alg{
+-(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps alg:(AIAlgNode*)alg saveDB:(BOOL)saveDB{
     if (ISOK(alg, AIAlgNode.class)) {
-        return [AIAlgNodeManager createAbsAlgNode:value_ps conAlgs:@[alg]];
+        return [AIAlgNodeManager createAbsAlgNode:value_ps conAlgs:@[alg] saveDB:saveDB];
     }
     return nil;
 }

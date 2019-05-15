@@ -31,7 +31,7 @@
     [AINetUtils insertPointer:conNode.pointer toRefPortsByValues:conNode.content_ps ps:conNode.content_ps];
     
     //5. 存储
-    [SMGUtils insertObject:conNode rootPath:conNode.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
+    [SMGUtils insertObject:conNode rootPath:conNode.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];//xxxx
     
     return conNode;
 }
@@ -101,7 +101,7 @@
 //    return result;
 //}
 
-+(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)algSames conAlgs:(NSArray*)conAlgs{
++(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)algSames conAlgs:(NSArray*)conAlgs saveDB:(BOOL)saveDB{
     if (ARRISOK(algSames) && ARRISOK(conAlgs)) {
         //1. 数据准备
         algSames = ARRTOOK(algSames);
@@ -144,7 +144,7 @@
         }
         
         //5. 关联 & 存储
-        [AINetUtils relateAbs:findAbsNode conNodes:conAlgs save:true];
+        [AINetUtils relateAbs:findAbsNode conNodes:conAlgs saveDB:true];
         return findAbsNode;
     }
     return nil;

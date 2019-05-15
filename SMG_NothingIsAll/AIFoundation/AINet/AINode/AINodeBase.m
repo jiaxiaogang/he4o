@@ -7,6 +7,7 @@
 //
 
 #import "AINodeBase.h"
+#import "AIKVPointer.h"
 
 @implementation AINodeBase
 
@@ -16,6 +17,14 @@
     }
     return _absPorts;
 }
+
+//-(NSMutableArray *)absPorts:(BOOL)saveDB{
+//    if (saveDB) {
+//        return [self absPorts];
+//    }else{
+//        return [[NSMutableArray alloc] initWithArray:ARRISOK([SMGUtils searchObjectForPointer:self.pointer fileName:FILENAME_MemAbsPorts])];
+//    }
+//}
 
 /**
  *  MARK:--------------------NSCoding--------------------

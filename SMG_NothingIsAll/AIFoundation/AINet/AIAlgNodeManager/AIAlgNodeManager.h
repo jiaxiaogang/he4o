@@ -28,11 +28,12 @@
 
 /**
  *  MARK:--------------------构建absAlgNode中间祖母节点--------------------
- *  @param algSames 微信息组algSames不能为空;
- *  @param conAlgs : 具象AIAlgNode数组:(外类比时的algA&algB / 内类比时仅有一个元素) //不可为空数组
+ *  @param algSames : 微信息组algSames不能为空;
+ *  @param conAlgs  : 具象AIAlgNode数组:(外类比时的algA&algB / 内类比时仅有一个元素) //不可为空数组
+ *  @param saveDB   : 是否持久化,(如thinkIn中,视觉场景下的subView就不进行持久化,只存在意识流内存时间序列中)
  *
  *  注: TODO:判断algSames是否就是algsA或algB本身; (等conAlgNode和absAlgNode统一不区分后,再判断本身)
  */
-+(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)algSames conAlgs:(NSArray*)conAlgs;
++(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)algSames conAlgs:(NSArray*)conAlgs saveDB:(BOOL)saveDB;
 
 @end
