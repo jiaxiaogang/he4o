@@ -16,7 +16,7 @@
 
 @implementation AIAlgNodeManager
 
-+(AIAlgNode*) createAlgNode:(NSArray*)algsArr isOut:(BOOL)isOut{
++(AIAlgNode*) createAlgNode:(NSArray*)algsArr isOut:(BOOL)isOut saveDB:(BOOL)saveDB{
     //1. 数据
     algsArr = ARRTOOK(algsArr);
     
@@ -31,7 +31,7 @@
     [AINetUtils insertPointer:conNode.pointer toRefPortsByValues:conNode.content_ps ps:conNode.content_ps];
     
     //5. 存储
-    [SMGUtils insertObject:conNode rootPath:conNode.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];//xxxx
+    [SMGUtils insertObject:conNode rootPath:conNode.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime_All(saveDB) saveDB:saveDB];//xxxx
     
     return conNode;
 }
@@ -130,7 +130,7 @@
             findAbsNode.content_ps = sortSames;
             
             ///1. value.refPorts (更新微信息的引用序列)
-            [AINetUtils insertPointer:findAbsNode.pointer toRefPortsByValues:findAbsNode.content_ps ps:findAbsNode.content_ps];
+            [AINetUtils insertPointer:findAbsNode.pointer toRefPortsByValues:findAbsNode.content_ps ps:findAbsNode.content_ps saveDB:saveDB];
         }
         
         //4. 祖母的嵌套
@@ -144,7 +144,7 @@
         }
         
         //5. 关联 & 存储
-        [AINetUtils relateAbs:findAbsNode conNodes:conAlgs saveDB:true];
+        [AINetUtils relateAbs:findAbsNode conNodes:conAlgs saveDB:saveDB];
         return findAbsNode;
     }
     return nil;

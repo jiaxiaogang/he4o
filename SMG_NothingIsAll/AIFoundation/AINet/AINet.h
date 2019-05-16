@@ -84,7 +84,7 @@
  *  需要对祖母节点指定当前的isOut状态; (思维控制器知道它是行为还是认知)
  *  @result notnull
  */
--(AIAlgNode*) createAlgNode:(NSArray*)algsArr isOut:(BOOL)isOut;
+-(AIAlgNode*) createAlgNode:(NSArray*)algsArr isOut:(BOOL)isOut saveDB:(BOOL)saveDB;
 
 //外类比调用
 -(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)algSames algA:(AIAlgNode*)algA algB:(AIAlgNode*)algB;

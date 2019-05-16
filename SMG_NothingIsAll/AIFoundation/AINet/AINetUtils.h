@@ -35,13 +35,13 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------插线到ports--------------------
+ *  MARK:--------------------二分插线到强度ports--------------------
  *  @param pointer  : 把这个插到ports
  *  @param ports    : 把pointer插到这儿;
  *  @param ps       : pointer是alg时,传alg.content_ps | pointer是fo时,传fo.orders; (用来计算md5.header)
  */
 +(void) insertPointer:(AIPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps;
-
++(void) insertPointer:(AIPointer*)pointer toMemPorts:(NSMutableArray*)memPorts ps:(NSArray*)ps;
 
 /**
  *  MARK:--------------------插线到ports (分文件优化)--------------------
@@ -61,8 +61,9 @@
  *  @param algNode_p    : 引用微信息的algNode
  *  @param value_ps     : 微信息组
  *  @param ps           : 生成md5的ps
+ *  @param saveDB       : 存硬盘/内存神经网络;
  */
-+(void) insertPointer:(AIPointer*)algNode_p toRefPortsByValues:(NSArray*)value_ps ps:(NSArray*)ps;
++(void) insertPointer:(AIPointer*)algNode_p toRefPortsByValues:(NSArray*)value_ps ps:(NSArray*)ps saveDB:(BOOL)saveDB;
 
 /**
  *  MARK:--------------------对algNode引用进行关联--------------------
@@ -90,9 +91,9 @@
 
 /**
  *  MARK:--------------------关联抽具象祖母--------------------
- *  @param absNode : 抽象祖母
+ *  @param absNode  : 抽象祖母
  *  @param conNodes : 具象祖母们
- *  @param save : 是否保存
+ *  @param saveDB   : 是否持久化到神经网络
  */
 +(void) relateAbs:(AIAbsAlgNode*)absNode conNodes:(NSArray*)conNodes saveDB:(BOOL)saveDB;
 

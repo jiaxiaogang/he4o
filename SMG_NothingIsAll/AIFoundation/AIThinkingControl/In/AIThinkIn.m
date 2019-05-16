@@ -38,7 +38,7 @@
     }
     
     //3. 构建父祖母 & 将父祖母加入瞬时记忆;
-    AIAlgNode *parentAlgNode = [theNet createAlgNode:parentValue_ps isOut:false];
+    AIAlgNode *parentAlgNode = [theNet createAlgNode:parentValue_ps isOut:false saveDB:false];
     if (parentAlgNode && self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_AddToShortMemory:)]) {
         [self.delegate aiThinkIn_AddToShortMemory:@[parentAlgNode.pointer]];
     }
@@ -64,7 +64,7 @@
         [self dataIn_FindMV:algsArr];
     }else{
         //1. 打包成algTypeNode;
-        AIAlgNodeBase *algNode = [theNet createAlgNode:algsArr isOut:false];
+        AIAlgNodeBase *algNode = [theNet createAlgNode:algsArr isOut:false saveDB:false];
         
         //2. 加入瞬时记忆
         if (algNode && self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_AddToShortMemory:)]) {
