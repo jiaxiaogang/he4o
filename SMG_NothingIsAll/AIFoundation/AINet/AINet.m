@@ -12,7 +12,7 @@
 #import "AINetIndex.h"
 #import "AICMVManager.h"
 #import "AIPort.h"
-#import "AIAbsManager.h"
+#import "AIAbsFoManager.h"
 #import "AINetDirectionReference.h"
 #import "AIAbsCMVManager.h"
 #import "AIAbsCMVNode.h"
@@ -29,9 +29,9 @@
 
 @property (strong, nonatomic) AINetIndex *netIndex; //索引区(皮层/海马)
 @property (strong, nonatomic) AICMVManager *cmvManager;     //网络树根(杏仁核)
-@property (strong, nonatomic) AIAbsManager *absManager;     //抽具象序列
+@property (strong, nonatomic) AIAbsFoManager *absFoManager; //抽象时序管理器
 @property (strong, nonatomic) AINetDirectionReference *netDirectionReference;
-@property (strong, nonatomic) AIAbsCMVManager *absCmvManager;//网络cmv的抽象;
+@property (strong, nonatomic) AIAbsCMVManager *absCmvManager;//抽象mv管理器;
 @property (strong, nonatomic) AINetIndexReference *reference;
 
 @end
@@ -60,7 +60,7 @@ static AINet *_instance;
     self.netIndex = [[AINetIndex alloc] init];
     self.cmvManager = [[AICMVManager alloc] init];
     self.cmvManager.delegate = self;
-    self.absManager = [[AIAbsManager alloc] init];
+    self.absFoManager = [[AIAbsFoManager alloc] init];
     self.netDirectionReference = [[AINetDirectionReference alloc] init];
     self.reference = [[AINetIndexReference alloc] init];
     self.absCmvManager = [[AIAbsCMVManager alloc] init];
@@ -151,13 +151,13 @@ static AINet *_instance;
 //MARK:===============================================================
 -(AINetAbsFoNode*) createAbsFo_Outside:(AIFoNodeBase*)foA foB:(AIFoNodeBase*)foB orderSames:(NSArray*)orderSames{
     if (ISOK(foA, AIFoNodeBase.class) && ISOK(foB, AIFoNodeBase.class)) {
-        return [self.absManager create:@[foA,foB] orderSames:orderSames];
+        return [self.absFoManager create:@[foA,foB] orderSames:orderSames];
     }
     return nil;
 }
 -(AINetAbsFoNode*) createAbsFo_Inner:(AIFoNodeBase*)conFo orderSames:(NSArray*)orderSames{
     if (ISOK(conFo, AIFoNodeBase.class)) {
-        return [self.absManager create:@[conFo] orderSames:orderSames];
+        return [self.absFoManager create:@[conFo] orderSames:orderSames];
     }
     return nil;
 }

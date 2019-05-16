@@ -6,11 +6,11 @@
 //  Copyright © 2018年 XiaoGang. All rights reserved.
 //
 
-#import "AINetAbsUtils.h"
+#import "AINetAbsFoUtils.h"
 #import "AIKVPointer.h"
 #import "AIPort.h"
 
-@implementation AINetAbsUtils
+@implementation AINetAbsFoUtils
 
 +(AIPort*) searchPortWithTargetP:(AIKVPointer*)target_p fromPorts:(NSArray*)ports{
     for (AIPort *checkPort in ARRTOOK(ports)) {

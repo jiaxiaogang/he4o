@@ -6,7 +6,7 @@
 //  Copyright © 2018年 XiaoGang. All rights reserved.
 //
 
-#import "AIAbsManager.h"
+#import "AIAbsFoManager.h"
 #import "AICMVManager.h"
 #import "AIPort.h"
 #import "PINCache.h"
@@ -14,14 +14,14 @@
 #import "SMGUtils.h"
 #import "XGRedisUtil.h"
 #import "AINet.h"
-#import "AINetAbsUtils.h"
+#import "AINetAbsFoUtils.h"
 #import "AIFrontOrderNode.h"
 #import "AINetAbsFoNode.h"
 #import "AINetUtils.h"
 #import "NSString+Extension.h"
 #import "AIAlgNodeBase.h"
 
-@implementation AIAbsManager
+@implementation AIAbsFoManager
 
 -(AINetAbsFoNode*) create:(NSArray*)conFos orderSames:(NSArray*)orderSames{
     //1. 数据准备

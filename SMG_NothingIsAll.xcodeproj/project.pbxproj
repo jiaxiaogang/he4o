@@ -102,11 +102,11 @@
 		88A43F3D2109576D00281348 /* AIFrontOrderNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 88A43F3C2109576D00281348 /* AIFrontOrderNode.m */; };
 		88A43F40210957C300281348 /* AINetAbsFoNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 88A43F3F210957C300281348 /* AINetAbsFoNode.m */; };
 		88A43F432109589600281348 /* AICMVNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 88A43F422109589600281348 /* AICMVNode.m */; };
-		88B23BE620BE20BC00BE8AF6 /* AIAbsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 88B23BE520BE20BC00BE8AF6 /* AIAbsManager.m */; };
+		88B23BE620BE20BC00BE8AF6 /* AIAbsFoManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 88B23BE520BE20BC00BE8AF6 /* AIAbsFoManager.m */; };
 		88BC09D720B4EB920006ABEF /* XGRedis.m in Sources */ = {isa = PBXBuildFile; fileRef = 88BC09D620B4EB920006ABEF /* XGRedis.m */; };
 		88BC09DA20B4ECAB0006ABEF /* XGRedisUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 88BC09D920B4ECAB0006ABEF /* XGRedisUtil.m */; };
 		88BC09DD20B4F67E0006ABEF /* XGRedisDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 88BC09DC20B4F67E0006ABEF /* XGRedisDictionary.m */; };
-		88C20B8220C7696A0076BB52 /* AINetAbsUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 88C20B8120C7696A0076BB52 /* AINetAbsUtils.m */; };
+		88C20B8220C7696A0076BB52 /* AINetAbsFoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 88C20B8120C7696A0076BB52 /* AINetAbsFoUtils.m */; };
 		88C258C1209E99B00042CB6A /* AICMVManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 88C258C0209E99B00042CB6A /* AICMVManager.m */; };
 		88E1F84E211591D80036B616 /* DemandManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 88E1F84D211591D80036B616 /* DemandManager.m */; };
 		88E1F851211591E50036B616 /* DemandModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 88E1F850211591E50036B616 /* DemandModel.m */; };
@@ -301,16 +301,16 @@
 		88A43F3F210957C300281348 /* AINetAbsFoNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetAbsFoNode.m; sourceTree = "<group>"; };
 		88A43F412109589600281348 /* AICMVNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AICMVNode.h; sourceTree = "<group>"; };
 		88A43F422109589600281348 /* AICMVNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AICMVNode.m; sourceTree = "<group>"; };
-		88B23BE420BE20BC00BE8AF6 /* AIAbsManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIAbsManager.h; sourceTree = "<group>"; };
-		88B23BE520BE20BC00BE8AF6 /* AIAbsManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIAbsManager.m; sourceTree = "<group>"; };
+		88B23BE420BE20BC00BE8AF6 /* AIAbsFoManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIAbsFoManager.h; sourceTree = "<group>"; };
+		88B23BE520BE20BC00BE8AF6 /* AIAbsFoManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIAbsFoManager.m; sourceTree = "<group>"; };
 		88BC09D520B4EB920006ABEF /* XGRedis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XGRedis.h; sourceTree = "<group>"; };
 		88BC09D620B4EB920006ABEF /* XGRedis.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XGRedis.m; sourceTree = "<group>"; };
 		88BC09D820B4ECAB0006ABEF /* XGRedisUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XGRedisUtil.h; sourceTree = "<group>"; };
 		88BC09D920B4ECAB0006ABEF /* XGRedisUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XGRedisUtil.m; sourceTree = "<group>"; };
 		88BC09DB20B4F67E0006ABEF /* XGRedisDictionary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XGRedisDictionary.h; sourceTree = "<group>"; };
 		88BC09DC20B4F67E0006ABEF /* XGRedisDictionary.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XGRedisDictionary.m; sourceTree = "<group>"; };
-		88C20B8020C7696A0076BB52 /* AINetAbsUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetAbsUtils.h; sourceTree = "<group>"; };
-		88C20B8120C7696A0076BB52 /* AINetAbsUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetAbsUtils.m; sourceTree = "<group>"; };
+		88C20B8020C7696A0076BB52 /* AINetAbsFoUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetAbsFoUtils.h; sourceTree = "<group>"; };
+		88C20B8120C7696A0076BB52 /* AINetAbsFoUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetAbsFoUtils.m; sourceTree = "<group>"; };
 		88C258BF209E99B00042CB6A /* AICMVManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AICMVManager.h; sourceTree = "<group>"; };
 		88C258C0209E99B00042CB6A /* AICMVManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AICMVManager.m; sourceTree = "<group>"; };
 		88E1F84C211591D80036B616 /* DemandManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DemandManager.h; sourceTree = "<group>"; };
@@ -456,7 +456,7 @@
 				08497A9021C3228E009E7D69 /* AIAlgNodeManager */,
 				08412CA0216C322100483B6B /* AICerebel */,
 				8868F6E8210A9457000EAC9B /* AIAbsCMVManager */,
-				8887E62520ABB02600F3D5E1 /* AIAbsManager */,
+				8887E62520ABB02600F3D5E1 /* AIAbsFoManager */,
 				88C258BE209E99110042CB6A /* AICMVManager */,
 				88988521208979AF001D1ADC /* AINetIndex */,
 				08F737FB1F7C714F005EAD56 /* AIPointer */,
@@ -828,15 +828,15 @@
 			path = AIAbsCMVManager;
 			sourceTree = "<group>";
 		};
-		8887E62520ABB02600F3D5E1 /* AIAbsManager */ = {
+		8887E62520ABB02600F3D5E1 /* AIAbsFoManager */ = {
 			isa = PBXGroup;
 			children = (
-				88B23BE420BE20BC00BE8AF6 /* AIAbsManager.h */,
-				88B23BE520BE20BC00BE8AF6 /* AIAbsManager.m */,
-				88C20B8020C7696A0076BB52 /* AINetAbsUtils.h */,
-				88C20B8120C7696A0076BB52 /* AINetAbsUtils.m */,
+				88B23BE420BE20BC00BE8AF6 /* AIAbsFoManager.h */,
+				88B23BE520BE20BC00BE8AF6 /* AIAbsFoManager.m */,
+				88C20B8020C7696A0076BB52 /* AINetAbsFoUtils.h */,
+				88C20B8120C7696A0076BB52 /* AINetAbsFoUtils.m */,
 			);
-			path = AIAbsManager;
+			path = AIAbsFoManager;
 			sourceTree = "<group>";
 		};
 		88988521208979AF001D1ADC /* AINetIndex */ = {
@@ -1010,7 +1010,7 @@
 				0858C5D32194F8B000951BA5 /* View+MASAdditions.m in Sources */,
 				8868F6EE210AA00B000EAC9B /* AINetAbsCMVUtil.m in Sources */,
 				08497A9921C32E17009E7D69 /* AIAlgNodeManager.m in Sources */,
-				88B23BE620BE20BC00BE8AF6 /* AIAbsManager.m in Sources */,
+				88B23BE620BE20BC00BE8AF6 /* AIAbsFoManager.m in Sources */,
 				0830DAB721D6E8AD003065CD /* NSString+Extension.m in Sources */,
 				08C84A8E1E9A866200897D8B /* AIInput.m in Sources */,
 				08EA48BF2029242B0038B982 /* ImvAlgsHungerModel.m in Sources */,
@@ -1061,7 +1061,7 @@
 				08EA48C7202929A40038B982 /* ImvAlgsModelBase.m in Sources */,
 				0858C5AE2194F5DA00951BA5 /* CarView.m in Sources */,
 				0858C5D02194F8B000951BA5 /* MASViewConstraint.m in Sources */,
-				88C20B8220C7696A0076BB52 /* AINetAbsUtils.m in Sources */,
+				88C20B8220C7696A0076BB52 /* AINetAbsFoUtils.m in Sources */,
 				0858C5D22194F8B000951BA5 /* NSLayoutConstraint+MASDebugAdditions.m in Sources */,
 				0860617621F92F5200113366 /* AIThinkOut.m in Sources */,
 				8822852020F58BDA009884DC /* AINetDirectionReference.m in Sources */,

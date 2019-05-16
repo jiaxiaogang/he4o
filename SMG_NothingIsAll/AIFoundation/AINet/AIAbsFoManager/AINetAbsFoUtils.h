@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @class AIKVPointer,AIPort;
-@interface AINetAbsUtils : NSObject
+@interface AINetAbsFoUtils : NSObject
 
 /**
  *  MARK:--------------------从ports中搜索出某个port--------------------
