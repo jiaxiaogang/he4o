@@ -43,17 +43,10 @@
 +(void) insertPointer:(AIPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps;
 +(void) insertPointer:(AIPointer*)pointer toMemPorts:(NSMutableArray*)memPorts ps:(NSArray*)ps;
 
-/**
- *  MARK:--------------------插线到ports (分文件优化)--------------------
- *  @param pointerFileName : 指针序列文件名,如FILENAME_Reference_ByPointer
- *  @param portFileName : 强度序列文件名,如FILENAME_Reference_ByPort
- *
- *  1. 各种神经元中只保留"指针"和"类型";
- *  2. 其它absPorts,conPorts,refPorts都使用单独文件的方式;
- *  3. 暂不使用 (未完成)
- */
--(void) insertPointer:(AIKVPointer*)node_p target_p:(AIKVPointer*)target_p difStrong:(int)difStrong pointerFileName:(NSString*)pointerFileName portFileName:(NSString*)portFileName;
 
+//MARK:===============================================================
+//MARK:                     < 对 (祖母/时序/微信息) 引用关联 >
+//MARK:===============================================================
 
 /**
  *  MARK:--------------------对微信息引用进行关联--------------------
@@ -73,6 +66,14 @@
  *  @param ps           : 生成md5的ps
  */
 +(void) insertPointer:(AIPointer*)foNode_p toRefPortsByOrders:(NSArray*)order_ps ps:(NSArray*)ps;
+
+
+/**
+ *  MARK:--------------------对节点(algNode或mvNode)引用微信息关联--------------------
+ *  1. 目前仅支持内存网络,硬盘网络在AIRefrAINetIndexReference.setRefresh()中;
+ *  2. 微信息引用ports.header为空; (因为目前不需要)
+ */
+-(void) insertPointer:(AIKVPointer*)value_p memNode_p:(AIKVPointer*)memNode_p;
 
 
 //MARK:===============================================================

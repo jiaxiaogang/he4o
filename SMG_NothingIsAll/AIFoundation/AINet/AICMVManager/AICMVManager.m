@@ -17,6 +17,13 @@
 
 @implementation AICMVManager
 
+
+//TODOTOMORROW:
+//继续写意识流双序列:
+//有三处"//xxxx",可以采用意识流双序列方式;
+//继续支持此处,conFoNode和conMvNode; (在AINetUtils中,有insertPointer_memNode_p()方法;
+
+
 -(AIFrontOrderNode*) create:(NSArray*)imvAlgsArr order:(NSArray*)order{
     //1. 数据
     __block NSString *mvAlgsType = @"cmv";
