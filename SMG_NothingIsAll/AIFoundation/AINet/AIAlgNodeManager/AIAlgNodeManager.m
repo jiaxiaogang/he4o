@@ -31,7 +31,7 @@
     [AINetUtils insertPointer:conNode.pointer toRefPortsByValues:conNode.content_ps ps:conNode.content_ps saveDB:saveDB];
     
     //5. 存储
-    [SMGUtils insertObject:conNode rootPath:conNode.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime_All(saveDB) saveDB:saveDB];//xxxx
+    [SMGUtils insertObject:conNode rootPath:conNode.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime_All(saveDB) saveDB:saveDB];
     
     return conNode;
 }

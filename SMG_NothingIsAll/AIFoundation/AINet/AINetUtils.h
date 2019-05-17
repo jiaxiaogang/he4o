@@ -31,25 +31,32 @@
 
 
 //MARK:===============================================================
-//MARK:                     < insertPointer >
+//MARK:                     < 仅插线 到 ports >
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------二分插线到强度ports--------------------
+ *  MARK:--------------------硬盘插线到强度ports序列--------------------
  *  @param pointer  : 把这个插到ports
  *  @param ports    : 把pointer插到这儿;
  *  @param ps       : pointer是alg时,传alg.content_ps | pointer是fo时,传fo.orders; (用来计算md5.header)
  */
 +(void) insertPointer:(AIPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps;
+
+/**
+ *  MARK:--------------------内存插线到时间ports序列--------------------
+ *  @param pointer  : 把这个插到ports
+ *  @param memPorts : 把pointer插到这儿;
+ *  @param ps       : pointer是alg时,传alg.content_ps | pointer是fo时,传fo.orders; (用来计算md5.header)
+ */
 +(void) insertPointer:(AIPointer*)pointer toMemPorts:(NSMutableArray*)memPorts ps:(NSArray*)ps;
 
 
 //MARK:===============================================================
-//MARK:                     < 对 (祖母/时序/微信息) 引用关联 >
+//MARK:                     < 对 (祖母/时序) 引用关联 (数组) >
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------对微信息引用进行关联--------------------
+ *  MARK:--------------------祖母_引用_微信息--------------------
  *  @desc               : 将algNode插线到value_ps的refPorts
  *  @param algNode_p    : 引用微信息的algNode
  *  @param value_ps     : 微信息组
@@ -59,21 +66,29 @@
 +(void) insertPointer:(AIPointer*)algNode_p toRefPortsByValues:(NSArray*)value_ps ps:(NSArray*)ps saveDB:(BOOL)saveDB;
 
 /**
- *  MARK:--------------------对algNode引用进行关联--------------------
+ *  MARK:--------------------时序_引用_祖母--------------------
  *  @desc               : 将algNode插线到value_ps的refPorts
  *  @param foNode_p     : 引用algNode的foNode
  *  @param order_ps     : orders节点组
  *  @param ps           : 生成md5的ps
  */
-+(void) insertPointer:(AIPointer*)foNode_p toRefPortsByOrders:(NSArray*)order_ps ps:(NSArray*)ps;
++(void) insertPointer:(AIPointer*)foNode_p toRefPortsByOrders:(NSArray*)order_ps ps:(NSArray*)ps saveDB:(BOOL)saveDB;
++(void) insertPointer:(AIPointer*)foNode_p toRefPortsByOrder:(AIPointer*)order_p ps:(NSArray*)ps saveDB:(BOOL)saveDB;
 
+
+//MARK:===============================================================
+//MARK:                     < 对 (内存) 引用关联 (单个) >
+//MARK:===============================================================
 
 /**
- *  MARK:--------------------对节点(algNode或mvNode)引用微信息关联--------------------
+ *  MARK:--------------------memNode_p_引用_wasRef_p--------------------
+ *  @param wasRef_p     : 此指针,被某节点引用;
+ *  @param memNode_p    : 此节点,引用了某指针;
  *  1. 目前仅支持内存网络,硬盘网络在AIRefrAINetIndexReference.setRefresh()中;
  *  2. 微信息引用ports.header为空; (因为目前不需要)
  */
--(void) insertPointer:(AIKVPointer*)value_p memNode_p:(AIKVPointer*)memNode_p;
++(void) insertPointer:(AIPointer*)wasRef_p memNode_p:(AIPointer*)memNode_p;
++(void) insertPointer:(AIPointer*)wasRef_p memNode_p:(AIPointer*)memNode_p ps:(NSArray*)ps;
 
 
 //MARK:===============================================================

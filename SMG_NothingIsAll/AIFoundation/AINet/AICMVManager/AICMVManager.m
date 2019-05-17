@@ -17,13 +17,6 @@
 
 @implementation AICMVManager
 
-
-//TODOTOMORROW:
-//继续写意识流双序列:
-//有三处"//xxxx",可以采用意识流双序列方式;
-//继续支持此处,conFoNode和conMvNode; (在AINetUtils中,有insertPointer_memNode_p()方法;
-
-
 -(AIFrontOrderNode*) create:(NSArray*)imvAlgsArr order:(NSArray*)order{
     //1. 数据
     __block NSString *mvAlgsType = @"cmv";
@@ -44,32 +37,30 @@
     cmvNode.pointer = [SMGUtils createPointer:PATH_NET_CMV_NODE algsType:mvAlgsType dataSource:@"" isOut:false];
     cmvNode.delta_p = deltaPointer;
     cmvNode.urgentTo_p = urgentToPointer;
-    [self createdNode:cmvNode.delta_p nodePointer:cmvNode.pointer];//reference
-    [self createdNode:cmvNode.urgentTo_p nodePointer:cmvNode.pointer];
-    [self createdCMVNode:cmvNode.pointer delta:deltaValue urgentTo:urgentToValue];
+    [self createdNode:cmvNode.delta_p nodePointer:cmvNode.pointer saveDB:false];//reference
+    [self createdNode:cmvNode.urgentTo_p nodePointer:cmvNode.pointer saveDB:false];
+    [self createdCMVNode:cmvNode.pointer delta:deltaValue urgentTo:urgentToValue saveDB:false];
     
     //3. 打包foNode;
     AIFrontOrderNode *foNode = [[AIFrontOrderNode alloc] init];//node
     foNode.pointer = [SMGUtils createPointer:PATH_NET_FRONT_ORDER_NODE algsType:@"" dataSource:@"" isOut:false];
+    //3.1. foNode.orders收集
     for (AIPointer *conAlgNode_p in ARRTOOK(order)) {
         if (ISOK(conAlgNode_p, AIPointer.class)) {
             [foNode.orders_kvp addObject:conAlgNode_p];
-            
-            ///1. foNode引用报备;
-            AIAlgNode *algNode = [SMGUtils searchObjectForPointer:conAlgNode_p fileName:FILENAME_Node time:cRedisNodeTime];
-            [AINetUtils insertPointer:foNode.pointer toPorts:algNode.refPorts ps:foNode.orders_kvp];
-            [SMGUtils insertObject:algNode rootPath:algNode.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
         }
     }
+    //3.2. foNode引用conAlg;
+    [AINetUtils insertPointer:foNode.pointer toRefPortsByOrders:foNode.orders_kvp ps:foNode.orders_kvp saveDB:false];
     
     //4. 互指向
     cmvNode.foNode_p = foNode.pointer;
     foNode.cmvNode_p = cmvNode.pointer;
     
     //5. 存储foNode & cmvNode
-    [SMGUtils insertObject:cmvNode rootPath:cmvNode.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];//xxxx
+    [SMGUtils insertObject:cmvNode rootPath:cmvNode.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime saveDB:false];
     
-    [SMGUtils insertObject:foNode rootPath:foNode.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];//xxxx
+    [SMGUtils insertObject:foNode rootPath:foNode.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime saveDB:false];
     
     //6. 返回给thinking
     return foNode;
@@ -79,18 +70,18 @@
 /**
  *  MARK:--------------------用于,创建node后,将其插线到引用序列;--------------------
  */
--(void) createdNode:(AIPointer*)indexPointer nodePointer:(AIKVPointer*)nodePointer{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(aiNetCMV_CreatedNode:nodePointer:)]) {
-        [self.delegate aiNetCMV_CreatedNode:indexPointer nodePointer:nodePointer];
+-(void) createdNode:(AIPointer*)value_p nodePointer:(AIKVPointer*)nodePointer saveDB:(BOOL)saveDB{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(aiNetCMV_CreatedNode:nodePointer:saveDB:)]) {
+        [self.delegate aiNetCMV_CreatedNode:value_p nodePointer:nodePointer saveDB:saveDB];
     }
 }
 
--(void) createdCMVNode:(AIKVPointer*)cmvNode_p delta:(NSInteger)delta urgentTo:(NSInteger)urgentTo{
+-(void) createdCMVNode:(AIKVPointer*)cmvNode_p delta:(NSInteger)delta urgentTo:(NSInteger)urgentTo saveDB:(BOOL)saveDB{
     MVDirection direction = delta < 0 ? MVDirection_Negative : MVDirection_Positive;
     NSInteger difStrong = urgentTo;//暂时先相等;
     if (ISOK(cmvNode_p, AIKVPointer.class)) {
-        if (self.delegate && [self.delegate respondsToSelector:@selector(aiNetCMV_CreatedCMVNode:mvAlgsType:direction:difStrong:)]) {
-            [self.delegate aiNetCMV_CreatedCMVNode:cmvNode_p mvAlgsType:cmvNode_p.algsType direction:direction difStrong:difStrong];
+        if (self.delegate && [self.delegate respondsToSelector:@selector(aiNetCMV_CreatedCMVNode:mvAlgsType:direction:difStrong:saveDB:)]) {
+            [self.delegate aiNetCMV_CreatedCMVNode:cmvNode_p mvAlgsType:cmvNode_p.algsType direction:direction difStrong:difStrong saveDB:saveDB];
         }
     }
 }

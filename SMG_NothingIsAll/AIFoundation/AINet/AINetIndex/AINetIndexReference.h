@@ -31,6 +31,7 @@
  *  1. outNode或absOutNode作为target_p时(目前其实就是outputIndex_p);
  */
 -(void) setReference:(AIKVPointer*)index_p target_p:(AIKVPointer*)target_p difStrong:(int)difStrong;
+-(void) setMemReference:(AIKVPointer*)value_p targetNode_p:(AIKVPointer*)targetNode_p;
 
 
 /**

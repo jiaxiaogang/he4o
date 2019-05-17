@@ -117,7 +117,7 @@
                 //6. cmv模型连接;
                 if (ISOK(createAbsCmv, AIAbsCMVNode.class)) {
                     createAbsFo.cmvNode_p = createAbsCmv.pointer;
-                    [SMGUtils insertObject:createAbsFo rootPath:createAbsFo.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
+                    [SMGUtils insertObject:createAbsFo rootPath:createAbsFo.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime saveDB:true];
                 }
             }
             
@@ -293,7 +293,7 @@
             //8. cmv模型连接;
             if (ISOK(createrMv, AIAbsCMVNode.class)) {
                 createrFo.cmvNode_p = createrMv.pointer;
-                [SMGUtils insertObject:createrFo pointer:createrFo.pointer fileName:FILENAME_Node time:cRedisNodeTime];
+                [SMGUtils insertObject:createrFo pointer:createrFo.pointer fileName:FILENAME_Node time:cRedisNodeTime saveDB:true];
             }
             return createrFo;
         }

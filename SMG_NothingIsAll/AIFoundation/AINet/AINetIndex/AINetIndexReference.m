@@ -10,6 +10,7 @@
 #import "AIPort.h"
 #import "AIKVPointer.h"
 #import "XGRedisUtil.h"
+#import "AINetUtils.h"
 
 /**
  *  MARK:--------------------索引数据分文件--------------------
@@ -87,6 +88,10 @@
         }
         [SMGUtils insertObject:mArrByPort rootPath:filePath fileName:FILENAME_Reference_ByPort time:cRedisReferenceTime];
     }];
+}
+
+-(void) setMemReference:(AIKVPointer*)value_p targetNode_p:(AIKVPointer*)targetNode_p{
+    [AINetUtils insertPointer:value_p memNode_p:targetNode_p];
 }
 
 /**

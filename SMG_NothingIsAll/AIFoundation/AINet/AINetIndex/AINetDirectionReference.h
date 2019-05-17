@@ -25,6 +25,7 @@
  *  @param mvAlgsType : 引用序列的分区标识
  */
 -(void) setNodePointerToDirectionReference:(AIKVPointer*)cmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction difStrong:(NSInteger)difStrong;
+-(void) setNodePointerToDirectionMemReference:(AIKVPointer*)cmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction;
 
 
 /**

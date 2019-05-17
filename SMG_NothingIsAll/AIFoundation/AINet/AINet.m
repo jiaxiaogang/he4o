@@ -130,20 +130,27 @@ static AINet *_instance;
 /**
  *  MARK:--------------------AICMVManagerDelegate--------------------
  */
--(void)aiNetCMV_CreatedNode:(AIKVPointer *)indexPointer nodePointer:(AIKVPointer *)nodePointer{
-    if (ISOK(indexPointer, AIKVPointer.class)) {
+-(void)aiNetCMV_CreatedNode:(AIKVPointer *)value_p nodePointer:(AIKVPointer *)nodePointer saveDB:(BOOL)saveDB{
+    if (ISOK(value_p, AIKVPointer.class)) {
         //1. kv_p时,记录node对index的引用;
         //2. op时,strong+1 & 记录输出的引用 & 记录可输出;
-        [self setNetReference:indexPointer target_p:nodePointer difValue:1];
-        
+        if (saveDB) {
+            [self setNetReference:value_p target_p:nodePointer difValue:1];
+        }else{
+            [self.reference setMemReference:value_p targetNode_p:nodePointer];
+        }
         //if (indexPointer.isOut) {
         //  [self.cerebel 记录可输出];
         //}
     }
 }
 
--(void) aiNetCMV_CreatedCMVNode:(AIKVPointer*)cmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction difStrong:(NSInteger)difStrong{
-    [self.netDirectionReference setNodePointerToDirectionReference:cmvNode_p mvAlgsType:mvAlgsType direction:direction difStrong:difStrong];
+-(void) aiNetCMV_CreatedCMVNode:(AIKVPointer*)cmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction difStrong:(NSInteger)difStrong saveDB:(BOOL)saveDB{
+    if (saveDB) {
+        [self.netDirectionReference setNodePointerToDirectionReference:cmvNode_p mvAlgsType:mvAlgsType direction:direction difStrong:difStrong];
+    }else{
+        [self.netDirectionReference setNodePointerToDirectionMemReference:cmvNode_p mvAlgsType:mvAlgsType direction:direction];
+    }
 }
 
 //MARK:===============================================================

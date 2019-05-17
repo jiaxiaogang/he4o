@@ -21,14 +21,14 @@
  *  @param indexPointer : 微信息值的指针;
  *  @param nodePointer : 宏节点的指针;
  */
--(void) aiNetCMV_CreatedNode:(AIPointer*)indexPointer nodePointer:(AIKVPointer*)nodePointer;
+-(void) aiNetCMV_CreatedNode:(AIPointer*)value_p nodePointer:(AIKVPointer*)nodePointer saveDB:(BOOL)saveDB;
 
 /**
  *  MARK:--------------------cmvNode或absCMVNode构建时,报告directionReference--------------------
  *  @param difStrong : mv的迫切度越高,越强;
  *  @param direction : 方向(delta的正负)
  */
--(void) aiNetCMV_CreatedCMVNode:(AIKVPointer*)cmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction difStrong:(NSInteger)difStrong;
+-(void) aiNetCMV_CreatedCMVNode:(AIKVPointer*)cmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction difStrong:(NSInteger)difStrong saveDB:(BOOL)saveDB;
 
 @end
 

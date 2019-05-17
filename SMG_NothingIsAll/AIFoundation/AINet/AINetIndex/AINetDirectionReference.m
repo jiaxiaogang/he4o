@@ -11,6 +11,7 @@
 #import "XGRedisUtil.h"
 #import "AIKVPointer.h"
 #import "AIPort.h"
+#import "AINetUtils.h"
 
 @implementation AINetDirectionReference
 
@@ -73,7 +74,15 @@
     }];
     
     //4. 存
-    [SMGUtils insertObject:mArr rootPath:mvReference_p.filePath fileName:FILENAME_Reference time:cRedisReferenceTime];
+    [SMGUtils insertObject:mArr rootPath:mvReference_p.filePath fileName:FILENAME_Reference time:cRedisReferenceTime saveDB:true];
+}
+
+-(void) setNodePointerToDirectionMemReference:(AIKVPointer*)cmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction{
+    //1. 取mv分区的引用序列文件;
+    AIKVPointer *mvReference_p = [SMGUtils createPointerForDirection:mvAlgsType direction:direction];
+    
+    //2. 内存网络时,取出memRefPorts -> 插入首位 -> 存XGRedis;
+    [AINetUtils insertPointer:mvReference_p memNode_p:cmvNode_p];
 }
 
 

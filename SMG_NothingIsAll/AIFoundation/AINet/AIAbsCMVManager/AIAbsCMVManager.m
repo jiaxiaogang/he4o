@@ -88,7 +88,14 @@
     absPort.target_p = result.pointer;
     for (AICMVNodeBase *conMv in conMvs) {
         [conMv.absPorts addObject:absPort];
-        [SMGUtils insertObject:conMv rootPath:conMv.pointer.filePath fileName:FILENAME_Node];
+        [SMGUtils insertObject:conMv rootPath:conMv.pointer.filePath fileName:FILENAME_Node saveDB:true];
+        
+        
+        //TODOTOMORROW:
+        //1. IndexRefrence和AINetUtil.insertPointer微信息部分有重复;
+        //2. 写"内存网络"的使用;
+        
+        
     }
     
     //8. 报告添加direction引用
@@ -100,7 +107,7 @@
         conPort.target_p = conMv_p;
         [result addConPorts:conPort difValue:1];
     }
-    [SMGUtils insertObject:result rootPath:result.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime];
+    [SMGUtils insertObject:result rootPath:result.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime saveDB:true];
     return result;
 }
 
