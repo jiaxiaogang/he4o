@@ -1,12 +1,12 @@
 //
-//  AICMVManager.m
+//  AIMvFoManager.m
 //  SMG_NothingIsAll
 //
 //  Created by iMac on 2018/5/6.
 //  Copyright © 2018年 XiaoGang. All rights reserved.
 //
 
-#import "AICMVManager.h"
+#import "AIMvFoManager.h"
 #import "PINCache.h"
 #import "AIKVPointer.h"
 #import "ThinkingUtils.h"
@@ -15,7 +15,7 @@
 #import "AIAlgNode.h"
 #import "AINetUtils.h"
 
-@implementation AICMVManager
+@implementation AIMvFoManager
 
 -(AIFrontOrderNode*) create:(NSArray*)imvAlgsArr order:(NSArray*)order{
     //1. 数据

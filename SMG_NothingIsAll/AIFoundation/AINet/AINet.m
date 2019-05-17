@@ -10,7 +10,7 @@
 #import "AIPointer.h"
 #import "NSObject+Extension.h"
 #import "AINetIndex.h"
-#import "AICMVManager.h"
+#import "AIMvFoManager.h"
 #import "AIPort.h"
 #import "AIAbsFoManager.h"
 #import "AINetDirectionReference.h"
@@ -25,10 +25,10 @@
 #import "AIAlgNode.h"
 #import "NSString+Extension.h"
 
-@interface AINet () <AICMVManagerDelegate,AIAbsCMVManagerDelegate>
+@interface AINet () <AIMvFoManagerDelegate,AIAbsCMVManagerDelegate>
 
 @property (strong, nonatomic) AINetIndex *netIndex; //索引区(皮层/海马)
-@property (strong, nonatomic) AICMVManager *cmvManager;     //网络树根(杏仁核)
+@property (strong, nonatomic) AIMvFoManager *mvFoManager;     //网络树根(杏仁核)
 @property (strong, nonatomic) AIAbsFoManager *absFoManager; //抽象时序管理器
 @property (strong, nonatomic) AINetDirectionReference *netDirectionReference;
 @property (strong, nonatomic) AIAbsCMVManager *absCmvManager;//抽象mv管理器;
@@ -58,8 +58,8 @@ static AINet *_instance;
 
 -(void) initData{
     self.netIndex = [[AINetIndex alloc] init];
-    self.cmvManager = [[AICMVManager alloc] init];
-    self.cmvManager.delegate = self;
+    self.mvFoManager = [[AIMvFoManager alloc] init];
+    self.mvFoManager.delegate = self;
     self.absFoManager = [[AIAbsFoManager alloc] init];
     self.netDirectionReference = [[AINetDirectionReference alloc] init];
     self.reference = [[AINetIndexReference alloc] init];
@@ -123,12 +123,12 @@ static AINet *_instance;
 //MARK:                     < cmv >
 //MARK:===============================================================
 -(AIFrontOrderNode*) createCMV:(NSArray*)imvAlgsArr order:(NSArray*)order{
-    return [self.cmvManager create:imvAlgsArr order:order];
+    return [self.mvFoManager create:imvAlgsArr order:order];
 }
 
 
 /**
- *  MARK:--------------------AICMVManagerDelegate--------------------
+ *  MARK:--------------------AIMvFoManagerDelegate--------------------
  */
 -(void)aiNetCMV_CreatedNode:(AIKVPointer *)value_p nodePointer:(AIKVPointer *)nodePointer saveDB:(BOOL)saveDB{
     if (ISOK(value_p, AIKVPointer.class)) {
