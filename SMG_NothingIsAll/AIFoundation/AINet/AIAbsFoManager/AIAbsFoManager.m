@@ -53,10 +53,25 @@
         
         //4. value.refPorts (更新微信息的引用序列)
         [AINetUtils insertPointer:findAbsNode.pointer toRefPortsByOrders:findAbsNode.orders_kvp ps:findAbsNode.orders_kvp];
+        
+        
+        //TODOTOMORROW:
+        //1. IndexRefrence和AINetUtil.insertPointer微信息部分有重复;
+        //3. 取用时,优先取memPorts和memNode;
+        //4. 存储时,将当前的排到首位;
+        
+        //1. 此处hdNet中的absFo有可能引用,memNet中的algNode;
+        
+        
+        
+        
     }
     
     //5. 具象节点_关联&存储
     for (AIFoNodeBase *conItem in conFos) {
+        if (findAbsNode.pointer.isMem) {
+            ////TODO判断此处是否调用toMemPorts:方法;
+        }
         [AINetUtils insertPointer:findAbsNode.pointer toPorts:conItem.absPorts ps:findAbsNode.orders_kvp];
         [AINetUtils insertPointer:conItem.pointer toPorts:findAbsNode.conPorts ps:conItem.orders_kvp];
         [SMGUtils insertObject:conItem pointer:conItem.pointer fileName:FILENAME_Node time:cRedisNodeTime];

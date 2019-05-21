@@ -16,23 +16,22 @@
 
 @implementation AIAlgNodeManager
 
-+(AIAlgNode*) createAlgNode:(NSArray*)algsArr isOut:(BOOL)isOut saveDB:(BOOL)saveDB{
++(AIAlgNode*) createAlgNode:(NSArray*)algsArr isOut:(BOOL)isOut isMem:(BOOL)isMem{
     //1. 数据
     algsArr = ARRTOOK(algsArr);
     
     //2. 构建具象节点 (优先用本地已有,否则new)
     AIAlgNode *conNode = [[AIAlgNode alloc] init];
-    conNode.pointer = [SMGUtils createPointer:PATH_NET_ALG_NODE algsType:@"" dataSource:@"" isOut:isOut];
+    conNode.pointer = [SMGUtils createPointer:PATH_NET_ALG_NODE algsType:@"" dataSource:@"" isOut:isOut isMem:isMem];
     
     //3. 指定value_ps
     conNode.content_ps = [SMGUtils sortPointers:algsArr];
  
     //4. value.refPorts (更新引用序列)
-    [AINetUtils insertPointer:conNode.pointer toRefPortsByValues:conNode.content_ps ps:conNode.content_ps saveDB:saveDB];
+    [AINetUtils insertPointer:conNode.pointer toRefPortsByValues:conNode.content_ps ps:conNode.content_ps];
     
     //5. 存储
-    [SMGUtils insertObject:conNode rootPath:conNode.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime_All(saveDB) saveDB:saveDB];
-    
+    [SMGUtils insertObject:conNode pointer:conNode.pointer fileName:FILENAME_Node time:cRedisNodeTime_All(isMem)];
     return conNode;
 }
 
@@ -101,7 +100,7 @@
 //    return result;
 //}
 
-+(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)algSames conAlgs:(NSArray*)conAlgs saveDB:(BOOL)saveDB{
++(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)algSames conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem{
     if (ARRISOK(algSames) && ARRISOK(conAlgs)) {
         //1. 数据准备
         algSames = ARRTOOK(algSames);
@@ -126,11 +125,11 @@
         if (!findAbsNode) {
             findAbsNode = [[AIAbsAlgNode alloc] init];
             BOOL isOut = [AINetUtils checkAllOfOut:sortSames];
-            findAbsNode.pointer = [SMGUtils createPointer:PATH_NET_ALG_ABS_NODE algsType:@"" dataSource:@"" isOut:isOut];
+            findAbsNode.pointer = [SMGUtils createPointer:PATH_NET_ALG_ABS_NODE algsType:@"" dataSource:@"" isOut:isOut isMem:isMem];
             findAbsNode.content_ps = sortSames;
             
             ///1. value.refPorts (更新微信息的引用序列)
-            [AINetUtils insertPointer:findAbsNode.pointer toRefPortsByValues:findAbsNode.content_ps ps:findAbsNode.content_ps saveDB:saveDB];
+            [AINetUtils insertPointer:findAbsNode.pointer toRefPortsByValues:findAbsNode.content_ps ps:findAbsNode.content_ps];
         }
         
         //4. 祖母的嵌套
@@ -144,7 +143,7 @@
         }
         
         //5. 关联 & 存储
-        [AINetUtils relateAbs:findAbsNode conNodes:conAlgs saveDB:saveDB];
+        [AINetUtils relateAbs:findAbsNode conNodes:conAlgs];
         return findAbsNode;
     }
     return nil;

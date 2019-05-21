@@ -96,7 +96,7 @@ static AIThinkingControl *_instance;
     }
     
     //5. 祖母
-    AIAlgNode *algNode = [theNet createAlgNode:value_ps isOut:true saveDB:true];
+    AIAlgNode *algNode = [theNet createAlgNode:value_ps isOut:true isMem:false];
     
     //6. 加瞬时记忆
     [self.shortMemory addToShortCache_Ps:@[algNode.pointer]];

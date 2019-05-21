@@ -35,7 +35,7 @@
 -(NSString*) filePath{
     NSString *pIdStr = STRFORMAT(@"%ld",self.pointerId);
     NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSMutableString *fileRootPath = [[NSMutableString alloc] initWithFormat:@"%@/%@/%@/%@/%d/%d",cachePath,self.folderName,self.algsType,self.dataSource,self.isOut,self.isMemNet];
+    NSMutableString *fileRootPath = [[NSMutableString alloc] initWithFormat:@"%@/%@/%@/%@/%d/%d",cachePath,self.folderName,self.algsType,self.dataSource,self.isOut,self.isMem];
     for (NSInteger j = 0; j < pIdStr.length; j++) {
         [fileRootPath appendFormat:@"/%@",[pIdStr substringWithRange:NSMakeRange(j, 1)]];
     }
@@ -60,10 +60,6 @@
 
 -(BOOL) isOut{
     return [STRTOOK([self.params objectForKey:@"isOut"]) boolValue];
-}
-
--(BOOL) isMem{
-    return [STRTOOK([self.params objectForKey:@"isMem"]) boolValue];
 }
 
 @end

@@ -24,7 +24,7 @@
  *  @param saveDB   : 为true时,持久化构建(如commitOutput),为false时仅内存网络中(如dataIn);
  *  @result 具象algNode : notnull
  */
-+(AIAlgNode*) createAlgNode:(NSArray*)algsArr isOut:(BOOL)isOut saveDB:(BOOL)saveDB;
++(AIAlgNode*) createAlgNode:(NSArray*)algsArr isOut:(BOOL)isOut isMem:(BOOL)isMem;
 
 
 /**
@@ -35,6 +35,6 @@
  *
  *  注: TODO:判断algSames是否就是algsA或algB本身; (等conAlgNode和absAlgNode统一不区分后,再判断本身)
  */
-+(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)algSames conAlgs:(NSArray*)conAlgs saveDB:(BOOL)saveDB;
++(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)algSames conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem;
 
 @end

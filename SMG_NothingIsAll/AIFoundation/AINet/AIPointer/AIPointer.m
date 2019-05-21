@@ -47,6 +47,10 @@
     return STRFORMAT(@"%@",self.params);
 }
 
+-(BOOL) isMem{
+    return [STRTOOK([self.params objectForKey:@"isMem"]) boolValue];
+}
+
 /**
  *  MARK:--------------------NSCoding--------------------
  */

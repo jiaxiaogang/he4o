@@ -61,9 +61,8 @@
  *  @param algNode_p    : 引用微信息的algNode
  *  @param value_ps     : 微信息组
  *  @param ps           : 生成md5的ps
- *  @param saveDB       : 存硬盘/内存神经网络;
  */
-+(void) insertPointer:(AIPointer*)algNode_p toRefPortsByValues:(NSArray*)value_ps ps:(NSArray*)ps saveDB:(BOOL)saveDB;
++(void) insertPointer:(AIPointer*)algNode_p toRefPortsByValues:(NSArray*)value_ps ps:(NSArray*)ps;
 
 /**
  *  MARK:--------------------时序_引用_祖母--------------------
@@ -109,8 +108,7 @@
  *  MARK:--------------------关联抽具象祖母--------------------
  *  @param absNode  : 抽象祖母
  *  @param conNodes : 具象祖母们
- *  @param saveDB   : 是否持久化到神经网络
  */
-+(void) relateAbs:(AIAbsAlgNode*)absNode conNodes:(NSArray*)conNodes saveDB:(BOOL)saveDB;
++(void) relateAbs:(AIAbsAlgNode*)absNode conNodes:(NSArray*)conNodes;
 
 @end

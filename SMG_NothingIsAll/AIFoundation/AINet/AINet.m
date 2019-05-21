@@ -214,20 +214,13 @@ static AINet *_instance;
 //MARK:===============================================================
 //MARK:                     < algNode >
 //MARK:===============================================================
--(AIAlgNode*) createAlgNode:(NSArray*)algsArr isOut:(BOOL)isOut saveDB:(BOOL)saveDB{
-    return [AIAlgNodeManager createAlgNode:algsArr isOut:isOut];
+-(AIAlgNode*) createAlgNode:(NSArray*)algsArr isOut:(BOOL)isOut isMem:(BOOL)isMem{
+    return [AIAlgNodeManager createAlgNode:algsArr isOut:isOut isMem:isMem];
 }
 
--(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)algSames algA:(AIAlgNode*)algA algB:(AIAlgNode*)algB{
-    if (ISOK(algA, AIAlgNode.class) && ISOK(algB, AIAlgNode.class)) {
-        return [AIAlgNodeManager createAbsAlgNode:algSames conAlgs:@[algA,algB] saveDB:true];
-    }
-    return nil;
-}
-
--(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps alg:(AIAlgNode*)alg saveDB:(BOOL)saveDB{
-    if (ISOK(alg, AIAlgNode.class)) {
-        return [AIAlgNodeManager createAbsAlgNode:value_ps conAlgs:@[alg] saveDB:saveDB];
+-(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem{
+    if (ARRISOK(conAlgs)) {
+        return [AIAlgNodeManager createAbsAlgNode:value_ps conAlgs:conAlgs isMem:isMem];
     }
     return nil;
 }

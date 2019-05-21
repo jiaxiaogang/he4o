@@ -84,18 +84,15 @@
  *  需要对祖母节点指定当前的isOut状态; (思维控制器知道它是行为还是认知)
  *  @result notnull
  */
--(AIAlgNode*) createAlgNode:(NSArray*)algsArr isOut:(BOOL)isOut saveDB:(BOOL)saveDB;
-
-//外类比调用
--(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)algSames algA:(AIAlgNode*)algA algB:(AIAlgNode*)algB;
+-(AIAlgNode*) createAlgNode:(NSArray*)algsArr isOut:(BOOL)isOut isMem:(BOOL)isMem;
 
 
 /**
  *  MARK:--------------------构建抽象祖母--------------------
- *  1. 内类比调用 (saveDB=true)
- *  2. thinkIn调用 (saveDB=false)
+ *  1. 内类比调用 & 外类比调用 (存硬盘)
+ *  2. thinkIn调用 (存内存)
  */
--(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps alg:(AIAlgNode*)alg saveDB:(BOOL)saveDB;
+-(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem;
 
 //获取绝对匹配到value_ps的algNode (祖母引用联想的方式去重)
 -(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValueP:(AIPointer*)value_p;

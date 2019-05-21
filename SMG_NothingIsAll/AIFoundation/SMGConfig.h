@@ -15,7 +15,7 @@
 #define cRedisDataTime 315360000    //常驻内存(十年)
 #define cRedisReferenceTime 600
 #define cRedisNodeTime 200
-#define cRedisNodeTime_All(saveDB) (saveDB ? cRedisNodeTime : cRedisMemNetTime)
+#define cRedisNodeTime_All(isMem) (isMem ? cRedisMemNetTime : cRedisNodeTime)
 #define cRedisDefaultTime 60    //默认,例如:小脑canout序列;
 #define cRedisPortTime 200
 #define cRedisMemNetTime 1800 //意识流内存时间序列_生存时间;

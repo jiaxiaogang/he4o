@@ -49,7 +49,7 @@
         }else{
             [mArrByPointer addObject:oldPort];
         }
-        [SMGUtils insertObject:mArrByPointer rootPath:filePath fileName:FILENAME_Reference_ByPointer time:cRedisReferenceTime];
+        [SMGUtils insertObject:mArrByPointer rootPath:filePath fileName:FILENAME_Reference_ByPointer time:cRedisReferenceTime saveDB:true];
     }];
     
     //4. 搜索旧port并去掉_mArrByPort;
@@ -86,7 +86,7 @@
         }else{
             [mArrByPort addObject:newPort];
         }
-        [SMGUtils insertObject:mArrByPort rootPath:filePath fileName:FILENAME_Reference_ByPort time:cRedisReferenceTime];
+        [SMGUtils insertObject:mArrByPort rootPath:filePath fileName:FILENAME_Reference_ByPort time:cRedisReferenceTime saveDB:true];
     }];
 }
 

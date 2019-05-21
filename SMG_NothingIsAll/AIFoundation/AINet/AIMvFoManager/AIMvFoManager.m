@@ -34,7 +34,7 @@
     
     //2. 打包cmvNode;
     AICMVNode *cmvNode = [[AICMVNode alloc] init];
-    cmvNode.pointer = [SMGUtils createPointer:PATH_NET_CMV_NODE algsType:mvAlgsType dataSource:@"" isOut:false];
+    cmvNode.pointer = [SMGUtils createPointer:PATH_NET_CMV_NODE algsType:mvAlgsType dataSource:@"" isOut:false isMem:true];
     cmvNode.delta_p = deltaPointer;
     cmvNode.urgentTo_p = urgentToPointer;
     [self createdNode:cmvNode.delta_p nodePointer:cmvNode.pointer saveDB:false];//reference
@@ -43,7 +43,7 @@
     
     //3. 打包foNode;
     AIFrontOrderNode *foNode = [[AIFrontOrderNode alloc] init];//node
-    foNode.pointer = [SMGUtils createPointer:PATH_NET_FRONT_ORDER_NODE algsType:@"" dataSource:@"" isOut:false];
+    foNode.pointer = [SMGUtils createPointer:PATH_NET_FRONT_ORDER_NODE algsType:@"" dataSource:@"" isOut:false isMem:true];
     //3.1. foNode.orders收集
     for (AIPointer *conAlgNode_p in ARRTOOK(order)) {
         if (ISOK(conAlgNode_p, AIPointer.class)) {

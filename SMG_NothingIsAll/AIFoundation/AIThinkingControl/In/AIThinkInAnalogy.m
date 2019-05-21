@@ -55,7 +55,7 @@
                             }
                         }
                         if (ARRISOK(algSames)) {
-                            [theNet createAbsAlgNode:algSames algA:algNodeA algB:algNodeB];
+                            [theNet createAbsAlgNode:algSames conAlgs:@[algNodeA,algNodeB] isMem:false];
                             
                             ///4. 构建时,消耗能量值;
                             if (updateEnergy) {
@@ -117,7 +117,7 @@
                 //6. cmv模型连接;
                 if (ISOK(createAbsCmv, AIAbsCMVNode.class)) {
                     createAbsFo.cmvNode_p = createAbsCmv.pointer;
-                    [SMGUtils insertObject:createAbsFo rootPath:createAbsFo.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime saveDB:true];
+                    [SMGUtils insertObject:createAbsFo pointer:createAbsFo.pointer fileName:FILENAME_Node time:cRedisNodeTime];
                 }
             }
             
@@ -263,11 +263,11 @@
         AIAlgNodeBase* (^RelateDynamicAlgBlock)(AIAlgNodeBase*, AIAlgNode*,AIPointer*) = ^AIAlgNodeBase* (AIAlgNodeBase *dynamicAbsNode, AIAlgNode *conNode,AIPointer *value_p){
             if (ISOK(dynamicAbsNode, AIAbsAlgNode.class)) {
                 ///1. 有效时,关联;
-                [AINetUtils relateAbs:(AIAbsAlgNode*)dynamicAbsNode conNodes:@[conNode] saveDB:true];
+                [AINetUtils relateAbs:(AIAbsAlgNode*)dynamicAbsNode conNodes:@[conNode]];
             }else{
                 ///2. 无效时,构建;
                 if (value_p) {
-                    dynamicAbsNode = [theNet createAbsAlgNode:@[value_p] alg:conNode saveDB:true];
+                    dynamicAbsNode = [theNet createAbsAlgNode:@[value_p] conAlgs:@[conNode] isMem:false];
                 }
             }
             return dynamicAbsNode;
@@ -293,7 +293,7 @@
             //8. cmv模型连接;
             if (ISOK(createrMv, AIAbsCMVNode.class)) {
                 createrFo.cmvNode_p = createrMv.pointer;
-                [SMGUtils insertObject:createrFo pointer:createrFo.pointer fileName:FILENAME_Node time:cRedisNodeTime saveDB:true];
+                [SMGUtils insertObject:createrFo pointer:createrFo.pointer fileName:FILENAME_Node time:cRedisNodeTime];
             }
             return createrFo;
         }

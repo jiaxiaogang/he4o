@@ -64,7 +64,7 @@
     
     //4. 创建absCMVNode;
     AIAbsCMVNode *result = [[AIAbsCMVNode alloc] init];
-    result.pointer = [SMGUtils createPointer:PATH_NET_ABS_CMV_NODE algsType:algsType dataSource:dataSource isOut:false];
+    result.pointer = [SMGUtils createPointer:PATH_NET_ABS_CMV_NODE algsType:algsType dataSource:dataSource isOut:false isMem:false];
     result.foNode_p = absFo_p;
     
     //5. absUrgentTo
@@ -89,15 +89,6 @@
     for (AICMVNodeBase *conMv in conMvs) {
         [conMv.absPorts addObject:absPort];
         [SMGUtils insertObject:conMv rootPath:conMv.pointer.filePath fileName:FILENAME_Node];
-        
-        //TODOTOMORROW:
-        //1. IndexRefrence和AINetUtil.insertPointer微信息部分有重复;
-        //2. 写"内存网络"的使用 >>>
-        //3. 取用时,优先取memPorts和memNode;
-        //4. 存储时,将当前的排到首位;
-        
-        //5. 使用pointer.isMem来替代saveDB;(因为saveDB难以持续追踪)
-        
     }
     
     //8. 报告添加direction引用

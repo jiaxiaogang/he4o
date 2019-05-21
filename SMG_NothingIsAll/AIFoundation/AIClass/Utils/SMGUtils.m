@@ -50,7 +50,7 @@
 
 //Node
 +(AIKVPointer*) createPointerForNode:(NSString*)folderName{
-    return [self createPointer:folderName algsType:@" " dataSource:@" " isOut:false];
+    return [self createPointer:folderName algsType:@" " dataSource:@" " isOut:false isMem:false];
 }
 +(AIKVPointer*) createPointer:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem{
     NSInteger pointerId = [SMGUtils createPointerId:algsType dataSource:dataSource];
@@ -74,21 +74,21 @@
 //生成indexValue的指针;
 +(AIKVPointer*) createPointerForValue:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut{
     NSInteger pointerId = [self createPointerId:algsType dataSource:dataSource];
-    return [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_VALUE algsType:algsType dataSource:dataSource isOut:isOut];
+    return [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_VALUE algsType:algsType dataSource:dataSource isOut:isOut isMem:false];
 }
 
 +(AIKVPointer*) createPointerForValue:(NSInteger)pointerId algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut{
-    return [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_VALUE algsType:algsType dataSource:dataSource isOut:isOut];
+    return [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_VALUE algsType:algsType dataSource:dataSource isOut:isOut isMem:false];
 }
 
 +(AIKVPointer*) createPointerForIndex{
     NSInteger pointerId = 0;
-    return [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_INDEX algsType:@" " dataSource:@" " isOut:false];
+    return [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_INDEX algsType:@" " dataSource:@" " isOut:false isMem:false];
 }
 
 +(AIKVPointer*) createPointerForData{
     NSInteger pointerId = 0;
-    return [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_DATA algsType:@" " dataSource:@" " isOut:false];
+    return [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_DATA algsType:@" " dataSource:@" " isOut:false isMem:false];
 }
 
 @end
@@ -373,12 +373,12 @@
     return result;
 }
 
-+(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName saveDB:(BOOL)saveDB{
-    [self insertObject:obj rootPath:rootPath fileName:fileName time:0 saveDB:saveDB];
++(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName{
+    [self insertObject:obj rootPath:rootPath fileName:fileName time:0 saveDB:true];////TODOsaveDB:true是临时的;一会删掉;
 }
-+(void) insertObject:(NSObject*)obj pointer:(AIPointer*)pointer fileName:(NSString*)fileName time:(double)time saveDB:(BOOL)saveDB{
++(void) insertObject:(NSObject*)obj pointer:(AIPointer*)pointer fileName:(NSString*)fileName time:(double)time{
     if (ISOK(pointer, AIPointer.class)) {
-        [self insertObject:obj rootPath:pointer.filePath fileName:fileName time:time saveDB:saveDB];
+        [self insertObject:obj rootPath:pointer.filePath fileName:fileName time:time saveDB:!pointer.isMem];
     }
 }
 +(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName time:(double)time saveDB:(BOOL)saveDB{
