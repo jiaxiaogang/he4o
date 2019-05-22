@@ -406,6 +406,12 @@
     [[XGRedis sharedInstance] setObject:obj forKey:key time:time];//随后去掉(redisKey)前辍
 }
 
++(void) insertNode:(AINodeBase*)node{
+    if (ISOK(node, AINodeBase.class)) {
+        [self insertObject:node rootPath:node.pointer.filePath fileName:FILENAME_Node_All(node.pointer.isMem) time:cRedisNodeTime saveDB:!node.pointer.isMem];
+    }
+}
+
 @end
 
 

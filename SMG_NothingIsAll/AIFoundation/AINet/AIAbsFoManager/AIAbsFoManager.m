@@ -49,6 +49,29 @@
     if (!findAbsNode) {
         findAbsNode = [[AINetAbsFoNode alloc] init];
         findAbsNode.pointer = [SMGUtils createPointerForNode:PATH_NET_FO_ABS_NODE];
+        
+        //4. absNode.orders的祖母元素必须在hdNet中; (将sortSames中,memNet中的algNode转到hdNet)
+        for (AIKVPointer *item_p in sortSames) {
+            if (item_p.isMem) {
+                AIAlgNodeBase *memAlgNode = [SMGUtils searchObjectForPointer:item_p fileName:FILENAME_MemNode time:cRedisNodeTime_Mem];
+                AIAlgNodeBase *hdAlgNode = [SMGUtils searchObjectForPointer:item_p fileName:FILENAME_Node time:cRedisNodeTime];
+                
+                //5. 如果没持久化过,则要将所有相关信息持久化;
+                if (hdAlgNode == nil) {
+                    memAlgNode.pointer.isMem = false;
+                    [SMGUtils insertNode:memAlgNode];
+                    
+                    //5. 将memAlgNode报到微信息引用序列;
+                    
+                    
+                    //////将algNode的转移,单独封装成方法,供调用;
+                    
+                    
+                }
+            }
+        }
+        
+        
         [findAbsNode.orders_kvp addObjectsFromArray:sortSames];//指定微信息
         
         //4. value.refPorts (更新微信息的引用序列)

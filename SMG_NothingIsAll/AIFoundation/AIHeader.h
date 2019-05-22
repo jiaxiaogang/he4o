@@ -58,6 +58,8 @@
 #define FILENAME_MemRefPorts @"memRefPorts" //意识流_微信息的reference序列文件名;
 #define FILENAME_MemAbsPorts @"memAbsPorts" //意识流_抽象序列;
 #define FILENAME_MemConPorts @"memConPorts" //意识流_具象序列;
+#define FILENAME_MemNode @"memNode"         //内存网络中节点
+#define FILENAME_Node_All(isMem) (isMem ? FILENAME_MemNode : FILENAME_Node) //节点
 
 /**
  *  MARK:--------------------数据检查--------------------

@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 
-@class AIPointer,AIKVPointer,AIObject,AIArray,ThinkModel,AIPort;
+@class AIPointer,AIKVPointer,AIObject,AIArray,ThinkModel,AIPort,AINodeBase;
 @interface SMGUtils : NSObject
 
 
@@ -76,12 +76,28 @@
 +(NSString*) sqlWhere_RowId:(NSInteger)rowid;
 //+(NSString*) sqlWhere_K:(id)columnName V:(id)value;
 //+(NSDictionary*) sqlWhereDic_K:(id)columnName V:(id)value;
+
+
+/**
+ *  MARK:--------------------searchObj--------------------
+ */
 +(id) searchObjectForPointer:(AIPointer*)pointer fileName:(NSString*)fileName;
 +(id) searchObjectForPointer:(AIPointer*)pointer fileName:(NSString*)fileName time:(double)time;//找到后,缓存到redis,time秒;
 +(id) searchObjectForFilePath:(NSString*)filePath fileName:(NSString*)fileName time:(double)time;
+
+
+/**
+ *  MARK:--------------------insertObj--------------------
+ */
 +(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName;
 +(void) insertObject:(NSObject*)obj pointer:(AIPointer*)pointer fileName:(NSString*)fileName time:(double)time;
 +(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName time:(double)time saveDB:(BOOL)saveDB;//同时插入到redis,time秒
+
+
+/**
+ *  MARK:--------------------insertOther--------------------
+ */
++(void) insertNode:(AINodeBase*)node;
 
 @end
 

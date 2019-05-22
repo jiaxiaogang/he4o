@@ -13,11 +13,11 @@
 +(AIKVPointer*) newWithPointerId:(NSInteger)pointerId folderName:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem{
     AIKVPointer *pointer = [[AIKVPointer alloc] init];
     pointer.pointerId = pointerId;
+    pointer.isMem = isMem;
     [pointer.params setObject:STRTOOK(folderName) forKey:@"folderName"];
     [pointer.params setObject:STRTOOK(algsType) forKey:@"algsType"];
     [pointer.params setObject:STRTOOK(dataSource) forKey:@"dataSource"];
     [pointer.params setObject:STRFORMAT(@"%d",isOut) forKey:@"isOut"];
-    [pointer.params setObject:STRFORMAT(@"%d",isMem) forKey:@"isMem"];
     return pointer;
 }
 
@@ -35,7 +35,7 @@
 -(NSString*) filePath{
     NSString *pIdStr = STRFORMAT(@"%ld",self.pointerId);
     NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSMutableString *fileRootPath = [[NSMutableString alloc] initWithFormat:@"%@/%@/%@/%@/%d/%d",cachePath,self.folderName,self.algsType,self.dataSource,self.isOut,self.isMem];
+    NSMutableString *fileRootPath = [[NSMutableString alloc] initWithFormat:@"%@/%@/%@/%@/%d",cachePath,self.folderName,self.algsType,self.dataSource,self.isOut];
     for (NSInteger j = 0; j < pIdStr.length; j++) {
         [fileRootPath appendFormat:@"/%@",[pIdStr substringWithRange:NSMakeRange(j, 1)]];
     }
