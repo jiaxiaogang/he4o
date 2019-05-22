@@ -59,6 +59,9 @@
                 //5. 如果没持久化过,则要将所有相关信息持久化;
                 if (hdAlgNode == nil) {
                     memAlgNode.pointer.isMem = false;
+                    
+                    //////[AINetUtils insertPointer_Hd:nil toPorts:nil ps:nil];
+                    
                     [SMGUtils insertNode:memAlgNode];
                     
                     //5. 将memAlgNode报到微信息引用序列;
@@ -75,7 +78,7 @@
         [findAbsNode.orders_kvp addObjectsFromArray:sortSames];//指定微信息
         
         //4. value.refPorts (更新微信息的引用序列)
-        [AINetUtils insertPointer:findAbsNode.pointer toRefPortsByOrders:findAbsNode.orders_kvp ps:findAbsNode.orders_kvp];
+        [AINetUtils insertPointer_AllFoNode:findAbsNode.pointer order_ps:findAbsNode.orders_kvp ps:findAbsNode.orders_kvp];
         
         
         //TODOTOMORROW:
@@ -95,8 +98,8 @@
         if (findAbsNode.pointer.isMem) {
             ////TODO判断此处是否调用toMemPorts:方法;
         }
-        [AINetUtils insertPointer:findAbsNode.pointer toPorts:conItem.absPorts ps:findAbsNode.orders_kvp];
-        [AINetUtils insertPointer:conItem.pointer toPorts:findAbsNode.conPorts ps:conItem.orders_kvp];
+        [AINetUtils insertPointer_Hd:findAbsNode.pointer toPorts:conItem.absPorts ps:findAbsNode.orders_kvp];
+        [AINetUtils insertPointer_Hd:conItem.pointer toPorts:findAbsNode.conPorts ps:conItem.orders_kvp];
         [SMGUtils insertObject:conItem pointer:conItem.pointer fileName:FILENAME_Node time:cRedisNodeTime];
     }
     

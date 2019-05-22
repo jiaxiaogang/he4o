@@ -51,7 +51,7 @@
         }
     }
     //3.2. foNode引用conAlg;
-    [AINetUtils insertPointer:foNode.pointer toRefPortsByOrders:foNode.orders_kvp ps:foNode.orders_kvp saveDB:false];
+    [AINetUtils insertPointer_AllFoNode:foNode.pointer order_ps:foNode.orders_kvp ps:foNode.orders_kvp saveDB:false];
     
     //4. 互指向
     cmvNode.foNode_p = foNode.pointer;

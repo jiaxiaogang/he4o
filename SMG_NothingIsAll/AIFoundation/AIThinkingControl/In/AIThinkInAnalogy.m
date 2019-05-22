@@ -103,8 +103,8 @@
         BOOL jumpForAbsAlreadyHav = (ISOK(assFo, AINetAbsFoNode.class) && samesEqualAssFo);
         if (jumpForAbsAlreadyHav) {
             AINetAbsFoNode *assAbsFo = (AINetAbsFoNode*)assFo;
-            [AINetUtils insertPointer:fo.pointer toPorts:assAbsFo.conPorts ps:fo.orders_kvp];
-            [AINetUtils insertPointer:assAbsFo.pointer toPorts:fo.absPorts ps:assAbsFo.orders_kvp];
+            [AINetUtils insertPointer_Hd:fo.pointer toPorts:assAbsFo.conPorts ps:fo.orders_kvp];
+            [AINetUtils insertPointer_Hd:assAbsFo.pointer toPorts:fo.absPorts ps:assAbsFo.orders_kvp];
         }else{
             //4. 构建absFoNode
             AINetAbsFoNode *createAbsFo = [theNet createAbsFo_Outside:fo foB:assFo orderSames:orderSames];

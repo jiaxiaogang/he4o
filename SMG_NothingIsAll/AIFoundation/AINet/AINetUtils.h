@@ -31,27 +31,6 @@
 
 
 //MARK:===============================================================
-//MARK:                     < 仅插线 到 ports >
-//MARK:===============================================================
-
-/**
- *  MARK:--------------------硬盘插线到强度ports序列--------------------
- *  @param pointer  : 把这个插到ports
- *  @param ports    : 把pointer插到这儿;
- *  @param ps       : pointer是alg时,传alg.content_ps | pointer是fo时,传fo.orders; (用来计算md5.header)
- */
-+(void) insertPointer:(AIPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps;
-
-/**
- *  MARK:--------------------内存插线到时间ports序列--------------------
- *  @param pointer  : 把这个插到ports
- *  @param memPorts : 把pointer插到这儿;
- *  @param ps       : pointer是alg时,传alg.content_ps | pointer是fo时,传fo.orders; (用来计算md5.header)
- */
-+(void) insertPointer:(AIPointer*)pointer toMemPorts:(NSMutableArray*)memPorts ps:(NSArray*)ps;
-
-
-//MARK:===============================================================
 //MARK:                     < 对 (祖母/时序) 引用关联 (数组) >
 //MARK:===============================================================
 
@@ -62,7 +41,7 @@
  *  @param value_ps     : 微信息组
  *  @param ps           : 生成md5的ps
  */
-+(void) insertPointer:(AIPointer*)algNode_p toRefPortsByValues:(NSArray*)value_ps ps:(NSArray*)ps;
++(void) insertPointer_AllAlgNode:(AIPointer*)algNode_p value_ps:(NSArray*)value_ps ps:(NSArray*)ps;
 
 /**
  *  MARK:--------------------时序_引用_祖母--------------------
@@ -71,8 +50,8 @@
  *  @param order_ps     : orders节点组
  *  @param ps           : 生成md5的ps
  */
-+(void) insertPointer:(AIPointer*)foNode_p toRefPortsByOrders:(NSArray*)order_ps ps:(NSArray*)ps saveDB:(BOOL)saveDB;
-+(void) insertPointer:(AIPointer*)foNode_p toRefPortsByOrder:(AIPointer*)order_p ps:(NSArray*)ps saveDB:(BOOL)saveDB;
++(void) insertPointer_AllFoNode:(AIPointer*)foNode_p order_ps:(NSArray*)order_ps ps:(NSArray*)ps;
++(void) insertPointer_AllFoNode:(AIPointer*)foNode_p order_p:(AIPointer*)order_p ps:(NSArray*)ps;
 
 
 //MARK:===============================================================
@@ -80,14 +59,35 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------memNode_p_引用_wasRef_p--------------------
- *  @param wasRef_p     : 此指针,被某节点引用;
+ *  MARK:--------------------memNode_p_引用_passiveRef_p--------------------
+ *  @param passiveRef_p     : 此指针,被某节点引用;
  *  @param memNode_p    : 此节点,引用了某指针;
  *  1. 目前仅支持内存网络,硬盘网络在AIRefrAINetIndexReference.setRefresh()中;
  *  2. 微信息引用ports.header为空; (因为目前不需要)
  */
-+(void) insertPointer:(AIPointer*)wasRef_p memNode_p:(AIPointer*)memNode_p;
-+(void) insertPointer:(AIPointer*)wasRef_p memNode_p:(AIPointer*)memNode_p ps:(NSArray*)ps;
++(void) insertPointer_MemNode:(AIPointer*)memNode_p passiveRef_p:(AIPointer*)passiveRef_p;
++(void) insertPointer_MemNode:(AIPointer*)memNode_p passiveRef_p:(AIPointer*)passiveRef_p ps:(NSArray*)ps;
+
+
+//MARK:===============================================================
+//MARK:                     < 仅插线 到 ports >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------硬盘插线到强度ports序列--------------------
+ *  @param pointer  : 把这个插到ports
+ *  @param ports    : 把pointer插到这儿;
+ *  @param ps       : pointer是alg时,传alg.content_ps | pointer是fo时,传fo.orders; (用来计算md5.header)
+ */
++(void) insertPointer_Hd:(AIPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps;
+
+/**
+ *  MARK:--------------------内存插线到时间ports序列--------------------
+ *  @param pointer  : 把这个插到ports
+ *  @param memPorts : 把pointer插到这儿;
+ *  @param ps       : pointer是alg时,传alg.content_ps | pointer是fo时,传fo.orders; (用来计算md5.header)
+ */
++(void) insertPointer_Mem:(AIPointer*)pointer toPorts:(NSMutableArray*)memPorts ps:(NSArray*)ps;
 
 
 //MARK:===============================================================
