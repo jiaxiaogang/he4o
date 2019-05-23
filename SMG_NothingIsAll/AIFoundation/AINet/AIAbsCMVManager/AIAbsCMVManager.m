@@ -100,6 +100,18 @@
         conPort.target_p = conMv_p;
         [result addConPorts:conPort difValue:1];
     }
+    
+    //TODOTOMORROW:
+    //1. IndexRefrence和AINetUtil.insertPointer微信息部分有重复;
+    //3. 取用时,优先取memPorts和memNode;
+    //4. 存储时,将当前的排到首位;
+    
+    //1. 此处hdNet中的absFo有可能引用,memNet中的algNode;
+    
+    
+    /////1. 此处absPort和conPorts的关联,要兼容内存网络;
+    
+    
     [SMGUtils insertObject:result rootPath:result.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime saveDB:true];
     return result;
 }

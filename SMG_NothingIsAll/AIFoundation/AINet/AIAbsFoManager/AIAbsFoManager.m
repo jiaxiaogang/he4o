@@ -85,13 +85,4 @@
     return findAbsNode;
 }
 
-
-
-//TODOTOMORROW:
-//1. IndexRefrence和AINetUtil.insertPointer微信息部分有重复;
-//3. 取用时,优先取memPorts和memNode;
-//4. 存储时,将当前的排到首位;
-
-//1. 此处hdNet中的absFo有可能引用,memNet中的algNode;
-
 @end
