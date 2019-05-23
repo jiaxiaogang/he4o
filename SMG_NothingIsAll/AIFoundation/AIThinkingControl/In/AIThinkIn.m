@@ -170,7 +170,7 @@
     
     //3. strong++
     if (ISOK(assAlgNode, AIAlgNodeBase.class)) {
-        [AINetUtils insertPointer_AllAlgNode:assAlgNode.pointer value_ps:assAlgNode.content_ps ps:assAlgNode.content_ps];
+        [AINetUtils insertRefPorts_AllAlgNode:assAlgNode.pointer value_ps:assAlgNode.content_ps ps:assAlgNode.content_ps];
         
     }
     return assAlgNode;

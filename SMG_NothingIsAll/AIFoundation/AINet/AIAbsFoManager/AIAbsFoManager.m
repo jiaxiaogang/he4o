@@ -50,63 +50,48 @@
         findAbsNode = [[AINetAbsFoNode alloc] init];
         findAbsNode.pointer = [SMGUtils createPointerForNode:PATH_NET_FO_ABS_NODE];
         
-        //4. absNode.orders的祖母元素必须在hdNet中; (将sortSames中,memNet中的algNode转到hdNet)
+        ///1. 收集order_ps (将不在hdNet中的转移)
         for (AIKVPointer *item_p in sortSames) {
             if (item_p.isMem) {
                 AIAlgNodeBase *memAlgNode = [SMGUtils searchObjectForPointer:item_p fileName:FILENAME_MemNode time:cRedisNodeTime_Mem];
                 AIAlgNodeBase *hdAlgNode = [SMGUtils searchObjectForPointer:item_p fileName:FILENAME_Node time:cRedisNodeTime];
                 
-                //5. 如果没持久化过,则要将所有相关信息持久化;
+                ///2. 转移_hdNet不存在,才转移;
                 if (hdAlgNode == nil) {
-                    memAlgNode.pointer.isMem = false;
+                    hdAlgNode = memAlgNode;
+                    hdAlgNode.pointer.isMem = false;
                     
-                    //////[AINetUtils insertPointer_Hd:nil toPorts:nil ps:nil];
+                    ///3. 转移_微信息引用序列;
+                    [AINetUtils insertRefPorts_AllAlgNode:hdAlgNode.pointer value_ps:hdAlgNode.content_ps ps:hdAlgNode.content_ps];
                     
-                    [SMGUtils insertNode:memAlgNode];
-                    
-                    //5. 将memAlgNode报到微信息引用序列;
-                    
-                    
-                    //////将algNode的转移,单独封装成方法,供调用;
-                    
-                    
+                    ///4. 转移_存储到hdNet
+                    [SMGUtils insertNode:hdAlgNode];
                 }
+                
+                ///5. 收集order_p
+                [findAbsNode.orders_kvp addObject:hdAlgNode.pointer];
+            }else{
+                ///6. 收集order_p
+                [findAbsNode.orders_kvp addObject:item_p];
             }
         }
         
-        
-        [findAbsNode.orders_kvp addObjectsFromArray:sortSames];//指定微信息
-        
-        //4. value.refPorts (更新微信息的引用序列)
-        [AINetUtils insertPointer_AllFoNode:findAbsNode.pointer order_ps:findAbsNode.orders_kvp ps:findAbsNode.orders_kvp];
-        
-        
-        //TODOTOMORROW:
-        //1. IndexRefrence和AINetUtil.insertPointer微信息部分有重复;
-        //3. 取用时,优先取memPorts和memNode;
-        //4. 存储时,将当前的排到首位;
-        
-        //1. 此处hdNet中的absFo有可能引用,memNet中的algNode;
-        
-        
-        
-        
+        //4. order_ps更新祖母节点引用序列;
+        [AINetUtils insertRefPorts_AllFoNode:findAbsNode.pointer order_ps:findAbsNode.orders_kvp ps:findAbsNode.orders_kvp];
     }
     
-    //5. 具象节点_关联&存储
-    for (AIFoNodeBase *conItem in conFos) {
-        if (findAbsNode.pointer.isMem) {
-            ////TODO判断此处是否调用toMemPorts:方法;
-        }
-        [AINetUtils insertPointer_Hd:findAbsNode.pointer toPorts:conItem.absPorts ps:findAbsNode.orders_kvp];
-        [AINetUtils insertPointer_Hd:conItem.pointer toPorts:findAbsNode.conPorts ps:conItem.orders_kvp];
-        [SMGUtils insertObject:conItem pointer:conItem.pointer fileName:FILENAME_Node time:cRedisNodeTime];
-    }
-    
-    //6. 抽象节点_存储
-    [SMGUtils insertObject:findAbsNode pointer:findAbsNode.pointer fileName:FILENAME_Node time:cRedisNodeTime];
-    
+    //5. 具象节点&抽象节点_关联&存储
+    [AINetUtils relateFoAbs:findAbsNode conNodes:conFos];
     return findAbsNode;
 }
+
+
+
+//TODOTOMORROW:
+//1. IndexRefrence和AINetUtil.insertPointer微信息部分有重复;
+//3. 取用时,优先取memPorts和memNode;
+//4. 存储时,将当前的排到首位;
+
+//1. 此处hdNet中的absFo有可能引用,memNet中的algNode;
 
 @end

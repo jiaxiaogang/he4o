@@ -28,7 +28,7 @@
     conNode.content_ps = [SMGUtils sortPointers:algsArr];
  
     //4. value.refPorts (更新引用序列)
-    [AINetUtils insertPointer_AllAlgNode:conNode.pointer value_ps:conNode.content_ps ps:conNode.content_ps];
+    [AINetUtils insertRefPorts_AllAlgNode:conNode.pointer value_ps:conNode.content_ps ps:conNode.content_ps];
     
     //5. 存储
     [SMGUtils insertObject:conNode pointer:conNode.pointer fileName:FILENAME_Node time:cRedisNodeTime_All(isMem)];
@@ -129,7 +129,7 @@
             findAbsNode.content_ps = sortSames;
             
             ///1. value.refPorts (更新微信息的引用序列)
-            [AINetUtils insertPointer_AllAlgNode:findAbsNode.pointer value_ps:findAbsNode.content_ps ps:findAbsNode.content_ps];
+            [AINetUtils insertRefPorts_AllAlgNode:findAbsNode.pointer value_ps:findAbsNode.content_ps ps:findAbsNode.content_ps];
         }
         
         //4. 祖母的嵌套
@@ -143,7 +143,7 @@
         }
         
         //5. 关联 & 存储
-        [AINetUtils relateAbs:findAbsNode conNodes:conAlgs];
+        [AINetUtils relateAlgAbs:findAbsNode conNodes:conAlgs];
         return findAbsNode;
     }
     return nil;

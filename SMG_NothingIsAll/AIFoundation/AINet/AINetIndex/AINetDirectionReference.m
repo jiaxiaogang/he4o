@@ -82,7 +82,7 @@
     AIKVPointer *mvReference_p = [SMGUtils createPointerForDirection:mvAlgsType direction:direction];
     
     //2. 内存网络时,取出memRefPorts -> 插入首位 -> 存XGRedis;
-    [AINetUtils insertPointer_MemNode:cmvNode_p passiveRef_p:mvReference_p];
+    [AINetUtils insertRefPorts_MemNode:cmvNode_p passiveRef_p:mvReference_p];
 }
 
 

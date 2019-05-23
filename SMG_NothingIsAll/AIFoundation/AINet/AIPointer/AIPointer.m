@@ -62,7 +62,7 @@
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [aCoder encodeInteger:self.pointerId forKey:@"pointerId"];
-    [aCoder encodeBool:self.isMem forKey:"isMem"];
+    [aCoder encodeBool:self.isMem forKey:@"isMem"];
     [aCoder encodeObject:self.params forKey:@"params"];
 }
 

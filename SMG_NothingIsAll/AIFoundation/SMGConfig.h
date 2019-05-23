@@ -21,6 +21,7 @@
 
 #define cRedisMemNetTime 1800 //意识流内存时间序列_生存时间;
 #define cRedisNodeTime_Mem 1800 //内存网络_Node时间;
+#define cRedisMemPortTime 1800  //内存网络_Port时间;
 
 //MARK:===============================================================
 //MARK:                     < thinkingControl >

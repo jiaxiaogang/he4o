@@ -31,7 +31,7 @@
 
 
 //MARK:===============================================================
-//MARK:                     < 对 (祖母/时序) 引用关联 (数组) >
+//MARK:                     < 横向refPorts引用-祖母引用微信息 >
 //MARK:===============================================================
 
 /**
@@ -41,8 +41,12 @@
  *  @param value_ps     : 微信息组
  *  @param ps           : 生成md5的ps
  */
-+(void) insertPointer_AllAlgNode:(AIPointer*)algNode_p value_ps:(NSArray*)value_ps ps:(NSArray*)ps;
++(void) insertRefPorts_AllAlgNode:(AIPointer*)algNode_p value_ps:(NSArray*)value_ps ps:(NSArray*)ps;
 
+
+//MARK:===============================================================
+//MARK:                     < 横向refPorts引用-时序引用祖母 >
+//MARK:===============================================================
 /**
  *  MARK:--------------------时序_引用_祖母--------------------
  *  @desc               : 将algNode插线到value_ps的refPorts
@@ -50,23 +54,33 @@
  *  @param order_ps     : orders节点组
  *  @param ps           : 生成md5的ps
  */
-+(void) insertPointer_AllFoNode:(AIPointer*)foNode_p order_ps:(NSArray*)order_ps ps:(NSArray*)ps;
-+(void) insertPointer_AllFoNode:(AIPointer*)foNode_p order_p:(AIPointer*)order_p ps:(NSArray*)ps;
++(void) insertRefPorts_AllFoNode:(AIPointer*)foNode_p order_ps:(NSArray*)order_ps ps:(NSArray*)ps;
++(void) insertRefPorts_AllFoNode:(AIPointer*)foNode_p order_p:(AIPointer*)order_p ps:(NSArray*)ps;
 
 
 //MARK:===============================================================
-//MARK:                     < 对 (内存) 引用关联 (单个) >
+//MARK:                     < 内存插线 >
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------memNode_p_引用_passiveRef_p--------------------
+ *  MARK:--------------------节点插到被引用信息上--------------------
  *  @param passiveRef_p     : 此指针,被某节点引用;
  *  @param memNode_p    : 此节点,引用了某指针;
  *  1. 目前仅支持内存网络,硬盘网络在AIRefrAINetIndexReference.setRefresh()中;
  *  2. 微信息引用ports.header为空; (因为目前不需要)
  */
-+(void) insertPointer_MemNode:(AIPointer*)memNode_p passiveRef_p:(AIPointer*)passiveRef_p;
-+(void) insertPointer_MemNode:(AIPointer*)memNode_p passiveRef_p:(AIPointer*)passiveRef_p ps:(NSArray*)ps;
++(void) insertRefPorts_MemNode:(AIPointer*)memNode_p passiveRef_p:(AIPointer*)passiveRef_p;
++(void) insertRefPorts_MemNode:(AIPointer*)memNode_p passiveRef_p:(AIPointer*)passiveRef_p ps:(NSArray*)ps;
+/**
+ *  MARK:--------------------抽象插到具象上--------------------
+ */
++(void) insertAbsPorts_MemNode:(AIPointer*)abs_p con_p:(AIPointer*)con_p absNodeContent:(NSArray*)absNodeContent;
+
+/**
+ *  MARK:--------------------具象插到抽象上--------------------
+ */
++(void) insertConPorts_MemNode:(AIPointer*)con_p abs_p:(AIPointer*)abs_p conNodeContent:(NSArray*)conNodeContent;
+
 
 
 //MARK:===============================================================
@@ -101,7 +115,7 @@
 
 
 //MARK:===============================================================
-//MARK:                     < Relate >
+//MARK:                     < 纵向抽具象关联 Relate >
 //MARK:===============================================================
 
 /**
@@ -109,6 +123,7 @@
  *  @param absNode  : 抽象祖母
  *  @param conNodes : 具象祖母们
  */
-+(void) relateAbs:(AIAbsAlgNode*)absNode conNodes:(NSArray*)conNodes;
++(void) relateAlgAbs:(AIAbsAlgNode*)absNode conNodes:(NSArray*)conNodes;
++(void) relateFoAbs:(AINetAbsFoNode*)absNode conNodes:(NSArray*)conNodes;
 
 @end

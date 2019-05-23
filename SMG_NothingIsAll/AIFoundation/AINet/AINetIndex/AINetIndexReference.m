@@ -91,7 +91,7 @@
 }
 
 -(void) setMemReference:(AIKVPointer*)value_p targetNode_p:(AIKVPointer*)targetNode_p{
-    [AINetUtils insertPointer_MemNode:targetNode_p passiveRef_p:value_p];
+    [AINetUtils insertRefPorts_MemNode:targetNode_p passiveRef_p:value_p];
 }
 
 /**
