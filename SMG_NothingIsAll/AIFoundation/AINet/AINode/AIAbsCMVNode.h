@@ -21,8 +21,9 @@
 /**
  *  MARK:--------------------添加具象关联--------------------
  *  注:从大到小(5,4,3,2,1)
+ *  注:20190524删除,由AINetUtils.relateMv替代;
  */
--(void) addConPorts:(AIPort*)conPort difValue:(NSInteger)difValue;
+//-(void) addConPorts:(AIPort*)conPort difValue:(NSInteger)difValue;
 
 -(AIPort*) getConPort:(NSInteger)index;
 

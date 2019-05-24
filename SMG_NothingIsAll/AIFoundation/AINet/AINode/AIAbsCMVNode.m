@@ -22,43 +22,6 @@
     return _conPorts;
 }
 
-/**
- *  MARK:--------------------添加具象关联--------------------
- *  注:从大到小(5,4,3,2,1)
- */
--(void) addConPorts:(AIPort*)conPort difValue:(NSInteger)difValue{
-    //1. 数据检查
-    if (conPort == nil) {
-        return;
-    }
-    conPort.strong.value += difValue;
-    
-    //2. 去重
-    for (NSInteger i = 0; i < self.conPorts.count; i++) {
-        AIPort *checkPort = self.conPorts[i];
-        if (checkPort.target_p) {
-            if ([checkPort.target_p isEqual:conPort.target_p]) {
-                [self.conPorts removeObjectAtIndex:i];
-                break;
-            }
-        }
-    }
-    
-    //3. 插入合适位置
-    BOOL find = false;
-    for (NSInteger i = 0; i < self.conPorts.count; i++) {
-        AIPort *checkPort = self.conPorts[i];
-        if (checkPort.strong.value < conPort.strong.value) {
-            [self.conPorts insertObject:conPort atIndex:i];
-            find = true;
-            break;
-        }
-    }
-    if (!find) {
-        [self.conPorts addObject:conPort];
-    }
-}
-
 -(AIPort*) getConPort:(NSInteger)index{
     return ARR_INDEX(self.conPorts, index);
 }

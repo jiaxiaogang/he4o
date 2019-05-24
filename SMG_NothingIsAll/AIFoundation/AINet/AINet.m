@@ -25,7 +25,7 @@
 #import "AIAlgNode.h"
 #import "NSString+Extension.h"
 
-@interface AINet () <AIMvFoManagerDelegate,AIAbsCMVManagerDelegate>
+@interface AINet ()
 
 @property (strong, nonatomic) AINetIndex *netIndex; //索引区(皮层/海马)
 @property (strong, nonatomic) AIMvFoManager *mvFoManager;     //网络树根(杏仁核)
@@ -59,12 +59,10 @@ static AINet *_instance;
 -(void) initData{
     self.netIndex = [[AINetIndex alloc] init];
     self.mvFoManager = [[AIMvFoManager alloc] init];
-    self.mvFoManager.delegate = self;
     self.absFoManager = [[AIAbsFoManager alloc] init];
     self.netDirectionReference = [[AINetDirectionReference alloc] init];
     self.reference = [[AINetIndexReference alloc] init];
     self.absCmvManager = [[AIAbsCMVManager alloc] init];
-    self.absCmvManager.delegate = self;
 }
 
 
@@ -111,7 +109,11 @@ static AINet *_instance;
 //MARK:===============================================================
 
 -(void) setNetReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue{
-    [self.reference setReference:indexPointer target_p:target_p difStrong:difValue];
+    if (!target_p.isMem) {
+        [self.reference setReference:indexPointer target_p:target_p difStrong:difValue];
+    }else{
+        [AINetUtils insertRefPorts_MemNode:target_p passiveRef_p:indexPointer];
+    }
 }
 
 -(NSArray*) getNetReference:(AIKVPointer*)pointer limit:(NSInteger)limit {
@@ -126,32 +128,6 @@ static AINet *_instance;
     return [self.mvFoManager create:imvAlgsArr order:order];
 }
 
-
-/**
- *  MARK:--------------------AIMvFoManagerDelegate--------------------
- */
--(void)aiNetCMV_CreatedNode:(AIKVPointer *)value_p nodePointer:(AIKVPointer *)nodePointer saveDB:(BOOL)saveDB{
-    if (ISOK(value_p, AIKVPointer.class)) {
-        //1. kv_p时,记录node对index的引用;
-        //2. op时,strong+1 & 记录输出的引用 & 记录可输出;
-        if (saveDB) {
-            [self setNetReference:value_p target_p:nodePointer difValue:1];
-        }else{
-            [self.reference setMemReference:value_p targetNode_p:nodePointer];
-        }
-        //if (indexPointer.isOut) {
-        //  [self.cerebel 记录可输出];
-        //}
-    }
-}
-
--(void) aiNetCMV_CreatedCMVNode:(AIKVPointer*)cmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction difStrong:(NSInteger)difStrong saveDB:(BOOL)saveDB{
-    if (saveDB) {
-        [self.netDirectionReference setNodePointerToDirectionReference:cmvNode_p mvAlgsType:mvAlgsType direction:direction difStrong:difStrong];
-    }else{
-        [self.netDirectionReference setNodePointerToDirectionMemReference:cmvNode_p mvAlgsType:mvAlgsType direction:direction];
-    }
-}
 
 //MARK:===============================================================
 //MARK:                     < absFo >
@@ -184,8 +160,12 @@ static AINet *_instance;
     return [self.netDirectionReference getNodePointersFromDirectionReference:mvAlgsType direction:direction filter:filter];
 }
 
--(void) setNetNodePointerToDirectionReference:(AIKVPointer*)cmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction difStrong:(int)difStrong{
-    [self.netDirectionReference setNodePointerToDirectionReference:cmvNode_p mvAlgsType:mvAlgsType direction:direction difStrong:difStrong];
+-(void) setNetNodePointerToDirectionReference:(AIKVPointer*)cmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction difStrong:(NSInteger)difStrong{
+    if (!cmvNode_p.isMem) {
+        [self.netDirectionReference setNodePointerToDirectionReference:cmvNode_p mvAlgsType:mvAlgsType direction:direction difStrong:difStrong];
+    }else{
+        [self.netDirectionReference setNodePointerToDirectionMemReference:cmvNode_p mvAlgsType:mvAlgsType direction:direction];
+    }
 }
 
 
@@ -201,13 +181,6 @@ static AINet *_instance;
         return [self.absCmvManager create:absFo_p conMvPs:@[conMv_p]];
     }
     return nil;
-}
-
-/**
- *  MARK:--------------------AIAbsCMVManagerDelegate--------------------
- */
--(void) aiNetCMVNode_createdAbsCMVNode:(AIKVPointer*)absCmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction difStrong:(NSInteger)difStrong{
-    [self.netDirectionReference setNodePointerToDirectionReference:absCmvNode_p mvAlgsType:mvAlgsType direction:direction difStrong:difStrong];
 }
 
 

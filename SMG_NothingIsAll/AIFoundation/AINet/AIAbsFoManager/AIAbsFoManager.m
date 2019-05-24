@@ -37,6 +37,20 @@
     NSMutableArray *allAbsPorts = [[NSMutableArray alloc] init];
     for (AIFoNodeBase *conItem in conFos) {
         [allAbsPorts addObjectsFromArray:conItem.absPorts];
+        
+        
+        //TODOUseMemNet:AddAbsMemPorts
+        
+        
+        
+        
+        //TODOTOMORROW: (UseMemNet)
+        //1. IndexRefrence和AINetUtil.insertPointer微信息部分有重复;
+        //2. 取用时,优先取memPorts和memNode;
+        //3. 处理所有TODOUseMemNet:
+        
+        
+        
     }
     for (AIPort *port in allAbsPorts) {
         if ([samesMd5 isEqualToString:port.header]) {

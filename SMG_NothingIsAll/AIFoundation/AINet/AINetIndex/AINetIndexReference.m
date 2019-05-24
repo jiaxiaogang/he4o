@@ -90,10 +90,6 @@
     }];
 }
 
--(void) setMemReference:(AIKVPointer*)value_p targetNode_p:(AIKVPointer*)targetNode_p{
-    [AINetUtils insertRefPorts_MemNode:targetNode_p passiveRef_p:value_p];
-}
-
 /**
  *  MARK:--------------------获取value被引用的node地址;--------------------
  *  @param indexPointer : value_p地址

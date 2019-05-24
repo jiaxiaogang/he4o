@@ -20,6 +20,7 @@
  *  @params conFos      : 具象节点们 (item类型为AIFoNodeBase) (外类比时,传入foA和foB) (内类比时传入conFo即可)
  *  @params orderSames  : algNode组
  *  @result : notnull
+ *  注: 转移: 仅祖母支持内存网络向硬盘网络的转移,fo不进行转移;
  */
 -(AINetAbsFoNode*) create:(NSArray*)conFos orderSames:(NSArray*)orderSames;
 

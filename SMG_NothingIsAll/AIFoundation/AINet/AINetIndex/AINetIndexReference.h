@@ -28,10 +28,10 @@
  *  4. 目前未对小脑做详细设计,没有固化动作的功能,所以此处的引用强度,也仅作为记录,后续可以先以此强度对评分产生影响,再做其它;详参v2计划;
  *  5. 目前此处可作为记录输出,并且作为canOut的依据;
  *  注2:
- *  1. outNode或absOutNode作为target_p时(目前其实就是outputIndex_p);
+ *  6. outNode或absOutNode作为target_p时(目前其实就是outputIndex_p);
+ *  7. 此方法仅存硬盘,存内存网络的,在AINetUtils中;
  */
 -(void) setReference:(AIKVPointer*)index_p target_p:(AIKVPointer*)target_p difStrong:(int)difStrong;
--(void) setMemReference:(AIKVPointer*)value_p targetNode_p:(AIKVPointer*)targetNode_p;
 
 
 /**

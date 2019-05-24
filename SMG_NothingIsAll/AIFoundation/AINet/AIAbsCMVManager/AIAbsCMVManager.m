@@ -13,6 +13,8 @@
 #import "AINetAbsCMVUtil.h"
 #import "AINet.h"
 #import "AIPort.h"
+#import "AINetUtils.h"
+#import "AINet.h"
 
 /**
  *  MARK:--------------------生成AINetAbsCMVNode--------------------
@@ -56,7 +58,7 @@
     //3. 将conMv_ps转换为conMvs
     NSMutableArray *conMvs = [[NSMutableArray alloc] init];
     for (AIKVPointer *mv_p in conMv_ps) {
-        AICMVNodeBase *conMvNode = [SMGUtils searchObjectForPointer:mv_p fileName:FILENAME_Node time:cRedisNodeTime];
+        AICMVNodeBase *conMvNode = [SMGUtils searchObjectForPointer:mv_p fileName:FILENAME_Node_All(mv_p.isMem) time:cRedisNodeTime_All(mv_p.isMem)];
         if (!ISOK(conMvNode, AICMVNodeBase.class)){
             [conMvs addObject:conMvNode];
         }
@@ -83,36 +85,11 @@
         [theNet setNetReference:result.delta_p target_p:result.pointer difValue:1];//引用插线
     }
     
-    //7. 关联absPort插口 & 存储具象节点;
-    AIPort *absPort = [[AIPort alloc] init];
-    absPort.target_p = result.pointer;
-    for (AICMVNodeBase *conMv in conMvs) {
-        [conMv.absPorts addObject:absPort];
-        [SMGUtils insertObject:conMv rootPath:conMv.pointer.filePath fileName:FILENAME_Node];
-    }
+    //7. 抽具象关联插线 & 存储抽具象节点;
+    [AINetUtils relateMvAbs:result conNodes:conMvs];
     
     //8. 报告添加direction引用
     [self createdAbsCMVNode:result.pointer delta:absDelta urgentTo:absUrgentTo];
-    
-    //9. 关联conPorts插口 & 存储抽象节点;
-    for (AIPointer *conMv_p in conMv_ps) {
-        AIPort *conPort = [[AIPort alloc] init];
-        conPort.target_p = conMv_p;
-        [result addConPorts:conPort difValue:1];
-    }
-    
-    //TODOTOMORROW:
-    //1. IndexRefrence和AINetUtil.insertPointer微信息部分有重复;
-    //3. 取用时,优先取memPorts和memNode;
-    //4. 存储时,将当前的排到首位;
-    
-    //1. 此处hdNet中的absFo有可能引用,memNet中的algNode;
-    
-    
-    /////1. 此处absPort和conPorts的关联,要兼容内存网络;
-    
-    
-    [SMGUtils insertObject:result rootPath:result.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime saveDB:true];
     return result;
 }
 
@@ -123,9 +100,7 @@
     MVDirection direction = delta < 0 ? MVDirection_Negative : MVDirection_Positive;
     NSInteger difStrong = urgentTo * 2;//暂时先x2;(因为一般是两个相抽象)
     if (ISOK(absCmvNode_p, AIKVPointer.class)) {
-        if (self.delegate && [self.delegate respondsToSelector:@selector(aiNetCMVNode_createdAbsCMVNode:mvAlgsType:direction:difStrong:)]) {
-            [self.delegate aiNetCMVNode_createdAbsCMVNode:absCmvNode_p mvAlgsType:absCmvNode_p.algsType direction:direction difStrong:difStrong];
-        }
+        [theNet setNetNodePointerToDirectionReference:absCmvNode_p mvAlgsType:absCmvNode_p.algsType direction:direction difStrong:difStrong];
     }
 }
 

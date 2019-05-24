@@ -29,9 +29,23 @@
  */
 +(void) setCanOutput:(NSString*)dataSource ;
 
+//MARK:===============================================================
+//MARK:                     < Other >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------检查value_ps指针isOut都是true--------------------
+ */
++(BOOL) checkAllOfOut:(NSArray*)value_ps;
+
+@end
+
+
+
+@interface AINetUtils (Insert)
 
 //MARK:===============================================================
-//MARK:                     < 横向refPorts引用-祖母引用微信息 >
+//MARK:                     < 引用插线 (外界调用,支持alg/fo/mv) >
 //MARK:===============================================================
 
 /**
@@ -44,9 +58,6 @@
 +(void) insertRefPorts_AllAlgNode:(AIPointer*)algNode_p value_ps:(NSArray*)value_ps ps:(NSArray*)ps;
 
 
-//MARK:===============================================================
-//MARK:                     < 横向refPorts引用-时序引用祖母 >
-//MARK:===============================================================
 /**
  *  MARK:--------------------时序_引用_祖母--------------------
  *  @desc               : 将algNode插线到value_ps的refPorts
@@ -56,6 +67,14 @@
  */
 +(void) insertRefPorts_AllFoNode:(AIPointer*)foNode_p order_ps:(NSArray*)order_ps ps:(NSArray*)ps;
 +(void) insertRefPorts_AllFoNode:(AIPointer*)foNode_p order_p:(AIPointer*)order_p ps:(NSArray*)ps;
+
+
+/**
+ *  MARK:--------------------mv_引用_微信息--------------------
+ *  注:目前在使用NetRefrence,所以此处不用;
+ */
++(void) insertRefPorts_AllMvNode:(AIPointer*)mvNode_p value_p:(AIPointer*)value_p;
+
 
 
 //MARK:===============================================================
@@ -84,7 +103,7 @@
 
 
 //MARK:===============================================================
-//MARK:                     < 仅插线 到 ports >
+//MARK:                     < 通用 仅插线到ports >
 //MARK:===============================================================
 
 /**
@@ -105,17 +124,7 @@
 
 
 //MARK:===============================================================
-//MARK:                     < Other >
-//MARK:===============================================================
-
-/**
- *  MARK:--------------------检查value_ps指针isOut都是true--------------------
- */
-+(BOOL) checkAllOfOut:(NSArray*)value_ps;
-
-
-//MARK:===============================================================
-//MARK:                     < 纵向抽具象关联 Relate >
+//MARK:                     < 抽具象关联 Relate (外界调用,支持alg/fo) >
 //MARK:===============================================================
 
 /**
@@ -125,5 +134,6 @@
  */
 +(void) relateAlgAbs:(AIAbsAlgNode*)absNode conNodes:(NSArray*)conNodes;
 +(void) relateFoAbs:(AINetAbsFoNode*)absNode conNodes:(NSArray*)conNodes;
++(void) relateMvAbs:(AIAbsCMVNode*)absNode conNodes:(NSArray*)conNodes;
 
 @end

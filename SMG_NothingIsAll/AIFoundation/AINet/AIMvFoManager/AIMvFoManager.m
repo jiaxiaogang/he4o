@@ -14,6 +14,7 @@
 #import "AICMVNode.h"
 #import "AIAlgNode.h"
 #import "AINetUtils.h"
+#import "AINet.h"
 
 @implementation AIMvFoManager
 
@@ -37,8 +38,8 @@
     cmvNode.pointer = [SMGUtils createPointer:PATH_NET_CMV_NODE algsType:mvAlgsType dataSource:@"" isOut:false isMem:true];
     cmvNode.delta_p = deltaPointer;
     cmvNode.urgentTo_p = urgentToPointer;
-    [self createdNode:cmvNode.delta_p nodePointer:cmvNode.pointer saveDB:false];//reference
-    [self createdNode:cmvNode.urgentTo_p nodePointer:cmvNode.pointer saveDB:false];
+    [theNet setNetReference:cmvNode.delta_p target_p:cmvNode.pointer difValue:1];//引用插线
+    [theNet setNetReference:cmvNode.urgentTo_p target_p:cmvNode.pointer difValue:1];//引用插线
     [self createdCMVNode:cmvNode.pointer delta:deltaValue urgentTo:urgentToValue saveDB:false];
     
     //3. 打包foNode;
@@ -66,23 +67,11 @@
     return foNode;
 }
 
-
-/**
- *  MARK:--------------------用于,创建node后,将其插线到引用序列;--------------------
- */
--(void) createdNode:(AIPointer*)value_p nodePointer:(AIKVPointer*)nodePointer saveDB:(BOOL)saveDB{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(aiNetCMV_CreatedNode:nodePointer:saveDB:)]) {
-        [self.delegate aiNetCMV_CreatedNode:value_p nodePointer:nodePointer saveDB:saveDB];
-    }
-}
-
 -(void) createdCMVNode:(AIKVPointer*)cmvNode_p delta:(NSInteger)delta urgentTo:(NSInteger)urgentTo saveDB:(BOOL)saveDB{
     MVDirection direction = delta < 0 ? MVDirection_Negative : MVDirection_Positive;
     NSInteger difStrong = urgentTo;//暂时先相等;
     if (ISOK(cmvNode_p, AIKVPointer.class)) {
-        if (self.delegate && [self.delegate respondsToSelector:@selector(aiNetCMV_CreatedCMVNode:mvAlgsType:direction:difStrong:saveDB:)]) {
-            [self.delegate aiNetCMV_CreatedCMVNode:cmvNode_p mvAlgsType:cmvNode_p.algsType direction:direction difStrong:difStrong saveDB:saveDB];
-        }
+        [theNet setNetNodePointerToDirectionReference:cmvNode_p mvAlgsType:cmvNode_p.algsType direction:direction difStrong:difStrong];
     }
 }
 
