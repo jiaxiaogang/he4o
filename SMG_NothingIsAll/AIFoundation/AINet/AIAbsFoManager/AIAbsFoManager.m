@@ -48,6 +48,7 @@
         //1. IndexRefrence和AINetUtil.insertPointer微信息部分有重复;
         //2. 取用时,优先取memPorts和memNode;
         //3. 处理所有TODOUseMemNet:
+        //4. 祖母进行抽象(嵌套)时,是否有转移问题;
         
         
         
