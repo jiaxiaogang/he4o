@@ -113,6 +113,12 @@
         NSMutableArray *allAbsPorts = [[NSMutableArray alloc] init];
         for (AIAlgNode *item in conAlgs) {
             [allAbsPorts addObjectsFromArray:item.absPorts];
+            
+            
+            /////TODOTOMORROW:把absMemPorts也添加到allAbsPorts中;
+            
+            
+            
         }
         for (AIPort *port in allAbsPorts) {
             if ([samesMd5 isEqualToString:port.header]) {
