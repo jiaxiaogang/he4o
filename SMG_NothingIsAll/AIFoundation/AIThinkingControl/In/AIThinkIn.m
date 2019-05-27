@@ -113,7 +113,7 @@
  */
 -(AIAlgNodeBase*) dataIn_NoMV_RecognitionIs:(AIPointer*)algNode_p {
     //1. 数据准备
-    AIAlgNodeBase *algNode = [SMGUtils searchObjectForPointer:algNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+    AIAlgNodeBase *algNode = [SMGUtils searchObjectForPointer:algNode_p fileName:kFNNode time:cRTNode];
     AIAlgNodeBase *assAlgNode = nil;
     
     //2. 对value.refPorts进行检查识别; (noMv信号已输入完毕,识别联想)
@@ -121,12 +121,12 @@
         ///1. 绝对匹配 -> (header匹配)
         NSString *valuesMD5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:[SMGUtils sortPointers:algNode.content_ps]]]);
         for (AIPointer *value_p in algNode.content_ps) {
-            NSArray *refPorts = ARRTOOK([SMGUtils searchObjectForFilePath:value_p.filePath fileName:FILENAME_RefPorts time:cRedisReferenceTime]);
+            NSArray *refPorts = ARRTOOK([SMGUtils searchObjectForFilePath:value_p.filePath fileName:kFNRefPorts time:cRTReference]);
             for (AIPort *refPort in refPorts) {
                 
                 ///2. 依次绝对匹配header,找到则break;
                 if (![refPort.target_p isEqual:algNode.pointer] && [valuesMD5 isEqualToString:refPort.header]) {
-                    assAlgNode = [SMGUtils searchObjectForPointer:refPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
+                    assAlgNode = [SMGUtils searchObjectForPointer:refPort.target_p fileName:kFNNode time:cRTNode];
                     break;
                 }
             }
@@ -141,7 +141,7 @@
             ///4. 计数器对强度前3进行计数
             NSMutableDictionary *countDic = [[NSMutableDictionary alloc] init];
             for (AIPointer *value_p in algNode.content_ps) {
-                NSArray *refPorts = ARRTOOK([SMGUtils searchObjectForFilePath:value_p.filePath fileName:FILENAME_RefPorts time:cRedisReferenceTime]);
+                NSArray *refPorts = ARRTOOK([SMGUtils searchObjectForFilePath:value_p.filePath fileName:kFNRefPorts time:cRTReference]);
                 refPorts = [refPorts subarrayWithRange:NSMakeRange(0, MIN(cAssDataLimit, refPorts.count))];
                 for (AIPort *refPort in refPorts) {
                     if (![refPort.target_p isEqual:algNode.pointer]) {
@@ -163,7 +163,7 @@
             ///6. 取出对应的assAlgNode
             if (maxKey) {
                 AIKVPointer *max_p = [NSKeyedUnarchiver unarchiveObjectWithData:maxKey];
-                assAlgNode = [SMGUtils searchObjectForPointer:max_p fileName:FILENAME_Node time:cRedisNodeTime];
+                assAlgNode = [SMGUtils searchObjectForPointer:max_p fileName:kFNNode time:cRTNode];
             }
         }
     }
@@ -201,13 +201,13 @@
     }
     
     //3. 取到最强引用节点
-    AIFoNodeBase *foNode = [SMGUtils searchObjectForPointer:firstPort.target_p fileName:FILENAME_Node];
+    AIFoNodeBase *foNode = [SMGUtils searchObjectForPointer:firstPort.target_p fileName:kFNNode];
     if (!ISOK(foNode, AIFoNodeBase.class)) {
         return nil;
     }
         
     //4. 联想mvNode返回;
-    AICMVNode *cmvNode = [SMGUtils searchObjectForPointer:foNode.cmvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+    AICMVNode *cmvNode = [SMGUtils searchObjectForPointer:foNode.cmvNode_p fileName:kFNNode time:cRTNode];
     NSLog(@"联想到cmvNode: %@",[NVUtils getCmvModelDesc_ByCmvNode:cmvNode]);
     return cmvNode;
 }
@@ -228,7 +228,7 @@
     }
     
     //2. 取cmvNode
-    AICMVNode *cmvNode = [SMGUtils searchObjectForPointer:foNode.cmvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+    AICMVNode *cmvNode = [SMGUtils searchObjectForPointer:foNode.cmvNode_p fileName:kFNNode time:cRTNode];
     if (!ISOK(cmvNode, AICMVNode.class)) {
         return;
     }
@@ -266,13 +266,13 @@
     
     //3. 外类比_以mv为方向,联想assFo
     for (AIPort *assDirectionPort in ARRTOOK(directionPorts)) {
-        id assDirectionNode = [SMGUtils searchObjectForPointer:assDirectionPort.target_p fileName:FILENAME_Node];
+        id assDirectionNode = [SMGUtils searchObjectForPointer:assDirectionPort.target_p fileName:kFNNode];
         
         if (ISOK(assDirectionNode, AICMVNodeBase.class)) {
             AICMVNodeBase *ass_cn = (AICMVNodeBase*)assDirectionNode;
             //4. 排除联想自己(随后写到reference中)
             if (![cmvNode.pointer isEqual:ass_cn.pointer]) {
-                AIFoNodeBase *assFrontNode = [SMGUtils searchObjectForPointer:ass_cn.foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+                AIFoNodeBase *assFrontNode = [SMGUtils searchObjectForPointer:ass_cn.foNode_p fileName:kFNNode time:cRTNode];
                 
                 if (ISOK(assFrontNode, AINodeBase.class)) {
                     NSLog(@"\n抽象前========== %@",[NVUtils getCmvModelDesc_ByFoNode:assFrontNode]);

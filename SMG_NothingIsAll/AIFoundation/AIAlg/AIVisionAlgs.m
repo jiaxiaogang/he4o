@@ -113,7 +113,7 @@
         CGFloat lastDistance = [((NSNumber*)lastDistanceNum) floatValue];
         speed = distance - lastDistance;
     }
-    [[XGRedis sharedInstance] setObject:[NSNumber numberWithFloat:distance] forKey:key time:cRedisDefaultTime];
+    [[XGRedis sharedInstance] setObject:[NSNumber numberWithFloat:distance] forKey:key time:cRTDefault];
     return speed;
 }
 

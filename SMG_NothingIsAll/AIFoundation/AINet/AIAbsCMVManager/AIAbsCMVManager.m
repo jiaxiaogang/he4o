@@ -58,7 +58,7 @@
     //3. 将conMv_ps转换为conMvs
     NSMutableArray *conMvs = [[NSMutableArray alloc] init];
     for (AIKVPointer *mv_p in conMv_ps) {
-        AICMVNodeBase *conMvNode = [SMGUtils searchObjectForPointer:mv_p fileName:FILENAME_Node_All(mv_p.isMem) time:cRedisNodeTime_All(mv_p.isMem)];
+        AICMVNodeBase *conMvNode = [SMGUtils searchObjectForPointer:mv_p fileName:kFNNode_All(mv_p.isMem) time:cRTNode_All(mv_p.isMem)];
         if (!ISOK(conMvNode, AICMVNodeBase.class)){
             [conMvs addObject:conMvNode];
         }
@@ -66,7 +66,7 @@
     
     //4. 创建absCMVNode;
     AIAbsCMVNode *result = [[AIAbsCMVNode alloc] init];
-    result.pointer = [SMGUtils createPointer:PATH_NET_ABS_CMV_NODE algsType:algsType dataSource:dataSource isOut:false isMem:false];
+    result.pointer = [SMGUtils createPointer:kPN_ABS_CMV_NODE algsType:algsType dataSource:dataSource isOut:false isMem:false];
     result.foNode_p = absFo_p;
     
     //5. absUrgentTo

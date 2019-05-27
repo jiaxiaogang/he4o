@@ -154,7 +154,7 @@
 }
 
 +(CGFloat) getScoreForce:(AIPointer*)cmvNode_p ratio:(CGFloat)ratio{
-    AICMVNodeBase *cmvNode = [SMGUtils searchObjectForPointer:cmvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+    AICMVNodeBase *cmvNode = [SMGUtils searchObjectForPointer:cmvNode_p fileName:kFNNode time:cRTNode];
     if (ISOK(cmvNode, AICMVNodeBase.class)) {
         return [ThinkingUtils getScoreForce:cmvNode.pointer.algsType urgentTo_p:cmvNode.urgentTo_p delta_p:cmvNode.delta_p ratio:ratio];
     }
@@ -200,7 +200,7 @@
 +(AIFrontOrderNode*) getFoNodeFromCmvNode:(AICMVNode*)cmvNode{
     if (ISOK(cmvNode, AICMVNode.class)) {
         //2. 取"解决经验"对应的前因时序列;
-        AIFrontOrderNode *foNode = [SMGUtils searchObjectForPointer:cmvNode.foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+        AIFrontOrderNode *foNode = [SMGUtils searchObjectForPointer:cmvNode.foNode_p fileName:kFNNode time:cRTNode];
         return foNode;
     }
     return nil;
@@ -208,7 +208,7 @@
 
 +(id) getNodeFromPort:(AIPort*)port{
     if (port) {
-        return [SMGUtils searchObjectForPointer:port.target_p fileName:FILENAME_Node time:cRedisNodeTime];
+        return [SMGUtils searchObjectForPointer:port.target_p fileName:kFNNode time:cRTNode];
     }
     return nil;
 }
@@ -245,7 +245,7 @@
 
 +(CGFloat) dataOut_CheckScore_ExpOut:(AIPointer*)foNode_p {
     //1. 数据
-    AIFoNodeBase *foNode = [SMGUtils searchObjectForPointer:foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+    AIFoNodeBase *foNode = [SMGUtils searchObjectForPointer:foNode_p fileName:kFNNode time:cRTNode];
     
     //2. 评价 (根据当前foNode的mv果,处理cmvNode评价影响力;(系数0.2))
     CGFloat score = 0;
@@ -259,7 +259,7 @@
     //for (AIPort *absPort in ARRTOOK(foNode.absPorts)) {
     //
     //    ///2. 判断absNode是否是由out_ps抽象的 (根据"微信息"组)
-    //    AINetAbsFoNode *absNode = [SMGUtils searchObjectForPointer:absPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
+    //    AINetAbsFoNode *absNode = [SMGUtils searchObjectForPointer:absPort.target_p fileName:kFNNode time:cRTNode];
     //    if (absNode) {
     //        BOOL fromOut_ps = [SMGUtils containsSub_ps:absNode.orders_kvp parent_ps:out_ps];
     //
@@ -283,7 +283,7 @@
         if (![SMGUtils containsSub_p:fo_p parent_ps:except_ps]) {
             
             //3. 未排除,返回;
-            id result = [SMGUtils searchObjectForPointer:fo_p fileName:FILENAME_Node time:cRedisNodeTime];
+            id result = [SMGUtils searchObjectForPointer:fo_p fileName:kFNNode time:cRTNode];
             if (checkBlock) {
                 if (checkBlock(result)) {
                     return result;
@@ -321,7 +321,7 @@
     
     //2. 每层向具象取前3条
     for (AIPointer *fo_p in curLayer_ps) {
-        id curNode = [SMGUtils searchObjectForPointer:fo_p fileName:FILENAME_Node time:cRedisNodeTime];
+        id curNode = [SMGUtils searchObjectForPointer:fo_p fileName:kFNNode time:cRTNode];
         if (getConPsBlock) {
             NSArray *con_ps = ARRTOOK(getConPsBlock(curNode));
             [result addObjectsFromArray:con_ps];
@@ -362,7 +362,7 @@
     if (conAlg_p && absAlg_p) {
         
         //2. 取出absAlg.conPorts
-        AIAbsAlgNode *absAlg = [SMGUtils searchObjectForPointer:absAlg_p fileName:FILENAME_Node time:cRedisNodeTime];
+        AIAbsAlgNode *absAlg = [SMGUtils searchObjectForPointer:absAlg_p fileName:kFNNode time:cRTNode];
         if (ISOK(absAlg, AIAbsAlgNode.class)) {
             NSArray *absAlgCon_ps = [SMGUtils convertPointersFromPorts:absAlg.conPorts];
             

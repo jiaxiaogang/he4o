@@ -16,50 +16,50 @@
 #import "AIInput.h"
 
 /**
- *  MARK:--------------------PathKey--------------------
+ *  MARK:--------------------PathNameKey (kPH)--------------------
  */
 
 //algNode
-#define PATH_NET_ALG_NODE           @"NET_ALG_NODE"                         //Alg节点根目录;(白质)
-#define PATH_NET_ALG_ABS_NODE       @"NET_ALG_ABS_NODE"                     //AbsAlg节点根目录;(白质)
+#define kPN_ALG_NODE           @"PN_ALG_NODE"          //Alg节点根目录;(白质)
+#define kPN_ALG_ABS_NODE       @"PN_ALG_ABS_NODE"      //AbsAlg节点根目录;(白质)
 
 //foNode
-#define PATH_NET_FRONT_ORDER_NODE   @"NET_FRONT_ORDER_NODE"                 //frontOrder节点根目录;(白质)
-#define PATH_NET_FO_ABS_NODE        @"NET_FO_ABS_NODE"                      //神经网络根目录;(白质)
+#define kPN_FRONT_ORDER_NODE   @"PN_FRONT_ORDER_NODE"  //frontOrder节点根目录;(白质)
+#define kPN_FO_ABS_NODE        @"PN_FO_ABS_NODE"       //神经网络根目录;(白质)
 
 //cmv
-#define PATH_NET_CMV_NODE           @"NET_CMV_NODE"                         //cmv节点根目录;(白质)
-#define PATH_NET_ABS_CMV_NODE       @"NET_ABS_CMV_NODE"                     //cmv抽象节点根目录;(白质)
-#define PATH_NET_DIRECTION(mvDir)   STRFORMAT(@"NET_DIRECTION_%ld",mvDir)   //mv顺逆方向引用序列(以Path为各mv的分区,cmvNode和absCMVNode都指向此direction)
+#define kPN_CMV_NODE           @"PN_CMV_NODE"          //cmv节点根目录;(白质)
+#define kPN_ABS_CMV_NODE       @"PN_ABS_CMV_NODE"      //cmv抽象节点根目录;(白质)
+#define kPN_DIRECTION(mvDir)   STRFORMAT(@"PN_DIRECTION_%ld",mvDir)//mv顺逆方向引用序列(以Path为各mv的分区,cmvNode和absCMVNode都指向此direction)
 
 //reference
-#define PATH_NET_REFERENCE          @"NET_REFERENCE"                        //神经网络"引用序列"根目录;(海马体)
-#define PATH_NET_CEREBEL_CANOUT     @"PATH_NET_CEREBEL_CANOUT"              //小脑可输出标识序列
+#define kPN_REFERENCE          @"PN_REFERENCE"         //神经网络"引用序列"根目录;(海马体)
+#define kPN_CEREBEL_CANOUT     @"PN_CEREBEL_CANOUT"    //小脑可输出标识序列
 
-#define PATH_NET_INDEX              @"NET_INDEX"    //索引序列
-#define PATH_NET_DATA               @"NET_DATA"     //微信息值字典
-#define PATH_NET_VALUE              @"NET_VALUE"    //微信息单条值
+#define kPN_INDEX              @"PN_INDEX"             //索引序列
+#define kPN_DATA               @"PN_DATA"              //微信息值字典
+#define kPN_VALUE              @"PN_VALUE"             //微信息单条值
 
 /**
- *  MARK:--------------------fileNameKey--------------------
+ *  MARK:--------------------FileNameKey (kFN)--------------------
  */
-#define FILENAME_Node @"node"               //节点
-//#define FILENAME_Value @"value"             //微信息
-#define FILENAME_RefPorts @"refPorts"       //微信息的reference序列文件名;
-#define FILENAME_Index(isOut) STRFORMAT(@"index_%d",isOut) //in微信息索引(数组) / out小脑微信息(数组)
-#define FILENAME_Data(isOut) STRFORMAT(@"data_%d",isOut) //in微信息值 / out小脑微信息值 (dic)
-#define FILENAME_Reference @"reference"     //微信息引用序列
-#define FILENAME_DirectionIndex(mvDirection) STRFORMAT(@"directionIndex_%ld",mvDirection) //mv的顺逆方向索引序列地址
+#define kFNNode @"node"               //节点
+//#define kFNValue @"value"             //微信息
+#define kFNRefPorts @"refPorts"       //微信息的reference序列文件名;
+#define kFNIndex(isOut) STRFORMAT(@"index_%d",isOut) //in微信息索引(数组) / out小脑微信息(数组)
+#define kFNData(isOut) STRFORMAT(@"data_%d",isOut) //in微信息值 / out小脑微信息值 (dic)
+#define kFNReference @"reference"     //微信息引用序列
+#define kFNDirectionIndex(mvDirection) STRFORMAT(@"directionIndex_%ld",mvDirection) //mv的顺逆方向索引序列地址
 
-#define FILENAME_Reference_ByPointer @"reference_ByPointer" //微信息引用(pointer序)
-#define FILENAME_Reference_ByPort @"reference_ByPort"       //微信息引用(port序)
-#define FILENAME_Default @" "                               //默认文件名; (例如:小脑canout序列)
+#define kFNReference_ByPointer @"reference_ByPointer" //微信息引用(pointer序)
+#define kFNReference_ByPort @"reference_ByPort"       //微信息引用(port序)
+#define kFNDefault @" "                               //默认文件名; (例如:小脑canout序列)
 
-#define FILENAME_MemRefPorts @"memRefPorts" //意识流_微信息的reference序列文件名;
-#define FILENAME_MemAbsPorts @"memAbsPorts" //意识流_抽象序列;
-#define FILENAME_MemConPorts @"memConPorts" //意识流_具象序列;
-#define FILENAME_MemNode @"memNode"         //内存网络中节点
-#define FILENAME_Node_All(isMem) (isMem ? FILENAME_MemNode : FILENAME_Node) //节点
+#define kFNMemRefPorts @"memRefPorts" //意识流_微信息的reference序列文件名;
+#define kFNMemAbsPorts @"memAbsPorts" //意识流_抽象序列;
+#define kFNMemConPorts @"memConPorts" //意识流_具象序列;
+#define kFNMemNode @"memNode"         //内存网络中节点
+#define kFNNode_All(isMem) (isMem ? kFNMemNode : kFNNode) //节点
 
 /**
  *  MARK:--------------------数据检查--------------------

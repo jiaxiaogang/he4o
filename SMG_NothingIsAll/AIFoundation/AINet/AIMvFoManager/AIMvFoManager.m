@@ -35,7 +35,7 @@
     
     //2. 打包cmvNode;
     AICMVNode *cmvNode = [[AICMVNode alloc] init];
-    cmvNode.pointer = [SMGUtils createPointer:PATH_NET_CMV_NODE algsType:mvAlgsType dataSource:@"" isOut:false isMem:true];
+    cmvNode.pointer = [SMGUtils createPointer:kPN_CMV_NODE algsType:mvAlgsType dataSource:@"" isOut:false isMem:true];
     cmvNode.delta_p = deltaPointer;
     cmvNode.urgentTo_p = urgentToPointer;
     [theNet setNetReference:cmvNode.delta_p target_p:cmvNode.pointer difValue:1];//引用插线
@@ -44,7 +44,7 @@
     
     //3. 打包foNode;
     AIFrontOrderNode *foNode = [[AIFrontOrderNode alloc] init];//node
-    foNode.pointer = [SMGUtils createPointer:PATH_NET_FRONT_ORDER_NODE algsType:@"" dataSource:@"" isOut:false isMem:true];
+    foNode.pointer = [SMGUtils createPointer:kPN_FRONT_ORDER_NODE algsType:@"" dataSource:@"" isOut:false isMem:true];
     //3.1. foNode.orders收集
     for (AIPointer *conAlgNode_p in ARRTOOK(order)) {
         if (ISOK(conAlgNode_p, AIPointer.class)) {
@@ -59,9 +59,9 @@
     foNode.cmvNode_p = cmvNode.pointer;
     
     //5. 存储foNode & cmvNode
-    [SMGUtils insertObject:cmvNode rootPath:cmvNode.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime saveDB:false];
+    [SMGUtils insertObject:cmvNode rootPath:cmvNode.pointer.filePath fileName:kFNNode time:cRTNode saveDB:false];
     
-    [SMGUtils insertObject:foNode rootPath:foNode.pointer.filePath fileName:FILENAME_Node time:cRedisNodeTime saveDB:false];
+    [SMGUtils insertObject:foNode rootPath:foNode.pointer.filePath fileName:kFNNode time:cRTNode saveDB:false];
     
     //6. 返回给thinking
     return foNode;

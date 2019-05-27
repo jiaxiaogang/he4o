@@ -23,7 +23,7 @@
 
 +(BOOL) checkCanOutput:(NSString*)dataSource {
     AIKVPointer *canout_p = [SMGUtils createPointerForCerebelCanOut];
-    NSArray *arr = [SMGUtils searchObjectForFilePath:canout_p.filePath fileName:FILENAME_Default time:cRedisDefaultTime];
+    NSArray *arr = [SMGUtils searchObjectForFilePath:canout_p.filePath fileName:kFNDefault time:cRTDefault];
     return ARRISOK(arr) && [arr containsObject:STRTOOK(dataSource)];
 }
 
@@ -31,11 +31,11 @@
 +(void) setCanOutput:(NSString*)dataSource {
     //1. 取mv分区的引用序列文件;
     AIKVPointer *canout_p = [SMGUtils createPointerForCerebelCanOut];
-    NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForFilePath:canout_p.filePath fileName:FILENAME_Default time:cRedisDefaultTime]];
+    NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForFilePath:canout_p.filePath fileName:kFNDefault time:cRTDefault]];
     NSString *identifier = STRTOOK(dataSource);
     if (![mArr containsObject:identifier]) {
         [mArr addObject:identifier];
-        [SMGUtils insertObject:mArr rootPath:canout_p.filePath fileName:FILENAME_Default time:cRedisDefaultTime saveDB:true];
+        [SMGUtils insertObject:mArr rootPath:canout_p.filePath fileName:kFNDefault time:cRTDefault saveDB:true];
     }
 }
 
@@ -86,10 +86,10 @@
 }
 +(void) insertRefPorts_AllFoNode:(AIPointer*)foNode_p order_p:(AIPointer*)order_p ps:(NSArray*)ps{
     if (!foNode_p.isMem) {
-        AIAlgNodeBase *algNode = [SMGUtils searchObjectForPointer:order_p fileName:FILENAME_Node time:cRedisNodeTime];
+        AIAlgNodeBase *algNode = [SMGUtils searchObjectForPointer:order_p fileName:kFNNode time:cRTNode];
         if (ISOK(algNode, AIAlgNodeBase.class)) {
             [AINetUtils insertPointer_Hd:foNode_p toPorts:algNode.refPorts ps:ps];
-            [SMGUtils insertObject:algNode pointer:algNode.pointer fileName:FILENAME_Node time:cRedisNodeTime];
+            [SMGUtils insertObject:algNode pointer:algNode.pointer fileName:kFNNode time:cRTNode];
         }
     }else{
         [self insertRefPorts_MemNode:foNode_p passiveRef_p:order_p ps:ps];
@@ -113,9 +113,9 @@
  */
 +(void) insertRefPorts_HdNode:(AIPointer*)hdNode_p passiveRefValue_p:(AIPointer*)passiveRefValue_p ps:(NSArray*)ps{
     if (ISOK(hdNode_p, AIKVPointer.class) && ISOK(passiveRefValue_p, AIKVPointer.class)) {
-        NSMutableArray *refPorts = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForFilePath:passiveRefValue_p.filePath fileName:FILENAME_RefPorts time:cRedisReferenceTime]];
+        NSMutableArray *refPorts = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForFilePath:passiveRefValue_p.filePath fileName:kFNRefPorts time:cRTReference]];
         [AINetUtils insertPointer_Hd:hdNode_p toPorts:refPorts ps:ps];
-        [SMGUtils insertObject:refPorts rootPath:passiveRefValue_p.filePath fileName:FILENAME_RefPorts time:cRedisReferenceTime saveDB:true];
+        [SMGUtils insertObject:refPorts rootPath:passiveRefValue_p.filePath fileName:kFNRefPorts time:cRTReference saveDB:true];
     }
 }
 
@@ -129,25 +129,25 @@
 +(void) insertRefPorts_MemNode:(AIPointer*)memNode_p passiveRef_p:(AIPointer*)passiveRef_p ps:(NSArray*)ps{
     if (ISOK(memNode_p, AIKVPointer.class) && ISOK(passiveRef_p, AIKVPointer.class)) {
         //1. 内存网络时,取出memRefPorts -> 插入首位 -> 存XGRedis;
-        NSMutableArray *memRefPorts = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:passiveRef_p fileName:FILENAME_MemRefPorts]];
+        NSMutableArray *memRefPorts = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:passiveRef_p fileName:kFNMemRefPorts]];
         [AINetUtils insertPointer_Mem:memNode_p toPorts:memRefPorts ps:ps];
-        [SMGUtils insertObject:memRefPorts rootPath:passiveRef_p.filePath fileName:FILENAME_MemRefPorts time:cRedisMemNetTime saveDB:false];//存储
+        [SMGUtils insertObject:memRefPorts rootPath:passiveRef_p.filePath fileName:kFNMemRefPorts time:cRTMemPort saveDB:false];//存储
     }
 }
 
 +(void) insertAbsPorts_MemNode:(AIPointer*)abs_p con_p:(AIPointer*)con_p absNodeContent:(NSArray*)absNodeContent{
     if (ISOK(abs_p, AIKVPointer.class) && ISOK(con_p, AIKVPointer.class)) {
-        NSMutableArray *memAbsPorts = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:con_p fileName:FILENAME_MemAbsPorts]];
+        NSMutableArray *memAbsPorts = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:con_p fileName:kFNMemAbsPorts]];
         [AINetUtils insertPointer_Mem:abs_p toPorts:memAbsPorts ps:absNodeContent];
-        [SMGUtils insertObject:memAbsPorts rootPath:con_p.filePath fileName:FILENAME_MemAbsPorts time:cRedisMemPortTime saveDB:false];//存储
+        [SMGUtils insertObject:memAbsPorts rootPath:con_p.filePath fileName:kFNMemAbsPorts time:cRTMemPort saveDB:false];//存储
     }
 }
 
 +(void) insertConPorts_MemNode:(AIPointer*)con_p abs_p:(AIPointer*)abs_p conNodeContent:(NSArray*)conNodeContent{
     if (ISOK(con_p, AIKVPointer.class) && ISOK(abs_p, AIKVPointer.class)) {
-        NSMutableArray *memConPorts = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:abs_p fileName:FILENAME_MemConPorts]];
+        NSMutableArray *memConPorts = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:abs_p fileName:kFNMemConPorts]];
         [AINetUtils insertPointer_Mem:con_p toPorts:memConPorts ps:conNodeContent];
-        [SMGUtils insertObject:memConPorts rootPath:abs_p.filePath fileName:FILENAME_MemConPorts time:cRedisMemPortTime saveDB:false];//存储
+        [SMGUtils insertObject:memConPorts rootPath:abs_p.filePath fileName:kFNMemConPorts time:cRTMemPort saveDB:false];//存储
     }
 }
 
@@ -270,7 +270,7 @@
                 //3. hd_抽象节点插"具象端口";
                 [AINetUtils insertPointer_Hd:conNode.pointer toPorts:absConPorts ps:conContent_ps];
                 //4. hd_存储
-                [SMGUtils insertObject:conNode pointer:conNode.pointer fileName:FILENAME_Node time:cRedisNodeTime];
+                [SMGUtils insertObject:conNode pointer:conNode.pointer fileName:kFNNode time:cRTNode];
             }else{
                 //5. mem_抽象插到具象上
                 [self insertAbsPorts_MemNode:absNode.pointer con_p:conNode.pointer absNodeContent:absContent_ps];
@@ -280,7 +280,7 @@
         }
         
         //7. 抽象节点的 关联&存储
-        [SMGUtils insertObject:absNode pointer:absNode.pointer fileName:FILENAME_Node_All(absNode.pointer.isMem) time:cRedisNodeTime_All(absNode.pointer.isMem)];
+        [SMGUtils insertObject:absNode pointer:absNode.pointer fileName:kFNNode_All(absNode.pointer.isMem) time:cRTNode_All(absNode.pointer.isMem)];
     }
 }
 
@@ -289,8 +289,8 @@
 
 ///**
 // *  MARK:--------------------插线到ports (分文件优化)--------------------
-// *  @param pointerFileName : 指针序列文件名,如FILENAME_Reference_ByPointer
-// *  @param portFileName : 强度序列文件名,如FILENAME_Reference_ByPort
+// *  @param pointerFileName : 指针序列文件名,如kFNReference_ByPointer
+// *  @param portFileName : 强度序列文件名,如kFNReference_ByPort
 // *
 // *  1. 各种神经元中只保留"指针"和"类型";
 // *  2. 其它absPorts,conPorts,refPorts都使用单独文件的方式;
@@ -303,8 +303,8 @@
 ////    }
 ////
 ////    //2. 取identifier分区的引用序列文件;
-////    NSMutableArray *mArrByPointer = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:node_p fileName:pointerFileName time:cRedisPortTime]];
-////    NSMutableArray *mArrByPort = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:node_p fileName:portFileName time:cRedisPortTime]];
+////    NSMutableArray *mArrByPointer = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:node_p fileName:pointerFileName time:cRTPort]];
+////    NSMutableArray *mArrByPort = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:node_p fileName:portFileName time:cRTPort]];
 ////
 ////    //3. 找到旧的mArrByPointer;
 ////    __block AIPort *oldPort = nil;
@@ -325,7 +325,7 @@
 ////        }else{
 ////            [mArrByPointer addObject:oldPort];
 ////        }
-////        [SMGUtils insertObject:mArrByPointer rootPath:filePath fileName:FILENAME_Reference_ByPointer time:cRedisReferenceTime];
+////        [SMGUtils insertObject:mArrByPointer rootPath:filePath fileName:kFNReference_ByPointer time:cRTReference];
 ////    }];
 ////
 ////    //4. 搜索旧port并去掉_mArrByPort;
@@ -359,6 +359,6 @@
 ////        }else{
 ////            [mArrByPort addObject:newPort];
 ////        }
-////        [SMGUtils insertObject:mArrByPort rootPath:filePath fileName:FILENAME_Reference_ByPort time:cRedisReferenceTime];
+////        [SMGUtils insertObject:mArrByPort rootPath:filePath fileName:kFNReference_ByPort time:cRTReference];
 ////    }];
 //}

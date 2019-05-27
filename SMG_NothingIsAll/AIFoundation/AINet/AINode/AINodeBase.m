@@ -22,7 +22,7 @@
 //    if (saveDB) {
 //        return [self absPorts];
 //    }else{
-//        return [[NSMutableArray alloc] initWithArray:ARRISOK([SMGUtils searchObjectForPointer:self.pointer fileName:FILENAME_MemAbsPorts])];
+//        return [[NSMutableArray alloc] initWithArray:ARRISOK([SMGUtils searchObjectForPointer:self.pointer fileName:kFNMemAbsPorts])];
 //    }
 //}
 

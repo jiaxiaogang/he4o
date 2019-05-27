@@ -61,34 +61,34 @@
 //Direction的mv分区pointer;(存引用序列)
 +(AIKVPointer*) createPointerForDirection:(NSString*)mvAlgsType direction:(MVDirection)direction{
     NSInteger pointerId = 0;
-    AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_DIRECTION(direction) algsType:mvAlgsType dataSource:nil isOut:false isMem:false];
+    AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:kPN_DIRECTION(direction) algsType:mvAlgsType dataSource:nil isOut:false isMem:false];
     return kvPointer;
 }
 
 //生成小脑CanOut指针;
 +(AIKVPointer*) createPointerForCerebelCanOut{
-    AIKVPointer *pointer = [AIKVPointer newWithPointerId:0 folderName:PATH_NET_CEREBEL_CANOUT algsType:@" " dataSource:@" " isOut:false isMem:false];
+    AIKVPointer *pointer = [AIKVPointer newWithPointerId:0 folderName:kPN_CEREBEL_CANOUT algsType:@" " dataSource:@" " isOut:false isMem:false];
     return pointer;
 }
 
 //生成indexValue的指针;
 +(AIKVPointer*) createPointerForValue:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut{
     NSInteger pointerId = [self createPointerId:algsType dataSource:dataSource];
-    return [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_VALUE algsType:algsType dataSource:dataSource isOut:isOut isMem:false];
+    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_VALUE algsType:algsType dataSource:dataSource isOut:isOut isMem:false];
 }
 
 +(AIKVPointer*) createPointerForValue:(NSInteger)pointerId algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut{
-    return [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_VALUE algsType:algsType dataSource:dataSource isOut:isOut isMem:false];
+    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_VALUE algsType:algsType dataSource:dataSource isOut:isOut isMem:false];
 }
 
 +(AIKVPointer*) createPointerForIndex{
     NSInteger pointerId = 0;
-    return [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_INDEX algsType:@" " dataSource:@" " isOut:false isMem:false];
+    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_INDEX algsType:@" " dataSource:@" " isOut:false isMem:false];
 }
 
 +(AIKVPointer*) createPointerForData{
     NSInteger pointerId = 0;
-    return [AIKVPointer newWithPointerId:pointerId folderName:PATH_NET_DATA algsType:@" " dataSource:@" " isOut:false isMem:false];
+    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_DATA algsType:@" " dataSource:@" " isOut:false isMem:false];
 }
 
 @end
@@ -247,8 +247,8 @@
 //    for (NSInteger i = 0; i < MIN(aLength, bLength); i++) {
 //        AIKVPointer *itemA = ARR_INDEX(refsA_p, i);
 //        AIKVPointer *itemB = ARR_INDEX(refsB_p, i);
-//        NSNumber *aNum = [SMGUtils searchObjectForPointer:itemA fileName:FILENAME_Value];
-//        NSNumber *bNum = [SMGUtils searchObjectForPointer:itemB fileName:FILENAME_Value];
+//        NSNumber *aNum = [SMGUtils searchObjectForPointer:itemA fileName:kFNValue];
+//        NSNumber *bNum = [SMGUtils searchObjectForPointer:itemB fileName:kFNValue];
 //        NSComparisonResult result = [NUMTOOK(aNum) compare:NUMTOOK(bNum)] ;
 //        if (result != NSOrderedSame) {
 //            return result;
@@ -408,7 +408,7 @@
 
 +(void) insertNode:(AINodeBase*)node{
     if (ISOK(node, AINodeBase.class)) {
-        [self insertObject:node rootPath:node.pointer.filePath fileName:FILENAME_Node_All(node.pointer.isMem) time:cRedisNodeTime saveDB:!node.pointer.isMem];
+        [self insertObject:node rootPath:node.pointer.filePath fileName:kFNNode_All(node.pointer.isMem) time:cRTNode saveDB:!node.pointer.isMem];
     }
 }
 
@@ -501,8 +501,8 @@
     for (AIKVPointer *value_p in value_ps) {
         
         //3. 祖母嵌套时
-        if ([PATH_NET_ALG_ABS_NODE isEqualToString:value_p.folderName]) {
-            AIAlgNodeBase *algNode = [SMGUtils searchObjectForPointer:value_p fileName:FILENAME_Node time:cRedisNodeTime];
+        if ([kPN_ALG_ABS_NODE isEqualToString:value_p.folderName]) {
+            AIAlgNodeBase *algNode = [SMGUtils searchObjectForPointer:value_p fileName:kFNNode time:cRTNode];
             
             //4. 递归取嵌套的value_ps
             if (ISOK(algNode, AIAlgNodeBase.class)) {

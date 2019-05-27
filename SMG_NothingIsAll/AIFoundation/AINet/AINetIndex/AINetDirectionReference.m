@@ -39,7 +39,7 @@
 
     //2. 取mv分区的引用序列文件;
     AIKVPointer *mvReference_p = [SMGUtils createPointerForDirection:mvAlgsType direction:direction];
-    NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:mvReference_p fileName:FILENAME_Reference time:cRedisReferenceTime]];
+    NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:mvReference_p fileName:kFNReference time:cRTReference]];
     
     //3. 移除旧的
     __block NSInteger oldStrong = 0;
@@ -74,7 +74,7 @@
     }];
     
     //4. 存
-    [SMGUtils insertObject:mArr rootPath:mvReference_p.filePath fileName:FILENAME_Reference time:cRedisReferenceTime saveDB:true];
+    [SMGUtils insertObject:mArr rootPath:mvReference_p.filePath fileName:kFNReference time:cRTReference saveDB:true];
 }
 
 -(void) setNodePointerToDirectionMemReference:(AIKVPointer*)cmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction{
@@ -100,7 +100,7 @@
 -(NSArray*) getNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction filter:(NSArray*(^)(NSArray *protoArr))filter{
     //1. 取mv分区的引用序列文件;
     AIKVPointer *mvReference_p = [SMGUtils createPointerForDirection:mvAlgsType direction:direction];
-    NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:mvReference_p fileName:FILENAME_Reference time:cRedisReferenceTime]];
+    NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:mvReference_p fileName:kFNReference time:cRTReference]];
     
     //2. 筛选器
     if (filter) {

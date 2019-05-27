@@ -11,17 +11,19 @@
 //MARK:===============================================================
 //MARK:                     < redisTime >
 //MARK:===============================================================
-#define cRedisIndexTime 315360000   //常驻内存(十年)
-#define cRedisDataTime 315360000    //常驻内存(十年)
-#define cRedisReferenceTime 600
-#define cRedisNodeTime 200
-#define cRedisNodeTime_All(isMem) (isMem ? cRedisNodeTime_Mem : cRedisNodeTime)
-#define cRedisDefaultTime 60    //默认,例如:小脑canout序列;
-#define cRedisPortTime 200
+#define cRTIndex 315360000  //常驻内存(十年)
+#define cRTData 315360000   //常驻内存(十年)
+#define cRTReference 600
+#define cRTNode 200
+#define cRTDefault 60       //默认,例如:小脑canout序列;
+#define cRTPort 200
 
-#define cRedisMemNetTime 1800 //意识流内存时间序列_生存时间;
-#define cRedisNodeTime_Mem 1800 //内存网络_Node时间;
-#define cRedisMemPortTime 1800  //内存网络_Port时间;
+#define cRTMemNet 1800      //意识流内存时间序列_生存时间;
+#define cRTMemNode 1800     //内存网络_Node时间;
+#define cRTMemPort 1800     //内存网络_Port时间;
+
+#define cRTNode_All(isMem) (isMem ? cRTMemNode : cRTNode)
+#define cRTPort_All(isMem) (isMem ? cRTMemPort : cRTPort)
 
 //MARK:===============================================================
 //MARK:                     < thinkingControl >

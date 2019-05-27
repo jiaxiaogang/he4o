@@ -154,7 +154,7 @@
     if (!ISOK(outMvModel, TOMvModel.class)) {
         return nil;
     }
-    AICMVNodeBase *checkMvNode = [SMGUtils searchObjectForPointer:outMvModel.content_p fileName:FILENAME_Node time:cRedisNodeTime];
+    AICMVNodeBase *checkMvNode = [SMGUtils searchObjectForPointer:outMvModel.content_p fileName:kFNNode time:cRTNode];
     if (!checkMvNode) {
         return nil;
     }
@@ -192,7 +192,7 @@
     if (!ISOK(outFoModel, TOFoModel.class)) {
         return;
     }
-    AIFoNodeBase *foNode = [SMGUtils searchObjectForPointer:outFoModel.content_p fileName:FILENAME_Node time:cRedisNodeTime];
+    AIFoNodeBase *foNode = [SMGUtils searchObjectForPointer:outFoModel.content_p fileName:kFNNode time:cRTNode];
     if (!foNode) {
         return;
     }
@@ -276,7 +276,7 @@
 //    if (!ISOK(outFoModel, TOFoModel.class)) {
 //        return;
 //    }
-//    AIFoNodeBase *foNode = [SMGUtils searchObjectForPointer:outFoModel.content_p fileName:FILENAME_Node time:cRedisNodeTime];
+//    AIFoNodeBase *foNode = [SMGUtils searchObjectForPointer:outFoModel.content_p fileName:kFNNode time:cRTNode];
 //    if (!foNode) {
 //        return;
 //    }
@@ -289,7 +289,7 @@
 //    for (AIKVPointer *pointer in foNode.orders_kvp) {
 //        ///1. 本身为输出节点的话,直接收集到memOrder
 //        if (pointer.isOut) {
-//            AIAlgNodeBase *outAlgNode = [SMGUtils searchObjectForPointer:pointer fileName:FILENAME_Node time:cRedisNodeTime];
+//            AIAlgNodeBase *outAlgNode = [SMGUtils searchObjectForPointer:pointer fileName:kFNNode time:cRTNode];
 //            if (outAlgNode) {
 //                [outFoModel.memOrder addObject:outAlgNode];
 //            }

@@ -22,7 +22,7 @@
     
     //2. 构建具象节点 (优先用本地已有,否则new)
     AIAlgNode *conNode = [[AIAlgNode alloc] init];
-    conNode.pointer = [SMGUtils createPointer:PATH_NET_ALG_NODE algsType:@"" dataSource:@"" isOut:isOut isMem:isMem];
+    conNode.pointer = [SMGUtils createPointer:kPN_ALG_NODE algsType:@"" dataSource:@"" isOut:isOut isMem:isMem];
     
     //3. 指定value_ps
     conNode.content_ps = [SMGUtils sortPointers:algsArr];
@@ -31,7 +31,7 @@
     [AINetUtils insertRefPorts_AllAlgNode:conNode.pointer value_ps:conNode.content_ps ps:conNode.content_ps];
     
     //5. 存储
-    [SMGUtils insertObject:conNode pointer:conNode.pointer fileName:FILENAME_Node time:cRedisNodeTime_All(isMem)];
+    [SMGUtils insertObject:conNode pointer:conNode.pointer fileName:kFNNode time:cRTNode_All(isMem)];
     return conNode;
 }
 
@@ -78,7 +78,7 @@
 //            ///3. 反过来检查 "找到的具象节点" 是否也指向 "这些抽象节点";
 //            if (checkSuccess) {
 //                BOOL singleSuccess = true;
-//                AIAlgNode *single = [SMGUtils searchObjectForPointer:checkPointer fileName:FILENAME_Node time:cRedisNodeTime];
+//                AIAlgNode *single = [SMGUtils searchObjectForPointer:checkPointer fileName:kFNNode time:cRTNode];
 //                if (ISOK(single, AIAlgNode.class) && single.absPorts.count == absNodes.count) {
 //                    NSArray *single_ps = [SMGUtils convertPointersFromPorts:single.absPorts];
 //                    for (AIAbsAlgNode *absNode in absNodes) {
@@ -112,17 +112,15 @@
         AIAbsAlgNode *findAbsNode = nil;
         NSMutableArray *allAbsPorts = [[NSMutableArray alloc] init];
         for (AIAlgNode *item in conAlgs) {
+            ///1. 收集硬盘absPorts;
             [allAbsPorts addObjectsFromArray:item.absPorts];
-            
-            
-            /////TODOTOMORROW:把absMemPorts也添加到allAbsPorts中;
-            
-            
-            
+            ///2. 收集内存memAbsPorts;
+            NSArray *memAbsPorts = [SMGUtils searchObjectForPointer:item.pointer fileName:kFNMemAbsPorts time:cRTPort_All(item.pointer.isMem)];
+            [allAbsPorts addObjectsFromArray:memAbsPorts];
         }
         for (AIPort *port in allAbsPorts) {
             if ([samesMd5 isEqualToString:port.header]) {
-                findAbsNode = [SMGUtils searchObjectForPointer:port.target_p fileName:FILENAME_Node time:cRedisNodeTime];
+                findAbsNode = [SMGUtils searchObjectForPointer:port.target_p fileName:kFNNode time:cRTNode];
                 break;
             }
         }
@@ -131,7 +129,7 @@
         if (!findAbsNode) {
             findAbsNode = [[AIAbsAlgNode alloc] init];
             BOOL isOut = [AINetUtils checkAllOfOut:sortSames];
-            findAbsNode.pointer = [SMGUtils createPointer:PATH_NET_ALG_ABS_NODE algsType:@"" dataSource:@"" isOut:isOut isMem:isMem];
+            findAbsNode.pointer = [SMGUtils createPointer:kPN_ALG_ABS_NODE algsType:@"" dataSource:@"" isOut:isOut isMem:isMem];
             findAbsNode.content_ps = sortSames;
             
             ///1. value.refPorts (更新微信息的引用序列)

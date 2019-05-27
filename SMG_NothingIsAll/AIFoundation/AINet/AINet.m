@@ -209,12 +209,12 @@ static AINet *_instance;
     value_ps = ARRTOOK(value_ps);
     NSString *valuesMD5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:[SMGUtils sortPointers:value_ps]]]);
     for (AIPointer *value_p in value_ps) {
-        NSArray *refPorts = ARRTOOK([SMGUtils searchObjectForFilePath:value_p.filePath fileName:FILENAME_RefPorts time:cRedisReferenceTime]);
+        NSArray *refPorts = ARRTOOK([SMGUtils searchObjectForFilePath:value_p.filePath fileName:kFNRefPorts time:cRTReference]);
         for (AIPort *refPort in refPorts) {
             
             ///2. 依次绝对匹配header,找到则返回;
             if (![refPort.target_p isEqual:exceptAlg_p] && [valuesMD5 isEqualToString:refPort.header]) {
-                AIAlgNodeBase *result = [SMGUtils searchObjectForPointer:refPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
+                AIAlgNodeBase *result = [SMGUtils searchObjectForPointer:refPort.target_p fileName:kFNNode time:cRTNode];
                 return result;
             }
         }

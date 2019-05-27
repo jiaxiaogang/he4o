@@ -36,11 +36,11 @@
     AINetAbsFoNode *findAbsNode = nil;
     NSMutableArray *allAbsPorts = [[NSMutableArray alloc] init];
     for (AIFoNodeBase *conItem in conFos) {
+        ///1. 收集硬盘absPorts;
         [allAbsPorts addObjectsFromArray:conItem.absPorts];
-        
-        
-        //TODOUseMemNet:AddAbsMemPorts
-        
+        ///2. 收集内存memAbsPorts;
+        NSArray *memAbsPorts = [SMGUtils searchObjectForPointer:conItem.pointer fileName:kFNMemAbsPorts time:cRTPort_All(conItem.pointer.isMem)];
+        [allAbsPorts addObjectsFromArray:memAbsPorts];
         
         
         
@@ -55,7 +55,7 @@
     }
     for (AIPort *port in allAbsPorts) {
         if ([samesMd5 isEqualToString:port.header]) {
-            findAbsNode = [SMGUtils searchObjectForPointer:port.target_p fileName:FILENAME_Node time:cRedisNodeTime];
+            findAbsNode = [SMGUtils searchObjectForPointer:port.target_p fileName:kFNNode time:cRTNode];
             break;
         }
     }
@@ -63,13 +63,13 @@
     //3. 无则创建
     if (!findAbsNode) {
         findAbsNode = [[AINetAbsFoNode alloc] init];
-        findAbsNode.pointer = [SMGUtils createPointerForNode:PATH_NET_FO_ABS_NODE];
+        findAbsNode.pointer = [SMGUtils createPointerForNode:kPN_FO_ABS_NODE];
         
         ///1. 收集order_ps (将不在hdNet中的转移)
         for (AIKVPointer *item_p in sortSames) {
             if (item_p.isMem) {
-                AIAlgNodeBase *memAlgNode = [SMGUtils searchObjectForPointer:item_p fileName:FILENAME_MemNode time:cRedisNodeTime_Mem];
-                AIAlgNodeBase *hdAlgNode = [SMGUtils searchObjectForPointer:item_p fileName:FILENAME_Node time:cRedisNodeTime];
+                AIAlgNodeBase *memAlgNode = [SMGUtils searchObjectForPointer:item_p fileName:kFNMemNode time:cRTMemNode];
+                AIAlgNodeBase *hdAlgNode = [SMGUtils searchObjectForPointer:item_p fileName:kFNNode time:cRTNode];
                 
                 ///2. 转移_hdNet不存在,才转移;
                 if (hdAlgNode == nil) {

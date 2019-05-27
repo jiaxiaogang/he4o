@@ -30,7 +30,7 @@
 
 +(BOOL) output_TC:(AIKVPointer*)algNode_p{
     //1. 数据
-    AIAlgNodeBase *algNode = [SMGUtils searchObjectForPointer:algNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+    AIAlgNodeBase *algNode = [SMGUtils searchObjectForPointer:algNode_p fileName:kFNNode time:cRTNode];
     if (!ISOK(algNode, AIAlgNodeBase.class)) {
         return false;
     }

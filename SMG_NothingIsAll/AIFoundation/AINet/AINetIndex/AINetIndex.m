@@ -22,8 +22,8 @@
     if (!ISOK(data, NSNumber.class)) {
         return nil;
     }
-    NSMutableArray *indexModels = [[NSMutableArray alloc] initWithArray:ARRTOOK([SMGUtils searchObjectForPointer:[SMGUtils createPointerForIndex] fileName:FILENAME_Index(isOut) time:cRedisIndexTime])];//加载索引序列
-    NSMutableDictionary *dataDic = [[NSMutableDictionary alloc] initWithDictionary:DICTOOK([SMGUtils searchObjectForPointer:[SMGUtils createPointerForData] fileName:FILENAME_Data(isOut) time:cRedisDataTime])];//加载微信息值字典
+    NSMutableArray *indexModels = [[NSMutableArray alloc] initWithArray:ARRTOOK([SMGUtils searchObjectForPointer:[SMGUtils createPointerForIndex] fileName:kFNIndex(isOut) time:cRTIndex])];//加载索引序列
+    NSMutableDictionary *dataDic = [[NSMutableDictionary alloc] initWithDictionary:DICTOOK([SMGUtils searchObjectForPointer:[SMGUtils createPointerForData] fileName:kFNData(isOut) time:cRTData])];//加载微信息值字典
     
     //2. 查找model,没则new
     AINetIndexModel *model = nil;
@@ -67,15 +67,15 @@
         }
         
         //5. 存
-        [SMGUtils insertObject:indexModels rootPath:[SMGUtils createPointerForIndex].filePath fileName:FILENAME_Index(isOut)];
-        [SMGUtils insertObject:dataDic rootPath:[SMGUtils createPointerForData].filePath fileName:FILENAME_Data(isOut)];
+        [SMGUtils insertObject:indexModels rootPath:[SMGUtils createPointerForIndex].filePath fileName:kFNIndex(isOut)];
+        [SMGUtils insertObject:dataDic rootPath:[SMGUtils createPointerForData].filePath fileName:kFNData(isOut)];
     }];
     
     return resultPointer;
 }
 
 +(NSNumber*) getData:(AIKVPointer*)data_p{
-    NSDictionary *dataDic = DICTOOK([SMGUtils searchObjectForPointer:[SMGUtils createPointerForData] fileName:FILENAME_Data(data_p.isOut) time:cRedisDataTime]);
+    NSDictionary *dataDic = DICTOOK([SMGUtils searchObjectForPointer:[SMGUtils createPointerForData] fileName:kFNData(data_p.isOut) time:cRTData]);
     return [dataDic objectForKey:data_p];
 }
 

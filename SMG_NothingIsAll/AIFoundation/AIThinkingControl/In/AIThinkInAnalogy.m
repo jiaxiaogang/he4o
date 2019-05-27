@@ -40,8 +40,8 @@
                     }
                     
                     ///2. 取出algNodeA & algNodeB
-                    AIAlgNode *algNodeA = [SMGUtils searchObjectForPointer:algNodeA_p fileName:FILENAME_Node time:cRedisNodeTime];
-                    AIAlgNode *algNodeB = [SMGUtils searchObjectForPointer:algNodeB_p fileName:FILENAME_Node time:cRedisNodeTime];
+                    AIAlgNode *algNodeA = [SMGUtils searchObjectForPointer:algNodeA_p fileName:kFNNode time:cRTNode];
+                    AIAlgNode *algNodeB = [SMGUtils searchObjectForPointer:algNodeB_p fileName:kFNNode time:cRTNode];
                     
                     ///3. values->absPorts的认知过程
                     if (algNodeA && algNodeB) {
@@ -110,14 +110,14 @@
             AINetAbsFoNode *createAbsFo = [theNet createAbsFo_Outside:fo foB:assFo orderSames:orderSames];
 
             //5. createAbsCmvNode
-            AICMVNodeBase *assMv = [SMGUtils searchObjectForPointer:assFo.cmvNode_p fileName:FILENAME_Node];
+            AICMVNodeBase *assMv = [SMGUtils searchObjectForPointer:assFo.cmvNode_p fileName:kFNNode];
             if (assMv) {
                 AIAbsCMVNode *createAbsCmv = [theNet createAbsCMVNode_Outside:createAbsFo.pointer aMv_p:fo.cmvNode_p bMv_p:assMv.pointer];
                 
                 //6. cmv模型连接;
                 if (ISOK(createAbsCmv, AIAbsCMVNode.class)) {
                     createAbsFo.cmvNode_p = createAbsCmv.pointer;
-                    [SMGUtils insertObject:createAbsFo pointer:createAbsFo.pointer fileName:FILENAME_Node time:cRedisNodeTime];
+                    [SMGUtils insertObject:createAbsFo pointer:createAbsFo.pointer fileName:kFNNode time:cRTNode];
                 }
             }
             
@@ -153,8 +153,8 @@
             //4. 取出两个祖母
             AIKVPointer *algA_p = ARR_INDEX(orders, i);
             AIKVPointer *algB_p = ARR_INDEX(orders, j);
-            AIAlgNode *algNodeA = [SMGUtils searchObjectForPointer:algA_p fileName:FILENAME_Node time:cRedisNodeTime];
-            AIAlgNode *algNodeB = [SMGUtils searchObjectForPointer:algB_p fileName:FILENAME_Node time:cRedisNodeTime];
+            AIAlgNode *algNodeA = [SMGUtils searchObjectForPointer:algA_p fileName:kFNNode time:cRTNode];
+            AIAlgNode *algNodeB = [SMGUtils searchObjectForPointer:algB_p fileName:kFNNode time:cRTNode];
             
             //5. 内类比找不同 (比大小:同区不同值 / 有无)
             AINetAbsFoNode *abFo = nil;
@@ -185,13 +185,13 @@
                 }else if(aSub_ps.count == 1 && bSub_ps.count == 0){
                     //2) 当长度各A=1和B=0时,判定A0是否为祖母: 无;
                     AIKVPointer *a_p = ARR_INDEX(aSub_ps, 0);
-                    if ([PATH_NET_ALG_ABS_NODE isEqualToString:a_p.folderName]) {
+                    if ([kPN_ALG_ABS_NODE isEqualToString:a_p.folderName]) {
                         abFo = [self analogyInner_Creater:AnalogyInnerType_None target_p:a_p algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
                     }
                 }else if(aSub_ps.count == 0 && bSub_ps.count == 1){
                     //3) 当长度各A=0和B=1时,判定B0是否为祖母: 有;
                     AIKVPointer *b_p = ARR_INDEX(bSub_ps, 0);
-                    if ([PATH_NET_ALG_ABS_NODE isEqualToString:b_p.folderName]) {
+                    if ([kPN_ALG_ABS_NODE isEqualToString:b_p.folderName]) {
                         abFo = [self analogyInner_Creater:AnalogyInnerType_Hav target_p:b_p algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
                     }
                 }
@@ -293,7 +293,7 @@
             //8. cmv模型连接;
             if (ISOK(createrMv, AIAbsCMVNode.class)) {
                 createrFo.cmvNode_p = createrMv.pointer;
-                [SMGUtils insertObject:createrFo pointer:createrFo.pointer fileName:FILENAME_Node time:cRedisNodeTime];
+                [SMGUtils insertObject:createrFo pointer:createrFo.pointer fileName:kFNNode time:cRTNode];
             }
             return createrFo;
         }
@@ -312,7 +312,7 @@
     if (ISOK(abFo, AINetAbsFoNode.class)) {
         //2. 取用来联想的aAlg;
         AIPointer *a_p = ARR_INDEX(abFo.orders_kvp, 0);
-        AIAlgNodeBase *aAlg = [SMGUtils searchObjectForPointer:a_p fileName:FILENAME_Node time:cRedisNodeTime];
+        AIAlgNodeBase *aAlg = [SMGUtils searchObjectForPointer:a_p fileName:kFNNode time:cRTNode];
         if (!aAlg) {
             return;
         }
@@ -322,7 +322,7 @@
         for (AIPort *refPort in aAlg.refPorts) {
             ///1. 不能与abFo重复
             if (![aAlg.pointer isEqual:refPort.target_p]) {
-                AIFoNodeBase *refFo = [SMGUtils searchObjectForPointer:refPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
+                AIFoNodeBase *refFo = [SMGUtils searchObjectForPointer:refPort.target_p fileName:kFNNode time:cRTNode];
                 if (ISOK(refFo, AIFoNodeBase.class)) {
                     AIPointer *firstAlg_p = ARR_INDEX(refFo.orders_kvp, 0);
                     ///2. 必须符合aAlg在orders前面

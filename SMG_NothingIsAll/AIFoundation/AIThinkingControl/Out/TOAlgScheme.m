@@ -80,7 +80,7 @@
  */
 +(NSArray*) convert2Out_Single_Sub:(AIKVPointer*)curAlg_p{
     //1. 数据检查准备;
-    AIAlgNodeBase *curAlg = [SMGUtils searchObjectForPointer:curAlg_p fileName:FILENAME_Node time:cRedisNodeTime];
+    AIAlgNodeBase *curAlg = [SMGUtils searchObjectForPointer:curAlg_p fileName:kFNNode time:cRTNode];
     if (!curAlg) return nil;
     NSMutableArray *result = [[NSMutableArray alloc] init];
     
@@ -90,14 +90,14 @@
         AIKVPointer *second_p = ARR_INDEX(curAlg.content_ps, 1);
         AIKVPointer *subAlg_p = nil;
         AIKVPointer *subValue_p = nil;
-        if ([PATH_NET_ALG_ABS_NODE isEqualToString:first_p.folderName]) {
+        if ([kPN_ALG_ABS_NODE isEqualToString:first_p.folderName]) {
             subAlg_p = first_p;
-        }else if([PATH_NET_ALG_ABS_NODE isEqualToString:second_p.folderName]){
+        }else if([kPN_ALG_ABS_NODE isEqualToString:second_p.folderName]){
             subAlg_p = second_p;
         }
-        if([PATH_NET_VALUE isEqualToString:first_p.folderName]){
+        if([kPN_VALUE isEqualToString:first_p.folderName]){
             subValue_p = first_p;
-        }else if([PATH_NET_VALUE isEqualToString:second_p.folderName]){
+        }else if([kPN_VALUE isEqualToString:second_p.folderName]){
             subValue_p = second_p;
         }
         if (!subAlg_p || !subValue_p) return nil;
@@ -128,7 +128,7 @@
             if (!forecastAlg_p) return;
             
             //8. 取出"预测"祖母信息;
-            AIAlgNodeBase *forecastAlg = [SMGUtils searchObjectForPointer:forecastAlg_p fileName:FILENAME_Node time:cRedisNodeTime];
+            AIAlgNodeBase *forecastAlg = [SMGUtils searchObjectForPointer:forecastAlg_p fileName:kFNNode time:cRTNode];
             if (!forecastAlg) return;
             
             //8. 进一步取出预测微信息;
@@ -179,7 +179,7 @@
     //2. 根据havAlg联想时序,并找出新的解决方案,与新的行为化的祖母,与新的条件祖母;
     for (NSInteger i = 0; i < cHavNoneAssFoCount; i ++) {
         AIPort *refPort = ARR_INDEX(relativeAlg.refPorts, i);
-        AIFoNodeBase *relativeFo = [SMGUtils searchObjectForPointer:refPort.target_p fileName:FILENAME_Node time:cRedisNodeTime];
+        AIFoNodeBase *relativeFo = [SMGUtils searchObjectForPointer:refPort.target_p fileName:kFNNode time:cRTNode];
         
         //3. 取出havFo除第一个和最后一个之外的中间rangeOrder
         if (relativeFo != nil && relativeFo.orders_kvp.count > 2) {

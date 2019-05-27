@@ -119,6 +119,7 @@
  *  @param pointer  : 把这个插到ports
  *  @param memPorts : 把pointer插到这儿;
  *  @param ps       : pointer是alg时,传alg.content_ps | pointer是fo时,传fo.orders; (用来计算md5.header)
+ *  注: 内存网络中,仅按时间排序,没有强度;
  */
 +(void) insertPointer_Mem:(AIPointer*)pointer toPorts:(NSMutableArray*)memPorts ps:(NSArray*)ps;
 

@@ -26,9 +26,9 @@
     }
     
     //2. 取identifier分区的引用序列文件;
-    NSString *filePath = [index_p filePath:PATH_NET_REFERENCE];
-    NSMutableArray *mArrByPointer = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForFilePath:filePath fileName:FILENAME_Reference_ByPointer time:cRedisReferenceTime]];
-    NSMutableArray *mArrByPort = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForFilePath:filePath fileName:FILENAME_Reference_ByPort time:cRedisReferenceTime]];
+    NSString *filePath = [index_p filePath:kPN_REFERENCE];
+    NSMutableArray *mArrByPointer = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForFilePath:filePath fileName:kFNReference_ByPointer time:cRTReference]];
+    NSMutableArray *mArrByPort = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForFilePath:filePath fileName:kFNReference_ByPort time:cRTReference]];
     
     //3. 找到旧的mArrByPointer;
     __block AIPort *oldPort = nil;
@@ -49,7 +49,7 @@
         }else{
             [mArrByPointer addObject:oldPort];
         }
-        [SMGUtils insertObject:mArrByPointer rootPath:filePath fileName:FILENAME_Reference_ByPointer time:cRedisReferenceTime saveDB:true];
+        [SMGUtils insertObject:mArrByPointer rootPath:filePath fileName:kFNReference_ByPointer time:cRTReference saveDB:true];
     }];
     
     //4. 搜索旧port并去掉_mArrByPort;
@@ -86,7 +86,7 @@
         }else{
             [mArrByPort addObject:newPort];
         }
-        [SMGUtils insertObject:mArrByPort rootPath:filePath fileName:FILENAME_Reference_ByPort time:cRedisReferenceTime saveDB:true];
+        [SMGUtils insertObject:mArrByPort rootPath:filePath fileName:kFNReference_ByPort time:cRTReference saveDB:true];
     }];
 }
 
@@ -105,8 +105,8 @@
     if (ISOK(indexPointer, AIKVPointer.class)) {
         
         //2. 取identifier分区的引用序列文件;
-        NSString *filePath = [indexPointer filePath:PATH_NET_REFERENCE];
-        NSArray *localPorts = ARRTOOK([SMGUtils searchObjectForFilePath:filePath fileName:FILENAME_Reference_ByPort time:cRedisReferenceTime]);
+        NSString *filePath = [indexPointer filePath:kPN_REFERENCE];
+        NSArray *localPorts = ARRTOOK([SMGUtils searchObjectForFilePath:filePath fileName:kFNReference_ByPort time:cRTReference]);
         
         limit = MAX(0, MIN(limit, localPorts.count));
         [mArr addObjectsFromArray:[localPorts subarrayWithRange:NSMakeRange(localPorts.count - limit, limit)]];

@@ -43,7 +43,7 @@
     order_ps = ARRTOOK(order_ps);
     NSMutableString *mStr = [NSMutableString new];
     for (AIKVPointer *algNode_p in order_ps) {
-        AIAlgNodeBase *algNode = [SMGUtils searchObjectForPointer:algNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+        AIAlgNodeBase *algNode = [SMGUtils searchObjectForPointer:algNode_p fileName:kFNNode time:cRTNode];
         if (ISOK(algNode, AIAlgNodeBase.class)) {
             [mStr appendFormat:@"%@%@",(mStr.length == 0 ? @"":@"\n"),[self convertValuePs2Str:algNode.content_ps]];
         }
@@ -88,7 +88,7 @@
 
 +(NSString*) getCmvModelDesc_ByFoNode:(AIFoNodeBase*)foNode{
     if (foNode) {
-        AICMVNodeBase *cmvNode = [SMGUtils searchObjectForPointer:foNode.cmvNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+        AICMVNodeBase *cmvNode = [SMGUtils searchObjectForPointer:foNode.cmvNode_p fileName:kFNNode time:cRTNode];
         return [self getCmvModelDesc:foNode cmvNode:cmvNode];
     }
     return nil;
@@ -96,7 +96,7 @@
 
 +(NSString*) getCmvModelDesc_ByCmvNode:(AICMVNodeBase*)cmvNode{
     if (cmvNode) {
-        AIFoNodeBase *foNode = [SMGUtils searchObjectForPointer:cmvNode.foNode_p fileName:FILENAME_Node time:cRedisNodeTime];
+        AIFoNodeBase *foNode = [SMGUtils searchObjectForPointer:cmvNode.foNode_p fileName:kFNNode time:cRTNode];
         return [self getCmvModelDesc:foNode cmvNode:cmvNode];
     }
     return nil;
@@ -125,7 +125,7 @@
         
         //2. absNode.conPorts.desc
         for (AIPort *conPort in absNode.conPorts) {
-            AIFoNodeBase *conNode = [SMGUtils searchObjectForPointer:conPort.target_p fileName:FILENAME_Node];
+            AIFoNodeBase *conNode = [SMGUtils searchObjectForPointer:conPort.target_p fileName:kFNNode];
             [mStr appendFormat:@"具象FO:\n%@",[self getFoNodeDesc:conNode]];
         }
         return mStr;
@@ -141,7 +141,7 @@
         
         //2. absNode.absPorts.desc
         for (AIPort *conPort in foNode.absPorts) {
-            AIFoNodeBase *conNode = [SMGUtils searchObjectForPointer:conPort.target_p fileName:FILENAME_Node];
+            AIFoNodeBase *conNode = [SMGUtils searchObjectForPointer:conPort.target_p fileName:kFNNode];
             [mStr appendFormat:@"抽象FO:\n%@",[self getFoNodeDesc:conNode]];
         }
         return mStr;
