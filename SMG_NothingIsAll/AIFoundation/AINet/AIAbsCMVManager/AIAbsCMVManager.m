@@ -68,6 +68,7 @@
     AIAbsCMVNode *result = [[AIAbsCMVNode alloc] init];
     result.pointer = [SMGUtils createPointer:kPN_ABS_CMV_NODE algsType:algsType dataSource:dataSource isOut:false isMem:false];
     result.foNode_p = absFo_p;
+    if (absFo_p.isMem) NSLog(@"!!!!警告,mv基本模型中,foNode在内存网络中,请检查createAbsFo()中转移是否成功;");
     
     //5. absUrgentTo
     NSInteger absUrgentTo = [AINetAbsCMVUtil getAbsUrgentTo:conMvs];

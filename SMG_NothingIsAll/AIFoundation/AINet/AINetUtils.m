@@ -287,6 +287,53 @@
 @end
 
 
+//MARK:===============================================================
+//MARK:                     < 转移 >
+//MARK:===============================================================
+@implementation AINetUtils (Move)
+
++(id) move2HdNodeFromMemNode_Alg:(AINodeBase*)memNode {
+    return [self move2HdNodeFromMemNode_General:memNode insertRefPortsBlock:^(AIAlgNodeBase *hdNode) {
+        if (ISOK(hdNode, AIAlgNodeBase.class)) {
+            [AINetUtils insertRefPorts_AllAlgNode:hdNode.pointer value_ps:hdNode.content_ps ps:hdNode.content_ps];
+        }
+    }];
+}
+
++(id) move2HdNodeFromMemNode_Fo:(AINodeBase*)memNode {
+    return [self move2HdNodeFromMemNode_General:memNode insertRefPortsBlock:^(AIFoNodeBase *hdNode) {
+        if (ISOK(hdNode, AIFoNodeBase.class)) {
+            [AINetUtils insertRefPorts_AllFoNode:hdNode.pointer order_ps:hdNode.orders_kvp ps:hdNode.orders_kvp];
+        }
+    }];
+}
+
+/**
+ *  MARK:--------------------转移内存节点为硬盘节点--------------------
+ *  @param insertRefPortsBlock : 引用插线方法 notnull;
+ */
++(id) move2HdNodeFromMemNode_General:(AINodeBase*)memNode insertRefPortsBlock:(void(^)(id hdNode))insertRefPortsBlock{
+    if (memNode && memNode.pointer.isMem) {
+        AINodeBase *hdNode = [SMGUtils searchObjectForPointer:memNode.pointer fileName:kFNNode time:cRTNode];
+        ///2. 转移_hdNet不存在,才转移;
+        if (!hdNode) {
+            hdNode = memNode;
+            hdNode.pointer.isMem = false;
+            
+            ///3. 转移_微信息引用序列;
+            insertRefPortsBlock(hdNode);
+            
+            ///4. 转移_存储到hdNet
+            [SMGUtils insertNode:hdNode];
+        }
+        return hdNode;
+    }
+    return memNode;
+}
+
+@end
+
+
 ///**
 // *  MARK:--------------------插线到ports (分文件优化)--------------------
 // *  @param pointerFileName : 指针序列文件名,如kFNReference_ByPointer

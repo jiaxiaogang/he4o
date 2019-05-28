@@ -45,10 +45,7 @@
         
         
         //TODOTOMORROW: (UseMemNet)
-        //1. IndexRefrence和AINetUtil.insertPointer微信息部分有重复;
-        //2. 取用时,优先取memPorts和memNode;
-        //3. 处理所有TODOUseMemNet:
-        //4. 祖母进行抽象(嵌套)时,是否有转移问题;
+        //1. 取用时,优先取memPorts和memNode;
         
         
         
@@ -56,6 +53,11 @@
     for (AIPort *port in allAbsPorts) {
         if ([samesMd5 isEqualToString:port.header]) {
             findAbsNode = [SMGUtils searchObjectForPointer:port.target_p fileName:kFNNode time:cRTNode];
+            if (findAbsNode.pointer.isMem) {
+                ///3. 转移foNode到硬盘网络;
+                NSLog(@"检查!!!!,此处对findAbsNode做内存到硬盘网络的转移!!!");
+                findAbsNode = [AINetUtils move2HdNodeFromMemNode_Fo:findAbsNode];
+            }
             break;
         }
     }
@@ -69,24 +71,16 @@
         for (AIKVPointer *item_p in sortSames) {
             if (item_p.isMem) {
                 AIAlgNodeBase *memAlgNode = [SMGUtils searchObjectForPointer:item_p fileName:kFNMemNode time:cRTMemNode];
-                AIAlgNodeBase *hdAlgNode = [SMGUtils searchObjectForPointer:item_p fileName:kFNNode time:cRTNode];
                 
-                ///2. 转移_hdNet不存在,才转移;
-                if (hdAlgNode == nil) {
-                    hdAlgNode = memAlgNode;
-                    hdAlgNode.pointer.isMem = false;
-                    
-                    ///3. 转移_微信息引用序列;
-                    [AINetUtils insertRefPorts_AllAlgNode:hdAlgNode.pointer value_ps:hdAlgNode.content_ps ps:hdAlgNode.content_ps];
-                    
-                    ///4. 转移_存储到hdNet
-                    [SMGUtils insertNode:hdAlgNode];
+                ///2. 转移memAlgNode到硬盘网络;
+                AIAlgNodeBase *hdAlgNode = [AINetUtils move2HdNodeFromMemNode_Alg:memAlgNode];
+                
+                ///3. 收集order_p
+                if (hdAlgNode) {
+                    [findAbsNode.orders_kvp addObject:hdAlgNode.pointer];
                 }
-                
-                ///5. 收集order_p
-                [findAbsNode.orders_kvp addObject:hdAlgNode.pointer];
             }else{
-                ///6. 收集order_p
+                ///4. 收集order_p
                 [findAbsNode.orders_kvp addObject:item_p];
             }
         }

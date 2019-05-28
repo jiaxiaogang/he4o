@@ -138,3 +138,14 @@
 +(void) relateMvAbs:(AIAbsCMVNode*)absNode conNodes:(NSArray*)conNodes;
 
 @end
+
+
+//MARK:===============================================================
+//MARK:                     < 转移 >
+//MARK:===============================================================
+@interface AINetUtils (Move)
+
++(id) move2HdNodeFromMemNode_Alg:(AINodeBase*)memNode;
++(id) move2HdNodeFromMemNode_Fo:(AINodeBase*)memNode;
+
+@end
