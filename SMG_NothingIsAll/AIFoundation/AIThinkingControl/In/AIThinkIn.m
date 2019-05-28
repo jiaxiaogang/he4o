@@ -119,20 +119,9 @@
     //2. 对value.refPorts进行检查识别; (noMv信号已输入完毕,识别联想)
     if (ISOK(algNode, AIAlgNodeBase.class)) {
         ///1. 绝对匹配 -> (header匹配)
-        NSString *valuesMD5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:[SMGUtils sortPointers:algNode.content_ps]]]);
-        for (AIPointer *value_p in algNode.content_ps) {
-            NSArray *refPorts = ARRTOOK([SMGUtils searchObjectForFilePath:value_p.filePath fileName:kFNRefPorts time:cRTReference]);
-            for (AIPort *refPort in refPorts) {
-                
-                ///2. 依次绝对匹配header,找到则break;
-                if (![refPort.target_p isEqual:algNode.pointer] && [valuesMD5 isEqualToString:refPort.header]) {
-                    assAlgNode = [SMGUtils searchObjectForPointer:refPort.target_p fileName:kFNNode time:cRTNode];
-                    break;
-                }
-            }
-            if (assAlgNode) {
-                break;
-            }
+        assAlgNode = [self recognition_AbsoluteMatching:algNode isMem:true];
+        if (!assAlgNode) {
+            assAlgNode = [self recognition_AbsoluteMatching:algNode isMem:false];
         }
         
         ///3. 局部匹配 -> (从values的8个value.refPorts找前3个, 3*8=24)
@@ -313,6 +302,35 @@
     if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_UpdateEnergy:)]) {
         [self.delegate aiThinkIn_UpdateEnergy:-1];
     }
+}
+
+/**
+ *  MARK:--------------------识别_绝对匹配--------------------
+ *  @param isMem : 是否从内存网络找;
+ *  注: 找出与algNode绝对匹配的节点; (header匹配)
+ */
+-(AIAlgNodeBase*) recognition_AbsoluteMatching:(AIAlgNodeBase*)algNode isMem:(BOOL)isMem {
+    //1. 数据准备
+    if (ISOK(algNode, AIAlgNodeBase.class)) {
+        NSString *valuesMD5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:[SMGUtils sortPointers:algNode.content_ps]]]);
+        
+        //2. 循环对content_ps中微信息的引用序列进行匹配判定;
+        for (AIPointer *value_p in algNode.content_ps) {
+            NSArray *refPorts = ARRTOOK([SMGUtils searchObjectForFilePath:value_p.filePath fileName:kFNRefPorts_All(isMem) time:cRTReference_All(isMem)]);
+            for (AIPort *refPort in refPorts) {
+                
+                //3. 依次绝对匹配header,找到则return;
+                if (![refPort.target_p isEqual:algNode.pointer] && [valuesMD5 isEqualToString:refPort.header]) {
+                    AIAlgNodeBase *assAlgNode = [SMGUtils searchObjectForPointer:refPort.target_p fileName:kFNNode time:cRTNode];
+                    if (assAlgNode) {
+                        NSLog(@">>> %@绝对匹配成功;",isMem ? @"内存" : @"硬盘");
+                        return assAlgNode;
+                    }
+                }
+            }
+        }
+    }
+    return nil;
 }
 
 @end

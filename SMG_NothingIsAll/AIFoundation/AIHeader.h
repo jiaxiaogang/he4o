@@ -55,10 +55,14 @@
 #define kFNReference_ByPort @"reference_ByPort"       //微信息引用(port序)
 #define kFNDefault @" "                               //默认文件名; (例如:小脑canout序列)
 
-#define kFNMemRefPorts @"memRefPorts" //意识流_微信息的reference序列文件名;
-#define kFNMemAbsPorts @"memAbsPorts" //意识流_抽象序列;
-#define kFNMemConPorts @"memConPorts" //意识流_具象序列;
+#define kFNMemRefPorts @"memRefPorts" //内存网络_微信息的reference序列文件名;
+#define kFNMemAbsPorts @"memAbsPorts" //内存网络_抽象序列;
+#define kFNMemConPorts @"memConPorts" //内存网络_具象序列;
 #define kFNMemNode @"memNode"         //内存网络中节点
+
+#define kFNRefPorts_All(isMem) (isMem ? kFNMemRefPorts : kFNRefPorts) //微信息的reference序列文件名;
+//#define kFNAbsPorts_All(isMem) (isMem ? kFNMemAbsPorts : kFNAbsPorts) //抽象序列; (硬盘中存在node下)
+//#define kFNConPorts_All(isMem) (isMem ? kFNMemConPorts : kFNConPorts) //具象序列; (硬盘中存在node下)
 #define kFNNode_All(isMem) (isMem ? kFNMemNode : kFNNode) //节点
 
 /**
