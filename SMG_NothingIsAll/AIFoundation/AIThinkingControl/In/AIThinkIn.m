@@ -118,42 +118,22 @@
     
     //2. 对value.refPorts进行检查识别; (noMv信号已输入完毕,识别联想)
     if (ISOK(algNode, AIAlgNodeBase.class)) {
-        ///1. 绝对匹配 -> (header匹配)
+        ///1. 绝对匹配 -> 内存网络;
         assAlgNode = [self recognition_AbsoluteMatching:algNode isMem:true];
+        
+        ///2. 绝对匹配 -> 硬盘网络;
         if (!assAlgNode) {
             assAlgNode = [self recognition_AbsoluteMatching:algNode isMem:false];
         }
         
-        ///3. 局部匹配 -> (从values的8个value.refPorts找前3个, 3*8=24)
-        if (assAlgNode == nil) {
-            
-            ///4. 计数器对强度前3进行计数
-            NSMutableDictionary *countDic = [[NSMutableDictionary alloc] init];
-            for (AIPointer *value_p in algNode.content_ps) {
-                NSArray *refPorts = ARRTOOK([SMGUtils searchObjectForFilePath:value_p.filePath fileName:kFNRefPorts time:cRTReference]);
-                refPorts = [refPorts subarrayWithRange:NSMakeRange(0, MIN(cAssDataLimit, refPorts.count))];
-                for (AIPort *refPort in refPorts) {
-                    if (![refPort.target_p isEqual:algNode.pointer]) {
-                        NSData *key = [NSKeyedArchiver archivedDataWithRootObject:refPort.target_p];
-                        int oldCount = [NUMTOOK([countDic objectForKey:key]) intValue];
-                        [countDic setObject:@(oldCount + 1) forKey:key];
-                    }
-                }
-            }
-            
-            ///5. 找出计数最大的key
-            NSData *maxKey = nil;
-            for (NSData *key in countDic.allKeys) {
-                if (maxKey == nil || ([NUMTOOK([countDic objectForKey:maxKey]) intValue] < [NUMTOOK([countDic objectForKey:key]) intValue])) {
-                    maxKey = key;
-                }
-            }
-            
-            ///6. 取出对应的assAlgNode
-            if (maxKey) {
-                AIKVPointer *max_p = [NSKeyedUnarchiver unarchiveObjectWithData:maxKey];
-                assAlgNode = [SMGUtils searchObjectForPointer:max_p fileName:kFNNode time:cRTNode];
-            }
+        ///3. 局部匹配 -> 内存网络;
+        if (!assAlgNode) {
+            [self recognition_PartMatching:algNode isMem:true];
+        }
+        
+        ///4. 局部匹配 -> 硬盘网络;
+        if (!assAlgNode) {
+            [self recognition_PartMatching:algNode isMem:false];
         }
     }
     
@@ -328,6 +308,57 @@
                     }
                 }
             }
+        }
+    }
+    return nil;
+}
+
+/**
+ *  MARK:--------------------识别_局部匹配--------------------
+ *  注: 根据引用找出相似度最高且达到阀值的结果返回; (相似度匹配)
+ *  从content_ps的所有value.refPorts找前cPartMatchingCheckRefPortsLimit个, 如:contentCount9*limit5=45个;
+ */
+-(AIAlgNodeBase*) recognition_PartMatching:(AIAlgNodeBase*)algNode isMem:(BOOL)isMem {
+    //1. 数据准备;
+    if (ISOK(algNode, AIAlgNodeBase.class)) {
+        NSMutableDictionary *countDic = [[NSMutableDictionary alloc] init];
+        NSData *maxKey = nil;
+        
+        //2. 对每个微信息,取被引用的强度前cPartMatchingCheckRefPortsLimit个;
+        for (AIPointer *value_p in algNode.content_ps) {
+            NSArray *refPorts = ARRTOOK([SMGUtils searchObjectForFilePath:value_p.filePath fileName:kFNRefPorts_All(isMem) time:cRTReference_All(isMem)]);
+            refPorts = ARR_SUB(refPorts, 0, cPartMatchingCheckRefPortsLimit);
+            
+            //3. 进行计数
+            for (AIPort *refPort in refPorts) {
+                if (![refPort.target_p isEqual:algNode.pointer]) {
+                    NSData *key = [NSKeyedArchiver archivedDataWithRootObject:refPort.target_p];
+                    int oldCount = [NUMTOOK([countDic objectForKey:key]) intValue];
+                    [countDic setObject:@(oldCount + 1) forKey:key];
+                }
+            }
+        }
+        
+        //4. 从计数器countDic 中 找出最相似(计数最大)的maxKey
+        for (NSData *key in countDic.allKeys) {
+            
+            //5. 达到局部匹配的阀值才有效;
+            int curNodeMatchingCount = [NUMTOOK([countDic objectForKey:key]) intValue];
+            if ((curNodeMatchingCount / algNode.content_ps.count) >= cPartMatchingThreshold) {
+                
+                //6. 取最匹配的一个;
+                if (maxKey == nil || ([NUMTOOK([countDic objectForKey:maxKey]) intValue] < curNodeMatchingCount)) {
+                    maxKey = key;
+                }
+            }
+        }
+        
+        //7. 有结果时取出对应的assAlgNode返回;
+        if (maxKey) {
+            AIKVPointer *max_p = [NSKeyedUnarchiver unarchiveObjectWithData:maxKey];
+            AIAlgNodeBase *assAlgNode = [SMGUtils searchObjectForPointer:max_p fileName:kFNNode_All(max_p.isMem) time:cRTNode_All(max_p.isMem)];
+            NSLog(@">>> %@局部匹配成功;",isMem ? @"内存" : @"硬盘");
+            return assAlgNode;
         }
     }
     return nil;

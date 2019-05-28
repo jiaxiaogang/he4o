@@ -58,3 +58,5 @@
 //MARK:                     < ThinkIn >
 //MARK:===============================================================
 #define cMvNoneIdent @"mvNone"     //mv的默认标识
+#define cPartMatchingCheckRefPortsLimit 5 //局部匹配时_检查refPorts数;
+#define cPartMatchingThreshold 0.3  //局部匹配时_匹配阀值 (相似度)
