@@ -373,9 +373,9 @@
     return result;
 }
 
-+(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName{
-    [self insertObject:obj rootPath:rootPath fileName:fileName time:0 saveDB:true];////TODOsaveDB:true是临时的;一会删掉;
-}
+//+(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName{
+//    [self insertObject:obj rootPath:rootPath fileName:fileName time:0 saveDB:true];
+//}
 +(void) insertObject:(NSObject*)obj pointer:(AIPointer*)pointer fileName:(NSString*)fileName time:(double)time{
     if (ISOK(pointer, AIPointer.class)) {
         [self insertObject:obj rootPath:pointer.filePath fileName:fileName time:time saveDB:!pointer.isMem];
