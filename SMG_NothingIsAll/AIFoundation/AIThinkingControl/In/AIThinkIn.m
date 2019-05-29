@@ -163,8 +163,25 @@
         return nil;
     }
     
-    //2. assAlgNode的引用序列联想assFo
-    AIPort *firstPort = ARR_INDEX(recognitionAlgNode.refPorts, 0);
+    //2. assAlgNode的引用序列联想assFo (目前先仅对内存做内存操作,对硬盘做硬盘操作)
+    AIPort *firstPort;
+    if (recognitionAlgNode.pointer.isMem) {
+        
+        ///1. 尝试取_对应硬盘祖母的引用序列; (有可能被迁移过)
+        AIAlgNodeBase *hdRecogniAlgNode = [SMGUtils searchObjectForPointer:recognitionAlgNode.pointer fileName:kFNNode time:cRTNode];
+        if (hdRecogniAlgNode) {
+            firstPort = ARR_INDEX(hdRecogniAlgNode.refPorts, 0);
+        }
+        
+        ///2. 尝试取_内存祖母引用序列
+        if (!firstPort) {
+            NSArray *memRefPorts = [SMGUtils searchObjectForPointer:recognitionAlgNode.pointer fileName:kFNMemRefPorts time:cRTMemPort];
+            firstPort = ARR_INDEX(memRefPorts, 0);
+        }
+    }else{
+        ///3. 尝试取_硬盘祖母引用序列
+        firstPort = ARR_INDEX(recognitionAlgNode.refPorts, 0);
+    }
     if (!firstPort) {
         return nil;
     }
