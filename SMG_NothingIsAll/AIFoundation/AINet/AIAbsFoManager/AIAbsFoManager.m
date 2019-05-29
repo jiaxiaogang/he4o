@@ -41,14 +41,6 @@
         ///2. 收集内存memAbsPorts;
         NSArray *memAbsPorts = [SMGUtils searchObjectForPointer:conItem.pointer fileName:kFNMemAbsPorts time:cRTPort_All(conItem.pointer.isMem)];
         [allAbsPorts addObjectsFromArray:memAbsPorts];
-        
-        
-        
-        //TODOTOMORROW: (UseMemNet)
-        //1. 取用时,优先取memPorts和memNode;
-        
-        
-        
     }
     for (AIPort *port in allAbsPorts) {
         if ([samesMd5 isEqualToString:port.header]) {

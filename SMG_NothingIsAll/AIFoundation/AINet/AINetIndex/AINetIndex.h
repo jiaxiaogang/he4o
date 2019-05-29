@@ -36,7 +36,7 @@
 /**
  *  MARK:--------------------取微信息值--------------------
  */
-+(NSNumber*) getData:(AIKVPointer*)data_p;
++(NSNumber*) getData:(AIKVPointer*)value_p;
 
 @end
 

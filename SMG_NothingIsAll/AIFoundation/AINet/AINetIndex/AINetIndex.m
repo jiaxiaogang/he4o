@@ -22,8 +22,10 @@
     if (!ISOK(data, NSNumber.class)) {
         return nil;
     }
-    NSMutableArray *indexModels = [[NSMutableArray alloc] initWithArray:ARRTOOK([SMGUtils searchObjectForPointer:[SMGUtils createPointerForIndex] fileName:kFNIndex(isOut) time:cRTIndex])];//加载索引序列
-    NSMutableDictionary *dataDic = [[NSMutableDictionary alloc] initWithDictionary:DICTOOK([SMGUtils searchObjectForPointer:[SMGUtils createPointerForData] fileName:kFNData(isOut) time:cRTData])];//加载微信息值字典
+    AIKVPointer *index_p = [SMGUtils createPointerForIndex];
+    AIKVPointer *data_p = [SMGUtils createPointerForData];
+    NSMutableArray *indexModels = [[NSMutableArray alloc] initWithArray:ARRTOOK([SMGUtils searchObjectForPointer:index_p fileName:kFNIndex(isOut) time:cRTIndex])];//加载索引序列
+    NSMutableDictionary *dataDic = [[NSMutableDictionary alloc] initWithDictionary:DICTOOK([SMGUtils searchObjectForPointer:data_p fileName:kFNData(isOut) time:cRTData])];//加载微信息值字典
     
     //2. 查找model,没则new
     AINetIndexModel *model = nil;
@@ -67,16 +69,16 @@
         }
         
         //5. 存
-        [SMGUtils insertObject:indexModels rootPath:[SMGUtils createPointerForIndex].filePath fileName:kFNIndex(isOut)];
-        [SMGUtils insertObject:dataDic rootPath:[SMGUtils createPointerForData].filePath fileName:kFNData(isOut)];
+        [SMGUtils insertObject:indexModels pointer:index_p fileName:kFNIndex(isOut) time:cRTIndex];
+        [SMGUtils insertObject:dataDic pointer:data_p fileName:kFNData(isOut) time:cRTData];
     }];
     
     return resultPointer;
 }
 
-+(NSNumber*) getData:(AIKVPointer*)data_p{
-    NSDictionary *dataDic = DICTOOK([SMGUtils searchObjectForPointer:[SMGUtils createPointerForData] fileName:kFNData(data_p.isOut) time:cRTData]);
-    return [dataDic objectForKey:data_p];
++(NSNumber*) getData:(AIKVPointer*)value_p{
+    NSDictionary *dataDic = DICTOOK([SMGUtils searchObjectForPointer:[SMGUtils createPointerForData] fileName:kFNData(value_p.isOut) time:cRTData]);
+    return [dataDic objectForKey:value_p];
 }
 
 //MARK:===============================================================

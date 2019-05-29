@@ -59,6 +59,15 @@
     //2. 检测imv
     BOOL findMV = [ThinkingUtils dataIn_CheckMV:algsArr];
     
+    
+    
+    //TODOTOMORROW: (UseMemNet)
+    //1. 取用时,优先取memPorts和memNode;
+    //2. 已完成识别部分和NoMv部分;明天检查findMV部分;
+    
+    
+    
+    
     //3. 分流_mv时
     if (findMV) {
         [self dataIn_FindMV:algsArr];
