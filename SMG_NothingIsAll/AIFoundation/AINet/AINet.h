@@ -99,9 +99,13 @@
  */
 -(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem;
 
-//获取绝对匹配到value_ps的algNode (祖母引用联想的方式去重)
+
+/**
+ *  MARK:--------------------获取value_ps相匹配的祖母--------------------
+ *  说明: 获取绝对匹配到value_ps的algNode (祖母引用联想的方式去重)
+ */
 -(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValueP:(AIPointer*)value_p;
--(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps exceptAlg_p:(AIPointer*)exceptAlg_p;
+-(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps exceptAlg_p:(AIPointer*)exceptAlg_p isMem:(BOOL)isMem;
 
 @end
 

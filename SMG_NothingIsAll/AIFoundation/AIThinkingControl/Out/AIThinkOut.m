@@ -30,6 +30,21 @@
 //MARK:===============================================================
 
 -(void) dataOut {
+    
+    
+    
+    
+    //TODOTOMORROW: (UseMemNet)
+    //1. 取用时,优先取memPorts和memNode;
+    
+    
+    
+    
+    
+    
+    
+    
+    
     //1. 重排序 & 取当前序列最前的demandModel
     DemandModel *demandModel = nil;
     if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkOut_GetCurrentDemand)]) {

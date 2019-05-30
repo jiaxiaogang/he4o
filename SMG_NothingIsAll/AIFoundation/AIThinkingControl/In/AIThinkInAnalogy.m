@@ -134,13 +134,6 @@
 //MARK:                     < 内类比部分 >
 //MARK:===============================================================
 +(void) analogyInner:(AIFoNodeBase*)checkFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)())updateEnergy{
-    
-    
-    //TODOTOMORROW: (UseMemNet)
-    //1. 取用时,优先取memPorts和memNode;
-    
-    
-    
     //1. 数据检查
     if (!ISOK(checkFo, AIFoNodeBase.class)) {
         return;
@@ -159,8 +152,8 @@
             //4. 取出两个祖母
             AIKVPointer *algA_p = ARR_INDEX(orders, i);
             AIKVPointer *algB_p = ARR_INDEX(orders, j);
-            AIAlgNode *algNodeA = [SMGUtils searchObjectForPointer:algA_p fileName:kFNNode time:cRTNode];
-            AIAlgNode *algNodeB = [SMGUtils searchObjectForPointer:algB_p fileName:kFNNode time:cRTNode];
+            AIAlgNode *algNodeA = [SMGUtils searchNode:algA_p];
+            AIAlgNode *algNodeB = [SMGUtils searchNode:algB_p];
             
             //5. 内类比找不同 (比大小:同区不同值 / 有无)
             AINetAbsFoNode *abFo = nil;
@@ -294,12 +287,12 @@
             }
             
             //7. 构建mv节点,形成mv基本模型;
-            AIAbsCMVNode * createrMv = [theNet createAbsCMVNode_Inner:createrFo.pointer conMv_p:conFo.cmvNode_p];
+            AIAbsCMVNode *createrMv = [theNet createAbsCMVNode_Inner:createrFo.pointer conMv_p:conFo.cmvNode_p];
             
             //8. cmv模型连接;
             if (ISOK(createrMv, AIAbsCMVNode.class)) {
                 createrFo.cmvNode_p = createrMv.pointer;
-                [SMGUtils insertObject:createrFo pointer:createrFo.pointer fileName:kFNNode time:cRTNode];
+                [SMGUtils insertNode:createrFo];
             }
             return createrFo;
         }
@@ -310,15 +303,16 @@
 
 /**
  *  MARK:--------------------内类比的内中有外--------------------
- *  1. 根据abFo联想assAbFo并进行外类比
+ *  1. 根据abFo联想assAbFo并进行外类比 (根据微信息来索引查找assAbFo)
  *  2. 复用外类比方法;
+ *  3. 一个抽象了a1-range-a2的时序,必然是抽象的,必然是硬盘网络中的;所以此处不必考虑联想内存网络中的assAbFo;
  */
 +(void)analogyInner_Outside:(AINetAbsFoNode*)abFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)())updateEnergy{
     //1. 数据检查
     if (ISOK(abFo, AINetAbsFoNode.class)) {
         //2. 取用来联想的aAlg;
         AIPointer *a_p = ARR_INDEX(abFo.orders_kvp, 0);
-        AIAlgNodeBase *aAlg = [SMGUtils searchObjectForPointer:a_p fileName:kFNNode time:cRTNode];
+        AIAlgNodeBase *aAlg = [SMGUtils searchNode:a_p];
         if (!aAlg) {
             return;
         }
@@ -327,7 +321,7 @@
         AIFoNodeBase *assAbFo = nil;
         for (AIPort *refPort in aAlg.refPorts) {
             ///1. 不能与abFo重复
-            if (![aAlg.pointer isEqual:refPort.target_p]) {
+            if (![abFo.pointer isEqual:refPort.target_p]) {
                 AIFoNodeBase *refFo = [SMGUtils searchObjectForPointer:refPort.target_p fileName:kFNNode time:cRTNode];
                 if (ISOK(refFo, AIFoNodeBase.class)) {
                     AIPointer *firstAlg_p = ARR_INDEX(refFo.orders_kvp, 0);
