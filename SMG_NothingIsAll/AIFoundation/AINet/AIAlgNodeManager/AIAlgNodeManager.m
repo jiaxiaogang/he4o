@@ -31,7 +31,7 @@
     [AINetUtils insertRefPorts_AllAlgNode:conNode.pointer value_ps:conNode.content_ps ps:conNode.content_ps];
     
     //5. 存储
-    [SMGUtils insertObject:conNode pointer:conNode.pointer fileName:kFNNode time:cRTNode_All(isMem)];
+    [SMGUtils insertNode:conNode];
     return conNode;
 }
 
@@ -100,11 +100,11 @@
 //    return result;
 //}
 
-+(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)algSames conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem{
-    if (ARRISOK(algSames) && ARRISOK(conAlgs)) {
++(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem{
+    if (ARRISOK(value_ps) && ARRISOK(conAlgs)) {
         //1. 数据准备
-        algSames = ARRTOOK(algSames);
-        NSArray *sortSames = ARRTOOK([SMGUtils sortPointers:algSames]);
+        value_ps = ARRTOOK(value_ps);
+        NSArray *sortSames = ARRTOOK([SMGUtils sortPointers:value_ps]);
         NSString *samesStr = [SMGUtils convertPointers2String:sortSames];
         NSString *samesMd5 = STRTOOK([NSString md5:samesStr]);
         
@@ -139,8 +139,8 @@
         //4. 祖母的嵌套
         for (AIAlgNode *item in conAlgs) {
             ///1. 可替换时,逐个进行替换; (比如cLess/cGreater时,就不可替换)
-            if ([SMGUtils containsSub_ps:algSames parent_ps:item.content_ps]) {
-                NSMutableArray *newValue_ps = [SMGUtils removeSub_ps:algSames parent_ps:[[NSMutableArray alloc] initWithArray:item.content_ps]];
+            if ([SMGUtils containsSub_ps:value_ps parent_ps:item.content_ps]) {
+                NSMutableArray *newValue_ps = [SMGUtils removeSub_ps:value_ps parent_ps:[[NSMutableArray alloc] initWithArray:item.content_ps]];
                 [newValue_ps addObject:findAbsNode.pointer];
                 item.content_ps = [SMGUtils sortPointers:newValue_ps];
             }

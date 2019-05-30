@@ -280,7 +280,7 @@
         }
         
         //7. 抽象节点的 关联&存储
-        [SMGUtils insertObject:absNode pointer:absNode.pointer fileName:kFNNode_All(absNode.pointer.isMem) time:cRTNode_All(absNode.pointer.isMem)];
+        [SMGUtils insertNode:absNode];
     }
 }
 

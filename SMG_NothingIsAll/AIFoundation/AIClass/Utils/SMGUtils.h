@@ -95,8 +95,9 @@
 
 
 /**
- *  MARK:--------------------insertOther--------------------
+ *  MARK:--------------------Node--------------------
  */
++(id) searchNode:(AIPointer*)pointer;
 +(void) insertNode:(AINodeBase*)node;
 
 @end

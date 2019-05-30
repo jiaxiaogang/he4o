@@ -406,9 +406,16 @@
     [[XGRedis sharedInstance] setObject:obj forKey:key time:time];//随后去掉(redisKey)前辍
 }
 
++(id) searchNode:(AIPointer*)pointer {
+    if (ISOK(pointer, AIPointer.class)) {
+        return [self searchObjectForFilePath:pointer.filePath fileName:kFNNode_All(pointer.isMem) time:cRTNode_All(pointer.isMem)];
+    }
+    return nil;
+}
+
 +(void) insertNode:(AINodeBase*)node{
     if (ISOK(node, AINodeBase.class)) {
-        [self insertObject:node rootPath:node.pointer.filePath fileName:kFNNode_All(node.pointer.isMem) time:cRTNode saveDB:!node.pointer.isMem];
+        [self insertObject:node pointer:node.pointer fileName:kFNNode_All(node.pointer.isMem) time:cRTNode_All(node.pointer.isMem)];
     }
 }
 

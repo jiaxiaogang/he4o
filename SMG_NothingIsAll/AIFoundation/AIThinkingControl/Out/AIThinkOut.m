@@ -105,7 +105,7 @@
         MVDirection direction = downDemand ? MVDirection_Negative : MVDirection_Positive;
         
         //2. filter筛选器取曾经历的除已有outMvModels之外的最强解决;
-        NSArray *mvRefs = [theNet getNetNodePointersFromDirectionReference:demandModel.algsType direction:direction filter:^NSArray *(NSArray *protoArr) {
+        NSArray *mvRefs = [theNet getNetNodePointersFromDirectionReference:demandModel.algsType direction:direction isMem:false filter:^NSArray *(NSArray *protoArr) {
             protoArr = ARRTOOK(protoArr);
             for (NSInteger i = 0; i < protoArr.count; i++) {
                 AIPort *port = ARR_INDEX(protoArr, protoArr.count - i - 1);

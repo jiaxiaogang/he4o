@@ -40,22 +40,22 @@
                     }
                     
                     ///2. 取出algNodeA & algNodeB
-                    AIAlgNode *algNodeA = [SMGUtils searchObjectForPointer:algNodeA_p fileName:kFNNode time:cRTNode];
-                    AIAlgNode *algNodeB = [SMGUtils searchObjectForPointer:algNodeB_p fileName:kFNNode time:cRTNode];
+                    AIAlgNode *algNodeA = [SMGUtils searchNode:algNodeA_p];
+                    AIAlgNode *algNodeB = [SMGUtils searchNode:algNodeB_p];
                     
                     ///3. values->absPorts的认知过程
                     if (algNodeA && algNodeB) {
-                        NSMutableArray *algSames = [[NSMutableArray alloc] init];
+                        NSMutableArray *sameValue_ps = [[NSMutableArray alloc] init];
                         for (AIKVPointer *valueA_p in algNodeA.content_ps) {
                             for (AIKVPointer *valueB_p in algNodeB.content_ps) {
-                                if ([valueA_p isEqual:valueB_p] && ![algSames containsObject:valueB_p]) {
-                                    [algSames addObject:valueB_p];
+                                if ([valueA_p isEqual:valueB_p] && ![sameValue_ps containsObject:valueB_p]) {
+                                    [sameValue_ps addObject:valueB_p];
                                     break;
                                 }
                             }
                         }
-                        if (ARRISOK(algSames)) {
-                            [theNet createAbsAlgNode:algSames conAlgs:@[algNodeA,algNodeB] isMem:false];
+                        if (ARRISOK(sameValue_ps)) {
+                            [theNet createAbsAlgNode:sameValue_ps conAlgs:@[algNodeA,algNodeB] isMem:false];
                             
                             ///4. 构建时,消耗能量值;
                             if (updateEnergy) {
@@ -103,14 +103,13 @@
         BOOL jumpForAbsAlreadyHav = (ISOK(assFo, AINetAbsFoNode.class) && samesEqualAssFo);
         if (jumpForAbsAlreadyHav) {
             AINetAbsFoNode *assAbsFo = (AINetAbsFoNode*)assFo;
-            [AINetUtils insertPointer_Hd:fo.pointer toPorts:assAbsFo.conPorts ps:fo.orders_kvp];
-            [AINetUtils insertPointer_Hd:assAbsFo.pointer toPorts:fo.absPorts ps:assAbsFo.orders_kvp];
+            [AINetUtils relateFoAbs:assAbsFo conNodes:@[fo]];
         }else{
             //4. 构建absFoNode
             AINetAbsFoNode *createAbsFo = [theNet createAbsFo_Outside:fo foB:assFo orderSames:orderSames];
 
             //5. createAbsCmvNode
-            AICMVNodeBase *assMv = [SMGUtils searchObjectForPointer:assFo.cmvNode_p fileName:kFNNode];
+            AICMVNodeBase *assMv = [SMGUtils searchNode:assFo.cmvNode_p];
             if (assMv) {
                 AIAbsCMVNode *createAbsCmv = [theNet createAbsCMVNode_Outside:createAbsFo.pointer aMv_p:fo.cmvNode_p bMv_p:assMv.pointer];
                 
@@ -135,6 +134,13 @@
 //MARK:                     < 内类比部分 >
 //MARK:===============================================================
 +(void) analogyInner:(AIFoNodeBase*)checkFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)())updateEnergy{
+    
+    
+    //TODOTOMORROW: (UseMemNet)
+    //1. 取用时,优先取memPorts和memNode;
+    
+    
+    
     //1. 数据检查
     if (!ISOK(checkFo, AIFoNodeBase.class)) {
         return;

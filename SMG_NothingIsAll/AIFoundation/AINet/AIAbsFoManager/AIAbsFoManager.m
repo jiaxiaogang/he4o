@@ -44,7 +44,7 @@
     }
     for (AIPort *port in allAbsPorts) {
         if ([samesMd5 isEqualToString:port.header]) {
-            findAbsNode = [SMGUtils searchObjectForPointer:port.target_p fileName:kFNNode time:cRTNode];
+            findAbsNode = [SMGUtils searchNode:port.target_p];
             if (findAbsNode.pointer.isMem) {
                 ///3. 转移foNode到硬盘网络;
                 NSLog(@"检查!!!!,此处对findAbsNode做内存到硬盘网络的转移!!!");

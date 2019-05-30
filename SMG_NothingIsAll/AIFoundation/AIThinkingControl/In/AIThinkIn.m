@@ -59,15 +59,6 @@
     //2. 检测imv
     BOOL findMV = [ThinkingUtils dataIn_CheckMV:algsArr];
     
-    
-    
-    //TODOTOMORROW: (UseMemNet)
-    //1. 取用时,优先取memPorts和memNode;
-    //2. 已完成识别部分和NoMv部分;明天检查findMV部分;
-    
-    
-    
-    
     //3. 分流_mv时
     if (findMV) {
         [self dataIn_FindMV:algsArr];
@@ -223,7 +214,7 @@
     }
     
     //2. 取cmvNode
-    AICMVNode *cmvNode = [SMGUtils searchObjectForPointer:foNode.cmvNode_p fileName:kFNNode time:cRTNode];
+    AICMVNode *cmvNode = [SMGUtils searchNode:foNode.cmvNode_p];
     if (!ISOK(cmvNode, AICMVNode.class)) {
         return;
     }
@@ -249,29 +240,40 @@
  *   > 联想->类比->规律->抽象->关联->网络
  */
 -(void) dataIn_FindMV_Learning:(AIFrontOrderNode*)foNode cmvNode:(AICMVNode*)cmvNode {
-    //1. 数据检查
+    //1. 数据检查 & 准备
     if (foNode == nil || cmvNode == nil) {
         return;
     }
-    
-    //2. 联想相关数据
     NSInteger delta = [NUMTOOK([AINetIndex getData:cmvNode.delta_p]) integerValue];
     MVDirection direction = delta < 0 ? MVDirection_Negative : MVDirection_Positive;
-    NSArray *directionPorts = [[AINet sharedInstance] getNetNodePointersFromDirectionReference:cmvNode.pointer.algsType direction:direction limit:2];
+    
+    //2. 联想相似mv数据_内存网络取1个,硬盘网络取2个;
+    NSArray *memMvPorts = [theNet getNetNodePointersFromDirectionReference:cmvNode.pointer.algsType direction:direction isMem:true filter:^NSArray *(NSArray *protoArr) {
+        protoArr = ARRTOOK(protoArr);
+        for (AIPort *protoItem in protoArr) {
+            if (![cmvNode.pointer isEqual:protoItem.target_p]) {
+                return @[protoItem];
+            }
+        }
+        return nil;
+    }];
+    NSArray *hdMvPorts = [theNet getNetNodePointersFromDirectionReference:cmvNode.pointer.algsType direction:direction isMem:false limit:2];
+    
+    NSMutableArray *assDirectionPorts = [[NSMutableArray alloc] init];
+    [assDirectionPorts addObjectsFromArray:memMvPorts];
+    [assDirectionPorts addObjectsFromArray:hdMvPorts];
     
     //3. 外类比_以mv为方向,联想assFo
-    for (AIPort *assDirectionPort in ARRTOOK(directionPorts)) {
-        id assDirectionNode = [SMGUtils searchObjectForPointer:assDirectionPort.target_p fileName:kFNNode];
+    for (AIPort *assDirectionPort in assDirectionPorts) {
+        AICMVNodeBase *assMvNode = [SMGUtils searchNode:assDirectionPort.target_p];
         
-        if (ISOK(assDirectionNode, AICMVNodeBase.class)) {
-            AICMVNodeBase *ass_cn = (AICMVNodeBase*)assDirectionNode;
+        if (ISOK(assMvNode, AICMVNodeBase.class)) {
             //4. 排除联想自己(随后写到reference中)
-            if (![cmvNode.pointer isEqual:ass_cn.pointer]) {
-                AIFoNodeBase *assFrontNode = [SMGUtils searchObjectForPointer:ass_cn.foNode_p fileName:kFNNode time:cRTNode];
+            if (![cmvNode.pointer isEqual:assMvNode.pointer]) {
+                AIFoNodeBase *assFrontNode = [SMGUtils searchNode:assMvNode.foNode_p];
                 
                 if (ISOK(assFrontNode, AINodeBase.class)) {
                     NSLog(@"\n抽象前========== %@",[NVUtils getCmvModelDesc_ByFoNode:assFrontNode]);
-                    
                     //5. 执行外类比;
                     [AIThinkInAnalogy analogyOutside:foNode assFo:assFrontNode canAss:^BOOL{
                         return [self canAss];
