@@ -29,9 +29,11 @@
  *  @param indexPointer : value地址
  *  @param target_p : 引用者地址(如:xxNode.pointer)
  *
- *  注: 暂不支持output;
+ *  注:
+ *  1. 暂不支持output;
+ *  2. 由AINetUtils.insertRefPorts_AllMvNode()取代
  */
--(void) setNetReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue;
+//-(void) setNetReference:(AIKVPointer*)value_p target_p:(AIKVPointer*)target_p difValue:(int)difValue;
 
 //获取算法单结果的第二序列联想;
 -(NSArray*) getNetReference:(AIKVPointer*)pointer limit:(NSInteger)limit;
@@ -57,11 +59,11 @@
 -(NSArray*) getNetNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction isMem:(BOOL)isMem filter:(NSArray*(^)(NSArray *protoArr))filter;
 
 /**
- *  MARK:--------------------cmvNode或absCMVNode构建时,报告directionReference--------------------
- *  @param difStrong : mv的迫切度越高,越强;
- *  @param direction : 方向(delta的正负)
+ *  MARK:--------------------mvNode的方向索引--------------------
+ *  @param difStrong    : mv的迫切度越高,越强;
+ *  @param delta        :
  */
--(void) setNetNodePointerToDirectionReference:(AIKVPointer*)cmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction difStrong:(NSInteger)difStrong;
+-(void) setMvNodeToDirectionReference:(AIKVPointer*)cmvNode_p delta:(NSInteger)delta difStrong:(NSInteger)difStrong;
 
 
 //MARK:===============================================================

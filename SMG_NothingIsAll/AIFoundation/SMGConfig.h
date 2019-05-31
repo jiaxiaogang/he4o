@@ -17,15 +17,18 @@
 #define cRTNode 200         //所有node时间
 #define cRTDefault 60       //默认,例如:小脑canout序列;
 #define cRTPort 200         //refPorts(祖母),absPorts,conPorts的时间;
+#define cRTMvRef 600        //mv方向索引时间;
 
 #define cRTMemDefault 1800  //内存网络_默认生存时间;
 #define cRTMemNode 1800     //内存网络_Node时间;
 #define cRTMemPort 1800     //内存网络_Port时间;
 #define cRTMemReference 1800//内存网络_微信息引用序列
+#define cRTMemMvRef 1800    //mv方向索引时间;
 
 #define cRTNode_All(isMem) (isMem ? cRTMemNode : cRTNode)
 #define cRTPort_All(isMem) (isMem ? cRTMemPort : cRTPort)
 #define cRTReference_All(isMem) (isMem ? cRTMemReference : cRTReference)    //微信息索引序列
+#define cRTMemMvRef_All(isMem) (isMem ? cRTMemMvRef : cRTMvRef)             //mv方向索引时间;
 
 //MARK:===============================================================
 //MARK:                     < thinkingControl >

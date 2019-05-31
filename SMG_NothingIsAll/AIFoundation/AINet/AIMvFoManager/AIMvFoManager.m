@@ -38,9 +38,9 @@
     cmvNode.pointer = [SMGUtils createPointer:kPN_CMV_NODE algsType:mvAlgsType dataSource:@"" isOut:false isMem:true];
     cmvNode.delta_p = deltaPointer;
     cmvNode.urgentTo_p = urgentToPointer;
-    [theNet setNetReference:cmvNode.delta_p target_p:cmvNode.pointer difValue:1];//引用插线
-    [theNet setNetReference:cmvNode.urgentTo_p target_p:cmvNode.pointer difValue:1];//引用插线
-    [self createdCMVNode:cmvNode.pointer delta:deltaValue urgentTo:urgentToValue];
+    [AINetUtils insertRefPorts_AllMvNode:cmvNode.pointer value_p:cmvNode.delta_p difStrong:1];//引用插线
+    [AINetUtils insertRefPorts_AllMvNode:cmvNode.pointer value_p:cmvNode.urgentTo_p difStrong:1];//引用插线
+    [theNet setMvNodeToDirectionReference:cmvNode.pointer delta:deltaValue difStrong:urgentToValue];//difStrong暂时先相等;
     
     //3. 打包foNode;
     AIFrontOrderNode *foNode = [[AIFrontOrderNode alloc] init];//node
@@ -64,14 +64,6 @@
     
     //6. 返回给thinking
     return foNode;
-}
-
--(void) createdCMVNode:(AIKVPointer*)cmvNode_p delta:(NSInteger)delta urgentTo:(NSInteger)urgentTo {
-    MVDirection direction = delta < 0 ? MVDirection_Negative : MVDirection_Positive;
-    NSInteger difStrong = urgentTo;//暂时先相等;
-    if (ISOK(cmvNode_p, AIKVPointer.class)) {
-        [theNet setNetNodePointerToDirectionReference:cmvNode_p mvAlgsType:cmvNode_p.algsType direction:direction difStrong:difStrong];
-    }
 }
 
 @end

@@ -19,7 +19,7 @@
 /**
  *  MARK:--------------------给target_p建引用序列索引--------------------
  *  @param target_p     :   引用信息的节点地址 (引用者地址(如:xxNode.pointer))
- *  @param index_p      :   被引用的信息地址 (value地址)
+ *  @param value_p      :   被引用的信息地址 (value地址)
  *
  *  注:
  *  1. 分别排了kFNReference_ByPointer和kFNReference_ByPort两个序列;
@@ -30,8 +30,9 @@
  *  注2:
  *  6. outNode或absOutNode作为target_p时(目前其实就是outputIndex_p);
  *  7. 此方法仅存硬盘,存内存网络的,在AINetUtils中;
+ *  8. 2019.05.31由AINetUtils.insertRefPorts_AllMvNode()取代;但代码先不删,因为双序列方式,有可能后面会用来做空间换时间优化;
  */
--(void) setReference:(AIKVPointer*)index_p target_p:(AIKVPointer*)target_p difStrong:(int)difStrong;
+//-(void) setReference:(AIKVPointer*)value_p target_p:(AIKVPointer*)target_p difStrong:(int)difStrong;
 
 
 /**

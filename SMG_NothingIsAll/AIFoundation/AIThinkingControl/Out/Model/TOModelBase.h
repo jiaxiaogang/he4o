@@ -34,8 +34,9 @@
 
 /**
  *  MARK:--------------------获取当前最强的outSubModel--------------------
+ *  @result 返回TOModelBase或其子类型;
  */
--(TOModelBase*) getCurSubModel;
+-(id) getCurSubModel;
 
 /**
  *  MARK:--------------------对比是否相等--------------------

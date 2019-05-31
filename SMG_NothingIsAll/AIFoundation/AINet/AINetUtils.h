@@ -71,9 +71,11 @@
 
 /**
  *  MARK:--------------------mv_引用_微信息--------------------
+ *  @param difStrong    : mvNode的方向索引序列传urgent正相关值 / delta和urgent传1;
+ *  @param value_p      : 有三种值; 1:delta 2:urgent 3:DirectionReference地址;
  *  注:目前在使用NetRefrence,所以此处不用;
  */
-+(void) insertRefPorts_AllMvNode:(AIPointer*)mvNode_p value_p:(AIPointer*)value_p;
++(void) insertRefPorts_AllMvNode:(AIPointer*)mvNode_p value_p:(AIPointer*)value_p difStrong:(NSInteger)difStrong;
 
 
 
@@ -83,13 +85,14 @@
 
 /**
  *  MARK:--------------------节点插到被引用信息上--------------------
- *  @param passiveRef_p     : 此指针,被某节点引用;
+ *  @param passiveRef_p : 此指针,被某节点引用;
  *  @param memNode_p    : 此节点,引用了某指针;
+ *  @param ps           : algNode传content_ps,foNode传orders_kvp,而mv传nil;
+ *  @param difStrong    : mvNode索引引用序列传迫切度正相关值,delta和urgent及别的微信息传1;
  *  1. 目前仅支持内存网络,硬盘网络在AIRefrAINetIndexReference.setRefresh()中;
  *  2. 微信息引用ports.header为空; (因为目前不需要)
  */
-+(void) insertRefPorts_MemNode:(AIPointer*)memNode_p passiveRef_p:(AIPointer*)passiveRef_p;
-+(void) insertRefPorts_MemNode:(AIPointer*)memNode_p passiveRef_p:(AIPointer*)passiveRef_p ps:(NSArray*)ps;
++(void) insertRefPorts_MemNode:(AIPointer*)memNode_p passiveRef_p:(AIPointer*)passiveRef_p ps:(NSArray*)ps difStrong:(NSInteger)difStrong;
 /**
  *  MARK:--------------------抽象插到具象上--------------------
  */

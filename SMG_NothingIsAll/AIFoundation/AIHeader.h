@@ -48,7 +48,6 @@
 #define kFNRefPorts @"refPorts"       //微信息的reference序列文件名;
 #define kFNIndex(isOut) STRFORMAT(@"index_%d",isOut) //in微信息索引(数组) / out小脑微信息(数组)
 #define kFNData(isOut) STRFORMAT(@"data_%d",isOut) //in微信息值 / out小脑微信息值 (dic)
-#define kFNReference @"reference"     //微信息引用序列
 #define kFNDirectionIndex(mvDirection) STRFORMAT(@"directionIndex_%ld",mvDirection) //mv的顺逆方向索引序列地址
 
 #define kFNReference_ByPointer @"reference_ByPointer" //微信息引用(pointer序)

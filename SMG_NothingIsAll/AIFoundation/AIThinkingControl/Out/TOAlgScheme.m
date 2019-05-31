@@ -16,6 +16,18 @@
 
 @implementation TOAlgScheme
 
+
+
+//TODOTOMORROW: (UseMemNet To TOAlgScheme)
+//1. 取用时,优先取memPorts和memNode;
+//a. actionScheme T
+//b. mvScheme T
+//c. foScheme T
+//d. algScheme.TOAlgScheme
+
+
+
+
 //对一个rangeOrder进行行为化;
 +(NSArray*) convert2Out:(NSArray*)curAlg_ps{
     //1. 数据准备

@@ -108,13 +108,13 @@ static AINet *_instance;
 //MARK:                     < reference >
 //MARK:===============================================================
 
--(void) setNetReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue{
-    if (!target_p.isMem) {
-        [self.reference setReference:indexPointer target_p:target_p difStrong:difValue];
-    }else{
-        [AINetUtils insertRefPorts_MemNode:target_p passiveRef_p:indexPointer];
-    }
-}
+//-(void) setNetReference:(AIKVPointer*)value_p target_p:(AIKVPointer*)target_p difValue:(int)difValue{
+//    if (!target_p.isMem) {
+//        [self.reference setReference:value_p target_p:target_p difStrong:difValue];
+//    }else{
+//        [AINetUtils insertRefPorts_MemNode:target_p passiveRef_p:value_p];
+//    }
+//}
 
 -(NSArray*) getNetReference:(AIKVPointer*)pointer limit:(NSInteger)limit {
     return [self.reference getReference:pointer limit:limit];
@@ -160,11 +160,16 @@ static AINet *_instance;
     return [self.netDirectionReference getNodePointersFromDirectionReference:mvAlgsType direction:direction isMem:isMem filter:filter];
 }
 
--(void) setNetNodePointerToDirectionReference:(AIKVPointer*)cmvNode_p mvAlgsType:(NSString*)mvAlgsType direction:(MVDirection)direction difStrong:(NSInteger)difStrong{
-    if (!cmvNode_p.isMem) {
-        [self.netDirectionReference setNodePointerToDirectionReference:cmvNode_p mvAlgsType:mvAlgsType direction:direction difStrong:difStrong];
-    }else{
-        [self.netDirectionReference setNodePointerToDirectionMemReference:cmvNode_p mvAlgsType:mvAlgsType direction:direction];
+-(void) setMvNodeToDirectionReference:(AIKVPointer*)cmvNode_p delta:(NSInteger)delta difStrong:(NSInteger)difStrong {
+    //1. 取方向(delta的正负)
+    MVDirection direction = delta < 0 ? MVDirection_Negative : MVDirection_Positive;
+    if (ISOK(cmvNode_p, AIKVPointer.class)) {
+        
+        //2. 取虚似value_p地址; (不存在值的固定指针地址)
+        AIKVPointer *mvReference_p = [SMGUtils createPointerForDirection:cmvNode_p.algsType direction:direction];
+        
+        //3. 将mvNode地址,插入到强度序列,并存储;
+        [AINetUtils insertRefPorts_AllMvNode:cmvNode_p value_p:mvReference_p difStrong:difStrong];
     }
 }
 

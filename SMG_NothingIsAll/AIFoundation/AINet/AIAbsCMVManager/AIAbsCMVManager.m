@@ -75,7 +75,7 @@
     AIPointer *urgentTo_p = [theNet getNetDataPointerWithData:@(absUrgentTo) algsType:algsType dataSource:dataSource];
     if (ISOK(urgentTo_p, AIKVPointer.class)) {
         result.urgentTo_p = (AIKVPointer*)urgentTo_p;
-        [theNet setNetReference:result.urgentTo_p target_p:result.pointer difValue:1];//引用插线
+        [AINetUtils insertRefPorts_AllMvNode:result.pointer value_p:result.urgentTo_p difStrong:1];//引用插线
     }
     
     //6. absDelta
@@ -83,26 +83,20 @@
     AIPointer *delta_p = [theNet getNetDataPointerWithData:@(absDelta) algsType:algsType dataSource:dataSource];
     if (ISOK(delta_p, AIKVPointer.class)) {
         result.delta_p = (AIKVPointer*)delta_p;
-        [theNet setNetReference:result.delta_p target_p:result.pointer difValue:1];//引用插线
+        [AINetUtils insertRefPorts_AllMvNode:result.pointer value_p:result.delta_p difStrong:1];//引用插线
     }
     
     //7. 抽具象关联插线 & 存储抽具象节点;
     [AINetUtils relateMvAbs:result conNodes:conMvs];
     
-    //8. 报告添加direction引用
-    [self createdAbsCMVNode:result.pointer delta:absDelta urgentTo:absUrgentTo];
+    //8. 报告添加direction引用 (difStrong暂时先x2;(因为一般是两个相抽象))
+    [theNet setMvNodeToDirectionReference:result.pointer delta:absDelta difStrong:absUrgentTo * 2];
     return result;
 }
 
 //MARK:===============================================================
 //MARK:                     < private_Method >
 //MARK:===============================================================
--(void) createdAbsCMVNode:(AIKVPointer*)absCmvNode_p delta:(NSInteger)delta urgentTo:(NSInteger)urgentTo{
-    MVDirection direction = delta < 0 ? MVDirection_Negative : MVDirection_Positive;
-    NSInteger difStrong = urgentTo * 2;//暂时先x2;(因为一般是两个相抽象)
-    if (ISOK(absCmvNode_p, AIKVPointer.class)) {
-        [theNet setNetNodePointerToDirectionReference:absCmvNode_p mvAlgsType:absCmvNode_p.algsType direction:direction difStrong:difStrong];
-    }
-}
+
 
 @end

@@ -154,14 +154,14 @@
 }
 
 +(CGFloat) getScoreForce:(AIPointer*)cmvNode_p ratio:(CGFloat)ratio{
-    AICMVNodeBase *cmvNode = [SMGUtils searchObjectForPointer:cmvNode_p fileName:kFNNode time:cRTNode];
+    AICMVNodeBase *cmvNode = [SMGUtils searchNode:cmvNode_p];
     if (ISOK(cmvNode, AICMVNodeBase.class)) {
         return [ThinkingUtils getScoreForce:cmvNode.pointer.algsType urgentTo_p:cmvNode.urgentTo_p delta_p:cmvNode.delta_p ratio:ratio];
     }
     return 0;
 }
 
-+(CGFloat) getScoreForce:(NSString*)algsType urgentTo_p:(AIPointer*)urgentTo_p delta_p:(AIPointer*)delta_p ratio:(CGFloat)ratio{
++(CGFloat) getScoreForce:(NSString*)algsType urgentTo_p:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p ratio:(CGFloat)ratio{
     //1. 检查absCmvNode是否顺心
     NSInteger delta = [NUMTOOK([AINetIndex getData:delta_p]) integerValue];
     NSInteger urgentTo = [NUMTOOK([AINetIndex getData:urgentTo_p]) integerValue];
@@ -245,7 +245,7 @@
 
 +(CGFloat) dataOut_CheckScore_ExpOut:(AIPointer*)foNode_p {
     //1. 数据
-    AIFoNodeBase *foNode = [SMGUtils searchObjectForPointer:foNode_p fileName:kFNNode time:cRTNode];
+    AIFoNodeBase *foNode = [SMGUtils searchNode:foNode_p];
     
     //2. 评价 (根据当前foNode的mv果,处理cmvNode评价影响力;(系数0.2))
     CGFloat score = 0;
@@ -283,7 +283,7 @@
         if (![SMGUtils containsSub_p:fo_p parent_ps:except_ps]) {
             
             //3. 未排除,返回;
-            id result = [SMGUtils searchObjectForPointer:fo_p fileName:kFNNode time:cRTNode];
+            id result = [SMGUtils searchNode:fo_p];
             if (checkBlock) {
                 if (checkBlock(result)) {
                     return result;
@@ -319,9 +319,9 @@
     NSMutableArray *result = [[NSMutableArray alloc] init];
     curLayer_ps = ARRTOOK(curLayer_ps);
     
-    //2. 每层向具象取前3条
+    //2. 每层向具象取前5条
     for (AIPointer *fo_p in curLayer_ps) {
-        id curNode = [SMGUtils searchObjectForPointer:fo_p fileName:kFNNode time:cRTNode];
+        id curNode = [SMGUtils searchNode:fo_p];
         if (getConPsBlock) {
             NSArray *con_ps = ARRTOOK(getConPsBlock(curNode));
             [result addObjectsFromArray:con_ps];

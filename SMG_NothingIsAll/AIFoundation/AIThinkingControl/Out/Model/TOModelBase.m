@@ -33,7 +33,7 @@
     return _subModels;
 }
 
--(TOModelBase*) getCurSubModel{
+-(id) getCurSubModel{
     TOModelBase *maxModel = nil;
     for (TOModelBase *model in self.subModels) {
         //1. 取不在except中的;

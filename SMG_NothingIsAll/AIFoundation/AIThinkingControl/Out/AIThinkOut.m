@@ -30,21 +30,6 @@
 //MARK:===============================================================
 
 -(void) dataOut {
-    
-    
-    
-    
-    //TODOTOMORROW: (UseMemNet)
-    //1. 取用时,优先取memPorts和memNode;
-    
-    
-    
-    
-    
-    
-    
-    
-    
     //1. 重排序 & 取当前序列最前的demandModel
     DemandModel *demandModel = nil;
     if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkOut_GetCurrentDemand)]) {
@@ -111,7 +96,10 @@
 
 /**
  *  MARK:--------------------MvScheme--------------------
- *  用于找到新的mv经验; (根据index索引找到outMvModel)
+ *  功能:
+ *      1. 用于找到新的mv经验; (根据index索引找到outMvModel)
+ *  注:
+ *      1. 目前仅从硬盘找mvNode,因为能解决问题的都几乎被抽象,而太过于具象的又很难行为化;
  */
 -(TOMvModel*) dataOut_MvScheme:(DemandModel*)demandModel{
     //1. 判断mv方向
@@ -169,7 +157,7 @@
     if (!ISOK(outMvModel, TOMvModel.class)) {
         return nil;
     }
-    AICMVNodeBase *checkMvNode = [SMGUtils searchObjectForPointer:outMvModel.content_p fileName:kFNNode time:cRTNode];
+    AICMVNodeBase *checkMvNode = [SMGUtils searchNode:outMvModel.content_p];
     if (!checkMvNode) {
         return nil;
     }
@@ -207,7 +195,7 @@
     if (!ISOK(outFoModel, TOFoModel.class)) {
         return;
     }
-    AIFoNodeBase *foNode = [SMGUtils searchObjectForPointer:outFoModel.content_p fileName:kFNNode time:cRTNode];
+    AIFoNodeBase *foNode = [SMGUtils searchNode:outFoModel.content_p];
     if (!foNode) {
         return;
     }

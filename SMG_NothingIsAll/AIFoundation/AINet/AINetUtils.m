@@ -70,10 +70,10 @@
         for (AIPointer *value_p in value_ps) {
             //2. 硬盘网络时,取出refPorts -> 并二分法强度序列插入 -> 存XGWedis;
             if (!algNode_p.isMem) {
-                [self insertRefPorts_HdNode:algNode_p passiveRefValue_p:value_p ps:ps];
+                [self insertRefPorts_HdNode:algNode_p passiveRefValue_p:value_p ps:ps difStrong:1];
             }else{
                 //3. 内存网络时,取出memRefPorts -> 插入首位 -> 存XGRedis;
-                [AINetUtils insertRefPorts_MemNode:algNode_p passiveRef_p:value_p];
+                [AINetUtils insertRefPorts_MemNode:algNode_p passiveRef_p:value_p ps:nil difStrong:1];
             }
         }
     }
@@ -92,18 +92,18 @@
             [SMGUtils insertObject:algNode pointer:algNode.pointer fileName:kFNNode time:cRTNode];
         }
     }else{
-        [self insertRefPorts_MemNode:foNode_p passiveRef_p:order_p ps:ps];
+        [self insertRefPorts_MemNode:foNode_p passiveRef_p:order_p ps:ps difStrong:1];
     }
 }
 
-+(void) insertRefPorts_AllMvNode:(AIPointer*)mvNode_p value_p:(AIPointer*)value_p {
++(void) insertRefPorts_AllMvNode:(AIPointer*)mvNode_p value_p:(AIPointer*)value_p difStrong:(NSInteger)difStrong{
     if (mvNode_p && value_p) {
         if (!mvNode_p.isMem) {
             //1. 硬盘网络时,取出refPorts -> 并二分法强度序列插入 -> 存XGWedis;
-            [self insertRefPorts_HdNode:mvNode_p passiveRefValue_p:value_p ps:nil];
+            [self insertRefPorts_HdNode:mvNode_p passiveRefValue_p:value_p ps:nil difStrong:difStrong];
         }else{
             //2. 内存网络时,取出memRefPorts -> 插入首位 -> 存XGRedis;
-            [AINetUtils insertRefPorts_MemNode:mvNode_p passiveRef_p:value_p];
+            [AINetUtils insertRefPorts_MemNode:mvNode_p passiveRef_p:value_p ps:nil difStrong:difStrong];
         }
     }
 }
@@ -111,10 +111,10 @@
 /**
  *  MARK:--------------------硬盘节点_引用_微信息_插线 通用方法--------------------
  */
-+(void) insertRefPorts_HdNode:(AIPointer*)hdNode_p passiveRefValue_p:(AIPointer*)passiveRefValue_p ps:(NSArray*)ps{
++(void) insertRefPorts_HdNode:(AIPointer*)hdNode_p passiveRefValue_p:(AIPointer*)passiveRefValue_p ps:(NSArray*)ps difStrong:(NSInteger)difStrong{
     if (ISOK(hdNode_p, AIKVPointer.class) && ISOK(passiveRefValue_p, AIKVPointer.class)) {
         NSMutableArray *refPorts = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForFilePath:passiveRefValue_p.filePath fileName:kFNRefPorts time:cRTReference]];
-        [AINetUtils insertPointer_Hd:hdNode_p toPorts:refPorts ps:ps];
+        [AINetUtils insertPointer_Hd:hdNode_p toPorts:refPorts ps:ps difStrong:difStrong];
         [SMGUtils insertObject:refPorts rootPath:passiveRefValue_p.filePath fileName:kFNRefPorts time:cRTReference saveDB:true];
     }
 }
@@ -122,11 +122,7 @@
 //MARK:===============================================================
 //MARK:                     < 内存插线 >
 //MARK:===============================================================
-
-+(void) insertRefPorts_MemNode:(AIPointer*)memNode_p passiveRef_p:(AIPointer*)passiveRef_p{
-    [self insertRefPorts_MemNode:memNode_p passiveRef_p:passiveRef_p ps:nil];
-}
-+(void) insertRefPorts_MemNode:(AIPointer*)memNode_p passiveRef_p:(AIPointer*)passiveRef_p ps:(NSArray*)ps{
++(void) insertRefPorts_MemNode:(AIPointer*)memNode_p passiveRef_p:(AIPointer*)passiveRef_p ps:(NSArray*)ps difStrong:(NSInteger)difStrong{
     if (ISOK(memNode_p, AIKVPointer.class) && ISOK(passiveRef_p, AIKVPointer.class)) {
         //1. 内存网络时,取出memRefPorts -> 插入首位 -> 存XGRedis;
         NSMutableArray *memRefPorts = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:passiveRef_p fileName:kFNMemRefPorts]];
@@ -155,8 +151,10 @@
 //MARK:===============================================================
 //MARK:                     < 通用 仅插线到ports >
 //MARK:===============================================================
-
 +(void) insertPointer_Hd:(AIPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps{
+    [self insertPointer_Hd:pointer toPorts:ports ps:ps difStrong:1];
+}
++(void) insertPointer_Hd:(AIPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps difStrong:(NSInteger)difStrong{
     if (ISOK(pointer, AIPointer.class) && ISOK(ports, NSMutableArray.class)) {
         //1. 找到/新建port
         AIPort *findPort = [self findPort:pointer toPorts:ports ps:ps];
@@ -165,7 +163,7 @@
         }
         
         //2. 强度更新
-        findPort.strong.value ++;
+        findPort.strong.value += difStrong;
         
         //3. 二分插入
         [XGRedisUtil searchIndexWithCompare:^NSComparisonResult(NSInteger checkIndex) {
@@ -183,9 +181,9 @@
     }
 }
 
-+(void) insertPointer_Mem:(AIPointer*)pointer toPorts:(NSMutableArray*)memPorts ps:(NSArray*)ps{
++(void) insertPointer_Mem:(AIPointer*)pointer toPorts:(NSMutableArray*)memPorts ps:(NSArray*)ps difStrong:(NSInteger)difStrong{
     //1. 找出/生成port
-    AIPort *findPort = [self findPort:pointer toPorts:memPorts ps:ps];
+    AIPort *findPort = [self findPort:pointer toPorts:memPorts ps:ps difStrong:difStrong];
     if (findPort) {
         //2. 插到第一个
         [memPorts insertObject:findPort atIndex:0];
@@ -195,7 +193,10 @@
 /**
  *  MARK:--------------------从ports中找出符合的port或者new一个 通用方法--------------------
  */
-+(AIPort*) findPort:(AIPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps{
++(AIPort*) findPort:(AIPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps {
+    return [self findPort:pointer toPorts:ports ps:ps difStrong:1];
+}
++(AIPort*) findPort:(AIPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps difStrong:(NSInteger)difStrong{
     if (ISOK(pointer, AIPointer.class) && ISOK(ports, NSMutableArray.class)) {
         //1. 找出旧有;
         AIPort *findPort = nil;
@@ -214,6 +215,8 @@
             findPort.header = [NSString md5:[SMGUtils convertPointers2String:ps]];
         }
         
+        //3. difStrong
+        findPort.strong.value += difStrong;
         return findPort;
     }
     return nil;
