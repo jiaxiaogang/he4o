@@ -28,14 +28,7 @@
 
 -(AIPort*) getConPortWithExcept:(NSArray*)except_ps{
     for (AIPort *conPort in self.conPorts) {
-        BOOL excepted = false;
-        for (AIPointer *except_p in ARRTOOK(except_ps)) {
-            if ([except_p isEqual:conPort.target_p]) {
-                excepted = true;
-                break;
-            }
-        }
-        if (!excepted) {
+        if (![SMGUtils containsSub_p:conPort.target_p parent_ps:except_ps]) {
             conPort.strong.value += 1;//被激活强度+1;
             return conPort;
         }
