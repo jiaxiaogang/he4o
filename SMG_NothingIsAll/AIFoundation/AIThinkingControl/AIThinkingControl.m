@@ -19,19 +19,6 @@
 #import "AIAlgNode.h"
 #import "AINetIndex.h"
 
-
-
-//TODOTOMORROW:
-//a. actionScheme T
-//b. mvScheme T
-//c. foScheme T
-//d. algScheme.TOAlgScheme T
-//UseMemNet To TC
-
-
-
-
-
 /**
  *  MARK:--------------------思维控制器--------------------
  *

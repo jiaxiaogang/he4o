@@ -16,16 +16,6 @@
  */
 +(NSInteger) updateEnergy:(NSInteger)oriEnergy delta:(NSInteger)delta;
 
-
-/**
- *  MARK:--------------------筛选出outPointers--------------------
- *  注:未判定是否连续;
- */
-+(NSArray*) filterOutPointers:(NSArray*)proto_ps;
-
-//筛选出非out的pointers
-+(NSArray*) filterNotOutPointers:(NSArray*)proto_ps;
-
 @end
 
 
@@ -76,18 +66,6 @@
 //MARK:===============================================================
 @class AICMVNode;
 @interface ThinkingUtils (Association)
-
-
-/**
- *  MARK:--------------------根据cmvNode联想其对应的前因时序列;--------------------
- */
-//+(NSArray*) getFrontOrdersFromCmvNode:(AICMVNode*)cmvNode;
-
-
-/**
- *  MARK:--------------------根据cmvNode联想其对应的foNode--------------------
- */
-+(AIFrontOrderNode*) getFoNodeFromCmvNode:(AICMVNode*)cmvNode;
 
 //根据端口,获取到target指向的节点;
 +(id) getNodeFromPort:(AIPort*)port;
@@ -164,12 +142,28 @@
 //MARK:===============================================================
 //MARK:                     < ThinkingUtils (General) >
 //MARK:===============================================================
-@interface ThinkingUtils (General)
+@interface ThinkingUtils (Contains)
 
 //判断absAlg是否具象指向conAlg;
-+(BOOL) checkHavConAlg:(AIKVPointer*)conAlg_p absAlg:(AIPointer*)absAlg_p;
++(BOOL) containsConAlg:(AIKVPointer*)conAlg_p absAlg:(AIPointer*)absAlg_p;
+
+@end
+
+
+//MARK:===============================================================
+//MARK:                     < ThinkingUtils (Filter) >
+//MARK:===============================================================
+@interface ThinkingUtils (Filter)
+
+/**
+ *  MARK:--------------------筛选出outPointers--------------------
+ *  @param proto_ps : 从中筛选
+ *  @param isOut : false时筛选出非out的pointers
+ *  注:未判定是否连续;
+ */
++(NSArray*) filterPointers:(NSArray*)proto_ps isOut:(BOOL)isOut;
 
 //从from_ps中查找与check_p同标识区的指针并返回;
-+(AIKVPointer*) getSameIdentifierPointer:(AIKVPointer*)check_p from_ps:(NSArray*)from_ps;
++(AIKVPointer*) filterPointer:(NSArray*)from_ps identifier:(NSString*)identifier;
 
 @end

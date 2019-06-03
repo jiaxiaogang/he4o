@@ -33,26 +33,6 @@
     return MAX(cMinEnergy, MIN(cMaxEnergy, oriEnergy));
 }
 
-+(NSArray*) filterOutPointers:(NSArray*)proto_ps{
-    NSMutableArray *out_ps = [[NSMutableArray alloc] init];
-    for (AIKVPointer *pointer in ARRTOOK(proto_ps)) {
-        if (ISOK(pointer, AIKVPointer.class) && pointer.isOut) {
-            [out_ps addObject:pointer];
-        }
-    }
-    return out_ps;
-}
-
-+(NSArray*) filterNotOutPointers:(NSArray*)proto_ps{
-    NSMutableArray *result = [[NSMutableArray alloc] init];
-    for (AIKVPointer *pointer in ARRTOOK(proto_ps)) {
-        if (ISOK(pointer, AIKVPointer.class) && !pointer.isOut) {
-            [result addObject:pointer];
-        }
-    }
-    return result;
-}
-
 @end
 
 
@@ -133,24 +113,16 @@
 
 //cmvAlgsArr->mvValue
 +(void) parserAlgsMVArr:(NSArray*)algsArr success:(void(^)(AIKVPointer *delta_p,AIKVPointer *urgentTo_p,NSInteger delta,NSInteger urgentTo,NSString *algsType))success{
-    //1. 数据
-    __block AIKVPointer *delta_p = nil;
-    __block AIKVPointer *urgentTo_p = nil;
-    __block NSInteger delta = 0;
-    __block NSInteger urgentTo = 0;
-    __block NSString *algsType = @"";
-    
-    //2. 数据检查
-    [self parserAlgsMVArrWithoutValue:algsArr success:^(AIKVPointer *findDelta_p, AIKVPointer *findUrgentTo_p, NSString *findAlgsType) {
-        delta_p = findDelta_p;
-        urgentTo_p = findUrgentTo_p;
-        delta = [NUMTOOK([AINetIndex getData:delta_p]) integerValue];
-        urgentTo = [NUMTOOK([AINetIndex getData:urgentTo_p]) integerValue];
-        algsType = findAlgsType;
+    //1. 解析
+    [self parserAlgsMVArrWithoutValue:algsArr success:^(AIKVPointer *delta_p, AIKVPointer *urgentTo_p, NSString *algsType) {
+        
+        //2. 转换格式
+        NSInteger delta = [NUMTOOK([AINetIndex getData:delta_p]) integerValue];
+        NSInteger urgentTo = [NUMTOOK([AINetIndex getData:urgentTo_p]) integerValue];
+        
+        //3. 回调
+        if (success) success(delta_p,urgentTo_p,delta,urgentTo,algsType);
     }];
-    
-    //3. 逻辑执行
-    if (success) success(delta_p,urgentTo_p,delta,urgentTo,algsType);
 }
 
 +(CGFloat) getScoreForce:(AIPointer*)cmvNode_p ratio:(CGFloat)ratio{
@@ -187,24 +159,6 @@
 //MARK:                     < ThinkingUtils (Association) >
 //MARK:===============================================================
 @implementation ThinkingUtils (Association)
-
-
-//+(NSArray*) getFrontOrdersFromCmvNode:(AICMVNode*)cmvNode{
-//    AIFrontOrderNode *foNode = [self getFoNodeFromCmvNode:cmvNode];
-//    if (foNode) {
-//        return foNode.orders_kvp;//out是不能以数组处理foNode.orders_p的,下版本改)
-//    }
-//    return nil;
-//}
-
-+(AIFrontOrderNode*) getFoNodeFromCmvNode:(AICMVNode*)cmvNode{
-    if (ISOK(cmvNode, AICMVNode.class)) {
-        //2. 取"解决经验"对应的前因时序列;
-        AIFrontOrderNode *foNode = [SMGUtils searchObjectForPointer:cmvNode.foNode_p fileName:kFNNode time:cRTNode];
-        return foNode;
-    }
-    return nil;
-}
 
 +(id) getNodeFromPort:(AIPort*)port{
     if (port) {
@@ -353,11 +307,11 @@
 
 
 //MARK:===============================================================
-//MARK:                     < ThinkingUtils (General) >
+//MARK:                     < ThinkingUtils (Contains) >
 //MARK:===============================================================
-@implementation ThinkingUtils (General)
+@implementation ThinkingUtils (Contains)
 
-+(BOOL) checkHavConAlg:(AIKVPointer*)conAlg_p absAlg:(AIPointer*)absAlg_p{
++(BOOL) containsConAlg:(AIKVPointer*)conAlg_p absAlg:(AIPointer*)absAlg_p{
     //1. 判定有效
     if (conAlg_p && absAlg_p) {
         
@@ -380,10 +334,28 @@
     return false;
 }
 
-+(AIKVPointer*) getSameIdentifierPointer:(AIKVPointer*)check_p from_ps:(NSArray*)from_ps{
-    if (ARRISOK(from_ps) && check_p) {
+@end
+
+
+//MARK:===============================================================
+//MARK:                     < ThinkingUtils (Filter) >
+//MARK:===============================================================
+@implementation ThinkingUtils (Filter)
+
++(NSArray*) filterPointers:(NSArray*)proto_ps isOut:(BOOL)isOut{
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    for (AIKVPointer *pointer in ARRTOOK(proto_ps)) {
+        if (ISOK(pointer, AIKVPointer.class) && pointer.isOut == isOut) {
+            [result addObject:pointer];
+        }
+    }
+    return result;
+}
+
++(AIKVPointer*) filterPointer:(NSArray*)from_ps identifier:(NSString*)identifier{
+    if (ARRISOK(from_ps) && STRISOK(identifier)) {
         for (AIKVPointer *from_p in from_ps) {
-            if ([STRTOOK(from_p.identifier) isEqualToString:check_p.identifier]) {
+            if ([identifier isEqualToString:from_p.identifier]) {
                 return from_p;
             }
         }

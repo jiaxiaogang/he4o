@@ -104,7 +104,9 @@
 
 /**
  *  MARK:--------------------获取value_ps相匹配的祖母--------------------
- *  说明: 获取绝对匹配到value_ps的algNode (祖母引用联想的方式去重)
+ *  说明:
+ *      1. 获取绝对匹配到value_ps的algNode (祖母引用联想的方式去重)
+ *      2. 先从内存网络,再从硬盘网络找;
  */
 -(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValueP:(AIPointer*)value_p;
 -(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps exceptAlg_p:(AIPointer*)exceptAlg_p isMem:(BOOL)isMem;

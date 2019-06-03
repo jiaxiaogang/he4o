@@ -140,7 +140,7 @@
 //将pointers转字符串;
 +(NSString*) convertPointers2String:(NSArray*)pointers;
 
-//将祖母中的value_ps展开成纯微信息的组; @result : notnull
+//将祖母中的value_ps(含嵌套)展开成纯微信息的组; @result : notnull
 +(NSMutableArray*) convertValuePs2MicroValuePs:(NSArray*)value_ps;
 
 @end

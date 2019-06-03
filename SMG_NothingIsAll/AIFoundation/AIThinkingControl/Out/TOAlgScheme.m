@@ -120,7 +120,7 @@
             for (AIKVPointer *item_p in conSubHavFo.orders_kvp) {
                 
                 //7. 判断item_p是subAlg的具象节点;
-                if ([ThinkingUtils checkHavConAlg:item_p absAlg:subAlg_p]) {
+                if ([ThinkingUtils containsConAlg:item_p absAlg:subAlg_p]) {
                     forecastAlg_p = item_p;
                     break;
                 }
@@ -132,7 +132,7 @@
             if (!forecastAlg) return;
             
             //8. 进一步取出预测微信息;
-            AIKVPointer *forecastValue_p = [ThinkingUtils getSameIdentifierPointer:subValue_p from_ps:forecastAlg.content_ps];
+            AIKVPointer *forecastValue_p = [ThinkingUtils filterPointer:forecastAlg.content_ps identifier:subValue_p.identifier];
             if (!forecastValue_p) return;
             
             //9. 将诉求信息:subValue与预测信息:forecastValue进行类比;

@@ -50,7 +50,7 @@
 
 //Node
 +(AIKVPointer*) createPointerForNode:(NSString*)folderName{
-    return [self createPointer:folderName algsType:@" " dataSource:@" " isOut:false isMem:false];
+    return [self createPointer:folderName algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false isMem:false];
 }
 +(AIKVPointer*) createPointer:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem{
     NSInteger pointerId = [SMGUtils createPointerId:algsType dataSource:dataSource];
@@ -67,7 +67,7 @@
 
 //生成小脑CanOut指针;
 +(AIKVPointer*) createPointerForCerebelCanOut{
-    AIKVPointer *pointer = [AIKVPointer newWithPointerId:0 folderName:kPN_CEREBEL_CANOUT algsType:@" " dataSource:@" " isOut:false isMem:false];
+    AIKVPointer *pointer = [AIKVPointer newWithPointerId:0 folderName:kPN_CEREBEL_CANOUT algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false isMem:false];
     return pointer;
 }
 
@@ -83,12 +83,12 @@
 
 +(AIKVPointer*) createPointerForIndex{
     NSInteger pointerId = 0;
-    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_INDEX algsType:@" " dataSource:@" " isOut:false isMem:false];
+    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_INDEX algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false isMem:false];
 }
 
 +(AIKVPointer*) createPointerForData{
     NSInteger pointerId = 0;
-    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_DATA algsType:@" " dataSource:@" " isOut:false isMem:false];
+    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_DATA algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false isMem:false];
 }
 
 @end
@@ -509,7 +509,7 @@
         
         //3. 祖母嵌套时
         if ([kPN_ALG_ABS_NODE isEqualToString:value_p.folderName]) {
-            AIAlgNodeBase *algNode = [SMGUtils searchObjectForPointer:value_p fileName:kFNNode time:cRTNode];
+            AIAlgNodeBase *algNode = [SMGUtils searchNode:value_p];
             
             //4. 递归取嵌套的value_ps
             if (ISOK(algNode, AIAlgNodeBase.class)) {

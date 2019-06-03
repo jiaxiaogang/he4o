@@ -124,7 +124,7 @@
  *  @param ps       : pointer是alg时,传alg.content_ps | pointer是fo时,传fo.orders; (用来计算md5.header)
  *  注: 内存网络中,仅按时间排序,没有强度;
  */
-+(void) insertPointer_Mem:(AIPointer*)pointer toPorts:(NSMutableArray*)memPorts ps:(NSArray*)ps;
++(void) insertPointer_Mem:(AIPointer*)pointer toPorts:(NSMutableArray*)memPorts ps:(NSArray*)ps difStrong:(NSInteger)difStrong;
 
 
 //MARK:===============================================================
@@ -135,6 +135,7 @@
  *  MARK:--------------------关联抽具象祖母--------------------
  *  @param absNode  : 抽象祖母
  *  @param conNodes : 具象祖母们
+ *  注: 抽具象的difStrong默认都为1;
  */
 +(void) relateAlgAbs:(AIAbsAlgNode*)absNode conNodes:(NSArray*)conNodes;
 +(void) relateFoAbs:(AINetAbsFoNode*)absNode conNodes:(NSArray*)conNodes;

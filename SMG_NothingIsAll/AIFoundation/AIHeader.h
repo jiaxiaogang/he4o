@@ -133,3 +133,9 @@ va_end(args);\
 #define TEXT_RDS @"TEXT_RDS" //字符输出反射标识
 #define ANXIOUS_RDS @"ANXIOUS_RDS" //焦急情绪输出标识
 #define SATISFY_RDS @"SATISFY_RDS" //满意情绪输出标识
+
+/**
+ *  MARK:--------------------AlgsType & DataSource--------------------
+ */
+#define DefaultAlgsType @" "    //默认AlgsType
+#define DefaultDataSource @" "  //默认DataSource

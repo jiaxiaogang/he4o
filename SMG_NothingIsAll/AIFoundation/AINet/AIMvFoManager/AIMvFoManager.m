@@ -35,7 +35,7 @@
     
     //2. 打包cmvNode;
     AICMVNode *cmvNode = [[AICMVNode alloc] init];
-    cmvNode.pointer = [SMGUtils createPointer:kPN_CMV_NODE algsType:mvAlgsType dataSource:@"" isOut:false isMem:true];
+    cmvNode.pointer = [SMGUtils createPointer:kPN_CMV_NODE algsType:mvAlgsType dataSource:DefaultDataSource isOut:false isMem:true];
     cmvNode.delta_p = deltaPointer;
     cmvNode.urgentTo_p = urgentToPointer;
     [AINetUtils insertRefPorts_AllMvNode:cmvNode.pointer value_p:cmvNode.delta_p difStrong:1];//引用插线
@@ -44,7 +44,7 @@
     
     //3. 打包foNode;
     AIFrontOrderNode *foNode = [[AIFrontOrderNode alloc] init];//node
-    foNode.pointer = [SMGUtils createPointer:kPN_FRONT_ORDER_NODE algsType:@"" dataSource:@"" isOut:false isMem:true];
+    foNode.pointer = [SMGUtils createPointer:kPN_FRONT_ORDER_NODE algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false isMem:true];
     //3.1. foNode.orders收集
     for (AIPointer *conAlgNode_p in ARRTOOK(order)) {
         if (ISOK(conAlgNode_p, AIPointer.class)) {

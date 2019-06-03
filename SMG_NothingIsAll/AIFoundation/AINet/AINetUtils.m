@@ -126,7 +126,7 @@
     if (ISOK(memNode_p, AIKVPointer.class) && ISOK(passiveRef_p, AIKVPointer.class)) {
         //1. 内存网络时,取出memRefPorts -> 插入首位 -> 存XGRedis;
         NSMutableArray *memRefPorts = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:passiveRef_p fileName:kFNMemRefPorts]];
-        [AINetUtils insertPointer_Mem:memNode_p toPorts:memRefPorts ps:ps];
+        [AINetUtils insertPointer_Mem:memNode_p toPorts:memRefPorts ps:ps difStrong:difStrong];
         [SMGUtils insertObject:memRefPorts rootPath:passiveRef_p.filePath fileName:kFNMemRefPorts time:cRTMemPort saveDB:false];//存储
     }
 }
@@ -134,7 +134,7 @@
 +(void) insertAbsPorts_MemNode:(AIPointer*)abs_p con_p:(AIPointer*)con_p absNodeContent:(NSArray*)absNodeContent{
     if (ISOK(abs_p, AIKVPointer.class) && ISOK(con_p, AIKVPointer.class)) {
         NSMutableArray *memAbsPorts = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:con_p fileName:kFNMemAbsPorts]];
-        [AINetUtils insertPointer_Mem:abs_p toPorts:memAbsPorts ps:absNodeContent];
+        [AINetUtils insertPointer_Mem:abs_p toPorts:memAbsPorts ps:absNodeContent difStrong:1];
         [SMGUtils insertObject:memAbsPorts rootPath:con_p.filePath fileName:kFNMemAbsPorts time:cRTMemPort saveDB:false];//存储
     }
 }
@@ -142,7 +142,7 @@
 +(void) insertConPorts_MemNode:(AIPointer*)con_p abs_p:(AIPointer*)abs_p conNodeContent:(NSArray*)conNodeContent{
     if (ISOK(con_p, AIKVPointer.class) && ISOK(abs_p, AIKVPointer.class)) {
         NSMutableArray *memConPorts = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:abs_p fileName:kFNMemConPorts]];
-        [AINetUtils insertPointer_Mem:con_p toPorts:memConPorts ps:conNodeContent];
+        [AINetUtils insertPointer_Mem:con_p toPorts:memConPorts ps:conNodeContent difStrong:1];
         [SMGUtils insertObject:memConPorts rootPath:abs_p.filePath fileName:kFNMemConPorts time:cRTMemPort saveDB:false];//存储
     }
 }
@@ -335,80 +335,3 @@
 }
 
 @end
-
-
-///**
-// *  MARK:--------------------插线到ports (分文件优化)--------------------
-// *  @param pointerFileName : 指针序列文件名,如kFNReference_ByPointer
-// *  @param portFileName : 强度序列文件名,如kFNReference_ByPort
-// *
-// *  1. 各种神经元中只保留"指针"和"类型";
-// *  2. 其它absPorts,conPorts,refPorts都使用单独文件的方式;
-// *  3. 暂不使用 (未完成)
-// */
-//-(void) insertPointer:(AIKVPointer*)node_p target_p:(AIKVPointer*)target_p difStrong:(int)difStrong pointerFileName:(NSString*)pointerFileName portFileName:(NSString*)portFileName{
-////    //1. 数据检查
-////    if (!ISOK(target_p, AIKVPointer.class) || !ISOK(node_p, AIKVPointer.class) || difStrong == 0) {
-////        return;
-////    }
-////
-////    //2. 取identifier分区的引用序列文件;
-////    NSMutableArray *mArrByPointer = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:node_p fileName:pointerFileName time:cRTPort]];
-////    NSMutableArray *mArrByPort = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:node_p fileName:portFileName time:cRTPort]];
-////
-////    //3. 找到旧的mArrByPointer;
-////    __block AIPort *oldPort = nil;
-////    [XGRedisUtil searchIndexWithCompare:^NSComparisonResult(NSInteger checkIndex) {
-////        AIPort *checkPort = ARR_INDEX(mArrByPointer, checkIndex);
-////        return [SMGUtils comparePointerA:target_p pointerB:checkPort.target_p];
-////    } startIndex:0 endIndex:mArrByPointer.count - 1 success:^(NSInteger index) {
-////        AIPort *findPort = ARR_INDEX(mArrByPointer, index);
-////        if (ISOK(findPort, AIPort.class)) {
-////            oldPort = findPort;
-////        }
-////    } failure:^(NSInteger index) {
-////        oldPort = [[AIPort alloc] init];
-////        oldPort.target_p = target_p;
-////        oldPort.strong.value = 1;
-////        if (ARR_INDEXISOK(mArrByPointer, index)) {
-////            [mArrByPointer insertObject:oldPort atIndex:index];
-////        }else{
-////            [mArrByPointer addObject:oldPort];
-////        }
-////        [SMGUtils insertObject:mArrByPointer rootPath:filePath fileName:kFNReference_ByPointer time:cRTReference];
-////    }];
-////
-////    //4. 搜索旧port并去掉_mArrByPort;
-////    if (oldPort == nil) {
-////        NSLog(@"BUG!!!未找到,也未生成新的oldPort!!!");
-////        return;
-////    }
-////    [XGRedisUtil searchIndexWithCompare:^NSComparisonResult(NSInteger checkIndex) {
-////        AIPort *checkPort = ARR_INDEX(mArrByPort, checkIndex);
-////        return [SMGUtils comparePortA:oldPort portB:checkPort];
-////    } startIndex:0 endIndex:mArrByPort.count - 1 success:^(NSInteger index) {
-////        AIPort *findPort = ARR_INDEX(mArrByPort, index);
-////        if (ISOK(findPort, AIPort.class)) {
-////            [mArrByPort removeObjectAtIndex:index];
-////        }
-////    } failure:nil];
-////
-////    //5. 生成新port
-////    oldPort.strong.value += difStrong;
-////    AIPort *newPort = oldPort;
-////
-////    //6. 将新port插入_mArrByPort
-////    [XGRedisUtil searchIndexWithCompare:^NSComparisonResult(NSInteger checkIndex) {
-////        AIPort *checkPort = ARR_INDEX(mArrByPort, checkIndex);
-////        return [SMGUtils comparePortA:newPort portB:checkPort];
-////    } startIndex:0 endIndex:mArrByPort.count - 1 success:^(NSInteger index) {
-////        NSLog(@"警告!!! bug:在第二序列的ports中发现了两次port目标___pointerId为:%ld",(long)newPort.target_p.pointerId);
-////    } failure:^(NSInteger index) {
-////        if (ARR_INDEXISOK(mArrByPort, index)) {
-////            [mArrByPort insertObject:newPort atIndex:index];
-////        }else{
-////            [mArrByPort addObject:newPort];
-////        }
-////        [SMGUtils insertObject:mArrByPort rootPath:filePath fileName:kFNReference_ByPort time:cRTReference];
-////    }];
-//}
