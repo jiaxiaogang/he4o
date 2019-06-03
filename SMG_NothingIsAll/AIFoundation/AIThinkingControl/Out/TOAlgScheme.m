@@ -16,18 +16,6 @@
 
 @implementation TOAlgScheme
 
-
-
-//TODOTOMORROW: (UseMemNet To TOAlgScheme)
-//1. 取用时,优先取memPorts和memNode;
-//a. actionScheme T
-//b. mvScheme T
-//c. foScheme T
-//d. algScheme.TOAlgScheme
-
-
-
-
 //对一个rangeOrder进行行为化;
 +(NSArray*) convert2Out:(NSArray*)curAlg_ps{
     //1. 数据准备
@@ -92,7 +80,7 @@
  */
 +(NSArray*) convert2Out_Single_Sub:(AIKVPointer*)curAlg_p{
     //1. 数据检查准备;
-    AIAlgNodeBase *curAlg = [SMGUtils searchObjectForPointer:curAlg_p fileName:kFNNode time:cRTNode];
+    AIAlgNodeBase *curAlg = [SMGUtils searchNode:curAlg_p];
     if (!curAlg) return nil;
     NSMutableArray *result = [[NSMutableArray alloc] init];
     
@@ -140,7 +128,7 @@
             if (!forecastAlg_p) return;
             
             //8. 取出"预测"祖母信息;
-            AIAlgNodeBase *forecastAlg = [SMGUtils searchObjectForPointer:forecastAlg_p fileName:kFNNode time:cRTNode];
+            AIAlgNodeBase *forecastAlg = [SMGUtils searchNode:forecastAlg_p];
             if (!forecastAlg) return;
             
             //8. 进一步取出预测微信息;
@@ -184,14 +172,42 @@
 +(void) convert2Out_RelativeAlg:(AIAlgNodeBase*)relativeAlg success:(void(^)(AIFoNodeBase *havFo,NSArray *actions))success failure:(void(^)())failure{
     //1. 数据检查
     if (!relativeAlg) {
-        failure();
+        if (failure) failure();
         return;
     }
     
-    //2. 根据havAlg联想时序,并找出新的解决方案,与新的行为化的祖母,与新的条件祖母;
-    for (NSInteger i = 0; i < cHavNoneAssFoCount; i ++) {
-        AIPort *refPort = ARR_INDEX(relativeAlg.refPorts, i);
-        AIFoNodeBase *relativeFo = [SMGUtils searchObjectForPointer:refPort.target_p fileName:kFNNode time:cRTNode];
+    //2. 找引用"相对祖母"的内存中"相对时序",并行为化; (注: 一般不存在内存相对祖母,此处代码应该不会执行);
+    NSArray *memRefPorts = [SMGUtils searchObjectForPointer:relativeAlg.pointer fileName:kFNMemRefPorts time:cRTMemPort];
+    BOOL memSuccess = [self convert2Out_RelativeFo_ps:[SMGUtils convertPointersFromPorts:memRefPorts] success:success];
+    
+    //3. 根据havAlg联想时序,并找出新的解决方案,与新的行为化的祖母,与新的条件祖母;
+    if (!memSuccess) {
+        NSArray *hdRefPorts = ARR_SUB(relativeAlg.refPorts, 0, cHavNoneAssFoCount);
+        BOOL hdSuccess = [self convert2Out_RelativeFo_ps:[SMGUtils convertPointersFromPorts:hdRefPorts] success:success];
+        
+        //4. 行为化失败;
+        if (!hdSuccess) {
+            if (failure) failure();
+        }
+    }
+}
+
+/**
+ *  MARK:--------------------"相对时序"的行为化--------------------
+ *  @param relativeFo_ps    : 相对时序地址;
+ *  @param success          : 回调传回: 相对时序 & 行为化结果;
+ *  @result                 : 只要有一条行为化成功则返回true,否则false;
+ *  注:
+ *      1. 参数: 由方法调用者保证传入的是"相对时序"而不是普通时序
+ *      2. 流程: 取出相对时序,并取rangeOrder,行为化并返回
+ */
++(BOOL) convert2Out_RelativeFo_ps:(NSArray*)relativeFo_ps success:(void(^)(AIFoNodeBase *havFo,NSArray *actions))success {
+    //1. 数据准备
+    relativeFo_ps = ARRTOOK(relativeFo_ps);
+    
+    //2. 逐个尝试行为化
+    for (AIPointer *relativeFo_p in relativeFo_ps) {
+        AIFoNodeBase *relativeFo = [SMGUtils searchNode:relativeFo_p];
         
         //3. 取出havFo除第一个和最后一个之外的中间rangeOrder
         if (relativeFo != nil && relativeFo.orders_kvp.count > 2) {
@@ -199,11 +215,11 @@
             NSArray *foResult = [TOAlgScheme convert2Out:foRangeOrder];
             if (ARRISOK(foResult)) {
                 success(relativeFo,foResult);
-                return;
+                return true;
             }
         }
     }
-    failure();
+    return false;
 }
 
 @end

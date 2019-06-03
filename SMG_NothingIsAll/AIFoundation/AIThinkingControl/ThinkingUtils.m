@@ -208,7 +208,7 @@
 
 +(id) getNodeFromPort:(AIPort*)port{
     if (port) {
-        return [SMGUtils searchObjectForPointer:port.target_p fileName:kFNNode time:cRTNode];
+        return [SMGUtils searchNode:port.target_p];
     }
     return nil;
 }
@@ -361,13 +361,18 @@
     //1. 判定有效
     if (conAlg_p && absAlg_p) {
         
-        //2. 取出absAlg.conPorts
-        AIAbsAlgNode *absAlg = [SMGUtils searchObjectForPointer:absAlg_p fileName:kFNNode time:cRTNode];
+        //2. 判断memConPorts是否指向conAlg_p (absAlg有具象指向:conAlg_p);
+        NSArray *memConPorts = [SMGUtils searchObjectForPointer:absAlg_p fileName:kFNMemConPorts time:cRTMemPort];
+        NSArray *memCon_ps = [SMGUtils convertPointersFromPorts:memConPorts];
+        if ([SMGUtils containsSub_p:conAlg_p parent_ps:memCon_ps]) {
+            return true;
+        }
+        
+        //3. 判断硬盘absAlg.conPorts (absAlg有具象指向:conAlg_p);
+        AIAbsAlgNode *absAlg = [SMGUtils searchNode:absAlg_p];
         if (ISOK(absAlg, AIAbsAlgNode.class)) {
-            NSArray *absAlgCon_ps = [SMGUtils convertPointersFromPorts:absAlg.conPorts];
-            
-            //3. 判断"坚果"具象有指向:conAlg_p;
-            if ([SMGUtils containsSub_p:conAlg_p parent_ps:absAlgCon_ps]) {
+            NSArray *hdCon_ps = [SMGUtils convertPointersFromPorts:absAlg.conPorts];
+            if ([SMGUtils containsSub_p:conAlg_p parent_ps:hdCon_ps]) {
                 return true;
             }
         }
