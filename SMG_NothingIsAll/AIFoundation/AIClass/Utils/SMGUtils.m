@@ -398,7 +398,7 @@
                 PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:saveRootPath];
                 [cache setObject:saveObj forKey:saveFileName];
             }
-            NSLog(@">>>>>>>>>>>>>>>>>>>WriteDisk,%@",fileName);
+            NSLog(@">>>>>>>>>>>>>>>>>>>WriteDisk,%@",dic.allKeys);
         }];
     }
     
