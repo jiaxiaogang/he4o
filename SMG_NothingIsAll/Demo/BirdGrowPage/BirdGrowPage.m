@@ -119,4 +119,8 @@
     return self.view;
 }
 
+-(CGRect)birdView_GetSeeRect{
+    return CGRectMake(0, 64, ScreenWidth, ScreenHeight - 128);
+}
+
 @end

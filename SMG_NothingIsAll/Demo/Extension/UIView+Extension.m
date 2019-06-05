@@ -86,8 +86,7 @@
     [self collectSubViews:arr withClass:aClass];
     return arr;
 }
-
--(void) collectSubViews:(NSMutableArray*) arr withClass:(Class)aClass{
+-(void) collectSubViews:(NSMutableArray*)arr withClass:(Class)aClass{
     if (arr != nil && aClass != nil){
         if ([self isKindOfClass:aClass]) {
             [arr addObject:self];
@@ -100,6 +99,22 @@
     }
 }
 
+-(NSMutableArray*) subViews_AllDeepWithRect:(CGRect)rect{
+    NSMutableArray *arr = [[NSMutableArray alloc]init];
+    CGRect sRect = [UIView convertWorldRect:self];
+    if (CGRectGetMinX(sRect) >= CGRectGetMinX(rect) &&
+        CGRectGetMinY(sRect) >= CGRectGetMinY(rect) &&
+        CGRectGetMaxX(sRect) <= CGRectGetMaxX(rect) &&
+        CGRectGetMaxY(sRect) <= CGRectGetMaxY(rect)) {
+        [arr addObject:self];
+    }
+    if(self.subviews != nil){
+        for (UIView *childView in self.subviews) {
+            [arr addObjectsFromArray:[childView subViews_AllDeepWithRect:rect]];
+        }
+    }
+    return arr;
+}
 
 //MARK:===============================================================
 //MARK:                     < convert坐标 >
@@ -114,6 +129,13 @@
         return [selfView.superview convertPoint:selfView.center toView:theApp.window];
     }
     return CGPointZero;
+}
+
++(CGRect) convertWorldRect:(UIView*)selfView{
+    if(selfView && selfView.superview){
+        return [selfView.superview convertRect:selfView.frame toView:theApp.window];
+    }
+    return CGRectZero;
 }
 
 

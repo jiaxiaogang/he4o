@@ -113,7 +113,7 @@
  */
 -(AIAlgNodeBase*) dataIn_NoMV_RecognitionIs:(AIPointer*)algNode_p {
     //1. 数据准备
-    AIAlgNodeBase *algNode = [SMGUtils searchObjectForPointer:algNode_p fileName:kFNNode time:cRTNode];
+    AIAlgNodeBase *algNode = [SMGUtils searchNode:algNode_p];
     AIAlgNodeBase *assAlgNode = nil;
     
     //2. 对value.refPorts进行检查识别; (noMv信号已输入完毕,识别联想)

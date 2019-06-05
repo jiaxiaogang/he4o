@@ -45,8 +45,8 @@
     [AICustomAlgs commitCustom:type value:value];
 }
 
-+(void) commitView:(UIView*)selfView targetView:(UIView*)targetView{
-    [AIVisionAlgs commitView:selfView targetView:targetView];
++(void) commitView:(UIView*)selfView targetView:(UIView*)targetView rect:(CGRect)rect{
+    [AIVisionAlgs commitView:selfView targetView:targetView rect:rect];
 }
 
 +(void) commitReactor:(NSString*)rds{

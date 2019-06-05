@@ -262,7 +262,7 @@
  *  @param absConPorts : notnull
  */
 +(void) relateGeneralAbs:(AINodeBase*)absNode absConPorts:(NSMutableArray*)absConPorts conNodes:(NSArray*)conNodes contentPsBlock:(NSArray*(^)(id))contentPsBlock{
-    if (ISOK(absNode, AIAbsCMVNode.class) && ARRISOK(conNodes)) {
+    if (ISOK(absNode, AINodeBase.class) && ARRISOK(conNodes)) {
         //1. 具象节点的 关联&存储
         for (AINodeBase *conNode in conNodes) {
             NSArray *absContent_ps = contentPsBlock(absNode);

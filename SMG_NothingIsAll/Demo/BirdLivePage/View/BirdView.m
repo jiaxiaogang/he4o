@@ -66,8 +66,11 @@
 }
 
 -(void) see:(UIView*)view{
-    //1. 将坚果,的一些信息输入大脑;
-    [AIInput commitView:self targetView:view];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(birdView_GetSeeRect)]) {
+        //1. 将视觉范围下,的视觉信息输入大脑;
+        CGRect rect = [self.delegate birdView_GetSeeRect];
+        [AIInput commitView:self targetView:view rect:rect];
+    }
 }
 
 -(void) touchMouth{

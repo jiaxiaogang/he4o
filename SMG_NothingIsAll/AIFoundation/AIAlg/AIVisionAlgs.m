@@ -14,13 +14,13 @@
 
 @implementation AIVisionAlgs
 
-+(void) commitView:(UIView*)selfView targetView:(UIView*)targetView{
++(void) commitView:(UIView*)selfView targetView:(UIView*)targetView rect:(CGRect)rect{
     //1. 数据准备;
     if (!selfView || !targetView) {
         return;
     }
     NSMutableArray *models = [[NSMutableArray alloc] init];
-    NSMutableArray *views = [targetView subViews_AllDeep];
+    NSMutableArray *views = [targetView subViews_AllDeepWithRect:rect];
     
     //2. 生成model
     for (UIView *curView in views) {

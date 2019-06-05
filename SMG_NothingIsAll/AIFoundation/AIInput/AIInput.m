@@ -39,8 +39,8 @@
     [AIReactorControl commitCustom:type value:value];
 }
 
-+(void) commitView:(UIView*)selfView targetView:(UIView*)targetView{
-    [AIReactorControl commitView:selfView targetView:targetView];
++(void) commitView:(UIView*)selfView targetView:(UIView*)targetView rect:(CGRect)rect{
+    [AIReactorControl commitView:selfView targetView:targetView rect:rect];
 }
 
 @end
