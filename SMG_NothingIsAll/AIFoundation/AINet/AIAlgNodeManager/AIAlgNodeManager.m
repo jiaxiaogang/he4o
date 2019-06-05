@@ -115,7 +115,7 @@
             ///1. 收集硬盘absPorts;
             [allAbsPorts addObjectsFromArray:item.absPorts];
             ///2. 收集内存memAbsPorts;
-            NSArray *memAbsPorts = [SMGUtils searchObjectForPointer:item.pointer fileName:kFNMemAbsPorts time:cRTPort_All(item.pointer.isMem)];
+            NSArray *memAbsPorts = [SMGUtils searchObjectForPointer:item.pointer fileName:kFNMemAbsPorts time:cRTMemPort];
             [allAbsPorts addObjectsFromArray:memAbsPorts];
         }
         for (AIPort *port in allAbsPorts) {

@@ -62,7 +62,7 @@
         ///1. 收集order_ps (将不在hdNet中的转移)
         for (AIKVPointer *item_p in sortSames) {
             if (item_p.isMem) {
-                AIAlgNodeBase *memAlgNode = [SMGUtils searchObjectForPointer:item_p fileName:kFNMemNode time:cRTMemNode];
+                AIAlgNodeBase *memAlgNode = [SMGUtils searchNode:item_p];
                 
                 ///2. 转移memAlgNode到硬盘网络;
                 AIAlgNodeBase *hdAlgNode = [AINetUtils move2HdNodeFromMemNode_Alg:memAlgNode];

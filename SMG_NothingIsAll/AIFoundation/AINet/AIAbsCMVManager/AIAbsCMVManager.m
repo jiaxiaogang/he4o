@@ -58,7 +58,7 @@
     //3. 将conMv_ps转换为conMvs
     NSMutableArray *conMvs = [[NSMutableArray alloc] init];
     for (AIKVPointer *mv_p in conMv_ps) {
-        AICMVNodeBase *conMvNode = [SMGUtils searchObjectForPointer:mv_p fileName:kFNNode_All(mv_p.isMem) time:cRTNode_All(mv_p.isMem)];
+        AICMVNodeBase *conMvNode = [SMGUtils searchNode:mv_p];
         if (!ISOK(conMvNode, AICMVNodeBase.class)){
             [conMvs addObject:conMvNode];
         }

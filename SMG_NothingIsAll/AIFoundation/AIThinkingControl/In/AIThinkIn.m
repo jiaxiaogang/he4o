@@ -128,12 +128,12 @@
         
         ///3. 局部匹配 -> 内存网络;
         if (!assAlgNode) {
-            [self recognition_PartMatching:algNode isMem:true];
+            assAlgNode = [self recognition_PartMatching:algNode isMem:true];
         }
         
         ///4. 局部匹配 -> 硬盘网络;
         if (!assAlgNode) {
-            [self recognition_PartMatching:algNode isMem:false];
+            assAlgNode = [self recognition_PartMatching:algNode isMem:false];
         }
     }
     
@@ -187,13 +187,13 @@
     }
     
     //3. 取到最强引用节点
-    AIFoNodeBase *foNode = [SMGUtils searchObjectForPointer:firstPort.target_p fileName:kFNNode];
+    AIFoNodeBase *foNode = [SMGUtils searchNode:firstPort.target_p];
     if (!ISOK(foNode, AIFoNodeBase.class)) {
         return nil;
     }
         
     //4. 联想mvNode返回;
-    AICMVNode *cmvNode = [SMGUtils searchObjectForPointer:foNode.cmvNode_p fileName:kFNNode time:cRTNode];
+    AICMVNode *cmvNode = [SMGUtils searchNode:foNode.cmvNode_p];
     NSLog(@"联想到cmvNode: %@",[NVUtils getCmvModelDesc_ByCmvNode:cmvNode]);
     return cmvNode;
 }
@@ -329,7 +329,7 @@
                 
                 //3. 依次绝对匹配header,找到则return;
                 if (![refPort.target_p isEqual:algNode.pointer] && [valuesMD5 isEqualToString:refPort.header]) {
-                    AIAlgNodeBase *assAlgNode = [SMGUtils searchObjectForPointer:refPort.target_p fileName:kFNNode time:cRTNode];
+                    AIAlgNodeBase *assAlgNode = [SMGUtils searchNode:refPort.target_p];
                     if (assAlgNode) {
                         NSLog(@">>> %@绝对匹配成功;",isMem ? @"内存" : @"硬盘");
                         return assAlgNode;
@@ -384,7 +384,7 @@
         //7. 有结果时取出对应的assAlgNode返回;
         if (maxKey) {
             AIKVPointer *max_p = [NSKeyedUnarchiver unarchiveObjectWithData:maxKey];
-            AIAlgNodeBase *assAlgNode = [SMGUtils searchObjectForPointer:max_p fileName:kFNNode_All(max_p.isMem) time:cRTNode_All(max_p.isMem)];
+            AIAlgNodeBase *assAlgNode = [SMGUtils searchNode:max_p];
             NSLog(@">>> %@局部匹配成功;",isMem ? @"内存" : @"硬盘");
             return assAlgNode;
         }
