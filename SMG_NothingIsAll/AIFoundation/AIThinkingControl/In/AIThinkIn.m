@@ -126,10 +126,10 @@
             assAlgNode = [self recognition_AbsoluteMatching:algNode isMem:false];
         }
         
-        ///3. 局部匹配 -> 内存网络;
-        if (!assAlgNode) {
-            assAlgNode = [self recognition_PartMatching:algNode isMem:true];
-        }
+        ///3. 局部匹配 -> 内存网络; (不能太过于脱离持久网络做思考,所以先注掉)
+        //if (!assAlgNode) {
+        //    assAlgNode = [self recognition_PartMatching:algNode isMem:true];
+        //}
         
         ///4. 局部匹配 -> 硬盘网络;
         if (!assAlgNode) {

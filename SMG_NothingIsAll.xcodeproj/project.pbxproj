@@ -150,6 +150,7 @@
 		083352F221800AB1003931E5 /* MainPage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainPage.h; sourceTree = "<group>"; };
 		083352F321800AB1003931E5 /* MainPage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainPage.m; sourceTree = "<group>"; };
 		083352F421800AB1003931E5 /* MainPage.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainPage.xib; sourceTree = "<group>"; };
+		0837F72322A89A0D00836689 /* ReadMe.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ReadMe.md; sourceTree = "<group>"; };
 		083F61361F048329000330E1 /* AILine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AILine.h; sourceTree = "<group>"; };
 		083F61371F048329000330E1 /* AILine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AILine.m; sourceTree = "<group>"; };
 		08412CA1216C324300483B6B /* AICerebel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AICerebel.h; sourceTree = "<group>"; };
@@ -805,6 +806,7 @@
 				08FAEC92215EED39004DCEAD /* NVUtils.h */,
 				08FAEC93215EED39004DCEAD /* NVUtils.m */,
 				08FAEC95215EED48004DCEAD /* NVHeader.h */,
+				0837F72322A89A0D00836689 /* ReadMe.md */,
 			);
 			path = SMGNetVision;
 			sourceTree = "<group>";
