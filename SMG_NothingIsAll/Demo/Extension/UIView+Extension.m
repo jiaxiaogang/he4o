@@ -116,6 +116,13 @@
     return arr;
 }
 
+-(void)removeAllSubviews {
+    while (self.subviews.count) {
+        UIView *child = self.subviews.lastObject;
+        [child removeFromSuperview];
+    }
+}
+
 //MARK:===============================================================
 //MARK:                     < convert坐标 >
 //MARK:===============================================================

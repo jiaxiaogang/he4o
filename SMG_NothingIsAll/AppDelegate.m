@@ -11,6 +11,15 @@
 #import "AINet.h"
 #import "NSObject+Extension.h"
 #import "AIKVPointer.h"
+#import "NVView.h"
+#import "NVDelegate_He.h"
+
+@interface AppDelegate()
+
+@property (strong, nonatomic) NVView *nvView;
+@property (strong, nonatomic) NVDelegate_He *nvDelegate;
+
+@end
 
 @implementation AppDelegate
 
@@ -27,6 +36,12 @@
     UINavigationController *naviC = [[UINavigationController alloc] initWithRootViewController:page];
     [self.window setRootViewController:naviC];
     [self.window makeKeyAndVisible];
+    
+    //3. 神经网络可视化
+    self.nvView = [[NVView alloc] init];
+    self.nvDelegate = [[NVDelegate_He alloc] init];
+    self.nvView.delegate = self.nvDelegate;
+    [self.window addSubview:self.nvView];
     
     return YES;
 }

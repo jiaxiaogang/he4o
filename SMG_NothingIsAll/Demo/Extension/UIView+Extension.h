@@ -33,6 +33,8 @@
 -(NSMutableArray*) subViews_AllDeepWithClass:(Class)aClass;
 -(NSMutableArray*) subViews_AllDeepWithRect:(CGRect)rect;
 
+-(void)removeAllSubviews;
+
 //MARK:===============================================================
 //MARK:                     < convert坐标 >
 //MARK:===============================================================
