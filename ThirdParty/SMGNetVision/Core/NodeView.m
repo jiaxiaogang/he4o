@@ -60,10 +60,7 @@
     [self.containerView removeAllSubviews];
     
     //2. 优先取自定义subView
-    UIView *subView = nil;
-    if (self.delegate && [self.delegate respondsToSelector:@selector(nodeView_GetCustomSubView:)]) {
-        subView = [self.delegate nodeView_GetCustomSubView:self.data];
-    }
+    UIView *subView = [self nodeView_GetCustomSubView:self.data];
     
     //3. 再取默认subView
     if (!subView) {
@@ -75,14 +72,67 @@
     [self.containerView addSubview:subView];
 }
 
+//MARK:===============================================================
+//MARK:                     < onClick >
+//MARK:===============================================================
 - (IBAction)contentViewTouchDown:(id)sender {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(nodeView_GetDesc:)]) {
-        NSString *desc = [self.delegate nodeView_GetDesc:self.data];
-        NSLog(@"按下:%@",desc);
-    }
+    NSString *desc = [self nodeView_GetCustomSubView:self.data];
+    NSLog(@"按下:%@",desc);
 }
 - (IBAction)contentViewTouchCancel:(id)sender {
     NSLog(@"松开");
+}
+- (IBAction)topBtnOnClick:(id)sender {
+    [self nodeView_TopClick:self.data];
+    NSLog(@"absPorts");
+}
+- (IBAction)bottomBtnOnClick:(id)sender {
+    [self nodeView_BottomClick:self.data];
+    NSLog(@"conPorts");
+}
+- (IBAction)leftBtnOnClick:(id)sender {
+    [self nodeView_LeftClick:self.data];
+    NSLog(@"content");
+}
+- (IBAction)rightBtnOnClick:(id)sender {
+    [self nodeView_RightClick:self.data];
+    NSLog(@"refPorts");
+}
+
+//MARK:===============================================================
+//MARK:                     < SelfDelegate >
+//MARK:===============================================================
+-(UIView*) nodeView_GetCustomSubView:(id)nodeData{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(nodeView_GetCustomSubView:)]) {
+        return [self.delegate nodeView_GetCustomSubView:nodeData];
+    }
+    return nil;
+}
+-(NSString*) nodeView_GetTipsDesc:(id)nodeData{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(nodeView_GetTipsDesc:)]) {
+        return [self.delegate nodeView_GetTipsDesc:nodeData];
+    }
+    return nil;
+}
+-(void) nodeView_TopClick:(id)nodeData{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(nodeView_TopClick:)]) {
+        [self.delegate nodeView_TopClick:nodeData];
+    }
+}
+-(void) nodeView_BottomClick:(id)nodeData{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(nodeView_BottomClick:)]) {
+        [self.delegate nodeView_BottomClick:nodeData];
+    }
+}
+-(void) nodeView_LeftClick:(id)nodeData{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(nodeView_LeftClick:)]) {
+        [self.delegate nodeView_LeftClick:nodeData];
+    }
+}
+-(void) nodeView_RightClick:(id)nodeData{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(nodeView_RightClick:)]) {
+        [self.delegate nodeView_RightClick:nodeData];
+    }
 }
 
 @end

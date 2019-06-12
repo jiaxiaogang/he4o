@@ -16,18 +16,19 @@
 
 @property (strong,nonatomic) IBOutlet UIView *containerView;
 @property (strong, nonatomic) UIScrollView *scrollView;
-@property (weak, nonatomic) IBOutlet UIView *contentView;
 @property (strong, nonatomic) NSMutableArray *nodeArr;
 @property (assign, nonatomic) BOOL isOpen;
 @property (weak, nonatomic) IBOutlet UIButton *openCloseBtn;
+@property (weak, nonatomic) id<NVViewDelegate> delegate;
 
 @end
 
 @implementation NVView
 
--(id) init {
+-(id) initWithDelegate:(id<NVViewDelegate>)delegate {
     self = [super init];
     if(self != nil){
+        self.delegate = delegate;
         [self initView];
         [self initData];
         [self initDisplay];
@@ -55,29 +56,8 @@
     [self.scrollView setFrame:CGRectMake(0, 20, ScreenWidth, 280)];
     [self.scrollView setShowsVerticalScrollIndicator:NO];
     [self.scrollView setShowsHorizontalScrollIndicator:NO];
-}
-
--(void) initData{
-    self.nodeArr = [[NSMutableArray alloc] init];
-}
-
--(void) initDisplay{
     
-}
-
-//MARK:===============================================================
-//MARK:                     < method >
-//MARK:===============================================================
--(void) setData:(NSArray*)arr{
-    [self.nodeArr removeAllObjects];
-    if (ARRISOK(arr)) {
-        [self.nodeArr addObjectsFromArray:arr];
-    }
-    [self refreshDisplay];
-}
-
--(void) refreshDisplay{
-    //1. 显示所有模块
+    //moduleViews
     NSArray *moduleIds = [self nv_GetModuleIds];
     if (ARRISOK(moduleIds)) {
         CGFloat curModuleX = 2;
@@ -92,20 +72,59 @@
             curModuleX += (moduleW + 2);
         }
         [self.scrollView setContentSize:CGSizeMake(curModuleX, 276)];
-        
-        //2. 显示所有node
-        for (id nodeData in self.nodeArr) {
+    }
+}
+
+-(void) initData{
+    self.nodeArr = [[NSMutableArray alloc] init];
+}
+
+-(void) initDisplay{
+    
+}
+
+//MARK:===============================================================
+//MARK:                     < method >
+//MARK:===============================================================
+-(void) setNodeData:(id)nodeData{
+    if (nodeData) {
+        if (![self.nodeArr containsObject:nodeData]) {
+            [self.nodeArr addObject:nodeData];
+            [self refreshDisplay];
+        }
+    }
+}
+
+-(void) refreshDisplay{
+    //1. 显示所有node
+    for (id nodeData in self.nodeArr) {
+        ModuleView *mView = [self getModuleView:nodeData];
+        if (mView) {
             NodeView *nodeView = [[NodeView alloc] init];
             nodeView.delegate = self;
             [nodeView setDataWithNodeData:nodeData];
-            [self.contentView addSubview:nodeView];
+            [mView addSubview:nodeView];
         }
-        
-        //2. 显示所有line
-        
-        //3. 排版,重置计算所有坐标;
     }
+    
+    //2. 显示所有line
+    
+    //3. 排版,重置计算所有坐标;
 }
+
+/**
+ *  MARK:--------------------获取nodeData所属的模块--------------------
+ */
+-(ModuleView*) getModuleView:(id)nodeData{
+    NSString *moduleId = STRTOOK([self nv_GetModuleId:nodeData]);
+    for (ModuleView *mView in self.scrollView.subviews) {
+        if (ISOK(mView, ModuleView.class) && [moduleId isEqualToString:mView.moduleId]) {
+            return mView;
+        }
+    }
+    return nil;
+}
+
 
 /**
  *  MARK:--------------------NodeViewDelegate--------------------
@@ -113,9 +132,24 @@
 -(UIView *)nodeView_GetCustomSubView:(id)nodeData{
     return [self nv_GetCustomNodeView:nodeData];
 }
-
--(NSString*) nodeView_GetDesc:(id)nodeData{
+-(NSString*) nodeView_GetTipsDesc:(id)nodeData{
     return [self nv_GetNodeTipsDesc:nodeData];
+}
+-(void) nodeView_TopClick:(id)nodeData{
+    NSArray *absPorts = [self nv_AbsPorts:nodeData];
+    NSLog(@"%@",absPorts);
+}
+-(void) nodeView_BottomClick:(id)nodeData{
+    NSArray *conPorts = [self nv_ConPorts:nodeData];
+    NSLog(@"%@",conPorts);
+}
+-(void) nodeView_LeftClick:(id)nodeData{
+    NSArray *content_ps = [self nv_Content_ps:nodeData];
+    NSLog(@"%@",content_ps);
+}
+-(void) nodeView_RightClick:(id)nodeData{
+    NSArray *refPorts = [self nv_GetRefPorts:nodeData];
+    NSLog(@"%@",refPorts);
 }
 
 //MARK:===============================================================

@@ -58,8 +58,8 @@
  */
 @interface NVView : UIView
 
-@property (weak, nonatomic) id<NVViewDelegate> delegate;
--(void) setData:(NSArray*)arr;
+-(id) initWithDelegate:(id<NVViewDelegate>)delegate;
+-(void) setNodeData:(id)nodeData;
 
 @end
 

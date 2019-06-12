@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "NVUtils.h"
+#import "NVView.h"
 
 /**
  *  MARK:--------------------SMG内核中网络可视化项目--------------------

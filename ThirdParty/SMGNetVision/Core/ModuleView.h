@@ -14,6 +14,7 @@
  */
 @interface ModuleView : UIView
 
+@property (readonly,strong, nonatomic) NSString *moduleId;
 -(void) setData:(NSString*)moduleId;
 
 @end

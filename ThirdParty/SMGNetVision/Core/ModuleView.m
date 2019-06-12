@@ -14,7 +14,6 @@
 
 @property (strong,nonatomic) IBOutlet UIView *containerView;
 @property (weak, nonatomic) IBOutlet UILabel *titleLab;
-@property (strong, nonatomic) NSString *moduleId;
 
 @end
 
@@ -52,7 +51,7 @@
 //MARK:                     < method >
 //MARK:===============================================================
 -(void) setData:(NSString*)moduleId{
-    self.moduleId = moduleId;
+    _moduleId = moduleId;
     [self refreshDisplay];
 }
 

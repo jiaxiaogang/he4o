@@ -11,15 +11,7 @@
 #import "AINet.h"
 #import "NSObject+Extension.h"
 #import "AIKVPointer.h"
-#import "NVView.h"
 #import "NVDelegate_He.h"
-
-@interface AppDelegate()
-
-@property (strong, nonatomic) NVView *nvView;
-@property (strong, nonatomic) NVDelegate_He *nvDelegate;
-
-@end
 
 @implementation AppDelegate
 
@@ -38,10 +30,7 @@
     [self.window makeKeyAndVisible];
     
     //3. 神经网络可视化
-    self.nvView = [[NVView alloc] init];
-    self.nvDelegate = [[NVDelegate_He alloc] init];
-    self.nvView.delegate = self.nvDelegate;
-    [self.nvView setData:nil];
+    self.nvView = [[NVView alloc] initWithDelegate:[NVDelegate_He new]];
     [self.window addSubview:self.nvView];
     
     return YES;

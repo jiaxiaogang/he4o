@@ -8,10 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
+@class NVView;
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 -(UIViewController*) getTopDisplayViewController;
+@property (strong, nonatomic) NVView *nvView;
 
 @end
 
