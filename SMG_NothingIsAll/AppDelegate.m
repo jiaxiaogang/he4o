@@ -41,6 +41,7 @@
     self.nvView = [[NVView alloc] init];
     self.nvDelegate = [[NVDelegate_He alloc] init];
     self.nvView.delegate = self.nvDelegate;
+    [self.nvView setData:nil];
     [self.window addSubview:self.nvView];
     
     return YES;

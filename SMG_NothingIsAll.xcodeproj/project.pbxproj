@@ -60,6 +60,8 @@
 		088070A222693C2D00E9E21F /* TOAlgScheme.m in Sources */ = {isa = PBXBuildFile; fileRef = 088070A122693C2D00E9E21F /* TOAlgScheme.m */; };
 		0881965F21800F2B00D5DB36 /* BirdLivePage.m in Sources */ = {isa = PBXBuildFile; fileRef = 0881965D21800F2B00D5DB36 /* BirdLivePage.m */; };
 		0881966021800F2B00D5DB36 /* BirdLivePage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0881965E21800F2B00D5DB36 /* BirdLivePage.xib */; };
+		0889257F22B0702A00A0DBDD /* ModuleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0889257E22B0702A00A0DBDD /* ModuleView.m */; };
+		0889258122B0703700A0DBDD /* ModuleView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0889258022B0703700A0DBDD /* ModuleView.xib */; };
 		088DD7232201216500E0A786 /* TOFoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088DD7222201216500E0A786 /* TOFoModel.m */; };
 		089614A9219A4D5200343FAC /* BirdGrowPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 089614A7219A4D5200343FAC /* BirdGrowPage.m */; };
 		089614AA219A4D5200343FAC /* BirdGrowPage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 089614A8219A4D5200343FAC /* BirdGrowPage.xib */; };
@@ -224,6 +226,9 @@
 		0881965C21800F2B00D5DB36 /* BirdLivePage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BirdLivePage.h; sourceTree = "<group>"; };
 		0881965D21800F2B00D5DB36 /* BirdLivePage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BirdLivePage.m; sourceTree = "<group>"; };
 		0881965E21800F2B00D5DB36 /* BirdLivePage.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BirdLivePage.xib; sourceTree = "<group>"; };
+		0889257D22B0702A00A0DBDD /* ModuleView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModuleView.h; sourceTree = "<group>"; };
+		0889257E22B0702A00A0DBDD /* ModuleView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ModuleView.m; sourceTree = "<group>"; };
+		0889258022B0703700A0DBDD /* ModuleView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ModuleView.xib; sourceTree = "<group>"; };
 		088DD7212201216500E0A786 /* TOFoModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOFoModel.h; sourceTree = "<group>"; };
 		088DD7222201216500E0A786 /* TOFoModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOFoModel.m; sourceTree = "<group>"; };
 		089614A6219A4D5200343FAC /* BirdGrowPage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BirdGrowPage.h; sourceTree = "<group>"; };
@@ -641,6 +646,9 @@
 				08A5D5DB22AF21B000E56BB4 /* NodeView.h */,
 				08A5D5DC22AF21B000E56BB4 /* NodeView.m */,
 				08A5D5DE22AF21C900E56BB4 /* NodeView.xib */,
+				0889257D22B0702A00A0DBDD /* ModuleView.h */,
+				0889257E22B0702A00A0DBDD /* ModuleView.m */,
+				0889258022B0703700A0DBDD /* ModuleView.xib */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -992,6 +1000,7 @@
 				0858C5E921950CAA00951BA5 /* FoodView.xib in Resources */,
 				08A5D5DA22AF1E9D00E56BB4 /* NVView.xib in Resources */,
 				0858C5B02194F5E400951BA5 /* CarView.xib in Resources */,
+				0889258122B0703700A0DBDD /* ModuleView.xib in Resources */,
 				08AF45551E97D0B500377887 /* Assets.xcassets in Resources */,
 				08DB40CC1F11A65E003162C8 /* TestHungryPage.xib in Resources */,
 				0881966021800F2B00D5DB36 /* BirdLivePage.xib in Resources */,
@@ -1109,6 +1118,7 @@
 				0858C5D12194F8B000951BA5 /* NSArray+MASAdditions.m in Sources */,
 				0858C5CC2194F8B000951BA5 /* MASConstraint.m in Sources */,
 				0860617921F92F7100113366 /* AIThinkIn.m in Sources */,
+				0889257F22B0702A00A0DBDD /* ModuleView.m in Sources */,
 				0858C5CE2194F8B000951BA5 /* MASLayoutConstraint.m in Sources */,
 				0808927A215AF5F400710636 /* AINodeBase.m in Sources */,
 				089E66B421B9F84500ECA28A /* AIAlgNode.m in Sources */,

@@ -7,6 +7,7 @@
 //
 
 #import "NVDelegate_He.h"
+#import "AIKVPointer.h"
 
 @implementation NVDelegate_He
 
@@ -17,9 +18,54 @@
     return nil;
 }
 
-- (NSString *)nv_GetNodeDesc:(AIKVPointer*)node_p{
-    
+-(NSString*)nv_GetNodeTipsDesc:(AIKVPointer*)node_p{
+    //1. value时,返回 "iden+value值";
+    //2. algNode时,返回content_ps的 "微信息数+嵌套数";
+    //3. foNode时,返回 "order_kvp数"
+    //4. mv时,返回 "类型+升降";
     return @"描述还没写";
+}
+
+-(NSArray*)nv_GetModuleIds{
+    return @[@"微信息",@"概念网络",@"时序网络",@"价值网络"];
+}
+
+-(NSString*)nv_GetModuleId:(AIKVPointer*)node_p{
+    //判断node_p的类型,并返回;
+    NSLog(@"%@",node_p.params);
+    return @"微信息";
+}
+
+-(NSArray*)nv_GetRefPorts:(AIKVPointer*)node_p{
+    //1. 如果是value,则独立取refPorts文件返回;
+    
+    //2. 如果是algNode则返回.refPorts;
+    
+    //3. 如果是foNode/mvNode则返回mv基本模型互指向指针;
+    return nil;
+}
+
+-(NSArray*)nv_Content_ps:(AIKVPointer*)node_p{
+    //1. value时返回空;
+    
+    //2. algNode时返回content_ps
+    
+    //3. foNode时返回order_kvp
+    
+    //4. mv时返回nil;
+    return nil;
+}
+
+-(NSArray*)nv_AbsPorts:(AIKVPointer*)node_p{
+    //1. 如果是algNode/foNode/mvNode则返回.absPorts;
+    //2. 否则返回nil;
+    return nil;
+}
+
+-(NSArray*)nv_ConPorts:(AIKVPointer*)node_p{
+    //1. 如果是algNode/foNode/mvNode则返回.conPorts;
+    //2. 否则返回nil;
+    return nil;
 }
 
 @end
