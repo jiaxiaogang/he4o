@@ -24,6 +24,7 @@
  */
 @interface NodeView : UIView
 
+@property (readonly,strong, nonatomic) id data;//一般为一个指针
 @property (weak, nonatomic) id<NodeViewDelegate> delegate;
 -(void) setDataWithNodeData:(id)nodeData;
 

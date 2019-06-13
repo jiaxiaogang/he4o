@@ -10,45 +10,27 @@
 
 @protocol NVViewDelegate <NSObject>
 
-/**
- *  MARK:--------------------获取自定义节点view--------------------
- */
+//获取自定义节点view
 -(UIView *)nv_GetCustomNodeView:(id)nodeData;
 
-/**
- *  MARK:--------------------获取节点描述--------------------
- */
+//获取节点描述
 -(NSString*)nv_GetNodeTipsDesc:(id)nodeData;
 
-/**
- *  MARK:--------------------获取模块Id--------------------
- */
+//获取模块Id
 -(NSArray*)nv_GetModuleIds;
 -(NSString*)nv_GetModuleId:(id)nodeData;
 
-/**
- *  MARK:--------------------获取节点的引用序列--------------------
- *  注: 点击右角触发
- */
--(NSArray*)nv_GetRefPorts:(id)nodeData;
+//获取节点的被引用序列
+-(NSArray*)nv_GetRefNodeDatas:(id)nodeData;
 
-/**
- *  MARK:--------------------获取节点的内容序列--------------------
- *  注: 点击左角触发
- */
--(NSArray*)nv_Content_ps:(id)nodeData;
+//获取节点的引用序列(内容)
+-(NSArray*)nv_ContentNodeDatas:(id)nodeData;
 
-/**
- *  MARK:--------------------获取节点的抽象序列--------------------
- *  注: 点击上角触发
- */
--(NSArray*)nv_AbsPorts:(id)nodeData;
+//获取节点的抽象序列
+-(NSArray*)nv_AbsNodeDatas:(id)nodeData;
 
-/**
- *  MARK:--------------------获取节点的具象序列--------------------
- *  注: 点击下角触发
- */
--(NSArray*)nv_ConPorts:(id)nodeData;
+//获取节点的具象序列
+-(NSArray*)nv_ConNodeDatas:(id)nodeData;
 
 @end
 

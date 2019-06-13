@@ -13,7 +13,6 @@
 @interface NodeView ()
 
 @property (strong,nonatomic) IBOutlet UIControl *containerView;
-@property (strong, nonatomic) id data;//一般为一个指针
 
 @end
 
@@ -51,7 +50,7 @@
 //MARK:                     < method >
 //MARK:===============================================================
 -(void) setDataWithNodeData:(id)nodeData{
-    self.data = nodeData;
+    _data = nodeData;
     [self refreshDisplay];
 }
 
@@ -76,7 +75,7 @@
 //MARK:                     < onClick >
 //MARK:===============================================================
 - (IBAction)contentViewTouchDown:(id)sender {
-    NSString *desc = [self nodeView_GetCustomSubView:self.data];
+    NSString *desc = [self nodeView_GetTipsDesc:self.data];
     NSLog(@"按下:%@",desc);
 }
 - (IBAction)contentViewTouchCancel:(id)sender {

@@ -9,14 +9,12 @@
 #import "NVView.h"
 #import "MASConstraint.h"
 #import "View+MASAdditions.h"
-#import "NodeView.h"
 #import "ModuleView.h"
 
-@interface NVView () <NodeViewDelegate>
+@interface NVView () <ModuleViewDelegate>
 
 @property (strong,nonatomic) IBOutlet UIView *containerView;
 @property (strong, nonatomic) UIScrollView *scrollView;
-@property (strong, nonatomic) NSMutableArray *nodeArr;
 @property (assign, nonatomic) BOOL isOpen;
 @property (weak, nonatomic) IBOutlet UIButton *openCloseBtn;
 @property (weak, nonatomic) id<NVViewDelegate> delegate;
@@ -66,7 +64,7 @@
         [self.scrollView removeAllSubviews];
         for (NSString *moduleId in moduleIds) {
             ModuleView *moduleView = [[ModuleView alloc] init];
-            [moduleView setData:moduleId];
+            [moduleView setDataWithModuleId:moduleId];
             [moduleView setFrame:CGRectMake(curModuleX, 2, moduleW, moduleH)];
             [self.scrollView addSubview:moduleView];
             curModuleX += (moduleW + 2);
@@ -76,7 +74,6 @@
 }
 
 -(void) initData{
-    self.nodeArr = [[NSMutableArray alloc] init];
 }
 
 -(void) initDisplay{
@@ -88,28 +85,11 @@
 //MARK:===============================================================
 -(void) setNodeData:(id)nodeData{
     if (nodeData) {
-        if (![self.nodeArr containsObject:nodeData]) {
-            [self.nodeArr addObject:nodeData];
-            [self refreshDisplay];
-        }
-    }
-}
-
--(void) refreshDisplay{
-    //1. 显示所有node
-    for (id nodeData in self.nodeArr) {
         ModuleView *mView = [self getModuleView:nodeData];
         if (mView) {
-            NodeView *nodeView = [[NodeView alloc] init];
-            nodeView.delegate = self;
-            [nodeView setDataWithNodeData:nodeData];
-            [mView addSubview:nodeView];
+            [mView setDataWithNodeData:nodeData];
         }
     }
-    
-    //2. 显示所有line
-    
-    //3. 排版,重置计算所有坐标;
 }
 
 /**
@@ -125,33 +105,6 @@
     return nil;
 }
 
-
-/**
- *  MARK:--------------------NodeViewDelegate--------------------
- */
--(UIView *)nodeView_GetCustomSubView:(id)nodeData{
-    return [self nv_GetCustomNodeView:nodeData];
-}
--(NSString*) nodeView_GetTipsDesc:(id)nodeData{
-    return [self nv_GetNodeTipsDesc:nodeData];
-}
--(void) nodeView_TopClick:(id)nodeData{
-    NSArray *absPorts = [self nv_AbsPorts:nodeData];
-    NSLog(@"%@",absPorts);
-}
--(void) nodeView_BottomClick:(id)nodeData{
-    NSArray *conPorts = [self nv_ConPorts:nodeData];
-    NSLog(@"%@",conPorts);
-}
--(void) nodeView_LeftClick:(id)nodeData{
-    NSArray *content_ps = [self nv_Content_ps:nodeData];
-    NSLog(@"%@",content_ps);
-}
--(void) nodeView_RightClick:(id)nodeData{
-    NSArray *refPorts = [self nv_GetRefPorts:nodeData];
-    NSLog(@"%@",refPorts);
-}
-
 //MARK:===============================================================
 //MARK:                     < onclick >
 //MARK:===============================================================
@@ -159,6 +112,33 @@
     self.isOpen = !self.isOpen;
     self.height = self.isOpen ? 300 : 20;
     [self.openCloseBtn setTitle:(self.isOpen ? @"收起" : @"放开") forState:UIControlStateNormal];
+}
+
+/**
+ *  MARK:--------------------ModuleViewDelegate--------------------
+ */
+-(UIView *)moduleView_GetCustomSubView:(id)nodeData{
+    return [self nv_GetCustomNodeView:nodeData];
+}
+
+-(NSString*)moduleView_GetTipsDesc:(id)nodeData{
+    return [self nv_GetNodeTipsDesc:nodeData];
+}
+
+-(NSArray*)moduleView_AbsNodeDatas:(id)nodeData{
+    return [self nv_AbsNodeDatas:nodeData];
+}
+
+-(NSArray*)moduleView_ConNodeDatas:(id)nodeData{
+    return [self nv_ConNodeDatas:nodeData];
+}
+
+-(NSArray*)moduleView_ContentNodeDatas:(id)nodeData{
+    return [self nv_ContentNodeDatas:nodeData];
+}
+
+-(NSArray*)moduleView_RefNodeDatas:(id)nodeData{
+    return [self nv_GetRefNodeDatas:nodeData];
 }
 
 //MARK:===============================================================
@@ -188,27 +168,27 @@
     }
     return nil;
 }
--(NSArray*)nv_GetRefPorts:(id)nodeData{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_GetRefPorts:)]) {
-        return [self.delegate nv_GetRefPorts:nodeData];
+-(NSArray*)nv_GetRefNodeDatas:(id)nodeData{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_GetRefNodeDatas:)]) {
+        return [self.delegate nv_GetRefNodeDatas:nodeData];
     }
     return nil;
 }
--(NSArray*)nv_Content_ps:(id)nodeData{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_Content_ps:)]) {
-        return [self.delegate nv_Content_ps:nodeData];
+-(NSArray*)nv_ContentNodeDatas:(id)nodeData{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_ContentNodeDatas:)]) {
+        return [self.delegate nv_ContentNodeDatas:nodeData];
     }
     return nil;
 }
--(NSArray*)nv_AbsPorts:(id)nodeData{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_AbsPorts:)]) {
-        return [self.delegate nv_AbsPorts:nodeData];
+-(NSArray*)nv_AbsNodeDatas:(id)nodeData{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_AbsNodeDatas:)]) {
+        return [self.delegate nv_AbsNodeDatas:nodeData];
     }
     return nil;
 }
--(NSArray*)nv_ConPorts:(id)nodeData{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_ConPorts:)]) {
-        return [self.delegate nv_ConPorts:nodeData];
+-(NSArray*)nv_ConNodeDatas:(id)nodeData{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_ConNodeDatas:)]) {
+        return [self.delegate nv_ConNodeDatas:nodeData];
     }
     return nil;
 }

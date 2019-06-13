@@ -36,7 +36,7 @@
     return @"微信息";
 }
 
--(NSArray*)nv_GetRefPorts:(AIKVPointer*)node_p{
+-(NSArray*)nv_GetRefNodeDatas:(AIKVPointer*)node_p{
     //1. 如果是value,则独立取refPorts文件返回;
     
     //2. 如果是algNode则返回.refPorts;
@@ -45,7 +45,7 @@
     return nil;
 }
 
--(NSArray*)nv_Content_ps:(AIKVPointer*)node_p{
+-(NSArray*)nv_ContentNodeDatas:(AIKVPointer*)node_p{
     //1. value时返回空;
     
     //2. algNode时返回content_ps
@@ -56,13 +56,13 @@
     return nil;
 }
 
--(NSArray*)nv_AbsPorts:(AIKVPointer*)node_p{
+-(NSArray*)nv_AbsNodeDatas:(AIKVPointer*)node_p{
     //1. 如果是algNode/foNode/mvNode则返回.absPorts;
     //2. 否则返回nil;
     return nil;
 }
 
--(NSArray*)nv_ConPorts:(AIKVPointer*)node_p{
+-(NSArray*)nv_ConNodeDatas:(AIKVPointer*)node_p{
     //1. 如果是algNode/foNode/mvNode则返回.conPorts;
     //2. 否则返回nil;
     return nil;
