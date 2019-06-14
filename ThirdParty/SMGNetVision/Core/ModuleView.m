@@ -10,6 +10,7 @@
 #import "MASConstraint.h"
 #import "View+MASAdditions.h"
 #import "NodeView.h"
+#import "NodeCompareModel.h"
 
 @interface ModuleView ()<NodeViewDelegate>
 
@@ -92,25 +93,133 @@
  *  1. 有可能,a组与b组间没抽具象关系;此时只能默认往底部排;
  */
 -(void) refreshDisplay_Node{
-    //1. 对所有节点数据,逐个纵向打通,来做层级判断;
-    NSMutableDictionary *numDic = [NSMutableDictionary new];
-    for (id curItem in self.nodeArr) {
-        NSArray *abss = ARRTOOK([self moduleView_AbsNodeDatas:curItem]);
-        NSArray *cons = ARRTOOK([self moduleView_ConNodeDatas:curItem]);
+    //1. 获取分组数据;
+    NSArray *sortGroups = [self getSortGroups];
+    
+    //2. 转成编层号字典;
+    NSMutableDictionary *xDic = [[NSMutableDictionary alloc] init];//从左往右编号
+    NSMutableDictionary *yDic = [[NSMutableDictionary alloc] init];//从下往上编号
+    int curX = 0;
+    int curY = 0;
+    ///1. 有抽象加一层的,
+    ///2. 也有平层在同一层的;
+    
+    //3. 根据编号计算坐标;
+    
+    
+    
+    
+}
+
+/**
+ *  MARK:--------------------获取dataArr的排版分组--------------------
+ *  注: 其中最具象为0,抽象往上,越抽象值越大,越具象值越小;
+ *  @result : 二维数组,元素为组,组中具象在前,抽象在后;
+ */
+-(NSMutableArray*) getSortGroups{
+    //1. 找出所有有关系的NodeCompareModel
+    NSArray *compareModels = [self getNodeCompareModels];
+    
+    //2. 用相容算法,分组;
+    NSMutableArray *groups = [[NSMutableArray alloc] init];
+    for (id item in self.nodeArr) {
+        ///1. 已有,则加入;
+        BOOL joinSuccess = false;
+        for (NSMutableArray *group in groups) {
+            if ([self containsRelateWithData:item fromGroup:groups compareModels:compareModels]) {
+                [group addObject:item];
+                joinSuccess = true;
+                break;
+            }
+        }
         
-        for (id checkItem in self.nodeArr) {
-            if ([abss containsObject:checkItem]) {
-                //抽象关系
-            }
-            if ([cons containsObject:checkItem]) {
-                //具象关系
-            }
+        ///2. 未有,则新组;
+        if (!joinSuccess) {
+            NSMutableArray *newGroup = [[NSMutableArray alloc] init];
+            [newGroup addObject:item];
+            [groups addObject:newGroup];
         }
     }
     
-    
-    
-    
+    //3. 对groups中,每一组进行独立排序,并取编号结果;
+    NSMutableArray *sortGroups = [[NSMutableArray alloc] init];
+    for (NSArray *group in groups) {
+        NSArray *sortGroup = [group sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+            return [self compareNodeData1:obj1 nodeData2:obj2 compareModels:compareModels];
+        }];
+        [sortGroups addObject:sortGroup];
+    }
+    return sortGroups;
+}
+
+/**
+ *  MARK:--------------------比较nodeData1和2的抽具象关系--------------------
+ *  @result : 抽象为大,具象为小,无关系为相等
+ */
+-(NSComparisonResult)compareNodeData1:(id)n1 nodeData2:(id)n2 compareModels:(NSArray*)compareModels{
+    //1. 数据检查
+    if (n1 && n2) {
+        compareModels = ARRTOOK(compareModels);
+        
+        //2. 判断n1与n2的关系,并返回大或小;
+        for (NodeCompareModel *model in compareModels) {
+            if ([model isA:n1 andB:n2]) {
+                return [n1 isEqual:model.smallNodeData] ? NSOrderedDescending : NSOrderedAscending;
+            }
+        }
+    }
+    //3. 无关系异常
+    return NSOrderedSame;
+}
+
+/**
+ *  MARK:--------------------收集所有nodeData的关系模型--------------------
+ */
+-(NSArray*)getNodeCompareModels {
+    //1. 进行一一比较,并收集;
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    for (NSInteger i = 0; i < self.nodeArr.count; i++) {
+        for (NSInteger j = i + 1; j < self.nodeArr.count; j++) {
+            id iData = ARR_INDEX(self.nodeArr, i);
+            id jData = ARR_INDEX(self.nodeArr, j);
+            if (iData && jData) {
+                //2. n1抽象指向n2
+                NSArray *iAbs = ARRTOOK([self moduleView_AbsNodeDatas:iData]);
+                NSLog(@"此处,检查下指针能否使用containsObject:如果不能,要使用smgutils中的方法;");
+                if ([iAbs containsObject:jData]) {
+                    [result addObject:[NodeCompareModel newWithBig:jData small:iData]];
+                    continue;
+                }
+                //3. n1具象指向n2
+                NSArray *iCon = ARRTOOK([self moduleView_ConNodeDatas:iData]);
+                if ([iCon containsObject:jData]) {
+                    [result addObject:[NodeCompareModel newWithBig:iData small:jData]];
+                }
+            }
+        }
+    }
+    return result;
+}
+
+/**
+ *  MARK:--------------------检查group中有没有和checkData有关系的--------------------
+ */
+-(BOOL) containsRelateWithData:(id)checkData fromGroup:(NSArray*)group compareModels:(NSArray*)compareModels{
+    //1. 数据检查
+    if (checkData) {
+        group = ARRTOOK(group);
+        compareModels = ARRTOOK(compareModels);
+        
+        //2. 检查group中,是否有元素与checkData有关系;
+        for (id groupData in group) {
+            for (NodeCompareModel *model in compareModels) {
+                if ([model isA:groupData andB:checkData]) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
 }
 
 /**

@@ -80,6 +80,7 @@
 		08AF45581E97D0B500377887 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45561E97D0B500377887 /* LaunchScreen.storyboard */; };
 		08B31E7E20648C3700FD96EA /* ThinkingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B31E7D20648C3700FD96EA /* ThinkingUtils.m */; };
 		08C84A8E1E9A866200897D8B /* AIInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A8D1E9A866200897D8B /* AIInput.m */; };
+		08CEAFAD22B317A800CD1D91 /* NodeCompareModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08CEAFAC22B317A800CD1D91 /* NodeCompareModel.m */; };
 		08D1743B22712D50009A5586 /* TOActionModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D1743A22712D50009A5586 /* TOActionModel.m */; };
 		08D322A91EBA28B0009D734A /* Foundation+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D322A81EBA28B0009D734A /* Foundation+Log.m */; };
 		08D471DE1FEB3FFF00C61322 /* AIImvAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D471DD1FEB3FFF00C61322 /* AIImvAlgs.m */; };
@@ -262,6 +263,8 @@
 		08C84A8C1E9A866200897D8B /* AIInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIInput.h; sourceTree = "<group>"; };
 		08C84A8D1E9A866200897D8B /* AIInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIInput.m; sourceTree = "<group>"; };
 		08CB89B82231EAB200EC1181 /* ReadMe.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReadMe.h; sourceTree = "<group>"; };
+		08CEAFAB22B317A800CD1D91 /* NodeCompareModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NodeCompareModel.h; sourceTree = "<group>"; };
+		08CEAFAC22B317A800CD1D91 /* NodeCompareModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NodeCompareModel.m; sourceTree = "<group>"; };
 		08D1743922712D50009A5586 /* TOActionModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOActionModel.h; sourceTree = "<group>"; };
 		08D1743A22712D50009A5586 /* TOActionModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOActionModel.m; sourceTree = "<group>"; };
 		08D322A71EBA2783009D734A /* SMGPrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMGPrefixHeader.pch; sourceTree = "<group>"; };
@@ -640,6 +643,7 @@
 		08A5D5D522AF1C1E00E56BB4 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				08CEAFAA22B3179000CD1D91 /* Model */,
 				08A5D5D622AF1E3400E56BB4 /* NVView.h */,
 				08A5D5D722AF1E3400E56BB4 /* NVView.m */,
 				08A5D5D922AF1E9D00E56BB4 /* NVView.xib */,
@@ -742,6 +746,15 @@
 				087268DF219CF3B500B5490F /* AIVisionAlgs.m */,
 			);
 			path = AIAlg;
+			sourceTree = "<group>";
+		};
+		08CEAFAA22B3179000CD1D91 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				08CEAFAB22B317A800CD1D91 /* NodeCompareModel.h */,
+				08CEAFAC22B317A800CD1D91 /* NodeCompareModel.m */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		08D7DA401ED1499C004B1018 /* AIFoundation */ = {
@@ -1082,6 +1095,7 @@
 				08EA48CE202932B80038B982 /* CustomAlgsChargeModel.m in Sources */,
 				084C3A6B21926D5700DAA08A /* BirdView.m in Sources */,
 				088DD7232201216500E0A786 /* TOFoModel.m in Sources */,
+				08CEAFAD22B317A800CD1D91 /* NodeCompareModel.m in Sources */,
 				0858C5DB2194FB3F00951BA5 /* LightView.m in Sources */,
 				08E8F7B221798AEE004F51DE /* AIFoNodeBase.m in Sources */,
 				0842ADBD1FE207500048ADDC /* DemoHunger.m in Sources */,
