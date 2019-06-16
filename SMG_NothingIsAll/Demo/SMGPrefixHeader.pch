@@ -22,9 +22,26 @@
 #import "AIHeader.h"
 #endif
 
-//application
+/**
+ *  MARK:--------------------application--------------------
+ */
 #define theApp ((AppDelegate*)[[UIApplication sharedApplication] delegate])
 
-//ui
+/**
+ *  MARK:--------------------ui--------------------
+ */
 #define ScreenHeight [[UIScreen mainScreen] bounds].size.height
 #define ScreenWidth [[UIScreen mainScreen] bounds].size.width
+
+/**
+ *  MARK:--------------------color--------------------
+ */
+//RGB & RGBA
+#define UIColorWithRGB(R, G, B) [UIColor colorWithRed:(R)/255.0 green:(G)/255.0 blue:(B)/255.0 alpha:1]
+#define UIColorWithRGBA(R, G, B, A) [UIColor colorWithRed:(R)/255.0 green:(G)/255.0 blue:(B)/255.0 alpha:A]
+//Hex & HexA
+#define UIColorWithRGBHex(RGB_Hex) UIColorWithRGB((float)((RGB_Hex&0xFF0000)>>16), (float)((RGB_Hex&0xFF00)>>8), (float)(RGB_Hex&0xFF))
+#define UIColorWithRGBHexA(RGB_Hex,A) UIColorWithRGBA((float)((RGB_Hex&0xFF0000)>>16), (float)((RGB_Hex&0xFF00)>>8), (float)(RGB_Hex&0xFF),A)
+//HSB (色相,饱合度,亮度)
+#define UIColorWithHSB(H, S, B) [UIColor colorWithHue:(H)/255.0 saturation:(S)/255.0 brightness:(B)/255.0 alpha:1]
+

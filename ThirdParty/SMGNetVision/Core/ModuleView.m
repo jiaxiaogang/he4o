@@ -52,7 +52,7 @@
 }
 
 -(void) initDisplay{
-    
+    [self refreshDisplay_Line];
 }
 
 //MARK:===============================================================
@@ -83,11 +83,12 @@
     [self refreshDisplay_Node];
     
     //3. 重绘关联线
-    
-    
-    
+    [self refreshDisplay_Line];
 }
 
+//MARK:===============================================================
+//MARK:                     < Node >
+//MARK:===============================================================
 /**
  *  MARK:--------------------节点排版算法--------------------
  *  1. 有可能,a组与b组间没抽具象关系;此时只能默认往底部排;
@@ -246,6 +247,21 @@
         }
     }
     return false;
+}
+
+//MARK:===============================================================
+//MARK:                     < Line >
+//MARK:===============================================================
+-(void) refreshDisplay_Line{
+    UIBezierPath *path = [UIBezierPath bezierPath];
+    [path moveToPoint:CGPointMake(50, 50)];
+    [path addLineToPoint:CGPointMake(100, 100)];
+    CAShapeLayer *pathLayer = [CAShapeLayer layer];
+    pathLayer.lineWidth = 1;
+    pathLayer.strokeColor = UIColorWithRGBHexA(0x0000FF, 0.3).CGColor;
+    pathLayer.fillColor = nil;
+    pathLayer.path = path.CGPath;
+    [self.containerView.layer addSublayer:pathLayer];
 }
 
 /**
