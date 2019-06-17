@@ -11,60 +11,64 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="NodeView">
             <connections>
+                <outlet property="bottomBtn" destination="Tlc-fp-yjP" id="Fx9-Dx-0J6"/>
                 <outlet property="containerView" destination="iN0-l3-epB" id="zFp-P6-7Xt"/>
+                <outlet property="leftBtn" destination="qq9-YW-ooV" id="5IV-LS-v7Z"/>
+                <outlet property="rightBtn" destination="LMI-Sl-GNe" id="wTa-i6-qiZ"/>
+                <outlet property="topBtn" destination="w7V-wM-pHv" id="Gi6-sX-3bf"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="UIControl">
-            <rect key="frame" x="0.0" y="0.0" width="10" height="10"/>
+            <rect key="frame" x="0.0" y="0.0" width="15" height="15"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="w7V-wM-pHv">
-                    <rect key="frame" x="0.0" y="0.0" width="10" height="2"/>
-                    <color key="backgroundColor" red="0.73210509698879611" green="0.78017729922279799" blue="0.77764690463693953" alpha="0.24639634683098591" colorSpace="custom" customColorSpace="sRGB"/>
+                <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="w7V-wM-pHv">
+                    <rect key="frame" x="5" y="0.0" width="5" height="5"/>
+                    <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="2" id="NWR-HI-eA9"/>
-                        <constraint firstAttribute="width" constant="10" id="n1U-JB-hBe"/>
+                        <constraint firstAttribute="height" constant="5" id="NWR-HI-eA9"/>
+                        <constraint firstAttribute="width" constant="5" id="n1U-JB-hBe"/>
                     </constraints>
                     <connections>
                         <action selector="topBtnOnClick:" destination="-1" eventType="touchUpInside" id="NJW-Zn-s25"/>
                     </connections>
                 </button>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tlc-fp-yjP">
-                    <rect key="frame" x="0.0" y="8" width="10" height="2"/>
-                    <color key="backgroundColor" red="0.73210509700000004" green="0.78017729920000001" blue="0.77764690459999997" alpha="0.2463963468" colorSpace="custom" customColorSpace="sRGB"/>
+                <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tlc-fp-yjP">
+                    <rect key="frame" x="5" y="10" width="5" height="5"/>
+                    <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="2" id="V4w-Qz-7sC"/>
-                        <constraint firstAttribute="width" constant="10" id="c5h-QO-d7o"/>
+                        <constraint firstAttribute="height" constant="5" id="V4w-Qz-7sC"/>
+                        <constraint firstAttribute="width" constant="5" id="c5h-QO-d7o"/>
                     </constraints>
                     <connections>
                         <action selector="bottomBtnOnClick:" destination="-1" eventType="touchUpInside" id="fef-fZ-2ri"/>
                     </connections>
                 </button>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qq9-YW-ooV">
-                    <rect key="frame" x="0.0" y="0.0" width="2" height="10"/>
-                    <color key="backgroundColor" red="0.73210509700000004" green="0.78017729920000001" blue="0.77764690459999997" alpha="0.2463963468" colorSpace="custom" customColorSpace="sRGB"/>
+                <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qq9-YW-ooV">
+                    <rect key="frame" x="0.0" y="5" width="5" height="5"/>
+                    <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
-                        <constraint firstAttribute="width" constant="2" id="MwO-eY-DYm"/>
-                        <constraint firstAttribute="height" constant="10" id="RBz-UR-8rA"/>
+                        <constraint firstAttribute="width" constant="5" id="MwO-eY-DYm"/>
+                        <constraint firstAttribute="height" constant="5" id="RBz-UR-8rA"/>
                     </constraints>
                     <connections>
                         <action selector="leftBtnOnClick:" destination="-1" eventType="touchUpInside" id="grZ-JJ-RTg"/>
                     </connections>
                 </button>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LMI-Sl-GNe">
-                    <rect key="frame" x="8" y="0.0" width="2" height="10"/>
-                    <color key="backgroundColor" red="0.73210509700000004" green="0.78017729920000001" blue="0.77764690459999997" alpha="0.2463963468" colorSpace="custom" customColorSpace="sRGB"/>
+                <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LMI-Sl-GNe">
+                    <rect key="frame" x="10" y="5" width="5" height="5"/>
+                    <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
-                        <constraint firstAttribute="width" constant="2" id="goy-w7-MNS"/>
-                        <constraint firstAttribute="height" constant="10" id="xaT-Ra-o38"/>
+                        <constraint firstAttribute="width" constant="5" id="goy-w7-MNS"/>
+                        <constraint firstAttribute="height" constant="5" id="xaT-Ra-o38"/>
                     </constraints>
                     <connections>
                         <action selector="rightBtnOnClick:" destination="-1" eventType="touchUpInside" id="Qwn-uK-8wn"/>
                     </connections>
                 </button>
             </subviews>
-            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color key="backgroundColor" red="0.88220167395982951" green="1" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
                 <constraint firstItem="qq9-YW-ooV" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="25A-1J-4Wb"/>
                 <constraint firstItem="Tlc-fp-yjP" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="7N9-uB-GYk"/>

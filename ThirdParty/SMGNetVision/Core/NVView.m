@@ -67,6 +67,7 @@
         [self.scrollView removeAllSubviews];
         for (NSString *moduleId in moduleIds) {
             ModuleView *moduleView = [[ModuleView alloc] init];
+            moduleView.delegate = self;
             [moduleView setDataWithModuleId:moduleId];
             [moduleView setFrame:CGRectMake(curModuleX, 2, moduleW, moduleH)];
             [self.scrollView addSubview:moduleView];

@@ -52,7 +52,7 @@
 }
 
 -(void) initDisplay{
-    [self refreshDisplay_Line];
+    
 }
 
 //MARK:===============================================================
@@ -76,7 +76,7 @@
         NodeView *nodeView = [[NodeView alloc] init];
         nodeView.delegate = self;
         [nodeView setDataWithNodeData:nodeData];
-        [self addSubview:nodeView];
+        [self.containerView addSubview:nodeView];
     }
     
     //2. 节点排版算法,重置计算所有节点坐标;
@@ -132,8 +132,8 @@
     for (NodeView *nodeView in nodeViews) {
         NSInteger x = [NUMTOOK([xDic objectForKey:nodeView.data]) integerValue];
         NSInteger y = [NUMTOOK([yDic objectForKey:nodeView.data]) integerValue];
-        [nodeView setX:x * 12];
-        [nodeView setX:(self.height - y * 12)];
+        nodeView.x = x * 17;
+        nodeView.y = (self.height - 15) - y * 17;
     }
 }
 

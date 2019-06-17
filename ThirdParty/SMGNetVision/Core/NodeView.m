@@ -13,6 +13,11 @@
 @interface NodeView ()
 
 @property (strong,nonatomic) IBOutlet UIControl *containerView;
+@property (strong, nonatomic) UIView *customSubView;
+@property (weak, nonatomic) IBOutlet UIButton *topBtn;
+@property (weak, nonatomic) IBOutlet UIButton *bottomBtn;
+@property (weak, nonatomic) IBOutlet UIButton *leftBtn;
+@property (weak, nonatomic) IBOutlet UIButton *rightBtn;
 
 @end
 
@@ -30,6 +35,11 @@
 -(void) initView{
     //self
     [self setBackgroundColor:[UIColor clearColor]];
+    [self setFrame:CGRectMake(0, 0, 15, 15)];
+    [self.layer setMasksToBounds:true];
+    [self.layer setCornerRadius:7.5f];
+    [self.layer setBorderColor:UIColorWithRGBHex(0xAAAAAA).CGColor];
+    [self.layer setBorderWidth:1];
     
     //containerView
     [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];
@@ -40,6 +50,12 @@
         make.top.mas_equalTo(self);
         make.bottom.mas_equalTo(self);
     }];
+    
+    //btn
+    [self.leftBtn.layer setCornerRadius:2.5f];
+    [self.rightBtn.layer setCornerRadius:2.5f];
+    [self.topBtn.layer setCornerRadius:2.5f];
+    [self.bottomBtn.layer setCornerRadius:2.5f];
 }
 
 -(void) initDisplay{
@@ -56,19 +72,19 @@
 
 -(void) refreshDisplay{
     //1. 移除旧的subView
-    [self.containerView removeAllSubviews];
-    
-    //2. 优先取自定义subView
-    UIView *subView = [self nodeView_GetCustomSubView:self.data];
-    
-    //3. 再取默认subView
-    if (!subView) {
-        subView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
-        [subView setBackgroundColor:[UIColor redColor]];
+    if (self.customSubView) {
+        [self.customSubView removeFromSuperview];
     }
     
+    //2. 优先取自定义subView (默认时不显示)
+    self.customSubView = [self nodeView_GetCustomSubView:self.data];
+    
     //4. 显示
-    [self.containerView addSubview:subView];
+    if (self.customSubView) {
+        [self.containerView addSubview:self.customSubView];
+        [self.containerView sendSubviewToBack:self.customSubView];
+        [self.customSubView setUserInteractionEnabled:false];
+    }
 }
 
 //MARK:===============================================================
