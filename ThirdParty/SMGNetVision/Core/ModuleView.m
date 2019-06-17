@@ -11,12 +11,12 @@
 #import "View+MASAdditions.h"
 #import "NodeView.h"
 #import "NodeCompareModel.h"
+#import "NVViewUtil.h"
 
 @interface ModuleView ()<NodeViewDelegate>
 
 @property (strong,nonatomic) IBOutlet UIView *containerView;
 @property (weak, nonatomic) IBOutlet UILabel *titleLab;
-@property (strong, nonatomic) NSMutableArray *nodeArr;
 
 @end
 
@@ -48,7 +48,7 @@
 }
 
 -(void) initData{
-    self.nodeArr = [[NSMutableArray alloc] init];
+    _nodeArr = [[NSMutableArray alloc] init];
 }
 
 -(void) initDisplay{
@@ -253,15 +253,31 @@
 //MARK:                     < Line >
 //MARK:===============================================================
 -(void) refreshDisplay_Line{
-    UIBezierPath *path = [UIBezierPath bezierPath];
-    [path moveToPoint:CGPointMake(50, 50)];
-    [path addLineToPoint:CGPointMake(100, 100)];
-    CAShapeLayer *pathLayer = [CAShapeLayer layer];
-    pathLayer.lineWidth = 1;
-    pathLayer.strokeColor = UIColorWithRGBHexA(0x0000FF, 0.3).CGColor;
-    pathLayer.fillColor = nil;
-    pathLayer.path = path.CGPath;
-    [self.containerView.layer addSublayer:pathLayer];
+    //1. 收集所有线的数据 (元素为长度为2的数组);
+    NSMutableArray *lineDatas = [[NSMutableArray alloc] init];
+    
+    //2. 逐个节点进行关联判断;
+    NSArray *netDatas = ARRTOOK([self moduleView_GetAllNetDatas]);
+    for (id item in self.nodeArr) {
+        
+        //3. 取四种关联端口;
+        NSArray *absDatas = ARRTOOK([self moduleView_AbsNodeDatas:item]);
+        NSArray *conDatas = ARRTOOK([self moduleView_ConNodeDatas:item]);
+        NSArray *contentDatas = ARRTOOK([self moduleView_ContentNodeDatas:item]);
+        NSArray *refDatas = ARRTOOK([self moduleView_RefNodeDatas:item]);
+        
+        
+        //4. 对网络中各节点,判定关联 (非本身 & 有关系 & 未重复)
+        for (id netItem in netDatas) {
+            BOOL havRelate = ([absDatas containsObject:netItem] || [conDatas containsObject:netItem] || [contentDatas containsObject:netItem] || [refDatas containsObject:netItem]);
+            if (![item isEqual:netItem] && havRelate && ![NVViewUtil containsLineData:@[item,netItem] fromLineDatas:lineDatas]) {
+                [lineDatas addObject:@[item,netItem]];
+            }
+        }
+    }
+    
+    //5. 画线
+    [self moduleView_DrawLine:lineDatas];
 }
 
 /**
@@ -334,5 +350,28 @@
     return nil;
 }
 
+-(NSArray*)moduleView_GetAllNetDatas{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(moduleView_GetAllNetDatas)]) {
+        return [self.delegate moduleView_GetAllNetDatas];
+    }
+    return nil;
+}
+
+-(void)moduleView_DrawLine:(NSArray*)lineDatas{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(moduleView_DrawLine:)]) {
+        [self.delegate moduleView_DrawLine:lineDatas];
+    }
+}
+
 @end
 
+//使用NVLineView替代BezierPath;
+//UIBezierPath *path = [UIBezierPath bezierPath];
+//[path moveToPoint:CGPointMake(50, 50)];
+//[path addLineToPoint:CGPointMake(100, 100)];
+//CAShapeLayer *pathLayer = [CAShapeLayer layer];
+//pathLayer.lineWidth = 1;
+//pathLayer.strokeColor = UIColorWithRGBHexA(0x0000FF, 0.3).CGColor;
+//pathLayer.fillColor = nil;
+//pathLayer.path = path.CGPath;
+//[self.containerView.layer addSublayer:pathLayer];

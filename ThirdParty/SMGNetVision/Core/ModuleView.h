@@ -28,6 +28,12 @@
 //获取节点的被引用序列
 -(NSArray*)moduleView_RefNodeDatas:(id)nodeData;
 
+//获取所有网络中的节点数据 (判定关联)
+-(NSArray*)moduleView_GetAllNetDatas;
+
+//获取所有网络中的节点数据 (判定关联)
+-(void)moduleView_DrawLine:(NSArray*)lineDatas;
+
 @end
 
 /**
@@ -37,6 +43,7 @@
 @interface ModuleView : UIView
 
 @property (readonly,strong, nonatomic) NSString *moduleId;
+@property (readonly,strong, nonatomic) NSMutableArray *nodeArr;
 @property (weak, nonatomic) id<ModuleViewDelegate> delegate;
 -(void) setDataWithModuleId:(NSString*)moduleId;
 -(void) setDataWithNodeData:(id)nodeData;

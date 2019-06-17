@@ -10,6 +10,9 @@
 #import "MASConstraint.h"
 #import "View+MASAdditions.h"
 #import "ModuleView.h"
+#import "NodeView.h"
+#import "NVLineView.h"
+#import "NVViewUtil.h"
 
 @interface NVView () <ModuleViewDelegate>
 
@@ -139,6 +142,69 @@
 
 -(NSArray*)moduleView_RefNodeDatas:(id)nodeData{
     return [self nv_GetRefNodeDatas:nodeData];
+}
+
+-(NSArray*)moduleView_GetAllNetDatas{
+    NSMutableArray *netDatas = [[NSMutableArray alloc] init];
+    NSArray *moduleViews = ARRTOOK([self subViews_AllDeepWithClass:ModuleView.class]);
+    for (ModuleView *mView in moduleViews) {
+        [netDatas addObjectsFromArray:mView.nodeArr];
+    }
+    return netDatas;
+}
+
+-(void)moduleView_DrawLine:(NSArray*)lineDatas{
+    //1. 数据准备
+    lineDatas = ARRTOOK(lineDatas);
+    NSArray *nodeViews = ARRTOOK([self subViews_AllDeepWithClass:NodeView.class]);
+    NSArray *lineViews = ARRTOOK([self subViews_AllDeepWithClass:NVLineView.class]);
+    
+    //2. 逐根画线
+    for (NSArray *lineData in lineDatas) {
+        
+        //3. 准备两端的数据
+        id dataA = ARR_INDEX(lineData, 0);
+        id dataB = ARR_INDEX(lineData, 1);
+        if (dataA && dataB) {
+            
+            //4. 去掉旧有线
+            for (NVLineView *lView in lineViews) {
+                if ([lView.data containsObject:dataA] && [lView.data containsObject:dataB]) {
+                    [lView removeFromSuperview];
+                }
+            }
+            
+            //5. 获取两端的坐标
+            CGPoint pointA = CGPointZero;
+            CGPoint pointB = CGPointZero;
+            for (NodeView *nView in nodeViews) {
+                if ([nView isEqual:dataA]) {
+                    pointA = [nView.superview convertPoint:nView.center toView:self];
+                }else if([nView isEqual:dataB]){
+                    pointB = [nView.superview convertPoint:nView.center toView:self];
+                }
+            }
+            
+            //6. 画线
+            if (CGPointEqualToPoint(pointA, CGPointZero) && CGPointEqualToPoint(pointB, CGPointZero)) {
+                //7. 计算线长度
+                float width = [NVViewUtil distancePoint:pointA second:pointB];
+                
+                //8. 计算线中心位置
+                float centerX = (pointA.x + pointB.x) / 2.0f;
+                float centerY = (pointA.y + pointB.y) / 2.0f;
+                
+                //9. 旋转角度
+                CGFloat angle = [NVViewUtil anglePoint:pointA second:pointB];
+                
+                //10. draw
+                NVLineView *lView = [[NVLineView alloc] init];
+                lView.center = CGPointMake(centerX, centerY);
+                lView.width = width;
+                [lView.layer setTransform:CATransform3DMakeRotation(angle, 0, 0, 1)];
+            }
+        }
+    }
 }
 
 //MARK:===============================================================
