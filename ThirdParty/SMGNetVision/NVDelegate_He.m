@@ -33,7 +33,16 @@
 -(NSString*)nv_GetModuleId:(AIKVPointer*)node_p{
     //判断node_p的类型,并返回;
     NSLog(@"%@",node_p.params);
-    return @"微信息";
+    if ([kPN_FRONT_ORDER_NODE isEqualToString:node_p.folderName] || [kPN_FO_ABS_NODE isEqualToString:node_p.folderName]) {
+        return @"时序网络";
+    }else if ([kPN_CMV_NODE isEqualToString:node_p.folderName] || [kPN_ABS_CMV_NODE isEqualToString:node_p.folderName]) {
+        return @"价值网络";
+    }if ([kPN_ALG_NODE isEqualToString:node_p.folderName] || [kPN_ALG_ABS_NODE isEqualToString:node_p.folderName]) {
+        return @"概念网络";
+    }if ([kPN_VALUE isEqualToString:node_p.folderName] || [kPN_DATA isEqualToString:node_p.folderName] || [kPN_INDEX isEqualToString:node_p.folderName]) {
+        return @"微信息";
+    }
+    return nil;
 }
 
 -(NSArray*)nv_GetRefNodeDatas:(AIKVPointer*)node_p{

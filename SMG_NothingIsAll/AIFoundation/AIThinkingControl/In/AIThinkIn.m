@@ -195,6 +195,7 @@
     //4. 联想mvNode返回;
     AICMVNode *cmvNode = [SMGUtils searchNode:foNode.cmvNode_p];
     NSLog(@"联想到cmvNode: %@",[NVUtils getCmvModelDesc_ByCmvNode:cmvNode]);
+    [theApp.nvView setNodeData:cmvNode.pointer];
     return cmvNode;
 }
 
@@ -274,6 +275,7 @@
                 
                 if (ISOK(assFrontNode, AINodeBase.class)) {
                     NSLog(@"\n抽象前========== %@",[NVUtils getCmvModelDesc_ByFoNode:assFrontNode]);
+                    [theApp.nvView setNodeData:assFrontNode.pointer];
                     //5. 执行外类比;
                     [AIThinkInAnalogy analogyOutside:foNode assFo:assFrontNode canAss:^BOOL{
                         return [self canAss];

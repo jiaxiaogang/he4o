@@ -20,7 +20,7 @@
 @property (strong, nonatomic) UIScrollView *scrollView;
 @property (assign, nonatomic) BOOL isOpen;
 @property (weak, nonatomic) IBOutlet UIButton *openCloseBtn;
-@property (weak, nonatomic) id<NVViewDelegate> delegate;
+@property (strong, nonatomic) id<NVViewDelegate> delegate;
 
 @end
 

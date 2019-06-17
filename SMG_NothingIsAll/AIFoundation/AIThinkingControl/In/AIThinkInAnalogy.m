@@ -96,6 +96,8 @@
     NSLog(@"外类比时序抽象\n\nFo1=====> %@\n\
           Fo2=====> %@\n\
           Sames=====> %@",foOrderStr,assMicroStr,samesStr);
+    [theApp.nvView setNodeData:fo.pointer];
+    [theApp.nvView setNodeData:assFo.pointer];
     
     //2. 数据检查;
     if (ARRISOK(orderSames) && ISOK(fo, AIFoNodeBase.class) && ISOK(assFo, AIFoNodeBase.class)) {
@@ -127,6 +129,7 @@
             //NSLog(@"\nconPorts\n%@",[NVUtils getFoNodeConPortsDesc:createAbsFo]);
             //NSLog(@"\nabsPorts\n%@",[NVUtils getFoNodeAbsPortsDesc:createAbsFo]);
             //TODO:>>>>>将absNode和absCmvNode存到thinkFeedCache;
+            [theApp.nvView setNodeData:createAbsFo.pointer];
         }
     }
 }
