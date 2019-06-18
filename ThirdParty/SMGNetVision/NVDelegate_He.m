@@ -8,6 +8,9 @@
 
 #import "NVDelegate_He.h"
 #import "AIKVPointer.h"
+#import "AIAbsAlgNode.h"
+#import "AINetAbsFoNode.h"
+#import "AIAbsCMVNode.h"
 
 @implementation NVDelegate_He
 
@@ -23,7 +26,7 @@
     //2. algNode时,返回content_ps的 "微信息数+嵌套数";
     //3. foNode时,返回 "order_kvp数"
     //4. mv时,返回 "类型+升降";
-    return @"描述还没写";
+    return @"...DESC...";
 }
 
 -(NSArray*)nv_GetModuleIds{
@@ -33,48 +36,127 @@
 -(NSString*)nv_GetModuleId:(AIKVPointer*)node_p{
     //判断node_p的类型,并返回;
     NSLog(@"%@",node_p.params);
-    if ([kPN_FRONT_ORDER_NODE isEqualToString:node_p.folderName] || [kPN_FO_ABS_NODE isEqualToString:node_p.folderName]) {
-        return @"时序网络";
-    }else if ([kPN_CMV_NODE isEqualToString:node_p.folderName] || [kPN_ABS_CMV_NODE isEqualToString:node_p.folderName]) {
-        return @"价值网络";
-    }if ([kPN_ALG_NODE isEqualToString:node_p.folderName] || [kPN_ALG_ABS_NODE isEqualToString:node_p.folderName]) {
-        return @"概念网络";
-    }if ([kPN_VALUE isEqualToString:node_p.folderName] || [kPN_DATA isEqualToString:node_p.folderName] || [kPN_INDEX isEqualToString:node_p.folderName]) {
+    if ([self isValue:node_p]) {
         return @"微信息";
+    }else if ([self isAlg:node_p]) {
+        return @"概念网络";
+    }else if ([self isFo:node_p]) {
+        return @"时序网络";
+    }else if ([self isMv:node_p]) {
+        return @"价值网络";
     }
     return nil;
 }
 
 -(NSArray*)nv_GetRefNodeDatas:(AIKVPointer*)node_p{
-    //1. 如果是value,则独立取refPorts文件返回;
-    
-    //2. 如果是algNode则返回.refPorts;
-    
-    //3. 如果是foNode/mvNode则返回mv基本模型互指向指针;
+    if (node_p) {
+        if ([self isValue:node_p]) {
+            //1. 如果是value,则独立取refPorts文件返回;
+            NSArray *refPorts = [SMGUtils searchObjectForFilePath:node_p.filePath fileName:kFNRefPorts_All(node_p.isMem) time:cRTReference_All(node_p.isMem)];
+            return [SMGUtils convertPointersFromPorts:refPorts];
+        }else if ([self isAlg:node_p]) {
+            //2. 如果是algNode则返回.refPorts;
+            AIAlgNodeBase *node = [SMGUtils searchNode:node_p];
+            if (ISOK(node, AIAlgNodeBase.class)) {
+                return [SMGUtils convertPointersFromPorts:node.refPorts];
+            }
+        }else if ([self isFo:node_p]) {
+            //3. 如果是foNode则返回mv基本模型指向cmvNode_p;
+            AIFoNodeBase *foNode = [SMGUtils searchNode:node_p];
+            if (ISOK(foNode, AIFoNodeBase.class) && foNode.cmvNode_p) {
+                return @[foNode.cmvNode_p];
+            }
+        }else if ([self isMv:node_p]) {
+            //4. 如果是mvNode则返回mv指向foNode_p;
+            AICMVNodeBase *mvNode = [SMGUtils searchNode:node_p];
+            if (ISOK(mvNode, AICMVNodeBase.class) && mvNode.foNode_p) {
+                return @[mvNode.foNode_p];
+            }
+        }
+    }
     return nil;
 }
 
 -(NSArray*)nv_ContentNodeDatas:(AIKVPointer*)node_p{
-    //1. value时返回空;
-    
-    //2. algNode时返回content_ps
-    
-    //3. foNode时返回order_kvp
-    
-    //4. mv时返回nil;
+    if (node_p) {
+        if ([self isValue:node_p]) {
+            //1. value时返回空;
+            return nil;
+        }else if ([self isAlg:node_p]) {
+            //2. algNode时返回content_ps
+            AIAlgNodeBase *node = [SMGUtils searchNode:node_p];
+            if (ISOK(node, AIAlgNodeBase.class)) {
+                return node.content_ps;
+            }
+        }else if ([self isFo:node_p]) {
+            //3. foNode时返回order_kvp
+            AIFoNodeBase *foNode = [SMGUtils searchNode:node_p];
+            if (ISOK(foNode, AIFoNodeBase.class) && foNode.cmvNode_p) {
+                return foNode.orders_kvp;
+            }
+        }
+    }
     return nil;
 }
 
 -(NSArray*)nv_AbsNodeDatas:(AIKVPointer*)node_p{
-    //1. 如果是algNode/foNode/mvNode则返回.absPorts;
+    if (node_p) {
+        //1. 如果是algNode/foNode/mvNode则返回.absPorts;
+        if ([self isAlg:node_p] || [self isFo:node_p] || [self isMv:node_p]) {
+            AINodeBase *node = [SMGUtils searchNode:node_p];
+            if (ISOK(node, AINodeBase.class)) {
+                return [SMGUtils convertPointersFromPorts:node.absPorts];
+            }
+        }
+    }
+    
     //2. 否则返回nil;
     return nil;
 }
 
 -(NSArray*)nv_ConNodeDatas:(AIKVPointer*)node_p{
-    //1. 如果是algNode/foNode/mvNode则返回.conPorts;
+    if (node_p) {
+        //1. 如果是algNode/foNode/mvNode则返回.conPorts;
+        if ([self isAlg:node_p]) {
+            AIAbsAlgNode *absAlgNode = [SMGUtils searchNode:node_p];
+            if (ISOK(absAlgNode, AIAbsAlgNode.class)) {
+                return [SMGUtils convertPointersFromPorts:absAlgNode.conPorts];
+            }
+        }else if ([self isFo:node_p]) {
+            AINetAbsFoNode *foNode = [SMGUtils searchNode:node_p];
+            if (ISOK(foNode, AINetAbsFoNode.class)) {
+                return [SMGUtils convertPointersFromPorts:foNode.conPorts];
+            }
+        }else if ([self isMv:node_p]) {
+            AIAbsCMVNode *mvNode = [SMGUtils searchNode:node_p];
+            if (ISOK(mvNode, AIAbsCMVNode.class)) {
+                return [SMGUtils convertPointersFromPorts:mvNode.conPorts];
+            }
+        }
+    }
+    
     //2. 否则返回nil;
     return nil;
+}
+
+
+//MARK:===============================================================
+//MARK:                     < private_Method >
+//MARK:===============================================================
+-(BOOL) isValue:(AIKVPointer*)node_p{
+    return [kPN_VALUE isEqualToString:node_p.folderName] || [kPN_DATA isEqualToString:node_p.folderName] || [kPN_INDEX isEqualToString:node_p.folderName];
+}
+
+-(BOOL) isAlg:(AIKVPointer*)node_p{
+    return [kPN_ALG_NODE isEqualToString:node_p.folderName] || [kPN_ALG_ABS_NODE isEqualToString:node_p.folderName];
+}
+
+-(BOOL) isFo:(AIKVPointer*)node_p{
+    return [kPN_FRONT_ORDER_NODE isEqualToString:node_p.folderName] || [kPN_FO_ABS_NODE isEqualToString:node_p.folderName];
+}
+
+-(BOOL) isMv:(AIKVPointer*)node_p{
+    return [kPN_CMV_NODE isEqualToString:node_p.folderName] || [kPN_ABS_CMV_NODE isEqualToString:node_p.folderName];
 }
 
 @end

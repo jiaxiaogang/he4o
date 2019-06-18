@@ -88,16 +88,13 @@
  *  2. 构建absCmv
  */
 +(void)analogyOutside_Creater:(NSArray*)orderSames fo:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo{
-    
     //1. 外类比构建前日志;
-    NSString *foOrderStr = [NVUtils convertOrderPs2Str:fo.orders_kvp];
-    NSString *assMicroStr = [NVUtils convertOrderPs2Str:assFo.orders_kvp];
-    NSString *samesStr = [NVUtils convertOrderPs2Str:orderSames];
-    NSLog(@"外类比时序抽象\n\nFo1=====> %@\n\
+    //NSString *foOrderStr = [NVUtils convertOrderPs2Str:fo.orders_kvp];
+    //NSString *assMicroStr = [NVUtils convertOrderPs2Str:assFo.orders_kvp];
+    //NSString *samesStr = [NVUtils convertOrderPs2Str:orderSames];
+    //NSLog(@"外类比时序抽象\n\nFo1=====> %@\n\
           Fo2=====> %@\n\
           Sames=====> %@",foOrderStr,assMicroStr,samesStr);
-    [theApp.nvView setNodeData:fo.pointer];
-    [theApp.nvView setNodeData:assFo.pointer];
     
     //2. 数据检查;
     if (ARRISOK(orderSames) && ISOK(fo, AIFoNodeBase.class) && ISOK(assFo, AIFoNodeBase.class)) {
@@ -122,6 +119,10 @@
                     createAbsFo.cmvNode_p = createAbsCmv.pointer;
                     [SMGUtils insertObject:createAbsFo pointer:createAbsFo.pointer fileName:kFNNode time:cRTNode];
                 }
+                
+                [theApp.nvView setNodeData:createAbsFo.pointer];
+                [theApp.nvView setNodeData:assMv.pointer];
+                [theApp.nvView setNodeData:createAbsCmv.pointer];
             }
             
             //7. 外类比构建后日志;
@@ -129,7 +130,6 @@
             //NSLog(@"\nconPorts\n%@",[NVUtils getFoNodeConPortsDesc:createAbsFo]);
             //NSLog(@"\nabsPorts\n%@",[NVUtils getFoNodeAbsPortsDesc:createAbsFo]);
             //TODO:>>>>>将absNode和absCmvNode存到thinkFeedCache;
-            [theApp.nvView setNodeData:createAbsFo.pointer];
         }
     }
 }
@@ -178,7 +178,7 @@
                         if (a_p.pointerId != b_p.pointerId) {
                             NSNumber *numA = [AINetIndex getData:a_p];
                             NSNumber *numB = [AINetIndex getData:b_p];
-                            NSComparisonResult compareResult = [NUMTOOK(numA) compare:numB];
+                            NSComparisonResult compareResult = [NUMTOOK(numA) compare:NUMTOOK(numB)];
                             if (compareResult == NSOrderedAscending) {
                                 abFo = [self analogyInner_Creater:AnalogyInnerType_Less target_p:a_p algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
                             }else if (compareResult == NSOrderedDescending) {
@@ -210,6 +210,7 @@
             }
             
             //7. 内中有外
+            [theApp.nvView setNodeData:abFo.pointer];
             [self analogyInner_Outside:abFo canAss:canAssBlock updateEnergy:updateEnergy];
         }
     }
@@ -343,6 +344,7 @@
         }
         
         //4. 对abFo和assAbFo进行类比;
+        [theApp.nvView setNodeData:assAbFo];
         [self analogyOutside:abFo assFo:assAbFo canAss:canAssBlock updateEnergy:updateEnergy];
     }
 }
