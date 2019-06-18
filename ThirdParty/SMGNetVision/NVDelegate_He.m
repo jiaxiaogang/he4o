@@ -79,17 +79,14 @@
 
 -(NSArray*)nv_ContentNodeDatas:(AIKVPointer*)node_p{
     if (node_p) {
-        if ([self isValue:node_p]) {
-            //1. value时返回空;
-            return nil;
-        }else if ([self isAlg:node_p]) {
-            //2. algNode时返回content_ps
+        if ([self isAlg:node_p]) {
+            //1. algNode时返回content_ps
             AIAlgNodeBase *node = [SMGUtils searchNode:node_p];
             if (ISOK(node, AIAlgNodeBase.class)) {
                 return node.content_ps;
             }
         }else if ([self isFo:node_p]) {
-            //3. foNode时返回order_kvp
+            //2. foNode时返回order_kvp
             AIFoNodeBase *foNode = [SMGUtils searchNode:node_p];
             if (ISOK(foNode, AIFoNodeBase.class) && foNode.cmvNode_p) {
                 return foNode.orders_kvp;
@@ -100,43 +97,54 @@
 }
 
 -(NSArray*)nv_AbsNodeDatas:(AIKVPointer*)node_p{
+    NSMutableArray *result = [[NSMutableArray alloc] init];
     if (node_p) {
         //1. 如果是algNode/foNode/mvNode则返回.absPorts;
         if ([self isAlg:node_p] || [self isFo:node_p] || [self isMv:node_p]) {
+            //2. memAbsPorts
+            NSArray *memAbsPorts = [SMGUtils searchObjectForPointer:node_p fileName:kFNMemAbsPorts];
+            [result addObjectsFromArray:[SMGUtils convertPointersFromPorts:memAbsPorts]];
+            
+            //3. hdAbsPorts
             AINodeBase *node = [SMGUtils searchNode:node_p];
             if (ISOK(node, AINodeBase.class)) {
-                return [SMGUtils convertPointersFromPorts:node.absPorts];
+                [result addObjectsFromArray:[SMGUtils convertPointersFromPorts:node.absPorts]];
             }
         }
     }
-    
-    //2. 否则返回nil;
-    return nil;
+    return result;
 }
 
 -(NSArray*)nv_ConNodeDatas:(AIKVPointer*)node_p{
+    NSMutableArray *result = [[NSMutableArray alloc] init];
     if (node_p) {
-        //1. 如果是algNode/foNode/mvNode则返回.conPorts;
+        //1. alg&fo&mv_MemConPorts
+        if ([self isAlg:node_p] || [self isFo:node_p] || [self isMv:node_p]) {
+            NSArray *memConPorts = [SMGUtils searchObjectForPointer:node_p fileName:kFNMemConPorts];
+            [result addObjectsFromArray:[SMGUtils convertPointersFromPorts:memConPorts]];
+        }
+        
         if ([self isAlg:node_p]) {
+            //2. algNode_HdConPorts
             AIAbsAlgNode *absAlgNode = [SMGUtils searchNode:node_p];
             if (ISOK(absAlgNode, AIAbsAlgNode.class)) {
-                return [SMGUtils convertPointersFromPorts:absAlgNode.conPorts];
+                [result addObjectsFromArray:[SMGUtils convertPointersFromPorts:absAlgNode.conPorts]];
             }
         }else if ([self isFo:node_p]) {
+            //3. foNode_HdConPorts
             AINetAbsFoNode *foNode = [SMGUtils searchNode:node_p];
             if (ISOK(foNode, AINetAbsFoNode.class)) {
-                return [SMGUtils convertPointersFromPorts:foNode.conPorts];
+                [result addObjectsFromArray:[SMGUtils convertPointersFromPorts:foNode.conPorts]];
             }
         }else if ([self isMv:node_p]) {
+            //4. mvNode_HdConPorts
             AIAbsCMVNode *mvNode = [SMGUtils searchNode:node_p];
             if (ISOK(mvNode, AIAbsCMVNode.class)) {
-                return [SMGUtils convertPointersFromPorts:mvNode.conPorts];
+                [result addObjectsFromArray:[SMGUtils convertPointersFromPorts:mvNode.conPorts]];
             }
         }
     }
-    
-    //2. 否则返回nil;
-    return nil;
+    return result;
 }
 
 
