@@ -179,15 +179,15 @@
             CGPoint pointA = CGPointZero;
             CGPoint pointB = CGPointZero;
             for (NodeView *nView in nodeViews) {
-                if ([nView isEqual:dataA]) {
+                if ([dataA isEqual:nView.data]) {
                     pointA = [nView.superview convertPoint:nView.center toView:self];
-                }else if([nView isEqual:dataB]){
+                }else if([dataB isEqual:nView.data]){
                     pointB = [nView.superview convertPoint:nView.center toView:self];
                 }
             }
             
             //6. 画线
-            if (CGPointEqualToPoint(pointA, CGPointZero) && CGPointEqualToPoint(pointB, CGPointZero)) {
+            if (!CGPointEqualToPoint(pointA, CGPointZero) && !CGPointEqualToPoint(pointB, CGPointZero)) {
                 //7. 计算线长度
                 float width = [NVViewUtil distancePoint:pointA second:pointB];
                 
@@ -203,6 +203,8 @@
                 lView.center = CGPointMake(centerX, centerY);
                 lView.width = width;
                 [lView.layer setTransform:CATransform3DMakeRotation(angle, 0, 0, 1)];
+                [lView setDataWithDataA:dataA dataB:dataB];
+                [self.scrollView addSubview:lView];
             }
         }
     }
