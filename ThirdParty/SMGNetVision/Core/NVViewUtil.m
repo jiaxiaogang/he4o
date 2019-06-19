@@ -33,7 +33,7 @@
     CGFloat height = second.y - first.y;
     CGFloat width = first.x - second.x;
     CGFloat rads = atan(height/width);
-    return 180.0f * rads / M_PI;
+    return -rads;
 }
 
 @end

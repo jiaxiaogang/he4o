@@ -5,7 +5,7 @@
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.31"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -18,7 +18,19 @@
         <view contentMode="scaleToFill" id="iN0-l3-epB">
             <rect key="frame" x="0.0" y="0.0" width="413" height="3"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-            <color key="backgroundColor" red="1" green="0.10192505943809005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HHC-Ju-Jl5">
+                    <rect key="frame" x="7.5" y="0.0" width="398" height="3"/>
+                    <color key="backgroundColor" red="1" green="0.1019250594" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                </view>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <constraints>
+                <constraint firstItem="HHC-Ju-Jl5" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="7.5" id="3SK-Xc-5Ny"/>
+                <constraint firstItem="HHC-Ju-Jl5" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="QmL-ko-EvX"/>
+                <constraint firstAttribute="bottom" secondItem="HHC-Ju-Jl5" secondAttribute="bottom" id="gJI-cy-c9R"/>
+                <constraint firstAttribute="trailing" secondItem="HHC-Ju-Jl5" secondAttribute="trailing" constant="7.5" id="ptR-tj-qyT"/>
+            </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <point key="canvasLocation" x="93.599999999999994" y="-250.52473763118442"/>
         </view>
