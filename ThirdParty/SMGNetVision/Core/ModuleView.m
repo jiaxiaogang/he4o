@@ -135,9 +135,8 @@
         NSInteger x = [NUMTOOK([xDic objectForKey:key]) integerValue];
         NSInteger y = [NUMTOOK([yDic objectForKey:key]) integerValue];
         float spaceX = MIN(15, self.width / xDic.count);//最大15,最小平均;
-        float spaceY = MIN(37, (self.height - 15) / yDic.count);//最大37,最小平均;
         nodeView.x = x * spaceX;
-        nodeView.y = (self.height - 15) - y * spaceY;
+        nodeView.y = (self.height - 15) - y * 37;
     }
 }
 

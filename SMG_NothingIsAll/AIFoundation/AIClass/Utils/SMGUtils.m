@@ -18,6 +18,7 @@
 
 @implementation SMGUtils
 
+static int readDiskCount;
 
 //MARK:===============================================================
 //MARK:                     < PointerId >
@@ -347,6 +348,12 @@
 }
 
 +(id) searchObjectForFilePath:(NSString*)filePath fileName:(NSString*)fileName time:(double)time{
+    //isMem临时先这么判断,后续再改 (由各方法自行传入);
+    BOOL isMem = [kFNMemNode isEqualToString:fileName] || [kFNMemAbsPorts isEqualToString:fileName] || [kFNMemConPorts isEqualToString:fileName] || [kFNMemRefPorts isEqualToString:fileName];
+    return [self searchObjectForFilePath:filePath fileName:fileName time:time isMem:isMem];
+}
+
++(id) searchObjectForFilePath:(NSString*)filePath fileName:(NSString*)fileName time:(double)time isMem:(BOOL)isMem{
     //1. 数据检查
     filePath = STRTOOK(filePath);
     
@@ -359,10 +366,12 @@
         result = [[XGWedis sharedInstance] objectForKey:key];
         
         //4. 最后取disk
-        if (result == nil) {
+        if (result == nil && !isMem) {
             PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:filePath];
             result = [cache objectForKey:fileName];
-            NSLog(@">>>>>>>>>>>>>>>>>>>ReadDisk,%@",fileName);
+            if (++readDiskCount % 10 == 0) {
+                NSLog(@">>>>>>>>>>>>>>>>>>>ReadDisk,%d,%@",readDiskCount,fileName);
+            }
         }
         
         //5. 存到redis (wedis/disk)
