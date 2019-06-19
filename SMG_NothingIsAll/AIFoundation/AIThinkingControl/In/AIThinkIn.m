@@ -35,6 +35,9 @@
         NSArray *item_ps = ARRTOOK([ThinkingUtils algModelConvert2Pointers:item]);
         [parentValue_ps addObjectsFromArray:item_ps];
         [subValuePsArr addObject:item_ps];
+//        [theApp.nvView setNodeData:ARR_INDEX(item_ps, 0)];
+//        [theApp.nvView setNodeData:ARR_INDEX(item_ps, 1)];
+//        [theApp.nvView setNodeData:ARR_INDEX(item_ps, 2)];
     }
     
     //3. 构建父祖母 & 将父祖母加入瞬时记忆;
@@ -42,10 +45,12 @@
     if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_AddToShortMemory:)]) {
         [self.delegate aiThinkIn_AddToShortMemory:@[parentAlgNode.pointer]];
     }
+    [theApp.nvView setNodeData:parentAlgNode.pointer];
     
     //4. 构建子祖母 (抽象祖母,并嵌套);
     for (NSArray *subValue_ps in subValuePsArr) {
         AIAbsAlgNode *subAlgNode = [theNet createAbsAlgNode:subValue_ps conAlgs:@[parentAlgNode] isMem:true];
+        [theApp.nvView setNodeData:subAlgNode.pointer];
         
         //5. NoMv处理;
         [self dataIn_NoMV:subAlgNode.pointer];
@@ -71,6 +76,7 @@
             [self.delegate aiThinkIn_AddToShortMemory:@[algNode.pointer]];
         }
         
+        [theApp.nvView setNodeData:algNode.pointer];
         [self dataIn_NoMV:algNode.pointer];
     }
 }
@@ -213,12 +219,14 @@
     if (!ISOK(foNode, AIFrontOrderNode.class)) {
         return;
     }
+    [theApp.nvView setNodeData:foNode.pointer];
     
     //2. 取cmvNode
     AICMVNode *cmvNode = [SMGUtils searchNode:foNode.cmvNode_p];
     if (!ISOK(cmvNode, AICMVNode.class)) {
         return;
     }
+    [theApp.nvView setNodeData:cmvNode.pointer];
     
     //3. 思考mv,需求处理
     if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_CommitMvNode:)]) {

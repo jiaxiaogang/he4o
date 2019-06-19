@@ -62,7 +62,7 @@
     NSArray *moduleIds = [self nv_GetModuleIds];
     if (ARRISOK(moduleIds)) {
         CGFloat curModuleX = 2;
-        CGFloat moduleW = 150;
+        CGFloat moduleW = 300;
         CGFloat moduleH = 276;
         [self.scrollView removeAllSubviews];
         for (NSString *moduleId in moduleIds) {
@@ -180,9 +180,9 @@
             CGPoint pointB = CGPointZero;
             for (NodeView *nView in nodeViews) {
                 if ([dataA isEqual:nView.data]) {
-                    pointA = [nView.superview convertPoint:nView.center toView:self];
+                    pointA = [nView.superview convertPoint:nView.center toView:self.scrollView];
                 }else if([dataB isEqual:nView.data]){
-                    pointB = [nView.superview convertPoint:nView.center toView:self];
+                    pointB = [nView.superview convertPoint:nView.center toView:self.scrollView];
                 }
             }
             

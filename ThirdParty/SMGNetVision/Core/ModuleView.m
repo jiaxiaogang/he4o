@@ -109,18 +109,19 @@
         //判断当前sortItem是否是上一个last的抽象; (是则curY+1,不是则curY+0)
         id lastSortItem = nil;
         for (id sortItem in sortGroup) {
+            NSData *key = [NSKeyedArchiver archivedDataWithRootObject:sortItem];
             NSComparisonResult compare = [self compareNodeData1:sortItem nodeData2:lastSortItem compareModels:compareModels];
-            ///1. 排y_抽象加一层;
-            if (compare == NSOrderedAscending) {
-                [yDic setObject:@(++curY) forKey:sortItem];
+            ///1. 排y_抽象加一层; (越排后面的,反而越抽象)
+            if (compare == NSOrderedDescending) {
+                [yDic setObject:@(++curY) forKey:key];
             }else if(compare == NSOrderedSame){
                 ///2. 排y_平层在同一层;
-                [yDic setObject:@(curY) forKey:sortItem];
+                [yDic setObject:@(curY) forKey:key];
             }else{
                 NSLog(@"错误!!! 排更后面的节点,不允许比具象更具象! (请检查排序算法,是否排反了)");
             }
             ///3. 排x;
-            [xDic setObject:@(++curX) forKey:sortItem];
+            [xDic setObject:@(++curX) forKey:key];
             
             ///4. 记录last,下一个;
             lastSortItem = sortItem;
@@ -130,8 +131,9 @@
     //3. 根据编号计算坐标;
     NSArray *nodeViews = ARRTOOK([self subViews_AllDeepWithClass:NodeView.class]);
     for (NodeView *nodeView in nodeViews) {
-        NSInteger x = [NUMTOOK([xDic objectForKey:nodeView.data]) integerValue];
-        NSInteger y = [NUMTOOK([yDic objectForKey:nodeView.data]) integerValue];
+        NSData *key = [NSKeyedArchiver archivedDataWithRootObject:nodeView.data];
+        NSInteger x = [NUMTOOK([xDic objectForKey:key]) integerValue];
+        NSInteger y = [NUMTOOK([yDic objectForKey:key]) integerValue];
         nodeView.x = x * 17;
         nodeView.y = (self.height - 15) - y * 17;
     }
@@ -152,7 +154,7 @@
         ///1. 已有,则加入;
         BOOL joinSuccess = false;
         for (NSMutableArray *group in groups) {
-            if ([self containsRelateWithData:item fromGroup:groups compareModels:compareModels]) {
+            if ([self containsRelateWithData:item fromGroup:group compareModels:compareModels]) {
                 [group addObject:item];
                 joinSuccess = true;
                 break;
@@ -188,10 +190,10 @@
     if (n1 && n2) {
         compareModels = ARRTOOK(compareModels);
         
-        //2. 判断n1与n2的关系,并返回大或小;
+        //2. 判断n1与n2的关系,并返回大或小; (越小,越排前面)
         for (NodeCompareModel *model in compareModels) {
             if ([model isA:n1 andB:n2]) {
-                return [n1 isEqual:model.smallNodeData] ? NSOrderedDescending : NSOrderedAscending;
+                return [n1 isEqual:model.smallNodeData] ? NSOrderedAscending : NSOrderedDescending;
             }
         }
     }
