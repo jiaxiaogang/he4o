@@ -206,7 +206,7 @@
                 [lView setDataWithDataA:dataA dataB:dataB];
                 [self.scrollView addSubview:lView];
                 //[self.scrollView sendSubviewToBack:lView];
-                NSLog(@"drawLine A坐标:%f,%f B坐标:%f,%f line坐标:%f,%f line长度:%f line角度:%f",pointA.x,pointA.y,pointB.x,pointB.y,lView.x,lView.y,lView.width,angle * 180.0f / M_PI);
+                //NSLog(@"drawLine A坐标:%f,%f B坐标:%f,%f line坐标:%f,%f line长度:%f line角度:%f",pointA.x,pointA.y,pointB.x,pointB.y,lView.x,lView.y,lView.width,angle * 180.0f / M_PI);
             }
         }
     }

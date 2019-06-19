@@ -134,8 +134,10 @@
         NSData *key = [NSKeyedArchiver archivedDataWithRootObject:nodeView.data];
         NSInteger x = [NUMTOOK([xDic objectForKey:key]) integerValue];
         NSInteger y = [NUMTOOK([yDic objectForKey:key]) integerValue];
-        nodeView.x = x * 17;
-        nodeView.y = (self.height - 15) - y * 17;
+        float spaceX = MIN(15, self.width / xDic.count);//最大15,最小平均;
+        float spaceY = MIN(37, (self.height - 15) / yDic.count);//最大37,最小平均;
+        nodeView.x = x * spaceX;
+        nodeView.y = (self.height - 15) - y * spaceY;
     }
 }
 
@@ -214,7 +216,6 @@
             if (iData && jData) {
                 //2. n1抽象指向n2
                 NSArray *iAbs = ARRTOOK([self moduleView_AbsNodeDatas:iData]);
-                NSLog(@"此处,检查下指针能否使用containsObject:如果不能,要使用smgutils中的方法;");
                 if ([iAbs containsObject:jData]) {
                     [result addObject:[NodeCompareModel newWithBig:jData small:iData]];
                     continue;
