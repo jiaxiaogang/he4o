@@ -1,26 +1,26 @@
 //
-//  ModuleView.m
+//  NVModuleView.m
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2019/6/12.
 //  Copyright © 2019年 XiaoGang. All rights reserved.
 //
 
-#import "ModuleView.h"
+#import "NVModuleView.h"
 #import "MASConstraint.h"
 #import "View+MASAdditions.h"
-#import "NodeView.h"
+#import "NVNodeView.h"
 #import "NodeCompareModel.h"
 #import "NVViewUtil.h"
 
-@interface ModuleView ()<NodeViewDelegate>
+@interface NVModuleView ()<NVNodeViewDelegate>
 
 @property (strong,nonatomic) IBOutlet UIView *containerView;
 @property (weak, nonatomic) IBOutlet UILabel *titleLab;
 
 @end
 
-@implementation ModuleView
+@implementation NVModuleView
 
 -(id) init {
     self = [super init];
@@ -73,7 +73,7 @@
 -(void) refreshDisplayWithNodeData:(id)nodeData{
     //1. 显示新节点
     if (nodeData) {
-        NodeView *nodeView = [[NodeView alloc] init];
+        NVNodeView *nodeView = [[NVNodeView alloc] init];
         nodeView.delegate = self;
         [nodeView setDataWithNodeData:nodeData];
         [self.containerView addSubview:nodeView];
@@ -129,8 +129,8 @@
     }
     
     //3. 根据编号计算坐标;
-    NSArray *nodeViews = ARRTOOK([self subViews_AllDeepWithClass:NodeView.class]);
-    for (NodeView *nodeView in nodeViews) {
+    NSArray *nodeViews = ARRTOOK([self subViews_AllDeepWithClass:NVNodeView.class]);
+    for (NVNodeView *nodeView in nodeViews) {
         NSData *key = [NSKeyedArchiver archivedDataWithRootObject:nodeView.data];
         NSInteger x = [NUMTOOK([xDic objectForKey:key]) integerValue];
         NSInteger y = [NUMTOOK([yDic objectForKey:key]) integerValue];
@@ -283,7 +283,7 @@
 }
 
 /**
- *  MARK:--------------------NodeViewDelegate--------------------
+ *  MARK:--------------------NVNodeViewDelegate--------------------
  */
 -(UIView *)nodeView_GetCustomSubView:(id)nodeData{
     return [self moduleView_GetCustomSubView:nodeData];

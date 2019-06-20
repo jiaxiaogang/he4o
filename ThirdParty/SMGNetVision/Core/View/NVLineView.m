@@ -9,7 +9,7 @@
 #import "NVLineView.h"
 #import "MASConstraint.h"
 #import "View+MASAdditions.h"
-#import "NodeView.h"
+#import "NVNodeView.h"
 #import "NodeCompareModel.h"
 
 @interface NVLineView ()

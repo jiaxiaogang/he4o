@@ -17,7 +17,7 @@
 /**
  *  MARK:--------------------NVViewDelegate--------------------
  */
-- (UIView *)nv_GetCustomNodeView:(AIKVPointer*)node_p{
+- (UIView *)nv_GetCustomSubNodeView:(AIKVPointer*)node_p{
     return nil;
 }
 

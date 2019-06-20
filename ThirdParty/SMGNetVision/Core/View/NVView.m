@@ -9,12 +9,12 @@
 #import "NVView.h"
 #import "MASConstraint.h"
 #import "View+MASAdditions.h"
-#import "ModuleView.h"
-#import "NodeView.h"
+#import "NVModuleView.h"
+#import "NVNodeView.h"
 #import "NVLineView.h"
 #import "NVViewUtil.h"
 
-@interface NVView () <ModuleViewDelegate>
+@interface NVView () <NVModuleViewDelegate>
 
 @property (strong,nonatomic) IBOutlet UIView *containerView;
 @property (strong, nonatomic) UIScrollView *scrollView;
@@ -66,7 +66,7 @@
         CGFloat moduleH = 276;
         [self.scrollView removeAllSubviews];
         for (NSString *moduleId in moduleIds) {
-            ModuleView *moduleView = [[ModuleView alloc] init];
+            NVModuleView *moduleView = [[NVModuleView alloc] init];
             moduleView.delegate = self;
             [moduleView setDataWithModuleId:moduleId];
             [moduleView setFrame:CGRectMake(curModuleX, 2, moduleW, moduleH)];
@@ -89,7 +89,7 @@
 //MARK:===============================================================
 -(void) setNodeData:(id)nodeData{
     if (nodeData) {
-        ModuleView *mView = [self getModuleView:nodeData];
+        NVModuleView *mView = [self getNVModuleView:nodeData];
         if (mView) {
             [mView setDataWithNodeData:nodeData];
         }
@@ -99,10 +99,10 @@
 /**
  *  MARK:--------------------获取nodeData所属的模块--------------------
  */
--(ModuleView*) getModuleView:(id)nodeData{
+-(NVModuleView*) getNVModuleView:(id)nodeData{
     NSString *moduleId = STRTOOK([self nv_GetModuleId:nodeData]);
-    for (ModuleView *mView in self.scrollView.subviews) {
-        if (ISOK(mView, ModuleView.class) && [moduleId isEqualToString:mView.moduleId]) {
+    for (NVModuleView *mView in self.scrollView.subviews) {
+        if (ISOK(mView, NVModuleView.class) && [moduleId isEqualToString:mView.moduleId]) {
             return mView;
         }
     }
@@ -119,10 +119,10 @@
 }
 
 /**
- *  MARK:--------------------ModuleViewDelegate--------------------
+ *  MARK:--------------------NVModuleViewDelegate--------------------
  */
 -(UIView *)moduleView_GetCustomSubView:(id)nodeData{
-    return [self nv_GetCustomNodeView:nodeData];
+    return [self nv_GetCustomSubNodeView:nodeData];
 }
 
 -(NSString*)moduleView_GetTipsDesc:(id)nodeData{
@@ -147,8 +147,8 @@
 
 -(NSArray*)moduleView_GetAllNetDatas{
     NSMutableArray *netDatas = [[NSMutableArray alloc] init];
-    NSArray *moduleViews = ARRTOOK([self subViews_AllDeepWithClass:ModuleView.class]);
-    for (ModuleView *mView in moduleViews) {
+    NSArray *moduleViews = ARRTOOK([self subViews_AllDeepWithClass:NVModuleView.class]);
+    for (NVModuleView *mView in moduleViews) {
         [netDatas addObjectsFromArray:mView.nodeArr];
     }
     return netDatas;
@@ -157,7 +157,7 @@
 -(void)moduleView_DrawLine:(NSArray*)lineDatas{
     //1. 数据准备
     lineDatas = ARRTOOK(lineDatas);
-    NSArray *nodeViews = ARRTOOK([self subViews_AllDeepWithClass:NodeView.class]);
+    NSArray *nodeViews = ARRTOOK([self subViews_AllDeepWithClass:NVNodeView.class]);
     NSArray *lineViews = ARRTOOK([self subViews_AllDeepWithClass:NVLineView.class]);
     
     //2. 逐根画线
@@ -178,7 +178,7 @@
             //5. 获取两端的坐标
             CGPoint pointA = CGPointZero;
             CGPoint pointB = CGPointZero;
-            for (NodeView *nView in nodeViews) {
+            for (NVNodeView *nView in nodeViews) {
                 if ([dataA isEqual:nView.data]) {
                     pointA = [nView.superview convertPoint:nView.center toView:self.scrollView];
                 }else if([dataB isEqual:nView.data]){
@@ -215,9 +215,9 @@
 //MARK:===============================================================
 //MARK:                     < SelfDelegate >
 //MARK:===============================================================
--(UIView *)nv_GetCustomNodeView:(id)nodeData{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_GetCustomNodeView:)]) {
-        return [self.delegate nv_GetCustomNodeView:nodeData];
+-(UIView *)nv_GetCustomSubNodeView:(id)nodeData{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_GetCustomSubNodeView:)]) {
+        return [self.delegate nv_GetCustomSubNodeView:nodeData];
     }
     return nil;
 }

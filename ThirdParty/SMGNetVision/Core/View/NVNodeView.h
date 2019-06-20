@@ -1,5 +1,5 @@
 //
-//  NodeView.h
+//  NVNodeView.h
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2019/6/11.
@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@protocol NodeViewDelegate <NSObject>
+@protocol NVNodeViewDelegate <NSObject>
 
 -(UIView*) nodeView_GetCustomSubView:(id)nodeData;
 -(NSString*) nodeView_GetTipsDesc:(id)nodeData;
@@ -22,10 +22,10 @@
 /**
  *  MARK:--------------------节点view--------------------
  */
-@interface NodeView : UIView
+@interface NVNodeView : UIView
 
 @property (readonly,strong, nonatomic) id data;//一般为一个指针
-@property (weak, nonatomic) id<NodeViewDelegate> delegate;
+@property (weak, nonatomic) id<NVNodeViewDelegate> delegate;
 -(void) setDataWithNodeData:(id)nodeData;
 
 @end

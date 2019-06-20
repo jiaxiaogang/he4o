@@ -24,8 +24,8 @@
 }
 
 +(CGFloat) distancePoint:(CGPoint)first second:(CGPoint)second {
-    CGFloat deltaX = fabsf(second.x - first.x);
-    CGFloat deltaY = fabsf(second.y - first.y);
+    CGFloat deltaX = fabs(second.x - first.x);
+    CGFloat deltaY = fabs(second.y - first.y);
     return sqrtf(deltaX * deltaX + deltaY * deltaY);
 }
 

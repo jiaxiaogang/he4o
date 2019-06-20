@@ -11,7 +11,7 @@
 @protocol NVViewDelegate <NSObject>
 
 //获取自定义节点view
--(UIView *)nv_GetCustomNodeView:(id)nodeData;
+-(UIView *)nv_GetCustomSubNodeView:(id)nodeData;
 
 //获取节点描述
 -(NSString*)nv_GetNodeTipsDesc:(id)nodeData;

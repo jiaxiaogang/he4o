@@ -1,5 +1,5 @@
 //
-//  ModuleView.h
+//  NVModuleView.h
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2019/6/12.
@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol ModuleViewDelegate <NSObject>
+@protocol NVModuleViewDelegate <NSObject>
 
 //获取自定义nodeView
 -(UIView *)moduleView_GetCustomSubView:(id)nodeData;
@@ -40,11 +40,11 @@
  *  MARK:--------------------模块View--------------------
  *  网络模块View;
  */
-@interface ModuleView : UIView
+@interface NVModuleView : UIView
 
 @property (readonly,strong, nonatomic) NSString *moduleId;
 @property (readonly,strong, nonatomic) NSMutableArray *nodeArr;
-@property (weak, nonatomic) id<ModuleViewDelegate> delegate;
+@property (weak, nonatomic) id<NVModuleViewDelegate> delegate;
 -(void) setDataWithModuleId:(NSString*)moduleId;
 -(void) setDataWithNodeData:(id)nodeData;
 

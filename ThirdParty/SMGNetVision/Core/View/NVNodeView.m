@@ -1,16 +1,16 @@
 //
-//  NodeView.m
+//  NVNodeView.m
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2019/6/11.
 //  Copyright © 2019年 XiaoGang. All rights reserved.
 //
 
-#import "NodeView.h"
+#import "NVNodeView.h"
 #import "MASConstraint.h"
 #import "View+MASAdditions.h"
 
-@interface NodeView ()
+@interface NVNodeView ()
 
 @property (strong,nonatomic) IBOutlet UIControl *containerView;
 @property (strong, nonatomic) UIView *customSubView;
@@ -21,7 +21,7 @@
 
 @end
 
-@implementation NodeView
+@implementation NVNodeView
 
 -(id) init {
     self = [super init];
