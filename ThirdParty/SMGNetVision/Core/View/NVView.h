@@ -13,6 +13,9 @@
 //获取自定义节点view
 -(UIView *)nv_GetCustomSubNodeView:(id)nodeData;
 
+//获取节点颜色
+-(UIColor *)nv_GetNodeColor:(id)nodeData;
+
 //获取节点描述
 -(NSString*)nv_GetNodeTipsDesc:(id)nodeData;
 
@@ -42,6 +45,7 @@
 
 -(id) initWithDelegate:(id<NVViewDelegate>)delegate;
 -(void) setNodeData:(id)nodeData;
+-(void) clear;
 
 @end
 

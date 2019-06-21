@@ -21,6 +21,17 @@
     return nil;
 }
 
+-(UIColor *)nv_GetNodeColor:(AIKVPointer*)node_p{
+    if ([self isMv:node_p]) {
+        //上升为绿;
+        //下降为红;
+    }
+    if ([self isAbs:node_p]) {
+        return UIColorWithRGBHex(0xFFFF00);//抽象显示黄色
+    }
+    return nil;
+}
+
 -(NSString*)nv_GetNodeTipsDesc:(AIKVPointer*)node_p{
     //1. value时,返回 "iden+value值";
     //2. algNode时,返回content_ps的 "微信息数+嵌套数";
@@ -35,7 +46,6 @@
 
 -(NSString*)nv_GetModuleId:(AIKVPointer*)node_p{
     //判断node_p的类型,并返回;
-    NSLog(@"%@",node_p.params);
     if ([self isValue:node_p]) {
         return @"微信息";
     }else if ([self isAlg:node_p]) {
@@ -165,6 +175,10 @@
 
 -(BOOL) isMv:(AIKVPointer*)node_p{
     return [kPN_CMV_NODE isEqualToString:node_p.folderName] || [kPN_ABS_CMV_NODE isEqualToString:node_p.folderName];
+}
+
+-(BOOL) isAbs:(AIKVPointer*)node_p{
+    return [kPN_FO_ABS_NODE isEqualToString:node_p.folderName] || [kPN_ABS_CMV_NODE isEqualToString:node_p.folderName] || [kPN_ALG_ABS_NODE isEqualToString:node_p.folderName];
 }
 
 @end

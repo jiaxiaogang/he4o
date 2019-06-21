@@ -96,6 +96,20 @@
     }
 }
 
+-(void) clear{
+    //1. 清模块
+    NSArray *mViews = ARRTOOK([self subViews_AllDeepWithClass:NVModuleView.class]);
+    for (NVModuleView *mView in mViews) {
+        [mView clear];
+    }
+    
+    //2. 清线
+    NSArray *lViews = ARRTOOK([self subViews_AllDeepWithClass:NVLineView.class]);
+    for (NVLineView *lView in lViews) {
+        [lView removeFromSuperview];
+    }
+}
+
 /**
  *  MARK:--------------------获取nodeData所属的模块--------------------
  */
@@ -123,6 +137,10 @@
  */
 -(UIView *)moduleView_GetCustomSubView:(id)nodeData{
     return [self nv_GetCustomSubNodeView:nodeData];
+}
+
+-(UIColor *)moduleView_GetNodeColor:(id)nodeData{
+    return [self nv_GetNodeColor:nodeData];
 }
 
 -(NSString*)moduleView_GetTipsDesc:(id)nodeData{
@@ -218,6 +236,12 @@
 -(UIView *)nv_GetCustomSubNodeView:(id)nodeData{
     if (self.delegate && [self.delegate respondsToSelector:@selector(nv_GetCustomSubNodeView:)]) {
         return [self.delegate nv_GetCustomSubNodeView:nodeData];
+    }
+    return nil;
+}
+- (UIColor *)nv_GetNodeColor:(id)nodeData{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_GetNodeColor:)]) {
+        return [self.delegate nv_GetNodeColor:nodeData];
     }
     return nil;
 }

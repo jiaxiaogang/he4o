@@ -52,10 +52,12 @@
     }];
     
     //btn
-    [self.leftBtn.layer setCornerRadius:2.5f];
-    [self.rightBtn.layer setCornerRadius:2.5f];
-    [self.topBtn.layer setCornerRadius:2.5f];
-    [self.bottomBtn.layer setCornerRadius:2.5f];
+    NSArray *btns = @[self.topBtn,self.bottomBtn,self.leftBtn,self.rightBtn];
+    for (UIButton *btn in btns) {
+        [btn.layer setCornerRadius:2.5f];
+        [btn.layer setBorderWidth:0.3f];
+        [btn.layer setBorderColor:[UIColor grayColor].CGColor];
+    }
 }
 
 -(void) initDisplay{
@@ -84,6 +86,12 @@
         [self.containerView addSubview:self.customSubView];
         [self.containerView sendSubviewToBack:self.customSubView];
         [self.customSubView setUserInteractionEnabled:false];
+    }
+    
+    //5. nodeColor
+    UIColor *nodeColor = [self nodeView_GetNodeColor:self.data];
+    if (nodeColor) {
+        [self.containerView setBackgroundColor:nodeColor];
     }
 }
 
@@ -120,6 +128,12 @@
 -(UIView*) nodeView_GetCustomSubView:(id)nodeData{
     if (self.delegate && [self.delegate respondsToSelector:@selector(nodeView_GetCustomSubView:)]) {
         return [self.delegate nodeView_GetCustomSubView:nodeData];
+    }
+    return nil;
+}
+-(UIColor*) nodeView_GetNodeColor:(id)nodeData{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(nodeView_GetNodeColor:)]) {
+        return [self.delegate nodeView_GetNodeColor:nodeData];
     }
     return nil;
 }

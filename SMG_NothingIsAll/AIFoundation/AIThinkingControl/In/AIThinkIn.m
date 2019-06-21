@@ -282,8 +282,10 @@
                 AIFoNodeBase *assFrontNode = [SMGUtils searchNode:assMvNode.foNode_p];
                 
                 if (ISOK(assFrontNode, AINodeBase.class)) {
-                    NSLog(@"\n抽象前========== %@",[NVUtils getCmvModelDesc_ByFoNode:assFrontNode]);
+                    //NSLog(@"\n抽象前========== %@",[NVUtils getCmvModelDesc_ByFoNode:assFrontNode]);
+                    [theApp.nvView clear];
                     [theApp.nvView setNodeData:assFrontNode.pointer];
+                    [theApp.nvView setNodeData:assFrontNode.cmvNode_p];
                     //5. 执行外类比;
                     [AIThinkInAnalogy analogyOutside:foNode assFo:assFrontNode canAss:^BOOL{
                         return [self canAss];

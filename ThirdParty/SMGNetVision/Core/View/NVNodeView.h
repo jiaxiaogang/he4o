@@ -8,9 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
+/**
+ *  MARK:--------------------NodeView代理--------------------
+ *  @desc : 运行在nv.core内部,nodeView的每个方法必须被实现;
+ */
 @protocol NVNodeViewDelegate <NSObject>
 
 -(UIView*) nodeView_GetCustomSubView:(id)nodeData;
+-(UIColor *)nodeView_GetNodeColor:(id)nodeData;
 -(NSString*) nodeView_GetTipsDesc:(id)nodeData;
 -(void) nodeView_TopClick:(id)nodeData;
 -(void) nodeView_BottomClick:(id)nodeData;

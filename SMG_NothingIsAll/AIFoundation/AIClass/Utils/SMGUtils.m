@@ -62,7 +62,7 @@ static int readDiskCount;
 //Direction的mv分区pointer;(存引用序列)
 +(AIKVPointer*) createPointerForDirection:(NSString*)mvAlgsType direction:(MVDirection)direction{
     NSInteger pointerId = 0;
-    AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:kPN_DIRECTION(direction) algsType:mvAlgsType dataSource:nil isOut:false isMem:false];
+    AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:kPN_DIRECTION(direction) algsType:mvAlgsType dataSource:DefaultDataSource isOut:false isMem:false];
     return kvPointer;
 }
 
@@ -370,7 +370,7 @@ static int readDiskCount;
             PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:filePath];
             result = [cache objectForKey:fileName];
             if (++readDiskCount % 10 == 0) {
-                NSLog(@">>>>>>>>>>>>>>>>>>>ReadDisk,%d,%@",readDiskCount,fileName);
+                NSLog(@">>>>>>>>>ReadDisk,%d,%@",readDiskCount,fileName);
             }
         }
         
@@ -407,7 +407,11 @@ static int readDiskCount;
                 PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:saveRootPath];
                 [cache setObject:saveObj forKey:saveFileName];
             }
-            NSLog(@">>>>>>>>>>>>>>>>>>>WriteDisk,%@",dic.allKeys);
+            NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+            for (NSString *key in dic.allKeys) {
+                NSLog(@">>>>>>>>>WriteDisk,%@",[key stringByReplacingOccurrencesOfString:cachePath withString:@""]);
+            }
+            
         }];
     }
     

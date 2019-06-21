@@ -13,6 +13,9 @@
 //获取自定义nodeView
 -(UIView *)moduleView_GetCustomSubView:(id)nodeData;
 
+//获取节点颜色
+-(UIColor *)moduleView_GetNodeColor:(id)nodeData;
+
 //获取节点描述
 -(NSString*)moduleView_GetTipsDesc:(id)nodeData;
 
@@ -47,5 +50,6 @@
 @property (weak, nonatomic) id<NVModuleViewDelegate> delegate;
 -(void) setDataWithModuleId:(NSString*)moduleId;
 -(void) setDataWithNodeData:(id)nodeData;
+-(void) clear;
 
 @end

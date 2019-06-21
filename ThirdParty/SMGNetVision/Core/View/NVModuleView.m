@@ -86,6 +86,17 @@
     [self refreshDisplay_Line];
 }
 
+-(void) clear{
+    //1. 清数据
+    [self.nodeArr removeAllObjects];
+    
+    //2. 清节点
+    NSArray *nodeViews = ARRTOOK([self subViews_AllDeepWithClass:NVNodeView.class]);
+    for (NVNodeView *nodeView in nodeViews) {
+        [nodeView removeFromSuperview];
+    }
+}
+
 //MARK:===============================================================
 //MARK:                     < Node >
 //MARK:===============================================================
@@ -288,6 +299,9 @@
 -(UIView *)nodeView_GetCustomSubView:(id)nodeData{
     return [self moduleView_GetCustomSubView:nodeData];
 }
+-(UIColor *)nodeView_GetNodeColor:(id)nodeData{
+    return [self moduleView_GetNodeColor:nodeData];
+}
 -(NSString*) nodeView_GetTipsDesc:(id)nodeData{
     return [self moduleView_GetTipsDesc:nodeData];
 }
@@ -317,7 +331,12 @@
     }
     return nil;
 }
-
+-(UIColor *)moduleView_GetNodeColor:(id)nodeData{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(moduleView_GetNodeColor:)]) {
+        return [self.delegate moduleView_GetNodeColor:nodeData];
+    }
+    return nil;
+}
 -(NSString*)moduleView_GetTipsDesc:(id)nodeData{
     if (self.delegate && [self.delegate respondsToSelector:@selector(moduleView_GetTipsDesc:)]) {
         return [self.delegate moduleView_GetTipsDesc:nodeData];
