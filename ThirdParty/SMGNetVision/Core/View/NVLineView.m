@@ -33,7 +33,7 @@
 -(void) initView{
     //self
     [self setBackgroundColor:[UIColor clearColor]];
-    self.height = 1;
+    self.height = 1.0f / UIScreen.mainScreen.scale;
     
     //containerView
     [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];

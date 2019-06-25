@@ -64,15 +64,27 @@
 }
 
 -(void) setDataWithNodeData:(id)nodeData{
-    if (![self.nodeArr containsObject:nodeData]) {
-        [self.nodeArr addObject:nodeData];
-        [self refreshDisplayWithNodeData:nodeData];
+    if (nodeData) {
+        [self setDataWithNodeDatas:@[nodeData]];
     }
 }
 
--(void) refreshDisplayWithNodeData:(id)nodeData{
+-(void) setDataWithNodeDatas:(NSArray*)nodeDatas{
+    NSMutableArray *validDatas = [[NSMutableArray alloc] init];
+    if (ARRISOK(nodeDatas)) {
+        for (id item in nodeDatas) {
+            if (![self.nodeArr containsObject:item]) {
+                [self.nodeArr addObject:item];
+                [validDatas addObject:item];
+            }
+        }
+        [self refreshDisplayWithNodeDatas:validDatas];
+    }
+}
+
+-(void) refreshDisplayWithNodeDatas:(NSArray*)nodeDatas{
     //1. 显示新节点
-    if (nodeData) {
+    for (id nodeData in ARRTOOK(nodeDatas)) {
         NVNodeView *nodeView = [[NVNodeView alloc] init];
         nodeView.delegate = self;
         [nodeView setDataWithNodeData:nodeData];
@@ -311,6 +323,7 @@
 }
 -(void) nodeView_BottomClick:(id)nodeData{
     NSArray *conNodeDatas = [self moduleView_ConNodeDatas:nodeData];
+    [self setDataWithNodeDatas:conNodeDatas];
     NSLog(@"%@",conNodeDatas);
 }
 -(void) nodeView_LeftClick:(id)nodeData{

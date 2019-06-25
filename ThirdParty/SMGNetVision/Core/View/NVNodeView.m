@@ -55,7 +55,7 @@
     NSArray *btns = @[self.topBtn,self.bottomBtn,self.leftBtn,self.rightBtn];
     for (UIButton *btn in btns) {
         [btn.layer setCornerRadius:2.5f];
-        [btn.layer setBorderWidth:0.3f];
+        [btn.layer setBorderWidth:1.0f / UIScreen.mainScreen.scale];
         [btn.layer setBorderColor:[UIColor grayColor].CGColor];
     }
 }
