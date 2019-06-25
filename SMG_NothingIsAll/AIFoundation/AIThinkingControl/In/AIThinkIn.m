@@ -132,10 +132,12 @@
             assAlgNode = [self recognition_AbsoluteMatching:algNode isMem:false];
         }
         
-        ///3. 局部匹配 -> 内存网络; (不能太过于脱离持久网络做思考,所以先注掉)
-        //if (!assAlgNode) {
-        //    assAlgNode = [self recognition_PartMatching:algNode isMem:true];
-        //}
+        ///3. 局部匹配 -> 内存网络;
+        ///(19xxxx注掉,不能太过于脱离持久网络做思考,所以先注掉)
+        ///(190625放开,因采用内存网络后,靠这识别)
+        if (!assAlgNode) {
+            assAlgNode = [self recognition_PartMatching:algNode isMem:true];
+        }
         
         ///4. 局部匹配 -> 硬盘网络;
         if (!assAlgNode) {
@@ -148,6 +150,7 @@
         [AINetUtils insertRefPorts_AllAlgNode:assAlgNode.pointer value_ps:assAlgNode.content_ps ps:assAlgNode.content_ps];
         
     }
+    if (!assAlgNode) NSLog(@"识别 failure");
     return assAlgNode;
 }
 
@@ -177,16 +180,19 @@
         AIAlgNodeBase *hdRecogniAlgNode = [SMGUtils searchObjectForPointer:recognitionAlgNode.pointer fileName:kFNNode time:cRTNode];
         if (hdRecogniAlgNode) {
             firstPort = ARR_INDEX(hdRecogniAlgNode.refPorts, 0);
+            if (firstPort) NSLog(@"RecognUse success Mem from Hd");
         }
         
         ///2. 尝试取_内存祖母引用序列
         if (!firstPort) {
             NSArray *memRefPorts = [SMGUtils searchObjectForPointer:recognitionAlgNode.pointer fileName:kFNMemRefPorts time:cRTMemPort];
             firstPort = ARR_INDEX(memRefPorts, 0);
+            if (firstPort) NSLog(@"RecognUse success Mem from Mem");
         }
     }else{
         ///3. 尝试取_硬盘祖母引用序列
         firstPort = ARR_INDEX(recognitionAlgNode.refPorts, 0);
+        if (firstPort) NSLog(@"RecognUse success Hd from Hd");
     }
     if (!firstPort) {
         return nil;
