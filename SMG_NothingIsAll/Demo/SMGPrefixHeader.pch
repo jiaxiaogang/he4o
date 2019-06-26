@@ -45,3 +45,7 @@
 //HSB (色相,饱合度,亮度)
 #define UIColorWithHSB(H, S, B) [UIColor colorWithHue:(H)/255.0 saturation:(S)/255.0 brightness:(B)/255.0 alpha:1]
 
+/**
+ *  MARK:--------------------log--------------------
+ */
+#define TPLog(a,...) [theApp setTipLog:STRFORMAT(a,##__VA_ARGS__)]

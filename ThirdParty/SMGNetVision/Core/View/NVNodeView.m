@@ -100,26 +100,26 @@
 //MARK:===============================================================
 - (IBAction)contentViewTouchDown:(id)sender {
     NSString *desc = [self nodeView_GetTipsDesc:self.data];
-    NSLog(@"按下:%@",desc);
+    TPLog(@"按下:%@",desc);
 }
 - (IBAction)contentViewTouchCancel:(id)sender {
-    NSLog(@"松开");
+    TPLog(@"松开");
 }
 - (IBAction)topBtnOnClick:(id)sender {
     [self nodeView_TopClick:self.data];
-    NSLog(@"absPorts");
+    TPLog(@"absPorts");
 }
 - (IBAction)bottomBtnOnClick:(id)sender {
     [self nodeView_BottomClick:self.data];
-    NSLog(@"conPorts");
+    TPLog(@"conPorts");
 }
 - (IBAction)leftBtnOnClick:(id)sender {
     [self nodeView_LeftClick:self.data];
-    NSLog(@"content");
+    TPLog(@"content");
 }
 - (IBAction)rightBtnOnClick:(id)sender {
     [self nodeView_RightClick:self.data];
-    NSLog(@"refPorts");
+    TPLog(@"refPorts");
 }
 
 //MARK:===============================================================

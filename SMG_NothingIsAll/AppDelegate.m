@@ -13,6 +13,12 @@
 #import "AIKVPointer.h"
 #import "NVDelegate_He.h"
 
+@interface AppDelegate ()
+
+@property (strong, nonatomic) UILabel *tipLogLab;
+
+@end
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
@@ -33,6 +39,11 @@
     self.nvView = [[NVView alloc] initWithDelegate:[NVDelegate_He new]];
     [self.window addSubview:self.nvView];
     
+    //4. tipLogLab
+    self.tipLogLab = [[UILabel alloc] initWithFrame:CGRectMake(0, ScreenHeight - 8, ScreenWidth, 8)];
+    [self.tipLogLab setFont:[UIFont boldSystemFontOfSize:8]];
+    [self.tipLogLab setTextColor:[UIColor redColor]];
+    [self.window addSubview:self.tipLogLab];
     return YES;
 }
 
@@ -54,6 +65,10 @@
     NSArray *controllers = navC.viewControllers;
     UIViewController *controller = [controllers lastObject];
     return controller;
+}
+
+-(void) setTipLog:(NSString*)tipLog{
+    [self.tipLogLab setText:STRTOOK(tipLog)];
 }
 
 @end

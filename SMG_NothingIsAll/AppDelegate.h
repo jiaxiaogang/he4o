@@ -14,6 +14,7 @@
 @property (strong, nonatomic) UIWindow *window;
 -(UIViewController*) getTopDisplayViewController;
 @property (strong, nonatomic) NVView *nvView;
+-(void) setTipLog:(NSString*)tipLog;
 
 @end
 
