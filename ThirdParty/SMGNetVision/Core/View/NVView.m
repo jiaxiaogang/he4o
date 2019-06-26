@@ -89,9 +89,28 @@
 //MARK:===============================================================
 -(void) setNodeData:(id)nodeData{
     if (nodeData) {
-        NVModuleView *mView = [self getNVModuleView:nodeData];
+        [self setNodeDatas:@[nodeData]];
+    }
+}
+
+-(void) setNodeDatas:(NSArray*)nodeDatas{
+    //1. 数据准备
+    nodeDatas = ARRTOOK(nodeDatas);
+    NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
+    
+    //2. 分组
+    for (id data in nodeDatas) {
+        NSString *mId = STRTOOK([self nv_GetModuleId:data]);
+        NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[dic objectForKey:mId]];
+        [mArr addObject:data];
+        [dic setObject:mArr forKey:mId];
+    }
+    
+    //3. 显示
+    for (NSString *mId in dic.allKeys) {
+        NVModuleView *mView = [self getNVModuleViewWithModuleId:mId];
         if (mView) {
-            [mView setDataWithNodeData:nodeData];
+            [mView setDataWithNodeDatas:[dic objectForKey:mId]];
         }
     }
 }
@@ -113,8 +132,8 @@
 /**
  *  MARK:--------------------获取nodeData所属的模块--------------------
  */
--(NVModuleView*) getNVModuleView:(id)nodeData{
-    NSString *moduleId = STRTOOK([self nv_GetModuleId:nodeData]);
+-(NVModuleView*) getNVModuleViewWithModuleId:(NSString*)moduleId{
+    moduleId = STRTOOK(moduleId);
     for (NVModuleView *mView in self.scrollView.subviews) {
         if (ISOK(mView, NVModuleView.class) && [moduleId isEqualToString:mView.moduleId]) {
             return mView;
@@ -170,6 +189,10 @@
         [netDatas addObjectsFromArray:mView.nodeArr];
     }
     return netDatas;
+}
+
+-(void)moduleView_SetNetDatas:(NSArray*)datas{
+    [self setNodeDatas:datas];
 }
 
 -(void)moduleView_DrawLine:(NSArray*)lineDatas{

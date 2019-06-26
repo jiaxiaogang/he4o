@@ -45,6 +45,7 @@
 
 -(id) initWithDelegate:(id<NVViewDelegate>)delegate;
 -(void) setNodeData:(id)nodeData;
+-(void) setNodeDatas:(NSArray*)nodeDatas;
 -(void) clear;
 
 @end

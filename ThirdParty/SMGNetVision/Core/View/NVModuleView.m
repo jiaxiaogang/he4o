@@ -319,6 +319,7 @@
 }
 -(void) nodeView_TopClick:(id)nodeData{
     NSArray *absNodeDatas = [self moduleView_AbsNodeDatas:nodeData];
+    [self setDataWithNodeDatas:absNodeDatas];
     NSLog(@"%@",absNodeDatas);
 }
 -(void) nodeView_BottomClick:(id)nodeData{
@@ -328,10 +329,12 @@
 }
 -(void) nodeView_LeftClick:(id)nodeData{
     NSArray *contentNodeDatas = [self moduleView_ContentNodeDatas:nodeData];
+    [self.delegate moduleView_SetNetDatas:contentNodeDatas];
     NSLog(@"%@",contentNodeDatas);
 }
 -(void) nodeView_RightClick:(id)nodeData{
     NSArray *refNodeDatas = [self moduleView_RefNodeDatas:nodeData];
+    [self.delegate moduleView_SetNetDatas:refNodeDatas];
     NSLog(@"%@",refNodeDatas);
 }
 

@@ -34,6 +34,9 @@
 //获取所有网络中的节点数据 (判定关联)
 -(NSArray*)moduleView_GetAllNetDatas;
 
+//向可视化中,追加datas;
+-(void)moduleView_SetNetDatas:(NSArray*)datas;
+
 //获取所有网络中的节点数据 (判定关联)
 -(void)moduleView_DrawLine:(NSArray*)lineDatas;
 
@@ -50,6 +53,7 @@
 @property (weak, nonatomic) id<NVModuleViewDelegate> delegate;
 -(void) setDataWithModuleId:(NSString*)moduleId;
 -(void) setDataWithNodeData:(id)nodeData;
+-(void) setDataWithNodeDatas:(NSArray*)nodeDatas;
 -(void) clear;
 
 @end

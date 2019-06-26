@@ -47,13 +47,20 @@
     }
     [theApp.nvView setNodeData:parentAlgNode.pointer];
     
-    //4. 构建子祖母 (抽象祖母,并嵌套);
+    //4. 收集本组中,所有祖母节点;
+    NSMutableArray *fromGroup_ps = [[NSMutableArray alloc] init];
+    [fromGroup_ps addObject:parentAlgNode.pointer];
+    
+    //5. 构建子祖母 (抽象祖母,并嵌套);
     for (NSArray *subValue_ps in subValuePsArr) {
         AIAbsAlgNode *subAlgNode = [theNet createAbsAlgNode:subValue_ps conAlgs:@[parentAlgNode] isMem:true];
+        [fromGroup_ps addObject:subAlgNode.pointer];
         [theApp.nvView setNodeData:subAlgNode.pointer];
-        
-        //5. NoMv处理;
-        [self dataIn_NoMV:subAlgNode.pointer];
+    }
+    
+    //6. NoMv处理;
+    for (AIKVPointer *alg_p in fromGroup_ps) {
+        [self dataIn_NoMV:alg_p fromGroup_ps:fromGroup_ps];
     }
 }
 
@@ -77,7 +84,7 @@
         }
         
         [theApp.nvView setNodeData:algNode.pointer];
-        [self dataIn_NoMV:algNode.pointer];
+        [self dataIn_NoMV:algNode.pointer fromGroup_ps:@[algNode.pointer]];
     }
 }
 
@@ -88,14 +95,15 @@
 /**
  *  MARK:--------------------输入非mv信息时--------------------
  *  1. 看到西瓜会开心 : TODO: 对自身状态的判断, (比如,看到西瓜,想吃,那么当前状态是否饿)
+ *  @param fromGroup_ps : 当前输入批次的整组祖母指针;
  */
--(void) dataIn_NoMV:(AIPointer*)algNode_p{
+-(void) dataIn_NoMV:(AIPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps{
     if (!algNode_p) {
         return;
     }
     
     //3. 识别
-    AIAlgNodeBase *recognitionAlgNode = [self dataIn_NoMV_RecognitionIs:algNode_p];
+    AIAlgNodeBase *recognitionAlgNode = [self dataIn_NoMV_RecognitionIs:algNode_p fromGroup_ps:fromGroup_ps];
     
     //TODOWAIT:
     //4. 识别后,要进行类比,并构建网络关联; (参考n16p7)
@@ -117,7 +125,7 @@
  *  问题: 看到的algNode与识别到的,未必是正确的,但我们应该保持使用protoAlgNode而不是recognitionAlgNode;
  *  TODOV1.1:祖母的嵌套,有可能会导致识别上的一些问题; (我们需要支持结构化识别,而不仅是绝对识别和模糊识别)
  */
--(AIAlgNodeBase*) dataIn_NoMV_RecognitionIs:(AIPointer*)algNode_p {
+-(AIAlgNodeBase*) dataIn_NoMV_RecognitionIs:(AIPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps{
     //1. 数据准备
     AIAlgNodeBase *algNode = [SMGUtils searchNode:algNode_p];
     AIAlgNodeBase *assAlgNode = nil;
@@ -136,12 +144,12 @@
         ///(19xxxx注掉,不能太过于脱离持久网络做思考,所以先注掉)
         ///(190625放开,因采用内存网络后,靠这识别)
         if (!assAlgNode) {
-            assAlgNode = [self recognition_PartMatching:algNode isMem:true];
+            assAlgNode = [self recognition_PartMatching:algNode isMem:true except_ps:fromGroup_ps];
         }
         
         ///4. 局部匹配 -> 硬盘网络;
         if (!assAlgNode) {
-            assAlgNode = [self recognition_PartMatching:algNode isMem:false];
+            assAlgNode = [self recognition_PartMatching:algNode isMem:false except_ps:fromGroup_ps];
         }
     }
     
@@ -361,11 +369,28 @@
 
 /**
  *  MARK:--------------------识别_局部匹配--------------------
+ *  @param except_ps : 排除_ps; (如:同一批次输入的祖母组,不可用来识别自己)
  *  注: 根据引用找出相似度最高且达到阀值的结果返回; (相似度匹配)
  *  从content_ps的所有value.refPorts找前cPartMatchingCheckRefPortsLimit个, 如:contentCount9*limit5=45个;
  */
--(AIAlgNodeBase*) recognition_PartMatching:(AIAlgNodeBase*)algNode isMem:(BOOL)isMem {
+-(AIAlgNodeBase*) recognition_PartMatching:(AIAlgNodeBase*)algNode isMem:(BOOL)isMem except_ps:(NSArray*)except_ps{
+    
+    //debugStart
+    if (algNode.content_ps.count == 9) {
+        for (AIKVPointer *p in algNode.content_ps) {
+            if ([p.dataSource isEqualToString:@"sizeHeight"]) {
+                if ([NUMTOOK([AINetIndex getData:p]) floatValue] == 5) {
+                    NSLog(@"命中...");//仅对坚果进行识别调试;
+                    //1. 此处坚果的微信息refPorts中,无其它坚果引用;
+                    //2. 可使用可视化,来调试查看坚果的微信息refPorts为什么未形成;
+                }
+            }
+        }
+    }
+    //debugEnd
+    
     //1. 数据准备;
+    except_ps = ARRTOOK(except_ps);
     if (ISOK(algNode, AIAlgNodeBase.class)) {
         NSMutableDictionary *countDic = [[NSMutableDictionary alloc] init];
         NSData *maxKey = nil;
@@ -377,7 +402,7 @@
             
             //3. 进行计数
             for (AIPort *refPort in refPorts) {
-                if (![refPort.target_p isEqual:algNode.pointer]) {
+                if (![refPort.target_p isEqual:algNode.pointer] && ![SMGUtils containsSub_p:refPort.target_p parent_ps:except_ps]) {
                     NSData *key = [NSKeyedArchiver archivedDataWithRootObject:refPort.target_p];
                     int oldCount = [NUMTOOK([countDic objectForKey:key]) intValue];
                     [countDic setObject:@(oldCount + 1) forKey:key];

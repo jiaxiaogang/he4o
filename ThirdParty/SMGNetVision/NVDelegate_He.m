@@ -62,8 +62,15 @@
     if (node_p) {
         if ([self isValue:node_p]) {
             //1. 如果是value,则独立取refPorts文件返回;
-            NSArray *refPorts = [SMGUtils searchObjectForFilePath:node_p.filePath fileName:kFNRefPorts_All(node_p.isMem) time:cRTReference_All(node_p.isMem)];
-            return [SMGUtils convertPointersFromPorts:refPorts];
+            NSMutableArray *result = [[NSMutableArray alloc] init];
+            ///1. 取硬盘
+            NSArray *hdRefPorts = [SMGUtils searchObjectForFilePath:node_p.filePath fileName:kFNRefPorts time:cRTReference];
+            [result addObjectsFromArray:[SMGUtils convertPointersFromPorts:hdRefPorts]];
+            
+            ///2. 取内存
+            NSArray *memRefPorts = [SMGUtils searchObjectForFilePath:node_p.filePath fileName:kFNMemRefPorts time:cRTMemReference];
+            [result addObjectsFromArray:[SMGUtils convertPointersFromPorts:memRefPorts]];
+            return result;
         }else if ([self isAlg:node_p]) {
             //2. 如果是algNode则返回.refPorts;
             AIAlgNodeBase *node = [SMGUtils searchNode:node_p];
