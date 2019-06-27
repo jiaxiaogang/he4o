@@ -30,12 +30,29 @@
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nXm-WR-YVi">
+                    <rect key="frame" x="448" y="0.0" width="30" height="20"/>
+                    <color key="backgroundColor" red="0.88220167400000005" green="1" blue="0.0" alpha="0.30223921654929575" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="20" id="798-fq-fYF"/>
+                        <constraint firstAttribute="width" constant="30" id="iSD-13-T59"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="9"/>
+                    <state key="normal" title="清模块">
+                        <color key="titleColor" red="1" green="0.1019250594" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </state>
+                    <connections>
+                        <action selector="clearBtnOnClick:" destination="-1" eventType="touchUpInside" id="k2V-sG-QTM"/>
+                    </connections>
+                </button>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
                 <constraint firstAttribute="trailing" secondItem="nGz-Hr-NjD" secondAttribute="trailing" id="FNa-B9-UbT"/>
                 <constraint firstItem="nGz-Hr-NjD" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="JBK-A5-Zlg"/>
+                <constraint firstItem="nXm-WR-YVi" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="dyh-kY-vk6"/>
                 <constraint firstItem="nGz-Hr-NjD" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="gEg-fW-gLY"/>
+                <constraint firstAttribute="trailing" secondItem="nXm-WR-YVi" secondAttribute="trailing" id="ngL-uk-JID"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <point key="canvasLocation" x="185.59999999999999" y="-93.553223388305852"/>

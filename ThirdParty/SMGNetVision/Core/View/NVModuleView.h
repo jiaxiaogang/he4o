@@ -40,6 +40,9 @@
 //获取所有网络中的节点数据 (判定关联)
 -(void)moduleView_DrawLine:(NSArray*)lineDatas;
 
+//清除所有网络中的有关的线
+-(void)moduleView_ClearLine:(NSArray*)datas;
+
 @end
 
 /**

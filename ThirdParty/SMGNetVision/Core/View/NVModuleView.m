@@ -307,6 +307,17 @@
     [self moduleView_DrawLine:lineDatas];
 }
 
+//MARK:===============================================================
+//MARK:                     < onclick >
+//MARK:===============================================================
+- (IBAction)clearBtnOnClick:(id)sender {
+    //1. 清线
+    [self.delegate moduleView_ClearLine:self.nodeArr];
+    
+    //2. 清数据和节点
+    [self clear];
+}
+
 /**
  *  MARK:--------------------NVNodeViewDelegate--------------------
  */

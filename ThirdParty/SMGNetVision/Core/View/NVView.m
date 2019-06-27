@@ -262,6 +262,21 @@
     }
 }
 
+-(void)moduleView_ClearLine:(NSArray*)datas{
+    //1. 数据准备
+    datas = ARRTOOK(datas);
+    NSArray *lineViews = ARRTOOK([self subViews_AllDeepWithClass:NVLineView.class]);
+    
+    //2. 遍历找到含有nodeData的线,并清除
+    for (NSArray *nodeData in datas) {
+        for (NVLineView *lView in lineViews) {
+            if ([lView.data containsObject:nodeData]) {
+                [lView removeFromSuperview];
+            }
+        }
+    }
+}
+
 //MARK:===============================================================
 //MARK:                     < SelfDelegate >
 //MARK:===============================================================
