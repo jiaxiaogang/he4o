@@ -54,7 +54,7 @@
     //btn
     NSArray *btns = @[self.topBtn,self.bottomBtn,self.leftBtn,self.rightBtn];
     for (UIButton *btn in btns) {
-        [btn.layer setCornerRadius:2.5f];
+        [btn.layer setCornerRadius:5.5f];
         [btn.layer setBorderWidth:1.0f / UIScreen.mainScreen.scale];
         [btn.layer setBorderColor:[UIColor grayColor].CGColor];
     }
@@ -100,7 +100,7 @@
 //MARK:===============================================================
 - (IBAction)contentViewTouchDown:(id)sender {
     NSString *desc = [self nodeView_GetTipsDesc:self.data];
-    TPLog(@"按下:%@",desc);
+    TPLog(@"> %@", desc);
 }
 - (IBAction)contentViewTouchCancel:(id)sender {
     TPLog(@"松开");

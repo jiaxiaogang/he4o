@@ -153,13 +153,15 @@
     
     //3. 根据编号计算坐标;
     NSArray *nodeViews = ARRTOOK([self subViews_AllDeepWithClass:NVNodeView.class]);
+    CGFloat spaceY = 57;
+    CGFloat nodeSize = 15;
     for (NVNodeView *nodeView in nodeViews) {
         NSData *key = [NSKeyedArchiver archivedDataWithRootObject:nodeView.data];
         NSInteger x = [NUMTOOK([xDic objectForKey:key]) integerValue];
         NSInteger y = [NUMTOOK([yDic objectForKey:key]) integerValue];
-        float spaceX = MIN(15, self.width / xDic.count);//最大15,最小平均;
+        float spaceX = MIN(nodeSize, self.width / xDic.count);//最大15,最小平均;
         nodeView.x = x * spaceX;
-        nodeView.y = (self.height - 15) - y * 37;
+        nodeView.y = (self.height - nodeSize) - y * spaceY;
     }
 }
 

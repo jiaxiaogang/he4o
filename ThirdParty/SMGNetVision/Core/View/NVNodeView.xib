@@ -23,45 +23,45 @@
             <rect key="frame" x="0.0" y="0.0" width="15" height="15"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="w7V-wM-pHv">
-                    <rect key="frame" x="5" y="0.0" width="5" height="5"/>
-                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                <button opaque="NO" clipsSubviews="YES" alpha="0.90000000000000002" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="w7V-wM-pHv">
+                    <rect key="frame" x="2" y="-4.5" width="11" height="9"/>
+                    <color key="backgroundColor" cocoaTouchSystemColor="darkTextColor"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="5" id="NWR-HI-eA9"/>
-                        <constraint firstAttribute="width" constant="5" id="n1U-JB-hBe"/>
+                        <constraint firstAttribute="height" constant="9" id="NWR-HI-eA9"/>
+                        <constraint firstAttribute="width" constant="11" id="n1U-JB-hBe"/>
                     </constraints>
                     <connections>
                         <action selector="topBtnOnClick:" destination="-1" eventType="touchUpInside" id="NJW-Zn-s25"/>
                     </connections>
                 </button>
-                <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tlc-fp-yjP">
-                    <rect key="frame" x="5" y="10" width="5" height="5"/>
-                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                <button opaque="NO" clipsSubviews="YES" alpha="0.90000000000000002" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tlc-fp-yjP">
+                    <rect key="frame" x="2" y="10.5" width="11" height="9"/>
+                    <color key="backgroundColor" cocoaTouchSystemColor="darkTextColor"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="5" id="V4w-Qz-7sC"/>
-                        <constraint firstAttribute="width" constant="5" id="c5h-QO-d7o"/>
+                        <constraint firstAttribute="height" constant="9" id="V4w-Qz-7sC"/>
+                        <constraint firstAttribute="width" constant="11" id="c5h-QO-d7o"/>
                     </constraints>
                     <connections>
                         <action selector="bottomBtnOnClick:" destination="-1" eventType="touchUpInside" id="fef-fZ-2ri"/>
                     </connections>
                 </button>
-                <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qq9-YW-ooV">
-                    <rect key="frame" x="0.0" y="5" width="5" height="5"/>
-                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                <button opaque="NO" clipsSubviews="YES" alpha="0.90000000000000002" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qq9-YW-ooV">
+                    <rect key="frame" x="-4.5" y="2" width="9" height="11"/>
+                    <color key="backgroundColor" cocoaTouchSystemColor="darkTextColor"/>
                     <constraints>
-                        <constraint firstAttribute="width" constant="5" id="MwO-eY-DYm"/>
-                        <constraint firstAttribute="height" constant="5" id="RBz-UR-8rA"/>
+                        <constraint firstAttribute="width" constant="9" id="MwO-eY-DYm"/>
+                        <constraint firstAttribute="height" constant="11" id="RBz-UR-8rA"/>
                     </constraints>
                     <connections>
                         <action selector="leftBtnOnClick:" destination="-1" eventType="touchUpInside" id="grZ-JJ-RTg"/>
                     </connections>
                 </button>
-                <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LMI-Sl-GNe">
-                    <rect key="frame" x="10" y="5" width="5" height="5"/>
-                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                <button opaque="NO" clipsSubviews="YES" alpha="0.90000000000000002" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LMI-Sl-GNe">
+                    <rect key="frame" x="10.5" y="2" width="9" height="11"/>
+                    <color key="backgroundColor" cocoaTouchSystemColor="darkTextColor"/>
                     <constraints>
-                        <constraint firstAttribute="width" constant="5" id="goy-w7-MNS"/>
-                        <constraint firstAttribute="height" constant="5" id="xaT-Ra-o38"/>
+                        <constraint firstAttribute="width" constant="9" id="goy-w7-MNS"/>
+                        <constraint firstAttribute="height" constant="11" id="xaT-Ra-o38"/>
                     </constraints>
                     <connections>
                         <action selector="rightBtnOnClick:" destination="-1" eventType="touchUpInside" id="Qwn-uK-8wn"/>
@@ -70,11 +70,11 @@
             </subviews>
             <color key="backgroundColor" red="0.0" green="0.47843137254901957" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
-                <constraint firstItem="qq9-YW-ooV" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="25A-1J-4Wb"/>
+                <constraint firstItem="qq9-YW-ooV" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="-4.5" id="25A-1J-4Wb"/>
                 <constraint firstItem="Tlc-fp-yjP" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="7N9-uB-GYk"/>
-                <constraint firstAttribute="bottom" secondItem="Tlc-fp-yjP" secondAttribute="bottom" id="Gzn-2s-Dzq"/>
-                <constraint firstItem="w7V-wM-pHv" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="J6f-zl-oLT"/>
-                <constraint firstAttribute="trailing" secondItem="LMI-Sl-GNe" secondAttribute="trailing" id="QNl-dC-Mfo"/>
+                <constraint firstAttribute="bottom" secondItem="Tlc-fp-yjP" secondAttribute="bottom" constant="-4.5" id="Gzn-2s-Dzq"/>
+                <constraint firstItem="w7V-wM-pHv" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="-4.5" id="J6f-zl-oLT"/>
+                <constraint firstAttribute="trailing" secondItem="LMI-Sl-GNe" secondAttribute="trailing" constant="-4.5" id="QNl-dC-Mfo"/>
                 <constraint firstItem="qq9-YW-ooV" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="Xsb-Rq-ISZ"/>
                 <constraint firstItem="LMI-Sl-GNe" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="dEO-xD-o9e"/>
                 <constraint firstItem="w7V-wM-pHv" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="gDi-v4-3Ty"/>
