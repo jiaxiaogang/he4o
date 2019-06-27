@@ -21,6 +21,7 @@
 @property (assign, nonatomic) BOOL isOpen;
 @property (weak, nonatomic) IBOutlet UIButton *openCloseBtn;
 @property (strong, nonatomic) id<NVViewDelegate> delegate;
+@property (strong, nonatomic) UIView *contentView;
 
 @end
 
@@ -39,7 +40,7 @@
 
 -(void) initView{
     //self
-    [self setFrame:CGRectMake(0, 20, ScreenWidth, 20)];
+    [self setFrame:CGRectMake(ScreenWidth - 40, 20, 40, 20)];
     
     //containerView
     [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];
@@ -58,22 +59,27 @@
     [self.scrollView setShowsVerticalScrollIndicator:NO];
     [self.scrollView setShowsHorizontalScrollIndicator:NO];
     
+    //contentView
+    self.contentView = [[UIView alloc] init];
+    [self.scrollView addSubview:self.contentView];
+    [self.contentView setBackgroundColor:[UIColor clearColor]];
+    
     //moduleViews
     NSArray *moduleIds = [self nv_GetModuleIds];
     if (ARRISOK(moduleIds)) {
         CGFloat curModuleX = 2;
         CGFloat moduleW = 300;
         CGFloat moduleH = 276;
-        [self.scrollView removeAllSubviews];
         for (NSString *moduleId in moduleIds) {
             NVModuleView *moduleView = [[NVModuleView alloc] init];
             moduleView.delegate = self;
             [moduleView setDataWithModuleId:moduleId];
             [moduleView setFrame:CGRectMake(curModuleX, 2, moduleW, moduleH)];
-            [self.scrollView addSubview:moduleView];
+            [self.contentView addSubview:moduleView];
             curModuleX += (moduleW + 2);
         }
         [self.scrollView setContentSize:CGSizeMake(curModuleX, 276)];
+        [self.contentView setFrame:CGRectMake(0, 0, curModuleX, 276)];
     }
 }
 
@@ -134,7 +140,7 @@
  */
 -(NVModuleView*) getNVModuleViewWithModuleId:(NSString*)moduleId{
     moduleId = STRTOOK(moduleId);
-    for (NVModuleView *mView in self.scrollView.subviews) {
+    for (NVModuleView *mView in self.contentView.subviews) {
         if (ISOK(mView, NVModuleView.class) && [moduleId isEqualToString:mView.moduleId]) {
             return mView;
         }
@@ -148,7 +154,12 @@
 - (IBAction)openCloseBtnOnClick:(id)sender {
     self.isOpen = !self.isOpen;
     self.height = self.isOpen ? 300 : 20;
-    [self.openCloseBtn setTitle:(self.isOpen ? @"收起" : @"放开") forState:UIControlStateNormal];
+    self.x = self.isOpen ? 0 : ScreenWidth - 40;
+    self.width = self.isOpen ? ScreenWidth : 40;
+    [self.openCloseBtn setTitle:(self.isOpen ? @"一" : @"口") forState:UIControlStateNormal];
+}
+- (IBAction)clearBtnOnClick:(id)sender {
+    [self clear];
 }
 
 /**
@@ -221,9 +232,9 @@
             CGPoint pointB = CGPointZero;
             for (NVNodeView *nView in nodeViews) {
                 if ([dataA isEqual:nView.data]) {
-                    pointA = [nView.superview convertPoint:nView.center toView:self.scrollView];
+                    pointA = [nView.superview convertPoint:nView.center toView:self.contentView];
                 }else if([dataB isEqual:nView.data]){
-                    pointB = [nView.superview convertPoint:nView.center toView:self.scrollView];
+                    pointB = [nView.superview convertPoint:nView.center toView:self.contentView];
                 }
             }
             
@@ -245,9 +256,7 @@
                 [lView.layer setTransform:CATransform3DMakeRotation(angle, 0, 0, 1)];
                 lView.center = CGPointMake(centerX, centerY);
                 [lView setDataWithDataA:dataA dataB:dataB];
-                [self.scrollView addSubview:lView];
-                //[self.scrollView sendSubviewToBack:lView];
-                //NSLog(@"drawLine A坐标:%f,%f B坐标:%f,%f line坐标:%f,%f line长度:%f line角度:%f",pointA.x,pointA.y,pointB.x,pointB.y,lView.x,lView.y,lView.width,angle * 180.0f / M_PI);
+                [self.contentView addSubview:lView];
             }
         }
     }

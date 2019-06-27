@@ -21,22 +21,38 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="K2V-Rq-3S5">
-                    <rect key="frame" x="0.0" y="0.0" width="481" height="20"/>
+                    <rect key="frame" x="441" y="0.0" width="40" height="20"/>
                     <color key="backgroundColor" red="0.89952432832742069" green="1" blue="0.90397931961062949" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
+                        <constraint firstAttribute="width" constant="40" id="WrC-dy-7Z3"/>
                         <constraint firstAttribute="height" constant="20" id="ahc-Ga-vg9"/>
                     </constraints>
-                    <state key="normal" title="放开"/>
+                    <state key="normal" title="口"/>
                     <connections>
                         <action selector="openCloseBtnOnClick:" destination="-1" eventType="touchUpInside" id="vcB-kT-Et9"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IjF-as-aab">
+                    <rect key="frame" x="401" y="0.0" width="40" height="20"/>
+                    <color key="backgroundColor" red="0.88220167400000005" green="1" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="20" id="g88-ld-zHa"/>
+                        <constraint firstAttribute="width" constant="40" id="jK7-gg-qRP"/>
+                    </constraints>
+                    <state key="normal" title="clear">
+                        <color key="titleColor" red="1" green="0.1019250594" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </state>
+                    <connections>
+                        <action selector="clearBtnOnClick:" destination="-1" eventType="touchUpInside" id="0SU-ul-oXs"/>
                     </connections>
                 </button>
             </subviews>
             <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
             <constraints>
-                <constraint firstItem="K2V-Rq-3S5" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="VLq-xM-dPu"/>
+                <constraint firstItem="IjF-as-aab" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="E77-HX-hia"/>
                 <constraint firstAttribute="trailing" secondItem="K2V-Rq-3S5" secondAttribute="trailing" id="ZkJ-o1-PXM"/>
                 <constraint firstItem="K2V-Rq-3S5" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="ofi-MI-pHk"/>
+                <constraint firstItem="K2V-Rq-3S5" firstAttribute="leading" secondItem="IjF-as-aab" secondAttribute="trailing" id="rO5-O4-mRW"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <point key="canvasLocation" x="148" y="-61.619190404797607"/>

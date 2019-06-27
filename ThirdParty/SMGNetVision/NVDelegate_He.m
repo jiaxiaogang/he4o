@@ -11,6 +11,8 @@
 #import "AIAbsAlgNode.h"
 #import "AINetAbsFoNode.h"
 #import "AIAbsCMVNode.h"
+#import "AINetIndex.h"
+#import "ThinkingUtils.h"
 
 @implementation NVDelegate_He
 
@@ -22,12 +24,38 @@
 }
 
 -(UIColor *)nv_GetNodeColor:(AIKVPointer*)node_p{
+    //1. mv节点:(上升为绿&下降为红)
     if ([self isMv:node_p]) {
-        //上升为绿;
-        //下降为红;
+        AICMVNodeBase *mvNode = [SMGUtils searchNode:node_p];
+        if (mvNode) {
+            NSInteger delta = [NUMTOOK([AINetIndex getData:mvNode.delta_p]) integerValue];
+            BOOL demand = [ThinkingUtils getDemand:node_p.algsType delta:delta complete:nil];
+            return demand ? UIColorWithRGBHex(0xFF0000) : UIColorWithRGBHex(0x00FF00);
+        }
     }
+    
+    //2. 坚果显示偏绿色 (抽象黄绿&具象蓝绿)
+    if ([self isAlg:node_p]) {
+        AIAlgNodeBase *algNode = [SMGUtils searchNode:node_p];
+        if (algNode) {
+            for (AIKVPointer *value_p in algNode.content_ps) {
+                if ([@"sizeWidth" isEqualToString:value_p.dataSource]) {
+                    CGFloat width = [NUMTOOK([AINetIndex getData:value_p]) floatValue];
+                    if (width == 5) {
+                        if ([self isAbs:node_p]) {
+                            return UIColorWithRGBHex(0xCCFF00);
+                        }else{
+                            return UIColorWithRGBHex(0x00DDFF);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    //3. 抽象显示黄色
     if ([self isAbs:node_p]) {
-        return UIColorWithRGBHex(0xFFFF00);//抽象显示黄色
+        return UIColorWithRGBHex(0xFFFF00);
     }
     return nil;
 }

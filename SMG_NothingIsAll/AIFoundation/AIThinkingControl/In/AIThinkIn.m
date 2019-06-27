@@ -297,7 +297,6 @@
                 
                 if (ISOK(assFrontNode, AINodeBase.class)) {
                     //NSLog(@"\n抽象前========== %@",[NVUtils getCmvModelDesc_ByFoNode:assFrontNode]);
-                    [theApp.nvView clear];
                     [theApp.nvView setNodeData:assFrontNode.pointer];
                     [theApp.nvView setNodeData:assFrontNode.cmvNode_p];
                     //5. 执行外类比;
