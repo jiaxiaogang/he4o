@@ -153,15 +153,26 @@
     
     //3. 根据编号计算坐标;
     NSArray *nodeViews = ARRTOOK([self subViews_AllDeepWithClass:NVNodeView.class]);
-    CGFloat spaceY = 57;
-    CGFloat nodeSize = 15;
+    CGFloat layerSpace = 57;//层间距
+    CGFloat xSpace = 13;    //节点横间距
+    CGFloat nodeSize = 15;  //节点大小
+    
+    //4. 同层计数器 (本层节点个数)
+    NSMutableDictionary *yLayerCountDic = [[NSMutableDictionary alloc] init];
     for (NVNodeView *nodeView in nodeViews) {
+        //5. 取xIndex和yIndex;
         NSData *key = [NSKeyedArchiver archivedDataWithRootObject:nodeView.data];
         NSInteger x = [NUMTOOK([xDic objectForKey:key]) integerValue];
         NSInteger y = [NUMTOOK([yDic objectForKey:key]) integerValue];
-        float spaceX = MIN(nodeSize, self.width / xDic.count);//最大15,最小平均;
+        
+        //6. 同层y值偏移量 (交错3 & 偏移8)
+        NSInteger layerCount = [NUMTOOK([yLayerCountDic objectForKey:@(y)]) intValue];
+        [yLayerCountDic setObject:@(layerCount + 1) forKey:@(y)];
+        
+        //7. 节点坐标
+        float spaceX = MIN(xSpace, self.width / xDic.count);
         nodeView.x = x * spaceX;
-        nodeView.y = (self.height - nodeSize) - y * spaceY;
+        nodeView.y = (self.height - nodeSize) - (y * layerSpace) - (layerCount % 3) * 8;
     }
 }
 

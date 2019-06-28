@@ -34,6 +34,7 @@
     //self
     [self setBackgroundColor:[UIColor clearColor]];
     self.height = 1.0f / UIScreen.mainScreen.scale;
+    [self setUserInteractionEnabled:false];
     
     //containerView
     [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];
