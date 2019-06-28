@@ -45,6 +45,7 @@
         make.top.mas_equalTo(self);
         make.bottom.mas_equalTo(self);
     }];
+    [self.containerView setAlpha:0.3f];
 }
 
 -(void) initData{

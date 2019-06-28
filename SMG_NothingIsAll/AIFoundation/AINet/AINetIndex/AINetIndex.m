@@ -25,7 +25,7 @@
     AIKVPointer *index_p = [SMGUtils createPointerForIndex];
     AIKVPointer *data_p = [SMGUtils createPointerForData];
     NSMutableArray *indexModels = [[NSMutableArray alloc] initWithArray:ARRTOOK([SMGUtils searchObjectForPointer:index_p fileName:kFNIndex(isOut) time:cRTIndex])];//加载索引序列
-    NSMutableDictionary *dataDic = [[NSMutableDictionary alloc] initWithDictionary:DICTOOK([SMGUtils searchObjectForPointer:data_p fileName:kFNData(isOut) time:cRTData])];//加载微信息值字典
+    NSMutableDictionary *dataDic = [[NSMutableDictionary alloc] initWithDictionary:DICTOOK([SMGUtils searchObjectForPointer:data_p fileName:kFNData(isOut) time:cRTData])];//加载微信息值字典(key为pointer.filePath)
     
     //2. 查找model,没则new
     AINetIndexModel *model = nil;
@@ -48,7 +48,8 @@
         NSNumber *checkPointerIdNumber = ARR_INDEX(model.pointerIds, checkIndex);
         long checkPointerId = [NUMTOOK(checkPointerIdNumber) longValue];
         AIKVPointer *checkValue_p = [SMGUtils createPointerForValue:checkPointerId algsType:algsType dataSource:dataSource isOut:isOut];
-        NSNumber *checkValue = [dataDic objectForKey:checkValue_p];
+        NSString *key = STRFORMAT(@"%@_%d",checkValue_p.params,checkValue_p.pointerId);
+        NSNumber *checkValue = [dataDic objectForKey:key];
         NSComparisonResult compareResult = [NUMTOOK(checkValue) compare:data];
         return compareResult;
     } startIndex:0 endIndex:model.pointerIds.count - 1 success:^(NSInteger index) {
@@ -59,7 +60,8 @@
     } failure:^(NSInteger index) {
         //4. 未找到;创建一个;
         AIKVPointer *value_p = [SMGUtils createPointerForValue:algsType dataSource:dataSource isOut:isOut];
-        [dataDic setObject:data forKey:value_p];
+        NSString *key = STRFORMAT(@"%@_%ld",value_p.params,(long)value_p.pointerId);
+        [dataDic setObject:data forKey:key];
         resultPointer = value_p;
         
         if (model.pointerIds.count <= index) {
@@ -78,7 +80,8 @@
 
 +(NSNumber*) getData:(AIKVPointer*)value_p{
     NSDictionary *dataDic = DICTOOK([SMGUtils searchObjectForPointer:[SMGUtils createPointerForData] fileName:kFNData(value_p.isOut) time:cRTData]);
-    return [dataDic objectForKey:value_p];
+    NSString *key = STRFORMAT(@"%@_%ld",value_p.params,(long)value_p.pointerId);
+    return [dataDic objectForKey:key];
 }
 
 //MARK:===============================================================
