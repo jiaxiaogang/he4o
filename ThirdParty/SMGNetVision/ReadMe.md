@@ -20,3 +20,15 @@
   * 一个网络含多个模块:NVModuleView
   * 一个NVModuleView含多个节点:NVNodeView
   * 所有节点间,可能包含多个关联NVLine
+
+***
+
+## v2.1 可视化优化
+
+![](Assets/神经网络可视化v2.1演示.gif)
+
+> **更新日志:**
+> 1. UI调节与排版美化;
+> 2. setDatas()和clear()功能;
+> 3. 性能优化
+> 4. 完善he代理;
