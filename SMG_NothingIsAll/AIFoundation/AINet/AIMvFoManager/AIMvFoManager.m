@@ -20,7 +20,7 @@
 
 -(AIFrontOrderNode*) create:(NSArray*)imvAlgsArr order:(NSArray*)order{
     //1. 数据
-    __block NSString *mvAlgsType = @"cmv";
+    __block NSString *mvAlgsType = DefaultAlgsType;
     __block AIKVPointer *deltaPointer = nil;
     __block AIKVPointer *urgentToPointer = nil;
     __block NSInteger deltaValue = 0;

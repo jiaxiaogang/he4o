@@ -9,6 +9,7 @@
 #import "CustomAddNodeWindow.h"
 #import "MASConstraint.h"
 #import "View+MASAdditions.h"
+#import "AIKVPointer.h"
 
 @interface CustomAddNodeWindow ()
 
@@ -16,6 +17,10 @@
 @property (weak, nonatomic) IBOutlet UISegmentedControl *moduleSegment;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *typeSegment;
 @property (weak, nonatomic) IBOutlet UITextField *pointerIdTF;
+@property (weak, nonatomic) IBOutlet UISwitch *isOutSwitch;
+@property (weak, nonatomic) IBOutlet UISwitch *isMemSwitch;
+@property (weak, nonatomic) IBOutlet UITextField *algsTypeTF;
+@property (weak, nonatomic) IBOutlet UITextField *dataSourceTF;
 
 @end
 
@@ -33,7 +38,8 @@
 
 -(void) initView{
     //self
-    [self setFrame:CGRectMake((ScreenWidth - 300) / 2.0f, (ScreenHeight - 275) / 2.0f,300, 275)];
+    float height = 380;
+    [self setFrame:CGRectMake((ScreenWidth - 300) / 2.0f, (ScreenHeight - height) / 2.0f,300, height)];
     
     //containerView
     [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];
@@ -57,7 +63,6 @@
 //MARK:                     < onclick >
 //MARK:===============================================================
 - (IBAction)commitBtnOnClick:(id)sender {
-    NSLog(@"-----------------");
     //1. 抽具象;
     BOOL isAbs = self.typeSegment.selectedSegmentIndex == 0;
     
@@ -76,11 +81,25 @@
     //3. pointerId
     NSInteger pointerId = [STRTOOK(self.pointerIdTF.text) integerValue];
     
-    NSLog(@"追加节点: %@,%ld",folderName,(long)pointerId);
-    NSLog(@"-----------------");
+    //4. isOut
+    BOOL isOut = [self.isOutSwitch state] == UIControlStateSelected;
     
-    //4. 提交到网络
-    //[theApp.nvView setNodeData:nil];
+    //5. isMem
+    BOOL isMem = [self.isMemSwitch state] == UIControlStateSelected;
+    
+    //6. algsType
+    NSString *algsType = STRISOK(self.algsTypeTF.text) ? self.algsTypeTF.text : DefaultAlgsType;
+    
+    //7. dataSource
+    NSString *dataSource = STRISOK(self.dataSourceTF.text) ? self.dataSourceTF.text : DefaultDataSource;
+    
+    //8. 提交到网络
+    AIKVPointer *node_p = [AIKVPointer newWithPointerId:pointerId folderName:folderName algsType:algsType dataSource:dataSource isOut:isOut isMem:isMem];
+    [theApp.nvView setNodeData:node_p];
+    
+    //9. 关闭窗口
+    [self removeFromSuperview];
+    TPLog(@"追加节点: %@/%@/%@/%d/%ld",node_p.folderName,node_p.algsType,node_p.dataSource,node_p.isOut,node_p.pointerId);
 }
 
 @end

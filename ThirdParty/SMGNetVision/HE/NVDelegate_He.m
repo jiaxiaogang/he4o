@@ -65,7 +65,7 @@
     //1. value时,返回 "iden+value值";
     if ([self isValue:node_p]) {
         NSNumber *value = NUMTOOK([AINetIndex getData:node_p]);
-        return STRFORMAT(@"%@,%@:%@",node_p.algsType,node_p.dataSource,value);
+        return STRFORMAT(@"pId:%ld,%@,%@:%@",(long)node_p.pointerId,node_p.algsType,node_p.dataSource,value);
     }
     //2. algNode时,返回content_ps的 "微信息数+嵌套数";
     if([self isAlg:node_p]){
@@ -80,19 +80,19 @@
                     valueCount++;
                 }
             }
-            return STRFORMAT(@"嵌套数:%ld 微信息数:%ld",(long)absAlgCount,(long)valueCount);
+            return STRFORMAT(@"pId:%ld 嵌套数:%ld 微信息数:%ld",(long)node_p.pointerId,(long)absAlgCount,(long)valueCount);
         }
     }
     //3. foNode时,返回 "order_kvp数"
     if([self isFo:node_p]){
         AIFoNodeBase *foNode = [SMGUtils searchNode:node_p];
         if (foNode) {
-            return STRFORMAT(@"时序数:%ld",foNode.orders_kvp.count);
+            return STRFORMAT(@"pId:%ld 时序数:%ld",(long)node_p.pointerId,foNode.orders_kvp.count);
         }
     }
     //4. mv时,返回 "类型+升降";
     if([self isMv:node_p]){
-        return STRFORMAT(@"algsType:%@,dataSource:%@",node_p.algsType,node_p.dataSource);
+        return STRFORMAT(@"pId:%ld algsType:%@ dataSource:%@",(long)node_p.pointerId,node_p.algsType,node_p.dataSource);
     }
     return nil;
 }

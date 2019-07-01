@@ -93,7 +93,7 @@
     //1. 数据
     AIKVPointer *delta_p = nil;
     AIKVPointer *urgentTo_p = 0;
-    NSString *algsType = @"";
+    NSString *algsType = DefaultAlgsType;
     
     //2. 数据检查
     for (AIKVPointer *pointer in algsArr) {
