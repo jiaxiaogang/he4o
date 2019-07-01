@@ -414,7 +414,7 @@
             
             //5. 达到局部匹配的阀值才有效;
             int curNodeMatchingCount = [NUMTOOK([countDic objectForKey:key]) intValue];
-            if ((curNodeMatchingCount / algNode.content_ps.count) >= cPartMatchingThreshold) {
+            if (((float)curNodeMatchingCount / (float)algNode.content_ps.count) >= cPartMatchingThreshold) {
                 
                 //6. 取最匹配的一个;
                 if (maxKey == nil || ([NUMTOOK([countDic objectForKey:maxKey]) intValue] < curNodeMatchingCount)) {

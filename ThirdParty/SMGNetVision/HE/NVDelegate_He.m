@@ -13,6 +13,7 @@
 #import "AIAbsCMVNode.h"
 #import "AINetIndex.h"
 #import "ThinkingUtils.h"
+#import "CustomAddNodeWindow.h"
 
 @implementation NVDelegate_He
 
@@ -218,6 +219,19 @@
         }
     }
     return result;
+}
+
+//追加节点
+-(void)nv_AddNodeOnClick{
+    NSArray *subViews = [theApp.window subViews_AllDeepWithClass:CustomAddNodeWindow.class];
+    if (ARRISOK(subViews)) {
+        for (CustomAddNodeWindow *subView in subViews) {
+            [subView removeFromSuperview];
+        }
+    }else{
+        CustomAddNodeWindow *addNodeWindow = [[CustomAddNodeWindow alloc] init];
+        [theApp.window addSubview:addNodeWindow];
+    }
 }
 
 

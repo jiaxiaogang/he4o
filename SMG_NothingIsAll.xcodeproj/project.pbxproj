@@ -58,6 +58,8 @@
 		0858C5E921950CAA00951BA5 /* FoodView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0858C5E821950CAA00951BA5 /* FoodView.xib */; };
 		0860617621F92F5200113366 /* AIThinkOut.m in Sources */ = {isa = PBXBuildFile; fileRef = 0860617521F92F5200113366 /* AIThinkOut.m */; };
 		0860617921F92F7100113366 /* AIThinkIn.m in Sources */ = {isa = PBXBuildFile; fileRef = 0860617821F92F7100113366 /* AIThinkIn.m */; };
+		0860A3BB22C9851800A48682 /* CustomAddNodeWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 0860A3BA22C9851800A48682 /* CustomAddNodeWindow.m */; };
+		0860A3BD22C9859200A48682 /* CustomAddNodeWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0860A3BC22C9859200A48682 /* CustomAddNodeWindow.xib */; };
 		086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */ = {isa = PBXBuildFile; fileRef = 086D93361F8CA782002BAF3F /* RuntimeInvoker.m */; };
 		087268E0219CF3B500B5490F /* AIVisionAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 087268DF219CF3B500B5490F /* AIVisionAlgs.m */; };
 		088070A222693C2D00E9E21F /* TOAlgScheme.m in Sources */ = {isa = PBXBuildFile; fileRef = 088070A122693C2D00E9E21F /* TOAlgScheme.m */; };
@@ -226,6 +228,9 @@
 		0860617521F92F5200113366 /* AIThinkOut.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIThinkOut.m; sourceTree = "<group>"; };
 		0860617721F92F7100113366 /* AIThinkIn.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIThinkIn.h; sourceTree = "<group>"; };
 		0860617821F92F7100113366 /* AIThinkIn.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIThinkIn.m; sourceTree = "<group>"; };
+		0860A3B922C9851800A48682 /* CustomAddNodeWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomAddNodeWindow.h; sourceTree = "<group>"; };
+		0860A3BA22C9851800A48682 /* CustomAddNodeWindow.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomAddNodeWindow.m; sourceTree = "<group>"; };
+		0860A3BC22C9859200A48682 /* CustomAddNodeWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomAddNodeWindow.xib; sourceTree = "<group>"; };
 		086D93351F8CA782002BAF3F /* RuntimeInvoker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RuntimeInvoker.h; sourceTree = "<group>"; };
 		086D93361F8CA782002BAF3F /* RuntimeInvoker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RuntimeInvoker.m; sourceTree = "<group>"; };
 		087268DE219CF3B500B5490F /* AIVisionAlgs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIVisionAlgs.h; sourceTree = "<group>"; };
@@ -657,6 +662,18 @@
 			path = Out;
 			sourceTree = "<group>";
 		};
+		0860A3B822C984DF00A48682 /* HE */ = {
+			isa = PBXGroup;
+			children = (
+				0860A3B922C9851800A48682 /* CustomAddNodeWindow.h */,
+				0860A3BA22C9851800A48682 /* CustomAddNodeWindow.m */,
+				0860A3BC22C9859200A48682 /* CustomAddNodeWindow.xib */,
+				08A5D5E322AF2B8200E56BB4 /* NVDelegate_He.h */,
+				08A5D5E422AF2B8200E56BB4 /* NVDelegate_He.m */,
+			);
+			path = HE;
+			sourceTree = "<group>";
+		};
 		089614A5219A4D3400343FAC /* BirdGrowPage */ = {
 			isa = PBXGroup;
 			children = (
@@ -871,13 +888,12 @@
 		08FAEC91215EEC98004DCEAD /* SMGNetVision */ = {
 			isa = PBXGroup;
 			children = (
+				0860A3B822C984DF00A48682 /* HE */,
 				08A5D5D522AF1C1E00E56BB4 /* Core */,
 				08FAEC92215EED39004DCEAD /* NVUtils.h */,
 				08FAEC93215EED39004DCEAD /* NVUtils.m */,
 				08FAEC95215EED48004DCEAD /* NVHeader.h */,
 				0837F72322A89A0D00836689 /* ReadMe.md */,
-				08A5D5E322AF2B8200E56BB4 /* NVDelegate_He.h */,
-				08A5D5E422AF2B8200E56BB4 /* NVDelegate_He.m */,
 			);
 			path = SMGNetVision;
 			sourceTree = "<group>";
@@ -1041,6 +1057,7 @@
 				0881966021800F2B00D5DB36 /* BirdLivePage.xib in Resources */,
 				08A5D5DF22AF21C900E56BB4 /* NVNodeView.xib in Resources */,
 				0858C5D82194FAC200951BA5 /* RoadView.xib in Resources */,
+				0860A3BD22C9859200A48682 /* CustomAddNodeWindow.xib in Resources */,
 				089614AA219A4D5200343FAC /* BirdGrowPage.xib in Resources */,
 				084C3A6D21926D7800DAA08A /* BirdView.xib in Resources */,
 			);
@@ -1075,6 +1092,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0858C5D62194FABA00951BA5 /* RoadView.m in Sources */,
+				0860A3BB22C9851800A48682 /* CustomAddNodeWindow.m in Sources */,
 				0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */,
 				88E1F851211591E50036B616 /* DemandModel.m in Sources */,
 				0881965F21800F2B00D5DB36 /* BirdLivePage.m in Sources */,

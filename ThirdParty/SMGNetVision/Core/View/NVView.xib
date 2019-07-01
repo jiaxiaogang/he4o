@@ -46,13 +46,30 @@
                         <action selector="clearBtnOnClick:" destination="-1" eventType="touchUpInside" id="0SU-ul-oXs"/>
                     </connections>
                 </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ER3-4p-m9N">
+                    <rect key="frame" x="361" y="0.0" width="40" height="20"/>
+                    <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="40" id="3Ef-ev-2eD"/>
+                        <constraint firstAttribute="height" constant="20" id="j2m-qm-gw0"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="27"/>
+                    <state key="normal" title="+">
+                        <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </state>
+                    <connections>
+                        <action selector="addBtnOnClick:" destination="-1" eventType="touchUpInside" id="LcY-vu-Dab"/>
+                    </connections>
+                </button>
             </subviews>
             <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
             <constraints>
                 <constraint firstItem="IjF-as-aab" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="E77-HX-hia"/>
+                <constraint firstItem="ER3-4p-m9N" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="GJw-h2-xmy"/>
                 <constraint firstAttribute="trailing" secondItem="K2V-Rq-3S5" secondAttribute="trailing" id="ZkJ-o1-PXM"/>
                 <constraint firstItem="K2V-Rq-3S5" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="ofi-MI-pHk"/>
                 <constraint firstItem="K2V-Rq-3S5" firstAttribute="leading" secondItem="IjF-as-aab" secondAttribute="trailing" id="rO5-O4-mRW"/>
+                <constraint firstItem="IjF-as-aab" firstAttribute="leading" secondItem="ER3-4p-m9N" secondAttribute="trailing" id="w1Z-TY-e80"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <point key="canvasLocation" x="148" y="-61.619190404797607"/>

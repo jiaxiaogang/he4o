@@ -44,6 +44,7 @@
     [self.tipLogLab setFont:[UIFont boldSystemFontOfSize:8]];
     [self.tipLogLab setTextColor:[UIColor redColor]];
     [self.window addSubview:self.tipLogLab];
+    
     return YES;
 }
 
@@ -57,9 +58,9 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application {}
 
-/**
- *  MARK:--------------------method--------------------
- */
+//MARK:===============================================================
+//MARK:                     < method >
+//MARK:===============================================================
 -(UIViewController*) getTopDisplayViewController{
     UINavigationController *navC = (UINavigationController*)[self.window rootViewController];    
     NSArray *controllers = navC.viewControllers;

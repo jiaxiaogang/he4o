@@ -35,6 +35,9 @@
 //获取节点的具象序列
 -(NSArray*)nv_ConNodeDatas:(id)nodeData;
 
+//追加节点
+-(void)nv_AddNodeOnClick;
+
 @end
 
 /**

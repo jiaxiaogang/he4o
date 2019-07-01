@@ -161,6 +161,9 @@
 - (IBAction)clearBtnOnClick:(id)sender {
     [self clear];
 }
+- (IBAction)addBtnOnClick:(id)sender {
+    [self nv_AddNodeOnClick];
+}
 
 /**
  *  MARK:--------------------NVModuleViewDelegate--------------------
@@ -334,6 +337,10 @@
     }
     return nil;
 }
+-(void)nv_AddNodeOnClick{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_AddNodeOnClick)]) {
+        return [self.delegate nv_AddNodeOnClick];
+    }
+}
 
 @end
-
