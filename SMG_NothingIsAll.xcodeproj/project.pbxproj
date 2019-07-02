@@ -79,6 +79,7 @@
 		08A5D5DD22AF21B000E56BB4 /* NVNodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 08A5D5DC22AF21B000E56BB4 /* NVNodeView.m */; };
 		08A5D5DF22AF21C900E56BB4 /* NVNodeView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 08A5D5DE22AF21C900E56BB4 /* NVNodeView.xib */; };
 		08A5D5E522AF2B8200E56BB4 /* NVDelegate_He.m in Sources */ = {isa = PBXBuildFile; fileRef = 08A5D5E422AF2B8200E56BB4 /* NVDelegate_He.m */; };
+		08AA10E822CAD8520077DE36 /* NVHeUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AA10E722CAD8520077DE36 /* NVHeUtil.m */; };
 		08AF454A1E97D0B500377887 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF45491E97D0B500377887 /* main.m */; };
 		08AF454D1E97D0B500377887 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF454C1E97D0B500377887 /* AppDelegate.m */; };
 		08AF45551E97D0B500377887 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45541E97D0B500377887 /* Assets.xcassets */; };
@@ -264,6 +265,8 @@
 		08A5D5DE22AF21C900E56BB4 /* NVNodeView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NVNodeView.xib; sourceTree = "<group>"; };
 		08A5D5E322AF2B8200E56BB4 /* NVDelegate_He.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVDelegate_He.h; sourceTree = "<group>"; };
 		08A5D5E422AF2B8200E56BB4 /* NVDelegate_He.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NVDelegate_He.m; sourceTree = "<group>"; };
+		08AA10E622CAD8520077DE36 /* NVHeUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVHeUtil.h; sourceTree = "<group>"; };
+		08AA10E722CAD8520077DE36 /* NVHeUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NVHeUtil.m; sourceTree = "<group>"; };
 		08AF45451E97D0B500377887 /* SMG_NothingIsAll.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SMG_NothingIsAll.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		08AF45491E97D0B500377887 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		08AF454B1E97D0B500377887 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -670,6 +673,8 @@
 				0860A3BC22C9859200A48682 /* CustomAddNodeWindow.xib */,
 				08A5D5E322AF2B8200E56BB4 /* NVDelegate_He.h */,
 				08A5D5E422AF2B8200E56BB4 /* NVDelegate_He.m */,
+				08AA10E622CAD8520077DE36 /* NVHeUtil.h */,
+				08AA10E722CAD8520077DE36 /* NVHeUtil.m */,
 			);
 			path = HE;
 			sourceTree = "<group>";
@@ -1127,6 +1132,7 @@
 				08089280215B07FC00710636 /* AICMVNodeBase.m in Sources */,
 				08081DD821DD8BDC005B867F /* AIAlgNodeBase.m in Sources */,
 				08B31E7E20648C3700FD96EA /* ThinkingUtils.m in Sources */,
+				08AA10E822CAD8520077DE36 /* NVHeUtil.m in Sources */,
 				0858C5E721950CA300951BA5 /* FoodView.m in Sources */,
 				08236CEC21A23439008D8761 /* AIVisionAlgsModel.m in Sources */,
 				0858C5CF2194F8B000951BA5 /* MASViewAttribute.m in Sources */,

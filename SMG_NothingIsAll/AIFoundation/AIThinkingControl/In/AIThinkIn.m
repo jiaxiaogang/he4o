@@ -21,6 +21,7 @@
 #import "AIAlgNode.h"
 #import "AIAbsAlgNode.h"
 #import "AINetIndex.h"
+#import "NVHeUtil.h"
 
 @implementation AIThinkIn
 
@@ -35,9 +36,6 @@
         NSArray *item_ps = ARRTOOK([ThinkingUtils algModelConvert2Pointers:item]);
         [parentValue_ps addObjectsFromArray:item_ps];
         [subValuePsArr addObject:item_ps];
-//        [theApp.nvView setNodeData:ARR_INDEX(item_ps, 0)];
-//        [theApp.nvView setNodeData:ARR_INDEX(item_ps, 1)];
-//        [theApp.nvView setNodeData:ARR_INDEX(item_ps, 2)];
     }
     
     //3. 构建父祖母 & 将父祖母加入瞬时记忆;
@@ -54,6 +52,9 @@
     //5. 构建子祖母 (抽象祖母,并嵌套);
     for (NSArray *subValue_ps in subValuePsArr) {
         AIAbsAlgNode *subAlgNode = [theNet createAbsAlgNode:subValue_ps conAlgs:@[parentAlgNode] isMem:true];
+        if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_AddToShortMemory:)]) {
+            [self.delegate aiThinkIn_AddToShortMemory:@[subAlgNode.pointer]];
+        }
         [fromGroup_ps addObject:subAlgNode.pointer];
         [theApp.nvView setNodeData:subAlgNode.pointer];
     }
@@ -214,7 +215,6 @@
         
     //4. 联想mvNode返回;
     AICMVNode *cmvNode = [SMGUtils searchNode:foNode.cmvNode_p];
-    NSLog(@"联想到cmvNode: %@",[NVUtils getCmvModelDesc_ByCmvNode:cmvNode]);
     [theApp.nvView setNodeData:cmvNode.pointer];
     return cmvNode;
 }
@@ -373,20 +373,9 @@
  *  从content_ps的所有value.refPorts找前cPartMatchingCheckRefPortsLimit个, 如:contentCount9*limit5=45个;
  */
 -(AIAlgNodeBase*) recognition_PartMatching:(AIAlgNodeBase*)algNode isMem:(BOOL)isMem except_ps:(NSArray*)except_ps{
-    
-    //debugStart
-    if (algNode.content_ps.count == 9) {
-        for (AIKVPointer *p in algNode.content_ps) {
-            if ([p.dataSource isEqualToString:@"sizeHeight"]) {
-                if ([NUMTOOK([AINetIndex getData:p]) floatValue] == 5) {
-                    NSLog(@"命中...");//仅对坚果进行识别调试;
-                    //1. 此处坚果的微信息refPorts中,无其它坚果引用;
-                    //2. 可使用可视化,来调试查看坚果的微信息refPorts为什么未形成;
-                }
-            }
-        }
+    if (algNode.content_ps.count == 9 && [NVHeUtil isHeight:5 fromContent_ps:algNode.content_ps]) {
+        //TODO: 仅对坚果进行识别调试;(此处坚果的refPorts为空,未被时序引用);
     }
-    //debugEnd
     
     //1. 数据准备;
     except_ps = ARRTOOK(except_ps);

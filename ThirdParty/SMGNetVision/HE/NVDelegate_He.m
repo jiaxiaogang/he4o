@@ -14,6 +14,7 @@
 #import "AINetIndex.h"
 #import "ThinkingUtils.h"
 #import "CustomAddNodeWindow.h"
+#import "NVHeUtil.h"
 
 @implementation NVDelegate_He
 
@@ -39,16 +40,11 @@
     if ([self isAlg:node_p]) {
         AIAlgNodeBase *algNode = [SMGUtils searchNode:node_p];
         if (algNode) {
-            for (AIKVPointer *value_p in algNode.content_ps) {
-                if ([@"sizeWidth" isEqualToString:value_p.dataSource]) {
-                    CGFloat width = [NUMTOOK([AINetIndex getData:value_p]) floatValue];
-                    if (width == 5) {
-                        if ([self isAbs:node_p]) {
-                            return UIColorWithRGBHex(0xCCFF00);
-                        }else{
-                            return UIColorWithRGBHex(0x00DDFF);
-                        }
-                    }
+            if ([NVHeUtil isHeight:5 fromContent_ps:algNode.content_ps]) {
+                if ([self isAbs:node_p]) {
+                    return UIColorWithRGBHex(0xCCFF00);
+                }else{
+                    return UIColorWithRGBHex(0x00DDFF);
                 }
             }
         }
