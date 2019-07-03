@@ -57,6 +57,13 @@
     return nil;
 }
 
+-(CGFloat)nv_GetNodeAlpha:(AIKVPointer*)node_p{
+    if (node_p && node_p.isMem) {
+        return 0.5f;
+    }
+    return 1.0f;
+}
+
 -(NSString*)nv_GetNodeTipsDesc:(AIKVPointer*)node_p{
     //1. value时,返回 "iden+value值";
     if ([self isValue:node_p]) {
@@ -128,7 +135,10 @@
             //2. 如果是algNode则返回.refPorts;
             AIAlgNodeBase *node = [SMGUtils searchNode:node_p];
             if (ISOK(node, AIAlgNodeBase.class)) {
-                return [SMGUtils convertPointersFromPorts:node.refPorts];
+                NSMutableArray *result = [[NSMutableArray alloc] init];
+                [result addObjectsFromArray:node.refPorts];
+                [result addObjectsFromArray:[SMGUtils searchObjectForPointer:node_p fileName:kFNMemRefPorts time:cRTMemPort]];
+                return result;
             }
         }else if ([self isFo:node_p]) {
             //3. 如果是foNode则返回mv基本模型指向cmvNode_p;

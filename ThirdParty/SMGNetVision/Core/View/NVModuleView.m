@@ -338,6 +338,12 @@
 -(UIColor *)nodeView_GetNodeColor:(id)nodeData{
     return [self moduleView_GetNodeColor:nodeData];
 }
+-(CGFloat)nodeView_GetNodeAlpha:(id)nodeData{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(moduleView_GetNodeAlpha:)]) {
+        return [self.delegate moduleView_GetNodeAlpha:nodeData];
+    }
+    return 1.0f;
+}
 -(NSString*) nodeView_GetTipsDesc:(id)nodeData{
     return [self moduleView_GetTipsDesc:nodeData];
 }

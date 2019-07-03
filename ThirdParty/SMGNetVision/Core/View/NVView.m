@@ -169,31 +169,59 @@
  *  MARK:--------------------NVModuleViewDelegate--------------------
  */
 -(UIView *)moduleView_GetCustomSubView:(id)nodeData{
-    return [self nv_GetCustomSubNodeView:nodeData];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_GetCustomSubNodeView:)]) {
+        return [self.delegate nv_GetCustomSubNodeView:nodeData];
+    }
+    return nil;
 }
 
 -(UIColor *)moduleView_GetNodeColor:(id)nodeData{
-    return [self nv_GetNodeColor:nodeData];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_GetNodeColor:)]) {
+        return [self.delegate nv_GetNodeColor:nodeData];
+    }
+    return nil;
+}
+
+-(CGFloat)moduleView_GetNodeAlpha:(id)nodeData{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_GetNodeAlpha:)]) {
+        return [self.delegate nv_GetNodeAlpha:nodeData];
+    }
+    return 1.0f;
 }
 
 -(NSString*)moduleView_GetTipsDesc:(id)nodeData{
-    return [self nv_GetNodeTipsDesc:nodeData];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_GetNodeTipsDesc:)]) {
+        return [self.delegate nv_GetNodeTipsDesc:nodeData];
+    }
+    return nil;
 }
 
 -(NSArray*)moduleView_AbsNodeDatas:(id)nodeData{
-    return [self nv_AbsNodeDatas:nodeData];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_AbsNodeDatas:)]) {
+        return [self.delegate nv_AbsNodeDatas:nodeData];
+    }
+    return nil;
 }
 
 -(NSArray*)moduleView_ConNodeDatas:(id)nodeData{
-    return [self nv_ConNodeDatas:nodeData];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_ConNodeDatas:)]) {
+        return [self.delegate nv_ConNodeDatas:nodeData];
+    }
+    return nil;
 }
 
 -(NSArray*)moduleView_ContentNodeDatas:(id)nodeData{
-    return [self nv_ContentNodeDatas:nodeData];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_ContentNodeDatas:)]) {
+        return [self.delegate nv_ContentNodeDatas:nodeData];
+    }
+    return nil;
 }
 
 -(NSArray*)moduleView_RefNodeDatas:(id)nodeData{
-    return [self nv_GetRefNodeDatas:nodeData];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_GetRefNodeDatas:)]) {
+        return [self.delegate nv_GetRefNodeDatas:nodeData];
+    }
+    return nil;
 }
 
 -(NSArray*)moduleView_GetAllNetDatas{
@@ -283,24 +311,6 @@
 //MARK:===============================================================
 //MARK:                     < SelfDelegate >
 //MARK:===============================================================
--(UIView *)nv_GetCustomSubNodeView:(id)nodeData{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_GetCustomSubNodeView:)]) {
-        return [self.delegate nv_GetCustomSubNodeView:nodeData];
-    }
-    return nil;
-}
-- (UIColor *)nv_GetNodeColor:(id)nodeData{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_GetNodeColor:)]) {
-        return [self.delegate nv_GetNodeColor:nodeData];
-    }
-    return nil;
-}
--(NSString*)nv_GetNodeTipsDesc:(id)nodeData{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_GetNodeTipsDesc:)]) {
-        return [self.delegate nv_GetNodeTipsDesc:nodeData];
-    }
-    return nil;
-}
 -(NSArray*)nv_GetModuleIds{
     if (self.delegate && [self.delegate respondsToSelector:@selector(nv_GetModuleIds)]) {
         return [self.delegate nv_GetModuleIds];
@@ -310,30 +320,6 @@
 -(NSString*)nv_GetModuleId:(id)nodeData{
     if (self.delegate && [self.delegate respondsToSelector:@selector(nv_GetModuleId:)]) {
         return [self.delegate nv_GetModuleId:nodeData];
-    }
-    return nil;
-}
--(NSArray*)nv_GetRefNodeDatas:(id)nodeData{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_GetRefNodeDatas:)]) {
-        return [self.delegate nv_GetRefNodeDatas:nodeData];
-    }
-    return nil;
-}
--(NSArray*)nv_ContentNodeDatas:(id)nodeData{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_ContentNodeDatas:)]) {
-        return [self.delegate nv_ContentNodeDatas:nodeData];
-    }
-    return nil;
-}
--(NSArray*)nv_AbsNodeDatas:(id)nodeData{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_AbsNodeDatas:)]) {
-        return [self.delegate nv_AbsNodeDatas:nodeData];
-    }
-    return nil;
-}
--(NSArray*)nv_ConNodeDatas:(id)nodeData{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_ConNodeDatas:)]) {
-        return [self.delegate nv_ConNodeDatas:nodeData];
     }
     return nil;
 }

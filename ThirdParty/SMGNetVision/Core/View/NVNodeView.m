@@ -93,6 +93,12 @@
     if (nodeColor) {
         [self.containerView setBackgroundColor:nodeColor];
     }
+    
+    //6. nodeAlpha
+    if (self.delegate && [self.delegate respondsToSelector:@selector(nodeView_GetNodeAlpha:)]) {
+        CGFloat alpha = [self.delegate nodeView_GetNodeAlpha:self.data];
+        [self setAlpha:alpha];
+    }
 }
 
 //MARK:===============================================================
