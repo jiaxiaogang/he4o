@@ -20,7 +20,7 @@
 -(CGFloat)nv_GetNodeAlpha:(id)nodeData;
 
 //获取节点描述
--(NSString*)nv_GetNodeTipsDesc:(id)nodeData;
+-(NSString*)nv_NodeOnClick:(id)nodeData;
 
 //获取模块Id
 -(NSArray*)nv_GetModuleIds;
@@ -50,9 +50,22 @@
 @interface NVView : UIView
 
 -(id) initWithDelegate:(id<NVViewDelegate>)delegate;
+
+/**
+ *  MARK:--------------------设置内容--------------------
+ */
 -(void) setNodeData:(id)nodeData;
 -(void) setNodeDatas:(NSArray*)nodeDatas;
+
+/**
+ *  MARK:--------------------清空网络--------------------
+ */
 -(void) clear;
+
+/**
+ *  MARK:--------------------节点闪烁--------------------
+ */
+-(void) lightNode:(id)nodeData str:(NSString*)str;
 
 @end
 

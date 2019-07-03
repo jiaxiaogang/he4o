@@ -18,6 +18,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *bottomBtn;
 @property (weak, nonatomic) IBOutlet UIButton *leftBtn;
 @property (weak, nonatomic) IBOutlet UIButton *rightBtn;
+@property (weak, nonatomic) IBOutlet UILabel *lightLab;
 
 @end
 
@@ -35,9 +36,9 @@
 -(void) initView{
     //self
     [self setBackgroundColor:[UIColor clearColor]];
-    [self setFrame:CGRectMake(0, 0, 15, 15)];
+    [self setFrame:CGRectMake(0, 0, 20, 20)];
     [self.layer setMasksToBounds:true];
-    [self.layer setCornerRadius:7.5f];
+    [self.layer setCornerRadius:10];
     [self.layer setBorderColor:UIColorWithRGBHex(0xAAAAAA).CGColor];
     [self.layer setBorderWidth:1];
     
@@ -54,10 +55,13 @@
     //btn
     NSArray *btns = @[self.topBtn,self.bottomBtn,self.leftBtn,self.rightBtn];
     for (UIButton *btn in btns) {
-        [btn.layer setCornerRadius:5.5f];
+        [btn.layer setCornerRadius:8];
         [btn.layer setBorderWidth:1.0f / UIScreen.mainScreen.scale];
         [btn.layer setBorderColor:[UIColor grayColor].CGColor];
     }
+    
+    //ligthLab
+    [self.lightLab setUserInteractionEnabled:false];
 }
 
 -(void) initDisplay{
@@ -101,12 +105,22 @@
     }
 }
 
+-(void) light:(NSString*)lightStr{
+    [self.lightLab setText:lightStr];
+    [self.lightLab setAlpha:1.0f];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self.lightLab setAlpha:0];
+    });
+}
+
 //MARK:===============================================================
 //MARK:                     < onClick >
 //MARK:===============================================================
 - (IBAction)contentViewTouchDown:(id)sender {
-    NSString *desc = [self nodeView_GetTipsDesc:self.data];
-    TPLog(@"> %@", desc);
+    if (self.delegate && [self.delegate respondsToSelector:@selector(nodeView_OnClick:)]) {
+        NSString *desc = [self.delegate nodeView_OnClick:self.data];
+        TPLog(@"> %@", desc);
+    }
 }
 - (IBAction)contentViewTouchCancel:(id)sender {
     TPLog(@"松开");
@@ -140,12 +154,6 @@
 -(UIColor*) nodeView_GetNodeColor:(id)nodeData{
     if (self.delegate && [self.delegate respondsToSelector:@selector(nodeView_GetNodeColor:)]) {
         return [self.delegate nodeView_GetNodeColor:nodeData];
-    }
-    return nil;
-}
--(NSString*) nodeView_GetTipsDesc:(id)nodeData{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(nodeView_GetTipsDesc:)]) {
-        return [self.delegate nodeView_GetTipsDesc:nodeData];
     }
     return nil;
 }

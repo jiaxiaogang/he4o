@@ -20,7 +20,7 @@
 -(CGFloat)moduleView_GetNodeAlpha:(id)nodeData;
 
 //获取节点描述
--(NSString*)moduleView_GetTipsDesc:(id)nodeData;
+-(NSString*)moduleView_NodeOnClick:(id)nodeData;
 
 //获取节点的抽象序列
 -(NSArray*)moduleView_AbsNodeDatas:(id)nodeData;

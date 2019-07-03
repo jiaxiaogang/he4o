@@ -64,7 +64,7 @@
     return 1.0f;
 }
 
--(NSString*)nv_GetNodeTipsDesc:(AIKVPointer*)node_p{
+-(NSString*)nv_NodeOnClick:(AIKVPointer*)node_p{
     //1. value时,返回 "iden+value值";
     if ([self isValue:node_p]) {
         NSNumber *value = NUMTOOK([AINetIndex getData:node_p]);
@@ -90,6 +90,10 @@
     if([self isFo:node_p]){
         AIFoNodeBase *foNode = [SMGUtils searchNode:node_p];
         if (foNode) {
+            for (NSInteger i = 0; i < foNode.orders_kvp.count; i++) {
+                AIKVPointer *item = ARR_INDEX(foNode.orders_kvp, i);
+                [theApp.nvView lightNode:item str:STRFORMAT(@"%ld",(long)i)];
+            }
             return STRFORMAT(@"pId:%ld 时序数:%ld",(long)node_p.pointerId,foNode.orders_kvp.count);
         }
     }
@@ -135,10 +139,11 @@
             //2. 如果是algNode则返回.refPorts;
             AIAlgNodeBase *node = [SMGUtils searchNode:node_p];
             if (ISOK(node, AIAlgNodeBase.class)) {
-                NSMutableArray *result = [[NSMutableArray alloc] init];
-                [result addObjectsFromArray:node.refPorts];
-                [result addObjectsFromArray:[SMGUtils searchObjectForPointer:node_p fileName:kFNMemRefPorts time:cRTMemPort]];
-                return result;
+                NSMutableArray *allPorts = [[NSMutableArray alloc] init];
+                [allPorts addObjectsFromArray:node.refPorts];
+                [allPorts addObjectsFromArray:[SMGUtils searchObjectForPointer:node_p fileName:kFNMemRefPorts time:cRTMemPort]];
+                NSLog(@">>>>>>>> refPorts Hd:%lu Mem:%lu",(unsigned long)node.refPorts.count,allPorts.count - node.refPorts.count);
+                return [SMGUtils convertPointersFromPorts:allPorts];
             }
         }else if ([self isFo:node_p]) {
             //3. 如果是foNode则返回mv基本模型指向cmvNode_p;

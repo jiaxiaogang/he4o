@@ -153,9 +153,10 @@
     
     //3. 根据编号计算坐标;
     NSArray *nodeViews = ARRTOOK([self subViews_AllDeepWithClass:NVNodeView.class]);
-    CGFloat layerSpace = 57;//层间距
-    CGFloat xSpace = 13;    //节点横间距
-    CGFloat nodeSize = 15;  //节点大小
+    CGFloat layerSpace = 65;//层间距
+    CGFloat xSpace = 18;    //节点横间距
+    CGFloat nodeSize = 20;  //节点大小
+    CGFloat ySpace = 10;    //同层纵间距
     
     //4. 同层计数器 (本层节点个数)
     NSMutableDictionary *yLayerCountDic = [[NSMutableDictionary alloc] init];
@@ -172,7 +173,7 @@
         //7. 节点坐标
         float spaceX = MIN(xSpace, self.width / xDic.count);
         nodeView.x = x * spaceX;
-        nodeView.y = (self.height - nodeSize) - (y * layerSpace) - (layerCount % 3) * 8;
+        nodeView.y = (self.height - nodeSize) - (y * layerSpace) - (layerCount % 3) * ySpace;
     }
 }
 
@@ -344,8 +345,11 @@
     }
     return 1.0f;
 }
--(NSString*) nodeView_GetTipsDesc:(id)nodeData{
-    return [self moduleView_GetTipsDesc:nodeData];
+-(NSString*) nodeView_OnClick:(id)nodeData{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(moduleView_NodeOnClick:)]) {
+        return [self.delegate moduleView_NodeOnClick:nodeData];
+    }
+    return nil;
 }
 -(void) nodeView_TopClick:(id)nodeData{
     NSArray *absNodeDatas = [self moduleView_AbsNodeDatas:nodeData];
@@ -380,12 +384,6 @@
 -(UIColor *)moduleView_GetNodeColor:(id)nodeData{
     if (self.delegate && [self.delegate respondsToSelector:@selector(moduleView_GetNodeColor:)]) {
         return [self.delegate moduleView_GetNodeColor:nodeData];
-    }
-    return nil;
-}
--(NSString*)moduleView_GetTipsDesc:(id)nodeData{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(moduleView_GetTipsDesc:)]) {
-        return [self.delegate moduleView_GetTipsDesc:nodeData];
     }
     return nil;
 }

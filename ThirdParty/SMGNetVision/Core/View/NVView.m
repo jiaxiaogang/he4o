@@ -135,6 +135,17 @@
     }
 }
 
+-(void) lightNode:(id)nodeData str:(NSString*)str{
+    if (nodeData) {
+        NSArray *nvs = ARRTOOK([self subViews_AllDeepWithClass:NVNodeView.class]);
+        for (NVNodeView *nv in nvs) {
+            if ([nodeData isEqual:nv.data]) {
+                [nv light:str];
+            }
+        }
+    }
+}
+
 /**
  *  MARK:--------------------获取nodeData所属的模块--------------------
  */
@@ -189,9 +200,9 @@
     return 1.0f;
 }
 
--(NSString*)moduleView_GetTipsDesc:(id)nodeData{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_GetNodeTipsDesc:)]) {
-        return [self.delegate nv_GetNodeTipsDesc:nodeData];
+-(NSString*)moduleView_NodeOnClick:(id)nodeData{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_NodeOnClick:)]) {
+        return [self.delegate nv_NodeOnClick:nodeData];
     }
     return nil;
 }

@@ -16,23 +16,23 @@
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="iN0-l3-epB">
-            <rect key="frame" x="0.0" y="0.0" width="413" height="3"/>
+            <rect key="frame" x="0.0" y="0.0" width="563" height="8"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HHC-Ju-Jl5">
-                    <rect key="frame" x="7.5" y="0.0" width="398" height="3"/>
+                    <rect key="frame" x="10" y="0.0" width="543" height="8"/>
                     <color key="backgroundColor" red="1" green="0.1019250594" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                 </view>
             </subviews>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
-                <constraint firstItem="HHC-Ju-Jl5" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="7.5" id="3SK-Xc-5Ny"/>
+                <constraint firstItem="HHC-Ju-Jl5" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="10" id="3SK-Xc-5Ny"/>
                 <constraint firstItem="HHC-Ju-Jl5" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="QmL-ko-EvX"/>
                 <constraint firstAttribute="bottom" secondItem="HHC-Ju-Jl5" secondAttribute="bottom" id="gJI-cy-c9R"/>
-                <constraint firstAttribute="trailing" secondItem="HHC-Ju-Jl5" secondAttribute="trailing" constant="7.5" id="ptR-tj-qyT"/>
+                <constraint firstAttribute="trailing" secondItem="HHC-Ju-Jl5" secondAttribute="trailing" constant="10" id="ptR-tj-qyT"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <point key="canvasLocation" x="93.599999999999994" y="-250.52473763118442"/>
+            <point key="canvasLocation" x="440.80000000000001" y="-259.97001499250376"/>
         </view>
     </objects>
 </document>

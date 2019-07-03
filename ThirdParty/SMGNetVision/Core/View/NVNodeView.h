@@ -17,7 +17,7 @@
 -(UIView*) nodeView_GetCustomSubView:(id)nodeData;
 -(UIColor *)nodeView_GetNodeColor:(id)nodeData;
 -(CGFloat)nodeView_GetNodeAlpha:(id)nodeData;
--(NSString*) nodeView_GetTipsDesc:(id)nodeData;
+-(NSString*) nodeView_OnClick:(id)nodeData;
 -(void) nodeView_TopClick:(id)nodeData;
 -(void) nodeView_BottomClick:(id)nodeData;
 -(void) nodeView_LeftClick:(id)nodeData;
@@ -33,5 +33,10 @@
 @property (readonly,strong, nonatomic) id data;//一般为一个指针
 @property (weak, nonatomic) id<NVNodeViewDelegate> delegate;
 -(void) setDataWithNodeData:(id)nodeData;
+
+/**
+ *  MARK:--------------------闪烁--------------------
+ */
+-(void) light:(NSString*)lightStr;
 
 @end
