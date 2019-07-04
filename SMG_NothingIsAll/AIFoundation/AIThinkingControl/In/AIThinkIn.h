@@ -13,7 +13,17 @@
 
 -(void) aiThinkIn_AddToShortMemory:(NSArray*)algNode_ps;        //将祖母节点添加到瞬时记忆
 -(AIFrontOrderNode*) aiThinkIn_CreateCMVModel:(NSArray*)algsArr;//构建cmv模型;
--(void) aiThinkIn_CommitMvNode:(AICMVNodeBase*)cmvNode;         //提交mv进行需求处理;
+
+/**
+ *  MARK:--------------------mv处理--------------------
+ *  @param toDemand : 是否尝试加入需求,imv输入状态则true,联想网络杏仁核得来的则false;
+ *  @param cmvNode  : 要处理的mvNode
+ *  @desc 功能说明:
+ *      1. 更新energy值
+ *      2. 更新需求池 (需要toDemand=true)
+ *      3. 进行dataOut决策行为化;
+ */
+-(void) aiThinkIn_CommitMvNode:(AICMVNodeBase*)cmvNode toDemand:(BOOL)toDemand;
 -(void) aiThinkIn_UpdateEnergy:(NSInteger)delta;                //更新思维能量值;
 -(BOOL) aiThinkIn_EnergyValid;                                  //能量值是否>0;
 

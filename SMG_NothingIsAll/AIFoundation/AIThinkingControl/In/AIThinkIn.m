@@ -113,8 +113,8 @@
     AICMVNodeBase *mvNode = [self dataIn_NoMV_RecognitionUse:recognitionAlgNode];
     
     //5. 看到西瓜会开心
-    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_CommitMvNode:)]) {
-        [self.delegate aiThinkIn_CommitMvNode:mvNode];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_CommitMvNode:toDemand:)]) {
+        [self.delegate aiThinkIn_CommitMvNode:mvNode toDemand:false];
     }
 }
 
@@ -245,8 +245,8 @@
     [theNV setNodeData:cmvNode.pointer];
     
     //3. 思考mv,需求处理
-    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_CommitMvNode:)]) {
-        [self.delegate aiThinkIn_CommitMvNode:cmvNode];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_CommitMvNode:toDemand:)]) {
+        [self.delegate aiThinkIn_CommitMvNode:cmvNode toDemand:true];
     }
     
     //4. 学习

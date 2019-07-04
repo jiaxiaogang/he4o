@@ -128,7 +128,7 @@ static AIThinkingControl *_instance;
     return foNode;
 }
 
--(void) aiThinkIn_CommitMvNode:(AICMVNodeBase*)cmvNode{
+-(void) aiThinkIn_CommitMvNode:(AICMVNodeBase*)cmvNode toDemand:(BOOL)toDemand{
     //1. 数据检查
     if (!ISOK(cmvNode, AICMVNodeBase.class)) {
         return;
