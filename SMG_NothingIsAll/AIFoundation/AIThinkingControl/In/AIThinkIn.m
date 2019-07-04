@@ -43,7 +43,7 @@
     if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_AddToShortMemory:)]) {
         [self.delegate aiThinkIn_AddToShortMemory:@[parentAlgNode.pointer]];
     }
-    [theApp.nvView setNodeData:parentAlgNode.pointer];
+    [theNV setNodeData:parentAlgNode.pointer];
     
     //4. 收集本组中,所有祖母节点;
     NSMutableArray *fromGroup_ps = [[NSMutableArray alloc] init];
@@ -56,7 +56,7 @@
             [self.delegate aiThinkIn_AddToShortMemory:@[subAlgNode.pointer]];
         }
         [fromGroup_ps addObject:subAlgNode.pointer];
-        [theApp.nvView setNodeData:subAlgNode.pointer];
+        [theNV setNodeData:subAlgNode.pointer];
     }
     
     //6. NoMv处理;
@@ -84,7 +84,7 @@
             [self.delegate aiThinkIn_AddToShortMemory:@[algNode.pointer]];
         }
         
-        [theApp.nvView setNodeData:algNode.pointer];
+        [theNV setNodeData:algNode.pointer];
         [self dataIn_NoMV:algNode.pointer fromGroup_ps:@[algNode.pointer]];
     }
 }
@@ -206,6 +206,8 @@
     if (!firstPort) {
         return nil;
     }
+    [theNV setNodeData:firstPort.target_p];
+    [theNV lightNode:firstPort.target_p str:@"~"];
     
     //3. 取到最强引用节点
     AIFoNodeBase *foNode = [SMGUtils searchNode:firstPort.target_p];
@@ -215,7 +217,7 @@
         
     //4. 联想mvNode返回;
     AICMVNode *cmvNode = [SMGUtils searchNode:foNode.cmvNode_p];
-    [theApp.nvView setNodeData:cmvNode.pointer];
+    [theNV setNodeData:cmvNode.pointer];
     return cmvNode;
 }
 
@@ -233,14 +235,14 @@
     if (!ISOK(foNode, AIFrontOrderNode.class)) {
         return;
     }
-    [theApp.nvView setNodeData:foNode.pointer];
+    [theNV setNodeData:foNode.pointer];
     
     //2. 取cmvNode
     AICMVNode *cmvNode = [SMGUtils searchNode:foNode.cmvNode_p];
     if (!ISOK(cmvNode, AICMVNode.class)) {
         return;
     }
-    [theApp.nvView setNodeData:cmvNode.pointer];
+    [theNV setNodeData:cmvNode.pointer];
     
     //3. 思考mv,需求处理
     if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_CommitMvNode:)]) {
@@ -297,8 +299,8 @@
                 
                 if (ISOK(assFrontNode, AINodeBase.class)) {
                     //NSLog(@"\n抽象前========== %@",[NVUtils getCmvModelDesc_ByFoNode:assFrontNode]);
-                    [theApp.nvView setNodeData:assFrontNode.pointer];
-                    [theApp.nvView setNodeData:assFrontNode.cmvNode_p];
+                    [theNV setNodeData:assFrontNode.pointer];
+                    [theNV setNodeData:assFrontNode.cmvNode_p];
                     //5. 执行外类比;
                     [AIThinkInAnalogy analogyOutside:foNode assFo:assFrontNode canAss:^BOOL{
                         return [self canAss];

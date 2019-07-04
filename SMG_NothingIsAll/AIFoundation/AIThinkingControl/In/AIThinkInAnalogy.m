@@ -120,9 +120,9 @@
                     [SMGUtils insertObject:createAbsFo pointer:createAbsFo.pointer fileName:kFNNode time:cRTNode];
                 }
                 
-                [theApp.nvView setNodeData:createAbsFo.pointer];
-                [theApp.nvView setNodeData:assMv.pointer];
-                [theApp.nvView setNodeData:createAbsCmv.pointer];
+                [theNV setNodeData:createAbsFo.pointer];
+                [theNV setNodeData:assMv.pointer];
+                [theNV setNodeData:createAbsCmv.pointer];
             }
             
             //7. 外类比构建后日志;
@@ -210,7 +210,7 @@
             }
             
             //7. 内中有外
-            [theApp.nvView setNodeData:abFo.pointer];
+            [theNV setNodeData:abFo.pointer];
             [self analogyInner_Outside:abFo canAss:canAssBlock updateEnergy:updateEnergy];
         }
     }
@@ -344,7 +344,7 @@
         }
         
         //4. 对abFo和assAbFo进行类比;
-        [theApp.nvView setNodeData:assAbFo];
+        [theNV setNodeData:assAbFo];
         [self analogyOutside:abFo assFo:assAbFo canAss:canAssBlock updateEnergy:updateEnergy];
     }
 }

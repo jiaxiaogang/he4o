@@ -95,7 +95,7 @@
     
     //8. 提交到网络
     AIKVPointer *node_p = [AIKVPointer newWithPointerId:pointerId folderName:folderName algsType:algsType dataSource:dataSource isOut:isOut isMem:isMem];
-    [theApp.nvView setNodeData:node_p];
+    [theNV setNodeData:node_p];
     
     //9. 关闭窗口
     [self removeFromSuperview];

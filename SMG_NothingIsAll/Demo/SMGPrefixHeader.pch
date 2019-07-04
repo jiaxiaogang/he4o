@@ -49,3 +49,4 @@
  *  MARK:--------------------log--------------------
  */
 #define TPLog(a,...) [theApp setTipLog:STRFORMAT(a,##__VA_ARGS__)]
+#define theNV (theApp.nvView)

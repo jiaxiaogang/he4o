@@ -92,7 +92,7 @@
         if (foNode) {
             for (NSInteger i = 0; i < foNode.orders_kvp.count; i++) {
                 AIKVPointer *item = ARR_INDEX(foNode.orders_kvp, i);
-                [theApp.nvView lightNode:item str:STRFORMAT(@"%ld",(long)i)];
+                [theNV lightNode:item str:STRFORMAT(@"%ld",(long)i)];
             }
             return STRFORMAT(@"pId:%ld 时序数:%ld",(long)node_p.pointerId,foNode.orders_kvp.count);
         }

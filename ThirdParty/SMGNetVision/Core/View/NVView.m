@@ -101,6 +101,7 @@
 
 -(void) setNodeDatas:(NSArray*)nodeDatas{
     //1. 数据准备
+    if (!self.isOpen) return;
     nodeDatas = ARRTOOK(nodeDatas);
     NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
     

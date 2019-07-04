@@ -108,7 +108,7 @@
 -(void) light:(NSString*)lightStr{
     [self.lightLab setText:lightStr];
     [self.lightLab setAlpha:1.0f];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self.lightLab setAlpha:0];
     });
 }
