@@ -43,7 +43,6 @@
     if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_AddToShortMemory:)]) {
         [self.delegate aiThinkIn_AddToShortMemory:@[parentAlgNode.pointer]];
     }
-    [theNV setNodeData:parentAlgNode.pointer];
     
     //4. 收集本组中,所有祖母节点;
     NSMutableArray *fromGroup_ps = [[NSMutableArray alloc] init];

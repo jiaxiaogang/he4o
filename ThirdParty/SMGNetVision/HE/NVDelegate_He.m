@@ -142,7 +142,9 @@
                 NSMutableArray *allPorts = [[NSMutableArray alloc] init];
                 [allPorts addObjectsFromArray:node.refPorts];
                 [allPorts addObjectsFromArray:[SMGUtils searchObjectForPointer:node_p fileName:kFNMemRefPorts time:cRTMemPort]];
-                NSLog(@">>>>>>>> refPorts Hd:%lu Mem:%lu",(unsigned long)node.refPorts.count,allPorts.count - node.refPorts.count);
+                if (allPorts.count == 0) {
+                    NSLog(@">>>>>>>> refPorts Hd:%lu Mem:%lu",(unsigned long)node.refPorts.count,allPorts.count - node.refPorts.count);
+                }
                 return [SMGUtils convertPointersFromPorts:allPorts];
             }
         }else if ([self isFo:node_p]) {

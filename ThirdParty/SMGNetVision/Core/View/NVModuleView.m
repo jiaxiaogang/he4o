@@ -188,6 +188,36 @@
     
     //2. 用相容算法,分组;
     NSMutableArray *groups = [[NSMutableArray alloc] init];
+    for (id iItem in self.nodeArr) {
+        ///1. 已有,则加入;
+        BOOL joinSuccess = false;
+        for (NSMutableArray *group in groups) {
+            if ([self containsRelateWithData:iItem fromGroup:group compareModels:compareModels]) {
+                [group addObject:iItem];
+                joinSuccess = true;
+                break;
+            }
+        }
+        
+        ///2. 没有组,则找出有关联的,新成组;
+        if (!joinSuccess) {
+            for (id jItem in self.nodeArr) {
+                if ([self isRelateWithData1:iItem data2:jItem compareModels:compareModels]) {
+                    NSMutableArray *newGroup = [[NSMutableArray alloc] init];
+                    [newGroup addObject:iItem];
+                    [newGroup addObject:jItem];
+                    [groups addObject:newGroup];
+                    joinSuccess = true;
+                }
+            }
+        }
+        
+        
+        ///3. 独立的成一组;
+        
+        
+        
+    }
     for (id item in self.nodeArr) {
         ///1. 已有,则加入;
         BOOL joinSuccess = false;
@@ -272,16 +302,26 @@
  */
 -(BOOL) containsRelateWithData:(id)checkData fromGroup:(NSArray*)group compareModels:(NSArray*)compareModels{
     //1. 数据检查
+    group = ARRTOOK(group);
+    
+    //2. 检查group中,是否有元素与checkData有关系;
     if (checkData) {
-        group = ARRTOOK(group);
-        compareModels = ARRTOOK(compareModels);
-        
-        //2. 检查group中,是否有元素与checkData有关系;
         for (id groupData in group) {
-            for (NodeCompareModel *model in compareModels) {
-                if ([model isA:groupData andB:checkData]) {
-                    return true;
-                }
+            if ([self isRelateWithData1:checkData data2:groupData compareModels:compareModels]) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+-(BOOL) isRelateWithData1:(id)data1 data2:(id)data2 compareModels:(NSArray*)compareModels{
+    //1. 数据检查
+    compareModels = ARRTOOK(compareModels);
+    if (data1 && data2) {
+        //2. 检查data1和data2是否有关系
+        for (NodeCompareModel *model in compareModels) {
+            if ([model isA:data1 andB:data2]) {
+                return true;
             }
         }
     }
