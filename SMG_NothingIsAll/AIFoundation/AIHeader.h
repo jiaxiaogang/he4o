@@ -75,8 +75,8 @@
 #define SUBSTR2INDEX(str,index) (STRISOK(str) ? [str substringToIndex:MIN(str.length, MAX(0, index))] : @"")//subStr_toIndex
 
 //Array
-#define ARRISOK(a) (a  && [a isKindOfClass:[NSArray class]] && a.count)//是否空数组
-#define ARRTOOK(a) (a  && [a isKindOfClass:[NSArray class]]) ?  a : [NSArray new]
+#define ARRTOOK(a) [NSArray arrayWithArray:a]
+#define ARRISOK(a) [NSArray arrayWithArray:a].count > 0 //是否空数组
 #define ARR_INDEX(a,i) (a && [a isKindOfClass:[NSArray class]] && a.count > i) ?  a[i] : nil//数组取子防闪
 #define ARR_INDEXISOK(a,i) (a && [a isKindOfClass:[NSArray class]] && a.count > i && i >= 0)//数组可移除i
 #define ARR_SUB(a,s,l) (ARRISOK(a) ? [a subarrayWithRange:NSMakeRange(MAX(0, MIN(s,a.count)), MAX(0, MIN(a.count - s, l)))] : nil)//数组截取 (a:arr s:start l:length)
@@ -113,12 +113,6 @@ while ((next = va_arg(args,id))) {\
 }\
 va_end(args);\
 
-
-#define ARRTOOK2(a) \
-NSArray *arr = [NSArray arrayWithArray:a]; \
-if(!ARRISOK(arr)) { \
-arr = [NSArray new]; \
-} \
 
 /**
  *  MARK:--------------------快捷访问对象--------------------

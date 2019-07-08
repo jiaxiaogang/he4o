@@ -346,7 +346,8 @@
 -(AIAlgNodeBase*) recognition_AbsoluteMatching:(AIAlgNodeBase*)algNode isMem:(BOOL)isMem {
     //1. 数据准备
     if (ISOK(algNode, AIAlgNodeBase.class)) {
-        NSString *valuesMD5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:[SMGUtils sortPointers:algNode.content_ps]]]);
+        NSString *valuesMD5 = [NSString md5:[SMGUtils convertPointers2String:[SMGUtils sortPointers:algNode.content_ps]]];
+        valuesMD5 = STRTOOK(valuesMD5);
         
         //2. 循环对content_ps中微信息的引用序列进行匹配判定;
         for (AIPointer *value_p in algNode.content_ps) {

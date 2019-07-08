@@ -192,13 +192,8 @@
         for (NSInteger j = i + 1; j < self.nodeArr.count; j++) {
             id iData = ARR_INDEX(self.nodeArr, i);
             id jData = ARR_INDEX(self.nodeArr, j);
-            NSArray *iGroup = [self getOrCreateGroupWithData:iData groups:groups];
-            NSArray *jGroup = [self getOrCreateGroupWithData:jData groups:groups];
-            
-            if (iGroup.count == 2 || jGroup.count == 2) {
-                NSArray *sss = ARRTOOK([self asdf]);
-                NSLog(@"aaaaa %lu",(unsigned long)sss.count);
-            }
+            NSArray *iGroup = ARRTOOK([self getOrCreateGroupWithData:iData groups:groups]);
+            NSArray *jGroup = ARRTOOK([self getOrCreateGroupWithData:jData groups:groups]);
             
             ///1. 当iData和jData有关系时;
             if ([self isRelateWithData1:iData data2:jData compareModels:compareModels]) {
@@ -225,10 +220,7 @@
     }
     return sortGroups;
 }
--(NSArray*) asdf{
-    NSLog(@"aaaaa ________________");
-    return [[NSMutableArray alloc] initWithObjects:@"1",@"2", nil];
-}
+
 //将data装成group并返回; (groups已有,则返回包含data的group)
 -(NSArray*) getOrCreateGroupWithData:(id)data groups:(NSMutableArray*)groups{
     //1. 无效则返nil;
