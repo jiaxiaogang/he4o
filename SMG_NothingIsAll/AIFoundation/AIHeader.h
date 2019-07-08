@@ -114,6 +114,12 @@ while ((next = va_arg(args,id))) {\
 va_end(args);\
 
 
+#define ARRTOOK2(a) \
+NSArray *arr = [NSArray arrayWithArray:a]; \
+if(!ARRISOK(arr)) { \
+arr = [NSArray new]; \
+} \
+
 /**
  *  MARK:--------------------快捷访问对象--------------------
  */

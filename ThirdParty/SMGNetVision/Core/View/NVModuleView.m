@@ -185,55 +185,33 @@
 -(NSMutableArray*) getSortGroups:(NSArray*)compareModels{
     //1. 数据检查
     compareModels = ARRTOOK(compareModels);
-    
-    //2. 用相容算法,分组;
     NSMutableArray *groups = [[NSMutableArray alloc] init];
-    for (id iItem in self.nodeArr) {
-        ///1. 已有,则加入;
-        BOOL joinSuccess = false;
-        for (NSMutableArray *group in groups) {
-            if ([self containsRelateWithData:iItem fromGroup:group compareModels:compareModels]) {
-                [group addObject:iItem];
-                joinSuccess = true;
-                break;
+    
+    //2. 用相容算法,分组 (一一对比,并合并);
+    for (NSInteger i = 0; i < self.nodeArr.count; i++) {
+        for (NSInteger j = i + 1; j < self.nodeArr.count; j++) {
+            id iData = ARR_INDEX(self.nodeArr, i);
+            id jData = ARR_INDEX(self.nodeArr, j);
+            NSArray *iGroup = [self getOrCreateGroupWithData:iData groups:groups];
+            NSArray *jGroup = [self getOrCreateGroupWithData:jData groups:groups];
+            
+            if (iGroup.count == 2 || jGroup.count == 2) {
+                NSArray *sss = ARRTOOK([self asdf]);
+                NSLog(@"aaaaa %lu",(unsigned long)sss.count);
             }
-        }
-        
-        ///2. 没有组,则找出有关联的,新成组;
-        if (!joinSuccess) {
-            for (id jItem in self.nodeArr) {
-                if ([self isRelateWithData1:iItem data2:jItem compareModels:compareModels]) {
-                    NSMutableArray *newGroup = [[NSMutableArray alloc] init];
-                    [newGroup addObject:iItem];
-                    [newGroup addObject:jItem];
-                    [groups addObject:newGroup];
-                    joinSuccess = true;
-                }
+            
+            ///1. 当iData和jData有关系时;
+            if ([self isRelateWithData1:iData data2:jData compareModels:compareModels]) {
+                ///2. 有关系,则将iGroup和jGroup合并,加到groups;
+                NSMutableArray *mergeGroup = [[NSMutableArray alloc] init];
+                [mergeGroup addObjectsFromArray:iGroup];
+                [mergeGroup addObjectsFromArray:jGroup];
+                [groups addObject:mergeGroup];
+            }else{
+                ///3. 没关系,则将iGroup和jGroup单独,加到groups;
+                [groups addObject:iGroup];
+                [groups addObject:jGroup];
             }
-        }
-        
-        
-        ///3. 独立的成一组;
-        
-        
-        
-    }
-    for (id item in self.nodeArr) {
-        ///1. 已有,则加入;
-        BOOL joinSuccess = false;
-        for (NSMutableArray *group in groups) {
-            if ([self containsRelateWithData:item fromGroup:group compareModels:compareModels]) {
-                [group addObject:item];
-                joinSuccess = true;
-                break;
-            }
-        }
-        
-        ///2. 未有,则新组;
-        if (!joinSuccess) {
-            NSMutableArray *newGroup = [[NSMutableArray alloc] init];
-            [newGroup addObject:item];
-            [groups addObject:newGroup];
         }
     }
     
@@ -246,6 +224,31 @@
         [sortGroups addObject:sortGroup];
     }
     return sortGroups;
+}
+-(NSArray*) asdf{
+    NSLog(@"aaaaa ________________");
+    return [[NSMutableArray alloc] initWithObjects:@"1",@"2", nil];
+}
+//将data装成group并返回; (groups已有,则返回包含data的group)
+-(NSArray*) getOrCreateGroupWithData:(id)data groups:(NSMutableArray*)groups{
+    //1. 无效则返nil;
+    if (!data) {
+        return nil;
+    }
+    
+    //2. 找已有,则取出;
+    if (ISOK(groups, NSMutableArray.class)) {
+        for (NSInteger i = 0; i < groups.count; i++) {
+            NSArray *group = ARR_INDEX(groups, i);
+            if ([group containsObject:data]) {
+                [groups removeObject:group];
+                return group;
+            }
+        }
+    }
+    
+    //3. 没找到,则新建
+    return @[data];
 }
 
 /**
