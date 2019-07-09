@@ -158,7 +158,13 @@
         [AINetUtils insertRefPorts_AllAlgNode:assAlgNode.pointer value_ps:assAlgNode.content_ps ps:assAlgNode.content_ps];
         
     }
-    if (!assAlgNode) NSLog(@"识别 failure");
+    if ([NVHeUtil isHeight:5 fromContent_ps:assAlgNode.content_ps]) {
+        if (!assAlgNode) {
+            NSLog(@"_______________________识别 failure");
+        }else{
+            NSLog(@"_______________________识别 success");
+        }
+    }
     return assAlgNode;
 }
 
@@ -188,19 +194,37 @@
         AIAlgNodeBase *hdRecogniAlgNode = [SMGUtils searchObjectForPointer:recognitionAlgNode.pointer fileName:kFNNode time:cRTNode];
         if (hdRecogniAlgNode) {
             firstPort = ARR_INDEX(hdRecogniAlgNode.refPorts, 0);
-            if (firstPort) NSLog(@"RecognUse success Mem from Hd");
+            if ([NVHeUtil isHeight:5 fromContent_ps:recognitionAlgNode.content_ps]) {
+                if (firstPort) {
+                    NSLog(@"__________________Use success");
+                }else{
+                    NSLog(@"__________________Use failure");
+                }
+            }
         }
         
         ///2. 尝试取_内存祖母引用序列
         if (!firstPort) {
             NSArray *memRefPorts = [SMGUtils searchObjectForPointer:recognitionAlgNode.pointer fileName:kFNMemRefPorts time:cRTMemPort];
             firstPort = ARR_INDEX(memRefPorts, 0);
-            if (firstPort) NSLog(@"RecognUse success Mem from Mem");
+            if ([NVHeUtil isHeight:5 fromContent_ps:recognitionAlgNode.content_ps]) {
+                if (firstPort) {
+                    NSLog(@"__________________Use success");
+                }else{
+                    NSLog(@"__________________Use failure");
+                }
+            }
         }
     }else{
         ///3. 尝试取_硬盘祖母引用序列
         firstPort = ARR_INDEX(recognitionAlgNode.refPorts, 0);
-        if (firstPort) NSLog(@"RecognUse success Hd from Hd");
+        if ([NVHeUtil isHeight:5 fromContent_ps:recognitionAlgNode.content_ps]) {
+            if (firstPort) {
+                NSLog(@"__________________Use success");
+            }else{
+                NSLog(@"__________________Use failure");
+            }
+        }
     }
     if (!firstPort) {
         return nil;

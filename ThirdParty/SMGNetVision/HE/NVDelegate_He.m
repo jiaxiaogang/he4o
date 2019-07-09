@@ -83,6 +83,10 @@
                     valueCount++;
                 }
             }
+            
+            NSInteger hdRefSize = algNode.refPorts.count;
+            //NSInteger memRefSize = [SMGUtils searchObjectForPointer:<#(AIPointer *)#> fileName:<#(NSString *)#>]
+            
             return STRFORMAT(@"pId:%ld 嵌套数:%ld 微信息数:%ld",(long)node_p.pointerId,(long)absAlgCount,(long)valueCount);
         }
     }

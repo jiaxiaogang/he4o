@@ -8,6 +8,7 @@
 
 #import "SMGEnum.h"
 #import "SMGUtils.h"
+#import "SMGUtils+General.h"
 #import "SMGConfig.h"
 #import "AINodeBase.h"
 #import "AIFoNodeBase.h"
@@ -69,34 +70,31 @@
  */
 
 //String
-#define STRISOK(a) (a  && ![a isKindOfClass:[NSNull class]] && [a isKindOfClass:[NSString class]] && ![a isEqualToString:@""])//是否空字符串
-#define STRTOOK(a) (a  && ![a isKindOfClass:[NSNull class]]) ? ([a isKindOfClass:[NSString class]] ? a : [NSString stringWithFormat:@"%@", a]) : @""
-#define STRFORMAT(a, ...) [NSString stringWithFormat:a, ##__VA_ARGS__]//String.format
-#define SUBSTR2INDEX(str,index) (STRISOK(str) ? [str substringToIndex:MIN(str.length, MAX(0, index))] : @"")//subStr_toIndex
+#define STRISOK(s) [SMGUtils strIsOk:s]                                 //是否空字符串
+#define STRTOOK(s) [SMGUtils strToOk:s]                                 //string强检查
+#define STRFORMAT(s, ...) [NSString stringWithFormat:s, ##__VA_ARGS__]  //String.format
+#define SUBSTR2INDEX(s,index) [SMGUtils subStr:s toIndex:index]         //subStr_toIndex
 
 //Array
-#define ARRTOOK(a) [NSArray arrayWithArray:a]
-#define ARRISOK(a) [NSArray arrayWithArray:a].count > 0 //是否空数组
-#define ARR_INDEX(a,i) (a && [a isKindOfClass:[NSArray class]] && a.count > i) ?  a[i] : nil//数组取子防闪
-#define ARR_INDEXISOK(a,i) (a && [a isKindOfClass:[NSArray class]] && a.count > i && i >= 0)//数组可移除i
-#define ARR_SUB(a,s,l) (ARRISOK(a) ? [a subarrayWithRange:NSMakeRange(MAX(0, MIN(s,a.count)), MAX(0, MIN(a.count - s, l)))] : nil)//数组截取 (a:arr s:start l:length)
+#define ARRISOK(a) [SMGUtils arrIsOk:a]                                 //是否空数组
+#define ARRTOOK(a) [SMGUtils arrToOk:a]                                 //数组强检查
+#define ARR_INDEX(a,i) [SMGUtils arrIndex:a index:i]                    //数组取子防闪
+#define ARR_INDEXISOK(a,i) [SMGUtils arrIndexIsOk:a index:i]            //数组可移除i
+#define ARR_SUB(a,s,l) [SMGUtils arrSub:a start:s length:l]             //数组截取 (arr start length)
 
 //NSNumber
-#define NUMISOK(a) (a  && [a isKindOfClass:[NSNumber class]])//是否有效NSNumber
-#define NUMTOOK(a) (a  && [a isKindOfClass:[NSNumber class]]) ? a : @(0)
+#define NUMISOK(n) [SMGUtils numIsOk:n]                                 //是否有效NSNumber
+#define NUMTOOK(n) [SMGUtils numToOk:n]                                 //number强检查
 
 //Dic
-#define DICISOK(a) (a  && [a isKindOfClass:[NSDictionary class]] && a.count)//是否空字典
-#define DICTOOK(a) (a  && [a isKindOfClass:[NSDictionary class]]) ?  a : [NSDictionary new]
-
-//AILine
-#define LINEISOK(a) (a  && [a isKindOfClass:[AILine class]])
+#define DICISOK(d) [SMGUtils dicIsOk:d]                                 //是否空字典
+#define DICTOOK(d) [SMGUtils dicToOk:d]                                 //dictionary强检查
 
 //AIPointer
-#define POINTERISOK(a) (a && [a isKindOfClass:[AIPointer class]] && a.pointerId > 0)
+#define POINTERISOK(p) [SMGUtils pointerIsOk:p]                         //指针强检查
 
 //ISOK
-#define ISOK(obj, class) (obj && [obj isKindOfClass:class])
+#define ISOK(o, c) [SMGUtils isOk:o class:c]                            //obj强检查 (object class)
 
 /**
  *  MARK:--------------------快捷建对象--------------------

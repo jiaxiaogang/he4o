@@ -23,6 +23,7 @@
 		08250AE0228112C000FC497C /* XGWedis.m in Sources */ = {isa = PBXBuildFile; fileRef = 08250ADF228112C000FC497C /* XGWedis.m */; };
 		0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 0825AFF21F748F67003B86C7 /* NSObject+Extension.m */; };
 		082ABC3521F7E864002E544C /* AIShortMemory.m in Sources */ = {isa = PBXBuildFile; fileRef = 082ABC3421F7E864002E544C /* AIShortMemory.m */; };
+		082D03DF22D40AF000BB0B7A /* SMGUtils+General.m in Sources */ = {isa = PBXBuildFile; fileRef = 082D03DE22D40AF000BB0B7A /* SMGUtils+General.m */; };
 		082F9D561EB234750009F6A9 /* Output.m in Sources */ = {isa = PBXBuildFile; fileRef = 082F9D551EB234750009F6A9 /* Output.m */; };
 		0830DAB721D6E8AD003065CD /* NSString+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 0830DAB621D6E8AD003065CD /* NSString+Extension.m */; };
 		083112F21F05E12600051DE6 /* MBProgressHUD+Add.m in Sources */ = {isa = PBXBuildFile; fileRef = 083112F11F05E12600051DE6 /* MBProgressHUD+Add.m */; };
@@ -160,6 +161,8 @@
 		0825AFF21F748F67003B86C7 /* NSObject+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Extension.m"; sourceTree = "<group>"; };
 		082ABC3321F7E864002E544C /* AIShortMemory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIShortMemory.h; sourceTree = "<group>"; };
 		082ABC3421F7E864002E544C /* AIShortMemory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIShortMemory.m; sourceTree = "<group>"; };
+		082D03DD22D40AF000BB0B7A /* SMGUtils+General.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SMGUtils+General.h"; sourceTree = "<group>"; };
+		082D03DE22D40AF000BB0B7A /* SMGUtils+General.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "SMGUtils+General.m"; sourceTree = "<group>"; };
 		082F9D541EB234750009F6A9 /* Output.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Output.h; sourceTree = "<group>"; };
 		082F9D551EB234750009F6A9 /* Output.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Output.m; sourceTree = "<group>"; };
 		0830DAB521D6E8AD003065CD /* NSString+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+Extension.h"; sourceTree = "<group>"; };
@@ -396,6 +399,8 @@
 			children = (
 				08F4C98C1EA7A03900F3EDA8 /* SMGUtils.h */,
 				08F4C98D1EA7A03900F3EDA8 /* SMGUtils.m */,
+				082D03DD22D40AF000BB0B7A /* SMGUtils+General.h */,
+				082D03DE22D40AF000BB0B7A /* SMGUtils+General.m */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1111,6 +1116,7 @@
 				0858C5D32194F8B000951BA5 /* View+MASAdditions.m in Sources */,
 				8868F6EE210AA00B000EAC9B /* AINetAbsCMVUtil.m in Sources */,
 				08497A9921C32E17009E7D69 /* AIAlgNodeManager.m in Sources */,
+				082D03DF22D40AF000BB0B7A /* SMGUtils+General.m in Sources */,
 				88B23BE620BE20BC00BE8AF6 /* AIAbsFoManager.m in Sources */,
 				08A5D5D822AF1E3400E56BB4 /* NVView.m in Sources */,
 				0830DAB721D6E8AD003065CD /* NSString+Extension.m in Sources */,
