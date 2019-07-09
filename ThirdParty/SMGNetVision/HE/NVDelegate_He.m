@@ -35,7 +35,7 @@
             return demand ? UIColorWithRGBHex(0xFF0000) : UIColorWithRGBHex(0x00FF00);
         }
     }
-    
+
     //2. 坚果显示偏绿色 (抽象黄绿&具象蓝绿)
     if ([self isAlg:node_p]) {
         AIAlgNodeBase *algNode = [SMGUtils searchNode:node_p];
@@ -49,7 +49,7 @@
             }
         }
     }
-    
+
     //3. 抽象显示黄色
     if ([self isAbs:node_p]) {
         return UIColorWithRGBHex(0xFFFF00);
@@ -66,11 +66,15 @@
 
 -(NSString*)nv_NodeOnClick:(AIKVPointer*)node_p{
     //1. value时,返回 "iden+value值";
+    NSInteger memRefCount = ARRTOOK([SMGUtils searchObjectForPointer:node_p fileName:kFNMemRefPorts time:cRTMemReference]).count;
     if ([self isValue:node_p]) {
+        NSInteger hdRefCount = ARRTOOK([SMGUtils searchObjectForPointer:node_p fileName:kFNRefPorts time:cRTReference]).count;
         NSNumber *value = NUMTOOK([AINetIndex getData:node_p]);
-        return STRFORMAT(@"pId:%ld,%@,%@:%@",(long)node_p.pointerId,node_p.algsType,node_p.dataSource,value);
+        return STRFORMAT(@"pId:%ld,%@,%@:%@ REF:h%ld/m%ld",(long)node_p.pointerId,node_p.algsType,node_p.dataSource,value,hdRefCount,memRefCount);
     }
     //2. algNode时,返回content_ps的 "微信息数+嵌套数";
+    NSInteger memAbsCount = ARRTOOK([SMGUtils searchObjectForPointer:node_p fileName:kFNMemAbsPorts time:cRTMemReference]).count;
+    NSInteger memConCount = ARRTOOK([SMGUtils searchObjectForPointer:node_p fileName:kFNMemConPorts time:cRTMemReference]).count;
     if([self isAlg:node_p]){
         AIAlgNodeBase *algNode = [SMGUtils searchNode:node_p];
         if (algNode) {
@@ -83,11 +87,9 @@
                     valueCount++;
                 }
             }
-            
-            NSInteger hdRefSize = algNode.refPorts.count;
-            //NSInteger memRefSize = [SMGUtils searchObjectForPointer:<#(AIPointer *)#> fileName:<#(NSString *)#>]
-            
-            return STRFORMAT(@"pId:%ld 嵌套数:%ld 微信息数:%ld",(long)node_p.pointerId,(long)absAlgCount,(long)valueCount);
+
+            NSInteger hdConCount = ISOK(algNode, AIAbsAlgNode.class) ? ((AIAbsAlgNode*)algNode).conPorts.count : 0;
+            return STRFORMAT(@"pId:%ld 嵌套数:%ld 微信息数:%ld REF:h%ld/m%ld ABS:h%ld/m%ld CON:h%ld/m%ld",(long)node_p.pointerId,(long)absAlgCount,(long)valueCount,algNode.refPorts.count,memRefCount,algNode.absPorts.count,memAbsCount,hdConCount,memConCount);
         }
     }
     //3. foNode时,返回 "order_kvp数"
@@ -98,7 +100,8 @@
                 AIKVPointer *item = ARR_INDEX(foNode.orders_kvp, i);
                 [theNV lightNode:item str:STRFORMAT(@"%ld",(long)i)];
             }
-            return STRFORMAT(@"pId:%ld 时序数:%ld",(long)node_p.pointerId,foNode.orders_kvp.count);
+            NSInteger hdConCount = ISOK(foNode, AINetAbsFoNode.class) ? ((AINetAbsFoNode*)foNode).conPorts.count : 0;
+            return STRFORMAT(@"pId:%ld 时序数:%ld ABS:h%ld/m%ld CON:h%ld/m%ld",(long)node_p.pointerId,foNode.orders_kvp.count,foNode.absPorts.count,memAbsCount,hdConCount,memConCount);
         }
     }
     //4. mv时,返回 "类型+升降";
@@ -134,7 +137,7 @@
             ///1. 取硬盘
             NSArray *hdRefPorts = [SMGUtils searchObjectForFilePath:node_p.filePath fileName:kFNRefPorts time:cRTReference];
             [result addObjectsFromArray:[SMGUtils convertPointersFromPorts:hdRefPorts]];
-            
+
             ///2. 取内存
             NSArray *memRefPorts = [SMGUtils searchObjectForFilePath:node_p.filePath fileName:kFNMemRefPorts time:cRTMemReference];
             [result addObjectsFromArray:[SMGUtils convertPointersFromPorts:memRefPorts]];
@@ -195,7 +198,7 @@
             //2. memAbsPorts
             NSArray *memAbsPorts = [SMGUtils searchObjectForPointer:node_p fileName:kFNMemAbsPorts];
             [result addObjectsFromArray:[SMGUtils convertPointersFromPorts:memAbsPorts]];
-            
+
             //3. hdAbsPorts
             AINodeBase *node = [SMGUtils searchNode:node_p];
             if (ISOK(node, AINodeBase.class)) {
@@ -214,7 +217,7 @@
             NSArray *memConPorts = [SMGUtils searchObjectForPointer:node_p fileName:kFNMemConPorts];
             [result addObjectsFromArray:[SMGUtils convertPointersFromPorts:memConPorts]];
         }
-        
+
         if ([self isAlg:node_p]) {
             //2. algNode_HdConPorts
             AIAbsAlgNode *absAlgNode = [SMGUtils searchNode:node_p];
