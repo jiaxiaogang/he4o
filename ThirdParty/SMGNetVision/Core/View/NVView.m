@@ -147,6 +147,13 @@
     }
 }
 
+-(void) clearLight{
+    NSArray *nvs = ARRTOOK([self subViews_AllDeepWithClass:NVNodeView.class]);
+    for (NVNodeView *nv in nvs) {
+        [nv clearLight];
+    }
+}
+
 /**
  *  MARK:--------------------获取nodeData所属的模块--------------------
  */

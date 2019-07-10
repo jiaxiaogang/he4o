@@ -78,6 +78,14 @@
     if([self isAlg:node_p]){
         AIAlgNodeBase *algNode = [SMGUtils searchNode:node_p];
         if (algNode) {
+            ///1. 依次点亮content;
+            [theNV clearLight];
+            for (NSInteger i = 0; i < algNode.content_ps.count; i++) {
+                AIKVPointer *item = ARR_INDEX(algNode.content_ps, i);
+                [theNV lightNode:item str:[NVHeUtil getLightStrForValue:item]];
+            }
+            
+            ///2. 返回描述;
             NSInteger absAlgCount = 0;
             NSInteger valueCount = 0;
             for (AIKVPointer *value_p in algNode.content_ps) {
@@ -96,10 +104,13 @@
     if([self isFo:node_p]){
         AIFoNodeBase *foNode = [SMGUtils searchNode:node_p];
         if (foNode) {
+            ///1. 依次点亮orders;
+            [theNV clearLight];
             for (NSInteger i = 0; i < foNode.orders_kvp.count; i++) {
                 AIKVPointer *item = ARR_INDEX(foNode.orders_kvp, i);
                 [theNV lightNode:item str:STRFORMAT(@"%ld",(long)i)];
             }
+            ///2. 返回描述;
             NSInteger hdConCount = ISOK(foNode, AINetAbsFoNode.class) ? ((AINetAbsFoNode*)foNode).conPorts.count : 0;
             return STRFORMAT(@"pId:%ld 时序数:%ld ABS:h%ld/m%ld CON:h%ld/m%ld",(long)node_p.pointerId,foNode.orders_kvp.count,foNode.absPorts.count,memAbsCount,hdConCount,memConCount);
         }

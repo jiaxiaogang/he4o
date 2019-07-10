@@ -15,4 +15,10 @@
  */
 +(BOOL) isHeight:(CGFloat)height fromContent_ps:(NSArray*)fromContent_ps;
 
+
+/**
+ *  MARK:--------------------获取value微信息的light描述--------------------
+ */
++(NSString*) getLightStrForValue:(AIKVPointer*)value_p;
+
 @end

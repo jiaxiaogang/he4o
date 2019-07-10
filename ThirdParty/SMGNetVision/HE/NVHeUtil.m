@@ -23,4 +23,23 @@
     return false;
 }
 
++(NSString*) getLightStrForValue:(AIKVPointer*)value_p{
+    if (ISOK(value_p, AIKVPointer.class)) {
+        if ([@"sizeWidth" isEqualToString:value_p.dataSource]) {
+            return @"一";
+        }else if ([@"sizeHeight" isEqualToString:value_p.dataSource]) {
+            return @"|";
+        }else if ([@"colorRed" isEqualToString:value_p.dataSource]) {
+            return @"R";
+        }else if ([@"colorBlue" isEqualToString:value_p.dataSource]) {
+            return @"B";
+        }else if ([@"colorGreen" isEqualToString:value_p.dataSource]) {
+            return @"G";
+        }else if ([@"radius" isEqualToString:value_p.dataSource]) {
+            return @"角";
+        }
+    }
+    return @"";
+}
+
 @end

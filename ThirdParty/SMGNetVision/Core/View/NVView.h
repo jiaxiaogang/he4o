@@ -66,6 +66,7 @@
  *  MARK:--------------------节点闪烁--------------------
  */
 -(void) lightNode:(id)nodeData str:(NSString*)str;
+-(void) clearLight;
 
 @end
 

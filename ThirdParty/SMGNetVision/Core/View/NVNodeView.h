@@ -38,5 +38,6 @@
  *  MARK:--------------------闪烁--------------------
  */
 -(void) light:(NSString*)lightStr;
+-(void) clearLight;
 
 @end
