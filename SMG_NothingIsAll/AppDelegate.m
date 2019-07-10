@@ -40,8 +40,8 @@
     [self.window addSubview:self.nvView];
     
     //4. tipLogLab
-    self.tipLogLab = [[UILabel alloc] initWithFrame:CGRectMake(0, ScreenHeight - 8, ScreenWidth, 8)];
-    [self.tipLogLab setFont:[UIFont boldSystemFontOfSize:8]];
+    self.tipLogLab = [[UILabel alloc] initWithFrame:CGRectMake(0, ScreenHeight - 11, ScreenWidth, 11)];
+    [self.tipLogLab setFont:[UIFont boldSystemFontOfSize:11]];
     [self.tipLogLab setTextColor:[UIColor redColor]];
     [self.window addSubview:self.tipLogLab];
     

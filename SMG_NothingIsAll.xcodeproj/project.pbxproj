@@ -106,6 +106,7 @@
 		08F738061F7C714F005EAD56 /* AIPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738011F7C714F005EAD56 /* AIPointer.m */; };
 		08F738071F7C714F005EAD56 /* AISqlPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738031F7C714F005EAD56 /* AISqlPointer.m */; };
 		08FAEC94215EED39004DCEAD /* NVUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FAEC93215EED39004DCEAD /* NVUtils.m */; };
+		08FBE10E22D56F360088EF1A /* NVModuleUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FBE10D22D56F360088EF1A /* NVModuleUtil.m */; };
 		2753D7CF7BAEDFEACAF9264A /* libPods-SMG_NothingIsAll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */; };
 		8806D888212B8EB100C442CA /* TOMvModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8806D887212B8EB100C442CA /* TOMvModel.m */; };
 		8822852020F58BDA009884DC /* AINetDirectionReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 8822851F20F58BDA009884DC /* AINetDirectionReference.m */; };
@@ -321,6 +322,8 @@
 		08FAEC92215EED39004DCEAD /* NVUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVUtils.h; sourceTree = "<group>"; };
 		08FAEC93215EED39004DCEAD /* NVUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NVUtils.m; sourceTree = "<group>"; };
 		08FAEC95215EED48004DCEAD /* NVHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVHeader.h; sourceTree = "<group>"; };
+		08FBE10C22D56F360088EF1A /* NVModuleUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVModuleUtil.h; sourceTree = "<group>"; };
+		08FBE10D22D56F360088EF1A /* NVModuleUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NVModuleUtil.m; sourceTree = "<group>"; };
 		8806D886212B8EB100C442CA /* TOMvModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOMvModel.h; sourceTree = "<group>"; };
 		8806D887212B8EB100C442CA /* TOMvModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOMvModel.m; sourceTree = "<group>"; };
 		8822851E20F58BDA009884DC /* AINetDirectionReference.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetDirectionReference.h; sourceTree = "<group>"; };
@@ -697,6 +700,7 @@
 		08A5D5D522AF1C1E00E56BB4 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				08FBE10B22D56F260088EF1A /* Util */,
 				0844618B22BB038D008E86CC /* View */,
 				08CEAFAA22B3179000CD1D91 /* Model */,
 				0808D34622B6FDD100D383BA /* NVViewUtil.h */,
@@ -906,6 +910,15 @@
 				0837F72322A89A0D00836689 /* ReadMe.md */,
 			);
 			path = SMGNetVision;
+			sourceTree = "<group>";
+		};
+		08FBE10B22D56F260088EF1A /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				08FBE10C22D56F360088EF1A /* NVModuleUtil.h */,
+				08FBE10D22D56F360088EF1A /* NVModuleUtil.m */,
+			);
+			path = Util;
 			sourceTree = "<group>";
 		};
 		207E0C8ABC4501E50CC5D363 /* Frameworks */ = {
@@ -1118,6 +1131,7 @@
 				08497A9921C32E17009E7D69 /* AIAlgNodeManager.m in Sources */,
 				082D03DF22D40AF000BB0B7A /* SMGUtils+General.m in Sources */,
 				88B23BE620BE20BC00BE8AF6 /* AIAbsFoManager.m in Sources */,
+				08FBE10E22D56F360088EF1A /* NVModuleUtil.m in Sources */,
 				08A5D5D822AF1E3400E56BB4 /* NVView.m in Sources */,
 				0830DAB721D6E8AD003065CD /* NSString+Extension.m in Sources */,
 				08C84A8E1E9A866200897D8B /* AIInput.m in Sources */,
