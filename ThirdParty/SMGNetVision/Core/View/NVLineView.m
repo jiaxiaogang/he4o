@@ -29,7 +29,7 @@
 -(void) initView{
     //self
     [self setBackgroundColor:[UIColor clearColor]];
-    self.height = 1.0f / UIScreen.mainScreen.scale;
+    self.height = 1.0f;
     [self setUserInteractionEnabled:false];
     [self.layer setMasksToBounds:true];
     
