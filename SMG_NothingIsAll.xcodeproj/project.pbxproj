@@ -12,7 +12,6 @@
 		0808927A215AF5F400710636 /* AINodeBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 08089279215AF5F400710636 /* AINodeBase.m */; };
 		08089280215B07FC00710636 /* AICMVNodeBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 0808927F215B07FC00710636 /* AICMVNodeBase.m */; };
 		0808D34022B6F73D00D383BA /* NVLineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0808D33F22B6F73D00D383BA /* NVLineView.m */; };
-		0808D34222B6F74B00D383BA /* NVLineView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0808D34122B6F74B00D383BA /* NVLineView.xib */; };
 		0808D34822B6FDD100D383BA /* NVViewUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 0808D34722B6FDD100D383BA /* NVViewUtil.m */; };
 		080A74321F60C6490025DBA3 /* AIPort.m in Sources */ = {isa = PBXBuildFile; fileRef = 080A74311F60C6490025DBA3 /* AIPort.m */; };
 		0817D6AB219E3CC7000E45AB /* UIColor+expanded.m in Sources */ = {isa = PBXBuildFile; fileRef = 0817D6A9219E3CC6000E45AB /* UIColor+expanded.m */; };
@@ -141,7 +140,6 @@
 		0808927F215B07FC00710636 /* AICMVNodeBase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AICMVNodeBase.m; sourceTree = "<group>"; };
 		0808D33E22B6F73D00D383BA /* NVLineView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVLineView.h; sourceTree = "<group>"; };
 		0808D33F22B6F73D00D383BA /* NVLineView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NVLineView.m; sourceTree = "<group>"; };
-		0808D34122B6F74B00D383BA /* NVLineView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NVLineView.xib; sourceTree = "<group>"; };
 		0808D34622B6FDD100D383BA /* NVViewUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVViewUtil.h; sourceTree = "<group>"; };
 		0808D34722B6FDD100D383BA /* NVViewUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NVViewUtil.m; sourceTree = "<group>"; };
 		080A74301F60C6490025DBA3 /* AIPort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIPort.h; sourceTree = "<group>"; };
@@ -581,7 +579,6 @@
 				0889258022B0703700A0DBDD /* NVModuleView.xib */,
 				0808D33E22B6F73D00D383BA /* NVLineView.h */,
 				0808D33F22B6F73D00D383BA /* NVLineView.m */,
-				0808D34122B6F74B00D383BA /* NVLineView.xib */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -1072,7 +1069,6 @@
 				08AF45581E97D0B500377887 /* LaunchScreen.storyboard in Resources */,
 				0858C5E921950CAA00951BA5 /* FoodView.xib in Resources */,
 				08A5D5DA22AF1E9D00E56BB4 /* NVView.xib in Resources */,
-				0808D34222B6F74B00D383BA /* NVLineView.xib in Resources */,
 				0858C5B02194F5E400951BA5 /* CarView.xib in Resources */,
 				0889258122B0703700A0DBDD /* NVModuleView.xib in Resources */,
 				08AF45551E97D0B500377887 /* Assets.xcassets in Resources */,
