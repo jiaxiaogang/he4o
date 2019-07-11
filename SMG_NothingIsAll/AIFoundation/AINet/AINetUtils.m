@@ -94,6 +94,9 @@
     }else{
         [self insertRefPorts_MemNode:foNode_p passiveRef_p:order_p ps:ps difStrong:1];
     }
+    if (foNode_p.isMem != order_p.isMem) {
+        NSLog(@"WARN!!! alg被fo引用时,内存状态各异; foIsMem:%d",foNode_p.isMem);
+    }
 }
 
 +(void) insertRefPorts_AllMvNode:(AIPointer*)mvNode_p value_p:(AIPointer*)value_p difStrong:(NSInteger)difStrong{

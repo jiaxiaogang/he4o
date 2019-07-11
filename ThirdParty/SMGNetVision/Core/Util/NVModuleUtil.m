@@ -54,6 +54,13 @@
         //2. 判断n1与n2的关系,并返回大或小; (越小,越排前面)
         for (NodeCompareModel *model in compareModels) {
             if ([model isA:n1 andB:n2]) {
+                
+                ///////TODO:此处,有可能n1和n2没有直接关系,但间接上,有大小;
+                ///////所以需要先把一一关系,串成一个链表;再来对比;
+                ///////要注意死亡环,导致的互相引用;(可能不用管,因为不会有环,就算有,仅会导致排版错误);
+                ///////注: 死亡环,即a>b & b>a的情况;
+                
+                ///////复现提示,先直投3个,然后记下最大的conAlgNode,单独追加进来,然后追加其absPorts,直至全纵向加载进来;
                 return [n1 isEqual:model.smallNodeData] ? NSOrderedAscending : NSOrderedDescending;
             }
         }
@@ -77,7 +84,8 @@
             NSArray *jGroup = [NVModuleUtil getOrCreateGroupWithData:jData groups:groups];
             
             ///1. 当iData和jData有关系时;
-            if ([NVModuleUtil isRelateWithData1:iData data2:jData compareModels:compareModels]) {
+            if (![iGroup isEqual:jGroup] && [NVModuleUtil isRelateWithData1:iData data2:jData compareModels:compareModels]) {
+                
                 ///2. 有关系,则移除合并前的group;
                 [groups removeObject:iGroup];
                 [groups removeObject:jGroup];

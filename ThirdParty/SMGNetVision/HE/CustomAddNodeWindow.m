@@ -82,10 +82,10 @@
     NSInteger pointerId = [STRTOOK(self.pointerIdTF.text) integerValue];
     
     //4. isOut
-    BOOL isOut = [self.isOutSwitch state] == UIControlStateSelected;
+    BOOL isOut = self.isOutSwitch.on;
     
     //5. isMem
-    BOOL isMem = [self.isMemSwitch state] == UIControlStateSelected;
+    BOOL isMem = self.isMemSwitch.on;
     
     //6. algsType
     NSString *algsType = STRISOK(self.algsTypeTF.text) ? self.algsTypeTF.text : DefaultAlgsType;
@@ -99,7 +99,7 @@
     
     //9. 关闭窗口
     [self removeFromSuperview];
-    TPLog(@"追加节点: %@/%@/%@/%d/%ld",node_p.folderName,node_p.algsType,node_p.dataSource,node_p.isOut,node_p.pointerId);
+    TPLog(@"追加节点: %@/%@/%@/%d/%d",node_p.folderName,node_p.algsType,node_p.dataSource,node_p.isOut,node_p.pointerId);
 }
 
 @end
