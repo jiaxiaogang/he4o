@@ -46,26 +46,53 @@
     return false;
 }
 
+/**
+ *  MARK:--------------------对比n1和n2的大小--------------------
+ *  说明:
+ *      1. 在compareModels中,数据是一对一的元素,如:[a>b,b>c,c>d,d>e];
+ *      2. 我们要的结果可能是对比a与e;
+ *      3. 我们先找出含a的元素,得出b;
+ *      4. 再找出含b的元素得出c,以此类推,直到找出e;
+ *      总结:先找出包含a的元素,并小的向小找,大的向大找,直到找出结果;
+ *
+ *  异常:
+ *      1. 死亡环:(即a>b & b>a的情况),导致的互相引用;
+ *      2. 解决:万一有死亡环,仅会导致排版错误;
+ *
+ *  BUG记录:
+ *      1. 因n1,n2并非直接大小,而是间隔了很多个model,导致的返回same排版错误;
+ *      2. 复现提示,先直投3个,然后记下最大的conAlgNode,单独追加进来,然后追加其absPorts,直至全纵向加载进来;
+ *
+ */
 +(NSComparisonResult)compareNodeData1:(id)n1 nodeData2:(id)n2 compareModels:(NSArray*)compareModels{
     //1. 数据检查
     if (n1 && n2) {
         compareModels = ARRTOOK(compareModels);
         
-        //2. 判断n1与n2的关系,并返回大或小; (越小,越排前面)
-        for (NodeCompareModel *model in compareModels) {
-            if ([model isA:n1 andB:n2]) {
+        //2. 生成n1映射n2,n2映射n1的字典;
+        NSDictionary *dic = @{n1:n2,n2:n1};
+        
+        //3. 分别假设key(n1/n2)为小时,向大的找value(n2/n1);
+        for (id key in dic.allKeys) {
+            
+            //4. key为small,从big方向找value;
+            id smaller = key;
+            id value = [dic objectForKey:key];
+            do {
+                //5. 找比small大;
+                NodeCompareModel *model = [self findModelWithSmallData:smaller compareModels:compareModels];
                 
-                ///////TODO:此处,有可能n1和n2没有直接关系,但间接上,有大小;
-                ///////所以需要先把一一关系,串成一个链表;再来对比;
-                ///////要注意死亡环,导致的互相引用;(可能不用管,因为不会有环,就算有,仅会导致排版错误);
-                ///////注: 死亡环,即a>b & b>a的情况;
+                //6. 匹配biger = value则成功找到,返回结果 (越小,越排前面);
+                if (model && [value isEqual:model.bigNodeData]) {
+                    return [n1 isEqual:key] ? NSOrderedAscending : NSOrderedDescending;
+                }
                 
-                ///////复现提示,先直投3个,然后记下最大的conAlgNode,单独追加进来,然后追加其absPorts,直至全纵向加载进来;
-                return [n1 isEqual:model.smallNodeData] ? NSOrderedAscending : NSOrderedDescending;
-            }
+                //7. 未匹配,则保留新的smaller,循环找比大更大;
+                smaller = model ? model.bigNodeData : nil;
+            } while (smaller);
         }
     }
-    //3. 无关系异常
+    //8. 无关系异常
     return NSOrderedSame;
 }
 
@@ -124,5 +151,23 @@
     }
     return false;
 }
+
+//MARK:===============================================================
+//MARK:                     < PrivateMethod >
+//MARK:===============================================================
++(NodeCompareModel*) findModelWithSmallData:(id)smallData compareModels:(NSArray*)compareModels{
+    return [self findModelWithData:smallData dataIsBig:false compareModels:compareModels];
+}
++(NodeCompareModel*) findModelWithData:(id)data dataIsBig:(BOOL)dataIsBig compareModels:(NSArray*)compareModels{
+    if (data && ARRISOK(compareModels)) {
+        for (NodeCompareModel *model in compareModels) {
+            if ([data isEqual:(dataIsBig ? model.bigNodeData : model.smallNodeData)]) {
+                return model;
+            }
+        }
+    }
+    return nil;
+}
+
 
 @end
