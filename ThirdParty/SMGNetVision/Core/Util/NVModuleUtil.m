@@ -70,14 +70,16 @@
         compareModels = ARRTOOK(compareModels);
         
         //2. 生成n1映射n2,n2映射n1的字典;
-        NSDictionary *dic = @{n1:n2,n2:n1};
+        NSArray *keys = @[n1,n2];
+        NSArray *values = @[n2,n1];
         
         //3. 分别假设key(n1/n2)为小时,向大的找value(n2/n1);
-        for (id key in dic.allKeys) {
+        for (NSInteger i = 0; i < keys.count; i++) {
             
             //4. key为small,从big方向找value;
+            id key = ARR_INDEX(keys, i);
+            id value = ARR_INDEX(values, i);
             id smaller = key;
-            id value = [dic objectForKey:key];
             do {
                 //5. 找比small大;
                 NodeCompareModel *model = [self findModelWithSmallData:smaller compareModels:compareModels];
@@ -129,6 +131,10 @@
     //3. 对groups中,每一组进行独立排序,并取编号结果; (排序:从具象到抽象)
     NSMutableArray *sortGroups = [[NSMutableArray alloc] init];
     for (NSArray *group in groups) {
+        
+        
+        //TODOTOMORROW: 排序算法不对;
+        //复现方式:直接乱投一个,然后点击显示出最具象;(即可发现,排序不对,导致的排版错误)
         NSArray *sortGroup = [group sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
             return [NVModuleUtil compareNodeData1:obj1 nodeData2:obj2 compareModels:compareModels];
         }];
