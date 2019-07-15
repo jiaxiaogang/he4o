@@ -244,15 +244,47 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ThirdParty/SMGNetVision/Core/Util/NVModuleUtil.m"
-            timestampString = "584585854.632894"
+            timestampString = "584845072.152283"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "89"
-            endingLineNumber = "89"
+            startingLineNumber = "189"
+            endingLineNumber = "189"
+            landmarkName = "+convertIndexDicWithCompareModels:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ThirdParty/SMGNetVision/Core/Util/NVModuleUtil.m"
+            timestampString = "584845072.1529289"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "92"
+            endingLineNumber = "92"
+            landmarkName = "+compareNodeData1:nodeData2:compareModels:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ThirdParty/SMGNetVision/Core/Util/NVModuleUtil.m"
+            timestampString = "584845072.1532871"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "105"
+            endingLineNumber = "105"
             landmarkName = "+compareNodeData1:nodeData2:compareModels:"
             landmarkType = "7">
          </BreakpointContent>
@@ -264,12 +296,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ThirdParty/SMGNetVision/Core/Util/NVModuleUtil.m"
-            timestampString = "584585854.633486"
+            timestampString = "584845072.153632"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "141"
-            endingLineNumber = "141"
-            landmarkName = "+getSortGroups:compareModels:"
+            startingLineNumber = "77"
+            endingLineNumber = "77"
+            landmarkName = "+compareNodeData1:nodeData2:compareModels:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -79,19 +79,26 @@
             //4. key为small,从big方向找value;
             id key = ARR_INDEX(keys, i);
             id value = ARR_INDEX(values, i);
-            id smaller = key;
+            NSArray *smallers = @[key];
             do {
-                //5. 找比small大;
-                NodeCompareModel *model = [self findModelWithSmallData:smaller compareModels:compareModels];
-                
-                //6. 匹配biger = value则成功找到,返回结果 (越小,越排前面);
-                if (model && [value isEqual:model.bigNodeData]) {
-                    return [n1 isEqual:key] ? NSOrderedAscending : NSOrderedDescending;
+                NSMutableArray *newSmallers = [[NSMutableArray alloc] init];
+                for (id smaller in smallers) {
+                    //5. 找比small大;
+                    NSArray *models = [self findModelsWithSmallData:smaller compareModels:compareModels];
+                    
+                    //6. 匹配biger = value则成功找到,返回结果 (越小,越排前面);
+                    for (NodeCompareModel *model in models) {
+                        if ([value isEqual:model.bigNodeData]) {
+                            return [n1 isEqual:key] ? NSOrderedAscending : NSOrderedDescending;
+                        }else{
+                            [newSmallers addObject:model.bigNodeData];
+                        }
+                    }
                 }
                 
                 //7. 未匹配,则保留新的smaller,循环找比大更大;
-                smaller = model ? model.bigNodeData : nil;
-            } while (smaller);
+                smallers = newSmallers;
+            } while (ARRISOK(smallers));
         }
     }
     //8. 无关系异常
@@ -161,18 +168,93 @@
 //MARK:===============================================================
 //MARK:                     < PrivateMethod >
 //MARK:===============================================================
-+(NodeCompareModel*) findModelWithSmallData:(id)smallData compareModels:(NSArray*)compareModels{
-    return [self findModelWithData:smallData dataIsBig:false compareModels:compareModels];
+
+/**
+ *  MARK:--------------------将单组compareModels转为indexDic--------------------
+ */
++(NSDictionary*)convertIndexDicWithCompareModels:(NSArray*)compareModels{
+    //1. 数据准备
+    compareModels = ARRTOOK(compareModels);
+    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
+    
+    //2. 找出最具象
+    for (NodeCompareModel *model in compareModels) {
+        //3. 假设当前为最小
+        NSArray *smallers = @[model.smallNodeData];
+        do {
+            NSMutableArray *newSmallers = [[NSMutableArray alloc] init];
+            for (id smaller in smallers) {
+                //4. 尝试找比假设的最小更小;
+                NSArray *models = [self findModelsWithBigData:smaller compareModels:compareModels];
+                if (!ARRISOK(models)) {
+                    //5. 找不到更小,smaller已经是最小了;
+                    [result setObject:@(1) forKey:smaller];
+                }else{
+                    //6. 有更小,则收集并再假设为最小,继续递归查更小;
+                    for (NodeCompareModel *model in models) {
+                        [newSmallers addObject:model.smallNodeData];
+                    }
+                }
+            }
+            
+            //7. 使用新的smallers假设,并递归找更小;
+            smallers = newSmallers;
+        } while (ARRISOK(smallers));
+    }
+    
+    //8. 列其它index;
+    for (id smaller in result.allKeys) {
+        //3. 假设当前为最小
+        NSArray *smallers = @[smaller];
+        do {
+            NSMutableArray *newSmallers = [[NSMutableArray alloc] init];
+            for (id smaller in smallers) {
+                //4. 尝试找比假设的最小更大;
+                NSArray *models = [self findModelsWithSmallData:smaller compareModels:compareModels];
+                if (ARRISOK(models)) {
+                    //6. 有更大,则index+1;
+                    for (NodeCompareModel *model in models) {
+                        int smallIndex = [NUMTOOK([result objectForKey:smaller]) intValue];
+                        int bigIndex = smallIndex + 1;
+                        
+                        //7. 存到result中;
+                        int oldIndex = [NUMTOOK([result objectForKey:model.bigNodeData]) intValue];
+                        int newIndex = MAX(oldIndex, bigIndex);
+                        [result setObject:@(newIndex) forKey:model.bigNodeData];
+                        
+                        //8. 收集新的smallers并递归找更大;
+                        [newSmallers addObject:model.smallNodeData];
+                    }
+                }
+            }
+            
+            //7. 使用新的smallers假设,并递归找更小;
+            smallers = newSmallers;
+        } while (ARRISOK(smallers));
+    }
+    
+    return result;
 }
-+(NodeCompareModel*) findModelWithData:(id)data dataIsBig:(BOOL)dataIsBig compareModels:(NSArray*)compareModels{
+
+/**
+ *  MARK:--------------------找出 "抽象/具象" 方向,有关系的models--------------------
+ */
++(NSArray*) findModelsWithBigData:(id)bigData compareModels:(NSArray*)compareModels{
+    return [self findModelsWithData:bigData dataIsBig:true compareModels:compareModels];
+}
++(NSArray*) findModelsWithSmallData:(id)smallData compareModels:(NSArray*)compareModels{
+    return [self findModelsWithData:smallData dataIsBig:false compareModels:compareModels];
+}
++(NSArray*) findModelsWithData:(id)data dataIsBig:(BOOL)dataIsBig compareModels:(NSArray*)compareModels{
+    NSMutableArray *result = [[NSMutableArray alloc] init];
     if (data && ARRISOK(compareModels)) {
         for (NodeCompareModel *model in compareModels) {
             if ([data isEqual:(dataIsBig ? model.bigNodeData : model.smallNodeData)]) {
-                return model;
+                [result addObject:model];
             }
         }
     }
-    return nil;
+    return result;
 }
 
 
