@@ -47,8 +47,11 @@
             findAbsNode = [SMGUtils searchNode:port.target_p];
             if (findAbsNode.pointer.isMem) {
                 ///3. 转移foNode到硬盘网络;
-                NSLog(@"检查!!!!,此处对findAbsNode做内存到硬盘网络的转移!!!");
                 findAbsNode = [AINetUtils move2HdNodeFromMemNode_Fo:findAbsNode];
+                NSLog(@"检查!!!!,此处对findAbsFo做内存到硬盘网络的转移!!!");
+                if (findAbsNode.orders_kvp.count == 0) {
+                    NSLog(@"警告...fo.orders为空");
+                }
             }
             break;
         }
@@ -66,6 +69,10 @@
                 
                 ///2. 转移memAlgNode到硬盘网络;
                 AIAlgNodeBase *hdAlgNode = [AINetUtils move2HdNodeFromMemNode_Alg:memAlgNode];
+                NSLog(@"检查!!!!,此处对algNode做内存到硬盘网络的转移!!!");
+                if (hdAlgNode.refPorts.count == 0) {
+                    NSLog(@"警告...alg.refPorts为空");
+                }
                 
                 ///3. 收集order_p
                 if (hdAlgNode) {
