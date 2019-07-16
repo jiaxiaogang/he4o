@@ -125,31 +125,12 @@
     //2. 获取分组数据;
     NSArray *sortGroups = [NVModuleUtil getSortGroups:self.nodeArr compareModels:compareModels indexDic:indexDic];
     
-    //3. 转成编层号字典; (每组的y单独从0开始,各组的x都要累加)
+    //3. 转成x编号字典 (各组的x都要累加);
     NSMutableDictionary *xDic = [[NSMutableDictionary alloc] init];//从左往右编号
-    NSMutableDictionary *yDic = [[NSMutableDictionary alloc] init];//从下往上编号
     int curX = -1;
     for (NSArray *sortGroup in sortGroups) {
-        int curY = 0;
-        //判断当前sortItem是否是上一个last的抽象; (是则curY+1,不是则curY+0)
-        id lastSortItem = nil;
         for (id sortItem in sortGroup) {
-            NSData *key = [NSKeyedArchiver archivedDataWithRootObject:sortItem];
-            NSComparisonResult compare = [NVModuleUtil compareNodeData1:sortItem nodeData2:lastSortItem indexDic:indexDic];
-            ///1. 排y_抽象加一层; (越排后面的,反而越抽象)
-            if (compare == NSOrderedDescending) {
-                [yDic setObject:@(++curY) forKey:key];
-            }else if(compare == NSOrderedSame){
-                ///2. 排y_平层在同一层;
-                [yDic setObject:@(curY) forKey:key];
-            }else{
-                NSLog(@"错误!!! 排更后面的节点,不允许比具象更具象! (请检查排序算法,是否排反了)");
-            }
-            ///3. 排x;
-            [xDic setObject:@(++curX) forKey:key];
-            
-            ///4. 记录last,下一个;
-            lastSortItem = sortItem;
+            [xDic setObject:@(++curX) forKey:[NVModuleUtil keyOfData:sortItem]];
         }
     }
     
@@ -166,7 +147,7 @@
         //5. 取xIndex和yIndex;
         NSData *key = [NVModuleUtil keyOfData:nodeView.data];
         NSInteger x = [NUMTOOK([xDic objectForKey:key]) integerValue];
-        NSInteger y = [NUMTOOK([yDic objectForKey:key]) integerValue];
+        NSInteger y = [NUMTOOK([indexDic objectForKey:key]) integerValue];
         
         //6. 同层y值偏移量 (交错3 & 偏移8)
         NSInteger layerCount = [NUMTOOK([yLayerCountDic objectForKey:@(y)]) intValue];
