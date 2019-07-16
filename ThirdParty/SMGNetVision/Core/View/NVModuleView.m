@@ -120,9 +120,10 @@
 -(void) refreshDisplay_Node{
     //1. 找出所有有关系的NodeCompareModel
     NSArray *compareModels = [self getNodeCompareModels];
+    NSDictionary *indexDic = [NVModuleUtil convertIndexDicWithCompareModels:compareModels];
     
     //2. 获取分组数据;
-    NSArray *sortGroups = [NVModuleUtil getSortGroups:self.nodeArr compareModels:compareModels];
+    NSArray *sortGroups = [NVModuleUtil getSortGroups:self.nodeArr compareModels:compareModels indexDic:indexDic];
     
     //3. 转成编层号字典; (每组的y单独从0开始,各组的x都要累加)
     NSMutableDictionary *xDic = [[NSMutableDictionary alloc] init];//从左往右编号
@@ -134,7 +135,7 @@
         id lastSortItem = nil;
         for (id sortItem in sortGroup) {
             NSData *key = [NSKeyedArchiver archivedDataWithRootObject:sortItem];
-            NSComparisonResult compare = [NVModuleUtil compareNodeData1:sortItem nodeData2:lastSortItem compareModels:compareModels];
+            NSComparisonResult compare = [NVModuleUtil compareNodeData1:sortItem nodeData2:lastSortItem indexDic:indexDic];
             ///1. 排y_抽象加一层; (越排后面的,反而越抽象)
             if (compare == NSOrderedDescending) {
                 [yDic setObject:@(++curY) forKey:key];
@@ -163,7 +164,7 @@
     NSMutableDictionary *yLayerCountDic = [[NSMutableDictionary alloc] init];
     for (NVNodeView *nodeView in nodeViews) {
         //5. 取xIndex和yIndex;
-        NSData *key = [NSKeyedArchiver archivedDataWithRootObject:nodeView.data];
+        NSData *key = [NVModuleUtil keyOfData:nodeView.data];
         NSInteger x = [NUMTOOK([xDic objectForKey:key]) integerValue];
         NSInteger y = [NUMTOOK([yDic objectForKey:key]) integerValue];
         

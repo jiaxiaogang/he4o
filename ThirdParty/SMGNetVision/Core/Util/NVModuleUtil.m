@@ -64,49 +64,21 @@
  *      2. 复现提示,先直投3个,然后记下最大的conAlgNode,单独追加进来,然后追加其absPorts,直至全纵向加载进来;
  *
  */
-+(NSComparisonResult)compareNodeData1:(id)n1 nodeData2:(id)n2 compareModels:(NSArray*)compareModels{
-    //1. 数据检查
++(NSComparisonResult)compareNodeData1:(id)n1 nodeData2:(id)n2 indexDic:(NSDictionary*)indexDic{
+    indexDic = DICTOOK(indexDic);
     if (n1 && n2) {
-        compareModels = ARRTOOK(compareModels);
-        
-        //2. 生成n1映射n2,n2映射n1的字典;
-        NSArray *keys = @[n1,n2];
-        NSArray *values = @[n2,n1];
-        
-        //3. 分别假设key(n1/n2)为小时,向大的找value(n2/n1);
-        for (NSInteger i = 0; i < keys.count; i++) {
-            
-            //4. key为small,从big方向找value;
-            id key = ARR_INDEX(keys, i);
-            id value = ARR_INDEX(values, i);
-            NSArray *smallers = @[key];
-            do {
-                NSMutableArray *newSmallers = [[NSMutableArray alloc] init];
-                for (id smaller in smallers) {
-                    //5. 找比small大;
-                    NSArray *models = [self findModelsWithSmallData:smaller compareModels:compareModels];
-                    
-                    //6. 匹配biger = value则成功找到,返回结果 (越小,越排前面);
-                    for (NodeCompareModel *model in models) {
-                        if ([value isEqual:model.bigNodeData]) {
-                            return [n1 isEqual:key] ? NSOrderedAscending : NSOrderedDescending;
-                        }else{
-                            [newSmallers addObject:model.bigNodeData];
-                        }
-                    }
-                }
-                
-                //7. 未匹配,则保留新的smaller,循环找比大更大;
-                smallers = newSmallers;
-            } while (ARRISOK(smallers));
-        }
+        NSData *key1 = [self keyOfData:n1];
+        NSData *key2 = [self keyOfData:n2];
+        int index1 = [NUMTOOK([indexDic objectForKey:key1]) intValue];
+        int index2 = [NUMTOOK([indexDic objectForKey:key2]) intValue];
+        return (index1 == index2) ? NSOrderedSame : ((index1 < index2) ? NSOrderedAscending : NSOrderedDescending);
     }
-    //8. 无关系异常
     return NSOrderedSame;
 }
 
-+(NSMutableArray*) getSortGroups:(NSArray*)nodeArr compareModels:(NSArray*)compareModels{
++(NSMutableArray*) getSortGroups:(NSArray*)nodeArr compareModels:(NSArray*)compareModels indexDic:(NSDictionary*)indexDic{
     //1. 数据检查
+    indexDic = DICTOOK(indexDic);
     compareModels = ARRTOOK(compareModels);
     nodeArr = ARRTOOK(nodeArr);
     NSMutableArray *groups = [[NSMutableArray alloc] init];
@@ -138,12 +110,8 @@
     //3. 对groups中,每一组进行独立排序,并取编号结果; (排序:从具象到抽象)
     NSMutableArray *sortGroups = [[NSMutableArray alloc] init];
     for (NSArray *group in groups) {
-        
-        
-        //TODOTOMORROW: 排序算法不对;
-        //复现方式:直接乱投一个,然后点击显示出最具象;(即可发现,排序不对,导致的排版错误)
         NSArray *sortGroup = [group sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-            return [NVModuleUtil compareNodeData1:obj1 nodeData2:obj2 compareModels:compareModels];
+            return [NVModuleUtil compareNodeData1:obj1 nodeData2:obj2 indexDic:indexDic];
         }];
         [sortGroups addObject:sortGroup];
     }
@@ -165,12 +133,9 @@
     return false;
 }
 
-//MARK:===============================================================
-//MARK:                     < PrivateMethod >
-//MARK:===============================================================
-
 /**
- *  MARK:--------------------将单组compareModels转为indexDic--------------------
+ *  MARK:--------------------compareModels转为indexDic--------------------
+ *  @result nutnull
  */
 +(NSDictionary*)convertIndexDicWithCompareModels:(NSArray*)compareModels{
     //1. 数据准备
@@ -188,7 +153,7 @@
                 NSArray *models = [self findModelsWithBigData:smaller compareModels:compareModels];
                 if (!ARRISOK(models)) {
                     //5. 找不到更小,smaller已经是最小了;
-                    [result setObject:@(1) forKey:smaller];
+                    [result setObject:@(0) forKey:[self keyOfData:smaller]];
                 }else{
                     //6. 有更小,则收集并再假设为最小,继续递归查更小;
                     for (NodeCompareModel *model in models) {
@@ -203,7 +168,8 @@
     }
     
     //8. 列其它index;
-    for (id smaller in result.allKeys) {
+    for (NSData *key in result.allKeys) {
+        id smaller = [self dataOfKey:key];
         //3. 假设当前为最小
         NSArray *smallers = @[smaller];
         do {
@@ -214,16 +180,16 @@
                 if (ARRISOK(models)) {
                     //6. 有更大,则index+1;
                     for (NodeCompareModel *model in models) {
-                        int smallIndex = [NUMTOOK([result objectForKey:smaller]) intValue];
+                        int smallIndex = [NUMTOOK([result objectForKey:[self keyOfData:smaller]]) intValue];
                         int bigIndex = smallIndex + 1;
                         
                         //7. 存到result中;
-                        int oldIndex = [NUMTOOK([result objectForKey:model.bigNodeData]) intValue];
+                        int oldIndex = [NUMTOOK([result objectForKey:[self keyOfData:model.bigNodeData]]) intValue];
                         int newIndex = MAX(oldIndex, bigIndex);
-                        [result setObject:@(newIndex) forKey:model.bigNodeData];
+                        [result setObject:@(newIndex) forKey:[self keyOfData:model.bigNodeData]];
                         
                         //8. 收集新的smallers并递归找更大;
-                        [newSmallers addObject:model.smallNodeData];
+                        [newSmallers addObject:model.bigNodeData];
                     }
                 }
             }
@@ -232,9 +198,24 @@
             smallers = newSmallers;
         } while (ARRISOK(smallers));
     }
-    
     return result;
 }
+
+/**
+ *  MARK:--------------------获取data的key形态--------------------
+ */
++(NSData*) keyOfData:(id)data{
+    NSData *key = [NSKeyedArchiver archivedDataWithRootObject:data];
+    return key;
+}
++(id) dataOfKey:(NSData*)key{
+    id data = [NSKeyedUnarchiver unarchiveObjectWithData:key];
+    return data;
+}
+
+//MARK:===============================================================
+//MARK:                     < PrivateMethod >
+//MARK:===============================================================
 
 /**
  *  MARK:--------------------找出 "抽象/具象" 方向,有关系的models--------------------
@@ -256,6 +237,5 @@
     }
     return result;
 }
-
 
 @end

@@ -19,7 +19,7 @@
  *  @result : 抽象为大,具象为小,无关系为相等
  *  @desc : 排序规则: (从具象到抽象 / 从小到大)
  */
-+(NSComparisonResult)compareNodeData1:(id)n1 nodeData2:(id)n2 compareModels:(NSArray*)compareModels;
++(NSComparisonResult)compareNodeData1:(id)n1 nodeData2:(id)n2 indexDic:(NSDictionary*)indexDic;
 
 
 /**
@@ -27,7 +27,7 @@
  *  注: 其中最具象为0,抽象往上,越抽象值越大,越具象值越小;
  *  @result : 二维数组,元素为组,组中具象在前,抽象在后;
  */
-+(NSMutableArray*) getSortGroups:(NSArray*)nodeArr compareModels:(NSArray*)compareModels;
++(NSMutableArray*) getSortGroups:(NSArray*)nodeArr compareModels:(NSArray*)compareModels indexDic:(NSDictionary*)indexDic;
 
 
 /**
@@ -35,5 +35,18 @@
  */
 +(BOOL) containsRelateWithData:(id)checkData fromGroup:(NSArray*)group compareModels:(NSArray*)compareModels;
 
+
+/**
+ *  MARK:--------------------compareModels转为indexDic--------------------
+ *  @result nutnull
+ */
++(NSDictionary*)convertIndexDicWithCompareModels:(NSArray*)compareModels;
+
+
+/**
+ *  MARK:--------------------获取data的key形态--------------------
+ */
++(NSData*) keyOfData:(id)data;
++(id) dataOfKey:(NSData*)key;
 
 @end
