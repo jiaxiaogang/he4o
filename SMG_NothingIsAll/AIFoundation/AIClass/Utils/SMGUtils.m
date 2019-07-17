@@ -394,6 +394,14 @@ static int readDiskCount;
     //1. 存disk (异步持久化)
     NSString *key = STRFORMAT(@"%@/%@",rootPath,fileName);
     if (saveDB) {
+        
+        if (ISOK(obj, AIAlgNodeBase.class)) {
+            AIAlgNodeBase *algNode = (AIAlgNodeBase*)obj;
+            if (algNode.refPorts.count == 0 && !algNode.pointer.isOut) {
+                NSLog(@"警告,,,refPorts=0");//调试absAlg.refPorts.count = 0的bug;
+            }
+        }
+        
         [[XGWedis sharedInstance] setObject:obj forKey:key];
         [[XGWedis sharedInstance] setSaveBlock:^(NSDictionary *dic) {
             dic = DICTOOK(dic);
