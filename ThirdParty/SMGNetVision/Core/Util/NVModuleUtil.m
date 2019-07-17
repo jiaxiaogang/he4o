@@ -85,10 +85,10 @@
     
     //2. 用相容算法,分组 (一一对比,并合并);
     for (NSInteger i = 0; i < nodeArr.count; i++) {
+        id iData = ARR_INDEX(nodeArr, i);
+        NSArray *iGroup = [NVModuleUtil getOrCreateGroupWithData:iData groups:groups];
         for (NSInteger j = i + 1; j < nodeArr.count; j++) {
-            id iData = ARR_INDEX(nodeArr, i);
             id jData = ARR_INDEX(nodeArr, j);
-            NSArray *iGroup = [NVModuleUtil getOrCreateGroupWithData:iData groups:groups];
             NSArray *jGroup = [NVModuleUtil getOrCreateGroupWithData:jData groups:groups];
             
             ///1. 当iData和jData有关系时;
@@ -103,6 +103,9 @@
                 [mergeGroup addObjectsFromArray:iGroup];
                 [mergeGroup addObjectsFromArray:jGroup];
                 [groups addObject:mergeGroup];
+                
+                ///4. 需要重新获取新的iGroup;
+                iGroup = [NVModuleUtil getOrCreateGroupWithData:iData groups:groups];
             }
         }
     }

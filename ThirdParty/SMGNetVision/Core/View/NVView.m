@@ -270,14 +270,33 @@
         id dataB = ARR_INDEX(lineData, 1);
         if (dataA && dataB) {
             
-            //4. 去掉旧有线
+            //4. 是否有旧的
+            BOOL find = false;
             for (NVLineView *lView in lineViews) {
                 if ([lView.data containsObject:dataA] && [lView.data containsObject:dataB]) {
-                    [lView removeFromSuperview];
+                    find = true;
                 }
             }
             
-            //5. 获取两端的坐标
+            //5. draw
+            if (!find) {
+                NVLineView *lView = [[NVLineView alloc] init];
+                [lView setDataWithDataA:dataA dataB:dataB];
+                [self.contentView addSubview:lView];
+            }
+        }
+    }
+    
+    //6. 逐根修正坐标
+    lineViews = ARRTOOK([self subViews_AllDeepWithClass:NVLineView.class]);
+    for (NVLineView *lView in lineViews) {
+        
+        //7. 准备两端的数据
+        id dataA = ARR_INDEX(lView.data, 0);
+        id dataB = ARR_INDEX(lView.data, 1);
+        if (dataA && dataB) {
+            
+            //8. 获取两端的坐标
             CGPoint pointA = CGPointZero;
             CGPoint pointB = CGPointZero;
             for (NVNodeView *nView in nodeViews) {
@@ -288,25 +307,23 @@
                 }
             }
             
-            //6. 画线
+            //9. 画线
             if (!CGPointEqualToPoint(pointA, CGPointZero) && !CGPointEqualToPoint(pointB, CGPointZero)) {
-                //7. 计算线长度
+                //10. 计算线长度
                 float width = [NVViewUtil distancePoint:pointA second:pointB];
                 
-                //8. 计算线中心位置
+                //11. 计算线中心位置
                 float centerX = (pointA.x + pointB.x) / 2.0f;
                 float centerY = (pointA.y + pointB.y) / 2.0f;
                 
-                //9. 旋转角度
+                //12. 旋转角度
                 CGFloat angle = [NVViewUtil anglePoint:pointA second:pointB];
                 
-                //10. draw
-                NVLineView *lView = [[NVLineView alloc] init];
+                //13. draw
+                [lView.layer setTransform:CATransform3DMakeRotation(0, 0, 0, 1)];
                 lView.width = width;
                 [lView.layer setTransform:CATransform3DMakeRotation(angle, 0, 0, 1)];
                 lView.center = CGPointMake(centerX, centerY);
-                [lView setDataWithDataA:dataA dataB:dataB];
-                [self.contentView addSubview:lView];
             }
         }
     }

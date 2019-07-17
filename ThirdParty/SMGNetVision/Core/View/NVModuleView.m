@@ -96,7 +96,7 @@
     [self refreshDisplay_Node];
     
     //3. 重绘关联线
-    [self refreshDisplay_Line];
+    [self refreshDisplay_Line:nodeDatas];
 }
 
 -(void) clear{
@@ -125,15 +125,6 @@
     //2. 获取分组数据;
     NSArray *sortGroups = [NVModuleUtil getSortGroups:self.nodeArr compareModels:compareModels indexDic:indexDic];
     
-    //3. 转成x编号字典 (各组的x都要累加);
-    NSMutableDictionary *xDic = [[NSMutableDictionary alloc] init];//从左往右编号
-    int curX = -1;
-    for (NSArray *sortGroup in sortGroups) {
-        for (id sortItem in sortGroup) {
-            [xDic setObject:@(++curX) forKey:[NVModuleUtil keyOfData:sortItem]];
-        }
-    }
-    
     //3. 根据编号计算坐标;
     NSArray *nodeViews = ARRTOOK([self subViews_AllDeepWithClass:NVNodeView.class]);
     CGFloat layerSpace = 65;//层间距
@@ -143,20 +134,27 @@
     
     //4. 同层计数器 (本层节点个数)
     NSMutableDictionary *yLayerCountDic = [[NSMutableDictionary alloc] init];
-    for (NVNodeView *nodeView in nodeViews) {
-        //5. 取xIndex和yIndex;
-        NSData *key = [NVModuleUtil keyOfData:nodeView.data];
-        NSInteger x = [NUMTOOK([xDic objectForKey:key]) integerValue];
-        NSInteger y = [NUMTOOK([indexDic objectForKey:key]) integerValue];
-        
-        //6. 同层y值偏移量 (交错3 & 偏移8)
-        NSInteger layerCount = [NUMTOOK([yLayerCountDic objectForKey:@(y)]) intValue];
-        [yLayerCountDic setObject:@(layerCount + 1) forKey:@(y)];
-        
-        //7. 节点坐标
-        float spaceX = MIN(xSpace, (self.width - nodeSize) / xDic.count);
-        nodeView.x = x * spaceX;
-        nodeView.y = (self.height - nodeSize) - (y * layerSpace) - (layerCount % 3) * ySpace;
+    int curX = -1;
+    for (NSArray *sortGroup in sortGroups) {
+        for (id sortItem in sortGroup) {
+            for (NVNodeView *nodeView in nodeViews) {
+                if ([nodeView.data isEqual:sortItem]) {
+                    //5. 取xIndex和yIndex;
+                    NSData *key = [NVModuleUtil keyOfData:nodeView.data];
+                    NSInteger x = ++curX;
+                    NSInteger y = [NUMTOOK([indexDic objectForKey:key]) integerValue];
+                    
+                    //6. 同层y值偏移量 (交错3 & 偏移8)
+                    NSInteger layerCount = [NUMTOOK([yLayerCountDic objectForKey:@(y)]) intValue];
+                    [yLayerCountDic setObject:@(layerCount + 1) forKey:@(y)];
+                    
+                    //7. 节点坐标
+                    float spaceX = MIN(xSpace, (self.width - nodeSize) / nodeViews.count);
+                    nodeView.x = x * spaceX;
+                    nodeView.y = (self.height - nodeSize) - (y * layerSpace) - (layerCount % 3) * ySpace;
+                }
+            }
+        }
     }
 }
 
@@ -191,13 +189,14 @@
 //MARK:===============================================================
 //MARK:                     < Line >
 //MARK:===============================================================
--(void) refreshDisplay_Line{
+-(void) refreshDisplay_Line:(NSArray*)newNodeDatas{
     //1. 收集所有线的数据 (元素为长度为2的数组);
     NSMutableArray *lineDatas = [[NSMutableArray alloc] init];
+    newNodeDatas = ARRTOOK(newNodeDatas);
     
     //2. 逐个节点进行关联判断;
     NSArray *netDatas = ARRTOOK([self moduleView_GetAllNetDatas]);
-    for (id item in self.nodeArr) {
+    for (id item in newNodeDatas) {
         
         //3. 取四种关联端口;
         NSArray *absDatas = ARRTOOK([self moduleView_AbsNodeDatas:item]);
