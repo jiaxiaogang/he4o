@@ -56,9 +56,6 @@
                         }
                         if (ARRISOK(sameValue_ps)) {
                             [theNet createAbsAlgNode:sameValue_ps conAlgs:@[algNodeA,algNodeB] isMem:false];
-                            //TODOTOMORROW:此处,absAlg未接收,应将absAlg放入到orderSames中,然后构建抽象时序;
-                            //或者在下面,line70的双循环中,加入;
-                            
                             ///4. 构建时,消耗能量值;
                             if (updateEnergy) {
                                 updateEnergy();
@@ -67,11 +64,16 @@
                     }
                     
                     ///5. absPorts->orderSames (根据强度优先)
-                    for (AIPort *aPort in algNodeA.absPorts) {
-                        
-                        //TODOTOMORROW:此处,未对algNodeA和algNodeB在内存网络,取memAbsPorts做处理;
-                        
-                        for (AIPort *bPort in algNodeB.absPorts) {
+                    NSMutableArray *aAbsPorts = [[NSMutableArray alloc] init];
+                    [aAbsPorts addObjectsFromArray:[SMGUtils searchObjectForPointer:algNodeA.pointer fileName:kFNMemAbsPorts time:cRTMemPort]];
+                    [aAbsPorts addObjectsFromArray:algNodeA.absPorts];
+                    
+                    NSMutableArray *bAbsPorts = [[NSMutableArray alloc] init];
+                    [bAbsPorts addObjectsFromArray:[SMGUtils searchObjectForPointer:algNodeB.pointer fileName:kFNMemAbsPorts time:cRTMemPort]];
+                    [bAbsPorts addObjectsFromArray:algNodeB.absPorts];
+                    
+                    for (AIPort *aPort in aAbsPorts) {
+                        for (AIPort *bPort in bAbsPorts) {
                             if ([aPort.target_p isEqual:bPort.target_p]) {
                                 [orderSames addObject:bPort.target_p];
                                 break;
