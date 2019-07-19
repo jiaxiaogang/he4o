@@ -95,14 +95,6 @@
  *  2. 构建absCmv
  */
 +(void)analogyOutside_Creater:(NSArray*)orderSames fo:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo{
-    //1. 外类比构建前日志;
-    //NSString *foOrderStr = [NVUtils convertOrderPs2Str:fo.orders_kvp];
-    //NSString *assMicroStr = [NVUtils convertOrderPs2Str:assFo.orders_kvp];
-    //NSString *samesStr = [NVUtils convertOrderPs2Str:orderSames];
-    //NSLog(@"外类比时序抽象\n\nFo1=====> %@\n\
-          Fo2=====> %@\n\
-          Sames=====> %@",foOrderStr,assMicroStr,samesStr);
-    
     //2. 数据检查;
     if (ARRISOK(orderSames) && ISOK(fo, AIFoNodeBase.class) && ISOK(assFo, AIFoNodeBase.class)) {
         
@@ -131,11 +123,6 @@
                 [theNV setNodeData:assMv.pointer];
                 [theNV setNodeData:createAbsCmv.pointer];
             }
-            
-            //7. 外类比构建后日志;
-            //NSLog(@"\n抽象后==========\n%@",[NVUtils getFoNodeDesc:createAbsFo]);
-            //NSLog(@"\nconPorts\n%@",[NVUtils getFoNodeConPortsDesc:createAbsFo]);
-            //NSLog(@"\nabsPorts\n%@",[NVUtils getFoNodeAbsPortsDesc:createAbsFo]);
             //TODO:>>>>>将absNode和absCmvNode存到thinkFeedCache;
         }
     }

@@ -70,7 +70,7 @@
     if ([self isValue:node_p]) {
         NSInteger hdRefCount = ARRTOOK([SMGUtils searchObjectForPointer:node_p fileName:kFNRefPorts time:cRTReference]).count;
         NSNumber *value = NUMTOOK([AINetIndex getData:node_p]);
-        return STRFORMAT(@"pId:%ld,%@,%@:%@ REF:h%ld/m%ld",(long)node_p.pointerId,node_p.algsType,node_p.dataSource,value,hdRefCount,memRefCount);
+        return STRFORMAT(@"pId:%ld,%@,%@:%@ REF:h%ld/m%ld",(long)node_p.pointerId,node_p.algsType,node_p.dataSource,value,(long)hdRefCount,(long)memRefCount);
     }
     //2. algNode时,返回content_ps的 "微信息数+嵌套数";
     NSInteger memAbsCount = ARRTOOK([SMGUtils searchObjectForPointer:node_p fileName:kFNMemAbsPorts time:cRTMemReference]).count;
@@ -97,7 +97,7 @@
             }
 
             NSInteger hdConCount = ISOK(algNode, AIAbsAlgNode.class) ? ((AIAbsAlgNode*)algNode).conPorts.count : 0;
-            return STRFORMAT(@"pId:%ld 嵌套数:%ld 微信息数:%ld REF:h%ld/m%ld ABS:h%ld/m%ld CON:h%ld/m%ld",(long)node_p.pointerId,(long)absAlgCount,(long)valueCount,algNode.refPorts.count,memRefCount,algNode.absPorts.count,memAbsCount,hdConCount,memConCount);
+            return STRFORMAT(@"pId:%ld 嵌套数:%ld 微信息数:%ld REF:h%lu/m%ld ABS:h%lu/m%ld CON:h%ld/m%ld",(long)node_p.pointerId,(long)absAlgCount,(long)valueCount,(unsigned long)algNode.refPorts.count,(long)memRefCount,(unsigned long)algNode.absPorts.count,(long)memAbsCount,(long)hdConCount,(long)memConCount);
         }
     }
     //3. foNode时,返回 "order_kvp数"
@@ -112,12 +112,21 @@
             }
             ///2. 返回描述;
             NSInteger hdConCount = ISOK(foNode, AINetAbsFoNode.class) ? ((AINetAbsFoNode*)foNode).conPorts.count : 0;
-            return STRFORMAT(@"pId:%ld 时序数:%ld ABS:h%ld/m%ld CON:h%ld/m%ld",(long)node_p.pointerId,foNode.orders_kvp.count,foNode.absPorts.count,memAbsCount,hdConCount,memConCount);
+            return STRFORMAT(@"pId:%ld 时序数:%d ABS:h%lu/m%ld CON:h%ld/m%ld",(long)node_p.pointerId,foNode.orders_kvp.count,(unsigned long)foNode.absPorts.count,(long)memAbsCount,(long)hdConCount,(long)memConCount);
         }
     }
     //4. mv时,返回 "类型+升降";
     if([self isMv:node_p]){
-        return STRFORMAT(@"pId:%ld algsType:%@ dataSource:%@",(long)node_p.pointerId,node_p.algsType,node_p.dataSource);
+        AICMVNodeBase *mvNode = [SMGUtils searchNode:node_p];
+        if (mvNode) {
+            ///1. 取数据
+            NSInteger urgentTo = [NUMTOOK([AINetIndex getData:mvNode.urgentTo_p]) integerValue];
+            NSInteger delta = [NUMTOOK([AINetIndex getData:mvNode.delta_p]) integerValue];
+            NSInteger hdConCount = ISOK(mvNode, AIAbsCMVNode.class) ? ((AIAbsCMVNode*)mvNode).conPorts.count : 0;
+            
+            ///2. 返回
+            return STRFORMAT(@"pId:%ld iden:%@_%@ urgentTo:%ld delta:%ld ABS:h%lu/m%ld CON:h%ld/m%ld",(long)node_p.pointerId,node_p.algsType,node_p.dataSource,(long)urgentTo,(long)delta,(unsigned long)mvNode.absPorts.count,(long)memAbsCount,(long)hdConCount,(long)memConCount);
+        }
     }
     return nil;
 }
@@ -161,7 +170,7 @@
                 [allPorts addObjectsFromArray:node.refPorts];
                 [allPorts addObjectsFromArray:[SMGUtils searchObjectForPointer:node_p fileName:kFNMemRefPorts time:cRTMemPort]];
                 if (allPorts.count == 0) {
-                    NSLog(@">>>>>>>> refPorts Hd:%lu Mem:%lu",(unsigned long)node.refPorts.count,allPorts.count - node.refPorts.count);
+                    NSLog(@">>>>>>>> refPorts Hd:%lu Mem:%u",(unsigned long)node.refPorts.count,allPorts.count - node.refPorts.count);
                 }
                 return [SMGUtils convertPointersFromPorts:allPorts];
             }

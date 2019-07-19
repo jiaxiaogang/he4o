@@ -59,7 +59,7 @@
     NSMutableArray *conMvs = [[NSMutableArray alloc] init];
     for (AIKVPointer *mv_p in conMv_ps) {
         AICMVNodeBase *conMvNode = [SMGUtils searchNode:mv_p];
-        if (!ISOK(conMvNode, AICMVNodeBase.class)){
+        if (ISOK(conMvNode, AICMVNodeBase.class)){
             [conMvs addObject:conMvNode];
         }
     }

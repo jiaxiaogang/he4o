@@ -64,7 +64,7 @@
     }
     
     //3. 取absUrgentTo | absDelta; (//由MIN(aUrgentTo, bUrgentTo)改为平均)
-    NSInteger absValue = sum / mvNodes.count;
+    NSInteger absValue = sum / (int)mvNodes.count;
     return absValue;
 }
 
