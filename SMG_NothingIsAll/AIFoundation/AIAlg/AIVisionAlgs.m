@@ -31,9 +31,9 @@
         model.colorGreen = [self colorGreen:curView];
         model.colorBlue = [self colorBlue:curView];
         model.radius = [self radius:curView];
-        model.originX = [self originX:selfView target:curView];
-        model.originY = [self originY:selfView target:curView];
         model.speed = [self speed:selfView target:curView];
+        model.direction = [self direction:selfView target:curView];
+        model.distance = [self distance:selfView target:curView];
         [models addObject:model];
     }
     
@@ -41,10 +41,11 @@
     [[AIThinkingControl shareInstance] commitInputWithModels:models];
 }
 
+//MARK:===============================================================
+//MARK:                     < 视觉算法 >
+//MARK:===============================================================
 
-//MARK:===============================================================
-//MARK:                     < size >
-//MARK:===============================================================
+//size
 +(CGFloat) sizeWidth:(UIView*)target{
     if (target) return target.width;
     return 0;
@@ -54,10 +55,7 @@
     return 0;
 }
 
-
-//MARK:===============================================================
-//MARK:                     < color >
-//MARK:===============================================================
+//color
 +(NSInteger) colorRed:(UIView*)target{
     if (target) return target.backgroundColor.red * 255.0f;
     return 0;
@@ -73,32 +71,13 @@
     return 0;
 }
 
-
-//MARK:===============================================================
-//MARK:                     < radius >
-//MARK:===============================================================
+//radius
 +(CGFloat) radius:(UIView*)target{
     if (target) return target.layer.cornerRadius;
     return 0;
 }
 
-
-//MARK:===============================================================
-//MARK:                     < origin >
-//MARK:===============================================================
-+(CGFloat) originX:(UIView*)selfView target:(UIView*)target{
-    return [UIView convertWorldPoint:target].x - [UIView convertWorldPoint:selfView].x;
-}
-+(CGFloat) originY:(UIView*)selfView target:(UIView*)target{
-    return [UIView convertWorldPoint:target].y - [UIView convertWorldPoint:selfView].y;
-}
-
-
-//MARK:===============================================================
-//MARK:                     < speed >
-//MARK:===============================================================
-
-//目前简单粗暴两桢差值 (随后有需要改用微积分)
+//speed >> 目前简单粗暴两桢差值 (随后有需要改用微积分)
 +(CGFloat) speed:(UIView*)selfView target:(UIView*)target{
     CGFloat speed = 0;
     CGPoint targetPoint = [UIView convertWorldPoint:target];
@@ -117,5 +96,38 @@
     return speed;
 }
 
+//direction
++(CGFloat) direction:(UIView*)selfView target:(UIView*)target{
+    CGPoint distanceP = [self distancePoint:selfView target:target];
+    CGFloat rads = atan2f(distanceP.y,distanceP.x);
+    //-PI -> PI
+    NSLog(@"视觉目标方向 >> %f",rads);
+    
+    //从右至左,上面为-0 -> -3.14
+    //从右至左,下面为0 -> 3.14
+    return -rads;
+}
+
+//direction
++(CGFloat) distance:(UIView*)selfView target:(UIView*)target{
+    CGPoint distanceP = [self distancePoint:selfView target:target];
+    CGFloat distance = sqrt(powf(distanceP.x, 2) + powf(distanceP.y, 2));
+    return distance;
+}
+
+
+//MARK:===============================================================
+//MARK:                     < PrivateMethod >
+//MARK:===============================================================
++(CGPoint) distancePoint:(UIView*)selfView target:(UIView*)target{
+    if (selfView && target) {
+        CGPoint targetPoint = [UIView convertWorldPoint:target];
+        CGPoint selfPoint = [UIView convertWorldPoint:selfView];
+        CGFloat distanceX = (targetPoint.x - selfPoint.x);
+        CGFloat distanceY = (targetPoint.y - selfPoint.y);
+        return CGPointMake(distanceX, distanceY);
+    }
+    return CGPointZero;
+}
 
 @end

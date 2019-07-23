@@ -27,11 +27,17 @@
 //radius
 @property (assign,nonatomic) CGFloat radius;
 
-//origin
-@property (assign,nonatomic) CGFloat originX;
-@property (assign,nonatomic) CGFloat originY;
-
 //speed
 @property (assign,nonatomic) CGFloat speed;
 
+//direction
+@property (assign,nonatomic) CGFloat direction;
+
+//distance
+@property (assign,nonatomic) CGFloat distance;
+
 @end
+
+//20190723由direction和distance替代;
+//@property (assign,nonatomic) CGFloat originX;
+//@property (assign,nonatomic) CGFloat originY;
