@@ -98,14 +98,22 @@
 
 //direction
 +(CGFloat) direction:(UIView*)selfView target:(UIView*)target{
+    //1. 取距离
     CGPoint distanceP = [self distancePoint:selfView target:target];
-    CGFloat rads = atan2f(distanceP.y,distanceP.x);
-    //-PI -> PI
-    NSLog(@"视觉目标方向 >> %f",rads);
     
-    //从右至左,上面为-0 -> -3.14
-    //从右至左,下面为0 -> 3.14
-    return -rads;
+    //2. 将距离转成角度-PI -> PI (从右至左,上面为-0 -> -3.14 / 从右至左,下面为0 -> 3.14)
+    CGFloat rads = atan2f(distanceP.y,distanceP.x);
+    
+    //3. 将(-PI到PI) 转换成 (0到1)
+    float protoParam = (rads / M_PI + 1) / 2;
+    
+    //4. 将(0到1)转成四舍五入整数(0-8);
+    int paramInt = (int)roundf(protoParam * 8.0f);
+    
+    //5. 如果是8,也是0;
+    float result = (paramInt % 8) / 8.0f;
+    NSLog(@"视觉目标方向 >> 角度:%f 原始参数:%f 返回参数:%f",rads / M_PI * 180,protoParam,result);
+    return result;
 }
 
 //direction

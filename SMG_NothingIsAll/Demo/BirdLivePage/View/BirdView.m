@@ -60,7 +60,9 @@
     value = MAX(MIN(1, value), 0);
     value = value * 2 - 1;
     CGFloat angle = value * M_PI;
-    NSLog(@"以右为0度,逆时针为正,顺时针为负结果 >>对边Y_sin:%f 邻边X_cos:%f y/x_tan:%f",sin(angle),cos(angle),tan(angle));
+    //以右为0度,逆时针为负,顺时针为正;
+    //对边Y,邻边X
+    NSLog(@"fly >> y:%f x:%f angle:%f",sin(angle),cos(angle),value * 180);
     [self setX:self.x + (cos(angle) * 10.0f)];
     [self setY:self.y + (sin(angle) * 10.0f)];
 }
@@ -78,7 +80,8 @@
 }
 
 -(void) touchWing{
-    [AIReactorControl commitReactor:FLY_RDS];
+    float random = (arc4random() % 8) / 8.0f;
+    [AIReactorControl commitReactor:FLY_RDS datas:@[@(random)]];
 }
 
 -(void) dropUp{
