@@ -147,10 +147,9 @@ static AIThinkingControl *_instance;
     }
     [self.thinkOut dataOut];
     
-    ////TODO:
-    //1. 在看到远投的坚果时,此处应该行为化,并做出行为,而不是直接使demand无效;
-    //2. 行为化失败则急,成功则输出行为 (飞行);
-    //3. 此处应保证,小鸟通过摸反射,学会飞行导致距离的变化; (下步重要训练点)
+    
+    //TODOTOMORROW:
+    
     
     
     

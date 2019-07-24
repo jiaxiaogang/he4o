@@ -62,7 +62,7 @@
                 //1) 同向较弱的撤消
                 if (labs(urgentTo) > labs(checkItem.urgentTo)) {
                     [self.loopCache removeObjectAtIndex:i];
-                    NSLog(@"demandManager >> 同向较弱撤消 %lu",self.loopCache.count);
+                    NSLog(@"demandManager >> 同向较弱撤消 %lu",(unsigned long)self.loopCache.count);
                     limit--;
                     i--;
                 }else{
@@ -88,7 +88,7 @@
         newItem.urgentTo = urgentTo;
         newItem.score = order;
         [self.loopCache addObject:newItem];
-        NSLog(@"demandManager >> 新需求 %lu",self.loopCache.count);
+        NSLog(@"demandManager >> 新需求 %lu",(unsigned long)self.loopCache.count);
     }
 }
 
