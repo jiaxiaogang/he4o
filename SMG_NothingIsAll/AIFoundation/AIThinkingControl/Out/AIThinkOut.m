@@ -50,6 +50,10 @@
         outMvModel = [self dataOut_MvScheme:demandModel];
     }
     
+    //TODOTOMORROW:
+    //1. 此处,outMvModel取到,解决问题的mvDirection结果,但再往下,仍然是进到反射输出了,,,查为什么行为化失败了,,,
+    
+    
     //3. 再为空,评价mvModel_无解决经验,则反射输出;
     if (!outMvModel) {
         [self dataOut_ActionScheme:nil];
