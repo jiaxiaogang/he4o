@@ -22,7 +22,7 @@
     
     //2. 构建具象节点 (优先用本地已有,否则new)
     AIAlgNode *conNode = [[AIAlgNode alloc] init];
-    conNode.pointer = [SMGUtils createPointer:kPN_ALG_NODE algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:isOut isMem:isMem];
+    conNode.pointer = [SMGUtils createPointerForAlg:kPN_ALG_NODE isOut:isOut isMem:isMem];
     
     //3. 指定value_ps
     conNode.content_ps = [SMGUtils sortPointers:algsArr];
@@ -129,7 +129,7 @@
         if (!findAbsNode) {
             findAbsNode = [[AIAbsAlgNode alloc] init];
             BOOL isOut = [AINetUtils checkAllOfOut:sortSames];
-            findAbsNode.pointer = [SMGUtils createPointer:kPN_ALG_ABS_NODE algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:isOut isMem:isMem];
+            findAbsNode.pointer = [SMGUtils createPointerForAlg:kPN_ALG_ABS_NODE isOut:isOut isMem:isMem];
             findAbsNode.content_ps = sortSames;
             
             ///1. value.refPorts (更新微信息的引用序列)

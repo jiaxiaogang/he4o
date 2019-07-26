@@ -92,6 +92,11 @@ static int readDiskCount;
     return [AIKVPointer newWithPointerId:pointerId folderName:kPN_DATA algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false isMem:false];
 }
 
++(AIKVPointer*) createPointerForAlg:(NSString*)folderName isOut:(BOOL)isOut isMem:(BOOL)isMem{
+    NSInteger pointerId = [SMGUtils createPointerId:DefaultAlgsType dataSource:DefaultDataSource];
+    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_ALG_NODE algsType:AlgNodeAlgsType(pointerId) dataSource:DefaultDataSource isOut:isOut isMem:isMem];
+}
+
 @end
 
 
