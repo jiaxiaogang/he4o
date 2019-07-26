@@ -225,6 +225,9 @@
  *  4. 构建mv节点;
  */
 +(AINetAbsFoNode*)analogyInner_Creater:(AnalogyInnerType)type target_p:(AIKVPointer*)target_p algA:(AIAlgNode*)algA algB:(AIAlgNode*)algB rangeOrders:(NSArray*)rangeOrders conFo:(AIFoNodeBase*)conFo{
+    
+    NSLog(@"========TODOTOMORROW:构建有无大小节点");
+    
     //1. 数据检查
     rangeOrders = ARRTOOK(rangeOrders);
     if (target_p && algA && algB) {

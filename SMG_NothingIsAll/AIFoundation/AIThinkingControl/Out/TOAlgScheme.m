@@ -59,6 +59,9 @@
     }else{
         //3. 第2级: 直接对当前祖母进行cHav并行为化;
         AIAlgNodeBase *havAlg = [ThinkingUtils dataOut_GetAlgNodeWithInnerType:AnalogyInnerType_Hav algsType:curAlg_p.algsType dataSource:curAlg_p.dataSource];
+        if (!havAlg) {
+            NSLog(@"========TODOTOMORROW:未找到有无大小节点");
+        }
         [self convert2Out_RelativeAlg:havAlg success:^(AIFoNodeBase *havFo, NSArray *actions) {
             //4. hav行为化成功;
             [result addObjectsFromArray:actions];

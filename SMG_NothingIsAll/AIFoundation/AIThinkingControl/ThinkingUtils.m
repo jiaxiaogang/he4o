@@ -288,7 +288,7 @@
  *  MARK:--------------------根据概念标识,获取概念的"有无大小"节点--------------------
  *  BUG记录190726:
  *      问题: 因概念节点中,algsType&dataSource多为@" ",导致无法准确定位到对应结果;
- *      解决: 在概念节点的create中,将@"alg_{pId}"作为algsType;
+ *      解决: 在概念节点的create中,将@"{pId}"作为概念节点的algsType;
  */
 +(AIAlgNodeBase*) dataOut_GetAlgNodeWithInnerType:(AnalogyInnerType)type algsType:(NSString*)algsType dataSource:(NSString*)dataSource{
     //1. 获取innerType的值;
