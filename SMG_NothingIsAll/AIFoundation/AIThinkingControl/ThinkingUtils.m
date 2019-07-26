@@ -228,7 +228,7 @@
 
 +(id) scheme_GetAValidNode:(NSArray*)check_ps except_ps:(NSMutableArray*)except_ps checkBlock:(BOOL(^)(id checkNode))checkBlock{
     //1. 数据检查
-    if (!ARRISOK(check_ps) || !ARRISOK(except_ps)) {
+    if (!ARRISOK(check_ps)) {
         return nil;
     }
     
@@ -284,9 +284,20 @@
     return result;
 }
 
+/**
+ *  MARK:--------------------根据概念标识,获取概念的"有无大小"节点--------------------
+ *  BUG记录190726:
+ *      问题: 因概念节点中,algsType&dataSource多为@" ",导致无法准确定位到对应结果;
+ *      解决: 在概念节点的create中,将@"alg_{pId}"作为algsType;
+ */
 +(AIAlgNodeBase*) dataOut_GetAlgNodeWithInnerType:(AnalogyInnerType)type algsType:(NSString*)algsType dataSource:(NSString*)dataSource{
+    //1. 获取innerType的值;
     NSInteger typeValue = [self getInnerTypeValue:type];
+    
+    //2. 获取相应的微信息;
     AIPointer *value_p = [theNet getNetDataPointerWithData:@(typeValue) algsType:algsType dataSource:dataSource];
+    
+    //3. 从微信息,联想refPorts绝对匹配的概念节点;
     return [theNet getAbsoluteMatchingAlgNodeWithValueP:value_p];
 }
 
