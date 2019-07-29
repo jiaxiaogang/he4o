@@ -244,7 +244,11 @@
         
         //1. 如果未找到复现方式,或解决方式,则产生情绪:急
         //2. 通过急,输出output表情哭
-        NSLog(@"反射输出 >>");
+        
+        //1. 心急情绪释放,平复思维;
+        [self useEnergy];
+        
+        //2. 反射输出
         [Output output_Mood:AIMoodType_Anxious];
     }
 }

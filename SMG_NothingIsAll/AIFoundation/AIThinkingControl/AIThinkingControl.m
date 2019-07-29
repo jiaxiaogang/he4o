@@ -133,16 +133,16 @@ static AIThinkingControl *_instance;
     if (!ISOK(cmvNode, AICMVNodeBase.class)) {
         return;
     }
-    NSString *algsType = cmvNode.urgentTo_p.algsType;
-    NSInteger urgentTo = [NUMTOOK([AINetIndex getData:cmvNode.urgentTo_p]) integerValue];
     NSInteger delta = [NUMTOOK([AINetIndex getData:cmvNode.delta_p]) integerValue];
     if (delta == 0) {
         return;
     }
     
     //2. 将联想到的cmv更新energy & 更新demandManager & decisionLoop
-    [self updateEnergy:((urgentTo + 9)/10)];
     if (toDemand) {
+        NSString *algsType = cmvNode.urgentTo_p.algsType;
+        NSInteger urgentTo = [NUMTOOK([AINetIndex getData:cmvNode.urgentTo_p]) integerValue];
+        [self updateEnergy:((urgentTo + 9)/10)];
         [self.demandManager updateCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
     }
     [self.thinkOut dataOut];
