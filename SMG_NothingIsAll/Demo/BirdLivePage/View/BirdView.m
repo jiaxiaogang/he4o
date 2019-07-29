@@ -80,6 +80,10 @@
 }
 
 -(void) touchWing{
+    //1. 飞前视觉
+    [self see:[self.delegate birdView_GetPageView]];
+    
+    //2. 反射飞行
     float random = (arc4random() % 8) / 8.0f;
     [AIReactorControl commitReactor:FLY_RDS datas:@[@(random)]];
 }
@@ -131,10 +135,15 @@
         }else if([FLY_RDS isEqualToString:rds]){
             //3. 扇翅膀反射
             [self fly:[paramNum floatValue]];
+            
+            //3. 飞后视觉
+            [self see:[self.delegate birdView_GetPageView]];
         }else if([ANXIOUS_RDS isEqualToString:rds]){
+            //4. 飞前视觉
+            [self see:[self.delegate birdView_GetPageView]];
+            
             //4. 小鸟焦急时_扇翅膀;
-            int random = arc4random();
-            CGFloat data = (random % 100) / 100.0f;
+            CGFloat data = (arc4random() % 8) / 8.0f;
             [AIReactorControl commitReactor:FLY_RDS datas:@[@(data)]];
         }
     }
