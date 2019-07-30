@@ -145,6 +145,15 @@
             
             //3. 检查能量值
             if (canAssBlock && !canAssBlock()) {
+                //训练距离:
+//                *      1. 点击一下,马上饿,产生demand和energy;
+//                *      2. 远投一个坚果;
+//                *      3. 点击摸翅膀,让鸟在触摸反射动下,和坚果距离产生变化;
+//                *      4. 直投,让鸟在时序中,意识到靠飞行,来距离变化,(调试内类比构建);
+                
+                //测到问题:依次点击后,最终却构建了radius的变化,而不是距离变化;
+                
+                
                 return;
             }
             
@@ -172,6 +181,7 @@
                         if (a_p.pointerId != b_p.pointerId) {
                             NSNumber *numA = [AINetIndex getData:a_p];
                             NSNumber *numB = [AINetIndex getData:b_p];
+                            NSLog(@"inner > 构建变化,%@:%@->%@",a_p.dataSource,numA,numB);
                             NSComparisonResult compareResult = [NUMTOOK(numA) compare:NUMTOOK(numB)];
                             if (compareResult == NSOrderedAscending) {
                                 abFo = [self analogyInner_Creater:AnalogyInnerType_Less target_p:a_p algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
@@ -183,12 +193,14 @@
                 }else if(aSub_ps.count == 1 && bSub_ps.count == 0){
                     //2) 当长度各A=1和B=0时,判定A0是否为祖母: 无;
                     AIKVPointer *a_p = ARR_INDEX(aSub_ps, 0);
+                    NSLog(@"inner > 构建无,%@",a_p.identifier);
                     if ([kPN_ALG_ABS_NODE isEqualToString:a_p.folderName]) {
                         abFo = [self analogyInner_Creater:AnalogyInnerType_None target_p:a_p algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
                     }
                 }else if(aSub_ps.count == 0 && bSub_ps.count == 1){
                     //3) 当长度各A=0和B=1时,判定B0是否为祖母: 有;
                     AIKVPointer *b_p = ARR_INDEX(bSub_ps, 0);
+                    NSLog(@"inner > 构建有,%@",b_p.identifier);
                     if ([kPN_ALG_ABS_NODE isEqualToString:b_p.folderName]) {
                         abFo = [self analogyInner_Creater:AnalogyInnerType_Hav target_p:b_p algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
                     }
@@ -197,7 +209,7 @@
             
             //6. 对energy消耗;
             if (!ISOK(abFo, AINetAbsFoNode.class)) {
-                return;
+                continue;
             }
             if (updateEnergy) {
                 updateEnergy();
@@ -225,9 +237,7 @@
  *  4. 构建mv节点;
  */
 +(AINetAbsFoNode*)analogyInner_Creater:(AnalogyInnerType)type target_p:(AIKVPointer*)target_p algA:(AIAlgNode*)algA algB:(AIAlgNode*)algB rangeOrders:(NSArray*)rangeOrders conFo:(AIFoNodeBase*)conFo{
-    
-    NSLog(@"========TODOTOMORROW:构建有无大小节点");
-    
+    NSLog(@"inner > 内类比,构建器执行构建");
     //1. 数据检查
     rangeOrders = ARRTOOK(rangeOrders);
     if (target_p && algA && algB) {

@@ -112,6 +112,7 @@ static AIThinkingControl *_instance;
  */
 -(void) updateEnergy:(NSInteger)delta{
     self.energy = [ThinkingUtils updateEnergy:self.energy delta:delta];
+    NSLog(@"inner > delta:%d = energy:%d",delta,self.energy);
 }
 
 
@@ -142,17 +143,10 @@ static AIThinkingControl *_instance;
     if (toDemand) {
         NSString *algsType = cmvNode.urgentTo_p.algsType;
         NSInteger urgentTo = [NUMTOOK([AINetIndex getData:cmvNode.urgentTo_p]) integerValue];
-        [self updateEnergy:((urgentTo + 9)/10)];
+        [self updateEnergy:urgentTo];//190730前:((urgentTo + 9)/10) 190730:urgentTo
         [self.demandManager updateCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
     }
     [self.thinkOut dataOut];
-    
-    
-    //TODOTOMORROW:
-    
-    
-    
-    
 }
 
 -(void) aiThinkIn_UpdateEnergy:(NSInteger)delta{
