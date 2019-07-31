@@ -327,8 +327,8 @@
                     //5. 执行外类比;
                     [AIThinkInAnalogy analogyOutside:foNode assFo:assFrontNode canAss:^BOOL{
                         return [self canAss];
-                    } updateEnergy:^{
-                        [self updateEnergy];
+                    } updateEnergy:^(CGFloat delta) {
+                        [self updateEnergy:delta];
                     }];
                 }
             }
@@ -338,8 +338,8 @@
     //12. 内类比
     [AIThinkInAnalogy analogyInner:foNode canAss:^BOOL{
         return [self canAss];
-    } updateEnergy:^{
-        [self updateEnergy];
+    } updateEnergy:^(CGFloat delta) {
+        [self updateEnergy:delta];
     }];
 }
 
@@ -356,9 +356,9 @@
 }
 
 //消耗能量值 (目前仅在构建后);
--(void) updateEnergy{
+-(void) updateEnergy:(CGFloat)delta{
     if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_UpdateEnergy:)]) {
-        [self.delegate aiThinkIn_UpdateEnergy:-1];
+        [self.delegate aiThinkIn_UpdateEnergy:delta];
     }
 }
 

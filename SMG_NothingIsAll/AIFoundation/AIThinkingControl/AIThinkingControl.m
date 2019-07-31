@@ -34,7 +34,17 @@
 @property (strong,nonatomic) AIShortMemory *shortMemory;
 @property (strong,nonatomic) NSMutableArray *thinkFeedCache;    //短时记忆_思维流(包括shortCache和cmvCache,10分钟内都会存在此处(人类可能一天或几小时))
 @property (strong, nonatomic) DemandManager *demandManager;   //输出循环所用到的数据管理器;
-@property (assign, nonatomic) NSInteger energy;                 //当前能量值;(mv输入时激活,思维的循环中消耗)
+
+/**
+ *  MARK:--------------------当前能量值--------------------
+ *  1. 激活: mv输入时激活;
+ *  2. 消耗: 思维的循环中消耗;
+ *      1. 构建"概念节点"消耗0.1;
+ *      2. 构建"时序节点"消耗1;
+ *
+ *  3. 范围: 0-20;
+ */
+@property (assign, nonatomic) CGFloat energy;
 
 @property (strong, nonatomic) AIThinkIn *thinkIn;
 @property (strong, nonatomic) AIThinkOut *thinkOut;
@@ -110,9 +120,9 @@ static AIThinkingControl *_instance;
 /**
  *  MARK:--------------------更新energy--------------------
  */
--(void) updateEnergy:(NSInteger)delta{
+-(void) updateEnergy:(CGFloat)delta{
     self.energy = [ThinkingUtils updateEnergy:self.energy delta:delta];
-    NSLog(@"inner > delta:%d = energy:%d",delta,self.energy);
+    NSLog(@"inner > delta:%f = energy:%f",delta,self.energy);
 }
 
 
@@ -149,7 +159,7 @@ static AIThinkingControl *_instance;
     [self.thinkOut dataOut];
 }
 
--(void) aiThinkIn_UpdateEnergy:(NSInteger)delta{
+-(void) aiThinkIn_UpdateEnergy:(CGFloat)delta{
     [self updateEnergy:delta];
 }
 
@@ -169,7 +179,7 @@ static AIThinkingControl *_instance;
     return self.energy > 0;
 }
 
--(void) aiThinkOut_UpdateEnergy:(NSInteger)delta{
+-(void) aiThinkOut_UpdateEnergy:(CGFloat)delta{
     [self updateEnergy:delta];
 }
 

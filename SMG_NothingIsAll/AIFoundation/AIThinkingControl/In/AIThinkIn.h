@@ -24,7 +24,7 @@
  *      3. 进行dataOut决策行为化;
  */
 -(void) aiThinkIn_CommitMvNode:(AICMVNodeBase*)cmvNode toDemand:(BOOL)toDemand;
--(void) aiThinkIn_UpdateEnergy:(NSInteger)delta;                //更新思维能量值;
+-(void) aiThinkIn_UpdateEnergy:(CGFloat)delta;                //更新思维能量值;
 -(BOOL) aiThinkIn_EnergyValid;                                  //能量值是否>0;
 
 @end

@@ -13,7 +13,7 @@
 
 -(DemandModel*) aiThinkOut_GetCurrentDemand;            //获取当前需求;
 -(BOOL) aiThinkOut_EnergyValid;                         //能量值是否>0;
--(void) aiThinkOut_UpdateEnergy:(NSInteger)delta;       //更新思维能量值;
+-(void) aiThinkOut_UpdateEnergy:(CGFloat)delta;       //更新思维能量值;
 
 @end
 

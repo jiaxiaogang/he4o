@@ -23,7 +23,7 @@
 //MARK:===============================================================
 //MARK:                     < 外类比部分 >
 //MARK:===============================================================
-+(void) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)())updateEnergy{
++(void) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
     //1. 类比orders的规律
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
     if (fo && assFo) {
@@ -58,7 +58,7 @@
                             [theNet createAbsAlgNode:sameValue_ps conAlgs:@[algNodeA,algNodeB] isMem:false];
                             ///4. 构建时,消耗能量值;
                             if (updateEnergy) {
-                                updateEnergy();
+                                updateEnergy(-0.1f);
                             }
                         }
                     }
@@ -132,7 +132,7 @@
 //MARK:===============================================================
 //MARK:                     < 内类比部分 >
 //MARK:===============================================================
-+(void) analogyInner:(AIFoNodeBase*)checkFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)())updateEnergy{
++(void) analogyInner:(AIFoNodeBase*)checkFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
     //1. 数据检查
     if (!ISOK(checkFo, AIFoNodeBase.class)) {
         return;
@@ -214,7 +214,7 @@
                 continue;
             }
             if (updateEnergy) {
-                updateEnergy();
+                updateEnergy(-1.0f);
             }
             
             //7. 内中有外
@@ -322,7 +322,7 @@
  *  2. 复用外类比方法;
  *  3. 一个抽象了a1-range-a2的时序,必然是抽象的,必然是硬盘网络中的;所以此处不必考虑联想内存网络中的assAbFo;
  */
-+(void)analogyInner_Outside:(AINetAbsFoNode*)abFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)())updateEnergy{
++(void)analogyInner_Outside:(AINetAbsFoNode*)abFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
     //1. 数据检查
     if (ISOK(abFo, AINetAbsFoNode.class)) {
         //2. 取用来联想的aAlg;
