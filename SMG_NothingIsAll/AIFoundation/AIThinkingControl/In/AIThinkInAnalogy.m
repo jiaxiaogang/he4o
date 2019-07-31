@@ -179,6 +179,8 @@
                     if ([a_p.identifier isEqualToString:b_p.identifier]) {
                         //注: 对比微信息是否不同 (MARK_VALUE:如微信息去重功能去掉,此处要取值再进行对比)
                         if (a_p.pointerId != b_p.pointerId) {
+                            [theApp.nvView setNodeData:algNodeA.pointer];
+                            [theApp.nvView setNodeData:algNodeB.pointer];
                             NSNumber *numA = [AINetIndex getData:a_p];
                             NSNumber *numB = [AINetIndex getData:b_p];
                             NSLog(@"inner > 构建变化,%@:%@->%@",a_p.dataSource,numA,numB);

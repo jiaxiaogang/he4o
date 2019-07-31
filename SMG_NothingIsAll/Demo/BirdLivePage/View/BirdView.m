@@ -140,11 +140,13 @@
             [self see:[self.delegate birdView_GetPageView]];
         }else if([ANXIOUS_RDS isEqualToString:rds]){
             //4. 飞前视觉
-            [self see:[self.delegate birdView_GetPageView]];
-            
+            //[self see:[self.delegate birdView_GetPageView]];
             //4. 小鸟焦急时_扇翅膀;
-            CGFloat data = (arc4random() % 8) / 8.0f;
-            [AIReactorControl commitReactor:FLY_RDS datas:@[@(data)]];
+            //CGFloat data = (arc4random() % 8) / 8.0f;
+            //[AIReactorControl commitReactor:FLY_RDS datas:@[@(data)]];
+            
+            //4. 190731由飞改为叫;
+            [theApp setTipLog:@"叽叽喳喳叫一叫"];
         }
     }
 }
