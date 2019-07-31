@@ -344,6 +344,13 @@
     }
 }
 
+-(NSString*)moduleView_ShowName:(id)data{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_ShowName:)]) {
+        return [self.delegate nv_ShowName:data];
+    }
+    return nil;
+}
+
 //MARK:===============================================================
 //MARK:                     < SelfDelegate >
 //MARK:===============================================================

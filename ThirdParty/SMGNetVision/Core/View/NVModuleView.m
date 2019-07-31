@@ -227,6 +227,15 @@
     //2. 清数据和节点
     [self clear];
 }
+- (IBAction)showNameBtnOnClick:(id)sender {
+    NSArray *nViews = ARRTOOK([self subViews_AllDeepWithClass:NVNodeView.class]);
+    for (NVNodeView *nodeView in nViews) {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(moduleView_ShowName:)]) {
+            NSString *showName = [self.delegate moduleView_ShowName:nodeView.data];
+            [nodeView setTitle:showName showTime:10];
+        }
+    }
+}
 
 /**
  *  MARK:--------------------NVNodeViewDelegate--------------------

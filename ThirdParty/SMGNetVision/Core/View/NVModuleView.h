@@ -46,6 +46,9 @@
 //清除所有网络中的有关的线
 -(void)moduleView_ClearLine:(NSArray*)datas;
 
+//报名
+-(NSString*)moduleView_ShowName:(id)data;
+
 @end
 
 /**

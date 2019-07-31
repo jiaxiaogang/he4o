@@ -41,6 +41,9 @@
 //追加节点
 -(void)nv_AddNodeOnClick;
 
+//报名
+-(NSString*)nv_ShowName:(id)data;
+
 @end
 
 /**

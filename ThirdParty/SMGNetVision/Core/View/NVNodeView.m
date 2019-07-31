@@ -12,13 +12,15 @@
 
 @interface NVNodeView ()
 
-@property (strong,nonatomic) IBOutlet UIControl *containerView;
+@property (strong,nonatomic) IBOutlet UIView *containerView;
+@property (weak, nonatomic) IBOutlet UIControl *contentView;
 @property (strong, nonatomic) UIView *customSubView;
 @property (weak, nonatomic) IBOutlet UIButton *topBtn;
 @property (weak, nonatomic) IBOutlet UIButton *bottomBtn;
 @property (weak, nonatomic) IBOutlet UIButton *leftBtn;
 @property (weak, nonatomic) IBOutlet UIButton *rightBtn;
 @property (weak, nonatomic) IBOutlet UILabel *lightLab;
+@property (weak, nonatomic) IBOutlet UILabel *titleLab;
 
 @end
 
@@ -37,10 +39,6 @@
     //self
     [self setBackgroundColor:[UIColor clearColor]];
     [self setFrame:CGRectMake(0, 0, 20, 20)];
-    [self.layer setMasksToBounds:true];
-    [self.layer setCornerRadius:10];
-    [self.layer setBorderColor:UIColorWithRGBHex(0xAAAAAA).CGColor];
-    [self.layer setBorderWidth:1];
     
     //containerView
     [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];
@@ -51,6 +49,12 @@
         make.top.mas_equalTo(self);
         make.bottom.mas_equalTo(self);
     }];
+    
+    //contentView
+    [self.contentView.layer setMasksToBounds:true];
+    [self.contentView.layer setCornerRadius:10];
+    [self.contentView.layer setBorderColor:UIColorWithRGBHex(0xAAAAAA).CGColor];
+    [self.contentView.layer setBorderWidth:1];
     
     //btn
     NSArray *btns = @[self.topBtn,self.bottomBtn,self.leftBtn,self.rightBtn];
@@ -95,26 +99,31 @@
     //5. nodeColor
     UIColor *nodeColor = [self nodeView_GetNodeColor:self.data];
     if (nodeColor) {
-        [self.containerView setBackgroundColor:nodeColor];
+        [self.contentView setBackgroundColor:nodeColor];
     }
     
     //6. nodeAlpha
     if (self.delegate && [self.delegate respondsToSelector:@selector(nodeView_GetNodeAlpha:)]) {
         CGFloat alpha = [self.delegate nodeView_GetNodeAlpha:self.data];
-        [self setAlpha:alpha];
+        [self.contentView setAlpha:alpha];
     }
 }
 
 -(void) light:(NSString*)lightStr{
     [self.lightLab setText:lightStr];
-    [self.lightLab setAlpha:1.0f];
-    //dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-    //    [self.lightLab setAlpha:0];
-    //});
 }
 
 -(void) clearLight{
-    [self.lightLab setAlpha:0];
+    [self.lightLab setText:@""];
+}
+
+-(void) setTitle:(NSString*)titleStr showTime:(CGFloat)showTime {
+    [self.titleLab setText:titleStr];
+    if (showTime > 0) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(showTime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.titleLab setText:@""];
+        });
+    }
 }
 
 //MARK:===============================================================

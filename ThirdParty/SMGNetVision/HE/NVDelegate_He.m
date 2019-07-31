@@ -15,6 +15,8 @@
 #import "ThinkingUtils.h"
 #import "CustomAddNodeWindow.h"
 #import "NVHeUtil.h"
+#import "NVModuleView.h"
+#import "NVNodeView.h"
 
 @implementation NVDelegate_He
 
@@ -272,6 +274,10 @@
         CustomAddNodeWindow *addNodeWindow = [[CustomAddNodeWindow alloc] init];
         [theApp.window addSubview:addNodeWindow];
     }
+}
+
+-(NSString*)nv_ShowName:(AIKVPointer*)data_p{
+    return STRFORMAT(@"%d",data_p.pointerId);
 }
 
 

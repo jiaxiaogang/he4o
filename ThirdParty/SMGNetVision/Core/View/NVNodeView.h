@@ -40,4 +40,6 @@
 -(void) light:(NSString*)lightStr;
 -(void) clearLight;
 
+-(void) setTitle:(NSString*)titleStr showTime:(CGFloat)showTime;
+
 @end
