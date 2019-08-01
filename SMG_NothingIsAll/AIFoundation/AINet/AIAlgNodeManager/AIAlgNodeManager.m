@@ -120,7 +120,7 @@
         }
         for (AIPort *port in allAbsPorts) {
             if ([samesMd5 isEqualToString:port.header]) {
-                findAbsNode = [SMGUtils searchObjectForPointer:port.target_p fileName:kFNNode time:cRTNode];
+                findAbsNode = [SMGUtils searchNode:port.target_p];
                 break;
             }
         }

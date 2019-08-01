@@ -51,7 +51,7 @@
     return 0;
 }
 +(CGFloat) sizeHeight:(UIView*)target{
-    if (target) return target.width;
+    if (target) return target.height;
     return 0;
 }
 
