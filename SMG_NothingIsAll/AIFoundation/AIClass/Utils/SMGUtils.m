@@ -575,14 +575,28 @@ static int readDiskCount;
 
 +(NSMutableArray*) removeSub_p:(AIPointer*)sub_p parent_ps:(NSMutableArray*)parent_ps{
     if (ISOK(sub_p, AIPointer.class) && ARRISOK(parent_ps)) {
-        for (AIPointer *parent_p in parent_ps) {
+        for (NSInteger i = 0; i < parent_ps.count; i++) {
+            AIPointer *parent_p = ARR_INDEX(parent_ps, i);
             if ([sub_p isEqual:parent_p]) {
-                [parent_ps removeObject:parent_p];
-                return parent_ps;
+                [parent_ps removeObjectAtIndex:i];
+                break;
             }
         }
     }
     return parent_ps;
 }
+
+//一次将parent_ps中,所有某指针移除; (数组中是允许有多个重复指针的)
+//+(NSMutableArray*) removeAllSub_p:(AIPointer*)sub_p parent_ps:(NSMutableArray*)parent_ps{
+//    if (ISOK(sub_p, AIPointer.class) && ARRISOK(parent_ps)) {
+//        for (AIPointer *parent_p in parent_ps) {
+//            if ([sub_p isEqual:parent_p]) {
+//                [parent_ps removeObject:parent_p];
+//                return parent_ps;
+//            }
+//        }
+//    }
+//    return parent_ps;
+//}
 
 @end
