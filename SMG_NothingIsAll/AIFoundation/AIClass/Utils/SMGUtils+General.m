@@ -70,9 +70,9 @@
     return (d && [d isKindOfClass:[NSDictionary class]]) ? d : [NSDictionary new];
 }
 
-//pointer
+//pointer (pointerId从0开始)
 +(BOOL) pointerIsOk:(AIPointer*)p{
-    return (p && [p isKindOfClass:[AIPointer class]] && p.pointerId > 0);
+    return (p && [p isKindOfClass:[AIPointer class]] && p.pointerId >= 0);
 }
 
 //object
