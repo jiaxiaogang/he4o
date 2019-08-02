@@ -182,12 +182,6 @@
             if (ISOK(foNode, AIFoNodeBase.class) && foNode.cmvNode_p) {
                 return @[foNode.cmvNode_p];
             }
-        }else if ([self isMv:node_p]) {
-            //4. 如果是mvNode则返回mv指向foNode_p;
-            AICMVNodeBase *mvNode = [SMGUtils searchNode:node_p];
-            if (ISOK(mvNode, AICMVNodeBase.class) && mvNode.foNode_p) {
-                return @[mvNode.foNode_p];
-            }
         }
     }
     return nil;
@@ -206,6 +200,12 @@
             AIFoNodeBase *foNode = [SMGUtils searchNode:node_p];
             if (ISOK(foNode, AIFoNodeBase.class) && foNode.cmvNode_p) {
                 return foNode.orders_kvp;
+            }
+        }else if ([self isMv:node_p]) {
+            //3. 如果是mvNode则返回mv指向foNode_p;
+            AICMVNodeBase *mvNode = [SMGUtils searchNode:node_p];
+            if (ISOK(mvNode, AICMVNodeBase.class) && mvNode.foNode_p) {
+                return @[mvNode.foNode_p];
             }
         }
     }

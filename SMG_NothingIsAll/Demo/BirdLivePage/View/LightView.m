@@ -34,6 +34,7 @@
     [self setFrame:CGRectMake(ScreenWidth - 25, 60, 30, 30)];
     [self.layer setCornerRadius:15];
     [self.layer setMasksToBounds:true];
+    self.tag = visibleTag;
     
     //containerView
     [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];

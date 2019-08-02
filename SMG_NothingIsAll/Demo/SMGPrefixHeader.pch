@@ -50,3 +50,8 @@
  */
 #define TPLog(a,...) [theApp setTipLog:STRFORMAT(a,##__VA_ARGS__)]
 #define theNV (theApp.nvView)
+
+/**
+ *  MARK:--------------------皮层算法--------------------
+ */
+#define visibleTag 999  //视觉可见标记

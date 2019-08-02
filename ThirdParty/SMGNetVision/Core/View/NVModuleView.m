@@ -261,22 +261,22 @@
 -(void) nodeView_TopClick:(id)nodeData{
     NSArray *absNodeDatas = [self moduleView_AbsNodeDatas:nodeData];
     [self setDataWithNodeDatas:absNodeDatas];
-    NSLog(@"%@",absNodeDatas);
+    TPLog(@"absPorts:%d",absNodeDatas.count);
 }
 -(void) nodeView_BottomClick:(id)nodeData{
     NSArray *conNodeDatas = [self moduleView_ConNodeDatas:nodeData];
     [self setDataWithNodeDatas:conNodeDatas];
-    NSLog(@"%@",conNodeDatas);
+    TPLog(@"conPorts:%d",conNodeDatas.count);
 }
 -(void) nodeView_LeftClick:(id)nodeData{
     NSArray *contentNodeDatas = [self moduleView_ContentNodeDatas:nodeData];
     [self.delegate moduleView_SetNetDatas:contentNodeDatas];
-    NSLog(@"%@",contentNodeDatas);
+    TPLog(@"contentPorts:%d",contentNodeDatas.count);
 }
 -(void) nodeView_RightClick:(id)nodeData{
     NSArray *refNodeDatas = [self moduleView_RefNodeDatas:nodeData];
     [self.delegate moduleView_SetNetDatas:refNodeDatas];
-    NSLog(@"%@",refNodeDatas);
+    TPLog(@"refPorts:%d",refNodeDatas.count);
 }
 
 //MARK:===============================================================

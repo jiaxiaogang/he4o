@@ -728,6 +728,7 @@
 		08AF45471E97D0B500377887 /* SMG_NothingIsAll */ = {
 			isa = PBXGroup;
 			children = (
+				08E65A0722F3BAE3009ED1CF /* CortexAlgorithms */,
 				082F9D581EB236AC0009F6A9 /* Demo */,
 				08D7DA401ED1499C004B1018 /* AIFoundation */,
 				08AF454B1E97D0B500377887 /* AppDelegate.h */,
@@ -791,8 +792,6 @@
 				08D471DD1FEB3FFF00C61322 /* AIImvAlgs.m */,
 				08EA48CF202932E70038B982 /* AICustomAlgs.h */,
 				08EA48D0202932E70038B982 /* AICustomAlgs.m */,
-				087268DE219CF3B500B5490F /* AIVisionAlgs.h */,
-				087268DF219CF3B500B5490F /* AIVisionAlgs.m */,
 			);
 			path = AIAlg;
 			sourceTree = "<group>";
@@ -825,6 +824,25 @@
 			path = AIFoundation;
 			sourceTree = "<group>";
 		};
+		08E65A0722F3BAE3009ED1CF /* CortexAlgorithms */ = {
+			isa = PBXGroup;
+			children = (
+				08E65A0822F3BAF8009ED1CF /* Vision */,
+			);
+			path = CortexAlgorithms;
+			sourceTree = "<group>";
+		};
+		08E65A0822F3BAF8009ED1CF /* Vision */ = {
+			isa = PBXGroup;
+			children = (
+				087268DE219CF3B500B5490F /* AIVisionAlgs.h */,
+				087268DF219CF3B500B5490F /* AIVisionAlgs.m */,
+				08236CEA21A23439008D8761 /* AIVisionAlgsModel.h */,
+				08236CEB21A23439008D8761 /* AIVisionAlgsModel.m */,
+			);
+			path = Vision;
+			sourceTree = "<group>";
+		};
 		08EA48C4202929860038B982 /* ImvAlgsModel */ = {
 			isa = PBXGroup;
 			children = (
@@ -850,8 +868,6 @@
 			children = (
 				08EA48CB202932880038B982 /* CustomAlgsModel */,
 				08EA48C4202929860038B982 /* ImvAlgsModel */,
-				08236CEA21A23439008D8761 /* AIVisionAlgsModel.h */,
-				08236CEB21A23439008D8761 /* AIVisionAlgsModel.m */,
 			);
 			path = AlgsModel;
 			sourceTree = "<group>";

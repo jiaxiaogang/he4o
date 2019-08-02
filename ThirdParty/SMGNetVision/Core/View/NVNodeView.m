@@ -140,19 +140,15 @@
 }
 - (IBAction)topBtnOnClick:(id)sender {
     [self nodeView_TopClick:self.data];
-    TPLog(@"absPorts");
 }
 - (IBAction)bottomBtnOnClick:(id)sender {
     [self nodeView_BottomClick:self.data];
-    TPLog(@"conPorts");
 }
 - (IBAction)leftBtnOnClick:(id)sender {
     [self nodeView_LeftClick:self.data];
-    TPLog(@"content");
 }
 - (IBAction)rightBtnOnClick:(id)sender {
     [self nodeView_RightClick:self.data];
-    TPLog(@"refPorts");
 }
 
 //MARK:===============================================================

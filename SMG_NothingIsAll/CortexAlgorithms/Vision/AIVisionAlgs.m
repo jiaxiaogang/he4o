@@ -24,17 +24,19 @@
     
     //2. 生成model
     for (UIView *curView in views) {
-        AIVisionAlgsModel *model = [[AIVisionAlgsModel alloc] init];
-        model.sizeWidth = [self sizeWidth:curView];
-        model.sizeHeight = [self sizeHeight:curView];
-        model.colorRed = [self colorRed:curView];
-        model.colorGreen = [self colorGreen:curView];
-        model.colorBlue = [self colorBlue:curView];
-        model.radius = [self radius:curView];
-        model.speed = [self speed:selfView target:curView];
-        model.direction = [self direction:selfView target:curView];
-        model.distance = [self distance:selfView target:curView];
-        [models addObject:model];
+        if (curView.tag == visibleTag) {
+            AIVisionAlgsModel *model = [[AIVisionAlgsModel alloc] init];
+            model.sizeWidth = [self sizeWidth:curView];
+            model.sizeHeight = [self sizeHeight:curView];
+            model.colorRed = [self colorRed:curView];
+            model.colorGreen = [self colorGreen:curView];
+            model.colorBlue = [self colorBlue:curView];
+            model.radius = [self radius:curView];
+            model.speed = [self speed:selfView target:curView];
+            model.direction = [self direction:selfView target:curView];
+            model.distance = [self distance:selfView target:curView];
+            [models addObject:model];
+        }
     }
     
     //3. 传给thinkingControl

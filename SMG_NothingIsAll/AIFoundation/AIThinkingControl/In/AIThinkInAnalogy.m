@@ -152,7 +152,7 @@
 //                *      4. 直投,让鸟在时序中,意识到靠飞行,来距离变化,(调试内类比构建);
                 
                 //测到问题:依次点击后,最终却构建了radius的变化,而不是距离变化;
-                //测到问题:此处,能量值消耗到0;所以return了;
+                //测到问题:越抽象的fo,反而orders越长;
                 
                 return;
             }
@@ -353,7 +353,7 @@
         }
         
         //4. 对abFo和assAbFo进行类比;
-        [theNV setNodeData:assAbFo];
+        [theNV setNodeData:assAbFo.pointer];
         [self analogyOutside:abFo assFo:assAbFo canAss:canAssBlock updateEnergy:updateEnergy];
     }
 }

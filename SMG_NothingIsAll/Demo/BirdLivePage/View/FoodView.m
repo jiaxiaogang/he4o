@@ -35,6 +35,7 @@
     [self.layer setMasksToBounds:true];
     [self.layer setBorderColor:[UIColor grayColor].CGColor];
     [self setBackgroundColor:[UIColor greenColor]];
+    self.tag = visibleTag;
     
     //containerView
     [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];

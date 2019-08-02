@@ -32,6 +32,7 @@
     //self
     [self setFrame:CGRectMake(ScreenWidth * 0.5f - 50, 0, 50, 150)];
     [self setBackgroundColor:[UIColor clearColor]];
+    self.tag = visibleTag;
     
     //containerView
     [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];
