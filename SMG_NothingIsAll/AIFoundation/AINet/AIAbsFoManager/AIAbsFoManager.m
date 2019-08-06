@@ -28,8 +28,8 @@
     if (!ARRISOK(conFos)) {
         return nil;
     }
-    NSArray *sortSames = ARRTOOK([SMGUtils sortPointers:orderSames]);
-    NSString *samesStr = [SMGUtils convertPointers2String:sortSames];
+    orderSames = ARRTOOK(orderSames);
+    NSString *samesStr = [SMGUtils convertPointers2String:orderSames];
     NSString *samesMd5 = STRTOOK([NSString md5:samesStr]);
     
     //2. 判断algA.absPorts和absB.absPorts中的header,是否已存在algSames的抽象节点;
@@ -63,7 +63,7 @@
         findAbsNode.pointer = [SMGUtils createPointerForNode:kPN_FO_ABS_NODE];
         
         ///1. 收集order_ps (将不在hdNet中的转移)
-        for (AIKVPointer *item_p in sortSames) {
+        for (AIKVPointer *item_p in orderSames) {
             if (item_p.isMem) {
                 AIAlgNodeBase *memAlgNode = [SMGUtils searchNode:item_p];
                 

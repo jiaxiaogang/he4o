@@ -166,6 +166,7 @@
             
             //5. 内类比找不同 (比大小:同区不同值 / 有无)
             AINetAbsFoNode *abFo = nil;
+            NSString *lightStr = nil;
             if (algNodeA && algNodeB){
                 ///1. 取a差集和b差集;
                 NSArray *aSub_ps = [SMGUtils removeSub_ps:algNodeB.content_ps parent_ps:[[NSMutableArray alloc] initWithArray:algNodeA.content_ps]];
@@ -188,8 +189,10 @@
                             NSComparisonResult compareResult = [NUMTOOK(numA) compare:NUMTOOK(numB)];
                             if (compareResult == NSOrderedAscending) {
                                 abFo = [self analogyInner_Creater:AnalogyInnerType_Less target_p:a_p algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
+                                lightStr = @"小";
                             }else if (compareResult == NSOrderedDescending) {
                                 abFo = [self analogyInner_Creater:AnalogyInnerType_Greater target_p:a_p algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
+                                lightStr = @"大";
                             }
                         }
                     }
@@ -199,6 +202,7 @@
                     NSLog(@"inner > 构建无,%@",a_p.identifier);
                     if ([kPN_ALG_ABS_NODE isEqualToString:a_p.folderName]) {
                         abFo = [self analogyInner_Creater:AnalogyInnerType_None target_p:a_p algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
+                        lightStr = @"无";
                     }
                 }else if(aSub_ps.count == 0 && bSub_ps.count == 1){
                     //3) 当长度各A=0和B=1时,判定B0是否为祖母: 有;
@@ -206,6 +210,7 @@
                     NSLog(@"inner > 构建有,%@",b_p.identifier);
                     if ([kPN_ALG_ABS_NODE isEqualToString:b_p.folderName]) {
                         abFo = [self analogyInner_Creater:AnalogyInnerType_Hav target_p:b_p algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
+                        lightStr = @"有";
                     }
                 }
             }
@@ -220,6 +225,7 @@
             
             //7. 内中有外
             [theNV setNodeData:abFo.pointer];
+            [theNV lightNode:abFo.pointer str:lightStr];
             [self analogyInner_Outside:abFo canAss:canAssBlock updateEnergy:updateEnergy];
         }
     }
