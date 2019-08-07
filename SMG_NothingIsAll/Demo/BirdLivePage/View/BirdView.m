@@ -12,9 +12,6 @@
 #import "FoodView.h"
 #import "AIReactorControl.h"
 
-#define EAT_RDS @"EAT_RDS"  //吸吮反射标识
-#define FLY_RDS @"FLY_RDS"  //扇翅膀反射标识 (类似人类的抓握反射)
-
 @interface BirdView ()
 
 @property (strong,nonatomic) IBOutlet UIView *containerView;

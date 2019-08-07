@@ -23,20 +23,31 @@
     return false;
 }
 
-+(NSString*) getLightStrForValue:(AIKVPointer*)value_p{
-    if (ISOK(value_p, AIKVPointer.class)) {
-        if ([@"sizeWidth" isEqualToString:value_p.dataSource]) {
-            return @"一";
-        }else if ([@"sizeHeight" isEqualToString:value_p.dataSource]) {
-            return @"|";
-        }else if ([@"colorRed" isEqualToString:value_p.dataSource]) {
-            return @"R";
-        }else if ([@"colorBlue" isEqualToString:value_p.dataSource]) {
-            return @"B";
-        }else if ([@"colorGreen" isEqualToString:value_p.dataSource]) {
-            return @"G";
-        }else if ([@"radius" isEqualToString:value_p.dataSource]) {
-            return @"角";
++(NSString*) getLightStr:(AIKVPointer*)node_p{
+    if (ISOK(node_p, AIKVPointer.class)) {
+        if ([kPN_VALUE isEqualToString:node_p.folderName]) {
+            if ([@"sizeWidth" isEqualToString:node_p.dataSource]) {
+                return @"一";
+            }else if ([@"sizeHeight" isEqualToString:node_p.dataSource]) {
+                return @"|";
+            }else if ([@"colorRed" isEqualToString:node_p.dataSource]) {
+                return @"R";
+            }else if ([@"colorBlue" isEqualToString:node_p.dataSource]) {
+                return @"B";
+            }else if ([@"colorGreen" isEqualToString:node_p.dataSource]) {
+                return @"G";
+            }else if ([@"radius" isEqualToString:node_p.dataSource]) {
+                return @"角";
+            }else if([EAT_RDS isEqualToString:node_p.dataSource]){
+                return @"吃";
+            }else if([FLY_RDS isEqualToString:node_p.dataSource]){
+                return @"飞";
+            }
+        }else if ([kPN_ALG_NODE isEqualToString:node_p.folderName] ||
+                  [kPN_ALG_ABS_NODE isEqualToString:node_p.folderName]) {
+            if (node_p.isOut) {
+                return @"动";
+            }
         }
     }
     return @"";

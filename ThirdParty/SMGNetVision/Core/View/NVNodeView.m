@@ -9,6 +9,7 @@
 #import "NVNodeView.h"
 #import "MASConstraint.h"
 #import "View+MASAdditions.h"
+#import "BorderLabel.h"
 
 @interface NVNodeView ()
 
@@ -19,7 +20,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *bottomBtn;
 @property (weak, nonatomic) IBOutlet UIButton *leftBtn;
 @property (weak, nonatomic) IBOutlet UIButton *rightBtn;
-@property (weak, nonatomic) IBOutlet UILabel *lightLab;
+@property (weak, nonatomic) IBOutlet BorderLabel *lightLab;
 @property (weak, nonatomic) IBOutlet UILabel *titleLab;
 
 @end
@@ -66,6 +67,8 @@
     
     //ligthLab
     [self.lightLab setUserInteractionEnabled:false];
+    self.lightLab.borderColor = [UIColor whiteColor];
+    self.lightLab.borderWidth = 3.0f / [UIScreen mainScreen].scale;
 }
 
 -(void) initDisplay{

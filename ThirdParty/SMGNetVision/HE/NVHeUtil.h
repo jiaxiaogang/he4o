@@ -19,6 +19,6 @@
 /**
  *  MARK:--------------------获取value微信息的light描述--------------------
  */
-+(NSString*) getLightStrForValue:(AIKVPointer*)value_p;
++(NSString*) getLightStr:(AIKVPointer*)value_p;
 
 @end

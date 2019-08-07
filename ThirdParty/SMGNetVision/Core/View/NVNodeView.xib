@@ -73,22 +73,13 @@
                                 <action selector="rightBtnOnClick:" destination="-1" eventType="touchUpInside" id="Qwn-uK-8wn"/>
                             </connections>
                         </button>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tSh-F7-NYO">
-                            <rect key="frame" x="10" y="10" width="0.0" height="0.0"/>
-                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="8"/>
-                            <color key="textColor" red="1" green="0.1019250594" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                            <nil key="highlightedColor"/>
-                        </label>
                     </subviews>
                     <color key="backgroundColor" red="0.0" green="0.47843137254901957" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
                         <constraint firstItem="qq9-YW-ooV" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="-6" id="25A-1J-4Wb"/>
                         <constraint firstItem="Tlc-fp-yjP" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="7N9-uB-GYk"/>
-                        <constraint firstItem="tSh-F7-NYO" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="Bym-01-r0M"/>
                         <constraint firstAttribute="bottom" secondItem="Tlc-fp-yjP" secondAttribute="bottom" constant="-6" id="Gzn-2s-Dzq"/>
                         <constraint firstItem="w7V-wM-pHv" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="-6" id="J6f-zl-oLT"/>
-                        <constraint firstItem="tSh-F7-NYO" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="KXH-31-uHo"/>
                         <constraint firstAttribute="trailing" secondItem="LMI-Sl-GNe" secondAttribute="trailing" constant="-6" id="QNl-dC-Mfo"/>
                         <constraint firstItem="qq9-YW-ooV" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="Xsb-Rq-ISZ"/>
                         <constraint firstItem="LMI-Sl-GNe" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="dEO-xD-o9e"/>
@@ -104,15 +95,26 @@
                     <fontDescription key="fontDescription" type="system" pointSize="8"/>
                     <nil key="highlightedColor"/>
                 </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tSh-F7-NYO" customClass="BorderLabel">
+                    <rect key="frame" x="10" y="10" width="0.0" height="0.0"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="8"/>
+                    <color key="textColor" red="1" green="0.1019250594" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <color key="highlightedColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <color key="shadowColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <size key="shadowOffset" width="0.0" height="0.0"/>
+                </label>
             </subviews>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
                 <constraint firstItem="3Aa-lm-VIk" firstAttribute="top" secondItem="fv4-mc-A7L" secondAttribute="top" constant="-10" id="HGb-pG-4S4"/>
                 <constraint firstItem="iN0-l3-epB" firstAttribute="top" secondItem="fv4-mc-A7L" secondAttribute="top" id="MeY-Fe-wfM"/>
                 <constraint firstItem="3Aa-lm-VIk" firstAttribute="centerX" secondItem="fv4-mc-A7L" secondAttribute="centerX" id="aKu-Kd-nuX"/>
+                <constraint firstItem="tSh-F7-NYO" firstAttribute="centerX" secondItem="fv4-mc-A7L" secondAttribute="centerX" id="am8-ZY-KtB"/>
                 <constraint firstAttribute="trailing" secondItem="iN0-l3-epB" secondAttribute="trailing" id="e5p-Zv-hvh"/>
                 <constraint firstItem="iN0-l3-epB" firstAttribute="leading" secondItem="fv4-mc-A7L" secondAttribute="leading" id="ewv-XA-CIl"/>
                 <constraint firstAttribute="bottom" secondItem="iN0-l3-epB" secondAttribute="bottom" id="qcv-u4-qMW"/>
+                <constraint firstItem="tSh-F7-NYO" firstAttribute="centerY" secondItem="fv4-mc-A7L" secondAttribute="centerY" id="rjQ-Wz-kLC"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <point key="canvasLocation" x="-233.59999999999999" y="-235.68215892053973"/>

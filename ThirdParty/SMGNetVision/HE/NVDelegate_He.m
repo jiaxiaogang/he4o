@@ -67,6 +67,9 @@
 }
 
 -(NSString*)nv_NodeOnClick:(AIKVPointer*)node_p{
+    //1. light自己;
+    [theNV lightNode:node_p str:[NVHeUtil getLightStr:node_p]];
+    
     //1. value时,返回 "iden+value值";
     NSInteger memRefCount = ARRTOOK([SMGUtils searchObjectForPointer:node_p fileName:kFNMemRefPorts time:cRTMemReference]).count;
     if ([self isValue:node_p]) {
@@ -84,7 +87,7 @@
             [theNV clearLight];
             for (NSInteger i = 0; i < algNode.content_ps.count; i++) {
                 AIKVPointer *item = ARR_INDEX(algNode.content_ps, i);
-                [theNV lightNode:item str:[NVHeUtil getLightStrForValue:item]];
+                [theNV lightNode:item str:[NVHeUtil getLightStr:item]];
             }
             
             ///2. 返回描述;
@@ -110,7 +113,7 @@
             [theNV clearLight];
             for (NSInteger i = 0; i < foNode.orders_kvp.count; i++) {
                 AIKVPointer *item = ARR_INDEX(foNode.orders_kvp, i);
-                [theNV lightNode:item str:STRFORMAT(@"%ld",(long)i)];
+                [theNV lightNode:item str:STRFORMAT(@"%ld%@",(long)i,[NVHeUtil getLightStr:item])];
             }
             ///2. 返回描述;
             NSInteger hdConCount = ISOK(foNode, AINetAbsFoNode.class) ? ((AINetAbsFoNode*)foNode).conPorts.count : 0;

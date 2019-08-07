@@ -259,6 +259,7 @@
         return;
     }
     [theNV setNodeData:foNode.pointer];
+    [theNV lightNode:foNode.pointer str:@"新"];
     
     //2. 取cmvNode
     AICMVNode *cmvNode = [SMGUtils searchNode:foNode.cmvNode_p];
