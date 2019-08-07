@@ -70,6 +70,7 @@
  */
 -(void) lightNode:(id)nodeData str:(NSString*)str;
 -(void) clearLight;
+-(void) clearLight:(NSString*)moduleId;
 
 @end
 

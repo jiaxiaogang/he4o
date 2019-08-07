@@ -148,9 +148,20 @@
 }
 
 -(void) clearLight{
-    NSArray *nvs = ARRTOOK([self subViews_AllDeepWithClass:NVNodeView.class]);
-    for (NVNodeView *nv in nvs) {
-        [nv clearLight];
+    [self clearLightFromParentView:self];
+}
+
+-(void) clearLight:(NSString*)moduleId{
+    NVModuleView *mView = [self getNVModuleViewWithModuleId:moduleId];
+    [self clearLightFromParentView:mView];
+}
+
+-(void) clearLightFromParentView:(UIView*)parentView{
+    if (parentView) {
+        NSArray *nvs = ARRTOOK([parentView subViews_AllDeepWithClass:NVNodeView.class]);
+        for (NVNodeView *nv in nvs) {
+            [nv clearLight];
+        }
     }
 }
 
