@@ -18,6 +18,11 @@
 #import "NVModuleView.h"
 #import "NVNodeView.h"
 
+#define ModuleName_Value @"稀疏码"
+#define ModuleName_Alg @"概念网络"
+#define ModuleName_Fo @"时序网络"
+#define ModuleName_Mv @"价值网络"
+
 @implementation NVDelegate_He
 
 /**
@@ -84,7 +89,7 @@
         AIAlgNodeBase *algNode = [SMGUtils searchNode:node_p];
         if (algNode) {
             ///1. 依次点亮content;
-            [theNV clearLight];
+            [theNV clearLight:ModuleName_Value];
             for (NSInteger i = 0; i < algNode.content_ps.count; i++) {
                 AIKVPointer *item = ARR_INDEX(algNode.content_ps, i);
                 [theNV lightNode:item str:[NVHeUtil getLightStr:item]];
@@ -110,7 +115,7 @@
         AIFoNodeBase *foNode = [SMGUtils searchNode:node_p];
         if (foNode) {
             ///1. 依次点亮orders;
-            [theNV clearLight];
+            [theNV clearLight:ModuleName_Alg];
             for (NSInteger i = 0; i < foNode.orders_kvp.count; i++) {
                 AIKVPointer *item = ARR_INDEX(foNode.orders_kvp, i);
                 [theNV lightNode:item str:STRFORMAT(@"%ld%@",(long)i,[NVHeUtil getLightStr:item])];
@@ -137,19 +142,19 @@
 }
 
 -(NSArray*)nv_GetModuleIds{
-    return @[@"微信息",@"概念网络",@"时序网络",@"价值网络"];
+    return @[ModuleName_Value,ModuleName_Alg,ModuleName_Fo,ModuleName_Mv];
 }
 
 -(NSString*)nv_GetModuleId:(AIKVPointer*)node_p{
     //判断node_p的类型,并返回;
     if ([self isValue:node_p]) {
-        return @"微信息";
+        return ModuleName_Value;
     }else if ([self isAlg:node_p]) {
-        return @"概念网络";
+        return ModuleName_Alg;
     }else if ([self isFo:node_p]) {
-        return @"时序网络";
+        return ModuleName_Fo;
     }else if ([self isMv:node_p]) {
-        return @"价值网络";
+        return ModuleName_Mv;
     }
     return nil;
 }
