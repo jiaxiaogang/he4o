@@ -51,9 +51,9 @@
     //5. 构建子祖母 (抽象祖母,并嵌套);
     for (NSArray *subValue_ps in subValuePsArr) {
         AIAbsAlgNode *subAlgNode = [theNet createAbsAlgNode:subValue_ps conAlgs:@[parentAlgNode] isMem:true];
-        if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_AddToShortMemory:)]) {
-            [self.delegate aiThinkIn_AddToShortMemory:@[subAlgNode.pointer]];
-        }
+        //if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_AddToShortMemory:)]) {
+        //    [self.delegate aiThinkIn_AddToShortMemory:@[subAlgNode.pointer]];
+        //}
         [fromGroup_ps addObject:subAlgNode.pointer];
         [theNV setNodeData:subAlgNode.pointer];
     }
