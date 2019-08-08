@@ -73,16 +73,30 @@
 }
 
 -(void) touchMouth{
+    //1. 吃前视觉
+    UIView *pageView = [self.delegate birdView_GetPageView];
+    [self see:pageView];
+    
+    //2. 吃
     [AIReactorControl commitReactor:EAT_RDS];
+    
+    //3. 吃完视觉
+    [self see:[self.delegate birdView_GetPageView]];
+    
+    //4. 产生HungerMindValue; (0-10)
+    [AIInput commitIMV:MVType_Hunger from:1.0f to:9.0f];
 }
 
 -(void) touchWing{
     //1. 飞前视觉
     [self see:[self.delegate birdView_GetPageView]];
     
-    //2. 反射飞行
+    //2. 飞行
     float random = (arc4random() % 8) / 8.0f;
     [AIReactorControl commitReactor:FLY_RDS datas:@[@(random)]];
+    
+    //3. 飞后视觉
+    [self see:[self.delegate birdView_GetPageView]];
 }
 
 -(void) dropUp{
@@ -100,19 +114,11 @@
 -(void) eat:(CGFloat)value{
     if (self.delegate && [self.delegate respondsToSelector:@selector(birdView_GetFoodOnMouth)]) {
         //1. 嘴附近的食物
-        UIView *pageView = [self.delegate birdView_GetPageView];
         FoodView *foodView = [self.delegate birdView_GetFoodOnMouth];
         if (!foodView) return;
         
-        //2. 视觉输入
-        [self see:pageView];
-        
-        //3. 吃掉 (让he以吸吮反射的方式,去主动吃;并将out入网,以抽象出"吃"的节点;参考n15p6-QT1)
+        //2. 吃掉 (让he以吸吮反射的方式,去主动吃;并将out入网,以抽象出"吃"的节点;参考n15p6-QT1)
         [foodView removeFromSuperview];
-        [self see:pageView];
-        
-        //4. 产生HungerMindValue; (0-10)
-        [AIInput commitIMV:MVType_Hunger from:1.0f to:9.0f];
     }
 }
 
@@ -129,20 +135,19 @@
         //2. 吸吮反射
         if ([EAT_RDS isEqualToString:rds]) {
             [self eat:[paramNum floatValue]];
-        }else if([FLY_RDS isEqualToString:rds]){
-            //3. 扇翅膀反射
+        }
+        //3. 扇翅膀反射
+        else if([FLY_RDS isEqualToString:rds]){
             [self fly:[paramNum floatValue]];
-            
-            //3. 飞后视觉
-            [self see:[self.delegate birdView_GetPageView]];
-        }else if([ANXIOUS_RDS isEqualToString:rds]){
-            //4. 飞前视觉
+        }
+        //4. 焦急反射
+        else if([ANXIOUS_RDS isEqualToString:rds]){
+            //1. 小鸟焦急时_扇翅膀;
             //[self see:[self.delegate birdView_GetPageView]];
-            //4. 小鸟焦急时_扇翅膀;
             //CGFloat data = (arc4random() % 8) / 8.0f;
             //[AIReactorControl commitReactor:FLY_RDS datas:@[@(data)]];
             
-            //4. 190731由飞改为叫;
+            //2. 190731由飞改为叫;
             [theApp setTipLog:@"叽叽喳喳叫一叫"];
         }
     }
