@@ -48,7 +48,7 @@
         NSNumber *checkPointerIdNumber = ARR_INDEX(model.pointerIds, checkIndex);
         long checkPointerId = [NUMTOOK(checkPointerIdNumber) longValue];
         AIKVPointer *checkValue_p = [SMGUtils createPointerForValue:checkPointerId algsType:algsType dataSource:dataSource isOut:isOut];
-        NSString *key = STRFORMAT(@"%@_%d",checkValue_p.params,checkValue_p.pointerId);
+        NSString *key = STRFORMAT(@"%d",checkValue_p.pointerId);
         NSNumber *checkValue = [dataDic objectForKey:key];
         NSComparisonResult compareResult = [NUMTOOK(checkValue) compare:data];
         return compareResult;
