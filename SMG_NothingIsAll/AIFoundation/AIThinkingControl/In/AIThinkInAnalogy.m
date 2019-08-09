@@ -178,7 +178,7 @@
                     //1) 当长度都为1时,比大小:同区不同值; (对比相同算法标识的两个指针 (如,颜色,距离等))
                     AIKVPointer *a_p = ARR_INDEX(aSub_ps, 0);
                     AIKVPointer *b_p = ARR_INDEX(bSub_ps, 0);
-                    if ([a_p.identifier isEqualToString:b_p.identifier]) {
+                    if ([a_p.identifier isEqualToString:b_p.identifier] && [kPN_VALUE isEqualToString:b_p.folderName]) {
                         //注: 对比微信息是否不同 (MARK_VALUE:如微信息去重功能去掉,此处要取值再进行对比)
                         if (a_p.pointerId != b_p.pointerId) {
                             [theApp.nvView setNodeData:algNodeA.pointer];
@@ -252,6 +252,7 @@
     if (target_p && algA && algB) {
         
         //2. 根据type来构建微信息,和祖母; (将a和b改成前和后)
+        BOOL isHavNon = (type == AnalogyInnerType_Hav || type == AnalogyInnerType_None);
         NSInteger frontData = 0,backData = 0;
         if (type == AnalogyInnerType_Greater) {
             frontData = cLess;
@@ -270,18 +271,18 @@
         }
         
         //3. 构建动态微信息
-        AIPointer *front_p = [theNet getNetDataPointerWithData:@(frontData) algsType:target_p.algsType dataSource:target_p.dataSource];
-        AIPointer *back_p = [theNet getNetDataPointerWithData:@(backData) algsType:target_p.algsType dataSource:target_p.dataSource];
-        if (!front_p || !back_p) {
+        AIPointer *frontValue_p = [theNet getNetDataPointerWithData:@(frontData) algsType:target_p.algsType dataSource:target_p.dataSource];
+        AIPointer *backValue_p = [theNet getNetDataPointerWithData:@(backData) algsType:target_p.algsType dataSource:target_p.dataSource];
+        if (!frontValue_p || !backValue_p) {
             return nil;
         }
         
         //4. 取出绝对匹配的dynamic抽象祖母
-        AIAlgNodeBase *frontAlg = [theNet getAbsoluteMatchingAlgNodeWithValueP:front_p];
-        AIAlgNodeBase *backAlg = [theNet getAbsoluteMatchingAlgNodeWithValueP:back_p];
+        AIAlgNodeBase *frontAlg = [theNet getAbsoluteMatchingAlgNodeWithValueP:frontValue_p];
+        AIAlgNodeBase *backAlg = [theNet getAbsoluteMatchingAlgNodeWithValueP:backValue_p];
         
-        //5. 构建动态抽象祖母;
-        AIAlgNodeBase* (^RelateDynamicAlgBlock)(AIAlgNodeBase*, AIAlgNode*,AIPointer*) = ^AIAlgNodeBase* (AIAlgNodeBase *dynamicAbsNode, AIAlgNode *conNode,AIPointer *value_p){
+        //5. 构建动态抽象祖母block;
+        AIAlgNodeBase* (^RelateDynamicAlgBlock)(AIAlgNodeBase*, AIAlgNodeBase*,AIPointer*) = ^AIAlgNodeBase* (AIAlgNodeBase *dynamicAbsNode, AIAlgNodeBase *conNode,AIPointer *value_p){
             if (ISOK(dynamicAbsNode, AIAbsAlgNode.class)) {
                 ///1. 有效时,关联;
                 [AINetUtils relateAlgAbs:(AIAbsAlgNode*)dynamicAbsNode conNodes:@[conNode]];
@@ -293,8 +294,18 @@
             }
             return dynamicAbsNode;
         };
-        frontAlg = RelateDynamicAlgBlock(frontAlg,algA,front_p);//从小到大
-        backAlg = RelateDynamicAlgBlock(backAlg,algB,back_p);//从大到小
+        
+        //5. 构建"有无"抽象概念; (有无时,以"变有无的那个概念"为具象)
+        if (isHavNon) {
+            AIAlgNodeBase *conNode = [SMGUtils searchNode:target_p];
+            frontAlg = RelateDynamicAlgBlock(frontAlg,conNode,frontValue_p);
+            backAlg = RelateDynamicAlgBlock(backAlg,conNode,backValue_p);
+        }else{
+            //5. 构建"大小"抽象概念; (大小时,以"微信息所在的概念"为具象)
+            //20190809注:此处可考虑,不做具象指向,因为大小概念,本来就是独立的节点;
+            frontAlg = RelateDynamicAlgBlock(frontAlg,algA,frontValue_p);
+            backAlg = RelateDynamicAlgBlock(backAlg,algB,backValue_p);
+        }
         
         //6. 构建抽象时序; (小动致大 / 大动致小) (之间的信息为balabala)
         if (frontAlg && backAlg) {
