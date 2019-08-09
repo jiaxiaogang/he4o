@@ -42,7 +42,7 @@
 +(AIKVPointer*) createPointerForIndex;
 
 //微信息值指针
-+(AIKVPointer*) createPointerForData;
++(AIKVPointer*) createPointerForData:(NSString*)algsType dataSource:(NSString*)dataSource;
 
 //概念节点指针
 +(AIKVPointer*) createPointerForAlg:(NSString*)folderName isOut:(BOOL)isOut isMem:(BOOL)isMem;

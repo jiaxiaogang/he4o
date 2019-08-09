@@ -23,7 +23,7 @@
         return nil;
     }
     AIKVPointer *index_p = [SMGUtils createPointerForIndex];
-    AIKVPointer *data_p = [SMGUtils createPointerForData];
+    AIKVPointer *data_p = [SMGUtils createPointerForData:algsType dataSource:dataSource];
     NSMutableArray *indexModels = [[NSMutableArray alloc] initWithArray:ARRTOOK([SMGUtils searchObjectForPointer:index_p fileName:kFNIndex(isOut) time:cRTIndex])];//加载索引序列
     NSMutableDictionary *dataDic = [[NSMutableDictionary alloc] initWithDictionary:DICTOOK([SMGUtils searchObjectForPointer:data_p fileName:kFNData(isOut) time:cRTData])];//加载微信息值字典(key为pointer.filePath)
     
@@ -60,7 +60,7 @@
     } failure:^(NSInteger index) {
         //4. 未找到;创建一个;
         AIKVPointer *value_p = [SMGUtils createPointerForValue:algsType dataSource:dataSource isOut:isOut];
-        NSString *key = STRFORMAT(@"%@_%ld",value_p.params,(long)value_p.pointerId);
+        NSString *key = STRFORMAT(@"%ld",(long)value_p.pointerId);
         [dataDic setObject:data forKey:key];
         resultPointer = value_p;
         
@@ -79,8 +79,9 @@
 }
 
 +(NSNumber*) getData:(AIKVPointer*)value_p{
-    NSDictionary *dataDic = DICTOOK([SMGUtils searchObjectForPointer:[SMGUtils createPointerForData] fileName:kFNData(value_p.isOut) time:cRTData]);
-    NSString *key = STRFORMAT(@"%@_%ld",value_p.params,(long)value_p.pointerId);
+    AIKVPointer *data_p = [SMGUtils createPointerForData:value_p.algsType dataSource:value_p.dataSource];
+    NSDictionary *dataDic = DICTOOK([SMGUtils searchObjectForPointer:data_p fileName:kFNData(value_p.isOut) time:cRTData]);
+    NSString *key = STRFORMAT(@"%ld",(long)value_p.pointerId);
     return [dataDic objectForKey:key];
 }
 

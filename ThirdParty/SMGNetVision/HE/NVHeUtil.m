@@ -26,6 +26,7 @@
 +(NSString*) getLightStr:(AIKVPointer*)node_p{
     if (ISOK(node_p, AIKVPointer.class)) {
         if ([kPN_VALUE isEqualToString:node_p.folderName]) {
+            NSInteger value = [NUMTOOK([AINetIndex getData:node_p]) integerValue];
             if ([@"sizeWidth" isEqualToString:node_p.dataSource]) {
                 return @"一";
             }else if ([@"sizeHeight" isEqualToString:node_p.dataSource]) {
@@ -42,6 +43,14 @@
                 return @"吃";
             }else if([FLY_RDS isEqualToString:node_p.dataSource]){
                 return @"飞";
+            }else if(value == cHav){
+                return @"有";
+            }else if(value == cNone){
+                return @"无";
+            }else if(value == cGreater){
+                return @"大";
+            }else if(value == cLess){
+                return @"小";
             }
         }else if ([kPN_ALG_NODE isEqualToString:node_p.folderName] ||
                   [kPN_ALG_ABS_NODE isEqualToString:node_p.folderName]) {

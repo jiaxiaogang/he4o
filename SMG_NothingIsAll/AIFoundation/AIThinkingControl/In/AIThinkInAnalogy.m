@@ -178,6 +178,7 @@
                     //1) 当长度都为1时,比大小:同区不同值; (对比相同算法标识的两个指针 (如,颜色,距离等))
                     AIKVPointer *a_p = ARR_INDEX(aSub_ps, 0);
                     AIKVPointer *b_p = ARR_INDEX(bSub_ps, 0);
+                    NSLog(@"inner > 大小 %@,%@",a_p.folderName,b_p.folderName);
                     if ([a_p.identifier isEqualToString:b_p.identifier] && [kPN_VALUE isEqualToString:b_p.folderName]) {
                         //注: 对比微信息是否不同 (MARK_VALUE:如微信息去重功能去掉,此处要取值再进行对比)
                         if (a_p.pointerId != b_p.pointerId) {
