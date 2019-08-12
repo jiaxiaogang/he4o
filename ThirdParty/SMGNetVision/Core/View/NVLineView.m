@@ -35,9 +35,9 @@
     
     //containerView
     self.containerView = [[UIView alloc] init];
-    [self.containerView setBackgroundColor:[UIColor redColor]];
+    [self.containerView setBackgroundColor:UIColorWithRGBHex(0xBB5500)];
     [self addSubview:self.containerView];
-    [self.containerView setAlpha:0.3f];
+    [self.containerView setAlpha:0.2f];
 }
 
 -(void) initData{

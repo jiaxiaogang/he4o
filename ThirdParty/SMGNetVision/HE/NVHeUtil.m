@@ -28,17 +28,23 @@
         if ([kPN_VALUE isEqualToString:node_p.folderName]) {
             NSInteger value = [NUMTOOK([AINetIndex getData:node_p]) integerValue];
             if ([@"sizeWidth" isEqualToString:node_p.dataSource]) {
-                return @"一";
+                return STRFORMAT(@"宽%d",value);
             }else if ([@"sizeHeight" isEqualToString:node_p.dataSource]) {
-                return @"|";
+                return STRFORMAT(@"高%d",value);
             }else if ([@"colorRed" isEqualToString:node_p.dataSource]) {
-                return @"R";
+                return STRFORMAT(@"R%d",value);
             }else if ([@"colorBlue" isEqualToString:node_p.dataSource]) {
-                return @"B";
+                return STRFORMAT(@"B%d",value);
             }else if ([@"colorGreen" isEqualToString:node_p.dataSource]) {
-                return @"G";
+                return STRFORMAT(@"G%d",value);
             }else if ([@"radius" isEqualToString:node_p.dataSource]) {
-                return @"角";
+                return STRFORMAT(@"形状%d",value);
+            }else if ([@"direction" isEqualToString:node_p.dataSource]) {
+                return STRFORMAT(@"方向%d",value);
+            }else if ([@"distance" isEqualToString:node_p.dataSource]) {
+                return STRFORMAT(@"距离%d",value);
+            }else if ([@"speed" isEqualToString:node_p.dataSource]) {
+                return STRFORMAT(@"速度%d",value);
             }else if([EAT_RDS isEqualToString:node_p.dataSource]){
                 return @"吃";
             }else if([FLY_RDS isEqualToString:node_p.dataSource]){
