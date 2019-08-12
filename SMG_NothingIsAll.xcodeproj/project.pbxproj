@@ -1056,7 +1056,7 @@
 				TargetAttributes = {
 					08AF45441E97D0B500377887 = {
 						CreatedOnToolsVersion = 8.3;
-						DevelopmentTeam = JFKVVV67KW;
+						DevelopmentTeam = H3583666HM;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -1348,13 +1348,17 @@
 			baseConfigurationReference = E74E5256A45FDF9C80A280FD /* Pods-SMG_NothingIsAll.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = JFKVVV67KW;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = H3583666HM;
 				GCC_PREFIX_HEADER = SMG_NothingIsAll/Demo/SMGPrefixHeader.pch;
 				INFOPLIST_FILE = SMG_NothingIsAll/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jxg.test.SMG-NothingIsAll";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Debug;
 		};
@@ -1363,13 +1367,17 @@
 			baseConfigurationReference = DE79539824FEDBA53557ECCA /* Pods-SMG_NothingIsAll.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = JFKVVV67KW;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = H3583666HM;
 				GCC_PREFIX_HEADER = SMG_NothingIsAll/Demo/SMGPrefixHeader.pch;
 				INFOPLIST_FILE = SMG_NothingIsAll/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jxg.test.SMG-NothingIsAll";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Release;
 		};
