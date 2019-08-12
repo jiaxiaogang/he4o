@@ -16,10 +16,10 @@
 @property (strong,nonatomic) IBOutlet UIView *containerView;
 @property (weak, nonatomic) IBOutlet UIControl *contentView;
 @property (strong, nonatomic) UIView *customSubView;
-@property (weak, nonatomic) IBOutlet UIButton *topBtn;
-@property (weak, nonatomic) IBOutlet UIButton *bottomBtn;
-@property (weak, nonatomic) IBOutlet UIButton *leftBtn;
-@property (weak, nonatomic) IBOutlet UIButton *rightBtn;
+@property (strong, nonatomic) UIButton *topBtn;
+@property (strong, nonatomic) UIButton *bottomBtn;
+@property (strong, nonatomic) UIButton *leftBtn;
+@property (strong, nonatomic) UIButton *rightBtn;
 @property (weak, nonatomic) IBOutlet BorderLabel *lightLab;
 @property (weak, nonatomic) IBOutlet UILabel *titleLab;
 
@@ -39,7 +39,7 @@
 -(void) initView{
     //self
     [self setBackgroundColor:[UIColor clearColor]];
-    [self setFrame:CGRectMake(0, 0, 20, 20)];
+    [self setFrame:CGRectMake(0, 0, cNodeSize, cNodeSize)];
     
     //containerView
     [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];
@@ -53,17 +53,18 @@
     
     //contentView
     [self.contentView.layer setMasksToBounds:true];
-    [self.contentView.layer setCornerRadius:10];
+    [self.contentView.layer setCornerRadius:cNodeSize * 0.5f];
     [self.contentView.layer setBorderColor:UIColorWithRGBHex(0xAAAAAA).CGColor];
     [self.contentView.layer setBorderWidth:1];
     
     //btn
-    NSArray *btns = @[self.topBtn,self.bottomBtn,self.leftBtn,self.rightBtn];
-    for (UIButton *btn in btns) {
-        [btn.layer setCornerRadius:8];
-        [btn.layer setBorderWidth:1.0f / UIScreen.mainScreen.scale];
-        [btn.layer setBorderColor:[UIColor grayColor].CGColor];
-    }
+    CGFloat btnW = cNodeSize * 0.6f;
+    CGFloat btnL = cNodeSize * 0.7f;
+    CGFloat btnMargin = (cNodeSize - btnL) * 0.5f;
+    self.leftBtn = [self createEdgeBtn:CGRectMake(btnW * -0.5f, btnMargin, btnW, btnL) onClick:@selector(leftBtnOnClick:)];
+    self.rightBtn = [self createEdgeBtn:CGRectMake(cNodeSize + btnW * -0.5f,btnMargin, btnW, btnL) onClick:@selector(rightBtnOnClick:)];
+    self.topBtn = [self createEdgeBtn:CGRectMake(btnMargin,btnW * -0.5f,btnL,btnW) onClick:@selector(topBtnOnClick:)];
+    self.bottomBtn = [self createEdgeBtn:CGRectMake(btnMargin,btnW * -0.5f + cNodeSize,btnL,btnW) onClick:@selector(bottomBtnOnClick:)];
     
     //ligthLab
     [self.lightLab setUserInteractionEnabled:false];
@@ -129,6 +130,17 @@
     }
 }
 
+-(UIButton*) createEdgeBtn:(CGRect)frame onClick:(SEL)onClick{
+    UIButton *btn = [[UIButton alloc] initWithFrame:frame];
+    [btn setBackgroundColor:[UIColor blackColor]];
+    [btn addTarget:self action:onClick forControlEvents:UIControlEventTouchUpInside];
+    [self.contentView addSubview:btn];
+    [btn.layer setCornerRadius:8];
+    [btn.layer setBorderWidth:1.0f / UIScreen.mainScreen.scale];
+    [btn.layer setBorderColor:[UIColor grayColor].CGColor];
+    return btn;
+}
+
 //MARK:===============================================================
 //MARK:                     < onClick >
 //MARK:===============================================================
@@ -141,16 +153,16 @@
 - (IBAction)contentViewTouchCancel:(id)sender {
     TPLog(@"松开");
 }
-- (IBAction)topBtnOnClick:(id)sender {
+- (void)topBtnOnClick:(id)sender {
     [self nodeView_TopClick:self.data];
 }
-- (IBAction)bottomBtnOnClick:(id)sender {
+- (void)bottomBtnOnClick:(id)sender {
     [self nodeView_BottomClick:self.data];
 }
-- (IBAction)leftBtnOnClick:(id)sender {
+- (void)leftBtnOnClick:(id)sender {
     [self nodeView_LeftClick:self.data];
 }
-- (IBAction)rightBtnOnClick:(id)sender {
+- (void)rightBtnOnClick:(id)sender {
     [self nodeView_RightClick:self.data];
 }
 
@@ -191,4 +203,3 @@
 }
 
 @end
-

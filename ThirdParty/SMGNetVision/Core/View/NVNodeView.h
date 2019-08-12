@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+#define cNodeSize 25
+
 /**
  *  MARK:--------------------NodeView代理--------------------
  *  @desc : 运行在nv.core内部,nodeView的每个方法必须被实现;

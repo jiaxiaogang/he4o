@@ -127,10 +127,10 @@
     
     //3. 根据编号计算坐标;
     NSArray *nodeViews = ARRTOOK([self subViews_AllDeepWithClass:NVNodeView.class]);
-    CGFloat layerSpace = 65;//层间距
-    CGFloat xSpace = 18;    //节点横间距
-    CGFloat nodeSize = 20;  //节点大小
-    CGFloat ySpace = 10;    //同层纵间距
+    CGFloat layerSpace = 3.25f * cNodeSize; //层间距
+    CGFloat xSpace = 0.9f * cNodeSize;      //节点横间距
+    CGFloat nodeSize = cNodeSize;           //节点大小
+    CGFloat ySpace = 0.5f * cNodeSize;      //同层纵间距
     
     //4. 同层计数器 (本层节点个数)
     NSMutableDictionary *yLayerCountDic = [[NSMutableDictionary alloc] init];
@@ -261,22 +261,22 @@
 -(void) nodeView_TopClick:(id)nodeData{
     NSArray *absNodeDatas = [self moduleView_AbsNodeDatas:nodeData];
     [self setDataWithNodeDatas:absNodeDatas];
-    TPLog(@"absPorts:%d",absNodeDatas.count);
+    TPLog(@"absPorts:%lu",(unsigned long)absNodeDatas.count);
 }
 -(void) nodeView_BottomClick:(id)nodeData{
     NSArray *conNodeDatas = [self moduleView_ConNodeDatas:nodeData];
     [self setDataWithNodeDatas:conNodeDatas];
-    TPLog(@"conPorts:%d",conNodeDatas.count);
+    TPLog(@"conPorts:%lu",(unsigned long)conNodeDatas.count);
 }
 -(void) nodeView_LeftClick:(id)nodeData{
     NSArray *contentNodeDatas = [self moduleView_ContentNodeDatas:nodeData];
     [self.delegate moduleView_SetNetDatas:contentNodeDatas];
-    TPLog(@"contentPorts:%d",contentNodeDatas.count);
+    TPLog(@"contentPorts:%lu",(unsigned long)contentNodeDatas.count);
 }
 -(void) nodeView_RightClick:(id)nodeData{
     NSArray *refNodeDatas = [self moduleView_RefNodeDatas:nodeData];
     [self.delegate moduleView_SetNetDatas:refNodeDatas];
-    TPLog(@"refPorts:%d",refNodeDatas.count);
+    TPLog(@"refPorts:%lu",(unsigned long)refNodeDatas.count);
 }
 
 //MARK:===============================================================

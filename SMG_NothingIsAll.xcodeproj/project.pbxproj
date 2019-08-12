@@ -1056,7 +1056,7 @@
 				TargetAttributes = {
 					08AF45441E97D0B500377887 = {
 						CreatedOnToolsVersion = 8.3;
-						DevelopmentTeam = H3583666HM;
+						DevelopmentTeam = A9BK2N9BZU;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -1351,12 +1351,12 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = H3583666HM;
+				DEVELOPMENT_TEAM = A9BK2N9BZU;
 				GCC_PREFIX_HEADER = SMG_NothingIsAll/Demo/SMGPrefixHeader.pch;
 				INFOPLIST_FILE = SMG_NothingIsAll/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.jxg.test.SMG-NothingIsAll";
+				PRODUCT_BUNDLE_IDENTIFIER = com.jxg.test.he;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
@@ -1370,12 +1370,12 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = H3583666HM;
+				DEVELOPMENT_TEAM = A9BK2N9BZU;
 				GCC_PREFIX_HEADER = SMG_NothingIsAll/Demo/SMGPrefixHeader.pch;
 				INFOPLIST_FILE = SMG_NothingIsAll/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.jxg.test.SMG-NothingIsAll";
+				PRODUCT_BUNDLE_IDENTIFIER = com.jxg.test.he;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
