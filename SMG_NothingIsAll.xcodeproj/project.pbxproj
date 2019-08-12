@@ -145,6 +145,7 @@
 		0808D34722B6FDD100D383BA /* NVViewUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NVViewUtil.m; sourceTree = "<group>"; };
 		080A74301F60C6490025DBA3 /* AIPort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIPort.h; sourceTree = "<group>"; };
 		080A74311F60C6490025DBA3 /* AIPort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIPort.m; sourceTree = "<group>"; };
+		0812679523022ADB003A85DE /* NVConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVConfig.h; sourceTree = "<group>"; };
 		0817D6A9219E3CC6000E45AB /* UIColor+expanded.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+expanded.m"; sourceTree = "<group>"; };
 		0817D6AA219E3CC6000E45AB /* UIColor+expanded.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+expanded.h"; sourceTree = "<group>"; };
 		081B3ACA1F6E2155008A7F36 /* AITime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AITime.h; sourceTree = "<group>"; };
@@ -925,6 +926,7 @@
 				08FAEC92215EED39004DCEAD /* NVUtils.h */,
 				08FAEC93215EED39004DCEAD /* NVUtils.m */,
 				08FAEC95215EED48004DCEAD /* NVHeader.h */,
+				0812679523022ADB003A85DE /* NVConfig.h */,
 				0837F72322A89A0D00836689 /* ReadMe.md */,
 			);
 			path = SMGNetVision;

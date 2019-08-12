@@ -13,6 +13,7 @@
 #import "NVNodeView.h"
 #import "NVLineView.h"
 #import "NVViewUtil.h"
+#import "NVConfig.h"
 
 @interface NVView () <NVModuleViewDelegate>
 
@@ -40,7 +41,7 @@
 
 -(void) initView{
     //self
-    [self setFrame:CGRectMake(ScreenWidth - 40, 20, 40, 20)];
+    [self setFrame:CGRectMake(ScreenWidth - 40, 0, 40, 20)];
     
     //containerView
     [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];
@@ -68,18 +69,16 @@
     NSArray *moduleIds = [self nv_GetModuleIds];
     if (ARRISOK(moduleIds)) {
         CGFloat curModuleX = 2;
-        CGFloat moduleW = 300;
-        CGFloat moduleH = 276;
         for (NSString *moduleId in moduleIds) {
             NVModuleView *moduleView = [[NVModuleView alloc] init];
             moduleView.delegate = self;
             [moduleView setDataWithModuleId:moduleId];
-            [moduleView setFrame:CGRectMake(curModuleX, 2, moduleW, moduleH)];
+            [moduleView setFrame:CGRectMake(curModuleX, 2, cModuleWidth, cModuleHeight)];
             [self.contentView addSubview:moduleView];
-            curModuleX += (moduleW + 2);
+            curModuleX += (cModuleWidth + 2);
         }
-        [self.scrollView setContentSize:CGSizeMake(curModuleX, 276)];
-        [self.contentView setFrame:CGRectMake(0, 0, curModuleX, 276)];
+        [self.scrollView setContentSize:CGSizeMake(curModuleX, cModuleHeight)];
+        [self.contentView setFrame:CGRectMake(0, 0, curModuleX, cModuleHeight)];
     }
 }
 
@@ -183,7 +182,7 @@
 //MARK:===============================================================
 - (IBAction)openCloseBtnOnClick:(id)sender {
     self.isOpen = !self.isOpen;
-    self.height = self.isOpen ? 300 : 20;
+    self.height = self.isOpen ? cNVHeight : 20;
     self.x = self.isOpen ? 0 : ScreenWidth - 40;
     self.width = self.isOpen ? ScreenWidth : 40;
     [self.openCloseBtn setTitle:(self.isOpen ? @"一" : @"口") forState:UIControlStateNormal];

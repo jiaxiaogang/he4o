@@ -10,6 +10,7 @@
 #import "MASConstraint.h"
 #import "View+MASAdditions.h"
 #import "BorderLabel.h"
+#import "NVConfig.h"
 
 @interface NVNodeView ()
 
@@ -57,14 +58,20 @@
     [self.contentView.layer setBorderColor:UIColorWithRGBHex(0xAAAAAA).CGColor];
     [self.contentView.layer setBorderWidth:1];
     
-    //btn
+    //edgeBtnSize
     CGFloat btnW = cNodeSize * 0.6f;
-    CGFloat btnL = cNodeSize * 0.7f;
+    CGFloat btnL = cNodeSize * 0.8f;
     CGFloat btnMargin = (cNodeSize - btnL) * 0.5f;
-    self.leftBtn = [self createEdgeBtn:CGRectMake(btnW * -0.5f, btnMargin, btnW, btnL) onClick:@selector(leftBtnOnClick:)];
-    self.rightBtn = [self createEdgeBtn:CGRectMake(cNodeSize + btnW * -0.5f,btnMargin, btnW, btnL) onClick:@selector(rightBtnOnClick:)];
-    self.topBtn = [self createEdgeBtn:CGRectMake(btnMargin,btnW * -0.5f,btnL,btnW) onClick:@selector(topBtnOnClick:)];
-    self.bottomBtn = [self createEdgeBtn:CGRectMake(btnMargin,btnW * -0.5f + cNodeSize,btnL,btnW) onClick:@selector(bottomBtnOnClick:)];
+    CGRect leftF = CGRectMake(btnW * -0.5f, btnMargin, btnW, btnL);
+    CGRect rightF = CGRectMake(cNodeSize + btnW * -0.5f,btnMargin, btnW, btnL);
+    CGRect topF = CGRectMake(btnMargin,btnW * -0.5f,btnL,btnW);
+    CGRect bottomF = CGRectMake(btnMargin,btnW * -0.5f + cNodeSize,btnL,btnW);
+    
+    //createEdgeBtn
+    self.leftBtn = [self createEdgeBtn:leftF onClick:@selector(leftBtnOnClick:)];
+    self.rightBtn = [self createEdgeBtn:rightF onClick:@selector(rightBtnOnClick:)];
+    self.topBtn = [self createEdgeBtn:topF onClick:@selector(topBtnOnClick:)];
+    self.bottomBtn = [self createEdgeBtn:bottomF onClick:@selector(bottomBtnOnClick:)];
     
     //ligthLab
     [self.lightLab setUserInteractionEnabled:false];
@@ -135,7 +142,7 @@
     [btn setBackgroundColor:[UIColor blackColor]];
     [btn addTarget:self action:onClick forControlEvents:UIControlEventTouchUpInside];
     [self.contentView addSubview:btn];
-    [btn.layer setCornerRadius:8];
+    [btn.layer setCornerRadius:MAX(frame.size.width,frame.size.height) * 0.5f];
     [btn.layer setBorderWidth:1.0f / UIScreen.mainScreen.scale];
     [btn.layer setBorderColor:[UIColor grayColor].CGColor];
     return btn;

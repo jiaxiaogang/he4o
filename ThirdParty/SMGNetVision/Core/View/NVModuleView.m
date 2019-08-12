@@ -13,6 +13,7 @@
 #import "NodeCompareModel.h"
 #import "NVViewUtil.h"
 #import "NVModuleUtil.h"
+#import "NVConfig.h"
 
 @interface NVModuleView ()<NVNodeViewDelegate>
 
@@ -127,7 +128,7 @@
     
     //3. 根据编号计算坐标;
     NSArray *nodeViews = ARRTOOK([self subViews_AllDeepWithClass:NVNodeView.class]);
-    CGFloat layerSpace = 3.25f * cNodeSize; //层间距
+    CGFloat layerSpace = 3.0f * cNodeSize;  //层间距
     CGFloat xSpace = 0.9f * cNodeSize;      //节点横间距
     CGFloat nodeSize = cNodeSize;           //节点大小
     CGFloat ySpace = 0.5f * cNodeSize;      //同层纵间距
@@ -232,7 +233,7 @@
     for (NVNodeView *nodeView in nViews) {
         if (self.delegate && [self.delegate respondsToSelector:@selector(moduleView_ShowName:)]) {
             NSString *showName = [self.delegate moduleView_ShowName:nodeView.data];
-            [nodeView setTitle:showName showTime:10];
+            [nodeView setTitle:showName showTime:cShowNameTime];
         }
     }
 }
