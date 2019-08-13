@@ -59,6 +59,7 @@
  */
 -(void) setNodeData:(id)nodeData;
 -(void) setNodeDatas:(NSArray*)nodeDatas;
+-(void) setNodeData:(id)nodeData lightStr:(NSString*)lightStr;
 
 /**
  *  MARK:--------------------清空网络--------------------

@@ -25,7 +25,7 @@
         //2. 依次单个祖母行为化
         for (AIKVPointer *curAlg_p in curAlg_ps) {
             NSArray *singleResult = [TOAlgScheme convert2Out_Single:curAlg_p];
-            
+            [theNV setNodeData:curAlg_p lightStr:@"o2"];
             //3. 行为化成功,则收集;
             if (ARRISOK(singleResult)) {
                 [result addObjectsFromArray:singleResult];

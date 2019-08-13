@@ -121,6 +121,11 @@
     }
 }
 
+-(void) setNodeData:(id)nodeData lightStr:(NSString*)lightStr{
+    [self setNodeData:nodeData];
+    [self lightNode:nodeData str:lightStr];
+}
+
 -(void) clear{
     //1. 清模块
     NSArray *mViews = ARRTOOK([self subViews_AllDeepWithClass:NVModuleView.class]);

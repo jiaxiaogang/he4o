@@ -137,6 +137,7 @@
             [demandModel.subModels addObject:outMvModel];
         }
     }];
+    [theNV setNodeData:outMvModel.content_p lightStr:@"o0"];
     return outMvModel;
 }
 
@@ -178,6 +179,7 @@
                 TOFoModel *result = [[TOFoModel alloc] initWithContent_p:validFoNode.pointer];
                 result.score = [ThinkingUtils dataOut_CheckScore_ExpOut:result.content_p];
                 [outMvModel.subModels addObject:result];
+                [theNV setNodeData:result.content_p lightStr:@"o1"];
                 return result;
             }else{
                 checkFo_ps = [ThinkingUtils foScheme_GetNextLayerPs:checkFo_ps];
@@ -230,6 +232,7 @@
             //>1 检查micro_p是否是"输出";
             //>2 假如order_p足够确切,尝试检查并输出;
             BOOL invoked = [Output output_TC:algNode_p];
+            [theNV setNodeData:algNode_p lightStr:@"o3"];
             if (invoked) {
                 tryOutSuccess = true;
             }

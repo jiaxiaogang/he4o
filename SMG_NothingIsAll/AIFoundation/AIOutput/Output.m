@@ -51,6 +51,7 @@
             OutputModel *model = [[OutputModel alloc] init];
             model.rds = dataSource;
             model.data = NUMTOOK([AINetIndex getData:value_p]);
+            [theNV setNodeData:value_p lightStr:@"o4"];
             [valids addObject:model];
         }
     }
