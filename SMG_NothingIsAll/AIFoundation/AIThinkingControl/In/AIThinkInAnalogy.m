@@ -86,6 +86,12 @@
     }
 
     //3. 外类比构建
+    if (orderSames.count == 1) {
+        NSLog(@"将构建长度为1的时序, fo:%ld,assFo:%ld",fo.orders_kvp.count,assFo.orders_kvp.count);
+        [theNV setNodeData:fo.pointer lightStr:@"BugFrom"];
+        [theNV setNodeData:assFo.pointer lightStr:@"BugFrom"];
+        NSLog(@"");
+    }
     [self analogyOutside_Creater:orderSames fo:fo assFo:assFo];
 }
 

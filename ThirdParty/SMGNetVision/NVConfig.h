@@ -6,7 +6,7 @@
 //  Copyright © 2019年 XiaoGang. All rights reserved.
 //
 
-#define cNodeSize 35
+#define cNodeSize 30
 #define cModuleWidth 300
 #define cModuleHeight 256
 #define cNVHeight (cModuleHeight + 24)

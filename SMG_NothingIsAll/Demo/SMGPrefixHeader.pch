@@ -26,6 +26,7 @@
  *  MARK:--------------------application--------------------
  */
 #define theApp ((AppDelegate*)[[UIApplication sharedApplication] delegate])
+#define isSimulator TARGET_OS_SIMULATOR
 
 /**
  *  MARK:--------------------ui--------------------

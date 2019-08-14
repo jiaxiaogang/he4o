@@ -77,6 +77,14 @@
     [self.lightLab setUserInteractionEnabled:false];
     self.lightLab.borderColor = [UIColor whiteColor];
     self.lightLab.borderWidth = 3.0f / [UIScreen mainScreen].scale;
+    
+    if (!isSimulator) {
+        [self.contentView setUserInteractionEnabled:false];
+        [self.leftBtn setUserInteractionEnabled:false];
+        [self.rightBtn setUserInteractionEnabled:false];
+        [self.topBtn setUserInteractionEnabled:false];
+        [self.bottomBtn setUserInteractionEnabled:false];
+    }
 }
 
 -(void) initDisplay{
@@ -213,6 +221,33 @@
     [UIView animateWithDuration:0.2f animations:^{
         [self.contentView.layer setTransform:CATransform3DIdentity];
     }];
+}
+
+//MARK:===============================================================
+//MARK:                     < touchOverride >
+//MARK:===============================================================
+-(void) touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    [super touchesBegan:touches withEvent:event];
+    NSArray *svs = ARRTOOK([self superViews_AllDeepWithClass:UIScrollView.class]);
+    for (UIScrollView *sv in svs) {
+        [sv setScrollEnabled:false];
+    }
+}
+
+-(void) touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    [super touchesMoved:touches withEvent:event];
+    CGPoint touchLocation = [[touches anyObject] locationInView:self];
+    NSLog(@"x:%f,y:%f",touchLocation.x,touchLocation.y);
+}
+
+-(void) touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    [super touchesEnded:touches withEvent:event];
+    CGPoint touchLocation = [[touches anyObject] locationInView:self];
+    NSLog(@"x:%f,y:%f",touchLocation.x,touchLocation.y);
+}
+
+-(void) touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    [super touchesCancelled:touches withEvent:event];
 }
 
 //MARK:===============================================================
