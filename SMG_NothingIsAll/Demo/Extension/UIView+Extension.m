@@ -129,8 +129,10 @@
 -(NSMutableArray*) superViews_AllDeepWithClass:(Class)aClass{
     NSMutableArray *arr = [[NSMutableArray alloc]init];
     UIView *curView = self;
-    while (curView.superview && [curView.superview isKindOfClass:aClass]) {
-        [arr addObject:curView.superview];
+    while (curView.superview) {
+        if ([curView.superview isKindOfClass:aClass]) {
+            [arr addObject:curView.superview];
+        }
         curView = curView.superview;
     }
     return arr;

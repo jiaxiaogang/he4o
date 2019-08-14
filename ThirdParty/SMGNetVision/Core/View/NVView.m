@@ -333,7 +333,7 @@
                 float centerY = (pointA.y + pointB.y) / 2.0f;
                 
                 //12. 旋转角度
-                CGFloat angle = [NVViewUtil anglePoint:pointA second:pointB];
+                CGFloat angle = [NVViewUtil anglePIPoint:pointA second:pointB];
                 
                 //13. draw
                 [lView.layer setTransform:CATransform3DMakeRotation(0, 0, 0, 1)];

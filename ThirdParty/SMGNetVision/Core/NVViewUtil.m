@@ -29,7 +29,17 @@
     return sqrtf(deltaX * deltaX + deltaY * deltaY);
 }
 
-+(CGFloat) anglePoint:(CGPoint)first second:(CGPoint)second {
++(CGFloat) angleZero2OnePoint:(CGPoint)first second:(CGPoint)second {
+    //1. 取PI角度;
+    CGPoint distance = CGPointMake(second.x - first.x, second.y - first.y);
+    CGFloat anglePI = atan2f(distance.y,distance.x);
+    
+    //2. 将(-PI到PI) 转换成 (0到1)
+    float result = (anglePI / M_PI + 1) / 2;
+    return result;
+}
+
++(CGFloat) anglePIPoint:(CGPoint)first second:(CGPoint)second {
     CGFloat height = second.y - first.y;
     CGFloat width = first.x - second.x;
     CGFloat rads = atan(height/width);

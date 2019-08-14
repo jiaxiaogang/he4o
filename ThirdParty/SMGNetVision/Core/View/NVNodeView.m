@@ -11,6 +11,7 @@
 #import "View+MASAdditions.h"
 #import "BorderLabel.h"
 #import "NVConfig.h"
+#import "NVViewUtil.h"
 
 @interface NVNodeView ()
 
@@ -23,6 +24,7 @@
 @property (strong, nonatomic) UIButton *rightBtn;
 @property (weak, nonatomic) IBOutlet BorderLabel *lightLab;
 @property (weak, nonatomic) IBOutlet UILabel *titleLab;
+@property (strong, nonatomic) UIView *touchMoveView;
 
 @end
 
@@ -85,6 +87,14 @@
         [self.topBtn setUserInteractionEnabled:false];
         [self.bottomBtn setUserInteractionEnabled:false];
     }
+    
+    //touchMoveView
+    self.touchMoveView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 5, 5)];
+    [self.touchMoveView setBackgroundColor:UIColorWithRGBHex(0x000000)];
+    [self.touchMoveView.layer setMasksToBounds:true];
+    [self.touchMoveView.layer setCornerRadius:2.5f];
+    [self.containerView addSubview:self.touchMoveView];
+    [self.touchMoveView setHidden:true];
 }
 
 -(void) initDisplay{
@@ -145,6 +155,9 @@
     }
 }
 
+//MARK:===============================================================
+//MARK:                     < privateMethod >
+//MARK:===============================================================
 -(UIButton*) createEdgeBtn:(CGRect)frame onClick:(SEL)onClick{
     UIButton *btn = [[UIButton alloc] initWithFrame:frame];
     [btn setBackgroundColor:[UIColor blackColor]];
@@ -161,6 +174,14 @@
     return btn;
 }
 
+//父级scrollView滚动开关
+-(void) setSuperScrollEnable:(BOOL)enable{
+    NSArray *svs = ARRTOOK([self superViews_AllDeepWithClass:UIScrollView.class]);
+    for (UIScrollView *sv in svs) {
+        [sv setScrollEnabled:enable];
+    }
+}
+
 //MARK:===============================================================
 //MARK:                     < onClick >
 //MARK:===============================================================
@@ -171,10 +192,7 @@
     [self animationUp:sender];
 }
 - (IBAction)contentViewOnClick:(UIControl *)sender {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(nodeView_OnClick:)]) {
-        NSString *desc = [self.delegate nodeView_OnClick:self.data];
-        TPLog(@"> %@", desc);
-    }
+    [self nodeView_OnClick:self.data];
 }
 
 - (void)topBtnOnClick:(UIControl*)sender {
@@ -228,26 +246,67 @@
 //MARK:===============================================================
 -(void) touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
     [super touchesBegan:touches withEvent:event];
-    NSArray *svs = ARRTOOK([self superViews_AllDeepWithClass:UIScrollView.class]);
-    for (UIScrollView *sv in svs) {
-        [sv setScrollEnabled:false];
-    }
+    [self setSuperScrollEnable:false];
 }
 
 -(void) touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    //1. 取touch坐标
     [super touchesMoved:touches withEvent:event];
     CGPoint touchLocation = [[touches anyObject] locationInView:self];
-    NSLog(@"x:%f,y:%f",touchLocation.x,touchLocation.y);
+    
+    //2. 计算距离和角度
+    CGPoint center = CGPointMake(cNodeSize*0.5f, cNodeSize*0.5f);
+    CGFloat distance = [NVViewUtil distancePoint:center second:touchLocation];
+    CGFloat angle = [NVViewUtil angleZero2OnePoint:center second:touchLocation];
+    
+    //3. 设置touchMoveView的显示
+    [self.touchMoveView setHidden:distance < cNodeGesDistance];
+    if (angle > 0.125f && angle < 0.375f) {
+        [self.touchMoveView setCenter:CGPointMake(center.x + 0, center.y + -cNodeGesDistance)];//上
+    }else if (angle > 0.375f && angle < 0.625f) {
+        [self.touchMoveView setCenter:CGPointMake(center.x + cNodeGesDistance, center.y + 0)];//右
+    }else if (angle > 0.625f && angle < 0.875f) {
+        [self.touchMoveView setCenter:CGPointMake(center.x + 0, center.y + cNodeGesDistance)];//下
+    }else {
+        [self.touchMoveView setCenter:CGPointMake(center.x + -cNodeGesDistance, center.y + 0)];//左
+    }
 }
 
 -(void) touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    //1. 取touch坐标
     [super touchesEnded:touches withEvent:event];
     CGPoint touchLocation = [[touches anyObject] locationInView:self];
-    NSLog(@"x:%f,y:%f",touchLocation.x,touchLocation.y);
+    
+    //2. 计算距离和角度
+    CGPoint center = CGPointMake(cNodeSize*0.5f, cNodeSize*0.5f);
+    CGFloat distance = [NVViewUtil distancePoint:center second:touchLocation];
+    CGFloat angle = [NVViewUtil angleZero2OnePoint:center second:touchLocation];
+    
+    //3. 达到距离时,边角点击事件
+    if (distance > cNodeGesDistance) {
+        if (angle > 0.125f && angle < 0.375f) {
+            [self nodeView_TopClick:self.data];//上
+        }else if (angle > 0.375f && angle < 0.625f) {
+            [self nodeView_RightClick:self.data];//右
+        }else if (angle > 0.625f && angle < 0.875f) {
+            [self nodeView_BottomClick:self.data];//下
+        }else {
+            [self nodeView_LeftClick:self.data];//左
+        }
+    }else if(distance < cNodeSize * 0.5f){
+        //4. 在节点内时,节点点击事件;
+        [self nodeView_OnClick:self.data];
+    }
+    
+    //5. 恢复display
+    [self setSuperScrollEnable:true];
+    [self.touchMoveView setHidden:true];
 }
 
 -(void) touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
     [super touchesCancelled:touches withEvent:event];
+    [self setSuperScrollEnable:true];
+    [self.touchMoveView setHidden:true];
 }
 
 //MARK:===============================================================
@@ -283,6 +342,13 @@
 -(void) nodeView_RightClick:(id)nodeData{
     if (self.delegate && [self.delegate respondsToSelector:@selector(nodeView_RightClick:)]) {
         [self.delegate nodeView_RightClick:nodeData];
+    }
+}
+
+-(void) nodeView_OnClick:(id)nodeData{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(nodeView_OnClick:)]) {
+        NSString *desc = [self.delegate nodeView_OnClick:self.data];
+        TPLog(@"> %@", desc);
     }
 }
 
