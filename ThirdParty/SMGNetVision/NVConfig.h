@@ -6,10 +6,10 @@
 //  Copyright © 2019年 XiaoGang. All rights reserved.
 //
 
-#define cNodeSize 30
-#define cModuleWidth 300
-#define cModuleHeight 256
-#define cNVHeight (cModuleHeight + 24)
+#define cNodeSize (isSimulator ? 23 : 27)
+#define cModuleWidth MAX(ScreenWidth * 0.25,235)
+#define cModuleHeight cNVHeight - 24
+#define cNVHeight MAX(ScreenHeight * 0.7,280)
 #define cShowNameTime 30
 
 #define cLayerSpace 2.5f * cNodeSize    //层间距

@@ -42,7 +42,7 @@
 
 -(void) initView{
     //self
-    [self setFrame:CGRectMake(ScreenWidth - 40, 0, 40, 20)];
+    [self setFrame:CGRectMake(ScreenWidth - 40, StateBarHeight, 40, 20)];
     
     //containerView
     [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];
@@ -57,7 +57,7 @@
     //scrollView
     self.scrollView = [[UIScrollView alloc] init];
     [self.containerView addSubview:self.scrollView];
-    [self.scrollView setFrame:CGRectMake(0, 20, ScreenWidth, 280)];
+    [self.scrollView setFrame:CGRectMake(0, 20, ScreenWidth, cNVHeight - 20)];
     [self.scrollView setShowsVerticalScrollIndicator:NO];
     [self.scrollView setShowsHorizontalScrollIndicator:NO];
     

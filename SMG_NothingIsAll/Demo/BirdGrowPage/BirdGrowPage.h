@@ -6,8 +6,8 @@
 //  Copyright © 2018年 XiaoGang. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "HEViewController.h"
 
-@interface BirdGrowPage : UIViewController
+@interface BirdGrowPage : HEViewController
 
 @end

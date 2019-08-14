@@ -14,6 +14,7 @@
 		0808D34022B6F73D00D383BA /* NVLineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0808D33F22B6F73D00D383BA /* NVLineView.m */; };
 		0808D34822B6FDD100D383BA /* NVViewUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 0808D34722B6FDD100D383BA /* NVViewUtil.m */; };
 		080A74321F60C6490025DBA3 /* AIPort.m in Sources */ = {isa = PBXBuildFile; fileRef = 080A74311F60C6490025DBA3 /* AIPort.m */; };
+		080BFAAF2304D06A00046D22 /* HEViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 080BFAAE2304D06A00046D22 /* HEViewController.m */; };
 		0817D6AB219E3CC7000E45AB /* UIColor+expanded.m in Sources */ = {isa = PBXBuildFile; fileRef = 0817D6A9219E3CC6000E45AB /* UIColor+expanded.m */; };
 		081B3ACC1F6E2155008A7F36 /* AITime.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3ACB1F6E2155008A7F36 /* AITime.m */; };
 		081B3AD61F6E2994008A7F36 /* AIStringAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3AD51F6E2994008A7F36 /* AIStringAlgs.m */; };
@@ -145,6 +146,8 @@
 		0808D34722B6FDD100D383BA /* NVViewUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NVViewUtil.m; sourceTree = "<group>"; };
 		080A74301F60C6490025DBA3 /* AIPort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIPort.h; sourceTree = "<group>"; };
 		080A74311F60C6490025DBA3 /* AIPort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIPort.m; sourceTree = "<group>"; };
+		080BFAAD2304D06A00046D22 /* HEViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HEViewController.h; sourceTree = "<group>"; };
+		080BFAAE2304D06A00046D22 /* HEViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HEViewController.m; sourceTree = "<group>"; };
 		0812679523022ADB003A85DE /* NVConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVConfig.h; sourceTree = "<group>"; };
 		0817D6A9219E3CC6000E45AB /* UIColor+expanded.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+expanded.m"; sourceTree = "<group>"; };
 		0817D6AA219E3CC6000E45AB /* UIColor+expanded.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+expanded.h"; sourceTree = "<group>"; };
@@ -465,6 +468,8 @@
 				08A1E57B2193BAFA0046C4AC /* UIView+Extension.m */,
 				08E6885922FA562600653545 /* BorderLabel.h */,
 				08E6885A22FA562600653545 /* BorderLabel.m */,
+				080BFAAD2304D06A00046D22 /* HEViewController.h */,
+				080BFAAE2304D06A00046D22 /* HEViewController.m */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -1174,6 +1179,7 @@
 				08AA10E822CAD8520077DE36 /* NVHeUtil.m in Sources */,
 				0858C5E721950CA300951BA5 /* FoodView.m in Sources */,
 				08236CEC21A23439008D8761 /* AIVisionAlgsModel.m in Sources */,
+				080BFAAF2304D06A00046D22 /* HEViewController.m in Sources */,
 				0858C5CF2194F8B000951BA5 /* MASViewAttribute.m in Sources */,
 				88BC09D720B4EB920006ABEF /* XGRedis.m in Sources */,
 				084219E11FD8CEFD009DA6BC /* AIReactorControl.m in Sources */,

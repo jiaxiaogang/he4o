@@ -33,6 +33,7 @@
  */
 #define ScreenHeight [[UIScreen mainScreen] bounds].size.height
 #define ScreenWidth [[UIScreen mainScreen] bounds].size.width
+#define StateBarHeight 20
 
 /**
  *  MARK:--------------------color--------------------
