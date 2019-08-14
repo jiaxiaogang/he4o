@@ -78,15 +78,6 @@
                 ///4. 收集order_p
                 [findAbsNode.orders_kvp addObject:item_p];
             }
-            
-            //调试时序中,仅有"吃"的问题;
-            if (orderSames.count == 1) {
-                AIAlgNodeBase *algNode = [SMGUtils searchNode:item_p];
-                if (algNode && algNode.pointer.isOut) {
-                    NSLog(@"时序中,仅有一个输出节点");
-                    [theNV setNodeData:algNode.pointer lightStr:@"BUG"];
-                }
-            }
         }
         
         //4. order_ps更新祖母节点引用序列;

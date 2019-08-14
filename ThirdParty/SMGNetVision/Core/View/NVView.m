@@ -14,6 +14,7 @@
 #import "NVLineView.h"
 #import "NVViewUtil.h"
 #import "NVConfig.h"
+#import "AIKVPointer.h"
 
 @interface NVView () <NVModuleViewDelegate>
 

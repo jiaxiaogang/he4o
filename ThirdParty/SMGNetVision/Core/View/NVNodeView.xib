@@ -22,12 +22,16 @@
             <rect key="frame" x="0.0" y="0.0" width="25" height="25"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iN0-l3-epB" customClass="UIControl">
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iN0-l3-epB" customClass="UIButton">
                     <rect key="frame" x="0.0" y="0.0" width="25" height="25"/>
                     <color key="backgroundColor" red="0.0" green="0.47843137254901957" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <connections>
-                        <action selector="contentViewTouchCancel:" destination="-1" eventType="touchCancel" id="Lzy-z6-aS9"/>
-                        <action selector="contentViewTouchDown:" destination="-1" eventType="touchDown" id="w2k-bb-pSn"/>
+                        <action selector="contentViewOnClick:" destination="-1" eventType="touchUpInside" id="pHd-ve-RZE"/>
+                        <action selector="contentViewTouchDown:" destination="-1" eventType="touchDown" id="Cvg-tq-238"/>
+                        <action selector="contentViewTouchUp:" destination="-1" eventType="touchUpOutside" id="7S6-h2-h6I"/>
+                        <action selector="contentViewTouchUp:" destination="-1" eventType="touchDragOutside" id="Frb-fz-dhq"/>
+                        <action selector="contentViewTouchUp:" destination="-1" eventType="touchUpInside" id="OlS-kI-eoa"/>
+                        <action selector="contentViewTouchUp:" destination="-1" eventType="touchCancel" id="THw-JX-Yjh"/>
                     </connections>
                 </view>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Aa-lm-VIk">

@@ -6,8 +6,12 @@
 //  Copyright © 2019年 XiaoGang. All rights reserved.
 //
 
-#define cNodeSize 27
-#define cModuleWidth 250
+#define cNodeSize 35
+#define cModuleWidth 300
 #define cModuleHeight 256
 #define cNVHeight (cModuleHeight + 24)
 #define cShowNameTime 30
+
+#define cLayerSpace 2.5f * cNodeSize  //层间距
+#define cXSpace 0.9f * cNodeSize      //节点横间距
+#define cYSpace 0.5f * cNodeSize      //同层纵间距

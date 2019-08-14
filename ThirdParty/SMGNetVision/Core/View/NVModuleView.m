@@ -128,10 +128,6 @@
     
     //3. 根据编号计算坐标;
     NSArray *nodeViews = ARRTOOK([self subViews_AllDeepWithClass:NVNodeView.class]);
-    CGFloat layerSpace = 3.0f * cNodeSize;  //层间距
-    CGFloat xSpace = 0.9f * cNodeSize;      //节点横间距
-    CGFloat nodeSize = cNodeSize;           //节点大小
-    CGFloat ySpace = 0.5f * cNodeSize;      //同层纵间距
     
     //4. 同层计数器 (本层节点个数)
     NSMutableDictionary *yLayerCountDic = [[NSMutableDictionary alloc] init];
@@ -150,9 +146,9 @@
                     [yLayerCountDic setObject:@(layerCount + 1) forKey:@(y)];
                     
                     //7. 节点坐标
-                    float spaceX = MIN(xSpace, (self.width - nodeSize) / nodeViews.count);
+                    float spaceX = MIN(cXSpace, (self.width - cNodeSize) / nodeViews.count);
                     nodeView.x = x * spaceX;
-                    nodeView.y = (self.height - nodeSize) - (y * layerSpace) - (layerCount % 3) * ySpace;
+                    nodeView.y = (self.height - cNodeSize) - (y * cLayerSpace) - (layerCount % 3) * cYSpace;
                 }
             }
         }

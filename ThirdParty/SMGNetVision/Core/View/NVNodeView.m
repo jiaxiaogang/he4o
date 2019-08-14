@@ -141,6 +141,11 @@
     UIButton *btn = [[UIButton alloc] initWithFrame:frame];
     [btn setBackgroundColor:[UIColor blackColor]];
     [btn addTarget:self action:onClick forControlEvents:UIControlEventTouchUpInside];
+    [btn addTarget:self action:@selector(btnTouchDown:) forControlEvents:UIControlEventTouchDown];
+    [btn addTarget:self action:@selector(btnTouchUp:) forControlEvents:UIControlEventTouchUpOutside];
+    [btn addTarget:self action:@selector(btnTouchUp:) forControlEvents:UIControlEventTouchCancel];
+    [btn addTarget:self action:@selector(btnTouchUp:) forControlEvents:UIControlEventTouchDragOutside];
+    [btn addTarget:self action:@selector(btnTouchUp:) forControlEvents:UIControlEventTouchUpInside];
     [self.contentView addSubview:btn];
     [btn.layer setCornerRadius:MAX(frame.size.width,frame.size.height) * 0.5f];
     [btn.layer setBorderWidth:1.0f / UIScreen.mainScreen.scale];
@@ -151,26 +156,63 @@
 //MARK:===============================================================
 //MARK:                     < onClick >
 //MARK:===============================================================
-- (IBAction)contentViewTouchDown:(id)sender {
+- (IBAction)contentViewTouchDown:(UIControl*)sender {
+    [self animationDown:sender];
+}
+- (IBAction)contentViewTouchUp:(UIControl *)sender {
+    [self animationUp:sender];
+}
+- (IBAction)contentViewOnClick:(UIControl *)sender {
     if (self.delegate && [self.delegate respondsToSelector:@selector(nodeView_OnClick:)]) {
         NSString *desc = [self.delegate nodeView_OnClick:self.data];
         TPLog(@"> %@", desc);
     }
 }
-- (IBAction)contentViewTouchCancel:(id)sender {
-    TPLog(@"松开");
-}
-- (void)topBtnOnClick:(id)sender {
+
+- (void)topBtnOnClick:(UIControl*)sender {
     [self nodeView_TopClick:self.data];
 }
-- (void)bottomBtnOnClick:(id)sender {
+- (void)bottomBtnOnClick:(UIControl*)sender {
     [self nodeView_BottomClick:self.data];
 }
-- (void)leftBtnOnClick:(id)sender {
+- (void)leftBtnOnClick:(UIControl*)sender {
     [self nodeView_LeftClick:self.data];
 }
-- (void)rightBtnOnClick:(id)sender {
+- (void)rightBtnOnClick:(UIControl*)sender {
     [self nodeView_RightClick:self.data];
+}
+- (void)btnTouchDown:(UIControl*)sender {
+    [self animationDown:sender];
+}
+- (void)btnTouchUp:(UIControl*)sender {
+    [self animationUp:sender];
+}
+
+//MARK:===============================================================
+//MARK:                     < animation >
+//MARK:===============================================================
+-(void) animationDown:(UIView*)view{
+    if (view) {
+        [UIView animateWithDuration:0.2f animations:^{
+            if ([view isEqual:self.leftBtn]) {
+                [self.contentView.layer setTransform:CATransform3DMakeTranslation(-30, 0, 0)];
+            }else if ([view isEqual:self.rightBtn]) {
+                [self.contentView.layer setTransform:CATransform3DMakeTranslation(30, 0, 0)];
+            }else if ([view isEqual:self.topBtn]) {
+                [self.contentView.layer setTransform:CATransform3DMakeTranslation(0, -30, 0)];
+            }else if ([view isEqual:self.bottomBtn]) {
+                [self.contentView.layer setTransform:CATransform3DMakeTranslation(0, 30, 0)];
+            }else if ([view isEqual:self.contentView]) {
+                [self.contentView.layer setTransform:CATransform3DMakeScale(2.0f, 2.0f, 2.0f)];
+            }
+        }];
+    }
+}
+
+-(void) animationUp:(UIView*)view{
+    [UIView animateWithDuration:0.2f animations:^{
+        [self.contentView.layer setTransform:CATransform3DIdentity];
+    }];
 }
 
 //MARK:===============================================================
