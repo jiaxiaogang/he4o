@@ -10,7 +10,7 @@
 #define cModuleWidth MAX(ScreenWidth * 0.25,235)
 #define cModuleHeight cNVHeight - 24
 #define cNVHeight MAX(ScreenHeight * 0.7,280)
-#define cShowNameTime 30
+#define cShowNameTime 3000
 
 #define cLayerSpace 2.5f * cNodeSize    //层间距
 #define cXSpace 0.9f * cNodeSize        //节点横间距

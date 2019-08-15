@@ -9,6 +9,7 @@
 #import "NVHeUtil.h"
 #import "AINetIndex.h"
 #import "AIKVPointer.h"
+#import "AIAlgNodeBase.h"
 
 @implementation NVHeUtil
 
@@ -26,44 +27,61 @@
 +(NSString*) getLightStr:(AIKVPointer*)node_p{
     if (ISOK(node_p, AIKVPointer.class)) {
         if ([kPN_VALUE isEqualToString:node_p.folderName]) {
-            NSInteger value = [NUMTOOK([AINetIndex getData:node_p]) integerValue];
-            if ([@"sizeWidth" isEqualToString:node_p.dataSource]) {
-                return STRFORMAT(@"宽%d",value);
-            }else if ([@"sizeHeight" isEqualToString:node_p.dataSource]) {
-                return STRFORMAT(@"高%d",value);
-            }else if ([@"colorRed" isEqualToString:node_p.dataSource]) {
-                return STRFORMAT(@"R%d",value);
-            }else if ([@"colorBlue" isEqualToString:node_p.dataSource]) {
-                return STRFORMAT(@"B%d",value);
-            }else if ([@"colorGreen" isEqualToString:node_p.dataSource]) {
-                return STRFORMAT(@"G%d",value);
-            }else if ([@"radius" isEqualToString:node_p.dataSource]) {
-                return STRFORMAT(@"形状%d",value);
-            }else if ([@"direction" isEqualToString:node_p.dataSource]) {
-                return STRFORMAT(@"方向%d",value);
-            }else if ([@"distance" isEqualToString:node_p.dataSource]) {
-                return STRFORMAT(@"距离%d",value);
-            }else if ([@"speed" isEqualToString:node_p.dataSource]) {
-                return STRFORMAT(@"速度%d",value);
-            }else if([EAT_RDS isEqualToString:node_p.dataSource]){
-                return @"吃";
-            }else if([FLY_RDS isEqualToString:node_p.dataSource]){
-                return @"飞";
-            }else if(value == cHav){
-                return @"有";
-            }else if(value == cNone){
-                return @"无";
-            }else if(value == cGreater){
-                return @"大";
-            }else if(value == cLess){
-                return @"小";
-            }
+            return [self getLightStr_Value:node_p];
         }else if ([kPN_ALG_NODE isEqualToString:node_p.folderName] ||
                   [kPN_ALG_ABS_NODE isEqualToString:node_p.folderName]) {
-            if (node_p.isOut) {
+            AIAlgNodeBase *algNode = [SMGUtils searchNode:node_p];
+            if (algNode && algNode.content_ps.count == 1) {
+                AIKVPointer *value_p = algNode.content_ps[0];
+                return [self getLightStr_Value:value_p];
+            }else if (node_p.isOut) {
                 return @"动";
             }
+        }else if([kPN_FRONT_ORDER_NODE isEqualToString:node_p.folderName] || [kPN_FO_ABS_NODE isEqualToString:node_p.folderName]){
+            AIFoNodeBase *foNode = [SMGUtils searchNode:node_p];
+            if (foNode) {
+                AIAlgNodeBase *lastAlgNode = [SMGUtils searchNode:ARR_INDEX(foNode.orders_kvp, foNode.orders_kvp.count - 1)];
+                if (lastAlgNode && lastAlgNode.content_ps.count == 1) {
+                    return [self getLightStr_Value:lastAlgNode.content_ps[0]];
+                }
+            }
         }
+    }
+    return @"";
+}
+
++(NSString*) getLightStr_Value:(AIKVPointer*)value_p{
+    NSInteger value = [NUMTOOK([AINetIndex getData:value_p]) integerValue];
+    if ([@"sizeWidth" isEqualToString:value_p.dataSource]) {
+        return STRFORMAT(@"宽%ld",value);
+    }else if ([@"sizeHeight" isEqualToString:value_p.dataSource]) {
+        return STRFORMAT(@"高%ld",value);
+    }else if ([@"colorRed" isEqualToString:value_p.dataSource]) {
+        return STRFORMAT(@"R%ld",value);
+    }else if ([@"colorBlue" isEqualToString:value_p.dataSource]) {
+        return STRFORMAT(@"B%ld",value);
+    }else if ([@"colorGreen" isEqualToString:value_p.dataSource]) {
+        return STRFORMAT(@"G%ld",value);
+    }else if ([@"radius" isEqualToString:value_p.dataSource]) {
+        return STRFORMAT(@"形状%ld",value);
+    }else if ([@"direction" isEqualToString:value_p.dataSource]) {
+        return STRFORMAT(@"方向%ld",value);
+    }else if ([@"distance" isEqualToString:value_p.dataSource]) {
+        return STRFORMAT(@"距离%ld",(long)value);
+    }else if ([@"speed" isEqualToString:value_p.dataSource]) {
+        return STRFORMAT(@"速度%ld",(long)value);
+    }else if([EAT_RDS isEqualToString:value_p.dataSource]){
+        return @"吃";
+    }else if([FLY_RDS isEqualToString:value_p.dataSource]){
+        return @"飞";
+    }else if(value == cHav){
+        return @"有";
+    }else if(value == cNone){
+        return @"无";
+    }else if(value == cGreater){
+        return @"大";
+    }else if(value == cLess){
+        return @"小";
     }
     return @"";
 }
