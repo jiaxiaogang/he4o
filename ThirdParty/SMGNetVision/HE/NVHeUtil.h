@@ -21,4 +21,14 @@
  */
 +(NSString*) getLightStr:(AIKVPointer*)value_p;
 
+
+//MARK:===============================================================
+//MARK:                     < 节点类型判断 >
+//MARK:===============================================================
++(BOOL) isValue:(AIKVPointer*)node_p;
++(BOOL) isAlg:(AIKVPointer*)node_p;
++(BOOL) isFo:(AIKVPointer*)node_p;
++(BOOL) isMv:(AIKVPointer*)node_p;
++(BOOL) isAbs:(AIKVPointer*)node_p;
+
 @end

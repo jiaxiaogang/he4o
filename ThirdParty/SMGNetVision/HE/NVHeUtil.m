@@ -26,10 +26,9 @@
 
 +(NSString*) getLightStr:(AIKVPointer*)node_p{
     if (ISOK(node_p, AIKVPointer.class)) {
-        if ([kPN_VALUE isEqualToString:node_p.folderName]) {
+        if ([self isValue:node_p]) {
             return [self getLightStr_Value:node_p];
-        }else if ([kPN_ALG_NODE isEqualToString:node_p.folderName] ||
-                  [kPN_ALG_ABS_NODE isEqualToString:node_p.folderName]) {
+        }else if ([self isAlg:node_p]) {
             AIAlgNodeBase *algNode = [SMGUtils searchNode:node_p];
             if (algNode && algNode.content_ps.count == 1) {
                 AIKVPointer *value_p = algNode.content_ps[0];
@@ -37,7 +36,7 @@
             }else if (node_p.isOut) {
                 return @"动";
             }
-        }else if([kPN_FRONT_ORDER_NODE isEqualToString:node_p.folderName] || [kPN_FO_ABS_NODE isEqualToString:node_p.folderName]){
+        }else if([self isFo:node_p]){
             AIFoNodeBase *foNode = [SMGUtils searchNode:node_p];
             if (foNode) {
                 AIAlgNodeBase *lastAlgNode = [SMGUtils searchNode:ARR_INDEX(foNode.orders_kvp, foNode.orders_kvp.count - 1)];
@@ -84,6 +83,30 @@
         return @"小";
     }
     return @"";
+}
+
+
+//MARK:===============================================================
+//MARK:                     < 节点类型判断 >
+//MARK:===============================================================
++(BOOL) isValue:(AIKVPointer*)node_p{
+    return [kPN_VALUE isEqualToString:node_p.folderName] || [kPN_DATA isEqualToString:node_p.folderName] || [kPN_INDEX isEqualToString:node_p.folderName];
+}
+
++(BOOL) isAlg:(AIKVPointer*)node_p{
+    return [kPN_ALG_NODE isEqualToString:node_p.folderName] || [kPN_ALG_ABS_NODE isEqualToString:node_p.folderName];
+}
+
++(BOOL) isFo:(AIKVPointer*)node_p{
+    return [kPN_FRONT_ORDER_NODE isEqualToString:node_p.folderName] || [kPN_FO_ABS_NODE isEqualToString:node_p.folderName];
+}
+
++(BOOL) isMv:(AIKVPointer*)node_p{
+    return [kPN_CMV_NODE isEqualToString:node_p.folderName] || [kPN_ABS_CMV_NODE isEqualToString:node_p.folderName];
+}
+
++(BOOL) isAbs:(AIKVPointer*)node_p{
+    return [kPN_FO_ABS_NODE isEqualToString:node_p.folderName] || [kPN_ABS_CMV_NODE isEqualToString:node_p.folderName] || [kPN_ALG_ABS_NODE isEqualToString:node_p.folderName];
 }
 
 @end
