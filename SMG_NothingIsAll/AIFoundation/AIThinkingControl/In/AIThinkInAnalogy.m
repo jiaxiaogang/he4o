@@ -23,7 +23,7 @@
 //MARK:===============================================================
 //MARK:                     < 外类比部分 >
 //MARK:===============================================================
-+(void) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
++(void) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy fromInner:(BOOL)fromInner{
     //1. 类比orders的规律
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
     if (fo && assFo) {
@@ -87,12 +87,12 @@
 
     //3. 外类比构建
     if (orderSames.count == 1) {
-        NSLog(@"将构建长度为1的时序, fo:%ld,assFo:%ld",fo.orders_kvp.count,assFo.orders_kvp.count);
+        NSLog(@"将构建长度为1的时序, fo:%lu,assFo:%lu",(unsigned long)fo.orders_kvp.count,(unsigned long)assFo.orders_kvp.count);
         [theNV setNodeData:fo.pointer lightStr:@"BugFrom"];
         [theNV setNodeData:assFo.pointer lightStr:@"BugFrom"];
         NSLog(@"");
     }
-    [self analogyOutside_Creater:orderSames fo:fo assFo:assFo];
+    [self analogyOutside_Creater:orderSames fo:fo assFo:assFo fromInner:fromInner];
 }
 
 /**
@@ -100,7 +100,7 @@
  *  1. 构建absFo
  *  2. 构建absCmv
  */
-+(void)analogyOutside_Creater:(NSArray*)orderSames fo:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo{
++(void)analogyOutside_Creater:(NSArray*)orderSames fo:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo fromInner:(BOOL)fromInner{
     //2. 数据检查;
     if (ARRISOK(orderSames) && ISOK(fo, AIFoNodeBase.class) && ISOK(assFo, AIFoNodeBase.class)) {
         
@@ -115,32 +115,32 @@
             AINetAbsFoNode *createAbsFo = [theNet createAbsFo_Outside:fo foB:assFo orderSames:orderSames];
 
             //5. createAbsCmvNode
-            AICMVNodeBase *assMv = [SMGUtils searchNode:assFo.cmvNode_p];
-            if (assMv) {
-                AIAbsCMVNode *createAbsCmv = [theNet createAbsCMVNode_Outside:createAbsFo.pointer aMv_p:fo.cmvNode_p bMv_p:assMv.pointer];
-                
-                //6. cmv模型连接;
-                if (ISOK(createAbsCmv, AIAbsCMVNode.class)) {
-                    createAbsFo.cmvNode_p = createAbsCmv.pointer;
-                    [SMGUtils insertObject:createAbsFo pointer:createAbsFo.pointer fileName:kFNNode time:cRTNode];
-                }
-                
-                //[theNV setNodeData:createAbsFo.pointer];
-                //调试时序中,仅有"吃"的问题;
-                if (createAbsFo.orders_kvp.count == 1) {
-                    AIAlgNodeBase *algNode = [SMGUtils searchNode:ARR_INDEX(createAbsFo.orders_kvp, 0)];
-                    if (algNode && algNode.pointer.isOut) {
-                        NSLog(@"时序中,仅有一个输出节点");
-                        [theNV setNodeData:algNode.pointer lightStr:@"BUG"];
-                        [theNV setNodeData:createAbsFo.pointer lightStr:@"BUG"];
+            if (!fromInner) {
+                AICMVNodeBase *assMv = [SMGUtils searchNode:assFo.cmvNode_p];
+                if (assMv) {
+                    AIAbsCMVNode *createAbsCmv = [theNet createAbsCMVNode_Outside:createAbsFo.pointer aMv_p:fo.cmvNode_p bMv_p:assMv.pointer];
+                    
+                    //6. cmv模型连接;
+                    if (ISOK(createAbsCmv, AIAbsCMVNode.class)) {
+                        createAbsFo.cmvNode_p = createAbsCmv.pointer;
+                        [SMGUtils insertObject:createAbsFo pointer:createAbsFo.pointer fileName:kFNNode time:cRTNode];
                     }
+                    
+                    //[theNV setNodeData:createAbsFo.pointer];
+                    //调试时序中,仅有"吃"的问题;
+                    if (createAbsFo.orders_kvp.count == 1) {
+                        AIAlgNodeBase *algNode = [SMGUtils searchNode:ARR_INDEX(createAbsFo.orders_kvp, 0)];
+                        if (algNode && algNode.pointer.isOut) {
+                            NSLog(@"时序中,仅有一个输出节点");
+                            [theNV setNodeData:algNode.pointer lightStr:@"BUG"];
+                            [theNV setNodeData:createAbsFo.pointer lightStr:@"BUG"];
+                        }
+                    }
+                    
+                    [theNV setNodeData:assMv.pointer];
+                    [theNV setNodeData:createAbsCmv.pointer];
                 }
-                
-                
-                [theNV setNodeData:assMv.pointer];
-                [theNV setNodeData:createAbsCmv.pointer];
             }
-            //TODO:>>>>>将absNode和absCmvNode存到thinkFeedCache;
         }
     }
 }
@@ -333,18 +333,19 @@
             [absOrders addObject:backAlg.pointer];
             AINetAbsFoNode *createrFo = [theNet createAbsFo_Inner:conFo orderSames:absOrders];
             
-            if (!createrFo) {
-                return nil;
-            }
-            
-            //7. 构建mv节点,形成mv基本模型;
-            AIAbsCMVNode *createrMv = [theNet createAbsCMVNode_Inner:createrFo.pointer conMv_p:conFo.cmvNode_p];
-            
-            //8. cmv模型连接;
-            if (ISOK(createrMv, AIAbsCMVNode.class)) {
-                createrFo.cmvNode_p = createrMv.pointer;
-                [SMGUtils insertNode:createrFo];
-            }
+            //190819取消理性fo(大小有无fo)指向mvNode;
+            //if (!createrFo) {
+            //    return nil;
+            //}
+            //
+            ////7. 构建mv节点,形成mv基本模型;
+            //AIAbsCMVNode *createrMv = [theNet createAbsCMVNode_Inner:createrFo.pointer conMv_p:conFo.cmvNode_p];
+            //
+            ////8. cmv模型连接;
+            //if (ISOK(createrMv, AIAbsCMVNode.class)) {
+            //    createrFo.cmvNode_p = createrMv.pointer;
+            //    [SMGUtils insertNode:createrFo];
+            //}
             return createrFo;
         }
     }
@@ -390,7 +391,7 @@
         
         //4. 对abFo和assAbFo进行类比;
         [theNV setNodeData:assAbFo.pointer];
-        [self analogyOutside:abFo assFo:assAbFo canAss:canAssBlock updateEnergy:updateEnergy];
+        [self analogyOutside:abFo assFo:assAbFo canAss:canAssBlock updateEnergy:updateEnergy fromInner:true];
     }
 }
 

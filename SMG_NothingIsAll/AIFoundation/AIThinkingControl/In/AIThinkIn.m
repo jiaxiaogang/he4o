@@ -330,7 +330,7 @@
                         return [self canAss];
                     } updateEnergy:^(CGFloat delta) {
                         [self updateEnergy:delta];
-                    }];
+                    } fromInner:false];
                 }
             }
         }

@@ -472,7 +472,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Volumes/APPLE%20HDD/work/temp/he4o/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/AIThinkIn.m"
-                  timestampString = "587606029.699681"
+                  timestampString = "587863136.826074"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "329"
@@ -487,7 +487,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Volumes/APPLE%20HDD/work/temp/he4o/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/AIThinkIn.m"
-                  timestampString = "587606029.702866"
+                  timestampString = "587863136.828375"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "329"
@@ -502,7 +502,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Volumes/APPLE%20HDD/work/temp/he4o/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/AIThinkIn.m"
-                  timestampString = "587606029.705886"
+                  timestampString = "587863136.83067"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "329"
@@ -524,7 +524,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "34"
             endingLineNumber = "34"
-            landmarkName = "+analogyOutside:assFo:canAss:updateEnergy:"
+            landmarkName = "+analogyOutside:assFo:canAss:updateEnergy:fromInner:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -540,7 +540,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "89"
             endingLineNumber = "89"
-            landmarkName = "+analogyOutside:assFo:canAss:updateEnergy:"
+            landmarkName = "+analogyOutside:assFo:canAss:updateEnergy:fromInner:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -556,7 +556,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "52"
             endingLineNumber = "52"
-            landmarkName = "+analogyOutside:assFo:canAss:updateEnergy:"
+            landmarkName = "+analogyOutside:assFo:canAss:updateEnergy:fromInner:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -572,7 +572,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "47"
             endingLineNumber = "47"
-            landmarkName = "+analogyOutside:assFo:canAss:updateEnergy:"
+            landmarkName = "+analogyOutside:assFo:canAss:updateEnergy:fromInner:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -588,7 +588,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "57"
             endingLineNumber = "57"
-            landmarkName = "+analogyOutside:assFo:canAss:updateEnergy:"
+            landmarkName = "+analogyOutside:assFo:canAss:updateEnergy:fromInner:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
