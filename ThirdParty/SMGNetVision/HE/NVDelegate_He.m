@@ -96,18 +96,15 @@
             }
             
             ///2. 返回描述;
-            NSInteger absAlgCount = 0;
             NSInteger valueCount = 0;
             for (AIKVPointer *value_p in algNode.content_ps) {
-                if ([kPN_ALG_ABS_NODE isEqualToString:value_p.folderName]) {
-                    absAlgCount++;
-                }else{
+                if ([NVHeUtil isValue:value_p]) {
                     valueCount++;
                 }
             }
 
             NSInteger hdConCount = ISOK(algNode, AIAbsAlgNode.class) ? ((AIAbsAlgNode*)algNode).conPorts.count : 0;
-            return STRFORMAT(@"pId:%ld 嵌套数:%ld 微信息数:%ld REF:h%lu/m%ld ABS:h%lu/m%ld CON:h%ld/m%ld",(long)node_p.pointerId,(long)absAlgCount,(long)valueCount,(unsigned long)algNode.refPorts.count,(long)memRefCount,(unsigned long)algNode.absPorts.count,(long)memAbsCount,(long)hdConCount,(long)memConCount);
+            return STRFORMAT(@"pId:%ld 微信息数:%ld/%ld REF:h%lu/m%ld ABS:h%lu/m%ld CON:h%ld/m%ld",(long)node_p.pointerId,(long)valueCount,(long)algNode.content_ps.count,(unsigned long)algNode.refPorts.count,(long)memRefCount,(unsigned long)algNode.absPorts.count,(long)memAbsCount,(long)hdConCount,(long)memConCount);
         }
     }
     //3. foNode时,返回 "order_kvp数"
@@ -206,7 +203,7 @@
         }else if ([NVHeUtil isFo:node_p]) {
             //2. foNode时返回order_kvp
             AIFoNodeBase *foNode = [SMGUtils searchNode:node_p];
-            if (ISOK(foNode, AIFoNodeBase.class) && foNode.cmvNode_p) {
+            if (ISOK(foNode, AIFoNodeBase.class)) {
                 return foNode.orders_kvp;
             }
         }else if ([NVHeUtil isMv:node_p]) {
