@@ -20,7 +20,7 @@
 
 +(void) output_Reactor:(NSArray*)outputModels{
     //1. 将输出入网
-    [[AIThinkingControl shareInstance] commitOutputLog:outputModels];
+    [theTC commitOutputLog:outputModels];
     
     //2. 广播执行输出;
     for (OutputModel *model in ARRTOOK(outputModels)) {

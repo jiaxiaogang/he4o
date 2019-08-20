@@ -36,6 +36,9 @@
 //distance
 @property (assign,nonatomic) CGFloat distance;
 
+//border
+@property (assign,nonatomic) CGFloat border;
+
 @end
 
 //20190723由direction和distance替代;

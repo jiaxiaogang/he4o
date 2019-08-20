@@ -40,7 +40,7 @@
 
 /**
  *  MARK:--------------------数据输入--------------------
- *  @param models : 多model (models仅含普通算法model -> 目前没有imv和普通信息掺杂在models中的情况;)
+ *  @param dics : 多model (models仅含普通算法model -> 目前没有imv和普通信息掺杂在models中的情况;)
  *  步骤说明:
  *  1. 先构建具象parent节点,再构建抽象sub节点;
  *  2. 仅parent添加到瞬时记忆;
@@ -49,14 +49,14 @@
  *  TODOWAIT:
  *  1. 默认为按边缘(ios的view层级)分组,随后可扩展祖母内类比,按别的维度分组; 参考: n16p7
  */
--(void) dataInWithModels:(NSArray*)models;
+-(void) dataInWithModels:(NSArray*)dics algsType:(NSString*)algsType;
 
 
 /**
  *  MARK:--------------------数据输入--------------------
  *  说明: 单model (普通算法模型 或 imv模型)
  */
--(void) dataIn:(NSObject*)algsModel;
+-(void) dataIn:(NSDictionary*)modelDic algsType:(NSString*)algsType;
 
 
 @end

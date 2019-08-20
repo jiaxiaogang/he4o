@@ -16,7 +16,13 @@
 //MARK:===============================================================
 //MARK:                     < index >
 //MARK:===============================================================
--(NSMutableArray*) getAlgsArr:(NSObject*)algsModel;  //装箱 (algsModel to indexPointerArr);
+
+/**
+ *  MARK:--------------------算法模型的装箱--------------------
+ *  转为指针数组(每个值都是指针)(在dataIn后第一件事就是装箱)
+ *  @result notnull
+ */
+-(NSMutableArray*) algModelConvert2Pointers:(NSDictionary*)modelDic algsType:(NSString*)algsType;
 -(AIPointer*) getNetDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource;//单data装箱
 
 

@@ -18,6 +18,7 @@
 #import "AIKVPointer.h"
 #import "AIAlgNode.h"
 #import "AINetIndex.h"
+#import "NSObject+Extension.h"
 
 /**
  *  MARK:--------------------思维控制器--------------------
@@ -84,11 +85,13 @@ static AIThinkingControl *_instance;
 //MARK:                     < publicMethod >
 //MARK:===============================================================
 -(void) commitInput:(NSObject*)algsModel{
-    [self.thinkIn dataIn:algsModel];
+    NSDictionary *modelDic = [NSObject getDic:algsModel containParent:true];
+    NSString *algsType = NSStringFromClass(algsModel.class);
+    [self.thinkIn dataIn:modelDic algsType:algsType];
 }
 
--(void) commitInputWithModels:(NSArray*)models{
-    [self.thinkIn dataInWithModels:models];
+-(void) commitInputWithModels:(NSArray*)dics algsType:(NSString*)algsType{
+    [self.thinkIn dataInWithModels:dics algsType:algsType];
 }
 
 -(void) commitOutputLog:(NSArray*)outputModels{

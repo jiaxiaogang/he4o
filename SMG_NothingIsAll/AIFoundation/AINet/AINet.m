@@ -8,7 +8,6 @@
 
 #import "AINet.h"
 #import "AIPointer.h"
-#import "NSObject+Extension.h"
 #import "AINetIndex.h"
 #import "AIMvFoManager.h"
 #import "AIPort.h"
@@ -69,25 +68,22 @@ static AINet *_instance;
 //MARK:===============================================================
 //MARK:                     < index >
 //MARK:===============================================================
--(NSMutableArray*) getAlgsArr:(NSObject*)algsModel {
-    if (algsModel) {
-        NSDictionary *modelDic = [NSObject getDic:algsModel containParent:true];
-        NSMutableArray *algsArr = [[NSMutableArray alloc] init];
-        NSString *algsType = NSStringFromClass(algsModel.class);
+-(NSMutableArray*) algModelConvert2Pointers:(NSDictionary*)modelDic algsType:(NSString*)algsType{
+    //1. 数据准备
+    NSMutableArray *algsArr = [[NSMutableArray alloc] init];
+    modelDic = DICTOOK(modelDic);
+    
+    //2. 循环装箱
+    for (NSString *dataSource in modelDic.allKeys) {
         
-        //1. algsType & dataSource
-        for (NSString *dataSource in modelDic.allKeys) {
-            //1. 转换AIModel&dataType;//废弃!(参考n12p12)
-            //2. 存储索引;
-            NSNumber *data = NUMTOOK([modelDic objectForKey:dataSource]);
-            AIPointer *pointer = [self.netIndex getDataPointerWithData:data algsType:algsType dataSource:dataSource isOut:false];
-            if (pointer) {
-                [algsArr addObject:pointer];
-            }
-        } 
-        return algsArr;
+        //3. 存储索引 & data;
+        NSNumber *data = NUMTOOK([modelDic objectForKey:dataSource]);
+        AIPointer *pointer = [self.netIndex getDataPointerWithData:data algsType:algsType dataSource:dataSource isOut:false];
+        if (pointer) {
+            [algsArr addObject:pointer];
+        }
     }
-    return nil;
+    return algsArr;
 }
 
 //单data装箱

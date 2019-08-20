@@ -25,15 +25,15 @@
 
 @implementation AIThinkIn
 
--(void) dataInWithModels:(NSArray*)models{
+-(void) dataInWithModels:(NSArray*)dics algsType:(NSString*)algsType{
     //1. 数据检查 (小鸟不能仅传入foodView,而要传入整个视角场景)
-    models = ARRTOOK(models);
+    dics = ARRTOOK(dics);
     
     //2. 收集所有具象父祖母的value_ps
     NSMutableArray *parentValue_ps = [[NSMutableArray alloc] init];
     NSMutableArray *subValuePsArr = [[NSMutableArray alloc] init];//2维数组
-    for (NSObject *item in models) {
-        NSArray *item_ps = ARRTOOK([ThinkingUtils algModelConvert2Pointers:item]);
+    for (NSDictionary *item in dics) {
+        NSArray *item_ps = [theNet algModelConvert2Pointers:item algsType:algsType];
         [parentValue_ps addObjectsFromArray:item_ps];
         [subValuePsArr addObject:item_ps];
     }
@@ -64,9 +64,9 @@
     }
 }
 
--(void) dataIn:(NSObject*)algsModel{
+-(void) dataIn:(NSDictionary*)modelDic algsType:(NSString*)algsType{
     //1. 装箱(除mv有两个元素外一般仅有一个元素)
-    NSArray *algsArr = [ThinkingUtils algModelConvert2Pointers:algsModel];
+    NSArray *algsArr = [theNet algModelConvert2Pointers:modelDic algsType:algsType];
     
     //2. 检测imv
     BOOL findMV = [ThinkingUtils dataIn_CheckMV:algsArr];

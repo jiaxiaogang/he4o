@@ -24,7 +24,7 @@
         imvModel.urgentTo = [self getHungerAlgsUrgentValue:to];
         CGFloat urgentFrom = [self getHungerAlgsUrgentValue:from];
         imvModel.delta = imvModel.urgentTo - urgentFrom;
-        [[AIThinkingControl shareInstance] commitInput:imvModel];
+        [theTC commitInput:imvModel];
     }else if(type == MVType_Anxious){
         
     }

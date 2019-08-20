@@ -184,11 +184,6 @@
     return false;
 }
 
-+(NSArray*) algModelConvert2Pointers:(NSObject*)algsModel{
-    NSArray *algsArr = [[AINet sharedInstance] getAlgsArr:algsModel];
-    return algsArr;
-}
-
 @end
 
 

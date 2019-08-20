@@ -20,13 +20,13 @@
         //model.str = input;
         //model.length = [self length:input];
         //model.spell = [self spell:input];
-        //[[AIThinkingControl shareInstance] commitInput:model];
+        //[theTC commitInput:model];
         
         const char *chars = [input UTF8String];
         for (NSInteger i = 0; i < input.length; i ++) {
             AICharAlgsModel *model = [AICharAlgsModel new];
             model.c = chars[i];
-            [[AIThinkingControl shareInstance] commitInput:model];
+            [theTC commitInput:model];
         }
     }
 }

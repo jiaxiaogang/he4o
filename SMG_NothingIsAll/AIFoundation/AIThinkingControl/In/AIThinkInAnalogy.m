@@ -214,22 +214,18 @@
                             }
                         }
                     }
-                }else if(aSub_ps.count == 1 && bSub_ps.count == 0){
-                    //2) 当长度各A=1和B=0时,判定A0是否为祖母: 无;
-                    AIKVPointer *a_p = ARR_INDEX(aSub_ps, 0);
-                    NSLog(@"inner > 构建无,%@",a_p.identifier);
-                    if ([kPN_ALG_ABS_NODE isEqualToString:a_p.folderName]) {
-                        abFo = [self analogyInner_Creater:AnalogyInnerType_None target_p:a_p algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
-                        lightStr = @"无";
-                    }
-                }else if(aSub_ps.count == 0 && bSub_ps.count == 1){
-                    //3) 当长度各A=0和B=1时,判定B0是否为祖母: 有;
-                    AIKVPointer *b_p = ARR_INDEX(bSub_ps, 0);
-                    NSLog(@"inner > 构建有,%@",b_p.identifier);
-                    if ([kPN_ALG_ABS_NODE isEqualToString:b_p.folderName]) {
-                        abFo = [self analogyInner_Creater:AnalogyInnerType_Hav target_p:b_p algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
-                        lightStr = @"有";
-                    }
+                }else if(aSub_ps.count > 0 && bSub_ps.count == 0){
+                    //2) 当长度各aSub>0和bSub=0时,抽象出aSub,并构建其"有变无"时序;
+                    AIAbsAlgNode *targetNode = [theNet createAbsAlgNode:aSub_ps conAlgs:@[algNodeA] isMem:false];
+                    NSLog(@"inner > 构建无,%@",targetNode.pointer.identifier);
+                    abFo = [self analogyInner_Creater:AnalogyInnerType_None target_p:targetNode.pointer algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
+                    lightStr = @"无";
+                }else if(aSub_ps.count == 0 && bSub_ps.count > 0){
+                    //3) 当长度各aSub=0和bSub>0时,抽象出bSub,并构建其"无变有"时序;
+                    AIAbsAlgNode *targetNode = [theNet createAbsAlgNode:aSub_ps conAlgs:@[algNodeA] isMem:false];
+                    NSLog(@"inner > 构建有,%@",targetNode.pointer.identifier);
+                    abFo = [self analogyInner_Creater:AnalogyInnerType_Hav target_p:targetNode.pointer algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
+                    lightStr = @"有";
                 }
             }
             

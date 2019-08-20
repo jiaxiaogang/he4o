@@ -279,7 +279,7 @@
 /**
  *  MARK:--------------------引自LKDB中LKModel--------------------
  */
-+ (NSDictionary*) getDic:(NSObject*)obj containParent:(BOOL)containParent{
++ (NSMutableDictionary*) getDic:(NSObject*)obj containParent:(BOOL)containParent{
     NSMutableDictionary *mDic = [[NSMutableDictionary alloc] init];
     if (obj) {
         [obj getDic:mDic appendPropertyStringWithClass:obj.class containParent:containParent];

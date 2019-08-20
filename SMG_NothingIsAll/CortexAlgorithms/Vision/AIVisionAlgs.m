@@ -11,6 +11,7 @@
 #import "AIThinkingControl.h"
 #import "XGRedis.h"
 #import "UIView+Extension.h"
+#import "NSObject+Extension.h"
 
 @implementation AIVisionAlgs
 
@@ -19,7 +20,7 @@
     if (!selfView || !targetView) {
         return;
     }
-    NSMutableArray *models = [[NSMutableArray alloc] init];
+    NSMutableArray *dics = [[NSMutableArray alloc] init];
     NSMutableArray *views = [targetView subViews_AllDeepWithRect:rect];
     
     //2. 生成model
@@ -35,12 +36,19 @@
             model.speed = [self speed:selfView target:curView];
             model.direction = [self direction:selfView target:curView];
             model.distance = [self distance:selfView target:curView];
-            [models addObject:model];
+            model.border = [self border:curView];
+            NSMutableDictionary *modelDic = [NSObject getDic:model containParent:true];
+            for (NSString *key in modelDic.allKeys) {
+                if ([NUMTOOK([modelDic objectForKey:key]) isEqualToNumber:@(0)]) {
+                    [modelDic removeObjectForKey:key];
+                }
+            }
+            [dics addObject:modelDic];
         }
     }
     
     //3. 传给thinkingControl
-    [[AIThinkingControl shareInstance] commitInputWithModels:models];
+    [theTC commitInputWithModels:dics algsType:NSStringFromClass(self)];
 }
 
 //MARK:===============================================================
@@ -123,6 +131,12 @@
     CGPoint distanceP = [self distancePoint:selfView target:target];
     CGFloat distance = sqrt(powf(distanceP.x, 2) + powf(distanceP.y, 2));
     return distance;
+}
+
+//border
++(CGFloat) border:(UIView*)target{
+    if (target) return target.layer.borderWidth;
+    return 0;
 }
 
 

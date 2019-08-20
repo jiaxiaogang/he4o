@@ -16,7 +16,7 @@
     if (type == CustomInputType_Charge) {
         CustomAlgsChargeModel *model = [[CustomAlgsChargeModel alloc] init];
         model.value = value;
-        [[AIThinkingControl shareInstance] commitInput:model];
+        [theTC commitInput:model];
     }
 }
 
