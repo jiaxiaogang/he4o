@@ -12,7 +12,7 @@
 #define cNVHeight MAX(ScreenHeight * 0.7,280)
 #define cShowNameTime 3000
 
-#define cLayerSpace 2.5f * cNodeSize    //层间距
+#define cLayerSpace 3.0f * cNodeSize    //层间距
 #define cXSpace 0.9f * cNodeSize        //节点横间距
 #define cYSpace 0.5f * cNodeSize        //同层纵间距
 

@@ -222,7 +222,7 @@
                     lightStr = @"无";
                 }else if(aSub_ps.count == 0 && bSub_ps.count > 0){
                     //3) 当长度各aSub=0和bSub>0时,抽象出bSub,并构建其"无变有"时序;
-                    AIAbsAlgNode *targetNode = [theNet createAbsAlgNode:aSub_ps conAlgs:@[algNodeA] isMem:false];
+                    AIAbsAlgNode *targetNode = [theNet createAbsAlgNode:aSub_ps conAlgs:@[algNodeB] isMem:false];
                     NSLog(@"inner > 构建有,%@",targetNode.pointer.identifier);
                     abFo = [self analogyInner_Creater:AnalogyInnerType_Hav target_p:targetNode.pointer algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
                     lightStr = @"有";
