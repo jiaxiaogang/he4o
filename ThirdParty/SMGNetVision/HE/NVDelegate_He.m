@@ -80,7 +80,7 @@
     if ([NVHeUtil isValue:node_p]) {
         NSInteger hdRefCount = ARRTOOK([SMGUtils searchObjectForPointer:node_p fileName:kFNRefPorts time:cRTReference]).count;
         NSNumber *value = NUMTOOK([AINetIndex getData:node_p]);
-        return STRFORMAT(@"pId:%ld,%@,%@:%@ REF:h%ld/m%ld",(long)node_p.pointerId,node_p.algsType,node_p.dataSource,value,(long)hdRefCount,(long)memRefCount);
+        return STRFORMAT(@"PID:%ld AT:%@ DS:%@ 值:%@ REF:h%ld/m%ld",(long)node_p.pointerId,node_p.algsType,node_p.dataSource,value,(long)hdRefCount,(long)memRefCount);
     }
     //2. algNode时,返回content_ps的 "微信息数+嵌套数";
     NSInteger memAbsCount = ARRTOOK([SMGUtils searchObjectForPointer:node_p fileName:kFNMemAbsPorts time:cRTMemReference]).count;
@@ -96,15 +96,8 @@
             }
             
             ///2. 返回描述;
-            NSInteger valueCount = 0;
-            for (AIKVPointer *value_p in algNode.content_ps) {
-                if ([NVHeUtil isValue:value_p]) {
-                    valueCount++;
-                }
-            }
-
             NSInteger hdConCount = ISOK(algNode, AIAbsAlgNode.class) ? ((AIAbsAlgNode*)algNode).conPorts.count : 0;
-            return STRFORMAT(@"pId:%ld 微信息数:%ld/%ld REF:h%lu/m%ld ABS:h%lu/m%ld CON:h%ld/m%ld",(long)node_p.pointerId,(long)valueCount,(long)algNode.content_ps.count,(unsigned long)algNode.refPorts.count,(long)memRefCount,(unsigned long)algNode.absPorts.count,(long)memAbsCount,(long)hdConCount,(long)memConCount);
+            return STRFORMAT(@"PID:%ld AT:%@ DS:%@ 数:%ld REF:h%lu/m%ld ABS:h%lu/m%ld CON:h%ld/m%ld",(long)node_p.pointerId,node_p.algsType,node_p.dataSource,(long)algNode.content_ps.count,(unsigned long)algNode.refPorts.count,(long)memRefCount,(unsigned long)algNode.absPorts.count,(long)memAbsCount,(long)hdConCount,(long)memConCount);
         }
     }
     //3. foNode时,返回 "order_kvp数"
@@ -119,7 +112,7 @@
             }
             ///2. 返回描述;
             NSInteger hdConCount = ISOK(foNode, AINetAbsFoNode.class) ? ((AINetAbsFoNode*)foNode).conPorts.count : 0;
-            return STRFORMAT(@"pId:%ld 时序数:%lu ABS:h%lu/m%ld CON:h%ld/m%ld",(long)node_p.pointerId,(unsigned long)foNode.orders_kvp.count,(unsigned long)foNode.absPorts.count,(long)memAbsCount,(long)hdConCount,(long)memConCount);
+            return STRFORMAT(@"PID:%ld AT:%@ DS:%@ 数:%lu ABS:h%lu/m%ld CON:h%ld/m%ld",(long)node_p.pointerId,node_p.algsType,node_p.dataSource,(unsigned long)foNode.orders_kvp.count,(unsigned long)foNode.absPorts.count,(long)memAbsCount,(long)hdConCount,(long)memConCount);
         }
     }
     //4. mv时,返回 "类型+升降";

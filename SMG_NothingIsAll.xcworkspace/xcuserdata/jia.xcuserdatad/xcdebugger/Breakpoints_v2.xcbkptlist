@@ -552,11 +552,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ThirdParty/SMGNetVision/HE/NVDelegate_He.m"
-            timestampString = "588038017.982355"
+            timestampString = "588042455.784214"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "107"
-            endingLineNumber = "107"
+            startingLineNumber = "100"
+            endingLineNumber = "100"
             landmarkName = "-nv_NodeOnClick:"
             landmarkType = "7">
          </BreakpointContent>

@@ -69,9 +69,9 @@
         return STRFORMAT(@"距离%ld",(long)value);
     }else if ([@"speed" isEqualToString:value_p.dataSource]) {
         return STRFORMAT(@"速度%ld",(long)value);
-    }else if([EAT_RDS isEqualToString:value_p.dataSource]){
+    }else if([EAT_RDS isEqualToString:value_p.algsType]){
         return @"吃";
-    }else if([FLY_RDS isEqualToString:value_p.dataSource]){
+    }else if([FLY_RDS isEqualToString:value_p.algsType]){
         return @"飞";
     }else if(value == cHav){
         return @"有";
