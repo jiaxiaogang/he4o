@@ -77,7 +77,7 @@
 //MARK:===============================================================
 
 //小脑索引
--(AIKVPointer*) getOutputIndex:(NSString*)dataSource outputObj:(NSNumber*)outputObj;
+-(AIKVPointer*) getOutputIndex:(NSString*)algsType outputObj:(NSNumber*)outputObj;
 
 
 //MARK:===============================================================
@@ -92,26 +92,27 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------创建祖母节点--------------------
- *  将微信息组,转换成祖母节点;
- *  需要对祖母节点指定当前的isOut状态; (思维控制器知道它是行为还是认知)
+ *  MARK:--------------------创建概念节点--------------------
+ *  将微信息组,转换成概念节点;
+ *  需要对概念节点指定当前的isOut状态; (思维控制器知道它是行为还是认知)
  *  @result notnull
  */
 -(AIAlgNode*) createAlgNode:(NSArray*)algsArr isOut:(BOOL)isOut isMem:(BOOL)isMem;
+-(AIAlgNode*) createAlgNode:(NSArray*)algsArr dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem;
 
 
 /**
- *  MARK:--------------------构建抽象祖母--------------------
+ *  MARK:--------------------构建抽象概念--------------------
  *  1. 内类比调用 & 外类比调用 (存硬盘)
  *  2. thinkIn调用 (存内存)
  */
 -(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem;
-
+-(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs dataSource:(NSString*)dataSource isMem:(BOOL)isMem;
 
 /**
- *  MARK:--------------------获取value_ps相匹配的祖母--------------------
+ *  MARK:--------------------获取value_ps相匹配的概念--------------------
  *  说明:
- *      1. 获取绝对匹配到value_ps的algNode (祖母引用联想的方式去重)
+ *      1. 获取绝对匹配到value_ps的algNode (概念引用联想的方式去重)
  *      2. 先从内存网络,再从硬盘网络找;
  */
 -(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValueP:(AIPointer*)value_p;

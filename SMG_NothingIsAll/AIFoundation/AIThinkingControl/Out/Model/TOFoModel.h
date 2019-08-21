@@ -12,7 +12,7 @@
  *  MARK:--------------------决策中的时序模型--------------------
  *  1. content_p : 存AIFoNodeBase_p
  *  2. 再通过algScheme联想把具象可执行的具体任务存到memOrder;
- *  3. 其间,如果有执行失败,无效等祖母节点,存到except_ps不应期;
+ *  3. 其间,如果有执行失败,无效等概念节点,存到except_ps不应期;
  */
 @interface TOFoModel : TOModelBase
 

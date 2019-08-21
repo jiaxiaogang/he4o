@@ -29,7 +29,7 @@
     //1. 数据检查 (小鸟不能仅传入foodView,而要传入整个视角场景)
     dics = ARRTOOK(dics);
     
-    //2. 收集所有具象父祖母的value_ps
+    //2. 收集所有具象父概念的value_ps
     NSMutableArray *parentValue_ps = [[NSMutableArray alloc] init];
     NSMutableArray *subValuePsArr = [[NSMutableArray alloc] init];//2维数组
     for (NSDictionary *item in dics) {
@@ -38,19 +38,19 @@
         [subValuePsArr addObject:item_ps];
     }
     
-    //3. 构建父祖母 & 将父祖母加入瞬时记忆;
-    AIAlgNode *parentAlgNode = [theNet createAlgNode:parentValue_ps isOut:false isMem:true];
+    //3. 构建父概念 & 将父概念加入瞬时记忆;
+    AIAlgNode *parentAlgNode = [theNet createAlgNode:parentValue_ps dataSource:algsType isOut:false isMem:true];
     if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_AddToShortMemory:)]) {
         [self.delegate aiThinkIn_AddToShortMemory:@[parentAlgNode.pointer]];
     }
     
-    //4. 收集本组中,所有祖母节点;
+    //4. 收集本组中,所有概念节点;
     NSMutableArray *fromGroup_ps = [[NSMutableArray alloc] init];
     [fromGroup_ps addObject:parentAlgNode.pointer];
     
-    //5. 构建子祖母 (抽象祖母,并嵌套);
+    //5. 构建子概念 (抽象概念,并嵌套);
     for (NSArray *subValue_ps in subValuePsArr) {
-        AIAbsAlgNode *subAlgNode = [theNet createAbsAlgNode:subValue_ps conAlgs:@[parentAlgNode] isMem:true];
+        AIAbsAlgNode *subAlgNode = [theNet createAbsAlgNode:subValue_ps conAlgs:@[parentAlgNode] dataSource:algsType isMem:true];
         //if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_AddToShortMemory:)]) {
         //    [self.delegate aiThinkIn_AddToShortMemory:@[subAlgNode.pointer]];
         //}
@@ -76,7 +76,7 @@
         [self dataIn_FindMV:algsArr];
     }else{
         //1. 打包成algTypeNode;
-        AIAlgNodeBase *algNode = [theNet createAlgNode:algsArr isOut:false isMem:true];
+        AIAlgNodeBase *algNode = [theNet createAlgNode:algsArr dataSource:algsType isOut:false isMem:true];
         
         //2. 加入瞬时记忆
         if (algNode && self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_AddToShortMemory:)]) {
@@ -95,7 +95,7 @@
 /**
  *  MARK:--------------------输入非mv信息时--------------------
  *  1. 看到西瓜会开心 : TODO: 对自身状态的判断, (比如,看到西瓜,想吃,那么当前状态是否饿)
- *  @param fromGroup_ps : 当前输入批次的整组祖母指针;
+ *  @param fromGroup_ps : 当前输入批次的整组概念指针;
  */
 -(void) dataIn_NoMV:(AIPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps{
     if (!algNode_p) {
@@ -123,7 +123,7 @@
  *  注: 无条件 & 目前无能量消耗 (以后有基础思维活力值后可energy-1)
  *  注: 局部匹配_后面通过调整参数,来达到99%以上的识别率;
  *  问题: 看到的algNode与识别到的,未必是正确的,但我们应该保持使用protoAlgNode而不是recognitionAlgNode;
- *  TODOv2.0:祖母的嵌套,有可能会导致识别上的一些问题; (我们需要支持结构化识别,而不仅是绝对识别和模糊识别)
+ *  TODOv2.0:概念的嵌套,有可能会导致识别上的一些问题; (我们需要支持结构化识别,而不仅是绝对识别和模糊识别)
  */
 -(AIAlgNodeBase*) dataIn_NoMV_RecognitionIs:(AIPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps{
     //1. 数据准备
@@ -190,7 +190,7 @@
     AIPort *firstPort;
     if (recognitionAlgNode.pointer.isMem) {
         
-        ///1. 尝试取_对应硬盘祖母的引用序列; (有可能被迁移过)
+        ///1. 尝试取_对应硬盘概念的引用序列; (有可能被迁移过)
         AIAlgNodeBase *hdRecogniAlgNode = [SMGUtils searchObjectForPointer:recognitionAlgNode.pointer fileName:kFNNode time:cRTNode];
         if (hdRecogniAlgNode) {
             firstPort = ARR_INDEX(hdRecogniAlgNode.refPorts, 0);
@@ -203,7 +203,7 @@
             }
         }
         
-        ///2. 尝试取_内存祖母引用序列
+        ///2. 尝试取_内存概念引用序列
         if (!firstPort) {
             NSArray *memRefPorts = [SMGUtils searchObjectForPointer:recognitionAlgNode.pointer fileName:kFNMemRefPorts time:cRTMemPort];
             firstPort = ARR_INDEX(memRefPorts, 0);
@@ -216,7 +216,7 @@
             }
         }
     }else{
-        ///3. 尝试取_硬盘祖母引用序列
+        ///3. 尝试取_硬盘概念引用序列
         firstPort = ARR_INDEX(recognitionAlgNode.refPorts, 0);
         if ([NVHeUtil isHeight:5 fromContent_ps:recognitionAlgNode.content_ps]) {
             if (firstPort) {
@@ -395,7 +395,7 @@
 
 /**
  *  MARK:--------------------识别_局部匹配--------------------
- *  @param except_ps : 排除_ps; (如:同一批次输入的祖母组,不可用来识别自己)
+ *  @param except_ps : 排除_ps; (如:同一批次输入的概念组,不可用来识别自己)
  *  注: 根据引用找出相似度最高且达到阀值的结果返回; (相似度匹配)
  *  从content_ps的所有value.refPorts找前cPartMatchingCheckRefPortsLimit个, 如:contentCount9*limit5=45个;
  */

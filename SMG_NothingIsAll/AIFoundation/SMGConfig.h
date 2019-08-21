@@ -16,7 +16,7 @@
 #define cRTReference 600    //微信息索引序列时间;
 #define cRTNode 200         //所有node时间
 #define cRTDefault 60       //默认,例如:小脑canout序列;
-#define cRTPort 200         //refPorts(祖母),absPorts,conPorts的时间;
+#define cRTPort 200         //refPorts(概念),absPorts,conPorts的时间;
 #define cRTMvRef 600        //mv方向索引时间;
 
 #define cRTMemDefault 1800  //内存网络_默认生存时间;
@@ -50,8 +50,8 @@
 #define cGreater NSIntegerMax - 47  //表示内类比算法中,比大小时的大;
 #define cLess NSIntegerMin + 48 //表示内类比算法中,比大小时的小;
 
-#define cHav NSIntegerMax       //表示内类比算法中,祖母的有
-#define cNone NSIntegerMin      //表示内类比算法中,祖母的无
+#define cHav NSIntegerMax       //表示内类比算法中,概念的有
+#define cNone NSIntegerMin      //表示内类比算法中,概念的无
 
 #define cHavNoneAssFoCount 5    //Hav和None在联想其fo时,最大条数;
 

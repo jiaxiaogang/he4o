@@ -11,7 +11,7 @@
 @class AIPointer,AICMVNodeBase;
 @protocol AIThinkInDelegate <NSObject>
 
--(void) aiThinkIn_AddToShortMemory:(NSArray*)algNode_ps;        //将祖母节点添加到瞬时记忆
+-(void) aiThinkIn_AddToShortMemory:(NSArray*)algNode_ps;        //将概念节点添加到瞬时记忆
 -(AIFrontOrderNode*) aiThinkIn_CreateCMVModel:(NSArray*)algsArr;//构建cmv模型;
 
 /**
@@ -47,7 +47,7 @@
  *  3. 每个subAlg都要单独进行识别操作;
  *
  *  TODOWAIT:
- *  1. 默认为按边缘(ios的view层级)分组,随后可扩展祖母内类比,按别的维度分组; 参考: n16p7
+ *  1. 默认为按边缘(ios的view层级)分组,随后可扩展概念内类比,按别的维度分组; 参考: n16p7
  */
 -(void) dataInWithModels:(NSArray*)dics algsType:(NSString*)algsType;
 

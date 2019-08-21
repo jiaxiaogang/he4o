@@ -22,7 +22,7 @@
     NSMutableArray *result = [[NSMutableArray alloc] init];
     if (ARRISOK(curAlg_ps)) {
         
-        //2. 依次单个祖母行为化
+        //2. 依次单个概念行为化
         for (AIKVPointer *curAlg_p in curAlg_ps) {
             NSArray *singleResult = [TOAlgScheme convert2Out_Single:curAlg_p];
             [theNV setNodeData:curAlg_p lightStr:@"o2"];
@@ -41,7 +41,7 @@
 
 
 /**
- *  MARK:--------------------单个祖母的行为化--------------------
+ *  MARK:--------------------单个概念的行为化--------------------
  *  第1级: 直接判定curAlg_p为输出则收集;
  *  第2级: 直接对curAlg的cHav来行为化,成功则收集;
  *  第3级: 对curAlg下subValue和subAlg进行依次行为化,成功则收集;
@@ -57,7 +57,7 @@
     if (curAlg_p.isOut) {
         [result addObject:curAlg_p];
     }else{
-        //3. 第2级: 直接对当前祖母进行cHav并行为化;
+        //3. 第2级: 直接对当前概念进行cHav并行为化;
         AIAlgNodeBase *havAlg = [ThinkingUtils dataOut_GetAlgNodeWithInnerType:AnalogyInnerType_Hav algsType:curAlg_p.algsType dataSource:curAlg_p.dataSource];
         if (!havAlg) {
             NSLog(@"inner > error not found 有无大小 node");
@@ -76,10 +76,10 @@
 }
 
 /**
- *  MARK:--------------------对单个祖母的sub拆分行为化--------------------
+ *  MARK:--------------------对单个概念的sub拆分行为化--------------------
  *  1. 对curAlg的(subAlg&subValue)分别判定;
  *  2. 目前仅支持 1 x subAlg + 1 x subValue (目前仅支持a2+v1各一个);
- *  3. TODO:支持"多个祖母+多个value",建议"两个祖母+两个value",然后,更复杂的情况用"抽象精简"和"具象展开"来解决;
+ *  3. TODO:支持"多个概念+多个value",建议"两个概念+两个value",然后,更复杂的情况用"抽象精简"和"具象展开"来解决;
  */
 +(NSArray*) convert2Out_Single_Sub:(AIKVPointer*)curAlg_p{
     //1. 数据检查准备;
@@ -118,7 +118,7 @@
             AIFoNodeBase *conSubHavFo = [ThinkingUtils getNodeFromPort:ARR_INDEX(subHavFo.conPorts, 0)];
             if (!ISOK(conSubHavFo, AIFoNodeBase.class)) return;
             
-            //6. 从conSubHavFo中,找到与forecastAlg_p预测祖母指针;
+            //6. 从conSubHavFo中,找到与forecastAlg_p预测概念指针;
             AIKVPointer *forecastAlg_p = nil;
             for (AIKVPointer *item_p in conSubHavFo.orders_kvp) {
                 
@@ -130,7 +130,7 @@
             }
             if (!forecastAlg_p) return;
             
-            //8. 取出"预测"祖母信息;
+            //8. 取出"预测"概念信息;
             AIAlgNodeBase *forecastAlg = [SMGUtils searchNode:forecastAlg_p];
             if (!forecastAlg) return;
             
@@ -167,7 +167,7 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------"相对祖母"的行为化--------------------
+ *  MARK:--------------------"相对概念"的行为化--------------------
  *  1. 先根据havAlg取到havFo;
  *  2. 再判断havFo中的rangeOrder的行为化;
  *  @param success : 行为化成功则返回(havFo + 行为序列); (havFo notnull, actions notnull)
@@ -179,11 +179,11 @@
         return;
     }
     
-    //2. 找引用"相对祖母"的内存中"相对时序",并行为化; (注: 一般不存在内存相对祖母,此处代码应该不会执行);
+    //2. 找引用"相对概念"的内存中"相对时序",并行为化; (注: 一般不存在内存相对概念,此处代码应该不会执行);
     NSArray *memRefPorts = [SMGUtils searchObjectForPointer:relativeAlg.pointer fileName:kFNMemRefPorts time:cRTMemPort];
     BOOL memSuccess = [self convert2Out_RelativeFo_ps:[SMGUtils convertPointersFromPorts:memRefPorts] success:success];
     
-    //3. 根据havAlg联想时序,并找出新的解决方案,与新的行为化的祖母,与新的条件祖母;
+    //3. 根据havAlg联想时序,并找出新的解决方案,与新的行为化的概念,与新的条件概念;
     if (!memSuccess) {
         NSArray *hdRefPorts = ARR_SUB(relativeAlg.refPorts, 0, cHavNoneAssFoCount);
         BOOL hdSuccess = [self convert2Out_RelativeFo_ps:[SMGUtils convertPointersFromPorts:hdRefPorts] success:success];

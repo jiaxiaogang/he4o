@@ -44,9 +44,11 @@
 //微信息值指针
 +(AIKVPointer*) createPointerForData:(NSString*)algsType dataSource:(NSString*)dataSource;
 
-//概念节点指针
-+(AIKVPointer*) createPointerForAlg:(NSString*)folderName isOut:(BOOL)isOut isMem:(BOOL)isMem;
-
+/**
+ *  MARK:--------------------概念节点指针--------------------
+ *  @param dataSource : 概念节点的ds = 微信息的at; (alg.ds = value.at)
+ */
++(AIKVPointer*) createPointerForAlg:(NSString*)folderName dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem;
 @end
 
 
@@ -146,7 +148,7 @@
 //将pointers转字符串;
 +(NSString*) convertPointers2String:(NSArray*)pointers;
 
-//将祖母中的value_ps(含嵌套)展开成纯微信息的组; @result : notnull
+//将概念中的value_ps(含嵌套)展开成纯微信息的组; @result : notnull
 +(NSMutableArray*) convertValuePs2MicroValuePs:(NSArray*)value_ps;
 
 @end

@@ -28,7 +28,7 @@
     value_ps = ARRTOOK(value_ps);
     NSMutableString *mStr = [NSMutableString new];
     
-    //2. 将祖母嵌套展开
+    //2. 将概念嵌套展开
     NSMutableArray *mic_ps = [SMGUtils convertValuePs2MicroValuePs:value_ps];
     for (AIKVPointer *value_p in mic_ps) {
         NSNumber *valueNum = [AINetIndex getData:value_p];

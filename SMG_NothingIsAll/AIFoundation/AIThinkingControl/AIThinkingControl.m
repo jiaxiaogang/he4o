@@ -108,7 +108,7 @@ static AIThinkingControl *_instance;
         [AINetUtils setCanOutput:model.rds];
     }
     
-    //5. 祖母
+    //5. 概念
     AIAlgNode *algNode = [theNet createAlgNode:value_ps isOut:true isMem:false];
     
     //6. 加瞬时记忆

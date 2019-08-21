@@ -175,7 +175,7 @@
                 return;
             }
             
-            //4. 取出两个祖母
+            //4. 取出两个概念
             AIKVPointer *algA_p = ARR_INDEX(orders, i);
             AIKVPointer *algB_p = ARR_INDEX(orders, j);
             AIAlgNode *algNodeA = [SMGUtils searchNode:algA_p];
@@ -249,13 +249,13 @@
 /**
  *  MARK:--------------------内类比的构建方法--------------------
  *  @param type : 内类比类型,大小有无; (必须为四值之一,否则构建未知节点)
- *  @param target_p : 目前正在操作的指针; (可能是微信息指针,也可能是被嵌套的祖母指针)
+ *  @param target_p : 目前正在操作的指针; (可能是微信息指针,也可能是被嵌套的概念指针)
  *  @param rangeOrders : 在i-j之间的orders; (如 "a1 balabala a2" 中,balabala就是rangeOrders)
  *  @param conFo : 用来构建抽象具象时序时,作为具象节点使用;
  *
  *  > 作用
  *  1. 构建动态微信息;
- *  2. 构建动态祖母;
+ *  2. 构建动态概念;
  *  3. 构建abFoNode时序;
  *  4. 构建mv节点;
  */
@@ -265,7 +265,7 @@
     rangeOrders = ARRTOOK(rangeOrders);
     if (target_p && algA && algB) {
         
-        //2. 根据type来构建微信息,和祖母; (将a和b改成前和后)
+        //2. 根据type来构建微信息,和概念; (将a和b改成前和后)
         BOOL isHavNon = (type == AnalogyInnerType_Hav || type == AnalogyInnerType_None);
         NSInteger frontData = 0,backData = 0;
         if (type == AnalogyInnerType_Greater) {
@@ -291,11 +291,11 @@
             return nil;
         }
         
-        //4. 取出绝对匹配的dynamic抽象祖母
+        //4. 取出绝对匹配的dynamic抽象概念
         AIAlgNodeBase *frontAlg = [theNet getAbsoluteMatchingAlgNodeWithValueP:frontValue_p];
         AIAlgNodeBase *backAlg = [theNet getAbsoluteMatchingAlgNodeWithValueP:backValue_p];
         
-        //5. 构建动态抽象祖母block;
+        //5. 构建动态抽象概念block;
         AIAlgNodeBase* (^RelateDynamicAlgBlock)(AIAlgNodeBase*, AIAlgNodeBase*,AIPointer*) = ^AIAlgNodeBase* (AIAlgNodeBase *dynamicAbsNode, AIAlgNodeBase *conNode,AIPointer *value_p){
             if (ISOK(dynamicAbsNode, AIAbsAlgNode.class)) {
                 ///1. 有效时,关联;

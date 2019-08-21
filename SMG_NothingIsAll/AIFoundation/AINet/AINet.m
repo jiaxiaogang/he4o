@@ -92,9 +92,9 @@ static AINet *_instance;
 }
 
 //小脑索引
--(AIKVPointer*) getOutputIndex:(NSString*)dataSource outputObj:(NSNumber*)outputObj {
+-(AIKVPointer*) getOutputIndex:(NSString*)algsType outputObj:(NSNumber*)outputObj {
     if (outputObj) {
-        return [self.netIndex getDataPointerWithData:outputObj algsType:NSStringFromClass(Output.class) dataSource:dataSource isOut:true];
+        return [self.netIndex getDataPointerWithData:outputObj algsType:algsType dataSource:DefaultDataSource isOut:true];
     }
     return nil;
 }
@@ -191,10 +191,19 @@ static AINet *_instance;
 -(AIAlgNode*) createAlgNode:(NSArray*)algsArr isOut:(BOOL)isOut isMem:(BOOL)isMem{
     return [AIAlgNodeManager createAlgNode:algsArr isOut:isOut isMem:isMem];
 }
+-(AIAlgNode*) createAlgNode:(NSArray*)algsArr dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem{
+    return [AIAlgNodeManager createAlgNode:algsArr dataSource:dataSource isOut:isOut isMem:isMem];
+}
 
 -(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem{
     if (ARRISOK(conAlgs)) {
         return [AIAlgNodeManager createAbsAlgNode:value_ps conAlgs:conAlgs isMem:isMem];
+    }
+    return nil;
+}
+-(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs dataSource:(NSString*)dataSource isMem:(BOOL)isMem{
+    if (ARRISOK(conAlgs)) {
+        return [AIAlgNodeManager createAbsAlgNode:value_ps conAlgs:conAlgs dataSource:dataSource isMem:isMem];
     }
     return nil;
 }

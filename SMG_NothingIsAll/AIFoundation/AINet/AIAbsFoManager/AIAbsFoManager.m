@@ -80,7 +80,7 @@
             }
         }
         
-        //4. order_ps更新祖母节点引用序列;
+        //4. order_ps更新概念节点引用序列;
         [AINetUtils insertRefPorts_AllFoNode:findAbsNode.pointer order_ps:findAbsNode.orders_kvp ps:findAbsNode.orders_kvp];
     }
     

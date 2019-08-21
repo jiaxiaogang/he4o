@@ -138,4 +138,4 @@ va_end(args);\
  */
 #define DefaultAlgsType @" "    //默认AlgsType
 #define DefaultDataSource @" "  //默认DataSource
-#define AlgNodeAlgsType(pId) STRFORMAT(@"%d",pId)   //概念节点AlgsType
+#define AlgNodeAlgsType(pId) STRFORMAT(@"%ld",(long)pId)   //概念节点AlgsType

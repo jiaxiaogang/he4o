@@ -525,7 +525,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "133"
             endingLineNumber = "133"
-            landmarkName = "+createAbsAlgNode:conAlgs:isMem:"
+            landmarkName = "+createAbsAlgNode:conAlgs:dataSource:isMem:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -542,6 +542,22 @@
             startingLineNumber = "221"
             endingLineNumber = "221"
             landmarkName = "+analogyInner:canAss:updateEnergy:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ThirdParty/SMGNetVision/HE/NVDelegate_He.m"
+            timestampString = "588038017.982355"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "107"
+            endingLineNumber = "107"
+            landmarkName = "-nv_NodeOnClick:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

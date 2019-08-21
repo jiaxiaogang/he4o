@@ -193,7 +193,7 @@
 
 /**
  *  MARK:--------------------algScheme--------------------
- *  1. 对条件祖母进行判定 (行为化);
+ *  1. 对条件概念进行判定 (行为化);
  *  2. 理性判定;
  */
 -(void) dataOut_AlgScheme:(TOFoModel*)outFoModel{
@@ -206,7 +206,7 @@
         return;
     }
     
-    //2. 进行行为化; (通过有无,变化,等方式,将结构中所有条件祖母行为化);
+    //2. 进行行为化; (通过有无,变化,等方式,将结构中所有条件概念行为化);
     outFoModel.actions = [TOAlgScheme convert2Out:foNode.orders_kvp];
 }
 
@@ -220,7 +220,7 @@
  *  2. 激活输出 : absNode信息无conPorts方向的outPointer信息时,将absNode的宏信息尝试输出;
  *  3. 经验输出 : expOut指在absNode或conPort方向有outPointer信息;
  *
- *  功能: 将行为祖母组成的长时序,转化为真实输出;
+ *  功能: 将行为概念组成的长时序,转化为真实输出;
  *  1. 找到行为的具象;
  *  2. 正式执行行为 (小脑);
  */
@@ -280,10 +280,10 @@
 /**
  *  MARK:--------------------algScheme--------------------
  *  1. 将fo.orders转换为memOrder;
- *  2. 对条件祖母取最具象 (目前仅支持1层);
+ *  2. 对条件概念取最具象 (目前仅支持1层);
  *
  *  注: 最具象不表示真实,所以此方法可考虑去掉;
- *  注: 190425,废弃"memOrder"和"最具象祖母"后备份于此;
+ *  注: 190425,废弃"memOrder"和"最具象概念"后备份于此;
  */
 //-(void) dataOut_AlgScheme_Front:(TOFoModel*)outFoModel{
 //    //1. 数据准备
@@ -295,10 +295,10 @@
 //        return;
 //    }
 //
-//    //废弃"memOrder"和"最具象祖母"
+//    //废弃"memOrder"和"最具象概念"
 //    [outFoModel.memOrder removeAllObjects];
 //
-//    2. 取条件祖母的最具象,得出memOrder;
+//    2. 取条件概念的最具象,得出memOrder;
 //    //NSLog(@" >> 所需条件: (%@)",[NVUtils convertOrderPs2Str:notOutAlg_ps]);
 //    for (AIKVPointer *pointer in foNode.orders_kvp) {
 //        ///1. 本身为输出节点的话,直接收集到memOrder
@@ -308,7 +308,7 @@
 //                [outFoModel.memOrder addObject:outAlgNode];
 //            }
 //        }else{
-//            ///2. 非输出时,找出条件祖母,并收集到memOrder (最多往具象循环2层) (最具象不表示真实,所以此处可以考虑去掉)
+//            ///2. 非输出时,找出条件概念,并收集到memOrder (最多往具象循环2层) (最具象不表示真实,所以此处可以考虑去掉)
 //            NSArray *check_ps = @[pointer];
 //            for (NSInteger i = 0; i < cDataOutAssAlgDeep; i++) {
 //                AIAlgNode *validAlgNode = [ThinkingUtils scheme_GetAValidNode:check_ps except_ps:outFoModel.except_ps checkBlock:^BOOL(id checkNode) {

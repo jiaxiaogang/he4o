@@ -92,9 +92,9 @@ static int readDiskCount;
     return [AIKVPointer newWithPointerId:pointerId folderName:kPN_DATA algsType:algsType dataSource:dataSource isOut:false isMem:false];
 }
 
-+(AIKVPointer*) createPointerForAlg:(NSString*)folderName isOut:(BOOL)isOut isMem:(BOOL)isMem{
-    NSInteger pointerId = [SMGUtils createPointerId:DefaultAlgsType dataSource:DefaultDataSource];
-    return [AIKVPointer newWithPointerId:pointerId folderName:folderName algsType:AlgNodeAlgsType(pointerId) dataSource:DefaultDataSource isOut:isOut isMem:isMem];
++(AIKVPointer*) createPointerForAlg:(NSString*)folderName dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem{
+    NSInteger pointerId = [SMGUtils createPointerId:DefaultAlgsType dataSource:dataSource];
+    return [AIKVPointer newWithPointerId:pointerId folderName:folderName algsType:AlgNodeAlgsType(pointerId) dataSource:dataSource isOut:isOut isMem:isMem];
 }
 
 @end
@@ -525,7 +525,7 @@ static int readDiskCount;
     //2. 逐个收集
     for (AIKVPointer *value_p in value_ps) {
         
-        //3. 祖母嵌套时
+        //3. 概念嵌套时
         if ([kPN_ALG_ABS_NODE isEqualToString:value_p.folderName]) {
             AIAlgNodeBase *algNode = [SMGUtils searchNode:value_p];
             
@@ -535,7 +535,7 @@ static int readDiskCount;
             }
         }
         
-        //5. 非祖母嵌套时,直接收集;
+        //5. 非概念嵌套时,直接收集;
         [mic_ps addObject:value_p];
     }
     return mic_ps;

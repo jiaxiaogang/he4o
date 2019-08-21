@@ -49,7 +49,7 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------祖母_引用_微信息--------------------
+ *  MARK:--------------------概念_引用_微信息--------------------
  *  @desc               : 将algNode插线到value_ps的refPorts
  *  @param algNode_p    : 引用微信息的algNode
  *  @param value_ps     : 微信息组
@@ -59,7 +59,7 @@
 
 
 /**
- *  MARK:--------------------时序_引用_祖母--------------------
+ *  MARK:--------------------时序_引用_概念--------------------
  *  @desc               : 将algNode插线到value_ps的refPorts
  *  @param foNode_p     : 引用algNode的foNode
  *  @param order_ps     : orders节点组
@@ -132,9 +132,9 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------关联抽具象祖母--------------------
- *  @param absNode  : 抽象祖母
- *  @param conNodes : 具象祖母们
+ *  MARK:--------------------关联抽具象概念--------------------
+ *  @param absNode  : 抽象概念
+ *  @param conNodes : 具象概念们
  *  注: 抽具象的difStrong默认都为1;
  */
 +(void) relateAlgAbs:(AIAbsAlgNode*)absNode conNodes:(NSArray*)conNodes;
