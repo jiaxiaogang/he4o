@@ -8,13 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
-
-//MARK:===============================================================
-//MARK:                     < cmv基本模型 >
-//MARK:===============================================================
 /**
  *  MARK:--------------------foNode->cmvNode的模型--------------------
  */
+@class AIFrontOrderNode;
 @interface AIMvFoManager : NSObject
 
 /**

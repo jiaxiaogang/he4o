@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIFrontOrderNode;
+@class AIFrontOrderNode,AIAlgNodeBase;
 @interface ThinkingUtils : NSObject
 
 /**

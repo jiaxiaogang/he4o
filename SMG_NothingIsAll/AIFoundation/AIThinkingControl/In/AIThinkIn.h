@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIPointer,AICMVNodeBase;
+@class AIPointer,AICMVNodeBase,AIFrontOrderNode;
 @protocol AIThinkInDelegate <NSObject>
 
 -(void) aiThinkIn_AddToShortMemory:(NSArray*)algNode_ps;        //将概念节点添加到瞬时记忆

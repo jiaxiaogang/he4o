@@ -13,6 +13,7 @@
 #import "AIKVPointer.h"
 #import "AINetUtils.h"
 #import "NSString+Extension.h"
+#import "NVHeUtil.h"
 
 @implementation AIAlgNodeManager
 
@@ -45,6 +46,17 @@
 }
 
 +(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs dataSource:(NSString*)dataSource isMem:(BOOL)isMem{
+    if ([NVHeUtil isHeight:5 fromContent_ps:value_ps]) {
+        BOOL containsDistance = false;
+        for (AIKVPointer *item in value_ps) {
+            if ([@"distance" isEqualToString:item.dataSource]) {
+                containsDistance = true;
+            }
+        }
+        if (containsDistance == false) {
+            NSLog(@"构建无距离抽象坚果");
+        }
+    }
     if (ARRISOK(value_ps) && ARRISOK(conAlgs)) {
         //1. 数据准备
         value_ps = ARRTOOK(value_ps);

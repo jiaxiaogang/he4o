@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIAbsAlgNode;
+@class AIAbsAlgNode,AINetAbsFoNode,AIAbsCMVNode;
 @interface AINetUtils : NSObject
 
 //MARK:===============================================================
