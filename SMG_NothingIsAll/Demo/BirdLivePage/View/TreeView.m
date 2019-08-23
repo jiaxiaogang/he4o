@@ -15,7 +15,7 @@
 
 @property (strong,nonatomic) IBOutlet UIView *containerView;
 @property (strong,nonatomic) NSTimer *timer;            //计时器(3s)
-@property (assign,nonatomic) CGFloat dropY;             //果实掉落位置(75,125,175,225,275,325)
+@property (assign,nonatomic) CGFloat dropY;             //果实掉落位置(75,125,175,225,275)
 
 @end
 
@@ -33,7 +33,7 @@
 
 -(void) initView{
     //self
-    [self setFrame:CGRectMake(ScreenWidth * 0.5f, ScreenHeight - 400, ScreenWidth * 0.5f, 50)];
+    [self setFrame:CGRectMake((ScreenWidth * 0.5f - 100) / 2 + ScreenWidth * 0.5f, 64, 100, 50)];
     self.tag = visibleTag;
     
     //containerView
@@ -68,12 +68,13 @@
 - (void)notificationTimer{
     //掉落果实 (3s掉一个)
     FoodView *foodView = [[FoodView alloc] init];
+    foodView.x = 50 - 2.5f;
     self.dropY += 50;
-    if (self.dropY > 325) {
+    if (self.dropY > 275) {
         self.dropY = 75;
     }
     [self addSubview:foodView];
-    [UIView animateWithDuration:self.dropY / 375.0f animations:^{
+    [UIView animateWithDuration:self.dropY / 275.0f animations:^{
         foodView.y = self.dropY;
     }];
 }

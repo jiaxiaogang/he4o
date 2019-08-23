@@ -30,7 +30,7 @@
 
 -(void) initView{
     //self
-    [self setFrame:CGRectMake(ScreenWidth * 0.25f - 2.5f, 50, 5, 5)];
+    [self setFrame:CGRectMake(0, 50, 5, 5)];
     [self.layer setCornerRadius:2.5f];
     [self.layer setMasksToBounds:true];
     [self.layer setBorderColor:[UIColor grayColor].CGColor];

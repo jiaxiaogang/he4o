@@ -6,8 +6,8 @@
 //  Copyright © 2017年 XiaoGang. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "HEViewController.h"
 
-@interface TestHungryPage : UIViewController
+@interface TestHungryPage : HEViewController
 
 @end
