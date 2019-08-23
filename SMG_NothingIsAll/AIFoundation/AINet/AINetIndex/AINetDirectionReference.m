@@ -34,17 +34,14 @@
 -(NSArray*) getNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction isMem:(BOOL)isMem limit:(NSInteger)limit {
     return [self getNodePointersFromDirectionReference:mvAlgsType direction:direction isMem:isMem filter:^NSArray *(NSArray *protoArr) {
         if (ARRISOK(protoArr)) {
-            if (!isMem) {
-                NSLog(@"检查下,当前protoArr序列,是否'从强到弱'排序;");
-            }
+            //if (!isMem && protoArr.count > 2) {
+            //    NSLog(@"调试mv索引的强度序列情况");
+            //}
             return ARR_SUB(protoArr, 0, limit);
-            //NSInteger subLimit = MAX(0, MIN(limit, protoArr.count));
-            //return [protoArr subarrayWithRange:NSMakeRange(protoArr.count - subLimit, subLimit)];
         }
         return nil;
     }];
 }
-
 
 -(NSArray*) getNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction isMem:(BOOL)isMem filter:(NSArray*(^)(NSArray *protoArr))filter{
     //1. 取mv分区的引用序列文件;

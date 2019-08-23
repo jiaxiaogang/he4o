@@ -21,7 +21,6 @@
  */
 @implementation AIAbsCMVManager
 
-
 -(AIAbsCMVNode*) create:(AIKVPointer*)absFo_p aMv_p:(AIKVPointer*)aMv_p bMv_p:(AIKVPointer*)bMv_p {
     //1. 数据
     BOOL valid = ISOK(aMv_p, AIKVPointer.class) && ISOK(bMv_p, AIKVPointer.class) && [STRTOOK(aMv_p.algsType) isEqualToString:bMv_p.algsType] && ISOK(absFo_p, AIKVPointer.class);
@@ -90,13 +89,9 @@
     [AINetUtils relateMvAbs:result conNodes:conMvs];
     
     //8. 报告添加direction引用 (difStrong暂时先x2;(因为一般是两个相抽象))
-    [theNet setMvNodeToDirectionReference:result.pointer delta:absDelta difStrong:absUrgentTo * 2];
+    NSInteger strong = absUrgentTo;
+    [theNet setMvNodeToDirectionReference:result difStrong:strong];
     return result;
 }
-
-//MARK:===============================================================
-//MARK:                     < private_Method >
-//MARK:===============================================================
-
 
 @end

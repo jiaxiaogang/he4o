@@ -67,9 +67,9 @@
 /**
  *  MARK:--------------------mvNode的方向索引--------------------
  *  @param difStrong    : mv的迫切度越高,越强;
- *  @param delta        :
+ *  @param cmvNode      : cmvNode有可能还在create阶段,未存硬盘,所以不能传指针进来;
  */
--(void) setMvNodeToDirectionReference:(AIKVPointer*)cmvNode_p delta:(NSInteger)delta difStrong:(NSInteger)difStrong;
+-(void) setMvNodeToDirectionReference:(AICMVNodeBase*)cmvNode difStrong:(NSInteger)difStrong;
 
 
 //MARK:===============================================================

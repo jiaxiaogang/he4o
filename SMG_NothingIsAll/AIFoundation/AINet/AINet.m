@@ -156,16 +156,19 @@ static AINet *_instance;
     return [self.netDirectionReference getNodePointersFromDirectionReference:mvAlgsType direction:direction isMem:isMem filter:filter];
 }
 
--(void) setMvNodeToDirectionReference:(AIKVPointer*)cmvNode_p delta:(NSInteger)delta difStrong:(NSInteger)difStrong {
-    //1. 取方向(delta的正负)
-    MVDirection direction = delta < 0 ? MVDirection_Negative : MVDirection_Positive;
-    if (ISOK(cmvNode_p, AIKVPointer.class)) {
+-(void) setMvNodeToDirectionReference:(AICMVNodeBase*)cmvNode difStrong:(NSInteger)difStrong {
+    //1. 数据检查
+    if (cmvNode) {
         
-        //2. 取虚似value_p地址; (不存在值的固定指针地址)
-        AIKVPointer *mvReference_p = [SMGUtils createPointerForDirection:cmvNode_p.algsType direction:direction];
+        //2. 取方向(delta的正负)
+        NSInteger delta = [NUMTOOK([AINetIndex getData:cmvNode.delta_p]) integerValue];
+        MVDirection direction = delta < 0 ? MVDirection_Negative : MVDirection_Positive;
         
-        //3. 将mvNode地址,插入到强度序列,并存储;
-        [AINetUtils insertRefPorts_AllMvNode:cmvNode_p value_p:mvReference_p difStrong:difStrong];
+        //3. 取mv方向索引;
+        AIKVPointer *mvReference_p = [SMGUtils createPointerForDirection:cmvNode.pointer.algsType direction:direction];
+        
+        //4. 将mvNode地址,插入到强度序列,并存储;
+        [AINetUtils insertRefPorts_AllMvNode:cmvNode.pointer value_p:mvReference_p difStrong:difStrong];
     }
 }
 

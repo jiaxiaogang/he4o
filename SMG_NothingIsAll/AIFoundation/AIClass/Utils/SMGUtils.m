@@ -18,8 +18,6 @@
 
 @implementation SMGUtils
 
-static int readDiskCount;
-
 //MARK:===============================================================
 //MARK:                     < PointerId >
 //MARK:===============================================================
@@ -374,9 +372,6 @@ static int readDiskCount;
         if (result == nil && !isMem) {
             PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:filePath];
             result = [cache objectForKey:fileName];
-            if (++readDiskCount % 10 == 0) {
-                NSLog(@">>>>>>>>>ReadDisk,%d,%@",readDiskCount,fileName);
-            }
         }
         
         //5. 存到redis (wedis/disk)

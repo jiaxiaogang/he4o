@@ -23,13 +23,11 @@
     __block NSString *mvAlgsType = DefaultAlgsType;
     __block AIKVPointer *deltaPointer = nil;
     __block AIKVPointer *urgentToPointer = nil;
-    __block NSInteger deltaValue = 0;
     __block NSInteger urgentToValue = 0;
     [ThinkingUtils parserAlgsMVArr:imvAlgsArr success:^(AIKVPointer *delta_p, AIKVPointer *urgentTo_p, NSInteger delta, NSInteger urgentTo, NSString *algsType) {
         deltaPointer = delta_p;
         mvAlgsType = algsType;
         urgentToPointer = urgentTo_p;
-        deltaValue = delta;
         urgentToValue = urgentTo;
     }];
     
@@ -40,7 +38,7 @@
     cmvNode.urgentTo_p = urgentToPointer;
     [AINetUtils insertRefPorts_AllMvNode:cmvNode.pointer value_p:cmvNode.delta_p difStrong:1];//引用插线
     [AINetUtils insertRefPorts_AllMvNode:cmvNode.pointer value_p:cmvNode.urgentTo_p difStrong:1];//引用插线
-    [theNet setMvNodeToDirectionReference:cmvNode.pointer delta:deltaValue difStrong:urgentToValue];//difStrong暂时先相等;
+    [theNet setMvNodeToDirectionReference:cmvNode difStrong:urgentToValue];//difStrong暂时先相等;
     
     //3. 打包foNode;
     AIFrontOrderNode *foNode = [[AIFrontOrderNode alloc] init];//node
