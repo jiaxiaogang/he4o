@@ -83,7 +83,7 @@
 
 ### 5. -------------（三）he4o系统实践-------------
 
-| 架构简图 | ![](https://github.com/jiaxiaogang/HELIX_THEORY/blob/master/Other/assets/26_%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84%E9%87%8D%E7%BB%98%E5%9B%BE.png?raw=true) |
+| 架构图 | ![](https://github.com/jiaxiaogang/HELIX_THEORY/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/assets/139_v2.0%E6%9E%B6%E6%9E%84%E5%9B%BE.png?raw=true) |
 | --- | --- |
 | 性能要求 | 可运行于单机终端 |
 | 编程思想 | DOP (面向动态编程) |
