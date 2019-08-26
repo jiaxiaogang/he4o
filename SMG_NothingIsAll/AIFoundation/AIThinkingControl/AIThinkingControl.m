@@ -32,8 +32,7 @@
  */
 @interface AIThinkingControl() <AIThinkInDelegate,AIThinkOutDelegate>
 
-@property (strong,nonatomic) AIShortMemory *shortMemory;
-@property (strong,nonatomic) NSMutableArray *thinkFeedCache;    //短时记忆_思维流(包括shortCache和cmvCache,10分钟内都会存在此处(人类可能一天或几小时))
+@property (strong,nonatomic) AIShortMemory *shortMemory;//瞬时记忆
 @property (strong, nonatomic) DemandManager *demandManager;   //输出循环所用到的数据管理器;
 
 /**
@@ -72,7 +71,6 @@ static AIThinkingControl *_instance;
 
 -(void) initData{
     self.shortMemory = [[AIShortMemory alloc] init];
-    self.thinkFeedCache = [[NSMutableArray alloc] init];
     self.demandManager = [[DemandManager alloc] init];
     self.thinkIn = [[AIThinkIn alloc] init];
     self.thinkIn.delegate = self;
