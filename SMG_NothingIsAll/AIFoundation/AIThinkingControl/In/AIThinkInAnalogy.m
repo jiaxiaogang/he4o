@@ -131,14 +131,14 @@
                     if (createAbsFo.orders_kvp.count == 1) {
                         AIAlgNodeBase *algNode = [SMGUtils searchNode:ARR_INDEX(createAbsFo.orders_kvp, 0)];
                         if (algNode && algNode.pointer.isOut) {
-                            NSLog(@"时序中,仅有一个输出节点");
-                            [theNV setNodeData:algNode.pointer lightStr:@"BUG"];
-                            [theNV setNodeData:createAbsFo.pointer lightStr:@"BUG"];
+                            NSLog(@"警告!! BUGFrom->BUG 时序中,仅有一个输出节点");
                         }
                     }
                     
-                    [theNV setNodeData:assMv.pointer];
-                    [theNV setNodeData:createAbsCmv.pointer];
+                    [theNV setNodeData:createAbsFo.pointer lightStr:@"新抽"];
+                    [theNV setNodeData:createAbsCmv.pointer lightStr:@"新抽"];
+                    //TODOTOMORROW:发现BUG,此处assFo和createAbsFo的时序内容是一致的;
+                    //应该加强,而不是再构建一个新的,导致构建多个;(此时时序为29 -abs-> 33 -abs-> 41,37)
                 }
             }
         }

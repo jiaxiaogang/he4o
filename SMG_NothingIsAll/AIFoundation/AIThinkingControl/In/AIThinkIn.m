@@ -258,15 +258,14 @@
     if (!ISOK(foNode, AIFrontOrderNode.class)) {
         return;
     }
-    [theNV setNodeData:foNode.pointer];
-    [theNV lightNode:foNode.pointer str:@"新"];
     
     //2. 取cmvNode
     AICMVNode *cmvNode = [SMGUtils searchNode:foNode.cmvNode_p];
     if (!ISOK(cmvNode, AICMVNode.class)) {
         return;
     }
-    [theNV setNodeData:cmvNode.pointer];
+    [theNV setNodeData:foNode.pointer lightStr:@"新"];
+    [theNV setNodeData:cmvNode.pointer lightStr:@"新"];
     
     //3. 思考mv,需求处理
     if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_CommitMvNode:toDemand:)]) {
@@ -329,9 +328,8 @@
                 AIFoNodeBase *assFrontNode = [SMGUtils searchNode:assMvNode.foNode_p];
                 
                 if (ISOK(assFrontNode, AINodeBase.class)) {
-                    //NSLog(@"\n抽象前========== %@",[NVUtils getCmvModelDesc_ByFoNode:assFrontNode]);
-                    [theNV setNodeData:assFrontNode.pointer];
-                    [theNV setNodeData:assFrontNode.cmvNode_p];
+                    [theNV setNodeData:assFrontNode.pointer lightStr:@"旧"];
+                    [theNV setNodeData:assFrontNode.cmvNode_p lightStr:@"旧"];
                     //5. 执行外类比;
                     [AIThinkInAnalogy analogyOutside:foNode assFo:assFrontNode canAss:^BOOL{
                         return [self canAss];
