@@ -51,6 +51,8 @@
         NSArray *sortSames = ARRTOOK([SMGUtils sortPointers:value_ps]);
         NSString *samesStr = [SMGUtils convertPointers2String:sortSames];
         NSString *samesMd5 = STRTOOK([NSString md5:samesStr]);
+        NSMutableArray *validConAlgs = [[NSMutableArray alloc] initWithArray:conAlgs];
+        AIAbsAlgNode *findAbsNode = nil;
         
         //2. 判断具象节点中,已有一个抽象sames节点,则不需要再构建新的;
         for (AIAbsAlgNode *checkNode in conAlgs) {
@@ -62,30 +64,31 @@
                 if ([samesMd5 isEqualToString:checkMd5]) {
                     
                     //c. 则把conAlgs去掉checkNode;
-                    NSMutableArray *conAlgs_RemCheckNode = [[NSMutableArray alloc] initWithArray:conAlgs];
-                    [conAlgs_RemCheckNode removeObject:checkNode];
+                    [validConAlgs removeObject:checkNode];
                     
-                    //d. 并直接关联;
-                    [AINetUtils relateAlgAbs:checkNode conNodes:conAlgs_RemCheckNode];
-                    return checkNode;
+                    //d. 找到findAbsNode
+                    findAbsNode = checkNode;
                 }
             }
         }
         
         //2. 判断algA.absPorts和absB.absPorts中的header,是否已存在algSames的抽象节点;
-        AIAbsAlgNode *findAbsNode = nil;
-        NSMutableArray *allAbsPorts = [[NSMutableArray alloc] init];
-        for (AIAlgNode *item in conAlgs) {
-            ///1. 收集硬盘absPorts;
-            [allAbsPorts addObjectsFromArray:item.absPorts];
-            ///2. 收集内存memAbsPorts;
-            NSArray *memAbsPorts = [SMGUtils searchObjectForPointer:item.pointer fileName:kFNMemAbsPorts time:cRTMemPort];
-            [allAbsPorts addObjectsFromArray:memAbsPorts];
-        }
-        for (AIPort *port in allAbsPorts) {
-            if ([samesMd5 isEqualToString:port.header]) {
-                findAbsNode = [SMGUtils searchNode:port.target_p];
-                break;
+        if (!findAbsNode) {
+            NSMutableArray *allAbsPorts = [[NSMutableArray alloc] init];
+            for (AIAlgNode *item in conAlgs) {
+                //a. 收集硬盘absPorts;
+                [allAbsPorts addObjectsFromArray:item.absPorts];
+                //b. 收集内存memAbsPorts;
+                NSArray *memAbsPorts = [SMGUtils searchObjectForPointer:item.pointer fileName:kFNMemAbsPorts time:cRTMemPort];
+                [allAbsPorts addObjectsFromArray:memAbsPorts];
+            }
+            
+            //c. 从absPorts中找已匹配到samesMd5的抽象节点;
+            for (AIPort *port in allAbsPorts) {
+                if ([samesMd5 isEqualToString:port.header]) {
+                    findAbsNode = [SMGUtils searchNode:port.target_p];
+                    break;
+                }
             }
         }
         
@@ -95,9 +98,6 @@
             BOOL isOut = [AINetUtils checkAllOfOut:sortSames];
             findAbsNode.pointer = [SMGUtils createPointerForAlg:kPN_ALG_ABS_NODE dataSource:dataSource isOut:isOut isMem:isMem];
             findAbsNode.content_ps = sortSames;
-            
-            ///1. value.refPorts (更新微信息的引用序列)
-            [AINetUtils insertRefPorts_AllAlgNode:findAbsNode.pointer value_ps:findAbsNode.content_ps ps:findAbsNode.content_ps];
         }
         
         ////4. 概念的嵌套 (190816取消概念嵌套,参见n16p17-bug16)
@@ -110,8 +110,11 @@
         //    }
         //}
         
+        //4. value.refPorts (更新/加强微信息的引用序列)
+        [AINetUtils insertRefPorts_AllAlgNode:findAbsNode.pointer value_ps:findAbsNode.content_ps ps:findAbsNode.content_ps];
+        
         //5. 关联 & 存储
-        [AINetUtils relateAlgAbs:findAbsNode conNodes:conAlgs];
+        [AINetUtils relateAlgAbs:findAbsNode conNodes:validConAlgs];
         return findAbsNode;
     }
     return nil;

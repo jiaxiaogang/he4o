@@ -142,6 +142,7 @@
                     [theNV setNodeData:createAbsCmv.pointer lightStr:@"新抽"];
                     //TODOTOMORROW:发现BUG,此处assFo和createAbsFo的时序内容是一致的;
                     //应该加强,而不是再构建一个新的,导致构建多个;(此时时序为29 -abs-> 33 -abs-> 41,37)
+                    //硬盘的已通过修改createAbsAlg()修复,内存的,还未修复,,,
                 }
             }
         }
