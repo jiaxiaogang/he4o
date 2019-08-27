@@ -52,6 +52,26 @@
         NSString *samesStr = [SMGUtils convertPointers2String:sortSames];
         NSString *samesMd5 = STRTOOK([NSString md5:samesStr]);
         
+        //2. 判断具象节点中,已有一个抽象sames节点,则不需要再构建新的;
+        for (AIAbsAlgNode *checkNode in conAlgs) {
+            //a. checkNode是抽象节点时;
+            if (ISOK(checkNode, AIAbsAlgNode.class)) {
+                
+                //b. 并且md5与orderSames相同时,即发现checkNode本身就是抽象节点;
+                NSString *checkMd5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:checkNode.content_ps]]);
+                if ([samesMd5 isEqualToString:checkMd5]) {
+                    
+                    //c. 则把conAlgs去掉checkNode;
+                    NSMutableArray *conAlgs_RemCheckNode = [[NSMutableArray alloc] initWithArray:conAlgs];
+                    [conAlgs_RemCheckNode removeObject:checkNode];
+                    
+                    //d. 并直接关联;
+                    [AINetUtils relateAlgAbs:checkNode conNodes:conAlgs_RemCheckNode];
+                    return checkNode;
+                }
+            }
+        }
+        
         //2. 判断algA.absPorts和absB.absPorts中的header,是否已存在algSames的抽象节点;
         AIAbsAlgNode *findAbsNode = nil;
         NSMutableArray *allAbsPorts = [[NSMutableArray alloc] init];

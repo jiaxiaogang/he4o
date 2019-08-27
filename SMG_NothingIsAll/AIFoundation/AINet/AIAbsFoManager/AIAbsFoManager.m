@@ -39,7 +39,6 @@
         }
     }
     
-    
     //1. 数据准备
     if (!ARRISOK(conFos)) {
         return nil;

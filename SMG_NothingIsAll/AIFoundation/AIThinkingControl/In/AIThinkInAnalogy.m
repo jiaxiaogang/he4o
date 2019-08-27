@@ -40,8 +40,8 @@
                     }
                     
                     ///2. 取出algNodeA & algNodeB
-                    AIAlgNode *algNodeA = [SMGUtils searchNode:algNodeA_p];
-                    AIAlgNode *algNodeB = [SMGUtils searchNode:algNodeB_p];
+                    AIAlgNodeBase *algNodeA = [SMGUtils searchNode:algNodeA_p];
+                    AIAlgNodeBase *algNodeB = [SMGUtils searchNode:algNodeB_p];
                     
                     ///3. values->absPorts的认知过程
                     if (algNodeA && algNodeB) {
@@ -55,7 +55,10 @@
                             }
                         }
                         if (ARRISOK(sameValue_ps)) {
-                            [theNet createAbsAlgNode:sameValue_ps conAlgs:@[algNodeA,algNodeB] isMem:false];
+                            AIAbsAlgNode *createAbsNode = [theNet createAbsAlgNode:sameValue_ps conAlgs:@[algNodeA,algNodeB] isMem:false];
+                            if (createAbsNode) {
+                                [orderSames addObject:createAbsNode.pointer];
+                            }
                             ///4. 构建时,消耗能量值;
                             if (updateEnergy) {
                                 updateEnergy(-0.1f);
@@ -63,23 +66,23 @@
                         }
                     }
                     
-                    ///5. absPorts->orderSames (根据强度优先)
-                    NSMutableArray *aAbsPorts = [[NSMutableArray alloc] init];
-                    [aAbsPorts addObjectsFromArray:[SMGUtils searchObjectForPointer:algNodeA.pointer fileName:kFNMemAbsPorts time:cRTMemPort]];
-                    [aAbsPorts addObjectsFromArray:algNodeA.absPorts];
-                    
-                    NSMutableArray *bAbsPorts = [[NSMutableArray alloc] init];
-                    [bAbsPorts addObjectsFromArray:[SMGUtils searchObjectForPointer:algNodeB.pointer fileName:kFNMemAbsPorts time:cRTMemPort]];
-                    [bAbsPorts addObjectsFromArray:algNodeB.absPorts];
-                    
-                    for (AIPort *aPort in aAbsPorts) {
-                        for (AIPort *bPort in bAbsPorts) {
-                            if ([aPort.target_p isEqual:bPort.target_p]) {
-                                [orderSames addObject:bPort.target_p];
-                                break;
-                            }
-                        }
-                    }
+                    ///5. absPorts->orderSames (根据强度优先)190827注掉,因为此处抽象不必添加到新时序中,且已经取消概念嵌套,所以还是以上面sameValue_ps构建的新absAlg添加进去即可;
+                    //NSMutableArray *aAbsPorts = [[NSMutableArray alloc] init];
+                    //[aAbsPorts addObjectsFromArray:[SMGUtils searchObjectForPointer:algNodeA.pointer fileName:kFNMemAbsPorts time:cRTMemPort]];
+                    //[aAbsPorts addObjectsFromArray:algNodeA.absPorts];
+                    //
+                    //NSMutableArray *bAbsPorts = [[NSMutableArray alloc] init];
+                    //[bAbsPorts addObjectsFromArray:[SMGUtils searchObjectForPointer:algNodeB.pointer fileName:kFNMemAbsPorts time:cRTMemPort]];
+                    //[bAbsPorts addObjectsFromArray:algNodeB.absPorts];
+                    //
+                    //for (AIPort *aPort in aAbsPorts) {
+                    //    for (AIPort *bPort in bAbsPorts) {
+                    //        if ([aPort.target_p isEqual:bPort.target_p]) {
+                    //            [orderSames addObject:bPort.target_p];
+                    //            break;
+                    //        }
+                    //    }
+                    //}
                 }
             }
         }
