@@ -91,8 +91,8 @@
     //3. 外类比构建
     if (orderSames.count == 1) {
         NSLog(@"将构建长度为1的时序, fo:%lu,assFo:%lu",(unsigned long)fo.orders_kvp.count,(unsigned long)assFo.orders_kvp.count);
-        [theNV setNodeData:fo.pointer lightStr:@"BugFrom"];
-        [theNV setNodeData:assFo.pointer lightStr:@"BugFrom"];
+        [theNV setNodeData:fo.pointer lightStr:@"长1BugFrom"];
+        [theNV setNodeData:assFo.pointer lightStr:@"长1BugFrom"];
         NSLog(@"");
     }
     [self analogyOutside_Creater:orderSames fo:fo assFo:assFo fromInner:fromInner];
@@ -138,11 +138,8 @@
                         }
                     }
                     
-                    [theNV setNodeData:createAbsFo.pointer lightStr:@"新抽"];
-                    [theNV setNodeData:createAbsCmv.pointer lightStr:@"新抽"];
-                    //TODOTOMORROW:发现BUG,此处assFo和createAbsFo的时序内容是一致的;
-                    //应该加强,而不是再构建一个新的,导致构建多个;(此时时序为29 -abs-> 33 -abs-> 41,37)
-                    //硬盘的已通过修改createAbsAlg()修复,内存的,还未修复,,,
+                    [theNV setNodeData:createAbsFo.pointer lightStr:@"osNew"];
+                    [theNV setNodeData:createAbsCmv.pointer lightStr:@"osNew"];
                 }
             }
         }

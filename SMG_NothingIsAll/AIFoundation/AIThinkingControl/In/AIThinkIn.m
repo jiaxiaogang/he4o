@@ -295,7 +295,7 @@
     NSInteger delta = [NUMTOOK([AINetIndex getData:cmvNode.delta_p]) integerValue];
     MVDirection direction = delta < 0 ? MVDirection_Negative : MVDirection_Positive;
     
-    //2. 联想相似mv数据_内存网络取1个;
+    //2. 联想相似mv数据_内存网络取1个;(联想内存类比,用以发现新的时序,比如学玩新游戏)
     NSArray *memMvPorts = [theNet getNetNodePointersFromDirectionReference:cmvNode.pointer.algsType direction:direction isMem:true filter:^NSArray *(NSArray *protoArr) {
         protoArr = ARRTOOK(protoArr);
         for (AIPort *protoItem in protoArr) {
@@ -306,7 +306,7 @@
         return nil;
     }];
     
-    //2. 联想相似mv数据_硬盘网络取2个; (并strong+1)
+    //2. 联想相似mv数据_硬盘网络取2个; (并strong+1)(联想硬盘类比,用以找出当下很确切的时序,比如每天加强吃饭-饱)
     NSArray *hdMvPorts = [theNet getNetNodePointersFromDirectionReference:cmvNode.pointer.algsType direction:direction isMem:false limit:2];
     for (AIPort *hdPort in hdMvPorts) {
         AICMVNodeBase *cmvNode = [SMGUtils searchNode:hdPort.target_p];
