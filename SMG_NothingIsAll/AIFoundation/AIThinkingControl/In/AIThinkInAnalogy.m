@@ -172,7 +172,7 @@
                 //测到问题:依次点击后,最终却构建了radius的变化,而不是距离变化;
                 //测到问题:有时序,指向了hungerMv+,但其并不能解决饥饿问题;
                 //测到问题:在点马上饿,TO输出了"吃" (说明在认知过程中,有了过份抽象的问题);
-                
+                //测到问题:发现BUG:小鸟仅发现了速度变化,飞行方向变化,却没有发现距离变化;
                 return;
             }
             
@@ -196,7 +196,6 @@
                     //1) 当长度都为1时,比大小:同区不同值; (对比相同算法标识的两个指针 (如,颜色,距离等))
                     AIKVPointer *a_p = ARR_INDEX(aSub_ps, 0);
                     AIKVPointer *b_p = ARR_INDEX(bSub_ps, 0);
-                    NSLog(@"inner > 大小 %@,%@",a_p.folderName,b_p.folderName);
                     if ([a_p.identifier isEqualToString:b_p.identifier] && [kPN_VALUE isEqualToString:b_p.folderName]) {
                         //注: 对比微信息是否不同 (MARK_VALUE:如微信息去重功能去掉,此处要取值再进行对比)
                         if (a_p.pointerId != b_p.pointerId) {
@@ -204,7 +203,7 @@
                             [theApp.nvView setNodeData:algNodeB.pointer];
                             NSNumber *numA = [AINetIndex getData:a_p];
                             NSNumber *numB = [AINetIndex getData:b_p];
-                            NSLog(@"inner > 构建变化,%@:%@->%@",a_p.dataSource,numA,numB);
+                            NSLog(@"\ninner > 构建变化,%@%@ (%@ - %@)",a_p.algsType,a_p.dataSource,numA,numB);
                             NSComparisonResult compareResult = [NUMTOOK(numA) compare:NUMTOOK(numB)];
                             if (compareResult == NSOrderedAscending) {
                                 abFo = [self analogyInner_Creater:AnalogyInnerType_Less target_p:a_p algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];

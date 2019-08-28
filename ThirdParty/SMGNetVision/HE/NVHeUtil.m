@@ -27,12 +27,12 @@
 +(NSString*) getLightStr:(AIKVPointer*)node_p{
     if (ISOK(node_p, AIKVPointer.class)) {
         if ([self isValue:node_p]) {
-            return [self getLightStr_Value:node_p];
+            return [self getLightStr_ValueP:node_p];
         }else if ([self isAlg:node_p]) {
             AIAlgNodeBase *algNode = [SMGUtils searchNode:node_p];
             if (algNode && algNode.content_ps.count == 1) {
                 AIKVPointer *value_p = algNode.content_ps[0];
-                return [self getLightStr_Value:value_p];
+                return [self getLightStr_ValueP:value_p];
             }else if (node_p.isOut) {
                 return @"动";
             }
@@ -41,7 +41,7 @@
             if (foNode) {
                 AIAlgNodeBase *lastAlgNode = [SMGUtils searchNode:ARR_INDEX(foNode.orders_kvp, foNode.orders_kvp.count - 1)];
                 if (lastAlgNode && lastAlgNode.content_ps.count == 1) {
-                    return [self getLightStr_Value:lastAlgNode.content_ps[0]];
+                    return [self getLightStr_ValueP:lastAlgNode.content_ps[0]];
                 }
             }
         }
@@ -49,31 +49,39 @@
     return @"";
 }
 
-+(NSString*) getLightStr_Value:(AIKVPointer*)value_p{
+//获取value_p的light描述;
++(NSString*) getLightStr_ValueP:(AIKVPointer*)value_p{
     NSInteger value = [NUMTOOK([AINetIndex getData:value_p]) integerValue];
+    NSString *valueStr = [self getLightStr_Value:value];
     if ([@"sizeWidth" isEqualToString:value_p.dataSource]) {
-        return STRFORMAT(@"宽%ld",value);
+        return STRFORMAT(@"宽%@",valueStr);
     }else if ([@"sizeHeight" isEqualToString:value_p.dataSource]) {
-        return STRFORMAT(@"高%ld",value);
+        return STRFORMAT(@"高%@",valueStr);
     }else if ([@"colorRed" isEqualToString:value_p.dataSource]) {
-        return STRFORMAT(@"R%ld",value);
+        return STRFORMAT(@"R%@",valueStr);
     }else if ([@"colorBlue" isEqualToString:value_p.dataSource]) {
-        return STRFORMAT(@"B%ld",value);
+        return STRFORMAT(@"B%@",valueStr);
     }else if ([@"colorGreen" isEqualToString:value_p.dataSource]) {
-        return STRFORMAT(@"G%ld",value);
+        return STRFORMAT(@"G%@",valueStr);
     }else if ([@"radius" isEqualToString:value_p.dataSource]) {
-        return STRFORMAT(@"形状%ld",value);
+        return STRFORMAT(@"形状%@",valueStr);
     }else if ([@"direction" isEqualToString:value_p.dataSource]) {
-        return STRFORMAT(@"方向%ld",value);
+        return STRFORMAT(@"方向%@",valueStr);
     }else if ([@"distance" isEqualToString:value_p.dataSource]) {
-        return STRFORMAT(@"距离%ld",(long)value);
+        return STRFORMAT(@"距离%@",valueStr);
     }else if ([@"speed" isEqualToString:value_p.dataSource]) {
-        return STRFORMAT(@"速度%ld",(long)value);
+        return STRFORMAT(@"速度%@",valueStr);
     }else if([EAT_RDS isEqualToString:value_p.algsType]){
-        return @"吃";
+        return STRFORMAT(@"吃%@",valueStr);
     }else if([FLY_RDS isEqualToString:value_p.algsType]){
-        return @"飞";
-    }else if(value == cHav){
+        return STRFORMAT(@"飞%@",valueStr);
+    }
+    return valueStr;
+}
+
+//获取value的light描述;
++(NSString*) getLightStr_Value:(NSInteger)value{
+    if(value == cHav){
         return @"有";
     }else if(value == cNone){
         return @"无";
@@ -82,7 +90,7 @@
     }else if(value == cLess){
         return @"小";
     }
-    return @"";
+    return STRFORMAT(@"%ld",value);
 }
 
 
