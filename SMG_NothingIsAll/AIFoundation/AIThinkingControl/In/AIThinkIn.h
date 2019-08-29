@@ -8,22 +8,28 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIPointer,AICMVNodeBase,AIFrontOrderNode;
+@class AIPointer,AICMVNodeBase,AIFrontOrderNode,AIAlgNodeBase;
 @protocol AIThinkInDelegate <NSObject>
 
 -(void) aiThinkIn_AddToShortMemory:(NSArray*)algNode_ps;        //将概念节点添加到瞬时记忆
 -(AIFrontOrderNode*) aiThinkIn_CreateCMVModel:(NSArray*)algsArr;//构建cmv模型;
 
 /**
- *  MARK:--------------------mv处理--------------------
- *  @param toDemand : 是否尝试加入需求,imv输入状态则true,联想网络杏仁核得来的则false;
+ *  MARK:--------------------感性mv输入处理--------------------
  *  @param cmvNode  : 要处理的mvNode
  *  @desc 功能说明:
  *      1. 更新energy值
- *      2. 更新需求池 (需要toDemand=true)
+ *      2. 更新需求池
  *      3. 进行dataOut决策行为化;
  */
--(void) aiThinkIn_CommitMvNode:(AICMVNodeBase*)cmvNode toDemand:(BOOL)toDemand;
+-(void) aiThinkIn_CommitMvNode:(AICMVNodeBase*)cmvNode;
+
+/**
+ *  MARK:--------------------理性输入识别处理--------------------
+ *  联想网络杏仁核得来的则false;
+ */
+-(void) aiThinkIn_CommitReason:(AIAlgNodeBase*)algNode mvNode:(AICMVNodeBase*)mvNode;
+
 -(void) aiThinkIn_UpdateEnergy:(CGFloat)delta;                //更新思维能量值;
 -(BOOL) aiThinkIn_EnergyValid;                                  //能量值是否>0;
 

@@ -140,7 +140,7 @@ static AIThinkingControl *_instance;
     return foNode;
 }
 
--(void) aiThinkIn_CommitMvNode:(AICMVNodeBase*)cmvNode toDemand:(BOOL)toDemand{
+-(void) aiThinkIn_CommitMvNode:(AICMVNodeBase*)cmvNode{
     //1. 数据检查
     if (!ISOK(cmvNode, AICMVNodeBase.class)) {
         return;
@@ -151,13 +151,33 @@ static AIThinkingControl *_instance;
     }
     
     //2. 将联想到的cmv更新energy & 更新demandManager & decisionLoop
-    if (toDemand) {
-        NSString *algsType = cmvNode.urgentTo_p.algsType;
-        NSInteger urgentTo = [NUMTOOK([AINetIndex getData:cmvNode.urgentTo_p]) integerValue];
-        [self updateEnergy:urgentTo];//190730前:((urgentTo + 9)/10) 190730:urgentTo
-        [self.demandManager updateCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
-    }
+    NSString *algsType = cmvNode.urgentTo_p.algsType;
+    NSInteger urgentTo = [NUMTOOK([AINetIndex getData:cmvNode.urgentTo_p]) integerValue];
+    [self updateEnergy:urgentTo];//190730前:((urgentTo + 9)/10) 190730:urgentTo
+    [self.demandManager updateCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
     [self.thinkOut dataOut];
+}
+
+-(void) aiThinkIn_CommitReason:(AIAlgNodeBase *)algNode mvNode:(AICMVNodeBase *)mvNode {
+    //1. 数据检查
+    if (!ISOK(mvNode, AICMVNodeBase.class) || !ISOK(algNode, AIAlgNodeBase.class)) {
+        return;
+    }
+    
+    //比对mv匹配;
+    NSInteger delta = [NUMTOOK([AINetIndex getData:mvNode.delta_p]) integerValue];
+    if (delta == 0) {
+        return;
+    }
+    //NSString *algsType = cmvNode.urgentTo_p.algsType;
+    //NSInteger urgentTo = [NUMTOOK([AINetIndex getData:cmvNode.urgentTo_p]) integerValue];
+    //[self.demandManager updateCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
+    
+    //加上活跃度
+    //[self updateEnergy:urgentTo];//190730前:((urgentTo + 9)/10) 190730:urgentTo
+    
+    //走ThinkOutReason进行行为化
+    //[self.thinkOut dataOut];
 }
 
 -(void) aiThinkIn_UpdateEnergy:(CGFloat)delta{
