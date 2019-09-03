@@ -13,6 +13,7 @@
 #import "AIAbsAlgNode.h"
 #import "AIThinkInReason.h"
 #import "AIThinkInPercept.h"
+#import "AICMVNode.h"
 
 @implementation AIThinkIn
 
@@ -88,11 +89,11 @@
  *  1. 看到西瓜会开心 : TODO: 对自身状态的判断, (比如,看到西瓜,想吃,那么当前状态是否饿)
  *  @param fromGroup_ps : 当前输入批次的整组概念指针;
  */
--(void) dataIn_NoMV:(AIPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps{
+-(void) dataIn_NoMV:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps{
     [AIThinkInReason dataIn_NoMV:algNode_p fromGroup_ps:fromGroup_ps finishBlock:^(AIAlgNodeBase *isNode, AICMVNodeBase *useNode) {
         //5. 看到西瓜会开心
-        if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_CommitReason:mvNode:)]) {
-            [self.delegate aiThinkIn_CommitReason:isNode mvNode:useNode];
+        if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_CommitReason:isNode:useNode:)]) {
+            [self.delegate aiThinkIn_CommitReason:algNode_p isNode:isNode useNode:useNode];
         }
     }];
 }
@@ -113,8 +114,8 @@
         return foNode;
     } finishBlock:^(AICMVNode *commitMvNode) {
         //3. 思考mv,需求处理
-        if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_CommitMvNode:)]) {
-            [self.delegate aiThinkIn_CommitMvNode:commitMvNode];
+        if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_CommitPercept:)]) {
+            [self.delegate aiThinkIn_CommitPercept:commitMvNode];
         }
     } canAss:^BOOL{
         return [self canAss];

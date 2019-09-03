@@ -24,7 +24,7 @@
  *  1. 看到西瓜会开心 : TODO: 对自身状态的判断, (比如,看到西瓜,想吃,那么当前状态是否饿)
  *  @param fromGroup_ps : 当前输入批次的整组概念指针;
  */
-+(void) dataIn_NoMV:(AIPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps finishBlock:(void(^)(AIAlgNodeBase *isNode,AICMVNodeBase *useNode))finishBlock{
++(void) dataIn_NoMV:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps finishBlock:(void(^)(AIAlgNodeBase *isNode,AICMVNodeBase *useNode))finishBlock{
     if (!algNode_p) {
         return;
     }
@@ -51,7 +51,7 @@
  *  问题: 看到的algNode与识别到的,未必是正确的,但我们应该保持使用protoAlgNode而不是recognitionAlgNode;
  *  TODOv2.0:概念的嵌套,有可能会导致识别上的一些问题; (我们需要支持结构化识别,而不仅是绝对识别和模糊识别)
  */
-+(AIAlgNodeBase*) dataIn_NoMV_RecognitionIs:(AIPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps{
++(AIAlgNodeBase*) dataIn_NoMV_RecognitionIs:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps{
     //1. 数据准备
     AIAlgNodeBase *algNode = [SMGUtils searchNode:algNode_p];
     AIAlgNodeBase *assAlgNode = nil;

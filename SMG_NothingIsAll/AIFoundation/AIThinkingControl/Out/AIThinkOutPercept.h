@@ -9,11 +9,11 @@
 #import <Foundation/Foundation.h>
 
 @class DemandModel;
-@protocol AIThinkOutDelegate <NSObject>
+@protocol AIThinkOutPerceptDelegate <NSObject>
 
--(DemandModel*) aiThinkOut_GetCurrentDemand;            //获取当前需求;
--(BOOL) aiThinkOut_EnergyValid;                         //能量值是否>0;
--(void) aiThinkOut_UpdateEnergy:(CGFloat)delta;       //更新思维能量值;
+-(DemandModel*) aiThinkOutPercept_GetCurrentDemand;            //获取当前需求;
+-(BOOL) aiThinkOutPercept_EnergyValid;                         //能量值是否>0;
+-(void) aiThinkOutPercept_UpdateEnergy:(CGFloat)delta;       //更新思维能量值;
 
 @end
 
@@ -33,9 +33,9 @@
 //MARK:     4. score的取值,取各具象层次第一名 (即最好学校的最好班级的最好学生) (参考n16p5)
 //MARK:
 //MARK:===============================================================
-@interface AIThinkOut : NSObject
+@interface AIThinkOutPercept : NSObject
 
-@property (weak, nonatomic) id<AIThinkOutDelegate> delegate;
+@property (weak, nonatomic) id<AIThinkOutPerceptDelegate> delegate;
 
 /**
  *  MARK:--------------------dataLoop联想(每次循环的检查执行点)--------------------

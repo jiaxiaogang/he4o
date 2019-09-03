@@ -1,12 +1,12 @@
 //
-//  AIThinkOut.m
+//  AIThinkOutPercept.m
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2019/1/24.
 //  Copyright © 2019年 XiaoGang. All rights reserved.
 //
 
-#import "AIThinkOut.h"
+#import "AIThinkOutPercept.h"
 #import "DemandModel.h"
 #import "ThinkingUtils.h"
 #import "AIPort.h"
@@ -23,7 +23,7 @@
 #import "AIAlgNode.h"
 #import "TOAlgScheme.h"
 
-@implementation AIThinkOut
+@implementation AIThinkOutPercept
 
 //MARK:===============================================================
 //MARK:                     < publicMethod >
@@ -32,8 +32,8 @@
 -(void) dataOut {
     //1. 重排序 & 取当前序列最前的demandModel
     DemandModel *demandModel = nil;
-    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkOut_GetCurrentDemand)]) {
-        demandModel = [self.delegate aiThinkOut_GetCurrentDemand];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkOutPercept_GetCurrentDemand)]) {
+        demandModel = [self.delegate aiThinkOutPercept_GetCurrentDemand];
     }
     if (!demandModel) return;
     
@@ -261,15 +261,15 @@
 //MARK:===============================================================
 //使用能量
 -(void) useEnergy{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkOut_UpdateEnergy:)]) {
-        [self.delegate aiThinkOut_UpdateEnergy:-1];//思考与决策消耗能量;
+    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkOutPercept_UpdateEnergy:)]) {
+        [self.delegate aiThinkOutPercept_UpdateEnergy:-1];//思考与决策消耗能量;
     }
 }
 
 //拥有能量
 -(BOOL) havEnergy{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkOut_EnergyValid)]) {
-        return [self.delegate aiThinkOut_EnergyValid];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkOutPercept_EnergyValid)]) {
+        return [self.delegate aiThinkOutPercept_EnergyValid];
     }
     return false;
 }

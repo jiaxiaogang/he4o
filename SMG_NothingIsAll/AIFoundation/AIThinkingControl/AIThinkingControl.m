@@ -10,7 +10,8 @@
 #import "AIShortMemory.h"
 #import "DemandManager.h"
 #import "AIThinkIn.h"
-#import "AIThinkOut.h"
+#import "AIThinkOutPercept.h"
+#import "AIThinkOutReason.h"
 #import "OutputModel.h"
 #import "AINet.h"
 #import "AINetUtils.h"
@@ -30,7 +31,7 @@
  *  2. 在联想中,遇到的mv,都叠加到当前demand下;
  *
  */
-@interface AIThinkingControl() <AIThinkInDelegate,AIThinkOutDelegate>
+@interface AIThinkingControl() <AIThinkInDelegate,AIThinkOutPerceptDelegate>
 
 @property (strong,nonatomic) AIShortMemory *shortMemory;//瞬时记忆
 @property (strong, nonatomic) DemandManager *demandManager;   //输出循环所用到的数据管理器;
@@ -47,7 +48,7 @@
 @property (assign, nonatomic) CGFloat energy;
 
 @property (strong, nonatomic) AIThinkIn *thinkIn;
-@property (strong, nonatomic) AIThinkOut *thinkOut;
+@property (strong, nonatomic) AIThinkOutPercept *thinkOutPercept;
 
 @end
 
@@ -74,8 +75,8 @@ static AIThinkingControl *_instance;
     self.demandManager = [[DemandManager alloc] init];
     self.thinkIn = [[AIThinkIn alloc] init];
     self.thinkIn.delegate = self;
-    self.thinkOut = [[AIThinkOut alloc] init];
-    self.thinkOut.delegate = self;
+    self.thinkOutPercept = [[AIThinkOutPercept alloc] init];
+    self.thinkOutPercept.delegate = self;
 }
 
 
@@ -140,7 +141,7 @@ static AIThinkingControl *_instance;
     return foNode;
 }
 
--(void) aiThinkIn_CommitMvNode:(AICMVNodeBase*)cmvNode{
+-(void) aiThinkIn_CommitPercept:(AICMVNodeBase*)cmvNode{
     //1. 数据检查
     if (!ISOK(cmvNode, AICMVNodeBase.class)) {
         return;
@@ -155,17 +156,18 @@ static AIThinkingControl *_instance;
     NSInteger urgentTo = [NUMTOOK([AINetIndex getData:cmvNode.urgentTo_p]) integerValue];
     [self updateEnergy:urgentTo];//190730前:((urgentTo + 9)/10) 190730:urgentTo
     [self.demandManager updateCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
-    [self.thinkOut dataOut];
+    [self.thinkOutPercept dataOut];
 }
 
--(void) aiThinkIn_CommitReason:(AIAlgNodeBase *)algNode mvNode:(AICMVNodeBase *)mvNode {
+-(void) aiThinkIn_CommitReason:(AIKVPointer*)targetAlg_p isNode:(AIAlgNodeBase*)isNode useNode:(AICMVNodeBase*)useNode {
     //1. 数据检查
-    if (!ISOK(mvNode, AICMVNodeBase.class) || !ISOK(algNode, AIAlgNodeBase.class)) {
+    AIAlgNodeBase *targetAlg = [SMGUtils searchNode:targetAlg_p];
+    if (!ISOK(useNode, AICMVNodeBase.class) || !ISOK(isNode, AIAlgNodeBase.class) || !targetAlg) {
         return;
     }
     
     //比对mv匹配;
-    NSInteger delta = [NUMTOOK([AINetIndex getData:mvNode.delta_p]) integerValue];
+    NSInteger delta = [NUMTOOK([AINetIndex getData:useNode.delta_p]) integerValue];
     if (delta == 0) {
         return;
     }
@@ -177,7 +179,7 @@ static AIThinkingControl *_instance;
     //[self updateEnergy:urgentTo];//190730前:((urgentTo + 9)/10) 190730:urgentTo
     
     //走ThinkOutReason进行行为化
-    //[self.thinkOut dataOut];
+    [AIThinkOutReason dataOut];
 }
 
 -(void) aiThinkIn_UpdateEnergy:(CGFloat)delta{
@@ -190,17 +192,17 @@ static AIThinkingControl *_instance;
 
 
 /**
- *  MARK:--------------------AIThinkOutDelegate--------------------
+ *  MARK:--------------------AIThinkOutPerceptDelegate--------------------
  */
--(DemandModel*) aiThinkOut_GetCurrentDemand{
+-(DemandModel*) aiThinkOutPercept_GetCurrentDemand{
     return [self.demandManager getCurrentDemand];
 }
 
--(BOOL) aiThinkOut_EnergyValid{
+-(BOOL) aiThinkOutPercept_EnergyValid{
     return self.energy > 0;
 }
 
--(void) aiThinkOut_UpdateEnergy:(CGFloat)delta{
+-(void) aiThinkOutPercept_UpdateEnergy:(CGFloat)delta{
     [self updateEnergy:delta];
 }
 

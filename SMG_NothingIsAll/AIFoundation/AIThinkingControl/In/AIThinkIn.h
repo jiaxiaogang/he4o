@@ -22,13 +22,13 @@
  *      2. 更新需求池
  *      3. 进行dataOut决策行为化;
  */
--(void) aiThinkIn_CommitMvNode:(AICMVNodeBase*)cmvNode;
+-(void) aiThinkIn_CommitPercept:(AICMVNodeBase*)cmvNode;
 
 /**
  *  MARK:--------------------理性输入识别处理--------------------
  *  联想网络杏仁核得来的则false;
  */
--(void) aiThinkIn_CommitReason:(AIAlgNodeBase*)algNode mvNode:(AICMVNodeBase*)mvNode;
+-(void) aiThinkIn_CommitReason:(AIKVPointer*)targetAlg_p isNode:(AIAlgNodeBase*)isNode useNode:(AICMVNodeBase*)useNode;
 
 -(void) aiThinkIn_UpdateEnergy:(CGFloat)delta;                //更新思维能量值;
 -(BOOL) aiThinkIn_EnergyValid;                                  //能量值是否>0;

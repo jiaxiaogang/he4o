@@ -16,6 +16,6 @@
 @class AIAlgNodeBase,AICMVNodeBase;
 @interface AIThinkInReason : NSObject
 
-+(void) dataIn_NoMV:(AIPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps finishBlock:(void(^)(AIAlgNodeBase *isNode,AICMVNodeBase *useNode))finishBlock;
++(void) dataIn_NoMV:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps finishBlock:(void(^)(AIAlgNodeBase *isNode,AICMVNodeBase *useNode))finishBlock;
 
 @end
