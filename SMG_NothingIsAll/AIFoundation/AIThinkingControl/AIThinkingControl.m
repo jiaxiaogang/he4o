@@ -160,26 +160,7 @@ static AIThinkingControl *_instance;
 }
 
 -(void) aiThinkIn_CommitReason:(AIKVPointer*)targetAlg_p isNode:(AIAlgNodeBase*)isNode useNode:(AICMVNodeBase*)useNode {
-    //1. 数据检查
-    AIAlgNodeBase *targetAlg = [SMGUtils searchNode:targetAlg_p];
-    if (!ISOK(useNode, AICMVNodeBase.class) || !ISOK(isNode, AIAlgNodeBase.class) || !targetAlg) {
-        return;
-    }
-    
-    //比对mv匹配;
-    NSInteger delta = [NUMTOOK([AINetIndex getData:useNode.delta_p]) integerValue];
-    if (delta == 0) {
-        return;
-    }
-    //NSString *algsType = cmvNode.urgentTo_p.algsType;
-    //NSInteger urgentTo = [NUMTOOK([AINetIndex getData:cmvNode.urgentTo_p]) integerValue];
-    //[self.demandManager updateCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
-    
-    //加上活跃度
-    //[self updateEnergy:urgentTo];//190730前:((urgentTo + 9)/10) 190730:urgentTo
-    
-    //走ThinkOutReason进行行为化
-    [AIThinkOutReason dataOut];
+    [AIThinkOutReason dataOut:targetAlg_p isNode:isNode useNode:useNode];
 }
 
 -(void) aiThinkIn_UpdateEnergy:(CGFloat)delta{

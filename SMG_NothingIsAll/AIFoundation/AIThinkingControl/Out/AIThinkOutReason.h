@@ -11,8 +11,9 @@
 /**
  *  MARK:--------------------理性ThinkOut部分--------------------
  */
+@class AICMVNodeBase,AIAlgNodeBase;
 @interface AIThinkOutReason : NSObject
 
-+(void) dataOut;
++(void) dataOut:(AIKVPointer*)targetAlg_p isNode:(AIAlgNodeBase*)isNode useNode:(AICMVNodeBase*)useNode;
 
 @end
