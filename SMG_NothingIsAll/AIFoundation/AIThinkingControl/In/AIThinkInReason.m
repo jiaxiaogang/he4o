@@ -16,6 +16,7 @@
 #import "NVHeader.h"
 #import "NSString+Extension.h"
 #import "AIPort.h"
+#import "AIAbsAlgNode.h"
 
 @implementation AIThinkInReason
 
@@ -48,50 +49,66 @@
  *  MARK:--------------------识别是什么(这是西瓜)--------------------
  *  注: 无条件 & 目前无能量消耗 (以后有基础思维活力值后可energy-1)
  *  注: 局部匹配_后面通过调整参数,来达到99%以上的识别率;
- *  问题: 看到的algNode与识别到的,未必是正确的,但我们应该保持使用protoAlgNode而不是recognitionAlgNode;
- *  TODOv2.0:概念的嵌套,有可能会导致识别上的一些问题; (我们需要支持结构化识别,而不仅是绝对识别和模糊识别)
+ *
+ *  Q1: 老问题,看到的algNode与识别到的,未必是正确的,但我们应该保持使用protoAlgNode而不是recognitionAlgNode;
+ *  A1: 190910在理性思维完善后,识别result和protoAlg都有用;
+ *
+ *  Q2: 概念的嵌套,有可能会导致识别上的一些问题; (我们需要支持结构化识别,而不仅是绝对识别和模糊识别)
+ *  A2: 190910概念嵌套已取消,正在做结构化识别,此次改动是为了完善ThinkReason细节;
+ *
+ *  TODO: 190910识别"概念与时序",并构建纵向关联;
+ *  STATUST: 190910概念识别,添加了抽象关联;
  */
 +(AIAlgNodeBase*) dataIn_NoMV_RecognitionIs:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps{
     //1. 数据准备
     AIAlgNodeBase *algNode = [SMGUtils searchNode:algNode_p];
-    AIAlgNodeBase *assAlgNode = nil;
+    AIAlgNodeBase *result = nil;
+    if (algNode == nil) {
+        return nil;
+    }
     
     //2. 对value.refPorts进行检查识别; (noMv信号已输入完毕,识别联想)
-    if (ISOK(algNode, AIAlgNodeBase.class)) {
-        ///1. 绝对匹配 -> 内存网络;
-        assAlgNode = [self recognition_AbsoluteMatching:algNode isMem:true];
-        
-        ///2. 绝对匹配 -> 硬盘网络;
-        if (!assAlgNode) {
-            assAlgNode = [self recognition_AbsoluteMatching:algNode isMem:false];
-        }
-        
-        ///3. 局部匹配 -> 内存网络;
-        ///(19xxxx注掉,不能太过于脱离持久网络做思考,所以先注掉)
-        ///(190625放开,因采用内存网络后,靠这识别)
-        if (!assAlgNode) {
-            assAlgNode = [self recognition_PartMatching:algNode isMem:true except_ps:fromGroup_ps];
-        }
-        
-        ///4. 局部匹配 -> 硬盘网络;
-        if (!assAlgNode) {
-            assAlgNode = [self recognition_PartMatching:algNode isMem:false except_ps:fromGroup_ps];
-        }
+    AIAlgNodeBase *assAlgNode = nil;
+    ///1. 绝对匹配 -> 内存网络;
+    assAlgNode = [self recognition_AbsoluteMatching:algNode isMem:true];
+    
+    ///2. 绝对匹配 -> 硬盘网络;
+    if (!assAlgNode) {
+        assAlgNode = [self recognition_AbsoluteMatching:algNode isMem:false];
     }
     
-    //3. strong++
-    if (ISOK(assAlgNode, AIAlgNodeBase.class)) {
-        [AINetUtils insertRefPorts_AllAlgNode:assAlgNode.pointer value_ps:assAlgNode.content_ps ps:assAlgNode.content_ps];
-        
+    ///3. 局部匹配 -> 内存网络;
+    ///(19xxxx注掉,不能太过于脱离持久网络做思考,所以先注掉)
+    ///(190625放开,因采用内存网络后,靠这识别)
+    if (!assAlgNode) {
+        assAlgNode = [self recognition_PartMatching:algNode isMem:true except_ps:fromGroup_ps];
     }
-    if ([NVHeUtil isHeight:5 fromContent_ps:assAlgNode.content_ps]) {
-        if (!assAlgNode) {
+    
+    ///4. 局部匹配 -> 硬盘网络;
+    if (!assAlgNode) {
+        assAlgNode = [self recognition_PartMatching:algNode isMem:false except_ps:fromGroup_ps];
+    }
+    
+    if (ISOK(assAlgNode, AIAlgNodeBase.class)) {
+        //3. 对algNode_p和assAlgNode进行抽具象关联;
+        if (ISOK(assAlgNode, AIAbsAlgNode.class)) {
+            [AINetUtils relateAlgAbs:(AIAbsAlgNode*)assAlgNode conNodes:@[algNode]];
+            result = assAlgNode;
+        }else{
+            result = [theNet createAbsAlgNode:assAlgNode.content_ps conAlgs:@[assAlgNode,algNode] isMem:false];
+        }
+        
+        //3. strong++
+        [AINetUtils insertRefPorts_AllAlgNode:assAlgNode.pointer value_ps:assAlgNode.content_ps ps:assAlgNode.content_ps];
+    }
+    if ([NVHeUtil isHeight:5 fromContent_ps:result.content_ps]) {
+        if (!result) {
             NSLog(@"_______________________识别 failure");
         }else{
             NSLog(@"_______________________识别 success");
         }
     }
-    return assAlgNode;
+    return result;
 }
 
 

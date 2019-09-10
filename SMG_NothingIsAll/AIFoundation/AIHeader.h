@@ -15,6 +15,7 @@
 #import "AICMVNodeBase.h"
 #import "NVHeader.h"
 #import "AIInput.h"
+#import "AINet.h"
 
 /**
  *  MARK:--------------------PathNameKey (kPH)--------------------
