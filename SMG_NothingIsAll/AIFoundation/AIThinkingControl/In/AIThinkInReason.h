@@ -16,6 +16,10 @@
 @class AIAlgNodeBase,AICMVNodeBase;
 @interface AIThinkInReason : NSObject
 
+//理性概念
 +(void) dataIn_NoMV:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps finishBlock:(void(^)(AIAlgNodeBase *isNode,AICMVNodeBase *useNode))finishBlock;
+
+//理性时序
++(void) TIR_Fo:(NSArray*)alg_ps canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy;
 
 @end

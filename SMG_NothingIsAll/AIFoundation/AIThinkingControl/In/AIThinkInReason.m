@@ -17,6 +17,7 @@
 #import "NSString+Extension.h"
 #import "AIPort.h"
 #import "AIAbsAlgNode.h"
+#import "AIThinkInAnalogy.h"
 
 @implementation AIThinkInReason
 
@@ -303,8 +304,18 @@
  *      5. 将zMv提交给demandManager,做TOR处理;
  *
  */
-+(void) TIR_Fo:(NSArray*)alg_ps {
++(void) TIR_Fo:(NSArray*)alg_ps canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
     
+    //1. 将alg_ps构建成时序;
+    AIFoNodeBase *foNode = nil;
+    
+    //2. 内类比,发现理性变化;
+    ///注: 如果把整个内类比由此处触发,是否:
+    ///a. 把每次dic输入,都作为一个新的内存时序;
+    ///b. 在内类比中,仅针对最后一个元素,与前面元素进行类比;
+    [AIThinkInAnalogy analogyInner:nil canAss:canAssBlock updateEnergy:updateEnergy];
+    
+    //3.
 }
 
 @end
