@@ -307,15 +307,19 @@
 +(void) TIR_Fo:(NSArray*)alg_ps canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
     
     //1. 将alg_ps构建成时序;
-    AIFoNodeBase *foNode = nil;
+    AIFrontOrderNode *foNode = [theNet createConFo:alg_ps];
     
     //2. 内类比,发现理性变化;
     ///注: 如果把整个内类比由此处触发,是否:
     ///a. 把每次dic输入,都作为一个新的内存时序;
     ///b. 在内类比中,仅针对最后一个元素,与前面元素进行类比;
-    [AIThinkInAnalogy analogyInner:nil canAss:canAssBlock updateEnergy:updateEnergy];
+    [AIThinkInAnalogy analogyInner:foNode canAss:canAssBlock updateEnergy:updateEnergy];
+    //TODOTOMORROW:把所有的inner中发现的abFo返回来,或者直接以此处foNode.absPorts来取;
     
-    //3.
+    
+    //3. 识别匹配foNode;
+    
+    //4. 看如何把innerResult也综合进来,,进行预测;
 }
 
 @end

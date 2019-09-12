@@ -22,4 +22,9 @@
  */
 -(AIFrontOrderNode*) create:(NSArray*)imvAlgsArr order:(NSArray*)order;
 
+/**
+ *  MARK:--------------------构建conFo--------------------
+ */
++(AIFrontOrderNode*) createConFo:(NSArray*)order_ps;
+
 @end

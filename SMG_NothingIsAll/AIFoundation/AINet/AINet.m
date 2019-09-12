@@ -126,6 +126,14 @@ static AINet *_instance;
 
 
 //MARK:===============================================================
+//MARK:                     < conFo >
+//MARK:===============================================================
+-(AIFrontOrderNode*) createConFo:(NSArray*)order_ps{
+    return [AIMvFoManager createConFo:order_ps];
+}
+
+
+//MARK:===============================================================
 //MARK:                     < absFo >
 //MARK:===============================================================
 -(AINetAbsFoNode*) createAbsFo_Outside:(AIFoNodeBase*)foA foB:(AIFoNodeBase*)foB orderSames:(NSArray*)orderSames{

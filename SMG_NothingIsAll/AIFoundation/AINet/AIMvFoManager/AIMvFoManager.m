@@ -41,16 +41,7 @@
     [theNet setMvNodeToDirectionReference:cmvNode difStrong:urgentToValue];//difStrong暂时先相等;
     
     //3. 打包foNode;
-    AIFrontOrderNode *foNode = [[AIFrontOrderNode alloc] init];//node
-    foNode.pointer = [SMGUtils createPointer:kPN_FRONT_ORDER_NODE algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false isMem:true];
-    //3.1. foNode.orders收集
-    for (AIPointer *conAlgNode_p in ARRTOOK(order)) {
-        if (ISOK(conAlgNode_p, AIPointer.class)) {
-            [foNode.orders_kvp addObject:conAlgNode_p];
-        }
-    }
-    //3.2. foNode引用conAlg;
-    [AINetUtils insertRefPorts_AllFoNode:foNode.pointer order_ps:foNode.orders_kvp ps:foNode.orders_kvp];
+    AIFrontOrderNode *foNode = [AIMvFoManager createConFo:order];
     
     //4. 互指向
     cmvNode.foNode_p = foNode.pointer;
@@ -61,6 +52,24 @@
     [SMGUtils insertNode:foNode];
     
     //6. 返回给thinking
+    return foNode;
+}
+
++(AIFrontOrderNode*) createConFo:(NSArray*)order_ps{
+    //1. foNode
+    AIFrontOrderNode *foNode = [[AIFrontOrderNode alloc] init];
+    
+    //2. pointer
+    foNode.pointer = [SMGUtils createPointer:kPN_FRONT_ORDER_NODE algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false isMem:true];
+    
+    //3. foNode.orders收集
+    [foNode.orders_kvp addObjectsFromArray:order_ps];
+    
+    //4. foNode引用conAlg;
+    [AINetUtils insertRefPorts_AllFoNode:foNode.pointer order_ps:foNode.orders_kvp ps:foNode.orders_kvp];
+    
+    //5. 存储foNode
+    [SMGUtils insertNode:foNode];
     return foNode;
 }
 
