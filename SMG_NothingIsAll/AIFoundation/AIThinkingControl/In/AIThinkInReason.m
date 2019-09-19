@@ -98,16 +98,16 @@
     }
     
     if (ISOK(assAlgNode, AIAlgNodeBase.class)) {
-        //3. 对algNode_p和assAlgNode进行抽具象关联;
-        if (ISOK(assAlgNode, AIAbsAlgNode.class)) {
-            [AINetUtils relateAlgAbs:(AIAbsAlgNode*)assAlgNode conNodes:@[algNode]];
-            result = assAlgNode;
-        }else{
-            result = [theNet createAbsAlgNode:assAlgNode.content_ps conAlgs:@[assAlgNode,algNode] isMem:false];
+        //3. 类比algNode和assAlgNode,并抽象;
+        NSMutableArray *same_ps = [[NSMutableArray alloc] init];
+        for (AIPointer *item_p in algNode.content_ps) {
+            if ([SMGUtils containsSub_p:item_p parent_ps:assAlgNode.content_ps]) {
+                [same_ps addObject:item_p];
+            }
         }
-        
-        //3. strong++
-        [AINetUtils insertRefPorts_AllAlgNode:assAlgNode.pointer value_ps:assAlgNode.content_ps ps:assAlgNode.content_ps];
+        if (ARRISOK(same_ps)) {
+            result = [theNet createAbsAlgNode:same_ps conAlgs:@[assAlgNode,algNode] isMem:false];
+        }
     }
     if ([NVHeUtil isHeight:5 fromContent_ps:result.content_ps]) {
         if (!result) {
