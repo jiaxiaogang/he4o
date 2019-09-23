@@ -18,13 +18,12 @@
     return _absPorts;
 }
 
-//-(NSMutableArray *)absPorts:(BOOL)saveDB{
-//    if (saveDB) {
-//        return [self absPorts];
-//    }else{
-//        return [[NSMutableArray alloc] initWithArray:ARRISOK([SMGUtils searchObjectForPointer:self.pointer fileName:kFNMemAbsPorts])];
-//    }
-//}
+-(NSMutableArray *)absPorts_All{
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    [result addObjectsFromArray:self.absPorts];
+    [result addObjectsFromArray:ARRTOOK([SMGUtils searchObjectForPointer:self.pointer fileName:kFNMemAbsPorts time:cRTMemPort])];
+    return result;
+}
 
 /**
  *  MARK:--------------------NSCoding--------------------

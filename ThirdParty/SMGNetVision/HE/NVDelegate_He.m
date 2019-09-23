@@ -76,15 +76,15 @@
     [theNV lightNode:node_p str:[NVHeUtil getLightStr:node_p]];
     
     //1. value时,返回 "iden+value值";
-    NSInteger memRefCount = ARRTOOK([SMGUtils searchObjectForPointer:node_p fileName:kFNMemRefPorts time:cRTMemReference]).count;
+    NSInteger memRefCount = ARRTOOK([SMGUtils searchObjectForPointer:node_p fileName:kFNMemRefPorts time:cRTMemPort]).count;
     if ([NVHeUtil isValue:node_p]) {
-        NSInteger hdRefCount = ARRTOOK([SMGUtils searchObjectForPointer:node_p fileName:kFNRefPorts time:cRTReference]).count;
+        NSInteger hdRefCount = ARRTOOK([SMGUtils searchObjectForPointer:node_p fileName:kFNRefPorts time:cRTMemPort]).count;
         NSNumber *value = NUMTOOK([AINetIndex getData:node_p]);
         return STRFORMAT(@"PID:%ld AT:%@ DS:%@ 值:%@ REF:h%ld/m%ld",(long)node_p.pointerId,node_p.algsType,node_p.dataSource,value,(long)hdRefCount,(long)memRefCount);
     }
     //2. algNode时,返回content_ps的 "微信息数+嵌套数";
-    NSInteger memAbsCount = ARRTOOK([SMGUtils searchObjectForPointer:node_p fileName:kFNMemAbsPorts time:cRTMemReference]).count;
-    NSInteger memConCount = ARRTOOK([SMGUtils searchObjectForPointer:node_p fileName:kFNMemConPorts time:cRTMemReference]).count;
+    NSInteger memAbsCount = ARRTOOK([SMGUtils searchObjectForPointer:node_p fileName:kFNMemAbsPorts time:cRTMemPort]).count;
+    NSInteger memConCount = ARRTOOK([SMGUtils searchObjectForPointer:node_p fileName:kFNMemConPorts time:cRTMemPort]).count;
     if([NVHeUtil isAlg:node_p]){
         AIAlgNodeBase *algNode = [SMGUtils searchNode:node_p];
         if (algNode) {
@@ -216,7 +216,7 @@
         //1. 如果是algNode/foNode/mvNode则返回.absPorts;
         if ([NVHeUtil isAlg:node_p] || [NVHeUtil isFo:node_p] || [NVHeUtil isMv:node_p]) {
             //2. memAbsPorts
-            NSArray *memAbsPorts = [SMGUtils searchObjectForPointer:node_p fileName:kFNMemAbsPorts];
+            NSArray *memAbsPorts = [SMGUtils searchObjectForPointer:node_p fileName:kFNMemAbsPorts time:cRTMemPort];
             [result addObjectsFromArray:[SMGUtils convertPointersFromPorts:memAbsPorts]];
 
             //3. hdAbsPorts

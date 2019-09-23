@@ -18,6 +18,11 @@
 @property (strong, nonatomic) AIKVPointer *pointer;     //自身存储地址
 @property (strong, nonatomic) NSMutableArray *absPorts; //抽象方向的端口;
 
+/**
+ *  MARK:--------------------返回所有absPorts--------------------
+ *  @desc memAbsPorts + hdAbsPorts;
+ */
+-(NSMutableArray *)absPorts_All;
 
 /**
  *  MARK:--------------------取absPorts--------------------

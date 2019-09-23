@@ -72,21 +72,21 @@
             }
         }
         
-        //2. 判断algA.absPorts和absB.absPorts中的header,是否已存在algSames的抽象节点;
-        if (!findAbsNode) {
-            NSMutableArray *allAbsPorts = [[NSMutableArray alloc] init];
-            for (AIAlgNode *item in conAlgs) {
-                //a. 收集硬盘absPorts;
-                [allAbsPorts addObjectsFromArray:item.absPorts];
-                //b. 收集内存memAbsPorts;
-                NSArray *memAbsPorts = [SMGUtils searchObjectForPointer:item.pointer fileName:kFNMemAbsPorts time:cRTMemPort];
-                [allAbsPorts addObjectsFromArray:memAbsPorts];
-            }
-            
-            //c. 从absPorts中找已匹配到samesMd5的抽象节点;
-            for (AIPort *port in allAbsPorts) {
-                if ([samesMd5 isEqualToString:port.header]) {
-                    findAbsNode = [SMGUtils searchNode:port.target_p];
+        //2. 判断具象节点的absPorts中,是否已有一个"sames"节点,有则无需构建新的;
+        for (AIAlgNodeBase *conNode in conAlgs) {
+            for (AIPort *absPort in conNode.absPorts_All) {
+                //1> 遍历找抽象是否已存在;
+                if ([samesMd5 isEqualToString:absPort.header]) {
+                    AIAbsAlgNode *absNode = [SMGUtils searchNode:absPort.target_p];
+                    //2> 已存在,则转移到硬盘网络;
+                    if (absNode.pointer.isMem) {
+                        absNode = [AINetUtils move2HdNodeFromMemNode_Alg:absNode];
+                    }
+                    //3> findAbsNode成功;
+                    findAbsNode = absNode;
+                    if (!ISOK(absNode, AIAbsAlgNode.class) ) {
+                        NSLog(@"警告!!!___发现非抽象类型的抽象节点错误,,,请检查出现此情况的原因;");
+                    }
                     break;
                 }
             }
