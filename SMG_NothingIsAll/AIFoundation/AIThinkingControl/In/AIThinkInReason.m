@@ -320,6 +320,18 @@
     //TODOTOMORROW:把所有的inner中发现的abFo返回来,或者直接以此处foNode.absPorts来取;
     
     
+    
+    //TIR_FO()代码步骤规划;
+    //1. 根据最后一个节点,取refPorts,
+    //2. 再根据左一个,取refPorts;
+    //3. 对lastRefPorts和leftRefPorts做类比,找出共同引用者,
+    //4. 对共同引用者的,顺序,看是否是正确的从左到右顺序;
+    //5. 能够匹配到更多个概念节点,越预测准确;
+    
+    
+    
+    
+    
     //3. 识别匹配foNode;
     
     //4. 看如何把innerResult也综合进来,,进行预测;
