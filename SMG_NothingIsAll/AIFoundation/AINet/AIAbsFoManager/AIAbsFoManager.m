@@ -64,7 +64,7 @@
                 ///3. 转移foNode到硬盘网络;
                 findAbsNode = [AINetUtils move2HdNodeFromMemNode_Fo:findAbsNode];
                 NSLog(@"检查!!!!,此处对findAbsFo做内存到硬盘网络的转移!!!");
-                if (findAbsNode.orders_kvp.count == 0) {
+                if (findAbsNode.content_ps.count == 0) {
                     NSLog(@"警告...fo.orders为空");
                 }
             }
@@ -87,16 +87,16 @@
                 
                 ///3. 收集order_p
                 if (hdAlgNode) {
-                    [findAbsNode.orders_kvp addObject:hdAlgNode.pointer];
+                    [findAbsNode.content_ps addObject:hdAlgNode.pointer];
                 }
             }else{
                 ///4. 收集order_p
-                [findAbsNode.orders_kvp addObject:item_p];
+                [findAbsNode.content_ps addObject:item_p];
             }
         }
         
         //4. order_ps更新概念节点引用序列;
-        [AINetUtils insertRefPorts_AllFoNode:findAbsNode.pointer order_ps:findAbsNode.orders_kvp ps:findAbsNode.orders_kvp];
+        [AINetUtils insertRefPorts_AllFoNode:findAbsNode.pointer order_ps:findAbsNode.content_ps ps:findAbsNode.content_ps];
     }
     
     //5. 具象节点&抽象节点_关联&存储

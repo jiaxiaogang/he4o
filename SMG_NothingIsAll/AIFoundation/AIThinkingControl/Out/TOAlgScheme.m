@@ -120,7 +120,7 @@
             
             //6. 从conSubHavFo中,找到与forecastAlg_p预测概念指针;
             AIKVPointer *forecastAlg_p = nil;
-            for (AIKVPointer *item_p in conSubHavFo.orders_kvp) {
+            for (AIKVPointer *item_p in conSubHavFo.content_ps) {
                 
                 //7. 判断item_p是subAlg的具象节点;
                 if ([ThinkingUtils containsConAlg:item_p absAlg:subAlg_p]) {
@@ -213,8 +213,8 @@
         AIFoNodeBase *relativeFo = [SMGUtils searchNode:relativeFo_p];
         
         //3. 取出havFo除第一个和最后一个之外的中间rangeOrder
-        if (relativeFo != nil && relativeFo.orders_kvp.count > 2) {
-            NSArray *foRangeOrder = ARR_SUB(relativeFo.orders_kvp, 1, relativeFo.orders_kvp.count - 2);
+        if (relativeFo != nil && relativeFo.content_ps.count > 2) {
+            NSArray *foRangeOrder = ARR_SUB(relativeFo.content_ps, 1, relativeFo.content_ps.count - 2);
             NSArray *foResult = [TOAlgScheme convert2Out:foRangeOrder];
             if (ARRISOK(foResult)) {
                 success(relativeFo,foResult);

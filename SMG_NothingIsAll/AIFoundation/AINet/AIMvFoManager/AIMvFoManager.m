@@ -63,10 +63,10 @@
     foNode.pointer = [SMGUtils createPointer:kPN_FRONT_ORDER_NODE algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false isMem:true];
     
     //3. foNode.orders收集
-    [foNode.orders_kvp addObjectsFromArray:order_ps];
+    [foNode.content_ps addObjectsFromArray:order_ps];
     
     //4. foNode引用conAlg;
-    [AINetUtils insertRefPorts_AllFoNode:foNode.pointer order_ps:foNode.orders_kvp ps:foNode.orders_kvp];
+    [AINetUtils insertRefPorts_AllFoNode:foNode.pointer order_ps:foNode.content_ps ps:foNode.content_ps];
     
     //5. 存储foNode
     [SMGUtils insertNode:foNode];

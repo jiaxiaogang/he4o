@@ -245,7 +245,7 @@
     if (ISOK(absNode, AINetAbsFoNode.class) && ARRISOK(conNodes)) {
         [self relateGeneralAbs:absNode absConPorts:absNode.conPorts conNodes:conNodes contentPsBlock:^NSArray *(AIFoNodeBase *node) {
             if (ISOK(node, AIFoNodeBase.class)) {
-                return node.orders_kvp;
+                return node.content_ps;
             }
             return nil;
         }];
@@ -310,7 +310,7 @@
 +(id) move2HdNodeFromMemNode_Fo:(AINodeBase*)memNode {
     return [self move2HdNodeFromMemNode_General:memNode insertRefPortsBlock:^(AIFoNodeBase *hdNode) {
         if (ISOK(hdNode, AIFoNodeBase.class)) {
-            [AINetUtils insertRefPorts_AllFoNode:hdNode.pointer order_ps:hdNode.orders_kvp ps:hdNode.orders_kvp];
+            [AINetUtils insertRefPorts_AllFoNode:hdNode.pointer order_ps:hdNode.content_ps ps:hdNode.content_ps];
         }
     }];
 }

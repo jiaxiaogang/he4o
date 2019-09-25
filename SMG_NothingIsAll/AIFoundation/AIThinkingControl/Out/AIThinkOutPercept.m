@@ -207,7 +207,7 @@
     }
     
     //2. 进行行为化; (通过有无,变化,等方式,将结构中所有条件概念行为化);
-    outFoModel.actions = [TOAlgScheme convert2Out:foNode.orders_kvp];
+    outFoModel.actions = [TOAlgScheme convert2Out:foNode.content_ps];
 }
 
 
@@ -300,7 +300,7 @@
 //
 //    2. 取条件概念的最具象,得出memOrder;
 //    //NSLog(@" >> 所需条件: (%@)",[NVUtils convertOrderPs2Str:notOutAlg_ps]);
-//    for (AIKVPointer *pointer in foNode.orders_kvp) {
+//    for (AIKVPointer *pointer in foNode.content_ps) {
 //        ///1. 本身为输出节点的话,直接收集到memOrder
 //        if (pointer.isOut) {
 //            AIAlgNodeBase *outAlgNode = [SMGUtils searchObjectForPointer:pointer fileName:kFNNode time:cRTNode];
@@ -326,7 +326,7 @@
 //    }
 //
 //    //3. 对memOrder有效性初步检查 (memOrder和fo.orders长度要一致)
-//    if (outFoModel.memOrder.count == foNode.orders_kvp.count) {
+//    if (outFoModel.memOrder.count == foNode.content_ps.count) {
 //        [self dataOut_AlgScheme:outFoModel];
 //    }else{
 //        [self dataOut];

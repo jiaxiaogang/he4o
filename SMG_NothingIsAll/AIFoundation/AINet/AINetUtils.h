@@ -87,7 +87,7 @@
  *  MARK:--------------------节点插到被引用信息上--------------------
  *  @param passiveRef_p : 此指针,被某节点引用;
  *  @param memNode_p    : 此节点,引用了某指针;
- *  @param ps           : algNode传content_ps,foNode传orders_kvp,而mv传nil;
+ *  @param ps           : algNode传content_ps,foNode传content_ps,而mv传nil;
  *  @param difStrong    : mvNode索引引用序列传迫切度正相关值,delta和urgent及别的微信息传1;
  *  1. 目前仅支持内存网络,硬盘网络在AIRefrAINetIndexReference.setRefresh()中;
  *  2. 微信息引用ports.header为空; (因为目前不需要)

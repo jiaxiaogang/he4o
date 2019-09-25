@@ -27,8 +27,8 @@
     //1. 类比orders的规律
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
     if (fo && assFo) {
-        for (AIKVPointer *algNodeA_p in fo.orders_kvp) {
-            for (AIKVPointer *algNodeB_p in assFo.orders_kvp) {
+        for (AIKVPointer *algNodeA_p in fo.content_ps) {
+            for (AIKVPointer *algNodeB_p in assFo.content_ps) {
                 //2. A与B直接一致则直接添加 & 不一致则如下代码;
                 if ([algNodeA_p isEqual:algNodeB_p]) {
                     [orderSames addObject:algNodeA_p];
@@ -90,7 +90,7 @@
 
     //3. 外类比构建
     if (orderSames.count == 1) {
-        NSLog(@"将构建长度为1的时序, fo:%lu,assFo:%lu",(unsigned long)fo.orders_kvp.count,(unsigned long)assFo.orders_kvp.count);
+        NSLog(@"将构建长度为1的时序, fo:%lu,assFo:%lu",(unsigned long)fo.content_ps.count,(unsigned long)assFo.content_ps.count);
         [theNV setNodeData:fo.pointer lightStr:@"长1BugFrom"];
         [theNV setNodeData:assFo.pointer lightStr:@"长1BugFrom"];
         NSLog(@"");
@@ -108,7 +108,7 @@
     if (ARRISOK(orderSames) && ISOK(fo, AIFoNodeBase.class) && ISOK(assFo, AIFoNodeBase.class)) {
         
         //3. fo和assFo本来就是抽象关系时_直接关联即可;
-        BOOL samesEqualAssFo = orderSames.count == assFo.orders_kvp.count && [SMGUtils containsSub_ps:orderSames parent_ps:assFo.orders_kvp];
+        BOOL samesEqualAssFo = orderSames.count == assFo.content_ps.count && [SMGUtils containsSub_ps:orderSames parent_ps:assFo.content_ps];
         BOOL jumpForAbsAlreadyHav = (ISOK(assFo, AINetAbsFoNode.class) && samesEqualAssFo);
         if (jumpForAbsAlreadyHav) {
             AINetAbsFoNode *assAbsFo = (AINetAbsFoNode*)assFo;
@@ -131,8 +131,8 @@
                     
                     //[theNV setNodeData:createAbsFo.pointer];
                     //调试时序中,仅有"吃"的问题;
-                    if (createAbsFo.orders_kvp.count == 1) {
-                        AIAlgNodeBase *algNode = [SMGUtils searchNode:ARR_INDEX(createAbsFo.orders_kvp, 0)];
+                    if (createAbsFo.content_ps.count == 1) {
+                        AIAlgNodeBase *algNode = [SMGUtils searchNode:ARR_INDEX(createAbsFo.content_ps, 0)];
                         if (algNode && algNode.pointer.isOut) {
                             NSLog(@"警告!! BUGFrom->BUG 时序中,仅有一个输出节点");
                         }
@@ -155,7 +155,7 @@
     if (!ISOK(checkFo, AIFoNodeBase.class)) {
         return;
     }
-    NSArray *orders = ARRTOOK(checkFo.orders_kvp);
+    NSArray *orders = ARRTOOK(checkFo.content_ps);
     
     //2. 每个元素,分别与orders后面所有元素进行类比
     for (NSInteger i = 0; i < orders.count; i++) {
@@ -359,7 +359,7 @@
     //1. 数据检查
     if (ISOK(abFo, AINetAbsFoNode.class)) {
         //2. 取用来联想的aAlg;
-        AIPointer *a_p = ARR_INDEX(abFo.orders_kvp, 0);
+        AIPointer *a_p = ARR_INDEX(abFo.content_ps, 0);
         AIAlgNodeBase *aAlg = [SMGUtils searchNode:a_p];
         if (!aAlg) {
             return;
@@ -372,7 +372,7 @@
             if (![abFo.pointer isEqual:refPort.target_p]) {
                 AIFoNodeBase *refFo = [SMGUtils searchObjectForPointer:refPort.target_p fileName:kFNNode time:cRTNode];
                 if (ISOK(refFo, AIFoNodeBase.class)) {
-                    AIPointer *firstAlg_p = ARR_INDEX(refFo.orders_kvp, 0);
+                    AIPointer *firstAlg_p = ARR_INDEX(refFo.content_ps, 0);
                     ///2. 必须符合aAlg在orders前面
                     if ([a_p isEqual:firstAlg_p]) {
                         assAbFo = refFo;

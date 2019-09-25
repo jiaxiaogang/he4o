@@ -16,6 +16,5 @@
 @interface AIAlgNodeBase : AINodeBase
 
 @property (strong, nonatomic) NSMutableArray *refPorts; //引用序列
-@property (strong, nonatomic) NSArray *content_ps;      //(微信息/嵌套概念)指针组 (以pointer默认排序)
 
 @end

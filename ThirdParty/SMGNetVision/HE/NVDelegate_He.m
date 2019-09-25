@@ -106,13 +106,13 @@
         if (foNode) {
             ///1. 依次点亮orders;
             [theNV clearLight:ModuleName_Alg];
-            for (NSInteger i = 0; i < foNode.orders_kvp.count; i++) {
-                AIKVPointer *item = ARR_INDEX(foNode.orders_kvp, i);
+            for (NSInteger i = 0; i < foNode.content_ps.count; i++) {
+                AIKVPointer *item = ARR_INDEX(foNode.content_ps, i);
                 [theNV lightNode:item str:STRFORMAT(@"%ld%@",(long)i,[NVHeUtil getLightStr:item])];
             }
             ///2. 返回描述;
             NSInteger hdConCount = ISOK(foNode, AINetAbsFoNode.class) ? ((AINetAbsFoNode*)foNode).conPorts.count : 0;
-            return STRFORMAT(@"PID:%ld AT:%@ DS:%@ 数:%lu ABS:h%lu/m%ld CON:h%ld/m%ld",(long)node_p.pointerId,node_p.algsType,node_p.dataSource,(unsigned long)foNode.orders_kvp.count,(unsigned long)foNode.absPorts.count,(long)memAbsCount,(long)hdConCount,(long)memConCount);
+            return STRFORMAT(@"PID:%ld AT:%@ DS:%@ 数:%lu ABS:h%lu/m%ld CON:h%ld/m%ld",(long)node_p.pointerId,node_p.algsType,node_p.dataSource,(unsigned long)foNode.content_ps.count,(unsigned long)foNode.absPorts.count,(long)memAbsCount,(long)hdConCount,(long)memConCount);
         }
     }
     //4. mv时,返回 "类型+升降";
@@ -197,7 +197,7 @@
             //2. foNode时返回order_kvp
             AIFoNodeBase *foNode = [SMGUtils searchNode:node_p];
             if (ISOK(foNode, AIFoNodeBase.class)) {
-                return foNode.orders_kvp;
+                return foNode.content_ps;
             }
         }else if ([NVHeUtil isMv:node_p]) {
             //3. 如果是mvNode则返回mv指向foNode_p;

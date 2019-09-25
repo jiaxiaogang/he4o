@@ -39,7 +39,7 @@
         }else if([self isFo:node_p]){
             AIFoNodeBase *foNode = [SMGUtils searchNode:node_p];
             if (foNode) {
-                AIAlgNodeBase *lastAlgNode = [SMGUtils searchNode:ARR_INDEX(foNode.orders_kvp, foNode.orders_kvp.count - 1)];
+                AIAlgNodeBase *lastAlgNode = [SMGUtils searchNode:ARR_INDEX(foNode.content_ps, foNode.content_ps.count - 1)];
                 if (lastAlgNode && lastAlgNode.content_ps.count == 1) {
                     return [self getLightStr_ValueP:lastAlgNode.content_ps[0]];
                 }

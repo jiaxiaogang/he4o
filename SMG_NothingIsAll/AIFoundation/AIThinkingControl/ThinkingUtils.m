@@ -210,7 +210,7 @@
     //    ///2. 判断absNode是否是由out_ps抽象的 (根据"微信息"组)
     //    AINetAbsFoNode *absNode = [SMGUtils searchObjectForPointer:absPort.target_p fileName:kFNNode time:cRTNode];
     //    if (absNode) {
-    //        BOOL fromOut_ps = [SMGUtils containsSub_ps:absNode.orders_kvp parent_ps:out_ps];
+    //        BOOL fromOut_ps = [SMGUtils containsSub_ps:absNode.content_ps parent_ps:out_ps];
     //
     //        ///3. 根据当前absNode的mv果,处理absCmvNode评价影响力;(系数0.2)
     //        if (fromOut_ps) {

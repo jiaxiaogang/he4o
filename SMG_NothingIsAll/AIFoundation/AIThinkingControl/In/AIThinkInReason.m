@@ -232,10 +232,6 @@
  *  从content_ps的所有value.refPorts找前cPartMatchingCheckRefPortsLimit个, 如:contentCount9*limit5=45个;
  */
 +(AIAlgNodeBase*) recognition_PartMatching:(AIAlgNodeBase*)algNode isMem:(BOOL)isMem except_ps:(NSArray*)except_ps{
-    if (algNode.content_ps.count == 9 && [NVHeUtil isHeight:5 fromContent_ps:algNode.content_ps]) {
-        //TODO: 仅对坚果进行识别调试;(此处坚果的refPorts为空,未被时序引用);
-    }
-    
     //1. 数据准备;
     except_ps = ARRTOOK(except_ps);
     if (ISOK(algNode, AIAlgNodeBase.class)) {
@@ -282,6 +278,9 @@
     return nil;
 }
 
+
+
+
 //MARK:===============================================================
 //MARK:                     < TIR_Fo >
 //MARK:===============================================================
@@ -322,6 +321,7 @@
     
     
     //TIR_FO()代码步骤规划;
+    AIFoNodeBase *assFo = [self TIR_Fo_Matching:foNode];
     //1. 根据最后一个节点,取refPorts,
     //2. 再根据左一个,取refPorts;
     //3. 对lastRefPorts和leftRefPorts做类比,找出共同引用者,
@@ -337,12 +337,89 @@
     //4. 看如何把innerResult也综合进来,,进行预测;
 }
 
+
+/**
+ *  MARK:--------------------时序的局部匹配--------------------
+ */
++(id) TIR_Fo_Matching:(AINodeBase*)protoNode{
+    return [self TIR_Matching:protoNode refPortsBlock:^NSArray *(AIKVPointer *item_p) {
+        //1. 返回alg.refPorts;
+        AIAlgNodeBase *itemNode = [SMGUtils searchNode:item_p];
+        if (itemNode) {
+            return itemNode.refPorts;
+        }
+        return nil;
+    } exceptBlock:^BOOL(AIKVPointer *target_p) {
+        //2. 不可匹配自己;
+        if (target_p) {
+            return [target_p isEqual:protoNode.pointer];
+        }
+        return true;
+    }];
+}
+
+/**
+ *  MARK:--------------------通用局部匹配方法--------------------
+ *  注: 根据引用找出相似度最高且达到阀值的结果返回; (相似度匹配)
+ *  从content_ps的所有value.refPorts找前cPartMatchingCheckRefPortsLimit个, 如:contentCount9*limit5=45个;
+ *  @param exceptBlock : notnull 排除回调,不可激活则返回true;
+ *  @param refPortsBlock : notnull 取item_p.refPorts的方法;
+ *  @result 把最匹配的返回;
+ */
++(id) TIR_Matching:(AINodeBase*)protoNode
+     refPortsBlock:(NSArray*(^)(AIKVPointer *item_p))refPortsBlock
+       exceptBlock:(BOOL(^)(AIKVPointer *target_p))exceptBlock{
+    //1. 数据准备;
+    if (ISOK(protoNode, AINodeBase.class)) {
+        NSMutableDictionary *countDic = [[NSMutableDictionary alloc] init];
+        NSData *maxKey = nil;
+        
+        //2. 对每个微信息,取被引用的强度前cPartMatchingCheckRefPortsLimit个;
+        for (AIKVPointer *item_p in protoNode.content_ps) {
+            NSArray *refPorts = refPortsBlock(item_p);
+            refPorts = ARR_SUB(refPorts, 0, cPartMatchingCheckRefPortsLimit);
+            
+            //3. 进行计数
+            for (AIPort *refPort in refPorts) {
+                if (!exceptBlock(item_p)) {
+                    NSData *key = [NSKeyedArchiver archivedDataWithRootObject:refPort.target_p];
+                    int oldCount = [NUMTOOK([countDic objectForKey:key]) intValue];
+                    [countDic setObject:@(oldCount + 1) forKey:key];
+                }
+            }
+        }
+        
+        //4. 从计数器countDic 中 找出最相似(计数最大)的maxKey
+        for (NSData *key in countDic.allKeys) {
+            
+            //5. 达到局部匹配的阀值才有效;
+            int curNodeMatchingCount = [NUMTOOK([countDic objectForKey:key]) intValue];
+            if (((float)curNodeMatchingCount / (float)protoNode.content_ps.count) >= cPartMatchingThreshold) {
+                
+                //6. 取最匹配的一个;
+                if (maxKey == nil || ([NUMTOOK([countDic objectForKey:maxKey]) intValue] < curNodeMatchingCount)) {
+                    maxKey = key;
+                }
+            }
+        }
+        
+        //7. 有结果时取出对应的assAlgNode返回;
+        if (maxKey) {
+            AIKVPointer *max_p = [NSKeyedUnarchiver unarchiveObjectWithData:maxKey];
+            AINodeBase *result = [SMGUtils searchNode:max_p];
+            return result;
+        }
+    }
+    return nil;
+}
+
+
 +(void) analogyInner:(AIFoNodeBase*)checkFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
     //1. 数据检查
     if (!ISOK(checkFo, AIFoNodeBase.class)) {
         return;
     }
-    NSArray *orders = ARRTOOK(checkFo.orders_kvp);
+    NSArray *orders = ARRTOOK(checkFo.content_ps);
     
     //2. 每个元素,分别与orders后面所有元素进行类比
     for (NSInteger i = 0; i < orders.count; i++) {
