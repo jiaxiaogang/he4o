@@ -89,12 +89,12 @@
     ///(19xxxx注掉,不能太过于脱离持久网络做思考,所以先注掉)
     ///(190625放开,因采用内存网络后,靠这识别)
     if (!assAlgNode) {
-        assAlgNode = [self recognition_PartMatching:algNode isMem:true except_ps:fromGroup_ps];
+        assAlgNode = [self partMatching_Alg:algNode isMem:true except_ps:fromGroup_ps];
     }
     
     ///4. 局部匹配 -> 硬盘网络;
     if (!assAlgNode) {
-        assAlgNode = [self recognition_PartMatching:algNode isMem:false except_ps:fromGroup_ps];
+        assAlgNode = [self partMatching_Alg:algNode isMem:false except_ps:fromGroup_ps];
     }
     
     if (ISOK(assAlgNode, AIAlgNodeBase.class)) {
@@ -225,61 +225,6 @@
     return nil;
 }
 
-/**
- *  MARK:--------------------识别_局部匹配--------------------
- *  @param except_ps : 排除_ps; (如:同一批次输入的概念组,不可用来识别自己)
- *  注: 根据引用找出相似度最高且达到阀值的结果返回; (相似度匹配)
- *  从content_ps的所有value.refPorts找前cPartMatchingCheckRefPortsLimit个, 如:contentCount9*limit5=45个;
- */
-+(AIAlgNodeBase*) recognition_PartMatching:(AIAlgNodeBase*)algNode isMem:(BOOL)isMem except_ps:(NSArray*)except_ps{
-    //1. 数据准备;
-    except_ps = ARRTOOK(except_ps);
-    if (ISOK(algNode, AIAlgNodeBase.class)) {
-        NSMutableDictionary *countDic = [[NSMutableDictionary alloc] init];
-        NSData *maxKey = nil;
-        
-        //2. 对每个微信息,取被引用的强度前cPartMatchingCheckRefPortsLimit个;
-        for (AIPointer *value_p in algNode.content_ps) {
-            NSArray *refPorts = ARRTOOK([SMGUtils searchObjectForFilePath:value_p.filePath fileName:kFNRefPorts_All(isMem) time:cRTReference_All(isMem)]);
-            refPorts = ARR_SUB(refPorts, 0, cPartMatchingCheckRefPortsLimit);
-            
-            //3. 进行计数
-            for (AIPort *refPort in refPorts) {
-                if (![refPort.target_p isEqual:algNode.pointer] && ![SMGUtils containsSub_p:refPort.target_p parent_ps:except_ps]) {
-                    NSData *key = [NSKeyedArchiver archivedDataWithRootObject:refPort.target_p];
-                    int oldCount = [NUMTOOK([countDic objectForKey:key]) intValue];
-                    [countDic setObject:@(oldCount + 1) forKey:key];
-                }
-            }
-        }
-        
-        //4. 从计数器countDic 中 找出最相似(计数最大)的maxKey
-        for (NSData *key in countDic.allKeys) {
-            
-            //5. 达到局部匹配的阀值才有效;
-            int curNodeMatchingCount = [NUMTOOK([countDic objectForKey:key]) intValue];
-            if (((float)curNodeMatchingCount / (float)algNode.content_ps.count) >= cPartMatchingThreshold) {
-                
-                //6. 取最匹配的一个;
-                if (maxKey == nil || ([NUMTOOK([countDic objectForKey:maxKey]) intValue] < curNodeMatchingCount)) {
-                    maxKey = key;
-                }
-            }
-        }
-        
-        //7. 有结果时取出对应的assAlgNode返回;
-        if (maxKey) {
-            AIKVPointer *max_p = [NSKeyedUnarchiver unarchiveObjectWithData:maxKey];
-            AIAlgNodeBase *assAlgNode = [SMGUtils searchNode:max_p];
-            NSLog(@">>> %@局部匹配成功;",isMem ? @"内存" : @"硬盘");
-            return assAlgNode;
-        }
-    }
-    return nil;
-}
-
-
-
 
 //MARK:===============================================================
 //MARK:                     < TIR_Fo >
@@ -321,7 +266,7 @@
     
     
     //TIR_FO()代码步骤规划;
-    AIFoNodeBase *assFo = [self TIR_Fo_Matching:foNode];
+    AIFoNodeBase *assFo = [self partMatching_Fo:foNode];
     //1. 根据最后一个节点,取refPorts,
     //2. 再根据左一个,取refPorts;
     //3. 对lastRefPorts和leftRefPorts做类比,找出共同引用者,
@@ -338,11 +283,39 @@
 }
 
 
+//MARK:===============================================================
+//MARK:                     < 局部匹配 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------概念局部匹配--------------------
+ *  @param except_ps : 排除_ps; (如:同一批次输入的概念组,不可用来识别自己)
+ */
++(AIAlgNodeBase*) partMatching_Alg:(AIAlgNodeBase*)algNode isMem:(BOOL)isMem except_ps:(NSArray*)except_ps{
+    //1. 数据准备;
+    except_ps = ARRTOOK(except_ps);
+    
+    //2. 调用通用局部 匹配方法;
+    return [self partMatching_General:algNode refPortsBlock:^NSArray *(AIKVPointer *item_p) {
+        if (item_p) {
+            //3. value_p的refPorts是单独存储的;
+            return ARRTOOK([SMGUtils searchObjectForFilePath:item_p.filePath fileName:kFNRefPorts_All(isMem) time:cRTReference_All(isMem)]);
+        }
+        return nil;
+    } exceptBlock:^BOOL(AIKVPointer *target_p) {
+        if (target_p) {
+            //4. 自身 | 排除序列 不可激活;
+            return [target_p isEqual:algNode.pointer] || [SMGUtils containsSub_p:target_p parent_ps:except_ps];
+        }
+        return true;
+    }];
+}
+
 /**
  *  MARK:--------------------时序的局部匹配--------------------
  */
-+(id) TIR_Fo_Matching:(AINodeBase*)protoNode{
-    return [self TIR_Matching:protoNode refPortsBlock:^NSArray *(AIKVPointer *item_p) {
++(id) partMatching_Fo:(AINodeBase*)protoNode{
+    return [self partMatching_General:protoNode refPortsBlock:^NSArray *(AIKVPointer *item_p) {
         //1. 返回alg.refPorts;
         AIAlgNodeBase *itemNode = [SMGUtils searchNode:item_p];
         if (itemNode) {
@@ -366,7 +339,7 @@
  *  @param refPortsBlock : notnull 取item_p.refPorts的方法;
  *  @result 把最匹配的返回;
  */
-+(id) TIR_Matching:(AINodeBase*)protoNode
++(id) partMatching_General:(AINodeBase*)protoNode
      refPortsBlock:(NSArray*(^)(AIKVPointer *item_p))refPortsBlock
        exceptBlock:(BOOL(^)(AIKVPointer *target_p))exceptBlock{
     //1. 数据准备;
