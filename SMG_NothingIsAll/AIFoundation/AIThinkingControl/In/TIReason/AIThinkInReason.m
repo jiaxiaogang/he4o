@@ -289,12 +289,30 @@
  */
 +(id) partMatching_Fo:(AIFoNodeBase*)protoNode{
     //1. 数据准备
-    NSMutableArray *proto_ps = [[NSMutableArray alloc] init];//content_ps的倒序
-    if (ISOK(protoNode, AIFoNodeBase.class)) {
-        for (AIKVPointer *item_p in protoNode.content_ps) {
-            [proto_ps insertObject:item_p atIndex:0];
-        }
+    if (!ISOK(protoNode, AIFoNodeBase.class)) {
+        return nil;
     }
+    
+    //2. 取alg.refPorts;
+    AIKVPointer *last_p = ARR_INDEX(protoNode.content_ps, protoNode.content_ps.count - 1);
+    AIAlgNodeBase *lastNode = [SMGUtils searchNode:last_p];
+    if (!lastNode) {
+        return nil;
+    }
+    NSArray *refPorts = ARR_SUB(lastNode.refPorts, 0, cPartMatchingCheckRefPortsLimit);
+    
+    //TODOTOMORROW:
+    //3. 根据fo顺序问题,方案2,做单线匹配;
+    for (int i = protoNode.content_ps.count - 1; i >= 0; i--) {
+        //AIKVPointer *item_p = ARR_INDEX(protoNode.content_ps, i);
+        //AIAlgNodeBase *itemNode = [SMGUtils searchNode:item_p];
+    }
+    
+    
+    
+    
+    
+    
     
     //2. 通用局部匹配方法;
     return [TIRUtils partMatching_General:protoNode.content_ps refPortsBlock:^NSArray *(AIKVPointer *item_p) {
