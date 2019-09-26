@@ -293,18 +293,21 @@
  */
 +(AIAlgNodeBase*) partMatching_Alg:(AIAlgNodeBase*)algNode isMem:(BOOL)isMem except_ps:(NSArray*)except_ps{
     //1. 数据准备;
+    if (!ISOK(algNode, AIAlgNodeBase.class)) {
+        return nil;
+    }
     except_ps = ARRTOOK(except_ps);
     
     //2. 调用通用局部 匹配方法;
-    return [self partMatching_General:algNode refPortsBlock:^NSArray *(AIKVPointer *item_p) {
+    return [self partMatching_General:algNode.content_ps refPortsBlock:^NSArray *(AIKVPointer *item_p) {
         if (item_p) {
-            //3. value_p的refPorts是单独存储的;
+            //1> value_p的refPorts是单独存储的;
             return ARRTOOK([SMGUtils searchObjectForFilePath:item_p.filePath fileName:kFNRefPorts_All(isMem) time:cRTReference_All(isMem)]);
         }
         return nil;
     } exceptBlock:^BOOL(AIKVPointer *target_p) {
         if (target_p) {
-            //4. 自身 | 排除序列 不可激活;
+            //2> 自身 | 排除序列 不可激活;
             return [target_p isEqual:algNode.pointer] || [SMGUtils containsSub_p:target_p parent_ps:except_ps];
         }
         return true;
@@ -314,16 +317,25 @@
 /**
  *  MARK:--------------------时序的局部匹配--------------------
  */
-+(id) partMatching_Fo:(AINodeBase*)protoNode{
-    return [self partMatching_General:protoNode refPortsBlock:^NSArray *(AIKVPointer *item_p) {
-        //1. 返回alg.refPorts;
++(id) partMatching_Fo:(AIFoNodeBase*)protoNode{
+    //1. 数据准备
+    NSMutableArray *proto_ps = [[NSMutableArray alloc] init];//content_ps的倒序
+    if (ISOK(protoNode, AIFoNodeBase.class)) {
+        for (AIKVPointer *item_p in protoNode.content_ps) {
+            [proto_ps insertObject:item_p atIndex:0];
+        }
+    }
+    
+    //2. 通用局部匹配方法;
+    return [self partMatching_General:protoNode.content_ps refPortsBlock:^NSArray *(AIKVPointer *item_p) {
+        //1> 返回alg.refPorts;
         AIAlgNodeBase *itemNode = [SMGUtils searchNode:item_p];
         if (itemNode) {
             return itemNode.refPorts;
         }
         return nil;
     } exceptBlock:^BOOL(AIKVPointer *target_p) {
-        //2. 不可匹配自己;
+        //2> 不可匹配自己;
         if (target_p) {
             return [target_p isEqual:protoNode.pointer];
         }
@@ -339,16 +351,16 @@
  *  @param refPortsBlock : notnull 取item_p.refPorts的方法;
  *  @result 把最匹配的返回;
  */
-+(id) partMatching_General:(AINodeBase*)protoNode
++(id) partMatching_General:(NSArray*)proto_ps
      refPortsBlock:(NSArray*(^)(AIKVPointer *item_p))refPortsBlock
        exceptBlock:(BOOL(^)(AIKVPointer *target_p))exceptBlock{
     //1. 数据准备;
-    if (ISOK(protoNode, AINodeBase.class)) {
+    if (ARRISOK(proto_ps)) {
         NSMutableDictionary *countDic = [[NSMutableDictionary alloc] init];
         NSData *maxKey = nil;
         
         //2. 对每个微信息,取被引用的强度前cPartMatchingCheckRefPortsLimit个;
-        for (AIKVPointer *item_p in protoNode.content_ps) {
+        for (AIKVPointer *item_p in proto_ps) {
             NSArray *refPorts = refPortsBlock(item_p);
             refPorts = ARR_SUB(refPorts, 0, cPartMatchingCheckRefPortsLimit);
             
@@ -367,7 +379,7 @@
             
             //5. 达到局部匹配的阀值才有效;
             int curNodeMatchingCount = [NUMTOOK([countDic objectForKey:key]) intValue];
-            if (((float)curNodeMatchingCount / (float)protoNode.content_ps.count) >= cPartMatchingThreshold) {
+            if (((float)curNodeMatchingCount / (float)proto_ps.count) >= cPartMatchingThreshold) {
                 
                 //6. 取最匹配的一个;
                 if (maxKey == nil || ([NUMTOOK([countDic objectForKey:maxKey]) intValue] < curNodeMatchingCount)) {
