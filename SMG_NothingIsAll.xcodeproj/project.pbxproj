@@ -77,6 +77,7 @@
 		089E66B121B9F5D100ECA28A /* AIAbsAlgNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 089E66B021B9F5D100ECA28A /* AIAbsAlgNode.m */; };
 		089E66B421B9F84500ECA28A /* AIAlgNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 089E66B321B9F84500ECA28A /* AIAlgNode.m */; };
 		08A1E57C2193BAFA0046C4AC /* UIView+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 08A1E57B2193BAFA0046C4AC /* UIView+Extension.m */; };
+		08A562A7233C48650093A88E /* TIRUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08A562A6233C48650093A88E /* TIRUtils.m */; };
 		08A5D5D822AF1E3400E56BB4 /* NVView.m in Sources */ = {isa = PBXBuildFile; fileRef = 08A5D5D722AF1E3400E56BB4 /* NVView.m */; };
 		08A5D5DA22AF1E9D00E56BB4 /* NVView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 08A5D5D922AF1E9D00E56BB4 /* NVView.xib */; };
 		08A5D5DD22AF21B000E56BB4 /* NVNodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 08A5D5DC22AF21B000E56BB4 /* NVNodeView.m */; };
@@ -270,6 +271,8 @@
 		089E66B321B9F84500ECA28A /* AIAlgNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIAlgNode.m; sourceTree = "<group>"; };
 		08A1E57A2193BAFA0046C4AC /* UIView+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+Extension.h"; sourceTree = "<group>"; };
 		08A1E57B2193BAFA0046C4AC /* UIView+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+Extension.m"; sourceTree = "<group>"; };
+		08A562A5233C48650093A88E /* TIRUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TIRUtils.h; sourceTree = "<group>"; };
+		08A562A6233C48650093A88E /* TIRUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TIRUtils.m; sourceTree = "<group>"; };
 		08A5D5D622AF1E3400E56BB4 /* NVView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVView.h; sourceTree = "<group>"; };
 		08A5D5D722AF1E3400E56BB4 /* NVView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NVView.m; sourceTree = "<group>"; };
 		08A5D5D922AF1E9D00E56BB4 /* NVView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NVView.xib; sourceTree = "<group>"; };
@@ -667,14 +670,10 @@
 		0860617221F92F1900113366 /* In */ = {
 			isa = PBXGroup;
 			children = (
+				08A562A4233C48500093A88E /* TIPercept */,
+				08A562A3233C483F0093A88E /* TIReason */,
 				0860617721F92F7100113366 /* AIThinkIn.h */,
 				0860617821F92F7100113366 /* AIThinkIn.m */,
-				08F3E92F2241B6E800545795 /* AIThinkInAnalogy.h */,
-				08F3E9302241B6E800545795 /* AIThinkInAnalogy.m */,
-				083BC01D231C9CD900CA9039 /* AIThinkInReason.h */,
-				083BC01E231C9CD900CA9039 /* AIThinkInReason.m */,
-				083BC020231CA14E00CA9039 /* AIThinkInPercept.h */,
-				083BC021231CA14E00CA9039 /* AIThinkInPercept.m */,
 			);
 			path = In;
 			sourceTree = "<group>";
@@ -715,6 +714,28 @@
 				089614A8219A4D5200343FAC /* BirdGrowPage.xib */,
 			);
 			path = BirdGrowPage;
+			sourceTree = "<group>";
+		};
+		08A562A3233C483F0093A88E /* TIReason */ = {
+			isa = PBXGroup;
+			children = (
+				083BC01D231C9CD900CA9039 /* AIThinkInReason.h */,
+				083BC01E231C9CD900CA9039 /* AIThinkInReason.m */,
+				08A562A5233C48650093A88E /* TIRUtils.h */,
+				08A562A6233C48650093A88E /* TIRUtils.m */,
+			);
+			path = TIReason;
+			sourceTree = "<group>";
+		};
+		08A562A4233C48500093A88E /* TIPercept */ = {
+			isa = PBXGroup;
+			children = (
+				08F3E92F2241B6E800545795 /* AIThinkInAnalogy.h */,
+				08F3E9302241B6E800545795 /* AIThinkInAnalogy.m */,
+				083BC020231CA14E00CA9039 /* AIThinkInPercept.h */,
+				083BC021231CA14E00CA9039 /* AIThinkInPercept.m */,
+			);
+			path = TIPercept;
 			sourceTree = "<group>";
 		};
 		08A5D5D522AF1C1E00E56BB4 /* Core */ = {
@@ -1194,6 +1215,7 @@
 				084219E11FD8CEFD009DA6BC /* AIReactorControl.m in Sources */,
 				0808D34022B6F73D00D383BA /* NVLineView.m in Sources */,
 				08EA48CE202932B80038B982 /* CustomAlgsChargeModel.m in Sources */,
+				08A562A7233C48650093A88E /* TIRUtils.m in Sources */,
 				084C3A6B21926D5700DAA08A /* BirdView.m in Sources */,
 				088DD7232201216500E0A786 /* TOFoModel.m in Sources */,
 				08CEAFAD22B317A800CD1D91 /* NodeCompareModel.m in Sources */,
