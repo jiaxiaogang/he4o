@@ -52,7 +52,7 @@
 
 > 信息熵减机模型是从螺旋论展开，随着理论的成型，模型也在不断完善中，从2017年2月始，2018年3月紧跟着理论成熟，直至今天此模型仍在不断细化中。
 
-| ![](https://github.com/jiaxiaogang/HELIX_THEORY/blob/master/Other/assets/25_%E4%BF%A1%E6%81%AF%E7%86%B5%E5%87%8F%E6%9C%BA%E6%A8%A1%E5%9E%8B.gif?raw=true) |
+| ![](https://github.com/jiaxiaogang/HELIX_THEORY/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/assets/162_%E4%BF%A1%E6%81%AF%E7%86%B5%E5%87%8F%E6%9C%BA%E6%A8%A1%E5%9E%8B.png?raw=true) |
 | --- |
 | 1. 神经网络-微信息模块 (可抽具象) |
 | 2. 神经网络-概念网络模块 (可抽具象) |
