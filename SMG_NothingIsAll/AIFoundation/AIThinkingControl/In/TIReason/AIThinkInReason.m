@@ -286,6 +286,9 @@
 
 /**
  *  MARK:--------------------时序的局部匹配--------------------
+ *  参考: n17p7 TIR_FO模型到代码
+ *  TODO_TEST_HERE:调试Pointer能否indexOfObject
+ *  TODO_TEST_HERE:调试下item_p在indexOfObject中,有多个时,怎么办;
  */
 +(id) partMatching_Fo:(AIFoNodeBase*)protoNode{
     //1. 数据准备
@@ -293,42 +296,58 @@
         return nil;
     }
     
-    //2. 取alg.refPorts;
+    //2. 取lastAlg.refPorts;
     AIKVPointer *last_p = ARR_INDEX(protoNode.content_ps, protoNode.content_ps.count - 1);
     AIAlgNodeBase *lastNode = [SMGUtils searchNode:last_p];
     if (!lastNode) {
         return nil;
     }
-    NSArray *refPorts = ARR_SUB(lastNode.refPorts, 0, cPartMatchingCheckRefPortsLimit);
+    NSArray *lastRefPorts = ARR_SUB(lastNode.refPorts, 0, cPartMatchingCheckRefPortsLimit);
     
-    //TODOTOMORROW:
-    //3. 根据fo顺序问题,方案2,做单线匹配;
-    for (int i = protoNode.content_ps.count - 1; i >= 0; i--) {
-        //AIKVPointer *item_p = ARR_INDEX(protoNode.content_ps, i);
-        //AIAlgNodeBase *itemNode = [SMGUtils searchNode:item_p];
+    //3. 依次对lastRefPorts对应的时序,做匹配度评价; (参考: 160_TIRFO单线顺序模型)
+    CGFloat maxMatchValue = 0;
+    AIFoNodeBase *maxMatchFo = nil;
+    for (AIPort *checkPort in lastRefPorts) {
+        AIFoNodeBase *checkFo = [SMGUtils searchNode:checkPort.target_p];
+        
+        //1> 匹配度
+        CGFloat matchValue = 0;
+        if (checkFo) {
+            //2> 从后向前,逐个匹配;
+            NSInteger lastAIndex = [checkFo.content_ps indexOfObject:last_p];
+            
+            //3> 默认有效数为1 (因为lastAlg肯定有效);
+            int validCount = 1;
+            
+            //4> 有效匹配计数: (proto中,在checkFo中总Alg有效数);
+            for (int i = protoNode.content_ps.count - 2; i >= 0; i--) {
+                AIKVPointer *item_p = ARR_INDEX(protoNode.content_ps, i);
+                NSInteger itemAIndex = [checkFo.content_ps indexOfObject:item_p];
+                
+                //5> 左概念,在更左边,则有效;
+                if (itemAIndex < lastAIndex) {
+                    validCount++;
+                    lastAIndex = itemAIndex;
+                }
+            }
+            
+            //6> 匹配度计算;
+            matchValue = (float)validCount / checkFo.content_ps.count;
+            
+            //7> 保留匹配度最高的结果;
+            if (matchValue > cPartMatchingThreshold && matchValue > maxMatchValue) {
+                maxMatchValue = matchValue;
+                maxMatchFo = checkFo;
+            }
+        }
     }
     
-    
-    
-    
-    
-    
-    
-    //2. 通用局部匹配方法;
-    return [TIRUtils partMatching_General:protoNode.content_ps refPortsBlock:^NSArray *(AIKVPointer *item_p) {
-        //1> 返回alg.refPorts;
-        AIAlgNodeBase *itemNode = [SMGUtils searchNode:item_p];
-        if (itemNode) {
-            return itemNode.refPorts;
-        }
-        return nil;
-    } exceptBlock:^BOOL(AIKVPointer *target_p) {
-        //2> 不可匹配自己;
-        if (target_p) {
-            return [target_p isEqual:protoNode.pointer];
-        }
-        return true;
-    }];
+    //TODOTOMORROW://此处,找到最匹配的时序了,,,以此时序做预测,或直接返回;
+    if (maxMatchFo) {
+        //可以根据maxMatchFo来做理性预测;
+        //可以根据此maxMatchValue匹配度,来做感性预测;
+    }
+    return maxMatchFo;
 }
 
 +(void) analogyInner:(AIFoNodeBase*)checkFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{

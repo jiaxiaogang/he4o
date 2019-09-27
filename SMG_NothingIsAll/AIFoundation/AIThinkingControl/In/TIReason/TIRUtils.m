@@ -45,6 +45,33 @@
 }
 
 /**
+ *  MARK:--------------------时序的局部匹配--------------------
+ *  废弃: 被顺序的专用匹配方法所取代;
+ */
+//+(id) partMatching_Fo:(AIFoNodeBase*)protoNode{
+//    //1. 数据准备
+//    if (!ISOK(protoNode, AIFoNodeBase.class)) {
+//        return nil;
+//    }
+//
+//    //2. 通用局部匹配方法;
+//    return [TIRUtils partMatching_General:protoNode.content_ps refPortsBlock:^NSArray *(AIKVPointer *item_p) {
+//        //1> 返回alg.refPorts;
+//        AIAlgNodeBase *itemNode = [SMGUtils searchNode:item_p];
+//        if (itemNode) {
+//            return itemNode.refPorts;
+//        }
+//        return nil;
+//    } exceptBlock:^BOOL(AIKVPointer *target_p) {
+//        //2> 不可匹配自己;
+//        if (target_p) {
+//            return [target_p isEqual:protoNode.pointer];
+//        }
+//        return true;
+//    }];
+//}
+
+/**
  *  MARK:--------------------通用局部匹配方法--------------------
  *  注: 根据引用找出相似度最高且达到阀值的结果返回; (相似度匹配)
  *  从content_ps的所有value.refPorts找前cPartMatchingCheckRefPortsLimit个, 如:contentCount9*limit5=45个;
