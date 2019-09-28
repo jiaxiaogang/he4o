@@ -281,25 +281,29 @@
         return nil;
     }
     
-    //2. 取lastAlg.refPorts;
+    //2. 取lastAlg.refPorts; (取识别到过的抽象节点(如苹果));
     AIKVPointer *last_p = ARR_INDEX(protoNode.content_ps, protoNode.content_ps.count - 1);
-    AIAlgNodeBase *lastNode = [SMGUtils searchNode:last_p];
-    if (!lastNode) {
+    AIAlgNodeBase *lastConNode = [SMGUtils searchNode:last_p];
+    if (!lastConNode) {
         return nil;
     }
-    NSArray *lastRefPorts = ARR_SUB(lastNode.refPorts, 0, cPartMatchingCheckRefPortsLimit);
+    AIAlgNodeBase *lastRecogniNode = [SMGUtils searchNode:ARR_INDEX(lastConNode.absPorts, 0)];
+    if (!lastRecogniNode) {
+        return nil;
+    }
+    NSArray *lastRecogniRefPorts = ARR_SUB(lastRecogniNode.refPorts, 0, cPartMatchingCheckRefPortsLimit);
     
     //3. 依次对lastRefPorts对应的时序,做匹配度评价; (参考: 160_TIRFO单线顺序模型)
     CGFloat maxMatchValue = 0;
     AIFoNodeBase *maxMatchFo = nil;
-    for (AIPort *checkPort in lastRefPorts) {
+    for (AIPort *checkPort in lastRecogniRefPorts) {
         AIFoNodeBase *checkFo = [SMGUtils searchNode:checkPort.target_p];
         
         //1> 匹配度
         CGFloat matchValue = 0;
         if (checkFo) {
             //2> 从后向前,逐个匹配;
-            NSInteger lastAIndex = [checkFo.content_ps indexOfObject:last_p];
+            NSInteger lastAIndex = [checkFo.content_ps indexOfObject:lastRecogniNode.pointer];
             
             //3> 默认有效数为1 (因为lastAlg肯定有效);
             int validCount = 1;
@@ -307,12 +311,29 @@
             //4> 有效匹配计数: (proto中,在checkFo中总Alg有效数);
             for (NSInteger i = protoNode.content_ps.count - 2; i >= 0; i--) {
                 AIKVPointer *item_p = ARR_INDEX(protoNode.content_ps, i);
-                NSInteger itemAIndex = [checkFo.content_ps indexOfObject:item_p];
+                AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
                 
-                //5> 左概念,在更左边,则有效;
-                if (itemAIndex < lastAIndex) {
-                    validCount++;
-                    lastAIndex = itemAIndex;
+                //5> 先判断,checkFo是否包含item的"识别is"概念 (如苹果);
+                if (itemAlg) {
+                    AIAlgNodeBase *itemRecogniNode = [SMGUtils searchNode:ARR_INDEX(itemAlg.content_ps, 0)];
+                    if (itemRecogniNode) {
+                        NSInteger itemAIndex = [checkFo.content_ps indexOfObject:item_p];
+                        
+                        //6> 再判断,checkFo是否包含"识别is"的再抽象概念 (如水果);
+                        if (itemAIndex == 0) {
+                            //写一个isBasedNode方法, (checkFo中概念节点的里氏替换原则);
+                            
+                            
+                            
+                            
+                            
+                        }
+                        //5> 左概念,在更左边,则有效;
+                        if (itemAIndex < lastAIndex) {
+                            validCount++;
+                            lastAIndex = itemAIndex;
+                        }
+                    }
                 }
             }
             
