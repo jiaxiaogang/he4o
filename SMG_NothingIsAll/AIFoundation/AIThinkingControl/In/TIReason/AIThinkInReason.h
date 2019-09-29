@@ -20,6 +20,6 @@
 +(void) dataIn_NoMV:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps finishBlock:(void(^)(AIAlgNodeBase *isNode,AICMVNodeBase *useNode))finishBlock;
 
 //理性时序
-+(void) TIR_Fo:(NSArray*)alg_ps canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy;
++(void) TIR_Fo:(NSArray*)alg_ps finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchingFo))finishBlock;
 
 @end

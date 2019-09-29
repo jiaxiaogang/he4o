@@ -250,14 +250,18 @@
  *      5. 将zMv提交给demandManager,做TOR处理;
  *
  */
-+(void) TIR_Fo:(NSArray*)alg_ps canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
++(void) TIR_Fo:(NSArray*)alg_ps finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchingFo))finishBlock{
     
     //1. 将alg_ps构建成时序; (把每次dic输入,都作为一个新的内存时序)
     AIFrontOrderNode *foNode = [theNet createConFo:alg_ps];
     
-    //TODOTOMORROW:把所有的inner中发现的abFo返回来,或者直接以此处foNode.absPorts来取;
+    //2. 局部匹配识别时序;
     AIFoNodeBase *matchingFo = [self partMatching_Fo:foNode];
     
+    //3. 返回;
+    if (finishBlock) {
+        finishBlock(foNode,matchingFo);
+    }
     
 }
 
@@ -273,6 +277,7 @@
  *      1. 根据最后一个节点,取refPorts,
  *      2. 对共同引用者的,顺序,看是否是正确的从左到右顺序;
  *      3. 能够匹配到更多个概念节点,越预测准确;
+ *  TODO_FUTURE:判断概念匹配,目前仅支持一层抽象判断,是否要支持多层?实现方式比如(索引 / TIRAlg和TIRFo的协作);
  *
  */
 +(id) partMatching_Fo:(AIFoNodeBase*)protoNode{
@@ -352,12 +357,6 @@
         }
     }
     
-    //TODOTOMORROW://此处,找到最匹配的时序了,,,以此时序做预测,或直接返回;
-    //TODO: 思考下,关于抽象的处理 (只有抽象alg,才有可能匹配到,否则都匹配不到);
-    if (maxMatchFo) {
-        //可以根据maxMatchFo来做理性预测;
-        //可以根据此maxMatchValue匹配度,来做感性预测;
-    }
     return maxMatchFo;
 }
 
