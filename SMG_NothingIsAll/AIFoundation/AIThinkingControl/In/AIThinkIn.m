@@ -90,24 +90,27 @@
  *  @param fromGroup_ps : 当前输入批次的整组概念指针;
  */
 -(void) dataIn_NoMV:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps{
-    //1. 识别概念;
+    //1. 数据准备
+    __block AIAlgNodeBase *weakMatchingAlg = nil;   //最匹配的概念,做TOR判定有没用;
+    __block AICMVNodeBase *weakUseNode = nil;       //旧有useNode,估计会删掉;
+    __block AIFoNodeBase *weakShortMemFo = nil;     //当前瞬时记忆时序
+    __block AIFoNodeBase *weakMatchingFo = nil;     //最匹配的时序,做预测;
+    
+    //2. 识别概念;
     [AIThinkInReason dataIn_NoMV:algNode_p fromGroup_ps:fromGroup_ps finishBlock:^(AIAlgNodeBase *isNode, AICMVNodeBase *useNode) {
-        //5. 看到西瓜会开心
-        if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_CommitReason:isNode:useNode:)]) {
-            [self.delegate aiThinkIn_CommitReason:algNode_p isNode:isNode useNode:useNode];
-        }
+        weakMatchingAlg = isNode;
+        weakUseNode = useNode;
     }];
     
-    //2. 识别时序;
-    //TODOTOMORROW:
-    //1. 将shortMemory中取过来当参数;
-    //2. 将此处回调finish,传给TOR,做下一步处理;
-    [AIThinkInReason TIR_Fo:nil finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchingFo) {
-        //TODOTOMORROW:
-        //此处,找到最匹配的时序了,,,以此时序做预测;
-        //可以根据maxMatchFo来做理性预测;
-        //可以根据此maxMatchValue匹配度,来做感性预测;
+    //3. 识别时序;
+    NSArray *shortMemory = [self.delegate aiThinkIn_GetShortMemory];
+    [AIThinkInReason TIR_Fo:shortMemory finishBlock:^(AIFoNodeBase *shortMemFo, AIFoNodeBase *matchingFo) {
+        weakShortMemFo = shortMemFo;
+        weakMatchingFo = matchingFo;
     }];
+    
+    //4. 传给TOR,做下一步处理;
+    [self.delegate aiThinkIn_Commit2TOR:algNode_p matchingAlg:weakMatchingAlg useNode:weakUseNode matchingFo:weakMatchingFo shortMemFo:weakShortMemFo];
 }
 
 

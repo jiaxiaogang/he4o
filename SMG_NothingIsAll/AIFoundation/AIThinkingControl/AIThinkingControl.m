@@ -135,6 +135,10 @@ static AIThinkingControl *_instance;
     [self.shortMemory addToShortCache_Ps:algNode_ps];
 }
 
+-(NSArray*) aiThinkIn_GetShortMemory{
+    return self.shortMemory.shortCache;
+}
+
 -(AIFrontOrderNode*)aiThinkIn_CreateCMVModel:(NSArray *)algsArr{
     AIFrontOrderNode *foNode = [[AINet sharedInstance] createCMV:algsArr order:self.shortMemory.shortCache];
     [self.shortMemory clear];
@@ -159,8 +163,8 @@ static AIThinkingControl *_instance;
     [self.thinkOutPercept dataOut];
 }
 
--(void) aiThinkIn_CommitReason:(AIKVPointer*)targetAlg_p isNode:(AIAlgNodeBase*)isNode useNode:(AICMVNodeBase*)useNode {
-    [AIThinkOutReason dataOut:targetAlg_p isNode:isNode useNode:useNode];
+-(void) aiThinkIn_Commit2TOR:(AIKVPointer *)targetAlg_p matchingAlg:(AIAlgNodeBase *)matchingAlg useNode:(AICMVNodeBase *)useNode matchingFo:(AIFoNodeBase *)matchingFo shortMemFo:(AIFoNodeBase *)shortMemFo {
+    [AIThinkOutReason dataOut:targetAlg_p matchingAlg:matchingAlg useNode:useNode matchingFo:matchingFo shortMemFo:shortMemFo];
 }
 
 -(void) aiThinkIn_UpdateEnergy:(CGFloat)delta{

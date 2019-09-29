@@ -253,14 +253,14 @@
 +(void) TIR_Fo:(NSArray*)alg_ps finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchingFo))finishBlock{
     
     //1. 将alg_ps构建成时序; (把每次dic输入,都作为一个新的内存时序)
-    AIFrontOrderNode *foNode = [theNet createConFo:alg_ps];
+    AIFrontOrderNode *shortMemFo = [theNet createConFo:alg_ps];
     
     //2. 局部匹配识别时序;
-    AIFoNodeBase *matchingFo = [self partMatching_Fo:foNode];
+    AIFoNodeBase *matchingFo = [self partMatching_Fo:shortMemFo];
     
     //3. 返回;
     if (finishBlock) {
-        finishBlock(foNode,matchingFo);
+        finishBlock(shortMemFo,matchingFo);
     }
     
 }
@@ -280,14 +280,14 @@
  *  TODO_FUTURE:判断概念匹配,目前仅支持一层抽象判断,是否要支持多层?实现方式比如(索引 / TIRAlg和TIRFo的协作);
  *
  */
-+(id) partMatching_Fo:(AIFoNodeBase*)protoNode{
++(id) partMatching_Fo:(AIFoNodeBase*)shortMemFo{
     //1. 数据准备
-    if (!ISOK(protoNode, AIFoNodeBase.class)) {
+    if (!ISOK(shortMemFo, AIFoNodeBase.class)) {
         return nil;
     }
     
     //2. 取lastAlg.refPorts; (取识别到过的抽象节点(如苹果));
-    AIKVPointer *last_p = ARR_INDEX(protoNode.content_ps, protoNode.content_ps.count - 1);
+    AIKVPointer *last_p = ARR_INDEX(shortMemFo.content_ps, shortMemFo.content_ps.count - 1);
     AIAlgNodeBase *lastConNode = [SMGUtils searchNode:last_p];
     if (!lastConNode) {
         return nil;
@@ -314,8 +314,8 @@
             int validCount = 1;
             
             //4> 有效匹配计数: (proto中,在checkFo中总Alg有效数);
-            for (NSInteger i = protoNode.content_ps.count - 2; i >= 0; i--) {
-                AIKVPointer *item_p = ARR_INDEX(protoNode.content_ps, i);
+            for (NSInteger i = shortMemFo.content_ps.count - 2; i >= 0; i--) {
+                AIKVPointer *item_p = ARR_INDEX(shortMemFo.content_ps, i);
                 AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
                 
                 //5> 先判断,checkFo是否包含item的"识别is"概念 (如苹果);

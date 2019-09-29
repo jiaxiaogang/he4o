@@ -12,6 +12,7 @@
 @protocol AIThinkInDelegate <NSObject>
 
 -(void) aiThinkIn_AddToShortMemory:(NSArray*)algNode_ps;        //将概念节点添加到瞬时记忆
+-(NSArray*) aiThinkIn_GetShortMemory;
 -(AIFrontOrderNode*) aiThinkIn_CreateCMVModel:(NSArray*)algsArr;//构建cmv模型;
 
 /**
@@ -28,7 +29,11 @@
  *  MARK:--------------------理性输入识别处理--------------------
  *  联想网络杏仁核得来的则false;
  */
--(void) aiThinkIn_CommitReason:(AIKVPointer*)targetAlg_p isNode:(AIAlgNodeBase*)isNode useNode:(AICMVNodeBase*)useNode;
+-(void) aiThinkIn_Commit2TOR:(AIKVPointer*)targetAlg_p
+                 matchingAlg:(AIAlgNodeBase*)matchingAlg
+                     useNode:(AICMVNodeBase*)useNode
+                  matchingFo:(AIFoNodeBase*)matchingFo
+                  shortMemFo:(AIFoNodeBase*)shortMemFo;
 
 -(void) aiThinkIn_UpdateEnergy:(CGFloat)delta;                //更新思维能量值;
 -(BOOL) aiThinkIn_EnergyValid;                                  //能量值是否>0;

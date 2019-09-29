@@ -14,16 +14,15 @@
 
 @implementation AIThinkOutReason
 
-+(void) dataOut{
-    //can有没有用
-    //how怎么用
-    //参考n17p1&n17p2
-}
-
-+(void) dataOut:(AIKVPointer*)targetAlg_p isNode:(AIAlgNodeBase*)isNode useNode:(AICMVNodeBase*)useNode {
+/**
+ *  MARK:--------------------TOR主方法--------------------
+ *  1. 可以根据此maxMatchValue匹配度,来做感性预测;
+ */
++(void) dataOut:(AIKVPointer *)targetAlg_p matchingAlg:(AIAlgNodeBase *)matchingAlg useNode:(AICMVNodeBase *)useNode matchingFo:(AIFoNodeBase *)matchingFo shortMemFo:(AIFoNodeBase *)shortMemFo {
+    
     //1. 数据检查
     AIAlgNodeBase *targetAlg = [SMGUtils searchNode:targetAlg_p];
-    if (!ISOK(useNode, AICMVNodeBase.class) || !ISOK(isNode, AIAlgNodeBase.class) || !targetAlg) {
+    if (!ISOK(useNode, AICMVNodeBase.class) || !ISOK(matchingAlg, AIAlgNodeBase.class) || !targetAlg) {
         return;
     }
     
@@ -39,8 +38,12 @@
     //加上活跃度
     //[self updateEnergy:urgentTo];//190730前:((urgentTo + 9)/10) 190730:urgentTo
     
+    
+    
     //走ThinkOutReason进行行为化
-    [AIThinkOutReason dataOut];
+    //can有没有用
+    //how怎么用
+    //参考n17p1&n17p2
 }
 
 @end
