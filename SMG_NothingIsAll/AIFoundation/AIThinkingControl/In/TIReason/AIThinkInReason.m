@@ -317,18 +317,22 @@
                 if (itemAlg) {
                     AIAlgNodeBase *itemRecogniNode = [SMGUtils searchNode:ARR_INDEX(itemAlg.content_ps, 0)];
                     if (itemRecogniNode) {
-                        NSInteger itemAIndex = [checkFo.content_ps indexOfObject:item_p];
+                        NSInteger itemAIndex = [checkFo.content_ps indexOfObject:itemRecogniNode.pointer];
                         
                         //6> 再判断,checkFo是否包含"识别is"的再抽象概念 (如水果);
                         if (itemAIndex == 0) {
-                            //写一个isBasedNode方法, (checkFo中概念节点的里氏替换原则);
                             
-                            
-                            
-                            
-                            
+                            //7> 写一个isBasedNode方法, (checkFo中概念节点的里氏替换原则) (目前仅从抽象一层取);
+                            for (AIPort *itemRecogniAbsPort in itemRecogniNode.absPorts) {
+                                itemAIndex = [checkFo.content_ps indexOfObject:itemRecogniAbsPort.target_p];
+                                
+                                //8> 找到有效的,则break;
+                                if (itemAIndex < lastAIndex) {
+                                    break;
+                                }
+                            }
                         }
-                        //5> 左概念,在更左边,则有效;
+                        //9> 左概念,在更左边,则有效;
                         if (itemAIndex < lastAIndex) {
                             validCount++;
                             lastAIndex = itemAIndex;
@@ -337,10 +341,10 @@
                 }
             }
             
-            //6> 匹配度计算;
+            //10> 匹配度计算;
             matchValue = (float)validCount / checkFo.content_ps.count;
             
-            //7> 保留匹配度最高的结果;
+            //11> 保留匹配度最高的结果;
             if (matchValue > cPartMatchingThreshold && matchValue > maxMatchValue) {
                 maxMatchValue = matchValue;
                 maxMatchFo = checkFo;
