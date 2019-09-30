@@ -40,7 +40,7 @@
 
 > 螺旋论从2017年2月正式开始研究至2018年2月成熟，历时一年。
 
-| ![](https://github.com/jiaxiaogang/HELIX_THEORY/blob/master/Other/assets/16_v1.0.0%E5%8F%91%E7%89%88%E6%8F%8F%E8%BF%B0-287ecbd0.png?raw=true) |
+| ![](https://github.com/jiaxiaogang/HELIX_THEORY/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/assets/165_%E8%9E%BA%E6%97%8B%E8%AE%BALOGO.png?raw=true) |
 | --- |
 | 1. 定义 |
 | 2. 相对 |
