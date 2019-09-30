@@ -20,6 +20,24 @@
  */
 +(void) dataOut:(AIKVPointer *)targetAlg_p matchingAlg:(AIAlgNodeBase *)matchingAlg useNode:(AICMVNodeBase *)useNode matchingFo:(AIFoNodeBase *)matchingFo shortMemFo:(AIFoNodeBase *)shortMemFo {
     
+    
+    
+    //TODOTOMORROW:
+    //1. 把mv预测,加入到reasonDemandManager中,同台竞争,而执行是为了避免;
+    //2. 判断matchValue的匹配度,对mv的迫切度产生"正相关"影响;
+    //3. 判断matchingFo.mv是否有值,如果无值,则仅需要对matchingFo和matchingAlg做理性使用;
+    
+    
+    //参考n17p8 TOR模型;
+    //1. 比如预测到车将撞到自己,那么我们可以去查看避免被撞的方法;
+    //  * 比如,飞行改变距离,改变方向,改变车的尺寸,改变车的速度,改变红绿灯为红灯等方式;
+    //2. 预测[alg(车) -> fo(车变近) -> mv(疼痛)]
+    //TOP通过,满足需求,找行为化,达成实;
+    //TOR通过,避免需求,找行为化,改变实;
+    
+    
+    
+    
     //1. 数据检查
     AIAlgNodeBase *targetAlg = [SMGUtils searchNode:targetAlg_p];
     if (!ISOK(useNode, AICMVNodeBase.class) || !ISOK(matchingAlg, AIAlgNodeBase.class) || !targetAlg) {
