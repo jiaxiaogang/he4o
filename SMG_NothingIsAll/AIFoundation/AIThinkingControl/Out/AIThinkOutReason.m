@@ -22,10 +22,15 @@
     
     
     
-    //TODOTOMORROW:
-    //1. 把mv预测,加入到reasonDemandManager中,同台竞争,而执行是为了避免;
-    //2. 判断matchValue的匹配度,对mv的迫切度产生"正相关"影响;
-    //3. 判断matchingFo.mv是否有值,如果无值,则仅需要对matchingFo和matchingAlg做理性使用;
+    //TODOTOMORROW代码计划:
+    //1. 把mv加入到demandManager;
+    //  1> 判断matchingFo.mv有值才加入demandManager,同台竞争,执行顺应mv;
+    //  2> 判断matchValue的匹配度,对mv的迫切度产生"正相关"影响;
+    //2. 将对matchingFo和matchingAlg做为激活节点,添加到demandManager中,供理性(实)使用;
+    //3. 对TOP的运作5个scheme做改动,以应用"激活"节点;
+    
+    
+    
     
     
     //参考n17p8 TOR模型;
