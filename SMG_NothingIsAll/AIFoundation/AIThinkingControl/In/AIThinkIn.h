@@ -30,9 +30,10 @@
  *  联想网络杏仁核得来的则false;
  */
 -(void) aiThinkIn_Commit2TOR:(AIKVPointer*)targetAlg_p
-                 matchingAlg:(AIAlgNodeBase*)matchingAlg
+                    matchAlg:(AIAlgNodeBase*)matchAlg
                      useNode:(AICMVNodeBase*)useNode
-                  matchingFo:(AIFoNodeBase*)matchingFo
+                     matchFo:(AIFoNodeBase*)matchFo
+                  matchValue:(CGFloat)matchValue
                   shortMemFo:(AIFoNodeBase*)shortMemFo;
 
 -(void) aiThinkIn_UpdateEnergy:(CGFloat)delta;                //更新思维能量值;

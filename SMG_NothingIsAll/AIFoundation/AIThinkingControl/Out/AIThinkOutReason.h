@@ -8,12 +8,21 @@
 
 #import <Foundation/Foundation.h>
 
+@protocol AIThinkOutReasonDelegate <NSObject>
+
+//更新理性mv到demandManager
+-(void) aiThinkOutReason_CommitDemand:(NSInteger)delta algsType:(NSString*)algsType urgentTo:(NSInteger)urgentTo;
+
+@end
+
 /**
  *  MARK:--------------------理性ThinkOut部分--------------------
  */
 @class AICMVNodeBase,AIAlgNodeBase,AIFoNodeBase;
 @interface AIThinkOutReason : NSObject
 
-+(void) dataOut:(AIKVPointer *)targetAlg_p matchingAlg:(AIAlgNodeBase *)matchingAlg useNode:(AICMVNodeBase *)useNode matchingFo:(AIFoNodeBase *)matchingFo shortMemFo:(AIFoNodeBase *)shortMemFo;
+@property (weak, nonatomic) id<AIThinkOutReasonDelegate> delegate;
+
+-(void) dataOut:(AIKVPointer *)targetAlg_p matchAlg:(AIAlgNodeBase *)matchAlg useNode:(AICMVNodeBase *)useNode matchFo:(AIFoNodeBase *)matchFo matchValue:(CGFloat)matchValue shortMemFo:(AIFoNodeBase *)shortMemFo;
 
 @end

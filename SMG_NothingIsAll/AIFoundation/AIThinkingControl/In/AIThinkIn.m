@@ -91,26 +91,28 @@
  */
 -(void) dataIn_NoMV:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps{
     //1. 数据准备
-    __block AIAlgNodeBase *weakMatchingAlg = nil;   //最匹配的概念,做TOR判定有没用;
+    __block AIAlgNodeBase *weakMatchAlg = nil;      //最匹配的概念,做TOR判定有没用;
     __block AICMVNodeBase *weakUseNode = nil;       //旧有useNode,估计会删掉;
     __block AIFoNodeBase *weakShortMemFo = nil;     //当前瞬时记忆时序
-    __block AIFoNodeBase *weakMatchingFo = nil;     //最匹配的时序,做预测;
+    __block AIFoNodeBase *weakMatchFo = nil;        //最匹配的时序,做预测;
+    __block CGFloat weakMatchValue = 0;             //时序匹配度
     
     //2. 识别概念;
     [AIThinkInReason dataIn_NoMV:algNode_p fromGroup_ps:fromGroup_ps finishBlock:^(AIAlgNodeBase *isNode, AICMVNodeBase *useNode) {
-        weakMatchingAlg = isNode;
+        weakMatchAlg = isNode;
         weakUseNode = useNode;
     }];
     
     //3. 识别时序;
     NSArray *shortMemory = [self.delegate aiThinkIn_GetShortMemory];
-    [AIThinkInReason TIR_Fo:shortMemory finishBlock:^(AIFoNodeBase *shortMemFo, AIFoNodeBase *matchingFo) {
-        weakShortMemFo = shortMemFo;
-        weakMatchingFo = matchingFo;
+    [AIThinkInReason TIR_Fo:shortMemory finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue) {
+        weakShortMemFo = curNode;
+        weakMatchFo = matchFo;
+        weakMatchValue = matchValue;
     }];
     
     //4. 传给TOR,做下一步处理;
-    [self.delegate aiThinkIn_Commit2TOR:algNode_p matchingAlg:weakMatchingAlg useNode:weakUseNode matchingFo:weakMatchingFo shortMemFo:weakShortMemFo];
+    [self.delegate aiThinkIn_Commit2TOR:algNode_p matchAlg:weakMatchAlg useNode:weakUseNode matchFo:weakMatchFo matchValue:weakMatchValue shortMemFo:weakShortMemFo];
 }
 
 

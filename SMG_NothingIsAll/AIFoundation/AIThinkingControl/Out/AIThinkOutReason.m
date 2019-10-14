@@ -18,14 +18,26 @@
  *  MARK:--------------------TOR主方法--------------------
  *  1. 可以根据此maxMatchValue匹配度,来做感性预测;
  */
-+(void) dataOut:(AIKVPointer *)targetAlg_p matchingAlg:(AIAlgNodeBase *)matchingAlg useNode:(AICMVNodeBase *)useNode matchingFo:(AIFoNodeBase *)matchingFo shortMemFo:(AIFoNodeBase *)shortMemFo {
-    
-    
+-(void) dataOut:(AIKVPointer *)targetAlg_p matchAlg:(AIAlgNodeBase *)matchAlg useNode:(AICMVNodeBase *)useNode matchFo:(AIFoNodeBase *)matchFo matchValue:(CGFloat)matchValue shortMemFo:(AIFoNodeBase *)shortMemFo {
     
     //TODOTOMORROW代码计划:
     //1. 把mv加入到demandManager;
-    //  1> 判断matchingFo.mv有值才加入demandManager,同台竞争,执行顺应mv;
-    //  2> 判断matchValue的匹配度,对mv的迫切度产生"正相关"影响;
+    if (matchFo) {
+        //1> 判断matchingFo.mv有值才加入demandManager,同台竞争,执行顺应mv;
+        AICMVNodeBase *mvNode = [SMGUtils searchNode:matchFo.cmvNode_p];
+        if (mvNode) {
+            NSInteger delta = [NUMTOOK([AINetIndex getData:mvNode.delta_p]) integerValue];
+            if (delta != 0) {
+                NSString *algsType = mvNode.urgentTo_p.algsType;
+                
+                //2> 判断matchValue的匹配度,对mv的迫切度产生"正相关"影响;
+                NSInteger urgentTo = [NUMTOOK([AINetIndex getData:mvNode.urgentTo_p]) integerValue];
+                urgentTo = (int)(urgentTo * matchValue);
+                [self.delegate aiThinkOutReason_CommitDemand:delta algsType:algsType urgentTo:urgentTo];
+            }
+        }
+    }
+    
     //2. 将对matchingFo和matchingAlg做为激活节点,添加到demandManager中,供理性(实)使用;
     //3. 对TOP的运作5个scheme做改动,以应用"激活"节点;
     
@@ -45,7 +57,7 @@
     
     //1. 数据检查
     AIAlgNodeBase *targetAlg = [SMGUtils searchNode:targetAlg_p];
-    if (!ISOK(useNode, AICMVNodeBase.class) || !ISOK(matchingAlg, AIAlgNodeBase.class) || !targetAlg) {
+    if (!ISOK(useNode, AICMVNodeBase.class) || !ISOK(matchAlg, AIAlgNodeBase.class) || !targetAlg) {
         return;
     }
     

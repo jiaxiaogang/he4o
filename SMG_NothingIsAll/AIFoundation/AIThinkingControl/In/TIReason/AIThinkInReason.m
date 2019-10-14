@@ -250,19 +250,23 @@
  *      5. 将zMv提交给demandManager,做TOR处理;
  *
  */
-+(void) TIR_Fo:(NSArray*)alg_ps finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchingFo))finishBlock{
++(void) TIR_Fo:(NSArray*)alg_ps finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue))finishBlock{
     
     //1. 将alg_ps构建成时序; (把每次dic输入,都作为一个新的内存时序)
     AIFrontOrderNode *shortMemFo = [theNet createConFo:alg_ps];
     
     //2. 局部匹配识别时序;
-    AIFoNodeBase *matchingFo = [self partMatching_Fo:shortMemFo];
+    __block AIFoNodeBase *weakMatchFo = nil;
+    __block CGFloat weakMatchValue = 0;
+    [self partMatching_Fo:shortMemFo finishBlock:^(id matchFo, CGFloat matchValue) {
+        weakMatchFo = matchFo;
+        weakMatchValue = matchValue;
+    }];
     
     //3. 返回;
     if (finishBlock) {
-        finishBlock(shortMemFo,matchingFo);
+        finishBlock(shortMemFo,weakMatchFo,weakMatchValue);
     }
-    
 }
 
 
@@ -271,6 +275,7 @@
  *  参考: n17p7 TIR_FO模型到代码
  *  TODO_TEST_HERE:调试Pointer能否indexOfObject
  *  TODO_TEST_HERE:调试下item_p在indexOfObject中,有多个时,怎么办;
+ *  TODO_TEST_HERE:测试下cPartMatchingThreshold配置值是否合理;
  *  @desc1: 在类比中,仅针对最后一个元素,与前面元素进行类比;
  *  @desc2: 内类比大小,将要取消(由外类比取代),此处不再支持;而内类比有无,此处理性概念全是"有";
  *  @desc:
@@ -280,21 +285,24 @@
  *  TODO_FUTURE:判断概念匹配,目前仅支持一层抽象判断,是否要支持多层?实现方式比如(索引 / TIRAlg和TIRFo的协作);
  *
  */
-+(id) partMatching_Fo:(AIFoNodeBase*)shortMemFo{
++(void) partMatching_Fo:(AIFoNodeBase*)shortMemFo finishBlock:(void(^)(id matchFo,CGFloat matchValue))finishBlock{
     //1. 数据准备
+    if (!finishBlock) {
+        return;
+    }
     if (!ISOK(shortMemFo, AIFoNodeBase.class)) {
-        return nil;
+        finishBlock(nil,0);
     }
     
     //2. 取lastAlg.refPorts; (取识别到过的抽象节点(如苹果));
     AIKVPointer *last_p = ARR_INDEX(shortMemFo.content_ps, shortMemFo.content_ps.count - 1);
     AIAlgNodeBase *lastConNode = [SMGUtils searchNode:last_p];
     if (!lastConNode) {
-        return nil;
+        finishBlock(nil,0);
     }
     AIAlgNodeBase *lastRecogniNode = [SMGUtils searchNode:ARR_INDEX(lastConNode.absPorts, 0)];
     if (!lastRecogniNode) {
-        return nil;
+        finishBlock(nil,0);
     }
     NSArray *lastRecogniRefPorts = ARR_SUB(lastRecogniNode.refPorts, 0, cPartMatchingCheckRefPortsLimit);
     
@@ -357,7 +365,10 @@
         }
     }
     
-    return maxMatchFo;
+    //4. 返回值
+    if (finishBlock) {
+        finishBlock(maxMatchFo,maxMatchValue);
+    }
 }
 
 @end

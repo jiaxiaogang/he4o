@@ -31,7 +31,7 @@
  *  2. 在联想中,遇到的mv,都叠加到当前demand下;
  *
  */
-@interface AIThinkingControl() <AIThinkInDelegate,AIThinkOutPerceptDelegate>
+@interface AIThinkingControl() <AIThinkInDelegate,AIThinkOutPerceptDelegate,AIThinkOutReasonDelegate>
 
 @property (strong,nonatomic) AIShortMemory *shortMemory;//瞬时记忆
 @property (strong, nonatomic) DemandManager *demandManager;   //输出循环所用到的数据管理器;
@@ -48,7 +48,8 @@
 @property (assign, nonatomic) CGFloat energy;
 
 @property (strong, nonatomic) AIThinkIn *thinkIn;
-@property (strong, nonatomic) AIThinkOutPercept *thinkOutPercept;
+@property (strong, nonatomic) AIThinkOutPercept *tOP;
+@property (strong, nonatomic) AIThinkOutReason *tOR;
 
 @end
 
@@ -75,8 +76,10 @@ static AIThinkingControl *_instance;
     self.demandManager = [[DemandManager alloc] init];
     self.thinkIn = [[AIThinkIn alloc] init];
     self.thinkIn.delegate = self;
-    self.thinkOutPercept = [[AIThinkOutPercept alloc] init];
-    self.thinkOutPercept.delegate = self;
+    self.tOP = [[AIThinkOutPercept alloc] init];
+    self.tOP.delegate = self;
+    self.tOR = [[AIThinkOutReason alloc] init];
+    self.tOR.delegate = self;
 }
 
 
@@ -160,11 +163,11 @@ static AIThinkingControl *_instance;
     NSInteger urgentTo = [NUMTOOK([AINetIndex getData:cmvNode.urgentTo_p]) integerValue];
     [self updateEnergy:urgentTo];//190730前:((urgentTo + 9)/10) 190730:urgentTo
     [self.demandManager updateCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
-    [self.thinkOutPercept dataOut];
+    [self.tOP dataOut];
 }
 
--(void) aiThinkIn_Commit2TOR:(AIKVPointer *)targetAlg_p matchingAlg:(AIAlgNodeBase *)matchingAlg useNode:(AICMVNodeBase *)useNode matchingFo:(AIFoNodeBase *)matchingFo shortMemFo:(AIFoNodeBase *)shortMemFo {
-    [AIThinkOutReason dataOut:targetAlg_p matchingAlg:matchingAlg useNode:useNode matchingFo:matchingFo shortMemFo:shortMemFo];
+-(void) aiThinkIn_Commit2TOR:(AIKVPointer *)targetAlg_p matchAlg:(AIAlgNodeBase *)matchAlg useNode:(AICMVNodeBase *)useNode matchFo:(AIFoNodeBase *)matchFo matchValue:(CGFloat)matchValue shortMemFo:(AIFoNodeBase *)shortMemFo {
+    [self.tOR dataOut:targetAlg_p matchAlg:matchAlg useNode:useNode matchFo:matchFo matchValue:matchValue shortMemFo:shortMemFo];
 }
 
 -(void) aiThinkIn_UpdateEnergy:(CGFloat)delta{
@@ -189,6 +192,14 @@ static AIThinkingControl *_instance;
 
 -(void) aiThinkOutPercept_UpdateEnergy:(CGFloat)delta{
     [self updateEnergy:delta];
+}
+
+
+/**
+ *  MARK:--------------------AIThinkOutReasonDelegate--------------------
+ */
+-(void)aiThinkOutReason_CommitDemand:(NSInteger)delta algsType:(NSString *)algsType urgentTo:(NSInteger)urgentTo{
+    [self.demandManager updateCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
 }
 
 @end
