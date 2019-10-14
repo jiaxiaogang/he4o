@@ -33,10 +33,17 @@
                 //2> 判断matchValue的匹配度,对mv的迫切度产生"正相关"影响;
                 NSInteger urgentTo = [NUMTOOK([AINetIndex getData:mvNode.urgentTo_p]) integerValue];
                 urgentTo = (int)(urgentTo * matchValue);
+                
+                //TODO:此处,仅为预测,并非已成现实,那么在demandManager中的逆向抵消,就是有问题的;
+                //如,饿了,马上就可以拿到面条,只是问题被解决在望,但并非已经解决;
+                //这里要思考一下,这两者的区分,并分别给予合理的处理;
                 [self.delegate aiThinkOutReason_CommitDemand:delta algsType:algsType urgentTo:urgentTo];
             }
         }
     }
+    
+    
+    
     
     //2. 将对matchingFo和matchingAlg做为激活节点,添加到demandManager中,供理性(实)使用;
     //3. 对TOP的运作5个scheme做改动,以应用"激活"节点;
