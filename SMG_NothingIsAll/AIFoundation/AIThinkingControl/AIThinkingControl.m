@@ -20,6 +20,7 @@
 #import "AIAlgNode.h"
 #import "AINetIndex.h"
 #import "NSObject+Extension.h"
+#import "ActiveCache.h"
 
 /**
  *  MARK:--------------------思维控制器--------------------
@@ -33,8 +34,9 @@
  */
 @interface AIThinkingControl() <AIThinkInDelegate,AIThinkOutPerceptDelegate,AIThinkOutReasonDelegate>
 
-@property (strong,nonatomic) AIShortMemory *shortMemory;//瞬时记忆
-@property (strong, nonatomic) DemandManager *demandManager;   //输出循环所用到的数据管理器;
+@property (strong,nonatomic) AIShortMemory *shortMemory;    //瞬时记忆
+@property (strong, nonatomic) DemandManager *demandManager; //输出循环所用到的数据管理器;
+@property (strong, nonatomic) ActiveCache *activeCache;     //激活神经元,存储
 
 /**
  *  MARK:--------------------当前能量值--------------------
@@ -48,8 +50,8 @@
 @property (assign, nonatomic) CGFloat energy;
 
 @property (strong, nonatomic) AIThinkIn *thinkIn;
-@property (strong, nonatomic) AIThinkOutPercept *tOP;
-@property (strong, nonatomic) AIThinkOutReason *tOR;
+@property (strong, nonatomic) AIThinkOutPercept *tOP;       //感性决策
+@property (strong, nonatomic) AIThinkOutReason *tOR;        //理性决策
 
 @end
 
@@ -80,6 +82,7 @@ static AIThinkingControl *_instance;
     self.tOP.delegate = self;
     self.tOR = [[AIThinkOutReason alloc] init];
     self.tOR.delegate = self;
+    self.activeCache = [[ActiveCache alloc] init];
 }
 
 
@@ -162,7 +165,7 @@ static AIThinkingControl *_instance;
     NSString *algsType = cmvNode.urgentTo_p.algsType;
     NSInteger urgentTo = [NUMTOOK([AINetIndex getData:cmvNode.urgentTo_p]) integerValue];
     [self updateEnergy:urgentTo];//190730前:((urgentTo + 9)/10) 190730:urgentTo
-    [self.demandManager updateCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
+    [self.demandManager updateCMVCache_PMV:algsType urgentTo:urgentTo delta:delta order:urgentTo];
     [self.tOP dataOut];
 }
 
@@ -199,7 +202,11 @@ static AIThinkingControl *_instance;
  *  MARK:--------------------AIThinkOutReasonDelegate--------------------
  */
 -(void)aiThinkOutReason_CommitDemand:(NSInteger)delta algsType:(NSString *)algsType urgentTo:(NSInteger)urgentTo{
-    [self.demandManager updateCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
+    [self.demandManager updateCMVCache_RMV:algsType urgentTo:urgentTo delta:delta order:urgentTo];
+}
+
+-(void) aiThinkOutReason_CommitActive:(AIKVPointer*)act_p{
+    [self.activeCache add:act_p];
 }
 
 @end

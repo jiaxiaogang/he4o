@@ -37,6 +37,7 @@
 #define cMinEnergy 0 //思维活力限低
 #define cMaxEnergy 20 //思维活力限高
 #define cShortMemoryLimit 8 //瞬时记忆最多8条
+#define cActiveCacheLimit 50//激活缓存最多50条;
 
 //MARK:===============================================================
 //MARK:                     < ThinkOut >

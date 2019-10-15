@@ -21,8 +21,12 @@
  *  2. 在assData等(内心活动,不抵消cmvCache中旧任务)
  *  3. 在dataIn时,抵消旧任务,并生成新任务;
  */
--(void) updateCMVCache:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta order:(NSInteger)order;
+-(void) updateCMVCache_PMV:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta order:(NSInteger)order;
 
+/**
+ *  MARK:--------------------理性思维预测mv加入--------------------
+ */
+-(void) updateCMVCache_RMV:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta order:(NSInteger)order;
 
 
 /**

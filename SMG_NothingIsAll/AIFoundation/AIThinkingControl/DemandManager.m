@@ -46,7 +46,7 @@
  *  2. 在assData等(内心活动,不抵消cmvCache中旧任务)
  *  3. 在dataIn时,抵消旧任务,并生成新任务;
  */
--(void) updateCMVCache:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta order:(NSInteger)order{
+-(void) updateCMVCache_PMV:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta order:(NSInteger)order{
     //1. 数据检查
     if (delta == 0) {
         return;
@@ -92,6 +92,44 @@
     }
 }
 
+-(void) updateCMVCache_RMV:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta order:(NSInteger)order{
+    //1. 有需求时且可加入demand序列;
+    BOOL havDemand = [ThinkingUtils getDemand:algsType delta:delta complete:nil];
+    if (havDemand) {
+        
+        //2. 去重_同向撤弱;
+        BOOL canNeed = true;
+        NSInteger limit = self.loopCache.count;
+        for (NSInteger i = 0; i < limit; i++) {
+            DemandModel *checkItem = self.loopCache[i];
+            if ([STRTOOK(algsType) isEqualToString:checkItem.algsType]) {
+                if ((delta > 0 == checkItem.delta > 0)) {
+                    //1) 同向较弱的撤消
+                    if (labs(urgentTo) > labs(checkItem.urgentTo)) {
+                        [self.loopCache removeObjectAtIndex:i];
+                        NSLog(@"demandManager >> 同向较弱撤消 %lu",(unsigned long)self.loopCache.count);
+                        limit--;
+                        i--;
+                    }else{
+                        canNeed = false;
+                    }
+                }
+            }
+        }
+        
+        //3. 未被撤弱掉,则加到需求序列中;
+        if (canNeed) {
+            DemandModel *newItem = [[DemandModel alloc] init];
+            newItem.algsType = algsType;
+            newItem.delta = delta;
+            newItem.urgentTo = urgentTo;
+            newItem.score = order;
+            [self.loopCache addObject:newItem];
+            NSLog(@"demandManager >> 新需求 %lu",(unsigned long)self.loopCache.count);
+        }
+    }
+}
+
 /**
  *  MARK:--------------------重排序cmvCache--------------------
  *  1. 懒排序,什么时候assLoop,什么时候排序;
@@ -110,7 +148,7 @@
  */
 //-(void) dataIn_CmvAlgsArr:(NSArray*)algsArr{
 //    [ThinkingUtils parserAlgsMVArr:algsArr success:^(AIKVPointer *delta_p, AIKVPointer *urgentTo_p, NSInteger delta, NSInteger urgentTo, NSString *algsType) {
-//        [self updateCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
+//        [self updateCMVCache_PMV:algsType urgentTo:urgentTo delta:delta order:urgentTo];
 //    }];
 //}
 

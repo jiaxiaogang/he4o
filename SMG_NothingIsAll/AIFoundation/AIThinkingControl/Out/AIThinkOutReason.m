@@ -11,6 +11,7 @@
 #import "AICMVNodeBase.h"
 #import "AINetIndex.h"
 #import "AIKVPointer.h"
+#import "ThinkingUtils.h"
 
 @implementation AIThinkOutReason
 
@@ -20,7 +21,6 @@
  */
 -(void) dataOut:(AIKVPointer *)targetAlg_p matchAlg:(AIAlgNodeBase *)matchAlg useNode:(AICMVNodeBase *)useNode matchFo:(AIFoNodeBase *)matchFo matchValue:(CGFloat)matchValue shortMemFo:(AIFoNodeBase *)shortMemFo {
     
-    //TODOTOMORROW代码计划:
     //1. 把mv加入到demandManager;
     if (matchFo) {
         //1> 判断matchingFo.mv有值才加入demandManager,同台竞争,执行顺应mv;
@@ -34,10 +34,14 @@
                 NSInteger urgentTo = [NUMTOOK([AINetIndex getData:mvNode.urgentTo_p]) integerValue];
                 urgentTo = (int)(urgentTo * matchValue);
                 
-                //TODO:此处,仅为预测,并非已成现实,那么在demandManager中的逆向抵消,就是有问题的;
-                //如,饿了,马上就可以拿到面条,只是问题被解决在望,但并非已经解决;
-                //这里要思考一下,这两者的区分,并分别给予合理的处理;
+                //3> 将mv加入demandCache
                 [self.delegate aiThinkOutReason_CommitDemand:delta algsType:algsType urgentTo:urgentTo];
+                
+                //4> RMV无需求时,将其加入到激活缓存;
+                BOOL havDemand = [ThinkingUtils getDemand:algsType delta:delta complete:nil];
+                if (!havDemand) {
+                    [self.delegate aiThinkOutReason_CommitActive:mvNode.pointer];
+                }
             }
         }
     }
@@ -75,7 +79,7 @@
     }
     //NSString *algsType = cmvNode.urgentTo_p.algsType;
     //NSInteger urgentTo = [NUMTOOK([AINetIndex getData:cmvNode.urgentTo_p]) integerValue];
-    //[self.demandManager updateCMVCache:algsType urgentTo:urgentTo delta:delta order:urgentTo];
+    //[self.demandManager updateCMVCache_RMV:algsType urgentTo:urgentTo delta:delta order:urgentTo];
     
     //加上活跃度
     //[self updateEnergy:urgentTo];//190730前:((urgentTo + 9)/10) 190730:urgentTo
