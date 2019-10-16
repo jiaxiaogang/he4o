@@ -29,12 +29,12 @@
  *  MARK:--------------------理性输入识别处理--------------------
  *  联想网络杏仁核得来的则false;
  */
--(void) aiThinkIn_Commit2TOR:(AIKVPointer*)targetAlg_p
-                    matchAlg:(AIAlgNodeBase*)matchAlg
-                     useNode:(AICMVNodeBase*)useNode
-                     matchFo:(AIFoNodeBase*)matchFo
+-(void) aiThinkIn_Commit2TOR:(AICMVNodeBase *)useNode
                   matchValue:(CGFloat)matchValue
-                  shortMemFo:(AIFoNodeBase*)shortMemFo;
+                  protoAlg_p:(AIKVPointer *)protoAlg_p
+                    matchAlg:(AIAlgNodeBase *)matchAlg
+                     protoFo:(AIFoNodeBase *)protoFo
+                     matchFo:(AIFoNodeBase *)matchFo;
 
 -(void) aiThinkIn_UpdateEnergy:(CGFloat)delta;                //更新思维能量值;
 -(BOOL) aiThinkIn_EnergyValid;                                  //能量值是否>0;

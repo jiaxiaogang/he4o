@@ -19,7 +19,12 @@
  *  MARK:--------------------TOR主方法--------------------
  *  1. 可以根据此maxMatchValue匹配度,来做感性预测;
  */
--(void) dataOut:(AIKVPointer *)targetAlg_p matchAlg:(AIAlgNodeBase *)matchAlg useNode:(AICMVNodeBase *)useNode matchFo:(AIFoNodeBase *)matchFo matchValue:(CGFloat)matchValue shortMemFo:(AIFoNodeBase *)shortMemFo {
+-(void) dataOut:(AICMVNodeBase *)useNode
+     matchValue:(CGFloat)matchValue
+     protoAlg_p:(AIKVPointer *)protoAlg_p
+       matchAlg:(AIAlgNodeBase *)matchAlg
+        protoFo:(AIFoNodeBase *)protoFo
+        matchFo:(AIFoNodeBase *)matchFo {
     
     //1. 把mv加入到demandManager;
     if (matchFo) {
@@ -46,11 +51,14 @@
         }
     }
     
+    //2. 将所有TIR的激活节点,添加到activeCache中,供理性(实)使用;
+    if (protoAlg_p) [self.delegate aiThinkOutReason_CommitActive:protoAlg_p];
+    if (matchAlg) [self.delegate aiThinkOutReason_CommitActive:matchAlg.pointer];
+    if (protoFo) [self.delegate aiThinkOutReason_CommitActive:protoFo.pointer];
+    if (matchFo) [self.delegate aiThinkOutReason_CommitActive:matchFo.pointer];
     
-    
-    
-    //2. 将对matchingFo和matchingAlg做为激活节点,添加到demandManager中,供理性(实)使用;
     //3. 对TOP的运作5个scheme做改动,以应用"激活"节点;
+    //或者,就在此处重写5个scheme,来做TOR的工作;
     
     
     
@@ -66,20 +74,8 @@
     
     
     
-    //1. 数据检查
-    AIAlgNodeBase *targetAlg = [SMGUtils searchNode:targetAlg_p];
-    if (!ISOK(useNode, AICMVNodeBase.class) || !ISOK(matchAlg, AIAlgNodeBase.class) || !targetAlg) {
-        return;
-    }
     
-    //比对mv匹配;
-    NSInteger delta = [NUMTOOK([AINetIndex getData:useNode.delta_p]) integerValue];
-    if (delta == 0) {
-        return;
-    }
-    //NSString *algsType = cmvNode.urgentTo_p.algsType;
-    //NSInteger urgentTo = [NUMTOOK([AINetIndex getData:cmvNode.urgentTo_p]) integerValue];
-    //[self.demandManager updateCMVCache_RMV:algsType urgentTo:urgentTo delta:delta order:urgentTo];
+    //旧有方法:
     
     //加上活跃度
     //[self updateEnergy:urgentTo];//190730前:((urgentTo + 9)/10) 190730:urgentTo

@@ -26,6 +26,21 @@
 
 @property (weak, nonatomic) id<AIThinkOutReasonDelegate> delegate;
 
--(void) dataOut:(AIKVPointer *)targetAlg_p matchAlg:(AIAlgNodeBase *)matchAlg useNode:(AICMVNodeBase *)useNode matchFo:(AIFoNodeBase *)matchFo matchValue:(CGFloat)matchValue shortMemFo:(AIFoNodeBase *)shortMemFo;
+
+/**
+ *  MARK:--------------------TOR方法主入口--------------------
+ *  @param useNode      : 旧有useNode (先保留,没什么用再删掉);
+ *  @param matchValue   : 匹配度
+ *  @param protoAlg_p   : 输入的原始概念
+ *  @param matchAlg     : 识别的匹配概念
+ *  @param protoFo      : 输入的原始时序
+ *  @param matchFo      : 识别的匹配时序
+ */
+-(void) dataOut:(AICMVNodeBase *)useNode
+     matchValue:(CGFloat)matchValue
+     protoAlg_p:(AIKVPointer *)protoAlg_p
+       matchAlg:(AIAlgNodeBase *)matchAlg
+        protoFo:(AIFoNodeBase *)protoFo
+        matchFo:(AIFoNodeBase *)matchFo;
 
 @end

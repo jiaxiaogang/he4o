@@ -169,8 +169,13 @@ static AIThinkingControl *_instance;
     [self.tOP dataOut];
 }
 
--(void) aiThinkIn_Commit2TOR:(AIKVPointer *)targetAlg_p matchAlg:(AIAlgNodeBase *)matchAlg useNode:(AICMVNodeBase *)useNode matchFo:(AIFoNodeBase *)matchFo matchValue:(CGFloat)matchValue shortMemFo:(AIFoNodeBase *)shortMemFo {
-    [self.tOR dataOut:targetAlg_p matchAlg:matchAlg useNode:useNode matchFo:matchFo matchValue:matchValue shortMemFo:shortMemFo];
+-(void) aiThinkIn_Commit2TOR:(AICMVNodeBase *)useNode
+                  matchValue:(CGFloat)matchValue
+                  protoAlg_p:(AIKVPointer *)protoAlg_p
+                    matchAlg:(AIAlgNodeBase *)matchAlg
+                     protoFo:(AIFoNodeBase *)protoFo
+                     matchFo:(AIFoNodeBase *)matchFo {
+    [self.tOR dataOut:useNode matchValue:matchValue protoAlg_p:protoAlg_p matchAlg:matchAlg protoFo:protoFo matchFo:matchFo];
 }
 
 -(void) aiThinkIn_UpdateEnergy:(CGFloat)delta{
