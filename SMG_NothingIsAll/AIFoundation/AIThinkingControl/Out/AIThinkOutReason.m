@@ -63,25 +63,29 @@
     
     //4. 对TOP的运作5个scheme做改动,以应用"激活"节点;
     //或者,就在此处重写5个scheme,来做TOR的工作;
-    //> 1. 取demandManager中,首个任务,看是否与当前mv有匹配,,,并逐步进行匹配,(参考:n17p9/168_TOR代码实践示图);
+    //>1. 取demandManager中,首个任务,看是否与当前mv有匹配,,,并逐步进行匹配,(参考:n17p9/168_TOR代码实践示图);
     
-    
-    
-    
-    
-    //参考n17p8 TOR模型;
-    //1. 比如预测到车将撞到自己,那么我们可以去查看避免被撞的方法;
-    //  * 比如,飞行改变距离,改变方向,改变车的尺寸,改变车的速度,改变红绿灯为红灯等方式;
-    //2. 预测[alg(车) -> fo(车变近) -> mv(疼痛)]
-    //TOP通过,满足需求,找行为化,达成实;
+    //参考n17p8 TOR模型; n17p9 代码实践示图;
     //TOR通过,避免需求,找行为化,改变实;
+    //>2. 如预测到车将撞到自己,去查避免被撞的方法;如,飞行改变距离,改变方向,改变车的尺寸,改变车的速度,改变红绿灯为红灯等方式;
+    //can有没有用 / how怎么用
     
+}
+
+-(void) mvScheme:(AIKVPointer*)mv_p {
     
+}
+
+-(void) foScheme:(AIFoNodeBase*)protoFo matchFo:(AIFoNodeBase*)matchFo {
     
-    //走ThinkOutReason进行行为化
-    //can有没有用
-    //how怎么用
-    //参考n17p1&n17p2
+}
+
+-(void) algScheme:(AIAlgNodeBase*)protoAlg matchAlg:(AIAlgNodeBase*)matchAlg {
+    
+}
+
+-(void) actionScheme {
+    
 }
 
 @end
