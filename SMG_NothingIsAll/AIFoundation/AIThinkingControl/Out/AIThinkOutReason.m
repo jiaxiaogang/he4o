@@ -27,6 +27,7 @@
         matchFo:(AIFoNodeBase *)matchFo {
     
     //1. 把mv加入到demandManager;
+    NSInteger urgentTo = 0;
     if (matchFo) {
         //1> 判断matchingFo.mv有值才加入demandManager,同台竞争,执行顺应mv;
         AICMVNodeBase *mvNode = [SMGUtils searchNode:matchFo.cmvNode_p];
@@ -36,7 +37,7 @@
                 NSString *algsType = mvNode.urgentTo_p.algsType;
                 
                 //2> 判断matchValue的匹配度,对mv的迫切度产生"正相关"影响;
-                NSInteger urgentTo = [NUMTOOK([AINetIndex getData:mvNode.urgentTo_p]) integerValue];
+                urgentTo = [NUMTOOK([AINetIndex getData:mvNode.urgentTo_p]) integerValue];
                 urgentTo = (int)(urgentTo * matchValue);
                 
                 //3> 将mv加入demandCache
@@ -57,8 +58,12 @@
     if (protoFo) [self.delegate aiThinkOutReason_CommitActive:protoFo.pointer];
     if (matchFo) [self.delegate aiThinkOutReason_CommitActive:matchFo.pointer];
     
-    //3. 对TOP的运作5个scheme做改动,以应用"激活"节点;
+    //3. 加上活跃度
+    [self.delegate aiThinkOutReason_UpdateEnergy:urgentTo];
+    
+    //4. 对TOP的运作5个scheme做改动,以应用"激活"节点;
     //或者,就在此处重写5个scheme,来做TOR的工作;
+    //> 1. 取demandManager中,首个任务,看是否与当前mv有匹配,,,并逐步进行匹配,(参考:n17p9/168_TOR代码实践示图);
     
     
     
@@ -70,15 +75,6 @@
     //2. 预测[alg(车) -> fo(车变近) -> mv(疼痛)]
     //TOP通过,满足需求,找行为化,达成实;
     //TOR通过,避免需求,找行为化,改变实;
-    
-    
-    
-    
-    
-    //旧有方法:
-    
-    //加上活跃度
-    //[self updateEnergy:urgentTo];//190730前:((urgentTo + 9)/10) 190730:urgentTo
     
     
     

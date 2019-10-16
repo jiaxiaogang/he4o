@@ -16,6 +16,9 @@
 //更新理性mv到激活缓存
 -(void) aiThinkOutReason_CommitActive:(AIKVPointer*)act_p;
 
+//更新思维活跃度
+-(void) aiThinkOutReason_UpdateEnergy:(CGFloat)delta;
+
 @end
 
 /**

@@ -214,4 +214,8 @@ static AIThinkingControl *_instance;
     [self.activeCache add:act_p];
 }
 
+-(void) aiThinkOutReason_UpdateEnergy:(CGFloat)delta{
+    [self updateEnergy:delta];
+}
+
 @end
