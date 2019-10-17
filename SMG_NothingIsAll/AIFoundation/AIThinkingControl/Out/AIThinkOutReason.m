@@ -72,7 +72,19 @@
     
 }
 
--(void) mvScheme:(AIKVPointer*)mv_p {
+//MARK:===============================================================
+//MARK:                     < 决策行为化 >
+//MARK: 1. 以algScheme开始,优先使用简单的方式,后向fo,mv;
+//MARK: 2. 因为TOP已经做了很多工作,此处与TOP协作 (与从左至右的理性向性是相符的);
+//MARK:===============================================================
+
+//TODOTOMORROW: 思考下,把mv提交给demandManager后,是否需要排好优先级;
+//1. 方案一:
+//a. 将RMV提交给demand后,不排优先级;
+//b. 此处取激活池时,先取demand.firstDemand();
+//c. 再根据demandModel取其下的:"激活池";
+
+-(void) algScheme:(AIAlgNodeBase*)protoAlg matchAlg:(AIAlgNodeBase*)matchAlg {
     
 }
 
@@ -80,7 +92,7 @@
     
 }
 
--(void) algScheme:(AIAlgNodeBase*)protoAlg matchAlg:(AIAlgNodeBase*)matchAlg {
+-(void) mvScheme:(AIKVPointer*)mv_p {
     
 }
 
