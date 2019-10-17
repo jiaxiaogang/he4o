@@ -84,6 +84,15 @@
 //b. 此处取激活池时,先取demand.firstDemand();
 //c. 再根据demandModel取其下的:"激活池";
 
+//2. 思考下,TOP的代码,如何拆分,把理性的部分拆过来;
+//3. 方案二:
+//a. TOR中的激活节点,是可以作用于任何任务的;
+//b. 所以应该将TOR的节点,作为激活池;供TOP使用,帮助TOP把感性的路跑通;
+//c. 供RMV时,把思维激活,然后,TOP.dataOut()执行,并使用上激活池,即可,直接看行为化结果;
+
+//4. 综上,方案二,更加简单直接,方案一:
+//a. 两个方案,都善有不成熟的迹象,需要先思考细节,并选定一个方案执行,执行中细化出问题,再改进方案的细节...
+
 -(void) algScheme:(AIAlgNodeBase*)protoAlg matchAlg:(AIAlgNodeBase*)matchAlg {
     
 }
