@@ -76,18 +76,14 @@
         }else{
             if (ISOK(outFoModel, TOFoModel.class)) {
                 TOFoModel *foModel = (TOFoModel*)outFoModel;
-                //7. 为空,进行行为化_尝试输出"可行性之首"并找到实际操作 (子可行性判定) (algScheme)
-                if (!ARRISOK(foModel.actions)) {
-                    [self dataOut_AlgScheme:foModel];
-                }
+                
+                //6. 为空,进行行为化_尝试输出"可行性之首"并找到实际操作 (子可行性判定) (algScheme)
+                [self.delegate aiThinkOutPercept_Commit2TOR:foModel];
                 
                 //7. 再为空,反馈上一级被不应期;
                 if (!ARRISOK(foModel.actions)) {
                     [outMvModel.except_ps addObject:foModel.content_p];
                     [self dataOut];
-                }else{
-                    //8. actionScheme (行为方案输出)
-                    [self dataOut_ActionScheme:foModel.actions];
                 }
             }
         }
@@ -188,26 +184,6 @@
     }
     
     return nil;
-}
-
-
-/**
- *  MARK:--------------------algScheme--------------------
- *  1. 对条件概念进行判定 (行为化);
- *  2. 理性判定;
- */
--(void) dataOut_AlgScheme:(TOFoModel*)outFoModel{
-    //1. 数据准备
-    if (!ISOK(outFoModel, TOFoModel.class)) {
-        return;
-    }
-    AIFoNodeBase *foNode = [SMGUtils searchNode:outFoModel.content_p];
-    if (!foNode) {
-        return;
-    }
-    
-    //2. 进行行为化; (通过有无,变化,等方式,将结构中所有条件概念行为化);
-    outFoModel.actions = [TOAlgScheme convert2Out:foNode.content_ps];
 }
 
 

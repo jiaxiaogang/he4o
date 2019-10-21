@@ -12,6 +12,8 @@
 #import "AINetIndex.h"
 #import "AIKVPointer.h"
 #import "ThinkingUtils.h"
+#import "TOFoModel.h"
+#import "TOAlgScheme.h"
 
 @implementation AIThinkOutReason
 
@@ -77,6 +79,47 @@
 //MARK: 1. 以algScheme开始,优先使用简单的方式,后向fo,mv;
 //MARK: 2. 因为TOP已经做了很多工作,此处与TOP协作 (与从左至右的理性向性是相符的);
 //MARK:===============================================================
+
+-(void) convert2Actions:(TOFoModel*)foModel{
+    if (foModel) {
+        //1. 为空,进行行为化_尝试输出"可行性之首"并找到实际操作 (子可行性判定) (algScheme)
+        if (!ARRISOK(foModel.actions)) {
+            [self dataOut_AlgScheme:foModel];
+        }
+        
+        //2. actionScheme (行为方案输出)
+        if (ARRISOK(foModel.actions)) {
+            [self dataOut_ActionScheme:foModel.actions];
+        }
+    }
+}
+
+
+/**
+ *  MARK:--------------------algScheme--------------------
+ *  1. 对条件概念进行判定 (行为化);
+ *  2. 理性判定;
+ */
+-(void) dataOut_AlgScheme:(TOFoModel*)outFoModel{
+    //1. 数据准备
+    if (!ISOK(outFoModel, TOFoModel.class)) {
+        return;
+    }
+    AIFoNodeBase *foNode = [SMGUtils searchNode:outFoModel.content_p];
+    if (!foNode) {
+        return;
+    }
+    
+    //2. 进行行为化; (通过有无,变化,等方式,将结构中所有条件概念行为化);
+    outFoModel.actions = [TOAlgScheme convert2Out:foNode.content_ps];
+}
+
+-(void) dataOut_ActionScheme:(NSArray*)outArr{
+    //随后从TOP中,把此方法内容搬过来;
+}
+
+
+
 -(void) algScheme:(AIAlgNodeBase*)protoAlg matchAlg:(AIAlgNodeBase*)matchAlg {
     
 }

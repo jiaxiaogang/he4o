@@ -8,12 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
-@class DemandModel;
+@class DemandModel,TOFoModel;
 @protocol AIThinkOutPerceptDelegate <NSObject>
 
--(DemandModel*) aiThinkOutPercept_GetCurrentDemand;            //获取当前需求;
--(BOOL) aiThinkOutPercept_EnergyValid;                         //能量值是否>0;
--(void) aiThinkOutPercept_UpdateEnergy:(CGFloat)delta;       //更新思维能量值;
+-(DemandModel*) aiThinkOutPercept_GetCurrentDemand;         //获取当前需求;
+-(BOOL) aiThinkOutPercept_EnergyValid;                      //能量值是否>0;
+-(void) aiThinkOutPercept_UpdateEnergy:(CGFloat)delta;      //更新思维能量值;
+-(void) aiThinkOutPercept_Commit2TOR:(TOFoModel*)foModel;   //提交foModel给TOR做理性行为化
 
 @end
 

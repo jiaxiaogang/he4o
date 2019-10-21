@@ -24,7 +24,7 @@
 /**
  *  MARK:--------------------理性ThinkOut部分--------------------
  */
-@class AICMVNodeBase,AIAlgNodeBase,AIFoNodeBase;
+@class AICMVNodeBase,AIAlgNodeBase,AIFoNodeBase,TOFoModel;
 @interface AIThinkOutReason : NSObject
 
 @property (weak, nonatomic) id<AIThinkOutReasonDelegate> delegate;
@@ -45,5 +45,10 @@
        matchAlg:(AIAlgNodeBase *)matchAlg
         protoFo:(AIFoNodeBase *)protoFo
         matchFo:(AIFoNodeBase *)matchFo;
+
+/**
+ *  MARK:--------------------从TOP提交过来,做理性行为化--------------------
+ */
+-(void) convert2Actions:(TOFoModel*)foModel;
 
 @end

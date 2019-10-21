@@ -21,6 +21,7 @@
 #import "AINetIndex.h"
 #import "NSObject+Extension.h"
 #import "ActiveCache.h"
+#import "TOFoModel.h"
 
 /**
  *  MARK:--------------------思维控制器--------------------
@@ -200,6 +201,10 @@ static AIThinkingControl *_instance;
 
 -(void) aiThinkOutPercept_UpdateEnergy:(CGFloat)delta{
     [self updateEnergy:delta];
+}
+
+-(void) aiThinkOutPercept_Commit2TOR:(TOFoModel*)foModel{
+    [self.tOR convert2Actions:foModel];
 }
 
 
