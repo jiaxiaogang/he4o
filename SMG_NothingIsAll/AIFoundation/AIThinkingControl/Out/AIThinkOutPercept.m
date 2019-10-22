@@ -17,7 +17,6 @@
 #import "AIAbsCMVNode.h"
 #import "AIFrontOrderNode.h"
 #import "AINetAbsFoNode.h"
-#import "Output.h"
 #import "TOFoModel.h"
 #import "AIAbsAlgNode.h"
 #import "AIAlgNode.h"
@@ -52,11 +51,12 @@
     
     //TODOTOMORROW:
     //1. 此处,outMvModel取到,解决问题的mvDirection结果,但再往下,仍然是进到反射输出了,,,查为什么行为化失败了,,,
+    //191022答: 由此处行为化失败率太高,而引出必须细化TR;
     
     
     //3. 再为空,评价mvModel_无解决经验,则反射输出;
     if (!outMvModel) {
-        [self dataOut_ActionScheme:nil];
+        [self.delegate aiThinkOutPercept_MVSchemeFailure];
     }else{
         //4. 有可具象思考的outMvModel则执行;
         [self useEnergy];
@@ -186,51 +186,6 @@
     return nil;
 }
 
-
-/**
- *  MARK:--------------------尝试输出信息--------------------
- *  @param outArr : orders里筛选出来的algNode组;
- *
- *  三种输出方式:
- *  1. 反射输出 : reflexOut
- *  2. 激活输出 : absNode信息无conPorts方向的outPointer信息时,将absNode的宏信息尝试输出;
- *  3. 经验输出 : expOut指在absNode或conPort方向有outPointer信息;
- *
- *  功能: 将行为概念组成的长时序,转化为真实输出;
- *  1. 找到行为的具象;
- *  2. 正式执行行为 (小脑);
- */
--(void) dataOut_ActionScheme:(NSArray*)outArr{
-    //1. 尝试输出找到解决问题的实际操作 (取到当前cacheModel中的最佳决策,并进行输出;)
-    BOOL tryOutSuccess = false;
-    if (ARRISOK(outArr)) {
-        for (AIKVPointer *algNode_p in outArr) {
-            //>1 检查micro_p是否是"输出";
-            //>2 假如order_p足够确切,尝试检查并输出;
-            BOOL invoked = [Output output_TC:algNode_p];
-            [theNV setNodeData:algNode_p lightStr:@"o3"];
-            if (invoked) {
-                tryOutSuccess = true;
-            }
-        }
-    }
-    
-    //2. 无法解决时,反射一些情绪变化,并增加额外输出;
-    if (!tryOutSuccess) {
-        //>1 产生"心急mv";(心急产生只是"urgent.energy x 2")
-        //>2 输出反射表情;
-        //>3 记录log到foOrders;(记录log应该到output中执行)
-        
-        //1. 如果未找到复现方式,或解决方式,则产生情绪:急
-        //2. 通过急,输出output表情哭
-        
-        //1. 心急情绪释放,平复思维;
-        [self useEnergy];
-        
-        //2. 反射输出
-        [Output output_Mood:AIMoodType_Anxious];
-    }
-}
 
 //MARK:===============================================================
 //MARK:                     < private_Method >

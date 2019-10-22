@@ -14,6 +14,7 @@
 #import "ThinkingUtils.h"
 #import "TOFoModel.h"
 #import "TOAlgScheme.h"
+#import "Output.h"
 
 @implementation AIThinkOutReason
 
@@ -21,12 +22,12 @@
  *  MARK:--------------------TOR主方法--------------------
  *  1. 可以根据此maxMatchValue匹配度,来做感性预测;
  */
--(void) dataOut:(AICMVNodeBase *)useNode
-     matchValue:(CGFloat)matchValue
-     protoAlg_p:(AIKVPointer *)protoAlg_p
-       matchAlg:(AIAlgNodeBase *)matchAlg
-        protoFo:(AIFoNodeBase *)protoFo
-        matchFo:(AIFoNodeBase *)matchFo {
+-(void) commitFromTIR:(AICMVNodeBase *)useNode
+           matchValue:(CGFloat)matchValue
+           protoAlg_p:(AIKVPointer *)protoAlg_p
+             matchAlg:(AIAlgNodeBase *)matchAlg
+              protoFo:(AIFoNodeBase *)protoFo
+              matchFo:(AIFoNodeBase *)matchFo {
     
     //1. 把mv加入到demandManager;
     NSInteger urgentTo = 0;
@@ -80,7 +81,7 @@
 //MARK: 2. 因为TOP已经做了很多工作,此处与TOP协作 (与从左至右的理性向性是相符的);
 //MARK:===============================================================
 
--(void) convert2Actions:(TOFoModel*)foModel{
+-(void) commitFromTOP_Convert2Actions:(TOFoModel*)foModel{
     if (foModel) {
         //1. 为空,进行行为化_尝试输出"可行性之首"并找到实际操作 (子可行性判定) (algScheme)
         if (!ARRISOK(foModel.actions)) {
@@ -93,7 +94,6 @@
         }
     }
 }
-
 
 /**
  *  MARK:--------------------algScheme--------------------
@@ -114,11 +114,6 @@
     outFoModel.actions = [TOAlgScheme convert2Out:foNode.content_ps];
 }
 
--(void) dataOut_ActionScheme:(NSArray*)outArr{
-    //随后从TOP中,把此方法内容搬过来;
-}
-
-
 
 -(void) algScheme:(AIAlgNodeBase*)protoAlg matchAlg:(AIAlgNodeBase*)matchAlg {
     
@@ -135,5 +130,61 @@
 -(void) actionScheme {
     
 }
+
+
+
+
+//MARK:===============================================================
+//MARK:                     < FromTOP_反射反应 >
+//MARK:===============================================================
+-(void) commitFromTOP_ReflexOut{
+    [self dataOut_ActionScheme:nil];
+}
+
+/**
+ *  MARK:--------------------尝试输出信息--------------------
+ *  @param outArr : orders里筛选出来的algNode组;
+ *
+ *  三种输出方式:
+ *  1. 反射输出 : reflexOut
+ *  2. 激活输出 : absNode信息无conPorts方向的outPointer信息时,将absNode的宏信息尝试输出;
+ *  3. 经验输出 : expOut指在absNode或conPort方向有outPointer信息;
+ *
+ *  功能: 将行为概念组成的长时序,转化为真实输出;
+ *  1. 找到行为的具象;
+ *  2. 正式执行行为 (小脑);
+ */
+-(void) dataOut_ActionScheme:(NSArray*)outArr{
+    //1. 尝试输出找到解决问题的实际操作 (取到当前cacheModel中的最佳决策,并进行输出;)
+    BOOL tryOutSuccess = false;
+    if (ARRISOK(outArr)) {
+        for (AIKVPointer *algNode_p in outArr) {
+            //>1 检查micro_p是否是"输出";
+            //>2 假如order_p足够确切,尝试检查并输出;
+            BOOL invoked = [Output output_TC:algNode_p];
+            [theNV setNodeData:algNode_p lightStr:@"o3"];
+            if (invoked) {
+                tryOutSuccess = true;
+            }
+        }
+    }
+    
+    //2. 无法解决时,反射一些情绪变化,并增加额外输出;
+    if (!tryOutSuccess) {
+        //>1 产生"心急mv";(心急产生只是"urgent.energy x 2")
+        //>2 输出反射表情;
+        //>3 记录log到foOrders;(记录log应该到output中执行)
+        
+        //1. 如果未找到复现方式,或解决方式,则产生情绪:急
+        //2. 通过急,输出output表情哭
+        
+        //1. 心急情绪释放,平复思维;
+        [self.delegate aiThinkOutReason_UpdateEnergy:-1];
+        
+        //2. 反射输出
+        [Output output_Mood:AIMoodType_Anxious];
+    }
+}
+
 
 @end

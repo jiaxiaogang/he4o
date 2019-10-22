@@ -176,7 +176,7 @@ static AIThinkingControl *_instance;
                     matchAlg:(AIAlgNodeBase *)matchAlg
                      protoFo:(AIFoNodeBase *)protoFo
                      matchFo:(AIFoNodeBase *)matchFo {
-    [self.tOR dataOut:useNode matchValue:matchValue protoAlg_p:protoAlg_p matchAlg:matchAlg protoFo:protoFo matchFo:matchFo];
+    [self.tOR commitFromTIR:useNode matchValue:matchValue protoAlg_p:protoAlg_p matchAlg:matchAlg protoFo:protoFo matchFo:matchFo];
 }
 
 -(void) aiThinkIn_UpdateEnergy:(CGFloat)delta{
@@ -204,9 +204,12 @@ static AIThinkingControl *_instance;
 }
 
 -(void) aiThinkOutPercept_Commit2TOR:(TOFoModel*)foModel{
-    [self.tOR convert2Actions:foModel];
+    [self.tOR commitFromTOP_Convert2Actions:foModel];
 }
 
+-(void) aiThinkOutPercept_MVSchemeFailure{
+    [self.tOR commitFromTOP_ReflexOut];
+}
 
 /**
  *  MARK:--------------------AIThinkOutReasonDelegate--------------------
