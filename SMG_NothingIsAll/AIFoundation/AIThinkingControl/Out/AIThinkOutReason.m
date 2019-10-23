@@ -110,6 +110,10 @@
         return;
     }
     
+    //TODOTOMORROW:
+    //190725此处,outMvModel取到,解决问题的mvDirection结果,但再往下,仍然是进到反射输出了,,,查为什么行为化失败了,,,
+    //191022答: 由此处行为化失败率太高,而引出必须细化TR;
+    
     //2. 进行行为化; (通过有无,变化,等方式,将结构中所有条件概念行为化);
     outFoModel.actions = [TOAlgScheme convert2Out:foNode.content_ps];
 }

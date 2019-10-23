@@ -24,6 +24,14 @@
         
         //2. 依次单个概念行为化
         for (AIKVPointer *curAlg_p in curAlg_ps) {
+            
+            //TODOTOMORROW:
+            //此处可支持,直接由activeCache来提供,以及提供后,的cValue修正;
+            
+            
+            
+            
+            
             NSArray *singleResult = [TOAlgScheme convert2Out_Single:curAlg_p];
             [theNV setNodeData:curAlg_p lightStr:@"o2"];
             //3. 行为化成功,则收集;
