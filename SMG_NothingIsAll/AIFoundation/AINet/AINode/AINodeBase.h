@@ -19,10 +19,10 @@
 @property (strong, nonatomic) NSMutableArray *absPorts; //抽象方向的端口;
 
 /**
- *  MARK:--------------------组--------------------
- *  @desc : (微信息/嵌套概念)指针组 (以pointer默认排序)
+ *  MARK:--------------------组端口--------------------
+ *  @desc : 组分关联的 "组";
  *  1. 用于fo: 在imv前发生的noMV的algs数据序列;(前因序列)(使用kvp而不是port的原因是cmvModel的强度不变:参考n12p16)
- *  2. 用于alg: 稀疏码微信息组;
+ *  2. 用于alg: 稀疏码微信息组;(微信息/嵌套概念)指针组 (以pointer默认排序)
  */
 @property (strong, nonatomic) NSMutableArray *content_ps;
 
