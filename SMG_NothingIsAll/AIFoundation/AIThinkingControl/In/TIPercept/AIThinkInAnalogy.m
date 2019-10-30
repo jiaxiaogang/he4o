@@ -216,13 +216,15 @@
                     }
                 }else if(aSub_ps.count > 0 && bSub_ps.count == 0){
                     //2) 当长度各aSub>0和bSub=0时,抽象出aSub,并构建其"有变无"时序;
-                    AIAbsAlgNode *targetNode = [theNet createAbsAlgNode:aSub_ps conAlgs:@[algNodeA] isMem:false];
+                    //AIAbsAlgNode *targetNode = [theNet createAbsAlgNode:aSub_ps conAlgs:@[algNodeA] isMem:false];//191030改成单具象节点 (因为坚果的抽象不是坚果皮) 参考179_内类比全流程回顾
+                    AIAlgNode *targetNode = [theNet createAlgNode:aSub_ps isOut:false isMem:false];
                     NSLog(@"inner > 构建无,%@",targetNode.pointer.identifier);
                     abFo = [self analogyInner_Creater:AnalogyInnerType_None target_p:targetNode.pointer algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
                     lightStr = @"无";
                 }else if(aSub_ps.count == 0 && bSub_ps.count > 0){
                     //3) 当长度各aSub=0和bSub>0时,抽象出bSub,并构建其"无变有"时序;
-                    AIAbsAlgNode *targetNode = [theNet createAbsAlgNode:aSub_ps conAlgs:@[algNodeB] isMem:false];
+                    //AIAbsAlgNode *targetNode = [theNet createAbsAlgNode:aSub_ps conAlgs:@[algNodeB] isMem:false];//191030改成单具象节点 (因为坚果的抽象不是坚果皮) 参考179_内类比全流程回顾
+                    AIAlgNode *targetNode = [theNet createAlgNode:bSub_ps isOut:false isMem:false];
                     NSLog(@"inner > 构建有,%@",targetNode.pointer.identifier);
                     abFo = [self analogyInner_Creater:AnalogyInnerType_Hav target_p:targetNode.pointer algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
                     lightStr = @"有";
@@ -298,6 +300,16 @@
         //5. 构建动态抽象概念block;
         AIAlgNodeBase* (^RelateDynamicAlgBlock)(AIAlgNodeBase*, AIAlgNodeBase*,AIPointer*) = ^AIAlgNodeBase* (AIAlgNodeBase *dynamicAbsNode, AIAlgNodeBase *conNode,AIPointer *value_p){
             if (ISOK(dynamicAbsNode, AIAbsAlgNode.class)) {
+                
+                
+                
+                //TODOTOMORROW:
+                //参考179_内类比全流程回顾
+                //a3与a4不应该是抽具象关系;
+                //应该是refPorts_Inner的组分关系;
+                //或者,考虑,下,这里先保持抽具象关系,看在后面测试中,会不会有别的影响,再看情况,再写到迭代计划里;
+                
+                
                 ///1. 有效时,关联;
                 [AINetUtils relateAlgAbs:(AIAbsAlgNode*)dynamicAbsNode conNodes:@[conNode]];
             }else{
