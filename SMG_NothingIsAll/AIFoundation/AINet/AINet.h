@@ -114,13 +114,4 @@
 -(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem;
 -(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs dataSource:(NSString*)dataSource isMem:(BOOL)isMem;
 
-/**
- *  MARK:--------------------获取value_ps相匹配的概念--------------------
- *  说明:
- *      1. 获取绝对匹配到value_ps的algNode (概念引用联想的方式去重)
- *      2. 先从内存网络,再从硬盘网络找;
- */
--(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValueP:(AIPointer*)value_p;
--(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps exceptAlg_p:(AIPointer*)exceptAlg_p isMem:(BOOL)isMem;
-
 @end

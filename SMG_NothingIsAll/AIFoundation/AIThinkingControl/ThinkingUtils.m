@@ -19,9 +19,9 @@
 #import "AIAlgNode.h"
 #import "AIPort.h"
 #import "AINet.h"
-#import "NSString+Extension.h"
 #import "AINetUtils.h"
 #import "AINetIndex.h"
+#import "AINetIndexUtils.h"
 
 @implementation ThinkingUtils
 
@@ -293,7 +293,7 @@
     AIPointer *value_p = [theNet getNetDataPointerWithData:@(typeValue) algsType:algsType dataSource:dataSource];
     
     //3. 从微信息,联想refPorts绝对匹配的概念节点;
-    return [theNet getAbsoluteMatchingAlgNodeWithValueP:value_p];
+    return [AINetIndexUtils getAbsoluteMatchingAlgNodeWithValueP:value_p];
 }
 
 +(NSInteger) getInnerTypeValue:(AnalogyInnerType)type{

@@ -17,6 +17,7 @@
 #import "AIFrontOrderNode.h"
 #import "AIAbsCMVNode.h"
 #import "AINetIndex.h"
+#import "AINetIndexUtils.h"
 
 @implementation AIThinkInAnalogy
 
@@ -294,8 +295,8 @@
         }
         
         //4. 取出绝对匹配的dynamic抽象概念
-        AIAlgNodeBase *frontAlg = [theNet getAbsoluteMatchingAlgNodeWithValueP:frontValue_p];
-        AIAlgNodeBase *backAlg = [theNet getAbsoluteMatchingAlgNodeWithValueP:backValue_p];
+        AIAlgNodeBase *frontAlg = [AINetIndexUtils getAbsoluteMatchingAlgNodeWithValueP:frontValue_p];
+        AIAlgNodeBase *backAlg = [AINetIndexUtils getAbsoluteMatchingAlgNodeWithValueP:backValue_p];
         
         //5. 构建动态抽象概念block;
         AIAlgNodeBase* (^RelateDynamicAlgBlock)(AIAlgNodeBase*, AIAlgNodeBase*,AIPointer*) = ^AIAlgNodeBase* (AIAlgNodeBase *dynamicAbsNode, AIAlgNodeBase *conNode,AIPointer *value_p){

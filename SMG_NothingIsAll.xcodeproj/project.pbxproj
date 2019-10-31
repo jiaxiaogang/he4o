@@ -16,6 +16,7 @@
 		0808D34822B6FDD100D383BA /* NVViewUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 0808D34722B6FDD100D383BA /* NVViewUtil.m */; };
 		080A74321F60C6490025DBA3 /* AIPort.m in Sources */ = {isa = PBXBuildFile; fileRef = 080A74311F60C6490025DBA3 /* AIPort.m */; };
 		080BFAAF2304D06A00046D22 /* HEViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 080BFAAE2304D06A00046D22 /* HEViewController.m */; };
+		0810E50F236A637500B33226 /* AINetIndexUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0810E50E236A637500B33226 /* AINetIndexUtils.m */; };
 		0817D6AB219E3CC7000E45AB /* UIColor+expanded.m in Sources */ = {isa = PBXBuildFile; fileRef = 0817D6A9219E3CC6000E45AB /* UIColor+expanded.m */; };
 		081B3ACC1F6E2155008A7F36 /* AITime.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3ACB1F6E2155008A7F36 /* AITime.m */; };
 		081B3AD61F6E2994008A7F36 /* AIStringAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3AD51F6E2994008A7F36 /* AIStringAlgs.m */; };
@@ -154,6 +155,8 @@
 		080A74311F60C6490025DBA3 /* AIPort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIPort.m; sourceTree = "<group>"; };
 		080BFAAD2304D06A00046D22 /* HEViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HEViewController.h; sourceTree = "<group>"; };
 		080BFAAE2304D06A00046D22 /* HEViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HEViewController.m; sourceTree = "<group>"; };
+		0810E50D236A637500B33226 /* AINetIndexUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetIndexUtils.h; sourceTree = "<group>"; };
+		0810E50E236A637500B33226 /* AINetIndexUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetIndexUtils.m; sourceTree = "<group>"; };
 		0812679523022ADB003A85DE /* NVConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVConfig.h; sourceTree = "<group>"; };
 		0817D6A9219E3CC6000E45AB /* UIColor+expanded.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+expanded.m"; sourceTree = "<group>"; };
 		0817D6AA219E3CC6000E45AB /* UIColor+expanded.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+expanded.h"; sourceTree = "<group>"; };
@@ -1021,6 +1024,8 @@
 				88960C6A209BDA2B004EF419 /* AINetIndexReference.m */,
 				8822851E20F58BDA009884DC /* AINetDirectionReference.h */,
 				8822851F20F58BDA009884DC /* AINetDirectionReference.m */,
+				0810E50D236A637500B33226 /* AINetIndexUtils.h */,
+				0810E50E236A637500B33226 /* AINetIndexUtils.m */,
 			);
 			path = AINetIndex;
 			sourceTree = "<group>";
@@ -1184,6 +1189,7 @@
 				08A5D5E522AF2B8200E56BB4 /* NVDelegate_He.m in Sources */,
 				081B3ADB1F6E2CCD008A7F36 /* AINet.m in Sources */,
 				0858C5E021950BB300951BA5 /* TreeView.m in Sources */,
+				0810E50F236A637500B33226 /* AINetIndexUtils.m in Sources */,
 				88BC09DD20B4F67E0006ABEF /* XGRedisDictionary.m in Sources */,
 				0858C5D32194F8B000951BA5 /* View+MASAdditions.m in Sources */,
 				8868F6EE210AA00B000EAC9B /* AINetAbsCMVUtil.m in Sources */,
