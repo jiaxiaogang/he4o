@@ -35,12 +35,6 @@
  *  @param checkFo      : 要处理的fo.orders;
  *  @param canAssBlock  : energy判断器 (为null时,无限能量);
  *  @param updateEnergy : energy消耗器 (为null时,不消耗能量值);
- *
- *  1. 此方法对一个fo内的orders进行内类比,并将找到的变化进行抽象构建网络;
- *  2. 如: 绿瓜变红瓜,如远坚果变近坚果;
- *  3. 每发现一个有效变化目标,则构建2个absAlg和2个absFo; (参考n15p18内类比构建图)
- *  注: 目前仅支持一个微信息变化的规律;
- *  TODO: 将内类比的类比部分代码,进行单独PrivateMethod,然后与外类比中调用的进行复用;
  */
 +(void) analogyInner:(AIFoNodeBase*)checkFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy;
 

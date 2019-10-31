@@ -85,6 +85,9 @@
  */
 +(BOOL) dataIn_CheckMV:(NSArray*)algResult_ps;
 
+//构建硬盘概念节点_去重;
++(AIAlgNodeBase*) createHdAlgNode_NoRepeat:(NSArray*)value_ps;
+
 @end
 
 

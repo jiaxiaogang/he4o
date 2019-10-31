@@ -18,6 +18,7 @@
 #import "AIAbsCMVNode.h"
 #import "AINetIndex.h"
 #import "AINetIndexUtils.h"
+#import "ThinkingUtils.h"
 
 @implementation AIThinkInAnalogy
 
@@ -151,6 +152,22 @@
 //MARK:===============================================================
 //MARK:                     < 内类比部分 >
 //MARK:===============================================================
+
+/**
+ *  MARK:--------------------fo内类比 (内中有外,找不同算法)--------------------
+ *  @param checkFo      : 要处理的fo.orders;
+ *  @param canAssBlock  : energy判断器 (为null时,无限能量);
+ *  @param updateEnergy : energy消耗器 (为null时,不消耗能量值);
+ *
+ *  1. 此方法对一个fo内的orders进行内类比,并将找到的变化进行抽象构建网络;
+ *  2. 如: 绿瓜变红瓜,如远坚果变近坚果;
+ *  3. 每发现一个有效变化目标,则构建2个absAlg和2个absFo; (参考n15p18内类比构建图)
+ *  注: 目前仅支持一个微信息变化的规律;
+ *  TODO: 将内类比的类比部分代码,进行单独PrivateMethod,然后与外类比中调用的进行复用;
+ *  @desc 代码说明:
+ *      1. "有无"的target需要去重,因为a3.identifier = a4.identifier,而a4需要外类比,所以去重才能联想到同质fo;
+ *      2. "有无"在191030改成单具象节点 (因为坚果的抽象不是坚果皮) 参考179_内类比全流程回顾;
+ */
 +(void) analogyInner:(AIFoNodeBase*)checkFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
     //1. 数据检查
     if (!ISOK(checkFo, AIFoNodeBase.class)) {
@@ -217,17 +234,17 @@
                     }
                 }else if(aSub_ps.count > 0 && bSub_ps.count == 0){
                     //2) 当长度各aSub>0和bSub=0时,抽象出aSub,并构建其"有变无"时序;
-                    //AIAbsAlgNode *targetNode = [theNet createAbsAlgNode:aSub_ps conAlgs:@[algNodeA] isMem:false];//191030改成单具象节点 (因为坚果的抽象不是坚果皮) 参考179_内类比全流程回顾
-                    AIAlgNode *targetNode = [theNet createAlgNode:aSub_ps isOut:false isMem:false];
-                    NSLog(@"inner > 构建无,%@",targetNode.pointer.identifier);
-                    abFo = [self analogyInner_Creater:AnalogyInnerType_None target_p:targetNode.pointer algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
+                    //AIAbsAlgNode *targetNode = [theNet createAbsAlgNode:aSub_ps conAlgs:@[algNodeA] isMem:false];
+                    AIAlgNodeBase *target = [ThinkingUtils createHdAlgNode_NoRepeat:aSub_ps];
+                    NSLog(@"inner > 构建无,%@",target.pointer.identifier);
+                    abFo = [self analogyInner_Creater:AnalogyInnerType_None target_p:target.pointer algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
                     lightStr = @"无";
                 }else if(aSub_ps.count == 0 && bSub_ps.count > 0){
                     //3) 当长度各aSub=0和bSub>0时,抽象出bSub,并构建其"无变有"时序;
-                    //AIAbsAlgNode *targetNode = [theNet createAbsAlgNode:aSub_ps conAlgs:@[algNodeB] isMem:false];//191030改成单具象节点 (因为坚果的抽象不是坚果皮) 参考179_内类比全流程回顾
-                    AIAlgNode *targetNode = [theNet createAlgNode:bSub_ps isOut:false isMem:false];
-                    NSLog(@"inner > 构建有,%@",targetNode.pointer.identifier);
-                    abFo = [self analogyInner_Creater:AnalogyInnerType_Hav target_p:targetNode.pointer algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
+                    //AIAbsAlgNode *targetNode = [theNet createAbsAlgNode:aSub_ps conAlgs:@[algNodeB] isMem:false];
+                    AIAlgNodeBase *target = [ThinkingUtils createHdAlgNode_NoRepeat:bSub_ps];
+                    NSLog(@"inner > 构建有,%@",target.pointer.identifier);
+                    abFo = [self analogyInner_Creater:AnalogyInnerType_Hav target_p:target.pointer algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
                     lightStr = @"有";
                 }
             }
@@ -301,16 +318,7 @@
         //5. 构建动态抽象概念block;
         AIAlgNodeBase* (^RelateDynamicAlgBlock)(AIAlgNodeBase*, AIAlgNodeBase*,AIPointer*) = ^AIAlgNodeBase* (AIAlgNodeBase *dynamicAbsNode, AIAlgNodeBase *conNode,AIPointer *value_p){
             if (ISOK(dynamicAbsNode, AIAbsAlgNode.class)) {
-                
-                
-                
-                //TODOTOMORROW:
-                //参考179_内类比全流程回顾
-                //a3与a4不应该是抽具象关系;
-                //应该是refPorts_Inner的组分关系;
-                //或者,考虑,下,这里先保持抽具象关系,看在后面测试中,会不会有别的影响,再看情况,再写到迭代计划里;
-                
-                
+                //注意: 此处algNode和algNode_Inner应该是组分关系,但先保持抽具象关系,看后面测试,有没别的影响,再改 (参考179_内类比全流程回顾)
                 ///1. 有效时,关联;
                 [AINetUtils relateAlgAbs:(AIAbsAlgNode*)dynamicAbsNode conNodes:@[conNode]];
             }else{
