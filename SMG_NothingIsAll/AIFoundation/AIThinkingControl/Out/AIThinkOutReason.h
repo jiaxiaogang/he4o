@@ -23,6 +23,10 @@
 
 /**
  *  MARK:--------------------理性ThinkOut部分--------------------
+ *  @desc 理性决策分为三种: (参考n17p14)
+ *      1. 瞬时 (从TIR中传递过来的识别与预测等)
+ *      2. 短时 (优先取内存网络)
+ *      3. 长时 (以硬盘网络为根基)
  */
 @class AICMVNodeBase,AIAlgNodeBase,AIFoNodeBase,TOFoModel;
 @interface AIThinkOutReason : NSObject
