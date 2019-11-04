@@ -10,12 +10,6 @@
 
 @protocol AIThinkOutReasonDelegate <NSObject>
 
-//更新理性mv到demandManager
--(void) aiThinkOutReason_CommitDemand:(NSInteger)delta algsType:(NSString*)algsType urgentTo:(NSInteger)urgentTo;
-
-//更新理性mv到激活缓存
--(void) aiThinkOutReason_CommitActive:(AIKVPointer*)act_p;
-
 //更新思维活跃度
 -(void) aiThinkOutReason_UpdateEnergy:(CGFloat)delta;
 

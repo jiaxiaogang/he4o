@@ -112,7 +112,7 @@
     }];
     
     //4. 传给TOR,做下一步处理;
-    [self.delegate aiThinkIn_Commit2TOR:weakUseNode matchValue:weakMatchValue protoAlg_p:algNode_p matchAlg:weakMatchAlg protoFo:weakShortMemFo matchFo:weakMatchFo];
+    [self.delegate aiThinkIn_Commit2TC:weakUseNode matchValue:weakMatchValue protoAlg_p:algNode_p matchAlg:weakMatchAlg protoFo:weakShortMemFo matchFo:weakMatchFo];
 }
 
 

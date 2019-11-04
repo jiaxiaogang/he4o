@@ -37,7 +37,6 @@
 
 @property (strong,nonatomic) AIShortMemory *shortMemory;    //瞬时记忆
 @property (strong, nonatomic) DemandManager *demandManager; //输出循环所用到的数据管理器;
-@property (strong, nonatomic) ActiveCache *activeCache;     //激活神经元,存储
 
 /**
  *  MARK:--------------------当前能量值--------------------
@@ -83,7 +82,6 @@ static AIThinkingControl *_instance;
     self.tOP.delegate = self;
     self.tOR = [[AIThinkOutReason alloc] init];
     self.tOR.delegate = self;
-    self.activeCache = [[ActiveCache alloc] init];
 }
 
 
@@ -170,13 +168,47 @@ static AIThinkingControl *_instance;
     [self.tOP dataOut];
 }
 
--(void) aiThinkIn_Commit2TOR:(AICMVNodeBase *)useNode
-                  matchValue:(CGFloat)matchValue
-                  protoAlg_p:(AIKVPointer *)protoAlg_p
-                    matchAlg:(AIAlgNodeBase *)matchAlg
-                     protoFo:(AIFoNodeBase *)protoFo
-                     matchFo:(AIFoNodeBase *)matchFo {
+-(void) aiThinkIn_Commit2TC:(AICMVNodeBase *)useNode
+                 matchValue:(CGFloat)matchValue
+                 protoAlg_p:(AIKVPointer *)protoAlg_p
+                   matchAlg:(AIAlgNodeBase *)matchAlg
+                    protoFo:(AIFoNodeBase *)protoFo
+                    matchFo:(AIFoNodeBase *)matchFo {
+    
+    //1. 把mv加入到demandManager;
+    NSInteger urgentTo = 0;
+    if (matchFo) {
+        //1> 判断matchingFo.mv有值才加入demandManager,同台竞争,执行顺应mv;
+        AICMVNodeBase *mvNode = [SMGUtils searchNode:matchFo.cmvNode_p];
+        if (mvNode) {
+            NSInteger delta = [NUMTOOK([AINetIndex getData:mvNode.delta_p]) integerValue];
+            if (delta != 0) {
+                NSString *algsType = mvNode.urgentTo_p.algsType;
+                
+                //2> 判断matchValue的匹配度,对mv的迫切度产生"正相关"影响;
+                urgentTo = [NUMTOOK([AINetIndex getData:mvNode.urgentTo_p]) integerValue];
+                urgentTo = (int)(urgentTo * matchValue);
+                
+                //3> 将mv加入demandCache
+                [self.demandManager updateCMVCache_RMV:algsType urgentTo:urgentTo delta:delta order:urgentTo];
+                
+                //4> RMV无需求时;
+                BOOL havDemand = [ThinkingUtils getDemand:algsType delta:delta complete:nil];
+                if (!havDemand) {
+                    NSLog(@"当前,预测mv未形成需求;");
+                }
+            }
+        }
+    }
+    
+    //2. 加上活跃度
+    [self updateEnergy:urgentTo];
+    
+    //3. 将shortNet提交给TOR;
     [self.tOR commitFromTIR:useNode matchValue:matchValue protoAlg_p:protoAlg_p matchAlg:matchAlg protoFo:protoFo matchFo:matchFo];
+    
+    //4. 激活dataOut
+    [self.tOP dataOut];
 }
 
 -(void) aiThinkIn_UpdateEnergy:(CGFloat)delta{
@@ -214,14 +246,6 @@ static AIThinkingControl *_instance;
 /**
  *  MARK:--------------------AIThinkOutReasonDelegate--------------------
  */
--(void)aiThinkOutReason_CommitDemand:(NSInteger)delta algsType:(NSString *)algsType urgentTo:(NSInteger)urgentTo{
-    [self.demandManager updateCMVCache_RMV:algsType urgentTo:urgentTo delta:delta order:urgentTo];
-}
-
--(void) aiThinkOutReason_CommitActive:(AIKVPointer*)act_p{
-    [self.activeCache add:act_p];
-}
-
 -(void) aiThinkOutReason_UpdateEnergy:(CGFloat)delta{
     [self updateEnergy:delta];
 }
