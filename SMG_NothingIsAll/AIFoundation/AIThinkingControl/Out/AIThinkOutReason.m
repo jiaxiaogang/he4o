@@ -20,10 +20,22 @@
 @interface AIThinkOutReason()
 
 @property (strong, nonatomic) AIShortMatchModel *shortMatchModel;
+@property (strong, nonatomic) TOAlgScheme *algScheme;
 
 @end
 
 @implementation AIThinkOutReason
+
+-(id) init{
+    self = [super init];
+    if (self) {
+        [self initData];
+    }
+    return self;
+}
+-(void) initData{
+    self.algScheme = [[TOAlgScheme alloc] init];
+}
 
 /**
  *  MARK:--------------------TOR主方法--------------------
@@ -77,7 +89,8 @@
     }
     
     //2. 进行行为化; (通过有无,变化,等方式,将结构中所有条件概念行为化);
-    outFoModel.actions = [TOAlgScheme convert2Out:foNode.content_ps];
+    [self.algScheme setData:self.shortMatchModel];
+    outFoModel.actions = [self.algScheme convert2Out:foNode.content_ps];
 }
 
 

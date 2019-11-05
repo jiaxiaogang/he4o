@@ -20,8 +20,14 @@
  *      A: 191104: 行为化失败率太高,可能仅是因为内类比构建时未去重,导致无法索引到
  *      R: 191104: 但也因此而细化了理性思维,也细化了瞬时记忆对理性的支持
  */
+@class AIShortMatchModel;
 @interface TOAlgScheme : NSObject
 
+/**
+ *  MARK:--------------------setData--------------------
+ *  @param shortMatchModel : 传入瞬时匹配模型,以大大提高行为化成功率;
+ */
+-(void)setData:(AIShortMatchModel *)shortMatchModel;
 
 /**
  *  MARK:--------------------多个概念rangeOrder行为化;--------------------
@@ -30,7 +36,7 @@
  *  2. 找到的坚果与fo中进行类比;(找出坚果距离的不同,或者坚果带皮儿的不同) (cLess,cGreater) (变化)
  *  3. 将距离与带皮转化成行为,条件的行为化; (如飞行,或去皮); (actionScheme) (行为)
  */
-+(NSArray*) convert2Out:(NSArray*)curAlg_ps;
+-(NSArray*) convert2Out:(NSArray*)curAlg_ps;
 
 
 @end

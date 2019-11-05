@@ -13,21 +13,28 @@
 #import "AINetAbsFoNode.h"
 #import "AIPort.h"
 #import "AINetIndex.h"
+#import "AIShortMatchModel.h"
+
+@interface TOAlgScheme()
+
+@property (strong, nonatomic) AIShortMatchModel *shortMatchModel;
+
+@end
 
 @implementation TOAlgScheme
 
+-(void)setData:(AIShortMatchModel *)shortMatchModel{
+    self.shortMatchModel = shortMatchModel;
+}
+
 //对一个rangeOrder进行行为化;
-+(NSArray*) convert2Out:(NSArray*)curAlg_ps{
+-(NSArray*) convert2Out:(NSArray*)curAlg_ps{
     //1. 数据准备
     NSMutableArray *result = [[NSMutableArray alloc] init];
     if (ARRISOK(curAlg_ps)) {
         
         //2. 依次单个概念行为化
         for (AIKVPointer *curAlg_p in curAlg_ps) {
-            
-            //TODOTOMORROW:
-            //此处可支持,直接由activeCache来提供,以及提供后,的cValue修正;
-            
             
             //1. 当前并没有概念嵌套,所以是否cHav和cNone已经没地方构建了?
             //  a> 到内类比代码处,去查看,是否真的没构建cHav&cNone了;
@@ -38,8 +45,12 @@
             //注: matchAlg优先,都是通过抽具象关联来判断的,而不是直接对比其内容;
             
             
+            //TODOTOMORROW:
+            //1. 191105总结下,此处有多少处,使用短时,长时,在前面插入瞬时;
+            //2. 191105针对概念嵌套的代码,先去掉;
             
-            NSArray *singleResult = [TOAlgScheme convert2Out_Single:curAlg_p];
+            
+            NSArray *singleResult = [self convert2Out_Single:curAlg_p];
             [theNV setNodeData:curAlg_p lightStr:@"o2"];
             //3. 行为化成功,则收集;
             if (ARRISOK(singleResult)) {
@@ -61,7 +72,7 @@
  *  第2级: 直接对curAlg的cHav来行为化,成功则收集;
  *  第3级: 对curAlg下subValue和subAlg进行依次行为化,成功则收集;
  */
-+(NSArray*) convert2Out_Single:(AIKVPointer*)curAlg_p{
+-(NSArray*) convert2Out_Single:(AIKVPointer*)curAlg_p{
     //1. 数据准备;
     if (!curAlg_p) {
         return nil;
@@ -96,7 +107,7 @@
  *  2. 目前仅支持 1 x subAlg + 1 x subValue (目前仅支持a2+v1各一个);
  *  3. TODO:支持"多个概念+多个value",建议"两个概念+两个value",然后,更复杂的情况用"抽象精简"和"具象展开"来解决;
  */
-+(NSArray*) convert2Out_Single_Sub:(AIKVPointer*)curAlg_p{
+-(NSArray*) convert2Out_Single_Sub:(AIKVPointer*)curAlg_p{
     //1. 数据检查准备;
     AIAlgNodeBase *curAlg = [SMGUtils searchNode:curAlg_p];
     if (!curAlg) return nil;
@@ -187,7 +198,7 @@
  *  2. 再判断havFo中的rangeOrder的行为化;
  *  @param success : 行为化成功则返回(havFo + 行为序列); (havFo notnull, actions notnull)
  */
-+(void) convert2Out_RelativeAlg:(AIAlgNodeBase*)relativeAlg success:(void(^)(AIFoNodeBase *havFo,NSArray *actions))success failure:(void(^)())failure{
+-(void) convert2Out_RelativeAlg:(AIAlgNodeBase*)relativeAlg success:(void(^)(AIFoNodeBase *havFo,NSArray *actions))success failure:(void(^)())failure{
     //1. 数据检查
     if (!relativeAlg) {
         if (failure) failure();
@@ -219,7 +230,7 @@
  *      1. 参数: 由方法调用者保证传入的是"相对时序"而不是普通时序
  *      2. 流程: 取出相对时序,并取rangeOrder,行为化并返回
  */
-+(BOOL) convert2Out_RelativeFo_ps:(NSArray*)relativeFo_ps success:(void(^)(AIFoNodeBase *havFo,NSArray *actions))success {
+-(BOOL) convert2Out_RelativeFo_ps:(NSArray*)relativeFo_ps success:(void(^)(AIFoNodeBase *havFo,NSArray *actions))success {
     //1. 数据准备
     relativeFo_ps = ARRTOOK(relativeFo_ps);
     
@@ -230,7 +241,7 @@
         //3. 取出havFo除第一个和最后一个之外的中间rangeOrder
         if (relativeFo != nil && relativeFo.content_ps.count > 2) {
             NSArray *foRangeOrder = ARR_SUB(relativeFo.content_ps, 1, relativeFo.content_ps.count - 2);
-            NSArray *foResult = [TOAlgScheme convert2Out:foRangeOrder];
+            NSArray *foResult = [self convert2Out:foRangeOrder];
             if (ARRISOK(foResult)) {
                 success(relativeFo,foResult);
                 return true;
