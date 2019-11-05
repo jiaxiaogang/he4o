@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIPointer,AICMVNodeBase,AIFrontOrderNode,AIAlgNodeBase;
+@class AIPointer,AICMVNodeBase,AIFrontOrderNode,AIAlgNodeBase,AIShortMatchModel;
 @protocol AIThinkInDelegate <NSObject>
 
 -(void) aiThinkIn_AddToShortMemory:(NSArray*)algNode_ps;        //将概念节点添加到瞬时记忆
@@ -29,13 +29,7 @@
  *  MARK:--------------------理性输入识别处理--------------------
  *  联想网络杏仁核得来的则false;
  */
--(void) aiThinkIn_Commit2TC:(AICMVNodeBase *)useNode
-                 matchValue:(CGFloat)matchValue
-                 protoAlg_p:(AIKVPointer *)protoAlg_p
-                   matchAlg:(AIAlgNodeBase *)matchAlg
-                    protoFo:(AIFoNodeBase *)protoFo
-                    matchFo:(AIFoNodeBase *)matchFo;
-
+-(void) aiThinkIn_Commit2TC:(AIShortMatchModel*)shortMatchModel;
 -(void) aiThinkIn_UpdateEnergy:(CGFloat)delta;                //更新思维能量值;
 -(BOOL) aiThinkIn_EnergyValid;                                  //能量值是否>0;
 

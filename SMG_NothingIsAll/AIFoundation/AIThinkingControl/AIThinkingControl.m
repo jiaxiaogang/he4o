@@ -20,7 +20,7 @@
 #import "AIAlgNode.h"
 #import "AINetIndex.h"
 #import "NSObject+Extension.h"
-#import "ActiveCache.h"
+#import "AIShortMatchModel.h"
 #import "TOFoModel.h"
 
 /**
@@ -168,18 +168,12 @@ static AIThinkingControl *_instance;
     [self.tOP dataOut];
 }
 
--(void) aiThinkIn_Commit2TC:(AICMVNodeBase *)useNode
-                 matchValue:(CGFloat)matchValue
-                 protoAlg_p:(AIKVPointer *)protoAlg_p
-                   matchAlg:(AIAlgNodeBase *)matchAlg
-                    protoFo:(AIFoNodeBase *)protoFo
-                    matchFo:(AIFoNodeBase *)matchFo {
-    
+-(void) aiThinkIn_Commit2TC:(AIShortMatchModel*)shortMatchModel {
     //1. 把mv加入到demandManager;
     NSInteger urgentTo = 0;
-    if (matchFo) {
+    if (shortMatchModel && shortMatchModel.matchFo) {
         //1> 判断matchingFo.mv有值才加入demandManager,同台竞争,执行顺应mv;
-        AICMVNodeBase *mvNode = [SMGUtils searchNode:matchFo.cmvNode_p];
+        AICMVNodeBase *mvNode = [SMGUtils searchNode:shortMatchModel.matchFo.cmvNode_p];
         if (mvNode) {
             NSInteger delta = [NUMTOOK([AINetIndex getData:mvNode.delta_p]) integerValue];
             if (delta != 0) {
@@ -187,7 +181,7 @@ static AIThinkingControl *_instance;
                 
                 //2> 判断matchValue的匹配度,对mv的迫切度产生"正相关"影响;
                 urgentTo = [NUMTOOK([AINetIndex getData:mvNode.urgentTo_p]) integerValue];
-                urgentTo = (int)(urgentTo * matchValue);
+                urgentTo = (int)(urgentTo * shortMatchModel.matchFoValue);
                 
                 //3> 将mv加入demandCache
                 [self.demandManager updateCMVCache_RMV:algsType urgentTo:urgentTo delta:delta order:urgentTo];
@@ -204,8 +198,8 @@ static AIThinkingControl *_instance;
     //2. 加上活跃度
     [self updateEnergy:urgentTo];
     
-    //3. 将shortNet提交给TOR;
-    [self.tOR commitFromTIR:useNode matchValue:matchValue protoAlg_p:protoAlg_p matchAlg:matchAlg protoFo:protoFo matchFo:matchFo];
+    //3. 将shortMatch提交给TOR;
+    [self.tOR commitFromTIR:shortMatchModel];
     
     //4. 激活dataOut
     [self.tOP dataOut];

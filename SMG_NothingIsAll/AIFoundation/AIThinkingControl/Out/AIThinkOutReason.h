@@ -22,7 +22,7 @@
  *      2. 短时 (优先取内存网络)
  *      3. 长时 (以硬盘网络为根基)
  */
-@class AICMVNodeBase,AIAlgNodeBase,AIFoNodeBase,TOFoModel;
+@class AICMVNodeBase,AIAlgNodeBase,AIFoNodeBase,TOFoModel,AIShortMatchModel;
 @interface AIThinkOutReason : NSObject
 
 @property (weak, nonatomic) id<AIThinkOutReasonDelegate> delegate;
@@ -37,12 +37,7 @@
  *  @param protoFo      : 输入的原始时序
  *  @param matchFo      : 识别的匹配时序
  */
--(void) commitFromTIR:(AICMVNodeBase *)useNode
-           matchValue:(CGFloat)matchValue
-           protoAlg_p:(AIKVPointer *)protoAlg_p
-             matchAlg:(AIAlgNodeBase *)matchAlg
-              protoFo:(AIFoNodeBase *)protoFo
-              matchFo:(AIFoNodeBase *)matchFo;
+-(void) commitFromTIR:(AIShortMatchModel*)shortMatchModel;
 
 /**
  *  MARK:--------------------FromTOP主入口--------------------

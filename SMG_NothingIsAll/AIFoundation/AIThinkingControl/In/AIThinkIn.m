@@ -14,6 +14,7 @@
 #import "AIThinkInReason.h"
 #import "AIThinkInPercept.h"
 #import "AICMVNode.h"
+#import "AIShortMatchModel.h"
 
 @implementation AIThinkIn
 
@@ -111,8 +112,17 @@
         weakMatchValue = matchValue;
     }];
     
+    //4. 瞬时记忆,理性匹配出的模型;
+    AIShortMatchModel *model = [[AIShortMatchModel alloc] init];
+    model.protoAlg_p = algNode_p;
+    model.matchAlg = weakMatchAlg;
+    model.protoFo = weakShortMemFo;
+    model.matchFo = weakMatchFo;
+    model.matchFoValue = weakMatchValue;
+    model.useNode = weakUseNode;
+    
     //4. 传给TOR,做下一步处理;
-    [self.delegate aiThinkIn_Commit2TC:weakUseNode matchValue:weakMatchValue protoAlg_p:algNode_p matchAlg:weakMatchAlg protoFo:weakShortMemFo matchFo:weakMatchFo];
+    [self.delegate aiThinkIn_Commit2TC:model];
 }
 
 

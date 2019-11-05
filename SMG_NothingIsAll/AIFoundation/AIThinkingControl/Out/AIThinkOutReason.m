@@ -15,13 +15,11 @@
 #import "TOFoModel.h"
 #import "TOAlgScheme.h"
 #import "Output.h"
+#import "AIShortMatchModel.h"
 
 @interface AIThinkOutReason()
 
-@property (strong, nonatomic) AIKVPointer *protoAlg_p;
-@property (strong, nonatomic) AIAlgNodeBase *matchAlg;
-@property (strong, nonatomic) AIFoNodeBase *protoFo;
-@property (strong, nonatomic) AIFoNodeBase *matchFo;
+@property (strong, nonatomic) AIShortMatchModel *shortMatchModel;
 
 @end
 
@@ -31,17 +29,9 @@
  *  MARK:--------------------TOR主方法--------------------
  *  1. 可以根据此maxMatchValue匹配度,来做感性预测;
  */
--(void) commitFromTIR:(AICMVNodeBase *)useNode
-           matchValue:(CGFloat)matchValue
-           protoAlg_p:(AIKVPointer *)protoAlg_p
-             matchAlg:(AIAlgNodeBase *)matchAlg
-              protoFo:(AIFoNodeBase *)protoFo
-              matchFo:(AIFoNodeBase *)matchFo {
+-(void) commitFromTIR:(AIShortMatchModel*)shortMatchModel {
     
-    self.protoAlg_p = protoAlg_p;
-    self.matchAlg = matchAlg;
-    self.protoFo = protoFo;
-    self.matchFo = matchFo;
+    self.shortMatchModel = shortMatchModel;
     
     //4. 对TOP的运作5个scheme做改动,以应用"激活"节点 (理性支持瞬时网络);
     //>1. 取demandManager中,首个任务,看是否与当前mv有匹配,,,并逐步进行匹配,(参考:n17p9/168_TOR代码实践示图);
