@@ -83,6 +83,11 @@
     if (curAlg_p.isOut) {
         [result addObject:curAlg_p];
     }else{
+        
+        
+        // TODO191106:以下havAlg要优先取shortMatchModel
+        
+        
         //3. 第2级: 直接对当前概念进行cHav并行为化;
         AIAlgNodeBase *havAlg = [ThinkingUtils dataOut_GetAlgNodeWithInnerType:AnalogyInnerType_Hav algsType:curAlg_p.algsType dataSource:curAlg_p.dataSource];
         if (!havAlg) {
@@ -106,12 +111,17 @@
  *  1. 对curAlg的(subAlg&subValue)分别判定;
  *  2. 目前仅支持 1 x subAlg + 1 x subValue (目前仅支持a2+v1各一个);
  *  3. TODO:支持"多个概念+多个value",建议"两个概念+两个value",然后,更复杂的情况用"抽象精简"和"具象展开"来解决;
+ *  TODO191106:因为此方法中,概念嵌套并未支持,所以需要重写此方法;
  */
 -(NSArray*) convert2Out_Single_Sub:(AIKVPointer*)curAlg_p{
     //1. 数据检查准备;
     AIAlgNodeBase *curAlg = [SMGUtils searchNode:curAlg_p];
     if (!curAlg) return nil;
     NSMutableArray *result = [[NSMutableArray alloc] init];
+    
+    
+    // TODO191106:content_ps.count != 2的情况 (因为没有概念嵌套) 是否涉及到要改cHav索引,因为需要at&ds不明确的索引;
+    
     
     //2. 将curAlg.content_ps提取为subAlg_p和subValue_p;
     if (curAlg.content_ps.count == 2) {
@@ -131,6 +141,9 @@
         }
         if (!subAlg_p || !subValue_p) return nil;
         
+        
+        // TODO191106:以下subHavAlg要优先取shortMatchModel
+        
         //3. 先对subHavAlg行为化; (坚果树会掉坚果);
         AIAlgNodeBase *subHavAlg = [ThinkingUtils dataOut_GetAlgNodeWithInnerType:AnalogyInnerType_Hav algsType:subAlg_p.algsType dataSource:subAlg_p.dataSource];
         [self convert2Out_RelativeAlg:subHavAlg success:^(AIFoNodeBase *havFo, NSArray *subHavActions) {
@@ -141,6 +154,9 @@
             
             //5. 从subHavFo联想其"具象序列":conSubHavFo;
             //TODO: 目前仅支持一个,随后要支持三个左右;
+            
+            // TODO191106:确定下:现在cHavFo与其抽象前的时序,是抽象关联吗?
+            
             AIFoNodeBase *conSubHavFo = [ThinkingUtils getNodeFromPort:ARR_INDEX(subHavFo.conPorts, 0)];
             if (!ISOK(conSubHavFo, AIFoNodeBase.class)) return;
             
