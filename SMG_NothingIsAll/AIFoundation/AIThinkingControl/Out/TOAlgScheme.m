@@ -48,6 +48,7 @@
             //TODOTOMORROW:
             //1. 191105总结下,此处有多少处,使用短时,长时,在前面插入瞬时;
             //2. 191105针对概念嵌套的代码,先去掉;
+            //3. 191107考虑将foScheme也搬过来,优先使用matchFo做第一解决方案;
             
             
             NSArray *singleResult = [self convert2Out_Single:curAlg_p];
@@ -108,10 +109,9 @@
 
 /**
  *  MARK:--------------------对单个概念的sub拆分行为化--------------------
- *  1. 对curAlg的(subAlg&subValue)分别判定;
- *  2. 目前仅支持 1 x subAlg + 1 x subValue (目前仅支持a2+v1各一个);
- *  3. TODO:支持"多个概念+多个value",建议"两个概念+两个value",然后,更复杂的情况用"抽象精简"和"具象展开"来解决;
+ *  写类比,alg.content_ps中哪些已行为化,哪里还没有;
  *  TODO191106:因为此方法中,概念嵌套并未支持,所以需要重写此方法;
+ *  TODO191107:考虑,将此_sub方法与_single方法进行合并;
  */
 -(NSArray*) convert2Out_Single_Sub:(AIKVPointer*)curAlg_p{
     //1. 数据检查准备;
@@ -268,3 +268,101 @@
 }
 
 @end
+
+//20191107备, 说明: 此_sub方法为嵌套时,一个value_p一个subAlg_p时,做行为化的;
+///**
+// *  MARK:--------------------对单个概念的sub拆分行为化--------------------
+// *  1. 对curAlg的(subAlg&subValue)分别判定;
+// *  2. 目前仅支持 1 x subAlg + 1 x subValue (目前仅支持a2+v1各一个);
+// *  3. TODO:支持"多个概念+多个value",建议"两个概念+两个value",然后,更复杂的情况用"抽象精简"和"具象展开"来解决;
+// *  TODO191106:因为此方法中,概念嵌套并未支持,所以需要重写此方法;
+// */
+//-(NSArray*) convert2Out_Single_Sub:(AIKVPointer*)curAlg_p{
+//    //1. 数据检查准备;
+//    AIAlgNodeBase *curAlg = [SMGUtils searchNode:curAlg_p];
+//    if (!curAlg) return nil;
+//    NSMutableArray *result = [[NSMutableArray alloc] init];
+//
+//
+//    // TODO191106:content_ps.count != 2的情况 (因为没有概念嵌套) 是否涉及到要改cHav索引,因为需要at&ds不明确的索引;
+//
+//
+//    //2. 将curAlg.content_ps提取为subAlg_p和subValue_p;
+//    if (curAlg.content_ps.count == 2) {
+//        AIKVPointer *first_p = ARR_INDEX(curAlg.content_ps, 0);
+//        AIKVPointer *second_p = ARR_INDEX(curAlg.content_ps, 1);
+//        AIKVPointer *subAlg_p = nil;
+//        AIKVPointer *subValue_p = nil;
+//        if ([kPN_ALG_ABS_NODE isEqualToString:first_p.folderName]) {
+//            subAlg_p = first_p;
+//        }else if([kPN_ALG_ABS_NODE isEqualToString:second_p.folderName]){
+//            subAlg_p = second_p;
+//        }
+//        if([kPN_VALUE isEqualToString:first_p.folderName]){
+//            subValue_p = first_p;
+//        }else if([kPN_VALUE isEqualToString:second_p.folderName]){
+//            subValue_p = second_p;
+//        }
+//        if (!subAlg_p || !subValue_p) return nil;
+//
+//
+//        // TODO191106:以下subHavAlg要优先取shortMatchModel
+//
+//        //3. 先对subHavAlg行为化; (坚果树会掉坚果);
+//        AIAlgNodeBase *subHavAlg = [ThinkingUtils dataOut_GetAlgNodeWithInnerType:AnalogyInnerType_Hav algsType:subAlg_p.algsType dataSource:subAlg_p.dataSource];
+//        [self convert2Out_RelativeAlg:subHavAlg success:^(AIFoNodeBase *havFo, NSArray *subHavActions) {
+//
+//            //4. 再对subValue行为化; (坚果会掉到树下,我们可以飞过去吃) 参考图109_subValue行为化;
+//            if (!ISOK(havFo, AINetAbsFoNode.class)) return;
+//            AINetAbsFoNode *subHavFo = (AINetAbsFoNode*)havFo;
+//
+//            //5. 从subHavFo联想其"具象序列":conSubHavFo;
+//            //TODO: 目前仅支持一个,随后要支持三个左右;
+//
+//            // TODO191106:确定下:现在cHavFo与其抽象前的时序,是抽象关联吗?
+//
+//            AIFoNodeBase *conSubHavFo = [ThinkingUtils getNodeFromPort:ARR_INDEX(subHavFo.conPorts, 0)];
+//            if (!ISOK(conSubHavFo, AIFoNodeBase.class)) return;
+//
+//            //6. 从conSubHavFo中,找到与forecastAlg_p预测概念指针;
+//            AIKVPointer *forecastAlg_p = nil;
+//            for (AIKVPointer *item_p in conSubHavFo.content_ps) {
+//
+//                //7. 判断item_p是subAlg的具象节点;
+//                if ([ThinkingUtils containsConAlg:item_p absAlg:subAlg_p]) {
+//                    forecastAlg_p = item_p;
+//                    break;
+//                }
+//            }
+//            if (!forecastAlg_p) return;
+//
+//            //8. 取出"预测"概念信息;
+//            AIAlgNodeBase *forecastAlg = [SMGUtils searchNode:forecastAlg_p];
+//            if (!forecastAlg) return;
+//
+//            //8. 进一步取出预测微信息;
+//            AIKVPointer *forecastValue_p = [ThinkingUtils filterPointer:forecastAlg.content_ps identifier:subValue_p.identifier];
+//            if (!forecastValue_p) return;
+//
+//            //9. 将诉求信息:subValue与预测信息:forecastValue进行类比;
+//            NSNumber *subValue = NUMTOOK([AINetIndex getData:subValue_p]);
+//            NSNumber *forecastValue = NUMTOOK([AINetIndex getData:forecastValue_p]);
+//            NSComparisonResult compareResult = [subValue compare:forecastValue];
+//
+//            //10. 得出是要找cLess或cGreater;
+//            if (compareResult == NSOrderedSame) {
+//                [result addObjectsFromArray:subHavActions];//成功A;
+//                return;
+//            }else{
+//                AnalogyInnerType type = (compareResult == NSOrderedAscending) ? AnalogyInnerType_Greater : AnalogyInnerType_Less;
+//                AIAlgNodeBase *glAlg = [ThinkingUtils dataOut_GetAlgNodeWithInnerType:type algsType:subValue_p.algsType dataSource:subValue_p.dataSource];
+//                [self convert2Out_RelativeAlg:glAlg success:^(AIFoNodeBase *havFo, NSArray *actions) {
+//                    //TODO:有些预测确定,有些不那么确定;(未必就可以直接添加到行为中)
+//                    [result addObjectsFromArray:subHavActions];
+//                    [result addObjectsFromArray:actions];//成功B;
+//                } failure:nil];
+//            }
+//        } failure:nil];
+//    }
+//    return result;
+//}
