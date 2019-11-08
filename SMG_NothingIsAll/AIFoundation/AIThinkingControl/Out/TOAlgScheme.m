@@ -88,6 +88,19 @@
         
         // TODOTOMORROW:找到A5 (参考182示图)
         //1. 优先类比瞬时alg,看是否匹配到 (并类比缺失部分,循环);
+        AIAlgNodeBase *curAlg = [SMGUtils searchNode:curAlg_p];
+        if (self.shortMatchModel && curAlg) {
+            AIAlgNodeBase *shortAlg = self.shortMatchModel.matchAlg;
+            
+            //a. 类比shortAlg和curAlg
+            NSArray *shortSub = [SMGUtils removeSub_ps:curAlg.content_ps parent_ps:shortAlg.content_ps];
+            NSArray *curSub = [SMGUtils removeSub_ps:shortAlg.content_ps parent_ps:curAlg.content_ps];
+            
+            
+            
+            
+            
+        }
         
         //2. 其次取短长alg绝对匹配,后取其cHav; (注: 核实下将absAlg去重,为了避免绝对匹配重复导致的联想不以cHav);
         
