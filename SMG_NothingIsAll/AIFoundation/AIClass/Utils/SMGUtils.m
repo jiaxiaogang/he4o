@@ -581,6 +581,18 @@
     return parent_ps;
 }
 
++(NSMutableArray*) filterSame_ps:(NSArray*)a_ps parent_ps:(NSArray*)b_ps{
+    a_ps = ARRTOOK(a_ps);
+    b_ps = ARRTOOK(b_ps);
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    for (AIPointer *a_p in a_ps) {
+        if ([self containsSub_p:a_p parent_ps:b_ps]) {
+            [result addObject:a_p];
+        }
+    }
+    return result;
+}
+
 //一次将parent_ps中,所有某指针移除; (数组中是允许有多个重复指针的)
 //+(NSMutableArray*) removeAllSub_p:(AIPointer*)sub_p parent_ps:(NSMutableArray*)parent_ps{
 //    if (ISOK(sub_p, AIPointer.class) && ARRISOK(parent_ps)) {

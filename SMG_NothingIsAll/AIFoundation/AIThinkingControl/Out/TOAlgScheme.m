@@ -90,11 +90,22 @@
         //1. 优先类比瞬时alg,看是否匹配到 (并类比缺失部分,循环);
         AIAlgNodeBase *curAlg = [SMGUtils searchNode:curAlg_p];
         if (self.shortMatchModel && curAlg) {
-            AIAlgNodeBase *shortAlg = self.shortMatchModel.matchAlg;
+            AIAlgNodeBase *matchAlg = self.shortMatchModel.matchAlg;
             
-            //a. 类比shortAlg和curAlg
-            NSArray *shortSub = [SMGUtils removeSub_ps:curAlg.content_ps parent_ps:shortAlg.content_ps];
-            NSArray *curSub = [SMGUtils removeSub_ps:shortAlg.content_ps parent_ps:curAlg.content_ps];
+            //a. 类比matchAlg和curAlg
+            NSArray *subM = [SMGUtils removeSub_ps:curAlg.content_ps parent_ps:matchAlg.content_ps];
+            NSArray *subC = [SMGUtils removeSub_ps:matchAlg.content_ps parent_ps:curAlg.content_ps];
+            NSArray *sames = [SMGUtils filterSame_ps:matchAlg.content_ps parent_ps:curAlg.content_ps];
+            
+            //b. 去掉subM
+            //c. 满足subC
+            
+            //d. sames是否需要一个正确率,比如0.6;
+            
+            //长时和瞬时的协作; (参见n17p14:长时和瞬时的协作分析表)
+            //TODOTOMORROW: 对长时瞬时的协作,做代码化;
+            //>> 1. 以长时递归为主;
+            //>> 2. 单次cHav中,以瞬时为优先; (但此辅助不能影响主递归);
             
             
             
