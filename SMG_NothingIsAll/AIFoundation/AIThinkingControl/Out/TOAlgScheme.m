@@ -97,15 +97,11 @@
             NSArray *subC = [SMGUtils removeSub_ps:matchAlg.content_ps parent_ps:curAlg.content_ps];
             NSArray *sames = [SMGUtils filterSame_ps:matchAlg.content_ps parent_ps:curAlg.content_ps];
             
-            //b. 去掉subM
-            //c. 满足subC
             
-            //d. sames是否需要一个正确率,比如0.6;
             
-            //长时和瞬时的协作; (参见n17p14:长时和瞬时的协作分析表)
-            //TODOTOMORROW: 对长时瞬时的协作,做代码化;
-            //>> 1. 以长时递归为主;
-            //>> 2. 单次cHav中,以瞬时为优先; (但此辅助不能影响主递归);
+            //TODOTOMORROW:
+            //>> 1. 不违背"TOR主辅原则";
+            //>> 2. 写MC关系相关代码;
             
             
             
