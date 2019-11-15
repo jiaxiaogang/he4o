@@ -51,7 +51,7 @@
             //3. 191107考虑将foScheme也搬过来,优先使用matchFo做第一解决方案;
             
             
-            NSArray *singleResult = [self convert2Out_Single:curAlg_p];
+            NSArray *singleResult = [self convert2Out_Single_Alg:curAlg_p];
             [theNV setNodeData:curAlg_p lightStr:@"o2"];
             //3. 行为化成功,则收集;
             if (ARRISOK(singleResult)) {
@@ -73,7 +73,7 @@
  *  第2级: 直接对curAlg的cHav来行为化,成功则收集;
  *  第3级: 对curAlg下subValue和subAlg进行依次行为化,成功则收集;
  */
--(NSArray*) convert2Out_Single:(AIKVPointer*)curAlg_p{
+-(NSArray*) convert2Out_Single_Alg:(AIKVPointer*)curAlg_p{
     //1. 数据准备;
     if (!curAlg_p) {
         return nil;
@@ -100,9 +100,18 @@
             
             
             //TODOTOMORROW:
-            //>> 1. 不违背"TOR主辅原则";
-            //>> 2. 写MC关系相关代码;
-            
+            //1. 写MC关系匹配代码;
+            //  2. MC不匹配,则转到6
+            //  3. MC匹配时,判断是否可里氏替换;
+            //      4. 可替换,success
+            //      5. 不可替换,changeM2C,判断条件为value_p还是alg_p;
+            //          6. alg_p,递归到1;
+            //          7. value_p,调用convert_Single_Value(value_p);
+            //8. 长时cHav,是否联想到;
+            //  9. 未联想到,failure
+            //  10. 联想到,判断range是否导致转移;
+            //      11. 转移,convert_Single_Alg(range),递归到1;
+            //      12. 未转移,success
             
             
             
@@ -130,6 +139,19 @@
             [result addObjectsFromArray:subResult];
         }];
     }
+    
+    return result;
+}
+
+/**
+ *  MARK:--------------------对单稀疏码的变化进行行为化--------------------
+ */
+-(NSArray*) convert2Out_Single_Value:(AIKVPointer*)value_p{
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    
+    //1. 判断要做cLess还是cGreater;
+    
+    
     
     return result;
 }
