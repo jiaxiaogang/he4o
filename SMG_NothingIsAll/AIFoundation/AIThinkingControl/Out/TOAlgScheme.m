@@ -101,6 +101,7 @@
             
             //TODOTOMORROW:
             //1. 写MC关系匹配代码;
+            
             //1> MC匹配之: 里氏判断,M是否是C
             BOOL cIsAbs = ISOK(curAlg, AIAbsAlgNode.class);
             NSArray *cConPorts = cIsAbs ? ((AIAbsAlgNode*)curAlg).conPorts : nil;
@@ -108,8 +109,37 @@
             if (mIsC) {
                 //success;
             }
+            //2> MC匹配之: 同级判断,M和C都是absMC
+            else{
+                NSArray *mAbs_ps = [SMGUtils convertPointersFromPorts:matchAlg.absPorts];
+                NSArray *cAbs_ps = [SMGUtils convertPointersFromPorts:curAlg.absPorts];
+                NSArray *absMC_ps = ARRTOOK([SMGUtils filterSame_ps:cAbs_ps parent_ps:mAbs_ps]);//c更重要,c的abs强度优先;
+                for (AIPointer *absMC_p in absMC_ps) {
+                    //3> 同级加工,changeM2C之: 取subM和subC分别多余信息;
+                    AIAlgNodeBase *absMC = [SMGUtils searchNode:absMC_p];
+                    if (absMC) {
+                        NSArray *subM = [SMGUtils removeSub_ps:matchAlg.content_ps parent_ps:absMC.content_ps];
+                        NSArray *subC = [SMGUtils removeSub_ps:curAlg.content_ps parent_ps:absMC.content_ps];
+                        
+                        //4> 加工changeM2C (目前仅支持一个特征不同);
+                        if (subM.count > 0 && subC.count ==0) {
+                            if (subM.count == 1) {
+                                //单value_p
+                            }else{
+                                //单alg_p
+                            }
+                        }else if (subC.count > 0 && subM.count ==0) {
+                            if (subC.count == 1) {
+                                //单value_p
+                            }else{
+                                //单alg_p
+                            }
+                        }
+                    }
+                }
+            }
             
-            //2> MC匹配之: 共同抽象判断,M和C都是absMC
+            
             
             
             
