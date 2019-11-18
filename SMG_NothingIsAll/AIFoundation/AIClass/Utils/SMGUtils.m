@@ -487,6 +487,11 @@
     return false;
 }
 
++(BOOL) containsSub_p:(AIPointer*)sub_p parentPorts:(NSArray*)parentPorts{
+    NSArray *parent_ps = [SMGUtils convertPointersFromPorts:parentPorts];
+    return [SMGUtils containsSub_p:sub_p parent_ps:parent_ps];
+}
+
 @end
 
 

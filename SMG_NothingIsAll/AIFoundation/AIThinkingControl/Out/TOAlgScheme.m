@@ -101,6 +101,22 @@
             
             //TODOTOMORROW:
             //1. 写MC关系匹配代码;
+            //1> MC匹配之: 里氏判断,M是否是C
+            BOOL cIsAbs = ISOK(curAlg, AIAbsAlgNode.class);
+            NSArray *cConPorts = cIsAbs ? ((AIAbsAlgNode*)curAlg).conPorts : nil;
+            BOOL mIsC = [SMGUtils containsSub_p:matchAlg.pointer parentPorts:cConPorts];
+            if (mIsC) {
+                //success;
+            }
+            
+            //2> MC匹配之: 共同抽象判断,M和C都是absMC
+            
+            
+            
+            
+            
+            
+            
             //  2. MC不匹配,则转到6
             //  3. MC匹配时,判断是否可里氏替换;
             //      4. 可替换,success
@@ -146,13 +162,13 @@
 /**
  *  MARK:--------------------对单稀疏码的变化进行行为化--------------------
  */
--(NSArray*) convert2Out_Single_Value:(AIKVPointer*)value_p{
+-(NSArray*) convert2Out_Single_Value:(AIKVPointer*)value_p type:(AnalogyInnerType)type{
     NSMutableArray *result = [[NSMutableArray alloc] init];
-    
-    //1. 判断要做cLess还是cGreater;
-    
-    
-    
+    //1. 根据type和value_p找cLess/cGreater
+    //  2. 找不到,failure;
+    //  3. 找到,判断range是否导致条件C转移;
+    //    4. 未转移: success
+    //    5. 转移: C条件->递归到convert2Out_Single_Alg();
     return result;
 }
 

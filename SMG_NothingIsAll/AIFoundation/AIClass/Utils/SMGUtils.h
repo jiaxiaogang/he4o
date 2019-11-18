@@ -133,6 +133,7 @@
 //判断parent_ps是否包含sub_ps;
 +(BOOL) containsSub_ps:(NSArray*)sub_ps parent_ps:(NSArray*)parent_ps;
 +(BOOL) containsSub_p:(AIPointer*)sub_p parent_ps:(NSArray*)parent_ps;
++(BOOL) containsSub_p:(AIPointer*)sub_p parentPorts:(NSArray*)parentPorts;
 
 @end
 
@@ -142,7 +143,10 @@
 //MARK:===============================================================
 @interface SMGUtils (Convert)
 
-//将ports端口中指向转换为指针数组返回;
+/**
+ *  MARK:--------------------将ports端口中指向转换为指针数组返回--------------------
+ *  @result notnull
+ */
 +(NSArray*) convertPointersFromPorts:(NSArray*)ports;
 
 //将pointers转字符串;
