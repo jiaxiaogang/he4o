@@ -13,7 +13,7 @@
 #import "NVHeader.h"
 #import "NSString+Extension.h"
 #import "AIPort.h"
-#import "TIRUtils.h"
+#import "AINetIndexUtils.h"
 #import "AIAlgNode.h"
 #import "AICMVNode.h"
 #import "AINetAbsFoNode.h"
@@ -88,12 +88,12 @@
     ///(19xxxx注掉,不能太过于脱离持久网络做思考,所以先注掉)
     ///(190625放开,因采用内存网络后,靠这识别)
     if (!assAlgNode) {
-        assAlgNode = [TIRUtils partMatching_Alg:algNode isMem:true except_ps:fromGroup_ps];
+        assAlgNode = [AINetIndexUtils partMatching_Alg:algNode isMem:true except_ps:fromGroup_ps];
     }
     
     ///4. 局部匹配 -> 硬盘网络;
     if (!assAlgNode) {
-        assAlgNode = [TIRUtils partMatching_Alg:algNode isMem:false except_ps:fromGroup_ps];
+        assAlgNode = [AINetIndexUtils partMatching_Alg:algNode isMem:false except_ps:fromGroup_ps];
     }
     
     if (ISOK(assAlgNode, AIAlgNodeBase.class)) {

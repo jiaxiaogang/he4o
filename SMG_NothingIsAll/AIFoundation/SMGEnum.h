@@ -70,6 +70,7 @@ typedef NS_ENUM(NSInteger, MindHappyType) {
  *  MARK:--------------------内类比变化与有无--------------------
  */
 typedef NS_ENUM(NSInteger,  AnalogyInnerType) {
+    AnalogyInnerType_Default=-1,//默认
     AnalogyInnerType_Greater= 0,//变大
     AnalogyInnerType_Less   = 1,//变小
     AnalogyInnerType_Hav    = 2,//变有

@@ -14,6 +14,7 @@
 #import "AIPort.h"
 #import "AINetIndex.h"
 #import "AIShortMatchModel.h"
+#import "AINetIndexUtils.h"
 
 @interface TOAlgScheme()
 
@@ -50,8 +51,13 @@
             //2. 191105针对概念嵌套的代码,先去掉;
             //3. 191107考虑将foScheme也搬过来,优先使用matchFo做第一解决方案;
             
-            
-            NSArray *singleResult = [self convert2Out_Single_Alg:curAlg_p];
+            NSMutableArray *singleResult = [[NSMutableArray alloc] init];
+            [self convert2Out_Single_Alg:curAlg_p type:AnalogyInnerType_Hav success:^(NSArray *actions) {
+                NSLog(@"行为化成功");
+                [singleResult addObjectsFromArray:actions];
+            } failure:^{
+                NSLog(@"行为化失败");
+            }];
             [theNV setNodeData:curAlg_p lightStr:@"o2"];
             //3. 行为化成功,则收集;
             if (ARRISOK(singleResult)) {
@@ -72,87 +78,40 @@
  *  第1级: 直接判定curAlg_p为输出则收集;
  *  第2级: 直接对curAlg的cHav来行为化,成功则收集;
  *  第3级: 对curAlg下subValue和subAlg进行依次行为化,成功则收集;
+ *  @param type : cHav或cNone
  */
--(NSArray*) convert2Out_Single_Alg:(AIKVPointer*)curAlg_p{
+-(void) convert2Out_Single_Alg:(AIKVPointer*)curAlg_p type:(AnalogyInnerType)type success:(void(^)(NSArray *actions))success failure:(void(^)())failure{
     //1. 数据准备;
     if (!curAlg_p) {
-        return nil;
+        failure();
     }
     NSMutableArray *result = [[NSMutableArray alloc] init];
     
-    //2. 第1级: 本身即是isOut时,直接行为化返回;
+    //2. 本身即是isOut时,直接行为化返回;
     if (curAlg_p.isOut) {
         [result addObject:curAlg_p];
     }else{
-        
-        
-        // TODOTOMORROW:找到A5 (参考182示图)
-        //1. 优先类比瞬时alg,看是否匹配到 (并类比缺失部分,循环);
         AIAlgNodeBase *curAlg = [SMGUtils searchNode:curAlg_p];
         if (self.shortMatchModel && curAlg) {
             AIAlgNodeBase *matchAlg = self.shortMatchModel.matchAlg;
             
-            //a. 类比matchAlg和curAlg
-            NSArray *subM = [SMGUtils removeSub_ps:curAlg.content_ps parent_ps:matchAlg.content_ps];
-            NSArray *subC = [SMGUtils removeSub_ps:matchAlg.content_ps parent_ps:curAlg.content_ps];
-            NSArray *sames = [SMGUtils filterSame_ps:matchAlg.content_ps parent_ps:curAlg.content_ps];
-            
-            
-            
-            //TODOTOMORROW:
-            //1. 写MC关系匹配代码;
-            
-            //1> MC匹配之: 里氏判断,M是否是C
-            BOOL cIsAbs = ISOK(curAlg, AIAbsAlgNode.class);
-            NSArray *cConPorts = cIsAbs ? ((AIAbsAlgNode*)curAlg).conPorts : nil;
-            BOOL mIsC = [SMGUtils containsSub_p:matchAlg.pointer parentPorts:cConPorts];
-            if (mIsC) {
-                //success;
+            //3. 单cHav时,直接从瞬时做MC匹配行为化;
+            __block BOOL successed = false;
+            if (type == AnalogyInnerType_Hav) {
+                [self convert2Out_MC:matchAlg curAlg:curAlg mcSuccess:^(NSArray *acts) {
+                    [result addObjectsFromArray:acts];
+                    successed = true;
+                } mcFailure:^{
+                    NSLog(@"mc行为化失败");
+                }];
             }
-            //2> MC匹配之: 同级判断,M和C都是absMC
-            else{
-                NSArray *mAbs_ps = [SMGUtils convertPointersFromPorts:matchAlg.absPorts];
-                NSArray *cAbs_ps = [SMGUtils convertPointersFromPorts:curAlg.absPorts];
-                NSArray *absMC_ps = ARRTOOK([SMGUtils filterSame_ps:cAbs_ps parent_ps:mAbs_ps]);//c更重要,c的abs强度优先;
-                for (AIPointer *absMC_p in absMC_ps) {
-                    //3> 同级加工,changeM2C之: 取subM和subC分别多余信息;
-                    AIAlgNodeBase *absMC = [SMGUtils searchNode:absMC_p];
-                    if (absMC) {
-                        NSArray *subM = [SMGUtils removeSub_ps:matchAlg.content_ps parent_ps:absMC.content_ps];
-                        NSArray *subC = [SMGUtils removeSub_ps:curAlg.content_ps parent_ps:absMC.content_ps];
-                        
-                        //4> 加工changeM2C (目前仅支持一个特征不同);
-                        if (subM.count > 0 && subC.count ==0) {
-                            if (subM.count == 1) {
-                                //单value_p
-                            }else{
-                                //单alg_p
-                            }
-                        }else if (subC.count > 0 && subM.count ==0) {
-                            if (subC.count == 1) {
-                                //单value_p
-                            }else{
-                                //单alg_p
-                            }
-                        }
-                    }
-                }
+            
+            //4. mc行为化失败,则到长时....
+            if (!successed) {
+                
             }
             
             
-            
-            
-            
-            
-            
-            
-            
-            //  2. MC不匹配,则转到6
-            //  3. MC匹配时,判断是否可里氏替换;
-            //      4. 可替换,success
-            //      5. 不可替换,changeM2C,判断条件为value_p还是alg_p;
-            //          6. alg_p,递归到1;
-            //          7. value_p,调用convert_Single_Value(value_p);
             //8. 长时cHav,是否联想到;
             //  9. 未联想到,failure
             //  10. 联想到,判断range是否导致转移;
@@ -186,13 +145,13 @@
         }];
     }
     
-    return result;
+    failure();
 }
 
 /**
  *  MARK:--------------------对单稀疏码的变化进行行为化--------------------
  */
--(NSArray*) convert2Out_Single_Value:(AIKVPointer*)value_p type:(AnalogyInnerType)type{
+-(NSArray*) convert2Out_Single_Value:(AIKVPointer*)value_p type:(AnalogyInnerType)type vSuccess:(void(^)(NSArray *acts))vSuccess vFailure:(void(^)())vFailure{
     NSMutableArray *result = [[NSMutableArray alloc] init];
     //1. 根据type和value_p找cLess/cGreater
     //  2. 找不到,failure;
@@ -360,6 +319,100 @@
         }
     }
     return false;
+}
+
+/**
+ *  MARK:--------------------MC匹配行为化--------------------
+ *  @desc 伪代码:
+ *  1. MC匹配时,判断是否可里氏替换;
+ *      2. 可替换,success
+ *      3. 不可替换,changeM2C,判断条件为value_p.cLess / value_p.cGreater / alg_p.cHav / alg_p.cNone;
+ *          4. alg_p则递归到convert2Out_Single_Alg();
+ *          5. value_p则递归到convert2Out_Single_Value();
+ *  @desc
+ *  1. MC匹配,仅针对cHav做行为化;
+ *  2. MC匹配,是对瞬时记忆中的matchAlg做匹配行为化;
+ *  3. 当MC匹配转移change条件时,递归到single_Alg或single_Value进行行为化;
+ */
+-(void) convert2Out_MC:(AIAlgNodeBase*)matchAlg curAlg:(AIAlgNodeBase*)curAlg mcSuccess:(void(^)(NSArray *acts))mcSuccess mcFailure:(void(^)())mcFailure{
+    if (matchAlg && curAlg) {
+        
+        //3. MC匹配之: 里氏判断,M是否是C
+        BOOL cIsAbs = ISOK(curAlg, AIAbsAlgNode.class);
+        NSArray *cConPorts = cIsAbs ? ((AIAbsAlgNode*)curAlg).conPorts : nil;
+        BOOL mIsC = [SMGUtils containsSub_p:matchAlg.pointer parentPorts:cConPorts];
+        if (mIsC) {
+            
+            //4. 里氏,本身具备的条件,不需要任何行为;
+            mcSuccess(nil);
+        }else{
+            
+            //5.  MC匹配之: 同级判断,M和C都是absMC
+            NSArray *mAbs_ps = [SMGUtils convertPointersFromPorts:matchAlg.absPorts];
+            NSArray *cAbs_ps = [SMGUtils convertPointersFromPorts:curAlg.absPorts];
+            //6. c更重要,c的abs强度优先;
+            NSArray *absMC_ps = ARRTOOK([SMGUtils filterSame_ps:cAbs_ps parent_ps:mAbs_ps]);
+            __block BOOL successed = false;
+            
+            for (AIPointer *absMC_p in absMC_ps) {
+                
+                //7. 同级加工,changeM2C之: 取subM和subC分别多余信息;
+                AIAlgNodeBase *absMC = [SMGUtils searchNode:absMC_p];
+                if (absMC) {
+                    NSArray *subM = [SMGUtils removeSub_ps:matchAlg.content_ps parent_ps:absMC.content_ps];
+                    NSArray *subC = [SMGUtils removeSub_ps:curAlg.content_ps parent_ps:absMC.content_ps];
+                    
+                    //8. 加工changeM2C (目前仅支持一个特征不同);
+                    AIKVPointer *change_p = nil;
+                    AnalogyInnerType changeType = AnalogyInnerType_Default;
+                    if (subM.count > 0 && subC.count == 0) {
+                        if (subM.count == 1) {
+                            //9. 多余单value_p
+                            change_p = ARR_INDEX(subM, 0);
+                            changeType = AnalogyInnerType_Less;
+                        }else{
+                            //10 多余单alg_p
+                            AIAlgNodeBase *alg = [AINetIndexUtils getAbsoluteMatchingAlgNodeWithValuePs:subM];
+                            if (alg) change_p = alg.pointer;
+                            changeType = AnalogyInnerType_None;
+                        }
+                    }else if (subC.count > 0 && subM.count == 0) {
+                        if (subC.count == 1) {
+                            //11. 缺少单value_p
+                            change_p = ARR_INDEX(subC, 0);
+                            changeType = AnalogyInnerType_Greater;
+                        }else{
+                            //12. 缺少单alg_p
+                            AIAlgNodeBase *alg = [AINetIndexUtils getAbsoluteMatchingAlgNodeWithValuePs:subC];
+                            if (alg) change_p = alg.pointer;
+                            changeType = AnalogyInnerType_Hav;
+                        }
+                    }
+                    
+                    //13. 针对change_p进行行为化;
+                    if (change_p) {
+                        if (changeType == AnalogyInnerType_Greater || changeType == AnalogyInnerType_Less) {
+                            [self convert2Out_Single_Value:change_p type:changeType vSuccess:^(NSArray *acts) {
+                                mcSuccess(acts);
+                                successed = true;
+                            } vFailure:nil];
+                        }else if (changeType == AnalogyInnerType_Hav || changeType == AnalogyInnerType_None){
+                            [self convert2Out_Single_Alg:change_p type:changeType success:^(NSArray *acts) {
+                                mcSuccess(acts);
+                                successed = true;
+                            } failure:nil];
+                        }
+                    }
+                }
+                
+                //14. 成功时,跳出循环;
+                if (successed) {
+                    return;
+                }
+            }
+        }
+    }
+    mcFailure();
 }
 
 @end
