@@ -28,6 +28,11 @@
     self.shortMatchModel = shortMatchModel;
 }
 
+
+//MARK:===============================================================
+//MARK:                     < FO & ALG >
+//MARK:===============================================================
+
 /**
  *  MARK:--------------------对一个rangeOrder进行行为化;--------------------
  *  @desc 一些记录:
@@ -113,12 +118,12 @@
             
             //4. mc行为化失败,则联想长时行为化;
             if (!successed) {
-                [self convert2Out_NET_RelativeAlg:type at:curAlg_p.algsType ds:curAlg_p.dataSource success:^(AIFoNodeBase *havFo, NSArray *actions) {
+                [self convert2Out_Long_NET:type at:curAlg_p.algsType ds:curAlg_p.dataSource success:^(AIFoNodeBase *havFo, NSArray *actions) {
                     //4. hnAlg行为化成功;
                     [result addObjectsFromArray:actions];
                 } failure:^{
-                    //5. 第3级: 对curAlg的(subAlg&subValue)分别判定; (目前仅支持a2+v1各一个)
                     //20191120: _sub方法废弃;
+                    //第3级: 对curAlg的(subAlg&subValue)分别判定; (目前仅支持a2+v1各一个)
                     //NSArray *subResult = ARRTOOK([self convert2Out_Single_Sub:curAlg_p]);
                     //[result addObjectsFromArray:subResult];
                     //8. 未联想到hnAlg,失败;
@@ -134,123 +139,15 @@
         
         
         
-        
-        
-        
-        
-        //2. 其次取短长alg绝对匹配,后取其cHav; (注: 核实下将absAlg去重,为了避免绝对匹配重复导致的联想不以cHav);
-        
-        //3. 再次,取短长alg局部匹配,递归取3个左右,逐个取并取其cHav (并类比缺失部分,循环);
     }
     
     failure();
 }
 
-/**
- *  MARK:--------------------对单稀疏码的变化进行行为化--------------------
- */
--(NSArray*) convert2Out_RelativeValue:(AIKVPointer*)value_p type:(AnalogyInnerType)type vSuccess:(void(^)(NSArray *acts))vSuccess vFailure:(void(^)())vFailure{
-    NSMutableArray *result = [[NSMutableArray alloc] init];
-    //1. 根据type和value_p找cLess/cGreater
-    //  2. 找不到,failure;
-    //  3. 找到,判断range是否导致条件C转移;
-    //    4. 未转移: success
-    //    5. 转移: C条件->递归到convert2Out_Single_Alg();
-    return result;
-}
-
 
 //MARK:===============================================================
-//MARK:                     < private_Method >
+//MARK:                     < ShortMC & LongNET >
 //MARK:===============================================================
-
-/**
- *  MARK:--------------------"相对概念"的行为化--------------------
- *  1. 先根据havAlg取到havFo;
- *  2. 再判断havFo中的rangeOrder的行为化;
- *  @param success : 行为化成功则返回(havFo + 行为序列); (havFo notnull, actions notnull)
- */
--(void) convert2Out_NET_RelativeAlg:(AnalogyInnerType)type at:(NSString*)at ds:(NSString*)ds success:(void(^)(AIFoNodeBase *havFo,NSArray *actions))success failure:(void(^)())failure{
-    //1. 数据准备
-    AIAlgNodeBase *hnAlg = [ThinkingUtils dataOut_GetAlgNodeWithInnerType:type algsType:at dataSource:ds];
-    if (!hnAlg) {
-        //2. 未联想到hnAlg,失败;
-        failure();
-    }
-    
-    //2. 找引用"相对概念"的内存中"相对时序",并行为化; (注: 一般不存在内存相对概念,此处代码应该不会执行);
-    NSArray *memRefPorts = [SMGUtils searchObjectForPointer:hnAlg.pointer fileName:kFNMemRefPorts time:cRTMemPort];
-    __block BOOL successed = false;
-    [self convert2Out_RelativeFo_ps:[SMGUtils convertPointersFromPorts:memRefPorts] success:^(AIFoNodeBase *havFo, NSArray *actions) {
-        successed = true;
-        success(havFo,actions);
-    } failure:^{
-        WLog(@"相对概念,行为化失败");
-    }];
-    
-    //3. 根据havAlg联想时序,并找出新的解决方案,与新的行为化的概念,与新的条件概念;
-    if (!successed) {
-        NSArray *hdRefPorts = ARR_SUB(hnAlg.refPorts, 0, cHavNoneAssFoCount);
-        [self convert2Out_RelativeFo_ps:[SMGUtils convertPointersFromPorts:hdRefPorts] success:^(AIFoNodeBase *havFo, NSArray *actions) {
-            successed = true;
-            success(havFo,actions);
-        } failure:^{
-            WLog(@"相对概念,行为化失败");
-        }];
-        
-        //4. 行为化失败;
-        if (!successed) {
-            failure();
-        }
-    }
-}
-
-/**
- *  MARK:--------------------"相对时序"的行为化--------------------
- *  @param relativeFo_ps    : 相对时序地址;
- *  @param success          : 回调传回: 相对时序 & 行为化结果;
- *  @param failure          : 只要有一条行为化成功则success(),否则failure();
- *  注:
- *      1. 参数: 由方法调用者保证传入的是"相对时序"而不是普通时序
- *      2. 流程: 取出相对时序,并取rangeOrder,行为化并返回
- */
--(void) convert2Out_RelativeFo_ps:(NSArray*)relativeFo_ps success:(void(^)(AIFoNodeBase *havFo,NSArray *actions))success failure:(void(^)())failure{
-    //1. 数据准备
-    relativeFo_ps = ARRTOOK(relativeFo_ps);
-    
-    //2. 逐个尝试行为化
-    for (AIPointer *relativeFo_p in relativeFo_ps) {
-        AIFoNodeBase *relativeFo = [SMGUtils searchNode:relativeFo_p];
-        
-        //3. 取出havFo除第一个和最后一个之外的中间rangeOrder
-        __block BOOL successed = false;
-        if (relativeFo != nil && relativeFo.content_ps.count >= 2) {
-            NSArray *foRangeOrder = ARR_SUB(relativeFo.content_ps, 1, relativeFo.content_ps.count - 2);
-            
-            //4. 未转移,不需要行为化;
-            if (!ARRISOK(foRangeOrder)) {
-                successed = true;
-                success(relativeFo,nil);
-            }else{
-                
-                //5. 转移,则进行行为化 (递归到总方法);
-                [self convert2Out_Fo:foRangeOrder success:^(NSArray *acts) {
-                    successed = true;
-                    success(relativeFo,acts);
-                } failure:^{
-                    failure();
-                    WLog(@"相对时序行为化失败");
-                }];
-            }
-        }
-        
-        //6. 成功一个item即可;
-        if (successed) {
-            return;
-        }
-    }
-    failure();
-}
 
 /**
  *  MARK:--------------------MC匹配行为化--------------------
@@ -267,6 +164,10 @@
  *
  *  @desc
  *      1. xx年xx月xx日: matchAlg优先,都是通过抽具象关联来判断的,而不是直接对比其内容;
+ *
+ *  @todo
+ *      TODO_TEST_HERE: 在alg抽象匹配时,核实下将absAlg去重,为了避免绝对匹配重复导致的联想不以cHav
+ *
  */
 -(void) convert2Out_Short_MC:(AIAlgNodeBase*)matchAlg curAlg:(AIAlgNodeBase*)curAlg mcSuccess:(void(^)(NSArray *acts))mcSuccess mcFailure:(void(^)())mcFailure{
     if (matchAlg && curAlg) {
@@ -345,6 +246,113 @@
     mcFailure();
 }
 
+/**
+ *  MARK:--------------------"相对概念"的行为化--------------------
+ *  1. 先根据havAlg取到havFo;
+ *  2. 再判断havFo中的rangeOrder的行为化;
+ *  3. 思考: 是否做alg局部匹配,递归取3个左右,逐个取并取其cHav (并类比缺失部分,循环); (191120废弃,不做)
+ *  @param success : 行为化成功则返回(havFo + 行为序列); (havFo notnull, actions notnull)
+ */
+-(void) convert2Out_Long_NET:(AnalogyInnerType)type at:(NSString*)at ds:(NSString*)ds success:(void(^)(AIFoNodeBase *havFo,NSArray *actions))success failure:(void(^)())failure{
+    //1. 数据准备
+    AIAlgNodeBase *hnAlg = [ThinkingUtils dataOut_GetAlgNodeWithInnerType:type algsType:at dataSource:ds];
+    if (!hnAlg) {
+        //2. 未联想到hnAlg,失败;
+        failure();
+    }
+    
+    //2. 找引用"相对概念"的内存中"相对时序",并行为化; (注: 一般不存在内存相对概念,此处代码应该不会执行);
+    NSArray *memRefPorts = [SMGUtils searchObjectForPointer:hnAlg.pointer fileName:kFNMemRefPorts time:cRTMemPort];
+    __block BOOL successed = false;
+    [self convert2Out_RelativeFo_ps:[SMGUtils convertPointersFromPorts:memRefPorts] success:^(AIFoNodeBase *havFo, NSArray *actions) {
+        successed = true;
+        success(havFo,actions);
+    } failure:^{
+        WLog(@"相对概念,行为化失败");
+    }];
+    
+    //3. 根据havAlg联想时序,并找出新的解决方案,与新的行为化的概念,与新的条件概念;
+    if (!successed) {
+        NSArray *hdRefPorts = ARR_SUB(hnAlg.refPorts, 0, cHavNoneAssFoCount);
+        [self convert2Out_RelativeFo_ps:[SMGUtils convertPointersFromPorts:hdRefPorts] success:^(AIFoNodeBase *havFo, NSArray *actions) {
+            successed = true;
+            success(havFo,actions);
+        } failure:^{
+            WLog(@"相对概念,行为化失败");
+        }];
+        
+        //4. 行为化失败;
+        if (!successed) {
+            failure();
+        }
+    }
+}
+
+
+//MARK:===============================================================
+//MARK:             < RelativeValue & RelativeFo >
+//MARK:===============================================================
+/**
+ *  MARK:--------------------对单稀疏码的变化进行行为化--------------------
+ */
+-(NSArray*) convert2Out_RelativeValue:(AIKVPointer*)value_p type:(AnalogyInnerType)type vSuccess:(void(^)(NSArray *acts))vSuccess vFailure:(void(^)())vFailure{
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    //1. 根据type和value_p找cLess/cGreater
+    //  2. 找不到,failure;
+    //  3. 找到,判断range是否导致条件C转移;
+    //    4. 未转移: success
+    //    5. 转移: C条件->递归到convert2Out_Single_Alg();
+    return result;
+}
+
+
+/**
+ *  MARK:--------------------"相对时序"的行为化--------------------
+ *  @param relativeFo_ps    : 相对时序地址;
+ *  @param success          : 回调传回: 相对时序 & 行为化结果;
+ *  @param failure          : 只要有一条行为化成功则success(),否则failure();
+ *  注:
+ *      1. 参数: 由方法调用者保证传入的是"相对时序"而不是普通时序
+ *      2. 流程: 取出相对时序,并取rangeOrder,行为化并返回
+ */
+-(void) convert2Out_RelativeFo_ps:(NSArray*)relativeFo_ps success:(void(^)(AIFoNodeBase *havFo,NSArray *actions))success failure:(void(^)())failure{
+    //1. 数据准备
+    relativeFo_ps = ARRTOOK(relativeFo_ps);
+    
+    //2. 逐个尝试行为化
+    for (AIPointer *relativeFo_p in relativeFo_ps) {
+        AIFoNodeBase *relativeFo = [SMGUtils searchNode:relativeFo_p];
+        
+        //3. 取出havFo除第一个和最后一个之外的中间rangeOrder
+        __block BOOL successed = false;
+        if (relativeFo != nil && relativeFo.content_ps.count >= 2) {
+            NSArray *foRangeOrder = ARR_SUB(relativeFo.content_ps, 1, relativeFo.content_ps.count - 2);
+            
+            //4. 未转移,不需要行为化;
+            if (!ARRISOK(foRangeOrder)) {
+                successed = true;
+                success(relativeFo,nil);
+            }else{
+                
+                //5. 转移,则进行行为化 (递归到总方法);
+                [self convert2Out_Fo:foRangeOrder success:^(NSArray *acts) {
+                    successed = true;
+                    success(relativeFo,acts);
+                } failure:^{
+                    failure();
+                    WLog(@"相对时序行为化失败");
+                }];
+            }
+        }
+        
+        //6. 成功一个item即可;
+        if (successed) {
+            return;
+        }
+    }
+    failure();
+}
+
 @end
 
 //20191107备, 说明: 此_sub方法为嵌套时,一个value_p一个subAlg_p时,做行为化的;
@@ -396,7 +404,7 @@
 //
 //        //3. 先对subHavAlg行为化; (坚果树会掉坚果);
 //        AIAlgNodeBase *subHavAlg = [ThinkingUtils dataOut_GetAlgNodeWithInnerType:AnalogyInnerType_Hav algsType:subAlg_p.algsType dataSource:subAlg_p.dataSource];
-//        [self convert2Out_NET_RelativeAlg:subHavAlg success:^(AIFoNodeBase *havFo, NSArray *subHavActions) {
+//        [self convert2Out_Long_NET:subHavAlg success:^(AIFoNodeBase *havFo, NSArray *subHavActions) {
 //
 //            //4. 再对subValue行为化; (坚果会掉到树下,我们可以飞过去吃) 参考图109_subValue行为化;
 //            if (!ISOK(havFo, AINetAbsFoNode.class)) return;
@@ -442,7 +450,7 @@
 //            }else{
 //                AnalogyInnerType type = (compareResult == NSOrderedAscending) ? AnalogyInnerType_Greater : AnalogyInnerType_Less;
 //                AIAlgNodeBase *glAlg = [ThinkingUtils dataOut_GetAlgNodeWithInnerType:type algsType:subValue_p.algsType dataSource:subValue_p.dataSource];
-//                [self convert2Out_NET_RelativeAlg:glAlg success:^(AIFoNodeBase *havFo, NSArray *actions) {
+//                [self convert2Out_Long_NET:glAlg success:^(AIFoNodeBase *havFo, NSArray *actions) {
 //                    //TODO:有些预测确定,有些不那么确定;(未必就可以直接添加到行为中)
 //                    [result addObjectsFromArray:subHavActions];
 //                    [result addObjectsFromArray:actions];//成功B;
