@@ -140,3 +140,9 @@ va_end(args);\
 #define DefaultAlgsType @" "    //默认AlgsType
 #define DefaultDataSource @" "  //默认DataSource
 #define AlgNodeAlgsType(pId) STRFORMAT(@"%ld",(long)pId)   //概念节点AlgsType
+
+/**
+ *  MARK:--------------------LOG--------------------
+ */
+#define ELog(fmt, ...) NSLog((@"error!!!  %s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
+#define WLog(fmt, ...) NSLog((@"warning???  %s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);

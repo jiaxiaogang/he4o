@@ -36,7 +36,7 @@
  *  2. 找到的坚果与fo中进行类比;(找出坚果距离的不同,或者坚果带皮儿的不同) (cLess,cGreater) (变化)
  *  3. 将距离与带皮转化成行为,条件的行为化; (如飞行,或去皮); (actionScheme) (行为)
  */
--(NSArray*) convert2Out:(NSArray*)curAlg_ps;
+-(void) convert2Out:(NSArray*)curAlg_ps success:(void(^)(NSArray *acts))success failure:(void(^)())failure;
 
 
 @end
