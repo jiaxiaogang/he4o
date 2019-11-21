@@ -132,13 +132,6 @@
                 }];
             }
         }
-        
-        
-        //TODOTOMORROW:============
-        //1. 写single_value
-        
-        
-        
     }
     
     failure();
@@ -223,10 +216,12 @@
                     //13. 针对change_p进行行为化;
                     if (change_p) {
                         if (changeType == AnalogyInnerType_Greater || changeType == AnalogyInnerType_Less) {
-                            [self convert2Out_RelativeValue:change_p type:changeType vSuccess:^(NSArray *acts) {
+                            [self convert2Out_RelativeValue:change_p type:changeType vSuccess:^(AIFoNodeBase *glFo, NSArray *acts) {
                                 mcSuccess(acts);
                                 successed = true;
-                            } vFailure:nil];
+                            } vFailure:^{
+                                WLog(@"value_行为化失败");
+                            }];
                         }else if (changeType == AnalogyInnerType_Hav || changeType == AnalogyInnerType_None){
                             [self convert2Out_Alg:change_p type:changeType success:^(NSArray *acts) {
                                 mcSuccess(acts);
@@ -294,15 +289,42 @@
 //MARK:===============================================================
 /**
  *  MARK:--------------------对单稀疏码的变化进行行为化--------------------
+ *  @desc 伪代码:
+ *  1. 根据type和value_p找cLess/cGreater
+ *      2. 找不到,failure;
+ *      3. 找到,判断range是否导致条件C转移;
+ *          4. 未转移: success
+ *          5. 转移: C条件->递归到convert2Out_Single_Alg();
  */
--(NSArray*) convert2Out_RelativeValue:(AIKVPointer*)value_p type:(AnalogyInnerType)type vSuccess:(void(^)(NSArray *acts))vSuccess vFailure:(void(^)())vFailure{
-    NSMutableArray *result = [[NSMutableArray alloc] init];
+-(void) convert2Out_RelativeValue:(AIKVPointer*)value_p type:(AnalogyInnerType)type vSuccess:(void(^)(AIFoNodeBase *glFo,NSArray *acts))vSuccess vFailure:(void(^)())vFailure{
+    //1. 数据检查
+    if ((type != AnalogyInnerType_Greater && type != AnalogyInnerType_Less) || !value_p) {
+        WLog(@"value_行为化类参数type|value_p错误");
+        vFailure();
+    }
+    
     //1. 根据type和value_p找cLess/cGreater
-    //  2. 找不到,failure;
-    //  3. 找到,判断range是否导致条件C转移;
-    //    4. 未转移: success
-    //    5. 转移: C条件->递归到convert2Out_Single_Alg();
-    return result;
+    AIAlgNodeBase *glAlg = [ThinkingUtils dataOut_GetAlgNodeWithInnerType:type algsType:value_p.algsType dataSource:value_p.dataSource];
+    
+    //2. 找不到glAlg,failure;
+    if (!glAlg) {
+        vFailure();
+    }
+    
+    //3. 根据havAlg联想时序,并找出新的解决方案,与新的行为化的概念,与新的条件概念;
+    __block BOOL successed = false;
+    NSArray *hdRefPorts = ARR_SUB(glAlg.refPorts, 0, cHavNoneAssFoCount);
+    [self convert2Out_RelativeFo_ps:[SMGUtils convertPointersFromPorts:hdRefPorts] success:^(AIFoNodeBase *glFo, NSArray *actions) {
+        successed = true;
+        vSuccess(glFo,actions);
+    } failure:^{
+        WLog(@"相对概念,行为化失败");
+    }];
+    
+    //4. 行为化失败;
+    if (!successed) {
+        vFailure();
+    }
 }
 
 
