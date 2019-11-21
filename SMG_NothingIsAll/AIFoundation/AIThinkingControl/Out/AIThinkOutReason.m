@@ -37,20 +37,14 @@
     self.algScheme = [[TOAlgScheme alloc] init];
 }
 
-/**
- *  MARK:--------------------TOR主方法--------------------
- *  1. 可以根据此maxMatchValue匹配度,来做感性预测;
- */
+
+//MARK:===============================================================
+//MARK:                     < method >
+//MARK:===============================================================
+
+//FromTIR主入口
 -(void) commitFromTIR:(AIShortMatchModel*)shortMatchModel {
-    
     self.shortMatchModel = shortMatchModel;
-    
-    //4. 对TOP的运作5个scheme做改动,以应用"激活"节点 (理性支持瞬时网络);
-    //>1. 取demandManager中,首个任务,看是否与当前mv有匹配,,,并逐步进行匹配,(参考:n17p9/168_TOR代码实践示图);
-    
-    //参考n17p8 TOR模型; n17p9 代码实践示图;
-    //TOR通过,避免需求,找行为化,改变实;
-    //>2. 如预测到车将撞到自己,去查避免被撞的方法;如,飞行改变距离,改变方向,改变车的尺寸,改变车的速度,改变红绿灯为红灯等方式;
 }
 
 //MARK:===============================================================
@@ -59,6 +53,7 @@
 //MARK: 2. 因为TOP已经做了很多工作,此处与TOP协作 (与从左至右的理性向性是相符的);
 //MARK:===============================================================
 
+//FromTOP主入口
 -(void) commitFromTOP_Convert2Actions:(TOFoModel*)foModel{
     if (foModel) {
         //1. 为空,进行行为化_尝试输出"可行性之首"并找到实际操作 (子可行性判定) (algScheme)
@@ -96,26 +91,6 @@
         WLog(@"TOR_行为化失败");
     }];
 }
-
-
--(void) algScheme:(AIAlgNodeBase*)protoAlg matchAlg:(AIAlgNodeBase*)matchAlg {
-    
-}
-
--(void) foScheme:(AIFoNodeBase*)protoFo matchFo:(AIFoNodeBase*)matchFo {
-    
-}
-
--(void) mvScheme:(AIKVPointer*)mv_p {
-    
-}
-
--(void) actionScheme {
-    
-}
-
-
-
 
 //MARK:===============================================================
 //MARK:                     < FromTOP_反射反应 >

@@ -9,8 +9,8 @@
 #import <Foundation/Foundation.h>
 
 /**
- *  MARK:--------------------TO中,对于概念的判定部分--------------------
- *  作用: 以时序与概念的协作,来做理性判定;
+ *  MARK:--------------------行为化--------------------
+ *  作用: TO中,对于概念的判定部分 -> 以时序与概念的协作,来做理性判定;
  *  TODO1: 随后对TOAlgScheme添加energy消耗,以精确控制;
  *  TODO2: 根据havAlg构建成ThinkOutAlgModel (暂时不需要)
  *  TODO3: 将DemandModel->TOMvModel->TOFoModel->TOAlgModel->TOActionModel的模型结构化关系整理清晰; (前三个已用,后两个暂不需要)
@@ -19,6 +19,9 @@
  *      A: 190820-191022: 由此处行为化失败率太高,而引出必须细化TR`理性思维`;
  *      A: 191104: 行为化失败率太高,可能仅是因为内类比构建时未去重,导致无法索引到
  *      R: 191104: 但也因此而细化了理性思维,也细化了瞬时记忆对理性的支持
+ *  迭代记录:
+ *      1. 190419始: 初版,支持fo(),single_alg(),single_sub();在嵌套的支持下,支持单个alg和value的嵌套行为化;
+ *      2. 191121完: 支持瞬时MC,增加行为化成功率; 参考:190行为化新架构图;
  */
 @class AIShortMatchModel;
 @interface TOAlgScheme : NSObject
