@@ -45,7 +45,11 @@
     NSMutableArray *result = [[NSMutableArray alloc] init];
     if (!ARRISOK(curAlg_ps)) {
         failure();
-        WLog(@"行为化失败");
+        WLog(@"fo行为化失败,参数无效");
+    }
+    if (![self.delegate toAlgScheme_EnergyValid]) {
+        failure();
+        WLog(@"思维活跃度耗尽,无法决策行为化");
     }
         
     //2. 依次单个概念行为化
@@ -74,6 +78,9 @@
             return;
         }
     }
+    
+    //5. 成功回调,每成功一次fo,消耗1格活跃值;
+    [self.delegate toAlgScheme_updateEnergy:-1];
     success(result);
 }
 

@@ -9,6 +9,16 @@
 #import <Foundation/Foundation.h>
 
 /**
+ *  MARK:--------------------行为化代理--------------------
+ */
+@protocol TOAlgSchemeDelegate <NSObject>
+
+-(void) toAlgScheme_updateEnergy:(CGFloat)delta;
+-(BOOL) toAlgScheme_EnergyValid;
+
+@end
+
+/**
  *  MARK:--------------------行为化--------------------
  *  作用: TO中,对于概念的判定部分 -> 以时序与概念的协作,来做理性判定;
  *  TODO1: 随后对TOAlgScheme添加energy消耗,以精确控制;
@@ -25,6 +35,8 @@
  */
 @class AIShortMatchModel;
 @interface TOAlgScheme : NSObject
+
+@property (weak, nonatomic) id<TOAlgSchemeDelegate> delegate;
 
 /**
  *  MARK:--------------------setData--------------------

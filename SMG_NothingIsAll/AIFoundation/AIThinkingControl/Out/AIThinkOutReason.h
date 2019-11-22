@@ -12,6 +12,7 @@
 
 //更新思维活跃度
 -(void) aiThinkOutReason_UpdateEnergy:(CGFloat)delta;
+-(BOOL) aiThinkOutReason_EnergyValid;
 
 @end
 

@@ -243,5 +243,8 @@ static AIThinkingControl *_instance;
 -(void) aiThinkOutReason_UpdateEnergy:(CGFloat)delta{
     [self updateEnergy:delta];
 }
+-(BOOL) aiThinkOutReason_EnergyValid {
+    return self.energy > 0;
+}
 
 @end

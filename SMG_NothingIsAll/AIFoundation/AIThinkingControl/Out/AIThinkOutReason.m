@@ -17,7 +17,7 @@
 #import "Output.h"
 #import "AIShortMatchModel.h"
 
-@interface AIThinkOutReason()
+@interface AIThinkOutReason() <TOAlgSchemeDelegate>
 
 @property (strong, nonatomic) AIShortMatchModel *shortMatchModel;
 @property (strong, nonatomic) TOAlgScheme *algScheme;
@@ -35,6 +35,7 @@
 }
 -(void) initData{
     self.algScheme = [[TOAlgScheme alloc] init];
+    self.algScheme.delegate = self;
 }
 
 
@@ -144,5 +145,14 @@
     }
 }
 
+//MARK:===============================================================
+//MARK:                     < TOAlgSchemeDelegate >
+//MARK:===============================================================
+-(void)toAlgScheme_updateEnergy:(CGFloat)delta{
+    [self.delegate aiThinkOutReason_UpdateEnergy:delta];
+}
+-(BOOL) toAlgScheme_EnergyValid{
+    return [self.delegate aiThinkOutReason_EnergyValid];
+}
 
 @end
