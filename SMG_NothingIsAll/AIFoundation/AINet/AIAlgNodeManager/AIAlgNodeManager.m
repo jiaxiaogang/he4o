@@ -55,6 +55,9 @@
         AIAbsAlgNode *findAbsNode = nil;
         
         //2. 判断具象节点中,已有一个抽象sames节点,则不需要再构建新的;
+        //TODOTOMORROW: 思考下此处,conAlg能不能做为absAlg的问题;
+        //1. 不能, (参考: 思考计划2/191126更新表)
+        //2. 能, (因为,会形成坚果是坚果的多层抽象)
         for (AIAbsAlgNode *checkNode in conAlgs) {
             //a. checkNode是抽象节点时;
             if (ISOK(checkNode, AIAbsAlgNode.class)) {
