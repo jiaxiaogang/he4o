@@ -93,6 +93,10 @@
     //2. 查看下行为化中,每一次重组出的fo;
     //3. 将2中,返回的重组fo,交给1,做评价; (将cMv与mMv进行类比,并且返回一个价值可行度)
     
+    //Fo评价,的内部竞争机制,
+    //1. fo评价时,不要实时影响到外界mvDemandModel
+    //2. fo评价时,如果mv-直接与当前mvDemand同类型,则直接返回不可行;即(5a + -1b = 4) (5a + -1a = -1a)
+    
     
     [self.algScheme convert2Out_Fo:foNode.content_ps success:^(NSArray *acts) {
         outFoModel.actions = acts;
