@@ -86,6 +86,14 @@
     
     //2. 进行行为化; (通过有无,变化,等方式,将结构中所有条件概念行为化);
     [self.algScheme setData:self.shortMatchModel];
+    
+    
+    //TODOTOMORROW:
+    //1. 查看下TOP的价值评价机制;
+    //2. 查看下行为化中,每一次重组出的fo;
+    //3. 将2中,返回的重组fo,交给1,做评价; (将cMv与mMv进行类比,并且返回一个价值可行度)
+    
+    
     [self.algScheme convert2Out_Fo:foNode.content_ps success:^(NSArray *acts) {
         outFoModel.actions = acts;
     } failure:^{

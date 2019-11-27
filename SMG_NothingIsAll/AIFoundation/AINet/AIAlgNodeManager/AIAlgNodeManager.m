@@ -44,6 +44,14 @@
     return [self createAbsAlgNode:value_ps conAlgs:conAlgs dataSource:dataSource isMem:isMem];
 }
 
+/**
+ *  MARK:--------------------构建抽象概念--------------------
+ *  @问题记录:
+ *    1. 思考下,conAlgs中去重,能不能将md5匹配的conAlg做为absAlg的问题?
+ *      a. 不能: (参考: 思考计划2/191126更新表)
+ *      b. 能: (则导致会形成坚果是坚果的多层抽象)
+ *      c. 结论: 能,问题转移到n17p19
+ */
 +(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs dataSource:(NSString*)dataSource isMem:(BOOL)isMem{
     if (ARRISOK(value_ps) && ARRISOK(conAlgs)) {
         //1. 数据准备
@@ -55,9 +63,6 @@
         AIAbsAlgNode *findAbsNode = nil;
         
         //2. 判断具象节点中,已有一个抽象sames节点,则不需要再构建新的;
-        //TODOTOMORROW: 思考下此处,conAlg能不能做为absAlg的问题;
-        //1. 不能, (参考: 思考计划2/191126更新表)
-        //2. 能, (因为,会形成坚果是坚果的多层抽象)
         for (AIAbsAlgNode *checkNode in conAlgs) {
             //a. checkNode是抽象节点时;
             if (ISOK(checkNode, AIAbsAlgNode.class)) {
