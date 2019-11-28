@@ -72,19 +72,19 @@
     }
 }
 
+//被动吃
 -(void) touchMouth{
     //1. 吃前视觉
-    UIView *pageView = [self.delegate birdView_GetPageView];
-    [self see:pageView];
+    //[self see:[self.delegate birdView_GetPageView]];
     
     //2. 吃
     [AIReactorControl commitReactor:EAT_RDS];
     
     //3. 吃完视觉
-    [self see:[self.delegate birdView_GetPageView]];
+    //[self see:[self.delegate birdView_GetPageView]];
     
     //4. 产生HungerMindValue; (0-10)
-    [AIInput commitIMV:MVType_Hunger from:1.0f to:9.0f];
+    //[AIInput commitIMV:MVType_Hunger from:1.0f to:9.0f];
 }
 
 -(void) touchWing{
@@ -111,14 +111,33 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
+//无论是主动吃,还是被动吃,都要观察下吃前的视觉,吃后的视觉,以及价值上的影响;
 -(void) eat:(CGFloat)value{
+    //1. 吃前视觉
+    [self see:[self.delegate birdView_GetPageView]];
+    
     if (self.delegate && [self.delegate respondsToSelector:@selector(birdView_GetFoodOnMouth)]) {
         //1. 嘴附近的食物
         FoodView *foodView = [self.delegate birdView_GetFoodOnMouth];
         if (!foodView) return;
         
         //2. 吃掉 (让he以吸吮反射的方式,去主动吃;并将out入网,以抽象出"吃"的节点;参考n15p6-QT1)
-        [foodView removeFromSuperview];
+        if (foodView.status == FoodStatus_Eat) {
+            [foodView removeFromSuperview];
+            
+            //3. 吃完视觉
+            [self see:[self.delegate birdView_GetPageView]];
+            
+            //4. 产生HungerMindValue;
+            [AIInput commitIMV:MVType_Hunger from:1.0f to:9.0f];
+        }else if(foodView.status == FoodStatus_Border){
+            //坚果带皮时,不仅吃不到,还得嘴疼;
+            //3. 吃完视觉
+            [self see:[self.delegate birdView_GetPageView]];
+            
+            //4. 产生HurtMindValue;
+            [AIInput commitIMV:MVType_Hurt from:9.0f to:1.0f];
+        }
     }
 }
 
@@ -132,7 +151,7 @@
         NSString *rds = STRTOOK([obj objectForKey:@"rds"]);
         NSNumber *paramNum = NUMTOOK([obj objectForKey:@"paramNum"]);
         
-        //2. 吸吮反射
+        //2. 吸吮反射 / 主动吃
         if ([EAT_RDS isEqualToString:rds]) {
             [self eat:[paramNum floatValue]];
         }
