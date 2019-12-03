@@ -163,7 +163,7 @@
 /**
  *  MARK:--------------------MC匹配行为化--------------------
  *  @desc 伪代码:
- *  1. MC匹配时,判断是否可里氏替换;
+ *  1. MC匹配时,判断是否可LSP里氏替换;
  *      2. 可替换,success
  *      3. 不可替换,changeM2C,判断条件为value_p.cLess / value_p.cGreater / alg_p.cHav / alg_p.cNone;
  *          4. alg_p则递归到convert2Out_Single_Alg();
@@ -182,13 +182,19 @@
  */
 -(void) convert2Out_Short_MC:(AIAlgNodeBase*)matchAlg curAlg:(AIAlgNodeBase*)curAlg mcSuccess:(void(^)(NSArray *acts))mcSuccess mcFailure:(void(^)())mcFailure{
     if (matchAlg && curAlg) {
-        //3. MC匹配之: 里氏判断,M是否是C
+        //3. MC匹配之: LSP里氏判断,M是否是C
         BOOL cIsAbs = ISOK(curAlg, AIAbsAlgNode.class);
         NSArray *cConPorts = cIsAbs ? ((AIAbsAlgNode*)curAlg).conPorts : nil;
         BOOL mIsC = [SMGUtils containsSub_p:matchAlg.pointer parentPorts:cConPorts];
         if (mIsC) {
             //4. 里氏,本身具备的条件,不需要任何行为;
-            mcSuccess(nil);
+            BOOL canLSP = [ThinkingUtils dataOut_CheckScore_LSP:matchAlg.pointer protoFo:nil];
+            if (canLSP) {
+                mcSuccess(nil);
+            }else{
+                WLog(@"行为化失败,里氏替换评价未通过");
+                mcFailure();
+            }
         }else{
             //5.  MC匹配之: 同级判断,M和C都是absMC
             NSArray *mAbs_ps = [SMGUtils convertPointersFromPorts:matchAlg.absPorts];

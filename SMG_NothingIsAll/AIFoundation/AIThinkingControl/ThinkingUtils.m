@@ -236,6 +236,10 @@
     //}
 }
 
++(BOOL) dataOut_CheckScore_LSP:(AIPointer*)matchAlg_p protoFo:(AIKVPointer*)protoFo_p{
+    return true;
+}
+
 +(id) scheme_GetAValidNode:(NSArray*)check_ps except_ps:(NSMutableArray*)except_ps checkBlock:(BOOL(^)(id checkNode))checkBlock{
     //1. 数据检查
     if (!ARRISOK(check_ps)) {
