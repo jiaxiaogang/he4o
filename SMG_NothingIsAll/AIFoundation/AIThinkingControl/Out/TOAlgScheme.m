@@ -73,7 +73,7 @@
         //3. 再根据除cHav之外的部分,来做行为化; 如`2`,如何变`大小`;
         
         __block BOOL successed = false;
-        [self convert2Out_Alg:curAlg_p type:AnalogyInnerType_Hav success:^(NSArray *actions) {
+        [self convert2Out_Alg:curAlg_p curAlg_ps:curAlg_ps type:AnalogyInnerType_Hav success:^(NSArray *actions) {
             //3. 行为化成功,则收集;
             successed = true;
             NSLog(@"行为化成功");
@@ -103,7 +103,7 @@
  *  第3级: 对curAlg下subValue和subAlg进行依次行为化,成功则收集;
  *  @param type : cHav或cNone
  */
--(void) convert2Out_Alg:(AIKVPointer*)curAlg_p type:(AnalogyInnerType)type success:(void(^)(NSArray *actions))success failure:(void(^)())failure{
+-(void) convert2Out_Alg:(AIKVPointer*)curAlg_p curAlg_ps:(NSArray*)curAlg_ps type:(AnalogyInnerType)type success:(void(^)(NSArray *actions))success failure:(void(^)())failure{
     //1. 数据准备;
     if (!curAlg_p) {
         failure();
@@ -125,7 +125,7 @@
             //3. 单cHav时,直接从瞬时做MC匹配行为化;
             __block BOOL successed = false;
             if (type == AnalogyInnerType_Hav) {
-                [self convert2Out_Short_MC:matchAlg curAlg:curAlg mcSuccess:^(NSArray *acts) {
+                [self convert2Out_Short_MC:matchAlg curAlg:curAlg curAlg_ps:curAlg_ps mcSuccess:^(NSArray *acts) {
                     [result addObjectsFromArray:acts];
                     successed = true;
                     NSLog(@"MC_行为化成功, 输出行为: %@",acts);
@@ -180,7 +180,7 @@
  *      TODO_TEST_HERE: 在alg抽象匹配时,核实下将absAlg去重,为了避免绝对匹配重复导致的联想不以cHav
  *
  */
--(void) convert2Out_Short_MC:(AIAlgNodeBase*)matchAlg curAlg:(AIAlgNodeBase*)curAlg mcSuccess:(void(^)(NSArray *acts))mcSuccess mcFailure:(void(^)())mcFailure{
+-(void) convert2Out_Short_MC:(AIAlgNodeBase*)matchAlg curAlg:(AIAlgNodeBase*)curAlg curAlg_ps:(NSArray*)curAlg_ps mcSuccess:(void(^)(NSArray *acts))mcSuccess mcFailure:(void(^)())mcFailure{
     if (matchAlg && curAlg) {
         //3. MC匹配之: LSP里氏判断,M是否是C
         BOOL cIsAbs = ISOK(curAlg, AIAbsAlgNode.class);
@@ -189,7 +189,13 @@
         if (mIsC) {
             
             //4. LSP反思
-            AIShortMatchModel *mModel = [self.delegate toAlgScheme_LSPRethink:matchAlg rtFoContent_ps:nil];
+            //TODOTOMORROW:用curAlg_ps + matchAlg组成rtFo_ps
+            curAlg_ps = ARRTOOK(curAlg_ps);
+            //indexOf:curAlg.pointer???
+            if ([SMGUtils containsSub_p:curAlg.pointer parent_ps:curAlg_ps]) {
+                //replaceIndex:matchAlg.pointer index:index;
+            }
+            AIShortMatchModel *mModel = [self.delegate toAlgScheme_LSPRethink:matchAlg rtFoContent_ps:curAlg_ps];
             BOOL canLSP = [ThinkingUtils dataOut_CheckScore_LSP:matchAlg.pointer protoFo:nil];
             
             
@@ -257,7 +263,7 @@
                                 WLog(@"value_行为化失败");
                             }];
                         }else if (changeType == AnalogyInnerType_Hav || changeType == AnalogyInnerType_None){
-                            [self convert2Out_Alg:change_p type:changeType success:^(NSArray *acts) {
+                            [self convert2Out_Alg:change_p curAlg_ps:nil type:changeType success:^(NSArray *acts) {
                                 mcSuccess(acts);
                                 successed = true;
                             } failure:nil];
