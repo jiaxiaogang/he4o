@@ -155,5 +155,9 @@
 -(BOOL) toAlgScheme_EnergyValid{
     return [self.delegate aiThinkOutReason_EnergyValid];
 }
+//反思
+-(AIShortMatchModel*) toAlgScheme_LSPRethink:(AIAlgNodeBase*)rtAlg rtFoContent_ps:(NSArray*)rtFoContent_ps{
+    return [self.delegate aiTOR_LSPRethink:rtAlg rtFoContent_ps:rtFoContent_ps];
+}
 
 @end

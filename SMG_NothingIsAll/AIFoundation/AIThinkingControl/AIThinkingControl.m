@@ -246,5 +246,8 @@ static AIThinkingControl *_instance;
 -(BOOL) aiThinkOutReason_EnergyValid {
     return self.energy > 0;
 }
+-(AIShortMatchModel*) aiTOR_LSPRethink:(AIAlgNodeBase*)rtAlg rtFoContent_ps:(NSArray*)rtFoContent_ps{
+    return [self.thinkIn dataInFromTORLSPRethink:rtAlg rtFoContent_ps:rtFoContent_ps];
+}
 
 @end

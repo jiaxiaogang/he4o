@@ -18,6 +18,9 @@
 
 @implementation AIThinkIn
 
+//MARK:===============================================================
+//MARK:                     < FromInput >
+//MARK:===============================================================
 -(void) dataInWithModels:(NSArray*)dics algsType:(NSString*)algsType{
     //1. 数据检查 (小鸟不能仅传入foodView,而要传入整个视角场景)
     dics = ARRTOOK(dics);
@@ -82,47 +85,52 @@
 }
 
 //MARK:===============================================================
+//MARK:                     < FromTOR >
+//MARK:===============================================================
+-(AIShortMatchModel*) dataInFromTORLSPRethink:(AIAlgNodeBase*)rtAlg rtFoContent_ps:(NSArray*)rtFoContent_ps{
+    //1. 数据准备
+    __block AIShortMatchModel *mModel = nil;
+    if (rtAlg && ARRISOK(rtFoContent_ps)) {
+        
+        //2. 识别时序;
+        [AIThinkInReason TIR_Fo:rtFoContent_ps finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue) {
+            mModel.protoFo = curNode;
+            mModel.matchFo = matchFo;
+            mModel.matchFoValue = matchValue;
+        }];
+    }
+    return mModel;
+}
+
+//MARK:===============================================================
 //MARK:                     < NoMV >
 //MARK:===============================================================
-
 /**
  *  MARK:--------------------输入非mv信息时--------------------
  *  1. 看到西瓜会开心 : TODO: 对自身状态的判断, (比如,看到西瓜,想吃,那么当前状态是否饿)
  *  @param fromGroup_ps : 当前输入批次的整组概念指针;
  */
 -(void) dataIn_NoMV:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps{
-    //1. 数据准备
-    __block AIAlgNodeBase *weakMatchAlg = nil;      //最匹配的概念,做TOR判定有没用;
-    __block AICMVNodeBase *weakUseNode = nil;       //旧有useNode,估计会删掉;
-    __block AIFoNodeBase *weakShortMemFo = nil;     //当前瞬时记忆时序
-    __block AIFoNodeBase *weakMatchFo = nil;        //最匹配的时序,做预测;
-    __block CGFloat weakMatchValue = 0;             //时序匹配度
+    //1. 数据准备 (瞬时记忆,理性匹配出的模型);
+    __block AIShortMatchModel *mModel = nil;
+    mModel.protoAlg_p = algNode_p;
     
     //2. 识别概念;
     [AIThinkInReason dataIn_NoMV:algNode_p fromGroup_ps:fromGroup_ps finishBlock:^(AIAlgNodeBase *isNode, AICMVNodeBase *useNode) {
-        weakMatchAlg = isNode;
-        weakUseNode = useNode;
+        mModel.matchAlg = isNode;
+        mModel.useNode = useNode;
     }];
     
     //3. 识别时序;
     NSArray *shortMemory = [self.delegate aiThinkIn_GetShortMemory];
     [AIThinkInReason TIR_Fo:shortMemory finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue) {
-        weakShortMemFo = curNode;
-        weakMatchFo = matchFo;
-        weakMatchValue = matchValue;
+        mModel.protoFo = curNode;
+        mModel.matchFo = matchFo;
+        mModel.matchFoValue = matchValue;
     }];
     
-    //4. 瞬时记忆,理性匹配出的模型;
-    AIShortMatchModel *model = [[AIShortMatchModel alloc] init];
-    model.protoAlg_p = algNode_p;
-    model.matchAlg = weakMatchAlg;
-    model.protoFo = weakShortMemFo;
-    model.matchFo = weakMatchFo;
-    model.matchFoValue = weakMatchValue;
-    model.useNode = weakUseNode;
-    
     //4. 传给TOR,做下一步处理;
-    [self.delegate aiThinkIn_Commit2TC:model];
+    [self.delegate aiThinkIn_Commit2TC:mModel];
 }
 
 

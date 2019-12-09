@@ -8,11 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
+@class AIShortMatchModel;
 @protocol AIThinkOutReasonDelegate <NSObject>
 
 //更新思维活跃度
 -(void) aiThinkOutReason_UpdateEnergy:(CGFloat)delta;
 -(BOOL) aiThinkOutReason_EnergyValid;
+//反思
+-(AIShortMatchModel*) aiTOR_LSPRethink:(AIAlgNodeBase*)rtAlg rtFoContent_ps:(NSArray*)rtFoContent_ps;
 
 @end
 

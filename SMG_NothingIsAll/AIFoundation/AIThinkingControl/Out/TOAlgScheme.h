@@ -11,10 +11,14 @@
 /**
  *  MARK:--------------------行为化代理--------------------
  */
+@class AIShortMatchModel;
 @protocol TOAlgSchemeDelegate <NSObject>
 
 -(void) toAlgScheme_updateEnergy:(CGFloat)delta;
 -(BOOL) toAlgScheme_EnergyValid;
+
+//里氏反思
+-(AIShortMatchModel*) toAlgScheme_LSPRethink:(AIAlgNodeBase*)rtAlg rtFoContent_ps:(NSArray*)rtFoContent_ps;
 
 @end
 

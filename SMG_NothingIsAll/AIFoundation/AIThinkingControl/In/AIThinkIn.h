@@ -44,6 +44,10 @@
 
 @property (weak, nonatomic) id<AIThinkInDelegate> delegate;
 
+
+//MARK:===============================================================
+//MARK:                     < FromInput >
+//MARK:===============================================================
 /**
  *  MARK:--------------------数据输入--------------------
  *  @param dics : 多model (models仅含普通算法model -> 目前没有imv和普通信息掺杂在models中的情况;)
@@ -64,5 +68,13 @@
  */
 -(void) dataIn:(NSDictionary*)modelDic algsType:(NSString*)algsType;
 
+
+//MARK:===============================================================
+//MARK:                     < FromTOR >
+//MARK:===============================================================
+/**
+ *  MARK:--------------------TOR反思调用--------------------
+ */
+-(AIShortMatchModel*) dataInFromTORLSPRethink:(AIAlgNodeBase*)rtAlg rtFoContent_ps:(NSArray*)rtFoContent_ps;
 
 @end

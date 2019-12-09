@@ -187,8 +187,18 @@
         NSArray *cConPorts = cIsAbs ? ((AIAbsAlgNode*)curAlg).conPorts : nil;
         BOOL mIsC = [SMGUtils containsSub_p:matchAlg.pointer parentPorts:cConPorts];
         if (mIsC) {
-            //4. 里氏,本身具备的条件,不需要任何行为;
+            
+            //4. LSP反思
+            AIShortMatchModel *mModel = [self.delegate toAlgScheme_LSPRethink:matchAlg rtFoContent_ps:nil];
             BOOL canLSP = [ThinkingUtils dataOut_CheckScore_LSP:matchAlg.pointer protoFo:nil];
+            
+            
+            
+            
+            
+            
+            
+            
             if (canLSP) {
                 mcSuccess(nil);
             }else{
@@ -196,7 +206,7 @@
                 mcFailure();
             }
         }else{
-            //5.  MC匹配之: 同级判断,M和C都是absMC
+            //5. MC匹配之: 同级判断,M和C都是absMC
             NSArray *mAbs_ps = [SMGUtils convertPointersFromPorts:matchAlg.absPorts];
             NSArray *cAbs_ps = [SMGUtils convertPointersFromPorts:curAlg.absPorts];
             //6. c更重要,c的abs强度优先;
