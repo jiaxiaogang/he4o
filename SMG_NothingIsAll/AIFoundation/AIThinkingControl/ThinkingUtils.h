@@ -111,10 +111,10 @@
 +(CGFloat) dataOut_CheckScore_ExpOut:(AIPointer*)foNode_p;
 
 /**
- *  MARK:--------------------里氏替换评价--------------------
+ *  MARK:--------------------里氏替换反思评价--------------------
  *  @desc 对Liskov Substitution Principle LSP的评价,包含先理性评价,后感性评价;
  */
-+(BOOL) dataOut_CheckScore_LSP:(AIShortMatchModel*)mModel;
++(BOOL) dataOut_CheckScore_LSPRethink:(AIShortMatchModel*)mModel;
 
 
 /**

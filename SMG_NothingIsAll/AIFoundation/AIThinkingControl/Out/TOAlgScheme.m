@@ -197,7 +197,7 @@
             AIShortMatchModel *mModel = [self.delegate toAlgScheme_LSPRethink:matchAlg rtFoContent_ps:rethinkAlg_ps];
             
             //4. LSP反思: 对mModel进行评价;
-            BOOL canLSP = [ThinkingUtils dataOut_CheckScore_LSP:mModel];
+            BOOL canLSP = [ThinkingUtils dataOut_CheckScore_LSPRethink:mModel];
             
             if (canLSP) {
                 mcSuccess(nil);
