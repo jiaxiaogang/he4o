@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIFrontOrderNode,AIAlgNodeBase;
+@class AIFrontOrderNode,AIAlgNodeBase,AIShortMatchModel;
 @interface ThinkingUtils : NSObject
 
 /**
@@ -114,7 +114,7 @@
  *  MARK:--------------------里氏替换评价--------------------
  *  @desc 对Liskov Substitution Principle LSP的评价,包含先理性评价,后感性评价;
  */
-+(BOOL) dataOut_CheckScore_LSP:(AIPointer*)matchAlg_p protoFo:(AIKVPointer*)protoFo_p;
++(BOOL) dataOut_CheckScore_LSP:(AIShortMatchModel*)mModel;
 
 
 /**

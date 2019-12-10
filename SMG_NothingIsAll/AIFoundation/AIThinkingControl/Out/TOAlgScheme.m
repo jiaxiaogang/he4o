@@ -188,22 +188,16 @@
         BOOL mIsC = [SMGUtils containsSub_p:matchAlg.pointer parentPorts:cConPorts];
         if (mIsC) {
             
-            //4. LSP反思
-            //TODOTOMORROW:用curAlg_ps + matchAlg组成rtFo_ps
-            curAlg_ps = ARRTOOK(curAlg_ps);
-            //indexOf:curAlg.pointer???
-            if ([SMGUtils containsSub_p:curAlg.pointer parent_ps:curAlg_ps]) {
-                //replaceIndex:matchAlg.pointer index:index;
-            }
-            AIShortMatchModel *mModel = [self.delegate toAlgScheme_LSPRethink:matchAlg rtFoContent_ps:curAlg_ps];
-            BOOL canLSP = [ThinkingUtils dataOut_CheckScore_LSP:matchAlg.pointer protoFo:nil];
+            //4. LSP反思: 用curAlg_ps + matchAlg组成rethinkAlg_ps
+            NSMutableArray *rethinkAlg_ps = [[NSMutableArray alloc] initWithArray:curAlg_ps];
+            NSInteger replaceIndex = [rethinkAlg_ps indexOfObject:curAlg.pointer];
+            [rethinkAlg_ps replaceObjectAtIndex:replaceIndex withObject:matchAlg.pointer];
             
+            //4. LSP反思: 回归tir反思,重新识别预测时序,预测价值;
+            AIShortMatchModel *mModel = [self.delegate toAlgScheme_LSPRethink:matchAlg rtFoContent_ps:rethinkAlg_ps];
             
-            
-            
-            
-            
-            
+            //4. LSP反思: 对mModel进行评价;
+            BOOL canLSP = [ThinkingUtils dataOut_CheckScore_LSP:mModel];
             
             if (canLSP) {
                 mcSuccess(nil);

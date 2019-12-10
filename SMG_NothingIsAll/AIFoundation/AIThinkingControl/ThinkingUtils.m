@@ -236,7 +236,14 @@
     //}
 }
 
-+(BOOL) dataOut_CheckScore_LSP:(AIPointer*)matchAlg_p protoFo:(AIKVPointer*)protoFo_p{
++(BOOL) dataOut_CheckScore_LSP:(AIShortMatchModel*)mModel {
+    //TODO:
+    //1. 进行理性评价 (参考手稿);
+    //2. 进行感性评价 (参考手稿);
+    
+    
+    
+    
     return true;
 }
 
