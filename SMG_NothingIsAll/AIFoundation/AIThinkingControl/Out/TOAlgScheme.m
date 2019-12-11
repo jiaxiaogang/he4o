@@ -257,6 +257,8 @@
                                 WLog(@"value_行为化失败");
                             }];
                         }else if (changeType == AnalogyInnerType_Hav || changeType == AnalogyInnerType_None){
+                            //Q: 为何此处curAlg_ps传nil?
+                            //A: 因为change_p不是curAlg,比如curAlg_ps是[吃,烤蘑菇],那么change_p可能是火,如果重组LSPFo可能会组成[吃,火] (解决方案参考:17208表);
                             [self convert2Out_Alg:change_p curAlg_ps:nil type:changeType success:^(NSArray *acts) {
                                 mcSuccess(acts);
                                 successed = true;
