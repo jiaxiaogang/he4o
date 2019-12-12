@@ -51,10 +51,23 @@
  *      2. 191105针对概念嵌套的代码,先去掉;
  *      3. 191107考虑将foScheme也搬过来,优先使用matchFo做第一解决方案;
  */
--(void) convert2Out_Fo:(NSArray*)curAlg_ps success:(void(^)(NSArray *acts))success failure:(void(^)())failure{
+-(void) convert2Out_Fo:(NSArray*)curAlg_ps curFo:(AIFoNodeBase*)curFo success:(void(^)(NSArray *acts))success failure:(void(^)())failure{
+    
+    
+    
+    
+    
+    //TODOTOMORROW:思考一下,此处结合烤蘑菇的例子,如何写反思递归的代码;
+    
+    
+    
+    
+    
+    
+    
     //1. 数据准备
     NSMutableArray *result = [[NSMutableArray alloc] init];
-    if (!ARRISOK(curAlg_ps)) {
+    if (!ARRISOK(curAlg_ps) || curFo == nil) {
         failure();
         WLog(@"fo行为化失败,参数无效");
     }
@@ -117,6 +130,8 @@
     //2. 本身即是isOut时,直接行为化返回;
     if (curAlg_p.isOut) {
         [result addObject:curAlg_p];
+        success(result);
+        return;
     }else{
         AIAlgNodeBase *curAlg = [SMGUtils searchNode:curAlg_p];
         if (self.shortMatchModel && curAlg) {
@@ -135,10 +150,15 @@
             }
             
             //4. mc行为化失败,则联想长时行为化;
-            if (!successed) {
+            if (successed) {
+                success(result);
+                return;
+            }else{
                 [self convert2Out_Long_NET:type at:curAlg_p.algsType ds:curAlg_p.dataSource success:^(AIFoNodeBase *havFo, NSArray *actions) {
                     //4. hnAlg行为化成功;
                     [result addObjectsFromArray:actions];
+                    success(result);
+                    successed = true;
                 } failure:^{
                     //20191120: _sub方法废弃;
                     //第3级: 对curAlg的(subAlg&subValue)分别判定; (目前仅支持a2+v1各一个)
@@ -146,12 +166,14 @@
                     //[result addObjectsFromArray:subResult];
                     //8. 未联想到hnAlg,失败;
                     WLog(@"长时_行为化失败");
-                    failure();
                 }];
+            }
+            if (!successed) {
+                failure();
+                return;
             }
         }
     }
-    
     failure();
 }
 
@@ -393,7 +415,7 @@
             }else{
                 
                 //5. 转移,则进行行为化 (递归到总方法);
-                [self convert2Out_Fo:foRangeOrder success:^(NSArray *acts) {
+                [self convert2Out_Fo:foRangeOrder curFo:relativeFo success:^(NSArray *acts) {
                     successed = true;
                     success(relativeFo,acts);
                 } failure:^{

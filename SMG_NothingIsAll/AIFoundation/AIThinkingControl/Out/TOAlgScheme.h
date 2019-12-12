@@ -25,6 +25,14 @@
 /**
  *  MARK:--------------------行为化--------------------
  *  作用: TO中,对于概念的判定部分 -> 以时序与概念的协作,来做理性判定;
+ *  @desc 概念: 行为化,就是对当前现实世界所具备的"1资源"进行"2经验"有效利用,并输出"3行为",以达到"4目标";
+ *  @desc 实例: 你有一个锤子,把眼前的坚果皮砸掉,并且吃掉坚果肉;
+ *      1. 资源: 锤子,带皮坚果
+ *      2. 经验: 吃坚果肉,带皮坚果可砸掉皮,坚果可以吃,吃可以解决饥饿问题等等
+ *      3. 行为: 砸,吃
+ *      4. 目标: 解决饥饿问题
+ *  @desc 决策: 在行为化中,有正向递归循环的决策;
+ *  @desc 反思: 在行为化中,以反向递归为评价,进行反思;
  *  TODO1: 随后对TOAlgScheme添加energy消耗,以精确控制;
  *  TODO2: 根据havAlg构建成ThinkOutAlgModel (暂时不需要)
  *  TODO3: 将DemandModel->TOMvModel->TOFoModel->TOAlgModel->TOActionModel的模型结构化关系整理清晰; (前三个已用,后两个暂不需要)
@@ -54,8 +62,10 @@
  *  1. 比如找到坚果,由有无时序来解决"有无"问题; (cNone,cHav) (有无)
  *  2. 找到的坚果与fo中进行类比;(找出坚果距离的不同,或者坚果带皮儿的不同) (cLess,cGreater) (变化)
  *  3. 将距离与带皮转化成行为,条件的行为化; (如飞行,或去皮); (actionScheme) (行为)
+ *  @params curAlg_ps   : 当前需要行为化的部分ps;
+ *  @param curFo        : 当前时序
  */
--(void) convert2Out_Fo:(NSArray*)curAlg_ps success:(void(^)(NSArray *acts))success failure:(void(^)())failure;
+-(void) convert2Out_Fo:(NSArray*)curAlg_ps curFo:(AIFoNodeBase*)curFo success:(void(^)(NSArray *acts))success failure:(void(^)())failure;
 
 
 @end

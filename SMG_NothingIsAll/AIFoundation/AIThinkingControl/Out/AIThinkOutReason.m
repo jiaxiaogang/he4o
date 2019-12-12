@@ -87,7 +87,7 @@
     //2. 进行行为化; (通过有无,变化,等方式,将结构中所有条件概念行为化);
     [self.algScheme setData:self.shortMatchModel];
     
-    [self.algScheme convert2Out_Fo:foNode.content_ps success:^(NSArray *acts) {
+    [self.algScheme convert2Out_Fo:foNode.content_ps curFo:foNode success:^(NSArray *acts) {
         outFoModel.actions = acts;
     } failure:^{
         WLog(@"TOR_行为化失败");
