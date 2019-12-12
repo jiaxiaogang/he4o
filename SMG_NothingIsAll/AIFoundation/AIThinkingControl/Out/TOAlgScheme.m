@@ -208,6 +208,11 @@
         BOOL cIsAbs = ISOK(curAlg, AIAbsAlgNode.class);
         NSArray *cConPorts = cIsAbs ? ((AIAbsAlgNode*)curAlg).conPorts : nil;
         BOOL mIsC = [SMGUtils containsSub_p:matchAlg.pointer parentPorts:cConPorts];
+        
+        
+        //TODO191213: 将本轮反思,封装成SEL函数,供本轮评价,或传递给下轮;
+        
+        
         if (mIsC) {
             
             //4. LSP反思: 用curAlg_ps + matchAlg组成rethinkAlg_ps
@@ -220,6 +225,10 @@
             
             //4. LSP反思: 对mModel进行评价;
             BOOL canLSP = [ThinkingUtils dataOut_CheckScore_LSPRethink:mModel];
+            
+            
+            //TODO191213: 本轮反思,
+            //TODO191213: parent轮反思,
             
             if (canLSP) {
                 mcSuccess(nil);
@@ -272,6 +281,8 @@
                     //13. 针对change_p进行行为化;
                     if (change_p) {
                         if (changeType == AnalogyInnerType_Greater || changeType == AnalogyInnerType_Less) {
+                            
+                            //TODO191213: 去转化,将parentCheckScore传递过去,供_fos使用;
                             [self convert2Out_RelativeValue:change_p type:changeType vSuccess:^(AIFoNodeBase *glFo, NSArray *acts) {
                                 mcSuccess(acts);
                                 successed = true;
@@ -415,6 +426,8 @@
             }else{
                 
                 //5. 转移,则进行行为化 (递归到总方法);
+                
+                //TODO191213: 在转化时,把parentCheckScore传递下去,供下轮循环,反思时,逐级回调;
                 [self convert2Out_Fo:foRangeOrder curFo:relativeFo success:^(NSArray *acts) {
                     successed = true;
                     success(relativeFo,acts);
