@@ -51,20 +51,7 @@
  *      2. 191105针对概念嵌套的代码,先去掉;
  *      3. 191107考虑将foScheme也搬过来,优先使用matchFo做第一解决方案;
  */
--(void) convert2Out_Fo:(NSArray*)curAlg_ps curFo:(AIFoNodeBase*)curFo success:(void(^)(NSArray *acts))success failure:(void(^)())failure{
-    
-    
-    
-    
-    
-    //TODOTOMORROW:思考一下,此处结合烤蘑菇的例子,如何写反思递归的代码;
-    
-    
-    
-    
-    
-    
-    
+-(void) convert2Out_Fo:(NSArray*)curAlg_ps curFo:(AIFoNodeBase*)curFo success:(void(^)(NSArray *acts))success failure:(void(^)())failure oldCheckScore:(BOOL(^)(AIAlgNodeBase *mAlg))oldCheckScore{
     //1. 数据准备
     NSMutableArray *result = [[NSMutableArray alloc] init];
     if (!ARRISOK(curAlg_ps) || curFo == nil) {
@@ -86,13 +73,41 @@
         //3. 再根据除cHav之外的部分,来做行为化; 如`2`,如何变`大小`;
         
         __block BOOL successed = false;
-        [self convert2Out_Alg:curAlg_p curAlg_ps:curAlg_ps type:AnalogyInnerType_Hav success:^(NSArray *actions) {
+        [self convert2Out_Alg:curAlg_p type:AnalogyInnerType_Hav success:^(NSArray *actions) {
             //3. 行为化成功,则收集;
             successed = true;
             NSLog(@"行为化成功");
             [result addObjectsFromArray:actions];
         } failure:^{
             WLog(@"行为化失败");
+        } checkScore:^BOOL(AIAlgNodeBase *mAlg) {
+            //3. 生成新checkScore = newCheckScore + oldCheckScore;
+            //TODOTOMORROW:思考一下,此处结合烤蘑菇的例子,如何写反思递归的代码;
+            
+            //4. =====对newCheckScore进行评价;
+            //5. LSP反思: 用curAlg_ps + matchAlg组成rethinkAlg_ps
+            NSMutableArray *rethinkAlg_ps = [[NSMutableArray alloc] initWithArray:curFo.content_ps];
+            NSInteger replaceIndex = [rethinkAlg_ps indexOfObject:curAlg_p];
+            [rethinkAlg_ps replaceObjectAtIndex:replaceIndex withObject:mAlg.pointer];
+            
+            //6. LSP反思: 回归tir反思,重新识别预测时序,预测价值;
+            AIShortMatchModel *mModel = [self.delegate toAlgScheme_LSPRethink:mAlg rtFoContent_ps:rethinkAlg_ps];
+            
+            //7. LSP反思: 对mModel进行评价;
+            BOOL newSuccess = [ThinkingUtils dataOut_CheckScore_LSPRethink:mModel];
+            
+            //8. =====对oldCheckScore进行评价 (在递归中,上一级评价成功,才进行下一级评价,否则中止);
+            if (newSuccess) {
+                //有无大小,都有可能是oldCheckScore的来源;
+                //结合实例,思考此处mAlg应该传递什么;
+                //此处只有两种alg,一种是源于range/content_ps的alg_p;一种则是源于alg嵌套的子alg_p;
+                //第一种的话,找到的mAlg就是最后一位;
+                //第二种的话,需要此处的mAlg+parentMAlg一起组成参数mAlg;
+                
+                //比如,去皮成功,我们要重组的,不是[吃,去皮],而是[吃,没皮坚果];
+                return oldCheckScore(nil);
+            }
+            return false;
         }];
         [theNV setNodeData:curAlg_p lightStr:@"o2"];
         
@@ -112,11 +127,12 @@
 /**
  *  MARK:--------------------单个概念的行为化--------------------
  *  第1级: 直接判定curAlg_p为输出则收集;
- *  第2级: 直接对curAlg的cHav来行为化,成功则收集;
- *  第3级: 对curAlg下subValue和subAlg进行依次行为化,成功则收集;
+ *  第2级: MC匹配行为化
+ *  第3级: LongNet长短时网络行为化
  *  @param type : cHav或cNone
+ *  @param curAlg_p : 三个来源: 1.Fo的元素A;  2.Range的元素A; 3.Alg的嵌套A;
  */
--(void) convert2Out_Alg:(AIKVPointer*)curAlg_p curAlg_ps:(NSArray*)curAlg_ps type:(AnalogyInnerType)type success:(void(^)(NSArray *actions))success failure:(void(^)())failure{
+-(void) convert2Out_Alg:(AIKVPointer*)curAlg_p type:(AnalogyInnerType)type success:(void(^)(NSArray *actions))success failure:(void(^)())failure checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
     //1. 数据准备;
     if (!curAlg_p) {
         failure();
@@ -140,13 +156,13 @@
             //3. 单cHav时,直接从瞬时做MC匹配行为化;
             __block BOOL successed = false;
             if (type == AnalogyInnerType_Hav) {
-                [self convert2Out_Short_MC:matchAlg curAlg:curAlg curAlg_ps:curAlg_ps mcSuccess:^(NSArray *acts) {
+                [self convert2Out_Short_MC:matchAlg curAlg:curAlg mcSuccess:^(NSArray *acts) {
                     [result addObjectsFromArray:acts];
                     successed = true;
                     NSLog(@"MC_行为化成功, 输出行为: %@",acts);
                 } mcFailure:^{
                     WLog(@"MC_行为化失败");
-                }];
+                } checkScore:checkScore];
             }
             
             //4. mc行为化失败,则联想长时行为化;
@@ -166,7 +182,7 @@
                     //[result addObjectsFromArray:subResult];
                     //8. 未联想到hnAlg,失败;
                     WLog(@"长时_行为化失败");
-                }];
+                } checkScore:checkScore];
             }
             if (!successed) {
                 failure();
@@ -202,35 +218,17 @@
  *      TODO_TEST_HERE: 在alg抽象匹配时,核实下将absAlg去重,为了避免绝对匹配重复导致的联想不以cHav
  *
  */
--(void) convert2Out_Short_MC:(AIAlgNodeBase*)matchAlg curAlg:(AIAlgNodeBase*)curAlg curAlg_ps:(NSArray*)curAlg_ps mcSuccess:(void(^)(NSArray *acts))mcSuccess mcFailure:(void(^)())mcFailure{
+-(void) convert2Out_Short_MC:(AIAlgNodeBase*)matchAlg curAlg:(AIAlgNodeBase*)curAlg mcSuccess:(void(^)(NSArray *acts))mcSuccess mcFailure:(void(^)())mcFailure checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
     if (matchAlg && curAlg) {
         //3. MC匹配之: LSP里氏判断,M是否是C
         BOOL cIsAbs = ISOK(curAlg, AIAbsAlgNode.class);
         NSArray *cConPorts = cIsAbs ? ((AIAbsAlgNode*)curAlg).conPorts : nil;
         BOOL mIsC = [SMGUtils containsSub_p:matchAlg.pointer parentPorts:cConPorts];
-        
-        
-        //TODO191213: 将本轮反思,封装成SEL函数,供本轮评价,或传递给下轮;
-        
-        
         if (mIsC) {
             
-            //4. LSP反思: 用curAlg_ps + matchAlg组成rethinkAlg_ps
-            NSMutableArray *rethinkAlg_ps = [[NSMutableArray alloc] initWithArray:curAlg_ps];
-            NSInteger replaceIndex = [rethinkAlg_ps indexOfObject:curAlg.pointer];
-            [rethinkAlg_ps replaceObjectAtIndex:replaceIndex withObject:matchAlg.pointer];
-            
-            //4. LSP反思: 回归tir反思,重新识别预测时序,预测价值;
-            AIShortMatchModel *mModel = [self.delegate toAlgScheme_LSPRethink:matchAlg rtFoContent_ps:rethinkAlg_ps];
-            
-            //4. LSP反思: 对mModel进行评价;
-            BOOL canLSP = [ThinkingUtils dataOut_CheckScore_LSPRethink:mModel];
-            
-            
-            //TODO191213: 本轮反思,
-            //TODO191213: parent轮反思,
-            
-            if (canLSP) {
+            //4. 进行反思
+            BOOL rtSuccess = checkScore(matchAlg);
+            if (rtSuccess) {
                 mcSuccess(nil);
             }else{
                 WLog(@"行为化失败,里氏替换评价未通过");
@@ -288,14 +286,14 @@
                                 successed = true;
                             } vFailure:^{
                                 WLog(@"value_行为化失败");
-                            }];
+                            } checkScore:checkScore];
                         }else if (changeType == AnalogyInnerType_Hav || changeType == AnalogyInnerType_None){
                             //Q: 为何此处curAlg_ps传nil?
                             //A: 因为change_p不是curAlg,比如curAlg_ps是[吃,烤蘑菇],那么change_p可能是火,如果重组LSPFo可能会组成[吃,火] (解决方案参考:17208表);
-                            [self convert2Out_Alg:change_p curAlg_ps:nil type:changeType success:^(NSArray *acts) {
+                            [self convert2Out_Alg:change_p type:changeType success:^(NSArray *acts) {
                                 mcSuccess(acts);
                                 successed = true;
-                            } failure:nil];
+                            } failure:nil checkScore:checkScore];
                         }
                     }
                 }
@@ -317,7 +315,7 @@
  *  3. 思考: 是否做alg局部匹配,递归取3个左右,逐个取并取其cHav (并类比缺失部分,循环); (191120废弃,不做)
  *  @param success : 行为化成功则返回(havFo + 行为序列); (havFo notnull, actions notnull)
  */
--(void) convert2Out_Long_NET:(AnalogyInnerType)type at:(NSString*)at ds:(NSString*)ds success:(void(^)(AIFoNodeBase *havFo,NSArray *actions))success failure:(void(^)())failure{
+-(void) convert2Out_Long_NET:(AnalogyInnerType)type at:(NSString*)at ds:(NSString*)ds success:(void(^)(AIFoNodeBase *havFo,NSArray *actions))success failure:(void(^)())failure checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
     //1. 数据准备
     AIAlgNodeBase *hnAlg = [ThinkingUtils dataOut_GetAlgNodeWithInnerType:type algsType:at dataSource:ds];
     if (!hnAlg) {
@@ -333,7 +331,7 @@
         success(havFo,actions);
     } failure:^{
         WLog(@"相对概念,行为化失败");
-    }];
+    } checkScore:checkScore];
     
     //3. 根据havAlg联想时序,并找出新的解决方案,与新的行为化的概念,与新的条件概念;
     if (!successed) {
@@ -343,7 +341,7 @@
             success(havFo,actions);
         } failure:^{
             WLog(@"相对概念,行为化失败");
-        }];
+        } checkScore:checkScore];
         
         //4. 行为化失败;
         if (!successed) {
@@ -365,7 +363,7 @@
  *          4. 未转移: success
  *          5. 转移: C条件->递归到convert2Out_Single_Alg();
  */
--(void) convert2Out_RelativeValue:(AIKVPointer*)value_p type:(AnalogyInnerType)type vSuccess:(void(^)(AIFoNodeBase *glFo,NSArray *acts))vSuccess vFailure:(void(^)())vFailure{
+-(void) convert2Out_RelativeValue:(AIKVPointer*)value_p type:(AnalogyInnerType)type vSuccess:(void(^)(AIFoNodeBase *glFo,NSArray *acts))vSuccess vFailure:(void(^)())vFailure checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
     //1. 数据检查
     if ((type != AnalogyInnerType_Greater && type != AnalogyInnerType_Less) || !value_p) {
         WLog(@"value_行为化类参数type|value_p错误");
@@ -388,7 +386,7 @@
         vSuccess(glFo,actions);
     } failure:^{
         WLog(@"相对概念,行为化失败");
-    }];
+    } checkScore:checkScore];
     
     //4. 行为化失败;
     if (!successed) {
@@ -402,11 +400,12 @@
  *  @param relativeFo_ps    : 相对时序地址;
  *  @param success          : 回调传回: 相对时序 & 行为化结果;
  *  @param failure          : 只要有一条行为化成功则success(),否则failure();
+ *  @param checkScore       : change转化时,作为oldCheckScore传递下去,供下轮循环,反思时,逐级回调;
  *  注:
  *      1. 参数: 由方法调用者保证传入的是"相对时序"而不是普通时序
  *      2. 流程: 取出相对时序,并取rangeOrder,行为化并返回
  */
--(void) convert2Out_RelativeFo_ps:(NSArray*)relativeFo_ps success:(void(^)(AIFoNodeBase *havFo,NSArray *actions))success failure:(void(^)())failure{
+-(void) convert2Out_RelativeFo_ps:(NSArray*)relativeFo_ps success:(void(^)(AIFoNodeBase *havFo,NSArray *actions))success failure:(void(^)())failure checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
     //1. 数据准备
     relativeFo_ps = ARRTOOK(relativeFo_ps);
     
@@ -426,15 +425,13 @@
             }else{
                 
                 //5. 转移,则进行行为化 (递归到总方法);
-                
-                //TODO191213: 在转化时,把parentCheckScore传递下去,供下轮循环,反思时,逐级回调;
                 [self convert2Out_Fo:foRangeOrder curFo:relativeFo success:^(NSArray *acts) {
                     successed = true;
                     success(relativeFo,acts);
                 } failure:^{
                     failure();
                     WLog(@"相对时序行为化失败");
-                }];
+                } oldCheckScore:checkScore];
             }
         }
         

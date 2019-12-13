@@ -32,7 +32,10 @@
  *      3. 行为: 砸,吃
  *      4. 目标: 解决饥饿问题
  *  @desc 决策: 在行为化中,有正向递归循环的决策;
- *  @desc 反思: 在行为化中,以反向递归为评价,进行反思;
+ *  @desc 反思:
+ *      1. 在行为化中,以反向递归为评价,进行反思;
+ *      2. 一个TR反思,包含多个CheckScore评价;
+ *
  *  TODO1: 随后对TOAlgScheme添加energy消耗,以精确控制;
  *  TODO2: 根据havAlg构建成ThinkOutAlgModel (暂时不需要)
  *  TODO3: 将DemandModel->TOMvModel->TOFoModel->TOAlgModel->TOActionModel的模型结构化关系整理清晰; (前三个已用,后两个暂不需要)
@@ -44,6 +47,9 @@
  *  迭代记录:
  *      1. 190419始: 初版,支持fo(),single_alg(),single_sub();在嵌套的支持下,支持单个alg和value的嵌套行为化;
  *      2. 191121完: 支持瞬时MC,增加行为化成功率; 参考:190行为化新架构图;
+ *  简写与名词说明:
+ *      1. CheckScore: CheckScore:表示评价;
+ *      2. RT: Rethink:表示反思,因反思是递归的,故一次反思中,可能包含数轮递归并依次评价;
  */
 @class AIShortMatchModel;
 @interface TOAlgScheme : NSObject
@@ -64,8 +70,9 @@
  *  3. 将距离与带皮转化成行为,条件的行为化; (如飞行,或去皮); (actionScheme) (行为)
  *  @params curAlg_ps   : 当前需要行为化的部分ps;
  *  @param curFo        : 当前时序
+ *  @param oldCheckScore: 反思路径记录,评价;
  */
--(void) convert2Out_Fo:(NSArray*)curAlg_ps curFo:(AIFoNodeBase*)curFo success:(void(^)(NSArray *acts))success failure:(void(^)())failure;
+-(void) convert2Out_Fo:(NSArray*)curAlg_ps curFo:(AIFoNodeBase*)curFo success:(void(^)(NSArray *acts))success failure:(void(^)())failure oldCheckScore:(BOOL(^)(AIAlgNodeBase *mAlg))oldCheckScore;
 
 
 @end
