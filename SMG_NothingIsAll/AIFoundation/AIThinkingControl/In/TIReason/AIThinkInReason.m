@@ -63,8 +63,9 @@
  *  Q2: 概念的嵌套,有可能会导致识别上的一些问题; (我们需要支持结构化识别,而不仅是绝对识别和模糊识别)
  *  A2: 190910概念嵌套已取消,正在做结构化识别,此次改动是为了完善ThinkReason细节;
  *
- *  TODO: 190910识别"概念与时序",并构建纵向关联;
- *  STATUST: 190910概念识别,添加了抽象关联;
+ *  @desc 迭代记录:
+ *      20190910: 识别"概念与时序",并构建纵向关联; (190910概念识别,添加了抽象关联)
+ *      20191223: 局部匹配支持全含: 对assAlg和protoAlg直接做抽象关联,而不是新构建抽象;
  */
 +(AIAlgNodeBase*) dataIn_NoMV_RecognitionIs:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps{
     //1. 数据准备
@@ -87,7 +88,6 @@
     ///3. 局部匹配 -> 内存网络;
     ///(19xxxx注掉,不能太过于脱离持久网络做思考,所以先注掉)
     ///(190625放开,因采用内存网络后,靠这识别)
-    //191223: TODOTOMORROW: 1. 将partMatching_Alg方法改为全含;   2. 对assAlg和protoAlg直接做抽象关联,而不是新构建抽象;
     if (!assAlgNode) {
         assAlgNode = [AINetIndexUtils partMatching_Alg:algNode isMem:true except_ps:fromGroup_ps];
     }
@@ -97,17 +97,14 @@
         assAlgNode = [AINetIndexUtils partMatching_Alg:algNode isMem:false except_ps:fromGroup_ps];
     }
     
+    //3. 直接将assAlgNode设置为algNode的抽象; (这样后面TOR理性决策时,才可以直接对当前瞬时实物进行很好的理性评价);
     if (ISOK(assAlgNode, AIAlgNodeBase.class)) {
-        //3. 类比algNode和assAlgNode,并抽象;
-        NSMutableArray *same_ps = [[NSMutableArray alloc] init];
-        for (AIPointer *item_p in algNode.content_ps) {
-            if ([SMGUtils containsSub_p:item_p parent_ps:assAlgNode.content_ps]) {
-                [same_ps addObject:item_p];
-            }
-        }
-        if (ARRISOK(same_ps)) {
-            result = [theNet createAbsAlgNode:same_ps conAlgs:@[assAlgNode,algNode] isMem:false];
-        }
+        result = [theNet createAbsAlgNode:assAlgNode.content_ps conAlgs:@[assAlgNode,algNode] isMem:false];
+    }
+    
+    //4. 调试日志;
+    if (assAlgNode && [SMGUtils containsSub_ps:assAlgNode.content_ps parent_ps:algNode.content_ps]) {
+        NSLog(@"TODO_TEST_HERE: 全含结果不正常,导致下面的抽象sames也不准确,,,可在git20191223找回原sames代码");
     }
     if ([NVHeUtil isHeight:5 fromContent_ps:result.content_ps]) {
         if (!result) {

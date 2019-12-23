@@ -116,8 +116,8 @@
  *  @param exceptBlock : notnull 排除回调,不可激活则返回true;
  *  @param refPortsBlock : notnull 取item_p.refPorts的方法;
  *  @result 把最匹配的返回;
- *  @desc 迭代说明:
- *      2019.12.23 - 迭代支持全含,参考17215
+ *  @desc 迭代记录:
+ *      2019.12.23 - 迭代支持全含,参考17215 (代码中由判断相似度,改为判断全含)
  */
 +(id) partMatching_General:(NSArray*)proto_ps
              refPortsBlock:(NSArray*(^)(AIKVPointer *item_p))refPortsBlock
@@ -125,7 +125,6 @@
     //1. 数据准备;
     if (ARRISOK(proto_ps)) {
         NSMutableDictionary *countDic = [[NSMutableDictionary alloc] init];
-        NSData *maxKey = nil;
         
         //2. 对每个微信息,取被引用的强度前cPartMatchingCheckRefPortsLimit个;
         for (AIKVPointer *item_p in proto_ps) {
@@ -142,28 +141,24 @@
             }
         }
         
-        //4. 从计数器countDic 中 找出最相似(计数最大)的maxKey
-        for (NSData *key in countDic.allKeys) {
-            
-            //5. 达到局部匹配的阀值才有效;
-            int curNodeMatchingCount = [NUMTOOK([countDic objectForKey:key]) intValue];
-            
-            
-            //TODOTOMORROW: 此处不判断相似度,而是判断全含; (curMatchingCount == assAlg.content.count)
-            if (((float)curNodeMatchingCount / (float)proto_ps.count) >= cPartMatchingThreshold) {
-                
-                //6. 取最匹配的一个;
-                if (maxKey == nil || ([NUMTOOK([countDic objectForKey:maxKey]) intValue] < curNodeMatchingCount)) {
-                    maxKey = key;
-                }
-            }
-        }
+        //4. 排序相似数从大到小;
+        NSArray *sortKeys = ARRTOOK([countDic.allKeys sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+            int matchingCount1 = [NUMTOOK([countDic objectForKey:obj1]) intValue];
+            int matchingCount2 = [NUMTOOK([countDic objectForKey:obj2]) intValue];
+            return matchingCount1 < matchingCount2;
+        }]);
+        NSLog(@"TODO_TEST_HERE:从大到小排序完成============:%@",sortKeys);
         
-        //7. 有结果时取出对应的assAlgNode返回;
-        if (maxKey) {
-            AIKVPointer *max_p = [NSKeyedUnarchiver unarchiveObjectWithData:maxKey];
-            AINodeBase *result = [SMGUtils searchNode:max_p];
-            return result;
+        //5. 从大到小,依次取到对应的node和matchingCount
+        for (NSData *key in sortKeys) {
+            AIKVPointer *key_p = [NSKeyedUnarchiver unarchiveObjectWithData:key];
+            AINodeBase *result = [SMGUtils searchNode:key_p];
+            int matchingCount = [NUMTOOK([countDic objectForKey:key]) intValue];
+            
+            //6. 判断全含; (matchingCount == assAlg.content.count)
+            if (result && result.content_ps.count == matchingCount) {
+                return result;
+            }
         }
     }
     return nil;

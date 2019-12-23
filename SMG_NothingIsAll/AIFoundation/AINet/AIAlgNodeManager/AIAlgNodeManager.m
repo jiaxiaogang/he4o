@@ -105,7 +105,7 @@
             findAbsNode = [[AIAbsAlgNode alloc] init];
             BOOL isOut = [AINetUtils checkAllOfOut:sortSames];
             findAbsNode.pointer = [SMGUtils createPointerForAlg:kPN_ALG_ABS_NODE dataSource:dataSource isOut:isOut isMem:isMem];
-            findAbsNode.content_ps = sortSames;
+            findAbsNode.content_ps = [[NSMutableArray alloc] initWithArray:sortSames];
         }
         
         ////4. 概念的嵌套 (190816取消概念嵌套,参见n16p17-bug16)
