@@ -116,6 +116,8 @@
  *  @param exceptBlock : notnull 排除回调,不可激活则返回true;
  *  @param refPortsBlock : notnull 取item_p.refPorts的方法;
  *  @result 把最匹配的返回;
+ *  @desc 迭代说明:
+ *      2019.12.23 - 迭代支持全含,参考17215
  */
 +(id) partMatching_General:(NSArray*)proto_ps
              refPortsBlock:(NSArray*(^)(AIKVPointer *item_p))refPortsBlock

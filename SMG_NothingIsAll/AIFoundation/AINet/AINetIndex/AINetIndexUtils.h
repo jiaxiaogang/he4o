@@ -20,9 +20,10 @@
 
 /**
  *  MARK:--------------------根据v_ps索引绝对匹配的algNode--------------------
- *  说明: 获取value_ps相匹配的概念;
+ *  说明: 获取value_ps相匹配的概念; (header匹配)
  *      1. 获取绝对匹配到value_ps的algNode (概念引用联想的方式去重)
  *      2. 先从内存网络,再从硬盘网络找;
+ *  @pparam isMem : 是否从内存网络找;
  */
 +(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValueP:(AIPointer*)value_p;
 +(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps;

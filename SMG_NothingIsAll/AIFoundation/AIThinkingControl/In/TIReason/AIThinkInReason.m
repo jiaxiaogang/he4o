@@ -77,11 +77,11 @@
     //2. 对value.refPorts进行检查识别; (noMv信号已输入完毕,识别联想)
     AIAlgNodeBase *assAlgNode = nil;
     ///1. 绝对匹配 -> 内存网络;
-    assAlgNode = [self recognition_AbsoluteMatching:algNode isMem:true];
+    assAlgNode = [AINetIndexUtils getAbsoluteMatchingAlgNodeWithValuePs:algNode.content_ps exceptAlg_p:algNode.pointer isMem:true];
     
     ///2. 绝对匹配 -> 硬盘网络;
     if (!assAlgNode) {
-        assAlgNode = [self recognition_AbsoluteMatching:algNode isMem:false];
+        assAlgNode = [AINetIndexUtils getAbsoluteMatchingAlgNodeWithValuePs:algNode.content_ps exceptAlg_p:algNode.pointer isMem:false];
     }
     
     ///3. 局部匹配 -> 内存网络;
@@ -193,37 +193,6 @@
     [theNV setNodeData:cmvNode.pointer];
     return cmvNode;
 }
-
-/**
- *  MARK:--------------------识别_绝对匹配--------------------
- *  @param isMem : 是否从内存网络找;
- *  注: 找出与algNode绝对匹配的节点; (header匹配)
- */
-+(AIAlgNodeBase*) recognition_AbsoluteMatching:(AIAlgNodeBase*)algNode isMem:(BOOL)isMem {
-    //1. 数据准备
-    if (ISOK(algNode, AIAlgNodeBase.class)) {
-        NSString *valuesMD5 = [NSString md5:[SMGUtils convertPointers2String:[SMGUtils sortPointers:algNode.content_ps]]];
-        valuesMD5 = STRTOOK(valuesMD5);
-        
-        //2. 循环对content_ps中微信息的引用序列进行匹配判定;
-        for (AIPointer *value_p in algNode.content_ps) {
-            NSArray *refPorts = ARRTOOK([SMGUtils searchObjectForFilePath:value_p.filePath fileName:kFNRefPorts_All(isMem) time:cRTReference_All(isMem)]);
-            for (AIPort *refPort in refPorts) {
-                
-                //3. 依次绝对匹配header,找到则return;
-                if (![refPort.target_p isEqual:algNode.pointer] && [valuesMD5 isEqualToString:refPort.header]) {
-                    AIAlgNodeBase *assAlgNode = [SMGUtils searchNode:refPort.target_p];
-                    if (assAlgNode) {
-                        NSLog(@">>> %@绝对匹配成功;",isMem ? @"内存" : @"硬盘");
-                        return assAlgNode;
-                    }
-                }
-            }
-        }
-    }
-    return nil;
-}
-
 
 //MARK:===============================================================
 //MARK:                     < TIR_Fo >
