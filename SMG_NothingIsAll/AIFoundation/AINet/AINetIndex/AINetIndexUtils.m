@@ -147,6 +147,9 @@
             
             //5. 达到局部匹配的阀值才有效;
             int curNodeMatchingCount = [NUMTOOK([countDic objectForKey:key]) intValue];
+            
+            
+            //TODOTOMORROW: 此处不判断相似度,而是判断全含; (curMatchingCount == assAlg.content.count)
             if (((float)curNodeMatchingCount / (float)proto_ps.count) >= cPartMatchingThreshold) {
                 
                 //6. 取最匹配的一个;

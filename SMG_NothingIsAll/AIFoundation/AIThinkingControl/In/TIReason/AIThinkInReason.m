@@ -87,6 +87,7 @@
     ///3. 局部匹配 -> 内存网络;
     ///(19xxxx注掉,不能太过于脱离持久网络做思考,所以先注掉)
     ///(190625放开,因采用内存网络后,靠这识别)
+    //191223: TODOTOMORROW: 1. 将partMatching_Alg方法改为全含;   2. 对assAlg和protoAlg直接做抽象关联,而不是新构建抽象;
     if (!assAlgNode) {
         assAlgNode = [AINetIndexUtils partMatching_Alg:algNode isMem:true except_ps:fromGroup_ps];
     }
