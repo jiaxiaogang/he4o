@@ -312,6 +312,42 @@
 }
 
 /**
+ *  MARK:--------------------同层MC分析--------------------
+ */
+-(void) sameLayerAnalysisWithMAlg:(AIAlgNodeBase*)mAlg cAlg:(AIAlgNodeBase*)cAlg complete:(void(^)(NSArray *mcs,NSArray *ms,NSArray *cs))complete{
+    //1. 数据准备
+    if (!mAlg || !cAlg) {
+        return;
+    }
+    NSMutableArray *mcs = [[NSMutableArray alloc] init];
+    NSMutableArray *ms = [[NSMutableArray alloc] init];
+    NSMutableArray *cs = [[NSMutableArray alloc] init];
+    
+    //2. 收集m_ps & c_ps & mc_ps;
+    NSArray *mAbs_ps = [SMGUtils convertPointersFromPorts:mAlg.absPorts];
+    NSArray *cAbs_ps = [SMGUtils convertPointersFromPorts:cAlg.absPorts];
+    NSMutableArray *mcAbs_ps = [[NSMutableArray alloc] init];
+    [mcAbs_ps addObjectsFromArray:mAbs_ps];
+    [mcAbs_ps addObjectsFromArray:cAbs_ps];
+    
+    //3. 收集mcs & ms & cs;
+    for (AIPointer *item_p in mcAbs_ps) {
+        BOOL mContains = [SMGUtils containsSub_p:item_p parent_ps:mAbs_ps];
+        BOOL cContains = [SMGUtils containsSub_p:item_p parent_ps:cAbs_ps];
+        if (mContains && cContains) {
+            if (![SMGUtils containsSub_p:item_p parent_ps:mcs]) [mcs addObject:item_p];
+        }else if(mContains){
+            if (![SMGUtils containsSub_p:item_p parent_ps:ms]) [ms addObject:item_p];
+        }else if(cContains){
+            if (![SMGUtils containsSub_p:item_p parent_ps:cs]) [cs addObject:item_p];
+        }
+    }
+    
+    //4. 返回_MC进行评价;
+    if (complete) complete(mcs,ms,cs);
+}
+
+/**
  *  MARK:--------------------"相对概念"的行为化--------------------
  *  1. 先根据havAlg取到havFo;
  *  2. 再判断havFo中的rangeOrder的行为化;
