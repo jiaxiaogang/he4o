@@ -426,6 +426,23 @@
     return nil;
 }
 
+/**
+ *  MARK:--------------------搜索节点组--------------------
+ *  @result notnull
+ */
++(NSArray*) searchNodes:(NSArray*)ps {
+    //1. 数据准备
+    ps = ARRTOOK(ps);
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    
+    //2. search
+    for (AIKVPointer *item_p in ps) {
+        AINodeBase *itemNode = [SMGUtils searchNode:item_p];
+        if (itemNode) [result addObject:itemNode];
+    }
+    return result;
+}
+
 +(void) insertNode:(AINodeBase*)node{
     if (ISOK(node, AINodeBase.class)) {
         [self insertObject:node pointer:node.pointer fileName:kFNNode_All(node.pointer.isMem) time:cRTNode_All(node.pointer.isMem)];

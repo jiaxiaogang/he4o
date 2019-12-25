@@ -106,6 +106,7 @@
  *  MARK:--------------------Node--------------------
  */
 +(id) searchNode:(AIPointer*)pointer;
++(NSArray*) searchNodes:(NSArray*)ps;
 +(void) insertNode:(AINodeBase*)node;
 
 @end

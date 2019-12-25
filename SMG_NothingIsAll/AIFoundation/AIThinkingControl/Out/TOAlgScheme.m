@@ -311,10 +311,77 @@
     mcFailure();
 }
 
+
+-(void) convert2Out_Short_MC_General:(AIAlgNodeBase*)matchAlg curAlg:(AIAlgNodeBase*)curAlg mcSuccess:(void(^)(NSArray *acts))mcSuccess mcFailure:(void(^)())mcFailure checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
+    if (matchAlg && curAlg) {
+        //3. MC匹配之: LSP里氏判断,M是否是C
+        BOOL cIsAbs = ISOK(curAlg, AIAbsAlgNode.class);
+        NSArray *cConPorts = cIsAbs ? ((AIAbsAlgNode*)curAlg).conPorts : nil;
+        BOOL mIsC = [SMGUtils containsSub_p:matchAlg.pointer parentPorts:cConPorts];
+        [self mcAnalogy:matchAlg cAlg:curAlg complete:^(NSArray *mcs, NSArray *ms, NSArray *cs) {
+            //1. 数据判断: (mcs无效且m不抽象自C时 = 则不匹配)
+            if (!ARRISOK(mcs) && !mIsC) {
+                return;
+            }
+            NSArray *msAlgs = [SMGUtils searchNodes:ms];
+            
+            //3. 满足cs (当m不抽象自C时,处理cs)
+            if (!mIsC) {
+                NSArray *csAlgs = [SMGUtils searchNodes:cs];
+                for (AIAlgNodeBase *csAlg in csAlgs) {
+                    //TODO检查itemAlg.content.count = 1, 且在msAlgs中有同样单稀疏码组成的alg;
+                    BOOL findItemFromMS = false;
+                    if (csAlg.content_ps.count == 1) {
+                        for (AIAlgNodeBase *msAlg in msAlgs) {
+                            if (msAlg.content_ps.count == 1) {
+                                AIKVPointer *csValue_p = ARR_INDEX(csAlg.content_ps, 0);
+                                AIKVPointer *msValue_p = ARR_INDEX(msAlg.content_ps, 0);
+                                if ([csValue_p.identifier isEqualToString:msValue_p.identifier]) {
+                                    findItemFromMS = true;
+                                    NSNumber *csValue = [AINetIndex getData:csValue_p];
+                                    NSNumber *msValue = [AINetIndex getData:msValue_p];
+                                    if (csValue > msValue) {//需增大
+                                        [self convert2Out_RelativeValue:msValue_p type:AnalogyInnerType_Greater vSuccess:^(AIFoNodeBase *glFo, NSArray *acts) {
+                                            mcSuccess(acts);
+                                        } vFailure:nil checkScore:checkScore];
+                                    }else if(csValue < msValue){//需减小
+                                        [self convert2Out_RelativeValue:msValue_p type:AnalogyInnerType_Less vSuccess:^(AIFoNodeBase *glFo, NSArray *acts) {
+                                            mcSuccess(acts);
+                                        } vFailure:nil checkScore:checkScore];
+                                    }else{
+                                        //再者一样,不处理;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    //4. 满足csAlg
+                    if (!findItemFromMS) {
+                        [self convert2Out_Alg:csAlg.pointer type:AnalogyInnerType_Hav success:^(NSArray *acts) {
+                            mcSuccess(acts);
+                        } failure:nil checkScore:checkScore];
+                    }
+                }
+            }
+            
+            //5. 修正ms
+            for (AIAlgNodeBase *msAlg in msAlgs) {
+                [self convert2Out_Alg:msAlg.pointer type:AnalogyInnerType_None success:^(NSArray *acts) {
+                    mcSuccess(acts);
+                } failure:nil checkScore:checkScore];
+            }
+        }];
+    }
+}
+
+
 /**
- *  MARK:--------------------同层MC分析--------------------
+ *  MARK:--------------------MC类比--------------------
+ *  @param complete : return mcs&ms&cs notnull
+ *  @desc 缩写说明: m = matchAlg, c = curAlg, mcs = MCSame, ms = MSpecial, cs = CSpecial
  */
--(void) sameLayerAnalysisWithMAlg:(AIAlgNodeBase*)mAlg cAlg:(AIAlgNodeBase*)cAlg complete:(void(^)(NSArray *mcs,NSArray *ms,NSArray *cs))complete{
+-(void) mcAnalogy:(AIAlgNodeBase*)mAlg cAlg:(AIAlgNodeBase*)cAlg complete:(void(^)(NSArray *mcs,NSArray *ms,NSArray *cs))complete{
     //1. 数据准备
     if (!mAlg || !cAlg) {
         return;
