@@ -110,6 +110,7 @@
 		08F738051F7C714F005EAD56 /* AIKVPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F737FF1F7C714F005EAD56 /* AIKVPointer.m */; };
 		08F738061F7C714F005EAD56 /* AIPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738011F7C714F005EAD56 /* AIPointer.m */; };
 		08F738071F7C714F005EAD56 /* AISqlPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738031F7C714F005EAD56 /* AISqlPointer.m */; };
+		08F7C69E23B42F2C0063BF2C /* AIThinkOutAnalogy.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F7C69D23B42F2C0063BF2C /* AIThinkOutAnalogy.m */; };
 		08FBE10E22D56F360088EF1A /* NVModuleUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FBE10D22D56F360088EF1A /* NVModuleUtil.m */; };
 		08FE031E231DEE8C001ED8B4 /* AIThinkOutReason.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FE031D231DEE8C001ED8B4 /* AIThinkOutReason.m */; };
 		2753D7CF7BAEDFEACAF9264A /* libPods-SMG_NothingIsAll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */; };
@@ -336,6 +337,8 @@
 		08F738011F7C714F005EAD56 /* AIPointer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIPointer.m; sourceTree = "<group>"; };
 		08F738021F7C714F005EAD56 /* AISqlPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AISqlPointer.h; sourceTree = "<group>"; };
 		08F738031F7C714F005EAD56 /* AISqlPointer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AISqlPointer.m; sourceTree = "<group>"; };
+		08F7C69C23B42F2C0063BF2C /* AIThinkOutAnalogy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIThinkOutAnalogy.h; sourceTree = "<group>"; };
+		08F7C69D23B42F2C0063BF2C /* AIThinkOutAnalogy.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIThinkOutAnalogy.m; sourceTree = "<group>"; };
 		08FAEC95215EED48004DCEAD /* NVHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVHeader.h; sourceTree = "<group>"; };
 		08FBE10C22D56F360088EF1A /* NVModuleUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVModuleUtil.h; sourceTree = "<group>"; };
 		08FBE10D22D56F360088EF1A /* NVModuleUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NVModuleUtil.m; sourceTree = "<group>"; };
@@ -693,6 +696,8 @@
 				088070A122693C2D00E9E21F /* TOAlgScheme.m */,
 				08FE031C231DEE8C001ED8B4 /* AIThinkOutReason.h */,
 				08FE031D231DEE8C001ED8B4 /* AIThinkOutReason.m */,
+				08F7C69C23B42F2C0063BF2C /* AIThinkOutAnalogy.h */,
+				08F7C69D23B42F2C0063BF2C /* AIThinkOutAnalogy.m */,
 			);
 			path = Out;
 			sourceTree = "<group>";
@@ -1263,6 +1268,7 @@
 				8868F6EB210A946A000EAC9B /* AIAbsCMVManager.m in Sources */,
 				0858C5D12194F8B000951BA5 /* NSArray+MASAdditions.m in Sources */,
 				0858C5CC2194F8B000951BA5 /* MASConstraint.m in Sources */,
+				08F7C69E23B42F2C0063BF2C /* AIThinkOutAnalogy.m in Sources */,
 				08FE031E231DEE8C001ED8B4 /* AIThinkOutReason.m in Sources */,
 				0860617921F92F7100113366 /* AIThinkIn.m in Sources */,
 				0889257F22B0702A00A0DBDD /* NVModuleView.m in Sources */,
