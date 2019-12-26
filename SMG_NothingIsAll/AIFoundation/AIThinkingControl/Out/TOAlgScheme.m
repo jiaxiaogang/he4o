@@ -208,7 +208,12 @@
  *  @实例: 用几个例子,来跑此处代码,看mAlg应该如何得来?如烤蘑菇的例子,坚果去皮的例子,cpu煎蛋的例子;
  */
 -(void) convert2Out_Short_MC_V2:(AIAlgNodeBase*)matchAlg curAlg:(AIAlgNodeBase*)curAlg mcSuccess:(void(^)(NSArray *acts))mcSuccess mcFailure:(void(^)())mcFailure checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
+    //0. 数据准备
+    __block BOOL failured = false;
+    NSMutableArray *allActs = [[NSMutableArray alloc] init];
+    NSMutableArray *alreadyGLs = [[NSMutableArray alloc] init];
     if (matchAlg && curAlg) {
+        
         //1. MC匹配之: LSP里氏判断,M是否是C
         BOOL cIsAbs = ISOK(curAlg, AIAbsAlgNode.class);
         NSArray *cConPorts = cIsAbs ? ((AIAbsAlgNode*)curAlg).conPorts : nil;
@@ -219,7 +224,6 @@
                 return;
             }
             NSArray *msAlgs = [SMGUtils searchNodes:ms];
-            NSMutableArray *alreadyGLs = [[NSMutableArray alloc] init];
             
             //2. 当mNotS时,进行cs处理
             if (!mIsC) {
@@ -238,19 +242,24 @@
                                     //5. MC抵消GL处理之: 转移到_Value()
                                     NSNumber *csValue = NUMTOOK([AINetIndex getData:csValue_p]);
                                     NSNumber *msValue = NUMTOOK([AINetIndex getData:msValue_p]);
+                                    AnalogyInnerType type = AnalogyInnerType_None;
                                     if (csValue > msValue) {//需增大
-                                        [self convert2Out_RelativeValue:msValue_p type:AnalogyInnerType_Greater vSuccess:^(AIFoNodeBase *glFo, NSArray *acts) {
-                                            mcSuccess(acts);
-                                        } vFailure:nil];
+                                        type = AnalogyInnerType_Greater;
                                     }else if(csValue < msValue){//需减小
-                                        [self convert2Out_RelativeValue:msValue_p type:AnalogyInnerType_Less vSuccess:^(AIFoNodeBase *glFo, NSArray *acts) {
-                                            mcSuccess(acts);
-                                        } vFailure:nil];
+                                        type = AnalogyInnerType_Less;
                                     }else{}//再者一样,不处理;
+                                    if (!failured && type != AnalogyInnerType_None) {
+                                        [self convert2Out_RelativeValue:msValue_p type:type vSuccess:^(AIFoNodeBase *glFo, NSArray *acts) {
+                                            [allActs addObjectsFromArray:acts];
+                                        } vFailure:^{
+                                            failured = true;
+                                        }];
+                                    }
                                     
                                     //6. MC抵消GL处理之: 标记已处理;
                                     [alreadyGLs addObject:csAlg];
                                     [alreadyGLs addObject:msAlg];
+                                    break;
                                 }
                             }
                         }
@@ -258,10 +267,12 @@
                     
                     //7. MC未抵消H处理之: 满足csAlg;
                     for (AIAlgNodeBase *csAlg in csAlgs) {
-                        if (![alreadyGLs containsObject:csAlg]) {
+                        if (![alreadyGLs containsObject:csAlg] && !failured) {
                             [self convert2Out_Alg:csAlg.pointer type:AnalogyInnerType_Hav success:^(NSArray *acts) {
-                                mcSuccess(acts);
-                            } failure:nil checkScore:checkScore];
+                                [allActs addObjectsFromArray:acts];
+                            } failure:^{
+                                failured = true;
+                            } checkScore:checkScore];
                         }
                     }
                 }
@@ -269,18 +280,27 @@
             
             //8. MC未抵消N处理之: 修正msAlg;
             for (AIAlgNodeBase *msAlg in msAlgs) {
-                if (![alreadyGLs containsObject:msAlg]) {
+                if (![alreadyGLs containsObject:msAlg] && !failured) {
                     
                     //9. 对msAlg进行评价,看是否需要修正;
                     BOOL scoreSuccess = checkScore(msAlg);
                     if (!scoreSuccess) {
                         [self convert2Out_Alg:msAlg.pointer type:AnalogyInnerType_None success:^(NSArray *acts) {
-                            mcSuccess(acts);
-                        } failure:nil checkScore:checkScore];
+                            [allActs addObjectsFromArray:acts];
+                        } failure:^{
+                            failured = true;
+                        } checkScore:checkScore];
                     }
                 }
             }
         }];
+    }
+    
+    //10. 结果
+    if (failured) {
+        mcFailure();
+    }else{
+        mcSuccess(allActs);
     }
 }
 
