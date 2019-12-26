@@ -70,9 +70,8 @@
  *  3. 将距离与带皮转化成行为,条件的行为化; (如飞行,或去皮); (actionScheme) (行为)
  *  @params curAlg_ps   : 当前需要行为化的部分ps;
  *  @param curFo        : 当前时序
- *  @param oldCheckScore: 反思路径记录,评价;
  */
--(void) convert2Out_Fo:(NSArray*)curAlg_ps curFo:(AIFoNodeBase*)curFo success:(void(^)(NSArray *acts))success failure:(void(^)())failure oldCheckScore:(BOOL(^)(AIAlgNodeBase *mAlg))oldCheckScore;
+-(void) convert2Out_Fo:(NSArray*)curAlg_ps curFo:(AIFoNodeBase*)curFo success:(void(^)(NSArray *acts))success failure:(void(^)())failure;
 
 
 @end

@@ -91,7 +91,7 @@
         outFoModel.actions = acts;
     } failure:^{
         WLog(@"TOR_行为化失败");
-    } oldCheckScore:nil];
+    }];
 }
 
 //MARK:===============================================================
