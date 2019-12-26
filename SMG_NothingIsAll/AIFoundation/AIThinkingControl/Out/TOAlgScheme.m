@@ -135,7 +135,7 @@
             //3. 单cHav时,直接从瞬时做MC匹配行为化;
             __block BOOL successed = false;
             if (type == AnalogyInnerType_Hav) {
-                [self convert2Out_Short_MC:matchAlg curAlg:curAlg mcSuccess:^(NSArray *acts) {
+                [self convert2Out_Short_MC_V2:matchAlg curAlg:curAlg mcSuccess:^(NSArray *acts) {
                     [result addObjectsFromArray:acts];
                     successed = true;
                     NSLog(@"MC_行为化成功, 输出行为: %@",acts);
@@ -178,6 +178,7 @@
 
 /**
  *  MARK:--------------------MC匹配行为化--------------------
+ *  ********** v1 **********
  *  @desc 伪代码:
  *  1. MC匹配时,判断是否可LSP里氏替换;
  *      2. 可替换,success
@@ -195,106 +196,16 @@
  *  @todo
  *      TODO_TEST_HERE: 在alg抽象匹配时,核实下将absAlg去重,为了避免绝对匹配重复导致的联想不以cHav
  *
- *  @实例: 用几个例子,来跑此处代码,看mAlg应该如何得来?如烤蘑菇的例子,坚果去皮的例子,cpu煎蛋的例子;
+ *  ********** v2 **********
+ *  @desc
+ *      1. 运行方式: 分为GLHN四种处理方式; (Greater,Less,Hav,None)
+ *      2. 主要改进: 对MC类比得到ms&cs&mcs并各进行精确的评价和行为化;
  *
- */
--(void) convert2Out_Short_MC:(AIAlgNodeBase*)matchAlg curAlg:(AIAlgNodeBase*)curAlg mcSuccess:(void(^)(NSArray *acts))mcSuccess mcFailure:(void(^)())mcFailure checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
-    if (matchAlg && curAlg) {
-        //3. MC匹配之: LSP里氏判断,M是否是C
-        BOOL cIsAbs = ISOK(curAlg, AIAbsAlgNode.class);
-        NSArray *cConPorts = cIsAbs ? ((AIAbsAlgNode*)curAlg).conPorts : nil;
-        BOOL mIsC = [SMGUtils containsSub_p:matchAlg.pointer parentPorts:cConPorts];
-        if (mIsC) {
-            
-            //4. 进行反思
-            BOOL rtSuccess = checkScore(matchAlg);
-            if (rtSuccess) {
-                mcSuccess(nil);
-            }else{
-                WLog(@"行为化失败,里氏替换评价未通过");
-                mcFailure();
-            }
-        }else{
-            //5. MC匹配之: 同级判断,M和C都是absMC
-            NSArray *mAbs_ps = [SMGUtils convertPointersFromPorts:matchAlg.absPorts];
-            NSArray *cAbs_ps = [SMGUtils convertPointersFromPorts:curAlg.absPorts];
-            //6. c更重要,c的abs强度优先;
-            NSArray *absMC_ps = ARRTOOK([SMGUtils filterSame_ps:cAbs_ps parent_ps:mAbs_ps]);
-            __block BOOL successed = false;
-            
-            for (AIPointer *absMC_p in absMC_ps) {
-                //7. 同级加工,changeM2C之: 取subM和subC分别多余信息;
-                AIAlgNodeBase *absMC = [SMGUtils searchNode:absMC_p];
-                if (absMC) {
-                    NSArray *subM = [SMGUtils removeSub_ps:matchAlg.content_ps parent_ps:absMC.content_ps];
-                    NSArray *subC = [SMGUtils removeSub_ps:curAlg.content_ps parent_ps:absMC.content_ps];
-                    
-                    //8. 加工changeM2C (目前仅支持一个特征不同);
-                    AIKVPointer *change_p = nil;
-                    AnalogyInnerType changeType = AnalogyInnerType_Default;
-                    if (subM.count > 0 && subC.count == 0) {
-                        if (subM.count == 1) {
-                            //9. 多余单value_p
-                            change_p = ARR_INDEX(subM, 0);
-                            changeType = AnalogyInnerType_Less;
-                        }else{
-                            //10 多余单alg_p
-                            AIAlgNodeBase *alg = [AINetIndexUtils getAbsoluteMatchingAlgNodeWithValuePs:subM];
-                            if (alg) change_p = alg.pointer;
-                            changeType = AnalogyInnerType_None;
-                        }
-                    }else if (subC.count > 0 && subM.count == 0) {
-                        if (subC.count == 1) {
-                            //11. 缺少单value_p
-                            change_p = ARR_INDEX(subC, 0);
-                            changeType = AnalogyInnerType_Greater;
-                        }else{
-                            //12. 缺少单alg_p
-                            AIAlgNodeBase *alg = [AINetIndexUtils getAbsoluteMatchingAlgNodeWithValuePs:subC];
-                            if (alg) change_p = alg.pointer;
-                            changeType = AnalogyInnerType_Hav;
-                        }
-                    }
-                    
-                    //13. 针对change_p进行行为化;
-                    if (change_p) {
-                        if (changeType == AnalogyInnerType_Greater || changeType == AnalogyInnerType_Less) {
-                            
-                            //TODO191213: 去转化,将parentCheckScore传递过去,供_fos使用;
-                            [self convert2Out_RelativeValue:change_p type:changeType vSuccess:^(AIFoNodeBase *glFo, NSArray *acts) {
-                                mcSuccess(acts);
-                                successed = true;
-                            } vFailure:^{
-                                WLog(@"value_行为化失败");
-                            }];
-                        }else if (changeType == AnalogyInnerType_Hav || changeType == AnalogyInnerType_None){
-                            //Q: 为何此处curAlg_ps传nil?
-                            //A: 因为change_p不是curAlg,比如curAlg_ps是[吃,烤蘑菇],那么change_p可能是火,如果重组LSPFo可能会组成[吃,火] (解决方案参考:17208表);
-                            [self convert2Out_Alg:change_p type:changeType success:^(NSArray *acts) {
-                                mcSuccess(acts);
-                                successed = true;
-                            } failure:nil checkScore:checkScore];
-                        }
-                    }
-                }
-                
-                //14. 成功时,跳出循环;
-                if (successed) {
-                    return;
-                }
-            }
-        }
-    }
-    mcFailure();
-}
-
-
-/**
- *  MARK:--------------------MC匹配--------------------
- *  @desc 分为GLHN四种处理方式; (Greater,Less,Hav,None)
  *  @desc 理性决策:
  *      1. 进行理性MC,并返回到checkScore进行理性预测评价;
  *      2. GLH为理性,因为必须满足,(其中H随后看是否需要进行评价下,比如苹果不甜,也照样能吃);
+ *
+ *  @实例: 用几个例子,来跑此处代码,看mAlg应该如何得来?如烤蘑菇的例子,坚果去皮的例子,cpu煎蛋的例子;
  */
 -(void) convert2Out_Short_MC_V2:(AIAlgNodeBase*)matchAlg curAlg:(AIAlgNodeBase*)curAlg mcSuccess:(void(^)(NSArray *acts))mcSuccess mcFailure:(void(^)())mcFailure checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
     if (matchAlg && curAlg) {
@@ -613,4 +524,117 @@
 //        } failure:nil];
 //    }
 //    return result;
+//}
+
+//20191226正式改用v2方法; (v1说明:以LSP和同级两种匹配,同级时单value则GL,多value则HN) (v2说明:以MC类比,并得出ms&cs&mcs各进行评价与行为化)
+/**
+ *  MARK:--------------------MC匹配行为化--------------------
+ *  @desc 伪代码:
+ *  1. MC匹配时,判断是否可LSP里氏替换;
+ *      2. 可替换,success
+ *      3. 不可替换,changeM2C,判断条件为value_p.cLess / value_p.cGreater / alg_p.cHav / alg_p.cNone;
+ *          4. alg_p则递归到convert2Out_Single_Alg();
+ *          5. value_p则递归到convert2Out_Single_Value();
+ *  @desc
+ *      1. MC匹配,仅针对cHav做行为化;
+ *      2. MC匹配,是对瞬时记忆中的matchAlg做匹配行为化;
+ *      3. 当MC匹配转移change条件时,递归到single_Alg或single_Value进行行为化;
+ *
+ *  @desc
+ *      1. xx年xx月xx日: matchAlg优先,都是通过抽具象关联来判断的,而不是直接对比其内容;
+ *
+ *  @todo
+ *      TODO_TEST_HERE: 在alg抽象匹配时,核实下将absAlg去重,为了避免绝对匹配重复导致的联想不以cHav
+ *
+ *  @实例: 用几个例子,来跑此处代码,看mAlg应该如何得来?如烤蘑菇的例子,坚果去皮的例子,cpu煎蛋的例子;
+ *
+ */
+//-(void) convert2Out_Short_MC_V1:(AIAlgNodeBase*)matchAlg curAlg:(AIAlgNodeBase*)curAlg mcSuccess:(void(^)(NSArray *acts))mcSuccess mcFailure:(void(^)())mcFailure checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
+//    if (matchAlg && curAlg) {
+//        //3. MC匹配之: LSP里氏判断,M是否是C
+//        BOOL cIsAbs = ISOK(curAlg, AIAbsAlgNode.class);
+//        NSArray *cConPorts = cIsAbs ? ((AIAbsAlgNode*)curAlg).conPorts : nil;
+//        BOOL mIsC = [SMGUtils containsSub_p:matchAlg.pointer parentPorts:cConPorts];
+//        if (mIsC) {
+//
+//            //4. 进行反思
+//            BOOL rtSuccess = checkScore(matchAlg);
+//            if (rtSuccess) {
+//                mcSuccess(nil);
+//            }else{
+//                WLog(@"行为化失败,里氏替换评价未通过");
+//                mcFailure();
+//            }
+//        }else{
+//            //5. MC匹配之: 同级判断,M和C都是absMC
+//            NSArray *mAbs_ps = [SMGUtils convertPointersFromPorts:matchAlg.absPorts];
+//            NSArray *cAbs_ps = [SMGUtils convertPointersFromPorts:curAlg.absPorts];
+//            //6. c更重要,c的abs强度优先;
+//            NSArray *absMC_ps = ARRTOOK([SMGUtils filterSame_ps:cAbs_ps parent_ps:mAbs_ps]);
+//            __block BOOL successed = false;
+//
+//            for (AIPointer *absMC_p in absMC_ps) {
+//                //7. 同级加工,changeM2C之: 取subM和subC分别多余信息;
+//                AIAlgNodeBase *absMC = [SMGUtils searchNode:absMC_p];
+//                if (absMC) {
+//                    NSArray *subM = [SMGUtils removeSub_ps:matchAlg.content_ps parent_ps:absMC.content_ps];
+//                    NSArray *subC = [SMGUtils removeSub_ps:curAlg.content_ps parent_ps:absMC.content_ps];
+//
+//                    //8. 加工changeM2C (目前仅支持一个特征不同);
+//                    AIKVPointer *change_p = nil;
+//                    AnalogyInnerType changeType = AnalogyInnerType_Default;
+//                    if (subM.count > 0 && subC.count == 0) {
+//                        if (subM.count == 1) {
+//                            //9. 多余单value_p
+//                            change_p = ARR_INDEX(subM, 0);
+//                            changeType = AnalogyInnerType_Less;
+//                        }else{
+//                            //10 多余单alg_p
+//                            AIAlgNodeBase *alg = [AINetIndexUtils getAbsoluteMatchingAlgNodeWithValuePs:subM];
+//                            if (alg) change_p = alg.pointer;
+//                            changeType = AnalogyInnerType_None;
+//                        }
+//                    }else if (subC.count > 0 && subM.count == 0) {
+//                        if (subC.count == 1) {
+//                            //11. 缺少单value_p
+//                            change_p = ARR_INDEX(subC, 0);
+//                            changeType = AnalogyInnerType_Greater;
+//                        }else{
+//                            //12. 缺少单alg_p
+//                            AIAlgNodeBase *alg = [AINetIndexUtils getAbsoluteMatchingAlgNodeWithValuePs:subC];
+//                            if (alg) change_p = alg.pointer;
+//                            changeType = AnalogyInnerType_Hav;
+//                        }
+//                    }
+//
+//                    //13. 针对change_p进行行为化;
+//                    if (change_p) {
+//                        if (changeType == AnalogyInnerType_Greater || changeType == AnalogyInnerType_Less) {
+//
+//                            //TODO191213: 去转化,将parentCheckScore传递过去,供_fos使用;
+//                            [self convert2Out_RelativeValue:change_p type:changeType vSuccess:^(AIFoNodeBase *glFo, NSArray *acts) {
+//                                mcSuccess(acts);
+//                                successed = true;
+//                            } vFailure:^{
+//                                WLog(@"value_行为化失败");
+//                            }];
+//                        }else if (changeType == AnalogyInnerType_Hav || changeType == AnalogyInnerType_None){
+//                            //Q: 为何此处curAlg_ps传nil?
+//                            //A: 因为change_p不是curAlg,比如curAlg_ps是[吃,烤蘑菇],那么change_p可能是火,如果重组LSPFo可能会组成[吃,火] (解决方案参考:17208表);
+//                            [self convert2Out_Alg:change_p type:changeType success:^(NSArray *acts) {
+//                                mcSuccess(acts);
+//                                successed = true;
+//                            } failure:nil checkScore:checkScore];
+//                        }
+//                    }
+//                }
+//
+//                //14. 成功时,跳出循环;
+//                if (successed) {
+//                    return;
+//                }
+//            }
+//        }
+//    }
+//    mcFailure();
 //}
