@@ -110,12 +110,20 @@
  */
 +(CGFloat) dataOut_CheckScore_ExpOut:(AIPointer*)foNode_p;
 
-/**
- *  MARK:--------------------里氏替换反思评价--------------------
- *  @desc 对Liskov Substitution Principle LSP的评价,包含先理性评价,后感性评价;
- */
-+(BOOL) dataOut_CheckScore_LSPRethink:(AIShortMatchModel*)mModel;
 
+/**
+ *  MARK:--------------------指定ratio的评价重载--------------------
+ *  @desc 对MC的评价时:
+ *      1. 理性评价: 由MC匹配方法中,进行类比ms&cs&mcs决定;
+ *      2. 感性评价: 由此处进行计算得出;
+ *          如: 判断变脏后,不能吃; 参考17202表中示图 (被吃mv为负 (理性是间接的感性) (导致负价值))
+ *          如: 判断cpu损坏,会浪费钱;
+ *          如: 带皮坚果,不能吃, (根本,不能吃,比如坚果皮 (抽象为:吃皮,导致负mv))
+ *
+ *  @desc 对ExpOut评价时:
+ *      1. 以默认ratio=0.2,进行评价;
+ */
++(CGFloat) getScoreForce:(AIPointer*)cmvNode_p ratio:(CGFloat)ratio;
 
 /**
  *  MARK:--------------------获取一条不在不应期的foNode/algNode--------------------

@@ -237,28 +237,6 @@
     //}
 }
 
-+(BOOL) dataOut_CheckScore_LSPRethink:(AIShortMatchModel*)mModel {
-    //TODOTOMORROW:
-    if (mModel) {
-        //1. 进行理性评价 (参考手稿);
-        //看是否预测到鸡蛋变脏,或者cpu损坏;
-        
-        //判断变脏后,不能吃; 参考17202表中示图
-        //判断cpu损坏,会浪费钱;
-        
-        //c. 向抽象取到"脏食物",
-        //c1 被吃mv为负 (理性是间接的感性) (导致负价值);
-        //c2 根本,不能吃,比如坚果皮 (抽象不指向食物);
-        
-        
-        
-        
-        //2. 进行感性评价 (参考手稿);
-        //看是否预测到不好的价值,比如宁饿死不吃屎;
-    }
-    return true;
-}
-
 +(id) scheme_GetAValidNode:(NSArray*)check_ps except_ps:(NSMutableArray*)except_ps checkBlock:(BOOL(^)(id checkNode))checkBlock{
     //1. 数据检查
     if (!ARRISOK(check_ps)) {

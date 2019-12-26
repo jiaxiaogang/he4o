@@ -29,18 +29,6 @@
     self.shortMatchModel = shortMatchModel;
 }
 
-
-//TODOTOMORROW:
-//1. 查看下TOP的价值评价机制;
-//2. 查看下行为化中,每一次重组出的fo;
-//3. 将2中,返回的重组fo,交给1,做评价; (将cMv与mMv进行类比,并且返回一个价值可行度)
-
-//1. 配合190_行为化架构图,看看此处,哪些itemFo需要被评价;
-//2. 写方法,支持itemFo的理性评价和感性评价;
-//3. 写评价时所需要,"设定的阈值"的计算算法;
-
-
-
 //MARK:===============================================================
 //MARK:                     < FO & ALG >
 //MARK:===============================================================
@@ -51,6 +39,7 @@
  *      1. 191105总结下,此处有多少处,使用短时,长时,在前面插入瞬时;
  *      2. 191105针对概念嵌套的代码,先去掉;
  *      3. 191107考虑将foScheme也搬过来,优先使用matchFo做第一解决方案;
+ *  @TODO_TEST_HERE: 测试下阈值-3,是否合理;
  */
 -(void) convert2Out_Fo:(NSArray*)curAlg_ps curFo:(AIFoNodeBase*)curFo success:(void(^)(NSArray *acts))success failure:(void(^)())failure oldCheckScore:(BOOL(^)(AIAlgNodeBase *mAlg))oldCheckScore{
     //1. 数据准备
@@ -66,13 +55,6 @@
         
     //2. 依次单个概念行为化
     for (AIKVPointer *curAlg_p in curAlg_ps) {
-        
-        //1. 当前并没有概念嵌套,所以是否cHav和cNone已经没地方构建了?
-        //  a> 到内类比代码处,去查看,是否真的没构建cHav&cNone了;
-        //  b> 如果没了,写上,比如`ab` 到 `abcd`就是rangeOrder导致`cd`变有了;
-        //2. 优先根据cHav节点,有无,来做行为化; 如:此处要行为化概念`cd2` 先判断 `cd`.cHav变有; (matchAlg优先)
-        //3. 再根据除cHav之外的部分,来做行为化; 如`2`,如何变`大小`;
-        
         __block BOOL successed = false;
         [self convert2Out_Alg:curAlg_p type:AnalogyInnerType_Hav success:^(NSArray *actions) {
             //3. 行为化成功,则收集;
@@ -85,18 +67,25 @@
             //3. 生成新checkScore = newCheckScore + oldCheckScore;
             if (mAlg) {
                 //4. =====对newCheckScore进行评价;
-                //5. LSP反思: 用curAlg_ps + matchAlg组成rethinkAlg_ps
+                //5. MC反思: 用curAlg_ps + matchAlg组成rethinkAlg_ps
                 NSMutableArray *rethinkAlg_ps = [[NSMutableArray alloc] initWithArray:curFo.content_ps];
                 NSInteger replaceIndex = [rethinkAlg_ps indexOfObject:curAlg_p];
                 [rethinkAlg_ps replaceObjectAtIndex:replaceIndex withObject:mAlg.pointer];
                 
-                //6. LSP反思: 回归tir反思,重新识别预测时序,预测价值;
+                //6. MC反思: 回归tir反思,重新识别理性预测时序,预测价值; (预测到鸡蛋变脏,或者cpu损坏) (理性预测影响评价即理性评价)
                 AIShortMatchModel *mModel = [self.delegate toAlgScheme_LSPRethink:mAlg rtFoContent_ps:rethinkAlg_ps];
                 
-                //7. LSP反思: 对mModel进行评价;
-                BOOL newSuccess = [ThinkingUtils dataOut_CheckScore_LSPRethink:mModel];
-                if (!newSuccess) return false;
+                //7. MC反思: 对mModel进行评价;
+                CGFloat mcScore = [ThinkingUtils getScoreForce:mModel.matchFo.cmvNode_p ratio:mModel.matchFoValue];
                 
+                //8. 对原fo进行评价
+                CGFloat curScore = [ThinkingUtils getScoreForce:curFo.cmvNode_p ratio:1.0f];
+                
+                //9. 写评价时所需要,"设定的"的计算算法;
+                
+                //10. 对mcScore和curScore返回评价值进行类比 (如宁饿死不吃屎);
+                CGFloat validDelta = -3;//阈值为-3;
+                return curScore + mcScore > validDelta;
                 //8. =====对oldCheckScore进行评价 (在递归中,上一级评价成功,才进行下一级评价,否则中止);
                 //有无大小,都有可能是oldCheckScore的来源;
                 //结合实例,思考此处mAlg应该传递什么;
@@ -107,7 +96,7 @@
                 //比如,去皮成功,我们要重组的,不是[吃,去皮],而是[吃,没皮坚果];
                 //TODOTOMORROW: 思考一下,此处oldCheckScore,mAlg传什么? (是curFo的最后一个item吗?)
                 //方向: 用几个例子,来跑此处代码,看mAlg应该如何得来?如烤蘑菇的例子,坚果去皮的例子,cpu煎蛋的例子;
-                return oldCheckScore(nil);
+                //return oldCheckScore(nil);
             }
             
             //9. 默认返回可行;
@@ -316,6 +305,9 @@
 /**
  *  MARK:--------------------MC匹配--------------------
  *  @desc 分为GLHN四种处理方式; (Greater,Less,Hav,None)
+ *  @desc 理性决策:
+ *      1. 进行理性MC,并返回到checkScore进行理性预测评价;
+ *      2. GLH为理性,因为必须满足,(其中H随后看是否需要进行评价下,比如苹果不甜,也照样能吃);
  */
 -(void) convert2Out_Short_MC_V2:(AIAlgNodeBase*)matchAlg curAlg:(AIAlgNodeBase*)curAlg mcSuccess:(void(^)(NSArray *acts))mcSuccess mcFailure:(void(^)())mcFailure checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
     if (matchAlg && curAlg) {
@@ -346,8 +338,8 @@
                                 AIKVPointer *msValue_p = ARR_INDEX(msAlg.content_ps, 0);
                                 if ([csValue_p.identifier isEqualToString:msValue_p.identifier]) {
                                     //5. MC抵消GL处理之: 转移到_Value()
-                                    NSNumber *csValue = [AINetIndex getData:csValue_p];
-                                    NSNumber *msValue = [AINetIndex getData:msValue_p];
+                                    NSNumber *csValue = NUMTOOK([AINetIndex getData:csValue_p]);
+                                    NSNumber *msValue = NUMTOOK([AINetIndex getData:msValue_p]);
                                     if (csValue > msValue) {//需增大
                                         [self convert2Out_RelativeValue:msValue_p type:AnalogyInnerType_Greater vSuccess:^(AIFoNodeBase *glFo, NSArray *acts) {
                                             mcSuccess(acts);
@@ -380,9 +372,14 @@
             //8. MC未抵消N处理之: 修正msAlg;
             for (AIAlgNodeBase *msAlg in msAlgs) {
                 if (![alreadyGLs containsObject:msAlg]) {
-                    [self convert2Out_Alg:msAlg.pointer type:AnalogyInnerType_None success:^(NSArray *acts) {
-                        mcSuccess(acts);
-                    } failure:nil checkScore:checkScore];
+                    
+                    //9. 对msAlg进行评价,看是否需要修正;
+                    BOOL scoreSuccess = checkScore(msAlg);
+                    if (!scoreSuccess) {
+                        [self convert2Out_Alg:msAlg.pointer type:AnalogyInnerType_None success:^(NSArray *acts) {
+                            mcSuccess(acts);
+                        } failure:nil checkScore:checkScore];
+                    }
                 }
             }
         }];
