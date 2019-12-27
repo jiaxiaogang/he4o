@@ -147,7 +147,6 @@
             int matchingCount2 = [NUMTOOK([countDic objectForKey:obj2]) intValue];
             return matchingCount1 < matchingCount2;
         }]);
-        NSLog(@"TODO_TEST_HERE:从大到小排序完成============:%@",sortKeys);
         
         //5. 从大到小,依次取到对应的node和matchingCount
         for (NSData *key in sortKeys) {
