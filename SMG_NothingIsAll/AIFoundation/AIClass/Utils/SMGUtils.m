@@ -407,11 +407,10 @@
                 PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:saveRootPath];
                 [cache setObject:saveObj forKey:saveFileName];
             }
-            NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-            for (NSString *key in dic.allKeys) {
-                NSLog(@">>>>>>>>>WriteDisk,%@",[key stringByReplacingOccurrencesOfString:cachePath withString:@""]);
-            }
-            
+            //NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+            //for (NSString *key in dic.allKeys)
+            //    NSLog(@">>>>>>>>>WriteDisk,%@",[key stringByReplacingOccurrencesOfString:cachePath withString:@""]);
+            NSLog(@">>>>>>>>>WriteDisk,%lu",(unsigned long)dic.count);
         }];
     }
     

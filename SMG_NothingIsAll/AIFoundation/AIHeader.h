@@ -75,11 +75,13 @@
 #define STRTOOK(s) [SMGUtils strToOk:s]                                 //string强检查
 #define STRFORMAT(s, ...) [NSString stringWithFormat:s, ##__VA_ARGS__]  //String.format
 #define SUBSTR2INDEX(s,index) [SMGUtils subStr:s toIndex:index]         //subStr_toIndex
+#define STRTOARR(str, sep) [SMGUtils strToArr:str sep:sep];             //str分隔成arr
 
 //Array
 #define ARRISOK(a) [SMGUtils arrIsOk:a]                                 //是否空数组
 #define ARRTOOK(a) [SMGUtils arrToOk:a]                                 //数组强检查
 #define ARR_INDEX(a,i) [SMGUtils arrIndex:a index:i]                    //数组取子防闪
+#define ARR_TRANSINDEX(a,i) [SMGUtils arrTransIndex:a index:i]          //数组反序取子防闪
 #define ARR_INDEXISOK(a,i) [SMGUtils arrIndexIsOk:a index:i]            //数组可移除i
 #define ARR_SUB(a,s,l) [SMGUtils arrSub:a start:s length:l]             //数组截取 (arr start length)
 
@@ -144,5 +146,7 @@ va_end(args);\
 /**
  *  MARK:--------------------LOG--------------------
  */
-#define ELog(fmt, ...) NSLog((@"error!!!  %s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
-#define WLog(fmt, ...) NSLog((@"warning???  %s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
+//#define ELog(fmt, ...) NSLog((@"error!!! %s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
+#define ELog(fmt, ...) NSLog((@"<错误> [%@ %d] " fmt), FILENAME, __LINE__, ##__VA_ARGS__);
+#define WLog(fmt, ...) NSLog((@"<警告> [%@ %d] " fmt), FILENAME, __LINE__, ##__VA_ARGS__);
+#define FILENAME [SMGUtils arrTransIndex:[SMGUtils strToArr:[NSString stringWithUTF8String:__FILE__] sep:@"/"] index:0]

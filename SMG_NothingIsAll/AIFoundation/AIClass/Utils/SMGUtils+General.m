@@ -18,6 +18,10 @@
 +(NSString*) strToOk:(NSString*)s{
     return (s && ![s isKindOfClass:[NSNull class]]) ? ([s isKindOfClass:[NSString class]] ? s : [NSString stringWithFormat:@"%@", s]) : @"";
 }
++(NSArray*) strToArr:(NSString*)str sep:(NSString*)sep{
+    str = STRTOOK(str);
+    return [str componentsSeparatedByString:sep];
+}
 
 //注: STRFORMAT目前的宏定义中,并没有多余调用,所以不需要单独封装出来;
 //注2: 如果有一天要使用此代码,可以尝试1: SMGArrayMake()来转换array, 尝试2:直接传递format,...到stringWithFormat:
@@ -46,6 +50,10 @@
 }
 +(id) arrIndex:(NSArray*)a index:(NSInteger)i{
     return (a && [a isKindOfClass:[NSArray class]] && a.count > i) ? a[i] : nil;
+}
++(id) arrTransIndex:(NSArray*)a index:(NSInteger)i{
+    NSInteger index = ARRTOOK(a).count - 1 - i;
+    return [self arrIndex:a index:index];
 }
 +(BOOL) arrIndexIsOk:(NSArray*)a index:(NSInteger)i{
     return (a && [a isKindOfClass:[NSArray class]] && a.count > i && i >= 0);
