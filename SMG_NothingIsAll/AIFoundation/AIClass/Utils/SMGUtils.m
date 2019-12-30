@@ -398,11 +398,9 @@
         [[XGWedis sharedInstance] setSaveBlock:^(NSDictionary *dic) {
             dic = DICTOOK(dic);
             for (NSString *saveKey in dic.allKeys) {
-                NSObject *saveObj = [dic objectForKey:saveKey];
-                
-                NSArray *saveKeyArr = ARRTOOK([saveKey componentsSeparatedByString:@"/"]);
-                NSString *saveFileName = ARR_INDEX(saveKeyArr, saveKeyArr.count - 1);
-                saveFileName = STRTOOK(saveFileName);
+                id saveObj = [dic objectForKey:saveKey];
+                NSString *sep = @"/";
+                NSString *saveFileName = STRTOOK(ARR_TRANSINDEX(STRTOARR(saveKey, sep), 0));
                 NSString *saveRootPath = STRTOOK(SUBSTR2INDEX(saveKey, (saveKey.length - saveFileName.length - 1)));
                 PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:saveRootPath];
                 [cache setObject:saveObj forKey:saveFileName];
@@ -410,7 +408,9 @@
             //NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
             //for (NSString *key in dic.allKeys)
             //    NSLog(@">>>>>>>>>WriteDisk,%@",[key stringByReplacingOccurrencesOfString:cachePath withString:@""]);
-            NSLog(@">>>>>>>>>WriteDisk,%lu",(unsigned long)dic.count);
+            if (dic.count > 0) {
+                NSLog(@">>>>>>>>>WriteDisk,%lu",(unsigned long)dic.count);
+            }
         }];
     }
     

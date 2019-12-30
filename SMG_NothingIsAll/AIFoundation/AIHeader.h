@@ -75,7 +75,7 @@
 #define STRTOOK(s) [SMGUtils strToOk:s]                                 //string强检查
 #define STRFORMAT(s, ...) [NSString stringWithFormat:s, ##__VA_ARGS__]  //String.format
 #define SUBSTR2INDEX(s,index) [SMGUtils subStr:s toIndex:index]         //subStr_toIndex
-#define STRTOARR(str, sep) [SMGUtils strToArr:str sep:sep];             //str分隔成arr
+#define STRTOARR(str, sep) [SMGUtils strToArr:str sep:sep]              //str分隔成arr
 
 //Array
 #define ARRISOK(a) [SMGUtils arrIsOk:a]                                 //是否空数组
