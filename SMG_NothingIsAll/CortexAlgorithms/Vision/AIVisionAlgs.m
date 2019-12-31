@@ -37,6 +37,7 @@
             model.direction = [self direction:selfView target:curView];
             model.distance = [self distance:selfView target:curView];
             model.border = [self border:curView];
+            NSLog(@"视觉目标 [距离:%f 角度:%f 宽:%f 高:%f 皮:%f 圆角:%f]",model.distance,model.direction,model.sizeWidth,model.sizeHeight,model.border,model.radius);
             NSMutableDictionary *modelDic = [NSObject getDic:model containParent:true];
             for (NSString *key in modelDic.allKeys) {
                 if ([NUMTOOK([modelDic objectForKey:key]) isEqualToNumber:@(0)]) {
@@ -122,7 +123,7 @@
     
     //5. 如果是8,也是0;
     float result = (paramInt % 8) / 8.0f;
-    NSLog(@"视觉目标方向 >> 角度:%f 原始参数:%f 返回参数:%f",rads / M_PI * 180,protoParam,result);
+    NSLog(@"视觉目标 方向 >> 角度:%f 原始参数:%f 返回参数:%f",rads / M_PI * 180,protoParam,result);
     return result;
 }
 

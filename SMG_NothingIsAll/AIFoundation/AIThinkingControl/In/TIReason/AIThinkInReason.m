@@ -99,6 +99,7 @@
     
     //3. 直接将assAlgNode设置为algNode的抽象; (这样后面TOR理性决策时,才可以直接对当前瞬时实物进行很好的理性评价);
     if (ISOK(assAlgNode, AIAlgNodeBase.class)) {
+        //TODOTOMORROW:点击饥饿,再点击乱投,此处全含assAlgNode为具象节点,在抽象后,与algNode都没得到正常的网络关联;
         result = [theNet createAbsAlgNode:assAlgNode.content_ps conAlgs:@[assAlgNode,algNode] isMem:false];
     }
     
@@ -253,6 +254,7 @@
  *
  */
 +(void) partMatching_Fo:(AIFoNodeBase*)shortMemFo finishBlock:(void(^)(id matchFo,CGFloat matchValue))finishBlock{
+    //TODOTOMORROW:点击饥饿,再点击乱投,此处返回了matchFo:nil matchValue:0;
     //1. 数据准备
     if (!finishBlock) {
         return;

@@ -112,7 +112,7 @@
  */
 -(void) dataIn_NoMV:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps{
     //1. 数据准备 (瞬时记忆,理性匹配出的模型);
-    __block AIShortMatchModel *mModel = nil;
+    __block AIShortMatchModel *mModel = [[AIShortMatchModel alloc] init];
     mModel.protoAlg_p = algNode_p;
     
     //2. 识别概念;
@@ -130,7 +130,7 @@
     }];
     
     //4. 传给TOR,做下一步处理;
-    [self.delegate aiThinkIn_Commit2TC:mModel];
+    [self.delegate aiThinkIn_Commit2TC:mModel];//TODOTOMORROW:点击饥饿,再点击乱投,此处返回了matchFo:nil matchValue:0;
 }
 
 
