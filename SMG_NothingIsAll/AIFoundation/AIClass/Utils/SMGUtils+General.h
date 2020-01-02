@@ -15,6 +15,7 @@
 +(NSString*) strToOk:(NSString*)s;
 +(NSArray*) strToArr:(NSString*)str sep:(NSString*)sep;     //str分隔arr
 +(NSString*) subStr:(NSString*)s toIndex:(NSInteger)index;
++(NSString*) strFormat:(NSString*)str length:(NSInteger)length;   //str强行长度
 
 //array
 +(BOOL) arrIsOk:(NSArray*)a;                            //数组有效判断

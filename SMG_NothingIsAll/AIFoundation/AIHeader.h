@@ -147,6 +147,13 @@ va_end(args);\
  *  MARK:--------------------LOG--------------------
  */
 //#define ELog(fmt, ...) NSLog((@"error!!! %s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
-#define ELog(fmt, ...) NSLog((@"<错误> [%@ %d] " fmt), FILENAME, __LINE__, ##__VA_ARGS__);
-#define WLog(fmt, ...) NSLog((@"<警告> [%@ %d] " fmt), FILENAME, __LINE__, ##__VA_ARGS__);
-#define FILENAME [SMGUtils arrTransIndex:[SMGUtils strToArr:[NSString stringWithUTF8String:__FILE__] sep:@"/"] index:0]
+//#define ELog(fmt, ...) NSLog((@"<错误> [%@ %d] " fmt), FILENAME, __LINE__, ##__VA_ARGS__);
+//#define WLog(fmt, ...) NSLog((@"<警告> [%@ %d] " fmt), FILENAME, __LINE__, ##__VA_ARGS__);
+//#define FILENAME [SMGUtils arrTransIndex:[SMGUtils strToArr:[NSString stringWithUTF8String:__FILE__] sep:@"/"] index:0]
+
+#define FILENAME [[NSString stringWithUTF8String:__FILE__] lastPathComponent]
+#define FILENAME_UTF8 [[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String]
+#define FILENAME_UTF8_20 [[SMGUtils strFormat:FILENAME length:20] UTF8String]   //utf8版的20位文件名,供c语言%s使用;
+#define NSLog(FORMAT, ...) fprintf(stderr,"%s [%s %d]\t%s\n",__TIME__,FILENAME_UTF8_20, __LINE__, [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
+#define ELog(fmt, ...) NSLog((@"<错误> " fmt), ##__VA_ARGS__);
+#define WLog(fmt, ...) NSLog((@"<警告> " fmt), ##__VA_ARGS__);

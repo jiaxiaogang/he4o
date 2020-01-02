@@ -29,7 +29,7 @@
     conNode.pointer = [SMGUtils createPointerForAlg:kPN_ALG_NODE dataSource:dataSource isOut:isOut isMem:isMem];
     
     //3. 指定value_ps
-    conNode.content_ps = [SMGUtils sortPointers:algsArr];
+    conNode.content_ps = [[NSMutableArray alloc] initWithArray:[SMGUtils sortPointers:algsArr]];
  
     //4. value.refPorts (更新引用序列)
     [AINetUtils insertRefPorts_AllAlgNode:conNode.pointer value_ps:conNode.content_ps ps:conNode.content_ps];

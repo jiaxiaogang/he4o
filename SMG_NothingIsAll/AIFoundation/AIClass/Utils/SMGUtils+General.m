@@ -22,6 +22,20 @@
     str = STRTOOK(str);
     return [str componentsSeparatedByString:sep];
 }
++(NSString*) strFormat:(NSString*)str length:(NSInteger)length{
+    NSString *result = @"";
+    str = STRTOOK(str);
+    if (str.length > length) {
+        result = STRFORMAT(@"%@...",[str substringToIndex:17]);
+    }else{
+        NSMutableString *prefix = [[NSMutableString alloc] init];
+        for (NSInteger i = 0; i < length - str.length; i++) {
+            [prefix appendString:@" "];
+        }
+        result = STRFORMAT(@"%@%@",prefix,str);
+    }
+    return result;
+}
 
 //注: STRFORMAT目前的宏定义中,并没有多余调用,所以不需要单独封装出来;
 //注2: 如果有一天要使用此代码,可以尝试1: SMGArrayMake()来转换array, 尝试2:直接传递format,...到stringWithFormat:
