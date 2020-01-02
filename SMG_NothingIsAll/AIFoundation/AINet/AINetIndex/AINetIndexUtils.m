@@ -73,7 +73,7 @@
             return ARRTOOK([SMGUtils searchObjectForFilePath:item_p.filePath fileName:kFNRefPorts_All(isMem) time:cRTReference_All(isMem)]);
         }
         return nil;
-    } exceptBlock:^BOOL(AIKVPointer *target_p) {
+    } exceptBlock:^BOOL(AIPointer *target_p) {
         if (target_p) {
             //2> 自身 | 排除序列 不可激活;
             return [target_p isEqual:algNode.pointer] || [SMGUtils containsSub_p:target_p parent_ps:except_ps];
@@ -121,7 +121,7 @@
  */
 +(id) partMatching_General:(NSArray*)proto_ps
              refPortsBlock:(NSArray*(^)(AIKVPointer *item_p))refPortsBlock
-               exceptBlock:(BOOL(^)(AIKVPointer *target_p))exceptBlock{
+               exceptBlock:(BOOL(^)(AIPointer *target_p))exceptBlock{
     //1. 数据准备;
     if (ARRISOK(proto_ps)) {
         NSMutableDictionary *countDic = [[NSMutableDictionary alloc] init];
@@ -133,7 +133,7 @@
             
             //3. 进行计数
             for (AIPort *refPort in refPorts) {
-                if (!exceptBlock(item_p)) {
+                if (!exceptBlock(refPort.target_p)) {
                     NSData *key = [NSKeyedArchiver archivedDataWithRootObject:refPort.target_p];
                     int oldCount = [NUMTOOK([countDic objectForKey:key]) intValue];
                     [countDic setObject:@(oldCount + 1) forKey:key];

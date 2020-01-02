@@ -51,6 +51,6 @@
  */
 +(id) partMatching_General:(NSArray*)proto_ps
              refPortsBlock:(NSArray*(^)(AIKVPointer *item_p))refPortsBlock
-               exceptBlock:(BOOL(^)(AIKVPointer *target_p))exceptBlock;
+               exceptBlock:(BOOL(^)(AIPointer *target_p))exceptBlock;
 
 @end
