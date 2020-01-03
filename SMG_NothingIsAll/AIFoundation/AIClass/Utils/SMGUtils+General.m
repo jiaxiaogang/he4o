@@ -22,19 +22,28 @@
     str = STRTOOK(str);
     return [str componentsSeparatedByString:sep];
 }
-+(NSString*) strFormat:(NSString*)str length:(NSInteger)length{
-    NSString *result = @"";
-    str = STRTOOK(str);
-    if (str.length > length) {
-        result = STRFORMAT(@"%@...",[str substringToIndex:17]);
++(NSString*) codeLocateFormat:(NSString*)fileName line:(NSInteger)line{
+    //1. 数据 准备
+    fileName = STRTOOK(fileName);
+    
+    //2. 拼lineStr
+    NSString *lineStr = STRFORMAT(@"%@%ld",(line > 999 ? @"" : ((line > 99 ? @" " : ((line > 9 ? @"  " : @"   "))))),(long)line);
+    
+    //3. 拼fileNameStr字符串
+    NSString *fileNameStr = @"";
+    NSInteger fileNameMax = 20;
+    if (fileName.length > fileNameMax) {
+        fileNameStr = STRFORMAT(@"%@...",[fileName substringToIndex:fileNameMax - 3]);
     }else{
         NSMutableString *prefix = [[NSMutableString alloc] init];
-        for (NSInteger i = 0; i < length - str.length; i++) {
+        for (NSInteger i = 0; i < fileNameMax - fileName.length; i++) {
             [prefix appendString:@" "];
         }
-        result = STRFORMAT(@"%@%@",prefix,str);
+        fileNameStr = STRFORMAT(@"%@%@",prefix,fileName);
     }
-    return result;
+    
+    //3. 拼result字符串
+    return STRFORMAT(@"%@%@",fileNameStr,lineStr);
 }
 
 //注: STRFORMAT目前的宏定义中,并没有多余调用,所以不需要单独封装出来;
