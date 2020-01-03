@@ -100,6 +100,8 @@
     //3. 直接将assAlgNode设置为algNode的抽象; (这样后面TOR理性决策时,才可以直接对当前瞬时实物进行很好的理性评价);
     if (ISOK(assAlgNode, AIAlgNodeBase.class)) {
         //TODOTOMORROW:点击饥饿,再点击乱投,此处全含assAlgNode为具象节点,在抽象后,与algNode都没得到正常的网络关联;
+        //TODOTOMORROW:BUG: 在进制关联时,有时,algNode也是抽象节点,然后被认成了抽象??!!
+        //TODOTOMORROW:测试得出: 有时algNode为内存节点,所以关联在内存中;
         result = [theNet createAbsAlgNode:assAlgNode.content_ps conAlgs:@[assAlgNode,algNode] isMem:false];
     }
     
