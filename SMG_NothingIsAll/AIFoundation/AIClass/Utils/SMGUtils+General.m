@@ -31,9 +31,9 @@
     
     //3. 拼fileNameStr字符串
     NSString *fileNameStr = @"";
-    NSInteger fileNameMax = 20;
+    NSInteger fileNameMax = 19;
     if (fileName.length > fileNameMax) {
-        fileNameStr = STRFORMAT(@"%@...",[fileName substringToIndex:fileNameMax - 3]);
+        fileNameStr = STRFORMAT(@"%@..",[fileName substringToIndex:fileNameMax - 2]);
     }else{
         NSMutableString *prefix = [[NSMutableString alloc] init];
         for (NSInteger i = 0; i < fileNameMax - fileName.length; i++) {
@@ -41,8 +41,6 @@
         }
         fileNameStr = STRFORMAT(@"%@%@",prefix,fileName);
     }
-    
-    //3. 拼result字符串
     return STRFORMAT(@"%@%@",fileNameStr,lineStr);
 }
 

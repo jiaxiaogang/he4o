@@ -17,4 +17,3 @@
 -(void) setTipLog:(NSString*)tipLog;
 
 @end
-

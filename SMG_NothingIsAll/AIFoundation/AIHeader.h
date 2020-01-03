@@ -146,15 +146,7 @@ va_end(args);\
 /**
  *  MARK:--------------------LOG--------------------
  */
-//#define ELog(fmt, ...) NSLog((@"error!!! %s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
-//#define ELog(fmt, ...) NSLog((@"<错误> [%@ %d] " fmt), FILENAME, __LINE__, ##__VA_ARGS__);
-//#define WLog(fmt, ...) NSLog((@"<警告> [%@ %d] " fmt), FILENAME, __LINE__, ##__VA_ARGS__);
-//#define FILENAME [SMGUtils arrTransIndex:[SMGUtils strToArr:[NSString stringWithUTF8String:__FILE__] sep:@"/"] index:0]
-
 #define FILENAME [[NSString stringWithUTF8String:__FILE__] lastPathComponent]
 #define ELog(fmt, ...) NSLog((@"<错误> " fmt), ##__VA_ARGS__);
 #define WLog(fmt, ...) NSLog((@"<警告> " fmt), ##__VA_ARGS__);
-
 #define NSLog(FORMAT, ...) fprintf(stderr,"[%s %s] %s\n",__TIME__,[[SMGUtils codeLocateFormat:FILENAME line:__LINE__]  UTF8String], [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
-
-
