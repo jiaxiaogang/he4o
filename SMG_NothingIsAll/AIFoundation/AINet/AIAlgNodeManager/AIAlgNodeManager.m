@@ -101,7 +101,9 @@
         }
         
         //3. 无则创建
+        BOOL absIsNew = false;
         if (!findAbsNode) {
+            absIsNew = true;
             findAbsNode = [[AIAbsAlgNode alloc] init];
             BOOL isOut = [AINetUtils checkAllOfOut:sortSames];
             findAbsNode.pointer = [SMGUtils createPointerForAlg:kPN_ALG_ABS_NODE dataSource:dataSource isOut:isOut isMem:isMem];
@@ -119,7 +121,8 @@
         //}
         
         //4. value.refPorts (更新/加强微信息的引用序列)
-        [AINetUtils insertRefPorts_AllAlgNode:findAbsNode.pointer value_ps:findAbsNode.content_ps ps:findAbsNode.content_ps difStrong:findAbsNode.conPorts.count];
+        NSInteger difStrong = absIsNew ? validConAlgs.count : 1;
+        [AINetUtils insertRefPorts_AllAlgNode:findAbsNode.pointer value_ps:findAbsNode.content_ps ps:findAbsNode.content_ps difStrong:difStrong];
         
         //5. 关联 & 存储
         [AINetUtils relateAlgAbs:findAbsNode conNodes:validConAlgs];
