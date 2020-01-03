@@ -32,7 +32,7 @@
     conNode.content_ps = [[NSMutableArray alloc] initWithArray:[SMGUtils sortPointers:algsArr]];
  
     //4. value.refPorts (更新引用序列)
-    [AINetUtils insertRefPorts_AllAlgNode:conNode.pointer value_ps:conNode.content_ps ps:conNode.content_ps];
+    [AINetUtils insertRefPorts_AllAlgNode:conNode.pointer value_ps:conNode.content_ps ps:conNode.content_ps difStrong:1];
     
     //5. 存储
     [SMGUtils insertNode:conNode];
@@ -119,7 +119,7 @@
         //}
         
         //4. value.refPorts (更新/加强微信息的引用序列)
-        [AINetUtils insertRefPorts_AllAlgNode:findAbsNode.pointer value_ps:findAbsNode.content_ps ps:findAbsNode.content_ps];
+        [AINetUtils insertRefPorts_AllAlgNode:findAbsNode.pointer value_ps:findAbsNode.content_ps ps:findAbsNode.content_ps difStrong:findAbsNode.conPorts.count];
         
         //5. 关联 & 存储
         [AINetUtils relateAlgAbs:findAbsNode conNodes:validConAlgs];

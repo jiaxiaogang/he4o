@@ -54,8 +54,9 @@
  *  @param algNode_p    : 引用微信息的algNode
  *  @param value_ps     : 微信息组
  *  @param ps           : 生成md5的ps
+ *  @param difStrong    : 构建具象alg时,默认为1,构建抽象时,默认为具象节点数(这个以后不合理再改规则,比如改为平均,或者具象强度之和等);
  */
-+(void) insertRefPorts_AllAlgNode:(AIPointer*)algNode_p value_ps:(NSArray*)value_ps ps:(NSArray*)ps;
++(void) insertRefPorts_AllAlgNode:(AIPointer*)algNode_p value_ps:(NSArray*)value_ps ps:(NSArray*)ps difStrong:(NSInteger)difStrong;
 
 
 /**

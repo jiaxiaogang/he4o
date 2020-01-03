@@ -24,7 +24,7 @@
  *  1. 用于fo: 在imv前发生的noMV的algs数据序列;(前因序列)(使用kvp而不是port的原因是cmvModel的强度不变:参考n12p16)
  *  2. 用于alg: 稀疏码微信息组;(微信息/嵌套概念)指针组 (以pointer默认排序) (去重,否则在局部识别全含时,判定content.count=matchingCount时会失效)
  */
-@property (strong, nonatomic) NSMutableArray *content_ps;
+@property (strong, nonatomic,nonnull) NSMutableArray *content_ps;
 
 /**
  *  MARK:--------------------返回所有absPorts--------------------

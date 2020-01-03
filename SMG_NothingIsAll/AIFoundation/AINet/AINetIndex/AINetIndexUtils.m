@@ -10,7 +10,7 @@
 #import "NSString+Extension.h"
 #import "AIKVPointer.h"
 #import "AIPort.h"
-#import "AIAlgNodeBase.h"
+#import "AIAbsAlgNode.h"
 
 @implementation AINetIndexUtils
 
@@ -155,8 +155,11 @@
             int matchingCount = [NUMTOOK([countDic objectForKey:key]) intValue];
             
             //6. 判断全含; (matchingCount == assAlg.content.count)
-            if (result && result.content_ps.count == matchingCount) {
+            if (ISOK(result, AIAbsAlgNode.class) && result.content_ps.count == matchingCount) {
                 return result;
+            }
+            if (ISOK(result, AIAbsAlgNode.class)) {
+                WLog(@"识别非抽象概念导致不对+1");
             }
         }
     }
