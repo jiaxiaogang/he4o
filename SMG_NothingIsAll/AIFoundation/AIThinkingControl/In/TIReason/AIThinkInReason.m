@@ -263,6 +263,7 @@
     }
     if (!ISOK(shortMemFo, AIFoNodeBase.class)) {
         finishBlock(nil,0);
+        return;
     }
     
     //2. 取lastAlg.refPorts; (取识别到过的抽象节点(如苹果));
@@ -270,10 +271,12 @@
     AIAlgNodeBase *lastConNode = [SMGUtils searchNode:last_p];
     if (!lastConNode) {
         finishBlock(nil,0);
+        return;
     }
-    AIAlgNodeBase *lastRecogniNode = [SMGUtils searchNode:ARR_INDEX(lastConNode.absPorts, 0)];
+    AIAlgNodeBase *lastRecogniNode = [SMGUtils searchNode:ARR_INDEX(lastConNode.absPorts_All, 0)];
     if (!lastRecogniNode) {
         finishBlock(nil,0);
+        return;
     }
     NSArray *lastRecogniRefPorts = ARR_SUB(lastRecogniNode.refPorts, 0, cPartMatchingCheckRefPortsLimit);
     
