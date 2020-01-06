@@ -154,7 +154,7 @@
             AINodeBase *result = [SMGUtils searchNode:key_p];
             int matchingCount = [NUMTOOK([countDic objectForKey:key]) intValue];
             
-            //6. 判断全含; (matchingCount == assAlg.content.count)
+            //6. 判断全含; (matchingCount == assAlg.content.count) (且只能识别为抽象节点)
             if (ISOK(result, AIAbsAlgNode.class) && result.content_ps.count == matchingCount) {
                 return result;
             }

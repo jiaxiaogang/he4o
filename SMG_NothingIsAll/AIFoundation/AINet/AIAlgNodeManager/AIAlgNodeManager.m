@@ -121,7 +121,7 @@
         //}
         
         //4. value.refPorts (更新/加强微信息的引用序列)
-        NSInteger difStrong = absIsNew ? validConAlgs.count : 1;
+        NSInteger difStrong = 1;//absIsNew ? validConAlgs.count : 1;//20200106改回1,自由竞争无论是抽象还是具象;世上没有两片一样的树叶,所以对于抽象来说,本来就是讨便宜,易联想匹配的;
         [AINetUtils insertRefPorts_AllAlgNode:findAbsNode.pointer value_ps:findAbsNode.content_ps ps:findAbsNode.content_ps difStrong:difStrong];
         
         //5. 关联 & 存储

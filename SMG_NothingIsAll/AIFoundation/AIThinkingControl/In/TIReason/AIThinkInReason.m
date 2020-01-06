@@ -70,7 +70,6 @@
 +(AIAlgNodeBase*) dataIn_NoMV_RecognitionIs:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps{
     //1. 数据准备
     AIAlgNodeBase *algNode = [SMGUtils searchNode:algNode_p];
-    AIAlgNodeBase *result = nil;
     if (algNode == nil) {
         return nil;
     }
@@ -99,24 +98,25 @@
     
     //3. 直接将assAlgNode设置为algNode的抽象; (这样后面TOR理性决策时,才可以直接对当前瞬时实物进行很好的理性评价);
     if (ISOK(assAlgNode, AIAlgNodeBase.class)) {
-        //TODOTOMORROW:点击饥饿,再点击乱投,此处全含assAlgNode为具象节点,在抽象后,与algNode都没得到正常的网络关联;
-        //TODOTOMORROW:BUG: 在进制关联时,有时,algNode也是抽象节点,然后被认成了抽象??!!
-        //TODOTOMORROW:测试得出: 有时algNode为内存节点,所以关联在内存中;
-        result = [theNet createAbsAlgNode:assAlgNode.content_ps conAlgs:@[assAlgNode,algNode] isMem:false];
+        //4. 识别到时,value.refPorts -> 更新/加强微信息的引用序列
+        [AINetUtils insertRefPorts_AllAlgNode:assAlgNode.pointer value_ps:assAlgNode.content_ps ps:assAlgNode.content_ps difStrong:1];
+        
+        //5. 识别到时,进行抽具象 -> 关联 & 存储 (20200103:测得,algNode为内存节点时,关联也在内存)
+        [AINetUtils relateAlgAbs:(AIAbsAlgNode*)assAlgNode conNodes:@[algNode]];
     }
     
     //4. 调试日志;
     if (assAlgNode && ![SMGUtils containsSub_ps:assAlgNode.content_ps parent_ps:algNode.content_ps]) {
         WLog(@"全含结果不正常,导致下面的抽象sames也不准确,,,可在git20191223找回原sames代码");
     }
-    if ([NVHeUtil isHeight:5 fromContent_ps:result.content_ps]) {
-        if (!result) {
+    if ([NVHeUtil isHeight:5 fromContent_ps:algNode.content_ps]) {
+        if (!assAlgNode) {
             NSLog(@"_______________________识别 failure");
         }else{
             NSLog(@"_______________________识别 success");
         }
     }
-    return result;
+    return assAlgNode;
 }
 
 
