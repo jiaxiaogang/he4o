@@ -273,6 +273,13 @@
         finishBlock(nil,0);
         return;
     }
+    
+    //TODOTOMORROW:
+    //1. 此处并不能根据proto取到match;因为last_p其实是parentAlg,而不是protoAlg;
+    //2. 四层FO_此处,就算改掉是matchAlg,也不能单以matchAlg.refPorts来取fo,而是需要支持四层;;
+    //3. 四层ALG_此处,在匹配item_Alg时,要支持先contains,再从四层找匹配;
+    //4. 全含_此处,对前半部分item_Alg,要支持全含;
+
     AIAlgNodeBase *lastRecogniNode = [SMGUtils searchNode:ARR_INDEX(lastConNode.absPorts_All, 0)];
     if (!lastRecogniNode) {
         finishBlock(nil,0);
