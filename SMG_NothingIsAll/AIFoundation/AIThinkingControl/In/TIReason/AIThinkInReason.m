@@ -222,7 +222,17 @@
  *      5. 将zMv提交给demandManager,做TOR处理;
  *
  */
-+(void) TIR_Fo:(NSArray*)protoAlg_ps finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue))finishBlock{
++(void) TIR_Fo_FromRethink:(NSArray*)protoAlg_ps finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue))finishBlock{
+    
+}
++(void) TIR_Fo_FromShortMem:(NSArray*)protoAlg_ps finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue))finishBlock{
+    
+}
++(void) TIR_Fo_General:(NSArray*)protoAlg_ps
+      getIndexForAssFo:(NSArray*(^)())getIndexForAssFo
+          checkFoValid:(BOOL(^)(AIFoNodeBase *assFo))checkFoValid
+        checkItemValid:(BOOL(^)(AIAlgNodeBase *protoAlg,AIAlgNodeBase *itemAlg))checkItemValid
+           finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue))finishBlock{
     
     //1. 将alg_ps构建成时序; (把每次dic输入,都作为一个新的内存时序)
     AIFrontOrderNode *protoFo = [theNet createConFo:protoAlg_ps];
