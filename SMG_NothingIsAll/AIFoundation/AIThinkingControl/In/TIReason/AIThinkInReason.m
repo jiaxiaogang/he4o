@@ -201,7 +201,9 @@
 
 /**
  *  MARK:--------------------理性时序--------------------
- *  @param alg_ps : 传入原始瞬时记忆序列 90% ,还是识别后的概念序列 10%;
+ *  @param protoAlg_ps :
+ *      1. 传入原始瞬时记忆序列 90% ,还是识别后的概念序列 10%;
+ *      2. 传入行为化中的rethinkLSP重组fo;
  *  @desc 向性:
  *      1. ↑
  *      2. →
@@ -220,22 +222,22 @@
  *      5. 将zMv提交给demandManager,做TOR处理;
  *
  */
-+(void) TIR_Fo:(NSArray*)alg_ps finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue))finishBlock{
++(void) TIR_Fo:(NSArray*)protoAlg_ps finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue))finishBlock{
     
     //1. 将alg_ps构建成时序; (把每次dic输入,都作为一个新的内存时序)
-    AIFrontOrderNode *shortMemFo = [theNet createConFo:alg_ps];
+    AIFrontOrderNode *protoFo = [theNet createConFo:protoAlg_ps];
     
     //2. 局部匹配识别时序;
     __block AIFoNodeBase *weakMatchFo = nil;
     __block CGFloat weakMatchValue = 0;
-    [self partMatching_Fo:shortMemFo finishBlock:^(id matchFo, CGFloat matchValue) {
+    [self partMatching_Fo:protoFo finishBlock:^(id matchFo, CGFloat matchValue) {
         weakMatchFo = matchFo;
         weakMatchValue = matchValue;
     }];
     
     //3. 返回;
     if (finishBlock) {
-        finishBlock(shortMemFo,weakMatchFo,weakMatchValue);
+        finishBlock(protoFo,weakMatchFo,weakMatchValue);
     }
 }
 

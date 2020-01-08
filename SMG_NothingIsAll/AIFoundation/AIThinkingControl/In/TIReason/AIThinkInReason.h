@@ -12,6 +12,7 @@
  *  MARK:--------------------理性ThinkIn控制器部分--------------------
  *  @desc 理性In流程的is和use部分;
  *  @desc 理性流程,即NOMV流程;
+ *  @desc 注: 目前内类比,并未搬过来,但内类比本来就算是理性的,所以随后有机会迁过来;
  */
 @class AIAlgNodeBase,AICMVNodeBase;
 @interface AIThinkInReason : NSObject
