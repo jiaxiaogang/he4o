@@ -81,7 +81,7 @@
 #define ARRISOK(a) [SMGUtils arrIsOk:a]                                 //是否空数组
 #define ARRTOOK(a) [SMGUtils arrToOk:a]                                 //数组强检查
 #define ARR_INDEX(a,i) [SMGUtils arrIndex:a index:i]                    //数组取子防闪
-#define ARR_TRANSINDEX(a,i) [SMGUtils arrTransIndex:a index:i]          //数组反序取子防闪
+#define ARR_INDEX_REVERSE(a,i) [SMGUtils arrTransIndex:a index:i]          //数组反序取子防闪
 #define ARR_INDEXISOK(a,i) [SMGUtils arrIndexIsOk:a index:i]            //数组可移除i
 #define ARR_SUB(a,s,l) [SMGUtils arrSub:a start:s length:l]             //数组截取 (arr start length)
 

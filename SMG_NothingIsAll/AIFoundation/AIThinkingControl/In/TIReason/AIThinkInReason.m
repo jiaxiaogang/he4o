@@ -222,14 +222,63 @@
  *      5. 将zMv提交给demandManager,做TOR处理;
  *
  */
-+(void) TIR_Fo_FromRethink:(NSArray*)protoAlg_ps finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue))finishBlock{
++(void) TIR_Fo_FromRethink:(NSArray*)protoAlg_ps replaceMatchAlg:(AIAlgNodeBase*)replaceMatchAlg finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue))finishBlock{
+    //1. 数据检查
+    AIKVPointer *last_p = ARR_INDEX_REVERSE(protoAlg_ps, 0);
+    AIAlgNodeBase *lastAlg = [SMGUtils searchNode:last_p];
+    if (!ARRISOK(protoAlg_ps) || !lastAlg || !replaceMatchAlg) {
+        return;
+    }
     
+    //2. 调用通用时序识别方法
+    [self TIR_Fo_General:protoAlg_ps getIndexForAssFo:^NSArray *{
+        NSMutableArray *result = [[NSMutableArray alloc] init];
+        [result addObject:lastAlg.pointer];
+        [result addObjectsFromArray:[SMGUtils convertPointersFromPorts:lastAlg.absPorts_All]];
+        return result;
+    } assFoBlock:^NSArray *(AIAlgNodeBase *indexAlg) {
+        NSMutableArray *result = [[NSMutableArray alloc] init];
+        if (indexAlg) {
+            for (AIPort *refPort in indexAlg.refPorts) {
+                //必须包含replaceMatchAlg的时序才有效;
+                if ([SMGUtils containsSub_p:refPort.target_p parentPorts:replaceMatchAlg.refPorts]) {
+                    [result addObject:refPort];
+                    if (result.count >= cPartMatchingCheckRefPortsLimit) {
+                        break;
+                    }
+                }
+            }
+        }
+        return result;
+    } checkFoValid:^BOOL(AIFoNodeBase *assFo) {
+        return false;
+    } checkItemValid:^BOOL(AIAlgNodeBase *protoAlg, AIAlgNodeBase *itemAlg) {
+        return false;
+    } finishBlock:finishBlock];
 }
-+(void) TIR_Fo_FromShortMem:(NSArray*)protoAlg_ps finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue))finishBlock{
-    
++(void) TIR_Fo_FromShortMem:(NSArray*)protoAlg_ps lastMatchAlg:(AIAlgNodeBase*)lastMatchAlg finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue))finishBlock{
+    if (!ARRISOK(protoAlg_ps) || !lastMatchAlg) {
+        return;
+    }
+    [self TIR_Fo_General:protoAlg_ps getIndexForAssFo:^NSArray *{
+        NSMutableArray *result = [[NSMutableArray alloc] init];
+        [result addObject:lastMatchAlg.pointer];
+        [result addObjectsFromArray:[SMGUtils convertPointersFromPorts:lastMatchAlg.absPorts_All]];
+        return result;
+    } assFoBlock:^NSArray *(AIAlgNodeBase *indexAlg) {
+        if (indexAlg) {
+            return ARR_SUB(indexAlg.refPorts, 0, cPartMatchingCheckRefPortsLimit);
+        }
+        return nil;
+    } checkFoValid:^BOOL(AIFoNodeBase *assFo) {
+        return false;
+    } checkItemValid:^BOOL(AIAlgNodeBase *protoAlg, AIAlgNodeBase *itemAlg) {
+        return false;
+    } finishBlock:finishBlock];
 }
 +(void) TIR_Fo_General:(NSArray*)protoAlg_ps
       getIndexForAssFo:(NSArray*(^)())getIndexForAssFo
+            assFoBlock:(NSArray*(^)(AIAlgNodeBase *indexAlg))assFoBlock
           checkFoValid:(BOOL(^)(AIFoNodeBase *assFo))checkFoValid
         checkItemValid:(BOOL(^)(AIAlgNodeBase *protoAlg,AIAlgNodeBase *itemAlg))checkItemValid
            finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue))finishBlock{
@@ -240,7 +289,7 @@
     //2. 局部匹配识别时序;
     __block AIFoNodeBase *weakMatchFo = nil;
     __block CGFloat weakMatchValue = 0;
-    [self partMatching_Fo:protoFo finishBlock:^(id matchFo, CGFloat matchValue) {
+    [self partMatching_Fo:protoFo getIndexForAssFo:getIndexForAssFo assFoBlock:assFoBlock checkFoValid:checkFoValid checkItemValid:checkItemValid finishBlock:^(id matchFo, CGFloat matchValue) {
         weakMatchFo = matchFo;
         weakMatchValue = matchValue;
     }];
@@ -255,6 +304,11 @@
 /**
  *  MARK:--------------------时序的局部匹配--------------------
  *  参考: n17p7 TIR_FO模型到代码
+ *  @param getIndexForAssFo : 获取联想fo的索引概念指针们 (取递归两层) notnull
+ *  @param assFoBlock       : 联想fos
+ *  @param checkFoValid     : 检查assFo的有效性 notnull
+ *  @param checkItemValid   : 检查item(fo.alg)的有效性 notnull
+ *  @param finishBlock      : 完成 notnull
  *  TODO_TEST_HERE:调试Pointer能否indexOfObject
  *  TODO_TEST_HERE:调试下item_p在indexOfObject中,有多个时,怎么办;
  *  TODO_TEST_HERE:测试下cPartMatchingThreshold配置值是否合理;
@@ -266,25 +320,35 @@
  *      3. 能够匹配到更多个概念节点,越预测准确;
  *  TODO_FUTURE:判断概念匹配,目前仅支持一层抽象判断,是否要支持多层?实现方式比如(索引 / TIRAlg和TIRFo的协作);
  *
+ *  @迭代记录:
+ *      20191231: 测试到,点击饥饿,再点击乱投,返回matchFo:nil matchValue:0;所以针对此识别失败问题,发现了_fromShortMem和_fromRethink的不同,且支持了两层assFo,与全含;(参考:n18p2)
+ *
  */
-+(void) partMatching_Fo:(AIFoNodeBase*)shortMemFo finishBlock:(void(^)(id matchFo,CGFloat matchValue))finishBlock{
-    //TODOTOMORROW:点击饥饿,再点击乱投,此处返回了matchFo:nil matchValue:0;
++(void) partMatching_Fo:(AIFoNodeBase*)shortMemFo
+       getIndexForAssFo:(NSArray*(^)())getIndexForAssFo
+             assFoBlock:(NSArray*(^)(AIAlgNodeBase *indexAlg))assFoBlock
+           checkFoValid:(BOOL(^)(AIFoNodeBase *assFo))checkFoValid
+         checkItemValid:(BOOL(^)(AIAlgNodeBase *protoAlg,AIAlgNodeBase *itemAlg))checkItemValid
+            finishBlock:(void(^)(AIFoNodeBase *matchFo,CGFloat matchValue))finishBlock{
     //1. 数据准备
-    if (!finishBlock) {
-        return;
-    }
     if (!ISOK(shortMemFo, AIFoNodeBase.class)) {
         finishBlock(nil,0);
         return;
     }
     
-    //2. 取lastAlg.refPorts; (取识别到过的抽象节点(如苹果));
-    AIKVPointer *last_p = ARR_INDEX(shortMemFo.content_ps, shortMemFo.content_ps.count - 1);
-    AIAlgNodeBase *lastConNode = [SMGUtils searchNode:last_p];
-    if (!lastConNode) {
-        finishBlock(nil,0);
-        return;
+    //2. 取assIndexes
+    NSArray *assIndexes = ARRTOOK(getIndexForAssFo());
+    
+    //3. 递归进行assFos
+    for (AIKVPointer *assIndex_p in assIndexes) {
+        AIAlgNodeBase *indexAlg = [SMGUtils searchNode:assIndex_p];
+        
+        //4. indexAlg.refPorts; (取识别到过的抽象节点(如苹果));
+        NSArray *assFos = ARRTOOK(assFoBlock(indexAlg));
+        
+        
     }
+    
     
     //TODOTOMORROW:
     //1. 此处并不能根据proto取到match;因为last_p其实是parentAlg,而不是protoAlg;
@@ -292,14 +356,12 @@
     //3. 四层ALG_此处,在匹配item_Alg时,要支持先contains,再从四层找匹配;
     //4. 全含_此处,对前半部分item_Alg,要支持全含;
 
-    AIAlgNodeBase *lastRecogniNode = [SMGUtils searchNode:ARR_INDEX(lastConNode.absPorts_All, 0)];
-    if (!lastRecogniNode) {
-        finishBlock(nil,0);
-        return;
-    }
-    NSArray *lastRecogniRefPorts = ARR_SUB(lastRecogniNode.refPorts, 0, cPartMatchingCheckRefPortsLimit);
+    
+
     
     //3. 依次对lastRefPorts对应的时序,做匹配度评价; (参考: 160_TIRFO单线顺序模型)
+    NSArray *lastRecogniRefPorts = nil;
+    AIAlgNodeBase *lastRecogniNode = nil;
     CGFloat maxMatchValue = 0;
     AIFoNodeBase *maxMatchFo = nil;
     for (AIPort *checkPort in lastRecogniRefPorts) {

@@ -93,7 +93,7 @@
     if (rtAlg && ARRISOK(rtFoContent_ps)) {
         
         //2. 识别时序;
-        [AIThinkInReason TIR_Fo_FromRethink:rtFoContent_ps finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue) {
+        [AIThinkInReason TIR_Fo_FromRethink:rtFoContent_ps replaceMatchAlg:rtAlg finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue) {
             mModel.protoFo = curNode;
             mModel.matchFo = matchFo;
             mModel.matchFoValue = matchValue;
@@ -123,7 +123,7 @@
     
     //3. 识别时序;
     NSArray *shortMemory = [self.delegate aiThinkIn_GetShortMemory];
-    [AIThinkInReason TIR_Fo_FromShortMem:shortMemory finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue) {
+    [AIThinkInReason TIR_Fo_FromShortMem:shortMemory lastMatchAlg:mModel.matchAlg finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue) {
         mModel.protoFo = curNode;
         mModel.matchFo = matchFo;
         mModel.matchFoValue = matchValue;

@@ -400,7 +400,7 @@
             for (NSString *saveKey in dic.allKeys) {
                 id saveObj = [dic objectForKey:saveKey];
                 NSString *sep = @"/";
-                NSString *saveFileName = STRTOOK(ARR_TRANSINDEX(STRTOARR(saveKey, sep), 0));
+                NSString *saveFileName = STRTOOK(ARR_INDEX_REVERSE(STRTOARR(saveKey, sep), 0));
                 NSString *saveRootPath = STRTOOK(SUBSTR2INDEX(saveKey, (saveKey.length - saveFileName.length - 1)));
                 PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:saveRootPath];
                 [cache setObject:saveObj forKey:saveFileName];

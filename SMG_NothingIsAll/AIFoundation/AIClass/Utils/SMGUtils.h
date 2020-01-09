@@ -179,7 +179,7 @@
 +(NSMutableArray*) removeSub_ps:(NSArray*)sub_ps parent_ps:(NSMutableArray*)parent_ps;
 +(NSMutableArray*) removeSub_p:(AIPointer*)sub_p parent_ps:(NSMutableArray*)parent_ps;
 
-//取交集
+//取交集 notnull
 +(NSMutableArray*) filterSame_ps:(NSArray*)a_ps parent_ps:(NSArray*)b_ps;
 
 @end
