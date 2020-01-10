@@ -21,6 +21,7 @@
 		081B3ACC1F6E2155008A7F36 /* AITime.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3ACB1F6E2155008A7F36 /* AITime.m */; };
 		081B3AD61F6E2994008A7F36 /* AIStringAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3AD51F6E2994008A7F36 /* AIStringAlgs.m */; };
 		081B3ADB1F6E2CCD008A7F36 /* AINet.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3ADA1F6E2CCD008A7F36 /* AINet.m */; };
+		081B7A5F23C809A900780115 /* TIRUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B7A5E23C809A900780115 /* TIRUtils.m */; };
 		08236CEC21A23439008D8761 /* AIVisionAlgsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08236CEB21A23439008D8761 /* AIVisionAlgsModel.m */; };
 		08250AE0228112C000FC497C /* XGWedis.m in Sources */ = {isa = PBXBuildFile; fileRef = 08250ADF228112C000FC497C /* XGWedis.m */; };
 		0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 0825AFF21F748F67003B86C7 /* NSObject+Extension.m */; };
@@ -166,6 +167,8 @@
 		081B3AD51F6E2994008A7F36 /* AIStringAlgs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIStringAlgs.m; sourceTree = "<group>"; };
 		081B3AD91F6E2CCD008A7F36 /* AINet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AINet.h; sourceTree = "<group>"; };
 		081B3ADA1F6E2CCD008A7F36 /* AINet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AINet.m; sourceTree = "<group>"; };
+		081B7A5D23C809A900780115 /* TIRUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TIRUtils.h; sourceTree = "<group>"; };
+		081B7A5E23C809A900780115 /* TIRUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TIRUtils.m; sourceTree = "<group>"; };
 		08236CEA21A23439008D8761 /* AIVisionAlgsModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIVisionAlgsModel.h; sourceTree = "<group>"; };
 		08236CEB21A23439008D8761 /* AIVisionAlgsModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIVisionAlgsModel.m; sourceTree = "<group>"; };
 		08250ADE228112C000FC497C /* XGWedis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XGWedis.h; sourceTree = "<group>"; };
@@ -731,6 +734,8 @@
 			children = (
 				083BC01D231C9CD900CA9039 /* AIThinkInReason.h */,
 				083BC01E231C9CD900CA9039 /* AIThinkInReason.m */,
+				081B7A5D23C809A900780115 /* TIRUtils.h */,
+				081B7A5E23C809A900780115 /* TIRUtils.m */,
 			);
 			path = TIReason;
 			sourceTree = "<group>";
@@ -1216,6 +1221,7 @@
 				08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */,
 				08089280215B07FC00710636 /* AICMVNodeBase.m in Sources */,
 				08081DD821DD8BDC005B867F /* AIAlgNodeBase.m in Sources */,
+				081B7A5F23C809A900780115 /* TIRUtils.m in Sources */,
 				08B31E7E20648C3700FD96EA /* ThinkingUtils.m in Sources */,
 				08AA10E822CAD8520077DE36 /* NVHeUtil.m in Sources */,
 				0858C5E721950CA300951BA5 /* FoodView.m in Sources */,
