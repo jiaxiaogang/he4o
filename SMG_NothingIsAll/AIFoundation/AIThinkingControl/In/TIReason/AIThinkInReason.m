@@ -246,18 +246,19 @@
             }
         }
         return result;
-    } checkItemValid:^BOOL(AIKVPointer *protoAlg_p, AIKVPointer *assAlg_p) {
+    } checkItemValid:^BOOL(AIKVPointer *itemAlg_p, AIKVPointer *assAlg_p) {
         //1. rethink需要单matchAlg对多抽象,共两层判断是否isEquals; (1 x N)
         //TODO_TEST_HERE: 本愿是自match层开始,已有去重机制,故使用指针匹配,如无去重且不好加,此处可改为md5匹配;
-        if (protoAlg_p && assAlg_p) {
+        AIKVPointer *matchAlg_p = itemAlg_p;
+        if (matchAlg_p && assAlg_p) {
             
             //2. 判断 1 (如是否苹果);
-            if (![assAlg_p isEqual:protoAlg_p]) {
+            if (![assAlg_p isEqual:matchAlg_p]) {
                 
                 //3. 判断 N (都不一样,则返回false) (如是否水果);
-                AIAlgNodeBase *protoAlg = [SMGUtils searchNode:protoAlg_p];
-                if (protoAlg) {
-                    if (![SMGUtils containsSub_p:assAlg_p parentPorts:protoAlg.absPorts]) {
+                AIAlgNodeBase *matchAlg = [SMGUtils searchNode:matchAlg_p];
+                if (matchAlg) {
+                    if (![SMGUtils containsSub_p:assAlg_p parentPorts:matchAlg.absPorts]) {
                         return false;
                     }
                 }
@@ -279,24 +280,33 @@
             return ARR_SUB(indexAlg.refPorts, 0, cPartMatchingCheckRefPortsLimit);
         }
         return nil;
-    } checkItemValid:^BOOL(AIKVPointer *protoAlg_p, AIKVPointer *assAlg_p) {
+    } checkItemValid:^BOOL(AIKVPointer *itemAlg_p, AIKVPointer *assAlg_p) {
         //1. shortMem需要多matchAlg对多抽象,共两层判断是否isEquals; (N x N)
         //TODO_TEST_HERE: 本愿是自match层开始,已有去重机制,故使用指针匹配,如无去重且不好加,此处可改为md5匹配;
-        if (protoAlg_p && assAlg_p) {
+        AIKVPointer *parentAlg_p = itemAlg_p;
+        if (parentAlg_p && assAlg_p) {
             
-            //2. 取得match层protoMatch_ps
-            AIAlgNodeBase *protoAlg = [SMGUtils searchNode:protoAlg_p];
-            NSArray *protoMatch_ps = protoAlg ? [SMGUtils convertPointersFromPorts:protoAlg.absPorts] : [NSArray new];
+            //2. 从parent层,向抽象proto层取;
+            AIAlgNodeBase *parentAlg = [SMGUtils searchNode:parentAlg_p];
+            NSArray *proto_ps = parentAlg ? [SMGUtils convertPointersFromPorts:parentAlg.absPorts_All] : [NSArray new];
             
-            //3. 判断 N1 (如是否苹果/圆的/青的/红的/甜的);
-            if (![SMGUtils containsSub_p:assAlg_p parent_ps:protoMatch_ps]) {
+            //3. 从proto层,向抽象match层取;
+            NSMutableArray *match_ps = [[NSMutableArray alloc] init];
+            for (AIKVPointer *proto_p in proto_ps) {
+                AIAlgNodeBase *protoAlg = [SMGUtils searchNode:proto_p];
+                if (protoAlg)
+                    [match_ps addObjectsFromArray:[SMGUtils convertPointersFromPorts:protoAlg.absPorts_All]];
+            }
+            
+            //4. 判断 N1 (如是否苹果/圆的/青的/红的/甜的);
+            if (![SMGUtils containsSub_p:assAlg_p parent_ps:match_ps]) {
                 
-                //4. 判断N2 (都不一样,则返回false) (如是否水果/有颜色/有味道);
+                //5. 判断N2 (都不一样,则返回false) (如是否水果/有颜色/有味道);
                 BOOL find = false;
-                for (AIKVPointer *protoMatch_p in protoMatch_ps) {
-                    AIAlgNodeBase *protoMatchAlg = [SMGUtils searchNode:protoMatch_p];
-                    if (protoMatchAlg) {
-                        if ([SMGUtils containsSub_p:assAlg_p parentPorts:protoMatchAlg.absPorts]) {
+                for (AIKVPointer *match_p in match_ps) {
+                    AIAlgNodeBase *matchAlg = [SMGUtils searchNode:match_p];
+                    if (matchAlg) {
+                        if ([SMGUtils containsSub_p:assAlg_p parentPorts:matchAlg.absPorts_All]) {
                             find = true;
                             break;
                         }
@@ -317,7 +327,7 @@
 +(void) TIR_Fo_General:(NSArray*)protoAlg_ps
          assFoIndexAlg:(AIAlgNodeBase*)assFoIndexAlg
             assFoBlock:(NSArray*(^)(AIAlgNodeBase *indexAlg))assFoBlock
-        checkItemValid:(BOOL(^)(AIKVPointer *protoAlg_p,AIKVPointer *assAlg_p))checkItemValid
+        checkItemValid:(BOOL(^)(AIKVPointer *itemAlg_p,AIKVPointer *assAlg_p))checkItemValid
            finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue))finishBlock{
     
     //1. 将alg_ps构建成时序; (把每次dic输入,都作为一个新的内存时序)
@@ -363,7 +373,7 @@
 +(void) partMatching_Fo:(AIFoNodeBase*)protoFo
           assFoIndexAlg:(AIAlgNodeBase*)assFoIndexAlg
              assFoBlock:(NSArray*(^)(AIAlgNodeBase *indexAlg))assFoBlock
-         checkItemValid:(BOOL(^)(AIKVPointer *protoAlg_p,AIKVPointer *assAlg_p))checkItemValid
+         checkItemValid:(BOOL(^)(AIKVPointer *itemAlg_p,AIKVPointer *assAlg_p))checkItemValid
             finishBlock:(void(^)(AIFoNodeBase *matchFo,CGFloat matchValue))finishBlock{
     //1. 数据准备
     if (!ISOK(protoFo, AIFoNodeBase.class) || !assFoIndexAlg) {
