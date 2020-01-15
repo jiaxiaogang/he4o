@@ -312,7 +312,11 @@
                         }
                     }
                 }
+                NSLog(@"-----时序匹配之item在abs层: %@",find ? @"有效" : @"无效");
                 return find;
+            }else{
+                NSLog(@"-----时序匹配之item在match层: 有效");
+                return true;
             }
         }
         return true;

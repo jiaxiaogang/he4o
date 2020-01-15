@@ -42,8 +42,10 @@
         }
     }
     if (lastAssIndex == -1) {
-        failure(@"最后一个alg都未匹配,查看是否在联想时就出bug了");
+        failure(@"---时序识别之: lastItem未匹配,查看是否在联想时就出bug了");
         return;
+    }else{
+        failure(@"---时序识别之: lastItem匹配成功");
     }
     
     //3. 从lastAssIndex向前逐个匹配;
@@ -59,13 +61,14 @@
                     lastProtoIndex = j; //成功匹配alg时,更新protoIndex (以达到只能向前匹配的目的);
                     checkResult = true;
                     validItemCount ++;  //有效数+1;
+                    NSLog(@"---时序识别之item,有效+1");
                     break;
                 }
             }
             
             //5. 非全含 (一个失败,全盘皆输);
             if (!checkResult) {
-                failure(@"assFo中有一个元素,没在protoFo中找到,所有非全含,不匹配");
+                failure(@"---时序识别之item无效,未在protoFo中找到,所有非全含,不匹配");
                 return;
             }
         }

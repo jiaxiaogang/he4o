@@ -93,7 +93,7 @@
                     //3> findAbsNode成功;
                     findAbsNode = absNode;
                     if (!ISOK(absNode, AIAbsAlgNode.class) ) {
-                        NSLog(@"警告!!!___发现非抽象类型的抽象节点错误,,,请检查出现此情况的原因;");
+                        WLog(@"发现非抽象类型的抽象节点错误,,,请检查出现此情况的原因;");
                     }
                     break;
                 }
