@@ -8,6 +8,9 @@
 
 #import "AIPointer.h"
 
+/**
+ *  MARK:--------------------数据库指针--------------------
+ */
 @interface AISqlPointer : AIPointer
 
 +(AISqlPointer*) initWithClass:(Class)pC withId:(NSInteger)pI ;

@@ -9,7 +9,7 @@
 #import "AIAlgNodeBase.h"
 
 /**
- *  MARK:--------------------算法类型具象节点--------------------
+ *  MARK:--------------------具象概念节点--------------------
  */
 @interface AIAlgNode : AIAlgNodeBase
 

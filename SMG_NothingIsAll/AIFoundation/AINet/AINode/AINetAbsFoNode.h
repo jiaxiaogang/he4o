@@ -8,9 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
-//MARK:===============================================================
-//MARK:                     < AbsNode类(抽象神经元(多级和双级合并)) >
-//MARK:===============================================================
+/**
+ *  MARK:--------------------抽象时序节点--------------------
+ */
 @class AIKVPointer;
 @interface AINetAbsFoNode : AIFoNodeBase
 

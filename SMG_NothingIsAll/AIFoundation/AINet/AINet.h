@@ -8,6 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ *  MARK:--------------------AINet面板--------------------
+ *  @desc 整理各种网络操作的总入口,供系统别处调用;
+ */
 @class AIModel,AINode,AIImvAlgsModel,AIPointer,AIKVPointer,AIPort,AIFrontOrderNode,AINetAbsFoNode,AIAbsCMVNode,AIAlgNode,AIAbsAlgNode,AIAlgNodeBase;
 @interface AINet : NSObject
 

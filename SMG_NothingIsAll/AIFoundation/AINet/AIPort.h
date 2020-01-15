@@ -11,6 +11,9 @@
 /**
  *  MARK:--------------------网络端口类--------------------
  *  用来替代AILine+AIStrong
+ *  @desc:
+ *      1. 每一个关联,有两个端口;
+ *      2. 每一个端口,都有关联强度;
  */
 @class AIKVPointer,AIPortStrong;
 @interface AIPort : NSObject <NSCoding>

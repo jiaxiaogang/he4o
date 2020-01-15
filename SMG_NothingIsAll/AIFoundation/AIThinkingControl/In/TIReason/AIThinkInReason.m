@@ -407,6 +407,8 @@
                 NSLog(@"时序识别: SUCCESS >>> matchValue:%f",matchValue);
                 successed = true;
                 finishBlock(assFo,matchValue);
+                [theNV setNodeData:assFo.pointer lightStr:@"assFo"];
+                [theNV setNodeData:protoFo.pointer lightStr:@"protoFo"];
             } failure:^(NSString *msg) {
                 //WLog(@"时序匹配失败了! 原因:%@",msg);
                 NSLog(@"%@",msg);

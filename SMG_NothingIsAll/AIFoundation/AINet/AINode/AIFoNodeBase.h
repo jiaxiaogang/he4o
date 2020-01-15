@@ -9,7 +9,8 @@
 #import <Foundation/Foundation.h>
 
 /**
- *  MARK:--------------------FoNode基类--------------------
+ *  MARK:--------------------时序节点基类--------------------
+ *  @name 前因序列
  *  1. 是frontOrderNode和absNode的基类;
  */
 @interface AIFoNodeBase : AINodeBase
