@@ -312,10 +312,10 @@
                         }
                     }
                 }
-                NSLog(@"-----时序匹配之item在abs层: %@",find ? @"有效" : @"无效");
+                NSLog(@"时序匹配: item%@ abs层",find ? @"有效" : @"无效");
                 return find;
             }else{
-                NSLog(@"-----时序匹配之item在match层: 有效");
+                NSLog(@"时序匹配: item有效 match层");
                 return true;
             }
         }
@@ -404,11 +404,12 @@
             
             //6. 对assFo做匹配判断;
             [TIRUtils TIR_Fo_CheckFoValidMatch:protoFo assFo:assFo checkItemValid:checkItemValid success:^(NSInteger lastAssIndex, CGFloat matchValue) {
-                NSLog(@"匹配成功,匹配度为:%f",matchValue);
+                NSLog(@"时序识别: SUCCESS >>> matchValue:%f",matchValue);
                 successed = true;
                 finishBlock(assFo,matchValue);
             } failure:^(NSString *msg) {
-                WLog(@"时序匹配失败了! 原因:%@",msg);
+                //WLog(@"时序匹配失败了! 原因:%@",msg);
+                NSLog(@"%@",msg);
             }];
             
             //7. 成功一条即return
