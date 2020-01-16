@@ -149,4 +149,4 @@ va_end(args);\
 #define FILENAME [[NSString stringWithUTF8String:__FILE__] lastPathComponent]
 #define ELog(fmt, ...) NSLog((@"<错误> " fmt), ##__VA_ARGS__);
 #define WLog(fmt, ...) NSLog((@"<警告> " fmt), ##__VA_ARGS__);
-#define NSLog(FORMAT, ...) fprintf(stderr,"[%s %s] %s\n",__TIME__,[[SMGUtils codeLocateFormat:FILENAME line:__LINE__]  UTF8String], [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
+#define NSLog(FORMAT, ...) fprintf(stderr,"[%s %s] %s\n",[[SMGUtils date2HHMMSSSSS] UTF8String],[[SMGUtils codeLocateFormat:FILENAME line:__LINE__]  UTF8String], [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);

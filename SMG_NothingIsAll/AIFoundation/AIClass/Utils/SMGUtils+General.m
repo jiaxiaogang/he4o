@@ -109,4 +109,18 @@
     return (o && [o isKindOfClass:c]);
 }
 
+//date
++(NSString*) date2HHMMSS{
+    return [SMGUtils date2Str:@"HH:mm:ss"];
+}
++(NSString*) date2HHMMSSSSS{
+    return [SMGUtils date2Str:@"HH:mm:ss:SSS"];
+}
++(NSString*) date2Str:(NSString*)format{
+    NSDate *date = [NSDate new];
+    NSDateFormatter *fmt = [[NSDateFormatter alloc] init];
+    fmt.dateFormat = format;
+    return [fmt stringFromDate:date];
+}
+
 @end
