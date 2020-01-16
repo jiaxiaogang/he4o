@@ -70,6 +70,9 @@
             
             //5. 非全含 (一个失败,全盘皆输);
             if (!checkResult) {
+                [theNV setNodeData:checkAssAlg_p lightStr:@"3item未匹配"];
+                [theNV setNodeData:assFo.pointer lightStr:@"3assFo"];
+                [theNV setNodeData:protoFo.pointer lightStr:@"3protoFo"];
                 failure(@"时序识别: item无效,未在protoFo中找到,所有非全含,不匹配");
                 return;
             }
