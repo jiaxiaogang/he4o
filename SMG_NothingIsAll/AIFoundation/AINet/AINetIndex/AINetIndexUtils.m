@@ -158,8 +158,11 @@
             if (ISOK(result, AIAbsAlgNode.class) && result.content_ps.count == matchingCount) {
                 return result;
             }
-            if (ISOK(result, AIAbsAlgNode.class)) {
+            if (!ISOK(result, AIAbsAlgNode.class)) {
                 WLog(@"识别非抽象概念导致不对+1");
+                [theNV setNodeData:result.pointer lightStr:@"识别非抽象错误"];
+            }else{
+                [theNV setNodeData:result.pointer lightStr:@"识别到抽象正确"];
             }
         }
     }

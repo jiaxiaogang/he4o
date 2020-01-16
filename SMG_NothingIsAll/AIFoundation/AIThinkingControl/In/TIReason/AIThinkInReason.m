@@ -86,11 +86,12 @@
     }
     
     ///3. 局部匹配 -> 内存网络;
-    ///(19xxxx注掉,不能太过于脱离持久网络做思考,所以先注掉)
-    ///(190625放开,因采用内存网络后,靠这识别)
-    if (!assAlgNode) {
-        assAlgNode = [AINetIndexUtils partMatching_Alg:algNode isMem:true except_ps:fromGroup_ps];
-    }
+    ///19xxxx注掉,不能太过于脱离持久网络做思考,所以先注掉;
+    ///190625放开,因采用内存网络后,靠这识别;
+    ///200116注掉,因为识别仅是建立抽象关联,此处会极易匹配到内存中大量的具象alg,导致无法建立关联,而在硬盘网络时,这种几率则低许多;
+    //if (!assAlgNode) {
+    //    assAlgNode = [AINetIndexUtils partMatching_Alg:algNode isMem:true except_ps:fromGroup_ps];
+    //}
     
     ///4. 局部匹配 -> 硬盘网络;
     if (!assAlgNode) {
