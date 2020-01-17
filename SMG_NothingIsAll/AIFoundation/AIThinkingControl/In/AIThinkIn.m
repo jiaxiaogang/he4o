@@ -107,8 +107,13 @@
 //MARK:===============================================================
 /**
  *  MARK:--------------------输入非mv信息时--------------------
- *  1. 看到西瓜会开心 : TODO: 对自身状态的判断, (比如,看到西瓜,想吃,那么当前状态是否饿)
  *  @param fromGroup_ps : 当前输入批次的整组概念指针;
+ *  @todo
+ *      1. 远古TODO: 看到西瓜会开心 : 对自身状态的判断, (比如,看到西瓜,想吃,那么当前状态是否饿)
+ *          > 已解决,废弃了useNode,并由mModel替代,且会交由demandManager做此处理;
+ *      2. TODOWAIT: TIR_Alg识别后,要进行类比,并构建网络关联; (参考n16p7)
+ *      3. 点击饥饿,再点击乱投,此处返回了matchFo:nil matchValue:0;
+ *          > 已解决,因为fromMemShort是4层alg,而fromRethink是两层;
  */
 -(void) dataIn_NoMV:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps{
     //1. 数据准备 (瞬时记忆,理性匹配出的模型);
@@ -116,10 +121,7 @@
     mModel.protoAlg_p = algNode_p;
     
     //2. 识别概念;
-    [AIThinkInReason dataIn_NoMV:algNode_p fromGroup_ps:fromGroup_ps finishBlock:^(AIAlgNodeBase *isNode, AICMVNodeBase *useNode) {
-        mModel.matchAlg = isNode;
-        mModel.useNode = useNode;
-    }];
+    mModel.matchAlg = [AIThinkInReason TIR_Alg:algNode_p fromGroup_ps:fromGroup_ps];
     
     //3. 识别时序;
     NSArray *shortMemory = [self.delegate aiThinkIn_GetShortMemory];
@@ -130,7 +132,7 @@
     }];
     
     //4. 传给TOR,做下一步处理;
-    [self.delegate aiThinkIn_Commit2TC:mModel];//TODOTOMORROW:点击饥饿,再点击乱投,此处返回了matchFo:nil matchValue:0;
+    [self.delegate aiThinkIn_Commit2TC:mModel];
 }
 
 

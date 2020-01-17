@@ -17,6 +17,7 @@
 #import "NVHeUtil.h"
 #import "NVModuleView.h"
 #import "NVNodeView.h"
+#import "AINetUtils.h"
 
 #define ModuleName_Value @"稀疏码"
 #define ModuleName_Alg @"概念网络"
@@ -165,15 +166,8 @@
         }else if ([NVHeUtil isAlg:node_p]) {
             //2. 如果是algNode则返回.refPorts;
             AIAlgNodeBase *node = [SMGUtils searchNode:node_p];
-            if (ISOK(node, AIAlgNodeBase.class)) {
-                NSMutableArray *allPorts = [[NSMutableArray alloc] init];
-                [allPorts addObjectsFromArray:node.refPorts];
-                [allPorts addObjectsFromArray:[SMGUtils searchObjectForPointer:node_p fileName:kFNMemRefPorts time:cRTMemPort]];
-                if (allPorts.count == 0) {
-                    NSLog(@">>>>>>>> refPorts Hd:%lu Mem:%lu",(unsigned long)node.refPorts.count,allPorts.count - node.refPorts.count);
-                }
-                return [SMGUtils convertPointersFromPorts:allPorts];
-            }
+            NSArray *allPorts = [AINetUtils refPorts_All:node];
+            return [SMGUtils convertPointersFromPorts:allPorts];
         }else if ([NVHeUtil isFo:node_p]) {
             //3. 如果是foNode则返回mv基本模型指向cmvNode_p;
             AIFoNodeBase *foNode = [SMGUtils searchNode:node_p];

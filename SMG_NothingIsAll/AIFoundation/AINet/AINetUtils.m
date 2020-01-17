@@ -339,3 +339,27 @@
 }
 
 @end
+
+//MARK:===============================================================
+//MARK:                     < Port >
+//MARK:===============================================================
+@implementation AINetUtils (Port)
+
++(NSArray*) absPorts_All:(AINodeBase*)node{
+    NSMutableArray *allPorts = [[NSMutableArray alloc] init];
+    if (ISOK(node, AINodeBase.class)) {
+        [allPorts addObjectsFromArray:node.absPorts];
+        [allPorts addObjectsFromArray:[SMGUtils searchObjectForPointer:node.pointer fileName:kFNMemAbsPorts time:cRTMemPort]];
+    }
+    return allPorts;
+}
++(NSArray*) refPorts_All:(AIAlgNodeBase*)node{
+    NSMutableArray *allPorts = [[NSMutableArray alloc] init];
+    if (ISOK(node, AIAlgNodeBase.class)) {
+        [allPorts addObjectsFromArray:node.refPorts];
+        [allPorts addObjectsFromArray:[SMGUtils searchObjectForPointer:node.pointer fileName:kFNMemRefPorts time:cRTMemPort]];
+    }
+    return allPorts;
+}
+
+@end

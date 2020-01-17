@@ -25,6 +25,4 @@
 @property (strong, nonatomic) AIFoNodeBase *matchFo;    //匹配时序
 @property (assign, nonatomic) CGFloat matchFoValue;     //时序匹配度
 
-@property (strong, nonatomic) AICMVNodeBase *useNode;   //旧有useNode,估计会删掉;
-
 @end

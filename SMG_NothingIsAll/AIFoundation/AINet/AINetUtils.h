@@ -154,3 +154,20 @@
 +(id) move2HdNodeFromMemNode_Fo:(AINodeBase*)memNode;
 
 @end
+
+//MARK:===============================================================
+//MARK:                     < Port >
+//MARK:===============================================================
+@interface AINetUtils (Port)
+
+/**
+ *  MARK:--------------------取hdAbsPorts + memAbsPorts--------------------
+ */
++(NSArray*) absPorts_All:(AINodeBase*)node;
+
+/**
+ *  MARK:--------------------取hdRefPorts + memRefPorts--------------------
+ */
++(NSArray*) refPorts_All:(AIAlgNodeBase*)node;
+
+@end

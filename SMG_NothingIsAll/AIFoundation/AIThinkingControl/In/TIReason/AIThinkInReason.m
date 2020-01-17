@@ -29,32 +29,9 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------输入非mv信息时--------------------
- *  1. 看到西瓜会开心 : TODO: 对自身状态的判断, (比如,看到西瓜,想吃,那么当前状态是否饿)
- *  @param fromGroup_ps : 当前输入批次的整组概念指针;
- */
-+(void) dataIn_NoMV:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps finishBlock:(void(^)(AIAlgNodeBase *isNode,AICMVNodeBase *useNode))finishBlock{
-    if (!algNode_p) {
-        return;
-    }
-    
-    //3. 识别
-    AIAlgNodeBase *recognitionAlgNode = [self dataIn_NoMV_RecognitionIs:algNode_p fromGroup_ps:fromGroup_ps];
-    
-    //TODOWAIT:
-    //4. 识别后,要进行类比,并构建网络关联; (参考n16p7)
-    
-    //4. 识别做什么用
-    AICMVNodeBase *mvNode = [self dataIn_NoMV_RecognitionUse:recognitionAlgNode];
-    
-    //5. 看到西瓜会开心
-    if (finishBlock) {
-        finishBlock(recognitionAlgNode,mvNode);
-    }
-}
-
-/**
  *  MARK:--------------------识别是什么(这是西瓜)--------------------
+ *  @param fromGroup_ps : 当前输入批次的整组概念指针;
+ *
  *  注: 无条件 & 目前无能量消耗 (以后有基础思维活力值后可energy-1)
  *  注: 局部匹配_后面通过调整参数,来达到99%以上的识别率;
  *
@@ -64,11 +41,15 @@
  *  Q2: 概念的嵌套,有可能会导致识别上的一些问题; (我们需要支持结构化识别,而不仅是绝对识别和模糊识别)
  *  A2: 190910概念嵌套已取消,正在做结构化识别,此次改动是为了完善ThinkReason细节;
  *
+ *  @todo
+ *      1. 看到西瓜会开心 : TODO: 对自身状态的判断, (比如,看到西瓜,想吃,那么当前状态是否饿)
+ *          > 已解决,将useNode去掉,并且由mModel替代后,会提交给demandManager进行这些处理;
+ *
  *  @desc 迭代记录:
  *      20190910: 识别"概念与时序",并构建纵向关联; (190910概念识别,添加了抽象关联)
  *      20191223: 局部匹配支持全含: 对assAlg和protoAlg直接做抽象关联,而不是新构建抽象;
  */
-+(AIAlgNodeBase*) dataIn_NoMV_RecognitionIs:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps{
++(AIAlgNodeBase*) TIR_Alg:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps{
     //1. 数据准备
     AIAlgNodeBase *algNode = [SMGUtils searchNode:algNode_p];
     if (algNode == nil) {
@@ -113,88 +94,12 @@
     }
     if ([NVHeUtil isHeight:5 fromContent_ps:algNode.content_ps]) {
         if (!assAlgNode) {
-            NSLog(@"_______________________识别 failure");
+            NSLog(@"识别Alg failure");
         }else{
-            NSLog(@"_______________________识别 success");
+            NSLog(@"识别Alg success");
         }
     }
     return assAlgNode;
-}
-
-
-/**
- *  MARK:--------------------识别有什么用(西瓜能吃)--------------------
- *  1. assCmv首先会通过energy和cmvCache表现在thinkingControl中,影响思维循环;
- *  2. dataIn负责护送一次指定信息的ass(随后进入递归循环)
- *
- *  注: 直至desicionOut前,assCmv都会真实作用于thinkingControl
- *  注: dataIn负责护送一次指定信息的ass(随后进入dataOut递归循环)
- *  注: dataIn_assExp可直接跳过检查点一次;
- *  TODO:将结果存到shortCache(目前以看到的为主,想到的没存)或thinkFeedCache(人脑有短中长时缓存)//需要时,再说;
- */
-+(AICMVNode*) dataIn_NoMV_RecognitionUse:(AIAlgNodeBase*)recognitionAlgNode{
-    
-    //1. assFo & mvCache (识别到的信息,是否可以激活mv与思维)
-    if (!ISOK(recognitionAlgNode, AIAlgNodeBase.class)) {
-        return nil;
-    }
-    
-    //2. assAlgNode的引用序列联想assFo (目前先仅对内存做内存操作,对硬盘做硬盘操作)
-    AIPort *firstPort;
-    if (recognitionAlgNode.pointer.isMem) {
-        
-        ///1. 尝试取_对应硬盘概念的引用序列; (有可能被迁移过)
-        AIAlgNodeBase *hdRecogniAlgNode = [SMGUtils searchObjectForPointer:recognitionAlgNode.pointer fileName:kFNNode time:cRTNode];
-        if (hdRecogniAlgNode) {
-            firstPort = ARR_INDEX(hdRecogniAlgNode.refPorts, 0);
-            if ([NVHeUtil isHeight:5 fromContent_ps:recognitionAlgNode.content_ps]) {
-                if (firstPort) {
-                    NSLog(@"__________________Use success");
-                }else{
-                    NSLog(@"__________________Use failure");
-                }
-            }
-        }
-        
-        ///2. 尝试取_内存概念引用序列
-        if (!firstPort) {
-            NSArray *memRefPorts = [SMGUtils searchObjectForPointer:recognitionAlgNode.pointer fileName:kFNMemRefPorts time:cRTMemPort];
-            firstPort = ARR_INDEX(memRefPorts, 0);
-            if ([NVHeUtil isHeight:5 fromContent_ps:recognitionAlgNode.content_ps]) {
-                if (firstPort) {
-                    NSLog(@"__________________Use success");
-                }else{
-                    NSLog(@"__________________Use failure");
-                }
-            }
-        }
-    }else{
-        ///3. 尝试取_硬盘概念引用序列
-        firstPort = ARR_INDEX(recognitionAlgNode.refPorts, 0);
-        if ([NVHeUtil isHeight:5 fromContent_ps:recognitionAlgNode.content_ps]) {
-            if (firstPort) {
-                NSLog(@"__________________Use success");
-            }else{
-                NSLog(@"__________________Use failure");
-            }
-        }
-    }
-    if (!firstPort) {
-        return nil;
-    }
-    [theNV setNodeData:firstPort.target_p];
-    [theNV lightNode:firstPort.target_p str:@"~"];
-    
-    //3. 取到最强引用节点
-    AIFoNodeBase *foNode = [SMGUtils searchNode:firstPort.target_p];
-    if (!ISOK(foNode, AIFoNodeBase.class)) {
-        return nil;
-    }
-    
-    //4. 联想mvNode返回;
-    AICMVNode *cmvNode = [SMGUtils searchNode:foNode.cmvNode_p];
-    [theNV setNodeData:cmvNode.pointer];
-    return cmvNode;
 }
 
 //MARK:===============================================================
@@ -289,14 +194,14 @@
             
             //2. 从parent层,向抽象proto层取;
             AIAlgNodeBase *parentAlg = [SMGUtils searchNode:parentAlg_p];
-            NSArray *proto_ps = parentAlg ? [SMGUtils convertPointersFromPorts:parentAlg.absPorts_All] : [NSArray new];
+            NSArray *proto_ps = parentAlg ? [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:parentAlg]] : [NSArray new];
             
             //3. 从proto层,向抽象match层取;
             NSMutableArray *match_ps = [[NSMutableArray alloc] init];
             for (AIKVPointer *proto_p in proto_ps) {
                 AIAlgNodeBase *protoAlg = [SMGUtils searchNode:proto_p];
                 if (protoAlg)
-                    [match_ps addObjectsFromArray:[SMGUtils convertPointersFromPorts:protoAlg.absPorts_All]];
+                    [match_ps addObjectsFromArray:[SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:protoAlg]]];
             }
             
             //4. 判断 N1 (如是否苹果/圆的/青的/红的/甜的);
@@ -307,7 +212,7 @@
                 for (AIKVPointer *match_p in match_ps) {
                     AIAlgNodeBase *matchAlg = [SMGUtils searchNode:match_p];
                     if (matchAlg) {
-                        if ([SMGUtils containsSub_p:assAlg_p parentPorts:matchAlg.absPorts_All]) {
+                        if ([SMGUtils containsSub_p:assAlg_p parentPorts:[AINetUtils absPorts_All:matchAlg]]) {
                             find = true;
                             break;
                         }
@@ -390,7 +295,7 @@
     //2. 取assIndexes (取递归两层)
     NSMutableArray *assIndexes = [[NSMutableArray alloc] init];
     [assIndexes addObject:assFoIndexAlg.pointer];
-    [assIndexes addObjectsFromArray:[SMGUtils convertPointersFromPorts:assFoIndexAlg.absPorts_All]];
+    [assIndexes addObjectsFromArray:[SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:assFoIndexAlg]]];
     
     //3. 递归进行assFos
     for (AIKVPointer *assIndex_p in assIndexes) {
@@ -408,8 +313,8 @@
                 NSLog(@"时序识别: SUCCESS >>> matchValue:%f",matchValue);
                 successed = true;
                 finishBlock(assFo,matchValue);
-                [theNV setNodeData:assFo.pointer lightStr:@"assFo"];
-                [theNV setNodeData:protoFo.pointer lightStr:@"protoFo"];
+                [theNV setNodeData:assFo.pointer lightStr:@"成功assFo"];
+                [theNV setNodeData:protoFo.pointer lightStr:@"成功protoFo"];
             } failure:^(NSString *msg) {
                 //WLog(@"时序匹配失败了! 原因:%@",msg);
                 NSLog(@"%@",msg);

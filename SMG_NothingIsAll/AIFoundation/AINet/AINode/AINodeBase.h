@@ -26,17 +26,4 @@
  */
 @property (strong, nonatomic,nonnull) NSMutableArray *content_ps;
 
-/**
- *  MARK:--------------------返回所有absPorts--------------------
- *  @desc memAbsPorts + hdAbsPorts;
- */
--(NSMutableArray *)absPorts_All;
-
-/**
- *  MARK:--------------------取absPorts--------------------
- *  @param saveDB : true则返回absPorts | false则返回memAbsPorts
- *  @return notnull
- */
-//-(NSMutableArray *)absPorts:(BOOL)saveDB;
-
 @end

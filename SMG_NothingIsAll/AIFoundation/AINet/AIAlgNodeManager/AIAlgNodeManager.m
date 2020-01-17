@@ -82,7 +82,8 @@
         
         //2. 判断具象节点的absPorts中,是否已有一个"sames"节点,有则无需构建新的;
         for (AIAlgNodeBase *conNode in conAlgs) {
-            for (AIPort *absPort in conNode.absPorts_All) {
+            NSArray *absPorts_All = [AINetUtils absPorts_All:conNode];
+            for (AIPort *absPort in absPorts_All) {
                 //1> 遍历找抽象是否已存在;
                 if ([samesMd5 isEqualToString:absPort.header]) {
                     AIAbsAlgNode *absNode = [SMGUtils searchNode:absPort.target_p];

@@ -18,13 +18,6 @@
     return _absPorts;
 }
 
--(NSMutableArray *)absPorts_All{
-    NSMutableArray *result = [[NSMutableArray alloc] init];
-    [result addObjectsFromArray:self.absPorts];
-    [result addObjectsFromArray:ARRTOOK([SMGUtils searchObjectForPointer:self.pointer fileName:kFNMemAbsPorts time:cRTMemPort])];
-    return result;
-}
-
 -(NSMutableArray *)content_ps{
     if (_content_ps == nil) {
         _content_ps = [[NSMutableArray alloc] init];
