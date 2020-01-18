@@ -76,3 +76,11 @@ typedef NS_ENUM(NSInteger,  AnalogyInnerType) {
     AnalogyInnerType_Hav    = 2,//变有
     AnalogyInnerType_None   = 3,//变无
 };
+
+/**
+ *  MARK:--------------------Output通知前后枚举--------------------
+ */
+typedef NS_ENUM(NSInteger,  OutputObserverType) {
+    OutputObserverType_Front   = 0,//前
+    OutputObserverType_Back    = 1,//后
+};

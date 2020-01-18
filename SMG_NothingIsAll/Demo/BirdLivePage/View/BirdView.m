@@ -74,17 +74,7 @@
 
 //被动吃
 -(void) touchMouth{
-    //1. 吃前视觉
-    //[self see:[self.delegate birdView_GetPageView]];
-    
-    //2. 吃
     [AIReactorControl commitReactor:EAT_RDS];
-    
-    //3. 吃完视觉
-    //[self see:[self.delegate birdView_GetPageView]];
-    
-    //4. 产生HungerMindValue; (0-10)
-    //[AIInput commitIMV:MVType_Hunger from:1.0f to:9.0f];
 }
 
 -(void) touchWing{
@@ -113,9 +103,6 @@
 
 //无论是主动吃,还是被动吃,都要观察下吃前的视觉,吃后的视觉,以及价值上的影响;
 -(void) eat:(CGFloat)value{
-    //1. 吃前视觉
-    [self see:[self.delegate birdView_GetPageView]];
-    
     if (self.delegate && [self.delegate respondsToSelector:@selector(birdView_GetFoodOnMouth)]) {
         //1. 嘴附近的食物
         FoodView *foodView = [self.delegate birdView_GetFoodOnMouth];
@@ -150,10 +137,17 @@
         NSDictionary *obj = DICTOOK(notification.object);
         NSString *rds = STRTOOK([obj objectForKey:@"rds"]);
         NSNumber *paramNum = NUMTOOK([obj objectForKey:@"paramNum"]);
+        NSInteger type = [NUMTOOK([obj objectForKey:@"type"]) integerValue];
         
         //2. 吸吮反射 / 主动吃
         if ([EAT_RDS isEqualToString:rds]) {
-            [self eat:[paramNum floatValue]];
+            if (OutputObserverType_Front == type) {
+                //a. 吃前视觉
+                [self see:[self.delegate birdView_GetPageView]];
+            }else if(OutputObserverType_Back == type){
+                //b. 吃后 => UI处理 & 视觉 & 产生mv;
+                [self eat:[paramNum floatValue]];
+            }
         }
         //3. 扇翅膀反射
         else if([FLY_RDS isEqualToString:rds]){

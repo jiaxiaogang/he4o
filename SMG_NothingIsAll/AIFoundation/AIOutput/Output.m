@@ -19,12 +19,17 @@
 @implementation Output
 
 +(void) output_Reactor:(NSArray*)outputModels{
-    //1. 将输出入网
+    //1. 广播执行输出前;
+    for (OutputModel *model in ARRTOOK(outputModels)) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:@{@"rds":STRTOOK(model.rds),@"paramNum":NUMTOOK(model.data),@"type":@(OutputObserverType_Front)}];
+    }
+    
+    //2. 将输出入网
     [theTC commitOutputLog:outputModels];
     
-    //2. 广播执行输出;
+    //3. 广播执行输出后;
     for (OutputModel *model in ARRTOOK(outputModels)) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:@{@"rds":STRTOOK(model.rds),@"paramNum":NUMTOOK(model.data)}];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:@{@"rds":STRTOOK(model.rds),@"paramNum":NUMTOOK(model.data),@"type":@(OutputObserverType_Back)}];
     }
 }
 
