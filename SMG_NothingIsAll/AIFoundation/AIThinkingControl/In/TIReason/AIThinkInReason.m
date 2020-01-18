@@ -92,12 +92,11 @@
     if (assAlgNode && ![SMGUtils containsSub_ps:assAlgNode.content_ps parent_ps:algNode.content_ps]) {
         WLog(@"全含结果不正常,导致下面的抽象sames也不准确,,,可在git20191223找回原sames代码");
     }
-    if ([NVHeUtil isHeight:5 fromContent_ps:algNode.content_ps]) {
-        if (!assAlgNode) {
-            NSLog(@"识别Alg failure");
-        }else{
-            NSLog(@"识别Alg success");
-        }
+    if (assAlgNode) {
+        NSLog(@"识别Alg success");
+        [theNV setNodeData:assAlgNode.pointer lightStr:@"识别alg成功"];
+    }else{
+        NSLog(@"识别Alg failure");
     }
     return assAlgNode;
 }
