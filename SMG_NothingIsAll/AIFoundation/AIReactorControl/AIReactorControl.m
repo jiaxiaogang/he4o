@@ -53,19 +53,7 @@
     [self commitReactor:rds datas:@[@(1)]];
 }
 +(void) commitReactor:(NSString*)rds datas:(NSArray*)datas{
-    //1. 转为outModel
-    NSMutableArray *models = [[NSMutableArray alloc] init];
-    for (NSNumber *data in ARRTOOK(datas)) {
-        OutputModel *model = [[OutputModel alloc] init];
-        model.rds = STRTOOK(rds);
-        model.data = NUMTOOK(data);
-        [models addObject:model];
-    }
-    
-    //2. 传递到output执行
-    if (ARRISOK(models)) {
-        [Output output_Reactor:models];
-    }
+    [Output output_FromReactor:rds datas:datas];
 }
 
 @end

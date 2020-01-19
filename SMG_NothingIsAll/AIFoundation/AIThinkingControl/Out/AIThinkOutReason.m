@@ -121,7 +121,7 @@
         for (AIKVPointer *algNode_p in outArr) {
             //>1 检查micro_p是否是"输出";
             //>2 假如order_p足够确切,尝试检查并输出;
-            BOOL invoked = [Output output_TC:algNode_p];
+            BOOL invoked = [Output output_FromTC:algNode_p];
             [theNV setNodeData:algNode_p appendLightStr:@",Out"];
             if (invoked) {
                 tryOutSuccess = true;
@@ -142,7 +142,7 @@
         [self.delegate aiThinkOutReason_UpdateEnergy:-1];
         
         //2. 反射输出
-        [Output output_Mood:AIMoodType_Anxious];
+        [Output output_FromMood:AIMoodType_Anxious];
     }
 }
 

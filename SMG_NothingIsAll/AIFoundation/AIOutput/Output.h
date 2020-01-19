@@ -19,31 +19,26 @@
 @interface Output : NSObject
 
 /**
- *  MARK:--------------------反射输出--------------------
- *  @param outputModels : OutputModel数组;
- *  如: 吸吮,抓握
- *  注: 先天,被动
- */
-+(void) output_Reactor:(NSArray*)outputModels;
-
-
-/**
  *  MARK:--------------------思维输出--------------------
  *  @param algNode_p : 概念节点指针
  *  @result 输出有效(>1条)时,返回true;
  *  如: 吃奶,飞行
  *  注: 后天,主动 (由神经网络后天执行输出: 检查执行微信息输出)
  */
-+(BOOL) output_TC:(AIKVPointer*)algNode_p;
-
++(BOOL) output_FromTC:(AIKVPointer*)algNode_p;
 
 /**
- *  MARK:--------------------情绪输出--------------------
+ *  MARK:--------------------反射输出--------------------
+ */
++(void) output_FromReactor:(NSString*)rds datas:(NSArray*)datas;
+
+/**
+ *  MARK:--------------------mood输出--------------------
  *  @param type : 情绪类型
  *  如: 焦急
  *  注: 先天,主动 (由思维控制器主动调用发泄情绪)
  *  代码实践: 对Anxious情绪,testHungryDemo与birdGrowDemo的反应肯定就不是一样的,所以具体执行的outModel由应用层指定;
  */
-+(void) output_Mood:(AIMoodType)type;
++(void) output_FromMood:(AIMoodType)type;
 
 @end
