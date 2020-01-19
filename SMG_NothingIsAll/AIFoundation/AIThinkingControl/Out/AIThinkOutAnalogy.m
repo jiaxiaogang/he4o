@@ -8,6 +8,7 @@
 
 #import "AIThinkOutAnalogy.h"
 #import "AIAbsAlgNode.h"
+#import "AINetUtils.h"
 
 @implementation AIThinkOutAnalogy
 
@@ -26,8 +27,8 @@
     NSMutableArray *cs = [[NSMutableArray alloc] init];
     
     //2. 收集m_ps & c_ps & mc_ps;
-    NSArray *mAbs_ps = [SMGUtils convertPointersFromPorts:mAlg.absPorts];
-    NSArray *cAbs_ps = [SMGUtils convertPointersFromPorts:cAlg.absPorts];
+    NSArray *mAbs_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:mAlg]];
+    NSArray *cAbs_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:cAlg]];
     NSMutableArray *mcAbs_ps = [[NSMutableArray alloc] init];
     [mcAbs_ps addObjectsFromArray:mAbs_ps];
     [mcAbs_ps addObjectsFromArray:cAbs_ps];
