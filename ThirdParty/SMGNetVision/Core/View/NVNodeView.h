@@ -39,6 +39,7 @@
  */
 -(void) light:(NSString*)lightStr;
 -(void) clearLight;
+-(NSString*) getLightStr;
 
 -(void) setTitle:(NSString*)titleStr showTime:(CGFloat)showTime;
 

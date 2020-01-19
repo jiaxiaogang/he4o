@@ -146,6 +146,10 @@
     [self.lightLab setText:@""];
 }
 
+-(NSString*) getLightStr{
+    return self.lightLab.text;
+}
+
 -(void) setTitle:(NSString*)titleStr showTime:(CGFloat)showTime {
     [self.titleLab setText:titleStr];
     if (showTime > 0) {

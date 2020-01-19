@@ -54,6 +54,7 @@
     }
         
     //2. 依次单个概念行为化
+    [theNV setNodeData:curFo.pointer lightStr:@"行为化时序"];
     for (AIKVPointer *curAlg_p in curAlg_ps) {
         __block BOOL successed = false;
         [self convert2Out_Alg:curAlg_p type:AnalogyInnerType_Hav success:^(NSArray *actions) {
@@ -88,13 +89,14 @@
             //11. 默认返回可行;
             return true;
         }];
-        [theNV setNodeData:curAlg_p lightStr:@"o2"];
         
         //4. 有一个失败,则整个rangeOrder失败;)
         if (!successed) {
+            [theNV setNodeData:curAlg_p lightStr:@"行为化失败"];
             failure();
             return;
         }
+        [theNV setNodeData:curAlg_p lightStr:@"行为化成功"];
     }
     
     //5. 成功回调,每成功一次fo,消耗1格活跃值;

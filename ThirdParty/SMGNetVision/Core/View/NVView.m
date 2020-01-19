@@ -127,6 +127,11 @@
     [self lightNode:nodeData str:lightStr];
 }
 
+-(void) setNodeData:(id)nodeData appendLightStr:(NSString*)appendLightStr{
+    NSString *lightStr = STRFORMAT(@"%@%@",[self getLightStr:nodeData],appendLightStr);
+    [self setNodeData:nodeData lightStr:lightStr];
+}
+
 -(void) clear{
     //1. 清模块
     NSArray *mViews = ARRTOOK([self subViews_AllDeepWithClass:NVModuleView.class]);
@@ -142,14 +147,8 @@
 }
 
 -(void) lightNode:(id)nodeData str:(NSString*)str{
-    if (nodeData) {
-        NSArray *nvs = ARRTOOK([self subViews_AllDeepWithClass:NVNodeView.class]);
-        for (NVNodeView *nv in nvs) {
-            if ([nodeData isEqual:nv.data]) {
-                [nv light:str];
-            }
-        }
-    }
+    NVNodeView *nv = [self findNodeView:nodeData];
+    if (nv) [nv light:str];
 }
 
 -(void) clearLight{
@@ -161,6 +160,14 @@
     [self clearLightFromParentView:mView];
 }
 
+-(NSString*) getLightStr:(id)nodeData{
+    NVNodeView *nv = [self findNodeView:nodeData];
+    return nv ? [nv getLightStr] : @"";
+}
+
+//MARK:===============================================================
+//MARK:                     < privateMethod >
+//MARK:===============================================================
 -(void) clearLightFromParentView:(UIView*)parentView{
     if (parentView) {
         NSArray *nvs = ARRTOOK([parentView subViews_AllDeepWithClass:NVNodeView.class]);
@@ -178,6 +185,18 @@
     for (NVModuleView *mView in self.contentView.subviews) {
         if (ISOK(mView, NVModuleView.class) && [moduleId isEqualToString:mView.moduleId]) {
             return mView;
+        }
+    }
+    return nil;
+}
+
+-(NVNodeView*) findNodeView:(id)nodeData{
+    if (nodeData) {
+        NSArray *nvs = ARRTOOK([self subViews_AllDeepWithClass:NVNodeView.class]);
+        for (NVNodeView *nv in nvs) {
+            if ([nodeData isEqual:nv.data]) {
+                return nv;
+            }
         }
     }
     return nil;
