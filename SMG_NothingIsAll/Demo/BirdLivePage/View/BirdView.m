@@ -74,6 +74,10 @@
 
 //被动吃
 -(void) touchMouth{
+    //1. 吃前视觉
+    [self see:[self.delegate birdView_GetPageView]];
+    
+    //2. 吃
     [AIReactorControl commitReactor:EAT_RDS];
 }
 
@@ -101,7 +105,11 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-//无论是主动吃,还是被动吃,都要观察下吃前的视觉,吃后的视觉,以及价值上的影响;
+/**
+ *  MARK:--------------------吃--------------------
+ *  @desc 无论是主动吃,还是被动吃,都要观察下吃前的视觉,吃后的视觉,以及价值上的影响;
+ *  @desc 20200120 吃前视觉仅由被动吃时有,为解决外层死循环问题 (参考n18p5-BUG9)
+ */
 -(void) eat:(CGFloat)value{
     if (self.delegate && [self.delegate respondsToSelector:@selector(birdView_GetFoodOnMouth)]) {
         //1. 嘴附近的食物
@@ -142,8 +150,6 @@
         //2. 吸吮反射 / 主动吃
         if ([EAT_RDS isEqualToString:identify]) {
             if (OutputObserverType_Front == type) {
-                //a. 吃前视觉
-                [self see:[self.delegate birdView_GetPageView]];
             }else if(OutputObserverType_Back == type){
                 //b. 吃后 => UI处理 & 视觉 & 产生mv;
                 [self eat:[paramNum floatValue]];

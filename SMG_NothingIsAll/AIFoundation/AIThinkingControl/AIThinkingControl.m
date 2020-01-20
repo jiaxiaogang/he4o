@@ -146,7 +146,9 @@ static AIThinkingControl *_instance;
 
 -(AIFrontOrderNode*)aiThinkIn_CreateCMVModel:(NSArray *)algsArr{
     AIFrontOrderNode *foNode = [[AINet sharedInstance] createCMV:algsArr order:self.shortMemory.shortCache];
-    [self.shortMemory clear];
+    
+    //20200120 瞬时记忆改为不清空,为解决外层死循环问题 (因为外层循环需要行为输出后,将时序连起来) 参考n18p5-BUG9
+    //[self.shortMemory clear];
     return foNode;
 }
 
