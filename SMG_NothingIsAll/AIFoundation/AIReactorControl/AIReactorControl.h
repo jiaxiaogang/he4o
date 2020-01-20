@@ -42,11 +42,11 @@
  *  目的: 是让he学会自主使用某外围功能;
  *  备注: 目前支持1个nsnumber参数; (也可以暂不支持参数)
  *
- *  @param rds      : 反射标识
+ *  @param identify : 反射标识
  *  @param datas    : 要反射执行的参数 (吸吮力度或哭的表情)
  *
  */
-+(void) commitReactor:(NSString*)rds datas:(NSArray*)datas;
-+(void) commitReactor:(NSString*)rds;
++(void) commitReactor:(NSString*)identify datas:(NSArray*)datas;
++(void) commitReactor:(NSString*)identify;
 
 @end

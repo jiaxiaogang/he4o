@@ -153,18 +153,18 @@
     if (notification) {
         //1. 取数据
         NSDictionary *obj = DICTOOK(notification.object);
-        NSString *rds = STRTOOK([obj objectForKey:@"rds"]);
-        NSNumber *paramNum = NUMTOOK([obj objectForKey:@"paramNum"]);
+        NSString *identify = STRTOOK([obj objectForKey:kOOIdentify]);
+        NSNumber *paramNum = NUMTOOK([obj objectForKey:kOOParam]);
         
         //2. 字符串反射
-        if ([TEXT_RDS isEqualToString:rds]) {
+        if ([TEXT_RDS isEqualToString:identify]) {
             char c = [paramNum charValue];
             [self.outputMStr appendFormat:@"%c",c];
             if (self.outputMStr.length > 100) {
                 NSString *subStr = [self.outputMStr substringFromIndex:self.outputMStr.length - 100];
                 self.outputMStr = [[NSMutableString alloc] initWithString:subStr];
             }
-        }else if([ANXIOUS_RDS isEqualToString:rds]){
+        }else if([ANXIOUS_RDS isEqualToString:identify]){
             const char *chars = [@"T_T" UTF8String];
             NSMutableArray *datas = [[NSMutableArray alloc] init];
             for (NSInteger i = 0; i < 3; i++) {

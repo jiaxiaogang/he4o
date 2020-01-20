@@ -135,12 +135,12 @@
     if (notification) {
         //1. 取数据
         NSDictionary *obj = DICTOOK(notification.object);
-        NSString *rds = STRTOOK([obj objectForKey:@"rds"]);
-        NSNumber *paramNum = NUMTOOK([obj objectForKey:@"paramNum"]);
-        NSInteger type = [NUMTOOK([obj objectForKey:@"type"]) integerValue];
+        NSString *identify = STRTOOK([obj objectForKey:kOOIdentify]);
+        NSNumber *paramNum = NUMTOOK([obj objectForKey:kOOParam]);
+        NSInteger type = [NUMTOOK([obj objectForKey:kOOType]) integerValue];
         
         //2. 吸吮反射 / 主动吃
-        if ([EAT_RDS isEqualToString:rds]) {
+        if ([EAT_RDS isEqualToString:identify]) {
             if (OutputObserverType_Front == type) {
                 //a. 吃前视觉
                 [self see:[self.delegate birdView_GetPageView]];
@@ -150,11 +150,11 @@
             }
         }
         //3. 扇翅膀反射
-        else if([FLY_RDS isEqualToString:rds]){
+        else if([FLY_RDS isEqualToString:identify]){
             [self fly:[paramNum floatValue]];
         }
         //4. 焦急反射
-        else if([ANXIOUS_RDS isEqualToString:rds]){
+        else if([ANXIOUS_RDS isEqualToString:identify]){
             //1. 小鸟焦急时_扇翅膀;
             //[self see:[self.delegate birdView_GetPageView]];
             //CGFloat data = (arc4random() % 8) / 8.0f;

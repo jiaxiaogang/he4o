@@ -124,14 +124,17 @@ va_end(args);\
 
 
 /**
- *  MARK:--------------------ObserverKey--------------------
+ *  MARK:--------------------OutputObserverKey--------------------
  */
+//OutputObserverKey
 #define kOutputObserver   @"kOutputObserver"
 
+//OutputObjectKey
+#define kOOIdentify @"identify"
+#define kOOParam @"param"
+#define kOOType @"type"
 
-/**
- *  MARK:--------------------RDS (ReactorDataSource)--------------------
- */
+//Identify标识 (内核方)
 #define TEXT_RDS @"TEXT_RDS" //字符输出反射标识
 #define ANXIOUS_RDS @"ANXIOUS_RDS" //焦急情绪输出标识
 #define SATISFY_RDS @"SATISFY_RDS" //满意情绪输出标识

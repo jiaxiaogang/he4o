@@ -14,10 +14,10 @@
 @interface OutputModel : NSObject
 
 /**
- *  MARK:--------------------通知标识符dataSource--------------------
+ *  MARK:--------------------通知标识符--------------------
  *  注: 目前输出是单值的,所以此处rds其实就是algsType,比如EAT_RDS,以后有了结构化后,再细分拆开;
  */
-@property (strong,nonatomic) NSString *rds;
+@property (strong,nonatomic) NSString *identify;
 
 //参数值 (目前仅支持1个) (应通过网络来实现组,而不是多参数)
 @property (strong,nonatomic) NSNumber *data;

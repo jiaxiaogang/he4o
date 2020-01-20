@@ -21,10 +21,10 @@
 //MARK:                     < CanOutput >
 //MARK:===============================================================
 
-+(BOOL) checkCanOutput:(NSString*)dataSource {
++(BOOL) checkCanOutput:(NSString*)identify {
     AIKVPointer *canout_p = [SMGUtils createPointerForCerebelCanOut];
     NSArray *arr = [SMGUtils searchObjectForFilePath:canout_p.filePath fileName:kFNDefault time:cRTDefault];
-    return ARRISOK(arr) && [arr containsObject:STRTOOK(dataSource)];
+    return ARRISOK(arr) && [arr containsObject:STRTOOK(identify)];
 }
 
 

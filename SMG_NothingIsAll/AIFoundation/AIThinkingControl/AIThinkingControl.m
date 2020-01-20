@@ -103,13 +103,13 @@ static AIThinkingControl *_instance;
     NSMutableArray *value_ps = [[NSMutableArray alloc] init];
     for (OutputModel *model in ARRTOOK(outputModels)) {
         //2. 装箱
-        AIKVPointer *output_p = [theNet getOutputIndex:model.rds outputObj:model.data];
+        AIKVPointer *output_p = [theNet getOutputIndex:model.identify outputObj:model.data];
         if (output_p) {
             [value_ps addObject:output_p];
         }
         
         //4. 记录可输出canout (当前善未形成node,所以无法建议索引;(检查一下,当outLog形成node后,索引的建立))
-        [AINetUtils setCanOutput:model.rds];
+        [AINetUtils setCanOutput:model.identify];
     }
     
     //5. 概念

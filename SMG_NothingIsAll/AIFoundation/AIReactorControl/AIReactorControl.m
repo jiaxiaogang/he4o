@@ -49,11 +49,11 @@
     [AIVisionAlgs commitView:selfView targetView:targetView rect:rect];
 }
 
-+(void) commitReactor:(NSString*)rds{
-    [self commitReactor:rds datas:@[@(1)]];
++(void) commitReactor:(NSString*)identify{
+    [self commitReactor:identify datas:@[@(1)]];
 }
-+(void) commitReactor:(NSString*)rds datas:(NSArray*)datas{
-    [Output output_FromReactor:rds datas:datas];
++(void) commitReactor:(NSString*)identify datas:(NSArray*)datas{
+    [Output output_FromReactor:identify datas:datas];
 }
 
 @end

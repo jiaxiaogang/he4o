@@ -24,10 +24,9 @@
 
 /**
  *  MARK:--------------------标记canout--------------------
- *  @param algsType     : 分区标识 (algsType不需要,因为都是Output)
- *  @param dataSource   : 算法标识
+ *  @param identify     : 输出标识 (algsType不需要,因为都是Output)
  */
-+(void) setCanOutput:(NSString*)dataSource ;
++(void) setCanOutput:(NSString*)identify ;
 
 //MARK:===============================================================
 //MARK:                     < Other >

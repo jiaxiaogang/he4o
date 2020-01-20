@@ -30,7 +30,7 @@
 /**
  *  MARK:--------------------反射输出--------------------
  */
-+(void) output_FromReactor:(NSString*)rds datas:(NSArray*)datas;
++(void) output_FromReactor:(NSString*)identify datas:(NSArray*)datas;
 
 /**
  *  MARK:--------------------mood输出--------------------
