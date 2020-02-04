@@ -194,6 +194,7 @@
  *
  *  @desc
  *      1. xx年xx月xx日: matchAlg优先,都是通过抽具象关联来判断的,而不是直接对比其内容;
+ *      2. 20200204: ms&cs抵消的条件,由ms.content_ps.count=cs.content_ps.count == 1改为,两者不同稀疏码长度为1;(参考18075)
  *
  *  @todo
  *      TODO_TEST_HERE: 在alg抽象匹配时,核实下将absAlg去重,为了避免绝对匹配重复导致的联想不以cHav
@@ -233,36 +234,37 @@
                 
                 //3. MC抵消GL处理之: 判断长度为1;
                 for (AIAlgNodeBase *csAlg in csAlgs) {
-                    if (csAlg.content_ps.count == 1) {
-                        for (AIAlgNodeBase *msAlg in msAlgs) {
-                            if (msAlg.content_ps.count == 1) {
-                                
-                                //4. MC抵消GL处理之: 判断标识相同
-                                AIKVPointer *csValue_p = ARR_INDEX(csAlg.content_ps, 0);
-                                AIKVPointer *msValue_p = ARR_INDEX(msAlg.content_ps, 0);
-                                if ([csValue_p.identifier isEqualToString:msValue_p.identifier]) {
-                                    //5. MC抵消GL处理之: 转移到_Value()
-                                    NSNumber *csValue = NUMTOOK([AINetIndex getData:csValue_p]);
-                                    NSNumber *msValue = NUMTOOK([AINetIndex getData:msValue_p]);
-                                    AnalogyInnerType type = AnalogyInnerType_None;
-                                    if (csValue > msValue) {//需增大
-                                        type = AnalogyInnerType_Greater;
-                                    }else if(csValue < msValue){//需减小
-                                        type = AnalogyInnerType_Less;
-                                    }else{}//再者一样,不处理;
-                                    if (!failured && type != AnalogyInnerType_None) {
-                                        [self convert2Out_RelativeValue:msValue_p type:type vSuccess:^(AIFoNodeBase *glFo, NSArray *acts) {
-                                            [allActs addObjectsFromArray:acts];
-                                        } vFailure:^{
-                                            failured = true;
-                                        }];
-                                    }
-                                    
-                                    //6. MC抵消GL处理之: 标记已处理;
-                                    [alreadyGLs addObject:csAlg];
-                                    [alreadyGLs addObject:msAlg];
-                                    break;
+                    for (AIAlgNodeBase *msAlg in msAlgs) {
+                        
+                        //3. ms&cs仅有1条不同稀疏码;
+                        NSArray *csSubMs = [SMGUtils removeSub_ps:msAlg.content_ps parent_ps:csAlg.content_ps];
+                        NSArray *msSubCs = [SMGUtils removeSub_ps:csAlg.content_ps parent_ps:msAlg.content_ps];
+                        if (csSubMs.count == 1 && msSubCs.count == 1) {
+                            //4. MC抵消GL处理之: 判断标识相同
+                            AIKVPointer *csValue_p = ARR_INDEX(csSubMs, 0);
+                            AIKVPointer *msValue_p = ARR_INDEX(msSubCs, 0);
+                            if ([csValue_p.identifier isEqualToString:msValue_p.identifier]) {
+                                //5. MC抵消GL处理之: 转移到_Value()
+                                NSNumber *csValue = NUMTOOK([AINetIndex getData:csValue_p]);
+                                NSNumber *msValue = NUMTOOK([AINetIndex getData:msValue_p]);
+                                AnalogyInnerType type = AnalogyInnerType_None;
+                                if (csValue > msValue) {//需增大
+                                    type = AnalogyInnerType_Greater;
+                                }else if(csValue < msValue){//需减小
+                                    type = AnalogyInnerType_Less;
+                                }else{}//再者一样,不处理;
+                                if (!failured && type != AnalogyInnerType_None) {
+                                    [self convert2Out_RelativeValue:msValue_p type:type vSuccess:^(AIFoNodeBase *glFo, NSArray *acts) {
+                                        [allActs addObjectsFromArray:acts];
+                                    } vFailure:^{
+                                        failured = true;
+                                    }];
                                 }
+                                
+                                //6. MC抵消GL处理之: 标记已处理;
+                                [alreadyGLs addObject:csAlg];
+                                [alreadyGLs addObject:msAlg];
+                                break;
                             }
                         }
                     }
