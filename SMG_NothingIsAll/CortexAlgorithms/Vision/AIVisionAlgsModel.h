@@ -34,7 +34,7 @@
 @property (assign,nonatomic) CGFloat direction;
 
 //distance
-@property (assign,nonatomic) CGFloat distance;
+@property (assign,nonatomic) NSInteger distance;
 
 //border
 @property (assign,nonatomic) CGFloat border;

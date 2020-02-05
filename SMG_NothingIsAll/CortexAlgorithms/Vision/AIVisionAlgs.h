@@ -15,6 +15,9 @@
  *  3. 形状(圆角) : radius
  *  4. 相对位置 : origin
  *  5. 相对速度 : speed
+ *  @desc
+ *      1. 目前HE为虚拟场景伪视觉,并非真正摄像头视觉;
+ *      2. 目前内核稀疏码不支持模糊匹配,所以很多算法值,采用整型,而非float;
  */
 @interface AIVisionAlgs : NSObject
 

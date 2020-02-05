@@ -37,7 +37,7 @@
             model.direction = [self direction:selfView target:curView];
             model.distance = [self distance:selfView target:curView];
             model.border = [self border:curView];
-            NSLog(@"视觉目标 [距离:%f 角度:%f 宽:%f 高:%f 皮:%f 圆角:%f]",model.distance,model.direction,model.sizeWidth,model.sizeHeight,model.border,model.radius);
+            NSLog(@"视觉目标 [距离:%ld 角度:%f 宽:%f 高:%f 皮:%f 圆角:%f]",(long)model.distance,model.direction,model.sizeWidth,model.sizeHeight,model.border,model.radius);
             NSMutableDictionary *modelDic = [NSObject getDic:model containParent:true];
             for (NSString *key in modelDic.allKeys) {
                 if ([NUMTOOK([modelDic objectForKey:key]) isEqualToNumber:@(0)]) {
@@ -128,9 +128,10 @@
 }
 
 //direction
-+(CGFloat) distance:(UIView*)selfView target:(UIView*)target{
-    CGPoint distanceP = [self distancePoint:selfView target:target];
-    CGFloat distance = sqrt(powf(distanceP.x, 2) + powf(distanceP.y, 2));
++(NSInteger) distance:(UIView*)selfView target:(UIView*)target{
+    CGPoint disPoint = [self distancePoint:selfView target:target];
+    CGFloat disFloat = sqrt(powf(disPoint.x, 2) + powf(disPoint.y, 2));
+    NSInteger distance = (NSInteger)(disFloat / 3.0f);
     return distance;
 }
 
