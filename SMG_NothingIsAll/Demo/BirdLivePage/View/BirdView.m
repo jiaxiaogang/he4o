@@ -15,7 +15,7 @@
 @interface BirdView ()
 
 @property (strong,nonatomic) IBOutlet UIView *containerView;
-@property (strong,nonatomic) NSTimer *timer;                    //计时器(乌鸦每过10s,饿一点);
+//@property (strong,nonatomic) NSTimer *timer;                    //计时器(乌鸦每过10s,饿一点); (关闭计时器,先用随机1/3吃不到时触发更饿)
 @property (assign, nonatomic) CGFloat hungerValue;              //当前饥饿度
 
 @end
@@ -49,7 +49,7 @@
 }
 
 -(void) initData{
-    self.timer = [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
+    //self.timer = [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
 }
 
 -(void) initDisplay{
@@ -123,7 +123,12 @@
         FoodView *foodView = [self.delegate birdView_GetFoodOnMouth];
         
         //2. 没坚果可吃 (计时器触发,更饿时,发现没坚果吃,并不能解决饥饿问题,参考:18084_todo1);
-        if (!foodView) return;
+        if (!foodView) {
+            if (arc4random() % 3 == 0) {
+                [self sendHunger:1.0f];
+            }
+            return;
+        }
         
         //2. 吃掉 (让he以吸吮反射的方式,去主动吃;并将out入网,以抽象出"吃"的节点;参考n15p6-QT1)
         if (foodView.status == FoodStatus_Eat) {
@@ -133,7 +138,7 @@
             [self see:[self.delegate birdView_GetPageView]];
             
             //4. 产生HungerMindValue;
-            [self sendHunger:8.0f];
+            [self sendHunger:1.0f];
         }else if(foodView.status == FoodStatus_Border){
             //坚果带皮时,不仅吃不到,还得嘴疼;
             //3. 吃完视觉
@@ -192,6 +197,7 @@
  *  MARK:--------------------发送饥饿信号--------------------
  */
 -(void) sendHunger:(CGFloat)delta{
+    NSLog(@"=====饥饿信号: %f + %f = %f",self.hungerValue,delta,self.hungerValue + delta);
     [AIInput commitIMV:MVType_Hunger from:self.hungerValue to:self.hungerValue + delta];
     self.hungerValue += delta;
 }

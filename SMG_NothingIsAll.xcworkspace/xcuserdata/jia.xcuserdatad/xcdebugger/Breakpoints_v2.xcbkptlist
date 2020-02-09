@@ -169,13 +169,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/AIThinkingControl.m"
-            timestampString = "602909546.290354"
+            filePath = "SMG_NothingIsAll/Demo/BirdLivePage/View/BirdView.m"
+            timestampString = "602913382.249379"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "94"
-            endingLineNumber = "94"
-            landmarkName = "-commitInput:"
+            startingLineNumber = "128"
+            endingLineNumber = "128"
+            landmarkName = "-eat:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
