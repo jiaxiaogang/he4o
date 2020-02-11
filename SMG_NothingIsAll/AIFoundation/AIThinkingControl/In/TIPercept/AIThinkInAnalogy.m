@@ -131,17 +131,10 @@
                         [SMGUtils insertObject:createAbsFo pointer:createAbsFo.pointer fileName:kFNNode time:cRTNode];
                     }
                     
-                    //[theNV setNodeData:createAbsFo.pointer];
-                    //调试时序中,仅有"吃"的问题;
-                    if (createAbsFo.content_ps.count == 1) {
-                        AIAlgNodeBase *algNode = [SMGUtils searchNode:ARR_INDEX(createAbsFo.content_ps, 0)];
-                        if (algNode && algNode.pointer.isOut) {
-                            NSLog(@"警告!! BUGFrom->BUG 时序中,仅有一个输出节点");
-                        }
-                    }
-                    
-                    [theNV setNodeData:createAbsFo.pointer lightStr:@"osNew"];
-                    [theNV setNodeData:createAbsCmv.pointer lightStr:@"osNew"];
+                    //调试短时序;
+                    [theNV setNodeData:fo.pointer lightStr:STRFORMAT(@"外类比A:%ld",createAbsFo.content_ps.count)];
+                    [theNV setNodeData:assFo.pointer lightStr:STRFORMAT(@"外类比B:%ld",createAbsFo.content_ps.count)];
+                    [theNV setNodeData:createAbsFo.pointer lightStr:STRFORMAT(@"外类比C:%ld",createAbsFo.content_ps.count)];
                 }
             }
         }
