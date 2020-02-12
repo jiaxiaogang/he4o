@@ -100,8 +100,6 @@
                 AIFoNodeBase *assFrontNode = [SMGUtils searchNode:assMvNode.foNode_p];
                 
                 if (ISOK(assFrontNode, AINodeBase.class)) {
-                    [theNV setNodeData:assFrontNode.pointer lightStr:@"旧"];
-                    [theNV setNodeData:assFrontNode.cmvNode_p lightStr:@"旧"];
                     //5. 执行外类比;
                     [AIThinkInAnalogy analogyOutside:foNode assFo:assFrontNode canAss:^BOOL{
                         return canAss();

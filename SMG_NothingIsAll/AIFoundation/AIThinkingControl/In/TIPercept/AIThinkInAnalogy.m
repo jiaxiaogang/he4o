@@ -29,6 +29,9 @@
     //1. 类比orders的规律
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
     if (fo && assFo) {
+        
+        
+        //TODOTOMORROW: 因出现了[果,果,吃,吃]这样的异常时序,所以将此处外类比,改为有序类比;
         for (AIKVPointer *algNodeA_p in fo.content_ps) {
             for (AIKVPointer *algNodeB_p in assFo.content_ps) {
                 //2. A与B直接一致则直接添加 & 不一致则如下代码;
