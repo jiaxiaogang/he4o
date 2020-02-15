@@ -25,15 +25,23 @@
 //MARK:===============================================================
 //MARK:                     < 外类比部分 >
 //MARK:===============================================================
+
+/**
+ *  MARK:--------------------fo外类比--------------------
+ *  @version
+ *      20200215: 有序外类比: 将forin循环fo和assFo改为反序,并记录lastJIndex (因出现了[果,果,吃,吃]这样的异常时序) 参考n18p11;
+ */
 +(void) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy fromInner:(BOOL)fromInner{
     //1. 类比orders的规律
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
     if (fo && assFo) {
         
-        
-        //TODOTOMORROW: 因出现了[果,果,吃,吃]这样的异常时序,所以将此处外类比,改为有序类比;
-        for (AIKVPointer *algNodeA_p in fo.content_ps) {
-            for (AIKVPointer *algNodeB_p in assFo.content_ps) {
+        //2. 外类比有序进行
+        NSInteger lastAnalogyJIndex = assFo.content_ps.count - 1;
+        for (NSInteger i = fo.content_ps.count - 1; i >= 0; i--) {
+            for (NSInteger j = lastAnalogyJIndex; j >= 0; j--) {
+                AIKVPointer *algNodeA_p = fo.content_ps[i];
+                AIKVPointer *algNodeB_p = assFo.content_ps[j];
                 //2. A与B直接一致则直接添加 & 不一致则如下代码;
                 if ([algNodeA_p isEqual:algNodeB_p]) {
                     [orderSames addObject:algNodeA_p];
