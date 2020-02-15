@@ -14,8 +14,8 @@
  */
 @interface NVLineView : UIView
 
-@property (readonly,strong, nonatomic) NSMutableArray *data;//元素为2的数据;
--(void) setStrongStr:(NSString*)strongStr;
+@property (nonnull,readonly,strong, nonatomic) NSMutableArray *data;//元素为2的数据;
+-(void) light:(NSString*)lightStr;
 -(void) setDataWithDataA:(id)dataA dataB:(id)dataB;
 -(void) setDataWithData:(NSArray*)data;
 

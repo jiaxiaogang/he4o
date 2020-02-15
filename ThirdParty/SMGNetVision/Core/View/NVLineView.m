@@ -14,7 +14,7 @@
 @interface NVLineView ()
 
 @property (strong,nonatomic) UIView *lineView;
-@property (strong, nonatomic) UILabel *strongLab;
+@property (strong, nonatomic) UILabel *lightLab;
 
 @end
 
@@ -46,13 +46,13 @@
     [self.lineView.layer setMasksToBounds:false];
     
     //strongLab
-    self.strongLab = [[UILabel alloc] init];
-    [self.strongLab setTextColor:UIColorWithRGBHex(0xFF0000)];
-    [self addSubview:self.strongLab];
-    [self.strongLab setAlpha:0.2f];
-    [self.strongLab setFrame:CGRectMake(0, 0, 50, 10)];
-    [self.strongLab setFont:[UIFont systemFontOfSize:8]];
-    [self.strongLab mas_makeConstraints:^(MASConstraintMaker *make) {
+    self.lightLab = [[UILabel alloc] init];
+    [self.lightLab setTextColor:UIColorWithRGBHex(0xFF0000)];
+    [self addSubview:self.lightLab];
+    [self.lightLab setAlpha:0.2f];
+    [self.lightLab setFrame:CGRectMake(0, 0, 50, 10)];
+    [self.lightLab setFont:[UIFont systemFontOfSize:8]];
+    [self.lightLab mas_makeConstraints:^(MASConstraintMaker *make) {
         make.center.mas_equalTo(self);
     }];
     
@@ -69,8 +69,8 @@
 //MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
--(void) setStrongStr:(NSString*)strongStr{
-    [self.strongLab setText:strongStr];
+-(void) light:(NSString*)lightStr{
+    [self.lightLab setText:lightStr];
 }
 
 -(void) setDataWithDataA:(id)dataA dataB:(id)dataB{

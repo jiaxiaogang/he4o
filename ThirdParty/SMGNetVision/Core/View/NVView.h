@@ -71,9 +71,10 @@
  *  MARK:--------------------节点闪烁--------------------
  */
 -(void) lightNode:(id)nodeData str:(NSString*)str;
+-(void) lightLine:(id)nodeDataA nodeDataB:(id)nodeDataB str:(NSString*)str;
 -(void) clearLight;
 -(void) clearLight:(NSString*)moduleId;
--(NSString*) getLightStr:(id)nodeData;;
+-(NSString*) getLightStr:(id)nodeData;
 
 @end
 

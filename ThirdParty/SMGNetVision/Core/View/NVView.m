@@ -151,6 +151,11 @@
     if (nv) [nv light:str];
 }
 
+-(void) lightLine:(id)nodeDataA nodeDataB:(id)nodeDataB str:(NSString*)str{
+    NVLineView *lv = [self findLineView:nodeDataA nodeDataB:nodeDataB];
+    if (lv) [lv light:str];
+}
+
 -(void) clearLight{
     [self clearLightFromParentView:self];
 }
@@ -196,6 +201,18 @@
         for (NVNodeView *nv in nvs) {
             if ([nodeData isEqual:nv.data]) {
                 return nv;
+            }
+        }
+    }
+    return nil;
+}
+
+-(NVLineView*) findLineView:(id)nodeDataA nodeDataB:(id)nodeDataB{
+    if (nodeDataA && nodeDataB) {
+        NSArray *vs = ARRTOOK([self subViews_AllDeepWithClass:NVLineView.class]);
+        for (NVLineView *n in vs) {
+            if ([n.data containsObject:nodeDataA] && [n.data containsObject:nodeDataB]) {
+                return n;
             }
         }
     }

@@ -29,23 +29,23 @@
 /**
  *  MARK:--------------------fo外类比--------------------
  *  @version
- *      20200215: 有序外类比: 将forin循环fo和assFo改为反序,并记录lastJIndex (因出现了[果,果,吃,吃]这样的异常时序) 参考n18p11;
+ *      20200215: 有序外类比: 将forin循环fo和assFo改为反序,并记录上次类比位置jMax (因出现了[果,果,吃,吃]这样的异常时序) 参考n18p11;
  */
 +(void) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy fromInner:(BOOL)fromInner{
     //1. 类比orders的规律
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
     if (fo && assFo) {
         
-        //2. 外类比有序进行
-        NSInteger lastJIndex = assFo.content_ps.count - 1;
+        //2. 外类比有序进行 (记录jMax & 反序)
+        NSInteger jMax = assFo.content_ps.count - 1;
         for (NSInteger i = fo.content_ps.count - 1; i >= 0; i--) {
-            for (NSInteger j = lastJIndex; j >= 0; j--) {
+            for (NSInteger j = jMax; j >= 0; j--) {
                 AIKVPointer *algNodeA_p = fo.content_ps[i];
                 AIKVPointer *algNodeB_p = assFo.content_ps[j];
                 //2. A与B直接一致则直接添加 & 不一致则如下代码;
                 if ([algNodeA_p isEqual:algNodeB_p]) {
                     [orderSames addObject:algNodeA_p];
-                    lastJIndex = j;
+                    jMax = j - 1;
                     break;
                 }else{
                     ///1. 构建时,消耗能量值;
@@ -72,7 +72,7 @@
                             AIAbsAlgNode *createAbsNode = [theNet createAbsAlgNode:sameValue_ps conAlgs:@[algNodeA,algNodeB] isMem:false];
                             if (createAbsNode) {
                                 [orderSames addObject:createAbsNode.pointer];
-                                lastJIndex = j;
+                                jMax = j - 1;
                             }
                             ///4. 构建时,消耗能量值;
                             if (updateEnergy) {
@@ -108,7 +108,6 @@
         NSLog(@"将构建长度为1的时序, fo:%lu,assFo:%lu",(unsigned long)fo.content_ps.count,(unsigned long)assFo.content_ps.count);
         [theNV setNodeData:fo.pointer lightStr:@"长1BugFrom"];
         [theNV setNodeData:assFo.pointer lightStr:@"长1BugFrom"];
-        NSLog(@"");
     }
     [self analogyOutside_Creater:orderSames fo:fo assFo:assFo fromInner:fromInner];
 }
@@ -143,13 +142,29 @@
                         createAbsFo.cmvNode_p = createAbsCmv.pointer;
                         [SMGUtils insertObject:createAbsFo pointer:createAbsFo.pointer fileName:kFNNode time:cRTNode];
                     }
-                    
-                    //调试短时序;
-                    [theNV setNodeData:fo.pointer lightStr:STRFORMAT(@"外类比A:%ld",createAbsFo.content_ps.count)];
-                    [theNV setNodeData:assFo.pointer lightStr:STRFORMAT(@"外类比B:%ld",createAbsFo.content_ps.count)];
-                    [theNV setNodeData:createAbsFo.pointer lightStr:STRFORMAT(@"外类比C:%ld",createAbsFo.content_ps.count)];
                 }
             }
+            
+            //调试短时序; (先仅打外类比日志);
+            if (!fromInner) {
+                [theNV setNodeData:fo.pointer lightStr:STRFORMAT(@"%@类比A:%ld",fromInner?@"内":@"外",fo.content_ps.count)];
+                [theNV setNodeData:assFo.pointer lightStr:STRFORMAT(@"%@类比B:%ld",fromInner?@"内":@"外",assFo.content_ps.count)];
+                [theNV setNodeData:createAbsFo.pointer lightStr:STRFORMAT(@"%@类比C:%ld",fromInner?@"内":@"外",createAbsFo.content_ps.count)];
+            }
+            
+            //调试关联强度
+            NSMutableString *lineLight = [NSMutableString new];
+            for (AIPort *absFoConPort in [AINetUtils absPorts_All:createAbsFo]) {
+                if ([absFoConPort.target_p isEqual:fo.pointer]) {
+                    [lineLight appendString:STRFORMAT(@"%ld",absFoConPort.strong.value)];
+                }
+            }
+            for (AIPort *foAbsPort in [AINetUtils absPorts_All:fo]) {
+                if ([foAbsPort.target_p isEqual:createAbsFo.pointer]) {
+                    [lineLight appendString:STRFORMAT(@"   %ld",foAbsPort.strong.value)];
+                }
+            }
+            [theNV lightLine:fo.pointer nodeDataB:createAbsFo.pointer str:lineLight];
         }
     }
 }
