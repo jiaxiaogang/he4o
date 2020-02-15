@@ -185,8 +185,8 @@
                   symbolName = "-[TOAlgScheme convert2Out_Alg:type:success:failure:checkScore:]"
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Volumes/APPLE%20HDD/work/temp/he4o/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOAlgScheme.m"
-                  timestampString = "603242456.048453"
+                  urlString = "file:///Volumes/APPLE%20HDD/work/temp/he4o_gitee20200214/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOAlgScheme.m"
+                  timestampString = "603459626.172973"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "154"
@@ -200,8 +200,8 @@
                   symbolName = "__63-[TOAlgScheme convert2Out_Alg:type:success:failure:checkScore:]_block_invoke_2"
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Volumes/APPLE%20HDD/work/temp/he4o/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOAlgScheme.m"
-                  timestampString = "603242456.051007"
+                  urlString = "file:///Volumes/APPLE%20HDD/work/temp/he4o_gitee20200214/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOAlgScheme.m"
+                  timestampString = "603459626.175312"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "154"
@@ -215,8 +215,8 @@
                   symbolName = "__destroy_helper_block_.218"
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Volumes/APPLE%20HDD/work/temp/he4o/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOAlgScheme.m"
-                  timestampString = "603242456.054245"
+                  urlString = "file:///Volumes/APPLE%20HDD/work/temp/he4o_gitee20200214/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOAlgScheme.m"
+                  timestampString = "603459626.177817"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "154"
@@ -255,6 +255,38 @@
             startingLineNumber = "62"
             endingLineNumber = "62"
             landmarkName = "-commitFromTOP_Convert2Actions:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIPercept/AIThinkInAnalogy.m"
+            timestampString = "603459625.8436511"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "148"
+            endingLineNumber = "148"
+            landmarkName = "+analogyOutside_Creater:fo:assFo:fromInner:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIPercept/AIThinkInAnalogy.m"
+            timestampString = "603459625.84405"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "40"
+            endingLineNumber = "40"
+            landmarkName = "+analogyOutside:assFo:canAss:updateEnergy:fromInner:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

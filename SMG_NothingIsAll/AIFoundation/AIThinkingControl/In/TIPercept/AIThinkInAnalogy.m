@@ -37,14 +37,15 @@
     if (fo && assFo) {
         
         //2. 外类比有序进行
-        NSInteger lastAnalogyJIndex = assFo.content_ps.count - 1;
+        NSInteger lastJIndex = assFo.content_ps.count - 1;
         for (NSInteger i = fo.content_ps.count - 1; i >= 0; i--) {
-            for (NSInteger j = lastAnalogyJIndex; j >= 0; j--) {
+            for (NSInteger j = lastJIndex; j >= 0; j--) {
                 AIKVPointer *algNodeA_p = fo.content_ps[i];
                 AIKVPointer *algNodeB_p = assFo.content_ps[j];
                 //2. A与B直接一致则直接添加 & 不一致则如下代码;
                 if ([algNodeA_p isEqual:algNodeB_p]) {
                     [orderSames addObject:algNodeA_p];
+                    lastJIndex = j;
                     break;
                 }else{
                     ///1. 构建时,消耗能量值;
@@ -71,6 +72,7 @@
                             AIAbsAlgNode *createAbsNode = [theNet createAbsAlgNode:sameValue_ps conAlgs:@[algNodeA,algNodeB] isMem:false];
                             if (createAbsNode) {
                                 [orderSames addObject:createAbsNode.pointer];
+                                lastJIndex = j;
                             }
                             ///4. 构建时,消耗能量值;
                             if (updateEnergy) {
