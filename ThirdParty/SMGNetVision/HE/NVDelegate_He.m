@@ -18,6 +18,7 @@
 #import "NVModuleView.h"
 #import "NVNodeView.h"
 #import "AINetUtils.h"
+#import "AIPort.h"
 
 #define ModuleName_Value @"稀疏码"
 #define ModuleName_Alg @"概念网络"
@@ -270,6 +271,33 @@
 
 -(NSString*)nv_ShowName:(AIKVPointer*)data_p{
     return STRFORMAT(@"%ld",(long)data_p.pointerId);
+}
+
+-(NSInteger)nv_GetPortStrong:(AIKVPointer*)mainNodeData target:(AIKVPointer*)targetNodeData{
+    AINodeBase *mainNode = [SMGUtils searchNode:mainNodeData];
+    if (mainNode && targetNodeData) {
+        //1. 找抽象
+        for (AIPort *itemPort in [AINetUtils absPorts_All:mainNode]) {
+            if ([itemPort.target_p isEqual:targetNodeData]) {
+                return itemPort.strong.value;
+            }
+        }
+        //2. 找具象
+        for (AIPort *itemPort in [AINetUtils conPorts_All:mainNode]) {
+            if ([itemPort.target_p isEqual:targetNodeData]) {
+                return itemPort.strong.value;
+            }
+        }
+        //3. 找被引用
+        if (ISOK(mainNode, AIAlgNodeBase.class)) {
+            for (AIPort *itemPort in [AINetUtils refPorts_All:(AIAlgNodeBase*)mainNode]) {
+                if ([itemPort.target_p isEqual:targetNodeData]) {
+                    return itemPort.strong.value;
+                }
+            }
+        }
+    }
+    return 0;
 }
 
 @end

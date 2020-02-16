@@ -153,18 +153,7 @@
             }
             
             //调试关联强度
-            NSMutableString *lineLight = [NSMutableString new];
-            for (AIPort *absFoConPort in [AINetUtils absPorts_All:createAbsFo]) {
-                if ([absFoConPort.target_p isEqual:fo.pointer]) {
-                    [lineLight appendString:STRFORMAT(@"%ld",absFoConPort.strong.value)];
-                }
-            }
-            for (AIPort *foAbsPort in [AINetUtils absPorts_All:fo]) {
-                if ([foAbsPort.target_p isEqual:createAbsFo.pointer]) {
-                    [lineLight appendString:STRFORMAT(@"   %ld",foAbsPort.strong.value)];
-                }
-            }
-            [theNV lightLine:fo.pointer nodeDataB:createAbsFo.pointer str:lineLight];
+            [theNV lightLineStrong:fo.pointer nodeDataB:createAbsFo.pointer];
         }
     }
 }

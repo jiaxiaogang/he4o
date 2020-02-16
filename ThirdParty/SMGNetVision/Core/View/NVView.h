@@ -44,6 +44,9 @@
 //报名
 -(NSString*)nv_ShowName:(id)data;
 
+//获取节点指向target的强度
+-(NSInteger)nv_GetPortStrong:(id)mainNodeData target:(id)targetNodeData;
+
 @end
 
 /**
@@ -68,12 +71,25 @@
 -(void) clear;
 
 /**
- *  MARK:--------------------节点闪烁--------------------
+ *  MARK:--------------------节点描述--------------------
  */
 -(void) lightNode:(id)nodeData str:(NSString*)str;
+
+/**
+ *  MARK:--------------------线描述--------------------
+ */
 -(void) lightLine:(id)nodeDataA nodeDataB:(id)nodeDataB str:(NSString*)str;
+-(void) lightLineStrong:(id)nodeDataA nodeDataB:(id)nodeDataB;
+
+/**
+ *  MARK:--------------------清空节点描述--------------------
+ */
 -(void) clearLight;
 -(void) clearLight:(NSString*)moduleId;
+
+/**
+ *  MARK:--------------------获取节点描述--------------------
+ */
 -(NSString*) getLightStr:(id)nodeData;
 
 @end

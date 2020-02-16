@@ -156,6 +156,15 @@
     if (lv) [lv light:str];
 }
 
+-(void) lightLineStrong:(id)nodeDataA nodeDataB:(id)nodeDataB {
+    NVLineView *lv = [self findLineView:nodeDataA nodeDataB:nodeDataB];
+    if (lv) {
+        NSInteger aStrong = [self.delegate nv_GetPortStrong:nodeDataA target:nodeDataB];
+        NSInteger bStrong = [self.delegate nv_GetPortStrong:nodeDataB target:nodeDataA];
+        [lv light:STRFORMAT(@"<%ld  %ld>",aStrong,bStrong)];
+    }
+}
+
 -(void) clearLight{
     [self clearLightFromParentView:self];
 }

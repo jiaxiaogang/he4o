@@ -165,7 +165,13 @@
 +(NSArray*) absPorts_All:(AINodeBase*)node;
 
 /**
+ *  MARK:--------------------取hdConPorts + memConPorts--------------------
+ */
++(NSArray*) conPorts_All:(AINodeBase*)node;
+
+/**
  *  MARK:--------------------取hdRefPorts + memRefPorts--------------------
+ *  @desc 目前仅支持alg,对于微信息的支持,随后再加;
  */
 +(NSArray*) refPorts_All:(AIAlgNodeBase*)node;
 

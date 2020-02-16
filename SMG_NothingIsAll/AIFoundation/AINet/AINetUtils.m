@@ -353,6 +353,18 @@
     }
     return allPorts;
 }
++(NSArray*) conPorts_All:(AINodeBase*)node{
+    NSMutableArray *allPorts = [[NSMutableArray alloc] init];
+    if (ISOK(node, AIAbsAlgNode.class)) {
+        [allPorts addObjectsFromArray:((AIAbsAlgNode*)node).conPorts];
+    }else if (ISOK(node, AINetAbsFoNode.class)) {
+        [allPorts addObjectsFromArray:((AINetAbsFoNode*)node).conPorts];
+    }
+    if (node) {
+        [allPorts addObjectsFromArray:[SMGUtils searchObjectForPointer:node.pointer fileName:kFNMemConPorts time:cRTMemPort]];
+    }
+    return allPorts;
+}
 +(NSArray*) refPorts_All:(AIAlgNodeBase*)node{
     NSMutableArray *allPorts = [[NSMutableArray alloc] init];
     if (ISOK(node, AIAlgNodeBase.class)) {
@@ -361,5 +373,6 @@
     }
     return allPorts;
 }
+
 
 @end
