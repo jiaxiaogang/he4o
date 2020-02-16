@@ -44,7 +44,7 @@
                 AIKVPointer *algNodeB_p = assFo.content_ps[j];
                 //2. A与B直接一致则直接添加 & 不一致则如下代码;
                 if ([algNodeA_p isEqual:algNodeB_p]) {
-                    [orderSames addObject:algNodeA_p];
+                    [orderSames insertObject:algNodeA_p atIndex:0];
                     jMax = j - 1;
                     break;
                 }else{
@@ -71,7 +71,7 @@
                         if (ARRISOK(sameValue_ps)) {
                             AIAbsAlgNode *createAbsNode = [theNet createAbsAlgNode:sameValue_ps conAlgs:@[algNodeA,algNodeB] isMem:false];
                             if (createAbsNode) {
-                                [orderSames addObject:createAbsNode.pointer];
+                                [orderSames insertObject:createAbsNode.pointer atIndex:0];
                                 jMax = j - 1;
                             }
                             ///4. 构建时,消耗能量值;
