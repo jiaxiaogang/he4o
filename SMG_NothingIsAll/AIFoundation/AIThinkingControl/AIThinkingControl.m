@@ -22,6 +22,7 @@
 #import "NSObject+Extension.h"
 #import "AIShortMatchModel.h"
 #import "TOFoModel.h"
+#import "AIFrontOrderNode.h"
 
 /**
  *  MARK:--------------------思维控制器--------------------
@@ -149,6 +150,17 @@ static AIThinkingControl *_instance;
     
     //20200120 瞬时记忆改为不清空,为解决外层死循环问题 (因为外层循环需要行为输出后,将时序连起来) 参考n18p5-BUG9
     //[self.shortMemory clear];
+    
+    //20200218 调试导致饿的时序;
+    [ThinkingUtils parserAlgsMVArr:algsArr success:^(AIKVPointer *delta_p, AIKVPointer *urgentTo_p, NSInteger delta, NSInteger urgentTo, NSString *algsType) {
+        BOOL havDemand = [ThinkingUtils getDemand:algsType delta:delta complete:nil];
+        if (havDemand) {
+            [theNV setNodeData:foNode.pointer lightStr:@"mv-"];
+            [theNV setNodeData:foNode.cmvNode_p lightStr:@"mv-"];
+            //AIKVPointer *item2 = ARR_INDEX(foNode.content_ps, 1);
+            //if (item2.isOut && [EAT_RDS isEqualToString:item2.dataSource]) {}
+        }
+    }];
     return foNode;
 }
 

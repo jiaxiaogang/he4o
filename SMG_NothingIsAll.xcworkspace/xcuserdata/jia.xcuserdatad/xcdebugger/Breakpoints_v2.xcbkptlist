@@ -153,24 +153,8 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/AIFoundation/AIOutput/Output.m"
-            timestampString = "601256389.742147"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "37"
-            endingLineNumber = "37"
-            landmarkName = "+output_FromTC:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOAlgScheme.m"
-            timestampString = "602983661.049019"
+            timestampString = "603671980.043535"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "154"
@@ -186,7 +170,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Volumes/APPLE%20HDD/work/temp/he4o_gitee20200214/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOAlgScheme.m"
-                  timestampString = "603527092.836539"
+                  timestampString = "603669913.029002"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "154"
@@ -201,7 +185,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Volumes/APPLE%20HDD/work/temp/he4o_gitee20200214/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOAlgScheme.m"
-                  timestampString = "603527092.838798"
+                  timestampString = "603669913.033318"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "154"
@@ -216,7 +200,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Volumes/APPLE%20HDD/work/temp/he4o_gitee20200214/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOAlgScheme.m"
-                  timestampString = "603527092.841252"
+                  timestampString = "603669913.037125"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "154"
@@ -232,13 +216,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOAlgScheme.m"
-            timestampString = "602983661.0494781"
+            filePath = "SMG_NothingIsAll/AIFoundation/AIOutput/Output.m"
+            timestampString = "603584520.816793"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "104"
-            endingLineNumber = "104"
-            landmarkName = "-convert2Out_Fo:curFo:success:failure:"
+            startingLineNumber = "60"
+            endingLineNumber = "60"
+            landmarkName = "+output_FromTC:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -248,61 +232,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/AIThinkOutReason.m"
-            timestampString = "603154787.311779"
+            filePath = "SMG_NothingIsAll/AIFoundation/AIOutput/Output.m"
+            timestampString = "603584544.6667989"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "62"
-            endingLineNumber = "62"
-            landmarkName = "-commitFromTOP_Convert2Actions:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/AIThinkingControl.m"
-            timestampString = "603524963.2750241"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "193"
-            endingLineNumber = "193"
-            landmarkName = "-aiThinkIn_Commit2TC:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ThirdParty/SMGNetVision/Core/View/NVView.m"
-            timestampString = "603527091.921382"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "163"
-            endingLineNumber = "163"
-            landmarkName = "-lightLineStrong:nodeDataB:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ThirdParty/SMGNetVision/Core/View/NVView.m"
-            timestampString = "603527157.692697"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "162"
-            endingLineNumber = "162"
-            landmarkName = "-lightLineStrong:nodeDataB:"
+            startingLineNumber = "38"
+            endingLineNumber = "38"
+            landmarkName = "+output_FromTC:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

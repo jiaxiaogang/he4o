@@ -268,8 +268,7 @@
             }
             
             //7. 内中有外
-            [theNV setNodeData:abFo.pointer];
-            [theNV lightNode:abFo.pointer str:lightStr];
+            //[theNV setNodeData:abFo.pointer lightStr:lightStr];
             [self analogyInner_Outside:abFo canAss:canAssBlock updateEnergy:updateEnergy];
         }
     }
