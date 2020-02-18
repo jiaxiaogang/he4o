@@ -36,7 +36,7 @@
     if (!ISOK(cmvNode, AICMVNode.class)) {
         return;
     }
-    [theNV setNodeData:foNode.pointer lightStr:@"新"];
+    [theNV setNodeData:foNode.pointer lightStr:STRFORMAT(@"新:%ld",foNode.content_ps.count)];
     [theNV setNodeData:cmvNode.pointer lightStr:@"新"];
     
     //3. 思考mv,需求处理
