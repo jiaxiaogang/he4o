@@ -309,6 +309,45 @@
 }
 
 /**
+ *  MARK:--------------------对MC中的Value部分代码--------------------
+ *  @caller : 由MC方法调用;
+ */
+-(void) convert2Out_Short_MC_Value:(AIAlgNodeBase*)mAlg cAlg:(AIAlgNodeBase*)cAlg pAlg:(AIAlgNodeBase*)pAlg checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
+    //1. 数据检查;
+    if (!mAlg || !cAlg) {
+        return;
+    }
+    
+    //2. ms&cs仅有1条不同稀疏码;
+    NSArray *csSubMs = [SMGUtils removeSub_ps:mAlg.content_ps parent_ps:cAlg.content_ps];
+    NSArray *msSubCs = [SMGUtils removeSub_ps:cAlg.content_ps parent_ps:mAlg.content_ps];
+    if (csSubMs.count == 1 && msSubCs.count == 1) {
+        //4. MC抵消GL处理之: 判断标识相同
+        AIKVPointer *csValue_p = ARR_INDEX(csSubMs, 0);
+        AIKVPointer *msValue_p = ARR_INDEX(msSubCs, 0);
+        if ([csValue_p.identifier isEqualToString:msValue_p.identifier]) {
+            //5. MC抵消GL处理之: 转移到_Value()
+            
+            //TODO: 取到protoAlg.value的值;
+            //查下,在类比抽象时,是否会形成不同value值,被抽象成同一抽象节点的可能性;
+            
+            
+            
+            
+            NSNumber *csValue = NUMTOOK([AINetIndex getData:csValue_p]);
+            NSNumber *msValue = NUMTOOK([AINetIndex getData:msValue_p]);
+            AnalogyInnerType type = AnalogyInnerType_None;
+            if (csValue > msValue) {//需增大
+                type = AnalogyInnerType_Greater;
+            }else if(csValue < msValue){//需减小
+                type = AnalogyInnerType_Less;
+            }else{}//再者一样,不处理;
+        }
+    }
+    
+}
+
+/**
  *  MARK:--------------------"相对概念"的行为化--------------------
  *  1. 先根据havAlg取到havFo;
  *  2. 再判断havFo中的rangeOrder的行为化;
