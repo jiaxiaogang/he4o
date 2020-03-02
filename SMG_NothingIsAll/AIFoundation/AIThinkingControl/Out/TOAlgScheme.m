@@ -328,10 +328,12 @@
         if ([csValue_p.identifier isEqualToString:msValue_p.identifier]) {
             //5. MC抵消GL处理之: 转移到_Value()
             
-            //TODO: 取到protoAlg.value的值;
-            //查下,在类比抽象时,是否会形成不同value值,被抽象成同一抽象节点的可能性;
-            
-            
+            //TODOTOMORROW:
+            //1. 取到matchAlg的最相似,且不包含value标识的absAlg: result1;
+            //2. 取result1的conPorts前20个: result2;
+            //3. 对result2筛选出包含同标识value值的: result3;
+            //4. 对result3进行取值value并排序: result4;
+            //5. 对result4中前5个进行反思;
             
             
             NSNumber *csValue = NUMTOOK([AINetIndex getData:csValue_p]);
