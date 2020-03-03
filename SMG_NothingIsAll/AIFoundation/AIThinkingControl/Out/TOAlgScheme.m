@@ -16,6 +16,7 @@
 #import "AIShortMatchModel.h"
 #import "AINetIndexUtils.h"
 #import "AIThinkOutAnalogy.h"
+#import "AINetUtils.h"
 
 @interface TOAlgScheme()
 
@@ -311,42 +312,54 @@
 /**
  *  MARK:--------------------对MC中的Value部分代码--------------------
  *  @caller : 由MC方法调用;
+ *  @param complete : 完成时调用
  */
--(void) convert2Out_Short_MC_Value:(AIAlgNodeBase*)mAlg cAlg:(AIAlgNodeBase*)cAlg pAlg:(AIAlgNodeBase*)pAlg checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
-    //1. 数据检查;
-    if (!mAlg || !cAlg) {
-        return;
+-(void) convert2Out_MC_Value:(AIAlgNodeBase*)cAlg checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore complete:(void(^)(NSArray *alreadayGLs,NSArray *acts))complete{
+    //1. 数据准备;
+    NSMutableArray *alreadayGLs = [[NSMutableArray alloc] init];
+    NSMutableArray *acts = [[NSMutableArray alloc] init];
+    AIAlgNodeBase *mAlg = self.shortMatchModel.matchAlg;
+    if (!mAlg || !cAlg || !complete) {
+        complete(alreadayGLs,acts);
     }
     
     //2. ms&cs仅有1条不同稀疏码;
     NSArray *csSubMs = [SMGUtils removeSub_ps:mAlg.content_ps parent_ps:cAlg.content_ps];
     NSArray *msSubCs = [SMGUtils removeSub_ps:cAlg.content_ps parent_ps:mAlg.content_ps];
-    if (csSubMs.count == 1 && msSubCs.count == 1) {
-        //4. MC抵消GL处理之: 判断标识相同
-        AIKVPointer *csValue_p = ARR_INDEX(csSubMs, 0);
-        AIKVPointer *msValue_p = ARR_INDEX(msSubCs, 0);
-        if ([csValue_p.identifier isEqualToString:msValue_p.identifier]) {
-            //5. MC抵消GL处理之: 转移到_Value()
-            
-            //TODOTOMORROW:
-            //1. 取到matchAlg的最相似,且不包含value标识的absAlg: result1;
-            //2. 取result1的conPorts前20个: result2;
-            //3. 对result2筛选出包含同标识value值的: result3;
-            //4. 对result3进行取值value并排序: result4;
-            //5. 对result4中前5个进行反思;
-            
-            
-            NSNumber *csValue = NUMTOOK([AINetIndex getData:csValue_p]);
-            NSNumber *msValue = NUMTOOK([AINetIndex getData:msValue_p]);
-            AnalogyInnerType type = AnalogyInnerType_None;
-            if (csValue > msValue) {//需增大
-                type = AnalogyInnerType_Greater;
-            }else if(csValue < msValue){//需减小
-                type = AnalogyInnerType_Less;
-            }else{}//再者一样,不处理;
-        }
+    if (csSubMs.count != 1 || msSubCs.count != 1) {
+        complete(alreadayGLs,acts);
     }
     
+    //3. MC抵消GL处理之: 判断标识相同
+    AIKVPointer *csValue_p = ARR_INDEX(csSubMs, 0);
+    AIKVPointer *msValue_p = ARR_INDEX(msSubCs, 0);
+    if (![csValue_p.identifier isEqualToString:msValue_p.identifier]) {
+        complete(alreadayGLs,acts);
+    }
+
+    //4. 取到matchAlg的最相似,且不包含value标识的absAlg: result1;
+    
+    //[AINetUtils absPort]
+    
+    
+    //5. MC抵消GL处理之: 转移到_Value()
+    
+    //TODOTOMORROW:
+    //1. 取到matchAlg的最相似,且不包含value标识的absAlg: result1;
+    //2. 取result1的conPorts前20个: result2;
+    //3. 对result2筛选出包含同标识value值的: result3;
+    //4. 对result3进行取值value并排序: result4;
+    //5. 对result4中前5个进行反思;
+    
+    
+    NSNumber *csValue = NUMTOOK([AINetIndex getData:csValue_p]);
+    NSNumber *msValue = NUMTOOK([AINetIndex getData:msValue_p]);
+    AnalogyInnerType type = AnalogyInnerType_None;
+    if (csValue > msValue) {//需增大
+        type = AnalogyInnerType_Greater;
+    }else if(csValue < msValue){//需减小
+        type = AnalogyInnerType_Less;
+    }else{}//再者一样,不处理;
 }
 
 /**
