@@ -324,6 +324,32 @@
     return 0;
 }
 
++(AIAlgNodeBase*) getRelativeSeemAbsAlgWithConAlg:(AIAlgNodeBase*)conAlg notContainsValue:(AIKVPointer*)value_p{
+    //1. 数据准备
+    NSArray *valueRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Value:value_p]];
+    NSArray *abs_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:conAlg]];
+    
+    //2. 取到conAlg.absAlgs中且不包含value标识的部分;
+    NSMutableArray *validAbs_ps = [[NSMutableArray alloc] init];
+    for (AIKVPointer *abs_p in abs_ps) {
+        if (![valueRef_ps containsObject:abs_p]) {
+            [validAbs_ps addObject:abs_p];
+        }
+    }
+    
+    //3. 取到validAbs前十个中,最相似的absAlg;
+    AIAlgNodeBase *result = nil;
+    NSInteger max = MIN(10, validAbs_ps.count);
+    for (NSInteger i = 0; i < max; i++) {
+        AIKVPointer *validAbs_p = validAbs_ps[i];
+        AIAlgNodeBase *validAbsNode = [SMGUtils searchNode:validAbs_p];
+        if (!result || result.content_ps.count < validAbsNode.content_ps.count) {
+            result = validAbsNode;
+        }
+    }
+    return result;
+}
+
 @end
 
 

@@ -146,6 +146,13 @@
  */
 +(AIAlgNodeBase*) dataOut_GetAlgNodeWithInnerType:(AnalogyInnerType)type algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
 
+/**
+ *  MARK:--------------------从抽象中,取与自己相对相似的--------------------
+ *  @param value_p : 结果不能包含value_p
+ *  @desc 相对最相似 : 指强度前10个中,找出最相似的;
+ */
++(AIAlgNodeBase*) getRelativeSeemAbsAlgWithConAlg:(AIAlgNodeBase*)conAlg notContainsValue:(AIKVPointer*)value_p;
+
 @end
 
 

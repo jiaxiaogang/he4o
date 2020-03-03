@@ -337,12 +337,14 @@
         complete(alreadayGLs,acts);
     }
 
-    //4. 取到matchAlg的最相似,且不包含value标识的absAlg: result1;
-    NSArray *mValue_refPorts = [AINetUtils refPorts_All4Value:nil];//写value的refPorts_All方法,并调用;
-    NSArray *mAlg_absPorts = [AINetUtils absPorts_All:mAlg];
+    //4. 取到matchAlg的不包含value,且最相似的absAlg;
+    AIAlgNodeBase *seemAbsAlg = [ThinkingUtils getRelativeSeemAbsAlgWithConAlg:mAlg notContainsValue:msValue_p];
+    
+    //5. 取seemAbsAlg的conPorts前20个: result2;
     
     
-    //5. MC抵消GL处理之: 转移到_Value()
+    
+    
     
     //TODOTOMORROW:
     //1. 取到matchAlg的最相似,且不包含value标识的absAlg: result1;
@@ -352,6 +354,7 @@
     //5. 对result4中前5个进行反思;
     
     
+    //5. MC抵消GL处理之: 转移到_Value()
     NSNumber *csValue = NUMTOOK([AINetIndex getData:csValue_p]);
     NSNumber *msValue = NUMTOOK([AINetIndex getData:msValue_p]);
     AnalogyInnerType type = AnalogyInnerType_None;
