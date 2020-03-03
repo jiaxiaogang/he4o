@@ -338,8 +338,8 @@
     }
 
     //4. 取到matchAlg的最相似,且不包含value标识的absAlg: result1;
-    
-    //[AINetUtils absPort]
+    NSArray *mValue_refPorts = [AINetUtils refPorts_All:nil];//写value的refPorts_All方法,并调用;
+    NSArray *mAlg_absPorts = [AINetUtils absPorts_All:mAlg];
     
     
     //5. MC抵消GL处理之: 转移到_Value()
