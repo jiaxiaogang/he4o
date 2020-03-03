@@ -365,7 +365,7 @@
     }
     return allPorts;
 }
-+(NSArray*) refPorts_All:(AIAlgNodeBase*)node{
++(NSArray*) refPorts_All4Alg:(AIAlgNodeBase*)node{
     NSMutableArray *allPorts = [[NSMutableArray alloc] init];
     if (ISOK(node, AIAlgNodeBase.class)) {
         [allPorts addObjectsFromArray:node.refPorts];
@@ -374,5 +374,13 @@
     return allPorts;
 }
 
++(NSArray*) refPorts_All4Value:(AIKVPointer*)value_p{
+    NSMutableArray *allPorts = [[NSMutableArray alloc] init];
+    if (value_p) {
+        [allPorts addObjectsFromArray:[SMGUtils searchObjectForFilePath:value_p.filePath fileName:kFNRefPorts time:cRTReference]];
+        [allPorts addObjectsFromArray:[SMGUtils searchObjectForFilePath:value_p.filePath fileName:kFNMemRefPorts time:cRTMemReference]];
+    }
+    return allPorts;
+}
 
 @end

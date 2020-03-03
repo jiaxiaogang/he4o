@@ -154,20 +154,12 @@
 -(NSArray*)nv_GetRefNodeDatas:(AIKVPointer*)node_p{
     if (node_p) {
         if ([NVHeUtil isValue:node_p]) {
-            //1. 如果是value,则独立取refPorts文件返回;
-            NSMutableArray *result = [[NSMutableArray alloc] init];
-            ///1. 取硬盘
-            NSArray *hdRefPorts = [SMGUtils searchObjectForFilePath:node_p.filePath fileName:kFNRefPorts time:cRTReference];
-            [result addObjectsFromArray:[SMGUtils convertPointersFromPorts:hdRefPorts]];
-
-            ///2. 取内存
-            NSArray *memRefPorts = [SMGUtils searchObjectForFilePath:node_p.filePath fileName:kFNMemRefPorts time:cRTMemReference];
-            [result addObjectsFromArray:[SMGUtils convertPointersFromPorts:memRefPorts]];
-            return result;
+            NSArray *allPorts = [AINetUtils refPorts_All4Value:node_p];
+            return [SMGUtils convertPointersFromPorts:allPorts];
         }else if ([NVHeUtil isAlg:node_p]) {
             //2. 如果是algNode则返回.refPorts;
             AIAlgNodeBase *node = [SMGUtils searchNode:node_p];
-            NSArray *allPorts = [AINetUtils refPorts_All:node];
+            NSArray *allPorts = [AINetUtils refPorts_All4Alg:node];
             return [SMGUtils convertPointersFromPorts:allPorts];
         }else if ([NVHeUtil isFo:node_p]) {
             //3. 如果是foNode则返回mv基本模型指向cmvNode_p;
@@ -290,7 +282,7 @@
         }
         //3. 找被引用
         if (ISOK(mainNode, AIAlgNodeBase.class)) {
-            for (AIPort *itemPort in [AINetUtils refPorts_All:(AIAlgNodeBase*)mainNode]) {
+            for (AIPort *itemPort in [AINetUtils refPorts_All4Alg:(AIAlgNodeBase*)mainNode]) {
                 if ([itemPort.target_p isEqual:targetNodeData]) {
                     return itemPort.strong.value;
                 }

@@ -172,7 +172,9 @@
 /**
  *  MARK:--------------------取hdRefPorts + memRefPorts--------------------
  *  @desc 目前仅支持alg,对于微信息的支持,随后再加;
+ *  @result notnull
  */
-+(NSArray*) refPorts_All:(AIAlgNodeBase*)node;
++(NSArray*) refPorts_All4Alg:(AIAlgNodeBase*)node;
++(NSArray*) refPorts_All4Value:(AIKVPointer*)value_p;
 
 @end
