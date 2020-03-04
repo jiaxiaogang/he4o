@@ -313,20 +313,25 @@
  *  MARK:--------------------对MC中的Value部分代码--------------------
  *  @caller : 由MC方法调用;
  *  @param complete : 完成时调用
+ *  @TODO: 测试是否C包含一个subValue,而M不包含,此时在代码第2步,改进下代码;
+ *  @参考: n18p13-18133,18134;
  */
--(void) convert2Out_MC_Value:(AIAlgNodeBase*)cAlg checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore complete:(void(^)(NSArray *alreadayGLs,NSArray *acts))complete{
+-(void) convert2Out_MC_Value:(AIAlgNodeBase*)csAlg msAlg:(AIAlgNodeBase*)msAlg checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore complete:(void(^)(NSArray *alreadayGLs,NSArray *acts))complete{
     //1. 数据准备;
     NSMutableArray *alreadayGLs = [[NSMutableArray alloc] init];
     NSMutableArray *acts = [[NSMutableArray alloc] init];
     AIAlgNodeBase *mAlg = self.shortMatchModel.matchAlg;
-    if (!mAlg || !cAlg || !complete) {
+    if (!msAlg || !csAlg || !complete || !checkScore || !mAlg) {
         complete(alreadayGLs,acts);
         return;
     }
     
-    //2. ms&cs仅有1条不同稀疏码;
-    NSArray *csSubMs = [SMGUtils removeSub_ps:mAlg.content_ps parent_ps:cAlg.content_ps];
-    NSArray *msSubCs = [SMGUtils removeSub_ps:cAlg.content_ps parent_ps:mAlg.content_ps];
+    //2. ms&cs仅有1条不同稀疏码; (有可能match中不包含value,而cur中包含,参考18134)
+    NSArray *csSubMs = [SMGUtils removeSub_ps:msAlg.content_ps parent_ps:csAlg.content_ps];
+    NSArray *msSubCs = [SMGUtils removeSub_ps:csAlg.content_ps parent_ps:msAlg.content_ps];
+    if (csSubMs.count == 1) {
+        WLog(@"MC.Value模糊匹配时,C中subValue=1,M.subV=%ld",msSubCs.count);
+    }
     if (csSubMs.count != 1 || msSubCs.count != 1) {
         complete(alreadayGLs,acts);
         return;
@@ -363,32 +368,47 @@
     
     //7. 对result3进行取值value并排序: result4 (根据差的绝对值大小排序);
     double mValue = [NUMTOOK([AINetIndex getData:msValue_p]) doubleValue];
-    NSArray *sortConAlgs = [validConData sortedArrayUsingComparator:^NSComparisonResult(NSDictionary *obj1, NSDictionary *obj2) {
+    NSArray *sortConData = [validConData sortedArrayUsingComparator:^NSComparisonResult(NSDictionary *obj1, NSDictionary *obj2) {
         double v1 = [NUMTOOK([obj1 objectForKey:@"v"]) doubleValue];
         double v2 = [NUMTOOK([obj2 objectForKey:@"v"]) doubleValue];
         double absV1 = fabs(v1 - mValue);
         double absV2 = fabs(v2 - mValue);
         return absV1 > absV2 ? NSOrderedAscending : absV1 < absV2 ? NSOrderedDescending : NSOrderedSame;
     }];
-    NSLog(@"M同层,具象节点排序好后:%@",sortConAlgs);
+    NSLog(@"M同层,具象节点排序好后:%@",sortConData);
+    if (!ARRISOK(sortConData)) {
+        complete(alreadayGLs,acts);
+        return;
+    }
     
+    //8. 对result4中前5个进行反思;
+    NSDictionary *firstConData = ARR_INDEX(sortConData, 0);
+    AIAlgNodeBase *firstConAlg = [firstConData objectForKey:@"a"];
+    BOOL scoreSuccess = checkScore(firstConAlg);
+    if (!scoreSuccess) {
+        //5. MC抵消GL处理之: 转移到_Value()
+        NSNumber *csValue = NUMTOOK([AINetIndex getData:csValue_p]);
+        NSNumber *msValue = NUMTOOK([AINetIndex getData:msValue_p]);
+        AnalogyInnerType type = AnalogyInnerType_None;
+        if (csValue > msValue) {//需增大
+            type = AnalogyInnerType_Greater;
+        }else if(csValue < msValue){//需减小
+            type = AnalogyInnerType_Less;
+        }else{}//再者一样,不处理;
+        if (type != AnalogyInnerType_None) {
+            [self convert2Out_RelativeValue:msValue_p type:type vSuccess:^(AIFoNodeBase *glFo, NSArray *subActs) {
+                [acts addObjectsFromArray:subActs];
+                [alreadayGLs addObject:msAlg];
+                [alreadayGLs addObject:csAlg];
+            } vFailure:^{}];
+        }
+    }else{
+        [alreadayGLs addObject:msAlg];
+        [alreadayGLs addObject:csAlg];
+    }
     
-    
-    
-    //TODOTOMORROW:
-    
-    //5. 对result4中前5个进行反思;
-    
-    
-    //5. MC抵消GL处理之: 转移到_Value()
-    NSNumber *csValue = NUMTOOK([AINetIndex getData:csValue_p]);
-    NSNumber *msValue = NUMTOOK([AINetIndex getData:msValue_p]);
-    AnalogyInnerType type = AnalogyInnerType_None;
-    if (csValue > msValue) {//需增大
-        type = AnalogyInnerType_Greater;
-    }else if(csValue < msValue){//需减小
-        type = AnalogyInnerType_Less;
-    }else{}//再者一样,不处理;
+    //9. 执行返回;
+    complete(alreadayGLs,acts);
 }
 
 /**
