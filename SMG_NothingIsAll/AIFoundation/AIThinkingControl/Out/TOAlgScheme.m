@@ -361,18 +361,16 @@
     }];
     NSLog(@"M同层有效节点数为:%ld",validConData.count);
     
-    //7. 对result3进行取值value并排序: result4;
-    NSNumber *mValue = [AINetIndex getData:msValue_p];
+    //7. 对result3进行取值value并排序: result4 (根据差的绝对值大小排序);
+    double mValue = [NUMTOOK([AINetIndex getData:msValue_p]) doubleValue];
     NSArray *sortConAlgs = [validConData sortedArrayUsingComparator:^NSComparisonResult(NSDictionary *obj1, NSDictionary *obj2) {
-        NSNumber *v1 = NUMTOOK([obj1 objectForKey:@"v"]);
-        NSNumber *v2 = NUMTOOK([obj2 objectForKey:@"v"]);
-        return NSOrderedAscending;
-        
-        //计算差的绝对值大小;
-        //return fabsf(v1 - mValue) > fabsf(v2 - mValue);
-        
-        //return aLength > bLength ? NSOrderedAscending : aLength < bLength ? NSOrderedDescending : NSOrderedSame;
+        double v1 = [NUMTOOK([obj1 objectForKey:@"v"]) doubleValue];
+        double v2 = [NUMTOOK([obj2 objectForKey:@"v"]) doubleValue];
+        double absV1 = fabs(v1 - mValue);
+        double absV2 = fabs(v2 - mValue);
+        return absV1 > absV2 ? NSOrderedAscending : absV1 < absV2 ? NSOrderedDescending : NSOrderedSame;
     }];
+    NSLog(@"M同层,具象节点排序好后:%@",sortConAlgs);
     
     
     
