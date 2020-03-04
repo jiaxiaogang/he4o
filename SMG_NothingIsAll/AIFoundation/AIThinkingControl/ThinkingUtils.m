@@ -339,7 +339,7 @@
     
     //3. 取到validAbs前十个中,最相似的absAlg;
     AIAlgNodeBase *result = nil;
-    NSInteger max = MIN(10, validAbs_ps.count);
+    NSInteger max = MIN(cMCValue_AbsAssLimit, validAbs_ps.count);
     for (NSInteger i = 0; i < max; i++) {
         AIKVPointer *validAbs_p = validAbs_ps[i];
         AIAlgNodeBase *validAbsNode = [SMGUtils searchNode:validAbs_p];
@@ -399,15 +399,43 @@
     return result;
 }
 
-+(AIKVPointer*) filterPointer:(NSArray*)from_ps identifier:(NSString*)identifier{
-    if (ARRISOK(from_ps) && STRISOK(identifier)) {
-        for (AIKVPointer *from_p in from_ps) {
-            if ([identifier isEqualToString:from_p.identifier]) {
-                return from_p;
++(NSArray*) filterPointer:(NSArray*)from_ps identifier:(NSString*)identifier{
+    return [self filterPointers:from_ps checkValid:^BOOL(AIKVPointer *item_p) {
+        return [identifier isEqualToString:item_p.identifier];
+    }];
+}
+
++(NSArray*) filterAlg_Ps:(NSArray*)alg_ps valueIdentifier:(NSString*)valueIdentifier itemValid:(id(^)(AIAlgNodeBase *alg,AIKVPointer *value_p))itemValid{
+    return [self filterPointers:alg_ps checkValid:^BOOL(AIKVPointer *item_p) {
+        AIAlgNodeBase *alg = [SMGUtils searchNode:item_p];
+        if (alg) {
+            for (AIKVPointer *itemValue_p in alg.content_ps) {
+                if ([valueIdentifier isEqualToString:itemValue_p.identifier]) {
+                    itemValid(alg,itemValue_p);
+                    return true;
+                }
             }
         }
+        return false;
+    }];
+}
+
+/**
+ *  MARK:--------------------从from_ps中,筛选出有效的元素返回--------------------
+ *  @result notnull
+ */
++(NSArray*) filterPointers:(NSArray *)from_ps checkValid:(BOOL(^)(AIKVPointer *item_p))checkValid {
+    //1. 数据准备
+    from_ps = ARRTOOK(from_ps);
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    
+    //2. 筛选
+    for (AIKVPointer *from_p in from_ps) {
+        BOOL fromValid = true;
+        if (checkValid) fromValid = checkValid(from_p);
+        if (fromValid) [result addObject:from_p];
     }
-    return nil;
+    return result;
 }
 
 @end

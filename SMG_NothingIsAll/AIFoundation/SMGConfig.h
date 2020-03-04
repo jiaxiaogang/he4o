@@ -58,6 +58,9 @@
 
 #define cTOSubModelLimit 2      //在决策中,子模型limit
 
+#define cMCValue_AbsAssLimit 10      //在MC匹配稀疏码模糊匹配时,向抽象联想个数
+#define cMCValue_ConAssLimit 20      //在MC匹配稀疏码模糊匹配时,向具象联想个数
+
 //MARK:===============================================================
 //MARK:                     < ThinkIn >
 //MARK:===============================================================

@@ -321,6 +321,7 @@
     AIAlgNodeBase *mAlg = self.shortMatchModel.matchAlg;
     if (!mAlg || !cAlg || !complete) {
         complete(alreadayGLs,acts);
+        return;
     }
     
     //2. ms&cs仅有1条不同稀疏码;
@@ -328,6 +329,7 @@
     NSArray *msSubCs = [SMGUtils removeSub_ps:cAlg.content_ps parent_ps:mAlg.content_ps];
     if (csSubMs.count != 1 || msSubCs.count != 1) {
         complete(alreadayGLs,acts);
+        return;
     }
     
     //3. MC抵消GL处理之: 判断标识相同
@@ -335,22 +337,45 @@
     AIKVPointer *msValue_p = ARR_INDEX(msSubCs, 0);
     if (![csValue_p.identifier isEqualToString:msValue_p.identifier]) {
         complete(alreadayGLs,acts);
+        return;
     }
 
     //4. 取到matchAlg的不包含value,且最相似的absAlg;
     AIAlgNodeBase *seemAbsAlg = [ThinkingUtils getRelativeSeemAbsAlgWithConAlg:mAlg notContainsValue:msValue_p];
+    if (!seemAbsAlg) {
+        complete(alreadayGLs,acts);
+        return;
+    }
     
     //5. 取seemAbsAlg的conPorts前20个: result2;
+    NSArray *conAlg_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:seemAbsAlg]];
+    conAlg_ps = ARR_SUB(conAlg_ps, 0, cMCValue_ConAssLimit);
     
+    //6. 对result2筛选出包含同标识value值的: result3;
+    __block NSMutableArray *validConData = [[NSMutableArray alloc] init];
+    [ThinkingUtils filterAlg_Ps:conAlg_ps valueIdentifier:msValue_p.identifier itemValid:^id(AIAlgNodeBase *alg, AIKVPointer *value_p) {
+        NSNumber *value = [AINetIndex getData:value_p];
+        if (alg && value) {
+            [validConData addObject:@{@"a":alg,@"v":value}];
+        }
+    }];
+    NSLog(@"M同层有效节点数为:%ld",validConData.count);
+    
+    //7. 对result3进行取值value并排序: result4;
+    NSNumber *mValue = [AINetIndex getData:msValue_p];
+    NSMutableArray *sortAlgs = [[NSMutableArray alloc] init];
+    
+    
+    
+    
+    
+    NSMutableDictionary *mDic = [[NSMutableDictionary alloc] init];
     
     
     
     
     //TODOTOMORROW:
-    //1. 取到matchAlg的最相似,且不包含value标识的absAlg: result1;
-    //2. 取result1的conPorts前20个: result2;
-    //3. 对result2筛选出包含同标识value值的: result3;
-    //4. 对result3进行取值value并排序: result4;
+    
     //5. 对result4中前5个进行反思;
     
     
@@ -581,7 +606,7 @@
 //            if (!forecastAlg) return;
 //
 //            //8. 进一步取出预测微信息;
-//            AIKVPointer *forecastValue_p = [ThinkingUtils filterPointer:forecastAlg.content_ps identifier:subValue_p.identifier];
+//            AIKVPointer *forecastValue_p = ARRINDEX([ThinkingUtils filterPointer:forecastAlg.content_ps identifier:subValue_p.identifier],0);
 //            if (!forecastValue_p) return;
 //
 //            //9. 将诉求信息:subValue与预测信息:forecastValue进行类比;

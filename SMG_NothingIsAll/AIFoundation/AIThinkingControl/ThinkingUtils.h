@@ -183,4 +183,7 @@
 //从from_ps中查找与check_p同标识区的指针并返回;
 +(AIKVPointer*) filterPointer:(NSArray*)from_ps identifier:(NSString*)identifier;
 
+//从alg_ps中查找含valueIdentifier标识稀疏码的概念并返回;
++(NSArray*) filterAlg_Ps:(NSArray*)alg_ps valueIdentifier:(NSString*)valueIdentifier itemValid:(id(^)(AIAlgNodeBase *alg,AIKVPointer *value_p))itemValid;
+
 @end
