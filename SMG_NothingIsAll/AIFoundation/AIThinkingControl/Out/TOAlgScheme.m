@@ -353,7 +353,7 @@
     
     //6. 对result2筛选出包含同标识value值的: result3;
     __block NSMutableArray *validConData = [[NSMutableArray alloc] init];
-    [ThinkingUtils filterAlg_Ps:conAlg_ps valueIdentifier:msValue_p.identifier itemValid:^id(AIAlgNodeBase *alg, AIKVPointer *value_p) {
+    [ThinkingUtils filterAlg_Ps:conAlg_ps valueIdentifier:msValue_p.identifier itemValid:^(AIAlgNodeBase *alg, AIKVPointer *value_p) {
         NSNumber *value = [AINetIndex getData:value_p];
         if (alg && value) {
             [validConData addObject:@{@"a":alg,@"v":value}];
@@ -363,13 +363,16 @@
     
     //7. 对result3进行取值value并排序: result4;
     NSNumber *mValue = [AINetIndex getData:msValue_p];
-    NSMutableArray *sortAlgs = [[NSMutableArray alloc] init];
-    
-    
-    
-    
-    
-    NSMutableDictionary *mDic = [[NSMutableDictionary alloc] init];
+    NSArray *sortConAlgs = [validConData sortedArrayUsingComparator:^NSComparisonResult(NSDictionary *obj1, NSDictionary *obj2) {
+        NSNumber *v1 = NUMTOOK([obj1 objectForKey:@"v"]);
+        NSNumber *v2 = NUMTOOK([obj2 objectForKey:@"v"]);
+        return NSOrderedAscending;
+        
+        //计算差的绝对值大小;
+        //return fabsf(v1 - mValue) > fabsf(v2 - mValue);
+        
+        //return aLength > bLength ? NSOrderedAscending : aLength < bLength ? NSOrderedDescending : NSOrderedSame;
+    }];
     
     
     

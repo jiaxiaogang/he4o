@@ -405,7 +405,7 @@
     }];
 }
 
-+(NSArray*) filterAlg_Ps:(NSArray*)alg_ps valueIdentifier:(NSString*)valueIdentifier itemValid:(id(^)(AIAlgNodeBase *alg,AIKVPointer *value_p))itemValid{
++(NSArray*) filterAlg_Ps:(NSArray*)alg_ps valueIdentifier:(NSString*)valueIdentifier itemValid:(void(^)(AIAlgNodeBase *alg,AIKVPointer *value_p))itemValid{
     return [self filterPointers:alg_ps checkValid:^BOOL(AIKVPointer *item_p) {
         AIAlgNodeBase *alg = [SMGUtils searchNode:item_p];
         if (alg) {
