@@ -77,7 +77,7 @@
     
     ///4. 局部匹配 -> 硬盘网络;
     if (!assAlgNode) {
-        assAlgNode = [AINetIndexUtils partMatching_Alg:algNode isMem:false except_ps:fromGroup_ps];
+        assAlgNode = [TIRUtils partMatching_Alg:algNode isMem:false except_ps:fromGroup_ps];
     }
     
     //3. 直接将assAlgNode设置为algNode的抽象; (这样后面TOR理性决策时,才可以直接对当前瞬时实物进行很好的理性评价);
@@ -101,7 +101,7 @@
     }
     
     //3. 模糊匹配
-    AIAlgNodeBase *fuzzyAlg = [AINetIndexUtils matchAlg2FuzzyAlg:algNode matchAlg:assAlgNode];
+    AIAlgNodeBase *fuzzyAlg = [TIRUtils matchAlg2FuzzyAlg:algNode matchAlg:assAlgNode];
     
     //4. 返回
     if (fuzzyAlg) {
