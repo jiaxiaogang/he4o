@@ -53,4 +53,10 @@
              refPortsBlock:(NSArray*(^)(AIKVPointer *item_p))refPortsBlock
                exceptBlock:(BOOL(^)(AIPointer *target_p))exceptBlock;
 
+
+//MARK:===============================================================
+//MARK:                     < 模糊匹配 >
+//MARK:===============================================================
++(AIAlgNodeBase*) matchAlg2FuzzyAlg:(AIAlgNodeBase*)protoAlg matchAlg:(AIAlgNodeBase*)matchAlg;
+
 @end

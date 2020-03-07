@@ -48,6 +48,7 @@
  *  @desc 迭代记录:
  *      20190910: 识别"概念与时序",并构建纵向关联; (190910概念识别,添加了抽象关联)
  *      20191223: 局部匹配支持全含: 对assAlg和protoAlg直接做抽象关联,而不是新构建抽象;
+ *      20200307: 迭代支持模糊匹配fuzzy
  */
 +(AIAlgNodeBase*) TIR_Alg:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps{
     //1. 数据准备
@@ -98,7 +99,18 @@
     }else{
         NSLog(@"识别Alg failure");
     }
-    return assAlgNode;
+    
+    //3. 模糊匹配
+    AIAlgNodeBase *fuzzyAlg = [AINetIndexUtils matchAlg2FuzzyAlg:algNode matchAlg:assAlgNode];
+    
+    //4. 返回
+    if (fuzzyAlg) {
+        [theNV setNodeData:fuzzyAlg.pointer appendLightStr:@"fuzzyA"];//A调试
+        [AINetUtils insertRefPorts_AllAlgNode:assAlgNode.pointer value_ps:assAlgNode.content_ps ps:assAlgNode.content_ps difStrong:1];//B更新强度
+        return fuzzyAlg;//C返回
+    }else{
+        return assAlgNode;
+    }
 }
 
 //MARK:===============================================================

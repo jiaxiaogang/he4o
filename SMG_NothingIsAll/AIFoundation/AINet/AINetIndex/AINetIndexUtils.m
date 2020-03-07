@@ -176,13 +176,14 @@
 //MARK:===============================================================
 //MARK:                     < 模糊匹配 >
 //MARK:===============================================================
+
 /**
- *  MARK:--------------------对识别算法补充模糊匹配功能--------------------
+ *  MARK:--------------------对概念识别算法补充模糊匹配功能--------------------
  *  @caller : 由TIR_Alg.partMatching()方法调用;
  *  @参考: 18151
  *  @time 2020.03.06
  */
-+(AIAlgNodeBase*) partMatching_Alg_Fuzzy:(AIAlgNodeBase*)protoAlg matchAlg:(AIAlgNodeBase*)matchAlg {
++(AIAlgNodeBase*) matchAlg2FuzzyAlg:(AIAlgNodeBase*)protoAlg matchAlg:(AIAlgNodeBase*)matchAlg {
     //1. 数据准备;
     if (!protoAlg || !matchAlg) {
         return nil;
