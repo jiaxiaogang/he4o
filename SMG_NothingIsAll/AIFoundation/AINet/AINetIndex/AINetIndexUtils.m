@@ -188,54 +188,45 @@
         return nil;
     }
     
-    //2. matchAlg未匹配之处;
+    //2. matchAlg未匹配之处 (目前仅支持单特征);
     NSArray *pSubMs = [SMGUtils removeSub_ps:protoAlg.content_ps parent_ps:matchAlg.content_ps];
+    if (pSubMs.count != 1) {
+        return nil;
+    }
+    AIKVPointer *pValue_p = ARR_INDEX(pSubMs, 0);
     
     //3. 取proto同层的sameLevel前20个;
     NSArray *sameLevel_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:matchAlg]];
     sameLevel_ps = ARR_SUB(sameLevel_ps, 0, cMCValue_ConAssLimit);
     
-    //4. 对未匹配稀疏码进行逐一模糊匹配;
-    NSMutableDictionary *scoreboard = [[NSMutableDictionary alloc] init];
+    //4. 对result2筛选出包含同标识value值的: result3;
     __block NSMutableArray *validConData = [[NSMutableArray alloc] init];
-    for (AIKVPointer *pValue_p in pSubMs) {
-        //5. 对result2筛选出包含同标识value值的: result3;
-        [ThinkingUtils filterAlg_Ps:sameLevel_ps valueIdentifier:pValue_p.identifier itemValid:^(AIAlgNodeBase *alg, AIKVPointer *value_p) {
-            NSNumber *value = [AINetIndex getData:value_p];
-            if (alg && value) {
-                //6. 收集同标记的具象节点的数据,并且记到计数牌;
-                [validConData addObject:@{@"a":alg,@"v":value}];
-                NSString *sbKey = STRFORMAT(@"%@_%ld",alg.pointer.identifier,(long)alg.pointer.pointerId);
-                NSInteger sbValue = [NUMTOOK([scoreboard objectForKey:sbKey]) integerValue];
-                [scoreboard setObject:@(sbValue + 1) forKey:sbKey];
-            }
-        }];
-    }
+    [ThinkingUtils filterAlg_Ps:sameLevel_ps valueIdentifier:pValue_p.identifier itemValid:^(AIAlgNodeBase *alg, AIKVPointer *value_p) {
+        NSNumber *value = [AINetIndex getData:value_p];
+        if (alg && value) {
+            [validConData addObject:@{@"a":alg,@"v":value}];
+        }
+    }];
+    NSLog(@"M同层有效节点数为:%lu",(unsigned long)validConData.count);
     
-    NSLog(@"M同层有效节点数为:%ld",validConData.count);
-    
-    //5. 找出以上sameLevel_ps中,匹配到pValue_p最多次的结果;
-    
-
-    
-    //7. 对result3进行取值value并排序: result4 (根据差的绝对值大小排序);
-    double mValue = [NUMTOOK([AINetIndex getData:msValue_p]) doubleValue];
+    //5. 对result3进行取值value并排序: result4 (根据差的绝对值大小排序);
+    double pValue = [NUMTOOK([AINetIndex getData:pValue_p]) doubleValue];
     NSArray *sortConData = [validConData sortedArrayUsingComparator:^NSComparisonResult(NSDictionary *obj1, NSDictionary *obj2) {
         double v1 = [NUMTOOK([obj1 objectForKey:@"v"]) doubleValue];
         double v2 = [NUMTOOK([obj2 objectForKey:@"v"]) doubleValue];
-        double absV1 = fabs(v1 - mValue);
-        double absV2 = fabs(v2 - mValue);
+        double absV1 = fabs(v1 - pValue);
+        double absV2 = fabs(v2 - pValue);
         return absV1 > absV2 ? NSOrderedAscending : absV1 < absV2 ? NSOrderedDescending : NSOrderedSame;
     }];
     NSLog(@"M同层,具象节点排序好后:%@",sortConData);
     if (!ARRISOK(sortConData)) {
-        complete(alreadayGLs,acts);
-        return;
+        return nil;
     }
     
-    //8. 对result4中前5个进行反思;
+    //6. 对result4中最相似的返回;
     NSDictionary *firstConData = ARR_INDEX(sortConData, 0);
     AIAlgNodeBase *firstConAlg = [firstConData objectForKey:@"a"];
+    return firstConAlg;
 }
 
 @end
