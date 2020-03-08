@@ -141,15 +141,16 @@
                     if (ISOK(createAbsCmv, AIAbsCMVNode.class)) {
                         createAbsFo.cmvNode_p = createAbsCmv.pointer;
                         [SMGUtils insertObject:createAbsFo pointer:createAbsFo.pointer fileName:kFNNode time:cRTNode];
+                        [theNV setNodeData:createAbsCmv.pointer appendLightStr:@"外Mv4"];
                     }
                 }
             }
             
             //调试短时序; (先仅打外类比日志);
             if (!fromInner) {
-                [theNV setNodeData:fo.pointer lightStr:STRFORMAT(@"%@类比A:%ld",fromInner?@"内":@"外",fo.content_ps.count)];
-                [theNV setNodeData:assFo.pointer lightStr:STRFORMAT(@"%@类比B:%ld",fromInner?@"内":@"外",assFo.content_ps.count)];
-                [theNV setNodeData:createAbsFo.pointer lightStr:STRFORMAT(@"%@类比C:%ld",fromInner?@"内":@"外",createAbsFo.content_ps.count)];
+                [theNV setNodeData:fo.pointer lightStr:STRFORMAT(@"外Con1:%ld",fo.content_ps.count)];
+                [theNV setNodeData:assFo.pointer lightStr:STRFORMAT(@"外Con2:%ld",assFo.content_ps.count)];
+                [theNV setNodeData:createAbsFo.pointer lightStr:STRFORMAT(@"外Abs3:%ld",createAbsFo.content_ps.count)];
             }
             
             //调试关联强度
