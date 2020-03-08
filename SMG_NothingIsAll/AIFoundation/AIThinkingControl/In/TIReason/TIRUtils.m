@@ -192,6 +192,7 @@
         
         //5. 从大到小,依次取到对应的node和matchingCount
         NSInteger typeWrong = 0;
+        NSInteger countWrong = 0;
         for (NSData *key in sortKeys) {
             AIKVPointer *key_p = [NSKeyedUnarchiver unarchiveObjectWithData:key];
             AINodeBase *result = [SMGUtils searchNode:key_p];
@@ -203,11 +204,11 @@
             }
             if (!ISOK(result, AIAbsAlgNode.class)) {
                 typeWrong ++;
-            }else{
-                [theNV setNodeData:result.pointer lightStr:@"识别到抽象正确"];
+            }else if(result.content_ps.count != matchingCount){
+                countWrong ++;
             }
         }
-        WLog(@"识别结果 >> 非抽象数:%ld / 总数:%lu",(long)typeWrong,(unsigned long)sortKeys.count);
+        WLog(@"识别结果 >> 非抽象数:%ld,非全含数:%ld / 总数:%lu",(long)typeWrong,countWrong,(unsigned long)sortKeys.count);
     }
     return nil;
 }

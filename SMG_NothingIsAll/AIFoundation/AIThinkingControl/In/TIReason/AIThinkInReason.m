@@ -105,7 +105,7 @@
     
     //4. 返回
     if (fuzzyAlg) {
-        [theNV setNodeData:fuzzyAlg.pointer appendLightStr:@"fuzzyA"];//A调试
+        [theNV setNodeData:fuzzyAlg.pointer appendLightStr:@"fuzzy成功"];//A调试
         [AINetUtils insertRefPorts_AllAlgNode:assAlgNode.pointer value_ps:assAlgNode.content_ps ps:assAlgNode.content_ps difStrong:1];//B更新强度
         return fuzzyAlg;//C返回
     }else{
