@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+@class NVModuleView;
 @protocol NVModuleViewDelegate <NSObject>
 
 //获取自定义nodeView
@@ -48,6 +49,9 @@
 
 //报名
 -(NSString*)moduleView_ShowName:(id)data;
+
+//directionClick
+-(void)moduleView_DirectionClick:(DirectionType)type mView:(NVModuleView*)mView nData:(id)nData targetDatas:(NSArray*)targetDatas;
 
 @end
 

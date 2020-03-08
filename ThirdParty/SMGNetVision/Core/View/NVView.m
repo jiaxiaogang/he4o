@@ -412,6 +412,10 @@
     return nil;
 }
 
+-(void)moduleView_DirectionClick:(DirectionType)type mView:(NVModuleView*)mView nData:(id)nData targetDatas:(NSArray*)targetDatas{
+    [self.delegate nv_DirectionClick:type mView:mView nData:nData targetDatas:targetDatas];
+}
+
 //MARK:===============================================================
 //MARK:                     < SelfDelegate >
 //MARK:===============================================================

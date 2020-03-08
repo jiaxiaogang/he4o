@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
+@class NVModuleView;
 @protocol NVViewDelegate <NSObject>
 
 //获取自定义节点view
@@ -46,6 +47,9 @@
 
 //获取节点指向target的强度
 -(NSInteger)nv_GetPortStrong:(id)mainNodeData target:(id)targetNodeData;
+
+//directionClick
+-(void)nv_DirectionClick:(int)type mView:(NVModuleView*)mView nData:(id)nData targetDatas:(NSArray*)targetDatas;
 
 @end
 

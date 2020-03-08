@@ -259,21 +259,25 @@
     NSArray *absNodeDatas = [self moduleView_AbsNodeDatas:nodeData];
     [self setDataWithNodeDatas:absNodeDatas];
     TPLog(@"absPorts:%lu",(unsigned long)absNodeDatas.count);
+    [self.delegate moduleView_DirectionClick:DirectionType_Top mView:self nData:nodeData targetDatas:absNodeDatas];
 }
 -(void) nodeView_BottomClick:(id)nodeData{
     NSArray *conNodeDatas = [self moduleView_ConNodeDatas:nodeData];
     [self setDataWithNodeDatas:conNodeDatas];
     TPLog(@"conPorts:%lu",(unsigned long)conNodeDatas.count);
+    [self.delegate moduleView_DirectionClick:DirectionType_Bottom mView:self nData:nodeData targetDatas:conNodeDatas];
 }
 -(void) nodeView_LeftClick:(id)nodeData{
     NSArray *contentNodeDatas = [self moduleView_ContentNodeDatas:nodeData];
     [self.delegate moduleView_SetNetDatas:contentNodeDatas];
     TPLog(@"contentPorts:%lu",(unsigned long)contentNodeDatas.count);
+    [self.delegate moduleView_DirectionClick:DirectionType_Left mView:self nData:nodeData targetDatas:contentNodeDatas];
 }
 -(void) nodeView_RightClick:(id)nodeData{
     NSArray *refNodeDatas = [self moduleView_RefNodeDatas:nodeData];
     [self.delegate moduleView_SetNetDatas:refNodeDatas];
     TPLog(@"refPorts:%lu",(unsigned long)refNodeDatas.count);
+    [self.delegate moduleView_DirectionClick:DirectionType_Right mView:self nData:nodeData targetDatas:refNodeDatas];
 }
 
 //MARK:===============================================================

@@ -292,4 +292,13 @@
     return 0;
 }
 
+//方向触发角点击事件;
+-(void)nv_DirectionClick:(int)type mView:(NVModuleView*)mView nData:(id)nData targetDatas:(NSArray *)targetDatas{
+    //1. 触发角时,显示出关联强度;
+    targetDatas = ARRTOOK(targetDatas);
+    for (id absData in targetDatas) {
+        [theNV lightLineStrong:nData nodeDataB:absData];
+    }
+}
+
 @end
