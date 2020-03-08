@@ -211,7 +211,7 @@
                 countWrong ++;
             }
         }
-        WLog(@"识别结果 >> 非抽象且非全含:%ld,非抽象数:%ld,非全含数:%ld / 总数:%lu",typeCountWrong,(long)typeWrong,countWrong,(unsigned long)sortKeys.count);
+        WLog(@"识别结果 >> 非抽象且非全含:%ld,非抽象数:%ld,非全含数:%ld / 总数:%lu",(long)typeCountWrong,(long)typeWrong,countWrong,(unsigned long)sortKeys.count);
     }
     return nil;
 }
