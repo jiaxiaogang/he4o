@@ -13,6 +13,7 @@
 #import "AINetUtils.h"
 #import "ThinkingUtils.h"
 #import "AINetIndex.h"
+#import "NSString+Extension.h"
 
 @implementation TIRUtils
 
@@ -110,11 +111,23 @@
     
     //2. 调用通用局部 匹配方法;
     return [self partMatching_General:algNode.content_ps refPortsBlock:^NSArray *(AIKVPointer *item_p) {
+        NSMutableArray *result = [[NSMutableArray alloc] init];
         if (item_p) {
-            //1> value_p的refPorts是单独存储的;
-            return ARRTOOK([SMGUtils searchObjectForFilePath:item_p.filePath fileName:kFNRefPorts_All(isMem) time:cRTReference_All(isMem)]);
+            //1> 数据准备 (value_p的refPorts是单独存储的);
+            NSArray *refPorts = ARRTOOK([SMGUtils searchObjectForFilePath:item_p.filePath fileName:kFNRefPorts_All(isMem) time:cRTReference_All(isMem)]);
+            
+            //2> 筛选
+            for (AIPort *item in refPorts) {
+                NSString *spaceMd5 = [NSString md5:@""];
+                if (![spaceMd5 isEqualToString:item.header]) {
+                    [result addObject:item];
+                    if (result.count >= cPartMatchingCheckRefPortsLimit) {
+                        break;
+                    }
+                }
+            }
         }
-        return nil;
+        return result;
     } exceptBlock:^BOOL(AIPointer *target_p) {
         if (target_p) {
             //2> 自身 | 排除序列 不可激活;
@@ -172,6 +185,21 @@
         for (AIKVPointer *item_p in proto_ps) {
             NSArray *refPorts = refPortsBlock(item_p);
             refPorts = ARR_SUB(refPorts, 0, cPartMatchingCheckRefPortsLimit);
+            for (NSInteger i = 0; i < refPorts.count; i++) {
+                AIPort *item = ARR_INDEX(refPorts, i);
+                AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item.target_p];
+                
+                NSString *countDesc = @"";
+                NSString *classDesc = @"";
+                NSString *reMd5 = @"";
+                if (itemAlg) {
+                    classDesc = ISOK(itemAlg, AIAbsAlgNode.class) ? @"抽象" : @"具象";
+                    countDesc = STRFORMAT(@"%ld/%ld",itemAlg.content_ps.count,proto_ps.count);
+                    reMd5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:itemAlg.content_ps]]);
+                }
+                NSLog(@"=====序列:%ld, 强度:%ld, 类型:%@ 长度:%@ \nMd5A:%@ \nMd5B:%@",(long)i,(long)item.strong.value,classDesc,countDesc,item.header,reMd5);
+            }
+            NSLog(@"==========================");
             
             //3. 进行计数
             for (AIPort *refPort in refPorts) {
@@ -212,6 +240,7 @@
             }
         }
         WLog(@"识别结果 >> 非抽象且非全含:%ld,非抽象数:%ld,非全含数:%ld / 总数:%lu",(long)typeCountWrong,(long)typeWrong,countWrong,(unsigned long)sortKeys.count);
+        NSLog(@"");
     }
     return nil;
 }
