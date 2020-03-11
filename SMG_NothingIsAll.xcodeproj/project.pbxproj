@@ -25,6 +25,7 @@
 		08236CEC21A23439008D8761 /* AIVisionAlgsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08236CEB21A23439008D8761 /* AIVisionAlgsModel.m */; };
 		08250AE0228112C000FC497C /* XGWedis.m in Sources */ = {isa = PBXBuildFile; fileRef = 08250ADF228112C000FC497C /* XGWedis.m */; };
 		0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 0825AFF21F748F67003B86C7 /* NSObject+Extension.m */; };
+		0827DAD324198EAC00A025D4 /* HeLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 0827DAD224198EAC00A025D4 /* HeLog.m */; };
 		082ABC3521F7E864002E544C /* AIShortMemory.m in Sources */ = {isa = PBXBuildFile; fileRef = 082ABC3421F7E864002E544C /* AIShortMemory.m */; };
 		082D03DF22D40AF000BB0B7A /* SMGUtils+General.m in Sources */ = {isa = PBXBuildFile; fileRef = 082D03DE22D40AF000BB0B7A /* SMGUtils+General.m */; };
 		082F9D561EB234750009F6A9 /* Output.m in Sources */ = {isa = PBXBuildFile; fileRef = 082F9D551EB234750009F6A9 /* Output.m */; };
@@ -175,6 +176,9 @@
 		08250ADF228112C000FC497C /* XGWedis.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XGWedis.m; sourceTree = "<group>"; };
 		0825AFF11F748F67003B86C7 /* NSObject+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Extension.h"; sourceTree = "<group>"; };
 		0825AFF21F748F67003B86C7 /* NSObject+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Extension.m"; sourceTree = "<group>"; };
+		0827DAD124198EAC00A025D4 /* HeLog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HeLog.h; sourceTree = "<group>"; };
+		0827DAD224198EAC00A025D4 /* HeLog.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HeLog.m; sourceTree = "<group>"; };
+		0827DAD424198F4900A025D4 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		082ABC3321F7E864002E544C /* AIShortMemory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIShortMemory.h; sourceTree = "<group>"; };
 		082ABC3421F7E864002E544C /* AIShortMemory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIShortMemory.m; sourceTree = "<group>"; };
 		082D03DD22D40AF000BB0B7A /* SMGUtils+General.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SMGUtils+General.h"; sourceTree = "<group>"; };
@@ -456,6 +460,16 @@
 				08250ADF228112C000FC497C /* XGWedis.m */,
 			);
 			path = XGWedis;
+			sourceTree = "<group>";
+		};
+		0827DAD024198E8A00A025D4 /* XGLog */ = {
+			isa = PBXGroup;
+			children = (
+				0827DAD124198EAC00A025D4 /* HeLog.h */,
+				0827DAD224198EAC00A025D4 /* HeLog.m */,
+				0827DAD424198F4900A025D4 /* README.md */,
+			);
+			path = XGLog;
 			sourceTree = "<group>";
 		};
 		082F9D581EB236AC0009F6A9 /* Demo */ = {
@@ -1038,6 +1052,7 @@
 		88BC09D320B4EAA70006ABEF /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
+				0827DAD024198E8A00A025D4 /* XGLog */,
 				08250ADD2281129300FC497C /* XGWedis */,
 				0858C5B32194F8B000951BA5 /* Masonry */,
 				08FAEC91215EEC98004DCEAD /* SMGNetVision */,
@@ -1202,6 +1217,7 @@
 				082D03DF22D40AF000BB0B7A /* SMGUtils+General.m in Sources */,
 				88B23BE620BE20BC00BE8AF6 /* AIAbsFoManager.m in Sources */,
 				08FBE10E22D56F360088EF1A /* NVModuleUtil.m in Sources */,
+				0827DAD324198EAC00A025D4 /* HeLog.m in Sources */,
 				08A5D5D822AF1E3400E56BB4 /* NVView.m in Sources */,
 				0830DAB721D6E8AD003065CD /* NSString+Extension.m in Sources */,
 				08C84A8E1E9A866200897D8B /* AIInput.m in Sources */,
