@@ -109,18 +109,32 @@
     return (o && [o isKindOfClass:c]);
 }
 
-//date
+//date2Str
 +(NSString*) date2HHMMSS{
-    return [SMGUtils date2Str:@"HH:mm:ss"];
+    return [SMGUtils date2Str:@"HH:mm:ss" date:nil];
 }
 +(NSString*) date2HHMMSSSSS{
-    return [SMGUtils date2Str:@"HH:mm:ss:SSS"];
+    return [SMGUtils date2Str:@"HH:mm:ss:SSS" date:nil];
 }
-+(NSString*) date2Str:(NSString*)format{
-    NSDate *date = [NSDate new];
++(NSString*) date2yyyyMMddHHmmssSSS:(NSDate*)date{
+    return [SMGUtils date2Str:@"yyyy-MM-dd HH:mm:ss:SSS" date:date];
+}
++(NSString*) date2Str:(NSString*)format date:(NSDate*)date{
+    if (!date) date = [NSDate new];
     NSDateFormatter *fmt = [[NSDateFormatter alloc] init];
     fmt.dateFormat = format;
     return [fmt stringFromDate:date];
+}
+
+//dateFromStr
++(NSDate*) dateFromTimeStr_yyyyMMddHHmmssSSS:(NSString*)timeStr{
+    return [SMGUtils dateFromTimeStr:timeStr format:@"yyyyMMddHHmmssSSS"];
+}
++(NSDate*) dateFromTimeStr:(NSString*)timeStr format:(NSString*)format{
+    NSDateFormatter *fmt = [[NSDateFormatter alloc] init];
+    fmt.dateFormat = STRTOOK(format);
+    return [fmt dateFromString:timeStr];
+    //long long startTime = [startDate timeIntervalSince1970];
 }
 
 @end

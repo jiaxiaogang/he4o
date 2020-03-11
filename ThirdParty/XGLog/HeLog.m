@@ -8,6 +8,7 @@
 
 #import "HeLog.h"
 #import "PINCache.h"
+#import "SMGUtils+General.h"
 
 @interface HeLog ()
 
@@ -63,10 +64,8 @@ static HeLog *_instance;
  */
 -(NSArray*) filterByTime:(NSString*)startT endT:(NSString*)endT{
     //1. 转换startT和endT的时间戳;
-    NSDateFormatter *format = [[NSDateFormatter alloc] init];
-    format.dateFormat = @"yyyyMMddHHmmssSSS";
-    NSDate *startDate = [format dateFromString:startT];
-    NSDate *endDate = [format dateFromString:endT];
+    NSDate *startDate = [SMGUtils dateFromTimeStr_yyyyMMddHHmmssSSS:startT];
+    NSDate *endDate = [SMGUtils dateFromTimeStr_yyyyMMddHHmmssSSS:endT];
     if (!startDate || !endDate) {
         ELog(@"输入时间格式错误!!! (%@,%@)",startT,endT);
         return nil;

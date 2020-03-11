@@ -12,6 +12,7 @@
 #import "NSObject+Extension.h"
 #import "AIKVPointer.h"
 #import "NVDelegate_He.h"
+#import "HeLogView.h"
 
 @interface AppDelegate ()
 
@@ -38,6 +39,10 @@
     //3. 神经网络可视化
     self.nvView = [[NVView alloc] initWithDelegate:[NVDelegate_He new]];
     [self.window addSubview:self.nvView];
+    
+    //4. heLogView
+    self.heLogView = [[HeLogView alloc] init];
+    [self.window addSubview:self.heLogView];
     
     //4. tipLogLab
     self.tipLogLab = [[UILabel alloc] initWithFrame:CGRectMake(0, ScreenHeight - 11, ScreenWidth, 11)];

@@ -8,12 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
-@class NVView;
+@class NVView,HeLogView;
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
--(UIViewController*) getTopDisplayViewController;
 @property (strong, nonatomic) NVView *nvView;
+@property (strong, nonatomic) HeLogView *heLogView;
+
+-(UIViewController*) getTopDisplayViewController;
 -(void) setTipLog:(NSString*)tipLog;
 
 @end

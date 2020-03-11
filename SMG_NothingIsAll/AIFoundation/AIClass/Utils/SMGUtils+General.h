@@ -39,9 +39,14 @@
 //object
 +(BOOL) isOk:(NSObject*)o class:(Class)c;
 
-//date
+//date2Str
 +(NSString*) date2HHMMSS;
 +(NSString*) date2HHMMSSSSS;
-+(NSString*) date2Str:(NSString*)format;
++(NSString*) date2yyyyMMddHHmmssSSS:(NSDate*)date;
++(NSString*) date2Str:(NSString*)format date:(NSDate*)date;
+
+//dateFromStr
++(NSDate*) dateFromTimeStr_yyyyMMddHHmmssSSS:(NSString*)timeStr;
++(NSDate*) dateFromTimeStr:(NSString*)timeStr format:(NSString*)format;
 
 @end

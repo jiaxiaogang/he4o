@@ -26,6 +26,8 @@
 		08250AE0228112C000FC497C /* XGWedis.m in Sources */ = {isa = PBXBuildFile; fileRef = 08250ADF228112C000FC497C /* XGWedis.m */; };
 		0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 0825AFF21F748F67003B86C7 /* NSObject+Extension.m */; };
 		0827DAD324198EAC00A025D4 /* HeLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 0827DAD224198EAC00A025D4 /* HeLog.m */; };
+		0827DAD724199C9E00A025D4 /* HeLogView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0827DAD624199C9E00A025D4 /* HeLogView.m */; };
+		0827DAD924199CC100A025D4 /* HeLogView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0827DAD824199CC100A025D4 /* HeLogView.xib */; };
 		082ABC3521F7E864002E544C /* AIShortMemory.m in Sources */ = {isa = PBXBuildFile; fileRef = 082ABC3421F7E864002E544C /* AIShortMemory.m */; };
 		082D03DF22D40AF000BB0B7A /* SMGUtils+General.m in Sources */ = {isa = PBXBuildFile; fileRef = 082D03DE22D40AF000BB0B7A /* SMGUtils+General.m */; };
 		082F9D561EB234750009F6A9 /* Output.m in Sources */ = {isa = PBXBuildFile; fileRef = 082F9D551EB234750009F6A9 /* Output.m */; };
@@ -179,6 +181,10 @@
 		0827DAD124198EAC00A025D4 /* HeLog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HeLog.h; sourceTree = "<group>"; };
 		0827DAD224198EAC00A025D4 /* HeLog.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HeLog.m; sourceTree = "<group>"; };
 		0827DAD424198F4900A025D4 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		0827DAD524199C9E00A025D4 /* HeLogView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HeLogView.h; sourceTree = "<group>"; };
+		0827DAD624199C9E00A025D4 /* HeLogView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HeLogView.m; sourceTree = "<group>"; };
+		0827DAD824199CC100A025D4 /* HeLogView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HeLogView.xib; sourceTree = "<group>"; };
+		0827DADC2419A46600A025D4 /* HeLogHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HeLogHeader.h; sourceTree = "<group>"; };
 		082ABC3321F7E864002E544C /* AIShortMemory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIShortMemory.h; sourceTree = "<group>"; };
 		082ABC3421F7E864002E544C /* AIShortMemory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIShortMemory.m; sourceTree = "<group>"; };
 		082D03DD22D40AF000BB0B7A /* SMGUtils+General.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SMGUtils+General.h"; sourceTree = "<group>"; };
@@ -468,6 +474,10 @@
 				0827DAD124198EAC00A025D4 /* HeLog.h */,
 				0827DAD224198EAC00A025D4 /* HeLog.m */,
 				0827DAD424198F4900A025D4 /* README.md */,
+				0827DAD524199C9E00A025D4 /* HeLogView.h */,
+				0827DAD624199C9E00A025D4 /* HeLogView.m */,
+				0827DAD824199CC100A025D4 /* HeLogView.xib */,
+				0827DADC2419A46600A025D4 /* HeLogHeader.h */,
 			);
 			path = XGLog;
 			sourceTree = "<group>";
@@ -1161,6 +1171,7 @@
 				0858C5B02194F5E400951BA5 /* CarView.xib in Resources */,
 				0889258122B0703700A0DBDD /* NVModuleView.xib in Resources */,
 				08AF45551E97D0B500377887 /* Assets.xcassets in Resources */,
+				0827DAD924199CC100A025D4 /* HeLogView.xib in Resources */,
 				08DB40CC1F11A65E003162C8 /* TestHungryPage.xib in Resources */,
 				0881966021800F2B00D5DB36 /* BirdLivePage.xib in Resources */,
 				08A5D5DF22AF21C900E56BB4 /* NVNodeView.xib in Resources */,
@@ -1295,6 +1306,7 @@
 				0860617921F92F7100113366 /* AIThinkIn.m in Sources */,
 				0889257F22B0702A00A0DBDD /* NVModuleView.m in Sources */,
 				0858C5CE2194F8B000951BA5 /* MASLayoutConstraint.m in Sources */,
+				0827DAD724199C9E00A025D4 /* HeLogView.m in Sources */,
 				0808927A215AF5F400710636 /* AINodeBase.m in Sources */,
 				089E66B421B9F84500ECA28A /* AIAlgNode.m in Sources */,
 				081B3ACC1F6E2155008A7F36 /* AITime.m in Sources */,

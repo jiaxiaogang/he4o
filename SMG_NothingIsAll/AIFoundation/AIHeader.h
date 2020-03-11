@@ -16,6 +16,7 @@
 #import "NVHeader.h"
 #import "AIInput.h"
 #import "AINet.h"
+#import "HeLogHeader.h"
 
 /**
  *  MARK:--------------------PathNameKey (kPH)--------------------
