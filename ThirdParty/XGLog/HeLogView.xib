@@ -25,8 +25,8 @@
             <rect key="frame" x="0.0" y="0.0" width="496" height="295"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="UlH-Fr-rnc">
-                    <rect key="frame" x="2" y="19" width="492" height="256"/>
+                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="UlH-Fr-rnc">
+                    <rect key="frame" x="2" y="37" width="492" height="256"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <fontDescription key="fontDescription" type="system" pointSize="9"/>
                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
@@ -42,7 +42,7 @@
                     <color key="highlightedColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                 </label>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="y5W-jH-Tad" userLabel="控制区">
-                    <rect key="frame" x="2" y="277" width="492" height="16"/>
+                    <rect key="frame" x="2" y="19" width="492" height="16"/>
                     <subviews>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SeQ-ZC-hKp">
                             <rect key="frame" x="421" y="1" width="70" height="14"/>
@@ -124,12 +124,12 @@
                 <constraint firstItem="UlH-Fr-rnc" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="2" id="6LK-n3-RoS"/>
                 <constraint firstAttribute="trailing" secondItem="spU-BU-3KQ" secondAttribute="trailing" constant="2" id="7SB-5b-CjU"/>
                 <constraint firstItem="spU-BU-3KQ" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="2" id="Dja-yh-FXH"/>
-                <constraint firstItem="UlH-Fr-rnc" firstAttribute="top" secondItem="spU-BU-3KQ" secondAttribute="bottom" constant="2" id="PBB-ic-1uk"/>
+                <constraint firstItem="UlH-Fr-rnc" firstAttribute="top" secondItem="spU-BU-3KQ" secondAttribute="bottom" constant="20" id="PBB-ic-1uk"/>
                 <constraint firstItem="y5W-jH-Tad" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="2" id="Qtr-Br-gvb"/>
-                <constraint firstAttribute="bottom" secondItem="UlH-Fr-rnc" secondAttribute="bottom" constant="20" id="R9m-JQ-w08"/>
+                <constraint firstAttribute="bottom" secondItem="UlH-Fr-rnc" secondAttribute="bottom" constant="2" id="R9m-JQ-w08"/>
                 <constraint firstAttribute="trailing" secondItem="y5W-jH-Tad" secondAttribute="trailing" constant="2" id="X7n-aI-eTv"/>
-                <constraint firstAttribute="bottom" secondItem="y5W-jH-Tad" secondAttribute="bottom" constant="2" id="d1S-QP-ghg"/>
-                <constraint firstItem="y5W-jH-Tad" firstAttribute="top" secondItem="UlH-Fr-rnc" secondAttribute="bottom" constant="2" id="fyH-8Y-dqo"/>
+                <constraint firstItem="y5W-jH-Tad" firstAttribute="top" secondItem="spU-BU-3KQ" secondAttribute="bottom" constant="2" id="ZTa-5z-VXG"/>
+                <constraint firstItem="UlH-Fr-rnc" firstAttribute="top" secondItem="y5W-jH-Tad" secondAttribute="bottom" constant="2" id="aZe-hc-2Fo"/>
                 <constraint firstAttribute="trailing" secondItem="UlH-Fr-rnc" secondAttribute="trailing" constant="2" id="qW8-qQ-VtN"/>
                 <constraint firstItem="spU-BU-3KQ" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="2" id="xzR-ne-XPK"/>
             </constraints>

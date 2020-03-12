@@ -41,16 +41,20 @@
     self.nvView = [[NVView alloc] initWithDelegate:[NVDelegate_He new]];
     [self.window addSubview:self.nvView];
     
-    //4. heLogView
-    self.heLogView = [[HeLogView alloc] init];
-    [self.window addSubview:self.heLogView];
-    
-    //5. heLogView打开按钮
-    self.openHeLogBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth - 40, StateBarHeight, 20, 20)];
+    //4. heLogView打开按钮
+    self.openHeLogBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth - 82, StateBarHeight, 40, 20)];
+    [self.openHeLogBtn.titleLabel setFont:[UIFont systemFontOfSize:10]];
+    [self.openHeLogBtn setTitleColor:UIColorWithRGBHex(0x0000EE) forState:UIControlStateNormal];
+    [self.openHeLogBtn setBackgroundColor:UIColorWithRGBHex(0xEEFFEE)];
+    [self.openHeLogBtn setTitle:@"LOG" forState:UIControlStateNormal];
     [self.window addSubview:self.openHeLogBtn];
     [self.openHeLogBtn addTarget:self action:@selector(openHeLogBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
     
-    //4. tipLogLab
+    //5. heLogView
+    self.heLogView = [[HeLogView alloc] init];
+    [self.window addSubview:self.heLogView];
+    
+    //6. tipLogLab
     self.tipLogLab = [[UILabel alloc] initWithFrame:CGRectMake(0, ScreenHeight - 11, ScreenWidth, 11)];
     [self.tipLogLab setFont:[UIFont boldSystemFontOfSize:11]];
     [self.tipLogLab setTextColor:[UIColor redColor]];
