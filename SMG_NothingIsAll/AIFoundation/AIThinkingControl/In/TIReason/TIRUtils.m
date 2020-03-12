@@ -185,11 +185,20 @@
                     countDesc = STRFORMAT(@"%ld/%ld",itemAlg.content_ps.count,proto_ps.count);
                     reMd5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:itemAlg.content_ps]]);
                 }
-                NSLog(@"稀疏码:%@/%ld->%ld, 引用:%ld, 强度:%ld, 类型:%@ 长度:%@ MD5:%d",item_p.identifier,item_p.pointerId,itemAlg.pointer.pointerId,(long)i,(long)item.strong.value,classDesc,countDesc,[reMd5 isEqualToString:item.header]);
+                NSLog(@"{稀疏码:%@=%ld} -%ld-> \
+{概念:%@=%ld[%@][%@][isMem:%d]}\
+下标:%ld, \
+MD5:%d",
+                      item_p.identifier,item_p.pointerId,(long)item.strong.value,
+                      itemAlg.pointer.identifier,itemAlg.pointer.pointerId,classDesc,countDesc,itemAlg.pointer.isMem,
+                      (long)i,
+                      [reMd5 isEqualToString:item.header]);
                 [theApp.nvView setNodeData:itemAlg.pointer lightStr:STRFORMAT(@"tmp_%@",countDesc)];
             }
             //TODOTOMORROW:
             //查下为什么那么多远投坚果,最终 (Height5).refPorts才3个;
+            //连续直投,然后重启远投,会有content_ps.count=0的情况, (2_AIVisionAlgs_0);
+            //但在构建日志中,有两次抽象2,分别存内存和硬盘,长度都为5;
             NSLog(@"");
             
             //3. 进行计数
