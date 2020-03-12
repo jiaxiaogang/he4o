@@ -51,6 +51,7 @@
 //MARK:                     < onclick >
 //MARK:===============================================================
 - (IBAction)nearFeedingBtnOnClick:(id)sender {
+    [theApp.heLogView addLog:@"直投"];
     FoodView *foodView = [[FoodView alloc] init];
     [foodView hit];
     [foodView setOrigin:CGPointMake(ScreenWidth * 0.75f, ScreenHeight - 66)];
@@ -76,6 +77,7 @@
     CGFloat targetX = 30 + (ScreenWidth - 60) * xRate;
     CGFloat targetY = 94 + (ScreenHeight - 60 - 128) * yRate;
     NSLog(@"远投:%f,%f",xRate,yRate);
+    [theApp.heLogView addLog:STRFORMAT(@"远投:%f,%f",xRate,yRate)];
     
     FoodView *foodView = [[FoodView alloc] init];
     [foodView hit];
@@ -93,11 +95,13 @@
 
 - (IBAction)hungerBtnOnClick:(id)sender {
     NSLog(@"马上饿onClick");
+    [theApp.heLogView addLog:@"马上饿onClick"];
     [[[DemoHunger alloc] init] commit:0.7 state:UIDeviceBatteryStateUnplugged];
 }
 
 - (IBAction)touchWingBtnOnClick:(id)sender {
     NSLog(@"摸翅膀onClick");
+    [theApp.heLogView addLog:@"摸翅膀onClick"];
     [self.birdView touchWing];
 }
 

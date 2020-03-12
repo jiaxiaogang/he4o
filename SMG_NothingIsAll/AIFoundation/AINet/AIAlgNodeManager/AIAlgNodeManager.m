@@ -36,6 +36,7 @@
     
     //5. 存储
     [SMGUtils insertNode:conNode];
+    [theApp.heLogView addLog:STRFORMAT(@"构建具象概念:%ld,内容数:%lu",conNode.pointer.pointerId,(unsigned long)conNode.content_ps.count)];
     return conNode;
 }
 
@@ -127,6 +128,7 @@
         
         //5. 关联 & 存储
         [AINetUtils relateAlgAbs:findAbsNode conNodes:validConAlgs];
+        [theApp.heLogView addLog:STRFORMAT(@"构建抽象概念:%ld,内容数:%lu",findAbsNode.pointer.pointerId,(unsigned long)findAbsNode.content_ps.count)];
         return findAbsNode;
     }
     return nil;

@@ -64,21 +64,25 @@ static HeLog *_instance;
  */
 -(NSArray*) filterByTime:(NSString*)startT endT:(NSString*)endT{
     //1. 转换startT和endT的时间戳;
+    if (!STRISOK(startT) || !STRISOK(endT)) {
+        ELog(@"输入时间格式错误!!! (%@,%@)",startT,endT);
+        return self.datas;
+    }
     NSDate *startDate = [SMGUtils dateFromTimeStr_yyyyMMddHHmmssSSS:startT];
     NSDate *endDate = [SMGUtils dateFromTimeStr_yyyyMMddHHmmssSSS:endT];
     if (!startDate || !endDate) {
-        ELog(@"输入时间格式错误!!! (%@,%@)",startT,endT);
+        ELog(@"时间转换错误!!! (%@,%@)",startT,endT);
         return self.datas;
     }
     long long startTime = [startDate timeIntervalSince1970];
     long long endTime = [endDate timeIntervalSince1970];
     
     //2. 找起始index
-    NSInteger startIndex = 0;
-    NSInteger endIndex = self.datas.count - 1;
+    NSInteger startIndex = self.datas.count;
+    NSInteger endIndex = -1;
     for (NSDictionary *item in self.datas) {
         long long itemTime = [NUMTOOK([item objectForKey:kTime]) longLongValue];
-        if (itemTime >= startTime) {
+        if (itemTime >= startTime && startIndex == self.datas.count) {
             startIndex = [self.datas indexOfObject:item];
         }
         if (itemTime == endTime) {
