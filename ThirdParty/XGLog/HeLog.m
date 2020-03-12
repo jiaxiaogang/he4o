@@ -103,11 +103,22 @@ static HeLog *_instance;
         return self.datas;
     }
     NSMutableArray *result = [[NSMutableArray alloc] init];
+    NSString *sep = @" ";
+    NSArray *kws = STRTOARR(keyword, sep);
     
     //2. 筛选
     for (NSDictionary *item in self.datas) {
         NSString *log = [item objectForKey:kLog];
-        if ([log containsString:keyword]) {
+        
+        //3. 判断包含所有关键字:kws
+        BOOL contains = true;
+        for (NSString *kw in kws) {
+            if (![log containsString:kw]) {
+                contains = false;
+                break;
+            }
+        }
+        if (contains) {
             [result addObject:item];
         }
     }
