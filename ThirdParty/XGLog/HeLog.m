@@ -65,7 +65,7 @@ static HeLog *_instance;
 -(NSArray*) filterByTime:(NSString*)startT endT:(NSString*)endT{
     //1. 转换startT和endT的时间戳;
     if (!STRISOK(startT) || !STRISOK(endT)) {
-        ELog(@"输入时间格式错误!!! (%@,%@)",startT,endT);
+        //ELog(@"输入时间格式错误!!! (%@,%@)",startT,endT);
         return self.datas;
     }
     NSDate *startDate = [SMGUtils dateFromTimeStr_yyyyMMddHHmmssSSS:startT];

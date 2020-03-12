@@ -185,10 +185,8 @@
                     countDesc = STRFORMAT(@"%ld/%ld",itemAlg.content_ps.count,proto_ps.count);
                     reMd5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:itemAlg.content_ps]]);
                 }
-                NSLog(@"稀疏码:%@/%ld, 引用:%ld, 强度:%ld, 类型:%@ 长度:%@",item_p.identifier,item_p.pointerId,(long)i,(long)item.strong.value,classDesc,countDesc);
-                if (![reMd5 isEqualToString:item.header]) {
-                    ELog(@"md5不相符:\n%@\n%@",reMd5,item.header);
-                }
+                NSLog(@"稀疏码:%@/%ld->%ld, 引用:%ld, 强度:%ld, 类型:%@ 长度:%@ MD5:%d",item_p.identifier,item_p.pointerId,itemAlg.pointer.pointerId,(long)i,(long)item.strong.value,classDesc,countDesc,[reMd5 isEqualToString:item.header]);
+                [theApp.nvView setNodeData:itemAlg.pointer lightStr:STRFORMAT(@"tmp_%@",countDesc)];
             }
             //TODOTOMORROW:
             //查下为什么那么多远投坚果,最终 (Height5).refPorts才3个;
