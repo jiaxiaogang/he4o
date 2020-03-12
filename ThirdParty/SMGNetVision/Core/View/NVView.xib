@@ -27,7 +27,8 @@
                         <constraint firstAttribute="width" constant="40" id="WrC-dy-7Z3"/>
                         <constraint firstAttribute="height" constant="20" id="ahc-Ga-vg9"/>
                     </constraints>
-                    <state key="normal" title="口"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                    <state key="normal" title="NET"/>
                     <connections>
                         <action selector="openCloseBtnOnClick:" destination="-1" eventType="touchUpInside" id="vcB-kT-Et9"/>
                     </connections>

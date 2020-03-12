@@ -236,7 +236,7 @@
     self.height = self.isOpen ? cNVHeight : 20;
     self.x = self.isOpen ? 0 : ScreenWidth - 40;
     self.width = self.isOpen ? ScreenWidth : 40;
-    [self.openCloseBtn setTitle:(self.isOpen ? @"一" : @"口") forState:UIControlStateNormal];
+    [self.openCloseBtn setTitle:(self.isOpen ? @"关闭" : @"NET") forState:UIControlStateNormal];
 }
 - (IBAction)clearBtnOnClick:(id)sender {
     [self clear];

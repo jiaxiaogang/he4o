@@ -37,18 +37,18 @@
     [self.window setRootViewController:naviC];
     [self.window makeKeyAndVisible];
     
-    //3. 神经网络可视化
-    self.nvView = [[NVView alloc] initWithDelegate:[NVDelegate_He new]];
-    [self.window addSubview:self.nvView];
-    
-    //4. heLogView打开按钮
+    //3. heLogView打开按钮
     self.openHeLogBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth - 82, StateBarHeight, 40, 20)];
-    [self.openHeLogBtn.titleLabel setFont:[UIFont systemFontOfSize:10]];
+    [self.openHeLogBtn.titleLabel setFont:[UIFont systemFontOfSize:15]];
     [self.openHeLogBtn setTitleColor:UIColorWithRGBHex(0x0000EE) forState:UIControlStateNormal];
     [self.openHeLogBtn setBackgroundColor:UIColorWithRGBHex(0xEEFFEE)];
     [self.openHeLogBtn setTitle:@"LOG" forState:UIControlStateNormal];
-    [self.window addSubview:self.openHeLogBtn];
     [self.openHeLogBtn addTarget:self action:@selector(openHeLogBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.window addSubview:self.openHeLogBtn];
+    
+    //4. 神经网络可视化
+    self.nvView = [[NVView alloc] initWithDelegate:[NVDelegate_He new]];
+    [self.window addSubview:self.nvView];
     
     //5. heLogView
     self.heLogView = [[HeLogView alloc] init];
