@@ -17,6 +17,7 @@
 @interface AppDelegate ()
 
 @property (strong, nonatomic) UILabel *tipLogLab;
+@property (strong, nonatomic) UIButton *openHeLogBtn;
 
 @end
 
@@ -43,6 +44,11 @@
     //4. heLogView
     self.heLogView = [[HeLogView alloc] init];
     [self.window addSubview:self.heLogView];
+    
+    //5. heLogView打开按钮
+    self.openHeLogBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth - 40, StateBarHeight, 20, 20)];
+    [self.window addSubview:self.openHeLogBtn];
+    [self.openHeLogBtn addTarget:self action:@selector(openHeLogBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
     
     //4. tipLogLab
     self.tipLogLab = [[UILabel alloc] initWithFrame:CGRectMake(0, ScreenHeight - 11, ScreenWidth, 11)];
@@ -75,6 +81,13 @@
 
 -(void) setTipLog:(NSString*)tipLog{
     [self.tipLogLab setText:STRTOOK(tipLog)];
+}
+
+//MARK:===============================================================
+//MARK:                     < privateMethod >
+//MARK:===============================================================
+-(void) openHeLogBtnOnClick:(id)btn{
+    [self.heLogView open];
 }
 
 @end

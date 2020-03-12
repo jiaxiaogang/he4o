@@ -13,5 +13,6 @@
 -(void) addLog:(NSString*)log;
 -(void) reloadData;
 -(void) open;
+-(void) close;
 
 @end

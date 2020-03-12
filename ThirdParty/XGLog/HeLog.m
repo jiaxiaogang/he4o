@@ -68,7 +68,7 @@ static HeLog *_instance;
     NSDate *endDate = [SMGUtils dateFromTimeStr_yyyyMMddHHmmssSSS:endT];
     if (!startDate || !endDate) {
         ELog(@"输入时间格式错误!!! (%@,%@)",startT,endT);
-        return nil;
+        return self.datas;
     }
     long long startTime = [startDate timeIntervalSince1970];
     long long endTime = [endDate timeIntervalSince1970];
@@ -95,7 +95,9 @@ static HeLog *_instance;
 
 -(NSArray*) filterByKeyword:(NSString*)keyword{
     //1. 数据准备
-    keyword = STRTOOK(keyword);
+    if (!STRISOK(keyword)) {
+        return self.datas;
+    }
     NSMutableArray *result = [[NSMutableArray alloc] init];
     
     //2. 筛选

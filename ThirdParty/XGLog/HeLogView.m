@@ -64,15 +64,22 @@
     [self reloadData];
 }
 -(void) reloadData{
-    //1. 取数据
-    NSArray *datas = [[HeLog sharedInstance] getDatas];
+    //1. 清空
     [self.str setString:@""];
     
-    //2. 时间筛选
+    //2. 筛选 (时间 & 关键字)
+    NSArray *timeValids = [[HeLog sharedInstance] filterByTime:self.startTF.text endT:self.endTF.text];
+    NSArray *keywordValids = [[HeLog sharedInstance] filterByKeyword:self.keywordTF.text];
     
-    //3. 关键字筛选
+    //3. 有效并集
+    NSMutableArray *datas = [[NSMutableArray alloc] init];
+    for (id timeItem in timeValids) {
+        if ([keywordValids containsObject:timeItem]) {
+            [datas addObject:timeItem];
+        }
+    }
     
-    //2. 重拼接赋值
+    //4. 重拼接赋值
     for (NSDictionary *data in datas) {
         long long time = [NUMTOOK([data objectForKey:kTime]) longLongValue];
         NSString *log = [data objectForKey:kLog];
@@ -80,7 +87,7 @@
         [self.str appendFormat:@"%@: %@\n",timeStr,log];
     }
     
-    //3. 刷新显示
+    //5. 刷新显示
     [self refreshDisplay];
 }
 
@@ -90,6 +97,20 @@
 
 -(void) open{
     [self setHidden:false];
+}
+
+-(void) close{
+    [self setHidden:true];
+}
+
+//MARK:===============================================================
+//MARK:                     < onClick >
+//MARK:===============================================================
+- (IBAction)filterBtnOnClick:(id)sender {
+    [self reloadData];
+}
+- (IBAction)closeBtnOnClick:(id)sender {
+    [self close];
 }
 
 @end
