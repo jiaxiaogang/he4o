@@ -47,19 +47,6 @@ static XGWedis *_instance;
 //MARK:===============================================================
 -(void) setObject:(NSObject*)obj forKey:(NSString*)key {
     if (obj && STRISOK(key)) {
-        
-        //打出调试日志========Start;
-        NSString *sep = @"/";
-        NSString *saveFileName = STRTOOK(ARR_INDEX_REVERSE(STRTOARR(key, sep), 0));
-        if ([kFNNode isEqualToString:saveFileName]) {
-            AINodeBase *node = (AINodeBase*)obj;
-            NSArray *content_ps = ARRTOOK([node valueForKey:@"content_ps"]);
-            [theApp.heLogView addLog:STRFORMAT(@"存储内存:%@ 指针:%@=%ld 内容:%ld",node.class,node.pointer.identifier,(long)node.pointer.pointerId,content_ps.count)];
-        }else{
-            [theApp.heLogView addLog:STRFORMAT(@"存储内存:--------%@",saveFileName)];
-        }
-        //调试========End
-        
         [self.dic setObject:obj forKey:key];
     }
 }
