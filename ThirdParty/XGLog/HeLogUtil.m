@@ -26,8 +26,8 @@
         ELog(@"时间转换错误!!! (%@,%@)",startT,endT);
         return checkDatas;
     }
-    long long startTime = [startDate timeIntervalSince1970];
-    long long endTime = [endDate timeIntervalSince1970];
+    long long startTime = [startDate timeIntervalSince1970] * 1000.0f;
+    long long endTime = [endDate timeIntervalSince1970] * 1000.0f;
     
     //2. 找起始index
     NSInteger startIndex = checkDatas.count;

@@ -12,7 +12,7 @@
 #import "View+MASAdditions.h"
 #import "HeLogUtil.h"
 
-@interface HeLogView ()
+@interface HeLogView () <UITextFieldDelegate>
 
 @property (strong, nonatomic) IBOutlet UIView *containerView;
 @property (weak, nonatomic) IBOutlet UITextView *textView;
@@ -53,6 +53,11 @@
         make.top.mas_equalTo(self);
         make.bottom.mas_equalTo(self);
     }];
+    
+    //tf
+    self.keywordTF.delegate = self;
+    self.startTF.delegate = self;
+    self.endTF.delegate = self;
 }
 
 -(void) initData{
@@ -98,14 +103,18 @@
     NSArray *keywordValids = [HeLogUtil filterByKeyword:self.keywordTF.text checkDatas:datas];
     
     //2. 有效并集 (用dic去重基于hash,比NSArray要快许多);
-    NSMutableDictionary *validDic = [[NSMutableDictionary alloc] init];
+    NSMutableArray *valids = [[NSMutableArray alloc] init];
+    NSMutableDictionary *timeDic = [[NSMutableDictionary alloc] init];
     for (NSDictionary *timeItem in timeValids)
-        [validDic setObject:timeItem forKey:STRFORMAT(@"%p",timeItem)];
-    for (NSDictionary *keywordItem in keywordValids)
-        [validDic setObject:keywordItem forKey:STRFORMAT(@"%p",keywordItem)];
+        [timeDic setObject:timeItem forKey:STRFORMAT(@"%p",timeItem)];
+    for (NSDictionary *keywordItem in keywordValids){
+        if ([timeDic objectForKey:STRFORMAT(@"%p",keywordItem)]) {
+            [valids addObject:keywordItem];
+        }
+    }
     
     //3. 重拼接赋值
-    for (NSDictionary *valid in validDic.allValues) {
+    for (NSDictionary *valid in valids) {
         double time = [NUMTOOK([valid objectForKey:kTime]) doubleValue];
         NSString *log = [valid objectForKey:kLog];
         NSString *timeStr = [SMGUtils date2yyyyMMddHHmmssSSS:[[NSDate alloc] initWithTimeIntervalSince1970:(time / 1000.0f)]];
@@ -135,4 +144,17 @@
     [self close];
 }
 
+//MARK:===============================================================
+//MARK:                     < UITextFieldDelegate >
+//MARK:===============================================================
+- (BOOL)textFieldShouldReturn:(UITextField *)textField{
+    if (textField == self.startTF) {
+        [self.endTF becomeFirstResponder];
+    }else if (textField == self.endTF) {
+        [self.keywordTF becomeFirstResponder];
+    }else if (textField == self.keywordTF) {
+        [self reloadData];
+    }
+    return true;
+}
 @end
