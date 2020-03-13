@@ -407,9 +407,10 @@
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if ([kFNNode isEqualToString:saveFileName]) {
                         AINodeBase *node = (AINodeBase*)saveObj;
-                        [theApp.heLogView addLog:STRFORMAT(@"存储%@: %@=%ld",node.class,node.pointer.identifier,(long)node.pointer.pointerId)];
+                        NSArray *content_ps = ARRTOOK([node valueForKey:@"content_ps"]);
+                        [theApp.heLogView addLog:STRFORMAT(@"存储:%@ 指针:%@=%ld 内容:%ld",node.class,node.pointer.identifier,(long)node.pointer.pointerId,content_ps.count)];
                     }else{
-                        [theApp.heLogView addLog:STRFORMAT(@"存储%@",saveFileName)];
+                        [theApp.heLogView addLog:STRFORMAT(@"存储:--------%@",saveFileName)];
                     }
                 });
             }
