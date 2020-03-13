@@ -404,6 +404,14 @@
                 NSString *saveRootPath = STRTOOK(SUBSTR2INDEX(saveKey, (saveKey.length - saveFileName.length - 1)));
                 PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:saveRootPath];
                 [cache setObject:saveObj forKey:saveFileName];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if ([kFNNode isEqualToString:saveFileName]) {
+                        AINodeBase *node = (AINodeBase*)saveObj;
+                        [theApp.heLogView addLog:STRFORMAT(@"存储%@: %@=%ld",node.class,node.pointer.identifier,(long)node.pointer.pointerId)];
+                    }else{
+                        [theApp.heLogView addLog:STRFORMAT(@"存储%@",saveFileName)];
+                    }
+                });
             }
             //NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
             //for (NSString *key in dic.allKeys)

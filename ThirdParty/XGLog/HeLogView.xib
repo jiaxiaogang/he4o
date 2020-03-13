@@ -13,6 +13,7 @@
             <connections>
                 <outlet property="closeBtn" destination="Uec-Fu-gaa" id="Ql7-cl-ENH"/>
                 <outlet property="containerView" destination="iN0-l3-epB" id="P5L-ms-rHZ"/>
+                <outlet property="countLab" destination="WeT-n6-tVV" id="Zq4-wH-1hx"/>
                 <outlet property="endTF" destination="FSt-p6-B84" id="QIy-ZJ-vMh"/>
                 <outlet property="filterBtn" destination="SeQ-ZC-hKp" id="ds7-15-JqJ"/>
                 <outlet property="keywordTF" destination="GSD-Pg-y6A" id="ka5-VG-qdO"/>
@@ -98,18 +99,27 @@
                                 <action selector="closeBtnOnClick:" destination="-1" eventType="touchUpInside" id="flw-JM-D5l"/>
                             </connections>
                         </button>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="条数:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WeT-n6-tVV">
+                            <rect key="frame" x="368" y="0.0" width="24" height="16"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
                     </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
                         <constraint firstAttribute="bottom" secondItem="Uec-Fu-gaa" secondAttribute="bottom" constant="1" id="5PY-ZP-utv"/>
                         <constraint firstItem="SeQ-ZC-hKp" firstAttribute="leading" secondItem="Uec-Fu-gaa" secondAttribute="trailing" constant="2" id="5fp-uH-1TZ"/>
                         <constraint firstItem="FSt-p6-B84" firstAttribute="leading" secondItem="i3L-Es-6sK" secondAttribute="trailing" constant="2" id="9mm-Cf-vZ8"/>
+                        <constraint firstItem="WeT-n6-tVV" firstAttribute="top" secondItem="y5W-jH-Tad" secondAttribute="top" id="An3-OJ-r9n"/>
                         <constraint firstItem="SeQ-ZC-hKp" firstAttribute="top" secondItem="y5W-jH-Tad" secondAttribute="top" constant="1" id="CF7-1A-kfz"/>
+                        <constraint firstAttribute="bottom" secondItem="WeT-n6-tVV" secondAttribute="bottom" id="DCa-Qh-kzr"/>
                         <constraint firstItem="GSD-Pg-y6A" firstAttribute="leading" secondItem="FSt-p6-B84" secondAttribute="trailing" constant="2" id="DER-dq-YHB"/>
                         <constraint firstAttribute="bottom" secondItem="FSt-p6-B84" secondAttribute="bottom" id="Dmg-jt-W6J"/>
                         <constraint firstItem="FSt-p6-B84" firstAttribute="top" secondItem="y5W-jH-Tad" secondAttribute="top" id="ItT-1P-9BX"/>
                         <constraint firstAttribute="bottom" secondItem="SeQ-ZC-hKp" secondAttribute="bottom" constant="1" id="TCj-Y6-eKN"/>
                         <constraint firstItem="Uec-Fu-gaa" firstAttribute="top" secondItem="y5W-jH-Tad" secondAttribute="top" constant="1" id="VOv-gF-kKZ"/>
+                        <constraint firstItem="WeT-n6-tVV" firstAttribute="leading" secondItem="GSD-Pg-y6A" secondAttribute="trailing" constant="2" id="YVn-lB-FDC"/>
                         <constraint firstItem="i3L-Es-6sK" firstAttribute="leading" secondItem="y5W-jH-Tad" secondAttribute="leading" constant="2" id="Zuu-JY-mng"/>
                         <constraint firstItem="GSD-Pg-y6A" firstAttribute="top" secondItem="y5W-jH-Tad" secondAttribute="top" id="ak9-Ok-Uio"/>
                         <constraint firstAttribute="bottom" secondItem="i3L-Es-6sK" secondAttribute="bottom" id="dbI-3o-BCN"/>

@@ -21,6 +21,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *closeBtn;
 @property (weak, nonatomic) IBOutlet UIButton *filterBtn;
 @property (strong, nonatomic) NSMutableString *str;
+@property (weak, nonatomic) IBOutlet UILabel *countLab;
 
 @end
 
@@ -81,9 +82,9 @@
     
     //4. 重拼接赋值
     for (NSDictionary *data in datas) {
-        long long time = [NUMTOOK([data objectForKey:kTime]) longLongValue];
+        double time = [NUMTOOK([data objectForKey:kTime]) doubleValue];
         NSString *log = [data objectForKey:kLog];
-        NSString *timeStr = [SMGUtils date2yyyyMMddHHmmssSSS:[[NSDate alloc] initWithTimeIntervalSince1970:time]];
+        NSString *timeStr = [SMGUtils date2yyyyMMddHHmmssSSS:[[NSDate alloc] initWithTimeIntervalSince1970:(time / 1000.0f)]];
         [self.str appendFormat:@"%@: %@\n",timeStr,log];
     }
     
@@ -92,7 +93,12 @@
 }
 
 -(void) refreshDisplay{
+    //1. textView
     [self.textView setText:self.str];
+    
+    //2. countLab
+    NSString *sep = @"\n";
+    [self.countLab setText:STRFORMAT(@"共计:%ld条",STRTOARR(self.str, sep).count - 1)];
 }
 
 -(void) open{

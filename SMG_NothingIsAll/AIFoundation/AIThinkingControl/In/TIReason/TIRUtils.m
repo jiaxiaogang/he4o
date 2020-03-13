@@ -193,6 +193,9 @@ MD5:%d",
                       itemAlg.pointer.identifier,itemAlg.pointer.pointerId,classDesc,countDesc,itemAlg.pointer.isMem,
                       (long)i,
                       [reMd5 isEqualToString:item.header]);
+                if (itemAlg.content_ps.count == 0) {
+                    int x = 0;
+                }
                 [theApp.nvView setNodeData:itemAlg.pointer lightStr:STRFORMAT(@"tmp_%@",countDesc)];
             }
             //TODOTOMORROW:

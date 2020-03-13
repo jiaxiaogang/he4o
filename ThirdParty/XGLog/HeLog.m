@@ -52,7 +52,7 @@ static HeLog *_instance;
  */
 -(void) addLog:(NSString*)log{
     log = STRTOOK(log);
-    long long nowTime = [[NSDate date] timeIntervalSince1970];
+    long long nowTime = [[NSDate new] timeIntervalSince1970] * 1000L;
     [self.datas addObject:@{kTime:@(nowTime),kLog:log}];
 }
 -(NSArray*) getDatas{
