@@ -25,7 +25,7 @@
 		08236CEC21A23439008D8761 /* AIVisionAlgsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08236CEB21A23439008D8761 /* AIVisionAlgsModel.m */; };
 		08250AE0228112C000FC497C /* XGWedis.m in Sources */ = {isa = PBXBuildFile; fileRef = 08250ADF228112C000FC497C /* XGWedis.m */; };
 		0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 0825AFF21F748F67003B86C7 /* NSObject+Extension.m */; };
-		0827DAD324198EAC00A025D4 /* HeLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 0827DAD224198EAC00A025D4 /* HeLog.m */; };
+		0827DAD324198EAC00A025D4 /* HeLogModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0827DAD224198EAC00A025D4 /* HeLogModel.m */; };
 		0827DAD724199C9E00A025D4 /* HeLogView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0827DAD624199C9E00A025D4 /* HeLogView.m */; };
 		0827DAD924199CC100A025D4 /* HeLogView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0827DAD824199CC100A025D4 /* HeLogView.xib */; };
 		082ABC3521F7E864002E544C /* AIShortMemory.m in Sources */ = {isa = PBXBuildFile; fileRef = 082ABC3421F7E864002E544C /* AIShortMemory.m */; };
@@ -65,6 +65,7 @@
 		0858C5E421950BC700951BA5 /* TreeView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0858C5E321950BC700951BA5 /* TreeView.xib */; };
 		0858C5E721950CA300951BA5 /* FoodView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0858C5E621950CA300951BA5 /* FoodView.m */; };
 		0858C5E921950CAA00951BA5 /* FoodView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0858C5E821950CAA00951BA5 /* FoodView.xib */; };
+		085BA9F4241C421500829450 /* HeLogUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 085BA9F3241C421500829450 /* HeLogUtil.m */; };
 		0860617621F92F5200113366 /* AIThinkOutPercept.m in Sources */ = {isa = PBXBuildFile; fileRef = 0860617521F92F5200113366 /* AIThinkOutPercept.m */; };
 		0860617921F92F7100113366 /* AIThinkIn.m in Sources */ = {isa = PBXBuildFile; fileRef = 0860617821F92F7100113366 /* AIThinkIn.m */; };
 		0860A3BB22C9851800A48682 /* CustomAddNodeWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 0860A3BA22C9851800A48682 /* CustomAddNodeWindow.m */; };
@@ -178,8 +179,8 @@
 		08250ADF228112C000FC497C /* XGWedis.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XGWedis.m; sourceTree = "<group>"; };
 		0825AFF11F748F67003B86C7 /* NSObject+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Extension.h"; sourceTree = "<group>"; };
 		0825AFF21F748F67003B86C7 /* NSObject+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Extension.m"; sourceTree = "<group>"; };
-		0827DAD124198EAC00A025D4 /* HeLog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HeLog.h; sourceTree = "<group>"; };
-		0827DAD224198EAC00A025D4 /* HeLog.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HeLog.m; sourceTree = "<group>"; };
+		0827DAD124198EAC00A025D4 /* HeLogModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HeLogModel.h; sourceTree = "<group>"; };
+		0827DAD224198EAC00A025D4 /* HeLogModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HeLogModel.m; sourceTree = "<group>"; };
 		0827DAD424198F4900A025D4 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		0827DAD524199C9E00A025D4 /* HeLogView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HeLogView.h; sourceTree = "<group>"; };
 		0827DAD624199C9E00A025D4 /* HeLogView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HeLogView.m; sourceTree = "<group>"; };
@@ -258,6 +259,8 @@
 		0858C5E521950CA300951BA5 /* FoodView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FoodView.h; sourceTree = "<group>"; };
 		0858C5E621950CA300951BA5 /* FoodView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FoodView.m; sourceTree = "<group>"; };
 		0858C5E821950CAA00951BA5 /* FoodView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FoodView.xib; sourceTree = "<group>"; };
+		085BA9F2241C421500829450 /* HeLogUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HeLogUtil.h; sourceTree = "<group>"; };
+		085BA9F3241C421500829450 /* HeLogUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HeLogUtil.m; sourceTree = "<group>"; };
 		0860617421F92F5200113366 /* AIThinkOutPercept.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIThinkOutPercept.h; sourceTree = "<group>"; };
 		0860617521F92F5200113366 /* AIThinkOutPercept.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIThinkOutPercept.m; sourceTree = "<group>"; };
 		0860617721F92F7100113366 /* AIThinkIn.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIThinkIn.h; sourceTree = "<group>"; };
@@ -471,13 +474,15 @@
 		0827DAD024198E8A00A025D4 /* XGLog */ = {
 			isa = PBXGroup;
 			children = (
-				0827DAD124198EAC00A025D4 /* HeLog.h */,
-				0827DAD224198EAC00A025D4 /* HeLog.m */,
+				0827DAD124198EAC00A025D4 /* HeLogModel.h */,
+				0827DAD224198EAC00A025D4 /* HeLogModel.m */,
 				0827DAD424198F4900A025D4 /* README.md */,
 				0827DAD524199C9E00A025D4 /* HeLogView.h */,
 				0827DAD624199C9E00A025D4 /* HeLogView.m */,
 				0827DAD824199CC100A025D4 /* HeLogView.xib */,
 				0827DADC2419A46600A025D4 /* HeLogHeader.h */,
+				085BA9F2241C421500829450 /* HeLogUtil.h */,
+				085BA9F3241C421500829450 /* HeLogUtil.m */,
 			);
 			path = XGLog;
 			sourceTree = "<group>";
@@ -1228,7 +1233,7 @@
 				082D03DF22D40AF000BB0B7A /* SMGUtils+General.m in Sources */,
 				88B23BE620BE20BC00BE8AF6 /* AIAbsFoManager.m in Sources */,
 				08FBE10E22D56F360088EF1A /* NVModuleUtil.m in Sources */,
-				0827DAD324198EAC00A025D4 /* HeLog.m in Sources */,
+				0827DAD324198EAC00A025D4 /* HeLogModel.m in Sources */,
 				08A5D5D822AF1E3400E56BB4 /* NVView.m in Sources */,
 				0830DAB721D6E8AD003065CD /* NSString+Extension.m in Sources */,
 				08C84A8E1E9A866200897D8B /* AIInput.m in Sources */,
@@ -1297,6 +1302,7 @@
 				88960C6B209BDA2B004EF419 /* AINetIndexReference.m in Sources */,
 				08F738071F7C714F005EAD56 /* AISqlPointer.m in Sources */,
 				08AF454A1E97D0B500377887 /* main.m in Sources */,
+				085BA9F4241C421500829450 /* HeLogUtil.m in Sources */,
 				88988524208979E6001D1ADC /* AINetIndex.m in Sources */,
 				8868F6EB210A946A000EAC9B /* AIAbsCMVManager.m in Sources */,
 				0858C5D12194F8B000951BA5 /* NSArray+MASAdditions.m in Sources */,

@@ -7,9 +7,10 @@
 //
 
 #import "HeLogView.h"
-#import "HeLog.h"
+#import "HeLogModel.h"
 #import "MASConstraint.h"
 #import "View+MASAdditions.h"
+#import "HeLogUtil.h"
 
 @interface HeLogView ()
 
@@ -22,6 +23,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *filterBtn;
 @property (strong, nonatomic) NSMutableString *str;
 @property (weak, nonatomic) IBOutlet UILabel *countLab;
+@property (strong, nonatomic) HeLogModel *model;
 
 @end
 
@@ -53,42 +55,54 @@
 }
 
 -(void) initData{
+    self.model = [[HeLogModel alloc] init];
     self.str = [[NSMutableString alloc] init];
-    [self reloadData];
+    [self reloadData:self.model.getDatas];
 }
 
 //MARK:===============================================================
 //MARK:                     < publicMethod >
 //MARK:===============================================================
 -(void) addLog:(NSString*)log{
-    [[HeLog sharedInstance] addLog:log];
-    [self reloadData];
+    if (log) {
+        NSDictionary *addDic = [self.model addLog:log];
+        [self reloadData:@[addDic]];
+    }
 }
--(void) reloadData{
-    //1. 清空
-    [self.str setString:@""];
+
+-(void) open{
+    [self setHidden:false];
+}
+
+-(void) close{
+    [self setHidden:true];
+}
+
+//MARK:===============================================================
+//MARK:                     < privateMethod >
+//MARK:===============================================================
+-(void) reloadData:(NSArray*)datas{
+    //1. 筛选 (时间 & 关键字)
+    NSArray *timeValids = [HeLogUtil filterByTime:self.startTF.text endT:self.endTF.text checkDatas:datas];
+    NSArray *keywordValids = [HeLogUtil filterByKeyword:self.keywordTF.text checkDatas:datas];
     
-    //2. 筛选 (时间 & 关键字)
-    NSArray *timeValids = [[HeLog sharedInstance] filterByTime:self.startTF.text endT:self.endTF.text];
-    NSArray *keywordValids = [[HeLog sharedInstance] filterByKeyword:self.keywordTF.text];
-    
-    //3. 有效并集
-    NSMutableArray *datas = [[NSMutableArray alloc] init];
+    //2. 有效并集
+    NSMutableArray *valids = [[NSMutableArray alloc] init];
     for (id timeItem in timeValids) {
         if ([keywordValids containsObject:timeItem]) {
-            [datas addObject:timeItem];
+            [valids addObject:timeItem];
         }
     }
     
-    //4. 重拼接赋值
-    for (NSDictionary *data in datas) {
-        double time = [NUMTOOK([data objectForKey:kTime]) doubleValue];
-        NSString *log = [data objectForKey:kLog];
+    //3. 重拼接赋值
+    for (NSDictionary *valid in valids) {
+        double time = [NUMTOOK([valid objectForKey:kTime]) doubleValue];
+        NSString *log = [valid objectForKey:kLog];
         NSString *timeStr = [SMGUtils date2yyyyMMddHHmmssSSS:[[NSDate alloc] initWithTimeIntervalSince1970:(time / 1000.0f)]];
         [self.str appendFormat:@"%@: %@\n",timeStr,log];
     }
     
-    //5. 刷新显示
+    //4. 刷新显示
     [self refreshDisplay];
 }
 
@@ -101,19 +115,13 @@
     [self.countLab setText:STRFORMAT(@"共计:%ld条",STRTOARR(self.str, sep).count - 1)];
 }
 
--(void) open{
-    [self setHidden:false];
-}
-
--(void) close{
-    [self setHidden:true];
-}
-
 //MARK:===============================================================
 //MARK:                     < onClick >
 //MARK:===============================================================
 - (IBAction)filterBtnOnClick:(id)sender {
-    [self reloadData];
+    //清空 & 重加载
+    [self.str setString:@""];
+    [self reloadData:self.model.getDatas];
 }
 - (IBAction)closeBtnOnClick:(id)sender {
     [self close];

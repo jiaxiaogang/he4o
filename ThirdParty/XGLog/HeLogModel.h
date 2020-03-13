@@ -21,14 +21,12 @@
  *  3. XGWedis支持delegate/observer/block三种持久化方式;
  *
  */
-@interface HeLog : NSObject
-
-+(HeLog*) sharedInstance;
+@interface HeLogModel : NSObject
 
 /**
  *  MARK:--------------------addLog--------------------
  */
--(void) addLog:(NSString*)log;
+-(NSDictionary*) addLog:(NSString*)log;
 -(NSArray*) getDatas;
 
 /**

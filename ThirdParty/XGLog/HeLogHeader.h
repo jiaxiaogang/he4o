@@ -7,5 +7,5 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "HeLog.h"
+#import "HeLogModel.h"
 #import "HeLogView.h"
