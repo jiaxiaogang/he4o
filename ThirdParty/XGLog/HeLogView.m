@@ -24,6 +24,7 @@
 @property (strong, nonatomic) NSMutableString *str;
 @property (weak, nonatomic) IBOutlet UILabel *countLab;
 @property (strong, nonatomic) HeLogModel *model;
+@property (assign, nonatomic) BOOL isOpen;
 
 @end
 
@@ -55,9 +56,9 @@
 }
 
 -(void) initData{
+    self.isOpen = false;
     self.model = [[HeLogModel alloc] init];
     self.str = [[NSMutableString alloc] init];
-    [self reloadData:self.model.getDatas];
 }
 
 //MARK:===============================================================
@@ -66,36 +67,45 @@
 -(void) addLog:(NSString*)log{
     if (log) {
         NSDictionary *addDic = [self.model addLog:log];
-        [self reloadData:@[addDic]];
+        if (self.isOpen) {
+            [self appendData:@[addDic]];
+        }
     }
 }
 
 -(void) open{
     [self setHidden:false];
+    self.isOpen = true;
+    [self reloadData];
 }
 
 -(void) close{
     [self setHidden:true];
+    self.isOpen = false;
 }
 
 //MARK:===============================================================
 //MARK:                     < privateMethod >
 //MARK:===============================================================
--(void) reloadData:(NSArray*)datas{
+-(void) reloadData{
+    //清空 & 重加载
+    [self.str setString:@""];
+    [self appendData:self.model.getDatas];
+}
+-(void) appendData:(NSArray*)datas{
     //1. 筛选 (时间 & 关键字)
     NSArray *timeValids = [HeLogUtil filterByTime:self.startTF.text endT:self.endTF.text checkDatas:datas];
     NSArray *keywordValids = [HeLogUtil filterByKeyword:self.keywordTF.text checkDatas:datas];
     
-    //2. 有效并集
-    NSMutableArray *valids = [[NSMutableArray alloc] init];
-    for (id timeItem in timeValids) {
-        if ([keywordValids containsObject:timeItem]) {
-            [valids addObject:timeItem];
-        }
-    }
+    //2. 有效并集 (用dic去重基于hash,比NSArray要快许多);
+    NSMutableDictionary *validDic = [[NSMutableDictionary alloc] init];
+    for (NSDictionary *timeItem in timeValids)
+        [validDic setObject:timeItem forKey:STRFORMAT(@"%p",timeItem)];
+    for (NSDictionary *keywordItem in keywordValids)
+        [validDic setObject:keywordItem forKey:STRFORMAT(@"%p",keywordItem)];
     
     //3. 重拼接赋值
-    for (NSDictionary *valid in valids) {
+    for (NSDictionary *valid in validDic.allValues) {
         double time = [NUMTOOK([valid objectForKey:kTime]) doubleValue];
         NSString *log = [valid objectForKey:kLog];
         NSString *timeStr = [SMGUtils date2yyyyMMddHHmmssSSS:[[NSDate alloc] initWithTimeIntervalSince1970:(time / 1000.0f)]];
@@ -119,9 +129,7 @@
 //MARK:                     < onClick >
 //MARK:===============================================================
 - (IBAction)filterBtnOnClick:(id)sender {
-    //清空 & 重加载
-    [self.str setString:@""];
-    [self reloadData:self.model.getDatas];
+    [self reloadData];
 }
 - (IBAction)closeBtnOnClick:(id)sender {
     [self close];
