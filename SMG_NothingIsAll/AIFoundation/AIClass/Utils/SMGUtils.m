@@ -408,9 +408,9 @@
                     if ([kFNNode isEqualToString:saveFileName]) {
                         AINodeBase *node = (AINodeBase*)saveObj;
                         NSArray *content_ps = ARRTOOK([node valueForKey:@"content_ps"]);
-                        [theApp.heLogView addLog:STRFORMAT(@"存储:%@ 指针:%@=%ld 内容:%ld",node.class,node.pointer.identifier,(long)node.pointer.pointerId,content_ps.count)];
+                        [theApp.heLogView addLog:STRFORMAT(@"存储硬盘:%@ 指针:%@=%ld 内容:%ld",node.class,node.pointer.identifier,(long)node.pointer.pointerId,content_ps.count)];
                     }else{
-                        [theApp.heLogView addLog:STRFORMAT(@"存储:--------%@",saveFileName)];
+                        [theApp.heLogView addLog:STRFORMAT(@"存储硬盘:--------%@",saveFileName)];
                     }
                 });
             }
