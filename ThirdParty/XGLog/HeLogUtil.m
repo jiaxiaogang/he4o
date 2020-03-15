@@ -16,18 +16,8 @@
 +(NSArray*) filterByTime:(NSString*)startT endT:(NSString*)endT checkDatas:(NSArray*)checkDatas{
     //1. 转换startT和endT的时间戳;
     checkDatas = ARRTOOK(checkDatas);
-    if (!STRISOK(startT) || !STRISOK(endT)) {
-        //ELog(@"输入时间格式错误!!! (%@,%@)",startT,endT);
-        return checkDatas;
-    }
-    NSDate *startDate = [SMGUtils dateFromTimeStr_yyyyMMddHHmmssSSS:startT];
-    NSDate *endDate = [SMGUtils dateFromTimeStr_yyyyMMddHHmmssSSS:endT];
-    if (!startDate || !endDate) {
-        ELog(@"时间转换错误!!! (%@,%@)",startT,endT);
-        return checkDatas;
-    }
-    long long startTime = [startDate timeIntervalSince1970] * 1000.0f;
-    long long endTime = [endDate timeIntervalSince1970] * 1000.0f;
+    long long startTime = [SMGUtils timestampFromStr_yyyyMMddHHmmssSSS:startT defaultResult:0];
+    long long endTime = [SMGUtils timestampFromStr_yyyyMMddHHmmssSSS:endT defaultResult:LONG_LONG_MAX];
     
     //2. 找起始index
     NSInteger startIndex = checkDatas.count;
@@ -56,7 +46,7 @@
         return checkDatas;
     }
     NSMutableArray *result = [[NSMutableArray alloc] init];
-    NSString *sep = @" ";
+    NSString *sep = @"&";
     NSArray *kws = STRTOARR(keyword, sep);
     
     //2. 筛选

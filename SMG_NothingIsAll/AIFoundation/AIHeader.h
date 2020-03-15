@@ -22,6 +22,8 @@
  *  MARK:--------------------PathNameKey (kPH)--------------------
  */
 
+#define kCachePath [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+
 //algNode
 #define kPN_ALG_NODE           @"PN_ALG_NODE"          //Alg节点根目录;(白质)
 #define kPN_ALG_ABS_NODE       @"PN_ALG_ABS_NODE"      //AbsAlg节点根目录;(白质)

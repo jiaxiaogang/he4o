@@ -134,7 +134,18 @@
     NSDateFormatter *fmt = [[NSDateFormatter alloc] init];
     fmt.dateFormat = STRTOOK(format);
     return [fmt dateFromString:timeStr];
-    //long long startTime = [startDate timeIntervalSince1970];
+}
+
+//timestampFromStr
++(long long)timestampFromStr_yyyyMMddHHmmssSSS:(NSString*)timeStr defaultResult:(long long)defaultResult{
+    long long result = defaultResult;
+    if (STRISOK(timeStr)) {
+        NSDate *date = [SMGUtils dateFromTimeStr_yyyyMMddHHmmssSSS:timeStr];
+        if (date) {
+            result = [date timeIntervalSince1970] * 1000.0f;
+        }
+    }
+    return result;
 }
 
 @end

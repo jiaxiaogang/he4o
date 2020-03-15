@@ -49,4 +49,7 @@
 +(NSDate*) dateFromTimeStr_yyyyMMddHHmmssSSS:(NSString*)timeStr;
 +(NSDate*) dateFromTimeStr:(NSString*)timeStr format:(NSString*)format;
 
+//timestampFromStr
++(long long)timestampFromStr_yyyyMMddHHmmssSSS:(NSString*)timeStr defaultResult:(long long)defaultResult;
+
 @end

@@ -15,7 +15,6 @@
  */
 @interface AIKVPointer : AIPointer
 
-
 +(AIKVPointer*) newWithPointerId:(NSInteger)pointerId folderName:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem;
 
 

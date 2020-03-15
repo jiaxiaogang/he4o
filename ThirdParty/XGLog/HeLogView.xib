@@ -57,7 +57,7 @@
                                 <action selector="filterBtnOnClick:" destination="-1" eventType="touchUpInside" id="Jm0-K8-1O9"/>
                             </connections>
                         </button>
-                        <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="输入关键字/空格分隔" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="GSD-Pg-y6A">
+                        <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="输入关键字/以&quot;&amp;&quot;分隔" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="GSD-Pg-y6A">
                             <rect key="frame" x="246" y="0.0" width="120" height="16"/>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>

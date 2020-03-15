@@ -34,7 +34,7 @@
 
 -(NSString*) filePath{
     NSString *pIdStr = STRFORMAT(@"%ld",self.pointerId);
-    NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString *cachePath = kCachePath;
     NSMutableString *fileRootPath = [[NSMutableString alloc] initWithFormat:@"%@/%@/%@/%@/%d",cachePath,self.folderName,self.algsType,self.dataSource,self.isOut];
     for (NSInteger j = 0; j < pIdStr.length; j++) {
         [fileRootPath appendFormat:@"/%@",[pIdStr substringWithRange:NSMakeRange(j, 1)]];
