@@ -8,6 +8,11 @@
 
 #import "SMGUtils.h"
 
+#define kHHmmss @"HH:mm:ss"
+#define kHHmmssSSS @"HH:mm:ss:SSS"
+#define kyyyyMMddHHmmssSSS @"yyyy-MM-dd HH:mm:ss:SSS"
+#define kyyyyMMddHHmmssSSS_Simple @"yyyyMMddHHmmssSSS"
+
 @interface SMGUtils (General)
 
 //string
@@ -39,7 +44,7 @@
 //object
 +(BOOL) isOk:(NSObject*)o class:(Class)c;
 
-//date2Str
+//date2Str (性能说明: stringFromDate较慢,所以批量处理时建议使用异步);
 +(NSString*) date2HHMMSS;
 +(NSString*) date2HHMMSSSSS;
 +(NSString*) date2yyyyMMddHHmmssSSS:(NSDate*)date;

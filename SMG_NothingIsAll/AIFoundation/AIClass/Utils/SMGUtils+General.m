@@ -111,13 +111,13 @@
 
 //date2Str
 +(NSString*) date2HHMMSS{
-    return [SMGUtils date2Str:@"HH:mm:ss" date:nil];
+    return [SMGUtils date2Str:kHHmmss date:nil];
 }
 +(NSString*) date2HHMMSSSSS{
-    return [SMGUtils date2Str:@"HH:mm:ss:SSS" date:nil];
+    return [SMGUtils date2Str:kHHmmssSSS date:nil];
 }
 +(NSString*) date2yyyyMMddHHmmssSSS:(NSDate*)date{
-    return [SMGUtils date2Str:@"yyyy-MM-dd HH:mm:ss:SSS" date:date];
+    return [SMGUtils date2Str:kyyyyMMddHHmmssSSS date:date];
 }
 +(NSString*) date2Str:(NSString*)format date:(NSDate*)date{
     if (!date) date = [NSDate new];
@@ -128,7 +128,7 @@
 
 //dateFromStr
 +(NSDate*) dateFromTimeStr_yyyyMMddHHmmssSSS:(NSString*)timeStr{
-    return [SMGUtils dateFromTimeStr:timeStr format:@"yyyyMMddHHmmssSSS"];
+    return [SMGUtils dateFromTimeStr:timeStr format:kyyyyMMddHHmmssSSS_Simple];
 }
 +(NSDate*) dateFromTimeStr:(NSString*)timeStr format:(NSString*)format{
     NSDateFormatter *fmt = [[NSDateFormatter alloc] init];

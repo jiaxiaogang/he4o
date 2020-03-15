@@ -23,15 +23,16 @@
     //2. 找起始index
     NSInteger startIndex = checkDatas.count;
     NSInteger endIndex = -1;
-    for (NSDictionary *item in checkDatas) {
+    for (NSInteger i = 0; i < checkDatas.count; i++) {
+        NSDictionary *item = checkDatas[i];
         long long itemTime = [NUMTOOK([item objectForKey:kTime]) longLongValue];
         if (itemTime >= startTime && startIndex == checkDatas.count) {
-            startIndex = [checkDatas indexOfObject:item];
+            startIndex = i;
         }
         if (itemTime == endTime) {
-            endIndex = [checkDatas indexOfObject:item];
+            endIndex = i;
         }else if(itemTime < endTime){
-            endIndex = [checkDatas indexOfObject:item] - 1;
+            endIndex = i - 1;
         }
     }
     
