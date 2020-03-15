@@ -94,7 +94,7 @@ static XGRedis *_instance;
                 if ([@"AIVisionAlgs" isEqualToString:node.pointer.dataSource]
                     && [kPN_ALG_ABS_NODE isEqualToString:node.pointer.folderName]
                     && content_ps.count == 0) {
-                    NSInteger pId = node.pointer.pointerId;
+                    ELog(@"----------发现alg.content长度为空BUG: %@=%ld",node.pointer.identifier,node.pointer.pointerId);
                 }
             }
         } failure:nil];

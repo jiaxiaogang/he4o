@@ -67,14 +67,11 @@
     }
     
     //2. 存储
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        PINDiskCache *cache = [[PINDiskCache alloc] initWithName:kFolderName];
-        [cache setObject:self.datas forKey:kFileName];
-        //dispatch_async(dispatch_get_main_queue(), ^{});
-        
-        //3. 记录硬盘日志文件的md5;
-        self.diskDatasMd5 = memDatasMd5;
-    });
+    PINDiskCache *cache = [[PINDiskCache alloc] initWithName:kFolderName];
+    [cache setObject:self.datas forKey:kFileName];
+    
+    //3. 记录硬盘日志文件的md5;
+    self.diskDatasMd5 = memDatasMd5;
 }
 
 @end

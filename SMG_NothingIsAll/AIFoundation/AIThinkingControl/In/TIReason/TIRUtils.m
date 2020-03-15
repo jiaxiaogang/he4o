@@ -244,8 +244,10 @@ MD5:%d",
             }else if(result.content_ps.count != matchingCount){
                 countWrong ++;
             }
+            WLog(@"识别 Item失败原因分析 > 类型:%@ AssCount:%ld 匹配长度:%d",result.class,result.content_ps.count,matchingCount);
         }
         WLog(@"识别结果 >> 非抽象且非全含:%ld,非抽象数:%ld,非全含数:%ld / 总数:%lu",(long)typeCountWrong,(long)typeWrong,countWrong,(unsigned long)sortKeys.count);
+        
         NSLog(@"");
     }
     return nil;
