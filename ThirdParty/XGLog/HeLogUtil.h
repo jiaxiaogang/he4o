@@ -12,8 +12,14 @@
 
 /**
  *  MARK:--------------------filter--------------------
+ *  @param startT : 格式为yyyyMMddHHmmssSSS 如: 20201230235959000
  */
 +(NSArray*) filterByTime:(NSString*)startT endT:(NSString*)endT checkDatas:(NSArray*)checkDatas;
 +(NSArray*) filterByKeyword:(NSString*)keyword checkDatas:(NSArray*)checkDatas;
+
+/**
+ *  MARK:--------------------NSData MD5--------------------
+ */
++(NSString *)md5ByData:(NSData*)data;
 
 @end

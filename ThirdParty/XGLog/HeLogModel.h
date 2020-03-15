@@ -29,11 +29,4 @@
 -(NSDictionary*) addLog:(NSString*)log;
 -(NSArray*) getDatas;
 
-/**
- *  MARK:--------------------filter--------------------
- *  @param startT : 格式为yyyyMMddHHmmssSSS 如: 20200312055959000
- */
--(NSArray*) filterByTime:(NSString*)startT endT:(NSString*)endT;
--(NSArray*) filterByKeyword:(NSString*)keyword;
-
 @end
