@@ -388,7 +388,7 @@
         AINodeBase *node = (AINodeBase*)result;
         NSArray *content_ps = ARRTOOK([node valueForKey:@"content_ps"]);
         if ([fromType isEqualToString:@"XGRedis"] && content_ps.count == 0) {
-            NSLog(@"");
+            int i = 0;
         }
         [theApp.heLogView addLog:STRFORMAT(@"读取%@:%@ 指针:%@=%ld 内容:%ld",fromType,node.class,node.pointer.identifier,(long)node.pointer.pointerId,content_ps.count)];
     }else{

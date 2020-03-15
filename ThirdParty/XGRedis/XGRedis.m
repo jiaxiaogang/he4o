@@ -9,6 +9,7 @@
 #import "XGRedis.h"
 #import "XGRedisUtil.h"
 #import "XGRedisDictionary.h"
+#import "AIKVPointer.h"
 
 @interface XGRedis ()
 
@@ -87,6 +88,17 @@ static XGRedis *_instance;
             return [XGRedisUtil compareStrA:key strB:checkKey];
         } startIndex:0 endIndex:self.dic.count - 1 success:^(NSInteger index) {
             obj = [self.dic valueForIndex:index];
+            if (obj && ISOK(obj, AINodeBase.class)) {
+                AINodeBase *node = (AINodeBase*)obj;
+                NSArray *content_ps = ARRTOOK([node valueForKey:@"content_ps"]);
+                if (node.pointer.pointerId == 2
+                    && [@"2" isEqualToString:node.pointer.algsType]
+                    && [@"AIVisionAlgs" isEqualToString:node.pointer.dataSource]
+                    && [kPN_ALG_ABS_NODE isEqualToString:node.pointer.folderName]
+                    && content_ps.count == 0) {
+                    int i = 0;
+                }
+            }
         } failure:nil];
     }
     return obj;
