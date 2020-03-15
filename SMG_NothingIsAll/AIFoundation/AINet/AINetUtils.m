@@ -206,10 +206,10 @@
         for (AIPort *port in ports) {
             if ([pointer isEqual:port.target_p]) {
                 findPort = port;
-                [ports removeObject:port];
                 break;
             }
         }
+        if (findPort) [ports removeObject:findPort];
         
         //2. 无则新建port;
         if (!findPort) {

@@ -91,12 +91,10 @@ static XGRedis *_instance;
             if (obj && ISOK(obj, AINodeBase.class)) {
                 AINodeBase *node = (AINodeBase*)obj;
                 NSArray *content_ps = ARRTOOK([node valueForKey:@"content_ps"]);
-                if (node.pointer.pointerId == 2
-                    && [@"2" isEqualToString:node.pointer.algsType]
-                    && [@"AIVisionAlgs" isEqualToString:node.pointer.dataSource]
+                if ([@"AIVisionAlgs" isEqualToString:node.pointer.dataSource]
                     && [kPN_ALG_ABS_NODE isEqualToString:node.pointer.folderName]
                     && content_ps.count == 0) {
-                    int i = 0;
+                    NSInteger pId = node.pointer.pointerId;
                 }
             }
         } failure:nil];
