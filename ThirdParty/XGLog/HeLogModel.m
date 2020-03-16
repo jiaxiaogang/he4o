@@ -35,7 +35,7 @@
     self.datas = [[NSMutableArray alloc] initWithArray:file];
     self.diskDatasMd5 = STRTOOK([HeLogUtil md5ByData:[NSKeyedArchiver archivedDataWithRootObject:self.datas]]);
     NSLog(@"===========HeLog Init Data %ld============",self.datas.count);
-    self.timer = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
 }
 
 
@@ -66,7 +66,7 @@
         return;
     }
     
-    //2. 存储
+    //2. 存储 (随后需支持文件流广告写入);
     PINDiskCache *cache = [[PINDiskCache alloc] initWithName:kFolderName];
     [cache setObject:self.datas forKey:kFileName];
     

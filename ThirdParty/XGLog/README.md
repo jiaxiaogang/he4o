@@ -8,3 +8,6 @@
 1. PINCache
 2. MASConstraint
 
+### TODOLIST:
+1. 优化addLog单条实时显示的性能;
+2. 支持文件流的方式进行写入;
