@@ -73,6 +73,10 @@
         return STRFORMAT(@"速%@",valueStr);
     }else if ([@"border" isEqualToString:value_p.dataSource]) {
         return STRFORMAT(@"皮%@",valueStr);
+    }else if ([@"posX" isEqualToString:value_p.dataSource]) {
+        return STRFORMAT(@"纬%@",valueStr);
+    }else if ([@"posY" isEqualToString:value_p.dataSource]) {
+        return STRFORMAT(@"经%@",valueStr);
     }else if([EAT_RDS isEqualToString:value_p.algsType]){
         return STRFORMAT(@"吃%@",valueStr);
     }else if([FLY_RDS isEqualToString:value_p.algsType]){

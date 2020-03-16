@@ -39,8 +39,9 @@
 //border
 @property (assign,nonatomic) CGFloat border;
 
-@end
+//20190723: originX和originY由direction和distance替代;
+//20200317: 二测训练时,再打开,与distance共存,并更名为posX/Y;
+@property (assign,nonatomic) NSInteger posX;
+@property (assign,nonatomic) NSInteger posY;
 
-//20190723由direction和distance替代;
-//@property (assign,nonatomic) CGFloat originX;
-//@property (assign,nonatomic) CGFloat originY;
+@end

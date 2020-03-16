@@ -37,6 +37,8 @@
             model.direction = [self direction:selfView target:curView];
             model.distance = [self distance:selfView target:curView];
             model.border = [self border:curView];
+            model.posX = [self posX:curView];
+            model.posY = [self posY:curView];
             NSLog(@"视觉目标 [距离:%ld 角度:%f 宽:%f 高:%f 皮:%f 圆角:%f]",(long)model.distance,model.direction,model.sizeWidth,model.sizeHeight,model.border,model.radius);
             NSMutableDictionary *modelDic = [NSObject getDic:model containParent:true];
             //for (NSString *key in modelDic.allKeys) {
@@ -138,6 +140,18 @@
 //border
 +(CGFloat) border:(UIView*)target{
     if (target) return target.layer.borderWidth;
+    return 0;
+}
+
+//posX
++(NSInteger) posX:(UIView*)target{
+    if (target) return (NSInteger)[UIView convertWorldPoint:target].x;
+    return 0;
+}
+
+//posY
++(NSInteger) posY:(UIView*)target{
+    if (target) return (NSInteger)[UIView convertWorldPoint:target].y;
     return 0;
 }
 
