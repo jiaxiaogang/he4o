@@ -95,7 +95,7 @@
 -(void) reloadData{
     //清空 & 重加载
     [self.str setString:@""];
-    [self appendData:self.model.getDatas];
+    //[self appendData:self.model.getDatas]; (实时加一行的性能问题,现在懒得解决,故先去掉)
 }
 -(void) appendData:(NSArray*)datas{
     //1. 筛选 (时间 & 关键字)
