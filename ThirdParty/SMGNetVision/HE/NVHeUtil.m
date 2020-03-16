@@ -58,19 +58,21 @@
     }else if ([@"sizeHeight" isEqualToString:value_p.dataSource]) {
         return STRFORMAT(@"高%@",valueStr);
     }else if ([@"colorRed" isEqualToString:value_p.dataSource]) {
-        return STRFORMAT(@"R%@",valueStr);
+        return STRFORMAT(@"红%@",valueStr);
     }else if ([@"colorBlue" isEqualToString:value_p.dataSource]) {
-        return STRFORMAT(@"B%@",valueStr);
+        return STRFORMAT(@"蓝%@",valueStr);
     }else if ([@"colorGreen" isEqualToString:value_p.dataSource]) {
-        return STRFORMAT(@"G%@",valueStr);
+        return STRFORMAT(@"绿%@",valueStr);
     }else if ([@"radius" isEqualToString:value_p.dataSource]) {
-        return STRFORMAT(@"形状%@",valueStr);
+        return STRFORMAT(@"形%@",valueStr);
     }else if ([@"direction" isEqualToString:value_p.dataSource]) {
-        return STRFORMAT(@"方向%@",valueStr);
+        return STRFORMAT(@"向%@",valueStr);
     }else if ([@"distance" isEqualToString:value_p.dataSource]) {
-        return STRFORMAT(@"距离%@",valueStr);
+        return STRFORMAT(@"距%@",valueStr);
     }else if ([@"speed" isEqualToString:value_p.dataSource]) {
-        return STRFORMAT(@"速度%@",valueStr);
+        return STRFORMAT(@"速%@",valueStr);
+    }else if ([@"border" isEqualToString:value_p.dataSource]) {
+        return STRFORMAT(@"皮%@",valueStr);
     }else if([EAT_RDS isEqualToString:value_p.algsType]){
         return STRFORMAT(@"吃%@",valueStr);
     }else if([FLY_RDS isEqualToString:value_p.algsType]){

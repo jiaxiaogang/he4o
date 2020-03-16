@@ -39,11 +39,11 @@
             model.border = [self border:curView];
             NSLog(@"视觉目标 [距离:%ld 角度:%f 宽:%f 高:%f 皮:%f 圆角:%f]",(long)model.distance,model.direction,model.sizeWidth,model.sizeHeight,model.border,model.radius);
             NSMutableDictionary *modelDic = [NSObject getDic:model containParent:true];
-            for (NSString *key in modelDic.allKeys) {
-                if ([NUMTOOK([modelDic objectForKey:key]) isEqualToNumber:@(0)]) {
-                    [modelDic removeObjectForKey:key];
-                }
-            }
+            //for (NSString *key in modelDic.allKeys) {
+            //    if ([NUMTOOK([modelDic objectForKey:key]) isEqualToNumber:@(0)]) {
+            //        [modelDic removeObjectForKey:key];
+            //    }
+            //}
             [dics addObject:modelDic];
         }
     }

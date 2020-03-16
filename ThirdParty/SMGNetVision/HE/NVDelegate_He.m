@@ -94,7 +94,7 @@
             [theNV clearLight:ModuleName_Value];
             for (NSInteger i = 0; i < algNode.content_ps.count; i++) {
                 AIKVPointer *item = ARR_INDEX(algNode.content_ps, i);
-                [theNV lightNode:item str:STRFORMAT(@"%ld%@",(long)i,[NVHeUtil getLightStr:item])];
+                [theNV lightNode:item str:[NVHeUtil getLightStr:item]];
             }
             
             ///2. 返回描述;
