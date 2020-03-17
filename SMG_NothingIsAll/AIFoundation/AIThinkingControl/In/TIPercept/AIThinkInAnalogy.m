@@ -61,7 +61,6 @@
                     if (algNodeA && algNodeB) {
                         NSMutableArray *sameValue_ps = [[NSMutableArray alloc] init];
                         for (AIKVPointer *valueA_p in algNodeA.content_ps) {
-                            
                             for (AIKVPointer *valueB_p in algNodeB.content_ps) {
                                 if ([valueA_p isEqual:valueB_p] && ![sameValue_ps containsObject:valueB_p]) {
                                     [sameValue_ps addObject:valueB_p];
@@ -74,6 +73,9 @@
                             if (createAbsNode) {
                                 [orderSames insertObject:createAbsNode.pointer atIndex:0];
                                 jMax = j - 1;
+                                if (!fromInner) {
+                                    [theNV setNodeData:createAbsNode.pointer lightStr:STRFORMAT(@"新%ld (%ld&%ld)",createAbsNode.content_ps.count,algNodeA.pointer.pointerId,algNodeB.pointer.pointerId)];
+                                }
                             }
                             ///4. 构建时,消耗能量值;
                             if (updateEnergy) {
@@ -145,9 +147,7 @@
             
             //调试短时序; (先仅打外类比日志);
             if (!fromInner) {
-                [theNV setNodeData:fo.pointer lightStr:STRFORMAT(@"外Con1:%ld",fo.content_ps.count)];
-                [theNV setNodeData:assFo.pointer lightStr:STRFORMAT(@"外Con2:%ld",assFo.content_ps.count)];
-                [theNV setNodeData:createAbsFo.pointer lightStr:STRFORMAT(@"外Abs3:%ld",createAbsFo.content_ps.count)];
+                [theNV setNodeData:createAbsFo.pointer lightStr:STRFORMAT(@"新%ld (%ld&%ld)",createAbsFo.content_ps.count,fo.pointer.pointerId,assFo.pointer.pointerId)];
             }
             
             //调试关联强度

@@ -89,6 +89,7 @@
                 if ([samesMd5 isEqualToString:absPort.header]) {
                     AIAbsAlgNode *absNode = [SMGUtils searchNode:absPort.target_p];
                     //2> 已存在,则转移到硬盘网络;
+                    NSInteger absNodeContentCountBak = absNode.content_ps.count;
                     if (absNode.pointer.isMem) {
                         absNode = [AINetUtils move2HdNodeFromMemNode_Alg:absNode];
                     }
@@ -96,6 +97,9 @@
                     findAbsNode = absNode;
                     if (!ISOK(absNode, AIAbsAlgNode.class) ) {
                         WLog(@"发现非抽象类型的抽象节点错误,,,请检查出现此情况的原因;");
+                    }
+                    if (findAbsNode.content_ps.count != value_ps.count) {
+                        NSLog(@"");//精训第6步A10长度为0的问题断点;
                     }
                     break;
                 }
@@ -129,6 +133,7 @@
         //5. 关联 & 存储
         [AINetUtils relateAlgAbs:findAbsNode conNodes:validConAlgs];
         [theApp.heLogView addLog:STRFORMAT(@"构建抽象概念:%@,存储于:%d,内容数:%lu",findAbsNode.pointer.identifier,findAbsNode.pointer.isMem,(unsigned long)findAbsNode.content_ps.count)];
+        
         return findAbsNode;
     }
     return nil;
