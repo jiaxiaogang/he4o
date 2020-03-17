@@ -61,6 +61,7 @@
                     if (algNodeA && algNodeB) {
                         NSMutableArray *sameValue_ps = [[NSMutableArray alloc] init];
                         for (AIKVPointer *valueA_p in algNodeA.content_ps) {
+                            
                             for (AIKVPointer *valueB_p in algNodeB.content_ps) {
                                 if ([valueA_p isEqual:valueB_p] && ![sameValue_ps containsObject:valueB_p]) {
                                     [sameValue_ps addObject:valueB_p];
@@ -104,11 +105,7 @@
     }
 
     //3. 外类比构建
-    if (orderSames.count == 1) {
-        NSLog(@"将构建长度为1的时序, fo:%lu,assFo:%lu",(unsigned long)fo.content_ps.count,(unsigned long)assFo.content_ps.count);
-        [theNV setNodeData:fo.pointer lightStr:@"长1BugFrom"];
-        [theNV setNodeData:assFo.pointer lightStr:@"长1BugFrom"];
-    }
+    //TODO; 在精细化训练第6步,valueSames长度为7,构建后从可视化去看,其概念长度却是0;
     [self analogyOutside_Creater:orderSames fo:fo assFo:assFo fromInner:fromInner];
 }
 
