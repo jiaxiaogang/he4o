@@ -15,6 +15,8 @@
 #import "AINetIndex.h"
 #import "NSString+Extension.h"
 
+#import "NVHeUtil.h"
+
 @implementation TIRUtils
 
 /**
@@ -172,11 +174,11 @@
         //2. 对每个微信息,取被引用的强度前cPartMatchingCheckRefPortsLimit个;
         for (AIKVPointer *item_p in proto_ps) {
             NSArray *refPorts = refPortsBlock(item_p);
+            NSLog(@"当前item_p:%@ -------------------",[NVHeUtil getLightStr:item_p]);
             refPorts = ARR_SUB(refPorts, 0, cPartMatchingCheckRefPortsLimit);
             for (NSInteger i = 0; i < refPorts.count; i++) {
                 AIPort *item = ARR_INDEX(refPorts, i);
                 AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item.target_p];
-                
                 NSString *countDesc = @"";
                 NSString *classDesc = @"";
                 NSString *reMd5 = @"";
@@ -185,18 +187,11 @@
                     countDesc = STRFORMAT(@"%ld/%ld",itemAlg.content_ps.count,proto_ps.count);
                     reMd5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:itemAlg.content_ps]]);
                 }
-                NSLog(@"{稀疏码:%@=%ld} -%ld-> \
-{概念:%@=%ld[%@][%@][isMem:%d]}\
-下标:%ld, \
-MD5:%d",
+                NSLog(@"{稀疏码:%@=%ld} -%ld-> {概念:%@=%ld[%@][%@][isMem:%d]} 下标:%ld, MD5:%d",
                       item_p.identifier,item_p.pointerId,(long)item.strong.value,
                       itemAlg.pointer.identifier,itemAlg.pointer.pointerId,classDesc,countDesc,itemAlg.pointer.isMem,
                       (long)i,
                       [reMd5 isEqualToString:item.header]);
-                if (itemAlg.content_ps.count == 0) {
-                    int x = 0;
-                }
-                [theApp.nvView setNodeData:itemAlg.pointer lightStr:STRFORMAT(@"tmp_%@",countDesc)];
             }
             //TODOTOMORROW:
             //查下为什么那么多远投坚果,最终 (Height5).refPorts才3个;
@@ -205,7 +200,6 @@ MD5:%d",
             
             //1. 确定一下长度=0,是否是因为未持久化;
             //2. 找下因非全含失败的原因;
-            NSLog(@"");
             
             //3. 进行计数
             for (AIPort *refPort in refPorts) {
@@ -215,6 +209,7 @@ MD5:%d",
                     [countDic setObject:@(oldCount + 1) forKey:key];
                 }
             }
+            NSLog(@"匹配情况: %@ -----------------",countDic.allValues);
         }
         
         //4. 排序相似数从大到小;
