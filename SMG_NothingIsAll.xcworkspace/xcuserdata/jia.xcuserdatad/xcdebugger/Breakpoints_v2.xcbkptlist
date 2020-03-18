@@ -58,7 +58,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIReason/AIThinkInReason.m"
-            timestampString = "606178685.493366"
+            timestampString = "606259997.209708"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "199"
@@ -74,7 +74,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIReason/AIThinkInReason.m"
-            timestampString = "606178685.493926"
+            timestampString = "606259997.2098089"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "239"
@@ -138,7 +138,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Volumes/APPLE%20HDD/work/temp/he4o/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOAlgScheme.m"
-                  timestampString = "606178685.834244"
+                  timestampString = "606259997.704348"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "155"
@@ -153,7 +153,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Volumes/APPLE%20HDD/work/temp/he4o/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOAlgScheme.m"
-                  timestampString = "606178685.836918"
+                  timestampString = "606259997.70667"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "155"
@@ -168,7 +168,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Volumes/APPLE%20HDD/work/temp/he4o/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOAlgScheme.m"
-                  timestampString = "606178685.839254"
+                  timestampString = "606259997.708931"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "155"
@@ -213,59 +213,11 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIReason/AIThinkInReason.m"
-            timestampString = "606178685.494477"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "110"
-            endingLineNumber = "110"
-            landmarkName = "+TIR_Alg:fromGroup_ps:"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__copy_helper_block_.33"
-                  moduleName = "SMG_NothingIsAll"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Volumes/APPLE%20HDD/work/temp/he4o/SMG_NothingIsAll/Demo/Foundation+Log.m"
-                  timestampString = "606178685.856445"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "93"
-                  endingLineNumber = "93"
-                  offsetFromSymbolStart = "24">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "+[AIThinkInReason TIR_Alg:fromGroup_ps:]"
-                  moduleName = "SMG_NothingIsAll"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Volumes/APPLE%20HDD/work/temp/he4o/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIReason/AIThinkInReason.m"
-                  timestampString = "606178685.858767"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "110"
-                  endingLineNumber = "110"
-                  offsetFromSymbolStart = "3424">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIReason/TIRUtils.m"
-            timestampString = "606178685.494903"
+            timestampString = "606259997.2100281"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "246"
@@ -281,7 +233,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m"
-            timestampString = "606003647.333685"
+            timestampString = "606259997.210582"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "391"
@@ -313,7 +265,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIReason/TIRUtils.m"
-            timestampString = "606178685.495121"
+            timestampString = "606259997.2107"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "179"
@@ -329,12 +281,60 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIReason/TIRUtils.m"
-            timestampString = "606178685.495193"
+            timestampString = "606259997.211123"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "209"
             endingLineNumber = "209"
             landmarkName = "+partMatching_General:refPortsBlock:exceptBlock:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIReason/TIRUtils.m"
+            timestampString = "606259997.211537"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "268"
+            endingLineNumber = "268"
+            landmarkName = "+matchAlg2FuzzyAlg:matchAlg:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIReason/TIRUtils.m"
+            timestampString = "606259997.211876"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "272"
+            endingLineNumber = "272"
+            landmarkName = "+matchAlg2FuzzyAlg:matchAlg:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIReason/TIRUtils.m"
+            timestampString = "606259997.2122101"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "270"
+            endingLineNumber = "270"
+            landmarkName = "+matchAlg2FuzzyAlg:matchAlg:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

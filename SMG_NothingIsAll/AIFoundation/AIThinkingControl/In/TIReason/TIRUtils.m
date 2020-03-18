@@ -265,7 +265,7 @@
     }
     
     //2. matchAlg未匹配之处 (目前仅支持单特征);
-    NSArray *pSubMs = [SMGUtils removeSub_ps:protoAlg.content_ps parent_ps:matchAlg.content_ps];
+    NSArray *pSubMs = [SMGUtils removeSub_ps:matchAlg.content_ps parent_ps:protoAlg.content_ps];
     if (pSubMs.count != 1) {
         return nil;
     }

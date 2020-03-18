@@ -638,16 +638,17 @@
 }
 
 +(NSMutableArray*) removeSub_p:(AIPointer*)sub_p parent_ps:(NSMutableArray*)parent_ps{
-    if (ISOK(sub_p, AIPointer.class) && ARRISOK(parent_ps)) {
-        for (NSInteger i = 0; i < parent_ps.count; i++) {
-            AIPointer *parent_p = ARR_INDEX(parent_ps, i);
+    NSMutableArray *result_ps = [[NSMutableArray alloc] initWithArray:parent_ps];
+    if (ISOK(sub_p, AIPointer.class)) {
+        for (NSInteger i = 0; i < result_ps.count; i++) {
+            AIPointer *parent_p = ARR_INDEX(result_ps, i);
             if ([sub_p isEqual:parent_p]) {
-                [parent_ps removeObjectAtIndex:i];
+                [result_ps removeObjectAtIndex:i];
                 break;
             }
         }
     }
-    return parent_ps;
+    return result_ps;
 }
 
 +(NSMutableArray*) filterSame_ps:(NSArray*)a_ps parent_ps:(NSArray*)b_ps{

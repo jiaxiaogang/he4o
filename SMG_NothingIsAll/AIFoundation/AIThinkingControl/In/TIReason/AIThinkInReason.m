@@ -101,8 +101,7 @@
     }
     
     //3. 模糊匹配
-    AIAlgNodeBase *fuzzyAlg = nil;//[TIRUtils matchAlg2FuzzyAlg:algNode matchAlg:assAlgNode];
-    //TODOTOMORROW: 查出概念长度为0的问题,竟然与fuzzy算法有关,,,,,,醉;
+    AIAlgNodeBase *fuzzyAlg = [TIRUtils matchAlg2FuzzyAlg:algNode matchAlg:assAlgNode];
     
     //4. 返回
     if (fuzzyAlg) {
