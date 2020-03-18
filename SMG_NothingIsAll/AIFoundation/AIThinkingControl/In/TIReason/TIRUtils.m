@@ -257,8 +257,11 @@
  *  @caller : 由TIR_Alg.partMatching()方法调用;
  *  @参考: 18151
  *  @time 2020.03.06
+ *  @version :
+ *      v1: 仅支持单个稀疏码不同,并仅返回单个最相似的结果;
+ *      v2: 支持多个稀疏码不同,并支持返回多个相似度排序后的结果;
  */
-+(AIAlgNodeBase*) matchAlg2FuzzyAlg:(AIAlgNodeBase*)protoAlg matchAlg:(AIAlgNodeBase*)matchAlg {
++(NSArray*) matchAlg2FuzzyAlgV2:(AIAlgNodeBase*)protoAlg matchAlg:(AIAlgNodeBase*)matchAlg {
     //1. 数据准备;
     if (!protoAlg || !matchAlg) {
         return nil;
@@ -266,43 +269,82 @@
     
     //2. matchAlg未匹配之处 (目前仅支持单特征);
     NSArray *pSubMs = [SMGUtils removeSub_ps:matchAlg.content_ps parent_ps:protoAlg.content_ps];
-    if (pSubMs.count != 1) {
-        return nil;
-    }
-    AIKVPointer *pValue_p = ARR_INDEX(pSubMs, 0);
     
     //3. 取proto同层的sameLevel前20个;
     NSArray *sameLevel_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:matchAlg]];
     sameLevel_ps = ARR_SUB(sameLevel_ps, 0, cMCValue_ConAssLimit);
     
-    //4. 对result2筛选出包含同标识value值的: result3;
-    __block NSMutableArray *validConData = [[NSMutableArray alloc] init];
-    [ThinkingUtils filterAlg_Ps:sameLevel_ps valueIdentifier:pValue_p.identifier itemValid:^(AIAlgNodeBase *alg, AIKVPointer *value_p) {
-        NSNumber *value = [AINetIndex getData:value_p];
-        if (alg && value) {
-            [validConData addObject:@{@"a":alg,@"v":value}];
+    //4. 逐个稀疏码,找模糊匹配节点数组;
+    NSMutableArray *allSortConAlgs = [[NSMutableArray alloc] init];//收集所有排序好的匹配节点数组 (二维数组);
+    NSMutableArray *fuzzyAlgs = [[NSMutableArray alloc] init];//收集所有模糊匹配到的同级节点指针;
+    for (AIKVPointer *pValue_p in pSubMs) {
+        //a. 对result2筛选出包含同标识value值的: result3;
+        __block NSMutableArray *validConDatas = [[NSMutableArray alloc] init];
+        [ThinkingUtils filterAlg_Ps:sameLevel_ps valueIdentifier:pValue_p.identifier itemValid:^(AIAlgNodeBase *alg, AIKVPointer *value_p) {
+            NSNumber *value = [AINetIndex getData:value_p];
+            if (alg && value) {
+                [validConDatas addObject:@{@"a":alg,@"v":value}];
+            }
+        }];
+        NSLog(@"M同层有效节点数为:%lu",(unsigned long)validConDatas.count);
+        
+        //b. 对result3进行取值value并排序: result4 (根据差的绝对值大小排序);
+        double pValue = [NUMTOOK([AINetIndex getData:pValue_p]) doubleValue];
+        NSArray *sortConDatas = [validConDatas sortedArrayUsingComparator:^NSComparisonResult(NSDictionary *obj1, NSDictionary *obj2) {
+            double v1 = [NUMTOOK([obj1 objectForKey:@"v"]) doubleValue];
+            double v2 = [NUMTOOK([obj2 objectForKey:@"v"]) doubleValue];
+            double absV1 = fabs(v1 - pValue);
+            double absV2 = fabs(v2 - pValue);
+            return absV1 > absV2 ? NSOrderedAscending : absV1 < absV2 ? NSOrderedDescending : NSOrderedSame;
+        }];
+        NSLog(@"M同层,具象节点排序好后:%@",sortConDatas);
+        
+        //c. 转成sortConAlgs & allValidSameLevel_ps
+        NSMutableArray *sortConAlgs = [[NSMutableArray alloc] init];
+        for (NSDictionary *sortConData in sortConDatas) {
+            AIAlgNodeBase *algNode = [sortConData objectForKey:@"a"];
+            [sortConAlgs addObject:algNode];
+            if (![fuzzyAlgs containsObject:algNode]) {
+                [fuzzyAlgs addObject:algNode];
+            }
         }
-    }];
-    NSLog(@"M同层有效节点数为:%lu",(unsigned long)validConData.count);
-    
-    //5. 对result3进行取值value并排序: result4 (根据差的绝对值大小排序);
-    double pValue = [NUMTOOK([AINetIndex getData:pValue_p]) doubleValue];
-    NSArray *sortConData = [validConData sortedArrayUsingComparator:^NSComparisonResult(NSDictionary *obj1, NSDictionary *obj2) {
-        double v1 = [NUMTOOK([obj1 objectForKey:@"v"]) doubleValue];
-        double v2 = [NUMTOOK([obj2 objectForKey:@"v"]) doubleValue];
-        double absV1 = fabs(v1 - pValue);
-        double absV2 = fabs(v2 - pValue);
-        return absV1 > absV2 ? NSOrderedAscending : absV1 < absV2 ? NSOrderedDescending : NSOrderedSame;
-    }];
-    NSLog(@"M同层,具象节点排序好后:%@",sortConData);
-    if (!ARRISOK(sortConData)) {
-        return nil;
+        
+        //d. 收集结果
+        [allSortConAlgs addObject:sortConAlgs];
     }
     
-    //6. 对result4中最相似的返回;
-    NSDictionary *firstConData = ARR_INDEX(sortConData, 0);
-    AIAlgNodeBase *firstConAlg = [firstConData objectForKey:@"a"];
-    return firstConAlg;
+    //5. 对最终结果进行排序;
+    NSArray *result = [fuzzyAlgs sortedArrayUsingComparator:^NSComparisonResult(AIKVPointer *p1, AIKVPointer *p2) {
+        //a. 数据准备;
+        NSInteger p1Count = 0,p2Count = 0,p1IndexSum = 0,p2IndexSum = 0;
+        
+        //b. 获取匹配量 (越大越相似);
+        for (NSArray *sortConAlgs in allSortConAlgs) {
+            for (NSInteger i = 0; i < sortConAlgs.count; i++) {
+                AIAlgNodeBase *item = ARR_INDEX(sortConAlgs, i);
+                if ([item.pointer isEqual:p1]) {
+                    p1Count ++;
+                    p1IndexSum += i;
+                }else if ([item.pointer isEqual:p2]) {
+                    p2Count ++;
+                    p2IndexSum += i;
+                }
+            }
+        }
+        
+        //c. 获取相似度 (越小越相似);
+        CGFloat p1Similarity = p1Count > 0 ? (float)p1IndexSum / p1Count : 0;
+        CGFloat p2Similarity = p2Count > 0 ? (float)p2IndexSum / p2Count : 0;
+        
+        //d. 一级对比匹配量;
+        if (p1Count != p2Count) {
+            return p1Count > p2Count ? NSOrderedAscending : NSOrderedDescending;
+        }else{
+            //3. 二级对比相似度;
+            return p1Similarity == p2Similarity ? NSOrderedSame : p1Similarity < p2Similarity ? NSOrderedAscending : NSOrderedDescending;
+        }
+    }];
+    return result;
 }
 
 @end

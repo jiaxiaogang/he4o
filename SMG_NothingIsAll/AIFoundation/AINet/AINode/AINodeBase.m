@@ -44,4 +44,11 @@
     [aCoder encodeObject:self.content_ps forKey:@"content_ps"];
 }
 
+//MARK:===============================================================
+//MARK:                     < privateMethod >
+//MARK:===============================================================
+-(BOOL)isEqual:(AINodeBase*)object{
+    return [self.pointer isEqual:object.pointer];
+}
+
 @end

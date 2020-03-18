@@ -100,8 +100,9 @@
         NSLog(@"识别Alg failure");
     }
     
-    //3. 模糊匹配
-    AIAlgNodeBase *fuzzyAlg = [TIRUtils matchAlg2FuzzyAlg:algNode matchAlg:assAlgNode];
+    //3. 模糊匹配 (因TOR未支持fuzzy,故目前仅将最相似的fuzzy放到AIShortMatchModel中当matchAlg用);
+    NSArray *fuzzys = ARRTOOK([TIRUtils matchAlg2FuzzyAlgV2:algNode matchAlg:assAlgNode]);
+    AIAlgNodeBase *fuzzyAlg = ARR_INDEX(fuzzys, 0);
     
     //4. 返回
     if (fuzzyAlg) {

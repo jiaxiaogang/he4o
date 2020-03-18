@@ -42,6 +42,6 @@
 //MARK:===============================================================
 //MARK:                     < 模糊匹配 >
 //MARK:===============================================================
-+(AIAlgNodeBase*) matchAlg2FuzzyAlg:(AIAlgNodeBase*)protoAlg matchAlg:(AIAlgNodeBase*)matchAlg;
++(NSArray*) matchAlg2FuzzyAlgV2:(AIAlgNodeBase*)protoAlg matchAlg:(AIAlgNodeBase*)matchAlg;
 
 @end
