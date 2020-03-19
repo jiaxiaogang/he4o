@@ -314,34 +314,34 @@
     }
     
     //5. 对最终结果进行排序;
-    NSArray *result = [fuzzyAlgs sortedArrayUsingComparator:^NSComparisonResult(AIKVPointer *p1, AIKVPointer *p2) {
+    NSArray *result = [fuzzyAlgs sortedArrayUsingComparator:^NSComparisonResult(AIAlgNodeBase *a1, AIAlgNodeBase *a2) {
         //a. 数据准备;
-        NSInteger p1Count = 0,p2Count = 0,p1IndexSum = 0,p2IndexSum = 0;
+        NSInteger a1Count = 0,a2Count = 0,a1IndexSum = 0,a2IndexSum = 0;
         
         //b. 获取匹配量 (越大越相似);
         for (NSArray *sortConAlgs in allSortConAlgs) {
             for (NSInteger i = 0; i < sortConAlgs.count; i++) {
                 AIAlgNodeBase *item = ARR_INDEX(sortConAlgs, i);
-                if ([item.pointer isEqual:p1]) {
-                    p1Count ++;
-                    p1IndexSum += i;
-                }else if ([item.pointer isEqual:p2]) {
-                    p2Count ++;
-                    p2IndexSum += i;
+                if ([item isEqual:a1]) {
+                    a1Count ++;
+                    a1IndexSum += i;
+                }else if ([item isEqual:a2]) {
+                    a2Count ++;
+                    a2IndexSum += i;
                 }
             }
         }
         
         //c. 获取相似度 (越小越相似);
-        CGFloat p1Similarity = p1Count > 0 ? (float)p1IndexSum / p1Count : 0;
-        CGFloat p2Similarity = p2Count > 0 ? (float)p2IndexSum / p2Count : 0;
+        CGFloat a1Similarity = a1Count > 0 ? (float)a1IndexSum / a1Count : 0;
+        CGFloat a2Similarity = a2Count > 0 ? (float)a2IndexSum / a2Count : 0;
         
         //d. 一级对比匹配量 (值大的排前面);
-        if (p1Count != p2Count) {
-            return p1Count > p2Count ? NSOrderedAscending : NSOrderedDescending;
+        if (a1Count != a2Count) {
+            return a1Count > a2Count ? NSOrderedAscending : NSOrderedDescending;
         }else{
             //3. 二级对比相似度 (值小的排前面);
-            return p1Similarity == p2Similarity ? NSOrderedSame : p1Similarity > p2Similarity ? NSOrderedDescending : NSOrderedAscending;
+            return a1Similarity == a2Similarity ? NSOrderedSame : a1Similarity > a2Similarity ? NSOrderedDescending : NSOrderedAscending;
         }
     }];
     
