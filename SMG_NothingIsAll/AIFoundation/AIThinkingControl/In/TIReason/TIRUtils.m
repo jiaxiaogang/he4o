@@ -287,9 +287,8 @@
                 [validConDatas addObject:@{@"a":alg,@"v":value}];
             }
         }];
-        NSLog(@"M同层有效节点数为: %@",validConDatas);
         
-        //b. 对result3进行取值value并排序: result4 (根据差的绝对值大小排序);
+        //b. 对result3进行取值value并排序: result4 (根据差的绝对值小的排前面);
         double pValue = [NUMTOOK([AINetIndex getData:pValue_p]) doubleValue];
         NSArray *sortConDatas = [validConDatas sortedArrayUsingComparator:^NSComparisonResult(NSDictionary *obj1, NSDictionary *obj2) {
             double v1 = [NUMTOOK([obj1 objectForKey:@"v"]) doubleValue];
@@ -298,7 +297,7 @@
             double absV2 = fabs(v2 - pValue);
             return absV1 > absV2 ? NSOrderedDescending : absV1 < absV2 ? NSOrderedAscending : NSOrderedSame;
         }];
-        NSLog(@"M同层,具象节点排序基准%f,排序好后:%@",pValue,sortConDatas);
+        NSLog(@"%@_M同层有效:%@ 排序后(基准%f):%@",[NVHeUtil getLightStr:pValue_p],validConDatas,pValue,sortConDatas);
         
         //c. 转成sortConAlgs & allValidSameLevel_ps
         NSMutableArray *sortConAlgs = [[NSMutableArray alloc] init];
@@ -337,12 +336,12 @@
         CGFloat p1Similarity = p1Count > 0 ? (float)p1IndexSum / p1Count : 0;
         CGFloat p2Similarity = p2Count > 0 ? (float)p2IndexSum / p2Count : 0;
         
-        //d. 一级对比匹配量;
+        //d. 一级对比匹配量 (值大的排前面);
         if (p1Count != p2Count) {
             return p1Count > p2Count ? NSOrderedAscending : NSOrderedDescending;
         }else{
-            //3. 二级对比相似度;
-            return p1Similarity == p2Similarity ? NSOrderedSame : p1Similarity < p2Similarity ? NSOrderedAscending : NSOrderedDescending;
+            //3. 二级对比相似度 (值小的排前面);
+            return p1Similarity == p2Similarity ? NSOrderedSame : p1Similarity > p2Similarity ? NSOrderedDescending : NSOrderedAscending;
         }
     }];
     
