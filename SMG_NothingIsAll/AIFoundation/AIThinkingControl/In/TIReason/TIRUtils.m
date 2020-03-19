@@ -270,8 +270,9 @@
     //2. matchAlg未匹配之处 (目前仅支持单特征);
     NSArray *pSubMs = [SMGUtils removeSub_ps:matchAlg.content_ps parent_ps:protoAlg.content_ps];
     
-    //3. 取proto同层的sameLevel前20个;
+    //3. 取proto同层的sameLevel前20个 (proto自身不算);
     NSArray *sameLevel_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:matchAlg]];
+    sameLevel_ps = [SMGUtils removeSub_p:protoAlg.pointer parent_ps:sameLevel_ps];
     sameLevel_ps = ARR_SUB(sameLevel_ps, 0, cMCValue_ConAssLimit);
     
     //4. 逐个稀疏码,找模糊匹配节点数组;
@@ -286,7 +287,7 @@
                 [validConDatas addObject:@{@"a":alg,@"v":value}];
             }
         }];
-        NSLog(@"M同层有效节点数为:%lu",(unsigned long)validConDatas.count);
+        NSLog(@"M同层有效节点数为: %@",validConDatas);
         
         //b. 对result3进行取值value并排序: result4 (根据差的绝对值大小排序);
         double pValue = [NUMTOOK([AINetIndex getData:pValue_p]) doubleValue];
@@ -295,9 +296,9 @@
             double v2 = [NUMTOOK([obj2 objectForKey:@"v"]) doubleValue];
             double absV1 = fabs(v1 - pValue);
             double absV2 = fabs(v2 - pValue);
-            return absV1 > absV2 ? NSOrderedAscending : absV1 < absV2 ? NSOrderedDescending : NSOrderedSame;
+            return absV1 > absV2 ? NSOrderedDescending : absV1 < absV2 ? NSOrderedAscending : NSOrderedSame;
         }];
-        NSLog(@"M同层,具象节点排序好后:%@",sortConDatas);
+        NSLog(@"M同层,具象节点排序基准%f,排序好后:%@",pValue,sortConDatas);
         
         //c. 转成sortConAlgs & allValidSameLevel_ps
         NSMutableArray *sortConAlgs = [[NSMutableArray alloc] init];
@@ -344,6 +345,14 @@
             return p1Similarity == p2Similarity ? NSOrderedSame : p1Similarity < p2Similarity ? NSOrderedAscending : NSOrderedDescending;
         }
     }];
+    
+    [theApp.nvView setNodeData:protoAlg.pointer appendLightStr:@"fuzzyP"];
+    [theApp.nvView setNodeData:matchAlg.pointer appendLightStr:@"fuzzyM"];
+    for (NSInteger i = 0; i < result.count; i++) {
+        AIAlgNodeBase *item = ARR_INDEX(result, i);
+        [theApp.nvView setNodeData:item.pointer appendLightStr:@"fuzzyR"];
+    }
+    
     return result;
 }
 

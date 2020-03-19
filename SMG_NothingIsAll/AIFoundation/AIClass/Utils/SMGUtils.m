@@ -629,7 +629,7 @@
 //MARK:===============================================================
 @implementation SMGUtils (Remove)
 
-+(NSMutableArray*) removeSub_ps:(NSArray*)sub_ps parent_ps:(NSMutableArray*)parent_ps{
++(NSMutableArray*) removeSub_ps:(NSArray*)sub_ps parent_ps:(NSArray*)parent_ps{
     sub_ps = ARRTOOK(sub_ps);
     for (AIPointer *sub_p in sub_ps) {
         parent_ps = [self removeSub_p:sub_p parent_ps:parent_ps];
@@ -637,7 +637,7 @@
     return parent_ps;
 }
 
-+(NSMutableArray*) removeSub_p:(AIPointer*)sub_p parent_ps:(NSMutableArray*)parent_ps{
++(NSMutableArray*) removeSub_p:(AIPointer*)sub_p parent_ps:(NSArray*)parent_ps{
     NSMutableArray *result_ps = [[NSMutableArray alloc] initWithArray:parent_ps];
     if (ISOK(sub_p, AIPointer.class)) {
         for (NSInteger i = 0; i < result_ps.count; i++) {
