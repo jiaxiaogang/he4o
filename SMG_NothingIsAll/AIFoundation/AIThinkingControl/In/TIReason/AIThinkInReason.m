@@ -95,13 +95,13 @@
     }
     if (assAlgNode) {
         NSLog(@"识别Alg success");
-        [theNV setNodeData:assAlgNode.pointer lightStr:@"识别alg成功"];
+        [theNV setNodeData:assAlgNode.pointer appendLightStr:@"识别alg成功"];
     }else{
         NSLog(@"识别Alg failure");
     }
     
     //3. 模糊匹配 (因TOR未支持fuzzy,故目前仅将最相似的fuzzy放到AIShortMatchModel中当matchAlg用);
-    NSArray *fuzzys = ARRTOOK([TIRUtils matchAlg2FuzzyAlgV2:algNode matchAlg:assAlgNode]);
+    NSArray *fuzzys = ARRTOOK([TIRUtils matchAlg2FuzzyAlgV2:algNode matchAlg:assAlgNode except_ps:fromGroup_ps]);
     AIAlgNodeBase *fuzzyAlg = ARR_INDEX(fuzzys, 0);
     
     //4. 返回

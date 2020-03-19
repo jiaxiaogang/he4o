@@ -128,7 +128,7 @@
 }
 
 -(void) setNodeData:(id)nodeData appendLightStr:(NSString*)appendLightStr{
-    NSString *lightStr = STRFORMAT(@"%@%@",[self getLightStr:nodeData],appendLightStr);
+    NSString *lightStr = STRFORMAT(@"%@ %@",[self getLightStr:nodeData],appendLightStr);
     [self setNodeData:nodeData lightStr:lightStr];
 }
 

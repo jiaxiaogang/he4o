@@ -52,7 +52,7 @@
     }
     if (lastAssIndex == -1) {
         failure(@"时序识别: lastItem匹配失败,查看是否在联想时就出bug了");
-        [theNV setNodeData:lastProtoAlg_p lightStr:@"lastItem2"];
+        [theNV setNodeData:lastProtoAlg_p appendLightStr:@"lastItem2"];
         [theNV setNodeData:assFo.pointer lightStr:@"assFo2"];
         return;
     }else{
@@ -261,8 +261,9 @@
  *      v1: 仅支持单个稀疏码不同,并仅返回单个最相似的结果;
  *      v2: 支持多个稀疏码不同,并支持返回多个相似度排序后的结果;
  */
-+(NSArray*) matchAlg2FuzzyAlgV2:(AIAlgNodeBase*)protoAlg matchAlg:(AIAlgNodeBase*)matchAlg {
++(NSArray*) matchAlg2FuzzyAlgV2:(AIAlgNodeBase*)protoAlg matchAlg:(AIAlgNodeBase*)matchAlg except_ps:(NSArray*)except_ps{
     //1. 数据准备;
+    except_ps = ARRTOOK(except_ps);
     if (!protoAlg || !matchAlg) {
         return nil;
     }
@@ -270,9 +271,9 @@
     //2. matchAlg未匹配之处 (目前仅支持单特征);
     NSArray *pSubMs = [SMGUtils removeSub_ps:matchAlg.content_ps parent_ps:protoAlg.content_ps];
     
-    //3. 取proto同层的sameLevel前20个 (proto自身不算);
+    //3. 取proto同层的sameLevel前20个 (排除(含proto)不算);
     NSArray *sameLevel_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:matchAlg]];
-    sameLevel_ps = [SMGUtils removeSub_p:protoAlg.pointer parent_ps:sameLevel_ps];
+    sameLevel_ps = [SMGUtils removeSub_ps:except_ps parent_ps:sameLevel_ps];
     sameLevel_ps = ARR_SUB(sameLevel_ps, 0, cMCValue_ConAssLimit);
     
     //4. 逐个稀疏码,找模糊匹配节点数组;
@@ -345,13 +346,12 @@
         }
     }];
     
-    [theApp.nvView setNodeData:protoAlg.pointer appendLightStr:@"fuzzyP"];
-    [theApp.nvView setNodeData:matchAlg.pointer appendLightStr:@"fuzzyM"];
+    [theApp.nvView setNodeData:protoAlg.pointer appendLightStr:STRFORMAT(@"%ld_fuzzyP",protoAlg.pointer.pointerId)];
+    [theApp.nvView setNodeData:matchAlg.pointer appendLightStr:STRFORMAT(@"%ld_fuzzyM",protoAlg.pointer.pointerId)];
     for (NSInteger i = 0; i < result.count; i++) {
         AIAlgNodeBase *item = ARR_INDEX(result, i);
-        [theApp.nvView setNodeData:item.pointer appendLightStr:@"fuzzyR"];
+        [theApp.nvView setNodeData:item.pointer appendLightStr:STRFORMAT(@"%ld_fuzzyR(%ld)",protoAlg.pointer.pointerId,(long)i)];
     }
-    
     return result;
 }
 

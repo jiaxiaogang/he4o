@@ -75,7 +75,7 @@
 
 -(NSString*)nv_NodeOnClick:(AIKVPointer*)node_p{
     //1. light自己;
-    [theNV lightNode:node_p str:[NVHeUtil getLightStr:node_p]];
+    [theApp.nvView setNodeData:node_p appendLightStr:[NVHeUtil getLightStr:node_p]];
     
     //1. value时,返回 "iden+value值";
     NSInteger memRefCount = ARRTOOK([SMGUtils searchObjectForPointer:node_p fileName:kFNMemRefPorts time:cRTMemPort]).count;
