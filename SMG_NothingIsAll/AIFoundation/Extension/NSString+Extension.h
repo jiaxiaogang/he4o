@@ -15,4 +15,9 @@
  */
 +(NSString*) md5:(NSString *)str;
 
+/**
+ *  MARK:-------------------- 截掉浮点数字符串后面的多余0--------------------
+ */
++(NSString*) removeFloatZero:(NSString*)floatStr;
+
 @end

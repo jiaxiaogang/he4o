@@ -10,6 +10,7 @@
 #import "AINetIndex.h"
 #import "AIKVPointer.h"
 #import "AIAlgNodeBase.h"
+#import "NSString+Extension.h"
 
 @implementation NVHeUtil
 
@@ -51,7 +52,7 @@
 
 //获取value_p的light描述;
 +(NSString*) getLightStr_ValueP:(AIKVPointer*)value_p{
-    NSInteger value = [NUMTOOK([AINetIndex getData:value_p]) integerValue];
+    double value = [NUMTOOK([AINetIndex getData:value_p]) doubleValue];
     NSString *valueStr = [self getLightStr_Value:value];
     if ([@"sizeWidth" isEqualToString:value_p.dataSource]) {
         return STRFORMAT(@"宽%@",valueStr);
@@ -86,7 +87,7 @@
 }
 
 //获取value的light描述;
-+(NSString*) getLightStr_Value:(NSInteger)value{
++(NSString*) getLightStr_Value:(double)value{
     if(value == cHav){
         return @"有";
     }else if(value == cNone){
@@ -96,7 +97,8 @@
     }else if(value == cLess){
         return @"小";
     }
-    return STRFORMAT(@"%ld",value);
+    NSString *stringValue = STRFORMAT(@"%f",value);
+    return [NSString removeFloatZero:stringValue];
 }
 
 

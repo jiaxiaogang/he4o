@@ -24,4 +24,26 @@
             ];
 }
 
++(NSString*) removeFloatZero:(NSString*)floatStr{
+    //1. 数据检查
+    floatStr = STRTOOK(floatStr);
+    NSRange dotRange = [floatStr rangeOfString:@"."];
+    if (dotRange.location <= 0) return floatStr;
+    
+    //2. 取lastDotOrZeroIndex
+    NSInteger dotOrZeroIndex = floatStr.length;
+    for (NSInteger i = floatStr.length - 1; i >= 0; i--) {
+        NSString *iChar = [floatStr substringWithRange:NSMakeRange(i, 1)];
+        if ([@"0" isEqualToString:iChar]) {
+            dotOrZeroIndex = i;
+        }else if([@"." isEqualToString:iChar]){
+            dotOrZeroIndex = i;
+            break;
+        }else{
+            break;
+        }
+    }
+    return [floatStr substringToIndex:dotOrZeroIndex];
+}
+
 @end
