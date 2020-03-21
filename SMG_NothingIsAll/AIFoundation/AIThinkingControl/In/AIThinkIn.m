@@ -15,6 +15,7 @@
 #import "AIThinkInPercept.h"
 #import "AICMVNode.h"
 #import "AIShortMatchModel.h"
+#import "AIFrontOrderNode.h"
 
 @implementation AIThinkIn
 
@@ -123,18 +124,20 @@
     //2. 识别概念;
     mModel.matchAlg = [AIThinkInReason TIR_Alg:algNode_p fromGroup_ps:fromGroup_ps];
     
-    //3. 识别时序;
+    //3. 构建时序 (把每次dic输入,都作为一个新的内存时序);
     NSArray *shortMemory = [self.delegate aiThinkIn_GetShortMemory];
-    [AIThinkInReason TIR_Fo_FromShortMem:shortMemory lastMatchAlg:mModel.matchAlg finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue) {
-        mModel.protoFo = curNode;
+    mModel.protoFo = [theNet createConFo:shortMemory];
+    
+    //4. 识别时序;
+    [AIThinkInReason TIR_Fo_FromShortMem:mModel.protoFo lastMatchAlg:mModel.matchAlg finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue) {
         mModel.matchFo = matchFo;
         mModel.matchFoValue = matchValue;
     }];
     
-    //4. 内类比
+    //5. 内类比
     [AIThinkInReason analogyInner:mModel.protoFo];
     
-    //4. 传给TOR,做下一步处理;
+    //6. 传给TOR,做下一步处理;
     [self.delegate aiThinkIn_Commit2TC:mModel];
 }
 

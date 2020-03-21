@@ -148,9 +148,10 @@
     if (!ARRISOK(protoAlg_ps) || !lastAlg || !replaceMatchAlg) {
         return;
     }
+    AIFrontOrderNode *protoFo = [theNet createConFo:protoAlg_ps];//将protoAlg_ps构建成时序;
     
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [self TIR_Fo_General:protoAlg_ps assFoIndexAlg:lastAlg assFoBlock:^NSArray *(AIAlgNodeBase *indexAlg) {
+    [self TIR_Fo_General:protoFo assFoIndexAlg:lastAlg assFoBlock:^NSArray *(AIAlgNodeBase *indexAlg) {
         NSMutableArray *result = [[NSMutableArray alloc] init];
         if (indexAlg) {
             for (AIPort *refPort in indexAlg.refPorts) {
@@ -186,14 +187,14 @@
     } finishBlock:finishBlock];
 }
 
-+(void) TIR_Fo_FromShortMem:(NSArray*)protoAlg_ps lastMatchAlg:(AIAlgNodeBase*)lastMatchAlg finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue))finishBlock{
++(void) TIR_Fo_FromShortMem:(AIFoNodeBase*)protoFo lastMatchAlg:(AIAlgNodeBase*)lastMatchAlg finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue))finishBlock{
     //1. 数据检查
-    if (!ARRISOK(protoAlg_ps) || !lastMatchAlg) {
+    if (!protoFo || !lastMatchAlg) {
         return;
     }
     
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [self TIR_Fo_General:protoAlg_ps assFoIndexAlg:lastMatchAlg assFoBlock:^NSArray *(AIAlgNodeBase *indexAlg) {
+    [self TIR_Fo_General:protoFo assFoIndexAlg:lastMatchAlg assFoBlock:^NSArray *(AIAlgNodeBase *indexAlg) {
         if (indexAlg) {
             return ARR_SUB(indexAlg.refPorts, 0, cPartMatchingCheckRefPortsLimit);
         }
@@ -245,16 +246,13 @@
  *  MARK:--------------------时序识别通用方法--------------------
  *  @desc : 目前仅支持局部匹配,所以这个_General方法就相当于只是个转发而已;
  *  @param checkItemValid : 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层;
+ *  @param protoFo : 在TOR中传入RethinkFo,在TIR中传入MemFo;
  */
-+(void) TIR_Fo_General:(NSArray*)protoAlg_ps
++(void) TIR_Fo_General:(AIFoNodeBase*)protoFo
          assFoIndexAlg:(AIAlgNodeBase*)assFoIndexAlg
             assFoBlock:(NSArray*(^)(AIAlgNodeBase *indexAlg))assFoBlock
         checkItemValid:(BOOL(^)(AIKVPointer *itemAlg_p,AIKVPointer *assAlg_p))checkItemValid
            finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue))finishBlock{
-    
-    //1. 将alg_ps构建成时序; (把每次dic输入,都作为一个新的内存时序)
-    AIFrontOrderNode *protoFo = [theNet createConFo:protoAlg_ps];
-    
     //2. 局部匹配识别时序;
     __block AIFoNodeBase *weakMatchFo = nil;
     __block CGFloat weakMatchValue = 0;
