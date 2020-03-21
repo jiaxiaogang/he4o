@@ -268,7 +268,7 @@
         return nil;
     }
     
-    //2. matchAlg未匹配之处 (目前仅支持单特征);
+    //2. matchAlg未匹配之处;
     NSArray *pSubMs = [SMGUtils removeSub_ps:matchAlg.content_ps parent_ps:protoAlg.content_ps];
     
     //3. 取proto同层的sameLevel前20个 (排除(含proto)不算);
