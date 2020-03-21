@@ -131,6 +131,9 @@
         mModel.matchFoValue = matchValue;
     }];
     
+    //4. 内类比
+    [AIThinkInReason analogyInner:mModel.protoFo];
+    
     //4. 传给TOR,做下一步处理;
     [self.delegate aiThinkIn_Commit2TC:mModel];
 }

@@ -21,6 +21,7 @@
 #import "AIAbsAlgNode.h"
 #import "AINetIndex.h"
 #import "TIRUtils.h"
+#import "AIThinkInAnalogy.h"
 
 @implementation AIThinkInReason
 
@@ -337,6 +338,17 @@
             }
         }
     }
+}
+
+/**
+ *  MARK:--------------------内类比--------------------
+ *  @desc 在理性中进行内类比;
+ *  @支持: 目前理性内类比不支持energy,待以后版本再考虑支持;
+ */
++(void) analogyInner:(AIFoNodeBase*)protoFo{
+    [AIThinkInAnalogy analogyInner_FromTIR:protoFo canAss:^BOOL{
+        return true;
+    } updateEnergy:nil];
 }
 
 @end

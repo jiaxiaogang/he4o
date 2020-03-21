@@ -24,4 +24,7 @@
 +(void) TIR_Fo_FromRethink:(NSArray*)protoAlg_ps replaceMatchAlg:(AIAlgNodeBase*)replaceMatchAlg finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue))finishBlock;
 +(void) TIR_Fo_FromShortMem:(NSArray*)protoAlg_ps lastMatchAlg:(AIAlgNodeBase*)lastMatchAlg finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue))finishBlock;
 
+//内类比
++(void) analogyInner:(AIFoNodeBase*)protoFo;
+
 @end
