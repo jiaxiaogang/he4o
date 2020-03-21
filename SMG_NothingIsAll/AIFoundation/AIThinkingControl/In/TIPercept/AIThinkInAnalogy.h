@@ -36,6 +36,7 @@
  *  @param canAssBlock  : energy判断器 (为null时,无限能量);
  *  @param updateEnergy : energy消耗器 (为null时,不消耗能量值);
  */
-+(void) analogyInner:(AIFoNodeBase*)checkFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy;
++(void) analogyInner_FromTIR:(AIFoNodeBase*)checkFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy;
++(void) analogyInner_FromTIP:(AIFoNodeBase*)checkFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy;
 
 @end
