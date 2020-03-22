@@ -209,7 +209,7 @@
                     [countDic setObject:@(oldCount + 1) forKey:key];
                 }
             }
-            NSLog(@"匹配情况: %@ -----------------",countDic.allValues);
+            if (countDic.count) NSLog(@"匹配情况: %@ -----------------",countDic.allValues);
         }
         
         //4. 排序相似数从大到小;

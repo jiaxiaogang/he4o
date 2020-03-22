@@ -280,7 +280,7 @@
         }
         
         //7. 内中有外
-        //[theNV setNodeData:abFo.pointer lightStr:lightStr];
+        [theNV setNodeData:abFo.pointer appendLightStr:STRFORMAT(@"新 %@",lightStr)];
         [self analogyInner_Outside:abFo canAss:canAssBlock updateEnergy:updateEnergy];
     }
 }
@@ -300,7 +300,6 @@
  *  4. 构建mv节点;
  */
 +(AINetAbsFoNode*)analogyInner_Creater:(AnalogyInnerType)type target_p:(AIKVPointer*)target_p algA:(AIAlgNode*)algA algB:(AIAlgNode*)algB rangeOrders:(NSArray*)rangeOrders conFo:(AIFoNodeBase*)conFo{
-    NSLog(@"inner > 内类比,构建器执行构建");
     //1. 数据检查
     rangeOrders = ARRTOOK(rangeOrders);
     if (target_p && algA && algB) {
@@ -369,6 +368,14 @@
             [absOrders addObjectsFromArray:rangeOrders];
             [absOrders addObject:backAlg.pointer];
             AINetAbsFoNode *createrFo = [theNet createAbsFo_Inner:conFo orderSames:absOrders];
+            
+            //调试内类比结果
+            NSMutableString *mStr = [[NSMutableString alloc] init];
+            for (AIKVPointer *item_p in absOrders) {
+                [mStr appendFormat:@"%@=%ld,",item_p.identifier,item_p.pointerId];
+            }
+            NSString *typeDesc = (backData == cGreater) ? @"大" : (backData == cLess) ? @"小" : (backData == cHav) ? @"有" : (backData == cNone) ? @"无" : @"错误";
+            NSLog(@"========> 内类比构建(%@): [%@]",typeDesc,SUBSTR2INDEX(mStr, mStr.length - 1));
             
             //190819取消理性fo(大小有无fo)指向mvNode;
             //if (!createrFo) {
