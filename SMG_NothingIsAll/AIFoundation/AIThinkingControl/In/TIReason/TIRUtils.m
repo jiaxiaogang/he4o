@@ -14,7 +14,7 @@
 #import "ThinkingUtils.h"
 #import "AINetIndex.h"
 #import "NSString+Extension.h"
-
+//temp
 #import "NVHeUtil.h"
 
 @implementation TIRUtils

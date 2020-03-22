@@ -171,7 +171,10 @@
         }
         //3. 扇翅膀反射
         else if([FLY_RDS isEqualToString:identify]){
-            [self fly:[paramNum floatValue]];
+            if (OutputObserverType_Front == type) {
+            }else if(OutputObserverType_Back == type){
+                [self fly:[paramNum floatValue]];
+            }
         }
         //4. 焦急反射
         else if([ANXIOUS_RDS isEqualToString:identify]){

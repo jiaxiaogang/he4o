@@ -8,7 +8,6 @@
 
 #import "AIThinkInReason.h"
 #import "AINetUtils.h"
-#import "NVHeUtil.h"
 #import "AIKVPointer.h"
 #import "NVHeader.h"
 #import "NSString+Extension.h"
@@ -22,6 +21,8 @@
 #import "AINetIndex.h"
 #import "TIRUtils.h"
 #import "AIThinkInAnalogy.h"
+//temp
+#import "NVHeUtil.h"
 
 @implementation AIThinkInReason
 

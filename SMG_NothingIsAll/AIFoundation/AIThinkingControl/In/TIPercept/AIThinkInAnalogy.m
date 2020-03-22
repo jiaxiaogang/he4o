@@ -19,6 +19,8 @@
 #import "AINetIndex.h"
 #import "AINetIndexUtils.h"
 #import "ThinkingUtils.h"
+//temp
+#import "NVHeUtil.h"
 
 @implementation AIThinkInAnalogy
 
@@ -228,6 +230,13 @@
     AINetAbsFoNode *abFo = nil;
     NSString *lightStr = nil;
     if (algNodeA && algNodeB){
+        //调试内类比开始
+        NSMutableString *aMStr = [[NSMutableString alloc] init];
+        NSMutableString *bMStr = [[NSMutableString alloc] init];
+        for (AIKVPointer *item_p in algNodeA.content_ps) [aMStr appendFormat:@"%@,",[NVHeUtil getLightStr:item_p]];
+        for (AIKVPointer *item_p in algNodeB.content_ps) [bMStr appendFormat:@"%@,",[NVHeUtil getLightStr:item_p]];
+        NSLog(@"内类比: [%@] | [%@]",SUBSTR2INDEX(aMStr, aMStr.length - 1),SUBSTR2INDEX(bMStr, bMStr.length - 1));
+        
         ///1. 取a差集和b差集;
         NSArray *aSub_ps = [SMGUtils removeSub_ps:algNodeB.content_ps parent_ps:[[NSMutableArray alloc] initWithArray:algNodeA.content_ps]];
         NSArray *bSub_ps = [SMGUtils removeSub_ps:algNodeA.content_ps parent_ps:[[NSMutableArray alloc] initWithArray:algNodeB.content_ps]];
