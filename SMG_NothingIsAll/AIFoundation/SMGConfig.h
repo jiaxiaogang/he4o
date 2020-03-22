@@ -48,11 +48,11 @@
 #define cDataOutAssAlgCount 5   //在决策过程中,algScheme横向最大检索条数;
 #define cDataOutAssAlgDeep 2    //在决策过程中,algScheme纵向最大检索深度;
 
-#define cGreater NSIntegerMax - 47  //表示内类比算法中,比大小时的大;
-#define cLess NSIntegerMin + 48 //表示内类比算法中,比大小时的小;
+#define cGreater INT_MAX - 47  //表示内类比算法中,比大小时的大;
+#define cLess INT_MIN + 48 //表示内类比算法中,比大小时的小;
 
-#define cHav NSIntegerMax       //表示内类比算法中,概念的有
-#define cNone NSIntegerMin      //表示内类比算法中,概念的无
+#define cHav INT_MAX       //表示内类比算法中,概念的有
+#define cNone INT_MIN      //表示内类比算法中,概念的无
 
 #define cHavNoneAssFoCount 5    //Hav和None在联想其fo时,最大条数;
 
