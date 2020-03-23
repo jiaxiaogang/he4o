@@ -313,8 +313,6 @@
     AIAlgNode *algNodeB = [SMGUtils searchNode:algB_p];
     
     //5. 内类比找不同 (比大小:同区不同值 / 有无)
-    AINetAbsFoNode *abFo = nil;
-    NSString *lightStr = nil;
     if (algNodeA && algNodeB){
         //a. 调试内类比开始
         NSMutableString *aMStr = [[NSMutableString alloc] init];
@@ -324,50 +322,28 @@
         NSLog(@"内类比: [%@] | [%@]",SUBSTR2INDEX(aMStr, aMStr.length - 1),SUBSTR2INDEX(bMStr, bMStr.length - 1));
 
         //b. 内类比大小;
-        NSArray *rangeOrders = ARR_SUB(orders, aIndex + 1, bIndex - aIndex - 1);
-        self analogyInner_GL:checkFo algA:algNodeA algB:algNodeB rangeAlgs:range
+        NSArray *rangeAlg_ps = ARR_SUB(orders, aIndex + 1, bIndex - aIndex - 1);
+        [self analogyInner_GL:checkFo algA:algNodeA algB:algNodeB rangeAlg_ps:rangeAlg_ps createdBlock:^(AINetAbsFoNode *createFo) {
+            //c. 消耗思维活跃度 & 内中有外
+            if (updateEnergy) updateEnergy(-0.1f);
+            [self analogyInner_Outside:createFo canAss:canAssBlock updateEnergy:updateEnergy];
+        }];
         
-        //c. 内类比有无;
-        
-        
-        
-        
-        ///2. 四种情况; (有且仅有1条微信息不同,进行内类比构建)
-        if(aSub_ps.count > 0 && bSub_ps.count == 0){
-            //2) 当长度各aSub>0和bSub=0时,抽象出aSub,并构建其"有变无"时序;
-            //AIAbsAlgNode *targetNode = [theNet createAbsAlgNode:aSub_ps conAlgs:@[algNodeA] isMem:false];
-            AIAlgNodeBase *target = [ThinkingUtils createHdAlgNode_NoRepeat:aSub_ps];
-            NSLog(@"内类比构建前 (无) %@=%ld",target.pointer.identifier,(long)target.pointer.pointerId);
-            abFo = [self analogyInner_Creater:AnalogyInnerType_None target_p:target.pointer algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
-            lightStr = @"无";
-        }else if(aSub_ps.count == 0 && bSub_ps.count > 0){
-            //3) 当长度各aSub=0和bSub>0时,抽象出bSub,并构建其"无变有"时序;
-            //AIAbsAlgNode *targetNode = [theNet createAbsAlgNode:aSub_ps conAlgs:@[algNodeB] isMem:false];
-            AIAlgNodeBase *target = [ThinkingUtils createHdAlgNode_NoRepeat:bSub_ps];
-            NSLog(@"内类比构建前 (有) %@=%ld",target.pointer.identifier,(long)target.pointer.pointerId);
-            abFo = [self analogyInner_Creater:AnalogyInnerType_Hav target_p:target.pointer algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
-            lightStr = @"有";
-        }
-    }
-    
-    //6. 对energy消耗;
-    if (ISOK(abFo, AINetAbsFoNode.class)) {
-        if (updateEnergy) {
-            updateEnergy(-1.0f);
-        }
-        
-        //7. 内中有外
-        [theNV setNodeData:abFo.pointer appendLightStr:STRFORMAT(@"新 %@",lightStr)];
-        [self analogyInner_Outside:abFo canAss:canAssBlock updateEnergy:updateEnergy];
+        //d. 内类比有无;
+        [self analogyInner_HN:checkFo algA:algNodeA algB:algNodeB rangeAlg_ps:rangeAlg_ps createdBlock:^(AINetAbsFoNode *createFo) {
+            //e. 消耗思维活跃度 & 内中有外
+            if (updateEnergy) updateEnergy(-0.1f);
+            [self analogyInner_Outside:createFo canAss:canAssBlock updateEnergy:updateEnergy];
+        }];
     }
 }
 
 /**
  *  MARK:--------------------内类比大小--------------------
  */
-+(void) analogyInner_GL:(AIFoNodeBase*)checkFo algA:(AIAlgNodeBase*)algA algB:(AIAlgNodeBase*)algB rangeAlgs:(NSArray*)rangeAlgs{
++(void) analogyInner_GL:(AIFoNodeBase*)checkFo algA:(AIAlgNodeBase*)algA algB:(AIAlgNodeBase*)algB rangeAlg_ps:(NSArray*)rangeAlg_ps createdBlock:(void(^)(AINetAbsFoNode *createFo))createdBlock{
     //1. 数据检查
-    rangeAlgs = ARRTOOK(rangeAlgs);
+    rangeAlg_ps = ARRTOOK(rangeAlg_ps);
     if (!algA || !algB) {
         return;
     }
@@ -388,13 +364,64 @@
         //调试a_p和b_p是否合格,应该同标识,同文件夹名称,不同pId;
         NSLog(@"内类比 (大小) 前: %@/%@=%ld(%@) | %@/%@=%ld(%@)",a_p.folderName,a_p.identifier,(long)a_p.pointerId,numA,b_p.folderName,b_p.identifier,(long)b_p.pointerId,numB);
         if (compareResult == NSOrderedAscending) {
-            AIFoNodeBase *create = [self analogyInner_Creater:AnalogyInnerType_Less target_p:a_p algA:algA algB:algB rangeOrders:rangeAlgs conFo:checkFo];
+            AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyInnerType_Less target_p:a_p algA:algA algB:algB rangeOrders:rangeAlg_ps conFo:checkFo];
+            if (createdBlock) createdBlock(create);
             NSLog(@"内类比 (小) 后: %@=%ld",create.pointer.identifier,(long)create.pointer.pointerId);
         }else if (compareResult == NSOrderedDescending) {
-            AIFoNodeBase *create = [self analogyInner_Creater:AnalogyInnerType_Greater target_p:a_p algA:algA algB:algB rangeOrders:rangeAlgs conFo:checkFo];
+            AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyInnerType_Greater target_p:a_p algA:algA algB:algB rangeOrders:rangeAlg_ps conFo:checkFo];
+            if (createdBlock) createdBlock(create);
             NSLog(@"内类比 (大) 后: %@=%ld",create.pointer.identifier,(long)create.pointer.pointerId);
         }
     }
+}
+
+/**
+ *  MARK:--------------------内类比有无--------------------
+ */
++(void) analogyInner_HN:(AIFoNodeBase*)checkFo algA:(AIAlgNodeBase*)algA algB:(AIAlgNodeBase*)algB rangeAlg_ps:(NSArray*)rangeAlg_ps createdBlock:(void(^)(AIFoNodeBase *createFo))createdBlock{
+    //1. 数据检查
+    rangeAlg_ps = ARRTOOK(rangeAlg_ps);
+    AIAlgNodeBase *aMatchAlg = [self getMatchAlgWithProtoAlg:algA];
+    AIAlgNodeBase *bMatchAlg = [self getMatchAlgWithProtoAlg:algB];
+    if (!aMatchAlg || !bMatchAlg) {
+        return;
+    }
+    NSArray *aMAbs_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:aMatchAlg]];
+    NSArray *bMAbs_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:bMatchAlg]];
+    
+    //2. 取a差集和b差集;
+    NSArray *aSub_ps = [SMGUtils removeSub_ps:bMAbs_ps parent_ps:aMAbs_ps];
+    NSArray *bSub_ps = [SMGUtils removeSub_ps:aMAbs_ps parent_ps:bMAbs_ps];
+    
+    //3. a变无
+    for (AIKVPointer *sub_p in aSub_ps) {
+        AIAlgNodeBase *target = [SMGUtils searchNode:sub_p];
+        AIFoNodeBase *create = [self analogyInner_Creater:AnalogyInnerType_None target_p:target.pointer algA:algA algB:algB rangeOrders:rangeAlg_ps conFo:checkFo];
+        if (createdBlock) createdBlock(create);
+        NSLog(@"内类比 (无):%@=%ld => %@=%ld",sub_p.identifier,(long)sub_p.pointerId,create.pointer.identifier,(long)create.pointer.pointerId);
+    }
+    
+    //4. b变有
+    for (AIKVPointer *sub_p in bSub_ps) {
+        AIAlgNodeBase *target = [SMGUtils searchNode:sub_p];
+        AIFoNodeBase *create = [self analogyInner_Creater:AnalogyInnerType_Hav target_p:target.pointer algA:algA algB:algB rangeOrders:rangeAlg_ps conFo:checkFo];
+        if (createdBlock) createdBlock(create);
+        NSLog(@"内类比 (有):%@=%ld => %@=%ld",sub_p.identifier,(long)sub_p.pointerId,create.pointer.identifier,(long)create.pointer.pointerId);
+    }
+}
+
+/**
+ *  MARK:--------------------取matchAlg--------------------
+ */
++(AIAlgNodeBase*) getMatchAlgWithProtoAlg:(AIAlgNodeBase*)protoAlg{
+    if (protoAlg) {
+        NSArray *absPorts = [AINetUtils absPorts_All:protoAlg];
+        if (absPorts.count == 1) {
+            AIPort *matchPort = ARR_INDEX(absPorts, 0);
+            return [SMGUtils searchNode:matchPort.target_p];
+        }
+    }
+    return nil;
 }
 
 /**

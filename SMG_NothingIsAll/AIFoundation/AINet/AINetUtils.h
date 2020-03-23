@@ -161,11 +161,13 @@
 
 /**
  *  MARK:--------------------取hdAbsPorts + memAbsPorts--------------------
+ *  @result notnull
  */
 +(NSArray*) absPorts_All:(AINodeBase*)node;
 
 /**
  *  MARK:--------------------取hdConPorts + memConPorts--------------------
+ *  @result notnull
  */
 +(NSArray*) conPorts_All:(AINodeBase*)node;
 
