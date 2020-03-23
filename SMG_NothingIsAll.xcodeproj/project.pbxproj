@@ -714,6 +714,8 @@
 				08A562A3233C483F0093A88E /* TIReason */,
 				0860617721F92F7100113366 /* AIThinkIn.h */,
 				0860617821F92F7100113366 /* AIThinkIn.m */,
+				08F3E92F2241B6E800545795 /* AIThinkInAnalogy.h */,
+				08F3E9302241B6E800545795 /* AIThinkInAnalogy.m */,
 			);
 			path = In;
 			sourceTree = "<group>";
@@ -772,8 +774,6 @@
 		08A562A4233C48500093A88E /* TIPercept */ = {
 			isa = PBXGroup;
 			children = (
-				08F3E92F2241B6E800545795 /* AIThinkInAnalogy.h */,
-				08F3E9302241B6E800545795 /* AIThinkInAnalogy.m */,
 				083BC020231CA14E00CA9039 /* AIThinkInPercept.h */,
 				083BC021231CA14E00CA9039 /* AIThinkInPercept.m */,
 			);
