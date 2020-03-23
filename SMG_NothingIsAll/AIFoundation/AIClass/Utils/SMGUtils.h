@@ -176,10 +176,23 @@
 @interface SMGUtils (Remove)
 
 //取差集
-+(NSMutableArray*) removeSub_ps:(NSArray*)sub_ps parent_ps:(NSArray*)parent_ps;
++(NSArray*) removeSub_ps:(NSArray*)sub_ps parent_ps:(NSArray*)parent_ps;
 +(NSMutableArray*) removeSub_p:(AIPointer*)sub_p parent_ps:(NSArray*)parent_ps;
 
 //取交集 notnull
-+(NSMutableArray*) filterSame_ps:(NSArray*)a_ps parent_ps:(NSArray*)b_ps;
++(NSArray*) filterSame_ps:(NSArray*)a_ps parent_ps:(NSArray*)b_ps;
++(NSMutableDictionary*) filterSameIdentifier_ps:(NSArray*)a_ps b_ps:(NSArray*)b_ps;
+
+/**
+ *  MARK:--------------------从from_ps中,筛选出有效的元素返回--------------------
+ *  @result notnull
+ */
++(NSArray*) filterPointers:(NSArray *)from_ps checkValid:(BOOL(^)(AIKVPointer *item_p))checkValid;
+
+/**
+ *  MARK:--------------------从a_ps和b_ps中,筛选出有效的元素映射返回--------------------
+ *  @result notnull
+ */
++(NSMutableDictionary*) filterPointers:(NSArray *)a_ps b_ps:(NSArray*)b_ps checkItemValid:(BOOL(^)(AIKVPointer *a_p,AIKVPointer *b_p))checkItemValid;
 
 @end

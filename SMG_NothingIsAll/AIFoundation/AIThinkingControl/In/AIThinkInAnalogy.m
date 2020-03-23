@@ -262,21 +262,21 @@
                         abFo = [self analogyInner_Creater:AnalogyInnerType_Greater target_p:a_p algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
                         lightStr = @"大";
                     }
-                    NSLog(@"内类比构建前 (%@) %@=%ld (%@ - %@)",lightStr,a_p.identifier,a_p.pointerId,numA,numB);
+                    NSLog(@"内类比构建前 (%@) %@=%ld (%@ - %@)",lightStr,a_p.identifier,(long)a_p.pointerId,numA,numB);
                 }
             }
         }else if(aSub_ps.count > 0 && bSub_ps.count == 0){
             //2) 当长度各aSub>0和bSub=0时,抽象出aSub,并构建其"有变无"时序;
             //AIAbsAlgNode *targetNode = [theNet createAbsAlgNode:aSub_ps conAlgs:@[algNodeA] isMem:false];
             AIAlgNodeBase *target = [ThinkingUtils createHdAlgNode_NoRepeat:aSub_ps];
-            NSLog(@"内类比构建前 (无) %@=%ld",target.pointer.identifier,target.pointer.pointerId);
+            NSLog(@"内类比构建前 (无) %@=%ld",target.pointer.identifier,(long)target.pointer.pointerId);
             abFo = [self analogyInner_Creater:AnalogyInnerType_None target_p:target.pointer algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
             lightStr = @"无";
         }else if(aSub_ps.count == 0 && bSub_ps.count > 0){
             //3) 当长度各aSub=0和bSub>0时,抽象出bSub,并构建其"无变有"时序;
             //AIAbsAlgNode *targetNode = [theNet createAbsAlgNode:aSub_ps conAlgs:@[algNodeB] isMem:false];
             AIAlgNodeBase *target = [ThinkingUtils createHdAlgNode_NoRepeat:bSub_ps];
-            NSLog(@"内类比构建前 (有) %@=%ld",target.pointer.identifier,target.pointer.pointerId);
+            NSLog(@"内类比构建前 (有) %@=%ld",target.pointer.identifier,(long)target.pointer.pointerId);
             abFo = [self analogyInner_Creater:AnalogyInnerType_Hav target_p:target.pointer algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
             lightStr = @"有";
         }
@@ -348,21 +348,21 @@
                         abFo = [self analogyInner_Creater:AnalogyInnerType_Greater target_p:a_p algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
                         lightStr = @"大";
                     }
-                    NSLog(@"内类比构建前 (%@) %@=%ld (%@ - %@)",lightStr,a_p.identifier,a_p.pointerId,numA,numB);
+                    NSLog(@"内类比构建前 (%@) %@=%ld (%@ - %@)",lightStr,a_p.identifier,(long)a_p.pointerId,numA,numB);
                 }
             }
         }else if(aSub_ps.count > 0 && bSub_ps.count == 0){
             //2) 当长度各aSub>0和bSub=0时,抽象出aSub,并构建其"有变无"时序;
             //AIAbsAlgNode *targetNode = [theNet createAbsAlgNode:aSub_ps conAlgs:@[algNodeA] isMem:false];
             AIAlgNodeBase *target = [ThinkingUtils createHdAlgNode_NoRepeat:aSub_ps];
-            NSLog(@"内类比构建前 (无) %@=%ld",target.pointer.identifier,target.pointer.pointerId);
+            NSLog(@"内类比构建前 (无) %@=%ld",target.pointer.identifier,(long)target.pointer.pointerId);
             abFo = [self analogyInner_Creater:AnalogyInnerType_None target_p:target.pointer algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
             lightStr = @"无";
         }else if(aSub_ps.count == 0 && bSub_ps.count > 0){
             //3) 当长度各aSub=0和bSub>0时,抽象出bSub,并构建其"无变有"时序;
             //AIAbsAlgNode *targetNode = [theNet createAbsAlgNode:aSub_ps conAlgs:@[algNodeB] isMem:false];
             AIAlgNodeBase *target = [ThinkingUtils createHdAlgNode_NoRepeat:bSub_ps];
-            NSLog(@"内类比构建前 (有) %@=%ld",target.pointer.identifier,target.pointer.pointerId);
+            NSLog(@"内类比构建前 (有) %@=%ld",target.pointer.identifier,(long)target.pointer.pointerId);
             abFo = [self analogyInner_Creater:AnalogyInnerType_Hav target_p:target.pointer algA:algNodeA algB:algNodeB rangeOrders:rangeOrders conFo:checkFo];
             lightStr = @"有";
         }
@@ -378,6 +378,27 @@
         [theNV setNodeData:abFo.pointer appendLightStr:STRFORMAT(@"新 %@",lightStr)];
         [self analogyInner_Outside:abFo canAss:canAssBlock updateEnergy:updateEnergy];
     }
+}
+
+/**
+ *  MARK:--------------------内类比大小--------------------
+ */
++(void) analogyInner_GL:(AIFoNodeBase*)checkFo algA:(AIAlgNodeBase*)algA algB:(AIAlgNodeBase*)algB rangeAlgs:(NSArray*)rangeAlgs{
+    //1. 数据检查
+    rangeAlgs = ARRTOOK(rangeAlgs);
+    if (!algA || !algB) {
+        return;
+    }
+    
+    //2. 取a差集和b差集;
+    NSArray *aSub_ps = [SMGUtils removeSub_ps:algB.content_ps parent_ps:algA.content_ps];
+    NSArray *bSub_ps = [SMGUtils removeSub_ps:algA.content_ps parent_ps:algB.content_ps];
+    
+    //3. 找了ab同标识字典;
+    NSMutableDictionary *sameIdentifier = [SMGUtils filterSameIdentifier_ps:aSub_ps b_ps:bSub_ps];
+    
+    
+    //TODOTOMORROW;
 }
 
 /**
@@ -466,7 +487,7 @@
             //调试内类比结果
             NSMutableString *mStr = [[NSMutableString alloc] init];
             for (AIKVPointer *item_p in absOrders) {
-                [mStr appendFormat:@"%@=%ld,",item_p.identifier,item_p.pointerId];
+                [mStr appendFormat:@"%@=%ld,",item_p.identifier,(long)item_p.pointerId];
             }
             NSString *typeDesc = (backData == cGreater) ? @"大" : (backData == cLess) ? @"小" : (backData == cHav) ? @"有" : (backData == cNone) ? @"无" : @"错误";
             NSLog(@"========> 内类比构建时序 (%@): [%@]",typeDesc,SUBSTR2INDEX(mStr, mStr.length - 1));

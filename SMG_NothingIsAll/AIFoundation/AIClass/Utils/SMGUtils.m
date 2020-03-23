@@ -629,7 +629,7 @@
 //MARK:===============================================================
 @implementation SMGUtils (Remove)
 
-+(NSMutableArray*) removeSub_ps:(NSArray*)sub_ps parent_ps:(NSArray*)parent_ps{
++(NSArray*) removeSub_ps:(NSArray*)sub_ps parent_ps:(NSArray*)parent_ps{
     sub_ps = ARRTOOK(sub_ps);
     for (AIPointer *sub_p in sub_ps) {
         parent_ps = [self removeSub_p:sub_p parent_ps:parent_ps];
@@ -651,13 +651,42 @@
     return result_ps;
 }
 
-+(NSMutableArray*) filterSame_ps:(NSArray*)a_ps parent_ps:(NSArray*)b_ps{
++(NSArray*) filterSame_ps:(NSArray*)a_ps parent_ps:(NSArray*)b_ps{
+    return [self filterPointers:a_ps b_ps:b_ps checkItemValid:^BOOL(AIKVPointer *a_p, AIKVPointer *b_p) {
+        return a_p ? [a_p isEqual:b_p] : false;
+    }].allValues;
+}
+
++(NSMutableDictionary*) filterSameIdentifier_ps:(NSArray*)a_ps b_ps:(NSArray*)b_ps{
+    return [SMGUtils filterPointers:a_ps b_ps:b_ps checkItemValid:^BOOL(AIKVPointer *a_p, AIKVPointer *b_p) {
+        return a_p ? [a_p.identifier isEqualToString:b_p.identifier] : false;
+    }];
+}
+
++(NSArray*) filterPointers:(NSArray *)from_ps checkValid:(BOOL(^)(AIKVPointer *item_p))checkValid {
+    //1. 数据准备
+    from_ps = ARRTOOK(from_ps);
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    
+    //2. 筛选
+    for (AIKVPointer *from_p in from_ps) {
+        if (checkValid && checkValid(from_p)) {
+            [result addObject:from_p];
+        }
+    }
+    return result;
+}
+
++(NSMutableDictionary*) filterPointers:(NSArray *)a_ps b_ps:(NSArray*)b_ps checkItemValid:(BOOL(^)(AIKVPointer *a_p,AIKVPointer *b_p))checkItemValid {
+    //1. 数据准备
+    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
     a_ps = ARRTOOK(a_ps);
     b_ps = ARRTOOK(b_ps);
-    NSMutableArray *result = [[NSMutableArray alloc] init];
-    for (AIPointer *a_p in a_ps) {
-        if ([self containsSub_p:a_p parent_ps:b_ps]) {
-            [result addObject:a_p];
+    for (AIKVPointer *a_p in a_ps) {
+        for (AIKVPointer *b_p in b_ps) {
+            if (checkItemValid && checkItemValid(a_p,b_p)) {
+                [result setObject:b_p forKey:a_p];
+            }
         }
     }
     return result;

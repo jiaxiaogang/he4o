@@ -112,11 +112,11 @@
     }
     
     //12. 内类比
-    [AIThinkInAnalogy analogyInner_FromTIP:foNode canAss:^BOOL{
-        return canAss();
-    } updateEnergy:^(CGFloat delta) {
-        updateEnergy(delta);
-    }];
+    //[AIThinkInAnalogy analogyInner_FromTIP:foNode canAss:^BOOL{
+    //    return canAss();
+    //} updateEnergy:^(CGFloat delta) {
+    //    updateEnergy(delta);
+    //}];
 }
 
 @end

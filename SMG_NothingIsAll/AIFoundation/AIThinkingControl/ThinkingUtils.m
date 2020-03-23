@@ -390,23 +390,19 @@
 @implementation ThinkingUtils (Filter)
 
 +(NSArray*) filterPointers:(NSArray*)proto_ps isOut:(BOOL)isOut{
-    NSMutableArray *result = [[NSMutableArray alloc] init];
-    for (AIKVPointer *pointer in ARRTOOK(proto_ps)) {
-        if (ISOK(pointer, AIKVPointer.class) && pointer.isOut == isOut) {
-            [result addObject:pointer];
-        }
-    }
-    return result;
+    return [SMGUtils filterPointers:proto_ps checkValid:^BOOL(AIKVPointer *item_p) {
+        return item_p.isOut == isOut;
+    }];
 }
 
 +(NSArray*) filterPointer:(NSArray*)from_ps identifier:(NSString*)identifier{
-    return [self filterPointers:from_ps checkValid:^BOOL(AIKVPointer *item_p) {
+    return [SMGUtils filterPointers:from_ps checkValid:^BOOL(AIKVPointer *item_p) {
         return [identifier isEqualToString:item_p.identifier];
     }];
 }
 
 +(NSArray*) filterAlg_Ps:(NSArray*)alg_ps valueIdentifier:(NSString*)valueIdentifier itemValid:(void(^)(AIAlgNodeBase *alg,AIKVPointer *value_p))itemValid{
-    return [self filterPointers:alg_ps checkValid:^BOOL(AIKVPointer *item_p) {
+    return [SMGUtils filterPointers:alg_ps checkValid:^BOOL(AIKVPointer *item_p) {
         AIAlgNodeBase *alg = [SMGUtils searchNode:item_p];
         if (alg) {
             for (AIKVPointer *itemValue_p in alg.content_ps) {
@@ -418,24 +414,6 @@
         }
         return false;
     }];
-}
-
-/**
- *  MARK:--------------------从from_ps中,筛选出有效的元素返回--------------------
- *  @result notnull
- */
-+(NSArray*) filterPointers:(NSArray *)from_ps checkValid:(BOOL(^)(AIKVPointer *item_p))checkValid {
-    //1. 数据准备
-    from_ps = ARRTOOK(from_ps);
-    NSMutableArray *result = [[NSMutableArray alloc] init];
-    
-    //2. 筛选
-    for (AIKVPointer *from_p in from_ps) {
-        BOOL fromValid = true;
-        if (checkValid) fromValid = checkValid(from_p);
-        if (fromValid) [result addObject:from_p];
-    }
-    return result;
 }
 
 @end
