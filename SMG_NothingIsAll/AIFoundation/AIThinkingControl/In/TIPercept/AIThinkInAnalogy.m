@@ -293,7 +293,7 @@
         [self analogyInner_Outside:abFo canAss:canAssBlock updateEnergy:updateEnergy];
     }
 }
-+(void) analogyInnerV2:(AIFoNodeBase*)checkFo aIndex:(NSInteger)aIndex bIndex:(NSInteger)bIndex canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
++(void) analogyInnerV2003:(AIFoNodeBase*)checkFo aIndex:(NSInteger)aIndex bIndex:(NSInteger)bIndex canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
     //1. 数据检查
     if (!ISOK(checkFo, AIFoNodeBase.class)) {
         return;
