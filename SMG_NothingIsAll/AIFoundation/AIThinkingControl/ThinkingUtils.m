@@ -143,6 +143,17 @@
     return nil;
 }
 
++(AIAlgNodeBase*) getMatchAlgWithProtoAlg:(AIAlgNodeBase*)protoAlg{
+    if (protoAlg) {
+        NSArray *absPorts = [AINetUtils absPorts_All:protoAlg];
+        if (absPorts.count == 1) {
+            AIPort *matchPort = ARR_INDEX(absPorts, 0);
+            return [SMGUtils searchNode:matchPort.target_p];
+        }
+    }
+    return nil;
+}
+
 @end
 
 

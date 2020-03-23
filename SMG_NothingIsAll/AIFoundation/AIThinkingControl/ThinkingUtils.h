@@ -70,6 +70,8 @@
 //根据端口,获取到target指向的节点;
 +(id) getNodeFromPort:(AIPort*)port;
 
+//根据proto联想matchAlg节点;
++(AIAlgNodeBase*) getMatchAlgWithProtoAlg:(AIAlgNodeBase*)protoAlg;
 
 @end
 
