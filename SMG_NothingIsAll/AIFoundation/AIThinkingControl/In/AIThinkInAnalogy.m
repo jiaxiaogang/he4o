@@ -323,118 +323,10 @@
 }
 
 /**
- *  MARK:--------------------内类比的构建方法--------------------
- *  @param type : 内类比类型,大小有无; (必须为四值之一,否则构建未知节点)
- *  @param target_p : 目前正在操作的指针; (可能是微信息指针,也可能是被嵌套的概念指针)
- *  @param rangeOrders : 在i-j之间的orders; (如 "a1 balabala a2" 中,balabala就是rangeOrders)
- *  @param conFo : 用来构建抽象具象时序时,作为具象节点使用;
- *
- *  > 作用
- *  1. 构建动态微信息;
- *  2. 构建动态概念;
- *  3. 构建abFoNode时序;
- *  4. 构建mv节点;
- */
-+(AINetAbsFoNode*)analogyInner_Creater:(AnalogyInnerType)type target_p:(AIKVPointer*)target_p algA:(AIAlgNodeBase*)algA algB:(AIAlgNodeBase*)algB rangeOrders:(NSArray*)rangeOrders conFo:(AIFoNodeBase*)conFo{
-    //1. 数据检查
-    rangeOrders = ARRTOOK(rangeOrders);
-    if (target_p && algA && algB) {
-        
-        //2. 根据type来构建微信息,和概念; (将a和b改成前和后)
-        BOOL isHavNon = (type == AnalogyInnerType_Hav || type == AnalogyInnerType_None);
-        NSInteger frontData = 0,backData = 0;
-        if (type == AnalogyInnerType_Greater) {
-            frontData = cLess;
-            backData = cGreater;
-        }else if (type == AnalogyInnerType_Less) {
-            frontData = cGreater;
-            backData = cLess;
-        }else if (type == AnalogyInnerType_Hav) {
-            frontData = cNone;
-            backData = cHav;
-        }else if (type == AnalogyInnerType_None) {
-            frontData = cHav;
-            backData = cNone;
-        }else{
-            return nil;
-        }
-        
-        //3. 构建动态微信息
-        AIKVPointer *frontValue_p = [theNet getNetDataPointerWithData:@(frontData) algsType:target_p.algsType dataSource:target_p.dataSource];
-        AIKVPointer *backValue_p = [theNet getNetDataPointerWithData:@(backData) algsType:target_p.algsType dataSource:target_p.dataSource];
-        if (!frontValue_p || !backValue_p) {
-            return nil;
-        }
-        
-        //4. 取出绝对匹配的dynamic抽象概念
-        AIAlgNodeBase *frontAlg = [AINetIndexUtils getAbsoluteMatchingAlgNodeWithValueP:frontValue_p];
-        AIAlgNodeBase *backAlg = [AINetIndexUtils getAbsoluteMatchingAlgNodeWithValueP:backValue_p];
-        
-        //5. 构建动态抽象概念block;
-        AIAlgNodeBase* (^RelateDynamicAlgBlock)(AIAlgNodeBase*, AIAlgNodeBase*,AIPointer*) = ^AIAlgNodeBase* (AIAlgNodeBase *dynamicAbsNode, AIAlgNodeBase *conNode,AIPointer *value_p){
-            if (ISOK(dynamicAbsNode, AIAbsAlgNode.class)) {
-                //注意: 此处algNode和algNode_Inner应该是组分关系,但先保持抽具象关系,看后面测试,有没别的影响,再改 (参考179_内类比全流程回顾)
-                ///1. 有效时,关联;
-                [AINetUtils relateAlgAbs:(AIAbsAlgNode*)dynamicAbsNode conNodes:@[conNode]];
-            }else{
-                ///2. 无效时,构建;
-                if (value_p) {
-                    dynamicAbsNode = [theNet createAbsAlgNode:@[value_p] conAlgs:@[conNode] isMem:false];
-                }
-            }
-            return dynamicAbsNode;
-        };
-        
-        //5. 构建"有无"抽象概念; (有无时,以"变有无的那个概念"为具象)
-        if (isHavNon) {
-            AIAlgNodeBase *conNode = [SMGUtils searchNode:target_p];
-            frontAlg = RelateDynamicAlgBlock(frontAlg,conNode,frontValue_p);
-            backAlg = RelateDynamicAlgBlock(backAlg,conNode,backValue_p);
-        }else{
-            //5. 构建"大小"抽象概念; (大小时,以"微信息所在的概念"为具象)
-            //20190809注:此处可考虑,不做具象指向,因为大小概念,本来就是独立的节点;
-            frontAlg = RelateDynamicAlgBlock(frontAlg,algA,frontValue_p);
-            backAlg = RelateDynamicAlgBlock(backAlg,algB,backValue_p);
-        }
-        
-        //6. 构建抽象时序; (小动致大 / 大动致小) (之间的信息为balabala)
-        if (frontAlg && backAlg) {
-            NSMutableArray *absOrders = [[NSMutableArray alloc] init];
-            [absOrders addObject:frontAlg.pointer];
-            [absOrders addObjectsFromArray:rangeOrders];
-            [absOrders addObject:backAlg.pointer];
-            AINetAbsFoNode *createrFo = [theNet createAbsFo_Inner:conFo orderSames:absOrders];
-            
-            //调试内类比结果
-            NSMutableString *mStr = [[NSMutableString alloc] init];
-            for (AIKVPointer *item_p in absOrders) {
-                [mStr appendFormat:@"%@=%ld,",item_p.identifier,(long)item_p.pointerId];
-            }
-            NSString *typeDesc = (backData == cGreater) ? @"大" : (backData == cLess) ? @"小" : (backData == cHav) ? @"有" : (backData == cNone) ? @"无" : @"错误";
-            NSLog(@"========> 内类比构建时序 (%@): [%@]",typeDesc,SUBSTR2INDEX(mStr, mStr.length - 1));
-            
-            //190819取消理性fo(大小有无fo)指向mvNode;
-            //if (!createrFo) {
-            //    return nil;
-            //}
-            //
-            ////7. 构建mv节点,形成mv基本模型;
-            //AIAbsCMVNode *createrMv = [theNet createAbsCMVNode_Inner:createrFo.pointer conMv_p:conFo.cmvNode_p];
-            //
-            ////8. cmv模型连接;
-            //if (ISOK(createrMv, AIAbsCMVNode.class)) {
-            //    createrFo.cmvNode_p = createrMv.pointer;
-            //    [SMGUtils insertNode:createrFo];
-            //}
-            return createrFo;
-        }
-    }
-    return nil;
-}
-
-/**
  *  MARK:--------------------内类比构建器--------------------
- *  @param target_p     :
+ *  @param type : 内类比类型,大小有无; (必须为四值之一,否则构建未知节点)
+ *  @param rangeAlg_ps  : 在i-j之间的orders; (如 "a1 balabala a2" 中,balabala就是rangeOrders)
+ *  @param target_p     : 操作对象 (有无时为概念地址,大小时为稀疏码地址);
  *      1. 构建有无时,以变有/无的概念为target;
  *      2. 构建大小时,以a_p/b_p为target (因为只是使用at&ds,所以用哪个都行);
  *  @param frontConAlg  :
@@ -443,6 +335,11 @@
  *  @param backConAlg   :
  *      1. 构建有无时,以变有/无的概念为backConAlg;
  *      2. 构建大小时,以"微信息所在的概念algB为backConAlg;
+ *  @param conFo : 用来构建抽象具象时序时,作为具象节点使用;
+ *  @作用
+ *      1. 构建动态微信息;
+ *      2. 构建动态概念;
+ *      3. 构建abFoNode时序;
  */
 +(AINetAbsFoNode*)analogyInner_Creater:(AnalogyInnerType)type target_p:(AIKVPointer*)target_p frontConAlg:(AIAlgNodeBase*)frontConAlg backConAlg:(AIAlgNodeBase*)backConAlg rangeAlg_ps:(NSArray*)rangeAlg_ps conFo:(AIFoNodeBase*)conFo{
     //1. 数据检查
