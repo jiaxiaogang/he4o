@@ -16,7 +16,7 @@
 //MARK:===============================================================
 //MARK:                     < 概念绝对匹配 >
 //MARK:===============================================================
-+(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValueP:(AIPointer*)value_p{
++(id) getAbsoluteMatchingAlgNodeWithValueP:(AIPointer*)value_p{
     AIAlgNodeBase *result = nil;
     if (value_p) {
         return [self getAbsoluteMatchingAlgNodeWithValuePs:@[value_p]];

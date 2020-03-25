@@ -14,6 +14,7 @@
 #import "ThinkingUtils.h"
 #import "AINetIndex.h"
 #import "NSString+Extension.h"
+#import "AINetIndexUtils.h"
 //temp
 #import "NVHeUtil.h"
 
@@ -352,6 +353,76 @@
         AIAlgNodeBase *item = ARR_INDEX(result, i);
         [theApp.nvView setNodeData:item.pointer appendLightStr:STRFORMAT(@"%ld_fuzzyR(%ld)",protoAlg.pointer.pointerId,(long)i)];
     }
+    return result;
+}
+
+//MARK:===============================================================
+//MARK:                     < 内类比 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------获取内类比稀疏码值--------------------
+ */
++(NSInteger) getInnerFrontData:(AnalogyInnerType)type {
+    if (type == AnalogyInnerType_Greater) {
+        return cLess;
+    }else if (type == AnalogyInnerType_Less) {
+        return cGreater;
+    }else if (type == AnalogyInnerType_Hav) {
+        return cNone;
+    }else if (type == AnalogyInnerType_None) {
+        return cHav;
+    }
+    return 0;
+}
++(NSInteger) getInnerBackData:(AnalogyInnerType)type {
+    if (type == AnalogyInnerType_Greater) {
+        return cGreater;
+    }else if (type == AnalogyInnerType_Less) {
+        return cLess;
+    }else if (type == AnalogyInnerType_Hav) {
+        return cHav;
+    }else if (type == AnalogyInnerType_None) {
+        return cNone;
+    }
+    return 0;
+}
+
+/**
+ *  MARK:--------------------内类比构建抽象概念--------------------
+ *  @注意: 此处algNode和algNode_Inner应该是组分关系,但先保持抽具象关系,看后面测试,有没别的影响,再改 (参考179_内类比全流程回顾)
+ *  @desc 大小时
+ */
++(AIAbsAlgNode*)createInnerAbsAlg:(AIAlgNodeBase*)conAlg value_p:(AIPointer*)value_p{
+    //1. 数据检查
+    if (!value_p) return nil;
+    //2. 有则加强;
+    AIAbsAlgNode *assAlg = [AINetIndexUtils getAbsoluteMatchingAlgNodeWithValueP:value_p];
+    if (ISOK(assAlg, AIAbsAlgNode.class)) {
+        [AINetUtils relateAlgAbs:assAlg conNodes:@[conAlg]];
+        return assAlg;
+    }else{
+        //3. 无则构建
+        return [theNet createAbsAlgNode:@[value_p] conAlgs:@[conAlg] isMem:false];
+    }
+}
+
+/**
+ *  MARK:--------------------内类比构建抽象时序--------------------
+ */
++(AINetAbsFoNode*)createInnerAbsFo:(AIAlgNodeBase*)frontAlg backAlg:(AIAlgNodeBase*)backAlg rangeAlg_ps:(NSArray*)rangeAlg_ps conFo:(AIFoNodeBase*)conFo{
+    //1. 数据检查
+    if (!frontAlg || !backAlg || !conFo) return nil;
+    rangeAlg_ps = ARRTOOK(rangeAlg_ps);
+    
+    //2. 拼接content_ps
+    NSMutableArray *absOrders = [[NSMutableArray alloc] init];
+    [absOrders addObject:frontAlg.pointer];
+    [absOrders addObjectsFromArray:rangeAlg_ps];
+    [absOrders addObject:backAlg.pointer];
+    
+    //3. 构建
+    AINetAbsFoNode *result = [theNet createAbsFo_Inner:conFo orderSames:absOrders];
     return result;
 }
 

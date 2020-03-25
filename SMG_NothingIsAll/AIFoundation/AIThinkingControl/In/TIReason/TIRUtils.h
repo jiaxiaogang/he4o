@@ -44,4 +44,19 @@
 //MARK:===============================================================
 +(NSArray*) matchAlg2FuzzyAlgV2:(AIAlgNodeBase*)protoAlg matchAlg:(AIAlgNodeBase*)matchAlg except_ps:(NSArray*)except_ps;
 
+
+//MARK:===============================================================
+//MARK:                     < 内类比 >
+//MARK:===============================================================
+
+//获取内类比稀疏码值
++(NSInteger) getInnerFrontData:(AnalogyInnerType)type;
++(NSInteger) getInnerBackData:(AnalogyInnerType)type;
+
+//内类比构建抽象概念
++(AIAbsAlgNode*)createInnerAbsAlg:(AIAlgNodeBase*)conAlg value_p:(AIPointer*)value_p;
+
+//内类比构建抽象时序
++(AINetAbsFoNode*)createInnerAbsFo:(AIAlgNodeBase*)frontAlg backAlg:(AIAlgNodeBase*)backAlg rangeAlg_ps:(NSArray*)rangeAlg_ps conFo:(AIFoNodeBase*)conFo;
+
 @end

@@ -25,7 +25,7 @@
  *      2. 先从内存网络,再从硬盘网络找;
  *  @pparam isMem : 是否从内存网络找;
  */
-+(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValueP:(AIPointer*)value_p;
++(id) getAbsoluteMatchingAlgNodeWithValueP:(AIPointer*)value_p;
 +(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps;
 +(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps exceptAlg_p:(AIPointer*)exceptAlg_p isMem:(BOOL)isMem;
 

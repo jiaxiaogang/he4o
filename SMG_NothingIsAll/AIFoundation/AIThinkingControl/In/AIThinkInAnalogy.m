@@ -19,6 +19,7 @@
 #import "AINetIndex.h"
 #import "AINetIndexUtils.h"
 #import "ThinkingUtils.h"
+#import "TIRUtils.h"
 //temp
 #import "NVHeUtil.h"
 
@@ -274,12 +275,12 @@
         NSLog(@"内类比 (大小) 前: %@/%@=%ld(%f) | %@/%@=%ld(%f)",a_p.folderName,a_p.identifier,(long)a_p.pointerId,[numA doubleValue],b_p.folderName,b_p.identifier,(long)b_p.pointerId,[numB doubleValue]);
         if (compareResult == NSOrderedAscending) {
             //c. 构建小;
-            AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyInnerType_Less target_p:a_p algA:algA algB:algB rangeOrders:rangeAlg_ps conFo:checkFo];
+            AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyInnerType_Less target_p:a_p frontConAlg:algA backConAlg:algB rangeAlg_ps:rangeAlg_ps conFo:checkFo];
             if (createdBlock) createdBlock(create);
             NSLog(@"内类比 (小) 后: %@=%ld",create.pointer.identifier,(long)create.pointer.pointerId);
         }else if (compareResult == NSOrderedDescending) {
             //d. 构建大;
-            AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyInnerType_Greater target_p:a_p algA:algA algB:algB rangeOrders:rangeAlg_ps conFo:checkFo];
+            AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyInnerType_Greater target_p:a_p frontConAlg:algA backConAlg:algB rangeAlg_ps:rangeAlg_ps conFo:checkFo];
             if (createdBlock) createdBlock(create);
             NSLog(@"内类比 (大) 后: %@=%ld",create.pointer.identifier,(long)create.pointer.pointerId);
         }
@@ -307,7 +308,7 @@
     //3. a变无
     for (AIKVPointer *sub_p in aSub_ps) {
         AIAlgNodeBase *target = [SMGUtils searchNode:sub_p];
-        AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyInnerType_None target_p:target.pointer algA:algA algB:algB rangeOrders:rangeAlg_ps conFo:checkFo];
+        AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyInnerType_None target_p:target.pointer frontConAlg:target backConAlg:target rangeAlg_ps:rangeAlg_ps conFo:checkFo];
         if (createdBlock) createdBlock(create);
         NSLog(@"内类比 (无):%@=%ld => %@=%ld",sub_p.identifier,(long)sub_p.pointerId,create.pointer.identifier,(long)create.pointer.pointerId);
     }
@@ -315,7 +316,7 @@
     //4. b变有
     for (AIKVPointer *sub_p in bSub_ps) {
         AIAlgNodeBase *target = [SMGUtils searchNode:sub_p];
-        AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyInnerType_Hav target_p:target.pointer algA:algA algB:algB rangeOrders:rangeAlg_ps conFo:checkFo];
+        AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyInnerType_Hav target_p:target.pointer frontConAlg:target backConAlg:target rangeAlg_ps:rangeAlg_ps conFo:checkFo];
         if (createdBlock) createdBlock(create);
         NSLog(@"内类比 (有):%@=%ld => %@=%ld",sub_p.identifier,(long)sub_p.pointerId,create.pointer.identifier,(long)create.pointer.pointerId);
     }
@@ -431,6 +432,50 @@
     return nil;
 }
 
+/**
+ *  MARK:--------------------内类比构建器--------------------
+ *  @param target_p     :
+ *      1. 构建有无时,以变有/无的概念为target;
+ *      2. 构建大小时,以a_p/b_p为target (因为只是使用at&ds,所以用哪个都行);
+ *  @param frontConAlg  :
+ *      1. 构建有无时,以变有/无的概念为frontConAlg;
+ *      2. 构建大小时,以"微信息所在的概念algA为frontConAlg;
+ *  @param backConAlg   :
+ *      1. 构建有无时,以变有/无的概念为backConAlg;
+ *      2. 构建大小时,以"微信息所在的概念algB为backConAlg;
+ */
++(AINetAbsFoNode*)analogyInner_Creater:(AnalogyInnerType)type target_p:(AIKVPointer*)target_p frontConAlg:(AIAlgNodeBase*)frontConAlg backConAlg:(AIAlgNodeBase*)backConAlg rangeAlg_ps:(NSArray*)rangeAlg_ps conFo:(AIFoNodeBase*)conFo{
+    //1. 数据检查
+    rangeAlg_ps = ARRTOOK(rangeAlg_ps);
+    if (!target_p || !frontConAlg || !backConAlg || !conFo) return nil;
+    
+    //2. 获取front&back稀疏码值;
+    NSInteger frontData = [TIRUtils getInnerFrontData:type];
+    NSInteger backData = [TIRUtils getInnerFrontData:type];
+    
+    //3. 构建微信息;
+    AIKVPointer *frontValue_p = [theNet getNetDataPointerWithData:@(frontData) algsType:target_p.algsType dataSource:target_p.dataSource];
+    AIKVPointer *backValue_p = [theNet getNetDataPointerWithData:@(backData) algsType:target_p.algsType dataSource:target_p.dataSource];
+    if (!frontValue_p || !backValue_p) {
+        return nil;
+    }
+    
+    //4. 构建抽象概念 (20190809注:此处可考虑,type为大/小时,不做具象指向,因为大小概念,本来就是独立的节点);
+    AIAlgNodeBase *frontAlg = [TIRUtils createInnerAbsAlg:frontConAlg value_p:frontValue_p];
+    AIAlgNodeBase *backAlg = [TIRUtils createInnerAbsAlg:backConAlg value_p:backValue_p];
+    
+    //5. 构建抽象时序; (小动致大 / 大动致小) (之间的信息为balabala)
+    AINetAbsFoNode *result = [TIRUtils createInnerAbsFo:frontAlg backAlg:backAlg rangeAlg_ps:rangeAlg_ps conFo:conFo];
+    
+    //6. 调试内类比结果
+    if (result) {
+        NSMutableString *mStr = [[NSMutableString alloc] init];
+        for (AIKVPointer *item_p in result.content_ps) [mStr appendFormat:@"%@=%ld,",item_p.identifier,(long)item_p.pointerId];
+        NSString *typeDesc = (backData == cGreater) ? @"大" : (backData == cLess) ? @"小" : (backData == cHav) ? @"有" : (backData == cNone) ? @"无" : @"错误";
+        NSLog(@"========> 内类比构建时序 (%@): [%@]",typeDesc,SUBSTR2INDEX(mStr, mStr.length - 1));
+    }
+    return result;
+}
 
 /**
  *  MARK:--------------------内类比的内中有外--------------------
