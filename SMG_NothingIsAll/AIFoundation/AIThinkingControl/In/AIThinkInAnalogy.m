@@ -337,9 +337,9 @@
  *      2. 构建大小时,以"微信息所在的概念algB为backConAlg;
  *  @param conFo : 用来构建抽象具象时序时,作为具象节点使用;
  *  @作用
- *      1. 构建动态微信息;
- *      2. 构建动态概念;
- *      3. 构建abFoNode时序;
+ *      1. 构建动态微信息 (有去重);
+ *      2. 构建动态概念 (有去重);
+ *      3. 构建abFoNode时序 (未去重);
  */
 +(AINetAbsFoNode*)analogyInner_Creater:(AnalogyInnerType)type target_p:(AIKVPointer*)target_p frontConAlg:(AIAlgNodeBase*)frontConAlg backConAlg:(AIAlgNodeBase*)backConAlg rangeAlg_ps:(NSArray*)rangeAlg_ps conFo:(AIFoNodeBase*)conFo{
     //1. 数据检查
@@ -353,9 +353,6 @@
     //3. 构建微信息;
     AIKVPointer *frontValue_p = [theNet getNetDataPointerWithData:@(frontData) algsType:target_p.algsType dataSource:target_p.dataSource];
     AIKVPointer *backValue_p = [theNet getNetDataPointerWithData:@(backData) algsType:target_p.algsType dataSource:target_p.dataSource];
-    if (!frontValue_p || !backValue_p) {
-        return nil;
-    }
     
     //4. 构建抽象概念 (20190809注:此处可考虑,type为大/小时,不做具象指向,因为大小概念,本来就是独立的节点);
     AIAlgNodeBase *frontAlg = [TIRUtils createInnerAbsAlg:frontConAlg value_p:frontValue_p];
