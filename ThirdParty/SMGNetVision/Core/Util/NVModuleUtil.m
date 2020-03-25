@@ -67,8 +67,8 @@
 +(NSComparisonResult)compareNodeData1:(id)n1 nodeData2:(id)n2 indexDic:(NSDictionary*)indexDic{
     indexDic = DICTOOK(indexDic);
     if (n1 && n2) {
-        NSData *key1 = [self keyOfData:n1];
-        NSData *key2 = [self keyOfData:n2];
+        NSData *key1 = OBJ2DATA(n1);
+        NSData *key2 = OBJ2DATA(n2);
         int index1 = [NUMTOOK([indexDic objectForKey:key1]) intValue];
         int index2 = [NUMTOOK([indexDic objectForKey:key2]) intValue];
         return (index1 == index2) ? NSOrderedSame : ((index1 < index2) ? NSOrderedAscending : NSOrderedDescending);
@@ -156,7 +156,7 @@
                 NSArray *models = [self findModelsWithBigData:smaller compareModels:compareModels];
                 if (!ARRISOK(models)) {
                     //5. 找不到更小,smaller已经是最小了;
-                    [result setObject:@(0) forKey:[self keyOfData:smaller]];
+                    [result setObject:@(0) forKey:OBJ2DATA(smaller)];
                 }else{
                     //6. 有更小,则收集并再假设为最小,继续递归查更小;
                     for (NodeCompareModel *model in models) {
@@ -172,7 +172,7 @@
     
     //8. 列其它index;
     for (NSData *key in result.allKeys) {
-        id smaller = [self dataOfKey:key];
+        id smaller = DATA2OBJ(key);
         //3. 假设当前为最小
         NSArray *smallers = @[smaller];
         do {
@@ -183,13 +183,13 @@
                 if (ARRISOK(models)) {
                     //6. 有更大,则index+1;
                     for (NodeCompareModel *model in models) {
-                        int smallIndex = [NUMTOOK([result objectForKey:[self keyOfData:smaller]]) intValue];
+                        int smallIndex = [NUMTOOK([result objectForKey:OBJ2DATA(smaller)]) intValue];
                         int bigIndex = smallIndex + 1;
                         
                         //7. 存到result中;
-                        int oldIndex = [NUMTOOK([result objectForKey:[self keyOfData:model.bigNodeData]]) intValue];
+                        int oldIndex = [NUMTOOK([result objectForKey:OBJ2DATA(model.bigNodeData)]) intValue];
                         int newIndex = MAX(oldIndex, bigIndex);
-                        [result setObject:@(newIndex) forKey:[self keyOfData:model.bigNodeData]];
+                        [result setObject:@(newIndex) forKey:OBJ2DATA(model.bigNodeData)];
                         
                         //8. 收集新的smallers并递归找更大;
                         [newSmallers addObject:model.bigNodeData];
@@ -202,18 +202,6 @@
         } while (ARRISOK(smallers));
     }
     return result;
-}
-
-/**
- *  MARK:--------------------获取data的key形态--------------------
- */
-+(NSData*) keyOfData:(id)data{
-    NSData *key = [NSKeyedArchiver archivedDataWithRootObject:data];
-    return key;
-}
-+(id) dataOfKey:(NSData*)key{
-    id data = [NSKeyedUnarchiver unarchiveObjectWithData:key];
-    return data;
 }
 
 //MARK:===============================================================

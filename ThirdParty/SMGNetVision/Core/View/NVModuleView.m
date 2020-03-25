@@ -137,7 +137,7 @@
             for (NVNodeView *nodeView in nodeViews) {
                 if ([nodeView.data isEqual:sortItem]) {
                     //5. 取xIndex和yIndex;
-                    NSData *key = [NVModuleUtil keyOfData:nodeView.data];
+                    NSData *key = OBJ2DATA(nodeView.data);
                     NSInteger x = ++curX;
                     NSInteger y = [NUMTOOK([indexDic objectForKey:key]) integerValue];
                     

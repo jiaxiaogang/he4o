@@ -102,6 +102,10 @@
 //ISOK
 #define ISOK(o, c) [SMGUtils isOk:o class:c]                            //obj强检查 (object class)
 
+//NSData
+#define OBJ2DATA(obj) [NSKeyedArchiver archivedDataWithRootObject:obj]
+#define DATA2OBJ(data) [NSKeyedUnarchiver unarchiveObjectWithData:data]
+
 /**
  *  MARK:--------------------快捷建对象--------------------
  */

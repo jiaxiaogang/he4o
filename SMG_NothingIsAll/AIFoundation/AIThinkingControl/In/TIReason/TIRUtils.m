@@ -204,7 +204,7 @@
             //3. 进行计数
             for (AIPort *refPort in refPorts) {
                 if (!exceptBlock(refPort.target_p)) {
-                    NSData *key = [NSKeyedArchiver archivedDataWithRootObject:refPort.target_p];
+                    NSData *key = OBJ2DATA(refPort.target_p);
                     int oldCount = [NUMTOOK([countDic objectForKey:key]) intValue];
                     [countDic setObject:@(oldCount + 1) forKey:key];
                 }
@@ -224,7 +224,7 @@
         NSInteger countWrong = 0;
         NSInteger typeCountWrong = 0;
         for (NSData *key in sortKeys) {
-            AIKVPointer *key_p = [NSKeyedUnarchiver unarchiveObjectWithData:key];
+            AIKVPointer *key_p = DATA2OBJ(key);
             AINodeBase *result = [SMGUtils searchNode:key_p];
             int matchingCount = [NUMTOOK([countDic objectForKey:key]) intValue];
             

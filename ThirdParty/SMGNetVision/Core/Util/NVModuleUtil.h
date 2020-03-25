@@ -42,11 +42,4 @@
  */
 +(NSDictionary*)convertIndexDicWithCompareModels:(NSArray*)compareModels;
 
-
-/**
- *  MARK:--------------------获取data的key形态--------------------
- */
-+(NSData*) keyOfData:(id)data;
-+(id) dataOfKey:(NSData*)key;
-
 @end

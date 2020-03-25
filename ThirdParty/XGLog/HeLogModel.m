@@ -33,7 +33,7 @@
     PINDiskCache *cache = [[PINDiskCache alloc] initWithName:kFolderName];
     id file = [cache objectForKey:kFileName];
     self.datas = [[NSMutableArray alloc] initWithArray:file];
-    self.diskDatasMd5 = STRTOOK([HeLogUtil md5ByData:[NSKeyedArchiver archivedDataWithRootObject:self.datas]]);
+    self.diskDatasMd5 = STRTOOK([HeLogUtil md5ByData:OBJ2DATA(self.datas)]);
     NSLog(@"===========HeLog Init Data %ld============",self.datas.count);
     self.timer = [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
 }
@@ -61,7 +61,7 @@
 //MARK:===============================================================
 - (void)notificationTimer{
     //1. md5去重,同样内容避免重复写硬盘;
-    NSString *memDatasMd5 = STRTOOK([HeLogUtil md5ByData:[NSKeyedArchiver archivedDataWithRootObject:self.datas]]);
+    NSString *memDatasMd5 = STRTOOK([HeLogUtil md5ByData:OBJ2DATA(self.datas)]);
     if ([memDatasMd5 isEqualToString:self.diskDatasMd5]) {
         return;
     }

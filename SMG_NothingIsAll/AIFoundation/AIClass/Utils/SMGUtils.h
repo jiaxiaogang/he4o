@@ -191,7 +191,7 @@
 
 /**
  *  MARK:--------------------从a_ps和b_ps中,筛选出有效的元素映射返回--------------------
- *  @result notnull
+ *  @result notnull (返回的字典中key,为NSData类型)
  */
 +(NSMutableDictionary*) filterPointers:(NSArray *)a_ps b_ps:(NSArray*)b_ps checkItemValid:(BOOL(^)(AIKVPointer *a_p,AIKVPointer *b_p))checkItemValid;
 

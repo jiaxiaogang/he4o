@@ -685,7 +685,7 @@
     for (AIKVPointer *a_p in a_ps) {
         for (AIKVPointer *b_p in b_ps) {
             if (checkItemValid && checkItemValid(a_p,b_p)) {
-                [result setObject:b_p forKey:a_p];
+                [result setObject:b_p forKey:OBJ2DATA(a_p)];
             }
         }
     }

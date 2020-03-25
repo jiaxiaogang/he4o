@@ -263,14 +263,15 @@
     NSMutableDictionary *sameIdentifier = [SMGUtils filterSameIdentifier_ps:aSub_ps b_ps:bSub_ps];
     
     //4. 分别进行比较大小并构建变化;
-    for (AIKVPointer *a_p in sameIdentifier.allKeys) {
-        AIKVPointer *b_p = [sameIdentifier objectForKey:a_p];
+    for (NSData *key in sameIdentifier.allKeys) {
+        AIKVPointer *a_p = DATA2OBJ(key);
+        AIKVPointer *b_p = [sameIdentifier objectForKey:key];
         //a. 对比微信息 (MARK_VALUE:如微信息去重功能去掉,此处要取值再进行对比)
         NSNumber *numA = [AINetIndex getData:a_p];
         NSNumber *numB = [AINetIndex getData:b_p];
         NSComparisonResult compareResult = [NUMTOOK(numA) compare:NUMTOOK(numB)];
         //b. 调试a_p和b_p是否合格,应该同标识,同文件夹名称,不同pId;
-        NSLog(@"内类比 (大小) 前: %@/%@=%ld(%@) | %@/%@=%ld(%@)",a_p.folderName,a_p.identifier,(long)a_p.pointerId,numA,b_p.folderName,b_p.identifier,(long)b_p.pointerId,numB);
+        NSLog(@"内类比 (大小) 前: %@/%@=%ld(%f) | %@/%@=%ld(%f)",a_p.folderName,a_p.identifier,(long)a_p.pointerId,[numA doubleValue],b_p.folderName,b_p.identifier,(long)b_p.pointerId,[numB doubleValue]);
         if (compareResult == NSOrderedAscending) {
             //c. 构建小;
             AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyInnerType_Less target_p:a_p algA:algA algB:algB rangeOrders:rangeAlg_ps conFo:checkFo];
