@@ -341,7 +341,7 @@
     
     //2. 获取front&back稀疏码值;
     NSInteger frontData = [TIRUtils getInnerFrontData:type];
-    NSInteger backData = [TIRUtils getInnerFrontData:type];
+    NSInteger backData = [TIRUtils getInnerBackData:type];
     
     //3. 构建微信息;
     AIKVPointer *frontValue_p = [theNet getNetDataPointerWithData:@(frontData) algsType:algsType dataSource:dataSource];
@@ -362,7 +362,7 @@
     [theNV setNodeData:frontValue_p appendLightStr:[NVHeUtil getLightStr:frontValue_p]];
     [theNV setNodeData:backValue_p appendLightStr:[NVHeUtil getLightStr:backValue_p]];
     [theNV setNodeData:frontAlg.pointer appendLightStr:[NVHeUtil getLightStr:frontAlg.pointer]];
-    [theNV setNodeData:backAlg appendLightStr:[NVHeUtil getLightStr:backAlg.pointer]];
+    [theNV setNodeData:backAlg.pointer appendLightStr:[NVHeUtil getLightStr:backAlg.pointer]];
     [theNV setNodeData:result.pointer appendLightStr:[NVHeUtil getLightStr:result.pointer]];
     return result;
 }
