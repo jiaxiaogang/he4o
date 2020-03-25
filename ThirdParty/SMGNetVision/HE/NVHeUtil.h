@@ -21,7 +21,6 @@
  */
 +(NSString*) getLightStr4Ps:(NSArray*)node_ps;
 +(NSString*) getLightStr:(AIKVPointer*)value_p;
-+(NSString*) getLightStr_Value:(double)value;
 
 
 //MARK:===============================================================

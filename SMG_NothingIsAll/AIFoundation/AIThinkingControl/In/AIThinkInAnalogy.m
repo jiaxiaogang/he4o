@@ -359,11 +359,11 @@
     if (frontAlg) NSLog(@"==> 内类比构建概念: [%@]",[NVHeUtil getLightStr4Ps:frontAlg.content_ps]);
     if (backAlg) NSLog(@"==> 内类比构建概念: [%@]",[NVHeUtil getLightStr4Ps:backAlg.content_ps]);
     if (result) NSLog(@"===> 内类比构建时序: [%@]",[NVHeUtil getLightStr4Ps:result.content_ps]);
-    [theNV setNodeData:frontValue_p appendLightStr:[NVHeUtil getLightStr:frontValue_p]];
-    [theNV setNodeData:backValue_p appendLightStr:[NVHeUtil getLightStr:backValue_p]];
-    [theNV setNodeData:frontAlg.pointer appendLightStr:[NVHeUtil getLightStr:frontAlg.pointer]];
-    [theNV setNodeData:backAlg.pointer appendLightStr:[NVHeUtil getLightStr:backAlg.pointer]];
-    [theNV setNodeData:result.pointer appendLightStr:[NVHeUtil getLightStr:result.pointer]];
+    [theNV setNodeData:frontValue_p lightStr:[NVHeUtil getLightStr:frontValue_p]];
+    [theNV setNodeData:backValue_p lightStr:[NVHeUtil getLightStr:backValue_p]];
+    [theNV setNodeData:frontAlg.pointer lightStr:[NVHeUtil getLightStr:frontAlg.pointer]];
+    [theNV setNodeData:backAlg.pointer lightStr:[NVHeUtil getLightStr:backAlg.pointer]];
+    [theNV setNodeData:result.pointer lightStr:[NVHeUtil getLightStr:result.pointer]];
     return result;
 }
 

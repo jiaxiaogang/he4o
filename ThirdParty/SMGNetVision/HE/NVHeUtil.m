@@ -68,8 +68,9 @@
 
 //获取value_p的light描述;
 +(NSString*) getLightStr_ValueP:(AIKVPointer*)value_p{
+    if (!value_p) return @"";
     double value = [NUMTOOK([AINetIndex getData:value_p]) doubleValue];
-    NSString *valueStr = [self getLightStr_Value:value];
+    NSString *valueStr = [self getLightStr_Value:value algsType:value_p.algsType dataSource:value_p.dataSource];
     if ([@"sizeWidth" isEqualToString:value_p.dataSource]) {
         return STRFORMAT(@"宽%@",valueStr);
     }else if ([@"sizeHeight" isEqualToString:value_p.dataSource]) {
@@ -103,7 +104,7 @@
 }
 
 //获取value的light描述;
-+(NSString*) getLightStr_Value:(double)value{
++(NSString*) getLightStr_Value:(double)value algsType:(NSString*)algsType dataSource:(NSString*)dataSource{
     if(value == cHav){
         return @"有";
     }else if(value == cNone){
@@ -112,6 +113,18 @@
         return @"大";
     }else if(value == cLess){
         return @"小";
+    }else if([FLY_RDS isEqualToString:algsType] || [@"direction" isEqualToString:dataSource]){
+        int caseValue = value * 8;
+        switch (caseValue) {
+            case 0: return @"←";
+            case 1: return @"↖";
+            case 2: return @"↑";
+            case 3: return @"↗";
+            case 4: return @"→";
+            case 5: return @"↘";
+            case 6: return @"↓";
+            case 7: return @"↙";
+        }
     }
     NSString *stringValue = STRFORMAT(@"%f",value);
     return [NSString removeFloatZero:stringValue];
