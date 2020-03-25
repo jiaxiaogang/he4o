@@ -267,11 +267,11 @@
         NSComparisonResult compareResult = [NUMTOOK(numA) compare:NUMTOOK(numB)];
         //b. 调试a_p和b_p是否合格,应该同标识,同文件夹名称,不同pId;
         NSLog(@"--------------内类比 (大小) 前: %@ -> %@",[NVHeUtil getLightStr:a_p],[NVHeUtil getLightStr:b_p]);
-        if (compareResult == NSOrderedAscending) {
+        if (compareResult == NSOrderedDescending) {
             //c. 构建小;
             AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyInnerType_Less algsType:a_p.algsType dataSource:a_p.dataSource frontConAlg:algA backConAlg:algB rangeAlg_ps:rangeAlg_ps conFo:checkFo];
             if (createdBlock) createdBlock(create);
-        }else if (compareResult == NSOrderedDescending) {
+        }else if (compareResult == NSOrderedAscending) {
             //d. 构建大;
             AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyInnerType_Greater algsType:a_p.algsType dataSource:a_p.dataSource frontConAlg:algA backConAlg:algB rangeAlg_ps:rangeAlg_ps conFo:checkFo];
             if (createdBlock) createdBlock(create);
