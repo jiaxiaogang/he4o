@@ -275,12 +275,12 @@
         NSLog(@"内类比 (大小) 前: %@/%@=%ld(%f) | %@/%@=%ld(%f)",a_p.folderName,a_p.identifier,(long)a_p.pointerId,[numA doubleValue],b_p.folderName,b_p.identifier,(long)b_p.pointerId,[numB doubleValue]);
         if (compareResult == NSOrderedAscending) {
             //c. 构建小;
-            AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyInnerType_Less target_p:a_p frontConAlg:algA backConAlg:algB rangeAlg_ps:rangeAlg_ps conFo:checkFo];
+            AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyInnerType_Less algsType:a_p.algsType dataSource:a_p.dataSource frontConAlg:algA backConAlg:algB rangeAlg_ps:rangeAlg_ps conFo:checkFo];
             if (createdBlock) createdBlock(create);
             NSLog(@"内类比 (小) 后: %@=%ld",create.pointer.identifier,(long)create.pointer.pointerId);
         }else if (compareResult == NSOrderedDescending) {
             //d. 构建大;
-            AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyInnerType_Greater target_p:a_p frontConAlg:algA backConAlg:algB rangeAlg_ps:rangeAlg_ps conFo:checkFo];
+            AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyInnerType_Greater algsType:a_p.algsType dataSource:a_p.dataSource frontConAlg:algA backConAlg:algB rangeAlg_ps:rangeAlg_ps conFo:checkFo];
             if (createdBlock) createdBlock(create);
             NSLog(@"内类比 (大) 后: %@=%ld",create.pointer.identifier,(long)create.pointer.pointerId);
         }
@@ -308,7 +308,7 @@
     //3. a变无
     for (AIKVPointer *sub_p in aSub_ps) {
         AIAlgNodeBase *target = [SMGUtils searchNode:sub_p];
-        AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyInnerType_None target_p:target.pointer frontConAlg:target backConAlg:target rangeAlg_ps:rangeAlg_ps conFo:checkFo];
+        AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyInnerType_None algsType:sub_p.algsType dataSource:sub_p.dataSource frontConAlg:target backConAlg:target rangeAlg_ps:rangeAlg_ps conFo:checkFo];
         if (createdBlock) createdBlock(create);
         NSLog(@"内类比 (无):%@=%ld => %@=%ld",sub_p.identifier,(long)sub_p.pointerId,create.pointer.identifier,(long)create.pointer.pointerId);
     }
@@ -316,7 +316,7 @@
     //4. b变有
     for (AIKVPointer *sub_p in bSub_ps) {
         AIAlgNodeBase *target = [SMGUtils searchNode:sub_p];
-        AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyInnerType_Hav target_p:target.pointer frontConAlg:target backConAlg:target rangeAlg_ps:rangeAlg_ps conFo:checkFo];
+        AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyInnerType_Hav algsType:sub_p.algsType dataSource:sub_p.dataSource frontConAlg:target backConAlg:target rangeAlg_ps:rangeAlg_ps conFo:checkFo];
         if (createdBlock) createdBlock(create);
         NSLog(@"内类比 (有):%@=%ld => %@=%ld",sub_p.identifier,(long)sub_p.pointerId,create.pointer.identifier,(long)create.pointer.pointerId);
     }
@@ -326,9 +326,9 @@
  *  MARK:--------------------内类比构建器--------------------
  *  @param type : 内类比类型,大小有无; (必须为四值之一,否则构建未知节点)
  *  @param rangeAlg_ps  : 在i-j之间的orders; (如 "a1 balabala a2" 中,balabala就是rangeOrders)
- *  @param target_p     : 操作对象 (有无时为概念地址,大小时为稀疏码地址);
- *      1. 构建有无时,以变有/无的概念为target;
- *      2. 构建大小时,以a_p/b_p为target (因为只是使用at&ds,所以用哪个都行);
+ *  @param algsType & dataSource : 构建"有无大小"稀疏码的at&ds  (有无时为概念地址,大小时为稀疏码地址);
+ *      1. 构建有无时,与变有/无的概念的标识相同;
+ *      2. 构建大小时,与a_p/b_p标识相同 (因为只是使用at&ds,所以用哪个都行);
  *  @param frontConAlg  :
  *      1. 构建有无时,以变有/无的概念为frontConAlg;
  *      2. 构建大小时,以"微信息所在的概念algA为frontConAlg;
@@ -341,18 +341,20 @@
  *      2. 构建动态概念 (有去重);
  *      3. 构建abFoNode时序 (未去重);
  */
-+(AINetAbsFoNode*)analogyInner_Creater:(AnalogyInnerType)type target_p:(AIKVPointer*)target_p frontConAlg:(AIAlgNodeBase*)frontConAlg backConAlg:(AIAlgNodeBase*)backConAlg rangeAlg_ps:(NSArray*)rangeAlg_ps conFo:(AIFoNodeBase*)conFo{
++(AINetAbsFoNode*)analogyInner_Creater:(AnalogyInnerType)type algsType:(NSString*)algsType dataSource:(NSString*)dataSource frontConAlg:(AIAlgNodeBase*)frontConAlg backConAlg:(AIAlgNodeBase*)backConAlg rangeAlg_ps:(NSArray*)rangeAlg_ps conFo:(AIFoNodeBase*)conFo{
     //1. 数据检查
     rangeAlg_ps = ARRTOOK(rangeAlg_ps);
-    if (!target_p || !frontConAlg || !backConAlg || !conFo) return nil;
+    algsType = STRTOOK(algsType);
+    dataSource = STRTOOK(dataSource);
+    if (!frontConAlg || !backConAlg || !conFo) return nil;
     
     //2. 获取front&back稀疏码值;
     NSInteger frontData = [TIRUtils getInnerFrontData:type];
     NSInteger backData = [TIRUtils getInnerFrontData:type];
     
     //3. 构建微信息;
-    AIKVPointer *frontValue_p = [theNet getNetDataPointerWithData:@(frontData) algsType:target_p.algsType dataSource:target_p.dataSource];
-    AIKVPointer *backValue_p = [theNet getNetDataPointerWithData:@(backData) algsType:target_p.algsType dataSource:target_p.dataSource];
+    AIKVPointer *frontValue_p = [theNet getNetDataPointerWithData:@(frontData) algsType:algsType dataSource:dataSource];
+    AIKVPointer *backValue_p = [theNet getNetDataPointerWithData:@(backData) algsType:algsType dataSource:dataSource];
     
     //4. 构建抽象概念 (20190809注:此处可考虑,type为大/小时,不做具象指向,因为大小概念,本来就是独立的节点);
     AIAlgNodeBase *frontAlg = [TIRUtils createInnerAbsAlg:frontConAlg value_p:frontValue_p];
