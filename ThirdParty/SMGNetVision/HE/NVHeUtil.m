@@ -25,6 +25,22 @@
     return false;
 }
 
++(NSString*) getLightStr4Ps:(NSArray*)node_ps{
+    return [self getLightStr4Ps:node_ps sep:@","];
+}
++(NSString*) getLightStr4Ps:(NSArray*)node_ps sep:(NSString*)sep{
+    //1. 数据检查
+    NSMutableString *result = [[NSMutableString alloc] init];
+    node_ps = ARRTOOK(node_ps);
+    sep = STRTOOK(sep);
+    
+    //2. 拼接返回
+    for (AIKVPointer *item_p in node_ps){
+        [result appendFormat:@"%@%@",[NVHeUtil getLightStr:item_p],sep];
+    }
+    return SUBSTR2INDEX(result, result.length - sep.length);
+}
+
 +(NSString*) getLightStr:(AIKVPointer*)node_p{
     if (ISOK(node_p, AIKVPointer.class)) {
         if ([self isValue:node_p]) {
