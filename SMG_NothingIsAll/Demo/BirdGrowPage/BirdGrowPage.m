@@ -35,6 +35,7 @@
     //2. birdView
     self.birdView = [[BirdView alloc] init];
     [self.view addSubview:self.birdView];
+    [self.birdView setCenter:CGPointMake(ScreenWidth / 2.0f, ScreenHeight / 2.0f)];
     self.birdView.delegate = self;
     
     //3. farTapRecognizer
@@ -85,49 +86,49 @@
     [self animationFlash:sender];
     NSLog(@"远投-左");
     CGPoint birdPos = self.birdView.center;
-    [self food2Pos:CGPointMake(birdPos.x - 50, birdPos.y)];
+    [self food2Pos:CGPointMake(birdPos.x - 100, birdPos.y)];
 }
 - (IBAction)foodLeftUpOnClick:(id)sender {
     [self animationFlash:sender];
     NSLog(@"远投-左上");
     CGPoint birdPos = self.birdView.center;
-    [self food2Pos:CGPointMake(birdPos.x - 50, birdPos.y - 50)];
+    [self food2Pos:CGPointMake(birdPos.x - 100, birdPos.y - 100)];
 }
 - (IBAction)foodUpOnClick:(id)sender {
     [self animationFlash:sender];
     NSLog(@"远投-上");
     CGPoint birdPos = self.birdView.center;
-    [self food2Pos:CGPointMake(birdPos.x, birdPos.y - 50)];
+    [self food2Pos:CGPointMake(birdPos.x, birdPos.y - 100)];
 }
 - (IBAction)foodRightUpOnClick:(id)sender {
     [self animationFlash:sender];
     NSLog(@"远投-右上");
     CGPoint birdPos = self.birdView.center;
-    [self food2Pos:CGPointMake(birdPos.x + 50, birdPos.y - 50)];
+    [self food2Pos:CGPointMake(birdPos.x + 100, birdPos.y - 100)];
 }
 - (IBAction)foodRightOnClick:(id)sender {
     [self animationFlash:sender];
     NSLog(@"远投-右");
     CGPoint birdPos = self.birdView.center;
-    [self food2Pos:CGPointMake(birdPos.x + 50, birdPos.y)];
+    [self food2Pos:CGPointMake(birdPos.x + 100, birdPos.y)];
 }
 - (IBAction)foodRightDownOnClick:(id)sender {
     [self animationFlash:sender];
     NSLog(@"远投-右下");
     CGPoint birdPos = self.birdView.center;
-    [self food2Pos:CGPointMake(birdPos.x + 50, birdPos.y + 50)];
+    [self food2Pos:CGPointMake(birdPos.x + 100, birdPos.y + 100)];
 }
 - (IBAction)foodDownOnClick:(id)sender {
     [self animationFlash:sender];
     NSLog(@"远投-下");
     CGPoint birdPos = self.birdView.center;
-    [self food2Pos:CGPointMake(birdPos.x, birdPos.y + 50)];
+    [self food2Pos:CGPointMake(birdPos.x, birdPos.y + 100)];
 }
 - (IBAction)foodLeftDownOnClick:(id)sender {
     [self animationFlash:sender];
     NSLog(@"远投-左下");
     CGPoint birdPos = self.birdView.center;
-    [self food2Pos:CGPointMake(birdPos.x - 50, birdPos.y + 50)];
+    [self food2Pos:CGPointMake(birdPos.x - 100, birdPos.y + 100)];
 }
 - (IBAction)hungerBtnOnClick:(id)sender {
     NSLog(@"马上饿onClick");
