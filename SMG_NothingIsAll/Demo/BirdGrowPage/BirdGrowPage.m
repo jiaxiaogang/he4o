@@ -82,41 +82,49 @@
     [self food2Pos:targetPoint];
 }
 - (IBAction)foodLeftOnClick:(id)sender {
+    [self animationFlash:sender];
     NSLog(@"远投-左");
     CGPoint birdPos = self.birdView.center;
     [self food2Pos:CGPointMake(birdPos.x - 50, birdPos.y)];
 }
 - (IBAction)foodLeftUpOnClick:(id)sender {
+    [self animationFlash:sender];
     NSLog(@"远投-左上");
     CGPoint birdPos = self.birdView.center;
     [self food2Pos:CGPointMake(birdPos.x - 50, birdPos.y - 50)];
 }
 - (IBAction)foodUpOnClick:(id)sender {
+    [self animationFlash:sender];
     NSLog(@"远投-上");
     CGPoint birdPos = self.birdView.center;
     [self food2Pos:CGPointMake(birdPos.x, birdPos.y - 50)];
 }
 - (IBAction)foodRightUpOnClick:(id)sender {
+    [self animationFlash:sender];
     NSLog(@"远投-右上");
     CGPoint birdPos = self.birdView.center;
     [self food2Pos:CGPointMake(birdPos.x + 50, birdPos.y - 50)];
 }
 - (IBAction)foodRightOnClick:(id)sender {
+    [self animationFlash:sender];
     NSLog(@"远投-右");
     CGPoint birdPos = self.birdView.center;
     [self food2Pos:CGPointMake(birdPos.x + 50, birdPos.y)];
 }
 - (IBAction)foodRightDownOnClick:(id)sender {
+    [self animationFlash:sender];
     NSLog(@"远投-右下");
     CGPoint birdPos = self.birdView.center;
     [self food2Pos:CGPointMake(birdPos.x + 50, birdPos.y + 50)];
 }
 - (IBAction)foodDownOnClick:(id)sender {
+    [self animationFlash:sender];
     NSLog(@"远投-下");
     CGPoint birdPos = self.birdView.center;
     [self food2Pos:CGPointMake(birdPos.x, birdPos.y + 50)];
 }
 - (IBAction)foodLeftDownOnClick:(id)sender {
+    [self animationFlash:sender];
     NSLog(@"远投-左下");
     CGPoint birdPos = self.birdView.center;
     [self food2Pos:CGPointMake(birdPos.x - 50, birdPos.y + 50)];
@@ -134,34 +142,42 @@
     [self.birdView touchWing:random];
 }
 - (IBAction)touchWingLeftOnClick:(id)sender {
+    [self animationFlash:sender];
     NSLog(@"摸翅膀onClick-左");
     [self.birdView touchWing:0];
 }
 - (IBAction)touchWingLeftUpOnClick:(id)sender {
+    [self animationFlash:sender];
     NSLog(@"摸翅膀onClick-左上");
     [self.birdView touchWing:1];
 }
 - (IBAction)touchWingUpOnClick:(id)sender {
+    [self animationFlash:sender];
     NSLog(@"摸翅膀onClick-上");
     [self.birdView touchWing:2];
 }
 - (IBAction)touchWingRightUpOnClick:(id)sender {
+    [self animationFlash:sender];
     NSLog(@"摸翅膀onClick-右上");
     [self.birdView touchWing:3];
 }
 - (IBAction)touchWingRightOnClick:(id)sender {
+    [self animationFlash:sender];
     NSLog(@"摸翅膀onClick-右");
     [self.birdView touchWing:4];
 }
 - (IBAction)touchWingRightDownOnClick:(id)sender {
+    [self animationFlash:sender];
     NSLog(@"摸翅膀onClick-右下");
     [self.birdView touchWing:5];
 }
 - (IBAction)touchWingDownOnClick:(id)sender {
+    [self animationFlash:sender];
     NSLog(@"摸翅膀onClick-下");
     [self.birdView touchWing:6];
 }
 - (IBAction)touchWingLeftDownOnClick:(id)sender {
+    [self animationFlash:sender];
     NSLog(@"摸翅膀onClick-左下");
     [self.birdView touchWing:7];
 }
@@ -202,6 +218,16 @@
         //1. 视觉输入
         [self.birdView see:self.view];
     }];
+}
+
+-(void) animationFlash:(UIView*)view{
+    if (view) {
+        [UIView animateWithDuration:0.2 animations:^{
+            view.alpha = 0.3f;
+        }completion:^(BOOL finished) {
+            view.alpha = 1.0f;
+        }];
+    }
 }
 
 @end
