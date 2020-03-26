@@ -122,7 +122,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Volumes/APPLE%20HDD/work/temp/he4o/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOAlgScheme.m"
-                  timestampString = "606866838.684975"
+                  timestampString = "606874195.630617"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "155"
@@ -137,7 +137,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Volumes/APPLE%20HDD/work/temp/he4o/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOAlgScheme.m"
-                  timestampString = "606866838.687215"
+                  timestampString = "606874195.632996"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "155"
@@ -152,7 +152,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Volumes/APPLE%20HDD/work/temp/he4o/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOAlgScheme.m"
-                  timestampString = "606866838.6894391"
+                  timestampString = "606874195.635599"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "155"
@@ -351,6 +351,22 @@
             startingLineNumber = "259"
             endingLineNumber = "259"
             landmarkName = "+analogyInner:aIndex:bIndex:canAss:updateEnergy:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SMG_NothingIsAll/Demo/BirdGrowPage/BirdGrowPage.m"
+            timestampString = "606874195.176453"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "92"
+            endingLineNumber = "92"
+            landmarkName = "-foodLeftUpOnClick:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

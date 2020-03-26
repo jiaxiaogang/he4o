@@ -88,13 +88,17 @@
     [AIReactorControl commitReactor:EAT_RDS];
 }
 
--(void) touchWing{
+/**
+ *  MARK:--------------------摸翅膀--------------------
+ *  @param direction 从左顺时针,8个方向,分别为0-7;
+ */
+-(void) touchWing:(int)direction{
     //1. 飞前视觉
     [self see:[self.delegate birdView_GetPageView]];
     
     //2. 飞行
-    float random = (arc4random() % 8) / 8.0f;
-    [AIReactorControl commitReactor:FLY_RDS datas:@[@(random)]];
+    float data = direction / 8.0f;
+    [AIReactorControl commitReactor:FLY_RDS datas:@[@(data)]];
     
     //3. 飞后视觉
     [self see:[self.delegate birdView_GetPageView]];

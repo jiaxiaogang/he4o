@@ -78,21 +78,49 @@
     CGFloat targetY = 94 + (ScreenHeight - 60 - 128) * yRate;
     NSLog(@"远投:%f,%f",xRate,yRate);
     [theApp.heLogView addLog:STRFORMAT(@"远投:%f,%f",xRate,yRate)];
-    
-    FoodView *foodView = [[FoodView alloc] init];
-    [foodView hit];
-    [foodView setOrigin:CGPointMake(ScreenWidth * 0.25f, ScreenHeight - 66)];
-    [self.view addSubview:foodView];
     CGPoint targetPoint = CGPointMake(targetX, targetY);
-    
-    [UIView animateWithDuration:1.0f animations:^{
-        [foodView setOrigin:targetPoint];
-    }completion:^(BOOL finished) {
-        //1. 视觉输入
-        [self.birdView see:self.view];
-    }];
+    [self food2Pos:targetPoint];
 }
-
+- (IBAction)foodLeftOnClick:(id)sender {
+    NSLog(@"远投-左");
+    CGPoint birdPos = self.birdView.center;
+    [self food2Pos:CGPointMake(birdPos.x - 50, birdPos.y)];
+}
+- (IBAction)foodLeftUpOnClick:(id)sender {
+    NSLog(@"远投-左上");
+    CGPoint birdPos = self.birdView.center;
+    [self food2Pos:CGPointMake(birdPos.x - 50, birdPos.y - 50)];
+}
+- (IBAction)foodUpOnClick:(id)sender {
+    NSLog(@"远投-上");
+    CGPoint birdPos = self.birdView.center;
+    [self food2Pos:CGPointMake(birdPos.x, birdPos.y - 50)];
+}
+- (IBAction)foodRightUpOnClick:(id)sender {
+    NSLog(@"远投-右上");
+    CGPoint birdPos = self.birdView.center;
+    [self food2Pos:CGPointMake(birdPos.x + 50, birdPos.y - 50)];
+}
+- (IBAction)foodRightOnClick:(id)sender {
+    NSLog(@"远投-右");
+    CGPoint birdPos = self.birdView.center;
+    [self food2Pos:CGPointMake(birdPos.x + 50, birdPos.y)];
+}
+- (IBAction)foodRightDownOnClick:(id)sender {
+    NSLog(@"远投-右下");
+    CGPoint birdPos = self.birdView.center;
+    [self food2Pos:CGPointMake(birdPos.x + 50, birdPos.y + 50)];
+}
+- (IBAction)foodDownOnClick:(id)sender {
+    NSLog(@"远投-下");
+    CGPoint birdPos = self.birdView.center;
+    [self food2Pos:CGPointMake(birdPos.x, birdPos.y + 50)];
+}
+- (IBAction)foodLeftDownOnClick:(id)sender {
+    NSLog(@"远投-左下");
+    CGPoint birdPos = self.birdView.center;
+    [self food2Pos:CGPointMake(birdPos.x - 50, birdPos.y + 50)];
+}
 - (IBAction)hungerBtnOnClick:(id)sender {
     NSLog(@"马上饿onClick");
     [theApp.heLogView addLog:@"马上饿onClick"];
@@ -102,7 +130,40 @@
 - (IBAction)touchWingBtnOnClick:(id)sender {
     NSLog(@"摸翅膀onClick");
     [theApp.heLogView addLog:@"摸翅膀onClick"];
-    [self.birdView touchWing];
+    int random = (arc4random() % 8);
+    [self.birdView touchWing:random];
+}
+- (IBAction)touchWingLeftOnClick:(id)sender {
+    NSLog(@"摸翅膀onClick-左");
+    [self.birdView touchWing:0];
+}
+- (IBAction)touchWingLeftUpOnClick:(id)sender {
+    NSLog(@"摸翅膀onClick-左上");
+    [self.birdView touchWing:1];
+}
+- (IBAction)touchWingUpOnClick:(id)sender {
+    NSLog(@"摸翅膀onClick-上");
+    [self.birdView touchWing:2];
+}
+- (IBAction)touchWingRightUpOnClick:(id)sender {
+    NSLog(@"摸翅膀onClick-右上");
+    [self.birdView touchWing:3];
+}
+- (IBAction)touchWingRightOnClick:(id)sender {
+    NSLog(@"摸翅膀onClick-右");
+    [self.birdView touchWing:4];
+}
+- (IBAction)touchWingRightDownOnClick:(id)sender {
+    NSLog(@"摸翅膀onClick-右下");
+    [self.birdView touchWing:5];
+}
+- (IBAction)touchWingDownOnClick:(id)sender {
+    NSLog(@"摸翅膀onClick-下");
+    [self.birdView touchWing:6];
+}
+- (IBAction)touchWingLeftDownOnClick:(id)sender {
+    NSLog(@"摸翅膀onClick-左下");
+    [self.birdView touchWing:7];
 }
 
 /**
@@ -125,6 +186,22 @@
 
 -(CGRect)birdView_GetSeeRect{
     return CGRectMake(0, 64, ScreenWidth, ScreenHeight - 128);
+}
+
+//MARK:===============================================================
+//MARK:                     < privateMethod >
+//MARK:===============================================================
+- (void) food2Pos:(CGPoint)targetPoint{
+    FoodView *foodView = [[FoodView alloc] init];
+    [foodView hit];
+    [foodView setOrigin:CGPointMake(ScreenWidth * 0.25f, ScreenHeight - 66)];
+    [self.view addSubview:foodView];
+    [UIView animateWithDuration:1.0f animations:^{
+        [foodView setOrigin:targetPoint];
+    }completion:^(BOOL finished) {
+        //1. 视觉输入
+        [self.birdView see:self.view];
+    }];
 }
 
 @end

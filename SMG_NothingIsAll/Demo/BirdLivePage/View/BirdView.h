@@ -50,6 +50,11 @@
  *
  */
 -(void) touchMouth;
--(void) touchWing;
+
+/**
+ *  MARK:--------------------摸翅膀--------------------
+ *  @param direction 从左顺时针,8个方向,分别为0-7;
+ */
+-(void) touchWing:(int)direction;
 
 @end
