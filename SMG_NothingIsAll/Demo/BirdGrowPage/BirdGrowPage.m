@@ -11,6 +11,7 @@
 #import "FoodView.h"
 #import "UIView+Extension.h"
 #import "DemoHunger.h"
+#import "NVViewUtil.h"
 
 @interface BirdGrowPage ()<UIGestureRecognizerDelegate,BirdViewDelegate>
 
@@ -38,13 +39,16 @@
     [self.birdView setCenter:CGPointMake(ScreenWidth / 2.0f, ScreenHeight / 2.0f)];
     self.birdView.delegate = self;
     
-    //3. farTapRecognizer
+    //3. tapRecognizer
     self.tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(customTapAction:)];
-    [self.farView addGestureRecognizer:self.tapRecognizer];
     self.tapRecognizer.delegate = self;
     
-    //4. borderView
+    //4. farView
+    [self.farView addGestureRecognizer:self.tapRecognizer];
+    
+    //5. borderView
     [self.borderView.layer setBorderColor:[UIColor grayColor].CGColor];
+    [self.borderView addGestureRecognizer:self.tapRecognizer];
     [self.borderView.layer setBorderWidth:30];
 }
 
@@ -71,16 +75,39 @@
 //MARK:                     < method >
 //MARK:===============================================================
 - (void)customTapAction:(UITapGestureRecognizer *)tapRecognizer{
+    //1. 计算距离和角度
     UIView *tapView = tapRecognizer.view;
-    CGPoint point = [tapRecognizer locationInView:tapView];
-    CGFloat xRate = point.x / tapView.width;
-    CGFloat yRate = point.y / tapView.height;
-    CGFloat targetX = 30 + (ScreenWidth - 60) * xRate;
-    CGFloat targetY = 94 + (ScreenHeight - 60 - 128) * yRate;
-    NSLog(@"远投:%f,%f",xRate,yRate);
-    [theApp.heLogView addLog:STRFORMAT(@"远投:%f,%f",xRate,yRate)];
-    CGPoint targetPoint = CGPointMake(targetX, targetY);
-    [self food2Pos:targetPoint];
+    CGPoint point = [tapRecognizer locationInView:tapView];                 //点击坐标
+    CGPoint tapPoint = [tapView convertPoint:point toView:theApp.window];   //点击世界坐标
+    CGPoint birdPoint = [self.birdView.superview convertPoint:self.birdView.center toView:theApp.window];//鸟世界坐标
+    CGFloat distance = [NVViewUtil distancePoint:birdPoint second:tapPoint];
+    CGFloat angle = [NVViewUtil angleZero2OnePoint:birdPoint second:tapPoint];
+    NSLog(@"点击: 距离%f,方向%f",distance,angle);
+    NSLog(@"tapPoint:(%f,%f),(%f,%f)",point.x,point.y,tapPoint.x,tapPoint.y);
+    
+    //2. 远投按键,则映射投食;
+    if ([self.farView isEqual:tapView]) {
+        CGPoint point = [tapRecognizer locationInView:tapView];
+        CGFloat xRate = point.x / tapView.width;
+        CGFloat yRate = point.y / tapView.height;
+        CGFloat targetX = 30 + (ScreenWidth - 60) * xRate;
+        CGFloat targetY = 94 + (ScreenHeight - 60 - 128) * yRate;
+        NSLog(@"远投:%f,%f",xRate,yRate);
+        [theApp.heLogView addLog:STRFORMAT(@"远投:%f,%f",xRate,yRate)];
+        CGPoint targetPoint = CGPointMake(targetX, targetY);
+        [self food2Pos:targetPoint];
+    }else if([self.borderView isEqual:tapView]){
+        //3. 全屏触摸_飞行至触摸方向;
+        if (distance < 100) {
+            int angle_15_14 = (int)(angle * 16 + 1);//angle为左向顺时针0-1,x16则为0-15,再+1则为15,0,1,2...14;
+            CGFloat angleValue = (angle_15_14 / 2) / 8.0f;//此时0-1为左上,2-3为上...14,15为左;先除2变成取0-7,再除8.0f,得0-1;
+            NSLog(@"飞行至:%f,%f",angle,angleValue);
+        }else{
+            //4. 全屏触摸_投食至触摸点;
+            CGPoint foodTargetPoint = [theApp.window convertPoint:tapPoint toView:self.borderView];
+            NSLog(@"投食至:(%f,%f),(%f,%f)",tapPoint.x,tapPoint.y,foodTargetPoint.x,foodTargetPoint.y);
+        }
+    }
 }
 - (IBAction)foodLeftOnClick:(id)sender {
     [self animationFlash:sender];
