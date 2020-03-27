@@ -16,7 +16,8 @@
 @interface BirdGrowPage ()<UIGestureRecognizerDelegate,BirdViewDelegate>
 
 @property (strong,nonatomic) BirdView *birdView;
-@property (strong,nonatomic) UITapGestureRecognizer *tapRecognizer;
+@property (strong,nonatomic) UITapGestureRecognizer *singleTap;
+@property (strong,nonatomic) UITapGestureRecognizer *doubleTap;
 @property (weak, nonatomic) IBOutlet UIView *farView;
 @property (weak, nonatomic) IBOutlet UIView *borderView;
 
@@ -39,16 +40,26 @@
     [self.birdView setCenter:CGPointMake(ScreenWidth / 2.0f, ScreenHeight / 2.0f)];
     self.birdView.delegate = self;
     
-    //3. tapRecognizer
-    self.tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(customTapAction:)];
-    self.tapRecognizer.delegate = self;
+    //3. doubleTap
+    self.doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(doubleTap:)];
+    self.doubleTap.numberOfTapsRequired = 2;
+    self.doubleTap.numberOfTouchesRequired = 1;
+    self.doubleTap.delegate = self;
+    
+    //4. singleTap
+    self.singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTap:)];
+    self.singleTap.numberOfTapsRequired = 1;
+    self.singleTap.numberOfTouchesRequired  = 1;
+    self.singleTap.delegate = self;
+    [self.singleTap requireGestureRecognizerToFail:self.doubleTap];
     
     //4. farView
-    [self.farView addGestureRecognizer:self.tapRecognizer];
+    [self.farView addGestureRecognizer:self.singleTap];
     
     //5. borderView
     [self.borderView.layer setBorderColor:[UIColor grayColor].CGColor];
-    [self.borderView addGestureRecognizer:self.tapRecognizer];
+    [self.borderView addGestureRecognizer:self.singleTap];
+    [self.borderView addGestureRecognizer:self.doubleTap];
     [self.borderView.layer setBorderWidth:30];
 }
 
@@ -74,7 +85,8 @@
 //MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
-- (void)customTapAction:(UITapGestureRecognizer *)tapRecognizer{
+//单击投食
+- (void)singleTap:(UITapGestureRecognizer *)tapRecognizer{
     //1. 计算距离和角度
     UIView *tapView = tapRecognizer.view;
     CGPoint point = [tapRecognizer locationInView:tapView];                 //点击坐标
@@ -97,17 +109,28 @@
         CGPoint targetPoint = CGPointMake(targetX, targetY);
         [self food2Pos:targetPoint];
     }else if([self.borderView isEqual:tapView]){
-        //3. 全屏触摸_飞行至触摸方向;
-        if (distance < 100) {
-            int angle_15_14 = (int)(angle * 16 + 1);//angle为左向顺时针0-1,x16则为0-15,再+1则为15,0,1,2...14;
-            CGFloat angleValue = (angle_15_14 / 2) / 8.0f;//此时0-1为左上,2-3为上...14,15为左;先除2变成取0-7,再除8.0f,得0-1;
-            NSLog(@"飞行至:%f,%f",angle,angleValue);
-        }else{
-            //4. 全屏触摸_投食至触摸点;
-            CGPoint foodTargetPoint = [theApp.window convertPoint:tapPoint toView:self.borderView];
-            NSLog(@"投食至:(%f,%f),(%f,%f)",tapPoint.x,tapPoint.y,foodTargetPoint.x,foodTargetPoint.y);
-        }
+        //3. 全屏触摸_投食至触摸点 (self.view本来就是全屏,所以不用转换坐标);
+        [self food2Pos:tapPoint];
+        NSLog(@"投食至:(%f,%f)",tapPoint.x,tapPoint.y);
     }
+}
+
+//双击飞行
+- (void)doubleTap:(UITapGestureRecognizer *)tapRecognizer{
+    //1. 计算距离和角度
+    UIView *tapView = tapRecognizer.view;
+    CGPoint point = [tapRecognizer locationInView:tapView];                 //点击坐标
+    CGPoint tapPoint = [tapView convertPoint:point toView:theApp.window];   //点击世界坐标
+    CGPoint birdPoint = [self.birdView.superview convertPoint:self.birdView.center toView:theApp.window];//鸟世界坐标
+    CGFloat distance = [NVViewUtil distancePoint:birdPoint second:tapPoint];
+    CGFloat angle = [NVViewUtil angleZero2OnePoint:birdPoint second:tapPoint];
+    NSLog(@"点击: 距离%f,方向%f",distance,angle);
+    NSLog(@"tapPoint:(%f,%f),(%f,%f)",point.x,point.y,tapPoint.x,tapPoint.y);
+    
+    //2. 飞行
+    angle = [NVViewUtil convertAngle2Direction_8:angle];
+    NSLog(@"飞行至:%f",angle);
+    [self.birdView fly:angle];
 }
 - (IBAction)foodLeftOnClick:(id)sender {
     [self animationFlash:sender];
