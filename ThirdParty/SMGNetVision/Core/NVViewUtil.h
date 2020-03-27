@@ -33,4 +33,14 @@
  */
 +(CGFloat) anglePIPoint:(CGPoint)first second:(CGPoint)second;
 
+
+/**
+ *  MARK:--------------------将angle转为方向值--------------------
+ *  @param angle : angle为左向顺时针0-1;
+ *  @param directionCount : 方向数 (一般为4或8向);
+ */
++(CGFloat) convertAngle2Direction:(CGFloat)angle directionCount:(int)directionCount;
++(CGFloat) convertAngle2Direction_4:(CGFloat)angle;
++(CGFloat) convertAngle2Direction_8:(CGFloat)angle;
+
 @end
