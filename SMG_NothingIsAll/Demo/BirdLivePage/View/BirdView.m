@@ -11,6 +11,7 @@
 #import "View+MASAdditions.h"
 #import "FoodView.h"
 #import "AIReactorControl.h"
+#import "NVHeUtil.h"
 
 @interface BirdView ()
 
@@ -61,12 +62,17 @@
 //MARK:===============================================================
 
 -(void) fly:(CGFloat)value{
+    //1. 数据检查
     value = MAX(MIN(1, value), 0);
-    value = value * 2 - 1;
-    CGFloat angle = value * M_PI;
-    //以右为0度,逆时针为负,顺时针为正;
-    //对边Y,邻边X
-    NSLog(@"fly >> y:%f x:%f angle:%f",sin(angle),cos(angle),value * 180);
+    
+    //2. 将从左顺时针: "0至1",转换为: "-1至1";
+    CGFloat value_F1_1 = value * 2 - 1;
+    
+    //3. 将"-1至1",转为: "-180至180度";
+    CGFloat angle = value_F1_1 * M_PI;
+    
+    //4. 用sin计算对边Y,cos计算邻边X;
+    NSLog(@"fly >> %@ angle:%f",[NVHeUtil getLightStr_Value:value algsType:FLY_RDS dataSource:@""],value_F1_1 * 180);
     [self setX:self.x + (cos(angle) * 10.0f)];
     [self setY:self.y + (sin(angle) * 10.0f)];
 }

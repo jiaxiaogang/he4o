@@ -90,28 +90,25 @@
     //1. 计算距离和角度
     UIView *tapView = tapRecognizer.view;
     CGPoint point = [tapRecognizer locationInView:tapView];                 //点击坐标
-    CGPoint tapPoint = [tapView convertPoint:point toView:theApp.window];   //点击世界坐标
-    CGPoint birdPoint = [self.birdView.superview convertPoint:self.birdView.center toView:theApp.window];//鸟世界坐标
-    CGFloat distance = [NVViewUtil distancePoint:birdPoint second:tapPoint];
-    CGFloat angle = [NVViewUtil angleZero2OnePoint:birdPoint second:tapPoint];
-    NSLog(@"点击: 距离%f,方向%f",distance,angle);
-    NSLog(@"tapPoint:(%f,%f),(%f,%f)",point.x,point.y,tapPoint.x,tapPoint.y);
+    CGPoint targetPoint = CGPointZero;
     
-    //2. 远投按键,则映射投食;
+    //2. 远投按键,计算映射坐标;
     if ([self.farView isEqual:tapView]) {
-        CGPoint point = [tapRecognizer locationInView:tapView];
         CGFloat xRate = point.x / tapView.width;
         CGFloat yRate = point.y / tapView.height;
         CGFloat targetX = 30 + (ScreenWidth - 60) * xRate;
         CGFloat targetY = 94 + (ScreenHeight - 60 - 128) * yRate;
-        NSLog(@"远投:%f,%f",xRate,yRate);
-        [theApp.heLogView addLog:STRFORMAT(@"远投:%f,%f",xRate,yRate)];
-        CGPoint targetPoint = CGPointMake(targetX, targetY);
-        [self food2Pos:targetPoint];
+        targetPoint = CGPointMake(targetX, targetY);
     }else if([self.borderView isEqual:tapView]){
-        //3. 全屏触摸_投食至触摸点 (self.view本来就是全屏,所以不用转换坐标);
-        [self food2Pos:tapPoint];
-        NSLog(@"投食至:(%f,%f)",tapPoint.x,tapPoint.y);
+        //3. 全屏触摸_计算触摸点世界坐标 (self.view本来就是全屏,所以不用转换坐标);
+        targetPoint = [tapView convertPoint:point toView:theApp.window];   //点击世界坐标
+    }
+    
+    //4. 投食 & 打日志;
+    if (targetPoint.x != 0 && targetPoint.y != 0) {
+        NSLog(@"远投:%f,%f",targetPoint.x,targetPoint.y);
+        [theApp.heLogView addLog:STRFORMAT(@"远投:%f,%f",targetPoint.x,targetPoint.y)];
+        [self food2Pos:targetPoint];
     }
 }
 
@@ -122,14 +119,10 @@
     CGPoint point = [tapRecognizer locationInView:tapView];                 //点击坐标
     CGPoint tapPoint = [tapView convertPoint:point toView:theApp.window];   //点击世界坐标
     CGPoint birdPoint = [self.birdView.superview convertPoint:self.birdView.center toView:theApp.window];//鸟世界坐标
-    CGFloat distance = [NVViewUtil distancePoint:birdPoint second:tapPoint];
     CGFloat angle = [NVViewUtil angleZero2OnePoint:birdPoint second:tapPoint];
-    NSLog(@"点击: 距离%f,方向%f",distance,angle);
-    NSLog(@"tapPoint:(%f,%f),(%f,%f)",point.x,point.y,tapPoint.x,tapPoint.y);
     
     //2. 飞行
     angle = [NVViewUtil convertAngle2Direction_8:angle];
-    NSLog(@"飞行至:%f",angle);
     [self.birdView fly:angle];
 }
 - (IBAction)foodLeftOnClick:(id)sender {
