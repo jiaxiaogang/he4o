@@ -129,6 +129,7 @@
         if (jumpForAbsAlreadyHav) {
             AINetAbsFoNode *assAbsFo = (AINetAbsFoNode*)assFo;
             [AINetUtils relateFoAbs:assAbsFo conNodes:@[fo]];
+            [AINetUtils insertRefPorts_AllFoNode:assAbsFo.pointer order_ps:assAbsFo.content_ps ps:assAbsFo.content_ps];
         }else{
             //4. 构建absFoNode
             AINetAbsFoNode *createAbsFo = [ThinkingUtils createOutsideAbsFo_NoRepeat:fo assFo:assFo content_ps:orderSames];

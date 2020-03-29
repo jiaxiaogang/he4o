@@ -195,6 +195,7 @@
         if (ISOK(absoluteFo, AINetAbsFoNode.class)) {
             result = (AINetAbsFoNode*)absoluteFo;
             [AINetUtils relateFoAbs:result conNodes:@[fo,assFo]];
+            [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
         }else{
             //3. 无则构建
             result = [theNet createAbsFo_Outside:fo foB:assFo orderSames:content_ps];
