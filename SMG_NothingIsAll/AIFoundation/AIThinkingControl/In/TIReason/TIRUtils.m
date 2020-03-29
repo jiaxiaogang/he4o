@@ -174,8 +174,8 @@
         
         //2. 对每个微信息,取被引用的强度前cPartMatchingCheckRefPortsLimit个;
         for (AIKVPointer *item_p in proto_ps) {
-            NSArray *refPorts = refPortsBlock(item_p);
             NSLog(@"当前item_p:%@ -------------------",[NVHeUtil getLightStr:item_p]);
+            NSArray *refPorts = refPortsBlock(item_p);
             refPorts = ARR_SUB(refPorts, 0, cPartMatchingCheckRefPortsLimit);
             for (NSInteger i = 0; i < refPorts.count; i++) {
                 AIPort *item = ARR_INDEX(refPorts, i);
