@@ -64,13 +64,14 @@
 //MARK:                     < 引用插线 (外界调用,支持alg/fo/mv) >
 //MARK:===============================================================
 
-+(void) insertRefPorts_AllAlgNode:(AIPointer*)algNode_p value_ps:(NSArray*)value_ps ps:(NSArray*)ps difStrong:(NSInteger)difStrong{
-    if (algNode_p && ARRISOK(value_ps)) {
++(void) insertRefPorts_AllAlgNode:(AIPointer*)algNode_p content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong{
+    if (algNode_p && ARRISOK(content_ps)) {
+        NSArray *sort_ps = [SMGUtils sortPointers:content_ps];
         //1. 遍历value_p微信息,添加引用;
-        for (AIPointer *value_p in value_ps) {
+        for (AIPointer *value_p in content_ps) {
             //2. 硬盘网络时,取出refPorts -> 并二分法强度序列插入 -> 存XGWedis;
             if (!algNode_p.isMem) {
-                [self insertRefPorts_HdNode:algNode_p passiveRefValue_p:value_p ps:ps difStrong:difStrong];
+                [self insertRefPorts_HdNode:algNode_p passiveRefValue_p:value_p ps:sort_ps difStrong:difStrong];
             }else{
                 //3. 内存网络时,取出memRefPorts -> 插入首位 -> 存XGRedis;
                 [AINetUtils insertRefPorts_MemNode:algNode_p passiveRef_p:value_p ps:nil difStrong:difStrong];
@@ -302,7 +303,7 @@
 +(id) move2HdNodeFromMemNode_Alg:(AINodeBase*)memNode {
     return [self move2HdNodeFromMemNode_General:memNode insertRefPortsBlock:^(AIAlgNodeBase *hdNode) {
         if (ISOK(hdNode, AIAlgNodeBase.class)) {
-            [AINetUtils insertRefPorts_AllAlgNode:hdNode.pointer value_ps:hdNode.content_ps ps:hdNode.content_ps difStrong:1];
+            [AINetUtils insertRefPorts_AllAlgNode:hdNode.pointer content_ps:hdNode.content_ps difStrong:1];
         }
     }];
 }

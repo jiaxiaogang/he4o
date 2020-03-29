@@ -32,7 +32,7 @@
     conNode.content_ps = [[NSMutableArray alloc] initWithArray:[SMGUtils sortPointers:algsArr]];
  
     //4. value.refPorts (更新引用序列)
-    [AINetUtils insertRefPorts_AllAlgNode:conNode.pointer value_ps:conNode.content_ps ps:conNode.content_ps difStrong:1];
+    [AINetUtils insertRefPorts_AllAlgNode:conNode.pointer content_ps:conNode.content_ps difStrong:1];
     
     //5. 存储
     [SMGUtils insertNode:conNode];
@@ -69,7 +69,7 @@
             if (ISOK(checkNode, AIAbsAlgNode.class)) {
                 
                 //b. 并且md5与orderSames相同时,即发现checkNode本身就是抽象节点;
-                NSString *checkMd5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:checkNode.content_ps]]);
+                NSString *checkMd5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:[SMGUtils sortPointers:checkNode.content_ps]]]);
                 if ([samesMd5 isEqualToString:checkMd5]) {
                     
                     //c. 则把conAlgs去掉checkNode;
@@ -89,7 +89,6 @@
                 if ([samesMd5 isEqualToString:absPort.header]) {
                     AIAbsAlgNode *absNode = [SMGUtils searchNode:absPort.target_p];
                     //2> 已存在,则转移到硬盘网络;
-                    NSInteger absNodeContentCountBak = absNode.content_ps.count;
                     if (absNode.pointer.isMem) {
                         absNode = [AINetUtils move2HdNodeFromMemNode_Alg:absNode];
                     }
@@ -128,7 +127,7 @@
         
         //4. value.refPorts (更新/加强微信息的引用序列)
         NSInteger difStrong = 1;//absIsNew ? validConAlgs.count : 1;//20200106改回1,自由竞争无论是抽象还是具象;世上没有两片一样的树叶,所以对于抽象来说,本来就是讨便宜,易联想匹配的;
-        [AINetUtils insertRefPorts_AllAlgNode:findAbsNode.pointer value_ps:findAbsNode.content_ps ps:findAbsNode.content_ps difStrong:difStrong];
+        [AINetUtils insertRefPorts_AllAlgNode:findAbsNode.pointer content_ps:findAbsNode.content_ps difStrong:difStrong];
         
         //5. 关联 & 存储
         [AINetUtils relateAlgAbs:findAbsNode conNodes:validConAlgs];

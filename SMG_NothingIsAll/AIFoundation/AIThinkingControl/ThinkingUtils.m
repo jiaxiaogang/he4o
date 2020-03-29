@@ -186,6 +186,23 @@
     return target;
 }
 
++(AINetAbsFoNode*)createOutsideAbsFo_NoRepeat:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo content_ps:(NSArray*)content_ps{
+    //1. 数据准备
+    AINetAbsFoNode *result = nil;
+    if (fo && assFo) {
+        //2. 有则加强;
+        AIFoNodeBase *absoluteFo = [AINetIndexUtils getAbsoluteMatchingFoNodeWithContent_ps:content_ps except_ps:@[fo.pointer,assFo.pointer] isMem:false];
+        if (ISOK(absoluteFo, AINetAbsFoNode.class)) {
+            result = (AINetAbsFoNode*)absoluteFo;
+            [AINetUtils relateFoAbs:result conNodes:@[fo,assFo]];
+        }else{
+            //3. 无则构建
+            result = [theNet createAbsFo_Outside:fo foB:assFo orderSames:content_ps];
+        }
+    }
+    return result;
+}
+
 @end
 
 

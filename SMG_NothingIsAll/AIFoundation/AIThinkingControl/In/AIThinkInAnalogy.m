@@ -131,7 +131,7 @@
             [AINetUtils relateFoAbs:assAbsFo conNodes:@[fo]];
         }else{
             //4. 构建absFoNode
-            AINetAbsFoNode *createAbsFo = [theNet createAbsFo_Outside:fo foB:assFo orderSames:orderSames];
+            AINetAbsFoNode *createAbsFo = [ThinkingUtils createOutsideAbsFo_NoRepeat:fo assFo:assFo content_ps:orderSames];
 
             //5. createAbsCmvNode
             if (!fromInner) {
@@ -353,8 +353,8 @@
     AIKVPointer *backValue_p = [theNet getNetDataPointerWithData:@(backData) algsType:algsType dataSource:dataSource];
     
     //4. 构建抽象概念 (20190809注:此处可考虑,type为大/小时,不做具象指向,因为大小概念,本来就是独立的节点);
-    AIAlgNodeBase *frontAlg = [TIRUtils createInnerAbsAlg:frontConAlg value_p:frontValue_p];
-    AIAlgNodeBase *backAlg = [TIRUtils createInnerAbsAlg:backConAlg value_p:backValue_p];
+    AIAlgNodeBase *frontAlg = [TIRUtils createInnerAbsAlg_NoRepeat:frontConAlg value_p:frontValue_p];
+    AIAlgNodeBase *backAlg = [TIRUtils createInnerAbsAlg_NoRepeat:backConAlg value_p:backValue_p];
     
     //5. 构建抽象时序; (小动致大 / 大动致小) (之间的信息为balabala)
     AINetAbsFoNode *result = [TIRUtils createInnerAbsFo:frontAlg backAlg:backAlg rangeAlg_ps:rangeAlg_ps conFo:conFo];

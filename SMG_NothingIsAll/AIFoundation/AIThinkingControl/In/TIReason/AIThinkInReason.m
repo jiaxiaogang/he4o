@@ -85,7 +85,7 @@
     //3. 直接将assAlgNode设置为algNode的抽象; (这样后面TOR理性决策时,才可以直接对当前瞬时实物进行很好的理性评价);
     if (ISOK(assAlgNode, AIAlgNodeBase.class)) {
         //4. 识别到时,value.refPorts -> 更新/加强微信息的引用序列
-        [AINetUtils insertRefPorts_AllAlgNode:assAlgNode.pointer value_ps:assAlgNode.content_ps ps:assAlgNode.content_ps difStrong:1];
+        [AINetUtils insertRefPorts_AllAlgNode:assAlgNode.pointer content_ps:assAlgNode.content_ps difStrong:1];
         
         //5. 识别到时,进行抽具象 -> 关联 & 存储 (20200103:测得,algNode为内存节点时,关联也在内存)
         [AINetUtils relateAlgAbs:(AIAbsAlgNode*)assAlgNode conNodes:@[algNode]];
@@ -108,7 +108,7 @@
     
     //4. 返回
     if (fuzzyAlg) {
-        [AINetUtils insertRefPorts_AllAlgNode:fuzzyAlg.pointer value_ps:fuzzyAlg.content_ps ps:fuzzyAlg.content_ps difStrong:1];//B更新强度
+        [AINetUtils insertRefPorts_AllAlgNode:fuzzyAlg.pointer content_ps:fuzzyAlg.content_ps difStrong:1];//B更新强度
         return fuzzyAlg;//C返回
     }else{
         return assAlgNode;

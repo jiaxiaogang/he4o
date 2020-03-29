@@ -186,7 +186,7 @@
                 if (itemAlg) {
                     classDesc = ISOK(itemAlg, AIAbsAlgNode.class) ? @"抽象" : @"具象";
                     countDesc = STRFORMAT(@"%ld/%ld",itemAlg.content_ps.count,proto_ps.count);
-                    reMd5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:itemAlg.content_ps]]);
+                    reMd5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:[SMGUtils sortPointers:itemAlg.content_ps]]]);
                 }
                 NSLog(@"{稀疏码:%@=%ld} -%ld-> {概念:%@=%ld[%@][%@][isMem:%d]} 下标:%ld, MD5:%d",
                       item_p.identifier,item_p.pointerId,(long)item.strong.value,
@@ -393,7 +393,7 @@
  *  @注意: 此处algNode和algNode_Inner应该是组分关系,但先保持抽具象关系,看后面测试,有没别的影响,再改 (参考179_内类比全流程回顾)
  *  @desc 大小时
  */
-+(AIAbsAlgNode*)createInnerAbsAlg:(AIAlgNodeBase*)conAlg value_p:(AIPointer*)value_p{
++(AIAbsAlgNode*)createInnerAbsAlg_NoRepeat:(AIAlgNodeBase*)conAlg value_p:(AIPointer*)value_p{
     //1. 数据检查
     if (!value_p) return nil;
     //2. 有则加强;

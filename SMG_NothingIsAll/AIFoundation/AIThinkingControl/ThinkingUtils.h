@@ -87,8 +87,18 @@
  */
 +(BOOL) dataIn_CheckMV:(NSArray*)algResult_ps;
 
-//构建硬盘概念节点_去重;
+/**
+ *  MARK:--------------------构建硬盘概念节点_去重--------------------
+ *  @callers : 无调用;
+ */
 +(AIAlgNodeBase*) createHdAlgNode_NoRepeat:(NSArray*)value_ps;
+
+/**
+ *  MARK:--------------------外类比构建抽象时序_去重--------------------
+ *  @callers : 被外类比构建器调用;
+ *  @功能说明: 1. 未支持内存去重;
+ */
++(AINetAbsFoNode*)createOutsideAbsFo_NoRepeat:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo content_ps:(NSArray*)content_ps;
 
 @end
 

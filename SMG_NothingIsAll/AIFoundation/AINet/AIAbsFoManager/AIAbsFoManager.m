@@ -27,20 +27,6 @@
 @implementation AIAbsFoManager
 
 -(AINetAbsFoNode*) create:(NSArray*)conFos orderSames:(NSArray*)orderSames{
-    BOOL eatFood = false;
-    if (orderSames.count == 2) {
-        AIKVPointer *eatAlg_p = ARR_INDEX(orderSames, 1);
-        AIKVPointer *foodAlg_p = ARR_INDEX(orderSames, 0);
-        AIAlgNodeBase *foodAlg = [SMGUtils searchNode:foodAlg_p];
-        
-        if ([NVHeUtil isHeight:5 fromContent_ps:foodAlg.content_ps]) {
-            if ([EAT_RDS isEqualToString:eatAlg_p.dataSource]) {
-                NSLog(@"构建'吃坚果'时序");
-                eatFood = true;
-            }
-        }
-    }
-    
     //1. 数据准备
     if (!ARRISOK(conFos)) {
         return nil;
@@ -103,9 +89,6 @@
     
     //5. 具象节点&抽象节点_关联&存储
     [AINetUtils relateFoAbs:findAbsNode conNodes:conFos];
-    if (eatFood) {
-        [theNV setNodeData:findAbsNode.pointer lightStr:@"果-吃"];
-    }
     return findAbsNode;
 }
 

@@ -54,7 +54,7 @@
 +(NSInteger) getInnerBackData:(AnalogyInnerType)type;
 
 //内类比构建抽象概念
-+(AIAbsAlgNode*)createInnerAbsAlg:(AIAlgNodeBase*)conAlg value_p:(AIPointer*)value_p;
++(AIAbsAlgNode*)createInnerAbsAlg_NoRepeat:(AIAlgNodeBase*)conAlg value_p:(AIPointer*)value_p;
 
 //内类比构建抽象时序
 +(AINetAbsFoNode*)createInnerAbsFo:(AIAlgNodeBase*)frontAlg backAlg:(AIAlgNodeBase*)backAlg rangeAlg_ps:(NSArray*)rangeAlg_ps conFo:(AIFoNodeBase*)conFo;
