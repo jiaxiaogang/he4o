@@ -22,8 +22,6 @@
 
 @property (weak,nonatomic) id<BirdViewDelegate> delegate;
 
--(void) fly:(CGFloat)value;//飞
-
 
 /**
  *  MARK:--------------------视觉--------------------

@@ -123,7 +123,8 @@
     
     //2. 飞行
     angle = [NVViewUtil convertAngle2Direction_8:angle];
-    [self.birdView fly:angle];
+    int direction = (int)(angle * 8.0f);
+    [self.birdView touchWing:direction];
 }
 - (IBAction)foodLeftOnClick:(id)sender {
     [self animationFlash:sender];

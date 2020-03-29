@@ -151,6 +151,9 @@
             //调试短时序; (先仅打外类比日志);
             if (!fromInner) {
                 [theNV setNodeData:createAbsFo.pointer lightStr:STRFORMAT(@"新%ld (%ld&%ld)",createAbsFo.content_ps.count,fo.pointer.pointerId,assFo.pointer.pointerId)];
+            }else{
+                NSLog(@"----> 内类比IHO构建抽象时序=%ld: [%@] from(%ld,%ld)",createAbsFo.pointer.pointerId,[NVHeUtil getLightStr4Ps:createAbsFo.content_ps],fo.pointer.pointerId,assFo.pointer.pointerId);
+                [theNV setNodeData:createAbsFo.pointer appendLightStr:STRFORMAT(@"IHO:[%@]",[NVHeUtil getLightStr4Ps:createAbsFo.content_ps])];
             }
             
             //调试关联强度
@@ -223,7 +226,9 @@
     //5. 内类比找不同 (比大小:同区不同值 / 有无)
     if (algNodeA && algNodeB){
         //a. 内类比大小;
-        NSLog(@"内类比: [%@] | [%@]",[NVHeUtil getLightStr4Ps:algNodeA.content_ps],[NVHeUtil getLightStr4Ps:algNodeB.content_ps]);
+        NSLog(@"============================内类比:(%ld_%ld | %ld_%ld)",aIndex,algNodeA.pointer.pointerId,bIndex,algNodeB.pointer.pointerId);
+        NSLog(@"==> 概念A: [%@]",[NVHeUtil getLightStr4Ps:algNodeA.content_ps]);
+        NSLog(@"==> 概念B: [%@]",[NVHeUtil getLightStr4Ps:algNodeB.content_ps]);
         NSArray *rangeAlg_ps = ARR_SUB(orders, aIndex + 1, bIndex - aIndex - 1);
         [self analogyInner_GL:checkFo algA:algNodeA algB:algNodeB rangeAlg_ps:rangeAlg_ps createdBlock:^(AINetAbsFoNode *createFo) {
             //b. 消耗思维活跃度 & 内中有外
@@ -355,15 +360,14 @@
     AINetAbsFoNode *result = [TIRUtils createInnerAbsFo:frontAlg backAlg:backAlg rangeAlg_ps:rangeAlg_ps conFo:conFo];
     
     //6. 调试;
-    NSLog(@"=> 内类比构建稀疏码: (%@)->(%@)",[NVHeUtil getLightStr:frontValue_p],[NVHeUtil getLightStr:backValue_p]);
-    if (frontAlg) NSLog(@"==> 内类比构建概念: [%@]",[NVHeUtil getLightStr4Ps:frontAlg.content_ps]);
-    if (backAlg) NSLog(@"==> 内类比构建概念: [%@]",[NVHeUtil getLightStr4Ps:backAlg.content_ps]);
-    if (result) NSLog(@"===> 内类比构建时序: [%@]",[NVHeUtil getLightStr4Ps:result.content_ps]);
+    NSLog(@"-> 内类比构建稀疏码: (%@)->(%@)",[NVHeUtil getLightStr:frontValue_p],[NVHeUtil getLightStr:backValue_p]);
+    if (frontAlg) NSLog(@"--> 内类比构建概念=%ld: [%@]",frontAlg.pointer.pointerId,[NVHeUtil getLightStr4Ps:frontAlg.content_ps]);
+    if (backAlg) NSLog(@"--> 内类比构建概念=%ld: [%@]",backAlg.pointer.pointerId,[NVHeUtil getLightStr4Ps:backAlg.content_ps]);
+    if (result) NSLog(@"---> 内类比构建时序=%ld: [%@]",result.pointer.pointerId,[NVHeUtil getLightStr4Ps:result.content_ps]);
     [theNV setNodeData:frontValue_p lightStr:[NVHeUtil getLightStr:frontValue_p]];
     [theNV setNodeData:backValue_p lightStr:[NVHeUtil getLightStr:backValue_p]];
     [theNV setNodeData:frontAlg.pointer lightStr:[NVHeUtil getLightStr:frontAlg.pointer]];
     [theNV setNodeData:backAlg.pointer lightStr:[NVHeUtil getLightStr:backAlg.pointer]];
-    [theNV setNodeData:result.pointer lightStr:[NVHeUtil getLightStr:result.pointer]];
     return result;
 }
 
@@ -404,7 +408,6 @@
         }
         
         //4. 对abFo和assAbFo进行类比;
-        [theNV setNodeData:assAbFo.pointer];
         [self analogyOutside:abFo assFo:assAbFo canAss:canAssBlock updateEnergy:updateEnergy fromInner:true];
     }
 }

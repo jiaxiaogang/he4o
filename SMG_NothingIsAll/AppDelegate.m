@@ -48,6 +48,7 @@
     
     //4. 神经网络可视化
     self.nvView = [[NVView alloc] initWithDelegate:[NVDelegate_He new]];
+    [self.nvView setAlpha:0.9f];
     [self.window addSubview:self.nvView];
     
     //5. heLogView

@@ -36,7 +36,7 @@
 #define cAssDataLimit 2 //应以当前整体思维活跃度,变化为1-3左右;
 #define cMinEnergy 0 //思维活力限低
 #define cMaxEnergy 20 //思维活力限高
-#define cShortMemoryLimit 8 //瞬时记忆最多8条
+#define cShortMemoryLimit 4 //瞬时记忆最多8条 (20200329训练内类比时,8->4,因为估计4条足够v2.0用了);
 //#define cActiveCacheLimit 50//激活缓存最多50条; (废弃,因为改为瞬时匹配模型)
 
 //MARK:===============================================================
