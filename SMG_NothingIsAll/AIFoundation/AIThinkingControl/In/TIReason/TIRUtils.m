@@ -224,6 +224,7 @@
         NSInteger typeWrong = 0;
         NSInteger countWrong = 0;
         NSInteger typeCountWrong = 0;
+        WLog(@"proto___________长度:%lu 内容:[%@]",proto_ps.count,[NVHeUtil getLightStr4Ps:proto_ps]);
         for (NSData *key in sortKeys) {
             AIKVPointer *key_p = DATA2OBJ(key);
             AINodeBase *result = [SMGUtils searchNode:key_p];
@@ -240,11 +241,9 @@
             }else if(result.content_ps.count != matchingCount){
                 countWrong ++;
             }
-            WLog(@"识别 Item失败原因分析 > 类型:%@ AssCount:%ld 匹配长度:%d",result.class,result.content_ps.count,matchingCount);
+            WLog(@"Item识别失败_长度:%lu 匹配:%d 类型:%@ 内容:[%@]",(unsigned long)result.content_ps.count,matchingCount,result.class,[NVHeUtil getLightStr4Ps:result.content_ps]);
         }
         WLog(@"识别结果 >> 非抽象且非全含:%ld,非抽象数:%ld,非全含数:%ld / 总数:%lu",(long)typeCountWrong,(long)typeWrong,countWrong,(unsigned long)sortKeys.count);
-        
-        NSLog(@"");
     }
     return nil;
 }
