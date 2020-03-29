@@ -34,6 +34,19 @@
     return MAX(cMinEnergy, MIN(cMaxEnergy, oriEnergy));
 }
 
++(NSInteger) getInnerTypeValue:(AnalogyInnerType)type{
+    if (type == AnalogyInnerType_Hav) {
+        return cHav;
+    }else if (type == AnalogyInnerType_None) {
+        return cNone;
+    }else if (type == AnalogyInnerType_Greater) {
+        return cGreater;
+    }else if (type == AnalogyInnerType_Less) {
+        return cLess;
+    }
+    return 0;
+}
+
 @end
 
 
@@ -338,19 +351,6 @@
     
     //3. 从微信息,联想refPorts绝对匹配的概念节点;
     return [AINetIndexUtils getAbsoluteMatchingAlgNodeWithValueP:value_p];
-}
-
-+(NSInteger) getInnerTypeValue:(AnalogyInnerType)type{
-    if (type == AnalogyInnerType_Hav) {
-        return cHav;
-    }else if (type == AnalogyInnerType_None) {
-        return cNone;
-    }else if (type == AnalogyInnerType_Greater) {
-        return cGreater;
-    }else if (type == AnalogyInnerType_Less) {
-        return cLess;
-    }
-    return 0;
 }
 
 +(AIAlgNodeBase*) getRelativeSeemAbsAlgWithConAlg:(AIAlgNodeBase*)conAlg notContainsValue:(AIKVPointer*)value_p{

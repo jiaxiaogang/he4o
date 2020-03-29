@@ -361,34 +361,6 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------获取内类比稀疏码值--------------------
- */
-+(NSInteger) getInnerFrontData:(AnalogyInnerType)type {
-    if (type == AnalogyInnerType_Greater) {
-        return cLess;
-    }else if (type == AnalogyInnerType_Less) {
-        return cGreater;
-    }else if (type == AnalogyInnerType_Hav) {
-        return cNone;
-    }else if (type == AnalogyInnerType_None) {
-        return cHav;
-    }
-    return 0;
-}
-+(NSInteger) getInnerBackData:(AnalogyInnerType)type {
-    if (type == AnalogyInnerType_Greater) {
-        return cGreater;
-    }else if (type == AnalogyInnerType_Less) {
-        return cLess;
-    }else if (type == AnalogyInnerType_Hav) {
-        return cHav;
-    }else if (type == AnalogyInnerType_None) {
-        return cNone;
-    }
-    return 0;
-}
-
-/**
  *  MARK:--------------------内类比构建抽象概念--------------------
  *  @注意: 此处algNode和algNode_Inner应该是组分关系,但先保持抽具象关系,看后面测试,有没别的影响,再改 (参考179_内类比全流程回顾)
  *  @desc 大小时
@@ -410,14 +382,13 @@
 /**
  *  MARK:--------------------内类比构建抽象时序--------------------
  */
-+(AINetAbsFoNode*)createInnerAbsFo:(AIAlgNodeBase*)frontAlg backAlg:(AIAlgNodeBase*)backAlg rangeAlg_ps:(NSArray*)rangeAlg_ps conFo:(AIFoNodeBase*)conFo{
++(AINetAbsFoNode*)createInnerAbsFo:(AIAlgNodeBase*)backAlg rangeAlg_ps:(NSArray*)rangeAlg_ps conFo:(AIFoNodeBase*)conFo{
     //1. 数据检查
-    if (!frontAlg || !backAlg || !conFo) return nil;
+    if (!backAlg || !conFo) return nil;
     rangeAlg_ps = ARRTOOK(rangeAlg_ps);
     
     //2. 拼接content_ps
     NSMutableArray *absOrders = [[NSMutableArray alloc] init];
-    [absOrders addObject:frontAlg.pointer];
     [absOrders addObjectsFromArray:rangeAlg_ps];
     [absOrders addObject:backAlg.pointer];
     

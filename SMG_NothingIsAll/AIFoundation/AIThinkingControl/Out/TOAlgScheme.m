@@ -517,8 +517,8 @@
         
         //3. 取出havFo除第一个和最后一个之外的中间rangeOrder
         __block BOOL successed = false;
-        if (relativeFo != nil && relativeFo.content_ps.count >= 2) {
-            NSArray *foRangeOrder = ARR_SUB(relativeFo.content_ps, 1, relativeFo.content_ps.count - 2);
+        if (relativeFo != nil && relativeFo.content_ps.count >= 1) {
+            NSArray *foRangeOrder = ARR_SUB(relativeFo.content_ps, 0, relativeFo.content_ps.count - 1);
             
             //4. 未转移,不需要行为化;
             if (!ARRISOK(foRangeOrder)) {

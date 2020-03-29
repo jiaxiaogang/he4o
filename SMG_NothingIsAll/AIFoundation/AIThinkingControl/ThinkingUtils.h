@@ -16,6 +16,11 @@
  */
 +(CGFloat) updateEnergy:(CGFloat)oriEnergy delta:(CGFloat)delta;
 
+/**
+ *  MARK:--------------------取InnerType的稀疏码值--------------------
+ */
++(NSInteger) getInnerTypeValue:(AnalogyInnerType)type;
+
 @end
 
 
@@ -169,7 +174,7 @@
 
 
 //MARK:===============================================================
-//MARK:                     < ThinkingUtils (General) >
+//MARK:                     < ThinkingUtils (Contains) >
 //MARK:===============================================================
 @interface ThinkingUtils (Contains)
 

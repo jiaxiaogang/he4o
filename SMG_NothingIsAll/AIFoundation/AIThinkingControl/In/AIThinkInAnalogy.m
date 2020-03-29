@@ -348,28 +348,22 @@
     if (!frontConAlg || !backConAlg || !conFo) return nil;
     
     //2. 获取front&back稀疏码值;
-    NSInteger frontData = [TIRUtils getInnerFrontData:type];
-    NSInteger backData = [TIRUtils getInnerBackData:type];
+    NSInteger backData = [ThinkingUtils getInnerTypeValue:type];
     
     //3. 构建微信息;
-    AIKVPointer *frontValue_p = [theNet getNetDataPointerWithData:@(frontData) algsType:algsType dataSource:dataSource];
     AIKVPointer *backValue_p = [theNet getNetDataPointerWithData:@(backData) algsType:algsType dataSource:dataSource];
     
     //4. 构建抽象概念 (20190809注:此处可考虑,type为大/小时,不做具象指向,因为大小概念,本来就是独立的节点);
-    AIAlgNodeBase *frontAlg = [TIRUtils createInnerAbsAlg_NoRepeat:frontConAlg value_p:frontValue_p];
     AIAlgNodeBase *backAlg = [TIRUtils createInnerAbsAlg_NoRepeat:backConAlg value_p:backValue_p];
     
     //5. 构建抽象时序; (小动致大 / 大动致小) (之间的信息为balabala)
-    AINetAbsFoNode *result = [TIRUtils createInnerAbsFo:frontAlg backAlg:backAlg rangeAlg_ps:rangeAlg_ps conFo:conFo];
+    AINetAbsFoNode *result = [TIRUtils createInnerAbsFo:backAlg rangeAlg_ps:rangeAlg_ps conFo:conFo];
     
     //6. 调试;
-    NSLog(@"-> 内类比构建稀疏码: (%@)->(%@)",[NVHeUtil getLightStr:frontValue_p],[NVHeUtil getLightStr:backValue_p]);
-    if (frontAlg) NSLog(@"--> 内类比构建概念=%ld: [%@]",frontAlg.pointer.pointerId,[NVHeUtil getLightStr4Ps:frontAlg.content_ps]);
+    NSLog(@"-> 内类比构建稀疏码: (变 -> %@)",[NVHeUtil getLightStr:backValue_p]);
     if (backAlg) NSLog(@"--> 内类比构建概念=%ld: [%@]",backAlg.pointer.pointerId,[NVHeUtil getLightStr4Ps:backAlg.content_ps]);
     if (result) NSLog(@"---> 内类比构建时序=%ld: [%@]",result.pointer.pointerId,[NVHeUtil getLightStr4Ps:result.content_ps]);
-    [theNV setNodeData:frontValue_p lightStr:[NVHeUtil getLightStr:frontValue_p]];
     [theNV setNodeData:backValue_p lightStr:[NVHeUtil getLightStr:backValue_p]];
-    [theNV setNodeData:frontAlg.pointer lightStr:[NVHeUtil getLightStr:frontAlg.pointer]];
     [theNV setNodeData:backAlg.pointer lightStr:[NVHeUtil getLightStr:backAlg.pointer]];
     return result;
 }
@@ -391,6 +385,10 @@
         }
         
         //3. 根据aAlg联想到的assAbFo时序;
+        
+        //TODO: 此处以rangeContent_ps来联想,并判定最后一位,需符合"变有/无/大/小";
+        
+        
         AIFoNodeBase *assAbFo = nil;
         for (AIPort *refPort in aAlg.refPorts) {
             ///1. 不能与abFo重复
