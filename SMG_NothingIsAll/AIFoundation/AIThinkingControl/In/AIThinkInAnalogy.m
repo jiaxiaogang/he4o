@@ -376,40 +376,33 @@
  */
 +(void)analogyInner_Outside:(AINetAbsFoNode*)abFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
     //1. 数据检查
-    if (ISOK(abFo, AINetAbsFoNode.class)) {
-        //2. 取用来联想的aAlg;
-        AIPointer *a_p = ARR_INDEX(abFo.content_ps, 0);
-        AIAlgNodeBase *aAlg = [SMGUtils searchNode:a_p];
-        if (!aAlg) {
-            return;
-        }
+    if (ISOK(abFo, AINetAbsFoNode.class) && abFo.content_ps.count > 1) {
+        //2. 取backAlg (用来判断取正确的"变有/无/大/小");
+        AIPointer *back_p = ARR_INDEX(abFo.content_ps, abFo.content_ps.count - 1);
+        AIAlgNodeBase *backAlg = [SMGUtils searchNode:back_p];
+        NSArray *backRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:backAlg]];
+        AIFoNodeBase *assFo = nil;
         
-        //3. 根据aAlg联想到的assAbFo时序;
-        
-        //TODO: 此处以rangeContent_ps来联想,并判定最后一位,需符合"变有/无/大/小";
-        
-        
-        AIFoNodeBase *assAbFo = nil;
-        for (AIPort *refPort in aAlg.refPorts) {
-            ///1. 不能与abFo重复
-            if (![abFo.pointer isEqual:refPort.target_p]) {
-                AIFoNodeBase *refFo = [SMGUtils searchObjectForPointer:refPort.target_p fileName:kFNNode time:cRTNode];
-                if (ISOK(refFo, AIFoNodeBase.class)) {
-                    AIPointer *firstAlg_p = ARR_INDEX(refFo.content_ps, 0);
-                    ///2. 必须符合aAlg在orders前面
-                    if ([a_p isEqual:firstAlg_p]) {
-                        assAbFo = refFo;
-                        break;
-                    }
+        //3. 根据range联想,从倒数第2个,开始向前逐一联想refPorts;
+        for (NSInteger i = abFo.content_ps.count - 2; i >= 0; i--) {
+            AIKVPointer *item_p = ARR_INDEX(abFo.content_ps, i);
+            AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
+            NSArray *itemRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:itemAlg]];
+            
+            //4. assAbFo的条件为: (包含item & 包含back & 不是abFo)
+            for (AIKVPointer *itemRef_p in itemRef_ps) {
+                if (![itemRef_p isEqual:abFo.pointer] && [backRef_ps containsObject:itemRef_p]) {
+                    assFo = [SMGUtils searchObjectForPointer:itemRef_p fileName:kFNNode time:cRTNode];
+                    break;
                 }
             }
-        }
-        if (!ISOK(assAbFo, AIFoNodeBase.class)) {
-            return;
+            
+            //5. 取一条有效即break;
+            if (assFo) break;
         }
         
-        //4. 对abFo和assAbFo进行类比;
-        [self analogyOutside:abFo assFo:assAbFo canAss:canAssBlock updateEnergy:updateEnergy fromInner:true];
+        //6. 对abFo和assAbFo进行类比;
+        [self analogyOutside:abFo assFo:assFo canAss:canAssBlock updateEnergy:updateEnergy fromInner:true];
     }
 }
 
