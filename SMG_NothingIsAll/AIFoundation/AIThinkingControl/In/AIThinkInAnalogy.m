@@ -126,39 +126,41 @@
         //3. fo和assFo本来就是抽象关系时_直接关联即可;
         BOOL samesEqualAssFo = orderSames.count == assFo.content_ps.count && [SMGUtils containsSub_ps:orderSames parent_ps:assFo.content_ps];
         BOOL jumpForAbsAlreadyHav = (ISOK(assFo, AINetAbsFoNode.class) && samesEqualAssFo);
+        AINetAbsFoNode *result = nil;
         if (jumpForAbsAlreadyHav) {
-            AINetAbsFoNode *assAbsFo = (AINetAbsFoNode*)assFo;
-            [AINetUtils relateFoAbs:assAbsFo conNodes:@[fo]];
-            [AINetUtils insertRefPorts_AllFoNode:assAbsFo.pointer order_ps:assAbsFo.content_ps ps:assAbsFo.content_ps];
+            result = (AINetAbsFoNode*)assFo;
+            [AINetUtils relateFoAbs:result conNodes:@[fo]];
+            [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
         }else{
             //4. 构建absFoNode
-            AINetAbsFoNode *createAbsFo = [ThinkingUtils createOutsideAbsFo_NoRepeat:fo assFo:assFo content_ps:orderSames];
+            result = [ThinkingUtils createOutsideAbsFo_NoRepeat:fo assFo:assFo content_ps:orderSames];
 
             //5. createAbsCmvNode
             if (!fromInner) {
                 AICMVNodeBase *assMv = [SMGUtils searchNode:assFo.cmvNode_p];
                 if (assMv) {
-                    AIAbsCMVNode *createAbsCmv = [theNet createAbsCMVNode_Outside:createAbsFo.pointer aMv_p:fo.cmvNode_p bMv_p:assMv.pointer];
+                    AIAbsCMVNode *createAbsCmv = [theNet createAbsCMVNode_Outside:result.pointer aMv_p:fo.cmvNode_p bMv_p:assMv.pointer];
                     
                     //6. cmv模型连接;
                     if (ISOK(createAbsCmv, AIAbsCMVNode.class)) {
-                        createAbsFo.cmvNode_p = createAbsCmv.pointer;
-                        [SMGUtils insertObject:createAbsFo pointer:createAbsFo.pointer fileName:kFNNode time:cRTNode];
+                        result.cmvNode_p = createAbsCmv.pointer;
+                        [SMGUtils insertObject:result pointer:result.pointer fileName:kFNNode time:cRTNode];
                         [theNV setNodeData:createAbsCmv.pointer appendLightStr:@"外Mv4"];
                     }
                 }
             }
-            
-            //调试短时序; (先仅打外类比日志);
+        }
+        
+        //调试短时序; (先仅打外类比日志);
+        if (result) {
             if (!fromInner) {
-                [theNV setNodeData:createAbsFo.pointer lightStr:STRFORMAT(@"新%ld (%ld&%ld)",createAbsFo.content_ps.count,fo.pointer.pointerId,assFo.pointer.pointerId)];
+                [theNV setNodeData:result.pointer lightStr:STRFORMAT(@"新%ld (%ld&%ld)",result.content_ps.count,fo.pointer.pointerId,assFo.pointer.pointerId)];
             }else{
-                NSLog(@"----> 内类比IHO构建抽象时序=%ld: [%@] from(%ld,%ld)",createAbsFo.pointer.pointerId,[NVHeUtil getLightStr4Ps:createAbsFo.content_ps],fo.pointer.pointerId,assFo.pointer.pointerId);
-                [theNV setNodeData:createAbsFo.pointer appendLightStr:STRFORMAT(@"IHO:[%@]",[NVHeUtil getLightStr4Ps:createAbsFo.content_ps])];
+                NSLog(@"----> 内类比IHO构建抽象时序=%ld: [%@] from(%ld,%ld)",result.pointer.pointerId,[NVHeUtil getLightStr4Ps:result.content_ps],fo.pointer.pointerId,assFo.pointer.pointerId);
+                [theNV setNodeData:result.pointer appendLightStr:STRFORMAT(@"IHO:[%@]",[NVHeUtil getLightStr4Ps:result.content_ps])];
             }
-            
             //调试关联强度
-            [theNV lightLineStrong:fo.pointer nodeDataB:createAbsFo.pointer];
+            [theNV lightLineStrong:fo.pointer nodeDataB:result.pointer];
         }
     }
 }
