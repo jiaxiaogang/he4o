@@ -232,7 +232,7 @@
             
             //6. 判断全含; (matchingCount == assAlg.content.count) (且只能识别为抽象节点)
             if (ISOK(result, AIAbsAlgNode.class) && result.content_ps.count == matchingCount) {
-                WLog(@"Item识别成功_长度:%lu 匹配:%d 类型:%@ 内容:[%@]",(unsigned long)result.content_ps.count,matchingCount,result.class,[NVHeUtil getLightStr4Ps:result.content_ps]);
+                NSLog(@"=======MatchAlg Success_长度:%lu 匹配:%d 类型:%@ 内容:[%@]",(unsigned long)result.content_ps.count,matchingCount,result.class,[NVHeUtil getLightStr4Ps:result.content_ps]);
                 return result;
             }
             if (!ISOK(result, AIAbsAlgNode.class) && result.content_ps.count != matchingCount) {
@@ -263,6 +263,7 @@
  *      v2: 支持多个稀疏码不同,并支持返回多个相似度排序后的结果;
  */
 +(NSArray*) matchAlg2FuzzyAlgV2:(AIAlgNodeBase*)protoAlg matchAlg:(AIAlgNodeBase*)matchAlg except_ps:(NSArray*)except_ps{
+    NSLog(@"=============== Fuzzy Start ===============");
     //1. 数据准备;
     except_ps = ARRTOOK(except_ps);
     if (!protoAlg || !matchAlg) {
@@ -299,7 +300,6 @@
             double absV2 = fabs(v2 - pValue);
             return absV1 > absV2 ? NSOrderedDescending : absV1 < absV2 ? NSOrderedAscending : NSOrderedSame;
         }];
-        NSLog(@"%@_M同层有效:%@ 排序后(基准%f):%@",[NVHeUtil getLightStr:pValue_p],validConDatas,pValue,sortConDatas);
         
         //c. 转成sortConAlgs & allValidSameLevel_ps
         NSMutableArray *sortConAlgs = [[NSMutableArray alloc] init];
@@ -313,6 +313,13 @@
         
         //d. 收集结果
         [allSortConAlgs addObject:sortConAlgs];
+        
+        //e. 调试日志
+        NSLog(@"-------------------> Fuzzy同层:%@ 有效数:%d 排序基准:%@",[NVHeUtil getLightStr:pValue_p],validConDatas.count,[NSString removeFloatZero:STRFORMAT(@"%f",pValue)]);
+        for (NSDictionary *item in sortConDatas) {
+            AIAlgNodeBase *itemAlg = [item objectForKey:@"a"];
+            NSLog(@"--> 地址:%d 内容:[%@] 值:%@",itemAlg.pointer.pointerId,[NVHeUtil getLightStr4Ps:itemAlg.content_ps],[item objectForKey:@"v"]);
+        }
     }
     
     //5. 对最终结果进行排序;
@@ -352,6 +359,7 @@
     for (NSInteger i = 0; i < result.count; i++) {
         AIAlgNodeBase *item = ARR_INDEX(result, i);
         [theApp.nvView setNodeData:item.pointer appendLightStr:STRFORMAT(@"%ld_fuzzyR(%ld)",protoAlg.pointer.pointerId,(long)i)];
+        NSLog(@"=======FuzzyAlg Success_地址:%d 长度:%lu 内容:[%@] (P数:%d / M数:%d)",item.pointer.pointerId,item.content_ps.count,[NVHeUtil getLightStr4Ps:item.content_ps],(unsigned long)protoAlg.content_ps.count,matchAlg.content_ps.count);
     }
     return result;
 }
