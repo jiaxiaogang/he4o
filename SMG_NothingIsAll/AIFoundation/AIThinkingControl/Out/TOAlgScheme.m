@@ -223,6 +223,20 @@
         NSArray *cConPorts = cIsAbs ? ((AIAbsAlgNode*)curAlg).conPorts : nil;
         BOOL mIsC = [SMGUtils containsSub_p:matchAlg.pointer parentPorts:cConPorts];
         [AIThinkOutAnalogy mcAnalogy:matchAlg cAlg:curAlg complete:^(NSArray *mcs, NSArray *ms, NSArray *cs) {
+            NSLog(@"MC---------->M: [%@]",[NVHeUtil getLightStr4Ps:matchAlg.content_ps]);
+            NSLog(@"MC---------->C: [%@]",[NVHeUtil getLightStr4Ps:curAlg.content_ps]);
+            for (AIKVPointer *mc in mcs) {
+                AIAlgNodeBase *mcAlg = [SMGUtils searchNode:mc];
+                NSLog(@"--->mcs:[%@]",[NVHeUtil getLightStr4Ps:mcAlg.content_ps]);
+            }
+            for (AIKVPointer *m in ms) {
+                AIAlgNodeBase *mAlg = [SMGUtils searchNode:m];
+                NSLog(@"-->ms:[%@]",[NVHeUtil getLightStr4Ps:mAlg.content_ps]);
+            }
+            for (AIKVPointer *c in cs) {
+                AIAlgNodeBase *cAlg = [SMGUtils searchNode:c];
+                NSLog(@"-->cs:[%@]",[NVHeUtil getLightStr4Ps:cAlg.content_ps]);
+            }
             //2. 数据准备: (mcs无效且m不抽象自C时 = 则不匹配)
             if (!ARRISOK(mcs) && !mIsC) {
                 return;
@@ -330,7 +344,7 @@
     NSArray *csSubMs = [SMGUtils removeSub_ps:msAlg.content_ps parent_ps:csAlg.content_ps];
     NSArray *msSubCs = [SMGUtils removeSub_ps:csAlg.content_ps parent_ps:msAlg.content_ps];
     if (csSubMs.count == 1) {
-        WLog(@"MC.Value模糊匹配时,C中subValue=1,M.subV=%ld",msSubCs.count);
+        WLog(@"MC.Value模糊匹配时,C中subValue=1,M.subV=%lu",(unsigned long)msSubCs.count);
     }
     if (csSubMs.count != 1 || msSubCs.count != 1) {
         complete(alreadayGLs,acts);
@@ -364,7 +378,7 @@
             [validConData addObject:@{@"a":alg,@"v":value}];
         }
     }];
-    NSLog(@"M同层有效节点数为:%ld",validConData.count);
+    NSLog(@"M同层有效节点数为:%lu",(unsigned long)validConData.count);
     
     //7. 对result3进行取值value并排序: result4 (根据差的绝对值大小排序);
     double mValue = [NUMTOOK([AINetIndex getData:msValue_p]) doubleValue];

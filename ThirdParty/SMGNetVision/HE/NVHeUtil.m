@@ -47,9 +47,10 @@
             return [self getLightStr_ValueP:node_p];
         }else if ([self isAlg:node_p]) {
             AIAlgNodeBase *algNode = [SMGUtils searchNode:node_p];
-            if (algNode && algNode.content_ps.count == 1) {
+            if (algNode && algNode.content_ps.count >= 1) {
                 AIKVPointer *value_p = algNode.content_ps[0];
-                return [self getLightStr_ValueP:value_p];
+                NSString *firstValueStr = [self getLightStr_ValueP:value_p];
+                return STRFORMAT(@"%@%@",firstValueStr,(algNode.content_ps.count > 1) ? @"..." : @"");
             }else if (node_p.isOut) {
                 return @"动";
             }
