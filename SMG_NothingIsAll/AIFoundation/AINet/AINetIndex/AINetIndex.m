@@ -22,6 +22,9 @@
     if (!ISOK(data, NSNumber.class)) {
         return nil;
     }
+    if ([@"speed" isEqualToString:dataSource]) {
+        NSLog(@"");
+    }
     AIKVPointer *index_p = [SMGUtils createPointerForIndex];
     AIKVPointer *data_p = [SMGUtils createPointerForData:algsType dataSource:dataSource];
     NSMutableArray *indexModels = [[NSMutableArray alloc] initWithArray:ARRTOOK([SMGUtils searchObjectForPointer:index_p fileName:kFNIndex(isOut) time:cRTIndex])];//加载索引序列
@@ -82,6 +85,9 @@
     AIKVPointer *data_p = [SMGUtils createPointerForData:value_p.algsType dataSource:value_p.dataSource];
     NSDictionary *dataDic = DICTOOK([SMGUtils searchObjectForPointer:data_p fileName:kFNData(value_p.isOut) time:cRTData]);
     NSString *key = STRFORMAT(@"%ld",(long)value_p.pointerId);
+    if ([value_p.dataSource isEqualToString:@"speed"]) {
+        NSLog(@"稀疏码speed的索引序列>>>>>>> %@",dataDic);
+    }
     return [dataDic objectForKey:key];
 }
 
@@ -138,4 +144,3 @@
 }
 
 @end
-
