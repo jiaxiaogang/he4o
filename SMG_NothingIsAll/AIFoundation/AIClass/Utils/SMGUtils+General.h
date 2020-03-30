@@ -28,7 +28,7 @@
 +(id) arrIndex:(NSArray*)a index:(NSInteger)i;          //取数组index元素
 +(id) arrTransIndex:(NSArray*)a index:(NSInteger)i;     //取数组反序index元素
 +(BOOL) arrIndexIsOk:(NSArray*)a index:(NSInteger)i;    //数组index有效判断
-+(NSArray*) arrSub:(NSArray*)a start:(NSInteger)s length:(NSInteger)l;
++(NSArray*) arrSub:(NSArray*)a start:(NSInteger)s length:(NSInteger)l;  //截数组 (notnull)
 
 //number
 +(BOOL) numIsOk:(NSNumber*)n;

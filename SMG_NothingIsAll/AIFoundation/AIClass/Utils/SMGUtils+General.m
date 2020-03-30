@@ -80,7 +80,7 @@
     return (a && [a isKindOfClass:[NSArray class]] && a.count > i && i >= 0);
 }
 +(NSArray*) arrSub:(NSArray*)a start:(NSInteger)s length:(NSInteger)l{
-    return (ARRISOK(a) ? [a subarrayWithRange:NSMakeRange(MAX(0, MIN(s,a.count)), MAX(0, MIN(a.count - s, l)))] : nil);
+    return (ARRISOK(a) ? [a subarrayWithRange:NSMakeRange(MAX(0, MIN(s,a.count)), MAX(0, MIN(a.count - s, l)))] : [NSArray new]);
 }
 
 //number

@@ -232,6 +232,7 @@
             
             //6. 判断全含; (matchingCount == assAlg.content.count) (且只能识别为抽象节点)
             if (ISOK(result, AIAbsAlgNode.class) && result.content_ps.count == matchingCount) {
+                WLog(@"Item识别成功_长度:%lu 匹配:%d 类型:%@ 内容:[%@]",(unsigned long)result.content_ps.count,matchingCount,result.class,[NVHeUtil getLightStr4Ps:result.content_ps]);
                 return result;
             }
             if (!ISOK(result, AIAbsAlgNode.class) && result.content_ps.count != matchingCount) {
