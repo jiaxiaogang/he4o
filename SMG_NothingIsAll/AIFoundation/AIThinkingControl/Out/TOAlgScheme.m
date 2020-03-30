@@ -17,6 +17,8 @@
 #import "AINetIndexUtils.h"
 #import "AIThinkOutAnalogy.h"
 #import "AINetUtils.h"
+//temp
+#import "NVHeUtil.h"
 
 @interface TOAlgScheme()
 
@@ -44,6 +46,7 @@
  */
 -(void) convert2Out_Fo:(NSArray*)curAlg_ps curFo:(AIFoNodeBase*)curFo success:(void(^)(NSArray *acts))success failure:(void(^)())failure {
     //1. 数据准备
+    NSLog(@"========== 行为化 START ========== {\n长度:%d 内容:[%@]\n}",curAlg_ps.count,[NVHeUtil getLightStr4Ps:curAlg_ps]);
     NSMutableArray *result = [[NSMutableArray alloc] init];
     if (!ARRISOK(curAlg_ps) || curFo == nil) {
         failure();
@@ -61,7 +64,6 @@
         [self convert2Out_Alg:curAlg_p type:AnalogyInnerType_Hav success:^(NSArray *actions) {
             //3. 行为化成功,则收集;
             successed = true;
-            NSLog(@"行为化成功");
             [result addObjectsFromArray:actions];
         } failure:^{
             WLog(@"行为化失败");
@@ -102,6 +104,7 @@
     
     //5. 成功回调,每成功一次fo,消耗1格活跃值;
     [self.delegate toAlgScheme_updateEnergy:-1];
+    NSLog(@"----> 输出行为:[%@]",[NVHeUtil getLightStr4Ps:result]);
     success(result);
 }
 
@@ -128,6 +131,7 @@
     //2. 本身即是isOut时,直接行为化返回;
     if (curAlg_p.isOut) {
         [result addObject:curAlg_p];
+        NSLog(@"-> isOut为TRUE: %@",[NVHeUtil getLightStr:curAlg_p]);
         success(result);
         return;
     }else{
@@ -141,20 +145,19 @@
                 [self convert2Out_Short_MC_V2:matchAlg curAlg:curAlg mcSuccess:^(NSArray *acts) {
                     [result addObjectsFromArray:acts];
                     successed = true;
-                    NSLog(@"MC_行为化成功, 输出行为: %@",acts);
+                    NSLog(@"--> MC_行为化成功: 长度:%d 行为:[%@]",acts.count,[NVHeUtil getLightStr4Ps:acts]);
+                    success(result);
                 } mcFailure:^{
                     WLog(@"MC_行为化失败");
                 } checkScore:checkScore];
             }
             
             //4. mc行为化失败,则联想长时行为化;
-            if (successed) {
-                success(result);
-                return;
-            }else{
+            if (!successed) {
                 [self convert2Out_Long_NET:type at:curAlg_p.algsType ds:curAlg_p.dataSource success:^(AIFoNodeBase *havFo, NSArray *actions) {
                     //4. hnAlg行为化成功;
                     [result addObjectsFromArray:actions];
+                    NSLog(@"---> HN_行为化成功: 长度:%d 行为:[%@]",actions.count,[NVHeUtil getLightStr4Ps:actions]);
                     success(result);
                     successed = true;
                 } failure:^{
@@ -165,10 +168,7 @@
                     WLog(@"长时_行为化失败");
                 }];
             }
-            if (!successed) {
-                failure();
-                return;
-            }
+            if (successed) return;
         }
     }
     failure();

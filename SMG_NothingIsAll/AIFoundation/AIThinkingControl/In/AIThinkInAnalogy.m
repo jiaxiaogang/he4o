@@ -339,6 +339,8 @@
  *      1. 构建动态微信息 (有去重);
  *      2. 构建动态概念 (有去重);
  *      3. 构建abFoNode时序 (未去重);
+ *  @version
+ *      20200329: 将frontAlg去掉,只保留backAlg (以使方便TOR中联想使用);
  */
 +(AINetAbsFoNode*)analogyInner_Creater:(AnalogyInnerType)type algsType:(NSString*)algsType dataSource:(NSString*)dataSource frontConAlg:(AIAlgNodeBase*)frontConAlg backConAlg:(AIAlgNodeBase*)backConAlg rangeAlg_ps:(NSArray*)rangeAlg_ps conFo:(AIFoNodeBase*)conFo{
     //1. 数据检查
@@ -373,6 +375,8 @@
  *  1. 根据abFo联想assAbFo并进行外类比 (根据微信息来索引查找assAbFo)
  *  2. 复用外类比方法;
  *  3. 一个抽象了a1-range-a2的时序,必然是抽象的,必然是硬盘网络中的;所以此处不必考虑联想内存网络中的assAbFo;
+ *  @version
+ *      20200329: 将assFo依range来联想,而非"有/无/大/小";以解决类比抽象时容易过度收束的问题;
  */
 +(void)analogyInner_Outside:(AINetAbsFoNode*)abFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
     //1. 数据检查
