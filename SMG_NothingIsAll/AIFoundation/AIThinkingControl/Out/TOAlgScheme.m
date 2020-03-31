@@ -223,8 +223,10 @@
         NSArray *cConPorts = cIsAbs ? ((AIAbsAlgNode*)curAlg).conPorts : nil;
         BOOL mIsC = [SMGUtils containsSub_p:matchAlg.pointer parentPorts:cConPorts];
         [AIThinkOutAnalogy mcAnalogy:matchAlg cAlg:curAlg complete:^(NSArray *mcs, NSArray *ms, NSArray *cs) {
-            NSLog(@"MC---------->M: [%@]",[NVHeUtil getLightStr4Ps:matchAlg.content_ps]);
-            NSLog(@"MC---------->C: [%@]",[NVHeUtil getLightStr4Ps:curAlg.content_ps]);
+            NSLog(@"MC---------->M 地址:%d 内容:[%@]",matchAlg.pointer.pointerId,[NVHeUtil getLightStr4Ps:matchAlg.content_ps]);
+            NSLog(@"MC---------->C 地址:%d 内容:[%@]",curAlg.pointer.pointerId,[NVHeUtil getLightStr4Ps:curAlg.content_ps]);
+            [theNV setNodeData:matchAlg.pointer lightStr:@"M"];
+            [theNV setNodeData:curAlg.pointer lightStr:@"C"];
             for (AIKVPointer *mc in mcs) {
                 AIAlgNodeBase *mcAlg = [SMGUtils searchNode:mc];
                 NSLog(@"--->mcs:[%@]",[NVHeUtil getLightStr4Ps:mcAlg.content_ps]);
