@@ -15,7 +15,6 @@
 #import "AINetIndex.h"
 #import "AIShortMatchModel.h"
 #import "AINetIndexUtils.h"
-#import "AIThinkOutAnalogy.h"
 #import "AINetUtils.h"
 #import "AIAlgNode.h"
 //temp

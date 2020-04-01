@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+@class AIAlgNodeBase;
 @interface TOUtils : NSObject
 
 /**

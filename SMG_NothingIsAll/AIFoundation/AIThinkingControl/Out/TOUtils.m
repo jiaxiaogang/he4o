@@ -7,6 +7,8 @@
 //
 
 #import "TOUtils.h"
+#import "AIAlgNodeBase.h"
+#import "NVHeUtil.h"
 
 @implementation TOUtils
 
