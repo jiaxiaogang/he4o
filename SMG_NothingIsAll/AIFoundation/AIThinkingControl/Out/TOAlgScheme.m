@@ -20,6 +20,7 @@
 #import "AIAlgNode.h"
 //temp
 #import "NVHeUtil.h"
+#import "TOUtils.h"
 
 @interface TOAlgScheme()
 
@@ -213,7 +214,44 @@
  *  @实例: 用几个例子,来跑此处代码,看mAlg应该如何得来?如烤蘑菇的例子,坚果去皮的例子,cpu煎蛋的例子;
  */
 -(void) convert2Out_Short_MC_V2:(AIAlgNodeBase*)matchAlg curAlg:(AIAlgNodeBase*)curAlg mcSuccess:(void(^)(NSArray *acts))mcSuccess mcFailure:(void(^)())mcFailure checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
+    //1. 数据准备
+    __block BOOL failured = false;
+    NSMutableArray *allActs = [[NSMutableArray alloc] init];
+    
+    //2. 取出mcs & ms & cs;
+    NSArray *mAbs_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:matchAlg]];
+    NSArray *cAbs_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:curAlg]];
+    NSArray *ms = [SMGUtils removeSub_ps:cAbs_ps parent_ps:mAbs_ps];
+    NSArray *cs = [SMGUtils removeSub_ps:mAbs_ps parent_ps:cAbs_ps];
+    NSArray *mcs = [SMGUtils filterSame_ps:mAbs_ps parent_ps:cAbs_ps];
+    
+    //3. 进行MC_Alg行为化;
+    [self convert2Out_MC_Alg:matchAlg curAlg:curAlg mcs:mcs ms:ms cs:cs mcSuccess:mcSuccess mcFailure:^{
+        failured = true;
+        mcFailure();
+    } checkScore:checkScore];
+    
+    //4. 进行MC_Value行为化;
+    if (!failured) {
+        [self convert2Out_MC_UniqueValue:matchAlg cAlg:curAlg mcs:mcs ms:ms cs:cs checkScore:checkScore complete:^(NSArray *acts, BOOL success) {
+            [allActs addObjectsFromArray:acts];
+            failured = !success;
+        }];
+    }
+    
+    //5. 完成
+    if (failured) {
+        mcFailure();
+    }else{
+        mcSuccess(allActs);
+    }
+}
+
+-(void) convert2Out_MC_Alg:(AIAlgNodeBase*)matchAlg curAlg:(AIAlgNodeBase*)curAlg mcs:(NSArray*)mcs ms:(NSArray*)ms cs:(NSArray*)cs mcSuccess:(void(^)(NSArray *acts))mcSuccess mcFailure:(void(^)())mcFailure checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
     //0. 数据准备
+    mcs = ARRTOOK(mcs);
+    ms = ARRTOOK(ms);
+    cs = ARRTOOK(cs);
     __block BOOL failured = false;
     NSMutableArray *allActs = [[NSMutableArray alloc] init];
     NSMutableArray *alreadyGLs = [[NSMutableArray alloc] init];
@@ -223,91 +261,59 @@
         BOOL cIsAbs = ISOK(curAlg, AIAbsAlgNode.class);
         NSArray *cConPorts = cIsAbs ? ((AIAbsAlgNode*)curAlg).conPorts : nil;
         BOOL mIsC = [SMGUtils containsSub_p:matchAlg.pointer parentPorts:cConPorts];
-        [AIThinkOutAnalogy mcAnalogy:matchAlg cAlg:curAlg complete:^(NSArray *mcs, NSArray *ms, NSArray *cs) {
-            NSLog(@"MC---------->M 地址:%d 内容:[%@]",matchAlg.pointer.pointerId,[NVHeUtil getLightStr4Ps:matchAlg.content_ps]);
-            NSLog(@"MC---------->C 地址:%d 内容:[%@]",curAlg.pointer.pointerId,[NVHeUtil getLightStr4Ps:curAlg.content_ps]);
-            [theNV setNodeData:matchAlg.pointer lightStr:@"M"];
-            [theNV setNodeData:curAlg.pointer lightStr:@"C"];
-            for (AIKVPointer *mc in mcs) {
-                AIAlgNodeBase *mcAlg = [SMGUtils searchNode:mc];
-                NSLog(@"--->mcs:[%@]",[NVHeUtil getLightStr4Ps:mcAlg.content_ps]);
-            }
-            for (AIKVPointer *m in ms) {
-                AIAlgNodeBase *mAlg = [SMGUtils searchNode:m];
-                NSLog(@"-->ms:[%@]",[NVHeUtil getLightStr4Ps:mAlg.content_ps]);
-            }
-            for (AIKVPointer *c in cs) {
-                AIAlgNodeBase *cAlg = [SMGUtils searchNode:c];
-                NSLog(@"-->cs:[%@]",[NVHeUtil getLightStr4Ps:cAlg.content_ps]);
-            }
-            //2. 数据准备: (mcs无效且m不抽象自C时 = 则不匹配)
-            if (!ARRISOK(mcs) && !mIsC) {
-                return;
-            }
-            NSArray *msAlgs = [SMGUtils searchNodes:ms];
+        [TOUtils debugMC_Alg:matchAlg cAlg:curAlg mcs:mcs ms:ms cs:cs];
+        
+        //2. 数据准备: (mcs无效且m不抽象自C时 = 则不匹配)
+        if (!ARRISOK(mcs) && !mIsC) {
+            return;
+        }
+        NSArray *msAlgs = [SMGUtils searchNodes:ms];
+        
+        //2. 当mNotS时,进行cs处理
+        if (!mIsC) {
+            NSArray *csAlgs = [SMGUtils searchNodes:cs];
             
-            //2. 当mNotS时,进行cs处理
-            if (!mIsC) {
-                NSArray *csAlgs = [SMGUtils searchNodes:cs];
-                
-                //3. MC抵消GL处理之: 判断长度为1;
-                for (AIAlgNodeBase *csAlg in csAlgs) {
-                    for (AIAlgNodeBase *msAlg in msAlgs) {
-                        
-                        //3. ms&cs仅有1条不同稀疏码;
-                        NSArray *csSubMs = [SMGUtils removeSub_ps:msAlg.content_ps parent_ps:csAlg.content_ps];
-                        NSArray *msSubCs = [SMGUtils removeSub_ps:csAlg.content_ps parent_ps:msAlg.content_ps];
-                        if (csSubMs.count == 1 && msSubCs.count == 1) {
-                            //4. MC抵消GL处理之: 判断标识相同
-                            AIKVPointer *csValue_p = ARR_INDEX(csSubMs, 0);
-                            AIKVPointer *msValue_p = ARR_INDEX(msSubCs, 0);
-                            if ([csValue_p.identifier isEqualToString:msValue_p.identifier]) {
-                                //5. MC抵消GL处理之: 转移到_Value()
-                                NSNumber *csValue = NUMTOOK([AINetIndex getData:csValue_p]);
-                                NSNumber *msValue = NUMTOOK([AINetIndex getData:msValue_p]);
-                                AnalogyInnerType type = AnalogyInnerType_None;
-                                if (csValue > msValue) {//需增大
-                                    type = AnalogyInnerType_Greater;
-                                }else if(csValue < msValue){//需减小
-                                    type = AnalogyInnerType_Less;
-                                }else{}//再者一样,不处理;
-                                if (!failured && type != AnalogyInnerType_None) {
-                                    [self convert2Out_RelativeValue:msValue_p type:type vSuccess:^(AIFoNodeBase *glFo, NSArray *acts) {
-                                        [allActs addObjectsFromArray:acts];
-                                    } vFailure:^{
-                                        failured = true;
-                                    }];
-                                }
-                                
-                                //6. MC抵消GL处理之: 标记已处理;
-                                [alreadyGLs addObject:csAlg];
-                                [alreadyGLs addObject:msAlg];
-                                break;
-                            }
-                        }
-                    }
+            //3. MC抵消GL处理之: 判断长度为1;
+            for (AIAlgNodeBase *csAlg in csAlgs) {
+                for (AIAlgNodeBase *msAlg in msAlgs) {
                     
-                    //7. MC未抵消H处理之: 满足csAlg;
-                    for (AIAlgNodeBase *csAlg in csAlgs) {
-                        if (![alreadyGLs containsObject:csAlg] && !failured) {
-                            [self convert2Out_Alg:csAlg.pointer type:AnalogyInnerType_Hav success:^(NSArray *acts) {
-                                [allActs addObjectsFromArray:acts];
-                            } failure:^{
-                                failured = true;
-                            } checkScore:checkScore];
+                    //3. ms&cs仅有1条不同稀疏码;
+                    NSArray *csSubMs = [SMGUtils removeSub_ps:msAlg.content_ps parent_ps:csAlg.content_ps];
+                    NSArray *msSubCs = [SMGUtils removeSub_ps:csAlg.content_ps parent_ps:msAlg.content_ps];
+                    if (csSubMs.count == 1 && msSubCs.count == 1) {
+                        //4. MC抵消GL处理之: 判断标识相同
+                        AIKVPointer *csValue_p = ARR_INDEX(csSubMs, 0);
+                        AIKVPointer *msValue_p = ARR_INDEX(msSubCs, 0);
+                        if ([csValue_p.identifier isEqualToString:msValue_p.identifier]) {
+                            //5. MC抵消GL处理之: 转移到_Value()
+                            NSNumber *csValue = NUMTOOK([AINetIndex getData:csValue_p]);
+                            NSNumber *msValue = NUMTOOK([AINetIndex getData:msValue_p]);
+                            AnalogyInnerType type = AnalogyInnerType_None;
+                            if (csValue > msValue) {//需增大
+                                type = AnalogyInnerType_Greater;
+                            }else if(csValue < msValue){//需减小
+                                type = AnalogyInnerType_Less;
+                            }else{}//再者一样,不处理;
+                            if (!failured && type != AnalogyInnerType_None) {
+                                [self convert2Out_RelativeValue:msValue_p type:type vSuccess:^(AIFoNodeBase *glFo, NSArray *acts) {
+                                    [allActs addObjectsFromArray:acts];
+                                } vFailure:^{
+                                    failured = true;
+                                }];
+                            }
+                            
+                            //6. MC抵消GL处理之: 标记已处理;
+                            [alreadyGLs addObject:csAlg];
+                            [alreadyGLs addObject:msAlg];
+                            break;
                         }
                     }
                 }
-            }
-            
-            //8. MC未抵消N处理之: 修正msAlg;
-            for (AIAlgNodeBase *msAlg in msAlgs) {
-                if (![alreadyGLs containsObject:msAlg] && !failured) {
-                    
-                    //9. 对msAlg进行评价,看是否需要修正;
-                    BOOL scoreSuccess = checkScore(msAlg);
-                    if (!scoreSuccess) {
-                        [self convert2Out_Alg:msAlg.pointer type:AnalogyInnerType_None success:^(NSArray *acts) {
+                
+                //7. MC未抵消H处理之: 满足csAlg;
+                for (AIAlgNodeBase *csAlg in csAlgs) {
+                    if (![alreadyGLs containsObject:csAlg] && !failured) {
+                        [self convert2Out_Alg:csAlg.pointer type:AnalogyInnerType_Hav success:^(NSArray *acts) {
                             [allActs addObjectsFromArray:acts];
                         } failure:^{
                             failured = true;
@@ -315,7 +321,23 @@
                     }
                 }
             }
-        }];
+        }
+        
+        //8. MC未抵消N处理之: 修正msAlg;
+        for (AIAlgNodeBase *msAlg in msAlgs) {
+            if (![alreadyGLs containsObject:msAlg] && !failured) {
+                
+                //9. 对msAlg进行评价,看是否需要修正;
+                BOOL scoreSuccess = checkScore(msAlg);
+                if (!scoreSuccess) {
+                    [self convert2Out_Alg:msAlg.pointer type:AnalogyInnerType_None success:^(NSArray *acts) {
+                        [allActs addObjectsFromArray:acts];
+                    } failure:^{
+                        failured = true;
+                    } checkScore:checkScore];
+                }
+            }
+        }
     }
     
     //10. 结果
@@ -375,9 +397,10 @@
             
             //d. 行为化 (GL处理: 转移到_Value);
             if (type != AnalogyInnerType_None) {
-                BOOL success = false;
+                __block BOOL success = false;
                 [self convert2Out_RelativeValue:mValue_p type:type vSuccess:^(AIFoNodeBase *glFo, NSArray *subActs) {
                     [acts addObjectsFromArray:subActs];
+                    success = true;
                 } vFailure:^{}];
                 
                 //e. 一条失败,则全部失败;
