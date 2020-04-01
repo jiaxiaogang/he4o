@@ -653,10 +653,17 @@
         return a_p ? [a_p isEqual:b_p] : false;
     }].allValues;
 }
-
 +(NSMutableDictionary*) filterSameIdentifier_ps:(NSArray*)a_ps b_ps:(NSArray*)b_ps{
     return [SMGUtils filterPointers:a_ps b_ps:b_ps checkItemValid:^BOOL(AIKVPointer *a_p, AIKVPointer *b_p) {
         return a_p ? [a_p.identifier isEqualToString:b_p.identifier] : false;
+    }];
+}
++(NSMutableDictionary*) filterSameIdentifier_DiffId_ps:(NSArray*)a_ps b_ps:(NSArray*)b_ps{
+    return [SMGUtils filterPointers:a_ps b_ps:b_ps checkItemValid:^BOOL(AIKVPointer *a_p, AIKVPointer *b_p) {
+        if (a_p && b_p) {
+            return [a_p.identifier isEqualToString:b_p.identifier] && a_p.pointerId != b_p.pointerId;
+        }
+        return false;
     }];
 }
 

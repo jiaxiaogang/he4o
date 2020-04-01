@@ -21,6 +21,9 @@
  */
 +(NSInteger) getInnerTypeValue:(AnalogyInnerType)type;
 
+//根据前后稀疏码值,得到该变大还是变小;
++(AnalogyInnerType) getInnerType:(AIKVPointer*)frontValue_p backValue_p:(AIKVPointer*)backValue_p;
+
 @end
 
 
@@ -162,13 +165,6 @@
  *  @desc : 根据概念标识,获取概念的"有无大小"节点
  */
 +(AIAlgNodeBase*) dataOut_GetAlgNodeWithInnerType:(AnalogyInnerType)type algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
-
-/**
- *  MARK:--------------------从抽象中,取与自己相对相似的--------------------
- *  @param value_p : 结果不能包含value_p
- *  @desc 相对最相似 : 指强度前10个中,找出最相似的;
- */
-+(AIAlgNodeBase*) getRelativeSeemAbsAlgWithConAlg:(AIAlgNodeBase*)conAlg notContainsValue:(AIKVPointer*)value_p;
 
 @end
 

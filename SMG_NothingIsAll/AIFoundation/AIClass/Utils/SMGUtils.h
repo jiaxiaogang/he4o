@@ -179,9 +179,15 @@
 +(NSArray*) removeSub_ps:(NSArray*)sub_ps parent_ps:(NSArray*)parent_ps;
 +(NSMutableArray*) removeSub_p:(AIPointer*)sub_p parent_ps:(NSArray*)parent_ps;
 
-//取交集 notnull
+/**
+ *  MARK:--------------------取交集--------------------
+ *  @result notnull
+ */
 +(NSArray*) filterSame_ps:(NSArray*)a_ps parent_ps:(NSArray*)b_ps;
+//同区
 +(NSMutableDictionary*) filterSameIdentifier_ps:(NSArray*)a_ps b_ps:(NSArray*)b_ps;
+//同区不同值
++(NSMutableDictionary*) filterSameIdentifier_DiffId_ps:(NSArray*)a_ps b_ps:(NSArray*)b_ps;
 
 /**
  *  MARK:--------------------从from_ps中,筛选出有效的元素返回--------------------

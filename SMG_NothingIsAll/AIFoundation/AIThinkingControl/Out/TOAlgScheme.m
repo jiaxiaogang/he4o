@@ -17,6 +17,7 @@
 #import "AINetIndexUtils.h"
 #import "AIThinkOutAnalogy.h"
 #import "AINetUtils.h"
+#import "AIAlgNode.h"
 //temp
 #import "NVHeUtil.h"
 
@@ -425,6 +426,71 @@
     
     //9. 执行返回;
     complete(alreadayGLs,acts);
+}
+
+/**
+ *  MARK:--------------------对MC中,特有的稀疏码进行行为化;--------------------
+ *  @desc : 参考n18205:组合方案;
+ */
+-(void) convert2Out_MC_UniqueValue:(AIAlgNodeBase*)mAlg cAlg:(AIAlgNodeBase*)cAlg mcs:(NSArray*)mcs ms:(NSArray*)ms cs:(NSArray*)cs checkScore:(BOOL(^)(AIAlgNodeBase *rtAlg))checkScore complete:(void(^)(NSArray *acts,BOOL success))complete{
+    //1. 数据准备;
+    NSArray *mcs_Alg = [SMGUtils searchNodes:mcs];
+    NSArray *ms_Alg = [SMGUtils searchNodes:ms];
+    NSArray *cs_Alg = [SMGUtils searchNodes:cs];
+    NSMutableArray *acts = [[NSMutableArray alloc] init];
+    if (!mAlg || !cAlg || !complete || !checkScore) {
+        complete(acts,true);
+        return;
+    }
+    
+    //2. 取M特有的稀疏码;
+    NSArray *mUnique_ps = mAlg.content_ps;
+    for (AIAlgNodeBase *item in mcs_Alg) mUnique_ps = [SMGUtils removeSub_ps:item.content_ps parent_ps:mUnique_ps];
+    for (AIAlgNodeBase *item in ms_Alg) mUnique_ps = [SMGUtils removeSub_ps:item.content_ps parent_ps:mUnique_ps];
+    
+    //3. 取C特有的稀疏码;
+    NSArray *cUnique_ps = cAlg.content_ps;
+    for (AIAlgNodeBase *item in mcs_Alg) cUnique_ps = [SMGUtils removeSub_ps:item.content_ps parent_ps:cUnique_ps];
+    for (AIAlgNodeBase *item in cs_Alg) cUnique_ps = [SMGUtils removeSub_ps:item.content_ps parent_ps:cUnique_ps];
+    
+    //4. 取MC同区不同值映射;
+    NSDictionary *mcValidDic = [SMGUtils filterSameIdentifier_DiffId_ps:mUnique_ps b_ps:cUnique_ps];
+    
+    //5. 将M特化且有效的稀疏码,逐一与mcs_Alg进行重组RTAlg;
+    for (NSData *key in mcValidDic.allKeys) {
+        AIKVPointer *mValue_p = DATA2OBJ(key);
+        AIKVPointer *cValue_p = [mcValidDic objectForKey:key];
+        for (AIAlgNodeBase *item in mcs_Alg) {
+            //a. 重组
+            NSMutableArray *content_ps = [[NSMutableArray alloc] initWithArray:item.content_ps];
+            [content_ps addObject:mValue_p];
+            AIAlgNode *rtAlg = [theNet createAlgNode:content_ps isOut:item.pointer.isOut isMem:true];
+            
+            //b. 评价
+            BOOL scoreSuccess = checkScore(rtAlg);
+            if (scoreSuccess) continue;
+            
+            //c. 转换为type
+            AnalogyInnerType type = [ThinkingUtils getInnerType:mValue_p backValue_p:cValue_p];
+            
+            //d. 行为化 (GL处理: 转移到_Value);
+            if (type != AnalogyInnerType_None) {
+                BOOL success = false;
+                [self convert2Out_RelativeValue:mValue_p type:type vSuccess:^(AIFoNodeBase *glFo, NSArray *subActs) {
+                    [acts addObjectsFromArray:subActs];
+                } vFailure:^{}];
+                
+                //e. 一条失败,则全部失败;
+                if (!success) {
+                    complete(acts,false);
+                    return;
+                }
+            }
+        }
+    }
+    
+    //6. 执行返回;
+    complete(acts,true);
 }
 
 /**
