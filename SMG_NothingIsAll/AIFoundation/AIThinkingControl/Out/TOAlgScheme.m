@@ -225,7 +225,9 @@
     NSArray *mcs = [SMGUtils filterSame_ps:mAbs_ps parent_ps:cAbs_ps];
     
     //3. 进行MC_Alg行为化;
-    [self convert2Out_MC_Alg:matchAlg curAlg:curAlg mcs:mcs ms:ms cs:cs mcSuccess:mcSuccess mcFailure:^{
+    [self convert2Out_MC_Alg:matchAlg curAlg:curAlg mcs:mcs ms:ms cs:cs mcSuccess:^(NSArray *acts) {
+        [allActs addObjectsFromArray:acts];
+    } mcFailure:^{
         failured = true;
         mcFailure();
     } checkScore:checkScore];
@@ -389,6 +391,7 @@
             
             //b. 评价
             BOOL scoreSuccess = checkScore(rtAlg);
+            NSLog(@"-->rtAlg M特化稀疏码:%@ 内容:[%@] 评价:%d",[NVHeUtil getLightStr:mValue_p],[NVHeUtil getLightStr4Ps:rtAlg.content_ps],scoreSuccess);
             if (scoreSuccess) continue;
             
             //c. 转换为type
