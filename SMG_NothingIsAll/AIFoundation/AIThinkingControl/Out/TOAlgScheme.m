@@ -223,6 +223,7 @@
     NSArray *ms = [SMGUtils removeSub_ps:cAbs_ps parent_ps:mAbs_ps];
     NSArray *cs = [SMGUtils removeSub_ps:mAbs_ps parent_ps:cAbs_ps];
     NSArray *mcs = [SMGUtils filterSame_ps:mAbs_ps parent_ps:cAbs_ps];
+    [TOUtils debugMC:matchAlg cAlg:curAlg mcs:mcs ms:ms cs:cs];
     
     //3. 进行MC_Alg行为化;
     [self convert2Out_MC_Alg:matchAlg curAlg:curAlg mcs:mcs ms:ms cs:cs mcSuccess:^(NSArray *acts) {
@@ -262,7 +263,6 @@
         BOOL cIsAbs = ISOK(curAlg, AIAbsAlgNode.class);
         NSArray *cConPorts = cIsAbs ? ((AIAbsAlgNode*)curAlg).conPorts : nil;
         BOOL mIsC = [SMGUtils containsSub_p:matchAlg.pointer parentPorts:cConPorts];
-        [TOUtils debugMC_Alg:matchAlg cAlg:curAlg mcs:mcs ms:ms cs:cs];
         
         //2. 数据准备: (mcs无效且m不抽象自C时 = 则不匹配)
         if (!ARRISOK(mcs) && !mIsC) {
@@ -378,6 +378,7 @@
     
     //4. 取MC同区不同值映射;
     NSDictionary *mcValidDic = [SMGUtils filterSameIdentifier_DiffId_ps:mUnique_ps b_ps:cUnique_ps];
+    NSLog(@"===========MC_Value START=========M特化数:%lu",(unsigned long)mcValidDic.count);
     
     //5. 将M特化且有效的稀疏码,逐一与mcs_Alg进行重组RTAlg;
     for (NSData *key in mcValidDic.allKeys) {

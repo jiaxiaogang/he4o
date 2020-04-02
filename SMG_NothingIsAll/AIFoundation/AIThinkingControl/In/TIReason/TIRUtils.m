@@ -174,33 +174,11 @@
         
         //2. 对每个微信息,取被引用的强度前cPartMatchingCheckRefPortsLimit个;
         for (AIKVPointer *item_p in proto_ps) {
-            NSLog(@"当前item_p:%@ -------------------",[NVHeUtil getLightStr:item_p]);
             NSArray *refPorts = refPortsBlock(item_p);
             refPorts = ARR_SUB(refPorts, 0, cPartMatchingCheckRefPortsLimit);
-            for (NSInteger i = 0; i < refPorts.count; i++) {
-                AIPort *item = ARR_INDEX(refPorts, i);
-                AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item.target_p];
-                NSString *countDesc = @"";
-                NSString *classDesc = @"";
-                NSString *reMd5 = @"";
-                if (itemAlg) {
-                    classDesc = ISOK(itemAlg, AIAbsAlgNode.class) ? @"抽象" : @"具象";
-                    countDesc = STRFORMAT(@"%ld/%ld",itemAlg.content_ps.count,proto_ps.count);
-                    reMd5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:[SMGUtils sortPointers:itemAlg.content_ps]]]);
-                }
-                NSLog(@"{稀疏码:%@=%ld} -%ld-> {概念:%@=%ld[%@][%@][isMem:%d]} 下标:%ld, MD5:%d",
-                      item_p.identifier,item_p.pointerId,(long)item.strong.value,
-                      itemAlg.pointer.identifier,itemAlg.pointer.pointerId,classDesc,countDesc,itemAlg.pointer.isMem,
-                      (long)i,
-                      [reMd5 isEqualToString:item.header]);
-            }
+            NSLog(@"当前item_p:%@ -------------------数量:%lu",[NVHeUtil getLightStr:item_p],(unsigned long)refPorts.count);
             //TODOTOMORROW:
             //查下为什么那么多远投坚果,最终 (Height5).refPorts才3个;
-            //连续直投,然后重启远投,会有content_ps.count=0的情况, (2_AIVisionAlgs_0);
-            //但在构建日志中,有两次抽象2,分别存内存和硬盘,长度都为5;
-            
-            //1. 确定一下长度=0,是否是因为未持久化;
-            //2. 找下因非全含失败的原因;
             
             //3. 进行计数
             for (AIPort *refPort in refPorts) {

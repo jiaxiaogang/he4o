@@ -12,10 +12,11 @@
 
 @implementation TOUtils
 
-+(void) debugMC_Alg:(AIAlgNodeBase*)mAlg cAlg:(AIAlgNodeBase*)cAlg mcs:(NSArray*)mcs ms:(NSArray*)ms cs:(NSArray*)cs{
++(void) debugMC:(AIAlgNodeBase*)mAlg cAlg:(AIAlgNodeBase*)cAlg mcs:(NSArray*)mcs ms:(NSArray*)ms cs:(NSArray*)cs{
     if (mAlg && cAlg && mcs && ms && cs) {
-        NSLog(@"MC---------->M 地址:%d 内容:[%@]",mAlg.pointer.pointerId,[NVHeUtil getLightStr4Ps:mAlg.content_ps]);
-        NSLog(@"MC---------->C 地址:%d 内容:[%@]",cAlg.pointer.pointerId,[NVHeUtil getLightStr4Ps:cAlg.content_ps]);
+        NSLog(@"===========MC START=========");
+        NSLog(@"MC---------->M 地址:%ld 内容:[%@]",(long)mAlg.pointer.pointerId,[NVHeUtil getLightStr4Ps:mAlg.content_ps]);
+        NSLog(@"MC---------->C 地址:%ld 内容:[%@]",(long)cAlg.pointer.pointerId,[NVHeUtil getLightStr4Ps:cAlg.content_ps]);
         [theNV setNodeData:mAlg.pointer lightStr:@"M"];
         [theNV setNodeData:cAlg.pointer lightStr:@"C"];
         for (AIKVPointer *mc in mcs) {
