@@ -165,7 +165,9 @@
     AIFrontOrderNode *protoFo = [theNet createConFo:protoAlg_ps];//将protoAlg_ps构建成时序;
     
     //TODOTOMORROW:
-    //支持识别到多个时序,并以此得到多个价值预测 (支持更多元的评价);
+    //1. 支持识别到多个时序,并以此得到多个价值预测 (支持更多元的评价);
+    //2. 以lastAlg匹配未必总是有效,比如[远果,吃],,可以尝试用(远果)来做索引;
+    //3. 查看下时序匹配度的代码,看此处改动,会不会对后面产生什么影响;
     
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
     [self TIR_Fo_General:protoFo assFoIndexAlg:lastAlg assFoBlock:^NSArray *(AIAlgNodeBase *indexAlg) {
