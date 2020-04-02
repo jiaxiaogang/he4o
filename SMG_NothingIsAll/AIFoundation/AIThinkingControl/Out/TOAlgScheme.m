@@ -378,7 +378,7 @@
     
     //4. 取MC同区不同值映射;
     NSDictionary *mcValidDic = [SMGUtils filterSameIdentifier_DiffId_ps:mUnique_ps b_ps:cUnique_ps];
-    NSLog(@"===========MC_Value START=========M特化数:%lu",(unsigned long)mcValidDic.count);
+    NSLog(@"===================MC_Value START=================M特化数:%lu",(unsigned long)mcValidDic.count);
     
     //5. 将M特化且有效的稀疏码,逐一与mcs_Alg进行重组RTAlg;
     for (NSData *key in mcValidDic.allKeys) {
@@ -389,11 +389,13 @@
             NSMutableArray *content_ps = [[NSMutableArray alloc] initWithArray:item.content_ps];
             [content_ps addObject:mValue_p];
             AIAlgNode *rtAlg = [theNet createAlgNode:content_ps isOut:item.pointer.isOut isMem:true];
+            NSLog(@"-------------->RTAlg %@重组概念内容:[%@]",[NVHeUtil getLightStr:mValue_p],[NVHeUtil getLightStr4Ps:rtAlg.content_ps]);
             
             //b. 反思 & 评价
             AIAlgNodeBase *matchAlg = [self.delegate toAlgScheme_MatchRTAlg:rtAlg];
             BOOL scoreSuccess = checkScore(matchAlg);
-            NSLog(@"-->rtAlg M特化稀疏码:%@ 内容:[%@] 评价:%d",[NVHeUtil getLightStr:mValue_p],[NVHeUtil getLightStr4Ps:rtAlg.content_ps],scoreSuccess);
+            NSLog(@"-------------->RTAlg 反思概念内容:[%@] 评价:%d",[NVHeUtil getLightStr4Ps:matchAlg.content_ps],scoreSuccess);
+            [theNV setNodeData:matchAlg.pointer appendLightStr:@"TMPPP"];
             if (scoreSuccess) continue;
             
             //c. 转换为type

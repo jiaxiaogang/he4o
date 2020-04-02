@@ -172,6 +172,8 @@
         NSMutableArray *result = [[NSMutableArray alloc] init];
         if (indexAlg) {
             for (AIPort *refPort in indexAlg.refPorts) {
+                AIFoNodeBase *tmpForLogFo = [SMGUtils searchNode:refPort.target_p];
+                NSLog(@"-----> TIR_Fo 索引:(%@) 取得时序:[%@]",[NVHeUtil getLightStr4Ps:indexAlg.content_ps],[NVHeUtil getLightStr4Ps:tmpForLogFo.content_ps]);
                 //3. rethink时,必须包含replaceMatchAlg的时序才有效;
                 if ([SMGUtils containsSub_p:refPort.target_p parentPorts:replaceMatchAlg.refPorts]) {
                     [result addObject:refPort];
@@ -325,11 +327,13 @@
     [assIndexes addObjectsFromArray:[SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:assFoIndexAlg]]];
     
     //3. 递归进行assFos
+    NSLog(@"============= TIR_Fo =============索引数:%d",assIndexes.count);
     for (AIKVPointer *assIndex_p in assIndexes) {
         AIAlgNodeBase *indexAlg = [SMGUtils searchNode:assIndex_p];
         
         //4. indexAlg.refPorts; (取识别到过的抽象节点(如苹果));
         NSArray *assFoPorts = ARRTOOK(assFoBlock(indexAlg));
+        NSLog(@"-----> TIR_Fo 索引到有效时序数:%d",assFoPorts.count);
         
         //5. 依次对assFos对应的时序,做匹配度评价; (参考: 160_TIRFO单线顺序模型)
         for (AIPort *assFoPort in assFoPorts) {
