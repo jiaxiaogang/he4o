@@ -17,14 +17,23 @@
 @class AIAlgNodeBase,AICMVNodeBase;
 @interface AIThinkInReason : NSObject
 
-//理性概念
+//MARK:===============================================================
+//MARK:                     < 理性概念识别 >
+//MARK:===============================================================
 +(AIAlgNodeBase*) TIR_Alg:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps;
++(AIAlgNodeBase*) TIR_Alg_FromRethink:(AIAlgNodeBase*)rtAlg;
 
-//理性时序
+
+//MARK:===============================================================
+//MARK:                     < 理性时序识别与预测 >
+//MARK:===============================================================
 +(void) TIR_Fo_FromRethink:(NSArray*)protoAlg_ps replaceMatchAlg:(AIAlgNodeBase*)replaceMatchAlg finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue))finishBlock;
 +(void) TIR_Fo_FromShortMem:(AIFoNodeBase*)protoFo lastMatchAlg:(AIAlgNodeBase*)lastMatchAlg finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue))finishBlock;
 
-//内类比
+
+//MARK:===============================================================
+//MARK:                     < 内类比 >
+//MARK:===============================================================
 +(void) analogyInner:(AIFoNodeBase*)protoFo;
 
 @end

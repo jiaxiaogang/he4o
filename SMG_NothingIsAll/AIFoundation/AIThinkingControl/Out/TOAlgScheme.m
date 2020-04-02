@@ -390,8 +390,9 @@
             [content_ps addObject:mValue_p];
             AIAlgNode *rtAlg = [theNet createAlgNode:content_ps isOut:item.pointer.isOut isMem:true];
             
-            //b. 评价
-            BOOL scoreSuccess = checkScore(rtAlg);
+            //b. 反思 & 评价
+            AIAlgNodeBase *matchAlg = [self.delegate toAlgScheme_MatchRTAlg:rtAlg];
+            BOOL scoreSuccess = checkScore(matchAlg);
             NSLog(@"-->rtAlg M特化稀疏码:%@ 内容:[%@] 评价:%d",[NVHeUtil getLightStr:mValue_p],[NVHeUtil getLightStr4Ps:rtAlg.content_ps],scoreSuccess);
             if (scoreSuccess) continue;
             

@@ -159,5 +159,8 @@
 -(AIShortMatchModel*) toAlgScheme_LSPRethink:(AIAlgNodeBase*)rtAlg rtFoContent_ps:(NSArray*)rtFoContent_ps{
     return [self.delegate aiTOR_LSPRethink:rtAlg rtFoContent_ps:rtFoContent_ps];
 }
+-(AIAlgNodeBase*) toAlgScheme_MatchRTAlg:(AIAlgNodeBase*)rtAlg {
+    return [self.delegate aiTOR_MatchRTAlg:rtAlg];
+}
 
 @end

@@ -252,5 +252,8 @@ static AIThinkingControl *_instance;
 -(AIShortMatchModel*) aiTOR_LSPRethink:(AIAlgNodeBase*)rtAlg rtFoContent_ps:(NSArray*)rtFoContent_ps{
     return [self.thinkIn dataInFromTORLSPRethink:rtAlg rtFoContent_ps:rtFoContent_ps];
 }
+-(AIAlgNodeBase*) aiTOR_MatchRTAlg:(AIAlgNodeBase*)rtAlg{
+    return [self.thinkIn dataInFromTOR_MatchRTAlg:rtAlg];
+}
 
 @end

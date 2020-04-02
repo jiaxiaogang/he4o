@@ -72,9 +72,11 @@
 //MARK:===============================================================
 //MARK:                     < FromTOR >
 //MARK:===============================================================
-/**
- *  MARK:--------------------TOR反思调用--------------------
- */
+
+//反思时序RTFo
 -(AIShortMatchModel*) dataInFromTORLSPRethink:(AIAlgNodeBase*)rtAlg rtFoContent_ps:(NSArray*)rtFoContent_ps;
+
+//反思概念RTAlg
+-(AIAlgNodeBase*) dataInFromTOR_MatchRTAlg:(AIAlgNodeBase*)rtAlg;
 
 @end

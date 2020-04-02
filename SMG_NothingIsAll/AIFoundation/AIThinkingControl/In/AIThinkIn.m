@@ -102,6 +102,9 @@
     }
     return mModel;
 }
+-(AIAlgNodeBase*) dataInFromTOR_MatchRTAlg:(AIAlgNodeBase*)rtAlg {
+    return [AIThinkInReason TIR_Alg_FromRethink:rtAlg];
+}
 
 //MARK:===============================================================
 //MARK:                     < NoMV >

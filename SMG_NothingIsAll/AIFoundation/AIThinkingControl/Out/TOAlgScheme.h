@@ -17,8 +17,10 @@
 -(void) toAlgScheme_updateEnergy:(CGFloat)delta;
 -(BOOL) toAlgScheme_EnergyValid;
 
-//里氏反思
+//里氏反思时序
 -(AIShortMatchModel*) toAlgScheme_LSPRethink:(AIAlgNodeBase*)rtAlg rtFoContent_ps:(NSArray*)rtFoContent_ps;
+//里氏反思概念
+-(AIAlgNodeBase*) toAlgScheme_MatchRTAlg:(AIAlgNodeBase*)rtAlg;
 
 @end
 

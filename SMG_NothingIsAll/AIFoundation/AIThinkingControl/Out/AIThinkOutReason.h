@@ -14,8 +14,10 @@
 //更新思维活跃度
 -(void) aiThinkOutReason_UpdateEnergy:(CGFloat)delta;
 -(BOOL) aiThinkOutReason_EnergyValid;
-//反思
+//反思时序
 -(AIShortMatchModel*) aiTOR_LSPRethink:(AIAlgNodeBase*)rtAlg rtFoContent_ps:(NSArray*)rtFoContent_ps;
+//反思概念
+-(AIAlgNodeBase*) aiTOR_MatchRTAlg:(AIAlgNodeBase*)rtAlg;
 
 @end
 
