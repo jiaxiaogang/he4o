@@ -153,24 +153,21 @@
  *      3. 通过,外类比,发现以此下去,"汽车距离变0"会撞到疼痛;
  *      4. 通过,"车-0-撞-疼"来计算时序相似度x% 与 通过"车距"y 计算= zMv;
  *      5. 将zMv提交给demandManager,做TOR处理;
+ *  @version
+ *      20200403 : 将assFoIndexAlg由proto.lastIndex改为replaceMatchAlg来代替 (因为lastAlg索引失败率太高);
+ *  @todo :
+ *      20200403 TODOTOMORROW: 支持识别到多个时序,并以此得到多个价值预测 (支持更多元的评价);
  *
  */
 +(void) TIR_Fo_FromRethink:(NSArray*)protoAlg_ps replaceMatchAlg:(AIAlgNodeBase*)replaceMatchAlg finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue))finishBlock{
     //1. 数据检查
-    AIKVPointer *last_p = ARR_INDEX_REVERSE(protoAlg_ps, 0);
-    AIAlgNodeBase *lastAlg = [SMGUtils searchNode:last_p];
-    if (!ARRISOK(protoAlg_ps) || !lastAlg || !replaceMatchAlg) {
+    if (!ARRISOK(protoAlg_ps) || !replaceMatchAlg) {
         return;
     }
     AIFrontOrderNode *protoFo = [theNet createConFo:protoAlg_ps];//将protoAlg_ps构建成时序;
     
-    //TODOTOMORROW:
-    //1. 支持识别到多个时序,并以此得到多个价值预测 (支持更多元的评价);
-    //2. 以lastAlg匹配未必总是有效,比如[远果,吃],,可以尝试用(远果)来做索引;
-    //3. 查看下时序匹配度的代码,看此处改动,会不会对后面产生什么影响;
-    
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [self TIR_Fo_General:protoFo assFoIndexAlg:lastAlg assFoBlock:^NSArray *(AIAlgNodeBase *indexAlg) {
+    [self TIR_Fo_General:protoFo assFoIndexAlg:replaceMatchAlg assFoBlock:^NSArray *(AIAlgNodeBase *indexAlg) {
         NSMutableArray *result = [[NSMutableArray alloc] init];
         if (indexAlg) {
             for (AIPort *refPort in indexAlg.refPorts) {
