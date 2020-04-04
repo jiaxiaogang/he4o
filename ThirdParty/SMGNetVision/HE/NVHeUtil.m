@@ -26,17 +26,17 @@
 }
 
 +(NSString*) getLightStr4Ps:(NSArray*)node_ps{
-    return [self getLightStr4Ps:node_ps sep:@","];
+    return [self getLightStr4Ps:node_ps simple:true];
 }
-+(NSString*) getLightStr4Ps:(NSArray*)node_ps sep:(NSString*)sep{
++(NSString*) getLightStr4Ps:(NSArray*)node_ps simple:(BOOL)simple{
     //1. 数据检查
     NSMutableString *result = [[NSMutableString alloc] init];
     node_ps = ARRTOOK(node_ps);
-    sep = STRTOOK(sep);
+    NSString *sep = @",";
     
     //2. 拼接返回
     for (AIKVPointer *item_p in node_ps){
-        NSString *str = [NVHeUtil getLightStr:item_p];
+        NSString *str = [NVHeUtil getLightStr:item_p simple:simple];
         if ([self isAlg:item_p] && STRTOARR(str, sep).count > 1) {
             str = STRFORMAT(@"(%@)",str);
         }
@@ -45,23 +45,33 @@
     return SUBSTR2INDEX(result, result.length - sep.length);
 }
 
-+(NSString*) getLightStr:(AIKVPointer*)node_p{
++(NSString*) getLightStr:(AIKVPointer*)node_p {
+    return [self getLightStr:node_p simple:true];
+}
++(NSString*) getLightStr:(AIKVPointer*)node_p simple:(BOOL)simple{
     if (ISOK(node_p, AIKVPointer.class)) {
         if ([self isValue:node_p]) {
             return [self getLightStr_ValueP:node_p];
         }else if ([self isAlg:node_p]) {
             AIAlgNodeBase *algNode = [SMGUtils searchNode:node_p];
-            if (algNode && algNode.content_ps.count >= 1) {
-                return [self getLightStr4Ps:algNode.content_ps];
-            }else if (node_p.isOut) {
-                return @"动";
+            if (algNode) {
+                if (simple) {
+                    NSString *firstValueStr = [self getLightStr_ValueP:ARR_INDEX(algNode.content_ps, 0)];
+                    return STRFORMAT(@"%@%@",firstValueStr,(algNode.content_ps.count > 1) ? @"..." : @"");
+                }else{
+                    return [self getLightStr4Ps:algNode.content_ps];
+                }
             }
         }else if([self isFo:node_p]){
             AIFoNodeBase *foNode = [SMGUtils searchNode:node_p];
             if (foNode) {
-                AIAlgNodeBase *lastAlgNode = [SMGUtils searchNode:ARR_INDEX(foNode.content_ps, foNode.content_ps.count - 1)];
-                if (lastAlgNode && lastAlgNode.content_ps.count == 1) {
-                    return [self getLightStr_ValueP:lastAlgNode.content_ps[0]];
+                if (simple) {
+                    AIAlgNodeBase *lastAlgNode = [SMGUtils searchNode:ARR_INDEX(foNode.content_ps, foNode.content_ps.count - 1)];
+                    if (lastAlgNode && lastAlgNode.content_ps.count == 1) {
+                        return [self getLightStr_ValueP:lastAlgNode.content_ps[0]];
+                    }
+                }else{
+                    return [self getLightStr4Ps:foNode.content_ps simple:false];
                 }
             }
         }

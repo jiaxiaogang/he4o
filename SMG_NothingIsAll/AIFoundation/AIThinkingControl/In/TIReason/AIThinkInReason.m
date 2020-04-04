@@ -175,7 +175,7 @@
         if (indexAlg) {
             for (AIPort *refPort in indexAlg.refPorts) {
                 AIFoNodeBase *tmpForLogFo = [SMGUtils searchNode:refPort.target_p];
-                NSLog(@"-----> TIR_Fo 索引:(%@) 取得时序:[%@]",[NVHeUtil getLightStr4Ps:indexAlg.content_ps],[NVHeUtil getLightStr4Ps:tmpForLogFo.content_ps]);
+                NSLog(@"-----> TIR_Fo 索引:(%@) 取得时序:[%@]",[NVHeUtil getLightStr4Ps:indexAlg.content_ps],[NVHeUtil getLightStr4Ps:tmpForLogFo.content_ps simple:false]);
                 //3. rethink时,必须包含replaceMatchAlg的时序才有效;
                 if ([SMGUtils containsSub_p:refPort.target_p parentPorts:lastAlgRefPorts]) {
                     [result addObject:refPort];
