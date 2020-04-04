@@ -16,6 +16,8 @@
 #import "AICMVNode.h"
 #import "AIShortMatchModel.h"
 #import "AIFrontOrderNode.h"
+//temp
+#import "NVHeUtil.h"
 
 @implementation AIThinkIn
 
@@ -90,7 +92,7 @@
 //MARK:===============================================================
 -(AIShortMatchModel*) dataInFromTORLSPRethink:(AIAlgNodeBase*)rtAlg rtFoContent_ps:(NSArray*)rtFoContent_ps{
     //1. 数据准备
-    __block AIShortMatchModel *mModel = nil;
+    __block AIShortMatchModel *mModel = [[AIShortMatchModel alloc] init];
     if (rtAlg && ARRISOK(rtFoContent_ps)) {
         
         //2. 识别时序;
@@ -126,6 +128,7 @@
     
     //2. 识别概念;
     mModel.matchAlg = [AIThinkInReason TIR_Alg:algNode_p fromGroup_ps:fromGroup_ps];
+    NSLog(@"-----------瞬时MModel.matchAlg为:(%@)",[NVHeUtil getLightStr4Ps:mModel.matchAlg.content_ps]);
     
     //3. 构建时序 (把每次dic输入,都作为一个新的内存时序);
     NSArray *shortMemory = [self.delegate aiThinkIn_GetShortMemory];

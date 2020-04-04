@@ -47,7 +47,7 @@
  */
 -(void) convert2Out_Fo:(NSArray*)curAlg_ps curFo:(AIFoNodeBase*)curFo success:(void(^)(NSArray *acts))success failure:(void(^)())failure {
     //1. 数据准备
-    NSLog(@"========== 行为化 START ========== {\n长度:%d 内容:[%@]\n}",curAlg_ps.count,[NVHeUtil getLightStr4Ps:curAlg_ps]);
+    NSLog(@"========== 行为化 START ========== {\n长度:%lu 内容:[%@]\n}",(unsigned long)curAlg_ps.count,[NVHeUtil getLightStr4Ps:curAlg_ps]);
     NSMutableArray *result = [[NSMutableArray alloc] init];
     if (!ARRISOK(curAlg_ps) || curFo == nil) {
         failure();
@@ -146,7 +146,7 @@
                 [self convert2Out_Short_MC_V2:matchAlg curAlg:curAlg mcSuccess:^(NSArray *acts) {
                     [result addObjectsFromArray:acts];
                     successed = true;
-                    NSLog(@"--> MC_行为化成功: 长度:%d 行为:[%@]",acts.count,[NVHeUtil getLightStr4Ps:acts]);
+                    NSLog(@"--> MC_行为化成功: 长度:%lu 行为:[%@]",(unsigned long)acts.count,[NVHeUtil getLightStr4Ps:acts]);
                     success(result);
                 } mcFailure:^{
                     WLog(@"MC_行为化失败");
@@ -158,7 +158,7 @@
                 [self convert2Out_Long_NET:type at:curAlg_p.algsType ds:curAlg_p.dataSource success:^(AIFoNodeBase *havFo, NSArray *actions) {
                     //4. hnAlg行为化成功;
                     [result addObjectsFromArray:actions];
-                    NSLog(@"---> HN_行为化成功: 长度:%d 行为:[%@]",actions.count,[NVHeUtil getLightStr4Ps:actions]);
+                    NSLog(@"---> HN_行为化成功: 长度:%lu 行为:[%@]",(unsigned long)actions.count,[NVHeUtil getLightStr4Ps:actions]);
                     success(result);
                     successed = true;
                 } failure:^{
@@ -379,6 +379,10 @@
     //4. 取MC同区不同值映射;
     NSDictionary *mcValidDic = [SMGUtils filterSameIdentifier_DiffId_ps:mUnique_ps b_ps:cUnique_ps];
     NSLog(@"===================MC_Value START=================M特化数:%lu",(unsigned long)mcValidDic.count);
+    
+    //此处测得BUG:以下情况的,MC得到特化数为0;
+    //M 地址:12 内容:[速0,宽5,高5,形2.5,向→,红0,绿255,蓝0,皮0,纬556,距62,经213]
+    //C 地址:27 内容:[速0,宽5,高5,形2.5,红0,绿255,蓝0,皮0]
     
     //5. 将M特化且有效的稀疏码,逐一与mcs_Alg进行重组RTAlg;
     for (NSData *key in mcValidDic.allKeys) {
