@@ -106,6 +106,7 @@
 //NSData
 #define OBJ2DATA(obj) [NSKeyedArchiver archivedDataWithRootObject:obj]
 #define DATA2OBJ(data) [NSKeyedUnarchiver unarchiveObjectWithData:data]
+#define DATAS2OBJS(datas) [SMGUtils datas2Objs:datas]
 
 /**
  *  MARK:--------------------快捷建对象--------------------

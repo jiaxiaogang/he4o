@@ -57,4 +57,7 @@
 //timestampFromStr
 +(long long)timestampFromStr_yyyyMMddHHmmssSSS:(NSString*)timeStr defaultResult:(long long)defaultResult;
 
+//nsdata
++(NSArray*)datas2Objs:(NSArray*)datas;
+
 @end

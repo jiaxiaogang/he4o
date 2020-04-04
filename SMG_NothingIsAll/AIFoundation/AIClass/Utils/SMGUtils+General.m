@@ -148,4 +148,14 @@
     return result;
 }
 
+//nsdata
++(NSArray*)datas2Objs:(NSArray*)datas{
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    datas = ARRTOOK(datas);
+    for (NSData *data in datas) {
+        [result addObject:DATA2OBJ(data)];
+    }
+    return result;
+}
+
 @end
