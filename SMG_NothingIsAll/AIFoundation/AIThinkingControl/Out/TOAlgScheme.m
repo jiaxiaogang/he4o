@@ -405,6 +405,11 @@
     for (NSData *key in alreadyDic.allKeys) {
         AIKVPointer *mValue_p = DATA2OBJ(key);
         AIKVPointer *cValue_p = [alreadyDic objectForKey:key];
+        
+        //TODOTOMORROW:
+        //此处mcs.count可能是0,所以rtAlg到底应该与mcs进行重组?还是与M进行重组?
+        
+        
         for (AIAlgNodeBase *item in mcs_Alg) {
             //a. 重组
             NSMutableArray *content_ps = [[NSMutableArray alloc] initWithArray:item.content_ps];
