@@ -77,3 +77,6 @@
 
 
 @end
+
+@interface TOAlgScheme (MC)
+@end

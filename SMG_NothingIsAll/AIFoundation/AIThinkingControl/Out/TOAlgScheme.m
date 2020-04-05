@@ -296,7 +296,7 @@
                                 type = AnalogyInnerType_Less;
                             }else{}//再者一样,不处理;
                             if (!failured && type != AnalogyInnerType_None) {
-                                [self convert2Out_RelativeValue:msValue_p type:type vSuccess:^(AIFoNodeBase *glFo, NSArray *acts) {
+                                [self convert2Out_RelativeValue:msValue_p.algsType ds:msValue_p.dataSource type:type vSuccess:^(AIFoNodeBase *glFo, NSArray *acts) {
                                     [allActs addObjectsFromArray:acts];
                                 } vFailure:^{
                                     failured = true;
@@ -482,7 +482,7 @@
     AnalogyInnerType type = [ThinkingUtils getInnerType:newValue_p backValue_p:oldValue_p];
     if (type != AnalogyInnerType_None) {
         __block BOOL success = false;
-        [self convert2Out_RelativeValue:newValue_p type:type vSuccess:^(AIFoNodeBase *glFo, NSArray *subActs) {
+        [self convert2Out_RelativeValue:newValue_p.algsType ds:newValue_p.dataSource type:type vSuccess:^(AIFoNodeBase *glFo, NSArray *subActs) {
             [acts addObjectsFromArray:subActs];
             success = true;
         } vFailure:^{}];
@@ -550,20 +550,21 @@
  *      3. 找到,判断range是否导致条件C转移;
  *          4. 未转移: success
  *          5. 转移: C条件->递归到convert2Out_Single_Alg();
+ *  @param at & ds : 用作查找"大/小"的标识;
  */
--(void) convert2Out_RelativeValue:(AIKVPointer*)value_p type:(AnalogyInnerType)type vSuccess:(void(^)(AIFoNodeBase *glFo,NSArray *acts))vSuccess vFailure:(void(^)())vFailure {
+-(void) convert2Out_RelativeValue:(NSString*)at ds:(NSString*)ds type:(AnalogyInnerType)type vSuccess:(void(^)(AIFoNodeBase *glFo,NSArray *acts))vSuccess vFailure:(void(^)())vFailure {
     //1. 数据检查
-    if ((type != AnalogyInnerType_Greater && type != AnalogyInnerType_Less) || !value_p) {
+    if ((type != AnalogyInnerType_Greater && type != AnalogyInnerType_Less)) {
         WLog(@"value_行为化类参数type|value_p错误");
         vFailure();
+        return;
     }
     
-    //1. 根据type和value_p找cLess/cGreater
-    AIAlgNodeBase *glAlg = [ThinkingUtils dataOut_GetAlgNodeWithInnerType:type algsType:value_p.algsType dataSource:value_p.dataSource];
-    
-    //2. 找不到glAlg,failure;
+    //2. 根据type和value_p找cLess/cGreater
+    AIAlgNodeBase *glAlg = [ThinkingUtils dataOut_GetAlgNodeWithInnerType:type algsType:at dataSource:ds];
     if (!glAlg) {
         vFailure();
+        return;
     }
     
     //3. 根据havAlg联想时序,并找出新的解决方案,与新的行为化的概念,与新的条件概念;
@@ -577,9 +578,7 @@
     }];
     
     //4. 行为化失败;
-    if (!successed) {
-        vFailure();
-    }
+    if (!successed) vFailure();
 }
 
 
@@ -632,221 +631,5 @@
 
 @end
 
-//20191107备, 说明: 此_sub方法为嵌套时,一个value_p一个subAlg_p时,做行为化的;
-/**
- *  MARK:--------------------对单个概念的sub拆分行为化--------------------
- *      1. 对curAlg的(subAlg&subValue)分别判定;
- *      2. 目前仅支持 1 x subAlg + 1 x subValue (目前仅支持a2+v1各一个);
- *      3. TODO:支持"多个概念+多个value",建议"两个概念+两个value",然后,更复杂的情况用"抽象精简"和"具象展开"来解决;
- *
- *
- *  写类比,alg.content_ps中哪些已行为化,哪里还没有;
- *  TODO:
- *      TODO191106:因为此方法中,概念嵌套并未支持,所以需要重写此方法;
- *      TODO191107:考虑,将此_sub方法与_single方法进行合并;
- *      TODO191106:content_ps.count != 2的情况 (因为没有概念嵌套) 是否涉及到要改cHav索引,因为需要at&ds不明确的索引;
- *      TODO191106:以下subHavAlg要优先取shortMatchModel (在2Out_Alg()中已实现,优先MC后NET);
- *      TODO191106:第5步: 确定下:现在cHavFo与其抽象前的时序,是抽象关联吗?
- */
-//-(NSArray*) convert2Out_Single_Sub:(AIKVPointer*)curAlg_p{
-//    //1. 数据检查准备;
-//    AIAlgNodeBase *curAlg = [SMGUtils searchNode:curAlg_p];
-//    if (!curAlg) return nil;
-//    NSMutableArray *result = [[NSMutableArray alloc] init];
-//
-//
-//    // TODO191106:content_ps.count != 2的情况 (因为没有概念嵌套) 是否涉及到要改cHav索引,因为需要at&ds不明确的索引;
-//
-//
-//    //2. 将curAlg.content_ps提取为subAlg_p和subValue_p;
-//    if (curAlg.content_ps.count == 2) {
-//        AIKVPointer *first_p = ARR_INDEX(curAlg.content_ps, 0);
-//        AIKVPointer *second_p = ARR_INDEX(curAlg.content_ps, 1);
-//        AIKVPointer *subAlg_p = nil;
-//        AIKVPointer *subValue_p = nil;
-//        if ([kPN_ALG_ABS_NODE isEqualToString:first_p.folderName]) {
-//            subAlg_p = first_p;
-//        }else if([kPN_ALG_ABS_NODE isEqualToString:second_p.folderName]){
-//            subAlg_p = second_p;
-//        }
-//        if([kPN_VALUE isEqualToString:first_p.folderName]){
-//            subValue_p = first_p;
-//        }else if([kPN_VALUE isEqualToString:second_p.folderName]){
-//            subValue_p = second_p;
-//        }
-//        if (!subAlg_p || !subValue_p) return nil;
-//
-//
-//        // TODO191106:以下subHavAlg要优先取shortMatchModel
-//
-//        //3. 先对subHavAlg行为化; (坚果树会掉坚果);
-//        AIAlgNodeBase *subHavAlg = [ThinkingUtils dataOut_GetAlgNodeWithInnerType:AnalogyInnerType_Hav algsType:subAlg_p.algsType dataSource:subAlg_p.dataSource];
-//        [self convert2Out_Long_NET:subHavAlg success:^(AIFoNodeBase *havFo, NSArray *subHavActions) {
-//
-//            //4. 再对subValue行为化; (坚果会掉到树下,我们可以飞过去吃) 参考图109_subValue行为化;
-//            if (!ISOK(havFo, AINetAbsFoNode.class)) return;
-//            AINetAbsFoNode *subHavFo = (AINetAbsFoNode*)havFo;
-//
-//            //5. 从subHavFo联想其"具象序列":conSubHavFo;
-//            //TODO: 目前仅支持一个,随后要支持三个左右;
-//
-//            // TODO191106:确定下:现在cHavFo与其抽象前的时序,是抽象关联吗?
-//
-//            AIFoNodeBase *conSubHavFo = [ThinkingUtils getNodeFromPort:ARR_INDEX(subHavFo.conPorts, 0)];
-//            if (!ISOK(conSubHavFo, AIFoNodeBase.class)) return;
-//
-//            //6. 从conSubHavFo中,找到与forecastAlg_p预测概念指针;
-//            AIKVPointer *forecastAlg_p = nil;
-//            for (AIKVPointer *item_p in conSubHavFo.content_ps) {
-//
-//                //7. 判断item_p是subAlg的具象节点;
-//                if ([ThinkingUtils containsConAlg:item_p absAlg:subAlg_p]) {
-//                    forecastAlg_p = item_p;
-//                    break;
-//                }
-//            }
-//            if (!forecastAlg_p) return;
-//
-//            //8. 取出"预测"概念信息;
-//            AIAlgNodeBase *forecastAlg = [SMGUtils searchNode:forecastAlg_p];
-//            if (!forecastAlg) return;
-//
-//            //8. 进一步取出预测微信息;
-//            AIKVPointer *forecastValue_p = ARRINDEX([ThinkingUtils filterPointer:forecastAlg.content_ps identifier:subValue_p.identifier],0);
-//            if (!forecastValue_p) return;
-//
-//            //9. 将诉求信息:subValue与预测信息:forecastValue进行类比;
-//            NSNumber *subValue = NUMTOOK([AINetIndex getData:subValue_p]);
-//            NSNumber *forecastValue = NUMTOOK([AINetIndex getData:forecastValue_p]);
-//            NSComparisonResult compareResult = [subValue compare:forecastValue];
-//
-//            //10. 得出是要找cLess或cGreater;
-//            if (compareResult == NSOrderedSame) {
-//                [result addObjectsFromArray:subHavActions];//成功A;
-//                return;
-//            }else{
-//                AnalogyInnerType type = (compareResult == NSOrderedAscending) ? AnalogyInnerType_Greater : AnalogyInnerType_Less;
-//                AIAlgNodeBase *glAlg = [ThinkingUtils dataOut_GetAlgNodeWithInnerType:type algsType:subValue_p.algsType dataSource:subValue_p.dataSource];
-//                [self convert2Out_Long_NET:glAlg success:^(AIFoNodeBase *havFo, NSArray *actions) {
-//                    //TODO:有些预测确定,有些不那么确定;(未必就可以直接添加到行为中)
-//                    [result addObjectsFromArray:subHavActions];
-//                    [result addObjectsFromArray:actions];//成功B;
-//                } failure:nil];
-//            }
-//        } failure:nil];
-//    }
-//    return result;
-//}
-
-//20191226正式改用v2方法; (v1说明:以LSP和同级两种匹配,同级时单value则GL,多value则HN) (v2说明:以MC类比,并得出ms&cs&mcs各进行评价与行为化)
-/**
- *  MARK:--------------------MC匹配行为化--------------------
- *  @desc 伪代码:
- *  1. MC匹配时,判断是否可LSP里氏替换;
- *      2. 可替换,success
- *      3. 不可替换,changeM2C,判断条件为value_p.cLess / value_p.cGreater / alg_p.cHav / alg_p.cNone;
- *          4. alg_p则递归到convert2Out_Single_Alg();
- *          5. value_p则递归到convert2Out_Single_Value();
- *  @desc
- *      1. MC匹配,仅针对cHav做行为化;
- *      2. MC匹配,是对瞬时记忆中的matchAlg做匹配行为化;
- *      3. 当MC匹配转移change条件时,递归到single_Alg或single_Value进行行为化;
- *
- *  @desc
- *      1. xx年xx月xx日: matchAlg优先,都是通过抽具象关联来判断的,而不是直接对比其内容;
- *
- *  @todo
- *      TODO_TEST_HERE: 在alg抽象匹配时,核实下将absAlg去重,为了避免绝对匹配重复导致的联想不以cHav
- *
- *  @实例: 用几个例子,来跑此处代码,看mAlg应该如何得来?如烤蘑菇的例子,坚果去皮的例子,cpu煎蛋的例子;
- *
- */
-//-(void) convert2Out_Short_MC_V1:(AIAlgNodeBase*)matchAlg curAlg:(AIAlgNodeBase*)curAlg mcSuccess:(void(^)(NSArray *acts))mcSuccess mcFailure:(void(^)())mcFailure checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
-//    if (matchAlg && curAlg) {
-//        //3. MC匹配之: LSP里氏判断,M是否是C
-//        BOOL cIsAbs = ISOK(curAlg, AIAbsAlgNode.class);
-//        NSArray *cConPorts = cIsAbs ? ((AIAbsAlgNode*)curAlg).conPorts : nil;
-//        BOOL mIsC = [SMGUtils containsSub_p:matchAlg.pointer parentPorts:cConPorts];
-//        if (mIsC) {
-//
-//            //4. 进行反思
-//            BOOL rtSuccess = checkScore(matchAlg);
-//            if (rtSuccess) {
-//                mcSuccess(nil);
-//            }else{
-//                WLog(@"行为化失败,里氏替换评价未通过");
-//                mcFailure();
-//            }
-//        }else{
-//            //5. MC匹配之: 同级判断,M和C都是absMC
-//            NSArray *mAbs_ps = [SMGUtils convertPointersFromPorts:matchAlg.absPorts];
-//            NSArray *cAbs_ps = [SMGUtils convertPointersFromPorts:curAlg.absPorts];
-//            //6. c更重要,c的abs强度优先;
-//            NSArray *absMC_ps = ARRTOOK([SMGUtils filterSame_ps:cAbs_ps parent_ps:mAbs_ps]);
-//            __block BOOL successed = false;
-//
-//            for (AIPointer *absMC_p in absMC_ps) {
-//                //7. 同级加工,changeM2C之: 取subM和subC分别多余信息;
-//                AIAlgNodeBase *absMC = [SMGUtils searchNode:absMC_p];
-//                if (absMC) {
-//                    NSArray *subM = [SMGUtils removeSub_ps:matchAlg.content_ps parent_ps:absMC.content_ps];
-//                    NSArray *subC = [SMGUtils removeSub_ps:curAlg.content_ps parent_ps:absMC.content_ps];
-//
-//                    //8. 加工changeM2C (目前仅支持一个特征不同);
-//                    AIKVPointer *change_p = nil;
-//                    AnalogyInnerType changeType = AnalogyInnerType_Default;
-//                    if (subM.count > 0 && subC.count == 0) {
-//                        if (subM.count == 1) {
-//                            //9. 多余单value_p
-//                            change_p = ARR_INDEX(subM, 0);
-//                            changeType = AnalogyInnerType_Less;
-//                        }else{
-//                            //10 多余单alg_p
-//                            AIAlgNodeBase *alg = [AINetIndexUtils getAbsoluteMatchingAlgNodeWithValuePs:subM];
-//                            if (alg) change_p = alg.pointer;
-//                            changeType = AnalogyInnerType_None;
-//                        }
-//                    }else if (subC.count > 0 && subM.count == 0) {
-//                        if (subC.count == 1) {
-//                            //11. 缺少单value_p
-//                            change_p = ARR_INDEX(subC, 0);
-//                            changeType = AnalogyInnerType_Greater;
-//                        }else{
-//                            //12. 缺少单alg_p
-//                            AIAlgNodeBase *alg = [AINetIndexUtils getAbsoluteMatchingAlgNodeWithValuePs:subC];
-//                            if (alg) change_p = alg.pointer;
-//                            changeType = AnalogyInnerType_Hav;
-//                        }
-//                    }
-//
-//                    //13. 针对change_p进行行为化;
-//                    if (change_p) {
-//                        if (changeType == AnalogyInnerType_Greater || changeType == AnalogyInnerType_Less) {
-//
-//                            //TODO191213: 去转化,将parentCheckScore传递过去,供_fos使用;
-//                            [self convert2Out_RelativeValue:change_p type:changeType vSuccess:^(AIFoNodeBase *glFo, NSArray *acts) {
-//                                mcSuccess(acts);
-//                                successed = true;
-//                            } vFailure:^{
-//                                WLog(@"value_行为化失败");
-//                            }];
-//                        }else if (changeType == AnalogyInnerType_Hav || changeType == AnalogyInnerType_None){
-//                            //Q: 为何此处curAlg_ps传nil?
-//                            //A: 因为change_p不是curAlg,比如curAlg_ps是[吃,烤蘑菇],那么change_p可能是火,如果重组LSPFo可能会组成[吃,火] (解决方案参考:17208表);
-//                            [self convert2Out_Alg:change_p type:changeType success:^(NSArray *acts) {
-//                                mcSuccess(acts);
-//                                successed = true;
-//                            } failure:nil checkScore:checkScore];
-//                        }
-//                    }
-//                }
-//
-//                //14. 成功时,跳出循环;
-//                if (successed) {
-//                    return;
-//                }
-//            }
-//        }
-//    }
-//    mcFailure();
-//}
+@implementation TOAlgScheme (MC)
+@end
