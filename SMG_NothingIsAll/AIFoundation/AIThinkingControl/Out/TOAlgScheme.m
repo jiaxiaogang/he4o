@@ -367,6 +367,7 @@
         complete(acts,true);
         return;
     }
+    __block BOOL success = true;//默认为成功,只有成功,才会一直运行下去;
     
     //2. 取M特有的稀疏码;
     NSArray *mUnique_ps = mAlg.content_ps;
@@ -380,13 +381,19 @@
     NSLog(@"===================MC_Value START=================");
     
     //4. 找同区不同值_直接从CUnique找;
-    NSMutableDictionary *alreadyDic = [[NSMutableDictionary alloc] init]; //已找到的映射 (后面分两步去找);
+    NSMutableDictionary *alreadyDic = [[NSMutableDictionary alloc] init]; //收集已找到的映射
     NSDictionary *findByCur = DICTOOK([SMGUtils filterSameIdentifier_DiffId_ps:mUnique_ps b_ps:cUnique_ps]);
     [alreadyDic setDictionary:findByCur];
     NSLog(@"----> findByCur:%lu / %lu",(unsigned long)findByCur.count,mUnique_ps.count);
     
-    //5. 找同区不同值_再从价值确切的具象概念找;
-    if (alreadyDic.count < mUnique_ps.count) {
+    //5. 将findByCur行为化;
+    [self convert2Out_MC_Value_Multi:findByCur protoAlg:cAlg complete:^(NSArray *mActs, BOOL mSuccess) {
+        [acts addObjectsFromArray:mActs];
+        success = mSuccess;
+    } checkScore:checkScore];
+    
+    //6. 找同区不同值_再从价值确切的具象概念找;
+    if (alreadyDic.count < mUnique_ps.count && success) {
         [TOUtils findConAlg_StableMV:cAlg curFo:curFo itemBlock:^BOOL(AIAlgNodeBase *validAlg) {
             if (validAlg) {
                 //a. 从conAlg中找映射;
@@ -394,58 +401,99 @@
                 NSDictionary *findByCon = DICTOOK([SMGUtils filterSameIdentifier_DiffId_ps:needFind_ps b_ps:validAlg.content_ps]);
                 //b. 找几条收集几条;
                 [alreadyDic setDictionary:findByCon];
-            }
-            //c. 未找完,则继续;
-            return mUnique_ps.count > alreadyDic.count;
-        }];
-    }
-    NSLog(@"----> findByCon:%lu / %lu",(unsigned long)alreadyDic.count - findByCur.count,mUnique_ps.count);
-    
-    //5. 将M特化且有效的稀疏码,逐一与mcs_Alg进行重组RTAlg;
-    for (NSData *key in alreadyDic.allKeys) {
-        AIKVPointer *mValue_p = DATA2OBJ(key);
-        AIKVPointer *cValue_p = [alreadyDic objectForKey:key];
-        
-        //TODOTOMORROW:
-        //此处mcs.count可能是0,所以rtAlg到底应该与mcs进行重组?还是与M进行重组?
-        
-        
-        for (AIAlgNodeBase *item in mcs_Alg) {
-            //a. 重组
-            NSMutableArray *content_ps = [[NSMutableArray alloc] initWithArray:item.content_ps];
-            [content_ps addObject:mValue_p];
-            AIAlgNode *rtAlg = [theNet createAlgNode:content_ps isOut:item.pointer.isOut isMem:true];
-            NSLog(@"-------------->RTAlg %@重组概念内容:[%@]",[NVHeUtil getLightStr:mValue_p],[NVHeUtil getLightStr4Ps:rtAlg.content_ps]);
-            
-            //b. 反思 & 评价
-            AIAlgNodeBase *matchAlg = [self.delegate toAlgScheme_MatchRTAlg:rtAlg];
-            BOOL scoreSuccess = checkScore(matchAlg);
-            NSLog(@"-------------->RTAlg 反思概念内容:[%@] 评价:%d",[NVHeUtil getLightStr4Ps:matchAlg.content_ps],scoreSuccess);
-            [theNV setNodeData:matchAlg.pointer appendLightStr:@"TMPPP"];
-            if (scoreSuccess) continue;
-            
-            //c. 转换为type
-            AnalogyInnerType type = [ThinkingUtils getInnerType:mValue_p backValue_p:cValue_p];
-            
-            //d. 行为化 (GL处理: 转移到_Value);
-            if (type != AnalogyInnerType_None) {
-                __block BOOL success = false;
-                [self convert2Out_RelativeValue:mValue_p type:type vSuccess:^(AIFoNodeBase *glFo, NSArray *subActs) {
-                    [acts addObjectsFromArray:subActs];
-                    success = true;
-                } vFailure:^{}];
+                NSLog(@"----> findByCon:%lu / %lu",(unsigned long)findByCon.count,mUnique_ps.count);
                 
-                //e. 一条失败,则全部失败;
-                if (!success) {
-                    complete(acts,false);
-                    return;
-                }
+                //c. 将findByCon行为化;
+                [self convert2Out_MC_Value_Multi:findByCon protoAlg:validAlg complete:^(NSArray *mActs, BOOL mSuccess) {
+                    [acts addObjectsFromArray:mActs];
+                    success = mSuccess;
+                } checkScore:checkScore];
             }
-        }
+            //c. 未行为化失败 且 未找完,则继续;
+            return mUnique_ps.count > alreadyDic.count && success;
+        }];
     }
     
     //6. 执行返回;
+    complete(acts,success);
+}
+
+-(void) convert2Out_MC_Value_Multi:(NSDictionary*)findDic protoAlg:(AIAlgNodeBase*)protoAlg complete:(void (^)(NSArray *mActs,BOOL mSuccess))complete checkScore:(BOOL(^)(AIAlgNodeBase *rtAlg))checkScore{
+    //1. 数据准备
+    findDic = DICTOOK(findDic);
+    NSMutableArray *acts = [[NSMutableArray alloc] init];
+    if (!protoAlg || !complete) {
+        complete(acts,false);
+        return;
+    }
+    
+    //2.  逐个行为化;
+    for (NSData *key in findDic.allKeys) {
+        //a. 取值;
+        AIKVPointer *newValue_p = DATA2OBJ(key);
+        AIKVPointer *oldValue_p = [findDic objectForKey:key];
+        __block BOOL success = true;
+        //b. 行为化;
+        [self convert2Out_MC_Value_Single:newValue_p oldValue_p:oldValue_p protoAlg:protoAlg complete:^(NSArray *sActs, BOOL sSuccess) {
+            success = sSuccess;
+            [acts addObjectsFromArray:sActs];
+        } checkScore:checkScore];
+        //c. 一条失败,则全失败;
+        if (!success) {
+            complete(acts,false);
+            return;
+        }
+    }
+    
+    //3. 全成功,返回;
     complete(acts,true);
+}
+
+/**
+ *  MARK:--------------------MC_Value单条行为化方法--------------------
+ *  @desc 主要功能为: 将protoAlg - old + new = rtAlg,然后反思rtAlg,如果需要则取new->old的行为化;
+ */
+-(void) convert2Out_MC_Value_Single:(AIKVPointer *)newValue_p oldValue_p:(AIKVPointer *)oldValue_p protoAlg:(AIAlgNodeBase*)protoAlg complete:(void (^)(NSArray *sActs,BOOL sSuccess))complete checkScore:(BOOL(^)(AIAlgNodeBase *rtAlg))checkScore{
+    //1. 数据检查
+    NSMutableArray *acts = [[NSMutableArray alloc] init];
+    if (!newValue_p || !oldValue_p || !protoAlg) {
+        complete(nil,false);
+        return;
+    }
+    
+    //2. 重组rtAlg
+    NSMutableArray *creativity_ps = [[NSMutableArray alloc] initWithArray:protoAlg.content_ps];
+    NSInteger replaceIndex = [creativity_ps indexOfObject:oldValue_p];
+    [creativity_ps replaceObjectAtIndex:replaceIndex withObject:newValue_p];
+    AIAlgNode *rtAlg = [theNet createAlgNode:creativity_ps isOut:protoAlg.pointer.isOut isMem:true];
+    NSLog(@"-------------->RTAlg %@重组概念内容:[%@]",[NVHeUtil getLightStr:newValue_p],[NVHeUtil getLightStr4Ps:rtAlg.content_ps]);
+    
+    //3. 反思 & 评价
+    AIAlgNodeBase *matchAlg = [self.delegate toAlgScheme_MatchRTAlg:rtAlg];
+    BOOL scoreSuccess = checkScore(matchAlg);
+    NSLog(@"-------------->RTAlg 反思概念内容:[%@] 评价:%d",[NVHeUtil getLightStr4Ps:matchAlg.content_ps],scoreSuccess);
+    [theNV setNodeData:matchAlg.pointer appendLightStr:@"TMPPP"];
+    if (scoreSuccess) {
+        complete(nil,true);
+        return;
+    }
+    
+    //4. 行为化 (GL处理: 转移到_Value);
+    AnalogyInnerType type = [ThinkingUtils getInnerType:newValue_p backValue_p:oldValue_p];
+    if (type != AnalogyInnerType_None) {
+        __block BOOL success = false;
+        [self convert2Out_RelativeValue:newValue_p type:type vSuccess:^(AIFoNodeBase *glFo, NSArray *subActs) {
+            [acts addObjectsFromArray:subActs];
+            success = true;
+        } vFailure:^{}];
+        
+        //5. 成功;
+        if (success) {
+            complete(acts,true);
+            return;
+        }
+    }
+    complete(nil,false);
 }
 
 /**
