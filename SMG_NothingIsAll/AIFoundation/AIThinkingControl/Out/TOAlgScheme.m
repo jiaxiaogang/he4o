@@ -181,322 +181,6 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------MC匹配行为化--------------------
- *  ********** v1 **********
- *  @desc 伪代码:
- *  1. MC匹配时,判断是否可LSP里氏替换;
- *      2. 可替换,success
- *      3. 不可替换,changeM2C,判断条件为value_p.cLess / value_p.cGreater / alg_p.cHav / alg_p.cNone;
- *          4. alg_p则递归到convert2Out_Single_Alg();
- *          5. value_p则递归到convert2Out_Single_Value();
- *  @desc
- *      1. MC匹配,仅针对cHav做行为化;
- *      2. MC匹配,是对瞬时记忆中的matchAlg做匹配行为化;
- *      3. 当MC匹配转移change条件时,递归到single_Alg或single_Value进行行为化;
- *
- *  @desc
- *      1. xx年xx月xx日: matchAlg优先,都是通过抽具象关联来判断的,而不是直接对比其内容;
- *      2. 20200204: ms&cs抵消的条件,由ms.content_ps.count=cs.content_ps.count == 1改为,两者不同稀疏码长度为1;(参考18075)
- *
- *  @todo
- *      TODO_TEST_HERE: 在alg抽象匹配时,核实下将absAlg去重,为了避免绝对匹配重复导致的联想不以cHav
- *
- *  ********** v2 **********
- *  @desc
- *      1. 运行方式: 分为GLHN四种处理方式; (Greater,Less,Hav,None)
- *      2. 主要改进: 对MC类比得到ms&cs&mcs并各进行精确的评价和行为化;
- *
- *  @desc 理性决策:
- *      1. 进行理性MC,并返回到checkScore进行理性预测评价;
- *      2. GLH为理性,因为必须满足,(其中H随后看是否需要进行评价下,比如苹果不甜,也照样能吃);
- *
- *  @实例: 用几个例子,来跑此处代码,看mAlg应该如何得来?如烤蘑菇的例子,坚果去皮的例子,cpu煎蛋的例子;
- */
--(void) convert2Out_Short_MC_V2:(AIAlgNodeBase*)matchAlg curAlg:(AIAlgNodeBase*)curAlg curFo:(AIFoNodeBase*)curFo mcSuccess:(void(^)(NSArray *acts))mcSuccess mcFailure:(void(^)())mcFailure checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
-    //1. 数据准备
-    __block BOOL failured = false;
-    NSMutableArray *allActs = [[NSMutableArray alloc] init];
-    
-    //2. 取出mcs & ms & cs;
-    NSArray *mAbs_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:matchAlg]];
-    NSArray *cAbs_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:curAlg]];
-    NSArray *ms = [SMGUtils removeSub_ps:cAbs_ps parent_ps:mAbs_ps];
-    NSArray *cs = [SMGUtils removeSub_ps:mAbs_ps parent_ps:cAbs_ps];
-    NSArray *mcs = [SMGUtils filterSame_ps:mAbs_ps parent_ps:cAbs_ps];
-    [TOUtils debugMC:matchAlg cAlg:curAlg mcs:mcs ms:ms cs:cs];
-    
-    //3. 进行MC_Alg行为化;
-    [self convert2Out_MC_Alg:matchAlg curAlg:curAlg curFo:curFo mcs:mcs ms:ms cs:cs mcSuccess:^(NSArray *acts) {
-        [allActs addObjectsFromArray:acts];
-    } mcFailure:^{
-        failured = true;
-        mcFailure();
-    } checkScore:checkScore];
-    
-    //4. 进行MC_Value行为化;
-    if (!failured) {
-        [self convert2Out_MC_UniqueValue:matchAlg cAlg:curAlg curFo:curFo mcs:mcs ms:ms cs:cs checkScore:checkScore complete:^(NSArray *acts, BOOL success) {
-            [allActs addObjectsFromArray:acts];
-            failured = !success;
-        }];
-    }
-    
-    //5. 完成
-    if (failured) {
-        mcFailure();
-    }else{
-        mcSuccess(allActs);
-    }
-}
-
--(void) convert2Out_MC_Alg:(AIAlgNodeBase*)matchAlg curAlg:(AIAlgNodeBase*)curAlg curFo:(AIFoNodeBase*)curFo mcs:(NSArray*)mcs ms:(NSArray*)ms cs:(NSArray*)cs mcSuccess:(void(^)(NSArray *acts))mcSuccess mcFailure:(void(^)())mcFailure checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
-    //0. 数据准备
-    mcs = ARRTOOK(mcs);
-    ms = ARRTOOK(ms);
-    cs = ARRTOOK(cs);
-    __block BOOL failured = false;
-    NSMutableArray *allActs = [[NSMutableArray alloc] init];
-    NSMutableArray *alreadyGLs = [[NSMutableArray alloc] init];
-    if (matchAlg && curAlg) {
-        
-        //1. MC匹配之: LSP里氏判断,M是否是C
-        BOOL cIsAbs = ISOK(curAlg, AIAbsAlgNode.class);
-        NSArray *cConPorts = cIsAbs ? ((AIAbsAlgNode*)curAlg).conPorts : nil;
-        BOOL mIsC = [SMGUtils containsSub_p:matchAlg.pointer parentPorts:cConPorts];
-        
-        //2. 数据准备: (mcs无效且m不抽象自C时 = 则不匹配)
-        if (!ARRISOK(mcs) && !mIsC) {
-            return;
-        }
-        NSArray *msAlgs = [SMGUtils searchNodes:ms];
-        
-        //2. 当mNotS时,进行cs处理
-        if (!mIsC) {
-            NSArray *csAlgs = [SMGUtils searchNodes:cs];
-            
-            //3. MC抵消GL处理之: 判断长度为1;
-            for (AIAlgNodeBase *csAlg in csAlgs) {
-                for (AIAlgNodeBase *msAlg in msAlgs) {
-                    
-                    //3. ms&cs仅有1条不同稀疏码;
-                    NSArray *csSubMs = [SMGUtils removeSub_ps:msAlg.content_ps parent_ps:csAlg.content_ps];
-                    NSArray *msSubCs = [SMGUtils removeSub_ps:csAlg.content_ps parent_ps:msAlg.content_ps];
-                    if (csSubMs.count == 1 && msSubCs.count == 1) {
-                        //4. MC抵消GL处理之: 判断标识相同
-                        AIKVPointer *csValue_p = ARR_INDEX(csSubMs, 0);
-                        AIKVPointer *msValue_p = ARR_INDEX(msSubCs, 0);
-                        if ([csValue_p.identifier isEqualToString:msValue_p.identifier]) {
-                            //5. MC抵消GL处理之: 转移到_Value()
-                            NSNumber *csValue = NUMTOOK([AINetIndex getData:csValue_p]);
-                            NSNumber *msValue = NUMTOOK([AINetIndex getData:msValue_p]);
-                            AnalogyInnerType type = AnalogyInnerType_None;
-                            if (csValue > msValue) {//需增大
-                                type = AnalogyInnerType_Greater;
-                            }else if(csValue < msValue){//需减小
-                                type = AnalogyInnerType_Less;
-                            }else{}//再者一样,不处理;
-                            if (!failured && type != AnalogyInnerType_None) {
-                                [self convert2Out_RelativeValue:msValue_p.algsType ds:msValue_p.dataSource type:type vSuccess:^(AIFoNodeBase *glFo, NSArray *acts) {
-                                    [allActs addObjectsFromArray:acts];
-                                } vFailure:^{
-                                    failured = true;
-                                }];
-                            }
-                            
-                            //6. MC抵消GL处理之: 标记已处理;
-                            [alreadyGLs addObject:csAlg];
-                            [alreadyGLs addObject:msAlg];
-                            break;
-                        }
-                    }
-                }
-                
-                //7. MC未抵消H处理之: 满足csAlg;
-                for (AIAlgNodeBase *csAlg in csAlgs) {
-                    if (![alreadyGLs containsObject:csAlg] && !failured) {
-                        [self convert2Out_Alg:csAlg.pointer curFo:curFo type:AnalogyInnerType_Hav success:^(NSArray *acts) {
-                            [allActs addObjectsFromArray:acts];
-                        } failure:^{
-                            failured = true;
-                        } checkScore:checkScore];
-                    }
-                }
-            }
-        }
-        
-        //8. MC未抵消N处理之: 修正msAlg;
-        for (AIAlgNodeBase *msAlg in msAlgs) {
-            if (![alreadyGLs containsObject:msAlg] && !failured) {
-                
-                //9. 对msAlg进行评价,看是否需要修正;
-                BOOL scoreSuccess = checkScore(msAlg);
-                if (!scoreSuccess) {
-                    [self convert2Out_Alg:msAlg.pointer curFo:curFo type:AnalogyInnerType_None success:^(NSArray *acts) {
-                        [allActs addObjectsFromArray:acts];
-                    } failure:^{
-                        failured = true;
-                    } checkScore:checkScore];
-                }
-            }
-        }
-    }
-    
-    //10. 结果
-    if (failured) {
-        mcFailure();
-    }else{
-        mcSuccess(allActs);
-    }
-}
-
-/**
- *  MARK:--------------------对MC中,特有的稀疏码进行行为化;--------------------
- *  @desc : 参考n18205:组合方案;
- *  @caller : 由MC方法调用;
- *  @param complete : 完成时调用
- *  @version
- *      2020.04.04 : 支持更全面查找的同区不同值 (渗透到具象中,参考:18206);
- */
--(void) convert2Out_MC_UniqueValue:(AIAlgNodeBase*)mAlg cAlg:(AIAlgNodeBase*)cAlg curFo:(AIFoNodeBase*)curFo mcs:(NSArray*)mcs ms:(NSArray*)ms cs:(NSArray*)cs checkScore:(BOOL(^)(AIAlgNodeBase *rtAlg))checkScore complete:(void(^)(NSArray *acts,BOOL success))complete{
-    //1. 数据准备;
-    NSArray *mcs_Alg = [SMGUtils searchNodes:mcs];
-    NSArray *ms_Alg = [SMGUtils searchNodes:ms];
-    NSArray *cs_Alg = [SMGUtils searchNodes:cs];
-    NSMutableArray *acts = [[NSMutableArray alloc] init];
-    if (!mAlg || !cAlg || !complete || !checkScore || !curFo) {
-        complete(acts,true);
-        return;
-    }
-    __block BOOL success = true;//默认为成功,只有成功,才会一直运行下去;
-    
-    //2. 取M特有的稀疏码;
-    NSArray *mUnique_ps = mAlg.content_ps;
-    for (AIAlgNodeBase *item in mcs_Alg) mUnique_ps = [SMGUtils removeSub_ps:item.content_ps parent_ps:mUnique_ps];
-    for (AIAlgNodeBase *item in ms_Alg) mUnique_ps = [SMGUtils removeSub_ps:item.content_ps parent_ps:mUnique_ps];
-    
-    //3. 取C特有的稀疏码;
-    NSArray *cUnique_ps = cAlg.content_ps;
-    for (AIAlgNodeBase *item in mcs_Alg) cUnique_ps = [SMGUtils removeSub_ps:item.content_ps parent_ps:cUnique_ps];
-    for (AIAlgNodeBase *item in cs_Alg) cUnique_ps = [SMGUtils removeSub_ps:item.content_ps parent_ps:cUnique_ps];
-    NSLog(@"===================MC_Value START=================");
-    
-    //4. 找同区不同值_直接从CUnique找;
-    NSMutableDictionary *alreadyDic = [[NSMutableDictionary alloc] init]; //收集已找到的映射
-    NSDictionary *findByCur = DICTOOK([SMGUtils filterSameIdentifier_DiffId_ps:mUnique_ps b_ps:cUnique_ps]);
-    [alreadyDic setDictionary:findByCur];
-    NSLog(@"----> findByCur:%lu / %lu",(unsigned long)findByCur.count,mUnique_ps.count);
-    
-    //5. 将findByCur行为化;
-    [self convert2Out_MC_Value_Multi:findByCur protoAlg:cAlg complete:^(NSArray *mActs, BOOL mSuccess) {
-        [acts addObjectsFromArray:mActs];
-        success = mSuccess;
-    } checkScore:checkScore];
-    
-    //6. 找同区不同值_再从价值确切的具象概念找;
-    if (alreadyDic.count < mUnique_ps.count && success) {
-        [TOUtils findConAlg_StableMV:cAlg curFo:curFo itemBlock:^BOOL(AIAlgNodeBase *validAlg) {
-            if (validAlg) {
-                //a. 从conAlg中找映射;
-                NSArray *needFind_ps = [SMGUtils removeSub_ps:DATAS2OBJS(alreadyDic.allKeys) parent_ps:mUnique_ps];
-                NSDictionary *findByCon = DICTOOK([SMGUtils filterSameIdentifier_DiffId_ps:needFind_ps b_ps:validAlg.content_ps]);
-                //b. 找几条收集几条;
-                [alreadyDic setDictionary:findByCon];
-                NSLog(@"----> findByCon:%lu / %lu",(unsigned long)findByCon.count,mUnique_ps.count);
-                
-                //c. 将findByCon行为化;
-                [self convert2Out_MC_Value_Multi:findByCon protoAlg:validAlg complete:^(NSArray *mActs, BOOL mSuccess) {
-                    [acts addObjectsFromArray:mActs];
-                    success = mSuccess;
-                } checkScore:checkScore];
-            }
-            //c. 未行为化失败 且 未找完,则继续;
-            return mUnique_ps.count > alreadyDic.count && success;
-        }];
-    }
-    
-    //6. 执行返回;
-    complete(acts,success);
-}
-
--(void) convert2Out_MC_Value_Multi:(NSDictionary*)findDic protoAlg:(AIAlgNodeBase*)protoAlg complete:(void (^)(NSArray *mActs,BOOL mSuccess))complete checkScore:(BOOL(^)(AIAlgNodeBase *rtAlg))checkScore{
-    //1. 数据准备
-    findDic = DICTOOK(findDic);
-    NSMutableArray *acts = [[NSMutableArray alloc] init];
-    if (!protoAlg || !complete) {
-        complete(acts,false);
-        return;
-    }
-    
-    //2.  逐个行为化;
-    for (NSData *key in findDic.allKeys) {
-        //a. 取值;
-        AIKVPointer *newValue_p = DATA2OBJ(key);
-        AIKVPointer *oldValue_p = [findDic objectForKey:key];
-        __block BOOL success = true;
-        //b. 行为化;
-        [self convert2Out_MC_Value_Single:newValue_p oldValue_p:oldValue_p protoAlg:protoAlg complete:^(NSArray *sActs, BOOL sSuccess) {
-            success = sSuccess;
-            [acts addObjectsFromArray:sActs];
-        } checkScore:checkScore];
-        //c. 一条失败,则全失败;
-        if (!success) {
-            complete(acts,false);
-            return;
-        }
-    }
-    
-    //3. 全成功,返回;
-    complete(acts,true);
-}
-
-/**
- *  MARK:--------------------MC_Value单条行为化方法--------------------
- *  @desc 主要功能为: 将protoAlg - old + new = rtAlg,然后反思rtAlg,如果需要则取new->old的行为化;
- */
--(void) convert2Out_MC_Value_Single:(AIKVPointer *)newValue_p oldValue_p:(AIKVPointer *)oldValue_p protoAlg:(AIAlgNodeBase*)protoAlg complete:(void (^)(NSArray *sActs,BOOL sSuccess))complete checkScore:(BOOL(^)(AIAlgNodeBase *rtAlg))checkScore{
-    //1. 数据检查
-    NSMutableArray *acts = [[NSMutableArray alloc] init];
-    if (!newValue_p || !oldValue_p || !protoAlg) {
-        complete(nil,false);
-        return;
-    }
-    
-    //2. 重组rtAlg
-    NSMutableArray *creativity_ps = [[NSMutableArray alloc] initWithArray:protoAlg.content_ps];
-    NSInteger replaceIndex = [creativity_ps indexOfObject:oldValue_p];
-    [creativity_ps replaceObjectAtIndex:replaceIndex withObject:newValue_p];
-    AIAlgNode *rtAlg = [theNet createAlgNode:creativity_ps isOut:protoAlg.pointer.isOut isMem:true];
-    NSLog(@"-------------->RTAlg %@重组概念内容:[%@]",[NVHeUtil getLightStr:newValue_p],[NVHeUtil getLightStr4Ps:rtAlg.content_ps]);
-    
-    //3. 反思 & 评价
-    AIAlgNodeBase *matchAlg = [self.delegate toAlgScheme_MatchRTAlg:rtAlg];
-    BOOL scoreSuccess = checkScore(matchAlg);
-    NSLog(@"-------------->RTAlg 反思概念内容:[%@] 评价:%d",[NVHeUtil getLightStr4Ps:matchAlg.content_ps],scoreSuccess);
-    [theNV setNodeData:matchAlg.pointer appendLightStr:@"TMPPP"];
-    if (scoreSuccess) {
-        complete(nil,true);
-        return;
-    }
-    
-    //4. 行为化 (GL处理: 转移到_Value);
-    AnalogyInnerType type = [ThinkingUtils getInnerType:newValue_p backValue_p:oldValue_p];
-    if (type != AnalogyInnerType_None) {
-        __block BOOL success = false;
-        [self convert2Out_RelativeValue:newValue_p.algsType ds:newValue_p.dataSource type:type vSuccess:^(AIFoNodeBase *glFo, NSArray *subActs) {
-            [acts addObjectsFromArray:subActs];
-            success = true;
-        } vFailure:^{}];
-        
-        //5. 成功;
-        if (success) {
-            complete(acts,true);
-            return;
-        }
-    }
-    complete(nil,false);
-}
-
-/**
  *  MARK:--------------------"相对概念"的行为化--------------------
  *  1. 先根据havAlg取到havFo;
  *  2. 再判断havFo中的rangeOrder的行为化;
@@ -631,5 +315,336 @@
 
 @end
 
+
+/**
+ *  MARK:--------------------MC行为化--------------------
+ *  @desc 结构说明:
+ *      主: _MC_V2
+ *          1: _MC_Alg
+ *          2: 二级:_MC_Value
+ *              2.1: _MC_Value_Multi
+ *              2.2: _MC_Value_Single
+ */
 @implementation TOAlgScheme (MC)
+
+/**
+ *  MARK:--------------------MC匹配行为化--------------------
+ *  ********** v1 **********
+ *  @desc 伪代码:
+ *  1. MC匹配时,判断是否可LSP里氏替换;
+ *      2. 可替换,success
+ *      3. 不可替换,changeM2C,判断条件为value_p.cLess / value_p.cGreater / alg_p.cHav / alg_p.cNone;
+ *          4. alg_p则递归到convert2Out_Single_Alg();
+ *          5. value_p则递归到convert2Out_Single_Value();
+ *  @desc
+ *      1. MC匹配,仅针对cHav做行为化;
+ *      2. MC匹配,是对瞬时记忆中的matchAlg做匹配行为化;
+ *      3. 当MC匹配转移change条件时,递归到single_Alg或single_Value进行行为化;
+ *
+ *  @desc
+ *      1. xx年xx月xx日: matchAlg优先,都是通过抽具象关联来判断的,而不是直接对比其内容;
+ *      2. 20200204: ms&cs抵消的条件,由ms.content_ps.count=cs.content_ps.count == 1改为,两者不同稀疏码长度为1;(参考18075)
+ *
+ *  @todo
+ *      TODO_TEST_HERE: 在alg抽象匹配时,核实下将absAlg去重,为了避免绝对匹配重复导致的联想不以cHav
+ *
+ *  ********** v2 **********
+ *  @desc
+ *      1. 运行方式: 分为GLHN四种处理方式; (Greater,Less,Hav,None)
+ *      2. 主要改进: 对MC类比得到ms&cs&mcs并各进行精确的评价和行为化;
+ *
+ *  @desc 理性决策:
+ *      1. 进行理性MC,并返回到checkScore进行理性预测评价;
+ *      2. GLH为理性,因为必须满足,(其中H随后看是否需要进行评价下,比如苹果不甜,也照样能吃);
+ *
+ *  @实例: 用几个例子,来跑此处代码,看mAlg应该如何得来?如烤蘑菇的例子,坚果去皮的例子,cpu煎蛋的例子;
+ */
+-(void) convert2Out_Short_MC_V2:(AIAlgNodeBase*)matchAlg curAlg:(AIAlgNodeBase*)curAlg curFo:(AIFoNodeBase*)curFo mcSuccess:(void(^)(NSArray *acts))mcSuccess mcFailure:(void(^)())mcFailure checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
+    //1. 数据准备
+    __block BOOL failured = false;
+    NSMutableArray *allActs = [[NSMutableArray alloc] init];
+    
+    //2. 取出mcs & ms & cs;
+    NSArray *mAbs_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:matchAlg]];
+    NSArray *cAbs_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:curAlg]];
+    NSArray *ms = [SMGUtils removeSub_ps:cAbs_ps parent_ps:mAbs_ps];
+    NSArray *cs = [SMGUtils removeSub_ps:mAbs_ps parent_ps:cAbs_ps];
+    NSArray *mcs = [SMGUtils filterSame_ps:mAbs_ps parent_ps:cAbs_ps];
+    [TOUtils debugMC:matchAlg cAlg:curAlg mcs:mcs ms:ms cs:cs];
+    
+    //3. 进行MC_Alg行为化;
+    [self convert2Out_MC_Alg:matchAlg curAlg:curAlg curFo:curFo mcs:mcs ms:ms cs:cs mcSuccess:^(NSArray *acts) {
+        [allActs addObjectsFromArray:acts];
+    } mcFailure:^{
+        failured = true;
+        mcFailure();
+    } checkScore:checkScore];
+    
+    //4. 进行MC_Value行为化;
+    if (!failured) {
+        [self convert2Out_MC_Value:matchAlg cAlg:curAlg curFo:curFo mcs:mcs ms:ms cs:cs checkScore:checkScore complete:^(NSArray *acts, BOOL success) {
+            [allActs addObjectsFromArray:acts];
+            failured = !success;
+        }];
+    }
+    
+    //5. 完成
+    if (failured) {
+        mcFailure();
+    }else{
+        mcSuccess(allActs);
+    }
+}
+
+-(void) convert2Out_MC_Alg:(AIAlgNodeBase*)matchAlg curAlg:(AIAlgNodeBase*)curAlg curFo:(AIFoNodeBase*)curFo mcs:(NSArray*)mcs ms:(NSArray*)ms cs:(NSArray*)cs mcSuccess:(void(^)(NSArray *acts))mcSuccess mcFailure:(void(^)())mcFailure checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
+    //0. 数据准备
+    mcs = ARRTOOK(mcs);
+    ms = ARRTOOK(ms);
+    cs = ARRTOOK(cs);
+    __block BOOL failured = false;
+    NSMutableArray *allActs = [[NSMutableArray alloc] init];
+    NSMutableArray *alreadyGLs = [[NSMutableArray alloc] init];
+    if (matchAlg && curAlg) {
+        
+        //1. MC匹配之: LSP里氏判断,M是否是C
+        BOOL cIsAbs = ISOK(curAlg, AIAbsAlgNode.class);
+        NSArray *cConPorts = cIsAbs ? ((AIAbsAlgNode*)curAlg).conPorts : nil;
+        BOOL mIsC = [SMGUtils containsSub_p:matchAlg.pointer parentPorts:cConPorts];
+        
+        //2. 数据准备: (mcs无效且m不抽象自C时 = 则不匹配)
+        if (!ARRISOK(mcs) && !mIsC) {
+            return;
+        }
+        NSArray *msAlgs = [SMGUtils searchNodes:ms];
+        
+        //2. 当mNotS时,进行cs处理
+        if (!mIsC) {
+            NSArray *csAlgs = [SMGUtils searchNodes:cs];
+            
+            //3. MC抵消GL处理之: 判断长度为1;
+            for (AIAlgNodeBase *csAlg in csAlgs) {
+                for (AIAlgNodeBase *msAlg in msAlgs) {
+                    
+                    //3. ms&cs仅有1条不同稀疏码;
+                    NSArray *csSubMs = [SMGUtils removeSub_ps:msAlg.content_ps parent_ps:csAlg.content_ps];
+                    NSArray *msSubCs = [SMGUtils removeSub_ps:csAlg.content_ps parent_ps:msAlg.content_ps];
+                    if (csSubMs.count == 1 && msSubCs.count == 1) {
+                        //4. MC抵消GL处理之: 判断标识相同
+                        AIKVPointer *csValue_p = ARR_INDEX(csSubMs, 0);
+                        AIKVPointer *msValue_p = ARR_INDEX(msSubCs, 0);
+                        if ([csValue_p.identifier isEqualToString:msValue_p.identifier]) {
+                            //5. MC抵消GL处理之: 转移到_Value()
+                            NSNumber *csValue = NUMTOOK([AINetIndex getData:csValue_p]);
+                            NSNumber *msValue = NUMTOOK([AINetIndex getData:msValue_p]);
+                            AnalogyInnerType type = AnalogyInnerType_None;
+                            if (csValue > msValue) {//需增大
+                                type = AnalogyInnerType_Greater;
+                            }else if(csValue < msValue){//需减小
+                                type = AnalogyInnerType_Less;
+                            }else{}//再者一样,不处理;
+                            if (!failured && type != AnalogyInnerType_None) {
+                                [self convert2Out_RelativeValue:msValue_p.algsType ds:msValue_p.dataSource type:type vSuccess:^(AIFoNodeBase *glFo, NSArray *acts) {
+                                    [allActs addObjectsFromArray:acts];
+                                } vFailure:^{
+                                    failured = true;
+                                }];
+                            }
+                            
+                            //6. MC抵消GL处理之: 标记已处理;
+                            [alreadyGLs addObject:csAlg];
+                            [alreadyGLs addObject:msAlg];
+                            break;
+                        }
+                    }
+                }
+                
+                //7. MC未抵消H处理之: 满足csAlg;
+                for (AIAlgNodeBase *csAlg in csAlgs) {
+                    if (![alreadyGLs containsObject:csAlg] && !failured) {
+                        [self convert2Out_Alg:csAlg.pointer curFo:curFo type:AnalogyInnerType_Hav success:^(NSArray *acts) {
+                            [allActs addObjectsFromArray:acts];
+                        } failure:^{
+                            failured = true;
+                        } checkScore:checkScore];
+                    }
+                }
+            }
+        }
+        
+        //8. MC未抵消N处理之: 修正msAlg;
+        for (AIAlgNodeBase *msAlg in msAlgs) {
+            if (![alreadyGLs containsObject:msAlg] && !failured) {
+                
+                //9. 对msAlg进行评价,看是否需要修正;
+                BOOL scoreSuccess = checkScore(msAlg);
+                if (!scoreSuccess) {
+                    [self convert2Out_Alg:msAlg.pointer curFo:curFo type:AnalogyInnerType_None success:^(NSArray *acts) {
+                        [allActs addObjectsFromArray:acts];
+                    } failure:^{
+                        failured = true;
+                    } checkScore:checkScore];
+                }
+            }
+        }
+    }
+    
+    //10. 结果
+    if (failured) {
+        mcFailure();
+    }else{
+        mcSuccess(allActs);
+    }
+}
+
+/**
+ *  MARK:--------------------对MC中,特有的稀疏码进行行为化;--------------------
+ *  @desc : 参考n18205:组合方案;
+ *  @caller : 由MC方法调用;
+ *  @param complete : 完成时调用
+ *  @version
+ *      2020.04.04 : 支持更全面查找的同区不同值 (渗透到具象中,参考:18206);
+ */
+-(void) convert2Out_MC_Value:(AIAlgNodeBase*)mAlg cAlg:(AIAlgNodeBase*)cAlg curFo:(AIFoNodeBase*)curFo mcs:(NSArray*)mcs ms:(NSArray*)ms cs:(NSArray*)cs checkScore:(BOOL(^)(AIAlgNodeBase *rtAlg))checkScore complete:(void(^)(NSArray *acts,BOOL success))complete{
+    //1. 数据准备;
+    NSArray *mcs_Alg = [SMGUtils searchNodes:mcs];
+    NSArray *ms_Alg = [SMGUtils searchNodes:ms];
+    NSArray *cs_Alg = [SMGUtils searchNodes:cs];
+    NSMutableArray *acts = [[NSMutableArray alloc] init];
+    if (!mAlg || !cAlg || !complete || !checkScore || !curFo) {
+        complete(acts,true);
+        return;
+    }
+    __block BOOL success = true;//默认为成功,只有成功,才会一直运行下去;
+    
+    //2. 取M特有的稀疏码;
+    NSArray *mUnique_ps = mAlg.content_ps;
+    for (AIAlgNodeBase *item in mcs_Alg) mUnique_ps = [SMGUtils removeSub_ps:item.content_ps parent_ps:mUnique_ps];
+    for (AIAlgNodeBase *item in ms_Alg) mUnique_ps = [SMGUtils removeSub_ps:item.content_ps parent_ps:mUnique_ps];
+    
+    //3. 取C特有的稀疏码;
+    NSArray *cUnique_ps = cAlg.content_ps;
+    for (AIAlgNodeBase *item in mcs_Alg) cUnique_ps = [SMGUtils removeSub_ps:item.content_ps parent_ps:cUnique_ps];
+    for (AIAlgNodeBase *item in cs_Alg) cUnique_ps = [SMGUtils removeSub_ps:item.content_ps parent_ps:cUnique_ps];
+    NSLog(@"===================MC_Value START=================");
+    
+    //4. 找同区不同值_直接从CUnique找;
+    NSMutableDictionary *alreadyDic = [[NSMutableDictionary alloc] init]; //收集已找到的映射
+    NSDictionary *findByCur = DICTOOK([SMGUtils filterSameIdentifier_DiffId_ps:mUnique_ps b_ps:cUnique_ps]);
+    [alreadyDic setDictionary:findByCur];
+    NSLog(@"----> findByCur:%lu / %lu",(unsigned long)findByCur.count,mUnique_ps.count);
+    
+    //5. 将findByCur行为化;
+    [self convert2Out_MC_Value_Multi:findByCur protoAlg:cAlg complete:^(NSArray *mActs, BOOL mSuccess) {
+        [acts addObjectsFromArray:mActs];
+        success = mSuccess;
+    } checkScore:checkScore];
+    
+    //6. 找同区不同值_再从价值确切的具象概念找;
+    if (alreadyDic.count < mUnique_ps.count && success) {
+        [TOUtils findConAlg_StableMV:cAlg curFo:curFo itemBlock:^BOOL(AIAlgNodeBase *validAlg) {
+            if (validAlg) {
+                //a. 从conAlg中找映射;
+                NSArray *needFind_ps = [SMGUtils removeSub_ps:DATAS2OBJS(alreadyDic.allKeys) parent_ps:mUnique_ps];
+                NSDictionary *findByCon = DICTOOK([SMGUtils filterSameIdentifier_DiffId_ps:needFind_ps b_ps:validAlg.content_ps]);
+                //b. 找几条收集几条;
+                [alreadyDic setDictionary:findByCon];
+                NSLog(@"----> findByCon:%lu / %lu",(unsigned long)findByCon.count,mUnique_ps.count);
+                
+                //c. 将findByCon行为化;
+                [self convert2Out_MC_Value_Multi:findByCon protoAlg:validAlg complete:^(NSArray *mActs, BOOL mSuccess) {
+                    [acts addObjectsFromArray:mActs];
+                    success = mSuccess;
+                } checkScore:checkScore];
+            }
+            //c. 未行为化失败 且 未找完,则继续;
+            return mUnique_ps.count > alreadyDic.count && success;
+        }];
+    }
+    
+    //6. 执行返回;
+    complete(acts,success);
+}
+
+/**
+ *  MARK:--------------------MC_Value多条行为化方法--------------------
+ *  @desc 主要功能为: 将findByDic循环进行行为化;
+ */
+-(void) convert2Out_MC_Value_Multi:(NSDictionary*)findDic protoAlg:(AIAlgNodeBase*)protoAlg complete:(void (^)(NSArray *mActs,BOOL mSuccess))complete checkScore:(BOOL(^)(AIAlgNodeBase *rtAlg))checkScore{
+    //1. 数据准备
+    findDic = DICTOOK(findDic);
+    NSMutableArray *acts = [[NSMutableArray alloc] init];
+    if (!protoAlg || !complete) {
+        complete(acts,false);
+        return;
+    }
+    
+    //2.  逐个行为化;
+    for (NSData *key in findDic.allKeys) {
+        //a. 取值;
+        AIKVPointer *newValue_p = DATA2OBJ(key);
+        AIKVPointer *oldValue_p = [findDic objectForKey:key];
+        __block BOOL success = true;
+        //b. 行为化;
+        [self convert2Out_MC_Value_Single:newValue_p oldValue_p:oldValue_p protoAlg:protoAlg complete:^(NSArray *sActs, BOOL sSuccess) {
+            success = sSuccess;
+            [acts addObjectsFromArray:sActs];
+        } checkScore:checkScore];
+        //c. 一条失败,则全失败;
+        if (!success) {
+            complete(acts,false);
+            return;
+        }
+    }
+    
+    //3. 全成功,返回;
+    complete(acts,true);
+}
+
+/**
+ *  MARK:--------------------MC_Value单条行为化方法--------------------
+ *  @desc 主要功能为: 将protoAlg - old + new = rtAlg,然后反思rtAlg,如果需要则取new->old的行为化;
+ */
+-(void) convert2Out_MC_Value_Single:(AIKVPointer *)newValue_p oldValue_p:(AIKVPointer *)oldValue_p protoAlg:(AIAlgNodeBase*)protoAlg complete:(void (^)(NSArray *sActs,BOOL sSuccess))complete checkScore:(BOOL(^)(AIAlgNodeBase *rtAlg))checkScore{
+    //1. 数据检查
+    NSMutableArray *acts = [[NSMutableArray alloc] init];
+    if (!newValue_p || !oldValue_p || !protoAlg) {
+        complete(nil,false);
+        return;
+    }
+    
+    //2. 重组rtAlg
+    NSMutableArray *creativity_ps = [[NSMutableArray alloc] initWithArray:protoAlg.content_ps];
+    NSInteger replaceIndex = [creativity_ps indexOfObject:oldValue_p];
+    [creativity_ps replaceObjectAtIndex:replaceIndex withObject:newValue_p];
+    AIAlgNode *rtAlg = [theNet createAlgNode:creativity_ps isOut:protoAlg.pointer.isOut isMem:true];
+    NSLog(@"-------------->RTAlg %@重组概念内容:[%@]",[NVHeUtil getLightStr:newValue_p],[NVHeUtil getLightStr4Ps:rtAlg.content_ps]);
+    
+    //3. 反思 & 评价
+    AIAlgNodeBase *matchAlg = [self.delegate toAlgScheme_MatchRTAlg:rtAlg];
+    BOOL scoreSuccess = checkScore(matchAlg);
+    NSLog(@"-------------->RTAlg 反思概念内容:[%@] 评价:%d",[NVHeUtil getLightStr4Ps:matchAlg.content_ps],scoreSuccess);
+    [theNV setNodeData:matchAlg.pointer appendLightStr:@"TMPPP"];
+    if (scoreSuccess) {
+        complete(nil,true);
+        return;
+    }
+    
+    //4. 行为化 (GL处理: 转移到_Value);
+    AnalogyInnerType type = [ThinkingUtils getInnerType:newValue_p backValue_p:oldValue_p];
+    if (type != AnalogyInnerType_None) {
+        __block BOOL success = false;
+        [self convert2Out_RelativeValue:newValue_p.algsType ds:newValue_p.dataSource type:type vSuccess:^(AIFoNodeBase *glFo, NSArray *subActs) {
+            [acts addObjectsFromArray:subActs];
+            success = true;
+        } vFailure:^{}];
+        
+        //5. 成功;
+        if (success) {
+            complete(acts,true);
+            return;
+        }
+    }
+    complete(nil,false);
+}
+
 @end

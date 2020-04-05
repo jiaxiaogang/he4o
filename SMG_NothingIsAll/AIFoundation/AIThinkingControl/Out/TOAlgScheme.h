@@ -78,5 +78,11 @@
 
 @end
 
+//MARK:===============================================================
+//MARK:                     < MC行为化 >
+//MARK:===============================================================
 @interface TOAlgScheme (MC)
+
+-(void) convert2Out_Short_MC_V2:(AIAlgNodeBase*)matchAlg curAlg:(AIAlgNodeBase*)curAlg curFo:(AIFoNodeBase*)curFo mcSuccess:(void(^)(NSArray *acts))mcSuccess mcFailure:(void(^)())mcFailure checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore;
+
 @end
