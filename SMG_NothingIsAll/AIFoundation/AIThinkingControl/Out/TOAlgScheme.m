@@ -609,12 +609,12 @@
     [creativity_ps addObject:mValue_p];
     AIAlgNode *rtAlg = [theNet createAlgNode:creativity_ps isOut:false isMem:true];
     [theNV setNodeData:rtAlg.pointer appendLightStr:@"RTAlg"];
-    NSLog(@"-------------->RTAlg 重组:%@ 概念:%@=%ld 内容:[%@]",[NVHeUtil getLightStr:mValue_p],rtAlg.pointer.identifier,rtAlg.pointer.pointerId,[NVHeUtil getLightStr4Ps:rtAlg.content_ps]);
     
     //3. 反思 & 评价
     AIAlgNodeBase *matchAlg = [self.delegate toAlgScheme_MatchRTAlg:rtAlg];
+    NSLog(@"-------------->RTAlg %@ 重组:%@=%ld(%@) 识别:%@=%ld(%@)",[NVHeUtil getLightStr:mValue_p],rtAlg.pointer.identifier,rtAlg.pointer.pointerId,[NVHeUtil getLightStr4Ps:rtAlg.content_ps],matchAlg.pointer.identifier,matchAlg.pointer.pointerId,[NVHeUtil getLightStr4Ps:matchAlg.content_ps]);
     BOOL scoreSuccess = checkScore(matchAlg);
-    NSLog(@"-------------->MatchRTAlg 反思概念:%@=%ld 内容:[%@] 评价:%d",matchAlg.pointer.identifier,matchAlg.pointer.pointerId,[NVHeUtil getLightStr4Ps:matchAlg.content_ps],scoreSuccess);
+    NSLog(@"-------------->评价结果:%d",scoreSuccess);
     [theNV setNodeData:matchAlg.pointer appendLightStr:@"MatchRTAlg"];
     if (scoreSuccess) {
         complete(nil,true);
