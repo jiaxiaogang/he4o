@@ -59,6 +59,7 @@
  */
 @interface NVView : UIView
 
+@property (assign, nonatomic) BOOL forceMode; //强力模式 (在此模式下,即使UI未展示,也会强行加入node);
 -(id) initWithDelegate:(id<NVViewDelegate>)delegate;
 
 /**

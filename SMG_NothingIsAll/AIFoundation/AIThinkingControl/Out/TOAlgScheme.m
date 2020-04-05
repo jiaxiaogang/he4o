@@ -617,13 +617,14 @@
     NSInteger replaceIndex = [creativity_ps indexOfObject:oldValue_p];
     [creativity_ps replaceObjectAtIndex:replaceIndex withObject:newValue_p];
     AIAlgNode *rtAlg = [theNet createAlgNode:creativity_ps isOut:protoAlg.pointer.isOut isMem:true];
-    NSLog(@"-------------->RTAlg %@重组概念内容:[%@]",[NVHeUtil getLightStr:newValue_p],[NVHeUtil getLightStr4Ps:rtAlg.content_ps]);
+    [theNV setNodeData:rtAlg.pointer appendLightStr:@"RTAlg"];
+    NSLog(@"-------------->RTAlg 重组:%@ 概念:%@=%ld 内容:[%@]",[NVHeUtil getLightStr:newValue_p],rtAlg.pointer.identifier,rtAlg.pointer.pointerId,[NVHeUtil getLightStr4Ps:rtAlg.content_ps]);
     
     //3. 反思 & 评价
     AIAlgNodeBase *matchAlg = [self.delegate toAlgScheme_MatchRTAlg:rtAlg];
     BOOL scoreSuccess = checkScore(matchAlg);
-    NSLog(@"-------------->RTAlg 反思概念内容:[%@] 评价:%d",[NVHeUtil getLightStr4Ps:matchAlg.content_ps],scoreSuccess);
-    [theNV setNodeData:matchAlg.pointer appendLightStr:@"TMPPP"];
+    NSLog(@"-------------->MatchRTAlg 反思概念:%@=%ld 内容:[%@] 评价:%d",matchAlg.pointer.identifier,matchAlg.pointer.pointerId,[NVHeUtil getLightStr4Ps:matchAlg.content_ps],scoreSuccess);
+    [theNV setNodeData:matchAlg.pointer appendLightStr:@"MatchRTAlg"];
     if (scoreSuccess) {
         complete(nil,true);
         return;

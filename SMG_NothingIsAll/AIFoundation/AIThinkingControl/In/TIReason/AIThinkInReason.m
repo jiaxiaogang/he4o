@@ -124,7 +124,7 @@
     
     //2. 识别
     AIAlgNodeBase *result = [self TIR_Alg:rtAlg.pointer fromGroup_ps:@[rtAlg.pointer]];
-    NSLog(@"--> 识别rtAlg:[%@]->[@]",[NVHeUtil getLightStr4Ps:rtAlg.content_ps],[NVHeUtil getLightStr4Ps:result.content_ps]);
+    NSLog(@"--> 识别rtAlg:[%@]->[%@]",[NVHeUtil getLightStr4Ps:rtAlg.content_ps],[NVHeUtil getLightStr4Ps:result.content_ps]);
     return result;
 }
 
