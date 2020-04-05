@@ -100,18 +100,6 @@
             mModel.protoFo = curNode;
             mModel.matchFo = matchFo;
             mModel.matchFoValue = matchValue;
-            if (matchFo.cmvNode_p) {
-                [theNV setForceMode:true];
-                [theNV setNodeData:matchFo.cmvNode_p];
-                [theNV setNodeData:matchFo.pointer];
-                [theNV setNodeData:mModel.protoFo.pointer lightStr:@"PROTOFO"];
-                [theNV setNodeData:rtAlg.pointer];
-                NSLog(@"aaaaaaaa cmv = %ld",matchFo.cmvNode_p.pointerId);
-                NSLog(@"aaaaaaaa matchFo = %ld",matchFo.pointer.pointerId);
-                NSLog(@"aaaaaaaa potoFo = %ld",mModel.protoFo.pointer.pointerId);
-                NSLog(@"aaaaaaaa rgAlg = %ld",rtAlg.pointer.pointerId);
-                [theNV setForceMode:false];
-            }
         }];
     }
     return mModel;

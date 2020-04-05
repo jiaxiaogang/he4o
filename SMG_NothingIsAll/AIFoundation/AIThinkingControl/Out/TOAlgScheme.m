@@ -79,14 +79,23 @@
                 AIShortMatchModel *mModel = [self.delegate toAlgScheme_LSPRethink:mAlg rtFoContent_ps:rethinkAlg_ps];
                 
                 //7. MC反思: 对mModel进行评价;
+                AIKVPointer *mMv_p = mModel.matchFo.cmvNode_p;
                 CGFloat mcScore = [ThinkingUtils getScoreForce:mModel.matchFo.cmvNode_p ratio:mModel.matchFoValue];
                 
                 //8. 对原fo进行评价
+                AIKVPointer *cMv_p = curFo.cmvNode_p;
                 CGFloat curScore = [ThinkingUtils getScoreForce:curFo.cmvNode_p ratio:1.0f];
                 
                 //9. 写评价时所需要,"设定的"的计算算法;
                 
-                //10. 对mcScore和curScore返回评价值进行类比 (如宁饿死不吃屎);
+                //10. 如果mv同区,只要为负则失败;
+                if (mMv_p && cMv_p) {
+                    if ([mMv_p.algsType isEqualToString:cMv_p.algsType] && [mMv_p.dataSource isEqualToString:cMv_p.dataSource] && mcScore < 0) {
+                        return false;
+                    }
+                }
+                
+                //11. 如果不同区,对mcScore和curScore返回评价值进行类比 (如宁饿死不吃屎);
                 CGFloat validDelta = -3;//阈值为-3;
                 return curScore + mcScore > validDelta;
             }

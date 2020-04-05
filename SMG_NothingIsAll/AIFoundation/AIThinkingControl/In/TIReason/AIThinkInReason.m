@@ -178,6 +178,7 @@
                 NSLog(@"-----> TIR_Fo 索引:(%@) 取得时序:[%@]",[NVHeUtil getLightStr4Ps:indexAlg.content_ps],[NVHeUtil getLightStr4Ps:tmpForLogFo.content_ps simple:false]);
                 //3. rethink时,必须包含replaceMatchAlg的时序才有效;
                 if ([SMGUtils containsSub_p:refPort.target_p parentPorts:lastAlgRefPorts]) {
+                    NSLog(@"-----> TIR_Fo 取得时序成功");
                     [result addObject:refPort];
                     if (result.count >= cPartMatchingCheckRefPortsLimit) {
                         break;
