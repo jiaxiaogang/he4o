@@ -411,3 +411,16 @@
 }
 
 @end
+
+@implementation AIThinkInAnalogy (MP)
+
++(void) analogy_MP:(AIShortMatchModel*)mModel protoFo:(AIFoNodeBase*)protoFo{
+    //1. 数据检查
+    if (!mModel | !protoFo) return;
+    
+    //2. 判断mModel.mv和protoFo.mv是否相符;
+    
+    
+}
+
+@end

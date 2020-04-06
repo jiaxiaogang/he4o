@@ -11,7 +11,7 @@
 //MARK:===============================================================
 //MARK:                     < Analogy类比 >
 //MARK:===============================================================
-@class AIAbsAlgNode,AIAlgNode;
+@class AIAbsAlgNode,AIAlgNode,AIShortMatchModel;
 @interface AIThinkInAnalogy : NSObject
 
 /**
@@ -38,5 +38,24 @@
  */
 +(void) analogyInner_FromTIR:(AIFoNodeBase*)checkFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy;
 +(void) analogyInner_FromTIP:(AIFoNodeBase*)checkFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy;
+
+@end
+
+/**
+ *  MARK:--------------------Match&Proto类比--------------------
+ */
+@interface AIThinkInAnalogy (MP)
+
+/**
+ *  MARK:--------------------MP类比算法--------------------
+ *  @callers : 由TIP调用;
+ *  @param protoFo  : 在TIP中,输入mv,新生成的protoFo;
+ *  @param mModel   : 在上一桢的识别预测模型;
+ *  @desc
+ *      1. 执行条件: 当imv与预测mv不符时,执行类比;
+ *      2. 功能作用: 用类比的方式,分析出预测不符的原因(两种,见下),并抽象之;
+ *      3. 不符的原因: a.该出现的未出现; b.不该出现的出现;
+ */
++(void) analogy_MP:(AIShortMatchModel*)mModel protoFo:(AIFoNodeBase*)protoFo;
 
 @end
