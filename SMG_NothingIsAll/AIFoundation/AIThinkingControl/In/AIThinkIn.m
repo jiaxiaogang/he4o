@@ -104,8 +104,8 @@
     }
     return mModel;
 }
--(AIAlgNodeBase*) dataInFromTOR_MatchRTAlg:(AIAlgNodeBase*)rtAlg {
-    return [AIThinkInReason TIR_Alg_FromRethink:rtAlg];
+-(AIAlgNodeBase*) dataInFromTOR_MatchRTAlg:(AIAlgNodeBase*)rtAlg mUniqueV_p:(AIKVPointer*)mUniqueV_p {
+    return [AIThinkInReason TIR_Alg_FromRethink:rtAlg mUniqueV_p:mUniqueV_p];
 }
 
 //MARK:===============================================================

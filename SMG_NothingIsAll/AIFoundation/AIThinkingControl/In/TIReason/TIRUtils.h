@@ -30,13 +30,13 @@
  *  MARK:--------------------通用局部匹配方法--------------------
  *  注: 根据引用找出相似度最高且达到阀值的结果返回; (相似度匹配)
  *  从content_ps的所有value.refPorts找前cPartMatchingCheckRefPortsLimit个, 如:contentCount9*limit5=45个;
- *  @param exceptBlock : notnull 排除回调,不可激活则返回true;
+ *  @param checkBlock : notnull 对可能的结果,进行检查; (就是自身 或 不应期则false)
  *  @param refPortsBlock : notnull 取item_p.refPorts的方法;
  *  @result 把最匹配的返回;
  */
 +(id) partMatching_General:(NSArray*)proto_ps
              refPortsBlock:(NSArray*(^)(AIKVPointer *item_p))refPortsBlock
-               exceptBlock:(BOOL(^)(AIPointer *target_p))exceptBlock;
+                checkBlock:(BOOL(^)(AIPointer *target_p))checkBlock;
 
 
 //MARK:===============================================================

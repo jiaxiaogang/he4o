@@ -117,15 +117,40 @@
 
 /**
  *  MARK:--------------------重新识别rtAlg方法--------------------
+ *  @version 20200406 : 由复用fromMem的识别M再Fuzzy(),改为仅识别硬盘MatchAlg,并返回;
  */
-+(AIAlgNodeBase*) TIR_Alg_FromRethink:(AIAlgNodeBase*)rtAlg {
++(AIAlgNodeBase*) TIR_Alg_FromRethink:(AIAlgNodeBase*)rtAlg mUniqueV_p:(AIKVPointer*)mUniqueV_p{
     //1. 数据检查
-    if (!rtAlg) return nil;
+    if (!rtAlg || !mUniqueV_p) return nil;
+    NSArray *mUniqueRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Value:mUniqueV_p]];
+    NSLog(@"---------- TIR_Alg_FromRT START -----");
+    NSLog(@"----> 特码:%@ 被引:%ld个 重组内容:(%@)",[NVHeUtil getLightStr:mUniqueV_p],mUniqueRef_ps.count,[NVHeUtil getLightStr4Ps:rtAlg.content_ps simple:false]);
     
     //2. 识别
-    AIAlgNodeBase *result = [self TIR_Alg:rtAlg.pointer fromGroup_ps:@[rtAlg.pointer]];
-    NSLog(@"--> 识别rtAlg:[%@]->[%@]",[NVHeUtil getLightStr4Ps:rtAlg.content_ps],[NVHeUtil getLightStr4Ps:result.content_ps]);
-    return result;
+    AIAlgNodeBase *matchAlg = [TIRUtils partMatching_General:rtAlg.content_ps refPortsBlock:^NSArray *(AIKVPointer *item_p) {
+        if (item_p) {
+            //1> 数据准备 (value_p的refPorts是单独存储的);
+            return ARRTOOK([SMGUtils searchObjectForFilePath:item_p.filePath fileName:kFNRefPorts time:cRTReference]);
+        }
+        return nil;
+    } checkBlock:^BOOL(AIPointer *target_p) {
+        if (target_p) {
+            //2> 自身 && 包含M特有码;
+            return ![target_p isEqual:rtAlg.pointer] && [mUniqueRef_ps containsObject:target_p];
+        }
+        return false;
+    }];
+    
+    //3. 直接将assAlgNode设置为algNode的抽象; (这样后面TOR理性决策时,才可以直接对当前瞬时实物进行很好的理性评价);
+    if (ISOK(matchAlg, AIAlgNodeBase.class)) {
+        //4. 识别到时,value.refPorts -> 更新/加强微信息的引用序列
+        [AINetUtils insertRefPorts_AllAlgNode:matchAlg.pointer content_ps:matchAlg.content_ps difStrong:1];
+        
+        //5. 识别到时,进行抽具象 -> 关联 & 存储 (20200103:测得,algNode为内存节点时,关联也在内存)
+        [AINetUtils relateAlgAbs:(AIAbsAlgNode*)matchAlg conNodes:@[rtAlg]];
+    }
+    NSLog(@"识别Alg_FromRT Success 结果:(%@)",[NVHeUtil getLightStr4Ps:matchAlg.content_ps simple:false]);
+    return matchAlg;
 }
 
 //MARK:===============================================================

@@ -623,7 +623,7 @@
     [theNV setNodeData:rtAlg.pointer appendLightStr:@"RTAlg"];
     
     //3. 反思 & 评价
-    AIAlgNodeBase *matchAlg = [self.delegate toAlgScheme_MatchRTAlg:rtAlg];
+    AIAlgNodeBase *matchAlg = [self.delegate toAlgScheme_MatchRTAlg:rtAlg mUniqueV_p:mValue_p];
     NSLog(@"-------------->RTAlg %@ 重组:%@=%ld(%@) 识别:%@=%ld(%@)",[NVHeUtil getLightStr:mValue_p],rtAlg.pointer.identifier,rtAlg.pointer.pointerId,[NVHeUtil getLightStr4Ps:rtAlg.content_ps],matchAlg.pointer.identifier,matchAlg.pointer.pointerId,[NVHeUtil getLightStr4Ps:matchAlg.content_ps]);
     BOOL scoreSuccess = checkScore(matchAlg);
     NSLog(@"-------------->评价结果:%d",scoreSuccess);

@@ -119,12 +119,12 @@
             return ARRTOOK([SMGUtils searchObjectForFilePath:item_p.filePath fileName:kFNRefPorts_All(isMem) time:cRTReference_All(isMem)]);
         }
         return nil;
-    } exceptBlock:^BOOL(AIPointer *target_p) {
+    } checkBlock:^BOOL(AIPointer *target_p) {
         if (target_p) {
             //2> 自身 | 排除序列 不可激活;
-            return [target_p isEqual:algNode.pointer] || [SMGUtils containsSub_p:target_p parent_ps:except_ps];
+            return ![target_p isEqual:algNode.pointer] && ![SMGUtils containsSub_p:target_p parent_ps:except_ps];
         }
-        return true;
+        return false;
     }];
 }
 
@@ -159,7 +159,7 @@
  *  MARK:--------------------通用局部匹配方法--------------------
  *  注: 根据引用找出相似度最高且达到阀值的结果返回; (相似度匹配)
  *  从content_ps的所有value.refPorts找前cPartMatchingCheckRefPortsLimit个, 如:contentCount9*limit5=45个;
- *  @param exceptBlock : notnull 排除回调,不可激活则返回true;
+ *  @param checkBlock : notnull 对可能的结果,进行检查; (就是自身 或 不应期则false)
  *  @param refPortsBlock : notnull 取item_p.refPorts的方法;
  *  @result 把最匹配的返回;
  *  @desc 迭代记录:
@@ -167,7 +167,7 @@
  */
 +(id) partMatching_General:(NSArray*)proto_ps
              refPortsBlock:(NSArray*(^)(AIKVPointer *item_p))refPortsBlock
-               exceptBlock:(BOOL(^)(AIPointer *target_p))exceptBlock{
+                checkBlock:(BOOL(^)(AIPointer *target_p))checkBlock{
     //1. 数据准备;
     if (ARRISOK(proto_ps)) {
         NSMutableDictionary *countDic = [[NSMutableDictionary alloc] init];
@@ -182,7 +182,7 @@
             
             //3. 进行计数
             for (AIPort *refPort in refPorts) {
-                if (!exceptBlock(refPort.target_p)) {
+                if (checkBlock(refPort.target_p)) {
                     NSData *key = OBJ2DATA(refPort.target_p);
                     int oldCount = [NUMTOOK([countDic objectForKey:key]) intValue];
                     [countDic setObject:@(oldCount + 1) forKey:key];
