@@ -254,6 +254,7 @@
     }
     
     //2. 根据type和value_p找cLess/cGreater
+    NSLog(@"----> RelativeValue Start at:%@ ds:%@ type:%ld",at,ds,(long)type);
     AIAlgNodeBase *glAlg = [ThinkingUtils dataOut_GetAlgNodeWithInnerType:type algsType:at dataSource:ds];
     if (!glAlg) {
         vFailure();
@@ -289,10 +290,12 @@
     relativeFo_ps = ARRTOOK(relativeFo_ps);
     
     //2. 逐个尝试行为化
+    NSLog(@"----> RelativeFo_ps Start 目标:%@",[NVHeUtil getLightStr4Ps:relativeFo_ps]);
     for (AIPointer *relativeFo_p in relativeFo_ps) {
         AIFoNodeBase *relativeFo = [SMGUtils searchNode:relativeFo_p];
         
         //3. 取出havFo除第一个和最后一个之外的中间rangeOrder
+        NSLog(@"---> RelativeFo Item 内容:%@",[NVHeUtil getLightStr4Ps:relativeFo.content_ps]);
         __block BOOL successed = false;
         if (relativeFo != nil && relativeFo.content_ps.count >= 1) {
             NSArray *foRangeOrder = ARR_SUB(relativeFo.content_ps, 0, relativeFo.content_ps.count - 1);
