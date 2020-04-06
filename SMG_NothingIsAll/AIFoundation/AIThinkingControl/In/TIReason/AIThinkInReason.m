@@ -118,12 +118,16 @@
 /**
  *  MARK:--------------------重新识别rtAlg方法--------------------
  *  @version 20200406 : 由复用fromMem的识别M再Fuzzy(),改为仅识别硬盘MatchAlg,并返回;
+ *  @desc 功能说明:
+ *      1. result必须包含mUniqueValue;
+ *      2. result必须被rtAlg全含 (代码见partMatching_General());
+ *      3. result不进行fuzzy模糊匹配 (因为mUniqueValue并非新输入,并且fuzzy会导致多出杂项码(如:m为经26,fuzzyAlg却包含距20));
  */
 +(AIAlgNodeBase*) TIR_Alg_FromRethink:(AIAlgNodeBase*)rtAlg mUniqueV_p:(AIKVPointer*)mUniqueV_p{
     //1. 数据检查
     if (!rtAlg || !mUniqueV_p) return nil;
     NSArray *mUniqueRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Value:mUniqueV_p]];
-    NSLog(@"---------- TIR_Alg_FromRT START -----");
+    NSLog(@"---------- TIR_Alg_FromRT START ----------");
     NSLog(@"----> 特码:%@ 被引:%ld个 重组内容:(%@)",[NVHeUtil getLightStr:mUniqueV_p],mUniqueRef_ps.count,[NVHeUtil getLightStr4Ps:rtAlg.content_ps simple:false]);
     
     //2. 识别
@@ -149,7 +153,7 @@
         //5. 识别到时,进行抽具象 -> 关联 & 存储 (20200103:测得,algNode为内存节点时,关联也在内存)
         [AINetUtils relateAlgAbs:(AIAbsAlgNode*)matchAlg conNodes:@[rtAlg]];
     }
-    NSLog(@"识别Alg_FromRT Success 结果:(%@)",[NVHeUtil getLightStr4Ps:matchAlg.content_ps simple:false]);
+    NSLog(@"识别Alg_FromRT Finish:(%@)",[NVHeUtil getLightStr4Ps:matchAlg.content_ps simple:false]);
     return matchAlg;
 }
 
