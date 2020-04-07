@@ -413,9 +413,9 @@
 
 @end
 
-@implementation AIThinkInAnalogy (MP)
+@implementation AIThinkInAnalogy (Feedback)
 
-+(void) analogy_MP:(AIShortMatchModel*)mModel protoFo:(AIFoNodeBase*)protoFo{
++(void) analogy_Feedback_Diff:(AIShortMatchModel*)mModel protoFo:(AIFoNodeBase*)protoFo{
     //1. 数据检查 (MMv和PMV有效,且同区);
     if (!mModel || mModel.matchFo || !protoFo) return;
     AIKVPointer *mMv_p = mModel.matchFo.cmvNode_p;
@@ -450,12 +450,8 @@
     
 }
 
-/**
- *  MARK:--------------------MP类比的内中有外--------------------
- *  @desc 如: (距20,经233) 与 (距20,经244) 可类比为: (距20)->{mv};
- */
-+(void) analogy_MP2Outside{
-    
++(void) analogy_Feedback_Same:(AIShortMatchModel*)mModel protoFo:(AIFoNodeBase*)protoFo{
+    //与当前的analogy_Outside()较相似,所以暂不写;
 }
 
 @end
