@@ -20,6 +20,7 @@
 #import "AINetIndexUtils.h"
 #import "ThinkingUtils.h"
 #import "TIRUtils.h"
+#import "AIShortMatchModel.h"
 //temp
 #import "NVHeUtil.h"
 
@@ -415,11 +416,45 @@
 @implementation AIThinkInAnalogy (MP)
 
 +(void) analogy_MP:(AIShortMatchModel*)mModel protoFo:(AIFoNodeBase*)protoFo{
-    //1. 数据检查
-    if (!mModel | !protoFo) return;
+    //1. 数据检查 (MMv和PMV有效,且同区);
+    if (!mModel || mModel.matchFo || !protoFo) return;
+    AIKVPointer *mMv_p = mModel.matchFo.cmvNode_p;
+    AIKVPointer *pMv_p = protoFo.cmvNode_p;
+    if (!mMv_p || !pMv_p || ![mMv_p.algsType isEqualToString:pMv_p.algsType] || ![mMv_p.dataSource isEqualToString:pMv_p.dataSource]) return;
+        
+    //2. 判断mModel.mv和protoFo.mv是否不相符 (一正一负);
+    CGFloat mScore = [ThinkingUtils getScoreForce:mMv_p ratio:mModel.matchFoValue];
+    CGFloat pScore = [ThinkingUtils getScoreForce:pMv_p ratio:1.0f];
+    BOOL isContrary = ((mScore > 0 && pScore < 0) || (mScore < 0 && pScore > 0));
+    if (!isContrary) return;
     
-    //2. 判断mModel.mv和protoFo.mv是否相符;
+    //3. 类比概念层: 并集 & 差集;
+    NSArray *mps = [SMGUtils filterSame_ps:mModel.matchFo.content_ps parent_ps:protoFo.content_ps];
+    NSArray *ms = [SMGUtils removeSub_ps:mps parent_ps:mModel.matchFo.content_ps];
+    NSArray *ps = [SMGUtils removeSub_ps:mps parent_ps:protoFo.content_ps];
     
+    //4. 类比稀疏码层: 并集 & 差集 (对同区不同值的差集进行抽象);
+    
+    //ms为该出现没出现的,缺席者;
+    for (AIKVPointer *item_p in ms) {
+        AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
+        
+        
+        
+    }
+    
+    //ps为不该出现出现的,搅局者;
+    for (AIKVPointer *item_p in ps) {
+        AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
+    }
+    
+}
+
+/**
+ *  MARK:--------------------MP类比的内中有外--------------------
+ *  @desc 如: (距20,经233) 与 (距20,经244) 可类比为: (距20)->{mv};
+ */
++(void) analogy_MP2Outside{
     
 }
 

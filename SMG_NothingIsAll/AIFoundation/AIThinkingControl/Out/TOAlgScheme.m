@@ -80,11 +80,11 @@
                 
                 //7. MC反思: 对mModel进行评价;
                 AIKVPointer *mMv_p = mModel.matchFo.cmvNode_p;
-                CGFloat mcScore = [ThinkingUtils getScoreForce:mModel.matchFo.cmvNode_p ratio:mModel.matchFoValue];
+                CGFloat mcScore = [ThinkingUtils getScoreForce:mMv_p ratio:mModel.matchFoValue];
                 
                 //8. 对原fo进行评价
                 AIKVPointer *cMv_p = curFo.cmvNode_p;
-                CGFloat curScore = [ThinkingUtils getScoreForce:curFo.cmvNode_p ratio:1.0f];
+                CGFloat curScore = [ThinkingUtils getScoreForce:cMv_p ratio:1.0f];
                 
                 //9. 写评价时所需要,"设定的"的计算算法;
                 
