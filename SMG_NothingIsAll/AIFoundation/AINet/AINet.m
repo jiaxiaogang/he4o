@@ -148,6 +148,12 @@ static AINet *_instance;
     }
     return nil;
 }
+-(AINetAbsFoNode*) createAbsFo_General:(NSArray*)conFos content_ps:(NSArray*)content_ps{
+    if (ARRISOK(conFos)) {
+        return [self.absFoManager create:conFos orderSames:content_ps];
+    }
+    return nil;
+}
 
 //MARK:===============================================================
 //MARK:                     < directionReference >

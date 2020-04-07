@@ -107,6 +107,8 @@
  *  @功能说明: 1. 未支持内存去重;
  */
 +(AINetAbsFoNode*)createOutsideAbsFo_NoRepeat:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo content_ps:(NSArray*)content_ps;
++(AINetAbsFoNode*)createAbsFo_NoRepeat_General:(NSArray*)conFos content_ps:(NSArray*)content_ps;
++(AIFrontOrderNode*)createConFo_NoRepeat_General:(NSArray*)content_ps;
 
 @end
 

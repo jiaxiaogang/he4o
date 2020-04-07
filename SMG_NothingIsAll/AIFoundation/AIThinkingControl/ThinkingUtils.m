@@ -213,18 +213,40 @@
 }
 
 +(AINetAbsFoNode*)createOutsideAbsFo_NoRepeat:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo content_ps:(NSArray*)content_ps{
+    if (fo && assFo) {
+        return [self createAbsFo_NoRepeat_General:@[fo,assFo] content_ps:content_ps];
+    }
+    return nil;
+}
++(AINetAbsFoNode*)createAbsFo_NoRepeat_General:(NSArray*)conFos content_ps:(NSArray*)content_ps{
     //1. 数据准备
     AINetAbsFoNode *result = nil;
-    if (fo && assFo) {
+    if (ARRISOK(conFos) && ARRISOK(content_ps)) {
         //2. 有则加强;
-        AIFoNodeBase *absoluteFo = [AINetIndexUtils getAbsoluteMatchingFoNodeWithContent_ps:content_ps except_ps:@[fo.pointer,assFo.pointer] isMem:false];
+        AIFoNodeBase *absoluteFo = [AINetIndexUtils getAbsoluteMatchingFoNodeWithContent_ps:content_ps except_ps:conFos isMem:false];
         if (ISOK(absoluteFo, AINetAbsFoNode.class)) {
             result = (AINetAbsFoNode*)absoluteFo;
-            [AINetUtils relateFoAbs:result conNodes:@[fo,assFo]];
+            [AINetUtils relateFoAbs:result conNodes:conFos];
             [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
         }else{
             //3. 无则构建
-            result = [theNet createAbsFo_Outside:fo foB:assFo orderSames:content_ps];
+            result = [theNet createAbsFo_General:conFos content_ps:content_ps];
+        }
+    }
+    return result;
+}
++(AIFrontOrderNode*)createConFo_NoRepeat_General:(NSArray*)content_ps{
+    //1. 数据准备
+    AIFrontOrderNode *result = nil;
+    if (ARRISOK(content_ps)) {
+        //2. 有则加强;
+        AIFoNodeBase *localFo = [AINetIndexUtils getAbsoluteMatchingFoNodeWithContent_ps:content_ps except_ps:nil isMem:false];
+        if (ISOK(localFo, AIFrontOrderNode.class)) {
+            result = (AIFrontOrderNode*)localFo;
+            [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
+        }else{
+            //3. 无则构建
+            result = [theNet createConFo:content_ps];
         }
     }
     return result;

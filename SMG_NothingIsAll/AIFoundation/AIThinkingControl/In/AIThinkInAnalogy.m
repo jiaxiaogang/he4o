@@ -491,9 +491,54 @@
     //5. 将最终都没收集的protoFo剩下的部分打包进多余 (jStart到end之间的pAlg_p(含jStart,含end));
     [ps addObjectsFromArray:ARR_SUB(protoFo.content_ps, jStart, protoFo.content_ps.count - jStart)];
     
+    //6. 构建
+    [self analogy_Feedback_Diff_Creater:mModel.matchFo protoFo:protoFo ms:ms ps:ps];
+}
+
++(void) analogy_Feedback_Diff_Creater:(AIFoNodeBase*)matchFo protoFo:(AIFoNodeBase*)protoFo ms:(NSArray*)ms ps:(NSArray*)ps{
+    //1. 数据检查
+    if(!matchFo || !protoFo) return;
+    
+    //2. 取protoMv的价值变化量 (基准);
+    AICMVNodeBase *pMv = [SMGUtils searchNode:protoFo.cmvNode_p];
+    NSInteger pUrgentTo = [NUMTOOK([AINetIndex getData:pMv.urgentTo_p]) integerValue];
+    NSInteger pDelta = [NUMTOOK([AINetIndex getData:pMv.delta_p]) integerValue];
+    
+    //3. 构建双时序
+    if (ARRISOK(ms)) {
+        AIFrontOrderNode *msFo = [ThinkingUtils createConFo_NoRepeat_General:ms];
+        
+        //4. 计算ms的价值变化量;
+        CGFloat ms_Rate = (float)ms.count / matchFo.content_ps.count;
+        NSInteger ms_UrgentTo = (float)pUrgentTo * ms_Rate;
+        NSInteger ms_Delta = (float)pDelta * ms_Rate;
+    }
+    if (ARRISOK(ps)) {
+        AINetAbsFoNode *psFo = [ThinkingUtils createAbsFo_NoRepeat_General:@[protoFo] content_ps:ps];
+        
+        //5. 计算ps的价值变化量;
+        CGFloat ps_Rate = (float)ps.count / protoFo.content_ps.count;
+        NSInteger ps_UrgentTo = (float)pUrgentTo * ps_Rate;
+        NSInteger ps_Delta = (float)pDelta * ps_Rate;
+    }
     
     
     
+    
+//    AIPointer *delta_p = [theNet getNetDataPointerWithData:@(absDelta) algsType:algsType dataSource:dataSource];
+//
+//
+//
+//    AICMVNodeBase *assMv = [SMGUtils searchNode:assFo.cmvNode_p];
+//    if (assMv) {
+//        AIAbsCMVNode *createAbsCmv = [theNet createAbsCMVNode_Outside:result.pointer aMv_p:fo.cmvNode_p bMv_p:assMv.pointer];
+//
+//        //6. cmv模型连接;
+//        if (ISOK(createAbsCmv, AIAbsCMVNode.class)) {
+//            result.cmvNode_p = createAbsCmv.pointer;
+//            [SMGUtils insertObject:result pointer:result.pointer fileName:kFNNode time:cRTNode];
+//        }
+//    }
     
 }
 
