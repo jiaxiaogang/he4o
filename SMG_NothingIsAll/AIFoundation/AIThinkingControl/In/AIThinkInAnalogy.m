@@ -428,91 +428,78 @@
     BOOL isDiff = ((mScore > 0 && pScore < 0) || (mScore < 0 && pScore > 0));
     if (!isDiff) return;
     
-    //3. 类比概念层: 并集 & 差集;
-    NSArray *mps = [SMGUtils filterSame_ps:mModel.matchFo.content_ps parent_ps:protoFo.content_ps];
-    NSArray *ms = [SMGUtils removeSub_ps:mps parent_ps:mModel.matchFo.content_ps];
-    NSArray *ps = [SMGUtils removeSub_ps:mps parent_ps:protoFo.content_ps];
+    //3. 提供类比收集"缺乏和多余"所需的两个数组;
+    NSMutableArray *ms = [[NSMutableArray alloc] init];
+    NSMutableArray *ps = [[NSMutableArray alloc] init];
     
-    //4. 类比稀疏码层: 并集 & 差集 (对同区不同值的差集进行抽象);
-    
-    
-    //正向有序类比;
+    //4. 正向有序类比 (从protoFo中找mAlg_p的踪迹);
     NSInteger jStart = 0;
     for (NSInteger i = 0; i < mModel.matchFo.content_ps.count; i++) {
+        //A. 类比_数据准备;
+        AIKVPointer *mAlg_p = mModel.matchFo.content_ps[i];
+        BOOL findM = false;
         for (NSInteger j = jStart; j < protoFo.content_ps.count; j++) {
-            AIKVPointer *mAlg_p = mModel.matchFo.content_ps[i];
             AIKVPointer *pAlg_p = protoFo.content_ps[j];
-            //2. A与B直接一致则直接添加 & 不一致则如下代码;
-            BOOL anySame = false;
+            BOOL findP = false;
+            
+            //B. 一级类比概念层;
             if ([mAlg_p isEqual:pAlg_p]) {
-                //[orderSames insertObject:algNodeA_p atIndex:0];
-                jStart = j + 1;
-                anySame = true;
-                break;
+                findP = true;
             }else{
-                ///2. 取出algNodeA & algNodeB
+                //C. 二级类比稀疏码层-数据准备;
                 AIAlgNodeBase *mAlg = [SMGUtils searchNode:mAlg_p];
                 AIAlgNodeBase *pAlg = [SMGUtils searchNode:pAlg_p];
+                if (!mAlg_p || !pAlg_p) continue;
                 
-                ///3. values->absPorts的认知过程
-                if (mAlg_p && pAlg_p) {
-                    NSArray *sameValue_ps = [SMGUtils filterSame_ps:mAlg.content_ps parent_ps:pAlg.content_ps];
-                    if (ARRISOK(sameValue_ps)) {
-                        anySame = true;
-                        jStart = j + 1;
-                        //a. 缺乏
-                        NSArray *mSub_ps = [SMGUtils removeSub_ps:sameValue_ps parent_ps:mAlg.content_ps];
-                        
-                        //b. 多余
-                        NSArray *pSub_ps = [SMGUtils removeSub_ps:sameValue_ps parent_ps:pAlg.content_ps];
-                        
-                        
-                        //TODOTOMORROW:
-                        //1. 将缺乏和多余的,进行收集;
-                        
-                        //2. if(anySame = false)时{
-                        //      a. j循环完,没找到i,则将i收集到缺乏中;
-                        //      b. j单轮循环,未找到same_Values,则将j收集到多余中;
-                        //      c. 对完全相同的,记录jStart,并不进行收集;
-                        //   }
-                        
-                        
-                        AIAbsAlgNode *createAbsNode = [theNet createAbsAlgNode:sameValue_ps conAlgs:@[algNodeA,algNodeB] isMem:false];
-                        if (createAbsNode) {
-                            [orderSames insertObject:createAbsNode.pointer atIndex:0];
-                            jMax = j - 1;
-                            if (!fromInner) {
-                                [theNV setNodeData:createAbsNode.pointer lightStr:STRFORMAT(@"新%ld (%ld&%ld)",createAbsNode.content_ps.count,algNodeA.pointer.pointerId,algNodeB.pointer.pointerId)];
-                            }
-                        }
+                //a. 二级类比-进行类比;
+                NSArray *sameValue_ps = [SMGUtils filterSame_ps:mAlg.content_ps parent_ps:pAlg.content_ps];
+                NSArray *mSub_ps = [SMGUtils removeSub_ps:sameValue_ps parent_ps:mAlg.content_ps];
+                NSArray *pSub_ps = [SMGUtils removeSub_ps:sameValue_ps parent_ps:pAlg.content_ps];
+                
+                //b. 二级类比-部分有效;
+                if (sameValue_ps.count > 0) {
+                    findP = true;
+                    
+                    //c. 二级类比-收集缺乏
+                    if (mSub_ps.count > 0) {
+                        AIAbsAlgNode *createAbsAlg = [theNet createAbsAlgNode:mSub_ps conAlgs:@[mAlg] isMem:false];
+                        if (createAbsAlg) [ms addObject:createAbsAlg.pointer];
+                    }
+                    
+                    //d. 二级类比-收集多余
+                    if (pSub_ps.count > 0) {
+                        AIAbsAlgNode *createAbsAlg = [theNet createAbsAlgNode:pSub_ps conAlgs:@[pAlg] isMem:false];
+                        if (createAbsAlg) [ps addObject:createAbsAlg.pointer];
                     }
                 }
             }
+            //D. 无论一级还是二级,只要findP找到了,说明jStart->j之间所有pAlg_p为多余 (含jStart,不含j"因为j已被二级收集过了));
+            if (findP) {
+                [ps addObjectsFromArray:ARR_SUB(protoFo.content_ps, jStart, j-jStart)];
+                jStart = j + 1;
+                findM = true;
+                break;
+            }
+        }
+        
+        //4. 所有j中未找到m,将m收集为缺乏;
+        if (!findM) {
+            [ms addObject:mAlg_p];
         }
     }
     
+    //5. 将最终都没收集的protoFo剩下的部分打包进多余 (jStart到end之间的pAlg_p(含jStart,含end));
+    [ps addObjectsFromArray:ARR_SUB(protoFo.content_ps, jStart, protoFo.content_ps.count - jStart)];
     
     
     
     
-    
-    //ms为该出现没出现的,缺席者;
-    for (AIKVPointer *item_p in ms) {
-        AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
-        
-        
-        
-    }
-    
-    //ps为不该出现出现的,搅局者;
-    for (AIKVPointer *item_p in ps) {
-        AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
-    }
     
 }
 
 +(void) analogy_Feedback_Same:(AIShortMatchModel*)mModel protoFo:(AIFoNodeBase*)protoFo{
     //与当前的analogy_Outside()较相似,所以暂不写;
+    //随后写时,也是将原有的_outside改成此_same类比方法;
 }
 
 @end

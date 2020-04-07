@@ -16,6 +16,9 @@
  *      1. 供TOR使用的模型一共有三种: 瞬时,短时,长时;
  *      2. 瞬时由模型承载,而短时和长时由Net承载;
  *      3. 此AIShortMatchModel是瞬时的模型;
+ *  @todo
+ *      1. 支持多条matchAlg,多条matchFo,将fuzzys独立列出;
+ *      2. 在多条matchFo.mv价值预测下,可以相应的跑多个正向反馈类比,和反向反馈类比;
  */
 @interface AIShortMatchModel : NSObject
 
