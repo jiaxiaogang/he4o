@@ -21,6 +21,7 @@
 #import "ThinkingUtils.h"
 #import "TIRUtils.h"
 #import "AIShortMatchModel.h"
+#import "AICMVNode.h"
 //temp
 #import "NVHeUtil.h"
 
@@ -39,7 +40,7 @@
     //1. 类比orders的规律
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
     if (fo && assFo) {
-        
+
         //2. 外类比有序进行 (记录jMax & 反序)
         NSInteger jMax = assFo.content_ps.count - 1;
         for (NSInteger i = fo.content_ps.count - 1; i >= 0; i--) {
@@ -56,11 +57,11 @@
                     if (canAssBlock && !canAssBlock()) {
                         break;
                     }
-                    
+
                     ///2. 取出algNodeA & algNodeB
                     AIAlgNodeBase *algNodeA = [SMGUtils searchNode:algNodeA_p];
                     AIAlgNodeBase *algNodeB = [SMGUtils searchNode:algNodeB_p];
-                    
+
                     ///3. values->absPorts的认知过程
                     if (algNodeA && algNodeB) {
                         NSMutableArray *sameValue_ps = [[NSMutableArray alloc] init];
@@ -87,7 +88,7 @@
                             }
                         }
                     }
-                    
+
                     ///5. absPorts->orderSames (根据强度优先)190827注掉,因为此处抽象不必添加到新时序中,且已经取消概念嵌套,所以还是以上面sameValue_ps构建的新absAlg添加进去即可;
                     //NSMutableArray *aAbsPorts = [[NSMutableArray alloc] init];
                     //[aAbsPorts addObjectsFromArray:[SMGUtils searchObjectForPointer:algNodeA.pointer fileName:kFNMemAbsPorts time:cRTMemPort]];
@@ -123,7 +124,7 @@
 +(void)analogyOutside_Creater:(NSArray*)orderSames fo:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo fromInner:(BOOL)fromInner{
     //2. 数据检查;
     if (ARRISOK(orderSames) && ISOK(fo, AIFoNodeBase.class) && ISOK(assFo, AIFoNodeBase.class)) {
-        
+
         //3. fo和assFo本来就是抽象关系时_直接关联即可;
         BOOL samesEqualAssFo = orderSames.count == assFo.content_ps.count && [SMGUtils containsSub_ps:orderSames parent_ps:assFo.content_ps];
         BOOL jumpForAbsAlreadyHav = (ISOK(assFo, AINetAbsFoNode.class) && samesEqualAssFo);
@@ -141,7 +142,7 @@
                 AICMVNodeBase *assMv = [SMGUtils searchNode:assFo.cmvNode_p];
                 if (assMv) {
                     AIAbsCMVNode *createAbsCmv = [theNet createAbsCMVNode_Outside:result.pointer aMv_p:fo.cmvNode_p bMv_p:assMv.pointer];
-                    
+
                     //6. cmv模型连接;
                     if (ISOK(createAbsCmv, AIAbsCMVNode.class)) {
                         result.cmvNode_p = createAbsCmv.pointer;
@@ -151,7 +152,7 @@
                 }
             }
         }
-        
+
         //调试短时序; (先仅打外类比日志);
         if (result) {
             if (!fromInner) {
@@ -214,19 +215,19 @@
         return;
     }
     NSArray *orders = ARRTOOK(checkFo.content_ps);
-    
+
     //3. 检查能量值
     if (canAssBlock && !canAssBlock()) {
         //训练距离-测到问题:发现BUG:小鸟仅发现了速度变化,飞行方向变化,却没有发现距离变化;
         return;
     }
-    
+
     //4. 取出两个概念
     AIKVPointer *algA_p = ARR_INDEX(orders, aIndex);
     AIKVPointer *algB_p = ARR_INDEX(orders, bIndex);
     AIAlgNode *algNodeA = [SMGUtils searchNode:algA_p];
     AIAlgNode *algNodeB = [SMGUtils searchNode:algB_p];
-    
+
     //5. 内类比找不同 (比大小:同区不同值 / 有无)
     if (algNodeA && algNodeB){
         //a. 内类比大小;
@@ -239,7 +240,7 @@
             if (updateEnergy) updateEnergy(-0.1f);
             [self analogyInner_Outside:createFo canAss:canAssBlock updateEnergy:updateEnergy];
         }];
-        
+
         //c. 内类比有无;
         [self analogyInner_HN:checkFo algA:algNodeA algB:algNodeB rangeAlg_ps:rangeAlg_ps createdBlock:^(AINetAbsFoNode *createFo) {
             //d. 消耗思维活跃度 & 内中有外
@@ -258,14 +259,14 @@
     if (!algA || !algB) {
         return;
     }
-    
+
     //2. 取a差集和b差集;
     NSArray *aSub_ps = [SMGUtils removeSub_ps:algB.content_ps parent_ps:algA.content_ps];
     NSArray *bSub_ps = [SMGUtils removeSub_ps:algA.content_ps parent_ps:algB.content_ps];
-    
+
     //3. 找出ab同标识字典;
     NSMutableDictionary *sameIdentifier = [SMGUtils filterSameIdentifier_ps:aSub_ps b_ps:bSub_ps];
-    
+
     //4. 分别进行比较大小并构建变化;
     for (NSData *key in sameIdentifier.allKeys) {
         AIKVPointer *a_p = DATA2OBJ(key);
@@ -301,11 +302,11 @@
     }
     NSArray *aMAbs_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:aMatchAlg]];
     NSArray *bMAbs_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:bMatchAlg]];
-    
+
     //2. 取a差集和b差集;
     NSArray *aSub_ps = [SMGUtils removeSub_ps:bMAbs_ps parent_ps:aMAbs_ps];
     NSArray *bSub_ps = [SMGUtils removeSub_ps:aMAbs_ps parent_ps:bMAbs_ps];
-    
+
     //3. a变无
     NSLog(@"--------------内类比 (有无) 前: [%@] -> [%@]",[NVHeUtil getLightStr4Ps:aSub_ps],[NVHeUtil getLightStr4Ps:bSub_ps]);
     for (AIKVPointer *sub_p in aSub_ps) {
@@ -313,7 +314,7 @@
         AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyInnerType_None algsType:sub_p.algsType dataSource:sub_p.dataSource frontConAlg:target backConAlg:target rangeAlg_ps:rangeAlg_ps conFo:checkFo];
         if (createdBlock) createdBlock(create);
     }
-    
+
     //4. b变有
     for (AIKVPointer *sub_p in bSub_ps) {
         AIAlgNodeBase *target = [SMGUtils searchNode:sub_p];
@@ -349,19 +350,19 @@
     algsType = STRTOOK(algsType);
     dataSource = STRTOOK(dataSource);
     if (!frontConAlg || !backConAlg || !conFo) return nil;
-    
+
     //2. 获取front&back稀疏码值;
     NSInteger backData = [ThinkingUtils getInnerTypeValue:type];
-    
+
     //3. 构建微信息;
     AIKVPointer *backValue_p = [theNet getNetDataPointerWithData:@(backData) algsType:algsType dataSource:dataSource];
-    
+
     //4. 构建抽象概念 (20190809注:此处可考虑,type为大/小时,不做具象指向,因为大小概念,本来就是独立的节点);
     AIAlgNodeBase *backAlg = [TIRUtils createInnerAbsAlg_NoRepeat:backConAlg value_p:backValue_p];
-    
+
     //5. 构建抽象时序; (小动致大 / 大动致小) (之间的信息为balabala)
     AINetAbsFoNode *result = [TIRUtils createInnerAbsFo:backAlg rangeAlg_ps:rangeAlg_ps conFo:conFo];
-    
+
     //6. 调试;
     NSLog(@"-> 内类比构建稀疏码: (变 -> %@)",[NVHeUtil getLightStr:backValue_p]);
     if (backAlg) NSLog(@"--> 内类比构建概念=%ld: [%@]",backAlg.pointer.pointerId,[NVHeUtil getLightStr4Ps:backAlg.content_ps]);
@@ -387,13 +388,13 @@
         AIAlgNodeBase *backAlg = [SMGUtils searchNode:back_p];
         NSArray *backRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:backAlg]];
         AIFoNodeBase *assFo = nil;
-        
+
         //3. 根据range联想,从倒数第2个,开始向前逐一联想refPorts;
         for (NSInteger i = abFo.content_ps.count - 2; i >= 0; i--) {
             AIKVPointer *item_p = ARR_INDEX(abFo.content_ps, i);
             AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
             NSArray *itemRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:itemAlg]];
-            
+
             //4. assAbFo的条件为: (包含item & 包含back & 不是abFo)
             for (AIKVPointer *itemRef_p in itemRef_ps) {
                 if (![itemRef_p isEqual:abFo.pointer] && [backRef_ps containsObject:itemRef_p]) {
@@ -401,11 +402,11 @@
                     break;
                 }
             }
-            
+
             //5. 取一条有效即break;
             if (assFo) break;
         }
-        
+
         //6. 对abFo和assAbFo进行类比;
         [self analogyOutside:abFo assFo:assFo canAss:canAssBlock updateEnergy:updateEnergy fromInner:true];
     }
@@ -420,18 +421,21 @@
     if (!mModel || mModel.matchFo || !protoFo) return;
     AIKVPointer *mMv_p = mModel.matchFo.cmvNode_p;
     AIKVPointer *pMv_p = protoFo.cmvNode_p;
-    if (!mMv_p || !pMv_p || ![mMv_p.algsType isEqualToString:pMv_p.algsType] || ![mMv_p.dataSource isEqualToString:pMv_p.dataSource]) return;
-        
+    AICMVNodeBase *pMv = [SMGUtils searchNode:pMv_p];
+    if (!mMv_p || !pMv_p || ![mMv_p.algsType isEqualToString:pMv_p.algsType] || ![mMv_p.dataSource isEqualToString:pMv_p.dataSource] || !pMv) {
+        return;
+    }
+
     //2. 判断mModel.mv和protoFo.mv是否不相符 (一正一负);
     CGFloat mScore = [ThinkingUtils getScoreForce:mMv_p ratio:mModel.matchFoValue];
     CGFloat pScore = [ThinkingUtils getScoreForce:pMv_p ratio:1.0f];
     BOOL isDiff = ((mScore > 0 && pScore < 0) || (mScore < 0 && pScore > 0));
     if (!isDiff) return;
-    
+
     //3. 提供类比收集"缺乏和多余"所需的两个数组;
     NSMutableArray *ms = [[NSMutableArray alloc] init];
     NSMutableArray *ps = [[NSMutableArray alloc] init];
-    
+
     //4. 正向有序类比 (从protoFo中找mAlg_p的踪迹);
     NSInteger jStart = 0;
     for (NSInteger i = 0; i < mModel.matchFo.content_ps.count; i++) {
@@ -441,7 +445,7 @@
         for (NSInteger j = jStart; j < protoFo.content_ps.count; j++) {
             AIKVPointer *pAlg_p = protoFo.content_ps[j];
             BOOL findP = false;
-            
+
             //B. 一级类比概念层;
             if ([mAlg_p isEqual:pAlg_p]) {
                 findP = true;
@@ -450,22 +454,22 @@
                 AIAlgNodeBase *mAlg = [SMGUtils searchNode:mAlg_p];
                 AIAlgNodeBase *pAlg = [SMGUtils searchNode:pAlg_p];
                 if (!mAlg_p || !pAlg_p) continue;
-                
+
                 //a. 二级类比-进行类比;
                 NSArray *sameValue_ps = [SMGUtils filterSame_ps:mAlg.content_ps parent_ps:pAlg.content_ps];
                 NSArray *mSub_ps = [SMGUtils removeSub_ps:sameValue_ps parent_ps:mAlg.content_ps];
                 NSArray *pSub_ps = [SMGUtils removeSub_ps:sameValue_ps parent_ps:pAlg.content_ps];
-                
+
                 //b. 二级类比-部分有效;
                 if (sameValue_ps.count > 0) {
                     findP = true;
-                    
+
                     //c. 二级类比-收集缺乏
                     if (mSub_ps.count > 0) {
                         AIAbsAlgNode *createAbsAlg = [theNet createAbsAlgNode:mSub_ps conAlgs:@[mAlg] isMem:false];
                         if (createAbsAlg) [ms addObject:createAbsAlg.pointer];
                     }
-                    
+
                     //d. 二级类比-收集多余
                     if (pSub_ps.count > 0) {
                         AIAbsAlgNode *createAbsAlg = [theNet createAbsAlgNode:pSub_ps conAlgs:@[pAlg] isMem:false];
@@ -481,65 +485,60 @@
                 break;
             }
         }
-        
+
         //4. 所有j中未找到m,将m收集为缺乏;
         if (!findM) {
             [ms addObject:mAlg_p];
         }
     }
-    
+
     //5. 将最终都没收集的protoFo剩下的部分打包进多余 (jStart到end之间的pAlg_p(含jStart,含end));
     [ps addObjectsFromArray:ARR_SUB(protoFo.content_ps, jStart, protoFo.content_ps.count - jStart)];
-    
-    //6. 构建
-    [self analogy_Feedback_Diff_Creater:mModel.matchFo protoFo:protoFo ms:ms ps:ps];
+
+    //6. 构建ms
+    [self analogy_Feedback_Diff_Creater:pMv content_ps:ms createFoBlock:^AIFoNodeBase *{
+        return [ThinkingUtils createConFo_NoRepeat_General:ms];
+    } createMvBlock:^AICMVNodeBase *(AIKVPointer *u_p, AIKVPointer *d_p, AIFoNodeBase *foNode) {
+        return [theNet createConMv:u_p delta_p:d_p at:pMv_p.algsType isMem:false];
+    } rate:(float)ms.count / mModel.matchFo.content_ps.count];
+
+    //7. 构建ps
+    [self analogy_Feedback_Diff_Creater:pMv content_ps:ps createFoBlock:^AIFoNodeBase *{
+        return [ThinkingUtils createAbsFo_NoRepeat_General:@[protoFo] content_ps:ps];
+    } createMvBlock:^AICMVNodeBase *(AIKVPointer *u_p, AIKVPointer *d_p, AIFoNodeBase *foNode) {
+        return [theNet createAbsMv:foNode.pointer conMvs:@[pMv] at:pMv_p.algsType ds:pMv_p.dataSource urgentTo_p:u_p delta_p:d_p];
+    } rate:(float)ps.count / protoFo.content_ps.count];
 }
 
-+(void) analogy_Feedback_Diff_Creater:(AIFoNodeBase*)matchFo protoFo:(AIFoNodeBase*)protoFo ms:(NSArray*)ms ps:(NSArray*)ps{
++(void) analogy_Feedback_Diff_Creater:(AICMVNodeBase*)pMv content_ps:(NSArray*)content_ps createFoBlock:(AIFoNodeBase*(^)())createFoBlock createMvBlock:(AICMVNodeBase*(^)(AIKVPointer *u_p,AIKVPointer *d_p,AIFoNodeBase *foNode))createMvBlock rate:(CGFloat)rate{
     //1. 数据检查
-    if(!matchFo || !protoFo) return;
-    
+    if(!pMv || !createFoBlock || !createMvBlock || !ARRISOK(content_ps)) return;
+
     //2. 取protoMv的价值变化量 (基准);
-    AICMVNodeBase *pMv = [SMGUtils searchNode:protoFo.cmvNode_p];
     NSInteger pUrgentTo = [NUMTOOK([AINetIndex getData:pMv.urgentTo_p]) integerValue];
     NSInteger pDelta = [NUMTOOK([AINetIndex getData:pMv.delta_p]) integerValue];
-    
-    //3. 构建双时序
-    if (ARRISOK(ms)) {
-        AIFrontOrderNode *msFo = [ThinkingUtils createConFo_NoRepeat_General:ms];
-        
-        //4. 计算ms的价值变化量;
-        CGFloat ms_Rate = (float)ms.count / matchFo.content_ps.count;
-        NSInteger ms_UrgentTo = (float)pUrgentTo * ms_Rate;
-        NSInteger ms_Delta = (float)pDelta * ms_Rate;
+
+    //3. 构建foNode
+    AIFoNodeBase *createFo = createFoBlock();
+
+    //4. 计算ms的价值变化量;
+    NSInteger ms_UrgentTo = (float)pUrgentTo * rate;
+    NSInteger ms_Delta = (float)pDelta * rate;
+    NSString *at = pMv.pointer.algsType;
+    NSString *ds = pMv.pointer.dataSource;
+
+    //5. 构建mvNode
+    AIKVPointer *urgent_p = [theNet getNetDataPointerWithData:@(ms_UrgentTo) algsType:at dataSource:ds];
+    AIKVPointer *delta_p = [theNet getNetDataPointerWithData:@(ms_Delta) algsType:at dataSource:ds];
+    AICMVNodeBase *createMv = createMvBlock(urgent_p,delta_p,createFo);
+
+    //6. 连接mv基本模型;
+    if (createFo && createMv) {
+        createFo.cmvNode_p = createMv.pointer;
+        createMv.foNode_p = createFo.pointer;
+        [SMGUtils insertNode:createFo];
+        [SMGUtils insertNode:createMv];
     }
-    if (ARRISOK(ps)) {
-        AINetAbsFoNode *psFo = [ThinkingUtils createAbsFo_NoRepeat_General:@[protoFo] content_ps:ps];
-        
-        //5. 计算ps的价值变化量;
-        CGFloat ps_Rate = (float)ps.count / protoFo.content_ps.count;
-        NSInteger ps_UrgentTo = (float)pUrgentTo * ps_Rate;
-        NSInteger ps_Delta = (float)pDelta * ps_Rate;
-    }
-    
-    
-    
-    
-//    AIPointer *delta_p = [theNet getNetDataPointerWithData:@(absDelta) algsType:algsType dataSource:dataSource];
-//
-//
-//
-//    AICMVNodeBase *assMv = [SMGUtils searchNode:assFo.cmvNode_p];
-//    if (assMv) {
-//        AIAbsCMVNode *createAbsCmv = [theNet createAbsCMVNode_Outside:result.pointer aMv_p:fo.cmvNode_p bMv_p:assMv.pointer];
-//
-//        //6. cmv模型连接;
-//        if (ISOK(createAbsCmv, AIAbsCMVNode.class)) {
-//            result.cmvNode_p = createAbsCmv.pointer;
-//            [SMGUtils insertObject:result pointer:result.pointer fileName:kFNNode time:cRTNode];
-//        }
-//    }
-    
 }
 
 +(void) analogy_Feedback_Same:(AIShortMatchModel*)mModel protoFo:(AIFoNodeBase*)protoFo{

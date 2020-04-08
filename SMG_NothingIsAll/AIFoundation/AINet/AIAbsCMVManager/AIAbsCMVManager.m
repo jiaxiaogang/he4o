@@ -15,6 +15,7 @@
 #import "AIPort.h"
 #import "AINetUtils.h"
 #import "AINet.h"
+#import "AINetIndex.h"
 
 /**
  *  MARK:--------------------生成AINetAbsCMVNode--------------------
@@ -27,7 +28,7 @@
     if (!valid) {
         return nil;
     }
-    
+
     return [self create:absFo_p conMvPs:@[aMv_p,bMv_p]];
 }
 
@@ -37,7 +38,7 @@
     if (!ARRISOK(conMv_ps)) {
         return nil;
     }
-    
+
     //2. 取algsType & dataSource (每一个conMv都一致,则继承,否则使用cMvNoneIdent)
     NSString *algsType = nil;
     NSString *dataSource = nil;
@@ -53,45 +54,46 @@
             dataSource = cMvNoneIdent;
         }
     }
-    
+
     //3. 将conMv_ps转换为conMvs
-    NSMutableArray *conMvs = [[NSMutableArray alloc] init];
-    for (AIKVPointer *mv_p in conMv_ps) {
-        AICMVNodeBase *conMvNode = [SMGUtils searchNode:mv_p];
-        if (ISOK(conMvNode, AICMVNodeBase.class)){
-            [conMvs addObject:conMvNode];
-        }
-    }
-    
-    //4. 创建absCMVNode;
-    AIAbsCMVNode *result = [[AIAbsCMVNode alloc] init];
-    result.pointer = [SMGUtils createPointer:kPN_ABS_CMV_NODE algsType:algsType dataSource:dataSource isOut:false isMem:false];
-    result.foNode_p = absFo_p;
-    if (absFo_p.isMem) NSLog(@"!!!!警告,mv基本模型中,foNode在内存网络中,请检查createAbsFo()中转移是否成功;");
-    
-    //5. absUrgentTo
+    NSArray *conMvs = [SMGUtils searchNodes:conMv_ps];
+
+    //4. 取absUrgentTo & absDelta;
     NSInteger absUrgentTo = [AINetAbsCMVUtil getAbsUrgentTo:conMvs];
-    AIPointer *urgentTo_p = [theNet getNetDataPointerWithData:@(absUrgentTo) algsType:algsType dataSource:dataSource];
-    if (ISOK(urgentTo_p, AIKVPointer.class)) {
-        result.urgentTo_p = (AIKVPointer*)urgentTo_p;
-        [AINetUtils insertRefPorts_AllMvNode:result.pointer value_p:result.urgentTo_p difStrong:1];//引用插线
-    }
-    
-    //6. absDelta
     NSInteger absDelta = [AINetAbsCMVUtil getAbsDelta:conMvs];
-    AIPointer *delta_p = [theNet getNetDataPointerWithData:@(absDelta) algsType:algsType dataSource:dataSource];
-    if (ISOK(delta_p, AIKVPointer.class)) {
-        result.delta_p = (AIKVPointer*)delta_p;
-        [AINetUtils insertRefPorts_AllMvNode:result.pointer value_p:result.delta_p difStrong:1];//引用插线
+    AIKVPointer *urgentTo_p = [theNet getNetDataPointerWithData:@(absUrgentTo) algsType:algsType dataSource:dataSource];
+    AIKVPointer *delta_p = [theNet getNetDataPointerWithData:@(absDelta) algsType:algsType dataSource:dataSource];
+
+    //5. 构建返回
+    return [self create_General:absFo_p conMvs:conMvs at:algsType ds:dataSource urgentTo_p:urgentTo_p delta_p:delta_p];
+}
+
+-(AIAbsCMVNode*) create_General:(AIKVPointer*)absFo_p conMvs:(NSArray*)conMvs at:(NSString*)at ds:(NSString*)ds urgentTo_p:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p{
+    //1. 数据
+    if (!absFo_p || !ARRISOK(conMvs) || !urgentTo_p || !delta_p) {
+        return nil;
     }
-    
-    //7. 抽具象关联插线 & 存储抽具象节点;
+    at = STRTOOK(at);
+    ds = STRTOOK(ds);
+    NSInteger urgentTo = [NUMTOOK([AINetIndex getData:urgentTo_p]) integerValue];
+    if (absFo_p.isMem) NSLog(@"!!!!警告,mv基本模型中,foNode在内存网络中,请检查createAbsFo()中转移是否成功;");
+
+    //2. 创建absCMVNode;
+    AIAbsCMVNode *result = [[AIAbsCMVNode alloc] init];
+    result.pointer = [SMGUtils createPointer:kPN_ABS_CMV_NODE algsType:at dataSource:ds isOut:false isMem:false];
+    result.foNode_p = absFo_p;
+    result.urgentTo_p = (AIKVPointer*)urgentTo_p;
+    result.delta_p = (AIKVPointer*)delta_p;
+    [AINetUtils insertRefPorts_AllMvNode:result.pointer value_p:result.urgentTo_p difStrong:1];//引用插线
+    [AINetUtils insertRefPorts_AllMvNode:result.pointer value_p:result.delta_p difStrong:1];//引用插线
+
+    //3. 抽具象关联插线 & 存储抽具象节点;
     [AINetUtils relateMvAbs:result conNodes:conMvs];
-    
-    //8. 报告添加direction引用 (difStrong暂时先x2;(因为一般是两个相抽象))
-    NSInteger strong = absUrgentTo;
-    [theNet setMvNodeToDirectionReference:result difStrong:strong];
+
+    //4. 报告添加direction引用 (difStrong暂时先x2;(因为一般是两个相抽象))
+    [theNet setMvNodeToDirectionReference:result difStrong:urgentTo];
     return result;
 }
+
 
 @end

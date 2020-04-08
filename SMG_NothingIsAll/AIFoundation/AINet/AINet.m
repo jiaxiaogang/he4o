@@ -72,10 +72,10 @@ static AINet *_instance;
     //1. 数据准备
     NSMutableArray *algsArr = [[NSMutableArray alloc] init];
     modelDic = DICTOOK(modelDic);
-    
+
     //2. 循环装箱
     for (NSString *dataSource in modelDic.allKeys) {
-        
+
         //3. 存储索引 & data;
         NSNumber *data = NUMTOOK([modelDic objectForKey:dataSource]);
         AIPointer *pointer = [self.netIndex getDataPointerWithData:data algsType:algsType dataSource:dataSource isOut:false];
@@ -122,6 +122,9 @@ static AINet *_instance;
 //MARK:===============================================================
 -(AIFrontOrderNode*) createCMV:(NSArray*)imvAlgsArr order:(NSArray*)order{
     return [self.mvFoManager create:imvAlgsArr order:order];
+}
+-(AICMVNode*) createConMv:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p at:(NSString*)at isMem:(BOOL)isMem{
+    return [self.mvFoManager createConMv:urgentTo_p delta_p:delta_p at:at isMem:isMem];
 }
 
 
@@ -173,14 +176,14 @@ static AINet *_instance;
 -(void) setMvNodeToDirectionReference:(AICMVNodeBase*)cmvNode difStrong:(NSInteger)difStrong {
     //1. 数据检查
     if (cmvNode) {
-        
+
         //2. 取方向(delta的正负)
         NSInteger delta = [NUMTOOK([AINetIndex getData:cmvNode.delta_p]) integerValue];
         MVDirection direction = delta < 0 ? MVDirection_Negative : MVDirection_Positive;
-        
+
         //3. 取mv方向索引;
         AIKVPointer *mvReference_p = [SMGUtils createPointerForDirection:cmvNode.pointer.algsType direction:direction];
-        
+
         //4. 将mvNode地址,插入到强度序列,并存储;
         [AINetUtils insertRefPorts_AllMvNode:cmvNode.pointer value_p:mvReference_p difStrong:difStrong];
     }
@@ -199,6 +202,9 @@ static AINet *_instance;
         return [self.absCmvManager create:absFo_p conMvPs:@[conMv_p]];
     }
     return nil;
+}
+-(AIAbsCMVNode*) createAbsMv:(AIKVPointer*)absFo_p conMvs:(NSArray*)conMvs at:(NSString*)at ds:(NSString*)ds urgentTo_p:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p{
+    return [self.absCmvManager create_General:absFo_p conMvs:conMvs at:at ds:ds urgentTo_p:urgentTo_p delta_p:delta_p];
 }
 
 

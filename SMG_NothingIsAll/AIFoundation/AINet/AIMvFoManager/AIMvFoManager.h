@@ -11,7 +11,7 @@
 /**
  *  MARK:--------------------foNode->cmvNode的模型--------------------
  */
-@class AIFrontOrderNode;
+@class AIFrontOrderNode,AICMVNode;
 @interface AIMvFoManager : NSObject
 
 /**
@@ -21,6 +21,11 @@
  *  @result : 返回foNode;
  */
 -(AIFrontOrderNode*) create:(NSArray*)imvAlgsArr order:(NSArray*)order;
+
+/**
+ *  MARK:--------------------构建conMv--------------------
+ */
+-(AICMVNode*) createConMv:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p at:(NSString*)at isMem:(BOOL)isMem;
 
 /**
  *  MARK:--------------------构建conFo--------------------
