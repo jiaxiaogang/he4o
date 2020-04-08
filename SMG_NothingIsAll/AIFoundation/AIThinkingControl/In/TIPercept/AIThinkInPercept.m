@@ -17,7 +17,7 @@
 
 @implementation AIThinkInPercept
 
-+(void) dataIn_FindMV:(NSArray*)algsArr
+-(void) dataIn_FindMV:(NSArray*)algsArr
    createMvModelBlock:(AIFrontOrderNode*(^)(NSArray *algsArr))createMvModelBlock
           finishBlock:(void(^)(AICMVNode *commitMvNode))finishBlock
                canAss:(BOOL(^)())canAss
@@ -59,7 +59,7 @@
  *  步骤:
  *   > 联想->类比->规律->抽象->关联->网络
  */
-+(void) dataIn_FindMV_Learning:(AIFrontOrderNode*)foNode cmvNode:(AICMVNode*)cmvNode canAss:(BOOL(^)())canAss updateEnergy:(void(^)(CGFloat delta))updateEnergy{
+-(void) dataIn_FindMV_Learning:(AIFrontOrderNode*)foNode cmvNode:(AICMVNode*)cmvNode canAss:(BOOL(^)())canAss updateEnergy:(void(^)(CGFloat delta))updateEnergy{
     //1. 数据检查 & 准备
     if (foNode == nil || cmvNode == nil) {
         return;
@@ -110,6 +110,10 @@
             }
         }
     }
+    
+    //4. 反向反馈类比;
+    AIShortMatchModel *mModel = [self.delegate tir_getShortMatchModel];
+    [AIThinkInAnalogy analogy_Feedback_Diff:mModel protoFo:foNode];
     
     //12. 内类比
     //[AIThinkInAnalogy analogyInner_FromTIP:foNode canAss:^BOOL{

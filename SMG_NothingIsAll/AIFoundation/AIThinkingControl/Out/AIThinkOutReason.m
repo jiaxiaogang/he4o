@@ -19,7 +19,6 @@
 
 @interface AIThinkOutReason() <TOAlgSchemeDelegate>
 
-@property (strong, nonatomic) AIShortMatchModel *shortMatchModel;
 @property (strong, nonatomic) TOAlgScheme *algScheme;
 
 @end
@@ -42,11 +41,6 @@
 //MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
-
-//FromTIR主入口
--(void) commitFromTIR:(AIShortMatchModel*)shortMatchModel {
-    self.shortMatchModel = shortMatchModel;
-}
 
 //MARK:===============================================================
 //MARK:                     < 决策行为化 >
@@ -85,7 +79,7 @@
     }
     
     //2. 进行行为化; (通过有无,变化,等方式,将结构中所有条件概念行为化);
-    [self.algScheme setData:self.shortMatchModel];
+    [self.algScheme setData:[self.delegate aiTOR_GetShortMatchModel]];
     
     [self.algScheme convert2Out_Fo:foNode.content_ps curFo:foNode success:^(NSArray *acts) {
         outFoModel.actions = acts;

@@ -19,7 +19,26 @@
 //temp
 #import "NVHeUtil.h"
 
+@interface AIThinkIn () <AIThinkInPerceptDelegate>
+
+@property (strong, nonatomic) AIThinkInPercept *tip;
+
+@end
+
 @implementation AIThinkIn
+
+-(id) init{
+    self = [super init];
+    if (self) {
+        [self initData];
+    }
+    return self;
+}
+
+-(void) initData{
+    self.tip = [[AIThinkInPercept alloc] init];
+    self.tip.delegate = self;
+}
 
 //MARK:===============================================================
 //MARK:                     < FromInput >
@@ -154,7 +173,7 @@
 
 -(void) dataIn_FindMV:(NSArray*)algsArr{
     //1. 联想到mv时,创建CmvModel取到FoNode;
-    [AIThinkInPercept dataIn_FindMV:algsArr createMvModelBlock:^AIFrontOrderNode *(NSArray *algsArr) {
+    [self.tip dataIn_FindMV:algsArr createMvModelBlock:^AIFrontOrderNode *(NSArray *algsArr) {
         //2. 创建CmvModel取到FoNode;
         AIFrontOrderNode *foNode = nil;
         if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_CreateCMVModel:)]) {
@@ -191,6 +210,13 @@
     if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_UpdateEnergy:)]) {
         [self.delegate aiThinkIn_UpdateEnergy:delta];
     }
+}
+
+/**
+ *  MARK:--------------------AIThinkInPerceptDelegate--------------------
+ */
+-(AIShortMatchModel *)tir_getShortMatchModel{
+    return [self.delegate aiThinkIn_getShortMatchModel];
 }
 
 @end

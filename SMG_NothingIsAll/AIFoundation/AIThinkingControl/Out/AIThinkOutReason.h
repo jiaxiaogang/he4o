@@ -18,6 +18,8 @@
 -(AIShortMatchModel*) aiTOR_LSPRethink:(AIAlgNodeBase*)rtAlg rtFoContent_ps:(NSArray*)rtFoContent_ps;
 //反思概念
 -(AIAlgNodeBase*) aiTOR_MatchRTAlg:(AIAlgNodeBase*)rtAlg mUniqueV_p:(AIKVPointer*)mUniqueV_p;
+//获取最后一桢mModel;
+-(AIShortMatchModel*) aiTOR_GetShortMatchModel;
 
 @end
 
@@ -41,12 +43,6 @@
 @interface AIThinkOutReason : NSObject
 
 @property (weak, nonatomic) id<AIThinkOutReasonDelegate> delegate;
-
-
-/**
- *  MARK:--------------------FromTIR主入口--------------------
- */
--(void) commitFromTIR:(AIShortMatchModel*)shortMatchModel;
 
 /**
  *  MARK:--------------------FromTOP主入口--------------------

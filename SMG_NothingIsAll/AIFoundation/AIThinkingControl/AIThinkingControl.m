@@ -38,6 +38,7 @@
 
 @property (strong,nonatomic) AIShortMemory *shortMemory;    //瞬时记忆
 @property (strong, nonatomic) DemandManager *demandManager; //输出循环所用到的数据管理器;
+@property (strong, nonatomic) AIShortMatchModel *shortMatchModel;
 
 /**
  *  MARK:--------------------当前能量值--------------------
@@ -201,19 +202,20 @@ static AIThinkingControl *_instance;
     //2. 加上活跃度
     [self updateEnergy:urgentTo];
     
-    //3. 将shortMatch提交给TOR;
-    [self.tOR commitFromTIR:shortMatchModel];
+    //3. 将shortMatch保留 (供TOR或TIP调用);
+    self.shortMatchModel = shortMatchModel;
     
     //4. 激活dataOut
     [self.tOP dataOut];
 }
-
 -(void) aiThinkIn_UpdateEnergy:(CGFloat)delta{
     [self updateEnergy:delta];
 }
-
 -(BOOL) aiThinkIn_EnergyValid{
     return self.energy > 0;
+}
+-(AIShortMatchModel*) aiThinkIn_getShortMatchModel{
+    return self.shortMatchModel;
 }
 
 
@@ -254,6 +256,9 @@ static AIThinkingControl *_instance;
 }
 -(AIAlgNodeBase*) aiTOR_MatchRTAlg:(AIAlgNodeBase*)rtAlg mUniqueV_p:(AIKVPointer*)mUniqueV_p{
     return [self.thinkIn dataInFromTOR_MatchRTAlg:rtAlg mUniqueV_p:mUniqueV_p];
+}
+-(AIShortMatchModel*) aiTOR_GetShortMatchModel{
+    return self.shortMatchModel;
 }
 
 @end
