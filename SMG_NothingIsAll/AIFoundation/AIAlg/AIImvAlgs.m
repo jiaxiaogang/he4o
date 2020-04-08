@@ -15,7 +15,7 @@
 
 /**
  *  MARK:--------------------输入mindValue--------------------
- *  所有值域,转换为0-10;(例如:hunger时0为不饿,10为非常饿)
+ *  @param from | to : 值域,转换为0-10;(例如:hunger时表示电量,0为无电,10为满电);
  */
 +(void) commitIMV:(MVType)type from:(CGFloat)from to:(CGFloat)to{
     //1. 生成imvModel
