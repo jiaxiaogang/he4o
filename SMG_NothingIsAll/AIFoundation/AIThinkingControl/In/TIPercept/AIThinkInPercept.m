@@ -114,13 +114,6 @@
     //4. 反向反馈类比;
     AIShortMatchModel *mModel = [self.delegate tir_getShortMatchModel];
     [AIThinkInAnalogy analogy_Feedback_Diff:mModel protoFo:foNode];
-    
-    //12. 内类比
-    //[AIThinkInAnalogy analogyInner_FromTIP:foNode canAss:^BOOL{
-    //    return canAss();
-    //} updateEnergy:^(CGFloat delta) {
-    //    updateEnergy(delta);
-    //}];
 }
 
 @end

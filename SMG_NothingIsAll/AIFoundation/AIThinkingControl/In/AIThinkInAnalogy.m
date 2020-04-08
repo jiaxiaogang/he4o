@@ -198,17 +198,6 @@
         }
     }
 }
-+(void) analogyInner_FromTIP:(AIFoNodeBase*)checkFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
-    //1. 数据检查
-    if (ISOK(checkFo, AIFoNodeBase.class) && checkFo.content_ps.count >= 2) {
-        //2. 每个元素,分别与orders后面所有元素进行类比
-        for (NSInteger i = 0; i < checkFo.content_ps.count; i++) {
-            for (NSInteger j = i + 1; j < checkFo.content_ps.count; j++) {
-                [self analogyInner:checkFo aIndex:i bIndex:j canAss:canAssBlock updateEnergy:updateEnergy];
-            }
-        }
-    }
-}
 +(void) analogyInner:(AIFoNodeBase*)checkFo aIndex:(NSInteger)aIndex bIndex:(NSInteger)bIndex canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
     //1. 数据检查
     if (!ISOK(checkFo, AIFoNodeBase.class)) {
