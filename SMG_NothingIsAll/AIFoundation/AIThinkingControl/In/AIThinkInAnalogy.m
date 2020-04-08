@@ -407,7 +407,7 @@
 
 +(void) analogy_Feedback_Diff:(AIShortMatchModel*)mModel protoFo:(AIFoNodeBase*)protoFo{
     //1. 数据检查 (MMv和PMV有效,且同区);
-    if (!mModel || mModel.matchFo || !protoFo) return;
+    if (!mModel || !mModel.matchFo || !protoFo) return;
     AIKVPointer *mMv_p = mModel.matchFo.cmvNode_p;
     AIKVPointer *pMv_p = protoFo.cmvNode_p;
     AICMVNodeBase *pMv = [SMGUtils searchNode:pMv_p];
@@ -435,8 +435,9 @@
             AIKVPointer *pAlg_p = protoFo.content_ps[j];
             BOOL findP = false;
 
-            //B. 一级类比概念层;
+            //B. 一级类比概念层 (匹配则说明jStart->j之间所有pAlg_p为多余 (含jStart,不含j"因为j本身匹配,无需收集));
             if ([mAlg_p isEqual:pAlg_p]) {
+                [ps addObjectsFromArray:ARR_SUB(protoFo.content_ps, jStart, j-jStart)];
                 findP = true;
             }else{
                 //C. 二级类比稀疏码层-数据准备;
@@ -449,26 +450,28 @@
                 NSArray *mSub_ps = [SMGUtils removeSub_ps:sameValue_ps parent_ps:mAlg.content_ps];
                 NSArray *pSub_ps = [SMGUtils removeSub_ps:sameValue_ps parent_ps:pAlg.content_ps];
 
-                //b. 二级类比-部分有效;
+                //b. 二级类比-部分有效
                 if (sameValue_ps.count > 0) {
+                    
+                    //c. 匹配则说明jStart->j之间所有pAlg_p为多余 (含jStart,不含j"因为j在下面被二级收集);
+                    [ps addObjectsFromArray:ARR_SUB(protoFo.content_ps, jStart, j-jStart)];
                     findP = true;
 
-                    //c. 二级类比-收集缺乏
+                    //d. 二级类比-收集缺乏
                     if (mSub_ps.count > 0) {
                         AIAbsAlgNode *createAbsAlg = [theNet createAbsAlgNode:mSub_ps conAlgs:@[mAlg] isMem:false];
                         if (createAbsAlg) [ms addObject:createAbsAlg.pointer];
                     }
 
-                    //d. 二级类比-收集多余
+                    //e. 二级类比-收集多余
                     if (pSub_ps.count > 0) {
                         AIAbsAlgNode *createAbsAlg = [theNet createAbsAlgNode:pSub_ps conAlgs:@[pAlg] isMem:false];
                         if (createAbsAlg) [ps addObject:createAbsAlg.pointer];
                     }
                 }
             }
-            //D. 无论一级还是二级,只要findP找到了,说明jStart->j之间所有pAlg_p为多余 (含jStart,不含j"因为j已被二级收集过了));
+            //D. 无论一级还是二级,只要找到了jStart从下一个开始,标记finM=true;
             if (findP) {
-                [ps addObjectsFromArray:ARR_SUB(protoFo.content_ps, jStart, j-jStart)];
                 jStart = j + 1;
                 findM = true;
                 break;
