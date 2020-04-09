@@ -17,7 +17,6 @@
 
 @property (strong,nonatomic) IBOutlet UIView *containerView;
 //@property (strong,nonatomic) NSTimer *timer;                    //计时器(乌鸦每过10s,饿一点); (关闭计时器,先用随机1/3吃不到时触发更饿)
-@property (assign, nonatomic) CGFloat fullValue;              //当前饱腹感(0-10)
 
 @end
 
@@ -50,7 +49,6 @@
 }
 
 -(void) initData{
-    self.fullValue = 10.0f;
     //self.timer = [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
 }
 
@@ -136,7 +134,7 @@
         //2. 没坚果可吃 (计时器触发,更饿时,发现没坚果吃,并不能解决饥饿问题,参考:18084_todo1);
         if (!foodView) {
             if (arc4random() % 3 == 0) {
-                [self sendHungerWithFullDelta:-1.0f];
+                [self sendHunger:-1.0f];
             }
             return;
         }
@@ -149,7 +147,7 @@
             [self see:[self.delegate birdView_GetPageView]];
             
             //4. 产生HungerMindValue;
-            [self sendHungerWithFullDelta:1.0f];
+            [self sendHunger:1.0f];
         }else if(foodView.status == FoodStatus_Border){
             //坚果带皮时,不仅吃不到,还得嘴疼;
             //3. 吃完视觉
@@ -204,16 +202,16 @@
 //MARK:                     < privateMethod >
 //MARK:===============================================================
 - (void)notificationTimer{
-    [self sendHungerWithFullDelta:-0.1f];
+    [self sendHunger:-0.1f];
 }
 
 /**
  *  MARK:--------------------发送饥饿信号--------------------
+ *  @desc 饱腹感 (0-10) (值越大越饱);
  */
--(void) sendHungerWithFullDelta:(CGFloat)delta{
-    NSLog(@"=====饥饿信号: %f + %f = %f",self.fullValue,delta,self.fullValue + delta);
-    [AIInput commitIMV:MVType_Hunger from:self.fullValue to:self.fullValue + delta];
-    self.fullValue += delta;
+-(void) sendHunger:(CGFloat)fullDelta{
+    NSLog(@"=====饱腹感变化量 %f",fullDelta);
+    [AIInput commitIMV:MVType_Hunger from:5.0f to:5.0 + fullDelta];
 }
 
 @end
