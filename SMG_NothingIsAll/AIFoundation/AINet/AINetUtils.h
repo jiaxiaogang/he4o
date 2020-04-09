@@ -141,6 +141,12 @@
 +(void) relateFoAbs:(AINetAbsFoNode*)absNode conNodes:(NSArray*)conNodes;
 +(void) relateMvAbs:(AIAbsCMVNode*)absNode conNodes:(NSArray*)conNodes;
 
+
+//MARK:===============================================================
+//MARK:                     < 关联mv基本模型 >
+//MARK:===============================================================
++(void) relateFo:(AIFoNodeBase*)foNode mv:(AICMVNodeBase*)mvNode;
+
 @end
 
 

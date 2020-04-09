@@ -118,7 +118,8 @@ static AIThinkingControl *_instance;
     AIAlgNode *algNode = [theNet createAlgNode:value_ps isOut:true isMem:false];
     
     //6. 加瞬时记忆
-    [self.shortMemory addToShortCache_Ps:@[algNode.pointer]];
+    [self.shortMemory addToShortCache_Ps:@[algNode.pointer] isMatch:false];
+    [self.shortMemory addToShortCache_Ps:@[algNode.pointer] isMatch:true];
 }
 
 
@@ -138,16 +139,16 @@ static AIThinkingControl *_instance;
 /**
  *  MARK:--------------------AIThinkInDelegate--------------------
  */
--(void)aiThinkIn_AddToShortMemory:(NSArray*)algNode_ps{
-    [self.shortMemory addToShortCache_Ps:algNode_ps];
+-(void) aiThinkIn_AddToShortMemory:(NSArray*)algNode_ps isMatch:(BOOL)isMatch{
+    [self.shortMemory addToShortCache_Ps:algNode_ps isMatch:isMatch];
 }
 
 -(NSArray*) aiThinkIn_GetShortMemory{
-    return self.shortMemory.shortCache;
+    return [self.shortMemory shortCache:false];
 }
 
--(AIFrontOrderNode*)aiThinkIn_CreateCMVModel:(NSArray *)algsArr{
-    AIFrontOrderNode *foNode = [[AINet sharedInstance] createCMV:algsArr order:self.shortMemory.shortCache];
+-(AIFrontOrderNode*)aiThinkIn_CreateCMVModel:(NSArray *)algsArr isMatch:(BOOL)isMatch{
+    AIFrontOrderNode *foNode = [theNet createCMV:algsArr order:[self.shortMemory shortCache:isMatch]];
     
     //20200120 瞬时记忆改为不清空,为解决外层死循环问题 (因为外层循环需要行为输出后,将时序连起来) 参考n18p5-BUG9
     //[self.shortMemory clear];

@@ -18,26 +18,21 @@
 @implementation AIThinkInPercept
 
 -(void) dataIn_FindMV:(NSArray*)algsArr
-   createMvModelBlock:(AIFrontOrderNode*(^)(NSArray *algsArr))createMvModelBlock
+   createMvModelBlock:(AIFrontOrderNode*(^)(NSArray *algsArr,BOOL isMatch))createMvModelBlock
           finishBlock:(void(^)(AICMVNode *commitMvNode))finishBlock
                canAss:(BOOL(^)())canAss
          updateEnergy:(void(^)(CGFloat delta))updateEnergy{
     //1. 联想到mv时,创建CmvModel取到FoNode;
-    AIFrontOrderNode *foNode = nil;
-    if (createMvModelBlock) {
-        foNode = createMvModelBlock(algsArr);
-    }
-    if (!ISOK(foNode, AIFrontOrderNode.class)) {
-        return;
-    }
+    if (!createMvModelBlock) return;
+    AIFrontOrderNode *protoFo = createMvModelBlock(algsArr,false);
+    AIFrontOrderNode *matchFo = createMvModelBlock(algsArr,true);
+    if (!protoFo || !matchFo) return;
     
     //2. 取cmvNode
-    AICMVNode *cmvNode = [SMGUtils searchNode:foNode.cmvNode_p];
+    AICMVNode *cmvNode = [SMGUtils searchNode:protoFo.cmvNode_p];
     if (!ISOK(cmvNode, AICMVNode.class)) {
         return;
     }
-    [theNV setNodeData:foNode.pointer lightStr:STRFORMAT(@"新:%ld",foNode.content_ps.count)];
-    [theNV setNodeData:cmvNode.pointer lightStr:@"新"];
     
     //3. 思考mv,需求处理
     if (finishBlock) {
@@ -45,7 +40,7 @@
     }
     
     //4. 学习
-    [self dataIn_FindMV_Learning:foNode cmvNode:cmvNode canAss:canAss updateEnergy:updateEnergy];
+    [self dataIn_FindMV_Learning:protoFo matchFo:matchFo cmvNode:cmvNode canAss:canAss updateEnergy:updateEnergy];
 }
 
 /**
@@ -59,9 +54,9 @@
  *  步骤:
  *   > 联想->类比->规律->抽象->关联->网络
  */
--(void) dataIn_FindMV_Learning:(AIFrontOrderNode*)foNode cmvNode:(AICMVNode*)cmvNode canAss:(BOOL(^)())canAss updateEnergy:(void(^)(CGFloat delta))updateEnergy{
+-(void) dataIn_FindMV_Learning:(AIFrontOrderNode*)foNode matchFo:(AIFrontOrderNode*)matchFo cmvNode:(AICMVNode*)cmvNode canAss:(BOOL(^)())canAss updateEnergy:(void(^)(CGFloat delta))updateEnergy{
     //1. 数据检查 & 准备
-    if (foNode == nil || cmvNode == nil) {
+    if (foNode == nil || cmvNode == nil || matchFo == nil) {
         return;
     }
     NSInteger delta = [NUMTOOK([AINetIndex getData:cmvNode.delta_p]) integerValue];

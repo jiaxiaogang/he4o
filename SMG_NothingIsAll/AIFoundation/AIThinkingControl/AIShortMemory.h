@@ -19,18 +19,18 @@
 /**
  *  MARK:--------------------获取瞬时记忆序列--------------------
  */
--(NSMutableArray*) shortCache;
+-(NSMutableArray*) shortCache:(BOOL)isMatch;
 
 /**
  *  MARK:--------------------shortCache瞬时记忆--------------------
  *  1. 存由algsDic生成的algNode_p;
  */
--(void) addToShortCache_Ps:(NSArray*)ps;
+-(void) addToShortCache_Ps:(NSArray*)ps isMatch:(BOOL)isMatch;
 
 /**
  *  MARK:--------------------清空记忆--------------------
  */
--(void) clear;
+-(void) clear:(BOOL)isMatch;
 
 @end
 

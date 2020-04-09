@@ -123,6 +123,9 @@ static AINet *_instance;
 -(AIFrontOrderNode*) createCMV:(NSArray*)imvAlgsArr order:(NSArray*)order{
     return [self.mvFoManager create:imvAlgsArr order:order];
 }
+-(AICMVNode*) createConMv:(NSArray*)imvAlgsArr{
+    return [self.mvFoManager createConMv:imvAlgsArr];
+}
 -(AICMVNode*) createConMv:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p at:(NSString*)at isMem:(BOOL)isMem{
     return [self.mvFoManager createConMv:urgentTo_p delta_p:delta_p at:at isMem:isMem];
 }

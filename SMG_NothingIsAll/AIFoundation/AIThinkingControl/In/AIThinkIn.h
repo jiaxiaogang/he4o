@@ -11,9 +11,9 @@
 @class AIPointer,AICMVNodeBase,AIFrontOrderNode,AIAlgNodeBase,AIShortMatchModel;
 @protocol AIThinkInDelegate <NSObject>
 
--(void) aiThinkIn_AddToShortMemory:(NSArray*)algNode_ps;        //将概念节点添加到瞬时记忆
+-(void) aiThinkIn_AddToShortMemory:(NSArray*)algNode_ps isMatch:(BOOL)isMatch;        //将概念节点添加到瞬时记忆
 -(NSArray*) aiThinkIn_GetShortMemory;
--(AIFrontOrderNode*) aiThinkIn_CreateCMVModel:(NSArray*)algsArr;//构建cmv模型;
+-(AIFrontOrderNode*) aiThinkIn_CreateCMVModel:(NSArray*)algsArr isMatch:(BOOL)isMatch;//构建cmv模型;
 
 /**
  *  MARK:--------------------感性mv输入处理--------------------

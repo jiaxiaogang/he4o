@@ -58,8 +58,8 @@
     
     //3. 构建父概念 & 将父概念加入瞬时记忆;
     AIAlgNode *parentAlgNode = [theNet createAlgNode:parentValue_ps dataSource:algsType isOut:false isMem:true];
-    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_AddToShortMemory:)]) {
-        [self.delegate aiThinkIn_AddToShortMemory:@[parentAlgNode.pointer]];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_AddToShortMemory:isMatch:)]) {
+        [self.delegate aiThinkIn_AddToShortMemory:@[parentAlgNode.pointer] isMatch:false];
     }
     
     //4. 收集本组中,所有概念节点;
@@ -69,9 +69,6 @@
     //5. 构建子概念 (抽象概念,并嵌套);
     for (NSArray *subValue_ps in subValuePsArr) {
         AIAbsAlgNode *subAlgNode = [theNet createAbsAlgNode:subValue_ps conAlgs:@[parentAlgNode] dataSource:algsType isMem:true];
-        //if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_AddToShortMemory:)]) {
-        //    [self.delegate aiThinkIn_AddToShortMemory:@[subAlgNode.pointer]];
-        //}
         [fromGroup_ps addObject:subAlgNode.pointer];
         [theNV setNodeData:subAlgNode.pointer];
     }
@@ -97,8 +94,8 @@
         AIAlgNodeBase *algNode = [theNet createAlgNode:algsArr dataSource:algsType isOut:false isMem:true];
         
         //2. 加入瞬时记忆
-        if (algNode && self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_AddToShortMemory:)]) {
-            [self.delegate aiThinkIn_AddToShortMemory:@[algNode.pointer]];
+        if (algNode && self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_AddToShortMemory:isMatch:)]) {
+            [self.delegate aiThinkIn_AddToShortMemory:@[algNode.pointer] isMatch:false];
         }
         
         [theNV setNodeData:algNode.pointer];
@@ -149,6 +146,9 @@
     mModel.matchAlg = [AIThinkInReason TIR_Alg:algNode_p fromGroup_ps:fromGroup_ps];
     NSLog(@"-----------瞬时MModel.matchAlg为:(%@)",[NVHeUtil getLightStr4Ps:mModel.matchAlg.content_ps]);
     
+    //3. 添加到瞬时记忆;
+    if (mModel.matchAlg) [self.delegate aiThinkIn_AddToShortMemory:@[mModel.matchAlg] isMatch:true];
+    
     //3. 构建时序 (把每次dic输入,都作为一个新的内存时序);
     NSArray *shortMemory = [self.delegate aiThinkIn_GetShortMemory];
     mModel.protoFo = [theNet createConFo:shortMemory];
@@ -173,13 +173,9 @@
 
 -(void) dataIn_FindMV:(NSArray*)algsArr{
     //1. 联想到mv时,创建CmvModel取到FoNode;
-    [self.tip dataIn_FindMV:algsArr createMvModelBlock:^AIFrontOrderNode *(NSArray *algsArr) {
+    [self.tip dataIn_FindMV:algsArr createMvModelBlock:^AIFrontOrderNode *(NSArray *algsArr,BOOL isMatch) {
         //2. 创建CmvModel取到FoNode;
-        AIFrontOrderNode *foNode = nil;
-        if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_CreateCMVModel:)]) {
-            foNode = [self.delegate aiThinkIn_CreateCMVModel:algsArr];
-        }
-        return foNode;
+        return [self.delegate aiThinkIn_CreateCMVModel:algsArr isMatch:isMatch];
     } finishBlock:^(AICMVNode *commitMvNode) {
         //3. 思考mv,需求处理
         if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_CommitPercept:)]) {

@@ -20,34 +20,26 @@
 @implementation AIMvFoManager
 
 -(AIFrontOrderNode*) create:(NSArray*)imvAlgsArr order:(NSArray*)order{
-    //1. 数据
-    __block NSString *mvAlgsType = DefaultAlgsType;
-    __block AIKVPointer *deltaPointer = nil;
-    __block AIKVPointer *urgentToPointer = nil;
-    __block NSInteger urgentToValue = 0;
-    [ThinkingUtils parserAlgsMVArr:imvAlgsArr success:^(AIKVPointer *delta_p, AIKVPointer *urgentTo_p, NSInteger delta, NSInteger urgentTo, NSString *algsType) {
-        deltaPointer = delta_p;
-        mvAlgsType = algsType;
-        urgentToPointer = urgentTo_p;
-        urgentToValue = urgentTo;
-    }];
-
     //2. 打包cmvNode & foNode;
-    AICMVNode *cmvNode = [self createConMv:urgentToPointer delta_p:deltaPointer at:mvAlgsType isMem:true];
+    AICMVNode *cmvNode = [self createConMv:imvAlgsArr];
     AIFrontOrderNode *foNode = [AIMvFoManager createConFo:order];
 
     //4. 互指向
-    cmvNode.foNode_p = foNode.pointer;
-    foNode.cmvNode_p = cmvNode.pointer;
-
-    //5. 存储foNode & cmvNode
-    [SMGUtils insertNode:cmvNode];
-    [SMGUtils insertNode:foNode];
+    [AINetUtils relateFo:foNode mv:cmvNode];
 
     //6. 返回给thinking
     return foNode;
 }
 
+-(AICMVNode*) createConMv:(NSArray*)imvAlgsArr {
+    //1. 数据解析 & 打包cmvNode;
+    __block AICMVNode *cmvNode = nil;
+    [ThinkingUtils parserAlgsMVArr:imvAlgsArr success:^(AIKVPointer *delta_p, AIKVPointer *urgentTo_p, NSInteger delta, NSInteger urgentTo, NSString *algsType) {
+        //2. 打包cmvNode (imv的价值节点先放内存中);
+        cmvNode = [self createConMv:urgentTo_p delta_p:delta_p at:algsType isMem:true];
+    }];
+    return cmvNode;
+}
 -(AICMVNode*) createConMv:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p at:(NSString*)at isMem:(BOOL)isMem{
     //1. 数据
     if (!urgentTo_p || !delta_p || !at) return nil;

@@ -25,6 +25,7 @@
 /**
  *  MARK:--------------------构建conMv--------------------
  */
+-(AICMVNode*) createConMv:(NSArray*)imvAlgsArr;//imv重载
 -(AICMVNode*) createConMv:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p at:(NSString*)at isMem:(BOOL)isMem;
 
 /**

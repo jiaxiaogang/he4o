@@ -527,11 +527,8 @@
     AICMVNodeBase *createMv = createMvBlock(urgent_p,delta_p,createFo);
 
     //6. 连接mv基本模型;
+    [AINetUtils relateFo:createFo mv:createMv];
     if (createFo && createMv) {
-        createFo.cmvNode_p = createMv.pointer;
-        createMv.foNode_p = createFo.pointer;
-        [SMGUtils insertNode:createFo];
-        [SMGUtils insertNode:createMv];
         ALog(@"~~~~> 反向反馈类比 CreateFo内容:[%@]->{%f}",[NVHeUtil getLightStr4Ps:createFo.content_ps simple:false],[ThinkingUtils getScoreForce:createMv.pointer ratio:1.0f]);
     }
 }

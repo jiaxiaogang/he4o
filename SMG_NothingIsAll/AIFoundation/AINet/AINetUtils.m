@@ -292,6 +292,18 @@
     }
 }
 
++(void) relateFo:(AIFoNodeBase*)foNode mv:(AICMVNodeBase*)mvNode{
+    if (foNode && mvNode) {
+        //1. 互指向
+        mvNode.foNode_p = foNode.pointer;
+        foNode.cmvNode_p = mvNode.pointer;
+        
+        //2. 存储foNode & cmvNode
+        [SMGUtils insertNode:mvNode];
+        [SMGUtils insertNode:foNode];
+    }
+}
+
 @end
 
 
