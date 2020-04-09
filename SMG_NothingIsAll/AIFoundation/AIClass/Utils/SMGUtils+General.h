@@ -60,4 +60,7 @@
 //nsdata
 +(NSArray*)datas2Objs:(NSArray*)datas;
 
+//log
++(void)allLog:(NSString *)log;
+
 @end

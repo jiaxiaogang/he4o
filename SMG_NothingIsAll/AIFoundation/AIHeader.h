@@ -113,16 +113,15 @@
  */
 
 //NSArray
-#define SMGArrayMake(arg) \
-NSMutableArray *array = [NSMutableArray arrayWithObject:arg];\
-va_list args;\
-va_start(args, arg);\
-id next = nil;\
-while ((next = va_arg(args,id))) {\
-[array addObject:next];\
-}\
-va_end(args);\
-
+//#define SMGArrayMake(arg) \
+//NSMutableArray *array = [NSMutableArray arrayWithObject:arg];\
+//va_list args;\
+//va_start(args, arg);\
+//id next = nil;\
+//while ((next = va_arg(args,id))) {\
+//[array addObject:next];\
+//}\
+//va_end(args);\
 
 /**
  *  MARK:--------------------快捷访问对象--------------------
@@ -159,6 +158,15 @@ va_end(args);\
  *  MARK:--------------------LOG--------------------
  */
 #define FILENAME [[NSString stringWithUTF8String:__FILE__] lastPathComponent]
+//errorLog
 #define ELog(fmt, ...) NSLog((@"<错误> " fmt), ##__VA_ARGS__);
+//warnLog
 #define WLog(fmt, ...) NSLog((@"<警告> " fmt), ##__VA_ARGS__);
+//系统log (格式化)
 #define NSLog(FORMAT, ...) fprintf(stderr,"[%s %s] %s\n",[[SMGUtils date2HHMMSSSSS] UTF8String],[[SMGUtils codeLocateFormat:FILENAME line:__LINE__]  UTF8String], [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
+//heLog (持久化日志)
+#define HeLog(fmt, ...) [theApp.heLogView addLog:[NSString stringWithFormat:fmt, ##__VA_ARGS__]]
+//tipLog (UI弹出日志)
+#define TLog(fmt, ...) [theApp setTipLog:[NSString stringWithFormat:fmt, ##__VA_ARGS__]]
+//allLog (系统 + 持久化 + UI弹出)
+#define ALog(fmt, ...) [SMGUtils allLog:[NSString stringWithFormat:fmt, ##__VA_ARGS__]]

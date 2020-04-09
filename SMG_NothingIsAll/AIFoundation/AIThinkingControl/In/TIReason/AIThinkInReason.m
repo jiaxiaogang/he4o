@@ -360,7 +360,7 @@
     [assIndexes addObjectsFromArray:[SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:assFoIndexAlg]]];
     
     //3. 递归进行assFos
-    NSLog(@"============= TIR_Fo =============索引数:%lu",(unsigned long)assIndexes.count);
+    NSLog(@"------------ TIR_Fo ------------索引数:%lu",(unsigned long)assIndexes.count);
     for (AIKVPointer *assIndex_p in assIndexes) {
         AIAlgNodeBase *indexAlg = [SMGUtils searchNode:assIndex_p];
         

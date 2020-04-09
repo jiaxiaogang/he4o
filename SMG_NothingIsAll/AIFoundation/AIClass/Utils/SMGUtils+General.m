@@ -158,4 +158,11 @@
     return result;
 }
 
+//log
++(void)allLog:(NSString *)log{
+    NSLog(@"%@",log);
+    [theApp.heLogView addLog:log];
+    [theApp setTipLog:log];
+}
+
 @end

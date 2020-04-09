@@ -220,9 +220,9 @@
     //5. 内类比找不同 (比大小:同区不同值 / 有无)
     if (algNodeA && algNodeB){
         //a. 内类比大小;
-        NSLog(@"============================内类比:(%ld_%ld | %ld_%ld)",aIndex,algNodeA.pointer.pointerId,bIndex,algNodeB.pointer.pointerId);
-        NSLog(@"==> 概念A: [%@]",[NVHeUtil getLightStr4Ps:algNodeA.content_ps]);
-        NSLog(@"==> 概念B: [%@]",[NVHeUtil getLightStr4Ps:algNodeB.content_ps]);
+        NSLog(@"--------------------内类比:(%ld_%ld | %ld_%ld)",aIndex,algNodeA.pointer.pointerId,bIndex,algNodeB.pointer.pointerId);
+        NSLog(@"--> 概念A: [%@]",[NVHeUtil getLightStr4Ps:algNodeA.content_ps]);
+        NSLog(@"--> 概念B: [%@]",[NVHeUtil getLightStr4Ps:algNodeB.content_ps]);
         NSArray *rangeAlg_ps = ARR_SUB(orders, aIndex + 1, bIndex - aIndex - 1);
         [self analogyInner_GL:checkFo algA:algNodeA algB:algNodeB rangeAlg_ps:rangeAlg_ps createdBlock:^(AINetAbsFoNode *createFo) {
             //b. 消耗思维活跃度 & 内中有外
@@ -419,7 +419,7 @@
     CGFloat mScore = [ThinkingUtils getScoreForce:mMv_p ratio:mModel.matchFoValue];
     CGFloat pScore = [ThinkingUtils getScoreForce:pMv_p ratio:1.0f];
     BOOL isDiff = ((mScore > 0 && pScore < 0) || (mScore < 0 && pScore > 0));
-    NSLog(@"############ 反向反馈类比 %@ ############",isDiff ? @"START" : @"JUMP");
+    ALog(@"~~~~~~~~~~~~~~~ 反向反馈类比 %@ (mMv:%f | fMv:%f) ~~~~~~~~~~~~~~~",isDiff ? @"START" : @"JUMP",mScore,pScore);
     if (!isDiff) return;
 
     //3. 提供类比收集"缺乏和多余"所需的两个数组;
@@ -487,7 +487,7 @@
 
     //5. 将最终都没收集的protoFo剩下的部分打包进多余 (jStart到end之间的pAlg_p(含jStart,含end));
     [ps addObjectsFromArray:ARR_SUB(protoFo.content_ps, jStart, protoFo.content_ps.count - jStart)];
-    NSLog(@"### 反向反馈类比 ms数:%lu ps数:%lu",ms.count,ps.count);
+    ALog(@"~~~> 反向反馈类比 ms数:%lu ps数:%lu",ms.count,ps.count);
     
     //6. 构建ms
     [self analogy_Feedback_Diff_Creater:pMv content_ps:ms createFoBlock:^AIFoNodeBase *{
@@ -532,7 +532,7 @@
         createMv.foNode_p = createFo.pointer;
         [SMGUtils insertNode:createFo];
         [SMGUtils insertNode:createMv];
-        NSLog(@"##### 反向反馈类比 CreateFo内容:[%@]->{%f}",[NVHeUtil getLightStr4Ps:createFo.content_ps simple:false],[ThinkingUtils getScoreForce:createMv.pointer ratio:1.0f]);
+        ALog(@"~~~~> 反向反馈类比 CreateFo内容:[%@]->{%f}",[NVHeUtil getLightStr4Ps:createFo.content_ps simple:false],[ThinkingUtils getScoreForce:createMv.pointer ratio:1.0f]);
     }
 }
 

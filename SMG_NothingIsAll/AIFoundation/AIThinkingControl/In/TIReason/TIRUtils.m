@@ -210,7 +210,7 @@
             
             //6. 判断全含; (matchingCount == assAlg.content.count) (且只能识别为抽象节点)
             if (ISOK(result, AIAbsAlgNode.class) && result.content_ps.count == matchingCount) {
-                NSLog(@"=======MatchAlg Success_长度:%lu 匹配:%d 类型:%@ 内容:[%@]",(unsigned long)result.content_ps.count,matchingCount,result.class,[NVHeUtil getLightStr4Ps:result.content_ps]);
+                NSLog(@"------MatchAlg Success_长度:%lu 匹配:%d 类型:%@ 内容:[%@]",(unsigned long)result.content_ps.count,matchingCount,result.class,[NVHeUtil getLightStr4Ps:result.content_ps]);
                 return result;
             }
             if (!ISOK(result, AIAbsAlgNode.class) && result.content_ps.count != matchingCount) {
@@ -241,7 +241,7 @@
  *      v2: 支持多个稀疏码不同,并支持返回多个相似度排序后的结果;
  */
 +(NSArray*) matchAlg2FuzzyAlgV2:(AIAlgNodeBase*)protoAlg matchAlg:(AIAlgNodeBase*)matchAlg except_ps:(NSArray*)except_ps{
-    NSLog(@"=============== Fuzzy Start ===============");
+    NSLog(@"--------------- Fuzzy Start ---------------");
     //1. 数据准备;
     except_ps = ARRTOOK(except_ps);
     if (!protoAlg || !matchAlg) {
@@ -337,7 +337,7 @@
     for (NSInteger i = 0; i < result.count; i++) {
         AIAlgNodeBase *item = ARR_INDEX(result, i);
         [theApp.nvView setNodeData:item.pointer appendLightStr:STRFORMAT(@"%ld_fuzzyR(%ld)",protoAlg.pointer.pointerId,(long)i)];
-        NSLog(@"=======FuzzyAlg Success_地址:%d 长度:%lu 内容:[%@] (P数:%d / M数:%d)",item.pointer.pointerId,item.content_ps.count,[NVHeUtil getLightStr4Ps:item.content_ps],(unsigned long)protoAlg.content_ps.count,matchAlg.content_ps.count);
+        NSLog(@"------FuzzyAlg Success_地址:%d 长度:%lu 内容:[%@] (P数:%d / M数:%d)",item.pointer.pointerId,item.content_ps.count,[NVHeUtil getLightStr4Ps:item.content_ps],(unsigned long)protoAlg.content_ps.count,matchAlg.content_ps.count);
     }
     return result;
 }
