@@ -23,6 +23,7 @@
 #import "AIThinkInAnalogy.h"
 //temp
 #import "NVHeUtil.h"
+#import "ThinkingUtils.h"
 
 @implementation AIThinkInReason
 
@@ -373,7 +374,8 @@
             
             //6. 对assFo做匹配判断;
             [TIRUtils TIR_Fo_CheckFoValidMatch:protoFo assFo:assFo checkItemValid:checkItemValid success:^(NSInteger lastAssIndex, CGFloat matchValue) {
-                NSLog(@"时序识别: SUCCESS >>> matchValue:%f",matchValue);
+                NSLog(@"时序识别: SUCCESS >>> matchValue:%f 内容:[%@]->{%f}",matchValue,[NVHeUtil getLightStr4Ps:assFo.content_ps simple:false],[ThinkingUtils getScoreForce:assFo.cmvNode_p ratio:1.0f]);
+                
                 successed = true;
                 finishBlock(assFo,matchValue);
                 [theNV setNodeData:assFo.pointer lightStr:@"成功assFo"];

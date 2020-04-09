@@ -419,6 +419,7 @@
     CGFloat mScore = [ThinkingUtils getScoreForce:mMv_p ratio:mModel.matchFoValue];
     CGFloat pScore = [ThinkingUtils getScoreForce:pMv_p ratio:1.0f];
     BOOL isDiff = ((mScore > 0 && pScore < 0) || (mScore < 0 && pScore > 0));
+    NSLog(@"############ 反向反馈类比 %@ ############",isDiff ? @"START" : @"JUMP");
     if (!isDiff) return;
 
     //3. 提供类比收集"缺乏和多余"所需的两个数组;
@@ -486,7 +487,8 @@
 
     //5. 将最终都没收集的protoFo剩下的部分打包进多余 (jStart到end之间的pAlg_p(含jStart,含end));
     [ps addObjectsFromArray:ARR_SUB(protoFo.content_ps, jStart, protoFo.content_ps.count - jStart)];
-
+    NSLog(@"### 反向反馈类比 ms数:%lu ps数:%lu",ms.count,ps.count);
+    
     //6. 构建ms
     [self analogy_Feedback_Diff_Creater:pMv content_ps:ms createFoBlock:^AIFoNodeBase *{
         return [ThinkingUtils createConFo_NoRepeat_General:ms];
@@ -530,6 +532,7 @@
         createMv.foNode_p = createFo.pointer;
         [SMGUtils insertNode:createFo];
         [SMGUtils insertNode:createMv];
+        NSLog(@"##### 反向反馈类比 CreateFo内容:[%@]->{%f}",[NVHeUtil getLightStr4Ps:createFo.content_ps simple:false],[ThinkingUtils getScoreForce:createMv.pointer ratio:1.0f]);
     }
 }
 
