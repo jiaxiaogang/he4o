@@ -533,9 +533,14 @@
     }
 }
 
-+(void) analogy_Feedback_Same:(AIShortMatchModel*)mModel protoFo:(AIFoNodeBase*)protoFo{
-    //与当前的analogy_Outside()较相似,所以暂不写;
-    //随后写时,也是将原有的_outside改成此_same类比方法;
++(void) analogy_Feedback_Same:(AIShortMatchModel*)mModel shortFo:(AIFoNodeBase*)shortFo{
+    //1. 数据检查;
+    if (!mModel || !mModel.matchFo || !shortFo) return;
+    
+    //2. 类比 (与当前的analogy_Outside()较相似,所以暂不写,随后写时,也是将原有的_outside改成此_same类比方法);
+    [self analogyOutside:shortFo assFo:mModel.matchFo canAss:^BOOL{
+        return true;
+    } updateEnergy:nil fromInner:false];
 }
 
 @end

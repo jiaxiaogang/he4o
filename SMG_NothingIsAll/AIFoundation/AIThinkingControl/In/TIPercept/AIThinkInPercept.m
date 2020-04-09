@@ -106,8 +106,11 @@
         }
     }
     
-    //4. 反向反馈类比;
+    //5. 正向反馈类比;
     AIShortMatchModel *mModel = [self.delegate tir_getShortMatchModel];
+    [AIThinkInAnalogy analogy_Feedback_Same:mModel shortFo:matchFo];
+    
+    //4. 反向反馈类比;
     [AIThinkInAnalogy analogy_Feedback_Diff:mModel protoFo:foNode];
 }
 

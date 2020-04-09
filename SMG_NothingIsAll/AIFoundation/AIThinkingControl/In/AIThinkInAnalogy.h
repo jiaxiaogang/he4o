@@ -62,6 +62,6 @@
  *  @desc 由TIP调用,执行条件为:当imv与预测mv相符时,执行类比;
  *  @desc 如: (距20,经233) 与 (距20,经244) 可类比为: (距20)->{mv};
  */
-+(void) analogy_Feedback_Same:(AIShortMatchModel*)mModel protoFo:(AIFoNodeBase*)protoFo;
++(void) analogy_Feedback_Same:(AIShortMatchModel*)mModel shortFo:(AIFoNodeBase*)shortFo;
 
 @end

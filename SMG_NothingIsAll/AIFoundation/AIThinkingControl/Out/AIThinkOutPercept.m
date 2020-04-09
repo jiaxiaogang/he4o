@@ -129,6 +129,12 @@
         }
     }];
     [theNV setNodeData:outMvModel.content_p lightStr:@"o0"];
+    
+    //4. 加强关联;
+    if (outMvModel && outMvModel.content_p) {
+        AICMVNodeBase *cmvNode = [SMGUtils searchNode:outMvModel.content_p];
+        [theNet setMvNodeToDirectionReference:cmvNode difStrong:1];
+    }
     return outMvModel;
 }
 
