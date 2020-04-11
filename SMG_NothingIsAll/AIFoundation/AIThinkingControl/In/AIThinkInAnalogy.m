@@ -39,6 +39,10 @@
 +(void) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy fromInner:(BOOL)fromInner{
     //1. 类比orders的规律
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
+    if (!fromInner) {
+        NSLog(@"~~~~~~~~~~~~~~~~~~~~ 外类比 START A:[%@]->{%@} B:[%@]->{%@}",Pit2FulStr(fo.pointer),Pit2SStr(fo.cmvNode_p),Pit2FulStr(assFo.pointer),Pit2SStr(assFo.cmvNode_p));
+        
+    }
     if (fo && assFo) {
 
         //2. 外类比有序进行 (记录jMax & 反序)
@@ -79,6 +83,7 @@
                                 [orderSames insertObject:createAbsNode.pointer atIndex:0];
                                 jMax = j - 1;
                                 if (!fromInner) {
+                                    NSLog(@"~~~> 构建概念:(%@)",[NVHeUtil getLightStr:createAbsNode.pointer simple:false]);
                                     [theNV setNodeData:createAbsNode.pointer lightStr:STRFORMAT(@"新%ld (%ld&%ld)",createAbsNode.content_ps.count,algNodeA.pointer.pointerId,algNodeB.pointer.pointerId)];
                                 }
                             }
@@ -157,6 +162,7 @@
         if (result) {
             if (!fromInner) {
                 [theNV setNodeData:result.pointer lightStr:STRFORMAT(@"新%ld (%ld&%ld)",result.content_ps.count,fo.pointer.pointerId,assFo.pointer.pointerId)];
+                NSLog(@"~~~>> 构建时序:[%@]->{%@}",Pit2FulStr(result.pointer),Pit2SStr(result.cmvNode_p));
             }else{
                 NSLog(@"----> 内类比IHO构建抽象时序=%ld: [%@] from(%ld,%ld)",result.pointer.pointerId,[NVHeUtil getLightStr4Ps:result.content_ps],fo.pointer.pointerId,assFo.pointer.pointerId);
                 [theNV setNodeData:result.pointer appendLightStr:STRFORMAT(@"IHO:[%@]",[NVHeUtil getLightStr4Ps:result.content_ps])];
@@ -221,8 +227,8 @@
     if (algNodeA && algNodeB){
         //a. 内类比大小;
         NSLog(@"--------------------内类比:(%ld_%ld | %ld_%ld)",aIndex,algNodeA.pointer.pointerId,bIndex,algNodeB.pointer.pointerId);
-        NSLog(@"--> 概念A: [%@]",[NVHeUtil getLightStr4Ps:algNodeA.content_ps]);
-        NSLog(@"--> 概念B: [%@]",[NVHeUtil getLightStr4Ps:algNodeB.content_ps]);
+        NSLog(@"--> 概念A: (%@)",Pits2FulStr(algNodeA.content_ps));
+        NSLog(@"--> 概念B: (%@)",Pits2FulStr(algNodeB.content_ps));
         NSArray *rangeAlg_ps = ARR_SUB(orders, aIndex + 1, bIndex - aIndex - 1);
         [self analogyInner_GL:checkFo algA:algNodeA algB:algNodeB rangeAlg_ps:rangeAlg_ps createdBlock:^(AINetAbsFoNode *createFo) {
             //b. 消耗思维活跃度 & 内中有外
@@ -536,6 +542,7 @@
 +(void) analogy_Feedback_Same:(AIShortMatchModel*)mModel shortFo:(AIFoNodeBase*)shortFo{
     //1. 数据检查;
     if (!mModel || !mModel.matchFo || !shortFo) return;
+    NSLog(@"~~~~~~~~~~~~~~~~~~~~ 正向反馈类比 START");
     
     //2. 类比 (与当前的analogy_Outside()较相似,所以暂不写,随后写时,也是将原有的_outside改成此_same类比方法);
     [self analogyOutside:shortFo assFo:mModel.matchFo canAss:^BOOL{

@@ -26,7 +26,7 @@
     if (!createMvModelBlock) return;
     AIFrontOrderNode *protoFo = createMvModelBlock(algsArr,false);
     AIFrontOrderNode *matchFo = createMvModelBlock(algsArr,true);
-    if (!protoFo || !matchFo) return;
+    if (!protoFo) return;
     
     //2. 取cmvNode
     AICMVNode *cmvNode = [SMGUtils searchNode:protoFo.cmvNode_p];
@@ -56,7 +56,7 @@
  */
 -(void) dataIn_FindMV_Learning:(AIFrontOrderNode*)foNode matchFo:(AIFrontOrderNode*)matchFo cmvNode:(AICMVNode*)cmvNode canAss:(BOOL(^)())canAss updateEnergy:(void(^)(CGFloat delta))updateEnergy{
     //1. 数据检查 & 准备
-    if (foNode == nil || cmvNode == nil || matchFo == nil) {
+    if (foNode == nil || cmvNode == nil) {
         return;
     }
     NSInteger delta = [NUMTOOK([AINetIndex getData:cmvNode.delta_p]) integerValue];

@@ -11,6 +11,7 @@
 #import "AIKVPointer.h"
 #import "AIAlgNodeBase.h"
 #import "NSString+Extension.h"
+#import "ThinkingUtils.h"
 
 @implementation NVHeUtil
 
@@ -59,7 +60,7 @@
                     NSString *firstValueStr = [self getLightStr_ValueP:ARR_INDEX(algNode.content_ps, 0)];
                     return STRFORMAT(@"%@%@",firstValueStr,(algNode.content_ps.count > 1) ? @"..." : @"");
                 }else{
-                    return [self getLightStr4Ps:algNode.content_ps];
+                    return [self getLightStr4Ps:algNode.content_ps simple:simple];
                 }
             }
         }else if([self isFo:node_p]){
@@ -67,6 +68,9 @@
             if (foNode) {
                 return [self getLightStr4Ps:foNode.content_ps simple:simple];
             }
+        }else if([self isMv:node_p]){
+            CGFloat score = [ThinkingUtils getScoreForce:node_p ratio:1.0f];
+            return [NSString removeFloatZero:STRFORMAT(@"%f",score)];
         }
     }
     return @"";
