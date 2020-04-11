@@ -53,64 +53,20 @@
  *   2. 注:此方法为abs方向的思维方法总入口;(与其相对的决策处
  *  步骤:
  *   > 联想->类比->规律->抽象->关联->网络
+ *  @version
+ *      202003-04: a.去掉外类比; b.外类比拆分为:正向类比和反向类比;
  */
 -(void) dataIn_FindMV_Learning:(AIFrontOrderNode*)foNode matchFo:(AIFrontOrderNode*)matchFo cmvNode:(AICMVNode*)cmvNode canAss:(BOOL(^)())canAss updateEnergy:(void(^)(CGFloat delta))updateEnergy{
     //1. 数据检查 & 准备
     if (foNode == nil || cmvNode == nil) {
         return;
     }
-    NSInteger delta = [NUMTOOK([AINetIndex getData:cmvNode.delta_p]) integerValue];
-    MVDirection direction = delta < 0 ? MVDirection_Negative : MVDirection_Positive;
     
-    //2. 联想相似mv数据_内存网络取1个;(联想内存类比,用以发现新的时序,比如学玩新游戏)
-    NSArray *memMvPorts = [theNet getNetNodePointersFromDirectionReference:cmvNode.pointer.algsType direction:direction isMem:true filter:^NSArray *(NSArray *protoArr) {
-        protoArr = ARRTOOK(protoArr);
-        for (AIPort *protoItem in protoArr) {
-            if (![cmvNode.pointer isEqual:protoItem.target_p]) {
-                return @[protoItem];
-            }
-        }
-        return nil;
-    }];
-    
-    //2. 联想相似mv数据_硬盘网络取2个; (并strong+1)(联想硬盘类比,用以找出当下很确切的时序,比如每天加强吃饭-饱)
-    NSArray *hdMvPorts = [theNet getNetNodePointersFromDirectionReference:cmvNode.pointer.algsType direction:direction isMem:false limit:2];
-    for (AIPort *hdPort in hdMvPorts) {
-        AICMVNodeBase *cmvNode = [SMGUtils searchNode:hdPort.target_p];
-        [theNet setMvNodeToDirectionReference:cmvNode difStrong:1];
-    }
-    
-    //2. 收集联想到的mv到一块儿
-    NSMutableArray *assDirectionPorts = [[NSMutableArray alloc] init];
-    [assDirectionPorts addObjectsFromArray:memMvPorts];
-    [assDirectionPorts addObjectsFromArray:hdMvPorts];
-    
-    //3. 外类比_以mv为方向,联想assFo
-    for (AIPort *assDirectionPort in assDirectionPorts) {
-        AICMVNodeBase *assMvNode = [SMGUtils searchNode:assDirectionPort.target_p];
-        
-        if (ISOK(assMvNode, AICMVNodeBase.class)) {
-            //4. 排除联想自己(随后写到reference中)
-            if (![cmvNode.pointer isEqual:assMvNode.pointer]) {
-                AIFoNodeBase *assFrontNode = [SMGUtils searchNode:assMvNode.foNode_p];
-                
-                if (ISOK(assFrontNode, AINodeBase.class)) {
-                    //5. 执行外类比;
-                    [AIThinkInAnalogy analogyOutside:foNode assFo:assFrontNode canAss:^BOOL{
-                        return canAss();
-                    } updateEnergy:^(CGFloat delta) {
-                        updateEnergy(delta);
-                    } fromInner:false];
-                }
-            }
-        }
-    }
-    
-    //5. 正向反馈类比;
+    //2. 正向反馈类比;
     AIShortMatchModel *mModel = [self.delegate tir_getShortMatchModel];
     [AIThinkInAnalogy analogy_Feedback_Same:mModel shortFo:matchFo];
     
-    //4. 反向反馈类比;
+    //3. 反向反馈类比;
     [AIThinkInAnalogy analogy_Feedback_Diff:mModel protoFo:foNode];
 }
 

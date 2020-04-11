@@ -235,7 +235,7 @@
     }
     return result;
 }
-+(AIFrontOrderNode*)createConFo_NoRepeat_General:(NSArray*)content_ps{
++(AIFrontOrderNode*)createConFo_NoRepeat_General:(NSArray*)content_ps isMem:(BOOL)isMem{
     //1. 数据准备
     AIFrontOrderNode *result = nil;
     if (ARRISOK(content_ps)) {
@@ -246,7 +246,7 @@
             [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
         }else{
             //3. 无则构建
-            result = [theNet createConFo:content_ps];
+            result = [theNet createConFo:content_ps isMem:isMem];
         }
     }
     return result;

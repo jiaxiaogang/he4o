@@ -197,7 +197,7 @@
     if (!ARRISOK(protoAlg_ps) || !replaceMatchAlg || !lastAlg) {
         return;
     }
-    AIFrontOrderNode *protoFo = [theNet createConFo:protoAlg_ps];//将protoAlg_ps构建成时序;
+    AIFrontOrderNode *protoFo = [theNet createConFo:protoAlg_ps isMem:true];//将protoAlg_ps构建成时序;
     
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
     [self TIR_Fo_General:protoFo assFoIndexAlg:replaceMatchAlg assFoBlock:^NSArray *(AIAlgNodeBase *indexAlg) {

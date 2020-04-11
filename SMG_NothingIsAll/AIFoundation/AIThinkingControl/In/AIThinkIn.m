@@ -151,7 +151,7 @@
     
     //3. 构建时序 (把每次dic输入,都作为一个新的内存时序);
     NSArray *shortMemory = [self.delegate aiThinkIn_GetShortMemory];
-    mModel.protoFo = [theNet createConFo:shortMemory];
+    mModel.protoFo = [theNet createConFo:shortMemory isMem:true];
     
     //4. 识别时序;
     [AIThinkInReason TIR_Fo_FromShortMem:mModel.protoFo lastMatchAlg:mModel.matchAlg finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue) {

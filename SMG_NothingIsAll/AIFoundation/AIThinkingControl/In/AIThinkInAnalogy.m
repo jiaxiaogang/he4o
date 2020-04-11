@@ -497,7 +497,7 @@
     
     //6. 构建ms
     [self analogy_Feedback_Diff_Creater:pMv content_ps:ms createFoBlock:^AIFoNodeBase *{
-        return [ThinkingUtils createConFo_NoRepeat_General:ms];
+        return [ThinkingUtils createConFo_NoRepeat_General:ms isMem:false];
     } createMvBlock:^AICMVNodeBase *(AIKVPointer *u_p, AIKVPointer *d_p, AIFoNodeBase *foNode) {
         return [theNet createConMv:u_p delta_p:d_p at:pMv_p.algsType isMem:false];
     } rate:(float)ms.count / mModel.matchFo.content_ps.count];

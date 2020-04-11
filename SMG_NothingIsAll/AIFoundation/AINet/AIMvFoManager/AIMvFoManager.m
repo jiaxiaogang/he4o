@@ -22,7 +22,7 @@
 -(AIFrontOrderNode*) create:(NSArray*)imvAlgsArr order:(NSArray*)order{
     //2. 打包cmvNode & foNode;
     AICMVNode *cmvNode = [self createConMv:imvAlgsArr];
-    AIFrontOrderNode *foNode = [AIMvFoManager createConFo:order];
+    AIFrontOrderNode *foNode = [AIMvFoManager createConFo:order isMem:false];
 
     //4. 互指向
     [AINetUtils relateFo:foNode mv:cmvNode];
@@ -36,7 +36,7 @@
     __block AICMVNode *cmvNode = nil;
     [ThinkingUtils parserAlgsMVArr:imvAlgsArr success:^(AIKVPointer *delta_p, AIKVPointer *urgentTo_p, NSInteger delta, NSInteger urgentTo, NSString *algsType) {
         //2. 打包cmvNode (imv的价值节点先放内存中);
-        cmvNode = [self createConMv:urgentTo_p delta_p:delta_p at:algsType isMem:true];
+        cmvNode = [self createConMv:urgentTo_p delta_p:delta_p at:algsType isMem:false];
     }];
     return cmvNode;
 }
@@ -59,12 +59,12 @@
     return cmvNode;
 }
 
-+(AIFrontOrderNode*) createConFo:(NSArray*)order_ps{
++(AIFrontOrderNode*) createConFo:(NSArray*)order_ps isMem:(BOOL)isMem{
     //1. foNode
     AIFrontOrderNode *foNode = [[AIFrontOrderNode alloc] init];
 
     //2. pointer
-    foNode.pointer = [SMGUtils createPointer:kPN_FRONT_ORDER_NODE algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false isMem:true];
+    foNode.pointer = [SMGUtils createPointer:kPN_FRONT_ORDER_NODE algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false isMem:isMem];
 
     //3. foNode.orders收集
     [foNode.content_ps addObjectsFromArray:order_ps];
