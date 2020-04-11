@@ -65,23 +65,8 @@
         findAbsNode = [[AINetAbsFoNode alloc] init];
         findAbsNode.pointer = [SMGUtils createPointerForNode:kPN_FO_ABS_NODE];
         
-        ///1. 收集order_ps (将不在hdNet中的转移)
-        for (AIKVPointer *item_p in orderSames) {
-            if (item_p.isMem) {
-                AIAlgNodeBase *memAlgNode = [SMGUtils searchNode:item_p];
-                
-                ///2. 转移memAlgNode到硬盘网络;
-                AIAlgNodeBase *hdAlgNode = [AINetUtils move2HdNodeFromMemNode_Alg:memAlgNode];
-                
-                ///3. 收集order_p
-                if (hdAlgNode) {
-                    [findAbsNode.content_ps addObject:hdAlgNode.pointer];
-                }
-            }else{
-                ///4. 收集order_p
-                [findAbsNode.content_ps addObject:item_p];
-            }
-        }
+        //3. 收集order_ps (将不在hdNet中的转移)
+        findAbsNode.content_ps = [AINetUtils move2Hd4Alg_ps:orderSames];
         
         //4. order_ps更新概念节点引用序列;
         [AINetUtils insertRefPorts_AllFoNode:findAbsNode.pointer order_ps:findAbsNode.content_ps ps:findAbsNode.content_ps];

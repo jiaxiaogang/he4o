@@ -312,6 +312,26 @@
 //MARK:===============================================================
 @implementation AINetUtils (Move)
 
++(NSArray*) move2Hd4Alg_ps:(NSArray*)alg_ps{
+    //1. 数据检查
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    alg_ps = ARRTOOK(alg_ps);
+    
+    //2. 循环检查;
+    for (AIKVPointer *item_p in alg_ps) {
+        //a. 内存则迁移,再添加;
+        if (item_p.isMem) {
+            AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
+            itemAlg = [AINetUtils move2HdNodeFromMemNode_Alg:itemAlg];
+            if (itemAlg) [result addObject:itemAlg.pointer];
+        }else{
+            //b. 不在内存直接添加;
+            [result addObject:item_p];
+        }
+    }
+    return result;
+}
+
 +(id) move2HdNodeFromMemNode_Alg:(AINodeBase*)memNode {
     return [self move2HdNodeFromMemNode_General:memNode insertRefPortsBlock:^(AIAlgNodeBase *hdNode) {
         if (ISOK(hdNode, AIAlgNodeBase.class)) {

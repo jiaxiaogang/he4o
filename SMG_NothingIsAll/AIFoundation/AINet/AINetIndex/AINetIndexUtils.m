@@ -24,15 +24,15 @@
     return nil;
 }
 +(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps{
-    AIAlgNodeBase *result = [self getAbsoluteMatchingAlgNodeWithValuePs:value_ps exceptAlg_p:nil isMem:true];
+    AIAlgNodeBase *result = [self getAbsoluteMatchingAlgNodeWithValuePs:value_ps except_ps:nil isMem:true];
     if (!result) {
-        result = [self getAbsoluteMatchingAlgNodeWithValuePs:value_ps exceptAlg_p:nil isMem:false];
+        result = [self getAbsoluteMatchingAlgNodeWithValuePs:value_ps except_ps:nil isMem:false];
     }
     return result;
 }
-+(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps exceptAlg_p:(AIPointer*)exceptAlg_p isMem:(BOOL)isMem {
++(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps except_ps:(NSArray*)except_ps isMem:(BOOL)isMem {
     //1. 取数据;
-    NSArray *except_ps = exceptAlg_p ? @[exceptAlg_p] : nil;
+    except_ps = ARRTOOK(except_ps);
     NSArray *sort_ps = [SMGUtils sortPointers:value_ps];
     
     //2. 执行并返回;

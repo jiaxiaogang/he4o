@@ -46,6 +46,7 @@
 -(void) dataInWithModels:(NSArray*)dics algsType:(NSString*)algsType{
     //1. 数据检查 (小鸟不能仅传入foodView,而要传入整个视角场景)
     dics = ARRTOOK(dics);
+    NSLog(@"------------------------------- 皮层输入 -------------------------------");
     
     //2. 收集所有具象父概念的value_ps
     NSMutableArray *parentValue_ps = [[NSMutableArray alloc] init];
@@ -58,9 +59,8 @@
     
     //3. 构建父概念 & 将父概念加入瞬时记忆;
     AIAlgNode *parentAlgNode = [theNet createAlgNode:parentValue_ps dataSource:algsType isOut:false isMem:true];
-    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_AddToShortMemory:isMatch:)]) {
-        [self.delegate aiThinkIn_AddToShortMemory:@[parentAlgNode.pointer] isMatch:false];
-    }
+    [self.delegate aiThinkIn_AddToShortMemory:@[parentAlgNode.pointer] isMatch:false];
+    NSLog(@"---> 构建InputParent节点:%@",Alg2Str(parentAlgNode));
     
     //4. 收集本组中,所有概念节点;
     NSMutableArray *fromGroup_ps = [[NSMutableArray alloc] init];
@@ -71,6 +71,7 @@
         AIAbsAlgNode *subAlgNode = [theNet createAbsAlgNode:subValue_ps conAlgs:@[parentAlgNode] dataSource:algsType isMem:true];
         [fromGroup_ps addObject:subAlgNode.pointer];
         [theNV setNodeData:subAlgNode.pointer];
+        NSLog(@"--->> 构建InputSub节点:%@",Alg2Str(subAlgNode));
     }
     
     //6. NoMv处理;
@@ -147,7 +148,7 @@
     NSLog(@"-----------瞬时MModel.matchAlg为:(%@)",[NVHeUtil getLightStr4Ps:mModel.matchAlg.content_ps]);
     
     //3. 添加到瞬时记忆;
-    if (mModel.matchAlg) [self.delegate aiThinkIn_AddToShortMemory:@[mModel.matchAlg] isMatch:true];
+    if (mModel.matchAlg) [self.delegate aiThinkIn_AddToShortMemory:@[mModel.matchAlg.pointer] isMatch:true];
     
     //3. 构建时序 (把每次dic输入,都作为一个新的内存时序);
     NSArray *shortMemory = [self.delegate aiThinkIn_GetShortMemory];

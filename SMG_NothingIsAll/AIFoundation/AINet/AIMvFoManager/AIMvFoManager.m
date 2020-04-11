@@ -66,6 +66,9 @@
     //2. pointer
     foNode.pointer = [SMGUtils createPointer:kPN_FRONT_ORDER_NODE algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false isMem:isMem];
 
+    //3. 将order_ps转移硬盘 (如有必要)
+    if (!isMem) order_ps = [AINetUtils move2Hd4Alg_ps:order_ps];
+    
     //3. foNode.orders收集
     [foNode.content_ps addObjectsFromArray:order_ps];
 

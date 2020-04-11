@@ -59,15 +59,16 @@
     if (algNode == nil) {
         return nil;
     }
+    NSLog(@"------------------------------- 概念识别 ----------------- %@",Alg2Str(algNode));
     
     //2. 对value.refPorts进行检查识别; (noMv信号已输入完毕,识别联想)
     AIAlgNodeBase *assAlgNode = nil;
     ///1. 绝对匹配 -> 内存网络;
-    assAlgNode = [AINetIndexUtils getAbsoluteMatchingAlgNodeWithValuePs:algNode.content_ps exceptAlg_p:algNode.pointer isMem:true];
+    assAlgNode = [AINetIndexUtils getAbsoluteMatchingAlgNodeWithValuePs:algNode.content_ps except_ps:fromGroup_ps isMem:true];
     
     ///2. 绝对匹配 -> 硬盘网络;
     if (!assAlgNode) {
-        assAlgNode = [AINetIndexUtils getAbsoluteMatchingAlgNodeWithValuePs:algNode.content_ps exceptAlg_p:algNode.pointer isMem:false];
+        assAlgNode = [AINetIndexUtils getAbsoluteMatchingAlgNodeWithValuePs:algNode.content_ps except_ps:fromGroup_ps isMem:false];
     }
     
     ///3. 局部匹配 -> 内存网络;
@@ -97,7 +98,7 @@
         WLog(@"全含结果不正常,导致下面的抽象sames也不准确,,,可在git20191223找回原sames代码");
     }
     if (assAlgNode) {
-        NSLog(@"识别Alg success");
+        NSLog(@"----> 识别Alg success:%@",Alg2Str(assAlgNode));
         [theNV setNodeData:assAlgNode.pointer appendLightStr:@"识别alg成功"];
     }else{
         NSLog(@"识别Alg failure");

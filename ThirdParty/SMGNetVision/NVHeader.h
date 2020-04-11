@@ -31,3 +31,7 @@ typedef NS_ENUM(NSInteger, DirectionType) {
 
 #define Pit2SStr(p) [NVHeUtil getLightStr:p]
 #define Pits2SStr(ps) [NVHeUtil getLightStr4Ps:ps]
+
+//节点转字符串
+#define Alg2Str(a) a ? STRFORMAT(@"A%ld(%@)",a.pointer.pointerId,[NVHeUtil getLightStr4Ps:a.content_ps]) : @"A()"
+#define Fo2Str(f) f ? STRFORMAT(@"F%ld[%@]",f.pointer.pointerId,[NVHeUtil getLightStr4Ps:f.content_ps]) : @"F[]"

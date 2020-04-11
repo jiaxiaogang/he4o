@@ -155,6 +155,8 @@
 //MARK:===============================================================
 @interface AINetUtils (Move)
 
+//notnull
++(NSMutableArray*) move2Hd4Alg_ps:(NSArray*)alg_ps;
 +(id) move2HdNodeFromMemNode_Alg:(AINodeBase*)memNode;
 +(id) move2HdNodeFromMemNode_Fo:(AINodeBase*)memNode;
 
