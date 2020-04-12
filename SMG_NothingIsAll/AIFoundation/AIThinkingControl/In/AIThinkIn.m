@@ -59,11 +59,11 @@
     
     //3. 构建父概念 & 将空场景加入瞬时记忆;
     AIAlgNode *parentAlgNode = [theNet createAlgNode:parentValue_ps dataSource:algsType isOut:false isMem:true];
+    if (parentValue_ps.count == 0) [self.delegate aiThinkIn_AddToShortMemory:@[parentAlgNode.pointer] isMatch:false];
     NSLog(@"---> 构建InputParent节点:%@",Alg2FStr(parentAlgNode));
     
     //4. 收集本组中,所有概念节点;
     NSMutableArray *fromGroup_ps = [[NSMutableArray alloc] init];
-    [fromGroup_ps addObject:parentAlgNode.pointer];
     
     //5. 构建子概念 (抽象概念,并嵌套);
     for (NSArray *subValue_ps in subValuePsArr) {
