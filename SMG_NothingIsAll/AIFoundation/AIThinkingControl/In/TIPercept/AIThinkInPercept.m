@@ -62,12 +62,15 @@
         return;
     }
     
-    //2. 正向反馈类比;
-    AIShortMatchModel *mModel = [self.delegate tir_getShortMatchModel];
-    [AIThinkInAnalogy analogy_Feedback_Same:mModel shortFo:matchFo];
-    
-    //3. 反向反馈类比;
-    [AIThinkInAnalogy analogy_Feedback_Diff:mModel protoFo:foNode];
+    //2. 获取最近的识别模型;
+    NSArray *mModels = ARRTOOK([self.delegate tir_getShortMatchModel]);
+    for (AIShortMatchModel *mModel in mModels) {
+        //a. 正向反馈类比;
+        [AIThinkInAnalogy analogy_Feedback_Same:mModel shortFo:matchFo];
+        
+        //b. 反向反馈类比;
+        [AIThinkInAnalogy analogy_Feedback_Diff:mModel protoFo:foNode];
+    }
 }
 
 @end

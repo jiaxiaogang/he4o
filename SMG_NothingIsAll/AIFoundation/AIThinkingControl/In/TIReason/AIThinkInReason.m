@@ -59,7 +59,7 @@
     if (algNode == nil) {
         return nil;
     }
-    NSLog(@"------------------------------- 概念识别 ----------------- %@",Alg2FStr(algNode));
+    NSLog(@"------------------------------- 概念识别 -------------------------------\n%@",Alg2FStr(algNode));
     
     //2. 对value.refPorts进行检查识别; (noMv信号已输入完毕,识别联想)
     AIAlgNodeBase *assAlgNode = nil;
@@ -254,7 +254,7 @@
         return;
     }
     
-    NSLog(@"-------------------------- 瞬时时序识别 --------------------------%@",Fo2FStr(protoFo));
+    NSLog(@"--------------------------------------- 瞬时时序识别 ---------------------------------------\n%@",Fo2FStr(protoFo));
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
     [self partMatching_Fo:protoFo assFoIndexAlg:lastMatchAlg assFoBlock:^NSArray *(AIAlgNodeBase *indexAlg) {
         if (indexAlg) {

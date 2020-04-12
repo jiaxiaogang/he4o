@@ -11,7 +11,7 @@
 @class AIShortMatchModel;
 @protocol AIThinkInPerceptDelegate <NSObject>
 
--(AIShortMatchModel*) tir_getShortMatchModel;
+-(NSArray*) tir_getShortMatchModel;
 
 @end
 

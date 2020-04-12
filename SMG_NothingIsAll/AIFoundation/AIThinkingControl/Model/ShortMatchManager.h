@@ -16,7 +16,7 @@
 @class AIShortMatchModel;
 @interface ShortMatchManager : NSObject
 
--(NSMutableArray*)getModels;
+-(NSMutableArray*)models;
 -(void) add:(AIShortMatchModel*)model;
 
 @end

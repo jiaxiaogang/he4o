@@ -215,7 +215,7 @@
 /**
  *  MARK:--------------------AIThinkInPerceptDelegate--------------------
  */
--(AIShortMatchModel *)tir_getShortMatchModel{
+-(NSArray *)tir_getShortMatchModel{
     return [self.delegate aiThinkIn_getShortMatchModel];
 }
 

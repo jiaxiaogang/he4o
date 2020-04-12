@@ -198,6 +198,7 @@
     //1. 数据检查
     if (ISOK(checkFo, AIFoNodeBase.class) && checkFo.content_ps.count >= 2) {
         //2. 最后一个元素,向前分别与orders后面所有元素进行类比
+        NSLog(@"---------------------------------------内类比---------------------------------------\n%@",Fo2FStr(checkFo));
         for (NSInteger i = checkFo.content_ps.count - 2; i >= 0; i--) {
             [self analogyInner:checkFo aIndex:i bIndex:checkFo.content_ps.count - 1 canAss:canAssBlock updateEnergy:updateEnergy];
         }
@@ -225,7 +226,7 @@
     //5. 内类比找不同 (比大小:同区不同值 / 有无)
     if (algNodeA && algNodeB){
         //a. 内类比大小;
-        NSLog(@"--------------------内类比:%@",Fo2FStr(checkFo));
+        NSLog(@"-----------内类比-----------");
         NSLog(@"--> 概念%ld: %@",aIndex,Alg2FStr(algNodeA));
         NSLog(@"--> 概念%ld: %@",bIndex,Alg2FStr(algNodeB));
         NSArray *rangeAlg_ps = ARR_SUB(orders, aIndex + 1, bIndex - aIndex - 1);
@@ -545,9 +546,15 @@
 +(void) analogy_Feedback_Same:(AIShortMatchModel*)mModel shortFo:(AIFoNodeBase*)shortFo{
     //1. 数据检查;
     if (!mModel || !mModel.matchFo || !shortFo) return;
-    NSLog(@"~~~~~~~~~~~~~~~~~~~~ 正向反馈类比 START");
     
-    //2. 类比 (与当前的analogy_Outside()较相似,所以暂不写,随后写时,也是将原有的_outside改成此_same类比方法);
+    //2. 检查同向;
+    CGFloat mScore = [ThinkingUtils getScoreForce:mModel.matchFo.cmvNode_p ratio:mModel.matchFoValue];
+    CGFloat sScore = [ThinkingUtils getScoreForce:shortFo.cmvNode_p ratio:1.0f];
+    BOOL isSame = ((mScore > 0 && sScore > 0) || (mScore < 0 && sScore < 0));
+    ALog(@"~~~~~~~~~~~~~~~ 正向反馈类比 %@ (mModelMv:%f | shortMv:%f) ~~~~~~~~~~~~~~~",isSame ? @"START" : @"JUMP",mScore,sScore);
+    if (!isSame) return;
+    
+    //3. 类比 (与当前的analogy_Outside()较相似,所以暂不写,随后写时,也是将原有的_outside改成此_same类比方法);
     [self analogyOutside:shortFo assFo:mModel.matchFo canAss:^BOOL{
         return true;
     } updateEnergy:nil fromInner:false];

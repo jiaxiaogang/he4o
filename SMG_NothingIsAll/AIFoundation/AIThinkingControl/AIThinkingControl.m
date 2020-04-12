@@ -217,8 +217,8 @@ static AIThinkingControl *_instance;
 -(BOOL) aiThinkIn_EnergyValid{
     return self.energy > 0;
 }
--(AIShortMatchModel*) aiThinkIn_getShortMatchModel{
-    return ARR_INDEX_REVERSE(self.shortMatchManager.getModels, 0);
+-(NSArray*) aiThinkIn_getShortMatchModel{
+    return self.shortMatchManager.models;
 }
 
 
@@ -261,7 +261,7 @@ static AIThinkingControl *_instance;
     return [self.thinkIn dataInFromTOR_MatchRTAlg:rtAlg mUniqueV_p:mUniqueV_p];
 }
 -(AIShortMatchModel*) aiTOR_GetShortMatchModel{
-    return ARR_INDEX_REVERSE(self.shortMatchManager.getModels, 0);
+    return ARR_INDEX_REVERSE(self.shortMatchManager.models, 0);
 }
 
 @end
