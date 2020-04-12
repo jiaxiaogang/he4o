@@ -40,8 +40,7 @@
     //1. 类比orders的规律
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
     if (!fromInner) {
-        NSLog(@"~~~~~~~~~~~~~~~~~~~~ 外类比 START A:[%@]->{%@} B:[%@]->{%@}",Pit2FStr(fo.pointer),Pit2SStr(fo.cmvNode_p),Pit2FStr(assFo.pointer),Pit2SStr(assFo.cmvNode_p));
-        
+        NSLog(@"~~~~~~~~~~~~~~~~~~~~ 外类比 START ~~~~~~~~~~~~~~~~~~~~\n%@->%@\n%@->%@",Fo2FStr(fo),Mvp2Str(fo.cmvNode_p),Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
     }
     if (fo && assFo) {
 

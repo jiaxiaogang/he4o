@@ -9,7 +9,4 @@
 #import "AIShortMatchModel.h"
 
 @implementation AIShortMatchModel
-
-
-
 @end

@@ -21,6 +21,7 @@
 #import "AINetIndex.h"
 #import "NSObject+Extension.h"
 #import "AIShortMatchModel.h"
+#import "ShortMatchManager.h"
 #import "TOFoModel.h"
 #import "AIFrontOrderNode.h"
 
@@ -38,7 +39,7 @@
 
 @property (strong,nonatomic) AIShortMemory *shortMemory;    //瞬时记忆
 @property (strong, nonatomic) DemandManager *demandManager; //输出循环所用到的数据管理器;
-@property (strong, nonatomic) AIShortMatchModel *shortMatchModel;
+@property (strong, nonatomic) ShortMatchManager *shortMatchManager;
 
 /**
  *  MARK:--------------------当前能量值--------------------
@@ -84,6 +85,7 @@ static AIThinkingControl *_instance;
     self.tOP.delegate = self;
     self.tOR = [[AIThinkOutReason alloc] init];
     self.tOR.delegate = self;
+    self.shortMatchManager = [[ShortMatchManager alloc] init];
 }
 
 
@@ -204,7 +206,7 @@ static AIThinkingControl *_instance;
     [self updateEnergy:urgentTo];
     
     //3. 将shortMatch保留 (供TOR或TIP调用);
-    self.shortMatchModel = shortMatchModel;
+    [self.shortMatchManager add:shortMatchModel];
     
     //4. 激活dataOut
     [self.tOP dataOut];
@@ -216,7 +218,7 @@ static AIThinkingControl *_instance;
     return self.energy > 0;
 }
 -(AIShortMatchModel*) aiThinkIn_getShortMatchModel{
-    return self.shortMatchModel;
+    return ARR_INDEX_REVERSE(self.shortMatchManager.getModels, 0);
 }
 
 
@@ -259,7 +261,7 @@ static AIThinkingControl *_instance;
     return [self.thinkIn dataInFromTOR_MatchRTAlg:rtAlg mUniqueV_p:mUniqueV_p];
 }
 -(AIShortMatchModel*) aiTOR_GetShortMatchModel{
-    return self.shortMatchModel;
+    return ARR_INDEX_REVERSE(self.shortMatchManager.getModels, 0);
 }
 
 @end
