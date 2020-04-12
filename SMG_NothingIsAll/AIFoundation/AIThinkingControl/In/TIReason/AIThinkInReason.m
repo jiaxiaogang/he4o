@@ -352,7 +352,7 @@
             
             //6. 对assFo做匹配判断;
             [TIRUtils TIR_Fo_CheckFoValidMatch:protoFo assFo:assFo checkItemValid:checkItemValid success:^(NSInteger lastAssIndex, CGFloat matchValue) {
-                NSLog(@"时序识别: SUCCESS >>> matchValue:%f 内容:[%@]->{%f}",matchValue,[NVHeUtil getLightStr4Ps:assFo.content_ps simple:false],[ThinkingUtils getScoreForce:assFo.cmvNode_p ratio:1.0f]);
+                NSLog(@"时序识别: SUCCESS >>> matchValue:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
                 
                 successed = true;
                 finishBlock(assFo,matchValue);

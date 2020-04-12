@@ -35,6 +35,4 @@ typedef NS_ENUM(NSInteger, DirectionType) {
 //节点转字符串
 #define Alg2FStr(a) a ? STRFORMAT(@"A%ld(%@)",a.pointer.pointerId,[NVHeUtil getLightStr4Ps:a.content_ps simple:false]) : @"A()"
 #define Fo2FStr(f) f ? STRFORMAT(@"F%ld[%@]",f.pointer.pointerId,[NVHeUtil getLightStr4Ps:f.content_ps simple:false]) : @"F[]"
-
-#define Alg2SStr(a) a ? STRFORMAT(@"A%ld(%@)",a.pointer.pointerId,[NVHeUtil getLightStr4Ps:a.content_ps simple:true]) : @"A()"
-#define Fo2SStr(f) f ? STRFORMAT(@"F%ld[%@]",f.pointer.pointerId,[NVHeUtil getLightStr4Ps:f.content_ps simple:true]) : @"F[]"
+#define Mvp2Str(m_p) m_p ? STRFORMAT(@"M%ld{%@}",m_p.pointerId,[NVHeUtil getLightStr:m_p]) : @"M{}"
