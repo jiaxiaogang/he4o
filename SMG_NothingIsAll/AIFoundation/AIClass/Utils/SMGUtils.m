@@ -561,7 +561,7 @@
 //MARK:===============================================================
 @implementation SMGUtils (Convert)
 
-+(NSArray*) convertPointersFromPorts:(NSArray*)ports{
++(NSMutableArray*) convertPointersFromPorts:(NSArray*)ports{
     NSMutableArray *result = [[NSMutableArray alloc] init];
     for (AIPort *port in ARRTOOK(ports)) {
         if (ISOK(port, AIPort.class) && ISOK(port.target_p, AIPointer.class)) {

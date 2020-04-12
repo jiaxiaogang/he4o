@@ -148,7 +148,7 @@
  *  MARK:--------------------将ports端口中指向转换为指针数组返回--------------------
  *  @result notnull
  */
-+(NSArray*) convertPointersFromPorts:(NSArray*)ports;
++(NSMutableArray*) convertPointersFromPorts:(NSArray*)ports;
 
 //将pointers转字符串;
 +(NSString*) convertPointers2String:(NSArray*)pointers;

@@ -226,9 +226,9 @@
     //5. 内类比找不同 (比大小:同区不同值 / 有无)
     if (algNodeA && algNodeB){
         //a. 内类比大小;
-        NSLog(@"--------------------内类比:(%ld_%ld | %ld_%ld)",aIndex,algNodeA.pointer.pointerId,bIndex,algNodeB.pointer.pointerId);
-        NSLog(@"--> 概念A: (%@)",Pits2FStr(algNodeA.content_ps));
-        NSLog(@"--> 概念B: (%@)",Pits2FStr(algNodeB.content_ps));
+        NSLog(@"--------------------内类比:%@",Fo2FStr(checkFo));
+        NSLog(@"--> 概念%ld: %@",aIndex,Alg2FStr(algNodeA));
+        NSLog(@"--> 概念%ld: %@",bIndex,Alg2FStr(algNodeB));
         NSArray *rangeAlg_ps = ARR_SUB(orders, aIndex + 1, bIndex - aIndex - 1);
         [self analogyInner_GL:checkFo algA:algNodeA algB:algNodeB rangeAlg_ps:rangeAlg_ps createdBlock:^(AINetAbsFoNode *createFo) {
             //b. 消耗思维活跃度 & 内中有外
@@ -289,21 +289,25 @@
  */
 +(void) analogyInner_HN:(AIFoNodeBase*)checkFo algA:(AIAlgNodeBase*)algA algB:(AIAlgNodeBase*)algB rangeAlg_ps:(NSArray*)rangeAlg_ps createdBlock:(void(^)(AINetAbsFoNode *createFo))createdBlock{
     //1. 数据检查
+    if (!algA || !algB) return;
     rangeAlg_ps = ARRTOOK(rangeAlg_ps);
-    AIAlgNodeBase *aMatchAlg = [ThinkingUtils getMatchAlgWithProtoAlg:algA];
-    AIAlgNodeBase *bMatchAlg = [ThinkingUtils getMatchAlgWithProtoAlg:algB];
-    if (!aMatchAlg || !bMatchAlg) {
-        return;
-    }
-    NSArray *aMAbs_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:aMatchAlg]];
-    NSArray *bMAbs_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:bMatchAlg]];
+    AIAlgNodeBase *aFocusAlg = [ThinkingUtils getMatchAlgWithProtoAlg:algA];
+    AIAlgNodeBase *bFocusAlg = [ThinkingUtils getMatchAlgWithProtoAlg:algB];
+    if (aFocusAlg == nil) aFocusAlg = algA;
+    if (bFocusAlg == nil) bFocusAlg = algB;
+    
+    //2. 收集a和b的概念辐射合集 (取自身 + 自身的一层抽象);
+    NSMutableArray *aSum_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:bFocusAlg]];
+    [aSum_ps addObject:aFocusAlg.pointer];
+    NSMutableArray *bSum_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:bFocusAlg]];
+    [bSum_ps addObject:bFocusAlg.pointer];
 
     //2. 取a差集和b差集;
-    NSArray *aSub_ps = [SMGUtils removeSub_ps:bMAbs_ps parent_ps:aMAbs_ps];
-    NSArray *bSub_ps = [SMGUtils removeSub_ps:aMAbs_ps parent_ps:bMAbs_ps];
+    NSArray *aSub_ps = [SMGUtils removeSub_ps:bSum_ps parent_ps:aSum_ps];
+    NSArray *bSub_ps = [SMGUtils removeSub_ps:aSum_ps parent_ps:bSum_ps];
 
     //3. a变无
-    NSLog(@"--------------内类比 (有无) 前: [%@] -> [%@]",[NVHeUtil getLightStr4Ps:aSub_ps],[NVHeUtil getLightStr4Ps:bSub_ps]);
+    NSLog(@"--------------内类比 (有无) 前: [%@] -> [%@]",Pits2FStr(aSub_ps),Pits2FStr(bSub_ps));
     for (AIKVPointer *sub_p in aSub_ps) {
         AIAlgNodeBase *target = [SMGUtils searchNode:sub_p];
         AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyInnerType_None algsType:sub_p.algsType dataSource:sub_p.dataSource frontConAlg:target backConAlg:target rangeAlg_ps:rangeAlg_ps conFo:checkFo];
@@ -360,8 +364,8 @@
 
     //6. 调试;
     NSLog(@"-> 内类比构建稀疏码: (变 -> %@)",[NVHeUtil getLightStr:backValue_p]);
-    if (backAlg) NSLog(@"--> 内类比构建概念=%ld: [%@]",backAlg.pointer.pointerId,[NVHeUtil getLightStr4Ps:backAlg.content_ps]);
-    if (result) NSLog(@"---> 内类比构建时序=%ld: [%@]",result.pointer.pointerId,[NVHeUtil getLightStr4Ps:result.content_ps]);
+    if (backAlg) NSLog(@"--> 内类比构建%@的抽象概念: %@",Alg2FStr(backConAlg),Alg2FStr(backAlg));
+    if (result) NSLog(@"---> 内类比构建%@的抽象时序: %@",Fo2FStr(conFo),Fo2FStr(result));
     [theNV setNodeData:backValue_p lightStr:[NVHeUtil getLightStr:backValue_p]];
     [theNV setNodeData:backAlg.pointer lightStr:[NVHeUtil getLightStr:backAlg.pointer]];
     return result;
