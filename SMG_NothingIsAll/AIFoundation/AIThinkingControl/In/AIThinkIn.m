@@ -57,10 +57,10 @@
         [subValuePsArr addObject:item_ps];
     }
     
-    //3. 构建父概念 & 将父概念加入瞬时记忆;
+    //3. 构建父概念 & 将空场景加入瞬时记忆;
     AIAlgNode *parentAlgNode = [theNet createAlgNode:parentValue_ps dataSource:algsType isOut:false isMem:true];
-    [self.delegate aiThinkIn_AddToShortMemory:@[parentAlgNode.pointer] isMatch:false];
-    NSLog(@"---> 构建InputParent节点:%@",Alg2Str(parentAlgNode));
+    if (parentValue_ps.count == 0) [self.delegate aiThinkIn_AddToShortMemory:@[parentAlgNode.pointer] isMatch:false];
+    NSLog(@"---> 构建InputParent节点:%@",Alg2FStr(parentAlgNode));
     
     //4. 收集本组中,所有概念节点;
     NSMutableArray *fromGroup_ps = [[NSMutableArray alloc] init];
@@ -70,8 +70,11 @@
     for (NSArray *subValue_ps in subValuePsArr) {
         AIAbsAlgNode *subAlgNode = [theNet createAbsAlgNode:subValue_ps conAlgs:@[parentAlgNode] dataSource:algsType isMem:true];
         [fromGroup_ps addObject:subAlgNode.pointer];
+        
+        //6. 将所有子概念添加到瞬时记忆;
+        [self.delegate aiThinkIn_AddToShortMemory:@[subAlgNode.pointer] isMatch:false];
         [theNV setNodeData:subAlgNode.pointer];
-        NSLog(@"--->> 构建InputSub节点:%@",Alg2Str(subAlgNode));
+        NSLog(@"--->> 构建InputSub节点:%@",Alg2FStr(subAlgNode));
     }
     
     //6. NoMv处理;
@@ -145,7 +148,7 @@
     
     //2. 识别概念;
     mModel.matchAlg = [AIThinkInReason TIR_Alg:algNode_p fromGroup_ps:fromGroup_ps];
-    NSLog(@"-----------瞬时MModel.matchAlg为:(%@)",[NVHeUtil getLightStr4Ps:mModel.matchAlg.content_ps]);
+    NSLog(@"-----> 瞬时识别概念:%@",Alg2FStr(mModel.matchAlg));
     
     //3. 添加到瞬时记忆;
     if (mModel.matchAlg) [self.delegate aiThinkIn_AddToShortMemory:@[mModel.matchAlg.pointer] isMatch:true];
@@ -159,6 +162,7 @@
         mModel.matchFo = matchFo;
         mModel.matchFoValue = matchValue;
     }];
+    NSLog(@"----->>> 瞬时识别时序:%@",Fo2FStr(mModel.matchFo));
     
     //5. 内类比
     [AIThinkInReason analogyInner:mModel.protoFo];

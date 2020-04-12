@@ -26,12 +26,15 @@ typedef NS_ENUM(NSInteger, DirectionType) {
 };
 
 //指针转字符串
-#define Pit2FulStr(p) [NVHeUtil getLightStr:p simple:false]
-#define Pits2FulStr(ps) [NVHeUtil getLightStr4Ps:ps simple:false]
+#define Pit2FStr(p) [NVHeUtil getLightStr:p simple:false]
+#define Pits2FStr(ps) [NVHeUtil getLightStr4Ps:ps simple:false]
 
-#define Pit2SStr(p) [NVHeUtil getLightStr:p]
-#define Pits2SStr(ps) [NVHeUtil getLightStr4Ps:ps]
+#define Pit2SStr(p) [NVHeUtil getLightStr:p simple:true]
+#define Pits2SStr(ps) [NVHeUtil getLightStr4Ps:ps simple:true]
 
 //节点转字符串
-#define Alg2Str(a) a ? STRFORMAT(@"A%ld(%@)",a.pointer.pointerId,[NVHeUtil getLightStr4Ps:a.content_ps]) : @"A()"
-#define Fo2Str(f) f ? STRFORMAT(@"F%ld[%@]",f.pointer.pointerId,[NVHeUtil getLightStr4Ps:f.content_ps]) : @"F[]"
+#define Alg2FStr(a) a ? STRFORMAT(@"A%ld(%@)",a.pointer.pointerId,[NVHeUtil getLightStr4Ps:a.content_ps simple:false]) : @"A()"
+#define Fo2FStr(f) f ? STRFORMAT(@"F%ld[%@]",f.pointer.pointerId,[NVHeUtil getLightStr4Ps:f.content_ps simple:false]) : @"F[]"
+
+#define Alg2SStr(a) a ? STRFORMAT(@"A%ld(%@)",a.pointer.pointerId,[NVHeUtil getLightStr4Ps:a.content_ps simple:true]) : @"A()"
+#define Fo2SStr(f) f ? STRFORMAT(@"F%ld[%@]",f.pointer.pointerId,[NVHeUtil getLightStr4Ps:f.content_ps simple:true]) : @"F[]"

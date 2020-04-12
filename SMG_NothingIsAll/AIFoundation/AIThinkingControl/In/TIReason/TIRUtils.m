@@ -53,11 +53,9 @@
     }
     if (lastAssIndex == -1) {
         failure(@"时序识别: lastItem匹配失败,查看是否在联想时就出bug了");
-        [theNV setNodeData:lastProtoAlg_p appendLightStr:@"lastItem2"];
-        [theNV setNodeData:assFo.pointer lightStr:@"assFo2"];
         return;
     }else{
-        NSLog(@"时序识别: lastItem匹配成功");
+        NSLog(@"--->>>>> 时序识别: lastItem匹配成功");
     }
     
     //3. 从lastAssIndex向前逐个匹配;

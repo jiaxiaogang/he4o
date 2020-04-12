@@ -59,7 +59,7 @@
     if (algNode == nil) {
         return nil;
     }
-    NSLog(@"------------------------------- 概念识别 ----------------- %@",Alg2Str(algNode));
+    NSLog(@"------------------------------- 概念识别 ----------------- %@",Alg2FStr(algNode));
     
     //2. 对value.refPorts进行检查识别; (noMv信号已输入完毕,识别联想)
     AIAlgNodeBase *assAlgNode = nil;
@@ -98,7 +98,7 @@
         WLog(@"全含结果不正常,导致下面的抽象sames也不准确,,,可在git20191223找回原sames代码");
     }
     if (assAlgNode) {
-        NSLog(@"----> 识别Alg success:%@",Alg2Str(assAlgNode));
+        NSLog(@"----> 识别Alg success:%@",Alg2FStr(assAlgNode));
         [theNV setNodeData:assAlgNode.pointer appendLightStr:@"识别alg成功"];
     }else{
         NSLog(@"识别Alg failure");
@@ -161,11 +161,12 @@
 
 //MARK:===============================================================
 //MARK:                     < TIR_Fo >
+//MARK: @desc : 目前仅支持局部匹配;
 //MARK:===============================================================
 
 /**
  *  MARK:--------------------理性时序--------------------
- *  @param protoAlg_ps :
+ *  @param protoAlg_ps : RTFo
  *      1. 传入原始瞬时记忆序列 90% ,还是识别后的概念序列 10%;
  *      2. 传入行为化中的rethinkLSP重组fo;
  *  @desc 向性:
@@ -199,9 +200,10 @@
         return;
     }
     AIFrontOrderNode *protoFo = [theNet createConFo:protoAlg_ps isMem:true];//将protoAlg_ps构建成时序;
+    NSLog(@"-------------------------- 反思时序识别 --------------------------%@",Fo2FStr(protoFo));
     
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [self TIR_Fo_General:protoFo assFoIndexAlg:replaceMatchAlg assFoBlock:^NSArray *(AIAlgNodeBase *indexAlg) {
+    [self partMatching_Fo:protoFo assFoIndexAlg:replaceMatchAlg assFoBlock:^NSArray *(AIAlgNodeBase *indexAlg) {
         NSMutableArray *result = [[NSMutableArray alloc] init];
         if (indexAlg) {
             for (AIPort *refPort in indexAlg.refPorts) {
@@ -237,17 +239,24 @@
             }
         }
         return true;
-    } finishBlock:finishBlock];
+    } finishBlock:^(AIFoNodeBase *matchFo, CGFloat matchValue) {
+        finishBlock(protoFo,matchFo,matchValue);
+    }];
 }
 
+/**
+ *  MARK:--------------------瞬时时序识别--------------------
+ *  @param protoFo : MemFo (由最初input输出的概念组成,在matchAlg的下一层);
+ */
 +(void) TIR_Fo_FromShortMem:(AIFoNodeBase*)protoFo lastMatchAlg:(AIAlgNodeBase*)lastMatchAlg finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue))finishBlock{
     //1. 数据检查
     if (!protoFo || !lastMatchAlg) {
         return;
     }
     
+    NSLog(@"-------------------------- 瞬时时序识别 --------------------------%@",Fo2FStr(protoFo));
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [self TIR_Fo_General:protoFo assFoIndexAlg:lastMatchAlg assFoBlock:^NSArray *(AIAlgNodeBase *indexAlg) {
+    [self partMatching_Fo:protoFo assFoIndexAlg:lastMatchAlg assFoBlock:^NSArray *(AIAlgNodeBase *indexAlg) {
         if (indexAlg) {
             return ARR_SUB(indexAlg.refPorts, 0, cPartMatchingCheckRefPortsLimit);
         }
@@ -255,23 +264,14 @@
     } checkItemValid:^BOOL(AIKVPointer *itemAlg_p, AIKVPointer *assAlg_p) {
         //1. shortMem需要多matchAlg对多抽象,共两层判断是否isEquals; (N x N)
         //TODO_TEST_HERE: 本愿是自match层开始,已有去重机制,故使用指针匹配,如无去重且不好加,此处可改为md5匹配;
-        AIKVPointer *parentAlg_p = itemAlg_p;
-        if (parentAlg_p && assAlg_p) {
+        if (itemAlg_p && assAlg_p) {
             
-            //2. 从parent层,向抽象proto层取;
-            AIAlgNodeBase *parentAlg = [SMGUtils searchNode:parentAlg_p];
-            NSArray *proto_ps = parentAlg ? [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:parentAlg]] : [NSArray new];
-            
-            //3. 从proto层,向抽象match层取;
-            NSMutableArray *match_ps = [[NSMutableArray alloc] init];
-            for (AIKVPointer *proto_p in proto_ps) {
-                AIAlgNodeBase *protoAlg = [SMGUtils searchNode:proto_p];
-                if (protoAlg)
-                    [match_ps addObjectsFromArray:[SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:protoAlg]]];
-            }
+            //2. 从proto层,向抽象match层取;
+            AIAlgNodeBase *protoAlg = [SMGUtils searchNode:itemAlg_p];
+            NSArray *match_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:protoAlg]];
             
             //4. 判断 N1 (如是否苹果/圆的/青的/红的/甜的);
-            if (![SMGUtils containsSub_p:assAlg_p parent_ps:match_ps]) {
+            if (![match_ps containsObject:assAlg_p]) {
                 
                 //5. 判断N2 (都不一样,则返回false) (如是否水果/有颜色/有味道);
                 BOOL find = false;
@@ -284,40 +284,17 @@
                         }
                     }
                 }
-                NSLog(@"时序匹配: item%@ abs层",find ? @"有效" : @"无效");
+                NSLog(@"--->>> 时序匹配: item%@ Match.Abs层",find ? @"有效" : @"无效");
                 return find;
             }else{
-                NSLog(@"时序匹配: item有效 match层");
+                NSLog(@"--->时序匹配: item有效 match层");
                 return true;
             }
         }
         return true;
-    } finishBlock:finishBlock];
-}
-
-/**
- *  MARK:--------------------时序识别通用方法--------------------
- *  @desc : 目前仅支持局部匹配,所以这个_General方法就相当于只是个转发而已;
- *  @param checkItemValid : 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层;
- *  @param protoFo : 在TOR中传入RethinkFo,在TIR中传入MemFo;
- */
-+(void) TIR_Fo_General:(AIFoNodeBase*)protoFo
-         assFoIndexAlg:(AIAlgNodeBase*)assFoIndexAlg
-            assFoBlock:(NSArray*(^)(AIAlgNodeBase *indexAlg))assFoBlock
-        checkItemValid:(BOOL(^)(AIKVPointer *itemAlg_p,AIKVPointer *assAlg_p))checkItemValid
-           finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue))finishBlock{
-    //2. 局部匹配识别时序;
-    __block AIFoNodeBase *weakMatchFo = nil;
-    __block CGFloat weakMatchValue = 0;
-    [self partMatching_Fo:protoFo assFoIndexAlg:assFoIndexAlg assFoBlock:assFoBlock checkItemValid:checkItemValid finishBlock:^(id matchFo, CGFloat matchValue) {
-        weakMatchFo = matchFo;
-        weakMatchValue = matchValue;
+    } finishBlock:^(AIFoNodeBase *matchFo, CGFloat matchValue) {
+        finishBlock(protoFo,matchFo,matchValue);
     }];
-    
-    //3. 返回;
-    if (finishBlock) {
-        finishBlock(protoFo,weakMatchFo,weakMatchValue);
-    }
 }
 
 
@@ -326,7 +303,7 @@
  *  参考: n17p7 TIR_FO模型到代码
  *  @param assFoIndexAlg    : 用来联想fo的索引概念 (shortMem的第3层 或 rethink的第1层) (match层,参考n18p2)
  *  @param assFoBlock       : 联想fos (联想有效的5个)
- *  @param checkItemValid   : 检查item(fo.alg)的有效性 notnull
+ *  @param checkItemValid   : 检查item(fo.alg)的有效性 notnull (可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
  *  @param finishBlock      : 完成 notnull
  *  TODO_TEST_HERE:调试Pointer能否indexOfObject
  *  TODO_TEST_HERE:调试下item_p在indexOfObject中,有多个时,怎么办;

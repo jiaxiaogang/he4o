@@ -40,7 +40,7 @@
     //1. 类比orders的规律
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
     if (!fromInner) {
-        NSLog(@"~~~~~~~~~~~~~~~~~~~~ 外类比 START A:[%@]->{%@} B:[%@]->{%@}",Pit2FulStr(fo.pointer),Pit2SStr(fo.cmvNode_p),Pit2FulStr(assFo.pointer),Pit2SStr(assFo.cmvNode_p));
+        NSLog(@"~~~~~~~~~~~~~~~~~~~~ 外类比 START A:[%@]->{%@} B:[%@]->{%@}",Pit2FStr(fo.pointer),Pit2SStr(fo.cmvNode_p),Pit2FStr(assFo.pointer),Pit2SStr(assFo.cmvNode_p));
         
     }
     if (fo && assFo) {
@@ -162,7 +162,7 @@
         if (result) {
             if (!fromInner) {
                 [theNV setNodeData:result.pointer lightStr:STRFORMAT(@"新%ld (%ld&%ld)",result.content_ps.count,fo.pointer.pointerId,assFo.pointer.pointerId)];
-                NSLog(@"~~~>> 构建时序:[%@]->{%@}",Pit2FulStr(result.pointer),Pit2SStr(result.cmvNode_p));
+                NSLog(@"~~~>> 构建时序:[%@]->{%@}",Pit2FStr(result.pointer),Pit2SStr(result.cmvNode_p));
             }else{
                 NSLog(@"----> 内类比IHO构建抽象时序=%ld: [%@] from(%ld,%ld)",result.pointer.pointerId,[NVHeUtil getLightStr4Ps:result.content_ps],fo.pointer.pointerId,assFo.pointer.pointerId);
                 [theNV setNodeData:result.pointer appendLightStr:STRFORMAT(@"IHO:[%@]",[NVHeUtil getLightStr4Ps:result.content_ps])];
@@ -227,8 +227,8 @@
     if (algNodeA && algNodeB){
         //a. 内类比大小;
         NSLog(@"--------------------内类比:(%ld_%ld | %ld_%ld)",aIndex,algNodeA.pointer.pointerId,bIndex,algNodeB.pointer.pointerId);
-        NSLog(@"--> 概念A: (%@)",Pits2FulStr(algNodeA.content_ps));
-        NSLog(@"--> 概念B: (%@)",Pits2FulStr(algNodeB.content_ps));
+        NSLog(@"--> 概念A: (%@)",Pits2FStr(algNodeA.content_ps));
+        NSLog(@"--> 概念B: (%@)",Pits2FStr(algNodeB.content_ps));
         NSArray *rangeAlg_ps = ARR_SUB(orders, aIndex + 1, bIndex - aIndex - 1);
         [self analogyInner_GL:checkFo algA:algNodeA algB:algNodeB rangeAlg_ps:rangeAlg_ps createdBlock:^(AINetAbsFoNode *createFo) {
             //b. 消耗思维活跃度 & 内中有外
