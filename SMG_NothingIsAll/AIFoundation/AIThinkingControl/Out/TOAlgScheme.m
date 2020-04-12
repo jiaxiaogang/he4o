@@ -47,7 +47,7 @@
  */
 -(void) convert2Out_Fo:(NSArray*)curAlg_ps curFo:(AIFoNodeBase*)curFo success:(void(^)(NSArray *acts))success failure:(void(^)())failure {
     //1. 数据准备
-    NSLog(@"========== 行为化 START ========== {\n长度:%lu 内容:[%@]\n}",(unsigned long)curAlg_ps.count,[NVHeUtil getLightStr4Ps:curAlg_ps simple:false]);
+    NSLog(@"============================== 行为化 START ==================== \n时序:%@\n需要:[%@]",Fo2FStr(curFo),Pits2FStr(curAlg_ps));
     NSMutableArray *result = [[NSMutableArray alloc] init];
     if (!ARRISOK(curAlg_ps) || curFo == nil) {
         failure();

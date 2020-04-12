@@ -239,7 +239,7 @@
  *      v2: 支持多个稀疏码不同,并支持返回多个相似度排序后的结果;
  */
 +(NSArray*) matchAlg2FuzzyAlgV2:(AIAlgNodeBase*)protoAlg matchAlg:(AIAlgNodeBase*)matchAlg except_ps:(NSArray*)except_ps{
-    NSLog(@"--------------- Fuzzy Start ---------------");
+    NSLog(@"------------------------------ Fuzzy Start ------------------------------");
     //1. 数据准备;
     except_ps = ARRTOOK(except_ps);
     if (!protoAlg || !matchAlg) {
