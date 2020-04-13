@@ -116,12 +116,8 @@ static AIThinkingControl *_instance;
         [AINetUtils setCanOutput:model.identify];
     }
     
-    //5. 概念
-    AIAlgNode *algNode = [theNet createAlgNode:value_ps isOut:true isMem:false];
-    
-    //6. 加瞬时记忆
-    [self.shortMemory addToShortCache_Ps:@[algNode.pointer] isMatch:false];
-    [self.shortMemory addToShortCache_Ps:@[algNode.pointer] isMatch:true];
+    //5. 提交到ThinkIn进行识别;
+    [self.thinkIn dataInFromOutput:value_ps];
 }
 
 

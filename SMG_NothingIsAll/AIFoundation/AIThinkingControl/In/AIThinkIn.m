@@ -106,6 +106,22 @@
     }
 }
 
+-(void) dataInFromOutput:(NSArray*)outValue_ps{
+    //1. 数据检查
+    outValue_ps = ARRTOOK(outValue_ps);
+    
+    //2. 构建概念
+    AIAlgNode *outAlg = [theNet createAlgNode:outValue_ps isOut:true isMem:false];
+    
+    //3. 加瞬时记忆
+    [self.delegate aiThinkIn_AddToShortMemory:@[outAlg.pointer] isMatch:false];
+    //[self.delegate aiThinkIn_AddToShortMemory:@[outAlg.pointer] isMatch:true];
+    //TODONEXT: 此处是否不必进行概念识别了?只进行时序识别即可;
+    
+    //4. 进行识别
+    [self dataIn_NoMV:outAlg.pointer fromGroup_ps:@[outAlg.pointer]];
+}
+
 //MARK:===============================================================
 //MARK:                     < FromTOR >
 //MARK:===============================================================

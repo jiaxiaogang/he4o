@@ -62,12 +62,16 @@
  */
 -(void) dataInWithModels:(NSArray*)dics algsType:(NSString*)algsType;
 
-
 /**
  *  MARK:--------------------数据输入--------------------
  *  说明: 单model (普通算法模型 或 imv模型)
  */
 -(void) dataIn:(NSDictionary*)modelDic algsType:(NSString*)algsType;
+
+/**
+ *  MARK:--------------------行为输出转输入--------------------
+ */
+-(void) dataInFromOutput:(NSArray*)outValue_ps;
 
 
 //MARK:===============================================================
