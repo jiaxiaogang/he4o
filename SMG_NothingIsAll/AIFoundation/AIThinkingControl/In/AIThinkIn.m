@@ -156,7 +156,7 @@
     if (mModel.matchAlg) [self.delegate aiThinkIn_AddToShortMemory:@[mModel.matchAlg.pointer] isMatch:true];
     
     //3. 构建时序 (把每次dic输入,都作为一个新的内存时序);
-    NSArray *shortMemory = [self.delegate aiThinkIn_GetShortMemory];
+    NSArray *shortMemory = [self.delegate aiThinkIn_GetShortMemory:true];
     mModel.protoFo = [theNet createConFo:shortMemory isMem:true];
     
     //4. 识别时序;

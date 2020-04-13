@@ -145,8 +145,8 @@ static AIThinkingControl *_instance;
     [self.shortMemory addToShortCache_Ps:algNode_ps isMatch:isMatch];
 }
 
--(NSArray*) aiThinkIn_GetShortMemory{
-    return [self.shortMemory shortCache:false];
+-(NSArray*) aiThinkIn_GetShortMemory:(BOOL)isMatch{
+    return [self.shortMemory shortCache:isMatch];
 }
 
 -(AIFrontOrderNode*)aiThinkIn_CreateCMVModel:(NSArray *)algsArr isMatch:(BOOL)isMatch{

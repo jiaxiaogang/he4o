@@ -256,7 +256,9 @@
 
 /**
  *  MARK:--------------------瞬时时序识别--------------------
- *  @param protoFo : MemFo (由最初input输出的概念组成,在matchAlg的下一层);
+ *  @param protoFo : MemFo (由瞬时记忆中概念序列组成);
+ *  @version
+ *      20200414 - protoFo由瞬时proto概念组成,改成瞬时match概念组成 (本方法中,去掉proto概念层到match层的联想);
  */
 +(void) TIR_Fo_FromShortMem:(AIFoNodeBase*)protoFo lastMatchAlg:(AIAlgNodeBase*)lastMatchAlg finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue))finishBlock{
     //1. 数据检查
@@ -276,28 +278,20 @@
         //TODO_TEST_HERE: 本愿是自match层开始,已有去重机制,故使用指针匹配,如无去重且不好加,此处可改为md5匹配;
         if (itemAlg_p && assAlg_p) {
             
-            //2. 从proto层,向抽象match层取;
-            AIAlgNodeBase *protoAlg = [SMGUtils searchNode:itemAlg_p];
-            NSArray *match_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:protoAlg]];
-            
-            //4. 判断 N1 (如是否苹果/圆的/青的/红的/甜的);
-            if (![match_ps containsObject:assAlg_p]) {
-                
-                //5. 判断N2 (都不一样,则返回false) (如是否水果/有颜色/有味道);
-                BOOL find = false;
-                for (AIKVPointer *match_p in match_ps) {
-                    AIAlgNodeBase *matchAlg = [SMGUtils searchNode:match_p];
-                    if (matchAlg) {
-                        if ([SMGUtils containsSub_p:assAlg_p parentPorts:[AINetUtils absPorts_All:matchAlg]]) {
-                            find = true;
-                            break;
-                        }
+            //2. 判断 1 (如是否苹果);
+            if (![itemAlg_p isEqual:assAlg_p]) {
+                //3. 判断N (都不一样,则返回false) (如是否水果/有颜色/有味道/圆的/青的/红的/甜的);
+                AIAlgNodeBase *matchAlg = [SMGUtils searchNode:itemAlg_p];
+                if (matchAlg) {
+                    if (![SMGUtils containsSub_p:assAlg_p parentPorts:[AINetUtils absPorts_All:matchAlg]]) {
+                        NSLog(@"--->>> 时序匹配: item无效 (Match.Abs层)");
+                        return false;
                     }
                 }
-                NSLog(@"--->>> 时序匹配: item%@ Match.Abs层",find ? @"有效" : @"无效");
-                return find;
+                NSLog(@"--->>> 时序匹配: item有效 (Match.Abs层)");
+                return true;
             }else{
-                NSLog(@"--->时序匹配: item有效 match层");
+                NSLog(@"--->时序匹配: item有效 (match层)");
                 return true;
             }
         }

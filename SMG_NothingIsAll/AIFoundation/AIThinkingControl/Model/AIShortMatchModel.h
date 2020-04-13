@@ -26,7 +26,7 @@
 @property (strong, nonatomic) AIAlgNodeBase *matchAlg;  //匹配概念
 @property (assign, nonatomic) MatchType algMatchType;   //概念匹配类型
 
-@property (strong, nonatomic) AIFoNodeBase *protoFo;    //原始时序
+@property (strong, nonatomic) AIFoNodeBase *protoFo;    //原始时序 (由前几桢瞬时中的protoAlg/matchAlg来构建);
 @property (strong, nonatomic) AIFoNodeBase *matchFo;    //匹配时序
 @property (assign, nonatomic) CGFloat matchFoValue;     //时序匹配度
 
