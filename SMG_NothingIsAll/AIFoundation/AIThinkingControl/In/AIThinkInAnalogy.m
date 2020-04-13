@@ -82,8 +82,7 @@
                                 [orderSames insertObject:createAbsNode.pointer atIndex:0];
                                 jMax = j - 1;
                                 if (!fromInner) {
-                                    NSLog(@"~~~> 构建概念:(%@)",[NVHeUtil getLightStr:createAbsNode.pointer simple:false]);
-                                    [theNV setNodeData:createAbsNode.pointer lightStr:STRFORMAT(@"新%ld (%ld&%ld)",createAbsNode.content_ps.count,algNodeA.pointer.pointerId,algNodeB.pointer.pointerId)];
+                                    NSLog(@"~~~> 构建概念:%@\n具象1:%@\n具象2:%@",Alg2FStr(createAbsNode),Alg2FStr(algNodeA),Alg2FStr(algNodeB));
                                 }
                             }
                             ///4. 构建时,消耗能量值;

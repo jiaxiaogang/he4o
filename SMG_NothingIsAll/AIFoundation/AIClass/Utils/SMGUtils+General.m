@@ -44,6 +44,28 @@
     return STRFORMAT(@"%@%@",fileNameStr,lineStr);
 }
 
++(NSString*) nsLogFormat:(NSString*)fileName line:(NSInteger)line protoLog:(NSString*)protoLog headerMode:(LogHeaderMode)headerMode{
+    //1. 数据准备
+    protoLog = STRTOOK(protoLog);
+    NSString *timeStr = [SMGUtils date2HHMMSSSSS];
+    NSString *codeStr = [SMGUtils codeLocateFormat:fileName line:line];
+    NSMutableString *result = [[NSMutableString alloc] init];
+    
+    //2. 拼接结果
+    if (headerMode == LogHeaderMode_All) {
+        NSString *sep = @"\n";
+        NSArray *logLines = ARRTOOK(STRTOARR(protoLog, sep));
+        for (NSString *logLine in logLines) {
+            [result appendFormat:@"[%@ %@] %@\n",timeStr,codeStr,logLine];
+        }
+    }else if(headerMode == LogHeaderMode_First){
+        [result appendFormat:@"[%@ %@] %@\n",timeStr,codeStr,protoLog];
+    }else{
+        [result appendFormat:@"%@\n",protoLog];
+    }
+    return result;
+}
+
 //注: STRFORMAT目前的宏定义中,并没有多余调用,所以不需要单独封装出来;
 //注2: 如果有一天要使用此代码,可以尝试1: SMGArrayMake()来转换array, 尝试2:直接传递format,...到stringWithFormat:
 //#define STRFORMAT(s, ...) [SMGUtils strFormat:s, ##__VA_ARGS__]

@@ -93,3 +93,12 @@ typedef NS_ENUM(NSInteger, MatchType) {
     MatchType_Full  = 1,//全含
     MatchType_Fuzzy = 2,//模糊匹配
 };
+
+/**
+ *  MARK:--------------------LogHeaderMode--------------------
+ */
+typedef NS_ENUM(NSInteger, LogHeaderMode) {
+    LogHeaderMode_None  = 0,//无header
+    LogHeaderMode_First = 1,//仅首行
+    LogHeaderMode_All   = 2,//所有行
+};

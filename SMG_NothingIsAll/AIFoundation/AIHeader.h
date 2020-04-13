@@ -108,6 +108,21 @@
 #define DATA2OBJ(data) [NSKeyedUnarchiver unarchiveObjectWithData:data]
 #define DATAS2OBJS(datas) [SMGUtils datas2Objs:datas]
 
+//指针转字符串
+#define Pit2FStr(p) [NVHeUtil getLightStr:p simple:false]
+#define Pits2FStr(ps) [NVHeUtil getLightStr4Ps:ps simple:false]
+
+#define Pit2SStr(p) [NVHeUtil getLightStr:p simple:true]
+#define Pits2SStr(ps) [NVHeUtil getLightStr4Ps:ps simple:true]
+
+#define AlgP2FStr(a_p) a_p ? STRFORMAT(@"A%ld(%@)",a_p.pointerId,[NVHeUtil getLightStr:a_p simple:false]) : @"A()"
+#define FoP2FStr(f_p) f_p ? STRFORMAT(@"F%ld[%@]",f_p.pointerId,[NVHeUtil getLightStr:f_p simple:false]) : @"F[]"
+
+//节点转字符串
+#define Alg2FStr(a) a ? STRFORMAT(@"A%ld(%@)",a.pointer.pointerId,[NVHeUtil getLightStr4Ps:a.content_ps simple:false]) : @"A()"
+#define Fo2FStr(f) f ? STRFORMAT(@"F%ld[%@]",f.pointer.pointerId,[NVHeUtil getLightStr4Ps:f.content_ps simple:false]) : @"F[]"
+#define Mvp2Str(m_p) m_p ? STRFORMAT(@"M%ld{%@}",m_p.pointerId,[NVHeUtil getLightStr:m_p]) : @"M{}"
+
 /**
  *  MARK:--------------------快捷建对象--------------------
  */
@@ -163,7 +178,7 @@
 //warnLog
 #define WLog(fmt, ...) NSLog((@"<警告> " fmt), ##__VA_ARGS__);
 //系统log (格式化)
-#define NSLog(FORMAT, ...) fprintf(stderr,"[%s %s] %s\n",[[SMGUtils date2HHMMSSSSS] UTF8String],[[SMGUtils codeLocateFormat:FILENAME line:__LINE__]  UTF8String], [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
+#define NSLog(FORMAT, ...) fprintf(stderr,"%s",[[SMGUtils nsLogFormat:FILENAME line:__LINE__ protoLog:[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] headerMode:1] UTF8String]);
 //heLog (持久化日志)
 #define HeLog(fmt, ...) [theApp.heLogView addLog:[NSString stringWithFormat:fmt, ##__VA_ARGS__]]
 //tipLog (UI弹出日志)

@@ -37,6 +37,7 @@
         failure(@"参数错误");
         return;
     }
+    NSLog(@"------------------------ checkFoValid ------------------------\n%@\n%@",Fo2FStr(protoFo),Fo2FStr(assFo));
     AIKVPointer *lastProtoAlg_p = ARR_INDEX_REVERSE(protoFo.content_ps, 0); //最后一个protoAlg指针
     int validItemCount = 1;                                                 //默认有效数为1 (因为lastAlg肯定有效);
     NSInteger lastAssIndex = -1;                                            //在assFo已发生到的index,后面为预测;
@@ -54,11 +55,10 @@
     if (lastAssIndex == -1) {
         failure(@"时序识别: lastItem匹配失败,查看是否在联想时就出bug了");
         return;
-    }else{
-        NSLog(@"--->>>>> 时序识别: lastItem匹配成功");
     }
     
     //3. 从lastAssIndex向前逐个匹配;
+    NSLog(@"--->>>>> 在%ld位,找到LastItem匹配",lastAssIndex);
     for (NSInteger i = lastAssIndex - 1; i >= 0; i--) {
         AIKVPointer *checkAssAlg_p = ARR_INDEX(assFo.content_ps, i);
         if (checkAssAlg_p) {
@@ -73,14 +73,13 @@
                     validItemCount ++;  //有效数+1;
                     NSLog(@"时序识别: item有效+1");
                     break;
+                }else{
+                    NSLog(@"---->匹配失败:\n%@\n%@",AlgP2FStr(lastProtoAlg_p),AlgP2FStr(checkAssAlg_p));
                 }
             }
             
             //5. 非全含 (一个失败,全盘皆输);
             if (!checkResult) {
-                [theNV setNodeData:checkAssAlg_p lightStr:@"3item未匹配"];
-                [theNV setNodeData:assFo.pointer lightStr:@"3assFo"];
-                [theNV setNodeData:protoFo.pointer lightStr:@"3protoFo"];
                 failure(@"时序识别: item无效,未在protoFo中找到,所有非全含,不匹配");
                 return;
             }
@@ -216,7 +215,7 @@
             }else if(result.content_ps.count != matchingCount){
                 countWrong ++;
             }
-            WLog(@"Item识别失败_长度:%lu 匹配:%d 类型:%@ 内容:[%@]",(unsigned long)result.content_ps.count,matchingCount,result.class,[NVHeUtil getLightStr4Ps:result.content_ps]);
+            WLog(@"Item识别失败_匹配:%d 类型:%@ 内容:%@",matchingCount,result.class,Alg2FStr(result));
         }
         
         WLog(@"识别结果 >> 非抽象且非全含:%ld,非抽象数:%ld,非全含数:%ld / 总数:%lu",(long)typeCountWrong,(long)typeWrong,countWrong,(unsigned long)sortKeys.count);

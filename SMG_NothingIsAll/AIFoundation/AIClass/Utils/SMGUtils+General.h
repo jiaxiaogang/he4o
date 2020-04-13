@@ -21,6 +21,7 @@
 +(NSArray*) strToArr:(NSString*)str sep:(NSString*)sep;     //str分隔arr
 +(NSString*) subStr:(NSString*)s toIndex:(NSInteger)index;
 +(NSString*) codeLocateFormat:(NSString*)fileName line:(NSInteger)line;
++(NSString*) nsLogFormat:(NSString*)fileName line:(NSInteger)line protoLog:(NSString*)protoLog headerMode:(LogHeaderMode)headerMode;//NSLog自定义格式化;
 
 //array
 +(BOOL) arrIsOk:(NSArray*)a;                            //数组有效判断
