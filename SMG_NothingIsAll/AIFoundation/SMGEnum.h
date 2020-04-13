@@ -86,9 +86,10 @@ typedef NS_ENUM(NSInteger,  OutputObserverType) {
 };
 
 /**
- *  MARK:--------------------理性识别结果类型--------------------
+ *  MARK:--------------------识别类型--------------------
  */
-typedef NS_ENUM(NSInteger, TIRMatchType) {
-    Match_FullHav     = 0,//全含
-    Match_JustSeem    = 1,//仅相似
+typedef NS_ENUM(NSInteger, MatchType) {
+    MatchType_Seem  = 0,//仅相似
+    MatchType_Full  = 1,//全含
+    MatchType_Fuzzy = 2,//模糊匹配
 };

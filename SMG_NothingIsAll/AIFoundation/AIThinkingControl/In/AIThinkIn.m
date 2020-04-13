@@ -146,7 +146,10 @@
     mModel.protoAlg_p = algNode_p;
     
     //2. 识别概念;
-    mModel.matchAlg = [AIThinkInReason TIR_Alg:algNode_p fromGroup_ps:fromGroup_ps];
+    [AIThinkInReason TIR_Alg:algNode_p fromGroup_ps:fromGroup_ps complete:^(AIAlgNodeBase *matchAlg, MatchType type) {
+        mModel.matchAlg = matchAlg;
+        mModel.algMatchType = type;
+    }];
     NSLog(@"-----> 瞬时识别概念:%@",Alg2FStr(mModel.matchAlg));
     
     //3. 添加到瞬时记忆;

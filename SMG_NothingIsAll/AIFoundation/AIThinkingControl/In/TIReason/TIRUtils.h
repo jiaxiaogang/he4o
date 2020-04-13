@@ -24,7 +24,7 @@
  *  MARK:--------------------概念局部匹配--------------------
  *  @param except_ps : 排除_ps; (如:同一批次输入的概念组,不可用来识别自己)
  */
-+(void) partMatching_Alg:(AIAlgNodeBase*)algNode isMem:(BOOL)isMem except_ps:(NSArray*)except_ps complete:(void(^)(AIAlgNodeBase *matchAlg,TIRMatchType type))complete;
++(void) partMatching_Alg:(AIAlgNodeBase*)algNode isMem:(BOOL)isMem except_ps:(NSArray*)except_ps complete:(void(^)(AIAlgNodeBase *matchAlg,MatchType type))complete;
 
 /**
  *  MARK:--------------------通用局部匹配方法--------------------
@@ -37,7 +37,7 @@
 +(void) partMatching_General:(NSArray*)proto_ps
                refPortsBlock:(NSArray*(^)(AIKVPointer *item_p))refPortsBlock
                   checkBlock:(BOOL(^)(AIPointer *target_p))checkBlock
-                    complete:(void(^)(AIAlgNodeBase *matchAlg,TIRMatchType type))complete;
+                    complete:(void(^)(AIAlgNodeBase *matchAlg,MatchType type))complete;
 
 
 //MARK:===============================================================

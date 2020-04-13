@@ -103,7 +103,7 @@
  *  MARK:--------------------概念局部匹配--------------------
  *  @param except_ps : 排除_ps; (如:同一批次输入的概念组,不可用来识别自己)
  */
-+(void) partMatching_Alg:(AIAlgNodeBase*)algNode isMem:(BOOL)isMem except_ps:(NSArray*)except_ps complete:(void(^)(AIAlgNodeBase *matchAlg,TIRMatchType type))complete{
++(void) partMatching_Alg:(AIAlgNodeBase*)algNode isMem:(BOOL)isMem except_ps:(NSArray*)except_ps complete:(void(^)(AIAlgNodeBase *matchAlg,MatchType type))complete{
     //1. 数据准备;
     if (!ISOK(algNode, AIAlgNodeBase.class)) return;
     except_ps = ARRTOOK(except_ps);
@@ -165,7 +165,7 @@
 +(void) partMatching_General:(NSArray*)proto_ps
                refPortsBlock:(NSArray*(^)(AIKVPointer *item_p))refPortsBlock
                   checkBlock:(BOOL(^)(AIPointer *target_p))checkBlock
-                    complete:(void(^)(AIAlgNodeBase *matchAlg,TIRMatchType type))complete{
+                    complete:(void(^)(AIAlgNodeBase *matchAlg,MatchType type))complete{
     //1. 数据准备;
     if (ARRISOK(proto_ps)) {
         NSMutableDictionary *countDic = [[NSMutableDictionary alloc] init];
@@ -175,9 +175,6 @@
             NSArray *refPorts = refPortsBlock(item_p);
             refPorts = ARR_SUB(refPorts, 0, cPartMatchingCheckRefPortsLimit);
             NSLog(@"当前item_p:%@ -------------------数量:%lu",[NVHeUtil getLightStr:item_p],(unsigned long)refPorts.count);
-            //TODOTOMORROW:
-            //查下为什么那么多远投坚果,最终 (Height5).refPorts才3个;
-            
             //3. 进行计数
             for (AIPort *refPort in refPorts) {
                 if (checkBlock(refPort.target_p)) {
@@ -209,7 +206,7 @@
             //6. 判断全含; (matchingCount == assAlg.content.count) (且只能识别为抽象节点)
             if (ISOK(result, AIAbsAlgNode.class) && result.content_ps.count == matchingCount) {
                 NSLog(@"------MatchAlg 全含返回 Success: %@",Alg2FStr(result));
-                complete(result,Match_FullHav);
+                complete(result,MatchType_Full);
                 return;
             }
             if (!ISOK(result, AIAbsAlgNode.class) && result.content_ps.count != matchingCount) {
@@ -226,7 +223,7 @@
         //7. 未将全含返回,则返回最相似;
         AIAlgNodeBase *result = [SMGUtils searchNode:DATA2OBJ(ARR_INDEX(sortKeys, 0))];
         NSLog(@"------MatchAlg 仅相似返回 Success: %@",Alg2FStr(result));
-        complete(result,Match_JustSeem);
+        complete(result,MatchType_Seem);
         return;
     }
 }
