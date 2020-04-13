@@ -62,7 +62,8 @@
     NSLog(@"------------------------------- 概念识别 -------------------------------\n%@",Alg2FStr(algNode));
     
     //2. 对value.refPorts进行检查识别; (noMv信号已输入完毕,识别联想)
-    AIAlgNodeBase *assAlgNode = nil;
+    __block AIAlgNodeBase *assAlgNode = nil;
+    __block TIRMatchType matchType = Match_FullHav;
     ///1. 绝对匹配 -> 内存网络;
     assAlgNode = [AINetIndexUtils getAbsoluteMatchingAlgNodeWithValuePs:algNode.content_ps except_ps:fromGroup_ps isMem:true];
     
@@ -81,7 +82,10 @@
     
     ///4. 局部匹配 -> 硬盘网络;
     if (!assAlgNode) {
-        assAlgNode = [TIRUtils partMatching_Alg:algNode isMem:false except_ps:fromGroup_ps];
+        [TIRUtils partMatching_Alg:algNode isMem:false except_ps:fromGroup_ps complete:^(AIAlgNodeBase *matchAlg, TIRMatchType type) {
+            assAlgNode = matchAlg;
+            matchType = type;
+        }];
     }
     
     //3. 直接将assAlgNode设置为algNode的抽象; (这样后面TOR理性决策时,才可以直接对当前瞬时实物进行很好的理性评价);
@@ -89,8 +93,8 @@
         //4. 识别到时,value.refPorts -> 更新/加强微信息的引用序列
         [AINetUtils insertRefPorts_AllAlgNode:assAlgNode.pointer content_ps:assAlgNode.content_ps difStrong:1];
         
-        //5. 识别到时,进行抽具象 -> 关联 & 存储 (20200103:测得,algNode为内存节点时,关联也在内存)
-        [AINetUtils relateAlgAbs:(AIAbsAlgNode*)assAlgNode conNodes:@[algNode]];
+        //5. 识别且全含时,进行抽具象关联 & 存储 (20200103:测得,algNode为内存节点时,关联也在内存)
+        if (matchType == Match_FullHav) [AINetUtils relateAlgAbs:(AIAbsAlgNode*)assAlgNode conNodes:@[algNode]];
     }
     
     //4. 调试日志;
@@ -104,17 +108,17 @@
         NSLog(@"识别Alg failure");
     }
     
-    //3. 模糊匹配 (因TOR未支持fuzzy,故目前仅将最相似的fuzzy放到AIShortMatchModel中当matchAlg用);
-    NSArray *fuzzys = ARRTOOK([TIRUtils matchAlg2FuzzyAlgV2:algNode matchAlg:assAlgNode except_ps:fromGroup_ps]);
-    AIAlgNodeBase *fuzzyAlg = ARR_INDEX(fuzzys, 0);
-    
-    //4. 返回
-    if (fuzzyAlg) {
-        [AINetUtils insertRefPorts_AllAlgNode:fuzzyAlg.pointer content_ps:fuzzyAlg.content_ps difStrong:1];//B更新强度
-        return fuzzyAlg;//C返回
-    }else{
-        return assAlgNode;
+    //3. 全含时,可进行模糊匹配 (因TOR未支持fuzzy,故目前仅将最相似的fuzzy放到AIShortMatchModel中当matchAlg用);
+    if (matchType == Match_FullHav) {
+        NSArray *fuzzys = ARRTOOK([TIRUtils matchAlg2FuzzyAlgV2:algNode matchAlg:assAlgNode except_ps:fromGroup_ps]);
+        AIAlgNodeBase *fuzzyAlg = ARR_INDEX(fuzzys, 0);
+        //a. 模糊匹配有效时,增强关联,并截胡;
+        if (fuzzyAlg) {
+            [AINetUtils insertRefPorts_AllAlgNode:fuzzyAlg.pointer content_ps:fuzzyAlg.content_ps difStrong:1];
+            assAlgNode = fuzzyAlg;
+        }
     }
+    return assAlgNode;
 }
 
 /**
@@ -133,7 +137,8 @@
     NSLog(@"----> 特码:%@ 被引:%ld个 重组内容:(%@)",[NVHeUtil getLightStr:mUniqueV_p],mUniqueRef_ps.count,[NVHeUtil getLightStr4Ps:rtAlg.content_ps simple:false]);
     
     //2. 识别
-    AIAlgNodeBase *matchAlg = [TIRUtils partMatching_General:rtAlg.content_ps refPortsBlock:^NSArray *(AIKVPointer *item_p) {
+    __block AIAlgNodeBase *matchAlg = nil;
+    [TIRUtils partMatching_General:rtAlg.content_ps refPortsBlock:^NSArray *(AIKVPointer *item_p) {
         if (item_p) {
             //1> 数据准备 (value_p的refPorts是单独存储的);
             return ARRTOOK([SMGUtils searchObjectForFilePath:item_p.filePath fileName:kFNRefPorts time:cRTReference]);
@@ -145,6 +150,10 @@
             return ![target_p isEqual:rtAlg.pointer] && [mUniqueRef_ps containsObject:target_p];
         }
         return false;
+    } complete:^(AIAlgNodeBase *outMatchAlg, TIRMatchType type) {
+        if (type == Match_FullHav) {
+            matchAlg = outMatchAlg;
+        }
     }];
     
     //3. 直接将assAlgNode设置为algNode的抽象; (这样后面TOR理性决策时,才可以直接对当前瞬时实物进行很好的理性评价);

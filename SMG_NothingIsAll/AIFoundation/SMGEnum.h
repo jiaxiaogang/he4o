@@ -84,3 +84,11 @@ typedef NS_ENUM(NSInteger,  OutputObserverType) {
     OutputObserverType_Front   = 0,//前
     OutputObserverType_Back    = 1,//后
 };
+
+/**
+ *  MARK:--------------------理性识别结果类型--------------------
+ */
+typedef NS_ENUM(NSInteger, TIRMatchType) {
+    Match_FullHav     = 0,//全含
+    Match_JustSeem    = 1,//仅相似
+};

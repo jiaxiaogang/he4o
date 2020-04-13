@@ -103,15 +103,13 @@
  *  MARK:--------------------概念局部匹配--------------------
  *  @param except_ps : 排除_ps; (如:同一批次输入的概念组,不可用来识别自己)
  */
-+(AIAlgNodeBase*) partMatching_Alg:(AIAlgNodeBase*)algNode isMem:(BOOL)isMem except_ps:(NSArray*)except_ps{
++(void) partMatching_Alg:(AIAlgNodeBase*)algNode isMem:(BOOL)isMem except_ps:(NSArray*)except_ps complete:(void(^)(AIAlgNodeBase *matchAlg,TIRMatchType type))complete{
     //1. 数据准备;
-    if (!ISOK(algNode, AIAlgNodeBase.class)) {
-        return nil;
-    }
+    if (!ISOK(algNode, AIAlgNodeBase.class)) return;
     except_ps = ARRTOOK(except_ps);
     
     //2. 调用通用局部 匹配方法;
-    return [self partMatching_General:algNode.content_ps refPortsBlock:^NSArray *(AIKVPointer *item_p) {
+    [self partMatching_General:algNode.content_ps refPortsBlock:^NSArray *(AIKVPointer *item_p) {
         if (item_p) {
             //1> 数据准备 (value_p的refPorts是单独存储的);
             return ARRTOOK([SMGUtils searchObjectForFilePath:item_p.filePath fileName:kFNRefPorts_All(isMem) time:cRTReference_All(isMem)]);
@@ -123,7 +121,7 @@
             return ![target_p isEqual:algNode.pointer] && ![SMGUtils containsSub_p:target_p parent_ps:except_ps];
         }
         return false;
-    }];
+    } complete:complete];
 }
 
 /**
@@ -159,13 +157,15 @@
  *  从content_ps的所有value.refPorts找前cPartMatchingCheckRefPortsLimit个, 如:contentCount9*limit5=45个;
  *  @param checkBlock : notnull 对可能的结果,进行检查; (就是自身 或 不应期则false)
  *  @param refPortsBlock : notnull 取item_p.refPorts的方法;
- *  @result 把最匹配的返回;
+ *  @param complete : 把最匹配的返回;
  *  @desc 迭代记录:
  *      2019.12.23 - 迭代支持全含,参考17215 (代码中由判断相似度,改为判断全含)
+ *      2020.04.13 - 将结果通过complete返回,支持全含 或 仅相似 (因为正向反馈类比的死循环切入问题,参考:n19p6);
  */
-+(id) partMatching_General:(NSArray*)proto_ps
-             refPortsBlock:(NSArray*(^)(AIKVPointer *item_p))refPortsBlock
-                checkBlock:(BOOL(^)(AIPointer *target_p))checkBlock{
++(void) partMatching_General:(NSArray*)proto_ps
+               refPortsBlock:(NSArray*(^)(AIKVPointer *item_p))refPortsBlock
+                  checkBlock:(BOOL(^)(AIPointer *target_p))checkBlock
+                    complete:(void(^)(AIAlgNodeBase *matchAlg,TIRMatchType type))complete{
     //1. 数据准备;
     if (ARRISOK(proto_ps)) {
         NSMutableDictionary *countDic = [[NSMutableDictionary alloc] init];
@@ -203,13 +203,14 @@
         WLog(@"proto___________长度:%lu 内容:[%@]",proto_ps.count,[NVHeUtil getLightStr4Ps:proto_ps]);
         for (NSData *key in sortKeys) {
             AIKVPointer *key_p = DATA2OBJ(key);
-            AINodeBase *result = [SMGUtils searchNode:key_p];
+            AIAlgNodeBase *result = [SMGUtils searchNode:key_p];
             int matchingCount = [NUMTOOK([countDic objectForKey:key]) intValue];
             
             //6. 判断全含; (matchingCount == assAlg.content.count) (且只能识别为抽象节点)
             if (ISOK(result, AIAbsAlgNode.class) && result.content_ps.count == matchingCount) {
-                NSLog(@"------MatchAlg Success_长度:%lu 匹配:%d 类型:%@ 内容:[%@]",(unsigned long)result.content_ps.count,matchingCount,result.class,[NVHeUtil getLightStr4Ps:result.content_ps]);
-                return result;
+                NSLog(@"------MatchAlg 全含返回 Success: %@",Alg2FStr(result));
+                complete(result,Match_FullHav);
+                return;
             }
             if (!ISOK(result, AIAbsAlgNode.class) && result.content_ps.count != matchingCount) {
                 typeCountWrong ++;
@@ -220,9 +221,14 @@
             }
             WLog(@"Item识别失败_长度:%lu 匹配:%d 类型:%@ 内容:[%@]",(unsigned long)result.content_ps.count,matchingCount,result.class,[NVHeUtil getLightStr4Ps:result.content_ps]);
         }
+        
         WLog(@"识别结果 >> 非抽象且非全含:%ld,非抽象数:%ld,非全含数:%ld / 总数:%lu",(long)typeCountWrong,(long)typeWrong,countWrong,(unsigned long)sortKeys.count);
+        //7. 未将全含返回,则返回最相似;
+        AIAlgNodeBase *result = [SMGUtils searchNode:DATA2OBJ(ARR_INDEX(sortKeys, 0))];
+        NSLog(@"------MatchAlg 仅相似返回 Success: %@",Alg2FStr(result));
+        complete(result,Match_JustSeem);
+        return;
     }
-    return nil;
 }
 
 //MARK:===============================================================
