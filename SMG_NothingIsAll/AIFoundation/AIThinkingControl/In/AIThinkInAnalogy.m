@@ -415,11 +415,11 @@
 
 @implementation AIThinkInAnalogy (Feedback)
 
-+(void) analogy_Feedback_Diff:(AIShortMatchModel*)mModel protoFo:(AIFoNodeBase*)protoFo{
++(void) analogy_Feedback_Diff:(AIShortMatchModel*)mModel shortFo:(AIFoNodeBase*)shortFo{
     //1. 数据检查 (MMv和PMV有效,且同区);
-    if (!mModel || !mModel.matchFo || !protoFo) return;
+    if (!mModel || !mModel.matchFo || !shortFo) return;
     AIKVPointer *mMv_p = mModel.matchFo.cmvNode_p;
-    AIKVPointer *pMv_p = protoFo.cmvNode_p;
+    AIKVPointer *pMv_p = shortFo.cmvNode_p;
     AICMVNodeBase *pMv = [SMGUtils searchNode:pMv_p];
     if (!mMv_p || !pMv_p || ![mMv_p.algsType isEqualToString:pMv_p.algsType] || ![mMv_p.dataSource isEqualToString:pMv_p.dataSource] || !pMv) {
         return;
@@ -442,13 +442,13 @@
         //A. 类比_数据准备;
         AIKVPointer *mAlg_p = mModel.matchFo.content_ps[i];
         BOOL findM = false;
-        for (NSInteger j = jStart; j < protoFo.content_ps.count; j++) {
-            AIKVPointer *pAlg_p = protoFo.content_ps[j];
+        for (NSInteger j = jStart; j < shortFo.content_ps.count; j++) {
+            AIKVPointer *pAlg_p = shortFo.content_ps[j];
             BOOL findP = false;
 
             //B. 一级类比概念层 (匹配则说明jStart->j之间所有pAlg_p为多余 (含jStart,不含j"因为j本身匹配,无需收集));
             if ([mAlg_p isEqual:pAlg_p]) {
-                [ps addObjectsFromArray:ARR_SUB(protoFo.content_ps, jStart, j-jStart)];
+                [ps addObjectsFromArray:ARR_SUB(shortFo.content_ps, jStart, j-jStart)];
                 findP = true;
             }else{
                 //C. 二级类比稀疏码层-数据准备;
@@ -465,7 +465,7 @@
                 if (sameValue_ps.count > 0) {
                     
                     //c. 匹配则说明jStart->j之间所有pAlg_p为多余 (含jStart,不含j"因为j在下面被二级收集);
-                    [ps addObjectsFromArray:ARR_SUB(protoFo.content_ps, jStart, j-jStart)];
+                    [ps addObjectsFromArray:ARR_SUB(shortFo.content_ps, jStart, j-jStart)];
                     findP = true;
 
                     //d. 二级类比-收集缺乏
@@ -495,8 +495,8 @@
         }
     }
 
-    //5. 将最终都没收集的protoFo剩下的部分打包进多余 (jStart到end之间的pAlg_p(含jStart,含end));
-    [ps addObjectsFromArray:ARR_SUB(protoFo.content_ps, jStart, protoFo.content_ps.count - jStart)];
+    //5. 将最终都没收集的shortFo剩下的部分打包进多余 (jStart到end之间的pAlg_p(含jStart,含end));
+    [ps addObjectsFromArray:ARR_SUB(shortFo.content_ps, jStart, shortFo.content_ps.count - jStart)];
     ALog(@"~~~> 反向反馈类比 ms数:%lu ps数:%lu",ms.count,ps.count);
     
     //6. 构建ms
@@ -508,10 +508,10 @@
 
     //7. 构建ps
     [self analogy_Feedback_Diff_Creater:pMv content_ps:ps createFoBlock:^AIFoNodeBase *{
-        return [ThinkingUtils createAbsFo_NoRepeat_General:@[protoFo] content_ps:ps];
+        return [ThinkingUtils createAbsFo_NoRepeat_General:@[shortFo] content_ps:ps];
     } createMvBlock:^AICMVNodeBase *(AIKVPointer *u_p, AIKVPointer *d_p, AIFoNodeBase *foNode) {
         return [theNet createAbsMv:foNode.pointer conMvs:@[pMv] at:pMv_p.algsType ds:pMv_p.dataSource urgentTo_p:u_p delta_p:d_p];
-    } rate:(float)ps.count / protoFo.content_ps.count];
+    } rate:(float)ps.count / shortFo.content_ps.count];
 }
 
 +(void) analogy_Feedback_Diff_Creater:(AICMVNodeBase*)pMv content_ps:(NSArray*)content_ps createFoBlock:(AIFoNodeBase*(^)())createFoBlock createMvBlock:(AICMVNodeBase*(^)(AIKVPointer *u_p,AIKVPointer *d_p,AIFoNodeBase *foNode))createMvBlock rate:(CGFloat)rate{

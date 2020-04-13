@@ -48,19 +48,20 @@
 /**
  *  MARK:--------------------反馈类比_反向--------------------
  *  @callers : 由TIP调用;
- *  @param protoFo  : 在TIP中,输入mv,新生成的protoFo;
+ *  @param shortFo  : 在TIP中,输入mv,新生成的protoFo;
  *  @param mModel   : 在上一桢的识别预测模型;
  *  @desc
  *      1. 执行条件: 当imv与预测mv不符时,执行类比;
  *      2. 功能作用: 用类比的方式,分析出预测不符的原因(两种,见下),并抽象之;
  *      3. 不符的原因: a.该出现的未出现; b.不该出现的出现;
  */
-+(void) analogy_Feedback_Diff:(AIShortMatchModel*)mModel protoFo:(AIFoNodeBase*)protoFo;
++(void) analogy_Feedback_Diff:(AIShortMatchModel*)mModel shortFo:(AIFoNodeBase*)shortFo;
 
 /**
  *  MARK:--------------------反馈类比_同向--------------------
  *  @desc 由TIP调用,执行条件为:当imv与预测mv相符时,执行类比;
  *  @desc 如: (距20,经233) 与 (距20,经244) 可类比为: (距20)->{mv};
+ *  @param shortFo : 传瞬时记忆的protoFo(70%) 或 matchFo(30%);
  */
 +(void) analogy_Feedback_Same:(AIShortMatchModel*)mModel shortFo:(AIFoNodeBase*)shortFo;
 

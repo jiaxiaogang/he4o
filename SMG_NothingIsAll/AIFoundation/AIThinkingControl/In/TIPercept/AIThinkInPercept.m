@@ -56,9 +56,9 @@
  *  @version
  *      202003-04: a.去掉外类比; b.外类比拆分为:正向类比和反向类比;
  */
--(void) dataIn_FindMV_Learning:(AIFrontOrderNode*)foNode matchFo:(AIFrontOrderNode*)matchFo cmvNode:(AICMVNode*)cmvNode canAss:(BOOL(^)())canAss updateEnergy:(void(^)(CGFloat delta))updateEnergy{
+-(void) dataIn_FindMV_Learning:(AIFrontOrderNode*)protoFo matchFo:(AIFrontOrderNode*)matchFo cmvNode:(AICMVNode*)cmvNode canAss:(BOOL(^)())canAss updateEnergy:(void(^)(CGFloat delta))updateEnergy{
     //1. 数据检查 & 准备
-    if (foNode == nil || cmvNode == nil) {
+    if (protoFo == nil || cmvNode == nil) {
         return;
     }
     
@@ -66,10 +66,10 @@
     NSArray *mModels = ARRTOOK([self.delegate tir_getShortMatchModel]);
     for (AIShortMatchModel *mModel in mModels) {
         //a. 正向反馈类比;
-        [AIThinkInAnalogy analogy_Feedback_Same:mModel shortFo:matchFo];
+        [AIThinkInAnalogy analogy_Feedback_Same:mModel shortFo:protoFo];
         
         //b. 反向反馈类比;
-        [AIThinkInAnalogy analogy_Feedback_Diff:mModel protoFo:foNode];
+        [AIThinkInAnalogy analogy_Feedback_Diff:mModel shortFo:protoFo];
     }
 }
 

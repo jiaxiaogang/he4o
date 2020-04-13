@@ -274,7 +274,7 @@
         }
         return nil;
     } checkItemValid:^BOOL(AIKVPointer *itemAlg_p, AIKVPointer *assAlg_p) {
-        //1. shortMem需要多matchAlg对多抽象,共两层判断是否isEquals; (N x N)
+        //1. shortMem需要多matchAlg对多抽象,共两层判断是否isEquals; (N x N) (20200414改为1xN)
         //TODO_TEST_HERE: 本愿是自match层开始,已有去重机制,故使用指针匹配,如无去重且不好加,此处可改为md5匹配;
         if (itemAlg_p && assAlg_p) {
             
