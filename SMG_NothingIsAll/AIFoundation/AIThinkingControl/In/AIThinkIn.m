@@ -115,8 +115,6 @@
     
     //3. 加瞬时记忆
     [self.delegate aiThinkIn_AddToShortMemory:@[outAlg.pointer] isMatch:false];
-    //[self.delegate aiThinkIn_AddToShortMemory:@[outAlg.pointer] isMatch:true];
-    //TODONEXT: 此处是否不必进行概念识别了?只进行时序识别即可;
     
     //4. 进行识别
     [self dataIn_NoMV:outAlg.pointer fromGroup_ps:@[outAlg.pointer]];
@@ -176,6 +174,17 @@
     mModel.protoFo = [theNet createConFo:shortMemory isMem:true];
     
     //4. 识别时序;
+    //训练A3,测得时序识别失败,原因在此处;
+    //此处传入时序为protoFo,而传入lastAlg为matchAlg,这导致只要是seemAlg都无法成功时序识别,因为seemAlg不会与matchAlg匹配;
+    //分析1: last为matchAlg才可能联想到被引用的时序;
+    //分析2: 传入时序只能为protoFo,因为此方法本来就是为了取matchFo;
+    
+    //日志如下:
+    //[21:28:44:388          TIRUtils.m  40] ------------------------ checkFoValid ------------------------
+    //F25[飞↗,(速0,宽5,高5,形2.5,距0,向→,红0,绿255,蓝0,皮0,经199,纬375),吃1]
+    //F11[(速0,宽5,高5,形2.5,经207,纬368,距0,向→,红0,绿255,蓝0,皮0),吃1]
+    
+    
     [AIThinkInReason TIR_Fo_FromShortMem:mModel.protoFo lastMatchAlg:mModel.matchAlg finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue) {
         mModel.matchFo = matchFo;
         mModel.matchFoValue = matchValue;

@@ -102,6 +102,11 @@ static AIThinkingControl *_instance;
     [self.thinkIn dataInWithModels:dics algsType:algsType];
 }
 
+/**
+ *  MARK:--------------------行为输出转输入--------------------
+ *  @version
+ *      20200414 - 将输出参数集value_ps转到ThinkIn,去进行识别,保留ShortMatchModel,内类比等流程;
+ */
 -(void) commitOutputLog:(NSArray*)outputModels{
     //1. 数据
     NSMutableArray *value_ps = [[NSMutableArray alloc] init];

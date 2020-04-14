@@ -70,6 +70,7 @@
 
 /**
  *  MARK:--------------------行为输出转输入--------------------
+ *  @desc 目前行为进行时序识别,也进行概念识别;
  */
 -(void) dataInFromOutput:(NSArray*)outValue_ps;
 
