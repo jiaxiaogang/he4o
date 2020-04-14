@@ -121,4 +121,9 @@
 -(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem;
 -(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs dataSource:(NSString*)dataSource isMem:(BOOL)isMem;
 
+/**
+ *  MARK:--------------------构建抽象概念_防重--------------------
+ */
++(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)conAlgs value_ps:(NSArray*)value_ps isMem:(BOOL)isMem;
+
 @end

@@ -35,4 +35,17 @@
 //MARK:===============================================================
 +(AIFoNodeBase*) getAbsoluteMatchingFoNodeWithContent_ps:(NSArray*)content_ps except_ps:(NSArray*)except_ps isMem:(BOOL)isMem;
 
+
+//MARK:===============================================================
+//MARK:                     < 绝对匹配 (概念/时序) 通用方法 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------alg/fo 绝对匹配通用方法--------------------
+ *  @todo
+ *      1. 随后支持只匹配抽象alg/fo (可由checkItemValid来实现) (可用于概念识别,因为概念识别为具象时,会导致无法建立抽具象关联);
+ *          说明: 不过随后抽具象节点类会统一,所以如果这个影响不到v2.0则可不做;
+ */
++(id) getAbsoluteMatching_General:(NSArray*)content_ps sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps getRefPortsBlock:(NSArray*(^)(AIKVPointer *item_p))getRefPortsBlock;
+
 @end
