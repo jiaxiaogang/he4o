@@ -135,7 +135,7 @@
     if (!rtAlg || !mUniqueV_p) return nil;
     NSArray *mUniqueRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Value:mUniqueV_p]];
     NSLog(@"---------- TIR_Alg_FromRT START ----------");
-    NSLog(@"----> 特码:%@ 被引:%ld个 重组内容:(%@)",[NVHeUtil getLightStr:mUniqueV_p],mUniqueRef_ps.count,[NVHeUtil getLightStr4Ps:rtAlg.content_ps simple:false]);
+    NSLog(@"----> 特码:%@ 被引:%ld个 RTAlg:%@",[NVHeUtil getLightStr:mUniqueV_p],mUniqueRef_ps.count,Alg2FStr(rtAlg));
     
     //2. 识别
     __block AIAlgNodeBase *matchAlg = nil;
@@ -165,7 +165,7 @@
         //5. 识别到时,进行抽具象 -> 关联 & 存储 (20200103:测得,algNode为内存节点时,关联也在内存)
         [AINetUtils relateAlgAbs:(AIAbsAlgNode*)matchAlg conNodes:@[rtAlg]];
     }
-    NSLog(@"识别Alg_FromRT Finish:(%@)",[NVHeUtil getLightStr4Ps:matchAlg.content_ps simple:false]);
+    NSLog(@"识别Alg_FromRT Finish:%@",Alg2FStr(matchAlg));
     return matchAlg;
 }
 
@@ -218,7 +218,7 @@
         if (indexAlg) {
             for (AIPort *refPort in indexAlg.refPorts) {
                 AIFoNodeBase *tmpForLogFo = [SMGUtils searchNode:refPort.target_p];
-                NSLog(@"-----> TIR_Fo 索引:(%@) 取得时序:[%@]",[NVHeUtil getLightStr4Ps:indexAlg.content_ps],[NVHeUtil getLightStr4Ps:tmpForLogFo.content_ps simple:false]);
+                NSLog(@"-----> TIR_Fo 索引:(%@) 取得时序:%@",[NVHeUtil getLightStr4Ps:indexAlg.content_ps],Fo2FStr(tmpForLogFo));
                 //3. rethink时,必须包含replaceMatchAlg的时序才有效;
                 if ([SMGUtils containsSub_p:refPort.target_p parentPorts:lastAlgRefPorts]) {
                     NSLog(@"-----> TIR_Fo 取得时序成功");

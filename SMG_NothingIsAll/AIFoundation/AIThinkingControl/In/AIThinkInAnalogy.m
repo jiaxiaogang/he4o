@@ -150,7 +150,6 @@
                     if (ISOK(createAbsCmv, AIAbsCMVNode.class)) {
                         result.cmvNode_p = createAbsCmv.pointer;
                         [SMGUtils insertObject:result pointer:result.pointer fileName:kFNNode time:cRTNode];
-                        [theNV setNodeData:createAbsCmv.pointer appendLightStr:@"外Mv4"];
                     }
                 }
             }
@@ -159,14 +158,10 @@
         //调试短时序; (先仅打外类比日志);
         if (result) {
             if (!fromInner) {
-                [theNV setNodeData:result.pointer lightStr:STRFORMAT(@"新%ld (%ld&%ld)",result.content_ps.count,fo.pointer.pointerId,assFo.pointer.pointerId)];
-                NSLog(@"~~~>> 构建时序:[%@]->{%@}",Pit2FStr(result.pointer),Pit2SStr(result.cmvNode_p));
+                NSLog(@"~~~>> 构建时序:%@->%@",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
             }else{
                 NSLog(@"----> 内类比IHO构建抽象时序=%ld: [%@] from(%ld,%ld)",result.pointer.pointerId,[NVHeUtil getLightStr4Ps:result.content_ps],fo.pointer.pointerId,assFo.pointer.pointerId);
-                [theNV setNodeData:result.pointer appendLightStr:STRFORMAT(@"IHO:[%@]",[NVHeUtil getLightStr4Ps:result.content_ps])];
             }
-            //调试关联强度
-            [theNV lightLineStrong:fo.pointer nodeDataB:result.pointer];
         }
     }
 }
@@ -538,7 +533,7 @@
     //6. 连接mv基本模型;
     [AINetUtils relateFo:createFo mv:createMv];
     if (createFo && createMv) {
-        ALog(@"~~~~> 反向反馈类比 CreateFo内容:[%@]->{%f}",[NVHeUtil getLightStr4Ps:createFo.content_ps simple:false],[ThinkingUtils getScoreForce:createMv.pointer ratio:1.0f]);
+        ALog(@"~~~~> 反向反馈类比 CreateFo内容:%@->{%f}",Fo2FStr(createFo),Mvp2Str(createMv.pointer));
     }
 }
 

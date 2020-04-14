@@ -27,9 +27,9 @@
 }
 
 +(NSString*) getLightStr4Ps:(NSArray*)node_ps{
-    return [self getLightStr4Ps:node_ps simple:true];
+    return [self getLightStr4Ps:node_ps simple:true header:false];
 }
-+(NSString*) getLightStr4Ps:(NSArray*)node_ps simple:(BOOL)simple{
++(NSString*) getLightStr4Ps:(NSArray*)node_ps simple:(BOOL)simple header:(BOOL)header{
     //1. 数据检查
     NSMutableString *result = [[NSMutableString alloc] init];
     node_ps = ARRTOOK(node_ps);
@@ -37,43 +37,43 @@
     
     //2. 拼接返回
     for (AIKVPointer *item_p in node_ps){
-        NSString *str = [NVHeUtil getLightStr:item_p simple:simple];
-        if ([self isAlg:item_p] && STRTOARR(str, sep).count > 1) {
-            str = STRFORMAT(@"(%@)",str);
-        }
+        NSString *str = [NVHeUtil getLightStr:item_p simple:simple header:header];
         [result appendFormat:@"%@%@",str,sep];
     }
     return SUBSTR2INDEX(result, result.length - sep.length);
 }
 
 +(NSString*) getLightStr:(AIKVPointer*)node_p {
-    return [self getLightStr:node_p simple:true];
+    return [self getLightStr:node_p simple:true header:false];
 }
-+(NSString*) getLightStr:(AIKVPointer*)node_p simple:(BOOL)simple{
++(NSString*) getLightStr:(AIKVPointer*)node_p simple:(BOOL)simple header:(BOOL)header{
+    NSString *lightStr = @"";
     if (ISOK(node_p, AIKVPointer.class)) {
         if ([self isValue:node_p]) {
-            return [self getLightStr_ValueP:node_p];
+            lightStr = [self getLightStr_ValueP:node_p];
         }else if ([self isAlg:node_p]) {
             AIAlgNodeBase *algNode = [SMGUtils searchNode:node_p];
             if (algNode) {
                 if (simple) {
                     NSString *firstValueStr = [self getLightStr_ValueP:ARR_INDEX(algNode.content_ps, 0)];
-                    return STRFORMAT(@"%@%@",firstValueStr,(algNode.content_ps.count > 1) ? @"..." : @"");
+                    lightStr = STRFORMAT(@"%@%@",firstValueStr,(algNode.content_ps.count > 1) ? @"..." : @"");
                 }else{
-                    return [self getLightStr4Ps:algNode.content_ps simple:simple];
+                    lightStr = [self getLightStr4Ps:algNode.content_ps simple:simple header:header];
                 }
             }
         }else if([self isFo:node_p]){
             AIFoNodeBase *foNode = [SMGUtils searchNode:node_p];
             if (foNode) {
-                return [self getLightStr4Ps:foNode.content_ps simple:simple];
+                lightStr = [self getLightStr4Ps:foNode.content_ps simple:simple header:header];
             }
         }else if([self isMv:node_p]){
             CGFloat score = [ThinkingUtils getScoreForce:node_p ratio:1.0f];
-            return [NSString removeFloatZero:STRFORMAT(@"%f",score)];
+            lightStr = [NSString removeFloatZero:STRFORMAT(@"%f",score)];
         }
     }
-    return @"";
+    //2. 返回;
+    if (header) lightStr = [self decoratorHeader:lightStr node_p:node_p];
+    return lightStr;
 }
 
 //获取value_p的light描述;
@@ -162,6 +162,21 @@
 
 +(BOOL) isAbs:(AIKVPointer*)node_p{
     return [kPN_FO_ABS_NODE isEqualToString:node_p.folderName] || [kPN_ABS_CMV_NODE isEqualToString:node_p.folderName] || [kPN_ALG_ABS_NODE isEqualToString:node_p.folderName];
+}
+
+//MARK:===============================================================
+//MARK:                     < privateMethod >
+//MARK:===============================================================
++(NSString*) decoratorHeader:(NSString*)lightStr node_p:(AIKVPointer*)node_p{
+    NSString *pIdStr = node_p ? STRFORMAT(@"%ld",node_p.pointerId) : @"";
+    if ([self isAlg:node_p]) {
+        return STRFORMAT(@"A%@(%@)",pIdStr,lightStr);
+    }else if([self isFo:node_p]){
+        return STRFORMAT(@"F%@[%@]",pIdStr,lightStr);
+    }else if([self isMv:node_p]){
+        return STRFORMAT(@"M%@{%@}",pIdStr,lightStr);
+    }
+    return lightStr;
 }
 
 @end

@@ -109,19 +109,20 @@
 #define DATAS2OBJS(datas) [SMGUtils datas2Objs:datas]
 
 //指针转字符串
-#define Pit2FStr(p) [NVHeUtil getLightStr:p simple:false]
-#define Pits2FStr(ps) [NVHeUtil getLightStr4Ps:ps simple:false]
+#define Pit2FStr(p) [NVHeUtil getLightStr:p simple:false header:true]
+#define Pits2FStr(ps) [NVHeUtil getLightStr4Ps:ps simple:false header:true]
 
-#define Pit2SStr(p) [NVHeUtil getLightStr:p simple:true]
-#define Pits2SStr(ps) [NVHeUtil getLightStr4Ps:ps simple:true]
-
-#define AlgP2FStr(a_p) a_p ? STRFORMAT(@"A%ld(%@)",a_p.pointerId,[NVHeUtil getLightStr:a_p simple:false]) : @"A()"
-#define FoP2FStr(f_p) f_p ? STRFORMAT(@"F%ld[%@]",f_p.pointerId,[NVHeUtil getLightStr:f_p simple:false]) : @"F[]"
+#define Pit2SStr(p) [NVHeUtil getLightStr:p]
+#define Pits2SStr(ps) [NVHeUtil getLightStr4Ps:ps]
 
 //节点转字符串
-#define Alg2FStr(a) a ? STRFORMAT(@"A%ld(%@)",a.pointer.pointerId,[NVHeUtil getLightStr4Ps:a.content_ps simple:false]) : @"A()"
-#define Fo2FStr(f) f ? STRFORMAT(@"F%ld[%@]",f.pointer.pointerId,[NVHeUtil getLightStr4Ps:f.content_ps simple:false]) : @"F[]"
-#define Mvp2Str(m_p) m_p ? STRFORMAT(@"M%ld{%@}",m_p.pointerId,[NVHeUtil getLightStr:m_p]) : @"M{}"
+#define Alg2FStr(a) [NVHeUtil getLightStr:a.pointer simple:false header:true]
+#define Fo2FStr(f) [NVHeUtil getLightStr:f.pointer simple:false header:true]
+#define Mv2FStr(m) [NVHeUtil getLightStr:m.pointer simple:false header:true]
+
+#define AlgP2FStr(a_p) [NVHeUtil getLightStr:a_p simple:false header:true]
+#define FoP2FStr(f_p) [NVHeUtil getLightStr:f_p simple:false header:true]
+#define Mvp2Str(m_p) [NVHeUtil getLightStr:m_p simple:false header:true]
 
 /**
  *  MARK:--------------------快捷建对象--------------------
