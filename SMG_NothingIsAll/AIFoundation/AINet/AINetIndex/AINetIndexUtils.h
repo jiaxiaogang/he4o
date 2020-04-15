@@ -26,9 +26,13 @@
  *  @pparam isMem : 是否从内存网络找;
  *  @version
  *      20200416 - 因概念全局去重了,导致此处绝对匹配算法,不再有用了;
- *  @callers : 1. TIR_Alg识别算法中,绝对匹配部分;
+ *  @callers
+ *      1. TIR_Alg识别算法中,绝对匹配部分;
+ *      2. 内类比获取;
  */
-//+(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps except_ps:(NSArray*)except_ps isMem:(BOOL)isMem;
++(id) getAbsoluteMatchingAlgNodeWithValueP:(AIPointer*)value_p;
++(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps;
++(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps except_ps:(NSArray*)except_ps isMem:(BOOL)isMem;
 
 
 //MARK:===============================================================

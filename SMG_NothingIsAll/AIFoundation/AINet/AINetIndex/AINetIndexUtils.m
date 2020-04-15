@@ -17,16 +17,29 @@
 //MARK:===============================================================
 //MARK:                     < 概念绝对匹配 >
 //MARK:===============================================================
-//+(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps except_ps:(NSArray*)except_ps isMem:(BOOL)isMem {
-//    //1. 取数据;
-//    except_ps = ARRTOOK(except_ps);
-//    NSArray *sort_ps = [SMGUtils sortPointers:value_ps];
-//    
-//    //2. 执行并返回;
-//    return [self getAbsoluteMatching_General:value_ps sort_ps:sort_ps except_ps:except_ps getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
-//        return ARRTOOK([SMGUtils searchObjectForFilePath:item_p.filePath fileName:kFNRefPorts_All(isMem) time:cRTReference_All(isMem)]);
-//    }];
-//}
++(id) getAbsoluteMatchingAlgNodeWithValueP:(AIPointer*)value_p{
+    if (value_p) {
+        return [self getAbsoluteMatchingAlgNodeWithValuePs:@[value_p]];
+    }
+    return nil;
+}
++(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps{
+    AIAlgNodeBase *result = [self getAbsoluteMatchingAlgNodeWithValuePs:value_ps except_ps:nil isMem:true];
+    if (!result) {
+        result = [self getAbsoluteMatchingAlgNodeWithValuePs:value_ps except_ps:nil isMem:false];
+    }
+    return result;
+}
++(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps except_ps:(NSArray*)except_ps isMem:(BOOL)isMem {
+    //1. 取数据;
+    except_ps = ARRTOOK(except_ps);
+    NSArray *sort_ps = [SMGUtils sortPointers:value_ps];
+    
+    //2. 执行并返回;
+    return [self getAbsoluteMatching_General:value_ps sort_ps:sort_ps except_ps:except_ps getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
+        return ARRTOOK([SMGUtils searchObjectForFilePath:item_p.filePath fileName:kFNRefPorts_All(isMem) time:cRTReference_All(isMem)]);
+    }];
+}
 
 
 //MARK:===============================================================
