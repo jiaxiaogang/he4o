@@ -87,11 +87,14 @@ typedef NS_ENUM(NSInteger,  OutputObserverType) {
 
 /**
  *  MARK:--------------------识别类型--------------------
+ *  @desc 优先级说明: self > fuzzy > abs > seem
  */
 typedef NS_ENUM(NSInteger, MatchType) {
-    MatchType_Seem  = 0,//仅相似
-    MatchType_Full  = 1,//全含
+    MatchType_None  = 0,//无效
+    MatchType_Self  = 1,//自身
     MatchType_Fuzzy = 2,//模糊匹配
+    MatchType_Abs   = 3,//全含
+    MatchType_Seem  = 4,//仅相似
 };
 
 /**

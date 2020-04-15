@@ -56,4 +56,14 @@
 //内类比构建抽象时序
 +(AINetAbsFoNode*)createInnerAbsFo:(AIAlgNodeBase*)backAlg rangeAlg_ps:(NSArray*)rangeAlg_ps conFo:(AIFoNodeBase*)conFo;
 
+//MARK:===============================================================
+//MARK:                     < 输入概念判断 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------输入概念是否老节点--------------------
+ *  @desc 目前以其被时序引用数>0,为判断基准;
+ */
++(BOOL) inputAlgIsOld:(AIAlgNodeBase*)inputAlg;
+
 @end

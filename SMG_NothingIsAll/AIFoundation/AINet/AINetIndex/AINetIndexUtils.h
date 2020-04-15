@@ -24,10 +24,11 @@
  *      1. 获取绝对匹配到value_ps的algNode (概念引用联想的方式去重)
  *      2. 先从内存网络,再从硬盘网络找;
  *  @pparam isMem : 是否从内存网络找;
+ *  @version
+ *      20200416 - 因概念全局去重了,导致此处绝对匹配算法,不再有用了;
+ *  @callers : 1. TIR_Alg识别算法中,绝对匹配部分;
  */
-+(id) getAbsoluteMatchingAlgNodeWithValueP:(AIPointer*)value_p;
-+(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps;
-+(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps except_ps:(NSArray*)except_ps isMem:(BOOL)isMem;
+//+(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps except_ps:(NSArray*)except_ps isMem:(BOOL)isMem;
 
 
 //MARK:===============================================================

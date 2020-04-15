@@ -205,7 +205,7 @@
             //6. 判断全含; (matchingCount == assAlg.content.count) (且只能识别为抽象节点)
             if (ISOK(result, AIAbsAlgNode.class) && result.content_ps.count == matchingCount) {
                 NSLog(@"------MatchAlg 全含返回 Success: %@",Alg2FStr(result));
-                complete(result,MatchType_Full);
+                complete(result,MatchType_Abs);
                 return;
             }
             if (!ISOK(result, AIAbsAlgNode.class) && result.content_ps.count != matchingCount) {
@@ -372,6 +372,17 @@
     //3. 构建
     AINetAbsFoNode *result = [theNet createAbsFo_Inner:conFo orderSames:absOrders];
     return result;
+}
+
+//MARK:===============================================================
+//MARK:                     < 输入概念判断 >
+//MARK:===============================================================
++(BOOL) inputAlgIsOld:(AIAlgNodeBase*)inputAlg{
+    if (inputAlg) {
+        NSArray *refPorts = [AINetUtils refPorts_All4Alg:inputAlg];
+        if (refPorts.count > 0) return true;
+    }
+    return false;
 }
 
 @end

@@ -53,6 +53,7 @@
  *      20191223: 局部匹配支持全含: 对assAlg和protoAlg直接做抽象关联,而不是新构建抽象;
  *      20200307: 迭代支持模糊匹配fuzzy
  *      20200413: 无全含时,支持最相似的seemAlg返回;
+ *      20200416: 废除绝对匹配 (因概念全局去重了,绝对匹配匹配没有意义);
  *  @param complete : 共支持三种返回: 匹配效果从高到低分别为:fuzzyAlg,matchAlg,seemAlg;
  */
 +(void) TIR_Alg:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps complete:(void(^)(AIAlgNodeBase *matchAlg,MatchType type))complete{
@@ -63,13 +64,11 @@
     
     //2. 对value.refPorts进行检查识别; (noMv信号已输入完毕,识别联想)
     __block AIAlgNodeBase *assAlgNode = nil;
-    __block MatchType matchType = MatchType_Full;
-    ///1. 绝对匹配 -> 内存网络;
-    assAlgNode = [AINetIndexUtils getAbsoluteMatchingAlgNodeWithValuePs:algNode.content_ps except_ps:fromGroup_ps isMem:true];
-    
-    ///2. 绝对匹配 -> 硬盘网络;
-    if (!assAlgNode) {
-        assAlgNode = [AINetIndexUtils getAbsoluteMatchingAlgNodeWithValuePs:algNode.content_ps except_ps:fromGroup_ps isMem:false];
+    __block MatchType matchType = MatchType_None;
+    ///1. 自身匹配 (Self匹配);
+    if ([TIRUtils inputAlgIsOld:algNode]) {
+        assAlgNode = algNode;
+        matchType = MatchType_Self;
     }
     
     ///3. 局部匹配 -> 内存网络;
@@ -80,7 +79,7 @@
     //    assAlgNode = [AINetIndexUtils partMatching_Alg:algNode isMem:true except_ps:fromGroup_ps];
     //}
     
-    ///4. 局部匹配 -> 硬盘网络;
+    ///4. 局部匹配 (Abs匹配 和 Seem匹配);
     if (!assAlgNode) {
         [TIRUtils partMatching_Alg:algNode isMem:false except_ps:fromGroup_ps complete:^(AIAlgNodeBase *matchAlg, MatchType type) {
             assAlgNode = matchAlg;
@@ -94,7 +93,7 @@
         [AINetUtils insertRefPorts_AllAlgNode:assAlgNode.pointer content_ps:assAlgNode.content_ps difStrong:1];
         
         //5. 识别且全含时,进行抽具象关联 & 存储 (20200103:测得,algNode为内存节点时,关联也在内存)
-        if (matchType == MatchType_Full) [AINetUtils relateAlgAbs:(AIAbsAlgNode*)assAlgNode conNodes:@[algNode]];
+        if (matchType == MatchType_Abs) [AINetUtils relateAlgAbs:(AIAbsAlgNode*)assAlgNode conNodes:@[algNode]];
     }
     
     //4. 调试日志;
@@ -103,13 +102,12 @@
     }
     if (assAlgNode) {
         NSLog(@"----> 识别Alg success:%@",Alg2FStr(assAlgNode));
-        [theNV setNodeData:assAlgNode.pointer appendLightStr:@"识别alg成功"];
     }else{
         NSLog(@"识别Alg failure");
     }
     
-    //3. 全含时,可进行模糊匹配 (因TOR未支持fuzzy,故目前仅将最相似的fuzzy放到AIShortMatchModel中当matchAlg用);
-    if (matchType == MatchType_Full) {
+    //3. 全含时,可进行模糊匹配 (Fuzzy匹配) //因TOR未支持fuzzy,故目前仅将最相似的fuzzy放到AIShortMatchModel中当matchAlg用;
+    if (matchType == MatchType_Abs) {
         NSArray *fuzzys = ARRTOOK([TIRUtils matchAlg2FuzzyAlgV2:algNode matchAlg:assAlgNode except_ps:fromGroup_ps]);
         AIAlgNodeBase *fuzzyAlg = ARR_INDEX(fuzzys, 0);
         //a. 模糊匹配有效时,增强关联,并截胡;
@@ -152,7 +150,7 @@
         }
         return false;
     } complete:^(AIAlgNodeBase *outMatchAlg, MatchType type) {
-        if (type == MatchType_Full) {
+        if (type == MatchType_Abs) {
             matchAlg = outMatchAlg;
         }
     }];
