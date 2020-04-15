@@ -351,18 +351,9 @@
  *  @注意: 此处algNode和algNode_Inner应该是组分关系,但先保持抽具象关系,看后面测试,有没别的影响,再改 (参考179_内类比全流程回顾)
  *  @desc 大小时
  */
-+(AIAbsAlgNode*)createInnerAbsAlg_NoRepeat:(AIAlgNodeBase*)conAlg value_p:(AIPointer*)value_p{
-    //1. 数据检查
-    if (!value_p) return nil;
-    //2. 有则加强;
-    AIAbsAlgNode *assAlg = [AINetIndexUtils getAbsoluteMatchingAlgNodeWithValueP:value_p];
-    if (ISOK(assAlg, AIAbsAlgNode.class)) {
-        [AINetUtils relateAlgAbs:assAlg conNodes:@[conAlg]];
-        return assAlg;
-    }else{
-        //3. 无则构建
-        return [theNet createAbsAlgNode:@[value_p] conAlgs:@[conAlg] isMem:false];
-    }
++(AIAbsAlgNode*)createInnerAbsAlg:(AIAlgNodeBase*)conAlg value_p:(AIPointer*)value_p{
+    if (!value_p || !conAlg) return nil;
+    return [theNet createAbsAlg_NoRepeat:@[value_p] conAlgs:@[conAlg] isMem:false];
 }
 
 /**

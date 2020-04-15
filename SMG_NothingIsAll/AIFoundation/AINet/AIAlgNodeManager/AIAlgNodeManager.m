@@ -13,6 +13,7 @@
 #import "AIKVPointer.h"
 #import "AINetUtils.h"
 #import "NSString+Extension.h"
+#import "AINetIndexUtils.h"
 
 @implementation AIAlgNodeManager
 
@@ -40,11 +41,6 @@
     return conNode;
 }
 
-+(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem{
-    NSString *dataSource = [self getDataSource:value_ps];
-    return [self createAbsAlgNode:value_ps conAlgs:conAlgs dataSource:dataSource isMem:isMem];
-}
-
 /**
  *  MARK:--------------------构建抽象概念--------------------
  *  @问题记录:
@@ -54,6 +50,9 @@
  *      c. 结论: 能,问题转移到n17p19
  */
 +(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs dataSource:(NSString*)dataSource isMem:(BOOL)isMem{
+    if (!dataSource) {
+        dataSource = [self getDataSource:value_ps];
+    }
     if (ARRISOK(value_ps) && ARRISOK(conAlgs)) {
         //1. 数据准备
         value_ps = ARRTOOK(value_ps);
@@ -136,6 +135,38 @@
         return findAbsNode;
     }
     return nil;
+}
+
+/**
+ *  MARK:--------------------构建抽象概念_防重--------------------
+ */
++(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs ds:(NSString*)ds isMem:(BOOL)isMem{
+    //1. 数据检查
+    value_ps = ARRTOOK(value_ps);
+    NSArray *sort_ps = [SMGUtils sortPointers:value_ps];
+    
+    //2. 去重找本地 (仅抽象);
+    AIAbsAlgNode *localAlg = [AINetIndexUtils getAbsoluteMatching_General:value_ps sort_ps:sort_ps except_ps:nil getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
+        NSArray *refPorts = [AINetUtils refPorts_All4Value:item_p];
+        NSMutableArray *result = [[NSMutableArray alloc] init];
+        for (AIPort *refPort in refPorts) {
+            if ([kPN_ALG_ABS_NODE isEqualToString:refPort.target_p.folderName]) {
+                [result addObject:refPort];
+            }
+        }
+        return result;
+    }];
+    
+    //3. 有则加强;
+    if (ISOK(localAlg, AIAbsAlgNode.class)) {
+        [AINetUtils relateAlgAbs:localAlg conNodes:conAlgs];
+        //4. 向硬盘转移
+        if (!isMem) localAlg = [AINetUtils move2HdNodeFromMemNode_Alg:localAlg];
+        return localAlg;
+    }else{
+        //4. 无则构建
+        return [self createAbsAlgNode:value_ps conAlgs:conAlgs dataSource:ds isMem:isMem];
+    }
 }
 
 //MARK:===============================================================

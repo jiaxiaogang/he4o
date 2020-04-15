@@ -77,7 +77,7 @@
                             }
                         }
                         if (ARRISOK(sameValue_ps)) {
-                            AIAbsAlgNode *createAbsNode = [theNet createAbsAlgNode:sameValue_ps conAlgs:@[algNodeA,algNodeB] isMem:false];
+                            AIAbsAlgNode *createAbsNode = [theNet createAbsAlg_NoRepeat:sameValue_ps conAlgs:@[algNodeA,algNodeB] isMem:false];
                             if (createAbsNode) {
                                 [orderSames insertObject:createAbsNode.pointer atIndex:0];
                                 jMax = j - 1;
@@ -351,7 +351,7 @@
     AIKVPointer *backValue_p = [theNet getNetDataPointerWithData:@(backData) algsType:algsType dataSource:dataSource];
 
     //4. 构建抽象概念 (20190809注:此处可考虑,type为大/小时,不做具象指向,因为大小概念,本来就是独立的节点);
-    AIAlgNodeBase *backAlg = [TIRUtils createInnerAbsAlg_NoRepeat:backConAlg value_p:backValue_p];
+    AIAlgNodeBase *backAlg = [TIRUtils createInnerAbsAlg:backConAlg value_p:backValue_p];
 
     //5. 构建抽象时序; (小动致大 / 大动致小) (之间的信息为balabala)
     AINetAbsFoNode *result = [TIRUtils createInnerAbsFo:backAlg rangeAlg_ps:rangeAlg_ps conFo:conFo];
@@ -464,13 +464,13 @@
 
                     //d. 二级类比-收集缺乏
                     if (mSub_ps.count > 0) {
-                        AIAbsAlgNode *createAbsAlg = [theNet createAbsAlgNode:mSub_ps conAlgs:@[mAlg] isMem:false];
+                        AIAbsAlgNode *createAbsAlg = [theNet createAbsAlg_NoRepeat:mSub_ps conAlgs:@[mAlg] isMem:false];
                         if (createAbsAlg) [ms addObject:createAbsAlg.pointer];
                     }
 
                     //e. 二级类比-收集多余
                     if (pSub_ps.count > 0) {
-                        AIAbsAlgNode *createAbsAlg = [theNet createAbsAlgNode:pSub_ps conAlgs:@[pAlg] isMem:false];
+                        AIAbsAlgNode *createAbsAlg = [theNet createAbsAlg_NoRepeat:pSub_ps conAlgs:@[pAlg] isMem:false];
                         if (createAbsAlg) [ps addObject:createAbsAlg.pointer];
                     }
                 }

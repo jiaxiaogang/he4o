@@ -223,12 +223,6 @@ static AINet *_instance;
     return [AIAlgNodeManager createAlgNode:algsArr dataSource:dataSource isOut:isOut isMem:isMem];
 }
 
--(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem{
-    if (ARRISOK(conAlgs)) {
-        return [AIAlgNodeManager createAbsAlgNode:value_ps conAlgs:conAlgs isMem:isMem];
-    }
-    return nil;
-}
 -(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs dataSource:(NSString*)dataSource isMem:(BOOL)isMem{
     if (ARRISOK(conAlgs)) {
         return [AIAlgNodeManager createAbsAlgNode:value_ps conAlgs:conAlgs dataSource:dataSource isMem:isMem];
@@ -239,30 +233,11 @@ static AINet *_instance;
 /**
  *  MARK:--------------------构建抽象概念_防重--------------------
  */
-+(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)conAlgs value_ps:(NSArray*)value_ps{
-    //1. 数据检查
-    value_ps = ARRTOOK(value_ps);
-    NSArray *sort_ps = [SMGUtils sortPointers:value_ps];
-    
-    //2. 去重找本地 (仅抽象);
-    AIAbsAlgNode *localAlg = [AINetIndexUtils getAbsoluteMatching_General:value_ps sort_ps:sort_ps except_ps:nil getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
-        NSArray *refPorts = [AINetUtils refPorts_All4Value:item_p];
-        NSMutableArray *result = [[NSMutableArray alloc] init];
-        for (AIPort *refPort in refPorts) {
-            if ([kPN_ALG_ABS_NODE isEqualToString:refPort.target_p.folderName]) {
-                [result addObject:refPort];
-            }
-        }
-        return result;
-    }];
-    
-    //3. 有则加强,无则构建;
-    if (ISOK(localAlg, AIAbsAlgNode.class)) {
-        [AINetUtils relateAlgAbs:localAlg conNodes:conAlgs];
-        return localAlg;
-    }else{
-        return [theNet createAbsAlgNode:value_ps conAlgs:conAlgs isMem:false];
-    }
+-(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem{
+    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs ds:nil isMem:isMem];
+}
+-(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs ds:(NSString*)ds isMem:(BOOL)isMem{
+    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs ds:ds isMem:isMem];
 }
 
 @end
