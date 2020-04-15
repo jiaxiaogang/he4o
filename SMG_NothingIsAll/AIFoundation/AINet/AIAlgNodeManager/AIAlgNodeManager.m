@@ -17,43 +17,60 @@
 
 @implementation AIAlgNodeManager
 
-+(AIAlgNode*) createAlgNode:(NSArray*)algsArr isOut:(BOOL)isOut isMem:(BOOL)isMem{
-    NSString *dataSource = [self getDataSource:algsArr];
-    return [self createAlgNode:algsArr dataSource:dataSource isOut:isOut isMem:isMem];
-}
-+(AIAlgNode*) createAlgNode:(NSArray*)algsArr dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem{
-    //1. 数据
-    algsArr = ARRTOOK(algsArr);
-    
-    //2. 构建具象节点 (优先用本地已有,否则new)
-    AIAlgNode *conNode = [[AIAlgNode alloc] init];
-    conNode.pointer = [SMGUtils createPointerForAlg:kPN_ALG_NODE dataSource:dataSource isOut:isOut isMem:isMem];
-    
-    //3. 指定value_ps
-    conNode.content_ps = [[NSMutableArray alloc] initWithArray:[SMGUtils sortPointers:algsArr]];
- 
-    //4. value.refPorts (更新引用序列)
-    [AINetUtils insertRefPorts_AllAlgNode:conNode.pointer content_ps:conNode.content_ps difStrong:1];
-    
-    //5. 存储
-    [SMGUtils insertNode:conNode];
-    [theApp.heLogView addLog:STRFORMAT(@"构建具象概念:%@,存储于:%d,内容数:%lu",conNode.pointer.identifier,conNode.pointer.isMem,(unsigned long)conNode.content_ps.count)];
-    return conNode;
-}
+/**
+ *  MARK:--------------------构建algNode--------------------
+ *  1. 自动将algsArr中的元素分别生成absAlgNode
+ *  2. absAlgNode根据索引的去重而去重;
+ *  3. 具象algNode根据网络中联想而去重; (for(abs1.cons) & for(abs2.cons))
+ *  4. abs和con都要有关联强度序列; (目前不需要,以后有需求的时候再加上)
+ *  5. 微信息引用处理: value索引中,加上refPorts;类似algNode.refPorts的方式使用;并且使用单文件的方式存储和插线;
+ *
+ *  @param algsArr      : 算法值的装箱数组;
+ *  @param isMem        : 为false时,持久化构建(如commitOutput),为true时仅内存网络中(如dataIn);
+ *  _param dataSource  : 概念节点的dataSource就是稀疏码信息的algsType (不传时,从algsArr提取)
+ *  @result notnull     : 返回具象algNode
+ */
+//+(AIAlgNode*) createAlgNode:(NSArray*)algsArr dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem{
+//    //1. 数据
+//    algsArr = ARRTOOK(algsArr);
+//    
+//    //2. 构建具象节点 (优先用本地已有,否则new)
+//    AIAlgNode *conNode = [[AIAlgNode alloc] init];
+//    conNode.pointer = [SMGUtils createPointerForAlg:kPN_ALG_NODE dataSource:dataSource isOut:isOut isMem:isMem];
+//    
+//    //3. 指定value_ps
+//    conNode.content_ps = [[NSMutableArray alloc] initWithArray:[SMGUtils sortPointers:algsArr]];
+// 
+//    //4. value.refPorts (更新引用序列)
+//    [AINetUtils insertRefPorts_AllAlgNode:conNode.pointer content_ps:conNode.content_ps difStrong:1];
+//    
+//    //5. 存储
+//    [SMGUtils insertNode:conNode];
+//    return conNode;
+//}
 
 /**
  *  MARK:--------------------构建抽象概念--------------------
+ *  @param value_ps     : 要构建absAlgNode的content_ps (稀疏码组) notnull;
+ *  @param conAlgs      : 具象AIAlgNode数组:(外类比时的algA&algB / 内类比时仅有一个元素) //不可为空数组
+ *  @param isMem        : 是否持久化,(如thinkIn中,视觉场景下的subView就不进行持久化,只存在内存网络中)
+ *  _param dataSource   : 概念节点的dataSource就是稀疏码信息的algsType; (不传时,从algsArr提取)
+ *  @param dsBlock      : 指定ds (默认从value_ps获取);
+ *  @param isOutBlock   : 指定isOut (默认从value_ps获取) (概念节点的isOut状态; (思维控制器知道它是行为还是认知));
+ *
  *  @问题记录:
  *    1. 思考下,conAlgs中去重,能不能将md5匹配的conAlg做为absAlg的问题?
  *      a. 不能: (参考: 思考计划2/191126更新表)
  *      b. 能: (则导致会形成坚果是坚果的多层抽象)
  *      c. 结论: 能,问题转移到n17p19
+ *  注: TODO:判断algSames是否就是algsA或algB本身; (等conAlgNode和absAlgNode统一不区分后,再判断本身)
  */
-+(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs dataSource:(NSString*)dataSource isMem:(BOOL)isMem{
-    if (!dataSource) {
-        dataSource = [self getDataSource:value_ps];
-    }
-    if (ARRISOK(value_ps) && ARRISOK(conAlgs)) {
++(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem dsBlock:(NSString*(^)())dsBlock isOutBlock:(BOOL(^)())isOutBlock{
+    //1. 初齐ds和isOut参数;
+    NSString *dataSource = dsBlock ? dsBlock() : [self getDataSource:value_ps];
+    BOOL isOut = isOutBlock ? isOutBlock() : [AINetUtils checkAllOfOut:value_ps];
+    conAlgs = ARRTOOK(conAlgs);
+    if (ARRISOK(value_ps)) {
         //1. 数据准备
         value_ps = ARRTOOK(value_ps);
         NSArray *sortSames = ARRTOOK([SMGUtils sortPointers:value_ps]);
@@ -96,9 +113,6 @@
                     if (!ISOK(absNode, AIAbsAlgNode.class) ) {
                         WLog(@"发现非抽象类型的抽象节点错误,,,请检查出现此情况的原因;");
                     }
-                    if (findAbsNode.content_ps.count != value_ps.count) {
-                        NSLog(@"");//精训第6步A10长度为0的问题断点;
-                    }
                     break;
                 }
             }
@@ -109,7 +123,6 @@
         if (!findAbsNode) {
             absIsNew = true;
             findAbsNode = [[AIAbsAlgNode alloc] init];
-            BOOL isOut = [AINetUtils checkAllOfOut:sortSames];
             findAbsNode.pointer = [SMGUtils createPointerForAlg:kPN_ALG_ABS_NODE dataSource:dataSource isOut:isOut isMem:isMem];
             findAbsNode.content_ps = [[NSMutableArray alloc] initWithArray:sortSames];
         }
@@ -131,7 +144,7 @@
         //5. 关联 & 存储
         [AINetUtils relateAlgAbs:findAbsNode conNodes:validConAlgs];
         [theApp.heLogView addLog:STRFORMAT(@"构建抽象概念:%@,存储于:%d,内容数:%lu",findAbsNode.pointer.identifier,findAbsNode.pointer.isMem,(unsigned long)findAbsNode.content_ps.count)];
-        
+        [SMGUtils insertNode:findAbsNode];
         return findAbsNode;
     }
     return nil;
@@ -140,7 +153,7 @@
 /**
  *  MARK:--------------------构建抽象概念_防重--------------------
  */
-+(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs ds:(NSString*)ds isMem:(BOOL)isMem{
++(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem dsBlock:(NSString*(^)())dsBlock isOutBlock:(BOOL(^)())isOutBlock{
     //1. 数据检查
     value_ps = ARRTOOK(value_ps);
     NSArray *sort_ps = [SMGUtils sortPointers:value_ps];
@@ -165,7 +178,7 @@
         return localAlg;
     }else{
         //4. 无则构建
-        return [self createAbsAlgNode:value_ps conAlgs:conAlgs dataSource:ds isMem:isMem];
+        return [self createAbsAlgNode:value_ps conAlgs:conAlgs isMem:isMem dsBlock:dsBlock isOutBlock:isOutBlock];
     }
 }
 

@@ -104,27 +104,12 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------创建概念节点--------------------
- *  将微信息组,转换成概念节点;
- *  需要对概念节点指定当前的isOut状态; (思维控制器知道它是行为还是认知)
- *  @result notnull
- */
--(AIAlgNode*) createAlgNode:(NSArray*)algsArr isOut:(BOOL)isOut isMem:(BOOL)isMem;
--(AIAlgNode*) createAlgNode:(NSArray*)algsArr dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem;
-
-
-/**
- *  MARK:--------------------构建抽象概念--------------------
- *  1. 内类比调用 & 外类比调用 (存硬盘)
- *  2. thinkIn调用 (存内存)
- */
-//-(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs dataSource:(NSString*)dataSource isMem:(BOOL)isMem;
-
-/**
  *  MARK:--------------------构建抽象概念_防重--------------------
  *  @desc 要做到全局防重,所以废弃具象AIAlgNode,只使用AIAbsAlgNode;
  */
 -(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem;
--(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs ds:(NSString*)ds isMem:(BOOL)isMem;
+-(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem ds:(NSString*)ds;
+-(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem isOut:(BOOL)isOut;
+-(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem isOut:(BOOL)isOut ds:(NSString*)ds;
 
 @end

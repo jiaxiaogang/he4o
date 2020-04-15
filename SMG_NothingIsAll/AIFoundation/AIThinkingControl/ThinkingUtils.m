@@ -198,18 +198,7 @@
 }
 
 +(AIAlgNodeBase*) createHdAlgNode_NoRepeat:(NSArray*)value_ps{
-    //1. 绝对匹配取已存在
-    value_ps = ARRTOOK(value_ps);
-    AIAlgNodeBase *target = [AINetIndexUtils getAbsoluteMatchingAlgNodeWithValuePs:value_ps];
-    
-    //2. 已存在,则转到硬盘
-    if (target) {
-        target = [AINetUtils move2HdNodeFromMemNode_Alg:target];
-    }else{
-        //3. 不存在则新构建
-        target = [theNet createAlgNode:value_ps isOut:false isMem:false];
-    }
-    return target;
+    return [theNet createAbsAlg_NoRepeat:value_ps conAlgs:nil isMem:false isOut:false];
 }
 
 +(AINetAbsFoNode*)createOutsideAbsFo_NoRepeat:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo content_ps:(NSArray*)content_ps{

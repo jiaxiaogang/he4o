@@ -619,7 +619,7 @@
     //2. 重组rtAlg
     NSMutableArray *creativity_ps = [[NSMutableArray alloc] initWithArray:same_ps];
     [creativity_ps addObject:mValue_p];
-    AIAlgNode *rtAlg = [theNet createAlgNode:creativity_ps isOut:false isMem:true];
+    AIAbsAlgNode *rtAlg = [theNet createAbsAlg_NoRepeat:creativity_ps conAlgs:nil isMem:true isOut:false];
     [theNV setNodeData:rtAlg.pointer appendLightStr:@"RTAlg"];
     
     //3. 反思 & 评价

@@ -216,28 +216,42 @@ static AINet *_instance;
 //MARK:===============================================================
 //MARK:                     < algNode >
 //MARK:===============================================================
--(AIAlgNode*) createAlgNode:(NSArray*)algsArr isOut:(BOOL)isOut isMem:(BOOL)isMem{
-    return [AIAlgNodeManager createAlgNode:algsArr isOut:isOut isMem:isMem];
-}
--(AIAlgNode*) createAlgNode:(NSArray*)algsArr dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem{
-    return [AIAlgNodeManager createAlgNode:algsArr dataSource:dataSource isOut:isOut isMem:isMem];
-}
-
--(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs dataSource:(NSString*)dataSource isMem:(BOOL)isMem{
-    if (ARRISOK(conAlgs)) {
-        return [AIAlgNodeManager createAbsAlgNode:value_ps conAlgs:conAlgs dataSource:dataSource isMem:isMem];
-    }
-    return nil;
-}
+//-(AIAlgNode*) createAlgNode:(NSArray*)algsArr isOut:(BOOL)isOut isMem:(BOOL)isMem{
+//    return [AIAlgNodeManager createAlgNode:algsArr isOut:isOut isMem:isMem];
+//}
+//-(AIAlgNode*) createAlgNode:(NSArray*)algsArr dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem{
+//    return [AIAlgNodeManager createAlgNode:algsArr dataSource:dataSource isOut:isOut isMem:isMem];
+//}
+//
+//-(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs dataSource:(NSString*)dataSource isMem:(BOOL)isMem{
+//    if (ARRISOK(conAlgs)) {
+//        return [AIAlgNodeManager createAbsAlgNode:value_ps conAlgs:conAlgs dataSource:dataSource isMem:isMem];
+//    }
+//    return nil;
+//}
 
 /**
  *  MARK:--------------------构建抽象概念_防重--------------------
  */
 -(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem{
-    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs ds:nil isMem:isMem];
+    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs isMem:isMem dsBlock:nil isOutBlock:nil];
 }
--(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs ds:(NSString*)ds isMem:(BOOL)isMem{
-    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs ds:ds isMem:isMem];
+-(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem ds:(NSString*)ds{
+    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs isMem:isMem dsBlock:^NSString *{
+        return ds;
+    } isOutBlock:nil];
+}
+-(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem isOut:(BOOL)isOut{
+    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs isMem:isMem dsBlock:nil isOutBlock:^BOOL{
+        return isOut;
+    }];
+}
+-(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem isOut:(BOOL)isOut ds:(NSString*)ds{
+    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs isMem:isMem dsBlock:^NSString *{
+        return ds;
+    } isOutBlock:^BOOL{
+        return isOut;
+    }];
 }
 
 @end

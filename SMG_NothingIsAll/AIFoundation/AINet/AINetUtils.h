@@ -55,7 +55,7 @@
  *  @paramer ps         : 生成md5的ps (需要有序)
  *  @param difStrong    : 构建具象alg时,默认为1,构建抽象时,默认为具象节点数(这个以后不合理再改规则,比如改为平均,或者具象强度之和等);
  */
-+(void) insertRefPorts_AllAlgNode:(AIPointer*)algNode_p content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong;
++(void) insertRefPorts_AllAlgNode:(AIKVPointer*)algNode_p content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong;
 
 
 /**
@@ -65,8 +65,8 @@
  *  @param order_ps     : orders节点组
  *  @param ps           : 生成md5的ps
  */
-+(void) insertRefPorts_AllFoNode:(AIPointer*)foNode_p order_ps:(NSArray*)order_ps ps:(NSArray*)ps;
-+(void) insertRefPorts_AllFoNode:(AIPointer*)foNode_p order_p:(AIPointer*)order_p ps:(NSArray*)ps;
++(void) insertRefPorts_AllFoNode:(AIKVPointer*)foNode_p order_ps:(NSArray*)order_ps ps:(NSArray*)ps;
++(void) insertRefPorts_AllFoNode:(AIKVPointer*)foNode_p order_p:(AIPointer*)order_p ps:(NSArray*)ps;
 
 
 /**
@@ -75,7 +75,7 @@
  *  @param value_p      : 有三种值; 1:delta 2:urgent 3:DirectionReference地址;
  *  注:目前在使用NetRefrence,所以此处不用;
  */
-+(void) insertRefPorts_AllMvNode:(AIPointer*)mvNode_p value_p:(AIPointer*)value_p difStrong:(NSInteger)difStrong;
++(void) insertRefPorts_AllMvNode:(AIKVPointer*)mvNode_p value_p:(AIPointer*)value_p difStrong:(NSInteger)difStrong;
 
 
 
@@ -115,7 +115,7 @@
  *  @param ports    : 把pointer插到这儿;
  *  @param ps       : pointer是alg时,传alg.content_ps | pointer是fo时,传fo.orders; (用来计算md5.header)
  */
-+(void) insertPointer_Hd:(AIPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps;
++(void) insertPointer_Hd:(AIKVPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps;
 
 /**
  *  MARK:--------------------内存插线到时间ports序列--------------------
@@ -124,7 +124,7 @@
  *  @param ps       : pointer是alg时,传alg.content_ps | pointer是fo时,传fo.orders; (用来计算md5.header)
  *  注: 内存网络中,仅按时间排序,没有强度;
  */
-+(void) insertPointer_Mem:(AIPointer*)pointer toPorts:(NSMutableArray*)memPorts ps:(NSArray*)ps difStrong:(NSInteger)difStrong;
++(void) insertPointer_Mem:(AIKVPointer*)pointer toPorts:(NSMutableArray*)memPorts ps:(NSArray*)ps difStrong:(NSInteger)difStrong;
 
 
 //MARK:===============================================================

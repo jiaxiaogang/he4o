@@ -58,7 +58,7 @@
     }
     
     //3. 构建父概念 & 将空场景加入瞬时记忆;
-    AIAlgNode *parentAlgNode = [theNet createAlgNode:parentValue_ps dataSource:algsType isOut:false isMem:true];
+    AIAbsAlgNode *parentAlgNode = [theNet createAbsAlg_NoRepeat:parentValue_ps conAlgs:nil isMem:true isOut:false ds:algsType];
     if (parentValue_ps.count == 0) [self.delegate aiThinkIn_AddToShortMemory:@[parentAlgNode.pointer] isMatch:false];
     NSLog(@"---> 构建InputParent节点:%@",Alg2FStr(parentAlgNode));
     
@@ -67,7 +67,7 @@
     
     //5. 构建子概念 (抽象概念,并嵌套);
     for (NSArray *subValue_ps in subValuePsArr) {
-        AIAbsAlgNode *subAlgNode = [theNet createAbsAlg_NoRepeat:subValue_ps conAlgs:@[parentAlgNode] ds:algsType isMem:true];
+        AIAbsAlgNode *subAlgNode = [theNet createAbsAlg_NoRepeat:subValue_ps conAlgs:@[parentAlgNode] isMem:true ds:algsType];
         [fromGroup_ps addObject:subAlgNode.pointer];
         
         //6. 将所有子概念添加到瞬时记忆;
@@ -94,7 +94,7 @@
         [self dataIn_FindMV:algsArr];
     }else{
         //1. 打包成algTypeNode;
-        AIAlgNodeBase *algNode = [theNet createAlgNode:algsArr dataSource:algsType isOut:false isMem:true];
+        AIAlgNodeBase *algNode = [theNet createAbsAlg_NoRepeat:algsArr conAlgs:nil isMem:true isOut:false ds:algsType];
         
         //2. 加入瞬时记忆
         if (algNode && self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_AddToShortMemory:isMatch:)]) {
@@ -111,7 +111,7 @@
     outValue_ps = ARRTOOK(outValue_ps);
     
     //2. 构建概念
-    AIAlgNode *outAlg = [theNet createAlgNode:outValue_ps isOut:true isMem:false];
+    AIAbsAlgNode *outAlg = [theNet createAbsAlg_NoRepeat:outValue_ps conAlgs:nil isMem:false isOut:true];
     
     //3. 加瞬时记忆
     [self.delegate aiThinkIn_AddToShortMemory:@[outAlg.pointer] isMatch:false];
