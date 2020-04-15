@@ -91,10 +91,10 @@ typedef NS_ENUM(NSInteger,  OutputObserverType) {
  */
 typedef NS_ENUM(NSInteger, MatchType) {
     MatchType_None  = 0,//无效
-    MatchType_Self  = 1,//自身
-    MatchType_Fuzzy = 2,//模糊匹配
-    MatchType_Abs   = 3,//全含
-    MatchType_Seem  = 4,//仅相似
+    MatchType_Seem  = 1,//仅相似
+    MatchType_Abs   = 2,//全含
+    MatchType_Fuzzy = 3,//模糊匹配
+    MatchType_Self  = 4,//自身
 };
 
 /**

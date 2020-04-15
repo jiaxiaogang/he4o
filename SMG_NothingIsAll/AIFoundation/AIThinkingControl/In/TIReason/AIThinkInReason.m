@@ -96,16 +96,6 @@
         if (matchType == MatchType_Abs) [AINetUtils relateAlgAbs:(AIAbsAlgNode*)assAlgNode conNodes:@[algNode]];
     }
     
-    //4. 调试日志;
-    if (assAlgNode && ![SMGUtils containsSub_ps:assAlgNode.content_ps parent_ps:algNode.content_ps]) {
-        WLog(@"全含结果不正常,导致下面的抽象sames也不准确,,,可在git20191223找回原sames代码");
-    }
-    if (assAlgNode) {
-        NSLog(@"----> 识别Alg success:%@",Alg2FStr(assAlgNode));
-    }else{
-        NSLog(@"识别Alg failure");
-    }
-    
     //3. 全含时,可进行模糊匹配 (Fuzzy匹配) //因TOR未支持fuzzy,故目前仅将最相似的fuzzy放到AIShortMatchModel中当matchAlg用;
     if (matchType == MatchType_Abs) {
         NSArray *fuzzys = ARRTOOK([TIRUtils matchAlg2FuzzyAlgV2:algNode matchAlg:assAlgNode except_ps:fromGroup_ps]);
@@ -117,6 +107,9 @@
             matchType = MatchType_Fuzzy;
         }
     }
+    
+    //4. 调试日志
+    NSLog(@"----> 识别Alg Finish 类型:%ld 内容:%@",matchType,Alg2FStr(assAlgNode));
     complete(assAlgNode,matchType);
 }
 
@@ -356,20 +349,14 @@
             //6. 对assFo做匹配判断;
             [TIRUtils TIR_Fo_CheckFoValidMatch:protoFo assFo:assFo checkItemValid:checkItemValid success:^(NSInteger lastAssIndex, CGFloat matchValue) {
                 NSLog(@"时序识别: SUCCESS >>> matchValue:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
-                
                 successed = true;
                 finishBlock(assFo,matchValue);
-                [theNV setNodeData:assFo.pointer lightStr:@"成功assFo"];
-                [theNV setNodeData:protoFo.pointer lightStr:@"成功protoFo"];
             } failure:^(NSString *msg) {
-                //WLog(@"时序匹配失败了! 原因:%@",msg);
                 NSLog(@"%@",msg);
             }];
             
             //7. 成功一条即return
-            if (successed) {
-                return;
-            }
+            if (successed) return;
         }
     }
 }
