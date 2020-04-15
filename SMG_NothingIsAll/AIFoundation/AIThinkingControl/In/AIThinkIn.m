@@ -153,6 +153,8 @@
  *      2. TODOWAIT: TIR_Alg识别后,要进行类比,并构建网络关联; (参考n16p7)
  *      3. 点击饥饿,再点击乱投,此处返回了matchFo:nil matchValue:0;
  *          > 已解决,因为fromMemShort是4层alg,而fromRethink是两层;
+ *  @version
+ *      20200416 - 修复时序识别的bug: 因概念节点去重不够,导致即使概念内容一致,在时序识别时,也会无法匹配 (参考n19p5-A组BUG4);
  */
 -(void) dataIn_NoMV:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps{
     //1. 数据准备 (瞬时记忆,理性匹配出的模型);
@@ -164,7 +166,6 @@
         mModel.matchAlg = matchAlg;
         mModel.algMatchType = type;
     }];
-    NSLog(@"-----> 瞬时识别概念:%@",Alg2FStr(mModel.matchAlg));
     
     //3. 添加到瞬时记忆;
     if (mModel.matchAlg) [self.delegate aiThinkIn_AddToShortMemory:@[mModel.matchAlg.pointer] isMatch:true];
@@ -174,65 +175,10 @@
     mModel.protoFo = [theNet createConFo:shortMemory isMem:true];
     
     //4. 识别时序;
-    //训练A3,测得时序识别失败,原因在此处;
-    //此处传入时序为protoFo,而传入lastAlg为matchAlg,这导致只要是seemAlg都无法成功时序识别,因为seemAlg不会与matchAlg匹配;
-    //分析1: last为matchAlg才可能联想到被引用的时序;
-    //分析2: 传入时序只能为protoFo,因为此方法本来就是为了取matchFo;
-    
-    //日志如下:
-    //[21:28:44:388          TIRUtils.m  40] ------------------------ checkFoValid ------------------------
-    //F25[飞↗,(速0,宽5,高5,形2.5,距0,向→,红0,绿255,蓝0,皮0,经199,纬375),吃1]
-    //F11[(速0,宽5,高5,形2.5,经207,纬368,距0,向→,红0,绿255,蓝0,皮0),吃1]
-    
-    
-    /**
-     
-     ///////// protoFo本来就是用matchAlg来构建的,所以构建方法没什么问题;
-     ///////// 训练A1和A3,发现以下两个疑点;
-     
-     疑点1: 为什么不是联想到F11,而是F9?
-     [08:10:00:974   AIThinkInReason.m 269] --------------------------------------- 瞬时时序识别 ---------------------------------------
-     F13[(速0,宽5,高5,形2.5,经207,纬368,距0,向→,红0,绿255,蓝0,皮0)]
-     [08:10:00:975   AIThinkInReason.m 346] ------------ TIR_Fo ------------索引数:1
-     [08:10:00:975   AIThinkInReason.m 352] -----> TIR_Fo 索引到有效时序数:1
-     [08:10:00:986          TIRUtils.m  40] ------------------------ checkFoValid ------------------------
-     F13[(速0,宽5,高5,形2.5,经207,纬368,距0,向→,红0,绿255,蓝0,皮0)]
-     F9[,(速0,宽5,高5,形2.5,经207,纬368,距0,向→,红0,绿255,蓝0,皮0),吃1,]
-     
-     
-     疑点2: 明明能匹配,为何没匹配到?
-     [08:10:01:013   AIThinkInReason.m 269] --------------------------------------- 瞬时时序识别 ---------------------------------------
-     F14[(速0,宽5,高5,形2.5,经207,纬368,距0,向→,红0,绿255,蓝0,皮0),吃1]
-     [08:10:01:013   AIThinkInReason.m 346] ------------ TIR_Fo ------------索引数:1
-     [08:10:01:013   AIThinkInReason.m 352] -----> TIR_Fo 索引到有效时序数:1
-     [08:10:01:021          TIRUtils.m  40] ------------------------ checkFoValid ------------------------
-     F14[(速0,宽5,高5,形2.5,经207,纬368,距0,向→,红0,绿255,蓝0,皮0),吃1]
-     F11[(速0,宽5,高5,形2.5,经207,纬368,距0,向→,红0,绿255,蓝0,皮0),吃1]
-     [08:10:01:022   AIThinkInReason.m 280] -------------- checkAlgValid --------------
-     A3(吃1)
-     A3(吃1)
-     [08:10:01:022   AIThinkInReason.m 295] --->>> checkItem有效 (Match层)
-     [08:10:01:023          TIRUtils.m  61] --->>>>> 在1位,找到LastItem匹配
-     [08:10:01:028   AIThinkInReason.m 280] -------------- checkAlgValid --------------
-     A5(速0,宽5,高5,形2.5,经207,纬368,距0,向→,红0,绿255,蓝0,皮0)
-     A2(速0,宽5,高5,形2.5,经207,纬368,距0,向→,红0,绿255,蓝0,皮0)
-     [08:10:01:029   AIThinkInReason.m 288] ---> checkItem无效 (Match.Abs层)
-     [08:10:01:032          TIRUtils.m  77] ---->匹配失败:
-     A3(吃1)
-     A2(速0,宽5,高5,形2.5,经207,纬368,距0,向→,红0,绿255,蓝0,皮0)
-     [08:10:01:033   AIThinkInReason.m 368] 时序识别: item无效,未在protoFo中找到,所有非全含,不匹配
-     [08:10:01:033         AIThinkIn.m 194] ----->>> 瞬时识别时序:F[]
-     
-     //结论: 初步怀疑是概念节点去重不够,导致;
-     
-     */
-    
-    
     [AIThinkInReason TIR_Fo_FromShortMem:mModel.protoFo lastMatchAlg:mModel.matchAlg finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue) {
         mModel.matchFo = matchFo;
         mModel.matchFoValue = matchValue;
     }];
-    NSLog(@"----->>> 瞬时识别时序:%@",Fo2FStr(mModel.matchFo));
     
     //5. 内类比
     [AIThinkInReason analogyInner:mModel.protoFo];

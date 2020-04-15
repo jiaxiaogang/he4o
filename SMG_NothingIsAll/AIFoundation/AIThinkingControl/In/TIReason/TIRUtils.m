@@ -204,7 +204,6 @@
             
             //6. 判断全含; (matchingCount == assAlg.content.count) (且只能识别为抽象节点)
             if (ISOK(result, AIAbsAlgNode.class) && result.content_ps.count == matchingCount) {
-                NSLog(@"------MatchAlg 全含返回 Success: %@",Alg2FStr(result));
                 complete(result,MatchType_Abs);
                 return;
             }
@@ -221,7 +220,6 @@
         WLog(@"识别结果 >> 非抽象且非全含:%ld,非抽象数:%ld,非全含数:%ld / 总数:%lu",(long)typeCountWrong,(long)typeWrong,countWrong,(unsigned long)sortKeys.count);
         //7. 未将全含返回,则返回最相似;
         AIAlgNodeBase *result = [SMGUtils searchNode:DATA2OBJ(ARR_INDEX(sortKeys, 0))];
-        NSLog(@"------MatchAlg 仅相似返回 Success: %@",Alg2FStr(result));
         complete(result,MatchType_Seem);
         return;
     }
