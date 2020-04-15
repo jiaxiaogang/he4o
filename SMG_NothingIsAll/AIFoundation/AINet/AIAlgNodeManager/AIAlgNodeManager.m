@@ -66,38 +66,37 @@
  *  注: TODO:判断algSames是否就是algsA或algB本身; (等conAlgNode和absAlgNode统一不区分后,再判断本身)
  */
 +(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem dsBlock:(NSString*(^)())dsBlock isOutBlock:(BOOL(^)())isOutBlock{
-    //1. 初齐ds和isOut参数;
+    //1. 数据准备
     NSString *dataSource = dsBlock ? dsBlock() : [self getDataSource:value_ps];
     BOOL isOut = isOutBlock ? isOutBlock() : [AINetUtils checkAllOfOut:value_ps];
     conAlgs = ARRTOOK(conAlgs);
-    if (ARRISOK(value_ps)) {
-        //1. 数据准备
-        value_ps = ARRTOOK(value_ps);
-        NSArray *sortSames = ARRTOOK([SMGUtils sortPointers:value_ps]);
-        NSString *samesStr = [SMGUtils convertPointers2String:sortSames];
-        NSString *samesMd5 = STRTOOK([NSString md5:samesStr]);
-        NSMutableArray *validConAlgs = [[NSMutableArray alloc] initWithArray:conAlgs];
-        AIAbsAlgNode *findAbsNode = nil;
-        
-        //2. 判断具象节点中,已有一个抽象sames节点,则不需要再构建新的;
-        for (AIAbsAlgNode *checkNode in conAlgs) {
-            //a. checkNode是抽象节点时;
-            if (ISOK(checkNode, AIAbsAlgNode.class)) {
+    value_ps = ARRTOOK(value_ps);
+    NSArray *sortSames = ARRTOOK([SMGUtils sortPointers:value_ps]);
+    NSString *samesStr = [SMGUtils convertPointers2String:sortSames];
+    NSString *samesMd5 = STRTOOK([NSString md5:samesStr]);
+    NSMutableArray *validConAlgs = [[NSMutableArray alloc] initWithArray:conAlgs];
+    AIAbsAlgNode *result = nil;
+    
+    //2. 判断具象节点中,已有一个抽象sames节点,则不需要再构建新的;
+    for (AIAbsAlgNode *checkNode in conAlgs) {
+        //a. checkNode是抽象节点时;
+        if (ISOK(checkNode, AIAbsAlgNode.class)) {
+            
+            //b. 并且md5与orderSames相同时,即发现checkNode本身就是抽象节点;
+            NSString *checkMd5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:[SMGUtils sortPointers:checkNode.content_ps]]]);
+            if ([samesMd5 isEqualToString:checkMd5]) {
                 
-                //b. 并且md5与orderSames相同时,即发现checkNode本身就是抽象节点;
-                NSString *checkMd5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:[SMGUtils sortPointers:checkNode.content_ps]]]);
-                if ([samesMd5 isEqualToString:checkMd5]) {
-                    
-                    //c. 则把conAlgs去掉checkNode;
-                    [validConAlgs removeObject:checkNode];
-                    
-                    //d. 找到findAbsNode
-                    findAbsNode = checkNode;
-                }
+                //c. 则把conAlgs去掉checkNode;
+                [validConAlgs removeObject:checkNode];
+                
+                //d. 找到result
+                result = checkNode;
             }
         }
-        
-        //2. 判断具象节点的absPorts中,是否已有一个"sames"节点,有则无需构建新的;
+    }
+    
+    //2. 判断具象节点的absPorts中,是否已有一个"sames"节点,有则无需构建新的;
+    if (!result) {
         for (AIAlgNodeBase *conNode in conAlgs) {
             NSArray *absPorts_All = [AINetUtils absPorts_All:conNode];
             for (AIPort *absPort in absPorts_All) {
@@ -109,7 +108,7 @@
                         absNode = [AINetUtils move2HdNodeFromMemNode_Alg:absNode];
                     }
                     //3> findAbsNode成功;
-                    findAbsNode = absNode;
+                    result = absNode;
                     if (!ISOK(absNode, AIAbsAlgNode.class) ) {
                         WLog(@"发现非抽象类型的抽象节点错误,,,请检查出现此情况的原因;");
                     }
@@ -117,37 +116,36 @@
                 }
             }
         }
-        
-        //3. 无则创建
-        BOOL absIsNew = false;
-        if (!findAbsNode) {
-            absIsNew = true;
-            findAbsNode = [[AIAbsAlgNode alloc] init];
-            findAbsNode.pointer = [SMGUtils createPointerForAlg:kPN_ALG_ABS_NODE dataSource:dataSource isOut:isOut isMem:isMem];
-            findAbsNode.content_ps = [[NSMutableArray alloc] initWithArray:sortSames];
-        }
-        
-        ////4. 概念的嵌套 (190816取消概念嵌套,参见n16p17-bug16)
-        //for (AIAlgNode *item in conAlgs) {
-        //    ///1. 可替换时,逐个进行替换; (比如cLess/cGreater时,就不可替换)
-        //    if ([SMGUtils containsSub_ps:value_ps parent_ps:item.content_ps]) {
-        //        NSMutableArray *newValue_ps = [SMGUtils removeSub_ps:value_ps parent_ps:[[NSMutableArray alloc] initWithArray:item.content_ps]];
-        //        [newValue_ps addObject:findAbsNode.pointer];
-        //        item.content_ps = [SMGUtils sortPointers:newValue_ps];
-        //    }
-        //}
-        
-        //4. value.refPorts (更新/加强微信息的引用序列)
-        NSInteger difStrong = 1;//absIsNew ? validConAlgs.count : 1;//20200106改回1,自由竞争无论是抽象还是具象;世上没有两片一样的树叶,所以对于抽象来说,本来就是讨便宜,易联想匹配的;
-        [AINetUtils insertRefPorts_AllAlgNode:findAbsNode.pointer content_ps:findAbsNode.content_ps difStrong:difStrong];
-        
-        //5. 关联 & 存储
-        [AINetUtils relateAlgAbs:findAbsNode conNodes:validConAlgs];
-        [theApp.heLogView addLog:STRFORMAT(@"构建抽象概念:%@,存储于:%d,内容数:%lu",findAbsNode.pointer.identifier,findAbsNode.pointer.isMem,(unsigned long)findAbsNode.content_ps.count)];
-        [SMGUtils insertNode:findAbsNode];
-        return findAbsNode;
     }
-    return nil;
+    
+    //3. 无则创建
+    BOOL absIsNew = false;
+    if (!result) {
+        absIsNew = true;
+        result = [[AIAbsAlgNode alloc] init];
+        result.pointer = [SMGUtils createPointerForAlg:kPN_ALG_ABS_NODE dataSource:dataSource isOut:isOut isMem:isMem];
+        result.content_ps = [[NSMutableArray alloc] initWithArray:sortSames];
+    }
+    
+    ////4. 概念的嵌套 (190816取消概念嵌套,参见n16p17-bug16)
+    //for (AIAlgNode *item in conAlgs) {
+    //    ///1. 可替换时,逐个进行替换; (比如cLess/cGreater时,就不可替换)
+    //    if ([SMGUtils containsSub_ps:value_ps parent_ps:item.content_ps]) {
+    //        NSMutableArray *newValue_ps = [SMGUtils removeSub_ps:value_ps parent_ps:[[NSMutableArray alloc] initWithArray:item.content_ps]];
+    //        [newValue_ps addObject:findAbsNode.pointer];
+    //        item.content_ps = [SMGUtils sortPointers:newValue_ps];
+    //    }
+    //}
+    
+    //4. value.refPorts (更新/加强微信息的引用序列)
+    NSInteger difStrong = 1;//absIsNew ? validConAlgs.count : 1;//20200106改回1,自由竞争无论是抽象还是具象;世上没有两片一样的树叶,所以对于抽象来说,本来就是讨便宜,易联想匹配的;
+    [AINetUtils insertRefPorts_AllAlgNode:result.pointer content_ps:result.content_ps difStrong:difStrong];
+    
+    //5. 关联 & 存储
+    [AINetUtils relateAlgAbs:result conNodes:validConAlgs];
+    [theApp.heLogView addLog:STRFORMAT(@"构建抽象概念:%@,存储于:%d,内容:%@",result.pointer.identifier,result.pointer.isMem,Alg2FStr(result))];
+    [SMGUtils insertNode:result];
+    return result;
 }
 
 /**

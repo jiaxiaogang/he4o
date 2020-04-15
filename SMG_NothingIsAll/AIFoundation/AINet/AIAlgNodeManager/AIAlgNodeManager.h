@@ -13,6 +13,7 @@
 
 /**
  *  MARK:--------------------构建抽象概念_防重版--------------------
+ *  @result notnull
  */
 +(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem dsBlock:(NSString*(^)())dsBlock isOutBlock:(BOOL(^)())isOutBlock;
 
