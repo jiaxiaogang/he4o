@@ -173,13 +173,17 @@
 /**
  *  MARK:--------------------LOG--------------------
  */
+//日志默认header模式 (当前为首行显示)
+#define DefaultHeaderMode 1
+//当前类名
 #define FILENAME [[NSString stringWithUTF8String:__FILE__] lastPathComponent]
 //errorLog
 #define ELog(fmt, ...) NSLog((@"<错误> " fmt), ##__VA_ARGS__);
 //warnLog
 #define WLog(fmt, ...) NSLog((@"<警告> " fmt), ##__VA_ARGS__);
 //系统log (格式化)
-#define NSLog(FORMAT, ...) fprintf(stderr,"%s",[[SMGUtils nsLogFormat:FILENAME line:__LINE__ protoLog:[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] headerMode:1] UTF8String]);
+#define NSLog(FORMAT, ...) fprintf(stderr,"%s",[[SMGUtils nsLogFormat:FILENAME line:__LINE__ protoLog:[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] headerMode:DefaultHeaderMode] UTF8String]);
+#define NSLog_Mode(mode,FORMAT, ...) fprintf(stderr,"%s",[[SMGUtils nsLogFormat:FILENAME line:__LINE__ protoLog:[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] headerMode:mode] UTF8String]);
 //heLog (持久化日志)
 #define HeLog(fmt, ...) [theApp.heLogView addLog:[NSString stringWithFormat:fmt, ##__VA_ARGS__]]
 //tipLog (UI弹出日志)
