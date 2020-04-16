@@ -409,13 +409,17 @@
 
 @implementation AIThinkInAnalogy (Feedback)
 
+/**
+ *  MARK:--------------------反向反馈类比--------------------
+ *  @version
+ *      20200416 - 原先ms和ps都导致{mv-},改为ms导致{mmv*rate},ps导致{pmv*rate};
+ */
 +(void) analogy_Feedback_Diff:(AIShortMatchModel*)mModel shortFo:(AIFoNodeBase*)shortFo{
     //1. 数据检查 (MMv和PMV有效,且同区);
     if (!mModel || !mModel.matchFo || !shortFo) return;
     AIKVPointer *mMv_p = mModel.matchFo.cmvNode_p;
     AIKVPointer *pMv_p = shortFo.cmvNode_p;
-    AICMVNodeBase *pMv = [SMGUtils searchNode:pMv_p];
-    if (!mMv_p || !pMv_p || ![mMv_p.algsType isEqualToString:pMv_p.algsType] || ![mMv_p.dataSource isEqualToString:pMv_p.dataSource] || !pMv) {
+    if (!mMv_p || !pMv_p || ![mMv_p.algsType isEqualToString:pMv_p.algsType] || ![mMv_p.dataSource isEqualToString:pMv_p.dataSource]) {
         return;
     }
 
@@ -423,7 +427,7 @@
     CGFloat mScore = [ThinkingUtils getScoreForce:mMv_p ratio:mModel.matchFoValue];
     CGFloat pScore = [ThinkingUtils getScoreForce:pMv_p ratio:1.0f];
     BOOL isDiff = ((mScore > 0 && pScore < 0) || (mScore < 0 && pScore > 0));
-    ALog(@"~~~~~~~~~~~~~~~ 反向反馈类比 %@ (mMv:%f | fMv:%f) ~~~~~~~~~~~~~~~",isDiff ? @"START" : @"JUMP",mScore,pScore);
+    ALog(@"~~~~~~~~~~~~~~~~~~~~~~~~ 反向反馈类比 %@ ~~~~~~~~~~~~~~~~~~~~~~~~\n%@->%@\n%@->%@",isDiff ? @"START" : @"JUMP",Fo2FStr(mModel.matchFo),Mvp2Str(mMv_p),Fo2FStr(shortFo),Mvp2Str(pMv_p));
     if (!isDiff) return;
 
     //3. 提供类比收集"缺乏和多余"所需的两个数组;
@@ -491,50 +495,36 @@
 
     //5. 将最终都没收集的shortFo剩下的部分打包进多余 (jStart到end之间的pAlg_p(含jStart,含end));
     [ps addObjectsFromArray:ARR_SUB(shortFo.content_ps, jStart, shortFo.content_ps.count - jStart)];
-    ALog(@"~~~> 反向反馈类比 ms数:%lu ps数:%lu",ms.count,ps.count);
+    NSLog(@"~~~> 反向反馈类比 ms:%@ ps:%@",Pits2FStr(ms),Pits2FStr(ps));
     
-    //6. 构建ms
-    [self analogy_Feedback_Diff_Creater:pMv content_ps:ms createFoBlock:^AIFoNodeBase *{
-        return [ThinkingUtils createConFo_NoRepeat_General:ms isMem:false];
-    } createMvBlock:^AICMVNodeBase *(AIKVPointer *u_p, AIKVPointer *d_p, AIFoNodeBase *foNode) {
-        return [theNet createConMv:u_p delta_p:d_p at:pMv_p.algsType isMem:false];
-    } rate:(float)ms.count / mModel.matchFo.content_ps.count];
-
-    //7. 构建ps
-    [self analogy_Feedback_Diff_Creater:pMv content_ps:ps createFoBlock:^AIFoNodeBase *{
-        return [ThinkingUtils createAbsFo_NoRepeat_General:@[shortFo] content_ps:ps];
-    } createMvBlock:^AICMVNodeBase *(AIKVPointer *u_p, AIKVPointer *d_p, AIFoNodeBase *foNode) {
-        return [theNet createAbsMv:foNode.pointer conMvs:@[pMv] at:pMv_p.algsType ds:pMv_p.dataSource urgentTo_p:u_p delta_p:d_p];
-    } rate:(float)ps.count / shortFo.content_ps.count];
+    //6. 构建ms & ps
+    [self analogy_Feedback_Diff_Creater:mMv_p conFo:mModel.matchFo content_ps:ms];
+    [self analogy_Feedback_Diff_Creater:pMv_p conFo:shortFo content_ps:ps];
 }
 
-+(void) analogy_Feedback_Diff_Creater:(AICMVNodeBase*)pMv content_ps:(NSArray*)content_ps createFoBlock:(AIFoNodeBase*(^)())createFoBlock createMvBlock:(AICMVNodeBase*(^)(AIKVPointer *u_p,AIKVPointer *d_p,AIFoNodeBase *foNode))createMvBlock rate:(CGFloat)rate{
++(void) analogy_Feedback_Diff_Creater:(AIKVPointer*)conMv_p conFo:(AIFoNodeBase*)conFo content_ps:(NSArray*)content_ps{
     //1. 数据检查
-    if(!pMv || !createFoBlock || !createMvBlock || !ARRISOK(content_ps)) return;
+    AICMVNodeBase *conMv = [SMGUtils searchNode:conMv_p];
+    if(!conMv || !ARRISOK(content_ps) || !conFo) return;
+    CGFloat rate = (float)content_ps.count / conFo.content_ps.count;
 
-    //2. 取protoMv的价值变化量 (基准);
-    NSInteger pUrgentTo = [NUMTOOK([AINetIndex getData:pMv.urgentTo_p]) integerValue];
-    NSInteger pDelta = [NUMTOOK([AINetIndex getData:pMv.delta_p]) integerValue];
+    //2. 构建foNode
+    AIFoNodeBase *createFo = [ThinkingUtils createAbsFo_NoRepeat_General:@[conFo] content_ps:content_ps];
 
-    //3. 构建foNode
-    AIFoNodeBase *createFo = createFoBlock();
-
-    //4. 计算ms的价值变化量;
+    //3. 计算ms的价值变化量 (基准 x rate);
+    NSInteger pUrgentTo = [NUMTOOK([AINetIndex getData:conMv.urgentTo_p]) integerValue];
+    NSInteger pDelta = [NUMTOOK([AINetIndex getData:conMv.delta_p]) integerValue];
     NSInteger ms_UrgentTo = (float)pUrgentTo * rate;
     NSInteger ms_Delta = (float)pDelta * rate;
-    NSString *at = pMv.pointer.algsType;
-    NSString *ds = pMv.pointer.dataSource;
 
-    //5. 构建mvNode
-    AIKVPointer *urgent_p = [theNet getNetDataPointerWithData:@(ms_UrgentTo) algsType:at dataSource:ds];
-    AIKVPointer *delta_p = [theNet getNetDataPointerWithData:@(ms_Delta) algsType:at dataSource:ds];
-    AICMVNodeBase *createMv = createMvBlock(urgent_p,delta_p,createFo);
-
-    //6. 连接mv基本模型;
+    //4. 构建mvNode
+    AIKVPointer *urgent_p = [theNet getNetDataPointerWithData:@(ms_UrgentTo) algsType:conMv_p.algsType dataSource:conMv_p.dataSource];
+    AIKVPointer *delta_p = [theNet getNetDataPointerWithData:@(ms_Delta) algsType:conMv_p.algsType dataSource:conMv_p.dataSource];
+    AICMVNodeBase *createMv = [theNet createAbsMv:createFo.pointer conMvs:@[conMv] at:conMv_p.algsType ds:conMv_p.dataSource urgentTo_p:urgent_p delta_p:delta_p];
+    
+    //5. 连接mv基本模型;
     [AINetUtils relateFo:createFo mv:createMv];
-    if (createFo && createMv) {
-        ALog(@"~~~~> 反向反馈类比 CreateFo内容:%@->{%f}",Fo2FStr(createFo),Mvp2Str(createMv.pointer));
-    }
+    NSLog(@"~~~~> 反向反馈类比 CreateFo内容:%@->%@",Fo2FStr(createFo),Mvp2Str(createMv.pointer));
 }
 
 +(void) analogy_Feedback_Same:(AIShortMatchModel*)mModel shortFo:(AIFoNodeBase*)shortFo{
@@ -545,7 +535,7 @@
     CGFloat mScore = [ThinkingUtils getScoreForce:mModel.matchFo.cmvNode_p ratio:mModel.matchFoValue];
     CGFloat sScore = [ThinkingUtils getScoreForce:shortFo.cmvNode_p ratio:1.0f];
     BOOL isSame = ((mScore > 0 && sScore > 0) || (mScore < 0 && sScore < 0));
-    ALog(@"~~~~~~~~~~~~~~~ 正向反馈类比 %@ (mModelMv:%f | shortMv:%f) ~~~~~~~~~~~~~~~",isSame ? @"START" : @"JUMP",mScore,sScore);
+    ALog(@"~~~~~~~~~~~~~~~~~~~~~~~~ 正向反馈类比 %@ ~~~~~~~~~~~~~~~~~~~~~~~~\n%@->%@\n%@->%@",isSame ? @"START" : @"JUMP",Fo2FStr(mModel.matchFo),Mvp2Str(mModel.matchFo.cmvNode_p),Fo2FStr(shortFo),Mvp2Str(shortFo.cmvNode_p));
     if (!isSame) return;
     
     //3. 类比 (与当前的analogy_Outside()较相似,所以暂不写,随后写时,也是将原有的_outside改成此_same类比方法);

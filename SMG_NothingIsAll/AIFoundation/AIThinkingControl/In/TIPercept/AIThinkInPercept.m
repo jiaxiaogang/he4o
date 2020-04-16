@@ -17,6 +17,11 @@
 
 @implementation AIThinkInPercept
 
+/**
+ *  MARK:--------------------入口--------------------
+ *  @version
+ *      20200416 - 将先"mv需求处理"后"学习",改为先"学习"后"mv需求处理",因为外层死循环 (参考n19p5-B组BUG2);
+ */
 -(void) dataIn_FindMV:(NSArray*)algsArr
    createMvModelBlock:(AIFrontOrderNode*(^)(NSArray *algsArr,BOOL isMatch))createMvModelBlock
           finishBlock:(void(^)(AICMVNode *commitMvNode))finishBlock
@@ -34,13 +39,11 @@
         return;
     }
     
-    //3. 思考mv,需求处理
-    if (finishBlock) {
-        finishBlock(cmvNode);
-    }
-    
-    //4. 学习
+    //3. 学习
     [self dataIn_FindMV_Learning:protoFo matchFo:matchFo cmvNode:cmvNode canAss:canAss updateEnergy:updateEnergy];
+    
+    //4. 思考mv,需求处理
+    if (finishBlock) finishBlock(cmvNode);
 }
 
 /**
@@ -74,3 +77,4 @@
 }
 
 @end
+
