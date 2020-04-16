@@ -123,6 +123,8 @@
  *  MARK:--------------------外类比的构建器--------------------
  *  1. 构建absFo
  *  2. 构建absCmv
+ *  @todo
+ *      20200416 - TODO_NEXT_VERSION:方法中absFo是防重的,如果absFo并非新构建,而又为其构建了absMv,则会有多个mv指向同一个fo的问题;
  */
 +(void)analogyOutside_Creater:(NSArray*)orderSames fo:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo fromInner:(BOOL)fromInner{
     //2. 数据检查;

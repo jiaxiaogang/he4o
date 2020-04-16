@@ -48,7 +48,11 @@
 //MARK: 2. 因为TOP已经做了很多工作,此处与TOP协作 (与从左至右的理性向性是相符的);
 //MARK:===============================================================
 
-//FromTOP主入口
+/**
+ *  MARK:--------------------FromTOP主入口--------------------
+ *  @version
+ *      20200416 - actions行为输出前,先清空; (如不清空,下轮外循环TIR->TOP.dataOut()时,导致不重新决策,直接输出上轮actions,行为再被TIR预测,又一轮,形成外层死循环 (参考n19p5-B组BUG2);
+ */
 -(void) commitFromTOP_Convert2Actions:(TOFoModel*)foModel{
     if (foModel) {
         //1. 为空,进行行为化_尝试输出"可行性之首"并找到实际操作 (子可行性判定) (algScheme)
@@ -56,9 +60,11 @@
             [self dataOut_AlgScheme:foModel];
         }
         
-        //2. actionScheme (行为方案输出)
+        //2. actionScheme (行为方案输出,并清空actions)
         if (ARRISOK(foModel.actions)) {
-            [self dataOut_ActionScheme:foModel.actions];
+            NSArray *outArr = [foModel.actions copy];
+            [foModel.actions removeAllObjects];
+            [self dataOut_ActionScheme:outArr];
         }
     }
 }
@@ -82,7 +88,7 @@
     [self.algScheme setData:[self.delegate aiTOR_GetShortMatchModel]];
     
     [self.algScheme convert2Out_Fo:foNode.content_ps curFo:foNode success:^(NSArray *acts) {
-        outFoModel.actions = acts;
+        [outFoModel.actions addObjectsFromArray:acts];
     } failure:^{
         WLog(@"TOR_行为化失败");
     }];
@@ -116,7 +122,6 @@
             //>1 检查micro_p是否是"输出";
             //>2 假如order_p足够确切,尝试检查并输出;
             BOOL invoked = [Output output_FromTC:algNode_p];
-            [theNV setNodeData:algNode_p appendLightStr:@",Out"];
             if (invoked) {
                 tryOutSuccess = true;
             }

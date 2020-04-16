@@ -16,6 +16,6 @@
  */
 @interface TOFoModel : TOModelBase
 
-@property (strong, nonatomic) NSArray *actions;//行为化数据;
+@property (strong, nonatomic) NSMutableArray *actions;//行为化数据;
 
 @end

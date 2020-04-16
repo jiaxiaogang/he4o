@@ -10,4 +10,9 @@
 
 @implementation TOFoModel
 
+-(NSMutableArray *)actions{
+    if (!_actions) _actions = [[NSMutableArray alloc] init];
+    return _actions;
+}
+
 @end
