@@ -146,12 +146,10 @@
     }else{
         AIAlgNodeBase *curAlg = [SMGUtils searchNode:curAlg_p];
         if (self.shortMatchModel && curAlg) {
-            AIAlgNodeBase *matchAlg = self.shortMatchModel.matchAlg;
-            
             //3. 单cHav时,直接从瞬时做MC匹配行为化;
             __block BOOL successed = false;
             if (type == AnalogyInnerType_Hav) {
-                [self convert2Out_Short_MC_V2:matchAlg curAlg:curAlg curFo:curFo mcSuccess:^(NSArray *acts) {
+                [self convert2Out_Short_MC_V2:curAlg curFo:curFo mcSuccess:^(NSArray *acts) {
                     [result addObjectsFromArray:acts];
                     successed = true;
                     NSLog(@"--> MC_行为化成功: 长度:%lu 行为:[%@]",(unsigned long)acts.count,[NVHeUtil getLightStr4Ps:acts]);
@@ -370,20 +368,14 @@
  *
  *  @实例: 用几个例子,来跑此处代码,看mAlg应该如何得来?如烤蘑菇的例子,坚果去皮的例子,cpu煎蛋的例子;
  */
--(void) convert2Out_Short_MC_V2:(AIAlgNodeBase*)matchAlg curAlg:(AIAlgNodeBase*)curAlg curFo:(AIFoNodeBase*)curFo mcSuccess:(void(^)(NSArray *acts))mcSuccess mcFailure:(void(^)())mcFailure checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
+-(void) convert2Out_Short_MC_V2:(AIAlgNodeBase*)curAlg curFo:(AIFoNodeBase*)curFo mcSuccess:(void(^)(NSArray *acts))mcSuccess mcFailure:(void(^)())mcFailure checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
     //1. 数据准备
     __block BOOL failured = false;
     NSMutableArray *allActs = [[NSMutableArray alloc] init];
-    NSLog(@"==========================MC START==========================\nM:%@\nC:%@",Alg2FStr(matchAlg),Alg2FStr(curAlg));
-    //2. 取出mcs & ms & cs;
-    NSArray *mAbs_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:matchAlg]];
-    NSArray *cAbs_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:curAlg]];
-    NSArray *ms = [SMGUtils removeSub_ps:cAbs_ps parent_ps:mAbs_ps];
-    NSArray *cs = [SMGUtils removeSub_ps:mAbs_ps parent_ps:cAbs_ps];
-    NSArray *mcs = [SMGUtils filterSame_ps:mAbs_ps parent_ps:cAbs_ps];
+    NSLog(@"==========================MC START==========================");
     
     //3. 进行MC_Alg行为化;
-    [self convert2Out_MC_Alg:matchAlg curAlg:curAlg curFo:curFo mcs:mcs ms:ms cs:cs mcSuccess:^(NSArray *acts) {
+    [self convert2Out_MC_Alg:curAlg curFo:curFo mcSuccess:^(NSArray *acts) {
         [allActs addObjectsFromArray:acts];
     } mcFailure:^{
         failured = true;
@@ -392,7 +384,7 @@
     
     //4. 进行MC_Value行为化;
     if (!failured) {
-        [self convert2Out_MC_Value_V2:matchAlg cAlg:curAlg curFo:curFo checkScore:checkScore complete:^(NSArray *acts, BOOL success) {
+        [self convert2Out_MC_Value_V2:curAlg curFo:curFo checkScore:checkScore complete:^(NSArray *acts, BOOL success) {
             [allActs addObjectsFromArray:acts];
             failured = !success;
         }];
@@ -406,16 +398,20 @@
     }
 }
 
--(void) convert2Out_MC_Alg:(AIAlgNodeBase*)matchAlg curAlg:(AIAlgNodeBase*)curAlg curFo:(AIFoNodeBase*)curFo mcs:(NSArray*)mcs ms:(NSArray*)ms cs:(NSArray*)cs mcSuccess:(void(^)(NSArray *acts))mcSuccess mcFailure:(void(^)())mcFailure checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
-    //0. 数据准备
-    mcs = ARRTOOK(mcs);
-    ms = ARRTOOK(ms);
-    cs = ARRTOOK(cs);
+-(void) convert2Out_MC_Alg:(AIAlgNodeBase*)curAlg curFo:(AIFoNodeBase*)curFo mcSuccess:(void(^)(NSArray *acts))mcSuccess mcFailure:(void(^)())mcFailure checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
+    //1. 数据准备
     __block BOOL failured = false;
+    AIAlgNodeBase *matchAlg = self.shortMatchModel.matchAlg;
     NSMutableArray *allActs = [[NSMutableArray alloc] init];
     NSMutableArray *alreadyGLs = [[NSMutableArray alloc] init];
     if (matchAlg && curAlg) {
-        NSLog(@"===========MC_ALG START=========\nmcs:%@\nms:%@\ncs:%@",Pits2FStr(mcs),Pits2FStr(ms),Pits2FStr(cs));
+        //1. 取出mcs & ms & cs;
+        NSArray *mAbs_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:matchAlg]];
+        NSArray *cAbs_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:curAlg]];
+        NSArray *ms = ARRTOOK([SMGUtils removeSub_ps:cAbs_ps parent_ps:mAbs_ps]);
+        NSArray *cs = ARRTOOK([SMGUtils removeSub_ps:mAbs_ps parent_ps:cAbs_ps]);
+        NSArray *mcs = ARRTOOK([SMGUtils filterSame_ps:mAbs_ps parent_ps:cAbs_ps]);
+        NSLog(@"===========MC_ALG START=========\nM:%@\nC:%@\nmcs:%@\nms:%@\ncs:%@",Alg2FStr(matchAlg),Alg2FStr(curAlg),Pits2FStr(mcs),Pits2FStr(ms),Pits2FStr(cs));
         
         //1. MC匹配之: LSP里氏判断,M是否是C
         BOOL cIsAbs = ISOK(curAlg, AIAbsAlgNode.class);
@@ -517,21 +513,23 @@
  *  @version
  *      2020.04.04 : 支持更全面查找的同区不同值 (渗透到具象中,参考:18206);
  *      2020.04.05 : 更新至v2(参考18207); 1. 将mcs&cs&ms的逻辑删掉,改用C和M的直接类比;   2. 将RTAlg的拼接改为用same_ps;
+ *      2020.04.17 : MC_Value操作M对象由MatchAlg改为ProtoAlg;
  */
--(void) convert2Out_MC_Value_V2:(AIAlgNodeBase*)mAlg cAlg:(AIAlgNodeBase*)cAlg curFo:(AIFoNodeBase*)curFo checkScore:(BOOL(^)(AIAlgNodeBase *rtAlg))checkScore complete:(void(^)(NSArray *acts,BOOL success))complete{
+-(void) convert2Out_MC_Value_V2:(AIAlgNodeBase*)cAlg curFo:(AIFoNodeBase*)curFo checkScore:(BOOL(^)(AIAlgNodeBase *rtAlg))checkScore complete:(void(^)(NSArray *acts,BOOL success))complete{
     //1. 数据准备;
     NSMutableArray *acts = [[NSMutableArray alloc] init];
-    if (!mAlg || !cAlg || !complete || !checkScore || !curFo) {
+    AIAlgNodeBase *pAlg = [SMGUtils searchNode:self.shortMatchModel.protoAlg_p];
+    if (!pAlg || !cAlg || !complete || !checkScore || !curFo) {
         complete(acts,true);
         return;
     }
     __block BOOL success = true;//默认为成功,只有成功,才会一直运行下去;
     
     //2. 取M特有的稀疏码 和 Same_ps;
-    NSArray *mUnique_ps = [SMGUtils removeSub_ps:cAlg.content_ps parent_ps:mAlg.content_ps];
-    NSArray *same_ps = [SMGUtils filterSame_ps:mAlg.content_ps parent_ps:cAlg.content_ps];
+    NSArray *mUnique_ps = [SMGUtils removeSub_ps:cAlg.content_ps parent_ps:pAlg.content_ps];
+    NSArray *same_ps = [SMGUtils filterSame_ps:pAlg.content_ps parent_ps:cAlg.content_ps];
     NSLog(@"===================MC_Value START=================");
-    NSLog(@"===========MC_VALUE START=========\nM特化:%@\n一致的:%@",Pits2FStr(mUnique_ps),Pits2FStr(same_ps));
+    NSLog(@"===========MC_VALUE START=========\nP:%@\nC:%@\n需满足:%@\n一致的:%@",Alg2FStr(pAlg),Alg2FStr(cAlg),Pits2FStr(mUnique_ps),Pits2FStr(same_ps));
     
     //4. 找同区不同值_直接从CUnique找 (1个自身cAlg);
     NSMutableDictionary *alreadyDic = [[NSMutableDictionary alloc] init]; //收集已找到的映射
