@@ -385,6 +385,7 @@
     //4. 进行MC_Value行为化;
     if (!failured) {
         [self convert2Out_MC_Value_V2:curAlg curFo:curFo checkScore:checkScore complete:^(NSArray *acts, BOOL success) {
+            NSLog(@"====> MC_Value complete:%d acts:(%@)",success,Pits2FStr(acts));
             [allActs addObjectsFromArray:acts];
             failured = !success;
         }];
@@ -514,6 +515,7 @@
  *      2020.04.04 : 支持更全面查找的同区不同值 (渗透到具象中,参考:18206);
  *      2020.04.05 : 更新至v2(参考18207); 1. 将mcs&cs&ms的逻辑删掉,改用C和M的直接类比;   2. 将RTAlg的拼接改为用same_ps;
  *      2020.04.17 : MC_Value操作M对象由MatchAlg改为ProtoAlg;
+ *      2020.04.18 : Same_ps为空时return,因为(远距果...)与(吃)对比,没有可比性;
  */
 -(void) convert2Out_MC_Value_V2:(AIAlgNodeBase*)cAlg curFo:(AIFoNodeBase*)curFo checkScore:(BOOL(^)(AIAlgNodeBase *rtAlg))checkScore complete:(void(^)(NSArray *acts,BOOL success))complete{
     //1. 数据准备;
@@ -528,8 +530,13 @@
     //2. 取M特有的稀疏码 和 Same_ps;
     NSArray *mUnique_ps = [SMGUtils removeSub_ps:cAlg.content_ps parent_ps:pAlg.content_ps];
     NSArray *same_ps = [SMGUtils filterSame_ps:pAlg.content_ps parent_ps:cAlg.content_ps];
-    NSLog(@"===================MC_Value START=================");
     NSLog(@"===========MC_VALUE START=========\nP:%@\nC:%@\n需满足:%@\n一致的:%@",Alg2FStr(pAlg),Alg2FStr(cAlg),Pits2FStr(mUnique_ps),Pits2FStr(same_ps));
+    
+    //2. 无共同点时,无可比性;
+    if (same_ps.count == 0) {
+        complete(acts,true);
+        return;
+    }
     
     //4. 找同区不同值_直接从CUnique找 (1个自身cAlg);
     NSMutableDictionary *alreadyDic = [[NSMutableDictionary alloc] init]; //收集已找到的映射
