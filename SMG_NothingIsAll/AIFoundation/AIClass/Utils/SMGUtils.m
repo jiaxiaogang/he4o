@@ -47,10 +47,7 @@
 //MARK:                     < AIPointer >
 //MARK:===============================================================
 
-//Node
-+(AIKVPointer*) createPointerForNode:(NSString*)folderName{
-    return [self createPointer:folderName algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false isMem:false];
-}
+//General指针
 +(AIKVPointer*) createPointer:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem{
     NSInteger pointerId = [SMGUtils createPointerId:algsType dataSource:dataSource];
     AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:folderName algsType:algsType dataSource:dataSource isOut:isOut isMem:isMem];
@@ -93,6 +90,10 @@
 +(AIKVPointer*) createPointerForAlg:(NSString*)folderName dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem{
     NSInteger pointerId = [SMGUtils createPointerId:DefaultAlgsType dataSource:dataSource];
     return [AIKVPointer newWithPointerId:pointerId folderName:folderName algsType:AlgNodeAlgsType(pointerId) dataSource:dataSource isOut:isOut isMem:isMem];
+}
+
++(AIKVPointer*) createPointerForFo:(NSString*)folderName ds:(NSString*)ds{
+    return [self createPointer:folderName algsType:DefaultAlgsType dataSource:ds isOut:false isMem:false];
 }
 
 @end

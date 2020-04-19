@@ -345,19 +345,9 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------内类比构建抽象概念--------------------
- *  @注意: 此处algNode和algNode_Inner应该是组分关系,但先保持抽具象关系,看后面测试,有没别的影响,再改 (参考179_内类比全流程回顾)
- *  @desc 大小时
- */
-+(AIAbsAlgNode*)createInnerAbsAlg:(AIAlgNodeBase*)conAlg value_p:(AIPointer*)value_p{
-    if (!value_p || !conAlg) return nil;
-    return [theNet createAbsAlg_NoRepeat:@[value_p] conAlgs:@[conAlg] isMem:false];
-}
-
-/**
  *  MARK:--------------------内类比构建抽象时序--------------------
  */
-+(AINetAbsFoNode*)createInnerAbsFo:(AIAlgNodeBase*)backAlg rangeAlg_ps:(NSArray*)rangeAlg_ps conFo:(AIFoNodeBase*)conFo{
++(AINetAbsFoNode*)createInnerAbsFo:(AIAlgNodeBase*)backAlg rangeAlg_ps:(NSArray*)rangeAlg_ps conFo:(AIFoNodeBase*)conFo ds:(NSString*)ds{
     //1. 数据检查
     if (!backAlg || !conFo) return nil;
     rangeAlg_ps = ARRTOOK(rangeAlg_ps);
@@ -368,7 +358,7 @@
     [absOrders addObject:backAlg.pointer];
     
     //3. 构建
-    AINetAbsFoNode *result = [theNet createAbsFo_Inner:conFo orderSames:absOrders];
+    AINetAbsFoNode *result = [theNet createAbsFo_Inner:conFo orderSames:absOrders ds:ds];
     return result;
 }
 

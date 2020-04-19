@@ -22,6 +22,6 @@
  *  @result : notnull
  *  注: 转移: 仅概念支持内存网络向硬盘网络的转移,fo不进行转移;
  */
--(AINetAbsFoNode*) create:(NSArray*)conFos orderSames:(NSArray*)orderSames;
+-(AINetAbsFoNode*) create:(NSArray*)conFos orderSames:(NSArray*)orderSames dsBlock:(NSString*(^)())dsBlock;
 
 @end

@@ -24,8 +24,7 @@
 //MARK:===============================================================
 //MARK:                     < AIPointer >
 //MARK:===============================================================
-//Node
-+(AIKVPointer*) createPointerForNode:(NSString*)folderName;
+//General指针
 +(AIKVPointer*) createPointer:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem;
 
 //Direction的mv分区pointer;(存引用序列)
@@ -46,9 +45,21 @@
 
 /**
  *  MARK:--------------------概念节点指针--------------------
- *  @param dataSource : 概念节点的ds = 微信息的at; (alg.ds = value.at)
+ *  @param dataSource : 有三种情况;
+ *      1. input输入TIR新概念时,概念的ds就是算法的at,比如:AIVersionAgls;
+ *      2. 类比构建器时,概念的ds就是类比源,比如:有无大小同异;
+ *      3. 默认(其它)时,概念节点的ds是其content_ps中稀疏码共同的at;
  */
 +(AIKVPointer*) createPointerForAlg:(NSString*)folderName dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem;
+
+/**
+ *  MARK:--------------------时序节点指针--------------------
+ *  @param ds : 有两种情况;
+ *      1. 类比构建器时,时序的ds就是类比源,比如:有无大小同异;
+ *      2. 默认(其它)时,时序节点的ds=DefaultDataSource;
+ */
++(AIKVPointer*) createPointerForFo:(NSString*)folderName ds:(NSString*)ds;
+
 @end
 
 

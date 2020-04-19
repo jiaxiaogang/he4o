@@ -336,8 +336,10 @@
  *      1. 构建动态微信息 (有去重);
  *      2. 构建动态概念 (有去重);
  *      3. 构建abFoNode时序 (未去重);
+ *  @注意: 此处algNode和algNode_Inner应该是组分关系,但先保持抽具象关系,看后面测试,有没别的影响,再改 (参考179_内类比全流程回顾)
  *  @version
  *      20200329: 将frontAlg去掉,只保留backAlg (以使方便TOR中联想使用);
+ *      20200419: 将构建alg和fo指定ds为:backData的值 (以便此后取absPorts时,可以根据指针进行类型筛选);
  */
 +(AINetAbsFoNode*)analogyInner_Creater:(AnalogyInnerType)type algsType:(NSString*)algsType dataSource:(NSString*)dataSource frontConAlg:(AIAlgNodeBase*)frontConAlg backConAlg:(AIAlgNodeBase*)backConAlg rangeAlg_ps:(NSArray*)rangeAlg_ps conFo:(AIFoNodeBase*)conFo{
     //1. 数据检查
@@ -353,17 +355,16 @@
     AIKVPointer *backValue_p = [theNet getNetDataPointerWithData:@(backData) algsType:algsType dataSource:dataSource];
 
     //4. 构建抽象概念 (20190809注:此处可考虑,type为大/小时,不做具象指向,因为大小概念,本来就是独立的节点);
-    AIAlgNodeBase *backAlg = [TIRUtils createInnerAbsAlg:backConAlg value_p:backValue_p];
+    NSString *afDS = STRFORMAT(@"%d",backData);
+    AIAlgNodeBase *backAlg = [theNet createAbsAlg_NoRepeat:@[backValue_p] conAlgs:@[backConAlg] isMem:false ds:afDS];
 
     //5. 构建抽象时序; (小动致大 / 大动致小) (之间的信息为balabala)
-    AINetAbsFoNode *result = [TIRUtils createInnerAbsFo:backAlg rangeAlg_ps:rangeAlg_ps conFo:conFo];
+    AINetAbsFoNode *result = [TIRUtils createInnerAbsFo:backAlg rangeAlg_ps:rangeAlg_ps conFo:conFo ds:afDS];
 
     //6. 调试;
     NSLog(@"-> 内类比构建稀疏码: (变 -> %@)",[NVHeUtil getLightStr:backValue_p]);
     if (backAlg) NSLog(@"--> 内类比构建%@的抽象概念: %@",Alg2FStr(backConAlg),Alg2FStr(backAlg));
     if (result) NSLog(@"---> 内类比构建%@的抽象时序: %@",Fo2FStr(conFo),Fo2FStr(result));
-    [theNV setNodeData:backValue_p lightStr:[NVHeUtil getLightStr:backValue_p]];
-    [theNV setNodeData:backAlg.pointer lightStr:[NVHeUtil getLightStr:backAlg.pointer]];
     return result;
 }
 

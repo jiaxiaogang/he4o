@@ -26,11 +26,10 @@
 
 @implementation AIAbsFoManager
 
--(AINetAbsFoNode*) create:(NSArray*)conFos orderSames:(NSArray*)orderSames{
+-(AINetAbsFoNode*) create:(NSArray*)conFos orderSames:(NSArray*)orderSames dsBlock:(NSString*(^)())dsBlock{
     //1. 数据准备
-    if (!ARRISOK(conFos)) {
-        return nil;
-    }
+    NSString *ds = dsBlock ? dsBlock() : DefaultDataSource;
+    if (!ARRISOK(conFos)) return nil;
     orderSames = ARRTOOK(orderSames);
     NSString *samesStr = [SMGUtils convertPointers2String:orderSames];
     NSString *samesMd5 = STRTOOK([NSString md5:samesStr]);
@@ -63,7 +62,7 @@
     //3. 无则创建
     if (!findAbsNode) {
         findAbsNode = [[AINetAbsFoNode alloc] init];
-        findAbsNode.pointer = [SMGUtils createPointerForNode:kPN_FO_ABS_NODE];
+        findAbsNode.pointer = [SMGUtils createPointerForFo:kPN_FO_ABS_NODE ds:ds];
         
         //3. 收集order_ps (将不在hdNet中的转移)
         findAbsNode.content_ps = [AINetUtils move2Hd4Alg_ps:orderSames];
