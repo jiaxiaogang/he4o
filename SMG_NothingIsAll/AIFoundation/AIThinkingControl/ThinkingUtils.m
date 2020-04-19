@@ -69,7 +69,7 @@
         return DefaultDataSource;
     }else{
         NSInteger value = [self getAnalogyTypeValue:type];
-        return STRFORMAT(@"%d",value);
+        return STRFORMAT(@"%ld",(long)value);
     }
     return DefaultDataSource;
 }

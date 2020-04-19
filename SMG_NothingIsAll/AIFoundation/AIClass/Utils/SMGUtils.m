@@ -15,6 +15,7 @@
 #import "AIPointer.h"
 #import "AIAlgNodeBase.h"
 #import "XGWedis.h"
+#import "ThinkingUtils.h"
 
 @implementation SMGUtils
 
@@ -673,17 +674,7 @@
 }
 
 +(NSArray*) filterPointers:(NSArray *)from_ps checkValid:(BOOL(^)(AIKVPointer *item_p))checkValid {
-    //1. 数据准备
-    from_ps = ARRTOOK(from_ps);
-    NSMutableArray *result = [[NSMutableArray alloc] init];
-    
-    //2. 筛选
-    for (AIKVPointer *from_p in from_ps) {
-        if (checkValid && checkValid(from_p)) {
-            [result addObject:from_p];
-        }
-    }
-    return result;
+    return [self filterArr:from_ps checkValid:checkValid];
 }
 
 +(NSMutableDictionary*) filterPointers:(NSArray *)a_ps b_ps:(NSArray*)b_ps checkItemValid:(BOOL(^)(AIKVPointer *a_p,AIKVPointer *b_p))checkItemValid {
@@ -701,17 +692,48 @@
     return result;
 }
 
-//一次将parent_ps中,所有某指针移除; (数组中是允许有多个重复指针的)
-//+(NSMutableArray*) removeAllSub_p:(AIPointer*)sub_p parent_ps:(NSMutableArray*)parent_ps{
-//    if (ISOK(sub_p, AIPointer.class) && ARRISOK(parent_ps)) {
-//        for (AIPointer *parent_p in parent_ps) {
-//            if ([sub_p isEqual:parent_p]) {
-//                [parent_ps removeObject:parent_p];
-//                return parent_ps;
-//            }
-//        }
-//    }
-//    return parent_ps;
-//}
++(NSMutableArray*) filterArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid {
+    //1. 数据准备
+    arr = ARRTOOK(arr);
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    
+    //2. 筛选
+    for (id item in arr) {
+        if (checkValid && checkValid(item)) {
+            [result addObject:item];
+        }
+    }
+    return result;
+}
+
+//用analogyType来筛选ports
++(NSArray*) filterPorts:(NSArray*)ports havTypes:(NSArray*)havTypes noTypes:(NSArray*)noTypes{
+    //1. 数据检查
+    havTypes = ARRTOOK(havTypes);
+    noTypes = ARRTOOK(noTypes);
+    ports = ARRTOOK(ports);
+    
+    //2. 转换types为dses
+    NSArray*(^ Convert2DSArr)(NSArray*)= ^ (NSArray *types){
+        NSMutableArray *result = [[NSMutableArray alloc] init];
+        for (NSNumber *type in types) {
+            NSString *ds = [ThinkingUtils getAnalogyTypeDS:[type integerValue]];
+            [result addObject:ds];
+        }
+        return result;
+    };
+    NSArray *havDSArr = Convert2DSArr(havTypes);
+    NSArray *noDSArr = Convert2DSArr(noTypes);
+    
+    //3. 筛选类型
+    return [SMGUtils filterArr:ports checkValid:^BOOL(AIPort *item) {
+        //a. hav筛选 (必须被havDSArr包含);
+        if (ARRISOK(havDSArr) && ![havDSArr containsObject:item.target_p.dataSource]) return false;
+        //b. no筛选 (必须不被noDSArr包含);
+        if (ARRISOK(noDSArr) && [noDSArr containsObject:item.target_p.dataSource]) return false;
+        //c. 干不死的,有效;
+        return true;
+    }];
+}
 
 @end

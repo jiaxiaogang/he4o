@@ -386,6 +386,17 @@
     }
     return allPorts;
 }
++(NSArray*) absPorts_All_Normal:(AINodeBase*)node{
+    NSArray *allPorts = [self absPorts_All:node];
+    NSArray *noTypes = @[@(AnalogyType_InnerG),@(AnalogyType_InnerL),@(AnalogyType_InnerH),@(AnalogyType_InnerN),
+                         @(AnalogyType_DiffPlus),@(AnalogyType_DiffSub)];
+    return [SMGUtils filterPorts:allPorts havTypes:nil noTypes:noTypes];
+}
++(NSArray*) absPorts_All:(AINodeBase*)node type:(AnalogyType)type{
+    NSArray *allPorts = [self absPorts_All:node];
+    return [SMGUtils filterPorts:allPorts havTypes:@[@(type)] noTypes:nil];
+}
+
 +(NSArray*) conPorts_All:(AINodeBase*)node{
     NSMutableArray *allPorts = [[NSMutableArray alloc] init];
     if (ISOK(node, AIAbsAlgNode.class)) {

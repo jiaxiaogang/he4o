@@ -172,6 +172,8 @@
  *  @result notnull
  */
 +(NSArray*) absPorts_All:(AINodeBase*)node;
++(NSArray*) absPorts_All_Normal:(AINodeBase*)node;
++(NSArray*) absPorts_All:(AINodeBase*)node type:(AnalogyType)type;
 
 /**
  *  MARK:--------------------取hdConPorts + memConPorts--------------------

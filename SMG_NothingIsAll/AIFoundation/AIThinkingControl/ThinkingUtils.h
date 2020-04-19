@@ -24,7 +24,7 @@
 //根据前后稀疏码值,得到该变大还是变小;
 +(AnalogyType) getInnerType:(AIKVPointer*)frontValue_p backValue_p:(AIKVPointer*)backValue_p;
 
-//根据analogyType取其构建Alg/Fo的dataSource;
+//根据analogyType取其构建Alg/Fo的dataSource; notnull
 +(NSString*) getAnalogyTypeDS:(AnalogyType)type;
 
 //根据评分,得到该开心,还是不开心;

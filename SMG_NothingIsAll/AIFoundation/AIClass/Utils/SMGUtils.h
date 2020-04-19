@@ -214,4 +214,16 @@
  */
 +(NSMutableDictionary*) filterPointers:(NSArray *)a_ps b_ps:(NSArray*)b_ps checkItemValid:(BOOL(^)(AIKVPointer *a_p,AIKVPointer *b_p))checkItemValid;
 
+/**
+ *  MARK:--------------------筛选数组--------------------
+ *  @result notnull
+ */
++(NSMutableArray*) filterArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid;
+
+/**
+ *  MARK:--------------------用analogyType来筛选ports--------------------
+ *  @result notnull
+ */
++(NSArray*) filterPorts:(NSArray*)ports havTypes:(NSArray*)havTypes noTypes:(NSArray*)noTypes;
+
 @end
