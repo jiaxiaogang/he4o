@@ -412,6 +412,8 @@
     //2. 判断mModel.mv和protoFo.mv是否不相符 (一正一负);
     CGFloat mScore = [ThinkingUtils getScoreForce:mMv_p ratio:mModel.matchFoValue];
     CGFloat pScore = [ThinkingUtils getScoreForce:pMv_p ratio:1.0f];
+    AnalogyType mType = [ThinkingUtils getInnerTypeWithScore:mScore];
+    AnalogyType pType = [ThinkingUtils getInnerTypeWithScore:pScore];
     BOOL isDiff = ((mScore > 0 && pScore < 0) || (mScore < 0 && pScore > 0));
     ALog(@"~~~~~~~~~~~~~~~~~~~~~~~~ 反向反馈类比 %@ ~~~~~~~~~~~~~~~~~~~~~~~~\n%@->%@\n%@->%@",isDiff ? @"START" : @"JUMP",Fo2FStr(mModel.matchFo),Mvp2Str(mMv_p),Fo2FStr(shortFo),Mvp2Str(pMv_p));
     if (!isDiff) return;
@@ -453,6 +455,11 @@
                     findP = true;
 
                     //d. 二级类比-收集缺乏
+                    //TODO:
+                    //1. 规划此处反向类比的构建方式;
+                    //2. 用type生成backValue,并附在后面;
+                    
+                    
                     if (mSub_ps.count > 0) {
                         AIAbsAlgNode *createAbsAlg = [theNet createAbsAlg_NoRepeat:mSub_ps conAlgs:@[mAlg] isMem:false];
                         if (createAbsAlg) [ms addObject:createAbsAlg.pointer];
@@ -484,8 +491,8 @@
     NSLog(@"~~~> 反向反馈类比 ms:%@ ps:%@",Pits2FStr(ms),Pits2FStr(ps));
     
     //6. 构建ms & ps
-    [self analogy_Feedback_Diff_Creater:mMv_p conFo:mModel.matchFo content_ps:ms type:[ThinkingUtils getInnerTypeWithScore:mScore]];
-    [self analogy_Feedback_Diff_Creater:pMv_p conFo:shortFo content_ps:ps type:[ThinkingUtils getInnerTypeWithScore:pScore]];
+    [self analogy_Feedback_Diff_Creater:mMv_p conFo:mModel.matchFo content_ps:ms type:mType];
+    [self analogy_Feedback_Diff_Creater:pMv_p conFo:shortFo content_ps:ps type:pType];
 }
 
 +(void) analogy_Feedback_Diff_Creater:(AIKVPointer*)conMv_p conFo:(AIFoNodeBase*)conFo content_ps:(NSArray*)content_ps type:(AnalogyType)type{

@@ -71,12 +71,12 @@ typedef NS_ENUM(NSInteger, MindHappyType) {
  */
 typedef NS_ENUM(NSInteger,  AnalogyType) {
     AnalogyType_None    =-1,//默认
-    AnalogyType_InnerG  = 0,//内类比_变大
-    AnalogyType_InnerL  = 1,//内类比_变小
-    AnalogyType_InnerH  = 2,//内类比_变有
-    AnalogyType_InnerN  = 3,//内类比_变无
-    AnalogyType_DiffPlus= 4,//反向类比_mv+
-    AnalogyType_DiffSub = 5,//反向类比_mv-
+    AnalogyType_InnerG  = 0,//内类比_变大 (greater)
+    AnalogyType_InnerL  = 1,//内类比_变小 (less)
+    AnalogyType_InnerH  = 2,//内类比_变有 (hav)
+    AnalogyType_InnerN  = 3,//内类比_变无 (none)
+    AnalogyType_DiffPlus= 4,//反向类比_mv+ (plus)
+    AnalogyType_DiffSub = 5,//反向类比_mv- (sub)
     AnalogyType_Same    = 5,//反向类比_异向
 };
 

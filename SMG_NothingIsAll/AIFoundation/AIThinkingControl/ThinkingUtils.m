@@ -44,9 +44,9 @@
     }else if (type == AnalogyType_InnerL) {
         return cLess;
     }else if(type == AnalogyType_DiffPlus){
-        return cSame;
+        return cPlus;
     }else if(type == AnalogyType_DiffSub){
-        return cDiff;
+        return cSub;
     }
     return 0;
 }

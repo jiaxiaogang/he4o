@@ -54,8 +54,8 @@
 #define cHav INT_MAX       //表示内类比算法中,概念的有
 #define cNone INT_MIN      //表示内类比算法中,概念的无
 
-#define cSame INT_MAX - 147  //表示内类比算法中,比大小时的大;
-#define cDiff INT_MIN + 148 //表示内类比算法中,比大小时的小;
+#define cPlus INT_MAX - 147//表示反向反馈中,导致mv+的值
+#define cSub INT_MIN + 148 //表示反向反馈中,导致m-的值
 
 #define cHavNoneAssFoCount 5    //Hav和None在联想其fo时,最大条数;
 
