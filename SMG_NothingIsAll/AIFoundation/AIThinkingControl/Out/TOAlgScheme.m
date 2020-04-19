@@ -595,11 +595,13 @@
     //1. 数据准备;
     NSMutableArray *acts = [[NSMutableArray alloc] init];
     AIAlgNodeBase *pAlg = [SMGUtils searchNode:self.shortMatchModel.protoAlg_p];
+    AIAlgNodeBase *mAlg = self.shortMatchModel.matchAlg;
     if (!pAlg || !cAlg || !complete || !checkScore || !curFo) {
         complete(acts,true);
         return;
     }
     __block BOOL success = true;//默认为成功,只有成功,才会一直运行下去;
+    NSLog(@"===========MC_VALUE V3 START=========\nCF:%@\nCA:%@\nPA:%@\nMA:%@",Fo2FStr(curFo),Alg2FStr(cAlg),Alg2FStr(pAlg),Alg2FStr(mAlg));
     
     //2. 取M特有的稀疏码 和 Same_ps;
     NSArray *cFPlus = [AINetUtils absPorts_All:curFo type:AnalogyType_DiffPlus];
@@ -609,7 +611,7 @@
     NSArray *pAPlus = [AINetUtils absPorts_All:pAlg type:AnalogyType_DiffPlus];
     NSArray *pASub = [AINetUtils absPorts_All:pAlg type:AnalogyType_DiffSub];
     
-    NSLog(@"===========MC_VALUE V3 START=========");
+    
     NSLog(@"cFPlus:%lu %@",(unsigned long)cFPlus.count,Pits2FStr([SMGUtils convertPointersFromPorts:cFPlus]));
     NSLog(@"cFSub:%lu %@",(unsigned long)cFSub.count,Pits2FStr([SMGUtils convertPointersFromPorts:cFSub]));
     
