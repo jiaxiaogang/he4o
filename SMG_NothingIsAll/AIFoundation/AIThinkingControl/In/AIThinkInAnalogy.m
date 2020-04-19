@@ -399,6 +399,7 @@
  *  MARK:--------------------反向反馈类比--------------------
  *  @version
  *      20200416 - 原先ms和ps都导致{mv-},改为ms导致{mmv*rate},ps导致{pmv*rate};
+ *      20200419 - 构建alg/fo都新增了与analogyType相对应的ds,以方便MC_Value使用;
  */
 +(void) analogy_Feedback_Diff:(AIShortMatchModel*)mModel shortFo:(AIFoNodeBase*)shortFo{
     //1. 数据检查 (MMv和PMV有效,且同区);
