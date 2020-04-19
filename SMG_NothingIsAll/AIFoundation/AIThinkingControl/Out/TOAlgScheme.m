@@ -61,7 +61,7 @@
     //2. 依次单个概念行为化
     for (AIKVPointer *curAlg_p in curAlg_ps) {
         __block BOOL successed = false;
-        [self convert2Out_Alg:curAlg_p curFo:curFo type:AnalogyInnerType_Hav success:^(NSArray *actions) {
+        [self convert2Out_Alg:curAlg_p curFo:curFo type:AnalogyType_InnerH success:^(NSArray *actions) {
             //3. 行为化成功,则收集;
             successed = true;
             [result addObjectsFromArray:actions];
@@ -126,12 +126,12 @@
  *  @param type : cHav或cNone
  *  @param curAlg_p : 三个来源: 1.Fo的元素A;  2.Range的元素A; 3.Alg的嵌套A;
  */
--(void) convert2Out_Alg:(AIKVPointer*)curAlg_p curFo:(AIFoNodeBase*)curFo type:(AnalogyInnerType)type success:(void(^)(NSArray *actions))success failure:(void(^)())failure checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
+-(void) convert2Out_Alg:(AIKVPointer*)curAlg_p curFo:(AIFoNodeBase*)curFo type:(AnalogyType)type success:(void(^)(NSArray *actions))success failure:(void(^)())failure checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
     //1. 数据准备;
     if (!curAlg_p) {
         failure();
     }
-    if (type != AnalogyInnerType_Hav && type != AnalogyInnerType_None) {
+    if (type != AnalogyType_InnerH && type != AnalogyType_InnerN) {
         WLog(@"SingleAlg_行为化类参数type错误");
         failure();
     }
@@ -148,7 +148,7 @@
         if (self.shortMatchModel && curAlg) {
             //3. 单cHav时,直接从瞬时做MC匹配行为化;
             __block BOOL successed = false;
-            if (type == AnalogyInnerType_Hav) {
+            if (type == AnalogyType_InnerH) {
                 [self convert2Out_Short_MC_V2:curAlg curFo:curFo mcSuccess:^(NSArray *acts) {
                     [result addObjectsFromArray:acts];
                     successed = true;
@@ -193,7 +193,7 @@
  *  3. 思考: 是否做alg局部匹配,递归取3个左右,逐个取并取其cHav (并类比缺失部分,循环); (191120废弃,不做)
  *  @param success : 行为化成功则返回(havFo + 行为序列); (havFo notnull, actions notnull)
  */
--(void) convert2Out_Long_NET:(AnalogyInnerType)type at:(NSString*)at ds:(NSString*)ds success:(void(^)(AIFoNodeBase *havFo,NSArray *actions))success failure:(void(^)())failure {
+-(void) convert2Out_Long_NET:(AnalogyType)type at:(NSString*)at ds:(NSString*)ds success:(void(^)(AIFoNodeBase *havFo,NSArray *actions))success failure:(void(^)())failure {
     //1. 数据准备
     AIAlgNodeBase *hnAlg = [ThinkingUtils dataOut_GetAlgNodeWithInnerType:type algsType:at dataSource:ds];
     if (!hnAlg) {
@@ -242,9 +242,9 @@
  *          5. 转移: C条件->递归到convert2Out_Single_Alg();
  *  @param at & ds : 用作查找"大/小"的标识;
  */
--(void) convert2Out_RelativeValue:(NSString*)at ds:(NSString*)ds type:(AnalogyInnerType)type vSuccess:(void(^)(AIFoNodeBase *glFo,NSArray *acts))vSuccess vFailure:(void(^)())vFailure {
+-(void) convert2Out_RelativeValue:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type vSuccess:(void(^)(AIFoNodeBase *glFo,NSArray *acts))vSuccess vFailure:(void(^)())vFailure {
     //1. 数据检查
-    if ((type != AnalogyInnerType_Greater && type != AnalogyInnerType_Less)) {
+    if ((type != AnalogyType_InnerG && type != AnalogyType_InnerL)) {
         WLog(@"value_行为化类参数type|value_p错误");
         vFailure();
         return;
@@ -444,13 +444,13 @@
                             //5. MC抵消GL处理之: 转移到_Value()
                             NSNumber *csValue = NUMTOOK([AINetIndex getData:csValue_p]);
                             NSNumber *msValue = NUMTOOK([AINetIndex getData:msValue_p]);
-                            AnalogyInnerType type = AnalogyInnerType_None;
+                            AnalogyType type = AnalogyType_None;
                             if (csValue > msValue) {//需增大
-                                type = AnalogyInnerType_Greater;
+                                type = AnalogyType_InnerG;
                             }else if(csValue < msValue){//需减小
-                                type = AnalogyInnerType_Less;
+                                type = AnalogyType_InnerL;
                             }else{}//再者一样,不处理;
-                            if (!failured && type != AnalogyInnerType_None) {
+                            if (!failured && type != AnalogyType_None) {
                                 [self convert2Out_RelativeValue:msValue_p.algsType ds:msValue_p.dataSource type:type vSuccess:^(AIFoNodeBase *glFo, NSArray *acts) {
                                     [allActs addObjectsFromArray:acts];
                                 } vFailure:^{
@@ -469,7 +469,7 @@
                 //7. MC未抵消H处理之: 满足csAlg;
                 for (AIAlgNodeBase *csAlg in csAlgs) {
                     if (![alreadyGLs containsObject:csAlg] && !failured) {
-                        [self convert2Out_Alg:csAlg.pointer curFo:curFo type:AnalogyInnerType_Hav success:^(NSArray *acts) {
+                        [self convert2Out_Alg:csAlg.pointer curFo:curFo type:AnalogyType_InnerH success:^(NSArray *acts) {
                             [allActs addObjectsFromArray:acts];
                         } failure:^{
                             failured = true;
@@ -486,7 +486,7 @@
                 //9. 对msAlg进行评价,看是否需要修正;
                 BOOL scoreSuccess = checkScore(msAlg);
                 if (!scoreSuccess) {
-                    [self convert2Out_Alg:msAlg.pointer curFo:curFo type:AnalogyInnerType_None success:^(NSArray *acts) {
+                    [self convert2Out_Alg:msAlg.pointer curFo:curFo type:AnalogyType_InnerN success:^(NSArray *acts) {
                         [allActs addObjectsFromArray:acts];
                     } failure:^{
                         failured = true;
@@ -639,8 +639,8 @@
     }
     
     //4. 行为化 (GL处理: 转移到_Value);
-    AnalogyInnerType type = [ThinkingUtils getInnerType:mValue_p backValue_p:cValue_p];
-    if (type != AnalogyInnerType_None) {
+    AnalogyType type = [ThinkingUtils getInnerType:mValue_p backValue_p:cValue_p];
+    if (type != AnalogyType_None) {
         __block BOOL success = false;
         [self convert2Out_RelativeValue:mValue_p.algsType ds:mValue_p.dataSource type:type vSuccess:^(AIFoNodeBase *glFo, NSArray *subActs) {
             [acts addObjectsFromArray:subActs];

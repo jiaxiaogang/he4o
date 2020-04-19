@@ -34,30 +34,53 @@
     return MAX(cMinEnergy, MIN(cMaxEnergy, oriEnergy));
 }
 
-+(NSInteger) getInnerTypeValue:(AnalogyInnerType)type{
-    if (type == AnalogyInnerType_Hav) {
++(NSInteger) getAnalogyTypeValue:(AnalogyType)type{
+    if (type == AnalogyType_None) {
         return cHav;
-    }else if (type == AnalogyInnerType_None) {
+    }else if (type == AnalogyType_InnerN) {
         return cNone;
-    }else if (type == AnalogyInnerType_Greater) {
+    }else if (type == AnalogyType_InnerG) {
         return cGreater;
-    }else if (type == AnalogyInnerType_Less) {
+    }else if (type == AnalogyType_InnerL) {
         return cLess;
+    }else if(type == AnalogyType_DiffPlus){
+        return cSame;
+    }else if(type == AnalogyType_DiffSub){
+        return cDiff;
     }
     return 0;
 }
 
-+(AnalogyInnerType) getInnerType:(AIKVPointer*)frontValue_p backValue_p:(AIKVPointer*)backValue_p{
++(AnalogyType) getInnerType:(AIKVPointer*)frontValue_p backValue_p:(AIKVPointer*)backValue_p{
     if (frontValue_p && backValue_p) {
         NSNumber *fValue = NUMTOOK([AINetIndex getData:frontValue_p]);
         NSNumber *bValue = NUMTOOK([AINetIndex getData:backValue_p]);
         if (fValue > bValue) {
-            return AnalogyInnerType_Less;
+            return AnalogyType_InnerL;
         }else if(fValue < bValue){
-            return AnalogyInnerType_Greater;
+            return AnalogyType_InnerG;
         }
     }
-    return AnalogyInnerType_None;
+    return AnalogyType_None;
+}
+
++(NSString*) getAnalogyTypeDS:(AnalogyType)type{
+    if (type == AnalogyType_None || type == AnalogyType_Same) {
+        return DefaultDataSource;
+    }else{
+        NSInteger value = [self getAnalogyTypeValue:type];
+        return STRFORMAT(@"%d",value);
+    }
+    return DefaultDataSource;
+}
+
++(AnalogyType) getInnerTypeWithScore:(CGFloat)score{
+    if (score > 0) {
+        return AnalogyType_DiffPlus;
+    }else if(score < 0){
+        return AnalogyType_DiffSub;
+    }
+    return AnalogyType_None;
 }
 
 @end
@@ -200,14 +223,7 @@
 +(AIAlgNodeBase*) createHdAlgNode_NoRepeat:(NSArray*)value_ps{
     return [theNet createAbsAlg_NoRepeat:value_ps conAlgs:nil isMem:false isOut:false];
 }
-
-+(AINetAbsFoNode*)createOutsideAbsFo_NoRepeat:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo content_ps:(NSArray*)content_ps{
-    if (fo && assFo) {
-        return [self createAbsFo_NoRepeat_General:@[fo,assFo] content_ps:content_ps];
-    }
-    return nil;
-}
-+(AINetAbsFoNode*)createAbsFo_NoRepeat_General:(NSArray*)conFos content_ps:(NSArray*)content_ps{
++(AINetAbsFoNode*)createAbsFo_NoRepeat_General:(NSArray*)conFos content_ps:(NSArray*)content_ps ds:(NSString*)ds{
     //1. 数据准备
     AINetAbsFoNode *result = nil;
     if (ARRISOK(conFos) && ARRISOK(content_ps)) {
@@ -219,7 +235,7 @@
             [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
         }else{
             //3. 无则构建
-            result = [theNet createAbsFo_General:conFos content_ps:content_ps];
+            result = [theNet createAbsFo_General:conFos content_ps:content_ps ds:ds];
         }
     }
     return result;
@@ -366,9 +382,9 @@
  *      问题: 因概念节点中,algsType&dataSource多为@" ",导致无法准确定位到对应结果;
  *      解决: 在概念节点的create中,将@"{pId}"作为概念节点的algsType;
  */
-+(AIAlgNodeBase*) dataOut_GetAlgNodeWithInnerType:(AnalogyInnerType)type algsType:(NSString*)algsType dataSource:(NSString*)dataSource{
++(AIAlgNodeBase*) dataOut_GetAlgNodeWithInnerType:(AnalogyType)type algsType:(NSString*)algsType dataSource:(NSString*)dataSource{
     //1. 获取innerType的值;
-    NSInteger typeValue = [self getInnerTypeValue:type];
+    NSInteger typeValue = [self getAnalogyTypeValue:type];
     
     //2. 获取相应的微信息;
     AIPointer *value_p = [theNet getNetDataPointerWithData:@(typeValue) algsType:algsType dataSource:dataSource];

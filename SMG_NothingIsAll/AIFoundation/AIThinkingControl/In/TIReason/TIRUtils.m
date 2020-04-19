@@ -358,7 +358,7 @@
     [absOrders addObject:backAlg.pointer];
     
     //3. 构建
-    AINetAbsFoNode *result = [theNet createAbsFo_Inner:conFo orderSames:absOrders ds:ds];
+    AINetAbsFoNode *result = [theNet createAbsFo_General:@[conFo] content_ps:absOrders ds:ds];
     return result;
 }
 

@@ -144,23 +144,11 @@ static AINet *_instance;
 //MARK:===============================================================
 //MARK:                     < absFo >
 //MARK:===============================================================
--(AINetAbsFoNode*) createAbsFo_Outside:(AIFoNodeBase*)foA foB:(AIFoNodeBase*)foB orderSames:(NSArray*)orderSames{
-    if (ISOK(foA, AIFoNodeBase.class) && ISOK(foB, AIFoNodeBase.class)) {
-        return [self.absFoManager create:@[foA,foB] orderSames:orderSames dsBlock:nil];
-    }
-    return nil;
-}
--(AINetAbsFoNode*) createAbsFo_Inner:(AIFoNodeBase*)conFo orderSames:(NSArray*)orderSames ds:(NSString*)ds{
-    if (ISOK(conFo, AIFoNodeBase.class)) {
-        return [self.absFoManager create:@[conFo] orderSames:orderSames dsBlock:^NSString *{
+-(AINetAbsFoNode*) createAbsFo_General:(NSArray*)conFos content_ps:(NSArray*)content_ps ds:(NSString*)ds{
+    if (ARRISOK(conFos)) {
+        return [self.absFoManager create:conFos orderSames:content_ps dsBlock:^NSString *{
             return ds;
         }];
-    }
-    return nil;
-}
--(AINetAbsFoNode*) createAbsFo_General:(NSArray*)conFos content_ps:(NSArray*)content_ps{
-    if (ARRISOK(conFos)) {
-        return [self.absFoManager create:conFos orderSames:content_ps dsBlock:nil];
     }
     return nil;
 }

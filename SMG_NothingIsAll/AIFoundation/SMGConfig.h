@@ -54,6 +54,9 @@
 #define cHav INT_MAX       //表示内类比算法中,概念的有
 #define cNone INT_MIN      //表示内类比算法中,概念的无
 
+#define cSame INT_MAX - 147  //表示内类比算法中,比大小时的大;
+#define cDiff INT_MIN + 148 //表示内类比算法中,比大小时的小;
+
 #define cHavNoneAssFoCount 5    //Hav和None在联想其fo时,最大条数;
 
 #define cTOSubModelLimit 2      //在决策中,子模型limit

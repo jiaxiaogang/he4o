@@ -36,10 +36,10 @@
  *  @version
  *      20200215: 有序外类比: 将forin循环fo和assFo改为反序,并记录上次类比位置jMax (因出现了[果,果,吃,吃]这样的异常时序) 参考n18p11;
  */
-+(void) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy fromInner:(BOOL)fromInner{
++(void) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy type:(AnalogyType)type{
     //1. 类比orders的规律
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
-    if (!fromInner) {
+    if (type == AnalogyType_Same) {
         NSLog(@"~~~~~~~~~~~~~~~~~~~~ 外类比 START ~~~~~~~~~~~~~~~~~~~~\n%@->%@\n%@->%@",Fo2FStr(fo),Mvp2Str(fo.cmvNode_p),Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
     }
     if (fo && assFo) {
@@ -81,7 +81,7 @@
                             if (createAbsNode) {
                                 [orderSames insertObject:createAbsNode.pointer atIndex:0];
                                 jMax = j - 1;
-                                if (!fromInner) {
+                                if (type == AnalogyType_Same) {
                                     NSLog(@"~~~> 构建概念:%@\n具象1:%@\n具象2:%@",Alg2FStr(createAbsNode),Alg2FStr(algNodeA),Alg2FStr(algNodeB));
                                 }
                             }
@@ -91,24 +91,6 @@
                             }
                         }
                     }
-
-                    ///5. absPorts->orderSames (根据强度优先)190827注掉,因为此处抽象不必添加到新时序中,且已经取消概念嵌套,所以还是以上面sameValue_ps构建的新absAlg添加进去即可;
-                    //NSMutableArray *aAbsPorts = [[NSMutableArray alloc] init];
-                    //[aAbsPorts addObjectsFromArray:[SMGUtils searchObjectForPointer:algNodeA.pointer fileName:kFNMemAbsPorts time:cRTMemPort]];
-                    //[aAbsPorts addObjectsFromArray:algNodeA.absPorts];
-                    //
-                    //NSMutableArray *bAbsPorts = [[NSMutableArray alloc] init];
-                    //[bAbsPorts addObjectsFromArray:[SMGUtils searchObjectForPointer:algNodeB.pointer fileName:kFNMemAbsPorts time:cRTMemPort]];
-                    //[bAbsPorts addObjectsFromArray:algNodeB.absPorts];
-                    //
-                    //for (AIPort *aPort in aAbsPorts) {
-                    //    for (AIPort *bPort in bAbsPorts) {
-                    //        if ([aPort.target_p isEqual:bPort.target_p]) {
-                    //            [orderSames addObject:bPort.target_p];
-                    //            break;
-                    //        }
-                    //    }
-                    //}
                 }
             }
         }
@@ -116,7 +98,7 @@
 
     //3. 外类比构建
     //TODO; 在精细化训练第6步,valueSames长度为7,构建后从可视化去看,其概念长度却是0;
-    [self analogyOutside_Creater:orderSames fo:fo assFo:assFo fromInner:fromInner];
+    [self analogyOutside_Creater:orderSames fo:fo assFo:assFo type:type];
 }
 
 /**
@@ -126,7 +108,7 @@
  *  @todo
  *      20200416 - TODO_NEXT_VERSION:方法中absFo是防重的,如果absFo并非新构建,而又为其构建了absMv,则会有多个mv指向同一个fo的问题;
  */
-+(void)analogyOutside_Creater:(NSArray*)orderSames fo:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo fromInner:(BOOL)fromInner{
++(void)analogyOutside_Creater:(NSArray*)orderSames fo:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type{
     //2. 数据检查;
     if (ARRISOK(orderSames) && ISOK(fo, AIFoNodeBase.class) && ISOK(assFo, AIFoNodeBase.class)) {
 
@@ -140,10 +122,11 @@
             [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
         }else{
             //4. 构建absFoNode
-            result = [ThinkingUtils createOutsideAbsFo_NoRepeat:fo assFo:assFo content_ps:orderSames];
+            NSString *foDS = [ThinkingUtils getAnalogyTypeDS:type];
+            result = [ThinkingUtils createAbsFo_NoRepeat_General:@[fo,assFo] content_ps:orderSames ds:foDS];
 
             //5. createAbsCmvNode
-            if (!fromInner) {
+            if (type == AnalogyType_Same) {
                 AICMVNodeBase *assMv = [SMGUtils searchNode:assFo.cmvNode_p];
                 if (assMv) {
                     AIAbsCMVNode *createAbsCmv = [theNet createAbsCMVNode_Outside:result.pointer aMv_p:fo.cmvNode_p bMv_p:assMv.pointer];
@@ -159,7 +142,7 @@
 
         //调试短时序; (先仅打外类比日志);
         if (result) {
-            if (!fromInner) {
+            if (type == AnalogyType_Same) {
                 NSLog(@"~~~>> 构建时序:%@->%@",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
             }else{
                 NSLog(@"----> 内类比IHO构建抽象时序=%ld: [%@] from(%ld,%ld)",result.pointer.pointerId,[NVHeUtil getLightStr4Ps:result.content_ps],fo.pointer.pointerId,assFo.pointer.pointerId);
@@ -223,20 +206,20 @@
     if (algNodeA && algNodeB){
         //a. 内类比大小;
         NSLog(@"-----------内类比-----------");
-        NSLog(@"--> 概念%ld: %@",aIndex,Alg2FStr(algNodeA));
-        NSLog(@"--> 概念%ld: %@",bIndex,Alg2FStr(algNodeB));
+        NSLog(@"--> 概念%ld: %@",(long)aIndex,Alg2FStr(algNodeA));
+        NSLog(@"--> 概念%ld: %@",(long)bIndex,Alg2FStr(algNodeB));
         NSArray *rangeAlg_ps = ARR_SUB(orders, aIndex + 1, bIndex - aIndex - 1);
-        [self analogyInner_GL:checkFo algA:algNodeA algB:algNodeB rangeAlg_ps:rangeAlg_ps createdBlock:^(AINetAbsFoNode *createFo) {
+        [self analogyInner_GL:checkFo algA:algNodeA algB:algNodeB rangeAlg_ps:rangeAlg_ps createdBlock:^(AINetAbsFoNode *createFo,AnalogyType type) {
             //b. 消耗思维活跃度 & 内中有外
             if (updateEnergy) updateEnergy(-0.1f);
-            [self analogyInner_Outside:createFo canAss:canAssBlock updateEnergy:updateEnergy];
+            [self analogyInner_Outside:createFo type:type canAss:canAssBlock updateEnergy:updateEnergy];
         }];
 
         //c. 内类比有无;
-        [self analogyInner_HN:checkFo algA:algNodeA algB:algNodeB rangeAlg_ps:rangeAlg_ps createdBlock:^(AINetAbsFoNode *createFo) {
+        [self analogyInner_HN:checkFo algA:algNodeA algB:algNodeB rangeAlg_ps:rangeAlg_ps createdBlock:^(AINetAbsFoNode *createFo,AnalogyType type) {
             //d. 消耗思维活跃度 & 内中有外
             if (updateEnergy) updateEnergy(-0.1f);
-            [self analogyInner_Outside:createFo canAss:canAssBlock updateEnergy:updateEnergy];
+            [self analogyInner_Outside:createFo type:type canAss:canAssBlock updateEnergy:updateEnergy];
         }];
     }
 }
@@ -244,7 +227,7 @@
 /**
  *  MARK:--------------------内类比大小--------------------
  */
-+(void) analogyInner_GL:(AIFoNodeBase*)checkFo algA:(AIAlgNodeBase*)algA algB:(AIAlgNodeBase*)algB rangeAlg_ps:(NSArray*)rangeAlg_ps createdBlock:(void(^)(AINetAbsFoNode *createFo))createdBlock{
++(void) analogyInner_GL:(AIFoNodeBase*)checkFo algA:(AIAlgNodeBase*)algA algB:(AIAlgNodeBase*)algB rangeAlg_ps:(NSArray*)rangeAlg_ps createdBlock:(void(^)(AINetAbsFoNode *createFo,AnalogyType type))createdBlock{
     //1. 数据检查
     rangeAlg_ps = ARRTOOK(rangeAlg_ps);
     if (!algA || !algB) {
@@ -270,12 +253,12 @@
         NSLog(@"--------------内类比 (大小) 前: %@ -> %@",[NVHeUtil getLightStr:a_p],[NVHeUtil getLightStr:b_p]);
         if (compareResult == NSOrderedDescending) {
             //c. 构建小;
-            AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyInnerType_Less algsType:a_p.algsType dataSource:a_p.dataSource frontConAlg:algA backConAlg:algB rangeAlg_ps:rangeAlg_ps conFo:checkFo];
-            if (createdBlock) createdBlock(create);
+            AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyType_InnerL algsType:a_p.algsType dataSource:a_p.dataSource frontConAlg:algA backConAlg:algB rangeAlg_ps:rangeAlg_ps conFo:checkFo];
+            if (createdBlock) createdBlock(create,AnalogyType_InnerL);
         }else if (compareResult == NSOrderedAscending) {
             //d. 构建大;
-            AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyInnerType_Greater algsType:a_p.algsType dataSource:a_p.dataSource frontConAlg:algA backConAlg:algB rangeAlg_ps:rangeAlg_ps conFo:checkFo];
-            if (createdBlock) createdBlock(create);
+            AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyType_InnerG algsType:a_p.algsType dataSource:a_p.dataSource frontConAlg:algA backConAlg:algB rangeAlg_ps:rangeAlg_ps conFo:checkFo];
+            if (createdBlock) createdBlock(create,AnalogyType_InnerG);
         }
     }
 }
@@ -283,7 +266,7 @@
 /**
  *  MARK:--------------------内类比有无--------------------
  */
-+(void) analogyInner_HN:(AIFoNodeBase*)checkFo algA:(AIAlgNodeBase*)algA algB:(AIAlgNodeBase*)algB rangeAlg_ps:(NSArray*)rangeAlg_ps createdBlock:(void(^)(AINetAbsFoNode *createFo))createdBlock{
++(void) analogyInner_HN:(AIFoNodeBase*)checkFo algA:(AIAlgNodeBase*)algA algB:(AIAlgNodeBase*)algB rangeAlg_ps:(NSArray*)rangeAlg_ps createdBlock:(void(^)(AINetAbsFoNode *createFo,AnalogyType type))createdBlock{
     //1. 数据检查
     if (!algA || !algB) return;
     rangeAlg_ps = ARRTOOK(rangeAlg_ps);
@@ -306,15 +289,15 @@
     NSLog(@"--------------内类比 (有无) 前: [%@] -> [%@]",Pits2FStr(aSub_ps),Pits2FStr(bSub_ps));
     for (AIKVPointer *sub_p in aSub_ps) {
         AIAlgNodeBase *target = [SMGUtils searchNode:sub_p];
-        AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyInnerType_None algsType:sub_p.algsType dataSource:sub_p.dataSource frontConAlg:target backConAlg:target rangeAlg_ps:rangeAlg_ps conFo:checkFo];
-        if (createdBlock) createdBlock(create);
+        AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyType_InnerN algsType:sub_p.algsType dataSource:sub_p.dataSource frontConAlg:target backConAlg:target rangeAlg_ps:rangeAlg_ps conFo:checkFo];
+        if (createdBlock) createdBlock(create,AnalogyType_InnerN);
     }
 
     //4. b变有
     for (AIKVPointer *sub_p in bSub_ps) {
         AIAlgNodeBase *target = [SMGUtils searchNode:sub_p];
-        AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyInnerType_Hav algsType:sub_p.algsType dataSource:sub_p.dataSource frontConAlg:target backConAlg:target rangeAlg_ps:rangeAlg_ps conFo:checkFo];
-        if (createdBlock) createdBlock(create);
+        AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyType_InnerH algsType:sub_p.algsType dataSource:sub_p.dataSource frontConAlg:target backConAlg:target rangeAlg_ps:rangeAlg_ps conFo:checkFo];
+        if (createdBlock) createdBlock(create,AnalogyType_InnerH);
     }
 }
 
@@ -341,7 +324,7 @@
  *      20200329: 将frontAlg去掉,只保留backAlg (以使方便TOR中联想使用);
  *      20200419: 将构建alg和fo指定ds为:backData的值 (以便此后取absPorts时,可以根据指针进行类型筛选);
  */
-+(AINetAbsFoNode*)analogyInner_Creater:(AnalogyInnerType)type algsType:(NSString*)algsType dataSource:(NSString*)dataSource frontConAlg:(AIAlgNodeBase*)frontConAlg backConAlg:(AIAlgNodeBase*)backConAlg rangeAlg_ps:(NSArray*)rangeAlg_ps conFo:(AIFoNodeBase*)conFo{
++(AINetAbsFoNode*)analogyInner_Creater:(AnalogyType)type algsType:(NSString*)algsType dataSource:(NSString*)dataSource frontConAlg:(AIAlgNodeBase*)frontConAlg backConAlg:(AIAlgNodeBase*)backConAlg rangeAlg_ps:(NSArray*)rangeAlg_ps conFo:(AIFoNodeBase*)conFo{
     //1. 数据检查
     rangeAlg_ps = ARRTOOK(rangeAlg_ps);
     algsType = STRTOOK(algsType);
@@ -349,13 +332,13 @@
     if (!frontConAlg || !backConAlg || !conFo) return nil;
 
     //2. 获取front&back稀疏码值;
-    NSInteger backData = [ThinkingUtils getInnerTypeValue:type];
+    NSInteger backData = [ThinkingUtils getAnalogyTypeValue:type];
 
     //3. 构建微信息;
     AIKVPointer *backValue_p = [theNet getNetDataPointerWithData:@(backData) algsType:algsType dataSource:dataSource];
 
     //4. 构建抽象概念 (20190809注:此处可考虑,type为大/小时,不做具象指向,因为大小概念,本来就是独立的节点);
-    NSString *afDS = STRFORMAT(@"%d",backData);
+    NSString *afDS = STRFORMAT(@"%ld",backData);
     AIAlgNodeBase *backAlg = [theNet createAbsAlg_NoRepeat:@[backValue_p] conAlgs:@[backConAlg] isMem:false ds:afDS];
 
     //5. 构建抽象时序; (小动致大 / 大动致小) (之间的信息为balabala)
@@ -376,7 +359,7 @@
  *  @version
  *      20200329: 将assFo依range来联想,而非"有/无/大/小";以解决类比抽象时容易过度收束的问题;
  */
-+(void)analogyInner_Outside:(AINetAbsFoNode*)abFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
++(void)analogyInner_Outside:(AINetAbsFoNode*)abFo type:(AnalogyType)type canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
     //1. 数据检查
     if (ISOK(abFo, AINetAbsFoNode.class) && abFo.content_ps.count > 1) {
         //2. 取backAlg (用来判断取正确的"变有/无/大/小");
@@ -404,7 +387,7 @@
         }
 
         //6. 对abFo和assAbFo进行类比;
-        [self analogyOutside:abFo assFo:assFo canAss:canAssBlock updateEnergy:updateEnergy fromInner:true];
+        [self analogyOutside:abFo assFo:assFo canAss:canAssBlock updateEnergy:updateEnergy type:type];
     }
 }
 
@@ -501,18 +484,18 @@
     NSLog(@"~~~> 反向反馈类比 ms:%@ ps:%@",Pits2FStr(ms),Pits2FStr(ps));
     
     //6. 构建ms & ps
-    [self analogy_Feedback_Diff_Creater:mMv_p conFo:mModel.matchFo content_ps:ms];
-    [self analogy_Feedback_Diff_Creater:pMv_p conFo:shortFo content_ps:ps];
+    [self analogy_Feedback_Diff_Creater:mMv_p conFo:mModel.matchFo content_ps:ms type:[ThinkingUtils getInnerTypeWithScore:mScore]];
+    [self analogy_Feedback_Diff_Creater:pMv_p conFo:shortFo content_ps:ps type:[ThinkingUtils getInnerTypeWithScore:pScore]];
 }
 
-+(void) analogy_Feedback_Diff_Creater:(AIKVPointer*)conMv_p conFo:(AIFoNodeBase*)conFo content_ps:(NSArray*)content_ps{
++(void) analogy_Feedback_Diff_Creater:(AIKVPointer*)conMv_p conFo:(AIFoNodeBase*)conFo content_ps:(NSArray*)content_ps type:(AnalogyType)type{
     //1. 数据检查
     AICMVNodeBase *conMv = [SMGUtils searchNode:conMv_p];
     if(!conMv || !ARRISOK(content_ps) || !conFo) return;
     CGFloat rate = (float)content_ps.count / conFo.content_ps.count;
 
     //2. 构建foNode
-    AIFoNodeBase *createFo = [ThinkingUtils createAbsFo_NoRepeat_General:@[conFo] content_ps:content_ps];
+    AIFoNodeBase *createFo = [ThinkingUtils createAbsFo_NoRepeat_General:@[conFo] content_ps:content_ps ds:[ThinkingUtils getAnalogyTypeDS:type]];
 
     //3. 计算ms的价值变化量 (基准 x rate);
     NSInteger pUrgentTo = [NUMTOOK([AINetIndex getData:conMv.urgentTo_p]) integerValue];
@@ -544,7 +527,7 @@
     //3. 类比 (与当前的analogy_Outside()较相似,所以暂不写,随后写时,也是将原有的_outside改成此_same类比方法);
     [self analogyOutside:shortFo assFo:mModel.matchFo canAss:^BOOL{
         return true;
-    } updateEnergy:nil fromInner:false];
+    } updateEnergy:nil type:AnalogyType_Same];
 }
 
 @end

@@ -19,10 +19,16 @@
 /**
  *  MARK:--------------------取InnerType的稀疏码值--------------------
  */
-+(NSInteger) getInnerTypeValue:(AnalogyInnerType)type;
++(NSInteger) getAnalogyTypeValue:(AnalogyType)type;
 
 //根据前后稀疏码值,得到该变大还是变小;
-+(AnalogyInnerType) getInnerType:(AIKVPointer*)frontValue_p backValue_p:(AIKVPointer*)backValue_p;
++(AnalogyType) getInnerType:(AIKVPointer*)frontValue_p backValue_p:(AIKVPointer*)backValue_p;
+
+//根据analogyType取其构建Alg/Fo的dataSource;
++(NSString*) getAnalogyTypeDS:(AnalogyType)type;
+
+//根据评分,得到该开心,还是不开心;
++(AnalogyType) getInnerTypeWithScore:(CGFloat)score;
 
 @end
 
@@ -102,12 +108,11 @@
 +(AIAlgNodeBase*) createHdAlgNode_NoRepeat:(NSArray*)value_ps;
 
 /**
- *  MARK:--------------------外类比构建抽象时序_去重--------------------
+ *  MARK:--------------------构建时序_去重--------------------
  *  @callers : 被外类比构建器调用;
  *  @功能说明: 1. 未支持内存去重;
  */
-+(AINetAbsFoNode*)createOutsideAbsFo_NoRepeat:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo content_ps:(NSArray*)content_ps;
-+(AINetAbsFoNode*)createAbsFo_NoRepeat_General:(NSArray*)conFos content_ps:(NSArray*)content_ps;
++(AINetAbsFoNode*)createAbsFo_NoRepeat_General:(NSArray*)conFos content_ps:(NSArray*)content_ps ds:(NSString*)ds;
 +(AIFrontOrderNode*)createConFo_NoRepeat_General:(NSArray*)content_ps isMem:(BOOL)isMem;
 
 @end
@@ -166,7 +171,7 @@
  *  MARK:--------------------获取到某标识下的cHav/cNone/cGreater/cLess概念--------------------
  *  @desc : 根据概念标识,获取概念的"有无大小"节点
  */
-+(AIAlgNodeBase*) dataOut_GetAlgNodeWithInnerType:(AnalogyInnerType)type algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
++(AIAlgNodeBase*) dataOut_GetAlgNodeWithInnerType:(AnalogyType)type algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
 
 @end
 
