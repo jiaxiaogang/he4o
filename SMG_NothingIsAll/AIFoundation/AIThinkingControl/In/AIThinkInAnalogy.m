@@ -338,7 +338,7 @@
     AIKVPointer *backValue_p = [theNet getNetDataPointerWithData:@(backData) algsType:algsType dataSource:dataSource];
 
     //4. 构建抽象概念 (20190809注:此处可考虑,type为大/小时,不做具象指向,因为大小概念,本来就是独立的节点);
-    NSString *afDS = STRFORMAT(@"%ld",backData);
+    NSString *afDS = STRFORMAT(@"%ld",(long)backData);
     AIAlgNodeBase *backAlg = [theNet createAbsAlg_NoRepeat:@[backValue_p] conAlgs:@[backConAlg] isMem:false ds:afDS];
 
     //5. 构建抽象时序; (小动致大 / 大动致小) (之间的信息为balabala)
@@ -414,6 +414,8 @@
     CGFloat pScore = [ThinkingUtils getScoreForce:pMv_p ratio:1.0f];
     AnalogyType mType = [ThinkingUtils getInnerTypeWithScore:mScore];
     AnalogyType pType = [ThinkingUtils getInnerTypeWithScore:pScore];
+    NSString *mDS = [ThinkingUtils getAnalogyTypeDS:mType];
+    NSString *pDS = [ThinkingUtils getAnalogyTypeDS:pType];
     BOOL isDiff = ((mScore > 0 && pScore < 0) || (mScore < 0 && pScore > 0));
     ALog(@"~~~~~~~~~~~~~~~~~~~~~~~~ 反向反馈类比 %@ ~~~~~~~~~~~~~~~~~~~~~~~~\n%@->%@\n%@->%@",isDiff ? @"START" : @"JUMP",Fo2FStr(mModel.matchFo),Mvp2Str(mMv_p),Fo2FStr(shortFo),Mvp2Str(pMv_p));
     if (!isDiff) return;
@@ -458,16 +460,14 @@
                     //TODO:
                     //1. 规划此处反向类比的构建方式;
                     //2. 用type生成backValue,并附在后面;
-                    
-                    
                     if (mSub_ps.count > 0) {
-                        AIAbsAlgNode *createAbsAlg = [theNet createAbsAlg_NoRepeat:mSub_ps conAlgs:@[mAlg] isMem:false];
+                        AIAbsAlgNode *createAbsAlg = [theNet createAbsAlg_NoRepeat:mSub_ps conAlgs:@[mAlg] isMem:false ds:mDS];
                         if (createAbsAlg) [ms addObject:createAbsAlg.pointer];
                     }
 
                     //e. 二级类比-收集多余
                     if (pSub_ps.count > 0) {
-                        AIAbsAlgNode *createAbsAlg = [theNet createAbsAlg_NoRepeat:pSub_ps conAlgs:@[pAlg] isMem:false];
+                        AIAbsAlgNode *createAbsAlg = [theNet createAbsAlg_NoRepeat:pSub_ps conAlgs:@[pAlg] isMem:false ds:pDS];
                         if (createAbsAlg) [ps addObject:createAbsAlg.pointer];
                     }
                 }
@@ -497,12 +497,13 @@
 
 +(void) analogy_Feedback_Diff_Creater:(AIKVPointer*)conMv_p conFo:(AIFoNodeBase*)conFo content_ps:(NSArray*)content_ps type:(AnalogyType)type{
     //1. 数据检查
+    NSString *ds = [ThinkingUtils getAnalogyTypeDS:type];
     AICMVNodeBase *conMv = [SMGUtils searchNode:conMv_p];
     if(!conMv || !ARRISOK(content_ps) || !conFo) return;
     CGFloat rate = (float)content_ps.count / conFo.content_ps.count;
 
     //2. 构建foNode
-    AIFoNodeBase *createFo = [ThinkingUtils createAbsFo_NoRepeat_General:@[conFo] content_ps:content_ps ds:[ThinkingUtils getAnalogyTypeDS:type]];
+    AIFoNodeBase *createFo = [ThinkingUtils createAbsFo_NoRepeat_General:@[conFo] content_ps:content_ps ds:ds];
 
     //3. 计算ms的价值变化量 (基准 x rate);
     NSInteger pUrgentTo = [NUMTOOK([AINetIndex getData:conMv.urgentTo_p]) integerValue];
