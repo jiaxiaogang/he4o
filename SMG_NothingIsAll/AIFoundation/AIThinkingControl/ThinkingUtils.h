@@ -85,7 +85,7 @@
 +(id) getNodeFromPort:(AIPort*)port;
 
 //根据proto联想matchAlg节点;
-+(AIAlgNodeBase*) getMatchAlgWithProtoAlg:(AIAlgNodeBase*)protoAlg;
+//+(AIAlgNodeBase*) getMatchAlgWithProtoAlg:(AIAlgNodeBase*)protoAlg;
 
 @end
 

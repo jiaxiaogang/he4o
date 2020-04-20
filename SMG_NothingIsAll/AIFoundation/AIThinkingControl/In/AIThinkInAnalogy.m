@@ -265,15 +265,19 @@
 
 /**
  *  MARK:--------------------内类比有无--------------------
+ *  @param checkFo : 从TIR传过来时,为瞬时组成的protoFo (当前protoFo由每桢的matchAlg构建);
+ *  @version
+ *      20200421 - 将a/bFocusAlg改成直接使用algA/algB (因为现在protoFo的元素即直接是matchAlg);
  */
 +(void) analogyInner_HN:(AIFoNodeBase*)checkFo algA:(AIAlgNodeBase*)algA algB:(AIAlgNodeBase*)algB rangeAlg_ps:(NSArray*)rangeAlg_ps createdBlock:(void(^)(AINetAbsFoNode *createFo,AnalogyType type))createdBlock{
     //1. 数据检查
     if (!algA || !algB) return;
     rangeAlg_ps = ARRTOOK(rangeAlg_ps);
-    AIAlgNodeBase *aFocusAlg = [ThinkingUtils getMatchAlgWithProtoAlg:algA];
-    AIAlgNodeBase *bFocusAlg = [ThinkingUtils getMatchAlgWithProtoAlg:algB];
-    if (aFocusAlg == nil) aFocusAlg = algA;
-    if (bFocusAlg == nil) bFocusAlg = algB;
+    //AIAlgNodeBase *aFocusAlg = [ThinkingUtils getMatchAlgWithProtoAlg:algA];if (aFocusAlg == nil) aFocusAlg = algA;
+    //AIAlgNodeBase *bFocusAlg = [ThinkingUtils getMatchAlgWithProtoAlg:algB];if (bFocusAlg == nil) bFocusAlg = algB;
+    AIAlgNodeBase *aFocusAlg = algA;
+    AIAlgNodeBase *bFocusAlg = algB;
+    
     
     //2. 收集a和b的概念辐射合集 (取自身 + 自身的一层抽象);
     NSMutableArray *aSum_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:bFocusAlg]];
@@ -401,7 +405,7 @@
  *      20200416 - 原先ms和ps都导致{mv-},改为ms导致{mmv*rate},ps导致{pmv*rate};
  *      20200419 - 构建alg/fo都新增了与analogyType相对应的ds,以方便MC_Value使用;
  *      20200421 - 新增构建sameAbsAlg节点 (如无距果),如:都是苹果,怎么1甜2苦?此处构建"都是苹果",可用于MC_V3中判断M零距果和C远距果的关系;
- *      20200421 - 取消构建sameAbsAlg,因为MC算法不需要同级MC判定,所以此处也没用,关于MC有效性检查可参考:19104;
+ *      20200421 - 取消构建sameAbsAlg,因为MC算法不需要同级MC判定,所以此处也没用,关于MC有效性检查可参考:19102;
  */
 +(void) analogy_Feedback_Diff:(AIShortMatchModel*)mModel shortFo:(AIFoNodeBase*)shortFo{
     //1. 数据检查 (MMv和PMV有效,且同区);
