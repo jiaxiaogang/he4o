@@ -26,7 +26,15 @@
 @property (strong, nonatomic) AIAlgNodeBase *matchAlg;  //匹配概念
 @property (assign, nonatomic) MatchType algMatchType;   //概念匹配类型
 
-@property (strong, nonatomic) AIFoNodeBase *protoFo;    //原始时序 (由前几桢瞬时中的protoAlg/matchAlg来构建);
+/**
+ *  MARK:--------------------原始时序--------------------
+ *  @desc
+ *      1. 由前几桢瞬时中的matchAlg来构建;
+ *      2. 不可轻易改为由protoAlg构建,因为matchAlg对红色或距离的认识才是几个标志性值(比如5,8,13,21,57);
+ *          a. 内类比成果因此而,这对以后决策时进行匹配有用,如果改成protoAlg构建,这个值会非常多,使决策循环也非常多才能找到有用的经验;
+ *          b. 反向反馈类比成果也同理,对MC中MC是否有效可行为化的判定非常有用,因为一旦无法MC匹配到mIsC,那么将进入下轮决策循环;
+ */
+@property (strong, nonatomic) AIFoNodeBase *protoFo;
 @property (strong, nonatomic) AIFoNodeBase *matchFo;    //匹配时序
 @property (assign, nonatomic) CGFloat matchFoValue;     //时序匹配度
 
