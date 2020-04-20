@@ -389,9 +389,6 @@
             [allActs addObjectsFromArray:acts];
             failured = !success;
         }];
-        [self convert2Out_MC_Value_V3:curAlg curFo:curFo checkScore:checkScore complete:^(NSArray *acts, BOOL success) {
-            NSLog(@"=======");
-        }];
     }
     
     //5. 完成

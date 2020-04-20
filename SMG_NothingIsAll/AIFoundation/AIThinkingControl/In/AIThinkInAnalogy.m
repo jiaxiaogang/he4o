@@ -400,6 +400,7 @@
  *  @version
  *      20200416 - 原先ms和ps都导致{mv-},改为ms导致{mmv*rate},ps导致{pmv*rate};
  *      20200419 - 构建alg/fo都新增了与analogyType相对应的ds,以方便MC_Value使用;
+ *      20200421 - 新增构建sameAbsAlg节点 (如无距果),如:都是苹果,怎么1甜2苦?此处构建"都是苹果",可用于MC_V3中判断M零距果和C远距果的关系;
  */
 +(void) analogy_Feedback_Diff:(AIShortMatchModel*)mModel shortFo:(AIFoNodeBase*)shortFo{
     //1. 数据检查 (MMv和PMV有效,且同区);
@@ -457,20 +458,23 @@
                     [ps addObjectsFromArray:ARR_SUB(shortFo.content_ps, jStart, j-jStart)];
                     findP = true;
 
-                    //d. 二级类比-收集缺乏
-                    //TODO:
-                    //1. 规划此处反向类比的构建方式;
-                    //2. 用type生成backValue,并附在后面;
+                    //d. 二级类比-收集缺乏 (都是苹果,怎么一个甜一个涩呢->"甜");
                     if (mSub_ps.count > 0) {
                         AIAbsAlgNode *createAbsAlg = [theNet createAbsAlg_NoRepeat:mSub_ps conAlgs:@[mAlg] isMem:false ds:mDS];
                         if (createAbsAlg) [ms addObject:createAbsAlg.pointer];
+                        NSLog(@"~~> M.PS节点 %@",Alg2FStr(createAbsAlg));
                     }
 
-                    //e. 二级类比-收集多余
+                    //e. 二级类比-收集多余 (都是苹果,怎么一个甜一个涩呢->"涩");
                     if (pSub_ps.count > 0) {
                         AIAbsAlgNode *createAbsAlg = [theNet createAbsAlg_NoRepeat:pSub_ps conAlgs:@[pAlg] isMem:false ds:pDS];
                         if (createAbsAlg) [ps addObject:createAbsAlg.pointer];
+                        NSLog(@"~~> P.PS节点 %@",Alg2FStr(createAbsAlg));
                     }
+                    
+                    //f. 构建共同抽象概念 (都是苹果,怎么一个甜一个涩呢->"苹果");
+                    AIAbsAlgNode *sameAbsAlg = [theNet createAbsAlg_NoRepeat:sameValue_ps conAlgs:@[mAlg,pAlg] isMem:false];
+                    NSLog(@"~~> MP.Sames节点 %@",Alg2FStr(sameAbsAlg));
                 }
             }
             //D. 无论一级还是二级,只要找到了jStart从下一个开始,标记finM=true;
