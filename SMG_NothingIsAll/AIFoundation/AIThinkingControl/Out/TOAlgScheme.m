@@ -402,6 +402,65 @@
     }
 }
 
+/**
+ *  MARK:--------------------MC_V3--------------------
+ *  @desc 参考:n19p10;
+ *      1. 废弃重组RTAlg和RTFo;
+ *      2.
+ */
+-(void) convert2Out_Short_MC_V3:(AIAlgNodeBase*)cAlg curFo:(AIFoNodeBase*)cFo complete:(void(^)(NSArray *acts,BOOL success))complete {
+    
+    
+    //TODOTOMORROW: 伪代码:
+    //1. 从C向下,找匹配M,支持三层:
+    //      a. MC直接相同
+    //      b. mIsC
+    //      c. M.abs与C.con有交集
+    //2. 反思评价-满足C,条件如下:
+    //      a. 取C中的mv+;
+    //      b. 到CFo中,判断是否也包含此mv+,包含才有效;
+    //      c. 再到M中判断,是否不包含此mv+ (M缺失同区不同值的mv+) ,不包含才需满足;
+    //      d. 对C此值进行满足 (如C中含距0,而M中为距50);
+    //3. 反思评价-修正M,条件如下:
+    //      a. 关键修正: 取M的同区mv- ,从C中找其同区稀疏码,并进行value行为化 (如M距50,C距0);
+    //      b. 次要修正: 取M的不同区mv-,从CFo的conPorts中,找同区不同值,(比如找到CFo具象中,吃热食物,M中为冷食物,吃了肚子疼,行为化加热);
+    //      c. 再次要修正: 取M.normalAbsPorts中不同区mv-,从....(略去,与上条b中一致);
+    
+    
+    //1. 数据准备;
+    NSMutableArray *acts = [[NSMutableArray alloc] init];
+    AIAlgNodeBase *pAlg = [SMGUtils searchNode:self.shortMatchModel.protoAlg_p];
+    AIAlgNodeBase *mAlg = self.shortMatchModel.matchAlg;
+    if (!pAlg || !cAlg || !complete || !cFo) {
+        complete(acts,true);
+        return;
+    }
+    __block BOOL success = true;//默认为成功,只有成功,才会一直运行下去;
+    NSLog(@"===========MC_VALUE V3 START=========\nCF:%@\nCA:%@\nPA:%@\nMA:%@",Fo2FStr(cFo),Alg2FStr(cAlg),Alg2FStr(pAlg),Alg2FStr(mAlg));
+    
+    //2. 取M特有的稀疏码 和 Same_ps;
+    NSArray *cFPlus = [AINetUtils absPorts_All:cFo type:AnalogyType_DiffPlus];
+    NSArray *cFSub = [AINetUtils absPorts_All:cFo type:AnalogyType_DiffSub];
+    NSArray *cAPlus = [AINetUtils absPorts_All:cAlg type:AnalogyType_DiffPlus];
+    NSArray *cASub = [AINetUtils absPorts_All:cAlg type:AnalogyType_DiffSub];
+    NSArray *pAPlus = [AINetUtils absPorts_All:pAlg type:AnalogyType_DiffPlus];
+    NSArray *pASub = [AINetUtils absPorts_All:pAlg type:AnalogyType_DiffSub];
+    
+    
+    NSLog(@"cFPlus:%lu %@",(unsigned long)cFPlus.count,Pits2FStr([SMGUtils convertPointersFromPorts:cFPlus]));
+    NSLog(@"cFSub:%lu %@",(unsigned long)cFSub.count,Pits2FStr([SMGUtils convertPointersFromPorts:cFSub]));
+    
+    NSLog(@"cAPlus:%lu %@",(unsigned long)cAPlus.count,Pits2FStr([SMGUtils convertPointersFromPorts:cAPlus]));
+    NSLog(@"cASub:%lu %@",(unsigned long)cASub.count,Pits2FStr([SMGUtils convertPointersFromPorts:cASub]));
+    
+    NSLog(@"pAPlus:%lu %@",(unsigned long)pAPlus.count,Pits2FStr([SMGUtils convertPointersFromPorts:pAPlus]));
+    NSLog(@"pASub:%lu %@",(unsigned long)pASub.count,Pits2FStr([SMGUtils convertPointersFromPorts:pASub]));
+    
+    NSLog(@"===========MC_VALUE V3 FINISH=========");
+    
+    
+}
+
 -(void) convert2Out_MC_Alg:(AIAlgNodeBase*)curAlg curFo:(AIFoNodeBase*)curFo mcSuccess:(void(^)(NSArray *acts))mcSuccess mcFailure:(void(^)())mcFailure checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
     //1. 数据准备
     __block BOOL failured = false;
@@ -519,6 +578,7 @@
  *      2020.04.05 : 更新至v2(参考18207); 1. 将mcs&cs&ms的逻辑删掉,改用C和M的直接类比;   2. 将RTAlg的拼接改为用same_ps;
  *      2020.04.17 : MC_Value操作M对象由MatchAlg改为ProtoAlg;
  *      2020.04.18 : Same_ps为空时return,因为(远距果...)与(吃)对比,没有可比性;
+ *      2020.04.19 : 更新至v3(参考n19p9); 1.仅针对反向反馈类比的成果cPlus和cSub进行使用; 2.由向右取cPlus/cSub替代重组RTAlg和Fo评价;(中止,转MC_V3开发,参考n19p10);
  */
 -(void) convert2Out_MC_Value_V2:(AIAlgNodeBase*)cAlg curFo:(AIFoNodeBase*)curFo checkScore:(BOOL(^)(AIAlgNodeBase *rtAlg))checkScore complete:(void(^)(NSArray *acts,BOOL success))complete{
     //1. 数据准备;
@@ -577,53 +637,6 @@
     
     //6. 执行返回;
     complete(acts,success);
-}
-
-/**
- *  MARK:--------------------对MC中,特有的稀疏码进行行为化;--------------------
- *  @desc : 参考n18205:组合方案;
- *  @caller : 由MC方法调用;
- *  @param complete : 完成时调用
- *  @version
- *      2020.04.04 : 支持更全面查找的同区不同值 (渗透到具象中,参考:18206);
- *      2020.04.05 : 更新至v2(参考18207); 1. 将mcs&cs&ms的逻辑删掉,改用C和M的直接类比;   2. 将RTAlg的拼接改为用same_ps;
- *      2020.04.17 : MC_Value操作M对象由MatchAlg改为ProtoAlg;
- *      2020.04.18 : Same_ps为空时return,因为(远距果...)与(吃)对比,没有可比性;
- *      2020.04.19 : 更新至v3(参考n19p9); 1.仅针对反向反馈类比的成果cPlus和cSub进行使用; 2.由向右取cPlus/cSub替代重组RTAlg和Fo评价;
- */
--(void) convert2Out_MC_Value_V3:(AIAlgNodeBase*)cAlg curFo:(AIFoNodeBase*)curFo checkScore:(BOOL(^)(AIAlgNodeBase *rtAlg))checkScore complete:(void(^)(NSArray *acts,BOOL success))complete{
-    //1. 数据准备;
-    NSMutableArray *acts = [[NSMutableArray alloc] init];
-    AIAlgNodeBase *pAlg = [SMGUtils searchNode:self.shortMatchModel.protoAlg_p];
-    AIAlgNodeBase *mAlg = self.shortMatchModel.matchAlg;
-    if (!pAlg || !cAlg || !complete || !checkScore || !curFo) {
-        complete(acts,true);
-        return;
-    }
-    __block BOOL success = true;//默认为成功,只有成功,才会一直运行下去;
-    NSLog(@"===========MC_VALUE V3 START=========\nCF:%@\nCA:%@\nPA:%@\nMA:%@",Fo2FStr(curFo),Alg2FStr(cAlg),Alg2FStr(pAlg),Alg2FStr(mAlg));
-    
-    //2. 取M特有的稀疏码 和 Same_ps;
-    NSArray *cFPlus = [AINetUtils absPorts_All:curFo type:AnalogyType_DiffPlus];
-    NSArray *cFSub = [AINetUtils absPorts_All:curFo type:AnalogyType_DiffSub];
-    NSArray *cAPlus = [AINetUtils absPorts_All:cAlg type:AnalogyType_DiffPlus];
-    NSArray *cASub = [AINetUtils absPorts_All:cAlg type:AnalogyType_DiffSub];
-    NSArray *pAPlus = [AINetUtils absPorts_All:pAlg type:AnalogyType_DiffPlus];
-    NSArray *pASub = [AINetUtils absPorts_All:pAlg type:AnalogyType_DiffSub];
-    
-    
-    NSLog(@"cFPlus:%lu %@",(unsigned long)cFPlus.count,Pits2FStr([SMGUtils convertPointersFromPorts:cFPlus]));
-    NSLog(@"cFSub:%lu %@",(unsigned long)cFSub.count,Pits2FStr([SMGUtils convertPointersFromPorts:cFSub]));
-    
-    NSLog(@"cAPlus:%lu %@",(unsigned long)cAPlus.count,Pits2FStr([SMGUtils convertPointersFromPorts:cAPlus]));
-    NSLog(@"cASub:%lu %@",(unsigned long)cASub.count,Pits2FStr([SMGUtils convertPointersFromPorts:cASub]));
-    
-    NSLog(@"pAPlus:%lu %@",(unsigned long)pAPlus.count,Pits2FStr([SMGUtils convertPointersFromPorts:pAPlus]));
-    NSLog(@"pASub:%lu %@",(unsigned long)pASub.count,Pits2FStr([SMGUtils convertPointersFromPorts:pASub]));
-    
-    NSLog(@"===========MC_VALUE V3 FINISH=========");
-    //6. 执行返回;
-    //complete(acts,success);
 }
 
 /**
