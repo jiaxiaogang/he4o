@@ -24,4 +24,9 @@
  */
 +(BOOL) mIsC:(AIAlgNodeBase*)m c:(AIAlgNodeBase*)c;
 
+/**
+ *  MARK:--------------------获取节点所有Plus的所有稀疏码--------------------
+ */
++(NSArray*) getAlgAllPlusAllValue_ps:(AIAlgNodeBase*)alg;
+
 @end

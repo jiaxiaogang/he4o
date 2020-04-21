@@ -186,7 +186,10 @@
 //MARK:===============================================================
 @interface SMGUtils (Remove)
 
-//取差集
+/**
+ *  MARK:--------------------取差集--------------------
+ *  @result notnull
+ */
 +(NSArray*) removeSub_ps:(NSArray*)sub_ps parent_ps:(NSArray*)parent_ps;
 +(NSMutableArray*) removeSub_p:(AIPointer*)sub_p parent_ps:(NSArray*)parent_ps;
 
@@ -195,7 +198,9 @@
  *  @result notnull
  */
 +(NSArray*) filterSame_ps:(NSArray*)a_ps parent_ps:(NSArray*)b_ps;
-//同区
+//从bps中,找到与ap同区的bItem返回;
++(AIKVPointer*) filterSameIdentifier_p:(AIKVPointer*)a_p b_ps:(NSArray*)b_ps;
+//从bps中,找到与aps同区的 所有映射结果 返回;
 +(NSMutableDictionary*) filterSameIdentifier_ps:(NSArray*)a_ps b_ps:(NSArray*)b_ps;
 //从b_ps中,找出与a_p同区不同值的指针;
 +(AIKVPointer*) filterSameIdentifier_DiffId_p:(AIKVPointer*)a_p b_ps:(NSArray*)b_ps;

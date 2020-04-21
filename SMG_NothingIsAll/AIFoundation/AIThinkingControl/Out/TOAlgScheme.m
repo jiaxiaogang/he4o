@@ -418,6 +418,11 @@
         return;
     }
     
+    //1. 数据准备
+    BOOL success = true;
+    NSMutableArray *acts = [[NSMutableArray alloc] init];
+    NSArray *mPlusAllValue_ps = [TOUtils getAlgAllPlusAllValue_ps:mAlg];
+    
     //2. C的mv+处理;
     NSArray *cPlus_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:cAlg type:AnalogyType_DiffPlus]];
     NSArray *cFoPlus_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:cFo type:AnalogyType_DiffPlus]];
@@ -428,29 +433,30 @@
         NSArray *cPlusRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:cPlusAlg]];
         if ([SMGUtils filterSame_ps:cPlusRef_ps parent_ps:cFoPlus_ps].count == 0) {
             //无需要处理;
-            //success();
             continue;
         }
         //2.2 有效性判断2: 再判断M是否包含此mv+,不包含才需满足 (C甜,M不能甜);
-        NSArray *mPlus_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:mAlg type:AnalogyType_DiffPlus]];
+        NSDictionary *sameIdenDic = [SMGUtils filterSameIdentifier_ps:cPlusAlg.content_ps b_ps:mPlusAllValue_ps];
+        NSArray *cAtM_ps = DATAS2OBJS(sameIdenDic.allKeys);
+        NSArray *cUniqueValue_ps = [SMGUtils removeSub_ps:cAtM_ps parent_ps:cPlusAlg.content_ps];
         
-        //TODOTOMORROW: 此处需取出cPlus_p和mPlus_ps所含的稀疏码,并判断是否有同区不同值;
-        //或者取出所有M的稀疏码,其中被mPlus引用的部分,即为mPlus_ps中所有稀疏码,省得一个一个取algNode;
-        if (![mPlus_ps containsObject:cPlus_p]) {
+        //2.3 有效性判断3: 再到M中找同区不同值,对C稀疏码进行满足 (如C中含距0,而M中为距50);
+        for (AIKVPointer *cUniqueValue_p in cUniqueValue_ps) {
+            AIKVPointer *mapMValue_p = [SMGUtils filterSameIdentifier_p:cUniqueValue_p b_ps:mAlg.content_ps];
+            //TODOTOMORROW: 将c和m的稀疏码值,进行行为化;
             
         }
-        if (!mPlus.contains(cPlus.item)) {
-            //2.3 有效性判断3: 再到M中找同区不同值,对C稀疏码进行满足 (如C中含距0,而M中为距50);
-            if (M.item.identifier == cPlus.item.identifier) {
-                this.mc_Value(M.item.value,cPlus.item.value);
-            }else{
-                //2.3B 匹配不上,转移;
-                this.alg_cHav(C);
-            }
-        }else{
-            //2.2B 无需处理;
-            success();
-        }
+//            //2.3 有效性判断3: 再到M中找同区不同值,对C稀疏码进行满足 (如C中含距0,而M中为距50);
+//            if (M.item.identifier == cPlus.item.identifier) {
+//                this.mc_Value(M.item.value,cPlus.item.value);
+//            }else{
+//                //2.3B 匹配不上,转移;
+//                this.alg_cHav(C);
+//            }
+//        }else{
+//            //2.2B 无需处理;
+//            success();
+//        }
     }
     
     //TODOTOMORROW: 伪代码:

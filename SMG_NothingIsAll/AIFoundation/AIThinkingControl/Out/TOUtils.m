@@ -53,4 +53,14 @@
     return false;
 }
 
++(NSArray*) getAlgAllPlusAllValue_ps:(AIAlgNodeBase*)alg{
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    if (alg) {
+        NSArray *plus_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:alg type:AnalogyType_DiffPlus]];
+        NSArray *plusAlgs = [SMGUtils searchNodes:plus_ps];
+        for (AIAlgNodeBase *item in plusAlgs) [result addObjectsFromArray:item.content_ps];
+    }
+    return result;
+}
+
 @end

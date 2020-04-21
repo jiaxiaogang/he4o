@@ -655,6 +655,10 @@
         return a_p ? [a_p isEqual:b_p] : false;
     }].allValues;
 }
++(AIKVPointer*) filterSameIdentifier_p:(AIKVPointer*)a_p b_ps:(NSArray*)b_ps{
+    if (!a_p) return nil;
+    return ARR_INDEX([self filterSameIdentifier_ps:@[a_p] b_ps:b_ps].allValues, 0);
+}
 +(NSMutableDictionary*) filterSameIdentifier_ps:(NSArray*)a_ps b_ps:(NSArray*)b_ps{
     return [SMGUtils filterPointers:a_ps b_ps:b_ps checkItemValid:^BOOL(AIKVPointer *a_p, AIKVPointer *b_p) {
         return a_p ? [a_p.identifier isEqualToString:b_p.identifier] : false;
