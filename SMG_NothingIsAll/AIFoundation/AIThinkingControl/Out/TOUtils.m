@@ -34,4 +34,23 @@
     }
 }
 
++(BOOL) mIsC:(AIAlgNodeBase*)m c:(AIAlgNodeBase*)c{
+    if (m && c) {
+        //1. 判断本级相等;
+        BOOL equ0 = [m.pointer isEqual:c.pointer];
+        if (equ0) return true;
+        
+        //2. 判断一级抽象;
+        NSArray *mAbs = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All_Normal:m]];
+        BOOL equ1 = [mAbs containsObject:c.pointer];
+        if (equ1) return true;
+        
+        //3. 判断二级抽象;
+        NSArray *cCon = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:c]];
+        BOOL equ2 = [SMGUtils filterSame_ps:mAbs parent_ps:cCon].count > 0;
+        if (equ2) return true;
+    }
+    return false;
+}
+
 @end

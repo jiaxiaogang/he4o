@@ -18,4 +18,10 @@
  */
 +(void) findConAlg_StableMV:(AIAlgNodeBase*)curAlg curFo:(AIFoNodeBase*)curFo itemBlock:(BOOL(^)(AIAlgNodeBase* validAlg))itemBlock;
 
+/**
+ *  MARK:--------------------判断mIsC--------------------
+ *  @desc 从M向上,找匹配C,支持三层 (含本层):
+ */
++(BOOL) mIsC:(AIAlgNodeBase*)m c:(AIAlgNodeBase*)c;
+
 @end

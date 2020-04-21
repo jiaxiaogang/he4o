@@ -406,13 +406,15 @@
  *      2.
  */
 -(void) convert2Out_Short_MC_V3:(AIAlgNodeBase*)cAlg curFo:(AIFoNodeBase*)cFo complete:(void(^)(NSArray *acts,BOOL success))complete {
+    //1. 有效性判断;
+    AIAlgNodeBase *mAlg = self.shortMatchModel.matchAlg;
+    if (![TOUtils mIsC:mAlg c:cAlg]) {
+        return;
+    }
     
     
     //TODOTOMORROW: 伪代码:
-    //1. 从C向下,找匹配M,支持三层:
-    //      a. MC直接相同
-    //      b. mIsC
-    //      c. M.abs与C.con有交集
+    
     //2. 反思评价-满足C,条件如下:
     //      a. 取C中的mv+;
     //      b. 到CFo中,判断是否也包含此mv+,包含才有效;
@@ -427,7 +429,6 @@
     //1. 数据准备;
     NSMutableArray *acts = [[NSMutableArray alloc] init];
     AIAlgNodeBase *pAlg = [SMGUtils searchNode:self.shortMatchModel.protoAlg_p];
-    AIAlgNodeBase *mAlg = self.shortMatchModel.matchAlg;
     if (!pAlg || !cAlg || !complete || !cFo) {
         complete(acts,true);
         return;
