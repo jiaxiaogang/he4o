@@ -409,9 +409,49 @@
     //1. 有效性判断;
     AIAlgNodeBase *mAlg = self.shortMatchModel.matchAlg;
     if (![TOUtils mIsC:mAlg c:cAlg]) {
+        //2. MC无法加工,则直接转移;
+        [self convert2Out_Long_NET:AnalogyType_InnerH at:nil ds:nil success:^(AIFoNodeBase *havFo, NSArray *actions) {
+            //暂略
+        } failure:^{
+            //暂略
+        }];
         return;
     }
     
+    //2. C的mv+处理;
+    NSArray *cPlus_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:cAlg type:AnalogyType_DiffPlus]];
+    NSArray *cFoPlus_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:cFo type:AnalogyType_DiffPlus]];
+    for (AIKVPointer *cPlus_p in cPlus_ps) {
+        
+        //2.1 有效性判断1: 到CFo中,判断是否也包含此mv+,包含才有效 (C甜,也正是要吃甜的);
+        AIAlgNodeBase *cPlusAlg = [SMGUtils searchNode:cPlus_p];
+        NSArray *cPlusRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:cPlusAlg]];
+        if ([SMGUtils filterSame_ps:cPlusRef_ps parent_ps:cFoPlus_ps].count == 0) {
+            //无需要处理;
+            //success();
+            continue;
+        }
+        //2.2 有效性判断2: 再判断M是否包含此mv+,不包含才需满足 (C甜,M不能甜);
+        NSArray *mPlus_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:mAlg type:AnalogyType_DiffPlus]];
+        
+        //TODOTOMORROW: 此处需取出cPlus_p和mPlus_ps所含的稀疏码,并判断是否有同区不同值;
+        //或者取出所有M的稀疏码,其中被mPlus引用的部分,即为mPlus_ps中所有稀疏码,省得一个一个取algNode;
+        if (![mPlus_ps containsObject:cPlus_p]) {
+            
+        }
+        if (!mPlus.contains(cPlus.item)) {
+            //2.3 有效性判断3: 再到M中找同区不同值,对C稀疏码进行满足 (如C中含距0,而M中为距50);
+            if (M.item.identifier == cPlus.item.identifier) {
+                this.mc_Value(M.item.value,cPlus.item.value);
+            }else{
+                //2.3B 匹配不上,转移;
+                this.alg_cHav(C);
+            }
+        }else{
+            //2.2B 无需处理;
+            success();
+        }
+    }
     
     //TODOTOMORROW: 伪代码:
     
