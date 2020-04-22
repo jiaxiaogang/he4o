@@ -435,14 +435,18 @@
             //无需要处理;
             continue;
         }
-        //2.2 有效性判断2: 再判断M是否包含此mv+,不包含才需满足 (C甜,M不能甜);
-        NSDictionary *sameIdenDic = [SMGUtils filterSameIdentifier_ps:cPlusAlg.content_ps b_ps:mPlusAllValue_ps];
-        NSArray *cAtM_ps = DATAS2OBJS(sameIdenDic.allKeys);
-        NSArray *cUniqueValue_ps = [SMGUtils removeSub_ps:cAtM_ps parent_ps:cPlusAlg.content_ps];
+        //2.2 有效性判断2: C-M (C甜,M不能甜);
+        NSArray *cAtM_ps = [SMGUtils filterSameIdentifier_ps:mPlusAllValue_ps b_ps:cPlusAlg.content_ps].allValues;
+        NSArray *cSubM_ps = [SMGUtils removeSub_ps:cAtM_ps parent_ps:cPlusAlg.content_ps];
         
         //2.3 有效性判断3: 再到M中找同区不同值,对C稀疏码进行满足 (如C中含距0,而M中为距50);
-        for (AIKVPointer *cUniqueValue_p in cUniqueValue_ps) {
-            AIKVPointer *mapMValue_p = [SMGUtils filterSameIdentifier_p:cUniqueValue_p b_ps:mAlg.content_ps];
+        for (AIKVPointer *item in cSubM_ps) {
+            //取出M的0到-1层sub
+            
+            
+            
+            
+            AIKVPointer *mapMValue_p = [SMGUtils filterSameIdentifier_p:item b_ps:mAlg.content_ps];
             //TODOTOMORROW: 将c和m的稀疏码值,进行行为化;
             
         }
