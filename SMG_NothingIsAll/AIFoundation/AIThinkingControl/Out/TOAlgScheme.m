@@ -415,7 +415,11 @@
  *          c. 再次要修正: 取M.normalAbsPorts中不同区mv-,从....(略去,与上条b中一致);
  */
 -(void) convert2Out_Short_MC_V3:(AIAlgNodeBase*)cAlg curFo:(AIFoNodeBase*)cFo complete:(void(^)(NSArray *acts,BOOL success))complete {
-    //1. 有效性判断;
+    //1. 结果数据准备
+    BOOL success = true;
+    NSMutableArray *acts = [[NSMutableArray alloc] init];
+    
+    //2. mIsC有效性判断;
     AIAlgNodeBase *mAlg = self.shortMatchModel.matchAlg;
     if (![TOUtils mIsC:mAlg c:cAlg]) {
         //2. MC无法加工,则直接转移;
@@ -427,36 +431,48 @@
         return;
     }
     
-    //1. 数据准备
-    BOOL success = true;
-    NSMutableArray *acts = [[NSMutableArray alloc] init];
-    NSArray *m_P1s = [TOUtils collectAbsPs:mAlg type:AnalogyType_DiffPlus conLayer:0 absLayer:0];//取M具象1层sub
-    NSArray *m_S2s = [TOUtils collectAbsPs:mAlg type:AnalogyType_DiffSub conLayer:1 absLayer:0];//取M具象2层sub
+    //3. 算法数据准备
+    //a. 供有效性判断1使用 (因为下层吃热食物,吃冷M会肚子疼,所以需要两层);
+    NSArray *cf_P2s = [TOUtils collectAbsPs:cFo type:AnalogyType_DiffPlus conLayer:1 absLayer:0];
+    //b. 供有效性判断2使用 (只需要满足Cmv+,但在M没有同区mv+的部分);
+    NSArray *m_P1s = [TOUtils collectAbsPs:mAlg type:AnalogyType_DiffPlus conLayer:0 absLayer:0];
     NSArray *m_P1_vps = [TOUtils convertValuesFromAlg_ps:m_P1s];
+    //c. 供有效性判断3使用 (C要求甜,M为食物,M具象有不甜的豆浆,豆浆可加糖,所以取两层);
+    NSArray *m_S2s = [TOUtils collectAbsPs:mAlg type:AnalogyType_DiffSub conLayer:1 absLayer:0];
+    //d. C的mv+处理 (要向具象一层,发现更多需要避免的错误,和满足的C,比如面前的冷面可吃,但要具象想一下我们只能吃热的);
+    NSArray *c_P2s = [TOUtils collectAbsPs:cAlg type:AnalogyType_DiffPlus conLayer:1 absLayer:0];
+    //e. 收集可满足和未满足的;
+    NSMutableDictionary *cCanOut = [[NSMutableDictionary alloc] init];
+    NSMutableArray *cCanNotOut = [[NSMutableArray alloc] init];
     
-    //2. C的mv+处理;
-    NSArray *c_P1s = [TOUtils collectAbsPs:cAlg type:AnalogyType_DiffPlus conLayer:0 absLayer:0];
-    NSArray *cf_P1s = [TOUtils collectAbsPs:cFo type:AnalogyType_DiffPlus conLayer:0 absLayer:0];
-    for (AIKVPointer *c_P1 in c_P1s) {
-        
-        //2.1 有效性判断1: 到CFo中,判断是否也包含此mv+,包含才有效 (C甜,也正是要吃甜的);
+    //4. 逐个判断收集;
+    for (AIKVPointer *c_P1 in c_P2s) {
+        //a. 有效性判断1: 到CFo中,判断是否也包含此mv+,包含才有效 (C甜,也正是要吃甜的);
         AIAlgNodeBase *cPlusAlg = [SMGUtils searchNode:c_P1];
         NSArray *cPlusRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:cPlusAlg]];
-        if ([SMGUtils filterSame_ps:cPlusRef_ps parent_ps:cf_P1s].count == 0) {
-            //无需要处理;
-            continue;
+        if ([SMGUtils filterSame_ps:cPlusRef_ps parent_ps:cf_P2s].count == 0) {
+            continue;//无需处理;
         }
-        //2.2 有效性判断2: C-M (C甜,M不能甜);
+        //b. 有效性判断2: C-M (C甜,M不能甜);
         NSArray *cP_At_mP = [SMGUtils filterSameIdentifier_ps:m_P1_vps b_ps:cPlusAlg.content_ps].allValues;
         NSArray *cP_Rm_mP = [SMGUtils removeSub_ps:cP_At_mP parent_ps:cPlusAlg.content_ps];
-        NSLog(@"--->需满足C: %lu",(unsigned long)cP_Rm_mP.count);
+        NSLog(@"--->需满足C:%@",Pits2FStr(cP_Rm_mP));
         
-        //2.3 有效性判断3: 再到M_S2s中找M负价值的,同区不同值的值,对C稀疏码进行满足 (如C中含距0,而M中为距50);
-        NSDictionary *cCanOut = [SMGUtils filterSameIdentifier_DiffId_ps:m_S2s b_ps:cP_Rm_mP];
-        NSLog(@"--->可满足C: %lu",(unsigned long)cCanOut.count);
+        //c. 有效性判断3: 再到M_S2s中找M负价值的,同区不同值的值,对C稀疏码进行满足 (如C中含距0,而M中为距50);
+        NSDictionary *itemCanOut = [SMGUtils filterSameIdentifier_DiffId_ps:m_S2s b_ps:cP_Rm_mP];
+        NSArray *itemCanNotOut = [SMGUtils removeSub_ps:itemCanOut.allValues parent_ps:cP_Rm_mP];
+        NSLog(@"--->可满足C:%@ 未满足:%@",Pits2FStr(cCanOut.allValues),Pits2FStr(itemCanNotOut));
+        
+        //d. 收集可满足和未满足;
+        [cCanOut setDictionary:itemCanOut];
+        [cCanNotOut addObjectsFromArray:itemCanNotOut];
     }
     
-    //TODOTOMORROW: 伪代码:
+    //5. 评价未满足带来的影响,是否要中断行为化;
+    
+    //6. 进行行为化;
+    
+    
     
     
 //    //1. 数据准备;
