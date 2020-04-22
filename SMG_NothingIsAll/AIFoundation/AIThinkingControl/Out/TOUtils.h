@@ -25,15 +25,15 @@
 +(BOOL) mIsC:(AIAlgNodeBase*)m c:(AIAlgNodeBase*)c;
 
 /**
- *  MARK:--------------------获取节点所有Plus的所有稀疏码--------------------
+ *  MARK:--------------------收集概念节点的稀疏码--------------------
  */
-+(NSArray*) getAlgAllPlusAllValue_ps:(AIAlgNodeBase*)alg;
++(NSArray*) convertValuesFromAlg_ps:(NSArray*)alg_ps;
 
 /**
  *  MARK:--------------------收集多层的absPorts--------------------
  *  @desc 从alg取指定type的absPorts,再从具象,从抽象,各取指定层absPorts,收集返回;
  *  @param conLayer : 从具象取几层 (不含当前层),一般取:1层当前层+1层具象层=共两层即可;
  */
-+(NSArray*) collectAbsPorts:(AIAlgNodeBase*)alg type:(AnalogyType)type conLayer:(NSInteger)conLayer absLayer:(NSInteger)absLayer;
++(NSArray*) collectAbsPs:(AINodeBase*)alg type:(AnalogyType)type conLayer:(NSInteger)conLayer absLayer:(NSInteger)absLayer;
 
 @end

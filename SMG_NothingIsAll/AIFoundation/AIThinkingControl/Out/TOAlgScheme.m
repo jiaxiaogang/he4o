@@ -403,7 +403,16 @@
  *  MARK:--------------------MC_V3--------------------
  *  @desc 参考:n19p10;
  *      1. 废弃重组RTAlg和RTFo;
- *      2.
+ *  @desc 算法步骤:
+ *      1. 反思评价-满足C,条件如下:
+ *          a. 取C中的mv+;
+ *          b. 到CFo中,判断是否也包含此mv+,包含才有效;
+ *          c. 再到M中判断,是否不包含此mv+ (M缺失同区不同值的mv+) ,不包含才需满足;
+ *          d. 对C此值进行满足 (如C中含距0,而M中为距50);
+ *      2. 反思评价-修正M,条件如下:
+ *          a. 关键修正: 取M的同区mv- ,从C中找其同区稀疏码,并进行value行为化 (如M距50,C距0);
+ *          b. 次要修正: 取M的不同区mv-,从CFo的conPorts中,找同区不同值,(比如找到CFo具象中,吃热食物,M中为冷食物,吃了肚子疼,行为化加热);
+ *          c. 再次要修正: 取M.normalAbsPorts中不同区mv-,从....(略去,与上条b中一致);
  */
 -(void) convert2Out_Short_MC_V3:(AIAlgNodeBase*)cAlg curFo:(AIFoNodeBase*)cFo complete:(void(^)(NSArray *acts,BOOL success))complete {
     //1. 有效性判断;
@@ -421,90 +430,64 @@
     //1. 数据准备
     BOOL success = true;
     NSMutableArray *acts = [[NSMutableArray alloc] init];
-    NSArray *mPlusAllValue_ps = [TOUtils getAlgAllPlusAllValue_ps:mAlg];
+    NSArray *m_P1s = [TOUtils collectAbsPs:mAlg type:AnalogyType_DiffPlus conLayer:0 absLayer:0];//取M具象1层sub
+    NSArray *m_S2s = [TOUtils collectAbsPs:mAlg type:AnalogyType_DiffSub conLayer:1 absLayer:0];//取M具象2层sub
+    NSArray *m_P1_vps = [TOUtils convertValuesFromAlg_ps:m_P1s];
     
     //2. C的mv+处理;
-    NSArray *cPlus_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:cAlg type:AnalogyType_DiffPlus]];
-    NSArray *cFoPlus_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:cFo type:AnalogyType_DiffPlus]];
-    for (AIKVPointer *cPlus_p in cPlus_ps) {
+    NSArray *c_P1s = [TOUtils collectAbsPs:cAlg type:AnalogyType_DiffPlus conLayer:0 absLayer:0];
+    NSArray *cf_P1s = [TOUtils collectAbsPs:cFo type:AnalogyType_DiffPlus conLayer:0 absLayer:0];
+    for (AIKVPointer *c_P1 in c_P1s) {
         
         //2.1 有效性判断1: 到CFo中,判断是否也包含此mv+,包含才有效 (C甜,也正是要吃甜的);
-        AIAlgNodeBase *cPlusAlg = [SMGUtils searchNode:cPlus_p];
+        AIAlgNodeBase *cPlusAlg = [SMGUtils searchNode:c_P1];
         NSArray *cPlusRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:cPlusAlg]];
-        if ([SMGUtils filterSame_ps:cPlusRef_ps parent_ps:cFoPlus_ps].count == 0) {
+        if ([SMGUtils filterSame_ps:cPlusRef_ps parent_ps:cf_P1s].count == 0) {
             //无需要处理;
             continue;
         }
         //2.2 有效性判断2: C-M (C甜,M不能甜);
-        NSArray *cAtM_ps = [SMGUtils filterSameIdentifier_ps:mPlusAllValue_ps b_ps:cPlusAlg.content_ps].allValues;
-        NSArray *cSubM_ps = [SMGUtils removeSub_ps:cAtM_ps parent_ps:cPlusAlg.content_ps];
+        NSArray *cP_At_mP = [SMGUtils filterSameIdentifier_ps:m_P1_vps b_ps:cPlusAlg.content_ps].allValues;
+        NSArray *cP_Rm_mP = [SMGUtils removeSub_ps:cP_At_mP parent_ps:cPlusAlg.content_ps];
+        NSLog(@"--->需满足C: %lu",(unsigned long)cP_Rm_mP.count);
         
-        //2.3 有效性判断3: 再到M中找同区不同值,对C稀疏码进行满足 (如C中含距0,而M中为距50);
-        for (AIKVPointer *item in cSubM_ps) {
-            //取出M的0到-1层sub
-            
-            
-            
-            
-            AIKVPointer *mapMValue_p = [SMGUtils filterSameIdentifier_p:item b_ps:mAlg.content_ps];
-            //TODOTOMORROW: 将c和m的稀疏码值,进行行为化;
-            
-        }
-//            //2.3 有效性判断3: 再到M中找同区不同值,对C稀疏码进行满足 (如C中含距0,而M中为距50);
-//            if (M.item.identifier == cPlus.item.identifier) {
-//                this.mc_Value(M.item.value,cPlus.item.value);
-//            }else{
-//                //2.3B 匹配不上,转移;
-//                this.alg_cHav(C);
-//            }
-//        }else{
-//            //2.2B 无需处理;
-//            success();
-//        }
+        //2.3 有效性判断3: 再到M_S2s中找M负价值的,同区不同值的值,对C稀疏码进行满足 (如C中含距0,而M中为距50);
+        NSDictionary *cCanOut = [SMGUtils filterSameIdentifier_DiffId_ps:m_S2s b_ps:cP_Rm_mP];
+        NSLog(@"--->可满足C: %lu",(unsigned long)cCanOut.count);
     }
     
     //TODOTOMORROW: 伪代码:
     
-    //2. 反思评价-满足C,条件如下:
-    //      a. 取C中的mv+;
-    //      b. 到CFo中,判断是否也包含此mv+,包含才有效;
-    //      c. 再到M中判断,是否不包含此mv+ (M缺失同区不同值的mv+) ,不包含才需满足;
-    //      d. 对C此值进行满足 (如C中含距0,而M中为距50);
-    //3. 反思评价-修正M,条件如下:
-    //      a. 关键修正: 取M的同区mv- ,从C中找其同区稀疏码,并进行value行为化 (如M距50,C距0);
-    //      b. 次要修正: 取M的不同区mv-,从CFo的conPorts中,找同区不同值,(比如找到CFo具象中,吃热食物,M中为冷食物,吃了肚子疼,行为化加热);
-    //      c. 再次要修正: 取M.normalAbsPorts中不同区mv-,从....(略去,与上条b中一致);
     
-    
-    //1. 数据准备;
-    NSMutableArray *acts = [[NSMutableArray alloc] init];
-    AIAlgNodeBase *pAlg = [SMGUtils searchNode:self.shortMatchModel.protoAlg_p];
-    if (!pAlg || !cAlg || !complete || !cFo) {
-        complete(acts,true);
-        return;
-    }
-    __block BOOL success = true;//默认为成功,只有成功,才会一直运行下去;
-    NSLog(@"===========MC_VALUE V3 START=========\nCF:%@\nCA:%@\nPA:%@\nMA:%@",Fo2FStr(cFo),Alg2FStr(cAlg),Alg2FStr(pAlg),Alg2FStr(mAlg));
-    
-    //2. 取M特有的稀疏码 和 Same_ps;
-    NSArray *cFPlus = [AINetUtils absPorts_All:cFo type:AnalogyType_DiffPlus];
-    NSArray *cFSub = [AINetUtils absPorts_All:cFo type:AnalogyType_DiffSub];
-    NSArray *cAPlus = [AINetUtils absPorts_All:cAlg type:AnalogyType_DiffPlus];
-    NSArray *cASub = [AINetUtils absPorts_All:cAlg type:AnalogyType_DiffSub];
-    NSArray *pAPlus = [AINetUtils absPorts_All:pAlg type:AnalogyType_DiffPlus];
-    NSArray *pASub = [AINetUtils absPorts_All:pAlg type:AnalogyType_DiffSub];
-    
-    
-    NSLog(@"cFPlus:%lu %@",(unsigned long)cFPlus.count,Pits2FStr([SMGUtils convertPointersFromPorts:cFPlus]));
-    NSLog(@"cFSub:%lu %@",(unsigned long)cFSub.count,Pits2FStr([SMGUtils convertPointersFromPorts:cFSub]));
-    
-    NSLog(@"cAPlus:%lu %@",(unsigned long)cAPlus.count,Pits2FStr([SMGUtils convertPointersFromPorts:cAPlus]));
-    NSLog(@"cASub:%lu %@",(unsigned long)cASub.count,Pits2FStr([SMGUtils convertPointersFromPorts:cASub]));
-    
-    NSLog(@"pAPlus:%lu %@",(unsigned long)pAPlus.count,Pits2FStr([SMGUtils convertPointersFromPorts:pAPlus]));
-    NSLog(@"pASub:%lu %@",(unsigned long)pASub.count,Pits2FStr([SMGUtils convertPointersFromPorts:pASub]));
-    
-    NSLog(@"===========MC_VALUE V3 FINISH=========");
+//    //1. 数据准备;
+//    NSMutableArray *acts = [[NSMutableArray alloc] init];
+//    AIAlgNodeBase *pAlg = [SMGUtils searchNode:self.shortMatchModel.protoAlg_p];
+//    if (!pAlg || !cAlg || !complete || !cFo) {
+//        complete(acts,true);
+//        return;
+//    }
+//    __block BOOL success = true;//默认为成功,只有成功,才会一直运行下去;
+//    NSLog(@"===========MC_VALUE V3 START=========\nCF:%@\nCA:%@\nPA:%@\nMA:%@",Fo2FStr(cFo),Alg2FStr(cAlg),Alg2FStr(pAlg),Alg2FStr(mAlg));
+//
+//    //2. 取M特有的稀疏码 和 Same_ps;
+//    NSArray *cFPlus = [AINetUtils absPorts_All:cFo type:AnalogyType_DiffPlus];
+//    NSArray *cFSub = [AINetUtils absPorts_All:cFo type:AnalogyType_DiffSub];
+//    NSArray *cAPlus = [AINetUtils absPorts_All:cAlg type:AnalogyType_DiffPlus];
+//    NSArray *cASub = [AINetUtils absPorts_All:cAlg type:AnalogyType_DiffSub];
+//    NSArray *pAPlus = [AINetUtils absPorts_All:pAlg type:AnalogyType_DiffPlus];
+//    NSArray *pASub = [AINetUtils absPorts_All:pAlg type:AnalogyType_DiffSub];
+//
+//
+//    NSLog(@"cFPlus:%lu %@",(unsigned long)cFPlus.count,Pits2FStr([SMGUtils convertPointersFromPorts:cFPlus]));
+//    NSLog(@"cFSub:%lu %@",(unsigned long)cFSub.count,Pits2FStr([SMGUtils convertPointersFromPorts:cFSub]));
+//
+//    NSLog(@"cAPlus:%lu %@",(unsigned long)cAPlus.count,Pits2FStr([SMGUtils convertPointersFromPorts:cAPlus]));
+//    NSLog(@"cASub:%lu %@",(unsigned long)cASub.count,Pits2FStr([SMGUtils convertPointersFromPorts:cASub]));
+//
+//    NSLog(@"pAPlus:%lu %@",(unsigned long)pAPlus.count,Pits2FStr([SMGUtils convertPointersFromPorts:pAPlus]));
+//    NSLog(@"pASub:%lu %@",(unsigned long)pASub.count,Pits2FStr([SMGUtils convertPointersFromPorts:pASub]));
+//
+//    NSLog(@"===========MC_VALUE V3 FINISH=========");
     
     
 }

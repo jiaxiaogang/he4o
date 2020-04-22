@@ -54,17 +54,17 @@
     return false;
 }
 
-+(NSArray*) getAlgAllPlusAllValue_ps:(AIAlgNodeBase*)alg{
++(NSArray*) convertValuesFromAlg_ps:(NSArray*)alg_ps{
     NSMutableArray *result = [[NSMutableArray alloc] init];
-    if (alg) {
-        NSArray *plus_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:alg type:AnalogyType_DiffPlus]];
-        NSArray *plusAlgs = [SMGUtils searchNodes:plus_ps];
-        for (AIAlgNodeBase *item in plusAlgs) [result addObjectsFromArray:item.content_ps];
-    }
+    NSArray *algs = [SMGUtils searchNodes:alg_ps];
+    for (AIAlgNodeBase *item in algs) [result addObjectsFromArray:item.content_ps];
     return result;
 }
 
-+(NSArray*) collectAbsPorts:(AIAlgNodeBase*)alg type:(AnalogyType)type conLayer:(NSInteger)conLayer absLayer:(NSInteger)absLayer{
++(NSArray*) collectAbsPs:(AINodeBase*)alg type:(AnalogyType)type conLayer:(NSInteger)conLayer absLayer:(NSInteger)absLayer{
+    return [SMGUtils convertPointersFromPorts:[self collectAbsPorts:alg type:type conLayer:conLayer absLayer:absLayer]];
+}
++(NSArray*) collectAbsPorts:(AINodeBase*)alg type:(AnalogyType)type conLayer:(NSInteger)conLayer absLayer:(NSInteger)absLayer{
     //1. 数据准备
     NSMutableArray *result = [[NSMutableArray alloc] init];
     if (!alg) return result;
