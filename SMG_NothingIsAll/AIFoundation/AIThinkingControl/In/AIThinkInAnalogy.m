@@ -523,6 +523,10 @@
     //5. 连接mv基本模型;
     [AINetUtils relateFo:createFo mv:createMv];
     NSLog(@"~~~~> 反向反馈类比 CreateFo内容:%@->%@",Fo2FStr(createFo),Mvp2Str(createMv.pointer));
+    
+    //6. 加强方向索引和时序索引强度;
+    [theNet setMvNodeToDirectionReference:conMv difStrong:1];
+    [AINetUtils insertRefPorts_AllFoNode:conFo.pointer order_ps:conFo.content_ps ps:conFo.content_ps];
 }
 
 +(void) analogy_Feedback_Same:(AIShortMatchModel*)mModel shortFo:(AIFoNodeBase*)shortFo{
