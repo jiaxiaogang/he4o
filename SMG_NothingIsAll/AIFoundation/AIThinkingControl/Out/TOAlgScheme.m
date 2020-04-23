@@ -201,6 +201,7 @@
     if (!hnAlg) {
         //2. 未联想到hnAlg,失败;
         failure();
+        return;
     }
     
     //2. 找引用"相对概念"的内存中"相对时序",并行为化; (注: 一般不存在内存相对概念,此处代码应该不会执行);
@@ -425,12 +426,6 @@
     NSLog(@"==========================MC V3 START==========================\nM:%@\nC:%@",Alg2FStr(mAlg),Alg2FStr(cAlg));
     if (![TOUtils mIsC:mAlg c:cAlg]) {
         NSLog(@"===> mNotC");
-        [self convert2Out_Long_NET:AnalogyType_InnerH at:cAlg.pointer.algsType ds:cAlg.pointer.dataSource success:^(AIFoNodeBase *havFo, NSArray *itemActs) {
-            [acts addObjectsFromArray:itemActs];//转移且行为化成功;
-            complete(acts,true);
-        } failure:^{
-            complete(acts,false);//转移失败,彻底失败;
-        }];
         return;
     }
     

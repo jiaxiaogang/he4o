@@ -186,7 +186,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/ThinkingUtils.m"
-            timestampString = "609341581.7993211"
+            timestampString = "609369729.262814"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "55"
@@ -202,7 +202,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/ThinkingUtils.m"
-            timestampString = "609341581.7993931"
+            timestampString = "609369729.262889"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "57"
@@ -218,7 +218,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/ThinkingUtils.m"
-            timestampString = "609341581.799453"
+            timestampString = "609369729.262953"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "60"
@@ -250,7 +250,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOAlgScheme.m"
-            timestampString = "609341581.800295"
+            timestampString = "609369729.263042"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "159"
@@ -266,55 +266,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOAlgScheme.m"
-            timestampString = "609341581.800586"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "432"
-            endingLineNumber = "432"
-            landmarkName = "-convert2Out_Short_MC_V3:curFo:complete:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOAlgScheme.m"
-            timestampString = "609341581.8008569"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "430"
-            endingLineNumber = "430"
-            landmarkName = "-convert2Out_Short_MC_V3:curFo:complete:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOAlgScheme.m"
-            timestampString = "609341581.801138"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "429"
-            endingLineNumber = "429"
-            landmarkName = "-convert2Out_Short_MC_V3:curFo:complete:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOAlgScheme.m"
-            timestampString = "609341614.001609"
+            timestampString = "609369729.263458"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "439"
@@ -330,7 +282,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOAlgScheme.m"
-            timestampString = "609341928.230751"
+            timestampString = "609369729.263769"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "446"
@@ -346,7 +298,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.m"
-            timestampString = "609342002.860662"
+            timestampString = "609369729.264071"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "107"
@@ -362,7 +314,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.m"
-            timestampString = "609342048.818029"
+            timestampString = "609369729.264132"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "110"
@@ -378,7 +330,7 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Volumes/APPLE%20HDD/work/temp/he4o/SMG_NothingIsAll/Demo/Foundation+Log.m"
-                  timestampString = "609342048.9431061"
+                  timestampString = "609369729.804626"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "93"
@@ -393,12 +345,12 @@
                   moduleName = "SMG_NothingIsAll"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Volumes/APPLE%20HDD/work/temp/he4o/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.m"
-                  timestampString = "609342048.945558"
+                  timestampString = "609369729.806913"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "110"
                   endingLineNumber = "110"
-                  offsetFromSymbolStart = "1096">
+                  offsetFromSymbolStart = "1092">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -410,7 +362,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.m"
-            timestampString = "609342054.175617"
+            timestampString = "609369729.2641881"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "118"
@@ -426,7 +378,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOAlgScheme.m"
-            timestampString = "609342083.44197"
+            timestampString = "609369729.264246"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "454"
@@ -442,7 +394,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOAlgScheme.m"
-            timestampString = "609342091.231512"
+            timestampString = "609369729.264671"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "480"
@@ -458,11 +410,43 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOAlgScheme.m"
-            timestampString = "609342094.003274"
+            timestampString = "609369729.264967"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "500"
             endingLineNumber = "500"
+            landmarkName = "-convert2Out_MC_Alg:curFo:mcSuccess:mcFailure:checkScore:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOAlgScheme.m"
+            timestampString = "609369729.265841"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "177"
+            endingLineNumber = "177"
+            landmarkName = "-convert2Out_Alg:curFo:type:success:failure:checkScore:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOAlgScheme.m"
+            timestampString = "609369801.0995539"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "427"
+            endingLineNumber = "427"
             landmarkName = "-convert2Out_Short_MC_V3:curFo:complete:"
             landmarkType = "7">
          </BreakpointContent>
