@@ -149,14 +149,16 @@
             //3. 单cHav时,直接从瞬时做MC匹配行为化;
             __block BOOL successed = false;
             if (type == AnalogyType_InnerH) {
-                [self convert2Out_Short_MC_V2:curAlg curFo:curFo mcSuccess:^(NSArray *acts) {
-                    [result addObjectsFromArray:acts];
-                    successed = true;
-                    NSLog(@"--> MC_行为化成功: 长度:%lu 行为:[%@]",(unsigned long)acts.count,[NVHeUtil getLightStr4Ps:acts]);
-                    success(result);
-                } mcFailure:^{
-                    WLog(@"MC_行为化失败");
-                } checkScore:checkScore];
+                [self convert2Out_Short_MC_V3:curAlg curFo:curFo complete:^(NSArray *acts, BOOL v3Success) {
+                    if (v3Success) {
+                        [result addObjectsFromArray:acts];
+                        successed = true;
+                        NSLog(@"--> MC_行为化成功: 长度:%lu 行为:[%@]",(unsigned long)acts.count,[NVHeUtil getLightStr4Ps:acts]);
+                        success(result);
+                    }else{
+                        WLog(@"MC_行为化失败");
+                    }
+                }];
             }
             
             //4. mc行为化失败,则联想长时行为化;
@@ -420,7 +422,9 @@
     
     //2. mIsC有效性判断 (MC无法加工,则直接转移);
     AIAlgNodeBase *mAlg = self.shortMatchModel.matchAlg;
+    NSLog(@"==========================MC V3 START==========================\nM:%@\nC:%@",Alg2FStr(mAlg),Alg2FStr(cAlg));
     if (![TOUtils mIsC:mAlg c:cAlg]) {
+        NSLog(@"===> mNotC");
         [self convert2Out_Long_NET:AnalogyType_InnerH at:cAlg.pointer.algsType ds:cAlg.pointer.dataSource success:^(AIFoNodeBase *havFo, NSArray *itemActs) {
             [acts addObjectsFromArray:itemActs];//转移且行为化成功;
             complete(acts,true);

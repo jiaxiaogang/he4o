@@ -84,5 +84,6 @@
 @interface TOAlgScheme (MC)
 
 -(void) convert2Out_Short_MC_V2:(AIAlgNodeBase*)curAlg curFo:(AIFoNodeBase*)curFo mcSuccess:(void(^)(NSArray *acts))mcSuccess mcFailure:(void(^)())mcFailure checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore;
+-(void) convert2Out_Short_MC_V3:(AIAlgNodeBase*)cAlg curFo:(AIFoNodeBase*)cFo complete:(void(^)(NSArray *acts,BOOL success))complete;
 
 @end

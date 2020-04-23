@@ -61,24 +61,24 @@
     return result;
 }
 
-+(NSArray*) collectAbsPs:(AINodeBase*)alg type:(AnalogyType)type conLayer:(NSInteger)conLayer absLayer:(NSInteger)absLayer{
-    return [SMGUtils convertPointersFromPorts:[self collectAbsPorts:alg type:type conLayer:conLayer absLayer:absLayer]];
++(NSArray*) collectAbsPs:(AINodeBase*)protoNode type:(AnalogyType)type conLayer:(NSInteger)conLayer absLayer:(NSInteger)absLayer{
+    return [SMGUtils convertPointersFromPorts:[self collectAbsPorts:protoNode type:type conLayer:conLayer absLayer:absLayer]];
 }
-+(NSArray*) collectAbsPorts:(AINodeBase*)alg type:(AnalogyType)type conLayer:(NSInteger)conLayer absLayer:(NSInteger)absLayer{
++(NSArray*) collectAbsPorts:(AINodeBase*)protoNode type:(AnalogyType)type conLayer:(NSInteger)conLayer absLayer:(NSInteger)absLayer{
     //1. 数据准备
     NSMutableArray *result = [[NSMutableArray alloc] init];
-    if (!alg) return result;
+    if (!protoNode) return result;
     
     //2. 收集本层
-    [result addObjectsFromArray:[AINetUtils absPorts_All:alg type:type]];
+    [result addObjectsFromArray:[AINetUtils absPorts_All:protoNode type:type]];
     
     //3. 具象所需层循环;
-    [result addObjectsFromArray:[self collectAbsPorts:alg type:type nextlayer:conLayer nextBlock:^NSArray *(AIAlgNodeBase *curAlg) {
+    [result addObjectsFromArray:[self collectAbsPorts:protoNode type:type nextlayer:conLayer nextBlock:^NSArray *(AINodeBase *curAlg) {
         return [AINetUtils conPorts_All:curAlg];
     }]];
     
     //4. 抽象所需层循环;
-    [result addObjectsFromArray:[self collectAbsPorts:alg type:type nextlayer:absLayer nextBlock:^NSArray *(AIAlgNodeBase *curAlg) {
+    [result addObjectsFromArray:[self collectAbsPorts:protoNode type:type nextlayer:absLayer nextBlock:^NSArray *(AINodeBase *curAlg) {
         return [AINetUtils absPorts_All_Normal:curAlg];
     }]];
     return result;
@@ -89,31 +89,31 @@
  *  @desc 收集后几层 (不含当前层);
  *  @result notnull
  */
-+(NSArray*) collectAbsPorts:(AIAlgNodeBase*)alg type:(AnalogyType)type nextlayer:(NSInteger)nextlayer nextBlock:(NSArray*(^)(AIAlgNodeBase *curAlg))nextBlock{
++(NSArray*) collectAbsPorts:(AINodeBase*)protoNode type:(AnalogyType)type nextlayer:(NSInteger)nextlayer nextBlock:(NSArray*(^)(AINodeBase *curAlg))nextBlock{
     //1. 数据检查;
     NSMutableArray *result = [[NSMutableArray alloc] init];
-    if (!alg || !nextBlock) {
+    if (!protoNode || !nextBlock) {
         return result;
     }
     
     //2. 层数循环
-    NSMutableArray *curAlgs = [[NSMutableArray alloc] initWithObjects:alg, nil];
+    NSMutableArray *curNodes = [[NSMutableArray alloc] initWithObjects:protoNode, nil];
     for (NSInteger i = 0; i < nextlayer; i++) {
-        NSMutableArray *nextAlgs = [[NSMutableArray alloc] init];
+        NSMutableArray *nextNodes = [[NSMutableArray alloc] init];
         //a. 当前层逐个循环;
-        for (AIAlgNodeBase *curAlg in curAlgs) {
+        for (AINodeBase *curNode in curNodes) {
             //b. 下层逐个收集循环;
-            NSArray *nextPorts = ARRTOOK(nextBlock(curAlg));
+            NSArray *nextPorts = ARRTOOK(nextBlock(curNode));
             for (AIPort *nextPort in nextPorts) {
-                AIAlgNodeBase *nextAlg = [SMGUtils searchNode:nextPort.target_p];
-                [result addObjectsFromArray:[AINetUtils absPorts_All:nextAlg type:type]];
-                [nextAlgs addObject:nextAlg];
+                AINodeBase *nextNode = [SMGUtils searchNode:nextPort.target_p];
+                [result addObjectsFromArray:[AINetUtils absPorts_All:nextNode type:type]];
+                [nextNodes addObject:nextNode];
             }
         }
         //c. 完成一层,将下层变成当前层,将下层清空;
-        [curAlgs removeAllObjects];
-        [curAlgs addObjectsFromArray:nextAlgs];
-        [nextAlgs removeAllObjects];
+        [curNodes removeAllObjects];
+        [curNodes addObjectsFromArray:nextNodes];
+        [nextNodes removeAllObjects];
     }
     return result;
 }
