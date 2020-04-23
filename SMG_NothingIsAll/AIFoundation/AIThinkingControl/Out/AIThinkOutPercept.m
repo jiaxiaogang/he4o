@@ -105,8 +105,25 @@
         //2. filter筛选器取曾经历的除已有outMvModels之外的最强解决;
         NSArray *mvRefs = [theNet getNetNodePointersFromDirectionReference:demandModel.algsType direction:direction isMem:false filter:^NSArray *(NSArray *protoArr) {
             protoArr = ARRTOOK(protoArr);
+            //protoArr = [SMGUtils filterArr:protoArr checkValid:^BOOL(AIPort *item) {
+            //    NSString *plusDS = [ThinkingUtils getAnalogyTypeDS:AnalogyType_DiffPlus];
+            //    NSString *subDS = [ThinkingUtils getAnalogyTypeDS:AnalogyType_DiffSub];
+            //    NSString *itemDS = item.target_p.dataSource;
+            //    return ![plusDS isEqualToString:itemDS] && ![subDS isEqualToString:itemDS];
+            //}];
+            
             for (NSInteger i = 0; i < protoArr.count; i++) {
                 AIPort *port = ARR_INDEX(protoArr, protoArr.count - i - 1);
+                //a. analogyType处理 (仅支持normal的fo);
+                AICMVNodeBase *itemMV = [SMGUtils searchNode:port.target_p];
+                NSString *plusDS = [ThinkingUtils getAnalogyTypeDS:AnalogyType_DiffPlus];
+                NSString *subDS = [ThinkingUtils getAnalogyTypeDS:AnalogyType_DiffSub];
+                NSString *foDS = itemMV.foNode_p.dataSource;
+                if ([plusDS isEqualToString:foDS] || [subDS isEqualToString:foDS]) {
+                    continue;
+                }
+                
+                //b. 不应期处理;
                 BOOL cacheContains = false;
                 for (TOMvModel *expCacheItem in demandModel.subModels) {
                     if (port.target_p && [port.target_p isEqual:expCacheItem.content_p]) {
