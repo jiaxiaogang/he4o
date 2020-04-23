@@ -246,19 +246,13 @@
         AIKVPointer *a_p = DATA2OBJ(key);
         AIKVPointer *b_p = [sameIdentifier objectForKey:key];
         //a. 对比微信息 (MARK_VALUE:如微信息去重功能去掉,此处要取值再进行对比)
-        NSNumber *numA = [AINetIndex getData:a_p];
-        NSNumber *numB = [AINetIndex getData:b_p];
-        NSComparisonResult compareResult = [NUMTOOK(numA) compare:NUMTOOK(numB)];
+        AnalogyType type = [ThinkingUtils compare:a_p valueB_p:b_p];
         //b. 调试a_p和b_p是否合格,应该同标识,同文件夹名称,不同pId;
         NSLog(@"--------------内类比 (大小) 前: %@ -> %@",[NVHeUtil getLightStr:a_p],[NVHeUtil getLightStr:b_p]);
-        if (compareResult == NSOrderedDescending) {
-            //c. 构建小;
-            AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyType_InnerL algsType:a_p.algsType dataSource:a_p.dataSource frontConAlg:algA backConAlg:algB rangeAlg_ps:rangeAlg_ps conFo:checkFo];
-            if (createdBlock) createdBlock(create,AnalogyType_InnerL);
-        }else if (compareResult == NSOrderedAscending) {
-            //d. 构建大;
-            AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyType_InnerG algsType:a_p.algsType dataSource:a_p.dataSource frontConAlg:algA backConAlg:algB rangeAlg_ps:rangeAlg_ps conFo:checkFo];
-            if (createdBlock) createdBlock(create,AnalogyType_InnerG);
+        //d. 构建小/大;
+        if (type != AnalogyType_None) {
+            AINetAbsFoNode *create = [self analogyInner_Creater:type algsType:a_p.algsType dataSource:a_p.dataSource frontConAlg:algA backConAlg:algB rangeAlg_ps:rangeAlg_ps conFo:checkFo];
+            if (createdBlock) createdBlock(create,type);
         }
     }
 }

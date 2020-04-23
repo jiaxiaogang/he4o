@@ -83,6 +83,20 @@
     return AnalogyType_None;
 }
 
++(AnalogyType) compare:(AIKVPointer*)valueA_p valueB_p:(AIKVPointer*)valueB_p{
+    NSNumber *aValue = NUMTOOK([AINetIndex getData:valueA_p]);
+    NSNumber *bValue = NUMTOOK([AINetIndex getData:valueB_p]);
+    NSComparisonResult compareResult = [aValue compare:bValue];
+    if (compareResult == NSOrderedDescending) {
+        return AnalogyType_InnerL;
+    }else if (compareResult == NSOrderedAscending) {
+        return AnalogyType_InnerG;
+    }else{
+        return AnalogyType_None;
+    }
+}
+
+
 @end
 
 

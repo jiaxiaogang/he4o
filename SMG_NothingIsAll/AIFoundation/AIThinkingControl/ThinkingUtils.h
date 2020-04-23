@@ -30,6 +30,9 @@
 //根据评分,得到该开心,还是不开心;
 +(AnalogyType) getInnerTypeWithScore:(CGFloat)score;
 
+//根据稀疏码对比反思类比大小结果;
++(AnalogyType) compare:(AIKVPointer*)valueA_p valueB_p:(AIKVPointer*)valueB_p;
+
 @end
 
 

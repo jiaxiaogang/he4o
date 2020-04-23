@@ -416,17 +416,16 @@
  */
 -(void) convert2Out_Short_MC_V3:(AIAlgNodeBase*)cAlg curFo:(AIFoNodeBase*)cFo complete:(void(^)(NSArray *acts,BOOL success))complete {
     //1. 结果数据准备
-    BOOL success = true;
     NSMutableArray *acts = [[NSMutableArray alloc] init];
     
-    //2. mIsC有效性判断;
+    //2. mIsC有效性判断 (MC无法加工,则直接转移);
     AIAlgNodeBase *mAlg = self.shortMatchModel.matchAlg;
     if (![TOUtils mIsC:mAlg c:cAlg]) {
-        //2. MC无法加工,则直接转移;
-        [self convert2Out_Long_NET:AnalogyType_InnerH at:nil ds:nil success:^(AIFoNodeBase *havFo, NSArray *actions) {
-            //暂略
+        [self convert2Out_Long_NET:AnalogyType_InnerH at:cAlg.pointer.algsType ds:cAlg.pointer.dataSource success:^(AIFoNodeBase *havFo, NSArray *itemActs) {
+            [acts addObjectsFromArray:itemActs];//转移且行为化成功;
+            complete(acts,true);
         } failure:^{
-            //暂略
+            complete(acts,false);//转移失败,彻底失败;
         }];
         return;
     }
@@ -443,19 +442,21 @@
     NSArray *c_P2s = [TOUtils collectAbsPs:cAlg type:AnalogyType_DiffPlus conLayer:1 absLayer:0];
     //e. 收集可满足和未满足的;
     NSMutableDictionary *cCanOut = [[NSMutableDictionary alloc] init];
-    NSMutableArray *cCanNotOut = [[NSMutableArray alloc] init];
+    //f. 计算用于评价的价值分;
+    CGFloat cScore = [ThinkingUtils getScoreForce:cFo.cmvNode_p ratio:1.0f];
+    CGFloat badScore = 0;
     
     //4. 逐个判断收集;
-    for (AIKVPointer *c_P1 in c_P2s) {
+    for (AIKVPointer *c_P2 in c_P2s) {
         //a. 有效性判断1: 到CFo中,判断是否也包含此mv+,包含才有效 (C甜,也正是要吃甜的);
-        AIAlgNodeBase *cPlusAlg = [SMGUtils searchNode:c_P1];
-        NSArray *cPlusRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:cPlusAlg]];
-        if ([SMGUtils filterSame_ps:cPlusRef_ps parent_ps:cf_P2s].count == 0) {
-            continue;//无需处理;
-        }
+        AIAlgNodeBase *cP2_Alg = [SMGUtils searchNode:c_P2];
+        NSArray *cP2_RefAll_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:cP2_Alg]];
+        NSArray *cP2_RefOK_ps = [SMGUtils filterSame_ps:cP2_RefAll_ps parent_ps:cf_P2s];
+        if (cP2_RefOK_ps.count == 0) continue;//无需处理;
+        
         //b. 有效性判断2: C-M (C甜,M不能甜);
-        NSArray *cP_At_mP = [SMGUtils filterSameIdentifier_ps:m_P1_vps b_ps:cPlusAlg.content_ps].allValues;
-        NSArray *cP_Rm_mP = [SMGUtils removeSub_ps:cP_At_mP parent_ps:cPlusAlg.content_ps];
+        NSArray *cP_At_mP = [SMGUtils filterSameIdentifier_ps:m_P1_vps b_ps:cP2_Alg.content_ps].allValues;
+        NSArray *cP_Rm_mP = [SMGUtils removeSub_ps:cP_At_mP parent_ps:cP2_Alg.content_ps];
         NSLog(@"--->需满足C:%@",Pits2FStr(cP_Rm_mP));
         
         //c. 有效性判断3: 再到M_S2s中找M负价值的,同区不同值的值,对C稀疏码进行满足 (如C中含距0,而M中为距50);
@@ -465,47 +466,34 @@
         
         //d. 收集可满足和未满足;
         [cCanOut setDictionary:itemCanOut];
-        [cCanNotOut addObjectsFromArray:itemCanNotOut];
+        
+        //5. 评价未满足带来的影响,是否要中断行为化 (忍无可忍,则行为化失败);
+        AIKVPointer *cP2_RefOK_p = ARR_INDEX(cP2_RefOK_ps, 0);
+        AIFoNodeBase *cP2_RefFo = [SMGUtils searchNode:cP2_RefOK_p];
+        badScore += [ThinkingUtils getScoreForce:cP2_RefFo.cmvNode_p ratio:(float)itemCanNotOut.count / cP_Rm_mP.count];
+        if (badScore + cScore <= 0) {
+            complete(acts,false);
+            return;
+        }
     }
     
-    //5. 评价未满足带来的影响,是否要中断行为化;
-    
     //6. 进行行为化;
-    
-    
-    
-    
-//    //1. 数据准备;
-//    NSMutableArray *acts = [[NSMutableArray alloc] init];
-//    AIAlgNodeBase *pAlg = [SMGUtils searchNode:self.shortMatchModel.protoAlg_p];
-//    if (!pAlg || !cAlg || !complete || !cFo) {
-//        complete(acts,true);
-//        return;
-//    }
-//    __block BOOL success = true;//默认为成功,只有成功,才会一直运行下去;
-//    NSLog(@"===========MC_VALUE V3 START=========\nCF:%@\nCA:%@\nPA:%@\nMA:%@",Fo2FStr(cFo),Alg2FStr(cAlg),Alg2FStr(pAlg),Alg2FStr(mAlg));
-//
-//    //2. 取M特有的稀疏码 和 Same_ps;
-//    NSArray *cFPlus = [AINetUtils absPorts_All:cFo type:AnalogyType_DiffPlus];
-//    NSArray *cFSub = [AINetUtils absPorts_All:cFo type:AnalogyType_DiffSub];
-//    NSArray *cAPlus = [AINetUtils absPorts_All:cAlg type:AnalogyType_DiffPlus];
-//    NSArray *cASub = [AINetUtils absPorts_All:cAlg type:AnalogyType_DiffSub];
-//    NSArray *pAPlus = [AINetUtils absPorts_All:pAlg type:AnalogyType_DiffPlus];
-//    NSArray *pASub = [AINetUtils absPorts_All:pAlg type:AnalogyType_DiffSub];
-//
-//
-//    NSLog(@"cFPlus:%lu %@",(unsigned long)cFPlus.count,Pits2FStr([SMGUtils convertPointersFromPorts:cFPlus]));
-//    NSLog(@"cFSub:%lu %@",(unsigned long)cFSub.count,Pits2FStr([SMGUtils convertPointersFromPorts:cFSub]));
-//
-//    NSLog(@"cAPlus:%lu %@",(unsigned long)cAPlus.count,Pits2FStr([SMGUtils convertPointersFromPorts:cAPlus]));
-//    NSLog(@"cASub:%lu %@",(unsigned long)cASub.count,Pits2FStr([SMGUtils convertPointersFromPorts:cASub]));
-//
-//    NSLog(@"pAPlus:%lu %@",(unsigned long)pAPlus.count,Pits2FStr([SMGUtils convertPointersFromPorts:pAPlus]));
-//    NSLog(@"pASub:%lu %@",(unsigned long)pASub.count,Pits2FStr([SMGUtils convertPointersFromPorts:pASub]));
-//
-//    NSLog(@"===========MC_VALUE V3 FINISH=========");
-    
-    
+    __block BOOL failure = false;
+    for (NSData *key in cCanOut) {
+        //a. 对比大小
+        AIKVPointer *mValue_p = DATA2OBJ(key);
+        AIKVPointer *cValue_p = [cCanOut objectForKey:key];
+        AnalogyType type = [ThinkingUtils compare:mValue_p valueB_p:cValue_p];
+        //b. 行为化
+        NSLog(@"------MC_V3行为化:%@ -> %@",[NVHeUtil getLightStr:mValue_p],[NVHeUtil getLightStr:cValue_p]);
+        [self convert2Out_RelativeValue:cValue_p.algsType ds:cValue_p.dataSource type:type vSuccess:^(AIFoNodeBase *glFo, NSArray *itemActs) {
+            [acts addObjectsFromArray:itemActs];
+        } vFailure:^{
+            failure = true;
+        }];
+        if (failure) break;
+    }
+    complete(acts,!failure);
 }
 
 -(void) convert2Out_MC_Alg:(AIAlgNodeBase*)curAlg curFo:(AIFoNodeBase*)curFo mcSuccess:(void(^)(NSArray *acts))mcSuccess mcFailure:(void(^)())mcFailure checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
