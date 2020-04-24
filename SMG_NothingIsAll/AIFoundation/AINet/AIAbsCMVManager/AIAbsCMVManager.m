@@ -91,6 +91,8 @@
     [AINetUtils relateMvAbs:result conNodes:conMvs];
 
     //4. 报告添加direction引用 (difStrong暂时先x2;(因为一般是两个相抽象))
+    //TODOTOMORROW: 在构建抽象时,初始方向索引强度要足够其被优先被想到,因为抽象方案往往更确切,如果抽象不被想到,那就没意义了;
+    //1. 可以考虑由conMvs的urgentTo求和计算得出,如此的话,就算刚习得的食物抽象,也不会比吃了一辈子的面条更易被想到;(防止最好吃的,和最抽象的,永远被优先想到);
     [theNet setMvNodeToDirectionReference:result difStrong:urgentTo];
     return result;
 }
