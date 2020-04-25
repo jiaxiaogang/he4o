@@ -115,6 +115,8 @@
  *  @callers : 被外类比构建器调用;
  *  @功能说明: 1. 未支持内存去重;
  *  @param difStrong : 构建fo的被引用初始强度;
+ *  @version
+ *      20200426 - 去掉时序的全局去重;
  */
 +(AINetAbsFoNode*)createAbsFo_NoRepeat_General:(NSArray*)conFos content_ps:(NSArray*)content_ps ds:(NSString*)ds difStrong:(NSInteger)difStrong;
 //+(AIFrontOrderNode*)createConFo_NoRepeat_General:(NSArray*)content_ps isMem:(BOOL)isMem;

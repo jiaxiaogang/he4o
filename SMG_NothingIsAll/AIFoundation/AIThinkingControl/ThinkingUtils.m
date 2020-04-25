@@ -239,20 +239,21 @@
 }
 +(AINetAbsFoNode*)createAbsFo_NoRepeat_General:(NSArray*)conFos content_ps:(NSArray*)content_ps ds:(NSString*)ds difStrong:(NSInteger)difStrong{
     //1. 数据准备
-    AINetAbsFoNode *result = nil;
-    if (ARRISOK(conFos) && ARRISOK(content_ps)) {
-        //2. 有则加强;
-        AIFoNodeBase *absoluteFo = [AINetIndexUtils getAbsoluteMatchingFoNodeWithContent_ps:content_ps except_ps:conFos isMem:false];
-        if (ISOK(absoluteFo, AINetAbsFoNode.class)) {
-            result = (AINetAbsFoNode*)absoluteFo;
-            [AINetUtils relateFoAbs:result conNodes:conFos isNew:false];
-            [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
-        }else{
-            //3. 无则构建
-            result = [theNet createAbsFo_General:conFos content_ps:content_ps difStrong:difStrong ds:ds];
-        }
-    }
-    return result;
+    //AINetAbsFoNode *result = nil;
+    //if (ARRISOK(conFos) && ARRISOK(content_ps)) {
+    //    //2. 有则加强;
+    //    AIFoNodeBase *absoluteFo = [AINetIndexUtils getAbsoluteMatchingFoNodeWithContent_ps:content_ps except_ps:conFos isMem:false];
+    //    if (ISOK(absoluteFo, AINetAbsFoNode.class)) {
+    //        result = (AINetAbsFoNode*)absoluteFo;
+    //        [AINetUtils relateFoAbs:result conNodes:conFos isNew:false];
+    //        [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
+    //    }else{
+    //        //3. 无则构建
+    //        result = [theNet createAbsFo_General:conFos content_ps:content_ps difStrong:difStrong ds:ds];
+    //    }
+    //}
+    //return result;
+    return [theNet createAbsFo_General:conFos content_ps:content_ps difStrong:difStrong ds:ds];
 }
 //+(AIFrontOrderNode*)createConFo_NoRepeat_General:(NSArray*)content_ps isMem:(BOOL)isMem{
 //    //1. 数据准备

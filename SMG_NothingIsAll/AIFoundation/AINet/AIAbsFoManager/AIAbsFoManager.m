@@ -38,11 +38,7 @@
     AINetAbsFoNode *findAbsNode = nil;
     NSMutableArray *allAbsPorts = [[NSMutableArray alloc] init];
     for (AIFoNodeBase *conItem in conFos) {
-        ///1. 收集硬盘absPorts;
-        [allAbsPorts addObjectsFromArray:conItem.absPorts];
-        ///2. 收集内存memAbsPorts;
-        NSArray *memAbsPorts = [SMGUtils searchObjectForPointer:conItem.pointer fileName:kFNMemAbsPorts time:cRTPort_All(conItem.pointer.isMem)];
-        [allAbsPorts addObjectsFromArray:memAbsPorts];
+        [allAbsPorts addObjectsFromArray:[AINetUtils absPorts_All:conItem]];
     }
     for (AIPort *port in allAbsPorts) {
         if ([samesMd5 isEqualToString:port.header]) {
