@@ -175,7 +175,7 @@
     [self food2Pos:CGPointMake(birdPos.x - 100, birdPos.y + 100)];
 }
 - (IBAction)hungerBtnOnClick:(id)sender {
-    NSLog(@"马上饿onClick");
+    NSLog(@"STEPKEY马上饿onClick");
     [theApp.heLogView addLog:@"马上饿onClick"];
     [[[DemoHunger alloc] init] commit:0.7 state:UIDeviceBatteryStateUnplugged];
 }

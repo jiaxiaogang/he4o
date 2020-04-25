@@ -174,7 +174,7 @@
  *  MARK:--------------------LOG--------------------
  */
 //日志默认header模式 (当前为首行显示)
-#define DefaultHeaderMode 1
+#define DefaultHeaderMode 2
 //当前类名
 #define FILENAME [[NSString stringWithUTF8String:__FILE__] lastPathComponent]
 //errorLog
