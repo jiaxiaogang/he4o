@@ -384,24 +384,6 @@
             [[XGRedis sharedInstance] setObject:result forKey:key time:time];
         }
     }
-    
-    //打出调试日志========Start;
-    if (result && ISOK(result, AINodeBase.class)) {
-        AINodeBase *node = (AINodeBase*)result;
-        NSArray *content_ps = ARRTOOK([node valueForKey:@"content_ps"]);
-        [theApp.heLogView addLog:STRFORMAT(@"读取%@:%@ 指针:%@=%ld 内容:%ld",fromType,node.class,node.pointer.identifier,(long)node.pointer.pointerId,content_ps.count)];
-    }else{
-        NSString *cachePath = kCachePath;
-        NSString *relativePath = [filePath stringByReplacingOccurrencesOfString:cachePath withString:@""];
-        if (ISOK(result, NSArray.class)) {
-            NSInteger count = ((NSArray*)result).count;
-            [theApp.heLogView addLog:STRFORMAT(@"读取%@:--------%@/%@,%ld",fromType,relativePath,fileName,count)];
-        }else{
-            [theApp.heLogView addLog:STRFORMAT(@"读取%@:--------%@/%@",fromType,relativePath,fileName)];
-        }
-    }
-    //调试========End
-    
     return result;
 }
 
@@ -418,18 +400,6 @@
     NSString *key = STRFORMAT(@"%@/%@",rootPath,fileName);
     if (saveDB) {
         [[XGWedis sharedInstance] setObject:obj forKey:key];
-        //打出调试日志========Start;
-        NSString *sep = @"/";
-        NSString *saveFileName = STRTOOK(ARR_INDEX_REVERSE(STRTOARR(key, sep), 0));
-        if ([kFNNode isEqualToString:saveFileName]) {
-            AINodeBase *node = (AINodeBase*)obj;
-            NSArray *content_ps = ARRTOOK([node valueForKey:@"content_ps"]);
-            [theApp.heLogView addLog:STRFORMAT(@"存储内存:%@ 指针:%@=%ld 内容:%ld",node.class,node.pointer.identifier,(long)node.pointer.pointerId,content_ps.count)];
-        }else{
-            [theApp.heLogView addLog:STRFORMAT(@"存储内存:--------%@",saveFileName)];
-        }
-        //调试========End
-        
         [[XGWedis sharedInstance] setSaveBlock:^(NSDictionary *dic) {
             dic = DICTOOK(dic);
             for (NSString *saveKey in dic.allKeys) {
@@ -439,22 +409,7 @@
                 NSString *saveRootPath = STRTOOK(SUBSTR2INDEX(saveKey, (saveKey.length - saveFileName.length - 1)));
                 PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:saveRootPath];
                 [cache setObject:saveObj forKey:saveFileName];
-                
-                //打出调试日志========Start;
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    if ([kFNNode isEqualToString:saveFileName]) {
-                        AINodeBase *node = (AINodeBase*)saveObj;
-                        NSArray *content_ps = ARRTOOK([node valueForKey:@"content_ps"]);
-                        [theApp.heLogView addLog:STRFORMAT(@"存储硬盘:%@ 指针:%@=%ld 内容:%ld",node.class,node.pointer.identifier,(long)node.pointer.pointerId,content_ps.count)];
-                    }else{
-                        [theApp.heLogView addLog:STRFORMAT(@"存储硬盘:--------%@",saveFileName)];
-                    }
-                });
-                //调试========End
             }
-            //NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-            //for (NSString *key in dic.allKeys)
-            //    NSLog(@">>>>>>>>>WriteDisk,%@",[key stringByReplacingOccurrencesOfString:cachePath withString:@""]);
             if (dic.count > 0) {
                 NSLog(@">>>>>>>>>WriteDisk,%lu",(unsigned long)dic.count);
             }

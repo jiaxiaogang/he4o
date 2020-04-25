@@ -217,7 +217,7 @@
  *  MARK:--------------------从ports中找出符合的port或者new一个 通用方法--------------------
  */
 +(AIPort*) findPort:(AIKVPointer*)pointer fromPorts:(NSMutableArray*)fromPorts ps:(NSArray*)ps{
-    if (ISOK(pointer, AIPointer.class) && ARRISOK(fromPorts)) {
+    if (ISOK(pointer, AIPointer.class) && ISOK(fromPorts, NSMutableArray.class)) {
         //1. 找出旧有;
         AIPort *findPort = nil;
         for (AIPort *port in fromPorts) {
