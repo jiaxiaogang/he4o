@@ -33,13 +33,7 @@
 
 -(NSArray*) getNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction isMem:(BOOL)isMem limit:(NSInteger)limit {
     return [self getNodePointersFromDirectionReference:mvAlgsType direction:direction isMem:isMem filter:^NSArray *(NSArray *protoArr) {
-        if (ARRISOK(protoArr)) {
-            //if (!isMem && protoArr.count > 2) {
-            //    NSLog(@"调试mv索引的强度序列情况");
-            //}
-            return ARR_SUB(protoArr, 0, limit);
-        }
-        return nil;
+        return ARR_SUB(protoArr, 0, limit);
     }];
 }
 

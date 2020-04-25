@@ -9,6 +9,8 @@
 #import "AINetAbsCMVUtil.h"
 #import "AIKVPointer.h"
 #import "AINetIndex.h"
+#import "AIAbsCMVNode.h"
+#import "AIPort.h"
 
 @implementation AINetAbsCMVUtil
 
@@ -42,6 +44,27 @@
     }];
 }
 
++(NSInteger) getDefaultStrong_Index:(AIAbsCMVNode*)absMv conMvs:(NSArray*)conMvs{
+    if (absMv && ARRISOK(conMvs)) {
+        //1. 取出方向索引;
+        NSInteger delta = [NUMTOOK([AINetIndex getData:absMv.delta_p]) integerValue];
+        MVDirection direction = delta < 0 ? MVDirection_Negative : MVDirection_Positive;
+        NSArray *indexes = [theNet getNetNodePointersFromDirectionReference:absMv.pointer.algsType direction:direction isMem:false limit:INT_MAX];
+        
+        //2. 筛出最强方向索引强度;
+        NSInteger maxStrong = 0;
+        for (__block AICMVNodeBase *weakConMv in conMvs) {
+            AIPort *findPort = ARR_INDEX([SMGUtils filterArr:indexes checkValid:^BOOL(AIPort *item) {
+                return [item.target_p isEqual:weakConMv.pointer];
+            }], 0);
+            if (findPort && maxStrong < findPort.strong.value) {
+                maxStrong = findPort.strong.value;
+            }
+        }
+        return maxStrong + 1;
+    }
+    return 1;
+}
 
 //MARK:===============================================================
 //MARK:                     < privateMethod >
@@ -67,6 +90,5 @@
     NSInteger absValue = sum / (int)mvNodes.count;
     return absValue;
 }
-
 
 @end

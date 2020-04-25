@@ -161,7 +161,7 @@
 +(void) insertPointer_Hd:(AIKVPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps difStrong:(NSInteger)difStrong{
     if (ISOK(pointer, AIPointer.class) && ISOK(ports, NSMutableArray.class)) {
         //1. 找到/新建port
-        AIPort *findPort = [self findPort:pointer toPorts:ports ps:ps];
+        AIPort *findPort = [self findPort:pointer fromPorts:ports ps:ps];
         if (!findPort) {
             return;
         }
@@ -185,11 +185,14 @@
     }
 }
 
-+(void) insertPointer_Mem:(AIPointer*)pointer toPorts:(NSMutableArray*)memPorts ps:(NSArray*)ps difStrong:(NSInteger)difStrong{
++(void) insertPointer_Mem:(AIKVPointer*)pointer toPorts:(NSMutableArray*)memPorts ps:(NSArray*)ps difStrong:(NSInteger)difStrong{
     //1. 找出/生成port
-    AIPort *findPort = [self findPort:pointer toPorts:memPorts ps:ps difStrong:difStrong];
+    AIPort *findPort = [self findPort:pointer fromPorts:memPorts ps:ps];
     if (findPort) {
-        //2. 插到第一个
+        //2. 强度更新
+        findPort.strong.value += difStrong;
+        
+        //3. 插到第一个
         [memPorts insertObject:findPort atIndex:0];
     }
 }
@@ -197,20 +200,17 @@
 /**
  *  MARK:--------------------从ports中找出符合的port或者new一个 通用方法--------------------
  */
-+(AIPort*) findPort:(AIKVPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps {
-    return [self findPort:pointer toPorts:ports ps:ps difStrong:1];
-}
-+(AIPort*) findPort:(AIKVPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps difStrong:(NSInteger)difStrong{
-    if (ISOK(pointer, AIPointer.class) && ISOK(ports, NSMutableArray.class)) {
++(AIPort*) findPort:(AIKVPointer*)pointer fromPorts:(NSMutableArray*)fromPorts ps:(NSArray*)ps{
+    if (ISOK(pointer, AIPointer.class) && ARRISOK(fromPorts)) {
         //1. 找出旧有;
         AIPort *findPort = nil;
-        for (AIPort *port in ports) {
+        for (AIPort *port in fromPorts) {
             if ([pointer isEqual:port.target_p]) {
                 findPort = port;
                 break;
             }
         }
-        if (findPort) [ports removeObject:findPort];
+        if (findPort) [fromPorts removeObject:findPort];
         
         //2. 无则新建port;
         if (!findPort) {
@@ -218,9 +218,6 @@
             findPort.target_p = pointer;
             findPort.header = [NSString md5:[SMGUtils convertPointers2String:ps]];
         }
-        
-        //3. difStrong
-        findPort.strong.value += difStrong;
         return findPort;
     }
     return nil;
