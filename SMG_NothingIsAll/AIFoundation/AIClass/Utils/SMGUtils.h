@@ -229,6 +229,7 @@
  *  MARK:--------------------用analogyType来筛选ports--------------------
  *  @result notnull
  */
++(NSArray*) filterPorts_Normal:(NSArray*)ports;
 +(NSArray*) filterPorts:(NSArray*)ports havTypes:(NSArray*)havTypes noTypes:(NSArray*)noTypes;
 
 @end

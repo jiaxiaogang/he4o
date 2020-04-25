@@ -666,6 +666,11 @@
 }
 
 //用analogyType来筛选ports
++(NSArray*) filterPorts_Normal:(NSArray*)ports{
+    NSArray *noTypes = @[@(AnalogyType_InnerG),@(AnalogyType_InnerL),@(AnalogyType_InnerH),@(AnalogyType_InnerN),
+                         @(AnalogyType_DiffPlus),@(AnalogyType_DiffSub)];
+    return [SMGUtils filterPorts:ports havTypes:nil noTypes:noTypes];
+}
 +(NSArray*) filterPorts:(NSArray*)ports havTypes:(NSArray*)havTypes noTypes:(NSArray*)noTypes{
     //1. 数据检查
     havTypes = ARRTOOK(havTypes);

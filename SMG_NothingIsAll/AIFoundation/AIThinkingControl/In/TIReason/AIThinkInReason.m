@@ -207,10 +207,12 @@
     [self partMatching_Fo:protoFo assFoIndexAlg:replaceMatchAlg assFoBlock:^NSArray *(AIAlgNodeBase *indexAlg) {
         NSMutableArray *result = [[NSMutableArray alloc] init];
         if (indexAlg) {
-            for (AIPort *refPort in indexAlg.refPorts) {
-                AIFoNodeBase *tmpForLogFo = [SMGUtils searchNode:refPort.target_p];
-                NSLog(@"-----> TIR_Fo 索引:(%@) 取得时序:%@",[NVHeUtil getLightStr4Ps:indexAlg.content_ps],Fo2FStr(tmpForLogFo));
-                //3. rethink时,必须包含replaceMatchAlg的时序才有效;
+            //a. 只能识别cNormal时序;
+            NSArray *normalRefPorts = [SMGUtils filterPorts_Normal:indexAlg.refPorts];
+            
+            for (AIPort *refPort in normalRefPorts) {;
+                NSLog(@"-----> TIR_Fo 索引:(%@) 取得时序:%@",[NVHeUtil getLightStr4Ps:indexAlg.content_ps],FoP2FStr(refPort.target_p));
+                //b. rethink时,必须包含replaceMatchAlg的时序才有效;
                 if ([SMGUtils containsSub_p:refPort.target_p parentPorts:lastAlgRefPorts]) {
                     NSLog(@"-----> TIR_Fo 取得时序成功");
                     [result addObject:refPort];
@@ -261,7 +263,8 @@
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
     [self partMatching_Fo:protoFo assFoIndexAlg:lastMatchAlg assFoBlock:^NSArray *(AIAlgNodeBase *indexAlg) {
         if (indexAlg) {
-            return ARR_SUB(indexAlg.refPorts, 0, cPartMatchingCheckRefPortsLimit);
+            NSArray *normalRefPorts = [SMGUtils filterPorts_Normal:indexAlg.refPorts];
+            return ARR_SUB(normalRefPorts, 0, cPartMatchingCheckRefPortsLimit);
         }
         return nil;
     } checkItemValid:^BOOL(AIKVPointer *itemAlg_p, AIKVPointer *assAlg_p) {
