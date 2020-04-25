@@ -82,7 +82,7 @@
                                 [orderSames insertObject:createAbsNode.pointer atIndex:0];
                                 jMax = j - 1;
                                 if (type == AnalogyType_Same) {
-                                    NSLog(@"~~~> 构建概念:%@\n具象1:%@\n具象2:%@",Alg2FStr(createAbsNode),Alg2FStr(algNodeA),Alg2FStr(algNodeB));
+                                    NSLog(@"STEPKEY~~~> 构建概念:%@\nSTEPKEY具象1:%@\nSTEPKEY具象2:%@",Alg2FStr(createAbsNode),Alg2FStr(algNodeA),Alg2FStr(algNodeB));
                                 }
                             }
                             ///4. 构建时,消耗能量值;
@@ -141,7 +141,7 @@
         //调试短时序; (先仅打外类比日志);
         if (result) {
             if (type == AnalogyType_Same) {
-                NSLog(@"~~~>> 构建时序:%@->%@",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
+                NSLog(@"STEPKEY~~~>> 构建时序:%@->%@",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
             }else{
                 NSLog(@"----> 内类比IHO构建抽象时序=%ld: [%@] from(%ld,%ld)",result.pointer.pointerId,[NVHeUtil getLightStr4Ps:result.content_ps],fo.pointer.pointerId,assFo.pointer.pointerId);
             }
@@ -416,7 +416,7 @@
     NSString *mDS = [ThinkingUtils getAnalogyTypeDS:mType];
     NSString *pDS = [ThinkingUtils getAnalogyTypeDS:pType];
     BOOL isDiff = ((mScore > 0 && pScore < 0) || (mScore < 0 && pScore > 0));
-    ALog(@"~~~~~~~~~~~~~~~~~~~~~~~~ 反向反馈类比 %@ ~~~~~~~~~~~~~~~~~~~~~~~~\n%@->%@\n%@->%@",isDiff ? @"START" : @"JUMP",Fo2FStr(mModel.matchFo),Mvp2Str(mMv_p),Fo2FStr(shortFo),Mvp2Str(pMv_p));
+    ALog(@"STEPKEY~~~~~~~~~~~~~~~~~~~~~~~~ 反向反馈类比 %@ ~~~~~~~~~~~~~~~~~~~~~~~~\nSTEPKEY%@->%@\nSTEPKEY%@->%@",isDiff ? @"START" : @"JUMP",Fo2FStr(mModel.matchFo),Mvp2Str(mMv_p),Fo2FStr(shortFo),Mvp2Str(pMv_p));
     if (!isDiff) return;
 
     //3. 提供类比收集"缺乏和多余"所需的两个数组;
@@ -520,7 +520,7 @@
     
     //5. 连接mv基本模型;
     [AINetUtils relateFo:createFo mv:createMv];
-    NSLog(@"~~~~> 反向反馈类比 CreateFo内容:%@->%@",Fo2FStr(createFo),Mvp2Str(createMv.pointer));
+    NSLog(@"STEPKEY~~~~> 反向反馈类比 CreateFo内容:%@->%@",Fo2FStr(createFo),Mvp2Str(createMv.pointer));
     
     //6. 加强conMv方向索引和conFo索引强度;
     [theNet setMvNodeToDirectionReference:conMv difStrong:1];
@@ -535,7 +535,7 @@
     CGFloat mScore = [ThinkingUtils getScoreForce:mModel.matchFo.cmvNode_p ratio:mModel.matchFoValue];
     CGFloat sScore = [ThinkingUtils getScoreForce:shortFo.cmvNode_p ratio:1.0f];
     BOOL isSame = ((mScore > 0 && sScore > 0) || (mScore < 0 && sScore < 0));
-    ALog(@"~~~~~~~~~~~~~~~~~~~~~~~~ 正向反馈类比 %@ ~~~~~~~~~~~~~~~~~~~~~~~~\n%@->%@\n%@->%@",isSame ? @"START" : @"JUMP",Fo2FStr(mModel.matchFo),Mvp2Str(mModel.matchFo.cmvNode_p),Fo2FStr(shortFo),Mvp2Str(shortFo.cmvNode_p));
+    NSLog(@"STEPKEY~~~~~~~~~~~~~~~~~~~~~~~~ 正向反馈类比 %@ ~~~~~~~~~~~~~~~~~~~~~~~~\nSTEPKEY%@->%@\nSTEPKEY%@->%@",isSame ? @"START" : @"JUMP",Fo2FStr(mModel.matchFo),Mvp2Str(mModel.matchFo.cmvNode_p),Fo2FStr(shortFo),Mvp2Str(shortFo.cmvNode_p));
     if (!isSame) return;
     
     //3. 类比 (与当前的analogy_Outside()较相似,所以暂不写,随后写时,也是将原有的_outside改成此_same类比方法);

@@ -109,7 +109,7 @@
     }
     
     //4. 调试日志
-    NSLog(@"----> 识别Alg Finish 类型:%ld 内容:%@",matchType,Alg2FStr(assAlgNode));
+    NSLog(@"STEPKEY----> 识别Alg Finish 类型:%ld 内容:%@",matchType,Alg2FStr(assAlgNode));
     complete(assAlgNode,matchType);
 }
 
@@ -257,7 +257,7 @@
         return;
     }
     
-    NSLog(@"--------------------------------------- 瞬时时序识别 ---------------------------------------\n%@",Fo2FStr(protoFo));
+    NSLog(@"STEPKEY--------------------------------------- 瞬时时序识别 ---------------------------------------\nSTEPKEY%@",Fo2FStr(protoFo));
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
     [self partMatching_Fo:protoFo assFoIndexAlg:lastMatchAlg assFoBlock:^NSArray *(AIAlgNodeBase *indexAlg) {
         if (indexAlg) {
@@ -348,7 +348,7 @@
             
             //6. 对assFo做匹配判断;
             [TIRUtils TIR_Fo_CheckFoValidMatch:protoFo assFo:assFo checkItemValid:checkItemValid success:^(NSInteger lastAssIndex, CGFloat matchValue) {
-                NSLog(@"时序识别: SUCCESS >>> matchValue:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
+                NSLog(@"STEPKEY时序识别: SUCCESS >>> matchValue:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
                 successed = true;
                 finishBlock(assFo,matchValue);
             } failure:^(NSString *msg) {

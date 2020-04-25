@@ -46,7 +46,7 @@
 -(void) dataInWithModels:(NSArray*)dics algsType:(NSString*)algsType{
     //1. 数据检查 (小鸟不能仅传入foodView,而要传入整个视角场景)
     dics = ARRTOOK(dics);
-    NSLog(@"------------------------------- 皮层输入 -------------------------------");
+    NSLog(@"STEPKEY------------------------------- 皮层输入 -------------------------------");
     
     //2. 收集所有具象父概念的value_ps
     NSMutableArray *parentValue_ps = [[NSMutableArray alloc] init];
@@ -73,7 +73,7 @@
         //6. 将所有子概念添加到瞬时记忆;
         [self.delegate aiThinkIn_AddToShortMemory:@[subAlgNode.pointer] isMatch:false];
         [theNV setNodeData:subAlgNode.pointer];
-        NSLog(@"--->> 构建InputSub节点:%@",Alg2FStr(subAlgNode));
+        NSLog(@"STEPKEY--->> 构建InputSub节点:%@",Alg2FStr(subAlgNode));
     }
     
     //6. NoMv处理;

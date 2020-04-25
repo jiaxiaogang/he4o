@@ -90,7 +90,7 @@
     [self.algScheme convert2Out_Fo:foNode.content_ps curFo:foNode success:^(NSArray *acts) {
         [outFoModel.actions addObjectsFromArray:acts];
     } failure:^{
-        WLog(@"TOR_行为化失败");
+        WLog(@"STEPKEYTOR_行为化失败");
     }];
 }
 

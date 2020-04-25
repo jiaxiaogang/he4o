@@ -47,7 +47,7 @@
  */
 -(void) convert2Out_Fo:(NSArray*)curAlg_ps curFo:(AIFoNodeBase*)curFo success:(void(^)(NSArray *acts))success failure:(void(^)())failure {
     //1. 数据准备
-    NSLog(@"============================== 行为化 START ==================== \n时序:%@->%@\n需要:[%@]",Fo2FStr(curFo),Mvp2Str(curFo.cmvNode_p),Pits2FStr(curAlg_ps));
+    NSLog(@"STEPKEY============================== 行为化 START ==================== \nSTEPKEY时序:%@->%@\nSTEPKEY需要:[%@]",Fo2FStr(curFo),Mvp2Str(curFo.cmvNode_p),Pits2FStr(curAlg_ps));
     NSMutableArray *result = [[NSMutableArray alloc] init];
     if (!ARRISOK(curAlg_ps) || curFo == nil) {
         failure();
@@ -423,9 +423,9 @@
     
     //2. mIsC有效性判断 (MC无法加工,则直接转移);
     AIAlgNodeBase *mAlg = self.shortMatchModel.matchAlg;
-    NSLog(@"==========================MC V3 START==========================\nM:%@\nC:%@",Alg2FStr(mAlg),Alg2FStr(cAlg));
+    NSLog(@"STEPKEY==========================MC V3 START==========================\nSTEPKEYM:%@\nSTEPKEYC:%@",Alg2FStr(mAlg),Alg2FStr(cAlg));
     if (![TOUtils mIsC:mAlg c:cAlg]) {
-        NSLog(@"===> mNotC");
+        NSLog(@"STEPKEY===> mNotC");
         return;
     }
     
@@ -456,12 +456,11 @@
         //b. 有效性判断2: C-M (C甜,M不能甜);
         NSArray *cP_At_mP = [SMGUtils filterSameIdentifier_ps:m_P1_vps b_ps:cP2_Alg.content_ps].allValues;
         NSArray *cP_Rm_mP = [SMGUtils removeSub_ps:cP_At_mP parent_ps:cP2_Alg.content_ps];
-        NSLog(@"--->需满足C:%@",Pits2FStr(cP_Rm_mP));
         
         //c. 有效性判断3: 再到M_S2s中找M负价值的,同区不同值的值,对C稀疏码进行满足 (如C中含距0,而M中为距50);
         NSDictionary *itemCanOut = [SMGUtils filterSameIdentifier_DiffId_ps:m_S2s b_ps:cP_Rm_mP];
         NSArray *itemCanNotOut = [SMGUtils removeSub_ps:itemCanOut.allValues parent_ps:cP_Rm_mP];
-        NSLog(@"--->可满足C:%@ 未满足:%@",Pits2FStr(cCanOut.allValues),Pits2FStr(itemCanNotOut));
+        NSLog(@"STEPKEY--->C需满足:%@ 可满足:%@ 未满足:%@",Pits2FStr(cP_Rm_mP),Pits2FStr(cCanOut.allValues),Pits2FStr(itemCanNotOut));
         
         //d. 收集可满足和未满足;
         [cCanOut setDictionary:itemCanOut];
