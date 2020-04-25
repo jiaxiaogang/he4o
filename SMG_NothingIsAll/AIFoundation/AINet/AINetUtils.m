@@ -80,20 +80,25 @@
     }
 }
 
-+(void) insertRefPorts_AllFoNode:(AIKVPointer*)foNode_p order_ps:(NSArray*)order_ps ps:(NSArray*)ps{
++(void) insertRefPorts_AllFoNode:(AIKVPointer*)foNode_p order_ps:(NSArray*)order_ps ps:(NSArray*)ps {
     for (AIPointer *order_p in ARRTOOK(order_ps)) {
-        [self insertRefPorts_AllFoNode:foNode_p order_p:order_p ps:ps];
+        [self insertRefPorts_AllFoNode:foNode_p order_p:order_p ps:ps difStrong:1];
     }
 }
-+(void) insertRefPorts_AllFoNode:(AIKVPointer*)foNode_p order_p:(AIPointer*)order_p ps:(NSArray*)ps{
++(void) insertRefPorts_AllFoNode:(AIKVPointer*)foNode_p order_ps:(NSArray*)order_ps ps:(NSArray*)ps difStrong:(NSInteger)difStrong{
+    for (AIPointer *order_p in ARRTOOK(order_ps)) {
+        [self insertRefPorts_AllFoNode:foNode_p order_p:order_p ps:ps difStrong:difStrong];
+    }
+}
++(void) insertRefPorts_AllFoNode:(AIKVPointer*)foNode_p order_p:(AIPointer*)order_p ps:(NSArray*)ps difStrong:(NSInteger)difStrong{
     if (!foNode_p.isMem) {
         AIAlgNodeBase *algNode = [SMGUtils searchObjectForPointer:order_p fileName:kFNNode time:cRTNode];
         if (ISOK(algNode, AIAlgNodeBase.class)) {
-            [AINetUtils insertPointer_Hd:foNode_p toPorts:algNode.refPorts ps:ps];
+            [AINetUtils insertPointer_Hd:foNode_p toPorts:algNode.refPorts ps:ps difStrong:difStrong];
             [SMGUtils insertObject:algNode pointer:algNode.pointer fileName:kFNNode time:cRTNode];
         }
     }else{
-        [self insertRefPorts_MemNode:foNode_p passiveRef_p:order_p ps:ps difStrong:1];
+        [self insertRefPorts_MemNode:foNode_p passiveRef_p:order_p ps:ps difStrong:difStrong];
     }
     if (foNode_p.isMem != order_p.isMem) {
         WLog(@"alg被fo引用时,内存状态各异; foIsMem:%d",foNode_p.isMem);

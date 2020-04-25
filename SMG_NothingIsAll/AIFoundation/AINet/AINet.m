@@ -125,12 +125,6 @@ static AINet *_instance;
 -(AIFrontOrderNode*) createCMV:(NSArray*)imvAlgsArr order:(NSArray*)order{
     return [self.mvFoManager create:imvAlgsArr order:order];
 }
--(AICMVNode*) createConMv:(NSArray*)imvAlgsArr{
-    return [self.mvFoManager createConMv:imvAlgsArr];
-}
--(AICMVNode*) createConMv:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p at:(NSString*)at isMem:(BOOL)isMem{
-    return [self.mvFoManager createConMv:urgentTo_p delta_p:delta_p at:at isMem:isMem];
-}
 
 
 //MARK:===============================================================
@@ -190,13 +184,6 @@ static AINet *_instance;
 //MARK:===============================================================
 -(AIAbsCMVNode*) createAbsCMVNode_Outside:(AIKVPointer*)absFo_p aMv_p:(AIKVPointer*)aMv_p bMv_p:(AIKVPointer*)bMv_p{
     return [self.absCmvManager create:absFo_p aMv_p:aMv_p bMv_p:bMv_p];
-}
-
--(AIAbsCMVNode*) createAbsCMVNode_Inner:(AIKVPointer*)absFo_p conMv_p:(AIKVPointer*)conMv_p{
-    if (POINTERISOK(conMv_p)) {
-        return [self.absCmvManager create:absFo_p conMvPs:@[conMv_p]];
-    }
-    return nil;
 }
 -(AIAbsCMVNode*) createAbsMv:(AIKVPointer*)absFo_p conMvs:(NSArray*)conMvs at:(NSString*)at ds:(NSString*)ds urgentTo_p:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p{
     return [self.absCmvManager create_General:absFo_p conMvs:conMvs at:at ds:ds urgentTo_p:urgentTo_p delta_p:delta_p];

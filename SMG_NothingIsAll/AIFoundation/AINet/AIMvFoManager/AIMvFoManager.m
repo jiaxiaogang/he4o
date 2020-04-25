@@ -22,7 +22,8 @@
 -(AIFrontOrderNode*) create:(NSArray*)imvAlgsArr order:(NSArray*)order{
     //2. 打包cmvNode & foNode;
     AICMVNode *cmvNode = [self createConMv:imvAlgsArr];
-    AIFrontOrderNode *foNode = [AIMvFoManager createConFo:order isMem:false];
+    NSInteger urgentTo = [NUMTOOK([AINetIndex getData:cmvNode.urgentTo_p]) integerValue];
+    AIFrontOrderNode *foNode = [AIMvFoManager createConFo:order isMem:false difStrong:urgentTo];
 
     //4. 互指向
     [AINetUtils relateFo:foNode mv:cmvNode];
@@ -60,6 +61,9 @@
 }
 
 +(AIFrontOrderNode*) createConFo:(NSArray*)order_ps isMem:(BOOL)isMem{
+    return [self createConFo:order_ps isMem:isMem difStrong:1];
+}
++(AIFrontOrderNode*) createConFo:(NSArray*)order_ps isMem:(BOOL)isMem difStrong:(NSInteger)difStrong{
     //1. foNode
     AIFrontOrderNode *foNode = [[AIFrontOrderNode alloc] init];
 
@@ -73,7 +77,7 @@
     [foNode.content_ps addObjectsFromArray:order_ps];
 
     //4. foNode引用conAlg;
-    [AINetUtils insertRefPorts_AllFoNode:foNode.pointer order_ps:foNode.content_ps ps:foNode.content_ps];
+    [AINetUtils insertRefPorts_AllFoNode:foNode.pointer order_ps:foNode.content_ps ps:foNode.content_ps difStrong:difStrong];
 
     //5. 存储foNode
     [SMGUtils insertNode:foNode];

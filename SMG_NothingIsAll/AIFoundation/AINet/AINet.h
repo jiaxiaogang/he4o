@@ -53,8 +53,6 @@
 //MARK:                     < cmv >
 //MARK:===============================================================
 -(AIFrontOrderNode*) createCMV:(NSArray*)imvAlgsArr order:(NSArray*)order;
--(AICMVNode*) createConMv:(NSArray*)imvAlgsArr;
--(AICMVNode*) createConMv:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p at:(NSString*)at isMem:(BOOL)isMem;
 
 
 //MARK:===============================================================
@@ -93,7 +91,6 @@
 //MARK:                     < absCmv >
 //MARK:===============================================================
 -(AIAbsCMVNode*) createAbsCMVNode_Outside:(AIKVPointer*)absFo_p aMv_p:(AIKVPointer*)aMv_p bMv_p:(AIKVPointer*)bMv_p;
--(AIAbsCMVNode*) createAbsCMVNode_Inner:(AIKVPointer*)absFo_p conMv_p:(AIKVPointer*)conMv_p;
 -(AIAbsCMVNode*) createAbsMv:(AIKVPointer*)absFo_p conMvs:(NSArray*)conMvs at:(NSString*)at ds:(NSString*)ds urgentTo_p:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p;
 
 
