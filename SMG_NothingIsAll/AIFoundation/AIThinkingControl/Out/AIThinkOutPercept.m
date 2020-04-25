@@ -113,7 +113,7 @@
             //}];
             
             for (NSInteger i = 0; i < protoArr.count; i++) {
-                AIPort *port = ARR_INDEX(protoArr, protoArr.count - i - 1);
+                AIPort *port = ARR_INDEX(protoArr, i);
                 //a. analogyType处理 (仅支持normal的fo);
                 AICMVNodeBase *itemMV = [SMGUtils searchNode:port.target_p];
                 NSString *plusDS = [ThinkingUtils getAnalogyTypeDS:AnalogyType_DiffPlus];
