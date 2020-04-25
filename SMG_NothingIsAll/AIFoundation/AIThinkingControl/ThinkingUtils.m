@@ -237,7 +237,7 @@
 +(AIAlgNodeBase*) createHdAlgNode_NoRepeat:(NSArray*)value_ps{
     return [theNet createAbsAlg_NoRepeat:value_ps conAlgs:nil isMem:false isOut:false];
 }
-+(AINetAbsFoNode*)createAbsFo_NoRepeat_General:(NSArray*)conFos content_ps:(NSArray*)content_ps ds:(NSString*)ds{
++(AINetAbsFoNode*)createAbsFo_NoRepeat_General:(NSArray*)conFos content_ps:(NSArray*)content_ps ds:(NSString*)ds difStrong:(NSInteger)difStrong{
     //1. 数据准备
     AINetAbsFoNode *result = nil;
     if (ARRISOK(conFos) && ARRISOK(content_ps)) {
@@ -249,7 +249,7 @@
             [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
         }else{
             //3. 无则构建
-            result = [theNet createAbsFo_General:conFos content_ps:content_ps ds:ds];
+            result = [theNet createAbsFo_General:conFos content_ps:content_ps difStrong:difStrong ds:ds];
         }
     }
     return result;

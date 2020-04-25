@@ -24,7 +24,7 @@
 
 -(AIAbsCMVNode*) create:(AIKVPointer*)absFo_p aMv_p:(AIKVPointer*)aMv_p bMv_p:(AIKVPointer*)bMv_p {
     //1. 数据
-    BOOL valid = ISOK(aMv_p, AIKVPointer.class) && ISOK(bMv_p, AIKVPointer.class) && [STRTOOK(aMv_p.algsType) isEqualToString:bMv_p.algsType] && ISOK(absFo_p, AIKVPointer.class);
+    BOOL valid = ISOK(aMv_p, AIKVPointer.class) && ISOK(bMv_p, AIKVPointer.class) && [STRTOOK(aMv_p.algsType) isEqualToString:bMv_p.algsType];
     if (!valid) {
         return nil;
     }
@@ -70,13 +70,12 @@
 
 -(AIAbsCMVNode*) create_General:(AIKVPointer*)absFo_p conMvs:(NSArray*)conMvs at:(NSString*)at ds:(NSString*)ds urgentTo_p:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p{
     //1. 数据
-    if (!absFo_p || !ARRISOK(conMvs) || !urgentTo_p || !delta_p) {
+    if (!ARRISOK(conMvs) || !urgentTo_p || !delta_p) {
         return nil;
     }
     at = STRTOOK(at);
     ds = STRTOOK(ds);
     NSInteger urgentTo = [NUMTOOK([AINetIndex getData:urgentTo_p]) integerValue];
-    if (absFo_p.isMem) NSLog(@"!!!!警告,mv基本模型中,foNode在内存网络中,请检查createAbsFo()中转移是否成功;");
 
     //2. 创建absCMVNode;
     AIAbsCMVNode *result = [[AIAbsCMVNode alloc] init];

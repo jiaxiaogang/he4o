@@ -63,7 +63,7 @@
 //MARK:===============================================================
 //MARK:                     < absFo >
 //MARK:===============================================================
--(AINetAbsFoNode*) createAbsFo_General:(NSArray*)conFos content_ps:(NSArray*)content_ps ds:(NSString*)ds;
+-(AINetAbsFoNode*) createAbsFo_General:(NSArray*)conFos content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong ds:(NSString*)ds;
 
 //MARK:===============================================================
 //MARK:                     < directionReference >

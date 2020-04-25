@@ -26,7 +26,7 @@
 
 @implementation AIAbsFoManager
 
--(AINetAbsFoNode*) create:(NSArray*)conFos orderSames:(NSArray*)orderSames dsBlock:(NSString*(^)())dsBlock{
+-(AINetAbsFoNode*) create:(NSArray*)conFos orderSames:(NSArray*)orderSames difStrong:(NSInteger)difStrong dsBlock:(NSString*(^)())dsBlock{
     //1. 数据准备
     NSString *ds = dsBlock ? dsBlock() : DefaultDataSource;
     if (!ARRISOK(conFos)) return nil;
@@ -68,7 +68,7 @@
         findAbsNode.content_ps = [AINetUtils move2Hd4Alg_ps:orderSames];
         
         //4. order_ps更新概念节点引用序列;
-        [AINetUtils insertRefPorts_AllFoNode:findAbsNode.pointer order_ps:findAbsNode.content_ps ps:findAbsNode.content_ps];
+        [AINetUtils insertRefPorts_AllFoNode:findAbsNode.pointer order_ps:findAbsNode.content_ps ps:findAbsNode.content_ps difStrong:difStrong];
     }
     
     //5. 具象节点&抽象节点_关联&存储

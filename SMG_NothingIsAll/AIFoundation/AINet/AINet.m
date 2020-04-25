@@ -138,9 +138,9 @@ static AINet *_instance;
 //MARK:===============================================================
 //MARK:                     < absFo >
 //MARK:===============================================================
--(AINetAbsFoNode*) createAbsFo_General:(NSArray*)conFos content_ps:(NSArray*)content_ps ds:(NSString*)ds{
+-(AINetAbsFoNode*) createAbsFo_General:(NSArray*)conFos content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong ds:(NSString*)ds{
     if (ARRISOK(conFos)) {
-        return [self.absFoManager create:conFos orderSames:content_ps dsBlock:^NSString *{
+        return [self.absFoManager create:conFos orderSames:content_ps difStrong:difStrong dsBlock:^NSString *{
             return ds;
         }];
     }

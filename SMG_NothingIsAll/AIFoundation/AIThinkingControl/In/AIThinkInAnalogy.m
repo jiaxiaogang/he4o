@@ -116,28 +116,26 @@
         BOOL samesEqualAssFo = orderSames.count == assFo.content_ps.count && [SMGUtils containsSub_ps:orderSames parent_ps:assFo.content_ps];
         BOOL jumpForAbsAlreadyHav = (ISOK(assFo, AINetAbsFoNode.class) && samesEqualAssFo);
         AINetAbsFoNode *result = nil;
+        AIAbsCMVNode *resultMv = nil;
         if (jumpForAbsAlreadyHav) {
             result = (AINetAbsFoNode*)assFo;
             [AINetUtils relateFoAbs:result conNodes:@[fo]];
             [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
         }else{
-            //4. 构建absFoNode
-            NSString *foDS = [ThinkingUtils getAnalogyTypeDS:type];
-            result = [ThinkingUtils createAbsFo_NoRepeat_General:@[fo,assFo] content_ps:orderSames ds:foDS];
-
-            //5. createAbsCmvNode
-            if (type == AnalogyType_Same) {
-                AICMVNodeBase *assMv = [SMGUtils searchNode:assFo.cmvNode_p];
-                if (assMv) {
-                    AIAbsCMVNode *createAbsCmv = [theNet createAbsCMVNode_Outside:result.pointer aMv_p:fo.cmvNode_p bMv_p:assMv.pointer];
-
-                    //6. cmv模型连接;
-                    if (ISOK(createAbsCmv, AIAbsCMVNode.class)) {
-                        result.cmvNode_p = createAbsCmv.pointer;
-                        [SMGUtils insertObject:result pointer:result.pointer fileName:kFNNode time:cRTNode];
-                    }
-                }
+            //4. createAbsCmvNode
+            NSInteger foDifStrong = 1;
+            AICMVNodeBase *assMv = [SMGUtils searchNode:assFo.cmvNode_p];
+            if (type == AnalogyType_Same && assMv) {
+                resultMv = [theNet createAbsCMVNode_Outside:nil aMv_p:fo.cmvNode_p bMv_p:assMv.pointer];
+                foDifStrong = [NUMTOOK([AINetIndex getData:resultMv.urgentTo_p]) integerValue];
             }
+            
+            //5. 构建absFoNode
+            NSString *foDS = [ThinkingUtils getAnalogyTypeDS:type];
+            result = [ThinkingUtils createAbsFo_NoRepeat_General:@[fo,assFo] content_ps:orderSames ds:foDS difStrong:foDifStrong];
+            
+            //6. cmv模型连接;
+            [AINetUtils relateFo:result mv:resultMv];
         }
 
         //调试短时序; (先仅打外类比日志);
@@ -506,25 +504,25 @@
     if(!conMv || !ARRISOK(content_ps) || !conFo) return;
     CGFloat rate = (float)content_ps.count / conFo.content_ps.count;
 
-    //2. 构建foNode
-    AIFoNodeBase *createFo = [ThinkingUtils createAbsFo_NoRepeat_General:@[conFo] content_ps:content_ps ds:ds];
-
-    //3. 计算ms的价值变化量 (基准 x rate);
+    //2. 计算ms的价值变化量 (基准 x rate);
     NSInteger pUrgentTo = [NUMTOOK([AINetIndex getData:conMv.urgentTo_p]) integerValue];
     NSInteger pDelta = [NUMTOOK([AINetIndex getData:conMv.delta_p]) integerValue];
     NSInteger ms_UrgentTo = (float)pUrgentTo * rate;
     NSInteger ms_Delta = (float)pDelta * rate;
 
-    //4. 构建mvNode
+    //3. 构建mvNode
     AIKVPointer *urgent_p = [theNet getNetDataPointerWithData:@(ms_UrgentTo) algsType:conMv_p.algsType dataSource:conMv_p.dataSource];
     AIKVPointer *delta_p = [theNet getNetDataPointerWithData:@(ms_Delta) algsType:conMv_p.algsType dataSource:conMv_p.dataSource];
-    AICMVNodeBase *createMv = [theNet createAbsMv:createFo.pointer conMvs:@[conMv] at:conMv_p.algsType ds:conMv_p.dataSource urgentTo_p:urgent_p delta_p:delta_p];
+    AICMVNodeBase *createMv = [theNet createAbsMv:nil conMvs:@[conMv] at:conMv_p.algsType ds:conMv_p.dataSource urgentTo_p:urgent_p delta_p:delta_p];
+    
+    //4. 构建foNode
+    AIFoNodeBase *createFo = [ThinkingUtils createAbsFo_NoRepeat_General:@[conFo] content_ps:content_ps ds:ds difStrong:ms_UrgentTo];
     
     //5. 连接mv基本模型;
     [AINetUtils relateFo:createFo mv:createMv];
     NSLog(@"~~~~> 反向反馈类比 CreateFo内容:%@->%@",Fo2FStr(createFo),Mvp2Str(createMv.pointer));
     
-    //6. 加强方向索引和时序索引强度;
+    //6. 加强conMv方向索引和conFo索引强度;
     [theNet setMvNodeToDirectionReference:conMv difStrong:1];
     [AINetUtils insertRefPorts_AllFoNode:conFo.pointer order_ps:conFo.content_ps ps:conFo.content_ps];
 }
