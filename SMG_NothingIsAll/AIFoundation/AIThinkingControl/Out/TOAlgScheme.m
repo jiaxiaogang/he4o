@@ -459,8 +459,8 @@
         
         //c. 有效性判断3: 再到M_S2s中找M负价值的,同区不同值的值,对C稀疏码进行满足 (如C中含距0,而M中为距50);
         NSDictionary *itemCanOut = [SMGUtils filterSameIdentifier_DiffId_ps:m_S2s b_ps:cP_Rm_mP];
-        NSArray *itemCanNotOut = [SMGUtils removeSub_ps:itemCanOut.allValues parent_ps:cP_Rm_mP];
-        NSLog(@"STEPKEY--->C需满足:%@ 可满足:%@ 未满足:%@",Pits2FStr(cP_Rm_mP),Pits2FStr(cCanOut.allValues),Pits2FStr(itemCanNotOut));
+        NSArray *itemCantOut = [SMGUtils removeSub_ps:itemCanOut.allValues parent_ps:cP_Rm_mP];
+        NSLog(@"STEPKEY--->C需满足:%@ 可满足:%@ 未满足:%@",Pits2FStr(cP_Rm_mP),Pits2FStr(cCanOut.allValues),Pits2FStr(itemCantOut));
         
         //d. 收集可满足和未满足;
         [cCanOut setDictionary:itemCanOut];
@@ -468,7 +468,7 @@
         //5. 评价未满足带来的影响,是否要中断行为化 (忍无可忍,则行为化失败);
         AIKVPointer *cP2_RefOK_p = ARR_INDEX(cP2_RefOK_ps, 0);
         AIFoNodeBase *cP2_RefFo = [SMGUtils searchNode:cP2_RefOK_p];
-        badScore += [ThinkingUtils getScoreForce:cP2_RefFo.cmvNode_p ratio:(float)itemCanNotOut.count / cP_Rm_mP.count];
+        badScore += [ThinkingUtils getScoreForce:cP2_RefFo.cmvNode_p ratio:(float)itemCantOut.count / cP_Rm_mP.count];
         if (badScore + cScore <= 0) {
             complete(acts,false);
             return;

@@ -501,13 +501,18 @@
     [self analogy_Feedback_Diff_Creater:pMv_p conFo:shortFo content_ps:ps type:pType];
 }
 
+/**
+ *  MARK:--------------------反向反馈类比构建器--------------------
+ *  @version
+ *      20200426 - 担责,责任元素担下所有责任 (计算mv的rate直接为1.0); //注:责任元素的平均担责,在MC_V3的badScore时计算;
+ */
 +(void) analogy_Feedback_Diff_Creater:(AIKVPointer*)conMv_p conFo:(AIFoNodeBase*)conFo content_ps:(NSArray*)content_ps type:(AnalogyType)type{
     //1. 数据检查
     NSString *ds = [ThinkingUtils getAnalogyTypeDS:type];
     AICMVNodeBase *conMv = [SMGUtils searchNode:conMv_p];
     if(!conMv || !ARRISOK(content_ps) || !conFo) return;
-    CGFloat rate = (float)content_ps.count / conFo.content_ps.count;
-
+    CGFloat rate = 1.0f;//(float)content_ps.count / conFo.content_ps.count;
+    
     //2. 计算ms的价值变化量 (基准 x rate);
     NSInteger pUrgentTo = [NUMTOOK([AINetIndex getData:conMv.urgentTo_p]) integerValue];
     NSInteger pDelta = [NUMTOOK([AINetIndex getData:conMv.delta_p]) integerValue];
