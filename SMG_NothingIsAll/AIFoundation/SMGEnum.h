@@ -77,7 +77,7 @@ typedef NS_ENUM(NSInteger,  AnalogyType) {
     AnalogyType_InnerN  = 3,//内类比_变无 (none)
     AnalogyType_DiffPlus= 4,//反向类比_mv+ (plus)
     AnalogyType_DiffSub = 5,//反向类比_mv- (sub)
-    AnalogyType_Same    = 6,//反向类比_异向
+    AnalogyType_Same    = 6,//正向类比
 };
 
 /**

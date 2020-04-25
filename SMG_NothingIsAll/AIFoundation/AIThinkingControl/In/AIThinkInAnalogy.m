@@ -22,6 +22,7 @@
 #import "TIRUtils.h"
 #import "AIShortMatchModel.h"
 #import "AICMVNode.h"
+#import "AINetAbsCMVUtil.h"
 //temp
 #import "NVHeUtil.h"
 
@@ -116,26 +117,29 @@
         BOOL samesEqualAssFo = orderSames.count == assFo.content_ps.count && [SMGUtils containsSub_ps:orderSames parent_ps:assFo.content_ps];
         BOOL jumpForAbsAlreadyHav = (ISOK(assFo, AINetAbsFoNode.class) && samesEqualAssFo);
         AINetAbsFoNode *result = nil;
-        AIAbsCMVNode *resultMv = nil;
         if (jumpForAbsAlreadyHav) {
             result = (AINetAbsFoNode*)assFo;
             [AINetUtils relateFoAbs:result conNodes:@[fo] isNew:false];
             [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
         }else{
-            //4. createAbsCmvNode
+            //4. 取foDifStrong
             NSInteger foDifStrong = 1;
+            AICMVNodeBase *foMv = [SMGUtils searchNode:fo.cmvNode_p];
             AICMVNodeBase *assMv = [SMGUtils searchNode:assFo.cmvNode_p];
-            if (type == AnalogyType_Same && assMv) {
-                resultMv = [theNet createAbsCMVNode_Outside:nil aMv_p:fo.cmvNode_p bMv_p:assMv.pointer];
-                foDifStrong = [NUMTOOK([AINetIndex getData:resultMv.urgentTo_p]) integerValue];
+            if (foMv && assMv) {
+                NSInteger absUrgentTo = [AINetAbsCMVUtil getAbsUrgentTo:@[fo.cmvNode_p,assFo.cmvNode_p]];
+                foDifStrong = absUrgentTo;
             }
             
             //5. 构建absFoNode
             NSString *foDS = [ThinkingUtils getAnalogyTypeDS:type];
             result = [ThinkingUtils createAbsFo_NoRepeat_General:@[fo,assFo] content_ps:orderSames ds:foDS difStrong:foDifStrong];
             
-            //6. cmv模型连接;
-            [AINetUtils relateFo:result mv:resultMv];
+            //6. createAbsCmvNode (当正向类比,且result没有cmv指向时);
+            if (type == AnalogyType_Same && assMv && !result.cmvNode_p) {
+                AIAbsCMVNode *resultMv = [theNet createAbsCMVNode_Outside:nil aMv_p:fo.cmvNode_p bMv_p:assMv.pointer];
+                [AINetUtils relateFo:result mv:resultMv];//cmv模型连接;
+            }
         }
 
         //调试短时序; (先仅打外类比日志);
@@ -416,7 +420,7 @@
     NSString *mDS = [ThinkingUtils getAnalogyTypeDS:mType];
     NSString *pDS = [ThinkingUtils getAnalogyTypeDS:pType];
     BOOL isDiff = ((mScore > 0 && pScore < 0) || (mScore < 0 && pScore > 0));
-    NSLog(@"STEPKEY------------------------ 反向反馈类比 %@ ------------------------\nSTEPKEY%@->%@\nSTEPKEY%@->%@",isDiff ? @"START" : @"JUMP",Fo2FStr(mModel.matchFo),Mvp2Str(mMv_p),Fo2FStr(shortFo),Mvp2Str(pMv_p));
+    NSLog(@"STEPKEY------------------------ 反向反馈类比 %@ ------------------------\nSTEPKEY%@->%@ \nSTEPKEY%@->%@",isDiff ? @"START" : @"JUMP",Fo2FStr(mModel.matchFo),Mvp2Str(mMv_p),Fo2FStr(shortFo),Mvp2Str(pMv_p));
     if (!isDiff) return;
 
     //3. 提供类比收集"缺乏和多余"所需的两个数组;
@@ -535,7 +539,7 @@
     CGFloat mScore = [ThinkingUtils getScoreForce:mModel.matchFo.cmvNode_p ratio:mModel.matchFoValue];
     CGFloat sScore = [ThinkingUtils getScoreForce:shortFo.cmvNode_p ratio:1.0f];
     BOOL isSame = ((mScore > 0 && sScore > 0) || (mScore < 0 && sScore < 0));
-    NSLog(@"STEPKEY------------------------ 正向反馈类比 %@ ------------------------\nSTEPKEY%@->%@\nSTEPKEY%@->%@",isSame ? @"START" : @"JUMP",Fo2FStr(mModel.matchFo),Mvp2Str(mModel.matchFo.cmvNode_p),Fo2FStr(shortFo),Mvp2Str(shortFo.cmvNode_p));
+    NSLog(@"STEPKEY------------------------ 正向反馈类比 %@ ------------------------\nSTEPKEY%@->%@ \nSTEPKEY%@->%@",isSame ? @"START" : @"JUMP",Fo2FStr(mModel.matchFo),Mvp2Str(mModel.matchFo.cmvNode_p),Fo2FStr(shortFo),Mvp2Str(shortFo.cmvNode_p));
     if (!isSame) return;
     
     //3. 类比 (与当前的analogy_Outside()较相似,所以暂不写,随后写时,也是将原有的_outside改成此_same类比方法);
