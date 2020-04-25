@@ -55,6 +55,17 @@
     return false;
 }
 
++(NSInteger) getConMaxStrong:(AINodeBase*)node{
+    NSInteger result = 1;
+    if (node) {
+        NSArray *conPorts = [self conPorts_All:node];
+        for (AIPort *conPort in conPorts) {
+            if (conPort.strong.value + 1 > result) result = conPort.strong.value + 1;
+        }
+    }
+    return result;
+}
+
 @end
 
 
@@ -140,18 +151,18 @@
     }
 }
 
-+(void) insertAbsPorts_MemNode:(AIPointer*)abs_p con_p:(AIPointer*)con_p absNodeContent:(NSArray*)absNodeContent{
++(void) insertAbsPorts_MemNode:(AIPointer*)abs_p con_p:(AIPointer*)con_p absNodeContent:(NSArray*)absNodeContent difStrong:(NSInteger)difStrong{
     if (ISOK(abs_p, AIKVPointer.class) && ISOK(con_p, AIKVPointer.class)) {
         NSMutableArray *memAbsPorts = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:con_p fileName:kFNMemAbsPorts time:cRTMemPort]];
-        [AINetUtils insertPointer_Mem:abs_p toPorts:memAbsPorts ps:absNodeContent difStrong:1];
+        [AINetUtils insertPointer_Mem:abs_p toPorts:memAbsPorts ps:absNodeContent difStrong:difStrong];
         [SMGUtils insertObject:memAbsPorts rootPath:con_p.filePath fileName:kFNMemAbsPorts time:cRTMemPort saveDB:false];//存储
     }
 }
 
-+(void) insertConPorts_MemNode:(AIPointer*)con_p abs_p:(AIPointer*)abs_p conNodeContent:(NSArray*)conNodeContent{
++(void) insertConPorts_MemNode:(AIPointer*)con_p abs_p:(AIPointer*)abs_p conNodeContent:(NSArray*)conNodeContent difStrong:(NSInteger)difStrong{
     if (ISOK(con_p, AIKVPointer.class) && ISOK(abs_p, AIKVPointer.class)) {
         NSMutableArray *memConPorts = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:abs_p fileName:kFNMemConPorts]];
-        [AINetUtils insertPointer_Mem:con_p toPorts:memConPorts ps:conNodeContent difStrong:1];
+        [AINetUtils insertPointer_Mem:con_p toPorts:memConPorts ps:conNodeContent difStrong:difStrong];
         [SMGUtils insertObject:memConPorts rootPath:abs_p.filePath fileName:kFNMemConPorts time:cRTMemPort saveDB:false];//存储
     }
 }
@@ -232,60 +243,40 @@
 //MARK:===============================================================
 //MARK:                     < 抽具象关联 Relate (外界调用,支持alg/fo) >
 //MARK:===============================================================
-
-+(void) relateAlgAbs:(AIAbsAlgNode*)absNode conNodes:(NSArray*)conNodes{
-    if (ISOK(absNode, AIAbsAlgNode.class) && ARRISOK(conNodes)) {
-        [self relateGeneralAbs:absNode absConPorts:absNode.conPorts conNodes:conNodes contentPsBlock:^NSArray *(AIAlgNodeBase *node) {
-            if (ISOK(node, AIAlgNodeBase.class)) {
-                return node.content_ps;
-            }
-            return nil;
-        }];
-    }
++(void) relateAlgAbs:(AIAbsAlgNode*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew{
+    [self relateGeneralAbs:absNode absConPorts:absNode.conPorts conNodes:conNodes isNew:isNew];
 }
-
-+(void) relateFoAbs:(AINetAbsFoNode*)absNode conNodes:(NSArray*)conNodes{
-    if (ISOK(absNode, AINetAbsFoNode.class) && ARRISOK(conNodes)) {
-        [self relateGeneralAbs:absNode absConPorts:absNode.conPorts conNodes:conNodes contentPsBlock:^NSArray *(AIFoNodeBase *node) {
-            if (ISOK(node, AIFoNodeBase.class)) {
-                return node.content_ps;
-            }
-            return nil;
-        }];
-    }
++(void) relateFoAbs:(AINetAbsFoNode*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew{
+    [self relateGeneralAbs:absNode absConPorts:absNode.conPorts conNodes:conNodes isNew:isNew];
 }
-
-+(void) relateMvAbs:(AIAbsCMVNode*)absNode conNodes:(NSArray*)conNodes{
-    if (ISOK(absNode, AIAbsCMVNode.class) && ARRISOK(conNodes)) {
-        [self relateGeneralAbs:absNode absConPorts:absNode.conPorts conNodes:conNodes contentPsBlock:^NSArray *(AICMVNodeBase *node) {
-            return nil;
-        }];
-    }
++(void) relateMvAbs:(AIAbsCMVNode*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew{
+    [self relateGeneralAbs:absNode absConPorts:absNode.conPorts conNodes:conNodes isNew:isNew];
 }
 
 /**
  *  MARK:--------------------抽具象关联通用方法--------------------
  *  @param absConPorts : notnull
  */
-+(void) relateGeneralAbs:(AINodeBase*)absNode absConPorts:(NSMutableArray*)absConPorts conNodes:(NSArray*)conNodes contentPsBlock:(NSArray*(^)(id))contentPsBlock{
++(void) relateGeneralAbs:(AINodeBase*)absNode absConPorts:(NSMutableArray*)absConPorts conNodes:(NSArray*)conNodes isNew:(BOOL)isNew{
     if (ISOK(absNode, AINodeBase.class)) {
         //1. 具象节点的 关联&存储
         conNodes = ARRTOOK(conNodes);
         for (AINodeBase *conNode in conNodes) {
-            NSArray *absContent_ps = contentPsBlock(absNode);
-            NSArray *conContent_ps = contentPsBlock(conNode);
+            NSArray *absContent_ps = absNode.content_ps;
+            NSArray *conContent_ps = conNode.content_ps;
+            NSInteger difStrong = isNew ? [self getConMaxStrong:conNode] : 1;
             if (!conNode.pointer.isMem) {
                 //2. hd_具象节点插"抽象端口";
-                [AINetUtils insertPointer_Hd:absNode.pointer toPorts:conNode.absPorts ps:absContent_ps];
+                [AINetUtils insertPointer_Hd:absNode.pointer toPorts:conNode.absPorts ps:absContent_ps difStrong:difStrong];
                 //3. hd_抽象节点插"具象端口";
-                [AINetUtils insertPointer_Hd:conNode.pointer toPorts:absConPorts ps:conContent_ps];
+                [AINetUtils insertPointer_Hd:conNode.pointer toPorts:absConPorts ps:conContent_ps difStrong:difStrong];
                 //4. hd_存储
                 [SMGUtils insertObject:conNode pointer:conNode.pointer fileName:kFNNode time:cRTNode];
             }else{
                 //5. mem_抽象插到具象上
-                [self insertAbsPorts_MemNode:absNode.pointer con_p:conNode.pointer absNodeContent:absContent_ps];
+                [self insertAbsPorts_MemNode:absNode.pointer con_p:conNode.pointer absNodeContent:absContent_ps difStrong:difStrong];
                 //6. mem_具象插到抽象上
-                [self insertConPorts_MemNode:conNode.pointer abs_p:absNode.pointer conNodeContent:conContent_ps];
+                [self insertConPorts_MemNode:conNode.pointer abs_p:absNode.pointer conNodeContent:conContent_ps difStrong:difStrong];
             }
         }
         

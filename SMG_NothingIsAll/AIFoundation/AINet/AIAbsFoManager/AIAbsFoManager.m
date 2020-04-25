@@ -60,7 +60,9 @@
     }
     
     //3. 无则创建
+    BOOL isNew = false;
     if (!findAbsNode) {
+        isNew = true;
         findAbsNode = [[AINetAbsFoNode alloc] init];
         findAbsNode.pointer = [SMGUtils createPointerForFo:kPN_FO_ABS_NODE ds:ds];
         
@@ -72,7 +74,7 @@
     }
     
     //5. 具象节点&抽象节点_关联&存储
-    [AINetUtils relateFoAbs:findAbsNode conNodes:conFos];
+    [AINetUtils relateFoAbs:findAbsNode conNodes:conFos isNew:isNew];
     return findAbsNode;
 }
 

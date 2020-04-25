@@ -37,6 +37,11 @@
  */
 +(BOOL) checkAllOfOut:(NSArray*)value_ps;
 
+/**
+ *  MARK:--------------------获取具象关联最强的强度--------------------
+ */
++(NSInteger) getConMaxStrong:(AINodeBase*)node;
+
 @end
 
 
@@ -95,12 +100,12 @@
 /**
  *  MARK:--------------------抽象插到具象上--------------------
  */
-+(void) insertAbsPorts_MemNode:(AIPointer*)abs_p con_p:(AIPointer*)con_p absNodeContent:(NSArray*)absNodeContent;
++(void) insertAbsPorts_MemNode:(AIPointer*)abs_p con_p:(AIPointer*)con_p absNodeContent:(NSArray*)absNodeContent difStrong:(NSInteger)difStrong;
 
 /**
  *  MARK:--------------------具象插到抽象上--------------------
  */
-+(void) insertConPorts_MemNode:(AIPointer*)con_p abs_p:(AIPointer*)abs_p conNodeContent:(NSArray*)conNodeContent;
++(void) insertConPorts_MemNode:(AIPointer*)con_p abs_p:(AIPointer*)abs_p conNodeContent:(NSArray*)conNodeContent difStrong:(NSInteger)difStrong;
 
 
 
@@ -136,9 +141,9 @@
  *  @param conNodes : 具象概念们
  *  注: 抽具象的difStrong默认都为1;
  */
-+(void) relateAlgAbs:(AIAbsAlgNode*)absNode conNodes:(NSArray*)conNodes;
-+(void) relateFoAbs:(AINetAbsFoNode*)absNode conNodes:(NSArray*)conNodes;
-+(void) relateMvAbs:(AIAbsCMVNode*)absNode conNodes:(NSArray*)conNodes;
++(void) relateAlgAbs:(AIAbsAlgNode*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew;
++(void) relateFoAbs:(AINetAbsFoNode*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew;
++(void) relateMvAbs:(AIAbsCMVNode*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew;
 
 
 //MARK:===============================================================

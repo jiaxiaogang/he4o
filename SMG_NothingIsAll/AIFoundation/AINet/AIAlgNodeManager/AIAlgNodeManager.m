@@ -142,7 +142,7 @@
     [AINetUtils insertRefPorts_AllAlgNode:result.pointer content_ps:result.content_ps difStrong:difStrong];
     
     //5. 关联 & 存储
-    [AINetUtils relateAlgAbs:result conNodes:validConAlgs];
+    [AINetUtils relateAlgAbs:result conNodes:validConAlgs isNew:absIsNew];
     [theApp.heLogView addLog:STRFORMAT(@"构建抽象概念:%@,存储于:%d,内容:%@",result.pointer.identifier,result.pointer.isMem,Alg2FStr(result))];
     [SMGUtils insertNode:result];
     return result;
@@ -170,7 +170,7 @@
     
     //3. 有则加强;
     if (ISOK(localAlg, AIAbsAlgNode.class)) {
-        [AINetUtils relateAlgAbs:localAlg conNodes:conAlgs];
+        [AINetUtils relateAlgAbs:localAlg conNodes:conAlgs isNew:false];
         //4. 向硬盘转移
         if (!isMem) localAlg = [AINetUtils move2HdNodeFromMemNode_Alg:localAlg];
         return localAlg;

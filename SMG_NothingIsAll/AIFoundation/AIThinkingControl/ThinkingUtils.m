@@ -245,7 +245,7 @@
         AIFoNodeBase *absoluteFo = [AINetIndexUtils getAbsoluteMatchingFoNodeWithContent_ps:content_ps except_ps:conFos isMem:false];
         if (ISOK(absoluteFo, AINetAbsFoNode.class)) {
             result = (AINetAbsFoNode*)absoluteFo;
-            [AINetUtils relateFoAbs:result conNodes:conFos];
+            [AINetUtils relateFoAbs:result conNodes:conFos isNew:false];
             [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
         }else{
             //3. 无则构建

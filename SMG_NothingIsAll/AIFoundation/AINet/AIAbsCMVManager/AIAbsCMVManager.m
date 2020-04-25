@@ -87,7 +87,7 @@
     [AINetUtils insertRefPorts_AllMvNode:result.pointer value_p:result.delta_p difStrong:1];//引用插线
 
     //3. 抽具象关联插线 & 存储抽具象节点;
-    [AINetUtils relateMvAbs:result conNodes:conMvs];
+    [AINetUtils relateMvAbs:result conNodes:conMvs isNew:true];
 
     //4. 方向索引
     NSInteger indexStrong = [AINetAbsCMVUtil getDefaultStrong_Index:result conMvs:conMvs];

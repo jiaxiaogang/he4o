@@ -119,7 +119,7 @@
         AIAbsCMVNode *resultMv = nil;
         if (jumpForAbsAlreadyHav) {
             result = (AINetAbsFoNode*)assFo;
-            [AINetUtils relateFoAbs:result conNodes:@[fo]];
+            [AINetUtils relateFoAbs:result conNodes:@[fo] isNew:false];
             [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
         }else{
             //4. createAbsCmvNode
