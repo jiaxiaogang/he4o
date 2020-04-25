@@ -416,7 +416,7 @@
     NSString *mDS = [ThinkingUtils getAnalogyTypeDS:mType];
     NSString *pDS = [ThinkingUtils getAnalogyTypeDS:pType];
     BOOL isDiff = ((mScore > 0 && pScore < 0) || (mScore < 0 && pScore > 0));
-    ALog(@"STEPKEY------------------------ 反向反馈类比 %@ ------------------------\nSTEPKEY%@->%@\nSTEPKEY%@->%@",isDiff ? @"START" : @"JUMP",Fo2FStr(mModel.matchFo),Mvp2Str(mMv_p),Fo2FStr(shortFo),Mvp2Str(pMv_p));
+    NSLog(@"STEPKEY------------------------ 反向反馈类比 %@ ------------------------\nSTEPKEY%@->%@\nSTEPKEY%@->%@",isDiff ? @"START" : @"JUMP",Fo2FStr(mModel.matchFo),Mvp2Str(mMv_p),Fo2FStr(shortFo),Mvp2Str(pMv_p));
     if (!isDiff) return;
 
     //3. 提供类比收集"缺乏和多余"所需的两个数组;
