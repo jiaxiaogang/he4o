@@ -133,9 +133,7 @@
         
         //2. 没坚果可吃 (计时器触发,更饿时,发现没坚果吃,并不能解决饥饿问题,参考:18084_todo1);
         if (!foodView) {
-            if (arc4random() % 3 == 0) {
-                [self sendHunger:-1.0f];
-            }
+            //if (arc4random() % 3 == 0) [self sendHunger:-1.0f];
             return;
         }
         
