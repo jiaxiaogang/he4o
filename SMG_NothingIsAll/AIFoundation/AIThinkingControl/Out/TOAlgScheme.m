@@ -61,7 +61,7 @@
     //2. 依次单个概念行为化
     for (AIKVPointer *curAlg_p in curAlg_ps) {
         __block BOOL successed = false;
-        [self convert2Out_Alg:curAlg_p curFo:curFo type:AnalogyType_InnerH success:^(NSArray *actions) {
+        [self convert2Out_Alg:curAlg_p curFo:curFo type:ATHav success:^(NSArray *actions) {
             //3. 行为化成功,则收集;
             successed = true;
             [result addObjectsFromArray:actions];
@@ -131,7 +131,7 @@
     if (!curAlg_p) {
         failure();
     }
-    if (type != AnalogyType_InnerH && type != AnalogyType_InnerN) {
+    if (type != ATHav && type != ATNone) {
         WLog(@"SingleAlg_行为化类参数type错误");
         failure();
     }
@@ -148,7 +148,7 @@
         if (self.shortMatchModel && curAlg) {
             //3. 单cHav时,直接从瞬时做MC匹配行为化;
             __block BOOL successed = false;
-            if (type == AnalogyType_InnerH) {
+            if (type == ATHav) {
                 [self convert2Out_Short_MC_V3:curAlg curFo:curFo complete:^(NSArray *acts, BOOL v3Success) {
                     if (v3Success) {
                         [result addObjectsFromArray:acts];
@@ -247,7 +247,7 @@
  */
 -(void) convert2Out_RelativeValue:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type vSuccess:(void(^)(AIFoNodeBase *glFo,NSArray *acts))vSuccess vFailure:(void(^)())vFailure {
     //1. 数据检查
-    if ((type != AnalogyType_InnerG && type != AnalogyType_InnerL)) {
+    if ((type != ATGreater && type != ATLess)) {
         WLog(@"value_行为化类参数type|value_p错误");
         vFailure();
         return;
@@ -431,14 +431,14 @@
     
     //3. 算法数据准备
     //a. 供有效性判断1使用 (因为下层吃热食物,吃冷M会肚子疼,所以需要两层);
-    NSArray *cf_P2s = [TOUtils collectAbsPs:cFo type:AnalogyType_DiffPlus conLayer:1 absLayer:0];
+    NSArray *cf_P2s = [TOUtils collectAbsPs:cFo type:ATPlus conLayer:1 absLayer:0];
     //b. 供有效性判断2使用 (只需要满足Cmv+,但在M没有同区mv+的部分);
-    NSArray *m_P1s = [TOUtils collectAbsPs:mAlg type:AnalogyType_DiffPlus conLayer:0 absLayer:0];
+    NSArray *m_P1s = [TOUtils collectAbsPs:mAlg type:ATPlus conLayer:0 absLayer:0];
     NSArray *m_P1_vps = [TOUtils convertValuesFromAlg_ps:m_P1s];
     //c. 供有效性判断3使用 (C要求甜,M为食物,M具象有不甜的豆浆,豆浆可加糖,所以取两层);
-    NSArray *m_S2s = [TOUtils collectAbsPs:mAlg type:AnalogyType_DiffSub conLayer:1 absLayer:0];
+    NSArray *m_S2s = [TOUtils collectAbsPs:mAlg type:ATSub conLayer:1 absLayer:0];
     //d. C的mv+处理 (要向具象一层,发现更多需要避免的错误,和满足的C,比如面前的冷面可吃,但要具象想一下我们只能吃热的);
-    NSArray *c_P2s = [TOUtils collectAbsPs:cAlg type:AnalogyType_DiffPlus conLayer:1 absLayer:0];
+    NSArray *c_P2s = [TOUtils collectAbsPs:cAlg type:ATPlus conLayer:1 absLayer:0];
     //e. 收集可满足和未满足的;
     NSMutableDictionary *cCanOut = [[NSMutableDictionary alloc] init];
     //f. 计算用于评价的价值分;
@@ -539,13 +539,13 @@
                             //5. MC抵消GL处理之: 转移到_Value()
                             NSNumber *csValue = NUMTOOK([AINetIndex getData:csValue_p]);
                             NSNumber *msValue = NUMTOOK([AINetIndex getData:msValue_p]);
-                            AnalogyType type = AnalogyType_None;
+                            AnalogyType type = ATDefault;
                             if (csValue > msValue) {//需增大
-                                type = AnalogyType_InnerG;
+                                type = ATGreater;
                             }else if(csValue < msValue){//需减小
-                                type = AnalogyType_InnerL;
+                                type = ATLess;
                             }else{}//再者一样,不处理;
-                            if (!failured && type != AnalogyType_None) {
+                            if (!failured && type != ATDefault) {
                                 [self convert2Out_RelativeValue:msValue_p.algsType ds:msValue_p.dataSource type:type vSuccess:^(AIFoNodeBase *glFo, NSArray *acts) {
                                     [allActs addObjectsFromArray:acts];
                                 } vFailure:^{
@@ -564,7 +564,7 @@
                 //7. MC未抵消H处理之: 满足csAlg;
                 for (AIAlgNodeBase *csAlg in csAlgs) {
                     if (![alreadyGLs containsObject:csAlg] && !failured) {
-                        [self convert2Out_Alg:csAlg.pointer curFo:curFo type:AnalogyType_InnerH success:^(NSArray *acts) {
+                        [self convert2Out_Alg:csAlg.pointer curFo:curFo type:ATHav success:^(NSArray *acts) {
                             [allActs addObjectsFromArray:acts];
                         } failure:^{
                             failured = true;
@@ -581,7 +581,7 @@
                 //9. 对msAlg进行评价,看是否需要修正;
                 BOOL scoreSuccess = checkScore(msAlg);
                 if (!scoreSuccess) {
-                    [self convert2Out_Alg:msAlg.pointer curFo:curFo type:AnalogyType_InnerN success:^(NSArray *acts) {
+                    [self convert2Out_Alg:msAlg.pointer curFo:curFo type:ATNone success:^(NSArray *acts) {
                         [allActs addObjectsFromArray:acts];
                     } failure:^{
                         failured = true;
@@ -736,7 +736,7 @@
     
     //4. 行为化 (GL处理: 转移到_Value);
     AnalogyType type = [ThinkingUtils getInnerType:mValue_p backValue_p:cValue_p];
-    if (type != AnalogyType_None) {
+    if (type != ATDefault) {
         __block BOOL success = false;
         [self convert2Out_RelativeValue:mValue_p.algsType ds:mValue_p.dataSource type:type vSuccess:^(AIFoNodeBase *glFo, NSArray *subActs) {
             [acts addObjectsFromArray:subActs];

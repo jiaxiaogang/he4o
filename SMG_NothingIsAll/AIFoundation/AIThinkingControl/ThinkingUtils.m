@@ -35,17 +35,17 @@
 }
 
 +(NSInteger) getAnalogyTypeValue:(AnalogyType)type{
-    if (type == AnalogyType_None) {
+    if (type == ATHav) {
         return cHav;
-    }else if (type == AnalogyType_InnerN) {
+    }else if (type == ATNone) {
         return cNone;
-    }else if (type == AnalogyType_InnerG) {
+    }else if (type == ATGreater) {
         return cGreater;
-    }else if (type == AnalogyType_InnerL) {
+    }else if (type == ATLess) {
         return cLess;
-    }else if(type == AnalogyType_DiffPlus){
+    }else if(type == ATPlus){
         return cPlus;
-    }else if(type == AnalogyType_DiffSub){
+    }else if(type == ATSub){
         return cSub;
     }
     return 0;
@@ -56,31 +56,30 @@
         NSNumber *fValue = NUMTOOK([AINetIndex getData:frontValue_p]);
         NSNumber *bValue = NUMTOOK([AINetIndex getData:backValue_p]);
         if (fValue > bValue) {
-            return AnalogyType_InnerL;
+            return ATLess;
         }else if(fValue < bValue){
-            return AnalogyType_InnerG;
+            return ATGreater;
         }
     }
-    return AnalogyType_None;
+    return ATDefault;
 }
 
 +(NSString*) getAnalogyTypeDS:(AnalogyType)type{
-    if (type == AnalogyType_None || type == AnalogyType_Same) {
+    if (type == ATDefault || type == ATSame) {
         return DefaultDataSource;
     }else{
         NSInteger value = [self getAnalogyTypeValue:type];
         return STRFORMAT(@"%ld",(long)value);
     }
-    return DefaultDataSource;
 }
 
 +(AnalogyType) getInnerTypeWithScore:(CGFloat)score{
     if (score > 0) {
-        return AnalogyType_DiffPlus;
+        return ATPlus;
     }else if(score < 0){
-        return AnalogyType_DiffSub;
+        return ATSub;
     }
-    return AnalogyType_None;
+    return ATDefault;
 }
 
 +(AnalogyType) compare:(AIKVPointer*)valueA_p valueB_p:(AIKVPointer*)valueB_p{
@@ -88,11 +87,11 @@
     NSNumber *bValue = NUMTOOK([AINetIndex getData:valueB_p]);
     NSComparisonResult compareResult = [aValue compare:bValue];
     if (compareResult == NSOrderedDescending) {
-        return AnalogyType_InnerL;
+        return ATLess;
     }else if (compareResult == NSOrderedAscending) {
-        return AnalogyType_InnerG;
+        return ATGreater;
     }else{
-        return AnalogyType_None;
+        return ATDefault;
     }
 }
 

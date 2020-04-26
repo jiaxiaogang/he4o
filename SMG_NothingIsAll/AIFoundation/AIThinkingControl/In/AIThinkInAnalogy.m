@@ -40,7 +40,7 @@
 +(void) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy type:(AnalogyType)type{
     //1. 类比orders的规律
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
-    if (type == AnalogyType_Same) {
+    if (type == ATSame) {
         NSLog(@"-------------------- 外类比 START --------------------\n%@->%@\n%@->%@",Fo2FStr(fo),Mvp2Str(fo.cmvNode_p),Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
     }
     if (fo && assFo) {
@@ -82,7 +82,7 @@
                             if (createAbsNode) {
                                 [orderSames insertObject:createAbsNode.pointer atIndex:0];
                                 jMax = j - 1;
-                                if (type == AnalogyType_Same) {
+                                if (type == ATSame) {
                                     NSLog(@"STEPKEY---> 构建概念:%@\nSTEPKEY具象1:%@\nSTEPKEY具象2:%@",Alg2FStr(createAbsNode),Alg2FStr(algNodeA),Alg2FStr(algNodeB));
                                 }
                             }
@@ -136,7 +136,7 @@
             result = [ThinkingUtils createAbsFo_NoRepeat_General:@[fo,assFo] content_ps:orderSames ds:foDS difStrong:foDifStrong];
             
             //6. createAbsCmvNode (当正向类比,且result没有cmv指向时);
-            if (type == AnalogyType_Same && assMv && !result.cmvNode_p) {
+            if (type == ATSame && assMv && !result.cmvNode_p) {
                 AIAbsCMVNode *resultMv = [theNet createAbsCMVNode_Outside:nil aMv_p:fo.cmvNode_p bMv_p:assMv.pointer];
                 [AINetUtils relateFo:result mv:resultMv];//cmv模型连接;
             }
@@ -144,7 +144,7 @@
 
         //调试短时序; (先仅打外类比日志);
         if (result) {
-            if (type == AnalogyType_Same) {
+            if (type == ATSame) {
                 NSLog(@"STEPKEY--->> 构建时序:%@->%@",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
             }else{
                 NSLog(@"----> 内类比IHO构建抽象时序=%ld: [%@] from(%ld,%ld)",result.pointer.pointerId,[NVHeUtil getLightStr4Ps:result.content_ps],fo.pointer.pointerId,assFo.pointer.pointerId);
@@ -179,7 +179,7 @@
     //1. 数据检查
     if (ISOK(checkFo, AIFoNodeBase.class) && checkFo.content_ps.count >= 2) {
         //2. 最后一个元素,向前分别与orders后面所有元素进行类比
-        NSLog(@"---------------------------------------内类比---------------------------------------\n%@",Fo2FStr(checkFo));
+        NSLog(@"STEPKEY---------------------------------------内类比---------------------------------------\nSTEPKEY%@",Fo2FStr(checkFo));
         for (NSInteger i = checkFo.content_ps.count - 2; i >= 0; i--) {
             [self analogyInner:checkFo aIndex:i bIndex:checkFo.content_ps.count - 1 canAss:canAssBlock updateEnergy:updateEnergy];
         }
@@ -252,7 +252,7 @@
         //b. 调试a_p和b_p是否合格,应该同标识,同文件夹名称,不同pId;
         NSLog(@"--------------内类比 (大小) 前: %@ -> %@",[NVHeUtil getLightStr:a_p],[NVHeUtil getLightStr:b_p]);
         //d. 构建小/大;
-        if (type != AnalogyType_None) {
+        if (type != ATDefault) {
             AINetAbsFoNode *create = [self analogyInner_Creater:type algsType:a_p.algsType dataSource:a_p.dataSource frontConAlg:algA backConAlg:algB rangeAlg_ps:rangeAlg_ps conFo:checkFo];
             if (createdBlock) createdBlock(create,type);
         }
@@ -289,15 +289,15 @@
     NSLog(@"--------------内类比 (有无) 前: [%@] -> [%@]",Pits2FStr(aSub_ps),Pits2FStr(bSub_ps));
     for (AIKVPointer *sub_p in aSub_ps) {
         AIAlgNodeBase *target = [SMGUtils searchNode:sub_p];
-        AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyType_InnerN algsType:sub_p.algsType dataSource:sub_p.dataSource frontConAlg:target backConAlg:target rangeAlg_ps:rangeAlg_ps conFo:checkFo];
-        if (createdBlock) createdBlock(create,AnalogyType_InnerN);
+        AINetAbsFoNode *create = [self analogyInner_Creater:ATNone algsType:sub_p.algsType dataSource:sub_p.dataSource frontConAlg:target backConAlg:target rangeAlg_ps:rangeAlg_ps conFo:checkFo];
+        if (createdBlock) createdBlock(create,ATNone);
     }
 
     //4. b变有
     for (AIKVPointer *sub_p in bSub_ps) {
         AIAlgNodeBase *target = [SMGUtils searchNode:sub_p];
-        AINetAbsFoNode *create = [self analogyInner_Creater:AnalogyType_InnerH algsType:sub_p.algsType dataSource:sub_p.dataSource frontConAlg:target backConAlg:target rangeAlg_ps:rangeAlg_ps conFo:checkFo];
-        if (createdBlock) createdBlock(create,AnalogyType_InnerH);
+        AINetAbsFoNode *create = [self analogyInner_Creater:ATHav algsType:sub_p.algsType dataSource:sub_p.dataSource frontConAlg:target backConAlg:target rangeAlg_ps:rangeAlg_ps conFo:checkFo];
+        if (createdBlock) createdBlock(create,ATHav);
     }
 }
 
@@ -338,16 +338,16 @@
     AIKVPointer *backValue_p = [theNet getNetDataPointerWithData:@(backData) algsType:algsType dataSource:dataSource];
 
     //4. 构建抽象概念 (20190809注:此处可考虑,type为大/小时,不做具象指向,因为大小概念,本来就是独立的节点);
-    NSString *afDS = STRFORMAT(@"%ld",(long)backData);
+    NSString *afDS = [ThinkingUtils getAnalogyTypeDS:type];
     AIAlgNodeBase *backAlg = [theNet createAbsAlg_NoRepeat:@[backValue_p] conAlgs:@[backConAlg] isMem:false ds:afDS];
 
     //5. 构建抽象时序; (小动致大 / 大动致小) (之间的信息为balabala)
     AINetAbsFoNode *result = [TIRUtils createInnerAbsFo:backAlg rangeAlg_ps:rangeAlg_ps conFo:conFo ds:afDS];
 
     //6. 调试;
-    NSLog(@"-> 内类比构建稀疏码: (变 -> %@)",[NVHeUtil getLightStr:backValue_p]);
-    if (backAlg) NSLog(@"--> 内类比构建%@的抽象概念: %@",Alg2FStr(backConAlg),Alg2FStr(backAlg));
-    if (result) NSLog(@"---> 内类比构建%@的抽象时序: %@",Fo2FStr(conFo),Fo2FStr(result));
+    NSLog(@"STEPKEY-> Inner Create Value:变->%@",[NVHeUtil getLightStr:backValue_p]);
+    if (backAlg) NSLog(@"STEPKEY--> Inner Create Alg:%@->%@",Alg2FStr(backConAlg),Alg2FStr(backAlg));
+    if (result) NSLog(@"STEPKEY---> Inner Create Fo:%@->%@",Fo2FStr(conFo),Fo2FStr(result));
     return result;
 }
 
@@ -550,7 +550,7 @@
     //3. 类比 (与当前的analogy_Outside()较相似,所以暂不写,随后写时,也是将原有的_outside改成此_same类比方法);
     [self analogyOutside:shortFo assFo:mModel.matchFo canAss:^BOOL{
         return true;
-    } updateEnergy:nil type:AnalogyType_Same];
+    } updateEnergy:nil type:ATSame];
 }
 
 @end

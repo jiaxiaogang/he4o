@@ -106,8 +106,8 @@
         NSArray *mvRefs = [theNet getNetNodePointersFromDirectionReference:demandModel.algsType direction:direction isMem:false filter:^NSArray *(NSArray *protoArr) {
             protoArr = ARRTOOK(protoArr);
             //protoArr = [SMGUtils filterArr:protoArr checkValid:^BOOL(AIPort *item) {
-            //    NSString *plusDS = [ThinkingUtils getAnalogyTypeDS:AnalogyType_DiffPlus];
-            //    NSString *subDS = [ThinkingUtils getAnalogyTypeDS:AnalogyType_DiffSub];
+            //    NSString *plusDS = [ThinkingUtils getAnalogyTypeDS:ATPlus];
+            //    NSString *subDS = [ThinkingUtils getAnalogyTypeDS:ATSub];
             //    NSString *itemDS = item.target_p.dataSource;
             //    return ![plusDS isEqualToString:itemDS] && ![subDS isEqualToString:itemDS];
             //}];
@@ -116,8 +116,8 @@
                 AIPort *port = ARR_INDEX(protoArr, i);
                 //a. analogyType处理 (仅支持normal的fo);
                 AICMVNodeBase *itemMV = [SMGUtils searchNode:port.target_p];
-                NSString *plusDS = [ThinkingUtils getAnalogyTypeDS:AnalogyType_DiffPlus];
-                NSString *subDS = [ThinkingUtils getAnalogyTypeDS:AnalogyType_DiffSub];
+                NSString *plusDS = [ThinkingUtils getAnalogyTypeDS:ATPlus];
+                NSString *subDS = [ThinkingUtils getAnalogyTypeDS:ATSub];
                 NSString *foDS = itemMV.foNode_p.dataSource;
                 if ([plusDS isEqualToString:foDS] || [subDS isEqualToString:foDS]) {
                     continue;
