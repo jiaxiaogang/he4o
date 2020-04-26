@@ -115,13 +115,13 @@
 
 //获取value的light描述;
 +(NSString*) getLightStr_Value:(double)value algsType:(NSString*)algsType dataSource:(NSString*)dataSource{
-    if(value == cHav){
+    if(value == ATHav){
         return @"有";
-    }else if(value == cNone){
+    }else if(value == ATNone){
         return @"无";
-    }else if(value == cGreater){
+    }else if(value == ATGreater){
         return @"大";
-    }else if(value == cLess){
+    }else if(value == ATLess){
         return @"小";
     }else if([FLY_RDS isEqualToString:algsType] || [@"direction" isEqualToString:dataSource]){
         int caseValue = value * 8;

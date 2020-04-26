@@ -332,7 +332,7 @@
     if (!frontConAlg || !backConAlg || !conFo) return nil;
 
     //2. 获取front&back稀疏码值;
-    NSInteger backData = [ThinkingUtils getAnalogyTypeValue:type];
+    NSInteger backData = type;
 
     //3. 构建微信息;
     AIKVPointer *backValue_p = [theNet getNetDataPointerWithData:@(backData) algsType:algsType dataSource:dataSource];

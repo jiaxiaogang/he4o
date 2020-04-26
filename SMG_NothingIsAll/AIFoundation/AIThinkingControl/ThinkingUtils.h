@@ -16,11 +16,6 @@
  */
 +(CGFloat) updateEnergy:(CGFloat)oriEnergy delta:(CGFloat)delta;
 
-/**
- *  MARK:--------------------取InnerType的稀疏码值--------------------
- */
-+(NSInteger) getAnalogyTypeValue:(AnalogyType)type;
-
 //根据前后稀疏码值,得到该变大还是变小;
 +(AnalogyType) getInnerType:(AIKVPointer*)frontValue_p backValue_p:(AIKVPointer*)backValue_p;
 
@@ -174,7 +169,7 @@
 
 
 /**
- *  MARK:--------------------获取到某标识下的cHav/cNone/cGreater/cLess概念--------------------
+ *  MARK:--------------------获取到某标识下的ATHav/ATNone/ATGreater/ATLess概念--------------------
  *  @desc : 根据概念标识,获取概念的"有无大小"节点
  */
 +(AIAlgNodeBase*) dataOut_GetAlgNodeWithInnerType:(AnalogyType)type algsType:(NSString*)algsType dataSource:(NSString*)dataSource;

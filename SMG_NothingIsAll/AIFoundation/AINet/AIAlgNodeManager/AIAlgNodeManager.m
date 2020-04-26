@@ -129,7 +129,7 @@
     
     ////4. 概念的嵌套 (190816取消概念嵌套,参见n16p17-bug16)
     //for (AIAlgNode *item in conAlgs) {
-    //    ///1. 可替换时,逐个进行替换; (比如cLess/cGreater时,就不可替换)
+    //    ///1. 可替换时,逐个进行替换; (比如ATLess/ATGreater时,就不可替换)
     //    if ([SMGUtils containsSub_ps:value_ps parent_ps:item.content_ps]) {
     //        NSMutableArray *newValue_ps = [SMGUtils removeSub_ps:value_ps parent_ps:[[NSMutableArray alloc] initWithArray:item.content_ps]];
     //        [newValue_ps addObject:findAbsNode.pointer];

@@ -123,7 +123,7 @@
  *  第1级: 直接判定curAlg_p为输出则收集;
  *  第2级: MC匹配行为化
  *  第3级: LongNet长短时网络行为化
- *  @param type : cHav或cNone
+ *  @param type : ATHav或ATNone
  *  @param curAlg_p : 三个来源: 1.Fo的元素A;  2.Range的元素A; 3.Alg的嵌套A;
  */
 -(void) convert2Out_Alg:(AIKVPointer*)curAlg_p curFo:(AIFoNodeBase*)curFo type:(AnalogyType)type success:(void(^)(NSArray *actions))success failure:(void(^)())failure checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
@@ -146,7 +146,7 @@
     }else{
         AIAlgNodeBase *curAlg = [SMGUtils searchNode:curAlg_p];
         if (self.shortMatchModel && curAlg) {
-            //3. 单cHav时,直接从瞬时做MC匹配行为化;
+            //3. 单ATHav时,直接从瞬时做MC匹配行为化;
             __block BOOL successed = false;
             if (type == ATHav) {
                 [self convert2Out_Short_MC_V3:curAlg curFo:curFo complete:^(NSArray *acts, BOOL v3Success) {
@@ -192,7 +192,7 @@
  *  MARK:--------------------"相对概念"的行为化--------------------
  *  1. 先根据havAlg取到havFo;
  *  2. 再判断havFo中的rangeOrder的行为化;
- *  3. 思考: 是否做alg局部匹配,递归取3个左右,逐个取并取其cHav (并类比缺失部分,循环); (191120废弃,不做)
+ *  3. 思考: 是否做alg局部匹配,递归取3个左右,逐个取并取其ATHav (并类比缺失部分,循环); (191120废弃,不做)
  *  @param success : 行为化成功则返回(havFo + 行为序列); (havFo notnull, actions notnull)
  */
 -(void) convert2Out_Long_NET:(AnalogyType)type at:(NSString*)at ds:(NSString*)ds success:(void(^)(AIFoNodeBase *havFo,NSArray *actions))success failure:(void(^)())failure {
@@ -238,7 +238,7 @@
 /**
  *  MARK:--------------------对单稀疏码的变化进行行为化--------------------
  *  @desc 伪代码:
- *  1. 根据type和value_p找cLess/cGreater
+ *  1. 根据type和value_p找ATLess/ATGreater
  *      2. 找不到,failure;
  *      3. 找到,判断range是否导致条件C转移;
  *          4. 未转移: success
@@ -253,7 +253,7 @@
         return;
     }
     
-    //2. 根据type和value_p找cLess/cGreater
+    //2. 根据type和value_p找ATLess/ATGreater
     NSLog(@"----> RelativeValue Start at:%@ ds:%@ type:%ld",at,ds,(long)type);
     AIAlgNodeBase *glAlg = [ThinkingUtils dataOut_GetAlgNodeWithInnerType:type algsType:at dataSource:ds];
     if (!glAlg) {
@@ -345,7 +345,7 @@
  *  @desc 伪代码:
  *  1. MC匹配时,判断是否可LSP里氏替换;
  *      2. 可替换,success
- *      3. 不可替换,changeM2C,判断条件为value_p.cLess / value_p.cGreater / alg_p.cHav / alg_p.cNone;
+ *      3. 不可替换,changeM2C,判断条件为value_p.ATLess / value_p.ATGreater / alg_p.ATHav / alg_p.ATNone;
  *          4. alg_p则递归到convert2Out_Single_Alg();
  *          5. value_p则递归到convert2Out_Single_Value();
  *  @desc
@@ -358,7 +358,7 @@
  *      2. 20200204: ms&cs抵消的条件,由ms.content_ps.count=cs.content_ps.count == 1改为,两者不同稀疏码长度为1;(参考18075)
  *
  *  @todo
- *      TODO_TEST_HERE: 在alg抽象匹配时,核实下将absAlg去重,为了避免绝对匹配重复导致的联想不以cHav
+ *      TODO_TEST_HERE: 在alg抽象匹配时,核实下将absAlg去重,为了避免绝对匹配重复导致的联想不以ATHav
  *
  *  ********** v2 **********
  *  @desc
@@ -611,7 +611,7 @@
  *      2020.04.05 : 更新至v2(参考18207); 1. 将mcs&cs&ms的逻辑删掉,改用C和M的直接类比;   2. 将RTAlg的拼接改为用same_ps;
  *      2020.04.17 : MC_Value操作M对象由MatchAlg改为ProtoAlg;
  *      2020.04.18 : Same_ps为空时return,因为(远距果...)与(吃)对比,没有可比性;
- *      2020.04.19 : 更新至v3(参考n19p9); 1.仅针对反向反馈类比的成果cPlus和cSub进行使用; 2.由向右取cPlus/cSub替代重组RTAlg和Fo评价;(中止,转MC_V3开发,参考n19p10);
+ *      2020.04.19 : 更新至v3(参考n19p9); 1.仅针对反向反馈类比的成果ATPlus和ATSub进行使用; 2.由向右取ATPlus/ATSub替代重组RTAlg和Fo评价;(中止,转MC_V3开发,参考n19p10);
  */
 -(void) convert2Out_MC_Value_V2:(AIAlgNodeBase*)cAlg curFo:(AIFoNodeBase*)curFo checkScore:(BOOL(^)(AIAlgNodeBase *rtAlg))checkScore complete:(void(^)(NSArray *acts,BOOL success))complete{
     //1. 数据准备;

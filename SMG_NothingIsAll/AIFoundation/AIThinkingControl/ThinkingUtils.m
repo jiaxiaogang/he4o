@@ -34,23 +34,6 @@
     return MAX(cMinEnergy, MIN(cMaxEnergy, oriEnergy));
 }
 
-+(NSInteger) getAnalogyTypeValue:(AnalogyType)type{
-    if (type == ATHav) {
-        return cHav;
-    }else if (type == ATNone) {
-        return cNone;
-    }else if (type == ATGreater) {
-        return cGreater;
-    }else if (type == ATLess) {
-        return cLess;
-    }else if(type == ATPlus){
-        return cPlus;
-    }else if(type == ATSub){
-        return cSub;
-    }
-    return 0;
-}
-
 +(AnalogyType) getInnerType:(AIKVPointer*)frontValue_p backValue_p:(AIKVPointer*)backValue_p{
     if (frontValue_p && backValue_p) {
         NSNumber *fValue = NUMTOOK([AINetIndex getData:frontValue_p]);
@@ -68,8 +51,7 @@
     if (type == ATDefault || type == ATSame) {
         return DefaultDataSource;
     }else{
-        NSInteger value = [self getAnalogyTypeValue:type];
-        return STRFORMAT(@"%ld",(long)value);
+        return STRFORMAT(@"%ld",(long)type);
     }
 }
 
@@ -397,13 +379,10 @@
  *      解决: 在概念节点的create中,将@"{pId}"作为概念节点的algsType;
  */
 +(AIAlgNodeBase*) dataOut_GetAlgNodeWithInnerType:(AnalogyType)type algsType:(NSString*)algsType dataSource:(NSString*)dataSource{
-    //1. 获取innerType的值;
-    NSInteger typeValue = [self getAnalogyTypeValue:type];
+    //1. 获取相应的微信息;
+    AIPointer *value_p = [theNet getNetDataPointerWithData:@(type) algsType:algsType dataSource:dataSource];
     
-    //2. 获取相应的微信息;
-    AIPointer *value_p = [theNet getNetDataPointerWithData:@(typeValue) algsType:algsType dataSource:dataSource];
-    
-    //3. 从微信息,联想refPorts绝对匹配的概念节点;
+    //2. 从微信息,联想refPorts绝对匹配的概念节点;
     return [AINetIndexUtils getAbsoluteMatchingAlgNodeWithValueP:value_p];
 }
 
