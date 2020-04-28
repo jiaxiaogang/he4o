@@ -15,6 +15,16 @@
  */
 @interface AIFoNodeBase : AINodeBase
 
-@property (strong, nonatomic) AIKVPointer *cmvNode_p;        //cmvNode_p结果;
+/**
+ *  MARK:--------------------cmvNode_p结果--------------------
+ *  @desc 指向mv基本模型的价值影响节点;
+ */
+@property (strong, nonatomic) AIKVPointer *cmvNode_p;
+
+/**
+ *  MARK:--------------------兄弟节点--------------------
+ *  @desc 目前用于反向反馈类比的结果,表示cPFo和cSFo之间的互指向关系;
+ */
+@property (strong, nonatomic) AIKVPointer *brother_p;
 
 @end

@@ -497,8 +497,11 @@
     NSLog(@"---> 反向反馈类比 ms:%@ ps:%@",Pits2FStr(ms),Pits2FStr(ps));
     
     //6. 构建ms & ps
-    [self analogy_Feedback_Diff_Creater:mMv_p conFo:mModel.matchFo content_ps:ms type:mType];
-    [self analogy_Feedback_Diff_Creater:pMv_p conFo:shortFo content_ps:ps type:pType];
+    AIFoNodeBase *mSPFo = [self analogy_Feedback_Diff_Creater:mMv_p conFo:mModel.matchFo content_ps:ms type:mType];
+    AIFoNodeBase *pSPFo = [self analogy_Feedback_Diff_Creater:pMv_p conFo:shortFo content_ps:ps type:pType];
+    
+    //7. 关联兄弟节点
+    [AINetUtils relateBrotherFoA:mSPFo foB:pSPFo];
 }
 
 /**
@@ -506,11 +509,11 @@
  *  @version
  *      20200426 - 担责,责任元素担下所有责任 (计算mv的rate直接为1.0); //注:责任元素的平均担责,在MC_V3的badScore时计算;
  */
-+(void) analogy_Feedback_Diff_Creater:(AIKVPointer*)conMv_p conFo:(AIFoNodeBase*)conFo content_ps:(NSArray*)content_ps type:(AnalogyType)type{
++(AIFoNodeBase*) analogy_Feedback_Diff_Creater:(AIKVPointer*)conMv_p conFo:(AIFoNodeBase*)conFo content_ps:(NSArray*)content_ps type:(AnalogyType)type{
     //1. 数据检查
     NSString *ds = [ThinkingUtils getAnalogyTypeDS:type];
     AICMVNodeBase *conMv = [SMGUtils searchNode:conMv_p];
-    if(!conMv || !ARRISOK(content_ps) || !conFo) return;
+    if(!conMv || !ARRISOK(content_ps) || !conFo) return nil;
     CGFloat rate = 1.0f;//(float)content_ps.count / conFo.content_ps.count;
     
     //2. 计算ms的价值变化量 (基准 x rate);
@@ -534,6 +537,7 @@
     //6. 加强conMv方向索引和conFo索引强度;
     [theNet setMvNodeToDirectionReference:conMv difStrong:1];
     [AINetUtils insertRefPorts_AllFoNode:conFo.pointer order_ps:conFo.content_ps ps:conFo.content_ps];
+    return createFo;
 }
 
 +(void) analogy_Feedback_Same:(AIShortMatchModel*)mModel shortFo:(AIFoNodeBase*)shortFo{
