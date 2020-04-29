@@ -21,6 +21,7 @@
 #import "AIAbsAlgNode.h"
 #import "AIAlgNode.h"
 #import "TOAlgScheme.h"
+#import "AIShortMatchModel.h"
 
 @implementation AIThinkOutPercept
 
@@ -204,6 +205,80 @@
     return nil;
 }
 
+/**
+ *  MARK:--------------------topV2--------------------
+ *  @desc 四种(2x2)TOP模式 (优先取同区工作模式,不行再以不同区工作模式);
+ *  @version
+ *      20200430 : v2,四种工作模式版;
+ */
+-(void) topV2{
+    //1. 数据准备
+    DemandModel *demand = [self.delegate aiThinkOutPercept_GetCurrentDemand];
+    NSArray *mModels = [self.delegate aiTOP_GetShortMatchModel];
+    if (!demand || !ARRISOK(mModels)) return;
+    
+    //2. 同区两个模式 (以最近的预测为准);
+    for (NSInteger i = 0; i < mModels.count; i++) {
+        AIShortMatchModel *mModel = ARR_INDEX_REVERSE(mModels, i);
+        AIFoNodeBase *matchFo = mModel.matchFo;
+        
+        //a.预测有效性判断和同区判断 (以预测的正负为准);
+        if (matchFo && matchFo.cmvNode_p && [demand.algsType isEqualToString:matchFo.pointer.algsType]) {
+            CGFloat score = [ThinkingUtils getScoreForce:mModel.matchFo.cmvNode_p ratio:mModel.matchFoValue];
+            //b. 同区Same_Mv+
+            if (score > 0) {
+                BOOL success = [self samePlus:matchFo];
+                if (success) return;
+            }else if(score < 0){
+                //c. 同区Same_Mv-
+                BOOL success = [self sameSub:matchFo];
+                if (success) return;
+            }
+        }
+    }
+    
+    //3. 不同区两个模式 (以最近的识别优先);
+    for (NSInteger i = 0; i < mModels.count; i++) {
+        AIShortMatchModel *mModel = ARR_INDEX_REVERSE(mModels, i);
+        AIAlgNodeBase *matchAlg = mModel.matchAlg;
+        
+        //a. 识别有效性判断 (优先直接mv+,不行再mv-迂回);
+        if (matchAlg) {
+            //b. 不同区Diff_Mv+
+            BOOL pSuccess = [self diffPlus:matchAlg];
+            if (pSuccess) return;
+            
+            //c. 不同区Diff_Mv-
+            BOOL sSuccess = [self diffSub:matchAlg];
+            if (sSuccess) return;
+        }
+    }
+}
+
+/**
+ *  MARK:--------------------同区正价值--------------------
+ */
+-(BOOL) samePlus:(AIFoNodeBase*)matchFo{
+    return false;
+}
+/**
+ *  MARK:--------------------同区负价值--------------------
+ */
+-(BOOL) sameSub:(AIFoNodeBase*)matchFo{
+    return false;
+}
+/**
+ *  MARK:--------------------不同区正价值--------------------
+ */
+-(BOOL) diffPlus:(AIAlgNodeBase*)matchAlg{
+    return false;
+}
+/**
+ *  MARK:--------------------不同区负价值--------------------
+ */
+-(BOOL) diffSub:(AIAlgNodeBase*)matchAlg{
+    return false;
+}
 
 //MARK:===============================================================
 //MARK:                     < private_Method >

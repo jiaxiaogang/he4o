@@ -246,6 +246,10 @@ static AIThinkingControl *_instance;
     [self.tOR commitFromTOP_ReflexOut];
 }
 
+-(NSArray*) aiTOP_GetShortMatchModel{
+    return self.shortMatchManager.models;
+}
+
 /**
  *  MARK:--------------------AIThinkOutReasonDelegate--------------------
  */

@@ -160,9 +160,18 @@
     if (ARRISOK(self.loopCache)) {
         //1. 重排序 & 取当前序列最前;
         [self refreshCmvCacheSort];
-        return self.loopCache.lastObject;
+        return self.loopCache.lastObject;//调试下,是否从小到大排序
     }
     return nil;
 }
+
+/**
+ *  MARK:--------------------返回所有demand任务--------------------
+ *  @desc 排序方式: 从大到小;
+ */
+//-(NSArray*) getAllDemand{
+//    [self refreshCmvCacheSort];
+//    return self.loopCache;
+//}
 
 @end
