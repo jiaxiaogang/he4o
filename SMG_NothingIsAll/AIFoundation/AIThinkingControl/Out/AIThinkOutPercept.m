@@ -227,7 +227,7 @@
             CGFloat score = [ThinkingUtils getScoreForce:mModel.matchFo.cmvNode_p ratio:mModel.matchFoValue];
             //b. 同区Same_Mv+
             if (score > 0) {
-                BOOL success = [self samePlus:matchFo];
+                BOOL success = [self samePlus:matchFo cutIndex:mModel.cutIndex];
                 if (success) return;
             }else if(score < 0){
                 //c. 同区Same_Mv-
@@ -255,28 +255,39 @@
     }
 }
 
+//MARK:===============================================================
+//MARK:              < 四种工作模式 (参考19152) >
+//MARK:===============================================================
+
 /**
  *  MARK:--------------------同区正价值--------------------
  */
--(BOOL) samePlus:(AIFoNodeBase*)matchFo{
+-(BOOL) samePlus:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex{
+    //将matchFo+作为CFo行为化;
+    NSInteger start = cutIndex + 1;
+    NSArray *need2Act_ps = ARR_SUB(matchFo.content_ps, start, matchFo.content_ps.count - start);
+    [self.delegate aiTOP_Commit2TOR_V2:need2Act_ps cFo:matchFo];
     return false;
 }
 /**
  *  MARK:--------------------同区负价值--------------------
  */
 -(BOOL) sameSub:(AIFoNodeBase*)matchFo{
+    //将matchFo-的兄弟节点作为CFo行为化;
     return false;
 }
 /**
  *  MARK:--------------------不同区正价值--------------------
  */
 -(BOOL) diffPlus:(AIAlgNodeBase*)matchAlg{
+    //mv方向索引找正价值解决方案;
     return false;
 }
 /**
  *  MARK:--------------------不同区负价值--------------------
  */
 -(BOOL) diffSub:(AIAlgNodeBase*)matchAlg{
+    //mv方向索引找负价值的兄弟节点解决方案;
     return false;
 }
 

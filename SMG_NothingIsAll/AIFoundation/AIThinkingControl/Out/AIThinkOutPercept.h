@@ -17,6 +17,7 @@
 -(void) aiThinkOutPercept_Commit2TOR:(TOFoModel*)foModel;   //提交foModel给TOR做理性行为化
 -(void) aiThinkOutPercept_MVSchemeFailure;                  //找解决mv经历失败
 -(NSArray*) aiTOP_GetShortMatchModel;                       //获取瞬时模型
+-(void) aiTOP_Commit2TOR_V2:(NSArray*)curAlg_ps cFo:(AIFoNodeBase*)cFo;//提交C给TOR行为化;
 
 @end
 

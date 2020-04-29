@@ -69,6 +69,10 @@
     }
 }
 
+-(void) commitFromTOP_Convert2Actions_V2:(NSArray*)curAlg_ps cFo:(AIFoNodeBase*)cFo{
+    //提交给TOR做行为化;
+}
+
 /**
  *  MARK:--------------------algScheme--------------------
  *  1. 对条件概念进行判定 (行为化);

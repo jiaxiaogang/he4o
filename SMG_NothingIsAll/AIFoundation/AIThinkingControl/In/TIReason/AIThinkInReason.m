@@ -192,7 +192,7 @@
  *      20200403 TODOTOMORROW: 支持识别到多个时序,并以此得到多个价值预测 (支持更多元的评价);
  *
  */
-+(void) TIR_Fo_FromRethink:(NSArray*)protoAlg_ps replaceMatchAlg:(AIAlgNodeBase*)replaceMatchAlg finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue))finishBlock{
++(void) TIR_Fo_FromRethink:(NSArray*)protoAlg_ps replaceMatchAlg:(AIAlgNodeBase*)replaceMatchAlg finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue,NSInteger cutIndex))finishBlock{
     //1. 数据检查
     AIKVPointer *last_p = ARR_INDEX_REVERSE(protoAlg_ps, 0);
     AIAlgNodeBase *lastAlg = [SMGUtils searchNode:last_p];
@@ -242,8 +242,8 @@
             }
         }
         return true;
-    } finishBlock:^(AIFoNodeBase *matchFo, CGFloat matchValue) {
-        finishBlock(protoFo,matchFo,matchValue);
+    } finishBlock:^(AIFoNodeBase *matchFo, CGFloat matchValue,NSInteger cutIndex) {
+        finishBlock(protoFo,matchFo,matchValue,cutIndex);
     }];
 }
 
@@ -253,7 +253,7 @@
  *  @version
  *      20200414 - protoFo由瞬时proto概念组成,改成瞬时match概念组成 (本方法中,去掉proto概念层到match层的联想);
  */
-+(void) TIR_Fo_FromShortMem:(AIFoNodeBase*)protoFo lastMatchAlg:(AIAlgNodeBase*)lastMatchAlg finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue))finishBlock{
++(void) TIR_Fo_FromShortMem:(AIFoNodeBase*)protoFo lastMatchAlg:(AIAlgNodeBase*)lastMatchAlg finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue,NSInteger cutIndex))finishBlock{
     //1. 数据检查
     if (!protoFo || !lastMatchAlg) {
         return;
@@ -291,8 +291,8 @@
             }
         }
         return true;
-    } finishBlock:^(AIFoNodeBase *matchFo, CGFloat matchValue) {
-        finishBlock(protoFo,matchFo,matchValue);
+    } finishBlock:^(AIFoNodeBase *matchFo, CGFloat matchValue,NSInteger cutIndex) {
+        finishBlock(protoFo,matchFo,matchValue,cutIndex);
     }];
 }
 
@@ -323,10 +323,10 @@
           assFoIndexAlg:(AIAlgNodeBase*)assFoIndexAlg
              assFoBlock:(NSArray*(^)(AIAlgNodeBase *indexAlg))assFoBlock
          checkItemValid:(BOOL(^)(AIKVPointer *itemAlg_p,AIKVPointer *assAlg_p))checkItemValid
-            finishBlock:(void(^)(AIFoNodeBase *matchFo,CGFloat matchValue))finishBlock{
+            finishBlock:(void(^)(AIFoNodeBase *matchFo,CGFloat matchValue,NSInteger cutIndex))finishBlock{
     //1. 数据准备
     if (!ISOK(protoFo, AIFoNodeBase.class) || !assFoIndexAlg) {
-        finishBlock(nil,0);
+        finishBlock(nil,0,0);
         return;
     }
     __block BOOL successed = false;
@@ -353,7 +353,7 @@
             [TIRUtils TIR_Fo_CheckFoValidMatch:protoFo assFo:assFo checkItemValid:checkItemValid success:^(NSInteger lastAssIndex, CGFloat matchValue) {
                 NSLog(@"STEPKEY时序识别: SUCCESS >>> matchValue:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
                 successed = true;
-                finishBlock(assFo,matchValue);
+                finishBlock(assFo,matchValue,lastAssIndex);
             } failure:^(NSString *msg) {
                 NSLog(@"%@",msg);
             }];

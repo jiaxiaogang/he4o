@@ -129,10 +129,11 @@
     if (rtAlg && ARRISOK(rtFoContent_ps)) {
         
         //2. 识别时序;
-        [AIThinkInReason TIR_Fo_FromRethink:rtFoContent_ps replaceMatchAlg:rtAlg finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue) {
+        [AIThinkInReason TIR_Fo_FromRethink:rtFoContent_ps replaceMatchAlg:rtAlg finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue, NSInteger cutIndex) {
             mModel.protoFo = curNode;
             mModel.matchFo = matchFo;
             mModel.matchFoValue = matchValue;
+            mModel.cutIndex = cutIndex;
         }];
     }
     return mModel;
@@ -175,9 +176,10 @@
     mModel.protoFo = [theNet createConFo:shortMemory isMem:true];
     
     //4. 识别时序;
-    [AIThinkInReason TIR_Fo_FromShortMem:mModel.protoFo lastMatchAlg:mModel.matchAlg finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue) {
+    [AIThinkInReason TIR_Fo_FromShortMem:mModel.protoFo lastMatchAlg:mModel.matchAlg finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue,NSInteger cutIndex) {
         mModel.matchFo = matchFo;
         mModel.matchFoValue = matchValue;
+        mModel.cutIndex = cutIndex;
     }];
     
     //5. 内类比
