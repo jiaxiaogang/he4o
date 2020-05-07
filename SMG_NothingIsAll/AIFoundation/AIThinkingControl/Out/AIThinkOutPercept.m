@@ -231,7 +231,7 @@
                 if (success) return;
             }else if(score < 0){
                 //c. 同区Same_Mv-
-                BOOL success = [self sameSub:matchFo];
+                BOOL success = [self sameSub:matchFo cutIndex:mModel.cutIndex];
                 if (success) return;
             }
         }
@@ -260,7 +260,10 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------同区正价值--------------------
+ *  MARK:-------------------- S+ --------------------
+ *  @desc
+ *      主线: 对需要输出的的元素,进行配合输出即可 (比如吓一下鸟,它自己就飞走了);
+ *      支线: 对不符合预测的元素修正 (比如剩下一只没飞走,我再更大声吓一下) (注:这涉及到外层循环,反向类比的修正);
  */
 -(BOOL) samePlus:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex{
     //将matchFo+作为CFo行为化;
@@ -270,21 +273,33 @@
     return false;
 }
 /**
- *  MARK:--------------------同区负价值--------------------
+ *  MARK:-------------------- S- --------------------
+ *  @desc
+ *      主线: 取matchFo的兄弟节点,进行行为化 (比如车将撞到我,我避开可避免);
+ *  @TODO 1. 对抽象也尝试取brotherFo,比如车撞与落石撞,其实都是需要躲开"撞过来的物体";
  */
--(BOOL) sameSub:(AIFoNodeBase*)matchFo{
-    //将matchFo-的兄弟节点作为CFo行为化;
+-(BOOL) sameSub:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex{
+    //1. 数据检查
+    if (!matchFo) return false;
+    
+    //2. 取matchFo-的兄弟节点;
+    AIFoNodeBase *brotherFo = [SMGUtils searchNode:matchFo.brother_p];
+    
+    //3. 对cutIndex进行处理,已发生的无法修正 (比如车很近,我已来不及躲避,只好行为化为"做好撞击准备",或者将车击退);
+    //问题: cutIndex是描述matchFo的截点的,如何用来定位兄弟节点中的cutIndex?
+    
+    
     return false;
 }
 /**
- *  MARK:--------------------不同区正价值--------------------
+ *  MARK:-------------------- D+ --------------------
  */
 -(BOOL) diffPlus:(AIAlgNodeBase*)matchAlg{
     //mv方向索引找正价值解决方案;
     return false;
 }
 /**
- *  MARK:--------------------不同区负价值--------------------
+ *  MARK:-------------------- D- --------------------
  */
 -(BOOL) diffSub:(AIAlgNodeBase*)matchAlg{
     //mv方向索引找负价值的兄弟节点解决方案;
