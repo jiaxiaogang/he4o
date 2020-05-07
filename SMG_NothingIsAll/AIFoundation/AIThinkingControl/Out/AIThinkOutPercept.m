@@ -22,6 +22,8 @@
 #import "AIAlgNode.h"
 #import "TOAlgScheme.h"
 #import "AIShortMatchModel.h"
+#import "TOUtils.h"
+#import "AINetUtils.h"
 
 @implementation AIThinkOutPercept
 
@@ -283,7 +285,21 @@
     if (!matchFo) return false;
     
     //2. 取matchFo-的兄弟节点;
-    AIFoNodeBase *brotherFo = [SMGUtils searchNode:matchFo.brother_p];
+    NSArray *subs = [TOUtils collectAbsPs:matchFo type:ATSub conLayer:0 absLayer:0];
+    for (AIKVPointer *sub_p in subs) {
+        AIFoNodeBase *subNode = [SMGUtils searchNode:sub_p];
+        AIFoNodeBase *brotherNode = [SMGUtils searchNode:subNode.brother_p];
+        
+        NSArray *plusPorts = [AINetUtils conPorts_All:brotherNode];
+        
+        for (AIPort *plusPort in plusPorts) {
+            //
+        }
+        
+        
+    }
+    
+    
     
     //3. 对cutIndex进行处理,已发生的无法修正 (比如车很近,我已来不及躲避,只好行为化为"做好撞击准备",或者将车击退);
     //问题: cutIndex是描述matchFo的截点的,如何用来定位兄弟节点中的cutIndex?
