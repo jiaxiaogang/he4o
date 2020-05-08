@@ -283,18 +283,24 @@
 -(BOOL) sameSub:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex{
     //1. 数据检查
     if (!matchFo) return false;
+    NSMutableArray *except_ps = [[NSMutableArray alloc] init];
     
-    //2. 取matchFo-的兄弟节点;
+    //2. 取matchFo的负节点;
     NSArray *subs = [TOUtils collectAbsPs:matchFo type:ATSub conLayer:0 absLayer:0];
     for (AIKVPointer *sub_p in subs) {
+        
+        //3. 根据负取正节点 (兄弟节点);
         AIFoNodeBase *subNode = [SMGUtils searchNode:sub_p];
-        AIFoNodeBase *brotherNode = [SMGUtils searchNode:subNode.brother_p];
+        AIFoNodeBase *plusNode = [SMGUtils searchNode:subNode.brother_p];
         
-        NSArray *plusPorts = [AINetUtils conPorts_All:brotherNode];
+        //4. 根据正节点,取到matchFo的对立节点checkFo;
+        AIPort *checkPort = ARR_INDEX([AINetUtils conPorts_All:plusNode], 0);
+        AIFoNodeBase *checkFo = [SMGUtils searchNode:checkPort.target_p];
+        if (!checkFo) continue;
         
-        for (AIPort *plusPort in plusPorts) {
-            //
-        }
+        //5. 
+        
+        
         
         
     }
