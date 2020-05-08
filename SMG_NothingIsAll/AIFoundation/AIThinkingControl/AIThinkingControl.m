@@ -250,7 +250,7 @@ static AIThinkingControl *_instance;
     return self.shortMatchManager.models;
 }
 
--(void) aiTOP_Commit2TOR_V2:(NSArray*)curAlg_ps cFo:(AIFoNodeBase*)cFo{
+-(BOOL) aiTOP_Commit2TOR_V2:(NSArray*)curAlg_ps cFo:(AIFoNodeBase*)cFo subNode:(AIFoNodeBase*)subNode plusNode:(AIFoNodeBase*)plusNode{
     [self.tOR commitFromTOP_Convert2Actions_V2:curAlg_ps cFo:cFo];
 }
 

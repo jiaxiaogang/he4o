@@ -271,13 +271,13 @@
     //将matchFo+作为CFo行为化;
     NSInteger start = cutIndex + 1;
     NSArray *need2Act_ps = ARR_SUB(matchFo.content_ps, start, matchFo.content_ps.count - start);
-    [self.delegate aiTOP_Commit2TOR_V2:need2Act_ps cFo:matchFo];
-    return false;
+    return [self.delegate aiTOP_Commit2TOR_V2:need2Act_ps cFo:matchFo subNode:nil plusNode:nil];
 }
 /**
  *  MARK:-------------------- S- --------------------
  *  @desc
  *      主线: 取matchFo的兄弟节点,进行行为化 (比如车将撞到我,我避开可避免);
+ *      CutIndex: 本算法中,未使用cutIndex而是使用了subNode和plusNode来解决问题 (参考
  *  @TODO 1. 对抽象也尝试取brotherFo,比如车撞与落石撞,其实都是需要躲开"撞过来的物体";
  */
 -(BOOL) sameSub:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex{
@@ -296,21 +296,18 @@
         //4. 根据正节点,取到matchFo的对立节点checkFo;
         AIPort *checkPort = ARR_INDEX([AINetUtils conPorts_All:plusNode], 0);
         AIFoNodeBase *checkFo = [SMGUtils searchNode:checkPort.target_p];
-        if (!checkFo) continue;
         
-        //5. 
+        //5. 防重 (一个checkFo只行为化一次);
+        if (!checkFo || [except_ps containsObject:checkFo.pointer]) continue;
         
-        
-        
-        
+        //6. 指定subNode和plusNode到行为化;
+        BOOL itemSuccess = [self.delegate aiTOP_Commit2TOR_V2:checkFo.content_ps cFo:checkFo subNode:subNode plusNode:plusNode];
+        if (itemSuccess) {
+            return true;
+        }else{
+            [except_ps addObject:checkFo.pointer];
+        }
     }
-    
-    
-    
-    //3. 对cutIndex进行处理,已发生的无法修正 (比如车很近,我已来不及躲避,只好行为化为"做好撞击准备",或者将车击退);
-    //问题: cutIndex是描述matchFo的截点的,如何用来定位兄弟节点中的cutIndex?
-    
-    
     return false;
 }
 /**
