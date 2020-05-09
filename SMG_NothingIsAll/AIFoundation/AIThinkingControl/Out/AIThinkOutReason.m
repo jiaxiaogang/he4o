@@ -69,8 +69,9 @@
     }
 }
 
--(void) commitFromTOP_Convert2Actions_V2:(NSArray*)curAlg_ps cFo:(AIFoNodeBase*)cFo{
+-(BOOL) commitFromTOP_Convert2Actions_V2:(NSArray*)curAlg_ps cFo:(AIFoNodeBase*)cFo{
     //提交给TOR做行为化;
+    return false;
 }
 
 /**
