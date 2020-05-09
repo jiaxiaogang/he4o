@@ -25,6 +25,7 @@
 #import "NSString+Extension.h"
 #import "AINetIndexUtils.h"
 #import "AIAbsAlgNode.h"
+#import "ThinkingUtils.h"
 
 @interface AINet ()
 
@@ -162,6 +163,33 @@ static AINet *_instance;
     return [self.netDirectionReference getNodePointersFromDirectionReference:mvAlgsType direction:direction isMem:isMem filter:filter];
 }
 
+-(void) getNormalFoByDirectionReference:(NSString*)at direction:(MVDirection)direction except_ps:(NSArray*)except_ps tryResult:(BOOL(^)(AIKVPointer *fo_p))tryResult{
+    //1. 数据准备
+    except_ps = ARRTOOK(except_ps);
+    
+    //2. 方向索引 (排除不应期);
+    NSArray *mvRefs = [theNet getNetNodePointersFromDirectionReference:at direction:direction isMem:false filter:^NSArray *(NSArray *protoArr) {
+        return [SMGUtils filterArr:protoArr checkValid:^BOOL(AIPort *item) {
+            return ![except_ps containsObject:item.target_p];
+        }];
+    }];
+    
+    //3. 逐个返回;
+    for (AIPort *item in mvRefs) {
+        //a. analogyType处理 (仅支持normal的fo);
+        AICMVNodeBase *itemMV = [SMGUtils searchNode:item.target_p];
+        NSString *plusDS = [ThinkingUtils getAnalogyTypeDS:ATPlus];
+        NSString *subDS = [ThinkingUtils getAnalogyTypeDS:ATSub];
+        NSString *foDS = itemMV.foNode_p.dataSource;
+        if (![plusDS isEqualToString:foDS] && ![subDS isEqualToString:foDS]) {
+            BOOL stop = checkItem(itemMV.foNode_p);
+            if (stop) {
+                return;
+            }
+        }
+    }
+}
+
 -(void) setMvNodeToDirectionReference:(AICMVNodeBase*)cmvNode difStrong:(NSInteger)difStrong {
     //1. 数据检查
     if (cmvNode) {
@@ -169,7 +197,7 @@ static AINet *_instance;
         //2. 取方向(delta的正负)
         NSInteger delta = [NUMTOOK([AINetIndex getData:cmvNode.delta_p]) integerValue];
         MVDirection direction = delta < 0 ? MVDirection_Negative : MVDirection_Positive;
-
+        
         //3. 取mv方向索引;
         AIKVPointer *mvReference_p = [SMGUtils createPointerForDirection:cmvNode.pointer.algsType direction:direction];
 

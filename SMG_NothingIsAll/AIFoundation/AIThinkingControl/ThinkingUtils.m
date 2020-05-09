@@ -117,18 +117,29 @@
     return MindHappyType_None;
 }
 
-+(BOOL) getDemand:(NSString*)algsType delta:(NSInteger)delta complete:(void(^)(BOOL upDemand,BOOL downDemand))complete{
-    //1. 数据
+//是否有向下需求 (目标为下,但delta却+)
++(BOOL) havDownDemand:(NSString*)algsType delta:(NSInteger)delta {
     AITargetType targetType = [ThinkingUtils getTargetTypeWithAlgsType:algsType];
-    BOOL downDemand = targetType == AITargetType_Down && delta > 0;
-    BOOL upDemand = targetType == AITargetType_Up && delta < 0;
-    //2. 有需求思考解决
-    if (complete) {
-        complete(upDemand,downDemand);
-    }
-    return downDemand || upDemand;
+    return targetType == AITargetType_Down && delta > 0;
 }
 
+//是否有向上需求 (目标为上,但delta却-)
++(BOOL) havUpDemand:(NSString*)algsType delta:(NSInteger)delta {
+    AITargetType targetType = [ThinkingUtils getTargetTypeWithAlgsType:algsType];
+    return targetType == AITargetType_Up && delta < 0;
+}
+
++(MVDirection) havDemand:(NSString*)algsType delta:(NSInteger)delta {
+    BOOL downDemand = [self havDownDemand:algsType delta:delta];
+    BOOL upDemand = [self havUpDemand:algsType delta:delta];
+    if (downDemand) {
+        return MVDirection_Negative;
+    }else if(upDemand){
+        return MVDirection_Positive;
+    }else{
+        return MVDirection_None;
+    }
+}
 
 /**
  *  MARK:--------------------解析algsMVArr--------------------

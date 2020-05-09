@@ -53,6 +53,7 @@ typedef NS_ENUM(NSInteger, AITargetType) {
  *  MARK:--------------------顺逆方向--------------------
  */
 typedef NS_ENUM(NSInteger, MVDirection) {
+    MVDirection_None        =-1,//无
     MVDirection_Negative    = 0,//负
     MVDirection_Positive    = 1,//正
 };

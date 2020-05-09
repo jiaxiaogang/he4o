@@ -102,53 +102,22 @@
 -(TOMvModel*) dataOut_MvScheme:(DemandModel*)demandModel{
     //1. 判断mv方向
     __block TOMvModel *outMvModel = nil;
-    [ThinkingUtils getDemand:demandModel.algsType delta:demandModel.delta complete:^(BOOL upDemand, BOOL downDemand) {
-        MVDirection direction = downDemand ? MVDirection_Negative : MVDirection_Positive;
-        
-        //2. filter筛选器取曾经历的除已有outMvModels之外的最强解决;
-        NSArray *mvRefs = [theNet getNetNodePointersFromDirectionReference:demandModel.algsType direction:direction isMem:false filter:^NSArray *(NSArray *protoArr) {
-            protoArr = ARRTOOK(protoArr);
-            //protoArr = [SMGUtils filterArr:protoArr checkValid:^BOOL(AIPort *item) {
-            //    NSString *plusDS = [ThinkingUtils getAnalogyTypeDS:ATPlus];
-            //    NSString *subDS = [ThinkingUtils getAnalogyTypeDS:ATSub];
-            //    NSString *itemDS = item.target_p.dataSource;
-            //    return ![plusDS isEqualToString:itemDS] && ![subDS isEqualToString:itemDS];
-            //}];
-            
-            for (NSInteger i = 0; i < protoArr.count; i++) {
-                AIPort *port = ARR_INDEX(protoArr, i);
-                //a. analogyType处理 (仅支持normal的fo);
-                AICMVNodeBase *itemMV = [SMGUtils searchNode:port.target_p];
-                NSString *plusDS = [ThinkingUtils getAnalogyTypeDS:ATPlus];
-                NSString *subDS = [ThinkingUtils getAnalogyTypeDS:ATSub];
-                NSString *foDS = itemMV.foNode_p.dataSource;
-                if ([plusDS isEqualToString:foDS] || [subDS isEqualToString:foDS]) {
-                    continue;
-                }
-                
-                //b. 不应期处理;
-                BOOL cacheContains = false;
-                for (TOMvModel *expCacheItem in demandModel.subModels) {
-                    if (port.target_p && [port.target_p isEqual:expCacheItem.content_p]) {
-                        cacheContains = true;
-                        break;
-                    }
-                }
-                if (!cacheContains) {
-                    return @[port];
-                }
-            }
-            return nil;
-        }];
-        
-        //3. 加入待判断区;
-        AIPort *referenceMvPort = ARR_INDEX(mvRefs, 0);
-        if (referenceMvPort) {
-            outMvModel = [[TOMvModel alloc] initWithContent_p:referenceMvPort.target_p];
+    MVDirection direction = [ThinkingUtils havDemand:demandModel.algsType delta:demandModel.delta];
+    
+    //2. 收集不应期
+    NSMutableArray *except_ps = [[NSMutableArray alloc] init];
+    for (TOMvModel *expCacheItem in demandModel.subModels) {
+        [except_ps addObject:expCacheItem.content_p];
+    }
+    
+    //3. 找normalFo解决方案;
+    [theNet getNormalFoByDirectionReference:demandModel.algsType direction:direction except_ps:except_ps tryResult:^BOOL(AIKVPointer *fo_p) {
+        if (fo_p) {
+            outMvModel = [[TOMvModel alloc] initWithContent_p:fo_p];
             [demandModel.subModels addObject:outMvModel];
         }
+        return true;
     }];
-    [theNV setNodeData:outMvModel.content_p lightStr:@"o0"];
     
     //4. 加强关联;
     if (outMvModel && outMvModel.content_p) {
@@ -247,7 +216,7 @@
         //a. 识别有效性判断 (优先直接mv+,不行再mv-迂回);
         if (matchAlg) {
             //b. 不同区Diff_Mv+
-            BOOL pSuccess = [self diffPlus:matchAlg];
+            BOOL pSuccess = [self diffPlus:matchAlg demandModel:demand];
             if (pSuccess) return;
             
             //c. 不同区Diff_Mv-
@@ -312,9 +281,24 @@
 }
 /**
  *  MARK:-------------------- D+ --------------------
+ *  @desc mv方向索引找正价值解决方案;
  */
--(BOOL) diffPlus:(AIAlgNodeBase*)matchAlg{
-    //mv方向索引找正价值解决方案;
+-(BOOL) diffPlus:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel{
+    //1. 数据准备;
+    if (!matchAlg || !demandModel) return false;
+    MVDirection direction = [ThinkingUtils havDemand:demandModel.algsType delta:demandModel.delta];
+    
+    //2. 用方向索引找normalFo解决方案;
+    [theNet getNormalFoByDirectionReference:demandModel.algsType direction:direction except_ps:nil tryResult:^BOOL(AIKVPointer *fo_p) {
+        if (fo_p) {
+            //3. 对fo_p进行conPorts (参考D+模式模型图);
+            
+            
+        }
+        return true;
+    }];
+    
+    //3. 默认为D+模式失败;
     return false;
 }
 /**

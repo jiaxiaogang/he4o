@@ -42,11 +42,11 @@
     AIKVPointer *mvReference_p = [SMGUtils createPointerForDirection:mvAlgsType direction:direction];
     NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:mvReference_p fileName:kFNRefPorts_All(isMem) time:cRTMemMvRef_All(isMem)]];
     
-    //2. 筛选器
+    //2. 筛选器 (无筛选器时,返回所有);
     if (filter) {
         return filter(mArr);
     }
-    return nil;
+    return mArr;
 }
 
 

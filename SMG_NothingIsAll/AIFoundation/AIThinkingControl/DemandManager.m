@@ -80,8 +80,8 @@
     
     //3. 有需求时且可加入时_加入新的
     //TODO:>>>>判断需求;(如饿,主动取当前状态,是否饿)
-    BOOL havDemand = [ThinkingUtils getDemand:algsType delta:delta complete:nil];
-    if (canNeed && havDemand) {
+    MVDirection direction = [ThinkingUtils havDemand:algsType delta:delta];
+    if (canNeed && (direction != MVDirection_None)) {
         DemandModel *newItem = [[DemandModel alloc] init];
         newItem.algsType = algsType;
         newItem.delta = delta;
@@ -94,8 +94,8 @@
 
 -(void) updateCMVCache_RMV:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta order:(NSInteger)order{
     //1. 有需求时且可加入demand序列;
-    BOOL havDemand = [ThinkingUtils getDemand:algsType delta:delta complete:nil];
-    if (havDemand) {
+    MVDirection direction = [ThinkingUtils havDemand:algsType delta:delta];
+    if (direction != MVDirection_None) {
         
         //2. 去重_同向撤弱;
         BOOL canNeed = true;

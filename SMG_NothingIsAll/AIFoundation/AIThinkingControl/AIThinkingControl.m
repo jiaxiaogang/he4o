@@ -195,8 +195,8 @@ static AIThinkingControl *_instance;
                 [self.demandManager updateCMVCache_RMV:algsType urgentTo:urgentTo delta:delta order:urgentTo];
                 
                 //4> RMV无需求时;
-                BOOL havDemand = [ThinkingUtils getDemand:algsType delta:delta complete:nil];
-                if (!havDemand) {
+                MVDirection havDemand = [ThinkingUtils havDemand:algsType delta:delta];
+                if (havDemand == MVDirection_None) {
                     NSLog(@"STEPKEY当前,预测mv未形成需求:%@ %ld",algsType,delta);
                 }
             }

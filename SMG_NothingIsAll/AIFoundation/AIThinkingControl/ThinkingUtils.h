@@ -52,8 +52,9 @@
 /**
  *  MARK:--------------------检查有没需求--------------------
  */
-+(BOOL) getDemand:(NSString*)algsType delta:(NSInteger)delta complete:(void(^)(BOOL upDemand,BOOL downDemand))complete;
-
++(BOOL) havDownDemand:(NSString*)algsType delta:(NSInteger)delta;
++(BOOL) havUpDemand:(NSString*)algsType delta:(NSInteger)delta;
++(MVDirection) havDemand:(NSString*)algsType delta:(NSInteger)delta;
 
 /**
  *  MARK:--------------------解析algsMVArr--------------------
