@@ -339,8 +339,16 @@
  *  MARK:-------------------- D- --------------------
  *  @desc mv方向索引找负价值的兄弟节点解决方案 (比如:打球打累了,不打了,避免更累);
  */
--(BOOL) diffSub:(AIAlgNodeBase*)matchAlg{
-    //mv方向索引找负价值的兄弟节点解决方案;
+-(BOOL) diffSub:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel{
+    //1. 数据准备;
+    if (!matchAlg || !demandModel) return false;
+    MVDirection direction = [ThinkingUtils havDemand:demandModel.algsType delta:demandModel.delta];
+    direction = labs(direction - 1);//取反方向;
+    
+    
+    
+    
+    
     return false;
 }
 

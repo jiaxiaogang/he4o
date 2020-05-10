@@ -166,6 +166,7 @@ static AINet *_instance;
 -(void) getNormalFoByDirectionReference:(NSString*)at direction:(MVDirection)direction except_ps:(NSArray*)except_ps tryResult:(BOOL(^)(AIKVPointer *fo_p))tryResult{
     //1. 数据准备
     except_ps = ARRTOOK(except_ps);
+    if (direction == MVDirection_None) return;
     
     //2. 方向索引 (排除不应期);
     NSArray *mvRefs = [theNet getNetNodePointersFromDirectionReference:at direction:direction isMem:false filter:^NSArray *(NSArray *protoArr) {
