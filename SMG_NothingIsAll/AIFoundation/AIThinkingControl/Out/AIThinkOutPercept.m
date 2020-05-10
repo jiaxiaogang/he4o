@@ -246,7 +246,7 @@
  *  MARK:-------------------- S- --------------------
  *  @desc
  *      主线: 取matchFo的兄弟节点,进行行为化 (比如车将撞到我,我避开可避免);
- *      CutIndex: 本算法中,未使用cutIndex而是使用了subNode和plusNode来解决问题 (参考
+ *      CutIndex: 本算法中,未使用cutIndex而是使用了subNode和plusNode来解决问题 (参考19152:S-)
  *  @TODO 1. 对抽象也尝试取brotherFo,比如车撞与落石撞,其实都是需要躲开"撞过来的物体";
  */
 -(BOOL) sameSub:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex{
@@ -281,28 +281,63 @@
 }
 /**
  *  MARK:-------------------- D+ --------------------
- *  @desc mv方向索引找正价值解决方案;
+ *  @desc
+ *      1. 简介: mv方向索引找正价值解决方案;
+ *      2. 实例: 饿了,现有面粉,做面吃可以解决;
+ *      3. 步骤: 用A.refPorts ∩ F.conPorts (参考D+模式模型图);
+ *  todo :
+ *      1. 集成原有的能量判断与消耗 T;
+ *      2. 评价机制1: 比如土豆我超不爱吃,在mvScheme中评价,入不应期,并继续下轮循环;
+ *      3. 评价机制2: 比如炒土豆好麻烦,在行为化中反思评价,入不应期,并继续下轮循环;
  */
 -(BOOL) diffPlus:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel{
     //1. 数据准备;
     if (!matchAlg || !demandModel) return false;
     MVDirection direction = [ThinkingUtils havDemand:demandModel.algsType delta:demandModel.delta];
     
-    //2. 用方向索引找normalFo解决方案;
+    //2. 取A.refPorts (土豆,可吃,也可当土豆地雷);
+    NSArray *algRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:matchAlg]];
+    
+    //3. 无瞬时指引,单靠内心瞎想,不能解决任何问题;
+    if (!ARRISOK(algRef_ps)) return false;
+    
+    //4. 用方向索引找normalFo解决方案 (饿了,该怎么办);
+    __block BOOL success = false;//默认为失败
     [theNet getNormalFoByDirectionReference:demandModel.algsType direction:direction except_ps:nil tryResult:^BOOL(AIKVPointer *fo_p) {
-        if (fo_p) {
-            //3. 对fo_p进行conPorts (参考D+模式模型图);
+        AIFoNodeBase *foNode = [SMGUtils searchNode:fo_p];
+        if (foNode) {
+            //5. 取F.conPorts (可以做饭,也可以下馆子);
+            NSArray *foCon_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:foNode]];
             
+            //6. 取交集 (炒个土豆丝,吃掉解决饥饿问题);
+            NSArray *same_ps = [SMGUtils filterSame_ps:algRef_ps parent_ps:foCon_ps];
             
+            //7. 依次尝试行为化;
+            for (AIKVPointer *same_p in same_ps) {
+                AIFoNodeBase *sameFo = [SMGUtils searchNode:same_p];
+                success = [self.delegate aiTOP_Commit2TOR_V2:sameFo.content_ps cFo:sameFo subNode:nil plusNode:nil];
+                
+                //8. 只要有一次tryResult成功,中断回调循环;
+                if (success) {
+                    return true;
+                }
+                
+                //9. 消耗活跃度,只要耗尽,中断回调循环;
+                [self useEnergy];
+                if (![self havEnergy]) {
+                    return true;
+                }
+            }
         }
         return true;
     }];
     
-    //3. 默认为D+模式失败;
-    return false;
+    //10. 返回D+模式结果;
+    return success;
 }
 /**
  *  MARK:-------------------- D- --------------------
+ *  @desc mv方向索引找负价值的兄弟节点解决方案 (比如:打球打累了,不打了,避免更累);
  */
 -(BOOL) diffSub:(AIAlgNodeBase*)matchAlg{
     //mv方向索引找负价值的兄弟节点解决方案;
