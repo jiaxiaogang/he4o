@@ -196,13 +196,13 @@
         //a.预测有效性判断和同区判断 (以预测的正负为准);
         if (matchFo && matchFo.cmvNode_p && [demand.algsType isEqualToString:matchFo.pointer.algsType]) {
             CGFloat score = [ThinkingUtils getScoreForce:mModel.matchFo.cmvNode_p ratio:mModel.matchFoValue];
-            //b. 同区Same_Mv+
+            //b. R+
             if (score > 0) {
-                BOOL success = [self samePlus:matchFo cutIndex:mModel.cutIndex];
+                BOOL success = [self reasonPlus:matchFo cutIndex:mModel.cutIndex];
                 if (success) return;
             }else if(score < 0){
-                //c. 同区Same_Mv-
-                BOOL success = [self sameSub:matchFo cutIndex:mModel.cutIndex];
+                //c. R-
+                BOOL success = [self reasonSub:matchFo cutIndex:mModel.cutIndex];
                 if (success) return;
             }
         }
@@ -215,12 +215,12 @@
         
         //a. 识别有效性判断 (优先直接mv+,不行再mv-迂回);
         if (matchAlg) {
-            //b. 不同区Diff_Mv+
-            BOOL pSuccess = [self diffPlus:matchAlg demandModel:demand];
+            //b. P+
+            BOOL pSuccess = [self perceptPlus:matchAlg demandModel:demand];
             if (pSuccess) return;
             
-            //c. 不同区Diff_Mv-
-            BOOL sSuccess = [self diffSub:matchAlg demandModel:demand];
+            //c. P-
+            BOOL sSuccess = [self perceptSub:matchAlg demandModel:demand];
             if (sSuccess) return;
         }
     }
@@ -231,25 +231,25 @@
 //MARK:===============================================================
 
 /**
- *  MARK:-------------------- S+ --------------------
+ *  MARK:-------------------- R+ --------------------
  *  @desc
  *      主线: 对需要输出的的元素,进行配合输出即可 (比如吓一下鸟,它自己就飞走了);
  *      支线: 对不符合预测的元素修正 (比如剩下一只没飞走,我再更大声吓一下) (注:这涉及到外层循环,反向类比的修正);
  */
--(BOOL) samePlus:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex{
+-(BOOL) reasonPlus:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex{
     //将matchFo+作为CFo行为化;
     NSInteger start = cutIndex + 1;
     NSArray *need2Act_ps = ARR_SUB(matchFo.content_ps, start, matchFo.content_ps.count - start);
     return [self.delegate aiTOP_Commit2TOR_V2:need2Act_ps cFo:matchFo subNode:nil plusNode:nil];
 }
 /**
- *  MARK:-------------------- S- --------------------
+ *  MARK:-------------------- R- --------------------
  *  @desc
  *      主线: 取matchFo的兄弟节点,进行行为化 (比如车将撞到我,我避开可避免);
- *      CutIndex: 本算法中,未使用cutIndex而是使用了subNode和plusNode来解决问题 (参考19152:S-)
+ *      CutIndex: 本算法中,未使用cutIndex而是使用了subNode和plusNode来解决问题 (参考19152:R-)
  *  @TODO 1. 对抽象也尝试取brotherFo,比如车撞与落石撞,其实都是需要躲开"撞过来的物体";
  */
--(BOOL) sameSub:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex{
+-(BOOL) reasonSub:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex{
     //1. 数据检查
     if (!matchFo) return false;
     
@@ -265,24 +265,24 @@
     return success;
 }
 /**
- *  MARK:-------------------- D+ --------------------
+ *  MARK:-------------------- P+ --------------------
  *  @desc
  *      1. 简介: mv方向索引找正价值解决方案;
  *      2. 实例: 饿了,现有面粉,做面吃可以解决;
- *      3. 步骤: 用A.refPorts ∩ F.conPorts (参考D+模式模型图);
+ *      3. 步骤: 用A.refPorts ∩ F.conPorts (参考P+模式模型图);
  *  todo :
  *      1. 集成原有的能量判断与消耗 T;
  *      2. 评价机制1: 比如土豆我超不爱吃,在mvScheme中评价,入不应期,并继续下轮循环;
  *      3. 评价机制2: 比如炒土豆好麻烦,在行为化中反思评价,入不应期,并继续下轮循环;
  */
--(BOOL) diffPlus:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel{
+-(BOOL) perceptPlus:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel{
     //1. 数据准备;
     if (!matchAlg || !demandModel) return false;
     MVDirection direction = [ThinkingUtils havDemand:demandModel.algsType delta:demandModel.delta];
     
     //2. 调用通用diff模式方法;
     __block BOOL success = false;//默认为失败
-    [TOUtils topDiffMode:matchAlg demandModel:demandModel direction:direction tryResult:^BOOL(AIFoNodeBase *sameFo) {
+    [TOUtils topPerceptMode:matchAlg demandModel:demandModel direction:direction tryResult:^BOOL(AIFoNodeBase *sameFo) {
         
         //a. 取自身,实现吃,则可不饿;
         success = [self.delegate aiTOP_Commit2TOR_V2:sameFo.content_ps cFo:sameFo subNode:nil plusNode:nil];
@@ -295,14 +295,14 @@
         [self useEnergy:delta];
     }];
     
-    //3. 返回D+模式结果;
+    //3. 返回P+模式结果;
     return success;
 }
 /**
- *  MARK:-------------------- D- --------------------
+ *  MARK:-------------------- P- --------------------
  *  @desc mv方向索引找负价值的兄弟节点解决方案 (比如:打球打累了,不打了,避免更累);
  */
--(BOOL) diffSub:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel{
+-(BOOL) perceptSub:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel{
     //1. 数据准备;
     if (!matchAlg || !demandModel) return false;
     MVDirection direction = [ThinkingUtils havDemand:demandModel.algsType delta:demandModel.delta];
@@ -310,7 +310,7 @@
     
     //2. 调用通用diff模式方法;
     __block BOOL success = false;//默认为失败
-    [TOUtils topDiffMode:matchAlg demandModel:demandModel direction:direction tryResult:^BOOL(AIFoNodeBase *sameFo) {
+    [TOUtils topPerceptMode:matchAlg demandModel:demandModel direction:direction tryResult:^BOOL(AIFoNodeBase *sameFo) {
         
         //a. 取兄弟节点,停止打球,则不再累;
         [TOUtils getPlusBrotherBySubProtoFo_NoRepeatNotNull:sameFo tryResult:^BOOL(AIFoNodeBase *checkFo, AIFoNodeBase *subNode, AIFoNodeBase *plusNode) {
@@ -330,7 +330,7 @@
         [self useEnergy:delta];
     }];
     
-    //3. 返回D-模式结果;
+    //3. 返回P-模式结果;
     return success;
 }
 
