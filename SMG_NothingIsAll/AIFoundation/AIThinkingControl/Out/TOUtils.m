@@ -11,6 +11,7 @@
 #import "NVHeUtil.h"
 #import "AINetUtils.h"
 #import "AIPort.h"
+#import "DemandModel.h"
 
 @implementation TOUtils
 
@@ -162,6 +163,60 @@
         BOOL stop = tryResult(checkPort.target_p,subNode,plusNode);
         if (stop) return;
     }
+}
+
++(void) topDiffMode:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel direction:(MVDirection)direction tryResult:(BOOL(^)(AIFoNodeBase *sameFo))tryResult canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
+    //1. 数据准备;
+    if (!matchAlg || !demandModel || direction == MVDirection_None || !tryResult || !canAssBlock || !updateEnergy) return;
+    
+    //2. matchAlg可以用来做什么,取A.refPorts
+    //P例:土豆,可吃,也可当土豆地雷;
+    //S例:打球,导致开心,但也导致累;
+    NSArray *algRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:matchAlg]];
+    
+    //3. 无瞬时指引,单靠内心瞎想,不能解决任何问题;
+    if (!ARRISOK(algRef_ps)) return;
+    
+    //4. 用方向索引找normalFo解决方案
+    //P例:饿了,该怎么办;
+    //S例:累了,肿么肥事;
+    [theNet getNormalFoByDirectionReference:demandModel.algsType direction:direction except_ps:nil tryResult:^BOOL(AIKVPointer *fo_p) {
+        //5. 方向索引找到一条normalFo解决方案;
+        //P例:吃可以解决饿;
+        //S例:运动导致累;
+        AIFoNodeBase *foNode = [SMGUtils searchNode:fo_p];
+        if (foNode) {
+            //6. 再向下取具体解决方案F.conPorts;
+            //P例:吃-可以做饭,也可以下馆子;
+            //S例:运动-打球是运动,跑步也是;
+            NSArray *foCon_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:foNode]];
+            
+            //6. 取交集
+            //P例:炒个土豆丝,吃掉解决饥饿问题;
+            //S例:打球导致累,越打越累;
+            NSArray *same_ps = [SMGUtils filterSame_ps:algRef_ps parent_ps:foCon_ps];
+            
+            //7. 依次尝试行为化;
+            //P例:取自身,实现吃,则可不饿;
+            //S例:取兄弟节点,停止打球,则不再累;
+            for (AIKVPointer *same_p in same_ps) {
+                AIFoNodeBase *sameFo = [SMGUtils searchNode:same_p];
+                BOOL success = tryResult(sameFo);
+                
+                //8. 只要有一次tryResult成功,中断回调循环;
+                if (success) {
+                    return true;
+                }
+                
+                //9. 消耗活跃度,只要耗尽,中断回调循环;
+                updateEnergy(-1);
+                if (!canAssBlock()) {
+                    return true;
+                }
+            }
+        }
+        return true;//一次无效,则中止方向索引找解决方案;
+    }];
 }
 
 @end

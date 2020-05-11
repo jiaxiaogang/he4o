@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIAlgNodeBase;
+@class AIAlgNodeBase,DemandModel;
 @interface TOUtils : NSObject
 
 /**
@@ -47,5 +47,10 @@
  *  MARK:--------------------获取兄弟节点(以负取正)--------------------
  */
 +(void) getPlusBrotherBySubProtoFo:(AIFoNodeBase*)subProtoFo tryResult:(BOOL(^)(AIKVPointer *checkFo_p,AIFoNodeBase *subNode,AIFoNodeBase *plusNode))tryResult;
+
+/**
+ *  MARK:--------------------TOP.diff正负两个模式--------------------
+ */
++(void) topDiffMode:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel direction:(MVDirection)direction tryResult:(BOOL(^)(AIFoNodeBase *sameFo))tryResult canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy;
 
 @end

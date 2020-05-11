@@ -57,7 +57,7 @@
         [self.delegate aiThinkOutPercept_MVSchemeFailure];
     }else{
         //4. 有可具象思考的outMvModel则执行;
-        [self useEnergy];
+        [self useEnergy:-1];
         
         //5. 取foModel_联想"解决经验"对应的cmvNode & 联想具象数据,并取到决策关键信息 (foScheme);
         TOModelBase *outFoModel = outMvModel.getCurSubModel;
@@ -278,53 +278,24 @@
 -(BOOL) diffPlus:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel{
     //1. 数据准备;
     if (!matchAlg || !demandModel) return false;
-    
-    ////////////TODOTOMORROW;
     MVDirection direction = [ThinkingUtils havDemand:demandModel.algsType delta:demandModel.delta];
-    ////////////TODOTOMORROW;
     
-    //2. 取A.refPorts (土豆,可吃,也可当土豆地雷);
-    NSArray *algRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:matchAlg]];
-    
-    //3. 无瞬时指引,单靠内心瞎想,不能解决任何问题;
-    if (!ARRISOK(algRef_ps)) return false;
-    
-    //4. 用方向索引找normalFo解决方案 (饿了,该怎么办);
+    //2. 调用通用diff模式方法;
     __block BOOL success = false;//默认为失败
-    [theNet getNormalFoByDirectionReference:demandModel.algsType direction:direction except_ps:nil tryResult:^BOOL(AIKVPointer *fo_p) {
-        //吃可以解决饿;
-        AIFoNodeBase *foNode = [SMGUtils searchNode:fo_p];
-        if (foNode) {
-            //5. 取F.conPorts (可以做饭,也可以下馆子);
-            NSArray *foCon_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:foNode]];
-            
-            //6. 取交集 (炒个土豆丝,吃掉解决饥饿问题);
-            NSArray *same_ps = [SMGUtils filterSame_ps:algRef_ps parent_ps:foCon_ps];
-            
-            //7. 依次尝试行为化;
-            for (AIKVPointer *same_p in same_ps) {
-                AIFoNodeBase *sameFo = [SMGUtils searchNode:same_p];
-                
-                ////////////TODOTOMORROW;
-                success = [self.delegate aiTOP_Commit2TOR_V2:sameFo.content_ps cFo:sameFo subNode:nil plusNode:nil];
-                ////////////TODOTOMORROW;
-                
-                //8. 只要有一次tryResult成功,中断回调循环;
-                if (success) {
-                    return true;
-                }
-                
-                //9. 消耗活跃度,只要耗尽,中断回调循环;
-                [self useEnergy];
-                if (![self havEnergy]) {
-                    return true;
-                }
-            }
-        }
-        return true;
+    [TOUtils topDiffMode:matchAlg demandModel:demandModel direction:direction tryResult:^BOOL(AIFoNodeBase *sameFo) {
+        
+        //a. 取自身,实现吃,则可不饿;
+        success = [self.delegate aiTOP_Commit2TOR_V2:sameFo.content_ps cFo:sameFo subNode:nil plusNode:nil];
+        
+        //b. 一条成功,则中止取消通用diff算法的交集循环;
+        return success;
+    } canAss:^BOOL{
+        return [self havEnergy];
+    } updateEnergy:^(CGFloat delta) {
+        [self useEnergy:delta];
     }];
     
-    //10. 返回D+模式结果;
+    //3. 返回D+模式结果;
     return success;
 }
 /**
@@ -334,70 +305,43 @@
 -(BOOL) diffSub:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel{
     //1. 数据准备;
     if (!matchAlg || !demandModel) return false;
-    
-    ////////////TODOTOMORROW;
     MVDirection direction = [ThinkingUtils havDemand:demandModel.algsType delta:demandModel.delta];
     direction = labs(direction - 1);//取反方向;
-    ////////////TODOTOMORROW;
     
-    //2. 取A.refPorts (打球,导致开心,但也导致累);
-    NSArray *algRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:matchAlg]];
-    
-    //3. 无瞬时指引,单靠内心瞎想,不能解决任何问题;
-    if (!ARRISOK(algRef_ps)) return false;
-    
-    //4. 用方向索引找normalFo解决方案 (累了,肿么肥事);
+    //2. 调用通用diff模式方法;
     __block BOOL success = false;//默认为失败
-    [theNet getNormalFoByDirectionReference:demandModel.algsType direction:direction except_ps:nil tryResult:^BOOL(AIKVPointer *fo_p) {
+    [TOUtils topDiffMode:matchAlg demandModel:demandModel direction:direction tryResult:^BOOL(AIFoNodeBase *sameFo) {
         
-        //运动导致累;
-        AIFoNodeBase *foNode = [SMGUtils searchNode:fo_p];
-        if (foNode) {
-            //5. 取F.conPorts (打球是运动,跑步也是);
-            NSArray *foCon_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:foNode]];
+        //a. 取兄弟节点,停止打球,则不再累;
+        [TOUtils getPlusBrotherBySubProtoFo_NoRepeatNotNull:sameFo tryResult:^BOOL(AIFoNodeBase *checkFo, AIFoNodeBase *subNode, AIFoNodeBase *plusNode) {
             
-            //6. 取交集 (打球导致累,停止解决累问题);
-            NSArray *same_ps = [SMGUtils filterSame_ps:algRef_ps parent_ps:foCon_ps];
+            //b. 指定subNode和plusNode到行为化;
+            success = [self.delegate aiTOP_Commit2TOR_V2:checkFo.content_ps cFo:checkFo subNode:subNode plusNode:plusNode];
             
-            //7. 依次尝试行为化;
-            for (AIKVPointer *same_p in same_ps) {
-                AIFoNodeBase *sameFo = [SMGUtils searchNode:same_p];
-                
-                ////////////TODOTOMORROW;
-                //8. 取兄弟节点,不打球则不再累;
-                [TOUtils getPlusBrotherBySubProtoFo_NoRepeatNotNull:sameFo tryResult:^BOOL(AIFoNodeBase *checkFo, AIFoNodeBase *subNode, AIFoNodeBase *plusNode) {
-                    //c. 指定subNode和plusNode到行为化 (一条成功,则中止循环);
-                    success = [self.delegate aiTOP_Commit2TOR_V2:checkFo.content_ps cFo:checkFo subNode:subNode plusNode:plusNode];
-                    return success;
-                }];
-                ////////////TODOTOMORROW;
-                
-                //8. 只要有一次tryResult成功,中断回调循环;
-                if (success) {
-                    return true;
-                }
-                
-                //9. 消耗活跃度,只要耗尽,中断回调循环;
-                [self useEnergy];
-                if (![self havEnergy]) {
-                    return true;
-                }
-            }
-        }
-        return true;
+            //c. 一条成功,则中止取兄弟节点循环;
+            return success;
+        }];
+        
+        //d. 一条成功,则中止取消通用diff算法的交集循环;
+        return success;
+    } canAss:^BOOL{
+        return [self havEnergy];
+    } updateEnergy:^(CGFloat delta) {
+        [self useEnergy:delta];
     }];
     
-    //10. 返回D-模式结果;
+    //3. 返回D-模式结果;
     return success;
 }
+
 
 //MARK:===============================================================
 //MARK:                     < private_Method >
 //MARK:===============================================================
 //使用能量
--(void) useEnergy{
+-(void) useEnergy:(CGFloat)delta{
     if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkOutPercept_UpdateEnergy:)]) {
-        [self.delegate aiThinkOutPercept_UpdateEnergy:-1];//思考与决策消耗能量;
+        [self.delegate aiThinkOutPercept_UpdateEnergy:delta];//思考与决策消耗能量;
     }
 }
 
