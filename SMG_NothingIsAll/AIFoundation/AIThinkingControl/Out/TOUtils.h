@@ -36,4 +36,16 @@
  */
 +(NSArray*) collectAbsPs:(AINodeBase*)protoNode type:(AnalogyType)type conLayer:(NSInteger)conLayer absLayer:(NSInteger)absLayer;
 
+
+/**
+ *  MARK:--------------------获取兄弟节点(以负取正)--------------------
+ *  @desc 防重,防空版;
+ */
++(void) getPlusBrotherBySubProtoFo_NoRepeatNotNull:(AIFoNodeBase*)subProtoFo tryResult:(BOOL(^)(AIFoNodeBase *checkFo,AIFoNodeBase *subNode,AIFoNodeBase *plusNode))tryResult;
+
+/**
+ *  MARK:--------------------获取兄弟节点(以负取正)--------------------
+ */
++(void) getPlusBrotherBySubProtoFo:(AIFoNodeBase*)subProtoFo tryResult:(BOOL(^)(AIKVPointer *checkFo_p,AIFoNodeBase *subNode,AIFoNodeBase *plusNode))tryResult;
+
 @end

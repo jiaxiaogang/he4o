@@ -220,7 +220,7 @@
             if (pSuccess) return;
             
             //c. 不同区Diff_Mv-
-            BOOL sSuccess = [self diffSub:matchAlg];
+            BOOL sSuccess = [self diffSub:matchAlg demandModel:demand];
             if (sSuccess) return;
         }
     }
@@ -252,32 +252,17 @@
 -(BOOL) sameSub:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex{
     //1. 数据检查
     if (!matchFo) return false;
-    NSMutableArray *except_ps = [[NSMutableArray alloc] init];
     
-    //2. 取matchFo的负节点;
-    NSArray *subs = [TOUtils collectAbsPs:matchFo type:ATSub conLayer:0 absLayer:0];
-    for (AIKVPointer *sub_p in subs) {
-        
-        //3. 根据负取正节点 (兄弟节点);
-        AIFoNodeBase *subNode = [SMGUtils searchNode:sub_p];
-        AIFoNodeBase *plusNode = [SMGUtils searchNode:subNode.brother_p];
-        
-        //4. 根据正节点,取到matchFo的对立节点checkFo;
-        AIPort *checkPort = ARR_INDEX([AINetUtils conPorts_All:plusNode], 0);
-        AIFoNodeBase *checkFo = [SMGUtils searchNode:checkPort.target_p];
-        
-        //5. 防重 (一个checkFo只行为化一次);
-        if (!checkFo || [except_ps containsObject:checkFo.pointer]) continue;
-        
-        //6. 指定subNode和plusNode到行为化;
-        BOOL itemSuccess = [self.delegate aiTOP_Commit2TOR_V2:checkFo.content_ps cFo:checkFo subNode:subNode plusNode:plusNode];
-        if (itemSuccess) {
-            return true;
-        }else{
-            [except_ps addObject:checkFo.pointer];
-        }
-    }
-    return false;
+    //2. 用负取正;
+    __block BOOL success = false;
+    [TOUtils getPlusBrotherBySubProtoFo_NoRepeatNotNull:matchFo tryResult:^BOOL(AIFoNodeBase *checkFo, AIFoNodeBase *subNode, AIFoNodeBase *plusNode) {
+        //c. 指定subNode和plusNode到行为化 (一条成功,则中止循环);
+        success = [self.delegate aiTOP_Commit2TOR_V2:checkFo.content_ps cFo:checkFo subNode:subNode plusNode:plusNode];
+        return success;
+    }];
+    
+    //3. 一条行为化成功,则整体成功;
+    return success;
 }
 /**
  *  MARK:-------------------- D+ --------------------
@@ -293,7 +278,10 @@
 -(BOOL) diffPlus:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel{
     //1. 数据准备;
     if (!matchAlg || !demandModel) return false;
+    
+    ////////////TODOTOMORROW;
     MVDirection direction = [ThinkingUtils havDemand:demandModel.algsType delta:demandModel.delta];
+    ////////////TODOTOMORROW;
     
     //2. 取A.refPorts (土豆,可吃,也可当土豆地雷);
     NSArray *algRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:matchAlg]];
@@ -304,6 +292,7 @@
     //4. 用方向索引找normalFo解决方案 (饿了,该怎么办);
     __block BOOL success = false;//默认为失败
     [theNet getNormalFoByDirectionReference:demandModel.algsType direction:direction except_ps:nil tryResult:^BOOL(AIKVPointer *fo_p) {
+        //吃可以解决饿;
         AIFoNodeBase *foNode = [SMGUtils searchNode:fo_p];
         if (foNode) {
             //5. 取F.conPorts (可以做饭,也可以下馆子);
@@ -315,7 +304,10 @@
             //7. 依次尝试行为化;
             for (AIKVPointer *same_p in same_ps) {
                 AIFoNodeBase *sameFo = [SMGUtils searchNode:same_p];
+                
+                ////////////TODOTOMORROW;
                 success = [self.delegate aiTOP_Commit2TOR_V2:sameFo.content_ps cFo:sameFo subNode:nil plusNode:nil];
+                ////////////TODOTOMORROW;
                 
                 //8. 只要有一次tryResult成功,中断回调循环;
                 if (success) {
@@ -342,14 +334,61 @@
 -(BOOL) diffSub:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel{
     //1. 数据准备;
     if (!matchAlg || !demandModel) return false;
+    
+    ////////////TODOTOMORROW;
     MVDirection direction = [ThinkingUtils havDemand:demandModel.algsType delta:demandModel.delta];
     direction = labs(direction - 1);//取反方向;
+    ////////////TODOTOMORROW;
     
+    //2. 取A.refPorts (打球,导致开心,但也导致累);
+    NSArray *algRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:matchAlg]];
     
+    //3. 无瞬时指引,单靠内心瞎想,不能解决任何问题;
+    if (!ARRISOK(algRef_ps)) return false;
     
+    //4. 用方向索引找normalFo解决方案 (累了,肿么肥事);
+    __block BOOL success = false;//默认为失败
+    [theNet getNormalFoByDirectionReference:demandModel.algsType direction:direction except_ps:nil tryResult:^BOOL(AIKVPointer *fo_p) {
+        
+        //运动导致累;
+        AIFoNodeBase *foNode = [SMGUtils searchNode:fo_p];
+        if (foNode) {
+            //5. 取F.conPorts (打球是运动,跑步也是);
+            NSArray *foCon_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:foNode]];
+            
+            //6. 取交集 (打球导致累,停止解决累问题);
+            NSArray *same_ps = [SMGUtils filterSame_ps:algRef_ps parent_ps:foCon_ps];
+            
+            //7. 依次尝试行为化;
+            for (AIKVPointer *same_p in same_ps) {
+                AIFoNodeBase *sameFo = [SMGUtils searchNode:same_p];
+                
+                ////////////TODOTOMORROW;
+                //8. 取兄弟节点,不打球则不再累;
+                [TOUtils getPlusBrotherBySubProtoFo_NoRepeatNotNull:sameFo tryResult:^BOOL(AIFoNodeBase *checkFo, AIFoNodeBase *subNode, AIFoNodeBase *plusNode) {
+                    //c. 指定subNode和plusNode到行为化 (一条成功,则中止循环);
+                    success = [self.delegate aiTOP_Commit2TOR_V2:checkFo.content_ps cFo:checkFo subNode:subNode plusNode:plusNode];
+                    return success;
+                }];
+                ////////////TODOTOMORROW;
+                
+                //8. 只要有一次tryResult成功,中断回调循环;
+                if (success) {
+                    return true;
+                }
+                
+                //9. 消耗活跃度,只要耗尽,中断回调循环;
+                [self useEnergy];
+                if (![self havEnergy]) {
+                    return true;
+                }
+            }
+        }
+        return true;
+    }];
     
-    
-    return false;
+    //10. 返回D-模式结果;
+    return success;
 }
 
 //MARK:===============================================================

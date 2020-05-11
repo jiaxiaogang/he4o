@@ -118,4 +118,50 @@
     return result;
 }
 
+
+/**
+ *  MARK:--------------------获取兄弟节点(以负取正)--------------------
+ *  @desc 防重,防空版;
+ */
++(void) getPlusBrotherBySubProtoFo_NoRepeatNotNull:(AIFoNodeBase*)subProtoFo tryResult:(BOOL(^)(AIFoNodeBase *checkFo,AIFoNodeBase *subNode,AIFoNodeBase *plusNode))tryResult{
+    //1. 去重功能;
+    NSMutableArray *except_ps = [[NSMutableArray alloc] init];
+    
+    //2. 用负取正;
+    [TOUtils getPlusBrotherBySubProtoFo:subProtoFo tryResult:^BOOL(AIKVPointer *checkFo_p, AIFoNodeBase *subNode, AIFoNodeBase *plusNode) {
+        //a. 重复,直接返回继续 (一个checkFo只行为化一次);
+        if (![except_ps containsObject:checkFo_p]) {
+            //b. 行为化失败,则收集不应期;
+            [except_ps addObject:checkFo_p];
+            
+            //c. 有效判断
+            AIFoNodeBase *checkFo = [SMGUtils searchNode:checkFo_p];
+            if (checkFo) {
+                return tryResult(checkFo,subNode,plusNode);
+            }
+        }
+        return false;
+    }];
+}
++(void) getPlusBrotherBySubProtoFo:(AIFoNodeBase*)subProtoFo tryResult:(BOOL(^)(AIKVPointer *checkFo_p,AIFoNodeBase *subNode,AIFoNodeBase *plusNode))tryResult{
+    //1. 数据检查
+    if (!tryResult) return;
+    
+    //2. 取matchFo的负节点;
+    NSArray *subs = [TOUtils collectAbsPs:subProtoFo type:ATSub conLayer:0 absLayer:0];
+    for (AIKVPointer *sub_p in subs) {
+        
+        //3. 根据负取正节点 (兄弟节点);
+        AIFoNodeBase *subNode = [SMGUtils searchNode:sub_p];
+        AIFoNodeBase *plusNode = [SMGUtils searchNode:subNode.brother_p];
+        
+        //4. 根据正节点,取到matchFo的对立节点checkFo;
+        AIPort *checkPort = ARR_INDEX([AINetUtils conPorts_All:plusNode], 0);
+        
+        //5. 尝试返回,判断中止;
+        BOOL stop = tryResult(checkPort.target_p,subNode,plusNode);
+        if (stop) return;
+    }
+}
+
 @end
