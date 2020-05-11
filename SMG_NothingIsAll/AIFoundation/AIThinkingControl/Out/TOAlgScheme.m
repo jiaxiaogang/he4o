@@ -424,7 +424,7 @@
     //2. mIsC有效性判断 (MC无法加工,则直接转移);
     AIAlgNodeBase *mAlg = self.shortMatchModel.matchAlg;
     NSLog(@"STEPKEY==========================MC V3 START==========================\nSTEPKEYM:%@\nSTEPKEYC:%@",Alg2FStr(mAlg),Alg2FStr(cAlg));
-    if (![TOUtils mIsC:mAlg c:cAlg]) {
+    if (![TOUtils mIsC_2:mAlg.pointer c:cAlg.pointer]) {
         NSLog(@"STEPKEY===> mNotC");
         return;
     }

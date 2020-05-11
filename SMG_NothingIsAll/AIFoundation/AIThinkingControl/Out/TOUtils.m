@@ -36,19 +36,34 @@
     }
 }
 
-+(BOOL) mIsC:(AIAlgNodeBase*)m c:(AIAlgNodeBase*)c{
++(BOOL) mIsC_0:(AIKVPointer*)m c:(AIKVPointer*)c{
     if (m && c) {
         //1. 判断本级相等;
-        BOOL equ0 = [m.pointer isEqual:c.pointer];
+        BOOL equ0 = [m isEqual:c];
         if (equ0) return true;
+    }
+    return false;
+}
++(BOOL) mIsC_1:(AIKVPointer*)m c:(AIKVPointer*)c{
+    if (m && c) {
+        //1. 判断本级相等;
+        if ([self mIsC_0:m c:c]) return true;
         
         //2. 判断一级抽象;
-        NSArray *mAbs = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All_Normal:m]];
-        BOOL equ1 = [mAbs containsObject:c.pointer];
+        NSArray *mAbs = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All_Normal:[SMGUtils searchNode:m]]];
+        BOOL equ1 = [mAbs containsObject:c];
         if (equ1) return true;
+    }
+    return false;
+}
++(BOOL) mIsC_2:(AIKVPointer*)m c:(AIKVPointer*)c{
+    if (m && c) {
+        //1. 判断0-1级抽象;
+        if ([self mIsC_1:m c:c]) return true;
         
-        //3. 判断二级抽象;
-        NSArray *cCon = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:c]];
+        //2. 判断二级抽象;
+        NSArray *mAbs = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All_Normal:[SMGUtils searchNode:m]]];
+        NSArray *cCon = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:[SMGUtils searchNode:c]]];
         BOOL equ2 = [SMGUtils filterSame_ps:mAbs parent_ps:cCon].count > 0;
         if (equ2) return true;
     }

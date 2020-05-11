@@ -22,7 +22,9 @@
  *  MARK:--------------------判断mIsC--------------------
  *  @desc 从M向上,找匹配C,支持三层 (含本层):
  */
-+(BOOL) mIsC:(AIAlgNodeBase*)m c:(AIAlgNodeBase*)c;
++(BOOL) mIsC_0:(AIKVPointer*)m c:(AIKVPointer*)c;
++(BOOL) mIsC_1:(AIKVPointer*)m c:(AIKVPointer*)c;
++(BOOL) mIsC_2:(AIKVPointer*)m c:(AIKVPointer*)c;
 
 /**
  *  MARK:--------------------收集概念节点的稀疏码--------------------

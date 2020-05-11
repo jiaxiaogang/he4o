@@ -248,6 +248,8 @@
  *      主线: 取matchFo的兄弟节点,进行行为化 (比如车将撞到我,我避开可避免);
  *      CutIndex: 本算法中,未使用cutIndex而是使用了subNode和plusNode来解决问题 (参考19152:R-)
  *  @TODO 1. 对抽象也尝试取brotherFo,比如车撞与落石撞,其实都是需要躲开"撞过来的物体";
+ *  @version
+ *      2020.05.12 - 支持cutIndex的判断,必须是未发生的部分才可以被修正 (如车将撞上,躲开是对的,但将已过去的出门改成不出门,是错的);
  */
 -(BOOL) reasonSub:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex{
     //1. 数据检查
@@ -256,9 +258,21 @@
     //2. 用负取正;
     __block BOOL success = false;
     [TOUtils getPlusBrotherBySubProtoFo_NoRepeatNotNull:matchFo tryResult:^BOOL(AIFoNodeBase *checkFo, AIFoNodeBase *subNode, AIFoNodeBase *plusNode) {
-        //c. 指定subNode和plusNode到行为化 (一条成功,则中止循环);
-        success = [self.delegate aiTOP_Commit2TOR_V2:checkFo.content_ps cFo:checkFo subNode:subNode plusNode:plusNode];
-        return success;
+        //a. 对cutIndex判断;
+        for (AIKVPointer *item_p in matchFo.content_ps) {
+            if ([TOUtils mIsC_1:item_p c:ARR_INDEX(subNode.content_ps, 0)]) {
+                
+                //b. subNode的第一个元素所对在位置,必须在cutIndex之后;
+                NSInteger firstAt = [matchFo.content_ps indexOfObject:item_p];
+                if (cutIndex < firstAt) {
+                    
+                    //c. 指定subNode和plusNode到行为化 (一条成功,则中止循环);
+                    success = [self.delegate aiTOP_Commit2TOR_V2:checkFo.content_ps cFo:checkFo subNode:subNode plusNode:plusNode];
+                    return success;
+                }
+            }
+        }
+        return false;//继续下轮尝试;
     }];
     
     //3. 一条行为化成功,则整体成功;
