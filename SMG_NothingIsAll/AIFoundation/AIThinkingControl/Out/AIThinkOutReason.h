@@ -49,7 +49,7 @@
  *  @desc 做理性行为化
  */
 -(void) commitFromTOP_Convert2Actions:(TOFoModel*)foModel;
--(BOOL) commitFromTOP_Convert2Actions_V2:(NSArray*)curAlg_ps cFo:(AIFoNodeBase*)cFo;
+-(BOOL) commitFromTOP_Convert2Actions_V2:(NSArray*)curAlg_ps cFo:(AIFoNodeBase*)cFo subNode:(AIFoNodeBase*)subNode plusNode:(AIFoNodeBase*)plusNode;
 
 /**
  *  MARK:--------------------FromTOP的MvScheme失败入口--------------------

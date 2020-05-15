@@ -69,8 +69,21 @@
     }
 }
 
--(BOOL) commitFromTOP_Convert2Actions_V2:(NSArray*)curAlg_ps cFo:(AIFoNodeBase*)cFo{
-    //提交给TOR做行为化;
+/**
+ *  MARK:--------------------以四模式的方式,传递给TOR--------------------
+ */
+-(BOOL) commitFromTOP_Convert2Actions_V2:(NSArray*)curAlg_ps cFo:(AIFoNodeBase*)cFo subNode:(AIFoNodeBase*)subNode plusNode:(AIFoNodeBase*)plusNode{
+    //1. 进行行为化 (仅对一帧做行为化);
+    BOOL actSuccess = false;
+    
+    //2. 记录短时记忆outModel
+    if (actSuccess) {
+        //outModel.add(fo);
+    }
+    
+    //3. 输出行为;
+    //[self outPut];
+    
     return false;
 }
 
