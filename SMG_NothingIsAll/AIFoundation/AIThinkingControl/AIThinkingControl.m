@@ -262,7 +262,7 @@ static AIThinkingControl *_instance;
         
         //2. 更新到outModel;
         if (actSuccess) {
-            //[self.demandManager add];
+            //[self.demandManager add]; status为尝试输出,事实input发生后,才会移动到下帧;
         }
         
         //3. 输出行为;
@@ -279,7 +279,24 @@ static AIThinkingControl *_instance;
         
         //2. 更新到outModel;
         if (actSuccess) {
-            //[self.demandManager add];
+            //[self.demandManager add]; status为尝试输出,事实input发生后,才会移动到下帧;
+        }
+        
+        //3. 输出行为;
+        [self.tOR dataOut_ActionScheme:acts];
+    }];
+    return success;
+}
+
+-(BOOL) aiTOP_2TOR_PerceptPlus:(AIFoNodeBase *)matchFo{
+    //1. 行为化;
+    __block BOOL success = false;
+    [self.tOR commitPerceptPlus:matchFo complete:^(BOOL actSuccess, NSArray *acts) {
+        success = actSuccess;
+        
+        //2. 更新到outModel;
+        if (actSuccess) {
+            //[self.demandManager add]; status为尝试输出,事实input发生后,才会移动到下帧;
         }
         
         //3. 输出行为;

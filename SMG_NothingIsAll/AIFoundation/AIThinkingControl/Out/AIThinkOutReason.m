@@ -113,6 +113,11 @@
     //1. 数据准备
     AIKVPointer *firstSubItem = ARR_INDEX(subFo.content_ps, 0);
     AIKVPointer *firstPlusItem = ARR_INDEX(plusFo.content_ps, 0);
+    AIKVPointer *curAlg_p = ARR_INDEX(checkFo.content_ps, cutIndex + 1);
+    if (!matchFo || !plusFo || !subFo || !checkFo || !complete || !curAlg_p) {
+        complete(false,nil);
+        return;
+    }
     
     //1. 负影响首元素,错过判断 (错过,行为化失败);
     NSInteger firstAt_Sub = [TOUtils indexOfAbsItem:firstSubItem atConContent:matchFo.content_ps];
@@ -128,15 +133,47 @@
         return;
     }
     
-    //3. 判断四种工作方式;
+    //3. 三级行为化判断;
     if (firstAt_Sub - cutIndex == 1 && firstAt_Plus - cutIndex == 1) {
         //a. 把S加工成P;
     }else if(firstAt_Sub - cutIndex == 1){
         //b. 把S加工修正;
     }else if(firstAt_Plus - cutIndex == 1){
         //c. 把P加工满足;
+    }else if(curAlg_p.isOut){
+        //d. isOut输出;
+        complete(true,@[curAlg_p]);
     }else{
-        //d. 等待;
+        //e. notOut等待;
+        complete(true,nil);
+    }
+}
+
+/**
+ *  MARK:--------------------P+行为化--------------------
+ *  @desc P+行为化,两级判断,参考:19166;
+ *          1. isOut则输出;
+ *          2. notOut则进行cHav行为化;
+ */
+-(void) commitPerceptPlus:(AIFoNodeBase*)matchFo complete:(void(^)(BOOL actSuccess,NSArray *acts))complete{
+    //1. 数据检查
+    if (!matchFo) {
+        complete(false,nil);
+        return;
+    }
+    
+    //2. 行为化;
+    AIKVPointer *curAlg_p = ARR_INDEX(matchFo.content_ps, 0);
+    if (curAlg_p && curAlg_p.isOut) {
+        complete(true,@[curAlg_p]);
+    }else{
+        
+        //3. cHav行为化;
+        //[self invokeCHav];
+        
+        //a. cHav行为化成功时,输出行为;
+        //b. cHav行为化无需行为时,则等待;
+        //c. 真正向下帧跳转,发生在事实发生之后 (即新的input匹配到);
         complete(true,nil);
     }
 }
