@@ -70,6 +70,15 @@
     return false;
 }
 
++(NSInteger) indexOfAbsItem:(AIKVPointer*)absItem atConContent:(NSArray*)conContent{
+    for (AIKVPointer *item_p in ARRTOOK(conContent)) {
+        if ([TOUtils mIsC_1:item_p c:absItem]) {
+            return [conContent indexOfObject:item_p];
+        }
+    }
+    return -1;
+}
+
 +(NSArray*) convertValuesFromAlg_ps:(NSArray*)alg_ps{
     NSMutableArray *result = [[NSMutableArray alloc] init];
     NSArray *algs = [SMGUtils searchNodes:alg_ps];

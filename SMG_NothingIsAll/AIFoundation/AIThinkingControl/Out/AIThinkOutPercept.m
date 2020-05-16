@@ -262,21 +262,8 @@
     //2. 用负取正;
     __block BOOL success = false;
     [TOUtils getPlusBrotherBySubProtoFo_NoRepeatNotNull:matchFo tryResult:^BOOL(AIFoNodeBase *checkFo, AIFoNodeBase *subNode, AIFoNodeBase *plusNode) {
-        //a. 对cutIndex判断;
-        for (AIKVPointer *item_p in matchFo.content_ps) {
-            if ([TOUtils mIsC_1:item_p c:ARR_INDEX(subNode.content_ps, 0)]) {
-                
-                //b. subNode的第一个元素所对在位置,必须在cutIndex之后;
-                NSInteger firstAt = [matchFo.content_ps indexOfObject:item_p];
-                if (cutIndex < firstAt) {
-                    
-                    //c. 指定subNode和plusNode到行为化 (一条成功,则中止循环);
-                    success = [self.delegate aiTOP_Commit2TOR_V2:checkFo.content_ps cFo:checkFo subNode:subNode plusNode:plusNode];
-                    return success;
-                }
-            }
-        }
-        return false;//继续下轮尝试;
+        success = [self.delegate aiTOP_2TOR_ReasonSub:matchFo plusFo:plusNode subFo:subNode checkFo:checkFo cutIndex:cutIndex];
+        return success;//成功行为化,则中止递归;
     }];
     
     //3. 一条行为化成功,则整体成功;

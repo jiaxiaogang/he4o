@@ -268,7 +268,23 @@ static AIThinkingControl *_instance;
         //3. 输出行为;
         [self.tOR dataOut_ActionScheme:acts];
     }];
-    
+    return success;
+}
+
+-(BOOL) aiTOP_2TOR_ReasonSub:(AIFoNodeBase *)matchFo plusFo:(AIFoNodeBase *)plusFo subFo:(AIFoNodeBase*)subFo checkFo:(AIFoNodeBase *)checkFo cutIndex:(NSInteger)cutIndex{
+    //1. 行为化;
+    __block BOOL success = false;
+    [self.tOR commitReasonSub:matchFo plusFo:plusFo subFo:subFo checkFo:checkFo cutIndex:cutIndex complete:^(BOOL actSuccess, NSArray *acts) {
+        success = actSuccess;
+        
+        //2. 更新到outModel;
+        if (actSuccess) {
+            //[self.demandManager add];
+        }
+        
+        //3. 输出行为;
+        [self.tOR dataOut_ActionScheme:acts];
+    }];
     return success;
 }
 

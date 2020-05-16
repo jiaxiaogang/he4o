@@ -16,6 +16,7 @@
 #import "TOAlgScheme.h"
 #import "Output.h"
 #import "AIShortMatchModel.h"
+#import "TOUtils.h"
 
 @interface AIThinkOutReason() <TOAlgSchemeDelegate>
 
@@ -89,9 +90,55 @@
 
 /**
  *  MARK:--------------------R+行为化--------------------
+ *  @desc R+行为化,两级判断,参考:19164;
+ *          1. isOut则输出;
+ *          2. notOut则等待;
  */
 -(void) commitReasonPlus:(AIKVPointer*)curAlg_p cFo:(AIFoNodeBase*)cFo complete:(void(^)(BOOL actSuccess,NSArray *acts))complete{
-    //行为化;
+    if (curAlg_p && curAlg_p.isOut) {
+        complete(true,@[curAlg_p]);
+    }else{
+        complete(true,nil);
+    }
+}
+
+/**
+ *  MARK:--------------------R-行为化--------------------
+ *  @desc R-行为化,三级判断,参考19165;
+ *          1. is(SP)判断 (转移sp行为化);
+ *          2. isOut判断 (输出);
+ *          3. notOut判断 (等待);
+ */
+-(void) commitReasonSub:(AIFoNodeBase*)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo checkFo:(AIFoNodeBase*)checkFo cutIndex:(NSInteger)cutIndex complete:(void(^)(BOOL actSuccess,NSArray *acts))complete{
+    //1. 数据准备
+    AIKVPointer *firstSubItem = ARR_INDEX(subFo.content_ps, 0);
+    AIKVPointer *firstPlusItem = ARR_INDEX(plusFo.content_ps, 0);
+    
+    //1. 负影响首元素,错过判断 (错过,行为化失败);
+    NSInteger firstAt_Sub = [TOUtils indexOfAbsItem:firstSubItem atConContent:matchFo.content_ps];
+    if (cutIndex >= firstAt_Sub) {
+        complete(false,nil);
+        return;
+    }
+    
+    //2. 正影响首元素,错过判断 (错过,行为化失败);
+    NSInteger firstAt_Plus = [TOUtils indexOfAbsItem:firstPlusItem atConContent:checkFo.content_ps];
+    if (cutIndex >= firstAt_Plus) {
+        complete(false,nil);
+        return;
+    }
+    
+    //3. 判断四种工作方式;
+    if (firstAt_Sub - cutIndex == 1 && firstAt_Plus - cutIndex == 1) {
+        //a. 把S加工成P;
+    }else if(firstAt_Sub - cutIndex == 1){
+        //b. 把S加工修正;
+    }else if(firstAt_Plus - cutIndex == 1){
+        //c. 把P加工满足;
+    }else{
+        //d. 等待;
+        complete(true,nil);
+    }
 }
 
 /**

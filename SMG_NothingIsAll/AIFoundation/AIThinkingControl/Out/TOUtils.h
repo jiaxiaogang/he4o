@@ -27,6 +27,12 @@
 +(BOOL) mIsC_2:(AIKVPointer*)m c:(AIKVPointer*)c;
 
 /**
+ *  MARK:--------------------在具象Content中定位抽象Item的下标--------------------
+ *  @result 如果找不到,默认返回-1;
+ */
++(NSInteger) indexOfAbsItem:(AIKVPointer*)absItem atConContent:(NSArray*)conContent;
+
+/**
  *  MARK:--------------------收集概念节点的稀疏码--------------------
  */
 +(NSArray*) convertValuesFromAlg_ps:(NSArray*)alg_ps;
