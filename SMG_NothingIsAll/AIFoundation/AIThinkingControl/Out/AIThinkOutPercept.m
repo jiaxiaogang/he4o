@@ -290,7 +290,7 @@
     [TOUtils topPerceptMode:matchAlg demandModel:demandModel direction:direction tryResult:^BOOL(AIFoNodeBase *sameFo) {
         
         //a. 取自身,实现吃,则可不饿;
-        success = [self.delegate aiTOP_Commit2TOR_V2:sameFo.content_ps cFo:sameFo subNode:nil plusNode:nil];
+        success = [self.delegate aiTOP_2TOR_PerceptPlus:sameFo];
         
         //b. 一条成功,则中止取消通用diff算法的交集循环;
         return success;
@@ -321,7 +321,7 @@
         [TOUtils getPlusBrotherBySubProtoFo_NoRepeatNotNull:sameFo tryResult:^BOOL(AIFoNodeBase *checkFo, AIFoNodeBase *subNode, AIFoNodeBase *plusNode) {
             
             //b. 指定subNode和plusNode到行为化;
-            success = [self.delegate aiTOP_Commit2TOR_V2:checkFo.content_ps cFo:checkFo subNode:subNode plusNode:plusNode];
+            success = [self.delegate aiTOP_2TOR_PerceptSub:sameFo plusFo:plusNode subFo:subNode checkFo:checkFo];
             
             //c. 一条成功,则中止取兄弟节点循环;
             return success;

@@ -179,6 +179,45 @@
 }
 
 /**
+ *  MARK:--------------------P-行为化--------------------
+ *  @desc P-行为化,三级判断,参考19167;
+ *          1. is(SP)判断 (转移sp行为化);
+ *          2. isOut判断 (输出);
+ *          3. notOut判断 (等待);
+ */
+-(void) commitPerceptSub:(AIFoNodeBase*)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo checkFo:(AIFoNodeBase*)checkFo complete:(void(^)(BOOL actSuccess,NSArray *acts))complete{
+    //1. 数据准备
+    AIKVPointer *firstSubItem = ARR_INDEX(subFo.content_ps, 0);
+    AIKVPointer *firstPlusItem = ARR_INDEX(plusFo.content_ps, 0);
+    AIKVPointer *curAlg_p = ARR_INDEX(checkFo.content_ps, 0);//当前plusFo的具象首元素;
+    if (!matchFo || !plusFo || !subFo || !checkFo || !complete || !curAlg_p) {
+        complete(false,nil);
+        return;
+    }
+    
+    //1. 负影响首元素,错过判断 (错过,行为化失败);
+    NSInteger firstAt_Sub = [TOUtils indexOfAbsItem:firstSubItem atConContent:matchFo.content_ps];
+    
+    //2. 正影响首元素,错过判断 (错过,行为化失败);
+    NSInteger firstAt_Plus = [TOUtils indexOfAbsItem:firstPlusItem atConContent:checkFo.content_ps];
+    
+    //3. 三级行为化判断;
+    if (firstAt_Sub == 0 && firstAt_Plus == 0) {
+        //a. 把S加工成P;
+    }else if(firstAt_Sub == 0){
+        //b. 把S加工修正;
+    }else if(firstAt_Plus == 0){
+        //c. 把P加工满足;
+    }else if(curAlg_p.isOut){
+        //d. isOut输出;
+        complete(true,@[curAlg_p]);
+    }else{
+        //e. notOut等待;
+        complete(true,nil);
+    }
+}
+
+/**
  *  MARK:--------------------algScheme--------------------
  *  1. 对条件概念进行判定 (行为化);
  *  2. 理性判定;
