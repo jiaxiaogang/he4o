@@ -50,11 +50,27 @@
  */
 -(void) commitFromTOP_Convert2Actions:(TOFoModel*)foModel;
 -(BOOL) commitFromTOP_Convert2Actions_V2:(NSArray*)curAlg_ps cFo:(AIFoNodeBase*)cFo subNode:(AIFoNodeBase*)subNode plusNode:(AIFoNodeBase*)plusNode;
+-(void) commitReasonPlus:(AIKVPointer*)curAlg_p cFo:(AIFoNodeBase*)cFo complete:(void(^)(BOOL actSuccess,NSArray *acts))complete;
 
 /**
  *  MARK:--------------------FromTOP的MvScheme失败入口--------------------
  *  @desc 做反射反应
  */
 -(void) commitFromTOP_ReflexOut;
+
+/**
+ *  MARK:--------------------尝试输出信息--------------------
+ *  @param outArr : orders里筛选出来的algNode组;
+ *
+ *  三种输出方式:
+ *  1. 反射输出 : reflexOut
+ *  2. 激活输出 : absNode信息无conPorts方向的outPointer信息时,将absNode的宏信息尝试输出;
+ *  3. 经验输出 : expOut指在absNode或conPort方向有outPointer信息;
+ *
+ *  功能: 将行为概念组成的长时序,转化为真实输出;
+ *  1. 找到行为的具象;
+ *  2. 正式执行行为 (小脑);
+ */
+-(void) dataOut_ActionScheme:(NSArray*)outArr;
 
 @end

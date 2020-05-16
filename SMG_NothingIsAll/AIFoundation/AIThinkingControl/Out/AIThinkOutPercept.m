@@ -238,9 +238,13 @@
  */
 -(BOOL) reasonPlus:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex{
     //将matchFo+作为CFo行为化;
-    NSInteger start = cutIndex + 1;
-    NSArray *need2Act_ps = ARR_SUB(matchFo.content_ps, start, matchFo.content_ps.count - start);
-    return [self.delegate aiTOP_Commit2TOR_V2:need2Act_ps cFo:matchFo subNode:nil plusNode:nil];
+    //NSInteger start = cutIndex + 1;
+    //NSArray *need2Act_ps = ARR_SUB(matchFo.content_ps, start, matchFo.content_ps.count - start);
+    //return [self.delegate aiTOP_Commit2TOR_V2:need2Act_ps cFo:matchFo subNode:nil plusNode:nil];
+    
+    //对首元素进行行为化;
+    AIKVPointer *cAlg_p = ARR_INDEX(matchFo.content_ps, cutIndex + 1);
+    return [self.delegate aiTOP_2TOR_ReasonPlus:cAlg_p cFo:matchFo];
 }
 /**
  *  MARK:-------------------- R- --------------------

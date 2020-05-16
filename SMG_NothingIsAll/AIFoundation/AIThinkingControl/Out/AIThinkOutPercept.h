@@ -18,6 +18,7 @@
 -(void) aiThinkOutPercept_MVSchemeFailure;                  //找解决mv经历失败
 -(NSArray*) aiTOP_GetShortMatchModel;                       //获取瞬时模型
 -(BOOL) aiTOP_Commit2TOR_V2:(NSArray*)curAlg_ps cFo:(AIFoNodeBase*)cFo subNode:(AIFoNodeBase*)subNode plusNode:(AIFoNodeBase*)plusNode;                                 //提交C给TOR行为化;
+-(BOOL) aiTOP_2TOR_ReasonPlus:(AIKVPointer*)cAlg cFo:(AIFoNodeBase*)cFo;
 
 @end
 

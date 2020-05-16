@@ -38,8 +38,8 @@
 @interface AIThinkingControl() <AIThinkInDelegate,AIThinkOutPerceptDelegate,AIThinkOutReasonDelegate>
 
 @property (strong,nonatomic) AIShortMemory *shortMemory;    //瞬时记忆
-@property (strong, nonatomic) DemandManager *demandManager; //输出循环所用到的数据管理器;
-@property (strong, nonatomic) ShortMatchManager *shortMatchManager;
+@property (strong, nonatomic) DemandManager *demandManager;         //OUT短时记忆 (输出数据管理器);
+@property (strong, nonatomic) ShortMatchManager *shortMatchManager; //IN短时记忆 (输入数据管理器);
 
 /**
  *  MARK:--------------------当前能量值--------------------
@@ -252,6 +252,24 @@ static AIThinkingControl *_instance;
 
 -(BOOL) aiTOP_Commit2TOR_V2:(NSArray*)curAlg_ps cFo:(AIFoNodeBase*)cFo subNode:(AIFoNodeBase*)subNode plusNode:(AIFoNodeBase*)plusNode{
     return [self.tOR commitFromTOP_Convert2Actions_V2:curAlg_ps cFo:cFo subNode:subNode plusNode:plusNode];
+}
+
+-(BOOL) aiTOP_2TOR_ReasonPlus:(AIKVPointer*)cAlg_p cFo:(AIFoNodeBase*)cFo{
+    //1. 行为化;
+    __block BOOL success = false;
+    [self.tOR commitReasonPlus:cAlg_p cFo:cFo complete:^(BOOL actSuccess, NSArray *acts) {
+        success = actSuccess;
+        
+        //2. 更新到outModel;
+        if (actSuccess) {
+            //[self.demandManager add];
+        }
+        
+        //3. 输出行为;
+        [self.tOR dataOut_ActionScheme:acts];
+    }];
+    
+    return success;
 }
 
 /**

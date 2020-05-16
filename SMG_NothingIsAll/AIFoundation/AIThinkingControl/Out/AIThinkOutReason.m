@@ -88,6 +88,13 @@
 }
 
 /**
+ *  MARK:--------------------R+行为化--------------------
+ */
+-(void) commitReasonPlus:(AIKVPointer*)curAlg_p cFo:(AIFoNodeBase*)cFo complete:(void(^)(BOOL actSuccess,NSArray *acts))complete{
+    //行为化;
+}
+
+/**
  *  MARK:--------------------algScheme--------------------
  *  1. 对条件概念进行判定 (行为化);
  *  2. 理性判定;
@@ -119,19 +126,6 @@
     [self dataOut_ActionScheme:nil];
 }
 
-/**
- *  MARK:--------------------尝试输出信息--------------------
- *  @param outArr : orders里筛选出来的algNode组;
- *
- *  三种输出方式:
- *  1. 反射输出 : reflexOut
- *  2. 激活输出 : absNode信息无conPorts方向的outPointer信息时,将absNode的宏信息尝试输出;
- *  3. 经验输出 : expOut指在absNode或conPort方向有outPointer信息;
- *
- *  功能: 将行为概念组成的长时序,转化为真实输出;
- *  1. 找到行为的具象;
- *  2. 正式执行行为 (小脑);
- */
 -(void) dataOut_ActionScheme:(NSArray*)outArr{
     //1. 尝试输出找到解决问题的实际操作 (取到当前cacheModel中的最佳决策,并进行输出;)
     BOOL tryOutSuccess = false;
