@@ -108,6 +108,7 @@
  *          1. is(SP)判断 (转移sp行为化);
  *          2. isOut判断 (输出);
  *          3. notOut判断 (等待);
+ *  @存储 负只是正的帧推进器,比如买菜为了做饭 (参考19171);
  */
 -(void) commitReasonSub:(AIFoNodeBase*)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo checkFo:(AIFoNodeBase*)checkFo cutIndex:(NSInteger)cutIndex complete:(void(^)(BOOL actSuccess,NSArray *acts))complete{
     //1. 数据准备
@@ -119,14 +120,11 @@
         return;
     }
     
-    //1. 负影响首元素,错过判断 (错过,行为化失败);
+    //1. 负影响首元素,错过判断 (错过,行为化修正);
     NSInteger firstAt_Sub = [TOUtils indexOfAbsItem:firstSubItem atConContent:matchFo.content_ps];
-    if (cutIndex >= firstAt_Sub) {
-        complete(false,nil);
-        return;
-    }
     
     //2. 正影响首元素,错过判断 (错过,行为化失败);
+    //从P中,找修正方式;
     NSInteger firstAt_Plus = [TOUtils indexOfAbsItem:firstPlusItem atConContent:checkFo.content_ps];
     if (cutIndex >= firstAt_Plus) {
         complete(false,nil);
