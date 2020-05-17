@@ -167,13 +167,7 @@
     if (curAlg_p && curAlg_p.isOut) {
         complete(true,@[curAlg_p]);
     }else{
-        
-        //3. cHav行为化;
-        //[self invokeCHav];
-        
-        //a. cHav行为化成功时,输出行为;
-        //b. cHav行为化无需行为时,则等待;
-        //c. 真正向下帧跳转,发生在事实发生之后 (即新的input匹配到);
+        //3. 等待 (真正向下帧跳转,发生在事实发生之后 (即新的input匹配到);
         complete(true,nil);
     }
 }
