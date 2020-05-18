@@ -120,31 +120,29 @@
         return;
     }
     
-    //1. 负影响首元素,错过判断 (错过,行为化修正);
-    NSInteger firstAt_Sub = [TOUtils indexOfAbsItem:firstSubItem atConContent:matchFo.content_ps];
-    
     //2. 正影响首元素,错过判断 (错过,行为化失败);
-    //从P中,找修正方式;
     NSInteger firstAt_Plus = [TOUtils indexOfAbsItem:firstPlusItem atConContent:checkFo.content_ps];
     if (cutIndex >= firstAt_Plus) {
         complete(false,nil);
         return;
     }
     
-    //3. 三级行为化判断;
-    if (firstAt_Sub - cutIndex == 1 && firstAt_Plus - cutIndex == 1) {
-        //a. 把S加工成P;
-    }else if(firstAt_Sub - cutIndex == 1){
-        //b. 把S加工修正;
-    }else if(firstAt_Plus - cutIndex == 1){
-        //c. 把P加工满足;
-    }else if(curAlg_p.isOut){
-        //d. isOut输出;
-        complete(true,@[curAlg_p]);
-    }else{
-        //e. notOut等待;
-        complete(true,nil);
-    }
+    //3. 三级行为化判断 (围绕P做行为);
+    //a. 从S中,已发现的(cutIndex前)找对应S,以进行SP行为化;
+    //b. 如果没有对应S,则单独对P进行cHav实现;
+    //行为,把matchFo加工成checkFo;
+    
+    //if (firstAt_Sub - cutIndex == 1 && firstAt_Plus - cutIndex == 1) {
+    //    //a. 把S加工成P;
+    //}else if(firstAt_Plus - cutIndex == 1){
+    //    //c. 把P加工满足;
+    //}else if(curAlg_p.isOut){
+    //    //d. isOut输出;
+    //    complete(true,@[curAlg_p]);
+    //}else{
+    //    //e. notOut等待;
+    //    complete(true,nil);
+    //}
 }
 
 /**
@@ -176,37 +174,38 @@
  *          1. is(SP)判断 (转移sp行为化);
  *          2. isOut判断 (输出);
  *          3. notOut判断 (等待);
+ *  @废弃: 因为左负是不存在的(或者说目前不需要的),可以以左正,转为右正,来实现,累了歇歇的例子;
  */
 -(void) commitPerceptSub:(AIFoNodeBase*)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo checkFo:(AIFoNodeBase*)checkFo complete:(void(^)(BOOL actSuccess,NSArray *acts))complete{
-    //1. 数据准备
-    AIKVPointer *firstSubItem = ARR_INDEX(subFo.content_ps, 0);
-    AIKVPointer *firstPlusItem = ARR_INDEX(plusFo.content_ps, 0);
-    AIKVPointer *curAlg_p = ARR_INDEX(checkFo.content_ps, 0);//当前plusFo的具象首元素;
-    if (!matchFo || !plusFo || !subFo || !checkFo || !complete || !curAlg_p) {
-        complete(false,nil);
-        return;
-    }
-    
-    //1. 负影响首元素,错过判断 (错过,行为化失败);
-    NSInteger firstAt_Sub = [TOUtils indexOfAbsItem:firstSubItem atConContent:matchFo.content_ps];
-    
-    //2. 正影响首元素,错过判断 (错过,行为化失败);
-    NSInteger firstAt_Plus = [TOUtils indexOfAbsItem:firstPlusItem atConContent:checkFo.content_ps];
-    
-    //3. 三级行为化判断;
-    if (firstAt_Sub == 0 && firstAt_Plus == 0) {
-        //a. 把S加工成P;
-    }else if(firstAt_Sub == 0){
-        //b. 把S加工修正;
-    }else if(firstAt_Plus == 0){
-        //c. 把P加工满足;
-    }else if(curAlg_p.isOut){
-        //d. isOut输出;
-        complete(true,@[curAlg_p]);
-    }else{
-        //e. notOut等待;
-        complete(true,nil);
-    }
+    ////1. 数据准备
+    //AIKVPointer *firstSubItem = ARR_INDEX(subFo.content_ps, 0);
+    //AIKVPointer *firstPlusItem = ARR_INDEX(plusFo.content_ps, 0);
+    //AIKVPointer *curAlg_p = ARR_INDEX(checkFo.content_ps, 0);//当前plusFo的具象首元素;
+    //if (!matchFo || !plusFo || !subFo || !checkFo || !complete || !curAlg_p) {
+    //    complete(false,nil);
+    //    return;
+    //}
+    //
+    ////1. 负影响首元素,错过判断 (错过,行为化失败);
+    //NSInteger firstAt_Sub = [TOUtils indexOfAbsItem:firstSubItem atConContent:matchFo.content_ps];
+    //
+    ////2. 正影响首元素,错过判断 (错过,行为化失败);
+    //NSInteger firstAt_Plus = [TOUtils indexOfAbsItem:firstPlusItem atConContent:checkFo.content_ps];
+    //
+    ////3. 三级行为化判断;
+    //if (firstAt_Sub == 0 && firstAt_Plus == 0) {
+    //    //a. 把S加工成P;
+    //}else if(firstAt_Sub == 0){
+    //    //b. 把S加工修正;
+    //}else if(firstAt_Plus == 0){
+    //    //c. 把P加工满足;
+    //}else if(curAlg_p.isOut){
+    //    //d. isOut输出;
+    //    complete(true,@[curAlg_p]);
+    //}else{
+    //    //e. notOut等待;
+    //    complete(true,nil);
+    //}
 }
 
 /**
