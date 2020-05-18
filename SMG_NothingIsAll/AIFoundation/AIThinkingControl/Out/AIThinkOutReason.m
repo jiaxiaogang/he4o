@@ -17,6 +17,7 @@
 #import "Output.h"
 #import "AIShortMatchModel.h"
 #import "TOUtils.h"
+#import "AINetUtils.h"
 
 @interface AIThinkOutReason() <TOAlgSchemeDelegate>
 
@@ -112,10 +113,9 @@
  */
 -(void) commitReasonSub:(AIFoNodeBase*)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo checkFo:(AIFoNodeBase*)checkFo cutIndex:(NSInteger)cutIndex complete:(void(^)(BOOL actSuccess,NSArray *acts))complete{
     //1. 数据准备
-    AIKVPointer *firstSubItem = ARR_INDEX(subFo.content_ps, 0);
     AIKVPointer *firstPlusItem = ARR_INDEX(plusFo.content_ps, 0);
-    AIKVPointer *curAlg_p = ARR_INDEX(checkFo.content_ps, cutIndex + 1);
-    if (!matchFo || !plusFo || !subFo || !checkFo || !complete || !curAlg_p) {
+    AIKVPointer *checkAlg_p = ARR_INDEX(checkFo.content_ps, cutIndex + 1);
+    if (!matchFo || !plusFo || !subFo || !checkFo || !complete || !checkAlg_p) {
         complete(false,nil);
         return;
     }
@@ -129,20 +129,40 @@
     
     //3. 三级行为化判断 (围绕P做行为);
     //a. 从S中,已发现的(cutIndex前)找对应S,以进行SP行为化;
-    //b. 如果没有对应S,则单独对P进行cHav实现;
-    //行为,把matchFo加工成checkFo;
     
-    //if (firstAt_Sub - cutIndex == 1 && firstAt_Plus - cutIndex == 1) {
-    //    //a. 把S加工成P;
-    //}else if(firstAt_Plus - cutIndex == 1){
-    //    //c. 把P加工满足;
-    //}else if(curAlg_p.isOut){
-    //    //d. isOut输出;
-    //    complete(true,@[curAlg_p]);
-    //}else{
-    //    //e. notOut等待;
-    //    complete(true,nil);
-    //}
+    //3. 当firstPlus就是checkAlg_p时 (尝试对checkAlg行为化);
+    if (firstAt_Plus == cutIndex + 1) {
+        
+        //4. 从SFo中,找出checkAlg的兄弟节点matchAlg;
+        AIKVPointer *matchAlg_p = [SMGUtils filterSingleFromArr:matchFo.content_ps checkValid:^BOOL(AIKVPointer *item_p) {
+            return [TOUtils mcSameLayer:item_p c:checkAlg_p];
+        }];
+        
+        //5. 根据matchAlg找到对应的S;
+        AIKVPointer *sAlg_p = [SMGUtils filterSingleFromArr:subFo.content_ps checkValid:^BOOL(AIKVPointer *item) {
+            return [TOUtils mIsC_1:matchAlg_p c:item];
+        }];
+        
+        //6. 行为化;
+        AIKVPointer *pAlg_p = firstPlusItem;
+        if (sAlg_p) {
+            NSInteger sIndex = [TOUtils indexOfAbsItem:sAlg_p atConContent:matchFo.content_ps];
+            BOOL sHappened = sIndex <= cutIndex;
+            if (sHappened) {
+                //a. S存在,且S已发生,则加工SP;
+            }else{
+                //b. S存在,但S未发生,则等待 (等S发生);
+            }
+            
+        }else{
+            if (pAlg_p.isOut) {
+                //c. S不存在,P.isOut=true,则直接输出;
+                complete(true,@[pAlg_p]);
+            }else{
+                //d. S不存在,P.isOut=false,则仅实现P即可;
+            }
+        }
+    }
 }
 
 /**

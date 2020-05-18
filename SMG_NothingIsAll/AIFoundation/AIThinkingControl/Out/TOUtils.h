@@ -33,6 +33,11 @@
 +(NSInteger) indexOfAbsItem:(AIKVPointer*)absItem atConContent:(NSArray*)conContent;
 
 /**
+ *  MARK:--------------------判断mc同级--------------------
+ */
++(BOOL) mcSameLayer:(AIKVPointer*)m c:(AIKVPointer*)c;
+
+/**
  *  MARK:--------------------收集概念节点的稀疏码--------------------
  */
 +(NSArray*) convertValuesFromAlg_ps:(NSArray*)alg_ps;

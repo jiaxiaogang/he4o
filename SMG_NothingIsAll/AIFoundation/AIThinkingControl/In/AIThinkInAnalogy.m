@@ -451,6 +451,8 @@
                 NSArray *sameValue_ps = [SMGUtils filterSame_ps:mAlg.content_ps parent_ps:pAlg.content_ps];
                 NSArray *mSub_ps = [SMGUtils removeSub_ps:sameValue_ps parent_ps:mAlg.content_ps];
                 NSArray *pSub_ps = [SMGUtils removeSub_ps:sameValue_ps parent_ps:pAlg.content_ps];
+                AIAbsAlgNode *createAbsAlg = [theNet createAbsAlg_NoRepeat:sameValue_ps conAlgs:@[mAlg,pAlg] isMem:false];
+                NSLog(@"--> MP 抽象概念节点 %@",Alg2FStr(createAbsAlg));
 
                 //b. 二级类比-部分有效
                 if (sameValue_ps.count > 0) {

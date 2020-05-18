@@ -79,6 +79,20 @@
     return -1;
 }
 
++(BOOL) mcSameLayer:(AIKVPointer*)m c:(AIKVPointer*)c{
+    AINodeBase *mNode = [SMGUtils searchNode:m];
+    AINodeBase *cNode = [SMGUtils searchNode:c];
+    if (mNode && cNode) {
+        //1. 判断0-1级抽象;
+        NSArray *mAbs_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:mNode]];
+        NSArray *cAbs_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:cNode]];
+        
+        //2. 判断有无共同抽象;
+        return [SMGUtils filterSame_ps:mAbs_ps parent_ps:cAbs_ps].count > 0;
+    }
+    return false;
+}
+
 +(NSArray*) convertValuesFromAlg_ps:(NSArray*)alg_ps{
     NSMutableArray *result = [[NSMutableArray alloc] init];
     NSArray *algs = [SMGUtils searchNodes:alg_ps];

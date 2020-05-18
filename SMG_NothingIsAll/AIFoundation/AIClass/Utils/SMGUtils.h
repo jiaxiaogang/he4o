@@ -224,6 +224,7 @@
  *  @result notnull
  */
 +(NSMutableArray*) filterArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid;
++(NSMutableArray*) filterArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid limit:(NSInteger)limit;
 
 /**
  *  MARK:--------------------用analogyType来筛选ports--------------------
@@ -231,5 +232,10 @@
  */
 +(NSArray*) filterPorts_Normal:(NSArray*)ports;
 +(NSArray*) filterPorts:(NSArray*)ports havTypes:(NSArray*)havTypes noTypes:(NSArray*)noTypes;
+
+/**
+ *  MARK:--------------------查找单条--------------------
+ */
++(id) filterSingleFromArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid;
 
 @end

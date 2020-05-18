@@ -652,6 +652,10 @@
 }
 
 +(NSMutableArray*) filterArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid {
+    return [SMGUtils filterArr:arr checkValid:checkValid limit:NSIntegerMax];
+}
+
++(NSMutableArray*) filterArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid limit:(NSInteger)limit{
     //1. 数据准备
     arr = ARRTOOK(arr);
     NSMutableArray *result = [[NSMutableArray alloc] init];
@@ -660,6 +664,7 @@
     for (id item in arr) {
         if (checkValid && checkValid(item)) {
             [result addObject:item];
+            if (result.count >= limit) break;
         }
     }
     return result;
@@ -698,6 +703,10 @@
         //c. 干不死的,有效;
         return true;
     }];
+}
+
++(id) filterSingleFromArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid {
+    return ARR_INDEX([SMGUtils filterArr:arr checkValid:checkValid limit:1], 0);
 }
 
 @end
