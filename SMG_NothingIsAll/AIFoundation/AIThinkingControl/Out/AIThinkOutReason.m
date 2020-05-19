@@ -18,10 +18,12 @@
 #import "AIShortMatchModel.h"
 #import "TOUtils.h"
 #import "AINetUtils.h"
+#import "AIThinkOutAction.h"
 
-@interface AIThinkOutReason() <TOAlgSchemeDelegate>
+@interface AIThinkOutReason() <TOAlgSchemeDelegate,TOActionDelegate>
 
 @property (strong, nonatomic) TOAlgScheme *algScheme;
+@property (strong, nonatomic) AIThinkOutAction *toAction;
 
 @end
 
@@ -37,6 +39,8 @@
 -(void) initData{
     self.algScheme = [[TOAlgScheme alloc] init];
     self.algScheme.delegate = self;
+    self.toAction = [[AIThinkOutAction alloc] init];
+    self.toAction.delegate = self;
 }
 
 
@@ -147,7 +151,7 @@
             BOOL sHappened = sIndex <= cutIndex;
             if (sHappened) {
                 //a. S存在,且S已发生,则加工SP;
-                [self.algScheme convert2Out_SP:sAlg_p pAlg_p:pAlg_p complete:^(BOOL success,NSArray *acts) {
+                [self.toAction convert2Out_SP:sAlg_p pAlg_p:pAlg_p complete:^(BOOL success,NSArray *acts) {
                     complete(success,acts);
                 }];
             }else{
@@ -156,7 +160,7 @@
             }
         }else{
             //c. S不存在,则仅实现P即可;
-            [self.algScheme convert2Out_SP_Hav:pAlg_p complete:complete checkScore:^BOOL(AIAlgNodeBase *mAlg) {
+            [self.toAction convert2Out_SP_Hav:pAlg_p complete:complete checkScore:^BOOL(AIAlgNodeBase *mAlg) {
                 return true;
             }];
         }
@@ -304,6 +308,16 @@
 }
 -(AIAlgNodeBase*) toAlgScheme_MatchRTAlg:(AIAlgNodeBase*)rtAlg mUniqueV_p:(AIKVPointer*)mUniqueV_p{
     return [self.delegate aiTOR_MatchRTAlg:rtAlg mUniqueV_p:mUniqueV_p];
+}
+
+//MARK:===============================================================
+//MARK:                     < TOActionDelegate >
+//MARK:===============================================================
+-(void)toAction_updateEnergy:(CGFloat)delta{
+    [self.delegate aiThinkOutReason_UpdateEnergy:delta];
+}
+-(BOOL)toAction_EnergyValid{
+    return [self.delegate aiThinkOutReason_EnergyValid];
 }
 
 @end

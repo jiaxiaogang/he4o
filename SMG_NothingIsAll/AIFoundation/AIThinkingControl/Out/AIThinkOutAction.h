@@ -9,6 +9,16 @@
 #import <Foundation/Foundation.h>
 
 /**
+ *  MARK:--------------------行为化代理--------------------
+ */
+@protocol TOActionDelegate <NSObject>
+
+-(void) toAction_updateEnergy:(CGFloat)delta;
+-(BOOL) toAction_EnergyValid;
+
+@end
+
+/**
  *  MARK:--------------------行为化类--------------------
  *  @version 20200520由TOAlgScheme大改版而来;
  *  @desc
@@ -21,5 +31,10 @@
  *          b. 转移时,将subOutModel存至outModel;
  */
 @interface AIThinkOutAction : NSObject
+
+@property (weak, nonatomic) id<TOActionDelegate> delegate;
+
+-(void) convert2Out_SP:(AIKVPointer*)sAlg_p pAlg_p:(AIKVPointer*)pAlg_p complete:(void(^)(BOOL success,NSArray *acts))complete;
+-(void) convert2Out_SP_Hav:(AIKVPointer*)curAlg_p complete:(void(^)(BOOL itemSuccess,NSArray *actions))complete checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore;
 
 @end
