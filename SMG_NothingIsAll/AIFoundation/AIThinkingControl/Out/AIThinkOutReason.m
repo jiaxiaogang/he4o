@@ -127,9 +127,6 @@
         return;
     }
     
-    //3. 三级行为化判断 (围绕P做行为);
-    //a. 从S中,已发现的(cutIndex前)找对应S,以进行SP行为化;
-    
     //3. 当firstPlus就是checkAlg_p时 (尝试对checkAlg行为化);
     if (firstAt_Plus == cutIndex + 1) {
         
@@ -143,15 +140,19 @@
             return [TOUtils mIsC_1:matchAlg_p c:item];
         }];
         
-        //6. 行为化;
+        //6. 行为化 (围绕P做行为);
         AIKVPointer *pAlg_p = firstPlusItem;
         if (sAlg_p) {
             NSInteger sIndex = [TOUtils indexOfAbsItem:sAlg_p atConContent:matchFo.content_ps];
             BOOL sHappened = sIndex <= cutIndex;
             if (sHappened) {
                 //a. S存在,且S已发生,则加工SP;
+                [self.algScheme convert2Out_SP:sAlg_p pAlg_p:pAlg_p complete:^(NSArray *acts, BOOL success) {
+                    complete(success,acts);
+                }];
             }else{
                 //b. S存在,但S未发生,则等待 (等S发生);
+                complete(true,nil);
             }
             
         }else{
@@ -160,6 +161,9 @@
                 complete(true,@[pAlg_p]);
             }else{
                 //d. S不存在,P.isOut=false,则仅实现P即可;
+                //在行为化中,做cHav,并且涉及到转移,和score评价;
+                
+                
             }
         }
     }

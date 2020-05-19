@@ -87,3 +87,13 @@
 -(void) convert2Out_Short_MC_V3:(AIAlgNodeBase*)cAlg curFo:(AIFoNodeBase*)cFo complete:(void(^)(NSArray *acts,BOOL success))complete;
 
 @end
+
+
+//MARK:===============================================================
+//MARK:                     < SP行为化 >
+//MARK:===============================================================
+@interface TOAlgScheme (SP)
+
+-(void) convert2Out_SP:(AIKVPointer*)sAlg_p pAlg_p:(AIKVPointer*)pAlg_p complete:(void(^)(NSArray *acts,BOOL success))complete;
+
+@end

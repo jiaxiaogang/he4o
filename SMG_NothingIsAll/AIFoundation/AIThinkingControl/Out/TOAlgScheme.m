@@ -753,3 +753,72 @@
 }
 
 @end
+
+
+//MARK:===============================================================
+//MARK:                     < SP行为化 >
+//MARK:===============================================================
+@implementation TOAlgScheme (SP)
+
+/**
+ *  MARK:--------------------SP行为化--------------------
+ *  @desc 参考:MC_V3;
+ *  @desc 工作模式:
+ *      1. 将S加工成P;
+ *      2. 满足P;
+ *  @param complete : 必然执行,且仅执行一次;
+ */
+-(void) convert2Out_SP:(AIKVPointer*)sAlg_p pAlg_p:(AIKVPointer*)pAlg_p complete:(void(^)(NSArray *acts,BOOL success))complete {
+    //1. 结果数据准备
+    NSMutableArray *acts = [[NSMutableArray alloc] init];
+    AIAlgNodeBase *sAlg = [SMGUtils searchNode:sAlg_p];
+    AIAlgNodeBase *pAlg = [SMGUtils searchNode:pAlg_p];
+    if (!pAlg) {
+        complete(acts,false);//p为空直接失败;
+        return;
+    }
+    NSLog(@"STEPKEY==========================SP START==========================\nSTEPKEYS:%@\nSTEPKEYP:%@",Alg2FStr(sAlg),Alg2FStr(pAlg));
+    
+    //2. 满足P: GL部分;
+    NSDictionary *cGLDic = [SMGUtils filterPointers:sAlg.content_ps b_ps:pAlg.content_ps checkItemValid:^BOOL(AIKVPointer *a_p, AIKVPointer *b_p) {
+        return [a_p.identifier isEqualToString:b_p.identifier];
+    }];
+    
+    //3. 满足P: H部分;
+    NSArray *cHavArr = [SMGUtils removeSub_ps:cGLDic.allValues parent_ps:pAlg.content_ps];
+    
+    //4. GL行为化;
+    __block BOOL failure = false;
+    for (NSData *key in cGLDic) {
+        //a. 对比大小
+        AIKVPointer *sValue_p = DATA2OBJ(key);
+        AIKVPointer *pValue_p = [cGLDic objectForKey:key];
+        AnalogyType type = [ThinkingUtils compare:sValue_p valueB_p:pValue_p];
+        //b. 行为化
+        NSLog(@"------SP_GL行为化:%@ -> %@",[NVHeUtil getLightStr:sValue_p],[NVHeUtil getLightStr:pValue_p]);
+        [self convert2Out_RelativeValue:pValue_p.algsType ds:pValue_p.dataSource type:type vSuccess:^(AIFoNodeBase *glFo, NSArray *itemActs) {
+            [acts addObjectsFromArray:itemActs];
+        } vFailure:^{
+            failure = true;
+        }];
+        if (failure) break;
+    }
+    
+    //5. H行为化;
+    for (AIKVPointer *pValue_p in cHavArr) {
+        //TODOTOMORROW:
+        //a. 将pValue_p独立找到概念,并找cHav;
+        //b. 将具象节点checkAlg找出来,并与pValue_p组成概念节点,并找cHav;
+        
+        
+        //[self convert2Out_Alg:csAlg.pointer curFo:curFo type:ATHav success:^(NSArray *acts) {
+        //    [allActs addObjectsFromArray:acts];
+        //} failure:^{
+        //    failured = true;
+        //} checkScore:checkScore];
+    }
+    
+    complete(acts,!failure);
+}
+
+@end
