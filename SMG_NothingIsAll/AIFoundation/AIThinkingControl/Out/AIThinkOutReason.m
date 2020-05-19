@@ -147,24 +147,18 @@
             BOOL sHappened = sIndex <= cutIndex;
             if (sHappened) {
                 //a. S存在,且S已发生,则加工SP;
-                [self.algScheme convert2Out_SP:sAlg_p pAlg_p:pAlg_p complete:^(NSArray *acts, BOOL success) {
+                [self.algScheme convert2Out_SP:sAlg_p pAlg_p:pAlg_p complete:^(BOOL success,NSArray *acts) {
                     complete(success,acts);
                 }];
             }else{
                 //b. S存在,但S未发生,则等待 (等S发生);
                 complete(true,nil);
             }
-            
         }else{
-            if (pAlg_p.isOut) {
-                //c. S不存在,P.isOut=true,则直接输出;
-                complete(true,@[pAlg_p]);
-            }else{
-                //d. S不存在,P.isOut=false,则仅实现P即可;
-                //在行为化中,做cHav,并且涉及到转移,和score评价;
-                
-                
-            }
+            //c. S不存在,则仅实现P即可;
+            [self.algScheme convert2Out_SP_Hav:pAlg_p complete:complete checkScore:^BOOL(AIAlgNodeBase *mAlg) {
+                return true;
+            }];
         }
     }
 }

@@ -94,6 +94,7 @@
 //MARK:===============================================================
 @interface TOAlgScheme (SP)
 
--(void) convert2Out_SP:(AIKVPointer*)sAlg_p pAlg_p:(AIKVPointer*)pAlg_p complete:(void(^)(NSArray *acts,BOOL success))complete;
+-(void) convert2Out_SP:(AIKVPointer*)sAlg_p pAlg_p:(AIKVPointer*)pAlg_p complete:(void(^)(BOOL success,NSArray *acts))complete;
+-(void) convert2Out_SP_Hav:(AIKVPointer*)curAlg_p complete:(void(^)(BOOL itemSuccess,NSArray *actions))complete checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore;
 
 @end

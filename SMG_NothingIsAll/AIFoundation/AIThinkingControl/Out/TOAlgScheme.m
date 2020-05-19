@@ -768,13 +768,13 @@
  *      2. 满足P;
  *  @param complete : 必然执行,且仅执行一次;
  */
--(void) convert2Out_SP:(AIKVPointer*)sAlg_p pAlg_p:(AIKVPointer*)pAlg_p complete:(void(^)(NSArray *acts,BOOL success))complete {
+-(void) convert2Out_SP:(AIKVPointer*)sAlg_p pAlg_p:(AIKVPointer*)pAlg_p complete:(void(^)(BOOL success,NSArray *acts))complete {
     //1. 结果数据准备
     NSMutableArray *acts = [[NSMutableArray alloc] init];
     AIAlgNodeBase *sAlg = [SMGUtils searchNode:sAlg_p];
     AIAlgNodeBase *pAlg = [SMGUtils searchNode:pAlg_p];
     if (!pAlg) {
-        complete(acts,false);//p为空直接失败;
+        complete(false,acts);//p为空直接失败;
         return;
     }
     NSLog(@"STEPKEY==========================SP START==========================\nSTEPKEYS:%@\nSTEPKEYP:%@",Alg2FStr(sAlg),Alg2FStr(pAlg));
@@ -806,9 +806,17 @@
     
     //5. H行为化;
     for (AIKVPointer *pValue_p in cHavArr) {
-        //TODOTOMORROW:
         //a. 将pValue_p独立找到概念,并找cHav;
-        //b. 将具象节点checkAlg找出来,并与pValue_p组成概念节点,并找cHav;
+        AIAbsAlgNode *soloAlg = [theNet createAbsAlg_NoRepeat:@[pValue_p] conAlgs:nil isMem:false];
+        [self convert2Out_SP_Hav:soloAlg.pointer complete:complete checkScore:^BOOL(AIAlgNodeBase *mAlg) {
+            return true;
+        }];
+        
+        
+        //TODOTOMORROW:
+        //1. 将具象节点checkAlg找出来,并与pValue_p组成概念节点,并找cHav;
+        //2. 对cHav和GL的调用,转移,做检查,不应走向MC,这个要改掉;
+        //3. 补全score评价;
         
         
         //[self convert2Out_Alg:csAlg.pointer curFo:curFo type:ATHav success:^(NSArray *acts) {
@@ -818,7 +826,45 @@
         //} checkScore:checkScore];
     }
     
-    complete(acts,!failure);
+    complete(!failure,acts);
+}
+
+/**
+ *  MARK:--------------------单个概念的行为化--------------------
+ *  第1级: 直接判定curAlg_p为输出则收集;
+ *  第2级: LongNet长短时网络行为化
+ *  @param curAlg_p : 来源: TOR.R-;
+ */
+-(void) convert2Out_SP_Hav:(AIKVPointer*)curAlg_p complete:(void(^)(BOOL itemSuccess,NSArray *actions))complete checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
+    //1. 数据准备;
+    if (!curAlg_p) {
+        complete(false,nil);
+        return;
+    }
+    
+    //2. 本身即是isOut时,直接行为化返回;
+    if (curAlg_p.isOut) {
+        complete(true,@[curAlg_p]);
+        NSLog(@"-> SP_Hav_isOut为TRUE: %@",AlgP2FStr(curAlg_p));
+        return;
+    }else{
+        NSMutableArray *result = [[NSMutableArray alloc] init];
+        __block BOOL success = false;
+        AIAlgNodeBase *curAlg = [SMGUtils searchNode:curAlg_p];
+        if (curAlg) {
+            //4. mc行为化失败,则联想长时行为化;
+            [self convert2Out_Long_NET:ATHav at:curAlg_p.algsType ds:curAlg_p.dataSource success:^(AIFoNodeBase *havFo, NSArray *actions) {
+                //4. hnAlg行为化成功;
+                [result addObjectsFromArray:actions];
+                NSLog(@"---> HN_行为化成功: 长度:%lu 行为:[%@]",(unsigned long)actions.count,[NVHeUtil getLightStr4Ps:actions]);
+                success = true;
+            } failure:^{
+                //8. 未联想到hnAlg,失败;
+                WLog(@"长时_行为化失败");
+            }];
+        }
+        complete(success,result);
+    }
 }
 
 @end
