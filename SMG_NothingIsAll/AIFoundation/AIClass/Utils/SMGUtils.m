@@ -583,12 +583,13 @@
 //MARK:===============================================================
 @implementation SMGUtils (Remove)
 
-+(NSArray*) removeSub_ps:(NSArray*)sub_ps parent_ps:(NSArray*)parent_ps{
++(NSMutableArray*) removeSub_ps:(NSArray*)sub_ps parent_ps:(NSArray*)parent_ps{
     sub_ps = ARRTOOK(sub_ps);
+    NSMutableArray *result = [[NSMutableArray alloc] init];
     for (AIPointer *sub_p in sub_ps) {
-        parent_ps = [self removeSub_p:sub_p parent_ps:parent_ps];
+        result = [self removeSub_p:sub_p parent_ps:parent_ps];
     }
-    return parent_ps;
+    return result;
 }
 
 +(NSMutableArray*) removeSub_p:(AIPointer*)sub_p parent_ps:(NSArray*)parent_ps{

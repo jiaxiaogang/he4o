@@ -20,7 +20,7 @@
  *      2. 满足P;
  *  @param complete : 必然执行,且仅执行一次;
  */
--(void) convert2Out_SP:(AIKVPointer*)sAlg_p pAlg_p:(AIKVPointer*)pAlg_p complete:(void(^)(BOOL success,NSArray *acts))complete {
+-(void) convert2Out_SP:(AIKVPointer*)sAlg_p pAlg_p:(AIKVPointer*)pAlg_p checkAlg_p:(AIKVPointer*)checkAlg_p complete:(void(^)(BOOL success,NSArray *acts))complete {
     //1. 结果数据准备
     NSMutableArray *acts = [[NSMutableArray alloc] init];
     AIAlgNodeBase *sAlg = [SMGUtils searchNode:sAlg_p];
@@ -36,7 +36,7 @@
         return [a_p.identifier isEqualToString:b_p.identifier];
     }];
     
-    //3. 满足P: H部分;
+    //3. 满足P: cHav部分;
     NSArray *cHavArr = [SMGUtils removeSub_ps:cGLDic.allValues parent_ps:pAlg.content_ps];
     
     //4. GL行为化;
@@ -48,7 +48,7 @@
         AnalogyType type = [ThinkingUtils compare:sValue_p valueB_p:pValue_p];
         //b. 行为化
         NSLog(@"------SP_GL行为化:%@ -> %@",[NVHeUtil getLightStr:sValue_p],[NVHeUtil getLightStr:pValue_p]);
-        [self convert2Out_RelativeValue:pValue_p.algsType ds:pValue_p.dataSource type:type vSuccess:^(AIFoNodeBase *glFo, NSArray *itemActs) {
+        [self convert2Out_GL:pValue_p.algsType ds:pValue_p.dataSource type:type vSuccess:^(AIFoNodeBase *glFo, NSArray *itemActs) {
             [acts addObjectsFromArray:itemActs];
         } vFailure:^{
             failure = true;
@@ -59,114 +59,50 @@
     //5. H行为化;
     for (AIKVPointer *pValue_p in cHavArr) {
         //a. 将pValue_p独立找到概念,并找cHav;
+        __block BOOL hSuccess = false;
         AIAbsAlgNode *soloAlg = [theNet createAbsAlg_NoRepeat:@[pValue_p] conAlgs:nil isMem:false];
-        [self convert2Out_SP_Hav:soloAlg.pointer complete:complete checkScore:^BOOL(AIAlgNodeBase *mAlg) {
+        [self convert2Out_Hav:soloAlg.pointer complete:^(BOOL itemSuccess, NSArray *actions) {
+            hSuccess = itemSuccess;
+            [acts addObjectsFromArray:actions];
+        }  checkScore:^BOOL(AIAlgNodeBase *mAlg) {
             return true;
         }];
         
+        //b. 将pValue_p+same_ps重组找到概念,并找cHav;
+        if (!hSuccess) {
+            AIAlgNodeBase *checkAlg = [SMGUtils searchNode:checkAlg_p];
+            NSMutableArray *group_ps = [SMGUtils removeSub_ps:pAlg.content_ps parent_ps:checkAlg.content_ps];
+            [group_ps addObject:pValue_p];
+            AIAbsAlgNode *groupAlg = [theNet createAbsAlg_NoRepeat:group_ps conAlgs:nil isMem:false];
+            [self convert2Out_Hav:groupAlg.pointer complete:^(BOOL itemSuccess, NSArray *actions) {
+                hSuccess = itemSuccess;
+                [acts addObjectsFromArray:actions];
+            } checkScore:^BOOL(AIAlgNodeBase *mAlg) {
+                return true;
+            }];
+        }
         
-        //TODOTOMORROW:
-        //1. 将具象节点checkAlg找出来,并与pValue_p组成概念节点,并找cHav;
-        //2. 对cHav和GL的调用,转移,做检查,不应走向MC,这个要改掉;
-        //3. 补全score评价;
-        
-        
-        //[self convert2Out_Alg:csAlg.pointer curFo:curFo type:ATHav success:^(NSArray *acts) {
-        //    [allActs addObjectsFromArray:acts];
-        //} failure:^{
-        //    failured = true;
-        //} checkScore:checkScore];
+        //c. 一条稀疏码行为化失败,则直接返回失败;
+        if (!hSuccess) {
+            failure = true;
+            break;
+        }
     }
     
     complete(!failure,acts);
 }
 
 /**
- *  MARK:--------------------单个概念的行为化--------------------
- *  第1级: 直接判定curAlg_p为输出则收集;
- *  第2级: LongNet长短时网络行为化
+ *  MARK:--------------------P行为化--------------------
  *  @param curAlg_p : 来源: TOR.R-;
  */
--(void) convert2Out_SP_Hav:(AIKVPointer*)curAlg_p complete:(void(^)(BOOL itemSuccess,NSArray *actions))complete checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
-    //1. 数据准备;
-    if (!curAlg_p) {
-        complete(false,nil);
-        return;
-    }
-    
-    //2. 本身即是isOut时,直接行为化返回;
-    if (curAlg_p.isOut) {
-        complete(true,@[curAlg_p]);
-        NSLog(@"-> SP_Hav_isOut为TRUE: %@",AlgP2FStr(curAlg_p));
-        return;
-    }else{
-        NSMutableArray *result = [[NSMutableArray alloc] init];
-        __block BOOL success = false;
-        AIAlgNodeBase *curAlg = [SMGUtils searchNode:curAlg_p];
-        if (curAlg) {
-            //4. mc行为化失败,则联想长时行为化;
-            [self convert2Out_Long_NET:ATHav at:curAlg_p.algsType ds:curAlg_p.dataSource success:^(AIFoNodeBase *havFo, NSArray *actions) {
-                //4. hnAlg行为化成功;
-                [result addObjectsFromArray:actions];
-                NSLog(@"---> HN_行为化成功: 长度:%lu 行为:[%@]",(unsigned long)actions.count,[NVHeUtil getLightStr4Ps:actions]);
-                success = true;
-            } failure:^{
-                //8. 未联想到hnAlg,失败;
-                WLog(@"长时_行为化失败");
-            }];
-        }
-        complete(success,result);
-    }
+-(void) convert2Out_P:(AIKVPointer*)curAlg_p complete:(void(^)(BOOL itemSuccess,NSArray *actions))complete checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
+    [self convert2Out_Hav:curAlg_p complete:complete checkScore:checkScore];
 }
 
-//MARK:===============================================================
-//MARK:                     < privateMethod >
-//MARK:===============================================================
-/**
- *  MARK:--------------------"相对概念"的行为化--------------------
- *  1. 先根据havAlg取到havFo;
- *  2. 再判断havFo中的rangeOrder的行为化;
- *  3. 思考: 是否做alg局部匹配,递归取3个左右,逐个取并取其ATHav (并类比缺失部分,循环); (191120废弃,不做)
- *  @param success : 行为化成功则返回(havFo + 行为序列); (havFo notnull, actions notnull)
- */
--(void) convert2Out_Long_NET:(AnalogyType)type at:(NSString*)at ds:(NSString*)ds success:(void(^)(AIFoNodeBase *havFo,NSArray *actions))success failure:(void(^)())failure {
-    //1. 数据准备
-    AIAlgNodeBase *hnAlg = [ThinkingUtils dataOut_GetAlgNodeWithInnerType:type algsType:at dataSource:ds];
-    if (!hnAlg) {
-        //2. 未联想到hnAlg,失败;
-        failure();
-        return;
-    }
-    
-    //2. 找引用"相对概念"的内存中"相对时序",并行为化; (注: 一般不存在内存相对概念,此处代码应该不会执行);
-    NSArray *memRefPorts = [SMGUtils searchObjectForPointer:hnAlg.pointer fileName:kFNMemRefPorts time:cRTMemPort];
-    __block BOOL successed = false;
-    [self convert2Out_RelativeFo_ps:[SMGUtils convertPointersFromPorts:memRefPorts] success:^(AIFoNodeBase *havFo, NSArray *actions) {
-        successed = true;
-        success(havFo,actions);
-    } failure:^{
-        WLog(@"相对概念,行为化失败");
-    }];
-    
-    //3. 根据havAlg联想时序,并找出新的解决方案,与新的行为化的概念,与新的条件概念;
-    if (!successed) {
-        NSArray *hdRefPorts = ARR_SUB(hnAlg.refPorts, 0, cHavNoneAssFoCount);
-        [self convert2Out_RelativeFo_ps:[SMGUtils convertPointersFromPorts:hdRefPorts] success:^(AIFoNodeBase *havFo, NSArray *actions) {
-            successed = true;
-            success(havFo,actions);
-        } failure:^{
-            WLog(@"相对概念,行为化失败");
-        }];
-        
-        //4. 行为化失败;
-        if (!successed) {
-            failure();
-        }
-    }
-}
 
 //MARK:===============================================================
-//MARK:                     < Fo&Alg >
+//MARK:                     < Fo >
 //MARK:===============================================================
 /**
  *  MARK:--------------------对一个rangeOrder进行行为化;--------------------
@@ -192,15 +128,24 @@
     //2. 依次单个概念行为化
     for (AIKVPointer *curAlg_p in curAlg_ps) {
         __block BOOL successed = false;
-        [self convert2Out_Alg:curAlg_p curFo:curFo type:ATHav success:^(NSArray *actions) {
+        [self convert2Out_Hav:curAlg_p complete:^(BOOL itemSuccess, NSArray *actions) {
             //3. 行为化成功,则收集;
-            successed = true;
+            successed = itemSuccess;
             [result addObjectsFromArray:actions];
-        } failure:^{
-            WLog(@"行为化失败");
         } checkScore:^BOOL(AIAlgNodeBase *mAlg) {
             if (mAlg) {
                 //将此处反思功能去掉 (原方法,太繁琐,评价应该基于SP反思解决);
+                
+                
+                //TODOTOMORROW:
+                //1. 全面检查score去掉旧的,补全新的;
+                
+                
+                
+                
+                
+                
+                
             }
             //11. 默认返回可行;
             return true;
@@ -221,59 +166,57 @@
     success(result);
 }
 
+//MARK:===============================================================
+//MARK:                     < H/G/L >
+//MARK:===============================================================
+
 /**
  *  MARK:--------------------单个概念的行为化--------------------
  *  第1级: 直接判定curAlg_p为输出则收集;
  *  第2级: MC匹配行为化
  *  第3级: LongNet长短时网络行为化
- *  @param type : ATHav或ATNone
  *  @param curAlg_p : 三个来源: 1.Fo的元素A;  2.Range的元素A; 3.Alg的嵌套A;
  */
--(void) convert2Out_Alg:(AIKVPointer*)curAlg_p curFo:(AIFoNodeBase*)curFo type:(AnalogyType)type success:(void(^)(NSArray *actions))success failure:(void(^)())failure checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
+-(void) convert2Out_Hav:(AIKVPointer*)curAlg_p complete:(void(^)(BOOL itemSuccess,NSArray *actions))complete checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
     //1. 数据准备;
-    if (!curAlg_p) {
-        failure();
-    }
-    if (type != ATHav && type != ATNone) {
-        WLog(@"SingleAlg_行为化类参数type错误");
-        failure();
-    }
     NSMutableArray *result = [[NSMutableArray alloc] init];
+    __block BOOL success = false;
+    __block AIFoNodeBase *moveHFo = nil;//转移fo,暂未使用;
+    if (!curAlg_p) {
+        complete(false,nil);
+        return;
+    }
     
     //2. 本身即是isOut时,直接行为化返回;
     if (curAlg_p.isOut) {
-        [result addObject:curAlg_p];
-        NSLog(@"-> isOut为TRUE: %@",[NVHeUtil getLightStr:curAlg_p]);
-        success(result);
+        complete(true,@[curAlg_p]);
+        NSLog(@"-> SP_Hav_isOut为TRUE: %@",AlgP2FStr(curAlg_p));
         return;
     }else{
+        //3. 数据检查curAlg
         AIAlgNodeBase *curAlg = [SMGUtils searchNode:curAlg_p];
-        if (curAlg) {
-            //3. 单ATHav时,直接从瞬时做MC匹配行为化;
-            __block BOOL successed = false;
-            //4. mc行为化失败,则联想长时行为化;
-            [self convert2Out_Long_NET:type at:curAlg_p.algsType ds:curAlg_p.dataSource success:^(AIFoNodeBase *havFo, NSArray *actions) {
-                //4. hnAlg行为化成功;
-                [result addObjectsFromArray:actions];
-                NSLog(@"---> HN_行为化成功: 长度:%lu 行为:[%@]",(unsigned long)actions.count,[NVHeUtil getLightStr4Ps:actions]);
-                success(result);
-                successed = true;
-            } failure:^{
-                //20191120: _sub方法废弃; 第3级: 对curAlg的(subAlg&subValue)分别判定; (目前仅支持a2+v1各一个)
-                //NSArray *subResult = ARRTOOK([self convert2Out_Single_Sub:curAlg_p]);
-                //[result addObjectsFromArray:subResult];
-                //8. 未联想到hnAlg,失败;
-                WLog(@"长时_行为化失败");
-            }];
-            if (successed) return;
+        if (!curAlg) {
+            complete(false,nil);
+            return;
         }
+        
+        //4. 数据检查hAlg
+        AIAlgNodeBase *hAlg = [ThinkingUtils dataOut_GetAlgNodeWithInnerType:ATHav algsType:curAlg_p.algsType dataSource:curAlg_p.dataSource];
+        if (!hAlg) {
+            complete(false,nil);
+            return;
+        }
+            
+        //5. 先根据havAlg取到havFo (逐个尝试行为化,成功一条即止);
+        NSArray *hdRefPorts = ARR_SUB(hAlg.refPorts, 0, cHavNoneAssFoCount);
+        [self convert2Out_RelativeFo_ps:[SMGUtils convertPointersFromPorts:hdRefPorts] success:^(AIFoNodeBase *havFo, NSArray *actions) {
+            success = true;
+            moveHFo = havFo;
+            [result addObjectsFromArray:actions];
+        } failure:nil];
     }
-    failure();
+    complete(success,result);
 }
-
-//MARK:===============================================================
-//MARK:                     < Relative >
-//MARK:===============================================================
 
 /**
  *  MARK:--------------------对单稀疏码的变化进行行为化--------------------
@@ -285,7 +228,7 @@
  *          5. 转移: C条件->递归到convert2Out_Single_Alg();
  *  @param at & ds : 用作查找"大/小"的标识;
  */
--(void) convert2Out_RelativeValue:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type vSuccess:(void(^)(AIFoNodeBase *glFo,NSArray *acts))vSuccess vFailure:(void(^)())vFailure {
+-(void) convert2Out_GL:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type vSuccess:(void(^)(AIFoNodeBase *glFo,NSArray *acts))vSuccess vFailure:(void(^)())vFailure {
     //1. 数据检查
     if ((type != ATGreater && type != ATLess)) {
         WLog(@"value_行为化类参数type|value_p错误");
@@ -315,6 +258,9 @@
     if (!successed) vFailure();
 }
 
+//MARK:===============================================================
+//MARK:                     < Relativen Fos >
+//MARK:===============================================================
 
 /**
  *  MARK:--------------------"相对时序"的行为化--------------------

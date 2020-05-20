@@ -151,7 +151,7 @@
             BOOL sHappened = sIndex <= cutIndex;
             if (sHappened) {
                 //a. S存在,且S已发生,则加工SP;
-                [self.toAction convert2Out_SP:sAlg_p pAlg_p:pAlg_p complete:^(BOOL success,NSArray *acts) {
+                [self.toAction convert2Out_SP:sAlg_p pAlg_p:pAlg_p checkAlg_p:checkAlg_p complete:^(BOOL success,NSArray *acts) {
                     complete(success,acts);
                 }];
             }else{
@@ -160,7 +160,7 @@
             }
         }else{
             //c. S不存在,则仅实现P即可;
-            [self.toAction convert2Out_SP_Hav:pAlg_p complete:complete checkScore:^BOOL(AIAlgNodeBase *mAlg) {
+            [self.toAction convert2Out_P:pAlg_p complete:complete checkScore:^BOOL(AIAlgNodeBase *mAlg) {
                 return true;
             }];
         }
