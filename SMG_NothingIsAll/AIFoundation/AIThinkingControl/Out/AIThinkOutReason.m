@@ -77,6 +77,7 @@
 
 /**
  *  MARK:--------------------以四模式的方式,传递给TOR--------------------
+ *  @todo 对TOR做mModel迭代;
  */
 -(BOOL) commitFromTOP_Convert2Actions_V2:(NSArray*)curAlg_ps cFo:(AIFoNodeBase*)cFo subNode:(AIFoNodeBase*)subNode plusNode:(AIFoNodeBase*)plusNode{
     //1. 进行行为化 (仅对一帧做行为化);
@@ -151,18 +152,14 @@
             BOOL sHappened = sIndex <= cutIndex;
             if (sHappened) {
                 //a. S存在,且S已发生,则加工SP;
-                [self.toAction convert2Out_SP:sAlg_p pAlg_p:pAlg_p checkAlg_p:checkAlg_p complete:^(BOOL success,NSArray *acts) {
-                    complete(success,acts);
-                }];
+                [self.toAction convert2Out_SP:sAlg_p pAlg_p:pAlg_p checkAlg_p:checkAlg_p complete:complete];
             }else{
                 //b. S存在,但S未发生,则等待 (等S发生);
                 complete(true,nil);
             }
         }else{
             //c. S不存在,则仅实现P即可;
-            [self.toAction convert2Out_P:pAlg_p complete:complete checkScore:^BOOL(AIAlgNodeBase *mAlg) {
-                return true;
-            }];
+            [self.toAction convert2Out_P:pAlg_p complete:complete];
         }
     }
 }

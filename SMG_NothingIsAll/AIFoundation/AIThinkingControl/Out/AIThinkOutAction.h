@@ -23,18 +23,21 @@
  *  @version 20200520由TOAlgScheme大改版而来;
  *  @desc
  *      1. 支持两个主要入口方法:
- *          a. SP_Value
- *          b. P_Alg
+ *          a. SP
+ *          b. P
  *      2. 支持子时序递归 (当cHav时,转移至另一时序);
  *      3. 支持outModel:
  *          a. 行为化成功时,cutIndex右移至下帧;
  *          b. 转移时,将subOutModel存至outModel;
+ *  @todo
+ *      1. 评价支持: 将fo返回到subOutModel并进行score评价);
+ *      2. 短时记忆支持:在转移时,生成subOutModel并放到outModel下;
  */
 @interface AIThinkOutAction : NSObject
 
 @property (weak, nonatomic) id<TOActionDelegate> delegate;
 
 -(void) convert2Out_SP:(AIKVPointer*)sAlg_p pAlg_p:(AIKVPointer*)pAlg_p checkAlg_p:(AIKVPointer*)checkAlg_p complete:(void(^)(BOOL success,NSArray *acts))complete;
--(void) convert2Out_P:(AIKVPointer*)curAlg_p complete:(void(^)(BOOL itemSuccess,NSArray *actions))complete checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore;
+-(void) convert2Out_P:(AIKVPointer*)curAlg_p complete:(void(^)(BOOL itemSuccess,NSArray *actions))complete;
 
 @end

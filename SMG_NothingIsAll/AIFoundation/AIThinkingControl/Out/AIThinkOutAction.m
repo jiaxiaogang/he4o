@@ -96,8 +96,10 @@
  *  MARK:--------------------P行为化--------------------
  *  @param curAlg_p : 来源: TOR.R-;
  */
--(void) convert2Out_P:(AIKVPointer*)curAlg_p complete:(void(^)(BOOL itemSuccess,NSArray *actions))complete checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
-    [self convert2Out_Hav:curAlg_p complete:complete checkScore:checkScore];
+-(void) convert2Out_P:(AIKVPointer*)curAlg_p complete:(void(^)(BOOL itemSuccess,NSArray *actions))complete {
+    [self convert2Out_Hav:curAlg_p complete:complete checkScore:^BOOL(AIAlgNodeBase *mAlg) {
+        return true;
+    }];
 }
 
 
@@ -133,21 +135,6 @@
             successed = itemSuccess;
             [result addObjectsFromArray:actions];
         } checkScore:^BOOL(AIAlgNodeBase *mAlg) {
-            if (mAlg) {
-                //将此处反思功能去掉 (原方法,太繁琐,评价应该基于SP反思解决);
-                
-                
-                //TODOTOMORROW:
-                //1. 全面检查score去掉旧的,补全新的;
-                
-                
-                
-                
-                
-                
-                
-            }
-            //11. 默认返回可行;
             return true;
         }];
         
