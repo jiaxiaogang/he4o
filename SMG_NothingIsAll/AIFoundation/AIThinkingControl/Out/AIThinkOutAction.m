@@ -21,6 +21,8 @@
  *      1. 将S加工成P;
  *      2. 满足P;
  *  @param complete : 必然执行,且仅执行一次;
+ *  @version
+ *      2020-05-22: 调用cHav,在原先solo与group的基础上,新增了最优先的checkAlg (因为solo和group可能压根不存在此概念,而TO是主应用,而非构建的);
  */
 -(void) convert2Out_SP:(AIKVPointer*)sAlg_p pAlg_p:(AIKVPointer*)pAlg_p checkAlg_p:(AIKVPointer*)checkAlg_p complete:(void(^)(BOOL success,NSArray *acts))complete {
     //1. 结果数据准备
@@ -60,16 +62,17 @@
     
     //5. H行为化;
     for (AIKVPointer *pValue_p in cHavArr) {
-        //TODOTOMORROW:
-        //1. SP方法,调用hav方法时,分与组的方式,是否都不太合适?即直接对checkAlg进行cHav;
-        //2. 对Hav方法,应用MC方式,更发散的联想;
-        //3. 转移时,对subOutModel的支持;
-        
-        
-        
-        
-        //a. 将pValue_p独立找到概念,并找cHav;
+        //a. 直接对checkAlg找cHav;
         __block BOOL hSuccess = false;
+        [self convert2Out_Hav:checkAlg_p complete:^(BOOL itemSuccess, NSArray *actions) {
+            hSuccess = itemSuccess;
+            [acts addObjectsFromArray:actions];
+        } checkScore:^BOOL(AIAlgNodeBase *mAlg) {
+            return true;
+        }];
+        if (hSuccess) continue;
+        
+        //b. 将pValue_p独立找到概念,并找cHav;
         AIAbsAlgNode *soloAlg = [theNet createAbsAlg_NoRepeat:@[pValue_p] conAlgs:nil isMem:false];
         [self convert2Out_Hav:soloAlg.pointer complete:^(BOOL itemSuccess, NSArray *actions) {
             hSuccess = itemSuccess;
@@ -77,20 +80,19 @@
         }  checkScore:^BOOL(AIAlgNodeBase *mAlg) {
             return true;
         }];
+        if (hSuccess) continue;
         
-        //b. 将pValue_p+same_ps重组找到概念,并找cHav;
-        if (!hSuccess) {
-            AIAlgNodeBase *checkAlg = [SMGUtils searchNode:checkAlg_p];
-            NSMutableArray *group_ps = [SMGUtils removeSub_ps:pAlg.content_ps parent_ps:checkAlg.content_ps];
-            [group_ps addObject:pValue_p];
-            AIAbsAlgNode *groupAlg = [theNet createAbsAlg_NoRepeat:group_ps conAlgs:nil isMem:false];
-            [self convert2Out_Hav:groupAlg.pointer complete:^(BOOL itemSuccess, NSArray *actions) {
-                hSuccess = itemSuccess;
-                [acts addObjectsFromArray:actions];
-            } checkScore:^BOOL(AIAlgNodeBase *mAlg) {
-                return true;
-            }];
-        }
+        //c. 将pValue_p+same_ps重组找到概念,并找cHav;
+        AIAlgNodeBase *checkAlg = [SMGUtils searchNode:checkAlg_p];
+        NSMutableArray *group_ps = [SMGUtils removeSub_ps:pAlg.content_ps parent_ps:checkAlg.content_ps];
+        [group_ps addObject:pValue_p];
+        AIAbsAlgNode *groupAlg = [theNet createAbsAlg_NoRepeat:group_ps conAlgs:nil isMem:false];
+        [self convert2Out_Hav:groupAlg.pointer complete:^(BOOL itemSuccess, NSArray *actions) {
+            hSuccess = itemSuccess;
+            [acts addObjectsFromArray:actions];
+        } checkScore:^BOOL(AIAlgNodeBase *mAlg) {
+            return true;
+        }];
         
         //c. 一条稀疏码行为化失败,则直接返回失败;
         if (!hSuccess) {
@@ -198,12 +200,23 @@
         }
         
         //4. 数据检查hAlg_根据type和value_p找ATHav
-        AIAlgNodeBase *hAlg = [AINetService getInnerAlg:curAlg vAT:curAlg_p.algsType vDS:curAlg_p.dataSource type:type];
+        AIAlgNodeBase *hAlg = [AINetService getInnerAlg:curAlg vAT:curAlg_p.algsType vDS:curAlg_p.dataSource type:ATHav];
         if (!hAlg) {
             complete(false,nil);
             return;
         }
-            
+        
+        
+        
+        
+        //TODOTOMORROW:
+        //1. 对Hav方法,应用MC方式,更发散的联想 (参考19192,因为每次递归,都要做这种发散联想,所以从TOP搬到TOAction中来);
+        //2. 转移时,对subOutModel的支持;
+        
+        
+        
+        
+        
         //5. 先根据havAlg取到havFo (逐个尝试行为化,成功一条即止);
         NSArray *hdRefPorts = ARR_SUB(hAlg.refPorts, 0, cHavNoneAssFoCount);
         [self convert2Out_RelativeFo_ps:[SMGUtils convertPointersFromPorts:hdRefPorts] success:^(AIFoNodeBase *havFo, NSArray *actions) {
