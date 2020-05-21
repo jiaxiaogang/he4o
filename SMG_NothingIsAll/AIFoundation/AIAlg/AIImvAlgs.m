@@ -8,7 +8,6 @@
 
 #import "AIImvAlgs.h"
 #import "ImvAlgsHungerModel.h"
-#import "AIThinkingControl.h"
 #import "ImvAlgsModelBase.h"
 
 @implementation AIImvAlgs

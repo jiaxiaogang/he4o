@@ -8,7 +8,6 @@
 
 #import "AIVisionAlgs.h"
 #import "AIVisionAlgsModel.h"
-#import "AIThinkingControl.h"
 #import "XGRedis.h"
 #import "UIView+Extension.h"
 #import "NSObject+Extension.h"

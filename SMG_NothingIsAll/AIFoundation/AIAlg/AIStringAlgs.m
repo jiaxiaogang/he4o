@@ -7,7 +7,6 @@
 //
 
 #import "AIStringAlgs.h"
-#import "AIThinkingControl.h"
 
 @implementation AIStringAlgs
 

@@ -8,7 +8,6 @@
 
 #import "AICustomAlgs.h"
 #import "CustomAlgsChargeModel.h"
-#import "AIThinkingControl.h"
 
 @implementation AICustomAlgs
 

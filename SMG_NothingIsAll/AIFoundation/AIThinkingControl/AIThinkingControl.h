@@ -13,10 +13,10 @@
  *  1. 主要负责思维 (前额叶) 功能;
  *  2. 次要负责分发激活等 (丘脑) 功能;
  */
+@class ShortMatchManager,DemandManager;
 @interface AIThinkingControl : NSObject
 
 +(AIThinkingControl*) shareInstance;
-
 
 /**
  *  MARK:--------------------流入input--------------------
@@ -31,5 +31,11 @@
  *  注: 大脑为引,小脑为行
  */
 -(void) commitOutputLog:(NSArray*)outputModels;
+
+/**
+ *  MARK:--------------------短时记忆模型--------------------
+ */
+-(ShortMatchManager*) inModelManager;
+-(DemandManager*) outModelManager;
 
 @end

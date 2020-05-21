@@ -11,6 +11,8 @@
 #import "ThinkingUtils.h"
 #import "AINetUtils.h"
 #import "AINetService.h"
+#import "ShortMatchManager.h"
+#import "AIShortMatchModel.h"
 
 @implementation AIThinkOutAction
 
@@ -127,6 +129,13 @@
  *  @TODO_TEST_HERE: 测试下阈值-3,是否合理;
  */
 -(void) convert2Out_Fo:(NSArray*)curAlg_ps curFo:(AIFoNodeBase*)curFo success:(void(^)(NSArray *acts))success failure:(void(^)())failure {
+    
+    //TODOTOMORROW:
+    //1. 转移时,对subOutModel的支持;
+    
+    
+    
+    
     //1. 数据准备
     NSLog(@"STEPKEY============================== 行为化 START ==================== \nSTEPKEY时序:%@->%@\nSTEPKEY需要:[%@]",Fo2FStr(curFo),Mvp2Str(curFo.cmvNode_p),Pits2FStr(curAlg_ps));
     NSMutableArray *result = [[NSMutableArray alloc] init];
@@ -175,6 +184,8 @@
  *  第2级: MC匹配行为化
  *  第3级: LongNet长短时网络行为化
  *  @param curAlg_p : 三个来源: 1.Fo的元素A;  2.Range的元素A; 3.Alg的嵌套A;
+ *  @version
+ *      2020-05-22 : 支持更发散的联想(要求matchAlg和hAlg同被引用),因每次递归都要这么联想,所以从TOP搬到这来 (由19152改成19192);
  */
 -(void) convert2Out_Hav:(AIKVPointer*)curAlg_p complete:(void(^)(BOOL itemSuccess,NSArray *actions))complete checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
     //1. 数据准备;
@@ -206,24 +217,26 @@
             return;
         }
         
-        
-        
-        
-        //TODOTOMORROW:
-        //1. 对Hav方法,应用MC方式,更发散的联想 (参考19192,因为每次递归,都要做这种发散联想,所以从TOP搬到TOAction中来);
-        //2. 转移时,对subOutModel的支持;
-        
-        
-        
-        
-        
-        //5. 先根据havAlg取到havFo (逐个尝试行为化,成功一条即止);
-        NSArray *hdRefPorts = ARR_SUB(hAlg.refPorts, 0, cHavNoneAssFoCount);
-        [self convert2Out_RelativeFo_ps:[SMGUtils convertPointersFromPorts:hdRefPorts] success:^(AIFoNodeBase *havFo, NSArray *actions) {
-            success = true;
-            moveHFo = havFo;
-            [result addObjectsFromArray:actions];
-        } failure:nil];
+        //5. 取hAlg的refs引用时序大全;
+        NSArray *hRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:hAlg]];
+        for (AIShortMatchModel *model in theTC.inModelManager.models) {
+            //6. 遍历入短时记忆,根据matchAlg取refs;
+            NSArray *mRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:model.matchAlg]];
+            
+            //7. 对hRefs和mRefs取交集;
+            NSArray *hmRef_ps = [SMGUtils filterSame_ps:hRef_ps parent_ps:mRef_ps];
+            hmRef_ps = ARR_SUB(hmRef_ps, 0, cHavNoneAssFoCount);
+            
+            //8. 并依次尝试行为化;
+            [self convert2Out_RelativeFo_ps:hmRef_ps success:^(AIFoNodeBase *havFo, NSArray *actions) {
+                success = true;
+                moveHFo = havFo;
+                [result addObjectsFromArray:actions];
+            } failure:nil];
+            
+            //9. 一条成功,则中止;
+            if (success) break;
+        }
     }
     complete(success,result);
 }

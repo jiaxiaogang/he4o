@@ -125,6 +125,12 @@ static AIThinkingControl *_instance;
     [self.thinkIn dataInFromOutput:value_ps];
 }
 
+-(ShortMatchManager*) inModelManager{
+    return self.shortMatchManager;
+}
+-(DemandManager*) outModelManager{
+    return self.demandManager;
+}
 
 //MARK:===============================================================
 //MARK:                     < privateMethod >

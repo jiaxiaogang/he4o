@@ -18,6 +18,7 @@
 #import "AINet.h"
 #import "HeLogHeader.h"
 #import "AIKVPointer.h"
+#import "AIThinkingControl.h"
 
 /**
  *  MARK:--------------------PathNameKey (kPH)--------------------
