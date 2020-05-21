@@ -9,6 +9,8 @@
 #import "AIThinkOutAction.h"
 #import "AIAbsAlgNode.h"
 #import "ThinkingUtils.h"
+#import "AINetUtils.h"
+#import "AINetService.h"
 
 @implementation AIThinkOutAction
 
@@ -48,7 +50,7 @@
         AnalogyType type = [ThinkingUtils compare:sValue_p valueB_p:pValue_p];
         //b. 行为化
         NSLog(@"------SP_GL行为化:%@ -> %@",[NVHeUtil getLightStr:sValue_p],[NVHeUtil getLightStr:pValue_p]);
-        [self convert2Out_GL:pValue_p.algsType ds:pValue_p.dataSource type:type vSuccess:^(AIFoNodeBase *glFo, NSArray *itemActs) {
+        [self convert2Out_GL:pAlg vAT:pValue_p.algsType vDS:pValue_p.dataSource type:type vSuccess:^(AIFoNodeBase *glFo, NSArray *itemActs) {
             [acts addObjectsFromArray:itemActs];
         } vFailure:^{
             failure = true;
@@ -58,6 +60,14 @@
     
     //5. H行为化;
     for (AIKVPointer *pValue_p in cHavArr) {
+        //TODOTOMORROW:
+        //1. SP方法,调用hav方法时,分与组的方式,是否都不太合适?即直接对checkAlg进行cHav;
+        //2. 对Hav方法,应用MC方式,更发散的联想;
+        //3. 转移时,对subOutModel的支持;
+        
+        
+        
+        
         //a. 将pValue_p独立找到概念,并找cHav;
         __block BOOL hSuccess = false;
         AIAbsAlgNode *soloAlg = [theNet createAbsAlg_NoRepeat:@[pValue_p] conAlgs:nil isMem:false];
@@ -187,8 +197,8 @@
             return;
         }
         
-        //4. 数据检查hAlg
-        AIAlgNodeBase *hAlg = [ThinkingUtils dataOut_GetAlgNodeWithInnerType:ATHav algsType:curAlg_p.algsType dataSource:curAlg_p.dataSource];
+        //4. 数据检查hAlg_根据type和value_p找ATHav
+        AIAlgNodeBase *hAlg = [AINetService getInnerAlg:curAlg vAT:curAlg_p.algsType vDS:curAlg_p.dataSource type:type];
         if (!hAlg) {
             complete(false,nil);
             return;
@@ -213,9 +223,10 @@
  *      3. 找到,判断range是否导致条件C转移;
  *          4. 未转移: success
  *          5. 转移: C条件->递归到convert2Out_Single_Alg();
- *  @param at & ds : 用作查找"大/小"的标识;
+ *  @param vAT & vDS : 用作查找"大/小"的标识;
+ *  @param alg : GL的微信息所处的概念, (所有微信息变化不应脱离概念,比如鸡蛋可以通过烧成固态,但水不能,所以变成固态这种特征变化,不应脱离概念去操作);
  */
--(void) convert2Out_GL:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type vSuccess:(void(^)(AIFoNodeBase *glFo,NSArray *acts))vSuccess vFailure:(void(^)())vFailure {
+-(void) convert2Out_GL:(AIAlgNodeBase*)alg vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type vSuccess:(void(^)(AIFoNodeBase *glFo,NSArray *acts))vSuccess vFailure:(void(^)())vFailure {
     //1. 数据检查
     if ((type != ATGreater && type != ATLess)) {
         WLog(@"value_行为化类参数type|value_p错误");
@@ -224,8 +235,7 @@
     }
     
     //2. 根据type和value_p找ATLess/ATGreater
-    NSLog(@"----> RelativeValue Start at:%@ ds:%@ type:%ld",at,ds,(long)type);
-    AIAlgNodeBase *glAlg = [ThinkingUtils dataOut_GetAlgNodeWithInnerType:type algsType:at dataSource:ds];
+    AIAlgNodeBase *glAlg = [AINetService getInnerAlg:alg vAT:vAT vDS:vDS type:type];
     if (!glAlg) {
         vFailure();
         return;

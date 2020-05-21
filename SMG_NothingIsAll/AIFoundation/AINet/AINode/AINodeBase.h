@@ -12,6 +12,10 @@
  *  MARK:--------------------节点基类--------------------
  *  1. 有指针地址;
  *  2. 可被抽象;
+ *  @todo
+ *      1. 需要将analogyType转为的ds,改为独立的type属性;
+ *          > 比如GL类型的Alg节点,其at是稀疏码的皮层算法名(如size),但而ds则是analogyType转来,这导致皮层算法区名未被纳入(如AIVersionAlgs);
+ *          > 如果有一天,视区和声区,都有一个叫"size"的算法,则会混乱;
  */
 @interface AINodeBase : NSObject <NSCoding>
 
