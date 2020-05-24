@@ -109,3 +109,14 @@ typedef NS_ENUM(NSInteger, LogHeaderMode) {
     LogHeaderMode_First = 1,//仅首行
     LogHeaderMode_All   = 2,//所有行
 };
+
+/**
+ *  MARK:--------------------TOModelStatus--------------------
+ *  @title 输出模型
+ */
+typedef NS_ENUM(NSInteger, TOModelStatus) {
+    TOModelStatus_Runing   = 0,//运行中
+    TOModelStatus_Pause    = 1,//因理性不满足条件而暂停
+    TOModelStatus_Stop     = 2,//因评价失败而中止
+    TOModelStatus_Finish   = 3,//最终成功
+};

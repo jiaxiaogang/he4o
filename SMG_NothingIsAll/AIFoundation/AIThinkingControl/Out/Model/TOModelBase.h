@@ -28,7 +28,7 @@
  *  注: 后续添加对时间衰减的支持
  */
 @property (assign, nonatomic) CGFloat score;            //评分
-@property (strong, nonatomic) NSMutableArray *except_ps;//不应期
+@property (strong, nonatomic) NSMutableArray *except_ps;//下级不应期收集
 @property (strong, nonatomic) NSMutableArray *subModels;//具象子集序列 (实时有序)
 
 
