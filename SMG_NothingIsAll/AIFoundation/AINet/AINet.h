@@ -11,6 +11,8 @@
 /**
  *  MARK:--------------------AINet面板--------------------
  *  @desc 整理各种网络操作的总入口,供系统别处调用;
+ *  @关联强度
+ *      1. 方向索引: setMvNodeToDirectionReference:difStrong:
  */
 @class AIModel,AINode,AIImvAlgsModel,AIPointer,AIKVPointer,AIPort,AIFrontOrderNode,AINetAbsFoNode,AIAbsCMVNode,AIAlgNode,AIAbsAlgNode,AIAlgNodeBase,AICMVNode;
 @interface AINet : NSObject
@@ -78,6 +80,7 @@
  *  MARK:--------------------mvNode的方向索引--------------------
  *  @param difStrong    : mv的迫切度越高,越强;
  *  @param cmvNode      : cmvNode有可能还在create阶段,未存硬盘,所以不能传指针进来;
+ *  @desc 加强关联强度;
  */
 -(void) setMvNodeToDirectionReference:(AICMVNodeBase*)cmvNode difStrong:(NSInteger)difStrong;
 

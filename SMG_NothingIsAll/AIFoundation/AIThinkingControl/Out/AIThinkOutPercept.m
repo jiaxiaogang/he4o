@@ -10,7 +10,6 @@
 #import "DemandModel.h"
 #import "ThinkingUtils.h"
 #import "AIPort.h"
-#import "TOMvModel.h"
 #import "AINet.h"
 #import "AIKVPointer.h"
 #import "AICMVNode.h"
@@ -32,60 +31,7 @@
 //MARK:===============================================================
 
 -(void) dataOut {
-    //1. 重排序 & 取当前序列最前的demandModel
-    DemandModel *demandModel = nil;
-    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkOutPercept_GetCurrentDemand)]) {
-        demandModel = [self.delegate aiThinkOutPercept_GetCurrentDemand];
-    }
-    if (!demandModel) return;
     
-    //2. energy判断;
-    if (![self havEnergy]) {
-        return;
-    }
-    
-    //3. 取mvModel_从expCache中,排序并取到首个值得思考的可行outMvModel, 没有则用mvScheme联想一个新的;
-    __block TOMvModel *outMvModel = [demandModel getCurSubModel];
-    
-    //3. 为空,取新的
-    if (!outMvModel && demandModel.subModels.count < cTOSubModelLimit) {
-        outMvModel = [self dataOut_MvScheme:demandModel];
-    }
-    
-    //3. 再为空,评价mvModel_无解决经验,则反射输出;
-    if (!outMvModel) {
-        [self.delegate aiThinkOutPercept_MVSchemeFailure];
-    }else{
-        //4. 有可具象思考的outMvModel则执行;
-        [self useEnergy:-1];
-        
-        //5. 取foModel_联想"解决经验"对应的cmvNode & 联想具象数据,并取到决策关键信息 (foScheme);
-        TOModelBase *outFoModel = outMvModel.getCurSubModel;
-        
-        //5. 为空,取新的
-        if (!outFoModel && outMvModel.subModels.count < cTOSubModelLimit) {
-            outFoModel = [self dataOut_FoScheme:outMvModel];
-        }
-        
-        //5. 再为空,反馈上一级被不应期;
-        if (!outFoModel) {
-            [demandModel.except_ps addObject:outMvModel.content_p];//排除无效的outMvModel;
-            [self dataOut];
-        }else{
-            if (ISOK(outFoModel, TOFoModel.class)) {
-                TOFoModel *foModel = (TOFoModel*)outFoModel;
-                
-                //6. 为空,进行行为化_尝试输出"可行性之首"并找到实际操作 (子可行性判定) (algScheme)
-                [self.delegate aiThinkOutPercept_Commit2TOR:foModel];
-                
-                //7. 再为空,反馈上一级被不应期;
-                if (!ARRISOK(foModel.actions)) {
-                    [outMvModel.except_ps addObject:foModel.content_p];
-                    [self dataOut];
-                }
-            }
-        }
-    }
 }
 
 //MARK:===============================================================
@@ -93,94 +39,13 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------MvScheme--------------------
- *  功能:
- *      1. 用于找到新的mv经验; (根据index索引找到outMvModel)
- *  注:
- *      1. 目前仅从硬盘找mvNode,因为能解决问题的都几乎被抽象,而太过于具象的又很难行为化;
- */
--(TOMvModel*) dataOut_MvScheme:(DemandModel*)demandModel{
-    //1. 判断mv方向
-    __block TOMvModel *outMvModel = nil;
-    MVDirection direction = [ThinkingUtils havDemand:demandModel.algsType delta:demandModel.delta];
-    
-    //2. 收集不应期
-    NSMutableArray *except_ps = [[NSMutableArray alloc] init];
-    for (TOMvModel *expCacheItem in demandModel.subModels) {
-        [except_ps addObject:expCacheItem.content_p];
-    }
-    
-    //3. 找normalFo解决方案;
-    [theNet getNormalFoByDirectionReference:demandModel.algsType direction:direction except_ps:except_ps tryResult:^BOOL(AIKVPointer *fo_p) {
-        if (fo_p) {
-            outMvModel = [[TOMvModel alloc] initWithContent_p:fo_p];
-            [demandModel.subModels addObject:outMvModel];
-        }
-        return true;
-    }];
-    
-    //4. 加强关联;
-    if (outMvModel && outMvModel.content_p) {
-        AICMVNodeBase *cmvNode = [SMGUtils searchNode:outMvModel.content_p];
-        [theNet setMvNodeToDirectionReference:cmvNode difStrong:1];
-    }
-    return outMvModel;
-}
-
-
-/**
- *  MARK:--------------------联想具象foNode--------------------
- *  @param outMvModel : 当前mvModel (具象之旅的出发点);
- *  @result : 返回时序节点地址
- *  1. 从上至下的联想foNode;
- *  注:目前支持每层3个(关联强度前3个),最多3层(具象方向3层);
- *
- *  TODO:加上联想到mv时,传回给demandManager;
- *  注:每一次输出,只是决策与预测上的一环;并不意味着结束;
- *  //1. 记录思考mv结果到叠加demandModel.order;
- *  //3. 如果mindHappy_No,可以再尝试下一个getNetNodePointersFromDirectionReference_Single;找到更好的解决方法;
- *  //4. 最终更好的解决方法被输出,并且解决问题后,被加强;
- *  //5. 是数据决定了下一轮循环思维想什么,但数据仅能通过mv来决定,无论是思考的方向,还是思考的能量,还是思考的目标,都是以mv为准的;而mv的一切关联,又是以数据为规律进行关联的;
- *
- */
--(TOFoModel*) dataOut_FoScheme:(TOMvModel*)outMvModel{
-    //1. 数据准备
-    if (!ISOK(outMvModel, TOMvModel.class)) {
-        return nil;
-    }
-    AICMVNodeBase *checkMvNode = [SMGUtils searchNode:outMvModel.content_p];
-    if (!checkMvNode) {
-        return nil;
-    }
-    
-    if (checkMvNode.foNode_p) {
-        NSArray *checkFo_ps = @[checkMvNode.foNode_p];
-        
-        //2. 最多往具象循环三层
-        for (NSInteger i = 0; i < cDataOutAssFoDeep; i++) {
-            AIFoNodeBase *validFoNode = [ThinkingUtils scheme_GetAValidNode:checkFo_ps except_ps:outMvModel.except_ps checkBlock:nil];
-            
-            //3. 有效则返回,无效则循环到下一层
-            if (ISOK(validFoNode, AIFoNodeBase.class)) {
-                TOFoModel *result = [[TOFoModel alloc] initWithContent_p:validFoNode.pointer];
-                result.score = [ThinkingUtils dataOut_CheckScore_ExpOut:result.content_p];
-                [outMvModel.subModels addObject:result];
-                [theNV setNodeData:result.content_p lightStr:@"o1"];
-                return result;
-            }else{
-                checkFo_ps = [ThinkingUtils foScheme_GetNextLayerPs:checkFo_ps];
-            }
-        }
-    }
-    
-    return nil;
-}
-
-/**
  *  MARK:--------------------topV2--------------------
  *  @desc 四种(2x2)TOP模式 (优先取同区工作模式,不行再以不同区工作模式);
  *  @version
  *      20200430 : v2,四种工作模式版;
+ *  @todo
+ *      1. 集成活跃度的判断和消耗;
+ *      2. 集成outModel;
  */
 -(void) topV2{
     //1. 数据准备
