@@ -49,10 +49,9 @@
  *  @desc 做理性行为化
  */
 -(void) commitFromTOP_Convert2Actions:(TOFoModel*)foModel;
--(BOOL) commitFromTOP_Convert2Actions_V2:(NSArray*)curAlg_ps cFo:(AIFoNodeBase*)cFo subNode:(AIFoNodeBase*)subNode plusNode:(AIFoNodeBase*)plusNode;
--(void) commitReasonPlus:(AIKVPointer*)curAlg_p cFo:(AIFoNodeBase*)cFo complete:(void(^)(BOOL actSuccess,NSArray *acts))complete;
--(void) commitReasonSub:(AIFoNodeBase*)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo checkFo:(AIFoNodeBase*)checkFo cutIndex:(NSInteger)cutIndex complete:(void(^)(BOOL actSuccess,NSArray *acts))complete;
--(void) commitPerceptPlus:(AIFoNodeBase*)matchFo complete:(void(^)(BOOL actSuccess,NSArray *acts))complete;
+-(void) commitReasonPlus:(AIKVPointer*)curAlg_p outModel:(TOFoModel*)outModel complete:(void(^)(BOOL actSuccess,NSArray *acts))complete;
+-(void) commitReasonSub:(AIFoNodeBase*)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo outModel:(TOFoModel*)outModel complete:(void(^)(BOOL actSuccess,NSArray *acts))complete;
+-(void) commitPerceptPlus:(TOFoModel*)outModel complete:(void(^)(BOOL actSuccess,NSArray *acts))complete;
 -(void) commitPerceptSub:(AIFoNodeBase*)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo checkFo:(AIFoNodeBase*)checkFo complete:(void(^)(BOOL actSuccess,NSArray *acts))complete;
 
 /**

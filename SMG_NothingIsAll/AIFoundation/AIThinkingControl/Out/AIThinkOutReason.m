@@ -76,34 +76,21 @@
 }
 
 /**
- *  MARK:--------------------以四模式的方式,传递给TOR--------------------
- *  @todo 对TOR做mModel迭代;
- */
--(BOOL) commitFromTOP_Convert2Actions_V2:(NSArray*)curAlg_ps cFo:(AIFoNodeBase*)cFo subNode:(AIFoNodeBase*)subNode plusNode:(AIFoNodeBase*)plusNode{
-    //1. 进行行为化 (仅对一帧做行为化);
-    BOOL actSuccess = false;
-    
-    //2. 记录短时记忆outModel
-    if (actSuccess) {
-        //outModel.add(fo);
-    }
-    
-    //3. 输出行为;
-    //[self outPut];
-    
-    return false;
-}
-
-/**
  *  MARK:--------------------R+行为化--------------------
  *  @desc R+行为化,两级判断,参考:19164;
  *          1. isOut则输出;
  *          2. notOut则等待;
  */
--(void) commitReasonPlus:(AIKVPointer*)curAlg_p cFo:(AIFoNodeBase*)cFo complete:(void(^)(BOOL actSuccess,NSArray *acts))complete{
+-(void) commitReasonPlus:(AIKVPointer*)curAlg_p outModel:(TOFoModel*)outModel complete:(void(^)(BOOL actSuccess,NSArray *acts))complete{
     if (curAlg_p && curAlg_p.isOut) {
         complete(true,@[curAlg_p]);
     }else{
+        //TODOTOMORROW:
+        //1. 对TOP的另外三个模式集成TOFoModel;
+        //2. 对TOR.R+集成TOFoModel;
+        //3. 此处等待,改为cHav行为化 (包括R+,P+);
+        
+        
         complete(true,nil);
     }
 }
@@ -116,24 +103,24 @@
  *          3. notOut判断 (等待);
  *  @存储 负只是正的帧推进器,比如买菜为了做饭 (参考19171);
  */
--(void) commitReasonSub:(AIFoNodeBase*)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo checkFo:(AIFoNodeBase*)checkFo cutIndex:(NSInteger)cutIndex complete:(void(^)(BOOL actSuccess,NSArray *acts))complete{
+-(void) commitReasonSub:(AIFoNodeBase*)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo outModel:(TOFoModel*)outModel complete:(void(^)(BOOL actSuccess,NSArray *acts))complete{
     //1. 数据准备
     AIKVPointer *firstPlusItem = ARR_INDEX(plusFo.content_ps, 0);
-    AIKVPointer *checkAlg_p = ARR_INDEX(checkFo.content_ps, cutIndex + 1);
-    if (!matchFo || !plusFo || !subFo || !checkFo || !complete || !checkAlg_p) {
+    AIKVPointer *checkAlg_p = ARR_INDEX(outModel.fo.content_ps, outModel.actionIndex);
+    if (!matchFo || !plusFo || !subFo || !complete || !checkAlg_p) {
         complete(false,nil);
         return;
     }
     
     //2. 正影响首元素,错过判断 (错过,行为化失败);
-    NSInteger firstAt_Plus = [TOUtils indexOfAbsItem:firstPlusItem atConContent:checkFo.content_ps];
-    if (cutIndex >= firstAt_Plus) {
+    NSInteger firstAt_Plus = [TOUtils indexOfAbsItem:firstPlusItem atConContent:outModel.fo.content_ps];
+    if (outModel.actionIndex > firstAt_Plus) {
         complete(false,nil);
         return;
     }
     
     //3. 当firstPlus就是checkAlg_p时 (尝试对checkAlg行为化);
-    if (firstAt_Plus == cutIndex + 1) {
+    if (firstAt_Plus == outModel.actionIndex) {
         
         //4. 从SFo中,找出checkAlg的兄弟节点matchAlg;
         AIKVPointer *matchAlg_p = [SMGUtils filterSingleFromArr:matchFo.content_ps checkValid:^BOOL(AIKVPointer *item_p) {
@@ -149,7 +136,7 @@
         AIKVPointer *pAlg_p = firstPlusItem;
         if (sAlg_p) {
             NSInteger sIndex = [TOUtils indexOfAbsItem:sAlg_p atConContent:matchFo.content_ps];
-            BOOL sHappened = sIndex <= cutIndex;
+            BOOL sHappened = sIndex < outModel.actionIndex;
             if (sHappened) {
                 //a. S存在,且S已发生,则加工SP;
                 [self.toAction convert2Out_SP:sAlg_p pAlg_p:pAlg_p checkAlg_p:checkAlg_p complete:complete];
@@ -170,15 +157,15 @@
  *          1. isOut则输出;
  *          2. notOut则进行cHav行为化;
  */
--(void) commitPerceptPlus:(AIFoNodeBase*)matchFo complete:(void(^)(BOOL actSuccess,NSArray *acts))complete{
+-(void) commitPerceptPlus:(TOFoModel*)outModel complete:(void(^)(BOOL actSuccess,NSArray *acts))complete{
     //1. 数据检查
-    if (!matchFo) {
+    if (!outModel.fo) {
         complete(false,nil);
         return;
     }
     
     //2. 行为化;
-    AIKVPointer *curAlg_p = ARR_INDEX(matchFo.content_ps, 0);
+    AIKVPointer *curAlg_p = ARR_INDEX(outModel.fo.content_ps, outModel.actionIndex);//从0开始
     if (curAlg_p && curAlg_p.isOut) {
         complete(true,@[curAlg_p]);
     }else{

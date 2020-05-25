@@ -128,7 +128,14 @@
     //2. 用负取正;
     __block BOOL success = false;
     [TOUtils getPlusBrotherBySubProtoFo_NoRepeatNotNull:matchFo tryResult:^BOOL(AIFoNodeBase *checkFo, AIFoNodeBase *subNode, AIFoNodeBase *plusNode) {
-        success = [self.delegate aiTOP_2TOR_ReasonSub:matchFo plusFo:plusNode subFo:subNode checkFo:checkFo cutIndex:cutIndex];
+        //a. 构建TOFoModel
+        TOFoModel *toFoModel = [[TOFoModel alloc] init];
+        toFoModel.fo = checkFo;
+        toFoModel.actionIndex = cutIndex;
+        toFoModel.status = TOModelStatus_Runing;
+        
+        //b. 转给TOR
+        success = [self.delegate aiTOP_2TOR_ReasonSub:matchFo plusFo:plusNode subFo:subNode outModel:toFoModel];
         return success;//成功行为化,则中止递归;
     }];
     
@@ -155,10 +162,16 @@
     __block BOOL success = false;//默认为失败
     [TOUtils topPerceptMode:matchAlg demandModel:demandModel direction:direction tryResult:^BOOL(AIFoNodeBase *sameFo) {
         
-        //a. 取自身,实现吃,则可不饿;
-        success = [self.delegate aiTOP_2TOR_PerceptPlus:sameFo];
+        //a. 构建TOFoModel
+        TOFoModel *toFoModel = [[TOFoModel alloc] init];
+        toFoModel.fo = sameFo;
+        toFoModel.actionIndex = 0;
+        toFoModel.status = TOModelStatus_Runing;
         
-        //b. 一条成功,则中止取消通用diff算法的交集循环;
+        //b. 取自身,实现吃,则可不饿;
+        success = [self.delegate aiTOP_2TOR_PerceptPlus:toFoModel];
+        
+        //c. 一条成功,则中止取消通用diff算法的交集循环;
         return success;
     } canAss:^BOOL{
         return [self havEnergy];
