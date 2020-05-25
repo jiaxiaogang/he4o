@@ -144,7 +144,7 @@
                 <constraint firstItem="spU-BU-3KQ" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="2" id="xzR-ne-XPK"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <point key="canvasLocation" x="388.80000000000001" y="-41.829085457271368"/>
+            <point key="canvasLocation" x="Simulated0,7631" y="-41.829085457271log"/>mmb
         </view>
     </objects>
 </document>
