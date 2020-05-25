@@ -260,10 +260,15 @@ static AIThinkingControl *_instance;
     return [self.tOR commitFromTOP_Convert2Actions_V2:curAlg_ps cFo:cFo subNode:subNode plusNode:plusNode];
 }
 
--(BOOL) aiTOP_2TOR_ReasonPlus:(AIKVPointer*)cAlg_p cFo:(AIFoNodeBase*)cFo{
+-(BOOL) aiTOP_2TOR_ReasonPlus:(AIKVPointer*)cAlg_p outModel:(TOFoModel*)outModel{
+    
+    //TODOTOMORROW:
+    //1. 对TOP的另外三个模式集成TOFoModel;
+    //2. 对TOR.R+集成TOFoModel;
+    
     //1. 行为化;
     __block BOOL success = false;
-    [self.tOR commitReasonPlus:cAlg_p cFo:cFo complete:^(BOOL actSuccess, NSArray *acts) {
+    [self.tOR commitReasonPlus:cAlg_p cFo:outModel.fo complete:^(BOOL actSuccess, NSArray *acts) {
         success = actSuccess;
         
         //2. 更新到outModel;

@@ -63,11 +63,11 @@
             CGFloat score = [ThinkingUtils getScoreForce:mModel.matchFo.cmvNode_p ratio:mModel.matchFoValue];
             //b. R+
             if (score > 0) {
-                BOOL success = [self reasonPlus:matchFo cutIndex:mModel.cutIndex];
+                BOOL success = [self reasonPlus:matchFo cutIndex:mModel.cutIndex demandModel:demand];
                 if (success) return;
             }else if(score < 0){
                 //c. R-
-                BOOL success = [self reasonSub:matchFo cutIndex:mModel.cutIndex];
+                BOOL success = [self reasonSub:matchFo cutIndex:mModel.cutIndex demandModel:demand];
                 if (success) return;
             }
         }
@@ -101,15 +101,16 @@
  *      主线: 对需要输出的的元素,进行配合输出即可 (比如吓一下鸟,它自己就飞走了);
  *      支线: 对不符合预测的元素修正 (比如剩下一只没飞走,我再更大声吓一下) (注:这涉及到外层循环,反向类比的修正);
  */
--(BOOL) reasonPlus:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex{
-    //将matchFo+作为CFo行为化;
-    //NSInteger start = cutIndex + 1;
-    //NSArray *need2Act_ps = ARR_SUB(matchFo.content_ps, start, matchFo.content_ps.count - start);
-    //return [self.delegate aiTOP_Commit2TOR_V2:need2Act_ps cFo:matchFo subNode:nil plusNode:nil];
+-(BOOL) reasonPlus:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex demandModel:(DemandModel*)demandModel{
+    //1. 生成outFo模型
+    TOFoModel *toFoModel = [[TOFoModel alloc] init];
+    toFoModel.fo = matchFo;
+    toFoModel.actionIndex = cutIndex + 1;
+    toFoModel.status = TOModelStatus_Runing;
     
-    //对首元素进行行为化;
+    //2. 对首元素进行行为化;
     AIKVPointer *cAlg_p = ARR_INDEX(matchFo.content_ps, cutIndex + 1);
-    return [self.delegate aiTOP_2TOR_ReasonPlus:cAlg_p cFo:matchFo];
+    return [self.delegate aiTOP_2TOR_ReasonPlus:cAlg_p outModel:toFoModel];
 }
 /**
  *  MARK:-------------------- R- --------------------
@@ -120,7 +121,7 @@
  *  @version
  *      2020.05.12 - 支持cutIndex的判断,必须是未发生的部分才可以被修正 (如车将撞上,躲开是对的,但将已过去的出门改成不出门,是错的);
  */
--(BOOL) reasonSub:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex{
+-(BOOL) reasonSub:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex demandModel:(DemandModel*)demandModel{
     //1. 数据检查
     if (!matchFo) return false;
     
