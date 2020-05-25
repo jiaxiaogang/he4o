@@ -120,7 +120,6 @@
 		08FE031E231DEE8C001ED8B4 /* AIThinkOutReason.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FE031D231DEE8C001ED8B4 /* AIThinkOutReason.m */; };
 		2753D7CF7BAEDFEACAF9264A /* libPods-SMG_NothingIsAll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */; };
 		456F2C322476BD5E0015ADB8 /* AINetService.m in Sources */ = {isa = PBXBuildFile; fileRef = 456F2C312476BD5E0015ADB8 /* AINetService.m */; };
-		456F2C35247817310015ADB8 /* TOModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 456F2C34247817310015ADB8 /* TOModel.m */; };
 		8806D888212B8EB100C442CA /* TOMvModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8806D887212B8EB100C442CA /* TOMvModel.m */; };
 		8822852020F58BDA009884DC /* AINetDirectionReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 8822851F20F58BDA009884DC /* AINetDirectionReference.m */; };
 		8868F6EB210A946A000EAC9B /* AIAbsCMVManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8868F6EA210A946A000EAC9B /* AIAbsCMVManager.m */; };
@@ -364,8 +363,6 @@
 		08FE031D231DEE8C001ED8B4 /* AIThinkOutReason.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIThinkOutReason.m; sourceTree = "<group>"; };
 		456F2C302476BD5E0015ADB8 /* AINetService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetService.h; sourceTree = "<group>"; };
 		456F2C312476BD5E0015ADB8 /* AINetService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetService.m; sourceTree = "<group>"; };
-		456F2C33247817310015ADB8 /* TOModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOModel.h; sourceTree = "<group>"; };
-		456F2C34247817310015ADB8 /* TOModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOModel.m; sourceTree = "<group>"; };
 		8806D886212B8EB100C442CA /* TOMvModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOMvModel.h; sourceTree = "<group>"; };
 		8806D887212B8EB100C442CA /* TOMvModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOMvModel.m; sourceTree = "<group>"; };
 		8822851E20F58BDA009884DC /* AINetDirectionReference.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetDirectionReference.h; sourceTree = "<group>"; };
@@ -431,8 +428,6 @@
 				8806D887212B8EB100C442CA /* TOMvModel.m */,
 				088DD7212201216500E0A786 /* TOFoModel.h */,
 				088DD7222201216500E0A786 /* TOFoModel.m */,
-				456F2C33247817310015ADB8 /* TOModel.h */,
-				456F2C34247817310015ADB8 /* TOModel.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1351,7 +1346,6 @@
 				08DB40CB1F11A65E003162C8 /* TestHungryPage.m in Sources */,
 				08250AE0228112C000FC497C /* XGWedis.m in Sources */,
 				88A43F432109589600281348 /* AICMVNode.m in Sources */,
-				456F2C35247817310015ADB8 /* TOModel.m in Sources */,
 				081B3AD61F6E2994008A7F36 /* AIStringAlgs.m in Sources */,
 				0842ADC01FE209700048ADDC /* DemoCharge.m in Sources */,
 				08412CA3216C324300483B6B /* AICerebel.m in Sources */,
