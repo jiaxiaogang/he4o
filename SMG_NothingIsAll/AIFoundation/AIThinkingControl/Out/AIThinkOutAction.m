@@ -13,6 +13,7 @@
 #import "AINetService.h"
 #import "ShortMatchManager.h"
 #import "AIShortMatchModel.h"
+#import "TOFoModel.h"
 
 @implementation AIThinkOutAction
 
@@ -26,8 +27,9 @@
  *  @version
  *      2020-05-22: 调用cHav,在原先solo与group的基础上,新增了最优先的checkAlg (因为solo和group可能压根不存在此概念,而TO是主应用,而非构建的);
  */
--(void) convert2Out_SP:(AIKVPointer*)sAlg_p pAlg_p:(AIKVPointer*)pAlg_p checkAlg_p:(AIKVPointer*)checkAlg_p complete:(void(^)(BOOL success,NSArray *acts))complete {
+-(void) convert2Out_SP:(AIKVPointer*)sAlg_p pAlg_p:(AIKVPointer*)pAlg_p outModel:(TOFoModel*)outModel complete:(void(^)(BOOL success,NSArray *acts))complete {
     //1. 结果数据准备
+    AIKVPointer *checkAlg_p = ARR_INDEX(outModel.fo.content_ps, outModel.actionIndex);
     NSMutableArray *acts = [[NSMutableArray alloc] init];
     AIAlgNodeBase *sAlg = [SMGUtils searchNode:sAlg_p];
     AIAlgNodeBase *pAlg = [SMGUtils searchNode:pAlg_p];
@@ -110,7 +112,7 @@
  *  MARK:--------------------P行为化--------------------
  *  @param curAlg_p : 来源: TOR.R-;
  */
--(void) convert2Out_P:(AIKVPointer*)curAlg_p complete:(void(^)(BOOL itemSuccess,NSArray *actions))complete {
+-(void) convert2Out_P:(AIKVPointer*)curAlg_p outModel:(TOFoModel*)outModel complete:(void(^)(BOOL itemSuccess,NSArray *actions))complete {
     [self convert2Out_Hav:curAlg_p complete:complete checkScore:^BOOL(AIAlgNodeBase *mAlg) {
         return true;
     }];
@@ -186,6 +188,7 @@
  *  @param curAlg_p : 三个来源: 1.Fo的元素A;  2.Range的元素A; 3.Alg的嵌套A;
  *  @version
  *      2020-05-22 : 支持更发散的联想(要求matchAlg和hAlg同被引用),因每次递归都要这么联想,所以从TOP搬到这来 (由19152改成19192);
+ *      2020-05-27 : 支持outModel (目前cHav方法,收集所有acts,一次性返回行为,而并未进行多轮外循环,所以此处不必做subOutModel);
  */
 -(void) convert2Out_Hav:(AIKVPointer*)curAlg_p complete:(void(^)(BOOL itemSuccess,NSArray *actions))complete checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
     //1. 数据准备;

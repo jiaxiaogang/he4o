@@ -33,11 +33,12 @@
  *      1. 评价支持: 将fo返回到subOutModel并进行score评价);
  *      2. 短时记忆支持:在转移时,生成subOutModel并放到outModel下;
  */
+@class TOFoModel;
 @interface AIThinkOutAction : NSObject
 
 @property (weak, nonatomic) id<TOActionDelegate> delegate;
 
--(void) convert2Out_SP:(AIKVPointer*)sAlg_p pAlg_p:(AIKVPointer*)pAlg_p checkAlg_p:(AIKVPointer*)checkAlg_p complete:(void(^)(BOOL success,NSArray *acts))complete;
--(void) convert2Out_P:(AIKVPointer*)curAlg_p complete:(void(^)(BOOL itemSuccess,NSArray *actions))complete;
+-(void) convert2Out_SP:(AIKVPointer*)sAlg_p pAlg_p:(AIKVPointer*)pAlg_p outModel:(TOFoModel*)outModel complete:(void(^)(BOOL success,NSArray *acts))complete;
+-(void) convert2Out_P:(AIKVPointer*)curAlg_p outModel:(TOFoModel*)outModel complete:(void(^)(BOOL itemSuccess,NSArray *actions))complete;
 
 @end

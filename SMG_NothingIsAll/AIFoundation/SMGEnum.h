@@ -115,8 +115,9 @@ typedef NS_ENUM(NSInteger, LogHeaderMode) {
  *  @title 输出模型
  */
 typedef NS_ENUM(NSInteger, TOModelStatus) {
-    TOModelStatus_Runing   = 0,//运行中
-    TOModelStatus_Pause    = 1,//因理性不满足条件而暂停
-    TOModelStatus_Stop     = 2,//因评价失败而中止
-    TOModelStatus_Finish   = 3,//最终成功
+    TOModelStatus_Runing   = 0,//运行中 (行为化前,尝试找各种解决方案);
+    TOModelStatus_ActYes   = 1,//行为化成功 (等待外循环结果);
+    TOModelStatus_ActNo    = 2,//行为化失败 (等待条件满足时继续);
+    TOModelStatus_ScoreNo  = 3,//评价失败而中止 (不想干,彻底挂掉,除非demandModel变的更迫切);
+    TOModelStatus_Finish   = 4,//最终成功 (完成后向下帧跳转,发生在事实发生之后,即新的input匹配到);
 };

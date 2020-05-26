@@ -82,23 +82,14 @@
  *          2. notOut则等待;
  */
 -(void) commitReasonPlus:(TOFoModel*)outModel complete:(void(^)(BOOL actSuccess,NSArray *acts))complete{
+    //1. isOut时,直接输出;
     AIKVPointer *cAlg_p = ARR_INDEX(outModel.fo.content_ps, outModel.actionIndex);
     if (cAlg_p && cAlg_p.isOut) {
-        
-        
-        
+        outModel.status = TOModelStatus_ActYes;
         complete(true,@[cAlg_p]);
     }else{
-        //TODOTOMORROW:
-        //1. 对TOP的另外三个模式集成TOFoModel;
-        //2. 对TOR.R+集成TOFoModel;
-        //3. 此处等待,改为cHav行为化 (包括R+,P+);
-        //4. 行为化成功时,要跳转至下帧 (将outModel更新,);
-        //  a. isOut=true时直接status=finish?
-        //  b. ......
-        
-        
-        complete(true,nil);
+        //2. cHav行为化;
+        [self.toAction convert2Out_P:cAlg_p outModel:outModel complete:complete];
     }
 }
 
@@ -146,14 +137,14 @@
             BOOL sHappened = sIndex < outModel.actionIndex;
             if (sHappened) {
                 //a. S存在,且S已发生,则加工SP;
-                [self.toAction convert2Out_SP:sAlg_p pAlg_p:pAlg_p checkAlg_p:checkAlg_p complete:complete];
+                [self.toAction convert2Out_SP:sAlg_p pAlg_p:pAlg_p outModel:outModel complete:complete];
             }else{
                 //b. S存在,但S未发生,则等待 (等S发生);
                 complete(true,nil);
             }
         }else{
             //c. S不存在,则仅实现P即可;
-            [self.toAction convert2Out_P:pAlg_p complete:complete];
+            [self.toAction convert2Out_P:pAlg_p outModel:outModel complete:complete];
         }
     }
 }
@@ -163,6 +154,8 @@
  *  @desc P+行为化,两级判断,参考:19166;
  *          1. isOut则输出;
  *          2. notOut则进行cHav行为化;
+ *  @version
+ *      2020-05-27 : 将isOut=false时等待改成进行cHav行为化;
  */
 -(void) commitPerceptPlus:(TOFoModel*)outModel complete:(void(^)(BOOL actSuccess,NSArray *acts))complete{
     //1. 数据检查
@@ -174,10 +167,11 @@
     //2. 行为化;
     AIKVPointer *curAlg_p = ARR_INDEX(outModel.fo.content_ps, outModel.actionIndex);//从0开始
     if (curAlg_p && curAlg_p.isOut) {
+        outModel.status = TOModelStatus_ActYes;
         complete(true,@[curAlg_p]);
     }else{
-        //3. 等待 (真正向下帧跳转,发生在事实发生之后 (即新的input匹配到);
-        complete(true,nil);
+        //3. cHav行为化
+        [self.toAction convert2Out_P:curAlg_p outModel:outModel complete:complete];
     }
 }
 
