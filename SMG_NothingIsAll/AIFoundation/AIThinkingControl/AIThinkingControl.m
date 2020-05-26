@@ -256,10 +256,10 @@ static AIThinkingControl *_instance;
     return self.shortMatchManager.models;
 }
 
--(BOOL) aiTOP_2TOR_ReasonPlus:(AIKVPointer*)cAlg_p outModel:(TOFoModel*)outModel{
+-(BOOL) aiTOP_2TOR_ReasonPlus:(TOFoModel*)outModel{
     //1. 行为化;
     __block BOOL success = false;
-    [self.tOR commitReasonPlus:cAlg_p outModel:outModel complete:^(BOOL actSuccess, NSArray *acts) {
+    [self.tOR commitReasonPlus:outModel complete:^(BOOL actSuccess, NSArray *acts) {
         success = actSuccess;
         
         //2. 更新到outModel;

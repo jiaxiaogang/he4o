@@ -109,8 +109,7 @@
     toFoModel.status = TOModelStatus_Runing;
     
     //2. 对首元素进行行为化;
-    AIKVPointer *cAlg_p = ARR_INDEX(matchFo.content_ps, cutIndex + 1);
-    return [self.delegate aiTOP_2TOR_ReasonPlus:cAlg_p outModel:toFoModel];
+    return [self.delegate aiTOP_2TOR_ReasonPlus:toFoModel];
 }
 /**
  *  MARK:-------------------- R- --------------------

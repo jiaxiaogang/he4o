@@ -19,7 +19,7 @@
 -(NSArray*) aiTOP_GetShortMatchModel;                       //获取瞬时模型
 
 //提交C给TOR行为化;
--(BOOL) aiTOP_2TOR_ReasonPlus:(AIKVPointer*)cAlg_p outModel:(TOFoModel*)outModel;
+-(BOOL) aiTOP_2TOR_ReasonPlus:(TOFoModel*)outModel;
 -(BOOL) aiTOP_2TOR_ReasonSub:(AIFoNodeBase *)matchFo plusFo:(AIFoNodeBase *)plusFo subFo:(AIFoNodeBase*)subFo outModel:(TOFoModel*)outModel;
 -(BOOL) aiTOP_2TOR_PerceptPlus:(TOFoModel*)outModel;
 -(BOOL) aiTOP_2TOR_PerceptSub:(AIFoNodeBase *)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo checkFo:(AIFoNodeBase*)checkFo;

@@ -49,7 +49,7 @@
  *  @desc 做理性行为化
  */
 -(void) commitFromTOP_Convert2Actions:(TOFoModel*)foModel;
--(void) commitReasonPlus:(AIKVPointer*)curAlg_p outModel:(TOFoModel*)outModel complete:(void(^)(BOOL actSuccess,NSArray *acts))complete;
+-(void) commitReasonPlus:(TOFoModel*)outModel complete:(void(^)(BOOL actSuccess,NSArray *acts))complete;
 -(void) commitReasonSub:(AIFoNodeBase*)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo outModel:(TOFoModel*)outModel complete:(void(^)(BOOL actSuccess,NSArray *acts))complete;
 -(void) commitPerceptPlus:(TOFoModel*)outModel complete:(void(^)(BOOL actSuccess,NSArray *acts))complete;
 -(void) commitPerceptSub:(AIFoNodeBase*)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo checkFo:(AIFoNodeBase*)checkFo complete:(void(^)(BOOL actSuccess,NSArray *acts))complete;

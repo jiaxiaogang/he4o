@@ -81,14 +81,21 @@
  *          1. isOut则输出;
  *          2. notOut则等待;
  */
--(void) commitReasonPlus:(AIKVPointer*)curAlg_p outModel:(TOFoModel*)outModel complete:(void(^)(BOOL actSuccess,NSArray *acts))complete{
-    if (curAlg_p && curAlg_p.isOut) {
-        complete(true,@[curAlg_p]);
+-(void) commitReasonPlus:(TOFoModel*)outModel complete:(void(^)(BOOL actSuccess,NSArray *acts))complete{
+    AIKVPointer *cAlg_p = ARR_INDEX(outModel.fo.content_ps, outModel.actionIndex);
+    if (cAlg_p && cAlg_p.isOut) {
+        
+        
+        
+        complete(true,@[cAlg_p]);
     }else{
         //TODOTOMORROW:
         //1. 对TOP的另外三个模式集成TOFoModel;
         //2. 对TOR.R+集成TOFoModel;
         //3. 此处等待,改为cHav行为化 (包括R+,P+);
+        //4. 行为化成功时,要跳转至下帧 (将outModel更新,);
+        //  a. isOut=true时直接status=finish?
+        //  b. ......
         
         
         complete(true,nil);
