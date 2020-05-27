@@ -46,7 +46,7 @@
  *  2. 在assData等(内心活动,不抵消cmvCache中旧任务)
  *  3. 在dataIn时,抵消旧任务,并生成新任务;
  */
--(void) updateCMVCache_PMV:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta order:(NSInteger)order{
+-(void) updateCMVCache_PMV:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta{
     //1. 数据检查
     if (delta == 0) {
         return;
@@ -86,13 +86,12 @@
         newItem.algsType = algsType;
         newItem.delta = delta;
         newItem.urgentTo = urgentTo;
-        newItem.score = order;
         [self.loopCache addObject:newItem];
         NSLog(@"demandManager >> 新需求 %lu",(unsigned long)self.loopCache.count);
     }
 }
 
--(void) updateCMVCache_RMV:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta order:(NSInteger)order{
+-(void) updateCMVCache_RMV:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta{
     //1. 有需求时且可加入demand序列;
     MVDirection direction = [ThinkingUtils havDemand:algsType delta:delta];
     if (direction != MVDirection_None) {
@@ -123,7 +122,6 @@
             newItem.algsType = algsType;
             newItem.delta = delta;
             newItem.urgentTo = urgentTo;
-            newItem.score = order;
             [self.loopCache addObject:newItem];
             NSLog(@"demandManager >> 新需求 %lu",(unsigned long)self.loopCache.count);
         }
@@ -138,7 +136,7 @@
     [self.loopCache sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
         DemandModel *itemA = (DemandModel*)obj1;
         DemandModel *itemB = (DemandModel*)obj2;
-        return [SMGUtils compareIntA:itemA.score intB:itemB.score];
+        return [SMGUtils compareIntA:itemA.urgentTo intB:itemB.urgentTo];
     }];
 }
 

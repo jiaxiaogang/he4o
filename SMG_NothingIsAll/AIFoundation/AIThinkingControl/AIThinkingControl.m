@@ -178,7 +178,7 @@ static AIThinkingControl *_instance;
     NSString *algsType = cmvNode.urgentTo_p.algsType;
     NSInteger urgentTo = [NUMTOOK([AINetIndex getData:cmvNode.urgentTo_p]) integerValue];
     [self updateEnergy:urgentTo];//190730前:((urgentTo + 9)/10) 190730:urgentTo
-    [self.demandManager updateCMVCache_PMV:algsType urgentTo:urgentTo delta:delta order:urgentTo];
+    [self.demandManager updateCMVCache_PMV:algsType urgentTo:urgentTo delta:delta];
     [self.tOP dataOut];
 }
 
@@ -198,7 +198,7 @@ static AIThinkingControl *_instance;
                 urgentTo = (int)(urgentTo * shortMatchModel.matchFoValue);
                 
                 //3> 将mv加入demandCache
-                [self.demandManager updateCMVCache_RMV:algsType urgentTo:urgentTo delta:delta order:urgentTo];
+                [self.demandManager updateCMVCache_RMV:algsType urgentTo:urgentTo delta:delta];
                 
                 //4> RMV无需求时;
                 MVDirection havDemand = [ThinkingUtils havDemand:algsType delta:delta];

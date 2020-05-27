@@ -27,7 +27,7 @@
  *  2. 懒运算,
  *  注: 后续添加对时间衰减的支持
  */
-@property (assign, nonatomic) CGFloat score;            //评分
+//@property (assign, nonatomic) CGFloat score;            //评分
 @property (strong, nonatomic) NSMutableArray *except_ps;//下级不应期收集
 
 /**

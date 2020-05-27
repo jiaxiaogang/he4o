@@ -27,7 +27,7 @@
  *  MARK:--------------------获取当前最强的outSubModel--------------------
  *  @result 返回TOModelBase或其子类型;
  */
--(id) getCurSubModel;
+//-(id) getCurSubModel;
 
 
 /**
