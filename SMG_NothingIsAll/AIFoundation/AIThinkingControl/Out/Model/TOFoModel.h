@@ -7,6 +7,7 @@
 //
 
 #import "TOModelBase.h"
+#import "ISubModelsDelegate.h"
 
 /**
  *  MARK:--------------------决策中的时序模型--------------------
@@ -15,7 +16,7 @@
  *  3. 其间,如果有执行失败,无效等概念节点,存到except_ps不应期;
  *  4. 不应期会上报给上一级except_ps (或许由TOModelStatus来替代此功能);
  */
-@interface TOFoModel : TOModelBase
+@interface TOFoModel : TOModelBase <ISubModelsDelegate>
 
 @property (strong, nonatomic) NSMutableArray *actions;//行为化数据;
 

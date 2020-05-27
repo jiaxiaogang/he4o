@@ -7,13 +7,14 @@
 //
 
 #import "TOModelBase.h"
+#import "ITryActionFoDelegate.h"
 
 /**
  *  MARK:--------------------思维控制器中任务序列的_数据模型--------------------
  *  @version
  *      2020-05-22 : 将demandModel下直接挂载Fo,然后Fo下,再挂载subFo (Fo和subFo都用TOModelBase模型);
  */
-@interface DemandModel : TOModelBase
+@interface DemandModel : TOModelBase <ITryActionFoDelegate>
 
 @property (assign, nonatomic) NSInteger urgentTo;
 @property (assign, nonatomic) NSInteger delta;

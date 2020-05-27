@@ -7,10 +7,11 @@
 //
 
 #import "TOModelBase.h"
+#import "ITryActionFoDelegate.h"
 
 /**
  *  MARK:--------------------决策中的稀疏码模型--------------------
  */
-@interface TOValueModel : TOModelBase
+@interface TOValueModel : TOModelBase <ITryActionFoDelegate>
 
 @end

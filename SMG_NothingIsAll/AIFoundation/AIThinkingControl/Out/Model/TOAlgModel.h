@@ -7,12 +7,14 @@
 //
 
 #import "TOModelBase.h"
+#import "ITryActionFoDelegate.h"
+#import "ISubModelsDelegate.h"
 
 /**
  *  MARK:--------------------决策中的概念模型--------------------
  *  1. 将content_p中的概念进行行为化;
  *  2. content_p : AIAlgNodeBase_p
  */
-@interface TOAlgModel : TOModelBase
+@interface TOAlgModel : TOModelBase <ITryActionFoDelegate,ISubModelsDelegate>
 
 @end

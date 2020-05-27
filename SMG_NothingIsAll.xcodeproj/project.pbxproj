@@ -368,6 +368,8 @@
 		4591E029247F11B600484B51 /* TOAlgModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOAlgModel.m; sourceTree = "<group>"; };
 		4591E02B247F11DE00484B51 /* TOValueModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOValueModel.h; sourceTree = "<group>"; };
 		4591E02C247F11DE00484B51 /* TOValueModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOValueModel.m; sourceTree = "<group>"; };
+		4591E02E247F1E1A00484B51 /* ISubModelsDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ISubModelsDelegate.h; sourceTree = "<group>"; };
+		4591E030247F1F4000484B51 /* ITryActionFoDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ITryActionFoDelegate.h; sourceTree = "<group>"; };
 		8822851E20F58BDA009884DC /* AINetDirectionReference.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetDirectionReference.h; sourceTree = "<group>"; };
 		8822851F20F58BDA009884DC /* AINetDirectionReference.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetDirectionReference.m; sourceTree = "<group>"; };
 		8868F6E9210A946A000EAC9B /* AIAbsCMVManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIAbsCMVManager.h; sourceTree = "<group>"; };
@@ -433,6 +435,8 @@
 				4591E029247F11B600484B51 /* TOAlgModel.m */,
 				4591E02B247F11DE00484B51 /* TOValueModel.h */,
 				4591E02C247F11DE00484B51 /* TOValueModel.m */,
+				4591E02E247F1E1A00484B51 /* ISubModelsDelegate.h */,
+				4591E030247F1F4000484B51 /* ITryActionFoDelegate.h */,
 			);
 			path = Model;
 			sourceTree = "<group>";
