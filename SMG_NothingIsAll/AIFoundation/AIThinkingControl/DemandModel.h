@@ -20,9 +20,6 @@
 @property (assign, nonatomic) NSInteger delta;
 @property (strong, nonatomic) NSString *algsType;
 
-@property (strong, nonatomic) NSMutableArray *subModels;//具象子集序列 (实时有序)
-
-
 /**
  *  MARK:--------------------获取当前最强的outSubModel--------------------
  *  @result 返回TOModelBase或其子类型;

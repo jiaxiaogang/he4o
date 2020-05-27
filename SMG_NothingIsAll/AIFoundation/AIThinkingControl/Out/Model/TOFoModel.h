@@ -21,8 +21,13 @@
 @property (strong, nonatomic) NSMutableArray *actions;//行为化数据;
 
 @property (strong, nonatomic) AIFoNodeBase *fo;                     //对应的fo节点
-@property (assign, nonatomic) NSInteger actionIndex;                //当前正在行为化的下标;
-@property (strong, nonatomic) NSMutableDictionary *itemSubModels;   //每个下标,对应的subModels字典;
+
+/**
+ *  MARK:--------------------当前正在行为化的下标--------------------
+ *  @todo 将actionIndex赋值,改为生成TOAlgModel模型,并挂在subModels下;
+ */
+@property (assign, nonatomic) NSInteger actionIndex;
+//@property (strong, nonatomic) NSMutableDictionary *itemSubModels;   //每个下标,对应的subModels字典;
 
 
 /**

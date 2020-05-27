@@ -9,13 +9,19 @@
 #import "DemandModel.h"
 #import "TOFoModel.h"
 
+@interface DemandModel()
+
+@property (strong, nonatomic) NSMutableArray *actionFoModels;
+
+@end
+
 @implementation DemandModel
 
-- (NSMutableArray *)subModels{
-    if (_subModels == nil) {
-        _subModels = [[NSMutableArray alloc] init];
+-(NSMutableArray *)actionFoModels{
+    if (_actionFoModels == nil) {
+        _actionFoModels = [[NSMutableArray alloc] init];
     }
-    return _subModels;
+    return _actionFoModels;
 }
 
 //-(id) getCurSubModel{

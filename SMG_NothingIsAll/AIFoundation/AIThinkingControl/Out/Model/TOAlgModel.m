@@ -8,6 +8,27 @@
 
 #import "TOAlgModel.h"
 
+@interface TOAlgModel()
+
+@property (strong, nonatomic) NSMutableArray *actionFoModels;
+@property (strong, nonatomic) NSMutableArray *subModels;
+
+@end
+
 @implementation TOAlgModel
+
+-(NSMutableArray *)actionFoModels{
+    if (_actionFoModels == nil) {
+        _actionFoModels = [[NSMutableArray alloc] init];
+    }
+    return _actionFoModels;
+}
+
+-(NSMutableArray *)subModels {
+    if (_subModels == nil) {
+        _subModels = [[NSMutableArray alloc] init];
+    }
+    return _subModels;
+}
 
 @end

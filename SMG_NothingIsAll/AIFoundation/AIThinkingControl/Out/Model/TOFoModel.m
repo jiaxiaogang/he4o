@@ -8,6 +8,10 @@
 
 #import "TOFoModel.h"
 
+@interface TOFoModel()
+@property (strong, nonatomic) NSMutableArray *subModels;
+@end
+
 @implementation TOFoModel
 
 -(NSMutableArray *)actions{
@@ -35,5 +39,12 @@
 //    //4. 那些时序的评分总和
 //    return self.score;
 //}
+
+-(NSMutableArray *)subModels {
+    if (_subModels == nil) {
+        _subModels = [[NSMutableArray alloc] init];
+    }
+    return _subModels;
+}
 
 @end

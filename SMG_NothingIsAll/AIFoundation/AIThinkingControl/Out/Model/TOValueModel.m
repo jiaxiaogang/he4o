@@ -8,6 +8,19 @@
 
 #import "TOValueModel.h"
 
+@interface TOValueModel ()
+
+@property (strong, nonatomic) NSMutableArray *actionFoModels;
+
+@end
+
 @implementation TOValueModel
+
+- (NSMutableArray *)actionFoModels {
+    if (_actionFoModels == nil) {
+        _actionFoModels = [[NSMutableArray alloc] init];
+    }
+    return _actionFoModels;
+}
 
 @end
