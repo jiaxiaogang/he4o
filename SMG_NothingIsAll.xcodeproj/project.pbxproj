@@ -120,6 +120,8 @@
 		08FE031E231DEE8C001ED8B4 /* AIThinkOutReason.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FE031D231DEE8C001ED8B4 /* AIThinkOutReason.m */; };
 		2753D7CF7BAEDFEACAF9264A /* libPods-SMG_NothingIsAll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */; };
 		456F2C322476BD5E0015ADB8 /* AINetService.m in Sources */ = {isa = PBXBuildFile; fileRef = 456F2C312476BD5E0015ADB8 /* AINetService.m */; };
+		4591E02A247F11B600484B51 /* TOAlgModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 4591E029247F11B600484B51 /* TOAlgModel.m */; };
+		4591E02D247F11DE00484B51 /* TOValueModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 4591E02C247F11DE00484B51 /* TOValueModel.m */; };
 		8822852020F58BDA009884DC /* AINetDirectionReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 8822851F20F58BDA009884DC /* AINetDirectionReference.m */; };
 		8868F6EB210A946A000EAC9B /* AIAbsCMVManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8868F6EA210A946A000EAC9B /* AIAbsCMVManager.m */; };
 		8868F6EE210AA00B000EAC9B /* AINetAbsCMVUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 8868F6ED210AA00B000EAC9B /* AINetAbsCMVUtil.m */; };
@@ -362,6 +364,10 @@
 		08FE031D231DEE8C001ED8B4 /* AIThinkOutReason.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIThinkOutReason.m; sourceTree = "<group>"; };
 		456F2C302476BD5E0015ADB8 /* AINetService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetService.h; sourceTree = "<group>"; };
 		456F2C312476BD5E0015ADB8 /* AINetService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetService.m; sourceTree = "<group>"; };
+		4591E028247F11B600484B51 /* TOAlgModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOAlgModel.h; sourceTree = "<group>"; };
+		4591E029247F11B600484B51 /* TOAlgModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOAlgModel.m; sourceTree = "<group>"; };
+		4591E02B247F11DE00484B51 /* TOValueModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOValueModel.h; sourceTree = "<group>"; };
+		4591E02C247F11DE00484B51 /* TOValueModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOValueModel.m; sourceTree = "<group>"; };
 		8822851E20F58BDA009884DC /* AINetDirectionReference.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetDirectionReference.h; sourceTree = "<group>"; };
 		8822851F20F58BDA009884DC /* AINetDirectionReference.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetDirectionReference.m; sourceTree = "<group>"; };
 		8868F6E9210A946A000EAC9B /* AIAbsCMVManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIAbsCMVManager.h; sourceTree = "<group>"; };
@@ -423,6 +429,10 @@
 				080228E0227282F80087FE69 /* TOModelBase.m */,
 				088DD7212201216500E0A786 /* TOFoModel.h */,
 				088DD7222201216500E0A786 /* TOFoModel.m */,
+				4591E028247F11B600484B51 /* TOAlgModel.h */,
+				4591E029247F11B600484B51 /* TOAlgModel.m */,
+				4591E02B247F11DE00484B51 /* TOValueModel.h */,
+				4591E02C247F11DE00484B51 /* TOValueModel.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1236,6 +1246,7 @@
 				0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */,
 				88E1F851211591E50036B616 /* DemandModel.m in Sources */,
 				0881965F21800F2B00D5DB36 /* BirdLivePage.m in Sources */,
+				4591E02D247F11DE00484B51 /* TOValueModel.m in Sources */,
 				086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */,
 				08D471DE1FEB3FFF00C61322 /* AIImvAlgs.m in Sources */,
 				08A5D5E522AF2B8200E56BB4 /* NVDelegate_He.m in Sources */,
@@ -1272,6 +1283,7 @@
 				08B31E7E20648C3700FD96EA /* ThinkingUtils.m in Sources */,
 				08AA10E822CAD8520077DE36 /* NVHeUtil.m in Sources */,
 				0858C5E721950CA300951BA5 /* FoodView.m in Sources */,
+				4591E02A247F11B600484B51 /* TOAlgModel.m in Sources */,
 				08236CEC21A23439008D8761 /* AIVisionAlgsModel.m in Sources */,
 				080BFAAF2304D06A00046D22 /* HEViewController.m in Sources */,
 				0858C5CF2194F8B000951BA5 /* MASViewAttribute.m in Sources */,
