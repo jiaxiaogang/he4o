@@ -7,6 +7,7 @@
 //
 
 #import "TOValueModel.h"
+#import "TOAlgModel.h"
 
 @interface TOValueModel ()
 
@@ -15,6 +16,13 @@
 @end
 
 @implementation TOValueModel
+
++(TOValueModel*) newWithSValue:(AIKVPointer*)sValue_p pValue:(AIKVPointer*)pValue_p parent:(TOAlgModel*)parent{
+    TOValueModel *result = [[TOValueModel alloc] initWithContent_p:pValue_p];
+    result.curValue_p = sValue_p;
+    if (parent) [parent.subModels addObject:result];
+    return result;
+}
 
 - (NSMutableArray *)actionFoModels {
     if (_actionFoModels == nil) {

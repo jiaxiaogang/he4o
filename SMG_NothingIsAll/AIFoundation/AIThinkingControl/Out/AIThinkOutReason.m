@@ -19,6 +19,7 @@
 #import "TOUtils.h"
 #import "AINetUtils.h"
 #import "AIThinkOutAction.h"
+#import "TOAlgModel.h"
 
 @interface AIThinkOutReason() <TOAlgSchemeDelegate,TOActionDelegate>
 
@@ -137,7 +138,8 @@
             BOOL sHappened = sIndex < outModel.actionIndex;
             if (sHappened) {
                 //a. S存在,且S已发生,则加工SP;
-                [self.toAction convert2Out_SP:sAlg_p pAlg_p:pAlg_p outModel:outModel complete:complete];
+                TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:checkAlg_p parent:outModel];
+                [self.toAction convert2Out_SP:sAlg_p pAlg_p:pAlg_p outModel:algOutModel complete:complete];
             }else{
                 //b. S存在,但S未发生,则等待 (等S发生);
                 complete(true,nil);

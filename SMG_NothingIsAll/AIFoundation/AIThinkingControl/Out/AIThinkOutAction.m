@@ -14,6 +14,8 @@
 #import "ShortMatchManager.h"
 #import "AIShortMatchModel.h"
 #import "TOFoModel.h"
+#import "TOAlgModel.h"
+#import "TOValueModel.h"
 
 @implementation AIThinkOutAction
 
@@ -26,15 +28,22 @@
  *  @param complete : 必然执行,且仅执行一次;
  *  @version
  *      2020-05-22: 调用cHav,在原先solo与group的基础上,新增了最优先的checkAlg (因为solo和group可能压根不存在此概念,而TO是主应用,而非构建的);
+ *  @todoTest:
+ *      1. 测试时,在_GL时,可将pAlg换成checkAlg试试,因为pAlg本来就是反向类比后的fo,可能没有再进行内类比的机会,所以无_GL经验;
  */
--(void) convert2Out_SP:(AIKVPointer*)sAlg_p pAlg_p:(AIKVPointer*)pAlg_p outModel:(TOFoModel*)outModel complete:(void(^)(BOOL success,NSArray *acts))complete {
+-(void) convert2Out_SP:(AIKVPointer*)sAlg_p pAlg_p:(AIKVPointer*)pAlg_p outModel:(TOAlgModel*)outModel complete:(void(^)(BOOL success,NSArray *acts))complete {
     //1. 结果数据准备
-    AIKVPointer *checkAlg_p = ARR_INDEX(outModel.fo.content_ps, outModel.actionIndex);
     
     //TODOTOMORROW:
-    //1. 在此处生成checkAlg的TOAlgModel;
-    //2. 在下面传给GL时,生成TOValueModel;
+    //1. 在方法被调用前,将outModel实例化好,并当参数传递进去;
+    //  a. 在下面传给GL时,生成TOValueModel;
+    //  b. 传给_Alg时,生成TOAlgModel;
+    //  c. 已完成: _SP, _GL
+    //2. 在方法执行中status变化的,重新对status赋值即可;
     //3. 在_Alg方法转移时,对TOAlgModel生成actionFoModel;
+    //4. 每一次subAct时,都直接进行输出 (中断只有两种情况,理性的即行为化失败,感性的即评价失败);
+    //5. 每次获取到一个新的fo时,都要尝试进行评价,以中止此subOutModel;
+    
     
     
     NSMutableArray *acts = [[NSMutableArray alloc] init];
@@ -42,6 +51,7 @@
     AIAlgNodeBase *pAlg = [SMGUtils searchNode:pAlg_p];
     if (!pAlg) {
         complete(false,acts);//p为空直接失败;
+        outModel.status = TOModelStatus_ActNo;
         return;
     }
     NSLog(@"STEPKEY==========================SP START==========================\nSTEPKEYS:%@\nSTEPKEYP:%@",Alg2FStr(sAlg),Alg2FStr(pAlg));
@@ -57,13 +67,13 @@
     //4. GL行为化;
     __block BOOL failure = false;
     for (NSData *key in cGLDic) {
-        //a. 对比大小
+        //a. 数据准备;
         AIKVPointer *sValue_p = DATA2OBJ(key);
         AIKVPointer *pValue_p = [cGLDic objectForKey:key];
-        AnalogyType type = [ThinkingUtils compare:sValue_p valueB_p:pValue_p];
+        TOValueModel *valueOutModel = [TOValueModel newWithSValue:sValue_p pValue:pValue_p parent:outModel];
         //b. 行为化
         NSLog(@"------SP_GL行为化:%@ -> %@",[NVHeUtil getLightStr:sValue_p],[NVHeUtil getLightStr:pValue_p]);
-        [self convert2Out_GL:pAlg vAT:pValue_p.algsType vDS:pValue_p.dataSource type:type vSuccess:^(AIFoNodeBase *glFo, NSArray *itemActs) {
+        [self convert2Out_GL:pAlg outModel:valueOutModel vSuccess:^(AIFoNodeBase *glFo, NSArray *itemActs) {
             [acts addObjectsFromArray:itemActs];
         } vFailure:^{
             failure = true;
@@ -75,7 +85,7 @@
     for (AIKVPointer *pValue_p in cHavArr) {
         //a. 直接对checkAlg找cHav;
         __block BOOL hSuccess = false;
-        [self convert2Out_Hav:checkAlg_p complete:^(BOOL itemSuccess, NSArray *actions) {
+        [self convert2Out_Hav:outModel.content_p complete:^(BOOL itemSuccess, NSArray *actions) {
             hSuccess = itemSuccess;
             [acts addObjectsFromArray:actions];
         } checkScore:^BOOL(AIAlgNodeBase *mAlg) {
@@ -94,7 +104,7 @@
         if (hSuccess) continue;
         
         //c. 将pValue_p+same_ps重组找到概念,并找cHav;
-        AIAlgNodeBase *checkAlg = [SMGUtils searchNode:checkAlg_p];
+        AIAlgNodeBase *checkAlg = [SMGUtils searchNode:outModel.content_p];
         NSMutableArray *group_ps = [SMGUtils removeSub_ps:pAlg.content_ps parent_ps:checkAlg.content_ps];
         [group_ps addObject:pValue_p];
         AIAbsAlgNode *groupAlg = [theNet createAbsAlg_NoRepeat:group_ps conAlgs:nil isMem:false];
@@ -112,6 +122,11 @@
         }
     }
     
+    if (failure) {
+        outModel.status = TOModelStatus_ActNo;
+    }else{
+        outModel.status = TOModelStatus_ActYes;
+    }
     complete(!failure,acts);
 }
 
@@ -259,14 +274,19 @@
  *      3. 找到,判断range是否导致条件C转移;
  *          4. 未转移: success
  *          5. 转移: C条件->递归到convert2Out_Single_Alg();
- *  @param vAT & vDS : 用作查找"大/小"的标识;
+ *  _param vAT & vDS : 用作查找"大/小"的标识;
  *  @param alg : GL的微信息所处的概念, (所有微信息变化不应脱离概念,比如鸡蛋可以通过烧成固态,但水不能,所以变成固态这种特征变化,不应脱离概念去操作);
  */
--(void) convert2Out_GL:(AIAlgNodeBase*)alg vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type vSuccess:(void(^)(AIFoNodeBase *glFo,NSArray *acts))vSuccess vFailure:(void(^)())vFailure {
-    //1. 数据检查
+-(void) convert2Out_GL:(AIAlgNodeBase*)alg outModel:(TOValueModel*)outModel vSuccess:(void(^)(AIFoNodeBase *glFo,NSArray *acts))vSuccess vFailure:(void(^)())vFailure {
+    //1. 数据准备
+    AnalogyType type = [ThinkingUtils compare:outModel.curValue_p valueB_p:outModel.content_p];
+    NSString *vAT = outModel.content_p.algsType;
+    NSString *vDS = outModel.content_p.dataSource;
     if ((type != ATGreater && type != ATLess)) {
         WLog(@"value_行为化类参数type|value_p错误");
-        vFailure();
+        //相等不必行为化,直接返回true;
+        vSuccess(nil,nil);
+        outModel.status = TOModelStatus_Finish;
         return;
     }
     

@@ -7,6 +7,7 @@
 //
 
 #import "TOAlgModel.h"
+#import "TOFoModel.h"
 
 @interface TOAlgModel()
 
@@ -16,6 +17,13 @@
 @end
 
 @implementation TOAlgModel
+
++(TOAlgModel*) newWithAlg_p:(AIKVPointer*)alg_p parent:(TOFoModel*)parent{
+    TOAlgModel *result = [[TOAlgModel alloc] initWithContent_p:alg_p];
+    result.status = TOModelStatus_Runing;
+    if (foOutModel) [foOutModel.subModels addObject:result];
+    return result;
+}
 
 -(NSMutableArray *)actionFoModels{
     if (_actionFoModels == nil) {

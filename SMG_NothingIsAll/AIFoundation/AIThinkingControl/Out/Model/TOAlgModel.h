@@ -15,6 +15,9 @@
  *  1. 将content_p中的概念进行行为化;
  *  2. content_p : AIAlgNodeBase_p
  */
+@class TOFoModel;
 @interface TOAlgModel : TOModelBase <ITryActionFoDelegate,ISubModelsDelegate>
+
++(TOAlgModel*) newWithAlg_p:(AIKVPointer*)alg_p parent:(TOFoModel*)parent;
 
 @end

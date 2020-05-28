@@ -12,6 +12,10 @@
 /**
  *  MARK:--------------------决策中的稀疏码模型--------------------
  */
+@class TOAlgModel;
 @interface TOValueModel : TOModelBase <ITryActionFoDelegate>
+
+@property (strong, nonatomic) AIKVPointer *curValue_p;
++(TOValueModel*) newWithSValue:(AIKVPointer*)sValue_p pValue:(AIKVPointer*)pValue_p parent:(TOAlgModel*)parent;
 
 @end

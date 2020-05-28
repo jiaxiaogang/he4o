@@ -11,7 +11,7 @@
 
 @implementation TOModelBase
 
--(id) initWithContent_p:(AIPointer*)content_p{
+-(id) initWithContent_p:(AIKVPointer*)content_p{
     self = [super init];
     if (self) {
         self.content_p = content_p;

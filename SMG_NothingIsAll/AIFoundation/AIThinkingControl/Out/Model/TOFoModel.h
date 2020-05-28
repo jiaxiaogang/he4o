@@ -36,10 +36,4 @@
  */
 @property (strong, nonatomic) TOModelBase *activateSubModel;
 
-
-/**
- *  MARK:--------------------当前model的状态--------------------
- */
-@property (assign, nonatomic) TOModelStatus status;
-
 @end
