@@ -30,6 +30,13 @@
 -(void) convert2Out_SP:(AIKVPointer*)sAlg_p pAlg_p:(AIKVPointer*)pAlg_p outModel:(TOFoModel*)outModel complete:(void(^)(BOOL success,NSArray *acts))complete {
     //1. 结果数据准备
     AIKVPointer *checkAlg_p = ARR_INDEX(outModel.fo.content_ps, outModel.actionIndex);
+    
+    //TODOTOMORROW:
+    //1. 在此处生成checkAlg的TOAlgModel;
+    //2. 在下面传给GL时,生成TOValueModel;
+    //3. 在_Alg方法转移时,对TOAlgModel生成actionFoModel;
+    
+    
     NSMutableArray *acts = [[NSMutableArray alloc] init];
     AIAlgNodeBase *sAlg = [SMGUtils searchNode:sAlg_p];
     AIAlgNodeBase *pAlg = [SMGUtils searchNode:pAlg_p];
