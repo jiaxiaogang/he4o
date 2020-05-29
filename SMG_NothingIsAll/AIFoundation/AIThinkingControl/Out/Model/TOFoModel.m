@@ -14,6 +14,13 @@
 
 @implementation TOFoModel
 
++(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(id<ITryActionFoDelegate>)base{
+    TOFoModel *result = [[TOFoModel alloc] initWithContent_p:fo_p];
+    result.status = TOModelStatus_Runing;
+    if (base) [base.actionFoModels addObject:result];
+    return result;
+}
+
 -(NSMutableArray *)actions{
     if (!_actions) _actions = [[NSMutableArray alloc] init];
     return _actions;

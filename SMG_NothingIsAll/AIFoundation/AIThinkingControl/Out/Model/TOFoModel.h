@@ -8,6 +8,7 @@
 
 #import "TOModelBase.h"
 #import "ISubModelsDelegate.h"
+#import "ITryActionFoDelegate.h"
 
 /**
  *  MARK:--------------------决策中的时序模型--------------------
@@ -18,6 +19,7 @@
  */
 @interface TOFoModel : TOModelBase <ISubModelsDelegate>
 
++(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(id<ITryActionFoDelegate>)base;
 @property (strong, nonatomic) NSMutableArray *actions;//行为化数据;
 
 @property (strong, nonatomic) AIFoNodeBase *fo;                     //对应的fo节点

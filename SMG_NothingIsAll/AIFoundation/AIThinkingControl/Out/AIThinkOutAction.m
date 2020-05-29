@@ -40,7 +40,7 @@
     //1. 在方法被调用前,将outModel实例化好,并当参数传递进去;
     //  a. 在下面传给GL时,生成TOValueModel;
     //  b. 传给_Alg时,生成TOAlgModel;
-    //  c. 已完成: _SP, _GL
+    //  c. 已完成: _SP, _P, _GL, _Hav, _Fos, _Fo;
     //2. 在方法执行中status变化的,重新对status赋值即可;
     //3. 在_Alg方法转移时,对TOAlgModel生成actionFoModel;
     //4. 每一次subAct时,都直接进行输出 (中断只有两种情况,理性的即行为化失败,感性的即评价失败);
@@ -156,15 +156,9 @@
  *      3. 191107考虑将foScheme也搬过来,优先使用matchFo做第一解决方案;
  *  @TODO_TEST_HERE: 测试下阈值-3,是否合理;
  */
--(void) convert2Out_Fo:(NSArray*)curAlg_ps curFo:(AIFoNodeBase*)curFo success:(void(^)(NSArray *acts))success failure:(void(^)())failure {
-    
-    //TODOTOMORROW:
-    //1. 转移时,对subOutModel的支持;
-    
-    
-    
-    
+-(void) convert2Out_Fo:(NSArray*)curAlg_ps outModel:(TOFoModel*)outModel success:(void(^)(NSArray *acts))success failure:(void(^)())failure {
     //1. 数据准备
+    AIFoNodeBase *curFo = [SMGUtils searchNode:outModel.content_p];
     NSLog(@"STEPKEY============================== 行为化 START ==================== \nSTEPKEY时序:%@->%@\nSTEPKEY需要:[%@]",Fo2FStr(curFo),Mvp2Str(curFo.cmvNode_p),Pits2FStr(curAlg_ps));
     NSMutableArray *result = [[NSMutableArray alloc] init];
     if (!ARRISOK(curAlg_ps) || curFo == nil) {
@@ -179,7 +173,7 @@
     //2. 依次单个概念行为化
     for (AIKVPointer *curAlg_p in curAlg_ps) {
         __block BOOL successed = false;
-        TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:curAlg_p parent:outModel];//TODOTOMORROW;
+        TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:curAlg_p parent:outModel];
         [self convert2Out_Hav:algOutModel complete:^(BOOL itemSuccess, NSArray *actions) {
             //3. 行为化成功,则收集;
             successed = itemSuccess;
@@ -212,7 +206,7 @@
  *  第1级: 直接判定curAlg_p为输出则收集;
  *  第2级: MC匹配行为化
  *  第3级: LongNet长短时网络行为化
- *  @param curAlg_p : 三个来源: 1.Fo的元素A;  2.Range的元素A; 3.Alg的嵌套A;
+ *  _param curAlg_p : 三个来源: 1.Fo的元素A;  2.Range的元素A; 3.Alg的嵌套A;
  *  @version
  *      2020-05-22 : 支持更发散的联想(要求matchAlg和hAlg同被引用),因每次递归都要这么联想,所以从TOP搬到这来 (由19152改成19192);
  *      2020-05-27 : 支持outModel (目前cHav方法,收集所有acts,一次性返回行为,而并未进行多轮外循环,所以此处不必做subOutModel);
@@ -222,26 +216,26 @@
     NSMutableArray *result = [[NSMutableArray alloc] init];
     __block BOOL success = false;
     __block AIFoNodeBase *moveHFo = nil;//转移fo,暂未使用;
-    if (!curAlg_p) {
+    if (!outModel.content_p) {
         complete(false,nil);
         return;
     }
     
     //2. 本身即是isOut时,直接行为化返回;
-    if (curAlg_p.isOut) {
-        complete(true,@[curAlg_p]);
-        NSLog(@"-> SP_Hav_isOut为TRUE: %@",AlgP2FStr(curAlg_p));
+    if (outModel.content_p.isOut) {
+        complete(true,@[outModel.content_p]);
+        NSLog(@"-> SP_Hav_isOut为TRUE: %@",AlgP2FStr(outModel.content_p));
         return;
     }else{
         //3. 数据检查curAlg
-        AIAlgNodeBase *curAlg = [SMGUtils searchNode:curAlg_p];
+        AIAlgNodeBase *curAlg = [SMGUtils searchNode:outModel.content_p];
         if (!curAlg) {
             complete(false,nil);
             return;
         }
         
         //4. 数据检查hAlg_根据type和value_p找ATHav
-        AIAlgNodeBase *hAlg = [AINetService getInnerAlg:curAlg vAT:curAlg_p.algsType vDS:curAlg_p.dataSource type:ATHav];
+        AIAlgNodeBase *hAlg = [AINetService getInnerAlg:curAlg vAT:outModel.content_p.algsType vDS:outModel.content_p.dataSource type:ATHav];
         if (!hAlg) {
             complete(false,nil);
             return;
@@ -258,7 +252,7 @@
             hmRef_ps = ARR_SUB(hmRef_ps, 0, cHavNoneAssFoCount);
             
             //8. 并依次尝试行为化;
-            [self convert2Out_RelativeFo_ps:hmRef_ps success:^(AIFoNodeBase *havFo, NSArray *actions) {
+            [self convert2Out_RelativeFo_ps:hmRef_ps outModel:outModel success:^(AIFoNodeBase *havFo, NSArray *actions) {
                 success = true;
                 moveHFo = havFo;
                 [result addObjectsFromArray:actions];
@@ -305,7 +299,7 @@
     //3. 根据havAlg联想时序,并找出新的解决方案,与新的行为化的概念,与新的条件概念;
     __block BOOL successed = false;
     NSArray *hdRefPorts = ARR_SUB(glAlg.refPorts, 0, cHavNoneAssFoCount);
-    [self convert2Out_RelativeFo_ps:[SMGUtils convertPointersFromPorts:hdRefPorts] success:^(AIFoNodeBase *glFo, NSArray *actions) {
+    [self convert2Out_RelativeFo_ps:[SMGUtils convertPointersFromPorts:hdRefPorts] outModel:outModel success:^(AIFoNodeBase *glFo, NSArray *actions) {
         successed = true;
         vSuccess(glFo,actions);
     } failure:^{
@@ -329,7 +323,7 @@
  *      1. 参数: 由方法调用者保证传入的是"相对时序"而不是普通时序
  *      2. 流程: 取出相对时序,并取rangeOrder,行为化并返回
  */
--(void) convert2Out_RelativeFo_ps:(NSArray*)relativeFo_ps success:(void(^)(AIFoNodeBase *havFo,NSArray *actions))success failure:(void(^)())failure {
+-(void) convert2Out_RelativeFo_ps:(NSArray*)relativeFo_ps outModel:(id<ITryActionFoDelegate>)outModel success:(void(^)(AIFoNodeBase *havFo,NSArray *actions))success failure:(void(^)())failure {
     //1. 数据准备
     relativeFo_ps = ARRTOOK(relativeFo_ps);
     
@@ -351,7 +345,8 @@
             }else{
                 
                 //5. 转移,则进行行为化 (递归到总方法);
-                [self convert2Out_Fo:foRangeOrder curFo:relativeFo success:^(NSArray *acts) {
+                TOFoModel *foOutModel = [TOFoModel newWithFo_p:relativeFo.pointer base:outModel];
+                [self convert2Out_Fo:foRangeOrder outModel:foOutModel success:^(NSArray *acts) {
                     successed = true;
                     success(relativeFo,acts);
                 } failure:^{
