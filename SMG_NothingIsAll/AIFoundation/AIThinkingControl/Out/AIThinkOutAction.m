@@ -28,8 +28,10 @@
  *  @param complete : 必然执行,且仅执行一次;
  *  @version
  *      2020-05-22: 调用cHav,在原先solo与group的基础上,新增了最优先的checkAlg (因为solo和group可能压根不存在此概念,而TO是主应用,而非构建的);
- *  @todoTest:
+ *  @TODO_TEST_HERE:
  *      1. 测试时,在_GL时,可将pAlg换成checkAlg试试,因为pAlg本来就是反向类比后的fo,可能没有再进行内类比的机会,所以无_GL经验;
+ *  @todo
+ *      1. 收集_GL向抽象和具象延伸,而尽量避免到_Hav,尤其要避免重组,无论是group还是solo (参考n19p18-todo4);
  */
 -(void) convert2Out_SP:(AIKVPointer*)sAlg_p pAlg_p:(AIKVPointer*)pAlg_p outModel:(TOAlgModel*)outModel complete:(void(^)(BOOL success,NSArray *acts))complete {
     //1. 结果数据准备
@@ -85,7 +87,7 @@
     for (AIKVPointer *pValue_p in cHavArr) {
         //a. 直接对checkAlg找cHav;
         __block BOOL hSuccess = false;
-        [self convert2Out_Hav:outModel.content_p complete:^(BOOL itemSuccess, NSArray *actions) {
+        [self convert2Out_Hav:outModel complete:^(BOOL itemSuccess, NSArray *actions) {
             hSuccess = itemSuccess;
             [acts addObjectsFromArray:actions];
         } checkScore:^BOOL(AIAlgNodeBase *mAlg) {
@@ -95,7 +97,8 @@
         
         //b. 将pValue_p独立找到概念,并找cHav;
         AIAbsAlgNode *soloAlg = [theNet createAbsAlg_NoRepeat:@[pValue_p] conAlgs:nil isMem:false];
-        [self convert2Out_Hav:soloAlg.pointer complete:^(BOOL itemSuccess, NSArray *actions) {
+        TOAlgModel *soloOutModel = [TOAlgModel newWithAlg_p:soloAlg.pointer parent:outModel];
+        [self convert2Out_Hav:soloOutModel complete:^(BOOL itemSuccess, NSArray *actions) {
             hSuccess = itemSuccess;
             [acts addObjectsFromArray:actions];
         }  checkScore:^BOOL(AIAlgNodeBase *mAlg) {
@@ -108,7 +111,8 @@
         NSMutableArray *group_ps = [SMGUtils removeSub_ps:pAlg.content_ps parent_ps:checkAlg.content_ps];
         [group_ps addObject:pValue_p];
         AIAbsAlgNode *groupAlg = [theNet createAbsAlg_NoRepeat:group_ps conAlgs:nil isMem:false];
-        [self convert2Out_Hav:groupAlg.pointer complete:^(BOOL itemSuccess, NSArray *actions) {
+        TOAlgModel *groupOutModel = [TOAlgModel newWithAlg_p:groupAlg.pointer parent:outModel];
+        [self convert2Out_Hav:groupOutModel complete:^(BOOL itemSuccess, NSArray *actions) {
             hSuccess = itemSuccess;
             [acts addObjectsFromArray:actions];
         } checkScore:^BOOL(AIAlgNodeBase *mAlg) {
@@ -132,10 +136,10 @@
 
 /**
  *  MARK:--------------------P行为化--------------------
- *  @param curAlg_p : 来源: TOR.R-;
+ *  _param curAlg_p : 来源: TOR.R-;
  */
--(void) convert2Out_P:(AIKVPointer*)curAlg_p outModel:(TOFoModel*)outModel complete:(void(^)(BOOL itemSuccess,NSArray *actions))complete {
-    [self convert2Out_Hav:curAlg_p complete:complete checkScore:^BOOL(AIAlgNodeBase *mAlg) {
+-(void) convert2Out_P:(TOAlgModel*)outModel complete:(void(^)(BOOL itemSuccess,NSArray *actions))complete {
+    [self convert2Out_Hav:outModel complete:complete checkScore:^BOOL(AIAlgNodeBase *mAlg) {
         return true;
     }];
 }
@@ -175,7 +179,8 @@
     //2. 依次单个概念行为化
     for (AIKVPointer *curAlg_p in curAlg_ps) {
         __block BOOL successed = false;
-        [self convert2Out_Hav:curAlg_p complete:^(BOOL itemSuccess, NSArray *actions) {
+        TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:curAlg_p parent:outModel];//TODOTOMORROW;
+        [self convert2Out_Hav:algOutModel complete:^(BOOL itemSuccess, NSArray *actions) {
             //3. 行为化成功,则收集;
             successed = itemSuccess;
             [result addObjectsFromArray:actions];
@@ -212,7 +217,7 @@
  *      2020-05-22 : 支持更发散的联想(要求matchAlg和hAlg同被引用),因每次递归都要这么联想,所以从TOP搬到这来 (由19152改成19192);
  *      2020-05-27 : 支持outModel (目前cHav方法,收集所有acts,一次性返回行为,而并未进行多轮外循环,所以此处不必做subOutModel);
  */
--(void) convert2Out_Hav:(AIKVPointer*)curAlg_p complete:(void(^)(BOOL itemSuccess,NSArray *actions))complete checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
+-(void) convert2Out_Hav:(TOAlgModel*)outModel complete:(void(^)(BOOL itemSuccess,NSArray *actions))complete checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
     //1. 数据准备;
     NSMutableArray *result = [[NSMutableArray alloc] init];
     __block BOOL success = false;

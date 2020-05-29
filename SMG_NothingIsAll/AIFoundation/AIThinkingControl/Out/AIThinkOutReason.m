@@ -90,7 +90,8 @@
         complete(true,@[cAlg_p]);
     }else{
         //2. cHav行为化;
-        [self.toAction convert2Out_P:cAlg_p outModel:outModel complete:complete];
+        TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:cAlg_p parent:outModel];
+        [self.toAction convert2Out_P:algOutModel complete:complete];
     }
 }
 
@@ -146,7 +147,8 @@
             }
         }else{
             //c. S不存在,则仅实现P即可;
-            [self.toAction convert2Out_P:pAlg_p outModel:outModel complete:complete];
+            TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:pAlg_p parent:outModel];
+            [self.toAction convert2Out_P:algOutModel complete:complete];
         }
     }
 }
@@ -173,7 +175,8 @@
         complete(true,@[curAlg_p]);
     }else{
         //3. cHav行为化
-        [self.toAction convert2Out_P:curAlg_p outModel:outModel complete:complete];
+        TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:curAlg_p parent:outModel];
+        [self.toAction convert2Out_P:algOutModel complete:complete];
     }
 }
 

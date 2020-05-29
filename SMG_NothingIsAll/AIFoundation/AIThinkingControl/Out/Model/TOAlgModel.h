@@ -18,6 +18,6 @@
 @class TOFoModel;
 @interface TOAlgModel : TOModelBase <ITryActionFoDelegate,ISubModelsDelegate>
 
-+(TOAlgModel*) newWithAlg_p:(AIKVPointer*)alg_p parent:(TOFoModel*)parent;
++(TOAlgModel*) newWithAlg_p:(AIKVPointer*)alg_p parent:(id<ISubModelsDelegate>)parent;
 
 @end
