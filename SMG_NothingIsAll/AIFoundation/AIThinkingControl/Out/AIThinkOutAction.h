@@ -15,6 +15,7 @@
 
 -(void) toAction_updateEnergy:(CGFloat)delta;
 -(BOOL) toAction_EnergyValid;
+-(void) toAction_Output:(NSArray*)actions;
 
 @end
 
@@ -38,7 +39,7 @@
 
 @property (weak, nonatomic) id<TOActionDelegate> delegate;
 
--(void) convert2Out_SP:(AIKVPointer*)sAlg_p pAlg_p:(AIKVPointer*)pAlg_p outModel:(TOAlgModel*)outModel complete:(void(^)(BOOL success,NSArray *acts))complete;
--(void) convert2Out_P:(TOAlgModel*)outModel complete:(void(^)(BOOL itemSuccess,NSArray *actions))complete;
+-(void) convert2Out_SP:(AIKVPointer*)sAlg_p pAlg_p:(AIKVPointer*)pAlg_p outModel:(TOAlgModel*)outModel;
+-(void) convert2Out_P:(TOAlgModel*)outModel;
 
 @end

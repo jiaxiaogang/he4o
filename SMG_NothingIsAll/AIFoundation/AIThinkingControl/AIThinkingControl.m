@@ -258,53 +258,20 @@ static AIThinkingControl *_instance;
 
 -(BOOL) aiTOP_2TOR_ReasonPlus:(TOFoModel*)outModel{
     //1. 行为化;
-    __block BOOL success = false;
-    [self.tOR commitReasonPlus:outModel complete:^(BOOL actSuccess, NSArray *acts) {
-        success = actSuccess;
-        
-        //2. 更新到outModel;
-        if (actSuccess) {
-            //[self.demandManager add]; status为尝试输出,事实input发生后,才会移动到下帧;
-        }
-        
-        //3. 输出行为;
-        [self.tOR dataOut_ActionScheme:acts];
-    }];
-    return success;
+    [self.tOR commitReasonPlus:outModel];
+    return outModel.status == TOModelStatus_Finish;
 }
 
 -(BOOL) aiTOP_2TOR_ReasonSub:(AIFoNodeBase *)matchFo plusFo:(AIFoNodeBase *)plusFo subFo:(AIFoNodeBase*)subFo outModel:(TOFoModel*)outModel {
     //1. 行为化;
-    __block BOOL success = false;
-    [self.tOR commitReasonSub:matchFo plusFo:plusFo subFo:subFo outModel:outModel complete:^(BOOL actSuccess, NSArray *acts) {
-        success = actSuccess;
-        
-        //2. 更新到outModel;
-        if (actSuccess) {
-            //[self.demandManager add]; status为尝试输出,事实input发生后,才会移动到下帧;
-        }
-        
-        //3. 输出行为;
-        [self.tOR dataOut_ActionScheme:acts];
-    }];
-    return success;
+    [self.tOR commitReasonSub:matchFo plusFo:plusFo subFo:subFo outModel:outModel];
+    return outModel.status == TOModelStatus_Finish;
 }
 
 -(BOOL) aiTOP_2TOR_PerceptPlus:(TOFoModel *)outModel{
     //1. 行为化;
-    __block BOOL success = false;
-    [self.tOR commitPerceptPlus:outModel complete:^(BOOL actSuccess, NSArray *acts) {
-        success = actSuccess;
-        
-        //2. 更新到outModel;
-        if (actSuccess) {
-            //[self.demandManager add]; status为尝试输出,事实input发生后,才会移动到下帧;
-        }
-        
-        //3. 输出行为;
-        [self.tOR dataOut_ActionScheme:acts];
-    }];
-    return success;
+    [self.tOR commitPerceptPlus:outModel];
+    return outModel.status == TOModelStatus_Finish;
 }
 
 -(BOOL) aiTOP_2TOR_PerceptSub:(AIFoNodeBase *)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo checkFo:(AIFoNodeBase*)checkFo{

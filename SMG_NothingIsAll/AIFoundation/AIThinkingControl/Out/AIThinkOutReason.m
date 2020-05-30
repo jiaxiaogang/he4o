@@ -82,16 +82,15 @@
  *          1. isOut则输出;
  *          2. notOut则等待;
  */
--(void) commitReasonPlus:(TOFoModel*)outModel complete:(void(^)(BOOL actSuccess,NSArray *acts))complete{
+-(void) commitReasonPlus:(TOFoModel*)outModel{
     //1. isOut时,直接输出;
     AIKVPointer *cAlg_p = ARR_INDEX(outModel.fo.content_ps, outModel.actionIndex);
-    if (cAlg_p && cAlg_p.isOut) {
-        outModel.status = TOModelStatus_ActYes;
-        complete(true,@[cAlg_p]);
-    }else{
-        //2. cHav行为化;
-        TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:cAlg_p parent:outModel];
-        [self.toAction convert2Out_P:algOutModel complete:complete];
+    
+    //2. cHav行为化;
+    TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:cAlg_p parent:outModel];
+    [self.toAction convert2Out_P:algOutModel];
+    if (algOutModel.status == TOModelStatus_Finish) {
+        outModel.status = TOModelStatus_Finish;
     }
 }
 
@@ -103,19 +102,19 @@
  *          3. notOut判断 (等待);
  *  @存储 负只是正的帧推进器,比如买菜为了做饭 (参考19171);
  */
--(void) commitReasonSub:(AIFoNodeBase*)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo outModel:(TOFoModel*)outModel complete:(void(^)(BOOL actSuccess,NSArray *acts))complete{
+-(void) commitReasonSub:(AIFoNodeBase*)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo outModel:(TOFoModel*)outModel {
     //1. 数据准备
     AIKVPointer *firstPlusItem = ARR_INDEX(plusFo.content_ps, 0);
     AIKVPointer *checkAlg_p = ARR_INDEX(outModel.fo.content_ps, outModel.actionIndex);
-    if (!matchFo || !plusFo || !subFo || !complete || !checkAlg_p) {
-        complete(false,nil);
+    if (!matchFo || !plusFo || !subFo || !checkAlg_p) {
+        outModel.status = TOModelStatus_ActNo;
         return;
     }
     
     //2. 正影响首元素,错过判断 (错过,行为化失败);
     NSInteger firstAt_Plus = [TOUtils indexOfAbsItem:firstPlusItem atConContent:outModel.fo.content_ps];
     if (outModel.actionIndex > firstAt_Plus) {
-        complete(false,nil);
+        outModel.status = TOModelStatus_ActNo;
         return;
     }
     
@@ -140,15 +139,21 @@
             if (sHappened) {
                 //a. S存在,且S已发生,则加工SP;
                 TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:checkAlg_p parent:outModel];
-                [self.toAction convert2Out_SP:sAlg_p pAlg_p:pAlg_p outModel:algOutModel complete:complete];
+                [self.toAction convert2Out_SP:sAlg_p pAlg_p:pAlg_p outModel:algOutModel];
+                if (algOutModel.status == TOModelStatus_Finish) {
+                    outModel.status = TOModelStatus_Finish;
+                }
             }else{
                 //b. S存在,但S未发生,则等待 (等S发生);
-                complete(true,nil);
+                outModel.status = TOModelStatus_Finish;
             }
         }else{
             //c. S不存在,则仅实现P即可;
             TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:pAlg_p parent:outModel];
-            [self.toAction convert2Out_P:algOutModel complete:complete];
+            [self.toAction convert2Out_P:algOutModel];
+            if (algOutModel.status == TOModelStatus_Finish) {
+                outModel.status = TOModelStatus_Finish;
+            }
         }
     }
 }
@@ -161,22 +166,21 @@
  *  @version
  *      2020-05-27 : 将isOut=false时等待改成进行cHav行为化;
  */
--(void) commitPerceptPlus:(TOFoModel*)outModel complete:(void(^)(BOOL actSuccess,NSArray *acts))complete{
+-(void) commitPerceptPlus:(TOFoModel*)outModel{
     //1. 数据检查
     if (!outModel.fo) {
-        complete(false,nil);
+        outModel.status = TOModelStatus_ActNo;
         return;
     }
     
     //2. 行为化;
     AIKVPointer *curAlg_p = ARR_INDEX(outModel.fo.content_ps, outModel.actionIndex);//从0开始
-    if (curAlg_p && curAlg_p.isOut) {
-        outModel.status = TOModelStatus_ActYes;
-        complete(true,@[curAlg_p]);
-    }else{
-        //3. cHav行为化
-        TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:curAlg_p parent:outModel];
-        [self.toAction convert2Out_P:algOutModel complete:complete];
+    
+    //3. cHav行为化
+    TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:curAlg_p parent:outModel];
+    [self.toAction convert2Out_P:algOutModel];
+    if (algOutModel.status == TOModelStatus_Finish) {
+        outModel.status = TOModelStatus_Finish;
     }
 }
 
@@ -308,6 +312,12 @@
 }
 -(BOOL)toAction_EnergyValid{
     return [self.delegate aiThinkOutReason_EnergyValid];
+}
+-(void)toAction_Output:(NSArray *)actions{
+    actions = ARRTOOK(actions);
+    for (AIKVPointer *algNode_p in actions) {
+        BOOL invoked = [Output output_FromTC:algNode_p];
+    }
 }
 
 @end
