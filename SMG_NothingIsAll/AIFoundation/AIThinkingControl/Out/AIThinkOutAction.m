@@ -37,14 +37,8 @@
     //1. 结果数据准备
     
     //TODOTOMORROW:
-    //1. 在方法被调用前,将outModel实例化好,并当参数传递进去; T
-    //  a. 在下面传给GL时,生成TOValueModel;
-    //  b. 传给_Alg时,生成TOAlgModel;
-    //  c. 已完成: _SP, _P, _GL, _Hav, _Fos, _Fo;
-    //2. 在方法执行中status变化的,重新对status赋值即可; T
-    //3. 在_Alg方法转移时,对TOAlgModel生成actionFoModel;
-    //4. 每一次subAct时,都直接进行输出 (中断只有两种情况,理性的即行为化失败,感性的即评价失败);
-    //5. 每次获取到一个新的fo时,都要尝试进行评价,以中止此subOutModel;
+    //1. 每次获取到一个新的fo时,都要尝试进行评价,以中止此subOutModel;
+    //2. 对单帧Finish的,要在下轮input传回判断是否符合要求,并跳转至下帧;
     
     
     
