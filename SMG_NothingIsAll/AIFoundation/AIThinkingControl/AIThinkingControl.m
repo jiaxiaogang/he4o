@@ -309,5 +309,8 @@ static AIThinkingControl *_instance;
 -(AIShortMatchModel*) aiTOR_GetShortMatchModel{
     return ARR_INDEX_REVERSE(self.shortMatchManager.models, 0);
 }
+-(AIShortMatchModel*) aiTOR_RethinkInnerFo:(AIFoNodeBase*)fo{
+    return [self.thinkIn dataInFromTORInnerFo:fo];
+}
 
 @end

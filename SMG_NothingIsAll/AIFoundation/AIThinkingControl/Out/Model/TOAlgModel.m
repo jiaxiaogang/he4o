@@ -18,10 +18,11 @@
 
 @implementation TOAlgModel
 
-+(TOAlgModel*) newWithAlg_p:(AIKVPointer*)alg_p parent:(id<ISubModelsDelegate>)parent{
++(TOAlgModel*) newWithAlg_p:(AIKVPointer*)alg_p group:(id<ISubModelsDelegate>)group{
     TOAlgModel *result = [[TOAlgModel alloc] initWithContent_p:alg_p];
     result.status = TOModelStatus_Runing;
-    if (parent) [parent.subModels addObject:result];
+    if (group) [group.subModels addObject:result];
+    result.baseOrGroup = group;
     return result;
 }
 

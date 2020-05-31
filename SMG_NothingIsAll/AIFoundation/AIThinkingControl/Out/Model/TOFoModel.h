@@ -22,8 +22,6 @@
 +(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(id<ITryActionFoDelegate>)base;
 @property (strong, nonatomic) NSMutableArray *actions;//行为化数据;
 
-@property (strong, nonatomic) AIFoNodeBase *fo;                     //对应的fo节点
-
 /**
  *  MARK:--------------------当前正在行为化的下标--------------------
  *  @todo 将actionIndex赋值,改为生成TOAlgModel模型,并挂在subModels下;

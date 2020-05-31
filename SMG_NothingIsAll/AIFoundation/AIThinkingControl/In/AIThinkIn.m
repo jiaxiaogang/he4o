@@ -141,6 +141,23 @@
 -(AIAlgNodeBase*) dataInFromTOR_MatchRTAlg:(AIAlgNodeBase*)rtAlg mUniqueV_p:(AIKVPointer*)mUniqueV_p {
     return [AIThinkInReason TIR_Alg_FromRethink:rtAlg mUniqueV_p:mUniqueV_p];
 }
+-(AIShortMatchModel*) dataInFromTORInnerFo:(AIFoNodeBase*)fo{
+    //1. 数据准备
+    __block AIShortMatchModel *mModel = [[AIShortMatchModel alloc] init];
+    NSArray *rtContent_ps = ARR_SUB(fo.content_ps, 0, fo.content_ps.count - 1);
+    AIAlgNodeBase *rtAlg = [SMGUtils searchNode:ARR_INDEX(rtContent_ps, rtContent_ps.count - 1)];
+    if (rtAlg && ARRISOK(rtContent_ps)) {
+        
+        //2. 识别时序;
+        [AIThinkInReason TIR_Fo_FromRethink:rtContent_ps replaceMatchAlg:rtAlg finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue, NSInteger cutIndex) {
+            mModel.protoFo = curNode;
+            mModel.matchFo = matchFo;
+            mModel.matchFoValue = matchValue;
+            mModel.cutIndex = cutIndex;
+        }];
+    }
+    return mModel;
+}
 
 //MARK:===============================================================
 //MARK:                     < NoMV >

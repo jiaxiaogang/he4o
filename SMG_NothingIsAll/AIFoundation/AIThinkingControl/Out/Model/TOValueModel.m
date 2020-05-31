@@ -17,10 +17,11 @@
 
 @implementation TOValueModel
 
-+(TOValueModel*) newWithSValue:(AIKVPointer*)sValue_p pValue:(AIKVPointer*)pValue_p parent:(TOAlgModel*)parent{
++(TOValueModel*) newWithSValue:(AIKVPointer*)sValue_p pValue:(AIKVPointer*)pValue_p group:(TOAlgModel*)group{
     TOValueModel *result = [[TOValueModel alloc] initWithContent_p:pValue_p];
     result.curValue_p = sValue_p;
-    if (parent) [parent.subModels addObject:result];
+    if (group) [group.subModels addObject:result];
+    result.baseOrGroup = group;
     return result;
 }
 

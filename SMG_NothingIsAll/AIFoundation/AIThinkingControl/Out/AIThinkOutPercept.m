@@ -103,10 +103,8 @@
  */
 -(BOOL) reasonPlus:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex demandModel:(DemandModel*)demandModel{
     //1. 生成outFo模型
-    TOFoModel *toFoModel = [[TOFoModel alloc] init];
-    toFoModel.fo = matchFo;
+    TOFoModel *toFoModel = [TOFoModel newWithFo_p:matchFo.pointer base:demandModel];
     toFoModel.actionIndex = cutIndex + 1;
-    toFoModel.status = TOModelStatus_Runing;
     
     //2. 对首元素进行行为化;
     return [self.delegate aiTOP_2TOR_ReasonPlus:toFoModel];
@@ -128,10 +126,8 @@
     __block BOOL success = false;
     [TOUtils getPlusBrotherBySubProtoFo_NoRepeatNotNull:matchFo tryResult:^BOOL(AIFoNodeBase *checkFo, AIFoNodeBase *subNode, AIFoNodeBase *plusNode) {
         //a. 构建TOFoModel
-        TOFoModel *toFoModel = [[TOFoModel alloc] init];
-        toFoModel.fo = checkFo;
+        TOFoModel *toFoModel = [TOFoModel newWithFo_p:checkFo.pointer base:demandModel];
         toFoModel.actionIndex = cutIndex;
-        toFoModel.status = TOModelStatus_Runing;
         
         //b. 转给TOR
         success = [self.delegate aiTOP_2TOR_ReasonSub:matchFo plusFo:plusNode subFo:subNode outModel:toFoModel];
@@ -162,10 +158,8 @@
     [TOUtils topPerceptMode:matchAlg demandModel:demandModel direction:direction tryResult:^BOOL(AIFoNodeBase *sameFo) {
         
         //a. 构建TOFoModel
-        TOFoModel *toFoModel = [[TOFoModel alloc] init];
-        toFoModel.fo = sameFo;
+        TOFoModel *toFoModel = [TOFoModel newWithFo_p:sameFo.pointer base:demandModel];
         toFoModel.actionIndex = 0;
-        toFoModel.status = TOModelStatus_Runing;
         
         //b. 取自身,实现吃,则可不饿;
         success = [self.delegate aiTOP_2TOR_PerceptPlus:toFoModel];

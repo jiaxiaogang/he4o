@@ -84,7 +84,8 @@
  */
 -(void) commitReasonPlus:(TOFoModel*)outModel{
     //1. isOut时,直接输出;
-    AIKVPointer *cAlg_p = ARR_INDEX(outModel.fo.content_ps, outModel.actionIndex);
+    AIFoNodeBase *fo = [SMGUtils searchNode:outModel.content_p];
+    AIKVPointer *cAlg_p = ARR_INDEX(fo.content_ps, outModel.actionIndex);
     
     //2. cHav行为化;
     TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:cAlg_p parent:outModel];
@@ -105,14 +106,15 @@
 -(void) commitReasonSub:(AIFoNodeBase*)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo outModel:(TOFoModel*)outModel {
     //1. 数据准备
     AIKVPointer *firstPlusItem = ARR_INDEX(plusFo.content_ps, 0);
-    AIKVPointer *checkAlg_p = ARR_INDEX(outModel.fo.content_ps, outModel.actionIndex);
+    AIFoNodeBase *fo = [SMGUtils searchNode:outModel.content_p];
+    AIKVPointer *checkAlg_p = ARR_INDEX(fo.content_ps, outModel.actionIndex);
     if (!matchFo || !plusFo || !subFo || !checkAlg_p) {
         outModel.status = TOModelStatus_ActNo;
         return;
     }
     
     //2. 正影响首元素,错过判断 (错过,行为化失败);
-    NSInteger firstAt_Plus = [TOUtils indexOfAbsItem:firstPlusItem atConContent:outModel.fo.content_ps];
+    NSInteger firstAt_Plus = [TOUtils indexOfAbsItem:firstPlusItem atConContent:fo.content_ps];
     if (outModel.actionIndex > firstAt_Plus) {
         outModel.status = TOModelStatus_ActNo;
         return;
@@ -168,13 +170,14 @@
  */
 -(void) commitPerceptPlus:(TOFoModel*)outModel{
     //1. 数据检查
-    if (!outModel.fo) {
+    AIFoNodeBase *fo = [SMGUtils searchNode:outModel.content_p];
+    if (!fo) {
         outModel.status = TOModelStatus_ActNo;
         return;
     }
     
     //2. 行为化;
-    AIKVPointer *curAlg_p = ARR_INDEX(outModel.fo.content_ps, outModel.actionIndex);//从0开始
+    AIKVPointer *curAlg_p = ARR_INDEX(fo.content_ps, outModel.actionIndex);//从0开始
     
     //3. cHav行为化
     TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:curAlg_p parent:outModel];
@@ -318,6 +321,9 @@
     for (AIKVPointer *algNode_p in actions) {
         BOOL invoked = [Output output_FromTC:algNode_p];
     }
+}
+-(AIShortMatchModel*) toAction_RethinkInnerFo:(AIFoNodeBase*)fo{
+    return [self.delegate aiTOR_RethinkInnerFo:fo];
 }
 
 @end

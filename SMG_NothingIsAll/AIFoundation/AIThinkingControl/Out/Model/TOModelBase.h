@@ -22,6 +22,7 @@
 -(id) initWithContent_p:(AIKVPointer*)content_p;
 
 @property (strong, nonatomic) AIKVPointer *content_p;
+@property (weak, nonatomic) TOModelBase *baseOrGroup;
 
 /**
  *  MARK:--------------------score排序因子--------------------

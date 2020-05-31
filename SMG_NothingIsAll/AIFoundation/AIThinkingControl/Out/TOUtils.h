@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIAlgNodeBase,DemandModel;
+@class AIAlgNodeBase,DemandModel,TOFoModel,AIShortMatchModel;
 @interface TOUtils : NSObject
 
 /**
@@ -65,5 +65,10 @@
  *  MARK:--------------------TOP.diff正负两个模式--------------------
  */
 +(void) topPerceptMode:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel direction:(MVDirection)direction tryResult:(BOOL(^)(AIFoNodeBase *sameFo))tryResult canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy;
+
+/**
+ *  MARK:--------------------对TOFoModel进行反思评价--------------------
+ */
++(BOOL) toAction_RethinkScore:(TOFoModel*)outModel rtBlock:(AIShortMatchModel*(^)(void))rtBlock;
 
 @end

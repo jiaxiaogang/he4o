@@ -313,6 +313,11 @@
     //1. 检查absCmvNode是否顺心
     NSInteger delta = [NUMTOOK([AINetIndex getData:delta_p]) integerValue];
     NSInteger urgentTo = [NUMTOOK([AINetIndex getData:urgentTo_p]) integerValue];
+    return [self getScoreForce:algsType urgentTo:urgentTo delta:delta ratio:ratio];
+}
+
++(CGFloat) getScoreForce:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta ratio:(CGFloat)ratio{
+    //1. 检查absCmvNode是否顺心
     MindHappyType type = [ThinkingUtils checkMindHappy:algsType delta:delta];
     
     //2. 根据检查到的数据取到score;

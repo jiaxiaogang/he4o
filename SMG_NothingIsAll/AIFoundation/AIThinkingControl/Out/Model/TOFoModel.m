@@ -18,6 +18,7 @@
     TOFoModel *result = [[TOFoModel alloc] initWithContent_p:fo_p];
     result.status = TOModelStatus_Runing;
     if (base) [base.actionFoModels addObject:result];
+    result.baseOrGroup = base;
     return result;
 }
 

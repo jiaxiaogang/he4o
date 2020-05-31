@@ -11,11 +11,13 @@
 /**
  *  MARK:--------------------行为化代理--------------------
  */
+@class AIShortMatchModel;
 @protocol TOActionDelegate <NSObject>
 
 -(void) toAction_updateEnergy:(CGFloat)delta;
 -(BOOL) toAction_EnergyValid;
 -(void) toAction_Output:(NSArray*)actions;
+-(AIShortMatchModel*) toAction_RethinkInnerFo:(AIFoNodeBase*)fo;
 
 @end
 

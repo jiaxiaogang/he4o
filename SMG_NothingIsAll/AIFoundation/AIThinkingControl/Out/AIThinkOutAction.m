@@ -16,6 +16,7 @@
 #import "TOFoModel.h"
 #import "TOAlgModel.h"
 #import "TOValueModel.h"
+#import "TOUtils.h"
 
 @implementation AIThinkOutAction
 
@@ -37,8 +38,7 @@
     //1. 结果数据准备
     
     //TODOTOMORROW:
-    //1. 每次获取到一个新的fo时,都要尝试进行评价,以中止此subOutModel;
-    //2. 对单帧Finish的,要在下轮input传回判断是否符合要求,并跳转至下帧;
+    //1. 对单帧Finish的,要在下轮input传回判断是否符合要求,并跳转至下帧;
     
     
     
@@ -51,9 +51,7 @@
     NSLog(@"STEPKEY==========================SP START==========================\nSTEPKEYS:%@\nSTEPKEYP:%@",Alg2FStr(sAlg),Alg2FStr(pAlg));
     
     //1. 直接对checkAlg找cHav (成功则一步到位);
-    [self convert2Out_Hav:outModel checkScore:^BOOL(AIAlgNodeBase *mAlg) {
-        return true;
-    }];
+    [self convert2Out_Hav:outModel];
     if (outModel.status == TOModelStatus_Finish) {
         return;
     }
@@ -71,7 +69,7 @@
         //a. 数据准备;
         AIKVPointer *sValue_p = DATA2OBJ(key);
         AIKVPointer *pValue_p = [cGLDic objectForKey:key];
-        TOValueModel *valueOutModel = [TOValueModel newWithSValue:sValue_p pValue:pValue_p parent:outModel];
+        TOValueModel *valueOutModel = [TOValueModel newWithSValue:sValue_p pValue:pValue_p group:outModel];
         //b. 行为化
         NSLog(@"------SP_GL行为化:%@ -> %@",[NVHeUtil getLightStr:sValue_p],[NVHeUtil getLightStr:pValue_p]);
         [self convert2Out_GL:pAlg outModel:valueOutModel];
@@ -87,9 +85,7 @@
         //b. 将pValue_p独立找到概念,并找cHav;
         AIAbsAlgNode *soloAlg = [theNet createAbsAlg_NoRepeat:@[pValue_p] conAlgs:nil isMem:false];
         TOAlgModel *soloOutModel = [TOAlgModel newWithAlg_p:soloAlg.pointer parent:outModel];
-        [self convert2Out_Hav:soloOutModel checkScore:^BOOL(AIAlgNodeBase *mAlg) {
-            return true;
-        }];
+        [self convert2Out_Hav:soloOutModel];
         if (soloOutModel.status == TOModelStatus_Finish) {
             continue;
         }
@@ -100,9 +96,7 @@
         [group_ps addObject:pValue_p];
         AIAbsAlgNode *groupAlg = [theNet createAbsAlg_NoRepeat:group_ps conAlgs:nil isMem:false];
         TOAlgModel *groupOutModel = [TOAlgModel newWithAlg_p:groupAlg.pointer parent:outModel];
-        [self convert2Out_Hav:groupOutModel checkScore:^BOOL(AIAlgNodeBase *mAlg) {
-            return true;
-        }];
+        [self convert2Out_Hav:groupOutModel];
         if (groupOutModel.status == TOModelStatus_Finish) {
             continue;
         }
@@ -121,9 +115,7 @@
  *  _param curAlg_p : 来源: TOR.R-;
  */
 -(void) convert2Out_P:(TOAlgModel*)outModel{
-    [self convert2Out_Hav:outModel checkScore:^BOOL(AIAlgNodeBase *mAlg) {
-        return true;
-    }];
+    [self convert2Out_Hav:outModel];
 }
 
 
@@ -147,13 +139,20 @@
         return;
     }
     
-    //2. 依次单个概念行为化
+    //2. 反思评价
+    BOOL scoreSuccess = [TOUtils toAction_RethinkScore:outModel rtBlock:^AIShortMatchModel *{
+        return [self.delegate toAction_RethinkInnerFo:curFo];
+    }];
+    if (!scoreSuccess) {
+        outModel.status = TOModelStatus_ScoreNo;
+        return;
+    }
+
+    //3. 依次单个概念行为化
     for (AIKVPointer *curAlg_p in curAlg_ps) {
         TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:curAlg_p parent:outModel];
-        [self convert2Out_Hav:algOutModel checkScore:^BOOL(AIAlgNodeBase *mAlg) {
-            return true;
-        }];
-        //3. 一条不成,则全部失败;
+        [self convert2Out_Hav:algOutModel];
+        //4. 一条不成,则全部失败;
         if (algOutModel.status != TOModelStatus_Finish) {
             outModel.status = TOModelStatus_ActNo;
             return;
@@ -178,7 +177,7 @@
  *      2020-05-22 : 支持更发散的联想(要求matchAlg和hAlg同被引用),因每次递归都要这么联想,所以从TOP搬到这来 (由19152改成19192);
  *      2020-05-27 : 支持outModel (目前cHav方法,收集所有acts,一次性返回行为,而并未进行多轮外循环,所以此处不必做subOutModel);
  */
--(void) convert2Out_Hav:(TOAlgModel*)outModel checkScore:(BOOL(^)(AIAlgNodeBase *mAlg))checkScore{
+-(void) convert2Out_Hav:(TOAlgModel*)outModel {
     //1. 数据准备;
     if (!outModel.content_p) {
         outModel.status = TOModelStatus_ActNo;

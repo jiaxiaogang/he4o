@@ -20,6 +20,8 @@
 -(AIAlgNodeBase*) aiTOR_MatchRTAlg:(AIAlgNodeBase*)rtAlg mUniqueV_p:(AIKVPointer*)mUniqueV_p;
 //获取最后一桢mModel;
 -(AIShortMatchModel*) aiTOR_GetShortMatchModel;
+//反思innerFo
+-(AIShortMatchModel*) aiTOR_RethinkInnerFo:(AIFoNodeBase*)fo;
 
 @end
 
