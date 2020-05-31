@@ -71,4 +71,9 @@
  */
 +(BOOL) toAction_RethinkScore:(TOFoModel*)outModel rtBlock:(AIShortMatchModel*(^)(void))rtBlock;
 
+/**
+ *  MARK:--------------------找出已行为输出等待外循环结果的outModels--------------------
+ */
++(NSArray*) getActYesOutModels:(TOModelBase*)outModel;
+
 @end

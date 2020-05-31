@@ -53,6 +53,30 @@
     NSArray *mModels = [self.delegate aiTOP_GetShortMatchModel];
     if (!demand || !ARRISOK(mModels)) return;
     
+    //2. 优先最新一帧,与上轮循环做匹配 (对单帧Finish的,要在下轮input传回判断是否符合要求,并跳转至下帧);
+    
+    //a. 输出行为的actYes要进行下轮匹配,比如吃,确定自己是否真吃了;
+    //b. 未输出行为,等待中的,也要进行下轮匹配,比如等开饭,等来开饭了; (等待的status是ActNo还是Runing?)
+    AIShortMatchModel *lastMModel = ARR_INDEX_REVERSE(mModels, 0);
+    if (lastMModel) {
+        NSArray *actYesModels = [TOUtils getActYesOutModels:demand];
+        for (TOModelBase *actYesModel in actYesModels) {
+            if ([TOUtils mIsC_1:lastMModel.matchAlg c:actYesModel.content_p]) {
+                actYesModel.status = TOModelStatus_Finish;
+                //c. 完成时,要向右取group推进至下一帧;
+                TOModelBase *groupModel = actYesModel.baseOrGroup;
+                
+                
+                
+                
+            }
+            
+        }
+        
+    }
+    
+    
+    
     //2. 同区两个模式 (以最近的预测为准);
     for (NSInteger i = 0; i < mModels.count; i++) {
         AIShortMatchModel *mModel = ARR_INDEX_REVERSE(mModels, i);

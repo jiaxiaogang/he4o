@@ -13,6 +13,8 @@
 #import "AIPort.h"
 #import "DemandModel.h"
 #import "TOFoModel.h"
+#import "TOAlgModel.h"
+#import "TOValueModel.h"
 #import "AIShortMatchModel.h"
 #import "ThinkingUtils.h"
 
@@ -292,6 +294,33 @@
         }
     }
     return nil;
+}
+
++(NSArray*) getActYesOutModels:(TOModelBase*)outModel{
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    if (outModel) {
+        //1. 收集当前
+        if (outModel.status == TOModelStatus_ActYes) {
+            [result addObject:outModel];
+        }
+        
+        //2. 找出子集;
+        NSMutableArray *subModels = [[NSMutableArray alloc] init];
+        if (ISOK(outModel, DemandModel.class) || ISOK(outModel, TOAlgModel.class) || ISOK(outModel, TOValueModel.class)) {
+            id<ITryActionFoDelegate> tryActionObj = (id<ITryActionFoDelegate>)outModel;
+            [subModels addObjectsFromArray:tryActionObj.actionFoModels];
+        }
+        if (ISOK(outModel, TOFoModel.class) || ISOK(outModel, TOAlgModel.class)) {
+            id<ISubModelsDelegate> subModelsObj = (id<ISubModelsDelegate>)outModel;
+            [subModels addObjectsFromArray:subModelsObj.subModels];
+        }
+        
+        //3. 递归收集子集;
+        for (TOModelBase *subModel in subModels) {
+            [result addObjectsFromArray:[self getActYesOutModels:subModel]];
+        }
+    }
+    return result;
 }
 
 @end

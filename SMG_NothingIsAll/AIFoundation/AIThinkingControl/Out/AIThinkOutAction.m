@@ -36,12 +36,6 @@
  */
 -(void) convert2Out_SP:(AIKVPointer*)sAlg_p pAlg_p:(AIKVPointer*)pAlg_p outModel:(TOAlgModel*)outModel {
     //1. 结果数据准备
-    
-    //TODOTOMORROW:
-    //1. 对单帧Finish的,要在下轮input传回判断是否符合要求,并跳转至下帧;
-    
-    
-    
     AIAlgNodeBase *sAlg = [SMGUtils searchNode:sAlg_p];
     AIAlgNodeBase *pAlg = [SMGUtils searchNode:pAlg_p];
     if (!pAlg) {
