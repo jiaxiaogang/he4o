@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIAlgNodeBase,DemandModel,TOFoModel,AIShortMatchModel;
+@class AIAlgNodeBase,DemandModel,TOFoModel,AIShortMatchModel,TOModelBase;
 @interface TOUtils : NSObject
 
 /**
@@ -74,6 +74,6 @@
 /**
  *  MARK:--------------------找出已行为输出等待外循环结果的outModels--------------------
  */
-+(NSArray*) getActYesOutModels:(TOModelBase*)outModel;
++(NSArray*) getSubOutModels_AllDeep:(TOModelBase*)outModel validStatus:(NSArray*)validStatus;
 
 @end

@@ -296,15 +296,19 @@
     return nil;
 }
 
-+(NSArray*) getActYesOutModels:(TOModelBase*)outModel{
++(NSArray*) getSubOutModels_AllDeep:(TOModelBase*)outModel validStatus:(NSArray*)validStatus {
+    //1. 数据准备
+    validStatus = ARRTOOK(validStatus);
     NSMutableArray *result = [[NSMutableArray alloc] init];
-    if (outModel) {
-        //1. 收集当前
-        if (outModel.status == TOModelStatus_ActYes) {
-            [result addObject:outModel];
-        }
-        
-        //2. 找出子集;
+    if (!outModel) return result;
+    
+    //2. 收集当前
+    if ([validStatus containsObject:@(outModel.status)]) {
+        [result addObject:outModel];
+    }
+    
+    //3. 找出子集 (Finish负责截停递归);
+    if (outModel.status != TOModelStatus_Finish) {
         NSMutableArray *subModels = [[NSMutableArray alloc] init];
         if (ISOK(outModel, DemandModel.class) || ISOK(outModel, TOAlgModel.class) || ISOK(outModel, TOValueModel.class)) {
             id<ITryActionFoDelegate> tryActionObj = (id<ITryActionFoDelegate>)outModel;
@@ -315,9 +319,9 @@
             [subModels addObjectsFromArray:subModelsObj.subModels];
         }
         
-        //3. 递归收集子集;
+        //4. 递归收集子集;
         for (TOModelBase *subModel in subModels) {
-            [result addObjectsFromArray:[self getActYesOutModels:subModel]];
+            [result addObjectsFromArray:[self getSubOutModels_AllDeep:subModel validStatus:validStatus]];
         }
     }
     return result;

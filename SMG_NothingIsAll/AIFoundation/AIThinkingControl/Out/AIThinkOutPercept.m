@@ -57,15 +57,42 @@
     
     //a. 输出行为的actYes要进行下轮匹配,比如吃,确定自己是否真吃了;
     //b. 未输出行为,等待中的,也要进行下轮匹配,比如等开饭,等来开饭了; (等待的status是ActNo还是Runing?)
-    AIShortMatchModel *lastMModel = ARR_INDEX_REVERSE(mModels, 0);
-    if (lastMModel) {
-        NSArray *actYesModels = [TOUtils getActYesOutModels:demand];
-        for (TOModelBase *actYesModel in actYesModels) {
-            if ([TOUtils mIsC_1:lastMModel.matchAlg c:actYesModel.content_p]) {
-                actYesModel.status = TOModelStatus_Finish;
-                //c. 完成时,要向右取group推进至下一帧;
-                TOModelBase *groupModel = actYesModel.baseOrGroup;
+    AIShortMatchModel *latestMModel = ARR_INDEX_REVERSE(mModels, 0);
+    if (latestMModel) {
+        //b. 取出所有等待下轮的outModel;
+        NSArray *waitModels = [TOUtils getSubOutModels_AllDeep:demand validStatus:@[@(TOModelStatus_ActYes),@(TOModelStatus_Runing)]];
+        
+        //c. 判断最近一次input是否与等待中outModel相匹配;
+        for (TOModelBase *waitModel in waitModels) {
+            if ([TOUtils mIsC_1:latestMModel.matchAlg.pointer c:waitModel.content_p]) {
                 
+                //d. 匹配,则完成;
+                waitModel.status = TOModelStatus_Finish;
+                
+                //e. 并反馈给上一级,跳到下帧,
+                TOModelBase *groupModel = waitModel.baseOrGroup;
+                if (ISOK(groupModel, TOFoModel.class)) {
+                    TOFoModel *toFoModel = (TOFoModel*)groupModel;
+                    toFoModel.actionIndex ++;
+                    [self.delegate aiTOP_2TOR_ReasonPlus:toFoModel];
+                    
+                    //f. foModel全完成了,则再递归至上一层;
+                    TOModelBase *baseModel = toFoModel.baseOrGroup;
+                    baseModel.status = TOModelStatus_Finish;
+                    
+                    //baseModel有可能是value也有可能是alg,再取group的话,有可能取到alg或fo;
+                    //如果取到alg,则应将当前已完成的value标记到algOutModel.alreadyFinishs,并提给TOAction._P/_SP继续完成去;
+                    //如果取到fo,则下帧继续;
+                    
+                    //TODOTOMORROW:
+                    //1. 将此处的跳帧封装成单独的递归方法;
+                    //2. 下面传给四模式的代码,用bool方式直接返回finish的判断不妥,改之;
+                    
+                    
+                    
+                }else{
+                    ELog(@"如打出此错误,则查下为何groupModel不是TOFoModel类型,因为一般行为化的都是概念,而概念的父级就是TOFoModel");
+                }
                 
                 
                 
@@ -74,8 +101,6 @@
         }
         
     }
-    
-    
     
     //2. 同区两个模式 (以最近的预测为准);
     for (NSInteger i = 0; i < mModels.count; i++) {

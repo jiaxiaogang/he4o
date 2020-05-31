@@ -85,13 +85,25 @@
 -(void) commitReasonPlus:(TOFoModel*)outModel{
     //1. isOut时,直接输出;
     AIFoNodeBase *fo = [SMGUtils searchNode:outModel.content_p];
+    
+    //2. 完成,则直接返回finish (如本来就是最后一帧,则再递归至上一层);
+    if (outModel.actionIndex >= fo.content_ps.count - 1) {
+        outModel.status = TOModelStatus_Finish;
+        return;
+    }
+    
+    //3. 取出当前帧任务,如果无效,则直接跳下帧;
     AIKVPointer *cAlg_p = ARR_INDEX(fo.content_ps, outModel.actionIndex);
+    if (!cAlg_p) {
+        outModel.actionIndex ++;
+        return;
+    }
     
     //2. cHav行为化;
     TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:cAlg_p parent:outModel];
     [self.toAction convert2Out_P:algOutModel];
     if (algOutModel.status == TOModelStatus_Finish) {
-        outModel.status = TOModelStatus_Finish;
+        outModel.actionIndex ++;
     }
 }
 
