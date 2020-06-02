@@ -23,6 +23,8 @@
 #import "AIShortMatchModel.h"
 #import "TOUtils.h"
 #import "AINetUtils.h"
+#import "TOAlgModel.h"
+#import "TOValueModel.h"
 
 @implementation AIThinkOutPercept
 
@@ -288,36 +290,55 @@
  *          c. Demand最终完成
  */
 -(void) outModelLoopBack:(TOModelBase*)newFinishModel {
-    //1. 数据检查
-    if (!newFinishModel) {
-        return;
-    }
-    
-    //TODOTOMORROW:
-    //e. 并反馈给上一级,跳到下帧,
-    TOModelBase *groupModel = newFinishModel.baseOrGroup;
-    if (ISOK(groupModel, TOFoModel.class)) {
-        TOFoModel *toFoModel = (TOFoModel*)groupModel;
-        toFoModel.actionIndex ++;
-        [self.delegate aiTOP_2TOR_ReasonPlus:toFoModel];
+    if (ISOK(newFinishModel, TOAlgModel.class)) {
+        //1. Alg
+        TOFoModel *toFoModel = (TOFoModel*)newFinishModel.baseOrGroup;
+        //2. 完成,则直接返回finish (如本来就是最后一帧,则再递归至上一层);
+        AIFoNodeBase *fo = [SMGUtils searchNode:toFoModel.content_p];
+        if (toFoModel.actionIndex < fo.content_ps.count - 1) {
+            //转移
+            toFoModel.actionIndex ++;
+            [self.delegate aiTOP_2TOR_ReasonPlus:toFoModel];
+        }else{
+            //递归
+            toFoModel.status = TOModelStatus_Finish;
+            [self outModelLoopBack:toFoModel.baseOrGroup];
+        }
+    }else if(ISOK(newFinishModel, TOValueModel.class)){
+        //2. Value
+        TOAlgModel *toAlgModel = (TOAlgModel*)newFinishModel.baseOrGroup;
         
-        //f. foModel全完成了,则再递归至上一层;
-        TOModelBase *baseModel = toFoModel.baseOrGroup;
-        baseModel.status = TOModelStatus_Finish;
-        
-        //baseModel有可能是value也有可能是alg,再取group的话,有可能取到alg或fo;
-        //如果取到alg,则应将当前已完成的value标记到algOutModel.alreadyFinishs,并提给TOAction._P/_SP继续完成去;
-        //如果取到fo,则下帧继续;
-        
+        //转移
         //TODOTOMORROW:
-        //1. 将此处的跳帧封装成单独的递归方法;
-        //2. 下面传给四模式的代码,用bool方式直接返回finish的判断不妥,改之;
+        //此处,给把_GL中,所有都一次性添加到TOAlgModel中,并依次输出行为 (比如先走到苹果边,后拿洗干净);
+        
+        //递归
+    }else if(ISOK(newFinishModel, DemandModel.class)){
         
         
         
+        //全部完成;
     }else{
         ELog(@"如打出此错误,则查下为何groupModel不是TOFoModel类型,因为一般行为化的都是概念,而概念的父级就是TOFoModel");
     }
+    
+    
+    
+    //TODOTOMORROW:
+    //e. 并反馈给上一级,跳到下帧,
+    
+    
+    //baseModel有可能是value也有可能是alg,再取group的话,有可能取到alg或fo;
+    //如果取到alg,则应将当前已完成的value标记到algOutModel.alreadyFinishs,并提给TOAction._P/_SP继续完成去;
+    //如果取到fo,则下帧继续;
+    
+    //TODOTOMORROW:
+    //1. 将此处的跳帧封装成单独的递归方法;
+    //2. 下面传给四模式的代码,用bool方式直接返回finish的判断不妥,改之;
+    
+        
+        
+    
 }
 
 @end

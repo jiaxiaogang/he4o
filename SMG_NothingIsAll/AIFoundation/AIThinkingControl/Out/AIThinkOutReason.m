@@ -83,18 +83,11 @@
  *          2. notOut则等待;
  */
 -(void) commitReasonPlus:(TOFoModel*)outModel{
-    //1. isOut时,直接输出;
+    //1. 取出当前帧任务,如果无效,则直接跳下帧;
     AIFoNodeBase *fo = [SMGUtils searchNode:outModel.content_p];
-    
-    //2. 完成,则直接返回finish (如本来就是最后一帧,则再递归至上一层);
-    if (outModel.actionIndex >= fo.content_ps.count - 1) {
-        outModel.status = TOModelStatus_Finish;
-        return;
-    }
-    
-    //3. 取出当前帧任务,如果无效,则直接跳下帧;
     AIKVPointer *cAlg_p = ARR_INDEX(fo.content_ps, outModel.actionIndex);
     if (!cAlg_p) {
+        WLog(@"行为化概念无效");
         outModel.actionIndex ++;
         return;
     }
