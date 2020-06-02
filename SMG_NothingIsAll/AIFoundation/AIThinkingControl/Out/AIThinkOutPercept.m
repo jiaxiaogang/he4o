@@ -299,8 +299,13 @@
             //转移
             toFoModel.actionIndex ++;
             [self.delegate aiTOP_2TOR_ReasonPlus:toFoModel];
+            
+            //失败,递归
+            if (toFoModel.status == TOModelStatus_ActNo || toFoModel.status == TOModelStatus_ScoreNo) {
+                //.............
+            }
         }else{
-            //递归
+            //成功,递归
             toFoModel.status = TOModelStatus_Finish;
             [self outModelLoopBack:toFoModel.baseOrGroup];
         }
@@ -308,9 +313,32 @@
         //2. Value
         TOAlgModel *toAlgModel = (TOAlgModel*)newFinishModel.baseOrGroup;
         
-        //转移
-        //TODOTOMORROW:
-        //此处,给把_GL中,所有都一次性添加到TOAlgModel中,并依次输出行为 (比如先走到苹果边,后拿洗干净);
+        //转移 (未行为化过的sp进行转移);
+        BOOL jump = false;
+        for (NSData *key in toAlgModel.cGLDic.allKeys) {
+            //a. 数据准备;
+            AIKVPointer *sValue_p = DATA2OBJ(key);
+            AIKVPointer *pValue_p = [toAlgModel.cGLDic objectForKey:key];
+            
+            //b. 找出未行为化过的
+            NSArray *alreadayAct_ps = [TOUtils convertPointersFromTOModels:toAlgModel.subModels];
+            if (![alreadayAct_ps containsObject:pValue_p]) {
+                TOValueModel *valueOutModel = [TOValueModel newWithSValue:sValue_p pValue:pValue_p group:toAlgModel];
+                jump = true;
+                
+                //TODOTOMORROW:
+                //[self.delegate convert2Out_GL:pAlg outModel:valueOutModel];
+                
+                //失败,递归;
+                
+                return;
+            }
+        }
+        
+        //成功,递归;
+        if (!jump) {
+            
+        }
         
         //递归
     }else if(ISOK(newFinishModel, DemandModel.class)){

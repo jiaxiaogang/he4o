@@ -76,4 +76,10 @@
  */
 +(NSArray*) getSubOutModels_AllDeep:(TOModelBase*)outModel validStatus:(NSArray*)validStatus;
 
+/**
+ *  MARK:--------------------将TOModels转为Pointers--------------------
+ *  @result notnull
+ */
++(NSArray*) convertPointersFromTOModels:(NSArray*)toModels;
+
 @end

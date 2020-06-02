@@ -20,4 +20,10 @@
 
 +(TOAlgModel*) newWithAlg_p:(AIKVPointer*)alg_p parent:(id<ISubModelsDelegate>)parent;
 
+/**
+ *  MARK:--------------------cGLDic短记--------------------
+ *  @desc 因为TOAction.SP算法执行时,将cGLDic存此,以便其中一个稀疏码成功时,顺利转移下一个;
+ */
+@property (strong, nonatomic) NSMutableDictionary *cGLDic;
+
 @end

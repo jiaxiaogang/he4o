@@ -29,10 +29,12 @@
  *  _param complete : 必然执行,且仅执行一次;
  *  @version
  *      2020-05-22: 调用cHav,在原先solo与group的基础上,新增了最优先的checkAlg (因为solo和group可能压根不存在此概念,而TO是主应用,而非构建的);
+ *      2020-06-03: 支持将cGLDic缓存至TOAlgModel,以便一条GL子任务完成时,顺利转移至下一GL子任务;
  *  @TODO_TEST_HERE:
  *      1. 测试时,在_GL时,可将pAlg换成checkAlg试试,因为pAlg本来就是反向类比后的fo,可能没有再进行内类比的机会,所以无_GL经验;
  *  @todo
  *      1. 收集_GL向抽象和具象延伸,而尽量避免到_Hav,尤其要避免重组,无论是group还是solo (参考n19p18-todo4);
+ *      2. 将group和solo重组的方式废弃掉,参考:n19p18-todo5
  */
 -(void) convert2Out_SP:(AIKVPointer*)sAlg_p pAlg_p:(AIKVPointer*)pAlg_p outModel:(TOAlgModel*)outModel {
     //1. 结果数据准备
@@ -46,7 +48,7 @@
     
     //1. 直接对checkAlg找cHav (成功则一步到位);
     [self convert2Out_Hav:outModel];
-    if (outModel.status == TOModelStatus_Finish) {
+    if (outModel.status == TOModelStatus_Finish || outModel.status == TOModelStatus_ActYes) {
         return;
     }
     
@@ -55,11 +57,14 @@
         return [a_p.identifier isEqualToString:b_p.identifier];
     }];
     
+    //3. 将cGLDic保留到短时记忆;
+    [outModel.cGLDic setDictionary:cGLDic];
+    
     //3. 满足P: cHav部分;
     NSArray *cHavArr = [SMGUtils removeSub_ps:cGLDic.allValues parent_ps:pAlg.content_ps];
     
     //4. GL行为化;
-    for (NSData *key in cGLDic) {
+    for (NSData *key in cGLDic.allKeys) {
         //a. 数据准备;
         AIKVPointer *sValue_p = DATA2OBJ(key);
         AIKVPointer *pValue_p = [cGLDic objectForKey:key];
@@ -299,11 +304,14 @@
                 if (foOutModel.status == TOModelStatus_Finish) {
                     outModel.status = TOModelStatus_Finish;
                     return;
+                }else if(foOutModel.status == TOModelStatus_Runing || foOutModel.status == TOModelStatus_ActYes){
+                    outModel.status = TOModelStatus_Runing;
+                    return;
                 }
             }
         }
     }
-    //7. 没一个成功,则失败;
+    //7. 没一个成功 或 行为化成功 或 等待行为化,则失败;
     outModel.status = TOModelStatus_ActNo;
 }
 

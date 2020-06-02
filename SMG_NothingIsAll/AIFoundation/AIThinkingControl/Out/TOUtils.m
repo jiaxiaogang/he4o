@@ -327,4 +327,16 @@
     return result;
 }
 
++(NSArray*) convertPointersFromTOModels:(NSArray*)toModels{
+    //1. 数据准备;
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    toModels = ARRTOOK(toModels);
+    
+    //2. 收集返回
+    for (TOModelBase *model in toModels) {
+        [result addObject:model.content_p];
+    }
+    return result;
+}
+
 @end

@@ -40,4 +40,11 @@
     return _subModels;
 }
 
+-(NSMutableDictionary *)cGLDic{
+    if (!_cGLDic) {
+        _cGLDic = [[NSMutableDictionary alloc] init];
+    }
+    return _cGLDic;
+}
+
 @end
