@@ -26,4 +26,10 @@
  */
 @property (strong, nonatomic) NSMutableDictionary *cGLDic;
 
+/**
+ *  MARK:--------------------pAlg保留--------------------
+ *  @desc 在TOAction.SP算法执行时,将pAlg存此,TOValueAlg转移时调用_GL方法会用到;
+ */
+@property (strong, nonatomic) AIAlgNodeBase *pAlg;
+
 @end

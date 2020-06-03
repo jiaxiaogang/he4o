@@ -20,6 +20,8 @@
 #import "AINetUtils.h"
 #import "AIThinkOutAction.h"
 #import "TOAlgModel.h"
+#import "TOValueModel.h"
+#import "DemandModel.h"
 
 @interface AIThinkOutReason() <TOAlgSchemeDelegate,TOActionDelegate>
 
@@ -293,6 +295,136 @@
         //2. 反射输出
         [Output output_FromMood:AIMoodType_Anxious];
     }
+}
+
+//MARK:===============================================================
+//MARK:                     < "外层输入" 推进 "中层循环" 决策 >
+//MARK:===============================================================
+-(BOOL) commitFromOuterPushMiddleLoop:(DemandModel*)demand latestMatchAlg:(AIAlgNodeBase*)latestMatchAlg{
+    if (!latestMatchAlg) {
+        return false;
+    }
+    
+    //2. 优先最新一帧,与上轮循环做匹配 (对单帧Finish的,要在下轮input传回判断是否符合要求,并跳转至下帧);
+    
+    //a. 输出行为的actYes要进行下轮匹配,比如吃,确定自己是否真吃了;
+    //b. 未输出行为,等待中的,也要进行下轮匹配,比如等开饭,等来开饭了; (等待的status是ActNo还是Runing?)
+    
+    
+    
+    
+    //2. 优先最新一帧,与上轮循环做匹配 (对单帧Finish的,要在下轮input传回判断是否符合要求,并跳转至下帧);
+    
+    //a. 输出行为的actYes要进行下轮匹配,比如吃,确定自己是否真吃了;
+    //b. 未输出行为,等待中的,也要进行下轮匹配,比如等开饭,等来开饭了; (等待的status是ActNo还是Runing?)
+    
+    //b. 取出所有等待下轮的outModel;
+    NSArray *waitModels = [TOUtils getSubOutModels_AllDeep:demand validStatus:@[@(TOModelStatus_ActYes),@(TOModelStatus_Runing)]];
+    
+    //c. 判断最近一次input是否与等待中outModel相匹配;
+    for (TOModelBase *waitModel in waitModels) {
+        if ([TOUtils mIsC_1:latestMatchAlg.pointer c:waitModel.content_p]) {
+            
+            //d. 匹配,则完成;
+            waitModel.status = TOModelStatus_Finish;
+            
+            //TODOTOMORROW:
+            //4. 此处在for循环中,所以有可能推进多条?
+            [self outModelLoopBack:waitModel];
+        }
+    }
+    
+    return false;
+}
+
+/**
+ *  MARK:--------------------新发生outModel完成,推进递归--------------------
+ *  @desc
+ *      1. 本方法,以递归方式运行;
+ *      2. 最终输出为:
+ *          a. 时序下帧概念
+ *          b. 概念下帧稀疏码
+ *          c. Demand最终完成
+ */
+-(void) outModelLoopBack:(TOModelBase*)newFinishModel {
+    if (ISOK(newFinishModel, TOAlgModel.class)) {
+        //1. Alg
+        TOFoModel *toFoModel = (TOFoModel*)newFinishModel.baseOrGroup;
+        //2. 完成,则直接返回finish (如本来就是最后一帧,则再递归至上一层);
+        AIFoNodeBase *fo = [SMGUtils searchNode:toFoModel.content_p];
+        if (toFoModel.actionIndex < fo.content_ps.count - 1) {
+            //Alg转移
+            toFoModel.actionIndex ++;
+            [self commitReasonPlus:toFoModel];
+            
+            //失败,递归
+            if (toFoModel.status == TOModelStatus_ActNo || toFoModel.status == TOModelStatus_ScoreNo) {
+                //.............
+            }
+        }else{
+            //成功,递归
+            toFoModel.status = TOModelStatus_Finish;
+            [self outModelLoopBack:toFoModel.baseOrGroup];
+        }
+    }else if(ISOK(newFinishModel, TOValueModel.class)){
+        //2. Value
+        TOAlgModel *toAlgModel = (TOAlgModel*)newFinishModel.baseOrGroup;
+        
+        //Value转移 (未行为化过的sp进行转移);
+        BOOL jump = false;
+        for (NSData *key in toAlgModel.cGLDic.allKeys) {
+            //a. 数据准备;
+            AIKVPointer *sValue_p = DATA2OBJ(key);
+            AIKVPointer *pValue_p = [toAlgModel.cGLDic objectForKey:key];
+            
+            //b. 找出未行为化过的
+            NSArray *alreadayAct_ps = [TOUtils convertPointersFromTOModels:toAlgModel.subModels];
+            if (![alreadayAct_ps containsObject:pValue_p]) {
+                TOValueModel *toValueModel = [TOValueModel newWithSValue:sValue_p pValue:pValue_p group:toAlgModel];
+                jump = true;
+                [self.toAction convert2Out_GL:toAlgModel.pAlg outModel:toValueModel];
+                
+                //失败,递归;
+                if (toValueModel.status == TOModelStatus_ActNo || toValueModel.status == TOModelStatus_ScoreNo) {
+                    //.............
+                }
+                return;
+            }
+        }
+        
+        //成功,递归;
+        if (!jump) {
+            toAlgModel.status = TOModelStatus_Finish;
+            [self outModelLoopBack:toAlgModel.baseOrGroup];
+        }
+        
+        //递归
+    }else if(ISOK(newFinishModel, DemandModel.class)){
+        
+        
+        
+        //全部完成;
+    }else{
+        ELog(@"如打出此错误,则查下为何groupModel不是TOFoModel类型,因为一般行为化的都是概念,而概念的父级就是TOFoModel");
+    }
+    
+    
+    
+    //TODOTOMORROW:
+    //e. 并反馈给上一级,跳到下帧,
+    
+    
+    //baseModel有可能是value也有可能是alg,再取group的话,有可能取到alg或fo;
+    //如果取到alg,则应将当前已完成的value标记到algOutModel.alreadyFinishs,并提给TOAction._P/_SP继续完成去;
+    //如果取到fo,则下帧继续;
+    
+    //TODOTOMORROW:
+    //1. 将此处的跳帧封装成单独的递归方法;
+    //2. 下面传给四模式的代码,用bool方式直接返回finish的判断不妥,改之;
+    
+    
+    
+    
 }
 
 //MARK:===============================================================

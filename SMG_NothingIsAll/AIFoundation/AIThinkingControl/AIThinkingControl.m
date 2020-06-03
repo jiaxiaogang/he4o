@@ -291,6 +291,10 @@ static AIThinkingControl *_instance;
     return success;
 }
 
+-(BOOL) aiTOP_OuterPushMiddleLoop:(DemandModel*)demand latestMatchAlg:(AIAlgNodeBase*)latestMatchAlg{
+    return [self.tOR commitFromOuterPushMiddleLoop:demand latestMatchAlg:latestMatchAlg];
+}
+
 /**
  *  MARK:--------------------AIThinkOutReasonDelegate--------------------
  */

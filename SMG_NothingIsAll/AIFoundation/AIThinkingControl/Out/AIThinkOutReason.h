@@ -41,7 +41,7 @@
  *  @todo 191121随后可以考虑,将foScheme也搬由TOP搬到TOR的行为化中;
  *
  */
-@class AICMVNodeBase,AIAlgNodeBase,AIFoNodeBase,TOFoModel,AIShortMatchModel;
+@class AICMVNodeBase,AIAlgNodeBase,AIFoNodeBase,TOFoModel,AIShortMatchModel,DemandModel;
 @interface AIThinkOutReason : NSObject
 
 @property (weak, nonatomic) id<AIThinkOutReasonDelegate> delegate;
@@ -76,5 +76,10 @@
  *  2. 正式执行行为 (小脑);
  */
 -(void) dataOut_ActionScheme:(NSArray*)outArr;
+
+/**
+ *  MARK:--------------------"外层输入" 推进 "中层循环" 决策--------------------
+ */
+-(BOOL) commitFromOuterPushMiddleLoop:(DemandModel*)demand latestMatchAlg:(AIAlgNodeBase*)latestMatchAlg;
 
 @end

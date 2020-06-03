@@ -57,8 +57,9 @@
         return [a_p.identifier isEqualToString:b_p.identifier];
     }];
     
-    //3. 将cGLDic保留到短时记忆;
+    //3. 将cGLDic & pAlg保留到短时记忆;
     [outModel.cGLDic setDictionary:cGLDic];
+    outModel.pAlg = pAlg;
     
     //3. 满足P: cHav部分;
     NSArray *cHavArr = [SMGUtils removeSub_ps:cGLDic.allValues parent_ps:pAlg.content_ps];
