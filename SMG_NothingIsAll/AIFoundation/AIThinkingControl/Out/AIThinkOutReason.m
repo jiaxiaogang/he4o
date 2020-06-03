@@ -330,7 +330,7 @@
             
             //TODOTOMORROW:
             //4. 此处在for循环中,所以有可能推进多条?
-            [self outModelLoopBack:waitModel];
+            [self outModelLoopBackWithSuccessModel:waitModel];
         }
     }
     
@@ -346,25 +346,27 @@
  *          b. 概念下帧稀疏码
  *          c. Demand最终完成
  */
--(void) outModelLoopBack:(TOModelBase*)newFinishModel {
+-(void) outModelLoopBackWithSuccessModel:(TOModelBase*)newFinishModel {
     if (ISOK(newFinishModel, TOAlgModel.class)) {
         //1. Alg
         TOFoModel *toFoModel = (TOFoModel*)newFinishModel.baseOrGroup;
         //2. 完成,则直接返回finish (如本来就是最后一帧,则再递归至上一层);
         AIFoNodeBase *fo = [SMGUtils searchNode:toFoModel.content_p];
         if (toFoModel.actionIndex < fo.content_ps.count - 1) {
-            //Alg转移
+            //Alg转移 (下帧)
             toFoModel.actionIndex ++;
-            [self commitReasonPlus:toFoModel];
+            AIKVPointer *move_p = ARR_INDEX(fo.content_ps, toFoModel.actionIndex);
+            TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:move_p parent:toFoModel];
+            [self.toAction convert2Out_P:algOutModel];
             
             //失败,递归
             if (toFoModel.status == TOModelStatus_ActNo || toFoModel.status == TOModelStatus_ScoreNo) {
-                //.............
+                [self outModelLoopBackWithFailureModel:toFoModel];
             }
         }else{
             //成功,递归
             toFoModel.status = TOModelStatus_Finish;
-            [self outModelLoopBack:toFoModel.baseOrGroup];
+            [self outModelLoopBackWithSuccessModel:toFoModel.baseOrGroup];
         }
     }else if(ISOK(newFinishModel, TOValueModel.class)){
         //2. Value
@@ -377,7 +379,7 @@
             AIKVPointer *sValue_p = DATA2OBJ(key);
             AIKVPointer *pValue_p = [toAlgModel.cGLDic objectForKey:key];
             
-            //b. 找出未行为化过的
+            //b. 转移 (找出未行为化过的)
             NSArray *alreadayAct_ps = [TOUtils convertPointersFromTOModels:toAlgModel.subModels];
             if (![alreadayAct_ps containsObject:pValue_p]) {
                 TOValueModel *toValueModel = [TOValueModel newWithSValue:sValue_p pValue:pValue_p group:toAlgModel];
@@ -386,23 +388,20 @@
                 
                 //失败,递归;
                 if (toValueModel.status == TOModelStatus_ActNo || toValueModel.status == TOModelStatus_ScoreNo) {
-                    //.............
+                    [self outModelLoopBackWithFailureModel:toValueModel];
                 }
-                return;
+                break;
             }
         }
         
         //成功,递归;
         if (!jump) {
             toAlgModel.status = TOModelStatus_Finish;
-            [self outModelLoopBack:toAlgModel.baseOrGroup];
+            [self outModelLoopBackWithSuccessModel:toAlgModel.baseOrGroup];
         }
         
         //递归
     }else if(ISOK(newFinishModel, DemandModel.class)){
-        
-        
-        
         //全部完成;
     }else{
         ELog(@"如打出此错误,则查下为何groupModel不是TOFoModel类型,因为一般行为化的都是概念,而概念的父级就是TOFoModel");
@@ -424,6 +423,18 @@
     
     
     
+    
+}
+
+/**
+ *  MARK:--------------------新发生模型失败,推进递归--------------------
+ *  @desc
+ *      1. 
+ */
+-(void) outModelLoopBackWithFailureModel:(TOModelBase*)failureModel {
+    //TODOTOMORROW:
+    //1. 向上级,找actYes或runing,进行再决策;
+    //2. 将再决策,所需的参数存到相应的outModel中 (到TOModelBase中保留参数);
     
 }
 

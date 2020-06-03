@@ -49,6 +49,7 @@
 -(void) convert2Out_P:(TOAlgModel*)outModel;
 
 //用于转移时调用;
+-(void) convert2Out_P:(TOAlgModel*)outModel;
 -(void) convert2Out_GL:(AIAlgNodeBase*)alg outModel:(TOValueModel*)outModel;
 
 @end

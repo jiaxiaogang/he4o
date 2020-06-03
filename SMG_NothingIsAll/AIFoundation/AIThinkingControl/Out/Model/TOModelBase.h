@@ -43,4 +43,10 @@
  */
 @property (assign, nonatomic) TOModelStatus status;
 
+/**
+ *  MARK:--------------------参数保留--------------------
+ *  @desc 用于再决策: 当下层尝试失败时,会递归回来再决策,再决策时会用到这些参数,以调用行为化中的相应方法;
+ */
+@property (strong, nonatomic) NSDictionary *params;
+
 @end
