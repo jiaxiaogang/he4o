@@ -48,6 +48,7 @@
  *  @todo
  *      1. 集成活跃度的判断和消耗;
  *      2. 集成outModel;
+ *      3. TODOTOMORROW: 下面传给四模式的代码,用bool方式直接返回finish的判断不妥,改之;
  */
 -(void) topV2{
     //1. 数据准备

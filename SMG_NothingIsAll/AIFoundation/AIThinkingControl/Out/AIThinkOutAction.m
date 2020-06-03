@@ -84,7 +84,7 @@
     for (AIKVPointer *pValue_p in cHavArr) {
         //b. 将pValue_p独立找到概念,并找cHav;
         AIAbsAlgNode *soloAlg = [theNet createAbsAlg_NoRepeat:@[pValue_p] conAlgs:nil isMem:false];
-        TOAlgModel *soloOutModel = [TOAlgModel newWithAlg_p:soloAlg.pointer parent:outModel];
+        TOAlgModel *soloOutModel = [TOAlgModel newWithAlg_p:soloAlg.pointer group:outModel];
         [self convert2Out_Hav:soloOutModel];
         if (soloOutModel.status == TOModelStatus_Finish) {
             continue;
@@ -95,7 +95,7 @@
         NSMutableArray *group_ps = [SMGUtils removeSub_ps:pAlg.content_ps parent_ps:checkAlg.content_ps];
         [group_ps addObject:pValue_p];
         AIAbsAlgNode *groupAlg = [theNet createAbsAlg_NoRepeat:group_ps conAlgs:nil isMem:false];
-        TOAlgModel *groupOutModel = [TOAlgModel newWithAlg_p:groupAlg.pointer parent:outModel];
+        TOAlgModel *groupOutModel = [TOAlgModel newWithAlg_p:groupAlg.pointer group:outModel];
         [self convert2Out_Hav:groupOutModel];
         if (groupOutModel.status == TOModelStatus_Finish) {
             continue;
@@ -150,7 +150,7 @@
 
     //3. 依次单个概念行为化
     for (AIKVPointer *curAlg_p in curAlg_ps) {
-        TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:curAlg_p parent:outModel];
+        TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:curAlg_p group:outModel];
         [self convert2Out_Hav:algOutModel];
         //4. 一条不成,则全部失败;
         if (algOutModel.status != TOModelStatus_Finish) {
