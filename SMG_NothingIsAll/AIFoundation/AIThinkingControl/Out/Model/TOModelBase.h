@@ -31,7 +31,6 @@
  *  注: 后续添加对时间衰减的支持
  */
 //@property (assign, nonatomic) CGFloat score;            //评分
-@property (strong, nonatomic) NSMutableArray *except_ps;//下级不应期收集
 
 /**
  *  MARK:--------------------对比是否相等--------------------
@@ -44,9 +43,16 @@
 @property (assign, nonatomic) TOModelStatus status;
 
 /**
+ *  MARK:--------------------下级不应期收集--------------------
+ *  @暂不需要: 目前用不着,因为直接从actionFoModels中取指针即可;
+ */
+//@property (strong, nonatomic) NSMutableArray *except_ps;
+
+/**
  *  MARK:--------------------参数保留--------------------
  *  @desc 用于再决策: 当下层尝试失败时,会递归回来再决策,再决策时会用到这些参数,以调用行为化中的相应方法;
+ *  @暂不开放: 目前用不着,再决策时,只需要传TOModel即可,而需要配合的mModel,也可以实时从短时记忆取;
  */
-@property (strong, nonatomic) NSDictionary *params;
+//@property (strong, nonatomic) NSDictionary *params;
 
 @end

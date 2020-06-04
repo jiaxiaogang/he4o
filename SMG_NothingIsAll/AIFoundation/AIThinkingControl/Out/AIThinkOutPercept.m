@@ -115,12 +115,8 @@
         AIShortMatchModel *mModel = ARR_INDEX_REVERSE(mModels, i);
         AIAlgNodeBase *matchAlg = mModel.matchAlg;
         
-        //3. 识别有效性判断 (优先直接mv+,不行再mv-迂回);
+        //3. 识别有效性判断 (转至P+);
         if (matchAlg) {
-            
-            
-            //TODOTOMORROW:
-            //将不应期,作用下此处调用的方法中方向索引对fo的联想;
             [self perceptPlus:matchAlg demandModel:demand];
             
             //4. 一个成功时,全部成功;
@@ -207,9 +203,10 @@
         toFoModel.actionIndex = 0;
         
         //b. 取自身,实现吃,则可不饿;
-        success = [self.delegate aiTOP_2TOR_PerceptPlus:toFoModel];
+        [self.delegate aiTOP_2TOR_PerceptPlus:toFoModel];
         
-        //c. 一条成功,则中止取消通用diff算法的交集循环;
+        //c. 一条行为化成功,则中止取消通用diff算法的交集循环;
+        success = (toFoModel.status == TOModelStatus_Runing || toFoModel.status == TOModelStatus_ActYes);
         return success;
     } canAss:^BOOL{
         return [self havEnergy];

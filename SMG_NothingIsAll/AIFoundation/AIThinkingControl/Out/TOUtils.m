@@ -220,10 +220,13 @@
     //3. 无瞬时指引,单靠内心瞎想,不能解决任何问题;
     if (!ARRISOK(algRef_ps)) return;
     
+    //3. 不应期
+    NSArray *except_ps = [TOUtils convertPointersFromTOModels:demandModel.actionFoModels];
+    
     //4. 用方向索引找normalFo解决方案
     //P例:饿了,该怎么办;
     //S例:累了,肿么肥事;
-    [theNet getNormalFoByDirectionReference:demandModel.algsType direction:direction except_ps:nil tryResult:^BOOL(AIKVPointer *fo_p) {
+    [theNet getNormalFoByDirectionReference:demandModel.algsType direction:direction except_ps:except_ps tryResult:^BOOL(AIKVPointer *fo_p) {
         //5. 方向索引找到一条normalFo解决方案;
         //P例:吃可以解决饿;
         //S例:运动导致累;
@@ -244,10 +247,10 @@
             //S例:取兄弟节点,停止打球,则不再累;
             for (AIKVPointer *same_p in same_ps) {
                 AIFoNodeBase *sameFo = [SMGUtils searchNode:same_p];
-                BOOL success = tryResult(sameFo);
+                BOOL stop = tryResult(sameFo);
                 
                 //8. 只要有一次tryResult成功,中断回调循环;
-                if (success) {
+                if (stop) {
                     return true;
                 }
                 
@@ -258,7 +261,7 @@
                 }
             }
         }
-        return true;//一次无效,则中止方向索引找解决方案;
+        return false;//fo解决方案无效,继续找下个;
     }];
 }
 

@@ -268,10 +268,9 @@ static AIThinkingControl *_instance;
     return outModel.status == TOModelStatus_Finish;
 }
 
--(BOOL) aiTOP_2TOR_PerceptPlus:(TOFoModel *)outModel{
+-(void) aiTOP_2TOR_PerceptPlus:(TOFoModel *)outModel{
     //1. 行为化;
     [self.tOR commitPerceptPlus:outModel];
-    return outModel.status == TOModelStatus_Finish;
 }
 
 -(BOOL) aiTOP_2TOR_PerceptSub:(AIFoNodeBase *)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo checkFo:(AIFoNodeBase*)checkFo{

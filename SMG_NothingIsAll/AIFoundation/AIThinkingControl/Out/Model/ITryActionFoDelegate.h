@@ -11,6 +11,5 @@
 @protocol ITryActionFoDelegate <NSObject>
 
 -(NSMutableArray*) actionFoModels;
--(NSMutableArray*) except_ps;
 
 @end

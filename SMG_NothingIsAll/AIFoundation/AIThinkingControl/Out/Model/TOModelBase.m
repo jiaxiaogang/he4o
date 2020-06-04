@@ -19,13 +19,6 @@
     return self;
 }
 
-- (NSMutableArray *)except_ps{
-    if (_except_ps == nil) {
-        _except_ps = [[NSMutableArray alloc] init];
-    }
-    return _except_ps;
-}
-
 -(BOOL) isEqual:(TOModelBase*)object{
     if (object && object.content_p) {
         return [object.content_p isEqual:self.content_p];

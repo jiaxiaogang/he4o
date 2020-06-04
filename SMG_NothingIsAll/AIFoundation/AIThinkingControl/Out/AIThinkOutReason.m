@@ -417,12 +417,6 @@
  *          c. avd为Demand时,转移方法为:TOP.P+;
  */
 -(void) singleLoopBackWithFailureModel:(TOModelBase*)failureModel {
-    //TODOTOMORROW:
-    //1. 将再决策,所需的参数存到相应的outModel中 (到TOModelBase中保留参数);
-    //2. 转移_Hav/_GL时,将不应期(从avd.actionFoModels中找failure的部分)去掉;
-    //3. 写完TOP.commitFromTOR_MoveForDemand();
-    
-    
     //1. 转移或递归Block();
     void(^ MoveOrLoopBackBlock)(TOModelBase *avd)= ^ (TOModelBase *avd){
         //a. 转移
@@ -435,7 +429,7 @@
             [self.toAction convert2Out_GL:baseAlg.pAlg outModel:(TOValueModel*)avd];
         }else if(ISOK(avd, DemandModel.class)){
             //a3. avdIsDemand: 再决策,转移至TOP.P+;
-            [self.delegate aiTOR_MoveForDemand:avd];
+            [self.delegate aiTOR_MoveForDemand:(DemandModel*)avd];
         }
         //b. 转移后,其下全失败,递归;
         if (avd.status == TOModelStatus_ActNo || avd.status == TOModelStatus_ScoreNo) {

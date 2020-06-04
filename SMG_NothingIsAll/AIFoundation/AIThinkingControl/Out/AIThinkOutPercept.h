@@ -21,7 +21,7 @@
 //提交C给TOR行为化;
 -(BOOL) aiTOP_2TOR_ReasonPlus:(TOFoModel*)outModel;
 -(BOOL) aiTOP_2TOR_ReasonSub:(AIFoNodeBase *)matchFo plusFo:(AIFoNodeBase *)plusFo subFo:(AIFoNodeBase*)subFo outModel:(TOFoModel*)outModel;
--(BOOL) aiTOP_2TOR_PerceptPlus:(TOFoModel*)outModel;
+-(void) aiTOP_2TOR_PerceptPlus:(TOFoModel*)outModel;
 -(BOOL) aiTOP_2TOR_PerceptSub:(AIFoNodeBase *)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo checkFo:(AIFoNodeBase*)checkFo;
 
 //外循环输入,推动中层决策循环;
