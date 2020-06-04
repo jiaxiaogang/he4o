@@ -411,70 +411,58 @@
  *          a. 由别的方法调用时,参数为:TOAlgModel或TOValueModel;
  *          b. 由递归自行调用时,参数为:TOAlgModel或TOValueModel或DemandModel;
  *      2. 参数的上级,必然是actYes或runing,对其进行再决策 (不是actYes或runing也不会有子model的failure了);
+ *      3. 转移:
+ *          a. avd为Alg时,转移方法为:TOAction._Hav;
+ *          b. avd为Value时,转移方法为:TOAction._GL;
+ *          c. avd为Demand时,转移方法为:TOP.P+;
  */
 -(void) singleLoopBackWithFailureModel:(TOModelBase*)failureModel {
     //TODOTOMORROW:
     //1. 将再决策,所需的参数存到相应的outModel中 (到TOModelBase中保留参数);
     //2. 转移_Hav/_GL时,将不应期(从avd.actionFoModels中找failure的部分)去掉;
-    //3. avd为DemandModel时,转移方法为TOP.P+;
-    
-    //写TryMoveBlock();=========
+    //3. 写完TOP.commitFromTOR_MoveForDemand();
     
     
+    //1. 转移或递归Block();
+    void(^ MoveOrLoopBackBlock)(TOModelBase *avd)= ^ (TOModelBase *avd){
+        //a. 转移
+        if (ISOK(avd, TOAlgModel.class)) {
+            //a1. avdIsAlg: 再决策,转移至TOAction;
+            [self.toAction convert2Out_Hav:(TOAlgModel*)avd];
+        }else if(ISOK(avd, TOValueModel.class)){
+            //a2. avdIsValue: 再决策,转移至TOAction;
+            TOAlgModel *baseAlg = (TOAlgModel*)avd.baseOrGroup;
+            [self.toAction convert2Out_GL:baseAlg.pAlg outModel:(TOValueModel*)avd];
+        }else if(ISOK(avd, DemandModel.class)){
+            //a3. avdIsDemand: 再决策,转移至TOP.P+;
+            [self.delegate aiTOR_MoveForDemand:avd];
+        }
+        //b. 转移后,其下全失败,递归;
+        if (avd.status == TOModelStatus_ActNo || avd.status == TOModelStatus_ScoreNo) {
+            [self singleLoopBackWithFailureModel:avd];
+        }
+    };
     
-    
+    //2. 主方法部分;
     if (ISOK(failureModel, TOAlgModel.class)) {
-        //1. Alg时,其右fo失败
+        //a. Alg时,其右fo失败
         TOFoModel *toFoModel = (TOFoModel*)failureModel.baseOrGroup;
         toFoModel.status = TOModelStatus_ActNo;
         
-        //2. 用fo向上找A/V/D进行fos再决策;
-        TOModelBase *avd = toFoModel.baseOrGroup;
-        if (ISOK(avd, TOAlgModel.class)) {
-            //a. avdIsAlg: 再决策,转移
-            [self.toAction convert2Out_Hav:(TOAlgModel*)avd];
-            
-            //b. avdIsAlg: 其下全失败,递归;
-            if (avd.status == TOModelStatus_ActNo || avd.status == TOModelStatus_ScoreNo) {
-                [self singleLoopBackWithFailureModel:avd];
-            }
-        }else if(ISOK(avd, TOValueModel.class)){
-            //a. avdIsValue: 再决策,转移
-            TOAlgModel *baseAlg = (TOAlgModel*)avd.baseOrGroup;
-            [self.toAction convert2Out_GL:baseAlg.pAlg outModel:(TOValueModel*)avd];
-            
-            //b. avdIsValue: 其下全失败,递归;
-            if (avd.status == TOModelStatus_ActNo || avd.status == TOModelStatus_ScoreNo) {
-                [self singleLoopBackWithFailureModel:avd];
-            }
-        }else if(ISOK(avd, DemandModel.class)){
-            ////////转移至TOP.P+;
-            
-            //失败时,全失败,
-        }
+        //b. 用fo向上找A/V/D进行fos再决策 (先尝试转移,后不行就递归);
+        MoveOrLoopBackBlock(toFoModel.baseOrGroup);
     }else if(ISOK(failureModel, TOValueModel.class)){
-        //1. Value时,其右alg和fo失败
+        //a. Value时,其右alg和fo失败
         TOAlgModel *toAlgModel = (TOAlgModel*)failureModel.baseOrGroup;
         TOFoModel *toFoModel = (TOFoModel*)toAlgModel.baseOrGroup;
         toAlgModel.status = TOModelStatus_ActNo;
         toFoModel.status = TOModelStatus_ActNo;
         
-        //2. 用fo向上找A/V/D进行fos再决策;
-        
-        
-        
-        
-        
-        //a. 再决策执行完成;
-        //b. 再决策未成功 (全失败了) 递归此方法,将AVD传过去;
-        
+        //b. 用fo向上找A/V/D进行fos再决策 (先尝试转移,后不行就递归);
+        MoveOrLoopBackBlock(toFoModel.baseOrGroup);
     }else if(ISOK(failureModel, DemandModel.class)){
-        //1. 找TOP.P+进行再决策;
-        //a. 再决策执行完成;
-        //b. 再决策未成功 (全失败了) ===> 全部失败;
-        
-        
-        
+        //a. 再决策未成功 (全失败了) ===> 全部失败;
+        NSLog(@"Demand所有方案全部失败");
     }else{
         ELog(@"如打出此错误,则查下为何groupModel不是TOFoModel类型,因为一般行为化的都是概念,而概念的父级就是TOFoModel");
     }

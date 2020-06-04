@@ -316,5 +316,8 @@ static AIThinkingControl *_instance;
 -(AIShortMatchModel*) aiTOR_RethinkInnerFo:(AIFoNodeBase*)fo{
     return [self.thinkIn dataInFromTORInnerFo:fo];
 }
+-(AIShortMatchModel*) aiTOR_MoveForDemand:(DemandModel*)demand{
+    [self.tOP commitFromTOR_MoveForDemand:demand];
+}
 
 @end

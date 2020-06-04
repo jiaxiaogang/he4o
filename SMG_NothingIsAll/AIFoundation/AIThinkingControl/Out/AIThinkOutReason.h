@@ -22,6 +22,8 @@
 -(AIShortMatchModel*) aiTOR_GetShortMatchModel;
 //反思innerFo
 -(AIShortMatchModel*) aiTOR_RethinkInnerFo:(AIFoNodeBase*)fo;
+//转移DemandModel子任务
+-(AIShortMatchModel*) aiTOR_MoveForDemand:(DemandModel*)demand;
 
 @end
 

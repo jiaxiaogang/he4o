@@ -72,6 +72,11 @@
  */
 -(void) dataOut;
 
+/**
+ *  MARK:--------------------TOR中Demand方案失败,尝试转移--------------------
+ */
+-(void) commitFromTOR_MoveForDemand:(DemandModel*)demand;
+
 
 @end
 
