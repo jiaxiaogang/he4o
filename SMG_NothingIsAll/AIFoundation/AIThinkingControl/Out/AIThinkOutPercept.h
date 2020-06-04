@@ -74,6 +74,7 @@
 
 /**
  *  MARK:--------------------TOR中Demand方案失败,尝试转移--------------------
+ *  @desc 当demand一轮失败时,进行P+递归;
  */
 -(void) commitFromTOR_MoveForDemand:(DemandModel*)demand;
 

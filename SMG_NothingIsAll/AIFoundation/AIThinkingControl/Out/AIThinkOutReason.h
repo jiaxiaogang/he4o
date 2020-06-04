@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIShortMatchModel;
+@class AIShortMatchModel,DemandModel;
 @protocol AIThinkOutReasonDelegate <NSObject>
 
 //更新思维活跃度
@@ -23,7 +23,7 @@
 //反思innerFo
 -(AIShortMatchModel*) aiTOR_RethinkInnerFo:(AIFoNodeBase*)fo;
 //转移DemandModel子任务
--(AIShortMatchModel*) aiTOR_MoveForDemand:(DemandModel*)demand;
+-(void) aiTOR_MoveForDemand:(DemandModel*)demand;
 
 @end
 

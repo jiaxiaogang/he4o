@@ -216,10 +216,14 @@
             NSArray *hmRef_ps = [SMGUtils filterSame_ps:hRef_ps parent_ps:mRef_ps];
             hmRef_ps = ARR_SUB(hmRef_ps, 0, cHavNoneAssFoCount);
             
+            //7. 去掉不应期
+            NSArray *except_ps = [TOUtils convertPointersFromTOModels:outModel.actionFoModels];
+            hmRef_ps = [SMGUtils removeSub_ps:except_ps parent_ps:hmRef_ps];
+            
             //8. 并依次尝试行为化;
             [self convert2Out_RelativeFo_ps:hmRef_ps outModel:outModel];
             //9. 一条成功,则中止;
-            if (outModel.status == TOModelStatus_Finish) {
+            if (outModel.status == TOModelStatus_ActYes || outModel.status == TOModelStatus_Runing) {
                 return;
             }
         }
@@ -260,8 +264,14 @@
     }
     
     //3. 根据havAlg联想时序,并找出新的解决方案,与新的行为化的概念,与新的条件概念;
-    NSArray *hdRefPorts = ARR_SUB(glAlg.refPorts, 0, cHavNoneAssFoCount);
-    [self convert2Out_RelativeFo_ps:[SMGUtils convertPointersFromPorts:hdRefPorts] outModel:outModel];
+    NSArray *hdRef_ps = [SMGUtils convertPointersFromPorts:ARR_SUB(glAlg.refPorts, 0, cHavNoneAssFoCount)];
+    
+    //4. 去掉不应期
+    NSArray *except_ps = [TOUtils convertPointersFromTOModels:outModel.actionFoModels];
+    hdRef_ps = [SMGUtils removeSub_ps:except_ps parent_ps:hdRef_ps];
+    
+    //5. 转移至_fos
+    [self convert2Out_RelativeFo_ps:hdRef_ps outModel:outModel];
 }
 
 //MARK:===============================================================

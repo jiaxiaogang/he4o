@@ -106,7 +106,34 @@
 }
 
 -(void) commitFromTOR_MoveForDemand:(DemandModel*)demand{
-    //self.P+
+    //1. 数据准备
+    NSArray *mModels = [self.delegate aiTOP_GetShortMatchModel];
+    if (!demand || !ARRISOK(mModels)) return;
+    
+    //2. 逐个对mModels短时记忆进行尝试使用;
+    for (NSInteger i = 0; i < mModels.count; i++) {
+        AIShortMatchModel *mModel = ARR_INDEX_REVERSE(mModels, i);
+        AIAlgNodeBase *matchAlg = mModel.matchAlg;
+        
+        //3. 识别有效性判断 (优先直接mv+,不行再mv-迂回);
+        if (matchAlg) {
+            
+            
+            //TODOTOMORROW:
+            //将不应期,作用下此处调用的方法中方向索引对fo的联想;
+            [self perceptPlus:matchAlg demandModel:demand];
+            
+            //4. 一个成功时,全部成功;
+            if (demand.status == TOModelStatus_Finish) {
+                NSLog(@"Demand完成,全部完成");
+                return;
+            }
+            //5. 只要有一条行为化中时,跳出循环;
+            if (demand.status == TOModelStatus_ActYes || demand.status == TOModelStatus_Runing) {
+                return;
+            }
+        }
+    }
 }
 
 //MARK:===============================================================
