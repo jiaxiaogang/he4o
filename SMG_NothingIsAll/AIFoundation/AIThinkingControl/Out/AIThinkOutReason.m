@@ -141,27 +141,22 @@
         }];
         
         //6. 行为化 (围绕P做行为);
+        TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:checkAlg_p group:outModel];
+        
+        //7. 直接尝试,实现checkAlg._Hav;
+        [self.toAction convert2Out_P:algOutModel];
+        if (algOutModel.status == TOModelStatus_ActYes || algOutModel.status == TOModelStatus_Finish) {
+            return;
+        }
+        
+        //8. 在S有效时,尝试_SP;
         AIKVPointer *pAlg_p = firstPlusItem;
         if (sAlg_p) {
             NSInteger sIndex = [TOUtils indexOfAbsItem:sAlg_p atConContent:matchFo.content_ps];
             BOOL sHappened = sIndex < outModel.actionIndex;
             if (sHappened) {
-                //a. S存在,且S已发生,则加工SP;
-                TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:checkAlg_p group:outModel];
+                //9. S存在,且S已发生,则加工SP;
                 [self.toAction convert2Out_SP:sAlg_p pAlg_p:pAlg_p outModel:algOutModel];
-                if (algOutModel.status == TOModelStatus_Finish) {
-                    outModel.status = TOModelStatus_Finish;
-                }
-            }else{
-                //b. S存在,但S未发生,则等待 (等S发生);
-                outModel.status = TOModelStatus_Finish;
-            }
-        }else{
-            //c. S不存在,则仅实现P即可;
-            TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:pAlg_p group:outModel];
-            [self.toAction convert2Out_P:algOutModel];
-            if (algOutModel.status == TOModelStatus_Finish) {
-                outModel.status = TOModelStatus_Finish;
             }
         }
     }
@@ -322,12 +317,16 @@
             waitModel.status = TOModelStatus_Finish;
             
             //5. 推动单轮循环,继续决策;
-            [self singleLoopBackWithSuccessModel:waitModel];
+            [self singleLoopBackWithFinishModel:waitModel];
             return true;
         }
     }
     return false;
 }
+
+//MARK:===============================================================
+//MARK:                   < 理性决策流程控制方法 >
+//MARK:===============================================================
 
 /**
  *  MARK:--------------------新发生outModel完成,推进递归--------------------
@@ -341,9 +340,11 @@
  *      4. 参数说明:
  *          a. 由别的方法调用时,参数为:TOAlgModel或TOValueModel;
  *          b. 由递归自行调用时,参数为:TOAlgModel或TOValueModel或DemandModel;
- *  @callers : 由外循环调用,当外循环输入新的matchAlg时,调用此方法推进继续决策;
+ *  @callers :
+ *      1. 由外循环调用,当外循环输入新的matchAlg时,调用此方法推进继续决策;
+ *      2. 由toAction调用,当无需行为的行为化,直接成功时,调用推进继续决策;
  */
--(void) singleLoopBackWithSuccessModel:(TOModelBase*)newFinishModel {
+-(void) singleLoopBackWithFinishModel:(TOModelBase*)newFinishModel {
     if (ISOK(newFinishModel, TOAlgModel.class)) {
         //1. Alg (如果取到fo,则下帧继续;)
         TOFoModel *toFoModel = (TOFoModel*)newFinishModel.baseOrGroup;
@@ -363,7 +364,7 @@
         }else{
             //c. 成功,递归
             toFoModel.status = TOModelStatus_Finish;
-            [self singleLoopBackWithSuccessModel:toFoModel.baseOrGroup];
+            [self singleLoopBackWithFinishModel:toFoModel.baseOrGroup];
         }
     }else if(ISOK(newFinishModel, TOValueModel.class)){
         //3. Value (如果取到alg,则应将当前已完成的value标记到algOutModel.alreadyFinishs,并提给TOAction._P/_SP继续完成去);
@@ -393,7 +394,7 @@
         //c. 成功,递归;
         if (!jump) {
             toAlgModel.status = TOModelStatus_Finish;
-            [self singleLoopBackWithSuccessModel:toAlgModel.baseOrGroup];
+            [self singleLoopBackWithFinishModel:toAlgModel.baseOrGroup];
         }
     }else if(ISOK(newFinishModel, DemandModel.class)){
         //5. 全部完成;
@@ -496,6 +497,12 @@
 }
 -(AIShortMatchModel*) toAction_RethinkInnerFo:(AIFoNodeBase*)fo{
     return [self.delegate aiTOR_RethinkInnerFo:fo];
+}
+-(void) toAction_SubModelFinish:(TOModelBase*)outModel{
+    [self singleLoopBackWithFinishModel:outModel];
+}
+-(void) toAction_SubModelFailure:(TOModelBase*)outModel{
+    [self singleLoopBackWithFailureModel:outModel];
 }
 
 @end

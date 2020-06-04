@@ -113,11 +113,13 @@ typedef NS_ENUM(NSInteger, LogHeaderMode) {
 /**
  *  MARK:--------------------TOModelStatus--------------------
  *  @title 输出模型
+ *  @todo 考虑支持ScorePK,即迟疑时,尝试别的方案,与当前方案进行竞争;
  */
 typedef NS_ENUM(NSInteger, TOModelStatus) {
-    TOModelStatus_Runing   = 0,//运行中 (行为化前,尝试找各种解决方案);
-    TOModelStatus_ActYes   = 1,//行为化成功 (等待外循环结果);
-    TOModelStatus_ActNo    = 2,//行为化失败 (等待条件满足时继续);
-    TOModelStatus_ScoreNo  = 3,//评价失败而中止 (不想干,彻底挂掉,除非demandModel变的更迫切);
-    TOModelStatus_Finish   = 4,//最终成功 (完成后向下帧跳转,发生在事实发生之后,即新的input匹配到);
+    TOModelStatus_Wait     = 0,//等待行为化 (行为化前,尝试找各种解决方案);
+    TOModelStatus_Runing   = 1,//运行中 (其subModel正在尝试行为化中);
+    TOModelStatus_ActYes   = 2,//行为化成功 (等待外循环结果);
+    TOModelStatus_ActNo    = 3,//行为化失败 (等待条件满足时继续);
+    TOModelStatus_ScoreNo  = 4,//评价失败而中止 (不想干,彻底挂掉,除非demandModel变的更迫切);
+    TOModelStatus_Finish   = 5,//最终成功 (完成后向下帧跳转,发生在事实发生之后,即新的input匹配到);
 };

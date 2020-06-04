@@ -35,6 +35,7 @@
  *  @todo
  *      1. 收集_GL向抽象和具象延伸,而尽量避免到_Hav,尤其要避免重组,无论是group还是solo (参考n19p18-todo4);
  *      2. 将group和solo重组的方式废弃掉,参考:n19p18-todo5
+ *      3. 替代group和solo的方法为: 用outModel.checkAlg找同层节点进行_Hav,并判断其符合GLDic中的稀疏码同区,且与GL的innerType相同,同大或同小;
  */
 -(void) convert2Out_SP:(AIKVPointer*)sAlg_p pAlg_p:(AIKVPointer*)pAlg_p outModel:(TOAlgModel*)outModel {
     //1. 结果数据准备
@@ -45,12 +46,6 @@
         return;
     }
     NSLog(@"STEPKEY==========================SP START==========================\nSTEPKEYS:%@\nSTEPKEYP:%@",Alg2FStr(sAlg),Alg2FStr(pAlg));
-    
-    //1. 直接对checkAlg找cHav (成功则一步到位);
-    [self convert2Out_Hav:outModel];
-    if (outModel.status == TOModelStatus_Finish || outModel.status == TOModelStatus_ActYes) {
-        return;
-    }
     
     //2. 满足P: GL部分;
     NSDictionary *cGLDic = [SMGUtils filterPointers:sAlg.content_ps b_ps:pAlg.content_ps checkItemValid:^BOOL(AIKVPointer *a_p, AIKVPointer *b_p) {
@@ -64,7 +59,7 @@
     //3. 满足P: cHav部分;
     NSArray *cHavArr = [SMGUtils removeSub_ps:cGLDic.allValues parent_ps:pAlg.content_ps];
     
-    //4. GL行为化;
+    //4. GL行为化 (仅对第一条行为化,其后都由流程控制方法来控制推动);
     for (NSData *key in cGLDic.allKeys) {
         //a. 数据准备;
         AIKVPointer *sValue_p = DATA2OBJ(key);
@@ -74,10 +69,13 @@
         NSLog(@"------SP_GL行为化:%@ -> %@",[NVHeUtil getLightStr:sValue_p],[NVHeUtil getLightStr:pValue_p]);
         [self convert2Out_GL:pAlg outModel:valueOutModel];
         //c. 一条失败,则全失败;
-        if (valueOutModel.status != TOModelStatus_Finish) {
-            outModel.status = TOModelStatus_ActNo;
-            return;
+        if (valueOutModel.status == TOModelStatus_ActNo || valueOutModel.status == TOModelStatus_ScoreNo) {
+            [self.delegate toAction_SubModelFailure:valueOutModel];
         }
+        if (valueOutModel.status == TOModelStatus_Finish) {
+            [self.delegate toAction_SubModelFinish:valueOutModel];
+        }
+        break;
     }
     
     //5. H行为化;
@@ -86,7 +84,7 @@
         AIAbsAlgNode *soloAlg = [theNet createAbsAlg_NoRepeat:@[pValue_p] conAlgs:nil isMem:false];
         TOAlgModel *soloOutModel = [TOAlgModel newWithAlg_p:soloAlg.pointer group:outModel];
         [self convert2Out_Hav:soloOutModel];
-        if (soloOutModel.status == TOModelStatus_Finish) {
+        if (soloOutModel.status == TOModelStatus_ActNo || soloOutModel.status == TOModelStatus_ScoreNo) {
             continue;
         }
         
@@ -97,17 +95,15 @@
         AIAbsAlgNode *groupAlg = [theNet createAbsAlg_NoRepeat:group_ps conAlgs:nil isMem:false];
         TOAlgModel *groupOutModel = [TOAlgModel newWithAlg_p:groupAlg.pointer group:outModel];
         [self convert2Out_Hav:groupOutModel];
-        if (groupOutModel.status == TOModelStatus_Finish) {
+        if (groupOutModel.status == TOModelStatus_ActNo || groupOutModel.status == TOModelStatus_ScoreNo) {
             continue;
         }
         
         //c. solo和group方式都未成功,则: 一条稀疏码行为化失败,则直接返回失败;
         outModel.status = TOModelStatus_ActNo;
+        [self.delegate toAction_SubModelFailure:outModel];
         return;
     }
-    
-    //6. 通关,成功;
-    outModel.status = TOModelStatus_Finish;
 }
 
 /**

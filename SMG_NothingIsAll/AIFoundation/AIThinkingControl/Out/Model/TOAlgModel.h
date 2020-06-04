@@ -14,6 +14,10 @@
  *  MARK:--------------------决策中的概念模型--------------------
  *  1. 将content_p中的概念进行行为化;
  *  2. content_p : AIAlgNodeBase_p
+ *  @相对其它outModel模型特殊说明:
+ *      1. TOAlgModel在_SP方法中,即尝试了本身的_Hav,也可以尝试其同层节点的_Hav,在失败时,还可以对SP尝试_GL,几种方式有一个达成,即可Finish;
+ *      2. 所以在单种方式失败时,要调用下一种方式尝试行为化;
+ *      3. 几种方式本身就会竞争,一次只单种,用ScorePK状态,进行方案竞争;
  */
 @class TOFoModel;
 @interface TOAlgModel : TOModelBase <ITryActionFoDelegate,ISubModelsDelegate>

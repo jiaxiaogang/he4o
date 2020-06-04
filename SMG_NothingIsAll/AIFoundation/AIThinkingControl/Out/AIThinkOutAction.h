@@ -11,13 +11,20 @@
 /**
  *  MARK:--------------------行为化代理--------------------
  */
-@class AIShortMatchModel;
+@class AIShortMatchModel,TOModelBase;
 @protocol TOActionDelegate <NSObject>
 
 -(void) toAction_updateEnergy:(CGFloat)delta;
 -(BOOL) toAction_EnergyValid;
 -(void) toAction_Output:(NSArray*)actions;
 -(AIShortMatchModel*) toAction_RethinkInnerFo:(AIFoNodeBase*)fo;
+-(void) toAction_SubModelFinish:(TOModelBase*)outModel;
+-(void) toAction_SubModelFailure:(TOModelBase*)outModel;
+
+//TODOTOMORROW:
+//1. 整理所有status的变化,一切调用者只管调用触发,还有模型生成,参数保留;
+//2. 一切流程控制的转移,失败递归,成功推进,都由流程控制方法完成;
+//3. 流程控制方法,由_Hav,_GL这些具体方法来调用;
 
 @end
 
