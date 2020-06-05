@@ -47,4 +47,11 @@
     return _cGLDic;
 }
 
+-(NSMutableArray *)replaceAlgs{
+    if (!_replaceAlgs) {
+        _replaceAlgs = [[NSMutableArray alloc] init];
+    }
+    return _replaceAlgs;
+}
+
 @end

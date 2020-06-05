@@ -25,10 +25,17 @@
 +(TOAlgModel*) newWithAlg_p:(AIKVPointer*)alg_p group:(id<ISubModelsDelegate>)group;
 
 /**
- *  MARK:--------------------cGLDic短记--------------------
+ *  MARK:--------------------保留params之cGLDic短记--------------------
  *  @desc 因为TOAction.SP算法执行时,将cGLDic存此,以便其中一个稀疏码成功时,顺利转移下一个;
  */
 @property (strong, nonatomic) NSMutableDictionary *cGLDic;
+
+
+/**
+ *  MARK:--------------------保留params之replaceAlgs短记--------------------
+ *  @desc 因为TOAction.SP算法执行时,将checkAlg和checkAlg的同层可替代的替身存于此,只要成功一个即可,不过失败时,方便转移;
+ */
+@property (strong, nonatomic) NSMutableArray *replaceAlgs;
 
 /**
  *  MARK:--------------------pAlg保留--------------------

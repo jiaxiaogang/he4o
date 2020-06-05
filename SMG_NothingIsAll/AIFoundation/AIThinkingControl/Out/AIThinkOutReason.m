@@ -421,17 +421,7 @@
     //1. 转移或递归Block();
     void(^ MoveOrLoopBackBlock)(TOModelBase *avd)= ^ (TOModelBase *avd){
         //a. 转移
-        if (ISOK(avd, TOAlgModel.class)) {
-            //a1. avdIsAlg: 再决策,转移至TOAction;
-            [self.toAction convert2Out_Hav:(TOAlgModel*)avd];
-        }else if(ISOK(avd, TOValueModel.class)){
-            //a2. avdIsValue: 再决策,转移至TOAction;
-            TOAlgModel *baseAlg = (TOAlgModel*)avd.baseOrGroup;
-            [self.toAction convert2Out_GL:baseAlg.pAlg outModel:(TOValueModel*)avd];
-        }else if(ISOK(avd, DemandModel.class)){
-            //a3. avdIsDemand: 再决策,转移至TOP.P+;
-            [self.delegate aiTOR_MoveForDemand:(DemandModel*)avd];
-        }
+        [self singleLoopBackWithBegin:avd];
         //b. 转移后,其下全失败,递归;
         if (avd.status == TOModelStatus_ActNo || avd.status == TOModelStatus_ScoreNo) {
             [self singleLoopBackWithFailureModel:avd];
@@ -460,6 +450,21 @@
         NSLog(@"Demand所有方案全部失败");
     }else{
         ELog(@"如打出此错误,则查下为何groupModel不是TOFoModel类型,因为一般行为化的都是概念,而概念的父级就是TOFoModel");
+    }
+}
+
+-(void) singleLoopBackWithBegin:(TOModelBase*)beginModel {
+    //a. 转移
+    if (ISOK(beginModel, TOAlgModel.class)) {
+        //a1. avdIsAlg: 再决策,转移至TOAction;
+        [self.toAction convert2Out_Hav:(TOAlgModel*)beginModel];
+    }else if(ISOK(beginModel, TOValueModel.class)){
+        //a2. avdIsValue: 再决策,转移至TOAction;
+        TOAlgModel *baseAlg = (TOAlgModel*)beginModel.baseOrGroup;
+        [self.toAction convert2Out_GL:baseAlg.pAlg outModel:(TOValueModel*)beginModel];
+    }else if(ISOK(beginModel, DemandModel.class)){
+        //a3. avdIsDemand: 再决策,转移至TOP.P+;
+        [self.delegate aiTOR_MoveForDemand:(DemandModel*)beginModel];
     }
 }
 
