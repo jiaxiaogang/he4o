@@ -42,7 +42,9 @@
 
 /**
  *  MARK:--------------------topV2--------------------
- *  @desc 四种(2x2)TOP模式 (优先取同区工作模式,不行再以不同区工作模式);
+ *  @desc
+ *      1. 四种(2x2)TOP模式 (优先取同区工作模式,不行再以不同区工作模式);
+ *      2. 调用者只管调用触发,模型生成,参数保留;
  *  @version
  *      20200430 : v2,四种工作模式版;
  *  @todo
@@ -117,17 +119,8 @@
         
         //3. 识别有效性判断 (转至P+);
         if (matchAlg) {
-            [self perceptPlus:matchAlg demandModel:demand];
-            
-            //4. 一个成功时,全部成功;
-            if (demand.status == TOModelStatus_Finish) {
-                NSLog(@"Demand完成,全部完成");
-                return;
-            }
-            //5. 只要有一条行为化中时,跳出循环;
-            if (demand.status == TOModelStatus_ActYes || demand.status == TOModelStatus_Runing) {
-                return;
-            }
+            BOOL success = [self perceptPlus:matchAlg demandModel:demand];
+            if (success) return;
         }
     }
 }
@@ -205,9 +198,13 @@
         //b. 取自身,实现吃,则可不饿;
         [self.delegate aiTOP_2TOR_PerceptPlus:toFoModel];
         
-        //c. 一条行为化成功,则中止取消通用diff算法的交集循环;
-        success = (toFoModel.status == TOModelStatus_Runing || toFoModel.status == TOModelStatus_ActYes);
-        return success;
+        //c. 用success记录下,是否本次成功找到候选方案;
+        if (toFoModel.status == TOModelStatus_ActYes || toFoModel.status == TOModelStatus_Runing || toFoModel.status == TOModelStatus_Finish) {
+            success = true;
+        }
+        
+        //d. 一次只尝试一条,行为化中途失败时,自然会由流程控制方法递归TOP.P+重来;
+        return true;
     } canAss:^BOOL{
         return [self havEnergy];
     } updateEnergy:^(CGFloat delta) {

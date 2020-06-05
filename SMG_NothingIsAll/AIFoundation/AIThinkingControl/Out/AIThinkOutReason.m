@@ -143,20 +143,29 @@
         //6. 行为化 (围绕P做行为);
         TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:checkAlg_p group:outModel];
         
-        //7. 直接尝试,实现checkAlg._Hav;
-        [self.toAction convert2Out_P:algOutModel];
-        if (algOutModel.status == TOModelStatus_ActYes || algOutModel.status == TOModelStatus_Finish) {
-            return;
-        }
+        //7. 找出可替代checkAlg的replaceAlgs,保留到algOutModel.replaceAlgs;
+        [algOutModel.replaceAlgs addObject:checkAlg_p];
+        //随后此处支持,在SP的指引下,找出checkAlg同层的其它可替代节点,加入replaceAlgs;
         
         //8. 在S有效时,尝试_SP;
         AIKVPointer *pAlg_p = firstPlusItem;
+        BOOL tryAct = false;
         if (sAlg_p) {
             NSInteger sIndex = [TOUtils indexOfAbsItem:sAlg_p atConContent:matchFo.content_ps];
             BOOL sHappened = sIndex < outModel.actionIndex;
             if (sHappened) {
                 //9. S存在,且S已发生,则加工SP;
                 [self.toAction convert2Out_SP:sAlg_p pAlg_p:pAlg_p outModel:algOutModel];
+                tryAct = true;
+            }
+        }
+        
+        //10. 如果SP未执行,则直接调用replaceAlg;
+        if (!tryAct) {
+            for (AIKVPointer *replace_p in algOutModel.replaceAlgs) {
+                TOAlgModel *replaceAlg = [TOAlgModel newWithAlg_p:replace_p group:algOutModel];
+                [self.toAction convert2Out_Hav:replaceAlg];
+                return;
             }
         }
     }
@@ -175,6 +184,7 @@
     AIFoNodeBase *fo = [SMGUtils searchNode:outModel.content_p];
     if (!fo) {
         outModel.status = TOModelStatus_ActNo;
+        [self singleLoopBackWithFailureModel:outModel];
         return;
     }
     
@@ -184,9 +194,6 @@
     //3. cHav行为化
     TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:curAlg_p group:outModel];
     [self.toAction convert2Out_P:algOutModel];
-    if (algOutModel.status == TOModelStatus_Finish) {
-        outModel.status = TOModelStatus_Finish;
-    }
 }
 
 /**
@@ -326,6 +333,8 @@
 
 //MARK:===============================================================
 //MARK:                   < 理性决策流程控制方法 >
+//MARK: 1. 一切流程控制的转移,失败递归,成功推进,都由流程控制方法完成;
+//MARK: 2. 流程控制方法,由TOAction中体方法中给status赋值的同时调用;
 //MARK:===============================================================
 
 /**
@@ -344,31 +353,36 @@
  *      1. 由外循环调用,当外循环输入新的matchAlg时,调用此方法推进继续决策;
  *      2. 由toAction调用,当无需行为的行为化,直接成功时,调用推进继续决策;
  */
--(void) singleLoopBackWithFinishModel:(TOModelBase*)newFinishModel {
-    if (ISOK(newFinishModel, TOAlgModel.class)) {
-        //1. Alg (如果取到fo,则下帧继续;)
-        TOFoModel *toFoModel = (TOFoModel*)newFinishModel.baseOrGroup;
+-(void) singleLoopBackWithFinishModel:(TOModelBase*)finishModel {
+    if (ISOK(finishModel, TOAlgModel.class)) {
+        //1. Alg
+        TOModelBase *base = finishModel.baseOrGroup;
         
-        //2. 完成,则直接返回finish (如本来就是最后一帧,则再递归至上一层);
-        AIFoNodeBase *fo = [SMGUtils searchNode:toFoModel.content_p];
-        if (toFoModel.actionIndex < fo.content_ps.count - 1) {
-            //a. Alg转移 (下帧)
-            toFoModel.actionIndex ++;
-            AIKVPointer *move_p = ARR_INDEX(fo.content_ps, toFoModel.actionIndex);
-            TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:move_p group:toFoModel];
-            [self.toAction convert2Out_Hav:algOutModel];
-            //b. 失败,递归
-            if (algOutModel.status == TOModelStatus_ActNo || algOutModel.status == TOModelStatus_ScoreNo) {
-                [self singleLoopBackWithFailureModel:algOutModel];
+        //2. 如果base取到fo,则下帧继续;
+        if (ISOK(base, TOFoModel.class)) {
+            TOFoModel *toFoModel = (TOFoModel*)base;
+            
+            //2. 完成,则直接返回finish (如本来就是最后一帧,则再递归至上一层);
+            AIFoNodeBase *fo = [SMGUtils searchNode:toFoModel.content_p];
+            if (toFoModel.actionIndex < fo.content_ps.count - 1) {
+                //a. Alg转移 (下帧)
+                toFoModel.actionIndex ++;
+                AIKVPointer *move_p = ARR_INDEX(fo.content_ps, toFoModel.actionIndex);
+                TOAlgModel *moveAlg = [TOAlgModel newWithAlg_p:move_p group:toFoModel];
+                [self singleLoopBackWithBegin:moveAlg];
+            }else{
+                //c. 成功,递归
+                toFoModel.status = TOModelStatus_Finish;
+                [self singleLoopBackWithFinishModel:toFoModel.baseOrGroup];
             }
-        }else{
-            //c. 成功,递归
-            toFoModel.status = TOModelStatus_Finish;
-            [self singleLoopBackWithFinishModel:toFoModel.baseOrGroup];
+        }else if(ISOK(base, TOAlgModel.class)){
+            //3. 如果base取到alg,则直接finish;
+            base.status = TOModelStatus_Finish;
+            [self singleLoopBackWithFinishModel:base];
         }
-    }else if(ISOK(newFinishModel, TOValueModel.class)){
+    }else if(ISOK(finishModel, TOValueModel.class)){
         //3. Value (如果取到alg,则应将当前已完成的value标记到algOutModel.alreadyFinishs,并提给TOAction._P/_SP继续完成去);
-        TOAlgModel *toAlgModel = (TOAlgModel*)newFinishModel.baseOrGroup;
+        TOAlgModel *toAlgModel = (TOAlgModel*)finishModel.baseOrGroup;
         
         //4. Value转移 (未行为化过的sp进行转移);
         BOOL jump = false;
@@ -381,12 +395,7 @@
             if (![alreadayAct_ps containsObject:pValue_p]) {
                 TOValueModel *toValueModel = [TOValueModel newWithSValue:sValue_p pValue:pValue_p group:toAlgModel];
                 jump = true;
-                [self.toAction convert2Out_GL:toAlgModel.pAlg outModel:toValueModel];
-                
-                //b. 失败,递归;
-                if (toValueModel.status == TOModelStatus_ActNo || toValueModel.status == TOModelStatus_ScoreNo) {
-                    [self singleLoopBackWithFailureModel:toValueModel];
-                }
+                [self singleLoopBackWithBegin:toValueModel];
                 break;
             }
         }
@@ -396,7 +405,7 @@
             toAlgModel.status = TOModelStatus_Finish;
             [self singleLoopBackWithFinishModel:toAlgModel.baseOrGroup];
         }
-    }else if(ISOK(newFinishModel, DemandModel.class)){
+    }else if(ISOK(finishModel, DemandModel.class)){
         //5. 全部完成;
         NSLog(@"SUCCESS > 决策任务完成");
     }else{
@@ -418,33 +427,57 @@
  *          c. avd为Demand时,转移方法为:TOP.P+;
  */
 -(void) singleLoopBackWithFailureModel:(TOModelBase*)failureModel {
-    //1. 转移或递归Block();
-    void(^ MoveOrLoopBackBlock)(TOModelBase *avd)= ^ (TOModelBase *avd){
-        //a. 转移
-        [self singleLoopBackWithBegin:avd];
-        //b. 转移后,其下全失败,递归;
-        if (avd.status == TOModelStatus_ActNo || avd.status == TOModelStatus_ScoreNo) {
-            [self singleLoopBackWithFailureModel:avd];
+    //1. 尝试向alg.replace转移Block;
+    BOOL(^ Move2ReplaceAlgBlock)(TOAlgModel *)= ^BOOL(TOAlgModel *targetAlg){
+        for (AIKVPointer *replace_p in targetAlg.replaceAlgs) {
+            NSArray *alreadayAct_ps = [TOUtils convertPointersFromTOModels:targetAlg.subModels];
+            if (![alreadayAct_ps containsObject:replace_p]) {
+                TOAlgModel *moveAlg = [TOAlgModel newWithAlg_p:replace_p group:targetAlg];
+                [self singleLoopBackWithBegin:moveAlg];
+                return true;
+            }
         }
+        return false;
     };
     
     //2. 主方法部分;
     if (ISOK(failureModel, TOAlgModel.class)) {
-        //a. Alg时,其右fo失败
-        TOFoModel *toFoModel = (TOFoModel*)failureModel.baseOrGroup;
-        toFoModel.status = TOModelStatus_ActNo;
-        
-        //b. 用fo向上找A/V/D进行fos再决策 (先尝试转移,后不行就递归);
-        MoveOrLoopBackBlock(toFoModel.baseOrGroup);
+        if (ISOK(failureModel.baseOrGroup, TOFoModel.class)) {
+            //a. Alg.base为fo时,baseFo失败
+            TOFoModel *toFoModel = (TOFoModel*)failureModel.baseOrGroup;
+            toFoModel.status = TOModelStatus_ActNo;
+            
+            //b. 用fo向上找A/V/D进行fos再决策 (先尝试转移,后不行就递归);
+            [self singleLoopBackWithBegin:toFoModel.baseOrGroup];
+        }else if(ISOK(failureModel.baseOrGroup, TOAlgModel.class)){
+            //c. Alg.base为alg时,baseAlg转移;
+            TOAlgModel *baseAlgModel = (TOAlgModel*)failureModel.baseOrGroup;
+            
+            //d. 转移replaceAlg (除掉已不应期的);
+            BOOL moveSuccess = Move2ReplaceAlgBlock(baseAlgModel);
+            
+            //e. 转移失败,完全失败;
+            if (!moveSuccess) {
+                baseAlgModel.status = TOModelStatus_ActNo;
+                [self singleLoopBackWithFailureModel:baseAlgModel];
+            }
+        }
     }else if(ISOK(failureModel, TOValueModel.class)){
-        //a. Value时,其右alg和fo失败
-        TOAlgModel *toAlgModel = (TOAlgModel*)failureModel.baseOrGroup;
-        TOFoModel *toFoModel = (TOFoModel*)toAlgModel.baseOrGroup;
-        toAlgModel.status = TOModelStatus_ActNo;
-        toFoModel.status = TOModelStatus_ActNo;
+        //a. Value失败时时,判断其右alg的replaceAlgs转移
+        TOAlgModel *baseAlg = (TOAlgModel*)failureModel.baseOrGroup;
         
-        //b. 用fo向上找A/V/D进行fos再决策 (先尝试转移,后不行就递归);
-        MoveOrLoopBackBlock(toFoModel.baseOrGroup);
+        //b. 转移replaceAlg (除掉已不应期的);
+        BOOL moveSuccess = Move2ReplaceAlgBlock(baseAlg);
+        
+        //c. 转移replace失败时,baseAlg和baseAlg.baseFo都失败
+        if (!moveSuccess) {
+            baseAlg.status = TOModelStatus_ActNo;
+            TOFoModel *baseBaseFo = (TOFoModel*)baseAlg.baseOrGroup;
+            baseBaseFo.status = TOModelStatus_ActNo;
+            
+            //b. 用fo向上找A/V/D进行fos再决策 (先尝试转移,后不行就递归);
+            [self singleLoopBackWithBegin:baseBaseFo.baseOrGroup];
+        }
     }else if(ISOK(failureModel, DemandModel.class)){
         //a. 再决策未成功 (全失败了) ===> 全部失败;
         NSLog(@"Demand所有方案全部失败");

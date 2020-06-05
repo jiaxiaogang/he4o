@@ -43,6 +43,7 @@
     AIAlgNodeBase *pAlg = [SMGUtils searchNode:pAlg_p];
     if (!pAlg) {
         outModel.status = TOModelStatus_ActNo;
+        [self.delegate toAction_SubModelFailure:outModel];
         return;
     }
     NSLog(@"STEPKEY==========================SP START==========================\nSTEPKEYS:%@\nSTEPKEYP:%@",Alg2FStr(sAlg),Alg2FStr(pAlg));
@@ -68,13 +69,6 @@
         //b. 行为化
         NSLog(@"------SP_GL行为化:%@ -> %@",[NVHeUtil getLightStr:sValue_p],[NVHeUtil getLightStr:pValue_p]);
         [self convert2Out_GL:pAlg outModel:valueOutModel];
-        //c. 一条失败,则全失败;
-        if (valueOutModel.status == TOModelStatus_ActNo || valueOutModel.status == TOModelStatus_ScoreNo) {
-            [self.delegate toAction_SubModelFailure:valueOutModel];
-        }
-        if (valueOutModel.status == TOModelStatus_Finish) {
-            [self.delegate toAction_SubModelFinish:valueOutModel];
-        }
         break;
     }
     
@@ -132,6 +126,7 @@
     NSLog(@"STEPKEY============================== 行为化 START ==================== \nSTEPKEY时序:%@->%@\nSTEPKEY需要:[%@]",Fo2FStr(curFo),Mvp2Str(curFo.cmvNode_p),Pits2FStr(curAlg_ps));
     if (!ARRISOK(curAlg_ps) || curFo == nil || ![self.delegate toAction_EnergyValid]) {
         outModel.status = TOModelStatus_ActNo;
+        [self.delegate toAction_SubModelFailure:outModel];
         return;
     }
     
@@ -141,22 +136,16 @@
     }];
     if (!scoreSuccess) {
         outModel.status = TOModelStatus_ScoreNo;
+        [self.delegate toAction_SubModelFailure:outModel];
         return;
     }
 
-    //3. 依次单个概念行为化
+    //3. 触发,首个概念行为化;
     for (AIKVPointer *curAlg_p in curAlg_ps) {
         TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:curAlg_p group:outModel];
         [self convert2Out_Hav:algOutModel];
-        //4. 一条不成,则全部失败;
-        if (algOutModel.status != TOModelStatus_Finish) {
-            outModel.status = TOModelStatus_ActNo;
-            return;
-        }
+        return;
     }
-    
-    //5. 成功回调,每成功一次fo,消耗1格活跃值;
-    outModel.status = TOModelStatus_Finish;
 }
 
 //MARK:===============================================================
@@ -174,9 +163,10 @@
  *      2020-05-27 : 支持outModel (目前cHav方法,收集所有acts,一次性返回行为,而并未进行多轮外循环,所以此处不必做subOutModel);
  */
 -(void) convert2Out_Hav:(TOAlgModel*)outModel {
-    //1. 数据准备;
+    //1. 数据准备 (空白无需行为化);
     if (!outModel.content_p) {
-        outModel.status = TOModelStatus_ActNo;
+        outModel.status = TOModelStatus_Finish;
+        [self.delegate toAction_SubModelFinish:outModel];
         return;
     }
     
@@ -192,6 +182,7 @@
         AIAlgNodeBase *curAlg = [SMGUtils searchNode:outModel.content_p];
         if (!curAlg) {
             outModel.status = TOModelStatus_ActNo;
+            [self.delegate toAction_SubModelFailure:outModel];
             return;
         }
         
@@ -199,6 +190,7 @@
         AIAlgNodeBase *hAlg = [AINetService getInnerAlg:curAlg vAT:outModel.content_p.algsType vDS:outModel.content_p.dataSource type:ATHav];
         if (!hAlg) {
             outModel.status = TOModelStatus_ActNo;
+            [self.delegate toAction_SubModelFailure:outModel];
             return;
         }
         
@@ -216,17 +208,18 @@
             NSArray *except_ps = [TOUtils convertPointersFromTOModels:outModel.actionFoModels];
             hmRef_ps = [SMGUtils removeSub_ps:except_ps parent_ps:hmRef_ps];
             
-            //8. 并依次尝试行为化;
-            [self convert2Out_RelativeFo_ps:hmRef_ps outModel:outModel];
-            //9. 一条成功,则中止;
-            if (outModel.status == TOModelStatus_ActYes || outModel.status == TOModelStatus_Runing) {
+            //8. 只要有善可尝试的方式,即从首条开始尝试;
+            if (ARRISOK(hmRef_ps)) {
+                [self convert2Out_RelativeFo_ps:hmRef_ps outModel:outModel];
                 return;
             }
+            //9. 可尝试的方案全无,则循环至下个mModel试一下;
         }
     }
     
-    //10. 都没成功行为化,则失败;
+    //10. 所有mModel都没成功行为化一条,则失败;
     outModel.status = TOModelStatus_ActNo;
+    [self.delegate toAction_SubModelFailure:outModel];
 }
 
 /**
@@ -249,6 +242,7 @@
         WLog(@"value_行为化类参数type|value_p错误");
         //相等不必行为化,直接返回true;
         outModel.status = TOModelStatus_Finish;
+        [self.delegate toAction_SubModelFinish:outModel];
         return;
     }
     
@@ -256,6 +250,7 @@
     AIAlgNodeBase *glAlg = [AINetService getInnerAlg:alg vAT:vAT vDS:vDS type:type];
     if (!glAlg) {
         outModel.status = TOModelStatus_ActNo;
+        [self.delegate toAction_SubModelFailure:outModel];
         return;
     }
     
@@ -267,7 +262,13 @@
     hdRef_ps = [SMGUtils removeSub_ps:except_ps parent_ps:hdRef_ps];
     
     //5. 转移至_fos
-    [self convert2Out_RelativeFo_ps:hdRef_ps outModel:outModel];
+    if (ARRISOK(hdRef_ps)) {
+        [self convert2Out_RelativeFo_ps:hdRef_ps outModel:outModel];
+    }else{
+        //6. 无计可施
+        outModel.status = TOModelStatus_ActNo;
+        [self.delegate toAction_SubModelFailure:outModel];
+    }
 }
 
 //MARK:===============================================================
@@ -297,29 +298,17 @@
         if (relativeFo != nil && relativeFo.content_ps.count >= 1) {
             NSArray *foRangeOrder = ARR_SUB(relativeFo.content_ps, 0, relativeFo.content_ps.count - 1);
             
-            //4. 未转移,不需要行为化;
-            if (!ARRISOK(foRangeOrder)) {
-                outModel.status = TOModelStatus_Finish;
-                return;
-            }else{
-                
-                //5. 转移,则进行行为化 (递归到总方法);
+            //5. 转移,则进行行为化 (递归到总方法);
+            if (ARRISOK(foRangeOrder)) {
                 TOFoModel *foOutModel = [TOFoModel newWithFo_p:relativeFo.pointer base:outModel];
                 [self convert2Out_Fo:foRangeOrder outModel:foOutModel];
-                
-                //6. 成功一个item即可;
-                if (foOutModel.status == TOModelStatus_Finish) {
-                    outModel.status = TOModelStatus_Finish;
-                    return;
-                }else if(foOutModel.status == TOModelStatus_Runing || foOutModel.status == TOModelStatus_ActYes){
-                    outModel.status = TOModelStatus_Runing;
-                    return;
-                }
+                return;
             }
         }
     }
     //7. 没一个成功 或 行为化成功 或 等待行为化,则失败;
     outModel.status = TOModelStatus_ActNo;
+    [self.delegate toAction_SubModelFailure:outModel];
 }
 
 @end
