@@ -19,7 +19,6 @@
 #import "TOFoModel.h"
 #import "AIAbsAlgNode.h"
 #import "AIAlgNode.h"
-#import "TOAlgScheme.h"
 #import "AIShortMatchModel.h"
 #import "TOUtils.h"
 #import "AINetUtils.h"
@@ -33,7 +32,7 @@
 //MARK:===============================================================
 
 -(void) dataOut {
-    
+    [self topV2];
 }
 
 //MARK:===============================================================
@@ -270,60 +269,3 @@
 }
 
 @end
-
-
-/**
- *  MARK:--------------------algScheme--------------------
- *  1. 将fo.orders转换为memOrder;
- *  2. 对条件概念取最具象 (目前仅支持1层);
- *
- *  注: 最具象不表示真实,所以此方法可考虑去掉;
- *  注: 190425,废弃"memOrder"和"最具象概念"后备份于此;
- */
-//-(void) dataOut_AlgScheme_Front:(TOFoModel*)outFoModel{
-//    //1. 数据准备
-//    if (!ISOK(outFoModel, TOFoModel.class)) {
-//        return;
-//    }
-//    AIFoNodeBase *foNode = [SMGUtils searchObjectForPointer:outFoModel.content_p fileName:kFNNode time:cRTNode];
-//    if (!foNode) {
-//        return;
-//    }
-//
-//    //废弃"memOrder"和"最具象概念"
-//    [outFoModel.memOrder removeAllObjects];
-//
-//    2. 取条件概念的最具象,得出memOrder;
-//    //NSLog(@" >> 所需条件: (%@)",[NVUtils convertOrderPs2Str:notOutAlg_ps]);
-//    for (AIKVPointer *pointer in foNode.content_ps) {
-//        ///1. 本身为输出节点的话,直接收集到memOrder
-//        if (pointer.isOut) {
-//            AIAlgNodeBase *outAlgNode = [SMGUtils searchObjectForPointer:pointer fileName:kFNNode time:cRTNode];
-//            if (outAlgNode) {
-//                [outFoModel.memOrder addObject:outAlgNode];
-//            }
-//        }else{
-//            ///2. 非输出时,找出条件概念,并收集到memOrder (最多往具象循环2层) (最具象不表示真实,所以此处可以考虑去掉)
-//            NSArray *check_ps = @[pointer];
-//            for (NSInteger i = 0; i < cDataOutAssAlgDeep; i++) {
-//                AIAlgNode *validAlgNode = [ThinkingUtils scheme_GetAValidNode:check_ps except_ps:outFoModel.except_ps checkBlock:^BOOL(id checkNode) {
-//                    return ISOK(checkNode, AIAlgNode.class);
-//                }];
-//
-//                //3. 有效则返回,无效则循环到下一层
-//                if (ISOK(validAlgNode, AIAlgNode.class)) {
-//                    [outFoModel.memOrder addObject:validAlgNode];
-//                }else{
-//                    check_ps = [ThinkingUtils algScheme_GetNextLayerPs:check_ps];
-//                }
-//            }
-//        }
-//    }
-//
-//    //3. 对memOrder有效性初步检查 (memOrder和fo.orders长度要一致)
-//    if (outFoModel.memOrder.count == foNode.content_ps.count) {
-//        [self dataOut_AlgScheme:outFoModel];
-//    }else{
-//        [self dataOut];
-//    }
-//}

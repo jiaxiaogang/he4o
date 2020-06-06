@@ -14,10 +14,6 @@
 //更新思维活跃度
 -(void) aiThinkOutReason_UpdateEnergy:(CGFloat)delta;
 -(BOOL) aiThinkOutReason_EnergyValid;
-//反思时序
--(AIShortMatchModel*) aiTOR_LSPRethink:(AIAlgNodeBase*)rtAlg rtFoContent_ps:(NSArray*)rtFoContent_ps;
-//反思概念
--(AIAlgNodeBase*) aiTOR_MatchRTAlg:(AIAlgNodeBase*)rtAlg mUniqueV_p:(AIKVPointer*)mUniqueV_p;
 //获取最后一桢mModel;
 -(AIShortMatchModel*) aiTOR_GetShortMatchModel;
 //反思innerFo
@@ -52,7 +48,6 @@
  *  MARK:--------------------FromTOP主入口--------------------
  *  @desc 做理性行为化
  */
--(void) commitFromTOP_Convert2Actions:(TOFoModel*)foModel;
 -(void) commitReasonPlus:(TOFoModel*)outModel;
 -(void) commitReasonSub:(AIFoNodeBase*)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo outModel:(TOFoModel*)outModel;
 -(void) commitPerceptPlus:(TOFoModel*)outModel;

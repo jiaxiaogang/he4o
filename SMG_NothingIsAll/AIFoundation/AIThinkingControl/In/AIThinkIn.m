@@ -123,24 +123,6 @@
 //MARK:===============================================================
 //MARK:                     < FromTOR >
 //MARK:===============================================================
--(AIShortMatchModel*) dataInFromTORLSPRethink:(AIAlgNodeBase*)rtAlg rtFoContent_ps:(NSArray*)rtFoContent_ps{
-    //1. 数据准备
-    __block AIShortMatchModel *mModel = [[AIShortMatchModel alloc] init];
-    if (rtAlg && ARRISOK(rtFoContent_ps)) {
-        
-        //2. 识别时序;
-        [AIThinkInReason TIR_Fo_FromRethink:rtFoContent_ps replaceMatchAlg:rtAlg finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue, NSInteger cutIndex) {
-            mModel.protoFo = curNode;
-            mModel.matchFo = matchFo;
-            mModel.matchFoValue = matchValue;
-            mModel.cutIndex = cutIndex;
-        }];
-    }
-    return mModel;
-}
--(AIAlgNodeBase*) dataInFromTOR_MatchRTAlg:(AIAlgNodeBase*)rtAlg mUniqueV_p:(AIKVPointer*)mUniqueV_p {
-    return [AIThinkInReason TIR_Alg_FromRethink:rtAlg mUniqueV_p:mUniqueV_p];
-}
 -(AIShortMatchModel*) dataInFromTORInnerFo:(AIFoNodeBase*)fo{
     //1. 数据准备
     __block AIShortMatchModel *mModel = [[AIShortMatchModel alloc] init];

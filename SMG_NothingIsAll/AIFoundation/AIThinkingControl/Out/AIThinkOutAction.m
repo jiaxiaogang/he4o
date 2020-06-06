@@ -1,9 +1,9 @@
 //
-//  AIThinkOutAction.m
+//  TOAlgScheme.m
 //  SMG_NothingIsAll
 //
-//  Created by jia on 2020/5/20.
-//  Copyright © 2020年 XiaoGang. All rights reserved.
+//  Created by jia on 2019/4/19.
+//  Copyright © 2019年 XiaoGang. All rights reserved.
 //
 
 #import "AIThinkOutAction.h"

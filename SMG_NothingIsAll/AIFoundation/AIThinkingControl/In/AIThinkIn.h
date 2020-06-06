@@ -79,12 +79,6 @@
 //MARK:                     < FromTOR >
 //MARK:===============================================================
 
-//反思时序RTFo
--(AIShortMatchModel*) dataInFromTORLSPRethink:(AIAlgNodeBase*)rtAlg rtFoContent_ps:(NSArray*)rtFoContent_ps;
-
-//反思概念RTAlg
--(AIAlgNodeBase*) dataInFromTOR_MatchRTAlg:(AIAlgNodeBase*)rtAlg mUniqueV_p:(AIKVPointer*)mUniqueV_p;
-
 //对innerFo进行反思 (目前仅支持最后一位rtAlg,随后可考虑支持更全面);
 -(AIShortMatchModel*) dataInFromTORInnerFo:(AIFoNodeBase*)fo;
 

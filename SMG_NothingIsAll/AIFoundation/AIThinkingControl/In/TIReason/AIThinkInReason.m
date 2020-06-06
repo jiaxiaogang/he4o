@@ -121,44 +121,44 @@
  *      2. result必须被rtAlg全含 (代码见partMatching_General());
  *      3. result不进行fuzzy模糊匹配 (因为mUniqueValue并非新输入,并且fuzzy会导致多出杂项码(如:m为经26,fuzzyAlg却包含距20));
  */
-+(AIAlgNodeBase*) TIR_Alg_FromRethink:(AIAlgNodeBase*)rtAlg mUniqueV_p:(AIKVPointer*)mUniqueV_p{
-    //1. 数据检查
-    if (!rtAlg || !mUniqueV_p) return nil;
-    NSArray *mUniqueRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Value:mUniqueV_p]];
-    NSLog(@"---------- TIR_Alg_FromRT START ----------");
-    NSLog(@"----> 特码:%@ 被引:%ld个 RTAlg:%@",[NVHeUtil getLightStr:mUniqueV_p],mUniqueRef_ps.count,Alg2FStr(rtAlg));
-    
-    //2. 识别
-    __block AIAlgNodeBase *matchAlg = nil;
-    [TIRUtils partMatching_General:rtAlg.content_ps refPortsBlock:^NSArray *(AIKVPointer *item_p) {
-        if (item_p) {
-            //1> 数据准备 (value_p的refPorts是单独存储的);
-            return ARRTOOK([SMGUtils searchObjectForFilePath:item_p.filePath fileName:kFNRefPorts time:cRTReference]);
-        }
-        return nil;
-    } checkBlock:^BOOL(AIPointer *target_p) {
-        if (target_p) {
-            //2> 自身 && 包含M特有码;
-            return ![target_p isEqual:rtAlg.pointer] && [mUniqueRef_ps containsObject:target_p];
-        }
-        return false;
-    } complete:^(AIAlgNodeBase *outMatchAlg, MatchType type) {
-        if (type == MatchType_Abs) {
-            matchAlg = outMatchAlg;
-        }
-    }];
-    
-    //3. 直接将assAlgNode设置为algNode的抽象; (这样后面TOR理性决策时,才可以直接对当前瞬时实物进行很好的理性评价);
-    if (ISOK(matchAlg, AIAlgNodeBase.class)) {
-        //4. 识别到时,value.refPorts -> 更新/加强微信息的引用序列
-        [AINetUtils insertRefPorts_AllAlgNode:matchAlg.pointer content_ps:matchAlg.content_ps difStrong:1];
-        
-        //5. 识别到时,进行抽具象 -> 关联 & 存储 (20200103:测得,algNode为内存节点时,关联也在内存)
-        [AINetUtils relateAlgAbs:(AIAbsAlgNode*)matchAlg conNodes:@[rtAlg] isNew:false];
-    }
-    NSLog(@"识别Alg_FromRT Finish:%@",Alg2FStr(matchAlg));
-    return matchAlg;
-}
+//+(AIAlgNodeBase*) TIR_Alg_FromRethink:(AIAlgNodeBase*)rtAlg mUniqueV_p:(AIKVPointer*)mUniqueV_p{
+//    //1. 数据检查
+//    if (!rtAlg || !mUniqueV_p) return nil;
+//    NSArray *mUniqueRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Value:mUniqueV_p]];
+//    NSLog(@"---------- TIR_Alg_FromRT START ----------");
+//    NSLog(@"----> 特码:%@ 被引:%ld个 RTAlg:%@",[NVHeUtil getLightStr:mUniqueV_p],mUniqueRef_ps.count,Alg2FStr(rtAlg));
+//
+//    //2. 识别
+//    __block AIAlgNodeBase *matchAlg = nil;
+//    [TIRUtils partMatching_General:rtAlg.content_ps refPortsBlock:^NSArray *(AIKVPointer *item_p) {
+//        if (item_p) {
+//            //1> 数据准备 (value_p的refPorts是单独存储的);
+//            return ARRTOOK([SMGUtils searchObjectForFilePath:item_p.filePath fileName:kFNRefPorts time:cRTReference]);
+//        }
+//        return nil;
+//    } checkBlock:^BOOL(AIPointer *target_p) {
+//        if (target_p) {
+//            //2> 自身 && 包含M特有码;
+//            return ![target_p isEqual:rtAlg.pointer] && [mUniqueRef_ps containsObject:target_p];
+//        }
+//        return false;
+//    } complete:^(AIAlgNodeBase *outMatchAlg, MatchType type) {
+//        if (type == MatchType_Abs) {
+//            matchAlg = outMatchAlg;
+//        }
+//    }];
+//
+//    //3. 直接将assAlgNode设置为algNode的抽象; (这样后面TOR理性决策时,才可以直接对当前瞬时实物进行很好的理性评价);
+//    if (ISOK(matchAlg, AIAlgNodeBase.class)) {
+//        //4. 识别到时,value.refPorts -> 更新/加强微信息的引用序列
+//        [AINetUtils insertRefPorts_AllAlgNode:matchAlg.pointer content_ps:matchAlg.content_ps difStrong:1];
+//
+//        //5. 识别到时,进行抽具象 -> 关联 & 存储 (20200103:测得,algNode为内存节点时,关联也在内存)
+//        [AINetUtils relateAlgAbs:(AIAbsAlgNode*)matchAlg conNodes:@[rtAlg] isNew:false];
+//    }
+//    NSLog(@"识别Alg_FromRT Finish:%@",Alg2FStr(matchAlg));
+//    return matchAlg;
+//}
 
 //MARK:===============================================================
 //MARK:                     < TIR_Fo >

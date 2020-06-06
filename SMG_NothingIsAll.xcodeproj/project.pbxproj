@@ -74,7 +74,6 @@
 		0860A3BD22C9859200A48682 /* CustomAddNodeWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0860A3BC22C9859200A48682 /* CustomAddNodeWindow.xib */; };
 		086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */ = {isa = PBXBuildFile; fileRef = 086D93361F8CA782002BAF3F /* RuntimeInvoker.m */; };
 		087268E0219CF3B500B5490F /* AIVisionAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 087268DF219CF3B500B5490F /* AIVisionAlgs.m */; };
-		088070A222693C2D00E9E21F /* TOAlgScheme.m in Sources */ = {isa = PBXBuildFile; fileRef = 088070A122693C2D00E9E21F /* TOAlgScheme.m */; };
 		0881965F21800F2B00D5DB36 /* BirdLivePage.m in Sources */ = {isa = PBXBuildFile; fileRef = 0881965D21800F2B00D5DB36 /* BirdLivePage.m */; };
 		0881966021800F2B00D5DB36 /* BirdLivePage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0881965E21800F2B00D5DB36 /* BirdLivePage.xib */; };
 		0889257F22B0702A00A0DBDD /* NVModuleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0889257E22B0702A00A0DBDD /* NVModuleView.m */; };
@@ -278,8 +277,6 @@
 		086D93361F8CA782002BAF3F /* RuntimeInvoker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RuntimeInvoker.m; sourceTree = "<group>"; };
 		087268DE219CF3B500B5490F /* AIVisionAlgs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIVisionAlgs.h; sourceTree = "<group>"; };
 		087268DF219CF3B500B5490F /* AIVisionAlgs.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIVisionAlgs.m; sourceTree = "<group>"; };
-		088070A022693C2D00E9E21F /* TOAlgScheme.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOAlgScheme.h; sourceTree = "<group>"; };
-		088070A122693C2D00E9E21F /* TOAlgScheme.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOAlgScheme.m; sourceTree = "<group>"; };
 		0881965C21800F2B00D5DB36 /* BirdLivePage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BirdLivePage.h; sourceTree = "<group>"; };
 		0881965D21800F2B00D5DB36 /* BirdLivePage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BirdLivePage.m; sourceTree = "<group>"; };
 		0881965E21800F2B00D5DB36 /* BirdLivePage.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BirdLivePage.xib; sourceTree = "<group>"; };
@@ -745,8 +742,6 @@
 				080228E2227282FF0087FE69 /* Model */,
 				0860617421F92F5200113366 /* AIThinkOutPercept.h */,
 				0860617521F92F5200113366 /* AIThinkOutPercept.m */,
-				088070A022693C2D00E9E21F /* TOAlgScheme.h */,
-				088070A122693C2D00E9E21F /* TOAlgScheme.m */,
 				08FE031C231DEE8C001ED8B4 /* AIThinkOutReason.h */,
 				08FE031D231DEE8C001ED8B4 /* AIThinkOutReason.m */,
 				08A232E3243557110090D4B5 /* TOUtils.h */,
@@ -1272,7 +1267,6 @@
 				082F9D561EB234750009F6A9 /* Output.m in Sources */,
 				0858C5CD2194F8B000951BA5 /* MASConstraintMaker.m in Sources */,
 				88BC09DA20B4ECAB0006ABEF /* XGRedisUtil.m in Sources */,
-				088070A222693C2D00E9E21F /* TOAlgScheme.m in Sources */,
 				083112F21F05E12600051DE6 /* MBProgressHUD+Add.m in Sources */,
 				08A232E5243557110090D4B5 /* TOUtils.m in Sources */,
 				084219ED1FD8CF81009DA6BC /* AIThinkingControl.m in Sources */,

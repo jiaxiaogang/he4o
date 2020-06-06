@@ -244,10 +244,6 @@ static AIThinkingControl *_instance;
     [self updateEnergy:delta];
 }
 
--(void) aiThinkOutPercept_Commit2TOR:(TOFoModel*)foModel{
-    [self.tOR commitFromTOP_Convert2Actions:foModel];
-}
-
 -(void) aiThinkOutPercept_MVSchemeFailure{
     [self.tOR commitFromTOP_ReflexOut];
 }
@@ -302,12 +298,6 @@ static AIThinkingControl *_instance;
 }
 -(BOOL) aiThinkOutReason_EnergyValid {
     return self.energy > 0;
-}
--(AIShortMatchModel*) aiTOR_LSPRethink:(AIAlgNodeBase*)rtAlg rtFoContent_ps:(NSArray*)rtFoContent_ps{
-    return [self.thinkIn dataInFromTORLSPRethink:rtAlg rtFoContent_ps:rtFoContent_ps];
-}
--(AIAlgNodeBase*) aiTOR_MatchRTAlg:(AIAlgNodeBase*)rtAlg mUniqueV_p:(AIKVPointer*)mUniqueV_p{
-    return [self.thinkIn dataInFromTOR_MatchRTAlg:rtAlg mUniqueV_p:mUniqueV_p];
 }
 -(AIShortMatchModel*) aiTOR_GetShortMatchModel{
     return ARR_INDEX_REVERSE(self.shortMatchManager.models, 0);

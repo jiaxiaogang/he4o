@@ -13,7 +13,6 @@
 #import "AIKVPointer.h"
 #import "ThinkingUtils.h"
 #import "TOFoModel.h"
-#import "TOAlgScheme.h"
 #import "Output.h"
 #import "AIShortMatchModel.h"
 #import "TOUtils.h"
@@ -23,9 +22,8 @@
 #import "TOValueModel.h"
 #import "DemandModel.h"
 
-@interface AIThinkOutReason() <TOAlgSchemeDelegate,TOActionDelegate>
+@interface AIThinkOutReason() <TOActionDelegate>
 
-@property (strong, nonatomic) TOAlgScheme *algScheme;
 @property (strong, nonatomic) AIThinkOutAction *toAction;
 
 @end
@@ -40,8 +38,6 @@
     return self;
 }
 -(void) initData{
-    self.algScheme = [[TOAlgScheme alloc] init];
-    self.algScheme.delegate = self;
     self.toAction = [[AIThinkOutAction alloc] init];
     self.toAction.delegate = self;
 }
@@ -62,21 +58,7 @@
  *  @version
  *      20200416 - actions行为输出前,先清空; (如不清空,下轮外循环TIR->TOP.dataOut()时,导致不重新决策,直接输出上轮actions,行为再被TIR预测,又一轮,形成外层死循环 (参考n19p5-B组BUG2);
  */
--(void) commitFromTOP_Convert2Actions:(TOFoModel*)foModel{
-    if (foModel) {
-        //1. 为空,进行行为化_尝试输出"可行性之首"并找到实际操作 (子可行性判定) (algScheme)
-        if (!ARRISOK(foModel.actions)) {
-            [self dataOut_AlgScheme:foModel];
-        }
-        
-        //2. actionScheme (行为方案输出,并清空actions)
-        if (ARRISOK(foModel.actions)) {
-            NSArray *outArr = [foModel.actions copy];
-            [foModel.actions removeAllObjects];
-            [self dataOut_ActionScheme:outArr];
-        }
-    }
-}
+
 
 /**
  *  MARK:--------------------R+行为化--------------------
@@ -234,31 +216,6 @@
     //    //e. notOut等待;
     //    complete(true,nil);
     //}
-}
-
-/**
- *  MARK:--------------------algScheme--------------------
- *  1. 对条件概念进行判定 (行为化);
- *  2. 理性判定;
- */
--(void) dataOut_AlgScheme:(TOFoModel*)outFoModel{
-    //1. 数据准备
-    if (!ISOK(outFoModel, TOFoModel.class)) {
-        return;
-    }
-    AIFoNodeBase *foNode = [SMGUtils searchNode:outFoModel.content_p];
-    if (!foNode) {
-        return;
-    }
-    
-    //2. 进行行为化; (通过有无,变化,等方式,将结构中所有条件概念行为化);
-    [self.algScheme setData:[self.delegate aiTOR_GetShortMatchModel]];
-    
-    [self.algScheme convert2Out_Fo:foNode.content_ps curFo:foNode success:^(NSArray *acts) {
-        [outFoModel.actions addObjectsFromArray:acts];
-    } failure:^{
-        WLog(@"STEPKEYTOR_行为化失败");
-    }];
 }
 
 //MARK:===============================================================
@@ -499,23 +456,6 @@
         //a3. avdIsDemand: 再决策,转移至TOP.P+;
         [self.delegate aiTOR_MoveForDemand:(DemandModel*)beginModel];
     }
-}
-
-//MARK:===============================================================
-//MARK:                     < TOAlgSchemeDelegate >
-//MARK:===============================================================
--(void)toAlgScheme_updateEnergy:(CGFloat)delta{
-    [self.delegate aiThinkOutReason_UpdateEnergy:delta];
-}
--(BOOL) toAlgScheme_EnergyValid{
-    return [self.delegate aiThinkOutReason_EnergyValid];
-}
-//反思
--(AIShortMatchModel*) toAlgScheme_LSPRethink:(AIAlgNodeBase*)rtAlg rtFoContent_ps:(NSArray*)rtFoContent_ps{
-    return [self.delegate aiTOR_LSPRethink:rtAlg rtFoContent_ps:rtFoContent_ps];
-}
--(AIAlgNodeBase*) toAlgScheme_MatchRTAlg:(AIAlgNodeBase*)rtAlg mUniqueV_p:(AIKVPointer*)mUniqueV_p{
-    return [self.delegate aiTOR_MatchRTAlg:rtAlg mUniqueV_p:mUniqueV_p];
 }
 
 //MARK:===============================================================
