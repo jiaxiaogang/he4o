@@ -585,9 +585,9 @@
 
 +(NSMutableArray*) removeSub_ps:(NSArray*)sub_ps parent_ps:(NSArray*)parent_ps{
     sub_ps = ARRTOOK(sub_ps);
-    NSMutableArray *result = [[NSMutableArray alloc] init];
+    NSMutableArray *result = [[NSMutableArray alloc] initWithArray:parent_ps];
     for (AIPointer *sub_p in sub_ps) {
-        result = [self removeSub_p:sub_p parent_ps:parent_ps];
+        result = [self removeSub_p:sub_p parent_ps:result];
     }
     return result;
 }
@@ -595,13 +595,7 @@
 +(NSMutableArray*) removeSub_p:(AIPointer*)sub_p parent_ps:(NSArray*)parent_ps{
     NSMutableArray *result_ps = [[NSMutableArray alloc] initWithArray:parent_ps];
     if (ISOK(sub_p, AIPointer.class)) {
-        for (NSInteger i = 0; i < result_ps.count; i++) {
-            AIPointer *parent_p = ARR_INDEX(result_ps, i);
-            if ([sub_p isEqual:parent_p]) {
-                [result_ps removeObjectAtIndex:i];
-                break;
-            }
-        }
+        [result_ps removeObject:sub_p];
     }
     return result_ps;
 }
