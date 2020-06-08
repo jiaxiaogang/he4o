@@ -1164,7 +1164,6 @@
 				TargetAttributes = {
 					08AF45441E97D0B500377887 = {
 						CreatedOnToolsVersion = 8.3;
-						DevelopmentTeam = H3583666HM;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -1471,7 +1470,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = H3583666HM;
+				DEVELOPMENT_TEAM = "";
 				GCC_PREFIX_HEADER = SMG_NothingIsAll/Demo/SMGPrefixHeader.pch;
 				INFOPLIST_FILE = SMG_NothingIsAll/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -1490,7 +1489,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = H3583666HM;
+				DEVELOPMENT_TEAM = "";
 				GCC_PREFIX_HEADER = SMG_NothingIsAll/Demo/SMGPrefixHeader.pch;
 				INFOPLIST_FILE = SMG_NothingIsAll/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
