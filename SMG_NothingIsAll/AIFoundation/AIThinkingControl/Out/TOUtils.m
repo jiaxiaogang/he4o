@@ -222,6 +222,7 @@
     
     //3. 不应期
     NSArray *except_ps = [TOUtils convertPointersFromTOModels:demandModel.actionFoModels];
+    //NSLog(@"====================TOP.P模式,不应期数:%ld",except_ps.count);
     
     //4. 用方向索引找normalFo解决方案
     //P例:饿了,该怎么办;

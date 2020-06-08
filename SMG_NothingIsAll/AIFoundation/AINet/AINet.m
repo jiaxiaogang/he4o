@@ -171,9 +171,11 @@ static AINet *_instance;
     //2. 方向索引 (排除不应期);
     NSArray *mvRefs = [theNet getNetNodePointersFromDirectionReference:at direction:direction isMem:false filter:^NSArray *(NSArray *protoArr) {
         return [SMGUtils filterArr:protoArr checkValid:^BOOL(AIPort *item) {
+            //NSLog(@"================方向索引总数:%ld",protoArr.count);
             return ![except_ps containsObject:item.target_p];
         }];
     }];
+    //NSLog(@"================方向索引有效数:%ld",mvRefs.count);
     
     //3. 逐个返回;
     for (AIPort *item in mvRefs) {

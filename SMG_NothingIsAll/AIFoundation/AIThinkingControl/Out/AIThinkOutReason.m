@@ -405,6 +405,7 @@
             toFoModel.status = TOModelStatus_ActNo;
             
             //b. 用fo向上找A/V/D进行fos再决策 (先尝试转移,后不行就递归);
+            //NSLog(@"=========================TOR流程控制FoFailure");
             [self singleLoopBackWithBegin:toFoModel.baseOrGroup];
         }else if(ISOK(failureModel.baseOrGroup, TOAlgModel.class)){
             //c. Alg.base为alg时,baseAlg转移;
@@ -454,6 +455,7 @@
         [self.toAction convert2Out_GL:baseAlg.pAlg outModel:(TOValueModel*)beginModel];
     }else if(ISOK(beginModel, DemandModel.class)){
         //a3. avdIsDemand: 再决策,转移至TOP.P+;
+        //NSLog(@"=========================TOR流程控制DemandBegin");
         [self.delegate aiTOR_MoveForDemand:(DemandModel*)beginModel];
     }
 }
