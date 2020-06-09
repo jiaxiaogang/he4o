@@ -210,7 +210,7 @@
 
 +(void) topPerceptMode:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel direction:(MVDirection)direction tryResult:(BOOL(^)(AIFoNodeBase *sameFo))tryResult canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
     //1. 数据准备;
-    if (!matchAlg || !demandModel || direction == MVDirection_None || !tryResult || !canAssBlock || !updateEnergy) return;
+    if (!matchAlg || !demandModel || direction == MVDirection_None || !tryResult || !canAssBlock || !canAssBlock() || !updateEnergy) return;
     
     //2. matchAlg可以用来做什么,取A.refPorts
     //P例:土豆,可吃,也可当土豆地雷;
@@ -232,11 +232,18 @@
         //P例:吃可以解决饿;
         //S例:运动导致累;
         AIFoNodeBase *foNode = [SMGUtils searchNode:fo_p];
+        NSLog(@"=============方向索引结果:%@",Fo2FStr(foNode));
         if (foNode) {
             //6. 再向下取具体解决方案F.conPorts;
             //P例:吃-可以做饭,也可以下馆子;
             //S例:运动-打球是运动,跑步也是;
-            NSArray *foCon_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:foNode]];
+            NSMutableArray *foCon_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:foNode]];
+            [foCon_ps insertObject:foNode.pointer atIndex:0];
+            NSLog(@"============方向索引结果具象二层 总数:%ld",foCon_ps.count);
+            
+            //6. 移除不应期
+            foCon_ps = [SMGUtils removeSub_ps:except_ps parent_ps:foCon_ps];
+            NSLog(@"============方向索引结果具象二层 有效数:%ld",foCon_ps.count);
             
             //6. 取交集
             //P例:炒个土豆丝,吃掉解决饥饿问题;
@@ -247,6 +254,8 @@
             //P例:取自身,实现吃,则可不饿;
             //S例:取兄弟节点,停止打球,则不再累;
             for (AIKVPointer *same_p in same_ps) {
+                //8. 消耗活跃度;
+                updateEnergy(-1);
                 AIFoNodeBase *sameFo = [SMGUtils searchNode:same_p];
                 BOOL stop = tryResult(sameFo);
                 
@@ -255,8 +264,7 @@
                     return true;
                 }
                 
-                //9. 消耗活跃度,只要耗尽,中断回调循环;
-                updateEnergy(-1);
+                //9. 只要耗尽,中断回调循环;
                 if (!canAssBlock()) {
                     return true;
                 }

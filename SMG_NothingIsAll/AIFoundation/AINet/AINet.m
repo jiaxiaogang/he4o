@@ -169,12 +169,7 @@ static AINet *_instance;
     if (direction == MVDirection_None) return;
     
     //2. 方向索引 (排除不应期);
-    NSArray *mvRefs = [theNet getNetNodePointersFromDirectionReference:at direction:direction isMem:false filter:^NSArray *(NSArray *protoArr) {
-        return [SMGUtils filterArr:protoArr checkValid:^BOOL(AIPort *item) {
-            NSLog(@"================方向索引总数:%ld",protoArr.count);
-            return ![except_ps containsObject:item.target_p];
-        }];
-    }];
+    NSArray *mvRefs = [theNet getNetNodePointersFromDirectionReference:at direction:direction isMem:false filter:nil];
     NSLog(@"================方向索引有效数:%ld",mvRefs.count);
     
     //3. 逐个返回;
@@ -184,7 +179,9 @@ static AINet *_instance;
         NSString *plusDS = [ThinkingUtils getAnalogyTypeDS:ATPlus];
         NSString *subDS = [ThinkingUtils getAnalogyTypeDS:ATSub];
         NSString *foDS = itemMV.foNode_p.dataSource;
-        if (![plusDS isEqualToString:foDS] && ![subDS isEqualToString:foDS]) {
+        if (![plusDS isEqualToString:foDS] &&
+            ![subDS isEqualToString:foDS] &&
+            ![except_ps containsObject:itemMV.foNode_p]) {
             BOOL stop = tryResult(itemMV.foNode_p);
             if (stop) {
                 return;
