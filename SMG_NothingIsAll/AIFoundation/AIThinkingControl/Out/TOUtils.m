@@ -227,7 +227,7 @@
     //4. 用方向索引找normalFo解决方案
     //P例:饿了,该怎么办;
     //S例:累了,肿么肥事;
-    [theNet getNormalFoByDirectionReference:demandModel.algsType direction:direction except_ps:except_ps tryResult:^BOOL(AIKVPointer *fo_p) {
+    [theNet getNormalFoByDirectionReference:demandModel.algsType direction:direction tryResult:^BOOL(AIKVPointer *fo_p) {
         //5. 方向索引找到一条normalFo解决方案;
         //P例:吃可以解决饿;
         //S例:运动导致累;

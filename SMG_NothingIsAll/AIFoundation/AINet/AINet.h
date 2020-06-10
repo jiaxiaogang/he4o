@@ -73,8 +73,12 @@
 -(NSArray*) getNetNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction isMem:(BOOL)isMem limit:(int)limit;
 -(NSArray*) getNetNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction isMem:(BOOL)isMem filter:(NSArray*(^)(NSArray *protoArr))filter;
 
-//方向索引,找normalFo,逐个尝试返回 (有效时中止);
--(void) getNormalFoByDirectionReference:(NSString*)at direction:(MVDirection)direction except_ps:(NSArray*)except_ps tryResult:(BOOL(^)(AIKVPointer *fo_p))tryResult;
+/**
+ *  MARK:--------------------方向索引,找normalFo,逐个尝试返回 (有效时中止)--------------------
+ *  @version
+ *      2020-06-10 : 去除fo的不应期,因为此处不应期应该针对mv,而fo的不应期是针对此处取得fo及其具象conPorts.fos的,所以将fo不应期前置了;
+ */
+-(void) getNormalFoByDirectionReference:(NSString*)at direction:(MVDirection)direction tryResult:(BOOL(^)(AIKVPointer *fo_p))tryResult;
 
 /**
  *  MARK:--------------------mvNode的方向索引--------------------

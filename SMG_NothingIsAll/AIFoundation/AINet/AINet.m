@@ -163,9 +163,8 @@ static AINet *_instance;
     return [self.netDirectionReference getNodePointersFromDirectionReference:mvAlgsType direction:direction isMem:isMem filter:filter];
 }
 
--(void) getNormalFoByDirectionReference:(NSString*)at direction:(MVDirection)direction except_ps:(NSArray*)except_ps tryResult:(BOOL(^)(AIKVPointer *fo_p))tryResult{
+-(void) getNormalFoByDirectionReference:(NSString*)at direction:(MVDirection)direction tryResult:(BOOL(^)(AIKVPointer *fo_p))tryResult{
     //1. 数据准备
-    except_ps = ARRTOOK(except_ps);
     if (direction == MVDirection_None) return;
     
     //2. 方向索引 (排除不应期);
@@ -179,9 +178,7 @@ static AINet *_instance;
         NSString *plusDS = [ThinkingUtils getAnalogyTypeDS:ATPlus];
         NSString *subDS = [ThinkingUtils getAnalogyTypeDS:ATSub];
         NSString *foDS = itemMV.foNode_p.dataSource;
-        if (![plusDS isEqualToString:foDS] &&
-            ![subDS isEqualToString:foDS] &&
-            ![except_ps containsObject:itemMV.foNode_p]) {
+        if (![plusDS isEqualToString:foDS] && ![subDS isEqualToString:foDS]) {
             BOOL stop = tryResult(itemMV.foNode_p);
             if (stop) {
                 return;
