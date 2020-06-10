@@ -74,7 +74,7 @@
         AIFoNodeBase *matchFo = mModel.matchFo;
         
         //a.预测有效性判断和同区判断 (以预测的正负为准);
-        if (matchFo && matchFo.cmvNode_p && [demand.algsType isEqualToString:matchFo.pointer.algsType]) {
+        if (matchFo && matchFo.cmvNode_p && [demand.algsType isEqualToString:matchFo.cmvNode_p.algsType]) {
             CGFloat score = [ThinkingUtils getScoreForce:mModel.matchFo.cmvNode_p ratio:mModel.matchFoValue];
             //b. R+
             if (score > 0) {
@@ -197,6 +197,7 @@
         toFoModel.actionIndex = 0;
         
         //b. 取自身,实现吃,则可不饿;
+        NSLog(@"------------新增一例解决方案: %p",toFoModel);
         [self.delegate aiTOP_2TOR_PerceptPlus:toFoModel];
         
         //c. 用success记录下,是否本次成功找到候选方案;
