@@ -75,6 +75,11 @@
     return false;
 }
 
+/**
+ *  MARK:--------------------判断indexOf (支持本级+一级抽象)--------------------
+ *  @bug 2020.06.12 : TOR.commitReasonSub()中firstAt_Plus取值为-1(失败),查原因...
+ *
+ */
 +(NSInteger) indexOfAbsItem:(AIKVPointer*)absItem atConContent:(NSArray*)conContent{
     for (AIKVPointer *item_p in ARRTOOK(conContent)) {
         if ([TOUtils mIsC_1:item_p c:absItem]) {

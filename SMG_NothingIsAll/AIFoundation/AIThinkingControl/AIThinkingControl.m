@@ -252,16 +252,14 @@ static AIThinkingControl *_instance;
     return self.shortMatchManager.models;
 }
 
--(BOOL) aiTOP_2TOR_ReasonPlus:(TOFoModel*)outModel{
+-(void) aiTOP_2TOR_ReasonPlus:(TOFoModel*)outModel{
     //1. 行为化;
     [self.tOR commitReasonPlus:outModel];
-    return outModel.status == TOModelStatus_Finish;
 }
 
--(BOOL) aiTOP_2TOR_ReasonSub:(AIFoNodeBase *)matchFo plusFo:(AIFoNodeBase *)plusFo subFo:(AIFoNodeBase*)subFo outModel:(TOFoModel*)outModel {
+-(void) aiTOP_2TOR_ReasonSub:(AIFoNodeBase *)matchFo plusFo:(AIFoNodeBase *)plusFo subFo:(AIFoNodeBase*)subFo outModel:(TOFoModel*)outModel {
     //1. 行为化;
     [self.tOR commitReasonSub:matchFo plusFo:plusFo subFo:subFo outModel:outModel];
-    return outModel.status == TOModelStatus_Finish;
 }
 
 -(void) aiTOP_2TOR_PerceptPlus:(TOFoModel *)outModel{

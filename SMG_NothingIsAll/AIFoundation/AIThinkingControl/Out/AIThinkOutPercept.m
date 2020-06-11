@@ -141,7 +141,8 @@
     toFoModel.actionIndex = cutIndex + 1;
     
     //2. 对首元素进行行为化;
-    return [self.delegate aiTOP_2TOR_ReasonPlus:toFoModel];
+    [self.delegate aiTOP_2TOR_ReasonPlus:toFoModel];
+    return toFoModel.status != TOModelStatus_ActNo && toFoModel.status != TOModelStatus_ScoreNo;//成功行为化,则中止递归;
 }
 /**
  *  MARK:-------------------- R- --------------------
@@ -164,8 +165,8 @@
         toFoModel.actionIndex = cutIndex;
         
         //b. 转给TOR
-        success = [self.delegate aiTOP_2TOR_ReasonSub:matchFo plusFo:plusNode subFo:subNode outModel:toFoModel];
-        return success;//成功行为化,则中止递归;
+        [self.delegate aiTOP_2TOR_ReasonSub:matchFo plusFo:plusNode subFo:subNode outModel:toFoModel];
+        return toFoModel.status != TOModelStatus_ActNo && toFoModel.status != TOModelStatus_ScoreNo;//成功行为化,则中止递归;
     }];
     
     //3. 一条行为化成功,则整体成功;
