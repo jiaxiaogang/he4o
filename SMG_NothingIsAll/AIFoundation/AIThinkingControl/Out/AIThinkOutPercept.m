@@ -166,7 +166,8 @@
         
         //b. 转给TOR
         [self.delegate aiTOP_2TOR_ReasonSub:matchFo plusFo:plusNode subFo:subNode outModel:toFoModel];
-        return toFoModel.status != TOModelStatus_ActNo && toFoModel.status != TOModelStatus_ScoreNo;//成功行为化,则中止递归;
+        success = toFoModel.status != TOModelStatus_ActNo && toFoModel.status != TOModelStatus_ScoreNo;//成功行为化,则中止递归;
+        return success;
     }];
     
     //3. 一条行为化成功,则整体成功;

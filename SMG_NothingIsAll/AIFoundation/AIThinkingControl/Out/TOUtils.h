@@ -21,6 +21,8 @@
 /**
  *  MARK:--------------------判断mIsC--------------------
  *  @desc 从M向上,找匹配C,支持三层 (含本层):
+ *  @version
+ *      2020.06.12 : 将取absPorts_All_Normal改为absPorts_All(),以支持innerTypeNode的mIsC判断;
  */
 +(BOOL) mIsC_0:(AIKVPointer*)m c:(AIKVPointer*)c;
 +(BOOL) mIsC_1:(AIKVPointer*)m c:(AIKVPointer*)c;

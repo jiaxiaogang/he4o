@@ -110,6 +110,12 @@
     }
     
     //3. 当firstPlus就是checkAlg_p时 (尝试对checkAlg行为化);
+    
+    //TODOTOMORROW:
+    //1. 由AB组训练过来,到B2时,此处最终运行到:"行为化概念无效",查下为什么;
+    
+    
+    
     if (firstAt_Plus == outModel.actionIndex) {
         
         //4. 从SFo中,找出checkAlg的兄弟节点matchAlg;

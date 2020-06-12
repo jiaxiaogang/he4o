@@ -55,7 +55,7 @@
         if ([self mIsC_0:m c:c]) return true;
         
         //2. 判断一级抽象;
-        NSArray *mAbs = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All_Normal:[SMGUtils searchNode:m]]];
+        NSArray *mAbs = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:[SMGUtils searchNode:m]]];
         BOOL equ1 = [mAbs containsObject:c];
         if (equ1) return true;
     }
@@ -67,7 +67,7 @@
         if ([self mIsC_1:m c:c]) return true;
         
         //2. 判断二级抽象;
-        NSArray *mAbs = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All_Normal:[SMGUtils searchNode:m]]];
+        NSArray *mAbs = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:[SMGUtils searchNode:m]]];
         NSArray *cCon = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:[SMGUtils searchNode:c]]];
         BOOL equ2 = [SMGUtils filterSame_ps:mAbs parent_ps:cCon].count > 0;
         if (equ2) return true;
@@ -77,7 +77,7 @@
 
 /**
  *  MARK:--------------------判断indexOf (支持本级+一级抽象)--------------------
- *  @bug 2020.06.12 : TOR.commitReasonSub()中firstAt_Plus取值为-1(失败),查原因...
+ *  @bug 2020.06.12 : TOR.R-中firstAt_Plus取值为-1,经查因为mIsC方法取absPorts_Normal,对plus/sub不支持导致,改后好了;
  *
  */
 +(NSInteger) indexOfAbsItem:(AIKVPointer*)absItem atConContent:(NSArray*)conContent{
@@ -244,11 +244,9 @@
             //S例:运动-打球是运动,跑步也是;
             NSMutableArray *foCon_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:foNode]];
             [foCon_ps insertObject:foNode.pointer atIndex:0];
-            NSLog(@"============方向索引结果具象二层 总数:%ld",foCon_ps.count);
             
             //6. 移除不应期
             foCon_ps = [SMGUtils removeSub_ps:except_ps parent_ps:foCon_ps];
-            NSLog(@"============方向索引结果具象二层 有效数:%ld",foCon_ps.count);
             
             //6. 取交集
             //P例:炒个土豆丝,吃掉解决饥饿问题;
