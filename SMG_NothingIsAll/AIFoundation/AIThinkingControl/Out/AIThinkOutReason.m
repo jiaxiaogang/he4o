@@ -141,6 +141,8 @@
         if (sAlg_p) {
             NSInteger sIndex = [TOUtils indexOfAbsItem:sAlg_p atConContent:matchFo.content_ps];
             BOOL sHappened = sIndex < outModel.actionIndex;
+            //此处sHappend为false,按道理说,投右,已经有了s,s应该是已发生的;
+            //或者查下,outModel.actionIndex应该不为0?
             if (sHappened) {
                 //9. S存在,且S已发生,则加工SP;
                 [self.toAction convert2Out_SP:sAlg_p pAlg_p:pAlg_p outModel:algOutModel];
