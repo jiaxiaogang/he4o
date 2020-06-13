@@ -71,6 +71,7 @@
     AIFoNodeBase *fo = [SMGUtils searchNode:outModel.content_p];
     AIKVPointer *cAlg_p = ARR_INDEX(fo.content_ps, outModel.actionIndex);
     if (!cAlg_p) {
+        //TODOTOMORROW: 此处outModel.actionIndex=2,而fo.content_ps一共才2个元素,所以行为化无效 (调试下mModel.cutIndex为什么是1);
         WLog(@"行为化概念无效");
         outModel.actionIndex ++;
         return;
@@ -110,12 +111,6 @@
     }
     
     //3. 当firstPlus就是checkAlg_p时 (尝试对checkAlg行为化);
-    
-    //TODOTOMORROW:
-    //1. 由AB组训练过来,到B2时,此处最终运行到:"行为化概念无效",查下为什么;
-    
-    
-    
     if (firstAt_Plus == outModel.actionIndex) {
         
         //4. 从SFo中,找出checkAlg的兄弟节点matchAlg;
@@ -141,7 +136,11 @@
         if (sAlg_p) {
             NSInteger sIndex = [TOUtils indexOfAbsItem:sAlg_p atConContent:matchFo.content_ps];
             BOOL sHappened = sIndex < outModel.actionIndex;
-            //此处sHappend为false,按道理说,投右,已经有了s,s应该是已发生的;
+            
+            //TODOTOMORROW:
+            //1. 由AB组训练过来,到B2时,此处最终运行到:"行为化概念无效",查下为什么;
+            
+            //TODOTOMORROW: 此处sHappend为false,按道理说,投右,已经有了s,s应该是已发生的;
             //或者查下,outModel.actionIndex应该不为0?
             if (sHappened) {
                 //9. S存在,且S已发生,则加工SP;
