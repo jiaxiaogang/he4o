@@ -135,7 +135,7 @@
         BOOL tryAct = false;
         if (sAlg_p) {
             NSInteger sIndex = [TOUtils indexOfAbsItem:sAlg_p atConContent:matchFo.content_ps];
-            BOOL sHappened = sIndex < outModel.actionIndex;
+            BOOL sHappened = sIndex <= outModel.actionIndex;
             
             //TODOTOMORROW:
             //1. 由AB组训练过来,到B2时,此处最终运行到:"行为化概念无效",查下为什么;
