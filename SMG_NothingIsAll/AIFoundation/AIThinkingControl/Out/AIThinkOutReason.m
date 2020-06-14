@@ -65,15 +65,16 @@
  *  @desc R+行为化,两级判断,参考:19164;
  *          1. isOut则输出;
  *          2. notOut则等待;
+ *  @bug
+ *      2020.06.15 : 训练B2步,R-失败时,转至R+后,此处outModel.actionIndex=2,而fo.content_ps一共才2个元素,所以行为化无效 (因为倒二帧是饿输出`吃`,本来吃已经是最后一个元素,所以越界);
  */
 -(void) commitReasonPlus:(TOFoModel*)outModel{
     //1. 取出当前帧任务,如果无效,则直接跳下帧;
     AIFoNodeBase *fo = [SMGUtils searchNode:outModel.content_p];
     AIKVPointer *cAlg_p = ARR_INDEX(fo.content_ps, outModel.actionIndex);
     if (!cAlg_p) {
-        //TODOTOMORROW: 训练B2步,R-失败时,转至R+后,此处outModel.actionIndex=2,而fo.content_ps一共才2个元素,所以行为化无效 (调试下mModel.cutIndex为什么是1);
         WLog(@"行为化概念无效");
-        outModel.actionIndex ++;
+        outModel.status = TOModelStatus_ActNo;
         return;
     }
     
