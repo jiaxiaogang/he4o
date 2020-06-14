@@ -237,7 +237,6 @@
         //P例:吃可以解决饿;
         //S例:运动导致累;
         AIFoNodeBase *foNode = [SMGUtils searchNode:fo_p];
-        NSLog(@"=============方向索引结果:%@",Fo2FStr(foNode));
         if (foNode) {
             //6. 再向下取具体解决方案F.conPorts;
             //P例:吃-可以做饭,也可以下馆子;
@@ -247,6 +246,7 @@
             
             //6. 移除不应期
             foCon_ps = [SMGUtils removeSub_ps:except_ps parent_ps:foCon_ps];
+            NSLog(@"================方向索引到-解决方案有效数:%ld",foCon_ps.count);
             
             //6. 取交集
             //P例:炒个土豆丝,吃掉解决饥饿问题;

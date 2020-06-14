@@ -71,7 +71,7 @@
     AIFoNodeBase *fo = [SMGUtils searchNode:outModel.content_p];
     AIKVPointer *cAlg_p = ARR_INDEX(fo.content_ps, outModel.actionIndex);
     if (!cAlg_p) {
-        //TODOTOMORROW: 此处outModel.actionIndex=2,而fo.content_ps一共才2个元素,所以行为化无效 (调试下mModel.cutIndex为什么是1);
+        //TODOTOMORROW: 训练B2步,R-失败时,转至R+后,此处outModel.actionIndex=2,而fo.content_ps一共才2个元素,所以行为化无效 (调试下mModel.cutIndex为什么是1);
         WLog(@"行为化概念无效");
         outModel.actionIndex ++;
         return;
@@ -92,6 +92,8 @@
  *          2. isOut判断 (输出);
  *          3. notOut判断 (等待);
  *  @存储 负只是正的帧推进器,比如买菜为了做饭 (参考19171);
+ *  @bug
+ *      2020.06.14 : 此处sHappend为false,按道理说,投右,已经有了s,s应该是已发生的 (经查,改为sIndex <= outModel.actionIndex即可) T;
  */
 -(void) commitReasonSub:(AIFoNodeBase*)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo outModel:(TOFoModel*)outModel {
     //1. 数据准备
@@ -136,12 +138,6 @@
         if (sAlg_p) {
             NSInteger sIndex = [TOUtils indexOfAbsItem:sAlg_p atConContent:matchFo.content_ps];
             BOOL sHappened = sIndex <= outModel.actionIndex;
-            
-            //TODOTOMORROW:
-            //1. 由AB组训练过来,到B2时,此处最终运行到:"行为化概念无效",查下为什么;
-            
-            //TODOTOMORROW: 此处sHappend为false,按道理说,投右,已经有了s,s应该是已发生的;
-            //或者查下,outModel.actionIndex应该不为0?
             if (sHappened) {
                 //9. S存在,且S已发生,则加工SP;
                 [self.toAction convert2Out_SP:sAlg_p pAlg_p:pAlg_p outModel:algOutModel];
@@ -398,7 +394,9 @@
             if (![alreadayAct_ps containsObject:replace_p]) {
                 TOAlgModel *moveAlg = [TOAlgModel newWithAlg_p:replace_p group:targetAlg];
                 [self singleLoopBackWithBegin:moveAlg];
-                return true;
+                if (moveAlg.status != TOModelStatus_ActNo && moveAlg.status != TOModelStatus_ScoreNo) {
+                    return true;
+                }
             }
         }
         return false;
@@ -412,7 +410,6 @@
             toFoModel.status = TOModelStatus_ActNo;
             
             //b. 用fo向上找A/V/D进行fos再决策 (先尝试转移,后不行就递归);
-            NSLog(@"=========================TOR流程控制FoFailure");
             [self singleLoopBackWithBegin:toFoModel.baseOrGroup];
         }else if(ISOK(failureModel.baseOrGroup, TOAlgModel.class)){
             //c. Alg.base为alg时,baseAlg转移;
@@ -462,7 +459,6 @@
         [self.toAction convert2Out_GL:baseAlg.pAlg outModel:(TOValueModel*)beginModel];
     }else if(ISOK(beginModel, DemandModel.class)){
         //a3. avdIsDemand: 再决策,转移至TOP.P+;
-        NSLog(@"=========================TOR流程控制DemandBegin");
         [self.delegate aiTOR_MoveForDemand:(DemandModel*)beginModel];
     }
 }

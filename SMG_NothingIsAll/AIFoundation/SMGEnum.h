@@ -73,7 +73,7 @@ typedef NS_ENUM(NSInteger, MindHappyType) {
 typedef NS_ENUM(NSInteger,  AnalogyType) {
     ATDefault   = 0,            //默认
     ATGreater   = INT_MAX - 47, //内类比_变大 (greater)
-    ATLess      = INT_MIN + 48, //内类比_变小 (less)
+    ATLess      = INT_MIN + 48, //内类比_变小 (less)     //-2147483600
     ATHav       = INT_MAX,      //内类比_变有 (hav)
     ATNone      = INT_MIN,      //内类比_变无 (none)
     ATPlus      = INT_MAX - 147,//反向类比_mv+ (plus)

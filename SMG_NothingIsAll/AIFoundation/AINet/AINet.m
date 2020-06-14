@@ -169,7 +169,6 @@ static AINet *_instance;
     
     //2. 方向索引 (排除不应期);
     NSArray *mvRefs = [theNet getNetNodePointersFromDirectionReference:at direction:direction isMem:false filter:nil];
-    NSLog(@"================方向索引有效数:%ld",mvRefs.count);
     
     //3. 逐个返回;
     for (AIPort *item in mvRefs) {

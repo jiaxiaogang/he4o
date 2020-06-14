@@ -180,6 +180,7 @@
     }else{
         //3. 数据检查curAlg
         AIAlgNodeBase *curAlg = [SMGUtils searchNode:outModel.content_p];
+        NSLog(@"-------------行为化_Hav:%@",Alg2FStr(curAlg));
         if (!curAlg) {
             outModel.status = TOModelStatus_ActNo;
             [self.delegate toAction_SubModelFailure:outModel];

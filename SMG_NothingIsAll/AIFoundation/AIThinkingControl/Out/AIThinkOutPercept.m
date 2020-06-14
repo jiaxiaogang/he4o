@@ -119,7 +119,6 @@
         //3. 识别有效性判断 (转至P+);
         if (matchAlg) {
             BOOL success = [self perceptPlus:matchAlg demandModel:demand];
-            NSLog(@"=========================TOP.Demand转移");
             if (success) return;
         }
     }
@@ -190,7 +189,6 @@
     MVDirection direction = [ThinkingUtils havDemand:demandModel.algsType delta:demandModel.delta];
     
     //2. 调用通用diff模式方法;
-    NSLog(@"=========================TOP.P+");
     __block BOOL success = false;//默认为失败
     [TOUtils topPerceptMode:matchAlg demandModel:demandModel direction:direction tryResult:^BOOL(AIFoNodeBase *sameFo) {
         
@@ -208,7 +206,6 @@
         }
         
         //d. 一次只尝试一条,行为化中途失败时,自然会由流程控制方法递归TOP.P+重来;
-        NSLog(@"=======================TOP.P+ tryResult return");
         return true;
     } canAss:^BOOL{
         return [self havEnergy];
