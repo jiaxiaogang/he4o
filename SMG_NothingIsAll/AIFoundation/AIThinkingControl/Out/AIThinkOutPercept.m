@@ -79,10 +79,12 @@
             //b. R+
             if (score > 0) {
                 BOOL success = [self reasonPlus:matchFo cutIndex:mModel.cutIndex demandModel:demand];
+                NSLog(@"topV2_R+ : %@",success ? @"成功":@"失败");
                 if (success) return;
             }else if(score < 0){
                 //c. R-
                 BOOL success = [self reasonSub:matchFo cutIndex:mModel.cutIndex demandModel:demand];
+                NSLog(@"topV2_R- : %@",success ? @"成功":@"失败");
                 if (success) return;
             }
         }
@@ -97,10 +99,12 @@
         if (matchAlg) {
             //b. P+
             BOOL pSuccess = [self perceptPlus:matchAlg demandModel:demand];
+            NSLog(@"topV2_P+ : %@",pSuccess ? @"成功":@"失败");
             if (pSuccess) return;
             
             //c. P-
             BOOL sSuccess = [self perceptSub:matchAlg demandModel:demand];
+            NSLog(@"topV2_P- : %@",sSuccess ? @"成功":@"失败");
             if (sSuccess) return;
         }
     }

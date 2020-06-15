@@ -248,6 +248,8 @@
     }
     
     //2. 根据type和value_p找ATLess/ATGreater
+    
+    //TODOTOMORROW: 查此处,C1训练右飞两次后,为何还是找不到距离变小索引;
     AIAlgNodeBase *glAlg = [AINetService getInnerAlg:alg vAT:vAT vDS:vDS type:type];
     if (!glAlg) {
         outModel.status = TOModelStatus_ActNo;
