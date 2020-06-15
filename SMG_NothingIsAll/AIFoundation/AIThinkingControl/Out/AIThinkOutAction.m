@@ -250,6 +250,8 @@
     //2. 根据type和value_p找ATLess/ATGreater
     
     //TODOTOMORROW: 查此处,C1训练右飞两次后,为何还是找不到距离变小索引;
+    //经查,此处alg是pAlg,就是dis0的组节点,而并未经历过飞到0的经验,所以无法获取到glAlg结果;
+    //可以尝试将此处,改为找将sAlg变小,而不是将其变成pAlg,即以s出发,接近p;
     AIAlgNodeBase *glAlg = [AINetService getInnerAlg:alg vAT:vAT vDS:vDS type:type];
     if (!glAlg) {
         outModel.status = TOModelStatus_ActNo;
