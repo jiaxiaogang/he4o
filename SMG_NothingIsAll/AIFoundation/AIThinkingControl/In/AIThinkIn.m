@@ -182,6 +182,9 @@
     }];
     
     //5. 内类比
+    NSLog(@"--------> InnerFo:%@",Fo2FStr(mModel.protoFo));
+    //InnerFo:F22[A7(速0,宽5,高5,形2.5,向→,红0,绿255,蓝0,皮0,距70,经186,纬577),A5(速0,宽5,高5,形2.5,距0,向→,红0,绿255,蓝0,皮0,经199,纬
+    //TODOTOMORROW: 查下,此处,距0从哪来的;
     [AIThinkInReason analogyInner:mModel.protoFo];
     
     //6. 传给TOR,做下一步处理;

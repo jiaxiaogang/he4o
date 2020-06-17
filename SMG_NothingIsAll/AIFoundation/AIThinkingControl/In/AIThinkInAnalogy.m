@@ -251,6 +251,8 @@
         AnalogyType type = [ThinkingUtils compare:a_p valueB_p:b_p];
         //b. 调试a_p和b_p是否合格,应该同标识,同文件夹名称,不同pId;
         NSLog(@"--------------内类比 (大小) 前: %@ -> %@",[NVHeUtil getLightStr:a_p],[NVHeUtil getLightStr:b_p]);
+        NSLog(@"--------------内类比 (%ld) 前: %@ From %@",(long)type,[NVHeUtil getLightStr:a_p],Alg2FStr(algA));
+        NSLog(@"--------------内类比 (%ld) 前: %@ From %@",(long)type,[NVHeUtil getLightStr:b_p],Alg2FStr(algB));
         //d. 构建小/大;
         if (type != ATDefault) {
             AINetAbsFoNode *create = [self analogyInner_Creater:type algsType:a_p.algsType dataSource:a_p.dataSource frontConAlg:algA backConAlg:algB rangeAlg_ps:rangeAlg_ps conFo:checkFo];
