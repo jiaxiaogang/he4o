@@ -344,6 +344,13 @@
     //5. 构建抽象时序; (小动致大 / 大动致小) (之间的信息为balabala)
     AINetAbsFoNode *result = [TIRUtils createInnerAbsFo:backAlg rangeAlg_ps:rangeAlg_ps conFo:conFo ds:afDS];
 
+    //TODOTOMORROW: 调试找不到glAlg的bug;
+    //1. 经查,内类比的两个概念中,其中一个没有"距离"稀疏码,导致无法类比出"距离"GL节点;
+    if (type == ATLess) {
+        NSLog(@"%@,%@,%@,%@,%@",algsType,dataSource,afDS,Alg2FStr(backConAlg),Alg2FStr(backAlg));
+        NSLog(@"");
+    }
+    
     //6. 调试;
     NSLog(@"STEPKEY-> Inner Create Value:变->%@",[NVHeUtil getLightStr:backValue_p]);
     if (backAlg) NSLog(@"STEPKEY--> Inner Create Alg:%@->%@",Alg2FStr(backConAlg),Alg2FStr(backAlg));

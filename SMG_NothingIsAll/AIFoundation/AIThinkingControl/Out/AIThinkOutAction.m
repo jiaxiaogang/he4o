@@ -70,7 +70,7 @@
         //b. 行为化
         NSLog(@"------SP_GL行为化:%@ -> %@",[NVHeUtil getLightStr:sValue_p],[NVHeUtil getLightStr:pValue_p]);
         
-        //调试用pAlg联想不到glAlg的bug;
+        //TODOTOMORROW: 调试找不到glAlg的bug;
         [theNV setForceMode:true];
         [theNV setNodeData:sAlg.pointer lightStr:@"S"];
         [theNV setNodeData:pAlg.pointer lightStr:@"P"];
