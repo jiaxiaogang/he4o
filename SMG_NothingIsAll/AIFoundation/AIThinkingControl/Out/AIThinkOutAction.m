@@ -17,6 +17,7 @@
 #import "TOAlgModel.h"
 #import "TOValueModel.h"
 #import "TOUtils.h"
+#import "AIPort.h"
 
 @implementation AIThinkOutAction
 
@@ -68,7 +69,30 @@
         TOValueModel *valueOutModel = [TOValueModel newWithSValue:sValue_p pValue:pValue_p group:outModel];
         //b. 行为化
         NSLog(@"------SP_GL行为化:%@ -> %@",[NVHeUtil getLightStr:sValue_p],[NVHeUtil getLightStr:pValue_p]);
-        [self convert2Out_GL:pAlg outModel:valueOutModel];
+        
+        //调试用pAlg联想不到glAlg的bug;
+        [theNV setForceMode:true];
+        [theNV setNodeData:sAlg.pointer lightStr:@"S"];
+        [theNV setNodeData:pAlg.pointer lightStr:@"P"];
+        [theNV setNodeData:sValue_p lightStr:@"s"];
+        [theNV setNodeData:pValue_p lightStr:@"p"];
+        [theNV setForceMode:false];
+        NSLog(@"======> s:%@",Alg2FStr(sAlg));
+        NSLog(@"======> p:%@",Alg2FStr(pAlg));
+        
+        for (AIPort *sPort in [AINetUtils absPorts_All:sAlg]) {
+            NSLog(@"======> SAbs:%@",AlgP2FStr(sPort.target_p));
+        }
+        
+        for (AIPort *pPort in [AINetUtils absPorts_All:pAlg]) {
+            NSLog(@"======> PAbs:%@",AlgP2FStr(pPort.target_p));
+        }
+        
+        //发现,很多glValue稀疏码节点的ds和值,完全对不上;
+        //对不上应该是正常的,不过应该是大对应小,有对应无,这样正常;随后再查查;
+        
+        
+        [self convert2Out_GL:sAlg outModel:valueOutModel];
         break;
     }
     
@@ -236,7 +260,7 @@
  */
 -(void) convert2Out_GL:(AIAlgNodeBase*)alg outModel:(TOValueModel*)outModel {
     //1. 数据准备
-    AnalogyType type = [ThinkingUtils compare:outModel.curValue_p valueB_p:outModel.content_p];
+    AnalogyType type = [ThinkingUtils compare:outModel.sValue_p valueB_p:outModel.content_p];
     NSString *vAT = outModel.content_p.algsType;
     NSString *vDS = outModel.content_p.dataSource;
     if ((type != ATGreater && type != ATLess)) {

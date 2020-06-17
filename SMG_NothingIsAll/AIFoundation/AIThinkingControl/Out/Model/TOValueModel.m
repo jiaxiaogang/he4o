@@ -19,7 +19,7 @@
 
 +(TOValueModel*) newWithSValue:(AIKVPointer*)sValue_p pValue:(AIKVPointer*)pValue_p group:(TOAlgModel*)group{
     TOValueModel *result = [[TOValueModel alloc] initWithContent_p:pValue_p];
-    result.curValue_p = sValue_p;
+    result.sValue_p = sValue_p;
     if (group) [group.subModels addObject:result];
     result.baseOrGroup = group;
     return result;

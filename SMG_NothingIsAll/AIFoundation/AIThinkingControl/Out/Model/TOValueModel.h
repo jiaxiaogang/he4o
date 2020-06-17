@@ -15,7 +15,7 @@
 @class TOAlgModel;
 @interface TOValueModel : TOModelBase <ITryActionFoDelegate>
 
-@property (strong, nonatomic) AIKVPointer *curValue_p;
+@property (strong, nonatomic) AIKVPointer *sValue_p;
 +(TOValueModel*) newWithSValue:(AIKVPointer*)sValue_p pValue:(AIKVPointer*)pValue_p group:(TOAlgModel*)group;
 
 @end

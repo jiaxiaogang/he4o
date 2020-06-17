@@ -72,13 +72,13 @@ typedef NS_ENUM(NSInteger, MindHappyType) {
  */
 typedef NS_ENUM(NSInteger,  AnalogyType) {
     ATDefault   = 0,            //默认
-    ATGreater   = INT_MAX - 47, //内类比_变大 (greater)
-    ATLess      = INT_MIN + 48, //内类比_变小 (less)     //-2147483600
-    ATHav       = INT_MAX,      //内类比_变有 (hav)
-    ATNone      = INT_MIN,      //内类比_变无 (none)
-    ATPlus      = INT_MAX - 147,//反向类比_mv+ (plus)
-    ATSub       = INT_MIN + 148,//反向类比_mv- (sub)
-    ATSame      = INT_MAX - 247,//正向类比
+    ATGreater   = INT_MAX - 47, //内类比_变大 (greater)  = 2147483600
+    ATLess      = INT_MIN + 48, //内类比_变小 (less)     = -2147483600
+    ATHav       = INT_MAX,      //内类比_变有 (hav)      = 2147483647
+    ATNone      = INT_MIN,      //内类比_变无 (none)     = -2147483648
+    ATPlus      = INT_MAX - 147,//反向类比_mv+ (plus)   = 2147483500
+    ATSub       = INT_MIN + 148,//反向类比_mv- (sub)    = -2147483500
+    ATSame      = INT_MAX - 247,//正向类比              = 2147483400
 };
 
 /**
