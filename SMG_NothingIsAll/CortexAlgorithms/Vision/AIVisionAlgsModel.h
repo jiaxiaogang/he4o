@@ -16,16 +16,16 @@
 @interface AIVisionAlgsModel : NSObject
 
 //size
-@property (assign,nonatomic) CGFloat sizeWidth;
+//@property (assign,nonatomic) CGFloat sizeWidth;
 @property (assign,nonatomic) CGFloat sizeHeight;
 
 //color
-@property (assign,nonatomic) NSInteger colorRed;
-@property (assign,nonatomic) NSInteger colorGreen;
-@property (assign,nonatomic) NSInteger colorBlue;
+//@property (assign,nonatomic) NSInteger colorRed;
+//@property (assign,nonatomic) NSInteger colorGreen;
+//@property (assign,nonatomic) NSInteger colorBlue;
 
 //radius
-@property (assign,nonatomic) CGFloat radius;
+//@property (assign,nonatomic) CGFloat radius;
 
 //speed
 @property (assign,nonatomic) CGFloat speed;
