@@ -348,8 +348,9 @@
 
     //TODOTOMORROW: 调试找不到glAlg的bug;
     //1. 经查,内类比的两个概念中,其中一个没有"距离"稀疏码,导致无法类比出"距离"GL节点;
+    //2. 通过此处,查为什么n20p2BUG3会有距50的节点参与到内类比中来?
     if (type == ATLess) {
-        NSLog(@"%@,%@,%@,%@,%@",algsType,dataSource,afDS,Alg2FStr(backConAlg),Alg2FStr(backAlg));
+        NSLog(@"======变小>%@,%@,%@,%@,%@",algsType,dataSource,afDS,Alg2FStr(backConAlg),Alg2FStr(backAlg));
         NSLog(@"");
     }
     
