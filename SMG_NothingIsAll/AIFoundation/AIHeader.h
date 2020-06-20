@@ -203,3 +203,6 @@
 #define Log4InAna false
 #define Log4InAnaGL true
 #define Log4InAnaHN false
+
+#define Log4SameAna false
+#define Log4DiffAna false
