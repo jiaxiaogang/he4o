@@ -147,7 +147,7 @@
             if (type == ATSame) {
                 NSLog(@"STEPKEY--->> 构建时序:%@->%@",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
             }else{
-                NSLog(@"----> 内类比IHO构建抽象时序=%ld: [%@] from(%ld,%ld)",result.pointer.pointerId,[NVHeUtil getLightStr4Ps:result.content_ps],fo.pointer.pointerId,assFo.pointer.pointerId);
+                if (Log4InAna) NSLog(@"----> 内中有外_构建:%@ from(%ld,%ld)",Fo2FStr(result),fo.pointer.pointerId,assFo.pointer.pointerId);
             }
         }
     }
@@ -179,7 +179,7 @@
     //1. 数据检查
     if (ISOK(checkFo, AIFoNodeBase.class) && checkFo.content_ps.count >= 2) {
         //2. 最后一个元素,向前分别与orders后面所有元素进行类比
-        NSLog(@"STEPKEY---------------------------------------内类比---------------------------------------\nSTEPKEY%@",Fo2FStr(checkFo));
+        NSLog(@"\n\n---------------------------------------内类比---------------------------------------\n%@",Fo2FStr(checkFo));
         for (NSInteger i = checkFo.content_ps.count - 2; i >= 0; i--) {
             [self analogyInner:checkFo aIndex:i bIndex:checkFo.content_ps.count - 1 canAss:canAssBlock updateEnergy:updateEnergy];
         }
@@ -207,9 +207,9 @@
     //5. 内类比找不同 (比大小:同区不同值 / 有无)
     if (algNodeA && algNodeB){
         //a. 内类比大小;
-        NSLog(@"-----------内类比-----------");
-        NSLog(@"--> 概念%ld: %@",(long)aIndex,Alg2FStr(algNodeA));
-        NSLog(@"--> 概念%ld: %@",(long)bIndex,Alg2FStr(algNodeB));
+        if (Log4InAna) NSLog(@"-----------内类比-----------");
+        if (Log4InAna) NSLog(@"%ld: %@",(long)aIndex,Alg2FStr(algNodeA));
+        if (Log4InAna) NSLog(@"%ld: %@",(long)bIndex,Alg2FStr(algNodeB));
         NSArray *rangeAlg_ps = ARR_SUB(orders, aIndex + 1, bIndex - aIndex - 1);
         [self analogyInner_GL:checkFo algA:algNodeA algB:algNodeB rangeAlg_ps:rangeAlg_ps createdBlock:^(AINetAbsFoNode *createFo,AnalogyType type) {
             //b. 消耗思维活跃度 & 内中有外
@@ -250,9 +250,7 @@
         //a. 对比微信息 (MARK_VALUE:如微信息去重功能去掉,此处要取值再进行对比)
         AnalogyType type = [ThinkingUtils compare:a_p valueB_p:b_p];
         //b. 调试a_p和b_p是否合格,应该同标识,同文件夹名称,不同pId;
-        NSLog(@"--------------内类比 (大小) 前: %@ -> %@",[NVHeUtil getLightStr:a_p],[NVHeUtil getLightStr:b_p]);
-        NSLog(@"--------------内类比 (%ld) 前: %@ From %@",(long)type,[NVHeUtil getLightStr:a_p],Alg2FStr(algA));
-        NSLog(@"--------------内类比 (%ld) 前: %@ From %@",(long)type,[NVHeUtil getLightStr:b_p],Alg2FStr(algB));
+        if (Log4InAnaGL) NSLog(@"--------------内类比大小: %@ -> %@ From(前:A%ld后:A%ld)",Pit2FStr(a_p),Pit2FStr(b_p),algA.pointer.pointerId,algB.pointer.pointerId);
         //d. 构建小/大;
         if (type != ATDefault) {
             AINetAbsFoNode *create = [self analogyInner_Creater:type algsType:a_p.algsType dataSource:a_p.dataSource frontConAlg:algA backConAlg:algB rangeAlg_ps:rangeAlg_ps conFo:checkFo];
@@ -288,7 +286,7 @@
     NSArray *bSub_ps = [SMGUtils removeSub_ps:aSum_ps parent_ps:bSum_ps];
 
     //3. a变无
-    NSLog(@"--------------内类比 (有无) 前: [%@] -> [%@]",Pits2FStr(aSub_ps),Pits2FStr(bSub_ps));
+    if (Log4InAnaHN) NSLog(@"--------------内类比 (有无) 前: [%@] -> [%@]",Pits2FStr(aSub_ps),Pits2FStr(bSub_ps));
     for (AIKVPointer *sub_p in aSub_ps) {
         AIAlgNodeBase *target = [SMGUtils searchNode:sub_p];
         AINetAbsFoNode *create = [self analogyInner_Creater:ATNone algsType:sub_p.algsType dataSource:sub_p.dataSource frontConAlg:target backConAlg:target rangeAlg_ps:rangeAlg_ps conFo:checkFo];
@@ -349,15 +347,13 @@
     //TODOTOMORROW: 调试找不到glAlg的bug;
     //1. 经查,内类比的两个概念中,其中一个没有"距离"稀疏码,导致无法类比出"距离"GL节点;
     //2. 通过此处,查为什么n20p2BUG3会有距50的节点参与到内类比中来?
-    if (type == ATLess) {
-        NSLog(@"======变小>%@,%@,%@,%@,%@",algsType,dataSource,afDS,Alg2FStr(backConAlg),Alg2FStr(backAlg));
-        NSLog(@"");
-    }
-    
+
     //6. 调试;
-    NSLog(@"STEPKEY-> Inner Create Value:变->%@",[NVHeUtil getLightStr:backValue_p]);
-    if (backAlg) NSLog(@"STEPKEY--> Inner Create Alg:%@->%@",Alg2FStr(backConAlg),Alg2FStr(backAlg));
-    if (result) NSLog(@"STEPKEY---> Inner Create Fo:%@->%@",Fo2FStr(conFo),Fo2FStr(result));
+    if (type == ATHav || type == ATNone) {
+        if (Log4InAnaHN) NSLog(@"构建:%@ ConFrom:%@ 构建Fo:%@",Alg2FStr(backAlg),Alg2FStr(backConAlg),Fo2FStr(result));
+    }else if (type == ATGreater || type == ATLess) {
+        if (Log4InAnaGL) NSLog(@"构建:%@ ConFrom:A%ld 构建Fo:%@",Alg2FStr(backAlg),backConAlg.pointer.pointerId,Fo2FStr(result));
+    }
     return result;
 }
 

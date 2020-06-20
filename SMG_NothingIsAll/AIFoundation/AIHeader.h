@@ -191,3 +191,15 @@
 #define TLog(fmt, ...) [theApp setTipLog:[NSString stringWithFormat:fmt, ##__VA_ARGS__]]
 //allLog (系统 + 持久化 + UI弹出)
 #define ALog(fmt, ...) [SMGUtils allLog:[NSString stringWithFormat:fmt, ##__VA_ARGS__]]
+
+/**
+ *  MARK:--------------------LOG开关--------------------
+ */
+#define Log4MAlg false
+#define Log4FuzzyAlg true
+
+#define Log4MFo false
+
+#define Log4InAna false
+#define Log4InAnaGL true
+#define Log4InAnaHN false

@@ -60,7 +60,7 @@
     //1. 数据准备
     AIAlgNodeBase *algNode = [SMGUtils searchNode:algNode_p];
     if (algNode == nil) return;
-    NSLog(@"------------------------------- 概念识别 -------------------------------\n%@",Alg2FStr(algNode));
+    NSLog(@"\n\n------------------------------- 概念识别 -------------------------------\n%@",Alg2FStr(algNode));
     
     //2. 对value.refPorts进行检查识别; (noMv信号已输入完毕,识别联想)
     __block AIAlgNodeBase *assAlgNode = nil;
@@ -211,10 +211,10 @@
             NSArray *normalRefPorts = [SMGUtils filterPorts_Normal:indexAlg.refPorts];
             
             for (AIPort *refPort in normalRefPorts) {;
-                NSLog(@"-----> TIR_Fo 索引:(%@) 取得时序:%@",[NVHeUtil getLightStr4Ps:indexAlg.content_ps],FoP2FStr(refPort.target_p));
+                if (Log4MFo) NSLog(@"-----> TIR_Fo 索引:%@ 取得时序:%@",Alg2FStr(indexAlg),FoP2FStr(refPort.target_p));
                 //b. rethink时,必须包含replaceMatchAlg的时序才有效;
                 if ([SMGUtils containsSub_p:refPort.target_p parentPorts:lastAlgRefPorts]) {
-                    NSLog(@"-----> TIR_Fo 取得时序成功");
+                    if (Log4MFo) NSLog(@"-----> TIR_Fo 取得时序成功");
                     [result addObject:refPort];
                     if (result.count >= cPartMatchingCheckRefPortsLimit) {
                         break;
@@ -259,7 +259,7 @@
         return;
     }
     
-    NSLog(@"STEPKEY--------------------------------------- 瞬时时序识别 ---------------------------------------\nSTEPKEY%@",Fo2FStr(protoFo));
+    NSLog(@"\n\n--------------------------------------- 瞬时时序识别 ---------------------------------------\n%@",Fo2FStr(protoFo));
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
     [self partMatching_Fo:protoFo assFoIndexAlg:lastMatchAlg assFoBlock:^NSArray *(AIAlgNodeBase *indexAlg) {
         if (indexAlg) {
@@ -271,7 +271,7 @@
         //1. shortMem需要多matchAlg对多抽象,共两层判断是否isEquals; (N x N) (20200414改为1xN)
         //TODO_TEST_HERE: 本愿是自match层开始,已有去重机制,故使用指针匹配,如无去重且不好加,此处可改为md5匹配;
         if (itemAlg_p && assAlg_p) {
-            NSLog(@"-------------- checkAlgValid --------------\n%@\n%@",AlgP2FStr(itemAlg_p),AlgP2FStr(assAlg_p));
+            if (Log4MFo) NSLog(@"-------------- checkAlgValid --------------\n%@\n%@",AlgP2FStr(itemAlg_p),AlgP2FStr(assAlg_p));
             
             //2. 判断 1 (如是否苹果);
             if (![itemAlg_p isEqual:assAlg_p]) {
@@ -279,14 +279,14 @@
                 AIAlgNodeBase *matchAlg = [SMGUtils searchNode:itemAlg_p];
                 if (matchAlg) {
                     if (![SMGUtils containsSub_p:assAlg_p parentPorts:[AINetUtils absPorts_All:matchAlg]]) {
-                        NSLog(@"---> checkItem无效 (Match.Abs层)");
+                        if (Log4MFo) NSLog(@"---> checkItem无效 (Match.Abs层)");
                         return false;
                     }
                 }
-                NSLog(@"--->>>> checkItem有效 (Match.Abs层)");
+                if (Log4MFo) NSLog(@"--->>>> checkItem有效 (Match.Abs层)");
                 return true;
             }else{
-                NSLog(@"--->>> checkItem有效 (Match层)");
+                if (Log4MFo) NSLog(@"--->>> checkItem有效 (Match层)");
                 return true;
             }
         }
@@ -337,13 +337,13 @@
     [assIndexes addObjectsFromArray:[SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:assFoIndexAlg]]];
     
     //3. 递归进行assFos
-    NSLog(@"------------ TIR_Fo ------------索引数:%lu",(unsigned long)assIndexes.count);
+    if (Log4MFo) NSLog(@"------------ TIR_Fo ------------索引数:%lu",(unsigned long)assIndexes.count);
     for (AIKVPointer *assIndex_p in assIndexes) {
         AIAlgNodeBase *indexAlg = [SMGUtils searchNode:assIndex_p];
         
         //4. indexAlg.refPorts; (取识别到过的抽象节点(如苹果));
         NSArray *assFoPorts = ARRTOOK(assFoBlock(indexAlg));
-        NSLog(@"-----> TIR_Fo 索引到有效时序数:%lu",(unsigned long)assFoPorts.count);
+        if (Log4MFo) NSLog(@"-----> TIR_Fo 索引到有效时序数:%lu",(unsigned long)assFoPorts.count);
         
         //5. 依次对assFos对应的时序,做匹配度评价; (参考: 160_TIRFO单线顺序模型)
         for (AIPort *assFoPort in assFoPorts) {
@@ -355,7 +355,7 @@
                 successed = true;
                 finishBlock(assFo,matchValue,lastAssIndex);
             } failure:^(NSString *msg) {
-                NSLog(@"%@",msg);
+                if (Log4MFo) NSLog(@"%@",msg);
             }];
             
             //7. 成功一条即return

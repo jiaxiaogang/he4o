@@ -37,7 +37,7 @@
         failure(@"参数错误");
         return;
     }
-    NSLog(@"------------------------ checkFoValid ------------------------\n%@\n%@",Fo2FStr(protoFo),Fo2FStr(assFo));
+    if (Log4MFo) NSLog(@"------------------------ checkFoValid ------------------------\n%@\n%@",Fo2FStr(protoFo),Fo2FStr(assFo));
     AIKVPointer *lastProtoAlg_p = ARR_INDEX_REVERSE(protoFo.content_ps, 0); //最后一个protoAlg指针
     int validItemCount = 1;                                                 //默认有效数为1 (因为lastAlg肯定有效);
     NSInteger lastAssIndex = -1;                                            //在assFo已发生到的index,后面为预测;
@@ -58,7 +58,7 @@
     }
     
     //3. 从lastAssIndex向前逐个匹配;
-    NSLog(@"--->>>>> 在%ld位,找到LastItem匹配",lastAssIndex);
+    if (Log4MFo)NSLog(@"--->>>>> 在%ld位,找到LastItem匹配",lastAssIndex);
     for (NSInteger i = lastAssIndex - 1; i >= 0; i--) {
         AIKVPointer *checkAssAlg_p = ARR_INDEX(assFo.content_ps, i);
         if (checkAssAlg_p) {
@@ -71,10 +71,10 @@
                     lastProtoIndex = j; //成功匹配alg时,更新protoIndex (以达到只能向前匹配的目的);
                     checkResult = true;
                     validItemCount ++;  //有效数+1;
-                    NSLog(@"时序识别: item有效+1");
+                    if (Log4MFo)NSLog(@"时序识别: item有效+1");
                     break;
                 }else{
-                    NSLog(@"---->匹配失败:\n%@\n%@",AlgP2FStr(lastProtoAlg_p),AlgP2FStr(checkAssAlg_p));
+                    if (Log4MFo)NSLog(@"---->匹配失败:\n%@\n%@",AlgP2FStr(lastProtoAlg_p),AlgP2FStr(checkAssAlg_p));
                 }
             }
             
@@ -173,7 +173,7 @@
         for (AIKVPointer *item_p in proto_ps) {
             NSArray *refPorts = refPortsBlock(item_p);
             refPorts = ARR_SUB(refPorts, 0, cPartMatchingCheckRefPortsLimit);
-            NSLog(@"当前item_p:%@ -------------------数量:%lu",[NVHeUtil getLightStr:item_p],(unsigned long)refPorts.count);
+            if (Log4MAlg) NSLog(@"当前item_p:%@ -------------------数量:%lu",[NVHeUtil getLightStr:item_p],(unsigned long)refPorts.count);
             //3. 进行计数
             for (AIPort *refPort in refPorts) {
                 if (checkBlock(refPort.target_p)) {
@@ -182,7 +182,7 @@
                     [countDic setObject:@(oldCount + 1) forKey:key];
                 }
             }
-            if (countDic.count) NSLog(@"匹配情况: %@ -----------------",countDic.allValues);
+            if (Log4MAlg) if (countDic.count) NSLog(@"匹配情况: %@ -----------------",countDic.allValues);
         }
         
         //4. 排序相似数从大到小;
@@ -196,7 +196,7 @@
         NSInteger typeWrong = 0;
         NSInteger countWrong = 0;
         NSInteger typeCountWrong = 0;
-        WLog(@"proto___________长度:%lu 内容:[%@]",proto_ps.count,[NVHeUtil getLightStr4Ps:proto_ps]);
+        if (Log4MAlg) WLog(@"proto___________长度:%lu 内容:(%@)",proto_ps.count,[NVHeUtil getLightStr4Ps:proto_ps]);
         for (NSData *key in sortKeys) {
             AIKVPointer *key_p = DATA2OBJ(key);
             AIAlgNodeBase *result = [SMGUtils searchNode:key_p];
@@ -214,10 +214,10 @@
             }else if(result.content_ps.count != matchingCount){
                 countWrong ++;
             }
-            WLog(@"Item识别失败_匹配:%d 类型:%@ 内容:%@",matchingCount,result.class,Alg2FStr(result));
+            if (Log4MAlg) WLog(@"Item识别失败_匹配:%d 类型:%@ 内容:%@",matchingCount,result.class,Alg2FStr(result));
         }
         
-        WLog(@"识别结果 >> 非抽象且非全含:%ld,非抽象数:%ld,非全含数:%ld / 总数:%lu",(long)typeCountWrong,(long)typeWrong,countWrong,(unsigned long)sortKeys.count);
+        if (Log4MAlg) WLog(@"识别结果 >> 非抽象且非全含:%ld,非抽象数:%ld,非全含数:%ld / 总数:%lu",(long)typeCountWrong,(long)typeWrong,countWrong,(unsigned long)sortKeys.count);
         //7. 未将全含返回,则返回最相似;
         AIAlgNodeBase *result = [SMGUtils searchNode:DATA2OBJ(ARR_INDEX(sortKeys, 0))];
         complete(result,MatchType_Seem);
@@ -239,7 +239,7 @@
  *      v2: 支持多个稀疏码不同,并支持返回多个相似度排序后的结果;
  */
 +(NSArray*) matchAlg2FuzzyAlgV2:(AIAlgNodeBase*)protoAlg matchAlg:(AIAlgNodeBase*)matchAlg except_ps:(NSArray*)except_ps{
-    NSLog(@"------------------------------ Fuzzy Start ------------------------------");
+    if (Log4FuzzyAlg) NSLog(@"------------------------------ Fuzzy Start ------------------------------");
     //1. 数据准备;
     except_ps = ARRTOOK(except_ps);
     if (!protoAlg || !matchAlg) {
@@ -291,10 +291,9 @@
         [allSortConAlgs addObject:sortConAlgs];
         
         //e. 调试日志
-        NSLog(@"-------------------> Fuzzy同层:%@ 有效数:%d 排序基准:%@",[NVHeUtil getLightStr:pValue_p],validConDatas.count,[NSString removeFloatZero:STRFORMAT(@"%f",pValue)]);
         for (NSDictionary *item in sortConDatas) {
             AIAlgNodeBase *itemAlg = [item objectForKey:@"a"];
-            NSLog(@"--> 地址:%d 内容:[%@] 值:%@",itemAlg.pointer.pointerId,[NVHeUtil getLightStr4Ps:itemAlg.content_ps],[item objectForKey:@"v"]);
+            if (Log4FuzzyAlg) NSLog(@"---> 同层基准:%@ => %@ 值:%@",Pit2FStr(pValue_p),Alg2FStr(itemAlg),[item objectForKey:@"v"]);
         }
     }
     
@@ -335,7 +334,7 @@
     for (NSInteger i = 0; i < result.count; i++) {
         AIAlgNodeBase *item = ARR_INDEX(result, i);
         [theApp.nvView setNodeData:item.pointer appendLightStr:STRFORMAT(@"%ld_fuzzyR(%ld)",protoAlg.pointer.pointerId,(long)i)];
-        NSLog(@"------FuzzyAlg Success_地址:%d 长度:%lu 内容:[%@] (P数:%d / M数:%d)",item.pointer.pointerId,item.content_ps.count,[NVHeUtil getLightStr4Ps:item.content_ps],(unsigned long)protoAlg.content_ps.count,matchAlg.content_ps.count);
+        if (Log4FuzzyAlg) NSLog(@"------FuzzyAlg Success %@ (P数:%lu / M数:%lu)",Alg2FStr(item),(unsigned long)protoAlg.content_ps.count,(unsigned long)matchAlg.content_ps.count);
     }
     return result;
 }

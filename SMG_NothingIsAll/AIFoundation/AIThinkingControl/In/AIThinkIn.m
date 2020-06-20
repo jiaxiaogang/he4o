@@ -46,7 +46,7 @@
 -(void) dataInWithModels:(NSArray*)dics algsType:(NSString*)algsType{
     //1. 数据检查 (小鸟不能仅传入foodView,而要传入整个视角场景)
     dics = ARRTOOK(dics);
-    NSLog(@"STEPKEY------------------------------- 皮层输入 -------------------------------");
+    NSLog(@"\n\n------------------------------- 皮层输入 -------------------------------");
     
     //2. 收集所有具象父概念的value_ps
     NSMutableArray *parentValue_ps = [[NSMutableArray alloc] init];
@@ -182,7 +182,6 @@
     }];
     
     //5. 内类比
-    NSLog(@"--------> InnerFo:%@",Fo2FStr(mModel.protoFo));
     //InnerFo:F22[A7(速0,宽5,高5,形2.5,向→,红0,绿255,蓝0,皮0,距70,经186,纬577),A5(速0,宽5,高5,形2.5,距0,向→,红0,绿255,蓝0,皮0,经199,纬
     //TODOTOMORROW: 查下,此处,距0从哪来的;
     [AIThinkInReason analogyInner:mModel.protoFo];
