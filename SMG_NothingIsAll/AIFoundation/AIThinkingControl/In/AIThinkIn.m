@@ -138,6 +138,7 @@
             mModel.cutIndex = cutIndex;
         }];
     }
+    NSLog(@"反思时序: Finish >> %@",Fo2FStr(mModel.matchFo));
     return mModel;
 }
 

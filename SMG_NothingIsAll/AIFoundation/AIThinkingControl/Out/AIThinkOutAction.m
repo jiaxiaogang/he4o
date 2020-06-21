@@ -147,7 +147,7 @@
 -(void) convert2Out_Fo:(NSArray*)curAlg_ps outModel:(TOFoModel*)outModel{
     //1. 数据准备
     AIFoNodeBase *curFo = [SMGUtils searchNode:outModel.content_p];
-    NSLog(@"\n\n============================== 行为化 START ==================== \n时序:%@->%@\n需要:[%@]",Fo2FStr(curFo),Mvp2Str(curFo.cmvNode_p),Pits2FStr(curAlg_ps));
+    NSLog(@"\n\n=============================== 行为化 ===============================\n时序:%@->%@\n需要:[%@]",Fo2FStr(curFo),Mvp2Str(curFo.cmvNode_p),Pits2FStr(curAlg_ps));
     if (!ARRISOK(curAlg_ps) || curFo == nil || ![self.delegate toAction_EnergyValid]) {
         outModel.status = TOModelStatus_ActNo;
         [self.delegate toAction_SubModelFailure:outModel];
@@ -196,10 +196,10 @@
     
     //2. 本身即是isOut时,直接行为化返回;
     if (outModel.content_p.isOut) {
+        NSLog(@"\n\n=============================== 行为输出 ===============================\n%@",AlgP2FStr(outModel.content_p));
         outModel.status = TOModelStatus_ActYes;
         [self.delegate toAction_updateEnergy:-0.1f];
         [self.delegate toAction_Output:@[outModel.content_p]];
-        NSLog(@"-> SP_Hav_isOut为TRUE: %@",AlgP2FStr(outModel.content_p));
         return;
     }else{
         //3. 数据检查curAlg
