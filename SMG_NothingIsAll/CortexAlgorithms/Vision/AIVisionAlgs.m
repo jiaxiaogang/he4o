@@ -19,6 +19,7 @@
     if (!selfView || !targetView) {
         return;
     }
+    NSLog(@"\n\n------------------------------- 皮层算法 -------------------------------");
     NSMutableArray *dics = [[NSMutableArray alloc] init];
     NSMutableArray *views = [targetView subViews_AllDeepWithRect:rect];
     
@@ -125,7 +126,7 @@
     
     //5. 如果是8,也是0;
     float result = (paramInt % 8) / 8.0f;
-    NSLog(@"视觉目标 方向 >> 角度:%f 原始参数:%f 返回参数:%f",rads / M_PI * 180,protoParam,result);
+    if (Log4DiffAna) NSLog(@"视觉目标 方向 >> 角度:%f 原始参数:%f 返回参数:%f",rads / M_PI * 180,protoParam,result);
     return result;
 }
 

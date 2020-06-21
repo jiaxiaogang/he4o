@@ -195,14 +195,21 @@
 /**
  *  MARK:--------------------LOG开关--------------------
  */
+//皮层
+#define Log4CortexAlgs false
+//输入思维
+#define Log4TCInput false
+//识别概念
 #define Log4MAlg false
+//模糊匹配
 #define Log4FuzzyAlg true
-
+//识别时序
 #define Log4MFo false
-
+//内类比
 #define Log4InAna false
 #define Log4InAnaGL true
 #define Log4InAnaHN false
-
+//正向类比
 #define Log4SameAna false
+//反向类比
 #define Log4DiffAna false

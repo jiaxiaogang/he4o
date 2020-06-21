@@ -91,6 +91,7 @@
     UIView *tapView = tapRecognizer.view;
     CGPoint point = [tapRecognizer locationInView:tapView];                 //点击坐标
     CGPoint targetPoint = CGPointZero;
+    NSLog(@"\n\n------------------------------- 现实世界 -------------------------------");
     
     //2. 远投按键,计算映射坐标;
     if ([self.farView isEqual:tapView]) {
@@ -175,12 +176,14 @@
     [self food2Pos:CGPointMake(birdPos.x - 100, birdPos.y + 100)];
 }
 - (IBAction)hungerBtnOnClick:(id)sender {
-    NSLog(@"STEPKEY马上饿onClick");
+    NSLog(@"\n\n------------------------------- 感官输入 -------------------------------");
+    NSLog(@"马上饿onClick");
     [theApp.heLogView addLog:@"马上饿onClick"];
     [[[DemoHunger alloc] init] commit:0.7 state:UIDeviceBatteryStateUnplugged];
 }
 
 - (IBAction)touchWingBtnOnClick:(id)sender {
+    NSLog(@"\n\n------------------------------- 现实世界 -------------------------------");
     NSLog(@"摸翅膀onClick");
     [theApp.heLogView addLog:@"摸翅膀onClick"];
     int random = (arc4random() % 8);

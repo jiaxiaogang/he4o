@@ -60,7 +60,7 @@
     //3. 构建父概念 & 将空场景加入瞬时记忆;
     AIAbsAlgNode *parentAlgNode = [theNet createAbsAlg_NoRepeat:parentValue_ps conAlgs:nil isMem:true isOut:false ds:algsType];
     if (parentValue_ps.count == 0) [self.delegate aiThinkIn_AddToShortMemory:@[parentAlgNode.pointer] isMatch:false];
-    NSLog(@"---> 构建InputParent节点:%@",Alg2FStr(parentAlgNode));
+    if (Log4TCInput) NSLog(@"---> 构建InputParent节点:%@",Alg2FStr(parentAlgNode));
     
     //4. 收集本组中,所有概念节点;
     NSMutableArray *fromGroup_ps = [[NSMutableArray alloc] init];
@@ -73,7 +73,7 @@
         //6. 将所有子概念添加到瞬时记忆;
         [self.delegate aiThinkIn_AddToShortMemory:@[subAlgNode.pointer] isMatch:false];
         [theNV setNodeData:subAlgNode.pointer];
-        NSLog(@"STEPKEY--->> 构建InputSub节点:%@",Alg2FStr(subAlgNode));
+        NSLog(@"InputSub:%@",Alg2FStr(subAlgNode));
     }
     
     //6. NoMv处理;

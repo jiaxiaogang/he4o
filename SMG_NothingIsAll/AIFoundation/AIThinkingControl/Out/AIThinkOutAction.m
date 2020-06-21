@@ -47,7 +47,7 @@
         [self.delegate toAction_SubModelFailure:outModel];
         return;
     }
-    NSLog(@"STEPKEY==========================SP START==========================\nSTEPKEYS:%@\nSTEPKEYP:%@",Alg2FStr(sAlg),Alg2FStr(pAlg));
+    NSLog(@"\n\n==========================SP START==========================\nS:%@\nP:%@",Alg2FStr(sAlg),Alg2FStr(pAlg));
     
     //2. 满足P: GL部分;
     NSDictionary *cGLDic = [SMGUtils filterPointers:sAlg.content_ps b_ps:pAlg.content_ps checkItemValid:^BOOL(AIKVPointer *a_p, AIKVPointer *b_p) {
@@ -147,7 +147,7 @@
 -(void) convert2Out_Fo:(NSArray*)curAlg_ps outModel:(TOFoModel*)outModel{
     //1. 数据准备
     AIFoNodeBase *curFo = [SMGUtils searchNode:outModel.content_p];
-    NSLog(@"STEPKEY============================== 行为化 START ==================== \nSTEPKEY时序:%@->%@\nSTEPKEY需要:[%@]",Fo2FStr(curFo),Mvp2Str(curFo.cmvNode_p),Pits2FStr(curAlg_ps));
+    NSLog(@"\n\n============================== 行为化 START ==================== \n时序:%@->%@\n需要:[%@]",Fo2FStr(curFo),Mvp2Str(curFo.cmvNode_p),Pits2FStr(curAlg_ps));
     if (!ARRISOK(curAlg_ps) || curFo == nil || ![self.delegate toAction_EnergyValid]) {
         outModel.status = TOModelStatus_ActNo;
         [self.delegate toAction_SubModelFailure:outModel];
