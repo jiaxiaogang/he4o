@@ -227,7 +227,7 @@
     
     //3. 不应期
     NSArray *except_ps = [TOUtils convertPointersFromTOModels:demandModel.actionFoModels];
-    NSLog(@"====================TOP.P模式,不应期数:%ld",except_ps.count);
+    if (Log4DirecRef) NSLog(@"Fo不应期数:%ld",except_ps.count);
     
     //4. 用方向索引找normalFo解决方案
     //P例:饿了,该怎么办;
@@ -246,7 +246,7 @@
             
             //6. 移除不应期
             foCon_ps = [SMGUtils removeSub_ps:except_ps parent_ps:foCon_ps];
-            NSLog(@"================方向索引到-解决方案有效数:%ld",foCon_ps.count);
+            if (Log4DirecRef) NSLog(@"方向索引到-有效Fo数:%ld",foCon_ps.count);
             
             //6. 取交集
             //P例:炒个土豆丝,吃掉解决饥饿问题;

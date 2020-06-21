@@ -213,3 +213,5 @@
 #define Log4SameAna false
 //反向类比
 #define Log4DiffAna false
+//方向索引
+#define Log4DirecRef false

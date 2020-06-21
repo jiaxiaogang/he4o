@@ -47,7 +47,7 @@
         [self.delegate toAction_SubModelFailure:outModel];
         return;
     }
-    NSLog(@"\n\n==========================SP START==========================\nS:%@\nP:%@",Alg2FStr(sAlg),Alg2FStr(pAlg));
+    NSLog(@"\n\n=============================== SP START ===============================\nS:%@\nP:%@",Alg2FStr(sAlg),Alg2FStr(pAlg));
     
     //2. 满足P: GL部分;
     NSDictionary *cGLDic = [SMGUtils filterPointers:sAlg.content_ps b_ps:pAlg.content_ps checkItemValid:^BOOL(AIKVPointer *a_p, AIKVPointer *b_p) {
@@ -91,9 +91,9 @@
         //发现,很多glValue稀疏码节点的ds和值,完全对不上;
         //对不上应该是正常的,不过应该是大对应小,有对应无,这样正常;随后再查查;
         
-        
-        [self convert2Out_GL:sAlg outModel:valueOutModel];
-        break;
+        AIAlgNodeBase *pConAlg = outModel.content_p;
+        [self convert2Out_GL:pConAlg outModel:valueOutModel];
+        break;//仅处理首条,其它条交由流程控制来做;
     }
     
     //5. H行为化;
@@ -256,7 +256,7 @@
  *          4. 未转移: success
  *          5. 转移: C条件->递归到convert2Out_Single_Alg();
  *  _param vAT & vDS : 用作查找"大/小"的标识;
- *  @param alg : GL的微信息所处的概念, (所有微信息变化不应脱离概念,比如鸡蛋可以通过烧成固态,但水不能,所以变成固态这种特征变化,不应脱离概念去操作);
+ *  @param alg : GL(pAlg)的具象概念, (所有微信息变化不应脱离概念,比如鸡蛋可以通过烧成固态,但水不能,所以变成固态这种特征变化,不应脱离概念去操作);
  */
 -(void) convert2Out_GL:(AIAlgNodeBase*)alg outModel:(TOValueModel*)outModel {
     //1. 数据准备
