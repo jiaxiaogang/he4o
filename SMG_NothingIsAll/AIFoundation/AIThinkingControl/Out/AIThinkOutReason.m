@@ -313,6 +313,8 @@
  *  @callers :
  *      1. 由外循环调用,当外循环输入新的matchAlg时,调用此方法推进继续决策;
  *      2. 由toAction调用,当无需行为的行为化,直接成功时,调用推进继续决策;
+ *  @version
+ *      2020.06.21 : 当本轮决策完成(FinishModel为Demand)时,清空demand.actionFoModels,以便整体任务未完成时,继续决策 (比如不断飞近);
  */
 -(void) singleLoopBackWithFinishModel:(TOModelBase*)finishModel {
     if (ISOK(finishModel, TOAlgModel.class)) {
@@ -368,7 +370,9 @@
         }
     }else if(ISOK(finishModel, DemandModel.class)){
         //5. 全部完成;
-        NSLog(@"SUCCESS > 决策任务完成");
+        NSLog(@"SUCCESS > 本轮决策完成");
+        DemandModel *demand = (DemandModel*)finishModel;
+        [demand.actionFoModels removeAllObjects];
     }else{
         ELog(@"如打出此错误,则查下为何groupModel不是TOFoModel类型,因为一般行为化的都是概念,而概念的父级就是TOFoModel");
     }
