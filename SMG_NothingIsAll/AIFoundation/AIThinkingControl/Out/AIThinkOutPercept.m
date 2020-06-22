@@ -201,7 +201,7 @@
         toFoModel.actionIndex = 0;
         
         //b. 取自身,实现吃,则可不饿;
-        NSLog(@"------------新增一例解决方案: %p",toFoModel);
+        NSLog(@"------------P+新增一例解决方案: %@",FoP2FStr(toFoModel.content_p));
         [self.delegate aiTOP_2TOR_PerceptPlus:toFoModel];
         
         //c. 用success记录下,是否本次成功找到候选方案;
