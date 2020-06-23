@@ -91,7 +91,7 @@
         //发现,很多glValue稀疏码节点的ds和值,完全对不上;
         //对不上应该是正常的,不过应该是大对应小,有对应无,这样正常;随后再查查;
         
-        AIAlgNodeBase *pConAlg = outModel.content_p;
+        AIAlgNodeBase *pConAlg = [SMGUtils searchNode:outModel.content_p];
         [self convert2Out_GL:pConAlg outModel:valueOutModel];
         break;//仅处理首条,其它条交由流程控制来做;
     }
@@ -259,6 +259,7 @@
  *  @param alg : GL(pAlg)的具象概念, (所有微信息变化不应脱离概念,比如鸡蛋可以通过烧成固态,但水不能,所以变成固态这种特征变化,不应脱离概念去操作);
  */
 -(void) convert2Out_GL:(AIAlgNodeBase*)alg outModel:(TOValueModel*)outModel {
+    NSLog(@"\n\n=============================== 行为化_GL ===============================\n%@",Alg2FStr(alg));
     //1. 数据准备
     AnalogyType type = [ThinkingUtils compare:outModel.sValue_p valueB_p:outModel.content_p];
     NSString *vAT = outModel.content_p.algsType;
