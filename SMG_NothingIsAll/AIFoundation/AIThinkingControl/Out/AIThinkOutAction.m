@@ -278,6 +278,7 @@
     //经查,此处alg是pAlg,就是dis0的组节点,而并未经历过飞到0的经验,所以无法获取到glAlg结果;
     //可以尝试将此处,改为找将sAlg变小,而不是将其变成pAlg,即以s出发,接近p;
     AIAlgNodeBase *glAlg = [AINetService getInnerAlg:alg vAT:vAT vDS:vDS type:type];
+    if (Log4ActGL) NSLog(@"getInnerAlg: 根据:%@->%@ 找:%@%@ GLAlg:%@",Pit2FStr(outModel.sValue_p),Pit2FStr(outModel.content_p),vDS,Data2FStr(type, vAT, vDS),Alg2FStr(glAlg));
     if (!glAlg) {
         outModel.status = TOModelStatus_ActNo;
         [self.delegate toAction_SubModelFailure:outModel];

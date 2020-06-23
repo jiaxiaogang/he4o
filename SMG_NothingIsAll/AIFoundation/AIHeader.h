@@ -125,6 +125,10 @@
 #define FoP2FStr(f_p) [NVHeUtil getLightStr:f_p simple:false header:true]
 #define Mvp2Str(m_p) [NVHeUtil getLightStr:m_p simple:false header:true]
 
+//稀疏码值转字符串
+#define Data2FStr(data,at,ds) [NVHeUtil getLightStr_Value:data algsType:at dataSource:ds]
+
+
 /**
  *  MARK:--------------------快捷建对象--------------------
  */
@@ -215,3 +219,5 @@
 #define Log4DiffAna false
 //方向索引
 #define Log4DirecRef false
+//行为化_GL
+#define Log4ActGL true

@@ -126,6 +126,9 @@
     
     //5. 如果是8,也是0;
     float result = (paramInt % 8) / 8.0f;
+    
+    //6. 与身体重叠,则距离为0;
+    if (result < 15.0f) result = 0;
     if (Log4DiffAna) NSLog(@"视觉目标 方向 >> 角度:%f 原始参数:%f 返回参数:%f",rads / M_PI * 180,protoParam,result);
     return result;
 }
