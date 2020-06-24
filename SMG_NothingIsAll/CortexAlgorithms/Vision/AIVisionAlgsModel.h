@@ -28,7 +28,7 @@
 //@property (assign,nonatomic) CGFloat radius;
 
 //speed
-@property (assign,nonatomic) CGFloat speed;
+@property (assign,nonatomic) NSInteger speed;
 
 //direction
 @property (assign,nonatomic) CGFloat direction;

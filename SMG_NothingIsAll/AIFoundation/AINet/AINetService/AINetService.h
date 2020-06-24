@@ -16,7 +16,7 @@
 @interface AINetService : NSObject
 
 /**
- *  MARK:--------------------概念内类比--------------------
+ *  MARK:--------------------获取HAlg/GLAlg--------------------
  *  @desc 获取概念的内类比结果,比如概念的GLHN
  *  @param alg : 取alg的大小有无;
  *  @param vAT & vDS : 此内类比类型的微信息at&ds (GL时,为变大小稀疏码的at&ds) (HN时,为变有无的概念的at&ds);

@@ -92,7 +92,7 @@
 }
 
 //speed >> 目前简单粗暴两桢差值 (随后有需要改用微积分)
-+(CGFloat) speed:(UIView*)selfView target:(UIView*)target{
++(NSInteger) speed:(UIView*)selfView target:(UIView*)target{
     CGFloat speed = 0;
     CGPoint targetPoint = [UIView convertWorldPoint:target];
     CGPoint selfPoint = [UIView convertWorldPoint:selfView];
@@ -100,14 +100,14 @@
     CGFloat distanceY = (targetPoint.y - selfPoint.y);
     CGFloat distance = sqrt(powf(distanceX, 2) + powf(distanceY, 2));
     
-    NSString *key = STRFORMAT(@"%p_%p",selfView,target);
+    NSString *key = STRFORMAT(@"lastDistanceOf_%p_%p",selfView,target);
     NSObject *lastDistanceNum = [[XGRedis sharedInstance] objectForKey:key];
     if (ISOK(lastDistanceNum, NSNumber.class)) {
         CGFloat lastDistance = [((NSNumber*)lastDistanceNum) floatValue];
         speed = distance - lastDistance;
     }
     [[XGRedis sharedInstance] setObject:[NSNumber numberWithFloat:distance] forKey:key time:cRTDefault];
-    return speed;
+    return (NSInteger)speed;
 }
 
 //direction
