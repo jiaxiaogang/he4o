@@ -37,6 +37,8 @@
  *      1. 收集_GL向抽象和具象延伸,而尽量避免到_Hav,尤其要避免重组,无论是group还是solo (参考n19p18-todo4);
  *      2. 将group和solo重组的方式废弃掉,参考:n19p18-todo5
  *      3. 替代group和solo的方法为: 用outModel.checkAlg找同层节点进行_Hav,并判断其符合GLDic中的稀疏码同区,且与GL的innerType相同,同大或同小;
+ *  @bug
+ *      1. 发现,很多glValue稀疏码节点的ds和值,完全对不上;对不上应该是正常的,不过应该是大对应小,有对应无,这样正常;随后再查查;后未复现; T
  */
 -(void) convert2Out_SP:(AIKVPointer*)sAlg_p pAlg_p:(AIKVPointer*)pAlg_p outModel:(TOAlgModel*)outModel {
     //1. 结果数据准备
@@ -69,27 +71,6 @@
         TOValueModel *valueOutModel = [TOValueModel newWithSValue:sValue_p pValue:pValue_p group:outModel];
         //b. 行为化
         NSLog(@"------SP_GL行为化:%@ -> %@",[NVHeUtil getLightStr:sValue_p],[NVHeUtil getLightStr:pValue_p]);
-        
-        //TODOTOMORROW: 调试找不到glAlg的bug;
-        [theNV setForceMode:true];
-        [theNV setNodeData:sAlg.pointer lightStr:@"S"];
-        [theNV setNodeData:pAlg.pointer lightStr:@"P"];
-        [theNV setNodeData:sValue_p lightStr:@"s"];
-        [theNV setNodeData:pValue_p lightStr:@"p"];
-        [theNV setForceMode:false];
-        NSLog(@"======> s:%@",Alg2FStr(sAlg));
-        NSLog(@"======> p:%@",Alg2FStr(pAlg));
-        
-        for (AIPort *sPort in [AINetUtils absPorts_All:sAlg]) {
-            NSLog(@"======> SAbs:%@",AlgP2FStr(sPort.target_p));
-        }
-        
-        for (AIPort *pPort in [AINetUtils absPorts_All:pAlg]) {
-            NSLog(@"======> PAbs:%@",AlgP2FStr(pPort.target_p));
-        }
-        
-        //发现,很多glValue稀疏码节点的ds和值,完全对不上;
-        //对不上应该是正常的,不过应该是大对应小,有对应无,这样正常;随后再查查;
         
         AIAlgNodeBase *pConAlg = [SMGUtils searchNode:outModel.content_p];
         [self convert2Out_GL:pConAlg outModel:valueOutModel];
@@ -212,7 +193,7 @@
         }
         
         //4. 数据检查hAlg_根据type和value_p找ATHav
-        AIAlgNodeBase *hAlg = [AINetService getInnerAlg:curAlg vAT:outModel.content_p.algsType vDS:outModel.content_p.dataSource type:ATHav];
+        AIAlgNodeBase *hAlg = [AINetService getInner1Alg:curAlg vAT:outModel.content_p.algsType vDS:outModel.content_p.dataSource type:ATHav];
         if (!hAlg) {
             outModel.status = TOModelStatus_ActNo;
             [self.delegate toAction_SubModelFailure:outModel];
@@ -277,7 +258,7 @@
     //TODOTOMORROW: 查此处,C1训练右飞两次后,为何还是找不到距离变小索引;
     //经查,此处alg是pAlg,就是dis0的组节点,而并未经历过飞到0的经验,所以无法获取到glAlg结果;
     //可以尝试将此处,改为找将sAlg变小,而不是将其变成pAlg,即以s出发,接近p;
-    AIAlgNodeBase *glAlg = [AINetService getInnerAlg:alg vAT:vAT vDS:vDS type:type];
+    AIAlgNodeBase *glAlg = [AINetService getInner1Alg:alg vAT:vAT vDS:vDS type:type];
     if (Log4ActGL) NSLog(@"getInnerAlg: 根据:%@->%@ 找:%@%@ GLAlg:%@",Pit2FStr(outModel.sValue_p),Pit2FStr(outModel.content_p),vDS,Data2FStr(type, vAT, vDS),Alg2FStr(glAlg));
     if (!glAlg) {
         outModel.status = TOModelStatus_ActNo;

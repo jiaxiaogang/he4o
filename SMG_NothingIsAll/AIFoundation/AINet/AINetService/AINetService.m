@@ -9,21 +9,9 @@
 #import "AINetService.h"
 #import "AINetUtils.h"
 #import "AIAlgNodeBase.h"
+#import "TOUtils.h"
 
 @implementation AINetService
-
-+(AIAlgNodeBase*) getInnerAlg:(AIAlgNodeBase*)alg vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type{
-    //4. 数据检查hAlg_根据type和value_p找ATHav
-    AIKVPointer *innerValue_p = [theNet getNetDataPointerWithData:@(type) algsType:vAT dataSource:vDS];
-    
-    //3. 对v.ref和a.abs进行交集,取得有效GLAlg;
-    NSArray *vRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Value:innerValue_p]];
-    NSArray *aAbs_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:alg type:type]];
-    AIKVPointer *innerAlg_p = ARR_INDEX([SMGUtils filterSame_ps:vRef_ps parent_ps:aAbs_ps], 0);
-    AIAlgNodeBase *innerAlg = [SMGUtils searchNode:innerAlg_p];
-    return innerAlg;
-}
-
 
 /**
  *  MARK:--------------------获取GLAlg--------------------
@@ -36,26 +24,36 @@
  *  @todo
  *      2020.06.24: 对alg指引联想,取同层+多层abs,比如,我没洗过西瓜,但我洗过苹果,或者洗过水果,那我可以试下用水洗西瓜;
  */
-+(AIAlgNodeBase*) getInnerAlg_GL:(AIAlgNodeBase*)alg vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type{
-    //4. 数据检查hAlg_根据type和value_p找ATHav
++(AIAlgNodeBase*) getInner1Alg:(AIAlgNodeBase*)pAlg vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type{
+    //1. 数据检查hAlg_根据type和value_p找ATHav
     AIKVPointer *innerValue_p = [theNet getNetDataPointerWithData:@(type) algsType:vAT dataSource:vDS];
     
-    for (AIKVPointer *p1 in [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:alg]]) {
-        AIAlgNodeBase *a1 = [SMGUtils searchNode:p1];
-        NSLog(@"-----1级:%@",Alg2FStr(a1));
-        
-        for (AIKVPointer *p2 in [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:a1]]) {
-            AIAlgNodeBase *a2 = [SMGUtils searchNode:p2];
-            NSLog(@"--2级:%@",Alg2FStr(a2));
+    //2. 对v.ref和a.abs进行交集,取得有效GLAlg;
+    NSArray *vRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Value:innerValue_p]];
+    
+    //用可视化调试glAlg和pAlg的关系;
+    [theNV setForceMode:true];
+    [theNV setNodeData:pAlg.pointer lightStr:@"P"];
+    for (NSInteger i = 0; i < vRef_ps.count; i++) {
+        AIAlgNodeBase *glAbsAlg = [SMGUtils searchNode:ARR_INDEX(vRef_ps, i)];
+        NSArray *glAlgs = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:glAbsAlg]];
+        for (NSInteger j = 0; j < glAlgs.count; j++) {
+            [theNV setNodeData:ARR_INDEX(glAlgs, i) lightStr:(STRFORMAT(@"GL%ld-%ld",(long)i,(long)j))];
         }
     }
+    [theNV setForceMode:false];
     
-    //3. 对v.ref和a.abs进行交集,取得有效GLAlg;
-    NSArray *vRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Value:innerValue_p]];
-    NSArray *aAbs_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:alg type:type]];
-    AIKVPointer *innerAlg_p = ARR_INDEX([SMGUtils filterSame_ps:vRef_ps parent_ps:aAbs_ps], 0);
-    AIAlgNodeBase *innerAlg = [SMGUtils searchNode:innerAlg_p];
-    return innerAlg;
+    //3. 找出合格的inner1Alg;
+    for (AIKVPointer *gl1_p in vRef_ps) {
+        AIAlgNodeBase *gl1Alg = [SMGUtils searchNode:gl1_p];
+        NSArray *gl0_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:gl1Alg]];
+        for (AIKVPointer *gl0_p in gl0_ps) {
+            if ([TOUtils mIsC_2:gl0_p c:pAlg.pointer] || [TOUtils mIsC_2:pAlg.pointer c:gl0_p]) {
+                return gl1Alg;
+            }
+        }
+    }
+    return nil;
 }
 
 @end
