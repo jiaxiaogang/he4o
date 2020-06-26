@@ -59,7 +59,7 @@
     
     //3. 构建父概念 & 将空场景加入瞬时记忆;
     AIAbsAlgNode *parentAlgNode = [theNet createAbsAlg_NoRepeat:parentValue_ps conAlgs:nil isMem:true isOut:false ds:algsType];
-    if (parentValue_ps.count == 0) [self.delegate aiThinkIn_AddToShortMemory:@[parentAlgNode.pointer] isMatch:false];
+    if (parentValue_ps.count == 0) [self.delegate aiThinkIn_AddToShortMemory:parentAlgNode.pointer isMatch:false];
     if (Log4TCInput) NSLog(@"---> 构建InputParent节点:%@",Alg2FStr(parentAlgNode));
     
     //4. 收集本组中,所有概念节点;
@@ -71,7 +71,7 @@
         [fromGroup_ps addObject:subAlgNode.pointer];
         
         //6. 将所有子概念添加到瞬时记忆;
-        [self.delegate aiThinkIn_AddToShortMemory:@[subAlgNode.pointer] isMatch:false];
+        [self.delegate aiThinkIn_AddToShortMemory:subAlgNode.pointer isMatch:false];
         [theNV setNodeData:subAlgNode.pointer];
         NSLog(@"InputSub:%@",Alg2FStr(subAlgNode));
     }
@@ -98,7 +98,7 @@
         
         //2. 加入瞬时记忆
         if (algNode && self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_AddToShortMemory:isMatch:)]) {
-            [self.delegate aiThinkIn_AddToShortMemory:@[algNode.pointer] isMatch:false];
+            [self.delegate aiThinkIn_AddToShortMemory:algNode.pointer isMatch:false];
         }
         
         [theNV setNodeData:algNode.pointer];
@@ -114,7 +114,7 @@
     AIAbsAlgNode *outAlg = [theNet createAbsAlg_NoRepeat:outValue_ps conAlgs:nil isMem:false isOut:true];
     
     //3. 加瞬时记忆
-    [self.delegate aiThinkIn_AddToShortMemory:@[outAlg.pointer] isMatch:false];
+    [self.delegate aiThinkIn_AddToShortMemory:outAlg.pointer isMatch:false];
     
     //4. 进行识别
     [self dataIn_NoMV:outAlg.pointer fromGroup_ps:@[outAlg.pointer]];
@@ -169,7 +169,8 @@
     }];
     
     //3. 添加到瞬时记忆;
-    if (mModel.matchAlg) [self.delegate aiThinkIn_AddToShortMemory:@[mModel.matchAlg.pointer] isMatch:true];
+    AIKVPointer *newAdd2ShortMem = mModel.matchAlg ? mModel.matchAlg.pointer : mModel.protoAlg_p;
+    [self.delegate aiThinkIn_AddToShortMemory:newAdd2ShortMem isMatch:true];
     
     //3. 构建时序 (把每次dic输入,都作为一个新的内存时序);
     NSArray *shortMemory = [self.delegate aiThinkIn_GetShortMemory:true];

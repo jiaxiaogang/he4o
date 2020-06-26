@@ -214,9 +214,9 @@
 #define Log4InAnaGL true
 #define Log4InAnaHN false
 //正向类比
-#define Log4SameAna false
+#define Log4SameAna true
 //反向类比
-#define Log4DiffAna false
+#define Log4DiffAna true
 //方向索引
 #define Log4DirecRef false
 //行为化_GL

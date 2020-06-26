@@ -76,7 +76,9 @@
     [UIView animateWithDuration:1.5f animations:^{
         [foodView setCenter:targetPoint];
     }completion:^(BOOL finished) {
-        //1. 触碰到鸟嘴;
+        //1. 吃前视觉
+        [self.birdView see:self.view];
+        //2. 触碰到鸟嘴;
         [self.birdView touchMouth];
     }];
 }

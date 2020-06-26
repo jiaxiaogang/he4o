@@ -72,8 +72,13 @@
     
     //4. 用sin计算对边Y,cos计算邻边X;
     NSLog(@"fly >> %@ angle:%f",[NVHeUtil getLightStr_Value:value algsType:FLY_RDS dataSource:@""],value_F1_1 * 180);
-    [self setX:self.x + (cos(angle) * 10.0f)];
-    [self setY:self.y + (sin(angle) * 10.0f)];
+    [UIView animateWithDuration:0.1f animations:^{
+        [self setX:self.x + (cos(angle) * 10.0f)];
+        [self setY:self.y + (sin(angle) * 10.0f)];
+    }completion:^(BOOL finished) {
+        //5. 飞后视觉
+        [self see:[self.delegate birdView_GetPageView]];
+    }];
 }
 
 -(void) see:(UIView*)view{
@@ -86,9 +91,6 @@
 
 //被动吃
 -(void) touchMouth{
-    //1. 吃前视觉
-    [self see:[self.delegate birdView_GetPageView]];
-    
     //2. 吃
     [AIReactorControl commitReactor:EAT_RDS];
 }
@@ -99,14 +101,11 @@
  */
 -(void) touchWing:(int)direction{
     //1. 飞前视觉
-    [self see:[self.delegate birdView_GetPageView]];
+    //[self see:[self.delegate birdView_GetPageView]];
     
     //2. 飞行
     float data = direction / 8.0f;
     [AIReactorControl commitReactor:FLY_RDS datas:@[@(data)]];
-    
-    //3. 飞后视觉
-    [self see:[self.delegate birdView_GetPageView]];
 }
 
 -(void) dropUp{

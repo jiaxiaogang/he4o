@@ -12,7 +12,15 @@
 @interface AIShortMemory ()
 
 @property (strong,nonatomic) NSMutableArray *protoCache;//瞬时记忆 (容量8)
-@property (strong,nonatomic) NSMutableArray *matchCache;//瞬时match版 (以后逐步替代shortCache);
+
+/**
+ *  MARK:--------------------瞬时match版--------------------
+ *  @desc 以后逐步替代shortCache;
+ *  @version
+ *      初版: 输入概念识别成功时,加入matchAlg;
+ *      2020.06.26: 识别失败时,将protoAlg加入 (以避免,飞行行为因不被识别而无法加入的BUG);
+ */
+@property (strong,nonatomic) NSMutableArray *matchCache;
 
 @end
 

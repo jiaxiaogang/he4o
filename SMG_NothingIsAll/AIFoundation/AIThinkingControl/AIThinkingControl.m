@@ -148,8 +148,10 @@ static AIThinkingControl *_instance;
 /**
  *  MARK:--------------------AIThinkInDelegate--------------------
  */
--(void) aiThinkIn_AddToShortMemory:(NSArray*)algNode_ps isMatch:(BOOL)isMatch{
-    [self.shortMemory addToShortCache_Ps:algNode_ps isMatch:isMatch];
+-(void) aiThinkIn_AddToShortMemory:(AIKVPointer*)algNode_p isMatch:(BOOL)isMatch{
+    if (algNode_p) {
+        [self.shortMemory addToShortCache_Ps:@[algNode_p] isMatch:isMatch];
+    }
 }
 
 -(NSArray*) aiThinkIn_GetShortMemory:(BOOL)isMatch{
