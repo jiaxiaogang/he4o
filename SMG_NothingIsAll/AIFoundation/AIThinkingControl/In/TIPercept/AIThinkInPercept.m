@@ -30,7 +30,6 @@
     //1. 联想到mv时,创建CmvModel取到FoNode;
     if (!createMvModelBlock) return;
     AIFrontOrderNode *protoFo = createMvModelBlock(algsArr,false);
-    AIFrontOrderNode *matchFo = createMvModelBlock(algsArr,true);
     if (!protoFo) return;
     
     //2. 取cmvNode
@@ -40,7 +39,7 @@
     }
     
     //3. 学习
-    [self dataIn_FindMV_Learning:protoFo matchFo:matchFo cmvNode:cmvNode canAss:canAss updateEnergy:updateEnergy];
+    [self dataIn_FindMV_Learning:protoFo cmvNode:cmvNode canAss:canAss updateEnergy:updateEnergy];
     
     //4. 思考mv,需求处理
     if (finishBlock) finishBlock(cmvNode);
@@ -59,7 +58,7 @@
  *  @version
  *      202003-04: a.去掉外类比; b.外类比拆分为:正向类比和反向类比;
  */
--(void) dataIn_FindMV_Learning:(AIFrontOrderNode*)protoFo matchFo:(AIFrontOrderNode*)matchFo cmvNode:(AICMVNode*)cmvNode canAss:(BOOL(^)())canAss updateEnergy:(void(^)(CGFloat delta))updateEnergy{
+-(void) dataIn_FindMV_Learning:(AIFrontOrderNode*)protoFo cmvNode:(AICMVNode*)cmvNode canAss:(BOOL(^)())canAss updateEnergy:(void(^)(CGFloat delta))updateEnergy{
     //1. 数据检查 & 准备
     if (protoFo == nil || cmvNode == nil) {
         return;

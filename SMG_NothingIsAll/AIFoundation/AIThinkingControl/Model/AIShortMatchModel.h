@@ -36,12 +36,22 @@
 /**
  *  MARK:--------------------原始时序--------------------
  *  @desc
- *      1. 由前几桢瞬时中的matchAlg来构建;
- *      2. 不可轻易改为由protoAlg构建,因为matchAlg对红色或距离的认识才是几个标志性值(比如5,8,13,21,57);
+ *      1. 不可轻易改为由protoAlg构建,因为matchAlg对红色或距离的认识才是几个标志性值(比如5,8,13,21,57);
  *          a. 内类比成果因此而,这对以后决策时进行匹配有用,如果改成protoAlg构建,这个值会非常多,使决策循环也非常多才能找到有用的经验;
  *          b. 反向反馈类比成果也同理,对MC中MC是否有效可行为化的判定非常有用,因为一旦无法MC匹配到mIsC,那么将进入下轮决策循环;
+ *  @version
+ *      2020.06.26: 将protoFo拆分为protoFo和matchAFo两部分;
  */
 @property (strong, nonatomic) AIFoNodeBase *protoFo;
+
+/**
+ *  MARK:--------------------由matchAlg构建的时序--------------------
+ *  @desc
+ *      1. 将原先protoFo,拆分为:protoFo和matchAFo两部分实现;
+ *      2. 由前几桢瞬时中的matchAlg来构建;
+ */
+@property (strong, nonatomic) AIFoNodeBase *matchAFo;
+
 @property (strong, nonatomic) AIFoNodeBase *matchFo;    //匹配时序
 @property (assign, nonatomic) CGFloat matchFoValue;     //时序匹配度
 @property (assign, nonatomic) NSInteger cutIndex;       //已发生与预测的截点 (0开始,已发生含cutIndex);

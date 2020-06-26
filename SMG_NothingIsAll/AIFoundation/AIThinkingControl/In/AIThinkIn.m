@@ -132,7 +132,7 @@
         
         //2. 识别时序;
         [AIThinkInReason TIR_Fo_FromRethink:rtContent_ps replaceMatchAlg:rtAlg finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue, NSInteger cutIndex) {
-            mModel.protoFo = curNode;
+            mModel.matchAFo = curNode;
             mModel.matchFo = matchFo;
             mModel.matchFoValue = matchValue;
             mModel.cutIndex = cutIndex;
@@ -173,11 +173,13 @@
     [self.delegate aiThinkIn_AddToShortMemory:newAdd2ShortMem isMatch:true];
     
     //3. 构建时序 (把每次dic输入,都作为一个新的内存时序);
-    NSArray *shortMemory = [self.delegate aiThinkIn_GetShortMemory:true];
-    mModel.protoFo = [theNet createConFo:shortMemory isMem:true];
+    NSArray *matchAShortMem = [self.delegate aiThinkIn_GetShortMemory:true];
+    mModel.matchAFo = [theNet createConFo:matchAShortMem isMem:true];
+    NSArray *protoAShortMem = [self.delegate aiThinkIn_GetShortMemory:false];
+    mModel.protoFo = [theNet createConFo:protoAShortMem isMem:true];
     
     //4. 识别时序;
-    [AIThinkInReason TIR_Fo_FromShortMem:mModel.protoFo lastMatchAlg:mModel.matchAlg finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue,NSInteger cutIndex) {
+    [AIThinkInReason TIR_Fo_FromShortMem:mModel.matchAFo lastMatchAlg:mModel.matchAlg finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue,NSInteger cutIndex) {
         mModel.matchFo = matchFo;
         mModel.matchFoValue = matchValue;
         mModel.cutIndex = cutIndex;

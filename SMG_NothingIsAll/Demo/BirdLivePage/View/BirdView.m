@@ -73,8 +73,8 @@
     //4. 用sin计算对边Y,cos计算邻边X;
     NSLog(@"fly >> %@ angle:%f",[NVHeUtil getLightStr_Value:value algsType:FLY_RDS dataSource:@""],value_F1_1 * 180);
     [UIView animateWithDuration:0.1f animations:^{
-        [self setX:self.x + (cos(angle) * 10.0f)];
-        [self setY:self.y + (sin(angle) * 10.0f)];
+        [self setX:self.x + (cos(angle) * 30.0f)];
+        [self setY:self.y + (sin(angle) * 30.0f)];
     }completion:^(BOOL finished) {
         //5. 飞后视觉
         [self see:[self.delegate birdView_GetPageView]];
@@ -138,13 +138,21 @@
         
         //2. 吃掉 (让he以吸吮反射的方式,去主动吃;并将out入网,以抽象出"吃"的节点;参考n15p6-QT1)
         if (foodView.status == FoodStatus_Eat) {
-            [foodView removeFromSuperview];
-            
-            //3. 吃完视觉
-            [self see:[self.delegate birdView_GetPageView]];
-            
-            //4. 产生HungerMindValue;
-            [self sendHunger:1.0f];
+            [UIView animateWithDuration:0.1f animations:^{
+                [self setTransform:CGAffineTransformMakeRotation(M_PI_4 * 0.5f)];
+            }completion:^(BOOL finished) {
+                [UIView animateWithDuration:0.1f animations:^{
+                    [self setTransform:CGAffineTransformIdentity];
+                }completion:^(BOOL finished) {
+                    [foodView removeFromSuperview];
+                    
+                    //3. 吃完视觉
+                    [self see:[self.delegate birdView_GetPageView]];
+                    
+                    //4. 产生HungerMindValue;
+                    [self sendHunger:1.0f];
+                }];
+            }];
         }else if(foodView.status == FoodStatus_Border){
             //坚果带皮时,不仅吃不到,还得嘴疼;
             //3. 吃完视觉
