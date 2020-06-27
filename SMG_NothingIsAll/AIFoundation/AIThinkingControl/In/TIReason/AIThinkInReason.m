@@ -315,8 +315,9 @@
  *      3. 能够匹配到更多个概念节点,越预测准确;
  *  TODO_FUTURE:判断概念匹配,目前仅支持一层抽象判断,是否要支持多层?实现方式比如(索引 / TIRAlg和TIRFo的协作);
  *
- *  @测试BUG/迭代记录:
+ *  @version:
  *      20191231: 测试到,点击饥饿,再点击乱投,返回matchFo:nil matchValue:0;所以针对此识别失败问题,发现了_fromShortMem和_fromRethink的不同,且支持了两层assFo,与全含;(参考:n18p2)
+ *      20200627: 支持明确价值预测 & 支持更匹配的时序预测 (参考:20052);
  *
  */
 +(void) partMatching_Fo:(AIFoNodeBase*)protoFo
@@ -329,7 +330,6 @@
         finishBlock(nil,0,0);
         return;
     }
-    __block BOOL successed = false;
     
     //2. 取assIndexes (取递归两层)
     NSMutableArray *assIndexes = [[NSMutableArray alloc] init];
@@ -345,30 +345,64 @@
         NSArray *assFoPorts = ARRTOOK(assFoBlock(indexAlg));
         if (Log4MFo) NSLog(@"-----> TIR_Fo 索引到有效时序数:%lu",(unsigned long)assFoPorts.count);
         
-        
-        //TODOTOMORROW: TIRFo迭代:
-        //1. 将此处改为对所有识别结果,进行价值判断,是否价值明确;
-        //1.1 如果价值明确,将匹配度最高的返回;
-        //1.2 如果价值不明确,则找出protoAlg独特部分稀疏码;
-        //1.2.1 并指引向具象找,包含这些独特稀疏码的Alg节点,做为新的assIndexes找引用时序,并返回第1步,进行价值明确判断,明确则返回;
-        
         //5. 依次对assFos对应的时序,做匹配度评价; (参考: 160_TIRFO单线顺序模型)
+        NSMutableDictionary *mostMatchResult = [[NSMutableDictionary alloc] init];
+        __block BOOL havDiff = false;
         for (AIPort *assFoPort in assFoPorts) {
             AIFoNodeBase *assFo = [SMGUtils searchNode:assFoPort.target_p];
             
             //6. 对assFo做匹配判断;
             [TIRUtils TIR_Fo_CheckFoValidMatch:protoFo assFo:assFo checkItemValid:checkItemValid success:^(NSInteger lastAssIndex, CGFloat matchValue) {
-                NSLog(@"时序识别: SUCCESS >>> matchValue:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
-                successed = true;
-                finishBlock(assFo,matchValue,lastAssIndex);
+                CGFloat oldMatchValue = [NUMTOOK([mostMatchResult objectForKey:@"matchValue"]) floatValue];
+                AIFoNodeBase *oldAssFo = [mostMatchResult objectForKey:@"assFo"];
+                if (!oldAssFo) {
+                    //7. 首个保留;
+                    [mostMatchResult setDictionary:@{@"matchValue":@(matchValue),@"assFo":assFo,@"lastAssIndex":@(lastAssIndex)}];
+                }else{
+                    //8. 将此处改为对所有识别结果,进行价值判断,是否价值明确;
+                    BOOL diff = [ThinkingUtils diffOfMV1:oldAssFo.cmvNode_p mv2:assFo.cmvNode_p];
+                    if (diff) {
+                        //9. 不明确则清空;
+                        [mostMatchResult removeAllObjects];
+                        havDiff = true;
+                    }else{
+                        //10. 如果价值明确,则保留更高匹配度的结果;
+                        if (matchValue > oldMatchValue) {
+                            [mostMatchResult setDictionary:@{@"matchValue":@(matchValue),@"assFo":assFo,@"lastAssIndex":@(lastAssIndex)}];
+                        }
+                    }
+                }
+                
             } failure:^(NSString *msg) {
                 if (Log4MFo) NSLog(@"%@",msg);
             }];
             
-            //7. 成功一条即return
-            if (successed) return;
+            //11. 有反向,预测不明确,跳出循环;
+            if (havDiff) {
+                
+                //TODOTOMORROW: TIRFo迭代:
+                //1. 如果价值不明确,则找出protoAlg独特部分稀疏码;
+                //2. 并顺着assFo指引向具象找,包含这些独特稀疏码的Alg节点,做为新的assIndexes找引用时序,并返回第1步,进行价值明确判断,明确则返回;
+                
+                
+                break;
+            }
+        }
+        
+        //12. 当前索引,找到明确预测结果,则直接返回;
+        if (DICISOK(mostMatchResult)) {
+            CGFloat matchValue = [NUMTOOK([mostMatchResult objectForKey:@"matchValue"]) floatValue];
+            AIFoNodeBase *assFo = [mostMatchResult objectForKey:@"assFo"];
+            NSInteger lastAssIndex = [NUMTOOK([mostMatchResult objectForKey:@"lastAssIndex"]) integerValue];
+            NSLog(@"时序识别: SUCCESS >>> matchValue:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
+            finishBlock(assFo,matchValue,lastAssIndex);
+            return;
         }
     }
+    
+    //13. 最终也没能匹配上;
+    
+    
 }
 
 /**

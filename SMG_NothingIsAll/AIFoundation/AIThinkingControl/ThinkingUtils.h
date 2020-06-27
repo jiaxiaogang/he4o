@@ -117,6 +117,14 @@
 +(AINetAbsFoNode*)createAbsFo_NoRepeat_General:(NSArray*)conFos content_ps:(NSArray*)content_ps ds:(NSString*)ds difStrong:(NSInteger)difStrong;
 //+(AIFrontOrderNode*)createConFo_NoRepeat_General:(NSArray*)content_ps isMem:(BOOL)isMem;
 
+/**
+ *  MARK:--------------------获取mv1和mv2是否同向或反向--------------------
+ *  @result 默认返回false;
+ */
++(BOOL) sameOfMV1:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p;
++(BOOL) diffOfMV1:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p;
++(BOOL) diffOfScore1:(CGFloat)score1 score2:(CGFloat)score2;
+
 @end
 
 

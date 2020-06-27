@@ -422,7 +422,7 @@
     AnalogyType pType = [ThinkingUtils getInnerTypeWithScore:pScore];
     NSString *mDS = [ThinkingUtils getAnalogyTypeDS:mType];
     NSString *pDS = [ThinkingUtils getAnalogyTypeDS:pType];
-    BOOL isDiff = ((mScore > 0 && pScore < 0) || (mScore < 0 && pScore > 0));
+    BOOL isDiff = [ThinkingUtils diffOfScore1:mScore score2:pScore];
     if (isDiff) NSLog(@"\n\n------------------------ 反向反馈类比 ------------------------\n%@->%@ \n%@->%@",Fo2FStr(mModel.matchFo),Mvp2Str(mMv_p),Fo2FStr(shortFo),Mvp2Str(pMv_p));
     if (!isDiff) return;
 
@@ -550,9 +550,7 @@
     if (!mModel || !mModel.matchFo || !shortFo) return;
     
     //2. 检查同向;
-    CGFloat mScore = [ThinkingUtils getScoreForce:mModel.matchFo.cmvNode_p ratio:mModel.matchFoValue];
-    CGFloat sScore = [ThinkingUtils getScoreForce:shortFo.cmvNode_p ratio:1.0f];
-    BOOL isSame = ((mScore > 0 && sScore > 0) || (mScore < 0 && sScore < 0));
+    BOOL isSame = [ThinkingUtils sameOfMV1:mModel.matchFo.cmvNode_p mv2:shortFo.cmvNode_p];
     if(isSame) NSLog(@"\n\n------------------------ 正向反馈类比 ------------------------\n%@->%@ \n%@->%@",Fo2FStr(mModel.matchFo),Mvp2Str(mModel.matchFo.cmvNode_p),Fo2FStr(shortFo),Mvp2Str(shortFo.cmvNode_p));
     if (!isSame) return;
     
