@@ -204,7 +204,7 @@
     NSLog(@"\n\n=============================== 反思时序识别 ===============================\n%@",Fo2FStr(protoFo));
     
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [self partMatching_Fo:protoFo assFoIndexAlg:replaceMatchAlg assFoBlock:^NSArray *(AIAlgNodeBase *indexAlg) {
+    [self partMatching_Fo:protoFo indexProtoAlg:nil assFoIndexAlg:replaceMatchAlg assFoBlock:^NSArray *(AIAlgNodeBase *indexAlg) {
         NSMutableArray *result = [[NSMutableArray alloc] init];
         if (indexAlg) {
             //a. 只能识别cNormal时序;
@@ -253,7 +253,7 @@
  *  @version
  *      20200414 - protoFo由瞬时proto概念组成,改成瞬时match概念组成 (本方法中,去掉proto概念层到match层的联想);
  */
-+(void) TIR_Fo_FromShortMem:(AIFoNodeBase*)protoFo lastMatchAlg:(AIAlgNodeBase*)lastMatchAlg finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue,NSInteger cutIndex))finishBlock{
++(void) TIR_Fo_FromShortMem:(AIFoNodeBase*)protoFo lastProtoAlg:(AIKVPointer*)lastProtoAlg lastMatchAlg:(AIAlgNodeBase*)lastMatchAlg finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue,NSInteger cutIndex))finishBlock{
     //1. 数据检查
     if (!protoFo || !lastMatchAlg) {
         return;
@@ -261,7 +261,7 @@
     
     NSLog(@"\n\n------------------------------- 瞬时时序识别 -------------------------------\n%@",Fo2FStr(protoFo));
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [self partMatching_Fo:protoFo assFoIndexAlg:lastMatchAlg assFoBlock:^NSArray *(AIAlgNodeBase *indexAlg) {
+    [self partMatching_Fo:protoFo indexProtoAlg:lastProtoAlg assFoIndexAlg:lastMatchAlg assFoBlock:^NSArray *(AIAlgNodeBase *indexAlg) {
         if (indexAlg) {
             NSArray *normalRefPorts = [SMGUtils filterPorts_Normal:indexAlg.refPorts];
             return ARR_SUB(normalRefPorts, 0, cPartMatchingCheckRefPortsLimit);
@@ -304,6 +304,7 @@
  *  @param assFoBlock       : 联想fos (联想有效的5个)
  *  @param checkItemValid   : 检查item(fo.alg)的有效性 notnull (可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
  *  @param finishBlock      : 完成 notnull
+ *  @param indexProtoAlg    : assFoIndexAlg所对应的protoAlg,用来在不明确时,用其独特稀疏码指引向具象时序找"明确"预测;
  *  TODO_TEST_HERE:调试Pointer能否indexOfObject
  *  TODO_TEST_HERE:调试下item_p在indexOfObject中,有多个时,怎么办;
  *  TODO_TEST_HERE:测试下cPartMatchingThreshold配置值是否合理;
@@ -321,6 +322,7 @@
  *
  */
 +(void) partMatching_Fo:(AIFoNodeBase*)protoFo
+          indexProtoAlg:(AIKVPointer*)indexProtoAlg
           assFoIndexAlg:(AIAlgNodeBase*)assFoIndexAlg
              assFoBlock:(NSArray*(^)(AIAlgNodeBase *indexAlg))assFoBlock
          checkItemValid:(BOOL(^)(AIKVPointer *itemAlg_p,AIKVPointer *assAlg_p))checkItemValid
@@ -384,6 +386,11 @@
                 //1. 如果价值不明确,则找出protoAlg独特部分稀疏码;
                 //2. 并顺着assFo指引向具象找,包含这些独特稀疏码的Alg节点,做为新的assIndexes找引用时序,并返回第1步,进行价值明确判断,明确则返回;
                 
+                
+                //1. 从protoAlg减去indexAlg,得到独特稀疏码;
+                //2. 对独特稀疏码循环,向assFo的具象找符合的具象时序 (涉及到模糊匹配,如距58匹配到距69);
+                //2.1 可能需要对所有assFoPorts下,判断了全含的,都进行向具象找符合的操作,如果符合者,其具象也都符合"明确"预测,则可success;
+                //2.2 即无论怎样的石头打中我,都不爽 (其中"我"为独特稀疏码,石头飞过来为抽象时序,石头打中我为具象时序);
                 
                 break;
             }
