@@ -345,6 +345,13 @@
         NSArray *assFoPorts = ARRTOOK(assFoBlock(indexAlg));
         if (Log4MFo) NSLog(@"-----> TIR_Fo 索引到有效时序数:%lu",(unsigned long)assFoPorts.count);
         
+        
+        //TODOTOMORROW: TIRFo迭代:
+        //1. 将此处改为对所有识别结果,进行价值判断,是否价值明确;
+        //1.1 如果价值明确,将匹配度最高的返回;
+        //1.2 如果价值不明确,则找出protoAlg独特部分稀疏码;
+        //1.2.1 并指引向具象找,包含这些独特稀疏码的Alg节点,做为新的assIndexes找引用时序,并返回第1步,进行价值明确判断,明确则返回;
+        
         //5. 依次对assFos对应的时序,做匹配度评价; (参考: 160_TIRFO单线顺序模型)
         for (AIPort *assFoPort in assFoPorts) {
             AIFoNodeBase *assFo = [SMGUtils searchNode:assFoPort.target_p];
