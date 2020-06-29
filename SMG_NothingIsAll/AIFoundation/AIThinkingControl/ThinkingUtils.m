@@ -209,6 +209,47 @@
 //    return nil;
 //}
 
+/**
+ *  MARK:--------------------按照模糊匹配度排序--------------------
+ *  @param maskValue_p  : 排序基准 (稀疏码);
+ *  @param proto_ps     : 对proto_ps进行排序 (元素为概念);
+ *  @desc 比如基准=d58, proto=[(d33),(d59),(a88)], 得到的结果result=[(d59),(d33)];
+ *  @result notnull
+ */
++(NSArray*) getFuzzySortWithMaskValue:(AIKVPointer*)maskValue_p fromProto_ps:(NSArray*)proto_ps{
+    //a. 对result2筛选出包含同标识value值的: result3;
+    __block NSMutableArray *validConDatas = [[NSMutableArray alloc] init];
+    [ThinkingUtils filterAlg_Ps:proto_ps valueIdentifier:maskValue_p.identifier itemValid:^(AIAlgNodeBase *alg, AIKVPointer *value_p) {
+        NSNumber *value = [AINetIndex getData:value_p];
+        if (alg && value) {
+            [validConDatas addObject:@{@"a":alg,@"v":value}];
+        }
+    }];
+    
+    //b. 对result3进行取值value并排序: result4 (根据差的绝对值小的排前面);
+    double pValue = [NUMTOOK([AINetIndex getData:maskValue_p]) doubleValue];
+    NSArray *sortConDatas = [validConDatas sortedArrayUsingComparator:^NSComparisonResult(NSDictionary *obj1, NSDictionary *obj2) {
+        double v1 = [NUMTOOK([obj1 objectForKey:@"v"]) doubleValue];
+        double v2 = [NUMTOOK([obj2 objectForKey:@"v"]) doubleValue];
+        double absV1 = fabs(v1 - pValue);
+        double absV2 = fabs(v2 - pValue);
+        return absV1 > absV2 ? NSOrderedDescending : absV1 < absV2 ? NSOrderedAscending : NSOrderedSame;
+    }];
+    
+    //c. 转成sortConAlgs
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    for (NSDictionary *sortConData in sortConDatas) {
+        AIAlgNodeBase *algNode = [sortConData objectForKey:@"a"];
+        [result addObject:algNode];
+    }
+    
+    //d. 调试日志
+    for (AIAlgNodeBase *item in result) {
+        if (Log4FuzzyAlg) NSLog(@"---> 同层基准:%@ => %@",Pit2FStr(maskValue_p),Alg2FStr(item));
+    }
+    return result;
+}
+
 @end
 
 

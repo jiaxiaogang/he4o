@@ -139,6 +139,22 @@
  *      支线: 对不符合预测的元素修正 (比如剩下一只没飞走,我再更大声吓一下) (注:这涉及到外层循环,反向类比的修正);
  */
 -(BOOL) reasonPlus:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex demandModel:(DemandModel*)demandModel{
+    
+    //TODOTOMORROW: 参考:20063
+    //1. 对新输入的protoAlg进行理性评价;
+    //a. 根据protoAlg-matchAlg取得独特稀疏码,并记录到短时记忆outModel;
+    //b. 取出首个独特稀疏码,获取模糊序列 (根据pValue_p对sameLevel_ps排序);
+    //NSArray *sortAlgs = [ThinkingUtils getFuzzySortWithMaskValue:pValue_p fromProto_ps:sameLevel_ps];
+    
+    //c. 从模糊Alg找refPorts,并取mv指向,看是否与原fo预测mv符合;
+    //d. 如不符合,则与原fo.conPorts取含pValue_p同区,且mv符合的,比如距0;
+    
+    //e. 判断,加工稀疏码值;
+    
+    
+    
+    
+    
     //1. 生成outFo模型
     TOFoModel *toFoModel = [TOFoModel newWithFo_p:matchFo.pointer base:demandModel];
     toFoModel.actionIndex = cutIndex + 1;

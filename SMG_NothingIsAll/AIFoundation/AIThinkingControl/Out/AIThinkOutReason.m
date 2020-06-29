@@ -78,17 +78,6 @@
         return;
     }
     
-    //TODOTOMORROW: 参考:20062
-    //1. 当行为化alg为matchAlg时,将其对应的protoAlg取特化的稀疏码;
-    //2. 并延着fo向具象找符合的conFos;
-    //3. 并判断其是否需实现;
-    //  a. 如距0: 则不影响无需实现;
-    //  b. 如距55: 则需修正;
-    //  c. 如pos35: 则无需理会;
-    
-    
-    
-    
     //2. cHav行为化;
     TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:cAlg_p group:outModel];
     [self.toAction convert2Out_P:algOutModel];

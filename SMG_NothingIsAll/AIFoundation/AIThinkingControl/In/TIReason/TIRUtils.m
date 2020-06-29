@@ -259,43 +259,18 @@
     NSMutableArray *allSortConAlgs = [[NSMutableArray alloc] init];//收集所有排序好的匹配节点数组 (二维数组);
     NSMutableArray *fuzzyAlgs = [[NSMutableArray alloc] init];//收集所有模糊匹配到的同级节点指针;
     for (AIKVPointer *pValue_p in pSubMs) {
-        //a. 对result2筛选出包含同标识value值的: result3;
-        __block NSMutableArray *validConDatas = [[NSMutableArray alloc] init];
-        [ThinkingUtils filterAlg_Ps:sameLevel_ps valueIdentifier:pValue_p.identifier itemValid:^(AIAlgNodeBase *alg, AIKVPointer *value_p) {
-            NSNumber *value = [AINetIndex getData:value_p];
-            if (alg && value) {
-                [validConDatas addObject:@{@"a":alg,@"v":value}];
-            }
-        }];
+        //a. 获取模糊序列 (根据pValue_p对sameLevel_ps排序);
+        NSArray *sortAlgs = [ThinkingUtils getFuzzySortWithMaskValue:pValue_p fromProto_ps:sameLevel_ps];
         
-        //b. 对result3进行取值value并排序: result4 (根据差的绝对值小的排前面);
-        double pValue = [NUMTOOK([AINetIndex getData:pValue_p]) doubleValue];
-        NSArray *sortConDatas = [validConDatas sortedArrayUsingComparator:^NSComparisonResult(NSDictionary *obj1, NSDictionary *obj2) {
-            double v1 = [NUMTOOK([obj1 objectForKey:@"v"]) doubleValue];
-            double v2 = [NUMTOOK([obj2 objectForKey:@"v"]) doubleValue];
-            double absV1 = fabs(v1 - pValue);
-            double absV2 = fabs(v2 - pValue);
-            return absV1 > absV2 ? NSOrderedDescending : absV1 < absV2 ? NSOrderedAscending : NSOrderedSame;
-        }];
-        
-        //c. 转成sortConAlgs & allValidSameLevel_ps
-        NSMutableArray *sortConAlgs = [[NSMutableArray alloc] init];
-        for (NSDictionary *sortConData in sortConDatas) {
-            AIAlgNodeBase *algNode = [sortConData objectForKey:@"a"];
-            [sortConAlgs addObject:algNode];
-            if (![fuzzyAlgs containsObject:algNode]) {
-                [fuzzyAlgs addObject:algNode];
+        //b. 收集结果到fuzzyAlgs
+        for (AIAlgNodeBase *item in sortAlgs) {
+            if (![fuzzyAlgs containsObject:item]) {
+                [fuzzyAlgs addObject:item];
             }
         }
         
-        //d. 收集结果
-        [allSortConAlgs addObject:sortConAlgs];
-        
-        //e. 调试日志
-        for (NSDictionary *item in sortConDatas) {
-            AIAlgNodeBase *itemAlg = [item objectForKey:@"a"];
-            if (Log4FuzzyAlg) NSLog(@"---> 同层基准:%@ => %@ 值:%@",Pit2FStr(pValue_p),Alg2FStr(itemAlg),[item objectForKey:@"v"]);
-        }
+        //c. 收集结果到allSortConAlgs
+        [allSortConAlgs addObject:sortAlgs];
     }
     
     //5. 对最终结果进行排序;

@@ -86,6 +86,11 @@
 //根据proto联想matchAlg节点;
 //+(AIAlgNodeBase*) getMatchAlgWithProtoAlg:(AIAlgNodeBase*)protoAlg;
 
+/**
+ *  MARK:--------------------按照模糊匹配度排序--------------------
+ */
++(NSArray*) getFuzzySortWithMaskValue:(AIKVPointer*)maskValue_p fromProto_ps:(NSArray*)proto_ps;
+
 @end
 
 
