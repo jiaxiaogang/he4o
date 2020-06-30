@@ -281,6 +281,8 @@
     for (TOModelBase *waitModel in waitModels) {
         if ([TOUtils mIsC_1:latestMatchAlg.pointer c:waitModel.content_p]) {
             
+            //TODO: 处理稀疏码部分_GL;
+            
             //4. 匹配,则完成;
             waitModel.status = TOModelStatus_Finish;
             

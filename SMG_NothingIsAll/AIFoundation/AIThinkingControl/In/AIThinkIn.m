@@ -78,7 +78,7 @@
     
     //6. NoMv处理;
     for (AIKVPointer *alg_p in fromGroup_ps) {
-        [self dataIn_NoMV:alg_p fromGroup_ps:fromGroup_ps];
+        [self dataIn_NoMV:[SMGUtils searchNode:alg_p] fromGroup_ps:fromGroup_ps];
     }
 }
 
@@ -102,7 +102,7 @@
         }
         
         [theNV setNodeData:algNode.pointer];
-        [self dataIn_NoMV:algNode.pointer fromGroup_ps:@[algNode.pointer]];
+        [self dataIn_NoMV:algNode fromGroup_ps:@[algNode.pointer]];
     }
 }
 
@@ -117,7 +117,7 @@
     [self.delegate aiThinkIn_AddToShortMemory:outAlg.pointer isMatch:false];
     
     //4. 进行识别
-    [self dataIn_NoMV:outAlg.pointer fromGroup_ps:@[outAlg.pointer]];
+    [self dataIn_NoMV:outAlg fromGroup_ps:@[outAlg.pointer]];
 }
 
 //MARK:===============================================================
@@ -157,19 +157,19 @@
  *  @version
  *      20200416 - 修复时序识别的bug: 因概念节点去重不够,导致即使概念内容一致,在时序识别时,也会无法匹配 (参考n19p5-A组BUG4);
  */
--(void) dataIn_NoMV:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps{
+-(void) dataIn_NoMV:(AIAlgNodeBase*)algNode fromGroup_ps:(NSArray*)fromGroup_ps{
     //1. 数据准备 (瞬时记忆,理性匹配出的模型);
     __block AIShortMatchModel *mModel = [[AIShortMatchModel alloc] init];
-    mModel.protoAlg_p = algNode_p;
+    mModel.protoAlg = algNode;
     
     //2. 识别概念;
-    [AIThinkInReason TIR_Alg:algNode_p fromGroup_ps:fromGroup_ps complete:^(AIAlgNodeBase *matchAlg, MatchType type) {
+    [AIThinkInReason TIR_Alg:algNode.pointer fromGroup_ps:fromGroup_ps complete:^(AIAlgNodeBase *matchAlg, MatchType type) {
         mModel.matchAlg = matchAlg;
         mModel.algMatchType = type;
     }];
     
     //3. 添加到瞬时记忆;
-    AIKVPointer *newAdd2ShortMem = mModel.matchAlg ? mModel.matchAlg.pointer : mModel.protoAlg_p;
+    AIKVPointer *newAdd2ShortMem = mModel.matchAlg ? mModel.matchAlg.pointer : mModel.protoAlg.pointer;
     [self.delegate aiThinkIn_AddToShortMemory:newAdd2ShortMem isMatch:true];
     
     //3. 构建时序 (把每次dic输入,都作为一个新的内存时序);
@@ -179,7 +179,7 @@
     mModel.protoFo = [theNet createConFo:protoAShortMem isMem:true];
     
     //4. 识别时序;
-    [AIThinkInReason TIR_Fo_FromShortMem:mModel.matchAFo lastProtoAlg:mModel.protoAlg_p lastMatchAlg:mModel.matchAlg finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue,NSInteger cutIndex) {
+    [AIThinkInReason TIR_Fo_FromShortMem:mModel.matchAFo lastProtoAlg:mModel.protoAlg.pointer lastMatchAlg:mModel.matchAlg finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue,NSInteger cutIndex) {
         mModel.matchFo = matchFo;
         mModel.matchFoValue = matchValue;
         mModel.cutIndex = cutIndex;

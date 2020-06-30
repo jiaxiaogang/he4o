@@ -25,7 +25,7 @@
 //MARK:===============================================================
 //MARK:                     < Alg部分 >
 //MARK:===============================================================
-@property (strong, nonatomic) AIKVPointer *protoAlg_p;  //原始概念
+@property (strong, nonatomic) AIAlgNodeBase *protoAlg;  //原始概念
 @property (strong, nonatomic) AIAlgNodeBase *matchAlg;  //匹配概念
 @property (assign, nonatomic) MatchType algMatchType;   //概念匹配类型
 

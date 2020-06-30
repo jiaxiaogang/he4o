@@ -24,6 +24,7 @@
 #import "AINetUtils.h"
 #import "TOAlgModel.h"
 #import "TOValueModel.h"
+#import "TOInputAlgModel.h"
 
 @implementation AIThinkOutPercept
 
@@ -78,7 +79,7 @@
             CGFloat score = [ThinkingUtils getScoreForce:mModel.matchFo.cmvNode_p ratio:mModel.matchFoValue];
             //b. R+
             if (score > 0) {
-                BOOL success = [self reasonPlus:matchFo cutIndex:mModel.cutIndex demandModel:demand];
+                BOOL success = [self reasonPlus:matchFo mModel:mModel demandModel:demand];
                 NSLog(@"topV2_R+ : %@",success ? @"成功":@"失败");
                 if (success) return;
             }else if(score < 0){
@@ -137,14 +138,46 @@
  *  @desc
  *      主线: 对需要输出的的元素,进行配合输出即可 (比如吓一下鸟,它自己就飞走了);
  *      支线: 对不符合预测的元素修正 (比如剩下一只没飞走,我再更大声吓一下) (注:这涉及到外层循环,反向类比的修正);
+ *  @version
+ *      2020.06.30: 对当前输入帧进行理性评价 (稀疏码检查,参考20063);
  */
--(BOOL) reasonPlus:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex demandModel:(DemandModel*)demandModel{
+-(BOOL) reasonPlus:(AIFoNodeBase*)matchFo mModel:(AIShortMatchModel*)mModel demandModel:(DemandModel*)demandModel{
+    //1. 数据检查
+    if (!mModel || matchFo || demandModel) {
+        return false;
+    }
     
+    //2. 生成outFo模型
+    TOFoModel *toFoModel = [TOFoModel newWithFo_p:matchFo.pointer base:demandModel];
+    toFoModel.actionIndex = mModel.cutIndex;
+    
+    
+    //3. 对前当帧进行理性评价
     //TODOTOMORROW: 参考:20063
     //1. 对新输入的protoAlg进行理性评价;
     //a. 根据protoAlg-matchAlg取得独特稀疏码,并记录到短时记忆outModel;
-    //b. 取出首个独特稀疏码,获取模糊序列 (根据pValue_p对sameLevel_ps排序);
-    //NSArray *sortAlgs = [ThinkingUtils getFuzzySortWithMaskValue:pValue_p fromProto_ps:sameLevel_ps];
+    NSArray *justPValues = [SMGUtils removeSub_ps:mModel.matchAlg.content_ps parent_ps:mModel.protoAlg.content_ps];
+    
+    //b. 将理性评价数据存到短时记忆模型;
+    TOInputAlgModel *toInputAlgModel = [TOInputAlgModel newWithAlg_p:mModel.matchAlg.pointer group:toFoModel];
+    NSArray *alreadayAct_ps = [TOUtils convertPointersFromTOModels:toInputAlgModel.subModels];
+    NSArray *validJustPValues = [SMGUtils removeSub_ps:alreadayAct_ps parent_ps:justPValues];
+    AIKVPointer *firstJustPValue = ARR_INDEX(validJustPValues, 0);
+    
+    //c. 取到首个P独特稀疏码;
+    if (firstJustPValue) {
+        //b. 取出首个独特稀疏码,获取模糊序列 (根据pValue_p对sameLevel_ps排序);
+        NSArray *sameLevelAlg_ps = [AINetUtils conPorts_All:mModel.matchAlg];
+        NSArray *sortAlgs = [ThinkingUtils getFuzzySortWithMaskValue:firstJustPValue fromProto_ps:sameLevelAlg_ps];
+        
+        
+        
+    }
+    
+    
+    
+    
+    
     
     //c. 从模糊Alg找refPorts,并取mv指向,看是否与原fo预测mv符合;
     //d. 如不符合,则与原fo.conPorts取含pValue_p同区,且mv符合的,比如距0;
@@ -153,13 +186,8 @@
     
     
     
-    
-    
-    //1. 生成outFo模型
-    TOFoModel *toFoModel = [TOFoModel newWithFo_p:matchFo.pointer base:demandModel];
-    toFoModel.actionIndex = cutIndex + 1;
-    
-    //2. 对首元素进行行为化;
+    //4. 对下帧进行行为化;
+    toFoModel.actionIndex = mModel.cutIndex + 1;
     [self.delegate aiTOP_2TOR_ReasonPlus:toFoModel];
     return toFoModel.status != TOModelStatus_ActNo && toFoModel.status != TOModelStatus_ScoreNo;//成功行为化,则中止递归;
 }
