@@ -79,7 +79,7 @@
             CGFloat score = [ThinkingUtils getScoreForce:mModel.matchFo.cmvNode_p ratio:mModel.matchFoValue];
             //b. R+
             if (score > 0) {
-                BOOL success = [self reasonPlus:matchFo mModel:mModel demandModel:demand];
+                BOOL success = [self reasonPlus:mModel demandModel:demand];
                 NSLog(@"topV2_R+ : %@",success ? @"成功":@"失败");
                 if (success) return;
             }else if(score < 0){
@@ -141,14 +141,14 @@
  *  @version
  *      2020.06.30: 对当前输入帧进行理性评价 (稀疏码检查,参考20063);
  */
--(BOOL) reasonPlus:(AIFoNodeBase*)matchFo mModel:(AIShortMatchModel*)mModel demandModel:(DemandModel*)demandModel{
+-(BOOL) reasonPlus:(AIShortMatchModel*)mModel demandModel:(DemandModel*)demandModel{
     //1. 数据检查
-    if (!mModel || matchFo || demandModel) {
+    if (!mModel || mModel.matchFo || demandModel) {
         return false;
     }
     
     //2. 生成outFo模型
-    TOFoModel *toFoModel = [TOFoModel newWithFo_p:matchFo.pointer base:demandModel];
+    TOFoModel *toFoModel = [TOFoModel newWithFo_p:mModel.matchFo.pointer base:demandModel];
     toFoModel.actionIndex = mModel.cutIndex;
     
     
@@ -166,11 +166,23 @@
     
     //c. 取到首个P独特稀疏码;
     if (firstJustPValue) {
-        //b. 取出首个独特稀疏码,获取模糊序列 (根据pValue_p对sameLevel_ps排序);
+        //b. 取出首个独特稀疏码,从同层概念中,获取模糊序列 (根据pValue_p对sameLevel_ps排序);
         NSArray *sameLevelAlg_ps = [AINetUtils conPorts_All:mModel.matchAlg];
         NSArray *sortAlgs = [ThinkingUtils getFuzzySortWithMaskValue:firstJustPValue fromProto_ps:sameLevelAlg_ps];
         
-        
+        //d. 取模糊最匹配的概念,并取出3条refPorts的时序;
+        AIAlgNodeBase *fuzzyAlg = [SMGUtils searchNode:ARR_INDEX(sortAlgs, 0)];
+        if (fuzzyAlg) {
+            NSArray *fuzzyRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:fuzzyAlg]];
+            fuzzyRef_ps = ARR_SUB(fuzzyRef_ps, 0, cPMValue_RefAssLimit);
+            
+            //e. 依次判断refPorts时序的价值,是否与matchFo相符 (只需要有一条相符就行);
+            for (AIKVPointer *fuzzyRef_p in fuzzyRef_ps) {
+                AIFoNodeBase *fuzzyRef = [SMGUtils searchNode:fuzzyRef_p];
+                
+                
+            }
+        }
         
     }
     
