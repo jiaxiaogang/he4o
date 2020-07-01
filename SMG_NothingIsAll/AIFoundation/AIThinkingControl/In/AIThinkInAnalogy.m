@@ -550,7 +550,7 @@
     if (!mModel || !mModel.matchFo || !shortFo) return;
     
     //2. 检查同向;
-    BOOL isSame = [ThinkingUtils sameOfMV1:mModel.matchFo.cmvNode_p mv2:shortFo.cmvNode_p];
+    BOOL isSame = [ThinkingUtils sameScoreOfMV1:mModel.matchFo.cmvNode_p mv2:shortFo.cmvNode_p];
     if(isSame) NSLog(@"\n\n------------------------ 正向反馈类比 ------------------------\n%@->%@ \n%@->%@",Fo2FStr(mModel.matchFo),Mvp2Str(mModel.matchFo.cmvNode_p),Fo2FStr(shortFo),Mvp2Str(shortFo.cmvNode_p));
     if (!isSame) return;
     

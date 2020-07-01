@@ -306,6 +306,13 @@
 //}
 
 +(BOOL) sameOfMV1:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p{
+    if (mv1_p && mv2_p && [mv1_p.algsType isEqualToString:mv2_p.algsType]) {
+        return [self sameScoreOfMV1:mv1_p mv2:mv2_p];
+    }
+    return false;
+}
+
++(BOOL) sameScoreOfMV1:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p{
     if (mv1_p && mv2_p) {
         CGFloat mScore = [ThinkingUtils getScoreForce:mv1_p ratio:1.0f];
         CGFloat sScore = [ThinkingUtils getScoreForce:mv2_p ratio:1.0f];
@@ -314,7 +321,7 @@
     }
     return false;
 }
-+(BOOL) diffOfMV1:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p{
++(BOOL) diffScoreOfMV1:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p{
     if (mv1_p && mv2_p) {
         CGFloat mScore = [ThinkingUtils getScoreForce:mv1_p ratio:1.0f];
         CGFloat pScore = [ThinkingUtils getScoreForce:mv2_p ratio:1.0f];

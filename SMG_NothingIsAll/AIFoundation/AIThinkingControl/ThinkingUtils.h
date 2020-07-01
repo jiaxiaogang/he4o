@@ -126,9 +126,10 @@
  *  MARK:--------------------获取mv1和mv2是否同向或反向--------------------
  *  @result 默认返回false;
  */
-+(BOOL) sameOfMV1:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p;
-+(BOOL) diffOfMV1:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p;
-+(BOOL) diffOfScore1:(CGFloat)score1 score2:(CGFloat)score2;
++(BOOL) sameOfMV1:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p;      //同区且同向
++(BOOL) sameScoreOfMV1:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p; //同向
++(BOOL) diffScoreOfMV1:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p; //同向
++(BOOL) diffOfScore1:(CGFloat)score1 score2:(CGFloat)score2;        //同向
 
 @end
 

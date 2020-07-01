@@ -139,7 +139,7 @@
  *      主线: 对需要输出的的元素,进行配合输出即可 (比如吓一下鸟,它自己就飞走了);
  *      支线: 对不符合预测的元素修正 (比如剩下一只没飞走,我再更大声吓一下) (注:这涉及到外层循环,反向类比的修正);
  *  @version
- *      2020.06.30: 对当前输入帧进行理性评价 (稀疏码检查,参考20063);
+ *      2020.06.30: 对当前输入帧进行PM理性评价 (稀疏码检查,参考20063);
  */
 -(BOOL) reasonPlus:(AIShortMatchModel*)mModel demandModel:(DemandModel*)demandModel{
     //1. 数据检查
@@ -165,6 +165,7 @@
     AIKVPointer *firstJustPValue = ARR_INDEX(validJustPValues, 0);
     
     //c. 取到首个P独特稀疏码;
+    BOOL firstPNeedGL = true;
     if (firstJustPValue) {
         //b. 取出首个独特稀疏码,从同层概念中,获取模糊序列 (根据pValue_p对sameLevel_ps排序);
         NSArray *sameLevelAlg_ps = [AINetUtils conPorts_All:mModel.matchAlg];
@@ -174,19 +175,52 @@
         AIAlgNodeBase *fuzzyAlg = [SMGUtils searchNode:ARR_INDEX(sortAlgs, 0)];
         if (fuzzyAlg) {
             NSArray *fuzzyRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:fuzzyAlg]];
-            fuzzyRef_ps = ARR_SUB(fuzzyRef_ps, 0, cPMValue_RefAssLimit);
+            fuzzyRef_ps = ARR_SUB(fuzzyRef_ps, 0, cPM_RefLimit);
             
             //e. 依次判断refPorts时序的价值,是否与matchFo相符 (只需要有一条相符就行);
             for (AIKVPointer *fuzzyRef_p in fuzzyRef_ps) {
                 AIFoNodeBase *fuzzyRef = [SMGUtils searchNode:fuzzyRef_p];
                 
-                
+                //f. 同区且同向,则相符;
+                if (fuzzyRef && [ThinkingUtils sameOfMV1:fuzzyRef.cmvNode_p mv2:mModel.matchFo.cmvNode_p]) {
+                    firstPNeedGL = false;
+                    break;
+                }
             }
         }
-        
+    }else{
+        firstPNeedGL = false;
     }
     
-    
+    //g. Finish_转至决策流程控制方法;
+    if (!firstPNeedGL) {
+        //TODOTOMORROW---->>>
+        
+        
+        
+    }else{
+        //h. 转至_GL行为化->从matchFo.conPorts中找稳定的价值指向;
+        NSArray *matchCon_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:mModel.matchFo]];
+        
+        //i. 依次判断conPorts是否包含"同区稀疏码" (只需要找到一条相符即可);
+        for (AIKVPointer *matchCon_p in matchCon_ps) {
+            AIFoNodeBase *matchCon = [SMGUtils searchNode:matchCon_p];
+            
+            //j. 找到含同区稀疏码的con时序;
+            AIKVPointer *glValue4M = [SMGUtils filterSameIdentifier_p:firstJustPValue b_ps:matchCon.content_ps];
+            
+            //k. 价值稳定,则转_GL行为化;
+            if (glValue4M && [ThinkingUtils sameOfMV1:matchCon.cmvNode_p mv2:mModel.matchFo.cmvNode_p]) {
+                
+                //TODOTOMORROW---->>>
+                
+                
+                
+                
+                break;
+            }
+        }
+    }
     
     
     

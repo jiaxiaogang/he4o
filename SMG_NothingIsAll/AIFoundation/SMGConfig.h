@@ -52,9 +52,9 @@
 
 #define cTOSubModelLimit 2      //在决策中,子模型limit
 
-#define cMCValue_AbsAssLimit 10      //在MC匹配稀疏码模糊匹配时,向抽象联想个数
-#define cMCValue_ConAssLimit 20      //在MC匹配稀疏码模糊匹配时,向具象联想个数
-#define cPMValue_RefAssLimit 3       //在PM加工时,取refPorts的个数 (参考20063-A2示图)
+#define cMCValue_AbsAssLimit 10 //在MC匹配稀疏码模糊匹配时,向抽象联想个数
+#define cMCValue_ConAssLimit 20 //在MC匹配稀疏码模糊匹配时,向具象联想个数
+#define cPM_RefLimit 3          //在PM理性评价时,取refPorts的个数 (参考20063-A2示图)
 
 //MARK:===============================================================
 //MARK:                     < ThinkIn >

@@ -362,7 +362,7 @@
                     [mostMatchResult setDictionary:@{@"matchValue":@(matchValue),@"assFo":assFo,@"lastAssIndex":@(lastAssIndex)}];
                 }else{
                     //8. 将此处改为对所有识别结果,进行价值判断,是否价值明确;
-                    BOOL diff = [ThinkingUtils diffOfMV1:oldAssFo.cmvNode_p mv2:assFo.cmvNode_p];
+                    BOOL diff = [ThinkingUtils diffScoreOfMV1:oldAssFo.cmvNode_p mv2:assFo.cmvNode_p];
                     if (diff) {
                         //9. 不明确则清空;
                         [mostMatchResult removeAllObjects];

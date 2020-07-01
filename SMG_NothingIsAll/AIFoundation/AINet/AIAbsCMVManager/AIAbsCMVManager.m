@@ -75,7 +75,6 @@
     }
     at = STRTOOK(at);
     ds = STRTOOK(ds);
-    NSInteger urgentTo = [NUMTOOK([AINetIndex getData:urgentTo_p]) integerValue];
 
     //2. 创建absCMVNode;
     AIAbsCMVNode *result = [[AIAbsCMVNode alloc] init];
