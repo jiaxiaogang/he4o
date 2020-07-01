@@ -254,9 +254,9 @@ static AIThinkingControl *_instance;
     return self.shortMatchManager.models;
 }
 
--(void) aiTOP_2TOR_ReasonPlus:(TOFoModel*)outModel{
+-(void) aiTOP_2TOR_ReasonPlus:(TOFoModel*)outModel mModel:(AIShortMatchModel*)mModel{
     //1. 行为化;
-    [self.tOR commitReasonPlus:outModel];
+    [self.tOR commitReasonPlus:outModel mModel:mModel];
 }
 
 -(void) aiTOP_2TOR_ReasonSub:(AIFoNodeBase *)matchFo plusFo:(AIFoNodeBase *)plusFo subFo:(AIFoNodeBase*)subFo outModel:(TOFoModel*)outModel {
@@ -286,8 +286,8 @@ static AIThinkingControl *_instance;
     return success;
 }
 
--(BOOL) aiTOP_OuterPushMiddleLoop:(DemandModel*)demand latestMatchAlg:(AIAlgNodeBase*)latestMatchAlg{
-    return [self.tOR commitFromOuterPushMiddleLoop:demand latestMatchAlg:latestMatchAlg];
+-(BOOL) aiTOP_OuterPushMiddleLoop:(DemandModel*)demand latestMModel:(AIShortMatchModel*)latestMModel{
+    return [self.tOR commitFromOuterPushMiddleLoop:demand latestMModel:latestMModel];
 }
 
 /**

@@ -48,7 +48,7 @@
  *  MARK:--------------------FromTOP主入口--------------------
  *  @desc 做理性行为化
  */
--(void) commitReasonPlus:(TOFoModel*)outModel;
+-(void) commitReasonPlus:(TOFoModel*)outModel mModel:(AIShortMatchModel*)mModel;
 -(void) commitReasonSub:(AIFoNodeBase*)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo outModel:(TOFoModel*)outModel;
 -(void) commitPerceptPlus:(TOFoModel*)outModel;
 -(void) commitPerceptSub:(AIFoNodeBase*)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo checkFo:(AIFoNodeBase*)checkFo complete:(void(^)(BOOL actSuccess,NSArray *acts))complete;
@@ -77,6 +77,6 @@
 /**
  *  MARK:--------------------"外层输入" 推进 "中层循环" 决策--------------------
  */
--(BOOL) commitFromOuterPushMiddleLoop:(DemandModel*)demand latestMatchAlg:(AIAlgNodeBase*)latestMatchAlg;
+-(BOOL) commitFromOuterPushMiddleLoop:(DemandModel*)demand latestMModel:(AIShortMatchModel*)latestMModel;
 
 @end

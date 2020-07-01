@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class DemandModel,TOFoModel;
+@class DemandModel,TOFoModel,AIShortMatchModel;
 @protocol AIThinkOutPerceptDelegate <NSObject>
 
 -(DemandModel*) aiThinkOutPercept_GetCurrentDemand;         //获取当前需求;
@@ -18,13 +18,13 @@
 -(NSArray*) aiTOP_GetShortMatchModel;                       //获取瞬时模型
 
 //提交C给TOR行为化;
--(void) aiTOP_2TOR_ReasonPlus:(TOFoModel*)outModel;
+-(void) aiTOP_2TOR_ReasonPlus:(TOFoModel*)outModel mModel:(AIShortMatchModel*)mModel;
 -(void) aiTOP_2TOR_ReasonSub:(AIFoNodeBase *)matchFo plusFo:(AIFoNodeBase *)plusFo subFo:(AIFoNodeBase*)subFo outModel:(TOFoModel*)outModel;
 -(void) aiTOP_2TOR_PerceptPlus:(TOFoModel*)outModel;
 -(BOOL) aiTOP_2TOR_PerceptSub:(AIFoNodeBase *)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo checkFo:(AIFoNodeBase*)checkFo;
 
 //外循环输入,推动中层决策循环;
--(BOOL) aiTOP_OuterPushMiddleLoop:(DemandModel*)demand latestMatchAlg:(AIAlgNodeBase*)latestMatchAlg;
+-(BOOL) aiTOP_OuterPushMiddleLoop:(DemandModel*)demand latestMModel:(AIShortMatchModel*)latestMModel;
 
 @end
 

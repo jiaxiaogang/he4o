@@ -21,6 +21,7 @@
 #import "TOAlgModel.h"
 #import "TOValueModel.h"
 #import "DemandModel.h"
+#import "TOInputAlgModel.h"
 
 @interface AIThinkOutReason() <TOActionDelegate>
 
@@ -66,9 +67,17 @@
  *          1. isOut则输出;
  *          2. notOut则等待;
  *  @bug
- *      2020.06.15 : 训练B2步,R-失败时,转至R+后,此处outModel.actionIndex=2,而fo.content_ps一共才2个元素,所以行为化无效 (因为倒二帧是饿输出`吃`,本来吃已经是最后一个元素,所以越界);
+ *      2020.06.15: 训练B2步,R-失败时,转至R+后,此处outModel.actionIndex=2,而fo.content_ps一共才2个元素,所以行为化无效 (因为倒二帧是饿输出`吃`,本来吃已经是最后一个元素,所以越界);
+ *  @version
+ *      2020.07.01: 对当前输入帧进行PM理性评价 (稀疏码检查,参考20063);
  */
--(void) commitReasonPlus:(TOFoModel*)outModel{
+-(void) commitReasonPlus:(TOFoModel*)outModel mModel:(AIShortMatchModel*)mModel{
+    //1. 先理性评价;
+    BOOL reasonScoreSuccess = [self reasonScorePM:mModel group:outModel];
+    if (reasonScoreSuccess) {
+        return;
+    }
+    
     //1. 取出当前帧任务,如果无效,则直接跳下帧;
     AIFoNodeBase *fo = [SMGUtils searchNode:outModel.content_p];
     AIKVPointer *cAlg_p = ARR_INDEX(fo.content_ps, outModel.actionIndex);
@@ -268,9 +277,9 @@
  *  @todo
  *      1. 此处在for循环中,所以有可能推进多条,比如我有了一只狗,可以拉雪撬,或者送给爷爷陪爷爷 (涉及多任务间的价值自由竞争),暂仅支持一条,后再支持;
  */
--(BOOL) commitFromOuterPushMiddleLoop:(DemandModel*)demand latestMatchAlg:(AIAlgNodeBase*)latestMatchAlg{
+-(BOOL) commitFromOuterPushMiddleLoop:(DemandModel*)demand latestMModel:(AIShortMatchModel*)latestMModel{
     //1. 数据检查
-    if (!latestMatchAlg) {
+    if (!latestMModel) {
         return false;
     }
     
@@ -279,9 +288,10 @@
     
     //3. 判断最近一次input是否与等待中outModel相匹配 (匹配,比如吃,确定自己是否真吃了);
     for (TOModelBase *waitModel in waitModels) {
-        if ([TOUtils mIsC_1:latestMatchAlg.pointer c:waitModel.content_p]) {
+        if ([TOUtils mIsC_1:latestMModel.matchAlg.pointer c:waitModel.content_p]) {
             
             //TODO: 处理稀疏码部分_GL;
+            [self reasonScorePM:latestMModel group:nil];
             
             //4. 匹配,则完成;
             waitModel.status = TOModelStatus_Finish;
@@ -292,6 +302,94 @@
         }
     }
     return false;
+}
+
+/**
+ *  MARK:--------------------理性评价--------------------
+ *  @desc 对当前输入帧进行PM理性评价 (稀疏码检查,参考20063);
+ */
+-(BOOL) reasonScorePM:(AIShortMatchModel*)mModel group:(id<ISubModelsDelegate>)group{
+    
+    //3. 对前当帧进行理性评价
+    //TODOTOMORROW: 参考:20063
+    //1. 对新输入的protoAlg进行理性评价;
+    //a. 根据protoAlg-matchAlg取得独特稀疏码,并记录到短时记忆outModel;
+    NSArray *justPValues = [SMGUtils removeSub_ps:mModel.matchAlg.content_ps parent_ps:mModel.protoAlg.content_ps];
+    
+    //b. 将理性评价数据存到短时记忆模型;
+    TOInputAlgModel *toInputAlgModel = [TOInputAlgModel newWithAlg_p:mModel.matchAlg.pointer group:group];
+    NSArray *alreadayAct_ps = [TOUtils convertPointersFromTOModels:toInputAlgModel.subModels];
+    NSArray *validJustPValues = [SMGUtils removeSub_ps:alreadayAct_ps parent_ps:justPValues];
+    AIKVPointer *firstJustPValue = ARR_INDEX(validJustPValues, 0);
+    
+    //c. 取到首个P独特稀疏码;
+    BOOL firstPNeedGL = true;
+    if (firstJustPValue) {
+        //b. 取出首个独特稀疏码,从同层概念中,获取模糊序列 (根据pValue_p对sameLevel_ps排序);
+        NSArray *sameLevelAlg_ps = [AINetUtils conPorts_All:mModel.matchAlg];
+        NSArray *sortAlgs = [ThinkingUtils getFuzzySortWithMaskValue:firstJustPValue fromProto_ps:sameLevelAlg_ps];
+        
+        //d. 取模糊最匹配的概念,并取出3条refPorts的时序;
+        AIAlgNodeBase *fuzzyAlg = [SMGUtils searchNode:ARR_INDEX(sortAlgs, 0)];
+        if (fuzzyAlg) {
+            NSArray *fuzzyRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:fuzzyAlg]];
+            fuzzyRef_ps = ARR_SUB(fuzzyRef_ps, 0, cPM_RefLimit);
+            
+            //e. 依次判断refPorts时序的价值,是否与matchFo相符 (只需要有一条相符就行);
+            for (AIKVPointer *fuzzyRef_p in fuzzyRef_ps) {
+                AIFoNodeBase *fuzzyRef = [SMGUtils searchNode:fuzzyRef_p];
+                
+                //f. 同区且同向,则相符;
+                if (fuzzyRef && [ThinkingUtils sameOfMV1:fuzzyRef.cmvNode_p mv2:mModel.matchFo.cmvNode_p]) {
+                    firstPNeedGL = false;
+                    break;
+                }
+            }
+        }
+    }else{
+        firstPNeedGL = false;
+    }
+    
+    //g. Finish_转至决策流程控制方法;
+    if (!firstPNeedGL) {
+        //TODOTOMORROW---->>>
+        
+        
+        
+    }else{
+        //h. 转至_GL行为化->从matchFo.conPorts中找稳定的价值指向;
+        NSArray *matchCon_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:mModel.matchFo]];
+        
+        //i. 依次判断conPorts是否包含"同区稀疏码" (只需要找到一条相符即可);
+        for (AIKVPointer *matchCon_p in matchCon_ps) {
+            AIFoNodeBase *matchCon = [SMGUtils searchNode:matchCon_p];
+            
+            //j. 找到含同区稀疏码的con时序;
+            AIKVPointer *glValue4M = [SMGUtils filterSameIdentifier_p:firstJustPValue b_ps:matchCon.content_ps];
+            
+            //k. 价值稳定,则转_GL行为化;
+            if (glValue4M && [ThinkingUtils sameOfMV1:matchCon.cmvNode_p mv2:mModel.matchFo.cmvNode_p]) {
+                
+                //TODOTOMORROW---->>>
+                
+                
+                
+                
+                break;
+            }
+        }
+    }
+    
+    
+    
+    
+    //c. 从模糊Alg找refPorts,并取mv指向,看是否与原fo预测mv符合;
+    //d. 如不符合,则与原fo.conPorts取含pValue_p同区,且mv符合的,比如距0;
+    
+    //e. 判断,加工稀疏码值;
+    
+    
+    return true;
 }
 
 //MARK:===============================================================
