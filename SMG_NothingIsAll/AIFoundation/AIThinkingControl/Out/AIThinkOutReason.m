@@ -86,7 +86,13 @@
     mTOAlgModel.pm_MVAT = mModel.matchFo.cmvNode_p.algsType;
     
     //5. 理性评价
-    [self reasonScorePM:mTOAlgModel];
+    BOOL jump = [self reasonScorePM:mTOAlgModel];
+    
+    //6. 未跳转到PM,则将algModel设为Finish,并递归;
+    if (!jump) {
+        mTOAlgModel.status = TOModelStatus_Finish;
+        [self singleLoopBackWithFinishModel:mTOAlgModel];
+    }
 }
 
 /**
@@ -270,6 +276,7 @@
  *      2. 未输出行为,等待中的,也要进行下轮匹配,比如等开饭,等来开饭了; (等待的status是ActNo还是Runing?)
  *  @todo
  *      1. 此处在for循环中,所以有可能推进多条,比如我有了一只狗,可以拉雪撬,或者送给爷爷陪爷爷 (涉及多任务间的价值自由竞争),暂仅支持一条,后再支持;
+ *  @result 返回pushMiddle是否成功,如果推进成功,则不再执行TOP四模式;
  */
 -(BOOL) commitFromOuterPushMiddleLoop:(DemandModel*)demand latestMModel:(AIShortMatchModel*)latestMModel{
     //1. 数据检查
@@ -287,17 +294,19 @@
             //4. 将"P-M取得独特稀疏码"保留到短时记忆模型;
             [waitModel.justPValues addObjectsFromArray:[SMGUtils removeSub_ps:latestMModel.matchAlg.content_ps parent_ps:latestMModel.protoAlg.content_ps]];
             
-            //4. 将理性评价"价值分"保留到短时记忆模型;
+            //5. 将理性评价"价值分"保留到短时记忆模型;
             waitModel.pm_Score = [ThinkingUtils getScoreForce:demand.algsType urgentTo:demand.urgentTo delta:demand.delta ratio:1.0f];
             waitModel.pm_MVAT = demand.algsType;
             
-            //4. 理性评价
-            [self reasonScorePM:waitModel];
+            //6. 理性评价
+            BOOL jump = [self reasonScorePM:waitModel];
             
-            //5. 理性评价成功;
-            if (waitModel.status == TOModelStatus_Finish) {
-                return true;
+            //7. 未跳转到PM,则将algModel设为Finish,并递归;
+            if (!jump) {
+                waitModel.status = TOModelStatus_Finish;
+                [self singleLoopBackWithFinishModel:waitModel];
             }
+            return true;
         }
     }
     return false;
@@ -308,24 +317,21 @@
  *  @desc 对当前输入帧进行PM理性评价 (稀疏码检查,参考20063);
  *  @version
  *      2020.07.02: 将outModel的pm相关字段放到方法调用前就处理好 (为了流程控制调用时,已经有完善可用的数据了);
+ *  @result moveValueSuccess : 转移到稀疏码行为化了;
  */
--(void) reasonScorePM:(TOAlgModel*)outModel{
+-(BOOL) reasonScorePM:(TOAlgModel*)outModel{
     //1. 数据准备
-    if (!outModel) return;
+    if (!outModel || !ISOK(outModel.baseOrGroup, TOFoModel.class)) return false;
     AIAlgNodeBase *M = [SMGUtils searchNode:outModel.content_p];
     AIFoNodeBase *mAtFo = [SMGUtils searchNode:outModel.baseOrGroup.content_p];
-    if (!M || !mAtFo) return;
+    if (!M || !mAtFo) return false;
     
     //3. 将理性评价数据存到短时记忆模型;
     NSArray *except_ps = [TOUtils convertPointersFromTOModels:outModel.subModels];
     NSArray *validJustPValues = [SMGUtils removeSub_ps:except_ps parent_ps:outModel.justPValues];
     
     //4. 不用PM评价 (则交由流程控制方法,推动继续决策(跳转下帧/别的);
-    if (!ARRISOK(validJustPValues)) {
-        outModel.status = TOModelStatus_Finish;
-        [self singleLoopBackWithFinishModel:outModel];
-        return;
-    }
+    if (!ARRISOK(validJustPValues)) return false;
     
     //5. 取到首个P独特稀疏码 (判断是否需要行为化);
     AIKVPointer *firstJustPValue = ARR_INDEX(validJustPValues, 0);
@@ -363,27 +369,35 @@
         TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:nil group:outModel];
         toValueModel.status = TOModelStatus_Finish;
         [self singleLoopBackWithFinishModel:toValueModel];
-    }else{
-        //7. 转至_GL行为化->从matchFo.conPorts中找稳定的价值指向;
-        NSArray *matchCon_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:mAtFo]];
+        return true;
+    }
+    
+    //7. 转至_GL行为化->从matchFo.conPorts中找稳定的价值指向;
+    NSArray *matchCon_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:mAtFo]];
+    
+    //8. 依次判断conPorts是否包含"同区稀疏码" (只需要找到一条相符即可);
+    for (AIKVPointer *matchCon_p in matchCon_ps) {
+        AIFoNodeBase *matchCon = [SMGUtils searchNode:matchCon_p];
         
-        //8. 依次判断conPorts是否包含"同区稀疏码" (只需要找到一条相符即可);
-        for (AIKVPointer *matchCon_p in matchCon_ps) {
-            AIFoNodeBase *matchCon = [SMGUtils searchNode:matchCon_p];
-            
-            //9. 找到含同区稀疏码的con时序;
-            AIKVPointer *glValue4M = [SMGUtils filterSameIdentifier_p:firstJustPValue b_ps:matchCon.content_ps];
-            
-            //10. 价值稳定,则转_GL行为化;
-            BOOL sameIdent = [outModel.pm_MVAT isEqualToString:matchCon.cmvNode_p.algsType];
-            CGFloat matchConScore = [ThinkingUtils getScoreForce:matchCon.cmvNode_p ratio:1.0f];
-            if (glValue4M && sameIdent && [ThinkingUtils sameOfScore1:matchConScore score2:outModel.pm_Score]) {
-                TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:glValue4M group:outModel];
-                [self.toAction convert2Out_GL:M outModel:toValueModel];
-                break;
-            }
+        //9. 找到含同区稀疏码的con时序;
+        AIKVPointer *glValue4M = [SMGUtils filterSameIdentifier_p:firstJustPValue b_ps:matchCon.content_ps];
+        
+        //10. 价值稳定,则转_GL行为化 (找到一条即可,因为此处只管转移,后面的逻辑由流程控制方法负责);
+        BOOL sameIdent = [outModel.pm_MVAT isEqualToString:matchCon.cmvNode_p.algsType];
+        CGFloat matchConScore = [ThinkingUtils getScoreForce:matchCon.cmvNode_p ratio:1.0f];
+        if (glValue4M && sameIdent && [ThinkingUtils sameOfScore1:matchConScore score2:outModel.pm_Score]) {
+            TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:glValue4M group:outModel];
+            outModel.sp_P = M;
+            [self singleLoopBackWithBegin:toValueModel];
+            return true;
         }
     }
+    
+    //11. 未找到GL的目标 (如距离0),直接计为失败;
+    TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:nil group:outModel];
+    toValueModel.status = TOModelStatus_ActNo;
+    [self singleLoopBackWithFailureModel:toValueModel];
+    return true;
 }
 
 //MARK:===============================================================
@@ -459,15 +473,13 @@
         
         //5. Value转移 (未行为化过的理性评价进行转移);
         if (!jump) {
-            for (AIKVPointer *item_p in toAlgModel.justPValues) {
-                //TODOTOMORROW: 向PM方法评价当前稀疏码;
-            }
+            jump = [self reasonScorePM:toAlgModel];
         }
         
-        //c. 成功,递归;
+        //c. 未跳转到GLDic或PM,则将algModel设为Finish,并递归;
         if (!jump) {
             toAlgModel.status = TOModelStatus_Finish;
-            [self singleLoopBackWithFinishModel:toAlgModel.baseOrGroup];
+            [self singleLoopBackWithFinishModel:toAlgModel];
         }
     }else if(ISOK(finishModel, DemandModel.class)){
         //5. 全部完成;
@@ -475,7 +487,7 @@
         DemandModel *demand = (DemandModel*)finishModel;
         [demand.actionFoModels removeAllObjects];
     }else{
-        ELog(@"如打出此错误,则查下为何groupModel不是TOFoModel类型,因为一般行为化的都是概念,而概念的父级就是TOFoModel");
+        ELog(@"如打出此错误,则查下为何groupModel不是TOFoModel类型,因为一般行为化的都是概念,而概念的父级就是TOFoModel:%@",finishModel.class);
     }
 }
 
