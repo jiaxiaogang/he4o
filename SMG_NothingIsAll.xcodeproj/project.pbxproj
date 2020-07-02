@@ -121,7 +121,6 @@
 		456F2C322476BD5E0015ADB8 /* AINetService.m in Sources */ = {isa = PBXBuildFile; fileRef = 456F2C312476BD5E0015ADB8 /* AINetService.m */; };
 		4591E02A247F11B600484B51 /* TOAlgModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 4591E029247F11B600484B51 /* TOAlgModel.m */; };
 		4591E02D247F11DE00484B51 /* TOValueModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 4591E02C247F11DE00484B51 /* TOValueModel.m */; };
-		45B2A5C424AAB7EE00A30915 /* TOInputAlgModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 45B2A5C324AAB7EE00A30915 /* TOInputAlgModel.m */; };
 		8822852020F58BDA009884DC /* AINetDirectionReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 8822851F20F58BDA009884DC /* AINetDirectionReference.m */; };
 		8868F6EB210A946A000EAC9B /* AIAbsCMVManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8868F6EA210A946A000EAC9B /* AIAbsCMVManager.m */; };
 		8868F6EE210AA00B000EAC9B /* AINetAbsCMVUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 8868F6ED210AA00B000EAC9B /* AINetAbsCMVUtil.m */; };
@@ -368,8 +367,6 @@
 		4591E02C247F11DE00484B51 /* TOValueModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOValueModel.m; sourceTree = "<group>"; };
 		4591E02E247F1E1A00484B51 /* ISubModelsDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ISubModelsDelegate.h; sourceTree = "<group>"; };
 		4591E030247F1F4000484B51 /* ITryActionFoDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ITryActionFoDelegate.h; sourceTree = "<group>"; };
-		45B2A5C224AAB7EE00A30915 /* TOInputAlgModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOInputAlgModel.h; sourceTree = "<group>"; };
-		45B2A5C324AAB7EE00A30915 /* TOInputAlgModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOInputAlgModel.m; sourceTree = "<group>"; };
 		8822851E20F58BDA009884DC /* AINetDirectionReference.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetDirectionReference.h; sourceTree = "<group>"; };
 		8822851F20F58BDA009884DC /* AINetDirectionReference.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetDirectionReference.m; sourceTree = "<group>"; };
 		8868F6E9210A946A000EAC9B /* AIAbsCMVManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIAbsCMVManager.h; sourceTree = "<group>"; };
@@ -433,8 +430,6 @@
 				088DD7222201216500E0A786 /* TOFoModel.m */,
 				4591E028247F11B600484B51 /* TOAlgModel.h */,
 				4591E029247F11B600484B51 /* TOAlgModel.m */,
-				45B2A5C224AAB7EE00A30915 /* TOInputAlgModel.h */,
-				45B2A5C324AAB7EE00A30915 /* TOInputAlgModel.m */,
 				4591E02B247F11DE00484B51 /* TOValueModel.h */,
 				4591E02C247F11DE00484B51 /* TOValueModel.m */,
 				4591E02E247F1E1A00484B51 /* ISubModelsDelegate.h */,
@@ -1284,7 +1279,6 @@
 				08081DD821DD8BDC005B867F /* AIAlgNodeBase.m in Sources */,
 				081B7A5F23C809A900780115 /* TIRUtils.m in Sources */,
 				08B31E7E20648C3700FD96EA /* ThinkingUtils.m in Sources */,
-				45B2A5C424AAB7EE00A30915 /* TOInputAlgModel.m in Sources */,
 				08AA10E822CAD8520077DE36 /* NVHeUtil.m in Sources */,
 				0858C5E721950CA300951BA5 /* FoodView.m in Sources */,
 				4591E02A247F11B600484B51 /* TOAlgModel.m in Sources */,

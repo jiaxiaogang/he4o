@@ -58,7 +58,7 @@
     
     //3. 将cGLDic & pAlg保留到短时记忆;
     [outModel.cGLDic setDictionary:cGLDic];
-    outModel.pAlg = pAlg;
+    outModel.sp_P = pAlg;
     
     //3. 满足P: cHav部分;
     NSArray *cHavArr = [SMGUtils removeSub_ps:cGLDic.allValues parent_ps:pAlg.content_ps];
@@ -238,6 +238,8 @@
  *          5. 转移: C条件->递归到convert2Out_Single_Alg();
  *  _param vAT & vDS : 用作查找"大/小"的标识;
  *  @param alg : GL(pAlg)的具象概念, (所有微信息变化不应脱离概念,比如鸡蛋可以通过烧成固态,但水不能,所以变成固态这种特征变化,不应脱离概念去操作);
+ *          1. _SP时,将pAlg传入;
+ *          2. _PM时,将M传入;
  */
 -(void) convert2Out_GL:(AIAlgNodeBase*)alg outModel:(TOValueModel*)outModel {
     NSLog(@"\n\n=============================== 行为化_GL ===============================\n%@",Alg2FStr(alg));

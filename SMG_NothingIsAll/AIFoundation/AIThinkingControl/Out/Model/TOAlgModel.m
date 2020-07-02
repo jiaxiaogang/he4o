@@ -54,4 +54,11 @@
     return _replaceAlgs;
 }
 
+-(NSMutableArray *)justPValues{
+    if (!_justPValues) {
+        _justPValues = [[NSMutableArray alloc] init];
+    }
+    return _justPValues;
+}
+
 @end
