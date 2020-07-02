@@ -47,10 +47,12 @@
  *  @desc
  *      1. 说明: 将新输入的protoAlg与matchAlg进行比较,理性评价,从而对稀疏码特征进行修正;
  *      2. 比如: 吃瓜子,得到带皮瓜子,就得先去皮再吃;
+ *      3. 在理性评价时,将要用到的MatchAlg就是当前模型中的content_p;
+ *      4. 在理性评价时,将要用到的MatchFo就是当前模型中.baseOrGroup中包含的时序;
  */
 @property (strong, nonatomic) NSMutableArray *justPValues;
-//在理性评价时,将输入的protoAlg保留于此;
-@property (strong, nonatomic) AIAlgNodeBase *pm_P;
-@property (strong, nonatomic) AIAlgNodeBase *pm_M;
+//保留字段 (score用于存M所在matchFo的价值分,mvAT用于存M所在的matchFo的价值at标识);
+@property (assign, nonatomic) float pm_Score;
+@property (strong, nonatomic) NSString *pm_MVAT;
 
 @end
