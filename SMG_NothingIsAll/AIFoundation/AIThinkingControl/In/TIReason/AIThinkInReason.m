@@ -48,12 +48,13 @@
  *      1. 看到西瓜会开心 : TODO: 对自身状态的判断, (比如,看到西瓜,想吃,那么当前状态是否饿)
  *          > 已解决,将useNode去掉,并且由mModel替代后,会提交给demandManager进行这些处理;
  *
- *  @desc 迭代记录:
+ *  @version 迭代记录:
  *      20190910: 识别"概念与时序",并构建纵向关联; (190910概念识别,添加了抽象关联)
  *      20191223: 局部匹配支持全含: 对assAlg和protoAlg直接做抽象关联,而不是新构建抽象;
  *      20200307: 迭代支持模糊匹配fuzzy
  *      20200413: 无全含时,支持最相似的seemAlg返回;
  *      20200416: 废除绝对匹配 (因概念全局去重了,绝对匹配匹配没有意义);
+ *      20200703: 废弃fuzzy模糊匹配功能,因为识别期要广入 (参考20062);
  *  @param complete : 共支持三种返回: 匹配效果从高到低分别为:fuzzyAlg,matchAlg,seemAlg;
  */
 +(void) TIR_Alg:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps complete:(void(^)(AIAlgNodeBase *matchAlg,MatchType type))complete{
@@ -97,16 +98,16 @@
     }
     
     //3. 全含时,可进行模糊匹配 (Fuzzy匹配) //因TOR未支持fuzzy,故目前仅将最相似的fuzzy放到AIShortMatchModel中当matchAlg用;
-    if (matchType == MatchType_Abs) {
-        NSArray *fuzzys = ARRTOOK([TIRUtils matchAlg2FuzzyAlgV2:algNode matchAlg:assAlgNode except_ps:fromGroup_ps]);
-        AIAlgNodeBase *fuzzyAlg = ARR_INDEX(fuzzys, 0);
-        //a. 模糊匹配有效时,增强关联,并截胡;
-        if (fuzzyAlg) {
-            [AINetUtils insertRefPorts_AllAlgNode:fuzzyAlg.pointer content_ps:fuzzyAlg.content_ps difStrong:1];
-            assAlgNode = fuzzyAlg;
-            matchType = MatchType_Fuzzy;
-        }
-    }
+    //if (matchType == MatchType_Abs) {
+    //    NSArray *fuzzys = ARRTOOK([TIRUtils matchAlg2FuzzyAlgV2:algNode matchAlg:assAlgNode except_ps:fromGroup_ps]);
+    //    AIAlgNodeBase *fuzzyAlg = ARR_INDEX(fuzzys, 0);
+    //    //a. 模糊匹配有效时,增强关联,并截胡;
+    //    if (fuzzyAlg) {
+    //        [AINetUtils insertRefPorts_AllAlgNode:fuzzyAlg.pointer content_ps:fuzzyAlg.content_ps difStrong:1];
+    //        assAlgNode = fuzzyAlg;
+    //        matchType = MatchType_Fuzzy;
+    //    }
+    //}
     
     //4. 调试日志
     NSLog(@"概念识别: Finish >>> 类型:%ld 内容:%@",matchType,Alg2FStr(assAlgNode));
@@ -304,7 +305,7 @@
  *  @param assFoBlock       : 联想fos (联想有效的5个)
  *  @param checkItemValid   : 检查item(fo.alg)的有效性 notnull (可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
  *  @param finishBlock      : 完成 notnull
- *  @param indexProtoAlg    : assFoIndexAlg所对应的protoAlg,用来在不明确时,用其独特稀疏码指引向具象时序找"明确"预测;
+ *  _param indexProtoAlg    : assFoIndexAlg所对应的protoAlg,用来在不明确时,用其独特稀疏码指引向具象时序找"明确"预测;
  *  TODO_TEST_HERE:调试Pointer能否indexOfObject
  *  TODO_TEST_HERE:调试下item_p在indexOfObject中,有多个时,怎么办;
  *  TODO_TEST_HERE:测试下cPartMatchingThreshold配置值是否合理;

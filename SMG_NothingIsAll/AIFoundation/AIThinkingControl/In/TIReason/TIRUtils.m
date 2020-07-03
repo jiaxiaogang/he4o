@@ -238,82 +238,83 @@
  *  @version :
  *      v1: 仅支持单个稀疏码不同,并仅返回单个最相似的结果;
  *      v2: 支持多个稀疏码不同,并支持返回多个相似度排序后的结果;
+ *      20200703: 废弃fuzzy模糊匹配功能 (参考20062);
  */
-+(NSArray*) matchAlg2FuzzyAlgV2:(AIAlgNodeBase*)protoAlg matchAlg:(AIAlgNodeBase*)matchAlg except_ps:(NSArray*)except_ps{
-    if (Log4FuzzyAlg) NSLog(@"------------------------------ Fuzzy Start ------------------------------");
-    //1. 数据准备;
-    except_ps = ARRTOOK(except_ps);
-    if (!protoAlg || !matchAlg) {
-        return nil;
-    }
-    
-    //2. matchAlg未匹配之处;
-    NSArray *pSubMs = [SMGUtils removeSub_ps:matchAlg.content_ps parent_ps:protoAlg.content_ps];
-    
-    //3. 取proto同层的sameLevel前20个 (排除(含proto)不算);
-    NSArray *sameLevel_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:matchAlg]];
-    sameLevel_ps = [SMGUtils removeSub_ps:except_ps parent_ps:sameLevel_ps];
-    sameLevel_ps = ARR_SUB(sameLevel_ps, 0, cMCValue_ConAssLimit);
-    
-    //4. 逐个稀疏码,找模糊匹配节点数组;
-    NSMutableArray *allSortConAlgs = [[NSMutableArray alloc] init];//收集所有排序好的匹配节点数组 (二维数组);
-    NSMutableArray *fuzzyAlgs = [[NSMutableArray alloc] init];//收集所有模糊匹配到的同级节点指针;
-    for (AIKVPointer *pValue_p in pSubMs) {
-        //a. 获取模糊序列 (根据pValue_p对sameLevel_ps排序);
-        NSArray *sortAlgs = [ThinkingUtils getFuzzySortWithMaskValue:pValue_p fromProto_ps:sameLevel_ps];
-        
-        //b. 收集结果到fuzzyAlgs
-        for (AIAlgNodeBase *item in sortAlgs) {
-            if (![fuzzyAlgs containsObject:item]) {
-                [fuzzyAlgs addObject:item];
-            }
-        }
-        
-        //c. 收集结果到allSortConAlgs
-        [allSortConAlgs addObject:sortAlgs];
-    }
-    
-    //5. 对最终结果进行排序;
-    NSArray *result = [fuzzyAlgs sortedArrayUsingComparator:^NSComparisonResult(AIAlgNodeBase *a1, AIAlgNodeBase *a2) {
-        //a. 数据准备;
-        NSInteger a1Count = 0,a2Count = 0,a1IndexSum = 0,a2IndexSum = 0;
-        
-        //b. 获取匹配量 (越大越相似);
-        for (NSArray *sortConAlgs in allSortConAlgs) {
-            for (NSInteger i = 0; i < sortConAlgs.count; i++) {
-                AIAlgNodeBase *item = ARR_INDEX(sortConAlgs, i);
-                if ([item isEqual:a1]) {
-                    a1Count ++;
-                    a1IndexSum += i;
-                }else if ([item isEqual:a2]) {
-                    a2Count ++;
-                    a2IndexSum += i;
-                }
-            }
-        }
-        
-        //c. 获取相似度 (越小越相似);
-        CGFloat a1Similarity = a1Count > 0 ? (float)a1IndexSum / a1Count : 0;
-        CGFloat a2Similarity = a2Count > 0 ? (float)a2IndexSum / a2Count : 0;
-        
-        //d. 一级对比匹配量 (值大的排前面);
-        if (a1Count != a2Count) {
-            return a1Count > a2Count ? NSOrderedAscending : NSOrderedDescending;
-        }else{
-            //3. 二级对比相似度 (值小的排前面);
-            return a1Similarity == a2Similarity ? NSOrderedSame : a1Similarity > a2Similarity ? NSOrderedDescending : NSOrderedAscending;
-        }
-    }];
-    
-    [theApp.nvView setNodeData:protoAlg.pointer appendLightStr:STRFORMAT(@"%ld_fuzzyP",protoAlg.pointer.pointerId)];
-    [theApp.nvView setNodeData:matchAlg.pointer appendLightStr:STRFORMAT(@"%ld_fuzzyM",protoAlg.pointer.pointerId)];
-    for (NSInteger i = 0; i < result.count; i++) {
-        AIAlgNodeBase *item = ARR_INDEX(result, i);
-        [theApp.nvView setNodeData:item.pointer appendLightStr:STRFORMAT(@"%ld_fuzzyR(%ld)",protoAlg.pointer.pointerId,(long)i)];
-        if (Log4FuzzyAlg) NSLog(@"------FuzzyAlg Success %@ (P数:%lu / M数:%lu)",Alg2FStr(item),(unsigned long)protoAlg.content_ps.count,(unsigned long)matchAlg.content_ps.count);
-    }
-    return result;
-}
+//+(NSArray*) matchAlg2FuzzyAlgV2:(AIAlgNodeBase*)protoAlg matchAlg:(AIAlgNodeBase*)matchAlg except_ps:(NSArray*)except_ps{
+//    if (Log4FuzzyAlg) NSLog(@"------------------------------ Fuzzy Start ------------------------------");
+//    //1. 数据准备;
+//    except_ps = ARRTOOK(except_ps);
+//    if (!protoAlg || !matchAlg) {
+//        return nil;
+//    }
+//
+//    //2. matchAlg未匹配之处;
+//    NSArray *pSubMs = [SMGUtils removeSub_ps:matchAlg.content_ps parent_ps:protoAlg.content_ps];
+//
+//    //3. 取proto同层的sameLevel前20个 (排除(含proto)不算);
+//    NSArray *sameLevel_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:matchAlg]];
+//    sameLevel_ps = [SMGUtils removeSub_ps:except_ps parent_ps:sameLevel_ps];
+//    sameLevel_ps = ARR_SUB(sameLevel_ps, 0, cMCValue_ConAssLimit);
+//
+//    //4. 逐个稀疏码,找模糊匹配节点数组;
+//    NSMutableArray *allSortConAlgs = [[NSMutableArray alloc] init];//收集所有排序好的匹配节点数组 (二维数组);
+//    NSMutableArray *fuzzyAlgs = [[NSMutableArray alloc] init];//收集所有模糊匹配到的同级节点指针;
+//    for (AIKVPointer *pValue_p in pSubMs) {
+//        //a. 获取模糊序列 (根据pValue_p对sameLevel_ps排序);
+//        NSArray *sortAlgs = [ThinkingUtils getFuzzySortWithMaskValue:pValue_p fromProto_ps:sameLevel_ps];
+//
+//        //b. 收集结果到fuzzyAlgs
+//        for (AIAlgNodeBase *item in sortAlgs) {
+//            if (![fuzzyAlgs containsObject:item]) {
+//                [fuzzyAlgs addObject:item];
+//            }
+//        }
+//
+//        //c. 收集结果到allSortConAlgs
+//        [allSortConAlgs addObject:sortAlgs];
+//    }
+//
+//    //5. 对最终结果进行排序;
+//    NSArray *result = [fuzzyAlgs sortedArrayUsingComparator:^NSComparisonResult(AIAlgNodeBase *a1, AIAlgNodeBase *a2) {
+//        //a. 数据准备;
+//        NSInteger a1Count = 0,a2Count = 0,a1IndexSum = 0,a2IndexSum = 0;
+//
+//        //b. 获取匹配量 (越大越相似);
+//        for (NSArray *sortConAlgs in allSortConAlgs) {
+//            for (NSInteger i = 0; i < sortConAlgs.count; i++) {
+//                AIAlgNodeBase *item = ARR_INDEX(sortConAlgs, i);
+//                if ([item isEqual:a1]) {
+//                    a1Count ++;
+//                    a1IndexSum += i;
+//                }else if ([item isEqual:a2]) {
+//                    a2Count ++;
+//                    a2IndexSum += i;
+//                }
+//            }
+//        }
+//
+//        //c. 获取相似度 (越小越相似);
+//        CGFloat a1Similarity = a1Count > 0 ? (float)a1IndexSum / a1Count : 0;
+//        CGFloat a2Similarity = a2Count > 0 ? (float)a2IndexSum / a2Count : 0;
+//
+//        //d. 一级对比匹配量 (值大的排前面);
+//        if (a1Count != a2Count) {
+//            return a1Count > a2Count ? NSOrderedAscending : NSOrderedDescending;
+//        }else{
+//            //3. 二级对比相似度 (值小的排前面);
+//            return a1Similarity == a2Similarity ? NSOrderedSame : a1Similarity > a2Similarity ? NSOrderedDescending : NSOrderedAscending;
+//        }
+//    }];
+//
+//    [theApp.nvView setNodeData:protoAlg.pointer appendLightStr:STRFORMAT(@"%ld_fuzzyP",protoAlg.pointer.pointerId)];
+//    [theApp.nvView setNodeData:matchAlg.pointer appendLightStr:STRFORMAT(@"%ld_fuzzyM",protoAlg.pointer.pointerId)];
+//    for (NSInteger i = 0; i < result.count; i++) {
+//        AIAlgNodeBase *item = ARR_INDEX(result, i);
+//        [theApp.nvView setNodeData:item.pointer appendLightStr:STRFORMAT(@"%ld_fuzzyR(%ld)",protoAlg.pointer.pointerId,(long)i)];
+//        if (Log4FuzzyAlg) NSLog(@"------FuzzyAlg Success %@ (P数:%lu / M数:%lu)",Alg2FStr(item),(unsigned long)protoAlg.content_ps.count,(unsigned long)matchAlg.content_ps.count);
+//    }
+//    return result;
+//}
 
 //MARK:===============================================================
 //MARK:                     < 内类比 >
