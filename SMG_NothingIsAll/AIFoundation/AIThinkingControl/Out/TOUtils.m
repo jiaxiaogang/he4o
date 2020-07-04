@@ -213,6 +213,10 @@
     }
 }
 
+/**
+ *  MARK:--------------------TOP.diff正负两个模式--------------------
+ *  @desc 联想方式,参考19192示图 (此行为后补注释);
+ */
 +(void) topPerceptMode:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel direction:(MVDirection)direction tryResult:(BOOL(^)(AIFoNodeBase *sameFo))tryResult canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
     //1. 数据准备;
     if (!matchAlg || !demandModel || direction == MVDirection_None || !tryResult || !canAssBlock || !canAssBlock() || !updateEnergy) return;
@@ -233,6 +237,15 @@
     //P例:饿了,该怎么办;
     //S例:累了,肿么肥事;
     [theNet getNormalFoByDirectionReference:demandModel.algsType direction:direction tryResult:^BOOL(AIKVPointer *fo_p) {
+        
+        //TODOTOMORROW: 查点击马上饿,找不到解决方案的BUG (参考20073)
+        //> 经查,MatchAlg与解决方案无明确关系,但MatchAlg.conPorts中,有与解决方案有直接关系的;
+        //> 随后思考下,这里的联想方式,能不能依关系直接更正下,为什么?
+        [theNV setForceMode:true];
+        [theNV setNodeData:fo_p lightStr:@"尝试fo方案"];
+        [theNV setNodeData:matchAlg.pointer lightStr:@"TOP.MatchAlg参数"];
+        [theNV setForceMode:false];
+        
         //5. 方向索引找到一条normalFo解决方案;
         //P例:吃可以解决饿;
         //S例:运动导致累;

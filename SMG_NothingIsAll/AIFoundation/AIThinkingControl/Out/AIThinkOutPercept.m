@@ -99,12 +99,12 @@
         if (matchAlg) {
             //b. P+
             BOOL pSuccess = [self perceptPlus:matchAlg demandModel:demand];
-            NSLog(@"topV2_P+ : %@",pSuccess ? @"成功":@"失败");
+            NSLog(@"topV2_P+ => %@ => %@",Alg2FStr(matchAlg),pSuccess ? @"成功":@"失败");
             if (pSuccess) return;
             
             //c. P-
             BOOL sSuccess = [self perceptSub:matchAlg demandModel:demand];
-            NSLog(@"topV2_P- : %@",sSuccess ? @"成功":@"失败");
+            NSLog(@"topV2_P- => %@ => %@",Alg2FStr(matchAlg),sSuccess ? @"成功":@"失败");
             if (sSuccess) return;
         }
     }
@@ -198,6 +198,7 @@
     //1. 数据准备;
     if (!matchAlg || !demandModel) return false;
     MVDirection direction = [ThinkingUtils havDemand:demandModel.algsType delta:demandModel.delta];
+    NSLog(@"\n\n=============================== TOP.P+ ===============================\n任务:%@,%ld,%ld,%@",demandModel.algsType,(long)demandModel.delta,(long)direction,Alg2FStr(matchAlg));
     
     //2. 调用通用diff模式方法;
     __block BOOL success = false;//默认为失败
