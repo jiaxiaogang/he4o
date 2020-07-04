@@ -141,10 +141,10 @@
             [UIView animateWithDuration:0.1f animations:^{
                 [self setTransform:CGAffineTransformMakeRotation(M_PI_4 * 0.5f)];
             }completion:^(BOOL finished) {
+                [foodView removeFromSuperview];
                 [UIView animateWithDuration:0.1f animations:^{
                     [self setTransform:CGAffineTransformIdentity];
                 }completion:^(BOOL finished) {
-                    [foodView removeFromSuperview];
                     
                     //3. 吃完视觉
                     [self see:[self.delegate birdView_GetPageView]];
