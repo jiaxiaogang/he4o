@@ -325,6 +325,7 @@
     AIAlgNodeBase *M = [SMGUtils searchNode:outModel.content_p];
     AIFoNodeBase *mAtFo = [SMGUtils searchNode:outModel.baseOrGroup.content_p];
     if (!M || !mAtFo) return false;
+    NSLog(@"\n\n=============================== PM ===============================\nM:%@\nMAtFo:%@",Alg2FStr(M),Fo2FStr(mAtFo));
     
     //3. 将理性评价数据存到短时记忆模型;
     NSArray *except_ps = [TOUtils convertPointersFromTOModels:outModel.subModels];
@@ -373,11 +374,16 @@
     }
     
     //7. 转至_GL行为化->从matchFo.conPorts中找稳定的价值指向;
-    NSArray *matchCon_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:mAtFo]];
+    NSMutableArray *matchCon_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:mAtFo]];
+    [matchCon_ps addObject:mAtFo.pointer];//(像MC传过来的,C作为M传过来的,C有可能本身就是最具象节点,或包含了距0的果);
     
     //8. 依次判断conPorts是否包含"同区稀疏码" (只需要找到一条相符即可);
     for (AIKVPointer *matchCon_p in matchCon_ps) {
         AIFoNodeBase *matchCon = [SMGUtils searchNode:matchCon_p];
+        
+        
+        //TODOTOMORROW: 此处有BUG,在用Fo.content和稀疏码找同区,肯定找不到结果....
+        
         
         //9. 找到含同区稀疏码的con时序;
         AIKVPointer *glValue4M = [SMGUtils filterSameIdentifier_p:firstJustPValue b_ps:matchCon.content_ps];
