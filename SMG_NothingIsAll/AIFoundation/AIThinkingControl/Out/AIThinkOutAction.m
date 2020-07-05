@@ -167,6 +167,7 @@
  *      2020-05-22 : 支持更发散的联想(要求matchAlg和hAlg同被引用),因每次递归都要这么联想,所以从TOP搬到这来 (由19152改成19192);
  *      2020-05-27 : 支持outModel (目前cHav方法,收集所有acts,一次性返回行为,而并未进行多轮外循环,所以此处不必做subOutModel);
  *      2020-07-05 : 支持MC匹配,优先级小于isOut=true,大于RelativeFos;
+ *      2020-07-06 : PM本质上是多态修正方法,所以不能将C作为M传过去,改为将M传过去;
  *  @todo
  *      2020-07-05 : 在下面MC中,转至PM时,是将C作为M的,随后需测下,看是否需要独立对MC做类似PM的理性评价,即将一步到位,细化成两步各自评价;
  */
@@ -201,22 +202,27 @@
             
             //a. 依次判断mModel,只要符合mIsC即可;
             for (AIShortMatchModel *model in theTC.inModelManager.models) {
-                if ([TOUtils mIsC_2:model.matchAlg.pointer c:curAlg.pointer] || [TOUtils mIsC_2:curAlg.pointer c:model.matchAlg.pointer]) {
+                if ([TOUtils mIsC_2:curAlg.pointer c:model.matchAlg.pointer]) {
                     
-                    //b. 将"P-M取得独特稀疏码"保留到短时记忆模型;
-                    [outModel.justPValues addObjectsFromArray:[SMGUtils removeSub_ps:curAlg.content_ps parent_ps:model.protoAlg.content_ps]];
+                    //b. 生成replaceAlg转移 & 保留到outModel.replaceAlgs;;
+                    TOAlgModel *reModel = [TOAlgModel newWithAlg_p:model.matchAlg.pointer group:outModel];
+                    [outModel.replaceAlgs addObject:reModel.content_p];
                     
-                    //c. 将理性评价"价值分"保留到短时记忆模型;
-                    outModel.pm_Score = [ThinkingUtils getScoreForce:baseFo.cmvNode_p ratio:1.0f];
-                    outModel.pm_MVAT = baseFo.cmvNode_p.algsType;
+                    //c. 将"P-M取得独特稀疏码"保留到短时记忆模型;
+                    [reModel.justPValues addObjectsFromArray:[SMGUtils removeSub_ps:curAlg.content_ps parent_ps:model.protoAlg.content_ps]];
                     
-                    //d. 理性评价
-                    BOOL jump = [self.delegate toAction_ReasonScorePM:outModel];
+                    //d. 将理性评价"价值分"保留到短时记忆模型;
+                    reModel.pm_Score = [ThinkingUtils getScoreForce:baseFo.cmvNode_p ratio:1.0f];
+                    reModel.pm_MVAT = baseFo.cmvNode_p.algsType;
+                    reModel.pm_Fo = baseFo;
                     
-                    //e. 未跳转到PM,则将algModel设为Finish,并递归;
+                    //e. 理性评价
+                    BOOL jump = [self.delegate toAction_ReasonScorePM:reModel];
+                    
+                    //f. 未跳转到PM,则将algModel设为Finish,并递归;
                     if (!jump) {
-                        outModel.status = TOModelStatus_Finish;
-                        [self.delegate toAction_SubModelFinish:outModel];
+                        reModel.status = TOModelStatus_Finish;
+                        [self.delegate toAction_SubModelFinish:reModel];
                     }
                     return;
                 }
