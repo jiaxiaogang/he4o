@@ -206,6 +206,14 @@
             //6. 遍历入短时记忆,根据matchAlg取refs;
             NSArray *mRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:model.matchAlg]];
             
+            //TODOTOMORROW: 测得右投,马上饿时,短时记忆中为抽象坚果M(速0,高5,向右,皮0),而此处要求为:C(速0,高5,向右,皮0,pos!=0,距0);
+            //已知,C为M的具象,而此处需要改动,使M可以匹配到C (其实mIsC或者cIsM都可以);
+            //然后跳转到PM方法,使PM算法来直接处理理性评价;
+            //原来的写法,应该仅是希望Hav不要脱离短时记忆,但现在要求更多支持而已;
+            
+            
+            
+            
             //7. 对hRefs和mRefs取交集;
             NSArray *hmRef_ps = [SMGUtils filterSame_ps:hRef_ps parent_ps:mRef_ps];
             hmRef_ps = ARR_SUB(hmRef_ps, 0, cHavNoneAssFoCount);
