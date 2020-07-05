@@ -198,7 +198,9 @@
     //1. 数据准备;
     if (!matchAlg || !demandModel) return false;
     MVDirection direction = [ThinkingUtils havDemand:demandModel.algsType delta:demandModel.delta];
-    NSLog(@"\n\n=============================== TOP.P+ ===============================\n任务:%@,%ld,%ld,%@",demandModel.algsType,(long)demandModel.delta,(long)direction,Alg2FStr(matchAlg));
+    NSLog(@"\n\n=============================== TOP.P+ ===============================\n任务:%@,发生%ld,方向%ld\nM:%@",demandModel.algsType,(long)demandModel.delta,(long)direction,Alg2FStr(matchAlg));
+    [theNV setForceMode:true];
+    [theNV setNodeData:matchAlg.pointer lightStr:@"TOP.MatchAlg参数"];
     
     //2. 调用通用diff模式方法;
     __block BOOL success = false;//默认为失败
@@ -210,6 +212,7 @@
         
         //b. 取自身,实现吃,则可不饿;
         NSLog(@"------------P+新增一例解决方案: %@",FoP2FStr(toFoModel.content_p));
+        [theNV setNodeData:toFoModel.content_p lightStr:@"新解决方案"];
         [self.delegate aiTOP_2TOR_PerceptPlus:toFoModel];
         
         //c. 用success记录下,是否本次成功找到候选方案;
@@ -224,6 +227,7 @@
     } updateEnergy:^(CGFloat delta) {
         [self useEnergy:delta];
     }];
+    [theNV setForceMode:false];
     
     //3. 返回P+模式结果;
     return success;

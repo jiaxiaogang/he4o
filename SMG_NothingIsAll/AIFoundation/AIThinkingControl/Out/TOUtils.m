@@ -216,6 +216,8 @@
 /**
  *  MARK:--------------------TOP.diff正负两个模式--------------------
  *  @desc 联想方式,参考19192示图 (此行为后补注释);
+ *  @bug
+ *      1. 查点击马上饿,找不到解决方案的BUG,经查,MatchAlg与解决方案无明确关系,但MatchAlg.conPorts中,有与解决方案有直接关系的,改后解决 (参考20073)
  */
 +(void) topPerceptMode:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel direction:(MVDirection)direction tryResult:(BOOL(^)(AIFoNodeBase *sameFo))tryResult canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
     //1. 数据准备;
@@ -224,10 +226,15 @@
     //2. matchAlg可以用来做什么,取A.refPorts
     //P例:土豆,可吃,也可当土豆地雷;
     //S例:打球,导致开心,但也导致累;
-    NSArray *algRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:matchAlg]];
+    NSMutableArray *mRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:matchAlg]];
+    NSArray *mCon_ps = [SMGUtils convertPointersFromPorts:ARR_SUB([AINetUtils conPorts_All:matchAlg], 0, cTOPPModeConAssLimit)];
+    for (AIKVPointer *mCon_p in mCon_ps) {
+        AIAlgNodeBase *mCon = [SMGUtils searchNode:mCon_p];
+        [mRef_ps addObjectsFromArray:[SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:mCon]]];
+    }
     
     //3. 无瞬时指引,单靠内心瞎想,不能解决任何问题;
-    if (!ARRISOK(algRef_ps)) return;
+    if (!ARRISOK(mRef_ps)) return;
     
     //3. 不应期
     NSArray *except_ps = [TOUtils convertPointersFromTOModels:demandModel.actionFoModels];
@@ -237,15 +244,6 @@
     //P例:饿了,该怎么办;
     //S例:累了,肿么肥事;
     [theNet getNormalFoByDirectionReference:demandModel.algsType direction:direction tryResult:^BOOL(AIKVPointer *fo_p) {
-        
-        //TODOTOMORROW: 查点击马上饿,找不到解决方案的BUG (参考20073)
-        //> 经查,MatchAlg与解决方案无明确关系,但MatchAlg.conPorts中,有与解决方案有直接关系的;
-        //> 随后思考下,这里的联想方式,能不能依关系直接更正下,为什么?
-        [theNV setForceMode:true];
-        [theNV setNodeData:fo_p lightStr:@"尝试fo方案"];
-        [theNV setNodeData:matchAlg.pointer lightStr:@"TOP.MatchAlg参数"];
-        [theNV setForceMode:false];
-        
         //5. 方向索引找到一条normalFo解决方案;
         //P例:吃可以解决饿;
         //S例:运动导致累;
@@ -264,7 +262,7 @@
             //6. 取交集
             //P例:炒个土豆丝,吃掉解决饥饿问题;
             //S例:打球导致累,越打越累;
-            NSArray *same_ps = [SMGUtils filterSame_ps:algRef_ps parent_ps:foCon_ps];
+            NSArray *same_ps = [SMGUtils filterSame_ps:mRef_ps parent_ps:foCon_ps];
             
             //7. 依次尝试行为化;
             //P例:取自身,实现吃,则可不饿;
