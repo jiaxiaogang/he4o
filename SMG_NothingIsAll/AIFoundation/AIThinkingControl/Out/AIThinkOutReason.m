@@ -318,6 +318,8 @@
  *  @version
  *      2020.07.02: 将outModel的pm相关字段放到方法调用前就处理好 (为了流程控制调用时,已经有完善可用的数据了);
  *  @result moveValueSuccess : 转移到稀疏码行为化了;
+ *  @bug
+ *      2020.07.05: BUG,在用MatchConF.content找交集同区稀疏码肯定找不到,改为用MatchConA后,ok了;
  */
 -(BOOL) reasonScorePM:(TOAlgModel*)outModel{
     //1. 数据准备
@@ -336,10 +338,10 @@
     
     //5. 取到首个P独特稀疏码 (判断是否需要行为化);
     AIKVPointer *firstJustPValue = ARR_INDEX(validJustPValues, 0);
+    NSArray *sameLevelAlg_ps = [AINetUtils conPorts_All:M];
     BOOL firstPNeedGL = true;
     if (firstJustPValue) {
         //a. 取出首个独特稀疏码,从同层概念中,获取模糊序列 (根据pValue_p对sameLevel_ps排序);
-        NSArray *sameLevelAlg_ps = [AINetUtils conPorts_All:M];
         NSArray *sortAlgs = [ThinkingUtils getFuzzySortWithMaskValue:firstJustPValue fromProto_ps:sameLevelAlg_ps];
         
         //b. 取模糊最匹配的概念,并取出3条refPorts的时序;
@@ -374,23 +376,26 @@
     }
     
     //7. 转至_GL行为化->从matchFo.conPorts中找稳定的价值指向;
-    NSMutableArray *matchCon_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:mAtFo]];
-    [matchCon_ps addObject:mAtFo.pointer];//(像MC传过来的,C作为M传过来的,C有可能本身就是最具象节点,或包含了距0的果);
+    NSMutableArray *matchConF_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:mAtFo]];
+    [matchConF_ps addObject:mAtFo.pointer];//(像MC传过来的,C作为M传过来的,C有可能本身就是最具象节点,或包含了距0的果);
     
     //8. 依次判断conPorts是否包含"同区稀疏码" (只需要找到一条相符即可);
-    for (AIKVPointer *matchCon_p in matchCon_ps) {
-        AIFoNodeBase *matchCon = [SMGUtils searchNode:matchCon_p];
-        
-        
-        //TODOTOMORROW: 此处有BUG,在用Fo.content和稀疏码找同区,肯定找不到结果....
-        
-        
+    for (AIKVPointer *matchConF_p in matchConF_ps) {
         //9. 找到含同区稀疏码的con时序;
-        AIKVPointer *glValue4M = [SMGUtils filterSameIdentifier_p:firstJustPValue b_ps:matchCon.content_ps];
+        AIFoNodeBase *matchConF = [SMGUtils searchNode:matchConF_p];
+        
+        //9. 找到含同区稀疏码的con概念;
+        //TODOTOMORROW: 此处M.conPorts,即sameLevelAlg_ps为空,明天查下原因;
+        AIKVPointer *matchConA_p = ARR_INDEX([SMGUtils filterSame_ps:sameLevelAlg_ps parent_ps:matchConF.content_ps], 0);
+        AIAlgNodeBase *matchConA = [SMGUtils searchNode:matchConA_p];
+        if (!matchConA) continue;
+        
+        //9. 找到同区稀疏码的glValue;
+        AIKVPointer *glValue4M = [SMGUtils filterSameIdentifier_p:firstJustPValue b_ps:matchConA.content_ps];
         
         //10. 价值稳定,则转_GL行为化 (找到一条即可,因为此处只管转移,后面的逻辑由流程控制方法负责);
-        BOOL sameIdent = [outModel.pm_MVAT isEqualToString:matchCon.cmvNode_p.algsType];
-        CGFloat matchConScore = [ThinkingUtils getScoreForce:matchCon.cmvNode_p ratio:1.0f];
+        BOOL sameIdent = [outModel.pm_MVAT isEqualToString:matchConF.cmvNode_p.algsType];
+        CGFloat matchConScore = [ThinkingUtils getScoreForce:matchConF.cmvNode_p ratio:1.0f];
         if (glValue4M && sameIdent && [ThinkingUtils sameOfScore1:matchConScore score2:outModel.pm_Score]) {
             TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:glValue4M group:outModel];
             outModel.sp_P = M;
