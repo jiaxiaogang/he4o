@@ -166,6 +166,9 @@
  *  @version
  *      2020-05-22 : 支持更发散的联想(要求matchAlg和hAlg同被引用),因每次递归都要这么联想,所以从TOP搬到这来 (由19152改成19192);
  *      2020-05-27 : 支持outModel (目前cHav方法,收集所有acts,一次性返回行为,而并未进行多轮外循环,所以此处不必做subOutModel);
+ *      2020-07-05 : 支持MC匹配,优先级小于isOut=true,大于RelativeFos;
+ *  @todo
+ *      2020-07-05 : 在下面MC中,转至PM时,是将C作为M的,随后需测下,看是否需要独立对MC做类似PM的理性评价,即将一步到位,细化成两步各自评价;
  */
 -(void) convert2Out_Hav:(TOAlgModel*)outModel {
     //1. 数据准备 (空白无需行为化);
@@ -175,7 +178,7 @@
         return;
     }
     
-    //2. 本身即是isOut时,直接行为化返回;
+    //2. 第1级: 本身即是isOut时,直接行为化返回;
     if (outModel.content_p.isOut) {
         NSLog(@"\n\n=============================== 行为输出 ===============================\n%@",AlgP2FStr(outModel.content_p));
         outModel.status = TOModelStatus_ActYes;
@@ -192,7 +195,35 @@
             return;
         }
         
-        //4. 数据检查hAlg_根据type和value_p找ATHav
+        //3. 第2级: 优先MC匹配 (当父级为时序,且mv有效时,执行)
+        AIFoNodeBase *baseFo = [SMGUtils searchNode:outModel.baseOrGroup.content_p];
+        if (ISOK(outModel.baseOrGroup, TOFoModel.class) && baseFo && baseFo.cmvNode_p) {
+            
+            //a. 依次判断mModel,只要符合mIsC即可;
+            for (AIShortMatchModel *model in theTC.inModelManager.models) {
+                if ([TOUtils mIsC_2:model.matchAlg.pointer c:curAlg.pointer] || [TOUtils mIsC_2:curAlg.pointer c:model.matchAlg.pointer]) {
+                    
+                    //b. 将"P-M取得独特稀疏码"保留到短时记忆模型;
+                    [outModel.justPValues addObjectsFromArray:[SMGUtils removeSub_ps:curAlg.content_ps parent_ps:model.protoAlg.content_ps]];
+                    
+                    //c. 将理性评价"价值分"保留到短时记忆模型;
+                    outModel.pm_Score = [ThinkingUtils getScoreForce:baseFo.cmvNode_p ratio:1.0f];
+                    outModel.pm_MVAT = baseFo.cmvNode_p.algsType;
+                    
+                    //d. 理性评价
+                    BOOL jump = [self.delegate toAction_ReasonScorePM:outModel];
+                    
+                    //e. 未跳转到PM,则将algModel设为Finish,并递归;
+                    if (!jump) {
+                        outModel.status = TOModelStatus_Finish;
+                        [self.delegate toAction_SubModelFinish:outModel];
+                    }
+                    return;
+                }
+            }
+        }
+        
+        //4. 第3级: 数据检查hAlg_根据type和value_p找ATHav
         AIAlgNodeBase *hAlg = [AINetService getInner1Alg:curAlg vAT:outModel.content_p.algsType vDS:outModel.content_p.dataSource type:ATHav];
         if (!hAlg) {
             outModel.status = TOModelStatus_ActNo;
@@ -203,16 +234,8 @@
         //5. 取hAlg的refs引用时序大全;
         NSArray *hRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:hAlg]];
         for (AIShortMatchModel *model in theTC.inModelManager.models) {
-            //6. 遍历入短时记忆,根据matchAlg取refs;
+            //6. 遍历入短时记忆,根据matchAlg取refs (此处应该是希望Hav不要脱离短时记忆,所以用M.refPorts取交集);
             NSArray *mRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:model.matchAlg]];
-            
-            //TODOTOMORROW: 测得右投,马上饿时,短时记忆中为抽象坚果M(速0,高5,向右,皮0),而此处要求为:C(速0,高5,向右,皮0,pos!=0,距0);
-            //已知,C为M的具象,而此处需要改动,使M可以匹配到C (其实mIsC或者cIsM都可以);
-            //然后跳转到PM方法,使PM算法来直接处理理性评价;
-            //原来的写法,应该仅是希望Hav不要脱离短时记忆,但现在要求更多支持而已;
-            
-            
-            
             
             //7. 对hRefs和mRefs取交集;
             NSArray *hmRef_ps = [SMGUtils filterSame_ps:hRef_ps parent_ps:mRef_ps];

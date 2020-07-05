@@ -605,5 +605,8 @@
 -(void) toAction_SubModelFailure:(TOModelBase*)outModel{
     [self singleLoopBackWithFailureModel:outModel];
 }
+-(BOOL) toAction_ReasonScorePM:(TOAlgModel*)outModel{
+    return [self reasonScorePM:outModel];
+}
 
 @end

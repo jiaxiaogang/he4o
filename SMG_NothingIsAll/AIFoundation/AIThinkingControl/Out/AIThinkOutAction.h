@@ -11,7 +11,7 @@
 /**
  *  MARK:--------------------行为化代理--------------------
  */
-@class AIShortMatchModel,TOModelBase;
+@class AIShortMatchModel,TOModelBase,TOAlgModel;
 @protocol TOActionDelegate <NSObject>
 
 -(void) toAction_updateEnergy:(CGFloat)delta;
@@ -20,6 +20,7 @@
 -(AIShortMatchModel*) toAction_RethinkInnerFo:(AIFoNodeBase*)fo;
 -(void) toAction_SubModelFinish:(TOModelBase*)outModel;
 -(void) toAction_SubModelFailure:(TOModelBase*)outModel;
+-(BOOL) toAction_ReasonScorePM:(TOAlgModel*)outModel;
 
 @end
 
