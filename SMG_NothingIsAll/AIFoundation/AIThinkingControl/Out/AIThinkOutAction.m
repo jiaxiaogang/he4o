@@ -168,6 +168,7 @@
  *      2020-05-27 : 支持outModel (目前cHav方法,收集所有acts,一次性返回行为,而并未进行多轮外循环,所以此处不必做subOutModel);
  *      2020-07-05 : 支持MC匹配,优先级小于isOut=true,大于RelativeFos;
  *      2020-07-06 : PM本质上是多态修正方法,所以不能将C作为M传过去,改为将M传过去;
+ *      2020-07-07 : RelativeFo最后一位,不用行为化;
  *  @todo
  *      2020-07-05 : 在下面MC中,转至PM时,是将C作为M的,随后需测下,看是否需要独立对MC做类似PM的理性评价,即将一步到位,细化成两步各自评价;
  */
@@ -179,8 +180,12 @@
         return;
     }
     
-    //2. 第1级: 本身即是isOut时,直接行为化返回;
-    if (outModel.content_p.isOut) {
+    //1. 第0级: 本身即是cHav节点,不用行为化,即成功 (但不用递归,等外循环返回行为结果);
+    if ([outModel.content_p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATHav]]) {
+        outModel.status = TOModelStatus_Finish;
+        return;
+    }else if (outModel.content_p.isOut) {
+        //2. 第1级: 本身即是isOut时,直接行为化返回;
         NSLog(@"\n\n=============================== 行为输出 ===============================\n%@",AlgP2FStr(outModel.content_p));
         outModel.status = TOModelStatus_ActYes;
         [self.delegate toAction_updateEnergy:-0.1f];
