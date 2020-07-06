@@ -307,8 +307,7 @@
     //if ([rtMv_p.algsType isEqualToString:demand.algsType] && [mMv_p.dataSource isEqualToString:cMv_p.dataSource] && mcScore < 0) { return false; }
     
     //11. 如果不同区,对mcScore和curScore返回评价值进行类比 (如宁饿死不吃屎);
-    CGFloat validDelta = -3;//阈值为-3;
-    return curScore + rtScore > validDelta;
+    return rtScore > curScore * 0.5f;
 }
 
 +(DemandModel*) getDemandModelWithFoOutModel:(TOModelBase*)foOutModel{
