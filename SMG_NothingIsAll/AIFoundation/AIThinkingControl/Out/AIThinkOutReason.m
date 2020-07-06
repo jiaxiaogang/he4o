@@ -438,7 +438,8 @@
  *      1. 由外循环调用,当外循环输入新的matchAlg时,调用此方法推进继续决策;
  *      2. 由toAction调用,当无需行为的行为化,直接成功时,调用推进继续决策;
  *  @version
- *      2020.06.21 : 当本轮决策完成(FinishModel为Demand)时,清空demand.actionFoModels,以便整体任务未完成时,继续决策 (比如不断飞近);
+ *      2020.06.21: 当本轮决策完成(FinishModel为Demand)时,清空demand.actionFoModels,以便整体任务未完成时,继续决策 (比如不断飞近);
+ *      2020.07.06: 当本轮决策完成(FinishModel为TOFoModel)时,解决方案Fo的父级也完成;
  */
 -(void) singleLoopBackWithFinishModel:(TOModelBase*)finishModel {
     if (ISOK(finishModel, TOAlgModel.class)) {
@@ -497,6 +498,10 @@
             toAlgModel.status = TOModelStatus_Finish;
             [self singleLoopBackWithFinishModel:toAlgModel];
         }
+    }else if(ISOK(finishModel, TOFoModel.class)){
+        //a. Fo完成时,其父级也完成;
+        finishModel.baseOrGroup.status = TOModelStatus_Finish;
+        [self singleLoopBackWithFinishModel:finishModel.baseOrGroup];
     }else if(ISOK(finishModel, DemandModel.class)){
         //5. 全部完成;
         NSLog(@"SUCCESS > 本轮决策完成");
@@ -519,6 +524,8 @@
  *          a. avd为Alg时,转移方法为:TOAction._Hav;
  *          b. avd为Value时,转移方法为:TOAction._GL;
  *          c. avd为Demand时,转移方法为:TOP.P+;
+ *  @version
+ *      2020.07.06: 当failureModel为TOFoModel时,直接尝试下一方案;
  */
 -(void) singleLoopBackWithFailureModel:(TOModelBase*)failureModel {
     //1. 尝试向alg.replace转移Block;
@@ -568,12 +575,12 @@
         //c. 转移replace失败时,baseAlg和baseAlg.baseFo都失败
         if (!moveSuccess) {
             baseAlg.status = TOModelStatus_ActNo;
-            TOFoModel *baseBaseFo = (TOFoModel*)baseAlg.baseOrGroup;
-            baseBaseFo.status = TOModelStatus_ActNo;
-            
-            //b. 用fo向上找A/V/D进行fos再决策 (先尝试转移,后不行就递归);
-            [self singleLoopBackWithBegin:baseBaseFo.baseOrGroup];
+            [self singleLoopBackWithFailureModel:baseAlg.baseOrGroup];
         }
+    }else if(ISOK(failureModel, TOFoModel.class)){
+        //a. 解决方案失败,则跳转找出下一方案;
+        failureModel.status = TOModelStatus_ActNo;
+        [self singleLoopBackWithBegin:failureModel.baseOrGroup];
     }else if(ISOK(failureModel, DemandModel.class)){
         //a. 再决策未成功 (全失败了) ===> 全部失败;
         NSLog(@"Demand所有方案全部失败");
@@ -582,6 +589,11 @@
     }
 }
 
+/**
+ *  MARK:--------------------决策流程控制_Begin--------------------
+ *  @version
+ *      2020.07.06: 当begin为Fo时,直接向上递归;
+ */
 -(void) singleLoopBackWithBegin:(TOModelBase*)beginModel {
     //a. 转移
     if (ISOK(beginModel, TOAlgModel.class)) {
@@ -594,6 +606,9 @@
     }else if(ISOK(beginModel, DemandModel.class)){
         //a3. avdIsDemand: 再决策,转移至TOP.P+;
         [self.delegate aiTOR_MoveForDemand:(DemandModel*)beginModel];
+    }else if(ISOK(beginModel, TOFoModel.class)){
+        ELog(@"如打出此错误,则查下为何beginModel是TOFoModel类型,因为一般Fo都直接取index去行为化了,而Fo是不应该传递到Begin方法中来的;");
+        [self singleLoopBackWithBegin:beginModel.baseOrGroup];
     }
 }
 
