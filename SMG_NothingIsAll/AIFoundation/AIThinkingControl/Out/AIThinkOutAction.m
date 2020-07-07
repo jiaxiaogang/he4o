@@ -186,6 +186,7 @@
         [outModel.content_p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATGreater]] ||
         [outModel.content_p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATLess]]) {
         outModel.status = TOModelStatus_Finish;
+        [self.delegate toAction_SubModelFinish:outModel];
         return;
     }else if (outModel.content_p.isOut) {
         //2. 第1级: 本身即是isOut时,直接行为化返回;
