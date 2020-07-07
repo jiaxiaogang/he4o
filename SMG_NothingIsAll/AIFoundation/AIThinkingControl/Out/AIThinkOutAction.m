@@ -181,7 +181,10 @@
     }
     
     //1. 第0级: 本身即是cHav节点,不用行为化,即成功 (但不用递归,等外循环返回行为结果);
-    if ([outModel.content_p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATHav]]) {
+    if ([outModel.content_p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATHav]] ||
+        [outModel.content_p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATNone]] ||
+        [outModel.content_p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATGreater]] ||
+        [outModel.content_p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATLess]]) {
         outModel.status = TOModelStatus_Finish;
         return;
     }else if (outModel.content_p.isOut) {
