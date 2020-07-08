@@ -169,6 +169,7 @@
  *      2020-07-05 : 支持MC匹配,优先级小于isOut=true,大于RelativeFos;
  *      2020-07-06 : PM本质上是多态修正方法,所以不能将C作为M传过去,改为将M传过去;
  *      2020-07-07 : RelativeFo最后一位,不用行为化;
+ *      2020-07-08 : 删掉HNGL调用递归,因为HNGL不是完成,外循环input回来,才算完成,(如飞了一步,还要继续飞)(如下了蛋,得看到蛋),参考20081;
  *  @todo
  *      2020-07-05 : 在下面MC中,转至PM时,是将C作为M的,随后需测下,看是否需要独立对MC做类似PM的理性评价,即将一步到位,细化成两步各自评价;
  */
@@ -186,7 +187,6 @@
         [outModel.content_p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATGreater]] ||
         [outModel.content_p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATLess]]) {
         outModel.status = TOModelStatus_Finish;
-        [self.delegate toAction_SubModelFinish:outModel];
         return;
     }else if (outModel.content_p.isOut) {
         //2. 第1级: 本身即是isOut时,直接行为化返回;
