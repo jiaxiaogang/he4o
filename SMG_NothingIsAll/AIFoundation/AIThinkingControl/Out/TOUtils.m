@@ -218,6 +218,7 @@
  *  @desc 联想方式,参考19192示图 (此行为后补注释);
  *  @bug
  *      1. 查点击马上饿,找不到解决方案的BUG,经查,MatchAlg与解决方案无明确关系,但MatchAlg.conPorts中,有与解决方案有直接关系的,改后解决 (参考20073)
+ *      2020.07.09: 修改方向索引的解决方案不应期,解决只持续飞行两次就停住的BUG (参考n20p8-BUG1);
  */
 +(void) topPerceptMode:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel direction:(MVDirection)direction tryResult:(BOOL(^)(AIFoNodeBase *sameFo))tryResult canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
     //1. 数据准备;
@@ -237,7 +238,10 @@
     if (!ARRISOK(mRef_ps)) return;
     
     //3. 不应期
-    NSArray *except_ps = [TOUtils convertPointersFromTOModels:demandModel.actionFoModels];
+    NSArray *exceptFoModels = [SMGUtils filterArr:demandModel.actionFoModels checkValid:^BOOL(TOModelBase *item) {
+        return item.status == TOModelStatus_ActNo || item.status == TOModelStatus_ScoreNo;
+    }];
+    NSArray *except_ps = [TOUtils convertPointersFromTOModels:exceptFoModels];
     if (Log4DirecRef) NSLog(@"Fo不应期数:%ld",except_ps.count);
     
     //4. 用方向索引找normalFo解决方案

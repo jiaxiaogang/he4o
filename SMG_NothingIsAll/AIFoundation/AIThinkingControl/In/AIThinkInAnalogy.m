@@ -332,7 +332,12 @@
     NSInteger backData = type;
 
     //3. 构建微信息;
-    AIKVPointer *backValue_p = [theNet getNetDataPointerWithData:@(backData) algsType:algsType dataSource:dataSource];
+    AIKVPointer *backValue_p = nil;
+    @try {
+        backValue_p = [theNet getNetDataPointerWithData:@(backData) algsType:algsType dataSource:dataSource];
+    } @catch (NSException *exception) {
+        NSLog(@"此处为右下投,马上饿,到内类比,偶尔闪退的问题;")
+    }
 
     //4. 构建抽象概念 (20190809注:此处可考虑,type为大/小时,不做具象指向,因为大小概念,本来就是独立的节点);
     NSString *afDS = [ThinkingUtils getAnalogyTypeDS:type];
