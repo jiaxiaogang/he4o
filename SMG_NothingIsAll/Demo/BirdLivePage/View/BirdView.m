@@ -130,37 +130,36 @@
         //1. 嘴附近的食物
         FoodView *foodView = [self.delegate birdView_GetFoodOnMouth];
         
-        //2. 没坚果可吃 (计时器触发,更饿时,发现没坚果吃,并不能解决饥饿问题,参考:18084_todo1);
-        if (!foodView) {
-            //if (arc4random() % 3 == 0) [self sendHunger:-1.0f];
-            return;
-        }
-        
-        //2. 吃掉 (让he以吸吮反射的方式,去主动吃;并将out入网,以抽象出"吃"的节点;参考n15p6-QT1)
-        if (foodView.status == FoodStatus_Eat) {
-            [UIView animateWithDuration:0.1f animations:^{
-                [self setTransform:CGAffineTransformMakeRotation(M_PI_4 * 0.5f)];
-            }completion:^(BOOL finished) {
-                [foodView removeFromSuperview];
-                [UIView animateWithDuration:0.1f animations:^{
-                    [self setTransform:CGAffineTransformIdentity];
-                }completion:^(BOOL finished) {
-                    
-                    //3. 吃完视觉
-                    [self see:[self.delegate birdView_GetPageView]];
-                    
-                    //4. 产生HungerMindValue;
-                    [self sendHunger:1.0f];
-                }];
-            }];
-        }else if(foodView.status == FoodStatus_Border){
-            //坚果带皮时,不仅吃不到,还得嘴疼;
-            //3. 吃完视觉
-            [self see:[self.delegate birdView_GetPageView]];
+        //2. 吃动作
+        [UIView animateWithDuration:0.1f animations:^{
+            [self setTransform:CGAffineTransformMakeRotation(M_PI_4 * 0.5f)];
+        }completion:^(BOOL finished) {
+            //3. 没坚果可吃 (计时器触发,更饿时,发现没坚果吃,并不能解决饥饿问题,参考:18084_todo1);
+            if (!foodView){
+            }else{
+                //4. 吃掉 (让he以吸吮反射的方式,去主动吃;并将out入网,以抽象出"吃"的节点;参考n15p6-QT1)
+                if(foodView.status == FoodStatus_Eat){
+                    [foodView removeFromSuperview];
+                }
+            }
             
-            //4. 产生HurtMindValue;
-            [AIInput commitIMV:MVType_Hurt from:9.0f to:1.0f];
-        }
+            //5. 吃完动作
+            [UIView animateWithDuration:0.1f animations:^{
+                [self setTransform:CGAffineTransformIdentity];
+            }completion:^(BOOL finished) {
+                if (foodView) {
+                    //6. 吃完视觉
+                    [self see:[self.delegate birdView_GetPageView]];
+                    if (foodView.status == FoodStatus_Eat) {
+                        //7. 产生HungerMindValue;
+                        [self sendHunger:1.0f];
+                    }else if(foodView.status == FoodStatus_Border){
+                        //8. 产生HurtMindValue (坚果带皮时,不仅吃不到,还得嘴疼);
+                        [AIInput commitIMV:MVType_Hurt from:9.0f to:1.0f];
+                    }
+                }
+            }];
+        }];
     }
 }
 
