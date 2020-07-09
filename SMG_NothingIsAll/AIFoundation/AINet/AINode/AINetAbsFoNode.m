@@ -33,15 +33,14 @@
     return self;
 }
 
+/**
+ *  MARK:--------------------序列化--------------------
+ *  @bug
+ *      2020.07.10: 最近老闪退,前段时间XGWedis异步存由10s改为2s,有UMeng看是这里闪的,打try也能捕获这里抛了异常,将ports加了copy试下,应该好了;
+ */
 - (void)encodeWithCoder:(NSCoder *)aCoder {
-    @try {
-        [super encodeWithCoder:aCoder];
-        //[aCoder encodeObject:[self.conPorts copy] forKey:@"conPorts"];
-        [aCoder encodeObject:self.conPorts forKey:@"conPorts"];//怀疑导致闪退,如复现,改成copy代码试下;
-    } @catch (NSException *exception) {
-        NSLog(@"%@\n%@\n%@\n%lu",exception.name,exception.reason,exception.userInfo,(unsigned long)self.conPorts.count);
-        NSLog(@"");
-    }
+    [super encodeWithCoder:aCoder];
+    [aCoder encodeObject:[self.conPorts copy] forKey:@"conPorts"];
 }
 
 @end
