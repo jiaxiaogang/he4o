@@ -54,13 +54,18 @@
     return false;
 }
 
--(id) content{
-    Class class = NSClassFromString(STRTOOK(self.pClass));
-    if (class) {
-        return [class searchSingleWithWhere:[SMGUtils sqlWhere_RowId:self.pId] orderBy:nil];
-    }
-    return nil;
-}
+/**
+ *  MARK:--------------------content--------------------
+ *  @version
+ *      2020.07.09: 暂用不着sql方式,将LKDB依赖去掉,此方法需依赖LKDB,也跟着注掉,哪天要重新启用,再打开即可;
+ */
+//-(id) content{
+//    Class class = NSClassFromString(STRTOOK(self.pClass));
+//    if (class) {
+//        return [class searchSingleWithWhere:[SMGUtils sqlWhere_RowId:self.pId] orderBy:nil];
+//    }
+//    return nil;
+//}
 
 
 

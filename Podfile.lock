@@ -1,41 +1,20 @@
 PODS:
-  - FMDB (2.6.2):
-    - FMDB/standard (= 2.6.2)
-  - FMDB/standard (2.6.2)
-  - LKDBHelper (2.4.1):
-    - FMDB
-  - "LKDBHelper+Transaction (1.0.4)":
-    - LKDBHelper
-    - "LKDBHelper+Transaction/DYPersistence (= 1.0.4)"
-    - "LKDBHelper+Transaction/Transaction (= 1.0.4)"
-  - "LKDBHelper+Transaction/DYPersistence (1.0.4)":
-    - LKDBHelper
-    - "LKDBHelper+Transaction/Transaction"
-  - "LKDBHelper+Transaction/Transaction (1.0.4)":
-    - LKDBHelper
   - MBProgressHUD (1.0.0)
   - PINCache (2.3)
 
 DEPENDENCIES:
-  - "LKDBHelper+Transaction (~> 1.0.4)"
   - MBProgressHUD
   - PINCache
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
-    - FMDB
-    - LKDBHelper
-    - "LKDBHelper+Transaction"
+  trunk:
     - MBProgressHUD
     - PINCache
 
 SPEC CHECKSUMS:
-  FMDB: 854a0341b4726e53276f2a8996f06f1b80f9259a
-  LKDBHelper: 531581fa6a7d0f14236cc028ce0d277bca73436a
-  "LKDBHelper+Transaction": c15c7b038d6503505f9849ad6ff61377a767a795
   MBProgressHUD: 4890f671c94e8a0f3cf959aa731e9de2f036d71a
   PINCache: ce36ed282031b92fc7733ffe831f474ff80fddc2
 
-PODFILE CHECKSUM: e08e904ce3639fc3a1cd24186ae3fe1a9712bbac
+PODFILE CHECKSUM: af74321b9fd42af7339731ceee8b3333d4e61133
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.9.3

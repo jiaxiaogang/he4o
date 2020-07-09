@@ -17,8 +17,6 @@
 #import "Foundation+Log.m"
 #import "UIView+Extension.h"
 #import "UIColor+expanded.h"
-#import "LKDBHelper.h"
-
 #import "AIHeader.h"
 #endif
 
