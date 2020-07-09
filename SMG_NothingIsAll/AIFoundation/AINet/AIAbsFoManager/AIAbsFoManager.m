@@ -37,9 +37,11 @@
     //2. 判断algA.absPorts和absB.absPorts中的header,是否已存在algSames的抽象节点;
     AINetAbsFoNode *findAbsNode = nil;
     NSMutableArray *allAbsPorts = [[NSMutableArray alloc] init];
+    NSLog(@"-----------6");
     for (AIFoNodeBase *conItem in conFos) {
         [allAbsPorts addObjectsFromArray:[AINetUtils absPorts_All:conItem]];
     }
+    NSLog(@"-----------7");
     for (AIPort *port in allAbsPorts) {
         if ([samesMd5 isEqualToString:port.header]) {
             findAbsNode = [SMGUtils searchNode:port.target_p];

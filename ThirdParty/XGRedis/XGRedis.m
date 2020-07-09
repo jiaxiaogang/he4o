@@ -102,6 +102,7 @@ static XGRedis *_instance;
     NSInteger findCount = 0;
     
     //2. 找到需要销毁的并销毁;
+    NSLog(@"-----------5");
     for (XGRedisGCMark *mark in self.gcMarks) {
         if (mark.time < now) {
             findCount ++;

@@ -45,6 +45,7 @@
 
 +(BOOL) checkAllOfOut:(NSArray*)value_ps{
     if (ARRISOK(value_ps)) {
+        NSLog(@"-----------12");
         for (AIKVPointer *value_p in value_ps) {
             if (!value_p.isOut) {
                 return false;
@@ -59,6 +60,7 @@
     NSInteger result = 1;
     if (node) {
         NSArray *conPorts = [self conPorts_All:node];
+        NSLog(@"-----------13");
         for (AIPort *conPort in conPorts) {
             if (conPort.strong.value + 1 > result) result = conPort.strong.value + 1;
         }
@@ -79,6 +81,7 @@
     if (algNode_p && ARRISOK(content_ps)) {
         NSArray *sort_ps = [SMGUtils sortPointers:content_ps];
         //1. 遍历value_p微信息,添加引用;
+        NSLog(@"-----------14");
         for (AIPointer *value_p in content_ps) {
             //2. 硬盘网络时,取出refPorts -> 并二分法强度序列插入 -> 存XGWedis;
             if (!algNode_p.isMem) {
@@ -92,11 +95,13 @@
 }
 
 +(void) insertRefPorts_AllFoNode:(AIKVPointer*)foNode_p order_ps:(NSArray*)order_ps ps:(NSArray*)ps {
+    NSLog(@"-----------15");
     for (AIPointer *order_p in ARRTOOK(order_ps)) {
         [self insertRefPorts_AllFoNode:foNode_p order_p:order_p ps:ps difStrong:1];
     }
 }
 +(void) insertRefPorts_AllFoNode:(AIKVPointer*)foNode_p order_ps:(NSArray*)order_ps ps:(NSArray*)ps difStrong:(NSInteger)difStrong{
+    NSLog(@"-----------16");
     for (AIPointer *order_p in ARRTOOK(order_ps)) {
         [self insertRefPorts_AllFoNode:foNode_p order_p:order_p ps:ps difStrong:difStrong];
     }
@@ -220,6 +225,7 @@
     if (ISOK(pointer, AIPointer.class) && ISOK(fromPorts, NSMutableArray.class)) {
         //1. 找出旧有;
         AIPort *findPort = nil;
+        NSLog(@"-----------17");
         for (AIPort *port in fromPorts) {
             if ([pointer isEqual:port.target_p]) {
                 findPort = port;
@@ -261,6 +267,7 @@
     if (ISOK(absNode, AINodeBase.class)) {
         //1. 具象节点的 关联&存储
         conNodes = ARRTOOK(conNodes);
+        NSLog(@"-----------18");
         for (AINodeBase *conNode in conNodes) {
             NSArray *absContent_ps = absNode.content_ps;
             NSArray *conContent_ps = conNode.content_ps;
@@ -323,6 +330,7 @@
     alg_ps = ARRTOOK(alg_ps);
     
     //2. 循环检查;
+    NSLog(@"-----------19");
     for (AIKVPointer *item_p in alg_ps) {
         //a. 内存则迁移,再添加;
         if (item_p.isMem) {

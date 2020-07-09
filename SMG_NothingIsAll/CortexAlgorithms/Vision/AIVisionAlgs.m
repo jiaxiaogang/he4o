@@ -146,6 +146,12 @@
     //1. 取距离
     CGPoint distanceP = [self distancePoint:selfView target:target];
     
+    //2. 在身上,则距离为(0,0);
+    NSInteger distance = [self distance:selfView target:target];
+    if (distance == 0) {
+        distanceP = CGPointMake(0, 0);
+    }
+    
     //2. 将距离转成角度-PI -> PI (从右至左,上面为-0 -> -3.14 / 从右至左,下面为0 -> 3.14)
     CGFloat rads = atan2f(distanceP.y,distanceP.x);
     
