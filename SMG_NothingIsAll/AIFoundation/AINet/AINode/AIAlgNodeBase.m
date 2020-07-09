@@ -29,8 +29,13 @@
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:self.refPorts forKey:@"refPorts"];
+    @try {
+        [super encodeWithCoder:aCoder];
+        [aCoder encodeObject:self.refPorts forKey:@"refPorts"];
+    } @catch (NSException *exception) {
+        NSLog(@"%@\n%@\n%@\n%@",exception.name,exception.reason,exception.userInfo,self.refPorts);
+        NSLog(@"此处老是闪退,refPorts有快两千个元素了,,,");
+    }
 }
 
 @end
