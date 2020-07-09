@@ -34,8 +34,14 @@
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:self.conPorts forKey:@"conPorts"];
+    @try {
+        [super encodeWithCoder:aCoder];
+        //[aCoder encodeObject:[self.conPorts copy] forKey:@"conPorts"];
+        [aCoder encodeObject:self.conPorts forKey:@"conPorts"];//怀疑导致闪退,如复现,改成copy代码试下;
+    } @catch (NSException *exception) {
+        NSLog(@"%@\n%@\n%@\n%lu",exception.name,exception.reason,exception.userInfo,(unsigned long)self.conPorts.count);
+        NSLog(@"");
+    }
 }
 
 @end

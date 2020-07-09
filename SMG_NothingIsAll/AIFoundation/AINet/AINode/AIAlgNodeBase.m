@@ -31,10 +31,11 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     @try {
         [super encodeWithCoder:aCoder];
-        [aCoder encodeObject:self.refPorts forKey:@"refPorts"];
+        //[aCoder encodeObject:[self.refPorts copy] forKey:@"refPorts"];
+        [aCoder encodeObject:self.refPorts forKey:@"refPorts"];//怀疑导致闪退,如复现,改成copy代码试下;
     } @catch (NSException *exception) {
-        NSLog(@"%@\n%@\n%@\n%@",exception.name,exception.reason,exception.userInfo,self.refPorts);
-        NSLog(@"此处老是闪退,refPorts有快两千个元素了,,,");
+        NSLog(@"%@\n%@\n%@\n%lu",exception.name,exception.reason,exception.userInfo,(unsigned long)self.refPorts.count);
+        NSLog(@"此处老是闪退");
     }
 }
 
