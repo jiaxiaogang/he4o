@@ -29,7 +29,6 @@
     
     //2. 查找model,没则new
     AINetIndexModel *model = nil;
-    NSLog(@"-----------9");
     for (AINetIndexModel *itemModel in indexModels) {
         if ([STRTOOK(algsType) isEqualToString:itemModel.algsType] && [STRTOOK(dataSource) isEqualToString:itemModel.dataSource]) {
             model = itemModel;

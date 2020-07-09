@@ -13,7 +13,6 @@
 @implementation AINetAbsFoUtils
 
 +(AIPort*) searchPortWithTargetP:(AIKVPointer*)target_p fromPorts:(NSArray*)ports{
-    NSLog(@"-----------8");
     for (AIPort *checkPort in ARRTOOK(ports)) {
         if (ISOK(checkPort, AIPort.class) && ISOK(checkPort.target_p, AIKVPointer.class)) {
             if ([checkPort.target_p isEqual:target_p]) {

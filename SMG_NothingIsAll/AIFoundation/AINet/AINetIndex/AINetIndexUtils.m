@@ -70,13 +70,11 @@
     except_ps = ARRTOOK(except_ps);
     
     //2. 依次找content_ps的被引用序列,并判断header匹配;
-    NSLog(@"-----------10");
     for (AIKVPointer *item_p in content_ps) {
         //3. 取refPorts;
         NSArray *refPorts = ARRTOOK(getRefPortsBlock(item_p));
         
         //4. 判定refPort.header是否一致;
-        NSLog(@"-----------11");
         for (AIPort *refPort in refPorts) {
             //5. 将md5匹配header & 不在except_ps的找到并返回;
             if (![except_ps containsObject:refPort.target_p] && [md5 isEqualToString:refPort.header]) {

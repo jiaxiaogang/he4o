@@ -117,9 +117,7 @@
         if (jumpForAbsAlreadyHav) {
             result = (AINetAbsFoNode*)assFo;
             [AINetUtils relateFoAbs:result conNodes:@[fo] isNew:false];
-            NSLog(@"-----------2_1");
             [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
-            NSLog(@"-----------2_2");
         }else{
             //4. 取foDifStrong
             NSInteger foDifStrong = 1;
@@ -180,9 +178,7 @@
         //2. 最后一个元素,向前分别与orders后面所有元素进行类比
         NSLog(@"\n\n------------------------------- 内类比 -------------------------------\n%@",Fo2FStr(checkFo));
         for (NSInteger i = checkFo.content_ps.count - 2; i >= 0; i--) {
-            NSLog(@"--------3_1");
             [self analogyInner:checkFo aIndex:i bIndex:checkFo.content_ps.count - 1 canAss:canAssBlock updateEnergy:updateEnergy];
-            NSLog(@"--------3_2");
         }
     }
 }
@@ -337,9 +333,7 @@
 
     //3. 构建微信息;
     AIKVPointer *backValue_p = nil;
-    NSLog(@"-----------1_1");
     backValue_p = [theNet getNetDataPointerWithData:@(backData) algsType:algsType dataSource:dataSource];
-    NSLog(@"-----------1_2");
 
     //4. 构建抽象概念 (20190809注:此处可考虑,type为大/小时,不做具象指向,因为大小概念,本来就是独立的节点);
     NSString *afDS = [ThinkingUtils getAnalogyTypeDS:type];

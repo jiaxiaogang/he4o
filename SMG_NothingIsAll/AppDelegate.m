@@ -27,6 +27,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     //0. 初始化UMeng
     [UMConfigure initWithAppkey:@"5f06fadaed3b4408234905b8" channel:@"default"];
+    [UMConfigure setLogEnabled:false];
     
     //1. Path
     NSArray * paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
