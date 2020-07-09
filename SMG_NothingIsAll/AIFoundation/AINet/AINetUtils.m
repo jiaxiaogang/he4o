@@ -64,6 +64,7 @@
         for (AIPort *conPort in conPorts) {
             if (conPort.strong.value + 1 > result) result = conPort.strong.value + 1;
         }
+        NSLog(@"-----------13B");
     }
     return result;
 }
@@ -232,7 +233,9 @@
                 break;
             }
         }
+        NSLog(@"-----------17B");
         if (findPort) [fromPorts removeObject:findPort];
+        NSLog(@"-----------17C");
         
         //2. 无则新建port;
         if (!findPort) {
