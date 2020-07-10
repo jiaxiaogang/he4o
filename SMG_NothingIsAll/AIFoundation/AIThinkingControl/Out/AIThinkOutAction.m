@@ -212,6 +212,7 @@
             //a. 依次判断mModel,只要符合mIsC即可;
             for (AIShortMatchModel *model in theTC.inModelManager.models) {
                 if ([TOUtils mIsC_2:curAlg.pointer c:model.matchAlg.pointer]) {
+                    NSLog(@"=====> MC\nP:%@\nM:%@ \n转至PM ↓↓↓↓↓↓↓↓↓",Alg2FStr(model.protoAlg),Alg2FStr(curAlg));
                     
                     //b. 生成replaceAlg转移 & 保留到outModel.replaceAlgs;;
                     TOAlgModel *reModel = [TOAlgModel newWithAlg_p:model.matchAlg.pointer group:outModel];
@@ -240,6 +241,7 @@
         
         //4. 第3级: 数据检查hAlg_根据type和value_p找ATHav
         AIAlgNodeBase *hAlg = [AINetService getInner1Alg:curAlg vAT:outModel.content_p.algsType vDS:outModel.content_p.dataSource type:ATHav];
+        if (Log4ActHav) NSLog(@"getInnerAlg: 根据:%@ 找:%@_%@ HAlg:%@",Alg2FStr(curAlg),outModel.content_p.algsType,outModel.content_p.dataSource,Alg2FStr(hAlg));
         if (!hAlg) {
             outModel.status = TOModelStatus_ActNo;
             [self.delegate toAction_SubModelFailure:outModel];
@@ -262,6 +264,7 @@
             
             //8. 只要有善可尝试的方式,即从首条开始尝试;
             if (ARRISOK(hmRef_ps)) {
+                if (Log4ActHav) NSLog(@"Move RelativeFos条数:%lu ↓↓↓↓↓↓↓↓",(unsigned long)hmRef_ps.count);
                 [self convert2Out_RelativeFo_ps:hmRef_ps outModel:outModel];
                 return;
             }

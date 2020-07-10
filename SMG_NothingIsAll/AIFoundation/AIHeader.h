@@ -206,13 +206,13 @@
 //识别概念
 #define Log4MAlg false
 //模糊匹配
-#define Log4FuzzyAlg true
+#define Log4FuzzyAlg false
 //识别时序
 #define Log4MFo false
 //内类比
-#define Log4InAna true
+#define Log4InAna false
 #define Log4InAnaGL true
-#define Log4InAnaHN true
+#define Log4InAnaHN false
 //正向类比
 #define Log4SameAna true
 //反向类比
@@ -221,3 +221,7 @@
 #define Log4DirecRef false
 //行为化_GL
 #define Log4ActGL true
+//行为化_Hav
+#define Log4ActHav true
+//PM算法
+#define Log4PM true

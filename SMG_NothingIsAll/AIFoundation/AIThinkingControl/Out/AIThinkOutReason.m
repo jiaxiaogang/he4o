@@ -338,7 +338,10 @@
     //3. 将理性评价数据存到短时记忆模型;
     NSArray *except_ps = [TOUtils convertPointersFromTOModels:outModel.subModels];
     NSArray *validJustPValues = [SMGUtils removeSub_ps:except_ps parent_ps:outModel.justPValues];
-    
+    if (Log4PM) NSLog(@"---> P独特码:%@",Pits2FStr(outModel.justPValues));
+    if (Log4PM) NSLog(@"---> 不应期:%@",Pits2FStr(except_ps));
+    if (Log4PM) NSLog(@"---> P有效独特码:%@",Pits2FStr(validJustPValues));
+        
     //4. 不用PM评价 (则交由流程控制方法,推动继续决策(跳转下帧/别的);
     if (!ARRISOK(validJustPValues)) return false;
     
@@ -352,6 +355,7 @@
         
         //b. 取模糊最匹配的概念,并取出3条refPorts的时序;
         AIAlgNodeBase *fuzzyAlg = [SMGUtils searchNode:ARR_INDEX(sortAlgs, 0)];
+        if (Log4PM && fuzzyAlg) NSLog(@"-> 当前操作:%@ => %@",Pit2FStr(firstJustPValue),Alg2FStr(fuzzyAlg));
         if (fuzzyAlg) {
             NSArray *fuzzyRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:fuzzyAlg]];
             fuzzyRef_ps = ARR_SUB(fuzzyRef_ps, 0, cPM_RefLimit);
@@ -375,6 +379,7 @@
     
     if (!firstPNeedGL) {
         //6. 不需要处理时,直接Finish,转至决策流程控制方法 (注:在TOValueModel构造方法中: proto中的value,就是subValue);
+        if (Log4PM) NSLog(@"-> 无需PM,转至流程控制Finish");
         TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:nil group:outModel];
         toValueModel.status = TOModelStatus_Finish;
         [self singleLoopBackWithFinishModel:toValueModel];
@@ -402,6 +407,7 @@
         BOOL sameIdent = [outModel.pm_MVAT isEqualToString:matchConF.cmvNode_p.algsType];
         CGFloat matchConScore = [ThinkingUtils getScoreForce:matchConF.cmvNode_p ratio:1.0f];
         if (glValue4M && sameIdent && [ThinkingUtils sameOfScore1:matchConScore score2:outModel.pm_Score]) {
+            if (Log4PM) NSLog(@"-> 操作 Success:(%@->%@)",Pit2FStr(firstJustPValue),Pit2FStr(glValue4M));
             TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:glValue4M group:outModel];
             outModel.sp_P = M;
             [self singleLoopBackWithBegin:toValueModel];
@@ -410,6 +416,7 @@
     }
     
     //11. 未找到GL的目标 (如距离0),直接计为失败;
+    if (Log4PM) NSLog(@"-> 未找到GL目标,转至流程控制Failure");
     TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:nil group:outModel];
     toValueModel.status = TOModelStatus_ActNo;
     [self singleLoopBackWithFailureModel:toValueModel];

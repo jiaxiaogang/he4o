@@ -31,17 +31,17 @@
     //2. 对v.ref和a.abs进行交集,取得有效GLAlg;
     NSArray *vRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Value:innerValue_p]];
     
-    //用可视化调试glAlg和pAlg的关系;
-    [theNV setForceMode:true];
-    [theNV setNodeData:pAlg.pointer lightStr:@"P"];
-    for (NSInteger i = 0; i < vRef_ps.count; i++) {
-        AIAlgNodeBase *glAbsAlg = [SMGUtils searchNode:ARR_INDEX(vRef_ps, i)];
-        NSArray *glAlgs = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:glAbsAlg]];
-        for (NSInteger j = 0; j < glAlgs.count; j++) {
-            [theNV setNodeData:ARR_INDEX(glAlgs, i) lightStr:(STRFORMAT(@"GL%ld-%ld",(long)i,(long)j))];
-        }
-    }
-    [theNV setForceMode:false];
+    ////用可视化调试glAlg和pAlg的关系;
+    //[theNV setForceMode:true];
+    //[theNV setNodeData:pAlg.pointer lightStr:@"P"];
+    //for (NSInteger i = 0; i < vRef_ps.count; i++) {
+    //    AIAlgNodeBase *glAbsAlg = [SMGUtils searchNode:ARR_INDEX(vRef_ps, i)];
+    //    NSArray *glAlgs = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:glAbsAlg]];
+    //    for (NSInteger j = 0; j < glAlgs.count; j++) {
+    //        [theNV setNodeData:ARR_INDEX(glAlgs, i) lightStr:(STRFORMAT(@"GL%ld-%ld",(long)i,(long)j))];
+    //    }
+    //}
+    //[theNV setForceMode:false];
     
     //3. 找出合格的inner1Alg;
     for (AIKVPointer *gl1_p in vRef_ps) {
