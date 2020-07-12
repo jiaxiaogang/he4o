@@ -7,8 +7,6 @@
 //
 
 #import "BirdView.h"
-#import "MASConstraint.h"
-#import "View+MASAdditions.h"
 #import "FoodView.h"
 #import "AIReactorControl.h"
 #import "NVHeUtil.h"
@@ -40,12 +38,7 @@
     //containerView
     [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];
     [self addSubview:self.containerView];
-    [self.containerView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.leading.mas_equalTo(self);
-        make.trailing.mas_equalTo(self);
-        make.top.mas_equalTo(self);
-        make.bottom.mas_equalTo(self);
-    }];
+    [self.containerView setFrame:CGRectMake(0, 0, 30, 30)];
 }
 
 -(void) initData{
@@ -132,7 +125,7 @@
         
         //2. 吃动作
         [UIView animateWithDuration:0.1f animations:^{
-            [self setTransform:CGAffineTransformMakeRotation(M_PI_4 * 0.5f)];
+            [self.containerView.layer setTransform:CATransform3DMakeRotation(M_PI_4 * 0.5f, 0, 0, 1)];
         }completion:^(BOOL finished) {
             //3. 没坚果可吃 (计时器触发,更饿时,发现没坚果吃,并不能解决饥饿问题,参考:18084_todo1);
             if (!foodView){
@@ -145,7 +138,7 @@
             
             //5. 吃完动作
             [UIView animateWithDuration:0.1f animations:^{
-                [self setTransform:CGAffineTransformIdentity];
+                [self.containerView.layer setTransform:CATransform3DIdentity];
             }completion:^(BOOL finished) {
                 if (foodView) {
                     //6. 吃完视觉
