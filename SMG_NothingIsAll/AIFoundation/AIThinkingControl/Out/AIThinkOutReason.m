@@ -327,6 +327,7 @@
  *      2020.07.05: BUG,在用MatchConF.content找交集同区稀疏码肯定找不到,改为用MatchConA后,ok了;
  *      2020.07.06: 此处M.conPorts,即sameLevelAlg_ps为空,明天查下原因 (因为MC以C做M,C有可能本来就是最具象概念);
  *      2020.07.12: PM会加工"经"和"纬"的问题,改为在判断时,仅对指向了mv的fo做判断后修复,参考:20092;
+ *      2020.07.13: getFuzzySortWithMaskValue中结果有多条同区码,这种多样性导致其价值指向不确定性,导致firstPNeedGL判断错误,改成只判断单码后fix;
  */
 -(BOOL) reasonScorePM:(TOAlgModel*)outModel{
     //1. 数据准备

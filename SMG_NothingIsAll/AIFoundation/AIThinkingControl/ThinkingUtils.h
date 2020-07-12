@@ -222,6 +222,6 @@
 +(AIKVPointer*) filterPointer:(NSArray*)from_ps identifier:(NSString*)identifier;
 
 //从alg_ps中查找含valueIdentifier标识稀疏码的概念并返回;
-+(NSArray*) filterAlg_Ps:(NSArray*)alg_ps valueIdentifier:(NSString*)valueIdentifier itemValid:(void(^)(AIAlgNodeBase *alg,AIKVPointer *value_p))itemValid;
++(NSArray*) filterAlg_Ps:(NSArray*)alg_ps valueIdentifier:(NSString*)valueIdentifier itemValid:(void(^)(AIAlgNodeBase *alg,NSArray *value_ps))itemValid;
 
 @end

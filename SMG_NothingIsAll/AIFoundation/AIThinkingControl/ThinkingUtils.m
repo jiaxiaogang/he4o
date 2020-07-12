@@ -215,15 +215,19 @@
  *  @param proto_ps     : 对proto_ps进行排序 (元素为概念);
  *  @desc 功能: 比如基准=d58, proto=[(d33),(d59),(a88)], 得到的结果result=[(d59),(d33)];
  *  @desc 性能: 含硬盘io操作,proto_ps每条元素,都要searchNode取alg;
+ *  @version
+ *      2020.07.13: 仅将同区稀疏码为1条的视为有效 (因为多条会导致排序错误,以及对预测不稳定,比如[距34,距0,吃]->{mv+},但显然距34并不能吃;
  *  @result notnull
  */
 +(NSArray*) getFuzzySortWithMaskValue:(AIKVPointer*)maskValue_p fromProto_ps:(NSArray*)proto_ps{
-    //a. 对result2筛选出包含同标识value值的: result3;
+    //a. 对result2筛选出包含同标识value值的: result3 (仅将同区稀疏码为1条的视为有效);
     __block NSMutableArray *validConDatas = [[NSMutableArray alloc] init];
-    [ThinkingUtils filterAlg_Ps:proto_ps valueIdentifier:maskValue_p.identifier itemValid:^(AIAlgNodeBase *alg, AIKVPointer *value_p) {
-        NSNumber *value = [AINetIndex getData:value_p];
-        if (alg && value) {
-            [validConDatas addObject:@{@"a":alg,@"v":value}];
+    [ThinkingUtils filterAlg_Ps:proto_ps valueIdentifier:maskValue_p.identifier itemValid:^(AIAlgNodeBase *alg, NSArray *value_ps) {
+        if (alg && ARRISOK(value_ps) && value_ps.count == 1) {
+            NSNumber *value = [AINetIndex getData:ARR_INDEX(value_ps, 0)];
+            if (value) {
+                [validConDatas addObject:@{@"a":alg,@"v":value}];
+            }
         }
     }];
     
@@ -528,15 +532,19 @@
     }];
 }
 
-+(NSArray*) filterAlg_Ps:(NSArray*)alg_ps valueIdentifier:(NSString*)valueIdentifier itemValid:(void(^)(AIAlgNodeBase *alg,AIKVPointer *value_p))itemValid{
++(NSArray*) filterAlg_Ps:(NSArray*)alg_ps valueIdentifier:(NSString*)valueIdentifier itemValid:(void(^)(AIAlgNodeBase *alg,NSArray *value_ps))itemValid{
     return [SMGUtils filterPointers:alg_ps checkValid:^BOOL(AIKVPointer *item_p) {
         AIAlgNodeBase *alg = [SMGUtils searchNode:item_p];
+        NSMutableArray *value_ps = [[NSMutableArray alloc] init];
         if (alg) {
             for (AIKVPointer *itemValue_p in alg.content_ps) {
                 if ([valueIdentifier isEqualToString:itemValue_p.identifier]) {
-                    itemValid(alg,itemValue_p);
-                    return true;
+                    [value_ps addObject:itemValue_p];
                 }
+            }
+            if (ARRISOK(value_ps)) {
+                itemValid(alg,value_ps);
+                return true;
             }
         }
         return false;
