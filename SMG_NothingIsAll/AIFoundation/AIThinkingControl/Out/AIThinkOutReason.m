@@ -327,7 +327,7 @@
  *      2020.07.05: BUG,在用MatchConF.content找交集同区稀疏码肯定找不到,改为用MatchConA后,ok了;
  *      2020.07.06: 此处M.conPorts,即sameLevelAlg_ps为空,明天查下原因 (因为MC以C做M,C有可能本来就是最具象概念);
  *      2020.07.12: PM会加工"经"和"纬"的问题,改为在判断时,仅对指向了mv的fo做判断后修复,参考:20092;
- *      2020.07.13: getFuzzySortWithMaskValue中结果有多条同区码,这种多样性导致其价值指向不确定性,导致firstPNeedGL判断错误,改成只判断单码后fix;
+ *      2020.07.13: fuzzyFo有时含多条同区码,导致其价值指向不确定,是否需加工判错,改成只判断单码后fix(如[距34,距0,吃]->{mv+},但显然距34并不能吃);
  */
 -(BOOL) reasonScorePM:(TOAlgModel*)outModel{
     //1. 数据准备
@@ -365,9 +365,10 @@
             //c. 依次判断refPorts时序的价值,是否与matchFo相符 (只需要有一条相符就行);
             for (AIKVPointer *fuzzyRef_p in fuzzyRef_ps) {
                 AIFoNodeBase *fuzzyRef = [SMGUtils searchNode:fuzzyRef_p];
+                NSArray *fuzzySameIdent_ps = ARRTOOK([ThinkingUtils filterAlg_Ps:fuzzyRef.content_ps valueIdentifier:firstJustPValue.identifier itemValid:nil]);
                 
                 //d. 同区且同向,则相符;
-                if (fuzzyRef.cmvNode_p) {
+                if (fuzzyRef.cmvNode_p && fuzzySameIdent_ps.count == 1) {
                     BOOL sameIdent = [outModel.pm_MVAT isEqualToString:fuzzyRef.cmvNode_p.algsType];
                     CGFloat fuzzyRefScore = [ThinkingUtils getScoreForce:fuzzyRef.cmvNode_p ratio:1.0f];
                     if (Log4PM) NSLog(@"-> checkFo:%@->%@ 同区:%d 得分(%f=%f)",Fo2FStr(fuzzyRef),Mvp2Str(fuzzyRef.cmvNode_p),sameIdent,fuzzyRefScore,outModel.pm_Score);
