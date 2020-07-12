@@ -368,4 +368,18 @@
     return result;
 }
 
++(NSArray*) convertPointersFromTOValueModelSValue:(NSArray*)toModels{
+    //1. 数据准备;
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    
+    //2. 收集返回
+    [SMGUtils filterArr:toModels checkValid:^BOOL(TOValueModel *model) {
+        if (ISOK(model, TOValueModel.class) && model.sValue_p) {
+            [result addObject:model.sValue_p];
+        }
+        return false;
+    }];
+    return result;
+}
+
 @end

@@ -85,4 +85,9 @@
  */
 +(NSArray*) convertPointersFromTOModels:(NSArray*)toModels;
 
+/**
+ *  MARK:--------------------将TOModels中TOValue部分的sValue_p收集返回--------------------
+ */
++(NSArray*) convertPointersFromTOValueModelSValue:(NSArray*)toModels;
+
 @end

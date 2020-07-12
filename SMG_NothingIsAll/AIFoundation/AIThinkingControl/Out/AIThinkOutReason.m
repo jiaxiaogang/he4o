@@ -337,7 +337,7 @@
     NSLog(@"\n\n=============================== PM ===============================\nM:%@\nMAtFo:%@",Alg2FStr(M),Fo2FStr(mMaskFo));
     
     //3. 将理性评价数据存到短时记忆模型;
-    NSArray *except_ps = [TOUtils convertPointersFromTOModels:outModel.subModels];
+    NSArray *except_ps = [TOUtils convertPointersFromTOValueModelSValue:outModel.subModels];
     NSArray *validJustPValues = [SMGUtils removeSub_ps:except_ps parent_ps:outModel.justPValues];
     if (Log4PM) NSLog(@"---> P独特码:%@",Pits2FStr(outModel.justPValues));
     if (Log4PM) NSLog(@"---> 不应期:%@",Pits2FStr(except_ps));
@@ -354,21 +354,12 @@
         //a. 取出首个独特稀疏码,从同层概念中,获取模糊序列 (根据pValue_p对sameLevel_ps排序) (因为性能仅排20条);
         NSArray *sortAlgs = [ThinkingUtils getFuzzySortWithMaskValue:firstJustPValue fromProto_ps:ARR_SUB(sameLevelAlg_ps, 0, 20)];
         
-        if ([firstJustPValue.dataSource isEqualToString:@"posX"] || [firstJustPValue.dataSource isEqualToString:@"posY"]) {
-            for (NSInteger i = 0; i < sortAlgs.count; i++) {
-                AIAlgNodeBase *item = ARR_INDEX(sortAlgs, i);
-                [theNV setForceMode:true];
-                [theNV setNodeData:item.pointer lightStr:STRFORMAT(@"%ld",i)];
-                [theNV setForceMode:false];
-            }
-        }
-        
         //b. 优先取最匹配的概念,直至检查到cPM_CheckRefLimit条有效条数;
         NSInteger checkNum = 0;
         for (AIAlgNodeBase *fuzzyAlg in sortAlgs) {
             NSArray *fuzzyRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:fuzzyAlg]];
             fuzzyRef_ps = ARR_SUB(fuzzyRef_ps, 0, cPM_RefLimit);
-            if (Log4PM && fuzzyAlg) NSLog(@"--> 当前操作概念:%@ => %@",Pit2FStr(firstJustPValue),Alg2FStr(fuzzyAlg));
+            if (Log4PM && fuzzyAlg) NSLog(@"--------> 当前Alg:%@ => %@ 引用条:%ld",Pit2FStr(firstJustPValue),Alg2FStr(fuzzyAlg),fuzzyRef_ps.count);
             
             //c. 依次判断refPorts时序的价值,是否与matchFo相符 (只需要有一条相符就行);
             for (AIKVPointer *fuzzyRef_p in fuzzyRef_ps) {
@@ -378,7 +369,7 @@
                 if (fuzzyRef.cmvNode_p) {
                     BOOL sameIdent = [outModel.pm_MVAT isEqualToString:fuzzyRef.cmvNode_p.algsType];
                     CGFloat fuzzyRefScore = [ThinkingUtils getScoreForce:fuzzyRef.cmvNode_p ratio:1.0f];
-                    if (Log4PM) NSLog(@"-> 当前操作时序:%@->%@ 同区:%d 得分(%f=%f)",Fo2FStr(fuzzyRef),Mvp2Str(fuzzyRef.cmvNode_p),sameIdent,fuzzyRefScore,outModel.pm_Score);
+                    if (Log4PM) NSLog(@"-> checkFo:%@->%@ 同区:%d 得分(%f=%f)",Fo2FStr(fuzzyRef),Mvp2Str(fuzzyRef.cmvNode_p),sameIdent,fuzzyRefScore,outModel.pm_Score);
                     if (fuzzyRef && sameIdent && [ThinkingUtils sameOfScore1:fuzzyRefScore score2:outModel.pm_Score]) {
                         firstPNeedGL = false;
                     }
