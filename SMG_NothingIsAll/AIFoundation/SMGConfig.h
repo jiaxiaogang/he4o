@@ -55,6 +55,7 @@
 #define cMCValue_AbsAssLimit 10 //在MC匹配稀疏码模糊匹配时,向抽象联想个数
 #define cMCValue_ConAssLimit 20 //在MC匹配稀疏码模糊匹配时,向具象联想个数
 #define cPM_RefLimit 20         //在PM理性评价时,取refPorts的个数 (参考20063-A2示图)
+#define cPM_CheckRefLimit 4     //在PM理性评价时,检查有效(有mv指向)refPorts的个数
 
 #define cTOPPModeConAssLimit 5  //在TOP的P模式下,下具象联想的条数
 

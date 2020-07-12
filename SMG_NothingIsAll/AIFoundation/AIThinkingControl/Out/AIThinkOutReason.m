@@ -326,6 +326,7 @@
  *  @bug
  *      2020.07.05: BUG,在用MatchConF.content找交集同区稀疏码肯定找不到,改为用MatchConA后,ok了;
  *      2020.07.06: 此处M.conPorts,即sameLevelAlg_ps为空,明天查下原因 (因为MC以C做M,C有可能本来就是最具象概念);
+ *      2020.07.12: PM会加工"经"和"纬"的问题,改为在判断时,仅对指向了mv的fo做判断后修复,参考:20092;
  */
 -(BOOL) reasonScorePM:(TOAlgModel*)outModel{
     //1. 数据准备
@@ -353,28 +354,41 @@
         //a. 取出首个独特稀疏码,从同层概念中,获取模糊序列 (根据pValue_p对sameLevel_ps排序) (因为性能仅排20条);
         NSArray *sortAlgs = [ThinkingUtils getFuzzySortWithMaskValue:firstJustPValue fromProto_ps:ARR_SUB(sameLevelAlg_ps, 0, 20)];
         
-        //b. 取模糊最匹配的概念,并取出3条refPorts的时序;
-        AIAlgNodeBase *fuzzyAlg = ARR_INDEX(sortAlgs, 0);
-        if (Log4PM && fuzzyAlg) NSLog(@"--> 当前操作概念:%@ => %@",Pit2FStr(firstJustPValue),Alg2FStr(fuzzyAlg));
-        if (fuzzyAlg) {
+        if ([firstJustPValue.dataSource isEqualToString:@"posX"] || [firstJustPValue.dataSource isEqualToString:@"posY"]) {
+            for (NSInteger i = 0; i < sortAlgs.count; i++) {
+                AIAlgNodeBase *item = ARR_INDEX(sortAlgs, i);
+                [theNV setForceMode:true];
+                [theNV setNodeData:item.pointer lightStr:STRFORMAT(@"%ld",i)];
+                [theNV setForceMode:false];
+            }
+        }
+        
+        //b. 优先取最匹配的概念,直至检查到cPM_CheckRefLimit条有效条数;
+        NSInteger checkNum = 0;
+        for (AIAlgNodeBase *fuzzyAlg in sortAlgs) {
             NSArray *fuzzyRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:fuzzyAlg]];
             fuzzyRef_ps = ARR_SUB(fuzzyRef_ps, 0, cPM_RefLimit);
-            
-            //TODOTOMORROW: 此处"经"度时,查出20条fuzzyRef_ps的cmv指向全为空;
+            if (Log4PM && fuzzyAlg) NSLog(@"--> 当前操作概念:%@ => %@",Pit2FStr(firstJustPValue),Alg2FStr(fuzzyAlg));
             
             //c. 依次判断refPorts时序的价值,是否与matchFo相符 (只需要有一条相符就行);
             for (AIKVPointer *fuzzyRef_p in fuzzyRef_ps) {
                 AIFoNodeBase *fuzzyRef = [SMGUtils searchNode:fuzzyRef_p];
                 
                 //d. 同区且同向,则相符;
-                BOOL sameIdent = [outModel.pm_MVAT isEqualToString:fuzzyRef.cmvNode_p.algsType];
-                CGFloat fuzzyRefScore = [ThinkingUtils getScoreForce:fuzzyRef.cmvNode_p ratio:1.0f];
-                if (Log4PM) NSLog(@"-> 当前操作时序:%@->%@ 同区:%d 得分(%f=%f)",Fo2FStr(fuzzyRef),Mvp2Str(fuzzyRef.cmvNode_p),sameIdent,fuzzyRefScore,outModel.pm_Score);
-                if (fuzzyRef && sameIdent && [ThinkingUtils sameOfScore1:fuzzyRefScore score2:outModel.pm_Score]) {
-                    firstPNeedGL = false;
-                    break;
+                if (fuzzyRef.cmvNode_p) {
+                    BOOL sameIdent = [outModel.pm_MVAT isEqualToString:fuzzyRef.cmvNode_p.algsType];
+                    CGFloat fuzzyRefScore = [ThinkingUtils getScoreForce:fuzzyRef.cmvNode_p ratio:1.0f];
+                    if (Log4PM) NSLog(@"-> 当前操作时序:%@->%@ 同区:%d 得分(%f=%f)",Fo2FStr(fuzzyRef),Mvp2Str(fuzzyRef.cmvNode_p),sameIdent,fuzzyRefScore,outModel.pm_Score);
+                    if (fuzzyRef && sameIdent && [ThinkingUtils sameOfScore1:fuzzyRefScore score2:outModel.pm_Score]) {
+                        firstPNeedGL = false;
+                    }
+                    checkNum ++;
+                    //e. 有一条有效,即不用GL加工,且break;
+                    if (checkNum >= cPM_CheckRefLimit || !firstPNeedGL) break;
                 }
             }
+            //e. 有一条有效,即不用GL加工,且break;
+            if (checkNum >= cPM_CheckRefLimit || !firstPNeedGL) break;
         }
     }else{
         firstPNeedGL = false;

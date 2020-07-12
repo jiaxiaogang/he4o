@@ -42,7 +42,6 @@
             OutputModel *model = [[OutputModel alloc] init];
             model.identify = identify;
             model.data = NUMTOOK([AINetIndex getData:value_p]);
-            [theNV setNodeData:value_p appendLightStr:@"o4"];
             [valids addObject:model];
         }
     }
