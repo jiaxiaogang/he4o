@@ -350,15 +350,17 @@
     NSArray *sameLevelAlg_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:M]];
     BOOL firstPNeedGL = true;
     if (firstJustPValue) {
-        //a. 取出首个独特稀疏码,从同层概念中,获取模糊序列 (根据pValue_p对sameLevel_ps排序);
-        NSArray *sortAlgs = [ThinkingUtils getFuzzySortWithMaskValue:firstJustPValue fromProto_ps:sameLevelAlg_ps];
+        //a. 取出首个独特稀疏码,从同层概念中,获取模糊序列 (根据pValue_p对sameLevel_ps排序) (因为性能仅排20条);
+        NSArray *sortAlgs = [ThinkingUtils getFuzzySortWithMaskValue:firstJustPValue fromProto_ps:ARR_SUB(sameLevelAlg_ps, 0, 20)];
         
         //b. 取模糊最匹配的概念,并取出3条refPorts的时序;
-        AIAlgNodeBase *fuzzyAlg = [SMGUtils searchNode:ARR_INDEX(sortAlgs, 0)];
-        if (Log4PM && fuzzyAlg) NSLog(@"-> 当前操作:%@ => %@",Pit2FStr(firstJustPValue),Alg2FStr(fuzzyAlg));
+        AIAlgNodeBase *fuzzyAlg = ARR_INDEX(sortAlgs, 0);
+        if (Log4PM && fuzzyAlg) NSLog(@"--> 当前操作概念:%@ => %@",Pit2FStr(firstJustPValue),Alg2FStr(fuzzyAlg));
         if (fuzzyAlg) {
             NSArray *fuzzyRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:fuzzyAlg]];
             fuzzyRef_ps = ARR_SUB(fuzzyRef_ps, 0, cPM_RefLimit);
+            
+            //TODOTOMORROW: 此处"经"度时,查出20条fuzzyRef_ps的cmv指向全为空;
             
             //c. 依次判断refPorts时序的价值,是否与matchFo相符 (只需要有一条相符就行);
             for (AIKVPointer *fuzzyRef_p in fuzzyRef_ps) {
@@ -367,6 +369,7 @@
                 //d. 同区且同向,则相符;
                 BOOL sameIdent = [outModel.pm_MVAT isEqualToString:fuzzyRef.cmvNode_p.algsType];
                 CGFloat fuzzyRefScore = [ThinkingUtils getScoreForce:fuzzyRef.cmvNode_p ratio:1.0f];
+                if (Log4PM) NSLog(@"-> 当前操作时序:%@->%@ 同区:%d 得分(%f=%f)",Fo2FStr(fuzzyRef),Mvp2Str(fuzzyRef.cmvNode_p),sameIdent,fuzzyRefScore,outModel.pm_Score);
                 if (fuzzyRef && sameIdent && [ThinkingUtils sameOfScore1:fuzzyRefScore score2:outModel.pm_Score]) {
                     firstPNeedGL = false;
                     break;

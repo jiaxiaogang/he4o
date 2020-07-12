@@ -213,7 +213,8 @@
  *  MARK:--------------------按照模糊匹配度排序--------------------
  *  @param maskValue_p  : 排序基准 (稀疏码);
  *  @param proto_ps     : 对proto_ps进行排序 (元素为概念);
- *  @desc 比如基准=d58, proto=[(d33),(d59),(a88)], 得到的结果result=[(d59),(d33)];
+ *  @desc 功能: 比如基准=d58, proto=[(d33),(d59),(a88)], 得到的结果result=[(d59),(d33)];
+ *  @desc 性能: 含硬盘io操作,proto_ps每条元素,都要searchNode取alg;
  *  @result notnull
  */
 +(NSArray*) getFuzzySortWithMaskValue:(AIKVPointer*)maskValue_p fromProto_ps:(NSArray*)proto_ps{
