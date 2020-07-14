@@ -322,6 +322,7 @@
  *  @param outModel : 因本文是验证其多态性,所以传入的outModel.cotent即M必须是P的抽象;
  *  @version
  *      2020.07.02: 将outModel的pm相关字段放到方法调用前就处理好 (为了流程控制调用时,已经有完善可用的数据了);
+ *      2020.07.14: 支持综合评价totalRefScore,因为不综合评价的话,会出现不稳定的BUG,参考20093;
  *  @result moveValueSuccess : 转移到稀疏码行为化了;
  *  @bug
  *      2020.07.05: BUG,在用MatchConF.content找交集同区稀疏码肯定找不到,改为用MatchConA后,ok了;
@@ -357,6 +358,8 @@
         
         //b. 优先取最匹配的概念,直至检查到cPM_CheckRefLimit条有效条数;
         NSInteger checkNum = 0;
+        CGFloat totalRefScore = 0;
+        BOOL stopLoop = false;
         for (AIAlgNodeBase *fuzzyAlg in sortAlgs) {
             NSArray *fuzzyRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:fuzzyAlg]];
             fuzzyRef_ps = ARR_SUB(fuzzyRef_ps, 0, cPM_RefLimit);
@@ -370,22 +373,25 @@
                 //d. 同区且同向,则相符 (cmv指向必须有效才做数 & 理性评价只判断同区 & 同区码只有一条才做数);
                 if (fuzzyRef && fuzzyRef.cmvNode_p && [outModel.pm_MVAT isEqualToString:fuzzyRef.cmvNode_p.algsType] && fuzzySameIdent_ps.count == 1) {
                     
-                    
-                    //TODOTOMORROW: 做综合评价,参考20093;
-                    
-                    
                     CGFloat fuzzyRefScore = [ThinkingUtils getScoreForce:fuzzyRef.cmvNode_p ratio:1.0f];
-                    if (Log4PM) NSLog(@"-> checkFo:%@->%@ 得分(%f=%f)",Fo2FStr(fuzzyRef),Mvp2Str(fuzzyRef.cmvNode_p),fuzzyRefScore,outModel.pm_Score);
+                    totalRefScore += fuzzyRefScore;
+                    if (Log4PM) NSLog(@"-> checkFo:%@->%@ 综合分(%f=%f)",Fo2FStr(fuzzyRef),Mvp2Str(fuzzyRef.cmvNode_p),totalRefScore,outModel.pm_Score);
+                    
+                    //e. 发现一条同向时,结束循环 (stopLoop=true);
                     if ([ThinkingUtils sameOfScore1:fuzzyRefScore score2:outModel.pm_Score]) {
-                        firstPNeedGL = false;
+                        stopLoop = true;
+                        //e. 以综合分为准,同向则不用加工,反向则进行加工;
+                        if ([ThinkingUtils sameOfScore1:totalRefScore score2:outModel.pm_Score]) {
+                            firstPNeedGL = false;
+                        }
                     }
                     checkNum ++;
                     //e. 有一条有效,即不用GL加工,且break;
-                    if (checkNum >= cPM_CheckRefLimit || !firstPNeedGL) break;
+                    if (checkNum >= cPM_CheckRefLimit || stopLoop) break;
                 }
             }
             //f. 有一条有效,即不用GL加工,且break;
-            if (checkNum >= cPM_CheckRefLimit || !firstPNeedGL) break;
+            if (checkNum >= cPM_CheckRefLimit || stopLoop) break;
         }
     }else{
         firstPNeedGL = false;
