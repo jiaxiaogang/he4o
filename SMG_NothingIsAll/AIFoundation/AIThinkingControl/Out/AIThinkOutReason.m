@@ -367,12 +367,16 @@
                 AIFoNodeBase *fuzzyRef = [SMGUtils searchNode:fuzzyRef_p];
                 NSArray *fuzzySameIdent_ps = ARRTOOK([ThinkingUtils filterAlg_Ps:fuzzyRef.content_ps valueIdentifier:firstJustPValue.identifier itemValid:nil]);
                 
-                //d. 同区且同向,则相符;
-                if (fuzzyRef.cmvNode_p && fuzzySameIdent_ps.count == 1) {
-                    BOOL sameIdent = [outModel.pm_MVAT isEqualToString:fuzzyRef.cmvNode_p.algsType];
+                //d. 同区且同向,则相符 (cmv指向必须有效才做数 & 理性评价只判断同区 & 同区码只有一条才做数);
+                if (fuzzyRef && fuzzyRef.cmvNode_p && [outModel.pm_MVAT isEqualToString:fuzzyRef.cmvNode_p.algsType] && fuzzySameIdent_ps.count == 1) {
+                    
+                    
+                    //TODOTOMORROW: 做综合评价,参考20093;
+                    
+                    
                     CGFloat fuzzyRefScore = [ThinkingUtils getScoreForce:fuzzyRef.cmvNode_p ratio:1.0f];
-                    if (Log4PM) NSLog(@"-> checkFo:%@->%@ 同区:%d 得分(%f=%f)",Fo2FStr(fuzzyRef),Mvp2Str(fuzzyRef.cmvNode_p),sameIdent,fuzzyRefScore,outModel.pm_Score);
-                    if (fuzzyRef && sameIdent && [ThinkingUtils sameOfScore1:fuzzyRefScore score2:outModel.pm_Score]) {
+                    if (Log4PM) NSLog(@"-> checkFo:%@->%@ 得分(%f=%f)",Fo2FStr(fuzzyRef),Mvp2Str(fuzzyRef.cmvNode_p),fuzzyRefScore,outModel.pm_Score);
+                    if ([ThinkingUtils sameOfScore1:fuzzyRefScore score2:outModel.pm_Score]) {
                         firstPNeedGL = false;
                     }
                     checkNum ++;
@@ -380,7 +384,7 @@
                     if (checkNum >= cPM_CheckRefLimit || !firstPNeedGL) break;
                 }
             }
-            //e. 有一条有效,即不用GL加工,且break;
+            //f. 有一条有效,即不用GL加工,且break;
             if (checkNum >= cPM_CheckRefLimit || !firstPNeedGL) break;
         }
     }else{
