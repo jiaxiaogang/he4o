@@ -393,7 +393,7 @@
 }
 +(NSArray*) absPorts_All_Normal:(AINodeBase*)node{
     NSArray *allPorts = [self absPorts_All:node];
-    return [SMGUtils filterPorts_Normal:node];
+    return [SMGUtils filterPorts_Normal:allPorts];
 }
 +(NSArray*) absPorts_All:(AINodeBase*)node type:(AnalogyType)type{
     NSArray *allPorts = [self absPorts_All:node];

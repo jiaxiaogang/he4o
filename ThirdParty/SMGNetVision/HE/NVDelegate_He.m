@@ -45,6 +45,13 @@
         }
     }
 
+    //2. SP节点指定颜色 (S红,P绿)
+    if ([[ThinkingUtils getAnalogyTypeDS:ATPlus] isEqualToString:node_p.dataSource]) {
+        return UIColorWithRGBHex(0x00FF00);
+    }else if ([[ThinkingUtils getAnalogyTypeDS:ATSub] isEqualToString:node_p.dataSource]) {
+        return UIColorWithRGBHex(0xFF0000);
+    }
+    
     //2. 坚果显示偏绿色 (抽象黄绿&具象蓝绿)
     if ([NVHeUtil isAlg:node_p]) {
         AIAlgNodeBase *algNode = [SMGUtils searchNode:node_p];
@@ -99,7 +106,7 @@
             
             ///2. 返回描述;
             NSInteger hdConCount = ISOK(algNode, AIAbsAlgNode.class) ? ((AIAbsAlgNode*)algNode).conPorts.count : 0;
-            return STRFORMAT(@"PID:%ld AT:%@ DS:%@ 数:%ld REF:h%lu/m%ld ABS:h%lu/m%ld CON:h%ld/m%ld",(long)node_p.pointerId,node_p.algsType,node_p.dataSource,(long)algNode.content_ps.count,(unsigned long)algNode.refPorts.count,(long)memRefCount,(unsigned long)algNode.absPorts.count,(long)memAbsCount,(long)hdConCount,(long)memConCount);
+            return STRFORMAT(@"PID:%ld AT:%@ DS:%@ 数:%ld REF:h%lu/m%ld ABS:h%lu/m%ld CON:h%ld/m%ld 内容:%@",(long)node_p.pointerId,node_p.algsType,node_p.dataSource,(long)algNode.content_ps.count,(unsigned long)algNode.refPorts.count,(long)memRefCount,(unsigned long)algNode.absPorts.count,(long)memAbsCount,(long)hdConCount,(long)memConCount,Alg2FStr(algNode));
         }
     }
     //3. foNode时,返回 "order_kvp数"
@@ -114,7 +121,7 @@
             }
             ///2. 返回描述;
             NSInteger hdConCount = ISOK(foNode, AINetAbsFoNode.class) ? ((AINetAbsFoNode*)foNode).conPorts.count : 0;
-            return STRFORMAT(@"PID:%ld AT:%@ DS:%@ 数:%lu ABS:h%lu/m%ld CON:h%ld/m%ld",(long)node_p.pointerId,node_p.algsType,node_p.dataSource,(unsigned long)foNode.content_ps.count,(unsigned long)foNode.absPorts.count,(long)memAbsCount,(long)hdConCount,(long)memConCount);
+            return STRFORMAT(@"PID:%ld AT:%@ DS:%@ 数:%lu ABS:h%lu/m%ld CON:h%ld/m%ld 内容:%@",(long)node_p.pointerId,node_p.algsType,node_p.dataSource,(unsigned long)foNode.content_ps.count,(unsigned long)foNode.absPorts.count,(long)memAbsCount,(long)hdConCount,(long)memConCount,Fo2FStr(foNode));
         }
     }
     //4. mv时,返回 "类型+升降";
