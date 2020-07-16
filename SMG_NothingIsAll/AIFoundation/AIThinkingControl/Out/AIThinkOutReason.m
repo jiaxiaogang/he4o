@@ -323,6 +323,7 @@
  *  @version
  *      2020.07.02: 将outModel的pm相关字段放到方法调用前就处理好 (为了流程控制调用时,已经有完善可用的数据了);
  *      2020.07.14: 支持综合评价totalRefScore,因为不综合评价的话,会出现不稳定的BUG,参考20093;
+ *      2020.07.16: 废除综合评价,改为只找出一条 (参考n20p10-todo1);
  *  @result moveValueSuccess : 转移到稀疏码行为化了;
  *  @bug
  *      2020.07.05: BUG,在用MatchConF.content找交集同区稀疏码肯定找不到,改为用MatchConA后,ok了;
@@ -382,13 +383,16 @@
                     [theNV setForceMode:false];
                     
                     //e. 发现一条同向时,结束循环 (stopLoop=true);
-                    if ([ThinkingUtils sameOfScore1:fuzzyRefScore score2:outModel.pm_Score]) {
-                        stopLoop = true;
-                        //e. 以综合分为准,同向则不用加工,反向则进行加工;
-                        if ([ThinkingUtils sameOfScore1:totalRefScore score2:outModel.pm_Score]) {
-                            firstPNeedGL = false;
-                        }
-                    }
+                    //if ([ThinkingUtils sameOfScore1:fuzzyRefScore score2:outModel.pm_Score]) {
+                    //    stopLoop = true;
+                    //    //e. 以综合分为准,同向则不用加工,反向则进行加工;
+                    //    if ([ThinkingUtils sameOfScore1:totalRefScore score2:outModel.pm_Score]) {
+                    //        firstPNeedGL = false;
+                    //    }
+                    //}
+                    
+                    stopLoop = true;
+                    firstPNeedGL = [ThinkingUtils sameOfScore1:fuzzyRefScore score2:outModel.pm_Score];
                     checkNum ++;
                     //e. 有一条有效,即不用GL加工,且break;
                     if (checkNum >= cPM_CheckRefLimit || stopLoop) break;
