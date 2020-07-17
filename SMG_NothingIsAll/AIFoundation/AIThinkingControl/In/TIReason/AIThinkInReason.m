@@ -338,7 +338,7 @@
     //2. 取assIndexes (取递归两层)
     NSMutableArray *assIndexes = [[NSMutableArray alloc] init];
     [assIndexes addObject:assFoIndexAlg.pointer];
-    [assIndexes addObjectsFromArray:[SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:assFoIndexAlg]]];
+    [assIndexes addObjectsFromArray:[SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All_Normal:assFoIndexAlg]]];
     
     //3. 递归进行assFos
     if (Log4MFo) NSLog(@"------------ TIR_Fo ------------索引数:%lu",(unsigned long)assIndexes.count);
