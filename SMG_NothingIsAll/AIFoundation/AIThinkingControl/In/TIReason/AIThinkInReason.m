@@ -369,6 +369,93 @@
 }
 
 /**
+ *  MARK:--------------------时序全含匹配算法v2--------------------
+ *  @desc 功能说明:
+ *      1. 本次v2迭代,主要在识别率上进行改进,因为v1识别率太低 (参考20111),所以迭代了v2版 (参考20112);
+ *      2. 目前判断有效引用,不支持"必须包含某protoAlg" (代码第5步),以前需要再支持即可;
+ *  @desc 执行步骤:
+ *      1. 原始时序protoFo的每个元素都是索引;
+ *      2. 对每个元素protoAlg自身1条 + 抽象5条 = 共6条做索引;
+ *      3. 根据6条取refPorts引用时序;
+ *      4. 对所有引用的时序,做计数判断,引用了越多的原始元素protoAlg,排在越前面;
+ *      5. 从前开始找,找出引用即多,又全含的结果返回;
+ */
++(void) partMatching_FoV2:(AIFoNodeBase*)protoFo
+           checkItemValid:(BOOL(^)(AIKVPointer *itemAlg_p,AIKVPointer *assAlg_p))checkItemValid
+              finishBlock:(void(^)(AIFoNodeBase *matchFo,CGFloat matchValue,NSInteger cutIndex))finishBlock{
+    //1. 数据准备
+    if (!ISOK(protoFo, AIFoNodeBase.class)) {
+        finishBlock(nil,0,0);
+        return;
+    }
+    
+    //2. 取assIndexes (取递归两层,当前1+抽象5=6条)
+    NSMutableArray *allRef_ps_2 = [[NSMutableArray alloc] init];
+    for (NSInteger i = 0; i < protoFo.content_ps.count; i++) {
+        NSArray *itemIndexes = [ThinkingUtils collectionNodes:ARR_INDEX(protoFo.content_ps, i) absLimit:cTIRFoAbsIndexLimit];
+        
+        //3. 收集下标i下的所有refPorts时序;
+        NSMutableArray *iRef_ps = [[NSMutableArray alloc] init];
+        for (AIKVPointer *itemIndex_p in itemIndexes) {
+            AIAlgNodeBase *itemIndexAlg = [SMGUtils searchNode:itemIndex_p];
+            [iRef_ps addObject:[SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:itemIndexAlg]]];
+        }
+        [allRef_ps_2 addObject:iRef_ps];
+        if (Log4MFo) NSLog(@"-----> 下标:%ld 索引数:%lu 指向时序数:%lu",(long)i,itemIndexes.count,(unsigned long)iRef_ps.count);
+    }
+    
+    //4. 将allRef_2拍平成一维数组,并去重;
+    NSMutableArray *allRef_ps_1 = [[NSMutableArray alloc] init];
+    for (NSArray *ps in allRef_ps_2) {
+        [allRef_ps_1 addObjectsFromArray:ps];
+    }
+    allRef_ps_1 = [SMGUtils removeRepeat:allRef_ps_1];
+    
+    //5. 对一维数组进行判断,看有几条有效引用;
+    NSMutableDictionary *countDic = [[NSMutableDictionary alloc] init];
+    for (AIKVPointer *item in allRef_ps_1) {
+        //a. 对当前有指向的时序,进行计数 (因时序本来就是引用找到的,所以itemRefCount至少应该是1);
+        NSInteger itemRefCount = 0;
+        for (NSArray *ps in allRef_ps_2) {
+            if ([ps containsObject:item]) {
+                itemRefCount ++;
+            }
+        }
+        //b. 收集引用数;
+        [countDic setObject:OBJ2DATA(item) forKey:@(itemRefCount)];
+    }
+    
+    //6. 按照有效引用数,进行排序;
+    NSArray *sortRef_ps_1 = [allRef_ps_1 sortedArrayUsingComparator:^NSComparisonResult(NSDictionary *obj1, NSDictionary *obj2) {
+        NSInteger count1 = [NUMTOOK([countDic objectForKey:OBJ2DATA(obj1)]) integerValue];
+        NSInteger count2 = [NUMTOOK([countDic objectForKey:OBJ2DATA(obj2)]) integerValue];
+        return [SMGUtils compareIntA:count1 intB:count2];
+    }];
+    for (NSInteger i = 0; i < MIN(5, sortRef_ps_1.count); i++) {
+        AIKVPointer *item = ARR_INDEX(sortRef_ps_1, i);
+        if (Log4MFo) NSLog(@"---> 排序完成,条数:%lu 引用数五强:%@",(unsigned long)sortRef_ps_1.count,[countDic objectForKey:OBJ2DATA(item)]);
+    }
+    
+    //7. 从排序首个开始,第全含 (取得一个即可) (参考: 160_TIRFO单线顺序模型);
+    __block BOOL successed = false;
+    for (AIKVPointer *item in sortRef_ps_1) {
+        AIFoNodeBase *assFo = [SMGUtils searchNode:item];
+        
+        //a. 对assFo做匹配判断;
+        [TIRUtils TIR_Fo_CheckFoValidMatch:protoFo assFo:assFo checkItemValid:checkItemValid success:^(NSInteger lastAssIndex, CGFloat matchValue) {
+            NSLog(@"时序识别: SUCCESS >>> matchValue:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
+            successed = true;
+            finishBlock(assFo,matchValue,lastAssIndex);
+        } failure:^(NSString *msg) {
+            if (Log4MFo) NSLog(@"%@",msg);
+        }];
+        
+        //b. 成功一条即return
+        if (successed) return;
+    }
+}
+
+/**
  *  MARK:--------------------内类比--------------------
  *  @desc 在理性中进行内类比;
  *  @支持: 目前理性内类比不支持energy,待以后版本再考虑支持;

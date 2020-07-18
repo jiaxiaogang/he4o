@@ -600,6 +600,20 @@
     return result_ps;
 }
 
++(NSMutableArray*) removeRepeat:(NSArray*)protoArr{
+    //1. 数据准备
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    protoArr = ARRTOOK(protoArr);
+    
+    //2. 防重收集
+    for (id proto in protoArr) {
+        if (![result containsObject:proto]) {
+            [result addObject:proto];
+        }
+    }
+    return result;
+}
+
 +(NSArray*) filterSame_ps:(NSArray*)a_ps parent_ps:(NSArray*)b_ps{
     return [self filterPointers:a_ps b_ps:b_ps checkItemValid:^BOOL(AIKVPointer *a_p, AIKVPointer *b_p) {
         return a_p ? [a_p isEqual:b_p] : false;

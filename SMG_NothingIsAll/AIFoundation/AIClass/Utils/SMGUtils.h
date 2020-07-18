@@ -194,6 +194,12 @@
 +(NSMutableArray*) removeSub_p:(AIPointer*)sub_p parent_ps:(NSArray*)parent_ps;
 
 /**
+ *  MARK:--------------------防重--------------------
+ *  @result notnull
+ */
++(NSMutableArray*) removeRepeat:(NSArray*)protoArr;
+
+/**
  *  MARK:--------------------取交集--------------------
  *  @result notnull
  */

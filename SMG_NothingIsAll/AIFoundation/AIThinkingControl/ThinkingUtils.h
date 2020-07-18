@@ -91,6 +91,13 @@
  */
 +(NSArray*) getFuzzySortWithMaskValue:(AIKVPointer*)maskValue_p fromProto_ps:(NSArray*)proto_ps;
 
+/**
+ *  MARK:--------------------收集节点指针地址--------------------
+ *  @param absLimit : 抽象追加收集多少个;
+ *  @desc 目前仅收集Normal类型的节点,因为一般情况下都是使用Normal类型,别的类型反射会干扰;
+ */
++(NSArray*) collectionNodes:(AIKVPointer*)node_p absLimit:(NSInteger)absLimit;
+
 @end
 
 

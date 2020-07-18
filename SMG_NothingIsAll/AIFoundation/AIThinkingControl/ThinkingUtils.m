@@ -251,6 +251,21 @@
     return result;
 }
 
++(NSArray*) collectionNodes:(AIKVPointer*)node_p absLimit:(NSInteger)absLimit{
+    //1. 数据准备
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    if (!node_p) return result;
+    
+    //2. 收集本身
+    [result addObject:node_p];
+    
+    //3. 收集抽象
+    AINodeBase *node = [SMGUtils searchNode:node_p];
+    NSArray *abs_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All_Normal:node]];
+    [result addObjectsFromArray:ARR_SUB(abs_ps, 0, absLimit)];
+    return result;
+}
+
 @end
 
 
