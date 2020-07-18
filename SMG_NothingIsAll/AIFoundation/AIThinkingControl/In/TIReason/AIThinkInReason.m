@@ -405,7 +405,8 @@
         NSMutableArray *iRef_ps = [[NSMutableArray alloc] init];
         for (AIKVPointer *itemIndex_p in itemIndexes) {
             AIAlgNodeBase *itemIndexAlg = [SMGUtils searchNode:itemIndex_p];
-            [iRef_ps addObject:[SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:itemIndexAlg]]];
+            [iRef_ps addObjectsFromArray:[SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:itemIndexAlg]]];
+            [iRef_ps removeObject:protoFo.pointer];
         }
         [allRef_ps_2 addObject:iRef_ps];
         if (Log4MFo) NSLog(@"-----> 下标:%ld 索引数:%lu 指向时序数:%lu",(long)i,itemIndexes.count,(unsigned long)iRef_ps.count);
@@ -429,7 +430,7 @@
             }
         }
         //b. 收集引用数;
-        [countDic setObject:OBJ2DATA(item) forKey:@(itemRefCount)];
+        [countDic setObject:@(itemRefCount) forKey:OBJ2DATA(item)];
     }
     
     //6. 按照有效引用数,进行排序;
@@ -443,8 +444,9 @@
         if (Log4MFo) NSLog(@"---> 排序完成,条数:%lu 引用数五强:%@",(unsigned long)sortRef_ps_1.count,[countDic objectForKey:OBJ2DATA(item)]);
     }
     
-    //7. 从排序首个开始,第全含 (取得一个即可) (参考: 160_TIRFO单线顺序模型);
+    //7. 取排序好的前10个,从前至后,逐个找全含 (找到一个即可) (参考: 160_TIRFO单线顺序模型);
     __block BOOL successed = false;
+    sortRef_ps_1 = ARR_SUB(sortRef_ps_1, 0, cPartMatchingCheckRefPortsLimit);
     for (AIKVPointer *item in sortRef_ps_1) {
         AIFoNodeBase *assFo = [SMGUtils searchNode:item];
         
@@ -462,6 +464,7 @@
         //b. 成功一条即return
         if (successed) return;
     }
+    NSLog(@"时序识别失败----Failure");
 }
 
 /**
