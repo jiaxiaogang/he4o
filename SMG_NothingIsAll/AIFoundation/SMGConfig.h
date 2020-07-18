@@ -40,11 +40,6 @@
 //#define cActiveCacheLimit 50//激活缓存最多50条; (废弃,因为改为瞬时匹配模型)
 
 //MARK:===============================================================
-//MARK:                     < ThinkIn >
-//MARK:===============================================================
-#define cTIRFoAbsIndexLimit 5   //时序识别时,取抽象索引的条数
-
-//MARK:===============================================================
 //MARK:                     < ThinkOut >
 //MARK:===============================================================
 #define cDataOutAssFoCount 3    //在决策过程中,foScheme横向最大检索条数;
@@ -67,6 +62,7 @@
 //MARK:===============================================================
 //MARK:                     < ThinkIn >
 //MARK:===============================================================
-#define cMvNoneIdent @"mvNone"     //mv的默认标识
+#define cMvNoneIdent @"mvNone"      //mv的默认标识
 #define cPartMatchingCheckRefPortsLimit 10 //局部匹配时_检查refPorts数;
 #define cPartMatchingThreshold 0.3  //局部匹配时_匹配阀值 (相似度) 20191224ALG改为全含方式 FO懒先不改
+#define cTIRFoAbsIndexLimit 5       //时序识别时,取抽象索引的条数
