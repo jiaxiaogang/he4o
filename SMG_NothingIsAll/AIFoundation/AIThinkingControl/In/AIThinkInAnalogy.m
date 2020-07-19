@@ -552,7 +552,7 @@
     
     //2. 检查同向;
     BOOL isSame = [ThinkingUtils sameScoreOfMV1:mModel.matchFo.cmvNode_p mv2:shortFo.cmvNode_p];
-    if(isSame) NSLog(@"\n\n------------------------ 正向反馈类比 ------------------------\n%@->%@ \n%@->%@",Fo2FStr(mModel.matchFo),Mvp2Str(mModel.matchFo.cmvNode_p),Fo2FStr(shortFo),Mvp2Str(shortFo.cmvNode_p));
+    if(isSame) NSLog(@"\n\n------------------------ 正向反馈类比 ------------------------\n短时MatchFo:%@->%@ \n输入ProtoFo:%@->%@",Fo2FStr(mModel.matchFo),Mvp2Str(mModel.matchFo.cmvNode_p),Fo2FStr(shortFo),Mvp2Str(shortFo.cmvNode_p));
     if (!isSame) return;
     
     //3. 类比 (与当前的analogy_Outside()较相似,所以暂不写,随后写时,也是将原有的_outside改成此_same类比方法);

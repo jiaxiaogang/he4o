@@ -178,7 +178,7 @@
     mModel.protoFo = [theNet createConFo:protoAShortMem isMem:true];
     
     //4. 识别时序;
-    [AIThinkInReason TIR_Fo_FromShortMem:mModel.matchAFo lastProtoAlg:mModel.protoAlg.pointer lastMatchAlg:mModel.matchAlg finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue,NSInteger cutIndex) {
+    [AIThinkInReason TIR_Fo_FromShortMem:mModel.matchAFo lastMatchAlg:mModel.matchAlg finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue,NSInteger cutIndex) {
         mModel.matchFo = matchFo;
         mModel.matchFoValue = matchValue;
         mModel.cutIndex = cutIndex;
