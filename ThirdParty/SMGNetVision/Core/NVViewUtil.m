@@ -48,7 +48,7 @@
 
 /**
  *  MARK:--------------------将angle转为方向值--------------------
- *  @param angle : angle为左向顺时针0-1;
+ *  @param angle : angle为左向顺时针0-1 (含0,不含1);
  *  @param directionCount : 方向数 (一般为4或8向);
  */
 +(CGFloat) convertAngle2Direction:(CGFloat)angle directionCount:(int)directionCount{
@@ -63,6 +63,7 @@
     
     //4. 将(0-7)除以8.0f,转换成0-1;
     CGFloat result = intAngle / (float)directionCount;
+    result = result == 1.0f ? 0 : result;
     return result;
 }
 +(CGFloat) convertAngle2Direction_4:(CGFloat)angle{
