@@ -70,7 +70,7 @@
     [theApp.heLogView addLog:@"直投"];
     FoodView *foodView = [[FoodView alloc] init];
     [foodView hit];
-    [foodView setOrigin:CGPointMake(ScreenWidth * 0.75f, ScreenHeight - 66)];
+    [foodView setOrigin:CGPointMake(ScreenWidth * 0.375f, ScreenHeight - 66)];
     [self.view addSubview:foodView];
     CGPoint targetPoint = self.birdView.center;
     [UIView animateWithDuration:1.5f animations:^{
@@ -260,7 +260,7 @@
 - (void) food2Pos:(CGPoint)targetPoint{
     FoodView *foodView = [[FoodView alloc] init];
     [foodView hit];
-    [foodView setOrigin:CGPointMake(ScreenWidth * 0.25f, ScreenHeight - 66)];
+    [foodView setOrigin:CGPointMake(ScreenWidth * 0.375f, ScreenHeight - 66)];
     [self.view addSubview:foodView];
     [UIView animateWithDuration:1.0f animations:^{
         [foodView setOrigin:targetPoint];

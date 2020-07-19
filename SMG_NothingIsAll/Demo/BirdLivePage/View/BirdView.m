@@ -88,6 +88,14 @@
     [AIReactorControl commitReactor:EAT_RDS];
 }
 
+//MARK:===============================================================
+//MARK:                     < onclick >
+//MARK:===============================================================
+- (IBAction)mouchOnClick:(id)sender {
+    NSLog(@"点鸟嘴,触发吸吮反射");
+    [self touchMouth];
+}
+
 /**
  *  MARK:--------------------摸翅膀--------------------
  *  @param direction 从左顺时针,8个方向,分别为0-7;
@@ -99,14 +107,6 @@
     //2. 飞行
     float data = direction / 8.0f;
     [AIReactorControl commitReactor:FLY_RDS datas:@[@(data)]];
-}
-
--(void) dropUp{
-    
-}
-
--(void) dropDown{
-    
 }
 
 -(void) dealloc{
