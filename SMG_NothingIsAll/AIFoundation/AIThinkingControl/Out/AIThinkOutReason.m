@@ -359,7 +359,6 @@
         
         //b. 优先取最匹配的概念,直至检查到cPM_CheckRefLimit条有效条数;
         NSInteger checkNum = 0;
-        CGFloat totalRefScore = 0;
         BOOL stopLoop = false;
         for (AIAlgNodeBase *fuzzyAlg in sortAlgs) {
             NSArray *fuzzyRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:fuzzyAlg]];
@@ -375,24 +374,15 @@
                 if (fuzzyRef && fuzzyRef.cmvNode_p && [outModel.pm_MVAT isEqualToString:fuzzyRef.cmvNode_p.algsType] && fuzzySameIdent_ps.count == 1) {
                     
                     CGFloat fuzzyRefScore = [ThinkingUtils getScoreForce:fuzzyRef.cmvNode_p ratio:1.0f];
-                    totalRefScore += fuzzyRefScore;
-                    if (Log4PM) NSLog(@"-> checkFo:%@->%@ 综合分(%f=%f)",Fo2FStr(fuzzyRef),Mvp2Str(fuzzyRef.cmvNode_p),totalRefScore,outModel.pm_Score);
+                    if (Log4PM) NSLog(@"-> checkFo:%@->%@ 任务分:%f",Fo2FStr(fuzzyRef),Mvp2Str(fuzzyRef.cmvNode_p),outModel.pm_Score);
                     [theNV setForceMode:true];
                     [theNV setNodeData:fuzzyRef.pointer lightStr:Pit2FStr(firstJustPValue)];
                     [theNV setNodeData:fuzzyRef.cmvNode_p lightStr:STRFORMAT(@"%f",fuzzyRefScore)];
                     [theNV setForceMode:false];
                     
                     //e. 发现一条同向时,结束循环 (stopLoop=true);
-                    //if ([ThinkingUtils sameOfScore1:fuzzyRefScore score2:outModel.pm_Score]) {
-                    //    stopLoop = true;
-                    //    //e. 以综合分为准,同向则不用加工,反向则进行加工;
-                    //    if ([ThinkingUtils sameOfScore1:totalRefScore score2:outModel.pm_Score]) {
-                    //        firstPNeedGL = false;
-                    //    }
-                    //}
-                    
                     stopLoop = true;
-                    firstPNeedGL = [ThinkingUtils sameOfScore1:fuzzyRefScore score2:outModel.pm_Score];
+                    firstPNeedGL = ![ThinkingUtils sameOfScore1:fuzzyRefScore score2:outModel.pm_Score];
                     checkNum ++;
                     //e. 有一条有效,即不用GL加工,且break;
                     if (checkNum >= cPM_CheckRefLimit || stopLoop) break;
