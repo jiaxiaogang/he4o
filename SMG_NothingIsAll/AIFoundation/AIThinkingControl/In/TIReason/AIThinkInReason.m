@@ -333,6 +333,10 @@
             successed = true;
             finishBlock(assFo,matchValue,lastAssIndex);
         } failure:^(NSString *msg) {
+            [theNV setForceMode:true];
+            [theNV setNodeData:protoFo.pointer lightStr:@"Proto"];
+            [theNV setNodeData:assFo.pointer lightStr:@"Ass"];
+            [theNV setForceMode:false];
             if (Log4MFo) NSLog(@"%@",msg);
         }];
         

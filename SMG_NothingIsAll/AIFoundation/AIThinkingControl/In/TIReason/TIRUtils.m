@@ -38,7 +38,7 @@
         failure(@"参数错误");
         return;
     }
-    if (Log4MFo) NSLog(@"------------------------ 时序全含检查 ------------------------\nproto:%@\nass:%@",Fo2FStr(protoFo),Fo2FStr(assFo));
+    if (Log4MFo) NSLog(@"------------------------ 时序全含检查 ------------------------\nproto:%@->%@\nass:%@->%@",Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p),Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
     AIKVPointer *lastProtoAlg_p = ARR_INDEX_REVERSE(protoFo.content_ps, 0); //最后一个protoAlg指针
     int validItemCount = 1;                                                 //默认有效数为1 (因为lastAlg肯定有效);
     NSInteger lastAssIndex = -1;                                            //在assFo已发生到的index,后面为预测;

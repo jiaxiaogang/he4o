@@ -43,6 +43,11 @@
 //MARK:===============================================================
 //MARK:                     < FromInput >
 //MARK:===============================================================
+/**
+ *  MARK:--------------------数据输入--------------------
+ *  @version
+ *      2020.07.19: 空场景时,不将空场景概念加到瞬时记忆序列中 (因为现在的内类比HN已经不再使用空场景做任何参考,所以其存在无意义,反而会影响到时序全含判断,因为记忆时序中的空场景,往往无法被新的时序包含);
+ */
 -(void) dataInWithModels:(NSArray*)dics algsType:(NSString*)algsType{
     //1. 数据检查 (小鸟不能仅传入foodView,而要传入整个视角场景)
     dics = ARRTOOK(dics);
@@ -59,7 +64,7 @@
     
     //3. 构建父概念 & 将空场景加入瞬时记忆;
     AIAbsAlgNode *parentAlgNode = [theNet createAbsAlg_NoRepeat:parentValue_ps conAlgs:nil isMem:true isOut:false ds:algsType];
-    if (parentValue_ps.count == 0) [self.delegate aiThinkIn_AddToShortMemory:parentAlgNode.pointer isMatch:false];
+    //if (parentValue_ps.count == 0) [self.delegate aiThinkIn_AddToShortMemory:parentAlgNode.pointer isMatch:false];
     if (Log4TCInput) NSLog(@"---> 构建InputParent节点:%@",Alg2FStr(parentAlgNode));
     
     //4. 收集本组中,所有概念节点;

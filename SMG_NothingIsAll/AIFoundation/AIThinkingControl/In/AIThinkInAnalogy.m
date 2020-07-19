@@ -271,7 +271,6 @@
     AIAlgNodeBase *aFocusAlg = algA;
     AIAlgNodeBase *bFocusAlg = algB;
     
-    
     //2. 收集a和b的概念辐射合集 (取自身 + 自身的一层抽象);
     NSMutableArray *aSum_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:aFocusAlg]];
     [aSum_ps addObject:aFocusAlg.pointer];
