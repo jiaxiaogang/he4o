@@ -127,11 +127,10 @@
     //1. 数据准备
     __block AIShortMatchModel *mModel = [[AIShortMatchModel alloc] init];
     NSArray *rtContent_ps = ARR_SUB(fo.content_ps, 0, fo.content_ps.count - 1);
-    AIAlgNodeBase *rtAlg = [SMGUtils searchNode:ARR_INDEX(rtContent_ps, rtContent_ps.count - 1)];
-    if (rtAlg && ARRISOK(rtContent_ps)) {
+    if (ARRISOK(rtContent_ps)) {
         
         //2. 识别时序;
-        [AIThinkInReason TIR_Fo_FromRethink:rtContent_ps replaceMatchAlg:rtAlg finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue, NSInteger cutIndex) {
+        [AIThinkInReason TIR_Fo_FromRethink:rtContent_ps finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue, NSInteger cutIndex) {
             mModel.matchAFo = curNode;
             mModel.matchFo = matchFo;
             mModel.matchFoValue = matchValue;

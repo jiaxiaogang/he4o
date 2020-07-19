@@ -420,6 +420,10 @@
     }
     return allPorts;
 }
++(NSArray*) refPorts_All4Alg_Normal:(AIAlgNodeBase*)node{
+    NSArray *allPorts = [self refPorts_All4Alg:node];
+    return [SMGUtils filterPorts_Normal:allPorts];
+}
 
 +(NSArray*) refPorts_All4Value:(AIKVPointer*)value_p{
     NSMutableArray *allPorts = [[NSMutableArray alloc] init];

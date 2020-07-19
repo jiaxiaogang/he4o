@@ -195,19 +195,19 @@
  *      20200403 TODOTOMORROW: 支持识别到多个时序,并以此得到多个价值预测 (支持更多元的评价);
  *
  */
-+(void) TIR_Fo_FromRethink:(NSArray*)protoAlg_ps replaceMatchAlg:(AIAlgNodeBase*)replaceMatchAlg finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue,NSInteger cutIndex))finishBlock{
++(void) TIR_Fo_FromRethink:(NSArray*)protoAlg_ps finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue,NSInteger cutIndex))finishBlock{
     //1. 数据检查
     AIKVPointer *last_p = ARR_INDEX_REVERSE(protoAlg_ps, 0);
     AIAlgNodeBase *lastAlg = [SMGUtils searchNode:last_p];
     NSArray *lastAlgRefPorts = [AINetUtils refPorts_All4Alg:lastAlg];
-    if (!ARRISOK(protoAlg_ps) || !replaceMatchAlg || !lastAlg) {
+    if (!ARRISOK(protoAlg_ps) || !lastAlg) {
         return;
     }
     AIFrontOrderNode *protoFo = [theNet createConFo:protoAlg_ps isMem:true];//将protoAlg_ps构建成时序;
     NSLog(@"\n\n=============================== 反思时序识别 ===============================\n%@",Fo2FStr(protoFo));
     
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    //[self partMatching_Fo:protoFo assFoIndexAlg:replaceMatchAlg assFoBlock:^NSArray *(AIAlgNodeBase *indexAlg) {
+    //[self partMatching_Fo:protoFo assFoIndexAlg:lastAlg assFoBlock:^NSArray *(AIAlgNodeBase *indexAlg) {
     //    NSMutableArray *result = [[NSMutableArray alloc] init];
     //    if (indexAlg) {
     //        //a. 只能识别cNormal时序;
@@ -388,6 +388,9 @@
  *      3. 根据6条取refPorts引用时序;
  *      4. 对所有引用的时序,做计数判断,引用了越多的原始元素protoAlg,排在越前面;
  *      5. 从前开始找,找出引用即多,又全含的结果返回;
+ *  @version 候选集
+ *      2020.07.18: 将整个allRef_2拍平成一维数组,并去重 (即所有帧的refFos都算做候选集);
+ *      2020.07.19: 改为仅取最后一位的refFos (因为最后一位是焦点帧,并且全含判断算法也需要支持仅末位候选集);
  */
 +(void) partMatching_FoV2:(AIFoNodeBase*)protoFo finishBlock:(void(^)(AIFoNodeBase *matchFo,CGFloat matchValue,NSInteger cutIndex))finishBlock{
     //1. 数据准备
@@ -405,19 +408,15 @@
         NSMutableArray *iRef_ps = [[NSMutableArray alloc] init];
         for (AIKVPointer *itemIndex_p in itemIndexes) {
             AIAlgNodeBase *itemIndexAlg = [SMGUtils searchNode:itemIndex_p];
-            [iRef_ps addObjectsFromArray:[SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:itemIndexAlg]]];
+            [iRef_ps addObjectsFromArray:[SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg_Normal:itemIndexAlg]]];
             [iRef_ps removeObject:protoFo.pointer];
         }
         [allRef_ps_2 addObject:iRef_ps];
         if (Log4MFo) NSLog(@"-----> 下标:%ld 索引数:%lu 指向时序数:%lu",(long)i,itemIndexes.count,(unsigned long)iRef_ps.count);
     }
     
-    //4. 将allRef_2拍平成一维数组,并去重;
-    NSMutableArray *allRef_ps_1 = [[NSMutableArray alloc] init];
-    for (NSArray *ps in allRef_ps_2) {
-        [allRef_ps_1 addObjectsFromArray:ps];
-    }
-    allRef_ps_1 = [SMGUtils removeRepeat:allRef_ps_1];
+    //4. 收集结果候选集 (目前仅末位refFos,参考注释version说明);
+    NSArray *allRef_ps_1 = ARR_INDEX_REVERSE(allRef_ps_2, 0);
     
     //5. 对一维数组进行判断,看有几条有效引用;
     NSMutableDictionary *countDic = [[NSMutableDictionary alloc] init];
