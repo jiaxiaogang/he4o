@@ -368,13 +368,14 @@
         AIAlgNodeBase *indexAlg = [SMGUtils searchNode:assIndex_p];
         
         //4. indexAlg.refPorts; (取识别到过的抽象节点(如苹果));
-        NSArray *assFoPorts = [AINetUtils refPorts_All4Alg_Normal:indexAlg];
-        assFoPorts = ARR_SUB(assFoPorts, 0, cPartMatchingCheckRefPortsLimit_Fo);
-        if (Log4MFo) NSLog(@"-----> TIR_Fo 索引到有效时序数:%lu",(unsigned long)assFoPorts.count);
+        NSArray *assFo_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg_Normal:indexAlg]];
+        assFo_ps = [SMGUtils removeSub_p:protoFo.pointer parent_ps:assFo_ps];
+        assFo_ps = ARR_SUB(assFo_ps, 0, cPartMatchingCheckRefPortsLimit_Fo);
+        if (Log4MFo) NSLog(@"-----> TIR_Fo 索引到有效时序数:%lu",(unsigned long)assFo_ps.count);
         
         //5. 依次对assFos对应的时序,做匹配度评价; (参考: 160_TIRFO单线顺序模型)
-        for (AIPort *assFoPort in assFoPorts) {
-            AIFoNodeBase *assFo = [SMGUtils searchNode:assFoPort.target_p];
+        for (AIKVPointer *assFo_p in assFo_ps) {
+            AIFoNodeBase *assFo = [SMGUtils searchNode:assFo_p];
             
             //6. 对assFo做匹配判断;
             [TIRUtils TIR_Fo_CheckFoValidMatch:protoFo assFo:assFo checkItemValid:^BOOL(AIKVPointer *itemAlg, AIKVPointer *assAlg) {
