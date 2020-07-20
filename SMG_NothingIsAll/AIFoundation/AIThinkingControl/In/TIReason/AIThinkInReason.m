@@ -288,7 +288,7 @@
             [iRef_ps removeObject:protoFo.pointer];
         }
         [allRef_ps_2 addObject:iRef_ps];
-        if (Log4MFo) NSLog(@"-----> 下标:%ld 索引数:%lu 指向时序数:%lu",(long)i,itemIndexes.count,(unsigned long)iRef_ps.count);
+        if (Log4MFo) NSLog(@"-----> 第%ld个概念_索引数:%lu 指向时序数:%lu",(long)i,itemIndexes.count,(unsigned long)iRef_ps.count);
     }
     
     //4. 收集结果候选集 (目前仅末位refFos,参考注释version说明);
@@ -316,7 +316,8 @@
     }];
     for (NSInteger i = 0; i < MIN(5, sortRef_ps_1.count); i++) {
         AIKVPointer *item = ARR_INDEX(sortRef_ps_1, i);
-        if (Log4MFo) NSLog(@"---> 排序完成,条数:%lu 引用数五强:%@",(unsigned long)sortRef_ps_1.count,[countDic objectForKey:OBJ2DATA(item)]);
+        AIFoNodeBase *itemFo = [SMGUtils searchNode:item];
+        if (Log4MFo) NSLog(@"---> 排序完成条数:%lu 引用数:%@ 内容:%@->%@",(unsigned long)sortRef_ps_1.count,[countDic objectForKey:OBJ2DATA(item)],Fo2FStr(itemFo),Mvp2Str(itemFo.cmvNode_p));
     }
     
     //7. 取排序好的前10个,从前至后,逐个找全含 (找到一个即可) (参考: 160_TIRFO单线顺序模型);
@@ -333,10 +334,6 @@
             successed = true;
             finishBlock(assFo,matchValue,lastAssIndex);
         } failure:^(NSString *msg) {
-            [theNV setForceMode:true];
-            [theNV setNodeData:protoFo.pointer lightStr:@"Proto"];
-            [theNV setNodeData:assFo.pointer lightStr:@"Ass"];
-            [theNV setForceMode:false];
             if (Log4MFo) NSLog(@"%@",msg);
         }];
         
