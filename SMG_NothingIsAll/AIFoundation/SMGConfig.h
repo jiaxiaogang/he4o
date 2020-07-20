@@ -63,6 +63,13 @@
 //MARK:                     < ThinkIn >
 //MARK:===============================================================
 #define cMvNoneIdent @"mvNone"      //mv的默认标识
-#define cPartMatchingCheckRefPortsLimit 10 //局部匹配时_检查refPorts数;
+
+/**
+ *  MARK:--------------------局部匹配时,检查refPorts数--------------------
+ *  @version 2020.07.20: 概念经历太多时,10个太少找不到本该出现的结果,所以改成IntMax,因为无性能问题
+ */
+#define cPartMatchingCheckRefPortsLimit_Alg NSIntegerMax
+#define cPartMatchingCheckRefPortsLimit_Fo 10
+
 #define cPartMatchingThreshold 0.3  //局部匹配时_匹配阀值 (相似度) 20191224ALG改为全含方式 FO懒先不改
 #define cTIRFoAbsIndexLimit 5       //时序识别时,取抽象索引的条数

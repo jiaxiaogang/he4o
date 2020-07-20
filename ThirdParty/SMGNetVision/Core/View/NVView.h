@@ -97,5 +97,10 @@
  */
 -(NSString*) getLightStr:(id)nodeData;
 
+/**
+ *  MARK:--------------------临时强行工作模式--------------------
+ */
+-(void) tempRunForceMode:(void(^)())block;
+
 @end
 

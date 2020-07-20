@@ -179,6 +179,15 @@
     return nv ? [nv getLightStr] : @"";
 }
 
+-(void) tempRunForceMode:(void(^)())block{
+    if (block) {
+        BOOL bakForceMode = self.forceMode;
+        [self setForceMode:true];
+        block();
+        [self setForceMode:bakForceMode];
+    }
+}
+
 //MARK:===============================================================
 //MARK:                     < privateMethod >
 //MARK:===============================================================

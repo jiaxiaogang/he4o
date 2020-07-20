@@ -204,7 +204,7 @@
     NSLog(@"\n\n=============================== 反思时序识别 ===============================\n%@",Fo2FStr(protoFo));
     
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [self partMatching_FoV2:protoFo finishBlock:^(AIFoNodeBase *matchFo, CGFloat matchValue, NSInteger cutIndex) {
+    [self partMatching_FoV1Dot5:protoFo finishBlock:^(AIFoNodeBase *matchFo, CGFloat matchValue, NSInteger cutIndex) {
         finishBlock(protoFo,matchFo,matchValue,cutIndex);
     }];
 }
@@ -224,7 +224,7 @@
     
     NSLog(@"\n\n------------------------------- 瞬时时序识别 -------------------------------\n%@",Fo2FStr(protoFo));
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [self partMatching_FoV2:protoFo finishBlock:^(AIFoNodeBase *matchFo, CGFloat matchValue, NSInteger cutIndex) {
+    [self partMatching_FoV1Dot5:protoFo finishBlock:^(AIFoNodeBase *matchFo, CGFloat matchValue, NSInteger cutIndex) {
         finishBlock(protoFo,matchFo,matchValue,cutIndex);
     }];
 }
@@ -322,7 +322,7 @@
     
     //7. 取排序好的前10个,从前至后,逐个找全含 (找到一个即可) (参考: 160_TIRFO单线顺序模型);
     __block BOOL successed = false;
-    sortRef_ps_1 = ARR_SUB(sortRef_ps_1, 0, cPartMatchingCheckRefPortsLimit);
+    sortRef_ps_1 = ARR_SUB(sortRef_ps_1, 0, cPartMatchingCheckRefPortsLimit_Fo);
     for (AIKVPointer *item in sortRef_ps_1) {
         AIFoNodeBase *assFo = [SMGUtils searchNode:item];
         
@@ -341,6 +341,56 @@
         if (successed) return;
     }
     NSLog(@"时序识别失败----Failure");
+}
+
+//时序识别v1.5 (在V1的基础上改的,与V2最大的区别,是其未按照索引计数排序);
++(void) partMatching_FoV1Dot5:(AIFoNodeBase*)protoFo finishBlock:(void(^)(AIFoNodeBase *matchFo,CGFloat matchValue,NSInteger cutIndex))finishBlock{
+    //1. 数据准备
+    if (!ISOK(protoFo, AIFoNodeBase.class)) {
+        finishBlock(nil,0,0);
+        return;
+    }
+    AIAlgNodeBase *lastAlg = [SMGUtils searchNode:ARR_INDEX_REVERSE(protoFo.content_ps, 0)];
+    if (!lastAlg) {
+        finishBlock(nil,0,0);
+        return;
+    }
+    __block BOOL successed = false;
+    
+    //2. 取assIndexes (取递归两层)
+    NSMutableArray *assIndexes = [[NSMutableArray alloc] init];
+    [assIndexes addObject:lastAlg.pointer];
+    [assIndexes addObjectsFromArray:[SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All_Normal:lastAlg]]];
+    
+    //3. 递归进行assFos
+    if (Log4MFo) NSLog(@"------------ TIR_Fo ------------索引数:%lu",(unsigned long)assIndexes.count);
+    for (AIKVPointer *assIndex_p in assIndexes) {
+        AIAlgNodeBase *indexAlg = [SMGUtils searchNode:assIndex_p];
+        
+        //4. indexAlg.refPorts; (取识别到过的抽象节点(如苹果));
+        NSArray *assFoPorts = [AINetUtils refPorts_All4Alg_Normal:indexAlg];
+        assFoPorts = ARR_SUB(assFoPorts, 0, cPartMatchingCheckRefPortsLimit_Fo);
+        if (Log4MFo) NSLog(@"-----> TIR_Fo 索引到有效时序数:%lu",(unsigned long)assFoPorts.count);
+        
+        //5. 依次对assFos对应的时序,做匹配度评价; (参考: 160_TIRFO单线顺序模型)
+        for (AIPort *assFoPort in assFoPorts) {
+            AIFoNodeBase *assFo = [SMGUtils searchNode:assFoPort.target_p];
+            
+            //6. 对assFo做匹配判断;
+            [TIRUtils TIR_Fo_CheckFoValidMatch:protoFo assFo:assFo checkItemValid:^BOOL(AIKVPointer *itemAlg, AIKVPointer *assAlg) {
+                return [TOUtils mIsC_1:itemAlg c:assAlg];
+            } success:^(NSInteger lastAssIndex, CGFloat matchValue) {
+                NSLog(@"时序识别: SUCCESS >>> matchValue:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
+                successed = true;
+                finishBlock(assFo,matchValue,lastAssIndex);
+            } failure:^(NSString *msg) {
+                if (Log4MFo) NSLog(@"%@",msg);
+            }];
+            
+            //7. 成功一条即return
+            if (successed) return;
+        }
+    }
 }
 
 /**

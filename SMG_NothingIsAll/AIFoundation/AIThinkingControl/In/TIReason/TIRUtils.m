@@ -173,7 +173,7 @@
         //2. 对每个微信息,取被引用的强度前cPartMatchingCheckRefPortsLimit个;
         for (AIKVPointer *item_p in proto_ps) {
             NSArray *refPorts = refPortsBlock(item_p);
-            refPorts = ARR_SUB(refPorts, 0, cPartMatchingCheckRefPortsLimit);
+            refPorts = ARR_SUB(refPorts, 0, cPartMatchingCheckRefPortsLimit_Alg);
             if (Log4MAlg) NSLog(@"当前item_p:%@ -------------------数量:%lu",[NVHeUtil getLightStr:item_p],(unsigned long)refPorts.count);
             //3. 进行计数
             for (AIPort *refPort in refPorts) {
