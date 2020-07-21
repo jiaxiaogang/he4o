@@ -390,7 +390,7 @@
                 successed = true;
                 finishBlock(assFo,matchValue,lastAssIndex);
             } failure:^(NSString *msg) {
-                if (Log4MFo) NSLog(@"%@",msg);
+                NSLog(@"%@",msg);
             }];
             
             //7. 成功一条即return
