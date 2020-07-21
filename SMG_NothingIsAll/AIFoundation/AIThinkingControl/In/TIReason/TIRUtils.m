@@ -109,7 +109,7 @@
     except_ps = ARRTOOK(except_ps);
     
     //2. 调用通用局部 匹配方法;
-    [self partMatching_General:algNode.content_ps refPortsBlock:^NSArray *(AIKVPointer *item_p) {
+    [self partMatching_General:algNode refPortsBlock:^NSArray *(AIKVPointer *item_p) {
         if (item_p) {
             //1> 数据准备 (value_p的refPorts是单独存储的);
             return ARRTOOK([SMGUtils searchObjectForFilePath:item_p.filePath fileName:kFNRefPorts_All(isMem) time:cRTReference_All(isMem)]);
@@ -161,17 +161,18 @@
  *  @desc 迭代记录:
  *      2019.12.23 - 迭代支持全含,参考17215 (代码中由判断相似度,改为判断全含)
  *      2020.04.13 - 将结果通过complete返回,支持全含 或 仅相似 (因为正向反馈类比的死循环切入问题,参考:n19p6);
+ *      2020.07.21 - 当Seem结果时,对seem和proto进行类比抽象,并将抽象概念返回 (参考:20142);
  */
-+(void) partMatching_General:(NSArray*)proto_ps
++(void) partMatching_General:(AIAlgNodeBase*)protoAlg
                refPortsBlock:(NSArray*(^)(AIKVPointer *item_p))refPortsBlock
                   checkBlock:(BOOL(^)(AIPointer *target_p))checkBlock
                     complete:(void(^)(AIAlgNodeBase *matchAlg,MatchType type))complete{
     //1. 数据准备;
-    if (ARRISOK(proto_ps)) {
+    if (protoAlg) {
         NSMutableDictionary *countDic = [[NSMutableDictionary alloc] init];
         
         //2. 对每个微信息,取被引用的强度前cPartMatchingCheckRefPortsLimit个;
-        for (AIKVPointer *item_p in proto_ps) {
+        for (AIKVPointer *item_p in protoAlg.content_ps) {
             NSArray *refPorts = refPortsBlock(item_p);
             refPorts = ARR_SUB(refPorts, 0, cPartMatchingCheckRefPortsLimit_Alg);
             if (Log4MAlg) NSLog(@"当前item_p:%@ -------------------数量:%lu",[NVHeUtil getLightStr:item_p],(unsigned long)refPorts.count);
@@ -197,7 +198,7 @@
         NSInteger typeWrong = 0;
         NSInteger countWrong = 0;
         NSInteger typeCountWrong = 0;
-        if (Log4MAlg) WLog(@"proto___________长度:%lu 内容:(%@)",proto_ps.count,[NVHeUtil getLightStr4Ps:proto_ps]);
+        if (Log4MAlg) WLog(@"proto___________长度:%lu 内容:(%@)",protoAlg.content_ps.count,Alg2FStr(protoAlg));
         for (NSData *key in sortKeys) {
             AIKVPointer *key_p = DATA2OBJ(key);
             AIAlgNodeBase *result = [SMGUtils searchNode:key_p];
@@ -219,11 +220,18 @@
         }
         
         if (Log4MAlg) WLog(@"识别结果 >> 非抽象且非全含:%ld,非抽象数:%ld,非全含数:%ld / 总数:%lu",(long)typeCountWrong,(long)typeWrong,countWrong,(unsigned long)sortKeys.count);
+        
         //7. 未将全含返回,则返回最相似;
-        AIAlgNodeBase *result = [SMGUtils searchNode:DATA2OBJ(ARR_INDEX(sortKeys, 0))];
-        complete(result,MatchType_Seem);
-        return;
+        AIAlgNodeBase *seemAlg = [SMGUtils searchNode:DATA2OBJ(ARR_INDEX(sortKeys, 0))];
+        if (seemAlg) {
+            //8. 对最相似的进行抽象;
+            NSArray *same_ps = [SMGUtils filterSame_ps:protoAlg.content_ps parent_ps:seemAlg.content_ps];
+            AIAlgNodeBase *absAlg = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[seemAlg,protoAlg] isMem:false];
+            complete(absAlg,MatchType_Seem);
+            return;
+        }
     }
+    complete(nil,MatchType_None);
 }
 
 //MARK:===============================================================

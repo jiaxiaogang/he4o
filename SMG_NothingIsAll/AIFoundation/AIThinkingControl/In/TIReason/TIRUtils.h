@@ -34,7 +34,7 @@
  *  @param refPortsBlock : notnull 取item_p.refPorts的方法;
  *  @param complete : 根据匹配度排序,并返回;
  */
-+(void) partMatching_General:(NSArray*)proto_ps
++(void) partMatching_General:(AIAlgNodeBase*)protoAlg
                refPortsBlock:(NSArray*(^)(AIKVPointer *item_p))refPortsBlock
                   checkBlock:(BOOL(^)(AIPointer *target_p))checkBlock
                     complete:(void(^)(AIAlgNodeBase *matchAlg,MatchType type))complete;
