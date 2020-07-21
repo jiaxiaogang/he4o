@@ -158,10 +158,11 @@
  *  @param checkBlock : notnull 对可能的结果,进行检查; (就是自身 或 不应期则false)
  *  @param refPortsBlock : notnull 取item_p.refPorts的方法;
  *  @param complete : 把最匹配的返回;
- *  @desc 迭代记录:
+ *  @version:
  *      2019.12.23 - 迭代支持全含,参考17215 (代码中由判断相似度,改为判断全含)
  *      2020.04.13 - 将结果通过complete返回,支持全含 或 仅相似 (因为正向反馈类比的死循环切入问题,参考:n19p6);
  *      2020.07.21 - 当Seem结果时,对seem和proto进行类比抽象,并将抽象概念返回 (参考:20142);
+ *      2020.07.21 - 当Seem结果时,虽然构建了absAlg,但还是将seemAlg返回 (参考20142-Q1);
  */
 +(void) partMatching_General:(AIAlgNodeBase*)protoAlg
                refPortsBlock:(NSArray*(^)(AIKVPointer *item_p))refPortsBlock
@@ -227,7 +228,8 @@
             //8. 对最相似的进行抽象;
             NSArray *same_ps = [SMGUtils filterSame_ps:protoAlg.content_ps parent_ps:seemAlg.content_ps];
             AIAlgNodeBase *absAlg = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[seemAlg,protoAlg] isMem:false];
-            complete(absAlg,MatchType_Seem);
+            NSLog(@"相似识别为:%@ >> 构建抽象:%@",Alg2FStr(seemAlg),Alg2FStr(absAlg));
+            complete(seemAlg,MatchType_Seem);
             return;
         }
     }
