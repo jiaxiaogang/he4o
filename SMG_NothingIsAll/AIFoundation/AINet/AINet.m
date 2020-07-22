@@ -170,20 +170,6 @@ static AINet *_instance;
     //2. 方向索引 (排除不应期);
     NSArray *mvRefs = [theNet getNetNodePointersFromDirectionReference:at direction:direction isMem:false filter:nil];
     
-    //TODOTOMORROW:
-    //查下方向索引的排序方式,能否与时序的确切性挂勾,即想到的不是最好吃的,而是最常吃的;
-    for (AIPort *item in mvRefs) {
-        AICMVNodeBase *itemMV = [SMGUtils searchNode:item.target_p];
-        NSString *plusDS = [ThinkingUtils getAnalogyTypeDS:ATPlus];
-        NSString *subDS = [ThinkingUtils getAnalogyTypeDS:ATSub];
-        NSString *foDS = itemMV.foNode_p.dataSource;
-        if (![plusDS isEqualToString:foDS] && ![subDS isEqualToString:foDS]) {
-            AIFoNodeBase *fo = [SMGUtils searchNode:itemMV.foNode_p];
-            NSLog(@"=======:strong:%ld 内容:%@->%@",item.strong.value,Fo2FStr(fo),Mv2FStr(itemMV));
-        }
-    }
-    
-    
     //3. 逐个返回;
     for (AIPort *item in mvRefs) {
         //a. analogyType处理 (仅支持normal的fo);
