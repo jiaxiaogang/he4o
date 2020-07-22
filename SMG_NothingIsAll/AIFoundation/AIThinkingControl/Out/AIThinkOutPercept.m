@@ -202,7 +202,7 @@
     
     //2. 调用通用diff模式方法;
     __block BOOL success = false;//默认为失败
-    [TOUtils topPerceptMode:matchAlg demandModel:demandModel direction:direction tryResult:^BOOL(AIFoNodeBase *sameFo) {
+    [TOUtils topPerceptModeV2:matchAlg demandModel:demandModel direction:direction tryResult:^BOOL(AIFoNodeBase *sameFo) {
         
         //a. 构建TOFoModel
         TOFoModel *toFoModel = [TOFoModel newWithFo_p:sameFo.pointer base:demandModel];
@@ -240,7 +240,7 @@
     
     //2. 调用通用diff模式方法;
     __block BOOL success = false;//默认为失败
-    [TOUtils topPerceptMode:matchAlg demandModel:demandModel direction:direction tryResult:^BOOL(AIFoNodeBase *sameFo) {
+    [TOUtils topPerceptModeV2:matchAlg demandModel:demandModel direction:direction tryResult:^BOOL(AIFoNodeBase *sameFo) {
         
         //a. 取兄弟节点,停止打球,则不再累;
         [TOUtils getPlusBrotherBySubProtoFo_NoRepeatNotNull:sameFo tryResult:^BOOL(AIFoNodeBase *checkFo, AIFoNodeBase *subNode, AIFoNodeBase *plusNode) {

@@ -219,19 +219,79 @@
  *  @bug
  *      1. 查点击马上饿,找不到解决方案的BUG,经查,MatchAlg与解决方案无明确关系,但MatchAlg.conPorts中,有与解决方案有直接关系的,改后解决 (参考20073)
  *      2020.07.09: 修改方向索引的解决方案不应期,解决只持续飞行两次就停住的BUG (参考n20p8-BUG1);
+ *  @version
+ *      2020.07.23: 迭代至V2_将19192示图的联想方式去掉,仅将方向索引除去不应期的返回,而解决方案到底是否实用,放到行为化中去判断;
  */
-+(void) topPerceptMode:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel direction:(MVDirection)direction tryResult:(BOOL(^)(AIFoNodeBase *sameFo))tryResult canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
+//+(void) topPerceptMode:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel direction:(MVDirection)direction tryResult:(BOOL(^)(AIFoNodeBase *sameFo))tryResult canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
+//    //1. 数据准备;
+//    if (!matchAlg || !demandModel || direction == MVDirection_None || !tryResult || !canAssBlock || !canAssBlock() || !updateEnergy) return;
+//
+//    //2. matchAlg可以用来做什么,取A.refPorts
+//    //P例:土豆,可吃,也可当土豆地雷;
+//    //S例:打球,导致开心,但也导致累;
+//    NSArray *mIndexes = [ThinkingUtils collectionNodes:matchAlg.pointer absLimit:0 conLimit:cTOPPModeConAssLimit];
+//    NSMutableArray *mRef_ps = [ThinkingUtils collectionAlgRefs:mIndexes itemRefLimit:NSIntegerMax except_p:nil];
+//
+//    //3. 无瞬时指引,单靠内心瞎想,不能解决任何问题;
+//    if (!ARRISOK(mRef_ps)) return;
+//
+//    //3. 不应期
+//    NSArray *exceptFoModels = [SMGUtils filterArr:demandModel.actionFoModels checkValid:^BOOL(TOModelBase *item) {
+//        return item.status == TOModelStatus_ActNo || item.status == TOModelStatus_ScoreNo;
+//    }];
+//    NSArray *except_ps = [TOUtils convertPointersFromTOModels:exceptFoModels];
+//    if (Log4DirecRef) NSLog(@"Fo不应期数:%ld",except_ps.count);
+//
+//    //4. 用方向索引找normalFo解决方案
+//    //P例:饿了,该怎么办;
+//    //S例:累了,肿么肥事;
+//    [theNet getNormalFoByDirectionReference:demandModel.algsType direction:direction tryResult:^BOOL(AIKVPointer *fo_p) {
+//        //5. 方向索引找到一条normalFo解决方案;
+//        //P例:吃可以解决饿;
+//        //S例:运动导致累;
+//        AIFoNodeBase *foNode = [SMGUtils searchNode:fo_p];
+//        if (foNode) {
+//            //6. 再向下取具体解决方案F.conPorts;
+//            //P例:吃-可以做饭,也可以下馆子;
+//            //S例:运动-打球是运动,跑步也是;
+//            NSMutableArray *foCon_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:foNode]];
+//            [foCon_ps insertObject:foNode.pointer atIndex:0];
+//
+//            //6. 移除不应期
+//            foCon_ps = [SMGUtils removeSub_ps:except_ps parent_ps:foCon_ps];
+//
+//            //6. 取交集
+//            //P例:炒个土豆丝,吃掉解决饥饿问题;
+//            //S例:打球导致累,越打越累;
+//            NSArray *same_ps = [SMGUtils filterSame_ps:mRef_ps parent_ps:foCon_ps];
+//            if (Log4DirecRef) NSLog(@"方向索引到-有效Fo数:%ld 瞬时match用途:%ld 交集有效:%ld",foCon_ps.count,mRef_ps.count,same_ps.count);
+//
+//            //7. 依次尝试行为化;
+//            //P例:取自身,实现吃,则可不饿;
+//            //S例:取兄弟节点,停止打球,则不再累;
+//            for (AIKVPointer *same_p in same_ps) {
+//                //8. 消耗活跃度;
+//                updateEnergy(-1);
+//                AIFoNodeBase *sameFo = [SMGUtils searchNode:same_p];
+//                BOOL stop = tryResult(sameFo);
+//
+//                //8. 只要有一次tryResult成功,中断回调循环;
+//                if (stop) {
+//                    return true;
+//                }
+//
+//                //9. 只要耗尽,中断回调循环;
+//                if (!canAssBlock()) {
+//                    return true;
+//                }
+//            }
+//        }
+//        return false;//fo解决方案无效,继续找下个;
+//    }];
+//}
++(void) topPerceptModeV2:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel direction:(MVDirection)direction tryResult:(BOOL(^)(AIFoNodeBase *sameFo))tryResult canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
     //1. 数据准备;
     if (!matchAlg || !demandModel || direction == MVDirection_None || !tryResult || !canAssBlock || !canAssBlock() || !updateEnergy) return;
-    
-    //2. matchAlg可以用来做什么,取A.refPorts
-    //P例:土豆,可吃,也可当土豆地雷;
-    //S例:打球,导致开心,但也导致累;
-    NSArray *mIndexes = [ThinkingUtils collectionNodes:matchAlg.pointer absLimit:0 conLimit:cTOPPModeConAssLimit];
-    NSMutableArray *mRef_ps = [ThinkingUtils collectionAlgRefs:mIndexes itemRefLimit:NSIntegerMax except_p:nil];
-    
-    //3. 无瞬时指引,单靠内心瞎想,不能解决任何问题;
-    if (!ARRISOK(mRef_ps)) return;
     
     //3. 不应期
     NSArray *exceptFoModels = [SMGUtils filterArr:demandModel.actionFoModels checkValid:^BOOL(TOModelBase *item) {
@@ -247,41 +307,20 @@
         //5. 方向索引找到一条normalFo解决方案;
         //P例:吃可以解决饿;
         //S例:运动导致累;
-        AIFoNodeBase *foNode = [SMGUtils searchNode:fo_p];
-        if (foNode) {
-            //6. 再向下取具体解决方案F.conPorts;
-            //P例:吃-可以做饭,也可以下馆子;
-            //S例:运动-打球是运动,跑步也是;
-            NSMutableArray *foCon_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:foNode]];
-            [foCon_ps insertObject:foNode.pointer atIndex:0];
+        if (![except_ps containsObject:fo_p]) {
+            //8. 消耗活跃度;
+            updateEnergy(-1);
+            AIFoNodeBase *fo = [SMGUtils searchNode:fo_p];
+            BOOL stop = tryResult(fo);
             
-            //6. 移除不应期
-            foCon_ps = [SMGUtils removeSub_ps:except_ps parent_ps:foCon_ps];
+            //8. 只要有一次tryResult成功,中断回调循环;
+            if (stop) {
+                return true;
+            }
             
-            //6. 取交集
-            //P例:炒个土豆丝,吃掉解决饥饿问题;
-            //S例:打球导致累,越打越累;
-            NSArray *same_ps = [SMGUtils filterSame_ps:mRef_ps parent_ps:foCon_ps];
-            if (Log4DirecRef) NSLog(@"方向索引到-有效Fo数:%ld 瞬时match用途:%ld 交集有效:%ld",foCon_ps.count,mRef_ps.count,same_ps.count);
-            
-            //7. 依次尝试行为化;
-            //P例:取自身,实现吃,则可不饿;
-            //S例:取兄弟节点,停止打球,则不再累;
-            for (AIKVPointer *same_p in same_ps) {
-                //8. 消耗活跃度;
-                updateEnergy(-1);
-                AIFoNodeBase *sameFo = [SMGUtils searchNode:same_p];
-                BOOL stop = tryResult(sameFo);
-                
-                //8. 只要有一次tryResult成功,中断回调循环;
-                if (stop) {
-                    return true;
-                }
-                
-                //9. 只要耗尽,中断回调循环;
-                if (!canAssBlock()) {
-                    return true;
-                }
+            //9. 只要耗尽,中断回调循环;
+            if (!canAssBlock()) {
+                return true;
             }
         }
         return false;//fo解决方案无效,继续找下个;
