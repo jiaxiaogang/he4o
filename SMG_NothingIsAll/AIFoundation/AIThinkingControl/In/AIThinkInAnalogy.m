@@ -105,6 +105,8 @@
  *  2. 构建absCmv
  *  @todo
  *      20200416 - TODO_NEXT_VERSION:方法中absFo是防重的,如果absFo并非新构建,而又为其构建了absMv,则会有多个mv指向同一个fo的问题;
+ *  @version
+ *      2020.07.22: 在外类比无需构建时 (即具象和抽象一致时),其方向索引强度+1;
  */
 +(void)analogyOutside_Creater:(NSArray*)orderSames fo:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type{
     //2. 数据检查;
@@ -118,13 +120,15 @@
             result = (AINetAbsFoNode*)assFo;
             [AINetUtils relateFoAbs:result conNodes:@[fo] isNew:false];
             [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
+            if (type == ATSame) [theNet setMvNodeToDirectionReference:[SMGUtils searchNode:result.cmvNode_p] difStrong:1];
         }else{
             //4. 取foDifStrong
             NSInteger foDifStrong = 1;
             AICMVNodeBase *foMv = [SMGUtils searchNode:fo.cmvNode_p];
             AICMVNodeBase *assMv = [SMGUtils searchNode:assFo.cmvNode_p];
             if (foMv && assMv) {
-                NSInteger absUrgentTo = [AINetAbsCMVUtil getAbsUrgentTo:@[fo.cmvNode_p,assFo.cmvNode_p]];
+                NSArray *conMvs = [SMGUtils searchNodes:@[fo.cmvNode_p,assFo.cmvNode_p]];
+                NSInteger absUrgentTo = [AINetAbsCMVUtil getAbsUrgentTo:conMvs];
                 foDifStrong = absUrgentTo;
             }
             
