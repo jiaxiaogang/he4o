@@ -283,15 +283,10 @@
     //2. 取assIndexes (取递归两层,当前1+抽象5=6条)
     NSMutableArray *allRef_ps_2 = [[NSMutableArray alloc] init];
     for (NSInteger i = 0; i < protoFo.content_ps.count; i++) {
-        NSArray *itemIndexes = [ThinkingUtils collectionNodes:ARR_INDEX(protoFo.content_ps, i) absLimit:cTIRFoAbsIndexLimit];
+        NSArray *itemIndexes = [ThinkingUtils collectionNodes:ARR_INDEX(protoFo.content_ps, i) absLimit:cTIRFoAbsIndexLimit conLimit:0];
         
         //3. 收集下标i下的所有refPorts时序;
-        NSMutableArray *iRef_ps = [[NSMutableArray alloc] init];
-        for (AIKVPointer *itemIndex_p in itemIndexes) {
-            AIAlgNodeBase *itemIndexAlg = [SMGUtils searchNode:itemIndex_p];
-            [iRef_ps addObjectsFromArray:[SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg_Normal:itemIndexAlg]]];
-            [iRef_ps removeObject:protoFo.pointer];
-        }
+        NSMutableArray *iRef_ps = [ThinkingUtils collectionAlgRefs:itemIndexes itemRefLimit:NSIntegerMax except_p:protoFo.pointer];
         [allRef_ps_2 addObject:iRef_ps];
         if (Log4MFo) NSLog(@"-----> 第%ld个概念_索引数:%lu 指向时序数:%lu",(long)i,itemIndexes.count,(unsigned long)iRef_ps.count);
     }

@@ -96,7 +96,13 @@
  *  @param absLimit : 抽象追加收集多少个;
  *  @desc 目前仅收集Normal类型的节点,因为一般情况下都是使用Normal类型,别的类型反射会干扰;
  */
-+(NSArray*) collectionNodes:(AIKVPointer*)node_p absLimit:(NSInteger)absLimit;
++(NSArray*) collectionNodes:(AIKVPointer*)node_p absLimit:(NSInteger)absLimit conLimit:(NSInteger)conLimit;
+
+/**
+ *  MARK:--------------------收集概念的refFos--------------------
+ *  @param itemRefLimit : 每条概念最多可收集refs条数;
+ */
++(NSMutableArray*) collectionAlgRefs:(NSArray*)alg_ps itemRefLimit:(NSInteger)itemRefLimit except_p:(AIKVPointer*)except_p;
 
 @end
 

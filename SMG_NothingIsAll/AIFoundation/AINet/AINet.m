@@ -178,6 +178,7 @@ static AINet *_instance;
         NSString *subDS = [ThinkingUtils getAnalogyTypeDS:ATSub];
         NSString *foDS = itemMV.foNode_p.dataSource;
         if (![plusDS isEqualToString:foDS] && ![subDS isEqualToString:foDS]) {
+            if (Log4DirecRef) NSLog(@"方向索引_尝试_索引强度:%ld 方案:%@",item.strong.value,FoP2FStr(itemMV.foNode_p));
             BOOL stop = tryResult(itemMV.foNode_p);
             if (stop) {
                 return;

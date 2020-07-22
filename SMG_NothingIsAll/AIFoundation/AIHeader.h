@@ -218,7 +218,7 @@
 //反向类比
 #define Log4DiffAna true
 //方向索引
-#define Log4DirecRef false
+#define Log4DirecRef true
 //行为化_GL
 #define Log4ActGL true
 //行为化_Hav

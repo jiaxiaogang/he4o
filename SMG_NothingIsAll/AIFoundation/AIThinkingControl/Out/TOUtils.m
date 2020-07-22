@@ -227,12 +227,8 @@
     //2. matchAlg可以用来做什么,取A.refPorts
     //P例:土豆,可吃,也可当土豆地雷;
     //S例:打球,导致开心,但也导致累;
-    NSMutableArray *mRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:matchAlg]];
-    NSArray *mCon_ps = [SMGUtils convertPointersFromPorts:ARR_SUB([AINetUtils conPorts_All:matchAlg], 0, cTOPPModeConAssLimit)];
-    for (AIKVPointer *mCon_p in mCon_ps) {
-        AIAlgNodeBase *mCon = [SMGUtils searchNode:mCon_p];
-        [mRef_ps addObjectsFromArray:[SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:mCon]]];
-    }
+    NSArray *mIndexes = [ThinkingUtils collectionNodes:matchAlg.pointer absLimit:0 conLimit:cTOPPModeConAssLimit];
+    NSMutableArray *mRef_ps = [ThinkingUtils collectionAlgRefs:mIndexes itemRefLimit:NSIntegerMax except_p:nil];
     
     //3. 无瞬时指引,单靠内心瞎想,不能解决任何问题;
     if (!ARRISOK(mRef_ps)) return;
