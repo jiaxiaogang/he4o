@@ -257,12 +257,12 @@
             
             //6. 移除不应期
             foCon_ps = [SMGUtils removeSub_ps:except_ps parent_ps:foCon_ps];
-            if (Log4DirecRef) NSLog(@"方向索引到-有效Fo数:%ld",foCon_ps.count);
             
             //6. 取交集
             //P例:炒个土豆丝,吃掉解决饥饿问题;
             //S例:打球导致累,越打越累;
             NSArray *same_ps = [SMGUtils filterSame_ps:mRef_ps parent_ps:foCon_ps];
+            if (Log4DirecRef) NSLog(@"方向索引到-有效Fo数:%ld 瞬时match用途:%ld 交集有效:%ld",foCon_ps.count,mRef_ps.count,same_ps.count);
             
             //7. 依次尝试行为化;
             //P例:取自身,实现吃,则可不饿;

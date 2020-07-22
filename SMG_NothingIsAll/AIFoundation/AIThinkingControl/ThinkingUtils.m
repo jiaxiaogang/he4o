@@ -255,7 +255,7 @@
     //1. 数据准备
     NSMutableArray *result = [[NSMutableArray alloc] init];
     AINodeBase *node = [SMGUtils searchNode:node_p];
-    if (node) return result;
+    if (!node) return result;
     
     //2. 收集本身
     [result addObject:node_p];
