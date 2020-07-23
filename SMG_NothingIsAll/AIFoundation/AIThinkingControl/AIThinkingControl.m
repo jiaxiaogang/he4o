@@ -35,7 +35,7 @@
  *  2. 在联想中,遇到的mv,都叠加到当前demand下;
  *
  */
-@interface AIThinkingControl() <AIThinkInDelegate,AIThinkOutPerceptDelegate,AIThinkOutReasonDelegate>
+@interface AIThinkingControl() <AIThinkInDelegate,AIThinkOutPerceptDelegate,AIThinkOutReasonDelegate,DemandManagerDelegate>
 
 @property (strong,nonatomic) AIShortMemory *shortMemory;    //瞬时记忆
 @property (strong, nonatomic) DemandManager *demandManager;         //OUT短时记忆 (输出数据管理器);
@@ -79,6 +79,7 @@ static AIThinkingControl *_instance;
 -(void) initData{
     self.shortMemory = [[AIShortMemory alloc] init];
     self.demandManager = [[DemandManager alloc] init];
+    self.demandManager.delegate = self;
     self.thinkIn = [[AIThinkIn alloc] init];
     self.thinkIn.delegate = self;
     self.tOP = [[AIThinkOutPercept alloc] init];
@@ -211,9 +212,6 @@ static AIThinkingControl *_instance;
         }
     }
     
-    //2. 加上活跃度
-    [self updateEnergy:urgentTo];
-    
     //3. 将shortMatch保留 (供TOR或TIP调用);
     [self.shortMatchManager add:shortMatchModel];
     
@@ -307,6 +305,13 @@ static AIThinkingControl *_instance;
 }
 -(void) aiTOR_MoveForDemand:(DemandModel*)demand{
     [self.tOP commitFromTOR_MoveForDemand:demand];
+}
+
+/**
+ *  MARK:--------------------DemandManagerDelegate--------------------
+ */
+-(void)demandManager_updateEnergy:(CGFloat)urgentTo{
+    [self updateEnergy:urgentTo];
 }
 
 @end

@@ -87,6 +87,9 @@
         newItem.delta = delta;
         newItem.urgentTo = urgentTo;
         [self.loopCache addObject:newItem];
+        
+        //2. 新需求时,加上活跃度;
+        [self.delegate demandManager_updateEnergy:urgentTo];
         NSLog(@"demandManager >> 新需求 %lu",(unsigned long)self.loopCache.count);
     }
 }
@@ -123,6 +126,9 @@
             newItem.delta = delta;
             newItem.urgentTo = urgentTo;
             [self.loopCache addObject:newItem];
+            
+            //2. 新需求时,加上活跃度;
+            [self.delegate demandManager_updateEnergy:urgentTo];
             NSLog(@"demandManager >> 新需求 %lu",(unsigned long)self.loopCache.count);
         }
     }

@@ -8,12 +8,19 @@
 
 #import <Foundation/Foundation.h>
 
+@protocol DemandManagerDelegate <NSObject>
+
+-(void) demandManager_updateEnergy:(CGFloat)urgentTo;
+
+@end
 
 /**
  *  MARK:--------------------思维控制器-循环管理器--------------------
  */
 @class DemandModel;
 @interface DemandManager : NSObject
+
+@property (weak, nonatomic) id<DemandManagerDelegate> delegate;
 
 /**
  *  MARK:--------------------joinToCMVCache--------------------
