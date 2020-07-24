@@ -206,7 +206,7 @@ static AIThinkingControl *_instance;
                 //4> RMV无需求时;
                 MVDirection havDemand = [ThinkingUtils havDemand:algsType delta:delta];
                 if (havDemand == MVDirection_None) {
-                    NSLog(@"当前,预测mv未形成需求:%@ %ld",algsType,delta);
+                    NSLog(@"当前,预测mv未形成需求:%@ %ld",algsType,(long)delta);
                 }
             }
         }

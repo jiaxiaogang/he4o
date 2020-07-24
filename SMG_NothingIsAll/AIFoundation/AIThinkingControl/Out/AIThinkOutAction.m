@@ -248,6 +248,11 @@
             return;
         }
         
+        //TODOTOMORROW:
+        //1. 此处见19192示图,期望从mModel中,进行理性取交集,从而找出更加理性的解决方案;
+        //2. 但同TOP.P模式同理,其实这种方式并不能一蹴而就,而应该将理性延迟到行为化递归中去做;
+        
+        
         //5. 取hAlg的refs引用时序大全;
         NSArray *hRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:hAlg]];
         for (AIShortMatchModel *model in theTC.inModelManager.models) {
