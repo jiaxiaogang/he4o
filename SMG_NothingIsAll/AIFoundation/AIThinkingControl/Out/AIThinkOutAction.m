@@ -170,6 +170,7 @@
  *      2020-07-06 : PM本质上是多态修正方法,所以不能将C作为M传过去,改为将M传过去;
  *      2020-07-07 : RelativeFo最后一位,不用行为化;
  *      2020-07-08 : 删掉HNGL调用递归,因为HNGL不是完成,外循环input回来,才算完成,(如飞了一步,还要继续飞)(如下了蛋,得看到蛋),参考20081;
+ *      2020-07-27 : hAlg的获取方案relativeFos,由纯理性交集(参考19192),改为优化取理性交集,其次取纯空想 (因为常无法一蹴而就,需递归判定,但又不得不承认,有时候确实可以一蹴而就,比如在家时有冰箱,就不用想回京吃外卖);
  *  @todo
  *      2020-07-05 : 在下面MC中,转至PM时,是将C作为M的,随后需测下,看是否需要独立对MC做类似PM的理性评价,即将一步到位,细化成两步各自评价;
  */
@@ -248,14 +249,12 @@
             return;
         }
         
-        //TODOTOMORROW:
-        //1. 此处见19192示图,期望从mModel中,进行理性取交集,从而找出更加理性的解决方案;
-        //2. 但同TOP.P模式同理,其实这种方式并不能一蹴而就,而应该将理性延迟到行为化递归中去做;
-        
-        
-        //5. 取hAlg的refs引用时序大全;
+        //5. 取hAlg的refs引用时序大全 (空想集,即如何获取hAlg);
         NSArray *hRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:hAlg]];
-        for (AIShortMatchModel *model in theTC.inModelManager.models) {
+        NSMutableArray *relativeFos = [[NSMutableArray alloc] init];
+        for (NSInteger i = 0; i < theTC.inModelManager.models.count; i++) {
+            AIShortMatchModel *model = ARR_INDEX_REVERSE(theTC.inModelManager.models, i);
+            
             //6. 遍历入短时记忆,根据matchAlg取refs (此处应该是希望Hav不要脱离短时记忆,所以用M.refPorts取交集);
             NSArray *mRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:model.matchAlg]];
             
@@ -263,18 +262,25 @@
             NSArray *hmRef_ps = [SMGUtils filterSame_ps:hRef_ps parent_ps:mRef_ps];
             hmRef_ps = ARR_SUB(hmRef_ps, 0, cHavNoneAssFoCount);
             
-            //7. 去掉不应期
-            NSArray *except_ps = [TOUtils convertPointersFromTOModels:outModel.actionFoModels];
-            hmRef_ps = [SMGUtils removeSub_ps:except_ps parent_ps:hmRef_ps];
-            
-            //8. 只要有善可尝试的方式,即从首条开始尝试;
-            if (ARRISOK(hmRef_ps)) {
-                if (Log4ActHav) NSLog(@"Move RelativeFos条数:%lu ↓↓↓↓↓↓↓↓",(unsigned long)hmRef_ps.count);
-                [self convert2Out_RelativeFo_ps:hmRef_ps outModel:outModel];
-                return;
-            }
-            //9. 可尝试的方案全无,则循环至下个mModel试一下;
+            //8. 收集 (交集优先部分);
+            relativeFos = [SMGUtils collectArrA_NoRepeat:relativeFos arrB:hmRef_ps];
         }
+        
+        //9. 收集 (其余空想部分);
+        relativeFos = [SMGUtils collectArrA_NoRepeat:relativeFos arrB:hRef_ps];
+        
+        //10. 去掉不应期
+        NSArray *except_ps = [TOUtils convertPointersFromTOModels:outModel.actionFoModels];
+        relativeFos = [SMGUtils removeSub_ps:except_ps parent_ps:relativeFos];
+        
+        //11. 只要有善可尝试的方式,即从首条开始尝试;
+        if (ARRISOK(relativeFos)) {
+            if (Log4ActHav) NSLog(@"Move RelativeFos条数:%lu ↓↓↓↓↓↓↓↓",(unsigned long)relativeFos.count);
+            [self convert2Out_RelativeFo_ps:relativeFos outModel:outModel];
+            return;
+        }
+        //9. 可尝试的方案全无;
+        if (Log4ActHav) NSLog(@"略惨 => 无任何方案可取到hAlg");
     }
     
     //10. 所有mModel都没成功行为化一条,则失败;

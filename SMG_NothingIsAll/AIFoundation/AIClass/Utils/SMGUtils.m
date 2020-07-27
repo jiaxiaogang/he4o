@@ -719,3 +719,23 @@
 }
 
 @end
+
+//MARK:===============================================================
+//MARK:                     < SMGUtils (Collect) >
+//MARK:===============================================================
+@implementation SMGUtils (Collect)
+
++(NSMutableArray *) collectArrA:(NSArray*)arrA arrB:(NSArray*)arrB{
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    [result addObjectsFromArray:arrA];
+    [result addObjectsFromArray:arrB];
+    return result;
+}
+
++(NSMutableArray *) collectArrA_NoRepeat:(NSArray*)arrA arrB:(NSArray*)arrB{
+    NSMutableArray *result = [SMGUtils collectArrA:arrA arrB:arrB];
+    result = [SMGUtils removeRepeat:result];
+    return result;
+}
+
+@end

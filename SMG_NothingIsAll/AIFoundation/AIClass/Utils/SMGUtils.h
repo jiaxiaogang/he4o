@@ -245,3 +245,17 @@
 +(id) filterSingleFromArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid;
 
 @end
+
+//MARK:===============================================================
+//MARK:                     < SMGUtils (Collect) >
+//MARK:===============================================================
+@interface SMGUtils (Collect)
+
+/**
+ *  MARK:--------------------并集--------------------
+ *  @result notnull
+ */
++(NSMutableArray *) collectArrA:(NSArray*)arrA arrB:(NSArray*)arrB;
++(NSMutableArray *) collectArrA_NoRepeat:(NSArray*)arrA arrB:(NSArray*)arrB;
+
+@end
