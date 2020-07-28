@@ -193,7 +193,7 @@
         //2. 第1级: 本身即是isOut时,直接行为化返回;
         NSLog(@"\n\n=============================== 行为输出 ===============================\n%@",AlgP2FStr(outModel.content_p));
         outModel.status = TOModelStatus_ActYes;
-        [self.delegate toAction_updateEnergy:-0.1f];
+        [self.delegate toAction_updateEnergy:-1.0f];
         [self.delegate toAction_Output:@[outModel.content_p]];
         return;
     }else{
@@ -215,7 +215,7 @@
                 if ([TOUtils mIsC_2:curAlg.pointer c:model.matchAlg.pointer]) {
                     NSLog(@"=====> MC\nP:%@\nM:%@ \n转至PM ↓↓↓↓↓↓↓↓↓",Alg2FStr(model.protoAlg),Alg2FStr(curAlg));
                     
-                    //b. 生成replaceAlg转移 & 保留到outModel.replaceAlgs;;
+                    //b. 生成replaceAlg转移 & 保留到outModel.replaceAlgs;
                     TOAlgModel *reModel = [TOAlgModel newWithAlg_p:model.matchAlg.pointer group:outModel];
                     [outModel.replaceAlgs addObject:reModel.content_p];
                     

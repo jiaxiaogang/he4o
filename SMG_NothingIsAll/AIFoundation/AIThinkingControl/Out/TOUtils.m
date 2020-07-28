@@ -309,7 +309,7 @@
         //S例:运动导致累;
         if (![except_ps containsObject:fo_p]) {
             //8. 消耗活跃度;
-            updateEnergy(-1);
+            updateEnergy(-2);
             AIFoNodeBase *fo = [SMGUtils searchNode:fo_p];
             BOOL stop = tryResult(fo);
             
