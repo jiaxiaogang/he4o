@@ -81,6 +81,8 @@
                                 jMax = j - 1;
                                 if (type == ATSame) {
                                     if (Log4SameAna) NSLog(@"---> 构建:%@ ConFrom (A%ld,A%ld)",Alg2FStr(createAbsNode),algNodeA.pointer.pointerId,algNodeB.pointer.pointerId);
+                                }else{
+                                     NSLog(@"---> 内中有外_构建:%@ ConFrom (A%ld,A%ld)",Alg2FStr(createAbsNode),algNodeA.pointer.pointerId,algNodeB.pointer.pointerId);
                                 }
                             }
                             ///4. 构建时,消耗能量值;
