@@ -376,13 +376,16 @@
         AIAlgNodeBase *backAlg = [SMGUtils searchNode:back_p];
         NSArray *backRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:backAlg]];
         AIFoNodeBase *assFo = nil;
+        if (Log4InAna) NSLog(@"--------- 内中外 ---------\n%@ 经验数:%ld",Fo2FStr(abFo),(long)backRef_ps.count);
 
         //3. 根据range联想,从倒数第2个,开始向前逐一联想refPorts;
         for (NSInteger i = abFo.content_ps.count - 2; i >= 0; i--) {
             AIKVPointer *item_p = ARR_INDEX(abFo.content_ps, i);
             AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
-            NSArray *itemRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:itemAlg]];
-
+            NSArray *itemRefPorts = [AINetUtils refPorts_All4Alg:itemAlg];
+            NSArray *itemRef_ps = [SMGUtils convertPointersFromPorts:[SMGUtils filterPorts:itemRefPorts havTypes:@[@(type)] noTypes:nil]];
+            if (Log4InAna) NSLog(@"--- 内中外:%ld-%@ 引用数:%ld 同类数:%ld",i,Alg2FStr(itemAlg),itemRefPorts.count,itemRef_ps.count);
+            
             //4. assAbFo的条件为: (包含item & 包含back & 不是abFo)
             for (AIKVPointer *itemRef_p in itemRef_ps) {
                 if (![itemRef_p isEqual:abFo.pointer] && [backRef_ps containsObject:itemRef_p]) {

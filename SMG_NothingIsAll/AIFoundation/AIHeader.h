@@ -210,7 +210,7 @@
 //识别时序
 #define Log4MFo false
 //内类比
-#define Log4InAna false
+#define Log4InAna true
 #define Log4InAnaGL true
 #define Log4InAnaHN false
 //正向类比
