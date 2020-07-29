@@ -150,7 +150,7 @@
             if (type == ATSame) {
                 if (Log4SameAna) NSLog(@"--->> 构建时序:%@->%@",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
             }else{
-                if (Log4InAna) NSLog(@"----> 内中有外_构建:%@ from(%ld,%ld)",Fo2FStr(result),fo.pointer.pointerId,assFo.pointer.pointerId);
+                if (Log4InOutAna) NSLog(@"----> 内中有外_构建:%@ from(%ld,%ld)",Fo2FStr(result),fo.pointer.pointerId,assFo.pointer.pointerId);
             }
         }
     }
@@ -209,10 +209,17 @@
 
     //5. 内类比找不同 (比大小:同区不同值 / 有无)
     if (algNodeA && algNodeB){
-        //a. 内类比大小;
         if (Log4InAna) NSLog(@"-----------内类比-----------");
         if (Log4InAna) NSLog(@"%ld: %@",(long)aIndex,Alg2FStr(algNodeA));
         if (Log4InAna) NSLog(@"%ld: %@",(long)bIndex,Alg2FStr(algNodeB));
+        //a. 取a和b交集,并构建抽象概念;
+        NSArray *same_ps = [SMGUtils filterSame_ps:algNodeA.content_ps parent_ps:algNodeB.content_ps];
+        if (ARRISOK(same_ps)) {
+            AIAbsAlgNode *createAbsAlg = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[algNodeA,algNodeB] isMem:false];
+            if (Log4InAna) NSLog(@"抽象出: %@",Alg2FStr(createAbsAlg));
+        }
+        
+        //a. 内类比大小;
         NSArray *rangeAlg_ps = ARR_SUB(orders, aIndex + 1, bIndex - aIndex - 1);
         [self analogyInner_GL:checkFo algA:algNodeA algB:algNodeB rangeAlg_ps:rangeAlg_ps createdBlock:^(AINetAbsFoNode *createFo,AnalogyType type) {
             //b. 消耗思维活跃度 & 内中有外
@@ -376,7 +383,7 @@
         AIAlgNodeBase *backAlg = [SMGUtils searchNode:back_p];
         NSArray *backRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:backAlg]];
         AIFoNodeBase *assFo = nil;
-        if (Log4InAna) NSLog(@"--------- 内中外 ---------\n%@ 经验数:%ld",Fo2FStr(abFo),(long)backRef_ps.count);
+        if (Log4InOutAna) NSLog(@"--------- 内中外 ---------\n%@ 经验数:%ld",Fo2FStr(abFo),(long)backRef_ps.count);
 
         //3. 根据range联想,从倒数第2个,开始向前逐一联想refPorts;
         for (NSInteger i = abFo.content_ps.count - 2; i >= 0; i--) {
@@ -384,7 +391,7 @@
             AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
             NSArray *itemRefPorts = [AINetUtils refPorts_All4Alg:itemAlg];
             NSArray *itemRef_ps = [SMGUtils convertPointersFromPorts:[SMGUtils filterPorts:itemRefPorts havTypes:@[@(type)] noTypes:nil]];
-            if (Log4InAna) NSLog(@"--- 内中外:%ld-%@ 引用数:%ld 同类数:%ld",i,Alg2FStr(itemAlg),itemRefPorts.count,itemRef_ps.count);
+            if (Log4InOutAna) NSLog(@"--- 内中外:%ld-%@ 引用数:%ld 同类数:%ld",i,Alg2FStr(itemAlg),itemRefPorts.count,itemRef_ps.count);
             
             //4. assAbFo的条件为: (包含item & 包含back & 不是abFo)
             for (AIKVPointer *itemRef_p in itemRef_ps) {
