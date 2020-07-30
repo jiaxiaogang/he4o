@@ -179,6 +179,11 @@
  *      2020.03.24: 内类比多码支持 (大小支持多个稀疏码变大/小 & 有无支持match.absPorts中多个变有/无);
  */
 +(void) analogyInner_FromTIR:(AIFoNodeBase*)checkFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
+    
+    //TODOTOMORROW:
+    //分析下,内类比大小用protoFo,而内类比有无用protoMFo,是否合理,合理的话,改掉训练下;
+    
+    
     //1. 数据检查
     if (ISOK(checkFo, AIFoNodeBase.class) && checkFo.content_ps.count >= 2) {
         //2. 最后一个元素,向前分别与orders后面所有元素进行类比
@@ -238,6 +243,7 @@
 
 /**
  *  MARK:--------------------内类比大小--------------------
+ *  @param checkFo : 内类比大小时,应该使用protoFo来做,因为内含了完善而原生的稀疏码信息;
  */
 +(void) analogyInner_GL:(AIFoNodeBase*)checkFo algA:(AIAlgNodeBase*)algA algB:(AIAlgNodeBase*)algB rangeAlg_ps:(NSArray*)rangeAlg_ps createdBlock:(void(^)(AINetAbsFoNode *createFo,AnalogyType type))createdBlock{
     //1. 数据检查
@@ -260,7 +266,7 @@
         //a. 对比微信息 (MARK_VALUE:如微信息去重功能去掉,此处要取值再进行对比)
         AnalogyType type = [ThinkingUtils compare:a_p valueB_p:b_p];
         //b. 调试a_p和b_p是否合格,应该同标识,同文件夹名称,不同pId;
-        if (Log4InAnaGL) NSLog(@"内类比大小: %@ -> %@ From(前:A%ld后:A%ld)",Pit2FStr(a_p),Pit2FStr(b_p),algA.pointer.pointerId,algB.pointer.pointerId);
+        if (Log4InAnaGL) NSLog(@"------ 内类比大小 ------\n%@ -> %@ From(前:A%ld后:A%ld)",Pit2FStr(a_p),Pit2FStr(b_p),algA.pointer.pointerId,algB.pointer.pointerId);
         //d. 构建小/大;
         if (type != ATDefault) {
             AINetAbsFoNode *create = [self analogyInner_Creater:type algsType:a_p.algsType dataSource:a_p.dataSource frontConAlg:algA backConAlg:algB rangeAlg_ps:rangeAlg_ps conFo:checkFo];
@@ -271,7 +277,9 @@
 
 /**
  *  MARK:--------------------内类比有无--------------------
- *  @param checkFo : 从TIR传过来时,为瞬时组成的protoFo (当前protoFo由每桢的matchAlg构建);
+ *  @param checkFo : TIR传过来mModel的最后一帧时序:
+ *          2020.07.30前: 由每桢的matchAlg构建;
+ *          2020.07.30后: 使用protoMFo来做,其每帧优先使用matchAlg,其次用protoAlg组成的时序 (完整而尽量抽象);
  *  @version
  *      20200421 - 将a/bFocusAlg改成直接使用algA/algB (因为现在protoFo的元素即直接是matchAlg);
  */
@@ -295,7 +303,7 @@
     NSArray *bSub_ps = [SMGUtils removeSub_ps:aSum_ps parent_ps:bSum_ps];
 
     //3. a变无
-    if (Log4InAnaHN) NSLog(@"--------------内类比 (有无) 前: [%@] -> [%@]",Pits2FStr(aSub_ps),Pits2FStr(bSub_ps));
+    if (Log4InAnaHN) NSLog(@"------ 内类比有无 ------\n[%@] -> [%@]",Pits2FStr(aSub_ps),Pits2FStr(bSub_ps));
     for (AIKVPointer *sub_p in aSub_ps) {
         AIAlgNodeBase *target = [SMGUtils searchNode:sub_p];
         AINetAbsFoNode *create = [self analogyInner_Creater:ATNone algsType:sub_p.algsType dataSource:sub_p.dataSource frontConAlg:target backConAlg:target rangeAlg_ps:rangeAlg_ps conFo:checkFo];
