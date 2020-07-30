@@ -14,7 +14,7 @@
  *  @desc 理性流程,即NOMV流程;
  *  @desc 注: 目前内类比,并未搬过来,但内类比本来就算是理性的,所以随后有机会迁过来;
  */
-@class AIAlgNodeBase,AICMVNodeBase;
+@class AIAlgNodeBase,AICMVNodeBase,AIShortMatchModel;
 @interface AIThinkInReason : NSObject
 
 //MARK:===============================================================
@@ -34,6 +34,6 @@
 //MARK:===============================================================
 //MARK:                     < 内类比 >
 //MARK:===============================================================
-+(void) analogyInner:(AIFoNodeBase*)protoFo;
++(void) analogyInner:(AIShortMatchModel*)mModel;
 
 @end

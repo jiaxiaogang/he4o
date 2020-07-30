@@ -21,8 +21,7 @@
 #import "AINetIndex.h"
 #import "TIRUtils.h"
 #import "AIThinkInAnalogy.h"
-//temp
-#import "NVHeUtil.h"
+#import "AIShortMatchModel.h"
 #import "ThinkingUtils.h"
 #import "TOUtils.h"
 
@@ -399,10 +398,12 @@
  *  @desc 在理性中进行内类比;
  *  @支持: 目前理性内类比不支持energy,待以后版本再考虑支持 (目前仅在TO阶段支持energy,TI阶段先用配置参数控制);
  */
-+(void) analogyInner:(AIFoNodeBase*)protoFo{
-    [AIThinkInAnalogy analogyInner_FromTIR:protoFo canAss:^BOOL{
-        return true;
-    } updateEnergy:nil];
++(void) analogyInner:(AIShortMatchModel*)mModel{
+    if (mModel) {
+        [AIThinkInAnalogy analogyInner_FromTIR:mModel.protoFo matchAFo:mModel.matchAFo canAss:^BOOL{
+            return true;
+        } updateEnergy:nil];
+    }
 }
 
 @end

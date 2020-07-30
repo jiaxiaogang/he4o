@@ -48,7 +48,7 @@
  *  MARK:--------------------由matchAlg构建的时序--------------------
  *  @desc
  *      1. 将原先protoFo,拆分为:protoFo和matchAFo两部分实现;
- *      2. 由前几桢瞬时中的matchAlg来构建;
+ *      2. 由前几桢瞬时中的(优先matchAlg,matchAlg为空时填充protoAlg)来构建 (完整而尽量抽象);
  */
 @property (strong, nonatomic) AIFoNodeBase *matchAFo;
 

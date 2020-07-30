@@ -178,18 +178,18 @@
  *  @迭代记录:
  *      2020.03.24: 内类比多码支持 (大小支持多个稀疏码变大/小 & 有无支持match.absPorts中多个变有/无);
  */
-+(void) analogyInner_FromTIR:(AIFoNodeBase*)checkFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
++(void) analogyInner_FromTIR:(AIFoNodeBase*)protoFo matchAFo:(AIFoNodeBase*)matchAFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
+    NSLog(@"\n\n------------------------------- 内类比 -------------------------------\nP:%@\nM:%@",Fo2FStr(protoFo),Fo2FStr(matchAFo));
     
     //TODOTOMORROW:
-    //分析下,内类比大小用protoFo,而内类比有无用protoMFo,是否合理,合理的话,改掉训练下;
+    //分析下,内类比大小用protoFo,而内类比有无用matchAFo,是否合理,合理的话,改掉训练下;
     
     
     //1. 数据检查
-    if (ISOK(checkFo, AIFoNodeBase.class) && checkFo.content_ps.count >= 2) {
+    if (ISOK(protoFo, AIFoNodeBase.class) && protoFo.content_ps.count >= 2) {
         //2. 最后一个元素,向前分别与orders后面所有元素进行类比
-        NSLog(@"\n\n------------------------------- 内类比 -------------------------------\n%@",Fo2FStr(checkFo));
-        for (NSInteger i = checkFo.content_ps.count - 2; i >= 0; i--) {
-            [self analogyInner:checkFo aIndex:i bIndex:checkFo.content_ps.count - 1 canAss:canAssBlock updateEnergy:updateEnergy];
+        for (NSInteger i = protoFo.content_ps.count - 2; i >= 0; i--) {
+            [self analogyInner:protoFo aIndex:i bIndex:protoFo.content_ps.count - 1 canAss:canAssBlock updateEnergy:updateEnergy];
         }
     }
 }
@@ -279,7 +279,7 @@
  *  MARK:--------------------内类比有无--------------------
  *  @param checkFo : TIR传过来mModel的最后一帧时序:
  *          2020.07.30前: 由每桢的matchAlg构建;
- *          2020.07.30后: 使用protoMFo来做,其每帧优先使用matchAlg,其次用protoAlg组成的时序 (完整而尽量抽象);
+ *          2020.07.30后: 使用mModel.matchAFo来做;
  *  @version
  *      20200421 - 将a/bFocusAlg改成直接使用algA/algB (因为现在protoFo的元素即直接是matchAlg);
  */
