@@ -163,9 +163,9 @@
 
 /**
  *  MARK:--------------------fo内类比 (内中有外,找不同算法)--------------------
- *  @param checkFo      : 要处理的fo.orders;
- *  @param canAssBlock  : energy判断器 (为null时,无限能量);
- *  @param updateEnergy : energy消耗器 (为null时,不消耗能量值);
+ *  _param checkFo      : 要处理的fo.orders;
+ *  _param canAssBlock  : energy判断器 (为null时,无限能量);
+ *  _param updateEnergy : energy消耗器 (为null时,不消耗能量值);
  *
  *  1. 此方法对一个fo内的orders进行内类比,并将找到的变化进行抽象构建网络;
  *  2. 如: 绿瓜变红瓜,如远坚果变近坚果;
@@ -177,67 +177,61 @@
  *      2. "有无"在191030改成单具象节点 (因为坚果的抽象不是坚果皮) 参考179_内类比全流程回顾;
  *  @迭代记录:
  *      2020.03.24: 内类比多码支持 (大小支持多个稀疏码变大/小 & 有无支持match.absPorts中多个变有/无);
+ *      2020.07.30: 对matchAFo的AB元素进行内类比有无时,构建其抽象概念;
+ *      2020.07.30: 内类比大小用protoFo,内类比有无用matchAFo;
  */
-+(void) analogyInner_FromTIR:(AIFoNodeBase*)protoFo matchAFo:(AIFoNodeBase*)matchAFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
++(void) analogyInner:(AIFoNodeBase*)protoFo matchAFo:(AIFoNodeBase*)matchAFo{
     NSLog(@"\n\n------------------------------- 内类比 -------------------------------\nP:%@\nM:%@",Fo2FStr(protoFo),Fo2FStr(matchAFo));
     
-    //TODOTOMORROW:
-    //分析下,内类比大小用protoFo,而内类比有无用matchAFo,是否合理,合理的话,改掉训练下;
-    
-    
-    //1. 数据检查
+    //1. 用protoFo做内类比大小;
     if (ISOK(protoFo, AIFoNodeBase.class) && protoFo.content_ps.count >= 2) {
+        
         //2. 最后一个元素,向前分别与orders后面所有元素进行类比
         for (NSInteger i = protoFo.content_ps.count - 2; i >= 0; i--) {
-            [self analogyInner:protoFo aIndex:i bIndex:protoFo.content_ps.count - 1 canAss:canAssBlock updateEnergy:updateEnergy];
+            
+            //3. 取出两个概念
+            NSInteger lastIndex = protoFo.content_ps.count - 1;
+            AIAlgNode *algA = [SMGUtils searchNode:ARR_INDEX(protoFo.content_ps, i)];
+            AIAlgNode *algB = [SMGUtils searchNode:ARR_INDEX(protoFo.content_ps, lastIndex)];
+            
+            //4. 内类比找不同 (比大小:同区不同值)
+            if (algA && algB){
+                if (Log4InAna) NSLog(@"-----------内类比大小-----------\n%ld: %@\n%ld: %@",i,Alg2FStr(algA),lastIndex,Alg2FStr(algB));
+                
+                //5. 内类比大小;
+                NSArray *rangeAlg_ps = ARR_SUB(protoFo.content_ps, i + 1, lastIndex - i - 1);
+                [self analogyInner_GL:protoFo algA:algA algB:algB rangeAlg_ps:rangeAlg_ps];
+            }
         }
     }
-}
-+(void) analogyInner:(AIFoNodeBase*)checkFo aIndex:(NSInteger)aIndex bIndex:(NSInteger)bIndex canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
-    //1. 数据检查
-    if (!ISOK(checkFo, AIFoNodeBase.class)) {
-        return;
-    }
-    NSArray *orders = ARRTOOK(checkFo.content_ps);
-
-    //3. 检查能量值
-    if (canAssBlock && !canAssBlock()) {
-        //训练距离-测到问题:发现BUG:小鸟仅发现了速度变化,飞行方向变化,却没有发现距离变化;
-        return;
-    }
-
-    //4. 取出两个概念
-    AIKVPointer *algA_p = ARR_INDEX(orders, aIndex);
-    AIKVPointer *algB_p = ARR_INDEX(orders, bIndex);
-    AIAlgNode *algNodeA = [SMGUtils searchNode:algA_p];
-    AIAlgNode *algNodeB = [SMGUtils searchNode:algB_p];
-
-    //5. 内类比找不同 (比大小:同区不同值 / 有无)
-    if (algNodeA && algNodeB){
-        if (Log4InAna) NSLog(@"-----------内类比-----------");
-        if (Log4InAna) NSLog(@"%ld: %@",(long)aIndex,Alg2FStr(algNodeA));
-        if (Log4InAna) NSLog(@"%ld: %@",(long)bIndex,Alg2FStr(algNodeB));
-        //a. 取a和b交集,并构建抽象概念;
-        NSArray *same_ps = [SMGUtils filterSame_ps:algNodeA.content_ps parent_ps:algNodeB.content_ps];
-        if (ARRISOK(same_ps)) {
-            AIAbsAlgNode *createAbsAlg = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[algNodeA,algNodeB] isMem:false];
-            if (Log4InAna) NSLog(@"抽象出: %@",Alg2FStr(createAbsAlg));
-        }
+    
+    //6. 用matchAFo,做内类比有无;
+    if (ISOK(matchAFo, AIFoNodeBase.class) && matchAFo.content_ps.count >= 2) {
         
-        //a. 内类比大小;
-        NSArray *rangeAlg_ps = ARR_SUB(orders, aIndex + 1, bIndex - aIndex - 1);
-        [self analogyInner_GL:checkFo algA:algNodeA algB:algNodeB rangeAlg_ps:rangeAlg_ps createdBlock:^(AINetAbsFoNode *createFo,AnalogyType type) {
-            //b. 消耗思维活跃度 & 内中有外
-            if (updateEnergy) updateEnergy(-0.1f);
-            [self analogyInner_Outside:createFo type:type canAss:canAssBlock updateEnergy:updateEnergy];
-        }];
-
-        //c. 内类比有无;
-        [self analogyInner_HN:checkFo algA:algNodeA algB:algNodeB rangeAlg_ps:rangeAlg_ps createdBlock:^(AINetAbsFoNode *createFo,AnalogyType type) {
-            //d. 消耗思维活跃度 & 内中有外
-            if (updateEnergy) updateEnergy(-0.1f);
-            [self analogyInner_Outside:createFo type:type canAss:canAssBlock updateEnergy:updateEnergy];
-        }];
+        //7. 最后一个元素,向前分别与orders后面所有元素进行类比
+        for (NSInteger i = matchAFo.content_ps.count - 2; i >= 0; i--) {
+            
+            //8. 取出两个概念
+            NSInteger lastIndex = matchAFo.content_ps.count - 1;
+            AIAlgNode *algA = [SMGUtils searchNode:ARR_INDEX(matchAFo.content_ps, i)];
+            AIAlgNode *algB = [SMGUtils searchNode:ARR_INDEX(matchAFo.content_ps, lastIndex)];
+            
+            //9. 内类比找不同 (比有无)
+            if (algA && algB){
+                if (Log4InAna) NSLog(@"-----------内类比有无-----------\n%ld: %@\n%ld: %@",i,Alg2FStr(algA),lastIndex,Alg2FStr(algB));
+                
+                //10. 取a和b交集,并构建抽象概念;
+                NSArray *same_ps = [SMGUtils filterSame_ps:algA.content_ps parent_ps:algB.content_ps];
+                if (ARRISOK(same_ps)) {
+                    AIAbsAlgNode *createAbsAlg = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[algA,algB] isMem:false];
+                    if (Log4InAna) NSLog(@"抽象出: %@",Alg2FStr(createAbsAlg));
+                }
+                
+                //11. 内类比大小;
+                NSArray *rangeAlg_ps = ARR_SUB(matchAFo.content_ps, i + 1, lastIndex - i - 1);
+                [self analogyInner_GL:matchAFo algA:algA algB:algB rangeAlg_ps:rangeAlg_ps];
+            }
+        }
     }
 }
 
@@ -245,7 +239,7 @@
  *  MARK:--------------------内类比大小--------------------
  *  @param checkFo : 内类比大小时,应该使用protoFo来做,因为内含了完善而原生的稀疏码信息;
  */
-+(void) analogyInner_GL:(AIFoNodeBase*)checkFo algA:(AIAlgNodeBase*)algA algB:(AIAlgNodeBase*)algB rangeAlg_ps:(NSArray*)rangeAlg_ps createdBlock:(void(^)(AINetAbsFoNode *createFo,AnalogyType type))createdBlock{
++(void) analogyInner_GL:(AIFoNodeBase*)checkFo algA:(AIAlgNodeBase*)algA algB:(AIAlgNodeBase*)algB rangeAlg_ps:(NSArray*)rangeAlg_ps {
     //1. 数据检查
     rangeAlg_ps = ARRTOOK(rangeAlg_ps);
     if (!algA || !algB) {
@@ -270,7 +264,8 @@
         //d. 构建小/大;
         if (type != ATDefault) {
             AINetAbsFoNode *create = [self analogyInner_Creater:type algsType:a_p.algsType dataSource:a_p.dataSource frontConAlg:algA backConAlg:algB rangeAlg_ps:rangeAlg_ps conFo:checkFo];
-            if (createdBlock) createdBlock(create,type);
+            //e. 内中有外
+            [self analogyInner_Outside:create type:type canAss:nil updateEnergy:nil];
         }
     }
 }
@@ -385,6 +380,7 @@
  */
 +(void)analogyInner_Outside:(AINetAbsFoNode*)abFo type:(AnalogyType)type canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
     //1. 数据检查
+    //if (updateEnergy) updateEnergy(-0.1f);//消耗活跃度
     if (ISOK(abFo, AINetAbsFoNode.class) && abFo.content_ps.count > 1) {
         //2. 取backAlg (用来判断取正确的"变有/无/大/小");
         AIPointer *back_p = ARR_INDEX(abFo.content_ps, abFo.content_ps.count - 1);

@@ -32,11 +32,11 @@
 
 /**
  *  MARK:--------------------fo内类比 (内中有外,找不同算法)--------------------
- *  @param checkFo      : 要处理的fo.orders;
- *  @param canAssBlock  : energy判断器 (为null时,无限能量);
- *  @param updateEnergy : energy消耗器 (为null时,不消耗能量值);
+ *  _param checkFo      : 要处理的fo.orders;
+ *  _param canAssBlock  : energy判断器 (为null时,无限能量);
+ *  _param updateEnergy : energy消耗器 (为null时,不消耗能量值);
  */
-+(void) analogyInner_FromTIR:(AIFoNodeBase*)protoFo matchAFo:(AIFoNodeBase*)matchAFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy;
++(void) analogyInner:(AIFoNodeBase*)protoFo matchAFo:(AIFoNodeBase*)matchAFo;
 
 @end
 

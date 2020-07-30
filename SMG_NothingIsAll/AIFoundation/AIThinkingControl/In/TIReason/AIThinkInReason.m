@@ -400,9 +400,7 @@
  */
 +(void) analogyInner:(AIShortMatchModel*)mModel{
     if (mModel) {
-        [AIThinkInAnalogy analogyInner_FromTIR:mModel.protoFo matchAFo:mModel.matchAFo canAss:^BOOL{
-            return true;
-        } updateEnergy:nil];
+        [AIThinkInAnalogy analogyInner:mModel.protoFo matchAFo:mModel.matchAFo];
     }
 }
 
