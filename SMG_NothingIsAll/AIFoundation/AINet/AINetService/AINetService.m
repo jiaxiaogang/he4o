@@ -31,25 +31,17 @@
     //2. 对v.ref和a.abs进行交集,取得有效GLAlg;
     NSArray *vRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Value:innerValue_p]];
     
-    ////用可视化调试glAlg和pAlg的关系;
-    //[theNV setForceMode:true];
-    //[theNV setNodeData:pAlg.pointer lightStr:@"P"];
-    //for (NSInteger i = 0; i < vRef_ps.count; i++) {
-    //    AIAlgNodeBase *glAbsAlg = [SMGUtils searchNode:ARR_INDEX(vRef_ps, i)];
-    //    NSArray *glAlgs = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:glAbsAlg]];
-    //    for (NSInteger j = 0; j < glAlgs.count; j++) {
-    //        [theNV setNodeData:ARR_INDEX(glAlgs, i) lightStr:(STRFORMAT(@"GL%ld-%ld",(long)i,(long)j))];
-    //    }
-    //}
-    //[theNV setForceMode:false];
-    
     //3. 找出合格的inner1Alg;
-    for (AIKVPointer *gl1_p in vRef_ps) {
-        AIAlgNodeBase *gl1Alg = [SMGUtils searchNode:gl1_p];
-        NSArray *gl0_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:gl1Alg]];
-        for (AIKVPointer *gl0_p in gl0_ps) {
-            if ([TOUtils mIsC_2:gl0_p c:pAlg.pointer] || [TOUtils mIsC_2:pAlg.pointer c:gl0_p]) {
-                return gl1Alg;
+    for (AIKVPointer *vRef_p in vRef_ps) {
+        AIAlgNodeBase *glAlg = [SMGUtils searchNode:vRef_p];
+        
+        //4. 根据glAlg,向具象找出真正当时变"大小"的具象概念节点;
+        NSArray *glAlgCon_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:glAlg]];
+        
+        //5. 这些节点中,哪个与pAlg有抽具象关系,就返回哪个;
+        for (AIKVPointer *glAlgCon_p in glAlgCon_ps) {
+            if ([TOUtils mIsC_2:glAlgCon_p c:pAlg.pointer] || [TOUtils mIsC_2:pAlg.pointer c:glAlgCon_p]) {
+                return glAlg;
             }
         }
     }
