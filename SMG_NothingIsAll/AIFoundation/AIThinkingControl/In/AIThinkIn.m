@@ -160,6 +160,7 @@
  *          > 已解决,因为fromMemShort是4层alg,而fromRethink是两层;
  *  @version
  *      20200416 - 修复时序识别的bug: 因概念节点去重不够,导致即使概念内容一致,在时序识别时,也会无法匹配 (参考n19p5-A组BUG4);
+ *      20200731 - 将protoFo和matchAFo的构建改为isMem=false (因为构建到内存的话,在内类比构建时序具象指向为空,参考20151-BUG);
  */
 -(void) dataIn_NoMV:(AIAlgNodeBase*)algNode fromGroup_ps:(NSArray*)fromGroup_ps{
     //1. 数据准备 (瞬时记忆,理性匹配出的模型);
@@ -178,9 +179,9 @@
     
     //3. 构建时序 (把每次dic输入,都作为一个新的内存时序);
     NSArray *matchAShortMem = [self.delegate aiThinkIn_GetShortMemory:true];
-    mModel.matchAFo = [theNet createConFo:matchAShortMem isMem:true];
+    mModel.matchAFo = [theNet createConFo:matchAShortMem isMem:false];
     NSArray *protoAShortMem = [self.delegate aiThinkIn_GetShortMemory:false];
-    mModel.protoFo = [theNet createConFo:protoAShortMem isMem:true];
+    mModel.protoFo = [theNet createConFo:protoAShortMem isMem:false];
     
     //4. 识别时序;
     [AIThinkInReason TIR_Fo_FromShortMem:mModel.matchAFo lastMatchAlg:mModel.matchAlg finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue,NSInteger cutIndex) {
