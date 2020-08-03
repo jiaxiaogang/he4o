@@ -398,7 +398,11 @@
     
     //2. 收集返回
     for (TOModelBase *model in toModels) {
-        [result addObject:model.content_p];
+        
+        //3. 防空,TOValueModel的目标pValue有为空的情况 (会导致此处闪退);
+        if (model.content_p) {
+            [result addObject:model.content_p];
+        }
     }
     return result;
 }

@@ -224,5 +224,7 @@
 #define Log4ActGL true
 //行为化_Hav
 #define Log4ActHav true
+//行为化_GetInnerAlg
+#define Log4GetInnerAlg true
 //PM算法
 #define Log4PM true

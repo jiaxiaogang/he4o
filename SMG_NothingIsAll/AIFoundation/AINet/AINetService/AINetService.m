@@ -29,17 +29,18 @@
     AIKVPointer *innerValue_p = [theNet getNetDataPointerWithData:@(type) algsType:vAT dataSource:vDS];
     
     //2. 对v.ref和a.abs进行交集,取得有效GLAlg;
-    NSArray *vRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Value:innerValue_p]];
+    NSArray *gl_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Value:innerValue_p]];
     
     //3. 找出合格的inner1Alg;
-    for (AIKVPointer *vRef_p in vRef_ps) {
-        AIAlgNodeBase *glAlg = [SMGUtils searchNode:vRef_p];
+    for (AIKVPointer *gl_p in gl_ps) {
+        AIAlgNodeBase *glAlg = [SMGUtils searchNode:gl_p];
         
         //4. 根据glAlg,向具象找出真正当时变"大小"的具象概念节点;
         NSArray *glAlgCon_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:glAlg]];
         
         //5. 这些节点中,哪个与pAlg有抽具象关系,就返回哪个;
         for (AIKVPointer *glAlgCon_p in glAlgCon_ps) {
+            if (Log4GetInnerAlg) NSLog(@"getInnerAlg_pAlg:%@ glAlg:%@ glAlgCon:%@",Alg2FStr(pAlg),Alg2FStr(glAlg),AlgP2FStr(glAlgCon_p));
             if ([TOUtils mIsC_2:glAlgCon_p c:pAlg.pointer] || [TOUtils mIsC_2:pAlg.pointer c:glAlgCon_p]) {
                 return glAlg;
             }
