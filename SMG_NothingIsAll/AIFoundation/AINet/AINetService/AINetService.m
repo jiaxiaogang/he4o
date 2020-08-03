@@ -40,7 +40,7 @@
         
         //5. 这些节点中,哪个与pAlg有抽具象关系,就返回哪个;
         for (AIKVPointer *glAlgCon_p in glAlgCon_ps) {
-            if (Log4GetInnerAlg) NSLog(@"getInnerAlg_pAlg:%@ glAlg:%@ glAlgCon:%@",Alg2FStr(pAlg),Alg2FStr(glAlg),AlgP2FStr(glAlgCon_p));
+            if (Log4GetInnerAlg) NSLog(@"getInnerAlg_(AC有抽具象关联时返回B)_参照A:%@ 结果B:%@ 结果具象C:%@",Alg2FStr(pAlg),Alg2FStr(glAlg),AlgP2FStr(glAlgCon_p));
             if ([TOUtils mIsC_2:glAlgCon_p c:pAlg.pointer] || [TOUtils mIsC_2:pAlg.pointer c:glAlgCon_p]) {
                 return glAlg;
             }

@@ -385,6 +385,7 @@
     }
     //7. 没一个成功 或 行为化成功 或 等待行为化,则失败;
     outModel.status = TOModelStatus_ActNo;
+    NSLog(@"---> RelativeFo 行为化失败:%@",Pit2FStr(outModel.content_p));
     [self.delegate toAction_SubModelFailure:outModel];
 }
 

@@ -375,10 +375,6 @@
                     
                     CGFloat fuzzyRefScore = [ThinkingUtils getScoreForce:fuzzyRef.cmvNode_p ratio:1.0f];
                     if (Log4PM) NSLog(@"-> checkFo:%@->%@ 任务分:%f",Fo2FStr(fuzzyRef),Mvp2Str(fuzzyRef.cmvNode_p),outModel.pm_Score);
-                    [theNV setForceMode:true];
-                    [theNV setNodeData:fuzzyRef.pointer lightStr:Pit2FStr(firstJustPValue)];
-                    [theNV setNodeData:fuzzyRef.cmvNode_p lightStr:STRFORMAT(@"%f",fuzzyRefScore)];
-                    [theNV setForceMode:false];
                     
                     //e. 发现一条同向时,结束循环 (stopLoop=true);
                     stopLoop = true;
@@ -430,6 +426,8 @@
             outModel.sp_P = M;
             [self singleLoopBackWithBegin:toValueModel];
             return true;
+        }else{
+            if (Log4PM) NSLog(@"-> 操作 ItemFailure:(%@->%@) conF:%@ conA:%@",Pit2FStr(firstJustPValue),Pit2FStr(glValue4M),Fo2FStr(matchConF),Alg2FStr(matchConA));
         }
     }
     
