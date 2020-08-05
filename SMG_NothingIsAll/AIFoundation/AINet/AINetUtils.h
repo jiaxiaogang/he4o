@@ -56,7 +56,7 @@
  *  MARK:--------------------概念_引用_微信息--------------------
  *  @desc               : 将algNode插线到value_ps的refPorts
  *  @param algNode_p    : 引用微信息的algNode
- *  @param content_ps   : 微信息组
+ *  @param content_ps   : 微信息组 (需要去重)
  *  @paramer ps         : 生成md5的ps (需要有序)
  *  @param difStrong    : 构建具象alg时,默认为1,构建抽象时,默认为具象节点数(这个以后不合理再改规则,比如改为平均,或者具象强度之和等);
  */
@@ -67,8 +67,8 @@
  *  MARK:--------------------时序_引用_概念--------------------
  *  @desc               : 将algNode插线到value_ps的refPorts
  *  @param foNode_p     : 引用algNode的foNode
- *  @param order_ps     : orders节点组
- *  @param ps           : 生成md5的ps
+ *  @param order_ps     : orders节点组 (需要去重)
+ *  @param ps           : 生成md5的ps (本来就有序)
  */
 +(void) insertRefPorts_AllFoNode:(AIKVPointer*)foNode_p order_ps:(NSArray*)order_ps ps:(NSArray*)ps;
 +(void) insertRefPorts_AllFoNode:(AIKVPointer*)foNode_p order_ps:(NSArray*)order_ps ps:(NSArray*)ps difStrong:(NSInteger)difStrong;

@@ -75,7 +75,13 @@
 //MARK:                     < 引用插线 (外界调用,支持alg/fo/mv) >
 //MARK:===============================================================
 
+/**
+ *  MARK:--------------------概念_引用_微信息--------------------
+ *  @version
+ *      2020.08.05: content_ps添加去重功能,避免同一个"分"信息,被多次报引用强度叠加;
+ */
 +(void) insertRefPorts_AllAlgNode:(AIKVPointer*)algNode_p content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong{
+    content_ps = [SMGUtils removeRepeat:content_ps];
     if (algNode_p && ARRISOK(content_ps)) {
         NSArray *sort_ps = [SMGUtils sortPointers:content_ps];
         //1. 遍历value_p微信息,添加引用;
@@ -91,12 +97,19 @@
     }
 }
 
+/**
+ *  MARK:--------------------时序_引用_概念--------------------
+ *  @version
+ *      2020.08.05: order_ps添加去重功能,避免同一个"分"信息,被多次报引用强度叠加;
+ */
 +(void) insertRefPorts_AllFoNode:(AIKVPointer*)foNode_p order_ps:(NSArray*)order_ps ps:(NSArray*)ps {
+    order_ps = [SMGUtils removeRepeat:order_ps];
     for (AIPointer *order_p in ARRTOOK(order_ps)) {
         [self insertRefPorts_AllFoNode:foNode_p order_p:order_p ps:ps difStrong:1];
     }
 }
 +(void) insertRefPorts_AllFoNode:(AIKVPointer*)foNode_p order_ps:(NSArray*)order_ps ps:(NSArray*)ps difStrong:(NSInteger)difStrong{
+    order_ps = [SMGUtils removeRepeat:order_ps];
     for (AIPointer *order_p in ARRTOOK(order_ps)) {
         [self insertRefPorts_AllFoNode:foNode_p order_p:order_p ps:ps difStrong:difStrong];
     }
@@ -187,9 +200,12 @@
         
         //TODOTOMORROW: 对强度>100的打断点,重新训练,查20151-BUG9方向索引强度异常的问题;
         if (difStrong == 64) {
-            NSLog(@"==== %@:%ld",findPort.target_p.folderName,findPort.strong.value);
-            if (findPort.strong.value > 64) {
+            NSLog(@"------mv指针强度=64 %@_%ld:%ld",findPort.target_p.folderName,findPort.target_p.pointerId,findPort.strong.value);
+            if (findPort.target_p.pointerId == 13) {
                 NSLog(@"");
+            }
+            if (findPort.strong.value > 64) {
+                NSLog(@"------mv指针强度>64 %@:%ld",findPort.target_p.folderName,findPort.strong.value);
             }
         }
         
