@@ -278,6 +278,9 @@
  *  @todo
  *      1. 此处在for循环中,所以有可能推进多条,比如我有了一只狗,可以拉雪撬,或者送给爷爷陪爷爷 (涉及多任务间的价值自由竞争),暂仅支持一条,后再支持;
  *  @result 返回pushMiddle是否成功,如果推进成功,则不再执行TOP四模式;
+ *  @version
+ *      2020.08.05: waitModel.pm_Score的赋值改为取demand.score取负 (因为demand一般为负,而解决任务为正);
+ *                  而此处,从waitModel的base中找fo较麻烦,所以省事儿,就直接取-demand.score得了;
  */
 -(BOOL) commitFromOuterPushMiddleLoop:(DemandModel*)demand latestMModel:(AIShortMatchModel*)latestMModel{
     //1. 数据检查
@@ -296,7 +299,7 @@
             [waitModel.justPValues addObjectsFromArray:[SMGUtils removeSub_ps:latestMModel.matchAlg.content_ps parent_ps:latestMModel.protoAlg.content_ps]];
             
             //5. 将理性评价"价值分"保留到短时记忆模型;
-            waitModel.pm_Score = [ThinkingUtils getScoreForce:demand.algsType urgentTo:demand.urgentTo delta:demand.delta ratio:1.0f];
+            waitModel.pm_Score = -[ThinkingUtils getScoreForce:demand.algsType urgentTo:demand.urgentTo delta:demand.delta ratio:1.0f];
             waitModel.pm_MVAT = demand.algsType;
             waitModel.pm_Fo = [SMGUtils searchNode:waitModel.baseOrGroup.content_p];
             
@@ -378,7 +381,7 @@
                     
                     //e. 发现一条同向时,结束循环 (stopLoop=true);
                     stopLoop = true;
-                    firstPNeedGL = ![ThinkingUtils sameOfScore1:fuzzyRefScore score2:outModel.pm_Score];
+                    firstPNeedGL = (fuzzyRefScore < 0);
                     checkNum ++;
                     //e. 有一条有效,即不用GL加工,且break;
                     if (checkNum >= cPM_CheckRefLimit || stopLoop) break;
@@ -420,7 +423,7 @@
         //10. 价值稳定,则转_GL行为化 (找到一条即可,因为此处只管转移,后面的逻辑由流程控制方法负责);
         BOOL sameIdent = [outModel.pm_MVAT isEqualToString:matchConF.cmvNode_p.algsType];
         CGFloat matchConScore = [ThinkingUtils getScoreForce:matchConF.cmvNode_p ratio:1.0f];
-        if (glValue4M && sameIdent && [ThinkingUtils sameOfScore1:matchConScore score2:outModel.pm_Score]) {
+        if (glValue4M && sameIdent && matchConScore > 0) {
             if (Log4PM) NSLog(@"-> 操作 Success:(%@->%@)",Pit2FStr(firstJustPValue),Pit2FStr(glValue4M));
             TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:glValue4M group:outModel];
             outModel.sp_P = M;

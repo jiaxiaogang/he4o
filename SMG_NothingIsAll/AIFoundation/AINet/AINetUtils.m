@@ -186,7 +186,7 @@
         findPort.strong.value += difStrong;
         
         //TODOTOMORROW: 对强度>100的打断点,重新训练,查20151-BUG9方向索引强度异常的问题;
-        if ([kPN_CMV_NODE isEqualToString:findPort.target_p.filePath] && findPort.strong.value > 100) {
+        if (([kPN_ABS_CMV_NODE isEqualToString:findPort.target_p.filePath] || [kPN_CMV_NODE isEqualToString:findPort.target_p.filePath]) && findPort.strong.value > 100) {
             NSLog(@"");
         }
         
