@@ -189,6 +189,16 @@
 }
 +(void) insertPointer_Hd:(AIKVPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps difStrong:(NSInteger)difStrong{
     if (ISOK(pointer, AIPointer.class) && ISOK(ports, NSMutableArray.class)) {
+        
+        //TODOTOMORROW: 对已包含pointer的mv节点,当difStrong>1时,断点,查强度异常的BUG;
+        if ([kPN_CMV_NODE isEqualToString:pointer.folderName]) {
+            if (difStrong > 1) {
+                if ([[SMGUtils convertPointersFromPorts:ports] containsObject:pointer]) {
+                    NSLog(@"");
+                }
+            }
+        }
+        
         //1. 找到/新建port
         AIPort *findPort = [self findPort:pointer fromPorts:ports ps:ps];
         if (!findPort) {
@@ -199,13 +209,10 @@
         findPort.strong.value += difStrong;
         
         //TODOTOMORROW: 对强度>100的打断点,重新训练,查20151-BUG9方向索引强度异常的问题;
-        if (difStrong == 64) {
-            NSLog(@"------mv指针强度=64 %@_%ld:%ld",findPort.target_p.folderName,findPort.target_p.pointerId,findPort.strong.value);
-            if (findPort.target_p.pointerId == 13) {
-                NSLog(@"");
-            }
-            if (findPort.strong.value > 64) {
-                NSLog(@"------mv指针强度>64 %@:%ld",findPort.target_p.folderName,findPort.strong.value);
+        if (difStrong > 1) {
+            NSLog(@"------引用强度 %@_%ld: + %ld = %ld",findPort.target_p.folderName,findPort.target_p.pointerId,difStrong,findPort.strong.value);
+            if (findPort.strong.value > 100) {
+                NSLog(@"---------引用强度>100 %@:%ld",findPort.target_p.folderName,findPort.strong.value);
             }
         }
         
