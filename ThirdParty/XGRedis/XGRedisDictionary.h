@@ -21,7 +21,7 @@
 -(BOOL) addObject:(NSObject*)obj forKey:(NSString*)key;
 -(BOOL) insertObject:(NSObject*)obj key:(NSString*)key atIndex:(NSInteger)index;
 -(NSString*) keyForIndex:(NSInteger)index;
--(NSObject*) valueForIndex:(NSInteger)index;
+-(id) valueForIndex:(NSInteger)index;
 
 @end
 

@@ -33,6 +33,6 @@
 -(void) setObject:(NSObject*)obj forKey:(NSString*)key time:(double)time;
 
 
--(NSObject*) objectForKey:(NSString*)key;
+-(id) objectForKey:(NSString*)key;
 
 @end

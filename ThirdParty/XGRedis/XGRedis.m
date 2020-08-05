@@ -79,9 +79,9 @@ static XGRedis *_instance;
     }
 }
 
--(NSObject*) objectForKey:(NSString*)key{
+-(id) objectForKey:(NSString*)key{
     //二分法查找
-    __block NSObject *obj = nil;
+    __block id obj = nil;
     if (STRISOK(key)) {
         [XGRedisUtil searchIndexWithCompare:^NSComparisonResult(NSInteger checkIndex) {
             NSString *checkKey = [self.dic keyForIndex:checkIndex];

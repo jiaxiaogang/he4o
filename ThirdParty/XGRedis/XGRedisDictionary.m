@@ -76,7 +76,7 @@
     return ARR_INDEX(self.keys, index);
 }
 
--(NSObject*) valueForIndex:(NSInteger)index{
+-(id) valueForIndex:(NSInteger)index{
     return ARR_INDEX(self.values, index);
 }
 

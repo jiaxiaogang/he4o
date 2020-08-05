@@ -73,7 +73,7 @@
     [foodView setOrigin:CGPointMake(ScreenWidth * 0.375f, ScreenHeight - 66)];
     [self.view addSubview:foodView];
     CGPoint targetPoint = self.birdView.center;
-    [UIView animateWithDuration:1.5f animations:^{
+    [UIView animateWithDuration:0.3f animations:^{
         [foodView setCenter:targetPoint];
     }completion:^(BOOL finished) {
         //1. 吃前视觉
@@ -262,7 +262,7 @@
     [foodView hit];
     [foodView setOrigin:CGPointMake(ScreenWidth * 0.375f, ScreenHeight - 66)];
     [self.view addSubview:foodView];
-    [UIView animateWithDuration:1.0f animations:^{
+    [UIView animateWithDuration:0.3f animations:^{
         [foodView setOrigin:targetPoint];
     }completion:^(BOOL finished) {
         //1. 视觉输入

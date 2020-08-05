@@ -48,6 +48,17 @@
             //    }
             //}
             [dics addObject:modelDic];
+            
+            
+            //TODOTOMORROW: 测抽象了无速果的问题 (因为坚果未移动,不应该有无速果);
+            NSString *vrKey = @"VisionRecord";
+            NSMutableArray *vrArr = [[NSMutableArray alloc] initWithArray:[[XGRedis sharedInstance] objectForKey:vrKey]];
+            [vrArr addObject:STRFORMAT(@"%p",curView)];
+            [[XGRedis sharedInstance] setObject:vrArr forKey:vrKey time:NSIntegerMax];
+            NSLog(@"see记录: %@",vrArr);
+            if (model.speed > 0) {
+                NSLog(@"");
+            }
         }
     }
     

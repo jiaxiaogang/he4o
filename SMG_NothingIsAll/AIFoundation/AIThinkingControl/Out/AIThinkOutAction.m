@@ -199,7 +199,7 @@
     }else{
         //3. 数据检查curAlg
         AIAlgNodeBase *curAlg = [SMGUtils searchNode:outModel.content_p];
-        NSLog(@"\n\n=============================== 行为化_Hav ===============================\n%@",Alg2FStr(curAlg));
+        NSLog(@"\n\n=============================== 行为化_Hav ===============================\nC:%@",Alg2FStr(curAlg));
         if (!curAlg) {
             outModel.status = TOModelStatus_ActNo;
             [self.delegate toAction_SubModelFailure:outModel];
@@ -212,8 +212,21 @@
             
             //a. 依次判断mModel,只要符合mIsC即可;
             for (AIShortMatchModel *model in theTC.inModelManager.models) {
+                NSLog(@"====== checkMC ======\nM:%@\nP:%@",Alg2FStr(model.matchAlg),Alg2FStr(model.protoAlg));
+                
+                //TODOTOMORROW: 调试m is not c的问题 (经查因为无速和有速问题,但坚果从未移动过,不应该有无速果);
+                if ([TOUtils mIsC_2:curAlg.pointer c:model.matchAlg.pointer]){
+                    NSLog(@"curAlg Is matchAlg");
+                }else if ([TOUtils mIsC_2:curAlg.pointer c:model.protoFo.pointer]){
+                    NSLog(@"curAlg Is protoAlg");
+                }else if ([TOUtils mIsC_2:model.matchAlg.pointer c:curAlg.pointer]){
+                    NSLog(@"matchAlg Is curAlg");
+                }else if ([TOUtils mIsC_2:model.protoFo.pointer c:curAlg.pointer]){
+                    NSLog(@"protoAlg Is curAlg");
+                }
+                
                 if ([TOUtils mIsC_2:curAlg.pointer c:model.matchAlg.pointer]) {
-                    NSLog(@"=====> MC\nP:%@\nM:%@ \n转至PM ↓↓↓↓↓↓↓↓↓",Alg2FStr(model.protoAlg),Alg2FStr(curAlg));
+                    NSLog(@"===> 转至PM ↓↓↓↓↓↓↓↓↓ (C作为M,P作为P)");
                     
                     //b. 生成replaceAlg转移 & 保留到outModel.replaceAlgs;
                     TOAlgModel *reModel = [TOAlgModel newWithAlg_p:model.matchAlg.pointer group:outModel];
