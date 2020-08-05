@@ -51,6 +51,11 @@
 //General指针
 +(AIKVPointer*) createPointer:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem{
     NSInteger pointerId = [SMGUtils createPointerId:algsType dataSource:dataSource];
+    
+    //TODOTOMORROW: 查20151-BUG9;
+    if ([kPN_CMV_NODE isEqualToString:folderName]) {
+        NSLog(@"---------mv新指针:%ld",pointerId);
+    }
     AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:folderName algsType:algsType dataSource:dataSource isOut:isOut isMem:isMem];
     return kvPointer;
 }
