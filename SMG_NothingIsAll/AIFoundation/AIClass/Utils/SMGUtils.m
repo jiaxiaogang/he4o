@@ -55,6 +55,7 @@
     //TODOTOMORROW: 查20151-BUG9;
     if ([kPN_CMV_NODE isEqualToString:folderName] || [kPN_ABS_CMV_NODE isEqualToString:folderName]) {
         NSLog(@"---------引用强度BUG-mv新指针:%ld",pointerId);
+        HeLog(@"---------引用强度BUG-mv新指针:%ld",pointerId);
     }
     AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:folderName algsType:algsType dataSource:dataSource isOut:isOut isMem:isMem];
     return kvPointer;

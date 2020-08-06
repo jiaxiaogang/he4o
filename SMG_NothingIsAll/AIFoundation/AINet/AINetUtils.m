@@ -193,6 +193,7 @@
         //TODOTOMORROW: 对已包含pointer的mv节点,当difStrong>1时,断点,查强度异常的BUG;
         if ([kPN_CMV_NODE isEqualToString:pointer.folderName]) {
             if (difStrong > 1) {
+                HeLog(@"---------引用强度_增强 %@ + %ld",Mvp2Str(pointer),difStrong);
                 if ([[SMGUtils convertPointersFromPorts:ports] containsObject:pointer]) {
                     NSLog(@"");
                 }
@@ -209,10 +210,12 @@
         findPort.strong.value += difStrong;
         
         //TODOTOMORROW: 对强度>100的打断点,重新训练,查20151-BUG9方向索引强度异常的问题;
-        if (difStrong > 1) {
+        if (difStrong > 1 && [kPN_CMV_NODE isEqualToString:pointer.folderName]) {
             NSLog(@"------引用强度 %@_%ld: + %ld = %ld",findPort.target_p.folderName,findPort.target_p.pointerId,difStrong,findPort.strong.value);
+            HeLog(@"---------引用强度_更新 %@ + %ld = %ld",Mvp2Str(pointer),difStrong,findPort.strong.value);
             if (findPort.strong.value > 100) {
-                NSLog(@"---------引用强度>100 %@:%ld",findPort.target_p.folderName,findPort.strong.value);
+                NSLog(@"---------引用强度_异常 > 100 %@:%ld",findPort.target_p.folderName,findPort.strong.value);
+                HeLog(@"---------引用强度_异常 > 100 %@ + %ld = %ld",Mvp2Str(pointer),difStrong,findPort.strong.value);
             }
         }
         
