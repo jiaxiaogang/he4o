@@ -213,17 +213,16 @@
             //a. 依次判断mModel,只要符合mIsC即可;
             for (AIShortMatchModel *model in theTC.inModelManager.models) {
                 NSLog(@"====== checkMC ======\nM:%@\nP:%@",Alg2FStr(model.matchAlg),Alg2FStr(model.protoAlg));
-                
-                //TODOTOMORROW: 调试m is not c的问题 (经查因为无速和有速问题,但坚果从未移动过,不应该有无速果);
-                if ([TOUtils mIsC_2:curAlg.pointer c:model.matchAlg.pointer]){
-                    NSLog(@"curAlg Is matchAlg");
-                }else if ([TOUtils mIsC_2:curAlg.pointer c:model.protoFo.pointer]){
-                    NSLog(@"curAlg Is protoAlg");
-                }else if ([TOUtils mIsC_2:model.matchAlg.pointer c:curAlg.pointer]){
-                    NSLog(@"matchAlg Is curAlg");
-                }else if ([TOUtils mIsC_2:model.protoFo.pointer c:curAlg.pointer]){
-                    NSLog(@"protoAlg Is curAlg");
-                }
+                ////调试: 当MC无法进入出现BUG时,打开此调试信息;
+                //if ([TOUtils mIsC_2:curAlg.pointer c:model.matchAlg.pointer]){
+                //    NSLog(@"curAlg Is matchAlg");
+                //}else if ([TOUtils mIsC_2:curAlg.pointer c:model.protoFo.pointer]){
+                //    NSLog(@"curAlg Is protoAlg");
+                //}else if ([TOUtils mIsC_2:model.matchAlg.pointer c:curAlg.pointer]){
+                //    NSLog(@"matchAlg Is curAlg");
+                //}else if ([TOUtils mIsC_2:model.protoFo.pointer c:curAlg.pointer]){
+                //    NSLog(@"protoAlg Is curAlg");
+                //}
                 
                 if ([TOUtils mIsC_2:curAlg.pointer c:model.matchAlg.pointer]) {
                     NSLog(@"===> 转至PM ↓↓↓↓↓↓↓↓↓ (C作为M,P作为P)");
