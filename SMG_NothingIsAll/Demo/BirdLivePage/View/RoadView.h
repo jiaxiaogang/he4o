@@ -14,7 +14,7 @@
 
 @end
 
-@interface RoadView : UIView
+@interface RoadView : HEView
 
 @property (weak,nonatomic) id<RoadViewDelegate> delegate;
 

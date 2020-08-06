@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface TreeView : UIView
+@interface TreeView : HEView
 
 @end

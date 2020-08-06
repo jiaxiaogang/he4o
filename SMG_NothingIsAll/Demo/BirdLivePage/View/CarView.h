@@ -15,7 +15,7 @@
 
 @end
 
-@interface CarView : UIView
+@interface CarView : HEView
 
 @property (weak,nonatomic) id<CarViewDelegate> delegate;
 -(void) run;

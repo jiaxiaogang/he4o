@@ -24,7 +24,7 @@
     NSMutableArray *views = [targetView subViews_AllDeepWithRect:rect];
     
     //2. 生成model
-    for (UIView *curView in views) {
+    for (HEView *curView in views) {
         if (curView.tag == visibleTag) {
             AIVisionAlgsModel *model = [[AIVisionAlgsModel alloc] init];
             //model.sizeWidth = [self sizeWidth:curView];
@@ -48,17 +48,6 @@
             //    }
             //}
             [dics addObject:modelDic];
-            
-            
-            //TODOTOMORROW: 测抽象了无速果的问题 (因为坚果未移动,不应该有无速果);
-            NSString *vrKey = @"VisionRecord";
-            NSMutableArray *vrArr = [[NSMutableArray alloc] initWithArray:[[XGRedis sharedInstance] objectForKey:vrKey]];
-            [vrArr addObject:STRFORMAT(@"%p",curView)];
-            [[XGRedis sharedInstance] setObject:vrArr forKey:vrKey time:NSIntegerMax];
-            NSLog(@"see记录: %@",vrArr);
-            if (model.speed > 0) {
-                NSLog(@"");
-            }
         }
     }
     
@@ -107,8 +96,9 @@
  *  @desc 目前简单粗暴两桢差值 (随后有需要改用微积分)
  *  @version
  *      2020.07.07: 将主观速度,改为客观速度 (因为主观速度对识别略有影响,虽可克服,但懒得设计训练步骤,正好改成客观速度更符合今后的设计);
+ *      2020.08.06: 将lastXY位置记录,加上initTime,因为ios的复用机制,会导致复用已销毁同内存地址的view (参考20151-BUG11);
  */
-+(NSInteger) speed:(UIView*)target{
++(NSInteger) speed:(HEView*)target{
     //>> 主观速度代码;
     //CGFloat speed = 0;
     //CGPoint targetPoint = [UIView convertWorldPoint:target];
@@ -130,8 +120,8 @@
     CGFloat speed = 0;
     CGPoint targetPoint = [UIView convertWorldPoint:target];
     //2. 上帧位置
-    NSString *lastXKey = STRFORMAT(@"lastX_%p",target);
-    NSString *lastYKey = STRFORMAT(@"lastY_%p",target);
+    NSString *lastXKey = STRFORMAT(@"lastX_%p_%lld",target,target.initTime);
+    NSString *lastYKey = STRFORMAT(@"lastY_%p_%lld",target,target.initTime);
     NSObject *lastXObj = [[XGRedis sharedInstance] objectForKey:lastXKey];
     NSObject *lastYObj = [[XGRedis sharedInstance] objectForKey:lastYKey];
     if (ISOK(lastXObj, NSNumber.class) && ISOK(lastYObj, NSNumber.class)) {

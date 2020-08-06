@@ -22,7 +22,7 @@ typedef NS_ENUM(NSInteger, FoodStatus) {
  *  MARK:--------------------坚果类--------------------
  *  1. 汽车压一次消皮,压两次报废;
  */
-@interface FoodView : UIView
+@interface FoodView : HEView
 
 @property (assign,nonatomic) FoodStatus status;
 

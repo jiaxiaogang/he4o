@@ -14,7 +14,7 @@
 
 @end
 
-@interface LightView : UIView
+@interface LightView : HEView
 
 @property (weak,nonatomic) id<LightViewDelegate> delegate;
 @property (assign,nonatomic) BOOL curLightIsGreen;

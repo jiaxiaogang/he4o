@@ -34,7 +34,6 @@
 -(void) initView{
     //self
     [self setFrame:CGRectMake((ScreenWidth * 0.5f - 100) / 2 + ScreenWidth * 0.5f, 64, 100, 50)];
-    self.tag = visibleTag;
     
     //containerView
     [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];
