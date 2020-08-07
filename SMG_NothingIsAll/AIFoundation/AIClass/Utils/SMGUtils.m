@@ -52,7 +52,7 @@
 +(AIKVPointer*) createPointer:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem{
     NSInteger pointerId = [SMGUtils createPointerId:algsType dataSource:dataSource];
     
-    //TODOTOMORROW: 查20151-BUG9;
+    //TODOTOMORROW: 查20151-BUG9 (此处新指针有重复,导致问题);
     if ([kPN_CMV_NODE isEqualToString:folderName] || [kPN_ABS_CMV_NODE isEqualToString:folderName]) {
         NSLog(@"---------引用强度BUG-mv新指针:%ld",pointerId);
         HeLog(@"---------引用强度BUG-mv新指针:%ld",pointerId);
