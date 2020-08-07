@@ -290,9 +290,11 @@
     
     //2. 取出所有等待下轮的outModel (ActYes&Runing);
     NSArray *waitModels = [TOUtils getSubOutModels_AllDeep:demand validStatus:@[@(TOModelStatus_ActYes),@(TOModelStatus_Runing)]];
+    NSLog(@"\n\n=============================== OPushM ===============================\n输入M:%@\n输入P:%@\n等待中任务数:%ld",Alg2FStr(latestMModel.matchAlg),Alg2FStr(latestMModel.protoAlg),waitModels.count);
     
     //3. 判断最近一次input是否与等待中outModel相匹配 (匹配,比如吃,确定自己是否真吃了);
     for (TOAlgModel *waitModel in waitModels) {
+        if (Log4OPushM) NSLog(@"==> checkTOModel: %@",Pit2FStr(waitModel.content_p));
         if (ISOK(waitModel, TOAlgModel.class) && ISOK(waitModel.baseOrGroup, TOFoModel.class) && [TOUtils mIsC_1:latestMModel.matchAlg.pointer c:waitModel.content_p]) {
             
             //4. 将"P-M取得独特稀疏码"保留到短时记忆模型;
@@ -305,6 +307,7 @@
             
             //6. 理性评价
             BOOL jump = [self reasonScorePM:waitModel];
+            NSLog(@"OPushM: %@",jump ? @"成功" : @"失败");
             
             //7. 未跳转到PM,则将algModel设为Finish,并递归;
             if (!jump) {
@@ -314,6 +317,7 @@
             return true;
         }
     }
+    if (Log4OPushM) NSLog(@"OPushM: 无一被需要");
     return false;
 }
 
@@ -340,17 +344,17 @@
     AIAlgNodeBase *M = [SMGUtils searchNode:outModel.content_p];
     AIFoNodeBase *mMaskFo = outModel.pm_Fo;
     if (!M) return false;
-    NSLog(@"\n\n=============================== PM ===============================\nM:%@\nMAtFo:%@",Alg2FStr(M),Fo2FStr(mMaskFo));
     
     //3. 将理性评价数据存到短时记忆模型;
     NSArray *except_ps = [TOUtils convertPointersFromTOValueModelSValue:outModel.subModels];
     NSArray *validJustPValues = [SMGUtils removeSub_ps:except_ps parent_ps:outModel.justPValues];
-    if (Log4PM) NSLog(@"---> P独特码:%@",Pits2FStr(outModel.justPValues));
-    if (Log4PM) NSLog(@"---> 不应期:%@",Pits2FStr(except_ps));
-    if (Log4PM) NSLog(@"---> P有效独特码:%@",Pits2FStr(validJustPValues));
         
     //4. 不用PM评价 (则交由流程控制方法,推动继续决策(跳转下帧/别的);
     if (!ARRISOK(validJustPValues)) return false;
+    NSLog(@"\n\n=============================== PM ===============================\nM:%@\nMAtFo:%@",Alg2FStr(M),Fo2FStr(mMaskFo));
+    if (Log4PM) NSLog(@"---> P独特码:%@",Pits2FStr(outModel.justPValues));
+    if (Log4PM) NSLog(@"---> 不应期:%@",Pits2FStr(except_ps));
+    if (Log4PM) NSLog(@"---> P有效独特码:%@",Pits2FStr(validJustPValues));
     
     //5. 取到首个P独特稀疏码 (判断是否需要行为化);
     AIKVPointer *firstJustPValue = ARR_INDEX(validJustPValues, 0);
