@@ -72,7 +72,9 @@
     [foodView hit];
     [foodView setOrigin:CGPointMake(ScreenWidth * 0.375f, ScreenHeight - 66)];
     [self.view addSubview:foodView];
-    CGPoint targetPoint = self.birdView.center;
+    CGFloat targetX = self.birdView.center.x + (random() % 3 - 1) * 10;
+    CGFloat targetY = self.birdView.center.y + (random() % 3 - 1) * 10;
+    CGPoint targetPoint = CGPointMake(targetX, targetY);
     [UIView animateWithDuration:0.3f animations:^{
         [foodView setCenter:targetPoint];
     }completion:^(BOOL finished) {
