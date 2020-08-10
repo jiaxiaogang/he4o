@@ -53,6 +53,12 @@
 +(CGPoint) convertWorldPoint:(UIView*)selfView;
 
 
+//MARK:===============================================================
+//MARK:                     < distance >
+//MARK:===============================================================
++(CGFloat) distance:(UIView*)selfView target:(UIView*)target;
++(CGPoint) distancePoint:(UIView*)selfView target:(UIView*)target;
+
 @end
 
 

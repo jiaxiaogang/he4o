@@ -145,13 +145,13 @@
 //direction
 +(CGFloat) direction:(UIView*)selfView target:(UIView*)target{
     //1. 取距离
-    CGPoint distanceP = [self distancePoint:selfView target:target];
+    CGPoint distanceP = [UIView distancePoint:selfView target:target];
     
     //2. 在身上,则距离为(0,0);
-    NSInteger distance = [self distance:selfView target:target];
-    if (distance == 0) {
-        distanceP = CGPointMake(0, 0);
-    }
+    //CGFloat distance = [UIView distance:selfView target:target];
+    //if (distance == 0) {
+    //    distanceP = CGPointMake(0, 0);
+    //}
     
     //2. 将距离转成角度-PI -> PI (从右至左,上面为-0 -> -3.14 / 从右至左,下面为0 -> 3.14)
     CGFloat rads = atan2f(distanceP.y,distanceP.x);
@@ -170,7 +170,7 @@
 
 //direction
 +(NSInteger) distance:(UIView*)selfView target:(UIView*)target{
-    CGPoint disPoint = [self distancePoint:selfView target:target];
+    CGPoint disPoint = [UIView distancePoint:selfView target:target];
     CGFloat disFloat = sqrt(powf(disPoint.x, 2) + powf(disPoint.y, 2));
     NSInteger distance = (NSInteger)(disFloat / 3.0f);
     if (distance <= 5) distance = 0;//与身体重叠,则距离为0;
@@ -193,21 +193,6 @@
 +(NSInteger) posY:(UIView*)target{
     if (target) return (NSInteger)[UIView convertWorldPoint:target].y;
     return 0;
-}
-
-
-//MARK:===============================================================
-//MARK:                     < PrivateMethod >
-//MARK:===============================================================
-+(CGPoint) distancePoint:(UIView*)selfView target:(UIView*)target{
-    if (selfView && target) {
-        CGPoint targetPoint = [UIView convertWorldPoint:target];
-        CGPoint selfPoint = [UIView convertWorldPoint:selfView];
-        CGFloat distanceX = (targetPoint.x - selfPoint.x);
-        CGFloat distanceY = (targetPoint.y - selfPoint.y);
-        return CGPointMake(distanceX, distanceY);
-    }
-    return CGPointZero;
 }
 
 @end

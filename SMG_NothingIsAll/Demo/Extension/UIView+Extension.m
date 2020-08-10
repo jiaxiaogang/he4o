@@ -160,5 +160,25 @@
     return CGRectZero;
 }
 
+//MARK:===============================================================
+//MARK:                     < distance >
+//MARK:===============================================================
++(CGFloat) distance:(UIView*)selfView target:(UIView*)target{
+    CGPoint disPoint = [self distancePoint:selfView target:target];
+    CGFloat disFloat = sqrt(powf(disPoint.x, 2) + powf(disPoint.y, 2));
+    CGFloat distance = disFloat / [UIScreen mainScreen].scale;
+    return distance;
+}
+
++(CGPoint) distancePoint:(UIView*)selfView target:(UIView*)target{
+    if (selfView && target) {
+        CGPoint targetPoint = [UIView convertWorldPoint:target];
+        CGPoint selfPoint = [UIView convertWorldPoint:selfView];
+        CGFloat distanceX = (targetPoint.x - selfPoint.x);
+        CGFloat distanceY = (targetPoint.y - selfPoint.y);
+        return CGPointMake(distanceX, distanceY);
+    }
+    return CGPointZero;
+}
 
 @end
