@@ -189,35 +189,19 @@
 }
 +(void) insertPointer_Hd:(AIKVPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps difStrong:(NSInteger)difStrong{
     if (ISOK(pointer, AIPointer.class) && ISOK(ports, NSMutableArray.class)) {
-        
-        //TODOTOMORROW: 对已包含pointer的mv节点,当difStrong>1时,断点,查强度异常的BUG;
-        if ([kPN_CMV_NODE isEqualToString:pointer.folderName]) {
-            if (difStrong > 1) {
-                HeLog(@"---------引用强度_增强 %@ + %ld",Mvp2Str(pointer),difStrong);
-                if ([[SMGUtils convertPointersFromPorts:ports] containsObject:pointer]) {
-                    NSLog(@"");
-                }
-            }
-        }
-        
         //1. 找到/新建port
         AIPort *findPort = [self findPort:pointer fromPorts:ports ps:ps];
         if (!findPort) {
             return;
         }
         
+        //TODOTOMORROW: 对强度>100的打断点,重新训练,查20151-BUG9方向索引强度异常的问题;
+        if (difStrong > 1 && [kPN_CMV_NODE isEqualToString:pointer.folderName] && findPort.strong.value > 1) {
+            NSLog(@"------引用强度异常更新 %@_%ld: %ld + %ld = %ld",findPort.target_p.folderName,findPort.target_p.pointerId,difStrong,findPort.strong.value,findPort.strong.value + difStrong);
+        }
+        
         //2. 强度更新
         findPort.strong.value += difStrong;
-        
-        //TODOTOMORROW: 对强度>100的打断点,重新训练,查20151-BUG9方向索引强度异常的问题;
-        if (difStrong > 1 && [kPN_CMV_NODE isEqualToString:pointer.folderName]) {
-            NSLog(@"------引用强度 %@_%ld: + %ld = %ld",findPort.target_p.folderName,findPort.target_p.pointerId,difStrong,findPort.strong.value);
-            HeLog(@"---------引用强度_更新 %@ + %ld = %ld",Mvp2Str(pointer),difStrong,findPort.strong.value);
-            if (findPort.strong.value > 100) {
-                NSLog(@"---------引用强度_异常 > 100 %@:%ld",findPort.target_p.folderName,findPort.strong.value);
-                HeLog(@"---------引用强度_异常 > 100 %@ + %ld = %ld",Mvp2Str(pointer),difStrong,findPort.strong.value);
-            }
-        }
         
         //3. 二分插入
         [XGRedisUtil searchIndexWithCompare:^NSComparisonResult(NSInteger checkIndex) {
