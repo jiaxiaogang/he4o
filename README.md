@@ -16,7 +16,6 @@
 [![](https://img.shields.io/badge/%20QQ-在线交谈%20-orange.svg)](http://wpa.qq.com/msgrd?v=3&uin=283636001&site=qq&menu=yes)
 [![](https://img.shields.io/badge/%20QQ-客户端交谈%20-orange.svg)](tencent://message/?uin=283636001&Site=&Menu=yes)
 ![](https://img.shields.io/badge/%20Wechat-17636342724%20-orange.svg)
-![](https://img.shields.io/badge/%20in-iphone%20-orange.svg)
 [![License](https://img.shields.io/badge/license-GPL-blue.svg)](LICENSE)
 
 ### 1. -------------引言-------------
@@ -71,7 +70,7 @@
 > **V1.0《初版》：**  
 > 　　`2017年2月`立项　－ `2018年10月21日`正式落地发布V1.0版本。  
 > **V2.0《小鸟生存演示》：**  
-> 　　`2018年11月`　－　`至今`　开发完成，测试训练中...
+> 　　`2018年11月`　－　`至今`　开发完成，第三轮测试训练中...
 
 | 架构图 | ![](https://github.com/jiaxiaogang/HELIX_THEORY/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/assets/139_v2.0%E6%9E%B6%E6%9E%84%E5%9B%BE.png?raw=true) |
 | --- | --- |
@@ -196,3 +195,6 @@
 
 > ##### 2020.06.28 `5天`
 > - 决策迭代：PM理性评价
+
+> ##### 2020.08.12 `至今`
+> - 反省迭代(DiffAnalogy) 与 生物钟(AITime)
