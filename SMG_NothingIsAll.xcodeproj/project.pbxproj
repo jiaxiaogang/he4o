@@ -18,7 +18,7 @@
 		080BFAAF2304D06A00046D22 /* HEViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 080BFAAE2304D06A00046D22 /* HEViewController.m */; };
 		0810E50F236A637500B33226 /* AINetIndexUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0810E50E236A637500B33226 /* AINetIndexUtils.m */; };
 		0817D6AB219E3CC7000E45AB /* UIColor+expanded.m in Sources */ = {isa = PBXBuildFile; fileRef = 0817D6A9219E3CC6000E45AB /* UIColor+expanded.m */; };
-		081B3ACC1F6E2155008A7F36 /* AITime.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3ACB1F6E2155008A7F36 /* AITime.m */; };
+		081B3ACC1F6E2155008A7F36 /* AITimeTrigger.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3ACB1F6E2155008A7F36 /* AITimeTrigger.m */; };
 		081B3AD61F6E2994008A7F36 /* AIStringAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3AD51F6E2994008A7F36 /* AIStringAlgs.m */; };
 		081B3ADB1F6E2CCD008A7F36 /* AINet.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3ADA1F6E2CCD008A7F36 /* AINet.m */; };
 		081B7A5F23C809A900780115 /* TIRUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B7A5E23C809A900780115 /* TIRUtils.m */; };
@@ -167,8 +167,8 @@
 		0812679523022ADB003A85DE /* NVConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVConfig.h; sourceTree = "<group>"; };
 		0817D6A9219E3CC6000E45AB /* UIColor+expanded.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+expanded.m"; sourceTree = "<group>"; };
 		0817D6AA219E3CC6000E45AB /* UIColor+expanded.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+expanded.h"; sourceTree = "<group>"; };
-		081B3ACA1F6E2155008A7F36 /* AITime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AITime.h; sourceTree = "<group>"; };
-		081B3ACB1F6E2155008A7F36 /* AITime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AITime.m; sourceTree = "<group>"; };
+		081B3ACA1F6E2155008A7F36 /* AITimeTrigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AITimeTrigger.h; sourceTree = "<group>"; };
+		081B3ACB1F6E2155008A7F36 /* AITimeTrigger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AITimeTrigger.m; sourceTree = "<group>"; };
 		081B3AD41F6E2994008A7F36 /* AIStringAlgs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIStringAlgs.h; sourceTree = "<group>"; };
 		081B3AD51F6E2994008A7F36 /* AIStringAlgs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIStringAlgs.m; sourceTree = "<group>"; };
 		081B3AD91F6E2CCD008A7F36 /* AINet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AINet.h; sourceTree = "<group>"; };
@@ -464,8 +464,8 @@
 		081B3AC91F6E210E008A7F36 /* AITime */ = {
 			isa = PBXGroup;
 			children = (
-				081B3ACA1F6E2155008A7F36 /* AITime.h */,
-				081B3ACB1F6E2155008A7F36 /* AITime.m */,
+				081B3ACA1F6E2155008A7F36 /* AITimeTrigger.h */,
+				081B3ACB1F6E2155008A7F36 /* AITimeTrigger.m */,
 			);
 			path = AITime;
 			sourceTree = "<group>";
@@ -1347,7 +1347,7 @@
 				0827DAD724199C9E00A025D4 /* HeLogView.m in Sources */,
 				0808927A215AF5F400710636 /* AINodeBase.m in Sources */,
 				089E66B421B9F84500ECA28A /* AIAlgNode.m in Sources */,
-				081B3ACC1F6E2155008A7F36 /* AITime.m in Sources */,
+				081B3ACC1F6E2155008A7F36 /* AITimeTrigger.m in Sources */,
 				08A1E57C2193BAFA0046C4AC /* UIView+Extension.m in Sources */,
 				089E66B121B9F5D100ECA28A /* AIAbsAlgNode.m in Sources */,
 				88E87A6721016EAA0071513F /* OutputUtils.m in Sources */,
