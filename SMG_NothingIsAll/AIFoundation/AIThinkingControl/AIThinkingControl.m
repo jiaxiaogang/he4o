@@ -7,7 +7,6 @@
 //
 
 #import "AIThinkingControl.h"
-#import "AIShortMemory.h"
 #import "DemandManager.h"
 #import "AIThinkIn.h"
 #import "AIThinkOutPercept.h"
@@ -37,7 +36,6 @@
  */
 @interface AIThinkingControl() <AIThinkInDelegate,AIThinkOutPerceptDelegate,AIThinkOutReasonDelegate,DemandManagerDelegate>
 
-@property (strong,nonatomic) AIShortMemory *shortMemory;    //瞬时记忆
 @property (strong, nonatomic) DemandManager *demandManager;         //OUT短时记忆 (输出数据管理器);
 @property (strong, nonatomic) ShortMatchManager *shortMatchManager; //IN短时记忆 (输入数据管理器);
 
@@ -77,7 +75,6 @@ static AIThinkingControl *_instance;
 }
 
 -(void) initData{
-    self.shortMemory = [[AIShortMemory alloc] init];
     self.demandManager = [[DemandManager alloc] init];
     self.demandManager.delegate = self;
     self.thinkIn = [[AIThinkIn alloc] init];
@@ -149,19 +146,12 @@ static AIThinkingControl *_instance;
 /**
  *  MARK:--------------------AIThinkInDelegate--------------------
  */
--(void) aiThinkIn_AddToShortMemory:(AIKVPointer*)algNode_p isMatch:(BOOL)isMatch{
-    if (algNode_p) {
-        [self.shortMemory addToShortCache_Ps:@[algNode_p] isMatch:isMatch];
-    }
-}
-
 -(NSArray*) aiThinkIn_GetShortMemory:(BOOL)isMatch{
-    return [self.shortMemory shortCache:isMatch];
+    return [self.shortMatchManager shortCache:isMatch];
 }
 
 -(AIFrontOrderNode*)aiThinkIn_CreateCMVModel:(NSArray *)algsArr isMatch:(BOOL)isMatch{
-    AIFrontOrderNode *foNode = [theNet createCMV:algsArr order:[self.shortMemory shortCache:isMatch]];
-    
+    AIFrontOrderNode *foNode = [theNet createCMV:algsArr order:[self.shortMatchManager shortCache:isMatch]];
     //20200120 瞬时记忆改为不清空,为解决外层死循环问题 (因为外层循环需要行为输出后,将时序连起来) 参考n18p5-BUG9
     //[self.shortMemory clear];
     return foNode;

@@ -12,12 +12,20 @@
  *  MARK:--------------------(短时记忆) 瞬时识别数据管理器--------------------
  *  1. 存最多4条;
  *  @desc 每一桢输入TIR,都会进行识别,并生成一个AIShortMatchModel实例;
- *  @todo TODO_NEXT_VERSION: 与ShortMemory进行整合;
+ *  @version
+ *      2020.08.17: 将瞬时记忆整合到短时记忆中来;
+ *  @todo TODO_NEXT_VERSION: 与ShortMemory进行整合 (完成);
  */
 @class AIShortMatchModel;
 @interface ShortMatchManager : NSObject
 
 -(NSMutableArray*)models;
 -(void) add:(AIShortMatchModel*)model;
+
+
+/**
+ *  MARK:--------------------获取瞬时记忆序列--------------------
+ */
+-(NSMutableArray*) shortCache:(BOOL)isMatch;
 
 @end

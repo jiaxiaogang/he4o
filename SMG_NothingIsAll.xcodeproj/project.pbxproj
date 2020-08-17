@@ -28,7 +28,6 @@
 		0827DAD324198EAC00A025D4 /* HeLogModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0827DAD224198EAC00A025D4 /* HeLogModel.m */; };
 		0827DAD724199C9E00A025D4 /* HeLogView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0827DAD624199C9E00A025D4 /* HeLogView.m */; };
 		0827DAD924199CC100A025D4 /* HeLogView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0827DAD824199CC100A025D4 /* HeLogView.xib */; };
-		082ABC3521F7E864002E544C /* AIShortMemory.m in Sources */ = {isa = PBXBuildFile; fileRef = 082ABC3421F7E864002E544C /* AIShortMemory.m */; };
 		082D03DF22D40AF000BB0B7A /* SMGUtils+General.m in Sources */ = {isa = PBXBuildFile; fileRef = 082D03DE22D40AF000BB0B7A /* SMGUtils+General.m */; };
 		082F9D561EB234750009F6A9 /* Output.m in Sources */ = {isa = PBXBuildFile; fileRef = 082F9D551EB234750009F6A9 /* Output.m */; };
 		0830DAB721D6E8AD003065CD /* NSString+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 0830DAB621D6E8AD003065CD /* NSString+Extension.m */; };
@@ -188,8 +187,6 @@
 		0827DAD624199C9E00A025D4 /* HeLogView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HeLogView.m; sourceTree = "<group>"; };
 		0827DAD824199CC100A025D4 /* HeLogView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HeLogView.xib; sourceTree = "<group>"; };
 		0827DADC2419A46600A025D4 /* HeLogHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HeLogHeader.h; sourceTree = "<group>"; };
-		082ABC3321F7E864002E544C /* AIShortMemory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIShortMemory.h; sourceTree = "<group>"; };
-		082ABC3421F7E864002E544C /* AIShortMemory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIShortMemory.m; sourceTree = "<group>"; };
 		082D03DD22D40AF000BB0B7A /* SMGUtils+General.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SMGUtils+General.h"; sourceTree = "<group>"; };
 		082D03DE22D40AF000BB0B7A /* SMGUtils+General.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "SMGUtils+General.m"; sourceTree = "<group>"; };
 		082F9D541EB234750009F6A9 /* Output.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Output.h; sourceTree = "<group>"; };
@@ -618,8 +615,6 @@
 				88E1F84D211591D80036B616 /* DemandManager.m */,
 				88E1F84F211591E50036B616 /* DemandModel.h */,
 				88E1F850211591E50036B616 /* DemandModel.m */,
-				082ABC3321F7E864002E544C /* AIShortMemory.h */,
-				082ABC3421F7E864002E544C /* AIShortMemory.m */,
 			);
 			path = AIThinkingControl;
 			sourceTree = "<group>";
@@ -1315,7 +1310,6 @@
 				08EF706421E5743F009B5194 /* OutputModel.m in Sources */,
 				08EA48D1202932E70038B982 /* AICustomAlgs.m in Sources */,
 				0808D34822B6FDD100D383BA /* NVViewUtil.m in Sources */,
-				082ABC3521F7E864002E544C /* AIShortMemory.m in Sources */,
 				88A43F3A2109571300281348 /* AIAbsCMVNode.m in Sources */,
 				08D4EC512160501000DA646B /* AINetUtils.m in Sources */,
 				08D322A91EBA28B0009D734A /* Foundation+Log.m in Sources */,

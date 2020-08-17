@@ -75,9 +75,7 @@
         AIAbsAlgNode *subAlgNode = [theNet createAbsAlg_NoRepeat:subValue_ps conAlgs:@[parentAlgNode] isMem:true ds:algsType];
         [fromGroup_ps addObject:subAlgNode.pointer];
         
-        //6. 将所有子概念添加到瞬时记忆;
-        [self.delegate aiThinkIn_AddToShortMemory:subAlgNode.pointer isMatch:false];
-        [theNV setNodeData:subAlgNode.pointer];
+        //6. 将所有子概念添加到瞬时记忆 (2020.08.17: 由短时记忆替代);
         NSLog(@"InputSub:%@",Alg2FStr(subAlgNode));
     }
     
@@ -101,12 +99,7 @@
         //1. 打包成algTypeNode;
         AIAlgNodeBase *algNode = [theNet createAbsAlg_NoRepeat:algsArr conAlgs:nil isMem:true isOut:false ds:algsType];
         
-        //2. 加入瞬时记忆
-        if (algNode && self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_AddToShortMemory:isMatch:)]) {
-            [self.delegate aiThinkIn_AddToShortMemory:algNode.pointer isMatch:false];
-        }
-        
-        [theNV setNodeData:algNode.pointer];
+        //2. 加入瞬时记忆 & 识别等;
         [self dataIn_NoMV:algNode fromGroup_ps:@[algNode.pointer]];
     }
 }
@@ -118,10 +111,7 @@
     //2. 构建概念
     AIAbsAlgNode *outAlg = [theNet createAbsAlg_NoRepeat:outValue_ps conAlgs:nil isMem:false isOut:true];
     
-    //3. 加瞬时记忆
-    [self.delegate aiThinkIn_AddToShortMemory:outAlg.pointer isMatch:false];
-    
-    //4. 进行识别
+    //3. 加瞬时记忆 & 进行识别
     [self dataIn_NoMV:outAlg fromGroup_ps:@[outAlg.pointer]];
 }
 
@@ -161,6 +151,7 @@
  *  @version
  *      20200416 - 修复时序识别的bug: 因概念节点去重不够,导致即使概念内容一致,在时序识别时,也会无法匹配 (参考n19p5-A组BUG4);
  *      20200731 - 将protoFo和matchAFo的构建改为isMem=false (因为构建到内存的话,在内类比构建时序具象指向为空,参考20151-BUG);
+ *      20200817 - 赋值protoAlg和matchAlg即是存瞬时记忆,因为瞬时与短时整合了;
  */
 -(void) dataIn_NoMV:(AIAlgNodeBase*)algNode fromGroup_ps:(NSArray*)fromGroup_ps{
     //1. 数据准备 (瞬时记忆,理性匹配出的模型);
@@ -173,10 +164,6 @@
         mModel.matchAlg = matchAlg;
         mModel.algMatchType = type;
     }];
-    
-    //3. 添加到瞬时记忆;
-    AIKVPointer *newAdd2ShortMem = mModel.matchAlg ? mModel.matchAlg.pointer : mModel.protoAlg.pointer;
-    [self.delegate aiThinkIn_AddToShortMemory:newAdd2ShortMem isMatch:true];
     
     //3. 构建时序 (把每次dic输入,都作为一个新的内存时序);
     NSArray *matchAShortMem = [self.delegate aiThinkIn_GetShortMemory:true];
