@@ -19,6 +19,7 @@
  *  @todo
  *      1. 支持多条matchAlg,多条matchFo,将fuzzys独立列出;
  *      2. 在多条matchFo.mv价值预测下,可以相应的跑多个正向反馈类比,和反向反馈类比;
+ *      3. TODOTOMORROW: 将瞬时记忆AIShortMemory整合到AIShortMatchModel短时记忆中来;
  */
 @interface AIShortMatchModel : NSObject
 
@@ -28,6 +29,7 @@
 @property (strong, nonatomic) AIAlgNodeBase *protoAlg;  //原始概念
 @property (strong, nonatomic) AIAlgNodeBase *matchAlg;  //匹配概念
 @property (assign, nonatomic) MatchType algMatchType;   //概念匹配类型
+@property (assign, nonatomic) NSTimeInterval protoTime; //原始概念输入时间
 
 
 //MARK:===============================================================
