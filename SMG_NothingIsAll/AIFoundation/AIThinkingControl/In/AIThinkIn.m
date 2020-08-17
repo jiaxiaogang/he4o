@@ -157,7 +157,7 @@
     //1. 数据准备 (瞬时记忆,理性匹配出的模型);
     __block AIShortMatchModel *mModel = [[AIShortMatchModel alloc] init];
     mModel.protoAlg = algNode;
-    mModel.protoTime = [[NSDate date] timeIntervalSince1970];
+    mModel.inputTime = [[NSDate date] timeIntervalSince1970];
     
     //2. 识别概念;
     [AIThinkInReason TIR_Alg:algNode.pointer fromGroup_ps:fromGroup_ps complete:^(AIAlgNodeBase *matchAlg, MatchType type) {

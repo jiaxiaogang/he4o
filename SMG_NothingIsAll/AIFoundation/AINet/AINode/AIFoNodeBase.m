@@ -10,6 +10,13 @@
 
 @implementation AIFoNodeBase
 
+-(NSMutableArray *)deltaTimes{
+    if (!_deltaTimes) {
+        _deltaTimes = [[NSMutableArray alloc] init];
+    }
+    return _deltaTimes;
+}
+
 /**
  *  MARK:--------------------NSCoding--------------------
  */
@@ -18,6 +25,7 @@
     if (self) {
         self.cmvNode_p = [aDecoder decodeObjectForKey:@"cmvNode_p"];
         self.brother_p = [aDecoder decodeObjectForKey:@"brother_p"];
+        self.deltaTimes = [aDecoder decodeObjectForKey:@"deltaTimes"];
     }
     return self;
 }
@@ -26,6 +34,7 @@
     [super encodeWithCoder:aCoder];
     [aCoder encodeObject:self.cmvNode_p forKey:@"cmvNode_p"];
     [aCoder encodeObject:self.brother_p forKey:@"brother_p"];
+    [aCoder encodeObject:self.deltaTimes forKey:@"deltaTimes"];
 }
 
 @end

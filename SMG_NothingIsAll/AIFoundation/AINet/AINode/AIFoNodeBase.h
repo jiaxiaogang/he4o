@@ -27,4 +27,13 @@
  */
 @property (strong, nonatomic) AIKVPointer *brother_p;
 
+/**
+ *  MARK:--------------------生物钟时间间隔记录--------------------
+ *  @desc
+ *      1. 功能: 用于记录时序中,每元素间的生物钟间隔;
+ *      2. 比如: [我,打,豆豆]->{mv+},记录成deltaTime后为[1,100,0];
+ *      3. 表示: 我用1ms打了,100ms豆豆,0ms内就感受到了爽;
+ */
+@property (strong, nonatomic) NSMutableArray *deltaTimes;
+
 @end
