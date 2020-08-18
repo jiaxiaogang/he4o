@@ -91,7 +91,7 @@
     NSMutableArray *result = [[NSMutableArray alloc] init];
     if (!ARRISOK(conFos) || absFo) return result;
     
-    //2. 提取
+    //2. 提取 (absFo有可能本来deltaTimes不为空,也要参与到竞争Max(A,B)中来;
     for (AIKVPointer *absAlg_p in absFo.content_ps) {
         
     }
