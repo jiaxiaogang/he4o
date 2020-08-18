@@ -227,9 +227,9 @@
                     if (Log4InAna) NSLog(@"抽象出: %@",Alg2FStr(createAbsAlg));
                 }
                 
-                //11. 内类比大小;
+                //11. 内类比有无;
                 NSArray *rangeAlg_ps = ARR_SUB(matchAFo.content_ps, i + 1, lastIndex - i - 1);
-                [self analogyInner_GL:matchAFo algA:algA algB:algB rangeAlg_ps:rangeAlg_ps];
+                [self analogyInner_HN:matchAFo algA:algA algB:algB rangeAlg_ps:rangeAlg_ps];
             }
         }
     }
@@ -278,7 +278,7 @@
  *  @version
  *      20200421 - 将a/bFocusAlg改成直接使用algA/algB (因为现在protoFo的元素即直接是matchAlg);
  */
-+(void) analogyInner_HN:(AIFoNodeBase*)checkFo algA:(AIAlgNodeBase*)algA algB:(AIAlgNodeBase*)algB rangeAlg_ps:(NSArray*)rangeAlg_ps createdBlock:(void(^)(AINetAbsFoNode *createFo,AnalogyType type))createdBlock{
++(void) analogyInner_HN:(AIFoNodeBase*)checkFo algA:(AIAlgNodeBase*)algA algB:(AIAlgNodeBase*)algB rangeAlg_ps:(NSArray*)rangeAlg_ps {
     //1. 数据检查
     if (!algA || !algB) return;
     rangeAlg_ps = ARRTOOK(rangeAlg_ps);
@@ -302,14 +302,16 @@
     for (AIKVPointer *sub_p in aSub_ps) {
         AIAlgNodeBase *target = [SMGUtils searchNode:sub_p];
         AINetAbsFoNode *create = [self analogyInner_Creater:ATNone algsType:sub_p.algsType dataSource:sub_p.dataSource frontConAlg:target backConAlg:target rangeAlg_ps:rangeAlg_ps conFo:checkFo];
-        if (createdBlock) createdBlock(create,ATNone);
+        //3. 内中有外
+        [self analogyInner_Outside:create type:ATNone canAss:nil updateEnergy:nil];
     }
 
     //4. b变有
     for (AIKVPointer *sub_p in bSub_ps) {
         AIAlgNodeBase *target = [SMGUtils searchNode:sub_p];
         AINetAbsFoNode *create = [self analogyInner_Creater:ATHav algsType:sub_p.algsType dataSource:sub_p.dataSource frontConAlg:target backConAlg:target rangeAlg_ps:rangeAlg_ps conFo:checkFo];
-        if (createdBlock) createdBlock(create,ATHav);
+        //4. 内中有外
+        [self analogyInner_Outside:create type:ATHav canAss:nil updateEnergy:nil];
     }
 }
 
@@ -335,6 +337,8 @@
  *  @version
  *      20200329: 将frontAlg去掉,只保留backAlg (以使方便TOR中联想使用);
  *      20200419: 将构建alg和fo指定ds为:backData的值 (以便此后取absPorts时,可以根据指针进行类型筛选);
+ *  @bug
+ *      2020.06.19: 调试找不到glAlg的bug (经查,内类比的两个概念中,其中一个没有"距离"稀疏码,导致无法类比出"距离"GL节点,查为什么n20p2BUG3会有距50的节点参与到内类比中来?) (过期BUG,不必再改);
  */
 +(AINetAbsFoNode*)analogyInner_Creater:(AnalogyType)type algsType:(NSString*)algsType dataSource:(NSString*)dataSource frontConAlg:(AIAlgNodeBase*)frontConAlg backConAlg:(AIAlgNodeBase*)backConAlg rangeAlg_ps:(NSArray*)rangeAlg_ps conFo:(AIFoNodeBase*)conFo{
     //1. 数据检查
@@ -356,10 +360,6 @@
 
     //5. 构建抽象时序; (小动致大 / 大动致小) (之间的信息为balabala)
     AINetAbsFoNode *result = [TIRUtils createInnerAbsFo:backAlg rangeAlg_ps:rangeAlg_ps conFo:conFo ds:afDS];
-
-    //TODOTOMORROW: 调试找不到glAlg的bug;
-    //1. 经查,内类比的两个概念中,其中一个没有"距离"稀疏码,导致无法类比出"距离"GL节点;
-    //2. 通过此处,查为什么n20p2BUG3会有距50的节点参与到内类比中来?
 
     //6. 调试;
     if (type == ATHav || type == ATNone) {
