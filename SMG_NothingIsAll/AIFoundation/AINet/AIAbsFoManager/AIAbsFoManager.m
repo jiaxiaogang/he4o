@@ -26,6 +26,11 @@
 
 @implementation AIAbsFoManager
 
+/**
+ *  MARK:--------------------在foNode基础上构建抽象--------------------
+ *  @version
+ *      2020.08.18: 支持deltaTimes (抽象时序的deltaTime全部由conFos得出,参考:20201);
+ */
 -(AINetAbsFoNode*) create:(NSArray*)conFos orderSames:(NSArray*)orderSames difStrong:(NSInteger)difStrong dsBlock:(NSString*(^)())dsBlock{
     //1. 数据准备
     NSString *ds = dsBlock ? dsBlock() : DefaultDataSource;
@@ -69,9 +74,28 @@
         [AINetUtils insertRefPorts_AllFoNode:findAbsNode.pointer order_ps:findAbsNode.content_ps ps:findAbsNode.content_ps difStrong:difStrong];
     }
     
+    //4. 提取findAbsNode的deltaTimes;
+    findAbsNode.deltaTimes = [AIAbsFoManager getDeltaTimes:conFos absFo:findAbsNode];
+    
     //5. 具象节点&抽象节点_关联&存储
     [AINetUtils relateFoAbs:findAbsNode conNodes:conFos isNew:isNew];
     return findAbsNode;
+}
+
+/**
+ *  MARK:--------------------从conFos中提取deltaTimes--------------------
+ *  @result notnull
+ */
++(NSMutableArray*) getDeltaTimes:(NSArray*)conFos absFo:(AIFoNodeBase*)absFo{
+    //1. 数据准备;
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    if (!ARRISOK(conFos) || absFo) return result;
+    
+    //2. 提取
+    for (AIKVPointer *absAlg_p in absFo.content_ps) {
+        
+    }
+    return result;
 }
 
 @end
