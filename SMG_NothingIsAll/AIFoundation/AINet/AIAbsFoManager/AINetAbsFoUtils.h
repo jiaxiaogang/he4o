@@ -17,4 +17,10 @@
  */
 +(AIPort*) searchPortWithTargetP:(AIKVPointer*)target_p fromPorts:(NSArray*)ports;
 
+/**
+ *  MARK:--------------------从conFos中提取deltaTimes--------------------
+ *  @result notnull
+ */
++(NSMutableArray*) getDeltaTimes:(NSArray*)conFos absFo:(AIFoNodeBase*)absFo;
+
 @end

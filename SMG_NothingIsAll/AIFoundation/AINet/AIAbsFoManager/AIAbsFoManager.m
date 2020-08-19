@@ -75,27 +75,11 @@
     }
     
     //4. 提取findAbsNode的deltaTimes;
-    findAbsNode.deltaTimes = [AIAbsFoManager getDeltaTimes:conFos absFo:findAbsNode];
+    findAbsNode.deltaTimes = [AINetAbsFoUtils getDeltaTimes:conFos absFo:findAbsNode];
     
     //5. 具象节点&抽象节点_关联&存储
     [AINetUtils relateFoAbs:findAbsNode conNodes:conFos isNew:isNew];
     return findAbsNode;
-}
-
-/**
- *  MARK:--------------------从conFos中提取deltaTimes--------------------
- *  @result notnull
- */
-+(NSMutableArray*) getDeltaTimes:(NSArray*)conFos absFo:(AIFoNodeBase*)absFo{
-    //1. 数据准备;
-    NSMutableArray *result = [[NSMutableArray alloc] init];
-    if (!ARRISOK(conFos) || absFo) return result;
-    
-    //2. 提取 (absFo有可能本来deltaTimes不为空,也要参与到竞争Max(A,B)中来;
-    for (AIKVPointer *absAlg_p in absFo.content_ps) {
-        
-    }
-    return result;
 }
 
 @end

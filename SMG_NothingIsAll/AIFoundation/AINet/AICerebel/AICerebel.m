@@ -1,13 +1,13 @@
+////
+////  AICerebel.m
+////  SMG_NothingIsAll
+////
+////  Created by jiaxiaogang on 2018/10/9.
+////  Copyright © 2018年 XiaoGang. All rights reserved.
+////
 //
-//  AICerebel.m
-//  SMG_NothingIsAll
+//#import "AICerebel.h"
 //
-//  Created by jiaxiaogang on 2018/10/9.
-//  Copyright © 2018年 XiaoGang. All rights reserved.
+//@implementation AICerebel
 //
-
-#import "AICerebel.h"
-
-@implementation AICerebel
-
-@end
+//@end

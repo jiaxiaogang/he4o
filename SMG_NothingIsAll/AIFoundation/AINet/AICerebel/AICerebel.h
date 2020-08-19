@@ -1,13 +1,13 @@
+////
+////  AICerebel.h
+////  SMG_NothingIsAll
+////
+////  Created by jiaxiaogang on 2018/10/9.
+////  Copyright © 2018年 XiaoGang. All rights reserved.
+////
 //
-//  AICerebel.h
-//  SMG_NothingIsAll
+//#import <Foundation/Foundation.h>
 //
-//  Created by jiaxiaogang on 2018/10/9.
-//  Copyright © 2018年 XiaoGang. All rights reserved.
+//@interface AICerebel : NSObject
 //
-
-#import <Foundation/Foundation.h>
-
-@interface AICerebel : NSObject
-
-@end
+//@end

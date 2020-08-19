@@ -101,8 +101,16 @@
 +(BOOL) arrIndexIsOk:(NSArray*)a index:(NSInteger)i{
     return (a && [a isKindOfClass:[NSArray class]] && a.count > i && i >= 0);
 }
+
+/**
+ *  MARK:--------------------分隔数组--------------------
+ *  @version
+ *      2020.08.19: 将a.count提取为NSInteger类型,再参与MAX和MIN运算 (因为a.count默认为NSUInteger类型,导致s和l不支持负数)
+ *  @result notnull (注意: subarrayWithRange是否可能返回null善未验证);
+ */
 +(NSArray*) arrSub:(NSArray*)a start:(NSInteger)s length:(NSInteger)l{
-    return (ARRISOK(a) ? [a subarrayWithRange:NSMakeRange(MAX(0, MIN(s,a.count)), MAX(0, MIN(a.count - s, l)))] : [NSArray new]);
+    NSInteger count = ARRISOK(a) ? a.count : 1;
+    return (ARRISOK(a) ? [a subarrayWithRange:NSMakeRange(MAX(0, MIN(s,count)), MAX(0, MIN(count - s, l)))] : [NSArray new]);
 }
 
 //number
