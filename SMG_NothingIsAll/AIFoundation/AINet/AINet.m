@@ -131,8 +131,8 @@ static AINet *_instance;
 //MARK:===============================================================
 //MARK:                     < conFo >
 //MARK:===============================================================
--(AIFrontOrderNode*) createConFo:(NSArray*)order_ps isMem:(BOOL)isMem{
-    return [AIMvFoManager createConFo:order_ps isMem:isMem];
+-(AIFrontOrderNode*) createConFo:(NSArray*)order isMem:(BOOL)isMem{
+    return [AIMvFoManager createConFo:order isMem:isMem];
 }
 
 

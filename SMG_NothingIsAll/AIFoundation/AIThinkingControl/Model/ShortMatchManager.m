@@ -9,6 +9,7 @@
 #import "ShortMatchManager.h"
 #import "AIShortMatchModel.h"
 #import "AIAlgNodeBase.h"
+#import "AIShortMatchModel_Simple.h"
 
 @interface ShortMatchManager ()
 
@@ -39,17 +40,21 @@
  *      xxxx.xx.xx: 输入概念识别成功时,加入matchAlg;
  *      2020.06.26: 识别失败时,将protoAlg加入 (以避免,飞行行为因不被识别而无法加入的BUG);
  *      2020.08.17: 将瞬时记忆整合到短时记忆中;
- *  @return notnull
+ *  @result 返回AIShortMatchModel_Simple数组 notnull;
  */
 -(NSMutableArray*) shortCache:(BOOL)isMatch{
     //1. 数据准备
     NSMutableArray *result = [[NSMutableArray alloc] init];
     for (AIShortMatchModel *mModel in self.models) {
         //2. 逐个取 (取M且有效时返回M,否则返回P);
-        AIKVPointer *item_p = (isMatch && mModel.matchAlg) ? mModel.matchAlg.pointer : mModel.protoAlg.pointer;
+        AIKVPointer *itemAlg_p = (isMatch && mModel.matchAlg) ? mModel.matchAlg.pointer : mModel.protoAlg.pointer;
         
         //3. 有效则收集;
-        if (item_p) [result addObject:item_p];
+        if (itemAlg_p) {
+            AIShortMatchModel_Simple *simple = [[AIShortMatchModel_Simple alloc] init];
+            simple.alg_p = itemAlg_p;
+            simple.inputTime = mModel.inputTime;
+        }
     }
     return result;
 }

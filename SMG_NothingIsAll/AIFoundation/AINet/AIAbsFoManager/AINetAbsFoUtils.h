@@ -23,4 +23,10 @@
  */
 +(NSMutableArray*) getDeltaTimes:(NSArray*)conFos absFo:(AIFoNodeBase*)absFo;
 
+/**
+ *  MARK:--------------------将order转换成alg_ps--------------------
+ */
++(NSMutableArray*) convertOrder2Alg_ps:(NSArray*)order;
++(NSMutableArray*) convertOrder2DeltaTimes:(NSArray*)order;
+
 @end

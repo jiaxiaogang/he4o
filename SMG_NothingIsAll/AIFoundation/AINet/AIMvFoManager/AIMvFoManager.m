@@ -16,6 +16,7 @@
 #import "AINetUtils.h"
 #import "AINet.h"
 #import "AINetIndex.h"
+#import "AINetAbsFoUtils.h"
 
 @implementation AIMvFoManager
 
@@ -60,10 +61,10 @@
     return cmvNode;
 }
 
-+(AIFrontOrderNode*) createConFo:(NSArray*)order_ps isMem:(BOOL)isMem{
-    return [self createConFo:order_ps isMem:isMem difStrong:1];
++(AIFrontOrderNode*) createConFo:(NSArray*)order isMem:(BOOL)isMem{
+    return [self createConFo:order isMem:isMem difStrong:1];
 }
-+(AIFrontOrderNode*) createConFo:(NSArray*)order_ps isMem:(BOOL)isMem difStrong:(NSInteger)difStrong{
++(AIFrontOrderNode*) createConFo:(NSArray*)order isMem:(BOOL)isMem difStrong:(NSInteger)difStrong{
     //1. foNode
     AIFrontOrderNode *foNode = [[AIFrontOrderNode alloc] init];
 
@@ -71,15 +72,19 @@
     foNode.pointer = [SMGUtils createPointer:kPN_FRONT_ORDER_NODE algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false isMem:isMem];
 
     //3. 将order_ps转移硬盘 (如有必要)
-    if (!isMem) order_ps = [AINetUtils move2Hd4Alg_ps:order_ps];
+    NSArray *content_ps = [AINetAbsFoUtils convertOrder2Alg_ps:order];
+    if (!isMem) content_ps = [AINetUtils move2Hd4Alg_ps:content_ps];
     
-    //3. foNode.orders收集
-    [foNode.content_ps addObjectsFromArray:order_ps];
+    //4. foNode.orders收集
+    [foNode.content_ps addObjectsFromArray:content_ps];
 
-    //4. foNode引用conAlg;
+    //5. foNode引用conAlg;
     [AINetUtils insertRefPorts_AllFoNode:foNode.pointer order_ps:foNode.content_ps ps:foNode.content_ps difStrong:difStrong];
-
-    //5. 存储foNode
+    
+    //6. 提取findAbsNode的deltaTimes;
+    foNode.deltaTimes = [AINetAbsFoUtils convertOrder2DeltaTimes:order];
+    
+    //7. 存储foNode
     [SMGUtils insertNode:foNode];
     return foNode;
 }

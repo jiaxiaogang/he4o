@@ -16,6 +16,7 @@
 #import "AICMVNode.h"
 #import "AIShortMatchModel.h"
 #import "AIFrontOrderNode.h"
+#import "AIShortMatchModel_Simple.h"
 //temp
 #import "NVHeUtil.h"
 
@@ -119,13 +120,19 @@
 //MARK:                     < FromTOR >
 //MARK:===============================================================
 -(AIShortMatchModel*) dataInFromTORInnerFo:(AIFoNodeBase*)fo{
-    //1. 数据准备
+    //1. 数据准备 (收集除末位外的content为order);
     __block AIShortMatchModel *mModel = [[AIShortMatchModel alloc] init];
-    NSArray *rtContent_ps = ARR_SUB(fo.content_ps, 0, fo.content_ps.count - 1);
-    if (ARRISOK(rtContent_ps)) {
+    NSMutableArray *order = [[NSMutableArray alloc] init];
+    for (NSInteger i = 0; i < fo.content_ps.count - 1; i++) {
+        AIShortMatchModel_Simple *simple = [[AIShortMatchModel_Simple alloc] init];
+        simple.alg_p = ARR_INDEX(fo.content_ps, i);
+        simple.inputTime = [NUMTOOK(ARR_INDEX(fo.deltaTimes, i)) longLongValue];
+        [order addObject:simple];
+    }
+    if (ARRISOK(order)) {
         
         //2. 识别时序;
-        [AIThinkInReason TIR_Fo_FromRethink:rtContent_ps finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue, NSInteger cutIndex) {
+        [AIThinkInReason TIR_Fo_FromRethink:order finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue, NSInteger cutIndex) {
             mModel.matchAFo = curNode;
             mModel.matchFo = matchFo;
             mModel.matchFoValue = matchValue;

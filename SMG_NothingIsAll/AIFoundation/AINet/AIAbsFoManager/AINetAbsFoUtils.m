@@ -10,6 +10,7 @@
 #import "AIKVPointer.h"
 #import "AIPort.h"
 #import "TOUtils.h"
+#import "AIShortMatchModel_Simple.h"
 
 @implementation AINetAbsFoUtils
 
@@ -73,6 +74,30 @@
         for (NSNumber *valid in valids) {
             result += [valid integerValue];
         }
+    }
+    return result;
+}
+
++(NSMutableArray*) convertOrder2Alg_ps:(NSArray*)order{
+    //1. 数据准备
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    order = ARRTOOK(order);
+    
+    //2. 提取返回
+    for (AIShortMatchModel_Simple *simple in order) {
+        [result addObject:simple.alg_p];
+    }
+    return result;
+}
+
++(NSMutableArray*) convertOrder2DeltaTimes:(NSArray*)order{
+    //1. 数据准备
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    order = ARRTOOK(order);
+    
+    //2. 提取返回
+    for (AIShortMatchModel_Simple *simple in order) {
+        [result addObject:@(simple.inputTime)];
     }
     return result;
 }

@@ -31,6 +31,6 @@
 /**
  *  MARK:--------------------构建conFo--------------------
  */
-+(AIFrontOrderNode*) createConFo:(NSArray*)order_ps isMem:(BOOL)isMem;
++(AIFrontOrderNode*) createConFo:(NSArray*)order isMem:(BOOL)isMem;
 
 @end

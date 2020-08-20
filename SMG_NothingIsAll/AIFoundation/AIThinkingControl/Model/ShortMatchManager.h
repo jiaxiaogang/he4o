@@ -25,6 +25,7 @@
 
 /**
  *  MARK:--------------------获取瞬时记忆序列--------------------
+ *  @result 返回AIShortMatchModel_Simple数组 notnull;
  */
 -(NSMutableArray*) shortCache:(BOOL)isMatch;
 

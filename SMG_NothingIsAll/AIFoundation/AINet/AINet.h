@@ -60,7 +60,8 @@
 //MARK:===============================================================
 //MARK:                     < conFo >
 //MARK:===============================================================
--(AIFrontOrderNode*) createConFo:(NSArray*)order_ps isMem:(BOOL)isMem;
+-(AIFrontOrderNode*) createConFo:(NSArray*)order isMem:(BOOL)isMem;
+
 
 //MARK:===============================================================
 //MARK:                     < absFo >

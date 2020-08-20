@@ -194,12 +194,13 @@
  *      20200403 TODOTOMORROW: 支持识别到多个时序,并以此得到多个价值预测 (支持更多元的评价);
  *
  */
-+(void) TIR_Fo_FromRethink:(NSArray*)protoAlg_ps finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue,NSInteger cutIndex))finishBlock{
++(void) TIR_Fo_FromRethink:(NSArray*)order finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue,NSInteger cutIndex))finishBlock{
     //1. 数据检查
-    if (!ARRISOK(protoAlg_ps)) {
+    if (!ARRISOK(order)) {
         return;
     }
-    AIFrontOrderNode *protoFo = [theNet createConFo:protoAlg_ps isMem:true];//将protoAlg_ps构建成时序;
+
+    AIFrontOrderNode *protoFo = [theNet createConFo:order isMem:true];//将protoAlg_ps构建成时序;
     NSLog(@"\n\n=============================== 反思时序识别 ===============================\n%@",Fo2FStr(protoFo));
     
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
