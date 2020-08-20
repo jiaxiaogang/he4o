@@ -26,6 +26,8 @@
     NSInteger urgentTo = [NUMTOOK([AINetIndex getData:cmvNode.urgentTo_p]) integerValue];
     AIFrontOrderNode *foNode = [AIMvFoManager createConFo:order isMem:false difStrong:urgentTo];
 
+    //TODOTOMORROW: 将mv.inputTime传入,在relateFo之前,将inputTime赋值到fo.mvDeltaTime中;
+    
     //4. 互指向
     [AINetUtils relateFo:foNode mv:cmvNode];
 

@@ -36,5 +36,6 @@
  *      4. 首位: 首位总是0,因为本序列采用了首位参照,所以为0;
  */
 @property (strong, nonatomic) NSMutableArray *deltaTimes;
+@property (assign, nonatomic) NSTimeInterval mvDeltaTime;
 
 @end
