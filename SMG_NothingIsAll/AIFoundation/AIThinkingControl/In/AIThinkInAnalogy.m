@@ -138,7 +138,8 @@
             NSString *foDS = [ThinkingUtils getAnalogyTypeDS:type];
             result = [ThinkingUtils createAbsFo_NoRepeat_General:@[fo,assFo] content_ps:orderSames ds:foDS difStrong:foDifStrong];
             
-            //TODOTOMORROW: 从fo和conFo.mvDeltaTime中提取mv导致时间隔,在relateFo之前,将inputTime赋值到fo中;
+            //5. 从fo和conFo.mvDeltaTime中提取mv导致时间隔,在relateFo之前,赋值到result中;
+            result.mvDeltaTime = MAX(fo.mvDeltaTime, assFo.mvDeltaTime);
             
             //6. createAbsCmvNode (当正向类比,且result没有cmv指向时);
             if (type == ATSame && assMv && !result.cmvNode_p) {
@@ -557,7 +558,8 @@
     //4. 构建foNode
     AIFoNodeBase *createFo = [ThinkingUtils createAbsFo_NoRepeat_General:@[conFo] content_ps:content_ps ds:ds difStrong:ms_UrgentTo];
     
-    //TODOTOMORROW: 从conFo.mvDeltaTime中提取mv导致时间隔,在relateFo之前,将inputTime赋值到fo中;
+    //4. 从conFo.mvDeltaTime中提取mv导致时间隔,在relateFo之前,赋值到createFo中;
+    createFo.mvDeltaTime = conFo.mvDeltaTime;
     
     //5. 连接mv基本模型;
     [AINetUtils relateFo:createFo mv:createMv];
