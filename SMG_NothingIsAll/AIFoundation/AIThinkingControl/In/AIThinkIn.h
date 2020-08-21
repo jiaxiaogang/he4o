@@ -12,7 +12,7 @@
 @protocol AIThinkInDelegate <NSObject>
 
 -(NSArray*) aiThinkIn_GetShortMemory:(BOOL)isMatch;
--(AIFrontOrderNode*) aiThinkIn_CreateCMVModel:(NSArray*)algsArr isMatch:(BOOL)isMatch;//构建cmv模型;
+-(AIFrontOrderNode*) aiThinkIn_CreateCMVModel:(NSArray*)algsArr inputTime:(NSTimeInterval)inputTime isMatch:(BOOL)isMatch;//构建cmv模型;
 
 /**
  *  MARK:--------------------感性mv输入处理--------------------

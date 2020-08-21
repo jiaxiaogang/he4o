@@ -199,9 +199,10 @@
 
 -(void) dataIn_FindMV:(NSArray*)algsArr{
     //1. 联想到mv时,创建CmvModel取到FoNode;
+    NSTimeInterval inputTime = [[NSDate date] timeIntervalSince1970];
     [self.tip dataIn_FindMV:algsArr createMvModelBlock:^AIFrontOrderNode *(NSArray *algsArr,BOOL isMatch) {
         //2. 创建CmvModel取到FoNode;
-        return [self.delegate aiThinkIn_CreateCMVModel:algsArr isMatch:isMatch];
+        return [self.delegate aiThinkIn_CreateCMVModel:algsArr inputTime:inputTime isMatch:isMatch];
     } finishBlock:^(AICMVNode *commitMvNode) {
         //3. 思考mv,需求处理
         if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_CommitPercept:)]) {

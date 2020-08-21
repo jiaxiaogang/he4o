@@ -150,8 +150,8 @@ static AIThinkingControl *_instance;
     return [self.shortMatchManager shortCache:isMatch];
 }
 
--(AIFrontOrderNode*)aiThinkIn_CreateCMVModel:(NSArray *)algsArr isMatch:(BOOL)isMatch{
-    AIFrontOrderNode *foNode = [theNet createCMV:algsArr order:[self.shortMatchManager shortCache:isMatch]];
+-(AIFrontOrderNode*)aiThinkIn_CreateCMVModel:(NSArray *)algsArr inputTime:(NSTimeInterval)inputTime isMatch:(BOOL)isMatch{
+    AIFrontOrderNode *foNode = [theNet createCMV:algsArr inputTime:inputTime order:[self.shortMatchManager shortCache:isMatch]];
     //20200120 瞬时记忆改为不清空,为解决外层死循环问题 (因为外层循环需要行为输出后,将时序连起来) 参考n18p5-BUG9
     //[self.shortMemory clear];
     return foNode;

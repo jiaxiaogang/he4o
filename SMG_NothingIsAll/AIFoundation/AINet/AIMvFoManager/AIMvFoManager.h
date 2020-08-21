@@ -20,7 +20,7 @@
  *  @param order : 瞬时记忆序列
  *  @result : 返回foNode;
  */
--(AIFrontOrderNode*) create:(NSArray*)imvAlgsArr order:(NSArray*)order;
+-(AIFrontOrderNode*) create:(NSArray*)imvAlgsArr inputTime:(NSTimeInterval)inputTime order:(NSArray*)order;
 
 /**
  *  MARK:--------------------构建conMv--------------------

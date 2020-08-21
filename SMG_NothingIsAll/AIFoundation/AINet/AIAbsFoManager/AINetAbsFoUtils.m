@@ -90,14 +90,27 @@
     return result;
 }
 
+/**
+ *  MARK:--------------------将order转成deltaTimes--------------------
+ *  @bug
+ *      2020.08.21: 将收集inputTime修正成收集deltaTime;
+ */
 +(NSMutableArray*) convertOrder2DeltaTimes:(NSArray*)order{
     //1. 数据准备
     NSMutableArray *result = [[NSMutableArray alloc] init];
     order = ARRTOOK(order);
     
     //2. 提取返回
-    for (AIShortMatchModel_Simple *simple in order) {
-        [result addObject:@(simple.inputTime)];
+    NSTimeInterval lastInputTime = 0;
+    for (NSInteger i = 0; i < order.count; i++) {
+        AIShortMatchModel_Simple *simple = ARR_INDEX(order, i);
+        if (i == 0) {
+            [result addObject:@(0)];
+        }else{
+            NSTimeInterval deltaTime = MAX(simple.inputTime - lastInputTime, 0);
+            [result addObject:@(deltaTime)];
+        }
+        lastInputTime = simple.inputTime;
     }
     return result;
 }

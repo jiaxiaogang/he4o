@@ -123,8 +123,8 @@ static AINet *_instance;
 //MARK:===============================================================
 //MARK:                     < cmv >
 //MARK:===============================================================
--(AIFrontOrderNode*) createCMV:(NSArray*)imvAlgsArr order:(NSArray*)order{
-    return [self.mvFoManager create:imvAlgsArr order:order];
+-(AIFrontOrderNode*) createCMV:(NSArray*)imvAlgsArr inputTime:(NSTimeInterval)inputTime order:(NSArray*)order{
+    return [self.mvFoManager create:imvAlgsArr inputTime:inputTime order:order];
 }
 
 

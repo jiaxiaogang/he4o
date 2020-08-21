@@ -27,6 +27,10 @@
  *  MARK:--------------------将order转换成alg_ps--------------------
  */
 +(NSMutableArray*) convertOrder2Alg_ps:(NSArray*)order;
+
+/**
+ *  MARK:--------------------将order转成deltaTimes--------------------
+ */
 +(NSMutableArray*) convertOrder2DeltaTimes:(NSArray*)order;
 
 @end

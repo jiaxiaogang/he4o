@@ -17,21 +17,26 @@
 #import "AINet.h"
 #import "AINetIndex.h"
 #import "AINetAbsFoUtils.h"
+#import "AIShortMatchModel_Simple.h"
 
 @implementation AIMvFoManager
 
--(AIFrontOrderNode*) create:(NSArray*)imvAlgsArr order:(NSArray*)order{
-    //2. 打包cmvNode & foNode;
+-(AIFrontOrderNode*) create:(NSArray*)imvAlgsArr inputTime:(NSTimeInterval)inputTime order:(NSArray*)order{
+    //1. 打包cmvNode & foNode;
     AICMVNode *cmvNode = [self createConMv:imvAlgsArr];
     NSInteger urgentTo = [NUMTOOK([AINetIndex getData:cmvNode.urgentTo_p]) integerValue];
     AIFrontOrderNode *foNode = [AIMvFoManager createConFo:order isMem:false difStrong:urgentTo];
 
-    //TODOTOMORROW: 将mv.inputTime传入,在relateFo之前,将inputTime赋值到fo.mvDeltaTime中;
+    //2. 将mv.inputTime传入,在relateFo之前,将inputTime赋值fo.mvDeltaTime;
+    if (ARRISOK(order)) {
+        AIShortMatchModel_Simple *lastOrderTime = ARR_INDEX_REVERSE(order, 0);
+        foNode.mvDeltaTime = inputTime - lastOrderTime.inputTime;
+    }
     
-    //4. 互指向
+    //3. 互指向
     [AINetUtils relateFo:foNode mv:cmvNode];
 
-    //6. 返回给thinking
+    //4. 返回给thinking
     return foNode;
 }
 
