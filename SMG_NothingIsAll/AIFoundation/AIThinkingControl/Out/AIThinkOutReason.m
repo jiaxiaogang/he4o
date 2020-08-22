@@ -21,6 +21,7 @@
 #import "TOAlgModel.h"
 #import "TOValueModel.h"
 #import "DemandModel.h"
+#import "AITimeTrigger.h"
 
 @interface AIThinkOutReason() <TOActionDelegate>
 
@@ -470,6 +471,7 @@
  *  @version
  *      2020.06.21: 当本轮决策完成(FinishModel为Demand)时,清空demand.actionFoModels,以便整体任务未完成时,继续决策 (比如不断飞近);
  *      2020.07.06: 当本轮决策完成(FinishModel为TOFoModel)时,解决方案Fo的父级也完成;
+ *      2020.08.22: BaseFo完成时,仅设定demand.status=ActYes,等待外循环返回"抵消价值";
  */
 -(void) singleLoopBackWithFinishModel:(TOModelBase*)finishModel {
     if (ISOK(finishModel, TOAlgModel.class)) {
@@ -529,14 +531,32 @@
             [self singleLoopBackWithFinishModel:toAlgModel];
         }
     }else if(ISOK(finishModel, TOFoModel.class)){
-        //a. Fo完成时,其父级也完成;
-        finishModel.baseOrGroup.status = TOModelStatus_Finish;
-        [self singleLoopBackWithFinishModel:finishModel.baseOrGroup];
+        //a. 任务全部完成时,构建反省类比触发器,等待外循环输入价值变化 (抵消);
+        if (ISOK(finishModel.baseOrGroup, DemandModel.class)) {
+            finishModel.baseOrGroup.status = TOModelStatus_ActYes;
+            NSLog(@"SUCCESS > 本轮决策完成");
+            AITimeTrigger *trigger = [[AITimeTrigger alloc] init];
+            trigger.actionFo = [SMGUtils searchNode:finishModel.content_p];
+            
+            //TODOTOMORROW:
+            //1. 三处构建触发器: a_demand.ActYes处, b_HNGL.ActYes处, c_行为输出ActYes处 (最好到操作的TOModel中构建触发器)
+            //2. 外循环回来,把各自实际输入的概念,存入到TOAlgModel/TOFoModel中 (最好在MP中存,因为MP在对其进行处理,面向的数据全);
+            //3. 当生物钟触发器触发时,如果未输入有效"理性推进" 或 "感性抵消",则对这些期望与实际的差距进行反省类比;
+            
+            
+            
+            
+            
+        }else{
+            //b. 子Fo完成时,其父级也完成 (不过一般子fo是HNGL类型,如果到这儿,说明出了BUG);
+            WLog(@"一般子fo是HNGL类型,如果到这儿,说明出了BUG");
+            finishModel.baseOrGroup.status = TOModelStatus_Finish;
+            [self singleLoopBackWithFinishModel:finishModel.baseOrGroup];
+        }
     }else if(ISOK(finishModel, DemandModel.class)){
-        //5. 全部完成;
-        NSLog(@"SUCCESS > 本轮决策完成");
-        DemandModel *demand = (DemandModel*)finishModel;
-        [demand.actionFoModels removeAllObjects];
+        //全部完成,不由此处执行,而是由外循环传入mv抵消后,再移除此demand;
+        //DemandModel *demand = (DemandModel*)finishModel;
+        //[demand.actionFoModels removeAllObjects];
     }else{
         ELog(@"如打出此错误,则查下为何groupModel不是TOFoModel类型,因为一般行为化的都是概念,而概念的父级就是TOFoModel:%@",finishModel.class);
     }

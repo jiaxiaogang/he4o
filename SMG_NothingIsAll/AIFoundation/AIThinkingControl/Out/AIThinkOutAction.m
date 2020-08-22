@@ -171,6 +171,7 @@
  *      2020-07-07 : RelativeFo最后一位,不用行为化;
  *      2020-07-08 : 删掉HNGL调用递归,因为HNGL不是完成,外循环input回来,才算完成,(如飞了一步,还要继续飞)(如下了蛋,得看到蛋),参考20081;
  *      2020-07-27 : hAlg的获取方案relativeFos,由纯理性交集(参考19192),改为优化取理性交集,其次取纯空想 (因为常无法一蹴而就,需递归判定,但又不得不承认,有时候确实可以一蹴而就,比如在家时有冰箱,就不用想回京吃外卖);
+ *      2020.08.22: HNGL时,仅设定status=ActYes,等待外循环返回"理性符合的HNGL"结果;
  *  @todo
  *      2020-07-05 : 在下面MC中,转至PM时,是将C作为M的,随后需测下,看是否需要独立对MC做类似PM的理性评价,即将一步到位,细化成两步各自评价;
  */
@@ -187,7 +188,7 @@
         [outModel.content_p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATNone]] ||
         [outModel.content_p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATGreater]] ||
         [outModel.content_p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATLess]]) {
-        outModel.status = TOModelStatus_Finish;
+        outModel.status = TOModelStatus_ActYes;//只需要等
         return;
     }else if (outModel.content_p.isOut) {
         //2. 第1级: 本身即是isOut时,直接行为化返回;
