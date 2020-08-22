@@ -535,18 +535,8 @@
         if (ISOK(finishModel.baseOrGroup, DemandModel.class)) {
             finishModel.baseOrGroup.status = TOModelStatus_ActYes;
             NSLog(@"SUCCESS > 本轮决策完成");
-            AITimeTrigger *trigger = [[AITimeTrigger alloc] init];
-            trigger.actionFo = [SMGUtils searchNode:finishModel.content_p];
-            
-            //TODOTOMORROW:
-            //1. 三处构建触发器: a_demand.ActYes处, b_HNGL.ActYes处, c_行为输出ActYes处 (最好到操作的TOModel中构建触发器)
-            //2. 外循环回来,把各自实际输入的概念,存入到TOAlgModel/TOFoModel中 (最好在MP中存,因为MP在对其进行处理,面向的数据全);
-            //3. 当生物钟触发器触发时,如果未输入有效"理性推进" 或 "感性抵消",则对这些期望与实际的差距进行反省类比;
-            
-            
-            
-            
-            
+            AIFoNodeBase *finishNode = [SMGUtils searchNode:finishModel.content_p];
+            [self singleLoopBackWithActYes:finishModel.baseOrGroup deltaTime:finishNode.mvDeltaTime];
         }else{
             //b. 子Fo完成时,其父级也完成 (不过一般子fo是HNGL类型,如果到这儿,说明出了BUG);
             WLog(@"一般子fo是HNGL类型,如果到这儿,说明出了BUG");
@@ -659,6 +649,35 @@
     }else if(ISOK(beginModel, TOFoModel.class)){
         ELog(@"如打出此错误,则查下为何beginModel是TOFoModel类型,因为一般Fo都直接取index去行为化了,而Fo是不应该传递到Begin方法中来的;");
         [self singleLoopBackWithBegin:beginModel.baseOrGroup];
+    }
+}
+
+/**
+ *  MARK:--------------------ActYes的流程控制--------------------
+ *  @desc : 当ActYes时,一般等待外循环反馈,而此处构建生物钟触发器,用于超时时触发反省类比;
+ *  @callers
+ *      1. demand.ActYes处
+ *      2. 行为化Hav().HNGL.ActYes处
+*       3. 行为输出ActYes处
+ */
+-(void) singleLoopBackWithActYes:(TOModelBase*)actYesModel deltaTime:(NSTimeInterval)deltaTime{
+    if (ISOK(actYesModel, TOAlgModel.class)) {
+        
+    }else if(ISOK(actYesModel, TOValueModel.class)){
+        
+    }else if(ISOK(actYesModel, TOFoModel.class)){
+        
+    }else if(ISOK(actYesModel, DemandModel.class)){
+        DemandModel *demand = (DemandModel*)actYesModel;
+        AITimeTrigger *trigger = [[AITimeTrigger alloc] init];
+        
+        //将trigger挂到demand下,并倒计时deltaTime触发,判断是否输入了抵消demand.mv;
+        
+        
+        //TODOTOMORROW:
+        //1. 三处构建触发器: a_demand.ActYes处, b_HNGL.ActYes处, c_行为输出ActYes处 (最好到操作的TOModel中构建触发器)
+        //2. 外循环回来,把各自实际输入的概念,存入到TOAlgModel/TOFoModel中 (最好在MP中存,因为MP在对其进行处理,面向的数据全);
+        //3. 当生物钟触发器触发时,如果未输入有效"理性推进" 或 "感性抵消",则对这些期望与实际的差距进行反省类比;
     }
 }
 
