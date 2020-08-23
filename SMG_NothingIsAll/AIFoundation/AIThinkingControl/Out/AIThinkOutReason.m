@@ -21,7 +21,6 @@
 #import "TOAlgModel.h"
 #import "TOValueModel.h"
 #import "DemandModel.h"
-#import "AITimeTrigger.h"
 
 @interface AIThinkOutReason() <TOActionDelegate>
 
@@ -658,7 +657,7 @@
  *  @callers
  *      1. demand.ActYes处
  *      2. 行为化Hav().HNGL.ActYes处
-*       3. 行为输出ActYes处
+ *      3. 行为输出ActYes处
  */
 -(void) singleLoopBackWithActYes:(TOModelBase*)actYesModel deltaTime:(NSTimeInterval)deltaTime{
     if (ISOK(actYesModel, TOAlgModel.class)) {
@@ -666,10 +665,9 @@
     }else if(ISOK(actYesModel, TOValueModel.class)){
         
     }else if(ISOK(actYesModel, TOFoModel.class)){
+        TOFoModel *foModel = (TOFoModel*)actYesModel;
+        [foModel setTimeTrigger];
         
-    }else if(ISOK(actYesModel, DemandModel.class)){
-        DemandModel *demand = (DemandModel*)actYesModel;
-        AITimeTrigger *trigger = [[AITimeTrigger alloc] init];
         
         //将trigger挂到demand下,并倒计时deltaTime触发,判断是否输入了抵消demand.mv;
         
