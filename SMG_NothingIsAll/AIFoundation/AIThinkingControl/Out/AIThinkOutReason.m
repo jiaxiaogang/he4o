@@ -21,6 +21,7 @@
 #import "TOAlgModel.h"
 #import "TOValueModel.h"
 #import "DemandModel.h"
+#import "AITimeTrigger.h"
 
 @interface AIThinkOutReason() <TOActionDelegate>
 
@@ -666,6 +667,13 @@
             //1. 如果TOAlgModel为HNGL时,
             //向上找fo;
             
+            
+            
+            //3. 触发反省类比_实际fo数据收集;
+            
+            
+            //4. 触发反省类比
+            
         }else if(actYesModel.content_p.isOut){
             //2. 为行为输出时;
             //向上找fo;
@@ -674,7 +682,9 @@
     }else if(ISOK(actYesModel, TOFoModel.class)){
         TOFoModel *foModel = (TOFoModel*)actYesModel;
         AIFoNodeBase *actYesFo = [SMGUtils searchNode:foModel.content_p];
-        [foModel setTimeTrigger:actYesModel deltaTime:actYesFo.mvDeltaTime];
+        [AITimeTrigger setTimeTrigger:actYesModel deltaTime:actYesFo.mvDeltaTime realTriggerBlock:^{
+            
+        }];
         //将trigger挂到demand下,并倒计时deltaTime触发,判断是否输入了抵消demand.mv;
         
         

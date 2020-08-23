@@ -36,9 +36,4 @@
  */
 @property (strong, nonatomic) TOModelBase *activateSubModel;
 
-/**
- *  MARK:--------------------生物钟触发器--------------------
- */
--(void) setTimeTrigger:(TOModelBase*)actYesModel deltaTime:(NSTimeInterval)deltaTime;
-
 @end
