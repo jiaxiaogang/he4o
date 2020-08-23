@@ -278,6 +278,7 @@
  *  @todo
  *      1. 此处在for循环中,所以有可能推进多条,比如我有了一只狗,可以拉雪撬,或者送给爷爷陪爷爷 (涉及多任务间的价值自由竞争),暂仅支持一条,后再支持;
  *      2020.08.23: 在inputMv时,支持当前actYes的fo进行抵消 (或设置为Finish);
+ *      2020.08.23: 在waitModel为ActYes且为HNGL时,仅判定其是否符合HNGL变化;
  *  @result 返回pushMiddle是否成功,如果推进成功,则不再执行TOP四模式;
  *  @version
  *      2020.08.05: waitModel.pm_Score的赋值改为取demand.score取负 (因为demand一般为负,而解决任务为正);
@@ -535,8 +536,7 @@
         if (ISOK(finishModel.baseOrGroup, DemandModel.class)) {
             finishModel.baseOrGroup.status = TOModelStatus_ActYes;
             NSLog(@"SUCCESS > 本轮决策完成");
-            AIFoNodeBase *finishNode = [SMGUtils searchNode:finishModel.content_p];
-            [self singleLoopBackWithActYes:finishModel.baseOrGroup deltaTime:finishNode.mvDeltaTime];
+            [self singleLoopBackWithActYes:finishModel.baseOrGroup];
         }else{
             //b. 子Fo完成时,其父级也完成 (不过一般子fo是HNGL类型,如果到这儿,说明出了BUG);
             WLog(@"一般子fo是HNGL类型,如果到这儿,说明出了BUG");
@@ -660,17 +660,21 @@
  *      2. 行为化Hav().HNGL.ActYes处
  *      3. 行为输出ActYes处
  */
--(void) singleLoopBackWithActYes:(TOModelBase*)actYesModel deltaTime:(NSTimeInterval)deltaTime{
+-(void) singleLoopBackWithActYes:(TOModelBase*)actYesModel {
     if (ISOK(actYesModel, TOAlgModel.class)) {
-        
-    }else if(ISOK(actYesModel, TOValueModel.class)){
-        
+        if ([TOUtils isHNGL:actYesModel.content_p]) {
+            //1. 如果TOAlgModel为HNGL时,
+            //向上找fo;
+            
+        }else if(actYesModel.content_p.isOut){
+            //2. 为行为输出时;
+            //向上找fo;
+            
+        }
     }else if(ISOK(actYesModel, TOFoModel.class)){
         TOFoModel *foModel = (TOFoModel*)actYesModel;
         AIFoNodeBase *actYesFo = [SMGUtils searchNode:foModel.content_p];
         [foModel setTimeTrigger:actYesModel deltaTime:actYesFo.mvDeltaTime];
-        
-        
         //将trigger挂到demand下,并倒计时deltaTime触发,判断是否输入了抵消demand.mv;
         
         
@@ -701,6 +705,9 @@
 }
 -(void) toAction_SubModelFinish:(TOModelBase*)outModel{
     [self singleLoopBackWithFinishModel:outModel];
+}
+-(void) toAction_SubModelActYes:(TOModelBase*)outModel{
+    [self singleLoopBackWithActYes:outModel];
 }
 -(void) toAction_SubModelFailure:(TOModelBase*)outModel{
     [self singleLoopBackWithFailureModel:outModel];

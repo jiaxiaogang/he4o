@@ -421,4 +421,14 @@
     return result;
 }
 
+/**
+ *  MARK:--------------------是否HNGL节点--------------------
+ */
++(BOOL) isHNGL:(AIKVPointer*)p{
+    if (p) {
+        return [p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATHav]] || [p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATNone]] || [p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATGreater]] || [p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATLess]];
+    }
+    return false;
+}
+
 @end

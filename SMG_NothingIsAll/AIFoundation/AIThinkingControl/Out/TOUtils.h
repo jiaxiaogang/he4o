@@ -90,4 +90,9 @@
  */
 +(NSArray*) convertPointersFromTOValueModelSValue:(NSArray*)toModels;
 
+/**
+ *  MARK:--------------------是否HNGL节点--------------------
+ */
++(BOOL) isHNGL:(AIKVPointer*)p;
+
 @end

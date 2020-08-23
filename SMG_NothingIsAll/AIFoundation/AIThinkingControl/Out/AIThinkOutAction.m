@@ -184,11 +184,9 @@
     }
     
     //1. 第0级: 本身即是cHav节点,不用行为化,即成功 (但不用递归,等外循环返回行为结果);
-    if ([outModel.content_p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATHav]] ||
-        [outModel.content_p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATNone]] ||
-        [outModel.content_p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATGreater]] ||
-        [outModel.content_p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATLess]]) {
+    if ([TOUtils isHNGL:outModel.content_p]) {
         outModel.status = TOModelStatus_ActYes;//只需要等
+        [self.delegate toAction_SubModelActYes:outModel];
         return;
     }else if (outModel.content_p.isOut) {
         //2. 第1级: 本身即是isOut时,直接行为化返回;
@@ -196,6 +194,7 @@
         outModel.status = TOModelStatus_ActYes;
         [self.delegate toAction_updateEnergy:-1.0f];
         [self.delegate toAction_Output:@[outModel.content_p]];
+        [self.delegate toAction_SubModelActYes:outModel];
         return;
     }else{
         //3. 数据检查curAlg
