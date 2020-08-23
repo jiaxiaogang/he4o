@@ -39,6 +39,6 @@
 /**
  *  MARK:--------------------生物钟触发器--------------------
  */
--(void) setTimeTrigger;
+-(void) setTimeTrigger:(TOModelBase*)actYesModel deltaTime:(NSTimeInterval)deltaTime;
 
 @end

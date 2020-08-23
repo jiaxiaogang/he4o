@@ -277,6 +277,7 @@
  *      2. 未输出行为,等待中的,也要进行下轮匹配,比如等开饭,等来开饭了; (等待的status是ActNo还是Runing?)
  *  @todo
  *      1. 此处在for循环中,所以有可能推进多条,比如我有了一只狗,可以拉雪撬,或者送给爷爷陪爷爷 (涉及多任务间的价值自由竞争),暂仅支持一条,后再支持;
+ *      2020.08.23: 在inputMv时,支持当前actYes的fo进行抵消 (或设置为Finish);
  *  @result 返回pushMiddle是否成功,如果推进成功,则不再执行TOP四模式;
  *  @version
  *      2020.08.05: waitModel.pm_Score的赋值改为取demand.score取负 (因为demand一般为负,而解决任务为正);
@@ -666,7 +667,8 @@
         
     }else if(ISOK(actYesModel, TOFoModel.class)){
         TOFoModel *foModel = (TOFoModel*)actYesModel;
-        [foModel setTimeTrigger];
+        AIFoNodeBase *actYesFo = [SMGUtils searchNode:foModel.content_p];
+        [foModel setTimeTrigger:actYesModel deltaTime:actYesFo.mvDeltaTime];
         
         
         //将trigger挂到demand下,并倒计时deltaTime触发,判断是否输入了抵消demand.mv;
