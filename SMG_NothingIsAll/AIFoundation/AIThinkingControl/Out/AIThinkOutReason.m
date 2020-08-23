@@ -280,6 +280,7 @@
  *      1. 此处在for循环中,所以有可能推进多条,比如我有了一只狗,可以拉雪撬,或者送给爷爷陪爷爷 (涉及多任务间的价值自由竞争),暂仅支持一条,后再支持;
  *      2020.08.23: 在inputMv时,支持当前actYes的fo进行抵消 (或设置为Finish);
  *      2020.08.23: 在waitModel为ActYes且为HNGL时,仅判定其是否符合HNGL变化;
+ *      2020.08.23: 对realAlg进行收集,收集到waitTOAlgModel.realContent_p下;
  *  @result 返回pushMiddle是否成功,如果推进成功,则不再执行TOP四模式;
  *  @version
  *      2020.08.05: waitModel.pm_Score的赋值改为取demand.score取负 (因为demand一般为负,而解决任务为正);
@@ -668,12 +669,6 @@
             //向上找fo;
             
             
-            
-            //3. 触发反省类比_实际fo数据收集;
-            
-            
-            //4. 触发反省类比
-            
         }else if(actYesModel.content_p.isOut){
             //2. 为行为输出时;
             //向上找fo;
@@ -683,6 +678,14 @@
         TOFoModel *foModel = (TOFoModel*)actYesModel;
         AIFoNodeBase *actYesFo = [SMGUtils searchNode:foModel.content_p];
         [AITimeTrigger setTimeTrigger:actYesModel deltaTime:actYesFo.mvDeltaTime realTriggerBlock:^{
+            
+            //3. 触发反省类比_实际fo数据收集;
+            /////////对当前fo之下的,realContent_p进行收集,并组成实际realFo;
+            
+            
+            //4. 触发反省类比
+            
+            
             
         }];
         //将trigger挂到demand下,并倒计时deltaTime触发,判断是否输入了抵消demand.mv;

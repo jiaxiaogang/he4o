@@ -56,4 +56,12 @@
 @property (strong, nonatomic) NSString *pm_MVAT;
 @property (strong, nonatomic) AIFoNodeBase *pm_Fo;//用来取conPorts的Fo
 
+/**
+ *  MARK:--------------------实际发生的概念保留--------------------
+ *  @desc
+ *      1. 在commitFromOuterPushMiddleLoop中进行保留;
+ *      2. 在ActYes流程控制中,生物钟触发器触发时,进行使用,用于反省类比;
+ */
+@property (strong, nonatomic) AIKVPointer *realContent_p;
+
 @end
