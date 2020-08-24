@@ -278,9 +278,7 @@
  *      2. 未输出行为,等待中的,也要进行下轮匹配,比如等开饭,等来开饭了; (等待的status是ActNo还是Runing?)
  *  @todo
  *      1. 此处在for循环中,所以有可能推进多条,比如我有了一只狗,可以拉雪撬,或者送给爷爷陪爷爷 (涉及多任务间的价值自由竞争),暂仅支持一条,后再支持;
- *      2020.08.23: 在inputMv时,支持当前actYes的fo进行抵消 (或设置为Finish);
- *      2020.08.23: 在waitModel为ActYes且为HNGL时,仅判定其是否符合HNGL变化;
- *      2020.08.23: 对realAlg进行收集,收集到waitTOAlgModel.realContent_p下;
+ *      2020.08.23: 在inputMv时,支持当前actYes的fo进行抵消 (或设置为Finish) (T 由demandManager完成);
  *  @result 返回pushMiddle是否成功,如果推进成功,则不再执行TOP四模式;
  *  @version
  *      2020.08.05: waitModel.pm_Score的赋值改为取demand.score取负 (因为demand一般为负,而解决任务为正);
@@ -293,7 +291,7 @@
     }
     
     //2. 取出所有等待下轮的outModel (ActYes&Runing);
-    NSArray *waitModels = [TOUtils getSubOutModels_AllDeep:demand validStatus:@[@(TOModelStatus_ActYes),@(TOModelStatus_Runing)]];
+    NSArray *waitModels = [TOUtils getSubOutModels_AllDeep:demand validStatus:@[@(TOModelStatus_ActYes),@(TOModelStatus_Runing),@(TOModelStatus_OuterBack)]];
     NSLog(@"\n\n=============================== OPushM ===============================\n输入M:%@\n输入P:%@\n等待中任务数:%ld",Alg2FStr(latestMModel.matchAlg),Alg2FStr(latestMModel.protoAlg),waitModels.count);
     
     //3. 判断最近一次input是否与等待中outModel相匹配 (匹配,比如吃,确定自己是否真吃了);
@@ -323,6 +321,41 @@
     }
     if (Log4OPushM) NSLog(@"OPushM: 无一被需要");
     return false;
+}
+
+/**
+ *  MARK:--------------------外层输入对Out短时记忆的影响处理--------------------
+ *  @todo
+ *      2020.08.23: 在waitModel为ActYes且为HNGL时,仅判定其是否符合HNGL变化;
+ *      2020.08.23: 对realAlg进行收集,收集到waitTOAlgModel.realContent_p下; T
+ *  @version
+ *      2020.08.24: 从commitFromOuterPushMiddleLoop中独立出来,独立调用,处理realAlg和HNGL的变化相符判断;
+ */
+-(void) commitFromOuterInputReason:(DemandModel*)demand inputMModel:(AIShortMatchModel*)inputMModel{
+    //1. 数据检查
+    if (!demand || !inputMModel) return;
+    
+    //2. 取出所有等待下轮的outModel (ActYes&Runing);
+    NSArray *waitModels = [TOUtils getSubOutModels_AllDeep:demand validStatus:@[@(TOModelStatus_ActYes),@(TOModelStatus_Runing)]];
+    
+    //3. 保留/更新实际发生到outModel
+    for (TOAlgModel *waitModel in waitModels) {
+        if (ISOK(waitModel, TOAlgModel.class) && ISOK(waitModel.baseOrGroup, TOFoModel.class) && [TOUtils mIsC_1:inputMModel.matchAlg.pointer c:waitModel.content_p]) {
+            
+            if ([TOUtils isHNGL:waitModel.content_p]) {
+                //4. 对inputMModel是否符合waitModel的HNGL进行判断;
+                
+                //TODOTOMORROW: 20200824
+                
+                
+                
+            }else{
+                //5. 非HNGL的,将实际概念直接存留到waitModel
+                waitModel.status = TOModelStatus_OuterBack;
+                waitModel.realContent_p = inputMModel.protoAlg.pointer;
+            }
+        }
+    }
 }
 
 /**
@@ -675,21 +708,24 @@
             
         }
     }else if(ISOK(actYesModel, TOFoModel.class)){
+        //a. 数据准备
         TOFoModel *foModel = (TOFoModel*)actYesModel;
         AIFoNodeBase *actYesFo = [SMGUtils searchNode:foModel.content_p];
-        [AITimeTrigger setTimeTrigger:actYesModel deltaTime:actYesFo.mvDeltaTime realTriggerBlock:^{
-            
-            //3. 触发反省类比_实际fo数据收集;
+        DemandModel *demand = (DemandModel*)actYesModel.baseOrGroup;
+        
+        //b. 触发器
+        [AITimeTrigger setTimeTrigger:actYesFo.mvDeltaTime canTrigger:^BOOL{
+            //c. 未等到实际输入 && 任务未完成 -> 则触发;
+            return foModel.status != TOModelStatus_ActYes && demand.status != TOModelStatus_Finish;
+        } trigger:^{
+            //d. 触发反省类比_实际fo数据收集;
             /////////对当前fo之下的,realContent_p进行收集,并组成实际realFo;
             
-            
-            //4. 触发反省类比
+            //TODOTOMORROW: 20200824
             
             
             
         }];
-        //将trigger挂到demand下,并倒计时deltaTime触发,判断是否输入了抵消demand.mv;
-        
         
         //TODOTOMORROW:
         //1. 三处构建触发器: a_demand.ActYes处, b_HNGL.ActYes处, c_行为输出ActYes处 (最好到操作的TOModel中构建触发器)

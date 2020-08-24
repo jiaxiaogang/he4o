@@ -48,14 +48,15 @@
  *          x. 当outModel中某时序完成时,则追回(销毁)与其对应的触发器 (废弃,不用销毁,改变status状态即可);
  *          x. 直到触发时,还未销毁,则说明实际时序并未完成,此时调用反省类比 (废弃,由commitFromOuterPushMiddleLoop()来做状态改变即可);
  */
--(void) setTimeTrigger:(TOModelBase*)actYesModel deltaTime:(NSTimeInterval)deltaTime realTriggerBlock:(void(^)())realTriggerBlock{
-    //1. 用after延迟定时deltaT x 1.3触发;
++(void) setTimeTrigger:(NSTimeInterval)deltaTime canTrigger:(BOOL(^)())canTrigger trigger:(void(^)())trigger{
+    //1. 数据检查
+    if (!canTrigger || !trigger) return;
+    
+    //2. 用after延迟定时deltaT x 1.3触发;
     CGFloat triggerTime = deltaTime / 1000.0f * 1.3f;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(triggerTime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        //2. 触发时,判断是否还是actYes状态 (在OuterPushMiddleLoop()中,会将ActYes且符合,且PM算法成功的,改为Finish);
-        if (actYesModel.status == TOModelStatus_ActYes) {
-            if (realTriggerBlock) realTriggerBlock();
-        }
+        //3. 触发时,判断是否还是actYes状态 (在OuterPushMiddleLoop()中,会将ActYes且符合,且PM算法成功的,改为Finish);
+        if (canTrigger()) trigger();
     });
 }
 

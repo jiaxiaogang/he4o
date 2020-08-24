@@ -205,9 +205,7 @@
         return [self.delegate aiThinkIn_CreateCMVModel:algsArr inputTime:inputTime isMatch:isMatch];
     } finishBlock:^(AICMVNode *commitMvNode) {
         //3. 思考mv,需求处理
-        if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_CommitPercept:)]) {
-            [self.delegate aiThinkIn_CommitPercept:commitMvNode];
-        }
+        [self.delegate aiThinkIn_CommitPercept:commitMvNode];
     } canAss:^BOOL{
         return [self canAss];
     } updateEnergy:^(CGFloat delta) {

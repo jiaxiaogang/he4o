@@ -176,6 +176,9 @@ static AIThinkingControl *_instance;
 }
 
 -(void) aiThinkIn_Commit2TC:(AIShortMatchModel*)shortMatchModel {
+    //1. 数据检查
+    if (!shortMatchModel) return;
+    
     //1. 把mv加入到demandManager;
     NSInteger urgentTo = 0;
     if (shortMatchModel && shortMatchModel.matchFo) {
@@ -205,8 +208,17 @@ static AIThinkingControl *_instance;
     //3. 将shortMatch保留 (供TOR或TIP调用);
     [self.shortMatchManager add:shortMatchModel];
     
-    //4. 激活dataOut
-    [self.tOP dataOut];
+    //4. 将新一帧数据报告给TOR,以进行短时记忆的更新,比如我输出行为"打",短时记忆由此知道输出"打"成功;
+    DemandModel *demand = [self.demandManager getCurrentDemand];
+    [self.tOR commitFromOuterInputReason:demand inputMModel:shortMatchModel];
+    
+    //5. 外循环入->推进->中循环出;
+    BOOL pushOldDemand = [self.tOR commitFromOuterPushMiddleLoop:demand latestMModel:shortMatchModel];
+    
+    //6. 此处推进不成功,则运行TOP四模式;
+    if (!pushOldDemand) {
+        [self.tOP dataOut];
+    }
 }
 -(void) aiThinkIn_UpdateEnergy:(CGFloat)delta{
     [self updateEnergy:delta];

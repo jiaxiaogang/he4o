@@ -45,6 +45,8 @@
  *  1. 添加新的cmv到cache,并且自动撤消掉相对较弱的同类同向mv;
  *  2. 在assData等(内心活动,不抵消cmvCache中旧任务)
  *  3. 在dataIn时,抵消旧任务,并生成新任务;
+ *  @version
+ *      2020.08.24: 在inputMv时,当前demand进行抵消时,其状态设置为Finish;
  */
 -(void) updateCMVCache_PMV:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta{
     //1. 数据检查
@@ -71,6 +73,7 @@
             }else{
                 //2) 反向抵消
                 [self.loopCache removeObjectAtIndex:i];
+                checkItem.status = TOModelStatus_Finish;
                 NSLog(@"demandManager >> 反向抵消 %lu",(unsigned long)self.loopCache.count);
                 limit--;
                 i--;

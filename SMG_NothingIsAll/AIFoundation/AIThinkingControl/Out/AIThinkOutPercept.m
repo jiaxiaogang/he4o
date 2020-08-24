@@ -46,6 +46,7 @@
  *      2. 调用者只管调用触发,模型生成,参数保留;
  *  @version
  *      20200430 : v2,四种工作模式版;
+ *      20200824 : 将外循环输入推进中循环,改到上一步aiThinkIn_Commit2TC()中;
  *  @todo
  *      1. 集成活跃度的判断和消耗;
  *      2. 集成outModel;
@@ -56,17 +57,6 @@
     DemandModel *demand = [self.delegate aiThinkOutPercept_GetCurrentDemand];
     NSArray *mModels = [self.delegate aiTOP_GetShortMatchModel];
     if (!demand || !ARRISOK(mModels)) return;
-    
-    //2. 外循环入->推进->中循环出;
-    AIShortMatchModel *latestMModel = ARR_INDEX_REVERSE(mModels, 0);
-    if (latestMModel) {
-        BOOL pushOldDemand = [self.delegate aiTOP_OuterPushMiddleLoop:demand latestMModel:latestMModel];
-        
-        //此处推进成功后,下面的四模式不必运行,
-        if (pushOldDemand) {
-            return;
-        }
-    }
     
     //2. 同区两个模式 (以最近的预测为准);
     for (NSInteger i = 0; i < mModels.count; i++) {

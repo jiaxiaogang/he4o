@@ -79,4 +79,9 @@
  */
 -(BOOL) commitFromOuterPushMiddleLoop:(DemandModel*)demand latestMModel:(AIShortMatchModel*)latestMModel;
 
+/**
+ *  MARK:--------------------外层输入对Out短时记忆的影响处理--------------------
+ */
+-(void) commitFromOuterInputReason:(DemandModel*)demand inputMModel:(AIShortMatchModel*)inputMModel;
+
 @end
