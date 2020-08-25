@@ -377,7 +377,7 @@
     //2. 逐个尝试行为化
     for (AIPointer *relativeFo_p in relativeFo_ps) {
         AIFoNodeBase *relativeFo = [SMGUtils searchNode:relativeFo_p];
-        NSLog(@"------> RelativeFo_ps Start 共有方案%ld条,%@",relativeFo_ps.count,Fo2FStr(relativeFo));
+        NSLog(@"------> RelativeFo_ps Start 共有方案%lu条,%@",(unsigned long)relativeFo_ps.count,Fo2FStr(relativeFo));
     }
     for (AIPointer *relativeFo_p in relativeFo_ps) {
         AIFoNodeBase *relativeFo = [SMGUtils searchNode:relativeFo_p];

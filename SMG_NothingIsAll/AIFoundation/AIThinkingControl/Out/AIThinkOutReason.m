@@ -292,7 +292,7 @@
     
     //2. 取出所有等待下轮的outModel (ActYes&Runing);
     NSArray *waitModels = [TOUtils getSubOutModels_AllDeep:demand validStatus:@[@(TOModelStatus_ActYes),@(TOModelStatus_Runing),@(TOModelStatus_OuterBack)]];
-    NSLog(@"\n\n=============================== OPushM ===============================\n输入M:%@\n输入P:%@\n等待中任务数:%ld",Alg2FStr(latestMModel.matchAlg),Alg2FStr(latestMModel.protoAlg),waitModels.count);
+    NSLog(@"\n\n=============================== OPushM ===============================\n输入M:%@\n输入P:%@\n等待中任务数:%lu",Alg2FStr(latestMModel.matchAlg),Alg2FStr(latestMModel.protoAlg),(long)waitModels.count);
     
     //3. 判断最近一次input是否与等待中outModel相匹配 (匹配,比如吃,确定自己是否真吃了);
     for (TOAlgModel *waitModel in waitModels) {
@@ -338,21 +338,38 @@
     //2. 取出所有等待下轮的outModel (ActYes&Runing);
     NSArray *waitModels = [TOUtils getSubOutModels_AllDeep:demand validStatus:@[@(TOModelStatus_ActYes),@(TOModelStatus_Runing)]];
     
-    //3. 保留/更新实际发生到outModel
+    //3. 保留/更新实际发生到outModel (通过了有效判断的,将实际概念直接存留到waitModel)
     for (TOAlgModel *waitModel in waitModels) {
-        if (ISOK(waitModel, TOAlgModel.class) && ISOK(waitModel.baseOrGroup, TOFoModel.class) && [TOUtils mIsC_1:inputMModel.matchAlg.pointer c:waitModel.content_p]) {
-            
+        if (ISOK(waitModel, TOAlgModel.class) && ISOK(waitModel.baseOrGroup, TOFoModel.class)) {
             if ([TOUtils isHNGL:waitModel.content_p]) {
-                //4. 对inputMModel是否符合waitModel的HNGL进行判断;
+                //4. "H"的有效判断;
+                if ([TOUtils isH:waitModel.content_p]) {
+                    if ([TOUtils mIsC_1:inputMModel.matchAlg.pointer c:waitModel.content_p]) {
+                        waitModel.status = TOModelStatus_OuterBack;
+                        waitModel.realContent_p = inputMModel.protoAlg.pointer;
+                    }
+                }else if([TOUtils isG:waitModel.content_p]){
+                    //5. "G"的有效判断;
+                    
+                    //查内类比大小的代码,看此处该如何根据waitModel找到type与原稀疏码值;
+                    
+                    
+                }else if([TOUtils isL:waitModel.content_p]){
+                    //6. "L"的有效判断;
+                    
+                }
+                
                 
                 //TODOTOMORROW: 20200824
                 
                 
                 
             }else{
-                //5. 非HNGL的,将实际概念直接存留到waitModel
-                waitModel.status = TOModelStatus_OuterBack;
-                waitModel.realContent_p = inputMModel.protoAlg.pointer;
+                //7. "行为输出" 和 "demand.ActYes"的有效判断;
+                if ([TOUtils mIsC_1:inputMModel.matchAlg.pointer c:waitModel.content_p]) {
+                    waitModel.status = TOModelStatus_OuterBack;
+                    waitModel.realContent_p = inputMModel.protoAlg.pointer;
+                }
             }
         }
     }
@@ -407,7 +424,7 @@
         for (AIAlgNodeBase *fuzzyAlg in sortAlgs) {
             NSArray *fuzzyRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:fuzzyAlg]];
             fuzzyRef_ps = ARR_SUB(fuzzyRef_ps, 0, cPM_RefLimit);
-            if (Log4PM && fuzzyAlg) NSLog(@"--------> 当前Alg:%@ => %@ 引用条:%ld",Pit2FStr(firstJustPValue),Alg2FStr(fuzzyAlg),fuzzyRef_ps.count);
+            if (Log4PM && fuzzyAlg) NSLog(@"--------> 当前Alg:%@ => %@ 引用条:%lu",Pit2FStr(firstJustPValue),Alg2FStr(fuzzyAlg),(long)fuzzyRef_ps.count);
             
             //c. 依次判断refPorts时序的价值,是否与matchFo相符 (只需要有一条相符就行);
             for (AIKVPointer *fuzzyRef_p in fuzzyRef_ps) {
@@ -715,7 +732,7 @@
         
         //b. 触发器
         [AITimeTrigger setTimeTrigger:actYesFo.mvDeltaTime canTrigger:^BOOL{
-            //c. 未等到实际输入 && 任务未完成 -> 则触发;
+            //c. 未等到实际输入 && 任务未在demandManager中抵消 -> 则触发;
             return foModel.status != TOModelStatus_ActYes && demand.status != TOModelStatus_Finish;
         } trigger:^{
             //d. 触发反省类比_实际fo数据收集;

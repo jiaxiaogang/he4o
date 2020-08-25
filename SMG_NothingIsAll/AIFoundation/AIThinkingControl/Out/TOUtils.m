@@ -425,10 +425,19 @@
  *  MARK:--------------------是否HNGL节点--------------------
  */
 +(BOOL) isHNGL:(AIKVPointer*)p{
-    if (p) {
-        return [p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATHav]] || [p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATNone]] || [p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATGreater]] || [p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATLess]];
-    }
-    return false;
+    return [self isH:p] || [self isN:p] || [self isG:p] || [self isN:p];
+}
++(BOOL) isH:(AIKVPointer*)p{
+    return p && [p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATHav]];
+}
++(BOOL) isN:(AIKVPointer*)p{
+    return p && [p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATNone]];
+}
++(BOOL) isG:(AIKVPointer*)p{
+    return p && [p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATGreater]];
+}
++(BOOL) isL:(AIKVPointer*)p{
+    return p && [p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATLess]];
 }
 
 @end
