@@ -298,7 +298,7 @@
         return item.status == TOModelStatus_ActNo || item.status == TOModelStatus_ScoreNo;
     }];
     NSArray *except_ps = [TOUtils convertPointersFromTOModels:exceptFoModels];
-    if (Log4DirecRef) NSLog(@"Fo不应期数:%ld",except_ps.count);
+    if (Log4DirecRef) NSLog(@"Fo不应期数:%lu",(unsigned long)except_ps.count);
     
     //4. 用方向索引找normalFo解决方案
     //P例:饿了,该怎么办;

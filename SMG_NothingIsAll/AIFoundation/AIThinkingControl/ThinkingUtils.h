@@ -21,6 +21,7 @@
 
 //根据analogyType取其构建Alg/Fo的dataSource; notnull
 +(NSString*) getAnalogyTypeDS:(AnalogyType)type;
++(AnalogyType) convertDS2AnalogyType:(NSString*)ds;
 
 //根据评分,得到该开心,还是不开心;
 +(AnalogyType) getInnerTypeWithScore:(CGFloat)score;

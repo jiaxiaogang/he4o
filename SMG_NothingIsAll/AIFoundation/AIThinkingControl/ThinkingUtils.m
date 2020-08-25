@@ -55,6 +55,16 @@
     }
 }
 
++(AnalogyType) convertDS2AnalogyType:(NSString*)ds{
+    NSArray *tryResults = @[@(ATHav),@(ATNone),@(ATGreater),@(ATLess)];
+    for (NSNumber *tryResult in tryResults) {
+        if ([[ThinkingUtils getAnalogyTypeDS:[tryResult intValue]] isEqualToString:ds]) {
+            return [tryResult intValue];
+        }
+    }
+    return ATDefault;
+}
+
 +(AnalogyType) getInnerTypeWithScore:(CGFloat)score{
     if (score > 0) {
         return ATPlus;

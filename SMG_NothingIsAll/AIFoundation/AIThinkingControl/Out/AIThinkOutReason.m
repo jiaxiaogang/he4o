@@ -348,22 +348,30 @@
                         waitModel.status = TOModelStatus_OuterBack;
                         waitModel.realContent_p = inputMModel.protoAlg.pointer;
                     }
-                }else if([TOUtils isG:waitModel.content_p]){
-                    //5. "G"的有效判断;
-                    
-                    //查内类比大小的代码,看此处该如何根据waitModel找到type与原稀疏码值;
-                    
-                    
-                }else if([TOUtils isL:waitModel.content_p]){
-                    //6. "L"的有效判断;
-                    
+                }else if([TOUtils isG:waitModel.content_p] || [TOUtils isL:waitModel.content_p]){
+                    //5. "GL"的有效判断;
+                    if (ISOK(waitModel.baseOrGroup.baseOrGroup, TOValueModel.class)) {
+                        
+                        //a. 从父级fo的父级取得原稀疏码值 (valueModel中有期望稀疏码sValue);
+                        TOValueModel *valueModel = (TOValueModel*)waitModel.baseOrGroup.baseOrGroup;
+                        AIKVPointer *hopeValue_p = valueModel.sValue_p;
+                        
+                        //b. 在inputProtoAlg中找到实际稀疏码realValue;
+                        AIKVPointer *realValue_p = [SMGUtils filterSameIdentifier_p:hopeValue_p b_ps:inputMModel.protoAlg.content_ps];
+                        
+                        //c. 对期望与实际稀疏码比较得到实际ATType;
+                        if (hopeValue_p && realValue_p) {
+                            AnalogyType realType = [ThinkingUtils compare:hopeValue_p valueB_p:realValue_p];
+                            
+                            //d. 当实际ATType与等待中的ATType一致时,符合预期;
+                            AnalogyType waitType = [ThinkingUtils convertDS2AnalogyType:waitModel.content_p.dataSource];
+                            if (realType == waitType) {
+                                waitModel.status = TOModelStatus_OuterBack;
+                                waitModel.realContent_p = inputMModel.protoAlg.pointer;
+                            }
+                        }
+                    }
                 }
-                
-                
-                //TODOTOMORROW: 20200824
-                
-                
-                
             }else{
                 //7. "行为输出" 和 "demand.ActYes"的有效判断;
                 if ([TOUtils mIsC_1:inputMModel.matchAlg.pointer c:waitModel.content_p]) {

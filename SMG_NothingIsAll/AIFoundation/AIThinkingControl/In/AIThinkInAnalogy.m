@@ -263,7 +263,7 @@
         //a. 对比微信息 (MARK_VALUE:如微信息去重功能去掉,此处要取值再进行对比)
         AnalogyType type = [ThinkingUtils compare:a_p valueB_p:b_p];
         //b. 调试a_p和b_p是否合格,应该同标识,同文件夹名称,不同pId;
-        if (Log4InAnaGL) NSLog(@"------ 内类比大小 ------\n%@ -> %@ From(前:A%ld后:A%ld)",Pit2FStr(a_p),Pit2FStr(b_p),algA.pointer.pointerId,algB.pointer.pointerId);
+        if (Log4InAnaGL) NSLog(@"------ 内类比大小 ------\n%@ -> %@ From(前:A%ld后:A%ld)",Pit2FStr(a_p),Pit2FStr(b_p),(long)algA.pointer.pointerId,(long)algB.pointer.pointerId);
         //d. 构建小/大;
         if (type != ATDefault) {
             AINetAbsFoNode *create = [self analogyInner_Creater:type algsType:a_p.algsType dataSource:a_p.dataSource frontConAlg:algA backConAlg:algB rangeAlg_ps:rangeAlg_ps conFo:checkFo];
@@ -368,7 +368,7 @@
     if (type == ATHav || type == ATNone) {
         if (Log4InAnaHN) NSLog(@"--> 构建:%@ ConFrom:%@ 构建Fo:%@",Alg2FStr(backAlg),Alg2FStr(backConAlg),Fo2FStr(result));
     }else if (type == ATGreater || type == ATLess) {
-        if (Log4InAnaGL) NSLog(@"--> 构建:%@ ConFrom:A%ld 构建Fo:%@",Alg2FStr(backAlg),backConAlg.pointer.pointerId,Fo2FStr(result));
+        if (Log4InAnaGL) NSLog(@"--> 构建:%@ ConFrom:A%ld 构建Fo:%@",Alg2FStr(backAlg),(long)backConAlg.pointer.pointerId,Fo2FStr(result));
     }
     return result;
 }
