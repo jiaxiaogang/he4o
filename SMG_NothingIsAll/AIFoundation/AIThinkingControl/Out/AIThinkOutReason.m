@@ -325,9 +325,14 @@
 
 /**
  *  MARK:--------------------外层输入对Out短时记忆的影响处理--------------------
+ *  @desc
+ *      1. 三种ActYes方式: (HNGL,isOut输出,demand完成);
+ *      2. 其中,"isOut输出"和"demand完成"和"HNGL.H"时的ActYes直接根据mIsC判断外循环输入是否符合即可;
+ *      3. 而HNGL.GL需要根据输入的稀疏码变化是否符合GL来判断 (base.base可找到期望稀疏码,参考:20204);
  *  @todo
- *      2020.08.23: 在waitModel为ActYes且为HNGL时,仅判定其是否符合HNGL变化;
+ *      2020.08.23: 在waitModel为ActYes且为HNGL时,仅判定其是否符合HNGL变化; T
  *      2020.08.23: 对realAlg进行收集,收集到waitTOAlgModel.realContent_p下; T
+ *      2020.08.26: 在GL时,需要判断其"期望"与"真实"概念间是否是同一物体 (参考20204-示例);
  *  @version
  *      2020.08.24: 从commitFromOuterPushMiddleLoop中独立出来,独立调用,处理realAlg和HNGL的变化相符判断;
  */

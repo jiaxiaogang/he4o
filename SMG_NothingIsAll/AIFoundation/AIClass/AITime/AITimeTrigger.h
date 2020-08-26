@@ -18,7 +18,6 @@
  *          4. 直到触发时,还未销毁,则说明实际时序并未完成,此时调用反省类比;
  *      2020.08.23: 改为由TOFoModel中setTimeTrigger方法替代;
  */
-@class TOModelBase;
 @interface AITimeTrigger : NSObject
 
 //@property (assign, nonatomic) NSTimeInterval time;          //AI运行的时间
