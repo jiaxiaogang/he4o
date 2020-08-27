@@ -121,6 +121,7 @@ typedef NS_ENUM(NSInteger, TOModelStatus) {
     TOModelStatus_ActYes   = 2,//行为化成功 (等待外循环结果);
     TOModelStatus_ActNo    = 3,//行为化失败 (等待条件满足时继续);
     TOModelStatus_ScoreNo  = 4,//评价失败而中止 (不想干,彻底挂掉,除非demandModel变的更迫切);
-    TOModelStatus_OuterBack= 5,//外循环结果返回标记;
-    TOModelStatus_Finish   = 6,//最终成功 (完成后向下帧跳转,发生在事实发生之后,即新的input匹配到);
+    TOModelStatus_NoNeedAct= 5,//无需行为化
+    TOModelStatus_OuterBack= 6,//外循环结果返回标记;
+    TOModelStatus_Finish   = 7,//最终成功 (完成后向下帧跳转,发生在事实发生之后,即新的input匹配到);
 };

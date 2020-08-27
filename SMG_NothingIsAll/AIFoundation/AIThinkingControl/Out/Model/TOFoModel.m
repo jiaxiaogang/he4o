@@ -22,12 +22,6 @@
     return result;
 }
 
--(NSMutableArray *)actions{
-    if (!_actions) _actions = [[NSMutableArray alloc] init];
-    return _actions;
-}
-
-
 /**
  *  MARK:--------------------每层第一名之和分值--------------------
  *  @desc 跨fo的综合评分,

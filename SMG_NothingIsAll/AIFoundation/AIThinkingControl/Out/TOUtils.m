@@ -407,13 +407,20 @@
     return result;
 }
 
-+(NSArray*) convertPointersFromTOValueModelSValue:(NSArray*)toModels{
+/**
+ *  MARK:--------------------将TOModels中TOValue部分的sValue_p收集返回--------------------
+ *  @version
+ *      2020.08.27: 支持invalidStatus,无效status不收集;
+ *
+ */
++(NSArray*) convertPointersFromTOValueModelSValue:(NSArray*)toModels invalidStatus:(NSArray*)invalidStatus{
     //1. 数据准备;
     NSMutableArray *result = [[NSMutableArray alloc] init];
+    invalidStatus = ARRTOOK(invalidStatus);
     
     //2. 收集返回
     [SMGUtils filterArr:toModels checkValid:^BOOL(TOValueModel *model) {
-        if (ISOK(model, TOValueModel.class) && model.sValue_p) {
+        if (ISOK(model, TOValueModel.class) && model.sValue_p && ![invalidStatus containsObject:model.status]) {
             [result addObject:model.sValue_p];
         }
         return false;

@@ -20,7 +20,13 @@
 @interface TOFoModel : TOModelBase <ISubModelsDelegate>
 
 +(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(id<ITryActionFoDelegate>)base;
-@property (strong, nonatomic) NSMutableArray *actions;//行为化数据;
+
+/**
+ *  MARK:--------------------行为化数据--------------------
+ *  @version
+ *      2020.08.27: 将actions行为化数据字段去掉,因为现在行为化数据在每一个isOut=true的TOAlgModel中;
+ */
+//@property (strong, nonatomic) NSMutableArray *actions;
 
 /**
  *  MARK:--------------------当前正在行为化的下标--------------------

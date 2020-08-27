@@ -413,7 +413,7 @@
     if (!M) return false;
     
     //3. 将理性评价数据存到短时记忆模型;
-    NSArray *except_ps = [TOUtils convertPointersFromTOValueModelSValue:outModel.subModels];
+    NSArray *except_ps = [TOUtils convertPointersFromTOValueModelSValue:outModel.subModels invalidStatus:nil];
     NSArray *validJustPValues = [SMGUtils removeSub_ps:except_ps parent_ps:outModel.justPValues];
         
     //4. 不用PM评价 (则交由流程控制方法,推动继续决策(跳转下帧/别的);
@@ -469,7 +469,7 @@
         //6. 不需要处理时,直接Finish,转至决策流程控制方法 (注:在TOValueModel构造方法中: proto中的value,就是subValue);
         if (Log4PM) NSLog(@"-> 无需PM,转至流程控制Finish");
         TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:nil group:outModel];
-        toValueModel.status = TOModelStatus_Finish;
+        toValueModel.status = TOModelStatus_NoNeedAct;
         [self singleLoopBackWithFinishModel:toValueModel];
         return true;
     }
@@ -751,10 +751,26 @@
             //d. 触发反省类比_实际fo数据收集;
             /////////对当前fo之下的,realContent_p进行收集,并组成实际realFo;
             
-            //TODOTOMORROW: 20200824
             
-            
-            
+            for (TOAlgModel *toAlgModel in foModel.subModels) {
+                if (ISOK(toAlgModel, TOAlgModel.class)) {
+                    NSArray *except_ps = [TOUtils convertPointersFromTOValueModelSValue:toAlgModel.subModels invalidStatus:@[@(TOModelStatus_Finish)]];
+                    NSArray *notFinish_ps = [SMGUtils removeSub_ps:except_ps parent_ps:toAlgModel.justPValues];
+                    
+                    
+                    //TODOTOMORROW: 20200828:
+                    //1. 对未完成的部分,进行构建概念;
+                    //2. 并收集起来,构建成S时序;
+                    
+                    //3. 并对同样别的S时序间,进行外类比,找出确切的S时序,如果已存在确切S时序,则加强;
+                    
+                    
+                    
+                    
+                }else{
+                    WLog(@"查下此处,为何fo的subModel不是algModel类型,如果2020.10之前未见过此警告,可取消打印此日志;");
+                }
+            }
         }];
         
         //TODOTOMORROW:
