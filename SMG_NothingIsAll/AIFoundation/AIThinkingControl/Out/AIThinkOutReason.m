@@ -23,6 +23,7 @@
 #import "DemandModel.h"
 #import "AITimeTrigger.h"
 #import "AIAbsAlgNode.h"
+#import "AINetAbsFoNode.h"
 
 @interface AIThinkOutReason() <TOActionDelegate>
 
@@ -792,8 +793,17 @@
                 AINetAbsFoNode *subFo = [theNet createAbsFo_General:@[foNode] content_ps:atSubFoContent difStrong:1 ds:subDS];
                 
                 ///5. 向性左向右,以当前foNode为交集指引,找assSubFo,以进行外类比 (参考20205-原则3);
-                if (subFo) {
-                    
+                NSArray *assSubFos = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:foNode type:ATSub]];
+                assSubFos = [SMGUtils removeSub_p:subFo.pointer parent_ps:assSubFos];
+                assSubFos = ARR_SUB(assSubFos, 0, cRethinkActBack_AssSubFoLimit);
+                
+                if (subFo && ARRISOK(assSubFos)) {
+                    for (AIKVPointer *item in assSubFos) {
+                        AINetAbsFoNode *assSubFo = [SMGUtils searchNode:item];
+                        
+                        //TODOTOMORROW 20200831:
+                        //对assSubFo和subFo进行外类比;
+                    }
                 }
                 
                 
