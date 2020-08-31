@@ -328,7 +328,7 @@
 
 /**
  *  MARK:--------------------外层输入对Out短时记忆的影响处理--------------------
- *  @desc
+ *  @desc 外循环回来,把各自实际输入的概念,存入到TOAlgModel.realAlg中;
  *      1. 三种ActYes方式: (HNGL,isOut输出,demand完成);
  *      2. 其中,"isOut输出"和"demand完成"和"HNGL.H"时的ActYes直接根据mIsC判断外循环输入是否符合即可;
  *      3. 而HNGL.GL需要根据输入的稀疏码变化是否符合GL来判断 (base.base可找到期望稀疏码,参考:20204);
@@ -723,6 +723,8 @@
 /**
  *  MARK:--------------------ActYes的流程控制--------------------
  *  @desc : 当ActYes时,一般等待外循环反馈,而此处构建生物钟触发器,用于超时时触发反省类比;
+ *      1. 调用AITimeTrigger触发器;
+ *      2. 当生物钟触发器触发时,如果未输入有效"理性推进" 或 "感性抵消",则对这些期望与实际的差距进行反省类比;
  *  @callers
  *      1. demand.ActYes处
  *      2. 行为化Hav().HNGL.ActYes处
@@ -730,16 +732,26 @@
  */
 -(void) singleLoopBackWithActYes:(TOModelBase*)actYesModel {
     if (ISOK(actYesModel, TOAlgModel.class)) {
+        //1. TOAlgModel时;
+        TOAlgModel *algModel = (TOAlgModel*)actYesModel;
+        TOFoModel *foModel = (TOFoModel*)algModel.baseOrGroup;
+        AIFoNodeBase *fo = [SMGUtils searchNode:foModel.content_p];
         if ([TOUtils isHNGL:actYesModel.content_p]) {
             //1. 如果TOAlgModel为HNGL时,
-            //向上找fo;
+            int algIndex = fo.content_ps.count - 1;
+            int deltaTime = [NUMTOOK(ARR_INDEX(fo.deltaTimes, algIndex)) intValue];
             
-            
+            //b. 触发器
+            [AITimeTrigger setTimeTrigger:deltaTime canTrigger:^BOOL{
+                //c. 触发条件: (未等到实际输入);
+                return algModel.status == TOModelStatus_ActYes;
+            } trigger:^{
+                //TODOTOMORROW: 20200901
+                //1. 对已发生的 (< algIndex) 的部分收集sub稀疏码,构建ATSubAlg;
+                //2. 对上述ATSubAlgs构建成ATSub时序;
+            }];
         }else if(actYesModel.content_p.isOut){
             //2. 为行为输出时;
-            TOAlgModel *algModel = (TOAlgModel*)actYesModel;
-            TOFoModel *foModel = (TOFoModel*)algModel.baseOrGroup;
-            AIFoNodeBase *fo = [SMGUtils searchNode:foModel.content_p];
             int algIndex = [fo.content_ps indexOfObject:algModel.content_p];
             int deltaTime = [NUMTOOK(ARR_INDEX(fo.deltaTimes, algIndex)) intValue];
             
@@ -748,7 +760,9 @@
                 //c. 触发条件: (未等到实际输入);
                 return algModel.status == TOModelStatus_ActYes;
             } trigger:^{
-                
+                //TODOTOMORROW: 20200901
+                //1. 对已发生的 (< algIndex) 的部分收集sub稀疏码,构建ATSubAlg;
+                //2. 对上述ATSubAlgs构建成ATSub时序;
             }];
         }
     }else if(ISOK(actYesModel, TOFoModel.class)){
@@ -807,17 +821,8 @@
                         } updateEnergy:nil type:ATSub];
                     }
                 }
-                
-                
-                
             }
-            
         }];
-        
-        //TODOTOMORROW:
-        //1. 三处构建触发器: a_demand.ActYes处, b_HNGL.ActYes处, c_行为输出ActYes处 (最好到操作的TOModel中构建触发器)
-        //2. 外循环回来,把各自实际输入的概念,存入到TOAlgModel/TOFoModel中 (最好在MP中存,因为MP在对其进行处理,面向的数据全);
-        //3. 当生物钟触发器触发时,如果未输入有效"理性推进" 或 "感性抵消",则对这些期望与实际的差距进行反省类比;
     }
 }
 
