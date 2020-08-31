@@ -11,7 +11,7 @@
 //MARK:===============================================================
 //MARK:                     < Analogy类比 >
 //MARK:===============================================================
-@class AIAbsAlgNode,AIAlgNode,AIShortMatchModel;
+@class AIAbsAlgNode,AIAlgNode,AIShortMatchModel,TOFoModel;
 @interface AIAnalogy : NSObject
 
 /**
@@ -44,9 +44,10 @@
 
 @end
 
-/**
- *  MARK:--------------------反馈类比--------------------
- */
+
+//MARK:===============================================================
+//MARK:                     < 反馈类比 >
+//MARK:===============================================================
 @interface AIAnalogy (Feedback)
 
 /**
@@ -68,5 +69,18 @@
  *  @param shortFo : 传瞬时记忆的protoFo(70%) 或 matchFo(30%);
  */
 +(void) analogy_Feedback_Same:(AIShortMatchModel*)mModel shortFo:(AIFoNodeBase*)shortFo;
+
+@end
+
+
+//MARK:===============================================================
+//MARK:                     < Out阶段类比 >
+//MARK:===============================================================
+@interface AIAnalogy (Out)
+
+/**
+ *  MARK:--------------------反省类比--------------------
+ */
++(void) analogy_ReasonRethink:(TOFoModel*)foModel cutIndex:(NSInteger)cutIndex;
 
 @end

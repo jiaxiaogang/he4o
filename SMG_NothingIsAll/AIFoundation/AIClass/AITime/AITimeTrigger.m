@@ -47,6 +47,7 @@
  *          3. 实际触发后,对预想时序fo 与 实际时序fo 进行反省类比;
  *          x. 当outModel中某时序完成时,则追回(销毁)与其对应的触发器 (废弃,不用销毁,改变status状态即可);
  *          x. 直到触发时,还未销毁,则说明实际时序并未完成,此时调用反省类比 (废弃,由commitFromOuterPushMiddleLoop()来做状态改变即可);
+ *  @param canTrigger : 触发条件;
  */
 +(void) setTimeTrigger:(NSTimeInterval)deltaTime canTrigger:(BOOL(^)())canTrigger trigger:(void(^)())trigger{
     //1. 数据检查

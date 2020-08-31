@@ -23,6 +23,9 @@
 #import "AIShortMatchModel.h"
 #import "AICMVNode.h"
 #import "AINetAbsCMVUtil.h"
+#import "TOFoModel.h"
+#import "TOAlgModel.h"
+#import "TOUtils.h"
 //temp
 #import "NVHeUtil.h"
 
@@ -420,6 +423,10 @@
 
 @end
 
+
+//MARK:===============================================================
+//MARK:                     < 反馈类比 >
+//MARK:===============================================================
 @implementation AIAnalogy (Feedback)
 
 /**
@@ -587,6 +594,74 @@
     [self analogyOutside:shortFo assFo:mModel.matchFo canAss:^BOOL{
         return true;
     } updateEnergy:nil type:ATSame];
+}
+
+@end
+
+
+//MARK:===============================================================
+//MARK:                     < Out阶段类比 >
+//MARK:===============================================================
+@implementation AIAnalogy (Out)
+
+/**
+ *  MARK:--------------------反省类比--------------------
+ *  @desc
+ *      1. 其实并不真正进行类比,而是对决策中未PM修正的部分,直接构建Sub节点;
+ *      2. 对已发生的 (cutIndex < algIndex) 的部分每一帧,收集未被PM修正的sub稀疏码,构建ATSubAlg (当前的两个调用者,都是全序列);
+ *      3. 对上述ATSubAlgs构建成ATSub时序;
+ *      4. 根据ATSubFo,从稀疏码向概念,再向时序索引查找,同样foNode的另外的assSubFo,并进行外类比 (目前仅简单的取时序的ATSub抽象);
+ *      5. 外类比构建更确切的S时序,如果已存在,则加强;
+ *
+ *  @callers
+ *      1. ActYes流程控制的HNGL调用时,生物钟触发器触发成功时,理性分析什么导致了未成功 (cutIndex无用,因为全部用);
+ *      2. ActYes流程控制的Demand调用时,生物钟触发器触发成功时,理性分析什么导致了未成功 (cutIndex无用,因为全部用);
+ */
++(void) analogy_ReasonRethink:(TOFoModel*)foModel cutIndex:(NSInteger)cutIndex{
+    //1. 数据准备
+    if (!foModel) return;
+    AIFoNodeBase *foNode = [SMGUtils searchNode:foModel.content_p];
+    NSMutableArray *atSubFoContent = [[NSMutableArray alloc] init];
+    NSString *subDS = [ThinkingUtils getAnalogyTypeDS:ATSub];
+    
+    //2. 构建ATSubAlg (触发反省类比_实际fo数据收集 (不用收集realFo,而是直接对未修正部分构建,参考20205-原则1));
+    for (TOAlgModel *toAlgModel in foModel.subModels) {
+        if (ISOK(toAlgModel, TOAlgModel.class)) {
+            //3. 取到 "未修正稀疏码" (参考20205-原则2);
+            NSArray *except_ps = [TOUtils convertPointersFromTOValueModelSValue:toAlgModel.subModels invalidStatus:@[@(TOModelStatus_Finish)]];
+            NSArray *notFinish_ps = [SMGUtils removeSub_ps:except_ps parent_ps:toAlgModel.justPValues];
+            
+            //4. 未修正部分构建为: "ATSub概念"
+            AIAlgNodeBase *curAlg = [SMGUtils searchNode:toAlgModel.content_p];
+            if (!ARRISOK(notFinish_ps)) continue;
+            AIAbsAlgNode *atSubAlg = [theNet createAbsAlg_NoRepeat:notFinish_ps conAlgs:@[curAlg] isMem:false ds:subDS];
+            
+            //5. 收集ATSub概念_用于构建ATSub时序;
+            [atSubFoContent addObject:atSubAlg.pointer];
+        }else{
+            WLog(@"查下此处,为何fo的subModel不是algModel类型,如果2020.10之前未见过此警告,可取消打印此日志;");
+        }
+    }
+    
+    //6. 构建ATSubFo
+    if (ARRISOK(atSubFoContent)) {
+        AINetAbsFoNode *subFo = [theNet createAbsFo_General:@[foNode] content_ps:atSubFoContent difStrong:1 ds:subDS];
+        
+        //7. 向性左向右,以当前foNode为交集指引,找assSubFo,以进行外类比 (参考20205-原则3);
+        NSArray *assSubFos = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:foNode type:ATSub]];
+        assSubFos = [SMGUtils removeSub_p:subFo.pointer parent_ps:assSubFos];
+        assSubFos = ARR_SUB(assSubFos, 0, cRethinkActBack_AssSubFoLimit);
+        
+        //8. 外类比;
+        if (subFo && ARRISOK(assSubFos)) {
+            for (AIKVPointer *item in assSubFos) {
+                AINetAbsFoNode *assSubFo = [SMGUtils searchNode:item];
+                [AIAnalogy analogyOutside:subFo assFo:assSubFo canAss:^BOOL{
+                    return true;
+                } updateEnergy:nil type:ATSub];
+            }
+        }
+    }
 }
 
 @end

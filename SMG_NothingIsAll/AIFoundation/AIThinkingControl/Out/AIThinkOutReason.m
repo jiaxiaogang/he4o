@@ -737,95 +737,43 @@
         //1. TOAlgModel时;
         TOAlgModel *algModel = (TOAlgModel*)actYesModel;
         TOFoModel *foModel = (TOFoModel*)algModel.baseOrGroup;
-        AIFoNodeBase *fo = [SMGUtils searchNode:foModel.content_p];
+        AIFoNodeBase *foNode = [SMGUtils searchNode:foModel.content_p];
         if ([TOUtils isHNGL:actYesModel.content_p]) {
-            //1. 如果TOAlgModel为HNGL时,
-            int algIndex = fo.content_ps.count - 1;
-            int deltaTime = [NUMTOOK(ARR_INDEX(fo.deltaTimes, algIndex)) intValue];
+            //2. 如果TOAlgModel为HNGL时,
+            NSInteger cutIndex = foNode.content_ps.count - 1;
+            int deltaTime = [NUMTOOK(ARR_INDEX(foNode.deltaTimes, cutIndex)) intValue];
             
-            //b. 触发器
+            //3. 触发器 (触发条件:未等到实际输入);
             [AITimeTrigger setTimeTrigger:deltaTime canTrigger:^BOOL{
-                //c. 触发条件: (未等到实际输入);
                 return algModel.status == TOModelStatus_ActYes;
             } trigger:^{
-                //TODOTOMORROW: 20200901
-                //1. 对已发生的 (< algIndex) 的部分收集sub稀疏码,构建ATSubAlg;
-                //2. 对上述ATSubAlgs构建成ATSub时序;
-                
-                
-                
+                [AIAnalogy analogy_ReasonRethink:foModel cutIndex:cutIndex];
             }];
         }else if(actYesModel.content_p.isOut){
-            //2. 为行为输出时;
-            int algIndex = [fo.content_ps indexOfObject:algModel.content_p];
-            int deltaTime = [NUMTOOK(ARR_INDEX(fo.deltaTimes, algIndex)) intValue];
-            
-            //b. 触发器
-            [AITimeTrigger setTimeTrigger:deltaTime canTrigger:^BOOL{
-                //c. 触发条件: (未等到实际输入);
-                return algModel.status == TOModelStatus_ActYes;
-            } trigger:^{
-                //1. 对已发生的 (< algIndex) 的部分收集sub稀疏码,构建ATSubAlg;
-                //2. 对上述ATSubAlgs构建成ATSub时序;
-            }];
+            ////2. 为行为输出时;
+            //int algIndex = [foNode.content_ps indexOfObject:algModel.content_p];
+            //int deltaTime = [NUMTOOK(ARR_INDEX(foNode.deltaTimes, algIndex)) intValue];
+            //
+            ////b. 触发器
+            //[AITimeTrigger setTimeTrigger:deltaTime canTrigger:^BOOL{
+            //    //c. 触发条件: (未等到实际输入);
+            //    return algModel.status == TOModelStatus_ActYes;
+            //} trigger:^{
+            //    //1. 对已发生的 (< algIndex) 的部分收集sub稀疏码,构建ATSubAlg;
+            //    //2. 对上述ATSubAlgs构建成ATSub时序;
+            //}];
         }
     }else if(ISOK(actYesModel, TOFoModel.class)){
-        //1. 数据准备
+        //1. TOFoModel时,数据准备
         TOFoModel *foModel = (TOFoModel*)actYesModel;
         AIFoNodeBase *actYesFo = [SMGUtils searchNode:foModel.content_p];
         DemandModel *demand = (DemandModel*)actYesModel.baseOrGroup;
-        AIFoNodeBase *foNode = [SMGUtils searchNode:foModel.content_p];
         
-        //2. 触发器
+        //2. 触发器 (触发条件:任务未在demandManager中抵消);
         [AITimeTrigger setTimeTrigger:actYesFo.mvDeltaTime canTrigger:^BOOL{
-            //3. 触发条件: 任务未在demandManager中抵消;
             return demand.status != TOModelStatus_Finish;
         } trigger:^{
-            //4. 触发反省类比_实际fo数据收集 (不用收集realFo,而是直接对未修正部分构建,参考20205-原则1);
-            //@desc
-            //  1. 将每一帧中未被PM修正的稀疏码,构建成ATSubAlg;
-            //  2. 将所有帧ATSubAlg再连起来,构建成ATSubFo;
-            //  3. 根据subFo,从稀疏码向概念,再向时序索引查找,同样foNode的另外的assSubFo,并进行外类比;
-            //  4. 外类比构建更确切的S时序,如果已存在,则加强;
-            NSMutableArray *atSubFoContent = [[NSMutableArray alloc] init];
-            NSString *subDS = [ThinkingUtils getAnalogyTypeDS:ATSub];
-            for (TOAlgModel *toAlgModel in foModel.subModels) {
-                if (ISOK(toAlgModel, TOAlgModel.class)) {
-                    ///1. 取到 "未修正稀疏码" (参考20205-原则2);
-                    NSArray *except_ps = [TOUtils convertPointersFromTOValueModelSValue:toAlgModel.subModels invalidStatus:@[@(TOModelStatus_Finish)]];
-                    NSArray *notFinish_ps = [SMGUtils removeSub_ps:except_ps parent_ps:toAlgModel.justPValues];
-                    
-                    ///2. 未修正部分构建为: "ATSub概念"
-                    AIAlgNodeBase *curAlg = [SMGUtils searchNode:toAlgModel.content_p];
-                    if (!ARRISOK(notFinish_ps)) continue;
-                    AIAbsAlgNode *atSubAlg = [theNet createAbsAlg_NoRepeat:notFinish_ps conAlgs:@[curAlg] isMem:false ds:subDS];
-                    
-                    ///3. 收集ATSub概念_用于构建ATSub时序;
-                    [atSubFoContent addObject:atSubAlg.pointer];
-                }else{
-                    WLog(@"查下此处,为何fo的subModel不是algModel类型,如果2020.10之前未见过此警告,可取消打印此日志;");
-                }
-            }
-            
-            ///4. 构建ATSubFo
-            if (ARRISOK(atSubFoContent)) {
-                AINetAbsFoNode *subFo = [theNet createAbsFo_General:@[foNode] content_ps:atSubFoContent difStrong:1 ds:subDS];
-                
-                ///5. 向性左向右,以当前foNode为交集指引,找assSubFo,以进行外类比 (参考20205-原则3);
-                NSArray *assSubFos = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:foNode type:ATSub]];
-                assSubFos = [SMGUtils removeSub_p:subFo.pointer parent_ps:assSubFos];
-                assSubFos = ARR_SUB(assSubFos, 0, cRethinkActBack_AssSubFoLimit);
-                
-                ///6. 外类比;
-                if (subFo && ARRISOK(assSubFos)) {
-                    for (AIKVPointer *item in assSubFos) {
-                        AINetAbsFoNode *assSubFo = [SMGUtils searchNode:item];
-                        [AIAnalogy analogyOutside:subFo assFo:assSubFo canAss:^BOOL{
-                            return true;
-                        } updateEnergy:nil type:ATSub];
-                    }
-                }
-            }
+            [AIAnalogy analogy_ReasonRethink:foModel cutIndex:NSIntegerMax];
         }];
     }
 }
