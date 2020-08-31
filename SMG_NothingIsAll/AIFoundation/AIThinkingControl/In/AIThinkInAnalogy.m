@@ -36,6 +36,7 @@
  *  MARK:--------------------fo外类比--------------------
  *  @version
  *      20200215: 有序外类比: 将forin循环fo和assFo改为反序,并记录上次类比位置jMax (因出现了[果,果,吃,吃]这样的异常时序) 参考n18p11;
+ *      20200831: 支持反省外类比,得出更确切的ATSub原因,参考:20205-步骤4;
  */
 +(void) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy type:(AnalogyType)type{
     //1. 类比orders的规律
@@ -80,9 +81,9 @@
                                 [orderSames insertObject:createAbsNode.pointer atIndex:0];
                                 jMax = j - 1;
                                 if (type == ATSame) {
-                                    if (Log4SameAna) NSLog(@"---> 构建:%@ ConFrom (A%ld,A%ld)",Alg2FStr(createAbsNode),algNodeA.pointer.pointerId,algNodeB.pointer.pointerId);
+                                    if (Log4SameAna) NSLog(@"---> 构建:%@ ConFrom (A%ld,A%ld)",Alg2FStr(createAbsNode),(long)algNodeA.pointer.pointerId,(long)algNodeB.pointer.pointerId);
                                 }else{
-                                     NSLog(@"---> 内中有外_构建:%@ ConFrom (A%ld,A%ld)",Alg2FStr(createAbsNode),algNodeA.pointer.pointerId,algNodeB.pointer.pointerId);
+                                    NSLog(@"---> 内中有外_构建:%@ ConFrom (A%ld,A%ld)",Alg2FStr(createAbsNode),(long)algNodeA.pointer.pointerId,(long)algNodeB.pointer.pointerId);
                                 }
                             }
                             ///4. 构建时,消耗能量值;
@@ -153,7 +154,7 @@
             if (type == ATSame) {
                 if (Log4SameAna) NSLog(@"--->> 构建时序:%@->%@",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
             }else{
-                if (Log4InOutAna) NSLog(@"----> 内中有外_构建:%@ from(%ld,%ld)",Fo2FStr(result),fo.pointer.pointerId,assFo.pointer.pointerId);
+                if (Log4InOutAna) NSLog(@"----> 内中有外_构建:%@ from(%ld,%ld)",Fo2FStr(result),(long)fo.pointer.pointerId,(long)assFo.pointer.pointerId);
             }
         }
     }
@@ -199,7 +200,7 @@
             
             //4. 内类比找不同 (比大小:同区不同值)
             if (algA && algB){
-                if (Log4InAna) NSLog(@"-----------内类比大小-----------\n%ld: %@\n%ld: %@",i,Alg2FStr(algA),lastIndex,Alg2FStr(algB));
+                if (Log4InAna) NSLog(@"-----------内类比大小-----------\n%ld: %@\n%ld: %@",(long)i,Alg2FStr(algA),(long)lastIndex,Alg2FStr(algB));
                 
                 //5. 内类比大小;
                 NSArray *rangeAlg_ps = ARR_SUB(protoFo.content_ps, i + 1, lastIndex - i - 1);
@@ -221,7 +222,7 @@
             
             //9. 内类比找不同 (比有无)
             if (algA && algB){
-                if (Log4InAna) NSLog(@"-----------内类比有无-----------\n%ld: %@\n%ld: %@",i,Alg2FStr(algA),lastIndex,Alg2FStr(algB));
+                if (Log4InAna) NSLog(@"-----------内类比有无-----------\n%ld: %@\n%ld: %@",(long)i,Alg2FStr(algA),(long)lastIndex,Alg2FStr(algB));
                 
                 //10. 取a和b交集,并构建抽象概念;
                 NSArray *same_ps = [SMGUtils filterSame_ps:algA.content_ps parent_ps:algB.content_ps];
@@ -398,7 +399,7 @@
             AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
             NSArray *itemRefPorts = [AINetUtils refPorts_All4Alg:itemAlg];
             NSArray *itemRef_ps = [SMGUtils convertPointersFromPorts:[SMGUtils filterPorts:itemRefPorts havTypes:@[@(type)] noTypes:nil]];
-            if (Log4InOutAna) NSLog(@"--- 内中外:%ld-%@ 引用数:%ld 同类数:%ld",i,Alg2FStr(itemAlg),itemRefPorts.count,itemRef_ps.count);
+            if (Log4InOutAna) NSLog(@"--- 内中外:%ld-%@ 引用数:%lu 同类数:%lu",(long)i,Alg2FStr(itemAlg),(unsigned long)itemRefPorts.count,(unsigned long)itemRef_ps.count);
             
             //4. assAbFo的条件为: (包含item & 包含back & 不是abFo)
             for (AIKVPointer *itemRef_p in itemRef_ps) {

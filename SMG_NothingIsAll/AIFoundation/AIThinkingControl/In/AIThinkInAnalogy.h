@@ -19,6 +19,10 @@
  *  @param canAssBlock      : energy判断器 (为null时,无限能量);
  *  @param updateEnergy     : energy消耗器 (为null时,不消耗能量值);
  *  @desc                   : orderSames用于构建absFo
+ *  @callers
+ *      1. analogy_Feedback_Same()  : 同向反馈类比
+ *      2. analogyInner()           : 内类比
+ *      3. reasonRethink()          : 反省类比
  *
  *  1. 连续信号中,找重复;(连续也是拆分,多事务处理的)
  *  2. 两条信息中,找交集;

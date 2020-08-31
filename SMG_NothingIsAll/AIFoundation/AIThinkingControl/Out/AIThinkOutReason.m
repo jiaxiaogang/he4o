@@ -24,6 +24,7 @@
 #import "AITimeTrigger.h"
 #import "AIAbsAlgNode.h"
 #import "AINetAbsFoNode.h"
+#import "AIThinkInAnalogy.h"
 
 @interface AIThinkOutReason() <TOActionDelegate>
 
@@ -797,12 +798,13 @@
                 assSubFos = [SMGUtils removeSub_p:subFo.pointer parent_ps:assSubFos];
                 assSubFos = ARR_SUB(assSubFos, 0, cRethinkActBack_AssSubFoLimit);
                 
+                ///6. 外类比;
                 if (subFo && ARRISOK(assSubFos)) {
                     for (AIKVPointer *item in assSubFos) {
                         AINetAbsFoNode *assSubFo = [SMGUtils searchNode:item];
-                        
-                        //TODOTOMORROW 20200831:
-                        //对assSubFo和subFo进行外类比;
+                        [AIThinkInAnalogy analogyOutside:subFo assFo:assSubFo canAss:^BOOL{
+                            return true;
+                        } updateEnergy:nil type:ATSub];
                     }
                 }
                 
