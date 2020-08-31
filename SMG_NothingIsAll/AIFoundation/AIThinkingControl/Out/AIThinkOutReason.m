@@ -729,6 +729,8 @@
  *      1. demand.ActYes处
  *      2. 行为化Hav().HNGL.ActYes处
  *      3. 行为输出ActYes处
+ *  @todo
+ *      2020.08.31: 对isOut触发的,先不做处理,因为一般都能直接行为输出并匹配上,所以暂不处理;
  */
 -(void) singleLoopBackWithActYes:(TOModelBase*)actYesModel {
     if (ISOK(actYesModel, TOAlgModel.class)) {
@@ -749,6 +751,9 @@
                 //TODOTOMORROW: 20200901
                 //1. 对已发生的 (< algIndex) 的部分收集sub稀疏码,构建ATSubAlg;
                 //2. 对上述ATSubAlgs构建成ATSub时序;
+                
+                
+                
             }];
         }else if(actYesModel.content_p.isOut){
             //2. 为行为输出时;
@@ -760,7 +765,6 @@
                 //c. 触发条件: (未等到实际输入);
                 return algModel.status == TOModelStatus_ActYes;
             } trigger:^{
-                //TODOTOMORROW: 20200901
                 //1. 对已发生的 (< algIndex) 的部分收集sub稀疏码,构建ATSubAlg;
                 //2. 对上述ATSubAlgs构建成ATSub时序;
             }];
