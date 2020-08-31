@@ -1,5 +1,5 @@
 //
-//  AIThinkInAnalogy.h
+//  AIAnalogy.h
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2019/3/20.
@@ -12,7 +12,7 @@
 //MARK:                     < Analogy类比 >
 //MARK:===============================================================
 @class AIAbsAlgNode,AIAlgNode,AIShortMatchModel;
-@interface AIThinkInAnalogy : NSObject
+@interface AIAnalogy : NSObject
 
 /**
  *  MARK:--------------------fo外类比 (外中有内,找相同算法)--------------------
@@ -47,7 +47,7 @@
 /**
  *  MARK:--------------------反馈类比--------------------
  */
-@interface AIThinkInAnalogy (Feedback)
+@interface AIAnalogy (Feedback)
 
 /**
  *  MARK:--------------------反馈类比_反向--------------------

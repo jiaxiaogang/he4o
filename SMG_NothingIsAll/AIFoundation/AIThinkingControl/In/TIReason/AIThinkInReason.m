@@ -20,7 +20,7 @@
 #import "AIAbsAlgNode.h"
 #import "AINetIndex.h"
 #import "TIRUtils.h"
-#import "AIThinkInAnalogy.h"
+#import "AIAnalogy.h"
 #import "AIShortMatchModel.h"
 #import "ThinkingUtils.h"
 #import "TOUtils.h"
@@ -401,7 +401,7 @@
  */
 +(void) analogyInner:(AIShortMatchModel*)mModel{
     if (mModel) {
-        [AIThinkInAnalogy analogyInner:mModel.protoFo matchAFo:mModel.matchAFo];
+        [AIAnalogy analogyInner:mModel.protoFo matchAFo:mModel.matchAFo];
     }
 }
 

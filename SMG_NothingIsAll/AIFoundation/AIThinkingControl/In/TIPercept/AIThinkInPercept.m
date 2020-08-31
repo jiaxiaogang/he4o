@@ -12,7 +12,7 @@
 #import "AIKVPointer.h"
 #import "AIPort.h"
 #import "AINet.h"
-#import "AIThinkInAnalogy.h"
+#import "AIAnalogy.h"
 #import "AINetIndex.h"
 
 @implementation AIThinkInPercept
@@ -68,10 +68,10 @@
     NSArray *mModels = ARRTOOK([self.delegate tir_getShortMatchModel]);
     for (AIShortMatchModel *mModel in mModels) {
         //a. 正向反馈类比;
-        [AIThinkInAnalogy analogy_Feedback_Same:mModel shortFo:protoFo];
+        [AIAnalogy analogy_Feedback_Same:mModel shortFo:protoFo];
         
         //b. 反向反馈类比;
-        [AIThinkInAnalogy analogy_Feedback_Diff:mModel shortFo:protoFo];
+        [AIAnalogy analogy_Feedback_Diff:mModel shortFo:protoFo];
     }
 }
 

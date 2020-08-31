@@ -1,12 +1,12 @@
 //
-//  AIThinkInAnalogy.m
+//  AIAnalogy.m
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2019/3/20.
 //  Copyright © 2019年 XiaoGang. All rights reserved.
 //
 
-#import "AIThinkInAnalogy.h"
+#import "AIAnalogy.h"
 #import "AIKVPointer.h"
 #import "AINetAbsFoNode.h"
 #import "AIAbsAlgNode.h"
@@ -26,7 +26,7 @@
 //temp
 #import "NVHeUtil.h"
 
-@implementation AIThinkInAnalogy
+@implementation AIAnalogy
 
 //MARK:===============================================================
 //MARK:                     < 外类比部分 >
@@ -420,7 +420,7 @@
 
 @end
 
-@implementation AIThinkInAnalogy (Feedback)
+@implementation AIAnalogy (Feedback)
 
 /**
  *  MARK:--------------------反向反馈类比--------------------

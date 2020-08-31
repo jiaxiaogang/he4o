@@ -24,7 +24,7 @@
 #import "AITimeTrigger.h"
 #import "AIAbsAlgNode.h"
 #import "AINetAbsFoNode.h"
-#import "AIThinkInAnalogy.h"
+#import "AIAnalogy.h"
 
 @interface AIThinkOutReason() <TOActionDelegate>
 
@@ -802,7 +802,7 @@
                 if (subFo && ARRISOK(assSubFos)) {
                     for (AIKVPointer *item in assSubFos) {
                         AINetAbsFoNode *assSubFo = [SMGUtils searchNode:item];
-                        [AIThinkInAnalogy analogyOutside:subFo assFo:assSubFo canAss:^BOOL{
+                        [AIAnalogy analogyOutside:subFo assFo:assSubFo canAss:^BOOL{
                             return true;
                         } updateEnergy:nil type:ATSub];
                     }

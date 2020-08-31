@@ -420,7 +420,7 @@
     
     //2. 收集返回
     [SMGUtils filterArr:toModels checkValid:^BOOL(TOValueModel *model) {
-        if (ISOK(model, TOValueModel.class) && model.sValue_p && ![invalidStatus containsObject:model.status]) {
+        if (ISOK(model, TOValueModel.class) && model.sValue_p && ![invalidStatus containsObject:@(model.status)]) {
             [result addObject:model.sValue_p];
         }
         return false;
