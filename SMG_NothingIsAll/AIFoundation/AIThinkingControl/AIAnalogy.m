@@ -85,6 +85,8 @@
                                 jMax = j - 1;
                                 if (type == ATSame) {
                                     if (Log4SameAna) NSLog(@"---> 构建:%@ ConFrom (A%ld,A%ld)",Alg2FStr(createAbsNode),(long)algNodeA.pointer.pointerId,(long)algNodeB.pointer.pointerId);
+                                }else if(type == ATSub){
+                                    NSLog(@"---> 反省类比-外类比_构建:%@ ConFrom (A%ld,A%ld)",Alg2FStr(createAbsNode),(long)algNodeA.pointer.pointerId,(long)algNodeB.pointer.pointerId);
                                 }else{
                                     NSLog(@"---> 内中有外_构建:%@ ConFrom (A%ld,A%ld)",Alg2FStr(createAbsNode),(long)algNodeA.pointer.pointerId,(long)algNodeB.pointer.pointerId);
                                 }
@@ -623,6 +625,7 @@
     AIFoNodeBase *foNode = [SMGUtils searchNode:foModel.content_p];
     NSMutableArray *atSubFoContent = [[NSMutableArray alloc] init];
     NSString *subDS = [ThinkingUtils getAnalogyTypeDS:ATSub];
+    NSLog(@"\n\n=============================== 反省类比 ===============================\n时序:%@",Fo2FStr(foNode));
     
     //2. 构建ATSubAlg (触发反省类比_实际fo数据收集 (不用收集realFo,而是直接对未修正部分构建,参考20205-原则1));
     for (TOAlgModel *toAlgModel in foModel.subModels) {
@@ -635,6 +638,7 @@
             AIAlgNodeBase *curAlg = [SMGUtils searchNode:toAlgModel.content_p];
             if (!ARRISOK(notFinish_ps)) continue;
             AIAbsAlgNode *atSubAlg = [theNet createAbsAlg_NoRepeat:notFinish_ps conAlgs:@[curAlg] isMem:false ds:subDS];
+            NSLog(@"createAlg: %@",Alg2FStr(atSubAlg));
             
             //5. 收集ATSub概念_用于构建ATSub时序;
             [atSubFoContent addObject:atSubAlg.pointer];
@@ -646,6 +650,7 @@
     //6. 构建ATSubFo
     if (ARRISOK(atSubFoContent)) {
         AINetAbsFoNode *subFo = [theNet createAbsFo_General:@[foNode] content_ps:atSubFoContent difStrong:1 ds:subDS];
+        NSLog(@"createFo: %@",Fo2FStr(subFo));
         
         //7. 向性左向右,以当前foNode为交集指引,找assSubFo,以进行外类比 (参考20205-原则3);
         NSArray *assSubFos = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:foNode type:ATSub]];
@@ -656,9 +661,7 @@
         if (subFo && ARRISOK(assSubFos)) {
             for (AIKVPointer *item in assSubFos) {
                 AINetAbsFoNode *assSubFo = [SMGUtils searchNode:item];
-                [AIAnalogy analogyOutside:subFo assFo:assSubFo canAss:^BOOL{
-                    return true;
-                } updateEnergy:nil type:ATSub];
+                [AIAnalogy analogyOutside:subFo assFo:assSubFo canAss:nil updateEnergy:nil type:ATSub];
             }
         }
     }

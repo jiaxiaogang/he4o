@@ -733,6 +733,7 @@
  *      2020.08.31: 对isOut触发的,先不做处理,因为一般都能直接行为输出并匹配上,所以暂不处理;
  */
 -(void) singleLoopBackWithActYes:(TOModelBase*)actYesModel {
+    NSLog(@"\n\n=============================== 流程控制:ActYes ===============================\nModel:%@ %@",actYesModel.class,Pit2FStr(actYesModel.content_p));
     if (ISOK(actYesModel, TOAlgModel.class)) {
         //1. TOAlgModel时;
         TOAlgModel *algModel = (TOAlgModel*)actYesModel;
