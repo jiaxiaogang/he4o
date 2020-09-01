@@ -199,5 +199,6 @@
 +(NSArray*) refPorts_All4Alg:(AIAlgNodeBase*)node;
 +(NSArray*) refPorts_All4Alg_Normal:(AIAlgNodeBase*)node;
 +(NSArray*) refPorts_All4Value:(AIKVPointer*)value_p;
++(NSArray*) refPorts_All4Value:(AIKVPointer*)value_p isMem:(BOOL)isMem;
 
 @end

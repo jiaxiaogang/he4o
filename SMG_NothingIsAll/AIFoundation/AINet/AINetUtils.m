@@ -449,9 +449,15 @@
 
 +(NSArray*) refPorts_All4Value:(AIKVPointer*)value_p{
     NSMutableArray *allPorts = [[NSMutableArray alloc] init];
+    [allPorts addObjectsFromArray:[self refPorts_All4Value:value_p isMem:false]];
+    [allPorts addObjectsFromArray:[self refPorts_All4Value:value_p isMem:true]];
+    return allPorts;
+}
+
++(NSArray*) refPorts_All4Value:(AIKVPointer*)value_p isMem:(BOOL)isMem{
+    NSMutableArray *allPorts = [[NSMutableArray alloc] init];
     if (value_p) {
-        [allPorts addObjectsFromArray:[SMGUtils searchObjectForFilePath:value_p.filePath fileName:kFNRefPorts time:cRTReference]];
-        [allPorts addObjectsFromArray:[SMGUtils searchObjectForFilePath:value_p.filePath fileName:kFNMemRefPorts time:cRTMemReference]];
+        [allPorts addObjectsFromArray:[SMGUtils searchObjectForFilePath:value_p.filePath fileName:kFNRefPorts_All(isMem) time:cRTReference_All(isMem)]];
     }
     return allPorts;
 }

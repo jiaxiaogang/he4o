@@ -112,7 +112,7 @@
     [self partMatching_General:algNode refPortsBlock:^NSArray *(AIKVPointer *item_p) {
         if (item_p) {
             //1> 数据准备 (value_p的refPorts是单独存储的);
-            return ARRTOOK([SMGUtils searchObjectForFilePath:item_p.filePath fileName:kFNRefPorts_All(isMem) time:cRTReference_All(isMem)]);
+            return [AINetUtils refPorts_All4Value:item_p isMem:isMem];
         }
         return nil;
     } checkBlock:^BOOL(AIPointer *target_p) {
@@ -199,7 +199,7 @@
         NSInteger typeWrong = 0;
         NSInteger countWrong = 0;
         NSInteger typeCountWrong = 0;
-        if (Log4MAlg) WLog(@"proto___________长度:%lu 内容:(%@)",protoAlg.content_ps.count,Alg2FStr(protoAlg));
+        if (Log4MAlg) WLog(@"proto___________长度:%lu 内容:(%@)",(unsigned long)protoAlg.content_ps.count,Alg2FStr(protoAlg));
         for (NSData *key in sortKeys) {
             AIKVPointer *key_p = DATA2OBJ(key);
             AIAlgNodeBase *result = [SMGUtils searchNode:key_p];
@@ -220,7 +220,7 @@
             if (Log4MAlg) WLog(@"Item识别失败_匹配:%d 类型:%@ 内容:%@",matchingCount,result.class,Alg2FStr(result));
         }
         
-        if (Log4MAlg) WLog(@"识别结果 >> 非抽象且非全含:%ld,非抽象数:%ld,非全含数:%ld / 总数:%lu",(long)typeCountWrong,(long)typeWrong,countWrong,(unsigned long)sortKeys.count);
+        if (Log4MAlg) WLog(@"识别结果 >> 非抽象且非全含:%ld,非抽象数:%ld,非全含数:%ld / 总数:%lu",(long)typeCountWrong,(long)typeWrong,(long)countWrong,(unsigned long)sortKeys.count);
         
         //7. 未将全含返回,则返回最相似;
         AIAlgNodeBase *seemAlg = [SMGUtils searchNode:DATA2OBJ(ARR_INDEX(sortKeys, 0))];
