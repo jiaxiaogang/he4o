@@ -54,6 +54,7 @@
             AIShortMatchModel_Simple *simple = [[AIShortMatchModel_Simple alloc] init];
             simple.alg_p = itemAlg_p;
             simple.inputTime = mModel.inputTime;
+            [result addObject:simple];
         }
     }
     return result;
