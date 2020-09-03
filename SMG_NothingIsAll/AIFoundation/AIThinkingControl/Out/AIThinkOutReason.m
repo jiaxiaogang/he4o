@@ -442,9 +442,35 @@
         TOFoModel *curFoModel = (TOFoModel*)curAlgModel.baseOrGroup;
         AIFoNodeBase *curFo = [SMGUtils searchNode:curFoModel.content_p];
         
-        //6. 根据curFo取ATSubPorts,查对应在curAlg上是否长过教训;
-        NSArray *curFoSubs = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:curFo type:ATSub]];
-        AIFoNodeBase *firstSubFo = [SMGUtils searchNode:ARR_INDEX(curFoSubs, 0)];
+        //7. 根据curFo取抽象SubFo3条,PlusFo3条;
+        NSArray *foSs = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:curFo type:ATSub]];
+        NSArray *foPs = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:curFo type:ATPlus]];
+        foSs = ARR_SUB(foSs, 0, cPM_CheckSPFoLimit);
+        foPs = ARR_SUB(foPs, 0, cPM_CheckSPFoLimit);
+        
+        //8. 查对应在curAlg上是否长过教训S / 被助攻过P;
+        NSArray *algSs = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:curAlg type:ATSub]];
+        NSArray *algPs = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:curAlg type:ATPlus]];
+        
+        //9. 从algSs中,筛选有效的部分validAlgSs
+        NSMutableArray *validAlgSs = [[NSMutableArray alloc] init];
+        for (AIKVPointer *item in foSs) {
+            AIFoNodeBase *sFo = [SMGUtils searchNode:item];
+            NSArray *itemValid = [SMGUtils filterSame_ps:sFo.content_ps parent_ps:algSs];
+            [validAlgSs addObjectsFromArray:itemValid];
+        }
+        
+        //10. 从algPs中,筛选有效的部分validAlgPs
+        NSMutableArray *validAlgPs = [[NSMutableArray alloc] init];
+        for (AIKVPointer *item in foPs) {
+            AIFoNodeBase *pFo = [SMGUtils searchNode:item];
+            NSArray *itemValid = [SMGUtils filterSame_ps:pFo.content_ps parent_ps:algPs];
+            [validAlgPs addObjectsFromArray:itemValid];
+        }
+        
+        //11. 从validAlgSs和validAlgPs中,找firstJustPValue同区稀疏码;
+        
+        //12. 对同区稀疏码的值进行接近度排序,将最接近的取出,并根据源于S或P作为理性评价结果,判断是否修正;
         
         
         
