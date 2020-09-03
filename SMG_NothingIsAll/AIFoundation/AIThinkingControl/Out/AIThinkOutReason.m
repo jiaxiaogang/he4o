@@ -21,7 +21,7 @@
 #import "TOAlgModel.h"
 #import "TOValueModel.h"
 #import "DemandModel.h"
-#import "AITimeTrigger.h"
+#import "AITime.h"
 #import "AIAbsAlgNode.h"
 #import "AINetAbsFoNode.h"
 #import "AIAnalogy.h"
@@ -734,7 +734,7 @@
 /**
  *  MARK:--------------------ActYes的流程控制--------------------
  *  @desc : 当ActYes时,一般等待外循环反馈,而此处构建生物钟触发器,用于超时时触发反省类比;
- *      1. 调用AITimeTrigger触发器;
+ *      1. 调用AITime触发器;
  *      2. 当生物钟触发器触发时,如果未输入有效"理性推进" 或 "感性抵消",则对这些期望与实际的差距进行反省类比;
  *  @callers
  *      1. demand.ActYes处
@@ -756,7 +756,7 @@
             int deltaTime = [NUMTOOK(ARR_INDEX(foNode.deltaTimes, cutIndex)) intValue];
             
             //3. 触发器 (触发条件:未等到实际输入);
-            [AITimeTrigger setTimeTrigger:deltaTime canTrigger:^BOOL{
+            [AITime setTimeTrigger:deltaTime canTrigger:^BOOL{
                 return algModel.status == TOModelStatus_ActYes;
             } trigger:^{
                 [AIAnalogy analogy_ReasonRethink:foModel cutIndex:cutIndex];
@@ -767,7 +767,7 @@
             //int deltaTime = [NUMTOOK(ARR_INDEX(foNode.deltaTimes, algIndex)) intValue];
             //
             ////b. 触发器
-            //[AITimeTrigger setTimeTrigger:deltaTime canTrigger:^BOOL{
+            //[AITime setTimeTrigger:deltaTime canTrigger:^BOOL{
             //    //c. 触发条件: (未等到实际输入);
             //    return algModel.status == TOModelStatus_ActYes;
             //} trigger:^{
@@ -782,7 +782,7 @@
         DemandModel *demand = (DemandModel*)actYesModel.baseOrGroup;
         
         //2. 触发器 (触发条件:任务未在demandManager中抵消);
-        [AITimeTrigger setTimeTrigger:actYesFo.mvDeltaTime canTrigger:^BOOL{
+        [AITime setTimeTrigger:actYesFo.mvDeltaTime canTrigger:^BOOL{
             return demand.status != TOModelStatus_Finish;
         } trigger:^{
             [AIAnalogy analogy_ReasonRethink:foModel cutIndex:NSIntegerMax];
