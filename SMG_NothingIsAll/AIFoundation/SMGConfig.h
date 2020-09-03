@@ -59,7 +59,7 @@
 
 #define cTOPPModeConAssLimit 5  //在TOP的P模式下,下具象联想的条数
 
-#define cRethinkActBack_AssSubFoLimit 3 //反省_联想ATSubFo的数量
+#define cRethinkActBack_AssSPFoLimit 3 //反省_联想ATSubFo的数量
 
 //MARK:===============================================================
 //MARK:                     < ThinkIn >

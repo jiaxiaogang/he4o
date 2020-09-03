@@ -756,10 +756,9 @@
             int deltaTime = [NUMTOOK(ARR_INDEX(foNode.deltaTimes, cutIndex)) intValue];
             
             //3. 触发器 (触发条件:未等到实际输入);
-            [AITime setTimeTrigger:deltaTime canTrigger:^BOOL{
-                return algModel.status == TOModelStatus_ActYes;
-            } trigger:^{
-                [AIAnalogy analogy_ReasonRethink:foModel cutIndex:cutIndex];
+            [AITime setTimeTrigger:deltaTime trigger:^{
+                AnalogyType type = (algModel.status == TOModelStatus_ActYes) ? ATSub : ATPlus;
+                [AIAnalogy analogy_ReasonRethink:foModel cutIndex:cutIndex type:type];
             }];
         }else if(actYesModel.content_p.isOut){
             ////2. 为行为输出时;
@@ -782,10 +781,9 @@
         DemandModel *demand = (DemandModel*)actYesModel.baseOrGroup;
         
         //2. 触发器 (触发条件:任务未在demandManager中抵消);
-        [AITime setTimeTrigger:actYesFo.mvDeltaTime canTrigger:^BOOL{
-            return demand.status != TOModelStatus_Finish;
-        } trigger:^{
-            [AIAnalogy analogy_ReasonRethink:foModel cutIndex:NSIntegerMax];
+        [AITime setTimeTrigger:actYesFo.mvDeltaTime trigger:^{
+            AnalogyType type = (demand.status != TOModelStatus_Finish) ? ATSub : ATPlus;
+            [AIAnalogy analogy_ReasonRethink:foModel cutIndex:NSIntegerMax type:type];
         }];
     }
 }
@@ -803,6 +801,7 @@
     actions = ARRTOOK(actions);
     for (AIKVPointer *algNode_p in actions) {
         BOOL invoked = [Output output_FromTC:algNode_p];
+        NSLog(@"===执行%@",invoked ? @"success" : @"failure");
     }
 }
 -(AIShortMatchModel*) toAction_RethinkInnerFo:(AIFoNodeBase*)fo{

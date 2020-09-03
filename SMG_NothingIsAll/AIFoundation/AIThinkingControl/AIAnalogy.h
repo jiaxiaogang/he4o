@@ -81,6 +81,6 @@
 /**
  *  MARK:--------------------反省类比--------------------
  */
-+(void) analogy_ReasonRethink:(TOFoModel*)foModel cutIndex:(NSInteger)cutIndex;
++(void) analogy_ReasonRethink:(TOFoModel*)foModel cutIndex:(NSInteger)cutIndex type:(AnalogyType)type;
 
 @end

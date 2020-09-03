@@ -85,10 +85,8 @@
                                 jMax = j - 1;
                                 if (type == ATSame) {
                                     if (Log4SameAna) NSLog(@"---> 构建:%@ ConFrom (A%ld,A%ld)",Alg2FStr(createAbsNode),(long)algNodeA.pointer.pointerId,(long)algNodeB.pointer.pointerId);
-                                }else if(type == ATSub){
-                                    NSLog(@"---> 反省类比-外类比_构建:%@ ConFrom (A%ld,A%ld)",Alg2FStr(createAbsNode),(long)algNodeA.pointer.pointerId,(long)algNodeB.pointer.pointerId);
                                 }else{
-                                    NSLog(@"---> 内中有外_构建:%@ ConFrom (A%ld,A%ld)",Alg2FStr(createAbsNode),(long)algNodeA.pointer.pointerId,(long)algNodeB.pointer.pointerId);
+                                    NSLog(@"---> type:%ld_外类比_构建:%@ ConFrom (A%ld,A%ld)",(long)type,Alg2FStr(createAbsNode),(long)algNodeA.pointer.pointerId,(long)algNodeB.pointer.pointerId);
                                 }
                             }
                             ///4. 构建时,消耗能量值;
@@ -158,8 +156,8 @@
         if (result) {
             if (type == ATSame) {
                 if (Log4SameAna) NSLog(@"--->> 构建时序:%@->%@",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
-            }else{
-                if (Log4InOutAna) NSLog(@"----> 内中有外_构建:%@ from(%ld,%ld)",Fo2FStr(result),(long)fo.pointer.pointerId,(long)assFo.pointer.pointerId);
+            }else {
+                if (Log4InOutAna) NSLog(@"----> type:%ld_外类比_构建:%@ from(%ld,%ld)",type,Fo2FStr(result),(long)fo.pointer.pointerId,(long)assFo.pointer.pointerId);
             }
         }
     }
@@ -618,50 +616,52 @@
  *  @callers
  *      1. ActYes流程控制的HNGL调用时,生物钟触发器触发成功时,理性分析什么导致了未成功 (cutIndex无用,因为全部用);
  *      2. ActYes流程控制的Demand调用时,生物钟触发器触发成功时,理性分析什么导致了未成功 (cutIndex无用,因为全部用);
+ *  @version
+ *      2020.09.03: 支持ATPlus反省类比;
  */
-+(void) analogy_ReasonRethink:(TOFoModel*)foModel cutIndex:(NSInteger)cutIndex{
++(void) analogy_ReasonRethink:(TOFoModel*)foModel cutIndex:(NSInteger)cutIndex type:(AnalogyType)type{
     //1. 数据准备
-    if (!foModel) return;
+    if (!foModel || (type != ATSub && type != ATPlus)) return;
     AIFoNodeBase *foNode = [SMGUtils searchNode:foModel.content_p];
-    NSMutableArray *atSubFoContent = [[NSMutableArray alloc] init];
-    NSString *subDS = [ThinkingUtils getAnalogyTypeDS:ATSub];
-    NSLog(@"\n\n=============================== 反省类比 ===============================\n时序:%@",Fo2FStr(foNode));
+    NSMutableArray *spFoContent = [[NSMutableArray alloc] init];
+    NSString *spDS = [ThinkingUtils getAnalogyTypeDS:type];
+    NSLog(@"\n\n=============================== 反省类比 ===============================\n%ld:时序:%@",(long)type,Fo2FStr(foNode));
     
-    //2. 构建ATSubAlg (触发反省类比_实际fo数据收集 (不用收集realFo,而是直接对未修正部分构建,参考20205-原则1));
+    //2. 构建SPAlg (触发反省类比_实际fo数据收集 (不用收集realFo,而是直接对未修正部分构建,参考20205-原则1));
     for (TOAlgModel *toAlgModel in foModel.subModels) {
         if (ISOK(toAlgModel, TOAlgModel.class)) {
             //3. 取到 "未修正稀疏码" (参考20205-原则2);
             NSArray *except_ps = [TOUtils convertPointersFromTOValueModelSValue:toAlgModel.subModels invalidStatus:@[@(TOModelStatus_Finish)]];
             NSArray *notFinish_ps = [SMGUtils removeSub_ps:except_ps parent_ps:toAlgModel.justPValues];
             
-            //4. 未修正部分构建为: "ATSub概念"
+            //4. 未修正部分构建为: "SP概念"
             AIAlgNodeBase *curAlg = [SMGUtils searchNode:toAlgModel.content_p];
             if (!ARRISOK(notFinish_ps)) continue;
-            AIAbsAlgNode *atSubAlg = [theNet createAbsAlg_NoRepeat:notFinish_ps conAlgs:@[curAlg] isMem:false ds:subDS];
-            NSLog(@"createAlg: %@",Alg2FStr(atSubAlg));
+            AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:notFinish_ps conAlgs:@[curAlg] isMem:false ds:spDS];
+            NSLog(@"createAlg: %@",Alg2FStr(spAlg));
             
-            //5. 收集ATSub概念_用于构建ATSub时序;
-            [atSubFoContent addObject:atSubAlg.pointer];
+            //5. 收集SP概念_用于构建SP时序;
+            [spFoContent addObject:spAlg.pointer];
         }else{
             WLog(@"查下此处,为何fo的subModel不是algModel类型,如果2020.10之前未见过此警告,可取消打印此日志;");
         }
     }
     
-    //6. 构建ATSubFo
-    if (ARRISOK(atSubFoContent)) {
-        AINetAbsFoNode *subFo = [theNet createAbsFo_General:@[foNode] content_ps:atSubFoContent difStrong:1 ds:subDS];
-        NSLog(@"createFo: %@",Fo2FStr(subFo));
+    //6. 构建SPFo
+    if (ARRISOK(spFoContent)) {
+        AINetAbsFoNode *spFo = [theNet createAbsFo_General:@[foNode] content_ps:spFoContent difStrong:1 ds:spDS];
+        NSLog(@"createFo: %@",Fo2FStr(spFo));
         
-        //7. 向性左向右,以当前foNode为交集指引,找assSubFo,以进行外类比 (参考20205-原则3);
-        NSArray *assSubFos = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:foNode type:ATSub]];
-        assSubFos = [SMGUtils removeSub_p:subFo.pointer parent_ps:assSubFos];
-        assSubFos = ARR_SUB(assSubFos, 0, cRethinkActBack_AssSubFoLimit);
+        //7. 向性左向右,以当前foNode为交集指引,找assSPFo,以进行外类比 (参考20205-原则3);
+        NSArray *assSPFos = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:foNode type:type]];
+        assSPFos = [SMGUtils removeSub_p:spFo.pointer parent_ps:assSPFos];
+        assSPFos = ARR_SUB(assSPFos, 0, cRethinkActBack_AssSPFoLimit);
         
         //8. 外类比;
-        if (subFo && ARRISOK(assSubFos)) {
-            for (AIKVPointer *item in assSubFos) {
-                AINetAbsFoNode *assSubFo = [SMGUtils searchNode:item];
-                [AIAnalogy analogyOutside:subFo assFo:assSubFo canAss:nil updateEnergy:nil type:ATSub];
+        if (spFo && ARRISOK(assSPFos)) {
+            for (AIKVPointer *item in assSPFos) {
+                AINetAbsFoNode *assSPFo = [SMGUtils searchNode:item];
+                [AIAnalogy analogyOutside:spFo assFo:assSPFo canAss:nil updateEnergy:nil type:type];
             }
         }
     }
