@@ -433,13 +433,22 @@
     if (firstJustPValue) {
         
         
-        //TODOTOMORROW: 20200903-将反省结果应用于PM理性评价
-        //1. outModel.baseOrGroup是CAlg
-        //      如: A22(速0,高5,距0,向→,皮0)
-        //2. 而outModel.base.base是CFo (即当前解决方案)
-        //      如: P+新增一例解决方案: F23[A22(速0,高5,距0,向→,皮0),A1(吃1)]->M7{64};
-        //3. 对CFo取ATSub抽象,看是否自省长过教训;
-        //4. 或者CFo中,没有距>0的概念,所以查下是否对预期Fo将具象概念替换进去,然后再形成时序和ATSub抽象指向;
+        //TODOTOMORROW: 20200903-将SP应用于PM理性评价
+        //5. 取得当前帧alg模型 (参考20206-示图) 如: A22(速0,高5,距0,向→,皮0);
+        TOAlgModel *curAlgModel = (TOAlgModel*)outModel.baseOrGroup;
+        AIAlgNodeBase *curAlg = [SMGUtils searchNode:curAlgModel.content_p];
+        
+        //6. 取当前方案fo模型 (参考20206-示图) 如: P+新增一例解决方案: F23[A22(速0,高5,距0,向→,皮0),A1(吃1)]->M7{64};
+        TOFoModel *curFoModel = (TOFoModel*)curAlgModel.baseOrGroup;
+        AIFoNodeBase *curFo = [SMGUtils searchNode:curFoModel.content_p];
+        
+        //6. 根据curFo取ATSubPorts,查对应在curAlg上是否长过教训;
+        NSArray *curFoSubs = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:curFo type:ATSub]];
+        AIFoNodeBase *firstSubFo = [SMGUtils searchNode:ARR_INDEX(curFoSubs, 0)];
+        
+        
+        
+        
         
         
         //a. 取出首个独特稀疏码,从同层概念中,获取模糊序列 (根据pValue_p对sameLevel_ps排序) (因为性能仅排20条);
