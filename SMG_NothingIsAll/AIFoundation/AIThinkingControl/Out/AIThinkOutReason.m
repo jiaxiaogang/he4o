@@ -469,6 +469,9 @@
         }
         
         //11. 从validAlgSs和validAlgPs中,找firstJustPValue同区稀疏码;
+        NSArray *sameIdenSs = [SMGUtils filterSameIdentifier_ps:@[firstJustPValue] b_ps:validAlgSs];
+        NSArray *sameIdenPs = [SMGUtils filterSameIdentifier_ps:@[firstJustPValue] b_ps:validAlgPs];
+        //注: 此处仅收集到.values中,是根据firstJustPValue去重的,所以只有一条,应该改下方法,支持多条返回;
         
         //12. 对同区稀疏码的值进行接近度排序,将最接近的取出,并根据源于S或P作为理性评价结果,判断是否修正;
         
