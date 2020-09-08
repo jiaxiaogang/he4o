@@ -627,13 +627,22 @@
 }
 +(AIKVPointer*) filterSameIdentifier_p:(AIKVPointer*)a_p b_ps:(NSArray*)b_ps{
     if (!a_p) return nil;
-    return ARR_INDEX([self filterSameIdentifier_ps:@[a_p] b_ps:b_ps].allValues, 0);
+    return ARR_INDEX([self filterSameIdentifier_Dic:@[a_p] b_ps:b_ps].allValues, 0);
 }
-+(NSMutableDictionary*) filterSameIdentifier_ps:(NSArray*)a_ps b_ps:(NSArray*)b_ps{
++(NSMutableDictionary*) filterSameIdentifier_Dic:(NSArray*)a_ps b_ps:(NSArray*)b_ps{
     return [SMGUtils filterPointers:a_ps b_ps:b_ps checkItemValid:^BOOL(AIKVPointer *a_p, AIKVPointer *b_p) {
         return a_p ? [a_p.identifier isEqualToString:b_p.identifier] : false;
     }];
 }
+//+(NSArray*) filterSameIdentifier_Arr:(NSArray*)from_ps valid_ps:(NSArray*)valid_ps{
+//    NSMutableArray *result = [[NSMutableArray alloc] init];
+//    [SMGUtils foreach:from_ps b_ps:valid_ps tryOut:^(AIKVPointer *a_p, AIKVPointer *b_p) {
+//        if ([a_p.identifier isEqualToString:b_p.identifier]) {
+//            [result addObject:a_p];
+//        }
+//    }];
+//    return result;
+//}
 +(AIKVPointer*) filterSameIdentifier_DiffId_p:(AIKVPointer*)a_p b_ps:(NSArray*)b_ps{
     if (! a_p) return nil;
     return ARR_INDEX([SMGUtils filterSameIdentifier_DiffId_ps:@[a_p] b_ps:b_ps].allValues, 0);
@@ -743,5 +752,22 @@
     result = [SMGUtils removeRepeat:result];
     return result;
 }
+
+@end
+
+//MARK:===============================================================
+//MARK:                     < SMGUtils (Other) >
+//MARK:===============================================================
+@implementation SMGUtils (Other)
+
+//+(void) foreach:(NSArray *)a_ps b_ps:(NSArray*)b_ps tryOut:(void(^)(AIKVPointer *a_p,AIKVPointer *b_p))tryOut {
+//    a_ps = ARRTOOK(a_ps);
+//    b_ps = ARRTOOK(b_ps);
+//    for (AIKVPointer *a_p in a_ps) {
+//        for (AIKVPointer *b_p in b_ps) {
+//            if (tryOut) tryOut(a_p,b_p);
+//        }
+//    }
+//}
 
 @end

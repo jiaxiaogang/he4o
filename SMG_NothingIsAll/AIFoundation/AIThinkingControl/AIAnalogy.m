@@ -258,7 +258,7 @@
     NSArray *bSub_ps = [SMGUtils removeSub_ps:algA.content_ps parent_ps:algB.content_ps];
 
     //3. 找出ab同标识字典;
-    NSMutableDictionary *sameIdentifier = [SMGUtils filterSameIdentifier_ps:aSub_ps b_ps:bSub_ps];
+    NSMutableDictionary *sameIdentifier = [SMGUtils filterSameIdentifier_Dic:aSub_ps b_ps:bSub_ps];
 
     //4. 分别进行比较大小并构建变化;
     for (NSData *key in sameIdentifier.allKeys) {

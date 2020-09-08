@@ -206,8 +206,10 @@
 +(NSArray*) filterSame_ps:(NSArray*)a_ps parent_ps:(NSArray*)b_ps;
 //从bps中,找到与ap同区的bItem返回;
 +(AIKVPointer*) filterSameIdentifier_p:(AIKVPointer*)a_p b_ps:(NSArray*)b_ps;
-//从bps中,找到与aps同区的 所有映射结果 返回;
-+(NSMutableDictionary*) filterSameIdentifier_ps:(NSArray*)a_ps b_ps:(NSArray*)b_ps;
+//从bps中,找到与aps同区的 所有映射结果 返回 (根据key去重);
++(NSMutableDictionary*) filterSameIdentifier_Dic:(NSArray*)a_ps b_ps:(NSArray*)b_ps;
+//从from中,找出valid同区的 所有结果返回 (不去重);
+//+(NSArray*) filterSameIdentifier_Arr:(NSArray*)from_ps valid_ps:(NSArray*)valid_ps;
 //从b_ps中,找出与a_p同区不同值的指针;
 +(AIKVPointer*) filterSameIdentifier_DiffId_p:(AIKVPointer*)a_p b_ps:(NSArray*)b_ps;
 //同区不同值
@@ -257,5 +259,14 @@
  */
 +(NSMutableArray *) collectArrA:(NSArray*)arrA arrB:(NSArray*)arrB;
 +(NSMutableArray *) collectArrA_NoRepeat:(NSArray*)arrA arrB:(NSArray*)arrB;
+
+@end
+
+@interface SMGUtils (Other)
+
+/**
+ *  MARK:--------------------遍历--------------------
+ */
+//+(void) foreach:(NSArray *)a_ps b_ps:(NSArray*)b_ps tryOut:(void(^)(AIKVPointer *a_p,AIKVPointer *b_p))tryOut;
 
 @end
