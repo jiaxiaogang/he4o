@@ -401,6 +401,7 @@
  *      2020.07.02: 将outModel的pm相关字段放到方法调用前就处理好 (为了流程控制调用时,已经有完善可用的数据了);
  *      2020.07.14: 支持综合评价totalRefScore,因为不综合评价的话,会出现不稳定的BUG,参考20093;
  *      2020.07.16: 废除综合评价,改为只找出一条 (参考n20p10-todo1);
+ *      2020.09.03: v2_将反省类比的SP用于PM理性评价;
  *  @result moveValueSuccess : 转移到稀疏码行为化了;
  *  @bug
  *      2020.07.05: BUG,在用MatchConF.content找交集同区稀疏码肯定找不到,改为用MatchConA后,ok了;
@@ -537,9 +538,8 @@
     //5. 取到首个P独特稀疏码 (判断是否需要行为化);
     AIKVPointer *firstJustPValue = ARR_INDEX(validJustPValues, 0);
     NSArray *sameLevelAlg_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:M]];
-    BOOL firstPNeedGL = true;
+    BOOL firstPNeedGL = false;
     if (firstJustPValue) {
-        
         
         //TODOTOMORROW: 20200903-将SP应用于PM理性评价
         //5. 取得当前帧alg模型 (参考20206-示图) 如: A22(速0,高5,距0,向→,皮0);
@@ -580,60 +580,30 @@
         NSMutableArray *allValidSPs = [SMGUtils collectArrA:validAlgSs arrB:validAlgPs];
         NSArray *sortValidSPs = [ThinkingUtils getFuzzySortWithMaskValue:firstJustPValue fromProto_ps:allValidSPs];
         
-        
         //12. 将最接近的取出,并根据源于S或P作为理性评价结果,判断是否修正;
         AIAlgNodeBase *mostSimilarAlg = ARR_INDEX(sortValidSPs, 0);
+        if (Log4PM) NSLog(@"----> firstJustPValue:%@ => S数:%lu P数:%lu 最相近:%@",Pit2FStr(firstJustPValue),validAlgSs.count,validAlgPs.count,Alg2FStr(mostSimilarAlg));
         if ([validAlgSs containsObject:mostSimilarAlg.pointer]) {
             //评价结果为S -> 需要修正
+            firstPNeedGL = true;
         }
         if ([validAlgPs containsObject:mostSimilarAlg.pointer]) {
             //评价结果为P -> 无需修正
+            firstPNeedGL = false;
         }
-
-        
-        
-        
-        
-        
-        //a. 取出首个独特稀疏码,从同层概念中,获取模糊序列 (根据pValue_p对sameLevel_ps排序) (因为性能仅排20条);
-        NSArray *sortAlgs = [ThinkingUtils getFuzzySortWithMaskValue:firstJustPValue fromProto_ps:ARR_SUB(sameLevelAlg_ps, 0, 20)];
-        
-        //b. 优先取最匹配的概念,直至检查到cPM_CheckRefLimit条有效条数;
-        NSInteger checkNum = 0;
-        BOOL stopLoop = false;
-        for (AIAlgNodeBase *fuzzyAlg in sortAlgs) {
-            NSArray *fuzzyRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:fuzzyAlg]];
-            fuzzyRef_ps = ARR_SUB(fuzzyRef_ps, 0, cPM_RefLimit);
-            if (Log4PM && fuzzyAlg) NSLog(@"--------> 当前Alg:%@ => %@ 引用条:%lu",Pit2FStr(firstJustPValue),Alg2FStr(fuzzyAlg),(long)fuzzyRef_ps.count);
-            
-            //c. 依次判断refPorts时序的价值,是否与matchFo相符 (只需要有一条相符就行);
-            for (AIKVPointer *fuzzyRef_p in fuzzyRef_ps) {
-                AIFoNodeBase *fuzzyRef = [SMGUtils searchNode:fuzzyRef_p];
-                NSArray *fuzzySameIdent_ps = ARRTOOK([ThinkingUtils filterAlg_Ps:fuzzyRef.content_ps valueIdentifier:firstJustPValue.identifier itemValid:nil]);
-                
-                //d. 同区且同向,则相符 (cmv指向必须有效才做数 & 理性评价只判断同区 & 同区码只有一条才做数);
-                if (fuzzyRef && fuzzyRef.cmvNode_p && [outModel.pm_MVAT isEqualToString:fuzzyRef.cmvNode_p.algsType] && fuzzySameIdent_ps.count == 1) {
-                    
-                    CGFloat fuzzyRefScore = [ThinkingUtils getScoreForce:fuzzyRef.cmvNode_p ratio:1.0f];
-                    if (Log4PM) NSLog(@"-> checkFo:%@->%@ 任务分:%f",Fo2FStr(fuzzyRef),Mvp2Str(fuzzyRef.cmvNode_p),outModel.pm_Score);
-                    
-                    //e. 发现一条同向时,结束循环 (stopLoop=true);
-                    stopLoop = true;
-                    firstPNeedGL = (fuzzyRefScore < 0);
-                    checkNum ++;
-                    //e. 有一条有效,即不用GL加工,且break;
-                    if (checkNum >= cPM_CheckRefLimit || stopLoop) break;
-                }
-            }
-            //f. 有一条有效,即不用GL加工,且break;
-            if (checkNum >= cPM_CheckRefLimit || stopLoop) break;
-        }
-    }else{
-        firstPNeedGL = false;
     }
     
+    
+    //TODOTOMORROW:
+    //1. 修正时,gl值也可以从S中获取;
+    //2. 将上面的Ss和Ps的代码进行封装;
+    
+    
+    
+    
+    
+    //6. 不需要处理时,直接Finish,转至决策流程控制方法 (注:在TOValueModel构造方法中: proto中的value,就是subValue);
     if (!firstPNeedGL) {
-        //6. 不需要处理时,直接Finish,转至决策流程控制方法 (注:在TOValueModel构造方法中: proto中的value,就是subValue);
         if (Log4PM) NSLog(@"-> 无需PM,转至流程控制Finish");
         TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:nil group:outModel];
         toValueModel.status = TOModelStatus_NoNeedAct;
