@@ -401,8 +401,9 @@
  *      2020.07.02: 将outModel的pm相关字段放到方法调用前就处理好 (为了流程控制调用时,已经有完善可用的数据了);
  *      2020.07.14: 支持综合评价totalRefScore,因为不综合评价的话,会出现不稳定的BUG,参考20093;
  *      2020.07.16: 废除综合评价,改为只找出一条 (参考n20p10-todo1);
- *      2020.09.03: v2_将反省类比的SP用于PM理性评价;
- *  @result moveValueSuccess : 转移到稀疏码行为化了;
+ *      2020.09.03: v2_将反省类比的SP用于PM理性评价 (参考20206);
+ *      2020.09.09: 转移_GL时,取GL目标值,改为从P中取 (参考20207);
+ *  @result moveValueSuccess : 转移到稀疏码行为化了,转移成功则返回true,未转移则返回false;
  *  @bug
  *      2020.07.05: BUG,在用MatchConF.content找交集同区稀疏码肯定找不到,改为用MatchConA后,ok了;
  *      2020.07.06: 此处M.conPorts,即sameLevelAlg_ps为空,明天查下原因 (因为MC以C做M,C有可能本来就是最具象概念);
@@ -537,8 +538,6 @@
     
     //5. 理性评价: 取到首个P独特稀疏码 (判断是否需要行为化);
     AIKVPointer *firstJustPValue = ARR_INDEX(validJustPValues, 0);
-    NSArray *sameLevelAlg_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:M]];
-    BOOL firstPNeedGL = false;
     if (firstJustPValue) {
         
         //5. 取得当前帧alg模型 (参考20206-结构图) 如: A22(速0,高5,距0,向→,皮0);
@@ -561,69 +560,44 @@
         AIAlgNodeBase *mostSimilarAlg = ARR_INDEX(sortValidSPs, 0);
         if (Log4PM) NSLog(@"----> firstJustPValue:%@ => S数:%lu P数:%lu 最相近:%@",Pit2FStr(firstJustPValue),validAlgSs.count,validAlgPs.count,Alg2FStr(mostSimilarAlg));
         if ([validAlgSs containsObject:mostSimilarAlg.pointer]) {
-            //评价结果为S -> 需要修正
-            firstPNeedGL = true;
-        }
-        if ([validAlgPs containsObject:mostSimilarAlg.pointer]) {
-            //评价结果为P -> 无需修正
-            firstPNeedGL = false;
-        }
-    }
-    
-    
-    //TODOTOMORROW:
-    //1. 修正时,gl值也可以从S中获取;
-    
-    
-    
-    
-    
-    //6. 不需要处理时,直接Finish,转至决策流程控制方法 (注:在TOValueModel构造方法中: proto中的value,就是subValue);
-    if (!firstPNeedGL) {
-        if (Log4PM) NSLog(@"-> 无需PM,转至流程控制Finish");
-        TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:nil group:outModel];
-        toValueModel.status = TOModelStatus_NoNeedAct;
-        [self singleLoopBackWithFinishModel:toValueModel];
-        return true;
-    }
-    
-    //7. 转至_GL行为化->从matchFo.conPorts中找稳定的价值指向;
-    NSMutableArray *matchConF_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:mMaskFo]];
-    [matchConF_ps addObject:mMaskFo.pointer];//(像MC传过来的,mMaskFo为C所在的时序,有可能本身就是最具象节点,或包含了距0的果);
-    
-    //8. 依次判断conPorts是否包含"同区稀疏码" (只需要找到一条相符即可);
-    for (AIKVPointer *matchConF_p in matchConF_ps) {
-        //9. 找到含同区稀疏码的con时序;
-        AIFoNodeBase *matchConF = [SMGUtils searchNode:matchConF_p];
-        
-        //9. 找到含同区稀疏码的con概念;
-        AIKVPointer *matchConA_p = ARR_INDEX([SMGUtils filterSame_ps:sameLevelAlg_ps parent_ps:matchConF.content_ps], 0);
-        AIAlgNodeBase *matchConA = [SMGUtils searchNode:matchConA_p];
-        if (!matchConA) continue;
-        
-        //9. 找到同区稀疏码的glValue;
-        AIKVPointer *glValue4M = [SMGUtils filterSameIdentifier_p:firstJustPValue b_ps:matchConA.content_ps];
-        
-        //10. 价值稳定,则转_GL行为化 (找到一条即可,因为此处只管转移,后面的逻辑由流程控制方法负责);
-        BOOL sameIdent = [outModel.pm_MVAT isEqualToString:matchConF.cmvNode_p.algsType];
-        CGFloat matchConScore = [ThinkingUtils getScoreForce:matchConF.cmvNode_p ratio:1.0f];
-        if (glValue4M && sameIdent && matchConScore > 0) {
-            if (Log4PM) NSLog(@"-> 操作 Success:(%@->%@)",Pit2FStr(firstJustPValue),Pit2FStr(glValue4M));
-            TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:glValue4M group:outModel];
-            outModel.sp_P = M;
-            [self singleLoopBackWithBegin:toValueModel];
+            //10. ------> 评价结果为S -> 需要修正,找最近的P:mostSimilarPAlg, 作为GL修正目标值 (参考20207-示图);
+            for (AIKVPointer *item in sortValidSPs) {
+                if ([validAlgPs containsObject:item]) {
+                    AIAlgNodeBase *mostSimilarPAlg = [SMGUtils searchNode:item];
+                    
+                    //11. 找到同区稀疏码的glValue, 并转移_GL修正;
+                    AIKVPointer *glValue4M = [SMGUtils filterSameIdentifier_p:firstJustPValue b_ps:mostSimilarPAlg.content_ps];
+                    if (glValue4M) {
+                        if (Log4PM) NSLog(@"-> 操作 Success:(%@->%@)",Pit2FStr(firstJustPValue),Pit2FStr(glValue4M));
+                        TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:glValue4M group:outModel];
+                        outModel.sp_P = M;
+                        [self singleLoopBackWithBegin:toValueModel];
+                        return true;
+                    }else{
+                        if (Log4PM) NSLog(@"-> 操作 ItemFailure:(%@->%@) conF:%@ conA:%@",Pit2FStr(firstJustPValue),Pit2FStr(glValue4M),Fo2FStr(curFo),Alg2FStr(curAlg));
+                    }
+                    break;
+                }
+            }
+            
+            //12. ------> 未找到GL的目标 (如距离0),直接计为失败;
+            if (Log4PM) NSLog(@"-> 未找到GL目标,转至流程控制Failure");
+            TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:nil group:outModel];
+            toValueModel.status = TOModelStatus_ActNo;
+            [self singleLoopBackWithFailureModel:toValueModel];
             return true;
-        }else{
-            if (Log4PM) NSLog(@"-> 操作 ItemFailure:(%@->%@) conF:%@ conA:%@",Pit2FStr(firstJustPValue),Pit2FStr(glValue4M),Fo2FStr(matchConF),Alg2FStr(matchConA));
+        }else if ([validAlgPs containsObject:mostSimilarAlg.pointer]) {
+            //13. ------> 评价结果为P -> 无需修正,直接Finish (注:在TOValueModel构造方法中: proto中的value,就是subValue);
+            if (Log4PM) NSLog(@"-> 无需PM,转至流程控制Finish");
+            TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:nil group:outModel];
+            toValueModel.status = TOModelStatus_NoNeedAct;
+            [self singleLoopBackWithFinishModel:toValueModel];
+            return true;
         }
     }
     
-    //11. 未找到GL的目标 (如距离0),直接计为失败;
-    if (Log4PM) NSLog(@"-> 未找到GL目标,转至流程控制Failure");
-    TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:nil group:outModel];
-    toValueModel.status = TOModelStatus_ActNo;
-    [self singleLoopBackWithFailureModel:toValueModel];
-    return true;
+    //14. 无justP目标需转移,直接返回false,调用PM者会使outModel直接Finish;
+    return false;
 }
 
 //MARK:===============================================================
