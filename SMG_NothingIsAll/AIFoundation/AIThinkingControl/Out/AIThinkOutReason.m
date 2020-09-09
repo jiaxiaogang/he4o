@@ -541,11 +541,11 @@
     BOOL firstPNeedGL = false;
     if (firstJustPValue) {
         
-        //5. 取得当前帧alg模型 (参考20206-示图) 如: A22(速0,高5,距0,向→,皮0);
+        //5. 取得当前帧alg模型 (参考20206-结构图) 如: A22(速0,高5,距0,向→,皮0);
         TOAlgModel *curAlgModel = (TOAlgModel*)outModel.baseOrGroup;
         AIAlgNodeBase *curAlg = [SMGUtils searchNode:curAlgModel.content_p];
         
-        //6. 取当前方案fo模型 (参考20206-示图) 如: P+新增一例解决方案: F23[A22(速0,高5,距0,向→,皮0),A1(吃1)]->M7{64};
+        //6. 取当前方案fo模型 (参考20206-结构图) 如: P+新增一例解决方案: F23[A22(速0,高5,距0,向→,皮0),A1(吃1)]->M7{64};
         TOFoModel *curFoModel = (TOFoModel*)curAlgModel.baseOrGroup;
         AIFoNodeBase *curFo = [SMGUtils searchNode:curFoModel.content_p];
         
@@ -553,7 +553,7 @@
         NSArray *validAlgSs = [ThinkingUtils pm_GetValidSPAlg_ps:curAlg curFo:curFo type:ATSub];
         NSArray *validAlgPs = [ThinkingUtils pm_GetValidSPAlg_ps:curAlg curFo:curFo type:ATPlus];
         
-        //8. 从validAlgSs和validAlgPs中,以firstJustPValue同区稀疏码相近排序 (参考20206-步骤图);
+        //8. 从validAlgSs和validAlgPs中,以firstJustPValue同区稀疏码相近排序 (参考20206-步骤图-第2步);
         NSMutableArray *allValidSPs = [SMGUtils collectArrA:validAlgSs arrB:validAlgPs];
         NSArray *sortValidSPs = [ThinkingUtils getFuzzySortWithMaskValue:firstJustPValue fromProto_ps:allValidSPs];
         
