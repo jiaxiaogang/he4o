@@ -91,7 +91,7 @@
     mTOAlgModel.pm_Fo = [SMGUtils searchNode:mTOAlgModel.baseOrGroup.content_p];
     
     //5. 理性评价
-    BOOL jump = [self reasonScorePM:mTOAlgModel];
+    BOOL jump = [self reasonScorePM_V2:mTOAlgModel];
     
     //6. 未跳转到PM,则将algModel设为Finish,并递归;
     if (!jump) {
@@ -311,7 +311,7 @@
             waitModel.pm_Fo = [SMGUtils searchNode:waitModel.baseOrGroup.content_p];
             
             //6. 理性评价
-            BOOL jump = [self reasonScorePM:waitModel];
+            BOOL jump = [self reasonScorePM_V2:waitModel];
             NSLog(@"OPushM: %@",jump ? @"成功" : @"失败");
             
             //7. 未跳转到PM,则将algModel设为Finish,并递归;
@@ -410,114 +410,6 @@
  *      2020.07.12: PM会加工"经"和"纬"的问题,改为在判断时,仅对指向了mv的fo做判断后修复,参考:20092;
  *      2020.07.13: fuzzyFo有时含多条同区码,导致其价值指向不确定,是否需加工判错,改成只判断单码后fix(如[距34,距0,吃]->{mv+},但显然距34并不能吃);
  */
--(BOOL) reasonScorePM:(TOAlgModel*)outModel{
-    //1. 数据准备
-    if (!outModel || !outModel.pm_Fo) return false;
-    AIAlgNodeBase *M = [SMGUtils searchNode:outModel.content_p];
-    AIFoNodeBase *mMaskFo = outModel.pm_Fo;
-    if (!M) return false;
-    
-    //3. 将理性评价数据存到短时记忆模型;
-    NSArray *except_ps = [TOUtils convertPointersFromTOValueModelSValue:outModel.subModels invalidStatus:nil];
-    NSArray *validJustPValues = [SMGUtils removeSub_ps:except_ps parent_ps:outModel.justPValues];
-        
-    //4. 不用PM评价 (则交由流程控制方法,推动继续决策(跳转下帧/别的);
-    if (!ARRISOK(validJustPValues)) return false;
-    NSLog(@"\n\n=============================== PM ===============================\nM:%@\nMAtFo:%@",Alg2FStr(M),Fo2FStr(mMaskFo));
-    if (Log4PM) NSLog(@"---> P独特码:%@",Pits2FStr(outModel.justPValues));
-    if (Log4PM) NSLog(@"---> 不应期:%@",Pits2FStr(except_ps));
-    if (Log4PM) NSLog(@"---> P有效独特码:%@",Pits2FStr(validJustPValues));
-    
-    //5. 取到首个P独特稀疏码 (判断是否需要行为化);
-    AIKVPointer *firstJustPValue = ARR_INDEX(validJustPValues, 0);
-    NSArray *sameLevelAlg_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:M]];
-    BOOL firstPNeedGL = true;
-    if (firstJustPValue) {
-        //a. 取出首个独特稀疏码,从同层概念中,获取模糊序列 (根据pValue_p对sameLevel_ps排序) (因为性能仅排20条);
-        NSArray *sortAlgs = [ThinkingUtils getFuzzySortWithMaskValue:firstJustPValue fromProto_ps:ARR_SUB(sameLevelAlg_ps, 0, 20)];
-        
-        //b. 优先取最匹配的概念,直至检查到cPM_CheckRefLimit条有效条数;
-        NSInteger checkNum = 0;
-        BOOL stopLoop = false;
-        for (AIAlgNodeBase *fuzzyAlg in sortAlgs) {
-            NSArray *fuzzyRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:fuzzyAlg]];
-            fuzzyRef_ps = ARR_SUB(fuzzyRef_ps, 0, cPM_RefLimit);
-            if (Log4PM && fuzzyAlg) NSLog(@"--------> 当前Alg:%@ => %@ 引用条:%lu",Pit2FStr(firstJustPValue),Alg2FStr(fuzzyAlg),(long)fuzzyRef_ps.count);
-            
-            //c. 依次判断refPorts时序的价值,是否与matchFo相符 (只需要有一条相符就行);
-            for (AIKVPointer *fuzzyRef_p in fuzzyRef_ps) {
-                AIFoNodeBase *fuzzyRef = [SMGUtils searchNode:fuzzyRef_p];
-                NSArray *fuzzySameIdent_ps = ARRTOOK([ThinkingUtils filterAlg_Ps:fuzzyRef.content_ps valueIdentifier:firstJustPValue.identifier itemValid:nil]);
-                
-                //d. 同区且同向,则相符 (cmv指向必须有效才做数 & 理性评价只判断同区 & 同区码只有一条才做数);
-                if (fuzzyRef && fuzzyRef.cmvNode_p && [outModel.pm_MVAT isEqualToString:fuzzyRef.cmvNode_p.algsType] && fuzzySameIdent_ps.count == 1) {
-                    
-                    CGFloat fuzzyRefScore = [ThinkingUtils getScoreForce:fuzzyRef.cmvNode_p ratio:1.0f];
-                    if (Log4PM) NSLog(@"-> checkFo:%@->%@ 任务分:%f",Fo2FStr(fuzzyRef),Mvp2Str(fuzzyRef.cmvNode_p),outModel.pm_Score);
-                    
-                    //e. 发现一条同向时,结束循环 (stopLoop=true);
-                    stopLoop = true;
-                    firstPNeedGL = (fuzzyRefScore < 0);
-                    checkNum ++;
-                    //e. 有一条有效,即不用GL加工,且break;
-                    if (checkNum >= cPM_CheckRefLimit || stopLoop) break;
-                }
-            }
-            //f. 有一条有效,即不用GL加工,且break;
-            if (checkNum >= cPM_CheckRefLimit || stopLoop) break;
-        }
-    }else{
-        firstPNeedGL = false;
-    }
-    
-    if (!firstPNeedGL) {
-        //6. 不需要处理时,直接Finish,转至决策流程控制方法 (注:在TOValueModel构造方法中: proto中的value,就是subValue);
-        if (Log4PM) NSLog(@"-> 无需PM,转至流程控制Finish");
-        TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:nil group:outModel];
-        toValueModel.status = TOModelStatus_NoNeedAct;
-        [self singleLoopBackWithFinishModel:toValueModel];
-        return true;
-    }
-    
-    //7. 转至_GL行为化->从matchFo.conPorts中找稳定的价值指向;
-    NSMutableArray *matchConF_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:mMaskFo]];
-    [matchConF_ps addObject:mMaskFo.pointer];//(像MC传过来的,mMaskFo为C所在的时序,有可能本身就是最具象节点,或包含了距0的果);
-    
-    //8. 依次判断conPorts是否包含"同区稀疏码" (只需要找到一条相符即可);
-    for (AIKVPointer *matchConF_p in matchConF_ps) {
-        //9. 找到含同区稀疏码的con时序;
-        AIFoNodeBase *matchConF = [SMGUtils searchNode:matchConF_p];
-        
-        //9. 找到含同区稀疏码的con概念;
-        AIKVPointer *matchConA_p = ARR_INDEX([SMGUtils filterSame_ps:sameLevelAlg_ps parent_ps:matchConF.content_ps], 0);
-        AIAlgNodeBase *matchConA = [SMGUtils searchNode:matchConA_p];
-        if (!matchConA) continue;
-        
-        //9. 找到同区稀疏码的glValue;
-        AIKVPointer *glValue4M = [SMGUtils filterSameIdentifier_p:firstJustPValue b_ps:matchConA.content_ps];
-        
-        //10. 价值稳定,则转_GL行为化 (找到一条即可,因为此处只管转移,后面的逻辑由流程控制方法负责);
-        BOOL sameIdent = [outModel.pm_MVAT isEqualToString:matchConF.cmvNode_p.algsType];
-        CGFloat matchConScore = [ThinkingUtils getScoreForce:matchConF.cmvNode_p ratio:1.0f];
-        if (glValue4M && sameIdent && matchConScore > 0) {
-            if (Log4PM) NSLog(@"-> 操作 Success:(%@->%@)",Pit2FStr(firstJustPValue),Pit2FStr(glValue4M));
-            TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:glValue4M group:outModel];
-            outModel.sp_P = M;
-            [self singleLoopBackWithBegin:toValueModel];
-            return true;
-        }else{
-            if (Log4PM) NSLog(@"-> 操作 ItemFailure:(%@->%@) conF:%@ conA:%@",Pit2FStr(firstJustPValue),Pit2FStr(glValue4M),Fo2FStr(matchConF),Alg2FStr(matchConA));
-        }
-    }
-    
-    //11. 未找到GL的目标 (如距离0),直接计为失败;
-    if (Log4PM) NSLog(@"-> 未找到GL目标,转至流程控制Failure");
-    TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:nil group:outModel];
-    toValueModel.status = TOModelStatus_ActNo;
-    [self singleLoopBackWithFailureModel:toValueModel];
-    return true;
-}
-
 -(BOOL) reasonScorePM_V2:(TOAlgModel*)outModel{
     //1. 数据准备
     if (!outModel || !outModel.pm_Fo) return false;
@@ -675,7 +567,7 @@
         
         //5. Value转移 (未行为化过的理性评价进行转移);
         if (!jump) {
-            jump = [self reasonScorePM:toAlgModel];
+            jump = [self reasonScorePM_V2:toAlgModel];
         }
         
         //c. 未跳转到GLDic或PM,则将algModel设为Finish,并递归;
@@ -890,7 +782,7 @@
     [self singleLoopBackWithFailureModel:outModel];
 }
 -(BOOL) toAction_ReasonScorePM:(TOAlgModel*)outModel{
-    return [self reasonScorePM:outModel];
+    return [self reasonScorePM_V2:outModel];
 }
 
 @end
