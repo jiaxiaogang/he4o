@@ -528,6 +528,32 @@
     return [AINetIndexUtils getAbsoluteMatchingAlgNodeWithValueP:value_p];
 }
 
+/**
+ *  MARK:--------------------PM算法获取有效SP概念--------------------
+ *  @desc
+ *      1. 向性: 从右向左;
+ *      2. 参考20206-步骤图-第1步
+ */
++(NSArray*) pm_GetValidSPAlg_ps:(AIAlgNodeBase*)curAlg curFo:(AIFoNodeBase*)curFo type:(AnalogyType)type{
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    if (curAlg && curFo && (type == ATSub || type == ATPlus)) {
+        //1. 根据curFo取抽象SubFo3条,PlusFo3条;
+        NSArray *spFos = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:curFo type:type]];
+        spFos = ARR_SUB(spFos, 0, cPM_CheckSPFoLimit);
+        
+        //2. 查对应在curAlg上是否长过教训S / 被助攻过P;
+        NSArray *spAlgs = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:curAlg type:type]];
+        
+        //3. 从algSPs中,筛选有效的部分validAlgSPs
+        for (AIKVPointer *spFo_p in spFos) {
+            AIFoNodeBase *spFo = [SMGUtils searchNode:spFo_p];
+            NSArray *validAlgs = [SMGUtils filterSame_ps:spFo.content_ps parent_ps:spAlgs];
+            [result addObjectsFromArray:validAlgs];
+        }
+    }
+    return result;
+}
+
 @end
 
 

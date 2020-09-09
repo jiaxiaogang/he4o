@@ -205,6 +205,11 @@
  */
 +(AIAlgNodeBase*) dataOut_GetAlgNodeWithInnerType:(AnalogyType)type algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
 
+/**
+ *  MARK:--------------------PM算法获取有效SP概念--------------------
+ */
++(NSArray*) pm_GetValidSPAlg_ps:(AIAlgNodeBase*)curAlg curFo:(AIFoNodeBase*)curFo type:(AnalogyType)type;
+
 @end
 
 

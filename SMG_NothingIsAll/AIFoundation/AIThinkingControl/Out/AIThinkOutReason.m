@@ -535,13 +535,12 @@
     if (Log4PM) NSLog(@"---> 不应期:%@",Pits2FStr(except_ps));
     if (Log4PM) NSLog(@"---> P有效独特码:%@",Pits2FStr(validJustPValues));
     
-    //5. 取到首个P独特稀疏码 (判断是否需要行为化);
+    //5. 理性评价: 取到首个P独特稀疏码 (判断是否需要行为化);
     AIKVPointer *firstJustPValue = ARR_INDEX(validJustPValues, 0);
     NSArray *sameLevelAlg_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:M]];
     BOOL firstPNeedGL = false;
     if (firstJustPValue) {
         
-        //TODOTOMORROW: 20200903-将SP应用于PM理性评价
         //5. 取得当前帧alg模型 (参考20206-示图) 如: A22(速0,高5,距0,向→,皮0);
         TOAlgModel *curAlgModel = (TOAlgModel*)outModel.baseOrGroup;
         AIAlgNodeBase *curAlg = [SMGUtils searchNode:curAlgModel.content_p];
@@ -550,37 +549,15 @@
         TOFoModel *curFoModel = (TOFoModel*)curAlgModel.baseOrGroup;
         AIFoNodeBase *curFo = [SMGUtils searchNode:curFoModel.content_p];
         
-        //7. 根据curFo取抽象SubFo3条,PlusFo3条;
-        NSArray *foSs = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:curFo type:ATSub]];
-        NSArray *foPs = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:curFo type:ATPlus]];
-        foSs = ARR_SUB(foSs, 0, cPM_CheckSPFoLimit);
-        foPs = ARR_SUB(foPs, 0, cPM_CheckSPFoLimit);
+        //7. 根据curAlg和curFo取有效的部分validAlgSPs (参考20206-步骤图-第1步);
+        NSArray *validAlgSs = [ThinkingUtils pm_GetValidSPAlg_ps:curAlg curFo:curFo type:ATSub];
+        NSArray *validAlgPs = [ThinkingUtils pm_GetValidSPAlg_ps:curAlg curFo:curFo type:ATPlus];
         
-        //8. 查对应在curAlg上是否长过教训S / 被助攻过P;
-        NSArray *algSs = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:curAlg type:ATSub]];
-        NSArray *algPs = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:curAlg type:ATPlus]];
-        
-        //9. 从algSs中,筛选有效的部分validAlgSs
-        NSMutableArray *validAlgSs = [[NSMutableArray alloc] init];
-        for (AIKVPointer *item in foSs) {
-            AIFoNodeBase *sFo = [SMGUtils searchNode:item];
-            NSArray *itemValid = [SMGUtils filterSame_ps:sFo.content_ps parent_ps:algSs];
-            [validAlgSs addObjectsFromArray:itemValid];
-        }
-        
-        //10. 从algPs中,筛选有效的部分validAlgPs
-        NSMutableArray *validAlgPs = [[NSMutableArray alloc] init];
-        for (AIKVPointer *item in foPs) {
-            AIFoNodeBase *pFo = [SMGUtils searchNode:item];
-            NSArray *itemValid = [SMGUtils filterSame_ps:pFo.content_ps parent_ps:algPs];
-            [validAlgPs addObjectsFromArray:itemValid];
-        }
-        
-        //11. 从validAlgSs和validAlgPs中,以firstJustPValue同区稀疏码相近排序 (参考20206-步骤图);
+        //8. 从validAlgSs和validAlgPs中,以firstJustPValue同区稀疏码相近排序 (参考20206-步骤图);
         NSMutableArray *allValidSPs = [SMGUtils collectArrA:validAlgSs arrB:validAlgPs];
         NSArray *sortValidSPs = [ThinkingUtils getFuzzySortWithMaskValue:firstJustPValue fromProto_ps:allValidSPs];
         
-        //12. 将最接近的取出,并根据源于S或P作为理性评价结果,判断是否修正;
+        //9. 将最接近的取出,并根据源于S或P作为理性评价结果,判断是否修正;
         AIAlgNodeBase *mostSimilarAlg = ARR_INDEX(sortValidSPs, 0);
         if (Log4PM) NSLog(@"----> firstJustPValue:%@ => S数:%lu P数:%lu 最相近:%@",Pit2FStr(firstJustPValue),validAlgSs.count,validAlgPs.count,Alg2FStr(mostSimilarAlg));
         if ([validAlgSs containsObject:mostSimilarAlg.pointer]) {
@@ -596,7 +573,6 @@
     
     //TODOTOMORROW:
     //1. 修正时,gl值也可以从S中获取;
-    //2. 将上面的Ss和Ps的代码进行封装;
     
     
     
