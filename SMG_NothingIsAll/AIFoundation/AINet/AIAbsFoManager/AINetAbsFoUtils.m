@@ -58,15 +58,22 @@
                 NSInteger sumDeltaTime = [AINetAbsFoUtils sumDeltaTime:conFo startIndex:startIndex endIndex:findIndex];
                 maxDeltaTime = MAX(maxDeltaTime, sumDeltaTime);
             }else{
-                WLog(@"getDetailTimes findIndex失败 (抽象必然可从具象时序中发现index才对,查下为何未发现)");
+                WLog(@"getDetailTimes findIndex失败 (抽象必然可从具象时序中发现index才对,查下为何未发现)\nAbsA:%@\nAbsF:%@\nConF:%@",AlgP2FStr(absAlg_p),Fo2FStr(absFo),Fo2FStr(conFo));
+                if (absFo.content_ps.count > 1) {
+                    [theNV setForceMode:true];
+                    [theNV setNodeData:absAlg_p lightStr:@"absA"];
+                    [theNV setNodeData:conFo.pointer lightStr:@"conF"];
+                    [theNV setNodeData:absFo.pointer lightStr:@"absF"];
+                    [theNV setForceMode:false];
+                }
             }
+        }
+        if (maxDeltaTime == 0 && [absFo.content_ps indexOfObject:absAlg_p] > 0) {
+            NSLog(@"-----------21022BUG: deltaTimes无效");
         }
         [result addObject:@(maxDeltaTime)];
     }
     NSLog(@"getDetailTimes Finish:%@",result);
-    if (!ARRISOK(result)) {
-        NSLog(@"-----------21022BUG: deltaTimes无效");
-    }
     return result;
 }
 
