@@ -61,12 +61,14 @@
                 
                 //c. 将有效间隔取出,并提取最大的deltaTime;
                 double sumDeltaTime = [AINetAbsFoUtils sumDeltaTime:conFo startIndex:startIndex endIndex:findIndex];
+                maxDeltaTime = MAX(maxDeltaTime, sumDeltaTime);
+                
+                //deltaTime为0的BUG测试;
                 if (findIndex != 0 && sumDeltaTime == 0) {
                     [AINetAbsFoUtils sumDeltaTime:conFo startIndex:startIndex endIndex:findIndex];
                     NSLog(@"");
                 }
-                maxDeltaTime = MAX(maxDeltaTime, sumDeltaTime);
-                if (maxDeltaTime == 0 && [absFo.content_ps indexOfObject:absAlg_p] > 0) {
+                if (sumDeltaTime == 0 && [absFo.content_ps indexOfObject:absAlg_p] > 0) {
                     NSLog(@"-----------21022BUG: maxDeltaTime无效");
                 }
             }else{
