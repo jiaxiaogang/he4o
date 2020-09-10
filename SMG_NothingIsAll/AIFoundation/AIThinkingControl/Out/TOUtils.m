@@ -87,10 +87,12 @@
  *
  */
 +(NSInteger) indexOfAbsItem:(AIKVPointer*)absItem atConContent:(NSArray*)conContent{
-    return [self indexOfAbsItem:absItem atConContent:conContent layerDiff:1];
+    return [self indexOfAbsItem:absItem atConContent:conContent layerDiff:1 startIndex:0];
 }
-+(NSInteger) indexOfAbsItem:(AIKVPointer*)absItem atConContent:(NSArray*)conContent layerDiff:(int)layerDiff{
-    for (AIKVPointer *item_p in ARRTOOK(conContent)) {
++(NSInteger) indexOfAbsItem:(AIKVPointer*)absItem atConContent:(NSArray*)conContent layerDiff:(int)layerDiff startIndex:(NSInteger)startIndex{
+    conContent = ARRTOOK(conContent);
+    for (NSInteger i = startIndex; i < conContent.count; i++) {
+        AIKVPointer *item_p = ARR_INDEX(conContent, i);
         if ([TOUtils mIsC:item_p c:absItem layerDiff:layerDiff]) {
             return [conContent indexOfObject:item_p];
         }

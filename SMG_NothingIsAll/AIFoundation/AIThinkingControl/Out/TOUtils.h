@@ -35,7 +35,7 @@
  *  _param layerDiff: 检查层数,默认为1,支持0,1,2;
  */
 +(NSInteger) indexOfAbsItem:(AIKVPointer*)absItem atConContent:(NSArray*)conContent;
-+(NSInteger) indexOfAbsItem:(AIKVPointer*)absItem atConContent:(NSArray*)conContent layerDiff:(int)layerDiff;
++(NSInteger) indexOfAbsItem:(AIKVPointer*)absItem atConContent:(NSArray*)conContent layerDiff:(int)layerDiff startIndex:(NSInteger)startIndex;
 
 /**
  *  MARK:--------------------判断mc同级--------------------

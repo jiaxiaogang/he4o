@@ -31,6 +31,7 @@
  *  @bug
  *      2020.09.01: 返回空result的BUG,发现是数据准备时,检查条件判断错误导致 T;
  *      2020.09.10: findIndex有时会失败 T (因为HNGL时,需要index判断两层);
+ *      2020.09.10: maxDeltaTime在非0位时,有可能取到0的BUG (记录lastIndex,但并未彻底解决);
  */
 +(NSMutableArray*) getDeltaTimes:(NSArray*)conFos absFo:(AIFoNodeBase*)absFo{
     //1. 数据准备;
@@ -39,6 +40,7 @@
     if (!ARRISOK(conFos) || !absFo) return result;
     
     //2. 提取 (absFo有可能本来deltaTimes不为空,也要参与到竞争Max(A,B)中来;
+    NSInteger lastIndex = 0;
     for (AIKVPointer *absAlg_p in absFo.content_ps) {
         
         //3. 从每个conFo中找到对应absAlg_p的元素下标;
@@ -47,8 +49,10 @@
             
             //a. 找到当前所处下标;
             BOOL isHNGL = [TOUtils isHNGL:absAlg_p];
-            NSInteger findIndex = [TOUtils indexOfAbsItem:absAlg_p atConContent:conFo.content_ps layerDiff:isHNGL ? 2 : 1];
+            NSInteger findIndex = [TOUtils indexOfAbsItem:absAlg_p atConContent:conFo.content_ps layerDiff:isHNGL ? 2 : 1 startIndex:lastIndex + 1];
             if (findIndex != -1) {
+                //a. 将新发现的下标记录,lastIndex+1作为下次循环的开始点;
+                lastIndex = findIndex;
                 
                 //b. 取出旧下标,存下新下标;
                 NSString *key = STRFORMAT(@"%@_%ld",conFo.pointer.identifier,conFo.pointer.pointerId);
