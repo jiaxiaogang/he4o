@@ -41,6 +41,12 @@
     }
 }
 
++(BOOL) mIsC:(AIKVPointer*)m c:(AIKVPointer*)c layerDiff:(int)layerDiff{
+    if (layerDiff == 0) return [self mIsC_0:m c:c];
+    if (layerDiff == 1) return [self mIsC_1:m c:c];
+    if (layerDiff == 2) return [self mIsC_2:m c:c];
+    return false;
+}
 +(BOOL) mIsC_0:(AIKVPointer*)m c:(AIKVPointer*)c{
     if (m && c) {
         //1. 判断本级相等;
@@ -81,8 +87,11 @@
  *
  */
 +(NSInteger) indexOfAbsItem:(AIKVPointer*)absItem atConContent:(NSArray*)conContent{
+    return [self indexOfAbsItem:absItem atConContent:conContent layerDiff:1];
+}
++(NSInteger) indexOfAbsItem:(AIKVPointer*)absItem atConContent:(NSArray*)conContent layerDiff:(int)layerDiff{
     for (AIKVPointer *item_p in ARRTOOK(conContent)) {
-        if ([TOUtils mIsC_1:item_p c:absItem]) {
+        if ([TOUtils mIsC:item_p c:absItem layerDiff:layerDiff]) {
             return [conContent indexOfObject:item_p];
         }
     }

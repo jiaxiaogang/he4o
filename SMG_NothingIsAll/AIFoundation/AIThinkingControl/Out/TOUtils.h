@@ -24,6 +24,7 @@
  *  @version
  *      2020.06.12 : 将取absPorts_All_Normal改为absPorts_All(),以支持innerTypeNode的mIsC判断;
  */
++(BOOL) mIsC:(AIKVPointer*)m c:(AIKVPointer*)c layerDiff:(int)layerDiff;
 +(BOOL) mIsC_0:(AIKVPointer*)m c:(AIKVPointer*)c;
 +(BOOL) mIsC_1:(AIKVPointer*)m c:(AIKVPointer*)c;
 +(BOOL) mIsC_2:(AIKVPointer*)m c:(AIKVPointer*)c;
@@ -31,8 +32,10 @@
 /**
  *  MARK:--------------------在具象Content中定位抽象Item的下标--------------------
  *  @result 如果找不到,默认返回-1;
+ *  _param layerDiff: 检查层数,默认为1,支持0,1,2;
  */
 +(NSInteger) indexOfAbsItem:(AIKVPointer*)absItem atConContent:(NSArray*)conContent;
++(NSInteger) indexOfAbsItem:(AIKVPointer*)absItem atConContent:(NSArray*)conContent layerDiff:(int)layerDiff;
 
 /**
  *  MARK:--------------------判断mc同级--------------------

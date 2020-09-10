@@ -30,7 +30,7 @@
  *  @result notnull
  *  @bug
  *      2020.09.01: 返回空result的BUG,发现是数据准备时,检查条件判断错误导致 T;
- *      2020.09.10: findIndex有时会失败,暂未解决;
+ *      2020.09.10: findIndex有时会失败 T (因为HNGL时,需要index判断两层);
  */
 +(NSMutableArray*) getDeltaTimes:(NSArray*)conFos absFo:(AIFoNodeBase*)absFo{
     //1. 数据准备;
@@ -46,7 +46,8 @@
         for (AIFoNodeBase *conFo in conFos) {
             
             //a. 找到当前所处下标;
-            NSInteger findIndex = [TOUtils indexOfAbsItem:absAlg_p atConContent:conFo.content_ps];
+            BOOL isHNGL = [TOUtils isHNGL:absAlg_p];
+            NSInteger findIndex = [TOUtils indexOfAbsItem:absAlg_p atConContent:conFo.content_ps layerDiff:isHNGL ? 2 : 1];
             if (findIndex != -1) {
                 
                 //b. 取出旧下标,存下新下标;
@@ -58,14 +59,8 @@
                 NSInteger sumDeltaTime = [AINetAbsFoUtils sumDeltaTime:conFo startIndex:startIndex endIndex:findIndex];
                 maxDeltaTime = MAX(maxDeltaTime, sumDeltaTime);
             }else{
+                [SMGUtils insertNode:absFo];//absFo未存过,先存下,否则日志打不出其内容;
                 WLog(@"getDetailTimes findIndex失败 (抽象必然可从具象时序中发现index才对,查下为何未发现)\nAbsA:%@\nAbsF:%@\nConF:%@",AlgP2FStr(absAlg_p),Fo2FStr(absFo),Fo2FStr(conFo));
-                if (absFo.content_ps.count > 1) {
-                    [theNV setForceMode:true];
-                    [theNV setNodeData:absAlg_p lightStr:@"absA"];
-                    [theNV setNodeData:conFo.pointer lightStr:@"conF"];
-                    [theNV setNodeData:absFo.pointer lightStr:@"absF"];
-                    [theNV setForceMode:false];
-                }
             }
         }
         if (maxDeltaTime == 0 && [absFo.content_ps indexOfObject:absAlg_p] > 0) {
