@@ -28,12 +28,15 @@
 /**
  *  MARK:--------------------从conFos中提取deltaTimes--------------------
  *  @result notnull
+ *  @bug
+ *      2020.09.01: 返回空result的BUG,发现是数据准备时,检查条件判断错误导致 T;
+ *      2020.09.10: findIndex有时会失败,暂未解决;
  */
 +(NSMutableArray*) getDeltaTimes:(NSArray*)conFos absFo:(AIFoNodeBase*)absFo{
     //1. 数据准备;
     NSMutableArray *result = [[NSMutableArray alloc] init];
     NSMutableDictionary *recordIndexs = [[NSMutableDictionary alloc] init];
-    if (!ARRISOK(conFos) || absFo) return result;
+    if (!ARRISOK(conFos) || !absFo) return result;
     
     //2. 提取 (absFo有可能本来deltaTimes不为空,也要参与到竞争Max(A,B)中来;
     for (AIKVPointer *absAlg_p in absFo.content_ps) {
@@ -61,6 +64,9 @@
         [result addObject:@(maxDeltaTime)];
     }
     NSLog(@"getDetailTimes Finish:%@",result);
+    if (!ARRISOK(result)) {
+        NSLog(@"-----------21022BUG: deltaTimes无效");
+    }
     return result;
 }
 
