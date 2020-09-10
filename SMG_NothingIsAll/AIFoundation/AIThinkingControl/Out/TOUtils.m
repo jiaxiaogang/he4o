@@ -84,6 +84,8 @@
 /**
  *  MARK:--------------------判断indexOf (支持本级+一级抽象)--------------------
  *  @bug 2020.06.12 : TOR.R-中firstAt_Plus取值为-1,经查因为mIsC方法取absPorts_Normal,对plus/sub不支持导致,改后好了;
+ *  @version
+ *      2020.09.10: 支持layerDiff和startIndex;
  *
  */
 +(NSInteger) indexOfAbsItem:(AIKVPointer*)absItem atConContent:(NSArray*)conContent{
@@ -94,7 +96,7 @@
     for (NSInteger i = startIndex; i < conContent.count; i++) {
         AIKVPointer *item_p = ARR_INDEX(conContent, i);
         if ([TOUtils mIsC:item_p c:absItem layerDiff:layerDiff]) {
-            return [conContent indexOfObject:item_p];
+            return i;
         }
     }
     return -1;
