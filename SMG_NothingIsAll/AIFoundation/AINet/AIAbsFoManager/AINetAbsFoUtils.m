@@ -39,7 +39,7 @@
     if (!ARRISOK(conFos) || !absFo) return result;
     
     //2. 提取 (absFo有可能本来deltaTimes不为空,也要参与到竞争Max(A,B)中来;
-    NSInteger lastIndex = 0;
+    NSInteger lastIndex = -1;
     for (AIKVPointer *absAlg_p in absFo.content_ps) {
         
         //3. 从每个conFo中找到对应absAlg_p的元素下标;
@@ -68,6 +68,10 @@
             }else{
                 WLog(@"getDetailTimes\nAbsA:%@\nAbsF:%@\nConF:%@,%ld,%ld",AlgP2FStr(absAlg_p),Fo2FStr(absFo),Fo2FStr(conFo),(long)findIndex,(long)lastIndex);
                 NSInteger findIndex = [TOUtils indexOfAbsItem:absAlg_p atConContent:conFo.content_ps layerDiff:isHNGL ? 2 : 1 startIndex:lastIndex + 1];
+                [theNV setForceMode:true];
+                [theNV setNodeData:absAlg_p lightStr:STRFORMAT(@"%ld",absAlg_p.pointerId)];
+                [theNV setNodeData:conFo.pointer lightStr:STRFORMAT(@"%ld",absAlg_p.pointerId)];
+                [theNV setForceMode:false];
                 NSLog(@"");
             }
         }
