@@ -74,11 +74,12 @@
         [AINetUtils insertRefPorts_AllFoNode:findAbsNode.pointer order_ps:findAbsNode.content_ps ps:findAbsNode.content_ps difStrong:difStrong];
     }
     
-    //4. 提取findAbsNode的deltaTimes;
-    findAbsNode.deltaTimes = [AINetAbsFoUtils getDeltaTimes:conFos absFo:findAbsNode];
-    
-    //5. 具象节点&抽象节点_关联&存储
+    //4. 具象节点&抽象节点_关联 & 存储;
     [AINetUtils relateFoAbs:findAbsNode conNodes:conFos isNew:isNew];
+    
+    //5. 提取findAbsNode的deltaTimes & 存储;
+    findAbsNode.deltaTimes = [AINetAbsFoUtils getDeltaTimes:conFos absFo:findAbsNode];
+    [SMGUtils insertNode:findAbsNode];
     return findAbsNode;
 }
 

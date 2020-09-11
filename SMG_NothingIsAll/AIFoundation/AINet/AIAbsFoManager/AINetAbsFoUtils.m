@@ -36,11 +36,10 @@
 +(NSMutableArray*) getDeltaTimes:(NSArray*)conFos absFo:(AIFoNodeBase*)absFo{
     //1. 数据准备;
     NSMutableArray *result = [[NSMutableArray alloc] init];
-    NSMutableDictionary *recordIndexs = [[NSMutableDictionary alloc] init];
     if (!ARRISOK(conFos) || !absFo) return result;
     
     //2. 提取 (absFo有可能本来deltaTimes不为空,也要参与到竞争Max(A,B)中来;
-    NSInteger nextStartIndex = 0;
+    NSInteger lastIndex = 0;
     for (AIKVPointer *absAlg_p in absFo.content_ps) {
         
         //3. 从每个conFo中找到对应absAlg_p的元素下标;
@@ -49,31 +48,27 @@
             
             //a. 找到当前所处下标;
             BOOL isHNGL = [TOUtils isHNGL:absAlg_p];
-            NSInteger findIndex = [TOUtils indexOfAbsItem:absAlg_p atConContent:conFo.content_ps layerDiff:isHNGL ? 2 : 1 startIndex:nextStartIndex];
+            NSInteger findIndex = [TOUtils indexOfAbsItem:absAlg_p atConContent:conFo.content_ps layerDiff:isHNGL ? 2 : 1 startIndex:lastIndex + 1];
             if (findIndex != -1) {
-                //a. 将新发现的下标记录,lastIndex+1作为下次循环的开始点;
-                nextStartIndex = findIndex + 1;
-                
-                //b. 取出旧下标,存下新下标;
-                NSString *key = STRFORMAT(@"%@_%ld",conFo.pointer.identifier,conFo.pointer.pointerId);
-                NSInteger startIndex = [NUMTOOK([recordIndexs objectForKey:key]) integerValue];
-                [recordIndexs setObject:@(findIndex) forKey:key];
-                
-                //c. 将有效间隔取出,并提取最大的deltaTime;
-                double sumDeltaTime = [AINetAbsFoUtils sumDeltaTime:conFo startIndex:startIndex endIndex:findIndex];
+                //b. 将有效间隔取出,并提取最大的deltaTime;
+                double sumDeltaTime = [AINetAbsFoUtils sumDeltaTime:conFo startIndex:lastIndex endIndex:findIndex];
                 maxDeltaTime = MAX(maxDeltaTime, sumDeltaTime);
+                
+                //c. 将新发现的下标记录 (1. lastIndex+1用于indexOfAbsItem 2. lastIndex用于sumDeltaTime);
+                lastIndex = findIndex;
                 
                 //deltaTime为0的BUG测试;
                 if (findIndex != 0 && sumDeltaTime == 0) {
-                    [AINetAbsFoUtils sumDeltaTime:conFo startIndex:startIndex endIndex:findIndex];
+                    [AINetAbsFoUtils sumDeltaTime:conFo startIndex:lastIndex endIndex:findIndex];
                     NSLog(@"");
                 }
                 if (sumDeltaTime == 0 && [absFo.content_ps indexOfObject:absAlg_p] > 0) {
                     NSLog(@"-----------21022BUG: maxDeltaTime无效");
                 }
             }else{
-                [SMGUtils insertNode:absFo];//absFo未存过,先存下,否则日志打不出其内容;
-                WLog(@"getDetailTimes\nAbsA:%@\nAbsF:%@\nConF:%@,%ld,%ld",AlgP2FStr(absAlg_p),Fo2FStr(absFo),Fo2FStr(conFo),(long)findIndex,(long)nextStartIndex);
+                WLog(@"getDetailTimes\nAbsA:%@\nAbsF:%@\nConF:%@,%ld,%ld",AlgP2FStr(absAlg_p),Fo2FStr(absFo),Fo2FStr(conFo),(long)findIndex,(long)lastIndex);
+                NSInteger findIndex = [TOUtils indexOfAbsItem:absAlg_p atConContent:conFo.content_ps layerDiff:isHNGL ? 2 : 1 startIndex:lastIndex + 1];
+                NSLog(@"");
             }
         }
         [result addObject:@(maxDeltaTime)];
