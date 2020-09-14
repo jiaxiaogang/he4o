@@ -65,19 +65,19 @@
                 if (sumDeltaTime == 0 && [absFo.content_ps indexOfObject:absAlg_p] > 0) {
                     NSLog(@"-----------21022BUG: maxDeltaTime无效");
                 }
-            }else{
+            }else if(![TOUtils isN:absAlg_p]){
+                //N找不到,是正常的,因为"内类比无"时,本身具象只是frontConAlg,并且本来就是瞬间变"无"的;
                 WLog(@"getDetailTimes\nAbsA:%@\nAbsF:%@\nConF:%@,%ld,%ld",AlgP2FStr(absAlg_p),Fo2FStr(absFo),Fo2FStr(conFo),(long)findIndex,(long)lastIndex);
-                NSInteger findIndex = [TOUtils indexOfAbsItem:absAlg_p atConContent:conFo.content_ps layerDiff:isHNGL ? 2 : 1 startIndex:lastIndex + 1];
-                [theNV setForceMode:true];
-                [theNV setNodeData:absAlg_p lightStr:STRFORMAT(@"%ld",absAlg_p.pointerId)];
-                [theNV setNodeData:conFo.pointer lightStr:STRFORMAT(@"%ld",absAlg_p.pointerId)];
-                [theNV setForceMode:false];
-                NSLog(@"");
             }
         }
-        [result addObject:@(maxDeltaTime)];
+        
+        //4. 首条时加入0,否则加入maxDeltaTime;
+        if ([absFo.content_ps indexOfObject:absAlg_p] == 0) {
+            [result addObject:@(0.0f)];
+        }else{
+            [result addObject:@(maxDeltaTime)];
+        }
     }
-    NSLog(@"getDetailTimes Finish:%@",result);
     return result;
 }
 
