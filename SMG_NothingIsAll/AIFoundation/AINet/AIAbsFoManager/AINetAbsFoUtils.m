@@ -58,12 +58,11 @@
                 lastIndex = findIndex;
                 
                 //deltaTime为0的BUG测试;
-                if (findIndex != 0 && sumDeltaTime == 0) {
+                BOOL nOk = [absFo.content_ps indexOfObject:absAlg_p] == absFo.content_ps.count - 1 && [TOUtils isN:conFo.pointer];
+                if (findIndex != 0 && sumDeltaTime == 0 && !nOk) {
                     [AINetAbsFoUtils sumDeltaTime:conFo startIndex:lastIndex endIndex:findIndex];
+                    NSLog(@"%@",Fo2FStr(conFo));
                     NSLog(@"");
-                }
-                if (sumDeltaTime == 0 && [absFo.content_ps indexOfObject:absAlg_p] > 0) {
-                    NSLog(@"-----------21022BUG: maxDeltaTime无效");
                 }
             }else if(![TOUtils isN:absAlg_p]){
                 //N找不到,是正常的,因为"内类比无"时,本身具象只是frontConAlg,并且本来就是瞬间变"无"的;

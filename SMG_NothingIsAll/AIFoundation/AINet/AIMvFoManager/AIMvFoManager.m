@@ -91,6 +91,11 @@
     //6. 提取findAbsNode的deltaTimes;
     foNode.deltaTimes = [AINetAbsFoUtils convertOrder2DeltaTimes:order];
     
+    NSMutableString *deltaTimeStr = [NSMutableString new];
+    for (NSNumber *deltaT in foNode.deltaTimes) {
+        [deltaTimeStr appendFormat:@"%@,",deltaT];
+    }
+    NSLog(@"===aaa===2 %@ %@",Fo2FStr(foNode),deltaTimeStr);
     //7. 存储foNode
     [SMGUtils insertNode:foNode];
     return foNode;

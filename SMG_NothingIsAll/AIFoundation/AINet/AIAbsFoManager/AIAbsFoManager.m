@@ -79,6 +79,12 @@
     
     //5. 提取findAbsNode的deltaTimes & 存储;
     findAbsNode.deltaTimes = [AINetAbsFoUtils getDeltaTimes:conFos absFo:findAbsNode];
+    
+    NSMutableString *deltaTimeStr = [NSMutableString new];
+    for (NSNumber *deltaT in findAbsNode.deltaTimes) {
+        [deltaTimeStr appendFormat:@"%@,",deltaT];
+    }
+    NSLog(@"===aaa===1 %@ %@",Fo2FStr(findAbsNode),deltaTimeStr);
     [SMGUtils insertNode:findAbsNode];
     return findAbsNode;
 }
