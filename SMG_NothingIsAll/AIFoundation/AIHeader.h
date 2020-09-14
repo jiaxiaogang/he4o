@@ -93,6 +93,7 @@
 //NSNumber
 #define NUMISOK(n) [SMGUtils numIsOk:n]                                 //是否有效NSNumber
 #define NUMTOOK(n) [SMGUtils numToOk:n]                                 //number强检查
+#define NUMTOOK_DV(n,dv) [SMGUtils numToOk:n defaultValue:dv]
 
 //Dic
 #define DICISOK(d) [SMGUtils dicIsOk:d]                                 //是否空字典

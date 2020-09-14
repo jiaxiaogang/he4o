@@ -118,7 +118,10 @@
     return (n && [n isKindOfClass:[NSNumber class]]);
 }
 +(NSNumber*) numToOk:(NSNumber*)n{
-    return (n && [n isKindOfClass:[NSNumber class]]) ? n : @(0);
+    return [self numToOk:n defaultValue:0];
+}
++(NSNumber*) numToOk:(NSNumber*)n defaultValue:(double)defaultValue{
+    return (n && [n isKindOfClass:[NSNumber class]]) ? n : @(defaultValue);
 }
 
 //dictionary

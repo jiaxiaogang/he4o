@@ -34,6 +34,7 @@
 //number
 +(BOOL) numIsOk:(NSNumber*)n;
 +(NSNumber*) numToOk:(NSNumber*)n;
++(NSNumber*) numToOk:(NSNumber*)n defaultValue:(double)defaultValue;
 
 //dictionary
 +(BOOL) dicIsOk:(NSDictionary*)d;

@@ -30,8 +30,9 @@
  *  @result notnull
  *  @bug
  *      2020.09.01: 返回空result的BUG,发现是数据准备时,检查条件判断错误导致 T;
- *      2020.09.10: findIndex有时会失败 T (因为HNGL时,需要index判断两层);
- *      2020.09.10: maxDeltaTime在非0位时,有可能取到0的BUG (记录lastIndex,但并未彻底解决);
+ *      2020.09.10: findIndex有时会失败 (因为HNGL时,需要index判断两层) T;
+ *      2020.09.10: maxDeltaTime在非0位时,有可能取到0的BUG (记录lastIndex,但并未彻底解决) (发现NL时为0正常) T;
+ *      2020.09.15: 多个conFos,却只记录了一个lastIndex导致错乱找不到findIndex的bug; T
  */
 +(NSMutableArray*) getDeltaTimes:(NSArray*)conFos absFo:(AIFoNodeBase*)absFo{
     //1. 数据准备;
@@ -39,7 +40,7 @@
     if (!ARRISOK(conFos) || !absFo) return result;
     
     //2. 提取 (absFo有可能本来deltaTimes不为空,也要参与到竞争Max(A,B)中来;
-    NSInteger lastIndex = -1;
+    NSMutableDictionary *lastIndexDic = [[NSMutableDictionary alloc] init];
     for (AIKVPointer *absAlg_p in absFo.content_ps) {
         
         //3. 从每个conFo中找到对应absAlg_p的元素下标;
@@ -47,6 +48,8 @@
         for (AIFoNodeBase *conFo in conFos) {
             
             //a. 找到当前所处下标;
+            NSData *lastIndexKey = OBJ2DATA(conFo.pointer);
+            NSInteger lastIndex = [NUMTOOK_DV([lastIndexDic objectForKey:lastIndexKey], -1) integerValue];
             BOOL isHNGL = [TOUtils isHNGL:absAlg_p];
             NSInteger findIndex = [TOUtils indexOfAbsItem:absAlg_p atConContent:conFo.content_ps layerDiff:isHNGL ? 2 : 1 startIndex:lastIndex + 1];
             if (findIndex != -1) {
@@ -55,7 +58,7 @@
                 maxDeltaTime = MAX(maxDeltaTime, sumDeltaTime);
                 
                 //c. 将新发现的下标记录 (1. lastIndex+1用于indexOfAbsItem 2. lastIndex用于sumDeltaTime);
-                lastIndex = findIndex;
+                [lastIndexDic setObject:@(findIndex) forKey:lastIndexKey];
                 
                 //deltaTime为0的BUG测试;
                 BOOL nOk = [absFo.content_ps indexOfObject:absAlg_p] == absFo.content_ps.count - 1 && [TOUtils isN:conFo.pointer];
