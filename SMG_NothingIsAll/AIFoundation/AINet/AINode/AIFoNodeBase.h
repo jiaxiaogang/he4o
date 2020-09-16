@@ -34,6 +34,10 @@
  *      2. 比如: [我,打,豆豆]->{mv+},记录成deltaTime后为[0,1,100,0];
  *      3. 表示: 我用1ms打了,100ms豆豆,0ms内就感受到了爽;
  *      4. 首位: 首位总是0,因为本序列采用了首位参照,所以为0;
+ *  @deltaTimes元素有可能为0的情况;
+ *      1. 首位为0;
+ *      2. 末位为N或L时,为0 (因为N和L抽象自frontAlg);
+ *      3. isOut=true时,为0,比如反射反应触发"吃",是即时触发的,自然是0;
  */
 @property (strong, nonatomic) NSMutableArray *deltaTimes;
 @property (assign, nonatomic) NSTimeInterval mvDeltaTime;

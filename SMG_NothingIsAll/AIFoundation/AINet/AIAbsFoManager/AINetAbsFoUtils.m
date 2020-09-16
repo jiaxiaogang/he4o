@@ -61,10 +61,10 @@
                 [lastIndexDic setObject:@(findIndex) forKey:lastIndexKey];
                 
                 //deltaTime为0的BUG测试;
-                BOOL nOk = [absFo.content_ps indexOfObject:absAlg_p] == absFo.content_ps.count - 1 && [TOUtils isN:conFo.pointer];
-                if (findIndex != 0 && sumDeltaTime == 0 && !nOk) {
-                    NSLog(@"%@",Fo2FStr(conFo));
-                }
+                //BOOL nOk = [absFo.content_ps indexOfObject:absAlg_p] == absFo.content_ps.count - 1 && [TOUtils isN:conFo.pointer];
+                //if (findIndex != 0 && sumDeltaTime == 0 && !nOk) {
+                //    NSLog(@"%@",Fo2FStr(conFo));
+                //}
             }else if(![TOUtils isN:absAlg_p] && ![TOUtils isL:absAlg_p]){
                 //NL找不到,是正常的,因为"内类比无/小"时,本身具象只是frontConAlg,并且本来就是瞬间变"无/小"的;
                 WLog(@"getDetailTimes\nAbsA:%@\nAbsF:%@\nConF:%@,%ld,%ld",AlgP2FStr(absAlg_p),Fo2FStr(absFo),Fo2FStr(conFo),(long)findIndex,(long)lastIndex);
