@@ -517,6 +517,7 @@
  *      2020.06.21: 当本轮决策完成(FinishModel为Demand)时,清空demand.actionFoModels,以便整体任务未完成时,继续决策 (比如不断飞近);
  *      2020.07.06: 当本轮决策完成(FinishModel为TOFoModel)时,解决方案Fo的父级也完成;
  *      2020.08.22: BaseFo完成时,仅设定demand.status=ActYes,等待外循环返回"抵消价值";
+ *      2020.09.16: TOFoModel不由此处Finish,而是由ActYes来处理,共有两种Fo (1. HNGL由末位转至ActYes  2. 普通Fo,直接转至ActYes);
  */
 -(void) singleLoopBackWithFinishModel:(TOModelBase*)finishModel {
     if (ISOK(finishModel, TOAlgModel.class)) {
@@ -536,9 +537,9 @@
                 TOAlgModel *moveAlg = [TOAlgModel newWithAlg_p:move_p group:toFoModel];
                 [self singleLoopBackWithBegin:moveAlg];
             }else{
-                //c. 成功,递归
-                toFoModel.status = TOModelStatus_Finish;
-                [self singleLoopBackWithFinishModel:toFoModel.baseOrGroup];
+                //c. 成功,递归 (参考注释version-20200916);
+                toFoModel.status = TOModelStatus_ActYes;
+                [self singleLoopBackWithActYes:toFoModel];
             }
         }else if(ISOK(base, TOAlgModel.class)){
             //3. 如果base取到alg,则直接finish;
@@ -576,17 +577,17 @@
             [self singleLoopBackWithFinishModel:toAlgModel];
         }
     }else if(ISOK(finishModel, TOFoModel.class)){
-        //a. 任务全部完成时,构建反省类比触发器,等待外循环输入价值变化 (抵消);
-        if (ISOK(finishModel.baseOrGroup, DemandModel.class)) {
-            finishModel.baseOrGroup.status = TOModelStatus_ActYes;
-            NSLog(@"SUCCESS > 本轮决策完成");
-            [self singleLoopBackWithActYes:finishModel.baseOrGroup];
-        }else{
-            //b. 子Fo完成时,其父级也完成 (不过一般子fo是HNGL类型,如果到这儿,说明出了BUG);
-            WLog(@"一般子fo是HNGL类型,如果到这儿,说明出了BUG");
-            finishModel.baseOrGroup.status = TOModelStatus_Finish;
-            [self singleLoopBackWithFinishModel:finishModel.baseOrGroup];
-        }
+        //TOFoModel不由此处Finish,而是由ActYes来处理,共有两种Fo (参考注释version-20200916);
+        //if (ISOK(finishModel.baseOrGroup, DemandModel.class)) {
+        //    finishModel.baseOrGroup.status = TOModelStatus_ActYes;
+        //    NSLog(@"SUCCESS > 本轮决策完成");
+        //    [self singleLoopBackWithActYes:finishModel.baseOrGroup];
+        //}else{
+        //    //b. 子Fo完成时,其父级也完成 (不过一般子fo是HNGL类型,如果到这儿,说明出了BUG);
+        //    WLog(@"一般子fo是HNGL类型,如果到这儿,说明出了BUG");
+        //    finishModel.baseOrGroup.status = TOModelStatus_Finish;
+        //    [self singleLoopBackWithFinishModel:finishModel.baseOrGroup];
+        //}
     }else if(ISOK(finishModel, DemandModel.class)){
         //全部完成,不由此处执行,而是由外循环传入mv抵消后,再移除此demand;
         //DemandModel *demand = (DemandModel*)finishModel;
@@ -718,7 +719,7 @@
         if ([TOUtils isHNGL:actYesModel.content_p]) {
             //2. 如果TOAlgModel为HNGL时,
             NSInteger cutIndex = foNode.content_ps.count - 1;
-            int deltaTime = [NUMTOOK(ARR_INDEX(foNode.deltaTimes, cutIndex)) intValue];
+            double deltaTime = [NUMTOOK(ARR_INDEX(foNode.deltaTimes, cutIndex)) doubleValue];
             
             //3. 触发器 (触发条件:未等到实际输入);
             [AITime setTimeTrigger:deltaTime trigger:^{
@@ -744,6 +745,7 @@
         TOFoModel *foModel = (TOFoModel*)actYesModel;
         AIFoNodeBase *actYesFo = [SMGUtils searchNode:foModel.content_p];
         DemandModel *demand = (DemandModel*)actYesModel.baseOrGroup;
+        if (!ISOK(demand, DemandModel.class)) WLog(@"HNGL应该直接转至HNGL.actYes,如果转到这儿,说明出了BUG");
         
         //2. 触发器 (触发条件:任务未在demandManager中抵消);
         [AITime setTimeTrigger:actYesFo.mvDeltaTime trigger:^{
