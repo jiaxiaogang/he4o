@@ -54,7 +54,7 @@
  */
 -(void) topV2{
     //1. 数据准备
-    DemandModel *demand = [self.delegate aiThinkOutPercept_GetCurrentDemand];
+    DemandModel *demand = [self.delegate aiThinkOutPercept_GetCanDecisionDemand];
     NSArray *mModels = [self.delegate aiTOP_GetShortMatchModel];
     if (!demand || !ARRISOK(mModels)) return;
     

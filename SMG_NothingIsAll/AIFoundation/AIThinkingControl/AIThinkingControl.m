@@ -234,8 +234,8 @@ static AIThinkingControl *_instance;
 /**
  *  MARK:--------------------AIThinkOutPerceptDelegate--------------------
  */
--(DemandModel*) aiThinkOutPercept_GetCurrentDemand{
-    return [self.demandManager getCurrentDemand];
+-(DemandModel*) aiThinkOutPercept_GetCanDecisionDemand{
+    return [self.demandManager getCanDecisionDemand];
 }
 
 -(BOOL) aiThinkOutPercept_EnergyValid{

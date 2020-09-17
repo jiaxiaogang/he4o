@@ -9,9 +9,9 @@
 #import "DemandManager.h"
 #import "DemandModel.h"
 #import "ThinkingUtils.h"
+#import "TOUtils.h"
 
 @interface DemandManager()
-
 
 /**
  *  MARK:--------------------实时序列--------------------
@@ -161,13 +161,38 @@
 
 
 /**
- *  MARK:--------------------获取当前最紧急out任务--------------------
+ *  MARK:--------------------获取任务--------------------
  */
+//获取当前,最紧急任务;
 -(DemandModel*) getCurrentDemand{
     if (ARRISOK(self.loopCache)) {
         //1. 重排序 & 取当前序列最前;
         [self refreshCmvCacheSort];
         return self.loopCache.lastObject;//调试下,是否从小到大排序
+    }
+    return nil;
+}
+//获取当前,可以继续决策的任务 (未完成 & 非等待反馈ActYes);
+-(DemandModel*) getCanDecisionDemand{
+    //1. 数据检查
+    if (!ARRISOK(self.loopCache)) return nil;
+        
+    //2. 重排序 & 取当前序列最前;
+    [self refreshCmvCacheSort];
+    
+    //3. 逐个判断条件
+    for (NSInteger i = 0; i < self.loopCache.count; i++) {
+        DemandModel *item = ARR_INDEX_REVERSE(self.loopCache, i);
+        
+        //4. 已完成时,下一个;
+        if (item.status == TOModelStatus_Finish) continue;
+        
+        //5. 等待反馈中,下一个;
+        NSArray *actYeses = [TOUtils getSubOutModels_AllDeep:item validStatus:@[@(TOModelStatus_ActYes)]];
+        if (ARRISOK(actYeses)) continue;
+        
+        //6. 有效,则返回;
+        return item;
     }
     return nil;
 }

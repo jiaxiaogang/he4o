@@ -723,8 +723,16 @@
             
             //3. 触发器 (触发条件:未等到实际输入);
             [AITime setTimeTrigger:deltaTime trigger:^{
+                
+                //4. 反省类比(成功/未成功)的主要原因;
                 AnalogyType type = (algModel.status == TOModelStatus_ActYes) ? ATSub : ATPlus;
                 [AIAnalogy analogy_ReasonRethink:foModel cutIndex:cutIndex type:type];
+                
+                //5. 失败时,转流程控制-失败 (会开始下一解决方案);
+                if (algModel.status == TOModelStatus_ActYes) {
+                    algModel.status = TOModelStatus_ScoreNo;
+                    [self singleLoopBackWithFailureModel:algModel];
+                }
             }];
         }else if(actYesModel.content_p.isOut){
             ////2. 为行为输出时;
@@ -749,8 +757,16 @@
         
         //2. 触发器 (触发条件:任务未在demandManager中抵消);
         [AITime setTimeTrigger:actYesFo.mvDeltaTime trigger:^{
+            
+            //3. 反省类比(成功/未成功)的主要原因;
             AnalogyType type = (demand.status != TOModelStatus_Finish) ? ATSub : ATPlus;
             [AIAnalogy analogy_ReasonRethink:foModel cutIndex:NSIntegerMax type:type];
+            
+            //4. 失败时,转流程控制-失败 (会开始下一解决方案);
+            if (demand.status != TOModelStatus_Finish) {
+                actYesModel.status = TOModelStatus_ScoreNo;
+                [self singleLoopBackWithFailureModel:actYesModel];
+            }
         }];
     }
 }

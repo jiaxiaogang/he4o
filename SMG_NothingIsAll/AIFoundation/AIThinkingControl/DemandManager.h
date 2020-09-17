@@ -44,9 +44,9 @@
 
 
 /**
- *  MARK:--------------------获取当前最紧急out任务--------------------
+ *  MARK:--------------------获取任务--------------------
  */
--(DemandModel*) getCurrentDemand;
-
+-(DemandModel*) getCurrentDemand;       //获取当前,最紧急任务;
+-(DemandModel*) getCanDecisionDemand;   //获取当前,可以继续决策的任务 (未完成 & 非等待反馈ActYes);
 
 @end

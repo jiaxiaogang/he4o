@@ -373,9 +373,13 @@
     return nil;
 }
 
-+(NSArray*) getSubOutModels_AllDeep:(TOModelBase*)outModel validStatus:(NSArray*)validStatus {
++(NSArray*) getSubOutModels_AllDeep:(TOModelBase*)outModel validStatus:(NSArray*)validStatus{
+    return [self getSubOutModels_AllDeep:outModel validStatus:validStatus cutStopStatus:@[@(TOModelStatus_Finish)]];
+}
++(NSArray*) getSubOutModels_AllDeep:(TOModelBase*)outModel validStatus:(NSArray*)validStatus cutStopStatus:(NSArray*)cutStopStatus{
     //1. 数据准备
     validStatus = ARRTOOK(validStatus);
+    cutStopStatus = ARRTOOK(cutStopStatus);
     NSMutableArray *result = [[NSMutableArray alloc] init];
     if (!outModel) return result;
     
@@ -385,7 +389,7 @@
     }
     
     //3. 找出子集 (Finish负责截停递归);
-    if (outModel.status != TOModelStatus_Finish) {
+    if (![cutStopStatus containsObject:@(outModel.status)]) {
         NSMutableArray *subModels = [[NSMutableArray alloc] init];
         if (ISOK(outModel, DemandModel.class) || ISOK(outModel, TOAlgModel.class) || ISOK(outModel, TOValueModel.class)) {
             id<ITryActionFoDelegate> tryActionObj = (id<ITryActionFoDelegate>)outModel;
