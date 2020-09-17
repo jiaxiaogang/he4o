@@ -192,9 +192,16 @@
     }else if (outModel.content_p.isOut) {
         //2. 第1级: 本身即是isOut时,直接行为化返回;
         NSLog(@"\n\n=============================== 行为输出 ===============================\n%@",AlgP2FStr(outModel.content_p));
-        outModel.status = TOModelStatus_Finish;
+        //2. 输出前改为ActYes (避免重复决策当前demand) (isOut=true暂无需反省类比);
+        outModel.status = TOModelStatus_ActYes;
+        //[self.delegate toAction_SubModelActYes:outModel];
+        
+        //2. 消耗活跃度并输出
         [self.delegate toAction_updateEnergy:-1.0f];
         [self.delegate toAction_Output:@[outModel.content_p]];
+        
+        //2. 输出后,直接改为Finish,因为行为输出暂无需反省类比 (所以直接代替OPushM改状态为Finish);
+        outModel.status = TOModelStatus_Finish;
         [self.delegate toAction_SubModelFinish:outModel];
         return;
     }else{
