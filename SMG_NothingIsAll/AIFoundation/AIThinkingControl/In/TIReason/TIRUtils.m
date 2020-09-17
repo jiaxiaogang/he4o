@@ -31,11 +31,11 @@
  *  @param protoFo : 四层说明: 在fromShortMem时,protoFo中的概念元素为parent层, 而在fromRethink时,其元素为match层;
  *  _result 将protoFo与assFo判断是否全含,并将匹配度返回;
  */
-+(void) TIR_Fo_CheckFoValidMatch:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo checkItemValid:(BOOL(^)(AIKVPointer *itemAlg,AIKVPointer *assAlg))checkItemValid success:(void(^)(NSInteger lastAssIndex,CGFloat matchValue))success failure:(void(^)(NSString *msg))failure {
++(void) TIR_Fo_CheckFoValidMatch:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo checkItemValid:(BOOL(^)(AIKVPointer *itemAlg,AIKVPointer *assAlg))checkItemValid success:(void(^)(NSInteger lastAssIndex,CGFloat matchValue))success{
     //1. 数据准备;
     BOOL paramValid = protoFo && protoFo.content_ps.count > 0 && assFo && assFo.content_ps.count > 0 && success && checkItemValid;
     if (!paramValid) {
-        failure(@"参数错误");
+        NSLog(@"参数错误");
         return;
     }
     if (Log4MFo) NSLog(@"------------------------ 时序全含检查 ------------------------\nproto:%@->%@\nass:%@->%@",Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p),Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
@@ -54,7 +54,7 @@
         }
     }
     if (lastAssIndex == -1) {
-        failure(@"时序识别: lastItem匹配失败,查看是否在联想时就出bug了");
+        NSLog(@"时序识别: lastItem匹配失败,查看是否在联想时就出bug了");
         return;
     }
     
@@ -81,7 +81,7 @@
             
             //5. 非全含 (一个失败,全盘皆输);
             if (!checkResult) {
-                failure(@"时序识别: item无效,未在protoFo中找到,所有非全含,不匹配");
+                if (Log4MFo) NSLog(@"时序识别: item无效,未在protoFo中找到,所有非全含,不匹配");
                 return;
             }
         }

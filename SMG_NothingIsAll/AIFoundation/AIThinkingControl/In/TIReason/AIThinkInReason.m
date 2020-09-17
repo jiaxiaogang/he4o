@@ -384,8 +384,6 @@
                 NSLog(@"时序识别: SUCCESS >>> matchValue:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
                 successed = true;
                 finishBlock(assFo,matchValue,lastAssIndex);
-            } failure:^(NSString *msg) {
-                NSLog(@"%@",msg);
             }];
             
             //7. 成功一条即return

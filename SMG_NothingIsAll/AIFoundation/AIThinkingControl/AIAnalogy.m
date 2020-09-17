@@ -634,6 +634,8 @@
             NSArray *except_ps = [TOUtils convertPointersFromTOValueModelSValue:toAlgModel.subModels invalidStatus:@[@(TOModelStatus_Finish)]];
             NSArray *notFinish_ps = [SMGUtils removeSub_ps:except_ps parent_ps:toAlgModel.justPValues];
             
+            //TODOTOMORROW: 发现BUG,此处justPValues为空;
+            
             //4. 未修正部分构建为: "SP概念"
             AIAlgNodeBase *curAlg = [SMGUtils searchNode:toAlgModel.content_p];
             if (!ARRISOK(notFinish_ps)) continue;
