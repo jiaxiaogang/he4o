@@ -618,6 +618,8 @@
  *      2. ActYes流程控制的Demand调用时,生物钟触发器触发成功时,理性分析什么导致了未成功 (cutIndex无用,因为全部用);
  *  @version
  *      2020.09.03: 支持ATPlus反省类比;
+ *  @bug
+ *      2020.09.18: 因为数据结构取错,导致取不到justPValues的BUG (参考:21027) T;
  */
 +(void) analogy_ReasonRethink:(TOFoModel*)foModel cutIndex:(NSInteger)cutIndex type:(AnalogyType)type{
     //1. 数据准备
@@ -629,24 +631,26 @@
     
     //2. 构建SPAlg (触发反省类比_实际fo数据收集 (不用收集realFo,而是直接对未修正部分构建,参考20205-原则1));
     for (TOAlgModel *toAlgModel in foModel.subModels) {
-        if (ISOK(toAlgModel, TOAlgModel.class)) {
-            //3. 取到 "未修正稀疏码" (参考20205-原则2);
-            NSArray *except_ps = [TOUtils convertPointersFromTOValueModelSValue:toAlgModel.subModels invalidStatus:@[@(TOModelStatus_Finish)]];
-            NSArray *notFinish_ps = [SMGUtils removeSub_ps:except_ps parent_ps:toAlgModel.justPValues];
-            
-            //TODOTOMORROW: 发现BUG,此处justPValues为空;
-            
-            //4. 未修正部分构建为: "SP概念"
-            AIAlgNodeBase *curAlg = [SMGUtils searchNode:toAlgModel.content_p];
-            if (!ARRISOK(notFinish_ps)) continue;
-            AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:notFinish_ps conAlgs:@[curAlg] isMem:false ds:spDS];
-            NSLog(@"createAlg: %@",Alg2FStr(spAlg));
-            
-            //5. 收集SP概念_用于构建SP时序;
-            [spFoContent addObject:spAlg.pointer];
-        }else{
-            WLog(@"查下此处,为何fo的subModel不是algModel类型,如果2020.10之前未见过此警告,可取消打印此日志;");
-        }
+        if (!ISOK(toAlgModel, TOAlgModel.class)) WLog(@"查下此处,为何fo的subModel不是algModel类型,如果2020.10之前未见过此警告,可取消打印此日志;");
+        if (!ISOK(toAlgModel, TOAlgModel.class)) continue;
+        
+        //2. 取出reModel;
+        TOAlgModel *reModel = ARR_INDEX(toAlgModel.subModels, 0);
+        if (toAlgModel.subModels.count > 1) WLog(@"--------->>> 反省类比取reModel时,subModels长度>1,看是否需要更全面处理>1的情况");
+        if (!reModel) continue;
+        
+        //3. 取到 "未修正稀疏码" (参考20205-原则2);
+        NSArray *except_ps = [TOUtils convertPointersFromTOValueModelSValue:reModel.subModels invalidStatus:@[@(TOModelStatus_Finish)]];
+        NSArray *notFinish_ps = [SMGUtils removeSub_ps:except_ps parent_ps:reModel.justPValues];
+        
+        //4. 未修正部分构建为: "SP概念"
+        AIAlgNodeBase *curAlg = [SMGUtils searchNode:toAlgModel.content_p];
+        if (!ARRISOK(notFinish_ps)) continue;
+        AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:notFinish_ps conAlgs:@[curAlg] isMem:false ds:spDS];
+        NSLog(@"createAlg: %@",Alg2FStr(spAlg));
+        
+        //5. 收集SP概念_用于构建SP时序;
+        [spFoContent addObject:spAlg.pointer];
     }
     
     //6. 构建SPFo
