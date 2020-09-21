@@ -97,6 +97,7 @@
 		08AF45551E97D0B500377887 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45541E97D0B500377887 /* Assets.xcassets */; };
 		08AF45581E97D0B500377887 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45561E97D0B500377887 /* LaunchScreen.storyboard */; };
 		08B31E7E20648C3700FD96EA /* ThinkingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B31E7D20648C3700FD96EA /* ThinkingUtils.m */; };
+		08C6C2632518E49400DDE6BF /* NSLog+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C6C2622518E49400DDE6BF /* NSLog+Extension.m */; };
 		08C84A8E1E9A866200897D8B /* AIInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A8D1E9A866200897D8B /* AIInput.m */; };
 		08CEAFAD22B317A800CD1D91 /* NodeCompareModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08CEAFAC22B317A800CD1D91 /* NodeCompareModel.m */; };
 		08D322A91EBA28B0009D734A /* Foundation+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D322A81EBA28B0009D734A /* Foundation+Log.m */; };
@@ -318,6 +319,8 @@
 		08AF45591E97D0B500377887 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		08B31E7C20648C3700FD96EA /* ThinkingUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThinkingUtils.h; sourceTree = "<group>"; };
 		08B31E7D20648C3700FD96EA /* ThinkingUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ThinkingUtils.m; sourceTree = "<group>"; };
+		08C6C2612518E49400DDE6BF /* NSLog+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSLog+Extension.h"; sourceTree = "<group>"; };
+		08C6C2622518E49400DDE6BF /* NSLog+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSLog+Extension.m"; sourceTree = "<group>"; };
 		08C84A8C1E9A866200897D8B /* AIInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIInput.h; sourceTree = "<group>"; };
 		08C84A8D1E9A866200897D8B /* AIInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIInput.m; sourceTree = "<group>"; };
 		08CB89B82231EAB200EC1181 /* ReadMe.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReadMe.h; sourceTree = "<group>"; };
@@ -527,6 +530,8 @@
 				080BFAAE2304D06A00046D22 /* HEViewController.m */,
 				0839819D24DB7F8C00A020D2 /* HEView.h */,
 				0839819E24DB7F8C00A020D2 /* HEView.m */,
+				08C6C2612518E49400DDE6BF /* NSLog+Extension.h */,
+				08C6C2622518E49400DDE6BF /* NSLog+Extension.m */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -1256,6 +1261,7 @@
 				08A5D5E522AF2B8200E56BB4 /* NVDelegate_He.m in Sources */,
 				0839819F24DB7F8C00A020D2 /* HEView.m in Sources */,
 				081B3ADB1F6E2CCD008A7F36 /* AINet.m in Sources */,
+				08C6C2632518E49400DDE6BF /* NSLog+Extension.m in Sources */,
 				0858C5E021950BB300951BA5 /* TreeView.m in Sources */,
 				0810E50F236A637500B33226 /* AINetIndexUtils.m in Sources */,
 				88BC09DD20B4F67E0006ABEF /* XGRedisDictionary.m in Sources */,

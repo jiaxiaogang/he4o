@@ -49,4 +49,9 @@
     return _subModels;
 }
 
+-(void)setActionIndex:(NSInteger)actionIndex{
+    NSLog(@"toFo.setActionIndex:%ld -> %ld",self.actionIndex,actionIndex);
+    _actionIndex = actionIndex;
+}
+
 @end

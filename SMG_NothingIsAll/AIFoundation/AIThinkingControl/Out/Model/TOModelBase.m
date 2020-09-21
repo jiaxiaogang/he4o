@@ -8,6 +8,7 @@
 
 #import "TOModelBase.h"
 #import "AIKVPointer.h"
+#import "NSLog+Extension.h"
 
 @implementation TOModelBase
 
@@ -24,6 +25,11 @@
         return [object.content_p isEqual:self.content_p];
     }
     return false;
+}
+
+-(void)setStatus:(TOModelStatus)status{
+    NSLog(@"toFo.setStatus:%@ (%@ -> %@)",Pit2FStr(self.content_p),[NSLog_Extension convertStatus2Desc:self.status],[NSLog_Extension convertStatus2Desc:status]);
+    _status = status;
 }
 
 @end

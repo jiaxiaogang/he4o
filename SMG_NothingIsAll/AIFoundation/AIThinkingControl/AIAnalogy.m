@@ -647,7 +647,7 @@
         AIAlgNodeBase *curAlg = [SMGUtils searchNode:toAlgModel.content_p];
         if (!ARRISOK(notFinish_ps)) continue;
         AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:notFinish_ps conAlgs:@[curAlg] isMem:false ds:spDS];
-        NSLog(@"createAlg: %@",Alg2FStr(spAlg));
+        NSLog(@"createAlg:%@ from:%@",Alg2FStr(spAlg),AlgP2FStr(toAlgModel.content_p));
         
         //5. 收集SP概念_用于构建SP时序;
         [spFoContent addObject:spAlg.pointer];
@@ -656,7 +656,7 @@
     //6. 构建SPFo
     if (ARRISOK(spFoContent)) {
         AINetAbsFoNode *spFo = [theNet createAbsFo_General:@[foNode] content_ps:spFoContent difStrong:1 ds:spDS];
-        NSLog(@"createFo: %@",Fo2FStr(spFo));
+        NSLog(@"createFo:%@ con:%@",Fo2FStr(spFo),Fo2FStr(foNode));
         
         //7. 向性左向右,以当前foNode为交集指引,找assSPFo,以进行外类比 (参考20205-原则3);
         NSArray *assSPFos = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:foNode type:type]];
