@@ -730,6 +730,7 @@
                 
                 //5. 失败时,转流程控制-失败 (会开始下一解决方案);
                 if (algModel.status == TOModelStatus_ActYes) {
+                    NSLog(@"====ActYes is Alg update status");
                     algModel.status = TOModelStatus_ScoreNo;
                     [self singleLoopBackWithFailureModel:algModel];
                 }
@@ -764,6 +765,7 @@
             
             //4. 失败时,转流程控制-失败 (会开始下一解决方案);
             if (demand.status != TOModelStatus_Finish) {
+                NSLog(@"====ActYes is Fo update status");
                 actYesModel.status = TOModelStatus_ScoreNo;
                 [self singleLoopBackWithFailureModel:actYesModel];
             }

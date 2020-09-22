@@ -28,7 +28,7 @@
 }
 
 -(void)setStatus:(TOModelStatus)status{
-    NSLog(@"toFo.setStatus:%@ (%@ -> %@)",Pit2FStr(self.content_p),[NSLog_Extension convertStatus2Desc:self.status],[NSLog_Extension convertStatus2Desc:status]);
+    NSLog(@"toModel.setStatus:%@ (%@ -> %@)",Pit2FStr(self.content_p),[NSLog_Extension convertStatus2Desc:self.status],[NSLog_Extension convertStatus2Desc:status]);
     _status = status;
 }
 
