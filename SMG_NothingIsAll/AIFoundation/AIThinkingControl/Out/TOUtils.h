@@ -81,6 +81,7 @@
  *  @result notnull NSArray<TOModelBase#>
  */
 +(NSArray*) getSubOutModels_AllDeep:(TOModelBase*)outModel validStatus:(NSArray*)validStatus;
++(NSArray*) getSubOutModels_AllDeep:(TOModelBase*)outModel validStatus:(NSArray*)validStatus cutStopStatus:(NSArray*)cutStopStatus;
 
 /**
  *  MARK:--------------------将TOModels转为Pointers--------------------

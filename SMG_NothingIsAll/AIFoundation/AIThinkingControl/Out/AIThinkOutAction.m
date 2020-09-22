@@ -200,9 +200,10 @@
         [self.delegate toAction_updateEnergy:-1.0f];
         [self.delegate toAction_Output:@[outModel.content_p]];
         
-        //2. 输出后,直接改为Finish,因为行为输出暂无需反省类比 (所以直接代替OPushM改状态为Finish);
-        outModel.status = TOModelStatus_Finish;
-        [self.delegate toAction_SubModelFinish:outModel];
+        //2. 输出后,直接改为Finish,因为行为输出本身暂无需反省类比(但需要推动baseFo的反省类比) (所以直接代替OPushM改状态为Finish);
+        //2. 2020.09.22: 注掉,因为OPushM中未排除isOut=true的情况,所以会触发反省类比,再加上这儿成了两次触发 (参考21042);
+        //outModel.status = TOModelStatus_Finish;
+        //[self.delegate toAction_SubModelFinish:outModel];
         return;
     }else{
         //3. 数据检查curAlg
