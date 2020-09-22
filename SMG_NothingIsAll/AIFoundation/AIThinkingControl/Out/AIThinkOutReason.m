@@ -286,6 +286,8 @@
  *  @version
  *      2020.08.05: waitModel.pm_Score的赋值改为取demand.score取负 (因为demand一般为负,而解决任务为正);
  *                  而此处,从waitModel的base中找fo较麻烦,所以省事儿,就直接取-demand.score得了;
+ *  @bug
+ *      2020.09.22: 加上cutStopStatus,避免同一waitModel被多次触发,导致BUG (参考21042);
  */
 -(BOOL) commitFromOuterPushMiddleLoop:(DemandModel*)demand latestMModel:(AIShortMatchModel*)latestMModel{
     //1. 数据检查
@@ -338,6 +340,8 @@
  *      2020.08.26: 在GL时,需要判断其"期望"与"真实"概念间是否是同一物体 (参考20204-示例);
  *  @version
  *      2020.08.24: 从commitFromOuterPushMiddleLoop中独立出来,独立调用,处理realAlg和HNGL的变化相符判断;
+ *  @bug
+ *      2020.09.22: 加上cutStopStatus,避免同一waitModel被多次触发,导致BUG (参考21042);
  */
 -(void) commitFromOuterInputReason:(DemandModel*)demand inputMModel:(AIShortMatchModel*)inputMModel{
     //1. 数据检查
