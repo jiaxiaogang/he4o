@@ -8,7 +8,6 @@
 
 #import "TOModelBase.h"
 #import "AIKVPointer.h"
-#import "NSLog+Extension.h"
 
 @implementation TOModelBase
 

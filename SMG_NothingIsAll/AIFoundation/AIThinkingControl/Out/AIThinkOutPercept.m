@@ -101,21 +101,8 @@
 }
 
 -(void) commitFromTOR_MoveForDemand:(DemandModel*)demand{
-    //1. 数据准备
-    NSArray *mModels = [self.delegate aiTOP_GetShortMatchModel];
-    if (!demand || !ARRISOK(mModels)) return;
-    
-    //2. 逐个对mModels短时记忆进行尝试使用;
-    for (NSInteger i = 0; i < mModels.count; i++) {
-        AIShortMatchModel *mModel = ARR_INDEX_REVERSE(mModels, i);
-        AIAlgNodeBase *matchAlg = mModel.matchAlg;
-        
-        //3. 识别有效性判断 (转至P+);
-        if (matchAlg) {
-            BOOL success = [self perceptPlus:demand];
-            if (success) return;
-        }
-    }
+    //1. 识别有效性判断 (转至P+);
+    [self perceptPlus:demand];
 }
 
 //MARK:===============================================================
@@ -179,10 +166,12 @@
  *      1. 简介: mv方向索引找正价值解决方案;
  *      2. 实例: 饿了,现有面粉,做面吃可以解决;
  *      3. 步骤: 用A.refPorts ∩ F.conPorts (参考P+模式模型图);
- *  todo :
+ *  @todo :
  *      1. 集成原有的能量判断与消耗 T;
  *      2. 评价机制1: 比如土豆我超不爱吃,在mvScheme中评价,入不应期,并继续下轮循环;
  *      3. 评价机制2: 比如炒土豆好麻烦,在行为化中反思评价,入不应期,并继续下轮循环;
+ *  @version
+ *      2020.09.23: 只要得到解决方案,就返回true中断,因为即使行为化失败,也会交由流程控制继续决策,而非由此处处理;
  */
 -(BOOL) perceptPlus:(DemandModel*)demandModel{
     //1. 数据准备;
@@ -199,13 +188,11 @@
         toFoModel.actionIndex = 0;
         
         //b. 取自身,实现吃,则可不饿;
-        NSLog(@"------------P+新增一例解决方案: %@->%@",Fo2FStr(sameFo),Mvp2Str(sameFo.cmvNode_p));
+        NSLog(@"------->>>>>> P+新增一例解决方案: %@->%@",Fo2FStr(sameFo),Mvp2Str(sameFo.cmvNode_p));
         [self.delegate aiTOP_2TOR_PerceptPlus:toFoModel];
         
         //c. 用success记录下,是否本次成功找到候选方案;
-        if (toFoModel.status == TOModelStatus_ActYes || toFoModel.status == TOModelStatus_Runing || toFoModel.status == TOModelStatus_Finish) {
-            success = true;
-        }
+        success = true;
         
         //d. 一次只尝试一条,行为化中途失败时,自然会由流程控制方法递归TOP.P+重来;
         return true;

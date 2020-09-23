@@ -307,12 +307,15 @@
     //1. 数据准备;
     if (!demandModel || direction == MVDirection_None || !tryResult || !canAssBlock || !canAssBlock() || !updateEnergy) return;
     
+    //2. 逐个对mModels短时记忆进行尝试使用 (关闭);
+    //NSArray *mModels = [self.delegate aiTOP_GetShortMatchModel];
+    
     //3. 不应期
     NSArray *exceptFoModels = [SMGUtils filterArr:demandModel.actionFoModels checkValid:^BOOL(TOModelBase *item) {
-        return item.status == TOModelStatus_ActNo || item.status == TOModelStatus_ScoreNo;
+        return item.status == TOModelStatus_ActNo || item.status == TOModelStatus_ScoreNo || item.status == TOModelStatus_ActYes;
     }];
     NSArray *except_ps = [TOUtils convertPointersFromTOModels:exceptFoModels];
-    if (Log4DirecRef) NSLog(@"Fo已有方案数:%lu 不应期数:%lu",(long)demandModel.actionFoModels.count,(long)except_ps.count);
+    if (Log4DirecRef) NSLog(@"------->>>>>> Fo已有方案数:%lu 不应期数:%lu",(long)demandModel.actionFoModels.count,(long)except_ps.count);
     
     //4. 用方向索引找normalFo解决方案
     //P例:饿了,该怎么办;

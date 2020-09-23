@@ -19,6 +19,7 @@
 #import "UIColor+expanded.h"
 #import "AIHeader.h"
 #import "HEView.h"
+#import "NSLog+Extension.h"
 #endif
 
 /**
