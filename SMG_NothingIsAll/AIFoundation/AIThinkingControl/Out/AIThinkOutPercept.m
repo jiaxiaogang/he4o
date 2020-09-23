@@ -88,7 +88,7 @@
         //a. 识别有效性判断 (优先直接mv+,不行再mv-迂回);
         if (matchAlg) {
             //b. P+
-            BOOL pSuccess = [self perceptPlus:matchAlg demandModel:demand];
+            BOOL pSuccess = [self perceptPlus:demand];
             NSLog(@"topV2_P+ => %@ => %@",Alg2FStr(matchAlg),pSuccess ? @"成功":@"失败");
             if (pSuccess) return;
             
@@ -112,7 +112,7 @@
         
         //3. 识别有效性判断 (转至P+);
         if (matchAlg) {
-            BOOL success = [self perceptPlus:matchAlg demandModel:demand];
+            BOOL success = [self perceptPlus:demand];
             if (success) return;
         }
     }
@@ -184,15 +184,15 @@
  *      2. 评价机制1: 比如土豆我超不爱吃,在mvScheme中评价,入不应期,并继续下轮循环;
  *      3. 评价机制2: 比如炒土豆好麻烦,在行为化中反思评价,入不应期,并继续下轮循环;
  */
--(BOOL) perceptPlus:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel{
+-(BOOL) perceptPlus:(DemandModel*)demandModel{
     //1. 数据准备;
-    if (!matchAlg || !demandModel) return false;
+    if (!demandModel) return false;
     MVDirection direction = [ThinkingUtils havDemand:demandModel.algsType delta:demandModel.delta];
-    NSLog(@"\n\n=============================== TOP.P+ ===============================\n任务:%@,发生%ld,方向%ld\nM:%@",demandModel.algsType,(long)demandModel.delta,(long)direction,Alg2FStr(matchAlg));
+    NSLog(@"\n\n=============================== TOP.P+ ===============================\n任务:%@,发生%ld,方向%ld",demandModel.algsType,(long)demandModel.delta,(long)direction);
     
     //2. 调用通用diff模式方法;
     __block BOOL success = false;//默认为失败
-    [TOUtils topPerceptModeV2:matchAlg demandModel:demandModel direction:direction tryResult:^BOOL(AIFoNodeBase *sameFo) {
+    [TOUtils topPerceptModeV2:demandModel direction:direction tryResult:^BOOL(AIFoNodeBase *sameFo) {
         
         //a. 构建TOFoModel
         TOFoModel *toFoModel = [TOFoModel newWithFo_p:sameFo.pointer base:demandModel];
@@ -230,7 +230,7 @@
     
     //2. 调用通用diff模式方法;
     __block BOOL success = false;//默认为失败
-    [TOUtils topPerceptModeV2:matchAlg demandModel:demandModel direction:direction tryResult:^BOOL(AIFoNodeBase *sameFo) {
+    [TOUtils topPerceptModeV2:demandModel direction:direction tryResult:^BOOL(AIFoNodeBase *sameFo) {
         
         //a. 取兄弟节点,停止打球,则不再累;
         [TOUtils getPlusBrotherBySubProtoFo_NoRepeatNotNull:sameFo tryResult:^BOOL(AIFoNodeBase *checkFo, AIFoNodeBase *subNode, AIFoNodeBase *plusNode) {

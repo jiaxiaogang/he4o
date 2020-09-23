@@ -234,6 +234,7 @@
  *      2020.07.09: 修改方向索引的解决方案不应期,解决只持续飞行两次就停住的BUG (参考n20p8-BUG1);
  *  @version
  *      2020.07.23: 迭代至V2_将19192示图的联想方式去掉,仅将方向索引除去不应期的返回,而解决方案到底是否实用,放到行为化中去判断;
+ *      2020.09.23: 取消参数matchAlg (最近识别的M),如果今后还要使用短时优先功能,直接从theTC.shortManager取);
  */
 //+(void) topPerceptMode:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel direction:(MVDirection)direction tryResult:(BOOL(^)(AIFoNodeBase *sameFo))tryResult canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
 //    //1. 数据准备;
@@ -302,16 +303,16 @@
 //        return false;//fo解决方案无效,继续找下个;
 //    }];
 //}
-+(void) topPerceptModeV2:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel direction:(MVDirection)direction tryResult:(BOOL(^)(AIFoNodeBase *sameFo))tryResult canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
++(void) topPerceptModeV2:(DemandModel*)demandModel direction:(MVDirection)direction tryResult:(BOOL(^)(AIFoNodeBase *sameFo))tryResult canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
     //1. 数据准备;
-    if (!matchAlg || !demandModel || direction == MVDirection_None || !tryResult || !canAssBlock || !canAssBlock() || !updateEnergy) return;
+    if (!demandModel || direction == MVDirection_None || !tryResult || !canAssBlock || !canAssBlock() || !updateEnergy) return;
     
     //3. 不应期
     NSArray *exceptFoModels = [SMGUtils filterArr:demandModel.actionFoModels checkValid:^BOOL(TOModelBase *item) {
         return item.status == TOModelStatus_ActNo || item.status == TOModelStatus_ScoreNo;
     }];
     NSArray *except_ps = [TOUtils convertPointersFromTOModels:exceptFoModels];
-    if (Log4DirecRef) NSLog(@"Fo不应期数:%lu",(unsigned long)except_ps.count);
+    if (Log4DirecRef) NSLog(@"Fo已有方案数:%lu 不应期数:%lu",(long)demandModel.actionFoModels.count,(long)except_ps.count);
     
     //4. 用方向索引找normalFo解决方案
     //P例:饿了,该怎么办;

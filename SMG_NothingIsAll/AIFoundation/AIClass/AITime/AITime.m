@@ -60,7 +60,7 @@
     
     //2. 用after延迟定时deltaT x 1.3触发;
     CGFloat triggerTime = deltaTime / 1000.0f * 1.3f;
-    NSLog(@"---> 生物钟触发器: %f",triggerTime);
+    NSLog(@"---> 设定生物钟触发器: %f",triggerTime);
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(triggerTime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         //3. 触发时,判断是否还是actYes状态 (在OuterPushMiddleLoop()中,会将ActYes且符合,且PM算法成功的,改为Finish);
         if (canTrigger) {
