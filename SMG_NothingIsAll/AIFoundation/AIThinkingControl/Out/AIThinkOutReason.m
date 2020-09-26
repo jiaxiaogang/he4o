@@ -726,10 +726,12 @@
             double deltaTime = [NUMTOOK(ARR_INDEX(foNode.deltaTimes, cutIndex)) doubleValue];
             
             //3. 触发器 (触发条件:未等到实际输入);
+            NSLog(@"---//触发器A_生成: %@ from:%@ time:%f",AlgP2FStr(algModel.content_p),Fo2FStr(foNode),deltaTime);
             [AITime setTimeTrigger:deltaTime trigger:^{
                 
                 //4. 反省类比(成功/未成功)的主要原因;
                 AnalogyType type = (algModel.status == TOModelStatus_ActYes) ? ATSub : ATPlus;
+                NSLog(@"---//触发器A_触发: %@ from %@ (%ld)",AlgP2FStr(algModel.content_p),Fo2FStr(foNode),(long)type);
                 [AIAnalogy analogy_ReasonRethink:foModel cutIndex:cutIndex type:type];
                 
                 //5. 失败时,转流程控制-失败 (会开始下一解决方案);
@@ -761,10 +763,12 @@
         if (!ISOK(demand, DemandModel.class)) WLog(@"HNGL应该直接转至HNGL.actYes,如果转到这儿,说明出了BUG");
         
         //2. 触发器 (触发条件:任务未在demandManager中抵消);
+        NSLog(@"---//触发器F_生成: %p -> %@ time:%f",demand,Fo2FStr(actYesFo),actYesFo.mvDeltaTime);
         [AITime setTimeTrigger:actYesFo.mvDeltaTime trigger:^{
             
             //3. 反省类比(成功/未成功)的主要原因;
             AnalogyType type = (demand.status != TOModelStatus_Finish) ? ATSub : ATPlus;
+            NSLog(@"---//触发器F_触发: %p -> %@ (%ld)",demand,Fo2FStr(actYesFo),(long)type);
             [AIAnalogy analogy_ReasonRethink:foModel cutIndex:NSIntegerMax type:type];
             
             //4. 失败时,转流程控制-失败 (会开始下一解决方案);
