@@ -14,6 +14,6 @@
 @interface AIShortMatchModel_Simple : NSObject
 
 @property (strong, nonatomic) AIKVPointer *alg_p;       //概念
-@property (assign, nonatomic) NSTimeInterval inputTime; //概念输入时间
+@property (assign, nonatomic) NSTimeInterval inputTime; //概念输入时间 (单位:s)
 
 @end
