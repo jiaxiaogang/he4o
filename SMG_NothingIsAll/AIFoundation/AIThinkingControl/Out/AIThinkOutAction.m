@@ -177,6 +177,7 @@
  *  @bug
  *      2020.09.15: 将isOut=true时,改为调Finish,因为目前ActYes暂不对行为输出做处理,但流程控制要继续推进,否则会BUG (参考21025);
  *      2020.09.22: 取消行为输出时直接调用Finish,因为在OPushM中也会推进流程控制,如果这里再调用,会重复触发反省类比 (参考21042);
+ *      2020.09.28: 独特码取到的不是最新帧,导致反省类比P时,不是距0而是距6,将mIsC的for循环改为新帧优先即可 (参考21054);
  */
 -(void) convert2Out_Hav:(TOAlgModel*)outModel {
     //1. 数据准备 (空白无需行为化);
@@ -222,7 +223,8 @@
         if (ISOK(outModel.baseOrGroup, TOFoModel.class) && baseFo && baseFo.cmvNode_p) {
             
             //a. 依次判断mModel,只要符合mIsC即可;
-            for (AIShortMatchModel *model in theTC.inModelManager.models) {
+            for (NSInteger i = 0; i < theTC.inModelManager.models.count; i++) {
+                AIShortMatchModel *model = ARR_INDEX_REVERSE(theTC.inModelManager.models, i);
                 NSLog(@"====== checkMC ======\nM:%@\nP:%@",Alg2FStr(model.matchAlg),Alg2FStr(model.protoAlg));
                 ////调试: 当MC无法进入出现BUG时,打开此调试信息;
                 //if ([TOUtils mIsC_2:curAlg.pointer c:model.matchAlg.pointer]){
@@ -244,9 +246,7 @@
                     
                     //c. 将"P-M取得独特稀疏码"保留到短时记忆模型;
                     [reModel.justPValues addObjectsFromArray:[SMGUtils removeSub_ps:curAlg.content_ps parent_ps:model.protoAlg.content_ps]];
-                    NSLog(@"--------justPValues1:%@",Pits2FStr(reModel.justPValues));
-                    //TODOTOMORROW: 查下为何此处会有`距11`出现在justPValues中;
-                    
+                        
                     //d. 将理性评价"价值分"保留到短时记忆模型;
                     reModel.pm_Score = [ThinkingUtils getScoreForce:baseFo.cmvNode_p ratio:1.0f];
                     reModel.pm_MVAT = baseFo.cmvNode_p.algsType;

@@ -84,7 +84,6 @@
     
     //3. 将"P-M取得独特稀疏码"保留到短时记忆模型;
     [mTOAlgModel.justPValues addObjectsFromArray:[SMGUtils removeSub_ps:mModel.matchAlg.content_ps parent_ps:mModel.protoAlg.content_ps]];
-    NSLog(@"--------justPValues2:%@",Pits2FStr(mTOAlgModel.justPValues));
     
     //4. 将理性评价"价值分"保留到短时记忆模型;
     mTOAlgModel.pm_Score = [ThinkingUtils getScoreForce:mModel.matchFo.cmvNode_p ratio:mModel.matchFoValue];
@@ -307,7 +306,6 @@
             
             //4. 将"P-M取得独特稀疏码"保留到短时记忆模型;
             [waitModel.justPValues addObjectsFromArray:[SMGUtils removeSub_ps:latestMModel.matchAlg.content_ps parent_ps:latestMModel.protoAlg.content_ps]];
-            NSLog(@"--------justPValues3:%@",Pits2FStr(waitModel.justPValues));
             
             //5. 将理性评价"价值分"保留到短时记忆模型;
             waitModel.pm_Score = -[ThinkingUtils getScoreForce:demand.algsType urgentTo:demand.urgentTo delta:demand.delta ratio:1.0f];
