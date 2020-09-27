@@ -244,6 +244,8 @@
                     
                     //c. 将"P-M取得独特稀疏码"保留到短时记忆模型;
                     [reModel.justPValues addObjectsFromArray:[SMGUtils removeSub_ps:curAlg.content_ps parent_ps:model.protoAlg.content_ps]];
+                    NSLog(@"--------justPValues1:%@",Pits2FStr(reModel.justPValues));
+                    //TODOTOMORROW: 查下为何此处会有`距11`出现在justPValues中;
                     
                     //d. 将理性评价"价值分"保留到短时记忆模型;
                     reModel.pm_Score = [ThinkingUtils getScoreForce:baseFo.cmvNode_p ratio:1.0f];
