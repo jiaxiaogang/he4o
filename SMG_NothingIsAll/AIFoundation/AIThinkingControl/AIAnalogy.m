@@ -642,6 +642,7 @@
         //3. 取到 "未修正稀疏码" (参考20205-原则2);
         NSArray *except_ps = [TOUtils convertPointersFromTOValueModelSValue:reModel.subModels invalidStatus:@[@(TOModelStatus_Finish)]];
         NSArray *notFinish_ps = [SMGUtils removeSub_ps:except_ps parent_ps:reModel.justPValues];
+        NSLog(@"item--> justPValues:(%@) - excepts:(%@) = (%@)",Pits2FStr(reModel.justPValues),Pits2FStr(except_ps),Pits2FStr(notFinish_ps));
         
         //4. 未修正部分构建为: "SP概念"
         AIAlgNodeBase *curAlg = [SMGUtils searchNode:toAlgModel.content_p];
