@@ -639,8 +639,10 @@
         if (toAlgModel.subModels.count > 1) WLog(@"--------->>> 反省类比取reModel时,subModels长度>1,看是否需要更全面处理>1的情况");
         if (!reModel) continue;
         
-        //3. 取到 "未修正稀疏码" (参考20205-原则2);
-        NSArray *except_ps = [TOUtils convertPointersFromTOValueModelSValue:reModel.subModels invalidStatus:@[@(TOModelStatus_Finish)]];
+        //3. 排除掉Finish的;
+        NSArray *except_ps = [TOUtils convertPointersFromTOValueModelSValue:reModel.subModels validStatus:@[@(TOModelStatus_Finish)]];
+        
+        //3. 剩下 "未修正(无需修正NoNeedAct/修正失败ActNo)的稀疏码" (参考20205-原则2);
         NSArray *notFinish_ps = [SMGUtils removeSub_ps:except_ps parent_ps:reModel.justPValues];
         NSLog(@"item--> justPValues:(%@) - excepts:(%@) = (%@)",Pits2FStr(reModel.justPValues),Pits2FStr(except_ps),Pits2FStr(notFinish_ps));
         

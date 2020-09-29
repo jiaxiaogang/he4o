@@ -421,8 +421,8 @@
     AIFoNodeBase *mMaskFo = outModel.pm_Fo;
     if (!M) return false;
     
-    //3. 将理性评价数据存到短时记忆模型;
-    NSArray *except_ps = [TOUtils convertPointersFromTOValueModelSValue:outModel.subModels invalidStatus:nil];
+    //3. 将理性评价数据存到短时记忆模型 (excepts收集所有已PM过的);
+    NSArray *except_ps = [TOUtils convertPointersFromTOValueModelSValue:outModel.subModels validStatus:nil];
     NSArray *validJustPValues = [SMGUtils removeSub_ps:except_ps parent_ps:outModel.justPValues];
     
     //4. 不用PM评价 (则交由流程控制方法,推动继续决策(跳转下帧/别的);
@@ -454,7 +454,7 @@
         
         //9. 将最接近的取出,并根据源于S或P作为理性评价结果,判断是否修正;
         AIAlgNodeBase *mostSimilarAlg = ARR_INDEX(sortValidSPs, 0);
-        if (Log4PM) NSLog(@"----> firstJustPValue:%@ => S数:%lu P数:%lu 最相近:%@",Pit2FStr(firstJustPValue),validAlgSs.count,validAlgPs.count,Alg2FStr(mostSimilarAlg));
+        if (Log4PM) NSLog(@"----> firstJustPValue:%@ => S数:%lu P数:%lu 最相近:%@",Pit2FStr(firstJustPValue),(unsigned long)validAlgSs.count,(unsigned long)validAlgPs.count,Alg2FStr(mostSimilarAlg));
         if ([validAlgSs containsObject:mostSimilarAlg.pointer]) {
             //10. ------> 评价结果为S -> 需要修正,找最近的P:mostSimilarPAlg, 作为GL修正目标值 (参考20207-示图);
             for (AIKVPointer *item in sortValidSPs) {

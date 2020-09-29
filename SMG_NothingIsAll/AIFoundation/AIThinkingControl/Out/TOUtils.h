@@ -92,7 +92,7 @@
 /**
  *  MARK:--------------------将TOModels中TOValue部分的sValue_p收集返回--------------------
  */
-+(NSArray*) convertPointersFromTOValueModelSValue:(NSArray*)toModels invalidStatus:(NSArray*)invalidStatus;
++(NSArray*) convertPointersFromTOValueModelSValue:(NSArray*)toModels validStatus:(NSArray*)validStatus;
 
 /**
  *  MARK:--------------------是否HNGL节点--------------------

@@ -431,18 +431,24 @@
 /**
  *  MARK:--------------------将TOModels中TOValue部分的sValue_p收集返回--------------------
  *  @version
- *      2020.08.27: 支持invalidStatus,无效status不收集;
+ *      2020.08.27: 支持validStatus,有效status才收集 (默认nil时,全收集);
  *
  */
-+(NSArray*) convertPointersFromTOValueModelSValue:(NSArray*)toModels invalidStatus:(NSArray*)invalidStatus{
++(NSArray*) convertPointersFromTOValueModelSValue:(NSArray*)toModels validStatus:(NSArray*)validStatus{
     //1. 数据准备;
     NSMutableArray *result = [[NSMutableArray alloc] init];
-    invalidStatus = ARRTOOK(invalidStatus);
+    validStatus = ARRTOOK(validStatus);
     
     //2. 收集返回
     [SMGUtils filterArr:toModels checkValid:^BOOL(TOValueModel *model) {
-        if (ISOK(model, TOValueModel.class) && model.sValue_p && ![invalidStatus containsObject:@(model.status)]) {
-            [result addObject:model.sValue_p];
+        if (ISOK(model, TOValueModel.class) && model.sValue_p) {
+            //3. 不要求validStatus时,全收集;
+            if (!ARRISOK(validStatus)) {
+                [result addObject:model.sValue_p];
+            }else if ([validStatus containsObject:@(model.status)]) {
+                //4. 要求validStatus时,有效才收集;
+                [result addObject:model.sValue_p];
+            }
         }
         return false;
     }];
