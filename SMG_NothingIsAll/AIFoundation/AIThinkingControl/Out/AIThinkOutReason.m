@@ -413,6 +413,7 @@
  *      2020.07.06: 此处M.conPorts,即sameLevelAlg_ps为空,明天查下原因 (因为MC以C做M,C有可能本来就是最具象概念);
  *      2020.07.12: PM会加工"经"和"纬"的问题,改为在判断时,仅对指向了mv的fo做判断后修复,参考:20092;
  *      2020.07.13: fuzzyFo有时含多条同区码,导致其价值指向不确定,是否需加工判错,改成只判断单码后fix(如[距34,距0,吃]->{mv+},但显然距34并不能吃);
+ *      2020.09.30: 类型错误,导致闪退的BUG (参考21056);
  */
 -(BOOL) reasonScorePM_V2:(TOAlgModel*)outModel{
     //1. 数据准备
@@ -457,12 +458,11 @@
         if (Log4PM) NSLog(@"----> firstJustPValue:%@ => S数:%lu P数:%lu 最相近:%@",Pit2FStr(firstJustPValue),(unsigned long)validAlgSs.count,(unsigned long)validAlgPs.count,Alg2FStr(mostSimilarAlg));
         if ([validAlgSs containsObject:mostSimilarAlg.pointer]) {
             //10. ------> 评价结果为S -> 需要修正,找最近的P:mostSimilarPAlg, 作为GL修正目标值 (参考20207-示图);
-            for (AIKVPointer *item in sortValidSPs) {
-                if ([validAlgPs containsObject:item]) {
-                    AIAlgNodeBase *mostSimilarPAlg = [SMGUtils searchNode:item];
+            for (AIAlgNodeBase *item in sortValidSPs) {
+                if ([validAlgPs containsObject:item.pointer]) {
                     
                     //11. 找到同区稀疏码的glValue, 并转移_GL修正;
-                    AIKVPointer *glValue4M = [SMGUtils filterSameIdentifier_p:firstJustPValue b_ps:mostSimilarPAlg.content_ps];
+                    AIKVPointer *glValue4M = [SMGUtils filterSameIdentifier_p:firstJustPValue b_ps:item.content_ps];
                     if (glValue4M) {
                         if (Log4PM) NSLog(@"-> 操作 Success:(%@->%@)",Pit2FStr(firstJustPValue),Pit2FStr(glValue4M));
                         TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:glValue4M group:outModel];
