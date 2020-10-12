@@ -455,7 +455,9 @@
         
         //9. 将最接近的取出,并根据源于S或P作为理性评价结果,判断是否修正;
         AIAlgNodeBase *mostSimilarAlg = ARR_INDEX(sortValidSPs, 0);
-        if (Log4PM) NSLog(@"----> firstJustPValue:%@ => S数:%lu P数:%lu 最相近:%@",Pit2FStr(firstJustPValue),(unsigned long)validAlgSs.count,(unsigned long)validAlgPs.count,Alg2FStr(mostSimilarAlg));
+        if (Log4PM) NSLog(@"----> firstJustPValue:%@ => 最相近:%@",Pit2FStr(firstJustPValue),Alg2FStr(mostSimilarAlg));
+        if (Log4PM) NSLog(@"--> S数:%lu [%@]",(unsigned long)validAlgSs.count,Pits2FStr(validAlgSs));
+        if (Log4PM) NSLog(@"--> P数:%lu [%@]",(unsigned long)validAlgPs.count,Pits2FStr(validAlgPs));
         if ([validAlgSs containsObject:mostSimilarAlg.pointer]) {
             //10. ------> 评价结果为S -> 需要修正,找最近的P:mostSimilarPAlg, 作为GL修正目标值 (参考20207-示图);
             for (AIAlgNodeBase *item in sortValidSPs) {
