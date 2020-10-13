@@ -458,6 +458,7 @@
         if (Log4PM) NSLog(@"----> firstJustPValue:%@ => 最相近:%@",Pit2FStr(firstJustPValue),Alg2FStr(mostSimilarAlg));
         if (Log4PM) NSLog(@"--> S数:%lu [%@]",(unsigned long)validAlgSs.count,Pits2FStr(validAlgSs));
         if (Log4PM) NSLog(@"--> P数:%lu [%@]",(unsigned long)validAlgPs.count,Pits2FStr(validAlgPs));
+        if (Log4PM) NSLog(@"--> SP From: %@ %@",Alg2FStr(curAlg),Fo2FStr(curFo));
         if ([validAlgSs containsObject:mostSimilarAlg.pointer]) {
             //10. ------> 评价结果为S -> 需要修正,找最近的P:mostSimilarPAlg, 作为GL修正目标值 (参考20207-示图);
             for (AIAlgNodeBase *item in sortValidSPs) {
