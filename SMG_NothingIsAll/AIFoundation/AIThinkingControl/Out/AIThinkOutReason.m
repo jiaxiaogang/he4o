@@ -460,6 +460,13 @@
         if (Log4PM) NSLog(@"--> P数:%lu [%@]",(unsigned long)validAlgPs.count,Pits2FStr(validAlgPs));
         if (Log4PM) NSLog(@"--> SP From: %@ %@",Alg2FStr(curAlg),Fo2FStr(curFo));
         if ([validAlgSs containsObject:mostSimilarAlg.pointer]) {
+            //TODOTOMORROW:
+            //10. 优先从(M的具象 且 在mMaskFo中),找同区码,作为修正目标,找不到时,再从P中找;
+            //  a. 找到时,转至Begin-TOValueModel;
+            //  b. 找不到时,继续以下代码从P中找;
+            
+            
+            
             //10. ------> 评价结果为S -> 需要修正,找最近的P:mostSimilarPAlg, 作为GL修正目标值 (参考20207-示图);
             for (AIAlgNodeBase *item in sortValidSPs) {
                 if ([validAlgPs containsObject:item.pointer]) {
