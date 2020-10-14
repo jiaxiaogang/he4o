@@ -414,6 +414,9 @@
  *      2020.07.12: PM会加工"经"和"纬"的问题,改为在判断时,仅对指向了mv的fo做判断后修复,参考:20092;
  *      2020.07.13: fuzzyFo有时含多条同区码,导致其价值指向不确定,是否需加工判错,改成只判断单码后fix(如[距34,距0,吃]->{mv+},但显然距34并不能吃);
  *      2020.09.30: 类型错误,导致闪退的BUG (参考21056);
+ *      2020.10.14: 有时gl修正目标码在MC的C中,而不在Plus中,要优先从C中取 (参考21059);
+ *  @callers
+ *      1. MC调用: 参考21059-344结构图;
  */
 -(BOOL) reasonScorePM_V2:(TOAlgModel*)outModel{
     //1. 数据准备
@@ -460,30 +463,29 @@
         if (Log4PM) NSLog(@"--> P数:%lu [%@]",(unsigned long)validAlgPs.count,Pits2FStr(validAlgPs));
         if (Log4PM) NSLog(@"--> SP From: %@ %@",Alg2FStr(curAlg),Fo2FStr(curFo));
         if ([validAlgSs containsObject:mostSimilarAlg.pointer]) {
-            //TODOTOMORROW:
-            //10. 优先从(M的具象 且 在mMaskFo中),找同区码,作为修正目标,找不到时,再从P中找;
-            //  a. 找到时,转至Begin-TOValueModel;
-            //  b. 找不到时,继续以下代码从P中找;
+            //10. 优先从MC的C中找同区码,作为修正GL的目标;
+            AIKVPointer *glValue4M = [SMGUtils filterSameIdentifier_p:firstJustPValue b_ps:curAlg.content_ps];
+            if (Log4PM) NSLog(@"find glValue4M %@ from C:(%@->%@) conF:%@ conA:%@",glValue4M ? @"success" : @"failure", Pit2FStr(firstJustPValue),Pit2FStr(glValue4M),Fo2FStr(curFo),Alg2FStr(curAlg));
             
-            
-            
-            //10. ------> 评价结果为S -> 需要修正,找最近的P:mostSimilarPAlg, 作为GL修正目标值 (参考20207-示图);
-            for (AIAlgNodeBase *item in sortValidSPs) {
-                if ([validAlgPs containsObject:item.pointer]) {
-                    
-                    //11. 找到同区稀疏码的glValue, 并转移_GL修正;
-                    AIKVPointer *glValue4M = [SMGUtils filterSameIdentifier_p:firstJustPValue b_ps:item.content_ps];
-                    if (glValue4M) {
-                        if (Log4PM) NSLog(@"-> 操作 Success:(%@->%@)",Pit2FStr(firstJustPValue),Pit2FStr(glValue4M));
-                        TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:glValue4M group:outModel];
-                        outModel.sp_P = M;
-                        [self singleLoopBackWithBegin:toValueModel];
-                        return true;
-                    }else{
-                        if (Log4PM) NSLog(@"-> 操作 ItemFailure:(%@->%@) conF:%@ conA:%@",Pit2FStr(firstJustPValue),Pit2FStr(glValue4M),Fo2FStr(curFo),Alg2FStr(curAlg));
+            //10. 其次,找不到时,再从Plus中找: 评价结果为S -> 需要修正,找最近的P:mostSimilarPAlg, 作为GL修正目标值 (参考20207-示图);
+            if (!glValue4M) {
+                for (AIAlgNodeBase *item in sortValidSPs) {
+                    if ([validAlgPs containsObject:item.pointer]) {
+                        //10. 仅找P第一条即可;
+                        glValue4M = [SMGUtils filterSameIdentifier_p:firstJustPValue b_ps:item.content_ps];
+                        if (Log4PM) NSLog(@"find glValue4M %@ from P:(%@->%@) conF:%@ conA:%@",glValue4M ? @"success" : @"failure", Pit2FStr(firstJustPValue),Pit2FStr(glValue4M),Fo2FStr(curFo),Alg2FStr(curAlg));
+                        break;
                     }
-                    break;
                 }
+            }
+            
+            //11. 修正找到时,转至Begin-TOValueModel,并转移_GL;
+            if (glValue4M) {
+                if (Log4PM) NSLog(@"-> 转移 Success:(%@->%@)",Pit2FStr(firstJustPValue),Pit2FStr(glValue4M));
+                TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:glValue4M group:outModel];
+                outModel.sp_P = M;
+                [self singleLoopBackWithBegin:toValueModel];
+                return true;
             }
             
             //12. ------> 未找到GL的目标 (如距离0),直接计为失败;
