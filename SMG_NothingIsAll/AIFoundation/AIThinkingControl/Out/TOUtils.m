@@ -356,7 +356,7 @@
     CGFloat rtScore = [ThinkingUtils getScoreForce:rtMv_p ratio:rtModel.matchFoValue];
     
     //8. 对原fo进行评价
-    DemandModel *demand = [self getDemandModelWithFoOutModel:outModel];
+    DemandModel *demand = [self getDemandModelWithSubOutModel:outModel];
     CGFloat curScore = [ThinkingUtils getScoreForce:demand.algsType urgentTo:demand.urgentTo delta:demand.delta ratio:1.0f];
     
     //10. 如果mv同区,只要为负则失败;
@@ -366,12 +366,15 @@
     return rtScore > curScore * 0.5f;
 }
 
-+(DemandModel*) getDemandModelWithFoOutModel:(TOModelBase*)foOutModel{
-    if (foOutModel) {
-        if (ISOK(foOutModel.baseOrGroup, DemandModel.class)) {
-            return (DemandModel*)foOutModel.baseOrGroup;
+/**
+ *  MARK:--------------------获取subOutModel的demand--------------------
+ */
++(DemandModel*) getDemandModelWithSubOutModel:(TOModelBase*)subOutModel{
+    if (subOutModel) {
+        if (ISOK(subOutModel.baseOrGroup, DemandModel.class)) {
+            return (DemandModel*)subOutModel.baseOrGroup;
         }else{
-            return [self getDemandModelWithFoOutModel:foOutModel.baseOrGroup];
+            return [self getDemandModelWithSubOutModel:subOutModel.baseOrGroup];
         }
     }
     return nil;

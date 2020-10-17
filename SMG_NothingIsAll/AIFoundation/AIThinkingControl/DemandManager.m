@@ -201,9 +201,9 @@
  *  MARK:--------------------返回所有demand任务--------------------
  *  @desc 排序方式: 从大到小;
  */
-//-(NSArray*) getAllDemand{
-//    [self refreshCmvCacheSort];
-//    return self.loopCache;
-//}
+-(NSArray*) getAllDemand{
+    [self refreshCmvCacheSort];
+    return self.loopCache;
+}
 
 @end

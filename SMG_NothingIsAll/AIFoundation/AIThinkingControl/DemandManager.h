@@ -42,11 +42,16 @@
 //-(void) dataIn_CmvAlgsArr:(NSArray*)algsArr;
 
 
-
 /**
  *  MARK:--------------------获取任务--------------------
  */
 -(DemandModel*) getCurrentDemand;       //获取当前,最紧急任务;
 -(DemandModel*) getCanDecisionDemand;   //获取当前,可以继续决策的任务 (未完成 & 非等待反馈ActYes);
+
+
+/**
+ *  MARK:--------------------返回所有demand任务--------------------
+ */
+-(NSArray*) getAllDemand;
 
 @end

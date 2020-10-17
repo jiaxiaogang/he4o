@@ -25,6 +25,7 @@
 #import "AIAbsAlgNode.h"
 #import "AINetAbsFoNode.h"
 #import "AIAnalogy.h"
+#import "DemandManager.h"
 
 @interface AIThinkOutReason() <TOActionDelegate>
 
@@ -724,6 +725,8 @@
  *      3. 行为输出ActYes处
  *  @todo
  *      2020.08.31: 对isOut触发的,先不做处理,因为一般都能直接行为输出并匹配上,所以暂不处理;
+ *  @version
+ *      2020.10.17: 在生物钟触发器触发器,做有根判定,任务失效时,不进行反省 (参考note21-todolist-1);
  */
 -(void) singleLoopBackWithActYes:(TOModelBase*)actYesModel {
     NSLog(@"\n\n=============================== 流程控制:ActYes ===============================\nModel:%@ %@",actYesModel.class,Pit2FStr(actYesModel.content_p));
@@ -747,7 +750,9 @@
                 [AIAnalogy analogy_ReasonRethink:foModel cutIndex:cutIndex type:type];
                 
                 //5. 失败时,转流程控制-失败 (会开始下一解决方案);
-                if (algModel.status == TOModelStatus_ActYes) {
+                DemandModel *root = [TOUtils getDemandModelWithSubOutModel:algModel];
+                BOOL havRoot = [theTC.outModelManager.getAllDemand containsObject:root];
+                if (algModel.status == TOModelStatus_ActYes && havRoot) {
                     NSLog(@"====ActYes is Alg update status");
                     algModel.status = TOModelStatus_ScoreNo;
                     [self singleLoopBackWithFailureModel:algModel];
@@ -784,7 +789,8 @@
             [AIAnalogy analogy_ReasonRethink:foModel cutIndex:NSIntegerMax type:type];
             
             //4. 失败时,转流程控制-失败 (会开始下一解决方案);
-            if (demand.status != TOModelStatus_Finish) {
+            BOOL havRoot = [theTC.outModelManager.getAllDemand containsObject:demand];
+            if (demand.status != TOModelStatus_Finish && havRoot) {
                 NSLog(@"====ActYes is Fo update status");
                 actYesModel.status = TOModelStatus_ScoreNo;
                 [self singleLoopBackWithFailureModel:actYesModel];
