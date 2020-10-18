@@ -55,6 +55,7 @@
 @property (assign, nonatomic) float pm_Score;
 @property (strong, nonatomic) NSString *pm_MVAT;
 @property (strong, nonatomic) AIFoNodeBase *pm_Fo;//用来取conPorts的Fo
+@property (strong, nonatomic) AIAlgNodeBase *pm_ProtoAlg;
 
 /**
  *  MARK:--------------------实际发生的概念保留--------------------

@@ -71,7 +71,6 @@
         TOValueModel *valueOutModel = [TOValueModel newWithSValue:sValue_p pValue:pValue_p group:outModel];
         //b. 行为化
         NSLog(@"------SP_GL行为化:%@ -> %@",[NVHeUtil getLightStr:sValue_p],[NVHeUtil getLightStr:pValue_p]);
-        
         AIAlgNodeBase *pConAlg = [SMGUtils searchNode:outModel.content_p];
         [self convert2Out_GL:pConAlg outModel:valueOutModel];
         break;//仅处理首条,其它条交由流程控制来做;
@@ -251,6 +250,7 @@
                     reModel.pm_Score = [ThinkingUtils getScoreForce:baseFo.cmvNode_p ratio:1.0f];
                     reModel.pm_MVAT = baseFo.cmvNode_p.algsType;
                     reModel.pm_Fo = baseFo;
+                    reModel.pm_ProtoAlg = model.protoAlg;
                     
                     //e. 理性评价
                     BOOL jump = [self.delegate toAction_ReasonScorePM:reModel];
