@@ -33,6 +33,7 @@
     NSArray *gl_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Value:innerValue_p]];
     
     //3. 找出合格的inner1Alg;
+    int debugVesion = 1;
     for (AIKVPointer *gl_p in gl_ps) {
         AIAlgNodeBase *glAlg = [SMGUtils searchNode:gl_p];
         
@@ -48,11 +49,12 @@
             
             //TODOTOMORROW:
             //可视化查2105cBUG时,的节点关系,目前仅调试↙坚果时;
-            if ([AlgP2FStr(glAlgCon_p) containsString:@"↙"]) {
+            if (debugVesion > 0 && [AlgP2FStr(glAlgCon_p) containsString:@"↙"]) {
                 [theNV setForceMode:true];
                 [theNV setNodeData:pAlg.pointer];
                 [theNV setNodeData:glAlgCon_p];
                 [theNV setForceMode:false];
+                debugVesion--;
             }
         }
     }

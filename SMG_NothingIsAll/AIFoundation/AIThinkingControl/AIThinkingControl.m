@@ -175,6 +175,11 @@ static AIThinkingControl *_instance;
     [self.tOP dataOut];
 }
 
+/**
+ *  MARK:--------------------提交InModel短时处理--------------------
+ *  @version
+ *      2020.10.19: 将add至ShortMatchManager代码前迁;
+ */
 -(void) aiThinkIn_Commit2TC:(AIShortMatchModel*)shortMatchModel {
     //1. 数据检查
     if (!shortMatchModel) return;
@@ -205,9 +210,6 @@ static AIThinkingControl *_instance;
         }
     }
     
-    //3. 将shortMatch保留 (供TOR或TIP调用);
-    [self.shortMatchManager add:shortMatchModel];
-    
     //4. 将新一帧数据报告给TOR,以进行短时记忆的更新,比如我输出行为"打",短时记忆由此知道输出"打"成功;
     DemandModel *demand = [self.demandManager getCurrentDemand];
     [self.tOR commitFromOuterInputReason:demand inputMModel:shortMatchModel];
@@ -228,6 +230,9 @@ static AIThinkingControl *_instance;
 }
 -(NSArray*) aiThinkIn_getShortMatchModel{
     return self.shortMatchManager.models;
+}
+-(void) aiThinkIn_addShortMatchModel:(AIShortMatchModel*)newMModel{
+    [self.shortMatchManager add:newMModel];
 }
 
 

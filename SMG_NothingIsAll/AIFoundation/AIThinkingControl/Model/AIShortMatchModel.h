@@ -10,7 +10,9 @@
 
 /**
  *  MARK:--------------------理性的,瞬时匹配模型--------------------
- *  说明: AIShortMatchModel是TOR理性思维的model结果;
+ *  说明:
+ *      1. AIShortMatchModel是TOR理性思维的model结果;
+ *      2. 在瞬时ShortMemory整合到短时ShortMatchModel中来后,短时中的protoAlg即表示原瞬时;
  *  @desc 191104 : 将activeCache更名为shortMatch,并传递给TOR使用;
  *  @desc 模型说明:
  *      1. 供TOR使用的模型一共有三种: 瞬时,短时,长时;

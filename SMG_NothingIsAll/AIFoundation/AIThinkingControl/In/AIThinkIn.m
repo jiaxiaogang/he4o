@@ -159,6 +159,7 @@
  *      20200416 - 修复时序识别的bug: 因概念节点去重不够,导致即使概念内容一致,在时序识别时,也会无法匹配 (参考n19p5-A组BUG4);
  *      20200731 - 将protoFo和matchAFo的构建改为isMem=false (因为构建到内存的话,在内类比构建时序具象指向为空,参考20151-BUG);
  *      20200817 - 赋值protoAlg和matchAlg即是存瞬时记忆,因为瞬时与短时整合了;
+ *      20201019 - 将mModel更提前保留至mModelManager中;
  */
 -(void) dataIn_NoMV:(AIAlgNodeBase*)algNode fromGroup_ps:(NSArray*)fromGroup_ps{
     //1. 数据准备 (瞬时记忆,理性匹配出的模型);
@@ -171,6 +172,9 @@
         mModel.matchAlg = matchAlg;
         mModel.algMatchType = type;
     }];
+    
+    //3. 将mModel保留 (只有先保留后,构建时序时,才会含新帧概念);
+    [self.delegate aiThinkIn_addShortMatchModel:mModel];
     
     //3. 构建时序 (把每次dic输入,都作为一个新的内存时序);
     NSArray *matchAShortMem = [self.delegate aiThinkIn_GetShortMemory:true];
