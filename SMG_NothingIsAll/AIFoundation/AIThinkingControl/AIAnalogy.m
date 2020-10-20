@@ -185,7 +185,7 @@
  *  @迭代记录:
  *      2020.03.24: 内类比多码支持 (大小支持多个稀疏码变大/小 & 有无支持match.absPorts中多个变有/无);
  *      2020.07.30: 对matchAFo的AB元素进行内类比有无时,构建其抽象概念;
- *      2020.07.30: 内类比大小用protoFo,内类比有无用matchAFo;
+ *      2020.07.30: 内类比大小用protoFo,内类比有无用matchAFo (参考20151-BUG4 & n20p15-todo5);
  */
 +(void) analogyInner:(AIFoNodeBase*)protoFo matchAFo:(AIFoNodeBase*)matchAFo{
     NSLog(@"\n\n------------------------------- 内类比 -------------------------------\nP:%@\nM:%@",Fo2FStr(protoFo),Fo2FStr(matchAFo));
