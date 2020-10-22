@@ -55,21 +55,22 @@
  *      20200413: 无全含时,支持最相似的seemAlg返回;
  *      20200416: 废除绝对匹配 (因概念全局去重了,绝对匹配匹配没有意义);
  *      20200703: 废弃fuzzy模糊匹配功能,因为识别期要广入 (参考20062);
- *  @param complete : 共支持三种返回: 匹配效果从高到低分别为:fuzzyAlg,matchAlg,seemAlg;
+ *      20201022: 同时支持matchAlg和seemAlg结果 (参考21091);
+ *      20201022: 将seem的抽象搬过来,且支持三种关联处理 (参考21091-蓝绿黄三种线);
+ *  @param complete : 共支持三种返回: 匹配效果从高到低分别为:fuzzyAlg废弃,matchAlg全含,seemAlg局部;
  */
-+(void) TIR_Alg:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps complete:(void(^)(AIAlgNodeBase *matchAlg,MatchType type))complete{
++(void) TIR_Alg:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps complete:(void(^)(AIAlgNodeBase *matchAlg,AIAlgNodeBase *seemAlg))complete{
     //1. 数据准备
-    AIAlgNodeBase *algNode = [SMGUtils searchNode:algNode_p];
-    if (algNode == nil) return;
-    NSLog(@"\n\n------------------------------- 概念识别 -------------------------------\n%@",Alg2FStr(algNode));
+    AIAlgNodeBase *protoAlg = [SMGUtils searchNode:algNode_p];
+    if (protoAlg == nil) return;
+    NSLog(@"\n\n------------------------------- 概念识别 -------------------------------\n%@",Alg2FStr(protoAlg));
     
     //2. 对value.refPorts进行检查识别; (noMv信号已输入完毕,识别联想)
-    __block AIAlgNodeBase *assAlgNode = nil;
-    __block MatchType matchType = MatchType_None;
+    __block AIAlgNodeBase *matchAlg = nil;
+    __block AIAlgNodeBase *seemAlg = nil;
     ///1. 自身匹配 (Self匹配);
-    if ([TIRUtils inputAlgIsOld:algNode]) {
-        assAlgNode = algNode;
-        matchType = MatchType_Self;
+    if ([TIRUtils inputAlgIsOld:protoAlg]) {
+        matchAlg = protoAlg;
     }
     
     ///3. 局部匹配 -> 内存网络;
@@ -81,20 +82,35 @@
     //}
     
     ///4. 局部匹配 (Abs匹配 和 Seem匹配);
-    if (!assAlgNode) {
-        [TIRUtils partMatching_Alg:algNode isMem:false except_ps:fromGroup_ps complete:^(AIAlgNodeBase *matchAlg, MatchType type) {
-            assAlgNode = matchAlg;
-            matchType = type;
+    if (!matchAlg) {
+        [TIRUtils partMatching_Alg:protoAlg isMem:false except_ps:fromGroup_ps complete:^(AIAlgNodeBase *matchAlgResult, AIAlgNodeBase *seemAlgResult) {
+            matchAlg = matchAlgResult;
+            seemAlg = seemAlgResult;
         }];
-    }
-    
-    //3. 直接将assAlgNode设置为algNode的抽象; (这样后面TOR理性决策时,才可以直接对当前瞬时实物进行很好的理性评价);
-    if (ISOK(assAlgNode, AIAlgNodeBase.class)) {
-        //4. 识别到时,value.refPorts -> 更新/加强微信息的引用序列
-        [AINetUtils insertRefPorts_AllAlgNode:assAlgNode.pointer content_ps:assAlgNode.content_ps difStrong:1];
         
-        //5. 识别且全含时,进行抽具象关联 & 存储 (20200103:测得,algNode为内存节点时,关联也在内存)
-        if (matchType == MatchType_Abs) [AINetUtils relateAlgAbs:(AIAbsAlgNode*)assAlgNode conNodes:@[algNode] isNew:false];
+        //5. 关联处理_直接将match设置为proto的抽象; (这样后面TOR理性决策时,才可以直接对当前瞬时实物进行很好的理性评价) (参考21091-蓝线);
+        if (matchAlg) {
+            //4. 识别到时,value.refPorts -> 更新/加强微信息的引用序列
+            [AINetUtils insertRefPorts_AllAlgNode:matchAlg.pointer content_ps:matchAlg.content_ps difStrong:1];
+            
+            //5. 识别且全含时,进行抽具象关联 & 存储 (20200103:测得,algNode为内存节点时,关联也在内存)
+            [AINetUtils relateAlgAbs:(AIAbsAlgNode*)matchAlg conNodes:@[protoAlg] isNew:false];
+        }
+        
+        //6. 关联处理_对seem和proto进行类比抽象 (参考21091-绿线);
+        AIAlgNodeBase *seemProtoAbs = nil;
+        if (seemAlg) {
+            NSArray *same_ps = [SMGUtils filterSame_ps:protoAlg.content_ps parent_ps:seemAlg.content_ps];
+            seemProtoAbs = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[seemAlg,protoAlg] isMem:false];
+            NSLog(@"构建相似抽象:%@",Alg2FStr(seemProtoAbs));
+        }
+        
+        //7. 关联处理_对seemProtoAbs与matchAlg建立抽具象关联 (参考21091-黄线);
+        if (seemProtoAbs) {
+            NSArray *same_ps = [SMGUtils filterSame_ps:seemProtoAbs.content_ps parent_ps:matchAlg.content_ps];
+            AIAlgNodeBase *topAbs = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[seemProtoAbs,matchAlg] isMem:false];
+            NSLog(@"构建TopAbs抽象:%@",Alg2FStr(topAbs));
+        }
     }
     
     //3. 全含时,可进行模糊匹配 (Fuzzy匹配) //因TOR未支持fuzzy,故目前仅将最相似的fuzzy放到AIShortMatchModel中当matchAlg用;
@@ -110,8 +126,8 @@
     //}
     
     //4. 调试日志
-    NSLog(@"概念识别: Finish >>> 类型:%ld 内容:%@",matchType,Alg2FStr(assAlgNode));
-    complete(assAlgNode,matchType);
+    NSLog(@"概念识别: Finish >>> 全含:%@ 局部:%@",Alg2FStr(matchAlg),Alg2FStr(seemAlg));
+    complete(matchAlg,seemAlg);
 }
 
 /**

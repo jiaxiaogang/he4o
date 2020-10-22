@@ -30,7 +30,7 @@
 //MARK:===============================================================
 @property (strong, nonatomic) AIAlgNodeBase *protoAlg;  //原始概念
 @property (strong, nonatomic) AIAlgNodeBase *matchAlg;  //匹配概念
-@property (assign, nonatomic) MatchType algMatchType;   //概念匹配类型
+@property (strong, nonatomic) AIAlgNodeBase *seemAlg;   //局部匹配概念
 @property (assign, nonatomic) NSTimeInterval inputTime; //原始概念输入时间
 
 

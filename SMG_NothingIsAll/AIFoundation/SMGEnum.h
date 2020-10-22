@@ -92,14 +92,16 @@ typedef NS_ENUM(NSInteger,  OutputObserverType) {
 /**
  *  MARK:--------------------识别类型--------------------
  *  @desc 优先级说明: self > fuzzy > abs > seem
+ *  @version
+ *      2020.10.22: TIR_Alg同时支持matchAlg和seemAlg的返回,fuzzy已废弃,所以不再需要MatchType枚举 (参考:21091);
  */
-typedef NS_ENUM(NSInteger, MatchType) {
-    MatchType_None  = 0,//无效
-    MatchType_Seem  = 1,//仅相似
-    MatchType_Abs   = 2,//全含
-    MatchType_Fuzzy = 3,//模糊匹配
-    MatchType_Self  = 4,//自身
-};
+//typedef NS_ENUM(NSInteger, MatchType) {
+//    MatchType_None  = 0,//无效
+//    MatchType_Seem  = 1,//局部相似
+//    MatchType_Abs   = 2,//全含
+//    MatchType_Fuzzy = 3,//模糊匹配
+//    MatchType_Self  = 4,//自身
+//};
 
 /**
  *  MARK:--------------------LogHeaderMode--------------------

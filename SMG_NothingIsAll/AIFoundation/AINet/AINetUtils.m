@@ -280,6 +280,8 @@
         //1. 具象节点的 关联&存储
         conNodes = ARRTOOK(conNodes);
         for (AINodeBase *conNode in conNodes) {
+            //1. con与abs必须不同;
+            if ([absNode isEqual:conNode]) continue;
             NSArray *absContent_ps = absNode.content_ps;
             NSArray *conContent_ps = conNode.content_ps;
             NSInteger difStrong = isNew ? [self getConMaxStrong:conNode] : 1;

@@ -24,20 +24,7 @@
  *  MARK:--------------------概念局部匹配--------------------
  *  @param except_ps : 排除_ps; (如:同一批次输入的概念组,不可用来识别自己)
  */
-+(void) partMatching_Alg:(AIAlgNodeBase*)algNode isMem:(BOOL)isMem except_ps:(NSArray*)except_ps complete:(void(^)(AIAlgNodeBase *matchAlg,MatchType type))complete;
-
-/**
- *  MARK:--------------------通用局部匹配方法--------------------
- *  注: 根据引用找出相似度最高且达到阀值的结果返回; (相似度匹配)
- *  从content_ps的所有value.refPorts找前cPartMatchingCheckRefPortsLimit个, 如:contentCount9*limit5=45个;
- *  @param checkBlock : notnull 对可能的结果,进行检查; (就是自身 或 不应期则false)
- *  @param refPortsBlock : notnull 取item_p.refPorts的方法;
- *  @param complete : 根据匹配度排序,并返回;
- */
-+(void) partMatching_General:(AIAlgNodeBase*)protoAlg
-               refPortsBlock:(NSArray*(^)(AIKVPointer *item_p))refPortsBlock
-                  checkBlock:(BOOL(^)(AIPointer *target_p))checkBlock
-                    complete:(void(^)(AIAlgNodeBase *matchAlg,MatchType type))complete;
++(void) partMatching_Alg:(AIAlgNodeBase*)algNode isMem:(BOOL)isMem except_ps:(NSArray*)except_ps complete:(void(^)(AIAlgNodeBase *matchAlg,AIAlgNodeBase *seemAlg))complete;
 
 
 //MARK:===============================================================

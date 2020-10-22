@@ -103,7 +103,7 @@
  *  MARK:--------------------概念局部匹配--------------------
  *  @param except_ps : 排除_ps; (如:同一批次输入的概念组,不可用来识别自己)
  */
-+(void) partMatching_Alg:(AIAlgNodeBase*)algNode isMem:(BOOL)isMem except_ps:(NSArray*)except_ps complete:(void(^)(AIAlgNodeBase *matchAlg,MatchType type))complete{
++(void) partMatching_Alg:(AIAlgNodeBase*)algNode isMem:(BOOL)isMem except_ps:(NSArray*)except_ps complete:(void(^)(AIAlgNodeBase *matchAlg,AIAlgNodeBase *seemAlg))complete{
     //1. 数据准备;
     if (!ISOK(algNode, AIAlgNodeBase.class)) return;
     except_ps = ARRTOOK(except_ps);
@@ -157,18 +157,21 @@
  *  从content_ps的所有value.refPorts找前cPartMatchingCheckRefPortsLimit个, 如:contentCount9*limit5=45个;
  *  @param checkBlock : notnull 对可能的结果,进行检查; (就是自身 或 不应期则false)
  *  @param refPortsBlock : notnull 取item_p.refPorts的方法;
- *  @param complete : 把最匹配的返回;
+ *  @param complete : 根据匹配度排序,并返回 (全含+局部);
  *  @version:
  *      2019.12.23 - 迭代支持全含,参考17215 (代码中由判断相似度,改为判断全含)
  *      2020.04.13 - 将结果通过complete返回,支持全含 或 仅相似 (因为正向反馈类比的死循环切入问题,参考:n19p6);
  *      2020.07.21 - 当Seem结果时,对seem和proto进行类比抽象,并将抽象概念返回 (参考:20142);
  *      2020.07.21 - 当Seem结果时,虽然构建了absAlg,但还是将seemAlg返回 (参考20142-Q1);
+ *      2020.10.22 - 支持matchAlg和seemAlg二者都返回 (参考21091);
  */
 +(void) partMatching_General:(AIAlgNodeBase*)protoAlg
                refPortsBlock:(NSArray*(^)(AIKVPointer *item_p))refPortsBlock
                   checkBlock:(BOOL(^)(AIPointer *target_p))checkBlock
-                    complete:(void(^)(AIAlgNodeBase *matchAlg,MatchType type))complete{
+                    complete:(void(^)(AIAlgNodeBase *matchAlg,AIAlgNodeBase *seemAlg))complete{
     //1. 数据准备;
+    AIAlgNodeBase *matchAlg = nil;
+    AIAlgNodeBase *seemAlg = nil;
     if (protoAlg) {
         NSMutableDictionary *countDic = [[NSMutableDictionary alloc] init];
         
@@ -207,33 +210,21 @@
             
             //6. 判断全含; (matchingCount == assAlg.content.count) (且只能识别为抽象节点)
             if (ISOK(result, AIAbsAlgNode.class) && result.content_ps.count == matchingCount) {
-                complete(result,MatchType_Abs);
-                return;
+                matchAlg = result;
+                break;
             }
-            if (!ISOK(result, AIAbsAlgNode.class) && result.content_ps.count != matchingCount) {
-                typeCountWrong ++;
-            }else if (!ISOK(result, AIAbsAlgNode.class)) {
-                typeWrong ++;
-            }else if(result.content_ps.count != matchingCount){
-                countWrong ++;
-            }
+            if (!ISOK(result, AIAbsAlgNode.class) && result.content_ps.count != matchingCount) typeCountWrong ++;
+            else if (!ISOK(result, AIAbsAlgNode.class)) typeWrong ++;
+            else if(result.content_ps.count != matchingCount) countWrong ++;
             if (Log4MAlg) WLog(@"Item识别失败_匹配:%d 类型:%@ 内容:%@",matchingCount,result.class,Alg2FStr(result));
         }
-        
         if (Log4MAlg) WLog(@"识别结果 >> 非抽象且非全含:%ld,非抽象数:%ld,非全含数:%ld / 总数:%lu",(long)typeCountWrong,(long)typeWrong,(long)countWrong,(unsigned long)sortKeys.count);
         
         //7. 未将全含返回,则返回最相似;
-        AIAlgNodeBase *seemAlg = [SMGUtils searchNode:DATA2OBJ(ARR_INDEX(sortKeys, 0))];
-        if (seemAlg) {
-            //8. 对最相似的进行抽象;
-            NSArray *same_ps = [SMGUtils filterSame_ps:protoAlg.content_ps parent_ps:seemAlg.content_ps];
-            AIAlgNodeBase *absAlg = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[seemAlg,protoAlg] isMem:false];
-            NSLog(@"相似识别为:%@ >> 构建抽象:%@",Alg2FStr(seemAlg),Alg2FStr(absAlg));
-            complete(seemAlg,MatchType_Seem);
-            return;
-        }
+        //2020.10.22: 全含返回,也要返回seemAlg;
+        seemAlg = [SMGUtils searchNode:DATA2OBJ(ARR_INDEX(sortKeys, 0))];
     }
-    complete(nil,MatchType_None);
+    complete(matchAlg,seemAlg);
 }
 
 //MARK:===============================================================
