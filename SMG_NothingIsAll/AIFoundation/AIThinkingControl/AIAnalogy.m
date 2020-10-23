@@ -364,6 +364,12 @@
     //4. 构建抽象概念 (20190809注:此处可考虑,type为大/小时,不做具象指向,因为大小概念,本来就是独立的节点);
     NSString *afDS = [ThinkingUtils getAnalogyTypeDS:type];
     AIAlgNodeBase *backAlg = [theNet createAbsAlg_NoRepeat:@[backValue_p] conAlgs:@[backConAlg] isMem:false ds:afDS];
+    
+    //TODOTOMORROW:
+    //GL时,将GL的构建,延伸至支持abs; (至少涉及到两个absAlg,参考21091绿黄指向的A66&A8);
+    
+    
+    
 
     //5. 构建抽象时序; (小动致大 / 大动致小) (之间的信息为balabala)
     AINetAbsFoNode *result = [TIRUtils createInnerAbsFo:backAlg rangeAlg_ps:rangeAlg_ps conFo:conFo ds:afDS];
