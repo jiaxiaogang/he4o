@@ -407,6 +407,9 @@
             AIKVPointer *item_p = ARR_INDEX(abFo.content_ps, i);
             AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
             NSArray *itemRefPorts = [AINetUtils refPorts_All4Alg:itemAlg];
+            //20201027-TODOTOMORROW: 尝试找出最相似的assFo,再进行类比,而不是仅限制同类即可 (参考21102);
+            
+            
             NSArray *itemRef_ps = [SMGUtils convertPointersFromPorts:[SMGUtils filterPorts:itemRefPorts havTypes:@[@(type)] noTypes:nil]];
             if (Log4InOutAna) NSLog(@"--- 内中外:%ld-%@ 引用数:%lu 同类数:%lu",(long)i,Alg2FStr(itemAlg),(unsigned long)itemRefPorts.count,(unsigned long)itemRef_ps.count);
             
