@@ -59,7 +59,7 @@
  *      20201022: 将seem的抽象搬过来,且支持三种关联处理 (参考21091-蓝绿黄三种线);
  *  @param complete : 共支持三种返回: 匹配效果从高到低分别为:fuzzyAlg废弃,matchAlg全含,seemAlg局部;
  */
-+(void) TIR_Alg:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps complete:(void(^)(AIAlgNodeBase *matchAlg,AIAlgNodeBase *seemAlg))complete{
++(void) TIR_Alg:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps complete:(void(^)(AIAlgNodeBase *matchAlg,NSArray *partAlg_ps))complete{
     //1. 数据准备
     AIAlgNodeBase *protoAlg = [SMGUtils searchNode:algNode_p];
     if (protoAlg == nil) return;
@@ -67,7 +67,7 @@
     
     //2. 对value.refPorts进行检查识别; (noMv信号已输入完毕,识别联想)
     __block AIAlgNodeBase *matchAlg = nil;
-    __block AIAlgNodeBase *seemAlg = nil;
+    __block NSArray *partAlg_ps = nil;
     ///1. 自身匹配 (Self匹配);
     if ([TIRUtils inputAlgIsOld:protoAlg]) {
         matchAlg = protoAlg;
@@ -83,9 +83,9 @@
     
     ///4. 局部匹配 (Abs匹配 和 Seem匹配);
     if (!matchAlg) {
-        [TIRUtils partMatching_Alg:protoAlg isMem:false except_ps:fromGroup_ps complete:^(AIAlgNodeBase *matchAlgResult, AIAlgNodeBase *seemAlgResult) {
-            matchAlg = matchAlgResult;
-            seemAlg = seemAlgResult;
+        [TIRUtils partMatching_Alg:protoAlg isMem:false except_ps:fromGroup_ps complete:^(AIAlgNodeBase *_matchAlg, NSArray *_partAlg_ps) {
+            matchAlg = _matchAlg;
+            partAlg_ps = _partAlg_ps;
         }];
         
         //5. 关联处理_直接将match设置为proto的抽象; (这样后面TOR理性决策时,才可以直接对当前瞬时实物进行很好的理性评价) (参考21091-蓝线);
@@ -98,18 +98,18 @@
         }
         
         //6. 关联处理_对seem和proto进行类比抽象 (参考21091-绿线);
-        AIAlgNodeBase *seemProtoAbs = nil;
-        if (seemAlg) {
-            NSArray *same_ps = [SMGUtils filterSame_ps:protoAlg.content_ps parent_ps:seemAlg.content_ps];
-            seemProtoAbs = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[seemAlg,protoAlg] isMem:false];
+        if (ARRISOK(partAlg_ps)) {
+            AIAlgNodeBase *firstPartAlg = [SMGUtils searchNode:ARR_INDEX(partAlg_ps, 0)];
+            NSArray *same_ps = [SMGUtils filterSame_ps:protoAlg.content_ps parent_ps:firstPartAlg.content_ps];
+            AIAlgNodeBase *seemProtoAbs = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[firstPartAlg,protoAlg] isMem:false];
             NSLog(@"构建相似抽象:%@",Alg2FStr(seemProtoAbs));
-        }
-        
-        //7. 关联处理_对seemProtoAbs与matchAlg建立抽具象关联 (参考21091-黄线);
-        if (seemProtoAbs) {
-            NSArray *same_ps = [SMGUtils filterSame_ps:seemProtoAbs.content_ps parent_ps:matchAlg.content_ps];
-            AIAlgNodeBase *topAbs = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[seemProtoAbs,matchAlg] isMem:false];
-            NSLog(@"构建TopAbs抽象:%@",Alg2FStr(topAbs));
+            
+            //7. 关联处理_对seemProtoAbs与matchAlg建立抽具象关联 (参考21091-黄线);
+            if (seemProtoAbs) {
+                NSArray *same_ps = [SMGUtils filterSame_ps:seemProtoAbs.content_ps parent_ps:matchAlg.content_ps];
+                AIAlgNodeBase *topAbs = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[seemProtoAbs,matchAlg] isMem:false];
+                NSLog(@"构建TopAbs抽象:%@",Alg2FStr(topAbs));
+            }
         }
     }
     
@@ -126,8 +126,8 @@
     //}
     
     //4. 调试日志
-    NSLog(@"概念识别: Finish >>> 全含:%@ 局部:%@",Alg2FStr(matchAlg),Alg2FStr(seemAlg));
-    complete(matchAlg,seemAlg);
+    NSLog(@"概念识别: Finish >>> 全含:%@ 局部:%@",Alg2FStr(matchAlg),Pits2FStr(ARR_SUB(partAlg_ps, 0, 3)));
+    complete(matchAlg,partAlg_ps);
 }
 
 /**
@@ -184,7 +184,7 @@
 
 /**
  *  MARK:--------------------理性时序--------------------
- *  @param protoAlg_ps : RTFo
+ *  _param protoAlg_ps : RTFo
  *      1. 传入原始瞬时记忆序列 90% ,还是识别后的概念序列 10%;
  *      2. 传入行为化中的rethinkLSP重组fo;
  *  @desc 向性:

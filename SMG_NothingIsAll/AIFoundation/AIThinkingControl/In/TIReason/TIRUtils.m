@@ -103,7 +103,7 @@
  *  MARK:--------------------概念局部匹配--------------------
  *  @param except_ps : 排除_ps; (如:同一批次输入的概念组,不可用来识别自己)
  */
-+(void) partMatching_Alg:(AIAlgNodeBase*)algNode isMem:(BOOL)isMem except_ps:(NSArray*)except_ps complete:(void(^)(AIAlgNodeBase *matchAlg,AIAlgNodeBase *seemAlg))complete{
++(void) partMatching_Alg:(AIAlgNodeBase*)algNode isMem:(BOOL)isMem except_ps:(NSArray*)except_ps complete:(void(^)(AIAlgNodeBase *matchAlg,NSArray *partAlg_ps))complete{
     //1. 数据准备;
     if (!ISOK(algNode, AIAlgNodeBase.class)) return;
     except_ps = ARRTOOK(except_ps);
@@ -168,10 +168,10 @@
 +(void) partMatching_General:(AIAlgNodeBase*)protoAlg
                refPortsBlock:(NSArray*(^)(AIKVPointer *item_p))refPortsBlock
                   checkBlock:(BOOL(^)(AIPointer *target_p))checkBlock
-                    complete:(void(^)(AIAlgNodeBase *matchAlg,AIAlgNodeBase *seemAlg))complete{
+                    complete:(void(^)(AIAlgNodeBase *matchAlg,NSArray *partAlg_ps))complete{
     //1. 数据准备;
     AIAlgNodeBase *matchAlg = nil;
-    AIAlgNodeBase *seemAlg = nil;
+    NSArray *partAlg_ps = nil;
     if (protoAlg) {
         NSMutableDictionary *countDic = [[NSMutableDictionary alloc] init];
         
@@ -222,9 +222,9 @@
         
         //7. 未将全含返回,则返回最相似;
         //2020.10.22: 全含返回,也要返回seemAlg;
-        seemAlg = [SMGUtils searchNode:DATA2OBJ(ARR_INDEX(sortKeys, 0))];
+        partAlg_ps = DATAS2OBJS(sortKeys);
     }
-    complete(matchAlg,seemAlg);
+    complete(matchAlg,partAlg_ps);
 }
 
 //MARK:===============================================================
