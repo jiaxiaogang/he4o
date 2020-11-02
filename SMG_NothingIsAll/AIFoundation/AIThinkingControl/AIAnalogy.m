@@ -430,6 +430,50 @@
     }
 }
 
+/**
+ *  MARK:--------------------内中外类比V2--------------------
+ *  @version
+ *      2020.11.02: V2_使之按照range反序优先索引,改为partAlgs优先索引 (参考:21113);
+ */
++(void)analogyInner_Outside_V2:(AINetAbsFoNode*)abFo type:(AnalogyType)type canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
+    //1. 数据检查
+    //if (updateEnergy) updateEnergy(-0.1f);//消耗活跃度
+    if (ISOK(abFo, AINetAbsFoNode.class) && abFo.content_ps.count > 1) {
+        //2. 取backAlg (用来判断取正确的"变有/无/大/小");
+        AIPointer *back_p = ARR_INDEX(abFo.content_ps, abFo.content_ps.count - 1);
+        AIAlgNodeBase *backAlg = [SMGUtils searchNode:back_p];
+        NSArray *backRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:backAlg]];
+        AIFoNodeBase *assFo = nil;
+        if (Log4InOutAna) NSLog(@"--------- 内中外 ---------\n%@ 经验数:%ld",Fo2FStr(abFo),(long)backRef_ps.count);
+        
+        //3. 根据range联想,从倒数第2个,开始向前逐一联想refPorts;
+        for (NSInteger i = abFo.content_ps.count - 2; i >= 0; i--) {
+            AIKVPointer *item_p = ARR_INDEX(abFo.content_ps, i);
+            AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
+            NSArray *itemRefPorts = [AINetUtils refPorts_All4Alg:itemAlg];
+            //20201027-TODOTOMORROW: 尝试找出最相似的assFo,再进行类比,而不是仅限制同类即可 (参考21102);
+            
+            
+            NSArray *itemRef_ps = [SMGUtils convertPointersFromPorts:[SMGUtils filterPorts:itemRefPorts havTypes:@[@(type)] noTypes:nil]];
+            if (Log4InOutAna) NSLog(@"--- 内中外:%ld-%@ 引用数:%lu 同类数:%lu",(long)i,Alg2FStr(itemAlg),(unsigned long)itemRefPorts.count,(unsigned long)itemRef_ps.count);
+            
+            //4. assAbFo的条件为: (包含item & 包含back & 不是abFo)
+            for (AIKVPointer *itemRef_p in itemRef_ps) {
+                if (![itemRef_p isEqual:abFo.pointer] && [backRef_ps containsObject:itemRef_p]) {
+                    assFo = [SMGUtils searchObjectForPointer:itemRef_p fileName:kFNNode time:cRTNode];
+                    break;
+                }
+            }
+            
+            //5. 取一条有效即break;
+            if (assFo) break;
+        }
+        
+        //6. 对abFo和assAbFo进行类比;
+        [self analogyOutside:abFo assFo:assFo canAss:canAssBlock updateEnergy:updateEnergy type:type];
+    }
+}
+
 @end
 
 
