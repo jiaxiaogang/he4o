@@ -187,7 +187,12 @@
  *      2020.07.30: 对matchAFo的AB元素进行内类比有无时,构建其抽象概念;
  *      2020.07.30: 内类比大小用protoFo,内类比有无用matchAFo (参考20151-BUG4 & n20p15-todo5);
  */
-+(void) analogyInner:(AIFoNodeBase*)protoFo matchAFo:(AIFoNodeBase*)matchAFo{
++(void) analogyInner:(AIShortMatchModel*)mModel{
+    if (!mModel) return;
+    AIFoNodeBase *matchAFo = mModel.matchAFo;
+    AIFoNodeBase *protoFo = mModel.protoFo;
+    NSArray *partAlg_ps = mModel.partAlg_ps;
+    
     NSLog(@"\n\n------------------------------- 内类比 -------------------------------\nP:%@\nM:%@",Fo2FStr(protoFo),Fo2FStr(matchAFo));
     
     //1. 用protoFo做内类比大小;

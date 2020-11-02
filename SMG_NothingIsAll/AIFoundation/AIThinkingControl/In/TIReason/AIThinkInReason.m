@@ -414,9 +414,7 @@
  *  @支持: 目前理性内类比不支持energy,待以后版本再考虑支持 (目前仅在TO阶段支持energy,TI阶段先用配置参数控制);
  */
 +(void) analogyInner:(AIShortMatchModel*)mModel{
-    if (mModel) {
-        [AIAnalogy analogyInner:mModel.protoFo matchAFo:mModel.matchAFo];
-    }
+    [AIAnalogy analogyInner:mModel];
 }
 
 @end

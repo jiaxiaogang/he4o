@@ -40,7 +40,7 @@
  *  _param canAssBlock  : energy判断器 (为null时,无限能量);
  *  _param updateEnergy : energy消耗器 (为null时,不消耗能量值);
  */
-+(void) analogyInner:(AIFoNodeBase*)protoFo matchAFo:(AIFoNodeBase*)matchAFo;
++(void) analogyInner:(AIShortMatchModel*)mModel;
 
 @end
 
