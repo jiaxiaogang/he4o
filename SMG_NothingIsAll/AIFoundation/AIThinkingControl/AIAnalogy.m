@@ -276,8 +276,7 @@
         //d. 构建小/大;
         if (type != ATDefault) {
             AINetAbsFoNode *create = [self analogyInner_Creater:type algsType:a_p.algsType dataSource:a_p.dataSource frontConAlg:algA backConAlg:algB rangeAlg_ps:rangeAlg_ps conFo:checkFo];
-            //e. 内中有外
-            [self analogyInner_Outside:create type:type canAss:nil updateEnergy:nil];
+            
         }
     }
 }
@@ -314,16 +313,12 @@
     for (AIKVPointer *sub_p in aSub_ps) {
         AIAlgNodeBase *target = [SMGUtils searchNode:sub_p];
         AINetAbsFoNode *create = [self analogyInner_Creater:ATNone algsType:sub_p.algsType dataSource:sub_p.dataSource frontConAlg:target backConAlg:target rangeAlg_ps:rangeAlg_ps conFo:checkFo];
-        //3. 内中有外
-        [self analogyInner_Outside:create type:ATNone canAss:nil updateEnergy:nil];
     }
 
     //4. b变有
     for (AIKVPointer *sub_p in bSub_ps) {
         AIAlgNodeBase *target = [SMGUtils searchNode:sub_p];
         AINetAbsFoNode *create = [self analogyInner_Creater:ATHav algsType:sub_p.algsType dataSource:sub_p.dataSource frontConAlg:target backConAlg:target rangeAlg_ps:rangeAlg_ps conFo:checkFo];
-        //4. 内中有外
-        [self analogyInner_Outside:create type:ATHav canAss:nil updateEnergy:nil];
     }
 }
 
@@ -385,6 +380,10 @@
     }else if (type == ATGreater || type == ATLess) {
         if (Log4InAnaGL) NSLog(@"--> 构建:%@ ConFrom:A%ld 构建Fo:%@",Alg2FStr(backAlg),(long)backConAlg.pointer.pointerId,Fo2FStr(result));
     }
+    
+    //7. 内中有外
+    [self analogyInner_Outside:result type:type canAss:nil updateEnergy:nil];
+    
     return result;
 }
 
@@ -437,45 +436,38 @@
 
 /**
  *  MARK:--------------------内中外类比V2--------------------
+ *  @param backAlg : 即glhn节点,根据之索引取conPorts,可取到所有"有无大小"概念经历;
+ *  @param partAlg_ps : protoAlg识别到的局部匹配大全;
  *  @version
+ *      2020.10.27: 新增partAlg_ps参数,找出最相似的assFo,再进行类比 (旧做法是只限Inner同类) (参考21102);
  *      2020.11.02: V2_使之按照range反序优先索引,改为partAlgs优先索引 (参考:21113);
  */
-+(void)analogyInner_Outside_V2:(AINetAbsFoNode*)abFo type:(AnalogyType)type canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy{
-    //1. 数据检查
-    //if (updateEnergy) updateEnergy(-0.1f);//消耗活跃度
-    if (ISOK(abFo, AINetAbsFoNode.class) && abFo.content_ps.count > 1) {
-        //2. 取backAlg (用来判断取正确的"变有/无/大/小");
-        AIPointer *back_p = ARR_INDEX(abFo.content_ps, abFo.content_ps.count - 1);
-        AIAlgNodeBase *backAlg = [SMGUtils searchNode:back_p];
-        NSArray *backRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:backAlg]];
-        AIFoNodeBase *assFo = nil;
-        if (Log4InOutAna) NSLog(@"--------- 内中外 ---------\n%@ 经验数:%ld",Fo2FStr(abFo),(long)backRef_ps.count);
++(void)analogyInner_Outside_V2:(AINetAbsFoNode*)abFo type:(AnalogyType)type partAlg_ps:(NSArray*)partAlg_ps backAlg:(AIAlgNodeBase*)backAlg{
+    
+    //1. 取所有GL经历 & 与此次类似GL经历;
+    NSArray *allInnerAlg_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:backAlg]];
+    NSArray *validInnerAlg_ps = [SMGUtils filterSame_ps:partAlg_ps parent_ps:allInnerAlg_ps];
+    
+    //2. 类比准备_对与此次类似的前(3-4/*有可能与abFo重复一条*/)条;
+    validInnerAlg_ps = ARR_SUB(validInnerAlg_ps, 0, 3);
+    if (Log4InOutAna) NSLog(@"--------- 内中外 ---------\n%@ 经验数:%ld",Fo2FStr(abFo),(long)validInnerAlg_ps.count);
+    
+    //3. 类比准备_依次取出有效的fo;
+    for (AIKVPointer *item_p in validInnerAlg_ps) {
+        NSArray *allFoPorts = [AINetUtils refPorts_All4Alg:[SMGUtils searchNode:item_p]];
+        NSArray *validFoPorts = [SMGUtils filterPorts:allFoPorts havTypes:@[@(type)] noTypes:nil];
+        if (Log4InOutAna) NSLog(@"------ 内中外:%@ 引用数:%lu 同类数:%lu",AlgP2FStr(item_p),(long)allFoPorts.count,(long)validFoPorts.count);
         
-        //3. 根据range联想,从倒数第2个,开始向前逐一联想refPorts;
-        for (NSInteger i = abFo.content_ps.count - 2; i >= 0; i--) {
-            AIKVPointer *item_p = ARR_INDEX(abFo.content_ps, i);
-            AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
-            NSArray *itemRefPorts = [AINetUtils refPorts_All4Alg:itemAlg];
-            //20201027-TODOTOMORROW: 尝试找出最相似的assFo,再进行类比,而不是仅限制同类即可 (参考21102);
-            
-            
-            NSArray *itemRef_ps = [SMGUtils convertPointersFromPorts:[SMGUtils filterPorts:itemRefPorts havTypes:@[@(type)] noTypes:nil]];
-            if (Log4InOutAna) NSLog(@"--- 内中外:%ld-%@ 引用数:%lu 同类数:%lu",(long)i,Alg2FStr(itemAlg),(unsigned long)itemRefPorts.count,(unsigned long)itemRef_ps.count);
-            
-            //4. assAbFo的条件为: (包含item & 包含back & 不是abFo)
-            for (AIKVPointer *itemRef_p in itemRef_ps) {
-                if (![itemRef_p isEqual:abFo.pointer] && [backRef_ps containsObject:itemRef_p]) {
-                    assFo = [SMGUtils searchObjectForPointer:itemRef_p fileName:kFNNode time:cRTNode];
-                    break;
-                }
+        //4. 类比准备_取出assFo (不能是abFo);
+        for (AIPort *foPort in validFoPorts) {
+            if (![foPort.target_p isEqual:abFo.pointer]) {
+                AIFoNodeBase *assFo = [SMGUtils searchNode:foPort.target_p];
+                
+                //5. 对abFo和assAbFo进行类比;
+                if (Log4InOutAna) NSLog(@"--- 内中外类比fo:%@ ass:%@",Fo2FStr(abFo),Fo2FStr(assFo));
+                [self analogyOutside:abFo assFo:assFo canAss:nil updateEnergy:nil type:type];
             }
-            
-            //5. 取一条有效即break;
-            if (assFo) break;
-        }
-        
-        //6. 对abFo和assAbFo进行类比;
-        [self analogyOutside:abFo assFo:assFo canAss:canAssBlock updateEnergy:updateEnergy type:type];
+        }   
     }
 }
 
