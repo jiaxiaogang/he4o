@@ -411,10 +411,10 @@
         NSArray *validFoPorts = [SMGUtils filterPorts:allFoPorts havTypes:@[@(type)] noTypes:nil];
         if (Log4InOutAna) NSLog(@"------ 内中外:%@ 引用数:%lu 同类数:%lu",AlgP2FStr(item_p),(long)allFoPorts.count,(long)validFoPorts.count);
         
-        //TODOTOMORROW:
+        //TODOTOMORROW (参考:21114);
         //  1. 对item_p和abFo.lastAlg之间进行类比抽象AbsA,并使AbsA抽象指向backAlg;
         //  2. 查下根据item_p的refPorts能不能查到有效的fos (因为有可能fos中,存的仅是backAlg,而不是partAlg);
-        
+        //  3. 将glFo由"range+glAlg"改为"range+backConAlg+glAlg"格式,或方案3;
         
         //4. 类比准备_取出assFo (不能是abFo);
         for (AIPort *foPort in validFoPorts) {
