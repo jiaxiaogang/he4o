@@ -323,16 +323,18 @@
 
 /**
  *  MARK:--------------------内类比构建抽象时序--------------------
+ *  @version
+ *      2020.11.05: 将backAlg(glAlg)改成backConAlg传入,使glFo改为[range+backConAlg] (参考21115);
  */
-+(AINetAbsFoNode*)createInnerAbsFo:(AIAlgNodeBase*)backAlg rangeAlg_ps:(NSArray*)rangeAlg_ps conFo:(AIFoNodeBase*)conFo ds:(NSString*)ds{
++(AINetAbsFoNode*)createInnerAbsFo:(AIAlgNodeBase*)backConAlg rangeAlg_ps:(NSArray*)rangeAlg_ps conFo:(AIFoNodeBase*)conFo ds:(NSString*)ds{
     //1. 数据检查
-    if (!backAlg || !conFo) return nil;
+    if (!backConAlg || !conFo) return nil;
     rangeAlg_ps = ARRTOOK(rangeAlg_ps);
     
     //2. 拼接content_ps
     NSMutableArray *absOrders = [[NSMutableArray alloc] init];
     [absOrders addObjectsFromArray:rangeAlg_ps];
-    [absOrders addObject:backAlg.pointer];
+    [absOrders addObject:backConAlg.pointer];
     
     //3. 构建 (内类比时序未指向mv,初始强度为1);
     AINetAbsFoNode *result = [theNet createAbsFo_General:@[conFo] content_ps:absOrders difStrong:1 ds:ds];

@@ -339,8 +339,9 @@
  *      3. 构建abFoNode时序 (未去重);
  *  @注意: 此处algNode和algNode_Inner应该是组分关系,但先保持抽具象关系,看后面测试,有没别的影响,再改 (参考179_内类比全流程回顾)
  *  @version
- *      20200329: 将frontAlg去掉,只保留backAlg (以使方便TOR中联想使用);
- *      20200419: 将构建alg和fo指定ds为:backData的值 (以便此后取absPorts时,可以根据指针进行类型筛选);
+ *      2020.03.29: 将frontAlg去掉,只保留backAlg (以使方便TOR中联想使用);
+ *      2020.04.19: 将构建alg和fo指定ds为:backData的值 (以便此后取absPorts时,可以根据指针进行类型筛选);
+ *      2020.11.05: 将glFo改为[range+backConAlg] (参考21115);
  *  @bug
  *      2020.06.19: 调试找不到glAlg的bug (经查,内类比的两个概念中,其中一个没有"距离"稀疏码,导致无法类比出"距离"GL节点,查为什么n20p2BUG3会有距50的节点参与到内类比中来?) (过期BUG,不必再改);
  */
@@ -369,7 +370,7 @@
     
 
     //5. 构建抽象时序; (小动致大 / 大动致小) (之间的信息为balabala)
-    AINetAbsFoNode *result = [TIRUtils createInnerAbsFo:backAlg rangeAlg_ps:rangeAlg_ps conFo:conFo ds:afDS];
+    AINetAbsFoNode *result = [TIRUtils createInnerAbsFo:backConAlg rangeAlg_ps:rangeAlg_ps conFo:conFo ds:afDS];
 
     //6. 调试;
     if (type == ATHav || type == ATNone) {
@@ -389,40 +390,42 @@
  *  2. 复用外类比方法;
  *  3. 一个抽象了a1-range-a2的时序,必然是抽象的,必然是硬盘网络中的;所以此处不必考虑联想内存网络中的assAbFo;
  *  @param backAlg : 即glhn节点,根据之索引取conPorts,可取到所有"有无大小"概念经历;
- *  @param partAlg_ps : protoAlg识别到的局部匹配大全;
+ *  @param partAlg_ps : protoAlg识别到的局部匹配大全 (亦有全含的,排前面);
  *  @version
  *      2020.03.29: 将assFo依range来联想,而非"有/无/大/小";以解决类比抽象时容易过度收束的问题;
  *      2020.10.27: 新增partAlg_ps参数,找出最相似的assFo,再进行类比 (旧做法是只限Inner同类) (参考21102);
  *      2020.11.02: V2_使之按照range反序优先索引,改为partAlgs优先索引 (参考:21113);
+ *      2020.11.05: 解决assFoPorts永远为0条的问题 (因为原先conFo不是gl时序),改为range+backConAlg后没此问题了 (参考21115);
  */
 +(void)analogyInner_Outside_V2:(AINetAbsFoNode*)abFo type:(AnalogyType)type partAlg_ps:(NSArray*)partAlg_ps backAlg:(AIAlgNodeBase*)backAlg{
     
     //1. 取所有GL经历 & 与此次类似GL经历;
-    NSArray *allInnerAlg_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:backAlg]];
-    NSArray *validInnerAlg_ps = [SMGUtils filterSame_ps:partAlg_ps parent_ps:allInnerAlg_ps];
+    NSArray *backConAlg_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:backAlg]];
+    NSArray *validBackConAlg_ps = [SMGUtils filterSame_ps:partAlg_ps parent_ps:backConAlg_ps];
     
     //2. 类比准备_对与此次类似的前(3-4/*有可能与abFo重复一条*/)条;
-    validInnerAlg_ps = ARR_SUB(validInnerAlg_ps, 0, 3);
-    if (Log4InOutAna) NSLog(@"--------- 内中外 ---------\n%@ 经验数:%ld",Fo2FStr(abFo),(long)validInnerAlg_ps.count);
+    validBackConAlg_ps = ARR_SUB(validBackConAlg_ps, 0, 3);
+    if (Log4InOutAna) NSLog(@"--------- 内中外 ---------\n%@ 经验数:%ld",Fo2FStr(abFo),(long)validBackConAlg_ps.count);
     
     //3. 类比准备_依次取出有效的fo;
-    for (AIKVPointer *item_p in validInnerAlg_ps) {
-        NSArray *allFoPorts = [AINetUtils refPorts_All4Alg:[SMGUtils searchNode:item_p]];
-        NSArray *validFoPorts = [SMGUtils filterPorts:allFoPorts havTypes:@[@(type)] noTypes:nil];
-        if (Log4InOutAna) NSLog(@"------ 内中外:%@ 引用数:%lu 同类数:%lu",AlgP2FStr(item_p),(long)allFoPorts.count,(long)validFoPorts.count);
-        
-        //TODOTOMORROW (参考:21114);
-        //  1. 对item_p和abFo.lastAlg之间进行类比抽象AbsA,并使AbsA抽象指向backAlg;
-        //  2. 查下根据item_p的refPorts能不能查到有效的fos (因为有可能fos中,存的仅是backAlg,而不是partAlg);
-        //  3. 将glFo由"range+glAlg"改为"range+backConAlg+glAlg"格式,或方案3;
+    for (AIKVPointer *validBackCon_p in validBackConAlg_ps) {
+        NSArray *assFoPorts = [AINetUtils refPorts_All4Alg:[SMGUtils searchNode:validBackCon_p]];
+        assFoPorts = [SMGUtils filterPorts:assFoPorts havTypes:@[@(type)] noTypes:nil];
+        if (Log4InOutAna) NSLog(@"------ 内中外:%@ 引用同类数:%lu",AlgP2FStr(validBackCon_p),(long)assFoPorts.count);
         
         //4. 类比准备_取出assFo (不能是abFo);
-        for (AIPort *foPort in validFoPorts) {
-            if (![foPort.target_p isEqual:abFo.pointer]) {
-                AIFoNodeBase *assFo = [SMGUtils searchNode:foPort.target_p];
+        for (AIPort *assFoPort in assFoPorts) {
+            if (![assFoPort.target_p isEqual:abFo.pointer]) {
+                AIFoNodeBase *assFo = [SMGUtils searchNode:assFoPort.target_p];
                 
                 //5. 对abFo和assAbFo进行类比;
                 if (Log4InOutAna) NSLog(@"--- 内中外类比fo:%@ ass:%@",Fo2FStr(abFo),Fo2FStr(assFo));
+                
+                //TODOTOMORROW:
+                //1. 当abFo.lastAlg和assFo.lastAlg类比抽象得到absA后,应该让absA抽象指向glAlg (参考21115);
+                
+                
+                
                 [self analogyOutside:abFo assFo:assFo canAss:nil updateEnergy:nil type:type];
             }
         }
