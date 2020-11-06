@@ -274,6 +274,7 @@
 /**
  *  MARK:--------------------抽具象关联通用方法--------------------
  *  @param absConPorts : notnull
+ *  @param isNew : absNode是否为新构建;
  */
 +(void) relateGeneralAbs:(AINodeBase*)absNode absConPorts:(NSMutableArray*)absConPorts conNodes:(NSArray*)conNodes isNew:(BOOL)isNew{
     if (ISOK(absNode, AINodeBase.class)) {

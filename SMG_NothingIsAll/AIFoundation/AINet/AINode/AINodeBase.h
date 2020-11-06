@@ -29,5 +29,6 @@
  *  2. 用于alg: 稀疏码微信息组;(微信息/嵌套概念)指针组 (以pointer默认排序) (去重,否则在局部识别全含时,判定content.count=matchingCount时会失效)
  */
 @property (strong, nonatomic,nonnull) NSMutableArray *content_ps;
+-(NSInteger) count;
 
 @end

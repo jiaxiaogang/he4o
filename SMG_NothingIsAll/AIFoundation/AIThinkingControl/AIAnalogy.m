@@ -41,14 +41,14 @@
  *      20200215: 有序外类比: 将forin循环fo和assFo改为反序,并记录上次类比位置jMax (因出现了[果,果,吃,吃]这样的异常时序) 参考n18p11;
  *      20200831: 支持反省外类比,得出更确切的ATSub原因,参考:20205-步骤4;
  */
-+(void) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy type:(AnalogyType)type{
++(void) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy type:(AnalogyType)type createAbsAlgBlock:(void(^)(AIAlgNodeBase *createAlg,NSInteger foIndex,NSInteger assFoIndex))createAbsAlgBlock{
     //1. 类比orders的规律
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
     if (fo && assFo) {
 
         //2. 外类比有序进行 (记录jMax & 反序)
-        NSInteger jMax = assFo.content_ps.count - 1;
-        for (NSInteger i = fo.content_ps.count - 1; i >= 0; i--) {
+        NSInteger jMax = assFo.count - 1;
+        for (NSInteger i = fo.count - 1; i >= 0; i--) {
             for (NSInteger j = jMax; j >= 0; j--) {
                 AIKVPointer *algNodeA_p = fo.content_ps[i];
                 AIKVPointer *algNodeB_p = assFo.content_ps[j];
@@ -119,7 +119,7 @@
     if (ARRISOK(orderSames) && ISOK(fo, AIFoNodeBase.class) && ISOK(assFo, AIFoNodeBase.class)) {
 
         //3. fo和assFo本来就是抽象关系时_直接关联即可;
-        BOOL samesEqualAssFo = orderSames.count == assFo.content_ps.count && [SMGUtils containsSub_ps:orderSames parent_ps:assFo.content_ps];
+        BOOL samesEqualAssFo = orderSames.count == assFo.count && [SMGUtils containsSub_ps:orderSames parent_ps:assFo.content_ps];
         BOOL jumpForAbsAlreadyHav = (ISOK(assFo, AINetAbsFoNode.class) && samesEqualAssFo);
         AINetAbsFoNode *result = nil;
         if (jumpForAbsAlreadyHav) {
@@ -194,13 +194,13 @@
     NSLog(@"\n\n------------------------------- 内类比 -------------------------------\nP:%@\nM:%@",Fo2FStr(protoFo),Fo2FStr(matchAFo));
     
     //1. 用protoFo做内类比大小;
-    if (ISOK(protoFo, AIFoNodeBase.class) && protoFo.content_ps.count >= 2) {
+    if (ISOK(protoFo, AIFoNodeBase.class) && protoFo.count >= 2) {
         
         //2. 最后一个元素,向前分别与orders后面所有元素进行类比
-        for (NSInteger i = protoFo.content_ps.count - 2; i >= 0; i--) {
+        for (NSInteger i = protoFo.count - 2; i >= 0; i--) {
             
             //3. 取出两个概念
-            NSInteger lastIndex = protoFo.content_ps.count - 1;
+            NSInteger lastIndex = protoFo.count - 1;
             AIAlgNode *algA = [SMGUtils searchNode:ARR_INDEX(protoFo.content_ps, i)];
             AIAlgNode *algB = [SMGUtils searchNode:ARR_INDEX(protoFo.content_ps, lastIndex)];
             
@@ -216,13 +216,13 @@
     }
     
     //6. 用matchAFo,做内类比有无;
-    if (ISOK(matchAFo, AIFoNodeBase.class) && matchAFo.content_ps.count >= 2) {
+    if (ISOK(matchAFo, AIFoNodeBase.class) && matchAFo.count >= 2) {
         
         //7. 最后一个元素,向前分别与orders后面所有元素进行类比
-        for (NSInteger i = matchAFo.content_ps.count - 2; i >= 0; i--) {
+        for (NSInteger i = matchAFo.count - 2; i >= 0; i--) {
             
             //8. 取出两个概念
-            NSInteger lastIndex = matchAFo.content_ps.count - 1;
+            NSInteger lastIndex = matchAFo.count - 1;
             AIAlgNode *algA = [SMGUtils searchNode:ARR_INDEX(matchAFo.content_ps, i)];
             AIAlgNode *algB = [SMGUtils searchNode:ARR_INDEX(matchAFo.content_ps, lastIndex)];
             
@@ -396,6 +396,7 @@
  *      2020.10.27: 新增partAlg_ps参数,找出最相似的assFo,再进行类比 (旧做法是只限Inner同类) (参考21102);
  *      2020.11.02: V2_使之按照range反序优先索引,改为partAlgs优先索引 (参考:21113);
  *      2020.11.05: 解决assFoPorts永远为0条的问题 (因为原先conFo不是gl时序),改为range+backConAlg后没此问题了 (参考21115);
+ *      2020.11.06: 内中外类比,backConAlg的抽象节点newAbsA,使之抽象指向backAlg(glAlg) (参考21115);
  */
 +(void)analogyInner_Outside_V2:(AINetAbsFoNode*)abFo type:(AnalogyType)type partAlg_ps:(NSArray*)partAlg_ps backAlg:(AIAlgNodeBase*)backAlg{
     
@@ -420,13 +421,13 @@
                 
                 //5. 对abFo和assAbFo进行类比;
                 if (Log4InOutAna) NSLog(@"--- 内中外类比fo:%@ ass:%@",Fo2FStr(abFo),Fo2FStr(assFo));
-                
-                //TODOTOMORROW:
-                //1. 当abFo.lastAlg和assFo.lastAlg类比抽象得到absA后,应该让absA抽象指向glAlg (参考21115);
-                
-                
-                
-                [self analogyOutside:abFo assFo:assFo canAss:nil updateEnergy:nil type:type];
+                [self analogyOutside:abFo assFo:assFo canAss:nil updateEnergy:nil type:type createAbsAlgBlock:^(AIAlgNodeBase *createAlg, NSInteger foIndex, NSInteger assFoIndex) {
+                    
+                    //6. 当abFo.lastAlg和assFo.lastAlg类比抽象得到absA后,应该让absA抽象指向glAlg (参考21115);
+                    if (foIndex == abFo.count - 1 && assFoIndex == assFo.count - 1) {
+                        [AINetUtils relateAlgAbs:(AIAbsAlgNode*)backAlg conNodes:@[createAlg] isNew:false];
+                    }
+                }];
             }
         }
     }
@@ -476,11 +477,11 @@
 
     //4. 正向有序类比 (从protoFo中找mAlg_p的踪迹);
     NSInteger jStart = 0;
-    for (NSInteger i = 0; i < mModel.matchFo.content_ps.count; i++) {
+    for (NSInteger i = 0; i < mModel.matchFo.count; i++) {
         //A. 类比_数据准备;
         AIKVPointer *mAlg_p = mModel.matchFo.content_ps[i];
         BOOL findM = false;
-        for (NSInteger j = jStart; j < shortFo.content_ps.count; j++) {
+        for (NSInteger j = jStart; j < shortFo.count; j++) {
             AIKVPointer *pAlg_p = shortFo.content_ps[j];
             BOOL findP = false;
 
@@ -542,7 +543,7 @@
     }
 
     //5. 将最终都没收集的shortFo剩下的部分打包进多余 (jStart到end之间的pAlg_p(含jStart,含end));
-    [ps addObjectsFromArray:ARR_SUB(shortFo.content_ps, jStart, shortFo.content_ps.count - jStart)];
+    [ps addObjectsFromArray:ARR_SUB(shortFo.content_ps, jStart, shortFo.count - jStart)];
     if (Log4DiffAna) NSLog(@"---> 反向反馈类比 ms:%@ ps:%@",Pits2FStr(ms),Pits2FStr(ps));
     
     //6. 构建ms & ps
@@ -563,7 +564,7 @@
     NSString *ds = [ThinkingUtils getAnalogyTypeDS:type];
     AICMVNodeBase *conMv = [SMGUtils searchNode:conMv_p];
     if(!conMv || !ARRISOK(content_ps) || !conFo) return nil;
-    CGFloat rate = 1.0f;//(float)content_ps.count / conFo.content_ps.count;
+    CGFloat rate = 1.0f;//(float)count / conFo.count;
     
     //2. 计算ms的价值变化量 (基准 x rate);
     NSInteger pUrgentTo = [NUMTOOK([AINetIndex getData:conMv.urgentTo_p]) integerValue];
@@ -602,9 +603,7 @@
     if (!isSame) return;
     
     //3. 类比 (与当前的analogy_Outside()较相似,所以暂不写,随后写时,也是将原有的_outside改成此_same类比方法);
-    [self analogyOutside:shortFo assFo:mModel.matchFo canAss:^BOOL{
-        return true;
-    } updateEnergy:nil type:ATSame];
+    [self analogyOutside:shortFo assFo:mModel.matchFo canAss:nil updateEnergy:nil type:ATSame createAbsAlgBlock:nil];
 }
 
 @end
@@ -682,7 +681,7 @@
         if (spFo && ARRISOK(assSPFos)) {
             for (AIKVPointer *item in assSPFos) {
                 AINetAbsFoNode *assSPFo = [SMGUtils searchNode:item];
-                [AIAnalogy analogyOutside:spFo assFo:assSPFo canAss:nil updateEnergy:nil type:type];
+                [AIAnalogy analogyOutside:spFo assFo:assSPFo canAss:nil updateEnergy:nil type:type createAbsAlgBlock:nil];
             }
         }
     }

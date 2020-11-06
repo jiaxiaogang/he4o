@@ -25,6 +25,10 @@
     return _content_ps;
 }
 
+-(NSInteger) count{
+    return self.content_ps.count;
+}
+
 /**
  *  MARK:--------------------NSCoding--------------------
  */
