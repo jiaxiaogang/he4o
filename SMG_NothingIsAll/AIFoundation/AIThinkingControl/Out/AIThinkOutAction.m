@@ -266,7 +266,9 @@
         }
         
         //4. 第3级: 数据检查hAlg_根据type和value_p找ATHav
-        AIAlgNodeBase *hAlg = [AINetService getInner1Alg:curAlg vAT:outModel.content_p.algsType vDS:outModel.content_p.dataSource type:ATHav];
+        
+        //TODOTOMORROW20201106: 直接返回relativeFos的处理;
+        NSArray *hAlg = [AINetService getInner1Alg:curAlg vAT:outModel.content_p.algsType vDS:outModel.content_p.dataSource type:ATHav];
         if (Log4ActHav) NSLog(@"getInnerAlg: 根据:%@ 找:%@_%@ HAlg:%@",Alg2FStr(curAlg),outModel.content_p.algsType,outModel.content_p.dataSource,Alg2FStr(hAlg));
         if (!hAlg) {
             outModel.status = TOModelStatus_ActNo;
@@ -345,24 +347,20 @@
     //TODOTOMORROW: 查此处,C1训练右飞两次后,为何还是找不到距离变小索引;
     //经查,此处alg是pAlg,就是dis0的组节点,而并未经历过飞到0的经验,所以无法获取到glAlg结果;
     //可以尝试将此处,改为找将sAlg变小,而不是将其变成pAlg,即以s出发,接近p;
-    AIAlgNodeBase *glAlg = [AINetService getInner1Alg:alg vAT:vAT vDS:vDS type:type];
-    if (Log4ActGL) NSLog(@"getInnerAlg: 根据:%@->%@ 找:%@%@ GLAlg:%@",Pit2FStr(outModel.sValue_p),Pit2FStr(outModel.content_p),vDS,Data2FStr(type, vAT, vDS),Alg2FStr(glAlg));
-    if (!glAlg) {
-        outModel.status = TOModelStatus_ActNo;
-        [self.delegate toAction_SubModelFailure:outModel];
-        return;
-    }
+    NSArray *relativeFos = [AINetService getInner1Alg:alg vAT:vAT vDS:vDS type:type];
     
-    //3. 根据havAlg联想时序,并找出新的解决方案,与新的行为化的概念,与新的条件概念;
-    NSArray *hdRef_ps = [SMGUtils convertPointersFromPorts:ARR_SUB(glAlg.refPorts, 0, cHavNoneAssFoCount)];
+    if (Log4ActGL) NSLog(@"getInnerAlg: 根据:%@->%@ 找:%@%@ GL有效经历数:%lu",Pit2FStr(outModel.sValue_p),Pit2FStr(outModel.content_p),vDS,Data2FStr(type, vAT, vDS),(unsigned long)relativeFos.count);
+    
+    //3. 根据havAlg联想时序,并找出新的解决方案,与新的行为化的概念,与新的条件概念; (2020.11.06: 由getInner1Alg直接取relativeFos);
+    //NSArray *hdRef_ps = [SMGUtils convertPointersFromPorts:ARR_SUB(glAlg.refPorts, 0, cHavNoneAssFoCount)];
     
     //4. 去掉不应期
     NSArray *except_ps = [TOUtils convertPointersFromTOModels:outModel.actionFoModels];
-    hdRef_ps = [SMGUtils removeSub_ps:except_ps parent_ps:hdRef_ps];
+    relativeFos = [SMGUtils removeSub_ps:except_ps parent_ps:relativeFos];
     
     //5. 转移至_fos
-    if (ARRISOK(hdRef_ps)) {
-        [self convert2Out_RelativeFo_ps:hdRef_ps outModel:outModel];
+    if (ARRISOK(relativeFos)) {
+        [self convert2Out_RelativeFo_ps:relativeFos outModel:outModel];
     }else{
         //6. 无计可施
         outModel.status = TOModelStatus_ActNo;

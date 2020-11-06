@@ -23,8 +23,11 @@
  *      2020.06.16: 找不到glAlg的bug;
  *  @todo
  *      2020.06.24: 对alg指引联想,取同层+多层abs,比如,我没洗过西瓜,但我洗过苹果,或者洗过水果,那我可以试下用水洗西瓜;
+ *  @version
+ *      2020.11.06: 核对21115逻辑没问题 & 直接取返回relativeFo_ps;
+ *  @result : 返回relativeFo_ps,用backConAlg节点,由此节点取refPorts,再筛选type,可取到glFo经历;
  */
-+(AIAlgNodeBase*) getInner1Alg:(AIAlgNodeBase*)pAlg vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type{
++(NSArray*) getInner1Alg:(AIAlgNodeBase*)pAlg vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type{
     //1. 数据检查hAlg_根据type和value_p找ATHav
     if (Log4GetInnerAlg) NSLog(@"--> getInnerAlg:%ld ATDS:%@&%@ 参照:%@(C和参照概念有mIsC关联则成功)",(long)type,vAT,vDS,Alg2FStr(pAlg));
     AIKVPointer *innerValue_p = [theNet getNetDataPointerWithData:@(type) algsType:vAT dataSource:vDS];
@@ -44,7 +47,11 @@
         for (AIKVPointer *glAlgCon_p in glAlgCon_ps) {
             if (Log4GetInnerAlg) NSLog(@"-> try_getInnerAlg结果B:%@ 结果具象C:%@",Alg2FStr(glAlg),AlgP2FStr(glAlgCon_p));
             if ([TOUtils mIsC_2:glAlgCon_p c:pAlg.pointer] || [TOUtils mIsC_2:pAlg.pointer c:glAlgCon_p]) {
-                return glAlg;
+                
+                //6. 用mIsC有效的glAlg具象指向节点,向refPorts取到relativeFos返回;
+                NSArray * relativeFoPorts = [SMGUtils filterPorts:[AINetUtils refPorts_All4Alg:glAlg] havTypes:@[@(type)] noTypes:nil];
+                NSArray *relativeFo_ps = [SMGUtils convertPointersFromPorts:ARR_SUB(relativeFoPorts, 0, cHavNoneAssFoCount)];
+                return relativeFo_ps;
             }
             
             //TODOTOMORROW:
