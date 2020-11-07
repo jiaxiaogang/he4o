@@ -266,51 +266,21 @@
         }
         
         //4. 第3级: 数据检查hAlg_根据type和value_p找ATHav
+        NSArray *relativeFos = [AINetService getInner1Alg:curAlg vAT:outModel.content_p.algsType vDS:outModel.content_p.dataSource type:ATHav];
+        if (Log4ActHav) NSLog(@"getInnerAlg: 根据:%@ 找:%@_%@ relativeFos数:%lu",Alg2FStr(curAlg),outModel.content_p.algsType,outModel.content_p.dataSource,(unsigned long)relativeFos.count);
         
-        //TODOTOMORROW20201106: 直接返回relativeFos的处理;
-        NSArray *hAlg = [AINetService getInner1Alg:curAlg vAT:outModel.content_p.algsType vDS:outModel.content_p.dataSource type:ATHav];
-        if (Log4ActHav) NSLog(@"getInnerAlg: 根据:%@ 找:%@_%@ HAlg:%@",Alg2FStr(curAlg),outModel.content_p.algsType,outModel.content_p.dataSource,Alg2FStr(hAlg));
-        if (!hAlg) {
-            outModel.status = TOModelStatus_ActNo;
-            [self.delegate toAction_SubModelFailure:outModel];
-            return;
-        }
-        
-        //5. 取hAlg的refs引用时序大全 (空想集,即如何获取hAlg);
-        NSArray *hRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:hAlg]];
-        NSMutableArray *relativeFos = [[NSMutableArray alloc] init];
-        for (NSInteger i = 0; i < theTC.inModelManager.models.count; i++) {
-            AIShortMatchModel *model = ARR_INDEX_REVERSE(theTC.inModelManager.models, i);
-            
-            //6. 遍历入短时记忆,根据matchAlg取refs (此处应该是希望Hav不要脱离短时记忆,所以用M.refPorts取交集);
-            NSArray *mRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:model.matchAlg]];
-            
-            //7. 对hRefs和mRefs取交集;
-            NSArray *hmRef_ps = [SMGUtils filterSame_ps:hRef_ps parent_ps:mRef_ps];
-            hmRef_ps = ARR_SUB(hmRef_ps, 0, cHavNoneAssFoCount);
-            
-            //8. 收集 (交集优先部分);
-            relativeFos = [SMGUtils collectArrA_NoRepeat:relativeFos arrB:hmRef_ps];
-        }
-        
-        //9. 收集 (其余空想部分);
-        relativeFos = [SMGUtils collectArrA_NoRepeat:relativeFos arrB:hRef_ps];
-        
-        //10. 去掉不应期
+        //5. 去掉不应期
         NSArray *except_ps = [TOUtils convertPointersFromTOModels:outModel.actionFoModels];
         relativeFos = [SMGUtils removeSub_ps:except_ps parent_ps:relativeFos];
         
-        //11. 只要有善可尝试的方式,即从首条开始尝试;
+        //6. 只要有善可尝试的方式,即从首条开始尝试;
+        if (Log4ActHav) NSLog(@"去掉不应期后_RelativeFos条数:%lu %@",(unsigned long)relativeFos.count,relativeFos.count > 0 ? @"↓↓↓↓↓↓↓↓" : @"无计可施");
         if (ARRISOK(relativeFos)) {
-            if (Log4ActHav) NSLog(@"Move RelativeFos条数:%lu ↓↓↓↓↓↓↓↓",(unsigned long)relativeFos.count);
             [self convert2Out_RelativeFo_ps:relativeFos outModel:outModel];
-            return;
         }
-        //9. 可尝试的方案全无;
-        if (Log4ActHav) NSLog(@"略惨 => 无任何方案可取到hAlg");
     }
     
-    //10. 所有mModel都没成功行为化一条,则失败;
+    //10. 所有mModel都没成功行为化一条,则失败 (无计可施);
     outModel.status = TOModelStatus_ActNo;
     [self.delegate toAction_SubModelFailure:outModel];
 }
