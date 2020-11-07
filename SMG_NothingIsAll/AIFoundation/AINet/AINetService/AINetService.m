@@ -74,16 +74,6 @@
             //}
             ////9. 收集 (其余空想部分) (考虑下二者是否应该取交集?);
             //relativeFos = [SMGUtils collectArrA_NoRepeat:relativeFos arrB:partFos];
-            
-            //TODOTOMORROW:
-            //可视化查2105cBUG时,的节点关系,目前仅调试↙坚果时;
-            if (debugVesion > 0 && [AlgP2FStr(glAlgCon_p) containsString:@"↙"]) {
-                [theNV setForceMode:true];
-                [theNV setNodeData:pAlg.pointer];
-                [theNV setNodeData:glAlgCon_p];
-                [theNV setForceMode:false];
-                debugVesion--;
-            }
         }
     }
     return nil;
