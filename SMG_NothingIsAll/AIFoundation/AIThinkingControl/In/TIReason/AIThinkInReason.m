@@ -105,7 +105,7 @@
             NSLog(@"构建相似抽象:%@",Alg2FStr(seemProtoAbs));
             
             //7. 关联处理_对seemProtoAbs与matchAlg建立抽具象关联 (参考21091-黄线);
-            if (seemProtoAbs) {
+            if (seemProtoAbs && matchAlg) {
                 NSArray *same_ps = [SMGUtils filterSame_ps:seemProtoAbs.content_ps parent_ps:matchAlg.content_ps];
                 AIAlgNodeBase *topAbs = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[seemProtoAbs,matchAlg] isMem:false];
                 NSLog(@"构建TopAbs抽象:%@",Alg2FStr(topAbs));
