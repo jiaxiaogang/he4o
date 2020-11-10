@@ -28,7 +28,7 @@
 //MARK:                     < 理性时序识别与预测 >
 //MARK:===============================================================
 +(void) TIR_Fo_FromRethink:(NSArray*)order finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue,NSInteger cutIndex))finishBlock;
-+(void) TIR_Fo_FromShortMem:(AIFoNodeBase*)protoFo lastMatchAlg:(AIAlgNodeBase*)lastMatchAlg finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue,NSInteger cutIndex))finishBlock;
++(void) TIR_Fo_FromShortMem:(AIFoNodeBase*)protoFo finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue,NSInteger cutIndex))finishBlock;
 
 
 //MARK:===============================================================

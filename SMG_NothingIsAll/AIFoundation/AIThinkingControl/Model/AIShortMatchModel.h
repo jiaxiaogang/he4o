@@ -31,7 +31,14 @@
 //MARK:                     < Alg部分 >
 //MARK:===============================================================
 @property (strong, nonatomic) AIAlgNodeBase *protoAlg;  //原始概念
-@property (strong, nonatomic) AIAlgNodeBase *matchAlg;  //匹配概念
+
+/**
+ *  MARK:--------------------匹配概念--------------------
+ *  @version
+ *      2020.10.30前: 一般为全含抽象节点,但在无全含时,就是partAlgs的首个节点;
+ *      2020.10.30: 仅为全含抽象节点 (如果v2四测中,发现此处变动有影响,则反过来考虑此改动是否合理);
+ */
+@property (strong, nonatomic) AIAlgNodeBase *matchAlg;
 @property (strong, nonatomic) NSArray *partAlg_ps;      //局部匹配概念
 @property (assign, nonatomic) NSTimeInterval inputTime; //原始概念输入时间
 
