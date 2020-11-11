@@ -92,7 +92,7 @@
 //MARK:                     < onclick >
 //MARK:===============================================================
 - (IBAction)mouchOnClick:(id)sender {
-    NSLog(@"点鸟嘴,触发吸吮反射");
+    DemoLog(@"鸟嘴 吸吮反射");
     [self touchMouth];
 }
 
@@ -207,7 +207,7 @@
  *  @desc 饱腹感 (0-10) (值越大越饱);
  */
 -(void) sendHunger:(CGFloat)fullDelta{
-    NSLog(@"=====饱腹感变化量 %f",fullDelta);
+    DemoLog(@"饥饿感 %f",fullDelta);
     [AIInput commitIMV:MVType_Hunger from:5.0f to:5.0 + fullDelta];
 }
 

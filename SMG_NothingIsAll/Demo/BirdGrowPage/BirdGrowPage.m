@@ -68,6 +68,7 @@
 //MARK:===============================================================
 - (IBAction)nearFeedingBtnOnClick:(id)sender {
     [theApp.heLogView addLog:@"直投"];
+    DemoLog(@"直投")
     FoodView *foodView = [[FoodView alloc] init];
     [foodView hit];
     [foodView setOrigin:CGPointMake(ScreenWidth * 0.375f, ScreenHeight - 66)];
@@ -111,7 +112,7 @@
     
     //4. 投食 & 打日志;
     if (targetPoint.x != 0 && targetPoint.y != 0) {
-        NSLog(@"远投:%f,%f",targetPoint.x,targetPoint.y);
+        DemoLog(@"远投:%f,%f",targetPoint.x,targetPoint.y);
         [theApp.heLogView addLog:STRFORMAT(@"远投:%f,%f",targetPoint.x,targetPoint.y)];
         [self food2Pos:targetPoint];
     }
@@ -133,104 +134,104 @@
 }
 - (IBAction)foodLeftOnClick:(id)sender {
     [self animationFlash:sender];
-    NSLog(@"远投-左");
+    DemoLog(@"远投-左");
     CGPoint birdPos = self.birdView.center;
     [self food2Pos:CGPointMake(birdPos.x - 100, birdPos.y)];
 }
 - (IBAction)foodLeftUpOnClick:(id)sender {
     [self animationFlash:sender];
-    NSLog(@"远投-左上");
+    DemoLog(@"远投-左上");
     CGPoint birdPos = self.birdView.center;
     [self food2Pos:CGPointMake(birdPos.x - 100, birdPos.y - 100)];
 }
 - (IBAction)foodUpOnClick:(id)sender {
     [self animationFlash:sender];
-    NSLog(@"远投-上");
+    DemoLog(@"远投-上");
     CGPoint birdPos = self.birdView.center;
     [self food2Pos:CGPointMake(birdPos.x, birdPos.y - 100)];
 }
 - (IBAction)foodRightUpOnClick:(id)sender {
     [self animationFlash:sender];
-    NSLog(@"远投-右上");
+    DemoLog(@"远投-右上");
     CGPoint birdPos = self.birdView.center;
     [self food2Pos:CGPointMake(birdPos.x + 100, birdPos.y - 100)];
 }
 - (IBAction)foodRightOnClick:(id)sender {
     [self animationFlash:sender];
-    NSLog(@"远投-右");
+    DemoLog(@"远投-右");
     CGPoint birdPos = self.birdView.center;
     [self food2Pos:CGPointMake(birdPos.x + 100, birdPos.y)];
 }
 - (IBAction)foodRightDownOnClick:(id)sender {
     [self animationFlash:sender];
-    NSLog(@"远投-右下");
+    DemoLog(@"远投-右下");
     CGPoint birdPos = self.birdView.center;
     [self food2Pos:CGPointMake(birdPos.x + 100, birdPos.y + 100)];
 }
 - (IBAction)foodDownOnClick:(id)sender {
     [self animationFlash:sender];
-    NSLog(@"远投-下");
+    DemoLog(@"远投-下");
     CGPoint birdPos = self.birdView.center;
     [self food2Pos:CGPointMake(birdPos.x, birdPos.y + 100)];
 }
 - (IBAction)foodLeftDownOnClick:(id)sender {
     [self animationFlash:sender];
-    NSLog(@"远投-左下");
+    DemoLog(@"远投-左下");
     CGPoint birdPos = self.birdView.center;
     [self food2Pos:CGPointMake(birdPos.x - 100, birdPos.y + 100)];
 }
 - (IBAction)hungerBtnOnClick:(id)sender {
     NSLog(@"\n\n------------------------------- 感官输入 -------------------------------");
-    NSLog(@"马上饿onClick");
+    DemoLog(@"马上饿onClick");
     [theApp.heLogView addLog:@"马上饿onClick"];
     [[[DemoHunger alloc] init] commit:0.7 state:UIDeviceBatteryStateUnplugged];
 }
 
 - (IBAction)touchWingBtnOnClick:(id)sender {
     NSLog(@"\n\n------------------------------- 现实世界 -------------------------------");
-    NSLog(@"摸翅膀onClick");
+    DemoLog(@"摸翅膀onClick");
     [theApp.heLogView addLog:@"摸翅膀onClick"];
     int random = (arc4random() % 8);
     [self.birdView touchWing:random];
 }
 - (IBAction)touchWingLeftOnClick:(id)sender {
     [self animationFlash:sender];
-    NSLog(@"摸翅膀onClick-左");
+    DemoLog(@"摸翅膀onClick-左");
     [self.birdView touchWing:0];
 }
 - (IBAction)touchWingLeftUpOnClick:(id)sender {
     [self animationFlash:sender];
-    NSLog(@"摸翅膀onClick-左上");
+    DemoLog(@"摸翅膀onClick-左上");
     [self.birdView touchWing:1];
 }
 - (IBAction)touchWingUpOnClick:(id)sender {
     [self animationFlash:sender];
-    NSLog(@"摸翅膀onClick-上");
+    DemoLog(@"摸翅膀onClick-上");
     [self.birdView touchWing:2];
 }
 - (IBAction)touchWingRightUpOnClick:(id)sender {
     [self animationFlash:sender];
-    NSLog(@"摸翅膀onClick-右上");
+    DemoLog(@"摸翅膀onClick-右上");
     [self.birdView touchWing:3];
 }
 - (IBAction)touchWingRightOnClick:(id)sender {
     [self animationFlash:sender];
-    NSLog(@"摸翅膀onClick-右");
+    DemoLog(@"摸翅膀onClick-右");
     [self.birdView touchWing:4];
 }
 - (IBAction)touchWingRightDownOnClick:(id)sender {
     [self animationFlash:sender];
-    NSLog(@"摸翅膀onClick-右下");
+    DemoLog(@"摸翅膀onClick-右下");
     [self.birdView touchWing:5];
 }
 - (IBAction)touchWingDownOnClick:(id)sender {
     [self animationFlash:sender];
-    NSLog(@"摸翅膀onClick-下");
+    DemoLog(@"摸翅膀onClick-下");
     [self.birdView touchWing:6];
 }
 - (IBAction)touchWingLeftDownOnClick:(id)sender {
     [self animationFlash:sender];
-    NSLog(@"摸翅膀onClick-左下");
+    DemoLog(@"摸翅膀onClick-左下");
     [self.birdView touchWing:7];
 }
 

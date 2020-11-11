@@ -155,7 +155,7 @@
         //调试短时序; (先仅打外类比日志);
         if (result) {
             if (type == ATSame) {
-                if (Log4SameAna) NSLog(@"--->> 构建时序:%@->%@",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
+                NSLog(@"--->> 构建时序:%@->%@",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
             }else {
                 if (Log4InOutAna) NSLog(@"----> type:%ld_外类比_构建:%@ from(%ld,%ld)",type,Fo2FStr(result),(long)fo.pointer.pointerId,(long)assFo.pointer.pointerId);
             }

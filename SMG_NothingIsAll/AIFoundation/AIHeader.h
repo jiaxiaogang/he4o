@@ -187,15 +187,17 @@
 #define ELog(fmt, ...) NSLog((@"<错误> " fmt), ##__VA_ARGS__);
 //warnLog
 #define WLog(fmt, ...) NSLog((@"<警告> " fmt), ##__VA_ARGS__);
+//demoLog (Demo交互信息)
+#define DemoLog(fmt, ...) NSLog((@"********************************************* " fmt @" *********************************************"), ##__VA_ARGS__);
 //系统log (格式化)
 #define NSLog(FORMAT, ...) fprintf(stderr,"%s",[[SMGUtils nsLogFormat:FILENAME line:__LINE__ protoLog:[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] headerMode:DefaultHeaderMode] UTF8String]);
 #define NSLog_Mode(mode,FORMAT, ...) fprintf(stderr,"%s",[[SMGUtils nsLogFormat:FILENAME line:__LINE__ protoLog:[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] headerMode:mode] UTF8String]);
 //heLog (持久化日志)
 #define HeLog(fmt, ...) [theApp.heLogView addLog:[NSString stringWithFormat:fmt, ##__VA_ARGS__]]
 //tipLog (UI弹出日志)
-#define TLog(fmt, ...) [theApp setTipLog:[NSString stringWithFormat:fmt, ##__VA_ARGS__]]
+#define TipLog(fmt, ...) [theApp setTipLog:[NSString stringWithFormat:fmt, ##__VA_ARGS__]]
 //allLog (系统 + 持久化 + UI弹出)
-#define ALog(fmt, ...) [SMGUtils allLog:[NSString stringWithFormat:fmt, ##__VA_ARGS__]]
+#define AllLog(fmt, ...) [SMGUtils allLog:[NSString stringWithFormat:fmt, ##__VA_ARGS__]]
 
 /**
  *  MARK:--------------------LOG开关--------------------
@@ -209,27 +211,27 @@
 //模糊匹配
 #define Log4FuzzyAlg false
 //识别时序
-#define Log4MFo true
+#define Log4MFo false
 //内类比
-#define Log4InAna true
+#define Log4InAna false
 #define Log4InOutAna false
-#define Log4InAnaGL true
+#define Log4InAnaGL false
 #define Log4InAnaHN false
 //正向类比
-#define Log4SameAna true
+#define Log4SameAna false
 //反向类比
-#define Log4DiffAna true
+#define Log4DiffAna false
 //方向索引
-#define Log4DirecRef true
+#define Log4DirecRef false
 //行为化_GL
-#define Log4ActGL true
+#define Log4ActGL false
 //行为化_Hav
-#define Log4ActHav true
+#define Log4ActHav false
 //行为化_RelativeFos
 #define Log4ActRelativeFos false
 //行为化_GetInnerAlg
-#define Log4GetInnerAlg true
+#define Log4GetInnerAlg false
 //PM算法
-#define Log4PM true
+#define Log4PM false
 //外输入推进中循环
-#define Log4OPushM true
+#define Log4OPushM false
