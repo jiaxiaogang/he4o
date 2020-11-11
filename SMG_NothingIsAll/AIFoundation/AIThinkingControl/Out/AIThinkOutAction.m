@@ -177,6 +177,7 @@
  *      2020.09.15: 将isOut=true时,改为调Finish,因为目前ActYes暂不对行为输出做处理,但流程控制要继续推进,否则会BUG (参考21025);
  *      2020.09.22: 取消行为输出时直接调用Finish,因为在OPushM中也会推进流程控制,如果这里再调用,会重复触发反省类比 (参考21042);
  *      2020.09.28: 独特码取到的不是最新帧,导致反省类比P时,不是距0而是距6,将mIsC的for循环改为新帧优先即可 (参考21054);
+ *      2020.11.11: 修复cIsM导致mIsC判断失败的BUG (参考21143);
  */
 -(void) convert2Out_Hav:(TOAlgModel*)outModel {
     //1. 数据准备 (空白无需行为化);
@@ -235,8 +236,12 @@
                 //}else if ([TOUtils mIsC_2:model.protoFo.pointer c:curAlg.pointer]){
                 //    NSLog(@"protoAlg Is curAlg");
                 //}
+                //[theNV setForceMode:true];
+                //[theNV setNodeData:curAlg.pointer];
+                //[theNV setNodeData:model.matchAlg.pointer];
+                //[theNV setForceMode:false];
                 
-                if ([TOUtils mIsC_2:curAlg.pointer c:model.matchAlg.pointer]) {
+                if ([TOUtils mIsC_2:curAlg.pointer c:model.matchAlg.pointer] || [TOUtils mIsC_2:model.matchAlg.pointer c:curAlg.pointer]) {
                     NSLog(@"===> 转至PM ↓↓↓↓↓↓↓↓↓ (C作为M,P作为P)");
                     
                     //b. 生成replaceAlg转移 & 保留到outModel.replaceAlgs;
