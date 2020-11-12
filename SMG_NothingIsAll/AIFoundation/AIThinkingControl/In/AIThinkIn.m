@@ -182,8 +182,14 @@
     NSArray *protoAShortMem = [self.delegate aiThinkIn_GetShortMemory:false];
     mModel.protoFo = [theNet createConFo:protoAShortMem isMem:false];
     
+    //TODOTOMORROW20201112: 识别到Fx+1->{noMv}的问题 (参考21144);
+    //1. 此处,用matchAFo识别到protoFo,所以将protoFo设为不应期; T
+    //2. 但这并不解决根本问题,所以改不应期后,要实测下,能否识别到以往fo;
+    
     //4. 识别时序;
-    [AIThinkInReason TIR_Fo_FromShortMem:mModel.matchAFo finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue,NSInteger cutIndex) {
+    [AIThinkInReason TIR_Fo_FromShortMem:mModel.matchAFo
+                               except_ps:@[mModel.protoFo.pointer,mModel.matchAFo.pointer]
+                             finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue,NSInteger cutIndex) {
         mModel.matchFo = matchFo;
         mModel.matchFoValue = matchValue;
         mModel.cutIndex = cutIndex;

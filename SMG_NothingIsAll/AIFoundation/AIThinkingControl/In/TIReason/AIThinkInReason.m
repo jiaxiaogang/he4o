@@ -220,7 +220,7 @@
     NSLog(@"\n\n=============================== 反思时序识别 ===============================\n%@",Fo2FStr(protoFo));
     
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [self partMatching_FoV1Dot5:protoFo finishBlock:^(AIFoNodeBase *matchFo, CGFloat matchValue, NSInteger cutIndex) {
+    [self partMatching_FoV1Dot5:protoFo except_ps:@[protoFo.pointer] finishBlock:^(AIFoNodeBase *matchFo, CGFloat matchValue, NSInteger cutIndex) {
         finishBlock(protoFo,matchFo,matchValue,cutIndex);
     }];
 }
@@ -234,7 +234,7 @@
  *  @bug
  *      2020.11.10: 在21141训练第一步,发现外类比不执行BUG,因为传入无用的matchAlg参数判空return了 (参考21142);
  */
-+(void) TIR_Fo_FromShortMem:(AIFoNodeBase*)protoFo finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue,NSInteger cutIndex))finishBlock{
++(void) TIR_Fo_FromShortMem:(AIFoNodeBase*)protoFo except_ps:(NSArray*)except_ps finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue,NSInteger cutIndex))finishBlock{
     //1. 数据检查
     if (!protoFo) {
         return;
@@ -242,7 +242,7 @@
     
     NSLog(@"\n\n------------------------------- 瞬时时序识别 -------------------------------\n%@->%@",Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p));
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [self partMatching_FoV1Dot5:protoFo finishBlock:^(AIFoNodeBase *matchFo, CGFloat matchValue, NSInteger cutIndex) {
+    [self partMatching_FoV1Dot5:protoFo except_ps:except_ps finishBlock:^(AIFoNodeBase *matchFo, CGFloat matchValue, NSInteger cutIndex) {
         finishBlock(protoFo,matchFo,matchValue,cutIndex);
     }];
 }
@@ -289,6 +289,7 @@
  *  @version 候选集
  *      2020.07.18: 将整个allRef_2拍平成一维数组,并去重 (即所有帧的refFos都算做候选集);
  *      2020.07.19: 改为仅取最后一位的refFos (因为最后一位是焦点帧,并且全含判断算法也需要支持仅末位候选集);
+ *      2020.11.12: 支持except_ps参数,因为在FromShortMem时,matchAFo会识别protoFo返回,所以将protoFo不应期掉 (参考21144);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
 //+(void) partMatching_FoV2:(AIFoNodeBase*)protoFo finishBlock:(void(^)(AIFoNodeBase *matchFo,CGFloat matchValue,NSInteger cutIndex))finishBlock{
@@ -362,7 +363,7 @@
 //}
 
 //时序识别v1.5 (在V1的基础上改的,与V2最大的区别,是其未按照索引计数排序);
-+(void) partMatching_FoV1Dot5:(AIFoNodeBase*)protoFo finishBlock:(void(^)(AIFoNodeBase *matchFo,CGFloat matchValue,NSInteger cutIndex))finishBlock{
++(void) partMatching_FoV1Dot5:(AIFoNodeBase*)protoFo except_ps:(NSArray*)except_ps finishBlock:(void(^)(AIFoNodeBase *matchFo,CGFloat matchValue,NSInteger cutIndex))finishBlock{
     //1. 数据准备
     if (!ISOK(protoFo, AIFoNodeBase.class)) {
         finishBlock(nil,0,0);
@@ -387,7 +388,7 @@
         
         //4. indexAlg.refPorts; (取识别到过的抽象节点(如苹果));
         NSArray *assFo_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg_Normal:indexAlg]];
-        assFo_ps = [SMGUtils removeSub_p:protoFo.pointer parent_ps:assFo_ps];
+        assFo_ps = [SMGUtils removeSub_ps:except_ps parent_ps:assFo_ps];
         assFo_ps = ARR_SUB(assFo_ps, 0, cPartMatchingCheckRefPortsLimit_Fo);
         if (Log4MFo) NSLog(@"-----> TIR_Fo 索引到有效时序数:%lu",(unsigned long)assFo_ps.count);
         

@@ -30,6 +30,7 @@
 
 /**
  *  MARK:--------------------构建conFo--------------------
+ *  @result notnull
  */
 +(AIFrontOrderNode*) createConFo:(NSArray*)order isMem:(BOOL)isMem;
 
