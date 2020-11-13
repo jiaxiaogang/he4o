@@ -160,6 +160,8 @@
  *      20200731 - 将protoFo和matchAFo的构建改为isMem=false (因为构建到内存的话,在内类比构建时序具象指向为空,参考20151-BUG);
  *      20200817 - 赋值protoAlg和matchAlg即是存瞬时记忆,因为瞬时与短时整合了;
  *      20201019 - 将mModel更提前保留至mModelManager中;
+ *      20201112 - TIR_Fo支持不应其except_ps,将protoF和matchAF都设为不应期,避免AF识别P回来 (参考21144);
+ *      20201113 - 构建matchAFo时,MatchA为空时,兼容取part首条,否则会导致时序识别失败 (参考21144);
  */
 -(void) dataIn_NoMV:(AIAlgNodeBase*)algNode fromGroup_ps:(NSArray*)fromGroup_ps{
     //1. 数据准备 (瞬时记忆,理性匹配出的模型);
@@ -181,10 +183,6 @@
     mModel.matchAFo = [theNet createConFo:matchAShortMem isMem:false];
     NSArray *protoAShortMem = [self.delegate aiThinkIn_GetShortMemory:false];
     mModel.protoFo = [theNet createConFo:protoAShortMem isMem:false];
-    
-    //TODOTOMORROW20201112: 识别到Fx+1->{noMv}的问题 (参考21144);
-    //1. 此处,用matchAFo识别到protoFo,所以将protoFo设为不应期; T
-    //2. 但这并不解决根本问题,所以改不应期后,要实测下,能否识别到以往fo;
     
     //4. 识别时序;
     [AIThinkInReason TIR_Fo_FromShortMem:mModel.matchAFo
