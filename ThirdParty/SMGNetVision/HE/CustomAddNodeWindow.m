@@ -101,6 +101,9 @@
     [self removeFromSuperview];
     TPLog(@"追加节点: %@/%@/%@/%d/%d",node_p.folderName,node_p.algsType,node_p.dataSource,node_p.isOut,node_p.pointerId);
 }
+- (IBAction)closeBtnOnClick:(id)sender {
+    [self removeFromSuperview];
+}
 
 @end
 
