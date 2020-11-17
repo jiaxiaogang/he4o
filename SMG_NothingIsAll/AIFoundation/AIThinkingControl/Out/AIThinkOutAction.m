@@ -241,6 +241,10 @@
                 //[theNV setNodeData:model.matchAlg.pointer];
                 //[theNV setForceMode:false];
                 
+                //TODOTOMORROW20201117: mIsC不稳定BUG (参考21145);
+                //1. 此处M由仅支持matchAlg改为partAlg_ps;
+                
+                
                 if ([TOUtils mIsC_2:curAlg.pointer c:model.matchAlg.pointer] || [TOUtils mIsC_2:model.matchAlg.pointer c:curAlg.pointer]) {
                     NSLog(@"===> 转至PM ↓↓↓↓↓↓↓↓↓ (C作为M,P作为P)");
                     
