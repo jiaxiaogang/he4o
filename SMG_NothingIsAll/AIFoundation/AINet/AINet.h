@@ -14,7 +14,7 @@
  *  @关联强度
  *      1. 方向索引: setMvNodeToDirectionReference:difStrong:
  */
-@class AIModel,AINode,AIImvAlgsModel,AIPointer,AIKVPointer,AIPort,AIFrontOrderNode,AINetAbsFoNode,AIAbsCMVNode,AIAlgNode,AIAbsAlgNode,AIAlgNodeBase,AICMVNode;
+@class AIImvAlgsModel,AIPointer,AIKVPointer,AIPort,AIFrontOrderNode,AINetAbsFoNode,AIAbsCMVNode,AIAlgNode,AIAbsAlgNode,AIAlgNodeBase,AICMVNode;
 @interface AINet : NSObject
 
 +(AINet*) sharedInstance;

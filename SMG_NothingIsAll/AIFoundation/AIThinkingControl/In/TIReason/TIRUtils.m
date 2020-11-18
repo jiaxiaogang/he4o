@@ -103,7 +103,7 @@
  *  MARK:--------------------概念局部匹配--------------------
  *  @param except_ps : 排除_ps; (如:同一批次输入的概念组,不可用来识别自己)
  */
-+(void) partMatching_Alg:(AIAlgNodeBase*)algNode isMem:(BOOL)isMem except_ps:(NSArray*)except_ps complete:(void(^)(AIAlgNodeBase *matchAlg,NSArray *partAlg_ps))complete{
++(void) partMatching_Alg:(AIAlgNodeBase*)algNode isMem:(BOOL)isMem except_ps:(NSArray*)except_ps complete:(void(^)(NSArray *matchAlgs,NSArray *partAlg_ps))complete{
     //1. 数据准备;
     if (!ISOK(algNode, AIAlgNodeBase.class)) return;
     except_ps = ARRTOOK(except_ps);
@@ -164,13 +164,14 @@
  *      2020.07.21 - 当Seem结果时,对seem和proto进行类比抽象,并将抽象概念返回 (参考:20142);
  *      2020.07.21 - 当Seem结果时,虽然构建了absAlg,但还是将seemAlg返回 (参考20142-Q1);
  *      2020.10.22 - 支持matchAlg和seemAlg二者都返回 (参考21091);
+ *      2020.11.18 - 支持多全含识别 (将所有全含matchAlgs返回) (参考21145方案1);
  */
 +(void) partMatching_General:(AIAlgNodeBase*)protoAlg
                refPortsBlock:(NSArray*(^)(AIKVPointer *item_p))refPortsBlock
                   checkBlock:(BOOL(^)(AIPointer *target_p))checkBlock
-                    complete:(void(^)(AIAlgNodeBase *matchAlg,NSArray *partAlg_ps))complete{
+                    complete:(void(^)(NSArray *matchAlgs,NSArray *partAlg_ps))complete{
     //1. 数据准备;
-    AIAlgNodeBase *matchAlg = nil;
+    NSMutableArray *matchAlgs = [[NSMutableArray alloc] init];
     NSArray *partAlg_ps = nil;
     if (protoAlg) {
         NSMutableDictionary *countDic = [[NSMutableDictionary alloc] init];
@@ -210,8 +211,7 @@
             
             //6. 判断全含; (matchingCount == assAlg.content.count) (且只能识别为抽象节点)
             if (ISOK(result, AIAbsAlgNode.class) && result.content_ps.count == matchingCount) {
-                matchAlg = result;
-                break;
+                [matchAlgs addObject:result];
             }
             if (!ISOK(result, AIAbsAlgNode.class) && result.content_ps.count != matchingCount) typeCountWrong ++;
             else if (!ISOK(result, AIAbsAlgNode.class)) typeWrong ++;
@@ -224,7 +224,7 @@
         //2020.10.22: 全含返回,也要返回seemAlg;
         partAlg_ps = DATAS2OBJS(sortKeys);
     }
-    complete(matchAlg,partAlg_ps);
+    complete(matchAlgs,partAlg_ps);
 }
 
 //MARK:===============================================================

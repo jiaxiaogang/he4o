@@ -270,6 +270,13 @@
                         [self.delegate toAction_SubModelFinish:reModel];
                     }
                     return;
+                }else{
+                    for (AIKVPointer *item_p in model.partAlg_ps) {
+                        BOOL mIsC = ([TOUtils mIsC_2:curAlg.pointer c:item_p] || [TOUtils mIsC_2:item_p c:curAlg.pointer]);
+                        AIAlgNodeBase *item = [SMGUtils searchNode:item_p];
+                        NSLog(@"===========%@ -> %@",mIsC?@"T":@"F",Alg2FStr(item));
+                    }
+                    NSLog(@"");
                 }
             }
         }

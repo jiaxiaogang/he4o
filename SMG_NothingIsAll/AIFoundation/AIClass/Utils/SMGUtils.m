@@ -534,6 +534,16 @@
     return result;
 }
 
++(NSMutableArray*) convertPointersFromNodes:(NSArray*)nodes{
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    for (AINodeBase *node in ARRTOOK(nodes)) {
+        if (ISOK(node, AINodeBase.class)) {
+            [result addObject:node.pointer];
+        }
+    }
+    return result;
+}
+
 +(NSString*) convertPointers2String:(NSArray*)pointers{
     NSMutableString *mStr = [[NSMutableString alloc] init];
     for (AIPointer *p in ARRTOOK(pointers)) {

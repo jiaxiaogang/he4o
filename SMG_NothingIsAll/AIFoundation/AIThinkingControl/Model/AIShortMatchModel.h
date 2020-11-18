@@ -37,9 +37,17 @@
  *  @version
  *      2020.10.30前: 一般为全含抽象节点,但在无全含时,就是partAlgs的首个节点;
  *      2020.10.30: 仅为全含抽象节点 (如果v2四测中,发现此处变动有影响,则反过来考虑此改动是否合理);
+ *      2020.11.18: 支持多全含识别 (参考21145);
  */
-@property (strong, nonatomic) AIAlgNodeBase *matchAlg;
-@property (strong, nonatomic) NSArray *partAlg_ps;      //局部匹配概念
+@property (strong, nonatomic) NSArray *matchAlgs;
+@property (strong, nonatomic) AIAlgNodeBase *matchAlg;//默认为matchAlgs首条;
+
+/**
+ *  MARK:--------------------局部匹配概念--------------------
+ *  @desc 排序方式: 仅按照matchCount排序;
+ *  @todo 随后可考虑,将是否"全含"作为第一排序标准,matchCount作为第二排序标准;
+ */
+@property (strong, nonatomic) NSArray *partAlg_ps;
 @property (assign, nonatomic) NSTimeInterval inputTime; //原始概念输入时间
 
 

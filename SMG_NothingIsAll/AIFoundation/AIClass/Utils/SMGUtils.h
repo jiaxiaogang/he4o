@@ -161,6 +161,9 @@
  */
 +(NSMutableArray*) convertPointersFromPorts:(NSArray*)ports;
 
+//nodes转pointers
++(NSMutableArray*) convertPointersFromNodes:(NSArray*)nodes;
+
 //将pointers转字符串;
 +(NSString*) convertPointers2String:(NSArray*)pointers;
 

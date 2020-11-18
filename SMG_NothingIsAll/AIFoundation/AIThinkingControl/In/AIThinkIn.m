@@ -170,9 +170,9 @@
     mModel.inputTime = [[NSDate date] timeIntervalSince1970];
     
     //2. 识别概念;
-    [AIThinkInReason TIR_Alg:algNode.pointer fromGroup_ps:fromGroup_ps complete:^(AIAlgNodeBase *matchAlg, NSArray *partAlg_ps) {
-        mModel.matchAlg = matchAlg;
-        mModel.partAlg_ps = partAlg_ps;
+    [AIThinkInReason TIR_Alg:algNode.pointer fromGroup_ps:fromGroup_ps complete:^(NSArray *_matchAlgs, NSArray *_partAlg_ps) {
+        mModel.matchAlgs = _matchAlgs;
+        mModel.partAlg_ps = _partAlg_ps;
     }];
     
     //3. 将mModel保留 (只有先保留后,构建时序时,才会含新帧概念);

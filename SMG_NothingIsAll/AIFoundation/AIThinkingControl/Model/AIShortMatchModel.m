@@ -9,4 +9,9 @@
 #import "AIShortMatchModel.h"
 
 @implementation AIShortMatchModel
+
+-(AIAlgNodeBase *)matchAlg{
+    return ARR_INDEX(self.matchAlgs, 0);
+}
+
 @end

@@ -59,18 +59,18 @@
  *      20201022: 将seem的抽象搬过来,且支持三种关联处理 (参考21091-蓝绿黄三种线);
  *  @param complete : 共支持三种返回: 匹配效果从高到低分别为:fuzzyAlg废弃,matchAlg全含,seemAlg局部;
  */
-+(void) TIR_Alg:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps complete:(void(^)(AIAlgNodeBase *matchAlg,NSArray *partAlg_ps))complete{
++(void) TIR_Alg:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps complete:(void(^)(NSArray *matchAlgs,NSArray *partAlg_ps))complete{
     //1. 数据准备
     AIAlgNodeBase *protoAlg = [SMGUtils searchNode:algNode_p];
     if (protoAlg == nil) return;
     NSLog(@"\n\n------------------------------- 概念识别 -------------------------------\n%@",Alg2FStr(protoAlg));
     
     //2. 对value.refPorts进行检查识别; (noMv信号已输入完毕,识别联想)
-    __block AIAlgNodeBase *matchAlg = nil;
+    __block NSMutableArray *matchAlgs = [[NSMutableArray alloc] init];
     __block NSArray *partAlg_ps = nil;
     ///1. 自身匹配 (Self匹配);
     if ([TIRUtils inputAlgIsOld:protoAlg]) {
-        matchAlg = protoAlg;
+        [matchAlgs addObject:protoAlg];
     }
     
     ///3. 局部匹配 -> 内存网络;
@@ -82,34 +82,33 @@
     //}
     
     ///4. 局部匹配 (Abs匹配 和 Seem匹配);
-    if (!matchAlg) {
-        [TIRUtils partMatching_Alg:protoAlg isMem:false except_ps:fromGroup_ps complete:^(AIAlgNodeBase *_matchAlg, NSArray *_partAlg_ps) {
-            matchAlg = _matchAlg;
-            partAlg_ps = _partAlg_ps;
-        }];
+    [TIRUtils partMatching_Alg:protoAlg isMem:false except_ps:fromGroup_ps complete:^(NSArray *_matchAlgs, NSArray *_partAlg_ps) {
+        [matchAlgs addObjectsFromArray:_matchAlgs];
+        partAlg_ps = _partAlg_ps;
+    }];
+    
+    //5. 关联处理_直接将match设置为proto的抽象; (这样后面TOR理性决策时,才可以直接对当前瞬时实物进行很好的理性评价) (参考21091-蓝线);
+    for (AIAlgNodeBase *matchAlg in matchAlgs) {
+        //4. 识别到时,value.refPorts -> 更新/加强微信息的引用序列
+        [AINetUtils insertRefPorts_AllAlgNode:matchAlg.pointer content_ps:matchAlg.content_ps difStrong:1];
         
-        //5. 关联处理_直接将match设置为proto的抽象; (这样后面TOR理性决策时,才可以直接对当前瞬时实物进行很好的理性评价) (参考21091-蓝线);
-        if (matchAlg) {
-            //4. 识别到时,value.refPorts -> 更新/加强微信息的引用序列
-            [AINetUtils insertRefPorts_AllAlgNode:matchAlg.pointer content_ps:matchAlg.content_ps difStrong:1];
-            
-            //5. 识别且全含时,进行抽具象关联 & 存储 (20200103:测得,algNode为内存节点时,关联也在内存)
-            [AINetUtils relateAlgAbs:(AIAbsAlgNode*)matchAlg conNodes:@[protoAlg] isNew:false];
-        }
+        //5. 识别且全含时,进行抽具象关联 & 存储 (20200103:测得,algNode为内存节点时,关联也在内存)
+        [AINetUtils relateAlgAbs:(AIAbsAlgNode*)matchAlg conNodes:@[protoAlg] isNew:false];
+    }
+    
+    //6. 关联处理_对seem和proto进行类比抽象 (参考21091-绿线);
+    if (ARRISOK(partAlg_ps)) {
+        AIAlgNodeBase *firstPartAlg = [SMGUtils searchNode:ARR_INDEX(partAlg_ps, 0)];
+        AIAlgNodeBase *firstMatchAlg = ARR_INDEX(matchAlgs, 0);
+        NSArray *same_ps = [SMGUtils filterSame_ps:protoAlg.content_ps parent_ps:firstPartAlg.content_ps];
+        AIAlgNodeBase *seemProtoAbs = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[firstPartAlg,protoAlg] isMem:false];
+        NSLog(@"构建相似抽象:%@",Alg2FStr(seemProtoAbs));
         
-        //6. 关联处理_对seem和proto进行类比抽象 (参考21091-绿线);
-        if (ARRISOK(partAlg_ps)) {
-            AIAlgNodeBase *firstPartAlg = [SMGUtils searchNode:ARR_INDEX(partAlg_ps, 0)];
-            NSArray *same_ps = [SMGUtils filterSame_ps:protoAlg.content_ps parent_ps:firstPartAlg.content_ps];
-            AIAlgNodeBase *seemProtoAbs = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[firstPartAlg,protoAlg] isMem:false];
-            NSLog(@"构建相似抽象:%@",Alg2FStr(seemProtoAbs));
-            
-            //7. 关联处理_对seemProtoAbs与matchAlg建立抽具象关联 (参考21091-黄线);
-            if (seemProtoAbs && matchAlg) {
-                NSArray *same_ps = [SMGUtils filterSame_ps:seemProtoAbs.content_ps parent_ps:matchAlg.content_ps];
-                AIAlgNodeBase *topAbs = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[seemProtoAbs,matchAlg] isMem:false];
-                NSLog(@"构建TopAbs抽象:%@",Alg2FStr(topAbs));
-            }
+        //7. 关联处理_对seemProtoAbs与matchAlg建立抽具象关联 (参考21091-黄线);
+        if (seemProtoAbs && firstMatchAlg) {
+            NSArray *same_ps = [SMGUtils filterSame_ps:seemProtoAbs.content_ps parent_ps:firstMatchAlg.content_ps];
+            AIAlgNodeBase *topAbs = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[seemProtoAbs,firstMatchAlg] isMem:false];
+            NSLog(@"构建TopAbs抽象:%@",Alg2FStr(topAbs));
         }
     }
     
@@ -126,8 +125,8 @@
     //}
     
     //4. 调试日志
-    NSLog(@"概念识别: Finish >>> 全含:%@ 局部:%@",Alg2FStr(matchAlg),Pits2FStr(ARR_SUB(partAlg_ps, 0, 3)));
-    complete(matchAlg,partAlg_ps);
+    NSLog(@"概念识别: Finish >>>\n全含:%@\n局部:%@",Pits2FStr([SMGUtils convertPointersFromNodes:matchAlgs]),Pits2FStr(ARR_SUB(partAlg_ps, 0, 3)));
+    complete(matchAlgs,partAlg_ps);
 }
 
 /**
