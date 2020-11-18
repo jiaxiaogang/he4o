@@ -165,6 +165,7 @@
  *      2020.07.21 - 当Seem结果时,虽然构建了absAlg,但还是将seemAlg返回 (参考20142-Q1);
  *      2020.10.22 - 支持matchAlg和seemAlg二者都返回 (参考21091);
  *      2020.11.18 - 支持多全含识别 (将所有全含matchAlgs返回) (参考21145方案1);
+ *      2020.11.18 - partAlg_ps将matchAlgs移除掉,仅保留非全含的部分;
  */
 +(void) partMatching_General:(AIAlgNodeBase*)protoAlg
                refPortsBlock:(NSArray*(^)(AIKVPointer *item_p))refPortsBlock
@@ -223,6 +224,7 @@
         //7. 未将全含返回,则返回最相似;
         //2020.10.22: 全含返回,也要返回seemAlg;
         partAlg_ps = DATAS2OBJS(sortKeys);
+        partAlg_ps = [SMGUtils removeSub_ps:[SMGUtils convertPointersFromNodes:matchAlgs] parent_ps:partAlg_ps];
     }
     complete(matchAlgs,partAlg_ps);
 }

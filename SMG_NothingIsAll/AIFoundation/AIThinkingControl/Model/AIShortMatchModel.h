@@ -45,7 +45,9 @@
 /**
  *  MARK:--------------------局部匹配概念--------------------
  *  @desc 排序方式: 仅按照matchCount排序;
- *  @todo 随后可考虑,将是否"全含"作为第一排序标准,matchCount作为第二排序标准;
+ *  @todo
+ *      2020.11.18: 随后可考虑,将是否"全含"作为第一排序标准,matchCount作为第二排序标准 (转至下条);
+ *      2020.11.18: 随后可考虑,是否将"全含"部分移出去,此处仅保留partAlg_ps即可 T;
  */
 @property (strong, nonatomic) NSArray *partAlg_ps;
 @property (assign, nonatomic) NSTimeInterval inputTime; //原始概念输入时间
