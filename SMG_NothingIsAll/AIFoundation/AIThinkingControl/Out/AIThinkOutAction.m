@@ -178,6 +178,7 @@
  *      2020.09.22: 取消行为输出时直接调用Finish,因为在OPushM中也会推进流程控制,如果这里再调用,会重复触发反省类比 (参考21042);
  *      2020.09.28: 独特码取到的不是最新帧,导致反省类比P时,不是距0而是距6,将mIsC的for循环改为新帧优先即可 (参考21054);
  *      2020.11.11: 修复cIsM导致mIsC判断失败的BUG (参考21143);
+ *      2020.11.18: mIsC不稳定BUG,将mIsC改为对matchAlgs依次判断 (参考21145);
  */
 -(void) convert2Out_Hav:(TOAlgModel*)outModel {
     //1. 数据准备 (空白无需行为化);
@@ -241,11 +242,15 @@
                 //[theNV setNodeData:model.matchAlg.pointer];
                 //[theNV setForceMode:false];
                 
-                //TODOTOMORROW20201117: mIsC不稳定BUG (参考21145);
-                //1. 此处M由仅支持matchAlg改为partAlg_ps;
+                BOOL mIsC = false;
+                for (AIAlgNodeBase *item in model.matchAlgs) {
+                    if ([TOUtils mIsC_2:curAlg.pointer c:item.pointer] || [TOUtils mIsC_2:item.pointer c:curAlg.pointer]) {
+                        mIsC = true;
+                        break;
+                    }
+                }
                 
-                
-                if ([TOUtils mIsC_2:curAlg.pointer c:model.matchAlg.pointer] || [TOUtils mIsC_2:model.matchAlg.pointer c:curAlg.pointer]) {
+                if (mIsC) {
                     NSLog(@"===> 转至PM ↓↓↓↓↓↓↓↓↓ (C作为M,P作为P)");
                     
                     //b. 生成replaceAlg转移 & 保留到outModel.replaceAlgs;
@@ -271,9 +276,8 @@
                     }
                     return;
                 }else{
-                    for (AIKVPointer *item_p in model.partAlg_ps) {
-                        BOOL mIsC = ([TOUtils mIsC_2:curAlg.pointer c:item_p] || [TOUtils mIsC_2:item_p c:curAlg.pointer]);
-                        AIAlgNodeBase *item = [SMGUtils searchNode:item_p];
+                    for (AIAlgNodeBase *item in model.matchAlgs) {
+                        BOOL mIsC = ([TOUtils mIsC_2:curAlg.pointer c:item.pointer] || [TOUtils mIsC_2:item.pointer c:curAlg.pointer]);
                         NSLog(@"===========%@ -> %@",mIsC?@"T":@"F",Alg2FStr(item));
                     }
                     NSLog(@"");
