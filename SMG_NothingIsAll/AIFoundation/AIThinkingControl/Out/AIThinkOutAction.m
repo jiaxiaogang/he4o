@@ -227,21 +227,6 @@
             for (NSInteger i = 0; i < theTC.inModelManager.models.count; i++) {
                 AIShortMatchModel *model = ARR_INDEX_REVERSE(theTC.inModelManager.models, i);
                 NSLog(@"====== checkMC ======\nM:%@\nP:%@",Alg2FStr(model.matchAlg),Alg2FStr(model.protoAlg));
-                ////调试: 当MC无法进入出现BUG时,打开此调试信息;
-                //if ([TOUtils mIsC_2:curAlg.pointer c:model.matchAlg.pointer]){
-                //    NSLog(@"curAlg Is matchAlg");
-                //}else if ([TOUtils mIsC_2:curAlg.pointer c:model.protoFo.pointer]){
-                //    NSLog(@"curAlg Is protoAlg");
-                //}else if ([TOUtils mIsC_2:model.matchAlg.pointer c:curAlg.pointer]){
-                //    NSLog(@"matchAlg Is curAlg");
-                //}else if ([TOUtils mIsC_2:model.protoFo.pointer c:curAlg.pointer]){
-                //    NSLog(@"protoAlg Is curAlg");
-                //}
-                //[theNV setForceMode:true];
-                //[theNV setNodeData:curAlg.pointer];
-                //[theNV setNodeData:model.matchAlg.pointer];
-                //[theNV setForceMode:false];
-                
                 BOOL mIsC = false;
                 for (AIAlgNodeBase *item in model.matchAlgs) {
                     if ([TOUtils mIsC_2:curAlg.pointer c:item.pointer] || [TOUtils mIsC_2:item.pointer c:curAlg.pointer]) {
@@ -249,7 +234,6 @@
                         break;
                     }
                 }
-                
                 if (mIsC) {
                     NSLog(@"===> 转至PM ↓↓↓↓↓↓↓↓↓ (C作为M,P作为P)");
                     
@@ -276,11 +260,7 @@
                     }
                     return;
                 }else{
-                    for (AIAlgNodeBase *item in model.matchAlgs) {
-                        BOOL mIsC = ([TOUtils mIsC_2:curAlg.pointer c:item.pointer] || [TOUtils mIsC_2:item.pointer c:curAlg.pointer]);
-                        NSLog(@"===========%@ -> %@",mIsC?@"T":@"F",Alg2FStr(item));
-                    }
-                    NSLog(@"");
+                    for (AIAlgNodeBase *item in model.matchAlgs) NSLog(@"==> mIsC失败: %@",Alg2FStr(item));
                 }
             }
         }
