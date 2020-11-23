@@ -21,7 +21,7 @@
 -(void) toAction_SubModelFinish:(TOModelBase*)outModel;
 -(void) toAction_SubModelActYes:(TOModelBase*)outModel;
 -(void) toAction_SubModelFailure:(TOModelBase*)outModel;
--(BOOL) toAction_ReasonScorePM:(TOAlgModel*)outModel;
+-(void) toAction_ReasonScorePM:(TOAlgModel*)outModel failure:(void(^)())failure notNeedPM:(void(^)())notNeedPM;
 
 @end
 

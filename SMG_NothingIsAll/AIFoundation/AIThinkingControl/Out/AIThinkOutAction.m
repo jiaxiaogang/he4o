@@ -251,14 +251,17 @@
                     reModel.pm_ProtoAlg = model.protoAlg;
                     
                     //e. 理性评价
-                    BOOL jump = [self.delegate toAction_ReasonScorePM:reModel];
-                    
-                    //f. 未跳转到PM,则将algModel设为Finish,并递归;
-                    if (!jump) {
+                    [self.delegate toAction_ReasonScorePM:reModel failure:^{
+                        //TODOTOMORROW20201123: 当失败时,进行relativeFos找C;
+                        
+                        
+                        
+                        
+                    } notNeedPM:^{
+                        //f. 未跳转到PM,则将algModel设为Finish,并递归;
                         reModel.status = TOModelStatus_Finish;
                         [self.delegate toAction_SubModelFinish:reModel];
-                    }
-                    return;
+                    }];
                 }else{
                     for (AIAlgNodeBase *item in model.matchAlgs) NSLog(@"==> mIsC转至PM失败: %@",Alg2FStr(item));
                 }
