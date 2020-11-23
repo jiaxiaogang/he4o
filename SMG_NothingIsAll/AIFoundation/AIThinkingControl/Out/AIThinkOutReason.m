@@ -424,7 +424,7 @@
     AIAlgNodeBase *M = [SMGUtils searchNode:outModel.content_p];
     AIFoNodeBase *mMaskFo = outModel.pm_Fo;
     if (!outModel || !outModel.pm_Fo || !M) {
-        notNeedPM();
+        if (notNeedPM) notNeedPM();
         return;
     }
     
@@ -434,7 +434,7 @@
     
     //4. 不用PM评价 (则交由流程控制方法,推动继续决策(跳转下帧/别的);
     if (!ARRISOK(validJustPValues)) {
-        notNeedPM();
+        if (notNeedPM) notNeedPM();
         return;
     }
     NSLog(@"\n\n=============================== PM ===============================\nM:%@\nMAtFo:%@",Alg2FStr(M),Fo2FStr(mMaskFo));
@@ -491,13 +491,13 @@
                 TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:glValue4M group:outModel];
                 outModel.sp_P = M;
                 [self singleLoopBackWithBegin:toValueModel];
-                success();
+                if (success) success();
                 return;
             }
             
             //12. ------> 未找到GL的目标 (如距离0),直接计为失败;
             if (Log4PM) NSLog(@"-> 未找到GL目标,转至流程控制Failure");
-            failure();
+            if (failure) failure();
             return;
         }else if ([validAlgPs containsObject:mostSimilarAlg.pointer]) {
             //13. ------> 评价结果为P -> 无需修正,直接Finish (注:在TOValueModel构造方法中: proto中的value,就是subValue);
@@ -505,13 +505,13 @@
             TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:nil group:outModel];
             toValueModel.status = TOModelStatus_NoNeedAct;
             [self singleLoopBackWithFinishModel:toValueModel];
-            success();
+            if (success) success();
             return;
         }
     }
     
     //14. 无justP目标需转移,直接返回false,调用PM者会使outModel直接Finish;
-    notNeedPM();
+    if (notNeedPM) notNeedPM();
 }
 
 //MARK:===============================================================
