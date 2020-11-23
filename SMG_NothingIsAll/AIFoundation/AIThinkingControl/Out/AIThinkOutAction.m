@@ -226,13 +226,13 @@
             //a. 依次判断mModel,只要符合mIsC即可;
             for (NSInteger i = 0; i < theTC.inModelManager.models.count; i++) {
                 AIShortMatchModel *model = ARR_INDEX_REVERSE(theTC.inModelManager.models, i);
-                NSLog(@"====== checkMC ======\nM:%@\nP:%@",Alg2FStr(model.matchAlg),Alg2FStr(model.protoAlg));
+                NSLog(@"====== checkMC ====== Proto:%@",Alg2FStr(model.protoAlg));
                 BOOL mIsC = false;
                 for (AIAlgNodeBase *item in model.matchAlgs) {
-                    if ([TOUtils mIsC_2:curAlg.pointer c:item.pointer] || [TOUtils mIsC_2:item.pointer c:curAlg.pointer]) {
-                        mIsC = true;
-                        break;
-                    }
+                    BOOL itemMIsC = [TOUtils mIsC_2:curAlg.pointer c:item.pointer] || [TOUtils mIsC_2:item.pointer c:curAlg.pointer];
+                    if (!mIsC && itemMIsC) mIsC = true;
+                    NSLog(@"M:%@ isC %@",Alg2FStr(item),itemMIsC ? @"true" : @"false");
+                    //if (mIsC) break;
                 }
                 if (mIsC) {
                     NSLog(@"===> 转至PM ↓↓↓↓↓↓↓↓↓ (C作为M,P作为P)");
@@ -260,7 +260,7 @@
                     }
                     return;
                 }else{
-                    for (AIAlgNodeBase *item in model.matchAlgs) NSLog(@"==> mIsC失败: %@",Alg2FStr(item));
+                    for (AIAlgNodeBase *item in model.matchAlgs) NSLog(@"==> mIsC转至PM失败: %@",Alg2FStr(item));
                 }
             }
         }
