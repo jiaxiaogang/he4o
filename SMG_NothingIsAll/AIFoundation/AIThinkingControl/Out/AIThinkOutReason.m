@@ -406,7 +406,7 @@
  *      2020.07.16: 废除综合评价,改为只找出一条 (参考n20p10-todo1);
  *      2020.09.03: v2_将反省类比的SP用于PM理性评价 (参考20206);
  *      2020.09.09: 转移_GL时,取GL目标值,改为从P中取 (参考20207);
- *      2020.11.23: 将return BOOL改为三个block: (failure,success,notNeedPM);
+ *      2020.11.23: 将return BOOL改为三个block: (failure,success,notNeedPM) (参考21147);
  *  _result moveValueSuccess : 转移到稀疏码行为化了,转移成功则返回true,未转移则返回false;
  *  @bug
  *      2020.07.05: BUG,在用MatchConF.content找交集同区稀疏码肯定找不到,改为用MatchConA后,ok了;
@@ -415,6 +415,7 @@
  *      2020.07.13: fuzzyFo有时含多条同区码,导致其价值指向不确定,是否需加工判错,改成只判断单码后fix(如[距34,距0,吃]->{mv+},但显然距34并不能吃);
  *      2020.09.30: 类型错误,导致闪退的BUG (参考21056);
  *      2020.10.14: 有时gl修正目标码在MC的C中,而不在Plus中,要优先从C中取 (参考21059);
+ *      2020.11.23: 在GL失败时,failure()返回_Hav继续进行行为化 (参考21147);
  *  @callers
  *      1. MC调用: 参考21059-344结构图;
  */
@@ -496,10 +497,7 @@
             
             //12. ------> 未找到GL的目标 (如距离0),直接计为失败;
             if (Log4PM) NSLog(@"-> 未找到GL目标,转至流程控制Failure");
-            TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:nil group:outModel];
-            toValueModel.status = TOModelStatus_ActNo;
-            [self singleLoopBackWithFailureModel:toValueModel];
-            success();
+            failure();
             return;
         }else if ([validAlgPs containsObject:mostSimilarAlg.pointer]) {
             //13. ------> 评价结果为P -> 无需修正,直接Finish (注:在TOValueModel构造方法中: proto中的value,就是subValue);
