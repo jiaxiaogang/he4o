@@ -93,6 +93,11 @@ static XGRedis *_instance;
     return obj;
 }
 
+-(void) clear{
+    [self.dic clear];
+    [self.gcMarks removeAllObjects];
+}
+
 //MARK:===============================================================
 //MARK:                     < privateMethod >
 //MARK:===============================================================

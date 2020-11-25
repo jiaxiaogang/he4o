@@ -80,6 +80,11 @@
     return ARR_INDEX(self.values, index);
 }
 
+-(void) clear{
+    [self.keys removeAllObjects];
+    [self.values removeAllObjects];
+}
+
 @end
 
 

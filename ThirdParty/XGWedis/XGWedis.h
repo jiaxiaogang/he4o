@@ -44,5 +44,9 @@ typedef void (^XGWedisSaveBlock)(NSDictionary *dic);
  */
 -(void)setSaveBlock:(XGWedisSaveBlock)saveBlock;
 
+/**
+ *  MARK:--------------------清空--------------------
+ */
+-(void) clear;
 
 @end

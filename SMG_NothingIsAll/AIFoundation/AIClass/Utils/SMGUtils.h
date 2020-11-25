@@ -249,6 +249,11 @@
  */
 +(id) filterSingleFromArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid;
 
+/**
+ *  MARK:--------------------清除记忆--------------------
+ */
++(void) removeAllMemory;
+
 @end
 
 //MARK:===============================================================

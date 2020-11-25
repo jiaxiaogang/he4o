@@ -59,6 +59,10 @@ static XGWedis *_instance;
     _saveBlock = saveBlock;
 }
 
+-(void) clear{
+    [self.dic removeAllObjects];
+}
+
 //MARK:===============================================================
 //MARK:                     < privateMethod >
 //MARK:===============================================================

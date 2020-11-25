@@ -743,6 +743,44 @@
     return ARR_INDEX([SMGUtils filterArr:arr checkValid:checkValid limit:1], 0);
 }
 
++(void) removeAllMemory{
+    //1. 清空UserDefaults记忆;
+    NSDictionary *dic = DICTOOK([[NSUserDefaults standardUserDefaults] dictionaryRepresentation]);
+    for (id key in dic) [[NSUserDefaults standardUserDefaults] removeObjectForKey:key];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    NSLog(@"===> 清空UserDefaults记忆:%lu",(unsigned long)dic.count);
+    
+    //2. 清空XGRedis & XGWedis
+    [[XGRedis sharedInstance] clear];
+    [[XGWedis sharedInstance] clear];
+    NSLog(@"===> 清空XGRedis & XGWedis记忆");
+    
+    //3. 清空mvNode
+    [[[PINDiskCache alloc] initWithName:@"" rootPath:kPN_CMV_NODE] removeAllObjects];
+    [[[PINDiskCache alloc] initWithName:@"" rootPath:kPN_ABS_CMV_NODE] removeAllObjects];
+    
+    //4. 清空mv索引
+    [[[PINDiskCache alloc] initWithName:@"" rootPath:kPN_DIRECTION(MVDirection_None)] removeAllObjects];
+    [[[PINDiskCache alloc] initWithName:@"" rootPath:kPN_DIRECTION(MVDirection_Negative)] removeAllObjects];
+    [[[PINDiskCache alloc] initWithName:@"" rootPath:kPN_DIRECTION(MVDirection_Positive)] removeAllObjects];
+    
+    //5. 清空foNode
+    [[[PINDiskCache alloc] initWithName:@"" rootPath:kPN_FRONT_ORDER_NODE] removeAllObjects];
+    [[[PINDiskCache alloc] initWithName:@"" rootPath:kPN_FO_ABS_NODE] removeAllObjects];
+    
+    //6. 清空algNode
+    [[[PINDiskCache alloc] initWithName:@"" rootPath:kPN_ALG_ABS_NODE] removeAllObjects];
+    
+    //7. 清空小脑
+    [[[PINDiskCache alloc] initWithName:@"" rootPath:kPN_CEREBEL_CANOUT] removeAllObjects];
+    
+    //8. 清空稀疏码和其索引
+    [[[PINDiskCache alloc] initWithName:@"" rootPath:kPN_INDEX] removeAllObjects];
+    [[[PINDiskCache alloc] initWithName:@"" rootPath:kPN_DATA] removeAllObjects];
+    [[[PINDiskCache alloc] initWithName:@"" rootPath:kPN_VALUE] removeAllObjects];
+    NSLog(@"===> 清空KVFile记忆");
+}
+
 @end
 
 //MARK:===============================================================

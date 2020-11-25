@@ -32,7 +32,10 @@
  */
 -(void) setObject:(NSObject*)obj forKey:(NSString*)key time:(double)time;
 
-
+//取
 -(id) objectForKey:(NSString*)key;
+
+//清
+-(void) clear;
 
 @end
