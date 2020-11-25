@@ -226,9 +226,9 @@
 //行为化_GL
 #define Log4ActGL false
 //行为化_Hav
-#define Log4ActHav false
+#define Log4ActHav true
 //行为化_RelativeFos
-#define Log4ActRelativeFos false
+#define Log4ActRelativeFos true
 //行为化_GetInnerAlg
 #define Log4GetInnerAlg false
 //PM算法
