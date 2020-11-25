@@ -755,30 +755,15 @@
     [[XGWedis sharedInstance] clear];
     NSLog(@"===> 清空XGRedis & XGWedis记忆");
     
-    //3. 清空mvNode
-    [[[PINDiskCache alloc] initWithName:@"" rootPath:kPN_CMV_NODE] removeAllObjects];
-    [[[PINDiskCache alloc] initWithName:@"" rootPath:kPN_ABS_CMV_NODE] removeAllObjects];
-    
-    //4. 清空mv索引
-    [[[PINDiskCache alloc] initWithName:@"" rootPath:kPN_DIRECTION(MVDirection_None)] removeAllObjects];
-    [[[PINDiskCache alloc] initWithName:@"" rootPath:kPN_DIRECTION(MVDirection_Negative)] removeAllObjects];
-    [[[PINDiskCache alloc] initWithName:@"" rootPath:kPN_DIRECTION(MVDirection_Positive)] removeAllObjects];
-    
-    //5. 清空foNode
-    [[[PINDiskCache alloc] initWithName:@"" rootPath:kPN_FRONT_ORDER_NODE] removeAllObjects];
-    [[[PINDiskCache alloc] initWithName:@"" rootPath:kPN_FO_ABS_NODE] removeAllObjects];
-    
-    //6. 清空algNode
-    [[[PINDiskCache alloc] initWithName:@"" rootPath:kPN_ALG_ABS_NODE] removeAllObjects];
-    
-    //7. 清空小脑
-    [[[PINDiskCache alloc] initWithName:@"" rootPath:kPN_CEREBEL_CANOUT] removeAllObjects];
-    
-    //8. 清空稀疏码和其索引
-    [[[PINDiskCache alloc] initWithName:@"" rootPath:kPN_INDEX] removeAllObjects];
-    [[[PINDiskCache alloc] initWithName:@"" rootPath:kPN_DATA] removeAllObjects];
-    [[[PINDiskCache alloc] initWithName:@"" rootPath:kPN_VALUE] removeAllObjects];
-    NSLog(@"===> 清空KVFile记忆");
+    //3. 清空KVFile
+    NSArray *folderNames = @[/*mvNode*/kPN_CMV_NODE,kPN_ABS_CMV_NODE,/*mv索引*/kPN_DIRECTION(MVDirection_None),kPN_DIRECTION(MVDirection_Negative),kPN_DIRECTION(MVDirection_Positive),/*foNode*/kPN_FRONT_ORDER_NODE,kPN_FO_ABS_NODE,/*algNode*/kPN_ALG_NODE,kPN_ALG_ABS_NODE,/*小脑*/kPN_CEREBEL_CANOUT,/*稀疏码索引*/kPN_INDEX,kPN_DATA,kPN_VALUE];
+    NSString *cachePath = kCachePath;
+    for (NSString *folderName in folderNames) {
+        NSMutableString *fileRootPath = [[NSMutableString alloc] initWithFormat:@"%@/%@",cachePath,folderName];
+        [[NSFileManager defaultManager] removeItemAtPath:fileRootPath error:nil];
+        NSLog(@"===> 清空KVFile记忆:%@",folderName);
+    }
+    NSLog(@"===> 清空记忆Finish");
 }
 
 @end

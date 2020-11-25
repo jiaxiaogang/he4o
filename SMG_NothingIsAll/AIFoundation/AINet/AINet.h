@@ -48,7 +48,7 @@
 //-(void) setNetReference:(AIKVPointer*)value_p target_p:(AIKVPointer*)target_p difValue:(int)difValue;
 
 //获取算法单结果的第二序列联想;
--(NSArray*) getNetReference:(AIKVPointer*)pointer limit:(NSInteger)limit;
+//-(NSArray*) getNetReference:(AIKVPointer*)pointer limit:(NSInteger)limit;
 
 
 //MARK:===============================================================

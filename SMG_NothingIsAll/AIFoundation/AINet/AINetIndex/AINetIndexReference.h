@@ -37,13 +37,7 @@
 
 /**
  *  MARK:--------------------获取value被引用的node地址;--------------------
- *  @param indexPointer : value_p地址
- *  @param limit : 最多结果个数
- *  @result Return NSArray(元素为AIPort)
- *
- *  @desc : 1.当indexPointer为absValue时,则只有absNode和frontNode会被搜索到;
- *  @desc : 2.当indexPointer为普通value时,则有可能搜索到除absNode之外的所有其它node(如:frontNode或mvNode等)
  */
--(NSArray*) getReference:(AIKVPointer*)indexPointer limit:(NSInteger)limit;
+//-(NSArray*) getReference:(AIKVPointer*)indexPointer limit:(NSInteger)limit;
 
 @end

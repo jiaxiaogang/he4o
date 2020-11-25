@@ -50,6 +50,15 @@
     [self.openHeLogBtn addTarget:self action:@selector(openHeLogBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.window addSubview:self.openHeLogBtn];
     
+    //3. 清空记忆
+    self.clearMemoryBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth - 162, StateBarHeight, 40, 20)];
+    [self.clearMemoryBtn.titleLabel setFont:[UIFont systemFontOfSize:15]];
+    [self.clearMemoryBtn setTitleColor:UIColorWithRGBHex(0xEEEE00) forState:UIControlStateNormal];
+    [self.clearMemoryBtn setBackgroundColor:UIColorWithRGBHex(0xEE0000)];
+    [self.clearMemoryBtn setTitle:@"重生" forState:UIControlStateNormal];
+    [self.clearMemoryBtn addTarget:self action:@selector(clearMemoryBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.window addSubview:self.clearMemoryBtn];
+    
     //4. 神经网络可视化
     self.nvView = [[NVView alloc] initWithDelegate:[NVDelegate_He new]];
     [self.nvView setAlpha:0.9f];
@@ -64,16 +73,6 @@
     [self.tipLogLab setFont:[UIFont boldSystemFontOfSize:11]];
     [self.tipLogLab setTextColor:[UIColor redColor]];
     [self.window addSubview:self.tipLogLab];
-    
-    //7. 清空记忆
-    self.clearMemoryBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth - 162, StateBarHeight, 40, 20)];
-    [self.clearMemoryBtn.titleLabel setFont:[UIFont systemFontOfSize:15]];
-    [self.clearMemoryBtn setTitleColor:UIColorWithRGBHex(0xEEEE00) forState:UIControlStateNormal];
-    [self.clearMemoryBtn setBackgroundColor:UIColorWithRGBHex(0xEE0000)];
-    [self.clearMemoryBtn setTitle:@"重生" forState:UIControlStateNormal];
-    [self.clearMemoryBtn addTarget:self action:@selector(clearMemoryBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.window addSubview:self.clearMemoryBtn];
-    
     return YES;
 }
 
@@ -109,6 +108,8 @@
 }
 
 -(void) clearMemoryBtnOnClick:(id)btn{
+    DemoLog(@"清空记忆");
+    HeLog(@"------------------> 清空记忆");
     [SMGUtils removeAllMemory];
 }
 

@@ -98,20 +98,21 @@
  *
  *  @desc : 1.当indexPointer为absValue时,则只有absNode和frontNode会被搜索到;
  *  @desc : 2.当indexPointer为普通value时,则有可能搜索到除absNode之外的所有其它node(如:frontNode或mvNode等)
+ *  @status : 2020.11.25_废弃状态,老早以前已被AINetIndex中(kPN_INDEX,kPN_DATA,kPN_VALUE)替代,此处代码处于未被调用状态;
  */
--(NSArray*) getReference:(AIKVPointer*)indexPointer limit:(NSInteger)limit {
-    //1. 数据检查
-    NSMutableArray *mArr = [[NSMutableArray alloc] init];
-    if (ISOK(indexPointer, AIKVPointer.class)) {
-        
-        //2. 取identifier分区的引用序列文件;
-        NSString *filePath = [indexPointer filePath:kPN_REFERENCE];
-        NSArray *localPorts = ARRTOOK([SMGUtils searchObjectForFilePath:filePath fileName:kFNReference_ByPort time:cRTReference]);
-        
-        limit = MAX(0, MIN(limit, localPorts.count));
-        [mArr addObjectsFromArray:[localPorts subarrayWithRange:NSMakeRange(localPorts.count - limit, limit)]];
-    }
-    return mArr;
-}
+//-(NSArray*) getReference:(AIKVPointer*)indexPointer limit:(NSInteger)limit {
+//    //1. 数据检查
+//    NSMutableArray *mArr = [[NSMutableArray alloc] init];
+//    if (ISOK(indexPointer, AIKVPointer.class)) {
+//        
+//        //2. 取identifier分区的引用序列文件;
+//        NSString *filePath = [indexPointer filePath:kPN_REFERENCE];
+//        NSArray *localPorts = ARRTOOK([SMGUtils searchObjectForFilePath:filePath fileName:kFNReference_ByPort time:cRTReference]);
+//        
+//        limit = MAX(0, MIN(limit, localPorts.count));
+//        [mArr addObjectsFromArray:[localPorts subarrayWithRange:NSMakeRange(localPorts.count - limit, limit)]];
+//    }
+//    return mArr;
+//}
 
 @end

@@ -115,9 +115,9 @@ static AINet *_instance;
 //    }
 //}
 
--(NSArray*) getNetReference:(AIKVPointer*)pointer limit:(NSInteger)limit {
-    return [self.reference getReference:pointer limit:limit];
-}
+//-(NSArray*) getNetReference:(AIKVPointer*)pointer limit:(NSInteger)limit {
+//    return [self.reference getReference:pointer limit:limit];
+//}
 
 
 //MARK:===============================================================
