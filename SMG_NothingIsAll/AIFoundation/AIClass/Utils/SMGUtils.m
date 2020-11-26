@@ -763,7 +763,11 @@
         [[NSFileManager defaultManager] removeItemAtPath:fileRootPath error:nil];
         NSLog(@"===> 清空KVFile记忆:%@",folderName);
     }
-    NSLog(@"===> 清空记忆Finish");
+    
+    //4. 清空heLog
+    [theApp.heLogView clear];
+    NSLog(@"===> 清空HeLog记忆");
+    NSLog(@"======> 清空记忆Finish");
 }
 
 @end

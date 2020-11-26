@@ -55,6 +55,11 @@
 -(NSArray*) getDatas{
     return self.datas;
 }
+-(void) clear{
+    [self.datas removeAllObjects];
+    PINDiskCache *cache = [[PINDiskCache alloc] initWithName:kFolderName];
+    [cache removeObjectForKey:kFileName];
+}
 
 //MARK:===============================================================
 //MARK:                     < privateMethod >

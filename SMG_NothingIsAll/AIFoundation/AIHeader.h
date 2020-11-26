@@ -188,7 +188,7 @@
 //warnLog
 #define WLog(fmt, ...) NSLog((@"<警告> " fmt), ##__VA_ARGS__);
 //demoLog (Demo交互信息)
-#define DemoLog(fmt, ...) NSLog((@"********************************************* " fmt @" *********************************************"), ##__VA_ARGS__);
+#define DemoLog(fmt, ...) NSLog((@"\n********************************************* " fmt @" *********************************************"), ##__VA_ARGS__);
 //系统log (格式化)
 #define NSLog(FORMAT, ...) fprintf(stderr,"%s",[[SMGUtils nsLogFormat:FILENAME line:__LINE__ protoLog:[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] headerMode:DefaultHeaderMode] UTF8String]);
 #define NSLog_Mode(mode,FORMAT, ...) fprintf(stderr,"%s",[[SMGUtils nsLogFormat:FILENAME line:__LINE__ protoLog:[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] headerMode:mode] UTF8String]);
@@ -224,7 +224,7 @@
 //方向索引
 #define Log4DirecRef false
 //行为化_GL
-#define Log4ActGL false
+#define Log4ActGL true
 //行为化_Hav
 #define Log4ActHav true
 //行为化_RelativeFos

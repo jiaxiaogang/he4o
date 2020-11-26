@@ -52,10 +52,10 @@
     
     //3. 清空记忆
     self.clearMemoryBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth - 162, StateBarHeight, 40, 20)];
-    [self.clearMemoryBtn.titleLabel setFont:[UIFont systemFontOfSize:15]];
+    [self.clearMemoryBtn.titleLabel setFont:[UIFont systemFontOfSize:8]];
     [self.clearMemoryBtn setTitleColor:UIColorWithRGBHex(0xEEEE00) forState:UIControlStateNormal];
     [self.clearMemoryBtn setBackgroundColor:UIColorWithRGBHex(0xEE0000)];
-    [self.clearMemoryBtn setTitle:@"重生" forState:UIControlStateNormal];
+    [self.clearMemoryBtn setTitle:@"清除记忆" forState:UIControlStateNormal];
     [self.clearMemoryBtn addTarget:self action:@selector(clearMemoryBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.window addSubview:self.clearMemoryBtn];
     
@@ -109,7 +109,6 @@
 
 -(void) clearMemoryBtnOnClick:(id)btn{
     DemoLog(@"清空记忆");
-    HeLog(@"------------------> 清空记忆");
     [SMGUtils removeAllMemory];
 }
 

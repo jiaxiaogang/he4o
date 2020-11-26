@@ -28,5 +28,6 @@
  */
 -(NSDictionary*) addLog:(NSString*)log;
 -(NSArray*) getDatas;
+-(void) clear;
 
 @end
