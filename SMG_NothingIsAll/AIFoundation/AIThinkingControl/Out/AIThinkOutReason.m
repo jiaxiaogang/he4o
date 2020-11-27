@@ -590,7 +590,11 @@
         
         //5. Value转移 (未行为化过的理性评价进行转移);
         if (!jump) {
-            [self reasonScorePM_V2:toAlgModel failure:nil success:nil notNeedPM:^{
+            [self reasonScorePM_V2:toAlgModel failure:^{
+                //6. 当PM转移失败时,递归到Action._Hav;
+                //2020.11.27: algModel永不言败 (只有在_Hav中全部失败后,才算真正的失败);
+                [self singleLoopBackWithBegin:toAlgModel];
+            } success:nil notNeedPM:^{
                 //c. 未跳转到GLDic或PM,则将algModel设为Finish,并递归;
                 toAlgModel.status = TOModelStatus_Finish;
                 [self singleLoopBackWithFinishModel:toAlgModel];
@@ -674,14 +678,8 @@
         //a. Value失败时时,判断其右alg的replaceAlgs转移
         TOAlgModel *baseAlg = (TOAlgModel*)failureModel.baseOrGroup;
         
-        //b. 转移replaceAlg (除掉已不应期的);
-        BOOL moveSuccess = Move2ReplaceAlgBlock(baseAlg);
-        
-        //c. 转移replace失败时,baseAlg和baseAlg.baseFo都失败
-        if (!moveSuccess) {
-            baseAlg.status = TOModelStatus_ActNo;
-            [self singleLoopBackWithFailureModel:baseAlg.baseOrGroup];
-        }
+        //b. 2020.11.27: algModel永不言败 (永远传给_Hav,只有_Hav全部失败时,才会自行调用failure声明失败);
+        [self singleLoopBackWithBegin:baseAlg];
     }else if(ISOK(failureModel, TOFoModel.class)){
         //a. 解决方案失败,则跳转找出下一方案;
         failureModel.status = TOModelStatus_ActNo;
