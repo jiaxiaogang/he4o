@@ -592,7 +592,7 @@
         if (!jump) {
             [self reasonScorePM_V2:toAlgModel failure:^{
                 //6. 当PM转移失败时,递归到Action._Hav;
-                //2020.11.27: algModel永不言败 (只有在_Hav中全部失败后,才算真正的失败);
+                //2020.11.27: algModel永不言败 (只有在_Hav中全部失败后,才算真正的失败) (参考2114B);
                 [self singleLoopBackWithBegin:toAlgModel];
             } success:nil notNeedPM:^{
                 //c. 未跳转到GLDic或PM,则将algModel设为Finish,并递归;
@@ -678,7 +678,7 @@
         //a. Value失败时时,判断其右alg的replaceAlgs转移
         TOAlgModel *baseAlg = (TOAlgModel*)failureModel.baseOrGroup;
         
-        //b. 2020.11.27: algModel永不言败 (永远传给_Hav,只有_Hav全部失败时,才会自行调用failure声明失败);
+        //b. 2020.11.27: algModel永不言败 (永远传给_Hav,只有_Hav全部失败时,才会自行调用failure声明失败) (参考2114B);
         [self singleLoopBackWithBegin:baseAlg];
     }else if(ISOK(failureModel, TOFoModel.class)){
         //a. 解决方案失败,则跳转找出下一方案;

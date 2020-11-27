@@ -28,7 +28,9 @@
 
 /**
  *  MARK:-------------------- 一: 保留params之replaceAlgs短记--------------------
- *  @desc 因为TOAction.SP算法执行时,将checkAlg和checkAlg的同层可替代的替身存于此,只要成功一个即可,不过失败时,方便转移;
+ *  @desc
+ *      1. 因为TOAction.SP算法执行时,将checkAlg和checkAlg的同层可替代的替身存于此,只要成功一个即可,不过失败时,方便转移;
+ *      2. 在Action._Hav中,将每一次尝试PM的reModel存于此,下次再执行时,用作不应期,避免死循环;
  */
 @property (strong, nonatomic) NSMutableArray *replaceAlgs;
 

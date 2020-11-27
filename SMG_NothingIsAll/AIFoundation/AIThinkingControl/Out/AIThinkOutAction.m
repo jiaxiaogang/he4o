@@ -227,6 +227,12 @@
             //a. 依次判断mModel,只要符合mIsC即可;
             for (NSInteger i = 0; i < theTC.inModelManager.models.count; i++) {
                 AIShortMatchModel *model = ARR_INDEX_REVERSE(theTC.inModelManager.models, i);
+                
+                //b. 2020.11.27: 不应期检查 (参考2114B);
+                if ([outModel.replaceAlgs containsObject:model.matchAlg.pointer]) {
+                    continue;
+                }
+                
                 NSLog(@"====== checkMC ====== Proto:%@",Alg2FStr(model.protoAlg));
                 BOOL mIsC = false;
                 for (AIAlgNodeBase *item in model.matchAlgs) {
