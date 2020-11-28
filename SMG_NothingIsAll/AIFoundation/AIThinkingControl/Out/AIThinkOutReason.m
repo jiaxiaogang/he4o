@@ -592,7 +592,7 @@
         if (!jump) {
             [self reasonScorePM_V2:toAlgModel failure:^{
                 //6. 当PM转移失败时,递归到Action._Hav;
-                //2020.11.27: algModel永不言败 (只有在_Hav中全部失败后,才算真正的失败) (参考2114B);
+                //2020.11.27: algModel本级递归 (只有在_Hav中全部失败后,才算真正的失败) (参考2114B);
                 [self singleLoopBackWithBegin:toAlgModel];
             } success:nil notNeedPM:^{
                 //c. 未跳转到GLDic或PM,则将algModel设为Finish,并递归;
@@ -633,6 +633,10 @@
  *          a. avd为Alg时,转移方法为:TOAction._Hav;
  *          b. avd为Value时,转移方法为:TOAction._GL;
  *          c. avd为Demand时,转移方法为:TOP.P+;
+ *      4. 递归说明: (上级递归方式,即每次failure向宏观级递归);
+ *          a. value失败时,递归到alg.begin (_Hav中不应期递归循环);
+ *          b. alg失败时,递归到fo.begin;
+ *          c. fo失败时,递归到demand.begin (TOP+换新解决方案);
  *  @version
  *      2020.07.06: 当failureModel为TOFoModel时,直接尝试下一方案;
  */
@@ -755,9 +759,9 @@
                 DemandModel *root = [TOUtils getDemandModelWithSubOutModel:algModel];
                 BOOL havRoot = [theTC.outModelManager.getAllDemand containsObject:root];
                 if (algModel.status == TOModelStatus_ActYes && havRoot) {
-                    NSLog(@"====ActYes is Alg update status");
-                    algModel.status = TOModelStatus_ScoreNo;
-                    [self singleLoopBackWithFailureModel:algModel];
+                    NSLog(@"====ActYes is ATSub -> 递归alg");
+                    //5. 2020.11.28: alg本级递归 (只有_Hav全部失败时,才会自行调用failure声明失败) (参考2114C);
+                    [self singleLoopBackWithBegin:algModel];
                 }
             }];
         }else if(actYesModel.content_p.isOut){
