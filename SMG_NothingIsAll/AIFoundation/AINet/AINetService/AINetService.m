@@ -38,7 +38,6 @@
     NSArray *gl_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Value:innerValue_p]];
     
     //3. 找出合格的inner1Alg;
-    int debugVesion = 1;
     for (AIKVPointer *gl_p in gl_ps) {
         AIAlgNodeBase *glAlg = [SMGUtils searchNode:gl_p];
         
