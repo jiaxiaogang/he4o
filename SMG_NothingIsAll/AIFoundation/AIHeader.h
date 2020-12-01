@@ -214,7 +214,7 @@
 #define Log4MFo false
 //内类比
 #define Log4InAna false
-#define Log4InOutAna false
+#define Log4InOutAna true
 #define Log4InAnaGL false
 #define Log4InAnaHN false
 //正向类比

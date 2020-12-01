@@ -178,7 +178,9 @@
  *  2. 如: 绿瓜变红瓜,如远坚果变近坚果;
  *  3. 每发现一个有效变化目标,则构建2个absAlg和2个absFo; (参考n15p18内类比构建图)
  *  注: 目前仅支持一个微信息变化的规律;
- *  TODO: 将内类比的类比部分代码,进行单独PrivateMethod,然后与外类比中调用的进行复用;
+ *  @todo
+ *      xxxx.xx.xx: 将内类比的类比部分代码,进行单独PrivateMethod,然后与外类比中调用的进行复用;
+ *      2020.12.01: 向内类比传的partAlg_ps永远都是当前这一帧的,可能导致无法触发"内中外类比",从而导致决策联想不到稳定的GL抽象节点 (参考21172);
  *  @desc 代码说明:
  *      1. "有无"的target需要去重,因为a3.identifier = a4.identifier,而a4需要外类比,所以去重才能联想到同质fo;
  *      2. "有无"在191030改成单具象节点 (因为坚果的抽象不是坚果皮) 参考179_内类比全流程回顾;
@@ -321,6 +323,7 @@
 
 /**
  *  MARK:--------------------内类比构建器--------------------
+ *  @desc 参考21115彩图;
  *  @param type : 内类比类型,大小有无; (必须为四值之一,否则构建未知节点)
  *  @param rangeAlg_ps  : 在i-j之间的orders; (如 "a1 balabala a2" 中,balabala就是rangeOrders)
  *  @param algsType & dataSource : 构建"有无大小"稀疏码的at&ds  (有无时为概念地址,大小时为稀疏码地址);
@@ -358,25 +361,25 @@
     NSInteger backData = type;
 
     //3. 构建微信息;
-    AIKVPointer *backValue_p = nil;
-    backValue_p = [theNet getNetDataPointerWithData:@(backData) algsType:algsType dataSource:dataSource];
+    AIKVPointer *glValue_p = nil;
+    glValue_p = [theNet getNetDataPointerWithData:@(backData) algsType:algsType dataSource:dataSource];
 
     //4. 构建抽象概念 (20190809注:此处可考虑,type为大/小时,不做具象指向,因为大小概念,本来就是独立的节点);
     NSString *afDS = [ThinkingUtils getAnalogyTypeDS:type];
-    AIAlgNodeBase *backAlg = [theNet createAbsAlg_NoRepeat:@[backValue_p] conAlgs:@[backConAlg] isMem:false ds:afDS];
+    AIAlgNodeBase *glAlg = [theNet createAbsAlg_NoRepeat:@[glValue_p] conAlgs:@[backConAlg] isMem:false ds:afDS];
     
     //5. 构建抽象时序; (小动致大 / 大动致小) (之间的信息为balabala)
     AINetAbsFoNode *result = [TIRUtils createInnerAbsFo:backConAlg rangeAlg_ps:rangeAlg_ps conFo:conFo ds:afDS];
 
     //6. 调试;
     if (type == ATHav || type == ATNone) {
-        if (Log4InAnaHN) NSLog(@"--> 构建:%@ ConFrom:%@ 构建Fo:%@",Alg2FStr(backAlg),Alg2FStr(backConAlg),Fo2FStr(result));
+        if (Log4InAnaHN) NSLog(@"--> 构建:%@ ConFrom:%@ 构建Fo:%@",Alg2FStr(glAlg),Alg2FStr(backConAlg),Fo2FStr(result));
     }else if (type == ATGreater || type == ATLess) {
-        if (Log4InAnaGL) NSLog(@"--> 构建:%@ ConFrom:A%ld 构建Fo:%@",Alg2FStr(backAlg),(long)backConAlg.pointer.pointerId,Fo2FStr(result));
+        if (Log4InAnaGL) NSLog(@"--> 构建:%@ ConFrom:A%ld 构建Fo:%@",Alg2FStr(glAlg),(long)backConAlg.pointer.pointerId,Fo2FStr(result));
     }
     
     //7. 内中有外
-    [self analogyInner_Outside_V2:result type:type partAlg_ps:partAlg_ps backAlg:backAlg];
+    [self analogyInner_Outside_V2:result type:type partAlg_ps:partAlg_ps glhnAlg:glAlg];
     return result;
 }
 
@@ -385,7 +388,7 @@
  *  1. 根据abFo联想assAbFo并进行外类比 (根据微信息来索引查找assAbFo)
  *  2. 复用外类比方法;
  *  3. 一个抽象了a1-range-a2的时序,必然是抽象的,必然是硬盘网络中的;所以此处不必考虑联想内存网络中的assAbFo;
- *  @param backAlg : 即glhn节点,根据之索引取conPorts,可取到所有"有无大小"概念经历;
+ *  @param glhnAlg : 即glhn节点,根据之索引取conPorts,可取到所有"有无大小"概念经历;
  *  @param partAlg_ps : protoAlg识别到的局部匹配大全 (亦有全含的,排前面);
  *  @version
  *      2020.03.29: 将assFo依range来联想,而非"有/无/大/小";以解决类比抽象时容易过度收束的问题;
@@ -394,10 +397,10 @@
  *      2020.11.05: 解决assFoPorts永远为0条的问题 (因为原先conFo不是gl时序),改为range+backConAlg后没此问题了 (参考21115);
  *      2020.11.06: 内中外类比,backConAlg的抽象节点newAbsA,使之抽象指向backAlg(glAlg) (参考21115);
  */
-+(void)analogyInner_Outside_V2:(AINetAbsFoNode*)abFo type:(AnalogyType)type partAlg_ps:(NSArray*)partAlg_ps backAlg:(AIAlgNodeBase*)backAlg{
++(void)analogyInner_Outside_V2:(AINetAbsFoNode*)abFo type:(AnalogyType)type partAlg_ps:(NSArray*)partAlg_ps glhnAlg:(AIAlgNodeBase*)glhnAlg{
     
     //1. 取所有GL经历 & 与此次类似GL经历;
-    NSArray *backConAlg_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:backAlg]];
+    NSArray *backConAlg_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:glhnAlg]];
     NSArray *validBackConAlg_ps = [SMGUtils filterSame_ps:partAlg_ps parent_ps:backConAlg_ps];
     
     //2. 类比准备_对与此次类似的前(3-4/*有可能与abFo重复一条*/)条;
@@ -421,7 +424,7 @@
                     
                     //6. 当abFo.lastAlg和assFo.lastAlg类比抽象得到absA后,应该让absA抽象指向glAlg (参考21115);
                     if (foIndex == abFo.count - 1 && assFoIndex == assFo.count - 1) {
-                        [AINetUtils relateAlgAbs:(AIAbsAlgNode*)backAlg conNodes:@[createAlg] isNew:false];
+                        [AINetUtils relateAlgAbs:(AIAbsAlgNode*)glhnAlg conNodes:@[createAlg] isNew:false];
                     }
                 }];
             }
