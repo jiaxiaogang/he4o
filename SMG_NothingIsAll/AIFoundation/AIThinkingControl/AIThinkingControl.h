@@ -38,4 +38,7 @@
 -(ShortMatchManager*) inModelManager;
 -(DemandManager*) outModelManager;
 
+//Temp
+-(void) updateEnergy:(CGFloat)delta;
+
 @end

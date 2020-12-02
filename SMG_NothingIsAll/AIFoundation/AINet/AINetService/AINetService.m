@@ -31,6 +31,7 @@
  */
 +(NSArray*) getInner1Alg:(AIAlgNodeBase*)pAlg vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type{
     //1. 数据检查hAlg_根据type和value_p找ATHav
+    BOOL debugMode = false;
     if (Log4GetInnerAlg) NSLog(@"--> getInnerAlg:%ld ATDS:%@&%@ 参照:%@(C和参照概念有mIsC关联则成功)",(long)type,vAT,vDS,Alg2FStr(pAlg));
     AIKVPointer *innerValue_p = [theNet getNetDataPointerWithData:@(type) algsType:vAT dataSource:vDS];
     
@@ -47,6 +48,11 @@
         //5. 这些节点中,哪个与pAlg有抽具象关系,就返回哪个;
         for (AIKVPointer *glAlgCon_p in glAlgCon_ps) {
             if (Log4GetInnerAlg) NSLog(@"-> try_getInnerAlg结果B:%@ 结果具象C:%@",Alg2FStr(glAlg),AlgP2FStr(glAlgCon_p));
+            if (debugMode) {
+                [theNV setForceMode:true];
+                [theNV setNodeData:glAlgCon_p];
+                [theNV setForceMode:false];
+            }
             if ([TOUtils mIsC_2:glAlgCon_p c:pAlg.pointer] || [TOUtils mIsC_2:pAlg.pointer c:glAlgCon_p]) {
                 
                 //6. 用mIsC有效的glAlg具象指向节点,向refPorts取到relativeFos返回;
@@ -75,6 +81,7 @@
             //relativeFos = [SMGUtils collectArrA_NoRepeat:relativeFos arrB:partFos];
         }
     }
+    if (debugMode) [theTC updateEnergy:-1000];
     return nil;
 }
 
