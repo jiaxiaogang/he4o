@@ -40,6 +40,7 @@
  *  @version
  *      20200215: 有序外类比: 将forin循环fo和assFo改为反序,并记录上次类比位置jMax (因出现了[果,果,吃,吃]这样的异常时序) 参考n18p11;
  *      20200831: 支持反省外类比,得出更确切的ATSub原因,参考:20205-步骤4;
+ *      20201203: 修复21175BUG (因createAbsAlgBlock忘记调用,导致absAlg和glAlg间未关联) (参考21115);
  */
 +(void) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy type:(AnalogyType)type createAbsAlgBlock:(void(^)(AIAlgNodeBase *createAlg,NSInteger foIndex,NSInteger assFoIndex))createAbsAlgBlock{
     //1. 类比orders的规律
@@ -81,6 +82,7 @@
                         if (ARRISOK(sameValue_ps)) {
                             AIAbsAlgNode *createAbsNode = [theNet createAbsAlg_NoRepeat:sameValue_ps conAlgs:@[algNodeA,algNodeB] isMem:false];
                             if (createAbsNode) {
+                                //3. 收集并更新jMax;
                                 [orderSames insertObject:createAbsNode.pointer atIndex:0];
                                 jMax = j - 1;
                                 if (type == ATSame) {
@@ -88,6 +90,9 @@
                                 }else{
                                     NSLog(@"---> type:%ld_外类比_构建:%@ ConFrom (A%ld,A%ld)",(long)type,Alg2FStr(createAbsNode),(long)algNodeA.pointer.pointerId,(long)algNodeB.pointer.pointerId);
                                 }
+                                
+                                //3. 构建absAlg时,回调构建和glhnAlg的关联 (参考21115);
+                                if (createAbsAlgBlock) createAbsAlgBlock(createAbsNode,i,j);
                             }
                             ///4. 构建时,消耗能量值;
                             if (updateEnergy) {
