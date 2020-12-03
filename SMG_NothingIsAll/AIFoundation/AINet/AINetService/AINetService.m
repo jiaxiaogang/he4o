@@ -21,17 +21,19 @@
  *        从中,找出交叠,比如,看下SP中的坚果,与GL生成时的坚果,之间的网络关系是什么? (可用网络可视化查);
  *  @bug
  *      2020.06.16: 找不到glAlg的bug;
+ *      2020.12.03: 修复联想只有太具象概念的BUG,修复后,可以顺利从glAlgCon_p中找到较抽象的absAlg (如A87(速0,高5,皮0)) (参考21175);
  *  @todo
  *      2020.06.24: 对alg指引联想,取同层+多层abs,比如,我没洗过西瓜,但我洗过苹果,或者洗过水果,那我可以试下用水洗西瓜;
  *      2020.11.07: 返回结果,按短时记忆局部匹配度排序 (比如饿了,优先想到几秒前看到过的香蕉);
  *                  注:这步未必需要,因为太复杂,况且在决策循环中,也会有类似实现,且是分解后的;
+ *      2020.12.03: 支持多路glAlgCon_ps返回,或者判断理性稳定性,比如太抽象概念,向任何方向飞都有可能更远或更近;
  *  @version
  *      2020.11.06: 核对21115逻辑没问题 & 直接取返回relativeFo_ps;
  *  @result : 返回relativeFo_ps,用backConAlg节点,由此节点取refPorts,再筛选type,可取到glFo经历;
  */
 +(NSArray*) getInner1Alg:(AIAlgNodeBase*)pAlg vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type{
     //1. 数据检查hAlg_根据type和value_p找ATHav
-    BOOL debugMode = false;
+    BOOL debugMode = (type == ATGreater || type == ATLess);
     if (Log4GetInnerAlg) NSLog(@"--> getInnerAlg:%ld ATDS:%@&%@ 参照:%@(C和参照概念有mIsC关联则成功)",(long)type,vAT,vDS,Alg2FStr(pAlg));
     AIKVPointer *innerValue_p = [theNet getNetDataPointerWithData:@(type) algsType:vAT dataSource:vDS];
     
