@@ -50,7 +50,7 @@
         //5. 这些节点中,哪个与pAlg有抽具象关系,就返回哪个;
         for (AIKVPointer *glAlgCon_p in glAlgCon_ps) {
             if (Log4GetInnerAlg) NSLog(@"-> try_getInnerAlg结果B:%@ 结果具象C:%@",Alg2FStr(glAlg),AlgP2FStr(glAlgCon_p));
-            if (debugMode) {
+            if (debugMode && [TOUtils mIsC_1:pAlg.pointer c:glAlgCon_p]) {
                 [theNV setForceMode:true];
                 [theNV setNodeData:glAlgCon_p];
                 [theNV setForceMode:false];
@@ -60,7 +60,7 @@
                 //6. 用mIsC有效的glAlg具象指向节点,向refPorts取到relativeFos返回;
                 NSArray * relativeFoPorts = [SMGUtils filterPorts:[AINetUtils refPorts_All4Alg:glAlg] havTypes:@[@(type)] noTypes:nil];
                 NSArray *relativeFo_ps = [SMGUtils convertPointersFromPorts:ARR_SUB(relativeFoPorts, 0, cHavNoneAssFoCount)];
-                return relativeFo_ps;
+                if (ARRISOK(relativeFo_ps)) return relativeFo_ps;
             }
             
             //7. 将结果,先按照短时记忆(除末位外)局部匹配度排序,再返回 (未必需要,参考注释todo20201107);
@@ -84,6 +84,9 @@
         }
     }
     if (debugMode) [theTC updateEnergy:-1000];
+    if (debugMode) {
+        NSLog(@"");
+    }
     return nil;
 }
 

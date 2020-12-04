@@ -315,7 +315,7 @@
     NSString *vAT = outModel.content_p.algsType;
     NSString *vDS = outModel.content_p.dataSource;
     if ((type != ATGreater && type != ATLess)) {
-        WLog(@"value_行为化类参数type|value_p错误");
+        WLog(@"value_行为化类参数type|value_p错误,相等不必行为化");
         //相等不必行为化,直接返回true;
         outModel.status = TOModelStatus_Finish;
         [self.delegate toAction_SubModelFinish:outModel];
