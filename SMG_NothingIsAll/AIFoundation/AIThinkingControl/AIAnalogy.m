@@ -429,6 +429,7 @@
                     
                     //6. 当abFo.lastAlg和assFo.lastAlg类比抽象得到absA后,应该让absA抽象指向glAlg (参考21115);
                     if (foIndex == abFo.count - 1 && assFoIndex == assFo.count - 1) {
+                        if (Log4InOutAna) NSLog(@"---> type:%@_内中外类比_关联:%@ ABSTO:%@",[NVHeUtil getLightStr:glhnAlg.pointer simple:false header:false],Alg2FStr(createAlg),Alg2FStr(glhnAlg));
                         [AINetUtils relateAlgAbs:(AIAbsAlgNode*)glhnAlg conNodes:@[createAlg] isNew:false];
                     }
                 }];
