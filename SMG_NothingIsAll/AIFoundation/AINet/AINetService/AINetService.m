@@ -50,16 +50,18 @@
         //5. 这些节点中,哪个与pAlg有抽具象关系,就返回哪个;
         for (AIKVPointer *glAlgCon_p in glAlgCon_ps) {
             if (Log4GetInnerAlg) NSLog(@"-> try_getInnerAlg结果B:%@ 结果具象C:%@",Alg2FStr(glAlg),AlgP2FStr(glAlgCon_p));
-            if (debugMode && [TOUtils mIsC_1:pAlg.pointer c:glAlgCon_p]) {
-                [theNV setForceMode:true];
-                [theNV setNodeData:glAlgCon_p];
-                [theNV setForceMode:false];
-            }
             if ([TOUtils mIsC_2:glAlgCon_p c:pAlg.pointer] || [TOUtils mIsC_2:pAlg.pointer c:glAlgCon_p]) {
                 
                 //6. 用mIsC有效的glAlg具象指向节点,向refPorts取到relativeFos返回;
                 NSArray * relativeFoPorts = [SMGUtils filterPorts:[AINetUtils refPorts_All4Alg:glAlg] havTypes:@[@(type)] noTypes:nil];
                 NSArray *relativeFo_ps = [SMGUtils convertPointersFromPorts:ARR_SUB(relativeFoPorts, 0, cHavNoneAssFoCount)];
+                
+                //6. 调试gl联想时,absAlg取到引用fos为0条的BUG (参考21172);
+                if (debugMode && !ARRISOK(relativeFo_ps)) {
+                    [theNV setForceMode:true];
+                    [theNV setNodeData:glAlgCon_p];
+                    [theNV setForceMode:false];
+                }
                 if (ARRISOK(relativeFo_ps)) return relativeFo_ps;
             }
             
