@@ -74,6 +74,7 @@
 		0860A3BD22C9859200A48682 /* CustomAddNodeWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0860A3BC22C9859200A48682 /* CustomAddNodeWindow.xib */; };
 		086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */ = {isa = PBXBuildFile; fileRef = 086D93361F8CA782002BAF3F /* RuntimeInvoker.m */; };
 		087268E0219CF3B500B5490F /* AIVisionAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 087268DF219CF3B500B5490F /* AIVisionAlgs.m */; };
+		087E7FCB258053D90097E0B9 /* NSFile+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 087E7FCA258053D90097E0B9 /* NSFile+Extension.m */; };
 		0881965F21800F2B00D5DB36 /* BirdLivePage.m in Sources */ = {isa = PBXBuildFile; fileRef = 0881965D21800F2B00D5DB36 /* BirdLivePage.m */; };
 		0881966021800F2B00D5DB36 /* BirdLivePage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0881965E21800F2B00D5DB36 /* BirdLivePage.xib */; };
 		0889257F22B0702A00A0DBDD /* NVModuleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0889257E22B0702A00A0DBDD /* NVModuleView.m */; };
@@ -279,6 +280,8 @@
 		086D93361F8CA782002BAF3F /* RuntimeInvoker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RuntimeInvoker.m; sourceTree = "<group>"; };
 		087268DE219CF3B500B5490F /* AIVisionAlgs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIVisionAlgs.h; sourceTree = "<group>"; };
 		087268DF219CF3B500B5490F /* AIVisionAlgs.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIVisionAlgs.m; sourceTree = "<group>"; };
+		087E7FC9258053D90097E0B9 /* NSFile+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSFile+Extension.h"; sourceTree = "<group>"; };
+		087E7FCA258053D90097E0B9 /* NSFile+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSFile+Extension.m"; sourceTree = "<group>"; };
 		0881965C21800F2B00D5DB36 /* BirdLivePage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BirdLivePage.h; sourceTree = "<group>"; };
 		0881965D21800F2B00D5DB36 /* BirdLivePage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BirdLivePage.m; sourceTree = "<group>"; };
 		0881965E21800F2B00D5DB36 /* BirdLivePage.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BirdLivePage.xib; sourceTree = "<group>"; };
@@ -532,6 +535,8 @@
 				0839819E24DB7F8C00A020D2 /* HEView.m */,
 				08C6C2612518E49400DDE6BF /* NSLog+Extension.h */,
 				08C6C2622518E49400DDE6BF /* NSLog+Extension.m */,
+				087E7FC9258053D90097E0B9 /* NSFile+Extension.h */,
+				087E7FCA258053D90097E0B9 /* NSFile+Extension.m */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -1360,6 +1365,7 @@
 				083BC022231CA14E00CA9039 /* AIThinkInPercept.m in Sources */,
 				080A74321F60C6490025DBA3 /* AIPort.m in Sources */,
 				08DB40CB1F11A65E003162C8 /* TestHungryPage.m in Sources */,
+				087E7FCB258053D90097E0B9 /* NSFile+Extension.m in Sources */,
 				08250AE0228112C000FC497C /* XGWedis.m in Sources */,
 				88A43F432109589600281348 /* AICMVNode.m in Sources */,
 				081B3AD61F6E2994008A7F36 /* AIStringAlgs.m in Sources */,

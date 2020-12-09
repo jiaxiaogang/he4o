@@ -93,6 +93,10 @@
     [self.model clear];
 }
 
+-(NSInteger) count{
+    return self.model.count;
+}
+
 //MARK:===============================================================
 //MARK:                     < privateMethod >
 //MARK:===============================================================

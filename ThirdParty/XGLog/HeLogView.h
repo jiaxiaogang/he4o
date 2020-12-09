@@ -14,5 +14,6 @@
 -(void) open;
 -(void) close;
 -(void) clear;
+-(NSInteger) count;
 
 @end

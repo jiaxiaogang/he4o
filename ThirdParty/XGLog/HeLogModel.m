@@ -42,6 +42,7 @@
 //MARK:===============================================================
 //MARK:                     < publicMethod >
 //MARK:===============================================================
+
 /**
  *  MARK:--------------------addLog--------------------
  */
@@ -59,6 +60,9 @@
     [self.datas removeAllObjects];
     PINDiskCache *cache = [[PINDiskCache alloc] initWithName:kFolderName];
     [cache removeObjectForKey:kFileName];
+}
+-(NSInteger) count{
+    return self.datas.count;
 }
 
 //MARK:===============================================================

@@ -16,6 +16,7 @@
 #import "AIAlgNodeBase.h"
 #import "XGWedis.h"
 #import "ThinkingUtils.h"
+#import "NSFile+Extension.h"
 
 @implementation SMGUtils
 
@@ -745,29 +746,39 @@
 
 +(void) removeAllMemory{
     //1. 清空UserDefaults记忆;
+    NSInteger sumCount = 0;
     NSDictionary *dic = DICTOOK([[NSUserDefaults standardUserDefaults] dictionaryRepresentation]);
+    sumCount += dic.count;
+    NSLog(@"===> 清空UserDefaults记忆 \t(%lu)",(unsigned long)dic.count);
     for (id key in dic) [[NSUserDefaults standardUserDefaults] removeObjectForKey:key];
     [[NSUserDefaults standardUserDefaults] synchronize];
-    NSLog(@"===> 清空UserDefaults记忆:%lu",(unsigned long)dic.count);
     
-    //2. 清空XGRedis & XGWedis
+    //2. 清空XGWedis
+    NSLog(@"===> 清空XGRedis \t(%lu)",XGRedis.sharedInstance.count);
+    sumCount += XGRedis.sharedInstance.count;
     [[XGRedis sharedInstance] clear];
+    
+    //2. 清空XGWedis
+    NSLog(@"===> 清空XGWedis记忆 \t(%lu)",XGWedis.sharedInstance.count);
+    sumCount += XGWedis.sharedInstance.count;
     [[XGWedis sharedInstance] clear];
-    NSLog(@"===> 清空XGRedis & XGWedis记忆");
     
     //3. 清空KVFile
     NSArray *folderNames = @[/*mvNode*/kPN_CMV_NODE,kPN_ABS_CMV_NODE,/*mv索引*/kPN_DIRECTION(MVDirection_None),kPN_DIRECTION(MVDirection_Negative),kPN_DIRECTION(MVDirection_Positive),/*foNode*/kPN_FRONT_ORDER_NODE,kPN_FO_ABS_NODE,/*algNode*/kPN_ALG_NODE,kPN_ALG_ABS_NODE,/*小脑*/kPN_CEREBEL_CANOUT,/*稀疏码索引*/kPN_INDEX,kPN_DATA,kPN_VALUE];
     NSString *cachePath = kCachePath;
     for (NSString *folderName in folderNames) {
         NSMutableString *fileRootPath = [[NSMutableString alloc] initWithFormat:@"%@/%@",cachePath,folderName];
+        NSArray *subFiles = [NSFile_Extension subFiles_AllDeep:fileRootPath];
+        NSLog(@"===> 清空KVFile记忆:%@ \t(%lu)",folderName,subFiles.count);
+        sumCount += subFiles.count;
         [[NSFileManager defaultManager] removeItemAtPath:fileRootPath error:nil];
-        NSLog(@"===> 清空KVFile记忆:%@",folderName);
     }
     
     //4. 清空heLog
+    NSLog(@"===> 清空HeLog记忆 \t(%lu)",theApp.heLogView.count);
+    sumCount += theApp.heLogView.count;
     [theApp.heLogView clear];
-    NSLog(@"===> 清空HeLog记忆");
-    NSLog(@"======> 清空记忆Finish");
+    NSLog(@"======> 清空记忆Finish \t(%lu)",sumCount);
 }
 
 @end

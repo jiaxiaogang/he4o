@@ -38,4 +38,7 @@
 //清
 -(void) clear;
 
+//记忆数
+-(NSInteger) count;
+
 @end

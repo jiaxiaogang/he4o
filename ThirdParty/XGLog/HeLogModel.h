@@ -29,5 +29,6 @@
 -(NSDictionary*) addLog:(NSString*)log;
 -(NSArray*) getDatas;
 -(void) clear;
+-(NSInteger) count;
 
 @end

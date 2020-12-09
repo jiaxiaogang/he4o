@@ -49,4 +49,9 @@ typedef void (^XGWedisSaveBlock)(NSDictionary *dic);
  */
 -(void) clear;
 
+/**
+ *  MARK:--------------------记忆长度--------------------
+ */
+-(NSInteger) count;
+
 @end

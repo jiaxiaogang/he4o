@@ -63,6 +63,10 @@ static XGWedis *_instance;
     [self.dic removeAllObjects];
 }
 
+-(NSInteger) count{
+    return self.dic.count;
+}
+
 //MARK:===============================================================
 //MARK:                     < privateMethod >
 //MARK:===============================================================

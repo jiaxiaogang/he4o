@@ -98,6 +98,10 @@ static XGRedis *_instance;
     [self.gcMarks removeAllObjects];
 }
 
+-(NSInteger) count{
+    return self.dic.count;
+}
+
 //MARK:===============================================================
 //MARK:                     < privateMethod >
 //MARK:===============================================================
