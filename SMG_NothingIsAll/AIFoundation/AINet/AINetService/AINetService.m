@@ -56,7 +56,7 @@
                 NSArray * relativeFoPorts = [SMGUtils filterPorts:[AINetUtils refPorts_All4Alg:glAlg] havTypes:@[@(type)] noTypes:nil];
                 NSArray *relativeFo_ps = [SMGUtils convertPointersFromPorts:ARR_SUB(relativeFoPorts, 0, cHavNoneAssFoCount)];
                 
-                //6. 调试gl联想时,absAlg取到引用fos为0条的BUG (参考21172);
+                //6. 调试gl联想时,absAlg取到引用fos为0条的BUG (参考21192);
                 if (debugMode && !ARRISOK(relativeFo_ps)) {
                     [theNV setForceMode:true];
                     [theNV setNodeData:glAlgCon_p];

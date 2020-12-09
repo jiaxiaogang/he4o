@@ -162,7 +162,7 @@
             if (type == ATSame) {
                 NSLog(@"--->> 构建时序:%@->%@",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
             }else {
-                if (Log4InOutAna) NSLog(@"----> type:%ld_外类比_构建:%@ from(%ld,%ld)",type,Fo2FStr(result),(long)fo.pointer.pointerId,(long)assFo.pointer.pointerId);
+                if (Log4InOutAna) NSLog(@"----> type:%ld_内中外类比_构建:%@ from(%@,%@)",type,Fo2FStr(result),Fo2FStr(fo),Fo2FStr(assFo));
             }
         }
     }
