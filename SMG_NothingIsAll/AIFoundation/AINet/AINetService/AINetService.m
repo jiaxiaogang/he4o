@@ -22,6 +22,7 @@
  *  @bug
  *      2020.06.16: 找不到glAlg的bug;
  *      2020.12.03: 修复联想只有太具象概念的BUG,修复后,可以顺利从glAlgCon_p中找到较抽象的absAlg (如A87(速0,高5,皮0)) (参考21175);
+ *      2020.12.10: 修复glAlg.conAlg被引用始终是0条的BUG (参考21192);
  *  @todo
  *      2020.06.24: 对alg指引联想,取同层+多层abs,比如,我没洗过西瓜,但我洗过苹果,或者洗过水果,那我可以试下用水洗西瓜;
  *      2020.11.07: 返回结果,按短时记忆局部匹配度排序 (比如饿了,优先想到几秒前看到过的香蕉);
@@ -45,21 +46,22 @@
         AIAlgNodeBase *glAlg = [SMGUtils searchNode:gl_p];
         
         //4. 根据glAlg,向具象找出真正当时变"大小"的具象概念节点;
-        NSArray *glAlgCon_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:glAlg]];
+        NSArray *glConAlg_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:glAlg]];
         
         //5. 这些节点中,哪个与pAlg有抽具象关系,就返回哪个;
-        for (AIKVPointer *glAlgCon_p in glAlgCon_ps) {
-            if (Log4GetInnerAlg) NSLog(@"-> try_getInnerAlg结果B:%@ 结果具象C:%@",Alg2FStr(glAlg),AlgP2FStr(glAlgCon_p));
-            if ([TOUtils mIsC_2:glAlgCon_p c:pAlg.pointer] || [TOUtils mIsC_2:pAlg.pointer c:glAlgCon_p]) {
+        for (AIKVPointer *glConAlg_p in glConAlg_ps) {
+            if (Log4GetInnerAlg) NSLog(@"-> try_getInnerAlg结果B:%@ 结果具象C:%@",Alg2FStr(glAlg),AlgP2FStr(glConAlg_p));
+            if ([TOUtils mIsC_2:glConAlg_p c:pAlg.pointer] || [TOUtils mIsC_2:pAlg.pointer c:glConAlg_p]) {
                 
                 //6. 用mIsC有效的glAlg具象指向节点,向refPorts取到relativeFos返回;
-                NSArray * relativeFoPorts = [SMGUtils filterPorts:[AINetUtils refPorts_All4Alg:glAlg] havTypes:@[@(type)] noTypes:nil];
+                AIAlgNodeBase *glConAlg = [SMGUtils searchNode:glConAlg_p];
+                NSArray *relativeFoPorts = [SMGUtils filterPorts:[AINetUtils refPorts_All4Alg:glConAlg] havTypes:@[@(type)] noTypes:nil];
                 NSArray *relativeFo_ps = [SMGUtils convertPointersFromPorts:ARR_SUB(relativeFoPorts, 0, cHavNoneAssFoCount)];
                 
                 //6. 调试gl联想时,absAlg取到引用fos为0条的BUG (参考21192);
                 if (debugMode && !ARRISOK(relativeFo_ps)) {
                     [theNV setForceMode:true];
-                    [theNV setNodeData:glAlgCon_p];
+                    [theNV setNodeData:glConAlg_p];
                     [theNV setForceMode:false];
                 }
                 if (ARRISOK(relativeFo_ps)) return relativeFo_ps;

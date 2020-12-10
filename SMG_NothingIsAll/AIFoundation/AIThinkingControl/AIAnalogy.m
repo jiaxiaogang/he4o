@@ -88,7 +88,7 @@
                                 if (type == ATSame) {
                                     if (Log4SameAna) NSLog(@"---> 构建:%@ ConFrom (A%ld,A%ld)",Alg2FStr(createAbsNode),(long)algNodeA.pointer.pointerId,(long)algNodeB.pointer.pointerId);
                                 }else{
-                                    NSLog(@"---> type:%ld_外类比_构建:%@ ConFrom (A%ld,A%ld)",(long)type,Alg2FStr(createAbsNode),(long)algNodeA.pointer.pointerId,(long)algNodeB.pointer.pointerId);
+                                    NSLog(@"-> 内中外类比_构建概念:(%@)%@ ConFrom (A%ld,A%ld)",[NVHeUtil getLightStr_Value:type algsType:nil dataSource:nil],Alg2FStr(createAbsNode),(long)algNodeA.pointer.pointerId,(long)algNodeB.pointer.pointerId);
                                 }
                                 
                                 //3. 构建absAlg时,回调构建和glhnAlg的关联 (参考21115);
@@ -160,9 +160,18 @@
         //调试短时序; (先仅打外类比日志);
         if (result) {
             if (type == ATSame) {
-                NSLog(@"--->> 构建时序:%@->%@",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
+                NSLog(@"->> 构建时序:%@->%@",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
             }else {
-                if (Log4InOutAna) NSLog(@"----> type:%ld_内中外类比_构建:%@ from(%@,%@)",type,Fo2FStr(result),Fo2FStr(fo),Fo2FStr(assFo));
+                if (Log4InOutAna) NSLog(@"-> 内中外类比_构建时序:(%@)%@",[NVHeUtil getLightStr_Value:type algsType:nil dataSource:nil],Fo2FStr(result));
+                
+                for (AIKVPointer *algp in result.content_ps) {
+                    if (algp.pointerId == 85) {
+                        AIAlgNodeBase *alg = [SMGUtils searchNode:algp];
+                        NSArray *relativeFoPorts = [SMGUtils filterPorts:[AINetUtils refPorts_All4Alg:alg] havTypes:@[@(type)] noTypes:nil];
+                        NSArray *relativeFo_ps = [SMGUtils convertPointersFromPorts:relativeFoPorts];
+                        NSLog(@"");
+                    }
+                }
             }
         }
     }
@@ -424,12 +433,12 @@
                 AIFoNodeBase *assFo = [SMGUtils searchNode:assFoPort.target_p];
                 
                 //5. 对abFo和assAbFo进行类比;
-                if (Log4InOutAna) NSLog(@"--- 内中外类比fo:%@ ass:%@",Fo2FStr(abFo),Fo2FStr(assFo));
+                if (Log4InOutAna) NSLog(@"\n------ 内中外类比 ------\n   Fo: %@ \nassFo: %@",Fo2FStr(abFo),Fo2FStr(assFo));
                 [self analogyOutside:abFo assFo:assFo canAss:nil updateEnergy:nil type:type createAbsAlgBlock:^(AIAlgNodeBase *createAlg, NSInteger foIndex, NSInteger assFoIndex) {
                     
                     //6. 当abFo.lastAlg和assFo.lastAlg类比抽象得到absA后,应该让absA抽象指向glAlg (参考21115);
                     if (foIndex == abFo.count - 1 && assFoIndex == assFo.count - 1) {
-                        if (Log4InOutAna) NSLog(@"---> type:%@_内中外类比_关联:%@ ABSTO:%@",[NVHeUtil getLightStr:glhnAlg.pointer simple:false header:false],Alg2FStr(createAlg),Alg2FStr(glhnAlg));
+                        if (Log4InOutAna) NSLog(@"-> 内中外类比_关联:%@ ABSTO:%@",Alg2FStr(createAlg),Alg2FStr(glhnAlg));
                         [AINetUtils relateAlgAbs:(AIAbsAlgNode*)glhnAlg conNodes:@[createAlg] isNew:false];
                     }
                 }];
