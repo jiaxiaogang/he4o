@@ -163,15 +163,6 @@
                 NSLog(@"->> 构建时序:%@->%@",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
             }else {
                 if (Log4InOutAna) NSLog(@"-> 内中外类比_构建时序:(%@)%@",[NVHeUtil getLightStr_Value:type algsType:nil dataSource:nil],Fo2FStr(result));
-                
-                for (AIKVPointer *algp in result.content_ps) {
-                    if (algp.pointerId == 85) {
-                        AIAlgNodeBase *alg = [SMGUtils searchNode:algp];
-                        NSArray *relativeFoPorts = [SMGUtils filterPorts:[AINetUtils refPorts_All4Alg:alg] havTypes:@[@(type)] noTypes:nil];
-                        NSArray *relativeFo_ps = [SMGUtils convertPointersFromPorts:relativeFoPorts];
-                        NSLog(@"");
-                    }
-                }
             }
         }
     }

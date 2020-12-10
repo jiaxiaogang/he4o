@@ -64,7 +64,12 @@
                     [theNV setNodeData:glConAlg_p];
                     [theNV setForceMode:false];
                 }
-                if (ARRISOK(relativeFo_ps)) return relativeFo_ps;
+                if (ARRISOK(relativeFo_ps)) {
+                    if (debugMode) {
+                        NSLog(@"");
+                    }
+                    return relativeFo_ps;
+                }
             }
             
             //7. 将结果,先按照短时记忆(除末位外)局部匹配度排序,再返回 (未必需要,参考注释todo20201107);
