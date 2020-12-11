@@ -65,11 +65,6 @@
                     [theNV setForceMode:false];
                 }
                 if (ARRISOK(relativeFo_ps)) {
-                    if (debugMode) {
-                        NSLog(@"");
-                    }
-                    //7. 有效返回时,消耗0.1活跃度;
-                    [theTC updateEnergy:-0.1f];
                     return relativeFo_ps;
                 }
             }
@@ -93,10 +88,6 @@
             ////9. 收集 (其余空想部分) (考虑下二者是否应该取交集?);
             //relativeFos = [SMGUtils collectArrA_NoRepeat:relativeFos arrB:partFos];
         }
-    }
-    if (debugMode) [theTC updateEnergy:-1000];
-    if (debugMode) {
-        NSLog(@"");
     }
     return nil;
 }
