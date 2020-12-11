@@ -130,18 +130,16 @@ static AIThinkingControl *_instance;
     return self.demandManager;
 }
 
-//MARK:===============================================================
-//MARK:                     < privateMethod >
-//MARK:===============================================================
-
 /**
- *  MARK:--------------------更新energy--------------------
+ *  MARK:--------------------活跃度--------------------
  */
 -(void) updateEnergy:(CGFloat)delta{
     self.energy = [ThinkingUtils updateEnergy:self.energy delta:delta];
     NSLog(@"inner > delta:%f = energy:%f",delta,self.energy);
 }
-
+-(BOOL) energyValid{
+    return self.energy > 0;
+}
 
 /**
  *  MARK:--------------------AIThinkInDelegate--------------------
@@ -226,7 +224,7 @@ static AIThinkingControl *_instance;
     [self updateEnergy:delta];
 }
 -(BOOL) aiThinkIn_EnergyValid{
-    return self.energy > 0;
+    return [self energyValid];
 }
 -(NSArray*) aiThinkIn_getShortMatchModel{
     return self.shortMatchManager.models;
@@ -241,14 +239,6 @@ static AIThinkingControl *_instance;
  */
 -(DemandModel*) aiThinkOutPercept_GetCanDecisionDemand{
     return [self.demandManager getCanDecisionDemand];
-}
-
--(BOOL) aiThinkOutPercept_EnergyValid{
-    return self.energy > 0;
-}
-
--(void) aiThinkOutPercept_UpdateEnergy:(CGFloat)delta{
-    [self updateEnergy:delta];
 }
 
 -(void) aiThinkOutPercept_MVSchemeFailure{
@@ -302,7 +292,7 @@ static AIThinkingControl *_instance;
     [self updateEnergy:delta];
 }
 -(BOOL) aiThinkOutReason_EnergyValid {
-    return self.energy > 0;
+    return [self energyValid];
 }
 -(AIShortMatchModel*) aiTOR_GetShortMatchModel{
     return ARR_INDEX_REVERSE(self.shortMatchManager.models, 0);

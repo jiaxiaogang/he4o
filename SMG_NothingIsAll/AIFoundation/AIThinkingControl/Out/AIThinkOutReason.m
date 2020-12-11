@@ -702,6 +702,12 @@
  *      2020.07.06: 当begin为Fo时,直接向上递归;
  */
 -(void) singleLoopBackWithBegin:(TOModelBase*)beginModel {
+    //1. 活跃度判断
+    if (![theTC energyValid]) {
+        return;
+    }
+    [theTC updateEnergy:-0.2f];
+    
     //a. 转移
     if (ISOK(beginModel, TOAlgModel.class)) {
         //a1. avdIsAlg: 再决策,转移至TOAction;

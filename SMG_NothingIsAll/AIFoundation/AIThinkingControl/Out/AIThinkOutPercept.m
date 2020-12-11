@@ -176,6 +176,7 @@
 -(BOOL) perceptPlus:(DemandModel*)demandModel{
     //1. 数据准备;
     if (!demandModel) return false;
+    if (![theTC energyValid]) return false;
     MVDirection direction = [ThinkingUtils havDemand:demandModel.algsType delta:demandModel.delta];
     NSLog(@"\n\n=============================== TOP.P+ ===============================\n任务:%@,发生%ld,方向%ld",demandModel.algsType,(long)demandModel.delta,(long)direction);
     
@@ -197,9 +198,9 @@
         //d. 一次只尝试一条,行为化中途失败时,自然会由流程控制方法递归TOP.P+重来;
         return true;
     } canAss:^BOOL{
-        return [self havEnergy];
+        return [theTC energyValid];
     } updateEnergy:^(CGFloat delta) {
-        [self useEnergy:delta];
+        [theTC updateEnergy:delta];
     }];
     
     //3. 返回P+模式结果;
@@ -232,32 +233,13 @@
         //d. 一条成功,则中止取消通用diff算法的交集循环;
         return success;
     } canAss:^BOOL{
-        return [self havEnergy];
+        return [theTC energyValid];
     } updateEnergy:^(CGFloat delta) {
-        [self useEnergy:delta];
+        [theTC updateEnergy:delta];
     }];
     
     //3. 返回P-模式结果;
     return success;
-}
-
-
-//MARK:===============================================================
-//MARK:                     < private_Method >
-//MARK:===============================================================
-//使用能量
--(void) useEnergy:(CGFloat)delta{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkOutPercept_UpdateEnergy:)]) {
-        [self.delegate aiThinkOutPercept_UpdateEnergy:delta];//思考与决策消耗能量;
-    }
-}
-
-//拥有能量
--(BOOL) havEnergy{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkOutPercept_EnergyValid)]) {
-        return [self.delegate aiThinkOutPercept_EnergyValid];
-    }
-    return false;
 }
 
 @end

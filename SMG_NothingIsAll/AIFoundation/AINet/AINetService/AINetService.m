@@ -68,6 +68,8 @@
                     if (debugMode) {
                         NSLog(@"");
                     }
+                    //7. 有效返回时,消耗0.1活跃度;
+                    [theTC updateEnergy:-0.1f];
                     return relativeFo_ps;
                 }
             }

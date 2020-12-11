@@ -38,7 +38,11 @@
 -(ShortMatchManager*) inModelManager;
 -(DemandManager*) outModelManager;
 
-//Temp
+/**
+ *  MARK:--------------------活跃度--------------------
+ *  @desc 直接开放到public,省得传来传去;
+ */
 -(void) updateEnergy:(CGFloat)delta;
+-(BOOL) energyValid;
 
 @end
