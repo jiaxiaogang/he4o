@@ -128,7 +128,7 @@
     //1. 数据准备
     AIFoNodeBase *curFo = [SMGUtils searchNode:outModel.content_p];
     NSLog(@"\n\n=============================== 行为化 ===============================\n时序:%@->%@\n需要:[%@]",Fo2FStr(curFo),Mvp2Str(curFo.cmvNode_p),Pits2FStr(curAlg_ps));
-    if (!ARRISOK(curAlg_ps) || curFo == nil || ![self.delegate toAction_EnergyValid]) {
+    if (!ARRISOK(curAlg_ps) || curFo == nil || ![theTC energyValid]) {
         outModel.status = TOModelStatus_ActNo;
         [self.delegate toAction_SubModelFailure:outModel];
         return;
@@ -147,7 +147,7 @@
     //3. 触发,首个概念行为化;
     for (AIKVPointer *curAlg_p in curAlg_ps) {
         TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:curAlg_p group:outModel];
-        [self convert2Out_Hav:algOutModel];
+        [self.delegate toAction_SubModelBegin:algOutModel];
         return;
     }
 }
@@ -202,7 +202,7 @@
         //[self.delegate toAction_SubModelActYes:outModel];
         
         //2. 消耗活跃度并输出
-        [self.delegate toAction_updateEnergy:-1.0f];
+        [theTC updateEnergy:-1.0f];
         [self.delegate toAction_Output:@[outModel.content_p]];
         
         //2. 输出后,直接改为Finish,因为行为输出本身暂无需反省类比(但需要推动baseFo的反省类比) (所以直接代替OPushM改状态为Finish);

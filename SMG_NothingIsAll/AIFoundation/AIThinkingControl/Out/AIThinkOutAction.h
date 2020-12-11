@@ -14,13 +14,12 @@
 @class AIShortMatchModel,TOModelBase,TOAlgModel;
 @protocol TOActionDelegate <NSObject>
 
--(void) toAction_updateEnergy:(CGFloat)delta;
--(BOOL) toAction_EnergyValid;
 -(void) toAction_Output:(NSArray*)actions;
 -(AIShortMatchModel*) toAction_RethinkInnerFo:(AIFoNodeBase*)fo;
 -(void) toAction_SubModelFinish:(TOModelBase*)outModel;
 -(void) toAction_SubModelActYes:(TOModelBase*)outModel;
 -(void) toAction_SubModelFailure:(TOModelBase*)outModel;
+-(void) toAction_SubModelBegin:(TOModelBase*)outModel;
 -(void) toAction_ReasonScorePM:(TOAlgModel*)outModel failure:(void(^)())failure notNeedPM:(void(^)())notNeedPM;
 
 @end

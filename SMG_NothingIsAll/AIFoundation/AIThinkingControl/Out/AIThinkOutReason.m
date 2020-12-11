@@ -814,12 +814,6 @@
 //MARK:===============================================================
 //MARK:                     < TOActionDelegate >
 //MARK:===============================================================
--(void)toAction_updateEnergy:(CGFloat)delta{
-    [self.delegate aiThinkOutReason_UpdateEnergy:delta];
-}
--(BOOL)toAction_EnergyValid{
-    return [self.delegate aiThinkOutReason_EnergyValid];
-}
 -(void)toAction_Output:(NSArray *)actions{
     actions = ARRTOOK(actions);
     for (AIKVPointer *algNode_p in actions) {
@@ -838,6 +832,9 @@
 }
 -(void) toAction_SubModelFailure:(TOModelBase*)outModel{
     [self singleLoopBackWithFailureModel:outModel];
+}
+-(void) toAction_SubModelBegin:(TOModelBase*)outModel{
+    [self singleLoopBackWithBegin:outModel];
 }
 -(void) toAction_ReasonScorePM:(TOAlgModel*)outModel failure:(void(^)())failure notNeedPM:(void(^)())notNeedPM{
     [self reasonScorePM_V2:outModel failure:failure success:nil notNeedPM:notNeedPM];
