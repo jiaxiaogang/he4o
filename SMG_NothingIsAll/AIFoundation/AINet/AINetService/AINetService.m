@@ -53,10 +53,15 @@
             BOOL mIsC = ([TOUtils mIsC_2:glConAlg_p c:pAlg.pointer] || [TOUtils mIsC_2:pAlg.pointer c:glConAlg_p]);
             AIAlgNodeBase *item = [SMGUtils searchNode:glConAlg_p];
             if (mIsC) {
-                NSArray *relativeFoPorts = [SMGUtils filterPorts:[AINetUtils refPorts_All4Alg:item] havTypes:@[@(type)] noTypes:nil];
-                NSArray *relativeFo_ps = [SMGUtils convertPointersFromPorts:ARR_SUB(relativeFoPorts, 0, cHavNoneAssFoCount)];
+                NSArray *relativeFoPorts = [AINetUtils refPorts_All4Alg:item];
+                NSArray *relativeFo_ps = [SMGUtils convertPointersFromPorts:relativeFoPorts];
                 NSLog(@"===== glConAlg_Item: %@",AlgP2FStr(glConAlg_p));
-                NSLog(@">> fos: %@",Pits2FStr(relativeFo_ps));
+                
+                for (AIKVPointer *item in relativeFo_ps) {
+                    NSLog(@">> fos: %@ == %@",FoP2FStr(item),item.identifier);
+                    
+                }
+                
             }
         }
         for (AIKVPointer *glConAlg_p in glConAlg_ps) {
@@ -74,6 +79,16 @@
                     [theNV setNodeData:glConAlg_p];
                     [theNV setForceMode:false];
                 }
+                
+                //TODOTOMORROW20201212:
+                //1. 将relativeFo改为逐个返回
+                //2. 并加上不应期
+                //3. 并且判断glConAlg必须在末位时,才有效;
+                
+                //4. 为GL返回结果做流程控制 (输出行为时,要走ActYes流程);
+                //5. 为GL返回结果做流程控制 (Failure时,要递归过来继续GL);
+                //6. ActYes反省类比触发后,要判断是否GL修正有效/符合预期 (并构建SP);
+                //7. OutterPushMidd中,当完成时,要转到PM_GL()中进行理性评价 (以对比是否需要继续修正GL);
                 if (ARRISOK(relativeFo_ps)) {
                     return relativeFo_ps;
                 }
