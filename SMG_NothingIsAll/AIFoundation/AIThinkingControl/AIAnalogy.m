@@ -160,9 +160,9 @@
         //调试短时序; (先仅打外类比日志);
         if (result) {
             if (type == ATSame) {
-                NSLog(@"->> 构建时序:%@->%@",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
+                NSLog(@"->> 外类比_构建时序:%@->%@",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
             }else {
-                if (Log4InOutAna) NSLog(@"-> 内中外类比_构建时序:(%@)%@",[NVHeUtil getLightStr_Value:type algsType:nil dataSource:nil],Fo2FStr(result));
+                if (Log4InOutAna) NSLog(@"-> 内中外类比_构建时序:(%@)%@  <%@ : %@>",[NVHeUtil getLightStr_Value:type algsType:nil dataSource:nil],Fo2FStr(result),Fo2FStr(fo),Fo2FStr(assFo));
             }
         }
     }
@@ -217,7 +217,7 @@
                 
                 //5. 内类比大小;
                 NSArray *rangeAlg_ps = ARR_SUB(protoFo.content_ps, i + 1, lastIndex - i - 1);
-                [self analogyInner_GL:protoFo algA:algA algB:algB rangeAlg_ps:rangeAlg_ps partAlg_ps:mModel.partAlg_ps];
+                [self analogyInner_GL:protoFo algA:algA algB:algB rangeAlg_ps:rangeAlg_ps mModel:mModel];
             }
         }
     }
@@ -246,7 +246,7 @@
                 
                 //11. 内类比有无;
                 NSArray *rangeAlg_ps = ARR_SUB(matchAFo.content_ps, i + 1, lastIndex - i - 1);
-                [self analogyInner_HN:matchAFo algA:algA algB:algB rangeAlg_ps:rangeAlg_ps partAlg_ps:mModel.partAlg_ps];
+                [self analogyInner_HN:matchAFo algA:algA algB:algB rangeAlg_ps:rangeAlg_ps mModel:mModel];
             }
         }
     }
@@ -256,7 +256,7 @@
  *  MARK:--------------------内类比大小--------------------
  *  @param checkFo : 内类比大小时,应该使用protoFo来做,因为内含了完善而原生的稀疏码信息;
  */
-+(void) analogyInner_GL:(AIFoNodeBase*)checkFo algA:(AIAlgNodeBase*)algA algB:(AIAlgNodeBase*)algB rangeAlg_ps:(NSArray*)rangeAlg_ps partAlg_ps:(NSArray*)partAlg_ps{
++(void) analogyInner_GL:(AIFoNodeBase*)checkFo algA:(AIAlgNodeBase*)algA algB:(AIAlgNodeBase*)algB rangeAlg_ps:(NSArray*)rangeAlg_ps mModel:(AIShortMatchModel*)mModel{
     //1. 数据检查
     rangeAlg_ps = ARRTOOK(rangeAlg_ps);
     if (!algA || !algB) {
@@ -280,7 +280,7 @@
         if (Log4InAnaGL) NSLog(@"------ 内类比大小 ------\n%@ -> %@ From(前:A%ld后:A%ld)",Pit2FStr(a_p),Pit2FStr(b_p),(long)algA.pointer.pointerId,(long)algB.pointer.pointerId);
         //d. 构建小/大;
         if (type != ATDefault) {
-            [self analogyInner_Creater:type algsType:a_p.algsType dataSource:a_p.dataSource frontConAlg:algA backConAlg:algB rangeAlg_ps:rangeAlg_ps conFo:checkFo partAlg_ps:partAlg_ps];
+            [self analogyInner_Creater:type algsType:a_p.algsType dataSource:a_p.dataSource frontConAlg:algA backConAlg:algB rangeAlg_ps:rangeAlg_ps conFo:checkFo mModel:mModel];
         }
     }
 }
@@ -293,7 +293,7 @@
  *  @version
  *      20200421 - 将a/bFocusAlg改成直接使用algA/algB (因为现在protoFo的元素即直接是matchAlg);
  */
-+(void) analogyInner_HN:(AIFoNodeBase*)checkFo algA:(AIAlgNodeBase*)algA algB:(AIAlgNodeBase*)algB rangeAlg_ps:(NSArray*)rangeAlg_ps partAlg_ps:(NSArray*)partAlg_ps{
++(void) analogyInner_HN:(AIFoNodeBase*)checkFo algA:(AIAlgNodeBase*)algA algB:(AIAlgNodeBase*)algB rangeAlg_ps:(NSArray*)rangeAlg_ps mModel:(AIShortMatchModel*)mModel{
     //1. 数据检查
     if (!algA || !algB) return;
     rangeAlg_ps = ARRTOOK(rangeAlg_ps);
@@ -316,13 +316,13 @@
     if (Log4InAnaHN) NSLog(@"------ 内类比有无 ------\n[%@] -> [%@]",Pits2FStr(aSub_ps),Pits2FStr(bSub_ps));
     for (AIKVPointer *sub_p in aSub_ps) {
         AIAlgNodeBase *target = [SMGUtils searchNode:sub_p];
-        [self analogyInner_Creater:ATNone algsType:sub_p.algsType dataSource:sub_p.dataSource frontConAlg:target backConAlg:target rangeAlg_ps:rangeAlg_ps conFo:checkFo partAlg_ps:partAlg_ps];
+        [self analogyInner_Creater:ATNone algsType:sub_p.algsType dataSource:sub_p.dataSource frontConAlg:target backConAlg:target rangeAlg_ps:rangeAlg_ps conFo:checkFo mModel:mModel];
     }
 
     //4. b变有
     for (AIKVPointer *sub_p in bSub_ps) {
         AIAlgNodeBase *target = [SMGUtils searchNode:sub_p];
-        [self analogyInner_Creater:ATHav algsType:sub_p.algsType dataSource:sub_p.dataSource frontConAlg:target backConAlg:target rangeAlg_ps:rangeAlg_ps conFo:checkFo partAlg_ps:partAlg_ps];
+        [self analogyInner_Creater:ATHav algsType:sub_p.algsType dataSource:sub_p.dataSource frontConAlg:target backConAlg:target rangeAlg_ps:rangeAlg_ps conFo:checkFo mModel:mModel];
     }
 }
 
@@ -355,7 +355,7 @@
  *  @bug
  *      2020.06.19: 调试找不到glAlg的bug (经查,内类比的两个概念中,其中一个没有"距离"稀疏码,导致无法类比出"距离"GL节点,查为什么n20p2BUG3会有距50的节点参与到内类比中来?) (过期BUG,不必再改);
  */
-+(AINetAbsFoNode*)analogyInner_Creater:(AnalogyType)type algsType:(NSString*)algsType dataSource:(NSString*)dataSource frontConAlg:(AIAlgNodeBase*)frontConAlg backConAlg:(AIAlgNodeBase*)backConAlg rangeAlg_ps:(NSArray*)rangeAlg_ps conFo:(AIFoNodeBase*)conFo partAlg_ps:(NSArray*)partAlg_ps{
++(AINetAbsFoNode*)analogyInner_Creater:(AnalogyType)type algsType:(NSString*)algsType dataSource:(NSString*)dataSource frontConAlg:(AIAlgNodeBase*)frontConAlg backConAlg:(AIAlgNodeBase*)backConAlg rangeAlg_ps:(NSArray*)rangeAlg_ps conFo:(AIFoNodeBase*)conFo mModel:(AIShortMatchModel*)mModel{
     //1. 数据检查
     rangeAlg_ps = ARRTOOK(rangeAlg_ps);
     algsType = STRTOOK(algsType);
@@ -384,7 +384,7 @@
     }
     
     //7. 内中有外
-    [self analogyInner_Outside_V2:result type:type partAlg_ps:partAlg_ps glhnAlg:glAlg];
+    [self analogyInner_Outside_V2:result type:type mModel:mModel glhnAlg:glAlg];
     return result;
 }
 
@@ -394,19 +394,41 @@
  *  2. 复用外类比方法;
  *  3. 一个抽象了a1-range-a2的时序,必然是抽象的,必然是硬盘网络中的;所以此处不必考虑联想内存网络中的assAbFo;
  *  @param glhnAlg : 即glhn节点,根据之索引取conPorts,可取到所有"有无大小"概念经历;
- *  @param partAlg_ps : protoAlg识别到的局部匹配大全 (亦有全含的,排前面);
+ *  @param mModel : 最后一帧短时InModel (主要使用protoAlg识别到的局部匹配大全 (亦有全含的,排前面));
  *  @version
  *      2020.03.29: 将assFo依range来联想,而非"有/无/大/小";以解决类比抽象时容易过度收束的问题;
  *      2020.10.27: 新增partAlg_ps参数,找出最相似的assFo,再进行类比 (旧做法是只限Inner同类) (参考21102);
  *      2020.11.02: V2_使之按照range反序优先索引,改为partAlgs优先索引 (参考:21113);
  *      2020.11.05: 解决assFoPorts永远为0条的问题 (因为原先conFo不是gl时序),改为range+backConAlg后没此问题了 (参考21115);
  *      2020.11.06: 内中外类比,backConAlg的抽象节点newAbsA,使之抽象指向backAlg(glAlg) (参考21115);
+ *      2020.12.12: 将partAlg_ps取交集,改成matchAlg_ps取交集,即索引参考变了 (索引参考21113,本次改动参考21194)
  */
-+(void)analogyInner_Outside_V2:(AINetAbsFoNode*)abFo type:(AnalogyType)type partAlg_ps:(NSArray*)partAlg_ps glhnAlg:(AIAlgNodeBase*)glhnAlg{
++(void)analogyInner_Outside_V2:(AINetAbsFoNode*)abFo type:(AnalogyType)type mModel:(AIShortMatchModel*)mModel glhnAlg:(AIAlgNodeBase*)glhnAlg{
     
     //1. 取所有GL经历 & 与此次类似GL经历;
+    NSArray *matchAlg_ps = [SMGUtils convertPointersFromNodes:mModel.matchAlgs];
     NSArray *backConAlg_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:glhnAlg]];
-    NSArray *validBackConAlg_ps = [SMGUtils filterSame_ps:partAlg_ps parent_ps:backConAlg_ps];
+    NSArray *validBackConAlg_ps = [SMGUtils filterSame_ps:matchAlg_ps parent_ps:backConAlg_ps];
+    
+    NSLog(@"tmp ===============================START");
+    
+    for (AIKVPointer *item in backConAlg_ps) {
+        NSLog(@"tmp1 glConAlg:%@",Pit2FStr(item));
+    }
+    
+    for (AIKVPointer *item in mModel.partAlg_ps) {
+        NSLog(@"tmp2 partAlg:%@",Pit2FStr(item));
+    }
+    
+    for (AIKVPointer *item in [SMGUtils convertPointersFromNodes:mModel.matchAlgs]) {
+        NSLog(@"tmp3 matchAlg:%@",Pit2FStr(item));
+    }
+    
+    for (AIKVPointer *item in validBackConAlg_ps) {
+        NSLog(@"tmp4 交集:%@",Pit2FStr(item));
+    }
+    
+    NSLog(@"tmp ===============================END");
     
     //2. 类比准备_对与此次类似的前(3-4/*有可能与abFo重复一条*/)条;
     validBackConAlg_ps = ARR_SUB(validBackConAlg_ps, 0, 3);
