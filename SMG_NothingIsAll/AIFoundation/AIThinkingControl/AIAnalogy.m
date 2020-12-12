@@ -410,25 +410,15 @@
     NSArray *backConAlg_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:glhnAlg]];
     NSArray *validBackConAlg_ps = [SMGUtils filterSame_ps:matchAlg_ps parent_ps:backConAlg_ps];
     
-    NSLog(@"tmp ===============================START");
-    
-    for (AIKVPointer *item in backConAlg_ps) {
-        NSLog(@"tmp1 glConAlg:%@",Pit2FStr(item));
-    }
-    
-    for (AIKVPointer *item in mModel.partAlg_ps) {
-        NSLog(@"tmp2 partAlg:%@",Pit2FStr(item));
-    }
-    
-    for (AIKVPointer *item in [SMGUtils convertPointersFromNodes:mModel.matchAlgs]) {
-        NSLog(@"tmp3 matchAlg:%@",Pit2FStr(item));
+    //调试21194BUG;
+    NSArray *validPart_ps = [SMGUtils filterSame_ps:mModel.partAlg_ps parent_ps:backConAlg_ps];
+    for (AIKVPointer *item in validPart_ps) {
+        NSLog(@"tmp4 part交集:%@",Pit2FStr(item));
     }
     
     for (AIKVPointer *item in validBackConAlg_ps) {
-        NSLog(@"tmp4 交集:%@",Pit2FStr(item));
+        NSLog(@"tmp4 match交集:%@",Pit2FStr(item));
     }
-    
-    NSLog(@"tmp ===============================END");
     
     //2. 类比准备_对与此次类似的前(3-4/*有可能与abFo重复一条*/)条;
     validBackConAlg_ps = ARR_SUB(validBackConAlg_ps, 0, 3);
@@ -439,6 +429,11 @@
         NSArray *assFoPorts = [AINetUtils refPorts_All4Alg:[SMGUtils searchNode:validBackCon_p]];
         assFoPorts = [SMGUtils filterPorts:assFoPorts havTypes:@[@(type)] noTypes:nil];
         if (Log4InOutAna) NSLog(@"------ 内中外:%@ 引用同类数:%lu",AlgP2FStr(validBackCon_p),(long)assFoPorts.count);
+        
+        //TODOTOMORROW20201212:
+        //1. 此处A169(速0,高5,皮0,向↖).refPorts永远是0,因为从未内中外类比过,所以就是0,也没法进入内中外类比;
+        //2. 一个先有鸡还是先有蛋的问题,所以此处应先由partAlgs来触发,再转由matchAlgs来增强;
+        //3. 即partAlgs支持几条内中外类比,matchAlgs也支持几条;
         
         //4. 类比准备_取出assFo (不能是abFo);
         for (AIPort *assFoPort in assFoPorts) {
