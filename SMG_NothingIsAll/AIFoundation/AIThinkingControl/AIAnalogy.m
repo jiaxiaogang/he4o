@@ -163,6 +163,17 @@
                 NSLog(@"->> 外类比_构建时序:%@->%@",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
             }else {
                 if (Log4InOutAna) NSLog(@"-> 内中外类比_构建时序:(%@)%@  <%@ : %@>",[NVHeUtil getLightStr_Value:type algsType:nil dataSource:nil],Fo2FStr(result),Fo2FStr(fo),Fo2FStr(assFo));
+                
+                for (AIKVPointer *item in result.content_ps) {
+                    if (item.pointerId == 169 && type == ATLess) {
+                        NSArray *assFoPorts = [AINetUtils refPorts_All4Alg:[SMGUtils searchNode:item]];
+                        NSArray *valids = [SMGUtils filterPorts:assFoPorts havTypes:@[@(type)] noTypes:nil];
+                        for (AIPort *item in valids) {
+                            NSLog(@"===%@",Pit2FStr(item.target_p));
+                        }
+                        NSLog(@"");
+                    }
+                }
             }
         }
     }
@@ -416,23 +427,21 @@
     [valids addObjectsFromArray:ARR_SUB(validPart_ps, 0, 3)];
     [valids addObjectsFromArray:ARR_SUB(validMatch_ps, 0, 3)];
     
-    //调试21194BUG;
-    for (AIKVPointer *item in validPart_ps) NSLog(@"tmp4 part交集:%@",Pit2FStr(item));
-    NSLog(@"\n\n\n");
-    for (AIKVPointer *item in validMatch_ps) NSLog(@"tmp4 match交集:%@",Pit2FStr(item));
-    
-    if (ARRISOK(validMatch_ps) || ARRISOK(validPart_ps)) {
-        NSLog(@"");
-    }
-    
     //2. 类比准备_对与此次类似的前(3-4/*有可能与abFo重复一条*/)条;
     if (Log4InOutAna) NSLog(@"--------- 内中外 ---------\n%@ 经验数:%ld",Fo2FStr(abFo),(long)valids.count);
     
     //3. 类比准备_依次取出有效的fo;
     for (AIKVPointer *validBackCon_p in valids) {
         NSArray *assFoPorts = [AINetUtils refPorts_All4Alg:[SMGUtils searchNode:validBackCon_p]];
+        if (validBackCon_p.pointerId == 169 && type == ATLess) {
+            NSLog(@"");
+        }
         assFoPorts = [SMGUtils filterPorts:assFoPorts havTypes:@[@(type)] noTypes:nil];
-        if (Log4InOutAna) NSLog(@"------ 内中外:%@ 引用同类数:%lu",AlgP2FStr(validBackCon_p),(long)assFoPorts.count);
+        
+        //TODOTOMORROW20201213: 测下,此处是否需要判断下validBackCon_p是否处在assFo的最后一位;
+        //因为最后一位back是它,才有效;
+        
+        if (Log4InOutAna) NSLog(@"------ 内中外根据glConAlg:%@ 引用同类数:%lu",AlgP2FStr(validBackCon_p),(long)assFoPorts.count);
         
         //4. 类比准备_取出assFo (不能是abFo);
         for (AIPort *assFoPort in assFoPorts) {
