@@ -49,21 +49,22 @@
         NSArray *glConAlg_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:glAlg]];
         
         //5. 这些节点中,哪个与pAlg有抽具象关系,就返回哪个;
-        for (AIKVPointer *glConAlg_p in glConAlg_ps) {
-            BOOL mIsC = ([TOUtils mIsC_2:glConAlg_p c:pAlg.pointer] || [TOUtils mIsC_2:pAlg.pointer c:glConAlg_p]);
-            AIAlgNodeBase *item = [SMGUtils searchNode:glConAlg_p];
-            if (mIsC) {
-                NSArray *relativeFoPorts = [AINetUtils refPorts_All4Alg:item];
-                NSArray *relativeFo_ps = [SMGUtils convertPointersFromPorts:relativeFoPorts];
-                NSLog(@"===== glConAlg_Item: %@",AlgP2FStr(glConAlg_p));
-                
-                for (AIKVPointer *item in relativeFo_ps) {
-                    NSLog(@">> fos: %@ == %@",FoP2FStr(item),item.identifier);
-                    
+        
+        if (type == ATLess) {
+            for (AIKVPointer *glConAlg_p in glConAlg_ps) {
+                BOOL mIsC = ([TOUtils mIsC_2:glConAlg_p c:pAlg.pointer] || [TOUtils mIsC_2:pAlg.pointer c:glConAlg_p]);
+                AIAlgNodeBase *item = [SMGUtils searchNode:glConAlg_p];
+                if (mIsC) {
+                    NSArray *relativeFo_ps = Ports2Pits([SMGUtils filterPorts:[AINetUtils refPorts_All4Alg:item] havTypes:@[@(type)] noTypes:nil]);
+                    NSLog(@"===== glConAlg_Item: %@",AlgP2FStr(glConAlg_p));
+                    for (AIKVPointer *item in relativeFo_ps) {
+                        NSLog(@">> fos: %@ == %@",FoP2FStr(item),item.identifier);
+                    }
                 }
-                
             }
+            NSLog(@"");
         }
+        
         for (AIKVPointer *glConAlg_p in glConAlg_ps) {
             if (Log4GetInnerAlg) NSLog(@"-> try_getInnerAlg结果B:%@ 结果具象C:%@",Alg2FStr(glAlg),AlgP2FStr(glConAlg_p));
             if ([TOUtils mIsC_2:glConAlg_p c:pAlg.pointer] || [TOUtils mIsC_2:pAlg.pointer c:glConAlg_p]) {
