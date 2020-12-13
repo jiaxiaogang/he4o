@@ -106,8 +106,6 @@
     }
 
     //3. 外类比构建
-    //TODO; 在精细化训练第6步,valueSames长度为7,构建后从可视化去看,其概念长度却是0;
-    NSLog(@"外类比sames:%@ from:< %@ : %@>",Pits2FStr(orderSames),Fo2FStr(fo),Fo2FStr(assFo));
     [self analogyOutside_Creater:orderSames fo:fo assFo:assFo type:type];
 }
 
@@ -164,17 +162,6 @@
                 NSLog(@"->> 外类比_构建时序:%@->%@",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
             }else if(type == ATGreater || type == ATLess){
                 if (Log4InAnaGL) NSLog(@"-> 内中外类比_构建时序:(%@)%@  <%@ : %@>",[NVHeUtil getLightStr_Value:type algsType:nil dataSource:nil],Fo2FStr(result),Fo2FStr(fo),Fo2FStr(assFo));
-                
-                for (AIKVPointer *item in result.content_ps) {
-                    if (item.pointerId == 57) {
-                        NSArray *assFoPorts = [AINetUtils refPorts_All4Alg:[SMGUtils searchNode:item]];
-                        NSArray *valids = [SMGUtils filterPorts:assFoPorts havTypes:@[@(type)] noTypes:nil];
-                        for (AIPort *item in valids) {
-                            NSLog(@"===%@",Pit2FStr(item.target_p));
-                        }
-                        NSLog(@"");
-                    }
-                }
             }else{
                 if (Log4InOutAna) NSLog(@"-> 内中外类比_构建时序:(%@)%@  <%@ : %@>",[NVHeUtil getLightStr_Value:type algsType:nil dataSource:nil],Fo2FStr(result),Fo2FStr(fo),Fo2FStr(assFo));
             }
@@ -317,9 +304,9 @@
     AIAlgNodeBase *bFocusAlg = algB;
     
     //2. 收集a和b的概念辐射合集 (取自身 + 自身的一层抽象);
-    NSMutableArray *aSum_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:aFocusAlg]];
+    NSMutableArray *aSum_ps = Ports2Pits([SMGUtils filterPorts_Normal:[AINetUtils absPorts_All:aFocusAlg]]);
     [aSum_ps addObject:aFocusAlg.pointer];
-    NSMutableArray *bSum_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:bFocusAlg]];
+    NSMutableArray *bSum_ps = Ports2Pits([SMGUtils filterPorts_Normal:[AINetUtils absPorts_All:bFocusAlg]]);
     [bSum_ps addObject:bFocusAlg.pointer];
 
     //2. 取a差集和b差集;
@@ -418,47 +405,46 @@
  *      2020.12.12: 将partAlg_ps取交集,改成matchAlg_ps取交集,即索引参考变了 (索引参考21113,本次改动参考21194)
  *      2020.12.13: 使partAlg_ps/matchAlg_ps与conAlg_ps取交集时,保持原概念匹配的有序 (参考21194-todo2);
  *      2020.12.13: 同时支持parts和matchs,各取三条进行assFo联想 (参考21194-todo1);
+ *      2020.12.13: assFo中,索引alg不在最后一位时,跳过不进行内中外类比 (因为调试测得有非末位被联想到的情况,参考代码valid非末位);
  */
 +(void)analogyInner_Outside_V2:(AINetAbsFoNode*)abFo type:(AnalogyType)type mModel:(AIShortMatchModel*)mModel glhnAlg:(AIAlgNodeBase*)glhnAlg{
     //1. 取所有GL经历 & 与此次类似GL经历;
-    NSArray *backConAlg_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:glhnAlg]];
-    NSArray *validPart_ps = [SMGUtils filterSame_ps:backConAlg_ps parent_ps:mModel.partAlg_ps];
-    NSArray *validMatch_ps = [SMGUtils filterSame_ps:backConAlg_ps parent_ps:[SMGUtils convertPointersFromNodes:mModel.matchAlgs]];
+    NSArray *glConAlg_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:glhnAlg]];
+    NSArray *validPart_ps = [SMGUtils filterSame_ps:glConAlg_ps parent_ps:mModel.partAlg_ps];
+    NSArray *validMatch_ps = [SMGUtils filterSame_ps:glConAlg_ps parent_ps:[SMGUtils convertPointersFromNodes:mModel.matchAlgs]];
     
     //2. validParts和validMatchs各收集3条;
     NSMutableArray *valids = [[NSMutableArray alloc] init];
-    [valids addObjectsFromArray:ARR_SUB(validPart_ps, 0, 3)];
-    [valids addObjectsFromArray:ARR_SUB(validMatch_ps, 0, 3)];
+    [valids addObjectsFromArray:ARR_SUB(validPart_ps, 0, 2)];
+    [valids addObjectsFromArray:ARR_SUB(validMatch_ps, 0, 2)];
     
-    //2. 类比准备_对与此次类似的前(3-4/*有可能与abFo重复一条*/)条;
+    //2. 类比准备_依次取出有效的fo_对与此次类似的前(3-4/*有可能与abFo重复一条*/)条;
     if (Log4InOutAna) NSLog(@"--------- 内中外 ---------\n%@ 经验数:%ld",Fo2FStr(abFo),(long)valids.count);
-    
-    //3. 类比准备_依次取出有效的fo;
-    for (AIKVPointer *validBackCon_p in valids) {
-        NSArray *assFoPorts = [AINetUtils refPorts_All4Alg:[SMGUtils searchNode:validBackCon_p]];
+    for (AIKVPointer *valid in valids) {
+        NSArray *assFoPorts = [AINetUtils refPorts_All4Alg:[SMGUtils searchNode:valid]];
         assFoPorts = [SMGUtils filterPorts:assFoPorts havTypes:@[@(type)] noTypes:nil];
-        
-        //TODOTOMORROW20201213: 测下,此处是否需要判断下validBackCon_p是否处在assFo的最后一位;
-        //因为最后一位back是它,才有效;
-        
-        if (Log4InOutAna) NSLog(@"------ 内中外根据glConAlg:%@ 引用同类数:%lu",AlgP2FStr(validBackCon_p),(long)assFoPorts.count);
+        assFoPorts = ARR_SUB(assFoPorts, 0, 3);
+        if (Log4InOutAna) NSLog(@"------ 内中外根据glConAlg:%@ 引用同类数:%lu",AlgP2FStr(valid),(long)assFoPorts.count);
         
         //4. 类比准备_取出assFo (不能是abFo);
         for (AIPort *assFoPort in assFoPorts) {
-            if (![assFoPort.target_p isEqual:abFo.pointer]) {
-                AIFoNodeBase *assFo = [SMGUtils searchNode:assFoPort.target_p];
+            //4. abFo和assFo一致时无效;
+            if ([assFoPort.target_p isEqual:abFo.pointer]) continue;
+            AIFoNodeBase *assFo = [SMGUtils searchNode:assFoPort.target_p];
+            
+            //4. 2020.12.13: valid非末位(backAlg),则无效;
+            if (![valid isEqual:ARR_INDEX_REVERSE(assFo.content_ps, 0)]) continue;
+            
+            //5. 对abFo和assAbFo进行类比;
+            if (Log4InOutAna) NSLog(@"\n------ 内中外类比 ------\n   Fo: %@ \nassFo: %@",Fo2FStr(abFo),Fo2FStr(assFo));
+            [self analogyOutside:abFo assFo:assFo canAss:nil updateEnergy:nil type:type createAbsAlgBlock:^(AIAlgNodeBase *createAlg, NSInteger foIndex, NSInteger assFoIndex) {
                 
-                //5. 对abFo和assAbFo进行类比;
-                if (Log4InOutAna) NSLog(@"\n------ 内中外类比 ------\n   Fo: %@ \nassFo: %@",Fo2FStr(abFo),Fo2FStr(assFo));
-                [self analogyOutside:abFo assFo:assFo canAss:nil updateEnergy:nil type:type createAbsAlgBlock:^(AIAlgNodeBase *createAlg, NSInteger foIndex, NSInteger assFoIndex) {
-                    
-                    //6. 当abFo.lastAlg和assFo.lastAlg类比抽象得到absA后,应该让absA抽象指向glAlg (参考21115);
-                    if (foIndex == abFo.count - 1 && assFoIndex == assFo.count - 1) {
-                        if (Log4InOutAna) NSLog(@"-> 内中外类比_关联:%@ ABSTO:%@",Alg2FStr(createAlg),Alg2FStr(glhnAlg));
-                        [AINetUtils relateAlgAbs:(AIAbsAlgNode*)glhnAlg conNodes:@[createAlg] isNew:false];
-                    }
-                }];
-            }
+                //6. 当abFo.lastAlg和assFo.lastAlg类比抽象得到absA后,应该让absA抽象指向glAlg (参考21115);
+                if (foIndex == abFo.count - 1 && assFoIndex == assFo.count - 1) {
+                    if (Log4InOutAna) NSLog(@"-> 内中外类比_关联:%@ ABSTO:%@",Alg2FStr(createAlg),Alg2FStr(glhnAlg));
+                    [AINetUtils relateAlgAbs:(AIAbsAlgNode*)glhnAlg conNodes:@[createAlg] isNew:false];
+                }
+            }];
         }
     }
 }

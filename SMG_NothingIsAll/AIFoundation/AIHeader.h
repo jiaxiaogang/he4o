@@ -128,6 +128,8 @@
 
 //稀疏码值转字符串
 #define Data2FStr(data,at,ds) [NVHeUtil getLightStr_Value:data algsType:at dataSource:ds]
+#define Ports2Pits(ports) [SMGUtils convertPointersFromPorts:ports]
+
 
 
 /**
@@ -214,9 +216,9 @@
 #define Log4MFo false
 //内类比
 #define Log4InAna true
-#define Log4InOutAna false
+#define Log4InOutAna true
 #define Log4InAnaGL true
-#define Log4InAnaHN false
+#define Log4InAnaHN true
 //正向类比
 #define Log4SameAna false
 //反向类比
