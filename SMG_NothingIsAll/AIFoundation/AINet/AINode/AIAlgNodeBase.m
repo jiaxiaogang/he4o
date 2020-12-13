@@ -11,8 +11,8 @@
 @implementation AIAlgNodeBase
 
 -(NSMutableArray *)refPorts{
-    if (_refPorts == nil) {
-        _refPorts = [NSMutableArray new];
+    if (!ISOK(_refPorts, NSMutableArray.class)) {
+        _refPorts = [[NSMutableArray alloc] initWithArray:_refPorts];
     }
     return _refPorts;
 }

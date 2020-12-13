@@ -12,8 +12,8 @@
 @implementation AINodeBase
 
 -(NSMutableArray *)absPorts{
-    if (_absPorts == nil) {
-        _absPorts = [NSMutableArray new];
+    if (!ISOK(_absPorts, NSMutableArray.class)) {
+        _absPorts = [[NSMutableArray alloc] initWithArray:_absPorts];
     }
     return _absPorts;
 }

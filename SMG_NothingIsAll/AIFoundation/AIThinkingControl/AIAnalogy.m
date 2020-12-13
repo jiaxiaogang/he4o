@@ -107,6 +107,7 @@
 
     //3. 外类比构建
     //TODO; 在精细化训练第6步,valueSames长度为7,构建后从可视化去看,其概念长度却是0;
+    NSLog(@"外类比sames:%@ from:< %@ : %@>",Pits2FStr(orderSames),Fo2FStr(fo),Fo2FStr(assFo));
     [self analogyOutside_Creater:orderSames fo:fo assFo:assFo type:type];
 }
 
@@ -161,11 +162,11 @@
         if (result) {
             if (type == ATSame) {
                 NSLog(@"->> 外类比_构建时序:%@->%@",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
-            }else {
-                if (Log4InOutAna) NSLog(@"-> 内中外类比_构建时序:(%@)%@  <%@ : %@>",[NVHeUtil getLightStr_Value:type algsType:nil dataSource:nil],Fo2FStr(result),Fo2FStr(fo),Fo2FStr(assFo));
+            }else if(type == ATGreater || type == ATLess){
+                if (Log4InAnaGL) NSLog(@"-> 内中外类比_构建时序:(%@)%@  <%@ : %@>",[NVHeUtil getLightStr_Value:type algsType:nil dataSource:nil],Fo2FStr(result),Fo2FStr(fo),Fo2FStr(assFo));
                 
                 for (AIKVPointer *item in result.content_ps) {
-                    if (item.pointerId == 169 && type == ATLess) {
+                    if (item.pointerId == 57) {
                         NSArray *assFoPorts = [AINetUtils refPorts_All4Alg:[SMGUtils searchNode:item]];
                         NSArray *valids = [SMGUtils filterPorts:assFoPorts havTypes:@[@(type)] noTypes:nil];
                         for (AIPort *item in valids) {
@@ -174,6 +175,8 @@
                         NSLog(@"");
                     }
                 }
+            }else{
+                if (Log4InOutAna) NSLog(@"-> 内中外类比_构建时序:(%@)%@  <%@ : %@>",[NVHeUtil getLightStr_Value:type algsType:nil dataSource:nil],Fo2FStr(result),Fo2FStr(fo),Fo2FStr(assFo));
             }
         }
     }
@@ -288,7 +291,7 @@
         //a. 对比微信息 (MARK_VALUE:如微信息去重功能去掉,此处要取值再进行对比)
         AnalogyType type = [ThinkingUtils compare:a_p valueB_p:b_p];
         //b. 调试a_p和b_p是否合格,应该同标识,同文件夹名称,不同pId;
-        if (Log4InAnaGL) NSLog(@"------ 内类比大小 ------\n%@ -> %@ From(前:A%ld后:A%ld)",Pit2FStr(a_p),Pit2FStr(b_p),(long)algA.pointer.pointerId,(long)algB.pointer.pointerId);
+        if (Log4InAnaGL) NSLog(@"> 比到大小: %@ -> %@ From(前:A%ld后:A%ld)",Pit2FStr(a_p),Pit2FStr(b_p),(long)algA.pointer.pointerId,(long)algB.pointer.pointerId);
         //d. 构建小/大;
         if (type != ATDefault) {
             [self analogyInner_Creater:type algsType:a_p.algsType dataSource:a_p.dataSource frontConAlg:algA backConAlg:algB rangeAlg_ps:rangeAlg_ps conFo:checkFo mModel:mModel];
@@ -433,9 +436,6 @@
     //3. 类比准备_依次取出有效的fo;
     for (AIKVPointer *validBackCon_p in valids) {
         NSArray *assFoPorts = [AINetUtils refPorts_All4Alg:[SMGUtils searchNode:validBackCon_p]];
-        if (validBackCon_p.pointerId == 169 && type == ATLess) {
-            NSLog(@"");
-        }
         assFoPorts = [SMGUtils filterPorts:assFoPorts havTypes:@[@(type)] noTypes:nil];
         
         //TODOTOMORROW20201213: 测下,此处是否需要判断下validBackCon_p是否处在assFo的最后一位;

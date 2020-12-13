@@ -11,8 +11,8 @@
 @implementation AIAbsAlgNode
 
 -(NSMutableArray *)conPorts{
-    if (_conPorts == nil) {
-        _conPorts = [NSMutableArray new];
+    if (!ISOK(_conPorts, NSMutableArray.class)) {
+        _conPorts = [[NSMutableArray alloc] initWithArray:_conPorts];
     }
     return _conPorts;
 }
