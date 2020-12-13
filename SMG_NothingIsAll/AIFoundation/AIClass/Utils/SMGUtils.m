@@ -631,11 +631,6 @@
     return result;
 }
 
-+(NSArray*) filterSame_ps:(NSArray*)a_ps parent_ps:(NSArray*)b_ps{
-    return [self filterPointers:a_ps b_ps:b_ps checkItemValid:^BOOL(AIKVPointer *a_p, AIKVPointer *b_p) {
-        return a_p ? [a_p isEqual:b_p] : false;
-    }].allValues;
-}
 +(AIKVPointer*) filterSameIdentifier_p:(AIKVPointer*)a_p b_ps:(NSArray*)b_ps{
     if (!a_p) return nil;
     return ARR_INDEX([self filterSameIdentifier_Dic:@[a_p] b_ps:b_ps].allValues, 0);
@@ -686,10 +681,19 @@
     return result;
 }
 
+/**
+ *  MARK:--------------------交集--------------------
+ *  @version
+ *      2020.12.13: 使之改为保持parent_ps有序 (以前的旧有方式是dic筛选,会使无序,导致原有序被打乱,比如参考21194的BUG);
+ */
++(NSArray*) filterSame_ps:(NSArray*)a_ps parent_ps:(NSArray*)b_ps{
+    return [self filterArr:b_ps checkValid:^BOOL(id item) {
+        return [a_ps containsObject:item];
+    }];
+}
 +(NSMutableArray*) filterArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid {
     return [SMGUtils filterArr:arr checkValid:checkValid limit:NSIntegerMax];
 }
-
 +(NSMutableArray*) filterArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid limit:(NSInteger)limit{
     //1. 数据准备
     arr = ARRTOOK(arr);

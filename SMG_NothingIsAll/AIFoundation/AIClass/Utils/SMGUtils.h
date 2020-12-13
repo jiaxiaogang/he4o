@@ -206,7 +206,6 @@
  *  MARK:--------------------取交集--------------------
  *  @result notnull
  */
-+(NSArray*) filterSame_ps:(NSArray*)a_ps parent_ps:(NSArray*)b_ps;
 //从bps中,找到与ap同区的bItem返回;
 +(AIKVPointer*) filterSameIdentifier_p:(AIKVPointer*)a_p b_ps:(NSArray*)b_ps;
 //从bps中,找到与aps同区的 所有映射结果 返回 (根据key去重);
@@ -234,6 +233,7 @@
  *  MARK:--------------------筛选数组--------------------
  *  @result notnull
  */
++(NSArray*) filterSame_ps:(NSArray*)a_ps parent_ps:(NSArray*)b_ps;
 +(NSMutableArray*) filterArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid;
 +(NSMutableArray*) filterArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid limit:(NSInteger)limit;
 
