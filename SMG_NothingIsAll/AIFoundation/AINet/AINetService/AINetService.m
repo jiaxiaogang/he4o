@@ -30,9 +30,10 @@
  *      2020.12.03: 支持多路glAlgCon_ps返回,或者判断理性稳定性,比如太抽象概念,向任何方向飞都有可能更远或更近;
  *  @version
  *      2020.11.06: 核对21115逻辑没问题 & 直接取返回relativeFo_ps;
+ *      2020.12.14: 支持except_ps不应期 (参考21183);
  *  @result : 返回relativeFo_ps,用backConAlg节点,由此节点取refPorts,再筛选type,可取到glFo经历;
  */
-+(NSArray*) getInner1Alg:(AIAlgNodeBase*)pAlg vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type{
++(NSArray*) getInner1Alg:(AIAlgNodeBase*)pAlg vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps{
     //1. 数据检查hAlg_根据type和value_p找ATHav
     BOOL debugMode = (type == ATGreater || type == ATLess);
     if (Log4GetInnerAlg) NSLog(@"--> getInnerAlg:%@ ATDS:%@&%@ 参照:%@",[NVHeUtil getLightStr_Value:type algsType:@"" dataSource:@""],vAT,vDS,Alg2FStr(pAlg));

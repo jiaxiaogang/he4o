@@ -276,7 +276,7 @@
         }
         
         //4. 第3级: 数据检查hAlg_根据type和value_p找ATHav
-        NSArray *relativeFos = [AINetService getInner1Alg:curAlg vAT:outModel.content_p.algsType vDS:outModel.content_p.dataSource type:ATHav];
+        NSArray *relativeFos = [AINetService getInner1Alg:curAlg vAT:outModel.content_p.algsType vDS:outModel.content_p.dataSource type:ATHav except_ps:nil];
         if (Log4ActHav) NSLog(@"getInnerAlg: 根据:%@ 找:%@_%@ relativeFos数:%lu",Alg2FStr(curAlg),outModel.content_p.algsType,outModel.content_p.dataSource,(unsigned long)relativeFos.count);
         
         //5. 去掉不应期
@@ -327,7 +327,7 @@
     //TODOTOMORROW: 查此处,C1训练右飞两次后,为何还是找不到距离变小索引;
     //经查,此处alg是pAlg,就是dis0的组节点,而并未经历过飞到0的经验,所以无法获取到glAlg结果;
     //可以尝试将此处,改为找将sAlg变小,而不是将其变成pAlg,即以s出发,接近p;
-    NSArray *relativeFos = [AINetService getInner1Alg:alg vAT:vAT vDS:vDS type:type];
+    NSArray *relativeFos = [AINetService getInner1Alg:alg vAT:vAT vDS:vDS type:type except_ps:nil];
     if (Log4ActGL) NSLog(@"getInnerAlg: 根据:%@->%@ 找:%@%@ GL有效经历数:%lu",Pit2FStr(outModel.sValue_p),Pit2FStr(outModel.content_p),vDS,Data2FStr(type, vAT, vDS),(unsigned long)relativeFos.count);
     
     //3. 根据havAlg联想时序,并找出新的解决方案,与新的行为化的概念,与新的条件概念; (2020.11.06: 由getInner1Alg直接取relativeFos);
