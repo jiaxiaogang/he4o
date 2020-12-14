@@ -126,4 +126,5 @@ typedef NS_ENUM(NSInteger, TOModelStatus) {
     TOModelStatus_NoNeedAct= 5,//无需行为化
     TOModelStatus_OuterBack= 6,//外循环结果返回标记;
     TOModelStatus_Finish   = 7,//最终成功 (完成后向下帧跳转,发生在事实发生之后,即新的input匹配到);
+    TOModelStatus_VSWait   = 8,//在多任务竞争中,被暂时击退 (等待继续博弈);
 };

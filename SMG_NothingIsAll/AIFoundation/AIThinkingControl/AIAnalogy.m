@@ -161,9 +161,9 @@
             if (type == ATSame) {
                 NSLog(@"->> 外类比_构建时序:%@->%@",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
             }else if(type == ATGreater || type == ATLess){
-                if (Log4InAnaGL) NSLog(@"-> 内中外类比_构建时序:(%@)%@  <%@ : %@>",[NVHeUtil getLightStr_Value:type algsType:nil dataSource:nil],Fo2FStr(result),Fo2FStr(fo),Fo2FStr(assFo));
+                if (Log4InAnaGL) NSLog(@"-> 内中外类比_构建时序:(%@)%@  from: ↑↑↑(fo:assFo)",[NVHeUtil getLightStr_Value:type algsType:nil dataSource:nil]);
             }else{
-                if (Log4InOutAna) NSLog(@"-> 内中外类比_构建时序:(%@)%@  <%@ : %@>",[NVHeUtil getLightStr_Value:type algsType:nil dataSource:nil],Fo2FStr(result),Fo2FStr(fo),Fo2FStr(assFo));
+                if (Log4InOutAna) NSLog(@"-> 内中外类比_构建时序:(%@)%@  from: ↑↑↑(fo:assFo)",[NVHeUtil getLightStr_Value:type algsType:nil dataSource:nil],Fo2FStr(result));
             }
         }
     }
