@@ -11,7 +11,7 @@
 /**
  *  MARK:--------------------行为化代理--------------------
  */
-@class AIShortMatchModel,TOModelBase,TOAlgModel;
+@class AIShortMatchModel,TOModelBase,TOAlgModel,TOFoModel;
 @protocol TOActionDelegate <NSObject>
 
 -(void) toAction_Output:(NSArray*)actions;
@@ -80,6 +80,9 @@
 //用于TO四模式调用;
 -(void) convert2Out_SP:(AIKVPointer*)sAlg_p pAlg_p:(AIKVPointer*)pAlg_p outModel:(TOAlgModel*)outModel;
 -(void) convert2Out_P:(TOAlgModel*)outModel;
+
+//用于Fo.Begin时调用;
+-(void) convert2Out_Fo:(TOFoModel*)outModel;
 
 //用于转移时调用;
 -(void) convert2Out_Hav:(TOAlgModel*)outModel;

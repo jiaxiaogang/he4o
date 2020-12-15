@@ -123,18 +123,28 @@
  *      2. 191105针对概念嵌套的代码,先去掉;
  *      3. 191107考虑将foScheme也搬过来,优先使用matchFo做第一解决方案;
  *  @TODO_TEST_HERE: 测试下阈值-3,是否合理;
+ *  @version
+ *      2020.12.15: _Fo统一由fo.begin调用 (参考21183:将RelativeFos改为逐个返回,21184:Fo流程控制);
  */
--(void) convert2Out_Fo:(NSArray*)curAlg_ps outModel:(TOFoModel*)outModel{
-    //1. 数据准备
+-(void) convert2Out_Fo:(TOFoModel*)outModel{
+    //1. 取出需行为化的content_ps部分;
     AIFoNodeBase *curFo = [SMGUtils searchNode:outModel.content_p];
+    NSArray *curAlg_ps = nil;
+    if ([TOUtils isHNGL:outModel.content_p]) {
+        curAlg_ps = ARR_SUB(curFo.content_ps, 0, curFo.content_ps.count - 1);
+    }else{
+        curAlg_ps = curFo.content_ps;
+    }
+    
+    //2. 数据检查
     NSLog(@"\n\n=============================== 行为化 ===============================\n时序:%@->%@\n需要:[%@]",Fo2FStr(curFo),Mvp2Str(curFo.cmvNode_p),Pits2FStr(curAlg_ps));
-    if (!ARRISOK(curAlg_ps) || curFo == nil || ![theTC energyValid]) {
+    if (!ARRISOK(curAlg_ps) || curFo == nil) {
         outModel.status = TOModelStatus_ActNo;
         [self.delegate toAction_SubModelFailure:outModel];
         return;
     }
     
-    //2. 反思评价
+    //3. fo反思评价
     BOOL scoreSuccess = [TOUtils toAction_RethinkScore:outModel rtBlock:^AIShortMatchModel *{
         return [self.delegate toAction_RethinkInnerFo:curFo];
     }];
@@ -144,7 +154,7 @@
         return;
     }
 
-    //3. 触发,首个概念行为化;
+    //4. 触发,首个概念行为化;
     for (AIKVPointer *curAlg_p in curAlg_ps) {
         TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:curAlg_p group:outModel];
         [self.delegate toAction_SubModelBegin:algOutModel];
@@ -375,14 +385,10 @@
         //3. 取出havFo除第一个和最后一个之外的中间rangeOrder
         NSLog(@"---> RelativeFo 行为化时序:%@",Fo2FStr(relativeFo));
         if (relativeFo != nil && relativeFo.content_ps.count >= 1) {
-            NSArray *foRangeOrder = ARR_SUB(relativeFo.content_ps, 0, relativeFo.content_ps.count - 1);
-            
             //5. 转移,则进行行为化 (递归到总方法);
-            if (ARRISOK(foRangeOrder)) {
-                TOFoModel *foOutModel = [TOFoModel newWithFo_p:relativeFo.pointer base:outModel];
-                [self convert2Out_Fo:foRangeOrder outModel:foOutModel];
-                return;
-            }
+            TOFoModel *foOutModel = [TOFoModel newWithFo_p:relativeFo.pointer base:outModel];
+            [self.delegate toAction_SubModelBegin:foOutModel];
+            return;
         }
     }
     //7. 没一个成功 或 行为化成功 或 等待行为化,则失败;

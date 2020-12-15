@@ -91,6 +91,8 @@
                 //5. 为GL返回结果做流程控制 (Failure时,要递归过来继续GL);
                 //6. ActYes反省类比触发后,要判断是否GL修正有效/符合预期 (并构建SP);
                 //7. OutterPushMidd中,当完成时,要转到PM_GL()中进行理性评价 (以对比是否需要继续修正GL);
+                
+                
                 if (ARRISOK(relativeFo_ps)) {
                     return relativeFo_ps;
                 }

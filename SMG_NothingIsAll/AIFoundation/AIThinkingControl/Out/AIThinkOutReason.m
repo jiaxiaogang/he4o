@@ -700,6 +700,7 @@
  *  MARK:--------------------决策流程控制_Begin--------------------
  *  @version
  *      2020.07.06: 当begin为Fo时,直接向上递归;
+ *      2020.12.15: 当begin为Fo时,向toAction._Fo执行;
  */
 -(void) singleLoopBackWithBegin:(TOModelBase*)beginModel {
     //1. 活跃度判断
@@ -721,12 +722,8 @@
         //a3. avdIsDemand: 再决策,转移至TOP.P+;
         [self.delegate aiTOR_MoveForDemand:(DemandModel*)beginModel];
     }else if(ISOK(beginModel, TOFoModel.class)){
-        ELog(@"如打出此错误,则查下为何beginModel是TOFoModel类型,因为一般Fo都直接取index去行为化了,而Fo是不应该传递到Begin方法中来的;");
-        [self singleLoopBackWithBegin:beginModel.baseOrGroup];
-        //TODOTOMORROW20201214: 此处是否应该调用TCAction._Fo
-        //在_Fo中,再进行感性评价;
-        //理性评价;
-        //按照index转至alg.begin;
+        //a4. 将一次性relative_fos改为由递归逐条执行;
+        [self.toAction convert2Out_Fo:(TOFoModel*)beginModel];
     }
 }
 
