@@ -182,6 +182,7 @@
  *      2020-07-27 : hAlg的获取方案relativeFos,由纯理性交集(参考19192),改为优化取理性交集,其次取纯空想 (因为常无法一蹴而就,需递归判定,但又不得不承认,有时候确实可以一蹴而就,比如在家时有冰箱,就不用想回京吃外卖);
  *      2020.08.22 : HNGL时,仅设定status=ActYes,等待外循环返回"理性符合的HNGL"结果;
  *      2020.11.23 : PM理性评价结果,之后的逻辑改动 (参考21147);
+ *      2020.12.16 : 将第0级,isHNGL判断,改为先判断baseFo是HNGL,然后alg是末位,则说明是hnglAlg (参考21115-glConAlg并不是ATGL);
  *  @todo
  *      2020-07-05 : 在下面MC中,转至PM时,是将C作为M的,随后需测下,看是否需要独立对MC做类似PM的理性评价,即将一步到位,细化成两步各自评价;
  *  @bug
@@ -200,12 +201,17 @@
     }
     
     //1. 第0级: 本身即是cHav节点,不用行为化,即成功 (但不用递归,等外循环返回行为结果);
-    if ([TOUtils isHNGL:outModel.content_p]) {
-        outModel.status = TOModelStatus_ActYes;//只需要等
-        [self.delegate toAction_SubModelActYes:outModel];
-        return;
-    }else if (outModel.content_p.isOut) {
-        //2. 第1级: 本身即是isOut时,直接行为化返回;
+    if (ISOK(outModel.baseOrGroup, TOFoModel.class) && [TOUtils isHNGL:outModel.baseOrGroup.content_p]) {
+        AIFoNodeBase *baseFo = [SMGUtils searchNode:outModel.baseOrGroup.content_p];
+        if ([outModel.content_p isEqual:[baseFo.content_ps lastObject]]) {
+            outModel.status = TOModelStatus_ActYes;//只需要等
+            [self.delegate toAction_SubModelActYes:outModel];
+            return;
+        }
+    }
+    
+    //2. 第1级: 本身即是isOut时,直接行为化返回;
+    if (outModel.content_p.isOut) {
         NSLog(@"\n\n=============================== 行为输出 ===============================\n%@",AlgP2FStr(outModel.content_p));
         //2. 输出前改为ActYes (避免重复决策当前demand) (isOut=true暂无需反省类比);
         outModel.status = TOModelStatus_ActYes;

@@ -35,7 +35,7 @@
  */
 +(NSArray*) getInner1Alg:(AIAlgNodeBase*)pAlg vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps{
     //1. 数据检查hAlg_根据type和value_p找ATHav
-    BOOL debugMode = (type == ATGreater || type == ATLess);
+    BOOL debugMode = type == ATLess;
     if (Log4GetInnerAlg) NSLog(@"--> getInnerAlg:%@ ATDS:%@&%@ 参照:%@",[NVHeUtil getLightStr_Value:type algsType:@"" dataSource:@""],vAT,vDS,Alg2FStr(pAlg));
     AIKVPointer *innerValue_p = [theNet getNetDataPointerWithData:@(type) algsType:vAT dataSource:vDS];
     
@@ -51,7 +51,7 @@
         
         //5. 这些节点中,哪个与pAlg有抽具象关系,就返回哪个;
         
-        if (type == ATLess) {
+        if (debugMode) {
             for (AIKVPointer *glConAlg_p in glConAlg_ps) {
                 BOOL mIsC = ([TOUtils mIsC_2:glConAlg_p c:pAlg.pointer] || [TOUtils mIsC_2:pAlg.pointer c:glConAlg_p]);
                 AIAlgNodeBase *item = [SMGUtils searchNode:glConAlg_p];
@@ -74,13 +74,6 @@
                 AIAlgNodeBase *glConAlg = [SMGUtils searchNode:glConAlg_p];
                 NSArray *relativeFoPorts = [SMGUtils filterPorts:[AINetUtils refPorts_All4Alg:glConAlg] havTypes:@[@(type)] noTypes:nil];
                 NSArray *relativeFo_ps = [SMGUtils convertPointersFromPorts:ARR_SUB(relativeFoPorts, 0, cHavNoneAssFoCount)];
-                
-                //6. 调试gl联想时,absAlg取到引用fos为0条的BUG (参考21192);
-                if (debugMode && !ARRISOK(relativeFo_ps)) {
-                    [theNV setForceMode:true];
-                    [theNV setNodeData:glConAlg_p];
-                    [theNV setForceMode:false];
-                }
                 
                 //TODOTOMORROW20201212:
                 //1. 将relativeFo改为逐个返回
