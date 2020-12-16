@@ -31,4 +31,14 @@
     return @"None";
 }
 
++(NSString*) convertATType2Desc:(AnalogyType)atType{
+    if (atType == ATHav) return @"有";
+    if (atType == ATNone) return @"无";
+    if (atType == ATGreater) return @"大";
+    if (atType == ATLess) return @"小";
+    if (atType == ATSub) return @"负";
+    if (atType == ATPlus) return @"正";
+    return @"普";
+}
+
 @end

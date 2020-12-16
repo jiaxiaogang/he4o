@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIAlgNodeBase,DemandModel,TOFoModel,AIShortMatchModel,TOModelBase;
+@class AIAlgNodeBase,DemandModel,TOFoModel,AIShortMatchModel,TOModelBase,TOAlgModel;
 @interface TOUtils : NSObject
 
 /**

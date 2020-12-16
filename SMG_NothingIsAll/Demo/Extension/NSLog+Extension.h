@@ -11,5 +11,6 @@
 @interface NSLog_Extension : NSObject
 
 +(NSString*) convertStatus2Desc:(TOModelStatus)status;
++(NSString*) convertATType2Desc:(AnalogyType)atType;
 
 @end
