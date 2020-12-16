@@ -460,7 +460,19 @@
 
 /**
  *  MARK:--------------------是否HNGL节点--------------------
+ *  @version
+ *      2020.12.16: 增加toAlgModel判断的重载 (因为21115的改动,hngl并不直接由alg判断,而是由fo来判断);
  */
++(BOOL) isHNGL_toAlgModel:(TOAlgModel*)toAlgModel{
+    //但alg所处的fo是HNGL节点 & alg位于末位时 = 则alg是HNGL;
+    if (ISOK(toAlgModel.baseOrGroup, TOFoModel.class) && [TOUtils isHNGL:toAlgModel.baseOrGroup.content_p]) {
+        AIFoNodeBase *baseFo = [SMGUtils searchNode:toAlgModel.baseOrGroup.content_p];
+        if ([toAlgModel.content_p isEqual:[baseFo.content_ps lastObject]]) {
+            return true;
+        }
+    }
+    return false;
+}
 +(BOOL) isHNGL:(AIKVPointer*)p{
     return [self isH:p] || [self isN:p] || [self isG:p] || [self isN:p];
 }

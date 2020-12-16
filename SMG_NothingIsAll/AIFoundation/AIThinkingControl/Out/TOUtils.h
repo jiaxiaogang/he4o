@@ -102,6 +102,7 @@
 /**
  *  MARK:--------------------是否HNGL节点--------------------
  */
++(BOOL) isHNGL_toAlgModel:(TOAlgModel*)toAlgModel;
 +(BOOL) isHNGL:(AIKVPointer*)p;
 +(BOOL) isH:(AIKVPointer*)p;
 +(BOOL) isN:(AIKVPointer*)p;

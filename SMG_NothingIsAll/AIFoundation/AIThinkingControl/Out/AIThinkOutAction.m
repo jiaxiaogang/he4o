@@ -201,17 +201,12 @@
     }
     
     //1. 第0级: 本身即是cHav节点,不用行为化,即成功 (但不用递归,等外循环返回行为结果);
-    if (ISOK(outModel.baseOrGroup, TOFoModel.class) && [TOUtils isHNGL:outModel.baseOrGroup.content_p]) {
-        AIFoNodeBase *baseFo = [SMGUtils searchNode:outModel.baseOrGroup.content_p];
-        if ([outModel.content_p isEqual:[baseFo.content_ps lastObject]]) {
-            outModel.status = TOModelStatus_ActYes;//只需要等
-            [self.delegate toAction_SubModelActYes:outModel];
-            return;
-        }
-    }
-    
-    //2. 第1级: 本身即是isOut时,直接行为化返回;
-    if (outModel.content_p.isOut) {
+    if ([TOUtils isHNGL_toAlgModel:outModel]) {
+        outModel.status = TOModelStatus_ActYes;//只需要等
+        [self.delegate toAction_SubModelActYes:outModel];
+        return;
+    }else if (outModel.content_p.isOut) {
+        //2. 第1级: 本身即是isOut时,直接行为化返回;
         NSLog(@"\n\n=============================== 行为输出 ===============================\n%@",AlgP2FStr(outModel.content_p));
         //2. 输出前改为ActYes (避免重复决策当前demand) (isOut=true暂无需反省类比);
         outModel.status = TOModelStatus_ActYes;
