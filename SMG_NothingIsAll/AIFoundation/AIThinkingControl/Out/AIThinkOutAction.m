@@ -292,7 +292,8 @@
         //6. 只要有善可尝试的方式,即从首条开始尝试;
         if (Log4ActHav) NSLog(@"去掉不应期后_RelativeFos条数:%lu %@",(unsigned long)relativeFos.count,relativeFos.count > 0 ? @"↓↓↓↓↓↓↓↓" : @"无计可施");
         if (ARRISOK(relativeFos)) {
-            [self convert2Out_RelativeFo_ps:relativeFos outModel:outModel];
+            [self convert2Out_Fo:ARR_INDEX(relativeFos, 0)];
+            return;
         }
     }
     
@@ -345,52 +346,12 @@
     
     //5. 转移至_fos
     if (ARRISOK(relativeFos)) {
-        [self convert2Out_RelativeFo_ps:relativeFos outModel:outModel];
+        [self convert2Out_Fo:ARR_INDEX(relativeFos, 0)];
     }else{
         //6. 无计可施
         outModel.status = TOModelStatus_ActNo;
         [self.delegate toAction_SubModelFailure:outModel];
     }
-}
-
-//MARK:===============================================================
-//MARK:                     < Relativen Fos >
-//MARK:===============================================================
-
-/**
- *  MARK:--------------------"相对时序"的行为化--------------------
- *  @param relativeFo_ps    : 相对时序地址;
- *  _param success          : 回调传回: 相对时序 & 行为化结果;
- *  _param failure          : 只要有一条行为化成功则success(),否则failure();
- *  注:
- *      1. 参数: 由方法调用者保证传入的是"相对时序"而不是普通时序
- *      2. 流程: 取出相对时序,并取rangeOrder,行为化并返回
- */
--(void) convert2Out_RelativeFo_ps:(NSArray*)relativeFo_ps outModel:(TOModelBase<ITryActionFoDelegate>*)outModel {
-    //1. 数据准备
-    relativeFo_ps = ARRTOOK(relativeFo_ps);
-    
-    //2. 逐个尝试行为化
-    for (AIPointer *relativeFo_p in relativeFo_ps) {
-        AIFoNodeBase *relativeFo = [SMGUtils searchNode:relativeFo_p];
-        if (Log4ActRelativeFos) NSLog(@"------> RelativeFo_ps Start 共有方案%lu条,%@",(unsigned long)relativeFo_ps.count,Fo2FStr(relativeFo));
-    }
-    for (AIPointer *relativeFo_p in relativeFo_ps) {
-        AIFoNodeBase *relativeFo = [SMGUtils searchNode:relativeFo_p];
-        
-        //3. 取出havFo除第一个和最后一个之外的中间rangeOrder
-        NSLog(@"---> RelativeFo 行为化时序:%@",Fo2FStr(relativeFo));
-        if (relativeFo != nil && relativeFo.content_ps.count >= 1) {
-            //5. 转移,则进行行为化 (递归到总方法);
-            TOFoModel *foOutModel = [TOFoModel newWithFo_p:relativeFo.pointer base:outModel];
-            [self.delegate toAction_SubModelBegin:foOutModel];
-            return;
-        }
-    }
-    //7. 没一个成功 或 行为化成功 或 等待行为化,则失败;
-    outModel.status = TOModelStatus_ActNo;
-    NSLog(@"---> RelativeFo 行为化失败:%@",Pit2FStr(outModel.content_p));
-    [self.delegate toAction_SubModelFailure:outModel];
 }
 
 @end
