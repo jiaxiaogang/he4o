@@ -179,20 +179,7 @@
  *      2020-05-27 : 将isOut=false时等待改成进行cHav行为化;
  */
 -(void) commitPerceptPlus:(TOFoModel*)outModel{
-    //1. 数据检查
-    AIFoNodeBase *fo = [SMGUtils searchNode:outModel.content_p];
-    if (!fo) {
-        outModel.status = TOModelStatus_ActNo;
-        [self singleLoopBackWithFailureModel:outModel];
-        return;
-    }
-    
-    //2. 行为化;
-    AIKVPointer *curAlg_p = ARR_INDEX(fo.content_ps, outModel.actionIndex);//从0开始
-    
-    //3. cHav行为化
-    TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:curAlg_p group:outModel];
-    [self.toAction convert2Out_P:algOutModel];
+    [self singleLoopBackWithBegin:outModel];
 }
 
 /**
@@ -704,7 +691,7 @@
  */
 -(void) singleLoopBackWithBegin:(TOModelBase*)beginModel {
     //1. 活跃度判断
-    if (![theTC energyValid]) {
+    if (!beginModel || ![theTC energyValid]) {
         return;
     }
     [theTC updateEnergy:-0.2f];
