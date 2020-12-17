@@ -188,7 +188,7 @@
     }
     
     //1. 第0级: 本身即是cHav节点,不用行为化,即成功 (但不用递归,等外循环返回行为结果);
-    if ([TOUtils isHNGL_toAlgModel:outModel]) {
+    if ([TOUtils isHNGL_toModel:outModel]) {
         outModel.status = TOModelStatus_ActYes;//只需要等
         [self.delegate toAction_SubModelActYes:outModel];
         return;
