@@ -169,6 +169,7 @@
  *      2020.08.22 : HNGL时,仅设定status=ActYes,等待外循环返回"理性符合的HNGL"结果;
  *      2020.11.23 : PM理性评价结果,之后的逻辑改动 (参考21147);
  *      2020.12.16 : 将第0级,isHNGL判断,改为先判断baseFo是HNGL,然后alg是末位,则说明是hnglAlg (参考21115-glConAlg并不是ATGL);
+ *      2020.12.17 : getInnerAlg改为返回单条,此处调用支持,并并入流程控制fo.begin (参考21183);
  *  @todo
  *      2020-07-05 : 在下面MC中,转至PM时,是将C作为M的,随后需测下,看是否需要独立对MC做类似PM的理性评价,即将一步到位,细化成两步各自评价;
  *  @bug
@@ -272,18 +273,17 @@
             }
         }
         
-        //4. 第3级: 数据检查hAlg_根据type和value_p找ATHav
-        NSArray *relativeFos = [AINetService getInner1Alg:curAlg vAT:outModel.content_p.algsType vDS:outModel.content_p.dataSource type:ATHav except_ps:nil];
-        if (Log4ActHav) NSLog(@"getInnerAlg: 根据:%@ 找:%@_%@ relativeFos数:%lu",Alg2FStr(curAlg),outModel.content_p.algsType,outModel.content_p.dataSource,(unsigned long)relativeFos.count);
-        
         //5. 去掉不应期
         NSArray *except_ps = [TOUtils convertPointersFromTOModels:outModel.actionFoModels];
-        relativeFos = [SMGUtils removeSub_ps:except_ps parent_ps:relativeFos];
+        
+        //4. 第3级: 数据检查hAlg_根据type和value_p找ATHav
+        AIKVPointer *relativeFo_p = [AINetService getInner1Alg:curAlg vAT:outModel.content_p.algsType vDS:outModel.content_p.dataSource type:ATHav except_ps:except_ps];
+        if (Log4ActHav) NSLog(@"getInnerAlg(有): 根据:%@ 找:%@_%@ \n联想结果:%@ %@",Alg2FStr(curAlg),outModel.content_p.algsType,outModel.content_p.dataSource,Pit2FStr(relativeFo_p),relativeFo_p ? @"↓↓↓↓↓↓↓↓" : @"无计可施");
         
         //6. 只要有善可尝试的方式,即从首条开始尝试;
-        if (Log4ActHav) NSLog(@"去掉不应期后_RelativeFos条数:%lu %@",(unsigned long)relativeFos.count,relativeFos.count > 0 ? @"↓↓↓↓↓↓↓↓" : @"无计可施");
-        if (ARRISOK(relativeFos)) {
-            [self convert2Out_Fo:ARR_INDEX(relativeFos, 0)];
+        if (relativeFo_p) {
+            TOFoModel *foModel = [TOFoModel newWithFo_p:relativeFo_p base:outModel];
+            [self.delegate toAction_SubModelBegin:foModel];
             return;
         }
     }
@@ -305,6 +305,8 @@
  *  @param alg : GL(pAlg)的具象概念, (所有微信息变化不应脱离概念,比如鸡蛋可以通过烧成固态,但水不能,所以变成固态这种特征变化,不应脱离概念去操作);
  *          1. _SP时,将pAlg传入;
  *          2. _PM时,将M传入;
+ *  @version
+ *      2020.12.17: getInnerAlg改为返回单条,此处调用支持,并并入流程控制fo.begin (参考21183);
  */
 -(void) convert2Out_GL:(AIAlgNodeBase*)alg outModel:(TOValueModel*)outModel {
     NSLog(@"\n\n=============================== 行为化_GL ===============================\n%@",Alg2FStr(alg));
@@ -320,24 +322,18 @@
         return;
     }
     
-    //2. 根据type和value_p找ATLess/ATGreater
-    
-    //TODOTOMORROW: 查此处,C1训练右飞两次后,为何还是找不到距离变小索引;
-    //经查,此处alg是pAlg,就是dis0的组节点,而并未经历过飞到0的经验,所以无法获取到glAlg结果;
-    //可以尝试将此处,改为找将sAlg变小,而不是将其变成pAlg,即以s出发,接近p;
-    NSArray *relativeFos = [AINetService getInner1Alg:alg vAT:vAT vDS:vDS type:type except_ps:nil];
-    if (Log4ActGL) NSLog(@"getInnerAlg: 根据:%@->%@ 找:%@%@ GL有效经历数:%lu",Pit2FStr(outModel.sValue_p),Pit2FStr(outModel.content_p),vDS,Data2FStr(type, vAT, vDS),(unsigned long)relativeFos.count);
-    
-    //3. 根据havAlg联想时序,并找出新的解决方案,与新的行为化的概念,与新的条件概念; (2020.11.06: 由getInner1Alg直接取relativeFos);
-    //NSArray *hdRef_ps = [SMGUtils convertPointersFromPorts:ARR_SUB(glAlg.refPorts, 0, cHavNoneAssFoCount)];
-    
     //4. 去掉不应期
     NSArray *except_ps = [TOUtils convertPointersFromTOModels:outModel.actionFoModels];
-    relativeFos = [SMGUtils removeSub_ps:except_ps parent_ps:relativeFos];
+    
+    //2. 根据type和value_p找ATLess/ATGreater
+    //3. 根据havAlg联想时序,并找出新的解决方案,与新的行为化的概念,与新的条件概念; (2020.11.06: 由getInner1Alg直接取relativeFos);
+    AIKVPointer *relativeFo_p = [AINetService getInner1Alg:alg vAT:vAT vDS:vDS type:type except_ps:except_ps];
+    if (Log4ActGL) NSLog(@"getInnerAlg(%@): 根据:%@->%@ 找:%@%@ \n联想结果:%@ %@",[NSLog_Extension convertATType2Desc:type],Pit2FStr(outModel.sValue_p),Pit2FStr(outModel.content_p),vDS,Data2FStr(type, vAT, vDS),Pit2FStr(relativeFo_p),relativeFo_p ? @"↓↓↓↓↓↓↓↓" : @"无计可施");
     
     //5. 转移至_fos
-    if (ARRISOK(relativeFos)) {
-        [self convert2Out_Fo:ARR_INDEX(relativeFos, 0)];
+    if (relativeFo_p) {
+        TOFoModel *foModel = [TOFoModel newWithFo_p:relativeFo_p base:outModel];
+        [self.delegate toAction_SubModelBegin:foModel];
     }else{
         //6. 无计可施
         outModel.status = TOModelStatus_ActNo;

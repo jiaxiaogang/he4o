@@ -31,9 +31,10 @@
  *  @version
  *      2020.11.06: 核对21115逻辑没问题 & 直接取返回relativeFo_ps;
  *      2020.12.14: 支持except_ps不应期 (参考21183);
+ *      2020.12.17: 将relativeFos返回,改为仅返回一条有效的relativeFo;
  *  @result : 返回relativeFo_ps,用backConAlg节点,由此节点取refPorts,再筛选type,可取到glFo经历;
  */
-+(NSArray*) getInner1Alg:(AIAlgNodeBase*)pAlg vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps{
++(AIKVPointer*) getInner1Alg:(AIAlgNodeBase*)pAlg vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps{
     //1. 数据检查hAlg_根据type和value_p找ATHav
     BOOL debugMode = type == ATLess;
     if (Log4GetInnerAlg) NSLog(@"--> getInnerAlg:%@ ATDS:%@&%@ 参照:%@",[NVHeUtil getLightStr_Value:type algsType:@"" dataSource:@""],vAT,vDS,Alg2FStr(pAlg));
@@ -85,30 +86,11 @@
                 //6. ActYes反省类比触发后,要判断是否GL修正有效/符合预期 (并构建SP);
                 //7. OutterPushMidd中,当完成时,要转到PM_GL()中进行理性评价 (以对比是否需要继续修正GL);
                 
-                
+                relativeFo_ps = [SMGUtils removeSub_ps:except_ps parent_ps:relativeFo_ps];
                 if (ARRISOK(relativeFo_ps)) {
-                    return relativeFo_ps;
+                    return ARR_INDEX(relativeFo_ps, 0);
                 }
             }
-            
-            //7. 将结果,先按照短时记忆(除末位外)局部匹配度排序,再返回 (未必需要,参考注释todo20201107);
-            //5. 取hAlg的refs引用时序大全 (空想集,即如何获取hAlg);
-            //NSMutableArray *partFos = [[NSMutableArray alloc] init];
-            //for (NSInteger i = 0; i < theTC.inModelManager.models.count; i++) {
-            //    AIShortMatchModel *model = ARR_INDEX_REVERSE(theTC.inModelManager.models, i);
-            //
-            //    //6. 遍历入短时记忆,根据matchAlg取refs (此处应该是希望Hav不要脱离短时记忆,所以用M.refPorts取交集);
-            //    NSArray *mRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:model.matchAlg]];
-            //
-            //    //7. 对hRefs和mRefs取交集;
-            //    NSArray *hmRef_ps = [SMGUtils filterSame_ps:hRef_ps parent_ps:mRef_ps];
-            //    hmRef_ps = ARR_SUB(hmRef_ps, 0, cHavNoneAssFoCount);
-            //
-            //    //8. 收集 (交集优先部分);
-            //    [partFos addObjectFromArray:[SMGUtils collectArrA_NoRepeat:partFos arrB:hmRef_ps]];
-            //}
-            ////9. 收集 (其余空想部分) (考虑下二者是否应该取交集?);
-            //relativeFos = [SMGUtils collectArrA_NoRepeat:relativeFos arrB:partFos];
         }
     }
     return nil;
