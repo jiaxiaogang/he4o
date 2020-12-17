@@ -281,10 +281,6 @@ static AIThinkingControl *_instance;
     return success;
 }
 
--(BOOL) aiTOP_OuterPushMiddleLoop:(DemandModel*)demand latestMModel:(AIShortMatchModel*)latestMModel{
-    return [self.tOR commitFromOuterPushMiddleLoop:demand latestMModel:latestMModel];
-}
-
 /**
  *  MARK:--------------------AIThinkOutReasonDelegate--------------------
  */

@@ -21,9 +21,6 @@
 -(void) aiTOP_2TOR_PerceptPlus:(TOFoModel*)outModel;
 -(BOOL) aiTOP_2TOR_PerceptSub:(AIFoNodeBase *)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo checkFo:(AIFoNodeBase*)checkFo;
 
-//外循环输入,推动中层决策循环;
--(BOOL) aiTOP_OuterPushMiddleLoop:(DemandModel*)demand latestMModel:(AIShortMatchModel*)latestMModel;
-
 @end
 
 //MARK:===============================================================

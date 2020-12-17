@@ -736,7 +736,7 @@
         TOAlgModel *algModel = (TOAlgModel*)actYesModel;
         TOFoModel *foModel = (TOFoModel*)algModel.baseOrGroup;
         AIFoNodeBase *foNode = [SMGUtils searchNode:foModel.content_p];
-        if ([TOUtils isHNGL_toAlgModel:algModel]) {
+        if ([TOUtils isHNGL_toModel:algModel]) {
             //2. 如果TOAlgModel为HNGL时,
             NSInteger cutIndex = foNode.content_ps.count - 1;
             double deltaTime = [NUMTOOK(ARR_INDEX(foNode.deltaTimes, cutIndex)) doubleValue];
