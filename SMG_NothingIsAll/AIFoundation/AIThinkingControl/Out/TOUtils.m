@@ -463,16 +463,6 @@
  *  @version
  *      2020.12.16: 增加toAlgModel判断的重载 (因为21115的改动,hngl并不直接由alg判断,而是由fo来判断);
  */
-+(BOOL) isHNGL_toAlgModel:(TOAlgModel*)toAlgModel{
-    //但alg所处的fo是HNGL节点 & alg位于末位时 = 则alg是HNGL;
-    if (ISOK(toAlgModel.baseOrGroup, TOFoModel.class) && [TOUtils isHNGL:toAlgModel.baseOrGroup.content_p]) {
-        AIFoNodeBase *baseFo = [SMGUtils searchNode:toAlgModel.baseOrGroup.content_p];
-        if ([toAlgModel.content_p isEqual:[baseFo.content_ps lastObject]]) {
-            return true;
-        }
-    }
-    return false;
-}
 +(BOOL) isHNGL:(AIKVPointer*)p{
     return [self isH:p] || [self isN:p] || [self isG:p] || [self isN:p];
 }
@@ -487,6 +477,35 @@
 }
 +(BOOL) isL:(AIKVPointer*)p{
     return p && [p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATLess]];
+}
+
+/**
+ *  MARK:--------------------是否HNGL的TOModel--------------------
+ */
++(BOOL) isHNGL_toModel:(TOModelBase*)toModel{
+    return [self isHNGL:[self convertLastAlg2FoModel:toModel].content_p];
+}
++(BOOL) isH_toModel:(TOModelBase*)toModel{
+    return [self isH:[self convertLastAlg2FoModel:toModel].content_p];
+}
++(BOOL) isN_toModel:(TOModelBase*)toModel{
+    return [self isN:[self convertLastAlg2FoModel:toModel].content_p];
+}
++(BOOL) isG_toModel:(TOModelBase*)toModel{
+    return [self isG:[self convertLastAlg2FoModel:toModel].content_p];
+}
++(BOOL) isL_toModel:(TOModelBase*)toModel{
+    return [self isL:[self convertLastAlg2FoModel:toModel].content_p];
+}
++(TOModelBase*) convertLastAlg2FoModel:(TOModelBase*)toModel{
+    //当alg所处的fo是末位节点,则返回所处的foModel;
+    if (!ISOK(toModel, TOFoModel.class) && ISOK(toModel.baseOrGroup, TOFoModel.class)) {
+        AIFoNodeBase *baseFo = [SMGUtils searchNode:toModel.baseOrGroup.content_p];
+        if ([toModel.content_p isEqual:[baseFo.content_ps lastObject]]) {
+            return toModel.baseOrGroup;
+        }
+    }
+    return toModel;
 }
 
 @end

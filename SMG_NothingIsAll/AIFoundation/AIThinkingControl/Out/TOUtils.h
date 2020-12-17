@@ -101,12 +101,22 @@
 
 /**
  *  MARK:--------------------是否HNGL节点--------------------
+ *  @desc 其中isHNGL主要支持fo,alg都是hnglConAlg (参考21115);
+ *  @todo
+ *      2020.12.17: 此处对alg的支持,需要迭代 (否则原来调用这五个方法isHNGL,isH,isN,isG,isL的alg都会不准确);
  */
-+(BOOL) isHNGL_toAlgModel:(TOAlgModel*)toAlgModel;
 +(BOOL) isHNGL:(AIKVPointer*)p;
 +(BOOL) isH:(AIKVPointer*)p;
 +(BOOL) isN:(AIKVPointer*)p;
 +(BOOL) isG:(AIKVPointer*)p;
 +(BOOL) isL:(AIKVPointer*)p;
 
+/**
+ *  MARK:--------------------是否HNGL的TOModel--------------------
+ */
++(BOOL) isHNGL_toModel:(TOModelBase*)toModel;
++(BOOL) isH_toModel:(TOModelBase*)toModel;
++(BOOL) isN_toModel:(TOModelBase*)toModel;
++(BOOL) isG_toModel:(TOModelBase*)toModel;
++(BOOL) isL_toModel:(TOModelBase*)toModel;
 @end

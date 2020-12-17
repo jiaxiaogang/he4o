@@ -340,14 +340,14 @@
     //3. 保留/更新实际发生到outModel (通过了有效判断的,将实际概念直接存留到waitModel)
     for (TOAlgModel *waitModel in waitModels) {
         if (ISOK(waitModel, TOAlgModel.class) && ISOK(waitModel.baseOrGroup, TOFoModel.class)) {
-            if ([TOUtils isHNGL:waitModel.content_p]) {
+            if ([TOUtils isHNGL_toModel:waitModel]) {
                 //4. "H"的有效判断;
-                if ([TOUtils isH:waitModel.content_p]) {
+                if ([TOUtils isH_toModel:waitModel]) {
                     if ([TOUtils mIsC_1:inputMModel.matchAlg.pointer c:waitModel.content_p]) {
                         waitModel.status = TOModelStatus_OuterBack;
                         waitModel.realContent_p = inputMModel.protoAlg.pointer;
                     }
-                }else if([TOUtils isG:waitModel.content_p] || [TOUtils isL:waitModel.content_p]){
+                }else if([TOUtils isG_toModel:waitModel] || [TOUtils isL_toModel:waitModel]){
                     //5. "GL"的有效判断;
                     if (ISOK(waitModel.baseOrGroup.baseOrGroup, TOValueModel.class)) {
                         
@@ -736,7 +736,7 @@
         TOAlgModel *algModel = (TOAlgModel*)actYesModel;
         TOFoModel *foModel = (TOFoModel*)algModel.baseOrGroup;
         AIFoNodeBase *foNode = [SMGUtils searchNode:foModel.content_p];
-        if ([TOUtils isHNGL:actYesModel.content_p]) {
+        if ([TOUtils isHNGL_toAlgModel:algModel]) {
             //2. 如果TOAlgModel为HNGL时,
             NSInteger cutIndex = foNode.content_ps.count - 1;
             double deltaTime = [NUMTOOK(ARR_INDEX(foNode.deltaTimes, cutIndex)) doubleValue];
