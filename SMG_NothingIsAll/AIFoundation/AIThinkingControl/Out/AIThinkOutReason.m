@@ -176,7 +176,8 @@
  *          1. isOut则输出;
  *          2. notOut则进行cHav行为化;
  *  @version
- *      2020-05-27 : 将isOut=false时等待改成进行cHav行为化;
+ *      2020.05.27: 将isOut=false时等待改成进行cHav行为化;
+ *      2020.12.17: 将此方法,归由流程控制控制 (跑下来逻辑与原来没啥不同);
  */
 -(void) commitPerceptPlus:(TOFoModel*)outModel{
     [self singleLoopBackWithBegin:outModel];
@@ -687,7 +688,7 @@
  *  MARK:--------------------决策流程控制_Begin--------------------
  *  @version
  *      2020.07.06: 当begin为Fo时,直接向上递归;
- *      2020.12.15: 当begin为Fo时,向toAction._Fo执行;
+ *      2020.12.15: 当begin为Fo时,向toAction._Fo执行 (因为原来不支持fo.begin,流程控制不完整);
  */
 -(void) singleLoopBackWithBegin:(TOModelBase*)beginModel {
     //1. 活跃度判断
