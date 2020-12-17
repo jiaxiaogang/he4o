@@ -536,21 +536,8 @@
         
         //2. 如果base取到fo,则下帧继续;
         if (ISOK(base, TOFoModel.class)) {
-            TOFoModel *toFoModel = (TOFoModel*)base;
-            
             //2. 完成,则直接返回finish (如本来就是最后一帧,则再递归至上一层);
-            AIFoNodeBase *fo = [SMGUtils searchNode:toFoModel.content_p];
-            if (toFoModel.actionIndex < fo.content_ps.count - 1) {
-                //a. Alg转移 (下帧)
-                toFoModel.actionIndex ++;
-                AIKVPointer *move_p = ARR_INDEX(fo.content_ps, toFoModel.actionIndex);
-                TOAlgModel *moveAlg = [TOAlgModel newWithAlg_p:move_p group:toFoModel];
-                [self singleLoopBackWithBegin:moveAlg];
-            }else{
-                //c. 成功,递归 (参考注释version-20200916);
-                toFoModel.status = TOModelStatus_ActYes;
-                [self singleLoopBackWithActYes:toFoModel];
-            }
+            [self.toAction convert2Out_Fo:(TOFoModel*)base];
         }else if(ISOK(base, TOAlgModel.class)){
             //3. 如果base取到alg,则直接finish;
             base.status = TOModelStatus_Finish;

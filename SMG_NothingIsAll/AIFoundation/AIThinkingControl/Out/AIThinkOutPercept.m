@@ -187,7 +187,6 @@
         
         //a. 构建TOFoModel
         TOFoModel *toFoModel = [TOFoModel newWithFo_p:sameFo.pointer base:demandModel];
-        toFoModel.actionIndex = 0;
         
         //b. 取自身,实现吃,则可不饿;
         NSLog(@"------->>>>>> P+新增一例解决方案: %@->%@",Fo2FStr(sameFo),Mvp2Str(sameFo.cmvNode_p));

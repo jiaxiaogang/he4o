@@ -19,6 +19,7 @@
     result.status = TOModelStatus_Runing;
     if (base) [base.actionFoModels addObject:result];
     result.baseOrGroup = base;
+    result.actionIndex = -1;//当前帧,初始为-1;
     return result;
 }
 
@@ -49,9 +50,9 @@
     return _subModels;
 }
 
--(void)setActionIndex:(NSInteger)actionIndex{
-    NSLog(@"toFo.setActionIndex:%ld -> %ld",self.actionIndex,actionIndex);
-    _actionIndex = actionIndex;
-}
+//-(void)setActionIndex:(NSInteger)actionIndex{
+//    NSLog(@"toFo.setActionIndex:%ld -> %ld",self.actionIndex,actionIndex);
+//    _actionIndex = actionIndex;
+//}
 
 @end

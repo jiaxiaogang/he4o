@@ -117,6 +117,7 @@
  *  @version
  *      2020.12.15: _Fo统一由fo.begin调用 (参考21183:将RelativeFos改为逐个返回,21184:Fo流程控制);
  *      2020.12.16: HNGL类型Fo节点的末位也照片行为化,因为_Hav中有处理其为ActYes (参考_Hav第0级);
+ *      2020.12.18: _Fo的下帧跳转,也交由此处来完成;
  */
 -(void) convert2Out_Fo:(TOFoModel*)outModel{
     //1. 取出需行为化的content_ps部分;
@@ -140,11 +141,17 @@
         return;
     }
 
-    //4. 触发,首个概念行为化;
-    for (AIKVPointer *curAlg_p in curFo.content_ps) {
-        TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:curAlg_p group:outModel];
-        [self.delegate toAction_SubModelBegin:algOutModel];
-        return;
+    //4. 跳转下帧,
+    if (outModel.actionIndex < curFo.content_ps.count - 1) {
+        //a. Alg转移 (下帧)
+        outModel.actionIndex ++;
+        AIKVPointer *move_p = ARR_INDEX(curFo.content_ps, outModel.actionIndex);
+        TOAlgModel *moveAlg = [TOAlgModel newWithAlg_p:move_p group:outModel];
+        [self.delegate toAction_SubModelBegin:moveAlg];
+    }else{
+        //c. 成功,递归 (参考流程控制Finish的注释version-20200916);
+        outModel.status = TOModelStatus_ActYes;
+        [self.delegate toAction_SubModelActYes:outModel];
     }
 }
 
