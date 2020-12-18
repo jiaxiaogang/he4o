@@ -703,4 +703,65 @@
     }
 }
 
++(void) analogy_ReasonRethinkGL:(TOFoModel*)foModel cutIndex:(NSInteger)cutIndex type:(AnalogyType)type{
+    //1. 数据准备
+    if (!foModel || (type != ATSub && type != ATPlus)) return;
+    AIFoNodeBase *foNode = [SMGUtils searchNode:foModel.content_p];
+    NSMutableArray *spFoContent = [[NSMutableArray alloc] init];
+    NSString *spDS = [ThinkingUtils getAnalogyTypeDS:type];
+    NSLog(@"\n\n=============================== 反省类比 ===============================\n%ld:时序:%@",(long)type,Fo2FStr(foNode));
+    
+    //TODOTOMORROW20201218: (当前所用的alg和fo是否有用);
+    //1. 对GL做判断-> OuterBack && type == ATPlus时,对修正所使用的alg和fo做ATPlus关联;
+    //2. 对GL做判断-> 未完成时,对当前使用的alg和fo做ATSub关联;
+    
+    
+    
+    
+    //2. 构建SPAlg (触发反省类比_实际fo数据收集 (不用收集realFo,而是直接对未修正部分构建,参考20205-原则1));
+    for (TOAlgModel *toAlgModel in foModel.subModels) {
+        if (!ISOK(toAlgModel, TOAlgModel.class)) continue;
+        
+        //2. 取出reModel;
+        TOAlgModel *reModel = ARR_INDEX(toAlgModel.subModels, 0);
+        if (toAlgModel.subModels.count > 1) WLog(@"--------->>> 反省类比取reModel时,subModels长度>1,看是否需要更全面处理>1的情况");
+        if (!reModel) continue;
+        
+        //3. 排除掉Finish的;
+        NSArray *except_ps = [TOUtils convertPointersFromTOValueModelSValue:reModel.subModels validStatus:@[@(TOModelStatus_Finish)]];
+        
+        //3. 剩下 "未修正(无需修正NoNeedAct/修正失败ActNo)的稀疏码" (参考20205-原则2);
+        NSArray *notFinish_ps = [SMGUtils removeSub_ps:except_ps parent_ps:reModel.justPValues];
+        NSLog(@"item--> justPValues:(%@) - excepts:(%@) = (%@)",Pits2FStr(reModel.justPValues),Pits2FStr(except_ps),Pits2FStr(notFinish_ps));
+        
+        //4. 未修正部分构建为: "SP概念"
+        AIAlgNodeBase *curAlg = [SMGUtils searchNode:toAlgModel.content_p];
+        if (!ARRISOK(notFinish_ps)) continue;
+        AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:notFinish_ps conAlgs:@[curAlg] isMem:false ds:spDS];
+        NSLog(@"createAlg:%@ from:%@",Alg2FStr(spAlg),AlgP2FStr(toAlgModel.content_p));
+        
+        //5. 收集SP概念_用于构建SP时序;
+        [spFoContent addObject:spAlg.pointer];
+    }
+    
+    //6. 构建SPFo
+    if (ARRISOK(spFoContent)) {
+        AINetAbsFoNode *spFo = [theNet createAbsFo_General:@[foNode] content_ps:spFoContent difStrong:1 ds:spDS];
+        NSLog(@"createFo:%@ con:%@",Fo2FStr(spFo),Fo2FStr(foNode));
+        
+        //7. 向性左向右,以当前foNode为交集指引,找assSPFo,以进行外类比 (参考20205-原则3);
+        NSArray *assSPFos = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:foNode type:type]];
+        assSPFos = [SMGUtils removeSub_p:spFo.pointer parent_ps:assSPFos];
+        assSPFos = ARR_SUB(assSPFos, 0, cRethinkActBack_AssSPFoLimit);
+        
+        //8. 外类比;
+        if (spFo && ARRISOK(assSPFos)) {
+            for (AIKVPointer *item in assSPFos) {
+                AINetAbsFoNode *assSPFo = [SMGUtils searchNode:item];
+                [AIAnalogy analogyOutside:spFo assFo:assSPFo canAss:nil updateEnergy:nil type:type createAbsAlgBlock:nil];
+            }
+        }
+    }
+}
+
 @end
