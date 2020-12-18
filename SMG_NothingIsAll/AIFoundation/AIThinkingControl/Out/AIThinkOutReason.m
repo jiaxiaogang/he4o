@@ -528,6 +528,7 @@
  *      2020.07.06: 当本轮决策完成(FinishModel为TOFoModel)时,解决方案Fo的父级也完成;
  *      2020.08.22: BaseFo完成时,仅设定demand.status=ActYes,等待外循环返回"抵消价值";
  *      2020.09.16: TOFoModel不由此处Finish,而是由ActYes来处理,共有两种Fo (1. HNGL由末位转至ActYes  2. 普通Fo,直接转至ActYes);
+ *      2020.12.18: TOFoModel不由此处跳帧,而是由toAction._Fo()来处理;
  */
 -(void) singleLoopBackWithFinishModel:(TOModelBase*)finishModel {
     if (ISOK(finishModel, TOAlgModel.class)) {
@@ -638,8 +639,8 @@
             TOFoModel *toFoModel = (TOFoModel*)failureModel.baseOrGroup;
             toFoModel.status = TOModelStatus_ActNo;
             
-            //b. 用fo向上找A/V/D进行fos再决策 (先尝试转移,后不行就递归);
-            [self singleLoopBackWithBegin:toFoModel.baseOrGroup];
+            //b. 一条alg失败时,整个fo失败;
+            [self singleLoopBackWithFailureModel:toFoModel];
         }else if(ISOK(failureModel.baseOrGroup, TOAlgModel.class)){
             //c. Alg.base为alg时,baseAlg转移;
             TOAlgModel *baseAlgModel = (TOAlgModel*)failureModel.baseOrGroup;
@@ -660,8 +661,7 @@
         //b. 2020.11.27: algModel永不言败 (永远传给_Hav,只有_Hav全部失败时,才会自行调用failure声明失败) (参考2114B);
         [self singleLoopBackWithBegin:baseAlg];
     }else if(ISOK(failureModel, TOFoModel.class)){
-        //a. 解决方案失败,则跳转找出下一方案;
-        failureModel.status = TOModelStatus_ActNo;
+        //a. 解决方案失败,则跳转找出下一方案 (用fo向上找A/V/D进行fos再决策 (先尝试转移,后不行就递归));
         [self singleLoopBackWithBegin:failureModel.baseOrGroup];
     }else if(ISOK(failureModel, DemandModel.class)){
         //a. 再决策未成功 (全失败了) ===> 全部失败;
@@ -715,6 +715,7 @@
  *      2020.08.31: 对isOut触发的,先不做处理,因为一般都能直接行为输出并匹配上,所以暂不处理;
  *  @version
  *      2020.10.17: 在生物钟触发器触发器,做有根判定,任务失效时,不进行反省 (参考note21-todolist-1);
+ *      2020.12.18: HNGL失败时再调用Begin会死循环的问题,改为HNGL.ActYes失败时,则直接调用FC.Failure(hnglAlg);
  */
 -(void) singleLoopBackWithActYes:(TOModelBase*)actYesModel {
     NSLog(@"\n\n=============================== 流程控制:ActYes ===============================\nModel:%@ %@",actYesModel.class,Pit2FStr(actYesModel.content_p));
@@ -743,7 +744,8 @@
                 if (algModel.status == TOModelStatus_ActYes && havRoot) {
                     NSLog(@"====ActYes is ATSub -> 递归alg");
                     //5. 2020.11.28: alg本级递归 (只有_Hav全部失败时,才会自行调用failure声明失败) (参考2114C);
-                    [self singleLoopBackWithBegin:algModel];
+                    algModel.status = TOModelStatus_ActNo;
+                    [self singleLoopBackWithFailureModel:algModel];
                 }
             }];
         }else if(actYesModel.content_p.isOut){

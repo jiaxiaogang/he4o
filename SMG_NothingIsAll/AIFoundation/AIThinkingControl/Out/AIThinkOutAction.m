@@ -118,6 +118,7 @@
  *      2020.12.15: _Fo统一由fo.begin调用 (参考21183:将RelativeFos改为逐个返回,21184:Fo流程控制);
  *      2020.12.16: HNGL类型Fo节点的末位也照片行为化,因为_Hav中有处理其为ActYes (参考_Hav第0级);
  *      2020.12.18: _Fo的下帧跳转,也交由此处来完成;
+ *      2020.12.18: 仅在首帧时,进行感性反思评价;
  */
 -(void) convert2Out_Fo:(TOFoModel*)outModel{
     //1. 取出需行为化的content_ps部分;
@@ -131,14 +132,16 @@
         return;
     }
     
-    //3. fo反思评价
-    BOOL scoreSuccess = [TOUtils toAction_RethinkScore:outModel rtBlock:^AIShortMatchModel *{
-        return [self.delegate toAction_RethinkInnerFo:curFo];
-    }];
-    if (!scoreSuccess) {
-        outModel.status = TOModelStatus_ScoreNo;
-        [self.delegate toAction_SubModelFailure:outModel];
-        return;
+    //3. fo反思评价 (2020.12.18仅首帧,进行评价);
+    if (outModel.actionIndex == -1) {
+        BOOL scoreSuccess = [TOUtils toAction_RethinkScore:outModel rtBlock:^AIShortMatchModel *{
+            return [self.delegate toAction_RethinkInnerFo:curFo];
+        }];
+        if (!scoreSuccess) {
+            outModel.status = TOModelStatus_ScoreNo;
+            [self.delegate toAction_SubModelFailure:outModel];
+            return;
+        }
     }
 
     //4. 跳转下帧,
