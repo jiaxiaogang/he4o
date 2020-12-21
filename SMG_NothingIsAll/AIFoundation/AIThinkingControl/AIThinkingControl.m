@@ -210,7 +210,6 @@ static AIThinkingControl *_instance;
     
     //4. 将新一帧数据报告给TOR,以进行短时记忆的更新,比如我输出行为"打",短时记忆由此知道输出"打"成功;
     DemandModel *demand = [self.demandManager getCurrentDemand];
-    [self.tOR commitFromOuterInputReason:demand inputMModel:shortMatchModel];
     
     //5. 外循环入->推进->中循环出;
     BOOL pushOldDemand = [self.tOR commitFromOuterPushMiddleLoop:demand latestMModel:shortMatchModel];
