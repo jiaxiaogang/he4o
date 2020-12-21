@@ -715,6 +715,10 @@
     //1. 对GL做判断-> OuterBack && type == ATPlus时,对修正所使用的alg和fo做ATPlus关联;
     //2. 对GL做判断-> 未完成时,对当前使用的alg和fo做ATSub关联;
     
+    //3. 判断foModel是HNGL类型;
+    //4. 从foModel.subModels中找与foModel.fo.content_ps末位匹配的,并判断realAlg是否为空;
+    //5. 或者什么都不用判断,只要直接根据type为SP,去构建SP即可;
+    
     
     
     
