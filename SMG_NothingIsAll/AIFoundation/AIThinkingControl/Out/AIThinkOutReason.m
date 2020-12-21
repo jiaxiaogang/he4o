@@ -289,26 +289,74 @@
     //3. 判断最近一次input是否与等待中outModel相匹配 (匹配,比如吃,确定自己是否真吃了);
     for (TOAlgModel *waitModel in waitModels) {
         if (Log4OPushM) NSLog(@"==> checkTOModel: %@",Pit2FStr(waitModel.content_p));
-        if (ISOK(waitModel, TOAlgModel.class) && ISOK(waitModel.baseOrGroup, TOFoModel.class) && [TOUtils mIsC_1:latestMModel.matchAlg.pointer c:waitModel.content_p]) {
+        if (ISOK(waitModel, TOAlgModel.class) && ISOK(waitModel.baseOrGroup, TOFoModel.class)) {
             
-            //4. 将"P-M取得独特稀疏码"保留到短时记忆模型;
-            [waitModel.justPValues addObjectsFromArray:[SMGUtils removeSub_ps:latestMModel.matchAlg.content_ps parent_ps:latestMModel.protoAlg.content_ps]];
-            
-            //5. 将理性评价"价值分"保留到短时记忆模型;
-            waitModel.pm_Score = -[ThinkingUtils getScoreForce:demand.algsType urgentTo:demand.urgentTo delta:demand.delta ratio:1.0f];
-            waitModel.pm_MVAT = demand.algsType;
-            waitModel.pm_Fo = [SMGUtils searchNode:waitModel.baseOrGroup.content_p];
-            
-            //6. 理性评价
-            [self reasonScorePM_V2:waitModel failure:nil success:^{
-                NSLog(@"OPushM: 跳转成功");
-            } notNeedPM:^{
-                //7. 未跳转到PM,则将algModel设为Finish,并递归;
-                NSLog(@"OPushM: 不用跳转");
-                waitModel.status = TOModelStatus_Finish;
-                [self singleLoopBackWithFinishModel:waitModel];
-            }];
-            return true;
+            if ([TOUtils isHNGL_toModel:waitModel]) {
+                //4. "H"的有效判断;
+                if ([TOUtils isH_toModel:waitModel]) {
+                    if ([TOUtils mIsC_1:latestMModel.matchAlg.pointer c:waitModel.content_p]) {
+                        waitModel.realContent_p = latestMModel.protoAlg.pointer;
+                        
+                        //TODOTOMORROW20201221:
+                        //1. 在ATHav时,执行到此处,说明waitModel和baseFo已完成;
+                        //2. 应跳到: baseFo.baseAlg与此处inputMModel.protoAlg之间,进行PM评价;
+                        
+                        
+                        
+                    }
+                }else if([TOUtils isG_toModel:waitModel] || [TOUtils isL_toModel:waitModel]){
+                    //5. "GL"的有效判断;
+                    if (ISOK(waitModel.baseOrGroup.baseOrGroup, TOValueModel.class)) {
+                        
+                        //a. 从父级fo的父级取得原稀疏码值 (valueModel中有期望稀疏码sValue);
+                        TOValueModel *valueModel = (TOValueModel*)waitModel.baseOrGroup.baseOrGroup;
+                        AIKVPointer *hopeValue_p = valueModel.sValue_p;
+                        
+                        //b. 在inputProtoAlg中找到实际稀疏码realValue;
+                        AIKVPointer *realValue_p = [SMGUtils filterSameIdentifier_p:hopeValue_p b_ps:latestMModel.protoAlg.content_ps];
+                        
+                        //c. 对期望与实际稀疏码比较得到实际ATType;
+                        if (hopeValue_p && realValue_p) {
+                            AnalogyType realType = [ThinkingUtils compare:hopeValue_p valueB_p:realValue_p];
+                            
+                            //d. 当实际ATType与等待中的ATType一致时,符合预期;
+                            AnalogyType waitType = [ThinkingUtils convertDS2AnalogyType:waitModel.content_p.dataSource];
+                            if (realType == waitType) {
+                                waitModel.status = TOModelStatus_OuterBack;
+                                waitModel.realContent_p = latestMModel.protoAlg.pointer;
+                                
+                                //TODOTOMORROW20201221:
+                                //1. 此处GL符合预期,说明waitModel和waitModel.baseFo已完成;
+                                //2. 应跳到: waitModel.baseFo与些处inputMModel.protoAlg之间,进行PM评价;
+                                
+                                
+                            }
+                        }
+                    }
+                }
+            }else{
+                //7. "行为输出" 和 "demand.ActYes"的有效判断;
+                if ([TOUtils mIsC_1:latestMModel.matchAlg.pointer c:waitModel.content_p]) {
+                    //4. 将"P-M取得独特稀疏码"保留到短时记忆模型;
+                    [waitModel.justPValues addObjectsFromArray:[SMGUtils removeSub_ps:latestMModel.matchAlg.content_ps parent_ps:latestMModel.protoAlg.content_ps]];
+                    
+                    //5. 将理性评价"价值分"保留到短时记忆模型;
+                    waitModel.pm_Score = -[ThinkingUtils getScoreForce:demand.algsType urgentTo:demand.urgentTo delta:demand.delta ratio:1.0f];
+                    waitModel.pm_MVAT = demand.algsType;
+                    waitModel.pm_Fo = [SMGUtils searchNode:waitModel.baseOrGroup.content_p];
+                    
+                    //6. 理性评价
+                    [self reasonScorePM_V2:waitModel failure:nil success:^{
+                        NSLog(@"OPushM: 跳转成功");
+                    } notNeedPM:^{
+                        //7. 未跳转到PM,则将algModel设为Finish,并递归;
+                        NSLog(@"OPushM: 不用跳转");
+                        waitModel.status = TOModelStatus_Finish;
+                        [self singleLoopBackWithFinishModel:waitModel];
+                    }];
+                    return true;
+                }
+            }
         }
     }
     if (Log4OPushM) NSLog(@"OPushM: 无一被需要");
