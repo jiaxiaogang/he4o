@@ -302,14 +302,33 @@
             if ([TOUtils isHNGL_toModel:waitModel]) {
                 //4. "H"的有效判断;
                 if ([TOUtils isH_toModel:waitModel]) {
+                    
+                    TOAlgModel *focusModel = (TOAlgModel*)waitModel.baseOrGroup.baseOrGroup;
                     if ([TOUtils mIsC_1:latestMModel.matchAlg.pointer c:waitModel.content_p]) {
                         waitModel.status = TOModelStatus_OuterBack;
+                        waitModel.baseOrGroup.status = TOModelStatus_Finish;//hAlg所在的hFo跟着完成;
                         waitModel.realContent_p = latestMModel.protoAlg.pointer;
                         
                         //TODOTOMORROW20201221:
                         //1. 在ATHav时,执行到此处,说明waitModel和baseFo已完成;
                         //2. 应跳到: baseFo.baseAlg与此处inputMModel.protoAlg之间,进行PM评价;
+                        //4. 将"P-M取得独特稀疏码"保留到短时记忆模型;
+                        [focusModel.justPValues addObjectsFromArray:[SMGUtils removeSub_ps:latestMModel.matchAlg.content_ps parent_ps:latestMModel.protoAlg.content_ps]];
                         
+                        //5. 将理性评价"价值分"保留到短时记忆模型;
+                        focusModel.pm_Score = -[ThinkingUtils getScoreForce:demand.algsType urgentTo:demand.urgentTo delta:demand.delta ratio:1.0f];
+                        focusModel.pm_MVAT = demand.algsType;
+                        focusModel.pm_Fo = [SMGUtils searchNode:waitModel.baseOrGroup.content_p];
+                        
+                        //6. 理性评价
+                        [self reasonScorePM_V2:focusModel failure:nil success:^{
+                            NSLog(@"OPushM: 跳转成功");
+                        } notNeedPM:^{
+                            //7. 未跳转到PM,则将algModel设为Finish,并递归;
+                            NSLog(@"OPushM: 不用跳转");
+                            focusModel.status = TOModelStatus_Finish;
+                            [self singleLoopBackWithFinishModel:focusModel];
+                        }];
                         
                         
                     }
