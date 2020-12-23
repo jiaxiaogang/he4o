@@ -632,7 +632,7 @@
 
 /**
  *  MARK:--------------------反省类比--------------------
- *  @desc
+ *  @desc (参考20205);
  *      1. 其实并不真正进行类比,而是对决策中未PM修正的部分,直接构建Sub节点;
  *      2. 对已发生的 (cutIndex < algIndex) 的部分每一帧,收集未被PM修正的sub稀疏码,构建ATSubAlg (当前的两个调用者,都是全序列);
  *      3. 对上述ATSubAlgs构建成ATSub时序;
@@ -642,8 +642,12 @@
  *  @callers
  *      1. ActYes流程控制的HNGL调用时,生物钟触发器触发成功时,理性分析什么导致了未成功 (cutIndex无用,因为全部用);
  *      2. ActYes流程控制的Demand调用时,生物钟触发器触发成功时,理性分析什么导致了未成功 (cutIndex无用,因为全部用);
+ *      3. ActYes流程控制的isOut调用时,生物钟触发器触发成功时,理性分析什么导致了行为未成功 (cutIndex有用) (未启用);
  *  @version
  *      2020.09.03: 支持ATPlus反省类比;
+ *      2020.12.18: 支持GL反省类比 (本来就支持) (参考20205 & 21187);
+ *  @todo
+ *      2020.12.23: 支持构建空SP (参考21188);
  *  @bug
  *      2020.09.18: 因为数据结构取错,导致取不到justPValues的BUG (参考:21027) T;
  *      2020.09.29: except_ps取错,导致反省类比的稀疏码内容经常为空 (参考21055描述及示图);
@@ -659,71 +663,6 @@
     //2. 构建SPAlg (触发反省类比_实际fo数据收集 (不用收集realFo,而是直接对未修正部分构建,参考20205-原则1));
     for (TOAlgModel *toAlgModel in foModel.subModels) {
         if (!ISOK(toAlgModel, TOAlgModel.class)) WLog(@"查下此处,为何fo的subModel不是algModel类型,如果2020.10之前未见过此警告,可取消打印此日志;");
-        if (!ISOK(toAlgModel, TOAlgModel.class)) continue;
-        
-        //2. 取出reModel;
-        TOAlgModel *reModel = ARR_INDEX(toAlgModel.subModels, 0);
-        if (toAlgModel.subModels.count > 1) WLog(@"--------->>> 反省类比取reModel时,subModels长度>1,看是否需要更全面处理>1的情况");
-        if (!reModel) continue;
-        
-        //3. 排除掉Finish的;
-        NSArray *except_ps = [TOUtils convertPointersFromTOValueModelSValue:reModel.subModels validStatus:@[@(TOModelStatus_Finish)]];
-        
-        //3. 剩下 "未修正(无需修正NoNeedAct/修正失败ActNo)的稀疏码" (参考20205-原则2);
-        NSArray *notFinish_ps = [SMGUtils removeSub_ps:except_ps parent_ps:reModel.justPValues];
-        NSLog(@"item--> justPValues:(%@) - excepts:(%@) = (%@)",Pits2FStr(reModel.justPValues),Pits2FStr(except_ps),Pits2FStr(notFinish_ps));
-        
-        //4. 未修正部分构建为: "SP概念"
-        AIAlgNodeBase *curAlg = [SMGUtils searchNode:toAlgModel.content_p];
-        if (!ARRISOK(notFinish_ps)) continue;
-        AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:notFinish_ps conAlgs:@[curAlg] isMem:false ds:spDS];
-        NSLog(@"createAlg:%@ from:%@",Alg2FStr(spAlg),AlgP2FStr(toAlgModel.content_p));
-        
-        //5. 收集SP概念_用于构建SP时序;
-        [spFoContent addObject:spAlg.pointer];
-    }
-    
-    //6. 构建SPFo
-    if (ARRISOK(spFoContent)) {
-        AINetAbsFoNode *spFo = [theNet createAbsFo_General:@[foNode] content_ps:spFoContent difStrong:1 ds:spDS];
-        NSLog(@"createFo:%@ con:%@",Fo2FStr(spFo),Fo2FStr(foNode));
-        
-        //7. 向性左向右,以当前foNode为交集指引,找assSPFo,以进行外类比 (参考20205-原则3);
-        NSArray *assSPFos = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:foNode type:type]];
-        assSPFos = [SMGUtils removeSub_p:spFo.pointer parent_ps:assSPFos];
-        assSPFos = ARR_SUB(assSPFos, 0, cRethinkActBack_AssSPFoLimit);
-        
-        //8. 外类比;
-        if (spFo && ARRISOK(assSPFos)) {
-            for (AIKVPointer *item in assSPFos) {
-                AINetAbsFoNode *assSPFo = [SMGUtils searchNode:item];
-                [AIAnalogy analogyOutside:spFo assFo:assSPFo canAss:nil updateEnergy:nil type:type createAbsAlgBlock:nil];
-            }
-        }
-    }
-}
-
-+(void) analogy_ReasonRethinkGL:(TOFoModel*)foModel cutIndex:(NSInteger)cutIndex type:(AnalogyType)type{
-    //1. 数据准备
-    if (!foModel || (type != ATSub && type != ATPlus)) return;
-    AIFoNodeBase *foNode = [SMGUtils searchNode:foModel.content_p];
-    NSMutableArray *spFoContent = [[NSMutableArray alloc] init];
-    NSString *spDS = [ThinkingUtils getAnalogyTypeDS:type];
-    NSLog(@"\n\n=============================== 反省类比 ===============================\n%ld:时序:%@",(long)type,Fo2FStr(foNode));
-    
-    //TODOTOMORROW20201218: (当前所用的alg和fo是否有用);
-    //1. 对GL做判断-> OuterBack && type == ATPlus时,对修正所使用的alg和fo做ATPlus关联;
-    //2. 对GL做判断-> 未完成时,对当前使用的alg和fo做ATSub关联;
-    
-    //3. 判断foModel是HNGL类型;
-    //4. 从foModel.subModels中找与foModel.fo.content_ps末位匹配的,并判断realAlg是否为空;
-    //5. 或者什么都不用判断,只要直接根据type为SP,去构建SP即可;
-    
-    
-    
-    
-    //2. 构建SPAlg (触发反省类比_实际fo数据收集 (不用收集realFo,而是直接对未修正部分构建,参考20205-原则1));
-    for (TOAlgModel *toAlgModel in foModel.subModels) {
         if (!ISOK(toAlgModel, TOAlgModel.class)) continue;
         
         //2. 取出reModel;
