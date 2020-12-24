@@ -646,6 +646,7 @@
  *  @version
  *      2020.09.03: 支持ATPlus反省类比;
  *      2020.12.18: 支持GL反省类比 (本来就支持) (参考20205 & 21187);
+ *      2020.12.24: 在spContent为0时,也构建spFo (构建空SP) (参考21202);
  *  @todo
  *      2020.12.23: 支持构建空SP (参考21188);
  *  @bug
@@ -688,10 +689,10 @@
     }
     
     //6. 构建SPFo
-    if (ARRISOK(spFoContent)) {
-        AINetAbsFoNode *spFo = [theNet createAbsFo_General:@[foNode] content_ps:spFoContent difStrong:1 ds:spDS];
-        NSLog(@"createFo:%@ con:%@",Fo2FStr(spFo),Fo2FStr(foNode));
-        
+    AINetAbsFoNode *spFo = [theNet createAbsFo_General:@[foNode] content_ps:spFoContent difStrong:1 ds:spDS];
+    NSLog(@"createFo:%@ con:%@",Fo2FStr(spFo),Fo2FStr(foNode));
+    
+    if (spFo && ARRISOK(spFo.content_ps)) {
         //7. 向性左向右,以当前foNode为交集指引,找assSPFo,以进行外类比 (参考20205-原则3);
         NSArray *assSPFos = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:foNode type:type]];
         assSPFos = [SMGUtils removeSub_p:spFo.pointer parent_ps:assSPFos];
