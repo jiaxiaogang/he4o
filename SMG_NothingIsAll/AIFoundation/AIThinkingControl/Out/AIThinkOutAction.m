@@ -125,7 +125,7 @@
     AIFoNodeBase *curFo = [SMGUtils searchNode:outModel.content_p];
     
     //2. 数据检查
-    NSLog(@"\n\n=============================== 行为化 ===============================\n时序:%@->%@ 类型:(%@)",Fo2FStr(curFo),Mvp2Str(curFo.cmvNode_p),[NSLog_Extension convertATType2Desc:[curFo.pointer.dataSource integerValue]]);
+    NSLog(@"\n\n=============================== 行为化Fo ===============================\n时序:%@->%@ 类型:(%@)",Fo2FStr(curFo),Mvp2Str(curFo.cmvNode_p),[NSLog_Extension convertATType2Desc:[curFo.pointer.dataSource integerValue]]);
     if (curFo == nil || !ARRISOK(curFo.content_ps)) {
         outModel.status = TOModelStatus_ActNo;
         [self.delegate toAction_SubModelFailure:outModel];
@@ -145,15 +145,17 @@
     }
 
     //4. 跳转下帧,
-    if (outModel.actionIndex < curFo.content_ps.count - 1) {
+    if (outModel.actionIndex < curFo.count - 1) {
         //a. Alg转移 (下帧)
         outModel.actionIndex ++;
         AIKVPointer *move_p = ARR_INDEX(curFo.content_ps, outModel.actionIndex);
         TOAlgModel *moveAlg = [TOAlgModel newWithAlg_p:move_p group:outModel];
+        NSLog(@"_Fo行为化: 第%ld/%ld个: %@",outModel.actionIndex,curFo.count,Pit2FStr(move_p));
         [self.delegate toAction_SubModelBegin:moveAlg];
     }else{
         //c. 成功,递归 (参考流程控制Finish的注释version-20200916);
         outModel.status = TOModelStatus_ActYes;
+        NSLog(@"_Fo行为化: Finish %ld/%ld 到ActYes",outModel.actionIndex,curFo.count);
         [self.delegate toAction_SubModelActYes:outModel];
     }
 }
@@ -188,6 +190,7 @@
  *      2020.09.28: 独特码取到的不是最新帧,导致反省类比P时,不是距0而是距6,将mIsC的for循环改为新帧优先即可 (参考21054);
  *      2020.11.11: 修复cIsM导致mIsC判断失败的BUG (参考21143);
  *      2020.11.18: mIsC不稳定BUG,将mIsC改为对matchAlgs依次判断 (参考21145);
+ *      2020.12.24: isHNGL判断isL写错,导致L时无法触发ActYes与反省类比 (参考isHNGL方法) `T`;
  */
 -(void) convert2Out_Hav:(TOAlgModel*)outModel {
     //1. 数据准备 (空白无需行为化);

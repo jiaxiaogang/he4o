@@ -462,9 +462,11 @@
  *  MARK:--------------------是否HNGL节点--------------------
  *  @version
  *      2020.12.16: 增加toAlgModel判断的重载 (因为21115的改动,hngl并不直接由alg判断,而是由fo来判断);
+ *  @bug
+ *      2020.12.24: isL写成了isN,导致L节点无法判定为HNGL,也导致无法ActYes并触发反省类比;
  */
 +(BOOL) isHNGL:(AIKVPointer*)p{
-    return [self isH:p] || [self isN:p] || [self isG:p] || [self isN:p];
+    return [self isH:p] || [self isN:p] || [self isG:p] || [self isL:p];
 }
 +(BOOL) isH:(AIKVPointer*)p{
     return p && [p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATHav]];
