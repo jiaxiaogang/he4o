@@ -30,8 +30,13 @@
  *      2020.12.03: 支持多路glAlgCon_ps返回,或者判断理性稳定性,比如太抽象概念,向任何方向飞都有可能更远或更近;
  *  @version
  *      2020.11.06: 核对21115逻辑没问题 & 直接取返回relativeFo_ps;
+ *      2020.12.12: 为GL返回结果做流程控制action._Fo (输出行为时,要走ActYes流程);
+ *      2020.12.12: 为GL返回结果做流程控制action._Fo (Failure时,要递归过来继续GL);
+ *      2020.12.12: 行为化失败_ActYes反省类比触发后,要判断是否GL修正有效/符合预期 (并构建SP) (参考ActYes);
+ *      2020.12.12: 行为化成功_OutterPushMidd中,当完成时,要转到PM_GL()中进行理性评价 (以对比是否需要继续修正GL) (参考OPushM);
  *      2020.12.14: 支持except_ps不应期 (参考21183);
- *      2020.12.17: 将relativeFos返回,改为仅返回一条有效的relativeFo;
+ *      2020.12.17: 将relativeFos返回,改为仅返回一条有效的relativeFo (逐个返回);
+ *      2020.12.25: 当relativeFo末位为glConAlg_p时,结果才有效 (参考21183-3);
  *  @result : 返回relativeFo_ps,用backConAlg节点,由此节点取refPorts,再筛选type,可取到glFo经历;
  */
 +(AIKVPointer*) getInner1Alg:(AIAlgNodeBase*)pAlg vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps{
@@ -51,7 +56,6 @@
         NSArray *glConAlg_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:glAlg]];
         
         //5. 这些节点中,哪个与pAlg有抽具象关系,就返回哪个;
-        
         if (debugMode) {
             for (AIKVPointer *glConAlg_p in glConAlg_ps) {
                 BOOL mIsC = ([TOUtils mIsC_2:glConAlg_p c:pAlg.pointer] || [TOUtils mIsC_2:pAlg.pointer c:glConAlg_p]);
@@ -64,7 +68,6 @@
                     }
                 }
             }
-            NSLog(@"");
         }
         
         for (AIKVPointer *glConAlg_p in glConAlg_ps) {
@@ -76,19 +79,15 @@
                 NSArray *relativeFoPorts = [SMGUtils filterPorts:[AINetUtils refPorts_All4Alg:glConAlg] havTypes:@[@(type)] noTypes:nil];
                 NSArray *relativeFo_ps = [SMGUtils convertPointersFromPorts:ARR_SUB(relativeFoPorts, 0, cHavNoneAssFoCount)];
                 
-                //TODOTOMORROW20201212:
-                //1. 将relativeFo改为逐个返回
-                //2. 并加上不应期
-                //3. 并且判断glConAlg必须在末位时,才有效;
-                
-                //4. 为GL返回结果做流程控制 (输出行为时,要走ActYes流程);
-                //5. 为GL返回结果做流程控制 (Failure时,要递归过来继续GL);
-                //6. ActYes反省类比触发后,要判断是否GL修正有效/符合预期 (并构建SP);
-                //7. OutterPushMidd中,当完成时,要转到PM_GL()中进行理性评价 (以对比是否需要继续修正GL);
-                
+                //7. 去掉不应期;
                 relativeFo_ps = [SMGUtils removeSub_ps:except_ps parent_ps:relativeFo_ps];
-                if (ARRISOK(relativeFo_ps)) {
-                    return ARR_INDEX(relativeFo_ps, 0);
+                for (AIKVPointer *item in relativeFo_ps) {
+                    
+                    //8. 当relativeFo末位为glConAlg_p时,结果才有效 (参考21183-3);
+                    AIFoNodeBase *itemFo = [SMGUtils searchNode:item];
+                    if ([glConAlg_p isEqual:ARR_INDEX_REVERSE(itemFo.content_ps, 0)]) {
+                        return item;
+                    }
                 }
             }
         }
