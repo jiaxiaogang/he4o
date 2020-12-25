@@ -161,12 +161,12 @@
         outModel.actionIndex ++;
         AIKVPointer *move_p = ARR_INDEX(curFo.content_ps, outModel.actionIndex);
         TOAlgModel *moveAlg = [TOAlgModel newWithAlg_p:move_p group:outModel];
-        NSLog(@"_Fo行为化: 第%ld/%ld个: %@",outModel.actionIndex,curFo.count,Pit2FStr(move_p));
+        NSLog(@"_Fo行为化: 第%ld/%ld个: %@",(long)outModel.actionIndex,(long)curFo.count,Pit2FStr(move_p));
         [self.delegate toAction_SubModelBegin:moveAlg];
     }else{
         //c. 成功,递归 (参考流程控制Finish的注释version-20200916);
         outModel.status = TOModelStatus_ActYes;
-        NSLog(@"_Fo行为化: Finish %ld/%ld 到ActYes",outModel.actionIndex,curFo.count);
+        NSLog(@"_Fo行为化: Finish %ld/%ld 到ActYes",(long)outModel.actionIndex,(long)curFo.count);
         [self.delegate toAction_SubModelActYes:outModel];
     }
 }
