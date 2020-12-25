@@ -267,6 +267,8 @@
  *  @desc
  *      1. 最新一帧,与上轮循环做匹配 (对单帧匹配到任务Finish的,要推动决策跳转下帧);
  *      2. 未输出行为,等待中的,也要进行下轮匹配,比如等开饭,等来开饭了; (等待的status是ActNo还是Runing?)
+ *      3. 流程说明: OPushM成功时,调用PM继续推进流程;
+ *      4. 流程说明: OPushM失败时,待生物钟触发器触发反省类比,再推进流程;
  *  @desc 外循环回来,把各自实际输入的概念,存入到TOAlgModel.realAlg中;
  *      1. 三种ActYes方式: (HNGL,isOut输出,demand完成);
  *      2. 其中,"isOut输出"和"demand完成"和"HNGL.H"时的ActYes直接根据mIsC判断外循环输入是否符合即可;
