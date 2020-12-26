@@ -120,6 +120,7 @@
  *      2020.12.18: _Fo的下帧跳转,也交由此处来完成;
  *      2020.12.18: 仅在首帧时,进行感性反思评价;
  *      2020.12.25: 未发生理性评价 T (参考21186 & 21188 & 21202);
+ *      2020.12.26: 未发生理性评价,改为只要是有空S,就失败 (无需要判断hngl & range为空) (参考21205);
  */
 -(void) convert2Out_Fo:(TOFoModel*)outModel{
     //1. 取出需行为化的content_ps部分;
@@ -144,14 +145,12 @@
             return;
         }
         
-        //4. 未发生理性评价 (针对hnglFo,当curFo.range_ps为空时,且具备ATSub时,评价不通过);
-        if (curFo.count == 1 && [TOUtils isHNGL_toModel:outModel]) {
-            BOOL reasonScore = !ARRISOK([AINetUtils absPorts_All:curFo type:ATSub]);
-            if (!reasonScore) {
-                outModel.status = TOModelStatus_ScoreNo;
-                [self.delegate toAction_SubModelFailure:outModel];
-                return;
-            }
+        //4. 未发生理性评价 (空ATSub时,评价不通过);
+        BOOL reasonScore = !ARRISOK([AINetUtils absPorts_All:curFo type:ATSub]);
+        if (!reasonScore) {
+            outModel.status = TOModelStatus_ScoreNo;
+            [self.delegate toAction_SubModelFailure:outModel];
+            return;
         }
     }
 
