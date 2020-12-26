@@ -289,6 +289,8 @@
  *      2020.12.22: 将所有waitModel有效的返回都赋值OuterBack,而仅将首个focusModel进行PM理性评价;
  *  @bug
  *      2020.09.22: 加上cutStopStatus,避免同一waitModel被多次触发,导致BUG (参考21042);
+ *      2020.12.26: GL时,waitType的判断改为bFo,因为只有bFo才携带了waitTypeDS (参考21204);
+ *      2020.12.26: GL时,在21204BUG修复后训练时,发现mIsC有时是cIsM,所以都判断下;
  */
 -(BOOL) commitFromOuterPushMiddleLoop:(DemandModel*)demand latestMModel:(AIShortMatchModel*)latestMModel{
     //1. 数据检查
@@ -308,6 +310,7 @@
                 //4. "H"的有效判断;
                 if ([TOUtils isH_toModel:waitModel]) {
                     TOAlgModel *targetModel = (TOAlgModel*)waitModel.baseOrGroup.baseOrGroup;
+                    if (Log4OPushM) NSLog(@"H有效判断_mIsC:(M=headerM C=%@)",Pit2FStr(targetModel.content_p));
                     if ([TOUtils mIsC_1:latestMModel.matchAlg.pointer c:targetModel.content_p]) {
                         waitModel.status = TOModelStatus_OuterBack;
                         waitModel.realContent_p = latestMModel.protoAlg.pointer;
@@ -316,15 +319,17 @@
                         waitModel.baseOrGroup.status = TOModelStatus_Finish;
                         
                         //2. 应跳到: baseFo.baseAlg与此处inputMModel.protoAlg之间,进行PM评价;
+                        if (!focusModel) NSLog(@"=== OPushM成功 Hav继续PM: %@",Pit2FStr(targetModel.content_p));
                         if (!focusModel) focusModel = targetModel;
                     }
                 }else if([TOUtils isG_toModel:waitModel] || [TOUtils isL_toModel:waitModel]){
                     //a. 从父级fo的父级取得原稀疏码值 (valueModel中有期望稀疏码sValue);
-                    TOValueModel *valueModel = (TOValueModel*)waitModel.baseOrGroup.baseOrGroup;
-                    TOAlgModel *targetModel = (TOAlgModel*)valueModel.baseOrGroup;
+                    TOFoModel *bFo = (TOFoModel*)waitModel.baseOrGroup;         //waitModel所属glFo
+                    TOValueModel *bbValue = (TOValueModel*)bFo.baseOrGroup;     //glFo是为了bbValue
+                    TOAlgModel *targetModel = (TOAlgModel*)bbValue.baseOrGroup; //bbValue所属目标alg
                     
                     //5. "GL"的有效判断;
-                    AIKVPointer *hopeValue_p = valueModel.sValue_p;
+                    AIKVPointer *hopeValue_p = bbValue.sValue_p;
                     
                     //b. 在inputProtoAlg中找到实际稀疏码realValue;
                     AIKVPointer *realValue_p = [SMGUtils filterSameIdentifier_p:hopeValue_p b_ps:latestMModel.protoAlg.content_ps];
@@ -333,10 +338,13 @@
                     if (hopeValue_p && realValue_p) {
                         AnalogyType realType = [ThinkingUtils compare:hopeValue_p valueB_p:realValue_p];
                         
-                        //d. 当实际ATType与等待中的ATType一致时,符合预期;
-                        AnalogyType waitType = [ThinkingUtils convertDS2AnalogyType:waitModel.content_p.dataSource];
+                        //d. 当实际ATType与等待中的ATType一致时,符合预期 (20201226改为判断bFo,因为只有bFo才携带了waitTypeDS,参考21204);
+                        AnalogyType waitType = [ThinkingUtils convertDS2AnalogyType:bFo.content_p.dataSource];
                         if (realType == waitType) {
-                            if ([TOUtils mIsC_1:latestMModel.matchAlg.pointer c:targetModel.content_p]) {
+                            if (Log4OPushM) NSLog(@"GL有效判断_mIsC:(M=headerM C=%@)",Pit2FStr(targetModel.content_p));
+                            
+                            //e. mIsC判断 (20201226:在21204BUG修复后训练时,发现mIsC有时是cIsM,所以都判断下);
+                            if ([TOUtils mIsC_1:latestMModel.matchAlg.pointer c:targetModel.content_p] || [TOUtils mIsC_1:targetModel.content_p c:latestMModel.matchAlg.pointer]) {
                                 waitModel.status = TOModelStatus_OuterBack;
                                 waitModel.realContent_p = latestMModel.protoAlg.pointer;
                                 
@@ -344,6 +352,7 @@
                                 waitModel.baseOrGroup.status = TOModelStatus_Finish;
                                 
                                 //2. 应跳到: baseFo.baseAlg与此处inputMModel.protoAlg之间,进行PM评价;
+                                if (!focusModel) NSLog(@"=== OPushM成功 GL继续PM: %@ bFo:%@",Pit2FStr(targetModel.content_p),Pit2FStr(bFo.content_p));
                                 if (!focusModel) focusModel = targetModel;
                             }
                         }
@@ -351,9 +360,11 @@
                 }
             }else{
                 //7. "行为输出" 和 "demand.ActYes"的有效判断;
+                if (Log4OPushM) NSLog(@"Normal有效判断_mIsC:(M=headerM C=%@)",Pit2FStr(waitModel.content_p));
                 if ([TOUtils mIsC_1:latestMModel.matchAlg.pointer c:waitModel.content_p]) {
                     waitModel.status = TOModelStatus_OuterBack;
                     waitModel.realContent_p = latestMModel.protoAlg.pointer;
+                    if (!focusModel) NSLog(@"=== OPushM成功 Normal继续PM: %@",Pit2FStr(waitModel.content_p));
                     if (!focusModel) focusModel = waitModel;
                 }
             }
@@ -382,7 +393,7 @@
         return true;
     }
     
-    if (Log4OPushM) NSLog(@"OPushM: 无一被需要");
+    NSLog(@"OPushM: 无一被需要");
     return false;
 }
 
