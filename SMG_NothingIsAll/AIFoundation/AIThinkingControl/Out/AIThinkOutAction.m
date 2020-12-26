@@ -119,8 +119,8 @@
  *      2020.12.16: HNGL类型Fo节点的末位也照片行为化,因为_Hav中有处理其为ActYes (参考_Hav第0级);
  *      2020.12.18: _Fo的下帧跳转,也交由此处来完成;
  *      2020.12.18: 仅在首帧时,进行感性反思评价;
- *      2020.12.25: 未发生理性评价 T (参考21186 & 21188 & 21202);
- *      2020.12.26: 未发生理性评价,改为只要是有空S,就失败 (无需要判断hngl & range为空) (参考21205);
+ *      2020.12.25: 未发生理性评价 (range为空 & hngl节点 & 空S = 不通过) (参考21186 & 21188 & 21202);
+ *      2020.12.26: 未发生理性评价,改为 (hngl节点 & 空S = 不通过) (参考21205);
  */
 -(void) convert2Out_Fo:(TOFoModel*)outModel{
     //1. 取出需行为化的content_ps部分;
@@ -140,17 +140,23 @@
             return [self.delegate toAction_RethinkInnerFo:curFo];
         }];
         if (!scoreSuccess) {
+            NSLog(@"未发生感性评价(反思)-不通过");
             outModel.status = TOModelStatus_ScoreNo;
             [self.delegate toAction_SubModelFailure:outModel];
             return;
         }
         
-        //4. 未发生理性评价 (空ATSub时,评价不通过);
-        BOOL reasonScore = !ARRISOK([AINetUtils absPorts_All:curFo type:ATSub]);
-        if (!reasonScore) {
-            outModel.status = TOModelStatus_ScoreNo;
-            [self.delegate toAction_SubModelFailure:outModel];
-            return;
+        //4. 未发生理性评价-必须为hngl节点 (否则F14主解决方案也会失败);
+        if ([TOUtils isHNGL_toModel:outModel]) {
+            
+            //4. 未发生理性评价-且为空ATSub时,评价不通过;
+            BOOL reasonScore = !ARRISOK([AINetUtils absPorts_All:curFo type:ATSub]);
+            if (!reasonScore) {
+                NSLog(@"未发生理性评价(空S)-不通过");
+                outModel.status = TOModelStatus_ScoreNo;
+                [self.delegate toAction_SubModelFailure:outModel];
+                return;
+            }
         }
     }
 
