@@ -291,6 +291,7 @@
  *      2020.09.22: 加上cutStopStatus,避免同一waitModel被多次触发,导致BUG (参考21042);
  *      2020.12.26: GL时,waitType的判断改为bFo,因为只有bFo才携带了waitTypeDS (参考21204);
  *      2020.12.26: GL时,在21204BUG修复后训练时,发现mIsC有时是cIsM,所以都判断下;
+ *      2020.12.26: 在OPushM继续PM前,replaceAlg时,重新赋值JustPValues=P-C (参考21206);
  */
 -(BOOL) commitFromOuterPushMiddleLoop:(DemandModel*)demand latestMModel:(AIShortMatchModel*)latestMModel{
     //1. 数据检查
@@ -310,8 +311,9 @@
                 //4. "H"的有效判断;
                 if ([TOUtils isH_toModel:waitModel]) {
                     TOAlgModel *targetModel = (TOAlgModel*)waitModel.baseOrGroup.baseOrGroup;
-                    if (Log4OPushM) NSLog(@"H有效判断_mIsC:(M=headerM C=%@)",Pit2FStr(targetModel.content_p));
-                    if ([TOUtils mIsC_1:latestMModel.matchAlg.pointer c:targetModel.content_p]) {
+                    BOOL mIsC = [TOUtils mIsC_1:latestMModel.matchAlg.pointer c:targetModel.content_p];
+                    if (Log4OPushM) NSLog(@"H有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(targetModel.content_p),mIsC);
+                    if (mIsC) {
                         waitModel.status = TOModelStatus_OuterBack;
                         waitModel.realContent_p = latestMModel.protoAlg.pointer;
                         
@@ -341,10 +343,11 @@
                         //d. 当实际ATType与等待中的ATType一致时,符合预期 (20201226改为判断bFo,因为只有bFo才携带了waitTypeDS,参考21204);
                         AnalogyType waitType = [ThinkingUtils convertDS2AnalogyType:bFo.content_p.dataSource];
                         if (realType == waitType) {
-                            if (Log4OPushM) NSLog(@"GL有效判断_mIsC:(M=headerM C=%@)",Pit2FStr(targetModel.content_p));
+                            BOOL mIsC = [TOUtils mIsC_1:latestMModel.matchAlg.pointer c:targetModel.content_p] || [TOUtils mIsC_1:targetModel.content_p c:latestMModel.matchAlg.pointer];
+                            if (Log4OPushM) NSLog(@"GL有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(targetModel.content_p),mIsC);
                             
                             //e. mIsC判断 (20201226:在21204BUG修复后训练时,发现mIsC有时是cIsM,所以都判断下);
-                            if ([TOUtils mIsC_1:latestMModel.matchAlg.pointer c:targetModel.content_p] || [TOUtils mIsC_1:targetModel.content_p c:latestMModel.matchAlg.pointer]) {
+                            if (mIsC) {
                                 waitModel.status = TOModelStatus_OuterBack;
                                 waitModel.realContent_p = latestMModel.protoAlg.pointer;
                                 
@@ -360,8 +363,9 @@
                 }
             }else{
                 //7. "行为输出" 和 "demand.ActYes"的有效判断;
-                if (Log4OPushM) NSLog(@"Normal有效判断_mIsC:(M=headerM C=%@)",Pit2FStr(waitModel.content_p));
-                if ([TOUtils mIsC_1:latestMModel.matchAlg.pointer c:waitModel.content_p]) {
+                BOOL mIsC = [TOUtils mIsC_1:latestMModel.matchAlg.pointer c:waitModel.content_p];
+                if (Log4OPushM) NSLog(@"Normal有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(waitModel.content_p),mIsC);
+                if (mIsC) {
                     waitModel.status = TOModelStatus_OuterBack;
                     waitModel.realContent_p = latestMModel.protoAlg.pointer;
                     if (!focusModel) NSLog(@"=== OPushM成功 Normal继续PM: %@",Pit2FStr(waitModel.content_p));
@@ -373,8 +377,21 @@
     
     //8. 将首个focusModel进行PM修正 (理性评价);
     if (focusModel) {
-        //4. 将"P-M取得独特稀疏码"保留到短时记忆模型;
-        [focusModel.justPValues addObjectsFromArray:[SMGUtils removeSub_ps:latestMModel.matchAlg.content_ps parent_ps:latestMModel.protoAlg.content_ps]];
+        
+        //4. 先清空justPValues,再重新根据两种情况赋值;
+        [focusModel.justPValues removeAllObjects];
+        
+        //4. 为replaceAlg时,取"P-C取得独特稀疏码"保留到短时记忆模型;
+        TOModelBase *baseAlg = focusModel.baseOrGroup;
+        if (ISOK(baseAlg, TOAlgModel.class) && [((TOAlgModel*)baseAlg).replaceAlgs containsObject:focusModel.content_p]) {
+            AIAlgNodeBase *inHeartNeedAlg = [SMGUtils searchNode:baseAlg.content_p];
+            [focusModel.justPValues addObjectsFromArray:[SMGUtils removeSub_ps:inHeartNeedAlg.content_ps parent_ps:latestMModel.protoAlg.content_ps]];
+            NSLog(@"JustPValues重赋值-> P:%@ - C:%@ = %@",Alg2FStr(latestMModel.protoAlg),Alg2FStr(inHeartNeedAlg),Pits2FStr(focusModel.justPValues));
+        }else{
+            //非replaceAlg时,取"P-M取得独特码"保留到短时记忆模型;
+            [focusModel.justPValues addObjectsFromArray:[SMGUtils removeSub_ps:latestMModel.matchAlg.content_ps parent_ps:latestMModel.protoAlg.content_ps]];
+            NSLog(@"JustPValues重赋值-> P:%@ - M:%@ = %@",Alg2FStr(latestMModel.protoAlg),Alg2FStr(latestMModel.matchAlg),Pits2FStr(focusModel.justPValues));
+        }
         
         //5. 将理性评价"价值分"保留到短时记忆模型;
         focusModel.pm_Score = -[ThinkingUtils getScoreForce:demand.algsType urgentTo:demand.urgentTo delta:demand.delta ratio:1.0f];

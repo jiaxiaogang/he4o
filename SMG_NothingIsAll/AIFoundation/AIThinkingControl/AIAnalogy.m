@@ -88,7 +88,7 @@
                                 if (type == ATSame) {
                                     if (Log4SameAna) NSLog(@"---> 构建:%@ ConFrom (A%ld,A%ld)",Alg2FStr(createAbsNode),(long)algNodeA.pointer.pointerId,(long)algNodeB.pointer.pointerId);
                                 }else{
-                                    NSLog(@"-> 内中外类比_构建概念:(%@)%@ ConFrom (A%ld,A%ld)",[NVHeUtil getLightStr_Value:type algsType:nil dataSource:nil],Alg2FStr(createAbsNode),(long)algNodeA.pointer.pointerId,(long)algNodeB.pointer.pointerId);
+                                    if (Log4InOutAna) NSLog(@"-> 内中外类比_构建概念:(%@)%@ ConFrom (A%ld,A%ld)",[NVHeUtil getLightStr_Value:type algsType:nil dataSource:nil],Alg2FStr(createAbsNode),(long)algNodeA.pointer.pointerId,(long)algNodeB.pointer.pointerId);
                                 }
                                 
                                 //3. 构建absAlg时,回调构建和glhnAlg的关联 (参考21115);
