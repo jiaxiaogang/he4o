@@ -533,6 +533,8 @@
  *  @desc
  *      1. 向性: 从右向左;
  *      2. 参考20206-步骤图-第1步
+ *  @version
+ *      2020.12.27: 把cPM_CheckSPFoLimit从3调整为100 (参考21207);
  */
 +(NSArray*) pm_GetValidSPAlg_ps:(AIAlgNodeBase*)curAlg curFo:(AIFoNodeBase*)curFo type:(AnalogyType)type{
     NSMutableArray *result = [[NSMutableArray alloc] init];
