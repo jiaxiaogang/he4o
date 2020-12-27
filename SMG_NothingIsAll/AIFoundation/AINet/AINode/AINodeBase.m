@@ -44,7 +44,7 @@
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [aCoder encodeObject:self.pointer forKey:@"pointer"];
-    [aCoder encodeObject:self.absPorts forKey:@"absPorts"];
+    [aCoder encodeObject:[self.absPorts copy] forKey:@"absPorts"];
     [aCoder encodeObject:self.content_ps forKey:@"content_ps"];
 }
 

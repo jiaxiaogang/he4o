@@ -50,7 +50,7 @@
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:self.conPorts forKey:@"conPorts"];
+    [aCoder encodeObject:[self.conPorts copy] forKey:@"conPorts"];
 }
 
 @end
