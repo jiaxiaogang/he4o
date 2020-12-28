@@ -146,17 +146,13 @@
             return;
         }
         
-        //4. 未发生理性评价-必须为hngl节点 (否则F14主解决方案也会失败);
-        if ([TOUtils isHNGL_toModel:outModel]) {
-            
-            //4. 未发生理性评价-且为空ATSub时,评价不通过;
-            BOOL reasonScore = !ARRISOK([AINetUtils absPorts_All:curFo type:ATSub]);
-            if (!reasonScore) {
-                NSLog(@"未发生理性评价(空S)-不通过");
-                outModel.status = TOModelStatus_ScoreNo;
-                [self.delegate toAction_SubModelFailure:outModel];
-                return;
-            }
+        //4. 未发生理性评价 (空S评价);
+        BOOL reasonScore =  [TOUtils toActionFront_ReasonScore:curFo];
+        if (!reasonScore) {
+            NSLog(@"未发生理性评价(空S)-不通过");
+            outModel.status = TOModelStatus_ScoreNo;
+            [self.delegate toAction_SubModelFailure:outModel];
+            return;
         }
     }
 

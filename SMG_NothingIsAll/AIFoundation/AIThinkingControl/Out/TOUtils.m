@@ -367,6 +367,23 @@
 }
 
 /**
+ *  MARK:--------------------未发生理性评价 (空S)--------------------
+ *  @todo
+ *      2020.12.28: 现在代码看起来S判空有问题,应该取出S并判断count是否为0;
+ *  @result 默认返回true (因为空fo并不指向空S);
+ */
++(BOOL) toActionFront_ReasonScore:(AIFoNodeBase*)fo{
+    //1. 未发生理性评价-必须为hngl节点 (否则F14主解决方案也会失败);
+    if ([TOUtils isHNGL:fo.pointer]) {
+        
+        //2. 未发生理性评价-且为空ATSub时,评价不通过;
+        BOOL reasonScore = !ARRISOK([AINetUtils absPorts_All:fo type:ATSub]);
+        return reasonScore;
+    }
+    return true;
+}
+
+/**
  *  MARK:--------------------获取subOutModel的demand--------------------
  */
 +(DemandModel*) getDemandModelWithSubOutModel:(TOModelBase*)subOutModel{

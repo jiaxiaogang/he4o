@@ -77,6 +77,11 @@
 +(BOOL) toAction_RethinkScore:(TOFoModel*)outModel rtBlock:(AIShortMatchModel*(^)(void))rtBlock;
 
 /**
+ *  MARK:--------------------未发生理性评价 (空S)--------------------
+ */
++(BOOL) toActionFront_ReasonScore:(AIFoNodeBase*)fo;
+
+/**
  *  MARK:--------------------获取subOutModel的demand--------------------
  */
 +(DemandModel*) getDemandModelWithSubOutModel:(TOModelBase*)subOutModel;

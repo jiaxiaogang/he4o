@@ -37,6 +37,7 @@
  *      2020.12.14: 支持except_ps不应期 (参考21183);
  *      2020.12.17: 将relativeFos返回,改为仅返回一条有效的relativeFo (逐个返回);
  *      2020.12.25: 当relativeFo末位为glConAlg_p时,结果才有效 (参考21183-3);
+ *      2020.12.28: 返回前,直接进行未发生理性评价 (以简化流程控制,且"未发生"本来就是指未行为化前);
  *  @result : 返回relativeFo_ps,用backConAlg节点,由此节点取refPorts,再筛选type,可取到glFo经历;
  */
 +(AIKVPointer*) getInner1Alg:(AIAlgNodeBase*)pAlg vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps{
@@ -85,9 +86,13 @@
                     
                     //8. 当relativeFo末位为glConAlg_p时,结果才有效 (参考21183-3);
                     AIFoNodeBase *itemFo = [SMGUtils searchNode:item];
-                    if ([glConAlg_p isEqual:ARR_INDEX_REVERSE(itemFo.content_ps, 0)]) {
-                        return item;
-                    }
+                    if (![glConAlg_p isEqual:ARR_INDEX_REVERSE(itemFo.content_ps, 0)]) continue;
+                    
+                    //9. 未发生理性评价 (空S评价);
+                    if (![TOUtils toActionFront_ReasonScore:itemFo]) continue;
+                    
+                    //10. 全部通过,返回;
+                    return item;
                 }
             }
         }
