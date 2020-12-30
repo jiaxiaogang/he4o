@@ -14,4 +14,28 @@
  */
 @interface SMGUtils (Sum)
 
+/**
+ *  MARK:--------------------值域求和--------------------
+ */
++(NSArray*) sumSPorts:(NSArray*)sPorts pPorts:(NSArray*)pPorts;
+
+/**
+ *  MARK:--------------------判断value处在S还是P中--------------------
+ */
++(AnalogyType) checkValueSPType:(double)value sumSPModel:(NSArray*)sumSPModel;
+
+@end
+
+
+//MARK:===============================================================
+//MARK:                     < SumModel单点模型 >
+//MARK:===============================================================
+@interface SumModel : NSObject
+
+//交点值
+@property (assign, nonatomic) double dotValue;
+
+//向右的方向类型(S/P)
+@property (assign, nonatomic) AnalogyType type;
+
 @end
