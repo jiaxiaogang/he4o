@@ -32,6 +32,8 @@
 //MARK:===============================================================
 @interface SumModel : NSObject
 
++(SumModel*)newWithDotValue:(double)dotValue type:(AnalogyType)type;
+
 //交点值
 @property (assign, nonatomic) double dotValue;
 
