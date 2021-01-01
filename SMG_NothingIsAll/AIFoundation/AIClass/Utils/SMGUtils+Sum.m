@@ -39,43 +39,35 @@
     for (AIPort *item in allPorts) {
         //4. 切换组: (收集中!=None & 非同组!=itemType);
         AnalogyType itemType = [sPorts containsObject:item] ? ATSub : ATPlus;
+        
+        //5. 首区间处理 (首个item即先把首区间做了);
+        if ([allPorts indexOfObject:item] == 0) {
+            [result addObject:[SumModel newWithDotValue:CGFLOAT_MIN type:itemType]];
+        }
+        
+        //6. 中间区间处理 (大于第2组(lastGroup>0)时,对前两组对比生成SubModel处理) (切3时处理2和1);
         if (curType != ATNone && curType != itemType) {
-            //5. 切组后: curGroup与lastGroup进行对比找出各自最有竞争力的成员 ();
-            __block AIPort *mostFightCurItem = nil;
-            __block AIPort *mostFightLastItem = nil;
-            [self findMostVertical:curType curGroup:curGroup lastGroup:lastGroup complete:^(AIPort *lastItem, AIPort *curItem) {
-                mostFightLastItem = lastItem;
-                mostFightCurItem = curItem;
-            }];
-            
-            //6. last为空组时-对curGroup形成SubModel;
-            if (!mostFightLastItem && !mostFightCurItem) {
-                SumModel *model = [SumModel newWithDotValue:CGFLOAT_MIN type:curType];
-                [result addObject:model];
-            }else{
-                //7. 切组后: 根据最有竞争力成员算出交点;
-                float dotValue = [self findDotValue:mostFightLastItem curItem:mostFightCurItem];
-                //8. 生成模型,并收集;
-                SumModel *model = [SumModel newWithDotValue:dotValue type:curType];
-                [result addObject:model];
+            if (ARRISOK(lastGroup)) {
+                SumModel *model = [SMGUtils createSumModel:curType lastGroup:lastGroup curGroup:curGroup];
+                if (model) [result addObject:model];
             }
             
-            //9. 当前组变成上组 (当前组重置);
+            //7. 切区间数据: 当前组变成上组 (当前组重置);
             [lastGroup removeAllObjects];
             [lastGroup addObjectsFromArray:curGroup];
             [curGroup removeAllObjects];
             
         }
-        //10. 收集curGroup: (不切组 或 切完组);
+        //8. 收集item到curGroup;
         [curGroup addObject:item];
         curType = itemType;
     }
     
-    //11. 全收集完后,最后一组处理;
-    
-    
-    
-    
+    //9. 尾区间处理: 全收集完后,最后一组处理 (lastGroup无效时,说明总共<=1组,不必处理尾区间);
+    if (ARRISOK(lastGroup)) {
+        SumModel *model = [SMGUtils createSumModel:curType lastGroup:lastGroup curGroup:curGroup];
+        if (model) [result addObject:model];
+    }
     return result;
 }
 
@@ -149,6 +141,34 @@
     //4. 根据比例,算出交点并返回;
     float dotValue = lastValue + rate * (curValue - lastValue);
     return dotValue;
+}
+
+/**
+ *  MARK:--------------------生成SubModel--------------------
+ *  @desc
+ *      1. 切区间时,对上组和上上组进行对比,并得出SumModel;
+ *      2. 上上组为空时,自然会返回nil;
+ */
++(SumModel*) createSumModel:(AnalogyType)curType lastGroup:(NSArray*)lastGroup curGroup:(NSArray*)curGroup{
+    //1. 数据检查;
+    if (curType != ATSub && curType != ATPlus) return nil;
+    lastGroup = ARRTOOK(lastGroup);
+    curGroup = ARRTOOK(curGroup);
+    
+    //2. 找出两组各自最有竞争力的成员;
+    __block AIPort *mostFightCurItem = nil;
+    __block AIPort *mostFightLastItem = nil;
+    [SMGUtils findMostVertical:curType curGroup:curGroup lastGroup:lastGroup complete:^(AIPort *lastItem, AIPort *curItem) {
+        mostFightLastItem = lastItem;
+        mostFightCurItem = curItem;
+    }];
+    
+    //3. 有效时,根据最有竞争力成员算出交点,生成模型,并收集;
+    if (mostFightLastItem && mostFightCurItem) {
+        float dotValue = [self findDotValue:mostFightLastItem curItem:mostFightCurItem];
+        return [SumModel newWithDotValue:dotValue type:curType];
+    }
+    return nil;
 }
 
 

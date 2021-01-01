@@ -34,10 +34,17 @@
 
 +(SumModel*)newWithDotValue:(double)dotValue type:(AnalogyType)type;
 
-//交点值
+/**
+ *  MARK:--------------------交点值--------------------
+ *  @desc 表征从左至右的稀疏码值的横轴上,交点至右到下一交点的起点值;
+ *        比如:[floatMin,1,8,20]中: 1表示1到8, 20表示20到floatMax;
+ */
 @property (assign, nonatomic) double dotValue;
 
-//向右的方向类型(S/P)
+/**
+ *  MARK:--------------------向右的方向类型--------------------
+ *  @desc 只有S和P两个值,标示dotValue右侧区间内是S还是P;
+ */
 @property (assign, nonatomic) AnalogyType type;
 
 @end
