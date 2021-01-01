@@ -22,7 +22,7 @@
 /**
  *  MARK:--------------------判断value处在S还是P中--------------------
  */
-+(AnalogyType) checkValueSPType:(double)value sumSPModel:(NSArray*)sumSPModel;
++(AnalogyType) checkValueSPType:(AIKVPointer*)value_p sumModels:(NSArray*)sumModels;
 
 @end
 

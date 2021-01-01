@@ -76,15 +76,21 @@
 /**
  *  MARK:--------------------判断value处在S还是P中--------------------
  */
-+(AnalogyType) checkValueSPType:(double)value sumSPModel:(NSArray*)sumSPModel{
++(AnalogyType) checkValueSPType:(AIKVPointer*)value_p sumModels:(NSArray*)sumModels{
     //1. 数据准备;
-    sumSPModel = ARRTOOK(sumSPModel);
+    AnalogyType result = ATNone;
+    if (!value_p || !ARRISOK(sumModels)) return result;
+    double value = [NUMTOOK([AINetIndex getData:value_p]) doubleValue];
     
     //2. 从中找value匹配;
-    for (SumModel *item in sumSPModel) {
-        
+    for (SumModel *item in sumModels) {
+        if (item.dotValue < value) {
+            result = item.type;
+        }else{
+            return result;
+        }
     }
-    return ATNone;
+    return result;
 }
 
 //MARK:===============================================================
