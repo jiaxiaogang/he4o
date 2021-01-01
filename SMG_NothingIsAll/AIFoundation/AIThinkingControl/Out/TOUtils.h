@@ -82,6 +82,11 @@
 +(BOOL) toActionFront_ReasonScore:(AIFoNodeBase*)fo;
 
 /**
+ *  MARK:--------------------判断value处在S还是P中--------------------
+ */
++(AnalogyType) score4Value:(AIKVPointer*)value_p sumModels:(NSArray*)sumModels;
+
+/**
  *  MARK:--------------------获取subOutModel的demand--------------------
  */
 +(DemandModel*) getDemandModelWithSubOutModel:(TOModelBase*)subOutModel;

@@ -221,22 +221,24 @@
 
 /**
  *  MARK:--------------------按照模糊匹配度排序--------------------
- *  @param maskValue_p  : 排序基准 (稀疏码);
+ *  @param maskValue_p  : 排序基准 (稀疏码) (在PM中传firstJustPValue过来);
  *  @param proto_ps     : 对proto_ps进行排序 (元素为概念);
  *  @desc 功能: 比如基准=d58, proto=[(d33),(d59),(a88)], 得到的结果result=[(d59),(d33)];
  *  @desc 性能: 含硬盘io操作,proto_ps每条元素,都要searchNode取alg;
+ *  @version
+ *      2021.01.01: 废弃,在PM_V3中,由值域求和来替代作评价 (参考2120A & n21p21);
  *  @result notnull
  */
 +(NSArray*) getFuzzySortWithMaskValue:(AIKVPointer*)maskValue_p fromProto_ps:(NSArray*)proto_ps{
     //a. 对result2筛选出包含同标识value值的: result3;
     __block NSMutableArray *validConDatas = [[NSMutableArray alloc] init];
-    [ThinkingUtils filterAlg_Ps:proto_ps valueIdentifier:maskValue_p.identifier itemValid:^(AIAlgNodeBase *alg, AIKVPointer *value_p) {
+    [SMGUtils filterAlg_Ps:proto_ps valueIdentifier:maskValue_p.identifier itemValid:^(AIAlgNodeBase *alg, AIKVPointer *value_p) {
         NSNumber *value = [AINetIndex getData:value_p];
         if (alg && value) {
             [validConDatas addObject:@{@"a":alg,@"v":value}];
         }
     }];
-    
+
     //b. 对result3进行取值value并排序: result4 (根据差的绝对值小的排前面);
     double pValue = [NUMTOOK([AINetIndex getData:maskValue_p]) doubleValue];
     NSArray *sortConDatas = [validConDatas sortedArrayUsingComparator:^NSComparisonResult(NSDictionary *obj1, NSDictionary *obj2) {
@@ -246,14 +248,14 @@
         double absV2 = fabs(v2 - pValue);
         return absV1 > absV2 ? NSOrderedDescending : absV1 < absV2 ? NSOrderedAscending : NSOrderedSame;
     }];
-    
+
     //c. 转成sortConAlgs
     NSMutableArray *result = [[NSMutableArray alloc] init];
     for (NSDictionary *sortConData in sortConDatas) {
         AIAlgNodeBase *algNode = [sortConData objectForKey:@"a"];
         [result addObject:algNode];
     }
-    
+
     //d. 调试日志
     for (AIAlgNodeBase *item in result) {
         if (Log4FuzzyAlg) NSLog(@"---> 同层基准:%@ => %@",Pit2FStr(maskValue_p),Alg2FStr(item));
@@ -535,6 +537,7 @@
  *      2. 参考20206-步骤图-第1步
  *  @version
  *      2020.12.27: 把cPM_CheckSPFoLimit从3调整为100 (参考21207);
+ *      2021.01.01: 返回由AIPinters改为AIPorts;
  */
 +(NSArray*) pm_GetValidSPAlg_ps:(AIAlgNodeBase*)curAlg curFo:(AIFoNodeBase*)curFo type:(AnalogyType)type{
     NSMutableArray *result = [[NSMutableArray alloc] init];
@@ -544,12 +547,14 @@
         spFos = ARR_SUB(spFos, 0, cPM_CheckSPFoLimit);
         
         //2. 查对应在curAlg上是否长过教训S / 被助攻过P;
-        NSArray *spAlgs = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:curAlg type:type]];
+        NSArray *spAlgs = [AINetUtils absPorts_All:curAlg type:type];
         
         //3. 从algSPs中,筛选有效的部分validAlgSPs
         for (AIKVPointer *spFo_p in spFos) {
             AIFoNodeBase *spFo = [SMGUtils searchNode:spFo_p];
-            NSArray *validAlgs = [SMGUtils filterSame_ps:spFo.content_ps parent_ps:spAlgs];
+            NSArray *validAlgs = [SMGUtils filterArr:spAlgs checkValid:^BOOL(AIPort *item) {
+                return [spFo.content_ps containsObject:item.target_p];
+            }];
             [result addObjectsFromArray:validAlgs];
         }
     }
@@ -585,41 +590,6 @@
         }
     }
     return false;
-}
-
-@end
-
-
-//MARK:===============================================================
-//MARK:                     < ThinkingUtils (Filter) >
-//MARK:===============================================================
-@implementation ThinkingUtils (Filter)
-
-+(NSArray*) filterPointers:(NSArray*)proto_ps isOut:(BOOL)isOut{
-    return [SMGUtils filterPointers:proto_ps checkValid:^BOOL(AIKVPointer *item_p) {
-        return item_p.isOut == isOut;
-    }];
-}
-
-+(NSArray*) filterPointer:(NSArray*)from_ps identifier:(NSString*)identifier{
-    return [SMGUtils filterPointers:from_ps checkValid:^BOOL(AIKVPointer *item_p) {
-        return [identifier isEqualToString:item_p.identifier];
-    }];
-}
-
-+(NSArray*) filterAlg_Ps:(NSArray*)alg_ps valueIdentifier:(NSString*)valueIdentifier itemValid:(void(^)(AIAlgNodeBase *alg,AIKVPointer *value_p))itemValid{
-    return [SMGUtils filterPointers:alg_ps checkValid:^BOOL(AIKVPointer *item_p) {
-        AIAlgNodeBase *alg = [SMGUtils searchNode:item_p];
-        if (alg) {
-            for (AIKVPointer *itemValue_p in alg.content_ps) {
-                if ([valueIdentifier isEqualToString:itemValue_p.identifier]) {
-                    if (itemValid) itemValid(alg,itemValue_p);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }];
 }
 
 @end

@@ -748,6 +748,56 @@
     return ARR_INDEX([SMGUtils filterArr:arr checkValid:checkValid limit:1], 0);
 }
 
+/**
+ *  MARK:--------------------筛选alg by 指定标识--------------------
+ *  @desc 从alg_ps中查找含valueIdentifier标识稀疏码的概念并返回;
+ *  @result 逐条返回 + 中断前所有收集全返回;
+ */
++(NSArray*) filterAlg_Ps:(NSArray*)alg_ps valueIdentifier:(NSString*)valueIdentifier itemValid:(void(^)(AIAlgNodeBase *alg,AIKVPointer *value_p))itemValid{
+    return [SMGUtils filterPointers:alg_ps checkValid:^BOOL(AIKVPointer *item_p) {
+        AIAlgNodeBase *alg = [SMGUtils searchNode:item_p];
+        if (alg) {
+            for (AIKVPointer *itemValue_p in alg.content_ps) {
+                if ([valueIdentifier isEqualToString:itemValue_p.identifier]) {
+                    if (itemValid) itemValid(alg,itemValue_p);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }];
+}
+
+/**
+ *  MARK:--------------------筛选指针 by isOut--------------------
+ *  @param proto_ps : 从中筛选
+ *  @param isOut : false时筛选出非out的pointers
+ *  注:未判定是否连续;
+ */
++(NSArray*) filterPointers:(NSArray*)proto_ps isOut:(BOOL)isOut{
+    return [SMGUtils filterPointers:proto_ps checkValid:^BOOL(AIKVPointer *item_p) {
+        return item_p.isOut == isOut;
+    }];
+}
+
+/**
+ *  MARK:--------------------筛选指针 by 指定标识--------------------
+ */
++(NSArray*) filterPointer:(NSArray*)from_ps identifier:(NSString*)identifier{
+    return [SMGUtils filterPointers:from_ps checkValid:^BOOL(AIKVPointer *item_p) {
+        return [identifier isEqualToString:item_p.identifier];
+    }];
+}
+
+/**
+ *  MARK:--------------------筛选端口 by 指定标识--------------------
+ */
++(NSArray*) filterPorts:(NSArray*)from_ps identifier:(NSString*)identifier{
+    return [SMGUtils filterPointers:from_ps checkValid:^BOOL(AIPort *item) {
+        return [identifier isEqualToString:item.target_p.identifier];
+    }];
+}
+
 +(void) removeAllMemory{
     //1. 清空UserDefaults记忆;
     NSInteger sumCount = 0;

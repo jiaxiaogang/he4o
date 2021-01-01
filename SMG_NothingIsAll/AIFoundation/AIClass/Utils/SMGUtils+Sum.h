@@ -19,11 +19,6 @@
  */
 +(NSArray*) sumSPorts:(NSArray*)sPorts pPorts:(NSArray*)pPorts;
 
-/**
- *  MARK:--------------------判断value处在S还是P中--------------------
- */
-+(AnalogyType) checkValueSPType:(AIKVPointer*)value_p sumModels:(NSArray*)sumModels;
-
 @end
 
 

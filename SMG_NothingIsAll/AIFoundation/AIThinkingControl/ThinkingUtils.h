@@ -222,25 +222,3 @@
 +(BOOL) containsConAlg:(AIKVPointer*)conAlg_p absAlg:(AIPointer*)absAlg_p;
 
 @end
-
-
-//MARK:===============================================================
-//MARK:                     < ThinkingUtils (Filter) >
-//MARK:===============================================================
-@interface ThinkingUtils (Filter)
-
-/**
- *  MARK:--------------------筛选出outPointers--------------------
- *  @param proto_ps : 从中筛选
- *  @param isOut : false时筛选出非out的pointers
- *  注:未判定是否连续;
- */
-+(NSArray*) filterPointers:(NSArray*)proto_ps isOut:(BOOL)isOut;
-
-//从from_ps中查找与check_p同标识区的指针并返回;
-+(AIKVPointer*) filterPointer:(NSArray*)from_ps identifier:(NSString*)identifier;
-
-//从alg_ps中查找含valueIdentifier标识稀疏码的概念并返回;
-+(NSArray*) filterAlg_Ps:(NSArray*)alg_ps valueIdentifier:(NSString*)valueIdentifier itemValid:(void(^)(AIAlgNodeBase *alg,AIKVPointer *value_p))itemValid;
-
-@end

@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 
-@class AIPointer,AIKVPointer,AIObject,AIArray,ThinkModel,AIPort,AINodeBase;
+@class AIPointer,AIKVPointer,AIObject,AIArray,ThinkModel,AIPort,AINodeBase,AIAlgNodeBase;
 @interface SMGUtils : NSObject
 
 
@@ -248,6 +248,29 @@
  *  MARK:--------------------查找单条--------------------
  */
 +(id) filterSingleFromArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid;
+
+/**
+ *  MARK:--------------------筛选alg by 指定标识--------------------
+ */
++(NSArray*) filterAlg_Ps:(NSArray*)alg_ps valueIdentifier:(NSString*)valueIdentifier itemValid:(void(^)(AIAlgNodeBase *alg,AIKVPointer *value_p))itemValid;
+
+/**
+ *  MARK:--------------------筛选指针 by isOut--------------------
+ *  @param proto_ps : 从中筛选
+ *  @param isOut : false时筛选出非out的pointers
+ *  注:未判定是否连续;
+ */
++(NSArray*) filterPointers:(NSArray*)proto_ps isOut:(BOOL)isOut;
+
+/**
+ *  MARK:--------------------筛选指针 by 指定标识--------------------
+ */
++(NSArray*) filterPointer:(NSArray*)from_ps identifier:(NSString*)identifier;
+
+/**
+ *  MARK:--------------------筛选端口 by 指定标识--------------------
+ */
++(NSArray*) filterPorts:(NSArray*)from_ps identifier:(NSString*)identifier;
 
 /**
  *  MARK:--------------------清除记忆--------------------
