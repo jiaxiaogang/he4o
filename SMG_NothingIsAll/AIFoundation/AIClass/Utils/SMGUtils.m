@@ -793,7 +793,7 @@
  *  MARK:--------------------筛选端口 by 指定标识--------------------
  */
 +(NSArray*) filterPorts:(NSArray*)from_ps identifier:(NSString*)identifier{
-    return [SMGUtils filterPointers:from_ps checkValid:^BOOL(AIPort *item) {
+    return [SMGUtils filterArr:from_ps checkValid:^BOOL(AIPort *item) {
         return [identifier isEqualToString:item.target_p.identifier];
     }];
 }

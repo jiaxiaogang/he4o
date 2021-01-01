@@ -93,7 +93,7 @@
     mTOAlgModel.pm_Fo = [SMGUtils searchNode:mTOAlgModel.baseOrGroup.content_p];
     
     //5. 理性评价
-    [self reasonScorePM_V2:mTOAlgModel failure:nil success:nil notNeedPM:^{
+    [self reasonScorePM_V3:mTOAlgModel failure:nil success:nil notNeedPM:^{
         //6. 未跳转到PM,则将algModel设为Finish,并递归;
         mTOAlgModel.status = TOModelStatus_Finish;
         [self singleLoopBackWithFinishModel:mTOAlgModel];
@@ -401,7 +401,7 @@
         focusModel.pm_Fo = [SMGUtils searchNode:focusModel.baseOrGroup.content_p];
         
         //6. 理性评价
-        [self reasonScorePM_V2:focusModel failure:nil success:^{
+        [self reasonScorePM_V3:focusModel failure:nil success:^{
             NSLog(@"OPushM: 跳转成功");
         } notNeedPM:^{
             //7. 未跳转到PM,则将algModel设为Finish,并递归;
@@ -442,101 +442,6 @@
  *  @callers
  *      1. MC调用: 参考21059-344结构图;
  */
--(void) reasonScorePM_V2:(TOAlgModel*)outModel failure:(void(^)())failure success:(void(^)())success notNeedPM:(void(^)())notNeedPM{
-    //1. 数据准备
-    AIAlgNodeBase *M = [SMGUtils searchNode:outModel.content_p];
-    AIFoNodeBase *mMaskFo = outModel.pm_Fo;
-    if (!outModel || !outModel.pm_Fo || !M) {
-        if (notNeedPM) notNeedPM();
-        return;
-    }
-    
-    //3. 将理性评价数据存到短时记忆模型 (excepts收集所有已PM过的);
-    NSArray *except_ps = [TOUtils convertPointersFromTOValueModelSValue:outModel.subModels validStatus:nil];
-    NSArray *validJustPValues = [SMGUtils removeSub_ps:except_ps parent_ps:outModel.justPValues];
-    
-    //4. 不用PM评价 (则交由流程控制方法,推动继续决策(跳转下帧/别的);
-    if (!ARRISOK(validJustPValues)) {
-        if (notNeedPM) notNeedPM();
-        return;
-    }
-    NSLog(@"\n\n=============================== PM ===============================\nM:%@\nMAtFo:%@",Alg2FStr(M),Fo2FStr(mMaskFo));
-    if (Log4PM) NSLog(@"---> P独特码:%@",Pits2FStr(outModel.justPValues));
-    if (Log4PM) NSLog(@"---> 不应期:%@",Pits2FStr(except_ps));
-    if (Log4PM) NSLog(@"---> P有效独特码:%@",Pits2FStr(validJustPValues));
-    
-    //5. 理性评价: 取到首个P独特稀疏码 (判断是否需要行为化);
-    AIKVPointer *firstJustPValue = ARR_INDEX(validJustPValues, 0);
-    if (firstJustPValue) {
-        
-        //5. 取得当前帧alg模型 (参考20206-结构图) 如: A22(速0,高5,距0,向→,皮0);
-        TOAlgModel *curAlgModel = (TOAlgModel*)outModel.baseOrGroup;
-        AIAlgNodeBase *curAlg = [SMGUtils searchNode:curAlgModel.content_p];
-        
-        //6. 取当前方案fo模型 (参考20206-结构图) 如: P+新增一例解决方案: F23[A22(速0,高5,距0,向→,皮0),A1(吃1)]->M7{64};
-        TOFoModel *curFoModel = (TOFoModel*)curAlgModel.baseOrGroup;
-        AIFoNodeBase *curFo = [SMGUtils searchNode:curFoModel.content_p];
-        
-        //7. 根据curAlg和curFo取有效的部分validAlgSPs (参考20206-步骤图-第1步);
-        NSArray *validAlgSs = [ThinkingUtils pm_GetValidSPAlg_ps:curAlg curFo:curFo type:ATSub];
-        NSArray *validAlgPs = [ThinkingUtils pm_GetValidSPAlg_ps:curAlg curFo:curFo type:ATPlus];
-        
-        //8. 从validAlgSs和validAlgPs中,以firstJustPValue同区稀疏码相近排序 (参考20206-步骤图-第2步);
-        NSMutableArray *allValidSPs = [SMGUtils collectArrA:validAlgSs arrB:validAlgPs];
-        NSArray *sortValidSPs = [ThinkingUtils getFuzzySortWithMaskValue:firstJustPValue fromProto_ps:allValidSPs];
-        
-        //9. 将最接近的取出,并根据源于S或P作为理性评价结果,判断是否修正;
-        AIAlgNodeBase *mostSimilarAlg = ARR_INDEX(sortValidSPs, 0);
-        if (Log4PM) NSLog(@"----> firstJustPValue:%@ => 最相近:%@",Pit2FStr(firstJustPValue),Alg2FStr(mostSimilarAlg));
-        if (Log4PM) NSLog(@"--> S数:%lu [%@]",(unsigned long)validAlgSs.count,Pits2FStr(validAlgSs));
-        if (Log4PM) NSLog(@"--> P数:%lu [%@]",(unsigned long)validAlgPs.count,Pits2FStr(validAlgPs));
-        if (Log4PM) NSLog(@"--> SP From: %@ %@",Alg2FStr(curAlg),Fo2FStr(curFo));
-        if ([validAlgSs containsObject:mostSimilarAlg.pointer]) {
-            //10. 优先从MC的C中找同区码,作为修正GL的目标;
-            AIKVPointer *glValue4M = [SMGUtils filterSameIdentifier_p:firstJustPValue b_ps:curAlg.content_ps];
-            if (Log4PM) NSLog(@"find glValue4M %@ from C:(%@->%@) conF:%@ conA:%@",glValue4M ? @"success" : @"failure", Pit2FStr(firstJustPValue),Pit2FStr(glValue4M),Fo2FStr(curFo),Alg2FStr(curAlg));
-            
-            //10. 其次,找不到时,再从Plus中找: 评价结果为S -> 需要修正,找最近的P:mostSimilarPAlg, 作为GL修正目标值 (参考20207-示图);
-            if (!glValue4M) {
-                for (AIAlgNodeBase *item in sortValidSPs) {
-                    if ([validAlgPs containsObject:item.pointer]) {
-                        //10. 仅找P第一条即可;
-                        glValue4M = [SMGUtils filterSameIdentifier_p:firstJustPValue b_ps:item.content_ps];
-                        if (Log4PM) NSLog(@"find glValue4M %@ from P:(%@->%@) conF:%@ conA:%@",glValue4M ? @"success" : @"failure", Pit2FStr(firstJustPValue),Pit2FStr(glValue4M),Fo2FStr(curFo),Alg2FStr(curAlg));
-                        break;
-                    }
-                }
-            }
-            
-            //11. 修正找到时,转至Begin-TOValueModel,并转移_GL;
-            if (glValue4M) {
-                if (Log4PM) NSLog(@"-> 转移 Success:(%@->%@)",Pit2FStr(firstJustPValue),Pit2FStr(glValue4M));
-                TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:glValue4M group:outModel];
-                outModel.sp_P = M;
-                [self singleLoopBackWithBegin:toValueModel];
-                if (success) success();
-                return;
-            }
-            
-            //12. ------> 未找到GL的目标 (如距离0),直接计为失败;
-            if (Log4PM) NSLog(@"-> 未找到GL目标,转至流程控制Failure");
-            if (failure) failure();
-            return;
-        }else if ([validAlgPs containsObject:mostSimilarAlg.pointer]) {
-            //13. ------> 评价结果为P -> 无需修正,直接Finish (注:在TOValueModel构造方法中: proto中的value,就是subValue);
-            if (Log4PM) NSLog(@"-> 无需PM,转至流程控制Finish");
-            TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:nil group:outModel];
-            toValueModel.status = TOModelStatus_NoNeedAct;
-            [self singleLoopBackWithFinishModel:toValueModel];
-            if (success) success();
-            return;
-        }
-    }
-    
-    //14. 无justP目标需转移,直接返回false,调用PM者会使outModel直接Finish;
-    if (notNeedPM) notNeedPM();
-}
-
 -(void) reasonScorePM_V3:(TOAlgModel*)outModel failure:(void(^)())failure success:(void(^)())success notNeedPM:(void(^)())notNeedPM{
     //1. 数据准备
     AIAlgNodeBase *M = [SMGUtils searchNode:outModel.content_p];
@@ -701,7 +606,7 @@
         
         //5. Value转移 (未行为化过的理性评价进行转移);
         if (!jump) {
-            [self reasonScorePM_V2:toAlgModel failure:^{
+            [self reasonScorePM_V3:toAlgModel failure:^{
                 //6. 当PM转移失败时,递归到Action._Hav;
                 //2020.11.27: algModel本级递归 (只有在_Hav中全部失败后,才算真正的失败) (参考2114B);
                 [self singleLoopBackWithBegin:toAlgModel];
@@ -950,7 +855,7 @@
     [self singleLoopBackWithBegin:outModel];
 }
 -(void) toAction_ReasonScorePM:(TOAlgModel*)outModel failure:(void(^)())failure notNeedPM:(void(^)())notNeedPM{
-    [self reasonScorePM_V2:outModel failure:failure success:nil notNeedPM:notNeedPM];
+    [self reasonScorePM_V3:outModel failure:failure success:nil notNeedPM:notNeedPM];
 }
 
 @end
