@@ -17,6 +17,8 @@
  *  MARK:--------------------值域求和--------------------
  *  @desc 束波求和简化版,采取线函数来替代找交点 (参考21212 & 21213);
  *  @result Array[SumModel] notnull
+ *  @todo
+ *      2021.01.01: 在排序后对同值的元素抵消(s3+p5=p2) (先不实现,因为同值此时交点即会直接取到值,在评价时,似乎这样并没有什么问题);
  */
 +(NSArray*) sumSPorts:(NSArray*)sPorts pPorts:(NSArray*)pPorts{
     //1. 数据检查;
