@@ -265,12 +265,12 @@
 /**
  *  MARK:--------------------筛选指针 by 指定标识--------------------
  */
-+(NSArray*) filterPointer:(NSArray*)from_ps identifier:(NSString*)identifier;
++(NSArray*) filterPointers:(NSArray*)from_ps identifier:(NSString*)identifier;
 
 /**
  *  MARK:--------------------筛选端口 by 指定标识--------------------
  */
-+(NSArray*) filterPorts:(NSArray*)from_ps identifier:(NSString*)identifier;
++(NSArray*) filterAlgPorts:(NSArray*)algPorts valueIdentifier:(NSString*)valueIdentifier;
 
 /**
  *  MARK:--------------------清除记忆--------------------

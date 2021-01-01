@@ -468,6 +468,7 @@
     //5. 理性评价: 取到首个P独特稀疏码 (判断是否需要行为化);
     AIKVPointer *firstJustPValue = ARR_INDEX(validJustPValues, 0);
     if (firstJustPValue) {
+        if (Log4PM) NSLog(@"\n=== 当前修正Value:%@",Pit2FStr(firstJustPValue));
         
         //5. 取得当前帧alg模型 (参考20206-结构图) 如: A22(速0,高5,距0,向→,皮0);
         TOAlgModel *curAlgModel = (TOAlgModel*)outModel.baseOrGroup;
@@ -479,11 +480,11 @@
         
         //7. 根据curAlg和curFo取有效的部分validAlgSPs (参考20206-步骤图-第1步);
         NSArray *sPorts = [ThinkingUtils pm_GetValidSPAlg_ps:curAlg curFo:curFo type:ATSub];
-        sPorts = [SMGUtils filterPorts:sPorts identifier:firstJustPValue.identifier];
+        sPorts = [SMGUtils filterAlgPorts:sPorts valueIdentifier:firstJustPValue.identifier];
         
         //8. 根据curAlg和curFo取有效部分的pPorts,并筛选有效分区部分;
         NSArray *pPorts = [ThinkingUtils pm_GetValidSPAlg_ps:curAlg curFo:curFo type:ATPlus];
-        pPorts = [SMGUtils filterPorts:pPorts identifier:firstJustPValue.identifier];
+        pPorts = [SMGUtils filterAlgPorts:pPorts valueIdentifier:firstJustPValue.identifier];
         
         //8. 2021.01.01: 个性评价依据,以值域求和方式来实现 (参考2120A & n21p21);
         NSArray *sumModels = [SMGUtils sumSPorts:sPorts pPorts:pPorts];
@@ -494,7 +495,7 @@
         //9. 将最接近的取出,并根据源于S或P作为理性评价结果,判断是否修正;
         AnalogyType scoreType = [TOUtils score4Value:firstJustPValue sumModels:sumModels];
         AIAlgNodeBase *mostSimilarAlg = ARR_INDEX(sortPAlgs, 0);
-        if (Log4PM) NSLog(@"===当前修正Value:%@ => 最近P:%@ 评价:%ld",Pit2FStr(firstJustPValue),Alg2FStr(mostSimilarAlg),(long)scoreType);
+        if (Log4PM) NSLog(@"> 最近P:%@ 评价:%ld",Alg2FStr(mostSimilarAlg),(long)scoreType);
         if (Log4PM) NSLog(@"--> S数:%lu [%@]",(unsigned long)sPorts.count,Pits2FStr(Ports2Pits(sPorts)));
         if (Log4PM) NSLog(@"--> P数:%lu [%@]",(unsigned long)pPorts.count,Pits2FStr(Ports2Pits(pPorts)));
         if (Log4PM) NSLog(@"--> SP From: %@ %@",Alg2FStr(curAlg),Fo2FStr(curFo));

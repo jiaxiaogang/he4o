@@ -783,7 +783,7 @@
 /**
  *  MARK:--------------------筛选指针 by 指定标识--------------------
  */
-+(NSArray*) filterPointer:(NSArray*)from_ps identifier:(NSString*)identifier{
++(NSArray*) filterPointers:(NSArray*)from_ps identifier:(NSString*)identifier{
     return [SMGUtils filterPointers:from_ps checkValid:^BOOL(AIKVPointer *item_p) {
         return [identifier isEqualToString:item_p.identifier];
     }];
@@ -792,9 +792,10 @@
 /**
  *  MARK:--------------------筛选端口 by 指定标识--------------------
  */
-+(NSArray*) filterPorts:(NSArray*)from_ps identifier:(NSString*)identifier{
-    return [SMGUtils filterArr:from_ps checkValid:^BOOL(AIPort *item) {
-        return [identifier isEqualToString:item.target_p.identifier];
++(NSArray*) filterAlgPorts:(NSArray*)algPorts valueIdentifier:(NSString*)valueIdentifier{
+    return [SMGUtils filterArr:algPorts checkValid:^BOOL(AIPort *item) {
+        AIAlgNodeBase *alg = [SMGUtils searchNode:item.target_p];
+        return ARRISOK([SMGUtils filterPointers:alg.content_ps identifier:valueIdentifier]);
     }];
 }
 
