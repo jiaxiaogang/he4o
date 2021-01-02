@@ -495,7 +495,7 @@
         //9. 将最接近的取出,并根据源于S或P作为理性评价结果,判断是否修正;
         AnalogyType scoreType = [TOUtils score4Value:firstJustPValue sumModels:sumModels];
         AIAlgNodeBase *mostSimilarAlg = ARR_INDEX(sortPAlgs, 0);
-        if (Log4PM) NSLog(@"> 最近P:%@ 评价:%ld",Alg2FStr(mostSimilarAlg),(long)scoreType);
+        if (Log4PM) NSLog(@"> 最近P:%@ 评价:%@",Alg2FStr(mostSimilarAlg),ATType2Str(scoreType));
         if (Log4PM) NSLog(@"--> S数:%lu [%@]",(unsigned long)sPorts.count,Pits2FStr(Ports2Pits(sPorts)));
         if (Log4PM) NSLog(@"--> P数:%lu [%@]",(unsigned long)pPorts.count,Pits2FStr(Ports2Pits(pPorts)));
         if (Log4PM) NSLog(@"--> SP From: %@ %@",Alg2FStr(curAlg),Fo2FStr(curFo));
@@ -528,7 +528,7 @@
             if (Log4PM) NSLog(@"-> 未找到GL目标,转至流程控制Failure");
             if (failure) failure();
             return;
-        }else if (scoreType == ATPlus) {
+        }else {
             //13. ------> 评价结果为P -> 无需修正,直接Finish (注:在TOValueModel构造方法中: proto中的value,就是subValue);
             if (Log4PM) NSLog(@"-> 无需PM,转至流程控制Finish");
             TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:nil group:outModel];
