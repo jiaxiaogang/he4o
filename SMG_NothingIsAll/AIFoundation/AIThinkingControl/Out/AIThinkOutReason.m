@@ -289,6 +289,7 @@
  *      2020.12.22: 在以往isNormal之外,再支持对isH,isGL的节点进行PM理性评价;
  *      2020.12.22: 将所有waitModel有效的返回都赋值OuterBack,而仅将首个focusModel进行PM理性评价;
  *      2020.12.28: waitModels仅对ActYes响应,将Runing去掉,因为Running应该到任务推进中自行进行PM匹配mModel,而非此处 (参考21208);
+ *      2021.01.02: 无论GL变化type是否与waitType符合,都对新的变化进行保留到realContent (参考2120B-BUG1);
  *  @bug
  *      2020.09.22: 加上cutStopStatus,避免同一waitModel被多次触发,导致BUG (参考21042);
  *      2020.12.26: GL时,waitType的判断改为bFo,因为只有bFo才携带了waitTypeDS (参考21204);
@@ -340,26 +341,27 @@
                     
                     //c. 对期望与实际稀疏码比较得到实际ATType;
                     if (hopeValue_p && realValue_p) {
-                        AnalogyType realType = [ThinkingUtils compare:hopeValue_p valueB_p:realValue_p];
+                        BOOL mIsC = [TOUtils mIsC_1:latestMModel.matchAlg.pointer c:targetModel.content_p] || [TOUtils mIsC_1:targetModel.content_p c:latestMModel.matchAlg.pointer];
+                        if (Log4OPushM) NSLog(@"GL有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(targetModel.content_p),mIsC);
                         
-                        //d. 当实际ATType与等待中的ATType一致时,符合预期 (20201226改为判断bFo,因为只有bFo才携带了waitTypeDS,参考21204);
-                        AnalogyType waitType = [ThinkingUtils convertDS2AnalogyType:bFo.content_p.dataSource];
-                        if (realType == waitType) {
-                            BOOL mIsC = [TOUtils mIsC_1:latestMModel.matchAlg.pointer c:targetModel.content_p] || [TOUtils mIsC_1:targetModel.content_p c:latestMModel.matchAlg.pointer];
-                            if (Log4OPushM) NSLog(@"GL有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(targetModel.content_p),mIsC);
+                        //e. mIsC判断 (20201226:在21204BUG修复后训练时,发现mIsC有时是cIsM,所以都判断下);
+                        if (mIsC) {
+                            //d. 当实际ATType与等待中的ATType一致时,符合预期 (20201226改为判断bFo,因为只有bFo才携带了waitTypeDS,参考21204);
+                            AnalogyType realType = [ThinkingUtils compare:hopeValue_p valueB_p:realValue_p];
+                            AnalogyType waitType = [ThinkingUtils convertDS2AnalogyType:bFo.content_p.dataSource];
                             
-                            //e. mIsC判断 (20201226:在21204BUG修复后训练时,发现mIsC有时是cIsM,所以都判断下);
-                            if (mIsC) {
+                            //e. 只有符合变化时,才改为OuterBack,否则不改,使之反省类比时,可以发现不符合问题;
+                            if (realType == waitType){
                                 waitModel.status = TOModelStatus_OuterBack;
-                                waitModel.realContent_p = latestMModel.protoAlg.pointer;
-                                
-                                //1. 在ATHav时,执行到此处,说明waitModel和baseFo已完成;
-                                waitModel.baseOrGroup.status = TOModelStatus_Finish;
-                                
-                                //2. 应跳到: baseFo.baseAlg与此处inputMModel.protoAlg之间,进行PM评价;
-                                if (!focusModel) NSLog(@"=== OPushM成功 GL继续PM: %@ bFo:%@",Pit2FStr(targetModel.content_p),Pit2FStr(bFo.content_p));
-                                if (!focusModel) focusModel = targetModel;
                             }
+                            waitModel.realContent_p = latestMModel.protoAlg.pointer;
+                            
+                            //1. 在ATHav时,执行到此处,说明waitModel和baseFo已完成;
+                            waitModel.baseOrGroup.status = TOModelStatus_Finish;
+                            
+                            //2. 应跳到: baseFo.baseAlg与此处inputMModel.protoAlg之间,进行PM评价;
+                            if (!focusModel) NSLog(@"=== OPushM成功 GL:%@ 继续PM:%@ bFo:%@",realType == waitType ? @"符合" : @"不符合",Pit2FStr(targetModel.content_p),Pit2FStr(bFo.content_p));
+                            if (!focusModel) focusModel = targetModel;
                         }
                     }
                 }
