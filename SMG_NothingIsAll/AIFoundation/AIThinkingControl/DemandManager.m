@@ -140,13 +140,17 @@
 /**
  *  MARK:--------------------重排序cmvCache--------------------
  *  1. 懒排序,什么时候assLoop,什么时候排序;
+ *  @version
+ *      2021.01.02: loopCache排序后未被接收,所以一直是未生效的BUG;
  */
 -(void) refreshCmvCacheSort{
-    [self.loopCache sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+    NSArray *sort = [self.loopCache sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
         DemandModel *itemA = (DemandModel*)obj1;
         DemandModel *itemB = (DemandModel*)obj2;
         return [SMGUtils compareIntA:itemA.urgentTo intB:itemB.urgentTo];
     }];
+    [self.loopCache removeAllObjects];
+    [self.loopCache addObjectsFromArray:sort];
 }
 
 

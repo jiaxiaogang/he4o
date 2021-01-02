@@ -487,7 +487,7 @@
         pPorts = [SMGUtils filterAlgPorts:pPorts valueIdentifier:firstJustPValue.identifier];
         
         //8. 2021.01.01: 个性评价依据,以值域求和方式来实现 (参考2120A & n21p21);
-        NSArray *sumModels = [SMGUtils sumSPorts:sPorts pPorts:pPorts];
+        NSArray *sumModels = [SMGUtils sumSPorts:sPorts pPorts:pPorts maskIdentifier:firstJustPValue.identifier];
         
         //8. 从validAlgSs和validAlgPs中,以firstJustPValue同区稀疏码相近排序 (参考20206-步骤图-第2步);
         NSArray *sortPAlgs = [ThinkingUtils getFuzzySortWithMaskValue:firstJustPValue fromProto_ps:Ports2Pits(pPorts)];

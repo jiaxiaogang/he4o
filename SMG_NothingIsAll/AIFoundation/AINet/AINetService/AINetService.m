@@ -10,6 +10,7 @@
 #import "AINetUtils.h"
 #import "AIAlgNodeBase.h"
 #import "TOUtils.h"
+#import "AINetIndex.h"
 
 @implementation AINetService
 
@@ -98,6 +99,18 @@
         }
     }
     return nil;
+}
+
+/**
+ *  MARK:--------------------从Alg中获取指定标识稀疏码的值--------------------
+ */
++(double) getValueDataFromAlg:(AIKVPointer*)alg_p valueIdentifier:(NSString*)valueIdentifier{
+    AIAlgNodeBase *alg = [SMGUtils searchNode:alg_p];
+    if (alg) {
+        AIKVPointer *value_p = ARR_INDEX([SMGUtils filterPointers:alg.content_ps identifier:valueIdentifier], 0);
+        return [NUMTOOK([AINetIndex getData:value_p]) doubleValue];
+    }
+    return 0;
 }
 
 @end

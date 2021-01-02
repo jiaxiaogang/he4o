@@ -318,6 +318,7 @@
 
 /**
  *  MARK:--------------------比较floatA是否比floatB大--------------------
+ *  @desc 从大到小排序,前大后小;
  */
 +(NSComparisonResult) compareFloatA:(CGFloat)floatA floatB:(CGFloat)floatB{
     return floatA > floatB ? NSOrderedAscending : floatA < floatB ? NSOrderedDescending : NSOrderedSame;

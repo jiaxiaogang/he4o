@@ -53,7 +53,6 @@
 //        TOModelBase *itemB = (TOModelBase*)obj2;
 //        return [SMGUtils compareFloatA:itemB.score floatB:itemA.score];
 //    }];
-//    NSLog(@"!!!测试下expCache是否是以order从大到小排序的...");
 //}
 
 @end

@@ -23,4 +23,9 @@
  */
 +(AIKVPointer*) getInner1Alg:(AIAlgNodeBase*)pAlg vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps;
 
+/**
+ *  MARK:--------------------从Alg中获取指定标识稀疏码的值--------------------
+ */
++(double) getValueDataFromAlg:(AIKVPointer*)alg_p valueIdentifier:(NSString*)valueIdentifier;
+
 @end

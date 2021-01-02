@@ -10,17 +10,24 @@
 #import "AINetIndex.h"
 #import "AIPort.h"
 #import "NVViewUtil.h"
+#import "AIAlgNodeBase.h"
+#import "AINetService.h"
 
 @implementation SMGUtils (Sum)
 
 /**
  *  MARK:--------------------值域求和--------------------
  *  @desc 束波求和简化版,采取线函数来替代找交点 (参考21212 & 21213);
+ *  @param sPorts : 传入Alg.ATSub的端口组;
+ *  @param maskIdentifier : 此次要获取值域求和的稀疏码标识;
  *  @result Array[SumModel] notnull
  *  @todo
  *      2021.01.01: 在排序后对同值的元素抵消(s3+p5=p2) (先不实现,因为同值此时交点即会直接取到值,在评价时,似乎这样并没有什么问题);
+ *  @version
+ *      2021.01.02: 解决sort未被接收,导致排序不生效的BUG;
+ *      2021.01.02: 支持maskIdentifier,因为原来把alg当成value来取值,导致生成sumModels和评价完全错误 (参考21216);
  */
-+(NSArray*) sumSPorts:(NSArray*)sPorts pPorts:(NSArray*)pPorts{
++(NSArray*) sumSPorts:(NSArray*)sPorts pPorts:(NSArray*)pPorts maskIdentifier:(NSString*)maskIdentifier{
     //1. 数据检查;
     sPorts = ARRTOOK(sPorts);
     pPorts = ARRTOOK(pPorts);
@@ -28,9 +35,9 @@
     NSMutableArray *result = [[NSMutableArray alloc] init];
     
     //2. 从小到大排序;
-    [allPorts sortedArrayUsingComparator:^NSComparisonResult(AIPort *p1, AIPort *p2) {
-        double v1 = [NUMTOOK([AINetIndex getData:p1.target_p]) doubleValue];
-        double v2 = [NUMTOOK([AINetIndex getData:p2.target_p]) doubleValue];
+    allPorts = [allPorts sortedArrayUsingComparator:^NSComparisonResult(AIPort *p1, AIPort *p2) {
+        double v1 = [AINetService getValueDataFromAlg:p1.target_p valueIdentifier:maskIdentifier];
+        double v2 = [AINetService getValueDataFromAlg:p2.target_p valueIdentifier:maskIdentifier];
         return [SMGUtils compareFloatA:v2 floatB:v1];
     }];
     
@@ -50,7 +57,7 @@
         //6. 中间区间处理 (大于第2组(lastGroup>0)时,对前两组对比生成SubModel处理) (切3时处理2和1);
         if (curType != ATNone && curType != itemType) {
             if (ARRISOK(lastGroup)) {
-                SumModel *model = [SMGUtils createSumModel:curType lastGroup:lastGroup curGroup:curGroup];
+                SumModel *model = [SMGUtils createSumModel:curType lastGroup:lastGroup curGroup:curGroup maskIdentifier:maskIdentifier];
                 if (model) [result addObject:model];
             }
             
@@ -67,7 +74,7 @@
     
     //9. 尾区间处理: 全收集完后,最后一组处理 (lastGroup无效时,说明总共<=1组,不必处理尾区间);
     if (ARRISOK(lastGroup)) {
-        SumModel *model = [SMGUtils createSumModel:curType lastGroup:lastGroup curGroup:curGroup];
+        SumModel *model = [SMGUtils createSumModel:curType lastGroup:lastGroup curGroup:curGroup maskIdentifier:maskIdentifier];
         if (model) [result addObject:model];
     }
     return result;
@@ -81,7 +88,7 @@
  *  MARK:--------------------找出最具竞争力的成员--------------------
  *  @desc 最垂直的即是结果 (参考21215);
  */
-+(void) findMostVertical:(AnalogyType)curType curGroup:(NSArray*)curGroup lastGroup:(NSArray*)lastGroup complete:(void(^)(AIPort *lastItem,AIPort *curItem))complete{
++(void) findMostVertical:(AnalogyType)curType curGroup:(NSArray*)curGroup lastGroup:(NSArray*)lastGroup complete:(void(^)(AIPort *lastItem,AIPort *curItem))complete maskIdentifier:(NSString*)maskIdentifier{
     //1. 数据检查;
     curGroup = ARRTOOK(curGroup);
     lastGroup = ARRTOOK(lastGroup);
@@ -92,8 +99,8 @@
     AIPort *mostFightCurItem = nil;
     for (AIPort *curItem in curGroup) {
         for (AIPort *lastItem in lastGroup) {
-            double curValue = [NUMTOOK([AINetIndex getData:curItem.target_p]) doubleValue];
-            double lastValue = [NUMTOOK([AINetIndex getData:lastItem.target_p]) doubleValue];
+            double curValue = [AINetService getValueDataFromAlg:curItem.target_p valueIdentifier:maskIdentifier];
+            double lastValue = [AINetService getValueDataFromAlg:lastItem.target_p valueIdentifier:maskIdentifier];
             CGPoint curPoint = CGPointMake(curValue, curItem.strong.value * (curType == ATSub ? -1 : 1));
             CGPoint lastPoint = CGPointMake(lastValue, lastItem.strong.value * (curType == ATSub ? 1 : -1));
             
@@ -113,13 +120,14 @@
 /**
  *  MARK:--------------------根据最有竞争力成员算出交点--------------------
  */
-+(CGFloat) findDotValue:(AIPort*)lastItem curItem:(AIPort*)curItem{
++(CGFloat) findDotValue:(AIPort*)lastItem curItem:(AIPort*)curItem maskIdentifier:(NSString*)maskIdentifier{
     //1. 数据检查;
     if (!lastItem || !curItem) return CGFLOAT_MIN;
     
     //2. 计算交点: 取两点值;
-    double curValue = [NUMTOOK([AINetIndex getData:curItem.target_p]) doubleValue];
-    double lastValue = [NUMTOOK([AINetIndex getData:lastItem.target_p]) doubleValue];
+    
+    double curValue = [AINetService getValueDataFromAlg:curItem.target_p valueIdentifier:maskIdentifier];
+    double lastValue = [AINetService getValueDataFromAlg:lastItem.target_p valueIdentifier:maskIdentifier];
     
     //3. 计算交点: 算出比例 (交点与强度是正比的);
     float lastStrong = (float)lastItem.strong.value;
@@ -137,7 +145,7 @@
  *      1. 切区间时,对上组和上上组进行对比,并得出SumModel;
  *      2. 上上组为空时,自然会返回nil;
  */
-+(SumModel*) createSumModel:(AnalogyType)curType lastGroup:(NSArray*)lastGroup curGroup:(NSArray*)curGroup{
++(SumModel*) createSumModel:(AnalogyType)curType lastGroup:(NSArray*)lastGroup curGroup:(NSArray*)curGroup maskIdentifier:(NSString*)maskIdentifier{
     //1. 数据检查;
     if (curType != ATSub && curType != ATPlus) return nil;
     lastGroup = ARRTOOK(lastGroup);
@@ -149,11 +157,11 @@
     [SMGUtils findMostVertical:curType curGroup:curGroup lastGroup:lastGroup complete:^(AIPort *lastItem, AIPort *curItem) {
         mostFightLastItem = lastItem;
         mostFightCurItem = curItem;
-    }];
+    } maskIdentifier:maskIdentifier];
     
     //3. 有效时,根据最有竞争力成员算出交点,生成模型,并收集;
     if (mostFightLastItem && mostFightCurItem) {
-        float dotValue = [self findDotValue:mostFightLastItem curItem:mostFightCurItem];
+        float dotValue = [self findDotValue:mostFightLastItem curItem:mostFightCurItem maskIdentifier:maskIdentifier];
         return [SumModel newWithDotValue:dotValue type:curType];
     }
     return nil;

@@ -17,7 +17,7 @@
 /**
  *  MARK:--------------------值域求和--------------------
  */
-+(NSArray*) sumSPorts:(NSArray*)sPorts pPorts:(NSArray*)pPorts;
++(NSArray*) sumSPorts:(NSArray*)sPorts pPorts:(NSArray*)pPorts maskIdentifier:(NSString*)maskIdentifier;
 
 @end
 
