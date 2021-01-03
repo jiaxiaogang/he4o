@@ -30,6 +30,7 @@
  *  MARK:--------------------在foNode基础上构建抽象--------------------
  *  @version
  *      2020.08.18: 支持deltaTimes (抽象时序的deltaTime全部由conFos得出,参考:20201);
+ *      2021.01.03: 判断abs已存在抽象节点时,加上ATDS的匹配判断,因为不同类型节点不必去重 (参考2120B-BUG2);
  */
 -(AINetAbsFoNode*) create:(NSArray*)conFos orderSames:(NSArray*)orderSames difStrong:(NSInteger)difStrong dsBlock:(NSString*(^)())dsBlock{
     //1. 数据准备
@@ -46,11 +47,7 @@
         [allAbsPorts addObjectsFromArray:[AINetUtils absPorts_All:conItem]];
     }
     for (AIPort *port in allAbsPorts) {
-        
-        //TODOTOMORROW20210103:
-        //此处header仅由content_ps生成,导致不同的ATType节点被去重,比如ds为ATSub时,怎么都生成不了新节点 (参考2120B-BUG2);
-        
-        if ([samesMd5 isEqualToString:port.header]) {
+        if ([samesMd5 isEqualToString:port.header] && [port.target_p.dataSource isEqualToString:ds]) {
             findAbsNode = [SMGUtils searchNode:port.target_p];
             if (findAbsNode.pointer.isMem) {
                 ///3. 转移foNode到硬盘网络;

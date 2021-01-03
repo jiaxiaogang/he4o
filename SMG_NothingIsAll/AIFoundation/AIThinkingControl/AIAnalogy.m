@@ -689,11 +689,6 @@
     }
     
     //6. 构建SPFo
-    if (foNode.pointer.pointerId == 23 && type == ATSub) {
-        NSArray *a1 = [AINetUtils absPorts_All:foNode];
-        NSArray *a2 = [AINetUtils absPorts_All:foNode type:ATSub];
-        NSLog(@"");
-    }
     AINetAbsFoNode *spFo = [theNet createAbsFo_General:@[foNode] content_ps:spFoContent difStrong:1 ds:spDS];
     NSLog(@"createFo:%@ con:%@",Fo2FStr(spFo),Fo2FStr(foNode));
     

@@ -64,6 +64,8 @@
  *      b. 能: (则导致会形成坚果是坚果的多层抽象)
  *      c. 结论: 能,问题转移到n17p19
  *  注: TODO:判断algSames是否就是algsA或algB本身; (等conAlgNode和absAlgNode统一不区分后,再判断本身)
+ *  @version
+ *      2021.01.03: 判断abs已存在抽象节点时,加上ATDS的匹配判断,因为不同类型节点不必去重 (参考2120B-BUG2);
  */
 +(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem dsBlock:(NSString*(^)())dsBlock isOutBlock:(BOOL(^)())isOutBlock{
     //1. 数据准备
@@ -101,7 +103,7 @@
             NSArray *absPorts_All = [AINetUtils absPorts_All:conNode];
             for (AIPort *absPort in absPorts_All) {
                 //1> 遍历找抽象是否已存在;
-                if ([samesMd5 isEqualToString:absPort.header]) {
+                if ([samesMd5 isEqualToString:absPort.header] && [absPort.target_p.dataSource isEqualToString:dataSource]) {
                     AIAbsAlgNode *absNode = [SMGUtils searchNode:absPort.target_p];
                     //2> 已存在,则转移到硬盘网络;
                     if (absNode.pointer.isMem) {
