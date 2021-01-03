@@ -46,6 +46,10 @@
         [allAbsPorts addObjectsFromArray:[AINetUtils absPorts_All:conItem]];
     }
     for (AIPort *port in allAbsPorts) {
+        
+        //TODOTOMORROW20210103:
+        //此处header仅由content_ps生成,导致不同的ATType节点被去重,比如ds为ATSub时,怎么都生成不了新节点 (参考2120B-BUG2);
+        
         if ([samesMd5 isEqualToString:port.header]) {
             findAbsNode = [SMGUtils searchNode:port.target_p];
             if (findAbsNode.pointer.isMem) {
