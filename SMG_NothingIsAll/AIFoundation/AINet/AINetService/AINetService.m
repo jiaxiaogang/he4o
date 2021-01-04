@@ -64,9 +64,10 @@
                 AIAlgNodeBase *item = [SMGUtils searchNode:glConAlg_p];
                 if (mIsC) {
                     NSArray *relativeFo_ps = Ports2Pits([SMGUtils filterPorts:[AINetUtils refPorts_All4Alg:item] havTypes:@[@(type)] noTypes:nil]);
-                    NSLog(@"===== glConAlg_Item: %@",AlgP2FStr(glConAlg_p));
-                    for (AIKVPointer *item in relativeFo_ps) {
-                        NSLog(@">> fos: %@ == %@",FoP2FStr(item),item.identifier);
+                    NSLog(@"===== glConAlg_Item: %@ 共%lu个",AlgP2FStr(glConAlg_p),(unsigned long)relativeFo_ps.count);
+                    for (NSInteger i = 0; i < 10; i++) {
+                        AIKVPointer *item = ARR_INDEX(relativeFo_ps, i);
+                        if (item) NSLog(@">> fos: %@ == %@",FoP2FStr(item),item.identifier);
                     }
                 }
             }

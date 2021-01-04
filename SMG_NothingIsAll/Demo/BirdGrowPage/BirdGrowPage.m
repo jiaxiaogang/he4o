@@ -242,7 +242,7 @@
     NSArray *foods = ARRTOOK([self.view subViews_AllDeepWithClass:FoodView.class]);
     for (FoodView *food in foods) {
         //判断触碰到的食物 & 并返回;
-        if (fabs(food.center.x - self.birdView.center.x) < 15.0f && fabs(food.center.y - self.birdView.center.y) < 15.0f) {
+        if (fabs(food.center.x - self.birdView.center.x) <= 15.0f && fabs(food.center.y - self.birdView.center.y) <= 15.0f) {
             return food;
         }
     }

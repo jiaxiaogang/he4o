@@ -508,6 +508,7 @@
         if (Log4PM) NSLog(@"--> S数:%lu [%@]",(unsigned long)sPorts.count,Pits2FStr(Ports2Pits(sPorts)));
         if (Log4PM) NSLog(@"--> P数:%lu [%@]",(unsigned long)pPorts.count,Pits2FStr(Ports2Pits(pPorts)));
         if (Log4PM) NSLog(@"--> SP From: %@ %@",Alg2FStr(curAlg),Fo2FStr(curFo));
+        if (Log4PM) NSLog(@"--> SP SumModels: %@",@"TODOTOMORROW20210104打印出SumModels");
         if (scoreType == ATSub) {
             //10. 优先从MC的C中找同区码,作为修正GL的目标;
             AIKVPointer *glValue4M = [SMGUtils filterSameIdentifier_p:firstJustPValue b_ps:curAlg.content_ps];
