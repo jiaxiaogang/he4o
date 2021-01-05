@@ -28,6 +28,8 @@
  *      2021.01.02: 支持maskIdentifier,因为原来把alg当成value来取值,导致生成sumModels和评价完全错误 (参考21216);
  */
 +(NSArray*) sumSPorts:(NSArray*)sPorts pPorts:(NSArray*)pPorts maskIdentifier:(NSString*)maskIdentifier{
+    
+    //TODOTOMORROW20210105: 对偶发性问题与思维固化的支持,迁移为主,强化为辅 (参考22021);
     //1. 数据检查;
     sPorts = ARRTOOK(sPorts);
     pPorts = ARRTOOK(pPorts);

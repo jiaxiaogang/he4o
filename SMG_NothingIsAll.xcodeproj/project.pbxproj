@@ -100,6 +100,7 @@
 		08B31E7E20648C3700FD96EA /* ThinkingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B31E7D20648C3700FD96EA /* ThinkingUtils.m */; };
 		08C07BFE259C030800623B11 /* SMGUtils+Sum.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C07BFD259C030800623B11 /* SMGUtils+Sum.m */; };
 		08C6C2632518E49400DDE6BF /* NSLog+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C6C2622518E49400DDE6BF /* NSLog+Extension.m */; };
+		08C7539225A3EEB800BCF011 /* AIScore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C7539125A3EEB800BCF011 /* AIScore.m */; };
 		08C84A8E1E9A866200897D8B /* AIInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A8D1E9A866200897D8B /* AIInput.m */; };
 		08CEAFAD22B317A800CD1D91 /* NodeCompareModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08CEAFAC22B317A800CD1D91 /* NodeCompareModel.m */; };
 		08D322A91EBA28B0009D734A /* Foundation+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D322A81EBA28B0009D734A /* Foundation+Log.m */; };
@@ -327,6 +328,8 @@
 		08C07BFD259C030800623B11 /* SMGUtils+Sum.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "SMGUtils+Sum.m"; sourceTree = "<group>"; };
 		08C6C2612518E49400DDE6BF /* NSLog+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSLog+Extension.h"; sourceTree = "<group>"; };
 		08C6C2622518E49400DDE6BF /* NSLog+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSLog+Extension.m"; sourceTree = "<group>"; };
+		08C7539025A3EEB800BCF011 /* AIScore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIScore.h; sourceTree = "<group>"; };
+		08C7539125A3EEB800BCF011 /* AIScore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIScore.m; sourceTree = "<group>"; };
 		08C84A8C1E9A866200897D8B /* AIInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIInput.h; sourceTree = "<group>"; };
 		08C84A8D1E9A866200897D8B /* AIInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIInput.m; sourceTree = "<group>"; };
 		08CB89B82231EAB200EC1181 /* ReadMe.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReadMe.h; sourceTree = "<group>"; };
@@ -635,6 +638,8 @@
 				88E1F850211591E50036B616 /* DemandModel.m */,
 				08F3E92F2241B6E800545795 /* AIAnalogy.h */,
 				08F3E9302241B6E800545795 /* AIAnalogy.m */,
+				08C7539025A3EEB800BCF011 /* AIScore.h */,
+				08C7539125A3EEB800BCF011 /* AIScore.m */,
 			);
 			path = AIThinkingControl;
 			sourceTree = "<group>";
@@ -1310,6 +1315,7 @@
 				88BC09D720B4EB920006ABEF /* XGRedis.m in Sources */,
 				084219E11FD8CEFD009DA6BC /* AIReactorControl.m in Sources */,
 				0808D34022B6F73D00D383BA /* NVLineView.m in Sources */,
+				08C7539225A3EEB800BCF011 /* AIScore.m in Sources */,
 				08EA48CE202932B80038B982 /* CustomAlgsChargeModel.m in Sources */,
 				084C3A6B21926D5700DAA08A /* BirdView.m in Sources */,
 				088DD7232201216500E0A786 /* TOFoModel.m in Sources */,
