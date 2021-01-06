@@ -85,11 +85,7 @@
                                 //3. 收集并更新jMax;
                                 [orderSames insertObject:createAbsNode.pointer atIndex:0];
                                 jMax = j - 1;
-                                if (type == ATSame) {
-                                    if (Log4SameAna) NSLog(@"---> 构建:%@ ConFrom (A%ld,A%ld)",Alg2FStr(createAbsNode),(long)algNodeA.pointer.pointerId,(long)algNodeB.pointer.pointerId);
-                                }else{
-                                    if (Log4InOutAna) NSLog(@"-> 内中外类比_构建概念:(%@)%@ ConFrom (A%ld,A%ld)",[NVHeUtil getLightStr_Value:type algsType:nil dataSource:nil],Alg2FStr(createAbsNode),(long)algNodeA.pointer.pointerId,(long)algNodeB.pointer.pointerId);
-                                }
+                                if (Log4OutAna) NSLog(@"---> 外类比构建概念:(%@)%@ ConFrom (A%ld,A%ld)",ATType2Str(type),Alg2FStr(createAbsNode),(long)algNodeA.pointer.pointerId,(long)algNodeB.pointer.pointerId);
                                 
                                 //3. 构建absAlg时,回调构建和glhnAlg的关联 (参考21115);
                                 if (createAbsAlgBlock) createAbsAlgBlock(createAbsNode,i,j);

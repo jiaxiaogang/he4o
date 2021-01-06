@@ -68,7 +68,7 @@
             }
         }else if([self isMv:node_p]){
             CGFloat score = [ThinkingUtils getScoreForce:node_p ratio:1.0f];
-            lightStr = [NSString removeFloatZero:STRFORMAT(@"%f",score)];
+            lightStr = Double2Str_NDZ(score);
         }
     }
     //2. 返回;
@@ -115,14 +115,9 @@
 
 //获取value的light描述;
 +(NSString*) getLightStr_Value:(double)value algsType:(NSString*)algsType dataSource:(NSString*)dataSource{
-    if(value == ATHav){
-        return @"有";
-    }else if(value == ATNone){
-        return @"无";
-    }else if(value == ATGreater){
-        return @"大";
-    }else if(value == ATLess){
-        return @"小";
+    if(value == ATHav || value == ATNone || value == ATGreater ||
+       value == ATLess || value == ATPlus || value == ATSub){
+        return [NSLog_Extension convertATType2Desc:value];
     }else if([FLY_RDS isEqualToString:algsType] || [@"direction" isEqualToString:dataSource]){
         int caseValue = value * 8;
         switch (caseValue) {
@@ -136,8 +131,7 @@
             case 7: return @"↙";
         }
     }
-    NSString *stringValue = STRFORMAT(@"%f",value);
-    return [NSString removeFloatZero:stringValue];
+    return Double2Str_NDZ(value);
 }
 
 

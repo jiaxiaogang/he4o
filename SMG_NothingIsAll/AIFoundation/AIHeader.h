@@ -19,6 +19,7 @@
 #import "HeLogHeader.h"
 #import "AIKVPointer.h"
 #import "AIThinkingControl.h"
+#import "NSString+Extension.h"
 
 /**
  *  MARK:--------------------PathNameKey (kPH)--------------------
@@ -134,6 +135,9 @@
 //AnalogType转字符串
 #define ATType2Str(type) [NSLog_Extension convertATType2Desc:type]
 
+//Double转Str
+#define Double2Str_NDZ(value) [NSString double2Str_NoDotZero:value]
+
 
 
 /**
@@ -223,6 +227,8 @@
 #define Log4InOutAna false
 #define Log4InAnaGL false
 #define Log4InAnaHN false
+//外类比
+#define Log4OutAna true
 //正向类比
 #define Log4SameAna false
 //反向类比

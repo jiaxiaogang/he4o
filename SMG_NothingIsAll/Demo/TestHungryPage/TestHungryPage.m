@@ -50,7 +50,7 @@
     [self.tf setReturnKeyType:UIReturnKeyGo];
     
     //3. hungerLevelLab
-    [self.hungerLevelLab setText:STRFORMAT(@"%.2f",self.hungerLevelSlider.value)];
+    [self.hungerLevelLab setText:Double2Str_NDZ(self.hungerLevelSlider.value)];
     [self.hungerLevelLab setTextColor:self.hungerLevelSlider.value > 0.7 ? [UIColor greenColor] : [UIColor redColor]];
     
     //4. thinkStatusBtn

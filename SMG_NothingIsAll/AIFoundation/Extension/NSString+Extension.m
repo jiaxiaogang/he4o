@@ -24,9 +24,9 @@
             ];
 }
 
-+(NSString*) removeFloatZero:(NSString*)floatStr{
++(NSString*) double2Str_NoDotZero:(double)value{
     //1. 数据检查
-    floatStr = STRTOOK(floatStr);
+    NSString *floatStr = STRFORMAT(@"%f",value);
     NSRange dotRange = [floatStr rangeOfString:@"."];
     if (dotRange.location <= 0) return floatStr;
     

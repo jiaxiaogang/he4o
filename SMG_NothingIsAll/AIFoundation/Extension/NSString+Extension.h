@@ -18,6 +18,6 @@
 /**
  *  MARK:-------------------- 截掉浮点数字符串后面的多余0--------------------
  */
-+(NSString*) removeFloatZero:(NSString*)floatStr;
++(NSString*) double2Str_NoDotZero:(double)value;
 
 @end
