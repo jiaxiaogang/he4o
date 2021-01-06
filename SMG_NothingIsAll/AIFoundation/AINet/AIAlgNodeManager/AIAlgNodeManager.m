@@ -146,7 +146,6 @@
     //5. 关联 & 存储
     [AINetUtils relateAlgAbs:result conNodes:validConAlgs isNew:absIsNew];
     [theApp.heLogView addLog:STRFORMAT(@"构建抽象概念:%@,存储于:%d,内容:%@",result.pointer.identifier,result.pointer.isMem,Alg2FStr(result))];
-    NSLog(@"构建抽象概念:%@,存储于:%d,内容:%@",result.pointer.identifier,result.pointer.isMem,Alg2FStr(result));
     [SMGUtils insertNode:result];
     return result;
 }

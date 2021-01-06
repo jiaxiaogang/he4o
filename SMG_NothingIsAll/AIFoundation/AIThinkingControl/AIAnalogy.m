@@ -36,14 +36,28 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------fo外类比--------------------
+ *  MARK:--------------------fo外类比 (找相同算法)--------------------
+ *  @desc                   : orderSames用于构建absFo
+ *  @callers
+ *      1. analogy_Feedback_Same()  : 同向反馈类比
+ *      2. analogyInner()           : 内类比
+ *      3. reasonRethink()          : 反省类比
+ *
+ *  1. 连续信号中,找重复;(连续也是拆分,多事务处理的)
+ *  2. 两条信息中,找交集;
+ *  3. 在连续信号的处理中,实时将拆分单信号存储到内存区,并提供可检索等,其形态与最终存硬盘是一致的;
+ *  4. 类比处理(瓜是瓜)
+ *  注: 类比的处理,是足够细化的,对思维每个信号作类比操作;(而将类比到的最基本的结果,输出给thinking,以供为构建网络的依据,最终是以网络为目的的)
+ *  注: 随后可以由一个sames改为多个sames并实时使用block抽象 (并消耗energy);
+ *
  *  @version
  *      20200215: 有序外类比: 将forin循环fo和assFo改为反序,并记录上次类比位置jMax (因出现了[果,果,吃,吃]这样的异常时序) 参考n18p11;
  *      20200831: 支持反省外类比,得出更确切的ATSub原因,参考:20205-步骤4;
  *      20201203: 修复21175BUG (因createAbsAlgBlock忘记调用,导致absAlg和glAlg间未关联) (参考21115);
  */
-+(void) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy type:(AnalogyType)type createAbsAlgBlock:(void(^)(AIAlgNodeBase *createAlg,NSInteger foIndex,NSInteger assFoIndex))createAbsAlgBlock{
++(void) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type createAbsAlgBlock:(void(^)(AIAlgNodeBase *createAlg,NSInteger foIndex,NSInteger assFoIndex))createAbsAlgBlock{
     //1. 类比orders的规律
+    NSLog(@"\n----------- 外类比(%@) -----------\nfo:%@ \nassFo:%@",ATType2Str(type),Fo2FStr(fo),Fo2FStr(assFo));
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
     if (fo && assFo) {
 
@@ -59,11 +73,7 @@
                     jMax = j - 1;
                     break;
                 }else{
-                    ///1. 构建时,消耗能量值;
-                    if (canAssBlock && !canAssBlock()) {
-                        break;
-                    }
-
+                    ///1. 构建时,消耗能量值; if (!canAssBlock()) 
                     ///2. 取出algNodeA & algNodeB
                     AIAlgNodeBase *algNodeA = [SMGUtils searchNode:algNodeA_p];
                     AIAlgNodeBase *algNodeB = [SMGUtils searchNode:algNodeB_p];
@@ -85,15 +95,12 @@
                                 //3. 收集并更新jMax;
                                 [orderSames insertObject:createAbsNode.pointer atIndex:0];
                                 jMax = j - 1;
-                                if (Log4OutAna) NSLog(@"---> 外类比构建概念:(%@)%@ ConFrom (A%ld,A%ld)",ATType2Str(type),Alg2FStr(createAbsNode),(long)algNodeA.pointer.pointerId,(long)algNodeB.pointer.pointerId);
+                                if (Log4OutAna) NSLog(@"-> 外类比构建概念 Finish: %@ from: ↑↑↑(A%ld:A%ld)",ATType2Str(type),Alg2FStr(createAbsNode),(long)algNodeA.pointer.pointerId,(long)algNodeB.pointer.pointerId);
                                 
                                 //3. 构建absAlg时,回调构建和glhnAlg的关联 (参考21115);
                                 if (createAbsAlgBlock) createAbsAlgBlock(createAbsNode,i,j);
                             }
-                            ///4. 构建时,消耗能量值;
-                            if (updateEnergy) {
-                                updateEnergy(-0.1f);
-                            }
+                            ///4. 构建时,消耗能量值; updateEnergy(-0.1f);
                         }
                     }
                 }
@@ -116,12 +123,12 @@
  */
 +(void)analogyOutside_Creater:(NSArray*)orderSames fo:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type{
     //2. 数据检查;
+    AINetAbsFoNode *result = nil;
     if (ARRISOK(orderSames) && ISOK(fo, AIFoNodeBase.class) && ISOK(assFo, AIFoNodeBase.class)) {
 
         //3. fo和assFo本来就是抽象关系时_直接关联即可;
         BOOL samesEqualAssFo = orderSames.count == assFo.count && [SMGUtils containsSub_ps:orderSames parent_ps:assFo.content_ps];
         BOOL jumpForAbsAlreadyHav = (ISOK(assFo, AINetAbsFoNode.class) && samesEqualAssFo);
-        AINetAbsFoNode *result = nil;
         if (jumpForAbsAlreadyHav) {
             result = (AINetAbsFoNode*)assFo;
             [AINetUtils relateFoAbs:result conNodes:@[fo] isNew:false];
@@ -151,18 +158,9 @@
                 [AINetUtils relateFo:result mv:resultMv];//cmv模型连接;
             }
         }
-
-        //调试短时序; (先仅打外类比日志);
-        if (result) {
-            if (type == ATSame) {
-                NSLog(@"->> 外类比_构建时序:%@->%@",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
-            }else if(type == ATGreater || type == ATLess){
-                if (Log4InAnaGL) NSLog(@"-> 内中外类比_构建时序:(%@)%@  from: ↑↑↑(fo:assFo)",[NVHeUtil getLightStr_Value:type algsType:nil dataSource:nil],Fo2FStr(result));
-            }else{
-                if (Log4InOutAna) NSLog(@"-> 内中外类比_构建时序:(%@)%@  from: ↑↑↑(fo:assFo)",[NVHeUtil getLightStr_Value:type algsType:nil dataSource:nil],Fo2FStr(result));
-            }
-        }
     }
+    //调试短时序; (先仅打外类比日志);
+    if (Log4OutAna) NSLog(@"-> 外类比构建时序 Finish: %@->{%@} from: ↑↑↑(fo:assFo)",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
 }
 
 
@@ -433,7 +431,7 @@
             
             //5. 对abFo和assAbFo进行类比;
             if (Log4InOutAna) NSLog(@"\n------ 内中外类比 ------\n   Fo: %@ \nassFo: %@",Fo2FStr(abFo),Fo2FStr(assFo));
-            [self analogyOutside:abFo assFo:assFo canAss:nil updateEnergy:nil type:type createAbsAlgBlock:^(AIAlgNodeBase *createAlg, NSInteger foIndex, NSInteger assFoIndex) {
+            [self analogyOutside:abFo assFo:assFo type:type createAbsAlgBlock:^(AIAlgNodeBase *createAlg, NSInteger foIndex, NSInteger assFoIndex) {
                 
                 //6. 当abFo.lastAlg和assFo.lastAlg类比抽象得到absA后,应该让absA抽象指向glAlg (参考21115);
                 if (foIndex == abFo.count - 1 && assFoIndex == assFo.count - 1) {
@@ -615,7 +613,7 @@
     if (!isSame) return;
     
     //3. 类比 (与当前的analogy_Outside()较相似,所以暂不写,随后写时,也是将原有的_outside改成此_same类比方法);
-    [self analogyOutside:shortFo assFo:mModel.matchFo canAss:nil updateEnergy:nil type:ATSame createAbsAlgBlock:nil];
+    [self analogyOutside:shortFo assFo:mModel.matchFo type:ATSame createAbsAlgBlock:nil];
 }
 
 @end
@@ -698,7 +696,7 @@
         if (spFo && ARRISOK(assSPFos)) {
             for (AIKVPointer *item in assSPFos) {
                 AINetAbsFoNode *assSPFo = [SMGUtils searchNode:item];
-                [AIAnalogy analogyOutside:spFo assFo:assSPFo canAss:nil updateEnergy:nil type:type createAbsAlgBlock:nil];
+                [AIAnalogy analogyOutside:spFo assFo:assSPFo type:type createAbsAlgBlock:nil];
             }
         }
     }
