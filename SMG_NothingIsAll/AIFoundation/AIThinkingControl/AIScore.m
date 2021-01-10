@@ -39,9 +39,9 @@
 +(BOOL) VRS:(AIKVPointer*)value_p sPorts:(NSArray*)sPorts pPorts:(NSArray*)pPorts {
     if (Log4VRS) NSLog(@"============== VRS ==============%@",Pit2FStr(value_p));
     double sScore = [self score4Value:value_p spPorts:sPorts];
-    if (Log4VRS) NSLog(@"--> S评分: %@",STRFORMAT(@"%.2f",sScore));
+    if (Log4VRS) NSLog(@"----> S评分: %@",STRFORMAT(@"%.2f",sScore));
     double pScore = [self score4Value:value_p spPorts:pPorts];
-    if (Log4VRS) NSLog(@"--> P评分: %@",STRFORMAT(@"%.2f",sScore));
+    if (Log4VRS) NSLog(@"----> P评分: %@",STRFORMAT(@"%.2f",pScore));
     return sScore - pScore < 2;
 }
 //VRS评分
@@ -74,8 +74,8 @@
         if (distance <= scope) {
             double rate = scope > 0 ? (scope - distance) / scope : 1.0f;
             double itemStrong = rate * item.strong.value;
-            if (Log4VRS) NSLog(@"-> 累计: %@ 依据:%@",STRFORMAT(@"%.2f",itemStrong),Pit2FStr(item.target_p));
             result += itemStrong;
+            if (Log4VRS) NSLog(@"-> 新增: %@ x %ld = %@ 累计:%f 依据:%@",STRFORMAT(@"%.2f",rate),(long)item.strong.value,STRFORMAT(@"%.2f",itemStrong),result,Pit2FStr(item.target_p));
         }
     }
     return result;
