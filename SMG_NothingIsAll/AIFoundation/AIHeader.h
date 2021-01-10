@@ -247,3 +247,5 @@
 #define Log4PM true
 //外输入推进中循环
 #define Log4OPushM true
+//VRS评价
+#define Log4VRS true

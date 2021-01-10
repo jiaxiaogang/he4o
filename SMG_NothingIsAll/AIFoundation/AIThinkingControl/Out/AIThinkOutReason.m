@@ -27,6 +27,7 @@
 #import "AIAnalogy.h"
 #import "DemandManager.h"
 #import "SMGUtils+Sum.h"
+#import "AIScore.h"
 
 @interface AIThinkOutReason() <TOActionDelegate>
 
@@ -489,29 +490,23 @@
         
         //7. 根据curAlg和curFo取有效的部分validAlgSPs (参考20206-步骤图-第1步);
         NSArray *sPorts = [ThinkingUtils pm_GetValidSPAlg_ps:curAlg curFo:curFo type:ATSub];
-        sPorts = [SMGUtils filterAlgPorts:sPorts valueIdentifier:firstJustPValue.identifier];
         
         //8. 根据curAlg和curFo取有效部分的pPorts,并筛选有效分区部分;
         NSArray *pPorts = [ThinkingUtils pm_GetValidSPAlg_ps:curAlg curFo:curFo type:ATPlus];
-        pPorts = [SMGUtils filterAlgPorts:pPorts valueIdentifier:firstJustPValue.identifier];
         
         //8. 2021.01.01: 个性评价依据,以值域求和方式来实现 (参考2120A & n21p21);
-        NSArray *sumModels = [SMGUtils sumSPorts:sPorts pPorts:pPorts maskIdentifier:firstJustPValue.identifier];
+        BOOL score = [AIScore VRS:firstJustPValue sPorts:sPorts pPorts:pPorts];
         
         //8. 从validAlgSs和validAlgPs中,以firstJustPValue同区稀疏码相近排序 (参考20206-步骤图-第2步);
         NSArray *sortPAlgs = [ThinkingUtils getFuzzySortWithMaskValue:firstJustPValue fromProto_ps:Ports2Pits(pPorts)];
         
         //9. 将最接近的取出,并根据源于S或P作为理性评价结果,判断是否修正;
-        AnalogyType scoreType = [TOUtils score4Value:firstJustPValue sumModels:sumModels];
         AIAlgNodeBase *mostSimilarAlg = ARR_INDEX(sortPAlgs, 0);
-        if (Log4PM) NSLog(@"> 最近P:%@ 评价:%@",Alg2FStr(mostSimilarAlg),ATType2Str(scoreType));
+        if (Log4PM) NSLog(@"> 最近P:%@ 评价:%@",Alg2FStr(mostSimilarAlg),score?@"通过":@"未通过");
         if (Log4PM) NSLog(@"--> S数:%lu [%@]",(unsigned long)sPorts.count,Pits2FStr(Ports2Pits(sPorts)));
         if (Log4PM) NSLog(@"--> P数:%lu [%@]",(unsigned long)pPorts.count,Pits2FStr(Ports2Pits(pPorts)));
         if (Log4PM) NSLog(@"--> SP From: %@ %@",Alg2FStr(curAlg),Fo2FStr(curFo));
-        NSMutableString *mStr = [NSMutableString new];
-        for (SumModel *item in sumModels) [mStr appendString:STRFORMAT(@"%.2f%@ ",item.dotValue,ATType2Str(item.type))];
-        if (Log4PM) NSLog(@"--> SP SumModels: [%@]",SUBSTR2INDEX(mStr, mStr.length - 1));
-        if (scoreType == ATSub) {
+        if (!score) {
             //10. 优先从MC的C中找同区码,作为修正GL的目标;
             AIKVPointer *glValue4M = [SMGUtils filterSameIdentifier_p:firstJustPValue b_ps:curAlg.content_ps];
             if (Log4PM) NSLog(@"find glValue4M %@ from C:(%@->%@) conF:%@ conA:%@",glValue4M ? @"success" : @"failure", Pit2FStr(firstJustPValue),Pit2FStr(glValue4M),Fo2FStr(curFo),Alg2FStr(curAlg));
