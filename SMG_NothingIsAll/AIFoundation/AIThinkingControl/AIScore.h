@@ -16,8 +16,12 @@
 //MARK: 2. 理性评价 (反省)
 //MARK:     > VRS & ARS & FRS
 //MARK:===============================================================
+@class AIShortMatchModel,TOFoModel;
 @interface AIScore : NSObject
 
 +(BOOL) VRS:(AIKVPointer*)value_p sPorts:(NSArray*)sPorts pPorts:(NSArray*)pPorts;
++(BOOL) FRS:(AIFoNodeBase*)fo;
++(BOOL) FPS:(TOFoModel*)outModel rtBlock:(AIShortMatchModel*(^)(void))rtBlock;
+//+(BOOL) ARS;//ARS在MIsC判定成功后,由PM实现,PM涉及代码较多,先不迁移过来;
 
 @end

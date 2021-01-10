@@ -11,6 +11,7 @@
 #import "AIAlgNodeBase.h"
 #import "TOUtils.h"
 #import "AINetIndex.h"
+#import "AIScore.h"
 
 @implementation AINetService
 
@@ -91,7 +92,7 @@
                     if (![glConAlg_p isEqual:ARR_INDEX_REVERSE(itemFo.content_ps, 0)]) continue;
                     
                     //9. 未发生理性评价 (空S评价);
-                    if (![TOUtils toActionFront_ReasonScore:itemFo]) continue;
+                    if (![AIScore FRS:itemFo]) continue;
                     
                     //10. 全部通过,返回;
                     return item;

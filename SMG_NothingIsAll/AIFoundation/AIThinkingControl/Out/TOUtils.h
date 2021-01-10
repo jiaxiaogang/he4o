@@ -72,16 +72,6 @@
 +(void) topPerceptModeV2:(DemandModel*)demandModel direction:(MVDirection)direction tryResult:(BOOL(^)(AIFoNodeBase *sameFo))tryResult canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy;
 
 /**
- *  MARK:--------------------对TOFoModel进行反思评价--------------------
- */
-+(BOOL) toAction_RethinkScore:(TOFoModel*)outModel rtBlock:(AIShortMatchModel*(^)(void))rtBlock;
-
-/**
- *  MARK:--------------------未发生理性评价 (空S)--------------------
- */
-+(BOOL) toActionFront_ReasonScore:(AIFoNodeBase*)fo;
-
-/**
  *  MARK:--------------------获取subOutModel的demand--------------------
  */
 +(DemandModel*) getDemandModelWithSubOutModel:(TOModelBase*)subOutModel;

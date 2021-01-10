@@ -18,6 +18,7 @@
 #import "TOValueModel.h"
 #import "TOUtils.h"
 #import "AIPort.h"
+#import "AIScore.h"
 
 @implementation AIThinkOutAction
 
@@ -136,7 +137,7 @@
     
     //3. fo反思评价 (2020.12.18仅首帧,进行评价);
     if (outModel.actionIndex == -1) {
-        BOOL scoreSuccess = [TOUtils toAction_RethinkScore:outModel rtBlock:^AIShortMatchModel *{
+        BOOL scoreSuccess = [AIScore FPS:outModel rtBlock:^AIShortMatchModel *{
             return [self.delegate toAction_RethinkInnerFo:curFo];
         }];
         if (!scoreSuccess) {
@@ -147,7 +148,7 @@
         }
         
         //4. 未发生理性评价 (空S评价);
-        BOOL reasonScore =  [TOUtils toActionFront_ReasonScore:curFo];
+        BOOL reasonScore =  [AIScore FRS:curFo];
         if (!reasonScore) {
             NSLog(@"未发生理性评价(空S)-不通过");
             outModel.status = TOModelStatus_ScoreNo;

@@ -10,11 +10,21 @@
 #import "AINetService.h"
 #import "AIPort.h"
 #import "AINetIndex.h"
+#import "TOUtils.h"
+#import "AINetUtils.h"
+#import "AIShortMatchModel.h"
+#import "ThinkingUtils.h"
+#import "DemandModel.h"
+#import "TOFoModel.h"
 
 @implementation AIScore
 
+//MARK:===============================================================
+//MARK:                     < VRS评价 >
+//MARK:===============================================================
+
 /**
- *  MARK:--------------------VRS评分--------------------
+ *  MARK:--------------------VRS评价--------------------
  *  @desc 值域求和V2: 束波求和简化版,采取线函数来替代找交点 (参考21212 & 21213);
  *  @param sPorts : 传入Alg.ATSub的端口组;
  *  @result <-2 时评价为否 (参考22025-分析2);
@@ -34,6 +44,7 @@
     if (Log4VRS) NSLog(@"--> P评分: %@",STRFORMAT(@"%.2f",sScore));
     return sScore - pScore < 2;
 }
+//VRS评分
 +(double) score4Value:(AIKVPointer*)value_p spPorts:(NSArray*)spPorts {
     //1. 数据准备;
     double result = 0;
@@ -68,6 +79,56 @@
         }
     }
     return result;
+}
+
+//MARK:===============================================================
+//MARK:                     < FRS >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------未发生理性评价 (空S)--------------------
+ *  @todo
+ *      2020.12.28: 现在代码看起来S判空有问题,应该取出S并判断count是否为0;
+ *  @result 默认返回true (因为空fo并不指向空S);
+ */
++(BOOL) FRS:(AIFoNodeBase*)fo{
+    //1. 未发生理性评价-必须为hngl节点 (否则F14主解决方案也会失败);
+    if ([TOUtils isHNGL:fo.pointer]) {
+        
+        //2. 未发生理性评价-且为空ATSub时,评价不通过;
+        BOOL reasonScore = !ARRISOK([AINetUtils absPorts_All:fo type:ATSub]);
+        return reasonScore;
+    }
+    return true;
+}
+
+//MARK:===============================================================
+//MARK:                     < FPS >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------对TOFoModel进行反思评价--------------------
+ */
++(BOOL) FPS:(TOFoModel*)outModel rtBlock:(AIShortMatchModel*(^)(void))rtBlock{
+    if (!outModel || !rtBlock) {
+        return true;
+    }
+    //6. MC反思: 回归tir反思,重新识别理性预测时序,预测价值; (预测到鸡蛋变脏,或者cpu损坏) (理性预测影响评价即理性评价)
+    AIShortMatchModel *rtModel = rtBlock();
+    
+    //7. MC反思: 对mModel进行评价;
+    AIKVPointer *rtMv_p = rtModel.matchFo.cmvNode_p;
+    CGFloat rtScore = [ThinkingUtils getScoreForce:rtMv_p ratio:rtModel.matchFoValue];
+    
+    //8. 对原fo进行评价
+    DemandModel *demand = [TOUtils getDemandModelWithSubOutModel:outModel];
+    CGFloat curScore = [ThinkingUtils getScoreForce:demand.algsType urgentTo:demand.urgentTo delta:demand.delta ratio:1.0f];
+    
+    //10. 如果mv同区,只要为负则失败;
+    //if ([rtMv_p.algsType isEqualToString:demand.algsType] && [mMv_p.dataSource isEqualToString:cMv_p.dataSource] && mcScore < 0) { return false; }
+    
+    //11. 如果不同区,对mcScore和curScore返回评价值进行类比 (如宁饿死不吃屎);
+    return rtScore > curScore * 0.5f;
 }
 
 @end
