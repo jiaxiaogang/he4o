@@ -26,7 +26,6 @@
 #import "AINetAbsFoNode.h"
 #import "AIAnalogy.h"
 #import "DemandManager.h"
-#import "SMGUtils+Sum.h"
 #import "AIScore.h"
 
 @interface AIThinkOutReason() <TOActionDelegate>

@@ -98,7 +98,6 @@
 		08AF45551E97D0B500377887 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45541E97D0B500377887 /* Assets.xcassets */; };
 		08AF45581E97D0B500377887 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45561E97D0B500377887 /* LaunchScreen.storyboard */; };
 		08B31E7E20648C3700FD96EA /* ThinkingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B31E7D20648C3700FD96EA /* ThinkingUtils.m */; };
-		08C07BFE259C030800623B11 /* SMGUtils+Sum.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C07BFD259C030800623B11 /* SMGUtils+Sum.m */; };
 		08C6C2632518E49400DDE6BF /* NSLog+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C6C2622518E49400DDE6BF /* NSLog+Extension.m */; };
 		08C7539225A3EEB800BCF011 /* AIScore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C7539125A3EEB800BCF011 /* AIScore.m */; };
 		08C84A8E1E9A866200897D8B /* AIInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A8D1E9A866200897D8B /* AIInput.m */; };
@@ -324,8 +323,6 @@
 		08AF45591E97D0B500377887 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		08B31E7C20648C3700FD96EA /* ThinkingUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThinkingUtils.h; sourceTree = "<group>"; };
 		08B31E7D20648C3700FD96EA /* ThinkingUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ThinkingUtils.m; sourceTree = "<group>"; };
-		08C07BFC259C030800623B11 /* SMGUtils+Sum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SMGUtils+Sum.h"; sourceTree = "<group>"; };
-		08C07BFD259C030800623B11 /* SMGUtils+Sum.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "SMGUtils+Sum.m"; sourceTree = "<group>"; };
 		08C6C2612518E49400DDE6BF /* NSLog+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSLog+Extension.h"; sourceTree = "<group>"; };
 		08C6C2622518E49400DDE6BF /* NSLog+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSLog+Extension.m"; sourceTree = "<group>"; };
 		08C7539025A3EEB800BCF011 /* AIScore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIScore.h; sourceTree = "<group>"; };
@@ -460,8 +457,6 @@
 				08F4C98D1EA7A03900F3EDA8 /* SMGUtils.m */,
 				082D03DD22D40AF000BB0B7A /* SMGUtils+General.h */,
 				082D03DE22D40AF000BB0B7A /* SMGUtils+General.m */,
-				08C07BFC259C030800623B11 /* SMGUtils+Sum.h */,
-				08C07BFD259C030800623B11 /* SMGUtils+Sum.m */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1361,7 +1356,6 @@
 				0858C5D12194F8B000951BA5 /* NSArray+MASAdditions.m in Sources */,
 				0858C5CC2194F8B000951BA5 /* MASConstraint.m in Sources */,
 				08FE031E231DEE8C001ED8B4 /* AIThinkOutReason.m in Sources */,
-				08C07BFE259C030800623B11 /* SMGUtils+Sum.m in Sources */,
 				0860617921F92F7100113366 /* AIThinkIn.m in Sources */,
 				0889257F22B0702A00A0DBDD /* NVModuleView.m in Sources */,
 				0858C5CE2194F8B000951BA5 /* MASLayoutConstraint.m in Sources */,

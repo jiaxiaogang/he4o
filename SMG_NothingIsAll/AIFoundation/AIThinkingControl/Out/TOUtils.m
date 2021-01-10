@@ -18,7 +18,6 @@
 #import "AIShortMatchModel.h"
 #import "ThinkingUtils.h"
 #import "AINetIndex.h"
-#import "SMGUtils+Sum.h"
 
 @implementation TOUtils
 
@@ -383,26 +382,6 @@
         return reasonScore;
     }
     return true;
-}
-
-/**
- *  MARK:--------------------判断value处在S还是P中--------------------
- */
-+(AnalogyType) score4Value:(AIKVPointer*)value_p sumModels:(NSArray*)sumModels{
-    //1. 数据准备;
-    AnalogyType result = ATNone;
-    if (!value_p || !ARRISOK(sumModels)) return result;
-    double value = [NUMTOOK([AINetIndex getData:value_p]) doubleValue];
-    
-    //2. 从中找value匹配;
-    for (SumModel *item in sumModels) {
-        if (item.dotValue < value) {
-            result = item.type;
-        }else{
-            return result;
-        }
-    }
-    return result;
 }
 
 /**
