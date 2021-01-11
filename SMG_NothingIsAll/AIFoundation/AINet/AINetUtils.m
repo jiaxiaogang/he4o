@@ -14,6 +14,7 @@
 #import "AIAbsAlgNode.h"
 #import "AINetAbsFoNode.h"
 #import "AIAbsCMVNode.h"
+#import "ThinkingUtils.h"
 
 @implementation AINetUtils
 
@@ -58,10 +59,8 @@
 +(NSInteger) getConMaxStrong:(AINodeBase*)node{
     NSInteger result = 1;
     if (node) {
-        NSArray *conPorts = [self conPorts_All:node];
-        for (AIPort *conPort in conPorts) {
-            if (conPort.strong.value + 1 > result) result = conPort.strong.value + 1;
-        }
+        AIPort *firstPort = ARR_INDEX([self conPorts_All:node], 0);
+        if (firstPort) result = firstPort.strong.value + 1;
     }
     return result;
 }
@@ -275,6 +274,8 @@
  *  MARK:--------------------抽具象关联通用方法--------------------
  *  @param absConPorts : notnull
  *  @param isNew : absNode是否为新构建;
+ *  @version
+ *      2021.01.11: 当SP节点时,difStrong为1 (参考22032);
  */
 +(void) relateGeneralAbs:(AINodeBase*)absNode absConPorts:(NSMutableArray*)absConPorts conNodes:(NSArray*)conNodes isNew:(BOOL)isNew{
     if (ISOK(absNode, AINodeBase.class)) {
@@ -285,7 +286,13 @@
             if ([absNode isEqual:conNode]) continue;
             NSArray *absContent_ps = absNode.content_ps;
             NSArray *conContent_ps = conNode.content_ps;
-            NSInteger difStrong = isNew ? [self getConMaxStrong:conNode] : 1;
+            
+            //2. 计算disStrong (默认为1 & 当新节点且不是SP时从具象取maxStrong);
+            AnalogyType type = [ThinkingUtils convertDS2AnalogyType:absNode.pointer.dataSource];
+            NSInteger difStrong = 1;
+            if (isNew && type != ATSub && type != ATPlus) {
+                difStrong = [self getConMaxStrong:conNode];
+            }
             if (!conNode.pointer.isMem) {
                 //2. hd_具象节点插"抽象端口";
                 [AINetUtils insertPointer_Hd:absNode.pointer toPorts:conNode.absPorts ps:absContent_ps difStrong:difStrong];

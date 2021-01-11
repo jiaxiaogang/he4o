@@ -56,7 +56,7 @@
 }
 
 +(AnalogyType) convertDS2AnalogyType:(NSString*)ds{
-    NSArray *tryResults = @[@(ATHav),@(ATNone),@(ATGreater),@(ATLess)];
+    NSArray *tryResults = @[@(ATHav),@(ATNone),@(ATGreater),@(ATLess),@(ATSub),@(ATPlus),@(ATSame)];
     for (NSNumber *tryResult in tryResults) {
         if ([[ThinkingUtils getAnalogyTypeDS:[tryResult intValue]] isEqualToString:ds]) {
             return [tryResult intValue];

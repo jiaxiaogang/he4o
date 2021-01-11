@@ -64,14 +64,6 @@
 +(void) parserAlgsMVArrWithoutValue:(NSArray*)algsArr success:(void(^)(AIKVPointer *delta_p,AIKVPointer *urgentTo_p,NSString *algsType))success;
 +(void) parserAlgsMVArr:(NSArray*)algsArr success:(void(^)(AIKVPointer *delta_p,AIKVPointer *urgentTo_p,NSInteger delta,NSInteger urgentTo,NSString *algsType))success;
 
-
-/**
- *  MARK:--------------------获取到cmvNode的评价力--------------------
- */
-+(CGFloat) getScoreForce:(AIPointer*)cmvNode_p ratio:(CGFloat)ratio;
-+(CGFloat) getScoreForce:(NSString*)algsType urgentTo_p:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p ratio:(CGFloat)ratio;
-+(CGFloat) getScoreForce:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta ratio:(CGFloat)ratio;
-
 @end
 
 
@@ -172,6 +164,7 @@
 
 /**
  *  MARK:--------------------指定ratio的评价重载--------------------
+ *  @desc 旧有说明: 获取到cmvNode的评价力;
  *  @desc 对MC的评价时:
  *      1. 理性评价: 由MC匹配方法中,进行类比ms&cs&mcs决定;
  *      2. 感性评价: 由此处进行计算得出;
@@ -183,6 +176,8 @@
  *      1. 以默认ratio=0.2,进行评价;
  */
 +(CGFloat) getScoreForce:(AIPointer*)cmvNode_p ratio:(CGFloat)ratio;
++(CGFloat) getScoreForce:(NSString*)algsType urgentTo_p:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p ratio:(CGFloat)ratio;
++(CGFloat) getScoreForce:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta ratio:(CGFloat)ratio;
 
 /**
  *  MARK:--------------------获取一条不在不应期的foNode/algNode--------------------
