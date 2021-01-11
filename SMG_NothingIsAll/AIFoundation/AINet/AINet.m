@@ -172,6 +172,13 @@ static AINet *_instance;
     NSArray *mvRefs = [theNet getNetNodePointersFromDirectionReference:at direction:direction isMem:false filter:nil];
     
     //3. 逐个返回;
+    if (Log4DirecRef){
+        for (NSInteger i = 0; i < 10; i++) {
+            AIPort *item = ARR_INDEX(mvRefs, i);
+            AICMVNodeBase *itemMV = [SMGUtils searchNode:item.target_p];
+            NSLog(@"item-> 强度:%ld 方案:%@",(long)item.strong.value,FoP2FStr(itemMV.foNode_p));
+        }
+    }
     for (AIPort *item in mvRefs) {
         //a. analogyType处理 (仅支持normal的fo);
         AICMVNodeBase *itemMV = [SMGUtils searchNode:item.target_p];
