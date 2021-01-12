@@ -668,6 +668,7 @@
         //3. 排除掉Finish的;
         if (reModel && !ISOK(reModel, TOAlgModel.class)) {
             NSLog(@"2021.10.11: 此处查可能为TOValueModel类型,导致取subModels闪退的问题");
+            //经查三条subModels全是toValue类型,并且都来自"无需PM"处生成;
         }
         NSArray *except_ps = [TOUtils convertPointersFromTOValueModelSValue:reModel.subModels validStatus:@[@(TOModelStatus_Finish)]];
         
