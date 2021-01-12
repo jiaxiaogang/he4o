@@ -45,7 +45,7 @@
 +(AIKVPointer*) getInner1Alg:(AIAlgNodeBase*)pAlg vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps{
     //1. 数据检查hAlg_根据type和value_p找ATHav
     BOOL debugMode = Log4GetInnerAlg;//type == ATLess;
-    NSLog(@"--> getInnerAlg:%@ ATDS:%@&%@ 参照:%@\n不应期:%@",[NVHeUtil getLightStr_Value:type algsType:@"" dataSource:@""],vAT,vDS,Alg2FStr(pAlg),Pits2FStr(except_ps));
+    NSLog(@"-------------- getInnerAlg (%@) --------------\nATDS:%@&%@ 参照:%@\n不应期:%@",ATType2Str(type),vAT,vDS,Alg2FStr(pAlg),Pits2FStr(except_ps));
     AIKVPointer *innerValue_p = [theNet getNetDataPointerWithData:@(type) algsType:vAT dataSource:vDS];
     
     //2. 对v.ref和a.abs进行交集,取得有效GLAlg;
@@ -68,14 +68,15 @@
                     NSLog(@"===== glConAlg_Item: %@ 共%lu个",AlgP2FStr(glConAlg_p),(unsigned long)relativeFo_ps.count);
                     for (NSInteger i = 0; i < 10; i++) {
                         AIKVPointer *item = ARR_INDEX(relativeFo_ps, i);
-                        if (item) NSLog(@">> fos: %@ == %@",FoP2FStr(item),item.identifier);
+                        AIFoNodeBase *itemFo = [SMGUtils searchNode:item];
+                        BOOL score = [AIScore FRS:itemFo];
+                        if (item) NSLog(@">> fos: %@ == %@",FoP2FStr(item),score ? @"通过" : @"未通过");
                     }
                 }
             }
         }
         
         for (AIKVPointer *glConAlg_p in glConAlg_ps) {
-            if (Log4GetInnerAlg) NSLog(@"-> try_getInnerAlg结果B:%@ 结果具象C:%@",Alg2FStr(glAlg),AlgP2FStr(glConAlg_p));
             if ([TOUtils mIsC_2:glConAlg_p c:pAlg.pointer] || [TOUtils mIsC_2:pAlg.pointer c:glConAlg_p]) {
                 
                 //6. 用mIsC有效的glAlg具象指向节点,向refPorts取到relativeFos返回;

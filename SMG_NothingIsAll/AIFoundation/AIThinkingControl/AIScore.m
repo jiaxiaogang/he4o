@@ -96,7 +96,11 @@
     if ([TOUtils isHNGL:fo.pointer]) {
         
         //2. 未发生理性评价-且为空ATSub时,评价不通过;
-        BOOL reasonScore = !ARRISOK([AINetUtils absPorts_All:fo type:ATSub]);
+        NSArray *sPorts = [AINetUtils absPorts_All:fo type:ATSub];
+        for (AIPort *item in sPorts) {
+            NSLog(@"    sPort: %@",Pit2FStr(item.target_p));
+        }
+        BOOL reasonScore = !ARRISOK(sPorts);
         return reasonScore;
     }
     return true;

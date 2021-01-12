@@ -666,6 +666,9 @@
         if (!reModel) continue;
         
         //3. 排除掉Finish的;
+        if (reModel && !ISOK(reModel, TOAlgModel.class)) {
+            NSLog(@"2021.10.11: 此处查可能为TOValueModel类型,导致取subModels闪退的问题");
+        }
         NSArray *except_ps = [TOUtils convertPointersFromTOValueModelSValue:reModel.subModels validStatus:@[@(TOModelStatus_Finish)]];
         
         //3. 剩下 "未修正(无需修正NoNeedAct/修正失败ActNo)的稀疏码" (参考20205-原则2);
