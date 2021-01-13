@@ -23,6 +23,7 @@
 #import "AINetIndex.h"
 #import "AINetIndexUtils.h"
 #import "AIShortMatchModel.h"
+#import "AIScore.h"
 
 @implementation ThinkingUtils
 
@@ -367,8 +368,8 @@
 //}
 +(BOOL) sameScoreOfMV1:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p{
     if (mv1_p && mv2_p) {
-        CGFloat mScore = [ThinkingUtils getScoreForce:mv1_p ratio:1.0f];
-        CGFloat sScore = [ThinkingUtils getScoreForce:mv2_p ratio:1.0f];
+        CGFloat mScore = [AIScore score4MV:mv1_p ratio:1.0f];
+        CGFloat sScore = [AIScore score4MV:mv2_p ratio:1.0f];
         BOOL isSame = ((mScore > 0 && sScore > 0) || (mScore < 0 && sScore < 0));
         return isSame;
     }
@@ -381,8 +382,8 @@
 
 +(BOOL) diffScoreOfMV1:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p{
     if (mv1_p && mv2_p) {
-        CGFloat mScore = [ThinkingUtils getScoreForce:mv1_p ratio:1.0f];
-        CGFloat pScore = [ThinkingUtils getScoreForce:mv2_p ratio:1.0f];
+        CGFloat mScore = [AIScore score4MV:mv1_p ratio:1.0f];
+        CGFloat pScore = [AIScore score4MV:mv2_p ratio:1.0f];
         return [self diffOfScore1:mScore score2:pScore];
     }
     return false;
@@ -400,63 +401,34 @@
 //MARK:===============================================================
 @implementation ThinkingUtils (Out)
 
-+(CGFloat) dataOut_CheckScore_ExpOut:(AIPointer*)foNode_p {
-    //1. 数据
-    AIFoNodeBase *foNode = [SMGUtils searchNode:foNode_p];
-    
-    //2. 评价 (根据当前foNode的mv果,处理cmvNode评价影响力;(系数0.2))
-    CGFloat score = 0;
-    if (foNode) {
-        score = [ThinkingUtils getScoreForce:foNode.cmvNode_p ratio:0.2f];
-    }
-    return score;
-    
-    ////4. v1.0评价方式: (目前outLog在foAbsNode和index中,无法区分,所以此方法仅对foNode的foNode.out_ps直接抽象部分进行联想,作为可行性判定原由)
-    /////1. 取foNode的抽象节点absNodes;
-    //for (AIPort *absPort in ARRTOOK(foNode.absPorts)) {
-    //
-    //    ///2. 判断absNode是否是由out_ps抽象的 (根据"微信息"组)
-    //    AINetAbsFoNode *absNode = [SMGUtils searchObjectForPointer:absPort.target_p fileName:kFNNode time:cRTNode];
-    //    if (absNode) {
-    //        BOOL fromOut_ps = [SMGUtils containsSub_ps:absNode.content_ps parent_ps:out_ps];
-    //
-    //        ///3. 根据当前absNode的mv果,处理absCmvNode评价影响力;(系数0.2)
-    //        if (fromOut_ps) {
-    //            CGFloat scoreForce = [ThinkingUtils getScoreForce:absNode.cmvNode_p ratio:0.2f];
-    //            score += scoreForce;
-    //        }
-    //    }
-    //}
-}
-
-+(CGFloat) getScoreForce:(AIPointer*)cmvNode_p ratio:(CGFloat)ratio{
-    AICMVNodeBase *cmvNode = [SMGUtils searchNode:cmvNode_p];
-    if (ISOK(cmvNode, AICMVNodeBase.class)) {
-        return [ThinkingUtils getScoreForce:cmvNode.pointer.algsType urgentTo_p:cmvNode.urgentTo_p delta_p:cmvNode.delta_p ratio:ratio];
-    }
-    return 0;
-}
-
-+(CGFloat) getScoreForce:(NSString*)algsType urgentTo_p:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p ratio:(CGFloat)ratio{
-    //1. 检查absCmvNode是否顺心
-    NSInteger delta = [NUMTOOK([AINetIndex getData:delta_p]) integerValue];
-    NSInteger urgentTo = [NUMTOOK([AINetIndex getData:urgentTo_p]) integerValue];
-    return [self getScoreForce:algsType urgentTo:urgentTo delta:delta ratio:ratio];
-}
-
-+(CGFloat) getScoreForce:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta ratio:(CGFloat)ratio{
-    //1. 检查absCmvNode是否顺心
-    MindHappyType type = [ThinkingUtils checkMindHappy:algsType delta:delta];
-    
-    //2. 根据检查到的数据取到score;
-    ratio = MIN(1,MAX(ratio,0));
-    if (type == MindHappyType_Yes) {
-        return urgentTo * ratio;
-    }else if(type == MindHappyType_No){
-        return  -urgentTo * ratio;
-    }
-    return 0;
-}
+//+(CGFloat) dataOut_CheckScore_ExpOut:(AIPointer*)foNode_p {
+//    //1. 数据
+//    AIFoNodeBase *foNode = [SMGUtils searchNode:foNode_p];
+//    
+//    //2. 评价 (根据当前foNode的mv果,处理cmvNode评价影响力;(系数0.2))
+//    CGFloat score = 0;
+//    if (foNode) {
+//        score = [AIScore score4MV:foNode.cmvNode_p ratio:0.2f];
+//    }
+//    return score;
+//    
+//    ////4. v1.0评价方式: (目前outLog在foAbsNode和index中,无法区分,所以此方法仅对foNode的foNode.out_ps直接抽象部分进行联想,作为可行性判定原由)
+//    /////1. 取foNode的抽象节点absNodes;
+//    //for (AIPort *absPort in ARRTOOK(foNode.absPorts)) {
+//    //
+//    //    ///2. 判断absNode是否是由out_ps抽象的 (根据"微信息"组)
+//    //    AINetAbsFoNode *absNode = [SMGUtils searchObjectForPointer:absPort.target_p fileName:kFNNode time:cRTNode];
+//    //    if (absNode) {
+//    //        BOOL fromOut_ps = [SMGUtils containsSub_ps:absNode.content_ps parent_ps:out_ps];
+//    //
+//    //        ///3. 根据当前absNode的mv果,处理absCmvNode评价影响力;(系数0.2)
+//    //        if (fromOut_ps) {
+//    //            CGFloat scoreForce = [AIScore score4MV:absNode.cmvNode_p ratio:0.2f];
+//    //            score += scoreForce;
+//    //        }
+//    //    }
+//    //}
+//}
 
 +(id) scheme_GetAValidNode:(NSArray*)check_ps except_ps:(NSMutableArray*)except_ps checkBlock:(BOOL(^)(id checkNode))checkBlock{
     //1. 数据检查

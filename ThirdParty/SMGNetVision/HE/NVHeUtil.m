@@ -12,6 +12,7 @@
 #import "AIAlgNodeBase.h"
 #import "NSString+Extension.h"
 #import "ThinkingUtils.h"
+#import "AIScore.h"
 
 @implementation NVHeUtil
 
@@ -67,7 +68,7 @@
                 lightStr = [self getLightStr4Ps:foNode.content_ps simple:simple header:header];
             }
         }else if([self isMv:node_p]){
-            CGFloat score = [ThinkingUtils getScoreForce:node_p ratio:1.0f];
+            CGFloat score = [AIScore score4MV:node_p ratio:1.0f];
             lightStr = Double2Str_NDZ(score);
         }
     }

@@ -24,6 +24,7 @@
 #import "AINetUtils.h"
 #import "TOAlgModel.h"
 #import "TOValueModel.h"
+#import "AIScore.h"
 
 @implementation AIThinkOutPercept
 
@@ -65,7 +66,7 @@
         
         //a.预测有效性判断和同区判断 (以预测的正负为准);
         if (matchFo && matchFo.cmvNode_p && [demand.algsType isEqualToString:matchFo.cmvNode_p.algsType]) {
-            CGFloat score = [ThinkingUtils getScoreForce:mModel.matchFo.cmvNode_p ratio:mModel.matchFoValue];
+            CGFloat score = [AIScore score4MV:mModel.matchFo.cmvNode_p ratio:mModel.matchFoValue];
             //b. R+
             if (score > 0) {
                 BOOL success = [self reasonPlus:mModel demandModel:demand];

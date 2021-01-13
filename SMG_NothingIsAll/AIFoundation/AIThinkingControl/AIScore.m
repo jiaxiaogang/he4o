@@ -122,17 +122,48 @@
     
     //7. MC反思: 对mModel进行评价;
     AIKVPointer *rtMv_p = rtModel.matchFo.cmvNode_p;
-    CGFloat rtScore = [ThinkingUtils getScoreForce:rtMv_p ratio:rtModel.matchFoValue];
+    CGFloat rtScore = [AIScore score4MV:rtMv_p ratio:rtModel.matchFoValue];
     
     //8. 对原fo进行评价
     DemandModel *demand = [TOUtils getDemandModelWithSubOutModel:outModel];
-    CGFloat curScore = [ThinkingUtils getScoreForce:demand.algsType urgentTo:demand.urgentTo delta:demand.delta ratio:1.0f];
+    CGFloat curScore = [AIScore score4MV:demand.algsType urgentTo:demand.urgentTo delta:demand.delta ratio:1.0f];
     
     //10. 如果mv同区,只要为负则失败;
     //if ([rtMv_p.algsType isEqualToString:demand.algsType] && [mMv_p.dataSource isEqualToString:cMv_p.dataSource] && mcScore < 0) { return false; }
     
     //11. 如果不同区,对mcScore和curScore返回评价值进行类比 (如宁饿死不吃屎);
     return rtScore > curScore * 0.5f;
+}
+
+//MARK:===============================================================
+//MARK:                     < MPS >
+//MARK:===============================================================
+//MPS评分
++(CGFloat) score4MV:(AIPointer*)cmvNode_p ratio:(CGFloat)ratio{
+    AICMVNodeBase *cmvNode = [SMGUtils searchNode:cmvNode_p];
+    if (ISOK(cmvNode, AICMVNodeBase.class)) {
+        return [AIScore score4MV:cmvNode.pointer.algsType urgentTo_p:cmvNode.urgentTo_p delta_p:cmvNode.delta_p ratio:ratio];
+    }
+    return 0;
+}
++(CGFloat) score4MV:(NSString*)algsType urgentTo_p:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p ratio:(CGFloat)ratio{
+    //1. 检查absCmvNode是否顺心
+    NSInteger delta = [NUMTOOK([AINetIndex getData:delta_p]) integerValue];
+    NSInteger urgentTo = [NUMTOOK([AINetIndex getData:urgentTo_p]) integerValue];
+    return [self score4MV:algsType urgentTo:urgentTo delta:delta ratio:ratio];
+}
++(CGFloat) score4MV:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta ratio:(CGFloat)ratio{
+    //1. 检查absCmvNode是否顺心
+    MindHappyType type = [ThinkingUtils checkMindHappy:algsType delta:delta];
+    
+    //2. 根据检查到的数据取到score;
+    ratio = MIN(1,MAX(ratio,0));
+    if (type == MindHappyType_Yes) {
+        return urgentTo * ratio;
+    }else if(type == MindHappyType_No){
+        return  -urgentTo * ratio;
+    }
+    return 0;
 }
 
 @end

@@ -277,7 +277,7 @@
                     [reModel.justPValues addObjectsFromArray:[SMGUtils removeSub_ps:curAlg.content_ps parent_ps:model.protoAlg.content_ps]];
                         
                     //d. 将理性评价"价值分"保留到短时记忆模型;
-                    reModel.pm_Score = [ThinkingUtils getScoreForce:baseFo.cmvNode_p ratio:1.0f];
+                    reModel.pm_Score = [AIScore score4MV:baseFo.cmvNode_p ratio:1.0f];
                     reModel.pm_MVAT = baseFo.cmvNode_p.algsType;
                     reModel.pm_Fo = baseFo;
                     reModel.pm_ProtoAlg = model.protoAlg;

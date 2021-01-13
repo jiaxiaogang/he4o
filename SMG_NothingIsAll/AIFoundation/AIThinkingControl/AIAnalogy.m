@@ -28,6 +28,7 @@
 #import "TOUtils.h"
 //temp
 #import "NVHeUtil.h"
+#import "AIScore.h"
 
 @implementation AIAnalogy
 
@@ -471,8 +472,8 @@
     }
 
     //2. 判断mModel.mv和protoFo.mv是否不相符 (一正一负);
-    CGFloat mScore = [ThinkingUtils getScoreForce:mMv_p ratio:mModel.matchFoValue];
-    CGFloat pScore = [ThinkingUtils getScoreForce:pMv_p ratio:1.0f];
+    CGFloat mScore = [AIScore score4MV:mMv_p ratio:mModel.matchFoValue];
+    CGFloat pScore = [AIScore score4MV:pMv_p ratio:1.0f];
     AnalogyType mType = [ThinkingUtils getInnerTypeWithScore:mScore];
     AnalogyType pType = [ThinkingUtils getInnerTypeWithScore:pScore];
     NSString *mDS = [ThinkingUtils getAnalogyTypeDS:mType];

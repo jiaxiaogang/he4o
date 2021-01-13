@@ -88,7 +88,7 @@
     [mTOAlgModel.justPValues addObjectsFromArray:[SMGUtils removeSub_ps:mModel.matchAlg.content_ps parent_ps:mModel.protoAlg.content_ps]];
     
     //4. 将理性评价"价值分"保留到短时记忆模型;
-    mTOAlgModel.pm_Score = [ThinkingUtils getScoreForce:mModel.matchFo.cmvNode_p ratio:mModel.matchFoValue];
+    mTOAlgModel.pm_Score = [AIScore score4MV:mModel.matchFo.cmvNode_p ratio:mModel.matchFoValue];
     mTOAlgModel.pm_MVAT = mModel.matchFo.cmvNode_p.algsType;
     mTOAlgModel.pm_Fo = [SMGUtils searchNode:mTOAlgModel.baseOrGroup.content_p];
     
@@ -405,7 +405,7 @@
         }
         
         //5. 将理性评价"价值分"保留到短时记忆模型;
-        focusModel.pm_Score = -[ThinkingUtils getScoreForce:demand.algsType urgentTo:demand.urgentTo delta:demand.delta ratio:1.0f];
+        focusModel.pm_Score = -[AIScore score4MV:demand.algsType urgentTo:demand.urgentTo delta:demand.delta ratio:1.0f];
         focusModel.pm_MVAT = demand.algsType;
         focusModel.pm_Fo = [SMGUtils searchNode:focusModel.baseOrGroup.content_p];
         

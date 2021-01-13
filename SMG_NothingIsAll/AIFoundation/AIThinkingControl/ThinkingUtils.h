@@ -159,25 +159,7 @@
  *  >assNoResult :
  *
  */
-+(CGFloat) dataOut_CheckScore_ExpOut:(AIPointer*)foNode_p;
-
-
-/**
- *  MARK:--------------------指定ratio的评价重载--------------------
- *  @desc 旧有说明: 获取到cmvNode的评价力;
- *  @desc 对MC的评价时:
- *      1. 理性评价: 由MC匹配方法中,进行类比ms&cs&mcs决定;
- *      2. 感性评价: 由此处进行计算得出;
- *          如: 判断变脏后,不能吃; 参考17202表中示图 (被吃mv为负 (理性是间接的感性) (导致负价值))
- *          如: 判断cpu损坏,会浪费钱;
- *          如: 带皮坚果,不能吃, (根本,不能吃,比如坚果皮 (抽象为:吃皮,导致负mv))
- *
- *  @desc 对ExpOut评价时:
- *      1. 以默认ratio=0.2,进行评价;
- */
-+(CGFloat) getScoreForce:(AIPointer*)cmvNode_p ratio:(CGFloat)ratio;
-+(CGFloat) getScoreForce:(NSString*)algsType urgentTo_p:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p ratio:(CGFloat)ratio;
-+(CGFloat) getScoreForce:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta ratio:(CGFloat)ratio;
+//+(CGFloat) dataOut_CheckScore_ExpOut:(AIPointer*)foNode_p;
 
 /**
  *  MARK:--------------------获取一条不在不应期的foNode/algNode--------------------
@@ -204,6 +186,8 @@
  *  MARK:--------------------PM算法获取有效SP概念--------------------
  */
 +(NSArray*) pm_GetValidSPAlg_ps:(AIAlgNodeBase*)curAlg curFo:(AIFoNodeBase*)curFo type:(AnalogyType)type;
+
+//+(TOAlgModel*) getAnalogyReasonRethink_
 
 @end
 
