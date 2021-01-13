@@ -647,6 +647,7 @@
  *  @bug
  *      2020.09.18: 因为数据结构取错,导致取不到justPValues的BUG (参考:21027) T;
  *      2020.09.29: except_ps取错,导致反省类比的稀疏码内容经常为空 (参考21055描述及示图);
+ *      2021.10.11: 有时baseAlg没有reModel,子节点直接就是value,导致取reModel..subModels闪退 (改为无reModel时直接用baseAlg);
  */
 +(void) analogy_ReasonRethink:(TOFoModel*)foModel cutIndex:(NSInteger)cutIndex type:(AnalogyType)type{
     //1. 数据准备
@@ -662,15 +663,9 @@
         if (!ISOK(toAlgModel, TOAlgModel.class)) continue;
         
         //2. 取出reModel;
-        TOAlgModel *reModel = ARR_INDEX(toAlgModel.subModels, 0);
-        if (toAlgModel.subModels.count > 1) WLog(@"--------->>> 反省类比取reModel时,subModels长度>1,看是否需要更全面处理>1的情况");
-        if (!reModel) continue;
+        TOAlgModel *reModel = [ThinkingUtils analogyReasonRethink_GetFirstReModelIfHav:toAlgModel];
         
         //3. 排除掉Finish的;
-        if (reModel && !ISOK(reModel, TOAlgModel.class)) {
-            NSLog(@"2021.10.11: 此处查可能为TOValueModel类型,导致取subModels闪退的问题");
-            //经查三条subModels全是toValue类型,并且都来自"无需PM"处生成;
-        }
         NSArray *except_ps = [TOUtils convertPointersFromTOValueModelSValue:reModel.subModels validStatus:@[@(TOModelStatus_Finish)]];
         
         //3. 剩下 "未修正(无需修正NoNeedAct/修正失败ActNo)的稀疏码" (参考20205-原则2);

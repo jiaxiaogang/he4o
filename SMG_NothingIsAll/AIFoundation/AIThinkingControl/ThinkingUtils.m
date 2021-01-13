@@ -24,6 +24,7 @@
 #import "AINetIndexUtils.h"
 #import "AIShortMatchModel.h"
 #import "AIScore.h"
+#import "TOAlgModel.h"
 
 @implementation ThinkingUtils
 
@@ -531,6 +532,17 @@
         }
     }
     return result;
+}
+
++(TOAlgModel*) analogyReasonRethink_GetFirstReModelIfHav:(TOAlgModel*)baseAlg{
+    if (ISOK(baseAlg, TOAlgModel.class)) {
+        TOAlgModel *reModel = ARR_INDEX(baseAlg.subModels, 0);
+        if (ISOK(reModel, TOAlgModel.class)) {
+            if (baseAlg.subModels.count > 1) WLog(@"--------->>> 反省类比取reModel时,subModels长度>1,看是否需要更全面处理>1的情况");
+            return reModel;
+        }
+    }
+    return baseAlg;
 }
 
 @end
