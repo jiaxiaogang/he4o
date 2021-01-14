@@ -477,8 +477,6 @@
     //5. 理性评价: 取到首个P独特稀疏码 (判断是否需要行为化);
     AIKVPointer *firstJustPValue = ARR_INDEX(validJustPValues, 0);
     if (firstJustPValue) {
-        if (Log4PM) NSLog(@"\n=== 当前修正Value:%@",Pit2FStr(firstJustPValue));
-        
         //5. 取得当前帧alg模型 (参考20206-结构图) 如: A22(速0,高5,距0,向→,皮0);
         TOAlgModel *curAlgModel = (TOAlgModel*)outModel.baseOrGroup;
         AIAlgNodeBase *curAlg = [SMGUtils searchNode:curAlgModel.content_p];
@@ -501,7 +499,7 @@
         
         //9. 将最接近的取出,并根据源于S或P作为理性评价结果,判断是否修正;
         AIAlgNodeBase *mostSimilarAlg = ARR_INDEX(sortPAlgs, 0);
-        if (Log4PM) NSLog(@"> 最近P:%@ 评价:%@",Alg2FStr(mostSimilarAlg),score?@"通过":@"未通过");
+        if (Log4PM) NSLog(@"> 当前修正:%@ 最近P:%@ 评价:%@",Pit2FStr(firstJustPValue),Alg2FStr(mostSimilarAlg),score?@"通过":@"未通过");
         if (Log4PM) NSLog(@"--> S数:%lu [%@]",(unsigned long)sPorts.count,Pits2FStr(Ports2Pits(sPorts)));
         if (Log4PM) NSLog(@"--> P数:%lu [%@]",(unsigned long)pPorts.count,Pits2FStr(Ports2Pits(pPorts)));
         if (Log4PM) NSLog(@"--> SP From: %@ %@",Alg2FStr(curAlg),Fo2FStr(curFo));

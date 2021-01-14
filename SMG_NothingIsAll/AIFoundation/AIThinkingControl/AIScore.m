@@ -90,7 +90,7 @@
             double rate = scope > 0 ? (scope - distance) / scope : 1.0f;
             double itemStrong = rate * item.strong.value;
             result += itemStrong;
-            if (Log4VRS) NSLog(@"-> 新增: %@ x %ld = %@ 累计:%f 依据:%@",STRFORMAT(@"%.2f",rate),(long)item.strong.value,STRFORMAT(@"%.2f",itemStrong),result,Pit2FStr(item.target_p));
+            if (Log4VRS) NSLog(@"-> %@ 新增: %@ x %ld = %@ 累计:%f 依据:%@",ATType2Str([item.target_p.dataSource integerValue]),STRFORMAT(@"%.2f",rate),(long)item.strong.value,STRFORMAT(@"%.2f",itemStrong),result,Pit2FStr(item.target_p));
         }
     }
     return result;
