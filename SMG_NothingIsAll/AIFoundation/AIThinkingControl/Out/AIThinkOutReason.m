@@ -494,7 +494,7 @@
         NSArray *pPorts = [ThinkingUtils pm_GetValidSPAlg_ps:curAlg curFo:curFo type:ATPlus];
         
         //8. 2021.01.01: 个性评价依据,以值域求和方式来实现 (参考2120A & n21p21);
-        BOOL score = [AIScore VRS:firstJustPValue sPorts:sPorts pPorts:pPorts];
+        BOOL score = [AIScore VRS:firstJustPValue cAlg:curAlg sPorts:sPorts pPorts:pPorts];
         
         //8. 从validAlgSs和validAlgPs中,以firstJustPValue同区稀疏码相近排序 (参考20206-步骤图-第2步);
         NSArray *sortPAlgs = [ThinkingUtils getFuzzySortWithMaskValue:firstJustPValue fromProto_ps:Ports2Pits(pPorts)];

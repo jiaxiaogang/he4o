@@ -16,6 +16,7 @@
 #import "ThinkingUtils.h"
 #import "DemandModel.h"
 #import "TOFoModel.h"
+#import "AIAlgNodeBase.h"
 
 @implementation AIScore
 
@@ -35,14 +36,28 @@
  *      2021.01.02: 支持maskIdentifier,因为原来把alg当成value来取值,导致生成sumModels和评价完全错误 (参考21216);
  *      2021.01.10: v2迭代,由偶发性导致的评价BUG引出迭代 (参考n22p2);
  *      2021.01.10: v2迭代,之直线范围累计法 (参考22025-方案5);
+ *      2021.01.14: 改为根据是否有同区码决定默认评价结果,起因:稀有值无法评价的问题 (参考22034-代码);
  */
-+(BOOL) VRS:(AIKVPointer*)value_p sPorts:(NSArray*)sPorts pPorts:(NSArray*)pPorts {
-    if (Log4VRS) NSLog(@"============== VRS ==============%@",Pit2FStr(value_p));
++(BOOL) VRS:(AIKVPointer*)value_p cAlg:(AIAlgNodeBase*)cAlg sPorts:(NSArray*)sPorts pPorts:(NSArray*)pPorts {
+    //1. value_p与cAlg是否有同区码判定;
+    BOOL findSameIden = ARRISOK([SMGUtils filterPointers:cAlg.content_ps identifier:value_p.identifier]);
+    
+    //2. 有同区码时默认为false,无时默认为true (参考22034);
+    BOOL result = !findSameIden;
+    
+    //3. 对sp评分
+    if (Log4VRS) NSLog(@"============== VRS ==============%@\nfrom:%@ 有同区码:%@",Pit2FStr(value_p),Alg2FStr(cAlg),findSameIden?@"是":@"否");
     double sScore = [self score4Value:value_p spPorts:sPorts];
-    if (Log4VRS) NSLog(@"----> S评分: %@",STRFORMAT(@"%.2f",sScore));
     double pScore = [self score4Value:value_p spPorts:pPorts];
-    if (Log4VRS) NSLog(@"----> P评分: %@",STRFORMAT(@"%.2f",pScore));
-    return sScore - pScore < 2;
+    
+    //4. 评价 (容错区间为2) (参考22034 & 22025-分析2);
+    if (sScore - pScore >= 2) {
+        result = false;
+    }else if (pScore - sScore >= 2) {
+        result = true;
+    }
+    if (Log4VRS) NSLog(@"----> S评分:%@ P评分:%@ 评价结果:%@",STRFORMAT(@"%.2f",sScore),STRFORMAT(@"%.2f",pScore),result?@"通过":@"未通过");
+    return result;
 }
 //VRS评分
 +(double) score4Value:(AIKVPointer*)value_p spPorts:(NSArray*)spPorts {
