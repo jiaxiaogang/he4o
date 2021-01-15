@@ -185,6 +185,8 @@
 /**
  *  MARK:--------------------获取兄弟节点(以负取正)--------------------
  *  @desc 防重,防空版;
+ *  @bug
+ *      2021.01.15: 当tryResult的checkFo_p为nil时,闪退 (参考n22p3-todo1) T;
  */
 +(void) getPlusBrotherBySubProtoFo_NoRepeatNotNull:(AIFoNodeBase*)subProtoFo tryResult:(BOOL(^)(AIFoNodeBase *checkFo,AIFoNodeBase *subNode,AIFoNodeBase *plusNode))tryResult{
     //1. 去重功能;
@@ -193,7 +195,7 @@
     //2. 用负取正;
     [TOUtils getPlusBrotherBySubProtoFo:subProtoFo tryResult:^BOOL(AIKVPointer *checkFo_p, AIFoNodeBase *subNode, AIFoNodeBase *plusNode) {
         //a. 重复,直接返回继续 (一个checkFo只行为化一次);
-        if (![except_ps containsObject:checkFo_p]) {
+        if (checkFo_p && ![except_ps containsObject:checkFo_p]) {
             //b. 行为化失败,则收集不应期;
             [except_ps addObject:checkFo_p];
             
