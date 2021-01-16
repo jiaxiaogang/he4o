@@ -12,6 +12,7 @@
 #import "UIView+Extension.h"
 #import "DemoHunger.h"
 #import "NVViewUtil.h"
+#import "WoodView.h"
 
 @interface BirdGrowPage ()<UIGestureRecognizerDelegate,BirdViewDelegate>
 
@@ -20,6 +21,7 @@
 @property (strong,nonatomic) UITapGestureRecognizer *doubleTap;
 @property (weak, nonatomic) IBOutlet UIView *farView;
 @property (weak, nonatomic) IBOutlet UIView *borderView;
+@property (weak, nonatomic) IBOutlet UIButton *throwWoodBtn;
 
 @end
 
@@ -233,6 +235,12 @@
     [self animationFlash:sender];
     DemoLog(@"摸翅膀onClick-左下");
     [self.birdView touchWing:7];
+}
+- (IBAction)throwWoodOnClick:(id)sender {
+    DemoLog(@"扔木棒onClick");
+    WoodView *wood = [[WoodView alloc] init];
+    [self.view addSubview:wood];
+    [wood throw];
 }
 
 /**

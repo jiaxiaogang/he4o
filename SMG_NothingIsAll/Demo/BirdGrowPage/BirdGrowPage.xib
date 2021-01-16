@@ -13,6 +13,7 @@
             <connections>
                 <outlet property="borderView" destination="Rkf-2Q-xj9" id="ynx-zk-0D3"/>
                 <outlet property="farView" destination="OTZ-lH-pjg" id="vj8-Yv-aPh"/>
+                <outlet property="throwWoodBtn" destination="KKF-W4-ZR3" id="rXc-DB-0xa"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -21,7 +22,7 @@
             <rect key="frame" x="0.0" y="0.0" width="671" height="344"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a5Y-T0-lOj">
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a5Y-T0-lOj">
                     <rect key="frame" x="166" y="287" width="165.5" height="50"/>
                     <color key="backgroundColor" white="0.84480794270000004" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
@@ -35,7 +36,7 @@
                         <action selector="nearFeedingBtnOnClick:" destination="-1" eventType="touchUpInside" id="Ith-1L-2iS"/>
                     </connections>
                 </button>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eQV-9R-5hK">
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eQV-9R-5hK">
                     <rect key="frame" x="339.5" y="287" width="165.5" height="50"/>
                     <color key="backgroundColor" white="0.84480794270000004" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
@@ -317,18 +318,35 @@
                         <constraint firstItem="QmJ-NG-55N" firstAttribute="leading" secondItem="Tmw-2d-FhY" secondAttribute="leading" id="zdV-b4-3dt"/>
                     </constraints>
                 </view>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" showsTouchWhenHighlighted="YES" lineBreakMode="wordWrap" translatesAutoresizingMaskIntoConstraints="NO" id="KKF-W4-ZR3">
+                    <rect key="frame" x="0.0" y="110" width="20" height="150"/>
+                    <color key="backgroundColor" red="0.66799789669999998" green="0.47512125970000002" blue="0.25860109930000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="150" id="4kM-np-MY9"/>
+                        <constraint firstAttribute="width" constant="20" id="hF6-hP-Fi3"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <state key="normal" title="扔木棒">
+                        <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </state>
+                    <connections>
+                        <action selector="throwWoodOnClick:" destination="-1" eventType="touchUpInside" id="DnL-wE-o9T"/>
+                    </connections>
+                </button>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
                 <constraint firstAttribute="bottom" secondItem="Rkf-2Q-xj9" secondAttribute="bottom" constant="64" id="10u-OU-awh"/>
                 <constraint firstAttribute="trailing" secondItem="sZG-fZ-WpA" secondAttribute="trailing" constant="8" id="3El-S7-Gtt"/>
                 <constraint firstItem="Rkf-2Q-xj9" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="64" id="6EV-r2-Ha1"/>
+                <constraint firstItem="Tmw-2d-FhY" firstAttribute="top" secondItem="KKF-W4-ZR3" secondAttribute="bottom" constant="20" id="D0R-XL-Ph8"/>
                 <constraint firstItem="Rkf-2Q-xj9" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="HhZ-Wy-dCW"/>
                 <constraint firstItem="sZG-fZ-WpA" firstAttribute="leading" secondItem="eQV-9R-5hK" secondAttribute="trailing" constant="8" id="LMl-jX-v0y"/>
                 <constraint firstAttribute="bottom" secondItem="eQV-9R-5hK" secondAttribute="bottom" constant="7" id="SRQ-5w-s97"/>
                 <constraint firstItem="a5Y-T0-lOj" firstAttribute="leading" secondItem="Tmw-2d-FhY" secondAttribute="trailing" constant="8" id="TSd-Qz-ntN"/>
                 <constraint firstItem="eQV-9R-5hK" firstAttribute="leading" secondItem="a5Y-T0-lOj" secondAttribute="trailing" constant="8" id="W3Y-Nf-WTl"/>
                 <constraint firstItem="eQV-9R-5hK" firstAttribute="width" secondItem="a5Y-T0-lOj" secondAttribute="width" id="XEP-d8-lfh"/>
+                <constraint firstItem="KKF-W4-ZR3" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="et4-DK-maZ"/>
                 <constraint firstAttribute="bottom" secondItem="a5Y-T0-lOj" secondAttribute="bottom" constant="7" id="fQq-vx-9iY"/>
                 <constraint firstAttribute="trailing" secondItem="Rkf-2Q-xj9" secondAttribute="trailing" id="hgc-Jp-DXl"/>
                 <constraint firstAttribute="bottom" secondItem="Tmw-2d-FhY" secondAttribute="bottom" id="iWs-Eq-9ga"/>
