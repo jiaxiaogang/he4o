@@ -51,6 +51,7 @@
  *  @result 世界坐标 : NotNull
  */
 +(CGPoint) convertWorldPoint:(UIView*)selfView;
++(CGRect) convertWorldRect:(UIView*)selfView;
 
 
 //MARK:===============================================================

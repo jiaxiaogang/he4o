@@ -21,7 +21,7 @@
 
 -(void) initView{
     //self
-    [self setFrame:CGRectMake(0, ScreenHeight - 150 - 85, 5, 150)];
+    [self setFrame:CGRectMake(0, ScreenHeight - 150 - 64 - 20, 5, 150)];
     [self setBackgroundColor:UIColorWithRGBHex(0x825528)];
 }
 

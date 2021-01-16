@@ -11,6 +11,7 @@
 @interface HeLogView : UIView
 
 -(void) addLog:(NSString*)log;
+-(void) addDemoLog:(NSString*)log;
 -(void) open;
 -(void) close;
 -(void) clear;

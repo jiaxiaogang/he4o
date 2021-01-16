@@ -109,6 +109,7 @@
 
 -(void) clearMemoryBtnOnClick:(id)btn{
     DemoLog(@"清空记忆");
+    [theApp.heLogView addDemoLog:@"清空记忆"];
     [SMGUtils removeAllMemory];
 }
 

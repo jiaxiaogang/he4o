@@ -78,6 +78,11 @@
     }
 }
 
+-(void) addDemoLog:(NSString*)log{
+    log = STRFORMAT(@"********************************************* %@ *********************************************",log);
+    [self.model addLog:log];
+}
+
 -(void) open{
     [self setHidden:false];
     self.isOpen = true;

@@ -69,7 +69,7 @@
 //MARK:                     < onclick >
 //MARK:===============================================================
 - (IBAction)nearFeedingBtnOnClick:(id)sender {
-    [theApp.heLogView addLog:@"直投"];
+    [theApp.heLogView addDemoLog:@"直投"];
     DemoLog(@"直投")
     FoodView *foodView = [[FoodView alloc] init];
     [foodView hit];
@@ -115,7 +115,7 @@
     //4. 投食 & 打日志;
     if (targetPoint.x != 0 && targetPoint.y != 0) {
         DemoLog(@"远投:%f,%f",targetPoint.x,targetPoint.y);
-        [theApp.heLogView addLog:STRFORMAT(@"远投:%f,%f",targetPoint.x,targetPoint.y)];
+        [theApp.heLogView addDemoLog:STRFORMAT(@"远投:%f,%f",targetPoint.x,targetPoint.y)];
         [self food2Pos:targetPoint];
     }
 }
@@ -185,14 +185,14 @@
 - (IBAction)hungerBtnOnClick:(id)sender {
     NSLog(@"\n\n------------------------------- 感官输入 -------------------------------");
     DemoLog(@"马上饿onClick");
-    [theApp.heLogView addLog:@"马上饿onClick"];
+    [theApp.heLogView addDemoLog:@"马上饿onClick"];
     [[[DemoHunger alloc] init] commit:0.7 state:UIDeviceBatteryStateUnplugged];
 }
 
 - (IBAction)touchWingBtnOnClick:(id)sender {
     NSLog(@"\n\n------------------------------- 现实世界 -------------------------------");
     DemoLog(@"摸翅膀onClick");
-    [theApp.heLogView addLog:@"摸翅膀onClick"];
+    [theApp.heLogView addDemoLog:@"摸翅膀onClick"];
     int random = (arc4random() % 8);
     [self.birdView touchWing:random];
 }
@@ -236,10 +236,50 @@
     DemoLog(@"摸翅膀onClick-左下");
     [self.birdView touchWing:7];
 }
+
+/**
+ *  MARK:--------------------扔木棒--------------------
+ *  @version
+ *      2021.01.16: 用NSTimer替代after延时,因为after时间不准,总会推后150ms左右,而timer非常准时;
+ */
 - (IBAction)throwWoodOnClick:(id)sender {
     DemoLog(@"扔木棒onClick");
+    [theApp.heLogView addDemoLog:@"扔木棒onClick"];
+    
+    //1. 生成木棒
     WoodView *wood = [[WoodView alloc] init];
     [self.view addSubview:wood];
+    
+    //2. 看到木棒
+    [self.birdView see:wood];
+    
+    //3. 撞到时疼下;
+    CGRect birdRect = [UIWindow convertWorldRect:self.birdView];
+    CGRect woodRect = [UIWindow convertWorldRect:wood];
+    CGFloat birdMinX = birdRect.origin.x;
+    CGFloat birdMinY = birdRect.origin.y;
+    CGFloat birdMaxY = birdMinY + birdRect.size.height;
+    CGFloat woodMinX = woodRect.origin.x;
+    CGFloat woodMaxX = woodMinX + woodRect.size.width;
+    CGFloat woodMinY = woodRect.origin.y;
+    CGFloat woodMaxY = woodMinY + woodRect.size.height;
+    
+    //4. 会撞到判断;
+    BOOL canHit = birdMaxY > woodMinY && birdMinY < woodMaxY;
+    if (canHit) {
+        //5. 撞到的时间判断 (撞需距离 / 总扔距离 * 总扔时间);
+        CGFloat hitTime = ((birdMinX - woodMaxX) / ScreenWidth) * 2.0f;
+        [NSTimer scheduledTimerWithTimeInterval:hitTime repeats:false block:^(NSTimer * _Nonnull timer) {
+            NSLog(@"撞到--> 用时:%f",hitTime);
+            //TODOTOMORROW: 触发疼痛感;
+            
+            
+        }];
+    }else{
+        NSLog(@"未撞到");
+    }
+    
+    //6. 扔出
     [wood throw];
 }
 
@@ -262,7 +302,7 @@
 }
 
 -(CGRect)birdView_GetSeeRect{
-    return CGRectMake(0, 64, ScreenWidth, ScreenHeight - 128);
+    return CGRectMake(0, 64, ScreenWidth, ScreenHeight - 64 - 64);//naviBar和btmBtn
 }
 
 //MARK:===============================================================
