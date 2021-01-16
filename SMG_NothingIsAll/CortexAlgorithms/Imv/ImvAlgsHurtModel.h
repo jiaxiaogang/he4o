@@ -6,11 +6,11 @@
 //  Copyright © 2021年 XiaoGang. All rights reserved.
 //
 
-#import "ImvAlgsModelBase.h"
+#import "ImvBadModel.h"
 
 /**
  *  MARK:--------------------痛感模型--------------------
  */
-@interface ImvAlgsHurtModel : ImvAlgsModelBase
+@interface ImvAlgsHurtModel : ImvBadModel
 
 @end

@@ -6,8 +6,11 @@
 //  Copyright © 2018年 XiaoGang. All rights reserved.
 //
 
-#import "ImvAlgsModelBase.h"
+#import "ImvBadModel.h"
 
-@interface ImvAlgsHungerModel : ImvAlgsModelBase
+/**
+ *  MARK:--------------------饥饿感模型--------------------
+ */
+@interface ImvAlgsHungerModel : ImvBadModel
 
 @end

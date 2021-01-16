@@ -20,37 +20,37 @@
     //1. 生成imvModel
     if (type == MVType_Hunger) {
         ImvAlgsHungerModel *imvModel = [[ImvAlgsHungerModel alloc] init];
-        imvModel.urgentTo = [self getSameMvUrgentValue:to];//36
-        CGFloat urgentFrom = [self getSameMvUrgentValue:from];//25
+        imvModel.urgentTo = [self getBadImvUrgentValue:to];//36
+        CGFloat urgentFrom = [self getBadImvUrgentValue:from];//25
         imvModel.delta = urgentFrom - imvModel.urgentTo;    //更饿为负;
         [theTC commitInput:imvModel];
     }else if(type == MVType_Anxious){
         
     }else if(type == MVType_Hurt){
         ImvAlgsHurtModel *imvModel = [[ImvAlgsHurtModel alloc] init];
-        imvModel.urgentTo = [self getSameMvUrgentValue:to];
-        CGFloat urgentFrom = [self getSameMvUrgentValue:from];
+        imvModel.urgentTo = [self getBadImvUrgentValue:to];
+        CGFloat urgentFrom = [self getBadImvUrgentValue:from];
         imvModel.delta = imvModel.urgentTo - urgentFrom;    //更痛为负
         [theTC commitInput:imvModel];
     }
 }
 
 /**
- *  MARK:--------------------同向迫切度--------------------
- *  @desc 指迫切度与value在同向上,比如更饿,越饿迫切度越高;
+ *  MARK:--------------------BadImv迫切度--------------------
+ *  @desc 指迫切度与value在"同向"上,比如更饿,越饿迫切度越高;
  *  @status 目前,饥饿感和痛感都是采用了此种;
  */
-+(CGFloat) getSameMvUrgentValue:(CGFloat)to{
++(CGFloat) getBadImvUrgentValue:(CGFloat)to{
     to = MAX(0, MIN(10,to));
     return to * to;
 }
 
 /**
- *  MARK:--------------------反向迫切度--------------------
- *  @desc 指迫切度与valud在反向上,比如更饱,越饱迫切度越低;
- *  @status 目前,饥饿感和痛感都是采用了同向迫切度,所以此处未被调用;
+ *  MARK:--------------------GoodImv迫切度--------------------
+ *  @desc 指迫切度与valud在"反向"上,比如更饱,越饱迫切度越低;
+ *  @status 目前,无GoodImv子定义,所以此处未被调用;
  */
-+(CGFloat) getDiffMvUrgentValue:(CGFloat)to{
++(CGFloat) getGoodImvUrgentValue:(CGFloat)to{
     to = MAX(0, MIN(10,to));
     return 100 - to * to;
 }

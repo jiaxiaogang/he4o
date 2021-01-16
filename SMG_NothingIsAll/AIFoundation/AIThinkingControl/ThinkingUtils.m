@@ -8,8 +8,6 @@
 
 #import "ThinkingUtils.h"
 #import "AIKVPointer.h"
-#import "ImvAlgsModelBase.h"
-#import "ImvAlgsHungerModel.h"
 #import "AIFrontOrderNode.h"
 #import "AICMVNode.h"
 #import "AIMvFoManager.h"
@@ -25,6 +23,8 @@
 #import "AIShortMatchModel.h"
 #import "AIScore.h"
 #import "TOAlgModel.h"
+#import "ImvGoodModel.h"
+#import "ImvBadModel.h"
 
 @implementation ThinkingUtils
 
@@ -110,8 +110,10 @@
 
 +(AITargetType) getTargetTypeWithAlgsType:(NSString*)algsType{
     algsType = STRTOOK(algsType);
-    if([algsType isEqualToString:NSStringFromClass(ImvAlgsHungerModel.class)]){//饥饿感
+    if ([NSClassFromString(algsType) isSubclassOfClass:ImvBadModel.class]) {//饥饿感等
         return AITargetType_Down;
+    }else if ([NSClassFromString(algsType) isSubclassOfClass:ImvGoodModel.class]) {//爽感等;
+        return AITargetType_Up;
     }
     return AITargetType_None;
 }

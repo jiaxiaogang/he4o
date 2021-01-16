@@ -110,6 +110,8 @@
 		08E6885B22FA562600653545 /* BorderLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E6885A22FA562600653545 /* BorderLabel.m */; };
 		08E8CF5525B2880600AA18DB /* WoodView.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E8CF5425B2880600AA18DB /* WoodView.m */; };
 		08E8CF5825B2F07100AA18DB /* ImvAlgsHurtModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E8CF5725B2F07100AA18DB /* ImvAlgsHurtModel.m */; };
+		08E8CF5B25B2F64000AA18DB /* ImvGoodModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E8CF5A25B2F64000AA18DB /* ImvGoodModel.m */; };
+		08E8CF5E25B2F64900AA18DB /* ImvBadModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E8CF5D25B2F64900AA18DB /* ImvBadModel.m */; };
 		08E8F7B221798AEE004F51DE /* AIFoNodeBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E8F7B121798AEE004F51DE /* AIFoNodeBase.m */; };
 		08EA48BF2029242B0038B982 /* ImvAlgsHungerModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08EA48BE2029242B0038B982 /* ImvAlgsHungerModel.m */; };
 		08EA48C7202929A40038B982 /* ImvAlgsModelBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 08EA48C6202929A40038B982 /* ImvAlgsModelBase.m */; };
@@ -350,6 +352,10 @@
 		08E8CF5425B2880600AA18DB /* WoodView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WoodView.m; sourceTree = "<group>"; };
 		08E8CF5625B2F07100AA18DB /* ImvAlgsHurtModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImvAlgsHurtModel.h; sourceTree = "<group>"; };
 		08E8CF5725B2F07100AA18DB /* ImvAlgsHurtModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImvAlgsHurtModel.m; sourceTree = "<group>"; };
+		08E8CF5925B2F64000AA18DB /* ImvGoodModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImvGoodModel.h; sourceTree = "<group>"; };
+		08E8CF5A25B2F64000AA18DB /* ImvGoodModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImvGoodModel.m; sourceTree = "<group>"; };
+		08E8CF5C25B2F64900AA18DB /* ImvBadModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImvBadModel.h; sourceTree = "<group>"; };
+		08E8CF5D25B2F64900AA18DB /* ImvBadModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImvBadModel.m; sourceTree = "<group>"; };
 		08E8F7B021798AEE004F51DE /* AIFoNodeBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIFoNodeBase.h; sourceTree = "<group>"; };
 		08E8F7B121798AEE004F51DE /* AIFoNodeBase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIFoNodeBase.m; sourceTree = "<group>"; };
 		08EA48BD2029242B0038B982 /* ImvAlgsHungerModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImvAlgsHungerModel.h; sourceTree = "<group>"; };
@@ -957,6 +963,7 @@
 		08E65A0722F3BAE3009ED1CF /* CortexAlgorithms */ = {
 			isa = PBXGroup;
 			children = (
+				08E8CF5F25B2F6B600AA18DB /* Imv */,
 				08E65A0822F3BAF8009ED1CF /* Vision */,
 			);
 			path = CortexAlgorithms;
@@ -973,15 +980,26 @@
 			path = Vision;
 			sourceTree = "<group>";
 		};
+		08E8CF5F25B2F6B600AA18DB /* Imv */ = {
+			isa = PBXGroup;
+			children = (
+				08EA48BD2029242B0038B982 /* ImvAlgsHungerModel.h */,
+				08EA48BE2029242B0038B982 /* ImvAlgsHungerModel.m */,
+				08E8CF5625B2F07100AA18DB /* ImvAlgsHurtModel.h */,
+				08E8CF5725B2F07100AA18DB /* ImvAlgsHurtModel.m */,
+			);
+			path = Imv;
+			sourceTree = "<group>";
+		};
 		08EA48C4202929860038B982 /* ImvAlgsModel */ = {
 			isa = PBXGroup;
 			children = (
 				08EA48C5202929A40038B982 /* ImvAlgsModelBase.h */,
 				08EA48C6202929A40038B982 /* ImvAlgsModelBase.m */,
-				08EA48BD2029242B0038B982 /* ImvAlgsHungerModel.h */,
-				08EA48BE2029242B0038B982 /* ImvAlgsHungerModel.m */,
-				08E8CF5625B2F07100AA18DB /* ImvAlgsHurtModel.h */,
-				08E8CF5725B2F07100AA18DB /* ImvAlgsHurtModel.m */,
+				08E8CF5925B2F64000AA18DB /* ImvGoodModel.h */,
+				08E8CF5A25B2F64000AA18DB /* ImvGoodModel.m */,
+				08E8CF5C25B2F64900AA18DB /* ImvBadModel.h */,
+				08E8CF5D25B2F64900AA18DB /* ImvBadModel.m */,
 			);
 			path = ImvAlgsModel;
 			sourceTree = "<group>";
@@ -1286,6 +1304,7 @@
 				0810E50F236A637500B33226 /* AINetIndexUtils.m in Sources */,
 				88BC09DD20B4F67E0006ABEF /* XGRedisDictionary.m in Sources */,
 				0858C5D32194F8B000951BA5 /* View+MASAdditions.m in Sources */,
+				08E8CF5E25B2F64900AA18DB /* ImvBadModel.m in Sources */,
 				8868F6EE210AA00B000EAC9B /* AINetAbsCMVUtil.m in Sources */,
 				08497A9921C32E17009E7D69 /* AIAlgNodeManager.m in Sources */,
 				082D03DF22D40AF000BB0B7A /* SMGUtils+General.m in Sources */,
@@ -1323,6 +1342,7 @@
 				08C7539225A3EEB800BCF011 /* AIScore.m in Sources */,
 				08EA48CE202932B80038B982 /* CustomAlgsChargeModel.m in Sources */,
 				084C3A6B21926D5700DAA08A /* BirdView.m in Sources */,
+				08E8CF5B25B2F64000AA18DB /* ImvGoodModel.m in Sources */,
 				088DD7232201216500E0A786 /* TOFoModel.m in Sources */,
 				084B4B0824433AA900FB3670 /* ShortMatchManager.m in Sources */,
 				08CEAFAD22B317A800CD1D91 /* NodeCompareModel.m in Sources */,
