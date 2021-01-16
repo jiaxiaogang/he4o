@@ -28,7 +28,7 @@
 
 /**
  *  MARK:--------------------提交mvType--------------------
- *  @params from : 0-10
+ *  @params from : 0-10 (0为最饥,1为最饱)
  *  @params to : 0-10
  */
 +(void) commitIMV:(MVType)type from:(CGFloat)from to:(CGFloat)to{

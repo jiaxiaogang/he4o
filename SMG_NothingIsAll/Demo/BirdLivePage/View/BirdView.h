@@ -55,4 +55,9 @@
  */
 -(void) touchWing:(int)direction;
 
+/**
+ *  MARK:--------------------痛--------------------
+ */
+-(void) hurt;
+
 @end

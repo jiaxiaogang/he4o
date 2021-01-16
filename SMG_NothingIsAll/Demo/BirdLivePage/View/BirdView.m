@@ -14,7 +14,6 @@
 @interface BirdView ()
 
 @property (strong,nonatomic) IBOutlet UIView *containerView;
-//@property (strong,nonatomic) NSTimer *timer;                    //计时器(乌鸦每过10s,饿一点); (关闭计时器,先用随机1/3吃不到时触发更饿)
 
 @end
 
@@ -42,7 +41,6 @@
 }
 
 -(void) initData{
-    //self.timer = [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
 }
 
 -(void) initDisplay{
@@ -107,6 +105,14 @@
     //2. 飞行
     float data = direction / 8.0f;
     [AIReactorControl commitReactor:FLY_RDS datas:@[@(data)]];
+}
+
+/**
+ *  MARK:--------------------痛--------------------
+ */
+-(void) hurt{
+    DemoLog(@"痛感");
+    [AIInput commitIMV:MVType_Hurt from:0.0f to:1.0f];
 }
 
 -(void) dealloc{
@@ -198,17 +204,14 @@
 //MARK:===============================================================
 //MARK:                     < privateMethod >
 //MARK:===============================================================
-- (void)notificationTimer{
-    [self sendHunger:-0.1f];
-}
 
 /**
  *  MARK:--------------------发送饥饿信号--------------------
- *  @desc 饱腹感 (0-10) (值越大越饱);
+ *  @desc 饥饿感 (0-10) (值越大越饿);
  */
--(void) sendHunger:(CGFloat)fullDelta{
-    DemoLog(@"饥饿感 %f",fullDelta);
-    [AIInput commitIMV:MVType_Hunger from:5.0f to:5.0 + fullDelta];
+-(void) sendHunger:(CGFloat)hungerDelta{
+    DemoLog(@"饥饿感 %f",hungerDelta);
+    [AIInput commitIMV:MVType_Hunger from:5.0f to:5.0 + hungerDelta];
 }
 
 @end

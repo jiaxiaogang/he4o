@@ -243,9 +243,6 @@
  *      2021.01.16: 用NSTimer替代after延时,因为after时间不准,总会推后150ms左右,而timer非常准时;
  */
 - (IBAction)throwWoodOnClick:(id)sender {
-    DemoLog(@"扔木棒onClick");
-    [theApp.heLogView addDemoLog:@"扔木棒onClick"];
-    
     //1. 生成木棒
     WoodView *wood = [[WoodView alloc] init];
     [self.view addSubview:wood];
@@ -266,20 +263,19 @@
     
     //4. 会撞到判断;
     BOOL canHit = birdMaxY > woodMinY && birdMinY < woodMaxY;
+    NSString *logStr = STRFORMAT(@"扔木棒 %@",canHit ? @"撞到" : @"撞不到");
+    DemoLog(@"%@",logStr);
+    [theApp.heLogView addDemoLog:logStr];
     if (canHit) {
         //5. 撞到的时间判断 (撞需距离 / 总扔距离 * 总扔时间);
         CGFloat hitTime = ((birdMinX - woodMaxX) / ScreenWidth) * 2.0f;
         [NSTimer scheduledTimerWithTimeInterval:hitTime repeats:false block:^(NSTimer * _Nonnull timer) {
-            NSLog(@"撞到--> 用时:%f",hitTime);
-            //TODOTOMORROW: 触发疼痛感;
-            
-            
+            //6. 触发疼痛感;
+            [self.birdView hurt];
         }];
-    }else{
-        NSLog(@"未撞到");
     }
     
-    //6. 扔出
+    //7. 扔出
     [wood throw];
 }
 
