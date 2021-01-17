@@ -98,6 +98,8 @@
         return STRFORMAT(@"向%@",valueStr);
     }else if ([@"distance" isEqualToString:value_p.dataSource]) {
         return STRFORMAT(@"距%@",valueStr);
+    }else if ([@"distanceY" isEqualToString:value_p.dataSource]) {
+        return STRFORMAT(@"Y距%@",valueStr);
     }else if ([@"speed" isEqualToString:value_p.dataSource]) {
         return STRFORMAT(@"速%@",valueStr);
     }else if ([@"border" isEqualToString:value_p.dataSource]) {

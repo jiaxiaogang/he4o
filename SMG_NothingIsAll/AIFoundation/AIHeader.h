@@ -228,9 +228,9 @@
 #define Log4InAnaGL false
 #define Log4InAnaHN false
 //外类比
-#define Log4OutAna false
+#define Log4OutAna true
 //正向类比
-#define Log4SameAna false
+#define Log4SameAna true
 //反向类比
 #define Log4DiffAna false
 //方向索引
