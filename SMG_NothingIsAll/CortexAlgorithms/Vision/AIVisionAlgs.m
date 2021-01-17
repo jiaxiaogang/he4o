@@ -36,6 +36,7 @@
             model.speed = [self speed:curView];
             model.direction = [self direction:selfView target:curView];
             model.distance = [self distance:selfView target:curView];
+            model.distanceY = [self distanceY:selfView target:curView];
             model.border = [self border:curView];
             model.posX = [self posX:curView];
             model.posY = [self posY:curView];
@@ -168,13 +169,32 @@
     return result;
 }
 
-//direction
+//distance
 +(NSInteger) distance:(UIView*)selfView target:(UIView*)target{
     CGPoint disPoint = [UIView distancePoint:selfView target:target];
     CGFloat disFloat = sqrt(powf(disPoint.x, 2) + powf(disPoint.y, 2));
     NSInteger distance = (NSInteger)(disFloat / 3.0f);
     if (distance <= 5) distance = 0;//与身体重叠,则距离为0;
     return distance;
+}
+
+//distanceY
++(NSInteger) distanceY:(UIView*)selfView target:(UIView*)target{
+    //1. 数据准备;
+    CGFloat selfY = [UIView convertWorldRect:selfView].origin.y;
+    CGFloat selfMaxY = selfY + selfView.height;
+    CGFloat targetY = [UIView convertWorldRect:target].origin.y;
+    CGFloat targetMaxY = targetY + target.height;
+    
+    //2. self在下方时;
+    if (selfY > targetMaxY) {
+        return selfY - targetMaxY;
+    }else if(targetY > selfMaxY){
+        //3. self在上方时;
+        return targetY - selfMaxY;
+    }
+    //4. 有重叠时,直接返回0;
+    return 0;
 }
 
 //border
