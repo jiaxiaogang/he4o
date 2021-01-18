@@ -19,6 +19,8 @@
 #import "AIShortMatchModel_Simple.h"
 //temp
 #import "NVHeUtil.h"
+#import "TOUtils.h"
+#import "AITime.h"
 
 @interface AIThinkIn () <AIThinkInPerceptDelegate>
 
@@ -162,6 +164,7 @@
  *      20201019 - 将mModel更提前保留至mModelManager中;
  *      20201112 - TIR_Fo支持不应其except_ps,将protoF和matchAF都设为不应期,避免AF识别P回来 (参考21144);
  *      20201113 - 构建matchAFo时,MatchA为空时,兼容取part首条,否则会导致时序识别失败 (参考21144);
+ *      20210118 - 支持生物钟触发器 (未完成) (参考22052-1);
  */
 -(void) dataIn_NoMV:(AIAlgNodeBase*)algNode fromGroup_ps:(NSArray*)fromGroup_ps{
     //1. 数据准备 (瞬时记忆,理性匹配出的模型);
@@ -192,6 +195,24 @@
         mModel.matchFoValue = matchValue;
         mModel.cutIndex = cutIndex;
     }];
+    
+    //3. 反向反馈类比_生物钟触发器;
+    BOOL isHNGL = [TOUtils isHNGL:mModel.matchFo.pointer];
+    if (isHNGL) {
+        //末位判断;
+        if (mModel.cutIndex == mModel.matchFo.count - 1) {
+            [AITime setTimeTrigger:mModel.matchFo.mvDeltaTime trigger:^{
+                NSLog(@"hngl触发,判断状态变化");
+            }];
+        }
+    }else{
+        //有mv判断;
+        if (mModel.cutIndex == mModel.matchFo.count && mModel.matchFo.cmvNode_p) {
+            [AITime setTimeTrigger:mModel.matchFo.mvDeltaTime trigger:^{
+                NSLog(@"normal触发,判断状态变化");
+            }];
+        }
+    }
     
     //5. 内类比
     [AIThinkInReason analogyInner:mModel];

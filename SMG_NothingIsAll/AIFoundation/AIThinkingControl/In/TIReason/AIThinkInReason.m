@@ -23,7 +23,6 @@
 #import "AIAnalogy.h"
 #import "AIShortMatchModel.h"
 #import "ThinkingUtils.h"
-#import "TOUtils.h"
 
 @implementation AIThinkInReason
 
@@ -242,14 +241,6 @@
     NSLog(@"\n\n------------------------------- 瞬时时序识别 -------------------------------\n%@->%@",Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p));
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
     [self partMatching_FoV1Dot5:protoFo except_ps:except_ps finishBlock:^(AIFoNodeBase *matchFo, CGFloat matchValue, NSInteger cutIndex) {
-        
-        //3. 反向反馈类比_生物钟触发器;
-        BOOL isHNGL = [TOUtils isHNGL:matchFo.pointer];
-        if (isHNGL) {
-            //末位判断;
-        }else{
-            //有mv判断;
-        }
         finishBlock(protoFo,matchFo,matchValue,cutIndex);
     }];
 }
