@@ -242,6 +242,14 @@
     NSLog(@"\n\n------------------------------- 瞬时时序识别 -------------------------------\n%@->%@",Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p));
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
     [self partMatching_FoV1Dot5:protoFo except_ps:except_ps finishBlock:^(AIFoNodeBase *matchFo, CGFloat matchValue, NSInteger cutIndex) {
+        
+        //3. 反向反馈类比_生物钟触发器;
+        BOOL isHNGL = [TOUtils isHNGL:matchFo.pointer];
+        if (isHNGL) {
+            //末位判断;
+        }else{
+            //有mv判断;
+        }
         finishBlock(protoFo,matchFo,matchValue,cutIndex);
     }];
 }
@@ -289,6 +297,7 @@
  *      2020.07.18: 将整个allRef_2拍平成一维数组,并去重 (即所有帧的refFos都算做候选集);
  *      2020.07.19: 改为仅取最后一位的refFos (因为最后一位是焦点帧,并且全含判断算法也需要支持仅末位候选集);
  *      2020.11.12: 支持except_ps参数,因为在FromShortMem时,matchAFo会识别protoFo返回,所以将protoFo不应期掉 (参考21144);
+ *      2021.01.18: 联想matchFo时,由原本只获取Normal类型,改为将HNGL也加入其中 (参考22052-1a,实测未影响原多向飞行训练);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
 //+(void) partMatching_FoV2:(AIFoNodeBase*)protoFo finishBlock:(void(^)(AIFoNodeBase *matchFo,CGFloat matchValue,NSInteger cutIndex))finishBlock{
@@ -386,7 +395,9 @@
         AIAlgNodeBase *indexAlg = [SMGUtils searchNode:assIndex_p];
         
         //4. indexAlg.refPorts; (取识别到过的抽象节点(如苹果));
-        NSArray *assFo_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg_Normal:indexAlg]];
+        NSArray *refFoPorts = [AINetUtils refPorts_All4Alg:indexAlg];
+        refFoPorts = [SMGUtils filterPorts:refFoPorts havTypes:nil noTypes:@[@(ATPlus),@(ATSub)]];
+        NSArray *assFo_ps = Ports2Pits(refFoPorts);
         assFo_ps = [SMGUtils removeSub_ps:except_ps parent_ps:assFo_ps];
         assFo_ps = ARR_SUB(assFo_ps, 0, cPartMatchingCheckRefPortsLimit_Fo);
         if (Log4MFo) NSLog(@"-----> TIR_Fo 索引到有效时序数:%lu",(unsigned long)assFo_ps.count);
