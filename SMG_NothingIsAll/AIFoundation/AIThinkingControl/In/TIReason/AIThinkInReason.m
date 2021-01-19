@@ -22,6 +22,7 @@
 #import "TIRUtils.h"
 #import "AIAnalogy.h"
 #import "AIShortMatchModel.h"
+#import "ShortMatchManager.h"
 #import "ThinkingUtils.h"
 #import "TOUtils.h"
 #import "AITime.h"
@@ -458,6 +459,105 @@
  */
 +(void) analogyInner:(AIShortMatchModel*)mModel{
     [AIAnalogy analogyInner:mModel];
+}
+
+/**
+ *  MARK:--------------------"外层输入" 推进 "中层循环" 决策--------------------
+ *  @title 外层输入对In短时记忆的影响处理 (参考22052-2);
+ */
++(BOOL) tir_OPushM:(AIShortMatchModel*)newInModel{
+    //1. 数据检查
+    NSArray *inModels = theTC.inModelManager.models;
+    if (!newInModel) return false;
+    
+    //2. 取出所有等待中的inModel;
+    NSArray *waitModels = [SMGUtils filterArr:inModels checkValid:^BOOL(AIShortMatchModel *item) {
+        return item.status == TIModelStatus_LastWait;
+    }];
+    NSLog(@"\n\n=============================== tir_OPushM ===============================\n输入M:%@\n输入P:%@\n等待中任务数:%lu",Alg2FStr(newInModel.matchAlg),Alg2FStr(newInModel.protoAlg),(long)waitModels.count);
+    
+    //3. 判断最近一次input是否与等待中outModel相匹配 (匹配,比如吃,确定自己是否真吃了);
+    //3. 保留/更新实际发生到outModel (通过了有效判断的,将实际概念直接存留到waitModel);
+    //TOAlgModel *focusModel = nil;
+    //for (TOAlgModel *waitModel in waitModels) {
+    //    if (Log4OPushM) NSLog(@"==> checkTOModel: %@",Pit2FStr(waitModel.content_p));
+    //    if (ISOK(waitModel, TOAlgModel.class) && ISOK(waitModel.baseOrGroup, TOFoModel.class)) {
+    //        if ([TOUtils isHNGL_toModel:waitModel]) {
+    //            //4. "H"的有效判断;
+    //            if ([TOUtils isH_toModel:waitModel]) {
+    //                TOAlgModel *targetModel = (TOAlgModel*)waitModel.baseOrGroup.baseOrGroup;
+    //                BOOL mIsC = [TOUtils mIsC_1:latestMModel.matchAlg.pointer c:targetModel.content_p];
+    //                if (Log4OPushM) NSLog(@"H有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(targetModel.content_p),mIsC);
+    //                if (mIsC) {
+    //                    waitModel.status = TOModelStatus_OuterBack;
+    //                    waitModel.realContent_p = latestMModel.protoAlg.pointer;
+    //
+    //                    //1. 在ATHav时,执行到此处,说明waitModel和baseFo已完成;
+    //                    waitModel.baseOrGroup.status = TOModelStatus_Finish;
+    //
+    //                    //2. 应跳到: baseFo.baseAlg与此处inputMModel.protoAlg之间,进行PM评价;
+    //                    if (!focusModel) NSLog(@"=== OPushM成功 Hav继续PM: %@",Pit2FStr(targetModel.content_p));
+    //                    if (!focusModel) focusModel = targetModel;
+    //                }
+    //            }else if([TOUtils isG_toModel:waitModel] || [TOUtils isL_toModel:waitModel]){
+    //                //a. 从父级fo的父级取得原稀疏码值 (valueModel中有期望稀疏码sValue);
+    //                TOFoModel *bFo = (TOFoModel*)waitModel.baseOrGroup;         //waitModel所属glFo
+    //                TOValueModel *bbValue = (TOValueModel*)bFo.baseOrGroup;     //glFo是为了bbValue
+    //                TOAlgModel *targetModel = (TOAlgModel*)bbValue.baseOrGroup; //bbValue所属目标alg
+    //
+    //                //5. "GL"的有效判断;
+    //                AIKVPointer *hopeValue_p = bbValue.sValue_p;
+    //
+    //                //b. 在inputProtoAlg中找到实际稀疏码realValue;
+    //                AIKVPointer *realValue_p = [SMGUtils filterSameIdentifier_p:hopeValue_p b_ps:latestMModel.protoAlg.content_ps];
+    //
+    //                //c. 对期望与实际稀疏码比较得到实际ATType;
+    //                if (hopeValue_p && realValue_p) {
+    //                    BOOL mIsC = false;
+    //                    for (AIAlgNodeBase *item in latestMModel.matchAlgs) {
+    //                        mIsC = [TOUtils mIsC_1:item.pointer c:targetModel.content_p] || [TOUtils mIsC_1:targetModel.content_p c:item.pointer];
+    //                        if (mIsC) {
+    //                            if (Log4OPushM) NSLog(@"GL有效判断_mIsC:(M=%@ C=%@) 结果:%d",Alg2FStr(item), Pit2FStr(targetModel.content_p),mIsC);
+    //                            break;
+    //                        }
+    //                    }
+    //
+    //                    //e. mIsC判断 (20201226:在21204BUG修复后训练时,发现mIsC有时是cIsM,所以都判断下);
+    //                    if (mIsC) {
+    //                        //d. 当实际ATType与等待中的ATType一致时,符合预期 (20201226改为判断bFo,因为只有bFo才携带了waitTypeDS,参考21204);
+    //                        AnalogyType realType = [ThinkingUtils compare:hopeValue_p valueB_p:realValue_p];
+    //                        AnalogyType waitType = [ThinkingUtils convertDS2AnalogyType:bFo.content_p.dataSource];
+    //
+    //                        //e. 只有符合变化时,才改为OuterBack,否则不改,使之反省类比时,可以发现不符合问题;
+    //                        if (realType == waitType){
+    //                            waitModel.status = TOModelStatus_OuterBack;
+    //                        }
+    //                        waitModel.realContent_p = latestMModel.protoAlg.pointer;
+    //
+    //                        //1. 在ATHav时,执行到此处,说明waitModel和baseFo已完成;
+    //                        waitModel.baseOrGroup.status = TOModelStatus_Finish;
+    //
+    //                        //2. 应跳到: baseFo.baseAlg与此处inputMModel.protoAlg之间,进行PM评价;
+    //                        if (!focusModel) NSLog(@"=== OPushM成功 GL:%@ 继续PM:%@ bFo:%@",realType == waitType ? @"符合" : @"不符合",Pit2FStr(targetModel.content_p),Pit2FStr(bFo.content_p));
+    //                        if (!focusModel) focusModel = targetModel;
+    //                    }
+    //                }
+    //            }
+    //        }else{
+    //            //7. "行为输出" 和 "demand.ActYes"的有效判断;
+    //            BOOL mIsC = [TOUtils mIsC_1:latestMModel.matchAlg.pointer c:waitModel.content_p];
+    //            if (Log4OPushM) NSLog(@"Normal有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(waitModel.content_p),mIsC);
+    //            if (mIsC) {
+    //                waitModel.status = TOModelStatus_OuterBack;
+    //                waitModel.realContent_p = latestMModel.protoAlg.pointer;
+    //                if (!focusModel) NSLog(@"=== OPushM成功 Normal继续PM: %@",Pit2FStr(waitModel.content_p));
+    //                if (!focusModel) focusModel = waitModel;
+    //            }
+    //        }
+    //    }
+    //}
+    NSLog(@"OPushM: 无一被需要");
+    return false;
 }
 
 @end

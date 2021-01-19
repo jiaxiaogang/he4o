@@ -163,6 +163,7 @@
  *      20201112 - TIR_Fo支持不应其except_ps,将protoF和matchAF都设为不应期,避免AF识别P回来 (参考21144);
  *      20201113 - 构建matchAFo时,MatchA为空时,兼容取part首条,否则会导致时序识别失败 (参考21144);
  *      20210118 - 支持生物钟触发器 (未完成) (参考22052-1);
+ *      20210119 - 支持TIR_OPushM (参考22052-2);
  */
 -(void) dataIn_NoMV:(AIAlgNodeBase*)algNode fromGroup_ps:(NSArray*)fromGroup_ps{
     //1. 数据准备 (瞬时记忆,理性匹配出的模型);
@@ -193,6 +194,9 @@
     
     //6. 传给TOR,做下一步处理;
     [self.delegate aiThinkIn_Commit2TC:mModel];
+    
+    //7. 传给TIR,做下一步处理;
+    [AIThinkInReason tir_OPushM:mModel];
 }
 
 
