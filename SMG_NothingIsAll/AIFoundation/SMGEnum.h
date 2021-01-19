@@ -114,7 +114,7 @@ typedef NS_ENUM(NSInteger, LogHeaderMode) {
 
 /**
  *  MARK:--------------------TOModelStatus--------------------
- *  @title 输出模型
+ *  @title 输出模型状态
  *  @todo 考虑支持ScorePK,即迟疑时,尝试别的方案,与当前方案进行竞争;
  */
 typedef NS_ENUM(NSInteger, TOModelStatus) {
@@ -127,4 +127,15 @@ typedef NS_ENUM(NSInteger, TOModelStatus) {
     TOModelStatus_OuterBack= 6,//外循环结果返回符合的标记 (mIsC 或 GL符合变化);
     TOModelStatus_Finish   = 7,//最终成功 (完成后向下帧跳转,发生在事实发生之后,即新的input匹配到);
     TOModelStatus_VSWait   = 8,//在多任务竞争中,被暂时击退 (等待继续博弈);
+};
+
+/**
+ *  MARK:--------------------TIModelStatus--------------------
+ *  @title 输入模型状态
+ */
+typedef NS_ENUM(NSInteger, TIModelStatus) {
+    TIModelStatus_Default   = 0,//默认值
+    TIModelStatus_LastWait  = 1,//末位等待
+    TIModelStatus_OutBackYes= 2,//返馈成功
+    TIModelStatus_OutBackNo = 3,//返馈失败
 };

@@ -178,15 +178,17 @@ static AIThinkingControl *_instance;
  *  @version
  *      2020.10.19: 将add至ShortMatchManager代码前迁;
  */
--(void) aiThinkIn_Commit2TC:(AIShortMatchModel*)shortMatchModel {
+-(void) aiThinkIn_Commit2TC:(AIShortMatchModel*)inModel {
     //1. 数据检查
-    if (!shortMatchModel) return;
+    if (!inModel) return;
     
-    //1. 把mv加入到demandManager;
-    NSInteger urgentTo = 0;
-    if (shortMatchModel && shortMatchModel.matchFo) {
+    //2. 预测处理_把mv加入到demandManager;
+    if (inModel.matchFo) {
+        NSInteger urgentTo = 0;
+        AIFoNodeBase *matchFo = inModel.matchFo;
+        
         //1> 判断matchingFo.mv有值才加入demandManager,同台竞争,执行顺应mv;
-        AICMVNodeBase *mvNode = [SMGUtils searchNode:shortMatchModel.matchFo.cmvNode_p];
+        AICMVNodeBase *mvNode = [SMGUtils searchNode:matchFo.cmvNode_p];
         if (mvNode) {
             NSInteger delta = [NUMTOOK([AINetIndex getData:mvNode.delta_p]) integerValue];
             if (delta != 0) {
@@ -194,7 +196,7 @@ static AIThinkingControl *_instance;
                 
                 //2> 判断matchValue的匹配度,对mv的迫切度产生"正相关"影响;
                 urgentTo = [NUMTOOK([AINetIndex getData:mvNode.urgentTo_p]) integerValue];
-                urgentTo = (int)(urgentTo * shortMatchModel.matchFoValue);
+                urgentTo = (int)(urgentTo * inModel.matchFoValue);
                 
                 //3> 将mv加入demandCache
                 [self.demandManager updateCMVCache_RMV:algsType urgentTo:urgentTo delta:delta];
@@ -212,7 +214,7 @@ static AIThinkingControl *_instance;
     DemandModel *demand = [self.demandManager getCurrentDemand];
     
     //5. 外循环入->推进->中循环出;
-    BOOL pushOldDemand = [self.tOR commitFromOuterPushMiddleLoop:demand latestMModel:shortMatchModel];
+    BOOL pushOldDemand = [self.tOR commitFromOuterPushMiddleLoop:demand latestMModel:inModel];
     
     //6. 此处推进不成功,则运行TOP四模式;
     if (!pushOldDemand) {

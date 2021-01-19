@@ -780,7 +780,7 @@
                 
                 //4. 反省类比(成功/未成功)的主要原因;
                 AnalogyType type = (algModel.status == TOModelStatus_ActYes) ? ATSub : ATPlus;
-                NSLog(@"---//触发器A_触发: %@ from %@ (%ld)",AlgP2FStr(algModel.content_p),Fo2FStr(foNode),(long)type);
+                NSLog(@"---//触发器A_触发: %@ from %@ (%@)",AlgP2FStr(algModel.content_p),Fo2FStr(foNode),ATType2Str(type));
                 [AIAnalogy analogy_ReasonRethink:foModel cutIndex:cutIndex type:type];
                 
                 //5. 失败时,转流程控制-失败 (会开始下一解决方案);
@@ -820,7 +820,7 @@
             
             //3. 反省类比(成功/未成功)的主要原因;
             AnalogyType type = (demand.status != TOModelStatus_Finish) ? ATSub : ATPlus;
-            NSLog(@"---//触发器F_触发: %p -> %@ (%ld)",demand,Fo2FStr(actYesFo),(long)type);
+            NSLog(@"---//触发器F_触发: %p -> %@ (%@)",demand,Fo2FStr(actYesFo),ATType2Str(type));
             [AIAnalogy analogy_ReasonRethink:foModel cutIndex:NSIntegerMax type:type];
             
             //4. 失败时,转流程控制-失败 (会开始下一解决方案);

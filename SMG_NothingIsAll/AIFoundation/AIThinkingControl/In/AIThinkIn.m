@@ -19,8 +19,6 @@
 #import "AIShortMatchModel_Simple.h"
 //temp
 #import "NVHeUtil.h"
-#import "TOUtils.h"
-#import "AITime.h"
 
 @interface AIThinkIn () <AIThinkInPerceptDelegate>
 
@@ -188,31 +186,7 @@
     mModel.protoFo = [theNet createConFo:protoAShortMem isMem:false];
     
     //4. 识别时序;
-    [AIThinkInReason TIR_Fo_FromShortMem:mModel.matchAFo
-                               except_ps:@[mModel.protoFo.pointer,mModel.matchAFo.pointer]
-                             finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue,NSInteger cutIndex) {
-        mModel.matchFo = matchFo;
-        mModel.matchFoValue = matchValue;
-        mModel.cutIndex = cutIndex;
-    }];
-    
-    //3. 反向反馈类比_生物钟触发器;
-    BOOL isHNGL = [TOUtils isHNGL:mModel.matchFo.pointer];
-    if (isHNGL) {
-        //末位判断;
-        if (mModel.cutIndex == mModel.matchFo.count - 1) {
-            [AITime setTimeTrigger:mModel.matchFo.mvDeltaTime trigger:^{
-                NSLog(@"hngl触发,判断状态变化");
-            }];
-        }
-    }else{
-        //有mv判断;
-        if (mModel.cutIndex == mModel.matchFo.count && mModel.matchFo.cmvNode_p) {
-            [AITime setTimeTrigger:mModel.matchFo.mvDeltaTime trigger:^{
-                NSLog(@"normal触发,判断状态变化");
-            }];
-        }
-    }
+    [AIThinkInReason TIR_Fo_FromShortMem:mModel.matchAFo except_ps:@[mModel.protoFo.pointer,mModel.matchAFo.pointer] decoratorInModel:mModel];
     
     //5. 内类比
     [AIThinkInReason analogyInner:mModel];

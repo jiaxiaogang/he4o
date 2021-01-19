@@ -23,6 +23,8 @@
 #import "AIAnalogy.h"
 #import "AIShortMatchModel.h"
 #import "ThinkingUtils.h"
+#import "TOUtils.h"
+#import "AITime.h"
 
 @implementation AIThinkInReason
 
@@ -229,10 +231,11 @@
  *  @version
  *      20200414 - protoFo由瞬时proto概念组成,改成瞬时match概念组成 (本方法中,去掉proto概念层到match层的联想);
  *      20200717 - 换上新版partMatching_FoV2时序识别算法;
+ *      20210119 - 支持预测-触发器和反向反馈类比 (22052-1&3);
  *  @bug
  *      2020.11.10: 在21141训练第一步,发现外类比不执行BUG,因为传入无用的matchAlg参数判空return了 (参考21142);
  */
-+(void) TIR_Fo_FromShortMem:(AIFoNodeBase*)protoFo except_ps:(NSArray*)except_ps finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue,NSInteger cutIndex))finishBlock{
++(void) TIR_Fo_FromShortMem:(AIFoNodeBase*)protoFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel{
     //1. 数据检查
     if (!protoFo) {
         return;
@@ -241,8 +244,44 @@
     NSLog(@"\n\n------------------------------- 瞬时时序识别 -------------------------------\n%@->%@",Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p));
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
     [self partMatching_FoV1Dot5:protoFo except_ps:except_ps finishBlock:^(AIFoNodeBase *matchFo, CGFloat matchValue, NSInteger cutIndex) {
-        finishBlock(protoFo,matchFo,matchValue,cutIndex);
+        inModel.matchFo = matchFo;
+        inModel.matchFoValue = matchValue;
+        inModel.cutIndex = cutIndex;
     }];
+    
+    //3. 预测处理_反向反馈类比_生物钟触发器;
+    AIFoNodeBase *matchFo = inModel.matchFo;
+    BOOL isHNGL = [TOUtils isHNGL:matchFo.pointer];
+    if (isHNGL) {
+        //末位判断;
+        if (inModel.cutIndex == matchFo.count - 1) {
+            inModel.status = TIModelStatus_LastWait;
+            double deltaTime = [NUMTOOK(ARR_INDEX_REVERSE(matchFo.deltaTimes, 0)) doubleValue];
+            [AITime setTimeTrigger:deltaTime trigger:^{
+                //4. 反向反馈类比(成功/未成功)的主要原因;
+                AnalogyType type = (inModel.status == TIModelStatus_LastWait) ? ATSub : ATPlus;
+                NSLog(@"---//触发器HNGL_触发: %@ (%@)",Fo2FStr(matchFo),ATType2Str(type));
+                [AIAnalogy analogy_Feedback_Diff:inModel shortFo:protoFo];
+                
+                //5. 失败状态标记;
+                if (inModel.status == TIModelStatus_LastWait) inModel.status = TIModelStatus_OutBackNo;
+            }];
+        }
+    }else{
+        //有mv判断;
+        if (inModel.cutIndex == matchFo.count && matchFo.cmvNode_p) {
+            inModel.status = TIModelStatus_LastWait;
+            [AITime setTimeTrigger:matchFo.mvDeltaTime trigger:^{
+                //4. 反向反馈类比(成功/未成功)的主要原因;
+                AnalogyType type = (inModel.status == TIModelStatus_LastWait) ? ATSub : ATPlus;
+                NSLog(@"---//触发器Mv_触发: %@ (%@)",Fo2FStr(matchFo),ATType2Str(type));
+                [AIAnalogy analogy_Feedback_Diff:inModel shortFo:protoFo];
+                
+                //5. 失败状态标记;
+                if (inModel.status == TIModelStatus_LastWait) inModel.status = TIModelStatus_OutBackNo;
+            }];
+        }
+    }
 }
 
 
