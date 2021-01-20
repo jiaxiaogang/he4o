@@ -36,4 +36,10 @@
                canAss:(BOOL(^)())canAss
          updateEnergy:(void(^)(CGFloat delta))updateEnergy;
 
+
+/**
+ *  MARK:--------------------"外层输入" 推进 "中层循环" 决策--------------------
+ */
++(void) tip_OPushM:(AICMVNode*)newMv;
+
 @end

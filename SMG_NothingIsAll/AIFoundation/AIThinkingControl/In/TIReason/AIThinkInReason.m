@@ -472,22 +472,19 @@
     
     //2. 取出所有等待中的inModel;
     NSArray *waitModels = [SMGUtils filterArr:inModels checkValid:^BOOL(AIShortMatchModel *item) {
-        return item.status == TIModelStatus_LastWait;
+        return item.status == TIModelStatus_LastWait && [TOUtils isHNGL:item.matchFo.pointer];
     }];
     NSLog(@"\n\n=============================== tir_OPushM ===============================\n输入M:%@\n输入P:%@\n等待中任务数:%lu",Alg2FStr(newInModel.matchAlg),Alg2FStr(newInModel.protoAlg),(long)waitModels.count);
     
     //3. 判断最近一次input是否与等待中outModel相匹配 (匹配,比如吃,确定自己是否真吃了);
-    //3. 保留/更新实际发生到outModel (通过了有效判断的,将实际概念直接存留到waitModel);
     for (AIShortMatchModel *waitModel in waitModels) {
         AIFoNodeBase *waitMatchFo = waitModel.matchFo;
         if (Log4OPushM) NSLog(@"==> checkTIModel=MatchFo: %@",Fo2FStr(waitMatchFo));
         AIKVPointer *waitLastAlg_p = ARR_INDEX_REVERSE(waitMatchFo.content_ps, 0);
         if (!waitLastAlg_p) continue;
         
-        //1. MV时,判断来者是否
-        if (waitMatchFo.cmvNode_p) {
-            
-        }else if([TOUtils isH:waitMatchFo.pointer]){
+        //4. 对H和GL分别做处理;
+        if([TOUtils isH:waitMatchFo.pointer]){
             //2. 直接判断H是否mIsC,是则OutBackYes;
             BOOL mIsC = [TOUtils mIsC_1:newInModel.protoAlg.pointer c:waitLastAlg_p];
             if (mIsC) {

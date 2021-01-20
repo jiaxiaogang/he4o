@@ -369,32 +369,6 @@
 //    }
 //    return false;
 //}
-+(BOOL) sameScoreOfMV1:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p{
-    if (mv1_p && mv2_p) {
-        CGFloat mScore = [AIScore score4MV:mv1_p ratio:1.0f];
-        CGFloat sScore = [AIScore score4MV:mv2_p ratio:1.0f];
-        BOOL isSame = ((mScore > 0 && sScore > 0) || (mScore < 0 && sScore < 0));
-        return isSame;
-    }
-    return false;
-}
-+(BOOL) sameOfScore1:(CGFloat)score1 score2:(CGFloat)score2{
-    BOOL isSame = ((score1 > 0 && score2 > 0) || (score1 < 0 && score2 < 0));
-    return isSame;
-}
-
-+(BOOL) diffScoreOfMV1:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p{
-    if (mv1_p && mv2_p) {
-        CGFloat mScore = [AIScore score4MV:mv1_p ratio:1.0f];
-        CGFloat pScore = [AIScore score4MV:mv2_p ratio:1.0f];
-        return [self diffOfScore1:mScore score2:pScore];
-    }
-    return false;
-}
-+(BOOL) diffOfScore1:(CGFloat)score1 score2:(CGFloat)score2{
-    BOOL isDiff = ((score1 > 0 && score2 < 0) || (score1 < 0 && score2 > 0));
-    return isDiff;
-}
 
 @end
 

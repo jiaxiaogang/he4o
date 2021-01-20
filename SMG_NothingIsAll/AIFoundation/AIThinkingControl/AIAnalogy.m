@@ -461,6 +461,7 @@
  *      20200421 - 取消构建sameAbsAlg,因为MC算法不需要同级MC判定,所以此处也没用,关于MC有效性检查可参考:19102;
  *  @todo
  *      20200823 - 一直以来,反向类比触发条件太苛刻的问题,通过反省类比迭代之;
+ *      20210120 - 此处取mType和pType的SPType有误,S不表示负价值评分,而是表示不符合当前父场景的hope预期;
  */
 +(void) analogy_Feedback_Diff:(AIShortMatchModel*)mModel shortFo:(AIFoNodeBase*)shortFo{
     //1. 数据检查 (MMv和PMV有效,且同区);
@@ -478,7 +479,7 @@
     AnalogyType pType = [ThinkingUtils getInnerTypeWithScore:pScore];
     NSString *mDS = [ThinkingUtils getAnalogyTypeDS:mType];
     NSString *pDS = [ThinkingUtils getAnalogyTypeDS:pType];
-    BOOL isDiff = [ThinkingUtils diffOfScore1:mScore score2:pScore];
+    BOOL isDiff = [AIScore diffOfScore1:mScore score2:pScore];
     
     //TODOTOMORROW20210117: 正与平,或者负与平是否也是isDiff的?
     
@@ -612,7 +613,7 @@
     if (!mModel || !mModel.matchFo || !shortFo) return;
     
     //2. 检查同向;
-    BOOL isSame = [ThinkingUtils sameScoreOfMV1:mModel.matchFo.cmvNode_p mv2:shortFo.cmvNode_p];
+    BOOL isSame = [AIScore sameScoreOfMV1:mModel.matchFo.cmvNode_p mv2:shortFo.cmvNode_p];
     NSLog(@"\n\n------------------------------- 正向反馈类比 (%@) -------------------------------\n短时MatchFo:%@->%@ \n输入ProtoFo:%@->%@",isSame ? @"执行" : @"未执行", Fo2FStr(mModel.matchFo),Mvp2Str(mModel.matchFo.cmvNode_p),Fo2FStr(shortFo),Mvp2Str(shortFo.cmvNode_p));
     if (!isSame) return;
     

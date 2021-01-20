@@ -41,4 +41,14 @@
 +(CGFloat) score4MV:(NSString*)algsType urgentTo_p:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p ratio:(CGFloat)ratio;
 +(CGFloat) score4MV:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta ratio:(CGFloat)ratio;
 
+/**
+ *  MARK:--------------------获取mv1和mv2是否同向或反向--------------------
+ *  @result 默认返回false;
+ */
++(BOOL) sameScoreOfMV1:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p; //同区且同向
++(BOOL) sameOfScore1:(CGFloat)score1 score2:(CGFloat)score2;        //同向
+
++(BOOL) diffScoreOfMV1:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p; //反向
++(BOOL) diffOfScore1:(CGFloat)score1 score2:(CGFloat)score2;        //反向
+
 @end
