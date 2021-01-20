@@ -27,14 +27,10 @@
 
 /**
  *  MARK:--------------------入口--------------------
- *  @param canAss       : NotNull
- *  @param updateEnergy : NotNull
  */
 -(void) dataIn_FindMV:(NSArray*)algsArr
    createMvModelBlock:(AIFrontOrderNode*(^)(NSArray *algsArr,BOOL isMatch))createMvModelBlock
-          finishBlock:(void(^)(AICMVNode *commitMvNode))finishBlock
-               canAss:(BOOL(^)())canAss
-         updateEnergy:(void(^)(CGFloat delta))updateEnergy;
+          finishBlock:(void(^)(AICMVNode *commitMvNode))finishBlock;
 
 
 /**

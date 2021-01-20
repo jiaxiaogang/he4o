@@ -29,8 +29,6 @@
  *  联想网络杏仁核得来的则false;
  */
 -(void) aiThinkIn_Commit2TC:(AIShortMatchModel*)shortMatchModel;
--(void) aiThinkIn_UpdateEnergy:(CGFloat)delta;                      //更新思维能量值;
--(BOOL) aiThinkIn_EnergyValid;                                      //能量值是否>0;
 -(NSArray*) aiThinkIn_getShortMatchModel;                           //获取mModel模型
 -(void) aiThinkIn_addShortMatchModel:(AIShortMatchModel*)newMModel; //提交新mModel模型
 

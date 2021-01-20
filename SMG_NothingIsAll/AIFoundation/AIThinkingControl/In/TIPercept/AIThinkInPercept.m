@@ -25,12 +25,11 @@
  *  MARK:--------------------入口--------------------
  *  @version
  *      20200416 - 将先"mv需求处理"后"学习",改为先"学习"后"mv需求处理",因为外层死循环 (参考n19p5-B组BUG2);
+ *      20210120 - 支持tir_OPush()反向反馈类比;
  */
 -(void) dataIn_FindMV:(NSArray*)algsArr
    createMvModelBlock:(AIFrontOrderNode*(^)(NSArray *algsArr,BOOL isMatch))createMvModelBlock
-          finishBlock:(void(^)(AICMVNode *commitMvNode))finishBlock
-               canAss:(BOOL(^)())canAss
-         updateEnergy:(void(^)(CGFloat delta))updateEnergy{
+          finishBlock:(void(^)(AICMVNode *commitMvNode))finishBlock{
     //1. 联想到mv时,创建CmvModel取到FoNode;
     if (!createMvModelBlock) return;
     AIFrontOrderNode *protoFo = createMvModelBlock(algsArr,false);
@@ -43,7 +42,10 @@
     }
     
     //3. 学习
-    [self dataIn_FindMV_Learning:protoFo cmvNode:cmvNode canAss:canAss updateEnergy:updateEnergy];
+    [self dataIn_FindMV_Learning:protoFo cmvNode:cmvNode];
+    
+    //4. OPushM
+    [AIThinkInPercept tip_OPushM:cmvNode];
     
     //4. 思考mv,需求处理
     if (finishBlock) finishBlock(cmvNode);
@@ -62,7 +64,7 @@
  *  @version
  *      202003-04: a.去掉外类比; b.外类比拆分为:正向类比和反向类比;
  */
--(void) dataIn_FindMV_Learning:(AIFrontOrderNode*)protoFo cmvNode:(AICMVNode*)cmvNode canAss:(BOOL(^)())canAss updateEnergy:(void(^)(CGFloat delta))updateEnergy{
+-(void) dataIn_FindMV_Learning:(AIFrontOrderNode*)protoFo cmvNode:(AICMVNode*)cmvNode{
     //1. 数据检查 & 准备
     if (protoFo == nil || cmvNode == nil) {
         return;
@@ -73,9 +75,6 @@
     for (AIShortMatchModel *mModel in mModels) {
         //a. 正向反馈类比;
         [AIAnalogy analogy_Feedback_Same:mModel shortFo:protoFo];
-        
-        //b. 反向反馈类比;
-        [AIAnalogy analogy_Feedback_Diff:mModel shortFo:protoFo];
     }
 }
 

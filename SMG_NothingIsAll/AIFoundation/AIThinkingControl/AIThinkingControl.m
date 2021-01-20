@@ -221,12 +221,6 @@ static AIThinkingControl *_instance;
         [self.tOP dataOut];
     }
 }
--(void) aiThinkIn_UpdateEnergy:(CGFloat)delta{
-    [self updateEnergy:delta];
-}
--(BOOL) aiThinkIn_EnergyValid{
-    return [self energyValid];
-}
 -(NSArray*) aiThinkIn_getShortMatchModel{
     return self.shortMatchManager.models;
 }

@@ -213,10 +213,6 @@
     } finishBlock:^(AICMVNode *commitMvNode) {
         //3. 思考mv,需求处理
         [self.delegate aiThinkIn_CommitPercept:commitMvNode];
-    } canAss:^BOOL{
-        return [self canAss];
-    } updateEnergy:^(CGFloat delta) {
-        [self updateEnergy:delta];
     }];
 }
 
@@ -224,21 +220,6 @@
 //MARK:===============================================================
 //MARK:                     < private_Method >
 //MARK:===============================================================
-
-//联想前判断;
--(BOOL) canAss{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_EnergyValid)]) {
-        return [self.delegate aiThinkIn_EnergyValid];
-    }
-    return false;
-}
-
-//消耗能量值 (目前仅在构建后);
--(void) updateEnergy:(CGFloat)delta{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(aiThinkIn_UpdateEnergy:)]) {
-        [self.delegate aiThinkIn_UpdateEnergy:delta];
-    }
-}
 
 /**
  *  MARK:--------------------AIThinkInPerceptDelegate--------------------
