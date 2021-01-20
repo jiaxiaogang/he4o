@@ -82,6 +82,19 @@
     return false;
 }
 
++(BOOL) mIsC_1:(NSArray*)ms cs:(NSArray*)cs{
+    ms = ARRTOOK(ms);
+    cs = ARRTOOK(cs);
+    for (AIKVPointer *c in cs) {
+        for (AIKVPointer *m in ms) {
+            if ([TOUtils mIsC_1:m c:c]) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 /**
  *  MARK:--------------------判断indexOf (支持本级+一级抽象)--------------------
  *  @bug 2020.06.12 : TOR.R-中firstAt_Plus取值为-1,经查因为mIsC方法取absPorts_Normal,对plus/sub不支持导致,改后好了;

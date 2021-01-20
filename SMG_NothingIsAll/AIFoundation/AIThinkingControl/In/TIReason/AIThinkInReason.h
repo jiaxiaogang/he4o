@@ -35,6 +35,6 @@
 //MARK:                     < 内类比 >
 //MARK:===============================================================
 +(void) analogyInner:(AIShortMatchModel*)mModel;
-+(BOOL) tir_OPushM:(AIShortMatchModel*)newInModel;
++(void) tir_OPushM:(AIShortMatchModel*)newInModel;
 
 @end

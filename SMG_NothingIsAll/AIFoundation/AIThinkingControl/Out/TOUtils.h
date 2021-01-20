@@ -29,6 +29,8 @@
 +(BOOL) mIsC_1:(AIKVPointer*)m c:(AIKVPointer*)c;
 +(BOOL) mIsC_2:(AIKVPointer*)m c:(AIKVPointer*)c;
 
++(BOOL) mIsC_1:(NSArray*)ms cs:(NSArray*)cs;
+
 /**
  *  MARK:--------------------在具象Content中定位抽象Item的下标--------------------
  *  @result 如果找不到,默认返回-1;
