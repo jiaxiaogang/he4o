@@ -471,102 +471,50 @@
  *      20210120 - 此处取mType和pType的SPType有误,S不表示负价值评分,而是表示不符合当前父场景的hope预期;
  */
 +(void) analogy_InRethink:(AIShortMatchModel*)mModel shortFo:(AIFoNodeBase*)shortFo type:(AnalogyType)type{
-    //1. 数据检查 (MMv和PMV有效,且同区);
+    //1. 数据准备;
     if (!mModel || !mModel.matchFo || !shortFo) return;
-    
-    //2. 判断mModel.mv和protoFo.mv是否不相符 (一正一负);
     NSString *ds = [ThinkingUtils getAnalogyTypeDS:type];
     
+    //2. 取有效的matchFo部分 (HNGL取range部分 | MV取所有);
+    NSMutableArray *matchContent = [[NSMutableArray alloc] init];
     if ([TOUtils isHNGL:mModel.matchFo.pointer]) {
-        //HNGL判断range部分 (取差集);
+        [matchContent addObjectsFromArray:ARR_SUB(mModel.matchFo.content_ps, 0, mModel.matchFo.count - 1)];
     }else{
-        //MV判断所有content部分 (取差集);
+        [matchContent addObjectsFromArray:mModel.matchFo.content_ps];
     }
-    
-    //TODOTOMORROW20210120: 继续写这里IN反省类比;
     NSLog(@"\n\n------------------------------- IN反省类比 (%@) -------------------------------\nM:%@\nP:%@",ATType2Str(type),Fo2FStr(mModel.matchFo),Fo2FStr(shortFo));
-
-    //3. 提供类比收集"缺乏和多余"所需的两个数组;
-    NSMutableArray *ms = [[NSMutableArray alloc] init];
-    NSMutableArray *ps = [[NSMutableArray alloc] init];
-
-    //4. 正向有序类比 (从protoFo中找mAlg_p的踪迹);
-    NSInteger jStart = 0;
-    for (NSInteger i = 0; i < mModel.matchFo.count; i++) {
-        //A. 类比_数据准备;
-        AIKVPointer *mAlg_p = mModel.matchFo.content_ps[i];
-        BOOL findM = false;
-        for (NSInteger j = jStart; j < shortFo.count; j++) {
-            AIKVPointer *pAlg_p = shortFo.content_ps[j];
-            BOOL findP = false;
-
-            //B. 一级类比概念层 (匹配则说明jStart->j之间所有pAlg_p为多余 (含jStart,不含j"因为j本身匹配,无需收集));
-            if ([mAlg_p isEqual:pAlg_p]) {
-                [ps addObjectsFromArray:ARR_SUB(shortFo.content_ps, jStart, j-jStart)];
-                findP = true;
-            }else{
-                //C. 二级类比稀疏码层-数据准备;
-                AIAlgNodeBase *mAlg = [SMGUtils searchNode:mAlg_p];
-                AIAlgNodeBase *pAlg = [SMGUtils searchNode:pAlg_p];
-                if (!mAlg_p || !pAlg_p) continue;
-
-                //a. 二级类比-进行类比;
-                NSArray *sameValue_ps = [SMGUtils filterSame_ps:mAlg.content_ps parent_ps:pAlg.content_ps];
-                NSArray *mSub_ps = [SMGUtils removeSub_ps:sameValue_ps parent_ps:mAlg.content_ps];
-                NSArray *pSub_ps = [SMGUtils removeSub_ps:sameValue_ps parent_ps:pAlg.content_ps];
-                AIAbsAlgNode *createAbsAlg = [theNet createAbsAlg_NoRepeat:sameValue_ps conAlgs:@[mAlg,pAlg] isMem:false];
-                if (Log4DiffAna) NSLog(@"--> MP 抽象概念节点 %@",Alg2FStr(createAbsAlg));
-
-                //b. 二级类比-部分有效
-                if (sameValue_ps.count > 0) {
-                    
-                    //c. 匹配则说明jStart->j之间所有pAlg_p为多余 (含jStart,不含j"因为j在下面被二级收集);
-                    [ps addObjectsFromArray:ARR_SUB(shortFo.content_ps, jStart, j-jStart)];
-                    findP = true;
-
-                    //d. 二级类比-收集缺乏 (都是苹果,怎么一个甜一个涩呢->"甜");
-                    if (mSub_ps.count > 0) {
-                        AIAbsAlgNode *createAbsAlg = [theNet createAbsAlg_NoRepeat:mSub_ps conAlgs:@[mAlg] isMem:false ds:mDS];
-                        if (createAbsAlg) [ms addObject:createAbsAlg.pointer];
-                        if (Log4DiffAna) NSLog(@"--> M.PS节点 %@",Alg2FStr(createAbsAlg));
-                    }
-
-                    //e. 二级类比-收集多余 (都是苹果,怎么一个甜一个涩呢->"涩");
-                    if (pSub_ps.count > 0) {
-                        AIAbsAlgNode *createAbsAlg = [theNet createAbsAlg_NoRepeat:pSub_ps conAlgs:@[pAlg] isMem:false ds:pDS];
-                        if (createAbsAlg) [ps addObject:createAbsAlg.pointer];
-                        if (Log4DiffAna) NSLog(@"--> P.PS节点 %@",Alg2FStr(createAbsAlg));
-                    }
-                    
-                    //f. 构建共同抽象概念 (都是苹果,怎么一个甜一个涩呢->"苹果");
-                    //AIAbsAlgNode *sameAbsAlg = [theNet createAbsAlg_NoRepeat:sameValue_ps conAlgs:@[mAlg,pAlg] isMem:false];
-                    //NSLog(@"--> MP.Sames节点 %@",Alg2FStr(sameAbsAlg));
-                }
+    
+    //3. 正向有序取差集 = M-P;
+    NSMutableArray *justPs = [[NSMutableArray alloc] init];
+    NSInteger nextStartJ = 0;
+    for (NSInteger i = 0; i < shortFo.count; i++) {
+        for (NSInteger j = nextStartJ; j < matchContent.count; j++) {
+            //4. 判断mIsC是否成立;
+            AIKVPointer *shortAlg_p = ARR_INDEX(shortFo.content_ps, i);
+            AIKVPointer *matchAlg_p = ARR_INDEX(matchContent, j);
+            BOOL mIsC = [TOUtils mIsC_1:shortAlg_p c:matchAlg_p];
+            
+            //5. shortAlg和matchAlg判断mIsC成立,则取差值;
+            if (mIsC) {
+                AIAlgNodeBase *matchAlg = [SMGUtils searchNode:matchAlg_p];
+                AIAlgNodeBase *shortAlg = [SMGUtils searchNode:shortAlg_p];
+                NSArray *pSubM = [SMGUtils removeSub_ps:matchAlg.content_ps parent_ps:shortAlg.content_ps];
+                if (!ARRISOK(pSubM)) continue;
+                
+                //6. 差值有效,则构建新SPAlg节点;
+                AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:pSubM conAlgs:@[matchAlg] isMem:false ds:ds];
+                if (Log4DiffAna) NSLog(@"--> In反省类比 构建SPAlg %@",Alg2FStr(spAlg));
+                
+                //7. 收集spAlg并更新nextStartJ;
+                [justPs addObject:spAlg];
+                nextStartJ = j + 1;
             }
-            //D. 无论一级还是二级,只要找到了jStart从下一个开始,标记finM=true;
-            if (findP) {
-                jStart = j + 1;
-                findM = true;
-                break;
-            }
-        }
-
-        //4. 所有j中未找到m,将m收集为缺乏;
-        if (!findM) {
-            [ms addObject:mAlg_p];
         }
     }
-
-    //5. 将最终都没收集的shortFo剩下的部分打包进多余 (jStart到end之间的pAlg_p(含jStart,含end));
-    [ps addObjectsFromArray:ARR_SUB(shortFo.content_ps, jStart, shortFo.count - jStart)];
-    if (Log4DiffAna) NSLog(@"---> 反向反馈类比 ms:%@ ps:%@",Pits2FStr(ms),Pits2FStr(ps));
     
-    //6. 构建ms & ps
-    AIFoNodeBase *mSPFo = [self analogy_Feedback_Diff_Creater:mMv_p conFo:mModel.matchFo content_ps:ms type:mType];
-    AIFoNodeBase *pSPFo = [self analogy_Feedback_Diff_Creater:pMv_p conFo:shortFo content_ps:ps type:pType];
-    
-    //7. 关联兄弟节点
-    [AINetUtils relateBrotherFoA:mSPFo foB:pSPFo];
+    //8. 构建SPFo;
+    AIFoNodeBase *spFo = [ThinkingUtils createAbsFo_NoRepeat_General:@[mModel.matchFo] content_ps:justPs ds:ds difStrong:1];
+    if (Log4DiffAna) NSLog(@"--> In反省类比 构建SPFo %@",Fo2FStr(spFo));
 }
 
 +(void) analogy_InRethinkBack:(AIShortMatchModel*)mModel shortFo:(AIFoNodeBase*)shortFo type:(AnalogyType)type{
