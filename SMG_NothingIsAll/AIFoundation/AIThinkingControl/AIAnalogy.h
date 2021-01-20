@@ -44,7 +44,7 @@
  *      2. 功能作用: 用类比的方式,分析出预测不符的原因(两种,见下),并抽象之;
  *      3. 不符的原因: a.该出现的未出现; b.不该出现的出现;
  */
-+(void) analogy_Feedback_Diff:(AIShortMatchModel*)mModel shortFo:(AIFoNodeBase*)shortFo;
++(void) analogy_InRethink:(AIShortMatchModel*)mModel shortFo:(AIFoNodeBase*)shortFo type:(AnalogyType)type;
 
 /**
  *  MARK:--------------------反馈类比_同向--------------------

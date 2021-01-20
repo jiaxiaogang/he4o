@@ -262,7 +262,7 @@
                 //4. 反向反馈类比(成功/未成功)的主要原因;
                 AnalogyType type = (inModel.status == TIModelStatus_LastWait) ? ATSub : ATPlus;
                 NSLog(@"---//触发器HNGL_触发: %@ (%@)",Fo2FStr(matchFo),ATType2Str(type));
-                [AIAnalogy analogy_Feedback_Diff:inModel shortFo:protoFo];
+                [AIAnalogy analogy_InRethink:inModel shortFo:protoFo type:type];
                 
                 //5. 失败状态标记;
                 if (inModel.status == TIModelStatus_LastWait) inModel.status = TIModelStatus_OutBackNo;
@@ -276,7 +276,7 @@
                 //4. 反向反馈类比(成功/未成功)的主要原因;
                 AnalogyType type = (inModel.status == TIModelStatus_LastWait) ? ATSub : ATPlus;
                 NSLog(@"---//触发器Mv_触发: %@ (%@)",Fo2FStr(matchFo),ATType2Str(type));
-                [AIAnalogy analogy_Feedback_Diff:inModel shortFo:protoFo];
+                [AIAnalogy analogy_InRethink:inModel shortFo:protoFo type:type];
                 
                 //5. 失败状态标记;
                 if (inModel.status == TIModelStatus_LastWait) inModel.status = TIModelStatus_OutBackNo;
