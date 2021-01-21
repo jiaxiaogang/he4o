@@ -210,34 +210,35 @@
 /**
  *  MARK:-------------------- P- --------------------
  *  @desc mv方向索引找负价值的兄弟节点解决方案 (比如:打球打累了,不打了,避免更累);
+ *  @废弃: 因为P-是不存在的(或者说目前不需要的),可以以P+&R-替代之;
  */
 -(BOOL) perceptSub:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel{
     //1. 数据准备;
-    if (!matchAlg || !demandModel) return false;
-    MVDirection direction = [ThinkingUtils havDemand:demandModel.algsType delta:demandModel.delta];
-    direction = labs(direction - 1);//取反方向;
+    //if (!matchAlg || !demandModel) return false;
+    //MVDirection direction = [ThinkingUtils havDemand:demandModel.algsType delta:demandModel.delta];
+    //direction = labs(direction - 1);//取反方向;
     
     //2. 调用通用diff模式方法;
     __block BOOL success = false;//默认为失败
-    [TOUtils topPerceptModeV2:demandModel direction:direction tryResult:^BOOL(AIFoNodeBase *sameFo) {
-        
-        //a. 取兄弟节点,停止打球,则不再累;
-        [TOUtils getPlusBrotherBySubProtoFo_NoRepeatNotNull:sameFo tryResult:^BOOL(AIFoNodeBase *checkFo, AIFoNodeBase *subNode, AIFoNodeBase *plusNode) {
-            
-            //b. 指定subNode和plusNode到行为化;
-            success = [self.delegate aiTOP_2TOR_PerceptSub:sameFo plusFo:plusNode subFo:subNode checkFo:checkFo];
-            
-            //c. 一条成功,则中止取兄弟节点循环;
-            return success;
-        }];
-        
-        //d. 一条成功,则中止取消通用diff算法的交集循环;
-        return success;
-    } canAss:^BOOL{
-        return [theTC energyValid];
-    } updateEnergy:^(CGFloat delta) {
-        [theTC updateEnergy:delta];
-    }];
+    //[TOUtils topPerceptModeV2:demandModel direction:direction tryResult:^BOOL(AIFoNodeBase *sameFo) {
+    //
+    //    //a. 取兄弟节点,停止打球,则不再累;
+    //    [TOUtils getPlusBrotherBySubProtoFo_NoRepeatNotNull:sameFo tryResult:^BOOL(AIFoNodeBase *checkFo, AIFoNodeBase *subNode, AIFoNodeBase *plusNode) {
+    //
+    //        //b. 指定subNode和plusNode到行为化;
+    //        success = [self.delegate aiTOP_2TOR_PerceptSub:sameFo plusFo:plusNode subFo:subNode checkFo:checkFo];
+    //
+    //        //c. 一条成功,则中止取兄弟节点循环;
+    //        return success;
+    //    }];
+    //
+    //    //d. 一条成功,则中止取消通用diff算法的交集循环;
+    //    return success;
+    //} canAss:^BOOL{
+    //    return [theTC energyValid];
+    //} updateEnergy:^(CGFloat delta) {
+    //    [theTC updateEnergy:delta];
+    //}];
     
     //3. 返回P-模式结果;
     return success;
