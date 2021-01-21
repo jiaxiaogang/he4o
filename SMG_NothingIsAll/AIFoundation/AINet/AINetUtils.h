@@ -151,11 +151,6 @@
 //MARK:===============================================================
 +(void) relateFo:(AIFoNodeBase*)foNode mv:(AICMVNodeBase*)mvNode;
 
-//MARK:===============================================================
-//MARK:                     < 关联fo兄弟节点 >
-//MARK:===============================================================
-+(void) relateBrotherFoA:(AIFoNodeBase*)foA foB:(AIFoNodeBase*)foB;
-
 @end
 
 

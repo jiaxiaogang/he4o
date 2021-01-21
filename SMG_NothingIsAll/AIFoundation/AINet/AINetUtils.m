@@ -325,18 +325,6 @@
     }
 }
 
-+(void) relateBrotherFoA:(AIFoNodeBase*)foA foB:(AIFoNodeBase*)foB{
-    if (foA && foB) {
-        //1. 互指向
-        foA.brother_p = foB.pointer;
-        foB.brother_p = foA.pointer;
-        
-        //2. 存储foNode & cmvNode
-        [SMGUtils insertNode:foA];
-        [SMGUtils insertNode:foB];
-    }
-}
-
 @end
 
 

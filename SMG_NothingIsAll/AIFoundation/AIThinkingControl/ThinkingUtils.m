@@ -67,15 +67,6 @@
     return ATDefault;
 }
 
-+(AnalogyType) getInnerTypeWithScore:(CGFloat)score{
-    if (score > 0) {
-        return ATPlus;
-    }else if(score < 0){
-        return ATSub;
-    }
-    return ATDefault;
-}
-
 +(AnalogyType) compare:(AIKVPointer*)valueA_p valueB_p:(AIKVPointer*)valueB_p{
     NSNumber *aValue = NUMTOOK([AINetIndex getData:valueA_p]);
     NSNumber *bValue = NUMTOOK([AINetIndex getData:valueB_p]);
