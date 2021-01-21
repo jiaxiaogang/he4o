@@ -115,36 +115,26 @@
 -(void) commitReasonSub:(TOFoModel*)foModel demand:(ReasonDemandModel*)demand{
     
     //TODOTOMORROW20210121:
-    //1. 决策前评价foModel;
-    //      > 有空S指向,则失败;
-    
-    //2. 决策时评价foModel (S已错过,则失败);
-    //      > 评价否掉的,直接demand.failure()进行递归 (尝试下一方案);
-    
-    //3. 评价foModel (S未错过,则进行SAlg逐个满足);
-    //      > 从cutIndex开始进行循环,判断是否被M.itemAlg抽象指向;
-    
-    //4. 被M抽象指向时,则对S加工,想办法满足demand.protoAlg变成S;
-    //      > 生成TOAlgModel,并交给PM进行满足修正;
-    
-    //5. 不被M抽象指向时,则到cHav看能否得到;
-    //      > 生成TOAlgModel,并交给Action._Hav进行满足;
-    
-    //6. 整个满足过程是否顺利?
-    //      > 交给流程控制来控制;
-    
-    //7. 未满足至末位_递归回来failure时则失败;
-    //      > 失败时,则递归到demand.failure尝试下一方案;
-    
-    //8. 满足至末位_finish时则成功;
-    //      > 则ActYes状态,制定生物钟触发器,并等待外循环mv-是否发生;
-    
-    //9. 成功避开mv-,则最终demand成功,任务完成;
-    //      > demand.status = finish,并且移除任务;
-    
-    //10. 未成功避开mv-,在OPushM中推进matchFo至末位了,status=OutBack;
-    //      > if(status!=ActYes) 则失败,且触发反省类比,并标记此foModel为S;
-    
+    /*
+    1  决策前_评价foModel;
+        > 有空S指向,则失败 (尝试下一方案);
+    2  决策时_评价foModel (S已错过,则失败);
+        > 评价否掉的,直接demand.failure()进行递归 (尝试下一方案);
+    3  决策时_评价foModel (S未错过,则通过,并提交Action._Fo逐个满足S);
+        > 从cutIndex开始进行循环,判断是否被M.itemAlg抽象指向;
+    4  被M抽象指向时,则对S加工,想办法满足demand.protoAlg变成S;
+        > 生成TOAlgModel,并交给PM进行满足修正;
+    5  不被M抽象指向时,则到cHav看能否得到;
+        > 生成TOAlgModel,并交给Action._Hav进行满足;
+    6  决策流程控制是否满足至末位?->否则failure失败;
+        > 失败时,则递归到demand.failure (尝试下一方案);
+    7  决策流程控制是否满足至末位?->是则finish成功;
+        > 设为ActYes,以`当前index至mv时间之和`生物钟触发,等待OPushM;
+    8  能不躲了mv-? 未避开,(OPushM有mv-),则status=OutBack;
+        > 不是ActYes,触发S反省标记S,且设为failure,递归任务 (尝试下一方案);
+    9  能不躲了mv-? 避开,(OPushM无mv-),则最终demand成功,任务完成;
+        > 还是ActYes,触发P反省标记P,且设为finish,并移除任务;
+    */
     
     //1. 数据准备
 //    AIKVPointer *firstPlusItem = ARR_INDEX(plusFo.content_ps, 0);
