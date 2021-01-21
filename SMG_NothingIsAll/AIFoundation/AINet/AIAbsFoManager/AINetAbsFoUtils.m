@@ -33,6 +33,8 @@
  *      2020.09.10: findIndex有时会失败 (因为HNGL时,需要index判断两层) T;
  *      2020.09.10: maxDeltaTime在非0位时,有可能取到0的BUG (记录lastIndex,但并未彻底解决) (发现NL时为0正常) T;
  *      2020.09.15: 多个conFos,却只记录了一个lastIndex导致错乱找不到findIndex的bug; T
+ *  @todo
+ *      2021.01.21: 当构建SPFo时,conFos中可能不包含所有的deltaTime (比如乌鸦带交警时,车不敢撞,具象时序中是无交警的);
  */
 +(NSMutableArray*) getDeltaTimes:(NSArray*)conFos absFo:(AIFoNodeBase*)absFo{
     //1. 数据准备;

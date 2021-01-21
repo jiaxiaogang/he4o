@@ -466,6 +466,7 @@
  *      20200421 - 新增构建sameAbsAlg节点 (如无距果),如:都是苹果,怎么1甜2苦?此处构建"都是苹果",可用于MC_V3中判断M零距果和C远距果的关系;
  *      20200421 - 取消构建sameAbsAlg,因为MC算法不需要同级MC判定,所以此处也没用,关于MC有效性检查可参考:19102;
  *      20210121 - 迭代为In反省类比 (参考22052);
+ *      20210121 - P.Alg在M中未发现时,也要收集到P-M的差集中 T;
  *  @todo
  *      20200823 - 一直以来,反向类比触发条件太苛刻的问题,通过反省类比迭代之,支持正与平也可触发 T;
  *      20210120 - 此处取mType和pType的SPType有误,S不表示负价值评分,而是表示不符合当前父场景的hope预期 (已废弃,改为直接传入type);
@@ -488,9 +489,10 @@
     NSMutableArray *justPs = [[NSMutableArray alloc] init];
     NSInteger nextStartJ = 0;
     for (NSInteger i = 0; i < shortFo.count; i++) {
+        BOOL findShortAlg = false;
+        AIKVPointer *shortAlg_p = ARR_INDEX(shortFo.content_ps, i);
         for (NSInteger j = nextStartJ; j < matchContent.count; j++) {
             //4. 判断mIsC是否成立;
-            AIKVPointer *shortAlg_p = ARR_INDEX(shortFo.content_ps, i);
             AIKVPointer *matchAlg_p = ARR_INDEX(matchContent, j);
             BOOL mIsC = [TOUtils mIsC_1:shortAlg_p c:matchAlg_p];
             
@@ -505,14 +507,18 @@
                 AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:pSubM conAlgs:@[matchAlg] isMem:false ds:ds];
                 if (Log4DiffAna) NSLog(@"--> In反省类比 构建SPAlg %@",Alg2FStr(spAlg));
                 
-                //7. 收集spAlg并更新nextStartJ;
-                [justPs addObject:spAlg];
+                //7. 收集spAlg并更新nextStartJ & findShortAlg;
+                [justPs addObject:spAlg.pointer];
                 nextStartJ = j + 1;
+                findShortAlg = true;
             }
         }
+        
+        //8. P在M中未找到时,也要收集 (比如乌鸦带了交警时,车不敢撞);
+        if (!findShortAlg) [justPs addObject:shortAlg_p];
     }
     
-    //8. 构建SPFo;
+    //9. 构建SPFo;
     AIFoNodeBase *spFo = [ThinkingUtils createAbsFo_NoRepeat_General:@[mModel.matchFo] content_ps:justPs ds:ds difStrong:1];
     if (Log4DiffAna) NSLog(@"--> In反省类比 构建SPFo %@",Fo2FStr(spFo));
 }
