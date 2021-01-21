@@ -20,13 +20,13 @@
 #import "AIThinkOutAction.h"
 #import "TOAlgModel.h"
 #import "TOValueModel.h"
-#import "DemandModel.h"
 #import "AITime.h"
 #import "AIAbsAlgNode.h"
 #import "AINetAbsFoNode.h"
 #import "AIAnalogy.h"
 #import "DemandManager.h"
 #import "AIScore.h"
+#import "ReasonDemandModel.h"
 
 @interface AIThinkOutReason() <TOActionDelegate>
 
@@ -75,29 +75,30 @@
  *      2020.06.15: 训练B2步,R-失败时,转至R+后,此处outModel.actionIndex=2,而fo.content_ps一共才2个元素,所以行为化无效 (因为倒二帧是饿输出`吃`,本来吃已经是最后一个元素,所以越界);
  *  @version
  *      2020.07.01: 对当前输入帧进行PM理性评价 (稀疏码检查,参考20063);
+ *  @status 2021.01.21: 废弃,R+不构成需求;
  */
 -(void) commitReasonPlus:(TOFoModel*)outModel mModel:(AIShortMatchModel*)mModel{
-    //1. 取出当前帧任务,如果无效,则直接跳下帧;
-    AIFoNodeBase *fo = [SMGUtils searchNode:outModel.content_p];
-    AIKVPointer *curAlg_p = ARR_INDEX(fo.content_ps, outModel.actionIndex);
-    
-    //2. 构建理性评价模型;
-    TOAlgModel *mTOAlgModel = [TOAlgModel newWithAlg_p:curAlg_p group:outModel];
-    
-    //3. 将"P-M取得独特稀疏码"保留到短时记忆模型;
-    [mTOAlgModel.justPValues addObjectsFromArray:[SMGUtils removeSub_ps:mModel.matchAlg.content_ps parent_ps:mModel.protoAlg.content_ps]];
-    
-    //4. 将理性评价"价值分"保留到短时记忆模型;
-    mTOAlgModel.pm_Score = [AIScore score4MV:mModel.matchFo.cmvNode_p ratio:mModel.matchFoValue];
-    mTOAlgModel.pm_MVAT = mModel.matchFo.cmvNode_p.algsType;
-    mTOAlgModel.pm_Fo = [SMGUtils searchNode:mTOAlgModel.baseOrGroup.content_p];
-    
-    //5. 理性评价
-    [self reasonScorePM_V3:mTOAlgModel failure:nil success:nil notNeedPM:^{
-        //6. 未跳转到PM,则将algModel设为Finish,并递归;
-        mTOAlgModel.status = TOModelStatus_Finish;
-        [self singleLoopBackWithFinishModel:mTOAlgModel];
-    }];
+    ////1. 取出当前帧任务,如果无效,则直接跳下帧;
+    //AIFoNodeBase *fo = [SMGUtils searchNode:outModel.content_p];
+    //AIKVPointer *curAlg_p = ARR_INDEX(fo.content_ps, outModel.actionIndex);
+    //
+    ////2. 构建理性评价模型;
+    //TOAlgModel *mTOAlgModel = [TOAlgModel newWithAlg_p:curAlg_p group:outModel];
+    //
+    ////3. 将"P-M取得独特稀疏码"保留到短时记忆模型;
+    //[mTOAlgModel.justPValues addObjectsFromArray:[SMGUtils removeSub_ps:mModel.matchAlg.content_ps parent_ps:mModel.protoAlg.content_ps]];
+    //
+    ////4. 将理性评价"价值分"保留到短时记忆模型;
+    //mTOAlgModel.pm_Score = [AIScore score4MV:mModel.matchFo.cmvNode_p ratio:mModel.matchFoValue];
+    //mTOAlgModel.pm_MVAT = mModel.matchFo.cmvNode_p.algsType;
+    //mTOAlgModel.pm_Fo = [SMGUtils searchNode:mTOAlgModel.baseOrGroup.content_p];
+    //
+    ////5. 理性评价
+    //[self reasonScorePM_V3:mTOAlgModel failure:nil success:nil notNeedPM:^{
+    //    //6. 未跳转到PM,则将algModel设为Finish,并递归;
+    //    mTOAlgModel.status = TOModelStatus_Finish;
+    //    [self singleLoopBackWithFinishModel:mTOAlgModel];
+    //}];
 }
 
 /**
@@ -107,68 +108,102 @@
  *          2. isOut判断 (输出);
  *          3. notOut判断 (等待);
  *  @存储 负只是正的帧推进器,比如买菜为了做饭 (参考19171);
+ *  @param foModel : 当前方案,阻止者,是一个S类型Fo,用来阻止demand.matchFo发生;
  *  @bug
  *      2020.06.14 : 此处sHappend为false,按道理说,投右,已经有了s,s应该是已发生的 (经查,改为sIndex <= outModel.actionIndex即可) T;
  */
--(void) commitReasonSub:(AIFoNodeBase*)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo outModel:(TOFoModel*)outModel {
+-(void) commitReasonSub:(TOFoModel*)foModel demand:(ReasonDemandModel*)demand{
+    
+    //TODOTOMORROW20210121:
+    //1. 决策前评价foModel;
+    //      > 有空S指向,则失败;
+    
+    //2. 决策时评价foModel (S已错过,则失败);
+    //      > 评价否掉的,直接demand.failure()进行递归 (尝试下一方案);
+    
+    //3. 评价foModel (S未错过,则进行SAlg逐个满足);
+    //      > 从cutIndex开始进行循环,判断是否被M.itemAlg抽象指向;
+    
+    //4. 被M抽象指向时,则对S加工,想办法满足demand.protoAlg变成S;
+    //      > 生成TOAlgModel,并交给PM进行满足修正;
+    
+    //5. 不被M抽象指向时,则到cHav看能否得到;
+    //      > 生成TOAlgModel,并交给Action._Hav进行满足;
+    
+    //6. 整个满足过程是否顺利?
+    //      > 交给流程控制来控制;
+    
+    //7. 未满足至末位_递归回来failure时则失败;
+    //      > 失败时,则递归到demand.failure尝试下一方案;
+    
+    //8. 满足至末位_finish时则成功;
+    //      > 则ActYes状态,制定生物钟触发器,并等待外循环mv-是否发生;
+    
+    //9. 成功避开mv-,则最终demand成功,任务完成;
+    //      > demand.status = finish,并且移除任务;
+    
+    //10. 未成功避开mv-,在OPushM中推进matchFo至末位了,status=OutBack;
+    //      > if(status!=ActYes) 则失败,且触发反省类比,并标记此foModel为S;
+    
+    
     //1. 数据准备
-    AIKVPointer *firstPlusItem = ARR_INDEX(plusFo.content_ps, 0);
-    AIFoNodeBase *fo = [SMGUtils searchNode:outModel.content_p];
-    AIKVPointer *checkAlg_p = ARR_INDEX(fo.content_ps, outModel.actionIndex);
-    if (!matchFo || !plusFo || !subFo || !checkAlg_p) {
-        outModel.status = TOModelStatus_ActNo;
-        return;
-    }
-    
-    //2. 正影响首元素,错过判断 (错过,行为化失败);
-    NSInteger firstAt_Plus = [TOUtils indexOfAbsItem:firstPlusItem atConContent:fo.content_ps];
-    if (outModel.actionIndex > firstAt_Plus) {
-        outModel.status = TOModelStatus_ActNo;
-        return;
-    }
-    
-    //3. 当firstPlus就是checkAlg_p时 (尝试对checkAlg行为化);
-    if (firstAt_Plus == outModel.actionIndex) {
-        
-        //4. 从SFo中,找出checkAlg的兄弟节点matchAlg;
-        AIKVPointer *matchAlg_p = [SMGUtils filterSingleFromArr:matchFo.content_ps checkValid:^BOOL(AIKVPointer *item_p) {
-            return [TOUtils mcSameLayer:item_p c:checkAlg_p];
-        }];
-        
-        //5. 根据matchAlg找到对应的S;
-        AIKVPointer *sAlg_p = [SMGUtils filterSingleFromArr:subFo.content_ps checkValid:^BOOL(AIKVPointer *item) {
-            return [TOUtils mIsC_1:matchAlg_p c:item];
-        }];
-        
-        //6. 行为化 (围绕P做行为);
-        TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:checkAlg_p group:outModel];
-        
-        //7. 找出可替代checkAlg的replaceAlgs,保留到algOutModel.replaceAlgs;
-        [algOutModel.replaceAlgs addObject:checkAlg_p];
-        //随后此处支持,在SP的指引下,找出checkAlg同层的其它可替代节点,加入replaceAlgs;
-        
-        //8. 在S有效时,尝试_SP;
-        AIKVPointer *pAlg_p = firstPlusItem;
-        BOOL tryAct = false;
-        if (sAlg_p) {
-            NSInteger sIndex = [TOUtils indexOfAbsItem:sAlg_p atConContent:matchFo.content_ps];
-            BOOL sHappened = sIndex <= outModel.actionIndex;
-            if (sHappened) {
-                //9. S存在,且S已发生,则加工SP;
-                [self.toAction convert2Out_SP:sAlg_p pAlg_p:pAlg_p outModel:algOutModel];
-                tryAct = true;
-            }
-        }
-        
-        //10. 如果SP未执行,则直接调用replaceAlg;
-        if (!tryAct) {
-            for (AIKVPointer *replace_p in algOutModel.replaceAlgs) {
-                TOAlgModel *replaceAlg = [TOAlgModel newWithAlg_p:replace_p group:algOutModel];
-                [self.toAction convert2Out_Hav:replaceAlg];
-                return;
-            }
-        }
-    }
+//    AIKVPointer *firstPlusItem = ARR_INDEX(plusFo.content_ps, 0);
+//    AIFoNodeBase *fo = [SMGUtils searchNode:outModel.content_p];
+//    AIKVPointer *checkAlg_p = ARR_INDEX(fo.content_ps, outModel.actionIndex);
+//    if (!matchFo || !plusFo || !subFo || !checkAlg_p) {
+//        outModel.status = TOModelStatus_ActNo;
+//        return;
+//    }
+//
+//    //2. 正影响首元素,错过判断 (错过,行为化失败);
+//    NSInteger firstAt_Plus = [TOUtils indexOfAbsItem:firstPlusItem atConContent:fo.content_ps];
+//    if (outModel.actionIndex > firstAt_Plus) {
+//        outModel.status = TOModelStatus_ActNo;
+//        return;
+//    }
+//
+//    //3. 当firstPlus就是checkAlg_p时 (尝试对checkAlg行为化);
+//    if (firstAt_Plus == outModel.actionIndex) {
+//
+//        //4. 从SFo中,找出checkAlg的兄弟节点matchAlg;
+//        AIKVPointer *matchAlg_p = [SMGUtils filterSingleFromArr:matchFo.content_ps checkValid:^BOOL(AIKVPointer *item_p) {
+//            return [TOUtils mcSameLayer:item_p c:checkAlg_p];
+//        }];
+//
+//        //5. 根据matchAlg找到对应的S;
+//        AIKVPointer *sAlg_p = [SMGUtils filterSingleFromArr:subFo.content_ps checkValid:^BOOL(AIKVPointer *item) {
+//            return [TOUtils mIsC_1:matchAlg_p c:item];
+//        }];
+//
+//        //6. 行为化 (围绕P做行为);
+//        TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:checkAlg_p group:outModel];
+//
+//        //7. 找出可替代checkAlg的replaceAlgs,保留到algOutModel.replaceAlgs;
+//        [algOutModel.replaceAlgs addObject:checkAlg_p];
+//        //随后此处支持,在SP的指引下,找出checkAlg同层的其它可替代节点,加入replaceAlgs;
+//
+//        //8. 在S有效时,尝试_SP;
+//        AIKVPointer *pAlg_p = firstPlusItem;
+//        BOOL tryAct = false;
+//        if (sAlg_p) {
+//            NSInteger sIndex = [TOUtils indexOfAbsItem:sAlg_p atConContent:matchFo.content_ps];
+//            BOOL sHappened = sIndex <= outModel.actionIndex;
+//            if (sHappened) {
+//                //9. S存在,且S已发生,则加工SP;
+//                [self.toAction convert2Out_SP:sAlg_p pAlg_p:pAlg_p outModel:algOutModel];
+//                tryAct = true;
+//            }
+//        }
+//
+//        //10. 如果SP未执行,则直接调用replaceAlg;
+//        if (!tryAct) {
+//            for (AIKVPointer *replace_p in algOutModel.replaceAlgs) {
+//                TOAlgModel *replaceAlg = [TOAlgModel newWithAlg_p:replace_p group:algOutModel];
+//                [self.toAction convert2Out_Hav:replaceAlg];
+//                return;
+//            }
+//        }
+//    }
 }
 
 /**
@@ -180,7 +215,7 @@
  *      2020.05.27: 将isOut=false时等待改成进行cHav行为化;
  *      2020.12.17: 将此方法,归由流程控制控制 (跑下来逻辑与原来没啥不同);
  */
--(void) commitPerceptPlus:(TOFoModel*)outModel{
+-(void) commitPerceptSub:(TOFoModel*)outModel{
     [self singleLoopBackWithBegin:outModel];
 }
 
@@ -190,9 +225,9 @@
  *          1. is(SP)判断 (转移sp行为化);
  *          2. isOut判断 (输出);
  *          3. notOut判断 (等待);
- *  @废弃: 因为左负是不存在的(或者说目前不需要的),可以以左正,转为右正,来实现,累了歇歇的例子;
+ *  @废弃: 因为正价值是不产生需求的(或者说目前不需要的),可以以P-/R-来实现,累了歇歇的例子;
  */
--(void) commitPerceptSub:(AIFoNodeBase*)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo checkFo:(AIFoNodeBase*)checkFo complete:(void(^)(BOOL actSuccess,NSArray *acts))complete{
+-(void) commitPerceptPlus:(AIFoNodeBase*)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo checkFo:(AIFoNodeBase*)checkFo complete:(void(^)(BOOL actSuccess,NSArray *acts))complete{
     ////1. 数据准备
     //AIKVPointer *firstSubItem = ARR_INDEX(subFo.content_ps, 0);
     //AIKVPointer *firstPlusItem = ARR_INDEX(plusFo.content_ps, 0);
@@ -739,7 +774,7 @@
         //a2. 2020.10.18: 传递参数由baseAlg.sp_P改成pm_ProtoAlg (因为飞近上面的坚果,却飞向左) (参考2105c)
         [self.toAction convert2Out_GL:baseAlg.pm_ProtoAlg outModel:(TOValueModel*)beginModel];
     }else if(ISOK(beginModel, DemandModel.class)){
-        //a3. avdIsDemand: 再决策,转移至TOP.P+;
+        //a3. avdIsDemand: 再决策,转移至TOP.P-;
         [self.delegate aiTOR_MoveForDemand:(DemandModel*)beginModel];
     }else if(ISOK(beginModel, TOFoModel.class)){
         //a4. 将一次性relative_fos改为由递归逐条执行;

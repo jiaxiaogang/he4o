@@ -23,6 +23,7 @@
 #import "ShortMatchManager.h"
 #import "TOFoModel.h"
 #import "AIFrontOrderNode.h"
+#import "ReasonDemandModel.h"
 
 /**
  *  MARK:--------------------思维控制器--------------------
@@ -199,7 +200,7 @@ static AIThinkingControl *_instance;
                 urgentTo = (int)(urgentTo * inModel.matchFoValue);
                 
                 //3> 将mv加入demandCache
-                [self.demandManager updateCMVCache_RMV:algsType urgentTo:urgentTo delta:delta];
+                [self.demandManager updateCMVCache_RMV:algsType urgentTo:urgentTo delta:delta inModel:inModel];
                 
                 //4> RMV无需求时;
                 MVDirection havDemand = [ThinkingUtils havDemand:algsType delta:delta];
@@ -249,20 +250,20 @@ static AIThinkingControl *_instance;
     [self.tOR commitReasonPlus:outModel mModel:mModel];
 }
 
--(void) aiTOP_2TOR_ReasonSub:(AIFoNodeBase *)matchFo plusFo:(AIFoNodeBase *)plusFo subFo:(AIFoNodeBase*)subFo outModel:(TOFoModel*)outModel {
+-(void) aiTOP_2TOR_ReasonSub:(TOFoModel*)foModel demand:(ReasonDemandModel*)demand{
     //1. 行为化;
-    [self.tOR commitReasonSub:matchFo plusFo:plusFo subFo:subFo outModel:outModel];
+    [self.tOR commitReasonSub:foModel demand:demand];
 }
 
--(void) aiTOP_2TOR_PerceptPlus:(TOFoModel *)outModel{
+-(void) aiTOP_2TOR_PerceptSub:(TOFoModel *)outModel{
     //1. 行为化;
-    [self.tOR commitPerceptPlus:outModel];
+    [self.tOR commitPerceptSub:outModel];
 }
 
--(BOOL) aiTOP_2TOR_PerceptSub:(AIFoNodeBase *)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo checkFo:(AIFoNodeBase*)checkFo{
+-(BOOL) aiTOP_2TOR_PerceptPlus:(AIFoNodeBase *)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo checkFo:(AIFoNodeBase*)checkFo{
     //1. 行为化;
     __block BOOL success = false;
-    [self.tOR commitPerceptSub:matchFo plusFo:plusFo subFo:subFo checkFo:checkFo complete:^(BOOL actSuccess, NSArray *acts) {
+    [self.tOR commitPerceptPlus:matchFo plusFo:plusFo subFo:subFo checkFo:checkFo complete:^(BOOL actSuccess, NSArray *acts) {
         success = actSuccess;
         
         //2. 更新到outModel;

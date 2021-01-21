@@ -22,6 +22,8 @@
 		081B3AD61F6E2994008A7F36 /* AIStringAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3AD51F6E2994008A7F36 /* AIStringAlgs.m */; };
 		081B3ADB1F6E2CCD008A7F36 /* AINet.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3ADA1F6E2CCD008A7F36 /* AINet.m */; };
 		081B7A5F23C809A900780115 /* TIRUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B7A5E23C809A900780115 /* TIRUtils.m */; };
+		081BD08825B94F1B003C3038 /* ReasonDemandModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 081BD08725B94F1B003C3038 /* ReasonDemandModel.m */; };
+		081BD08B25B94F24003C3038 /* PerceptDemandModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 081BD08A25B94F24003C3038 /* PerceptDemandModel.m */; };
 		08236CEC21A23439008D8761 /* AIVisionAlgsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08236CEB21A23439008D8761 /* AIVisionAlgsModel.m */; };
 		08250AE0228112C000FC497C /* XGWedis.m in Sources */ = {isa = PBXBuildFile; fileRef = 08250ADF228112C000FC497C /* XGWedis.m */; };
 		0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 0825AFF21F748F67003B86C7 /* NSObject+Extension.m */; };
@@ -182,6 +184,10 @@
 		081B3ADA1F6E2CCD008A7F36 /* AINet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AINet.m; sourceTree = "<group>"; };
 		081B7A5D23C809A900780115 /* TIRUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TIRUtils.h; sourceTree = "<group>"; };
 		081B7A5E23C809A900780115 /* TIRUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TIRUtils.m; sourceTree = "<group>"; };
+		081BD08625B94F1B003C3038 /* ReasonDemandModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReasonDemandModel.h; sourceTree = "<group>"; };
+		081BD08725B94F1B003C3038 /* ReasonDemandModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReasonDemandModel.m; sourceTree = "<group>"; };
+		081BD08925B94F24003C3038 /* PerceptDemandModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PerceptDemandModel.h; sourceTree = "<group>"; };
+		081BD08A25B94F24003C3038 /* PerceptDemandModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PerceptDemandModel.m; sourceTree = "<group>"; };
 		08236CEA21A23439008D8761 /* AIVisionAlgsModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIVisionAlgsModel.h; sourceTree = "<group>"; };
 		08236CEB21A23439008D8761 /* AIVisionAlgsModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIVisionAlgsModel.m; sourceTree = "<group>"; };
 		08250ADE228112C000FC497C /* XGWedis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XGWedis.h; sourceTree = "<group>"; };
@@ -491,6 +497,21 @@
 			path = AITime;
 			sourceTree = "<group>";
 		};
+		081BD08525B94F09003C3038 /* Demand */ = {
+			isa = PBXGroup;
+			children = (
+				88E1F84C211591D80036B616 /* DemandManager.h */,
+				88E1F84D211591D80036B616 /* DemandManager.m */,
+				88E1F84F211591E50036B616 /* DemandModel.h */,
+				88E1F850211591E50036B616 /* DemandModel.m */,
+				081BD08625B94F1B003C3038 /* ReasonDemandModel.h */,
+				081BD08725B94F1B003C3038 /* ReasonDemandModel.m */,
+				081BD08925B94F24003C3038 /* PerceptDemandModel.h */,
+				081BD08A25B94F24003C3038 /* PerceptDemandModel.m */,
+			);
+			path = Demand;
+			sourceTree = "<group>";
+		};
 		08250ADD2281129300FC497C /* XGWedis */ = {
 			isa = PBXGroup;
 			children = (
@@ -632,6 +653,7 @@
 		084219E81FD8CF64009DA6BC /* AIThinkingControl */ = {
 			isa = PBXGroup;
 			children = (
+				081BD08525B94F09003C3038 /* Demand */,
 				084B4B0524433A3100FB3670 /* Model */,
 				0860617321F92F3E00113366 /* Out */,
 				0860617221F92F1900113366 /* In */,
@@ -639,10 +661,6 @@
 				084219EA1FD8CF81009DA6BC /* AIThinkingControl.m */,
 				08B31E7C20648C3700FD96EA /* ThinkingUtils.h */,
 				08B31E7D20648C3700FD96EA /* ThinkingUtils.m */,
-				88E1F84C211591D80036B616 /* DemandManager.h */,
-				88E1F84D211591D80036B616 /* DemandManager.m */,
-				88E1F84F211591E50036B616 /* DemandModel.h */,
-				88E1F850211591E50036B616 /* DemandModel.m */,
 				08F3E92F2241B6E800545795 /* AIAnalogy.h */,
 				08F3E9302241B6E800545795 /* AIAnalogy.m */,
 				08C7539025A3EEB800BCF011 /* AIScore.h */,
@@ -1379,10 +1397,12 @@
 				8822852020F58BDA009884DC /* AINetDirectionReference.m in Sources */,
 				0850496B2474A4200017F9A0 /* AIThinkOutAction.m in Sources */,
 				88960C6B209BDA2B004EF419 /* AINetIndexReference.m in Sources */,
+				081BD08825B94F1B003C3038 /* ReasonDemandModel.m in Sources */,
 				08F738071F7C714F005EAD56 /* AISqlPointer.m in Sources */,
 				08AF454A1E97D0B500377887 /* main.m in Sources */,
 				085BA9F4241C421500829450 /* HeLogUtil.m in Sources */,
 				88988524208979E6001D1ADC /* AINetIndex.m in Sources */,
+				081BD08B25B94F24003C3038 /* PerceptDemandModel.m in Sources */,
 				8868F6EB210A946A000EAC9B /* AIAbsCMVManager.m in Sources */,
 				0858C5D12194F8B000951BA5 /* NSArray+MASAdditions.m in Sources */,
 				0858C5CC2194F8B000951BA5 /* MASConstraint.m in Sources */,

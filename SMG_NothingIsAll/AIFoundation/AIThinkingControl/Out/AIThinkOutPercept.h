@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class DemandModel,TOFoModel,AIShortMatchModel;
+@class DemandModel,TOFoModel,AIShortMatchModel,ReasonDemandModel;
 @protocol AIThinkOutPerceptDelegate <NSObject>
 
 -(DemandModel*) aiThinkOutPercept_GetCanDecisionDemand;     //获取当前需求;
@@ -17,9 +17,9 @@
 
 //提交C给TOR行为化;
 -(void) aiTOP_2TOR_ReasonPlus:(TOFoModel*)outModel mModel:(AIShortMatchModel*)mModel;
--(void) aiTOP_2TOR_ReasonSub:(AIFoNodeBase *)matchFo plusFo:(AIFoNodeBase *)plusFo subFo:(AIFoNodeBase*)subFo outModel:(TOFoModel*)outModel;
--(void) aiTOP_2TOR_PerceptPlus:(TOFoModel*)outModel;
--(BOOL) aiTOP_2TOR_PerceptSub:(AIFoNodeBase *)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo checkFo:(AIFoNodeBase*)checkFo;
+-(void) aiTOP_2TOR_ReasonSub:(TOFoModel*)foModel demand:(ReasonDemandModel*)demand;
+-(void) aiTOP_2TOR_PerceptSub:(TOFoModel*)outModel;
+-(BOOL) aiTOP_2TOR_PerceptPlus:(AIFoNodeBase *)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo checkFo:(AIFoNodeBase*)checkFo;
 
 @end
 
@@ -68,7 +68,6 @@
 
 /**
  *  MARK:--------------------TOR中Demand方案失败,尝试转移--------------------
- *  @desc 当demand一轮失败时,进行P+递归;
  */
 -(void) commitFromTOR_MoveForDemand:(DemandModel*)demand;
 

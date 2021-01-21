@@ -139,3 +139,14 @@ typedef NS_ENUM(NSInteger, TIModelStatus) {
     TIModelStatus_OutBackYes= 2,//返馈成功
     TIModelStatus_OutBackNo = 3,//返馈失败
 };
+
+/**
+ *  MARK:--------------------TOType--------------------
+ *  @title 决策类型 (其实只有P-和R-存在,另外两个不构成需求);
+ */
+//typedef NS_ENUM(NSInteger, TOType) {
+//    TO_PerceptSub = 0,//P- (必须完成,才算完成)
+//    TO_PerceptPlus= 1,//P+ (开心,无需求,暂废弃)
+//    TO_ReasonPlus = 2,//R+ (顺应即可,顺不成也算完成,无需求,暂废弃)
+//    TO_ReasonSub  = 3,//R- (只要阻止,就算完成)
+//};

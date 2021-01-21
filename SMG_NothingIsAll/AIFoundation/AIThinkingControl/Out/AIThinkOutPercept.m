@@ -7,7 +7,6 @@
 //
 
 #import "AIThinkOutPercept.h"
-#import "DemandModel.h"
 #import "ThinkingUtils.h"
 #import "AIPort.h"
 #import "AINet.h"
@@ -25,6 +24,8 @@
 #import "TOAlgModel.h"
 #import "TOValueModel.h"
 #import "AIScore.h"
+#import "ReasonDemandModel.h"
+#import "PerceptDemandModel.h"
 
 @implementation AIThinkOutPercept
 
@@ -59,7 +60,13 @@
     NSArray *mModels = [self.delegate aiTOP_GetShortMatchModel];
     if (!demand || !ARRISOK(mModels)) return;
     
-    //2. 同区两个模式 (以最近的预测为准);
+    //2. 同区两个模式之R-;
+    if (ISOK(demand, ReasonDemandModel.class)) {
+        [self reasonSub:(ReasonDemandModel*)demand];
+        return;
+    }
+    
+    //3. 同区两个模式之R+ (以最近的预测为准);
     for (NSInteger i = 0; i < mModels.count; i++) {
         AIShortMatchModel *mModel = ARR_INDEX_REVERSE(mModels, i);
         AIFoNodeBase *matchFo = mModel.matchFo;
@@ -72,11 +79,6 @@
                 BOOL success = [self reasonPlus:mModel demandModel:demand];
                 NSLog(@"topV2_R+ : %@",success ? @"成功":@"失败");
                 if (success) return;
-            }else if(score < 0){
-                //c. R-
-                BOOL success = [self reasonSub:matchFo cutIndex:mModel.cutIndex demandModel:demand];
-                NSLog(@"topV2_R- : %@",success ? @"成功":@"失败");
-                if (success) return;
             }
         }
     }
@@ -88,22 +90,32 @@
         
         //a. 识别有效性判断 (优先直接mv+,不行再mv-迂回);
         if (matchAlg) {
-            //b. P+
-            BOOL pSuccess = [self perceptPlus:demand];
+            //b. P-
+            BOOL pSuccess = [self perceptSub:demand];
             NSLog(@"topV2_P+ => %@ => %@",Alg2FStr(matchAlg),pSuccess ? @"成功":@"失败");
             if (pSuccess) return;
             
-            //c. P-
-            BOOL sSuccess = [self perceptSub:matchAlg demandModel:demand];
+            //c. P+
+            BOOL sSuccess = [self perceptPlus:matchAlg demandModel:demand];
             NSLog(@"topV2_P- => %@ => %@",Alg2FStr(matchAlg),sSuccess ? @"成功":@"失败");
             if (sSuccess) return;
         }
     }
 }
 
+/**
+ *  MARK:--------------------TOR中Demand方案失败,尝试转移--------------------
+ *  @desc 当demand一轮失败时,进行P+递归;
+ *  @version
+ *      2021.01.21: 支持R-模式;
+ */
 -(void) commitFromTOR_MoveForDemand:(DemandModel*)demand{
-    //1. 识别有效性判断 (转至P+);
-    [self perceptPlus:demand];
+    //1. 识别有效性判断 (转至P-/R-);
+    if (ISOK(demand, PerceptDemandModel.class)) {
+        [self perceptSub:demand];
+    }else if (ISOK(demand, ReasonDemandModel.class)) {
+        [self reasonSub:(ReasonDemandModel*)demand];
+    }
 }
 
 //MARK:===============================================================
@@ -118,20 +130,21 @@
  *      支线: 对不符合预测的元素修正 (比如剩下一只没飞走,我再更大声吓一下) (注:这涉及到外层循环,反向类比的修正);
  *  @version
  *      2020.06.30: 由下帧,改为当前帧 (因为需先进行理性评价PM);
+ *  @status 2021.01.21: 废弃,因为R+不构成需求;
  */
 -(BOOL) reasonPlus:(AIShortMatchModel*)mModel demandModel:(DemandModel*)demandModel{
-    //1. 数据检查
-    if (!mModel || mModel.matchFo || demandModel) {
+    ////1. 数据检查
+    //if (!mModel || mModel.matchFo || demandModel) {
         return false;
-    }
-    
-    //2. 生成outFo模型
-    TOFoModel *toFoModel = [TOFoModel newWithFo_p:mModel.matchFo.pointer base:demandModel];
-    
-    //3. 对下帧进行行为化 (先对当前帧,进行理性评价PM,再跳转下帧);
-    toFoModel.actionIndex = mModel.cutIndex;
-    [self.delegate aiTOP_2TOR_ReasonPlus:toFoModel mModel:mModel];
-    return toFoModel.status != TOModelStatus_ActNo && toFoModel.status != TOModelStatus_ScoreNo;//成功行为化,则中止递归;
+    //}
+    //
+    ////2. 生成outFo模型
+    //TOFoModel *toFoModel = [TOFoModel newWithFo_p:mModel.matchFo.pointer base:demandModel];
+    //
+    ////3. 对下帧进行行为化 (先对当前帧,进行理性评价PM,再跳转下帧);
+    //toFoModel.actionIndex = mModel.cutIndex;
+    //[self.delegate aiTOP_2TOR_ReasonPlus:toFoModel mModel:mModel];
+    //return toFoModel.status != TOModelStatus_ActNo && toFoModel.status != TOModelStatus_ScoreNo;//成功行为化,则中止递归;
 }
 /**
  *  MARK:-------------------- R- --------------------
@@ -142,32 +155,29 @@
  *  @version
  *      2020.05.12 - 支持cutIndex的判断,必须是未发生的部分才可以被修正 (如车将撞上,躲开是对的,但将已过去的出门改成不出门,是错的);
  */
--(BOOL) reasonSub:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex demandModel:(DemandModel*)demandModel{
+-(void) reasonSub:(ReasonDemandModel*)demand{
     //1. 数据检查
-    if (!matchFo) return false;
+    if (!demand) return;
+    AIFoNodeBase *matchFo = demand.inModel.matchFo;
     
-    //2. 取Sub避免MatchFo继续下去的办法;
-    BOOL success = false;
-    NSArray *sub_ps = Ports2Pits([AINetUtils absPorts_All:matchFo type:ATSub]);
+    //3. 取出所有S (取Sub避免MatchFo继续下去的办法);
+    NSArray *sFo_ps = Ports2Pits([AINetUtils absPorts_All:matchFo type:ATSub]);
     
-    //TODOTOMORROW20210121:
-    //3. 评价sub_ps中效果最好的;
-    //4. 将matchFo挂在demandModel下 (类型为阻止);
-    //5. 对cutIndex之后部分,取对应S,并尝试阻止之发生;
-    //6. 对demandModel增加四类型
-    //      a. 将R-类型的,只要阻止,就算完成;
-    //      b. P+类型的,必须完成,才算完成;
-    //      c. R+类型的,顺应即可,顺不成也算完成;
-    //      d. P-类型,暂废弃;
+    //4. 去掉不应期
+    NSArray *except_ps = [TOUtils convertPointersFromTOModels:demand.actionFoModels];
+    NSArray *validFos = [SMGUtils removeSub_ps:except_ps parent_ps:sFo_ps];
+    NSLog(@"\n\n=============================== TOP.R- ===============================\n任务:%@ 已发生:%ld 不应期数:%lu 可尝试方案:%lu",Fo2FStr(matchFo),(long)demand.inModel.cutIndex,(unsigned long)except_ps.count,(unsigned long)validFos.count);
     
+    //5. 新方案
+    AIKVPointer *tryFo_p = ARR_INDEX(validFos, 0);
+    TOFoModel *foModel = [TOFoModel newWithFo_p:tryFo_p base:demand];
+    NSLog(@"------->>>>>> R-新增一例解决方案: %@",Pit2FStr(tryFo_p));
     
-    [self.delegate aiTOP_2TOR_ReasonSub:matchFo plusFo:nil subFo:nil outModel:nil];
-    
-    //3. 一条行为化成功,则整体成功;
-    return success;
+    //6. 提前决策流程控制,行为化;
+    [self.delegate aiTOP_2TOR_ReasonSub:foModel demand:demand];
 }
 /**
- *  MARK:-------------------- P+ --------------------
+ *  MARK:-------------------- P- --------------------
  *  @desc
  *      1. 简介: mv方向索引找正价值解决方案;
  *      2. 实例: 饿了,现有面粉,做面吃可以解决;
@@ -179,12 +189,12 @@
  *  @version
  *      2020.09.23: 只要得到解决方案,就返回true中断,因为即使行为化失败,也会交由流程控制继续决策,而非由此处处理;
  */
--(BOOL) perceptPlus:(DemandModel*)demandModel{
+-(BOOL) perceptSub:(DemandModel*)demandModel{
     //1. 数据准备;
     if (!demandModel) return false;
     if (![theTC energyValid]) return false;
     MVDirection direction = [ThinkingUtils havDemand:demandModel.algsType delta:demandModel.delta];
-    NSLog(@"\n\n=============================== TOP.P+ ===============================\n任务:%@,发生%ld,方向%ld",demandModel.algsType,(long)demandModel.delta,(long)direction);
+    NSLog(@"\n\n=============================== TOP.P- ===============================\n任务:%@,发生%ld,方向%ld",demandModel.algsType,(long)demandModel.delta,(long)direction);
     
     //2. 调用通用diff模式方法;
     __block BOOL success = false;//默认为失败
@@ -194,8 +204,8 @@
         TOFoModel *toFoModel = [TOFoModel newWithFo_p:sameFo.pointer base:demandModel];
         
         //b. 取自身,实现吃,则可不饿;
-        NSLog(@"------->>>>>> P+新增一例解决方案: %@->%@",Fo2FStr(sameFo),Mvp2Str(sameFo.cmvNode_p));
-        [self.delegate aiTOP_2TOR_PerceptPlus:toFoModel];
+        NSLog(@"------->>>>>> P-新增一例解决方案: %@->%@",Fo2FStr(sameFo),Mvp2Str(sameFo.cmvNode_p));
+        [self.delegate aiTOP_2TOR_PerceptSub:toFoModel];
         
         //c. 用success记录下,是否本次成功找到候选方案;
         success = true;
@@ -216,7 +226,7 @@
  *  @desc mv方向索引找负价值的兄弟节点解决方案 (比如:打球打累了,不打了,避免更累);
  *  @废弃: 因为P-是不存在的(或者说目前不需要的),可以以P+&R-替代之;
  */
--(BOOL) perceptSub:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel{
+-(BOOL) perceptPlus:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel{
     //1. 数据准备;
     //if (!matchAlg || !demandModel) return false;
     //MVDirection direction = [ThinkingUtils havDemand:demandModel.algsType delta:demandModel.delta];
@@ -230,7 +240,7 @@
     //    [TOUtils getPlusBrotherBySubProtoFo_NoRepeatNotNull:sameFo tryResult:^BOOL(AIFoNodeBase *checkFo, AIFoNodeBase *subNode, AIFoNodeBase *plusNode) {
     //
     //        //b. 指定subNode和plusNode到行为化;
-    //        success = [self.delegate aiTOP_2TOR_PerceptSub:sameFo plusFo:plusNode subFo:subNode checkFo:checkFo];
+    //        success = [self.delegate aiTOP_2TOR_PerceptPlus:sameFo plusFo:plusNode subFo:subNode checkFo:checkFo];
     //
     //        //c. 一条成功,则中止取兄弟节点循环;
     //        return success;

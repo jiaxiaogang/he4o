@@ -42,7 +42,7 @@
  *  @todo 191121随后可以考虑,将foScheme也搬由TOP搬到TOR的行为化中;
  *
  */
-@class AICMVNodeBase,AIAlgNodeBase,AIFoNodeBase,TOFoModel,AIShortMatchModel,DemandModel;
+@class AICMVNodeBase,AIAlgNodeBase,AIFoNodeBase,TOFoModel,AIShortMatchModel,DemandModel,ReasonDemandModel;
 @interface AIThinkOutReason : NSObject
 
 @property (weak, nonatomic) id<AIThinkOutReasonDelegate> delegate;
@@ -52,9 +52,9 @@
  *  @desc 做理性行为化
  */
 -(void) commitReasonPlus:(TOFoModel*)outModel mModel:(AIShortMatchModel*)mModel;
--(void) commitReasonSub:(AIFoNodeBase*)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo outModel:(TOFoModel*)outModel;
--(void) commitPerceptPlus:(TOFoModel*)outModel;
--(void) commitPerceptSub:(AIFoNodeBase*)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo checkFo:(AIFoNodeBase*)checkFo complete:(void(^)(BOOL actSuccess,NSArray *acts))complete;
+-(void) commitReasonSub:(TOFoModel*)foModel demand:(ReasonDemandModel*)demand;
+-(void) commitPerceptSub:(TOFoModel*)outModel;
+-(void) commitPerceptPlus:(AIFoNodeBase*)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo checkFo:(AIFoNodeBase*)checkFo complete:(void(^)(BOOL actSuccess,NSArray *acts))complete;
 
 /**
  *  MARK:--------------------FromTOP的MvScheme失败入口--------------------

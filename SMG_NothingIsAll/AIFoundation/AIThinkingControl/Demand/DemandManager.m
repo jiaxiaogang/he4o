@@ -7,7 +7,8 @@
 //
 
 #import "DemandManager.h"
-#import "DemandModel.h"
+#import "ReasonDemandModel.h"
+#import "PerceptDemandModel.h"
 #import "ThinkingUtils.h"
 #import "TOUtils.h"
 
@@ -85,7 +86,7 @@
     //TODO:>>>>判断需求;(如饿,主动取当前状态,是否饿)
     MVDirection direction = [ThinkingUtils havDemand:algsType delta:delta];
     if (canNeed && (direction != MVDirection_None)) {
-        DemandModel *newItem = [[DemandModel alloc] init];
+        PerceptDemandModel *newItem = [[PerceptDemandModel alloc] init];
         newItem.algsType = algsType;
         newItem.delta = delta;
         newItem.urgentTo = urgentTo;
@@ -97,7 +98,14 @@
     }
 }
 
--(void) updateCMVCache_RMV:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta{
+/**
+ *  MARK:--------------------RMV输入更新任务管理器--------------------
+ *  @todo
+ *      2021.01.21: 抵销: 当汽车冲过来,突然又转向了,任务消除 (理性抵消 (仅能通过matchFo已发生的部分进行比对));
+ *      2021.01.21: 抵销: 当另一辆更大的车又冲过来,两次预测都会导致疼,但不能抵消 (理性抵消不以mv.algsType为准);
+ *      2021.01.21: 抵销&增强: 进度更新后,根据matchFo进行"理性抵消" 或者 "理性增强(进度更新)" 判断;
+ */
+-(void) updateCMVCache_RMV:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta inModel:(AIShortMatchModel*)inModel{
     //1. 有需求时且可加入demand序列;
     MVDirection direction = [ThinkingUtils havDemand:algsType delta:delta];
     if (direction != MVDirection_None) {
@@ -124,10 +132,11 @@
         
         //3. 未被撤弱掉,则加到需求序列中;
         if (canNeed) {
-            DemandModel *newItem = [[DemandModel alloc] init];
+            ReasonDemandModel *newItem = [[ReasonDemandModel alloc] init];
             newItem.algsType = algsType;
             newItem.delta = delta;
             newItem.urgentTo = urgentTo;
+            newItem.inModel = inModel;
             [self.loopCache addObject:newItem];
             
             //2. 新需求时,加上活跃度;

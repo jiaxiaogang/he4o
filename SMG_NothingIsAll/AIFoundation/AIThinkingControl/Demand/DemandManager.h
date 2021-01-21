@@ -17,7 +17,7 @@
 /**
  *  MARK:--------------------思维控制器-循环管理器--------------------
  */
-@class DemandModel;
+@class DemandModel,AIShortMatchModel;
 @interface DemandManager : NSObject
 
 @property (weak, nonatomic) id<DemandManagerDelegate> delegate;
@@ -33,7 +33,7 @@
 /**
  *  MARK:--------------------理性思维预测mv加入--------------------
  */
--(void) updateCMVCache_RMV:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta;
+-(void) updateCMVCache_RMV:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta inModel:(AIShortMatchModel*)inModel;
 
 
 /**
