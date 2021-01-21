@@ -22,13 +22,6 @@
 @property (strong, nonatomic) AIKVPointer *cmvNode_p;
 
 /**
- *  MARK:--------------------兄弟节点--------------------
- *  @desc 目前用于反向反馈类比的结果,表示cPFo和cSFo之间的互指向关系;
- *  @todo 20210121: 在In反省类比迭代后,直接由S来替代brother的功能;
- */
-@property (strong, nonatomic) AIKVPointer *brother_p;
-
-/**
  *  MARK:--------------------生物钟时间间隔记录--------------------
  *  @desc
  *      1. 功能: 用于记录时序中,每元素间的生物钟间隔 (单位:s);

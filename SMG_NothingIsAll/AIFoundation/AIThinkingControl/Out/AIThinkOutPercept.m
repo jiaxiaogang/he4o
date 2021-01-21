@@ -146,18 +146,14 @@
     //1. 数据检查
     if (!matchFo) return false;
     
-    //2. 用负取正;
-    __block BOOL success = false;
-    [TOUtils getPlusBrotherBySubProtoFo_NoRepeatNotNull:matchFo tryResult:^BOOL(AIFoNodeBase *checkFo, AIFoNodeBase *subNode, AIFoNodeBase *plusNode) {
-        //a. 构建TOFoModel
-        TOFoModel *toFoModel = [TOFoModel newWithFo_p:checkFo.pointer base:demandModel];
-        toFoModel.actionIndex = cutIndex;
-        
-        //b. 转给TOR
-        [self.delegate aiTOP_2TOR_ReasonSub:matchFo plusFo:plusNode subFo:subNode outModel:toFoModel];
-        success = toFoModel.status != TOModelStatus_ActNo && toFoModel.status != TOModelStatus_ScoreNo;//成功行为化,则中止递归;
-        return success;
-    }];
+    //2. 取Sub避免MatchFo继续下去的办法;
+    BOOL success = false;
+    NSArray *sub_ps = Ports2Pits([AINetUtils absPorts_All:matchFo type:ATSub]);
+    
+    //3. 评价sub_ps中效果最好的;
+    //4. 将matchFo挂在demandModel下 (类型为阻止);
+    //5. 对cutIndex之后部分,取对应S,并尝试阻止之发生;
+    [self.delegate aiTOP_2TOR_ReasonSub:matchFo plusFo:nil subFo:nil outModel:nil];
     
     //3. 一条行为化成功,则整体成功;
     return success;

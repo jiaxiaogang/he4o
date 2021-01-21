@@ -24,7 +24,6 @@
     self = [super initWithCoder:aDecoder];
     if (self) {
         self.cmvNode_p = [aDecoder decodeObjectForKey:@"cmvNode_p"];
-        self.brother_p = [aDecoder decodeObjectForKey:@"brother_p"];
         self.deltaTimes = [aDecoder decodeObjectForKey:@"deltaTimes"];
         self.mvDeltaTime = [aDecoder decodeDoubleForKey:@"mvDeltaTime"];
     }
@@ -34,7 +33,6 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [super encodeWithCoder:aCoder];
     [aCoder encodeObject:self.cmvNode_p forKey:@"cmvNode_p"];
-    [aCoder encodeObject:self.brother_p forKey:@"brother_p"];
     [aCoder encodeObject:self.deltaTimes forKey:@"deltaTimes"];
     [aCoder encodeDouble:self.mvDeltaTime forKey:@"mvDeltaTime"];
 }
