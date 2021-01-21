@@ -150,9 +150,17 @@
     BOOL success = false;
     NSArray *sub_ps = Ports2Pits([AINetUtils absPorts_All:matchFo type:ATSub]);
     
+    //TODOTOMORROW20210121:
     //3. 评价sub_ps中效果最好的;
     //4. 将matchFo挂在demandModel下 (类型为阻止);
     //5. 对cutIndex之后部分,取对应S,并尝试阻止之发生;
+    //6. 对demandModel增加四类型
+    //      a. 将R-类型的,只要阻止,就算完成;
+    //      b. P+类型的,必须完成,才算完成;
+    //      c. R+类型的,顺应即可,顺不成也算完成;
+    //      d. P-类型,暂废弃;
+    
+    
     [self.delegate aiTOP_2TOR_ReasonSub:matchFo plusFo:nil subFo:nil outModel:nil];
     
     //3. 一条行为化成功,则整体成功;
