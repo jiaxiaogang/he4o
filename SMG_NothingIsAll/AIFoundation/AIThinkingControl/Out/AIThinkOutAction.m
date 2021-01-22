@@ -196,6 +196,7 @@
  *      2020.11.23 : PM理性评价结果,之后的逻辑改动 (参考21147);
  *      2020.12.16 : 将第0级,isHNGL判断,改为先判断baseFo是HNGL,然后alg是末位,则说明是hnglAlg (参考21115-glConAlg并不是ATGL);
  *      2020.12.17 : getInnerAlg改为返回单条,此处调用支持,并并入流程控制fo.begin (参考21183);
+ *      2021.01.22 : 支持R-模式的S类型Alg满足 (参考22061);
  *  @todo
  *      2020.07.05: 在下面MC中,转至PM时,是将C作为M的,随后需测下,看是否需要独立对MC做类似PM的理性评价,即将一步到位,细化成两步各自评价;
  ×      2021.01.04: 支持APS评价 (以前原本支持替换Alg并反思fo,后来弃用了?代码找不到) (参考22012);
@@ -215,6 +216,42 @@
         return;
     }
     
+    //1. 第-1级,对R-的SAlg进行行为化;
+    BOOL isS = [TOUtils isS:outModel.content_p];
+    if (isS && ISOK(outModel.baseOrGroup.baseOrGroup, ReasonDemandModel.class)) {
+        //1. 数据准备 (此处直接取demand.inModel,就不必不再交给PM处理了);
+        TOFoModel *sFoModel = (TOFoModel*)outModel.baseOrGroup;
+        ReasonDemandModel *rDemand = (ReasonDemandModel*)sFoModel.baseOrGroup;
+        AIFoNodeBase *matchFo = rDemand.inModel.matchFo;
+        AIFoNodeBase *protoFo = rDemand.inModel.protoFo;
+        
+        //2. 判断是否被M.itemAlg和P.itemAlg抽象指向;
+        NSInteger mIndex = [TOUtils indexOfAbsItem:outModel.content_p atConContent:matchFo.content_ps];
+        AIKVPointer *mAlg_p = ARR_INDEX(matchFo.content_ps, mIndex);
+        NSInteger pIndex = [TOUtils indexOfAbsItem:mAlg_p atConContent:protoFo.content_ps];
+        AIKVPointer *pAlg_p = ARR_INDEX(protoFo.content_ps, pIndex);
+        
+        //2. 被M抽象指向时,则对S加工,想办法满足demand.protoAlg变成S (GL);
+        if (mIndex != -1 && pIndex != -1 && mAlg_p && pAlg_p) {
+            
+            //TODOTOMORROW20210122:
+            
+            //3. 对s的所有稀疏码,排除不应期,得到待满足集;
+            
+            //4. 取待满足首个,从pAlg中找出同区码;
+            
+            //5. 取到同区码后,进行GL加工,满足S;
+            
+            
+            
+            
+            
+            
+        }
+        return;
+    }
+    
+    //1. 无论是P-模式的Alg,还是R-中非S的Alg,都要走以下第2级PM流程 以及 第3级cHav流程;
     //1. 第0级: 本身即是cHav节点,不用行为化,即成功 (但不用递归,等外循环返回行为结果);
     if ([TOUtils isHNGL_toModel:outModel]) {
         outModel.status = TOModelStatus_ActYes;//只需要等
@@ -237,17 +274,6 @@
         //[self.delegate toAction_SubModelFinish:outModel];
         return;
     }else{
-        
-        
-        //TODOTOMORROW20210122:
-        //      > 从cutIndex开始进行循环,判断是否被M.itemAlg抽象指向;
-        //4  被M抽象指向时,则对S加工,想办法满足demand.protoAlg变成S;
-        //      > 生成TOAlgModel,并交给PM进行满足修正;
-        //5  不被M抽象指向时,则到cHav看能否得到;
-        //      > 生成TOAlgModel,并交给Action._Hav进行满足;
-        
-        
-        
         //3. 数据检查curAlg
         AIAlgNodeBase *curAlg = [SMGUtils searchNode:outModel.content_p];
         NSLog(@"\n\n=============================== 行为化_Hav ===============================\nC:%@",Alg2FStr(curAlg));

@@ -426,6 +426,9 @@
 +(BOOL) isL:(AIKVPointer*)p{
     return p && [p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATLess]];
 }
++(BOOL) isS:(AIKVPointer*)p{
+    return p && [p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATSub]];
+}
 
 /**
  *  MARK:--------------------是否HNGL的TOModel--------------------

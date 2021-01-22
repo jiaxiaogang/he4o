@@ -95,6 +95,7 @@
 +(BOOL) isN:(AIKVPointer*)p;
 +(BOOL) isG:(AIKVPointer*)p;
 +(BOOL) isL:(AIKVPointer*)p;
++(BOOL) isS:(AIKVPointer*)p;
 
 /**
  *  MARK:--------------------是否HNGL的TOModel--------------------
