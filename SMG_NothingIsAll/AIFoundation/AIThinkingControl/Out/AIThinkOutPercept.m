@@ -26,6 +26,7 @@
 #import "AIScore.h"
 #import "ReasonDemandModel.h"
 #import "PerceptDemandModel.h"
+#import "DemandManager.h"
 
 @implementation AIThinkOutPercept
 
@@ -53,6 +54,7 @@
  *      1. 集成活跃度的判断和消耗;
  *      2. 集成outModel;
  *      3. TODOTOMORROW: 下面传给四模式的代码,用bool方式直接返回finish的判断不妥,改之;
+ *      2021.01.22: 对ActYes或者OutBack的Demand进行不应期处理 (未完成);
  */
 -(void) topV2{
     //1. 数据准备
@@ -160,6 +162,12 @@
     if (!demand) return;
     AIFoNodeBase *matchFo = demand.inModel.matchFo;
     
+    //2. ActYes等待 或 OutBack反省等待 中时,不进行决策;
+    NSArray *waitFos = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
+        return item.status == TOModelStatus_ActYes || item.status == TOModelStatus_OuterBack;
+    }];
+    if (ARRISOK(waitFos)) return;
+    
     //3. 取出所有S (取Sub避免MatchFo继续下去的办法);
     NSArray *sFo_ps = Ports2Pits([AINetUtils absPorts_All:matchFo type:ATSub]);
     
@@ -256,6 +264,33 @@
     
     //3. 返回P-模式结果;
     return success;
+}
+
+/**
+ *  MARK:--------------------"外层输入" 推进 "中层循环" 决策--------------------
+ *  @title 外层输入对Out短时记忆的ReasonDemandModel影响处理 (参考22061-8);
+ */
++(void) top_OPushM:(AICMVNodeBase*)newMv{
+    //1. 数据检查
+    NSArray *demands = theTC.outModelManager.getAllDemand;
+    if (!newMv) return;
+    NSLog(@"\n\n=============================== top_OPushM ===============================\n输入MV:%@",Mv2FStr(newMv));
+    
+    //2. 对所有ReasonDemandModel尝试处理 (是R-任务);
+    for (ReasonDemandModel *demand in demands) {
+        if (!ISOK(demand, ReasonDemandModel.class)) continue;
+        
+        //3. 判断hope(wait)和real(new)之间是否相符 (与newMv同区且同向) (匹配,比如撞疼,确定疼了);
+        BOOL isSame = [AIScore sameScoreOfMV1:demand.inModel.matchFo.cmvNode_p mv2:newMv.pointer];
+        if (!isSame) continue;
+        
+        //4. 将等待中的foModel改为OutBack;
+        for (TOFoModel *foModel in demand.actionFoModels) {
+            if (foModel.status != TOModelStatus_ActYes) continue;
+            if (Log4OPushM) NSLog(@"==> top_OPushM_mv有效改为OutBack,SFo: %@",Pit2FStr(foModel.content_p));
+            foModel.status = TOModelStatus_OuterBack;
+        }
+    }
 }
 
 @end

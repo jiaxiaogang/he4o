@@ -71,6 +71,10 @@
  */
 -(void) commitFromTOR_MoveForDemand:(DemandModel*)demand;
 
+/**
+ *  MARK:--------------------"外层输入" 推进 "中层循环" 决策--------------------
+ */
++(void) top_OPushM:(AICMVNodeBase*)newMv;
 
 @end
 

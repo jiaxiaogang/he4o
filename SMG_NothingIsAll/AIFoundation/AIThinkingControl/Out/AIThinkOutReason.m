@@ -135,11 +135,6 @@
     //TODOTOMORROW20210121:
     /*
      
-    
-    6  决策流程控制是否满足至末位?->否则failure失败;
-        > 失败时,则递归到demand.failure (尝试下一方案);
-    7  决策流程控制是否满足至末位?->是则finish成功;
-        > 设为ActYes,以`当前index至mv时间之和`生物钟触发,等待OPushM;
     8  能不躲了mv-? 未避开,(OPushM有mv-),则status=OutBack;
         > 不是ActYes,触发S反省标记S,且设为failure,递归任务 (尝试下一方案);
     9  能不躲了mv-? 避开,(OPushM无mv-),则最终demand成功,任务完成;

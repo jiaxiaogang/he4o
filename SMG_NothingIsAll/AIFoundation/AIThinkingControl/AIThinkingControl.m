@@ -166,6 +166,9 @@ static AIThinkingControl *_instance;
         return;
     }
     
+    //2. OPushM
+    [AIThinkOutPercept top_OPushM:cmvNode];
+    
     //2. 将联想到的cmv更新energy & 更新demandManager & decisionLoop
     NSString *algsType = cmvNode.urgentTo_p.algsType;
     NSInteger urgentTo = [NUMTOOK([AINetIndex getData:cmvNode.urgentTo_p]) integerValue];

@@ -47,7 +47,7 @@
     //4. OPushM
     [AIThinkInPercept tip_OPushM:cmvNode];
     
-    //4. 思考mv,需求处理
+    //5. 思考mv,需求处理
     if (finishBlock) finishBlock(cmvNode);
 }
 
@@ -79,7 +79,7 @@
 }
 
 /**
- *  MARK:--------------------"外层输入" 推进 "中层循环" 决策--------------------
+ *  MARK:--------------------"外层输入" 推进 "中层循环" 认知--------------------
  *  @title 外层输入对In短时记忆的影响处理 (参考22052-2);
  */
 +(void) tip_OPushM:(AICMVNode*)newMv{
