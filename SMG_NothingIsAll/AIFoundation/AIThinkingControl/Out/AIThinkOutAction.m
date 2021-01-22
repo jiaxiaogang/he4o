@@ -181,7 +181,7 @@
 /**
  *  MARK:--------------------单个概念的行为化--------------------
  *  第1级: 直接判定curAlg_p为输出则收集;
- *  第2级: MC匹配行为化
+ *  第2级: MC匹配PM行为化
  *  第3级: LongNet长短时网络行为化
  *  _param curAlg_p : 三个来源: 1.Fo的元素A;  2.Range的元素A; 3.Alg的嵌套A;
  *  @version
@@ -220,6 +220,7 @@
     BOOL isS = [TOUtils isS:outModel.content_p];
     if (isS && ISOK(outModel.baseOrGroup.baseOrGroup, ReasonDemandModel.class)) {
         //1. 数据准备 (此处直接取demand.inModel,就不必不再交给PM处理了);
+        AIAlgNodeBase *sAlg = [SMGUtils searchNode:outModel.content_p];
         TOFoModel *sFoModel = (TOFoModel*)outModel.baseOrGroup;
         ReasonDemandModel *rDemand = (ReasonDemandModel*)sFoModel.baseOrGroup;
         AIFoNodeBase *matchFo = rDemand.inModel.matchFo;
@@ -230,28 +231,33 @@
         AIKVPointer *mAlg_p = ARR_INDEX(matchFo.content_ps, mIndex);
         NSInteger pIndex = [TOUtils indexOfAbsItem:mAlg_p atConContent:protoFo.content_ps];
         AIKVPointer *pAlg_p = ARR_INDEX(protoFo.content_ps, pIndex);
+        AIAlgNodeBase *pAlg = [SMGUtils searchNode:pAlg_p];
         
         //2. 被M抽象指向时,则对S加工,想办法满足demand.protoAlg变成S (GL);
-        if (mIndex != -1 && pIndex != -1 && mAlg_p && pAlg_p) {
-            
-            //TODOTOMORROW20210122:
-            
+        if (mIndex != -1 && pIndex != -1 && mAlg_p && pAlg) {
             //3. 对s的所有稀疏码,排除不应期,得到待满足集;
+            NSArray *except_ps = [TOUtils convertPointersFromTOModels:outModel.subModels];
+            NSArray *targetValue_ps = [SMGUtils removeSub_ps:except_ps parent_ps:sAlg.content_ps];
             
             //4. 取待满足首个,从pAlg中找出同区码;
+            AIKVPointer *targetValue_p = ARR_INDEX(targetValue_ps, 0);
+            AIKVPointer *protoValue_p = [SMGUtils filterSameIdentifier_p:targetValue_p b_ps:pAlg.content_ps];
             
-            //5. 取到同区码后,进行GL加工,满足S;
-            
-            
-            
-            
-            
-            
+            //5. 取到同区码后,进行GL加工,满足S_转移;
+            if (targetValue_p) {
+                TOValueModel *valueModel = [TOValueModel newWithSValue:protoValue_p pValue:targetValue_p group:outModel];
+                outModel.pm_ProtoAlg = pAlg;
+                [self.delegate toAction_SubModelBegin:valueModel];
+                return;
+            }
         }
+        //6. 未转移_全完成;
+        outModel.status = TOModelStatus_Finish;
+        [self.delegate toAction_SubModelFinish:outModel];
         return;
     }
     
-    //1. 无论是P-模式的Alg,还是R-中非S的Alg,都要走以下第2级PM流程 以及 第3级cHav流程;
+    //1. 无论是P-模式的Alg,还是R-中非S的Alg,都要走以下第1,第2,第3级流程;
     //1. 第0级: 本身即是cHav节点,不用行为化,即成功 (但不用递归,等外循环返回行为结果);
     if ([TOUtils isHNGL_toModel:outModel]) {
         outModel.status = TOModelStatus_ActYes;//只需要等
