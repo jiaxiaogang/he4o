@@ -19,6 +19,7 @@
 #import "TOUtils.h"
 #import "AIPort.h"
 #import "AIScore.h"
+#import "ReasonDemandModel.h"
 
 @implementation AIThinkOutAction
 
@@ -135,8 +136,8 @@
         return;
     }
     
-    //3. fo反思评价 (2020.12.18仅首帧,进行评价);
-    if (outModel.actionIndex == -1) {
+    //3. fo反思评价 (2020.12.18仅首帧,进行评价) (2021.01.22ReasonDemandModel不做反思和空S评价);
+    if (outModel.actionIndex == -1 && !ISOK(outModel.baseOrGroup, ReasonDemandModel.class)) {
         BOOL scoreSuccess = [AIScore FPS:outModel rtBlock:^AIShortMatchModel *{
             return [self.delegate toAction_RethinkInnerFo:curFo];
         }];
@@ -236,6 +237,17 @@
         //[self.delegate toAction_SubModelFinish:outModel];
         return;
     }else{
+        
+        
+        //TODOTOMORROW20210122:
+        //      > 从cutIndex开始进行循环,判断是否被M.itemAlg抽象指向;
+        //4  被M抽象指向时,则对S加工,想办法满足demand.protoAlg变成S;
+        //      > 生成TOAlgModel,并交给PM进行满足修正;
+        //5  不被M抽象指向时,则到cHav看能否得到;
+        //      > 生成TOAlgModel,并交给Action._Hav进行满足;
+        
+        
+        
         //3. 数据检查curAlg
         AIAlgNodeBase *curAlg = [SMGUtils searchNode:outModel.content_p];
         NSLog(@"\n\n=============================== 行为化_Hav ===============================\nC:%@",Alg2FStr(curAlg));

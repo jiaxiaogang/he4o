@@ -118,6 +118,21 @@
     return true;
 }
 
++(BOOL) FRS_Miss:(AIFoNodeBase*)sFo matchFo:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex{
+    //1. 数据检查;
+    if (sFo && matchFo) {
+        for (AIKVPointer *item in sFo.content_ps) {
+            NSInteger index = [TOUtils indexOfAbsItem:item atConContent:matchFo.content_ps];
+            if (index != -1) {
+                //2. 发现item时,返回是否已错过 (cutIndex刚发生也不行);
+                return cutIndex >= index;
+            }
+        }
+    }
+    //3. 默认未错过;
+    return true;
+}
+
 //MARK:===============================================================
 //MARK:                     < FPS >
 //MARK:===============================================================

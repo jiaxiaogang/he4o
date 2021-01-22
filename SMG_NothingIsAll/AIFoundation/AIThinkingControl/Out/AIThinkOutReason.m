@@ -108,24 +108,34 @@
  *          2. isOut判断 (输出);
  *          3. notOut判断 (等待);
  *  @存储 负只是正的帧推进器,比如买菜为了做饭 (参考19171);
- *  @param foModel : 当前方案,阻止者,是一个S类型Fo,用来阻止demand.matchFo发生;
+ *  @param sFoModel : 当前方案,阻止者,是一个S类型Fo,用来阻止demand.matchFo发生;
+ *  @version
+ *      2021.01.21: 大迭代 (参考22061);
  *  @bug
- *      2020.06.14 : 此处sHappend为false,按道理说,投右,已经有了s,s应该是已发生的 (经查,改为sIndex <= outModel.actionIndex即可) T;
+ *      2020.06.14: 此处sHappend为false,按道理说,投右,已经有了s,s应该是已发生的 (经查,改为sIndex<=outModel.actionIndex即可) T;
  */
--(void) commitReasonSub:(TOFoModel*)foModel demand:(ReasonDemandModel*)demand{
+-(void) commitReasonSub:(TOFoModel*)sFoModel demand:(ReasonDemandModel*)demand{
+    //1. 数据检查
+    if (!sFoModel || !demand) return;
+    AIFoNodeBase *matchFo = demand.inModel.matchFo;
+    AIFoNodeBase *sFo = [SMGUtils searchNode:sFoModel.content_p];
+    
+    //2. 决策时评价 (S首元素已错过,则失败);
+    BOOL score = [AIScore FRS_Miss:sFo matchFo:matchFo cutIndex:demand.inModel.cutIndex];
+    if (!score) {
+        sFoModel.status = TOModelStatus_ActNo;
+        [self singleLoopBackWithFailureModel:sFoModel];
+    }
+    
+    //3. 提交_Fo,逐个满足S;
+    [self singleLoopBackWithBegin:sFoModel];
+    
+
     
     //TODOTOMORROW20210121:
     /*
-    1  决策前_评价foModel;
-        > 有空S指向,则失败 (尝试下一方案);
-    2  决策时_评价foModel (S已错过,则失败);
-        > 评价否掉的,直接demand.failure()进行递归 (尝试下一方案);
-    3  决策时_评价foModel (S未错过,则通过,并提交Action._Fo逐个满足S);
-        > 从cutIndex开始进行循环,判断是否被M.itemAlg抽象指向;
-    4  被M抽象指向时,则对S加工,想办法满足demand.protoAlg变成S;
-        > 生成TOAlgModel,并交给PM进行满足修正;
-    5  不被M抽象指向时,则到cHav看能否得到;
-        > 生成TOAlgModel,并交给Action._Hav进行满足;
+     
+    
     6  决策流程控制是否满足至末位?->否则failure失败;
         > 失败时,则递归到demand.failure (尝试下一方案);
     7  决策流程控制是否满足至末位?->是则finish成功;
@@ -136,21 +146,7 @@
         > 还是ActYes,触发P反省标记P,且设为finish,并移除任务;
     */
     
-    //1. 数据准备
-//    AIKVPointer *firstPlusItem = ARR_INDEX(plusFo.content_ps, 0);
-//    AIFoNodeBase *fo = [SMGUtils searchNode:outModel.content_p];
-//    AIKVPointer *checkAlg_p = ARR_INDEX(fo.content_ps, outModel.actionIndex);
-//    if (!matchFo || !plusFo || !subFo || !checkAlg_p) {
-//        outModel.status = TOModelStatus_ActNo;
-//        return;
-//    }
-//
-//    //2. 正影响首元素,错过判断 (错过,行为化失败);
-//    NSInteger firstAt_Plus = [TOUtils indexOfAbsItem:firstPlusItem atConContent:fo.content_ps];
-//    if (outModel.actionIndex > firstAt_Plus) {
-//        outModel.status = TOModelStatus_ActNo;
-//        return;
-//    }
+
 //
 //    //3. 当firstPlus就是checkAlg_p时 (尝试对checkAlg行为化);
 //    if (firstAt_Plus == outModel.actionIndex) {
@@ -833,7 +829,18 @@
             //}];
         }
     }else if(ISOK(actYesModel, TOFoModel.class)){
-        //1. TOFoModel时,数据准备
+        if (ISOK(actYesModel.baseOrGroup, ReasonDemandModel.class)) {
+            //R-模式ActYes处理;
+            
+            //TODOTOMORROW20210122:
+            //1. 取matchFo已发生,到末位mvDeltaTime,所有时间之和做触发;
+            //2 触发条件为: 当mv-未发生,则成功P,否则失败S;
+            
+            
+            return;
+        }
+        
+        //1. P-模式ActYes处理 (TOFoModel时,数据准备);
         TOFoModel *foModel = (TOFoModel*)actYesModel;
         AIFoNodeBase *actYesFo = [SMGUtils searchNode:foModel.content_p];
         DemandModel *demand = (DemandModel*)actYesModel.baseOrGroup;
