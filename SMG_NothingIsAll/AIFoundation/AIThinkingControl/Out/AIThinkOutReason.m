@@ -135,17 +135,6 @@
     
     //3. 提交_Fo,逐个满足S;
     [self singleLoopBackWithBegin:sFoModel];
-    
-
-    
-    //TODOTOMORROW20210121:
-    /*
-     
-    8  能不躲了mv-? 未避开,(OPushM有mv-),则status=OutBack;
-        > 不是ActYes,触发S反省标记S,且设为failure,递归任务 (尝试下一方案);
-    9  能不躲了mv-? 避开,(OPushM无mv-),则最终demand成功,任务完成;
-        > 还是ActYes,触发P反省标记P,且设为finish,并移除任务;
-    */
 }
 
 /**
@@ -786,13 +775,41 @@
         }
     }else if(ISOK(actYesModel, TOFoModel.class)){
         if (ISOK(actYesModel.baseOrGroup, ReasonDemandModel.class)) {
-            //R-模式ActYes处理;
+            //1. R-模式ActYes处理_数据准备;
+            ReasonDemandModel *demand = (ReasonDemandModel*)actYesModel.baseOrGroup;
+            AIFoNodeBase *matchFo = demand.inModel.matchFo;
             
-            //TODOTOMORROW20210122:
-            //1. 取matchFo已发生,到末位mvDeltaTime,所有时间之和做触发;
-            //2 触发条件为: 当mv-未发生,则成功P,否则失败S;
+            //2. 取matchFo已发生,到末位mvDeltaTime,所有时间之和做触发;
+            double deltaTime = 0;
+            for (NSInteger i = demand.inModel.cutIndex; i < matchFo.count; i++) {
+                deltaTime += [NUMTOOK(ARR_INDEX(matchFo.deltaTimes, i)) doubleValue];
+            }
+            deltaTime += matchFo.mvDeltaTime;
             
-            
+            //3. 触发器;
+            NSLog(@"---//触发器R-_任务:%@ 破壁:%@ time:%f",Fo2FStr(matchFo),Pit2FStr(actYesModel.content_p),deltaTime);
+            [AITime setTimeTrigger:deltaTime trigger:^{
+                
+                //3. 反省类比 (当OutBack发生,则破壁失败S,否则成功P);
+                AnalogyType type = (actYesModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;
+                NSLog(@"---//触发器R-_任务:%@ 破壁:%@ (%@)",Fo2FStr(matchFo),Pit2FStr(actYesModel.content_p),ATType2Str(type));
+                
+                //TODOTOMORROW20210122:
+                //4. 可以考虑,仅对SP经验的强度产生变化;
+                //[AIAnalogy analogy_ReasonRethink:foModel cutIndex:NSIntegerMax type:type];
+                
+                //4. 失败时,转流程控制-失败 (会开始下一解决方案) (参考22061-8);
+                if (type == ATSub) {
+                    actYesModel.status = TOModelStatus_ScoreNo;
+                    [self singleLoopBackWithFailureModel:actYesModel];
+                }else{
+                    //5. 完成任务 (参考22061-9);
+                    actYesModel.status = TOModelStatus_Finish;
+                    //9  能不躲了mv-? 避开,(OPushM无mv-),则最终demand成功,任务完成;
+                    //> 还是ActYes,触发P反省标记P,且设为finish,并移除任务;
+                    //将demand移出DemandManager;
+                }
+            }];
             return;
         }
         
