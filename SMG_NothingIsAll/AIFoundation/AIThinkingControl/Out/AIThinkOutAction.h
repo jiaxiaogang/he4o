@@ -55,7 +55,9 @@
  *      2. RT: Rethink:表示反思,因反思是递归的,故一次反思中,可能包含数轮递归并依次评价;
  *
  *  ********新版********
- *  @version 20200520由TOAlgScheme大改版而来;
+ *  @version
+ *      2020.05.20: 由TOAlgScheme大改版而来;
+ *      2021.01.22: 将SP废弃掉,而原有R-模式,不再调用SP,而是融入到整个流程控制中 (参考22061);
  *  @desc
  *      1. 支持两个主要入口方法:
  *          a. SP
@@ -76,9 +78,6 @@
 @interface AIThinkOutAction : NSObject
 
 @property (weak, nonatomic) id<TOActionDelegate> delegate;
-
-//用于R-四模式调用;
--(void) convert2Out_SP:(AIKVPointer*)sAlg_p pAlg_p:(AIKVPointer*)pAlg_p outModel:(TOAlgModel*)outModel;
 
 //用于Fo.Begin时调用;
 -(void) convert2Out_Fo:(TOFoModel*)outModel;

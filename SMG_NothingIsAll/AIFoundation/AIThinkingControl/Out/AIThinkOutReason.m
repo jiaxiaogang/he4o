@@ -103,16 +103,22 @@
 
 /**
  *  MARK:--------------------R-行为化--------------------
- *  @desc R-行为化,三级判断,参考19165;
+ *  @desc R-行为化 (满足S) ,三级判断,参考19165;
  *          1. is(SP)判断 (转移sp行为化);
  *          2. isOut判断 (输出);
  *          3. notOut判断 (等待);
  *  @存储 负只是正的帧推进器,比如买菜为了做饭 (参考19171);
  *  @param sFoModel : 当前方案,阻止者,是一个S类型Fo,用来阻止demand.matchFo发生;
  *  @version
+ *      2020.05.22: fromAction.SP调用cHav,在原先solo与group的基础上,新增了最优先的checkAlg (因为solo和group可能压根不存在此概念,而TO是主应用,而非构建的);
+ *      2020.06.03: fromAction.SP支持将cGLDic缓存至TOAlgModel,以便一条GL子任务完成时,顺利转移至下一GL子任务;
  *      2021.01.21: 大迭代 (参考22061);
  *  @bug
  *      2020.06.14: 此处sHappend为false,按道理说,投右,已经有了s,s应该是已发生的 (经查,改为sIndex<=outModel.actionIndex即可) T;
+ *  @todo
+ *      1. fromAction.SP收集_GL向抽象和具象延伸,而尽量避免到_Hav,尤其要避免重组,无论是group还是solo (参考n19p18-todo4);
+ *      2. fromAction.SP将group和solo重组的方式废弃掉,参考:n19p18-todo5
+ *      3. fromAction.SP替代group和solo的方法为: 用outModel.checkAlg找同层节点进行_Hav,并判断其符合GLDic中的稀疏码同区,且与GL的innerType相同,同大或同小;
  */
 -(void) commitReasonSub:(TOFoModel*)sFoModel demand:(ReasonDemandModel*)demand{
     //1. 数据检查
@@ -140,51 +146,6 @@
     9  能不躲了mv-? 避开,(OPushM无mv-),则最终demand成功,任务完成;
         > 还是ActYes,触发P反省标记P,且设为finish,并移除任务;
     */
-    
-
-//
-//    //3. 当firstPlus就是checkAlg_p时 (尝试对checkAlg行为化);
-//    if (firstAt_Plus == outModel.actionIndex) {
-//
-//        //4. 从SFo中,找出checkAlg的兄弟节点matchAlg;
-//        AIKVPointer *matchAlg_p = [SMGUtils filterSingleFromArr:matchFo.content_ps checkValid:^BOOL(AIKVPointer *item_p) {
-//            return [TOUtils mcSameLayer:item_p c:checkAlg_p];
-//        }];
-//
-//        //5. 根据matchAlg找到对应的S;
-//        AIKVPointer *sAlg_p = [SMGUtils filterSingleFromArr:subFo.content_ps checkValid:^BOOL(AIKVPointer *item) {
-//            return [TOUtils mIsC_1:matchAlg_p c:item];
-//        }];
-//
-//        //6. 行为化 (围绕P做行为);
-//        TOAlgModel *algOutModel = [TOAlgModel newWithAlg_p:checkAlg_p group:outModel];
-//
-//        //7. 找出可替代checkAlg的replaceAlgs,保留到algOutModel.replaceAlgs;
-//        [algOutModel.replaceAlgs addObject:checkAlg_p];
-//        //随后此处支持,在SP的指引下,找出checkAlg同层的其它可替代节点,加入replaceAlgs;
-//
-//        //8. 在S有效时,尝试_SP;
-//        AIKVPointer *pAlg_p = firstPlusItem;
-//        BOOL tryAct = false;
-//        if (sAlg_p) {
-//            NSInteger sIndex = [TOUtils indexOfAbsItem:sAlg_p atConContent:matchFo.content_ps];
-//            BOOL sHappened = sIndex <= outModel.actionIndex;
-//            if (sHappened) {
-//                //9. S存在,且S已发生,则加工SP;
-//                [self.toAction convert2Out_SP:sAlg_p pAlg_p:pAlg_p outModel:algOutModel];
-//                tryAct = true;
-//            }
-//        }
-//
-//        //10. 如果SP未执行,则直接调用replaceAlg;
-//        if (!tryAct) {
-//            for (AIKVPointer *replace_p in algOutModel.replaceAlgs) {
-//                TOAlgModel *replaceAlg = [TOAlgModel newWithAlg_p:replace_p group:algOutModel];
-//                [self.toAction convert2Out_Hav:replaceAlg];
-//                return;
-//            }
-//        }
-//    }
 }
 
 /**

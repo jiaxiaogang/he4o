@@ -23,89 +23,6 @@
 
 @implementation AIThinkOutAction
 
-/**
- *  MARK:--------------------SP行为化--------------------
- *  @desc 参考:MC_V3;
- *  @desc 工作模式:
- *      1. 将S加工成P;
- *      2. 满足P;
- *  _param complete : 必然执行,且仅执行一次;
- *  @version
- *      2020-05-22: 调用cHav,在原先solo与group的基础上,新增了最优先的checkAlg (因为solo和group可能压根不存在此概念,而TO是主应用,而非构建的);
- *      2020-06-03: 支持将cGLDic缓存至TOAlgModel,以便一条GL子任务完成时,顺利转移至下一GL子任务;
- *  @TODO_TEST_HERE:
- *      1. 测试时,在_GL时,可将pAlg换成checkAlg试试,因为pAlg本来就是反向类比后的fo,可能没有再进行内类比的机会,所以无_GL经验;
- *  @todo
- *      1. 收集_GL向抽象和具象延伸,而尽量避免到_Hav,尤其要避免重组,无论是group还是solo (参考n19p18-todo4);
- *      2. 将group和solo重组的方式废弃掉,参考:n19p18-todo5
- *      3. 替代group和solo的方法为: 用outModel.checkAlg找同层节点进行_Hav,并判断其符合GLDic中的稀疏码同区,且与GL的innerType相同,同大或同小;
- *  @bug
- *      1. 发现,很多glValue稀疏码节点的ds和值,完全对不上;对不上应该是正常的,不过应该是大对应小,有对应无,这样正常;随后再查查;后未复现; T
- */
--(void) convert2Out_SP:(AIKVPointer*)sAlg_p pAlg_p:(AIKVPointer*)pAlg_p outModel:(TOAlgModel*)outModel {
-    //1. 结果数据准备
-    AIAlgNodeBase *sAlg = [SMGUtils searchNode:sAlg_p];
-    AIAlgNodeBase *pAlg = [SMGUtils searchNode:pAlg_p];
-    if (!pAlg) {
-        outModel.status = TOModelStatus_ActNo;
-        [self.delegate toAction_SubModelFailure:outModel];
-        return;
-    }
-    NSLog(@"\n\n=============================== SP START ===============================\nS:%@\nP:%@",Alg2FStr(sAlg),Alg2FStr(pAlg));
-    
-    //2. 满足P: GL部分;
-    NSDictionary *cGLDic = [SMGUtils filterPointers:sAlg.content_ps b_ps:pAlg.content_ps checkItemValid:^BOOL(AIKVPointer *a_p, AIKVPointer *b_p) {
-        return [a_p.identifier isEqualToString:b_p.identifier];
-    }];
-    
-    //3. 将cGLDic & pAlg保留到短时记忆;
-    [outModel.cGLDic setDictionary:cGLDic];
-    outModel.sp_P = pAlg;
-    
-    //3. 满足P: cHav部分;
-    NSArray *cHavArr = [SMGUtils removeSub_ps:cGLDic.allValues parent_ps:pAlg.content_ps];
-    
-    //4. GL行为化 (仅对第一条行为化,其后都由流程控制方法来控制推动);
-    for (NSData *key in cGLDic.allKeys) {
-        //a. 数据准备;
-        AIKVPointer *sValue_p = DATA2OBJ(key);
-        AIKVPointer *pValue_p = [cGLDic objectForKey:key];
-        TOValueModel *valueOutModel = [TOValueModel newWithSValue:sValue_p pValue:pValue_p group:outModel];
-        //b. 行为化
-        NSLog(@"------SP_GL行为化:%@ -> %@",[NVHeUtil getLightStr:sValue_p],[NVHeUtil getLightStr:pValue_p]);
-        AIAlgNodeBase *pConAlg = [SMGUtils searchNode:outModel.content_p];
-        [self convert2Out_GL:pConAlg outModel:valueOutModel];
-        break;//仅处理首条,其它条交由流程控制来做;
-    }
-    
-    //5. H行为化;
-    for (AIKVPointer *pValue_p in cHavArr) {
-        //b. 将pValue_p独立找到概念,并找cHav;
-        AIAbsAlgNode *soloAlg = [theNet createAbsAlg_NoRepeat:@[pValue_p] conAlgs:nil isMem:false];
-        TOAlgModel *soloOutModel = [TOAlgModel newWithAlg_p:soloAlg.pointer group:outModel];
-        [self convert2Out_Hav:soloOutModel];
-        if (soloOutModel.status == TOModelStatus_ActNo || soloOutModel.status == TOModelStatus_ScoreNo) {
-            continue;
-        }
-        
-        //c. 将pValue_p+same_ps重组找到概念,并找cHav;
-        AIAlgNodeBase *checkAlg = [SMGUtils searchNode:outModel.content_p];
-        NSMutableArray *group_ps = [SMGUtils removeSub_ps:pAlg.content_ps parent_ps:checkAlg.content_ps];
-        [group_ps addObject:pValue_p];
-        AIAbsAlgNode *groupAlg = [theNet createAbsAlg_NoRepeat:group_ps conAlgs:nil isMem:false];
-        TOAlgModel *groupOutModel = [TOAlgModel newWithAlg_p:groupAlg.pointer group:outModel];
-        [self convert2Out_Hav:groupOutModel];
-        if (groupOutModel.status == TOModelStatus_ActNo || groupOutModel.status == TOModelStatus_ScoreNo) {
-            continue;
-        }
-        
-        //c. solo和group方式都未成功,则: 一条稀疏码行为化失败,则直接返回失败;
-        outModel.status = TOModelStatus_ActNo;
-        [self.delegate toAction_SubModelFailure:outModel];
-        return;
-    }
-}
-
 //MARK:===============================================================
 //MARK:                     < Fo >
 //MARK:===============================================================
@@ -247,6 +164,7 @@
             if (targetValue_p) {
                 TOValueModel *valueModel = [TOValueModel newWithSValue:protoValue_p pValue:targetValue_p group:outModel];
                 outModel.pm_ProtoAlg = pAlg;
+                NSLog(@"------ R-:GL行为化: (%@ -> %@)",Pit2FStr(protoValue_p),Pit2FStr(targetValue_p));
                 [self.delegate toAction_SubModelBegin:valueModel];
                 return;
             }
