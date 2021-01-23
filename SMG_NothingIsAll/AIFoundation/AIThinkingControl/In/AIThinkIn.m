@@ -132,12 +132,7 @@
     if (ARRISOK(order)) {
         
         //2. 识别时序;
-        [AIThinkInReason TIR_Fo_FromRethink:order finishBlock:^(AIFoNodeBase *curNode, AIFoNodeBase *matchFo, CGFloat matchValue, NSInteger cutIndex) {
-            mModel.matchAFo = curNode;
-            mModel.matchFo = matchFo;
-            mModel.matchFoValue = matchValue;
-            mModel.cutIndex = cutIndex;
-        }];
+        [AIThinkInReason TIR_Fo_FromRethink:order decoratorInModel:mModel];
     }
     NSLog(@"反思时序: Finish >> %@",Fo2FStr(mModel.matchFo));
     return mModel;

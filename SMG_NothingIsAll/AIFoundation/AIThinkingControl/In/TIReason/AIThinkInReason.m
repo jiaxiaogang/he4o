@@ -26,6 +26,7 @@
 #import "ThinkingUtils.h"
 #import "TOUtils.h"
 #import "AITime.h"
+#import "AIMatchFoModel.h"
 
 @implementation AIThinkInReason
 
@@ -208,22 +209,21 @@
  *      20200403 : 将assFoIndexAlg由proto.lastIndex改为replaceMatchAlg来代替 (因为lastAlg索引失败率太高);
  *      20200717 - 换上新版partMatching_FoV2时序识别算法;
  *  @todo :
- *      20200403 TODOTOMORROW: 支持识别到多个时序,并以此得到多个价值预测 (支持更多元的评价);
+ *      2020.04.03: 支持识别到多个时序 T;
+ *      2020.04.03: 以识别到的多个时序,得到多个价值预测 (支持更多元的评价);
  *
  */
-+(void) TIR_Fo_FromRethink:(NSArray*)order finishBlock:(void(^)(AIFoNodeBase *curNode,AIFoNodeBase *matchFo,CGFloat matchValue,NSInteger cutIndex))finishBlock{
++(void) TIR_Fo_FromRethink:(NSArray*)order decoratorInModel:(AIShortMatchModel*)inModel{
     //1. 数据检查
     if (!ARRISOK(order)) {
         return;
     }
 
-    AIFrontOrderNode *protoFo = [theNet createConFo:order isMem:true];//将protoAlg_ps构建成时序;
-    NSLog(@"\n\n=============================== 反思时序识别 ===============================\n%@",Fo2FStr(protoFo));
+    inModel.matchAFo = [theNet createConFo:order isMem:true]; //将protoAlg_ps构建成时序;
+    NSLog(@"\n\n=============================== 反思时序识别 ===============================\n%@",Fo2FStr(inModel.matchAFo));
     
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [self partMatching_FoV1Dot5:protoFo except_ps:@[protoFo.pointer] finishBlock:^(AIFoNodeBase *matchFo, CGFloat matchValue, NSInteger cutIndex) {
-        finishBlock(protoFo,matchFo,matchValue,cutIndex);
-    }];
+    [self partMatching_FoV1Dot5:inModel.matchAFo except_ps:@[inModel.matchAFo.pointer] decoratorInModel:inModel];
 }
 
 /**
@@ -244,11 +244,7 @@
     
     NSLog(@"\n\n------------------------------- 瞬时时序识别 -------------------------------\n%@->%@",Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p));
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [self partMatching_FoV1Dot5:protoFo except_ps:except_ps finishBlock:^(AIFoNodeBase *matchFo, CGFloat matchValue, NSInteger cutIndex) {
-        inModel.matchFo = matchFo;
-        inModel.matchFoValue = matchValue;
-        inModel.cutIndex = cutIndex;
-    }];
+    [self partMatching_FoV1Dot5:protoFo except_ps:except_ps decoratorInModel:inModel];
     
     //3. 预测处理_反向反馈类比_生物钟触发器;
     AIFoNodeBase *matchFo = inModel.matchFo;
@@ -332,20 +328,18 @@
  *      2020.07.19: 改为仅取最后一位的refFos (因为最后一位是焦点帧,并且全含判断算法也需要支持仅末位候选集);
  *      2020.11.12: 支持except_ps参数,因为在FromShortMem时,matchAFo会识别protoFo返回,所以将protoFo不应期掉 (参考21144);
  *      2021.01.18: 联想matchFo时,由原本只获取Normal类型,改为将HNGL也加入其中 (参考22052-1a,实测未影响原多向飞行训练);
+ *      2021.01.23: 支持多识别 (参考22072BUG & TIR_Fo_FromRethink注释todo更多元的评价);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
-+(void) partMatching_FoV1Dot5:(AIFoNodeBase*)protoFo except_ps:(NSArray*)except_ps finishBlock:(void(^)(AIFoNodeBase *matchFo,CGFloat matchValue,NSInteger cutIndex))finishBlock{
++(void) partMatching_FoV1Dot5:(AIFoNodeBase*)protoFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel{
     //1. 数据准备
     if (!ISOK(protoFo, AIFoNodeBase.class)) {
-        finishBlock(nil,0,0);
         return;
     }
     AIAlgNodeBase *lastAlg = [SMGUtils searchNode:ARR_INDEX_REVERSE(protoFo.content_ps, 0)];
     if (!lastAlg) {
-        finishBlock(nil,0,0);
         return;
     }
-    __block BOOL successed = false;
     
     //2. 取assIndexes (取递归两层)
     NSMutableArray *assIndexes = [[NSMutableArray alloc] init];
@@ -366,6 +360,7 @@
         if (Log4MFo) NSLog(@"-----> TIR_Fo 索引到有效时序数:%lu",(unsigned long)assFo_ps.count);
         
         //5. 依次对assFos对应的时序,做匹配度评价; (参考: 160_TIRFO单线顺序模型)
+        NSMutableArray *matchFos = [[NSMutableArray alloc] init];
         for (AIKVPointer *assFo_p in assFo_ps) {
             AIFoNodeBase *assFo = [SMGUtils searchNode:assFo_p];
             
@@ -373,14 +368,11 @@
             [TIRUtils TIR_Fo_CheckFoValidMatch:protoFo assFo:assFo checkItemValid:^BOOL(AIKVPointer *itemAlg, AIKVPointer *assAlg) {
                 return [TOUtils mIsC_1:itemAlg c:assAlg];
             } success:^(NSInteger lastAssIndex, CGFloat matchValue) {
-                NSLog(@"时序识别: SUCCESS >>> matchValue:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
-                successed = true;
-                finishBlock(assFo,matchValue,lastAssIndex);
+                NSLog(@"时序识别item SUCCESS >>> matchValue:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
+                [matchFos addObject:[AIMatchFoModel newWithMatchFo:assFo matchFoValue:matchValue cutIndex:lastAssIndex]];
             }];
-            
-            //7. 成功一条即return
-            if (successed) return;
         }
+        inModel.matchFos = matchFos;
     }
 }
 

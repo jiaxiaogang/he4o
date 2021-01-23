@@ -178,23 +178,28 @@
     return distance;
 }
 
-//distanceY
+/**
+ *  MARK:--------------------distanceY--------------------
+ *  @version
+ *      2021.01.23: 改为返回真实距离 (什么距离可以被撞到,由反省类比自行学习);
+ */
 +(NSInteger) distanceY:(UIView*)selfView target:(UIView*)target{
-    //1. 数据准备;
-    CGFloat selfY = [UIView convertWorldRect:selfView].origin.y;
-    CGFloat selfMaxY = selfY + selfView.height;
-    CGFloat targetY = [UIView convertWorldRect:target].origin.y;
-    CGFloat targetMaxY = targetY + target.height;
-    
-    //2. self在下方时;
-    if (selfY > targetMaxY) {
-        return selfY - targetMaxY;
-    }else if(targetY > selfMaxY){
-        //3. self在上方时;
-        return targetY - selfMaxY;
-    }
-    //4. 有重叠时,直接返回0;
-    return 0;
+    return selfView.y - target.y;
+    ////1. 数据准备;
+    //CGFloat selfY = [UIView convertWorldRect:selfView].origin.y;
+    //CGFloat selfMaxY = selfY + selfView.height;
+    //CGFloat targetY = [UIView convertWorldRect:target].origin.y;
+    //CGFloat targetMaxY = targetY + target.height;
+    //
+    ////2. self在下方时;
+    //if (selfY > targetMaxY) {
+    //    return selfY - targetMaxY;
+    //}else if(targetY > selfMaxY){
+    //    //3. self在上方时;
+    //    return targetY - selfMaxY;
+    //}
+    ////4. 有重叠时,直接返回0;
+    //return 0;
 }
 
 //border
