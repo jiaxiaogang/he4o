@@ -114,9 +114,10 @@
  *      2020.12.16 : 将第0级,isHNGL判断,改为先判断baseFo是HNGL,然后alg是末位,则说明是hnglAlg (参考21115-glConAlg并不是ATGL);
  *      2020.12.17 : getInnerAlg改为返回单条,此处调用支持,并并入流程控制fo.begin (参考21183);
  *      2021.01.22 : 支持R-模式的S类型Alg满足 (参考22061);
+ *      2021.01.23 : 将R-模式改为调用PM满足 (参考22061-改4);
  *  @todo
  *      2020.07.05: 在下面MC中,转至PM时,是将C作为M的,随后需测下,看是否需要独立对MC做类似PM的理性评价,即将一步到位,细化成两步各自评价;
- ×      2021.01.04: 支持APS评价 (以前原本支持替换Alg并反思fo,后来弃用了?代码找不到) (参考22012);
+ *      2021.01.04: 支持APS评价 (以前原本支持替换Alg并反思fo,后来弃用了?代码找不到) (参考22012);
  *  @bug
  *      2020.09.15: 将isOut=true时,改为调Finish,因为目前ActYes暂不对行为输出做处理,但流程控制要继续推进,否则会BUG (参考21025);
  *      2020.09.22: 取消行为输出时直接调用Finish,因为在OPushM中也会推进流程控制,如果这里再调用,会重复触发反省类比 (参考21042);
@@ -156,26 +157,27 @@
             NSArray *except_ps = [TOUtils convertPointersFromTOModels:outModel.subModels];
             NSArray *targetValue_ps = [SMGUtils removeSub_ps:except_ps parent_ps:sAlg.content_ps];
             
-            //4. 取待满足首个,从pAlg中找出同区码;
-            AIKVPointer *targetValue_p = ARR_INDEX(targetValue_ps, 0);
-            AIKVPointer *protoValue_p = [SMGUtils filterSameIdentifier_p:targetValue_p b_ps:pAlg.content_ps];
+            //c. 将"ProtoAlg与SubAlg取得同区码，作为justPValues独特码"保留到短时记忆模型;
             NSArray *justPValues = [SMGUtils filterSameIdentifier_Dic:targetValue_ps b_ps:pAlg.content_ps].allValues;
             outModel.pm_ProtoAlg = pAlg;
             [outModel.justPValues addObjectsFromArray:justPValues];
             outModel.pm_Fo = [SMGUtils searchNode:outModel.baseOrGroup.content_p];
-            //5. TODOTOMORROW20210123: 转PM做稀疏码评价和满足处理;
             
-            //5. 取到同区码后,进行GL加工,满足S_转移;
-            if (targetValue_p) {
-                TOValueModel *valueModel = [TOValueModel newWithSValue:protoValue_p pValue:targetValue_p group:outModel];
-                NSLog(@"------ R-:GL行为化: (%@ -> %@)",Pit2FStr(protoValue_p),Pit2FStr(targetValue_p));
-                [self.delegate toAction_SubModelBegin:valueModel];
-                return;
-            }
+            //e. 理性评价
+            NSLog(@"===> 转至PM ↓↓↓↓↓↓↓↓↓ (C作为M,P作为P)");
+            [self.delegate toAction_ReasonScorePM:outModel failure:^{
+                outModel.status = TOModelStatus_ActNo;
+                [self.delegate toAction_SubModelFailure:outModel];
+            } notNeedPM:^{
+                //f. 未跳转到PM,则将algModel设为Finish,并递归;
+                outModel.status = TOModelStatus_Finish;
+                [self.delegate toAction_SubModelFinish:outModel];
+            }];
+            return;
         }
-        //6. 未转移_全完成;
-        outModel.status = TOModelStatus_Finish;
-        [self.delegate toAction_SubModelFinish:outModel];
+        //6. 转移失败_因为PAlg未能找到MIndex和PIndex;
+        outModel.status = TOModelStatus_ActNo;
+        [self.delegate toAction_SubModelFailure:outModel];
         return;
     }
     

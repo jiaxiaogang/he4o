@@ -419,8 +419,8 @@
  */
 -(void) reasonScorePM_V3:(TOAlgModel*)outModel failure:(void(^)())failure success:(void(^)())success notNeedPM:(void(^)())notNeedPM{
     //1. 数据准备
-    AIAlgNodeBase *M = [SMGUtils searchNode:outModel.content_p];
-    AIFoNodeBase *mMaskFo = outModel.pm_Fo;
+    AIAlgNodeBase *M = [SMGUtils searchNode:outModel.content_p];//(R-模式时为SAlg)
+    AIFoNodeBase *mMaskFo = outModel.pm_Fo;//(R-模式时为SFo)
     if (!outModel || !outModel.pm_Fo || !M) {
         if (notNeedPM) notNeedPM();
         return;
@@ -443,6 +443,9 @@
     //5. 理性评价: 取到首个P独特稀疏码 (判断是否需要行为化);
     AIKVPointer *firstJustPValue = ARR_INDEX(validJustPValues, 0);
     if (firstJustPValue) {
+        
+        //TODOTOMORROW20210123: 此处为R-模式时,数据结构并非如此,需调整使之兼容;
+        
         //5. 取得当前帧alg模型 (参考20206-结构图) 如: A22(速0,高5,距0,向→,皮0);
         TOAlgModel *curAlgModel = (TOAlgModel*)outModel.baseOrGroup;
         AIAlgNodeBase *curAlg = [SMGUtils searchNode:curAlgModel.content_p];
