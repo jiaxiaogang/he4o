@@ -311,7 +311,10 @@
  *      20200703: 废弃明确价值预测功能,因为认知期要广入,决策期再细修 (参考20063);
  *
  *  MARK:--------------------时序局部匹配算法V1.5--------------------
- *  @desc 由v1整理而来,逻辑与v1一致 (将v1中checkItemValid和assFoBlock回调,直接写在方法中,而不由外界传入);
+ *  @desc
+ *      1. 由v1整理而来,逻辑与v1一致 (将v1中checkItemValid和assFoBlock回调,直接写在方法中,而不由外界传入);
+ *      2. 时序识别v1.5 (在V1的基础上改的,与V2最大的区别,是其未按照索引计数排序);
+ *
  *  @status 启用,因为v2按照countDic排序的方式,不利于找出更确切的抽象结果;
  *
  *  MARK:--------------------时序全含匹配算法v2--------------------
@@ -331,77 +334,6 @@
  *      2021.01.18: 联想matchFo时,由原本只获取Normal类型,改为将HNGL也加入其中 (参考22052-1a,实测未影响原多向飞行训练);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
-//+(void) partMatching_FoV2:(AIFoNodeBase*)protoFo finishBlock:(void(^)(AIFoNodeBase *matchFo,CGFloat matchValue,NSInteger cutIndex))finishBlock{
-//    //1. 数据准备
-//    if (!ISOK(protoFo, AIFoNodeBase.class)) {
-//        finishBlock(nil,0,0);
-//        return;
-//    }
-//
-//    //2. 取assIndexes (取递归两层,当前1+抽象5=6条)
-//    NSMutableArray *allRef_ps_2 = [[NSMutableArray alloc] init];
-//    for (NSInteger i = 0; i < protoFo.content_ps.count; i++) {
-//        NSArray *itemIndexes = [ThinkingUtils collectionNodes:ARR_INDEX(protoFo.content_ps, i) absLimit:cTIRFoAbsIndexLimit conLimit:0];
-//
-//        //3. 收集下标i下的所有refPorts时序;
-//        NSMutableArray *iRef_ps = [ThinkingUtils collectionAlgRefs:itemIndexes itemRefLimit:NSIntegerMax except_p:protoFo.pointer];
-//        [allRef_ps_2 addObject:iRef_ps];
-//        if (Log4MFo) NSLog(@"-----> 第%ld个概念_索引数:%lu 指向时序数:%lu",(long)i,itemIndexes.count,(unsigned long)iRef_ps.count);
-//    }
-//
-//    //4. 收集结果候选集 (目前仅末位refFos,参考注释version说明);
-//    NSArray *allRef_ps_1 = ARR_INDEX_REVERSE(allRef_ps_2, 0);
-//
-//    //5. 对一维数组进行判断,看有几条有效引用;
-//    NSMutableDictionary *countDic = [[NSMutableDictionary alloc] init];
-//    for (AIKVPointer *item in allRef_ps_1) {
-//        //a. 对当前有指向的时序,进行计数 (因时序本来就是引用找到的,所以itemRefCount至少应该是1);
-//        NSInteger itemRefCount = 0;
-//        for (NSArray *ps in allRef_ps_2) {
-//            if ([ps containsObject:item]) {
-//                itemRefCount ++;
-//            }
-//        }
-//        //b. 收集引用数;
-//        [countDic setObject:@(itemRefCount) forKey:OBJ2DATA(item)];
-//    }
-//
-//    //6. 按照有效引用数,进行排序;
-//    NSArray *sortRef_ps_1 = [allRef_ps_1 sortedArrayUsingComparator:^NSComparisonResult(NSDictionary *obj1, NSDictionary *obj2) {
-//        NSInteger count1 = [NUMTOOK([countDic objectForKey:OBJ2DATA(obj1)]) integerValue];
-//        NSInteger count2 = [NUMTOOK([countDic objectForKey:OBJ2DATA(obj2)]) integerValue];
-//        return [SMGUtils compareIntA:count1 intB:count2];
-//    }];
-//    for (NSInteger i = 0; i < MIN(5, sortRef_ps_1.count); i++) {
-//        AIKVPointer *item = ARR_INDEX(sortRef_ps_1, i);
-//        AIFoNodeBase *itemFo = [SMGUtils searchNode:item];
-//        if (Log4MFo) NSLog(@"---> 排序完成条数:%lu 引用数:%@ 内容:%@->%@",(unsigned long)sortRef_ps_1.count,[countDic objectForKey:OBJ2DATA(item)],Fo2FStr(itemFo),Mvp2Str(itemFo.cmvNode_p));
-//    }
-//
-//    //7. 取排序好的前10个,从前至后,逐个找全含 (找到一个即可) (参考: 160_TIRFO单线顺序模型);
-//    __block BOOL successed = false;
-//    sortRef_ps_1 = ARR_SUB(sortRef_ps_1, 0, cPartMatchingCheckRefPortsLimit_Fo);
-//    for (AIKVPointer *item in sortRef_ps_1) {
-//        AIFoNodeBase *assFo = [SMGUtils searchNode:item];
-//
-//        //a. 对assFo做匹配判断;
-//        [TIRUtils TIR_Fo_CheckFoValidMatch:protoFo assFo:assFo checkItemValid:^BOOL(AIKVPointer *itemAlg, AIKVPointer *assAlg) {
-//            return [TOUtils mIsC_1:itemAlg c:assAlg];
-//        } success:^(NSInteger lastAssIndex, CGFloat matchValue) {
-//            NSLog(@"时序识别: SUCCESS:%lu >>> matchValue:%f %@->%@",(unsigned long)[sortRef_ps_1 indexOfObject:item],matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
-//            successed = true;
-//            finishBlock(assFo,matchValue,lastAssIndex);
-//        } failure:^(NSString *msg) {
-//            if (Log4MFo) NSLog(@"%@",msg);
-//        }];
-//
-//        //b. 成功一条即return
-//        if (successed) return;
-//    }
-//    NSLog(@"时序识别失败----Failure");
-//}
-
-//时序识别v1.5 (在V1的基础上改的,与V2最大的区别,是其未按照索引计数排序);
 +(void) partMatching_FoV1Dot5:(AIFoNodeBase*)protoFo except_ps:(NSArray*)except_ps finishBlock:(void(^)(AIFoNodeBase *matchFo,CGFloat matchValue,NSInteger cutIndex))finishBlock{
     //1. 数据准备
     if (!ISOK(protoFo, AIFoNodeBase.class)) {

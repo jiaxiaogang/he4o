@@ -483,7 +483,7 @@
     }else{
         [matchContent addObjectsFromArray:mModel.matchFo.content_ps];
     }
-    NSLog(@"\n\n------------------------------- IN反省类比 (%@) -------------------------------\nM:%@\nP:%@",ATType2Str(type),Fo2FStr(mModel.matchFo),Fo2FStr(shortFo));
+    NSLog(@"\n\n------------------------------- In反省类比 (%@) -------------------------------\nM:%@\nP:%@",ATType2Str(type),Fo2FStr(mModel.matchFo),Fo2FStr(shortFo));
     
     //3. 正向有序取差集 = M-P;
     NSMutableArray *justPs = [[NSMutableArray alloc] init];
@@ -574,7 +574,7 @@
     AIFoNodeBase *foNode = [SMGUtils searchNode:foModel.content_p];
     NSMutableArray *spFoContent = [[NSMutableArray alloc] init];
     NSString *spDS = [ThinkingUtils getAnalogyTypeDS:type];
-    NSLog(@"\n\n=============================== 反省类比 ===============================\n%@:时序:%@",ATType2Str(type),Fo2FStr(foNode));
+    NSLog(@"\n\n=============================== Out反省类比 ===============================\n%@:时序:%@",ATType2Str(type),Fo2FStr(foNode));
     
     //2. 构建SPAlg (触发反省类比_实际fo数据收集 (不用收集realFo,而是直接对未修正部分构建,参考20205-原则1));
     for (TOAlgModel *toAlgModel in foModel.subModels) {

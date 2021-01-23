@@ -232,19 +232,19 @@
 //正向类比
 #define Log4SameAna true
 //反向类比
-#define Log4DiffAna false
+#define Log4DiffAna true
 //方向索引
 #define Log4DirecRef true
 //行为化_GL
-#define Log4ActGL true
+#define Log4ActGL false
 //行为化_Hav
-#define Log4ActHav true
+#define Log4ActHav false
 //行为化_RelativeFos
-#define Log4ActRelativeFos true
+#define Log4ActRelativeFos false
 //行为化_GetInnerAlg
-#define Log4GetInnerAlg true
+#define Log4GetInnerAlg false
 //PM算法
-#define Log4PM true
+#define Log4PM false
 //外输入推进中循环
 #define Log4OPushM true
 //VRS评价
