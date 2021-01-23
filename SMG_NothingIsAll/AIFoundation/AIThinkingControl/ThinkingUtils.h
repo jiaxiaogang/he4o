@@ -175,7 +175,7 @@
 
 /**
  *  MARK:--------------------获取reModel--------------------
- *  @desc 有reModel时,返回第一条,没有时,返回自身 (参考反省类比注释bug-20211011);
+ *  @desc 有reModel时,返回第一条,没有时,返回自身 (参考反省类比注释bug-20210111);
  */
 +(TOAlgModel*) analogyReasonRethink_GetFirstReModelIfHav:(TOAlgModel*)baseAlg;
 

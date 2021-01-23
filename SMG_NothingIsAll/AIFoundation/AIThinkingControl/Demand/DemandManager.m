@@ -219,4 +219,11 @@
     return self.loopCache;
 }
 
+/**
+ *  MARK:--------------------移除某任务--------------------
+ */
+-(void) removeDemand:(DemandModel*)demand{
+    if (demand) return [self.loopCache removeObject:demand];
+}
+
 @end

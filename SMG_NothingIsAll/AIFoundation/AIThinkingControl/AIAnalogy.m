@@ -566,7 +566,7 @@
  *  @bug
  *      2020.09.18: 因为数据结构取错,导致取不到justPValues的BUG (参考:21027) T;
  *      2020.09.29: except_ps取错,导致反省类比的稀疏码内容经常为空 (参考21055描述及示图);
- *      2021.10.11: 有时baseAlg没有reModel,子节点直接就是value,导致取reModel..subModels闪退 (改为无reModel时直接用baseAlg);
+ *      2021.01.11: 有时baseAlg没有reModel,子节点直接就是value,导致取reModel..subModels闪退 (改为无reModel时直接用baseAlg);
  */
 +(void) analogy_ReasonRethink:(TOFoModel*)foModel cutIndex:(NSInteger)cutIndex type:(AnalogyType)type{
     //1. 数据准备

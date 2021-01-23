@@ -159,11 +159,15 @@
             //4. 取待满足首个,从pAlg中找出同区码;
             AIKVPointer *targetValue_p = ARR_INDEX(targetValue_ps, 0);
             AIKVPointer *protoValue_p = [SMGUtils filterSameIdentifier_p:targetValue_p b_ps:pAlg.content_ps];
+            NSArray *justPValues = [SMGUtils filterSameIdentifier_Dic:targetValue_ps b_ps:pAlg.content_ps].allValues;
+            outModel.pm_ProtoAlg = pAlg;
+            [outModel.justPValues addObjectsFromArray:justPValues];
+            outModel.pm_Fo = [SMGUtils searchNode:outModel.baseOrGroup.content_p];
+            //5. TODOTOMORROW20210123: 转PM做稀疏码评价和满足处理;
             
             //5. 取到同区码后,进行GL加工,满足S_转移;
             if (targetValue_p) {
                 TOValueModel *valueModel = [TOValueModel newWithSValue:protoValue_p pValue:targetValue_p group:outModel];
-                outModel.pm_ProtoAlg = pAlg;
                 NSLog(@"------ R-:GL行为化: (%@ -> %@)",Pit2FStr(protoValue_p),Pit2FStr(targetValue_p));
                 [self.delegate toAction_SubModelBegin:valueModel];
                 return;

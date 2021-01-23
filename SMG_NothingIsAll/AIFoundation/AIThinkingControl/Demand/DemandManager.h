@@ -54,4 +54,10 @@
  */
 -(NSArray*) getAllDemand;
 
+
+/**
+ *  MARK:--------------------移除某任务--------------------
+ */
+-(void) removeDemand:(DemandModel*)demand;
+
 @end

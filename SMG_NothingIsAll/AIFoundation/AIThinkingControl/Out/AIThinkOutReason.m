@@ -794,20 +794,17 @@
                 AnalogyType type = (actYesModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;
                 NSLog(@"---//触发器R-_任务:%@ 破壁:%@ (%@)",Fo2FStr(matchFo),Pit2FStr(actYesModel.content_p),ATType2Str(type));
                 
-                //TODOTOMORROW20210122:
-                //4. 可以考虑,仅对SP经验的强度产生变化;
-                //[AIAnalogy analogy_ReasonRethink:foModel cutIndex:NSIntegerMax type:type];
+                //4. 暂不开通反省类比,等做兼容PM后,再打开反省类比;
+                [AIAnalogy analogy_ReasonRethink:(TOFoModel*)actYesModel cutIndex:NSIntegerMax type:type];
                 
                 //4. 失败时,转流程控制-失败 (会开始下一解决方案) (参考22061-8);
                 if (type == ATSub) {
                     actYesModel.status = TOModelStatus_ScoreNo;
                     [self singleLoopBackWithFailureModel:actYesModel];
                 }else{
-                    //5. 完成任务 (参考22061-9);
+                    //5. SFo破壁成功,完成任务 (参考22061-9);
                     actYesModel.status = TOModelStatus_Finish;
-                    //9  能不躲了mv-? 避开,(OPushM无mv-),则最终demand成功,任务完成;
-                    //> 还是ActYes,触发P反省标记P,且设为finish,并移除任务;
-                    //将demand移出DemandManager;
+                    [theTC.outModelManager removeDemand:demand];
                 }
             }];
             return;
