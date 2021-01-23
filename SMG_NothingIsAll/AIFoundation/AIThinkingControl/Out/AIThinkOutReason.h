@@ -80,6 +80,6 @@
 /**
  *  MARK:--------------------"外层输入" 推进 "中层循环" 决策--------------------
  */
--(BOOL) commitFromOuterPushMiddleLoop:(DemandModel*)demand latestMModel:(AIShortMatchModel*)latestMModel;
+-(BOOL) tor_OPushM:(DemandModel*)demand latestMModel:(AIShortMatchModel*)latestMModel;
 
 @end

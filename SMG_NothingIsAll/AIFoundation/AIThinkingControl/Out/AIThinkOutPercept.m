@@ -156,6 +156,7 @@
  *  @TODO 1. 对抽象也尝试取brotherFo,比如车撞与落石撞,其实都是需要躲开"撞过来的物体";
  *  @version
  *      2020.05.12 - 支持cutIndex的判断,必须是未发生的部分才可以被修正 (如车将撞上,躲开是对的,但将已过去的出门改成不出门,是错的);
+ *      2021.01.23 - R-模式支持决策前空S评价 (参考22061-1);
  */
 -(void) reasonSub:(ReasonDemandModel*)demand{
     //1. 数据检查
@@ -176,13 +177,18 @@
     NSArray *validFos = [SMGUtils removeSub_ps:except_ps parent_ps:sFo_ps];
     NSLog(@"\n\n=============================== TOP.R- ===============================\n任务:%@ 已发生:%ld 不应期数:%lu 可尝试方案:%lu",Fo2FStr(matchFo),(long)demand.inModel.cutIndex,(unsigned long)except_ps.count,(unsigned long)validFos.count);
     
-    //5. 新方案
-    AIKVPointer *tryFo_p = ARR_INDEX(validFos, 0);
-    TOFoModel *foModel = [TOFoModel newWithFo_p:tryFo_p base:demand];
-    NSLog(@"------->>>>>> R-新增一例解决方案: %@",Pit2FStr(tryFo_p));
-    
-    //6. 提前决策流程控制,行为化;
-    [self.delegate aiTOP_2TOR_ReasonSub:foModel demand:demand];
+    //5. 找新方案 (破壁者);
+    for (AIKVPointer *item_p in validFos) {
+        //6. 未发生理性评价 (空S评价);
+        if (![AIScore FRS:[SMGUtils searchNode:item_p]]) continue;
+        
+        //7. 评价通过则取出 (提交决策流程控制,行为化);
+        TOFoModel *foModel = [TOFoModel newWithFo_p:item_p base:demand];
+        NSLog(@"------->>>>>> R-新增一例解决方案: %@",Pit2FStr(item_p));
+        [self.delegate aiTOP_2TOR_ReasonSub:foModel demand:demand];
+        break;
+    }
+    NSLog(@"------->>>>>> R-无计可施");
 }
 /**
  *  MARK:-------------------- P- --------------------

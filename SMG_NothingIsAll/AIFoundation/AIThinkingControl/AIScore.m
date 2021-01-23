@@ -102,18 +102,25 @@
 
 /**
  *  MARK:--------------------未发生理性评价 (空S)--------------------
- *  @todo
- *      2020.12.28: 现在代码看起来S判空有问题,应该取出S并判断count是否为0;
+ *  @version
+ *      2021.01.23: 兼容isSP类型,以支持R-模式下的空S评价 (参考22061-1);
+ *      2021.01.23: 原来判空方式为SPorts数组是否为空,会导致一次否定,永远否定,改为真正指向内容是否为空 T;
  *  @result 默认返回true (因为空fo并不指向空S);
  */
 +(BOOL) FRS:(AIFoNodeBase*)fo{
-    //1. 未发生理性评价-必须为hngl节点 (否则F14主解决方案也会失败);
-    if ([TOUtils isHNGL:fo.pointer]) {
+    //1. 未发生理性评价-必须为hnglsp节点 (否则F14主解决方案也会失败);
+    if ([TOUtils isHNGLSP:fo.pointer]) {
         
         //2. 未发生理性评价-且为空ATSub时,评价不通过;
         NSArray *sPorts = [AINetUtils absPorts_All:fo type:ATSub];
-        BOOL reasonScore = !ARRISOK(sPorts);
-        return reasonScore;
+        NSString *spaceHeader = [NSString md5:@""];
+        
+        //3. 判断sPorts有没有空S (有时返回false,评价不通过);
+        for (AIPort *sPort in sPorts) {
+            if ([sPort.header isEqualToString:spaceHeader]) {
+                return false;
+            }
+        }
     }
     return true;
 }

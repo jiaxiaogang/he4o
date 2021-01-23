@@ -39,8 +39,8 @@
  *  @desc 因为TOAction.SP算法执行时,将cGLDic存此,以便其中一个稀疏码成功时,顺利转移下一个;
  */
 @property (strong, nonatomic) NSMutableDictionary *cGLDic;
-//在TOAction.SP算法执行时,将pAlg存此,TOValueAlg转移时调用_GL方法会用到;
-@property (strong, nonatomic) AIAlgNodeBase *sp_P;
+//在TOAction.SP算法执行时,将pAlg存此,TOValueAlg转移时调用_GL方法会用到 (2021.01.23: 发出也没调用,仅在PM跳转GL行为化时有赋值而已);
+//@property (strong, nonatomic) AIAlgNodeBase *sp_P;
 
 
 /**
@@ -56,13 +56,21 @@
 //保留字段 (score用于存M所在matchFo的价值分,mvAT用于存M所在的matchFo的价值at标识);
 @property (assign, nonatomic) float pm_Score;
 @property (strong, nonatomic) NSString *pm_MVAT;
-@property (strong, nonatomic) AIFoNodeBase *pm_Fo;//用来取conPorts的Fo
+
+/**
+ *  MARK:--------------------pmFo--------------------
+ *  @desc 用来取conPorts的Fo
+ *      1. _Hav中P-模式时,为参数outModel的base (即当前正在行为化的Fo);
+ *      2. tor_OPushM()中为focusModel.base;
+ *      3. _Hav中R-模式时,为参数outModel的base (即SFo);
+ */
+@property (strong, nonatomic) AIFoNodeBase *pm_Fo;
 @property (strong, nonatomic) AIAlgNodeBase *pm_ProtoAlg;//getInnerAlg(GL)时,用作联想参考;
 
 /**
  *  MARK:--------------------实际发生的概念保留--------------------
  *  @desc
- *      1. 在commitFromOuterPushMiddleLoop中进行保留;
+ *      1. 在tor_OPushM中进行保留;
  *      2. 在ActYes流程控制中,生物钟触发器触发时,进行使用,用于反省类比;
  */
 @property (strong, nonatomic) AIKVPointer *realContent_p;

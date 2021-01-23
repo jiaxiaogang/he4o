@@ -218,7 +218,7 @@ static AIThinkingControl *_instance;
     DemandModel *demand = [self.demandManager getCurrentDemand];
     
     //5. 外循环入->推进->中循环出;
-    BOOL pushOldDemand = [self.tOR commitFromOuterPushMiddleLoop:demand latestMModel:inModel];
+    BOOL pushOldDemand = [self.tOR tor_OPushM:demand latestMModel:inModel];
     
     //6. 此处推进不成功,则运行TOP四模式;
     if (!pushOldDemand) {

@@ -414,6 +414,9 @@
 +(BOOL) isHNGL:(AIKVPointer*)p{
     return [self isH:p] || [self isN:p] || [self isG:p] || [self isL:p];
 }
++(BOOL) isHNGLSP:(AIKVPointer*)p{
+    return [self isH:p] || [self isN:p] || [self isG:p] || [self isL:p] || [self isS:p] || [self isP:p];
+}
 +(BOOL) isH:(AIKVPointer*)p{
     return p && [p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATHav]];
 }
@@ -428,6 +431,9 @@
 }
 +(BOOL) isS:(AIKVPointer*)p{
     return p && [p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATSub]];
+}
++(BOOL) isP:(AIKVPointer*)p{
+    return p && [p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATPlus]];
 }
 
 /**

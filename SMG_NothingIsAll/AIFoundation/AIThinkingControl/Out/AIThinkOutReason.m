@@ -250,7 +250,7 @@
  *  @version
  *      2020.08.05: waitModel.pm_Score的赋值改为取demand.score取负 (因为demand一般为负,而解决任务为正);
  *                  而此处,从waitModel的base中找fo较麻烦,所以省事儿,就直接取-demand.score得了;
- *      2020.08.24: 从commitFromOuterPushMiddleLoop中独立出来,独立调用,处理realAlg和HNGL的变化相符判断;
+ *      2020.08.24: 从tor_OPushM中独立出来,独立调用,处理realAlg和HNGL的变化相符判断;
  *      2020.12.21: 重新将commitFromOuterInputReason与OuterPushMiddleLoop()合并 (参考21185);
  *      2020.12.22: 在以往isNormal之外,再支持对isH,isGL的节点进行PM理性评价;
  *      2020.12.22: 将所有waitModel有效的返回都赋值OuterBack,而仅将首个focusModel进行PM理性评价;
@@ -263,7 +263,7 @@
  *      2020.12.26: GL时,在21204BUG修复后训练时,发现mIsC有时是cIsM,所以都判断下;
  *      2020.12.26: 在OPushM继续PM前,replaceAlg时,重新赋值JustPValues=P-C (参考21206);
  */
--(BOOL) commitFromOuterPushMiddleLoop:(DemandModel*)demand latestMModel:(AIShortMatchModel*)latestMModel{
+-(BOOL) tor_OPushM:(DemandModel*)demand latestMModel:(AIShortMatchModel*)latestMModel{
     //1. 数据检查
     if (!demand || !latestMModel) return false;
     
@@ -396,7 +396,10 @@
  *  @desc
  *      1. 对当前输入帧进行PM理性评价 (稀疏码检查,参考20063);
  *      2. 白话: 当具象要替代抽象时,对其多态性进行检查加工;
- *  @param outModel : 因本文是验证其多态性,所以传入的outModel.cotent即M必须是P的抽象;
+ *  @param outModel :
+ *              1. 因本文是验证其多态性,所以传入的outModel.cotent即M必须是P的抽象;
+ *              2. R-模式时为outModel即是SAlg,而outModel.base即是SFo;
+ *
  *  @version
  *      2020.07.02: 将outModel的pm相关字段放到方法调用前就处理好 (为了流程控制调用时,已经有完善可用的数据了);
  *      2020.07.14: 支持综合评价totalRefScore,因为不综合评价的话,会出现不稳定的BUG,参考20093;
@@ -405,6 +408,7 @@
  *      2020.09.09: 转移_GL时,取GL目标值,改为从P中取 (参考20207);
  *      2020.11.23: 将return BOOL改为三个block: (failure,success,notNeedPM) (参考21147);
  *      2021.01.01: v3_评价依据改为值域求和 (参考2120A & n21p21);
+ *      2021.01.23: 兼容支持R-模式 (满足SAlg) (参考22061-改4);
  *  _result moveValueSuccess : 转移到稀疏码行为化了,转移成功则返回true,未转移则返回false;
  *  @bug
  *      2020.07.05: BUG,在用MatchConF.content找交集同区稀疏码肯定找不到,改为用MatchConA后,ok了;
@@ -419,9 +423,7 @@
  */
 -(void) reasonScorePM_V3:(TOAlgModel*)outModel failure:(void(^)())failure success:(void(^)())success notNeedPM:(void(^)())notNeedPM{
     //1. 数据准备
-    AIAlgNodeBase *M = [SMGUtils searchNode:outModel.content_p];//(R-模式时为SAlg)
-    AIFoNodeBase *mMaskFo = outModel.pm_Fo;//(R-模式时为SFo)
-    if (!outModel || !outModel.pm_Fo || !M) {
+    if (!outModel || !outModel.pm_Fo) {
         if (notNeedPM) notNeedPM();
         return;
     }
@@ -435,7 +437,7 @@
         if (notNeedPM) notNeedPM();
         return;
     }
-    NSLog(@"\n\n=============================== PM ===============================\nM:%@\nMAtFo:%@",Alg2FStr(M),Fo2FStr(mMaskFo));
+    NSLog(@"\n\n=============================== PM ===============================\nM:%@\nMAtFo:%@",Pit2FStr(outModel.content_p),Fo2FStr(outModel.pm_Fo));
     if (Log4PM) NSLog(@"---> P独特码:%@",Pits2FStr(outModel.justPValues));
     if (Log4PM) NSLog(@"---> 不应期:%@",Pits2FStr(except_ps));
     if (Log4PM) NSLog(@"---> P有效独特码:%@",Pits2FStr(validJustPValues));
@@ -443,16 +445,21 @@
     //5. 理性评价: 取到首个P独特稀疏码 (判断是否需要行为化);
     AIKVPointer *firstJustPValue = ARR_INDEX(validJustPValues, 0);
     if (firstJustPValue) {
-        
-        //TODOTOMORROW20210123: 此处为R-模式时,数据结构并非如此,需调整使之兼容;
-        
-        //5. 取得当前帧alg模型 (参考20206-结构图) 如: A22(速0,高5,距0,向→,皮0);
-        TOAlgModel *curAlgModel = (TOAlgModel*)outModel.baseOrGroup;
-        AIAlgNodeBase *curAlg = [SMGUtils searchNode:curAlgModel.content_p];
-        
-        //6. 取当前方案fo模型 (参考20206-结构图) 如: P+新增一例解决方案: F23[A22(速0,高5,距0,向→,皮0),A1(吃1)]->M7{64};
-        TOFoModel *curFoModel = (TOFoModel*)curAlgModel.baseOrGroup;
-        AIFoNodeBase *curFo = [SMGUtils searchNode:curFoModel.content_p];
+        //5. R-模式判断 (R-模式时,数据结构中获取curAlg和curFo);
+        AIAlgNodeBase *curAlg = nil;
+        AIFoNodeBase *curFo = nil;
+        if ([TOUtils isS:outModel.content_p] && ISOK(outModel.baseOrGroup.baseOrGroup, ReasonDemandModel.class)) {
+            curAlg = [SMGUtils searchNode:outModel.content_p];
+            curFo = [SMGUtils searchNode:outModel.baseOrGroup.content_p];
+        }else{
+            //5. 取得当前帧alg模型 (参考20206-结构图) 如: A22(速0,高5,距0,向→,皮0);
+            TOAlgModel *curAlgModel = (TOAlgModel*)outModel.baseOrGroup;
+            curAlg = [SMGUtils searchNode:curAlgModel.content_p];
+            
+            //6. 取当前方案fo模型 (参考20206-结构图) 如: P+新增一例解决方案: F23[A22(速0,高5,距0,向→,皮0),A1(吃1)]->M7{64};
+            TOFoModel *curFoModel = (TOFoModel*)curAlgModel.baseOrGroup;
+            curFo = [SMGUtils searchNode:curFoModel.content_p];
+        }
         
         //7. 根据curAlg和curFo取有效的部分validAlgSPs (参考20206-步骤图-第1步);
         NSArray *sPorts = [ThinkingUtils pm_GetValidSPAlg_ps:curAlg curFo:curFo type:ATSub];
@@ -491,7 +498,6 @@
             if (glValue4M) {
                 if (Log4PM) NSLog(@"-> 转移 Success:(%@->%@)",Pit2FStr(firstJustPValue),Pit2FStr(glValue4M));
                 TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:glValue4M group:outModel];
-                outModel.sp_P = M;
                 [self singleLoopBackWithBegin:toValueModel];
                 if (success) success();
                 return;

@@ -91,11 +91,13 @@
  *      2020.12.17: 此处对alg的支持,需要迭代 (否则原来调用这五个方法isHNGL,isH,isN,isG,isL的alg都会不准确);
  */
 +(BOOL) isHNGL:(AIKVPointer*)p;
++(BOOL) isHNGLSP:(AIKVPointer*)p;
 +(BOOL) isH:(AIKVPointer*)p;
 +(BOOL) isN:(AIKVPointer*)p;
 +(BOOL) isG:(AIKVPointer*)p;
 +(BOOL) isL:(AIKVPointer*)p;
 +(BOOL) isS:(AIKVPointer*)p;
++(BOOL) isP:(AIKVPointer*)p;
 
 /**
  *  MARK:--------------------是否HNGL的TOModel--------------------
