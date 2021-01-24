@@ -183,24 +183,25 @@
  *  @version
  *      2021.01.23: 改为返回真实距离 (什么距离可以被撞到,由反省类比自行学习);
  *      2021.01.24: 真实距离导致DisY在多向飞行的VRS评价容易为否,所以先停掉 (随时防撞训练时,需要再打开,因为多向飞行向上下飞,应该可以不怕此问题);
+ *      2021.01.24: 经分析评价为否是因为很少经历多变的DisY,所以将直投到乌鸦身上的位置更随机些,此处又改为真实距离了 (经训练多向飞行ok);
  */
 +(NSInteger) distanceY:(UIView*)selfView target:(UIView*)target{
-    //return selfView.y - target.y;
+    return selfView.y - target.y;
     //1. 数据准备;
-    CGFloat selfY = [UIView convertWorldRect:selfView].origin.y;
-    CGFloat selfMaxY = selfY + selfView.height;
-    CGFloat targetY = [UIView convertWorldRect:target].origin.y;
-    CGFloat targetMaxY = targetY + target.height;
-    
-    //2. self在下方时;
-    if (selfY > targetMaxY) {
-        return selfY - targetMaxY;
-    }else if(targetY > selfMaxY){
-        //3. self在上方时;
-        return targetY - selfMaxY;
-    }
-    //4. 有重叠时,直接返回0;
-    return 0;
+    //CGFloat selfY = [UIView convertWorldRect:selfView].origin.y;
+    //CGFloat selfMaxY = selfY + selfView.height;
+    //CGFloat targetY = [UIView convertWorldRect:target].origin.y;
+    //CGFloat targetMaxY = targetY + target.height;
+    //
+    ////2. self在下方时;
+    //if (selfY > targetMaxY) {
+    //    return selfY - targetMaxY;
+    //}else if(targetY > selfMaxY){
+    //    //3. self在上方时;
+    //    return targetY - selfMaxY;
+    //}
+    ////4. 有重叠时,直接返回0;
+    //return 0;
 }
 
 //border

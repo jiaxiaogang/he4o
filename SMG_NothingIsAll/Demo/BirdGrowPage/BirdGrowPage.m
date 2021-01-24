@@ -68,6 +68,11 @@
 //MARK:===============================================================
 //MARK:                     < onclick >
 //MARK:===============================================================
+/**
+ *  MARK:--------------------直投--------------------
+ *  @version
+ *      2021.01.24: 使直投到乌鸦身上的坚果位置更随机些 (参考视觉DisY算法中20210124注释);
+ */
 - (IBAction)nearFeedingBtnOnClick:(id)sender {
     [theApp.heLogView addDemoLog:@"直投"];
     DemoLog(@"直投")
@@ -75,8 +80,8 @@
     [foodView hit];
     [foodView setOrigin:CGPointMake(ScreenWidth * 0.375f, ScreenHeight - 66)];
     [self.view addSubview:foodView];
-    CGFloat targetX = self.birdView.center.x + (random() % 3 - 1) * 10;
-    CGFloat targetY = self.birdView.center.y + (random() % 3 - 1) * 10;
+    CGFloat targetX = self.birdView.center.x + (random() % 20 - 10);
+    CGFloat targetY = self.birdView.center.y + (random() % 20 - 10);
     CGPoint targetPoint = CGPointMake(targetX, targetY);
     [UIView animateWithDuration:0.3f animations:^{
         [foodView setCenter:targetPoint];

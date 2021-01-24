@@ -242,7 +242,7 @@
 //行为化_RelativeFos
 #define Log4ActRelativeFos false
 //行为化_GetInnerAlg
-#define Log4GetInnerAlg false
+#define Log4GetInnerAlg true
 //PM算法
 #define Log4PM false
 //外输入推进中循环
