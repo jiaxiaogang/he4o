@@ -162,7 +162,7 @@
         CGFloat score = [AIScore score4MV:item.matchFo.cmvNode_p ratio:item.matchFoValue];
         sumScore += score;
     }
-    CGFloat rtScore = sumScore / rtInModel.matchFos.count;
+    CGFloat rtScore = rtInModel.matchFos.count == 0 ? 0 : sumScore / rtInModel.matchFos.count;
     
     //3. 对demand进行评价 (P-模式下demand为负分);
     DemandModel *demand = [TOUtils getDemandModelWithSubOutModel:outModel];
