@@ -15,6 +15,13 @@
     return ARR_INDEX(self.matchAlgs, 0);
 }
 
+-(NSMutableArray *)matchFos{
+    if (!_matchFos) {
+        _matchFos = [[NSMutableArray alloc] init];
+    }
+    return _matchFos;
+}
+
 -(AIFoNodeBase *)matchFo{
     AIMatchFoModel *firstMFo = ARR_INDEX(self.matchFos, 0);
     return firstMFo ? firstMFo.matchFo : nil;

@@ -17,6 +17,7 @@
 #import "DemandModel.h"
 #import "TOFoModel.h"
 #import "AIAlgNodeBase.h"
+#import "AIMatchFoModel.h"
 
 @implementation AIScore
 
@@ -146,27 +147,32 @@
 
 /**
  *  MARK:--------------------对TOFoModel进行反思评价--------------------
+ *  @version
+ *      2021.01.24: 对多时序识别,更准确多元的评价支持;
  */
-+(BOOL) FPS:(TOFoModel*)outModel rtBlock:(AIShortMatchModel*(^)(void))rtBlock{
-    if (!outModel || !rtBlock) {
++(BOOL) FPS:(TOFoModel*)outModel rtInModel:(AIShortMatchModel*)rtInModel{
+    //1. 数据检查
+    if (!outModel || !rtInModel) {
         return true;
     }
-    //6. MC反思: 回归tir反思,重新识别理性预测时序,预测价值; (预测到鸡蛋变脏,或者cpu损坏) (理性预测影响评价即理性评价)
-    AIShortMatchModel *rtModel = rtBlock();
     
-    //7. MC反思: 对mModel进行评价;
-    AIKVPointer *rtMv_p = rtModel.matchFo.cmvNode_p;
-    CGFloat rtScore = [AIScore score4MV:rtMv_p ratio:rtModel.matchFoValue];
+    //2. 对mModel进行评价;
+    CGFloat sumScore = 0;
+    for (AIMatchFoModel *item in rtInModel.matchFos) {
+        CGFloat score = [AIScore score4MV:item.matchFo.cmvNode_p ratio:item.matchFoValue];
+        sumScore += score;
+    }
+    CGFloat rtScore = sumScore / rtInModel.matchFos.count;
     
-    //8. 对原fo进行评价
+    //3. 对demand进行评价 (P-模式下demand为负分);
     DemandModel *demand = [TOUtils getDemandModelWithSubOutModel:outModel];
-    CGFloat curScore = [AIScore score4MV:demand.algsType urgentTo:demand.urgentTo delta:demand.delta ratio:1.0f];
+    CGFloat demandScore = [AIScore score4MV:demand.algsType urgentTo:demand.urgentTo delta:demand.delta ratio:1.0f];
     
     //10. 如果mv同区,只要为负则失败;
     //if ([rtMv_p.algsType isEqualToString:demand.algsType] && [mMv_p.dataSource isEqualToString:cMv_p.dataSource] && mcScore < 0) { return false; }
     
-    //11. 如果不同区,对mcScore和curScore返回评价值进行类比 (如宁饿死不吃屎);
-    return rtScore > curScore * 0.5f;
+    //4. 如果不同区,对mcScore和curScore返回评价值进行类比 (如宁饿死不吃屎);
+    return rtScore > demandScore * 0.5f;
 }
 
 //MARK:===============================================================

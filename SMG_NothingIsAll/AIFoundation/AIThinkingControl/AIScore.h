@@ -22,7 +22,7 @@
 +(BOOL) VRS:(AIKVPointer*)value_p cAlg:(AIAlgNodeBase*)cAlg sPorts:(NSArray*)sPorts pPorts:(NSArray*)pPorts;
 +(BOOL) FRS:(AIFoNodeBase*)fo;
 +(BOOL) FRS_Miss:(AIFoNodeBase*)sFo matchFo:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex;
-+(BOOL) FPS:(TOFoModel*)outModel rtBlock:(AIShortMatchModel*(^)(void))rtBlock;
++(BOOL) FPS:(TOFoModel*)outModel rtInModel:(AIShortMatchModel*)rtInModel;
 //+(BOOL) ARS;//ARS在MIsC判定成功后,由PM实现,PM涉及代码较多,先不迁移过来;
 
 /**

@@ -360,7 +360,6 @@
         if (Log4MFo) NSLog(@"-----> TIR_Fo 索引到有效时序数:%lu",(unsigned long)assFo_ps.count);
         
         //5. 依次对assFos对应的时序,做匹配度评价; (参考: 160_TIRFO单线顺序模型)
-        NSMutableArray *matchFos = [[NSMutableArray alloc] init];
         for (AIKVPointer *assFo_p in assFo_ps) {
             AIFoNodeBase *assFo = [SMGUtils searchNode:assFo_p];
             
@@ -369,10 +368,9 @@
                 return [TOUtils mIsC_1:itemAlg c:assAlg];
             } success:^(NSInteger lastAssIndex, CGFloat matchValue) {
                 NSLog(@"时序识别item SUCCESS >>> matchValue:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
-                [matchFos addObject:[AIMatchFoModel newWithMatchFo:assFo matchFoValue:matchValue cutIndex:lastAssIndex]];
+                [inModel.matchFos addObject:[AIMatchFoModel newWithMatchFo:assFo matchFoValue:matchValue cutIndex:lastAssIndex]];
             }];
         }
-        inModel.matchFos = matchFos;
     }
 }
 

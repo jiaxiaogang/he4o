@@ -55,9 +55,9 @@
     
     //3. fo反思评价 (2020.12.18仅首帧,进行评价) (2021.01.22ReasonDemandModel不做反思和空S评价);
     if (outModel.actionIndex == -1 && !ISOK(outModel.baseOrGroup, ReasonDemandModel.class)) {
-        BOOL scoreSuccess = [AIScore FPS:outModel rtBlock:^AIShortMatchModel *{
-            return [self.delegate toAction_RethinkInnerFo:curFo];
-        }];
+        //3. MC反思: 回归tir反思,重新识别理性预测时序,预测价值; (预测到鸡蛋变脏,或者cpu损坏) (理性预测影响评价即理性评价)
+        AIShortMatchModel *rtInModel = [self.delegate toAction_RethinkInnerFo:curFo];
+        BOOL scoreSuccess = [AIScore FPS:outModel rtInModel:rtInModel];
         if (!scoreSuccess) {
             NSLog(@"未发生感性评价(反思)-不通过");
             outModel.status = TOModelStatus_ScoreNo;
