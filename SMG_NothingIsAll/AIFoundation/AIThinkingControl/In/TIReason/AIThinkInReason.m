@@ -253,31 +253,31 @@
         BOOL isHNGL = [TOUtils isHNGL:matchFo.pointer];
         if (isHNGL) {
             //末位判断;
-            if (inModel.cutIndex == matchFo.count - 1) {
-                inModel.status = TIModelStatus_LastWait;
+            if (item.cutIndex == matchFo.count - 1) {
+                item.status = TIModelStatus_LastWait;
                 double deltaTime = [NUMTOOK(ARR_INDEX_REVERSE(matchFo.deltaTimes, 0)) doubleValue];
                 [AITime setTimeTrigger:deltaTime trigger:^{
                     //4. 反向反馈类比(成功/未成功)的主要原因;
-                    AnalogyType type = (inModel.status == TIModelStatus_LastWait) ? ATSub : ATPlus;
+                    AnalogyType type = (item.status == TIModelStatus_LastWait) ? ATSub : ATPlus;
                     NSLog(@"---//触发器HNGL_触发: %@ (%@)",Fo2FStr(matchFo),ATType2Str(type));
-                    [AIAnalogy analogy_InRethink:inModel shortFo:protoFo type:type];
+                    [AIAnalogy analogy_InRethink:item shortFo:protoFo type:type];
                     
                     //5. 失败状态标记;
-                    if (inModel.status == TIModelStatus_LastWait) inModel.status = TIModelStatus_OutBackNo;
+                    if (item.status == TIModelStatus_LastWait) item.status = TIModelStatus_OutBackNo;
                 }];
             }
         }else{
             //有mv判断;
-            if (inModel.cutIndex == matchFo.count && matchFo.cmvNode_p) {
-                inModel.status = TIModelStatus_LastWait;
+            if (item.cutIndex == matchFo.count && matchFo.cmvNode_p) {
+                item.status = TIModelStatus_LastWait;
                 [AITime setTimeTrigger:matchFo.mvDeltaTime trigger:^{
                     //4. 反向反馈类比(成功/未成功)的主要原因;
-                    AnalogyType type = (inModel.status == TIModelStatus_LastWait) ? ATSub : ATPlus;
+                    AnalogyType type = (item.status == TIModelStatus_LastWait) ? ATSub : ATPlus;
                     NSLog(@"---//触发器Mv_触发: %@ (%@)",Fo2FStr(matchFo),ATType2Str(type));
-                    [AIAnalogy analogy_InRethink:inModel shortFo:protoFo type:type];
+                    [AIAnalogy analogy_InRethink:item shortFo:protoFo type:type];
                     
                     //5. 失败状态标记;
-                    if (inModel.status == TIModelStatus_LastWait) inModel.status = TIModelStatus_OutBackNo;
+                    if (item.status == TIModelStatus_LastWait) item.status = TIModelStatus_OutBackNo;
                 }];
             }
         }

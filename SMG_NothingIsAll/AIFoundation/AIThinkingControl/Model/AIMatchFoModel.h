@@ -18,5 +18,6 @@
 @property (strong, nonatomic) AIFoNodeBase *matchFo;    //匹配时序
 @property (assign, nonatomic) CGFloat matchFoValue;     //时序匹配度
 @property (assign, nonatomic) NSInteger cutIndex;       //已发生与预测的截点 (0开始,已发生含cutIndex);
+@property (assign, nonatomic) TIModelStatus status;     //状态
 
 @end

@@ -26,9 +26,8 @@
 #import "TOFoModel.h"
 #import "TOAlgModel.h"
 #import "TOUtils.h"
-//temp
-#import "NVHeUtil.h"
 #import "AIScore.h"
+#import "AIMatchFoModel.h"
 
 @implementation AIAnalogy
 
@@ -458,7 +457,7 @@
  *      1. 类比找出预测与实际中不符的特征部分;
  *      2. 取P独特码(P-M差集) (M应该不存在多出来的,因为M本来就是被P全含的);
  *      3. 用独特码集构建S/P节点;
- *  @param mModel : M_预测fo为mModel.matchFo;
+ *  @param matchFoModel : M_预测fo为matchFo;
  *  @param shortFo : P_实际fo为shortFo;
  *  @version
  *      20200416 - 原先ms和ps都导致{mv-},改为ms导致{mmv*rate},ps导致{pmv*rate};
@@ -471,19 +470,20 @@
  *      20200823 - 一直以来,反向类比触发条件太苛刻的问题,通过反省类比迭代之,支持正与平也可触发 T;
  *      20210120 - 此处取mType和pType的SPType有误,S不表示负价值评分,而是表示不符合当前父场景的hope预期 (已废弃,改为直接传入type);
  */
-+(void) analogy_InRethink:(AIShortMatchModel*)mModel shortFo:(AIFoNodeBase*)shortFo type:(AnalogyType)type{
++(void) analogy_InRethink:(AIMatchFoModel*)matchFoModel shortFo:(AIFoNodeBase*)shortFo type:(AnalogyType)type{
     //1. 数据准备;
-    if (!mModel || !mModel.matchFo || !shortFo) return;
+    if (!matchFoModel || !matchFoModel.matchFo || !shortFo) return;
+    AIFoNodeBase *matchFo = matchFoModel.matchFo;
     NSString *ds = [ThinkingUtils getAnalogyTypeDS:type];
     
     //2. 取有效的matchFo部分 (HNGL取range部分 | MV取所有);
     NSMutableArray *matchContent = [[NSMutableArray alloc] init];
-    if ([TOUtils isHNGL:mModel.matchFo.pointer]) {
-        [matchContent addObjectsFromArray:ARR_SUB(mModel.matchFo.content_ps, 0, mModel.matchFo.count - 1)];
+    if ([TOUtils isHNGL:matchFo.pointer]) {
+        [matchContent addObjectsFromArray:ARR_SUB(matchFo.content_ps, 0, matchFo.count - 1)];
     }else{
-        [matchContent addObjectsFromArray:mModel.matchFo.content_ps];
+        [matchContent addObjectsFromArray:matchFo.content_ps];
     }
-    NSLog(@"\n\n------------------------------- In反省类比 (%@) -------------------------------\nM:%@\nP:%@",ATType2Str(type),Fo2FStr(mModel.matchFo),Fo2FStr(shortFo));
+    NSLog(@"\n\n------------------------------- In反省类比 (%@) -------------------------------\nM:%@\nP:%@",ATType2Str(type),Fo2FStr(matchFo),Fo2FStr(shortFo));
     
     //3. 正向有序取差集 = M-P;
     NSMutableArray *justPs = [[NSMutableArray alloc] init];
@@ -519,7 +519,7 @@
     }
     
     //9. 构建SPFo;
-    AIFoNodeBase *spFo = [ThinkingUtils createAbsFo_NoRepeat_General:@[mModel.matchFo] content_ps:justPs ds:ds difStrong:1];
+    AIFoNodeBase *spFo = [ThinkingUtils createAbsFo_NoRepeat_General:@[matchFo] content_ps:justPs ds:ds difStrong:1];
     if (Log4DiffAna) NSLog(@"--> In反省类比 构建SPFo %@",Fo2FStr(spFo));
 }
 

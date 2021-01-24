@@ -37,4 +37,9 @@
     return firstMFo ? firstMFo.cutIndex : 0;
 }
 
+-(TIModelStatus)status{
+    AIMatchFoModel *firstMFo = ARR_INDEX(self.matchFos, 0);
+    return firstMFo ? firstMFo.status : TIModelStatus_Default;
+}
+
 @end
