@@ -75,13 +75,20 @@
  */
 @property (strong, nonatomic) AIFoNodeBase *matchAFo;
 
-//TODOTOMORROW20210123:
-//2. 将多识别时序用于外类比;
-
+/**
+ *  MARK:--------------------时序识别--------------------
+ *  @version
+ *      2021.01.23: 支持时序多识别 (参考22073);
+ *      2021.01.24: 默认取首条mFo,改为默认取含mv且迫切度最高的一条 (参考22073-todo7);
+ */
 @property (strong, nonatomic) NSMutableArray *matchFos; //匹配时序 (元素为AIMatchFoModel);
-@property (strong, nonatomic) AIFoNodeBase *matchFo;    //matchFo (默认取matchFos首条)
-@property (assign, nonatomic) CGFloat matchFoValue;     //时序匹配度 (默认取matchFos首条)
-@property (assign, nonatomic) NSInteger cutIndex;       //已发生与预测的截点 (0开始,已发生含cutIndex) (默认取matchFos首条)
-//@property (assign, nonatomic) TIModelStatus status;     //状态 (默认取matchFos首条)
+
+/**
+ *  MARK:--------------------含mv且迫切度最高的一条mFo--------------------
+ */
+@property (strong, nonatomic) AIFoNodeBase *matchFo;    //matchFo
+@property (assign, nonatomic) CGFloat matchFoValue;     //时序匹配度
+@property (assign, nonatomic) NSInteger cutIndex;       //已发生与预测的截点 (0开始,已发生含cutIndex)
+@property (assign, nonatomic) TIModelStatus status;     //状态
 
 @end

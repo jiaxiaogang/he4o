@@ -8,6 +8,7 @@
 
 #import "AIShortMatchModel.h"
 #import "AIMatchFoModel.h"
+#import "AIScore.h"
 
 @implementation AIShortMatchModel
 
@@ -23,23 +24,45 @@
 }
 
 -(AIFoNodeBase *)matchFo{
-    AIMatchFoModel *firstMFo = ARR_INDEX(self.matchFos, 0);
-    return firstMFo ? firstMFo.matchFo : nil;
+    AIMatchFoModel *mFo = [self mustUrgentMFo];
+    return mFo ? mFo.matchFo : nil;
 }
 
 -(CGFloat)matchFoValue{
-    AIMatchFoModel *firstMFo = ARR_INDEX(self.matchFos, 0);
-    return firstMFo ? firstMFo.matchFoValue : 0;
+    AIMatchFoModel *mFo = [self mustUrgentMFo];
+    return mFo ? mFo.matchFoValue : 0;
 }
 
 -(NSInteger)cutIndex{
-    AIMatchFoModel *firstMFo = ARR_INDEX(self.matchFos, 0);
-    return firstMFo ? firstMFo.cutIndex : 0;
+    AIMatchFoModel *mFo = [self mustUrgentMFo];
+    return mFo ? mFo.cutIndex : 0;
 }
 
 -(TIModelStatus)status{
-    AIMatchFoModel *firstMFo = ARR_INDEX(self.matchFos, 0);
-    return firstMFo ? firstMFo.status : TIModelStatus_Default;
+    AIMatchFoModel *mFo = [self mustUrgentMFo];
+    return mFo ? mFo.status : TIModelStatus_Default;
+}
+
+/**
+ *  MARK:--------------------取最迫切的matchFoModel--------------------
+ *  @desc 即是评分<0,且最小的那个;
+ */
+-(AIMatchFoModel*) mustUrgentMFo{
+    //1. 找出最迫切的;
+    AIMatchFoModel *result;
+    for (AIMatchFoModel *item in self.matchFos) {
+        
+        //2. 首个只要是有迫切度即可;
+        CGFloat newScore = [AIScore score4MV:item.matchFo.cmvNode_p ratio:item.matchFoValue];
+        if (!result && newScore < 0) result = item;
+        
+        //3. 将更迫切的替换到result;
+        CGFloat oldScore = [AIScore score4MV:result.matchFo.cmvNode_p ratio:result.matchFoValue];
+        if (newScore < oldScore) {
+            result = item;
+        }
+    }
+    return result;
 }
 
 @end
