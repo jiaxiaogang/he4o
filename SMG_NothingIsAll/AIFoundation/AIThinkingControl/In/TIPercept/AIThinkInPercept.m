@@ -18,6 +18,7 @@
 #import "AIShortMatchModel.h"
 #import "AIAlgNodeBase.h"
 #import "AIScore.h"
+#import "AIMatchFoModel.h"
 
 @implementation AIThinkInPercept
 
@@ -81,28 +82,29 @@
 /**
  *  MARK:--------------------"外层输入" 推进 "中层循环" 认知--------------------
  *  @title 外层输入对In短时记忆的影响处理 (参考22052-2);
+ *  @version
+ *      2021.01.24: 对多时序识别结果支持,及时全面的改变status为OutBackYes (参考22073-todo5);
  */
 +(void) tip_OPushM:(AICMVNode*)newMv{
     //1. 数据检查
     NSArray *inModels = theTC.inModelManager.models;
     if (!newMv) return;
-    
-    //2. 取出所有等待中的inModel;
-    NSArray *waitModels = [SMGUtils filterArr:inModels checkValid:^BOOL(AIShortMatchModel *item) {
-        return item.status == TIModelStatus_LastWait && item.matchFo.cmvNode_p;
-    }];
-    NSLog(@"\n\n=============================== tip_OPushM ===============================\n输入MV:%@\n等待中任务数:%lu",Mv2FStr(newMv),(long)waitModels.count);
+    NSLog(@"\n\n=============================== tip_OPushM ===============================\n输入MV:%@",Mv2FStr(newMv));
     
     //3. 判断最近一次input是否与等待中outModel相匹配 (匹配,比如吃,确定自己是否真吃了);
-    for (AIShortMatchModel *waitModel in waitModels) {
-        AIFoNodeBase *waitMatchFo = waitModel.matchFo;
-        if (Log4OPushM) NSLog(@"==> checkTIModel=MatchFo: %@",Fo2FStr(waitMatchFo));
-        
-        //4. 判断hope(wait)和real(new)之间是否相符 (同区且同向);
-        BOOL isSame = [AIScore sameScoreOfMV1:waitMatchFo.cmvNode_p mv2:newMv.pointer];
-        if (isSame) {
-            waitModel.status = TIModelStatus_OutBackYes;
-            NSLog(@"tip_OPushM: MV有效");
+    for (AIShortMatchModel *inModel in inModels) {
+        for (AIMatchFoModel *waitModel in inModel.matchFos) {
+            //3. 非等待中的跳过;
+            if (waitModel.status != TIModelStatus_LastWait || waitModel.matchFo.cmvNode_p) continue;
+            
+            //4. 等待中的inModel_判断hope(wait)和real(new)之间是否相符 (同区且同向);
+            AIFoNodeBase *waitMatchFo = waitModel.matchFo;
+            if (Log4OPushM) NSLog(@"==> checkTIModel=MatchFo: %@",Fo2FStr(waitMatchFo));
+            BOOL isSame = [AIScore sameScoreOfMV1:waitMatchFo.cmvNode_p mv2:newMv.pointer];
+            if (isSame) {
+                waitModel.status = TIModelStatus_OutBackYes;
+                NSLog(@"tip_OPushM: MV有效");
+            }
         }
     }
 }
