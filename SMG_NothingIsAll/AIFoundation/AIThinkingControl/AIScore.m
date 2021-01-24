@@ -148,7 +148,7 @@
 /**
  *  MARK:--------------------对TOFoModel进行反思评价--------------------
  *  @version
- *      2021.01.24: 对多时序识别,更准确多元的评价支持;
+ *      2021.01.24: 对多时序识别,更准确多元的评价支持 (参考22073-todo2);
  */
 +(BOOL) FPS:(TOFoModel*)outModel rtInModel:(AIShortMatchModel*)rtInModel{
     //1. 数据检查

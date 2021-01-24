@@ -233,6 +233,7 @@
  *      20200414 - protoFo由瞬时proto概念组成,改成瞬时match概念组成 (本方法中,去掉proto概念层到match层的联想);
  *      20200717 - 换上新版partMatching_FoV2时序识别算法;
  *      20210119 - 支持预测-触发器和反向反馈类比 (22052-1&3);
+ *      20210124 - In反省类比触发器,支持多时序识别matchFos (参考22073-todo3);
  *  @bug
  *      2020.11.10: 在21141训练第一步,发现外类比不执行BUG,因为传入无用的matchAlg参数判空return了 (参考21142);
  */
@@ -247,36 +248,38 @@
     [self partMatching_FoV1Dot5:protoFo except_ps:except_ps decoratorInModel:inModel];
     
     //3. 预测处理_反向反馈类比_生物钟触发器;
-    AIFoNodeBase *matchFo = inModel.matchFo;
-    BOOL isHNGL = [TOUtils isHNGL:matchFo.pointer];
-    if (isHNGL) {
-        //末位判断;
-        if (inModel.cutIndex == matchFo.count - 1) {
-            inModel.status = TIModelStatus_LastWait;
-            double deltaTime = [NUMTOOK(ARR_INDEX_REVERSE(matchFo.deltaTimes, 0)) doubleValue];
-            [AITime setTimeTrigger:deltaTime trigger:^{
-                //4. 反向反馈类比(成功/未成功)的主要原因;
-                AnalogyType type = (inModel.status == TIModelStatus_LastWait) ? ATSub : ATPlus;
-                NSLog(@"---//触发器HNGL_触发: %@ (%@)",Fo2FStr(matchFo),ATType2Str(type));
-                [AIAnalogy analogy_InRethink:inModel shortFo:protoFo type:type];
-                
-                //5. 失败状态标记;
-                if (inModel.status == TIModelStatus_LastWait) inModel.status = TIModelStatus_OutBackNo;
-            }];
-        }
-    }else{
-        //有mv判断;
-        if (inModel.cutIndex == matchFo.count && matchFo.cmvNode_p) {
-            inModel.status = TIModelStatus_LastWait;
-            [AITime setTimeTrigger:matchFo.mvDeltaTime trigger:^{
-                //4. 反向反馈类比(成功/未成功)的主要原因;
-                AnalogyType type = (inModel.status == TIModelStatus_LastWait) ? ATSub : ATPlus;
-                NSLog(@"---//触发器Mv_触发: %@ (%@)",Fo2FStr(matchFo),ATType2Str(type));
-                [AIAnalogy analogy_InRethink:inModel shortFo:protoFo type:type];
-                
-                //5. 失败状态标记;
-                if (inModel.status == TIModelStatus_LastWait) inModel.status = TIModelStatus_OutBackNo;
-            }];
+    for (AIMatchFoModel *item in inModel.matchFos) {
+        AIFoNodeBase *matchFo = item.matchFo;
+        BOOL isHNGL = [TOUtils isHNGL:matchFo.pointer];
+        if (isHNGL) {
+            //末位判断;
+            if (inModel.cutIndex == matchFo.count - 1) {
+                inModel.status = TIModelStatus_LastWait;
+                double deltaTime = [NUMTOOK(ARR_INDEX_REVERSE(matchFo.deltaTimes, 0)) doubleValue];
+                [AITime setTimeTrigger:deltaTime trigger:^{
+                    //4. 反向反馈类比(成功/未成功)的主要原因;
+                    AnalogyType type = (inModel.status == TIModelStatus_LastWait) ? ATSub : ATPlus;
+                    NSLog(@"---//触发器HNGL_触发: %@ (%@)",Fo2FStr(matchFo),ATType2Str(type));
+                    [AIAnalogy analogy_InRethink:inModel shortFo:protoFo type:type];
+                    
+                    //5. 失败状态标记;
+                    if (inModel.status == TIModelStatus_LastWait) inModel.status = TIModelStatus_OutBackNo;
+                }];
+            }
+        }else{
+            //有mv判断;
+            if (inModel.cutIndex == matchFo.count && matchFo.cmvNode_p) {
+                inModel.status = TIModelStatus_LastWait;
+                [AITime setTimeTrigger:matchFo.mvDeltaTime trigger:^{
+                    //4. 反向反馈类比(成功/未成功)的主要原因;
+                    AnalogyType type = (inModel.status == TIModelStatus_LastWait) ? ATSub : ATPlus;
+                    NSLog(@"---//触发器Mv_触发: %@ (%@)",Fo2FStr(matchFo),ATType2Str(type));
+                    [AIAnalogy analogy_InRethink:inModel shortFo:protoFo type:type];
+                    
+                    //5. 失败状态标记;
+                    if (inModel.status == TIModelStatus_LastWait) inModel.status = TIModelStatus_OutBackNo;
+                }];
+            }
         }
     }
 }
@@ -328,7 +331,7 @@
  *      2020.07.19: 改为仅取最后一位的refFos (因为最后一位是焦点帧,并且全含判断算法也需要支持仅末位候选集);
  *      2020.11.12: 支持except_ps参数,因为在FromShortMem时,matchAFo会识别protoFo返回,所以将protoFo不应期掉 (参考21144);
  *      2021.01.18: 联想matchFo时,由原本只获取Normal类型,改为将HNGL也加入其中 (参考22052-1a,实测未影响原多向飞行训练);
- *      2021.01.23: 支持多识别 (参考22072BUG & TIR_Fo_FromRethink注释todo更多元的评价);
+ *      2021.01.23: 支持多识别 (参考22072BUG & TIR_Fo_FromRethink注释todo更多元的评价 & 22073-todo1);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
 +(void) partMatching_FoV1Dot5:(AIFoNodeBase*)protoFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel{
