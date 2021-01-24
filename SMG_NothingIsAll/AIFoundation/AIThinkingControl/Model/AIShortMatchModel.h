@@ -82,6 +82,6 @@
 @property (strong, nonatomic) AIFoNodeBase *matchFo;    //matchFo (默认取matchFos首条)
 @property (assign, nonatomic) CGFloat matchFoValue;     //时序匹配度 (默认取matchFos首条)
 @property (assign, nonatomic) NSInteger cutIndex;       //已发生与预测的截点 (0开始,已发生含cutIndex) (默认取matchFos首条)
-@property (assign, nonatomic) TIModelStatus status;     //状态 (默认取matchFos首条)
+//@property (assign, nonatomic) TIModelStatus status;     //状态 (默认取matchFos首条)
 
 @end

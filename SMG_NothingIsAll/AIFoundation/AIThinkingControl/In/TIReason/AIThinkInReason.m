@@ -389,65 +389,66 @@
 /**
  *  MARK:--------------------"外层输入" 推进 "中层循环" 决策--------------------
  *  @title 外层输入对In短时记忆的影响处理 (参考22052-2);
+ *  @version
+ *      2021.01.24: 多时序识别支持,使之更全面的支持每个matchFo的status更新 (参考22073-todo6);
  */
 +(void) tir_OPushM:(AIShortMatchModel*)newInModel{
     //1. 数据检查
     NSArray *inModels = theTC.inModelManager.models;
     if (!newInModel) return;
+    NSLog(@"\n\n=============================== tir_OPushM ===============================\n输入M:%@\n输入P:%@",Alg2FStr(newInModel.matchAlg),Alg2FStr(newInModel.protoAlg));
     
-    //2. 取出所有等待中的inModel;
-    NSArray *waitModels = [SMGUtils filterArr:inModels checkValid:^BOOL(AIShortMatchModel *item) {
-        return item.status == TIModelStatus_LastWait && [TOUtils isHNGL:item.matchFo.pointer];
-    }];
-    NSLog(@"\n\n=============================== tir_OPushM ===============================\n输入M:%@\n输入P:%@\n等待中任务数:%lu",Alg2FStr(newInModel.matchAlg),Alg2FStr(newInModel.protoAlg),(long)waitModels.count);
-    
-    //3. 判断最近一次input是否与等待中outModel相匹配 (匹配,比如吃,确定自己是否真吃了);
-    for (AIShortMatchModel *waitModel in waitModels) {
-        AIFoNodeBase *waitMatchFo = waitModel.matchFo;
-        if (Log4OPushM) NSLog(@"==> checkTIModel=MatchFo: %@",Fo2FStr(waitMatchFo));
-        AIKVPointer *waitLastAlg_p = ARR_INDEX_REVERSE(waitMatchFo.content_ps, 0);
-        if (!waitLastAlg_p) continue;
-        
-        //4. 对H和GL分别做处理;
-        if([TOUtils isH:waitMatchFo.pointer]){
-            //2. 直接判断H是否mIsC,是则OutBackYes;
-            BOOL mIsC = [TOUtils mIsC_1:newInModel.protoAlg.pointer c:waitLastAlg_p];
-            if (mIsC) {
-                waitModel.status = TIModelStatus_OutBackYes;
-                NSLog(@"tir_OPushM: H有效");
-            }
-        }else if([TOUtils isG:waitMatchFo.pointer] || [TOUtils isL:waitMatchFo.pointer]){
-            //3. 根据matchFo,找到glAlg (参考21115) (waitLastAlg相当于21115中的backConAlg);
-            NSArray *glAlgPorts = [AINetUtils absPorts_All:[SMGUtils searchNode:waitLastAlg_p]];
-            glAlgPorts = [SMGUtils filterPorts:glAlgPorts havTypes:@[@(ATGreater),@(ATLess)] noTypes:nil];
-            NSArray *glAlgs = Ports2Pits(glAlgPorts);
+    //2. 判断最近一次input是否与等待中outModel相匹配 (匹配,比如吃,确定自己是否真吃了);
+    for (AIShortMatchModel *inModel in inModels) {
+        for (AIMatchFoModel *waitModel in inModel.matchFos) {
+            //3. 取出等待中的_非wait状态的,不处理;
+            if (waitModel.status != TIModelStatus_LastWait) continue;
+            AIFoNodeBase *waitMatchFo = waitModel.matchFo;
+            if (Log4OPushM) NSLog(@"==> checkTIModel=MatchFo: %@",Fo2FStr(waitMatchFo));
+            AIKVPointer *waitLastAlg_p = ARR_INDEX_REVERSE(waitMatchFo.content_ps, 0);
+            if (!waitLastAlg_p) continue;
             
-            //4. 根据glAlg取出glValue,以根据其identifier分辨当前符合变化的稀疏码标识;
-            for (AIKVPointer *item in glAlgs) {
-                AIAlgNodeBase *glAlg = [SMGUtils searchNode:item];
-                AIKVPointer *glValue = ARR_INDEX(glAlg.content_ps, 0);
-                
-                //5. 取出hope和real
-                AIKVPointer *hopeValue_p = [SMGUtils filterSameIdentifier_p:glValue b_ps:waitModel.protoAlg.content_ps];
-                AIKVPointer *realValue_p = [SMGUtils filterSameIdentifier_p:glValue b_ps:newInModel.protoAlg.content_ps];
-                if (!hopeValue_p || !realValue_p) continue;
-                
-                //e. mIsC判断 (20201226:在21204BUG修复后训练时,发现mIsC有时是cIsM,所以都判断下);
-                NSArray *newInMatchAlg_ps = Nodes2Pits(newInModel.matchAlgs);
-                BOOL mIsC = [TOUtils mIsC_1:@[waitLastAlg_p] cs:newInMatchAlg_ps];
-                if (!mIsC) mIsC = [TOUtils mIsC_1:newInMatchAlg_ps cs:@[waitLastAlg_p]];
-                if (Log4OPushM) NSLog(@"GL有效判断_mIsC:(M=MFo末位 C=%@) 结果:%d", Pits2FStr(newInMatchAlg_ps),mIsC);
-                if (!mIsC) continue;
-                
-                //c. 对期望与实际稀疏码比较得到实际ATType;
-                //d. 当实际ATType与等待中的ATType一致时,符合预期 (20201226改为判断bFo,因为只有bFo才携带了waitTypeDS,参考21204);
-                AnalogyType realType = [ThinkingUtils compare:hopeValue_p valueB_p:realValue_p];
-                AnalogyType waitType = [ThinkingUtils convertDS2AnalogyType:waitMatchFo.pointer.dataSource];
-                
-                //e. 只有符合变化时,才改为OuterBack,否则不改,使之反省类比时,可以发现不符合问题;
-                if (realType == waitType){
+            //4. 对H和GL分别做处理;
+            if([TOUtils isH:waitMatchFo.pointer]){
+                //2. 直接判断H是否mIsC,是则OutBackYes;
+                BOOL mIsC = [TOUtils mIsC_1:newInModel.protoAlg.pointer c:waitLastAlg_p];
+                if (mIsC) {
                     waitModel.status = TIModelStatus_OutBackYes;
-                    NSLog(@"tir_OPushM: GL有效");
+                    NSLog(@"tir_OPushM: H有效");
+                }
+            }else if([TOUtils isG:waitMatchFo.pointer] || [TOUtils isL:waitMatchFo.pointer]){
+                //3. 根据matchFo,找到glAlg (参考21115) (waitLastAlg相当于21115中的backConAlg);
+                NSArray *glAlgPorts = [AINetUtils absPorts_All:[SMGUtils searchNode:waitLastAlg_p]];
+                glAlgPorts = [SMGUtils filterPorts:glAlgPorts havTypes:@[@(ATGreater),@(ATLess)] noTypes:nil];
+                NSArray *glAlgs = Ports2Pits(glAlgPorts);
+                
+                //4. 根据glAlg取出glValue,以根据其identifier分辨当前符合变化的稀疏码标识;
+                for (AIKVPointer *item in glAlgs) {
+                    AIAlgNodeBase *glAlg = [SMGUtils searchNode:item];
+                    AIKVPointer *glValue = ARR_INDEX(glAlg.content_ps, 0);
+                    
+                    //5. 取出hope和real
+                    AIKVPointer *hopeValue_p = [SMGUtils filterSameIdentifier_p:glValue b_ps:inModel.protoAlg.content_ps];
+                    AIKVPointer *realValue_p = [SMGUtils filterSameIdentifier_p:glValue b_ps:newInModel.protoAlg.content_ps];
+                    if (!hopeValue_p || !realValue_p) continue;
+                    
+                    //e. mIsC判断 (20201226:在21204BUG修复后训练时,发现mIsC有时是cIsM,所以都判断下);
+                    NSArray *newInMatchAlg_ps = Nodes2Pits(newInModel.matchAlgs);
+                    BOOL mIsC = [TOUtils mIsC_1:@[waitLastAlg_p] cs:newInMatchAlg_ps];
+                    if (!mIsC) mIsC = [TOUtils mIsC_1:newInMatchAlg_ps cs:@[waitLastAlg_p]];
+                    if (Log4OPushM) NSLog(@"GL有效判断_mIsC:(M=MFo末位 C=%@) 结果:%d", Pits2FStr(newInMatchAlg_ps),mIsC);
+                    if (!mIsC) continue;
+                    
+                    //c. 对期望与实际稀疏码比较得到实际ATType;
+                    //d. 当实际ATType与等待中的ATType一致时,符合预期 (20201226改为判断bFo,因为只有bFo才携带了waitTypeDS,参考21204);
+                    AnalogyType realType = [ThinkingUtils compare:hopeValue_p valueB_p:realValue_p];
+                    AnalogyType waitType = [ThinkingUtils convertDS2AnalogyType:waitMatchFo.pointer.dataSource];
+                    
+                    //e. 只有符合变化时,才改为OuterBack,否则不改,使之反省类比时,可以发现不符合问题;
+                    if (realType == waitType){
+                        waitModel.status = TIModelStatus_OutBackYes;
+                        NSLog(@"tir_OPushM: GL有效");
+                    }
                 }
             }
         }
