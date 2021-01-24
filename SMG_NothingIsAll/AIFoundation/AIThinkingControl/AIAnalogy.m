@@ -523,17 +523,17 @@
     if (Log4DiffAna) NSLog(@"--> In反省类比 构建SPFo %@",Fo2FStr(spFo));
 }
 
-+(void) analogy_Feedback_Same:(AIShortMatchModel*)mModel shortFo:(AIFoNodeBase*)shortFo{
++(void) analogy_Feedback_Same:(AIFoNodeBase*)matchFo shortFo:(AIFoNodeBase*)shortFo{
     //1. 数据检查;
-    if (!mModel || !mModel.matchFo || !shortFo) return;
+    if (!matchFo || !shortFo) return;
     
     //2. 检查同向;
-    BOOL isSame = [AIScore sameScoreOfMV1:mModel.matchFo.cmvNode_p mv2:shortFo.cmvNode_p];
-    NSLog(@"\n\n------------------------------- 正向反馈类比 (%@) -------------------------------\n短时MatchFo:%@->%@ \n输入ProtoFo:%@->%@",isSame ? @"执行" : @"未执行", Fo2FStr(mModel.matchFo),Mvp2Str(mModel.matchFo.cmvNode_p),Fo2FStr(shortFo),Mvp2Str(shortFo.cmvNode_p));
+    BOOL isSame = [AIScore sameScoreOfMV1:matchFo.cmvNode_p mv2:shortFo.cmvNode_p];
+    NSLog(@"\n\n------------------------------- 正向反馈类比 (%@) -------------------------------\n短时MatchFo:%@->%@ \n输入ProtoFo:%@->%@",isSame ? @"执行" : @"未执行", Fo2FStr(matchFo),Mvp2Str(matchFo.cmvNode_p),Fo2FStr(shortFo),Mvp2Str(shortFo.cmvNode_p));
     if (!isSame) return;
     
     //3. 类比 (与当前的analogy_Outside()较相似,所以暂不写,随后写时,也是将原有的_outside改成此_same类比方法);
-    [self analogyOutside:shortFo assFo:mModel.matchFo type:ATSame createAbsAlgBlock:nil];
+    [self analogyOutside:shortFo assFo:matchFo type:ATSame createAbsAlgBlock:nil];
 }
 
 @end

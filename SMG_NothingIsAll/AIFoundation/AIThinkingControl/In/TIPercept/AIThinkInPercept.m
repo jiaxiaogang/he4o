@@ -63,7 +63,8 @@
  *  步骤:
  *   > 联想->类比->规律->抽象->关联->网络
  *  @version
- *      202003-04: a.去掉外类比; b.外类比拆分为:正向类比和反向类比;
+ *      2020.03.04: a.去掉外类比; b.外类比拆分为:正向类比和反向类比;
+ *      2021.01.24: 支持多时序识别,更全面的触发外类比 (参考22073-todo4);
  */
 -(void) dataIn_FindMV_Learning:(AIFrontOrderNode*)protoFo cmvNode:(AICMVNode*)cmvNode{
     //1. 数据检查 & 准备
@@ -74,8 +75,11 @@
     //2. 获取最近的识别模型;
     NSArray *mModels = ARRTOOK([self.delegate tir_getShortMatchModel]);
     for (AIShortMatchModel *mModel in mModels) {
-        //a. 正向反馈类比;
-        [AIAnalogy analogy_Feedback_Same:mModel shortFo:protoFo];
+        for (AIMatchFoModel *foModel in mModel.matchFos) {
+            
+            //3. 正向反馈类比 (外类比);
+            [AIAnalogy analogy_Feedback_Same:foModel.matchFo shortFo:protoFo];
+        }
     }
 }
 
