@@ -23,7 +23,7 @@
 +(BOOL) FRS:(AIFoNodeBase*)fo;
 +(BOOL) FRS_Miss:(AIFoNodeBase*)sFo matchFo:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex;
 +(BOOL) FPS:(TOFoModel*)outModel rtInModel:(AIShortMatchModel*)rtInModel;
-//+(BOOL) ARS;//ARS在MIsC判定成功后,由PM实现,PM涉及代码较多,先不迁移过来;
++(BOOL) ARS;
 
 /**
  *  MARK:--------------------指定ratio的评价重载--------------------

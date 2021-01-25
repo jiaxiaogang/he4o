@@ -420,6 +420,9 @@
  *      2020.11.23: 在GL失败时,failure()返回_Hav继续进行行为化 (参考21147);
  *  @callers
  *      1. MC调用: 参考21059-344结构图;
+ *  @todo
+ *      2021.01.26: a.迭代计划,因为PM逻辑复杂,建议拆分掉,将整体分布到流程控制中,方案如下;
+ *      2021.01.26: b.废弃justPValues,直接在_Hav循环V调用_GL,并进行稀疏码评价,不属于justPValues的本来已实现,评价为true而已;
  */
 -(void) reasonScorePM_V3:(TOAlgModel*)outModel failure:(void(^)())failure success:(void(^)())success notNeedPM:(void(^)())notNeedPM{
     //1. 数据准备
