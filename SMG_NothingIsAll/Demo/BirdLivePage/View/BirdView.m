@@ -109,10 +109,12 @@
 
 /**
  *  MARK:--------------------痛--------------------
+ *  @version
+ *      2021.01.25: 加大痛感,否则不痛不痒的思维没活力 (乌鸦不care);
  */
 -(void) hurt{
     DemoLog(@"痛感");
-    [AIInput commitIMV:MVType_Hurt from:0.0f to:1.0f];
+    [AIInput commitIMV:MVType_Hurt from:4.0f to:5.0f];
 }
 
 -(void) dealloc{

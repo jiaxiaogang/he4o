@@ -94,7 +94,7 @@
         
         //2. 新需求时,加上活跃度;
         [self.delegate demandManager_updateEnergy:urgentTo];
-        NSLog(@"demandManager >> 新需求 %lu",(unsigned long)self.loopCache.count);
+        NSLog(@"demandManager-PMV >> 新需求 %lu",(unsigned long)self.loopCache.count);
     }
 }
 
@@ -104,6 +104,8 @@
  *      2021.01.21: 抵销: 当汽车冲过来,突然又转向了,任务消除 (理性抵消 (仅能通过matchFo已发生的部分进行比对));
  *      2021.01.21: 抵销: 当另一辆更大的车又冲过来,两次预测都会导致疼,但不能抵消 (理性抵消不以mv.algsType为准);
  *      2021.01.21: 抵销&增强: 进度更新后,根据matchFo进行"理性抵消" 或者 "理性增强(进度更新)" 判断;
+ *  @version
+ *      2021.01.25: RMV仅对ReasonDemandModel进行抵消防重 (否则会导致R-与P-需求冲突);
  */
 -(void) updateCMVCache_RMV:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta inModel:(AIShortMatchModel*)inModel{
     //1. 有需求时且可加入demand序列;
@@ -115,7 +117,7 @@
         NSInteger limit = self.loopCache.count;
         for (NSInteger i = 0; i < limit; i++) {
             DemandModel *checkItem = self.loopCache[i];
-            if ([STRTOOK(algsType) isEqualToString:checkItem.algsType]) {
+            if (ISOK(checkItem, ReasonDemandModel.class) && [STRTOOK(algsType) isEqualToString:checkItem.algsType]) {
                 if ((delta > 0 == checkItem.delta > 0)) {
                     //1) 同向较弱的撤消
                     if (labs(urgentTo) > labs(checkItem.urgentTo)) {
@@ -141,7 +143,7 @@
             
             //2. 新需求时,加上活跃度;
             [self.delegate demandManager_updateEnergy:urgentTo];
-            NSLog(@"demandManager >> 新需求 %lu",(unsigned long)self.loopCache.count);
+            NSLog(@"demandManager-RMV >> 新需求 %lu",(unsigned long)self.loopCache.count);
         }
     }
 }
