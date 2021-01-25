@@ -253,7 +253,7 @@
         BOOL isHNGL = [TOUtils isHNGL:matchFo.pointer];
         if (isHNGL) {
             //末位判断;
-            if (item.cutIndex == matchFo.count - 1) {
+            if (item.cutIndex == matchFo.count - 2) {
                 item.status = TIModelStatus_LastWait;
                 double deltaTime = [NUMTOOK(ARR_INDEX_REVERSE(matchFo.deltaTimes, 0)) doubleValue];
                 [AITime setTimeTrigger:deltaTime trigger:^{
@@ -268,7 +268,7 @@
             }
         }else{
             //有mv判断;
-            if (item.cutIndex == matchFo.count && matchFo.cmvNode_p) {
+            if (item.cutIndex == matchFo.count - 1 && matchFo.cmvNode_p) {
                 item.status = TIModelStatus_LastWait;
                 [AITime setTimeTrigger:matchFo.mvDeltaTime trigger:^{
                     //4. 反向反馈类比(成功/未成功)的主要原因;
