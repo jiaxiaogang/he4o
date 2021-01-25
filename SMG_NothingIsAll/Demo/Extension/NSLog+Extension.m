@@ -10,7 +10,7 @@
 
 @implementation NSLog_Extension
 
-+(NSString*) convertStatus2Desc:(TOModelStatus)status{
++(NSString*) convertTOStatus2Desc:(TOModelStatus)status{
     if(status == TOModelStatus_Wait){
         return @"Wait";
     }else if(status == TOModelStatus_Runing){
@@ -36,9 +36,20 @@
     if (atType == ATNone) return @"无";
     if (atType == ATGreater) return @"大";
     if (atType == ATLess) return @"小";
-    if (atType == ATSub) return @"负";
-    if (atType == ATPlus) return @"正";
+    if (atType == ATSub) return @"逆";
+    if (atType == ATPlus) return @"顺";
     return @"普";
+}
+
++(NSString*) convertTIStatus2Desc:(TIModelStatus)status{
+    if(status == TIModelStatus_LastWait){
+        return @"LastWait";
+    }else if(status == TIModelStatus_OutBackNo){
+        return @"OutBackNo";
+    }else if(status == TIModelStatus_OutBackYes){
+        return @"OutBackYes";
+    }
+    return @"Default";
 }
 
 @end

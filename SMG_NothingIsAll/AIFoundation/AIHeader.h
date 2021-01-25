@@ -134,6 +134,8 @@
 
 //AnalogType转字符串
 #define ATType2Str(type) [NSLog_Extension convertATType2Desc:type]
+#define TOStatus2Str(status) [NSLog_Extension convertTOStatus2Desc:status]
+#define TIStatus2Str(status) [NSLog_Extension convertTIStatus2Desc:status]
 
 //Double转Str
 #define Double2Str_NDZ(value) [NSString double2Str_NoDotZero:value]

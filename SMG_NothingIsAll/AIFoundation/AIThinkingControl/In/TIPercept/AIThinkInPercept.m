@@ -88,6 +88,8 @@
  *  @title 外层输入对In短时记忆的影响处理 (参考22052-2);
  *  @version
  *      2021.01.24: 对多时序识别结果支持,及时全面的改变status为OutBackYes (参考22073-todo5);
+ *  @bug
+ *      2021.01.25: 修复witMatchFo.cmvNode_p空判断逻辑反了,导致无法执行修改状态为OutBackYes,从而反省类比永远为"逆";
  */
 +(void) tip_OPushM:(AICMVNode*)newMv{
     //1. 数据检查
@@ -99,11 +101,11 @@
     for (AIShortMatchModel *inModel in inModels) {
         for (AIMatchFoModel *waitModel in inModel.matchFos) {
             //3. 非等待中的跳过;
-            if (waitModel.status != TIModelStatus_LastWait || waitModel.matchFo.cmvNode_p) continue;
+            AIFoNodeBase *waitMatchFo = waitModel.matchFo;
+            if (Log4OPushM) NSLog(@"==> checkTIModel=MatchFo: %@ (%@)",Fo2FStr(waitMatchFo),TIStatus2Str(waitModel.status));
+            if (waitModel.status != TIModelStatus_LastWait || !waitMatchFo.cmvNode_p) continue;
             
             //4. 等待中的inModel_判断hope(wait)和real(new)之间是否相符 (同区且同向);
-            AIFoNodeBase *waitMatchFo = waitModel.matchFo;
-            if (Log4OPushM) NSLog(@"==> checkTIModel=MatchFo: %@",Fo2FStr(waitMatchFo));
             BOOL isSame = [AIScore sameScoreOfMV1:waitMatchFo.cmvNode_p mv2:newMv.pointer];
             if (isSame) {
                 waitModel.status = TIModelStatus_OutBackYes;
