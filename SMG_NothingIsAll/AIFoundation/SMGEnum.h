@@ -120,7 +120,7 @@ typedef NS_ENUM(NSInteger, LogHeaderMode) {
 typedef NS_ENUM(NSInteger, TOModelStatus) {
     TOModelStatus_Wait     = 0,//等待行为化 (行为化前,尝试找各种解决方案);
     TOModelStatus_Runing   = 1,//运行中 (其subModel正在尝试行为化中);
-    TOModelStatus_ActYes   = 2,//行为化成功 (等待外循环结果,等待反馈);
+    TOModelStatus_ActYes   = 2,//行为化成功 (等待外循环结果,等待反馈) (预测);
     TOModelStatus_ActNo    = 3,//行为化失败 (等待条件满足时继续);
     TOModelStatus_ScoreNo  = 4,//评价失败而中止 (不想干,彻底挂掉,除非demandModel变的更迫切);
     TOModelStatus_NoNeedAct= 5,//无需行为化

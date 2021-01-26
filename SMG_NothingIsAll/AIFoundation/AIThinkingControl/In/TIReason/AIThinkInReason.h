@@ -18,14 +18,14 @@
 @interface AIThinkInReason : NSObject
 
 //MARK:===============================================================
-//MARK:                     < 理性概念识别 >
+//MARK:                     < 概念识别 >
 //MARK:===============================================================
 +(void) TIR_Alg:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps complete:(void(^)(NSArray *matchAlgs,NSArray *partAlg_ps))complete;
 //+(AIAlgNodeBase*) TIR_Alg_FromRethink:(AIAlgNodeBase*)rtAlg mUniqueV_p:(AIKVPointer*)mUniqueV_p;
 
 
 //MARK:===============================================================
-//MARK:                     < 理性时序识别与预测 >
+//MARK:                     < 时序识别 >
 //MARK:===============================================================
 +(void) TIR_Fo_FromRethink:(NSArray*)order decoratorInModel:(AIShortMatchModel*)inModel;
 +(void) TIR_Fo_FromShortMem:(AIFoNodeBase*)protoFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel;
@@ -35,6 +35,11 @@
 //MARK:                     < 内类比 >
 //MARK:===============================================================
 +(void) analogyInner:(AIShortMatchModel*)mModel;
+
+//MARK:===============================================================
+//MARK:                     < 预测 >
+//MARK:===============================================================
++(void) tir_Forecast:(AIShortMatchModel*)inModel;
 +(void) tir_OPushM:(AIShortMatchModel*)newInModel;
 
 @end

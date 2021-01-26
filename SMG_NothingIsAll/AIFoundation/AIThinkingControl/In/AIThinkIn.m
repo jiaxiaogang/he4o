@@ -184,6 +184,9 @@
     //4. 识别时序;
     [AIThinkInReason TIR_Fo_FromShortMem:mModel.matchAFo except_ps:@[mModel.protoFo.pointer,mModel.matchAFo.pointer] decoratorInModel:mModel];
     
+    //4. 预测;
+    [AIThinkInReason tir_Forecast:mModel];
+    
     //5. 内类比
     [AIThinkInReason analogyInner:mModel];
     
