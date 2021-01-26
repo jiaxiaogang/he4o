@@ -298,6 +298,7 @@
  *      2021.01.23: 支持多识别 (参考22072BUG & TIR_Fo_FromRethink注释todo更多元的评价 & 22073-todo1);
  *      2021.01.24: 改回仅识别Normal类型,因为HNGL太多了,不那么必要,还特麻烦,太多matchFos导致性能差 (参考22052-改1);
  *      2021.01.24: 将无mv指向的,算无效 (因为有大量未执行的正向反馈类比) (参考22072);
+ *      2021.01.26: 为多时序识别结果做去重 (参考22074-BUG3);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
 +(void) partMatching_FoV1Dot5:(AIFoNodeBase*)protoFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel{
@@ -337,13 +338,18 @@
             //5. 无cmv指向的,无效;
             if (!assFo.cmvNode_p) continue;
             
-            //6. 对assFo做匹配判断;
-            [TIRUtils TIR_Fo_CheckFoValidMatch:protoFo assFo:assFo checkItemValid:^BOOL(AIKVPointer *itemAlg, AIKVPointer *assAlg) {
-                return [TOUtils mIsC_1:itemAlg c:assAlg];
-            } success:^(NSInteger lastAssIndex, CGFloat matchValue) {
-                NSLog(@"时序识别item SUCCESS >>> matchValue:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
-                [inModel.matchFos addObject:[AIMatchFoModel newWithMatchFo:assFo matchFoValue:matchValue cutIndex:lastAssIndex]];
-            }];
+            //6. 防重并对assFo做匹配判断;
+            BOOL contains = ARRISOK([SMGUtils filterArr:inModel.matchFos checkValid:^BOOL(AIMatchFoModel *item) {
+                return [item.matchFo isEqual:assFo];
+            }]);
+            if (!contains) {
+                [TIRUtils TIR_Fo_CheckFoValidMatch:protoFo assFo:assFo checkItemValid:^BOOL(AIKVPointer *itemAlg, AIKVPointer *assAlg) {
+                    return [TOUtils mIsC_1:itemAlg c:assAlg];
+                } success:^(NSInteger lastAssIndex, CGFloat matchValue) {
+                    NSLog(@"时序识别item SUCCESS 完成度:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
+                    [inModel.matchFos addObject:[AIMatchFoModel newWithMatchFo:assFo matchFoValue:matchValue cutIndex:lastAssIndex]];
+                }];
+            }
         }
     }
 }

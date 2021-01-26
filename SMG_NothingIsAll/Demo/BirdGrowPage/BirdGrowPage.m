@@ -62,7 +62,7 @@
     [self.borderView.layer setBorderColor:[UIColor grayColor].CGColor];
     [self.borderView addGestureRecognizer:self.singleTap];
     [self.borderView addGestureRecognizer:self.doubleTap];
-    [self.borderView.layer setBorderWidth:30];
+    [self.borderView.layer setBorderWidth:20];
 }
 
 //MARK:===============================================================
