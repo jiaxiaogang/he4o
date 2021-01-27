@@ -14,12 +14,14 @@
  *  @version
  *      2020-05-22 : 将demandModel下直接挂载Fo,然后Fo下,再挂载subFo (Fo和subFo都用TOModelBase模型);
  *      2021-01-21 : 支持P和R两个子类;
+ *      2021-01-27 : 支持二级排序initTime;
  */
 @interface DemandModel : TOModelBase <ITryActionFoDelegate>
 
-@property (assign, nonatomic) NSInteger urgentTo;
+@property (assign, nonatomic) NSInteger urgentTo;   //一级排序因素 (高在前)
 @property (assign, nonatomic) NSInteger delta;
 @property (strong, nonatomic) NSString *algsType;
+@property (assign, nonatomic) double initTime;      //二级排序因素 (新在前)
 
 /**
  *  MARK:--------------------获取当前最强的outSubModel--------------------

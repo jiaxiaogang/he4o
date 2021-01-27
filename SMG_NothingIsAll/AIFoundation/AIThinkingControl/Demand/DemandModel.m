@@ -17,6 +17,14 @@
 
 @implementation DemandModel
 
+-(id) init{
+    self = [super init];
+    if (self) {
+        self.initTime = [[NSDate new] timeIntervalSince1970];
+    }
+    return self;
+}
+
 -(NSMutableArray *)actionFoModels{
     if (_actionFoModels == nil) {
         _actionFoModels = [[NSMutableArray alloc] init];

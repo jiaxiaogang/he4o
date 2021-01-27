@@ -81,6 +81,7 @@
 +(NSComparisonResult) comparePortA:(AIPort*)pA portB:(AIPort*)pB;
 +(NSComparisonResult) compareIntA:(NSInteger)intA intB:(NSInteger)intB;
 +(NSComparisonResult) compareFloatA:(CGFloat)floatA floatB:(CGFloat)floatB;
++(NSComparisonResult) compareDoubleA:(CGFloat)doubleA doubleB:(CGFloat)doubleB;
 
 @end
 
@@ -195,6 +196,7 @@
  */
 +(NSMutableArray*) removeSub_ps:(NSArray*)sub_ps parent_ps:(NSArray*)parent_ps;
 +(NSMutableArray*) removeSub_p:(AIPointer*)sub_p parent_ps:(NSArray*)parent_ps;
++(NSMutableArray*) removeArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid;
 
 /**
  *  MARK:--------------------防重--------------------

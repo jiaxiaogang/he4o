@@ -11,6 +11,10 @@
 #import "PerceptDemandModel.h"
 #import "ThinkingUtils.h"
 #import "TOUtils.h"
+#import "AIShortMatchModel.h"
+#import "AINetIndex.h"
+#import "AIScore.h"
+#import "AIMatchFoModel.h"
 
 @interface DemandManager()
 
@@ -101,49 +105,51 @@
 /**
  *  MARK:--------------------RMV输入更新任务管理器--------------------
  *  @todo
- *      2021.01.21: 抵销: 当汽车冲过来,突然又转向了,任务消除 (理性抵消 (仅能通过matchFo已发生的部分进行比对));
- *      2021.01.21: 抵销: 当另一辆更大的车又冲过来,两次预测都会导致疼,但不能抵消 (理性抵消不以mv.algsType为准);
- *      2021.01.21: 抵销&增强: 进度更新后,根据matchFo进行"理性抵消" 或者 "理性增强(进度更新)" 判断;
+ *      2021.01.21: 抵销: 当汽车冲过来,突然又转向了,任务消除 (理性抵消 (仅能通过matchFo已发生的部分进行比对)) (参考22074-BUG2) T;
+ *      2021.01.21: 抵销: 当另一辆更大的车又冲过来,两条matchFo都导致疼不能抵消 (理性抵消不以mv.algsType为准) (参考22074-BUG2) T;
+ *      2021.01.21: 抵销&增强: 进度更新后,根据matchFo进行"理性抵消" 或者 "理性增强(进度更新)" 判断 (参考22074-BUG2) T;
  *  @version
  *      2021.01.25: RMV仅对ReasonDemandModel进行抵消防重 (否则会导致R-与P-需求冲突);
+ *      2021.01.27: RMV仅对matchFoModel进行抵消防重 (否则会导致inModel预测处理不充分) (参考22074-BUG2);
  */
--(void) updateCMVCache_RMV:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta inModel:(AIShortMatchModel*)inModel{
-    //1. 有需求时且可加入demand序列;
-    MVDirection direction = [ThinkingUtils havDemand:algsType delta:delta];
-    if (direction != MVDirection_None) {
+-(void) updateCMVCache_RMV:(AIShortMatchModel*)inModel{
+    //1. 数据检查;
+    if (!inModel || !inModel.protoFo || !ARRISOK(inModel.matchFos)) return;
+    
+    //2. 多时序识别预测分别进行处理;
+    for (AIMatchFoModel *mModel in inModel.matchFos) {
         
-        //2. 去重_同向撤弱;
-        BOOL canNeed = true;
-        NSInteger limit = self.loopCache.count;
-        for (NSInteger i = 0; i < limit; i++) {
-            DemandModel *checkItem = self.loopCache[i];
-            if (ISOK(checkItem, ReasonDemandModel.class) && [STRTOOK(algsType) isEqualToString:checkItem.algsType]) {
-                if ((delta > 0 == checkItem.delta > 0)) {
-                    //1) 同向较弱的撤消
-                    if (labs(urgentTo) > labs(checkItem.urgentTo)) {
-                        [self.loopCache removeObjectAtIndex:i];
-                        NSLog(@"demandManager >> 同向较弱撤消 %lu",(unsigned long)self.loopCache.count);
-                        limit--;
-                        i--;
-                    }else{
-                        canNeed = false;
-                    }
-                }
-            }
-        }
+        //3. 单条数据准备;
+        AICMVNodeBase *mvNode = [SMGUtils searchNode:mModel.matchFo.cmvNode_p];
+        if (!mvNode) continue;
+        NSInteger delta = [NUMTOOK([AINetIndex getData:mvNode.delta_p]) integerValue];
+        NSString *algsType = mvNode.urgentTo_p.algsType;
+        NSInteger urgentTo = [NUMTOOK([AINetIndex getData:mvNode.urgentTo_p]) integerValue];
+        urgentTo = (int)(urgentTo * inModel.matchFoValue);
+            
+        //4. 抵消_同一matchFo将旧有移除 (仅保留最新的);
+        self.loopCache = [SMGUtils removeArr:self.loopCache checkValid:^BOOL(DemandModel *item) {
+            return ISOK(item, ReasonDemandModel.class) && [((ReasonDemandModel*)item).mModel.matchFo isEqual:mModel.matchFo];
+        }];
         
-        //3. 未被撤弱掉,则加到需求序列中;
-        if (canNeed) {
+        //5. 取迫切度评分: 判断matchingFo.mv有值才加入demandManager,同台竞争,执行顺应mv;
+        CGFloat score = [AIScore score4MV:mModel.matchFo.cmvNode_p ratio:mModel.matchFoValue];
+        if (score < 0) {
+            
+            //6. 有需求时,则加到需求序列中;
             ReasonDemandModel *newItem = [[ReasonDemandModel alloc] init];
             newItem.algsType = algsType;
             newItem.delta = delta;
             newItem.urgentTo = urgentTo;
-            newItem.inModel = inModel;
+            newItem.mModel = mModel;
+            newItem.protoFo = inModel.protoFo;
             [self.loopCache addObject:newItem];
             
-            //2. 新需求时,加上活跃度;
+            //7. 新需求时,加上活跃度;
             [self.delegate demandManager_updateEnergy:urgentTo];
-            NSLog(@"demandManager-RMV >> 新需求 %lu",(unsigned long)self.loopCache.count);
+            NSLog(@"demandManager-RMV >> 新需求:%lu 评分:%f\n%@->%@",(unsigned long)self.loopCache.count,score,Fo2FStr(mModel.matchFo),Pit2FStr(mModel.matchFo.cmvNode_p));
+        }else{
+            NSLog(@"当前,预测mv未形成需求:%@ 差值:%ld 评分:%f",algsType,(long)delta,score);
         }
     }
 }
@@ -153,12 +159,17 @@
  *  1. 懒排序,什么时候assLoop,什么时候排序;
  *  @version
  *      2021.01.02: loopCache排序后未被接收,所以一直是未生效的BUG;
+ *      2021.01.27: 支持第二级排序:initTime (参考22074-BUG2);
  */
 -(void) refreshCmvCacheSort{
     NSArray *sort = [self.loopCache sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
         DemandModel *itemA = (DemandModel*)obj1;
         DemandModel *itemB = (DemandModel*)obj2;
-        return [SMGUtils compareIntA:itemA.urgentTo intB:itemB.urgentTo];
+        NSComparisonResult result = [SMGUtils compareIntA:itemA.urgentTo intB:itemB.urgentTo];
+        if (result == NSOrderedSame) {
+            result = [SMGUtils compareDoubleA:itemA.initTime doubleB:itemB.initTime];
+        }
+        return result;
     }];
     [self.loopCache removeAllObjects];
     [self.loopCache addObjectsFromArray:sort];

@@ -33,7 +33,7 @@
 /**
  *  MARK:--------------------理性思维预测mv加入--------------------
  */
--(void) updateCMVCache_RMV:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta inModel:(AIShortMatchModel*)inModel;
+-(void) updateCMVCache_RMV:(AIShortMatchModel*)inModel;
 
 
 /**

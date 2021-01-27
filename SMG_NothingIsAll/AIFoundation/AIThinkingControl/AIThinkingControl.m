@@ -187,32 +187,7 @@ static AIThinkingControl *_instance;
     if (!inModel) return;
     
     //2. 预测处理_把mv加入到demandManager;
-    if (inModel.matchFo) {
-        NSInteger urgentTo = 0;
-        AIFoNodeBase *matchFo = inModel.matchFo;
-        
-        //1> 判断matchingFo.mv有值才加入demandManager,同台竞争,执行顺应mv;
-        AICMVNodeBase *mvNode = [SMGUtils searchNode:matchFo.cmvNode_p];
-        if (mvNode) {
-            NSInteger delta = [NUMTOOK([AINetIndex getData:mvNode.delta_p]) integerValue];
-            if (delta != 0) {
-                NSString *algsType = mvNode.urgentTo_p.algsType;
-                
-                //2> 判断matchValue的匹配度,对mv的迫切度产生"正相关"影响;
-                urgentTo = [NUMTOOK([AINetIndex getData:mvNode.urgentTo_p]) integerValue];
-                urgentTo = (int)(urgentTo * inModel.matchFoValue);
-                
-                //3> 将mv加入demandCache
-                [self.demandManager updateCMVCache_RMV:algsType urgentTo:urgentTo delta:delta inModel:inModel];
-                
-                //4> RMV无需求时;
-                MVDirection havDemand = [ThinkingUtils havDemand:algsType delta:delta];
-                if (havDemand == MVDirection_None) {
-                    NSLog(@"当前,预测mv未形成需求:%@ %ld",algsType,(long)delta);
-                }
-            }
-        }
-    }
+    [self.demandManager updateCMVCache_RMV:inModel];
     
     //4. 将新一帧数据报告给TOR,以进行短时记忆的更新,比如我输出行为"打",短时记忆由此知道输出"打"成功;
     DemandModel *demand = [self.demandManager getCurrentDemand];

@@ -27,6 +27,7 @@
 #import "ReasonDemandModel.h"
 #import "PerceptDemandModel.h"
 #import "DemandManager.h"
+#import "AIMatchFoModel.h"
 
 @implementation AIThinkOutPercept
 
@@ -161,7 +162,7 @@
 -(void) reasonSub:(ReasonDemandModel*)demand{
     //1. 数据检查
     if (!demand) return;
-    AIFoNodeBase *matchFo = demand.inModel.matchFo;
+    AIFoNodeBase *matchFo = demand.mModel.matchFo;
     
     //2. ActYes等待 或 OutBack反省等待 中时,不进行决策;
     NSArray *waitFos = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
@@ -175,7 +176,7 @@
     //4. 去掉不应期
     NSArray *except_ps = [TOUtils convertPointersFromTOModels:demand.actionFoModels];
     NSArray *validFos = [SMGUtils removeSub_ps:except_ps parent_ps:sFo_ps];
-    NSLog(@"\n\n=============================== TOP.R- ===============================\n任务:%@ 已发生:%ld 不应期数:%lu 可尝试方案:%lu",Fo2FStr(matchFo),(long)demand.inModel.cutIndex,(unsigned long)except_ps.count,(unsigned long)validFos.count);
+    NSLog(@"\n\n=============================== TOP.R- ===============================\n任务:%@ 已发生:%ld 不应期数:%lu 可尝试方案:%lu",Fo2FStr(matchFo),(long)demand.mModel.cutIndex,(unsigned long)except_ps.count,(unsigned long)validFos.count);
     
     //5. 找新方案 (破壁者);
     for (AIKVPointer *item_p in validFos) {
@@ -287,7 +288,7 @@
         if (!ISOK(demand, ReasonDemandModel.class)) continue;
         
         //3. 判断hope(wait)和real(new)之间是否相符 (与newMv同区且同向) (匹配,比如撞疼,确定疼了);
-        BOOL isSame = [AIScore sameScoreOfMV1:demand.inModel.matchFo.cmvNode_p mv2:newMv.pointer];
+        BOOL isSame = [AIScore sameScoreOfMV1:demand.mModel.matchFo.cmvNode_p mv2:newMv.pointer];
         if (!isSame) continue;
         
         //4. 将等待中的foModel改为OutBack;

@@ -27,6 +27,7 @@
 #import "DemandManager.h"
 #import "AIScore.h"
 #import "ReasonDemandModel.h"
+#import "AIMatchFoModel.h"
 
 @interface AIThinkOutReason() <TOActionDelegate>
 
@@ -123,11 +124,11 @@
 -(void) commitReasonSub:(TOFoModel*)sFoModel demand:(ReasonDemandModel*)demand{
     //1. 数据检查
     if (!sFoModel || !demand) return;
-    AIFoNodeBase *matchFo = demand.inModel.matchFo;
+    AIFoNodeBase *matchFo = demand.mModel.matchFo;
     AIFoNodeBase *sFo = [SMGUtils searchNode:sFoModel.content_p];
     
     //2. 决策时评价 (S首元素已错过,则失败);
-    BOOL score = [AIScore FRS_Miss:sFo matchFo:matchFo cutIndex:demand.inModel.cutIndex];
+    BOOL score = [AIScore FRS_Miss:sFo matchFo:matchFo cutIndex:demand.mModel.cutIndex];
     if (!score) {
         sFoModel.status = TOModelStatus_ActNo;
         [self singleLoopBackWithFailureModel:sFoModel];
@@ -789,11 +790,11 @@
         if (ISOK(actYesModel.baseOrGroup, ReasonDemandModel.class)) {
             //1. R-模式ActYes处理_数据准备;
             ReasonDemandModel *demand = (ReasonDemandModel*)actYesModel.baseOrGroup;
-            AIFoNodeBase *matchFo = demand.inModel.matchFo;
+            AIFoNodeBase *matchFo = demand.mModel.matchFo;
             
             //2. 取matchFo已发生,到末位mvDeltaTime,所有时间之和做触发;
             double deltaTime = 0;
-            for (NSInteger i = demand.inModel.cutIndex; i < matchFo.count; i++) {
+            for (NSInteger i = demand.mModel.cutIndex; i < matchFo.count; i++) {
                 deltaTime += [NUMTOOK(ARR_INDEX(matchFo.deltaTimes, i)) doubleValue];
             }
             deltaTime += matchFo.mvDeltaTime;

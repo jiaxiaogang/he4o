@@ -20,6 +20,7 @@
 #import "AIPort.h"
 #import "AIScore.h"
 #import "ReasonDemandModel.h"
+#import "AIMatchFoModel.h"
 
 @implementation AIThinkOutAction
 
@@ -141,8 +142,8 @@
         AIAlgNodeBase *sAlg = [SMGUtils searchNode:outModel.content_p];
         TOFoModel *sFoModel = (TOFoModel*)outModel.baseOrGroup;
         ReasonDemandModel *rDemand = (ReasonDemandModel*)sFoModel.baseOrGroup;
-        AIFoNodeBase *matchFo = rDemand.inModel.matchFo;
-        AIFoNodeBase *protoFo = rDemand.inModel.protoFo;
+        AIFoNodeBase *matchFo = rDemand.mModel.matchFo;
+        AIFoNodeBase *protoFo = rDemand.protoFo;
         
         //2. 判断是否被M.itemAlg和P.itemAlg抽象指向;
         NSInteger mIndex = [TOUtils indexOfAbsItem:outModel.content_p atConContent:matchFo.content_ps];

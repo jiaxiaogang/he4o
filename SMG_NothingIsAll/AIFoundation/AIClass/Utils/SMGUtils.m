@@ -323,6 +323,9 @@
 +(NSComparisonResult) compareFloatA:(CGFloat)floatA floatB:(CGFloat)floatB{
     return floatA > floatB ? NSOrderedAscending : floatA < floatB ? NSOrderedDescending : NSOrderedSame;
 }
++(NSComparisonResult) compareDoubleA:(CGFloat)doubleA doubleB:(CGFloat)doubleB{
+    return doubleA > doubleB ? NSOrderedAscending : doubleA < doubleB ? NSOrderedDescending : NSOrderedSame;
+}
 
 
 @end
@@ -616,6 +619,12 @@
         [result_ps removeObject:sub_p];
     }
     return result_ps;
+}
+
++(NSMutableArray*) removeArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid {
+    NSMutableArray *result = [[NSMutableArray alloc] initWithArray:arr];
+    NSArray *removeItems = [SMGUtils filterArr:arr checkValid:checkValid limit:NSIntegerMax];
+    [result removeObjectsInArray:removeItems];
 }
 
 +(NSMutableArray*) removeRepeat:(NSArray*)protoArr{
