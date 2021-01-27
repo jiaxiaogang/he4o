@@ -625,6 +625,7 @@
     NSMutableArray *result = [[NSMutableArray alloc] initWithArray:arr];
     NSArray *removeItems = [SMGUtils filterArr:arr checkValid:checkValid limit:NSIntegerMax];
     [result removeObjectsInArray:removeItems];
+    return result;
 }
 
 +(NSMutableArray*) removeRepeat:(NSArray*)protoArr{

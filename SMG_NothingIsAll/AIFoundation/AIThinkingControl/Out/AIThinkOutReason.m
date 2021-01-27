@@ -793,11 +793,7 @@
             AIFoNodeBase *matchFo = demand.mModel.matchFo;
             
             //2. 取matchFo已发生,到末位mvDeltaTime,所有时间之和做触发;
-            double deltaTime = 0;
-            for (NSInteger i = demand.mModel.cutIndex; i < matchFo.count; i++) {
-                deltaTime += [NUMTOOK(ARR_INDEX(matchFo.deltaTimes, i)) doubleValue];
-            }
-            deltaTime += matchFo.mvDeltaTime;
+            double deltaTime = [TOUtils getSumDeltaTime2Mv:matchFo cutIndex:demand.mModel.cutIndex];
             
             //3. 触发器;
             NSLog(@"---//触发器R-_任务:%@ 破壁:%@ time:%f",Fo2FStr(matchFo),Pit2FStr(actYesModel.content_p),deltaTime);

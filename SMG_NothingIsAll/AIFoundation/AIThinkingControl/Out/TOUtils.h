@@ -107,4 +107,10 @@
 +(BOOL) isN_toModel:(TOModelBase*)toModel;
 +(BOOL) isG_toModel:(TOModelBase*)toModel;
 +(BOOL) isL_toModel:(TOModelBase*)toModel;
+
+/**
+ *  MARK:--------------------求fo的cutIndex到mv的deltaTime之和--------------------
+ */
++(double) getSumDeltaTime2Mv:(AIFoNodeBase*)fo cutIndex:(NSInteger)cutIndex;
+
 @end

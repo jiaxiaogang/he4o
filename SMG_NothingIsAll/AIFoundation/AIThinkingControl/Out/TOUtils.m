@@ -465,4 +465,20 @@
     return toModel;
 }
 
+/**
+ *  MARK:--------------------求fo的cutIndex到mv的deltaTime之和--------------------
+ */
++(double) getSumDeltaTime2Mv:(AIFoNodeBase*)fo cutIndex:(NSInteger)cutIndex{
+    //1. 数据准备
+    double deltaTime = 0;
+    if (!fo) return deltaTime;
+    
+    //2. 取 "cutIndex后deltaTime" 与 "mvDeltaTime" 之和,并返回;
+    for (NSInteger i = cutIndex; i < fo.count; i++) {
+        deltaTime += [NUMTOOK(ARR_INDEX(fo.deltaTimes, i)) doubleValue];
+    }
+    deltaTime += fo.mvDeltaTime;
+    return deltaTime;
+}
+
 @end

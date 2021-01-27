@@ -370,6 +370,8 @@
  *      2. 支持:
  *          a.HNGL(因为时序识别处关闭,所以假启用状态);
  *          b.MV(启用);
+ *  @version
+ *      2021.01.27: 非末位也支持mv触发器 (参考22074-BUG2);
  */
 +(void) tir_Forecast:(AIShortMatchModel*)inModel{
     //1. 数据检查;
@@ -397,9 +399,10 @@
             }
         }else{
             //有mv判断;
-            if (item.cutIndex == matchFo.count - 1 && matchFo.cmvNode_p) {
+            if (matchFo.cmvNode_p) {
                 item.status = TIModelStatus_LastWait;
-                [AITime setTimeTrigger:matchFo.mvDeltaTime trigger:^{
+                double deltaTime = [TOUtils getSumDeltaTime2Mv:matchFo cutIndex:item.cutIndex];
+                [AITime setTimeTrigger:deltaTime trigger:^{
                     //4. 反向反馈类比(成功/未成功)的主要原因;
                     AnalogyType type = (item.status == TIModelStatus_LastWait) ? ATSub : ATPlus;
                     NSLog(@"---//触发器Mv_触发: %@ (%@)",Fo2FStr(matchFo),ATType2Str(type));
