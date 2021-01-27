@@ -408,6 +408,8 @@
                     NSLog(@"---//触发器Mv_触发: %@ (%@)",Fo2FStr(matchFo),ATType2Str(type));
                     [AIAnalogy analogy_InRethink:item shortFo:protoFo type:type];
                     
+                    //TODOTOMORROW20210127: 触发完成后,要移除任务,因为已失效 (参考22074-BUG2);
+                    
                     //5. 失败状态标记;
                     if (item.status == TIModelStatus_LastWait) item.status = TIModelStatus_OutBackNo;
                 }];
