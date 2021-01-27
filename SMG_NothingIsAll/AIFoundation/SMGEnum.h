@@ -136,8 +136,8 @@ typedef NS_ENUM(NSInteger, TOModelStatus) {
 typedef NS_ENUM(NSInteger, TIModelStatus) {
     TIModelStatus_Default   = 0,//默认值
     TIModelStatus_LastWait  = 1,//末位等待
-    TIModelStatus_OutBackYes= 2,//返馈成功
-    TIModelStatus_OutBackNo = 3,//返馈失败
+    TIModelStatus_OutBackYes= 2,//反馈成功
+    TIModelStatus_OutBackNo = 3,//反馈失败
 };
 
 /**

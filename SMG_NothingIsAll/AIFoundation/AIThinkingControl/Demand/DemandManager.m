@@ -15,6 +15,9 @@
 #import "AINetIndex.h"
 #import "AIScore.h"
 #import "AIMatchFoModel.h"
+#import "AITime.h"
+#import "TOFoModel.h"
+#import "AIAnalogy.h"
 
 @interface DemandManager()
 
@@ -111,6 +114,7 @@
  *  @version
  *      2021.01.25: RMV仅对ReasonDemandModel进行抵消防重 (否则会导致R-与P-需求冲突);
  *      2021.01.27: RMV仅对matchFoModel进行抵消防重 (否则会导致inModel预测处理不充分) (参考22074-BUG2);
+ *      2021.01.27: R-任务形成时,直接构建触发器 (参考22076-todo1);
  */
 -(void) updateCMVCache_RMV:(AIShortMatchModel*)inModel{
     //1. 数据检查;
@@ -144,6 +148,39 @@
             newItem.mModel = mModel;
             newItem.protoFo = inModel.protoFo;
             [self.loopCache addObject:newItem];
+            
+            //7. 新需求,直接构建生物钟触发器;
+            //a. 取matchFo已发生,到末位mvDeltaTime,所有时间之和做触发;
+            AIFoNodeBase *matchFo = newItem.mModel.matchFo;
+            double deltaTime = [TOUtils getSumDeltaTime2Mv:matchFo cutIndex:newItem.mModel.cutIndex];
+            newItem.status = TOModelStatus_Runing;
+            
+            //b. 触发器;
+            [AITime setTimeTrigger:deltaTime trigger:^{
+                //NSArray *actYesFos = [SMGUtils filterArr:newItem.actionFoModels checkValid:^BOOL(TOFoModel *item) {
+                //    return item.status == TOModelStatus_ActYes;
+                //}];
+                //
+                ////3. 反省类比 (当OutBack发生,则破壁失败S,否则成功P);
+                ////c. 是否顺利,还是以mv为判断标准;
+                ////d. 判断root,demand是否有根 (抵消后无根);
+                //AnalogyType type = ARRISOK(actYesFos) ? ATSub : ATPlus;
+                //NSLog(@"---//触发器R-_任务:%@ 破壁:%@ (%@)",Fo2FStr(matchFo),Pit2FStr(actYesModel.content_p),ATType2Str(type));
+                //
+                ////4. 暂不开通反省类比,等做兼容PM后,再打开反省类比;
+                //[AIAnalogy analogy_ReasonRethink:(TOFoModel*)actYesModel cutIndex:NSIntegerMax type:type];
+                //
+                ////4. 失败时,转流程控制-失败 (会开始下一解决方案) (参考22061-8);
+                //if (type == ATSub) {
+                //    newItem.status = TOModelStatus_ScoreNo;
+                //}else{
+                //    //5. SFo破壁成功,完成任务 (参考22061-9);
+                //    newItem.status = TOModelStatus_Finish;
+                //}
+                //
+                ////e. 无论如何,都中止任务 (过期失效,或已完成);
+                //[theTC.outModelManager removeDemand:newItem];
+            }];
             
             //7. 新需求时,加上活跃度;
             [self.delegate demandManager_updateEnergy:urgentTo];

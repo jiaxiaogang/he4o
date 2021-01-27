@@ -740,6 +740,7 @@
  *  @version
  *      2020.10.17: 在生物钟触发器触发器,做有根判定,任务失效时,不进行反省 (参考note21-todolist-1);
  *      2020.12.18: HNGL失败时再调用Begin会死循环的问题,改为HNGL.ActYes失败时,则直接调用FC.Failure(hnglAlg);
+ *      2021.01.27: R-模式的ActYes仅赋值,不在此处做触发器 (参考22076-todo4);
  */
 -(void) singleLoopBackWithActYes:(TOModelBase*)actYesModel {
     NSLog(@"\n\n=============================== 流程控制:ActYes ===============================\nModel:%@ %@",actYesModel.class,Pit2FStr(actYesModel.content_p));
@@ -788,34 +789,10 @@
         }
     }else if(ISOK(actYesModel, TOFoModel.class)){
         if (ISOK(actYesModel.baseOrGroup, ReasonDemandModel.class)) {
-            //1. R-模式ActYes处理_数据准备;
+            //1. R-模式ActYes处理,仅赋值,等待R-触发器;
             ReasonDemandModel *demand = (ReasonDemandModel*)actYesModel.baseOrGroup;
-            AIFoNodeBase *matchFo = demand.mModel.matchFo;
-            
-            //2. 取matchFo已发生,到末位mvDeltaTime,所有时间之和做触发;
-            double deltaTime = [TOUtils getSumDeltaTime2Mv:matchFo cutIndex:demand.mModel.cutIndex];
-            
-            //3. 触发器;
-            NSLog(@"---//触发器R-_任务:%@ 破壁:%@ time:%f",Fo2FStr(matchFo),Pit2FStr(actYesModel.content_p),deltaTime);
-            [AITime setTimeTrigger:deltaTime trigger:^{
-                
-                //3. 反省类比 (当OutBack发生,则破壁失败S,否则成功P);
-                AnalogyType type = (actYesModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;
-                NSLog(@"---//触发器R-_任务:%@ 破壁:%@ (%@)",Fo2FStr(matchFo),Pit2FStr(actYesModel.content_p),ATType2Str(type));
-                
-                //4. 暂不开通反省类比,等做兼容PM后,再打开反省类比;
-                [AIAnalogy analogy_ReasonRethink:(TOFoModel*)actYesModel cutIndex:NSIntegerMax type:type];
-                
-                //4. 失败时,转流程控制-失败 (会开始下一解决方案) (参考22061-8);
-                if (type == ATSub) {
-                    actYesModel.status = TOModelStatus_ScoreNo;
-                    [self singleLoopBackWithFailureModel:actYesModel];
-                }else{
-                    //5. SFo破壁成功,完成任务 (参考22061-9);
-                    actYesModel.status = TOModelStatus_Finish;
-                    [theTC.outModelManager removeDemand:demand];
-                }
-            }];
+            demand.status = TOModelStatus_ActYes;
+            NSLog(@"---//触发器R-_任务:%@ 破壁完成:%@",Fo2FStr(demand.mModel.matchFo),Pit2FStr(actYesModel.content_p));
             return;
         }
         

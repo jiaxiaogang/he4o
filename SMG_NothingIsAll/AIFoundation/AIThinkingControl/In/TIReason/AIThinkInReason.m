@@ -408,8 +408,6 @@
                     NSLog(@"---//触发器Mv_触发: %@ (%@)",Fo2FStr(matchFo),ATType2Str(type));
                     [AIAnalogy analogy_InRethink:item shortFo:protoFo type:type];
                     
-                    //TODOTOMORROW20210127: 触发完成后,要移除任务,因为已失效 (参考22074-BUG2);
-                    
                     //5. 失败状态标记;
                     if (item.status == TIModelStatus_LastWait) item.status = TIModelStatus_OutBackNo;
                 }];
@@ -423,6 +421,7 @@
  *  @title 外层输入对In短时记忆的影响处理 (参考22052-2);
  *  @version
  *      2021.01.24: 多时序识别支持,使之更全面的支持每个matchFo的status更新 (参考22073-todo6);
+ *  @status 非启动状态,因为时序识别中,未涵盖HNGL类型,所以并未对HNGL进行预测;
  */
 +(void) tir_OPushM:(AIShortMatchModel*)newInModel{
     //1. 数据检查
