@@ -553,6 +553,7 @@
  *      2020.08.22: BaseFo完成时,仅设定demand.status=ActYes,等待外循环返回"抵消价值";
  *      2020.09.16: TOFoModel不由此处Finish,而是由ActYes来处理,共有两种Fo (1. HNGL由末位转至ActYes  2. 普通Fo,直接转至ActYes);
  *      2020.12.18: TOFoModel不由此处跳帧,而是由toAction._Fo()来处理;
+ *      2021.01.28: ReasonDemand.Finish时,直接从任务池移出 (参考22081-todo3);
  */
 -(void) singleLoopBackWithFinishModel:(TOModelBase*)finishModel {
     if (ISOK(finishModel, TOAlgModel.class)) {
@@ -616,6 +617,10 @@
         //全部完成,不由此处执行,而是由外循环传入mv抵消后,再移除此demand;
         //DemandModel *demand = (DemandModel*)finishModel;
         //[demand.actionFoModels removeAllObjects];
+        //R-模式在完成后,直接移出任务池 (已躲撞成功);
+        if (ISOK(finishModel, ReasonDemandModel.class)) {
+            [theTC.outModelManager removeDemand:(ReasonDemandModel*)finishModel];
+        }
     }else{
         ELog(@"如打出此错误,则查下为何groupModel不是TOFoModel类型,因为一般行为化的都是概念,而概念的父级就是TOFoModel:%@",finishModel.class);
     }
@@ -639,6 +644,7 @@
  *          c. fo失败时,递归到demand.begin (TOP+换新解决方案);
  *  @version
  *      2020.07.06: 当failureModel为TOFoModel时,直接尝试下一方案;
+ *      2021.01.28: ReasonDemand.Failure时,直接移出任务池 (参考22081-todo2);
  */
 -(void) singleLoopBackWithFailureModel:(TOModelBase*)failureModel {
     //1. 尝试向alg.replace转移Block;
@@ -690,6 +696,10 @@
     }else if(ISOK(failureModel, DemandModel.class)){
         //a. 再决策未成功 (全失败了) ===> 全部失败;
         NSLog(@"Demand所有方案全部失败");
+        //当R-任务失败时,直接移除 (因为已撞再躲无用 / 已没办法只能硬抗伤害);
+        if (ISOK(failureModel, ReasonDemandModel.class)) {
+            [theTC.outModelManager removeDemand:(ReasonDemandModel*)failureModel];
+        }
     }else{
         ELog(@"如打出此错误,则查下为何groupModel不是TOFoModel类型,因为一般行为化的都是概念,而概念的父级就是TOFoModel");
     }
@@ -742,6 +752,7 @@
  *      2020.12.18: HNGL失败时再调用Begin会死循环的问题,改为HNGL.ActYes失败时,则直接调用FC.Failure(hnglAlg);
  *      2021.01.27: R-模式的ActYes仅赋值,不在此处做触发器 (参考22081-todo4);
  *      2021.01.28: R-模式的ActYes在此处触发Out反省,与昨天思考的In反省触发不冲突 (参考22082);
+ *      2021.01.28: ReasonDemand触发后,无论成功失败,都移出任务池 (参考22081-todo2&3);
  */
 -(void) singleLoopBackWithActYes:(TOModelBase*)actYesModel {
     NSLog(@"\n\n=============================== 流程控制:ActYes ===============================\nModel:%@ %@",actYesModel.class,Pit2FStr(actYesModel.content_p));
@@ -802,21 +813,26 @@
             NSLog(@"---//触发器R-_任务:%@ 破壁:%@ time:%f",Fo2FStr(matchFo),Pit2FStr(actYesModel.content_p),deltaTime);
             [AITime setTimeTrigger:deltaTime trigger:^{
                 
-                //3. 反省类比 (当OutBack发生,则破壁失败S,否则成功P) (参考top_OPushM());
-                AnalogyType type = (actYesModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;
-                NSLog(@"---//触发器R-_任务:%@ 破壁:%@ (%@)",Fo2FStr(matchFo),Pit2FStr(actYesModel.content_p),ATType2Str(type));
-                
-                //4. 暂不开通反省类比,等做兼容PM后,再打开反省类比;
-                [AIAnalogy analogy_ReasonRethink:(TOFoModel*)actYesModel cutIndex:NSIntegerMax type:type];
-                
-                //4. 失败时,转流程控制-失败 (会开始下一解决方案) (参考22061-8);
-                if (type == ATSub) {
-                    actYesModel.status = TOModelStatus_ScoreNo;
-                    [self singleLoopBackWithFailureModel:actYesModel];
-                }else{
-                    //5. SFo破壁成功,完成任务 (参考22061-9);
-                    actYesModel.status = TOModelStatus_Finish;
-                    [theTC.outModelManager removeDemand:demand];
+                //3. 无root时,说明已被别的R-新matchFo抵消掉,抵消掉后是不做反省的 (参考22081-todo1);
+                BOOL havRoot = [theTC.outModelManager.getAllDemand containsObject:demand];
+                if (havRoot) {
+                    //3. 反省类比 (当OutBack发生,则破壁失败S,否则成功P) (参考top_OPushM());
+                    AnalogyType type = (actYesModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;
+                    NSLog(@"---//触发器R-_任务:%@ 破壁:%@ (%@)",Fo2FStr(matchFo),Pit2FStr(actYesModel.content_p),ATType2Str(type));
+                    
+                    //4. 暂不开通反省类比,等做兼容PM后,再打开反省类比;
+                    [AIAnalogy analogy_ReasonRethink:(TOFoModel*)actYesModel cutIndex:NSIntegerMax type:type];
+                    
+                    //4. 失败时,转流程控制-失败 (会开始下一解决方案) (参考22061-8);
+                    //2021.01.28: 失败后不用再尝试下一方案了,因为R任务已过期 (已经被撞了,你再躲也没用) (参考22081-todo3);
+                    if (type == ATSub) {
+                        actYesModel.status = TOModelStatus_ScoreNo;
+                        [self singleLoopBackWithFailureModel:demand];
+                    }else{
+                        //5. SFo破壁成功,完成任务 (参考22061-9);
+                        actYesModel.status = TOModelStatus_Finish;
+                        [self singleLoopBackWithFinishModel:demand];
+                    }
                 }
             }];
             return;
