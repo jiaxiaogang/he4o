@@ -403,7 +403,7 @@
                 item.status = TIModelStatus_LastWait;
                 double deltaTime = [TOUtils getSumDeltaTime2Mv:matchFo cutIndex:item.cutIndex];
                 [AITime setTimeTrigger:deltaTime trigger:^{
-                    //4. 反向反馈类比(成功/未成功)的主要原因;
+                    //4. 反向反馈类比(成功/未成功)的主要原因 (参考tip_OPushM());
                     AnalogyType type = (item.status == TIModelStatus_LastWait) ? ATSub : ATPlus;
                     NSLog(@"---//触发器Mv_触发: %@ (%@)",Fo2FStr(matchFo),ATType2Str(type));
                     [AIAnalogy analogy_InRethink:item shortFo:protoFo type:type];

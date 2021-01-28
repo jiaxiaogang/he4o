@@ -802,7 +802,7 @@
             NSLog(@"---//触发器R-_任务:%@ 破壁:%@ time:%f",Fo2FStr(matchFo),Pit2FStr(actYesModel.content_p),deltaTime);
             [AITime setTimeTrigger:deltaTime trigger:^{
                 
-                //3. 反省类比 (当OutBack发生,则破壁失败S,否则成功P);
+                //3. 反省类比 (当OutBack发生,则破壁失败S,否则成功P) (参考top_OPushM());
                 AnalogyType type = (actYesModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;
                 NSLog(@"---//触发器R-_任务:%@ 破壁:%@ (%@)",Fo2FStr(matchFo),Pit2FStr(actYesModel.content_p),ATType2Str(type));
                 
