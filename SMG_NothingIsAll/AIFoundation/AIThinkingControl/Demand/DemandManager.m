@@ -218,7 +218,7 @@
     
     //3. 逐个判断条件
     for (NSInteger i = 0; i < self.loopCache.count; i++) {
-        DemandModel *item = ARR_INDEX_REVERSE(self.loopCache, i);
+        DemandModel *item = ARR_INDEX(self.loopCache, i);
         
         //4. 已完成时,下一个;
         if (item.status == TOModelStatus_Finish) continue;
