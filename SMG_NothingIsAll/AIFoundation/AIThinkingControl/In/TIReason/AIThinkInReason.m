@@ -427,7 +427,7 @@
     //1. 数据检查
     NSArray *inModels = theTC.inModelManager.models;
     if (!newInModel) return;
-    NSLog(@"\n\n=============================== tir_OPushM ===============================\n输入M:%@\n输入P:%@",Alg2FStr(newInModel.matchAlg),Alg2FStr(newInModel.protoAlg));
+    if (Log4TIROPushM) NSLog(@"\n\n=============================== tir_OPushM ===============================\n输入M:%@\n输入P:%@",Alg2FStr(newInModel.matchAlg),Alg2FStr(newInModel.protoAlg));
     
     //2. 判断最近一次input是否与等待中outModel相匹配 (匹配,比如吃,确定自己是否真吃了);
     for (AIShortMatchModel *inModel in inModels) {
@@ -435,7 +435,7 @@
             //3. 取出等待中的_非wait状态的,不处理;
             if (waitModel.status != TIModelStatus_LastWait) continue;
             AIFoNodeBase *waitMatchFo = waitModel.matchFo;
-            if (Log4OPushM) NSLog(@"==> checkTIModel=MatchFo: %@",Fo2FStr(waitMatchFo));
+            if (Log4TIROPushM) NSLog(@"==> checkTIModel=MatchFo: %@",Fo2FStr(waitMatchFo));
             AIKVPointer *waitLastAlg_p = ARR_INDEX_REVERSE(waitMatchFo.content_ps, 0);
             if (!waitLastAlg_p) continue;
             
@@ -467,7 +467,7 @@
                     NSArray *newInMatchAlg_ps = Nodes2Pits(newInModel.matchAlgs);
                     BOOL mIsC = [TOUtils mIsC_1:@[waitLastAlg_p] cs:newInMatchAlg_ps];
                     if (!mIsC) mIsC = [TOUtils mIsC_1:newInMatchAlg_ps cs:@[waitLastAlg_p]];
-                    if (Log4OPushM) NSLog(@"GL有效判断_mIsC:(M=MFo末位 C=%@) 结果:%d", Pits2FStr(newInMatchAlg_ps),mIsC);
+                    if (Log4TIROPushM) NSLog(@"GL有效判断_mIsC:(M=MFo末位 C=%@) 结果:%d", Pits2FStr(newInMatchAlg_ps),mIsC);
                     if (!mIsC) continue;
                     
                     //c. 对期望与实际稀疏码比较得到实际ATType;

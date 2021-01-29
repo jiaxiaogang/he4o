@@ -61,6 +61,7 @@
     if (delta == 0) {
         return;
     }
+    NSLog(@"\n\n------------------------------- PMV -------------------------------");
     
     //2. 去重_同向撤弱,反向抵消;
     BOOL canNeed = true;
@@ -118,6 +119,7 @@
 -(void) updateCMVCache_RMV:(AIShortMatchModel*)inModel{
     //1. 数据检查;
     if (!inModel || !inModel.protoFo || !ARRISOK(inModel.matchFos)) return;
+    NSLog(@"\n\n------------------------------- RMV -------------------------------");
     
     //2. 多时序识别预测分别进行处理;
     for (AIMatchFoModel *mModel in inModel.matchFos) {
@@ -192,12 +194,17 @@
 /**
  *  MARK:--------------------获取任务--------------------
  */
-//获取当前,最紧急任务;
+
+/**
+ *  MARK:--------------------获取当前,最紧急任务--------------------
+ *  @version
+ *      2021.01.29: 将last改为取first (因为顺序是从大到小,第一个才是最紧急的最新任务);
+ */
 -(DemandModel*) getCurrentDemand{
     if (ARRISOK(self.loopCache)) {
         //1. 重排序 & 取当前序列最前;
         [self refreshCmvCacheSort];
-        return self.loopCache.lastObject;//调试下,是否从小到大排序
+        return self.loopCache.firstObject;
     }
     return nil;
 }
@@ -239,7 +246,7 @@
  *  MARK:--------------------移除某任务--------------------
  */
 -(void) removeDemand:(DemandModel*)demand{
-    if (demand) return [self.loopCache removeObject:demand];
+    if (demand) [self.loopCache removeObject:demand];
 }
 
 @end

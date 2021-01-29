@@ -7,6 +7,8 @@
 //
 
 #import "NSLog+Extension.h"
+#import "ImvAlgsHungerModel.h"
+#import "ImvAlgsHurtModel.h"
 
 @implementation NSLog_Extension
 
@@ -50,6 +52,15 @@
         return @"OutBackYes";
     }
     return @"Default";
+}
+
++(NSString*) convertClass2Desc:(Class)clazz{
+    if ([clazz isEqual:ImvAlgsHungerModel.class]) {
+        return @"饿";
+    }else if ([clazz isEqual:ImvAlgsHurtModel.class]) {
+        return @"疼";
+    }
+    return @"无";
 }
 
 @end

@@ -136,6 +136,7 @@
 #define ATType2Str(type) [NSLog_Extension convertATType2Desc:type]
 #define TOStatus2Str(status) [NSLog_Extension convertTOStatus2Desc:status]
 #define TIStatus2Str(status) [NSLog_Extension convertTIStatus2Desc:status]
+#define Class2Str(c) [NSLog_Extension convertClass2Desc:c]
 
 //Double转Str
 #define Double2Str_NDZ(value) [NSString double2Str_NoDotZero:value]
@@ -230,7 +231,7 @@
 #define Log4InAnaGL false
 #define Log4InAnaHN false
 //外类比
-#define Log4OutAna true
+#define Log4OutAna false
 //正向类比
 #define Log4SameAna true
 //反向类比
@@ -249,5 +250,6 @@
 #define Log4PM false
 //外输入推进中循环
 #define Log4OPushM true
+#define Log4TIROPushM false
 //VRS评价
 #define Log4VRS true

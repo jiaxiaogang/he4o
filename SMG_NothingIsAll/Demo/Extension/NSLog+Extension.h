@@ -13,5 +13,6 @@
 +(NSString*) convertTOStatus2Desc:(TOModelStatus)status;
 +(NSString*) convertATType2Desc:(AnalogyType)atType;
 +(NSString*) convertTIStatus2Desc:(TIModelStatus)status;
++(NSString*) convertClass2Desc:(Class)clazz;
 
 @end
