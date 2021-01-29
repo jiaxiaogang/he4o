@@ -177,6 +177,7 @@
     NSArray *except_ps = [TOUtils convertPointersFromTOModels:demand.actionFoModels];
     NSArray *validFos = [SMGUtils removeSub_ps:except_ps parent_ps:sFo_ps];
     NSLog(@"\n\n=============================== TOP.R- ===============================\n任务:%@ 已发生:%ld 不应期数:%lu 可尝试方案:%lu",Fo2FStr(matchFo),(long)demand.mModel.cutIndex,(unsigned long)except_ps.count,(unsigned long)validFos.count);
+    for (AIKVPointer *item_p in validFos) NSLog(@"可选方案item: %@",Pit2FStr(item_p));
     
     //5. 找新方案 (破壁者);
     for (AIKVPointer *item_p in validFos) {
