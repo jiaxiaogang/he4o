@@ -795,7 +795,7 @@
             double deltaTime = [TOUtils getSumDeltaTime2Mv:matchFo cutIndex:demand.mModel.cutIndex];
             
             //3. 触发器;
-            NSLog(@"---//触发器R-_任务:%@ 破壁:%@ time:%f",Fo2FStr(matchFo),Pit2FStr(actYesModel.content_p),deltaTime);
+            NSLog(@"---//触发器R-_任务:%@ 解决方案:%@ time:%f",Fo2FStr(matchFo),Pit2FStr(actYesModel.content_p),deltaTime);
             [AITime setTimeTrigger:deltaTime trigger:^{
                 
                 //3. 无root时,说明已被别的R-新matchFo抵消掉,抵消掉后是不做反省的 (参考22081-todo1);
@@ -803,7 +803,7 @@
                 if (havRoot) {
                     //3. 反省类比 (当OutBack发生,则破壁失败S,否则成功P) (参考top_OPushM());
                     AnalogyType type = (actYesModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;
-                    NSLog(@"---//触发器R-_任务:%@ 破壁:%@ (%@)",Fo2FStr(matchFo),Pit2FStr(actYesModel.content_p),ATType2Str(type));
+                    NSLog(@"---//触发器R-_任务:%@ 解决方案:%@ (%@)",Fo2FStr(matchFo),Pit2FStr(actYesModel.content_p),ATType2Str(type));
                     
                     //4. 暂不开通反省类比,等做兼容PM后,再打开反省类比;
                     [AIAnalogy analogy_ReasonRethink:(TOFoModel*)actYesModel cutIndex:NSIntegerMax type:type];
