@@ -171,6 +171,9 @@
 //将概念中的value_ps(含嵌套)展开成纯微信息的组; @result : notnull
 +(NSMutableArray*) convertValuePs2MicroValuePs:(NSArray*)value_ps;
 
+//任意arr元素类型转换
++(NSArray*) convertArr:(NSArray*)arr convertBlock:(id(^)(id obj))convertBlock;
+
 @end
 
 
@@ -181,6 +184,10 @@
 
 //对ps进行从大到小的排序
 +(NSArray*) sortPointers:(NSArray*)ps;
+
+//从大到小排序
++(NSArray*) sortBig2Small:(NSArray*)arr compareBlock:(double(^)(id obj))compareBlock;
++(NSArray*) sortBig2Small:(NSArray*)arr compareBlock1:(double(^)(id obj))compareBlock1 compareBlock2:(double(^)(id obj))compareBlock2;
 
 @end
 

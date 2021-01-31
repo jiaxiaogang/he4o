@@ -192,6 +192,48 @@
     }
     NSLog(@"------->>>>>> R-无计可施");
 }
+
+-(void) reasonSubV3:(ReasonDemandModel*)demand{
+    //1. 数据检查
+    if (!demand) return;
+    AIFoNodeBase *matchFo = demand.mModel.matchFo;
+    
+    //2. ActYes等待 或 OutBack反省等待 中时,不进行决策;
+    NSArray *waitFos = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
+        return item.status == TOModelStatus_ActYes || item.status == TOModelStatus_OuterBack;
+    }];
+    if (ARRISOK(waitFos)) return;
+    
+    //3. 取所有经验排序;
+    NSArray *sortMFoModels = [SMGUtils sortBig2Small:demand.inModel.matchFos compareBlock:^double(AIMatchFoModel *mFo) {
+        return [AIScore score4MV:mFo.matchFo.cmvNode_p ratio:mFo.matchFoValue];
+    }];
+    NSArray *sortMFos = [SMGUtils convertArr:sortMFoModels convertBlock:^id(AIMatchFoModel *mModel) {
+        return mModel.matchFo;
+    }];
+    
+    //3. 取出所有S (取Sub避免MatchFo继续下去的办法);
+    NSArray *sFo_ps = Ports2Pits([AINetUtils absPorts_All:matchFo type:ATSub]);
+    
+    //4. 去掉不应期
+    NSArray *except_ps = [TOUtils convertPointersFromTOModels:demand.actionFoModels];
+    NSArray *validFos = [SMGUtils removeSub_ps:except_ps parent_ps:sFo_ps];
+    NSLog(@"\n\n=============================== TOP.R- ===============================\n任务:%@ 已发生:%ld 不应期数:%lu 可尝试方案:%lu",Fo2FStr(matchFo),(long)demand.mModel.cutIndex,(unsigned long)except_ps.count,(unsigned long)validFos.count);
+    for (AIKVPointer *item_p in validFos) NSLog(@"可选方案item: %@",Pit2FStr(item_p));
+    
+    //5. 找新方案 (破壁者);
+    for (AIKVPointer *item_p in validFos) {
+        //6. 未发生理性评价 (空S评价);
+        if (![AIScore FRS:[SMGUtils searchNode:item_p]]) continue;
+        
+        //7. 评价通过则取出 (提交决策流程控制,行为化);
+        TOFoModel *foModel = [TOFoModel newWithFo_p:item_p base:demand];
+        NSLog(@"------->>>>>> R-新增一例解决方案: %@",Pit2FStr(item_p));
+        [self.delegate aiTOP_2TOR_ReasonSub:foModel demand:demand];
+        break;
+    }
+    NSLog(@"------->>>>>> R-无计可施");
+}
 /**
  *  MARK:-------------------- P- --------------------
  *  @desc

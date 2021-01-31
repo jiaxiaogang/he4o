@@ -552,7 +552,7 @@
 +(NSString*) convertPointers2String:(NSArray*)pointers{
     NSMutableString *mStr = [[NSMutableString alloc] init];
     for (AIPointer *p in ARRTOOK(pointers)) {
-        [mStr appendFormat:@"%@_%ld,",p.identifier,p.pointerId];
+        [mStr appendFormat:@"%@_%ld,",p.identifier,(long)p.pointerId];
     }
     return mStr;
 }
@@ -580,6 +580,19 @@
     return mic_ps;
 }
 
+//任意arr元素类型转换
++(NSArray*) convertArr:(NSArray*)arr convertBlock:(id(^)(id obj))convertBlock{
+    //1. 数据准备;
+    arr = ARRTOOK(arr);
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    
+    //2. 转换
+    for (id obj in arr) {
+        id convertItem = convertBlock(obj);
+        if (convertItem) [result addObject:convertItem];
+    }
+    return result;
+}
 
 @end
 
@@ -593,6 +606,32 @@
     ps = ARRTOOK(ps);
     return [ps sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
         return [SMGUtils comparePointerA:obj1 pointerB:obj2];
+    }];
+}
+
+/**
+ *  MARK:--------------------从大到小排序--------------------
+ */
++(NSArray*) sortBig2Small:(NSArray*)arr compareBlock:(double(^)(id obj))compareBlock{
+    return [SMGUtils sortBig2Small:arr compareBlock1:compareBlock compareBlock2:nil];
+}
++(NSArray*) sortBig2Small:(NSArray*)arr compareBlock1:(double(^)(id obj))compareBlock1 compareBlock2:(double(^)(id obj))compareBlock2{
+    //1. 数据检查;
+    arr = ARRTOOK(arr);
+    
+    //2. 排序返回;
+    return [arr sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+        //3. 一级对比;
+        NSComparisonResult result = NSOrderedSame;
+        if (compareBlock2) {
+            result = [SMGUtils compareDoubleA:compareBlock1(obj1) doubleB:compareBlock1(obj2)];
+        }
+        
+        //4. 二级对比;
+        if (result == NSOrderedSame && compareBlock2) {
+            result = [SMGUtils compareDoubleA:compareBlock2(obj1) doubleB:compareBlock2(obj2)];
+        }
+        return result;
     }];
 }
 
