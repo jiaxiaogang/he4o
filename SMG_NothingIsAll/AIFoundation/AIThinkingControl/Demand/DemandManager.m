@@ -142,12 +142,10 @@
         if (score < 0) {
             
             //6. 有需求时,则加到需求序列中;
-            ReasonDemandModel *newItem = [[ReasonDemandModel alloc] init];
+            ReasonDemandModel *newItem = [ReasonDemandModel newWithMModel:mModel inModel:inModel];
             newItem.algsType = algsType;
             newItem.delta = delta;
             newItem.urgentTo = urgentTo;
-            newItem.mModel = mModel;
-            newItem.protoFo = inModel.protoFo;
             [self.loopCache addObject:newItem];
             
             //7. 新需求时,加上活跃度;

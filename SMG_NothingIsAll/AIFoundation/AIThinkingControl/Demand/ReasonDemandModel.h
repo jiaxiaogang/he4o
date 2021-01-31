@@ -19,7 +19,14 @@
 @class AIShortMatchModel,TOFoModel,AIMatchFoModel;
 @interface ReasonDemandModel : DemandModel
 
-@property (weak, nonatomic) AIFoNodeBase *protoFo;      //R-原始时序
-@property (strong, nonatomic) AIMatchFoModel *mModel;   //R-预测时序
+/**
+ *  MARK:--------------------newWith--------------------
+ *  @param mModel   : notnull
+ *  @param inModel  : notnull
+ */
++(ReasonDemandModel*) newWithMModel:(AIMatchFoModel*)mModel inModel:(AIShortMatchModel*)inModel;
+
+@property (strong, nonatomic) AIMatchFoModel *mModel;       //R-预测时序
+@property (strong, nonatomic) AIShortMatchModel *inModel;   //需求来源inModel;
 
 @end

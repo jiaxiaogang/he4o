@@ -143,7 +143,7 @@
         TOFoModel *sFoModel = (TOFoModel*)outModel.baseOrGroup;
         ReasonDemandModel *rDemand = (ReasonDemandModel*)sFoModel.baseOrGroup;
         AIFoNodeBase *matchFo = rDemand.mModel.matchFo;
-        AIFoNodeBase *protoFo = rDemand.protoFo;
+        AIFoNodeBase *protoFo = rDemand.inModel.protoFo;
         
         //2. 判断是否被M.itemAlg和P.itemAlg抽象指向;
         NSInteger mIndex = [TOUtils indexOfAbsItem:outModel.content_p atConContent:matchFo.content_ps];

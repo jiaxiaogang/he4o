@@ -12,4 +12,11 @@
 
 @implementation ReasonDemandModel
 
++(ReasonDemandModel*) newWithMModel:(AIMatchFoModel*)mModel inModel:(AIShortMatchModel*)inModel{
+    ReasonDemandModel *result = [[ReasonDemandModel alloc] init];
+    result.mModel = mModel;
+    result.inModel = inModel;
+    return result;
+}
+
 @end
