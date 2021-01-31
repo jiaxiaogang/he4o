@@ -116,6 +116,7 @@
  *      2020.12.17 : getInnerAlg改为返回单条,此处调用支持,并并入流程控制fo.begin (参考21183);
  *      2021.01.22 : 支持R-模式的S类型Alg满足 (参考22061);
  *      2021.01.23 : 将R-模式改为调用PM满足 (参考22061-改4);
+ &      2021.01.31 : R-模式V3迭代:将原R-模式彻底整合到原有流程中 (参考22105示图);
  *  @todo
  *      2020.07.05: 在下面MC中,转至PM时,是将C作为M的,随后需测下,看是否需要独立对MC做类似PM的理性评价,即将一步到位,细化成两步各自评价;
  *      2021.01.04: 支持APS评价 (以前原本支持替换Alg并反思fo,后来弃用了?代码找不到) (参考22012);
@@ -132,53 +133,6 @@
     if (!outModel.content_p) {
         outModel.status = TOModelStatus_Finish;
         [self.delegate toAction_SubModelFinish:outModel];
-        return;
-    }
-    
-    //1. 第-1级,对R-的SAlg进行行为化;
-    BOOL isS = [TOUtils isS:outModel.content_p];
-    if (isS && ISOK(outModel.baseOrGroup.baseOrGroup, ReasonDemandModel.class)) {
-        //1. 数据准备 (此处直接取demand.inModel,就不必不再交给PM处理了);
-        AIAlgNodeBase *sAlg = [SMGUtils searchNode:outModel.content_p];
-        TOFoModel *sFoModel = (TOFoModel*)outModel.baseOrGroup;
-        ReasonDemandModel *rDemand = (ReasonDemandModel*)sFoModel.baseOrGroup;
-        AIFoNodeBase *matchFo = rDemand.mModel.matchFo;
-        AIFoNodeBase *protoFo = rDemand.inModel.protoFo;
-        
-        //2. 判断是否被M.itemAlg和P.itemAlg抽象指向;
-        NSInteger mIndex = [TOUtils indexOfAbsItem:outModel.content_p atConContent:matchFo.content_ps];
-        AIKVPointer *mAlg_p = ARR_INDEX(matchFo.content_ps, mIndex);
-        NSInteger pIndex = [TOUtils indexOfAbsItem:mAlg_p atConContent:protoFo.content_ps];
-        AIKVPointer *pAlg_p = ARR_INDEX(protoFo.content_ps, pIndex);
-        AIAlgNodeBase *pAlg = [SMGUtils searchNode:pAlg_p];
-        
-        //2. 被M抽象指向时,则对S加工,想办法满足demand.protoAlg变成S (GL);
-        if (mIndex != -1 && pIndex != -1 && mAlg_p && pAlg) {
-            //3. 对s的所有稀疏码,排除不应期,得到待满足集;
-            NSArray *except_ps = [TOUtils convertPointersFromTOModels:outModel.subModels];
-            NSArray *targetValue_ps = [SMGUtils removeSub_ps:except_ps parent_ps:sAlg.content_ps];
-            
-            //c. 将"ProtoAlg与SubAlg取得同区码，作为justPValues独特码"保留到短时记忆模型;
-            NSArray *justPValues = [SMGUtils filterSameIdentifier_Dic:targetValue_ps b_ps:pAlg.content_ps].allValues;
-            outModel.pm_ProtoAlg = pAlg;
-            [outModel.justPValues addObjectsFromArray:justPValues];
-            outModel.pm_Fo = [SMGUtils searchNode:outModel.baseOrGroup.content_p];
-            
-            //e. 理性评价
-            NSLog(@"===> 转至PM ↓↓↓↓↓↓↓↓↓ (C作为M,P作为P)");
-            [self.delegate toAction_ReasonScorePM:outModel failure:^{
-                outModel.status = TOModelStatus_ActNo;
-                [self.delegate toAction_SubModelFailure:outModel];
-            } notNeedPM:^{
-                //f. 未跳转到PM,则将algModel设为Finish,并递归;
-                outModel.status = TOModelStatus_Finish;
-                [self.delegate toAction_SubModelFinish:outModel];
-            }];
-            return;
-        }
-        //6. 转移失败_因为PAlg未能找到MIndex和PIndex;
-        outModel.status = TOModelStatus_ActNo;
-        [self.delegate toAction_SubModelFailure:outModel];
         return;
     }
     
@@ -216,20 +170,20 @@
         
         //3. 第2级: 优先MC匹配 (当父级为时序,且mv有效时,执行) (参考21059-344图);
         AIFoNodeBase *baseFo = [SMGUtils searchNode:outModel.baseOrGroup.content_p];
-        if (ISOK(outModel.baseOrGroup, TOFoModel.class) && baseFo && baseFo.cmvNode_p) {
+        if (ISOK(outModel.baseOrGroup, TOFoModel.class) && baseFo) {
             
             //a. 依次判断mModel,只要符合mIsC即可;
             for (NSInteger i = 0; i < theTC.inModelManager.models.count; i++) {
-                AIShortMatchModel *model = ARR_INDEX_REVERSE(theTC.inModelManager.models, i);
+                AIShortMatchModel *inModel = ARR_INDEX_REVERSE(theTC.inModelManager.models, i);
                 
                 //b. 2020.11.27: 不应期检查 (参考2114B);
-                if ([outModel.replaceAlgs containsObject:model.matchAlg.pointer]) {
+                if ([outModel.replaceAlgs containsObject:inModel.matchAlg.pointer]) {
                     continue;
                 }
                 
-                NSLog(@"====== checkMC ====== Proto:%@",Alg2FStr(model.protoAlg));
+                NSLog(@"====== checkMC ====== Proto:%@",Alg2FStr(inModel.protoAlg));
                 BOOL mIsC = false;
-                for (AIAlgNodeBase *item in model.matchAlgs) {
+                for (AIAlgNodeBase *item in inModel.matchAlgs) {
                     BOOL itemMIsC = [TOUtils mIsC_2:curAlg.pointer c:item.pointer] || [TOUtils mIsC_2:item.pointer c:curAlg.pointer];
                     if (!mIsC && itemMIsC) mIsC = true;
                     NSLog(@"M:%@ isC %@",Alg2FStr(item),itemMIsC ? @"true" : @"false");
@@ -239,17 +193,17 @@
                     NSLog(@"===> 转至PM ↓↓↓↓↓↓↓↓↓ (C作为M,P作为P)");
                     
                     //b. 生成replaceAlg转移 & 保留到outModel.replaceAlgs;
-                    TOAlgModel *reModel = [TOAlgModel newWithAlg_p:model.matchAlg.pointer group:outModel];
+                    TOAlgModel *reModel = [TOAlgModel newWithAlg_p:inModel.matchAlg.pointer group:outModel];
                     [outModel.replaceAlgs addObject:reModel.content_p];
                     
                     //c. 将"P-M取得独特稀疏码"保留到短时记忆模型;
-                    [reModel.justPValues addObjectsFromArray:[SMGUtils removeSub_ps:curAlg.content_ps parent_ps:model.protoAlg.content_ps]];
+                    [reModel.justPValues addObjectsFromArray:[SMGUtils removeSub_ps:curAlg.content_ps parent_ps:inModel.protoAlg.content_ps]];
                         
                     //d. 将理性评价"价值分"保留到短时记忆模型;
-                    reModel.pm_Score = [AIScore score4MV:baseFo.cmvNode_p ratio:1.0f];
-                    reModel.pm_MVAT = baseFo.cmvNode_p.algsType;
+                    //reModel.pm_Score = [AIScore score4MV:baseFo.cmvNode_p ratio:1.0f];
+                    //reModel.pm_MVAT = baseFo.cmvNode_p.algsType;
                     reModel.pm_Fo = baseFo;
-                    reModel.pm_ProtoAlg = model.protoAlg;
+                    reModel.pm_ProtoAlg = inModel.protoAlg;
                     
                     //e. 理性评价
                     __block BOOL reasonScore = true;
@@ -264,7 +218,7 @@
                     //g. 评价成功一条,即返回 & 评价失败时,继续循环尝试下帧短时记忆 & 所有帧都失败时,转至relativeFos;
                     if (reasonScore) return;
                 }else{
-                    for (AIAlgNodeBase *item in model.matchAlgs) NSLog(@"==> mIsC转至PM失败: %@",Alg2FStr(item));
+                    for (AIAlgNodeBase *item in inModel.matchAlgs) NSLog(@"==> mIsC转至PM失败: %@",Alg2FStr(item));
                 }
             }
         }

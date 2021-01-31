@@ -364,8 +364,8 @@
         }
         
         //5. 将理性评价"价值分"保留到短时记忆模型;
-        focusModel.pm_Score = -[AIScore score4MV:demand.algsType urgentTo:demand.urgentTo delta:demand.delta ratio:1.0f];
-        focusModel.pm_MVAT = demand.algsType;
+        //focusModel.pm_Score = -[AIScore score4MV:demand.algsType urgentTo:demand.urgentTo delta:demand.delta ratio:1.0f];
+        //focusModel.pm_MVAT = demand.algsType;
         focusModel.pm_Fo = [SMGUtils searchNode:focusModel.baseOrGroup.content_p];
         
         //6. 理性评价

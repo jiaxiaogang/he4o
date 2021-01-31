@@ -54,8 +54,8 @@
  */
 @property (strong, nonatomic) NSMutableArray *justPValues;
 //保留字段 (score用于存M所在matchFo的价值分,mvAT用于存M所在的matchFo的价值at标识);
-@property (assign, nonatomic) float pm_Score;
-@property (strong, nonatomic) NSString *pm_MVAT;
+//@property (assign, nonatomic) float pm_Score;
+//@property (strong, nonatomic) NSString *pm_MVAT;
 
 /**
  *  MARK:--------------------pmFo--------------------
