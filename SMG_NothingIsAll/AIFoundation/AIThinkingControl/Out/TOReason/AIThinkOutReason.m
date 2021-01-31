@@ -49,10 +49,86 @@
     self.toAction.delegate = self;
 }
 
+//MARK:===============================================================
+//MARK:              < 四种工作模式 (参考19152) >
+//MARK: @desc 事实上,主要就P+和R-会触发思维工作;
+//MARK:===============================================================
 
-//MARK:===============================================================
-//MARK:                     < method >
-//MARK:===============================================================
+/**
+ *  MARK:-------------------- R+ --------------------
+ *  @desc
+ *      主线: 对需要输出的的元素,进行配合输出即可 (比如吓一下鸟,它自己就飞走了);
+ *      支线: 对不符合预测的元素修正 (比如剩下一只没飞走,我再更大声吓一下) (注:这涉及到外层循环,反向类比的修正);
+ *  @version
+ *      2020.06.30: 由下帧,改为当前帧 (因为需先进行理性评价PM);
+ *  @status 2021.01.21: 废弃,因为R+不构成需求;
+ */
+-(BOOL) reasonPlus:(AIShortMatchModel*)mModel demandModel:(DemandModel*)demandModel{
+    ////1. 数据检查
+    //if (!mModel || mModel.matchFo || demandModel) {
+    return false;
+    //}
+    //
+    ////2. 生成outFo模型
+    //TOFoModel *toFoModel = [TOFoModel newWithFo_p:mModel.matchFo.pointer base:demandModel];
+    //
+    ////3. 对下帧进行行为化 (先对当前帧,进行理性评价PM,再跳转下帧);
+    //toFoModel.actionIndex = mModel.cutIndex;
+    //[self commitReasonPlus:TOFoModel mModel:mModel];
+    //return toFoModel.status != TOModelStatus_ActNo && toFoModel.status != TOModelStatus_ScoreNo;//成功行为化,则中止递归;
+}
+/**
+ *  MARK:-------------------- R- --------------------
+ *  @desc
+ *      主线: 取matchFo的兄弟节点,进行行为化 (比如车将撞到我,我避开可避免);
+ *      CutIndex: 本算法中,未使用cutIndex而是使用了subNode和plusNode来解决问题 (参考19152:R-)
+ *  @TODO 1. 对抽象也尝试取brotherFo,比如车撞与落石撞,其实都是需要躲开"撞过来的物体";
+ *  @version
+ *      2020.05.12 - 支持cutIndex的判断,必须是未发生的部分才可以被修正 (如车将撞上,躲开是对的,但将已过去的出门改成不出门,是错的);
+ *      2021.01.23 - R-模式支持决策前空S评价 (参考22061-1);
+ *      2021.01.31 - V3迭代 (参考22102 & 22106-1);
+ */
+-(void) reasonSubV3:(ReasonDemandModel*)demand{
+    //1. 数据检查
+    if (!demand) return;
+    AIFoNodeBase *matchFo = demand.mModel.matchFo;
+    
+    //2. ActYes等待 或 OutBack反省等待 中时,不进行决策;
+    NSArray *waitFos = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
+        return item.status == TOModelStatus_ActYes || item.status == TOModelStatus_OuterBack;
+    }];
+    if (ARRISOK(waitFos)) return;
+    
+    //3. 取所有经验排序;
+    NSArray *sorts = [SMGUtils sortBig2Small:demand.inModel.matchFos compareBlock:^double(AIMatchFoModel *mFo) {
+        return [AIScore score4MV:mFo.matchFo.cmvNode_p ratio:mFo.matchFoValue];
+    }];
+    
+    //4. 转换为fo格式arr;
+    NSArray *fo_ps = [SMGUtils convertArr:sorts convertBlock:^id(AIMatchFoModel *mModel) {
+        return mModel.matchFo.pointer;
+    }];
+    
+    //4. 去掉不应期 & 自身;
+    NSArray *except_ps = [TOUtils convertPointersFromTOModels:demand.actionFoModels];
+    NSArray *validFos = [SMGUtils removeSub_ps:except_ps parent_ps:fo_ps];
+    validFos = [SMGUtils removeSub_p:matchFo.pointer parent_ps:validFos];
+    NSLog(@"\n\n=============================== TOP.R- ===============================\n任务:%@ 已发生:%ld 不应期数:%lu 可尝试方案:%lu",Fo2FStr(matchFo),(long)demand.mModel.cutIndex,(unsigned long)except_ps.count,(unsigned long)validFos.count);
+    for (AIKVPointer *item_p in validFos) NSLog(@"可选方案item: %@",Pit2FStr(item_p));
+    
+    //5. 找新方案 (破壁者);
+    for (AIKVPointer *item_p in validFos) {
+        //6. 未发生理性评价 (空S评价);
+        if (![AIScore FRS:[SMGUtils searchNode:item_p]]) continue;
+        
+        //7. 评价通过则取出 (提交决策流程控制,行为化);
+        TOFoModel *foModel = [TOFoModel newWithFo_p:item_p base:demand];
+        NSLog(@"------->>>>>> R-新增一例解决方案: %@",Pit2FStr(item_p));
+        [self commitReasonSub:foModel demand:demand];
+        break;
+    }
+    NSLog(@"------->>>>>> R-无计可施");
+}
 
 //MARK:===============================================================
 //MARK:                     < 决策行为化 >
@@ -214,7 +290,7 @@
         //2. 通过急,输出output表情哭
         
         //1. 心急情绪释放,平复思维;
-        [self.delegate aiThinkOutReason_UpdateEnergy:-1];
+        [theTC updateEnergy:-1];
         
         //2. 反射输出
         [Output output_FromMood:AIMoodType_Anxious];

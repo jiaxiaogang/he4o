@@ -9,6 +9,7 @@
 #import "AIThinkingControl.h"
 #import "DemandManager.h"
 #import "AIThinkIn.h"
+#import "AIThinkOut.h"
 #import "AIThinkOutPercept.h"
 #import "AIThinkOutReason.h"
 #import "OutputModel.h"
@@ -35,7 +36,7 @@
  *  2. 在联想中,遇到的mv,都叠加到当前demand下;
  *
  */
-@interface AIThinkingControl() <AIThinkInDelegate,AIThinkOutPerceptDelegate,AIThinkOutReasonDelegate,DemandManagerDelegate>
+@interface AIThinkingControl() <AIThinkInDelegate,DemandManagerDelegate,AIThinkOutDelegate>
 
 @property (strong, nonatomic) DemandManager *demandManager;         //OUT短时记忆 (输出数据管理器);
 @property (strong, nonatomic) ShortMatchManager *shortMatchManager; //IN短时记忆 (输入数据管理器);
@@ -52,8 +53,7 @@
 @property (assign, nonatomic) CGFloat energy;
 
 @property (strong, nonatomic) AIThinkIn *thinkIn;
-@property (strong, nonatomic) AIThinkOutPercept *tOP;       //感性决策
-@property (strong, nonatomic) AIThinkOutReason *tOR;        //理性决策
+@property (strong, nonatomic) AIThinkOut *thinkOut;
 
 @end
 
@@ -80,10 +80,8 @@ static AIThinkingControl *_instance;
     self.demandManager.delegate = self;
     self.thinkIn = [[AIThinkIn alloc] init];
     self.thinkIn.delegate = self;
-    self.tOP = [[AIThinkOutPercept alloc] init];
-    self.tOP.delegate = self;
-    self.tOR = [[AIThinkOutReason alloc] init];
-    self.tOR.delegate = self;
+    self.thinkOut = [[AIThinkOut alloc] init];
+    self.thinkOut.delegate = self;
     self.shortMatchManager = [[ShortMatchManager alloc] init];
 }
 
@@ -174,7 +172,7 @@ static AIThinkingControl *_instance;
     NSInteger urgentTo = [NUMTOOK([AINetIndex getData:cmvNode.urgentTo_p]) integerValue];
     [self updateEnergy:urgentTo];//190730前:((urgentTo + 9)/10) 190730:urgentTo
     [self.demandManager updateCMVCache_PMV:algsType urgentTo:urgentTo delta:delta];
-    [self.tOP dataOut];
+    [self.thinkOut dataOut];
 }
 
 /**
@@ -193,11 +191,11 @@ static AIThinkingControl *_instance;
     DemandModel *demand = [self.demandManager getCurrentDemand];
     
     //5. 外循环入->推进->中循环出;
-    BOOL pushOldDemand = [self.tOR tor_OPushM:demand latestMModel:inModel];
+    BOOL pushOldDemand = [self.thinkOut.tOR tor_OPushM:demand latestMModel:inModel];
     
     //6. 此处推进不成功,则运行TOP四模式;
     if (!pushOldDemand) {
-        [self.tOP dataOut];
+        [self.thinkOut dataOut];
     }
 }
 -(NSArray*) aiThinkIn_getShortMatchModel{
@@ -207,71 +205,11 @@ static AIThinkingControl *_instance;
     [self.shortMatchManager add:newMModel];
 }
 
-
-/**
- *  MARK:--------------------AIThinkOutPerceptDelegate--------------------
- */
--(DemandModel*) aiThinkOutPercept_GetCanDecisionDemand{
-    return [self.demandManager getCanDecisionDemand];
-}
-
--(void) aiThinkOutPercept_MVSchemeFailure{
-    [self.tOR commitFromTOP_ReflexOut];
-}
-
--(NSArray*) aiTOP_GetShortMatchModel{
-    return self.shortMatchManager.models;
-}
-
--(void) aiTOP_2TOR_ReasonPlus:(TOFoModel*)outModel mModel:(AIShortMatchModel*)mModel{
-    //1. 行为化;
-    [self.tOR commitReasonPlus:outModel mModel:mModel];
-}
-
--(void) aiTOP_2TOR_ReasonSub:(TOFoModel*)foModel demand:(ReasonDemandModel*)demand{
-    //1. 行为化;
-    [self.tOR commitReasonSub:foModel demand:demand];
-}
-
--(void) aiTOP_2TOR_PerceptSub:(TOFoModel *)outModel{
-    //1. 行为化;
-    [self.tOR commitPerceptSub:outModel];
-}
-
--(BOOL) aiTOP_2TOR_PerceptPlus:(AIFoNodeBase *)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo checkFo:(AIFoNodeBase*)checkFo{
-    //1. 行为化;
-    __block BOOL success = false;
-    [self.tOR commitPerceptPlus:matchFo plusFo:plusFo subFo:subFo checkFo:checkFo complete:^(BOOL actSuccess, NSArray *acts) {
-        success = actSuccess;
-        
-        //2. 更新到outModel;
-        if (actSuccess) {
-            //[self.demandManager add]; status为尝试输出,事实input发生后,才会移动到下帧;
-        }
-        
-        //3. 输出行为;
-        [self.tOR dataOut_ActionScheme:acts];
-    }];
-    return success;
-}
-
-/**
- *  MARK:--------------------AIThinkOutReasonDelegate--------------------
- */
--(void) aiThinkOutReason_UpdateEnergy:(CGFloat)delta{
-    [self updateEnergy:delta];
-}
--(BOOL) aiThinkOutReason_EnergyValid {
-    return [self energyValid];
-}
--(AIShortMatchModel*) aiTOR_GetShortMatchModel{
-    return ARR_INDEX_REVERSE(self.shortMatchManager.models, 0);
-}
--(AIShortMatchModel*) aiTOR_RethinkInnerFo:(AIFoNodeBase*)fo{
+//MARK:===============================================================
+//MARK:                     < AIThinkOutDelegate >
+//MARK:===============================================================
+-(AIShortMatchModel *)aiTO_RethinkInnerFo:(AIFoNodeBase *)fo{
     return [self.thinkIn dataInFromTORInnerFo:fo];
-}
--(void) aiTOR_MoveForDemand:(DemandModel*)demand{
-    [self.tOP commitFromTOR_MoveForDemand:demand];
 }
 
 /**

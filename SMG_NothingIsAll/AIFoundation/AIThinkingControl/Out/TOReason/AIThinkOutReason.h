@@ -11,11 +11,6 @@
 @class AIShortMatchModel,DemandModel;
 @protocol AIThinkOutReasonDelegate <NSObject>
 
-//更新思维活跃度
--(void) aiThinkOutReason_UpdateEnergy:(CGFloat)delta;
--(BOOL) aiThinkOutReason_EnergyValid;
-//获取最后一桢mModel;
--(AIShortMatchModel*) aiTOR_GetShortMatchModel;
 //反思innerFo
 -(AIShortMatchModel*) aiTOR_RethinkInnerFo:(AIFoNodeBase*)fo;
 //转移DemandModel子任务
@@ -46,6 +41,11 @@
 @interface AIThinkOutReason : NSObject
 
 @property (weak, nonatomic) id<AIThinkOutReasonDelegate> delegate;
+
+/**
+ *  MARK:--------------------fromTO主入口--------------------
+ */
+-(void) reasonSubV3:(ReasonDemandModel*)demand;
 
 /**
  *  MARK:--------------------FromTOP主入口--------------------

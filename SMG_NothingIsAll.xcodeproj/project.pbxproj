@@ -37,6 +37,7 @@
 		0832AD4325BC5AEF001B4DB1 /* AIMatchFoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0832AD4225BC5AEF001B4DB1 /* AIMatchFoModel.m */; };
 		083352F521800AB1003931E5 /* MainPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 083352F321800AB1003931E5 /* MainPage.m */; };
 		083352F621800AB1003931E5 /* MainPage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 083352F421800AB1003931E5 /* MainPage.xib */; };
+		0838AE9C25C6C14A000F67D9 /* AIThinkOut.m in Sources */ = {isa = PBXBuildFile; fileRef = 0838AE9B25C6C14A000F67D9 /* AIThinkOut.m */; };
 		0839819F24DB7F8C00A020D2 /* HEView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0839819E24DB7F8C00A020D2 /* HEView.m */; };
 		083BC01F231C9CD900CA9039 /* AIThinkInReason.m in Sources */ = {isa = PBXBuildFile; fileRef = 083BC01E231C9CD900CA9039 /* AIThinkInReason.m */; };
 		083BC022231CA14E00CA9039 /* AIThinkInPercept.m in Sources */ = {isa = PBXBuildFile; fileRef = 083BC021231CA14E00CA9039 /* AIThinkInPercept.m */; };
@@ -216,6 +217,8 @@
 		083352F321800AB1003931E5 /* MainPage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainPage.m; sourceTree = "<group>"; };
 		083352F421800AB1003931E5 /* MainPage.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainPage.xib; sourceTree = "<group>"; };
 		0837F72322A89A0D00836689 /* ReadMe.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ReadMe.md; sourceTree = "<group>"; };
+		0838AE9A25C6C14A000F67D9 /* AIThinkOut.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIThinkOut.h; sourceTree = "<group>"; };
+		0838AE9B25C6C14A000F67D9 /* AIThinkOut.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIThinkOut.m; sourceTree = "<group>"; };
 		0839819D24DB7F8C00A020D2 /* HEView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HEView.h; sourceTree = "<group>"; };
 		0839819E24DB7F8C00A020D2 /* HEView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HEView.m; sourceTree = "<group>"; };
 		083BC01D231C9CD900CA9039 /* AIThinkInReason.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIThinkInReason.h; sourceTree = "<group>"; };
@@ -611,6 +614,26 @@
 			path = TestHungryPage;
 			sourceTree = "<group>";
 		};
+		0838AE9D25C6C157000F67D9 /* TOPercept */ = {
+			isa = PBXGroup;
+			children = (
+				0860617421F92F5200113366 /* AIThinkOutPercept.h */,
+				0860617521F92F5200113366 /* AIThinkOutPercept.m */,
+			);
+			path = TOPercept;
+			sourceTree = "<group>";
+		};
+		0838AE9E25C6C162000F67D9 /* TOReason */ = {
+			isa = PBXGroup;
+			children = (
+				0850496A2474A41F0017F9A0 /* AIThinkOutAction.h */,
+				085049692474A41F0017F9A0 /* AIThinkOutAction.m */,
+				08FE031C231DEE8C001ED8B4 /* AIThinkOutReason.h */,
+				08FE031D231DEE8C001ED8B4 /* AIThinkOutReason.m */,
+			);
+			path = TOReason;
+			sourceTree = "<group>";
+		};
 		083F612C1F04830F000330E1 /* AINet */ = {
 			isa = PBXGroup;
 			children = (
@@ -796,15 +819,13 @@
 		0860617321F92F3E00113366 /* Out */ = {
 			isa = PBXGroup;
 			children = (
+				0838AE9E25C6C162000F67D9 /* TOReason */,
+				0838AE9D25C6C157000F67D9 /* TOPercept */,
 				080228E2227282FF0087FE69 /* Model */,
-				0860617421F92F5200113366 /* AIThinkOutPercept.h */,
-				0860617521F92F5200113366 /* AIThinkOutPercept.m */,
-				08FE031C231DEE8C001ED8B4 /* AIThinkOutReason.h */,
-				08FE031D231DEE8C001ED8B4 /* AIThinkOutReason.m */,
 				08A232E3243557110090D4B5 /* TOUtils.h */,
 				08A232E4243557110090D4B5 /* TOUtils.m */,
-				0850496A2474A41F0017F9A0 /* AIThinkOutAction.h */,
-				085049692474A41F0017F9A0 /* AIThinkOutAction.m */,
+				0838AE9A25C6C14A000F67D9 /* AIThinkOut.h */,
+				0838AE9B25C6C14A000F67D9 /* AIThinkOut.m */,
 			);
 			path = Out;
 			sourceTree = "<group>";
@@ -1312,6 +1333,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0858C5D62194FABA00951BA5 /* RoadView.m in Sources */,
+				0838AE9C25C6C14A000F67D9 /* AIThinkOut.m in Sources */,
 				0860A3BB22C9851800A48682 /* CustomAddNodeWindow.m in Sources */,
 				0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */,
 				88E1F851211591E50036B616 /* DemandModel.m in Sources */,

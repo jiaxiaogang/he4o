@@ -11,13 +11,7 @@
 @class DemandModel,TOFoModel,AIShortMatchModel,ReasonDemandModel;
 @protocol AIThinkOutPerceptDelegate <NSObject>
 
--(DemandModel*) aiThinkOutPercept_GetCanDecisionDemand;     //获取当前需求;
--(void) aiThinkOutPercept_MVSchemeFailure;                  //找解决mv经历失败
--(NSArray*) aiTOP_GetShortMatchModel;                       //获取瞬时模型
-
 //提交C给TOR行为化;
--(void) aiTOP_2TOR_ReasonPlus:(TOFoModel*)outModel mModel:(AIShortMatchModel*)mModel;
--(void) aiTOP_2TOR_ReasonSub:(TOFoModel*)foModel demand:(ReasonDemandModel*)demand;
 -(void) aiTOP_2TOR_PerceptSub:(TOFoModel*)outModel;
 -(BOOL) aiTOP_2TOR_PerceptPlus:(AIFoNodeBase *)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo checkFo:(AIFoNodeBase*)checkFo;
 
@@ -48,28 +42,10 @@
 @property (weak, nonatomic) id<AIThinkOutPerceptDelegate> delegate;
 
 /**
- *  MARK:--------------------dataLoop联想(每次循环的检查执行点)--------------------
- *  注:assExp联想经验(饿了找瓜)(递归)
- *  注:loopAssExp中本身已经是内心活动联想到的mv
- *  1. 有条件(energy>0)
- *  2. 有尝(energy-1)
- *  3. 不指定model (从cmvCache取)
- *  4. 每一轮循环不仅是想下一个singleMvPort;也有可能在当前port上,进行二次思考;
- *  5. 从expCache下,根据可行性,选定一个解决方案;
- *  6. 有需求时,找出outMvModel,尝试决策并解决;
- *
- *  框架: index -> mvNode -> foNode -> algNode -> action
- *  注:
- *  1. return           : 决策思维中止;
- *  2. [self dataOut]   : 递归再跑
- *
+ *  MARK:--------------------fromTO主入口--------------------
  */
--(void) dataOut;
-
-/**
- *  MARK:--------------------TOR中Demand方案失败,尝试转移--------------------
- */
--(void) commitFromTOR_MoveForDemand:(DemandModel*)demand;
+-(BOOL) perceptSub:(DemandModel*)demandModel;
+-(BOOL) perceptPlus:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel;
 
 /**
  *  MARK:--------------------"外层输入" 推进 "中层循环" 决策--------------------
