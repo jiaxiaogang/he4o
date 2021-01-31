@@ -299,6 +299,7 @@
  *      2021.01.24: 改回仅识别Normal类型,因为HNGL太多了,不那么必要,还特麻烦,太多matchFos导致性能差 (参考22052-改1);
  *      2021.01.24: 将无mv指向的,算无效 (因为有大量未执行的正向反馈类比) (参考22072);
  *      2021.01.26: 为多时序识别结果做去重 (参考22074-BUG3);
+ *      2021.01.31: 将无mv指向的,放开 (因为R-模式需要) (等支持反向反馈外类比后,再关掉) (参考n22p10);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
 +(void) partMatching_FoV1Dot5:(AIFoNodeBase*)protoFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel{
@@ -336,7 +337,7 @@
             AIFoNodeBase *assFo = [SMGUtils searchNode:assFo_p];
             
             //5. 无cmv指向的,无效;
-            if (!assFo.cmvNode_p) continue;
+            //if (!assFo.cmvNode_p) continue;
             
             //6. 防重并对assFo做匹配判断;
             BOOL contains = ARRISOK([SMGUtils filterArr:inModel.matchFos checkValid:^BOOL(AIMatchFoModel *item) {
@@ -407,6 +408,11 @@
                     AnalogyType type = (item.status == TIModelStatus_LastWait) ? ATSub : ATPlus;
                     NSLog(@"---//触发器Mv_触发: %@ (%@)",Fo2FStr(matchFo),ATType2Str(type));
                     [AIAnalogy analogy_InRethink:item shortFo:protoFo type:type];
+                    
+                    //TODOTOMORROW20210131:支持反向反馈外类比
+                    //1. 未撞到的matchFo们也要进行外类比;
+                    //2. 0-正/负=delta,其中delta!=0,所以也要触发cmv_p指向,触发外类比;
+                    //3. 注: 但并未直接发现mv+,因为其值为0 (迫切度为0);
                     
                     //5. 失败状态标记;
                     if (item.status == TIModelStatus_LastWait) item.status = TIModelStatus_OutBackNo;

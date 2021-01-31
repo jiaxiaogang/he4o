@@ -77,6 +77,7 @@
     //[self commitReasonPlus:TOFoModel mModel:mModel];
     //return toFoModel.status != TOModelStatus_ActNo && toFoModel.status != TOModelStatus_ScoreNo;//成功行为化,则中止递归;
 }
+
 /**
  *  MARK:-------------------- R- --------------------
  *  @desc
