@@ -87,6 +87,7 @@
  *      2020.05.12 - 支持cutIndex的判断,必须是未发生的部分才可以被修正 (如车将撞上,躲开是对的,但将已过去的出门改成不出门,是错的);
  *      2021.01.23 - R-模式支持决策前空S评价 (参考22061-1);
  *      2021.01.31 - V3迭代 (参考22102 & 22106-1);
+ *      2021.01.31 - 从matchFos获取解决方案时,仅过滤出更好的来 (delta>0);
  */
 -(void) reasonSubV3:(ReasonDemandModel*)demand{
     //1. 数据检查
@@ -102,6 +103,13 @@
     //3. 取所有经验排序;
     NSArray *sorts = [SMGUtils sortBig2Small:demand.inModel.matchFos compareBlock:^double(AIMatchFoModel *mFo) {
         return [AIScore score4MV:mFo.matchFo.cmvNode_p ratio:mFo.matchFoValue];
+    }];
+    
+    //4. 过滤掉mv更不好的;
+    CGFloat matchFoScore = [AIScore score4MV:matchFo.cmvNode_p ratio:1.0f];
+    sorts = [SMGUtils filterArr:sorts checkValid:^BOOL(AIMatchFoModel *item) {
+        CGFloat itemScore = [AIScore score4MV:item.matchFo.cmvNode_p ratio:1.0f];
+        return itemScore > matchFoScore;
     }];
     
     //4. 转换为fo格式arr;
