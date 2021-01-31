@@ -109,11 +109,12 @@
  *          2. isOut判断 (输出);
  *          3. notOut判断 (等待);
  *  @存储 负只是正的帧推进器,比如买菜为了做饭 (参考19171);
- *  @param sFoModel : 当前方案,阻止者,是一个S类型Fo,用来阻止demand.matchFo发生;
+ *  @param foModel : 当前方案;
  *  @version
  *      2020.05.22: fromAction.SP调用cHav,在原先solo与group的基础上,新增了最优先的checkAlg (因为solo和group可能压根不存在此概念,而TO是主应用,而非构建的);
  *      2020.06.03: fromAction.SP支持将cGLDic缓存至TOAlgModel,以便一条GL子任务完成时,顺利转移至下一GL子任务;
  *      2021.01.21: 大迭代 (参考22061);
+ *      2021.01.31: 废弃FRS_Miss评价 (参考FRSMiss注释);
  *  @bug
  *      2020.06.14: 此处sHappend为false,按道理说,投右,已经有了s,s应该是已发生的 (经查,改为sIndex<=outModel.actionIndex即可) T;
  *  @todo
@@ -121,21 +122,12 @@
  *      2. fromAction.SP将group和solo重组的方式废弃掉,参考:n19p18-todo5
  *      3. fromAction.SP替代group和solo的方法为: 用outModel.checkAlg找同层节点进行_Hav,并判断其符合GLDic中的稀疏码同区,且与GL的innerType相同,同大或同小;
  */
--(void) commitReasonSub:(TOFoModel*)sFoModel demand:(ReasonDemandModel*)demand{
+-(void) commitReasonSub:(TOFoModel*)foModel demand:(ReasonDemandModel*)demand{
     //1. 数据检查
-    if (!sFoModel || !demand) return;
-    AIFoNodeBase *matchFo = demand.mModel.matchFo;
-    AIFoNodeBase *sFo = [SMGUtils searchNode:sFoModel.content_p];
+    if (!foModel || !demand) return;
     
-    //2. 决策时评价 (S首元素已错过,则失败);
-    BOOL score = [AIScore FRS_Miss:sFo matchFo:matchFo cutIndex:demand.mModel.cutIndex];
-    if (!score) {
-        sFoModel.status = TOModelStatus_ActNo;
-        [self singleLoopBackWithFailureModel:sFoModel];
-    }
-    
-    //3. 提交_Fo,逐个满足S;
-    [self singleLoopBackWithBegin:sFoModel];
+    //2. 提交_Fo,逐个满足S;
+    [self singleLoopBackWithBegin:foModel];
 }
 
 /**

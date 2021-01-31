@@ -128,6 +128,14 @@
     return true;
 }
 
+/**
+ *  MARK:--------------------时序错过评价--------------------
+ *  @desc
+ *      1. 车已经撞了,再去修正Y距离,已经太晚了;
+ *      2. 蚊子天天咬人,某天才把蚊子干掉,但依然是有效的 (所以我们只是防止其再一次发生);
+ *      3. 综上: 这种FRS_Miss评价其实是无意义的,因为时序是否会再一次发生,这是另一个问题了;
+ *  @status 废弃,是否Miss,这是后天习得的,不可以写成先天代码;
+ */
 +(BOOL) FRS_Miss:(AIFoNodeBase*)sFo matchFo:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex{
     //1. 数据检查;
     if (sFo && matchFo) {
