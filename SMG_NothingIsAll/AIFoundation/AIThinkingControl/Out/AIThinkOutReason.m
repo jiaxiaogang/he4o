@@ -402,6 +402,7 @@
  *      2020.11.23: 将return BOOL改为三个block: (failure,success,notNeedPM) (参考21147);
  *      2021.01.01: v3_评价依据改为值域求和 (参考2120A & n21p21);
  *      2021.01.23: 兼容支持R-模式 (满足SAlg) (参考22061-改4);
+ *      2021.01.31: R-模式迭代V3 (将S的判断去掉,因为R-模式迭代后与P-模式处理一致) (参考22105);
  *  _result moveValueSuccess : 转移到稀疏码行为化了,转移成功则返回true,未转移则返回false;
  *  @bug
  *      2020.07.05: BUG,在用MatchConF.content找交集同区稀疏码肯定找不到,改为用MatchConA后,ok了;
@@ -441,21 +442,13 @@
     //5. 理性评价: 取到首个P独特稀疏码 (判断是否需要行为化);
     AIKVPointer *firstJustPValue = ARR_INDEX(validJustPValues, 0);
     if (firstJustPValue) {
-        //5. R-模式判断 (R-模式时,数据结构中获取curAlg和curFo);
-        AIAlgNodeBase *curAlg = nil;
-        AIFoNodeBase *curFo = nil;
-        if ([TOUtils isS:outModel.content_p] && ISOK(outModel.baseOrGroup.baseOrGroup, ReasonDemandModel.class)) {
-            curAlg = [SMGUtils searchNode:outModel.content_p];
-            curFo = [SMGUtils searchNode:outModel.baseOrGroup.content_p];
-        }else{
-            //5. 取得当前帧alg模型 (参考20206-结构图) 如: A22(速0,高5,距0,向→,皮0);
-            TOAlgModel *curAlgModel = (TOAlgModel*)outModel.baseOrGroup;
-            curAlg = [SMGUtils searchNode:curAlgModel.content_p];
-            
-            //6. 取当前方案fo模型 (参考20206-结构图) 如: P+新增一例解决方案: F23[A22(速0,高5,距0,向→,皮0),A1(吃1)]->M7{64};
-            TOFoModel *curFoModel = (TOFoModel*)curAlgModel.baseOrGroup;
-            curFo = [SMGUtils searchNode:curFoModel.content_p];
-        }
+        //5. 取得当前帧alg模型 (参考20206-结构图) 如: A22(速0,高5,距0,向→,皮0);
+        TOAlgModel *curAlgModel = (TOAlgModel*)outModel.baseOrGroup;
+        AIAlgNodeBase *curAlg = [SMGUtils searchNode:curAlgModel.content_p];
+        
+        //6. 取当前方案fo模型 (参考20206-结构图) 如: P+新增一例解决方案: F23[A22(速0,高5,距0,向→,皮0),A1(吃1)]->M7{64};
+        TOFoModel *curFoModel = (TOFoModel*)outModel.baseOrGroup.baseOrGroup;
+        AIFoNodeBase *curFo = [SMGUtils searchNode:curFoModel.content_p];
         
         //7. 根据curAlg和curFo取有效的部分validAlgSPs (参考20206-步骤图-第1步);
         NSArray *sPorts = [ThinkingUtils pm_GetValidSPAlg_ps:curAlg curFo:curFo type:ATSub];
