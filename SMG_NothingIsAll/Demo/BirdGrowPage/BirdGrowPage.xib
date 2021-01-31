@@ -319,10 +319,10 @@
                     </constraints>
                 </view>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" showsTouchWhenHighlighted="YES" lineBreakMode="wordWrap" translatesAutoresizingMaskIntoConstraints="NO" id="KKF-W4-ZR3">
-                    <rect key="frame" x="0.0" y="110" width="20" height="150"/>
+                    <rect key="frame" x="0.0" y="160" width="20" height="100"/>
                     <color key="backgroundColor" red="0.66799789669999998" green="0.47512125970000002" blue="0.25860109930000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="150" id="4kM-np-MY9"/>
+                        <constraint firstAttribute="height" constant="100" id="4kM-np-MY9"/>
                         <constraint firstAttribute="width" constant="20" id="hF6-hP-Fi3"/>
                     </constraints>
                     <fontDescription key="fontDescription" type="system" pointSize="10"/>
