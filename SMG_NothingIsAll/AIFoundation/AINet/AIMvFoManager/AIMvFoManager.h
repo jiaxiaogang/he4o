@@ -23,6 +23,12 @@
 -(AIFrontOrderNode*) create:(NSArray*)imvAlgsArr inputTime:(NSTimeInterval)inputTime order:(NSArray*)order;
 
 /**
+ *  MARK:--------------------构建具象mv--------------------
+ */
+-(AICMVNode*) createConMv:(NSArray*)imvAlgsArr;
+-(AICMVNode*) createConMv:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p at:(NSString*)at isMem:(BOOL)isMem;
+
+/**
  *  MARK:--------------------构建conMv--------------------
  */
 //-(AICMVNode*) createConMv:(NSArray*)imvAlgsArr;//imv重载

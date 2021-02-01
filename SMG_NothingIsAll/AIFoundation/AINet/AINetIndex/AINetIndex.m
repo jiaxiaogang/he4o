@@ -17,7 +17,7 @@
 //MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
--(AIKVPointer*) getDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut{
++(AIKVPointer*) getDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut{
     //1. 数据准备
     if (!ISOK(data, NSNumber.class)) {
         return nil;

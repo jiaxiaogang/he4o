@@ -545,7 +545,25 @@
     //1. 数据检查;
     if (!protoFo || !baseMv_p) return;
     
-    //2. 根据实mv构建虚mv节点,并指定给protoFo;
+    //2. 取出实mv的值;
+    AICMVNodeBase *baseMv = [SMGUtils searchNode:baseMv_p];
+    AIKVPointer *baseDelta_p = baseMv.delta_p;
+    AIKVPointer *baseUrgentTo_p = baseMv.urgentTo_p;
+    NSInteger baseDelta = [NUMTOOK([AINetIndex getData:baseDelta_p]) integerValue];
+    //NSInteger baseUrgentTo = [NUMTOOK([AINetIndex getData:baseUrgentTo_p]) integerValue];
+    
+    //3. 根据实mv构建虚mv节点 (虚mv不产生迫切度);
+    AIKVPointer *delta_p = [AINetIndex getDataPointerWithData:@(-baseDelta) algsType:baseDelta_p.algsType dataSource:baseDelta_p.dataSource isOut:false];
+    AIKVPointer *urgentTo_p = [AINetIndex getDataPointerWithData:@(0) algsType:baseUrgentTo_p.algsType dataSource:baseUrgentTo_p.dataSource isOut:false];
+    [theNet createAbsMv:nil conMvs:nil at:nil ds:nil urgentTo_p:nil delta_p:nil];
+    AICMVNode *mvNode = [theNet createConMv:urgentTo_p delta_p:delta_p at:baseMv_p.algsType isMem:false];
+    if (!mvNode) return;
+    
+    //4. 互指向 (将虚mv指定给protoFo);
+    [AINetUtils relateFo:protoFo mv:mvNode];
+    
+    //TODOTOMORROW20210201: 根据虚mv,联想assFo;
+    
     //  a. 0-正/负=delta,其中delta!=0,所以也要触发cmv_p指向,触发外类比;
     //  b. 注: 但并未直接发现mv+,因为其值为0 (迫切度为0);
     

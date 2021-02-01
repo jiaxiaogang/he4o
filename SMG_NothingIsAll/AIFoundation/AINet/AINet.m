@@ -29,7 +29,7 @@
 
 @interface AINet ()
 
-@property (strong, nonatomic) AINetIndex *netIndex; //索引区(皮层/海马)
+//@property (strong, nonatomic) AINetIndex *netIndex; //索引区(皮层/海马)
 @property (strong, nonatomic) AIMvFoManager *mvFoManager;     //网络树根(杏仁核)
 @property (strong, nonatomic) AIAbsFoManager *absFoManager; //抽象时序管理器
 @property (strong, nonatomic) AINetDirectionReference *netDirectionReference;
@@ -59,7 +59,7 @@ static AINet *_instance;
 }
 
 -(void) initData{
-    self.netIndex = [[AINetIndex alloc] init];
+    //self.netIndex = [[AINetIndex alloc] init];
     self.mvFoManager = [[AIMvFoManager alloc] init];
     self.absFoManager = [[AIAbsFoManager alloc] init];
     self.netDirectionReference = [[AINetDirectionReference alloc] init];
@@ -81,7 +81,7 @@ static AINet *_instance;
 
         //3. 存储索引 & data;
         NSNumber *data = NUMTOOK([modelDic objectForKey:dataSource]);
-        AIPointer *pointer = [self.netIndex getDataPointerWithData:data algsType:algsType dataSource:dataSource isOut:false];
+        AIPointer *pointer = [AINetIndex getDataPointerWithData:data algsType:algsType dataSource:dataSource isOut:false];
         if (pointer) {
             [algsArr addObject:pointer];
         }
@@ -91,13 +91,13 @@ static AINet *_instance;
 
 //单data装箱
 -(AIKVPointer*) getNetDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource{
-    return [self.netIndex getDataPointerWithData:data algsType:algsType dataSource:dataSource isOut:false];
+    return [AINetIndex getDataPointerWithData:data algsType:algsType dataSource:dataSource isOut:false];
 }
 
 //小脑索引
 -(AIKVPointer*) getOutputIndex:(NSString*)algsType outputObj:(NSNumber*)outputObj {
     if (outputObj) {
-        return [self.netIndex getDataPointerWithData:outputObj algsType:algsType dataSource:DefaultDataSource isOut:true];
+        return [AINetIndex getDataPointerWithData:outputObj algsType:algsType dataSource:DefaultDataSource isOut:true];
     }
     return nil;
 }
@@ -125,6 +125,12 @@ static AINet *_instance;
 //MARK:===============================================================
 -(AIFrontOrderNode*) createCMV:(NSArray*)imvAlgsArr inputTime:(NSTimeInterval)inputTime order:(NSArray*)order{
     return [self.mvFoManager create:imvAlgsArr inputTime:inputTime order:order];
+}
+-(AICMVNode*) createConMv:(NSArray*)imvAlgsArr{
+    return [self.mvFoManager createConMv:imvAlgsArr];
+}
+-(AICMVNode*) createConMv:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p at:(NSString*)at isMem:(BOOL)isMem{
+    return [self.mvFoManager createConMv:urgentTo_p delta_p:delta_p at:at isMem:isMem];
 }
 
 

@@ -55,6 +55,8 @@
 //MARK:                     < cmv >
 //MARK:===============================================================
 -(AIFrontOrderNode*) createCMV:(NSArray*)imvAlgsArr inputTime:(NSTimeInterval)inputTime order:(NSArray*)order;
+-(AICMVNode*) createConMv:(NSArray*)imvAlgsArr;
+-(AICMVNode*) createConMv:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p at:(NSString*)at isMem:(BOOL)isMem;
 
 
 //MARK:===============================================================
