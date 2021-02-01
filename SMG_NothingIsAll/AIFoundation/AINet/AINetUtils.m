@@ -15,6 +15,7 @@
 #import "AINetAbsFoNode.h"
 #import "AIAbsCMVNode.h"
 #import "ThinkingUtils.h"
+#import "AINetIndex.h"
 
 @implementation AINetUtils
 
@@ -63,6 +64,19 @@
         if (firstPort) result = firstPort.strong.value + 1;
     }
     return result;
+}
+
+/**
+ *  MARK:--------------------是否虚mv--------------------
+ *  @desc 虚mv判断标准 (迫切度是否为0);
+ */
++(BOOL) isVirtualMv:(AIKVPointer*)mv_p{
+    AICMVNodeBase *mv = [SMGUtils searchNode:mv_p];
+    if (mv) {
+        NSInteger urgentTo = [NUMTOOK([AINetIndex getData:mv.urgentTo_p]) integerValue];
+        return urgentTo == 0;
+    }
+    return 0;
 }
 
 @end

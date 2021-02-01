@@ -540,10 +540,11 @@
  *  MARK:--------------------反向反馈外类比--------------------
  *  @caller : 由预测触发器触发,当mv未发生时,构建虚mv时序,并进行外类比;
  *  @desc : 主要用于R-模式决策时使用 (参考22107);
+ *  @param baseMv_p : 此方法仅对实mv做处理,本身就是虚mv则不做任何处理;
  */
 +(void) analogy_Feedback_Diff:(AIFoNodeBase*)protoFo baseMv_p:(AIKVPointer*)baseMv_p{
-    //1. 数据检查;
-    if (!protoFo || !baseMv_p) return;
+    //1. 数据检查 (本身就是虚mv则返回);
+    if (!protoFo || ![AINetUtils isVirtualMv:baseMv_p]) return;
     
     //2. 取出实mv的值;
     AICMVNodeBase *baseMv = [SMGUtils searchNode:baseMv_p];
@@ -563,6 +564,9 @@
     [AINetUtils relateFo:protoFo mv:mvNode];
     
     //TODOTOMORROW20210201: 根据虚mv,联想assFo;
+    //考虑是否将direction的设计去掉,仅保留delta正或负即可;
+    //而是否hasDemand,直接在代码中根据Bad/Good和delta判断即可;
+    NSArray *mvRefs = [theNet getNetNodePointersFromDirectionReference:at direction:direction isMem:false filter:nil];
     
     //  a. 0-正/负=delta,其中delta!=0,所以也要触发cmv_p指向,触发外类比;
     //  b. 注: 但并未直接发现mv+,因为其值为0 (迫切度为0);

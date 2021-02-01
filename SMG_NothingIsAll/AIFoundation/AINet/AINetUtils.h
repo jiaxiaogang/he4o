@@ -42,6 +42,11 @@
  */
 +(NSInteger) getConMaxStrong:(AINodeBase*)node;
 
+/**
+ *  MARK:--------------------是否虚mv--------------------
+ */
++(BOOL) isVirtualMv:(AIKVPointer*)mv_p;
+
 @end
 
 
