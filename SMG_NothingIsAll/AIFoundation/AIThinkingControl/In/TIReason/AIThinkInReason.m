@@ -373,6 +373,7 @@
  *          b.MV(启用);
  *  @version
  *      2021.01.27: 非末位也支持mv触发器 (参考22074-BUG2);
+ *      2021.02.01: 支持反向反馈外类比 (参考22107);
  */
 +(void) tir_Forecast:(AIShortMatchModel*)inModel{
     //1. 数据检查;
@@ -409,10 +410,10 @@
                     NSLog(@"---//触发器Mv_触发: %@ (%@)",Fo2FStr(matchFo),ATType2Str(type));
                     [AIAnalogy analogy_InRethink:item shortFo:protoFo type:type];
                     
-                    //TODOTOMORROW20210131:支持反向反馈外类比
-                    //1. 未撞到的matchFo们也要进行外类比;
-                    //2. 0-正/负=delta,其中delta!=0,所以也要触发cmv_p指向,触发外类比;
-                    //3. 注: 但并未直接发现mv+,因为其值为0 (迫切度为0);
+                    //5. 反向反馈外类比;
+                    if (item.status == TIModelStatus_LastWait) {
+                        [AIAnalogy analogy_Feedback_Diff:protoFo baseMv_p:matchFo.cmvNode_p];
+                    }
                     
                     //5. 失败状态标记;
                     if (item.status == TIModelStatus_LastWait) item.status = TIModelStatus_OutBackNo;

@@ -47,12 +47,19 @@
 +(void) analogy_InRethink:(AIMatchFoModel*)matchFoModel shortFo:(AIFoNodeBase*)shortFo type:(AnalogyType)type;
 
 /**
- *  MARK:--------------------反馈类比_同向--------------------
+ *  MARK:--------------------正向反馈外类比--------------------
  *  @desc 由TIP调用,执行条件为:当imv与预测mv相符时,执行类比;
  *  @desc 如: (距20,经233) 与 (距20,经244) 可类比为: (距20)->{mv};
  *  @param shortFo : 传瞬时记忆的protoFo;
  */
 +(void) analogy_Feedback_Same:(AIFoNodeBase*)matchFo shortFo:(AIFoNodeBase*)shortFo;
+
+/**
+ *  MARK:--------------------反向反馈外类比--------------------
+ *  @param protoFo  : 真实发生的时序;
+ *  @param baseMv_p : 实mv (matchFo发生的),可由此实mv构建虚mv;
+ */
++(void) analogy_Feedback_Diff:(AIFoNodeBase*)protoFo baseMv_p:(AIKVPointer*)baseMv_p;
 
 @end
 

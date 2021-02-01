@@ -536,6 +536,26 @@
     [self analogyOutside:shortFo assFo:matchFo type:ATSame createAbsAlgBlock:nil];
 }
 
+/**
+ *  MARK:--------------------反向反馈外类比--------------------
+ *  @caller : 由预测触发器触发,当mv未发生时,构建虚mv时序,并进行外类比;
+ *  @desc : 主要用于R-模式决策时使用 (参考22107);
+ */
++(void) analogy_Feedback_Diff:(AIFoNodeBase*)protoFo baseMv_p:(AIKVPointer*)baseMv_p{
+    //1. 数据检查;
+    if (!protoFo || !baseMv_p) return;
+    
+    //2. 根据实mv构建虚mv节点,并指定给protoFo;
+    //  a. 0-正/负=delta,其中delta!=0,所以也要触发cmv_p指向,触发外类比;
+    //  b. 注: 但并未直接发现mv+,因为其值为0 (迫切度为0);
+    
+    //3. 根据虚mv联想assFo,并与protoFo外类比;
+    [self analogyOutside:protoFo assFo:nil type:ATDiff createAbsAlgBlock:^(AIAlgNodeBase *createAlg, NSInteger foIndex, NSInteger assFoIndex) {
+        //........
+    }];
+    
+}
+
 @end
 
 

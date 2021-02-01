@@ -78,7 +78,8 @@ typedef NS_ENUM(NSInteger,  AnalogyType) {
     ATNone      = INT_MIN,      //-2147483648   内类比_变无
     ATPlus      = INT_MAX - 147,//2147483500    反省_可行
     ATSub       = INT_MIN + 148,//-2147483500   反省_不可行
-    ATSame      = INT_MAX - 247,//2147483400    正向类比
+    ATSame      = INT_MAX - 247,//2147483400    正向外类比
+    ATDiff      = INT_MIN + 247,//-2147483400   反向外类比
 };
 
 /**
