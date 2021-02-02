@@ -89,57 +89,8 @@
  *      2021.01.23 - R-模式支持决策前空S评价 (参考22061-1);
  *      2021.01.31 - V3迭代 (参考22102 & 22106-1);
  *      2021.01.31 - 从matchFos获取解决方案时,仅过滤出更好的来 (delta>0);
- *      2021.02.02 - 将从matchFos取解决方案,改为由"反向反馈外类比虚mv"提供,而由matchFos做场景限定 (参考22107);
+ *      2021.02.02 - 将从matchFos取解决方案,优先由matchFos提供,其次由"反向反馈外类比虚mv"提供 (参考22107);
  */
--(void) reasonSubV3_Bak:(ReasonDemandModel*)demand{
-    //1. 数据检查
-    if (!demand) return;
-    AIFoNodeBase *matchFo = demand.mModel.matchFo;
-    
-    //2. ActYes等待 或 OutBack反省等待 中时,不进行决策;
-    NSArray *waitFos = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
-        return item.status == TOModelStatus_ActYes || item.status == TOModelStatus_OuterBack;
-    }];
-    if (ARRISOK(waitFos)) return;
-    
-    //3. 取所有经验排序;
-    NSArray *sorts = [SMGUtils sortBig2Small:demand.inModel.matchFos compareBlock:^double(AIMatchFoModel *mFo) {
-        return [AIScore score4MV:mFo.matchFo.cmvNode_p ratio:mFo.matchFoValue];
-    }];
-    
-    //4. 过滤掉mv更不好的;
-    CGFloat matchFoScore = [AIScore score4MV:matchFo.cmvNode_p ratio:1.0f];
-    sorts = [SMGUtils filterArr:sorts checkValid:^BOOL(AIMatchFoModel *item) {
-        CGFloat itemScore = [AIScore score4MV:item.matchFo.cmvNode_p ratio:1.0f];
-        return itemScore > matchFoScore;
-    }];
-    
-    //4. 转换为fo格式arr;
-    NSArray *fo_ps = [SMGUtils convertArr:sorts convertBlock:^id(AIMatchFoModel *mModel) {
-        return mModel.matchFo.pointer;
-    }];
-    
-    //4. 去掉不应期 & 自身;
-    NSArray *except_ps = [TOUtils convertPointersFromTOModels:demand.actionFoModels];
-    NSArray *validFos = [SMGUtils removeSub_ps:except_ps parent_ps:fo_ps];
-    validFos = [SMGUtils removeSub_p:matchFo.pointer parent_ps:validFos];
-    NSLog(@"\n\n=============================== TOP.R- ===============================\n任务:%@ 已发生:%ld 不应期数:%lu 可尝试方案:%lu",Fo2FStr(matchFo),(long)demand.mModel.cutIndex,(unsigned long)except_ps.count,(unsigned long)validFos.count);
-    for (AIKVPointer *item_p in validFos) NSLog(@"可选方案item: %@",Pit2FStr(item_p));
-    
-    //5. 找新方案 (破壁者);
-    for (AIKVPointer *item_p in validFos) {
-        //6. 未发生理性评价 (空S评价);
-        if (![AIScore FRS:[SMGUtils searchNode:item_p]]) continue;
-        
-        //7. 评价通过则取出 (提交决策流程控制,行为化);
-        TOFoModel *foModel = [TOFoModel newWithFo_p:item_p base:demand];
-        NSLog(@"------->>>>>> R-新增一例解决方案: %@",Pit2FStr(item_p));
-        [self commitReasonSub:foModel demand:demand];
-        break;
-    }
-    NSLog(@"------->>>>>> R-无计可施");
-}
-
 -(void) reasonSubV3:(ReasonDemandModel*)demand{
     //1. 数据检查
     if (!demand) return;
