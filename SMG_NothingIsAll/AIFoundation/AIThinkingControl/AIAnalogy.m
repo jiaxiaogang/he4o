@@ -541,10 +541,12 @@
  *  @caller : 由预测触发器触发,当mv未发生时,构建虚mv时序,并进行外类比;
  *  @desc : 主要用于R-模式决策时使用 (参考22107);
  *  @param baseMv_p : 此方法仅对实mv做处理,本身就是虚mv则不做任何处理;
+ *  @bug
+ *      2021.02.02: 虚mv逻辑判反,导致执行不了 (修复后正常) T;
  */
 +(void) analogy_Feedback_Diff:(AIFoNodeBase*)protoFo baseMv_p:(AIKVPointer*)baseMv_p{
     //1. 数据检查 (本身就是虚mv则返回);
-    if (!protoFo || ![AINetUtils isVirtualMv:baseMv_p]) return;
+    if (!protoFo || [AINetUtils isVirtualMv:baseMv_p]) return;
     
     //2. 取出实mv的值;
     AICMVNodeBase *baseMv = [SMGUtils searchNode:baseMv_p];

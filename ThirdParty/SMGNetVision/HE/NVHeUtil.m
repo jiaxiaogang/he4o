@@ -69,7 +69,7 @@
             }
         }else if([self isMv:node_p]){
             CGFloat score = [AIScore score4MV:node_p ratio:1.0f];
-            lightStr = STRFORMAT(@"%@%@",Class2Str(NSClassFromString(node_p.algsType)),Double2Str_NDZ(score));
+            lightStr = STRFORMAT(@"%@%@%@",Mvp2DeltaStr(node_p),Class2Str(NSClassFromString(node_p.algsType)),Double2Str_NDZ(score));
         }
     }
     //2. 返回;

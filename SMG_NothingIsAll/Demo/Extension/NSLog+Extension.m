@@ -9,6 +9,7 @@
 #import "NSLog+Extension.h"
 #import "ImvAlgsHungerModel.h"
 #import "ImvAlgsHurtModel.h"
+#import "AINetIndex.h"
 
 @implementation NSLog_Extension
 
@@ -61,6 +62,16 @@
         return @"疼";
     }
     return @"无";
+}
+
++(NSString*) convertMvp2DeltaDesc:(AIKVPointer*)mv_p{
+    AICMVNodeBase *mv = [SMGUtils searchNode:mv_p];
+    if (mv) {
+        NSInteger delta = [NUMTOOK([AINetIndex getData:mv.delta_p]) integerValue];
+        if (delta > 0) return @"↑";
+        else if(delta < 0) return @"↓";
+    }
+    return @"⇅";
 }
 
 @end

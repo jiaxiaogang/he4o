@@ -137,6 +137,7 @@
 #define TOStatus2Str(status) [NSLog_Extension convertTOStatus2Desc:status]
 #define TIStatus2Str(status) [NSLog_Extension convertTIStatus2Desc:status]
 #define Class2Str(c) [NSLog_Extension convertClass2Desc:c]
+#define Mvp2DeltaStr(mv_p) [NSLog_Extension convertMvp2DeltaDesc:mv_p]
 
 //Double转Str
 #define Double2Str_NDZ(value) [NSString double2Str_NoDotZero:value]

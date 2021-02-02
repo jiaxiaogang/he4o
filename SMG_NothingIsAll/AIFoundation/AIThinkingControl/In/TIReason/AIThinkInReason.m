@@ -407,7 +407,7 @@
                 [AITime setTimeTrigger:deltaTime trigger:^{
                     //4. 反向反馈类比(成功/未成功)的主要原因 (参考tip_OPushM());
                     AnalogyType type = (item.status == TIModelStatus_LastWait) ? ATSub : ATPlus;
-                    NSLog(@"---//触发器Mv_触发: %@ (%@)",Fo2FStr(matchFo),ATType2Str(type));
+                    NSLog(@"---//触发器Mv_触发: %@ (%@ | %@)",Fo2FStr(matchFo),TIStatus2Str(item.status),ATType2Str(type));
                     [AIAnalogy analogy_InRethink:item shortFo:protoFo type:type];
                     
                     //5. 反向反馈外类比;
