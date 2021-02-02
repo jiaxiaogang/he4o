@@ -89,8 +89,9 @@
  *      2021.01.23 - R-模式支持决策前空S评价 (参考22061-1);
  *      2021.01.31 - V3迭代 (参考22102 & 22106-1);
  *      2021.01.31 - 从matchFos获取解决方案时,仅过滤出更好的来 (delta>0);
+ *      2021.02.02 - 将从matchFos取解决方案,改为由"反向反馈外类比虚mv"提供,而由matchFos做场景限定 (参考22107);
  */
--(void) reasonSubV3:(ReasonDemandModel*)demand{
+-(void) reasonSubV3_Bak:(ReasonDemandModel*)demand{
     //1. 数据检查
     if (!demand) return;
     AIFoNodeBase *matchFo = demand.mModel.matchFo;
@@ -100,6 +101,90 @@
         return item.status == TOModelStatus_ActYes || item.status == TOModelStatus_OuterBack;
     }];
     if (ARRISOK(waitFos)) return;
+    
+    //3. 取所有经验排序;
+    NSArray *sorts = [SMGUtils sortBig2Small:demand.inModel.matchFos compareBlock:^double(AIMatchFoModel *mFo) {
+        return [AIScore score4MV:mFo.matchFo.cmvNode_p ratio:mFo.matchFoValue];
+    }];
+    
+    //4. 过滤掉mv更不好的;
+    CGFloat matchFoScore = [AIScore score4MV:matchFo.cmvNode_p ratio:1.0f];
+    sorts = [SMGUtils filterArr:sorts checkValid:^BOOL(AIMatchFoModel *item) {
+        CGFloat itemScore = [AIScore score4MV:item.matchFo.cmvNode_p ratio:1.0f];
+        return itemScore > matchFoScore;
+    }];
+    
+    //4. 转换为fo格式arr;
+    NSArray *fo_ps = [SMGUtils convertArr:sorts convertBlock:^id(AIMatchFoModel *mModel) {
+        return mModel.matchFo.pointer;
+    }];
+    
+    //4. 去掉不应期 & 自身;
+    NSArray *except_ps = [TOUtils convertPointersFromTOModels:demand.actionFoModels];
+    NSArray *validFos = [SMGUtils removeSub_ps:except_ps parent_ps:fo_ps];
+    validFos = [SMGUtils removeSub_p:matchFo.pointer parent_ps:validFos];
+    NSLog(@"\n\n=============================== TOP.R- ===============================\n任务:%@ 已发生:%ld 不应期数:%lu 可尝试方案:%lu",Fo2FStr(matchFo),(long)demand.mModel.cutIndex,(unsigned long)except_ps.count,(unsigned long)validFos.count);
+    for (AIKVPointer *item_p in validFos) NSLog(@"可选方案item: %@",Pit2FStr(item_p));
+    
+    //5. 找新方案 (破壁者);
+    for (AIKVPointer *item_p in validFos) {
+        //6. 未发生理性评价 (空S评价);
+        if (![AIScore FRS:[SMGUtils searchNode:item_p]]) continue;
+        
+        //7. 评价通过则取出 (提交决策流程控制,行为化);
+        TOFoModel *foModel = [TOFoModel newWithFo_p:item_p base:demand];
+        NSLog(@"------->>>>>> R-新增一例解决方案: %@",Pit2FStr(item_p));
+        [self commitReasonSub:foModel demand:demand];
+        break;
+    }
+    NSLog(@"------->>>>>> R-无计可施");
+}
+
+-(void) reasonSubV3:(ReasonDemandModel*)demand{
+    //1. 数据检查
+    if (!demand) return;
+    AIFoNodeBase *matchFo = demand.mModel.matchFo;
+    
+    //2. 根据demand获取索引方向;
+    MVDirection direction = [ThinkingUtils havDemand:demand.algsType delta:demand.delta];
+    NSLog(@"\n\n=============================== TOP.R- ===============================\n任务:%@,发生%ld,方向%ld",demand.algsType,(long)demand.delta,(long)direction);
+    
+    //3. ActYes等待 或 OutBack反省等待 中时,不进行决策;
+    NSArray *waitFos = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
+        return item.status == TOModelStatus_ActYes || item.status == TOModelStatus_OuterBack;
+    }];
+    if (ARRISOK(waitFos)) return;
+    
+    //3. 不应期
+    NSArray *exceptFoModels = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOModelBase *item) {
+        return item.status == TOModelStatus_ActNo || item.status == TOModelStatus_ScoreNo;
+    }];
+    NSArray *except_ps = [TOUtils convertPointersFromTOModels:exceptFoModels];
+    if (Log4DirecRef) NSLog(@"------->>>>>> Fo已有方案数:%lu 不应期数:%lu",(long)demand.actionFoModels.count,(long)except_ps.count);
+    
+    //4. 用方向索引找normalFo解决方案
+    //P例:饿了,该怎么办;
+    //S例:累了,肿么肥事;
+    [theNet getNormalFoByDirectionReference:demand.algsType direction:direction tryResult:^BOOL(AIKVPointer *fo_p) {
+        //5. 方向索引找到一条normalFo解决方案;
+        //P例:吃可以解决饿;
+        //S例:运动导致累;
+        //1. fo解决方案无效,继续找下个;
+        if ([except_ps containsObject:fo_p]) return false;
+        
+        //2. 新解决方案;
+        AIFoNodeBase *fo = [SMGUtils searchNode:fo_p];
+        
+        //TODOTOMORROW20210202:
+        //1. 判断fo是否有效 (与matchFos有抽具象关联);
+        
+        return true;
+    }];
+    
+    
+    
+    
+    
     
     //3. 取所有经验排序;
     NSArray *sorts = [SMGUtils sortBig2Small:demand.inModel.matchFos compareBlock:^double(AIMatchFoModel *mFo) {
