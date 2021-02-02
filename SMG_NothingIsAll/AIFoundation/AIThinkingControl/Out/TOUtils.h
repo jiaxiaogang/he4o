@@ -77,7 +77,7 @@
  *  MARK:--------------------将TOModels转为Pointers--------------------
  *  @result notnull
  */
-+(NSArray*) convertPointersFromTOModels:(NSArray*)toModels;
++(NSMutableArray*) convertPointersFromTOModels:(NSArray*)toModels;
 
 /**
  *  MARK:--------------------将TOModels中TOValue部分的sValue_p收集返回--------------------

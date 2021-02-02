@@ -11,6 +11,7 @@
 #import "AINetIndex.h"
 #import "AIAbsCMVNode.h"
 #import "AIPort.h"
+#import "ThinkingUtils.h"
 
 @implementation AINetAbsCMVUtil
 

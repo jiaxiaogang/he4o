@@ -145,9 +145,9 @@
     if (!demand) return;
     AIFoNodeBase *matchFo = demand.mModel.matchFo;
     
-    //2. 根据demand获取索引方向;
+    //2. 根据demand目标(获取索引)方向;
     MVDirection direction = [ThinkingUtils havDemand:demand.algsType delta:demand.delta];
-    NSLog(@"\n\n=============================== TOP.R- ===============================\n任务:%@,发生%ld,方向%ld",demand.algsType,(long)demand.delta,(long)direction);
+    NSLog(@"\n\n=============================== TOP.R- ===============================\n任务:%@,发生%ld,方向%ld",demand.algsType,(long)demand.mModel.cutIndex,(long)direction);
     
     //3. ActYes等待 或 OutBack反省等待 中时,不进行决策;
     NSArray *waitFos = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
@@ -155,73 +155,54 @@
     }];
     if (ARRISOK(waitFos)) return;
     
-    //3. 不应期
+    //3. 不应期 (可以考虑改为将整个demand.actionFoModels全加入不应期);
     NSArray *exceptFoModels = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOModelBase *item) {
         return item.status == TOModelStatus_ActNo || item.status == TOModelStatus_ScoreNo;
     }];
-    NSArray *except_ps = [TOUtils convertPointersFromTOModels:exceptFoModels];
+    NSMutableArray *except_ps = [TOUtils convertPointersFromTOModels:exceptFoModels];
+    [except_ps addObject:matchFo.pointer];
     if (Log4DirecRef) NSLog(@"------->>>>>> Fo已有方案数:%lu 不应期数:%lu",(long)demand.actionFoModels.count,(long)except_ps.count);
     
-    //4. 用方向索引找normalFo解决方案
-    //P例:饿了,该怎么办;
-    //S例:累了,肿么肥事;
-    [theNet getNormalFoByDirectionReference:demand.algsType direction:direction tryResult:^BOOL(AIKVPointer *fo_p) {
-        //5. 方向索引找到一条normalFo解决方案;
-        //P例:吃可以解决饿;
-        //S例:运动导致累;
-        //1. fo解决方案无效,继续找下个;
-        if ([except_ps containsObject:fo_p]) return false;
-        
-        //2. 新解决方案;
-        AIFoNodeBase *fo = [SMGUtils searchNode:fo_p];
-        
-        //TODOTOMORROW20210202:
-        //1. 判断fo是否有效 (与matchFos有抽具象关联);
-        
-        return true;
-    }];
-    
-    
-    
-    
-    
-    
-    //3. 取所有经验排序;
+    //4. 优先从matchFos中找解决方案_评分排序;
     NSArray *sorts = [SMGUtils sortBig2Small:demand.inModel.matchFos compareBlock:^double(AIMatchFoModel *mFo) {
         return [AIScore score4MV:mFo.matchFo.cmvNode_p ratio:mFo.matchFoValue];
     }];
     
-    //4. 过滤掉mv更不好的;
-    CGFloat matchFoScore = [AIScore score4MV:matchFo.cmvNode_p ratio:1.0f];
-    sorts = [SMGUtils filterArr:sorts checkValid:^BOOL(AIMatchFoModel *item) {
-        CGFloat itemScore = [AIScore score4MV:item.matchFo.cmvNode_p ratio:1.0f];
-        return itemScore > matchFoScore;
-    }];
-    
-    //4. 转换为fo格式arr;
-    NSArray *fo_ps = [SMGUtils convertArr:sorts convertBlock:^id(AIMatchFoModel *mModel) {
-        return mModel.matchFo.pointer;
-    }];
-    
-    //4. 去掉不应期 & 自身;
-    NSArray *except_ps = [TOUtils convertPointersFromTOModels:demand.actionFoModels];
-    NSArray *validFos = [SMGUtils removeSub_ps:except_ps parent_ps:fo_ps];
-    validFos = [SMGUtils removeSub_p:matchFo.pointer parent_ps:validFos];
-    NSLog(@"\n\n=============================== TOP.R- ===============================\n任务:%@ 已发生:%ld 不应期数:%lu 可尝试方案:%lu",Fo2FStr(matchFo),(long)demand.mModel.cutIndex,(unsigned long)except_ps.count,(unsigned long)validFos.count);
-    for (AIKVPointer *item_p in validFos) NSLog(@"可选方案item: %@",Pit2FStr(item_p));
-    
-    //5. 找新方案 (破壁者);
-    for (AIKVPointer *item_p in validFos) {
-        //6. 未发生理性评价 (空S评价);
-        if (![AIScore FRS:[SMGUtils searchNode:item_p]]) continue;
+    //5. 优先从matchFos中找解决方案_找新方案;
+    for (AIMatchFoModel *item in sorts) {
+        //a. 不应期的无效;
+        if ([except_ps containsObject:item.matchFo.pointer]) continue;
         
-        //7. 评价通过则取出 (提交决策流程控制,行为化);
-        TOFoModel *foModel = [TOFoModel newWithFo_p:item_p base:demand];
-        NSLog(@"------->>>>>> R-新增一例解决方案: %@",Pit2FStr(item_p));
+        //b. 同区不同向的才有效;
+        if (![AIScore sameIdenDiffScore:matchFo.cmvNode_p mv2:item.matchFo.cmvNode_p]) continue;
+        
+        //c. 未发生理性评价 (空S评价);
+        if (![AIScore FRS:item.matchFo]) continue;
+        
+        //d. 闯关成功则取出 (提交决策流程控制,行为化);
+        TOFoModel *foModel = [TOFoModel newWithFo_p:item.matchFo.pointer base:demand];
+        NSLog(@"------->>>>>> R- From MatchFos 新增一例解决方案: %@",Fo2FStr(item.matchFo));
         [self commitReasonSub:foModel demand:demand];
-        break;
+        return;
     }
-    NSLog(@"------->>>>>> R-无计可施");
+    
+    //6. 其次从方向索引找normalFo解决方案_找索引;
+    __block BOOL success = false;
+    [theNet getNormalFoByDirectionReference:demand.algsType direction:direction tryResult:^BOOL(AIKVPointer *fo_p) {
+        //a. 不应期无效,继续找下个;
+        if ([except_ps containsObject:fo_p]) return false;
+        
+        //b. 未发生理性评价 (空S评价);
+        if (![AIScore FRS:[SMGUtils searchNode:fo_p]]) return false;
+        
+        //c. 直接提交行为化 (废弃场景判断,因为fo场景一般mIsC会不通过,而alg判断,完全可以放到行为化过程中判断);
+        TOFoModel *foModel = [TOFoModel newWithFo_p:fo_p base:demand];
+        NSLog(@"------->>>>>> R- From mvRefs 新增一例解决方案: %@",Pit2FStr(fo_p));
+        [self commitReasonSub:foModel demand:demand];
+        success = true;
+        return true;
+    }];
+    if (!success) NSLog(@"------->>>>>> R-无计可施");
 }
 
 //MARK:===============================================================

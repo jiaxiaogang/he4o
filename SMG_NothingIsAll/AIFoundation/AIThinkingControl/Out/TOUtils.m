@@ -361,7 +361,7 @@
     return result;
 }
 
-+(NSArray*) convertPointersFromTOModels:(NSArray*)toModels{
++(NSMutableArray*) convertPointersFromTOModels:(NSArray*)toModels{
     //1. 数据准备;
     NSMutableArray *result = [[NSMutableArray alloc] init];
     toModels = ARRTOOK(toModels);

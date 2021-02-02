@@ -234,20 +234,35 @@
     return 0;
 }
 
-//同区且同向
-+(BOOL) sameScoreOfMV1:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p{
-    if (mv1_p && mv2_p && [mv1_p.identifier isEqualToString:mv2_p.identifier]) {
-        CGFloat mScore = [AIScore score4MV:mv1_p ratio:1.0f];
-        CGFloat sScore = [AIScore score4MV:mv2_p ratio:1.0f];
-        BOOL isSame = ((mScore > 0 && sScore > 0) || (mScore < 0 && sScore < 0));
-        return isSame;
-    }
-    return false;
+//同区
++(BOOL) sameIdentifierOfMV1:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p{
+    return mv1_p && mv2_p && [mv1_p.identifier isEqualToString:mv2_p.identifier];
 }
+
 //同向
 +(BOOL) sameOfScore1:(CGFloat)score1 score2:(CGFloat)score2{
     BOOL isSame = ((score1 > 0 && score2 > 0) || (score1 < 0 && score2 < 0));
     return isSame;
+}
+
+//同区且同向
++(BOOL) sameScoreOfMV1:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p{
+    if ([self sameIdentifierOfMV1:mv1_p mv2:mv2_p]) {
+        CGFloat mScore = [AIScore score4MV:mv1_p ratio:1.0f];
+        CGFloat sScore = [AIScore score4MV:mv2_p ratio:1.0f];
+        return [self sameOfScore1:mScore score2:sScore];
+    }
+    return false;
+}
+
+//同区不同向
++(BOOL) sameIdenDiffScore:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p{
+    if ([self sameIdentifierOfMV1:mv1_p mv2:mv2_p]) {
+        CGFloat mScore = [AIScore score4MV:mv1_p ratio:1.0f];
+        CGFloat sScore = [AIScore score4MV:mv2_p ratio:1.0f];
+        return ![self sameOfScore1:mScore score2:sScore];
+    }
+    return false;
 }
 
 @end
