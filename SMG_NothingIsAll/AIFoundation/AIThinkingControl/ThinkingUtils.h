@@ -49,10 +49,19 @@
 
 /**
  *  MARK:--------------------检查有没需求--------------------
+ *  @result 返回为目标方向: 向上任务(delta>0),向下任务(delta<0),和无任务;
  */
 +(BOOL) havDownDemand:(NSString*)algsType delta:(NSInteger)delta;
 +(BOOL) havUpDemand:(NSString*)algsType delta:(NSInteger)delta;
 +(MVDirection) havDemand:(NSString*)algsType delta:(NSInteger)delta;
+
+/**
+ *  MARK:--------------------转为direction--------------------
+ */
+//获取目标方向 (有了目标方向后,可根据此取索引)
++(MVDirection) getTargetDirection:(NSString*)algsType;
+//获取索引方向 (有了索引方向后,可供目标方向取用)
++(MVDirection) getMvReferenceDirection:(NSInteger)delta;
 
 /**
  *  MARK:--------------------解析algsMVArr--------------------

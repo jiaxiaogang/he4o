@@ -141,6 +141,9 @@
 //Double转Str
 #define Double2Str_NDZ(value) [NSString double2Str_NoDotZero:value]
 
+//思维控制器相关转换
+#define ATType2DS(type) [ThinkingUtils getAnalogyTypeDS:type]
+#define DS2ATType(ds) [ThinkingUtils convertDS2AnalogyType:ds]
 
 
 /**
@@ -253,3 +256,6 @@
 #define Log4TIROPushM false
 //VRS评价
 #define Log4VRS true
+//In反省
+#define Log4InRethink true
+#define Log4OutRethink true

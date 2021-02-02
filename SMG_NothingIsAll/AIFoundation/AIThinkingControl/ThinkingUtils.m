@@ -147,6 +147,28 @@
 }
 
 /**
+ *  MARK:--------------------转为direction--------------------
+ */
+//获取目标方向 (有了目标方向后,可根据此取索引)
++(MVDirection) getTargetDirection:(NSString*)algsType{
+    algsType = STRTOOK(algsType);
+    if ([NSClassFromString(algsType) isSubclassOfClass:ImvBadModel.class]) {//饥饿感等
+        return MVDirection_Negative;
+    }else if ([NSClassFromString(algsType) isSubclassOfClass:ImvGoodModel.class]) {//爽感等;
+        return MVDirection_Positive;
+    }
+    return MVDirection_None;
+}
+
+//获取索引方向 (有了索引方向后,可供目标方向取用)
++(MVDirection) getMvReferenceDirection:(NSInteger)delta {
+    //目前的索引就仅是按照delta正负来构建的;
+    if (delta < 0) return MVDirection_Negative;
+    else if(delta > 0) return MVDirection_Positive;
+    else return MVDirection_None;
+}
+
+/**
  *  MARK:--------------------解析algsMVArr--------------------
  *  cmvAlgsArr->mvValue
  */

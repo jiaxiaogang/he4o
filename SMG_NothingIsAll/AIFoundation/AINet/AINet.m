@@ -207,7 +207,7 @@ static AINet *_instance;
 
         //2. 取方向(delta的正负)
         NSInteger delta = [NUMTOOK([AINetIndex getData:cmvNode.delta_p]) integerValue];
-        MVDirection direction = delta < 0 ? MVDirection_Negative : MVDirection_Positive;
+        MVDirection direction = [ThinkingUtils getMvReferenceDirection:delta];
         
         //3. 取mv方向索引;
         AIKVPointer *mvReference_p = [SMGUtils createPointerForDirection:cmvNode.pointer.algsType direction:direction];

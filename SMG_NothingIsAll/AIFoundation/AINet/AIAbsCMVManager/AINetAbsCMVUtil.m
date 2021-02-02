@@ -48,7 +48,7 @@
     if (absMv && ARRISOK(conMvs)) {
         //1. 取出方向索引;
         NSInteger delta = [NUMTOOK([AINetIndex getData:absMv.delta_p]) integerValue];
-        MVDirection direction = delta < 0 ? MVDirection_Negative : MVDirection_Positive;
+        MVDirection direction = [ThinkingUtils getMvReferenceDirection:delta];
         NSArray *indexes = [theNet getNetNodePointersFromDirectionReference:absMv.pointer.algsType direction:direction isMem:false limit:INT_MAX];
         
         //2. 筛出最强方向索引强度;

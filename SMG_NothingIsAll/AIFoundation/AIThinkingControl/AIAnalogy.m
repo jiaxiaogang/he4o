@@ -505,7 +505,7 @@
                 
                 //6. 差值有效,则构建新SPAlg节点;
                 AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:pSubM conAlgs:@[matchAlg] isMem:false ds:ds];
-                if (Log4DiffAna) NSLog(@"--> In反省类比 构建SPAlg %@",Alg2FStr(spAlg));
+                if (Log4InRethink) NSLog(@"--> In反省类比 构建SPAlg %@",Alg2FStr(spAlg));
                 
                 //7. 收集spAlg并更新nextStartJ & findShortAlg;
                 [justPs addObject:spAlg.pointer];
@@ -520,7 +520,7 @@
     
     //9. 构建SPFo;
     AIFoNodeBase *spFo = [ThinkingUtils createAbsFo_NoRepeat_General:@[matchFo] content_ps:justPs ds:ds difStrong:1];
-    if (Log4DiffAna) NSLog(@"--> In反省类比 构建SPFo %@",Fo2FStr(spFo));
+    if (Log4InRethink) NSLog(@"--> In反省类比 构建SPFo %@",Fo2FStr(spFo));
 }
 
 +(void) analogy_Feedback_Same:(AIFoNodeBase*)matchFo shortFo:(AIFoNodeBase*)shortFo{
@@ -529,7 +529,7 @@
     
     //2. 检查同向;
     BOOL isSame = [AIScore sameScoreOfMV1:matchFo.cmvNode_p mv2:shortFo.cmvNode_p];
-    NSLog(@"\n\n------------------------------- 正向反馈类比 (%@) -------------------------------\n短时MatchFo:%@->%@ \n输入ProtoFo:%@->%@",isSame ? @"执行" : @"未执行", Fo2FStr(matchFo),Mvp2Str(matchFo.cmvNode_p),Fo2FStr(shortFo),Mvp2Str(shortFo.cmvNode_p));
+    NSLog(@"\n\n------------------------------- 正向反馈外类比 (%@) -------------------------------\n短时MatchFo:%@->%@ \n输入ProtoFo:%@->%@",isSame ? @"执行" : @"未执行", Fo2FStr(matchFo),Mvp2Str(matchFo.cmvNode_p),Fo2FStr(shortFo),Mvp2Str(shortFo.cmvNode_p));
     if (!isSame) return;
     
     //3. 类比 (与当前的analogy_Outside()较相似,所以暂不写,随后写时,也是将原有的_outside改成此_same类比方法);
@@ -554,7 +554,8 @@
     //NSInteger baseUrgentTo = [NUMTOOK([AINetIndex getData:baseUrgentTo_p]) integerValue];
     
     //3. 根据实mv构建虚mv节点 (虚mv不产生迫切度);
-    AIKVPointer *delta_p = [AINetIndex getDataPointerWithData:@(-baseDelta) algsType:baseDelta_p.algsType dataSource:baseDelta_p.dataSource isOut:false];
+    NSInteger delta = -baseDelta;
+    AIKVPointer *delta_p = [AINetIndex getDataPointerWithData:@(delta) algsType:baseDelta_p.algsType dataSource:baseDelta_p.dataSource isOut:false];
     AIKVPointer *urgentTo_p = [AINetIndex getDataPointerWithData:@(0) algsType:baseUrgentTo_p.algsType dataSource:baseUrgentTo_p.dataSource isOut:false];
     [theNet createAbsMv:nil conMvs:nil at:nil ds:nil urgentTo_p:nil delta_p:nil];
     AICMVNode *mvNode = [theNet createConMv:urgentTo_p delta_p:delta_p at:baseMv_p.algsType isMem:false];
@@ -562,20 +563,30 @@
     
     //4. 互指向 (将虚mv指定给protoFo);
     [AINetUtils relateFo:protoFo mv:mvNode];
+    NSLog(@"\n\n------------------------------- 反向反馈外类比 -------------------------------\nprotoFo:%@->%@", Fo2FStr(protoFo),Mv2FStr(mvNode));
     
-    //TODOTOMORROW20210201: 根据虚mv,联想assFo;
-    //考虑是否将direction的设计去掉,仅保留delta正或负即可;
-    //而是否hasDemand,直接在代码中根据Bad/Good和delta判断即可;
-    NSArray *mvRefs = [theNet getNetNodePointersFromDirectionReference:at direction:direction isMem:false filter:nil];
+    //5. 根据虚mv,联想同区虚mv们;
+    MVDirection direction = [ThinkingUtils getMvReferenceDirection:delta];
+    NSArray *assMvRefs = [theNet getNetNodePointersFromDirectionReference:mvNode.pointer.algsType direction:direction isMem:false filter:nil];
     
-    //  a. 0-正/负=delta,其中delta!=0,所以也要触发cmv_p指向,触发外类比;
-    //  b. 注: 但并未直接发现mv+,因为其值为0 (迫切度为0);
+    //6. 根据虚mv们,筛选出normal且防重的assFo;
+    NSMutableArray *assFos = [[NSMutableArray alloc] init];
+    for (AIPort *item in assMvRefs) {
+        AICMVNodeBase *itemMV = [SMGUtils searchNode:item.target_p];
+        AnalogyType type = DS2ATType(itemMV.foNode_p.dataSource);
+        if (type != ATPlus && type != ATSub && ![protoFo.pointer isEqual:itemMV.foNode_p]) {
+            AIFoNodeBase *assFo = [SMGUtils searchNode:itemMV.foNode_p];
+            if (assFo) [assFos addObject:assFo];
+        }
+        //7. 最多取三条assFo;
+        if (assFos.count >= 3) break;
+    }
     
-    //3. 根据虚mv联想assFo,并与protoFo外类比;
-    [self analogyOutside:protoFo assFo:nil type:ATDiff createAbsAlgBlock:^(AIAlgNodeBase *createAlg, NSInteger foIndex, NSInteger assFoIndex) {
-        //........
-    }];
-    
+    //8. 使protoFo与assFo外类比;
+    for (AIFoNodeBase *assFo in assFos) {
+        if (Log4DiffAna) NSLog(@"反向反馈外类比 assFo:%@->%@",Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
+        [self analogyOutside:protoFo assFo:assFo type:ATDiff createAbsAlgBlock:nil];
+    }
 }
 
 @end
