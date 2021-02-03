@@ -160,7 +160,7 @@
         }
     }
     //调试短时序; (先仅打外类比日志);
-    if (Log4OutAna) NSLog(@"-> 外类比构建时序 Finish: %@->{%@} from: ↑↑↑(fo:assFo)",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
+    NSLog(@"-> 外类比构建时序 Finish: %@->{%@} from: ↑↑↑(fo:assFo)",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
 }
 
 
@@ -525,7 +525,7 @@
 
 +(void) analogy_Feedback_Same:(AIFoNodeBase*)matchFo shortFo:(AIFoNodeBase*)shortFo{
     //1. 数据检查;
-    if (!matchFo || !shortFo) return;
+    if (!matchFo || !shortFo || !matchFo.cmvNode_p || !shortFo.cmvNode_p) return;
     
     //2. 检查同向;
     BOOL isSame = [AIScore sameScoreOfMV1:matchFo.cmvNode_p mv2:shortFo.cmvNode_p];
@@ -586,7 +586,7 @@
     
     //8. 使protoFo与assFo外类比;
     for (AIFoNodeBase *assFo in assFos) {
-        if (Log4DiffAna) NSLog(@"反向反馈外类比 assFo:%@->%@",Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
+        if (Log4DiffAna) NSLog(@"\nassFo:%@->%@",Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
         [self analogyOutside:protoFo assFo:assFo type:ATDiff createAbsAlgBlock:nil];
     }
 }

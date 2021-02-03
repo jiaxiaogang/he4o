@@ -19,9 +19,9 @@
     if (!selfView || !targetView) {
         return;
     }
-    NSLog(@"\n\n------------------------------- 皮层算法 -------------------------------");
     NSMutableArray *dics = [[NSMutableArray alloc] init];
     NSMutableArray *views = [targetView subViews_AllDeepWithRect:rect];
+    if (ARRISOK(views)) NSLog(@"\n\n------------------------------- 皮层算法 -------------------------------");
     
     //2. 生成model
     for (HEView *curView in views) {
