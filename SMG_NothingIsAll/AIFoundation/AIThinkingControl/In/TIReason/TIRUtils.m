@@ -201,10 +201,6 @@
         }]);
         
         //5. 从大到小,依次取到对应的node和matchingCount
-        NSInteger typeWrong = 0;
-        NSInteger countWrong = 0;
-        NSInteger typeCountWrong = 0;
-        if (Log4MAlg) WLog(@"proto___________长度:%lu 内容:(%@)",(unsigned long)protoAlg.content_ps.count,Alg2FStr(protoAlg));
         for (NSData *key in sortKeys) {
             AIKVPointer *key_p = DATA2OBJ(key);
             AIAlgNodeBase *result = [SMGUtils searchNode:key_p];
@@ -214,17 +210,13 @@
             if (ISOK(result, AIAbsAlgNode.class) && result.content_ps.count == matchingCount) {
                 [matchAlgs addObject:result];
             }
-            if (!ISOK(result, AIAbsAlgNode.class) && result.content_ps.count != matchingCount) typeCountWrong ++;
-            else if (!ISOK(result, AIAbsAlgNode.class)) typeWrong ++;
-            else if(result.content_ps.count != matchingCount) countWrong ++;
-            if (Log4MAlg) WLog(@"Item识别失败_匹配:%d 类型:%@ 内容:%@",matchingCount,result.class,Alg2FStr(result));
         }
-        if (Log4MAlg) WLog(@"识别结果 >> 非抽象且非全含:%ld,非抽象数:%ld,非全含数:%ld / 总数:%lu",(long)typeCountWrong,(long)typeWrong,(long)countWrong,(unsigned long)sortKeys.count);
         
         //7. 未将全含返回,则返回最相似;
         //2020.10.22: 全含返回,也要返回seemAlg;
         partAlg_ps = DATAS2OBJS(sortKeys);
         partAlg_ps = [SMGUtils removeSub_ps:[SMGUtils convertPointersFromNodes:matchAlgs] parent_ps:partAlg_ps];
+        if (Log4MAlg) NSLog(@"识别结果 >> 总数:%ld = 全含:%ld + 非全含数:%ld",sortKeys.count,matchAlgs.count,partAlg_ps.count);
     }
     complete(matchAlgs,partAlg_ps);
 }

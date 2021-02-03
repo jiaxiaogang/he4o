@@ -153,7 +153,7 @@
             result.mvDeltaTime = MAX(fo.mvDeltaTime, assFo.mvDeltaTime);
             
             //6. createAbsCmvNode (当正向类比,且result没有cmv指向时);
-            if (type == ATSame && assMv && !result.cmvNode_p) {
+            if ((type == ATSame || type == ATDiff) && assMv && !result.cmvNode_p) {
                 AIAbsCMVNode *resultMv = [theNet createAbsCMVNode_Outside:nil aMv_p:fo.cmvNode_p bMv_p:assMv.pointer];
                 [AINetUtils relateFo:result mv:resultMv];//cmv模型连接;
             }

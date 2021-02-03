@@ -128,7 +128,7 @@
     //}
     
     //4. 调试日志
-    NSLog(@"概念识别: Finish >>>\n全含:%@\n局部:%@",Pits2FStr([SMGUtils convertPointersFromNodes:matchAlgs]),Pits2FStr(ARR_SUB(partAlg_ps, 0, 3)));
+    NSLog(@"概念识别: Finish >>>\n全含:%@\n局部:%@",Pits2FStr(Nodes2Pits(matchAlgs)),Pits2FStr(ARR_SUB(partAlg_ps, 0, 3)));
     complete(matchAlgs,partAlg_ps);
 }
 
