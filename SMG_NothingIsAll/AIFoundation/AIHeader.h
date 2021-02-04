@@ -145,6 +145,7 @@
 //思维控制器相关转换
 #define ATType2DS(type) [ThinkingUtils getAnalogyTypeDS:type]
 #define DS2ATType(ds) [ThinkingUtils convertDS2AnalogyType:ds]
+#define Mvp2Delta(mv_p) [AINetUtils getDeltaFromMv:mv_p]
 
 
 /**

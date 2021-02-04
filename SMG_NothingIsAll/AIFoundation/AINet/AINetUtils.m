@@ -79,6 +79,17 @@
     return true;
 }
 
+/**
+ *  MARK:--------------------获取mv的delta--------------------
+ */
++(NSInteger) getDeltaFromMv:(AIKVPointer*)mv_p{
+    AICMVNodeBase *mv = [SMGUtils searchNode:mv_p];
+    if (mv) {
+        return [NUMTOOK([AINetIndex getData:mv.delta_p]) integerValue];
+    }
+    return 0;
+}
+
 @end
 
 

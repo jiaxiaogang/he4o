@@ -377,6 +377,7 @@
  *      2021.01.27: 非末位也支持mv触发器 (参考22074-BUG2);
  *      2021.02.01: 支持反向反馈外类比 (参考22107);
  *      2021.02.04: 虚mv不会触发In反省,否则几乎永远为逆 (因为本来虚mv就不会有输入的);
+ *      2021.02.04: 虚mv也要支持In反省,否则无法形成对R-模式助益 (参考22108);
  */
 +(void) tir_Forecast:(AIShortMatchModel*)inModel{
     //1. 数据检查;
@@ -399,17 +400,25 @@
                     [AIAnalogy analogy_InRethink:item shortFo:protoFo type:type];
                     
                     //5. 失败状态标记;
-                    if (item.status == TIModelStatus_LastWait) item.status = TIModelStatus_OutBackNo;
+                    if (item.status == TIModelStatus_LastWait) item.status = TIModelStatus_OutBackNone;
                 }];
             }
         }else{
             //有mv判断;
-            if (matchFo.cmvNode_p && ![AINetUtils isVirtualMv:matchFo.cmvNode_p]) {
+            if (matchFo.cmvNode_p) {
                 item.status = TIModelStatus_LastWait;
                 double deltaTime = [TOUtils getSumDeltaTime2Mv:matchFo cutIndex:item.cutIndex];
                 [AITime setTimeTrigger:deltaTime trigger:^{
                     //4. 反向反馈类比(成功/未成功)的主要原因 (参考tip_OPushM());
-                    AnalogyType type = (item.status == TIModelStatus_LastWait) ? ATSub : ATPlus;
+                    AnalogyType type = ATDefault;
+                    if ([AINetUtils isVirtualMv:matchFo.cmvNode_p]) {
+                        //a. 虚mv反馈反向:S,未反馈:P;
+                        type = (item.status == TIModelStatus_OutBackDiffDelta) ? ATSub : ATPlus;
+                    }else{
+                        //b. 实mv反馈正向:P,未反馈:S;
+                        type = (item.status == TIModelStatus_OutBackSameDelta) ? ATPlus : ATSub;
+                    }
+                    
                     NSLog(@"---//触发器Mv_触发: %@ (%@ | %@)",Fo2FStr(matchFo),TIStatus2Str(item.status),ATType2Str(type));
                     [AIAnalogy analogy_InRethink:item shortFo:protoFo type:type];
                     
@@ -419,7 +428,7 @@
                     }
                     
                     //5. 失败状态标记;
-                    if (item.status == TIModelStatus_LastWait) item.status = TIModelStatus_OutBackNo;
+                    if (item.status == TIModelStatus_LastWait) item.status = TIModelStatus_OutBackNone;
                 }];
             }
         }

@@ -47,6 +47,11 @@
  */
 +(BOOL) isVirtualMv:(AIKVPointer*)mv_p;
 
+/**
+ *  MARK:--------------------获取mv的delta--------------------
+ */
++(NSInteger) getDeltaFromMv:(AIKVPointer*)mv_p;
+
 @end
 
 

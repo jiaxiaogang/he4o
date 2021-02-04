@@ -19,6 +19,7 @@
 #import "AIAlgNodeBase.h"
 #import "AIScore.h"
 #import "AIMatchFoModel.h"
+#import "AINetUtils.h"
 
 @implementation AIThinkInPercept
 
@@ -88,6 +89,7 @@
  *  @title 外层输入对In短时记忆的影响处理 (参考22052-2);
  *  @version
  *      2021.01.24: 对多时序识别结果支持,及时全面的改变status为OutBackYes (参考22073-todo5);
+ *      2021.02.04: In反省支持虚mv,所以此处也要支持虚mv的OPush判断 (参考22108);
  *  @bug
  *      2021.01.25: 修复witMatchFo.cmvNode_p空判断逻辑反了,导致无法执行修改状态为OutBackYes,从而反省类比永远为"逆";
  */
@@ -106,10 +108,21 @@
             if (waitModel.status != TIModelStatus_LastWait || !waitMatchFo.cmvNode_p) continue;
             
             //4. 等待中的inModel_判断hope(wait)和real(new)之间是否相符 (同区且同向);
-            BOOL isSame = [AIScore sameScoreOfMV1:waitMatchFo.cmvNode_p mv2:newMv.pointer];
-            if (isSame) {
-                waitModel.status = TIModelStatus_OutBackYes;
-                NSLog(@"tip_OPushM: MV有效");
+            
+            
+            //4. 反向反馈类比(成功/未成功)的主要原因 (参考tip_OPushM());
+            if ([AINetUtils isVirtualMv:waitMatchFo.cmvNode_p]) {
+                //a. 虚mv反馈反向:S,未反馈:P;
+                type = (item.status == TIModelStatus_OutBackDiffDelta) ? ATSub : ATPlus;
+            }else{
+                //b. 实mv反馈正向:P,未反馈:S;
+                BOOL isSame = [AIScore sameScoreOfMV1:waitMatchFo.cmvNode_p mv2:newMv.pointer];
+                if (isSame) {
+                    waitModel.status = TIModelStatus_OutBackSameDelta;
+                    NSLog(@"tip_OPushM: 实MV有效");
+                }
+                
+                type = (item.status == TIModelStatus_OutBackSameDelta) ? ATPlus : ATSub;
             }
         }
     }
