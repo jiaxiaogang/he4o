@@ -528,7 +528,7 @@
     if (!matchFo || !shortFo || !matchFo.cmvNode_p || !shortFo.cmvNode_p) return;
     
     //2. 检查同向;
-    BOOL isSame = [AIScore sameScoreOfMV1:matchFo.cmvNode_p mv2:shortFo.cmvNode_p];
+    BOOL isSame = [AIScore sameIdenSameScore:matchFo.cmvNode_p mv2:shortFo.cmvNode_p];
     NSLog(@"\n\n------------------------------- 正向反馈外类比 (%@) -------------------------------\n短时MatchFo:%@->%@ \n输入ProtoFo:%@->%@",isSame ? @"执行" : @"未执行", Fo2FStr(matchFo),Mvp2Str(matchFo.cmvNode_p),Fo2FStr(shortFo),Mvp2Str(shortFo.cmvNode_p));
     if (!isSame) return;
     

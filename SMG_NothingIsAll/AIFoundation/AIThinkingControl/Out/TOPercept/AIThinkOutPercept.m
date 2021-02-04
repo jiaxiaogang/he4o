@@ -138,7 +138,7 @@
         if (!ISOK(demand, ReasonDemandModel.class)) continue;
         
         //3. 判断hope(wait)和real(new)之间是否相符 (与newMv同区且同向) (匹配,比如撞疼,确定疼了);
-        BOOL isSame = [AIScore sameScoreOfMV1:demand.mModel.matchFo.cmvNode_p mv2:newMv.pointer];
+        BOOL isSame = [AIScore sameIdenSameScore:demand.mModel.matchFo.cmvNode_p mv2:newMv.pointer];
         if (!isSame) continue;
         
         //4. 将等待中的foModel改为OutBack;

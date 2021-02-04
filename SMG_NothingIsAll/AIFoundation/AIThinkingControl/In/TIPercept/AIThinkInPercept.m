@@ -107,22 +107,19 @@
             if (Log4OPushM) NSLog(@"==> checkTIModel=MatchFo: %@ (%@)",Fo2FStr(waitMatchFo),TIStatus2Str(waitModel.status));
             if (waitModel.status != TIModelStatus_LastWait || !waitMatchFo.cmvNode_p) continue;
             
-            //4. 等待中的inModel_判断hope(wait)和real(new)之间是否相符 (同区且同向);
-            
-            
-            //4. 反向反馈类比(成功/未成功)的主要原因 (参考tip_OPushM());
+            //4. 等待中的inModel_判断hope(wait)和real(new)之间是否相符;
             if ([AINetUtils isVirtualMv:waitMatchFo.cmvNode_p]) {
-                //a. 虚mv反馈反向:S,未反馈:P;
-                type = (item.status == TIModelStatus_OutBackDiffDelta) ? ATSub : ATPlus;
-            }else{
-                //b. 实mv反馈正向:P,未反馈:S;
-                BOOL isSame = [AIScore sameScoreOfMV1:waitMatchFo.cmvNode_p mv2:newMv.pointer];
-                if (isSame) {
-                    waitModel.status = TIModelStatus_OutBackSameDelta;
-                    NSLog(@"tip_OPushM: 实MV有效");
+                //a. 虚mv仅标记同区反向反馈;
+                if ([AIScore sameIdenDiffDelta:waitMatchFo.cmvNode_p mv2:newMv.pointer]) {
+                    waitModel.status = TIModelStatus_OutBackDiffDelta;
+                    NSLog(@"tip_OPushM: 虚MV 反向反馈");
                 }
-                
-                type = (item.status == TIModelStatus_OutBackSameDelta) ? ATPlus : ATSub;
+            }else{
+                //b. 实mv仅标记同区同向反馈;
+                if ([AIScore sameIdenSameScore:waitMatchFo.cmvNode_p mv2:newMv.pointer]) {
+                    waitModel.status = TIModelStatus_OutBackSameDelta;
+                    NSLog(@"tip_OPushM: 实MV 正向反馈");
+                }
             }
         }
     }

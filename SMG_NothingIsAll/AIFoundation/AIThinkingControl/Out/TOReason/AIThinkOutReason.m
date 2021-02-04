@@ -126,7 +126,7 @@
     //    if ([except_ps containsObject:item.matchFo.pointer]) continue;
     //
     //    //b. 同区不同向的才有效;
-    //    if (![AIScore sameIdenDiffScore:matchFo.cmvNode_p mv2:item.matchFo.cmvNode_p]) continue;
+    //    if (![AIScore sameIdenNoSameScore:matchFo.cmvNode_p mv2:item.matchFo.cmvNode_p]) continue;
     //
     //    //c. 未发生理性评价 (空S评价);
     //    if (![AIScore FRS:item.matchFo]) continue;

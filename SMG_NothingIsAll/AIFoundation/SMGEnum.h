@@ -137,9 +137,10 @@ typedef NS_ENUM(NSInteger, TOModelStatus) {
 typedef NS_ENUM(NSInteger, TIModelStatus) {
     TIModelStatus_Default           = 0,//默认值
     TIModelStatus_LastWait          = 1,//末位等待
-    TIModelStatus_OutBackSameDelta  = 2,//反馈同向delta (用于实mv)
-    TIModelStatus_OutBackDiffDelta  = 3,//反馈反向delta (用于虚mv)
-    TIModelStatus_OutBackNone       = 4,//无反馈
+    TIModelStatus_OutBackReason     = 2,//反馈理性结果 (用于理性反馈)
+    TIModelStatus_OutBackSameDelta  = 3,//反馈同向delta (用于实mv)
+    TIModelStatus_OutBackDiffDelta  = 4,//反馈反向delta (用于虚mv)
+    TIModelStatus_OutBackNone       = 5,//无反馈
 };
 
 /**

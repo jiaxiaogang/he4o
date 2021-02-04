@@ -378,7 +378,7 @@
 
 //+(BOOL) sameOfMV1:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p{
 //    if (mv1_p && mv2_p && [mv1_p.algsType isEqualToString:mv2_p.algsType]) {
-//        return [self sameScoreOfMV1:mv1_p mv2:mv2_p];
+//        return [self sameIdenSameScore:mv1_p mv2:mv2_p];
 //    }
 //    return false;
 //}

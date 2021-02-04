@@ -204,7 +204,7 @@
 
 
 //MARK:===============================================================
-//MARK:                     < MPS >
+//MARK:                     < MPS评分 >
 //MARK:===============================================================
 //MPS评分
 +(CGFloat) score4MV:(AIPointer*)cmvNode_p ratio:(CGFloat)ratio{
@@ -234,51 +234,52 @@
     return 0;
 }
 
+//MARK:===============================================================
+//MARK:                     < MPS评价 >
+//MARK:===============================================================
+
 //同区且同向
-+(BOOL) sameScoreOfMV1:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p{
++(BOOL) sameIdenSameScore:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p{
     if ([self sameIdentifierOfMV1:mv1_p mv2:mv2_p]) {
         CGFloat mScore = [AIScore score4MV:mv1_p ratio:1.0f];
         CGFloat sScore = [AIScore score4MV:mv2_p ratio:1.0f];
-        return [self sameOfScore1:mScore score2:sScore];
+        return [self sameDire:mScore v2:sScore];
     }
     return false;
 }
 
 //同区不同向
-+(BOOL) sameIdenDiffScore:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p{
-    if ([self sameIdentifierOfMV1:mv1_p mv2:mv2_p]) {
-        CGFloat mScore = [AIScore score4MV:mv1_p ratio:1.0f];
-        CGFloat sScore = [AIScore score4MV:mv2_p ratio:1.0f];
-        return ![self sameOfScore1:mScore score2:sScore];
-    }
-    return false;
++(BOOL) sameIdenNoSameScore:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p{
+    CGFloat ratio = 1.0f;
+    return [self sameIdentifierOfMV1:mv1_p mv2:mv2_p] && ![self sameDire:Mvp2Score(mv1_p, ratio) v2:Mvp2Score(mv2_p, ratio)];
 }
-
 
 //同区且同向
 +(BOOL) sameIdenSameDelta:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p{
-    if ([self sameIdentifierOfMV1:mv1_p mv2:mv2_p]) {
-        return [self sameOfValue:Mvp2Delta(mv1_p) v2:Mvp2Delta(mv2_p)];
-    }
+    return [self sameIdentifierOfMV1:mv1_p mv2:mv2_p] && [self sameDire:Mvp2Delta(mv1_p) v2:Mvp2Delta(mv2_p)];
+    return false;
+}
+
+//同区且反向
++(BOOL) sameIdenDiffDelta:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p{
+    return [self sameIdentifierOfMV1:mv1_p mv2:mv2_p] && [self diffDire:Mvp2Delta(mv1_p) v2:Mvp2Delta(mv2_p)];
     return false;
 }
 
 //MARK:===============================================================
 //MARK:                     < 单纯同区同向判断 >
 //MARK:===============================================================
-
 //同区
 +(BOOL) sameIdentifierOfMV1:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p{
     return mv1_p && mv2_p && [mv1_p.identifier isEqualToString:mv2_p.identifier];
 }
 //同向
-+(BOOL) sameOfScore1:(CGFloat)score1 score2:(CGFloat)score2{
-    BOOL isSame = ((score1 > 0 && score2 > 0) || (score1 < 0 && score2 < 0));
-    return isSame;
-}
-//同向
 +(BOOL) sameDire:(NSInteger)v1 v2:(NSInteger)v2{
     return (v1 > 0 && v2 > 0) || (v1 < 0 && v2 < 0);
+}
+//反向
++(BOOL) diffDire:(NSInteger)v1 v2:(NSInteger)v2{
+    return (v1 > 0 && v2 < 0) || (v1 < 0 && v2 > 0);
 }
 
 @end

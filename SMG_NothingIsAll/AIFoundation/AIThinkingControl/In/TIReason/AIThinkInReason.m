@@ -463,7 +463,7 @@
                 //2. 直接判断H是否mIsC,是则OutBackYes;
                 BOOL mIsC = [TOUtils mIsC_1:newInModel.protoAlg.pointer c:waitLastAlg_p];
                 if (mIsC) {
-                    waitModel.status = TIModelStatus_OutBackYes;
+                    waitModel.status = TIModelStatus_OutBackReason;
                     NSLog(@"tir_OPushM: H有效");
                 }
             }else if([TOUtils isG:waitMatchFo.pointer] || [TOUtils isL:waitMatchFo.pointer]){
@@ -496,7 +496,7 @@
                     
                     //e. 只有符合变化时,才改为OuterBack,否则不改,使之反省类比时,可以发现不符合问题;
                     if (realType == waitType){
-                        waitModel.status = TIModelStatus_OutBackYes;
+                        waitModel.status = TIModelStatus_OutBackReason;
                         NSLog(@"tir_OPushM: GL有效");
                     }
                 }

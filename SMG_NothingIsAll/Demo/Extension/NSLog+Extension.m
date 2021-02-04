@@ -46,11 +46,15 @@
 
 +(NSString*) convertTIStatus2Desc:(TIModelStatus)status{
     if(status == TIModelStatus_LastWait){
-        return @"LastWait";
-    }else if(status == TIModelStatus_OutBackNo){
-        return @"OutBackNo";
-    }else if(status == TIModelStatus_OutBackYes){
-        return @"OutBackYes";
+        return @"等待反馈";
+    }else if(status == TIModelStatus_OutBackReason){
+        return @"理性反馈";
+    }else if(status == TIModelStatus_OutBackSameDelta){
+        return @"同向反馈";
+    }else if(status == TIModelStatus_OutBackDiffDelta){
+        return @"反向反馈";
+    }else if(status == TIModelStatus_OutBackNone){
+        return @"无反馈";
     }
     return @"Default";
 }
