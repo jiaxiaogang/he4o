@@ -301,6 +301,7 @@
  *      2021.01.26: 为多时序识别结果做去重 (参考22074-BUG3);
  *      2021.01.31: 将无mv指向的,放开 (因为R-模式需要) (等支持反向反馈外类比后,再关掉) (参考n22p10);
  *      2021.02.03: 反向反馈外类比已支持,将无mv指向的关掉 (参考version上条);
+ *      2021.02.04: 将matchFos中的虚mv筛除掉,因为现在R-模式不使用matchFos做解决方案,现在留着没用,等有用时再打开;
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
 +(void) partMatching_FoV1Dot5:(AIFoNodeBase*)protoFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel{
@@ -338,7 +339,7 @@
             AIFoNodeBase *assFo = [SMGUtils searchNode:assFo_p];
             
             //5. 无cmv指向的,无效;
-            if (!assFo.cmvNode_p) continue;
+            if (!assFo.cmvNode_p || [AINetUtils isVirtualMv:assFo.cmvNode_p]) continue;
             
             //6. 防重并对assFo做匹配判断;
             BOOL contains = ARRISOK([SMGUtils filterArr:inModel.matchFos checkValid:^BOOL(AIMatchFoModel *item) {

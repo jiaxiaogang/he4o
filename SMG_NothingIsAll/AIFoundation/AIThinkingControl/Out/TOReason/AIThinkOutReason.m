@@ -149,7 +149,8 @@
         
         //c. 直接提交行为化 (废弃场景判断,因为fo场景一般mIsC会不通过,而alg判断,完全可以放到行为化过程中判断);
         TOFoModel *foModel = [TOFoModel newWithFo_p:fo_p base:demand];
-        NSLog(@"------->>>>>> R- From mvRefs 新增一例解决方案: %@",Pit2FStr(fo_p));
+        AIFoNodeBase *fo = [SMGUtils searchNode:fo_p];
+        NSLog(@"------->>>>>> R- From mvRefs 新增一例解决方案: %@->%@",Pit2FStr(fo_p),Mvp2Str(fo.cmvNode_p));
         [self commitReasonSub:foModel demand:demand];
         success = true;
         return true;

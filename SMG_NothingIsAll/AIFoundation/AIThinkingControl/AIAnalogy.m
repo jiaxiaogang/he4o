@@ -629,7 +629,7 @@
     AIFoNodeBase *foNode = [SMGUtils searchNode:foModel.content_p];
     NSMutableArray *spFoContent = [[NSMutableArray alloc] init];
     NSString *spDS = [ThinkingUtils getAnalogyTypeDS:type];
-    NSLog(@"\n\n=============================== Out反省类比 ===============================\n%@:时序:%@",ATType2Str(type),Fo2FStr(foNode));
+    NSLog(@"\n\n=============================== Out反省类比 (%@) ===============================\n时序:%@",ATType2Str(type),Fo2FStr(foNode));
     
     //2. 构建SPAlg (触发反省类比_实际fo数据收集 (不用收集realFo,而是直接对未修正部分构建,参考20205-原则1));
     for (TOAlgModel *toAlgModel in foModel.subModels) {
