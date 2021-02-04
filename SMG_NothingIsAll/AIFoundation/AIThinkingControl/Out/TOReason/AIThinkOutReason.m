@@ -90,6 +90,7 @@
  *      2021.01.31 - V3迭代 (参考22102 & 22106-1);
  *      2021.01.31 - 从matchFos获取解决方案时,仅过滤出更好的来 (delta>0);
  *      2021.02.02 - 将从matchFos取解决方案,优先由matchFos提供,其次由"反向反馈外类比虚mv"提供 (参考22107);
+ *      2021.02.04 - 因为老是取到非常具体的解决方案,所以注掉优先从matchFos取 (参考22114);
  */
 -(void) reasonSubV3:(ReasonDemandModel*)demand{
     //1. 数据检查
@@ -114,28 +115,28 @@
     [except_ps addObject:matchFo.pointer];
     if (Log4DirecRef) NSLog(@"------->>>>>> Fo已有方案数:%lu 不应期数:%lu",(long)demand.actionFoModels.count,(long)except_ps.count);
     
-    //4. 优先从matchFos中找解决方案_评分排序;
-    NSArray *sorts = [SMGUtils sortBig2Small:demand.inModel.matchFos compareBlock:^double(AIMatchFoModel *mFo) {
-        return [AIScore score4MV:mFo.matchFo.cmvNode_p ratio:mFo.matchFoValue];
-    }];
-    
-    //5. 优先从matchFos中找解决方案_找新方案;
-    for (AIMatchFoModel *item in sorts) {
-        //a. 不应期的无效;
-        if ([except_ps containsObject:item.matchFo.pointer]) continue;
-        
-        //b. 同区不同向的才有效;
-        if (![AIScore sameIdenDiffScore:matchFo.cmvNode_p mv2:item.matchFo.cmvNode_p]) continue;
-        
-        //c. 未发生理性评价 (空S评价);
-        if (![AIScore FRS:item.matchFo]) continue;
-        
-        //d. 闯关成功则取出 (提交决策流程控制,行为化);
-        TOFoModel *foModel = [TOFoModel newWithFo_p:item.matchFo.pointer base:demand];
-        NSLog(@"------->>>>>> R- From MatchFos 新增一例解决方案: %@",Fo2FStr(item.matchFo));
-        [self commitReasonSub:foModel demand:demand];
-        return;
-    }
+    ////4. 优先从matchFos中找解决方案_评分排序;
+    //NSArray *sorts = [SMGUtils sortBig2Small:demand.inModel.matchFos compareBlock:^double(AIMatchFoModel *mFo) {
+    //    return [AIScore score4MV:mFo.matchFo.cmvNode_p ratio:mFo.matchFoValue];
+    //}];
+    //
+    ////5. 优先从matchFos中找解决方案_找新方案;
+    //for (AIMatchFoModel *item in sorts) {
+    //    //a. 不应期的无效;
+    //    if ([except_ps containsObject:item.matchFo.pointer]) continue;
+    //
+    //    //b. 同区不同向的才有效;
+    //    if (![AIScore sameIdenDiffScore:matchFo.cmvNode_p mv2:item.matchFo.cmvNode_p]) continue;
+    //
+    //    //c. 未发生理性评价 (空S评价);
+    //    if (![AIScore FRS:item.matchFo]) continue;
+    //
+    //    //d. 闯关成功则取出 (提交决策流程控制,行为化);
+    //    TOFoModel *foModel = [TOFoModel newWithFo_p:item.matchFo.pointer base:demand];
+    //    NSLog(@"------->>>>>> R- From MatchFos 新增一例解决方案: %@",Fo2FStr(item.matchFo));
+    //    [self commitReasonSub:foModel demand:demand];
+    //    return;
+    //}
     
     //6. 其次从方向索引找normalFo解决方案_找索引;
     __block BOOL success = false;

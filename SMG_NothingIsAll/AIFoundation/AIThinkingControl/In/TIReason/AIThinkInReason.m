@@ -375,6 +375,7 @@
  *  @version
  *      2021.01.27: 非末位也支持mv触发器 (参考22074-BUG2);
  *      2021.02.01: 支持反向反馈外类比 (参考22107);
+ *      2021.02.04: 虚mv不会触发In反省,否则几乎永远为逆 (因为本来虚mv就不会有输入的);
  */
 +(void) tir_Forecast:(AIShortMatchModel*)inModel{
     //1. 数据检查;
@@ -402,7 +403,7 @@
             }
         }else{
             //有mv判断;
-            if (matchFo.cmvNode_p) {
+            if (matchFo.cmvNode_p && ![AINetUtils isVirtualMv:matchFo.cmvNode_p]) {
                 item.status = TIModelStatus_LastWait;
                 double deltaTime = [TOUtils getSumDeltaTime2Mv:matchFo cutIndex:item.cutIndex];
                 [AITime setTimeTrigger:deltaTime trigger:^{
