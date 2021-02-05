@@ -169,7 +169,6 @@ static AIThinkingControl *_instance;
     //2. 将联想到的cmv更新energy & 更新demandManager & decisionLoop
     NSString *algsType = cmvNode.urgentTo_p.algsType;
     NSInteger urgentTo = [NUMTOOK([AINetIndex getData:cmvNode.urgentTo_p]) integerValue];
-    [self updateEnergy:urgentTo];//190730前:((urgentTo + 9)/10) 190730:urgentTo
     [self.demandManager updateCMVCache_PMV:algsType urgentTo:urgentTo delta:delta];
     [self.thinkOut dataOut];
 }
