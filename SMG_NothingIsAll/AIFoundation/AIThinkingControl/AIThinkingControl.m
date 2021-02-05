@@ -36,7 +36,7 @@
  *  2. 在联想中,遇到的mv,都叠加到当前demand下;
  *
  */
-@interface AIThinkingControl() <AIThinkInDelegate,DemandManagerDelegate,AIThinkOutDelegate>
+@interface AIThinkingControl() <AIThinkInDelegate,AIThinkOutDelegate>
 
 @property (strong, nonatomic) DemandManager *demandManager;         //OUT短时记忆 (输出数据管理器);
 @property (strong, nonatomic) ShortMatchManager *shortMatchManager; //IN短时记忆 (输入数据管理器);
@@ -77,7 +77,6 @@ static AIThinkingControl *_instance;
 
 -(void) initData{
     self.demandManager = [[DemandManager alloc] init];
-    self.demandManager.delegate = self;
     self.thinkIn = [[AIThinkIn alloc] init];
     self.thinkIn.delegate = self;
     self.thinkOut = [[AIThinkOut alloc] init];
@@ -210,13 +209,6 @@ static AIThinkingControl *_instance;
 //MARK:===============================================================
 -(AIShortMatchModel *)aiTO_RethinkInnerFo:(AIFoNodeBase *)fo{
     return [self.thinkIn dataInFromTORInnerFo:fo];
-}
-
-/**
- *  MARK:--------------------DemandManagerDelegate--------------------
- */
--(void)demandManager_updateEnergy:(CGFloat)urgentTo{
-    [self updateEnergy:urgentTo];
 }
 
 @end

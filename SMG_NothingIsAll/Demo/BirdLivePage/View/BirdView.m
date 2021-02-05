@@ -180,7 +180,7 @@
             if (OutputObserverType_Front == model.type) {
                 //b. 吃前 => 行为动画;
                 [self eatAction:[model.data floatValue]];
-                model.useTime = 0.1f;
+                model.useTime = 0.2f;
             }else if(OutputObserverType_Back == model.type){
                 //b. 吃后 => 世界变化 & 视觉 & 产生mv;
                 [self eatResult:[model.data floatValue]];

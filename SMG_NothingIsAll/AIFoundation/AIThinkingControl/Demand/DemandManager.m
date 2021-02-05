@@ -101,7 +101,7 @@
         [self.loopCache addObject:newItem];
         
         //2. 新需求时,加上活跃度;
-        [self.delegate demandManager_updateEnergy:urgentTo];
+        [theTC updateEnergy:urgentTo];
         NSLog(@"demandManager-PMV >> 新需求 %lu",(unsigned long)self.loopCache.count);
     }
 }
@@ -115,6 +115,7 @@
  *  @version
  *      2021.01.25: RMV仅对ReasonDemandModel进行抵消防重 (否则会导致R-与P-需求冲突);
  *      2021.01.27: RMV仅对matchFoModel进行抵消防重 (否则会导致inModel预测处理不充分) (参考22074-BUG2);
+ *      2021.02.05: 新增任务时,仅将"与旧有同区最大迫切度的差值"累增至活跃度 (参考22116);
  */
 -(void) updateCMVCache_RMV:(AIShortMatchModel*)inModel{
     //1. 数据检查;
@@ -148,8 +149,16 @@
             newItem.urgentTo = urgentTo;
             [self.loopCache addObject:newItem];
             
-            //7. 新需求时,加上活跃度;
-            [self.delegate demandManager_updateEnergy:urgentTo];
+            //7. 新需求时,加上活跃度_取同区旧有最大;
+            NSInteger sameIdenOldMax = 0;
+            for (DemandModel *item in self.loopCache) {
+                if ([item.algsType isEqualToString:algsType]) {
+                    sameIdenOldMax = MAX(sameIdenOldMax, item.urgentTo);
+                }
+            }
+            
+            //8. 新需求时,加上活跃度_将差值>0时,增至活跃度;
+            [theTC updateEnergy:MAX(0, urgentTo - sameIdenOldMax)];
             NSLog(@"demandManager-RMV >> 新需求:%lu 评分:%f\n%@->%@",(unsigned long)self.loopCache.count,score,Fo2FStr(mModel.matchFo),Pit2FStr(mModel.matchFo.cmvNode_p));
         }else{
             NSLog(@"当前,预测mv未形成需求:%@ 差值:%ld 评分:%f",algsType,(long)delta,score);
