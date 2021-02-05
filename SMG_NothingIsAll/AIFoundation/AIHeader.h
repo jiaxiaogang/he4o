@@ -254,7 +254,7 @@
 //行为化_GetInnerAlg
 #define Log4GetInnerAlg true
 //PM算法
-#define Log4PM false
+#define Log4PM true
 //外输入推进中循环
 #define Log4OPushM true
 #define Log4TIROPushM false

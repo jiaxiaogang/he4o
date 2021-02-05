@@ -106,23 +106,23 @@
  *  @version
  *      2021.01.23: 兼容isSP类型,以支持R-模式下的空S评价 (参考22061-1);
  *      2021.01.23: 原来判空方式为SPorts数组是否为空,会导致一次否定,永远否定,改为真正指向内容是否为空 T;
+ *      2021.02.05: 非HNGLSP的时序,也进行空S评价,因为R-模式时,经常有单纯的上下飞解决方案来躲避,而不是解决"距Y"的问题才飞的;
  *  @todo
  *      2021.01.29: FRS.SP评价受基conFo.mv影响迭代 (参考22013);
  *  @result 默认返回true (因为空fo并不指向空S);
  */
 +(BOOL) FRS:(AIFoNodeBase*)fo{
     //1. 未发生理性评价-必须为hnglsp节点 (否则F14主解决方案也会失败);
-    if ([TOUtils isHNGLSP:fo.pointer]) {
+    //if (![TOUtils isHNGLSP:fo.pointer]) return true;
         
-        //2. 未发生理性评价-且为空ATSub时,评价不通过;
-        NSArray *sPorts = [AINetUtils absPorts_All:fo type:ATSub];
-        NSString *spaceHeader = [NSString md5:@""];
-        
-        //3. 判断sPorts有没有空S (有时返回false,评价不通过);
-        for (AIPort *sPort in sPorts) {
-            if ([sPort.header isEqualToString:spaceHeader]) {
-                return false;
-            }
+    //2. 未发生理性评价-且为空ATSub时,评价不通过;
+    NSArray *sPorts = [AINetUtils absPorts_All:fo type:ATSub];
+    NSString *spaceHeader = [NSString md5:@""];
+    
+    //3. 判断sPorts有没有空S (有时返回false,评价不通过);
+    for (AIPort *sPort in sPorts) {
+        if ([sPort.header isEqualToString:spaceHeader]) {
+            return false;
         }
     }
     return true;
