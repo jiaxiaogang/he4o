@@ -142,14 +142,7 @@
         CGFloat score = [AIScore score4MV:mModel.matchFo.cmvNode_p ratio:mModel.matchFoValue];
         if (score < 0) {
             
-            //6. 有需求时,则加到需求序列中;
-            ReasonDemandModel *newItem = [ReasonDemandModel newWithMModel:mModel inModel:inModel];
-            newItem.algsType = algsType;
-            newItem.delta = delta;
-            newItem.urgentTo = urgentTo;
-            [self.loopCache addObject:newItem];
-            
-            //7. 新需求时,加上活跃度_取同区旧有最大;
+            //6. 新需求时_取同区旧有最大迫切度;
             NSInteger sameIdenOldMax = 0;
             for (DemandModel *item in self.loopCache) {
                 if ([item.algsType isEqualToString:algsType]) {
@@ -157,7 +150,14 @@
                 }
             }
             
-            //8. 新需求时,加上活跃度_将差值>0时,增至活跃度;
+            //7. 有需求时,则加到需求序列中;
+            ReasonDemandModel *newItem = [ReasonDemandModel newWithMModel:mModel inModel:inModel];
+            newItem.algsType = algsType;
+            newItem.delta = delta;
+            newItem.urgentTo = urgentTo;
+            [self.loopCache addObject:newItem];
+            
+            //8. 新需求时_将新需求迫切度的差值(>0时),增至活跃度;
             [theTC updateEnergy:MAX(0, urgentTo - sameIdenOldMax)];
             NSLog(@"demandManager-RMV >> 新需求:%lu 评分:%f\n%@->%@",(unsigned long)self.loopCache.count,score,Fo2FStr(mModel.matchFo),Pit2FStr(mModel.matchFo.cmvNode_p));
         }else{
