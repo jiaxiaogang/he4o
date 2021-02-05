@@ -86,8 +86,8 @@ typedef NS_ENUM(NSInteger,  AnalogyType) {
  *  MARK:--------------------Output通知前后枚举--------------------
  */
 typedef NS_ENUM(NSInteger,  OutputObserverType) {
-    OutputObserverType_Front   = 0,//前
-    OutputObserverType_Back    = 1,//后
+    OutputObserverType_Front   = 0,//前 (动作输出);
+    OutputObserverType_Back    = 1,//后 (世界变化处理 & 价值触发处理);
 };
 
 /**

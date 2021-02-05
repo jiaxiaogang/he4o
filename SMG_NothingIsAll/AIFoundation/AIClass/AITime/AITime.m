@@ -56,6 +56,8 @@
  *
  *  @param deltaTime : 原本间隔时长,单位s
  *  _param canTrigger : 触发条件;
+ *  @todo
+ *      2021.02.05: 换[NSTimer scheduledTimerWithTimeInterval:time repeats:false block:^(NSTimer *timer){}]更准时;
  */
 +(void) setTimeTrigger:(NSTimeInterval)deltaTime trigger:(void(^)())trigger{
     [self setTimeTrigger:deltaTime canTrigger:nil trigger:trigger];

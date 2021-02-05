@@ -81,6 +81,11 @@
     }
 }
 
+/**
+ *  MARK:--------------------情绪反射--------------------
+ *  @todo
+ *      2021.02.05: 将AIMoodType_Satisfy改为调用output_General()输出;
+ */
 +(void) output_FromMood:(AIMoodType)type{
     if (type == AIMoodType_Anxious) {
         //1. 生成outputModel
@@ -94,7 +99,9 @@
             [AIInput commitIMV:MVType_Anxious from:10 to:3];
         }];
     }else if(type == AIMoodType_Satisfy){
-        [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:@{kOOIdentify:SATISFY_RDS}];
+        OutputModel *model = [[OutputModel alloc] init];
+        model.identify = SATISFY_RDS;
+        [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:model];
     }
 }
 
@@ -108,30 +115,30 @@
  *  @param outputModels : OutputModel数组;
  *  如: 吸吮,抓握
  *  注: 先天,被动
+ *  @version
+ *      2021.02.05: 改为front取回useTime触发行为开始,到back再执行行为后视觉等触发 (参考22117);
  */
 +(void) output_General:(NSArray*)outputModels logBlock:(void(^)())logBlock{
-    //1. 广播执行输出前;
+    //1. 广播执行行为开始 (执行行为动画,返回执行用时);
     double useTime = 0;
     for (OutputModel *model in ARRTOOK(outputModels)) {
-        NSDictionary *obj = @{kOOIdentify:STRTOOK(model.identify),kOOParam:NUMTOOK(model.data),kOOType:@(OutputObserverType_Front),kOOUseTime:@(0)};
-        [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:obj];
-        double itemUseTime = [NUMTOOK([obj objectForKey:kOOUseTime]) doubleValue];
-        useTime = MAX(itemUseTime, useTime);
+        model.type = OutputObserverType_Front;
+        [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:model];
+        useTime = MAX(model.useTime, useTime);
     }
     
-    NSLog(@"-------取得输出需用时:%f",useTime);
-    //TODOTOMORROW20210205:
-    //a. 此处可改成,在front中,仅取用时和触发动画;
-    //b. 在back中,才真正触发做飞后视觉等行为后的处理;
-    
-    
-    //2. 将输出入网
-    logBlock();
-    
-    //3. 广播执行输出后;
-    for (OutputModel *model in ARRTOOK(outputModels)) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:@{kOOIdentify:STRTOOK(model.identify),kOOParam:NUMTOOK(model.data),kOOType:@(OutputObserverType_Back)}];
-    }
+    //2. 行为输出完成后;
+    [NSTimer scheduledTimerWithTimeInterval:useTime repeats:false block:^(NSTimer * _Nonnull timer) {
+        
+        //3. 将输出入网
+        logBlock();
+        
+        //4. 广播执行输出后 (现实世界处理 & 飞后视觉 & 价值触发等);
+        for (OutputModel *model in ARRTOOK(outputModels)) {
+            model.type = OutputObserverType_Back;
+            [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:model];
+        }
+    }];
 }
 
 @end

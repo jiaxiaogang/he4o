@@ -22,4 +22,10 @@
 //参数值 (目前仅支持1个) (应通过网络来实现组,而不是多参数)
 @property (strong,nonatomic) NSNumber *data;
 
+//输出类型 (阶段)
+@property (assign, nonatomic) OutputObserverType type;
+
+//输出所需时间
+@property (assign, nonatomic) CGFloat useTime;
+
 @end

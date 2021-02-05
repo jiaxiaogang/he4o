@@ -21,6 +21,7 @@
 #import "AIThinkingControl.h"
 #import "NSString+Extension.h"
 #import "AIScore.h"
+#import "OutputModel.h"
 
 /**
  *  MARK:--------------------PathNameKey (kPH)--------------------
@@ -179,11 +180,11 @@
 //OutputObserverKey
 #define kOutputObserver   @"kOutputObserver"
 
-//OutputObjectKey
-#define kOOIdentify @"identify" //输出行为标识
-#define kOOParam @"param"       //输出行为参数值
-#define kOOType @"type"         //广播类型
-#define kOOUseTime @"useTime"   //反馈需用时
+//OutputObjectKey (2021.02.05: 改为直接用OutputModel做obj);
+//#define kOOIdentify @"identify" //输出行为标识
+//#define kOOParam @"param"       //输出行为参数值
+//#define kOOType @"type"         //广播类型
+//#define kOOUseTime @"useTime"   //反馈需用时
 
 //Identify标识 (内核方)
 #define TEXT_RDS @"TEXT_RDS" //字符输出反射标识

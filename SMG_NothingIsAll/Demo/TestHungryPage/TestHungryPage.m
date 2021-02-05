@@ -150,21 +150,19 @@
 //MARK:                     < outputObserver >
 //MARK:===============================================================
 -(void) outputObserver:(NSNotification*)notification{
-    if (notification) {
+    if (notification && ISOK(notification.object, OutputModel.class)) {
         //1. 取数据
-        NSDictionary *obj = DICTOOK(notification.object);
-        NSString *identify = STRTOOK([obj objectForKey:kOOIdentify]);
-        NSNumber *paramNum = NUMTOOK([obj objectForKey:kOOParam]);
+        OutputModel *model = (OutputModel*)notification.object;
         
         //2. 字符串反射
-        if ([TEXT_RDS isEqualToString:identify]) {
-            char c = [paramNum charValue];
+        if ([TEXT_RDS isEqualToString:model.identify]) {
+            char c = [model.data charValue];
             [self.outputMStr appendFormat:@"%c",c];
             if (self.outputMStr.length > 100) {
                 NSString *subStr = [self.outputMStr substringFromIndex:self.outputMStr.length - 100];
                 self.outputMStr = [[NSMutableString alloc] initWithString:subStr];
             }
-        }else if([ANXIOUS_RDS isEqualToString:identify]){
+        }else if([ANXIOUS_RDS isEqualToString:model.identify]){
             const char *chars = [@"T_T" UTF8String];
             NSMutableArray *datas = [[NSMutableArray alloc] init];
             for (NSInteger i = 0; i < 3; i++) {
