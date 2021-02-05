@@ -178,6 +178,7 @@
         //2. 吸吮反射 / 主动吃
         if ([EAT_RDS isEqualToString:identify]) {
             if (OutputObserverType_Front == type) {
+                [obj setValue:@(0.2f) forKey:kOOUseTime];
             }else if(OutputObserverType_Back == type){
                 //b. 吃后 => UI处理 & 视觉 & 产生mv;
                 [self eat:[paramNum floatValue]];
@@ -186,6 +187,7 @@
         //3. 扇翅膀反射
         else if([FLY_RDS isEqualToString:identify]){
             if (OutputObserverType_Front == type) {
+                [obj setValue:@(0.1f) forKey:kOOUseTime];
             }else if(OutputObserverType_Back == type){
                 [self fly:[paramNum floatValue]];
             }

@@ -180,9 +180,10 @@
 #define kOutputObserver   @"kOutputObserver"
 
 //OutputObjectKey
-#define kOOIdentify @"identify"
-#define kOOParam @"param"
-#define kOOType @"type"
+#define kOOIdentify @"identify" //输出行为标识
+#define kOOParam @"param"       //输出行为参数值
+#define kOOType @"type"         //广播类型
+#define kOOUseTime @"useTime"   //反馈需用时
 
 //Identify标识 (内核方)
 #define TEXT_RDS @"TEXT_RDS" //字符输出反射标识

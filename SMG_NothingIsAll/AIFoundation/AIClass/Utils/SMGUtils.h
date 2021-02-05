@@ -169,7 +169,8 @@
 +(NSString*) convertPointers2String:(NSArray*)pointers;
 
 //将概念中的value_ps(含嵌套)展开成纯微信息的组; @result : notnull
-+(NSMutableArray*) convertValuePs2MicroValuePs:(NSArray*)value_ps;
+//2021.02.05: 概念嵌套早已废弃
+//+(NSMutableArray*) convertValuePs2MicroValuePs:(NSArray*)value_ps;
 
 //任意arr元素类型转换
 +(NSArray*) convertArr:(NSArray*)arr convertBlock:(id(^)(id obj))convertBlock;

@@ -557,28 +557,29 @@
     return mStr;
 }
 
-+(NSMutableArray*) convertValuePs2MicroValuePs:(NSArray*)value_ps{
-    //1. 数据准备
-    NSMutableArray *mic_ps = [[NSMutableArray alloc] init];
-    
-    //2. 逐个收集
-    for (AIKVPointer *value_p in value_ps) {
-        
-        //3. 概念嵌套时
-        if ([kPN_ALG_ABS_NODE isEqualToString:value_p.folderName]) {
-            AIAlgNodeBase *algNode = [SMGUtils searchNode:value_p];
-            
-            //4. 递归取嵌套的value_ps
-            if (ISOK(algNode, AIAlgNodeBase.class)) {
-                [mic_ps addObjectsFromArray:[self convertValuePs2MicroValuePs:algNode.content_ps]];
-            }
-        }
-        
-        //5. 非概念嵌套时,直接收集;
-        [mic_ps addObject:value_p];
-    }
-    return mic_ps;
-}
+//2021.02.05: 概念嵌套早已废弃
+//+(NSMutableArray*) convertValuePs2MicroValuePs:(NSArray*)value_ps{
+//    //1. 数据准备
+//    NSMutableArray *mic_ps = [[NSMutableArray alloc] init];
+//
+//    //2. 逐个收集
+//    for (AIKVPointer *value_p in value_ps) {
+//
+//        //3. 概念嵌套时
+//        if ([kPN_ALG_ABS_NODE isEqualToString:value_p.folderName]) {
+//            AIAlgNodeBase *algNode = [SMGUtils searchNode:value_p];
+//
+//            //4. 递归取嵌套的value_ps
+//            if (ISOK(algNode, AIAlgNodeBase.class)) {
+//                [mic_ps addObjectsFromArray:[self convertValuePs2MicroValuePs:algNode.content_ps]];
+//            }
+//        }
+//
+//        //5. 非概念嵌套时,直接收集;
+//        [mic_ps addObject:value_p];
+//    }
+//    return mic_ps;
+//}
 
 //任意arr元素类型转换
 +(NSArray*) convertArr:(NSArray*)arr convertBlock:(id(^)(id obj))convertBlock{

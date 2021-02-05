@@ -17,6 +17,11 @@
 
 @implementation Output
 
+/**
+ *  MARK:--------------------思维行为输出--------------------
+ *  @version
+ *      2021.02.05: 将概念嵌套的代码注掉,因为概念嵌套早已废弃;
+ */
 +(BOOL) output_FromTC:(AIKVPointer*)algNode_p {
     //1. 数据
     AIAlgNodeBase *algNode = [SMGUtils searchNode:algNode_p];
@@ -26,8 +31,7 @@
     
     //2. 循环微信息组
     NSMutableArray *valids = [[NSMutableArray alloc] init];
-    NSArray *mic_ps = [SMGUtils convertValuePs2MicroValuePs:algNode.content_ps];
-    for (AIKVPointer *value_p in mic_ps) {
+    for (AIKVPointer *value_p in algNode.content_ps) {
         
         //3. 取dataSource & algsType
         //TODOTOMORROW: 此处取得dataSource = @" ",所以,导致"吃"输出失败,,,,,,,,
@@ -107,9 +111,19 @@
  */
 +(void) output_General:(NSArray*)outputModels logBlock:(void(^)())logBlock{
     //1. 广播执行输出前;
+    double useTime = 0;
     for (OutputModel *model in ARRTOOK(outputModels)) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:@{kOOIdentify:STRTOOK(model.identify),kOOParam:NUMTOOK(model.data),kOOType:@(OutputObserverType_Front)}];
+        NSDictionary *obj = @{kOOIdentify:STRTOOK(model.identify),kOOParam:NUMTOOK(model.data),kOOType:@(OutputObserverType_Front),kOOUseTime:@(0)};
+        [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:obj];
+        double itemUseTime = [NUMTOOK([obj objectForKey:kOOUseTime]) doubleValue];
+        useTime = MAX(itemUseTime, useTime);
     }
+    
+    NSLog(@"-------取得输出需用时:%f",useTime);
+    //TODOTOMORROW20210205:
+    //a. 此处可改成,在front中,仅取用时和触发动画;
+    //b. 在back中,才真正触发做飞后视觉等行为后的处理;
+    
     
     //2. 将输出入网
     logBlock();
