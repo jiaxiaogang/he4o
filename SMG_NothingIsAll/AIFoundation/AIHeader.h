@@ -22,6 +22,7 @@
 #import "NSString+Extension.h"
 #import "AIScore.h"
 #import "OutputModel.h"
+#import "XGDelegate.h"
 
 /**
  *  MARK:--------------------PathNameKey (kPH)--------------------

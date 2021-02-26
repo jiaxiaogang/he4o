@@ -246,6 +246,7 @@
  *  MARK:--------------------扔木棒--------------------
  *  @version
  *      2021.01.16: 用NSTimer替代after延时,因为after时间不准,总会推后150ms左右,而timer非常准时;
+ *      2021.02.26: NSTimer改为SEL方式,因为block方式在模拟器运行闪退;
  */
 - (IBAction)throwWoodOnClick:(id)sender {
     //1. 生成木棒
@@ -274,10 +275,10 @@
     if (canHit) {
         //5. 撞到的时间判断 (撞需距离 / 总扔距离 * 总扔时间);
         CGFloat hitTime = ((birdMinX - woodMaxX) / ScreenWidth) * 2.0f;
-        [NSTimer scheduledTimerWithTimeInterval:hitTime repeats:false block:^(NSTimer * _Nonnull timer) {
+        [NSTimer scheduledTimerWithTimeInterval:hitTime target:self selector:@selector(notificationTimer:) userInfo:^(){
             //6. 触发疼痛感;
             [self.birdView hurt];
-        }];
+        } repeats:false];
     }
     
     //7. 扔出
@@ -330,6 +331,11 @@
             view.alpha = 1.0f;
         }];
     }
+}
+
++(void)notificationTimer:(NSTimer*)timer{
+    Act0 act = timer.userInfo;
+    act();
 }
 
 @end

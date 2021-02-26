@@ -339,6 +339,7 @@
 		08AF45591E97D0B500377887 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		08B31E7C20648C3700FD96EA /* ThinkingUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThinkingUtils.h; sourceTree = "<group>"; };
 		08B31E7D20648C3700FD96EA /* ThinkingUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ThinkingUtils.m; sourceTree = "<group>"; };
+		08B4DAEC25E881D200E32DB1 /* XGDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XGDelegate.h; sourceTree = "<group>"; };
 		08C6C2612518E49400DDE6BF /* NSLog+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSLog+Extension.h"; sourceTree = "<group>"; };
 		08C6C2622518E49400DDE6BF /* NSLog+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSLog+Extension.m"; sourceTree = "<group>"; };
 		08C7539025A3EEB800BCF011 /* AIScore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIScore.h; sourceTree = "<group>"; };
@@ -579,6 +580,7 @@
 				08C6C2622518E49400DDE6BF /* NSLog+Extension.m */,
 				087E7FC9258053D90097E0B9 /* NSFile+Extension.h */,
 				087E7FCA258053D90097E0B9 /* NSFile+Extension.m */,
+				08B4DAEC25E881D200E32DB1 /* XGDelegate.h */,
 			);
 			path = Extension;
 			sourceTree = "<group>";

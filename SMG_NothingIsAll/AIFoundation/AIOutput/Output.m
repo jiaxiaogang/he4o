@@ -117,6 +117,7 @@
  *  注: 先天,被动
  *  @version
  *      2021.02.05: 改为front取回useTime触发行为开始,到back再执行行为后视觉等触发 (参考22117);
+ *      2021.02.26: 将timer改为SEL方式,因为block方式在模拟器运行会闪退;
  */
 +(void) output_General:(NSArray*)outputModels logBlock:(void(^)())logBlock{
     //1. 广播执行行为开始 (执行行为动画,返回执行用时);
@@ -128,8 +129,7 @@
     }
     
     //2. 行为输出完成后;
-    [NSTimer scheduledTimerWithTimeInterval:useTime repeats:false block:^(NSTimer * _Nonnull timer) {
-        
+    [NSTimer scheduledTimerWithTimeInterval:useTime target:self selector:@selector(notificationTimer:) userInfo:^(){
         //3. 将输出入网
         logBlock();
         
@@ -138,7 +138,12 @@
             model.type = OutputObserverType_Back;
             [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:model];
         }
-    }];
+    } repeats:false];
+}
+
++(void)notificationTimer:(NSTimer*)timer{
+    Act0 invokeBlock = timer.userInfo;
+    invokeBlock();
 }
 
 @end
