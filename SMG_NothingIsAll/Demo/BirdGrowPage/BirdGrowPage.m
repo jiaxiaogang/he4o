@@ -333,7 +333,7 @@
     }
 }
 
-+(void)notificationTimer:(NSTimer*)timer{
+-(void)notificationTimer:(NSTimer*)timer{
     Act0 act = timer.userInfo;
     act();
 }
