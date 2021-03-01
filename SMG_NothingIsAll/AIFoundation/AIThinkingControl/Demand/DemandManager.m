@@ -116,6 +116,7 @@
  *      2021.01.25: RMV仅对ReasonDemandModel进行抵消防重 (否则会导致R-与P-需求冲突);
  *      2021.01.27: RMV仅对matchFoModel进行抵消防重 (否则会导致inModel预测处理不充分) (参考22074-BUG2);
  *      2021.02.05: 新增任务时,仅将"与旧有同区最大迫切度的差值"累增至活跃度 (参考22116);
+ *      2021.03.01: 修复RMV一直在行为输出和被识别间重复死循环BUG (参考22142);
  */
 -(void) updateCMVCache_RMV:(AIShortMatchModel*)inModel{
     //1. 数据检查;
@@ -134,13 +135,26 @@
         urgentTo = (int)(urgentTo * inModel.matchFoValue);
             
         //4. 抵消_同一matchFo将旧有移除 (仅保留最新的);
-        self.loopCache = [SMGUtils removeArr:self.loopCache checkValid:^BOOL(DemandModel *item) {
-            return ISOK(item, ReasonDemandModel.class) && [((ReasonDemandModel*)item).mModel.matchFo isEqual:mModel.matchFo];
+        self.loopCache = [SMGUtils removeArr:self.loopCache checkValid:^BOOL(ReasonDemandModel *item) {
+            if (ISOK(item, ReasonDemandModel.class)) {
+                if ([item.mModel.matchFo isEqual:mModel.matchFo] && item.mModel.cutIndex < mModel.cutIndex) {
+                    return true;
+                }
+            }
+            return false;
         }];
+        
+        //4. 防重
+        BOOL containsRepeat = false;
+        for (ReasonDemandModel *item in self.loopCache) {
+            if (ISOK(item, ReasonDemandModel.class) && [item.mModel.matchFo isEqual:mModel.matchFo]) {
+                containsRepeat = true;
+            }
+        }
         
         //5. 取迫切度评分: 判断matchingFo.mv有值才加入demandManager,同台竞争,执行顺应mv;
         CGFloat score = [AIScore score4MV:mModel.matchFo.cmvNode_p ratio:mModel.matchFoValue];
-        if (score < 0) {
+        if (score < 0 && !containsRepeat) {
             
             //6. 新需求时_取同区旧有最大迫切度;
             NSInteger sameIdenOldMax = 0;
@@ -159,7 +173,7 @@
             
             //8. 新需求时_将新需求迫切度的差值(>0时),增至活跃度;
             [theTC updateEnergy:MAX(0, urgentTo - sameIdenOldMax)];
-            NSLog(@"demandManager-RMV >> 新需求:%lu 评分:%f\n%@->%@",(unsigned long)self.loopCache.count,score,Fo2FStr(mModel.matchFo),Pit2FStr(mModel.matchFo.cmvNode_p));
+            NSLog(@"demandManager-RMV >> 新需求+1=%lu 评分:%f\n%@->%@",(unsigned long)self.loopCache.count,score,Fo2FStr(mModel.matchFo),Pit2FStr(mModel.matchFo.cmvNode_p));
         }else{
             NSLog(@"当前,预测mv未形成需求:%@ 差值:%ld 评分:%f",algsType,(long)delta,score);
         }
