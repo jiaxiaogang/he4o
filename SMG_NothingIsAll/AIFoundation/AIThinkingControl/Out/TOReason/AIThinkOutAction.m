@@ -219,6 +219,7 @@
         //TODOTOMORROW20210304: R-模式迭代: 理性静默成功;
         //1. mv0任务在mIsC找不到匹配的alg时;
         //2. 不可贸然进行cHav,以免弄巧成拙,反把老虎放出来;
+        //3. 准备好笼子,等老虎出现时,扣住它;
         
         
         //TODOTOMORROW20210305: R-模式_Hav首先是为了避免forecastAlg,其次才是为了达成curFo解决方案;
@@ -227,20 +228,25 @@
             ReasonDemandModel *rDemand = (ReasonDemandModel*)outModel.baseOrGroup.baseOrGroup;
             
             //2. 判断在RDemand.forecastFo中,cutIndex之后是否有和curAlg共同的抽象或本身就是抽具象关系的forecastAlg;
+            BOOL findMIsC = false;
+            for (NSInteger i = rDemand.mModel.cutIndex; i < rDemand.mModel.matchFo.count; i++) {
+                AIKVPointer *forecastAlg_p = ARR_INDEX(rDemand.mModel.matchFo.content_ps, i);
+                BOOL mIsC = [TOUtils mIsC_1:curAlg.pointer c:forecastAlg_p] || [TOUtils mIsC_1:forecastAlg_p c:curAlg.pointer];
+                if (mIsC) {
+                    findMIsC = true;
+                    break;
+                }
+            }
             
-            //rDemand.mModel.cutIndex
-            
-            
-            //  a. 如果有,则直接ActYes,等待其自然出现 (疑惑,比如主动视觉: 想知道附近有没危险,要主动去探看);
-            //      1> Outback返回,则会再调用到此处_Hav并调用第2级,PM进行修正处理;
-            //      2> OutBack未返回,静默成功;
-            //  b. 如果无,则继续cHav;
-            
+            if (findMIsC) {
+                //  a. 如果有,则直接ActYes,等待其自然出现 (疑惑,比如主动视觉: 想知道附近有没危险,要主动去探看);
+                //      1> Outback返回,则会再调用到此处_Hav并调用第2级,PM进行修正处理;
+                //      2> OutBack未返回,静默成功;
+                return;
+            }else{
+                //  b. 如果无,则继续cHav;
+            }
         }
-        
-        
-        
-        
         
         //5. 去掉不应期
         NSArray *except_ps = [TOUtils convertPointersFromTOModels:outModel.actionFoModels];
