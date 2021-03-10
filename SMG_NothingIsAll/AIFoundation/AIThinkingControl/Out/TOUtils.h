@@ -37,7 +37,15 @@
  *  _param layerDiff: 检查层数,默认为1,支持0,1,2;
  */
 +(NSInteger) indexOfAbsItem:(AIKVPointer*)absItem atConContent:(NSArray*)conContent;
+
+//absItem是content中的抽象一员,返回index;
 +(NSInteger) indexOfAbsItem:(AIKVPointer*)absItem atConContent:(NSArray*)conContent layerDiff:(int)layerDiff startIndex:(NSInteger)startIndex;
+
+//conItem是content中的具象一员,返回index;
++(NSInteger) indexOfConItem:(AIKVPointer*)conItem atAbsContent:(NSArray*)content layerDiff:(int)layerDiff startIndex:(NSInteger)startIndex;
+
+//conItem是content中的具象或抽象一员,返回index;
++(NSInteger) indexOfConOrAbsItem:(AIKVPointer*)item atContent:(NSArray*)content layerDiff:(int)layerDiff startIndex:(NSInteger)startIndex;
 
 /**
  *  MARK:--------------------判断mc同级--------------------

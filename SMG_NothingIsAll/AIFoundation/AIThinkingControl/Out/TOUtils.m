@@ -105,6 +105,8 @@
 +(NSInteger) indexOfAbsItem:(AIKVPointer*)absItem atConContent:(NSArray*)conContent{
     return [self indexOfAbsItem:absItem atConContent:conContent layerDiff:1 startIndex:0];
 }
+
+//absItem是content中的抽象一员,返回index;
 +(NSInteger) indexOfAbsItem:(AIKVPointer*)absItem atConContent:(NSArray*)conContent layerDiff:(int)layerDiff startIndex:(NSInteger)startIndex{
     conContent = ARRTOOK(conContent);
     for (NSInteger i = startIndex; i < conContent.count; i++) {
@@ -114,6 +116,27 @@
         }
     }
     return -1;
+}
+
+//conItem是content中的具象一员,返回index;
++(NSInteger) indexOfConItem:(AIKVPointer*)conItem atAbsContent:(NSArray*)content layerDiff:(int)layerDiff startIndex:(NSInteger)startIndex{
+    content = ARRTOOK(content);
+    for (NSInteger i = startIndex; i < content.count; i++) {
+        AIKVPointer *item_p = ARR_INDEX(content, i);
+        if ([TOUtils mIsC:conItem c:item_p layerDiff:layerDiff]) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+//conItem是content中的具象或抽象一员,返回index;
++(NSInteger) indexOfConOrAbsItem:(AIKVPointer*)item atContent:(NSArray*)content layerDiff:(int)layerDiff startIndex:(NSInteger)startIndex{
+    NSInteger findIndex = [TOUtils indexOfAbsItem:item atConContent:content layerDiff:layerDiff startIndex:startIndex];
+    if (findIndex == -1) {
+        findIndex = [TOUtils indexOfConItem:item atAbsContent:content layerDiff:layerDiff startIndex:startIndex];
+    }
+    return findIndex;
 }
 
 +(BOOL) mcSameLayer:(AIKVPointer*)m c:(AIKVPointer*)c{

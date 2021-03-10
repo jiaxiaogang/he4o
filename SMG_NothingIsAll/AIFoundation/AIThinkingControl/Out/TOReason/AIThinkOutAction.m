@@ -228,19 +228,13 @@
             ReasonDemandModel *rDemand = (ReasonDemandModel*)outModel.baseOrGroup.baseOrGroup;
             
             //2. 判断在RDemand.forecastFo中,cutIndex之后是否有和curAlg共同的抽象或本身就是抽具象关系的forecastAlg;
-            BOOL findMIsC = false;
-            for (NSInteger i = rDemand.mModel.cutIndex; i < rDemand.mModel.matchFo.count; i++) {
-                AIKVPointer *forecastAlg_p = ARR_INDEX(rDemand.mModel.matchFo.content_ps, i);
-                BOOL mIsC = [TOUtils mIsC_1:curAlg.pointer c:forecastAlg_p] || [TOUtils mIsC_1:forecastAlg_p c:curAlg.pointer];
-                if (mIsC) {
-                    findMIsC = true;
-                    break;
-                }
-            }
+            NSInteger findIndex = [TOUtils indexOfConOrAbsItem:curAlg.pointer atContent:rDemand.mModel.matchFo.content_ps layerDiff:1 startIndex:rDemand.mModel.cutIndex];
             
-            if (findMIsC) {
+            if (findIndex != -1) {
                 //  a. 如果有,则直接ActYes,等待其自然出现 (疑惑,比如主动视觉: 想知道附近有没危险,要主动去探看);
                 //      1> Outback返回,则会再调用到此处_Hav并调用第2级,PM进行修正处理;
+                outModel.status = TOModelStatus_ActYes;
+                [self.delegate toAction_SubModelActYes:outModel];
                 //      2> OutBack未返回,静默成功;
                 return;
             }else{

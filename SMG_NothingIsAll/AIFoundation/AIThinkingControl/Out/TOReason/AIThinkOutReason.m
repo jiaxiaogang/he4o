@@ -887,6 +887,46 @@
             //    //1. 对已发生的 (< algIndex) 的部分收集sub稀疏码,构建ATSubAlg;
             //    //2. 对上述ATSubAlgs构建成ATSub时序;
             //}];
+        }else if(ISOK(actYesModel.baseOrGroup.baseOrGroup, ReasonDemandModel.class)){
+            //3. R模式静默成功处理;
+            ReasonDemandModel *rDemand = (ReasonDemandModel*)actYesModel.baseOrGroup.baseOrGroup;
+            AIFoNodeBase *foNode = [SMGUtils searchNode:actYesModel.baseOrGroup.content_p];
+            
+            NSInteger findIndex = [TOUtils indexOfConOrAbsItem:actYesModel.content_p atContent:rDemand.mModel.matchFo.content_ps layerDiff:1 startIndex:rDemand.mModel.cutIndex];
+            if (findIndex != -1) {
+                double deltaTime = [NUMTOOK(ARR_INDEX(foNode.deltaTimes, findIndex)) doubleValue];
+                //  a. 如果有,则直接ActYes,等待其自然出现 (疑惑,比如主动视觉: 想知道附近有没危险,要主动去探看);
+                //      1> Outback返回,则会再调用到此处_Hav并调用第2级,PM进行修正处理;
+                //      2> OutBack未返回,静默成功;
+                //3. 触发器;
+                NSLog(@"---//触发器R-_理性alg任务:%@ 解决方案:%@ time:%f",Fo2FStr(foNode),Pit2FStr(actYesModel.content_p),deltaTime);
+                [AITime setTimeTrigger:deltaTime trigger:^{
+                    
+                    ////3. 无root时,说明已被别的R-新matchFo抵消掉,抵消掉后是不做反省的 (参考22081-todo1);
+                    //BOOL havRoot = [theTC.outModelManager.getAllDemand containsObject:demand];
+                    //if (havRoot) {
+                    //    //3. 反省类比 (当OutBack发生,则破壁失败S,否则成功P) (参考top_OPushM());
+                    //    AnalogyType type = (actYesModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;
+                    //    NSLog(@"---//触发器R-_任务:%@ 解决方案:%@ (%@)",Fo2FStr(matchFo),Pit2FStr(actYesModel.content_p),ATType2Str(type));
+                    //
+                    //    //4. 暂不开通反省类比,等做兼容PM后,再打开反省类比;
+                    //    [AIAnalogy analogy_ReasonRethink:(TOFoModel*)actYesModel cutIndex:NSIntegerMax type:type];
+                    //
+                    //    //4. 失败时,转流程控制-失败 (会开始下一解决方案) (参考22061-8);
+                    //    //2021.01.28: 失败后不用再尝试下一方案了,因为R任务已过期 (已经被撞了,你再躲也没用) (参考22081-todo3);
+                    //    if (type == ATSub) {
+                    //        actYesModel.status = TOModelStatus_ScoreNo;
+                    //        [self singleLoopBackWithFailureModel:demand];
+                    //    }else{
+                    //        //5. SFo破壁成功,完成任务 (参考22061-9);
+                    //        actYesModel.status = TOModelStatus_Finish;
+                    //        [self singleLoopBackWithFinishModel:demand];
+                    //    }
+                    //}
+                }];
+                
+                
+            }
         }
     }else if(ISOK(actYesModel, TOFoModel.class)){
         if (ISOK(actYesModel.baseOrGroup, ReasonDemandModel.class)) {
@@ -907,7 +947,7 @@
                 if (havRoot) {
                     //3. 反省类比 (当OutBack发生,则破壁失败S,否则成功P) (参考top_OPushM());
                     AnalogyType type = (actYesModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;
-                    NSLog(@"---//触发器R-_任务:%@ 解决方案:%@ (%@)",Fo2FStr(matchFo),Pit2FStr(actYesModel.content_p),ATType2Str(type));
+                    NSLog(@"---//触发器R-_感性mv任务:%@ 解决方案:%@ (%@)",Fo2FStr(matchFo),Pit2FStr(actYesModel.content_p),ATType2Str(type));
                     
                     //4. 暂不开通反省类比,等做兼容PM后,再打开反省类比;
                     [AIAnalogy analogy_ReasonRethink:(TOFoModel*)actYesModel cutIndex:NSIntegerMax type:type];
