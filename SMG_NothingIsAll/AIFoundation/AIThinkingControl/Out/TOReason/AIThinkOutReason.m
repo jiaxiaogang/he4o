@@ -903,15 +903,12 @@
                     //3. 无root时,说明已被别的R-新matchFo抵消掉,抵消掉后是不做反省的 (参考22081-todo1);
                     BOOL havRoot = [theTC.outModelManager.getAllDemand containsObject:rDemand];
                     if (havRoot) {
-                        //3. 当OutBack,说明当前R-方案阻止失败;
+                        //3. Outback有返回,则R-方案当前帧阻止失败 (参考22153-A21);
                         AnalogyType type = (actYesModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;
                         NSLog(@"---//触发器R-_理性alg任务Trigger:%@ 解决方案:%@ (%@)",Fo2FStr(foNode),Pit2FStr(actYesModel.content_p),ATType2Str(type));
                     
-                        //4. 失败时,转流程控制-curFo继续(不放弃)阻止后续帧 (参考22153-A21);
-                        if (type == ATSub) {
-                            //Outback返回,则会再调用Action._Hav中的第2级,PM进行修正处理 (到OPushM实现);
-                        }else{
-                            //5. 成功时,则整个R-任务阻止成功 (OutBack未返回,静默成功) (参考22153-A22);
+                        //5. 成功时,则整个R-任务阻止成功 (OutBack未返回,静默成功) (参考22153-A22);
+                        if (type == ATPlus) {
                             actYesModel.status = TOModelStatus_Finish;
                             [self singleLoopBackWithFinishModel:rDemand];
                         }

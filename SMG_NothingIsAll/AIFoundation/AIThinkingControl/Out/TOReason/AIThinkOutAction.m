@@ -110,6 +110,7 @@
  *      2021.01.22 : 支持R-模式的S类型Alg满足 (参考22061);
  *      2021.01.23 : 将R-模式改为调用PM满足 (参考22061-改4);
  &      2021.01.31 : R-模式V3迭代:将原R-模式彻底整合到原有流程中 (参考22105示图);
+ *      2021.03.11 : R-模式理性静默成功迭代 (参考22153);
  *  @todo
  *      2020.07.05: 在下面MC中,转至PM时,是将C作为M的,随后需测下,看是否需要独立对MC做类似PM的理性评价,即将一步到位,细化成两步各自评价;
  *      2021.01.04: 支持APS评价 (以前原本支持替换Alg并反思fo,后来弃用了?代码找不到) (参考22012);
@@ -216,13 +217,7 @@
             }
         }
         
-        //TODOTOMORROW20210304: R-模式迭代: 理性静默成功;
-        //1. mv0任务在mIsC找不到匹配的alg时;
-        //2. 不可贸然进行cHav,以免弄巧成拙,反把老虎放出来;
-        //3. 准备好笼子,等老虎出现时,扣住它;
-        
-        
-        //TODOTOMORROW20210305: R-模式_Hav首先是为了避免forecastAlg,其次才是为了达成curFo解决方案;
+        //R-模式理性静默成功迭代: R-模式_Hav首先是为了避免forecastAlg,其次才是为了达成curFo解决方案 (参考22153);
         //1. 判断当前是R-模式;
         if (ISOK(outModel.baseOrGroup.baseOrGroup, ReasonDemandModel.class)) {
             ReasonDemandModel *rDemand = (ReasonDemandModel*)outModel.baseOrGroup.baseOrGroup;
@@ -231,15 +226,12 @@
             NSInteger findIndex = [TOUtils indexOfConOrAbsItem:curAlg.pointer atContent:rDemand.mModel.matchFo.content_ps layerDiff:1 startIndex:rDemand.mModel.cutIndex];
             
             if (findIndex != -1) {
-                //  a. 如果有,则直接ActYes,等待其自然出现 (疑惑,比如主动视觉: 想知道附近有没危险,要主动去探看);
-                //      1> Outback返回,则会再调用到此处_Hav并调用第2级,PM进行修正处理;
+                //3. 如果有,则直接ActYes,等待其自然出现 (参考22153-A2);
                 outModel.status = TOModelStatus_ActYes;
                 [self.delegate toAction_SubModelActYes:outModel];
-                //      2> OutBack未返回,静默成功;
                 return;
-            }else{
-                //  b. 如果无,则继续cHav;
             }
+            //4. 如果无,则继续cHav;
         }
         
         //5. 去掉不应期
