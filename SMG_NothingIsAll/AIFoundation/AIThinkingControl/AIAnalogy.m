@@ -133,7 +133,7 @@
             result = (AINetAbsFoNode*)assFo;
             [AINetUtils relateFoAbs:result conNodes:@[fo] isNew:false];
             [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
-            if (type == ATSame) [theNet setMvNodeToDirectionReference:[SMGUtils searchNode:result.cmvNode_p] difStrong:1];
+            if (type == ATSame || type == ATDiff) [theNet setMvNodeToDirectionReference:[SMGUtils searchNode:result.cmvNode_p] difStrong:1];
         }else{
             //4. 取foDifStrong
             NSInteger foDifStrong = 1;
