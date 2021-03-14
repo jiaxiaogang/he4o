@@ -224,6 +224,10 @@
             
             //2. 判断在RDemand.forecastFo中,cutIndex之后是否有和curAlg共同的抽象或本身就是抽具象关系的forecastAlg;
             NSInteger findIndex = [TOUtils indexOfConOrAbsItem:curAlg.pointer atContent:rDemand.mModel.matchFo.content_ps layerDiff:1 startIndex:rDemand.mModel.cutIndex];
+            NSLog(@"当前R任务matchFo:%@",Fo2FStr(rDemand.mModel.matchFo));
+            //查此处findIndex为-1的原因;
+            //C:A80(速0,高100,Y280,X2,皮0)
+            //matchFo:F5[A1(飞↓),A2(速0,高100,Y280,X2,距122,Y距-8,向←,皮0)]
             
             if (findIndex != -1) {
                 //3. 如果有,则直接ActYes,等待其自然出现 (参考22153-A2);
