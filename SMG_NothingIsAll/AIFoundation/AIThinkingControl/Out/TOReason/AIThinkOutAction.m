@@ -121,6 +121,7 @@
  *      2020.11.11: 修复cIsM导致mIsC判断失败的BUG (参考21143);
  *      2020.11.18: mIsC不稳定BUG,将mIsC改为对matchAlgs依次判断 (参考21145);
  *      2020.12.24: isHNGL判断isL写错,导致L时无法触发ActYes与反省类比 (参考isHNGL方法) `T`;
+ *      2021.03.15: R-静默成功模式中,mIsC判断将1层改为2层 (参考22163);
  */
 -(void) convert2Out_Hav:(TOAlgModel*)outModel {
     //1. 数据准备 (空白无需行为化);
@@ -223,11 +224,8 @@
             ReasonDemandModel *rDemand = (ReasonDemandModel*)outModel.baseOrGroup.baseOrGroup;
             
             //2. 判断在RDemand.forecastFo中,cutIndex之后是否有和curAlg共同的抽象或本身就是抽具象关系的forecastAlg;
-            NSInteger findIndex = [TOUtils indexOfConOrAbsItem:curAlg.pointer atContent:rDemand.mModel.matchFo.content_ps layerDiff:1 startIndex:rDemand.mModel.cutIndex];
-            NSLog(@"当前R任务matchFo:%@",Fo2FStr(rDemand.mModel.matchFo));
-            //查此处findIndex为-1的原因;
-            //C:A80(速0,高100,Y280,X2,皮0)
-            //matchFo:F5[A1(飞↓),A2(速0,高100,Y280,X2,距122,Y距-8,向←,皮0)]
+            NSInteger findIndex = [TOUtils indexOfConOrAbsItem:curAlg.pointer atContent:rDemand.mModel.matchFo.content_ps layerDiff:2 startIndex:rDemand.mModel.cutIndex];
+            NSLog(@"当前R任务matchFo:%@ mIsC:%@",Fo2FStr(rDemand.mModel.matchFo),findIndex == -1 ? @"失败" : @"通过");
             
             if (findIndex != -1) {
                 //3. 如果有,则直接ActYes,等待其自然出现 (参考22153-A2);
