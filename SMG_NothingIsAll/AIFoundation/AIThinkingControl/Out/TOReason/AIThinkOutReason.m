@@ -354,6 +354,7 @@
  *      2020.12.28: waitModels仅对ActYes响应,将Runing去掉,因为Running应该到任务推进中自行进行PM匹配mModel,而非此处 (参考21208);
  *      2021.01.02: 无论GL变化type是否与waitType符合,都对新的变化进行保留到realContent (参考2120B-BUG1);
  *      2021.01.02: GL中mIsC对matchAlgs的全面支持,因为有时洽逢C不是matchAlgs首个,而致mIsC失败;
+ *      2021.03.17: 将latestAlg和waitAlg之间的mIsC判断由1层改为2层 (因为在22173BUG时,发现此处输入了隔层mIsC);
  *  @bug
  *      2020.09.22: 加上cutStopStatus,避免同一waitModel被多次触发,导致BUG (参考21042);
  *      2020.12.26: GL时,waitType的判断改为bFo,因为只有bFo才携带了waitTypeDS (参考21204);
@@ -437,7 +438,7 @@
                 }
             }else{
                 //7. "行为输出" 和 "demand.ActYes"的有效判断;
-                BOOL mIsC = [TOUtils mIsC_1:latestMModel.matchAlg.pointer c:waitModel.content_p];
+                BOOL mIsC = [TOUtils mIsC_2:latestMModel.matchAlg.pointer c:waitModel.content_p];
                 if (Log4OPushM) NSLog(@"Normal有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(waitModel.content_p),mIsC);
                 if (mIsC) {
                     waitModel.status = TOModelStatus_OuterBack;

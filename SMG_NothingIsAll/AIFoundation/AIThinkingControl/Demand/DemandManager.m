@@ -246,7 +246,10 @@
         
         //5. 等待反馈中,下一个;
         NSArray *actYeses = [TOUtils getSubOutModels_AllDeep:item validStatus:@[@(TOModelStatus_ActYes)]];
-        if (ARRISOK(actYeses)) continue;
+        if (ARRISOK(actYeses)) {
+            //2021.03.17: 当actYes时,return nil即为单任务,continue即是多任务 (现为多任务,为调试直观可临时调为单任务,参考22173);
+            continue;
+        }
         
         //6. 有效,则返回;
         return item;
