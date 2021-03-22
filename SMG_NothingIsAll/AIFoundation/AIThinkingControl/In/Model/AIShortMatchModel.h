@@ -38,6 +38,8 @@
  *      2020.10.30前: 一般为全含抽象节点,但在无全含时,就是partAlgs的首个节点;
  *      2020.10.30: 仅为全含抽象节点 (如果v2四测中,发现此处变动有影响,则反过来考虑此改动是否合理);
  *      2020.11.18: 支持多全含识别 (参考21145);
+ *  @desc
+ *      排序方式: 按照matchCount特征匹配数从大到小排序 (匹配数最多的,一般也最具象);
  */
 @property (strong, nonatomic) NSArray *matchAlgs;
 @property (strong, nonatomic) AIAlgNodeBase *matchAlg;//默认为matchAlgs首条;
@@ -80,6 +82,9 @@
  *  @version
  *      2021.01.23: 支持时序多识别 (参考22073);
  *      2021.01.24: 默认取首条mFo,改为默认取含mv且迫切度最高的一条 (参考22073-todo7);
+ *  @desc
+ *      内容说明: 对已发生部分全含匹配的时序;
+ *      排序方式: 按照当前matchAlg.refPorts被引用强度有序;
  */
 @property (strong, nonatomic) NSMutableArray *matchFos; //匹配时序 (元素为AIMatchFoModel);
 

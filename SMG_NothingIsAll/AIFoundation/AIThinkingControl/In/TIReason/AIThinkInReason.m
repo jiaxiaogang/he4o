@@ -380,6 +380,15 @@
  *      2021.02.04: 虚mv也要支持In反省,否则无法形成对R-模式助益 (参考22108);
  */
 +(void) tir_Forecast:(AIShortMatchModel*)inModel{
+    
+    //TODOTOMORROW20210322: 迭代提高预测的准确性 (参考22182);
+    //  1. 以更具象为准 (猴子怕虎,悟空不怕);
+    //  2. 以更全面为准 (猴子有麻醉枪不怕虎);
+    
+    
+    
+    
+    
     //1. 数据检查;
     if (!inModel) return;
     AIFoNodeBase *protoFo = inModel.protoFo;
