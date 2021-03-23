@@ -563,6 +563,16 @@
     AICMVNode *mvNode = [theNet createConMv:urgentTo_p delta_p:delta_p at:baseMv_p.algsType isMem:false];
     if (!mvNode) return;
     
+    
+    //TODOTOMORROW20210323: 构建虚mv时序时,虚mv是解决实mv的,所以protoFo要嵌套在matchFo之下;
+    //1. 对node追加嵌套和被嵌套两种端口ports : inRTPorts;
+    //2. in反省,有两种构建结果;
+    //  a. SP结果;
+    //  b. 虚mv结果 (目前R模式采用);
+    //3. 所以可对这两种结果,分别制定ports,目前仅制定虚mv的即可;
+    
+    
+    
     //4. 互指向 (将虚mv指定给protoFo);
     [AINetUtils relateFo:protoFo mv:mvNode];
     NSLog(@"\n\n------------------------------- 反向反馈外类比 -------------------------------\nprotoFo:%@->%@", Fo2FStr(protoFo),Mv2FStr(mvNode));
