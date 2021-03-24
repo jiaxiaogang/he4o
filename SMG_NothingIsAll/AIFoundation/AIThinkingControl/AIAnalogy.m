@@ -457,6 +457,7 @@
  *      1. 类比找出预测与实际中不符的特征部分;
  *      2. 取P独特码(P-M差集) (M应该不存在多出来的,因为M本来就是被P全含的);
  *      3. 用独特码集构建S/P节点;
+ *  @use : 用于PM对Alg评价;
  *  @param matchFoModel : M_预测fo为matchFo;
  *  @param shortFo : P_实际fo为shortFo;
  *  @version
@@ -523,6 +524,10 @@
     if (Log4InRethink) NSLog(@"--> In反省类比 构建SPFo %@",Fo2FStr(spFo));
 }
 
+/**
+ *  MARK:--------------------正向反馈外类比--------------------
+ *  @use : 用于P-任务取解决方案;
+ */
 +(void) analogy_Feedback_Same:(AIFoNodeBase*)matchFo shortFo:(AIFoNodeBase*)shortFo{
     //1. 数据检查;
     if (!matchFo || !shortFo || !matchFo.cmvNode_p || !shortFo.cmvNode_p) return;
@@ -538,6 +543,7 @@
 
 /**
  *  MARK:--------------------反向反馈外类比--------------------
+ *  @use : 用于R-任务取解决方案;
  *  @caller : 由预测触发器触发,当mv未发生时,构建虚mv时序,并进行外类比;
  *  @desc : 主要用于R-模式决策时使用 (参考22107);
  *  @param baseMv_p : 此方法仅对实mv做处理,本身就是虚mv则不做任何处理;
@@ -565,11 +571,7 @@
     
     
     //TODOTOMORROW20210323: 构建虚mv时序时,虚mv是解决实mv的,所以protoFo要嵌套在matchFo之下;
-    //1. 对node追加嵌套和被嵌套两种端口ports : inRTPorts;
-    //2. in反省,有两种构建结果;
-    //  a. SP结果;
-    //  b. 虚mv结果 (目前R模式采用);
-    //3. 所以可对这两种结果,分别制定ports,目前仅制定虚mv的即可;
+    //1. 将protoFo与matchFo做diffPorts关联;
     
     
     
@@ -605,18 +607,19 @@
 
 
 //MARK:===============================================================
-//MARK:                     < Out阶段类比 >
+//MARK:                     < 反省类比 >
 //MARK:===============================================================
-@implementation AIAnalogy (Out)
+@implementation AIAnalogy (Rethink)
 
 /**
- *  MARK:--------------------反省类比--------------------
+ *  MARK:--------------------Out反省类比--------------------
  *  @desc Out反省 (参考20205);
  *      1. 其实并不真正进行类比,而是对决策中未PM修正的部分,直接构建Sub节点;
  *      2. 对已发生的 (cutIndex < algIndex) 的部分每一帧,收集未被PM修正的sub稀疏码,构建ATSubAlg (当前的两个调用者,都是全序列);
  *      3. 对上述ATSubAlgs构建成ATSub时序;
  *      4. 根据ATSubFo,从稀疏码向概念,再向时序索引查找,同样foNode的另外的assSubFo,并进行外类比 (目前仅简单的取时序的ATSub抽象);
  *      5. 外类比构建更确切的S时序,如果已存在,则加强;
+ *  @use : 用于PM中对Alg评价;
  *
  *  @callers
  *      1. ActYes流程控制的HNGL调用时,生物钟触发器触发成功时,理性分析什么导致了未成功 (cutIndex无用,因为全部用);
@@ -633,7 +636,7 @@
  *      2020.09.29: except_ps取错,导致反省类比的稀疏码内容经常为空 (参考21055描述及示图);
  *      2021.01.11: 有时baseAlg没有reModel,子节点直接就是value,导致取reModel..subModels闪退 (改为无reModel时直接用baseAlg);
  */
-+(void) analogy_ReasonRethink:(TOFoModel*)foModel cutIndex:(NSInteger)cutIndex type:(AnalogyType)type{
++(void) analogy_OutRethink:(TOFoModel*)foModel cutIndex:(NSInteger)cutIndex type:(AnalogyType)type{
     //1. 数据准备
     if (!foModel || (type != ATSub && type != ATPlus)) return;
     AIFoNodeBase *foNode = [SMGUtils searchNode:foModel.content_p];

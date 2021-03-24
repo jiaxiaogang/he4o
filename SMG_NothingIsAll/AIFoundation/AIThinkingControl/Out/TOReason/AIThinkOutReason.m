@@ -864,7 +864,7 @@
                 //4. 反省类比(成功/未成功)的主要原因;
                 AnalogyType type = (algModel.status == TOModelStatus_ActYes) ? ATSub : ATPlus;
                 NSLog(@"---//触发器A_触发: %@ from %@ (%@)",AlgP2FStr(algModel.content_p),Fo2FStr(foNode),ATType2Str(type));
-                [AIAnalogy analogy_ReasonRethink:foModel cutIndex:cutIndex type:type];
+                [AIAnalogy analogy_OutRethink:foModel cutIndex:cutIndex type:type];
                 
                 //5. 失败时,转流程控制-失败 (会开始下一解决方案);
                 DemandModel *root = [TOUtils getDemandModelWithSubOutModel:algModel];
@@ -939,7 +939,7 @@
                     NSLog(@"---//触发器R-_感性mv任务:%@ 解决方案:%@ (%@)",Fo2FStr(matchFo),Pit2FStr(actYesModel.content_p),ATType2Str(type));
                     
                     //4. 暂不开通反省类比,等做兼容PM后,再打开反省类比;
-                    [AIAnalogy analogy_ReasonRethink:(TOFoModel*)actYesModel cutIndex:NSIntegerMax type:type];
+                    [AIAnalogy analogy_OutRethink:(TOFoModel*)actYesModel cutIndex:NSIntegerMax type:type];
                     
                     //4. 失败时,转流程控制-失败 (会开始下一解决方案) (参考22061-8);
                     //2021.01.28: 失败后不用再尝试下一方案了,因为R任务已过期 (已经被撞了,你再躲也没用) (参考22081-todo3);
@@ -969,7 +969,7 @@
             //3. 反省类比(成功/未成功)的主要原因;
             AnalogyType type = (demand.status != TOModelStatus_Finish) ? ATSub : ATPlus;
             NSLog(@"---//触发器F_触发: %p -> %@ (%@)",demand,Fo2FStr(actYesFo),ATType2Str(type));
-            [AIAnalogy analogy_ReasonRethink:foModel cutIndex:NSIntegerMax type:type];
+            [AIAnalogy analogy_OutRethink:foModel cutIndex:NSIntegerMax type:type];
             
             //4. 失败时,转流程控制-失败 (会开始下一解决方案);
             BOOL havRoot = [theTC.outModelManager.getAllDemand containsObject:demand];

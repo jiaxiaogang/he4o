@@ -36,4 +36,7 @@
 @property (strong, nonatomic) NSMutableArray *deltaTimes;
 @property (assign, nonatomic) NSTimeInterval mvDeltaTime;
 
+@property (strong, nonatomic) NSMutableArray *diffAbsPorts;    //反向反馈-虚mv时序
+@property (strong, nonatomic) NSMutableArray *diffConPorts;    //反向反馈-实mv时序
+
 @end

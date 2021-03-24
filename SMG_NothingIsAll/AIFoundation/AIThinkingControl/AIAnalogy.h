@@ -67,11 +67,11 @@
 //MARK:===============================================================
 //MARK:                     < Out阶段类比 >
 //MARK:===============================================================
-@interface AIAnalogy (Out)
+@interface AIAnalogy (Rethink)
 
 /**
- *  MARK:--------------------反省类比--------------------
+ *  MARK:--------------------Out反省类比--------------------
  */
-+(void) analogy_ReasonRethink:(TOFoModel*)foModel cutIndex:(NSInteger)cutIndex type:(AnalogyType)type;
++(void) analogy_OutRethink:(TOFoModel*)foModel cutIndex:(NSInteger)cutIndex type:(AnalogyType)type;
 
 @end

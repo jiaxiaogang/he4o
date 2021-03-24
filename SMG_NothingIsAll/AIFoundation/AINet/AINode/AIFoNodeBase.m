@@ -17,6 +17,20 @@
     return _deltaTimes;
 }
 
+-(NSMutableArray *)diffConPorts{
+    if (!ISOK(_diffConPorts, NSMutableArray.class)) {
+        _diffConPorts = [[NSMutableArray alloc] initWithArray:_diffConPorts];
+    }
+    return _diffConPorts;
+}
+
+-(NSMutableArray *)diffAbsPorts{
+    if (!ISOK(_diffAbsPorts, NSMutableArray.class)) {
+        _diffAbsPorts = [[NSMutableArray alloc] initWithArray:_diffAbsPorts];
+    }
+    return _diffAbsPorts;
+}
+
 /**
  *  MARK:--------------------NSCoding--------------------
  */
@@ -26,6 +40,8 @@
         self.cmvNode_p = [aDecoder decodeObjectForKey:@"cmvNode_p"];
         self.deltaTimes = [aDecoder decodeObjectForKey:@"deltaTimes"];
         self.mvDeltaTime = [aDecoder decodeDoubleForKey:@"mvDeltaTime"];
+        self.diffConPorts = [aDecoder decodeObjectForKey:@"diffConPorts"];
+        self.diffAbsPorts = [aDecoder decodeObjectForKey:@"diffAbsPorts"];
     }
     return self;
 }
@@ -35,6 +51,8 @@
     [aCoder encodeObject:self.cmvNode_p forKey:@"cmvNode_p"];
     [aCoder encodeObject:self.deltaTimes forKey:@"deltaTimes"];
     [aCoder encodeDouble:self.mvDeltaTime forKey:@"mvDeltaTime"];
+    [aCoder encodeObject:[self.diffConPorts copy] forKey:@"diffConPorts"];
+    [aCoder encodeObject:[self.diffAbsPorts copy] forKey:@"diffAbsPorts"];
 }
 
 @end
