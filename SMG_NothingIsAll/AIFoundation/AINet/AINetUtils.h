@@ -162,6 +162,11 @@
 //MARK:===============================================================
 +(void) relateFo:(AIFoNodeBase*)foNode mv:(AICMVNodeBase*)mvNode;
 
+/**
+ *  MARK:--------------------Diff关联通用方法--------------------
+ */
++(void) relateDiff:(AIFoNodeBase*)absNode conNode:(AIFoNodeBase*)conNode strongPorts:(NSArray*)strongPorts;
+
 @end
 
 

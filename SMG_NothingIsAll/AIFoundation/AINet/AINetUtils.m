@@ -367,40 +367,26 @@
  *              1. 当外类比时传入参与外类比的ports,difStrong=MaxStrong;
  *              2. 否则传空即可,difStrong=1;
  */
-+(void) relateGeneralDiff:(AINodeBase*)absNode conNode:(AIFoNodeBase*)conNode strongPorts:(NSArray*)strongPorts{
++(void) relateDiff:(AIFoNodeBase*)absNode conNode:(AIFoNodeBase*)conNode strongPorts:(NSArray*)strongPorts{
     //1. 数据准备;
     if (!absNode || !conNode) return;
     NSInteger difStrong = [self getMaxStrong:strongPorts];
-        
-        
-//    //1. 具象节点的 关联&存储
-//    conNodes = ARRTOOK(conNodes);
-//    for (AINodeBase *conNode in conNodes) {
-//        //1. con与abs必须不同;
-//        if ([absNode isEqual:conNode]) continue;
-//        NSArray *absContent_ps = absNode.content_ps;
-//        NSArray *conContent_ps = conNode.content_ps;
-//
-//        //2. 计算disStrong (默认为1 & 当新节点且不是SP时从具象取maxStrong);
-//        AnalogyType type = [ThinkingUtils convertDS2AnalogyType:absNode.pointer.dataSource];
-//
-//        if (!conNode.pointer.isMem) {
-//            //2. hd_具象节点插"抽象端口";
-//            [AINetUtils insertPointer_Hd:absNode.pointer toPorts:conNode.absPorts ps:absContent_ps difStrong:difStrong];
-//            //3. hd_抽象节点插"具象端口";
-//            [AINetUtils insertPointer_Hd:conNode.pointer toPorts:absConPorts ps:conContent_ps difStrong:difStrong];
-//            //4. hd_存储
-//            [SMGUtils insertObject:conNode pointer:conNode.pointer fileName:kFNNode time:cRTNode];
-//        }else{
-//            //5. mem_抽象插到具象上
-//            [self insertAbsPorts_MemNode:absNode.pointer con_p:conNode.pointer absNodeContent:absContent_ps difStrong:difStrong];
-//            //6. mem_具象插到抽象上
-//            [self insertConPorts_MemNode:conNode.pointer abs_p:absNode.pointer conNodeContent:conContent_ps difStrong:difStrong];
-//        }
-//    }
-//
-//    //7. 抽象节点的 关联&存储
-//    [SMGUtils insertNode:absNode];
+    
+    //2. 关联&存储
+    if (!conNode.pointer.isMem) {
+        //2. hd_具象节点插"抽象端口";
+        [AINetUtils insertPointer_Hd:absNode.pointer toPorts:conNode.diffAbsPorts ps:absNode.content_ps difStrong:difStrong];
+        //3. hd_抽象节点插"具象端口";
+        [AINetUtils insertPointer_Hd:conNode.pointer toPorts:absNode.diffConPorts ps:conNode.content_ps difStrong:difStrong];
+        //4. hd_存储
+        [SMGUtils insertNode:conNode];
+        [SMGUtils insertNode:absNode];
+    }else{
+        //5. mem_抽象插到具象上
+        [self insertAbsPorts_MemNode:absNode.pointer con_p:conNode.pointer absNodeContent:absNode.content_ps difStrong:difStrong];
+        //6. mem_具象插到抽象上
+        [self insertConPorts_MemNode:conNode.pointer abs_p:absNode.pointer conNodeContent:conNode.content_ps difStrong:difStrong];
+    }
 }
 
 @end

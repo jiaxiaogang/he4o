@@ -502,6 +502,11 @@
     
     //TODOTOMORROW20210323: 构建虚mv时序时,虚mv是解决实mv的,所以protoFo要嵌套在matchFo之下;
     //1. 将protoFo与matchFo做diffPorts关联;
+    //2. 将外类比抽象时也做diff关联;
+    //[AINetUtils relateGeneralDiff:protoFo conNode:matchFo strongPorts:nil];
+    
+    
+    
     
     
     
