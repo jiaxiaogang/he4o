@@ -41,6 +41,7 @@
  *  MARK:--------------------获取具象关联最强的强度--------------------
  */
 +(NSInteger) getConMaxStrong:(AINodeBase*)node;
++(NSInteger) getMaxStrong:(NSArray*)ports;
 
 /**
  *  MARK:--------------------是否虚mv--------------------
