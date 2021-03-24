@@ -163,10 +163,13 @@
     NSLog(@"-> 外类比构建时序 Finish: %@->{%@} from: ↑↑↑(fo:assFo)",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
 }
 
+@end
+
 
 //MARK:===============================================================
 //MARK:                     < 内类比部分 >
 //MARK:===============================================================
+@implementation AIAnalogy (In)
 
 /**
  *  MARK:--------------------fo内类比 (内中有外,找不同算法)--------------------
@@ -452,79 +455,6 @@
 @implementation AIAnalogy (Feedback)
 
 /**
- *  MARK:--------------------反向反馈类比--------------------
- *  @desc In反省: 不符合预测的反省类比;
- *      1. 类比找出预测与实际中不符的特征部分;
- *      2. 取P独特码(P-M差集) (M应该不存在多出来的,因为M本来就是被P全含的);
- *      3. 用独特码集构建S/P节点;
- *  @use : 用于PM对Alg评价;
- *  @param matchFoModel : M_预测fo为matchFo;
- *  @param shortFo : P_实际fo为shortFo;
- *  @version
- *      20200416 - 原先ms和ps都导致{mv-},改为ms导致{mmv*rate},ps导致{pmv*rate};
- *      20200419 - 构建alg/fo都新增了与analogyType相对应的ds,以方便MC_Value使用;
- *      20200421 - 新增构建sameAbsAlg节点 (如无距果),如:都是苹果,怎么1甜2苦?此处构建"都是苹果",可用于MC_V3中判断M零距果和C远距果的关系;
- *      20200421 - 取消构建sameAbsAlg,因为MC算法不需要同级MC判定,所以此处也没用,关于MC有效性检查可参考:19102;
- *      20210121 - 迭代为In反省类比 (参考22052);
- *      20210121 - P.Alg在M中未发现时,也要收集到P-M的差集中 T;
- *  @todo
- *      20200823 - 一直以来,反向类比触发条件太苛刻的问题,通过反省类比迭代之,支持正与平也可触发 T;
- *      20210120 - 此处取mType和pType的SPType有误,S不表示负价值评分,而是表示不符合当前父场景的hope预期 (已废弃,改为直接传入type);
- */
-+(void) analogy_InRethink:(AIMatchFoModel*)matchFoModel shortFo:(AIFoNodeBase*)shortFo type:(AnalogyType)type{
-    //1. 数据准备;
-    if (!matchFoModel || !matchFoModel.matchFo || !shortFo || (type != ATPlus && type != ATSub)) return;
-    AIFoNodeBase *matchFo = matchFoModel.matchFo;
-    NSString *ds = [ThinkingUtils getAnalogyTypeDS:type];
-    
-    //2. 取有效的matchFo部分 (HNGL取range部分 | MV取所有);
-    NSMutableArray *matchContent = [[NSMutableArray alloc] init];
-    if ([TOUtils isHNGL:matchFo.pointer]) {
-        [matchContent addObjectsFromArray:ARR_SUB(matchFo.content_ps, 0, matchFo.count - 1)];
-    }else{
-        [matchContent addObjectsFromArray:matchFo.content_ps];
-    }
-    NSLog(@"\n\n------------------------------- In反省类比 (%@) -------------------------------\nM:%@\nP:%@",ATType2Str(type),Fo2FStr(matchFo),Fo2FStr(shortFo));
-    
-    //3. 正向有序取差集 = M-P;
-    NSMutableArray *justPs = [[NSMutableArray alloc] init];
-    NSInteger nextStartJ = 0;
-    for (NSInteger i = 0; i < shortFo.count; i++) {
-        BOOL findShortAlg = false;
-        AIKVPointer *shortAlg_p = ARR_INDEX(shortFo.content_ps, i);
-        for (NSInteger j = nextStartJ; j < matchContent.count; j++) {
-            //4. 判断mIsC是否成立;
-            AIKVPointer *matchAlg_p = ARR_INDEX(matchContent, j);
-            BOOL mIsC = [TOUtils mIsC_1:shortAlg_p c:matchAlg_p];
-            
-            //5. shortAlg和matchAlg判断mIsC成立,则取差值;
-            if (mIsC) {
-                AIAlgNodeBase *matchAlg = [SMGUtils searchNode:matchAlg_p];
-                AIAlgNodeBase *shortAlg = [SMGUtils searchNode:shortAlg_p];
-                NSArray *pSubM = [SMGUtils removeSub_ps:matchAlg.content_ps parent_ps:shortAlg.content_ps];
-                if (!ARRISOK(pSubM)) continue;
-                
-                //6. 差值有效,则构建新SPAlg节点;
-                AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:pSubM conAlgs:@[matchAlg] isMem:false ds:ds];
-                if (Log4InRethink) NSLog(@"--> In反省类比 构建SPAlg %@",Alg2FStr(spAlg));
-                
-                //7. 收集spAlg并更新nextStartJ & findShortAlg;
-                [justPs addObject:spAlg.pointer];
-                nextStartJ = j + 1;
-                findShortAlg = true;
-            }
-        }
-        
-        //8. P在M中未找到时,也要收集 (比如乌鸦带了交警时,车不敢撞);
-        if (!findShortAlg) [justPs addObject:shortAlg_p];
-    }
-    
-    //9. 构建SPFo;
-    AIFoNodeBase *spFo = [ThinkingUtils createAbsFo_NoRepeat_General:@[matchFo] content_ps:justPs ds:ds difStrong:1];
-    if (Log4InRethink) NSLog(@"--> In反省类比 构建SPFo %@",Fo2FStr(spFo));
-}
-
-/**
  *  MARK:--------------------正向反馈外类比--------------------
  *  @use : 用于P-任务取解决方案;
  */
@@ -610,6 +540,79 @@
 //MARK:                     < 反省类比 >
 //MARK:===============================================================
 @implementation AIAnalogy (Rethink)
+
+/**
+ *  MARK:--------------------In反省类比--------------------
+ *  @desc In反省: 不符合预测的反省类比;
+ *      1. 类比找出预测与实际中不符的特征部分;
+ *      2. 取P独特码(P-M差集) (M应该不存在多出来的,因为M本来就是被P全含的);
+ *      3. 用独特码集构建S/P节点;
+ *  @use : 用于PM对Alg评价;
+ *  @param matchFoModel : M_预测fo为matchFo;
+ *  @param shortFo : P_实际fo为shortFo;
+ *  @version
+ *      20200416 - 原先ms和ps都导致{mv-},改为ms导致{mmv*rate},ps导致{pmv*rate};
+ *      20200419 - 构建alg/fo都新增了与analogyType相对应的ds,以方便MC_Value使用;
+ *      20200421 - 新增构建sameAbsAlg节点 (如无距果),如:都是苹果,怎么1甜2苦?此处构建"都是苹果",可用于MC_V3中判断M零距果和C远距果的关系;
+ *      20200421 - 取消构建sameAbsAlg,因为MC算法不需要同级MC判定,所以此处也没用,关于MC有效性检查可参考:19102;
+ *      20210121 - 迭代为In反省类比 (参考22052);
+ *      20210121 - P.Alg在M中未发现时,也要收集到P-M的差集中 T;
+ *  @todo
+ *      20200823 - 一直以来,反向类比触发条件太苛刻的问题,通过反省类比迭代之,支持正与平也可触发 T;
+ *      20210120 - 此处取mType和pType的SPType有误,S不表示负价值评分,而是表示不符合当前父场景的hope预期 (已废弃,改为直接传入type);
+ */
++(void) analogy_InRethink:(AIMatchFoModel*)matchFoModel shortFo:(AIFoNodeBase*)shortFo type:(AnalogyType)type{
+    //1. 数据准备;
+    if (!matchFoModel || !matchFoModel.matchFo || !shortFo || (type != ATPlus && type != ATSub)) return;
+    AIFoNodeBase *matchFo = matchFoModel.matchFo;
+    NSString *ds = [ThinkingUtils getAnalogyTypeDS:type];
+    
+    //2. 取有效的matchFo部分 (HNGL取range部分 | MV取所有);
+    NSMutableArray *matchContent = [[NSMutableArray alloc] init];
+    if ([TOUtils isHNGL:matchFo.pointer]) {
+        [matchContent addObjectsFromArray:ARR_SUB(matchFo.content_ps, 0, matchFo.count - 1)];
+    }else{
+        [matchContent addObjectsFromArray:matchFo.content_ps];
+    }
+    NSLog(@"\n\n------------------------------- In反省类比 (%@) -------------------------------\nM:%@\nP:%@",ATType2Str(type),Fo2FStr(matchFo),Fo2FStr(shortFo));
+    
+    //3. 正向有序取差集 = M-P;
+    NSMutableArray *justPs = [[NSMutableArray alloc] init];
+    NSInteger nextStartJ = 0;
+    for (NSInteger i = 0; i < shortFo.count; i++) {
+        BOOL findShortAlg = false;
+        AIKVPointer *shortAlg_p = ARR_INDEX(shortFo.content_ps, i);
+        for (NSInteger j = nextStartJ; j < matchContent.count; j++) {
+            //4. 判断mIsC是否成立;
+            AIKVPointer *matchAlg_p = ARR_INDEX(matchContent, j);
+            BOOL mIsC = [TOUtils mIsC_1:shortAlg_p c:matchAlg_p];
+            
+            //5. shortAlg和matchAlg判断mIsC成立,则取差值;
+            if (mIsC) {
+                AIAlgNodeBase *matchAlg = [SMGUtils searchNode:matchAlg_p];
+                AIAlgNodeBase *shortAlg = [SMGUtils searchNode:shortAlg_p];
+                NSArray *pSubM = [SMGUtils removeSub_ps:matchAlg.content_ps parent_ps:shortAlg.content_ps];
+                if (!ARRISOK(pSubM)) continue;
+                
+                //6. 差值有效,则构建新SPAlg节点;
+                AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:pSubM conAlgs:@[matchAlg] isMem:false ds:ds];
+                if (Log4InRethink) NSLog(@"--> In反省类比 构建SPAlg %@",Alg2FStr(spAlg));
+                
+                //7. 收集spAlg并更新nextStartJ & findShortAlg;
+                [justPs addObject:spAlg.pointer];
+                nextStartJ = j + 1;
+                findShortAlg = true;
+            }
+        }
+        
+        //8. P在M中未找到时,也要收集 (比如乌鸦带了交警时,车不敢撞);
+        if (!findShortAlg) [justPs addObject:shortAlg_p];
+    }
+    
+    //9. 构建SPFo;
+    AIFoNodeBase *spFo = [ThinkingUtils createAbsFo_NoRepeat_General:@[matchFo] content_ps:justPs ds:ds difStrong:1];
+    if (Log4InRethink) NSLog(@"--> In反省类比 构建SPFo %@",Fo2FStr(spFo));
+}
 
 /**
  *  MARK:--------------------Out反省类比--------------------
