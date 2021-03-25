@@ -55,7 +55,7 @@
  *      20200831: 支持反省外类比,得出更确切的ATSub原因,参考:20205-步骤4;
  *      20201203: 修复21175BUG (因createAbsAlgBlock忘记调用,导致absAlg和glAlg间未关联) (参考21115);
  */
-+(void) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type createAbsAlgBlock:(void(^)(AIAlgNodeBase *createAlg,NSInteger foIndex,NSInteger assFoIndex))createAbsAlgBlock{
++(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type createAbsAlgBlock:(void(^)(AIAlgNodeBase *createAlg,NSInteger foIndex,NSInteger assFoIndex))createAbsAlgBlock{
     //1. 类比orders的规律
     if (Log4OutAna) NSLog(@"\n----------- 外类比(%@) -----------\nfo:%@ \nassFo:%@",ATType2Str(type),Fo2FStr(fo),Fo2FStr(assFo));
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
@@ -109,7 +109,7 @@
     }
 
     //3. 外类比构建
-    [self analogyOutside_Creater:orderSames fo:fo assFo:assFo type:type];
+    return [self analogyOutside_Creater:orderSames fo:fo assFo:assFo type:type];
 }
 
 /**
@@ -121,7 +121,7 @@
  *  @version
  *      2020.07.22: 在外类比无需构建时 (即具象和抽象一致时),其方向索引强度+1;
  */
-+(void)analogyOutside_Creater:(NSArray*)orderSames fo:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type{
++(AINetAbsFoNode*)analogyOutside_Creater:(NSArray*)orderSames fo:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type{
     //2. 数据检查;
     AINetAbsFoNode *result = nil;
     if (ARRISOK(orderSames) && ISOK(fo, AIFoNodeBase.class) && ISOK(assFo, AIFoNodeBase.class)) {
@@ -157,10 +157,12 @@
                 AIAbsCMVNode *resultMv = [theNet createAbsCMVNode_Outside:nil aMv_p:fo.cmvNode_p bMv_p:assMv.pointer];
                 [AINetUtils relateFo:result mv:resultMv];//cmv模型连接;
             }
+            return result;
         }
     }
     //调试短时序; (先仅打外类比日志);
     NSLog(@"-> 外类比构建时序 Finish: %@->{%@} from: ↑↑↑(fo:assFo)",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
+    return nil;
 }
 
 @end
@@ -479,6 +481,8 @@
  *  @param matchFo : protoFo是嵌套于matchFo之下的,要求matchFo.cmv_p不为空 (matchFo携带了实mv);
  *  @bug
  *      2021.02.02: 虚mv逻辑判反,导致执行不了 (修复后正常) T;
+ *  @version
+ *      2021.03.25: 嵌套关联 & 外类比assFo改为使用嵌套关联来联想;
  */
 +(void) analogy_Feedback_Diff:(AIFoNodeBase*)protoFo matchFo:(AIFoNodeBase*)matchFo{
     //1. 数据检查 (本身就是虚mv则返回:此方法仅对实mv做处理,本身就是虚mv则不做任何处理);
@@ -505,33 +509,49 @@
     
     NSLog(@"\n\n------------------------------- 反向反馈外类比 -------------------------------\nprotoFo:%@->%@", Fo2FStr(protoFo),Mv2FStr(mvNode));
     
-    //5. 根据虚mv,联想同区虚mv们;
-    MVDirection direction = [ThinkingUtils getMvReferenceDirection:delta];
-    NSArray *assMvRefs = [theNet getNetNodePointersFromDirectionReference:mvNode.pointer.algsType direction:direction isMem:false filter:nil];
-    
-    //6. 根据虚mv们,筛选出normal且防重的assFo;
-    NSMutableArray *assFos = [[NSMutableArray alloc] init];
-    for (AIPort *item in assMvRefs) {
-        AICMVNodeBase *itemMV = [SMGUtils searchNode:item.target_p];
-        AnalogyType type = DS2ATType(itemMV.foNode_p.dataSource);
-        if (type != ATPlus && type != ATSub && ![protoFo.pointer isEqual:itemMV.foNode_p]) {
-            AIFoNodeBase *assFo = [SMGUtils searchNode:itemMV.foNode_p];
-            if (assFo) [assFos addObject:assFo];
-        }
-        //7. 最多取三条assFo;
-        if (assFos.count >= 3) break;
-    }
-    
-    //8. 使protoFo与assFo外类比;
-    for (AIFoNodeBase *assFo in assFos) {
+    //5. 取嵌套前3条subFo,进行外类比;
+    AIPort *protoPort = [AINetUtils findPort:protoFo.pointer fromPorts:matchFo.diffSubPorts];
+    int analogyCount = 0;
+    for (AIPort *subPort in matchFo.diffSubPorts) {
+        //6. 不可与proto重复;
+        if ([subPort.target_p isEqual:protoPort.target_p]) continue;
+        
+        //7. 进行外类比
+        AIFoNodeBase *assFo = [SMGUtils searchNode:subPort.target_p];
         if (Log4DiffAna) NSLog(@"\nassFo:%@->%@",Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
-        [self analogyOutside:protoFo assFo:assFo type:ATDiff createAbsAlgBlock:nil];
+        AINetAbsFoNode *absFo = [self analogyOutside:protoFo assFo:assFo type:ATDiff createAbsAlgBlock:nil];
+        if (!absFo) continue;
         
-        //9. 将外类比抽象时也做diff关联;
+        //8. 将外类比抽象时做嵌套关联 & 指定强度;
+        [AINetUtils relateDiff:absFo baseNode:matchFo strongPorts:@[protoPort,subPort]];
         
-        
-        
+        //9. 类比三条;
+        analogyCount ++;
+        if (analogyCount >= 3) break;
     }
+    
+    ////5. 根据虚mv,联想同区虚mv们;
+    //MVDirection direction = [ThinkingUtils getMvReferenceDirection:delta];
+    //NSArray *assMvRefs = [theNet getNetNodePointersFromDirectionReference:mvNode.pointer.algsType direction:direction isMem:false filter:nil];
+    //
+    ////6. 根据虚mv们,筛选出normal且防重的assFo;
+    //NSMutableArray *assFos = [[NSMutableArray alloc] init];
+    //for (AIPort *item in assMvRefs) {
+    //    AICMVNodeBase *itemMV = [SMGUtils searchNode:item.target_p];
+    //    AnalogyType type = DS2ATType(itemMV.foNode_p.dataSource);
+    //    if (type != ATPlus && type != ATSub && ![protoFo.pointer isEqual:itemMV.foNode_p]) {
+    //        AIFoNodeBase *assFo = [SMGUtils searchNode:itemMV.foNode_p];
+    //        if (assFo) [assFos addObject:assFo];
+    //    }
+    //    //7. 最多取三条assFo;
+    //    if (assFos.count >= 3) break;
+    //}
+    //
+    ////8. 使protoFo与assFo外类比;
+    //for (AIFoNodeBase *assFo in assFos) {
+    //    if (Log4DiffAna) NSLog(@"\nassFo:%@->%@",Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
+    //    [self analogyOutside:protoFo assFo:assFo type:ATDiff createAbsAlgBlock:nil];
+    //}
 }
 
 @end

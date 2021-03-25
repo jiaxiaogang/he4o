@@ -143,6 +143,11 @@
 
 
 //MARK:===============================================================
+//MARK:                     < 找出port >
+//MARK:===============================================================
++(AIPort*) findPort:(AIKVPointer*)pointer fromPorts:(NSArray*)fromPorts;
+
+//MARK:===============================================================
 //MARK:                     < 抽具象关联 Relate (外界调用,支持alg/fo) >
 //MARK:===============================================================
 
@@ -163,7 +168,7 @@
 +(void) relateFo:(AIFoNodeBase*)foNode mv:(AICMVNodeBase*)mvNode;
 
 /**
- *  MARK:--------------------Diff关联通用方法--------------------
+ *  MARK:--------------------Diff嵌套关联--------------------
  */
 +(void) relateDiff:(AIFoNodeBase*)subNode baseNode:(AIFoNodeBase*)baseNode strongPorts:(NSArray*)strongPorts;
 

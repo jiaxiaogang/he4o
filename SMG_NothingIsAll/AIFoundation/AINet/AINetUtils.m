@@ -286,19 +286,15 @@
     }
 }
 
-/**
- *  MARK:--------------------从ports中找出符合的port或者new一个 通用方法--------------------
- */
+//MARK:===============================================================
+//MARK:                     < 找出port >
+//MARK:===============================================================
+
+//找出port (并从ports中移除 & 无则新建);
 +(AIPort*) findPort:(AIKVPointer*)pointer fromPorts:(NSMutableArray*)fromPorts ps:(NSArray*)ps{
     if (ISOK(pointer, AIPointer.class) && ISOK(fromPorts, NSMutableArray.class)) {
         //1. 找出旧有;
-        AIPort *findPort = nil;
-        for (AIPort *port in fromPorts) {
-            if ([pointer isEqual:port.target_p]) {
-                findPort = port;
-                break;
-            }
-        }
+        AIPort *findPort = [self findPort:pointer fromPorts:fromPorts];
         if (findPort) [fromPorts removeObject:findPort];
         
         //2. 无则新建port;
@@ -308,6 +304,16 @@
             findPort.header = [NSString md5:[SMGUtils convertPointers2String:ps]];
         }
         return findPort;
+    }
+    return nil;
+}
+//找出port
++(AIPort*) findPort:(AIKVPointer*)pointer fromPorts:(NSArray*)fromPorts{
+    fromPorts = ARRTOOK(fromPorts);
+    for (AIPort *port in fromPorts) {
+        if ([port.target_p isEqual:pointer]) {
+            return port;
+        }
     }
     return nil;
 }
@@ -382,7 +388,7 @@
 }
 
 /**
- *  MARK:--------------------Diff关联通用方法--------------------
+ *  MARK:--------------------Diff嵌套关联--------------------
  *  @desc 构建虚mv时序时,虚mv是解决实mv的,所以protoFo要嵌套在matchFo之下;
  *  @param strongPorts : 用来取difStrong的节点集
  *              1. 当外类比时传入参与外类比的ports,difStrong=MaxStrong;
