@@ -193,12 +193,13 @@
 +(void) insertRefPorts_MemNode:(AIPointer*)memNode_p passiveRef_p:(AIPointer*)passiveRef_p ps:(NSArray*)ps difStrong:(NSInteger)difStrong{
     if (ISOK(memNode_p, AIKVPointer.class) && ISOK(passiveRef_p, AIKVPointer.class)) {
         //1. 内存网络时,取出memRefPorts -> 插入首位 -> 存XGRedis;
-        NSMutableArray *memRefPorts = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:passiveRef_p fileName:kFNMemRefPorts]];
+        NSMutableArray *memRefPorts = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:passiveRef_p fileName:kFNMemRefPorts time:cRTMemPort]];
         [AINetUtils insertPointer_Mem:memNode_p toPorts:memRefPorts ps:ps difStrong:difStrong];
         [SMGUtils insertObject:memRefPorts rootPath:passiveRef_p.filePath fileName:kFNMemRefPorts time:cRTMemPort saveDB:false];//存储
     }
 }
 
+//abs插入con.absPorts;
 +(void) insertAbsPorts_MemNode:(AIPointer*)abs_p con_p:(AIPointer*)con_p absNodeContent:(NSArray*)absNodeContent difStrong:(NSInteger)difStrong{
     if (ISOK(abs_p, AIKVPointer.class) && ISOK(con_p, AIKVPointer.class)) {
         NSMutableArray *memAbsPorts = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:con_p fileName:kFNMemAbsPorts time:cRTMemPort]];
@@ -207,11 +208,30 @@
     }
 }
 
+//con插入abs.conPorts;
 +(void) insertConPorts_MemNode:(AIPointer*)con_p abs_p:(AIPointer*)abs_p conNodeContent:(NSArray*)conNodeContent difStrong:(NSInteger)difStrong{
     if (ISOK(con_p, AIKVPointer.class) && ISOK(abs_p, AIKVPointer.class)) {
-        NSMutableArray *memConPorts = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:abs_p fileName:kFNMemConPorts]];
+        NSMutableArray *memConPorts = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:abs_p fileName:kFNMemConPorts time:cRTMemPort]];
         [AINetUtils insertPointer_Mem:con_p toPorts:memConPorts ps:conNodeContent difStrong:difStrong];
         [SMGUtils insertObject:memConPorts rootPath:abs_p.filePath fileName:kFNMemConPorts time:cRTMemPort saveDB:false];//存储
+    }
+}
+
+//sub插入base.subPorts;
++(void) insertDiffSubPorts_MemNode:(AIKVPointer*)sub_p base_p:(AIKVPointer*)base_p subContent:(NSArray*)subContent difStrong:(NSInteger)difStrong{
+    if (ISOK(sub_p, AIKVPointer.class) && ISOK(base_p, AIKVPointer.class)) {
+        NSMutableArray *ports = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:base_p fileName:kFNMemDSPorts time:cRTMemPort]];
+        [AINetUtils insertPointer_Mem:sub_p toPorts:ports ps:subContent difStrong:difStrong];
+        [SMGUtils insertObject:ports rootPath:base_p.filePath fileName:kFNMemDSPorts time:cRTMemPort saveDB:false];//存储
+    }
+}
+
+//base插入sub.basePorts;
++(void) insertDiffBasePorts_MemNode:(AIKVPointer*)base_p sub_p:(AIKVPointer*)sub_p baseContent:(NSArray*)baseContent difStrong:(NSInteger)difStrong{
+    if (ISOK(base_p, AIKVPointer.class) && ISOK(sub_p, AIKVPointer.class)) {
+        NSMutableArray *ports = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:sub_p fileName:kFNMemDBPorts time:cRTMemPort]];
+        [AINetUtils insertPointer_Mem:base_p toPorts:ports ps:baseContent difStrong:difStrong];
+        [SMGUtils insertObject:ports rootPath:sub_p.filePath fileName:kFNMemDBPorts time:cRTMemPort saveDB:false];//存储
     }
 }
 
@@ -363,29 +383,29 @@
 
 /**
  *  MARK:--------------------Diff关联通用方法--------------------
+ *  @desc 构建虚mv时序时,虚mv是解决实mv的,所以protoFo要嵌套在matchFo之下;
  *  @param strongPorts : 用来取difStrong的节点集
  *              1. 当外类比时传入参与外类比的ports,difStrong=MaxStrong;
  *              2. 否则传空即可,difStrong=1;
  */
-+(void) relateDiff:(AIFoNodeBase*)absNode conNode:(AIFoNodeBase*)conNode strongPorts:(NSArray*)strongPorts{
++(void) relateDiff:(AIFoNodeBase*)subNode baseNode:(AIFoNodeBase*)baseNode strongPorts:(NSArray*)strongPorts{
     //1. 数据准备;
-    if (!absNode || !conNode) return;
+    if (!baseNode || !subNode) return;
     NSInteger difStrong = [self getMaxStrong:strongPorts];
     
     //2. 关联&存储
-    if (!conNode.pointer.isMem) {
+    if (!baseNode.pointer.isMem) {
         //2. hd_具象节点插"抽象端口";
-        [AINetUtils insertPointer_Hd:absNode.pointer toPorts:conNode.diffAbsPorts ps:absNode.content_ps difStrong:difStrong];
+        [AINetUtils insertPointer_Hd:subNode.pointer toPorts:baseNode.diffSubPorts ps:subNode.content_ps difStrong:difStrong];
         //3. hd_抽象节点插"具象端口";
-        [AINetUtils insertPointer_Hd:conNode.pointer toPorts:absNode.diffConPorts ps:conNode.content_ps difStrong:difStrong];
+        [AINetUtils insertPointer_Hd:baseNode.pointer toPorts:subNode.diffBasePorts ps:baseNode.content_ps difStrong:difStrong];
         //4. hd_存储
-        [SMGUtils insertNode:conNode];
-        [SMGUtils insertNode:absNode];
+        [SMGUtils insertNode:baseNode];
+        [SMGUtils insertNode:subNode];
     }else{
-        //5. mem_抽象插到具象上
-        [self insertAbsPorts_MemNode:absNode.pointer con_p:conNode.pointer absNodeContent:absNode.content_ps difStrong:difStrong];
-        //6. mem_具象插到抽象上
-        [self insertConPorts_MemNode:conNode.pointer abs_p:absNode.pointer conNodeContent:conNode.content_ps difStrong:difStrong];
+        //5. 内存插端口;
+        [self insertDiffBasePorts_MemNode:baseNode.pointer sub_p:subNode.pointer baseContent:baseNode.content_ps difStrong:difStrong];
+        [self insertDiffSubPorts_MemNode:subNode.pointer base_p:baseNode.pointer subContent:subNode.content_ps difStrong:difStrong];
     }
 }
 

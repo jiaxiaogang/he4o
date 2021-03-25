@@ -165,7 +165,7 @@
 /**
  *  MARK:--------------------Diff关联通用方法--------------------
  */
-+(void) relateDiff:(AIFoNodeBase*)absNode conNode:(AIFoNodeBase*)conNode strongPorts:(NSArray*)strongPorts;
++(void) relateDiff:(AIFoNodeBase*)subNode baseNode:(AIFoNodeBase*)baseNode strongPorts:(NSArray*)strongPorts;
 
 @end
 

@@ -68,6 +68,8 @@
 #define kFNMemRefPorts @"memRefPorts" //内存网络_微信息的reference序列文件名;
 #define kFNMemAbsPorts @"memAbsPorts" //内存网络_抽象序列;
 #define kFNMemConPorts @"memConPorts" //内存网络_具象序列;
+#define kFNMemDBPorts @"memDiffBasePorts" //内存网络_DB序列;
+#define kFNMemDSPorts @"memDiffSubPorts" //内存网络_DS序列;
 #define kFNMemNode @"memNode"         //内存网络中节点
 
 #define kFNRefPorts_All(isMem) (isMem ? kFNMemRefPorts : kFNRefPorts) //微信息的reference序列文件名;

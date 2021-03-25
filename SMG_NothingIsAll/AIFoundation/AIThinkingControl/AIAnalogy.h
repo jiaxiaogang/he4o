@@ -60,9 +60,9 @@
 /**
  *  MARK:--------------------反向反馈外类比--------------------
  *  @param protoFo  : 真实发生的时序;
- *  @param baseMv_p : 实mv (matchFo发生的),可由此实mv构建虚mv;
+ *  @param matchFo : protoFo是嵌套于matchFo之下的,要求matchFo.cmv_p不为空 (matchFo携带了实mv);
  */
-+(void) analogy_Feedback_Diff:(AIFoNodeBase*)protoFo baseMv_p:(AIKVPointer*)baseMv_p;
++(void) analogy_Feedback_Diff:(AIFoNodeBase*)protoFo matchFo:(AIFoNodeBase*)matchFo;
 
 @end
 

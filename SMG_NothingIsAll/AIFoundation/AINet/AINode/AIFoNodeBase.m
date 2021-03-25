@@ -17,18 +17,18 @@
     return _deltaTimes;
 }
 
--(NSMutableArray *)diffConPorts{
-    if (!ISOK(_diffConPorts, NSMutableArray.class)) {
-        _diffConPorts = [[NSMutableArray alloc] initWithArray:_diffConPorts];
+-(NSMutableArray *)diffBasePorts{
+    if (!ISOK(_diffBasePorts, NSMutableArray.class)) {
+        _diffBasePorts = [[NSMutableArray alloc] initWithArray:_diffBasePorts];
     }
-    return _diffConPorts;
+    return _diffBasePorts;
 }
 
--(NSMutableArray *)diffAbsPorts{
-    if (!ISOK(_diffAbsPorts, NSMutableArray.class)) {
-        _diffAbsPorts = [[NSMutableArray alloc] initWithArray:_diffAbsPorts];
+-(NSMutableArray *)diffSubPorts{
+    if (!ISOK(_diffSubPorts, NSMutableArray.class)) {
+        _diffSubPorts = [[NSMutableArray alloc] initWithArray:_diffSubPorts];
     }
-    return _diffAbsPorts;
+    return _diffSubPorts;
 }
 
 /**
@@ -40,8 +40,8 @@
         self.cmvNode_p = [aDecoder decodeObjectForKey:@"cmvNode_p"];
         self.deltaTimes = [aDecoder decodeObjectForKey:@"deltaTimes"];
         self.mvDeltaTime = [aDecoder decodeDoubleForKey:@"mvDeltaTime"];
-        self.diffConPorts = [aDecoder decodeObjectForKey:@"diffConPorts"];
-        self.diffAbsPorts = [aDecoder decodeObjectForKey:@"diffAbsPorts"];
+        self.diffBasePorts = [aDecoder decodeObjectForKey:@"diffBasePorts"];
+        self.diffSubPorts = [aDecoder decodeObjectForKey:@"diffSubPorts"];
     }
     return self;
 }
@@ -51,8 +51,8 @@
     [aCoder encodeObject:self.cmvNode_p forKey:@"cmvNode_p"];
     [aCoder encodeObject:self.deltaTimes forKey:@"deltaTimes"];
     [aCoder encodeDouble:self.mvDeltaTime forKey:@"mvDeltaTime"];
-    [aCoder encodeObject:[self.diffConPorts copy] forKey:@"diffConPorts"];
-    [aCoder encodeObject:[self.diffAbsPorts copy] forKey:@"diffAbsPorts"];
+    [aCoder encodeObject:[self.diffBasePorts copy] forKey:@"diffBasePorts"];
+    [aCoder encodeObject:[self.diffSubPorts copy] forKey:@"diffSubPorts"];
 }
 
 @end

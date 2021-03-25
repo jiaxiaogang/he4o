@@ -476,16 +476,16 @@
  *  @use : 用于R-任务取解决方案;
  *  @caller : 由预测触发器触发,当mv未发生时,构建虚mv时序,并进行外类比;
  *  @desc : 主要用于R-模式决策时使用 (参考22107);
- *  @param baseMv_p : 此方法仅对实mv做处理,本身就是虚mv则不做任何处理;
+ *  @param matchFo : protoFo是嵌套于matchFo之下的,要求matchFo.cmv_p不为空 (matchFo携带了实mv);
  *  @bug
  *      2021.02.02: 虚mv逻辑判反,导致执行不了 (修复后正常) T;
  */
-+(void) analogy_Feedback_Diff:(AIFoNodeBase*)protoFo baseMv_p:(AIKVPointer*)baseMv_p{
-    //1. 数据检查 (本身就是虚mv则返回);
-    if (!protoFo || [AINetUtils isVirtualMv:baseMv_p]) return;
++(void) analogy_Feedback_Diff:(AIFoNodeBase*)protoFo matchFo:(AIFoNodeBase*)matchFo{
+    //1. 数据检查 (本身就是虚mv则返回:此方法仅对实mv做处理,本身就是虚mv则不做任何处理);
+    if (!protoFo || !matchFo || [AINetUtils isVirtualMv:matchFo.cmvNode_p]) return;
     
     //2. 取出实mv的值;
-    AICMVNodeBase *baseMv = [SMGUtils searchNode:baseMv_p];
+    AICMVNodeBase *baseMv = [SMGUtils searchNode:matchFo.cmvNode_p];
     AIKVPointer *baseDelta_p = baseMv.delta_p;
     AIKVPointer *baseUrgentTo_p = baseMv.urgentTo_p;
     NSInteger baseDelta = [NUMTOOK([AINetIndex getData:baseDelta_p]) integerValue];
@@ -496,22 +496,13 @@
     AIKVPointer *delta_p = [AINetIndex getDataPointerWithData:@(delta) algsType:baseDelta_p.algsType dataSource:baseDelta_p.dataSource isOut:false];
     AIKVPointer *urgentTo_p = [AINetIndex getDataPointerWithData:@(0) algsType:baseUrgentTo_p.algsType dataSource:baseUrgentTo_p.dataSource isOut:false];
     [theNet createAbsMv:nil conMvs:nil at:nil ds:nil urgentTo_p:nil delta_p:nil];
-    AICMVNode *mvNode = [theNet createConMv:urgentTo_p delta_p:delta_p at:baseMv_p.algsType isMem:false];
+    AICMVNode *mvNode = [theNet createConMv:urgentTo_p delta_p:delta_p at:matchFo.cmvNode_p.algsType isMem:false];
     if (!mvNode) return;
     
-    
-    //TODOTOMORROW20210323: 构建虚mv时序时,虚mv是解决实mv的,所以protoFo要嵌套在matchFo之下;
-    //1. 将protoFo与matchFo做diffPorts关联;
-    //2. 将外类比抽象时也做diff关联;
-    //[AINetUtils relateGeneralDiff:protoFo conNode:matchFo strongPorts:nil];
-    
-    
-    
-    
-    
-    
-    //4. 互指向 (将虚mv指定给protoFo);
+    //4. 互指向 (将虚mv指定给protoFo & 嵌套互指向);
     [AINetUtils relateFo:protoFo mv:mvNode];
+    [AINetUtils relateDiff:protoFo baseNode:matchFo strongPorts:nil];
+    
     NSLog(@"\n\n------------------------------- 反向反馈外类比 -------------------------------\nprotoFo:%@->%@", Fo2FStr(protoFo),Mv2FStr(mvNode));
     
     //5. 根据虚mv,联想同区虚mv们;
@@ -535,6 +526,11 @@
     for (AIFoNodeBase *assFo in assFos) {
         if (Log4DiffAna) NSLog(@"\nassFo:%@->%@",Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
         [self analogyOutside:protoFo assFo:assFo type:ATDiff createAbsAlgBlock:nil];
+        
+        //9. 将外类比抽象时也做diff关联;
+        
+        
+        
     }
 }
 

@@ -426,7 +426,7 @@
                     
                     //5. 反向反馈外类比;
                     if (item.status == TIModelStatus_LastWait) {
-                        [AIAnalogy analogy_Feedback_Diff:protoFo baseMv_p:matchFo.cmvNode_p];
+                        [AIAnalogy analogy_Feedback_Diff:protoFo matchFo:matchFo];
                     }
                     
                     //5. 失败状态标记;
