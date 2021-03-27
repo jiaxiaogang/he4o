@@ -9,7 +9,6 @@
 #import "TOModelBase.h"
 #import "ISubModelsDelegate.h"
 #import "ITryActionFoDelegate.h"
-#import "ISubDemandDelegate.h"
 
 /**
  *  MARK:--------------------决策中的时序模型--------------------
@@ -17,8 +16,10 @@
  *  2. 再通过algScheme联想把具象可执行的具体任务存到memOrder;
  *  3. 其间,如果有执行失败,无效等概念节点,存到except_ps不应期;
  *  4. 不应期会上报给上一级except_ps (或许由TOModelStatus来替代此功能);
+ *  @version
+ *      2021.03.27: 实现ITryActionFoDelegate接口,因为每个fo都有可能是子任务 (参考22193);
  */
-@interface TOFoModel : TOModelBase <ISubModelsDelegate,ISubDemandDelegate>
+@interface TOFoModel : TOModelBase <ISubModelsDelegate,ITryActionFoDelegate>
 
 +(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(id<ITryActionFoDelegate>)base;
 

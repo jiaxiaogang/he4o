@@ -12,6 +12,7 @@
  *  MARK:--------------------fo解决方案接口--------------------
  *  @version
  *      2020.05.28: 用于R-,P-,GL,Hav四处时序构建子outModel模型;
+ *      2021.03.27: 支持反思子任务 (当outFoModel实现此接口时,下方为子任务) (参考22193);
  */
 @protocol ITryActionFoDelegate <NSObject>
 
