@@ -8,6 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ *  MARK:--------------------子元素接口--------------------
+ *  @desc 比如时序FoOutModel下的元素即是概念AlgOutModel;
+ */
 @protocol ISubModelsDelegate <NSObject>
 
 /**

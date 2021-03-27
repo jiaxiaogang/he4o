@@ -9,6 +9,7 @@
 #import "TOModelBase.h"
 #import "ISubModelsDelegate.h"
 #import "ITryActionFoDelegate.h"
+#import "ISubDemandDelegate.h"
 
 /**
  *  MARK:--------------------决策中的时序模型--------------------
@@ -17,7 +18,7 @@
  *  3. 其间,如果有执行失败,无效等概念节点,存到except_ps不应期;
  *  4. 不应期会上报给上一级except_ps (或许由TOModelStatus来替代此功能);
  */
-@interface TOFoModel : TOModelBase <ISubModelsDelegate>
+@interface TOFoModel : TOModelBase <ISubModelsDelegate,ISubDemandDelegate>
 
 +(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(id<ITryActionFoDelegate>)base;
 
@@ -40,6 +41,6 @@
  *  MARK:--------------------当前正在激活中的subModel--------------------
  *  可由status来替代此功能 (status可支持多个激活状态的fo);
  */
-@property (strong, nonatomic) TOModelBase *activateSubModel;
+//@property (strong, nonatomic) TOModelBase *activateSubModel;
 
 @end

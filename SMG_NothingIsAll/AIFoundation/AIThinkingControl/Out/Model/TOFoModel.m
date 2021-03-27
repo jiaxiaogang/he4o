@@ -9,7 +9,10 @@
 #import "TOFoModel.h"
 
 @interface TOFoModel()
+
 @property (strong, nonatomic) NSMutableArray *subModels;
+@property (strong, nonatomic) NSMutableArray *subDemands;
+
 @end
 
 @implementation TOFoModel
@@ -48,6 +51,16 @@
         _subModels = [[NSMutableArray alloc] init];
     }
     return _subModels;
+}
+
+/**
+ *  MARK:--------------------ISubDemandDelegate--------------------
+ */
+-(NSMutableArray *)subDemands{
+    if (_subDemands == nil) {
+        _subDemands = [[NSMutableArray alloc] init];
+    }
+    return _subDemands;
 }
 
 //-(void)setActionIndex:(NSInteger)actionIndex{

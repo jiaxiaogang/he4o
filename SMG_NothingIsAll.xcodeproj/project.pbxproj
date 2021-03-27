@@ -302,6 +302,7 @@
 		0881965C21800F2B00D5DB36 /* BirdLivePage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BirdLivePage.h; sourceTree = "<group>"; };
 		0881965D21800F2B00D5DB36 /* BirdLivePage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BirdLivePage.m; sourceTree = "<group>"; };
 		0881965E21800F2B00D5DB36 /* BirdLivePage.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BirdLivePage.xib; sourceTree = "<group>"; };
+		088587DB260F0350001B9ADE /* ISubDemandDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ISubDemandDelegate.h; sourceTree = "<group>"; };
 		0889257D22B0702A00A0DBDD /* NVModuleView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVModuleView.h; sourceTree = "<group>"; };
 		0889257E22B0702A00A0DBDD /* NVModuleView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NVModuleView.m; sourceTree = "<group>"; };
 		0889258022B0703700A0DBDD /* NVModuleView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NVModuleView.xib; sourceTree = "<group>"; };
@@ -471,6 +472,7 @@
 				4591E02C247F11DE00484B51 /* TOValueModel.m */,
 				4591E02E247F1E1A00484B51 /* ISubModelsDelegate.h */,
 				4591E030247F1F4000484B51 /* ITryActionFoDelegate.h */,
+				088587DB260F0350001B9ADE /* ISubDemandDelegate.h */,
 			);
 			path = Model;
 			sourceTree = "<group>";
