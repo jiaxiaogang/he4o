@@ -9,6 +9,7 @@
 #import "TOModelBase.h"
 #import "ISubModelsDelegate.h"
 #import "ITryActionFoDelegate.h"
+#import "ISubDemandDelegate.h"
 
 /**
  *  MARK:--------------------决策中的时序模型--------------------
@@ -19,7 +20,7 @@
  *  @version
  *      2021.03.27: 实现ITryActionFoDelegate接口,因为每个fo都有可能是子任务 (参考22193);
  */
-@interface TOFoModel : TOModelBase <ISubModelsDelegate,ITryActionFoDelegate>
+@interface TOFoModel : TOModelBase <ISubModelsDelegate,ISubDemandDelegate>
 
 +(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(id<ITryActionFoDelegate>)base;
 

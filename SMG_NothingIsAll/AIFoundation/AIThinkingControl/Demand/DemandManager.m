@@ -165,7 +165,7 @@
             }
             
             //7. 有需求时,则加到需求序列中;
-            ReasonDemandModel *newItem = [ReasonDemandModel newWithMModel:mModel inModel:inModel];
+            ReasonDemandModel *newItem = [ReasonDemandModel newWithMModel:mModel inModel:inModel baseFo:nil];
             newItem.algsType = algsType;
             newItem.delta = delta;
             newItem.urgentTo = urgentTo;

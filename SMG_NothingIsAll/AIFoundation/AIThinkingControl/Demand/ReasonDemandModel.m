@@ -12,10 +12,12 @@
 
 @implementation ReasonDemandModel
 
-+(ReasonDemandModel*) newWithMModel:(AIMatchFoModel*)mModel inModel:(AIShortMatchModel*)inModel{
++(ReasonDemandModel*) newWithMModel:(AIMatchFoModel*)mModel inModel:(AIShortMatchModel*)inModel baseFo:(TOFoModel*)baseFo{
     ReasonDemandModel *result = [[ReasonDemandModel alloc] init];
     result.mModel = mModel;
     result.inModel = inModel;
+    if (baseFo) [baseFo.subDemands addObject:result];    
+    result.baseFo = baseFo;
     return result;
 }
 

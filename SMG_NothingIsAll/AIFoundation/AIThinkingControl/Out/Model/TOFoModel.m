@@ -11,7 +11,7 @@
 @interface TOFoModel()
 
 @property (strong, nonatomic) NSMutableArray *subModels;
-@property (strong, nonatomic) NSMutableArray *actionFoModels;
+@property (strong, nonatomic) NSMutableArray *subDemands;
 
 @end
 
@@ -52,11 +52,11 @@
     }
     return _subModels;
 }
--(NSMutableArray *)actionFoModels{
-    if (_actionFoModels == nil) {
-        _actionFoModels = [[NSMutableArray alloc] init];
+-(NSMutableArray *)subDemands{
+    if (_subDemands == nil) {
+        _subDemands = [[NSMutableArray alloc] init];
     }
-    return _actionFoModels;
+    return _subDemands;
 }
 
 //-(void)setActionIndex:(NSInteger)actionIndex{
