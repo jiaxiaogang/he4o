@@ -18,6 +18,7 @@
 #import "TOFoModel.h"
 #import "AIAlgNodeBase.h"
 #import "AIMatchFoModel.h"
+#import "ReasonDemandModel.h"
 
 @implementation AIScore
 
@@ -155,6 +156,14 @@
  *  MARK:--------------------时序来的及评价--------------------
  */
 +(BOOL) FRS_Time:(double)time1 time2:(double)time2{
+    
+    //TODOTOMORROW20210328:来的及评价(参考22194);
+    //子任务决策中,加入"来的及评价",当解决方案推进到待发生时,可转为ActYes状态,并继续主任务推进 (比如:枪已取到,等老虎出现时,干掉它);
+    
+    
+    
+    
+    
     return time1 > time2;
 }
 
@@ -166,6 +175,7 @@
  *  MARK:--------------------对TOFoModel进行反思评价--------------------
  *  @version
  *      2021.01.24: 对多时序识别,更准确多元的评价支持 (参考22073-todo2);
+ *      2021.03.28: 对子任务已决策成功时,不计分 (参考22193);
  */
 +(BOOL) FPS:(TOFoModel*)outModel rtInModel:(AIShortMatchModel*)rtInModel{
     //1. 数据检查
@@ -175,11 +185,24 @@
     
     //2. 对mModel进行评价;
     CGFloat sumScore = 0;
+    int sumCount = 0;
     for (AIMatchFoModel *item in rtInModel.matchFos) {
+        
+        //3. item子任务已决策成功时,不计分;
+        BOOL subDemandSuccess = false;
+        for (ReasonDemandModel *demand in outModel.subDemands) {
+            if ([demand.content_p isEqual:item.matchFo.pointer]) {
+                subDemandSuccess = demand.status == TOModelStatus_Finish || demand.status == TOModelStatus_ActYes;
+            }
+        }
+        if (subDemandSuccess) continue;
+        
+        //4. 需计分的,累计总分;
         CGFloat score = [AIScore score4MV:item.matchFo.cmvNode_p ratio:item.matchFoValue];
         sumScore += score;
+        sumCount++;
     }
-    CGFloat rtScore = rtInModel.matchFos.count == 0 ? 0 : sumScore / rtInModel.matchFos.count;
+    CGFloat rtScore = rtInModel.matchFos.count == 0 ? 0 : sumScore / sumCount;
     
     //3. 对demand进行评价 (P-模式下demand为负分);
     DemandModel *demand = [TOUtils getDemandModelWithSubOutModel:outModel];

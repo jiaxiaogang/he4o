@@ -57,7 +57,6 @@
         //3. MC反思: 回归tir反思,重新识别理性预测时序,预测价值; (预测到鸡蛋变脏,或者cpu损坏) (理性预测影响评价即理性评价)
         AIShortMatchModel *rtInModel = [self.delegate toAction_RethinkInnerFo:curFo];
         
-        //TODOTOROMORROW20210326:反思子任务(参考22193) & 来的及评价(参考22194);
         //1. 子任务_对反思预测fo尝试转为子任务;
         for (AIMatchFoModel *item in rtInModel.matchFos) {
             
@@ -67,14 +66,7 @@
             ReasonDemandModel *subDemand = [ReasonDemandModel newWithMModel:item inModel:rtInModel baseFo:outModel];
             
             //3. 子任务_对其决策;
-            [self.delegate toAction_SubModelBegin:subDemand];
-            
-            //4. 决策中,加入"来的及评价",当解决方案推进到待发生时,可转为ActYes状态,并继续主任务推进 (比如:枪已取到,等老虎出现时,干掉它);
-            
-            
-            
-            
-            
+            [self.delegate toAction_SubModelBegin:subDemand];   
         }
         
         BOOL scoreSuccess = [AIScore FPS:outModel rtInModel:rtInModel];
