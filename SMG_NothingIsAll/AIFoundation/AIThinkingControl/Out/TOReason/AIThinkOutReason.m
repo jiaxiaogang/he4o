@@ -28,6 +28,7 @@
 #import "AIScore.h"
 #import "ReasonDemandModel.h"
 #import "AIMatchFoModel.h"
+#import "AIPort.h"
 
 @interface AIThinkOutReason() <TOActionDelegate>
 
@@ -91,6 +92,7 @@
  *      2021.01.31 - 从matchFos获取解决方案时,仅过滤出更好的来 (delta>0);
  *      2021.02.02 - 将从matchFos取解决方案,优先由matchFos提供,其次由"反向反馈外类比虚mv"提供 (参考22107);
  *      2021.02.04 - 因为老是取到非常具体的解决方案,所以注掉优先从matchFos取 (参考22114);
+ *      2021.03.27 - V4迭代,支持从dsPorts找解决方案,而不是方向索引 (参考n22p19-todo1 & 22195);
  */
 -(void) reasonSubV3:(ReasonDemandModel*)demand{
     //1. 数据检查
@@ -156,6 +158,46 @@
         return true;
     }];
     if (!success) NSLog(@"------->>>>>> R-无计可施");
+}
+
+-(void) reasonSubV4:(ReasonDemandModel*)demand{
+    //1. 数据检查
+    if (!demand) return;
+    AIFoNodeBase *matchFo = demand.mModel.matchFo;
+    NSLog(@"\n\n=============================== TOP.R- ===============================\n任务:%@,发生%ld",demand.algsType,(long)demand.mModel.cutIndex);
+    
+    //3. ActYes等待 或 OutBack反省等待 中时,不进行决策;
+    NSArray *waitFos = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
+        return item.status == TOModelStatus_ActYes || item.status == TOModelStatus_OuterBack;
+    }];
+    if (ARRISOK(waitFos)) return;
+    
+    //3. 不应期 (可以考虑改为将整个demand.actionFoModels全加入不应期);
+    NSArray *exceptFoModels = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOModelBase *item) {
+        return item.status == TOModelStatus_ActNo || item.status == TOModelStatus_ScoreNo;
+    }];
+    NSMutableArray *except_ps = [TOUtils convertPointersFromTOModels:exceptFoModels];
+    [except_ps addObject:matchFo.pointer];
+    if (Log4DirecRef) NSLog(@"------->>>>>> Fo已有方案数:%lu 不应期数:%lu",(long)demand.actionFoModels.count,(long)except_ps.count);
+    
+    //6. 其次从方向索引找normalFo解决方案_找索引;
+    NSArray *dsPorts = [AINetUtils dsPorts_All:demand.mModel.matchFo];
+    
+    for (AIPort *dsPort in dsPorts) {
+        //a. 不应期无效,继续找下个;
+        if ([except_ps containsObject:dsPort.target_p]) continue;
+        
+        //b. 未发生理性评价 (空S评价);
+        if (![AIScore FRS:[SMGUtils searchNode:dsPort.target_p]]) continue;
+        
+        //c. 直接提交行为化 (废弃场景判断,因为fo场景一般mIsC会不通过,而alg判断,完全可以放到行为化过程中判断);
+        TOFoModel *foModel = [TOFoModel newWithFo_p:dsPort.target_p base:demand];
+        AIFoNodeBase *fo = [SMGUtils searchNode:dsPort.target_p];
+        NSLog(@"------->>>>>> R- From mvRefs 新增一例解决方案: %@->%@",Pit2FStr(dsPort.target_p),Mvp2Str(fo.cmvNode_p));
+        [self commitReasonSub:foModel demand:demand];
+        return;
+    }
+    NSLog(@"------->>>>>> R-无计可施");
 }
 
 //MARK:===============================================================

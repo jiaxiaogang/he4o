@@ -67,8 +67,11 @@
             ReasonDemandModel *subDemand = [ReasonDemandModel newWithMModel:item inModel:rtInModel baseFo:outModel];
             
             //3. 子任务_对其决策;
+            [self.delegate toAction_SubModelBegin:subDemand];
             
             //4. 决策中,加入"来的及评价",当解决方案推进到待发生时,可转为ActYes状态,并继续主任务推进 (比如:枪已取到,等老虎出现时,干掉它);
+            
+            
             
             
             

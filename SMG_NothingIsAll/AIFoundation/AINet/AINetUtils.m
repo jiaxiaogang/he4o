@@ -550,4 +550,13 @@
     return allPorts;
 }
 
++(NSArray*) dsPorts_All:(AIFoNodeBase*)node{
+    NSMutableArray *allPorts = [[NSMutableArray alloc] init];
+    if (node) {
+        [allPorts addObjectsFromArray:node.diffSubPorts];
+        [allPorts addObjectsFromArray:[SMGUtils searchObjectForPointer:node.pointer fileName:kFNMemDSPorts time:cRTMemPort]];
+    }
+    return allPorts;
+}
+
 @end
