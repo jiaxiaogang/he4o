@@ -21,6 +21,7 @@
 #import "AIScore.h"
 #import "ReasonDemandModel.h"
 #import "AIMatchFoModel.h"
+#import "AINetIndex.h"
 
 @implementation AIThinkOutAction
 
@@ -57,16 +58,21 @@
         AIShortMatchModel *rtInModel = [self.delegate toAction_RethinkInnerFo:curFo];
         
         //TODOTOROMORROW20210326:反思子任务(参考22193) & 来的及评价(参考22194);
-        //1. 评分为负时,此预测fo转为子任务,并对其决策;
-        //2. 决策中,加入"来的及评价",当解决方案推进到待发生时,可转为ActYes状态,并继续主任务推进 (比如:枪已取到,等老虎出现时,干掉它);
-        
-        //分析: 为什么我们主动取枪,却不主动放出老虎呢?
-        
-        
-        
-        
-        
-        
+        //1. 子任务_对反思预测fo尝试转为子任务;
+        for (AIMatchFoModel *item in rtInModel.matchFos) {
+            
+            //2. 子任务_评分为负时才生成;
+            CGFloat score = [AIScore score4MV:item.matchFo.cmvNode_p ratio:item.matchFoValue];
+            if (score >= 0) continue;
+            ReasonDemandModel *subDemand = [ReasonDemandModel newWithMModel:item inModel:rtInModel baseFo:outModel];
+            
+            //3. 子任务_对其决策;
+            
+            //4. 决策中,加入"来的及评价",当解决方案推进到待发生时,可转为ActYes状态,并继续主任务推进 (比如:枪已取到,等老虎出现时,干掉它);
+            
+            
+            
+        }
         
         BOOL scoreSuccess = [AIScore FPS:outModel rtInModel:rtInModel];
         if (!scoreSuccess) {

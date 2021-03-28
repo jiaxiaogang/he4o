@@ -127,12 +127,9 @@
     for (AIMatchFoModel *mModel in inModel.matchFos) {
         
         //3. 单条数据准备;
-        AICMVNodeBase *mvNode = [SMGUtils searchNode:mModel.matchFo.cmvNode_p];
-        if (!mvNode) continue;
-        NSInteger delta = [NUMTOOK([AINetIndex getData:mvNode.delta_p]) integerValue];
-        NSString *algsType = mvNode.urgentTo_p.algsType;
-        NSInteger urgentTo = [NUMTOOK([AINetIndex getData:mvNode.urgentTo_p]) integerValue];
-        urgentTo = (int)(urgentTo * inModel.matchFoValue);
+        //2021.03.28: 此处algsType由urgentTo.at改成cmv.at,从mvNodeManager看这俩一致,如果出现bug再说;
+        if (!mModel.matchFo.cmvNode_p) continue;
+        NSString *algsType = mModel.matchFo.cmvNode_p.algsType;
             
         //4. 抵消_同一matchFo将旧有移除 (仅保留最新的);
         self.loopCache = [SMGUtils removeArr:self.loopCache checkValid:^BOOL(ReasonDemandModel *item) {
@@ -166,16 +163,13 @@
             
             //7. 有需求时,则加到需求序列中;
             ReasonDemandModel *newItem = [ReasonDemandModel newWithMModel:mModel inModel:inModel baseFo:nil];
-            newItem.algsType = algsType;
-            newItem.delta = delta;
-            newItem.urgentTo = urgentTo;
             [self.loopCache addObject:newItem];
             
             //8. 新需求时_将新需求迫切度的差值(>0时),增至活跃度;
-            [theTC updateEnergy:MAX(0, urgentTo - sameIdenOldMax)];
+            [theTC updateEnergy:MAX(0, newItem.urgentTo - sameIdenOldMax)];
             NSLog(@"demandManager-RMV >> 新需求+1=%lu 评分:%f\n%@->%@",(unsigned long)self.loopCache.count,score,Fo2FStr(mModel.matchFo),Pit2FStr(mModel.matchFo.cmvNode_p));
         }else{
-            NSLog(@"当前,预测mv未形成需求:%@ 差值:%ld 评分:%f",algsType,(long)delta,score);
+            NSLog(@"当前,预测mv未形成需求:%@ 基于:%@ 评分:%f",algsType,Pit2FStr(mModel.matchFo.cmvNode_p),score);
         }
     }
 }

@@ -499,7 +499,7 @@
     NSInteger delta = -baseDelta;
     AIKVPointer *delta_p = [AINetIndex getDataPointerWithData:@(delta) algsType:baseDelta_p.algsType dataSource:baseDelta_p.dataSource isOut:false];
     AIKVPointer *urgentTo_p = [AINetIndex getDataPointerWithData:@(0) algsType:baseUrgentTo_p.algsType dataSource:baseUrgentTo_p.dataSource isOut:false];
-    [theNet createAbsMv:nil conMvs:nil at:nil ds:nil urgentTo_p:nil delta_p:nil];
+    //[theNet createAbsMv:nil conMvs:nil at:nil ds:nil urgentTo_p:nil delta_p:nil];//20210328此处全是空什么鬼,注掉先;
     AICMVNode *mvNode = [theNet createConMv:urgentTo_p delta_p:delta_p at:matchFo.cmvNode_p.algsType isMem:false];
     if (!mvNode) return;
     

@@ -9,15 +9,35 @@
 #import "ReasonDemandModel.h"
 #import "TOFoModel.h"
 #import "AIShortMatchModel.h"
+#import "AIMatchFoModel.h"
+#import "AINetIndex.h"
 
 @implementation ReasonDemandModel
 
+/**
+ *  MARK:--------------------newWith--------------------
+ *  @version
+ *      2021.03.28: 将at & delta & urgentTo也封装到此处取赋值;
+ */
 +(ReasonDemandModel*) newWithMModel:(AIMatchFoModel*)mModel inModel:(AIShortMatchModel*)inModel baseFo:(TOFoModel*)baseFo{
+    //1. 数据准备;
     ReasonDemandModel *result = [[ReasonDemandModel alloc] init];
+    AICMVNodeBase *mvNode = [SMGUtils searchNode:mModel.matchFo.cmvNode_p];
+    NSInteger delta = [NUMTOOK([AINetIndex getData:mvNode.delta_p]) integerValue];
+    NSString *algsType = mvNode.urgentTo_p.algsType;
+    NSInteger urgentTo = [NUMTOOK([AINetIndex getData:mvNode.urgentTo_p]) integerValue];
+    urgentTo = (int)(urgentTo * mModel.matchFoValue);
+    
+    //2. 短时结构;
+    if (baseFo) [baseFo.subDemands addObject:result];
+    result.baseFo = baseFo;
+    
+    //3. 属性赋值;
+    result.algsType = algsType;
+    result.delta = delta;
+    result.urgentTo = urgentTo;
     result.mModel = mModel;
     result.inModel = inModel;
-    if (baseFo) [baseFo.subDemands addObject:result];    
-    result.baseFo = baseFo;
     return result;
 }
 
