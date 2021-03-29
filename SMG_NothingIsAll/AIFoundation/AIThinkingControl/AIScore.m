@@ -227,17 +227,29 @@
 /**
  *  MARK:--------------------概念来的及评价--------------------
  *  @desc R子任务来的及评价 (后续考虑支持rootR任务) (参考22194 & 22195);
+ *  @param dsAlg : 当前正在推进的解决方案帧;
+ *  @param demand : 当前任务;
  */
-+(BOOL) ARS_Time{
++(BOOL) ARS_Time:(AIAlgNodeBase*)dsAlg demand:(ReasonDemandModel*)demand{
     //TODOTOMORROW20210328:来的及评价(参考22194);
     //子任务决策中,加入"来的及评价",当解决方案推进到待发生时,可转为ActYes状态,并继续主任务推进 (比如:枪已取到,等老虎出现时,干掉它);
     
+    //0. 可复用"静默成功"代码;
     //1. 对rDemand和curFo对比,取出cutIndex;
     //2. 来的及,则进行action._hav行为化;
     //3. 需等待,则输出actYes;
     //4. 来不及,已错过则输出failure;
     
+    //1. 数据检查;
+    if (!dsAlg || !demand) return true;
     
+    //2. 当dsAlg会导致弄巧成拙时,评价为否->ActYes;
+    NSInteger findIndex = [TOUtils indexOfConOrAbsItem:dsAlg.pointer atContent:demand.mModel.matchFo.content_ps layerDiff:2 startIndex:demand.mModel.cutIndex];
+    if (findIndex != -1) {
+        return false;
+    }
+    
+    //3. 当dsAlg在"之后部分"时,也评价为否 (参考22194示图);
     
     
     
