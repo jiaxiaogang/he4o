@@ -156,6 +156,10 @@
  *  MARK:--------------------时序来的及评价--------------------
  */
 +(BOOL) FRS_Time:(double)time1 time2:(double)time2{
+    //TODOTOMORROW20210330: 对demand.cutIndex进行来的及评价,如果在cutIndex之前,则表示来的及,在之后,则表示已错过;
+    
+    
+    
     return time1 > time2;
 }
 
@@ -226,11 +230,14 @@
 
 /**
  *  MARK:--------------------概念来的及评价--------------------
- *  @desc R子任务来的及评价 (后续考虑支持rootR任务) (参考22194 & 22195);
- *  @param dsAlg : 当前正在推进的解决方案帧;
+ *  @desc
+ *          1. 说明: R子任务来的及评价 (后续考虑支持rootR任务) (参考22194 & 22195);
+ *          2. 必要性: 之所以用ARSTime而不是FRSTime,是因为来的及评价是针对某帧的,而决策中,外界条件会变化,所以必须每帧都单独评价;
+ *  @param dsFo : 当前正在推进的解决方案,其中actionIndex为当前帧;
  *  @param demand : 当前任务;
+ *  @result 来的及返回true以ActYes,来不及返回false以进行实时行为化;
  */
-+(BOOL) ARS_Time:(AIAlgNodeBase*)dsAlg demand:(ReasonDemandModel*)demand{
++(BOOL) ARS_Time:(TOFoModel*)dsFo demand:(ReasonDemandModel*)demand{
     //TODOTOMORROW20210328:来的及评价(参考22194);
     //子任务决策中,加入"来的及评价",当解决方案推进到待发生时,可转为ActYes状态,并继续主任务推进 (比如:枪已取到,等老虎出现时,干掉它);
     
@@ -241,19 +248,24 @@
     //4. 来不及,已错过则输出failure;
     
     //1. 数据检查;
-    if (!dsAlg || !demand) return true;
+    if (!dsFo || !demand) return true;
+    AIFoNodeBase *curFo = [SMGUtils searchNode:dsFo.content_p];
     
     //2. 当dsAlg会导致弄巧成拙时,评价为否->ActYes;
-    NSInteger findIndex = [TOUtils indexOfConOrAbsItem:dsAlg.pointer atContent:demand.mModel.matchFo.content_ps layerDiff:2 startIndex:demand.mModel.cutIndex];
-    if (findIndex != -1) {
-        return false;
+    for (NSInteger i = 0; i <= dsFo.actionIndex; i++) {
+        AIKVPointer *alg_p = ARR_INDEX(curFo.content_ps, i);
+        NSInteger findIndex = [TOUtils indexOfConOrAbsItem:alg_p atContent:demand.mModel.matchFo.content_ps layerDiff:2 startIndex:0];
+        if (findIndex == -1) {
+            //未发现,下帧继续找;
+        }else{
+            if (findIndex < demand.mModel.cutIndex) {
+                //FRSTime结果;
+            }else{
+                //3. 当dsAlg在"之后部分"时,也评价为否 (参考22194示图);
+                //ARSTime结果;
+            }
+        }
     }
-    
-    //3. 当dsAlg在"之后部分"时,也评价为否 (参考22194示图);
-    
-    
-    
-    
     return true;
 }
 
