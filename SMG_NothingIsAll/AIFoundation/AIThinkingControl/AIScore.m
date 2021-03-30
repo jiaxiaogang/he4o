@@ -252,17 +252,20 @@
     AIFoNodeBase *curFo = [SMGUtils searchNode:dsFo.content_p];
     
     //2. 当dsAlg会导致弄巧成拙时,评价为否->ActYes;
-    for (NSInteger i = 0; i <= dsFo.actionIndex; i++) {
+    for (NSInteger i = 0; i < curFo.count; i++) {
         AIKVPointer *alg_p = ARR_INDEX(curFo.content_ps, i);
         NSInteger findIndex = [TOUtils indexOfConOrAbsItem:alg_p atContent:demand.mModel.matchFo.content_ps layerDiff:2 startIndex:0];
-        if (findIndex == -1) {
-            //未发现,下帧继续找;
-        }else{
+        if (findIndex != -1) {
             if (findIndex < demand.mModel.cutIndex) {
-                //FRSTime结果;
+                //FRSTime结果: 来不及;
             }else{
-                //3. 当dsAlg在"之后部分"时,也评价为否 (参考22194示图);
-                //ARSTime结果;
+                //FRSTime结果: 来的及;
+                
+                if (i < dsFo.actionIndex) {
+                    //ARSTime结果: 来的及-ActYes (参考22194示图);
+                }else{
+                    //ARSTime结果: 来不及-实时行为化 (参考22194示图);
+                }
             }
         }
     }
