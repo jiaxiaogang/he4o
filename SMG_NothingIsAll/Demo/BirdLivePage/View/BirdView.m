@@ -115,7 +115,7 @@
  */
 -(void) hurt{
     DemoLog(@"痛感");
-    [AIInput commitIMV:MVType_Hurt from:4.0f to:5.0f];
+    [AIInput commitIMV:MVType_Hurt from:2.0f to:3.0f];
 }
 
 -(void) dealloc{
@@ -159,7 +159,7 @@
                 [self sendHunger:1.0f];
             }else if(foodView.status == FoodStatus_Border){
                 //b. 产生HurtMindValue (坚果带皮时,不仅吃不到,还得嘴疼);
-                [AIInput commitIMV:MVType_Hurt from:9.0f to:1.0f];
+                [AIInput commitIMV:MVType_Hurt from:2.0f to:3.0f];
             }
         }else{
             //3. 没坚果可吃 (计时器触发,更饿时,发现没坚果吃,并不能解决饥饿问题,参考:18084_todo1);

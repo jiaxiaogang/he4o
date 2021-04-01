@@ -22,15 +22,15 @@
         ImvAlgsHungerModel *imvModel = [[ImvAlgsHungerModel alloc] init];
         imvModel.urgentTo = [self getBadImvUrgentValue:to];//36
         CGFloat urgentFrom = [self getBadImvUrgentValue:from];//25
-        imvModel.delta = urgentFrom - imvModel.urgentTo;    //更饿为负;
+        imvModel.delta = urgentFrom - imvModel.urgentTo;    //更饿为负 (-11);
         [theTC commitInput:imvModel];
     }else if(type == MVType_Anxious){
         
     }else if(type == MVType_Hurt){
         ImvAlgsHurtModel *imvModel = [[ImvAlgsHurtModel alloc] init];
-        imvModel.urgentTo = [self getBadImvUrgentValue:to];
-        CGFloat urgentFrom = [self getBadImvUrgentValue:from];
-        imvModel.delta = imvModel.urgentTo - urgentFrom;    //更痛为负
+        imvModel.urgentTo = [self getBadImvUrgentValue:to];//9
+        CGFloat urgentFrom = [self getBadImvUrgentValue:from];//4
+        imvModel.delta = urgentFrom - imvModel.urgentTo;    //更痛为负 (－5)
         [theTC commitInput:imvModel];
     }
 }
