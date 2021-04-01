@@ -53,7 +53,7 @@
             NSData *lastIndexKey = OBJ2DATA(conFo.pointer);
             NSInteger lastIndex = [NUMTOOK_DV([lastIndexDic objectForKey:lastIndexKey], -1) integerValue];
             BOOL isHNGL = [TOUtils isHNGL:absAlg_p];
-            NSInteger findIndex = [TOUtils indexOfAbsItem:absAlg_p atConContent:conFo.content_ps layerDiff:isHNGL ? 2 : 1 startIndex:lastIndex + 1];
+            NSInteger findIndex = [TOUtils indexOfAbsItem:absAlg_p atConContent:conFo.content_ps layerDiff:isHNGL ? 2 : 1 startIndex:lastIndex + 1 endIndex:NSIntegerMax];
             if (findIndex != -1) {
                 //b. 将有效间隔取出,并提取最大的deltaTime;
                 double sumDeltaTime = [AINetAbsFoUtils sumDeltaTime:conFo startIndex:lastIndex endIndex:findIndex];

@@ -154,13 +154,26 @@
 
 /**
  *  MARK:--------------------时序来的及评价--------------------
+ *  @desc 对将要决策部分:B 和 已发生部分:C 之间进行mIsC判断 (B<=C=已错过) (参考22197);
+ *  @result
+ *      true    : 继续行为化 (比如:没错过,正常继续即可);
+ *      false   : 已错过即:将任务推进到已发生处 (比如:穿越森林任务出门前带枪,但已经出门了,枪已经忘带);
  */
-+(BOOL) FRS_Time:(double)time1 time2:(double)time2{
-    //TODOTOMORROW20210330: 对demand.cutIndex进行来的及评价,如果在cutIndex之前,则表示来的及,在之后,则表示已错过;
++(BOOL) FRS_Time:(TOFoModel*)toFo demand:(ReasonDemandModel*)demand{
+    //1. 数据检查;
+    if (!toFo || !demand) return true;
+    AIFoNodeBase *curFo = [SMGUtils searchNode:toFo.content_p];
     
-    
-    
-    return time1 > time2;
+    //2. 对将要决策部分:B 和 已发生部分:C 之间进行mIsC判断;
+    for (NSInteger i = toFo.actionIndex + 1; i < curFo.count; i++) {
+        AIKVPointer *alg_p = ARR_INDEX(curFo.content_ps, i);
+        NSInteger findIndex = [TOUtils indexOfConOrAbsItem:alg_p atContent:demand.mModel.matchFo.content_ps layerDiff:2 startIndex:0 endIndex:demand.mModel.cutIndex];
+        if (findIndex != -1) {
+            //3. B < C = 已错过;
+            return findIndex <= demand.mModel.cutIndex;
+        }
+    }
+    return true;
 }
 
 //MARK:===============================================================
@@ -231,22 +244,16 @@
 /**
  *  MARK:--------------------概念来的及评价--------------------
  *  @desc
- *          1. 说明: R子任务来的及评价 (后续考虑支持rootR任务) (参考22194 & 22195);
- *          2. 必要性: 之所以用ARSTime而不是FRSTime,是因为来的及评价是针对某帧的,而决策中,外界条件会变化,所以必须每帧都单独评价;
+ *          1. 说明: R子任务来的及评价 (后续考虑支持rootR任务) (参考22194 & 22195 & 22198);
+ *          2. 决策时序AB 在 任务未发生部分D 中找mIsC (找到AB中index,index及之后需要等待静默成功,之前的可实行行为化) (参考22198);
+ *          3. 必要性: ARSTime来的及评价是针对某帧的,而决策中,外界条件会变化,所以必须每帧都单独评价;
  *  @param dsFo : 当前正在推进的解决方案,其中actionIndex为当前帧;
  *  @param demand : 当前任务;
- *  @result 来的及返回true以ActYes,来不及返回false以进行实时行为化;
+ *  @result (参考22194示图 & 22198);
+ *      true    : 提前可预备部分:返回true以进行_hav实时行为化 (比如:在穿越森林前,在遇到老虎前,我们先带枪);
+ *      false   : 来的及返回false则ActYes等待静默成功,并继续推进主任务 (比如:枪已取到,现在先穿越森林,等老虎出现时,再吓跑它);
  */
 +(BOOL) ARS_Time:(TOFoModel*)dsFo demand:(ReasonDemandModel*)demand{
-    //TODOTOMORROW20210328:来的及评价(参考22194);
-    //子任务决策中,加入"来的及评价",当解决方案推进到待发生时,可转为ActYes状态,并继续主任务推进 (比如:枪已取到,等老虎出现时,干掉它);
-    
-    //0. 可复用"静默成功"代码;
-    //1. 对rDemand和curFo对比,取出cutIndex;
-    //2. 来的及,则进行action._hav行为化;
-    //3. 需等待,则输出actYes;
-    //4. 来不及,已错过则输出failure;
-    
     //1. 数据检查;
     if (!dsFo || !demand) return true;
     AIFoNodeBase *curFo = [SMGUtils searchNode:dsFo.content_p];
@@ -254,19 +261,10 @@
     //2. 当dsAlg会导致弄巧成拙时,评价为否->ActYes;
     for (NSInteger i = 0; i < curFo.count; i++) {
         AIKVPointer *alg_p = ARR_INDEX(curFo.content_ps, i);
-        NSInteger findIndex = [TOUtils indexOfConOrAbsItem:alg_p atContent:demand.mModel.matchFo.content_ps layerDiff:2 startIndex:0];
+        NSInteger findIndex = [TOUtils indexOfConOrAbsItem:alg_p atContent:demand.mModel.matchFo.content_ps layerDiff:2 startIndex:demand.mModel.cutIndex + 1 endIndex:NSUIntegerMax];
         if (findIndex != -1) {
-            if (findIndex < demand.mModel.cutIndex) {
-                //FRSTime结果: 来不及;
-            }else{
-                //FRSTime结果: 来的及;
-                
-                if (i < dsFo.actionIndex) {
-                    //ARSTime结果: 来的及-ActYes (参考22194示图);
-                }else{
-                    //ARSTime结果: 来不及-实时行为化 (参考22194示图);
-                }
-            }
+            //3. ARSTime结果 (参考22194示图 & 22198);
+            return dsFo.actionIndex < i;
         }
     }
     return true;

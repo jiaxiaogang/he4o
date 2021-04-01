@@ -103,13 +103,14 @@
  *
  */
 +(NSInteger) indexOfAbsItem:(AIKVPointer*)absItem atConContent:(NSArray*)conContent{
-    return [self indexOfAbsItem:absItem atConContent:conContent layerDiff:1 startIndex:0];
+    return [self indexOfAbsItem:absItem atConContent:conContent layerDiff:1 startIndex:0 endIndex:NSUIntegerMax];
 }
 
 //absItem是content中的抽象一员,返回index;
-+(NSInteger) indexOfAbsItem:(AIKVPointer*)absItem atConContent:(NSArray*)conContent layerDiff:(int)layerDiff startIndex:(NSInteger)startIndex{
++(NSInteger) indexOfAbsItem:(AIKVPointer*)absItem atConContent:(NSArray*)conContent layerDiff:(int)layerDiff startIndex:(NSInteger)startIndex endIndex:(NSInteger)endIndex{
     conContent = ARRTOOK(conContent);
-    for (NSInteger i = startIndex; i < conContent.count; i++) {
+    endIndex = MAX(endIndex, conContent.count - 1);
+    for (NSInteger i = startIndex; i <= endIndex; i++) {
         AIKVPointer *item_p = ARR_INDEX(conContent, i);
         if ([TOUtils mIsC:item_p c:absItem layerDiff:layerDiff]) {
             return i;
@@ -119,9 +120,10 @@
 }
 
 //conItem是content中的具象一员,返回index;
-+(NSInteger) indexOfConItem:(AIKVPointer*)conItem atAbsContent:(NSArray*)content layerDiff:(int)layerDiff startIndex:(NSInteger)startIndex{
++(NSInteger) indexOfConItem:(AIKVPointer*)conItem atAbsContent:(NSArray*)content layerDiff:(int)layerDiff startIndex:(NSInteger)startIndex endIndex:(NSInteger)endIndex{
     content = ARRTOOK(content);
-    for (NSInteger i = startIndex; i < content.count; i++) {
+    endIndex = MAX(endIndex, content.count - 1);
+    for (NSInteger i = startIndex; i <= endIndex; i++) {
         AIKVPointer *item_p = ARR_INDEX(content, i);
         if ([TOUtils mIsC:conItem c:item_p layerDiff:layerDiff]) {
             return i;
@@ -131,10 +133,10 @@
 }
 
 //conItem是content中的具象或抽象一员,返回index;
-+(NSInteger) indexOfConOrAbsItem:(AIKVPointer*)item atContent:(NSArray*)content layerDiff:(int)layerDiff startIndex:(NSInteger)startIndex{
-    NSInteger findIndex = [TOUtils indexOfAbsItem:item atConContent:content layerDiff:layerDiff startIndex:startIndex];
++(NSInteger) indexOfConOrAbsItem:(AIKVPointer*)item atContent:(NSArray*)content layerDiff:(int)layerDiff startIndex:(NSInteger)startIndex endIndex:(NSInteger)endIndex{
+    NSInteger findIndex = [TOUtils indexOfAbsItem:item atConContent:content layerDiff:layerDiff startIndex:startIndex endIndex:endIndex];
     if (findIndex == -1) {
-        findIndex = [TOUtils indexOfConItem:item atAbsContent:content layerDiff:layerDiff startIndex:startIndex];
+        findIndex = [TOUtils indexOfConItem:item atAbsContent:content layerDiff:layerDiff startIndex:startIndex endIndex:endIndex];
     }
     return findIndex;
 }

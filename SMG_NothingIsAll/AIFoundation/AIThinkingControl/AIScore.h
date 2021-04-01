@@ -16,15 +16,16 @@
 //MARK: 2. 理性评价 (反省)
 //MARK:     > VRS & ARS & FRS
 //MARK:===============================================================
-@class AIShortMatchModel,TOFoModel;
+@class AIShortMatchModel,TOFoModel,ReasonDemandModel;
 @interface AIScore : NSObject
 
 +(BOOL) VRS:(AIKVPointer*)value_p cAlg:(AIAlgNodeBase*)cAlg sPorts:(NSArray*)sPorts pPorts:(NSArray*)pPorts;
 +(BOOL) FRS:(AIFoNodeBase*)fo;
 +(BOOL) FRS_Miss:(AIFoNodeBase*)sFo matchFo:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex;
-+(BOOL) FRS_Time:(double)time1 time2:(double)time2;
++(BOOL) FRS_Time:(TOFoModel*)toFo demand:(ReasonDemandModel*)demand;
 +(BOOL) FPS:(TOFoModel*)outModel rtInModel:(AIShortMatchModel*)rtInModel;
 +(BOOL) ARS;
++(BOOL) ARS_Time:(TOFoModel*)dsFo demand:(ReasonDemandModel*)demand;
 
 /**
  *  MARK:--------------------指定ratio的评价重载--------------------

@@ -238,7 +238,7 @@
             ReasonDemandModel *rDemand = (ReasonDemandModel*)outModel.baseOrGroup.baseOrGroup;
             
             //2. 判断在RDemand.forecastFo中,cutIndex之后是否有和curAlg共同的抽象或本身就是抽具象关系的forecastAlg;
-            NSInteger findIndex = [TOUtils indexOfConOrAbsItem:curAlg.pointer atContent:rDemand.mModel.matchFo.content_ps layerDiff:2 startIndex:rDemand.mModel.cutIndex];
+            NSInteger findIndex = [TOUtils indexOfConOrAbsItem:curAlg.pointer atContent:rDemand.mModel.matchFo.content_ps layerDiff:2 startIndex:rDemand.mModel.cutIndex endIndex:NSIntegerMax];
             NSLog(@"当前R任务matchFo:%@ mIsC:%@",Fo2FStr(rDemand.mModel.matchFo),findIndex == -1 ? @"失败" : @"通过");
             
             if (findIndex != -1) {

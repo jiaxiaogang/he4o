@@ -938,7 +938,7 @@
             ReasonDemandModel *rDemand = (ReasonDemandModel*)actYesModel.baseOrGroup.baseOrGroup;
             AIFoNodeBase *foNode = [SMGUtils searchNode:actYesModel.baseOrGroup.content_p];
             
-            NSInteger findIndex = [TOUtils indexOfConOrAbsItem:actYesModel.content_p atContent:rDemand.mModel.matchFo.content_ps layerDiff:1 startIndex:rDemand.mModel.cutIndex];
+            NSInteger findIndex = [TOUtils indexOfConOrAbsItem:actYesModel.content_p atContent:rDemand.mModel.matchFo.content_ps layerDiff:1 startIndex:rDemand.mModel.cutIndex endIndex:NSIntegerMax];
             if (findIndex != -1) {
                 double deltaTime = [NUMTOOK(ARR_INDEX(foNode.deltaTimes, findIndex)) doubleValue];
                 //3. 触发器;
