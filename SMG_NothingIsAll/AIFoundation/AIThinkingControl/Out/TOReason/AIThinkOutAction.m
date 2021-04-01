@@ -54,10 +54,29 @@
     
     //3. fo反思评价 (2020.12.18仅首帧,进行评价) (2021.01.22ReasonDemandModel不做反思和空S评价);
     if (outModel.actionIndex == -1 && !ISOK(outModel.baseOrGroup, ReasonDemandModel.class)) {
-        //3. MC反思: 回归tir反思,重新识别理性预测时序,预测价值; (预测到鸡蛋变脏,或者cpu损坏) (理性预测影响评价即理性评价)
+        
+        //4. FRS_Time错过评价;
+        BOOL frsTime = [AIScore FRS_Time:outModel demand:(ReasonDemandModel*)outModel.baseOrGroup];
+        if (!frsTime) {
+            NSLog(@"FRSTime理性评价(错过)-不通过");
+            outModel.status = TOModelStatus_ScoreNo;
+            [self.delegate toAction_SubModelFailure:outModel];
+            return;
+        }
+        
+        //5. 未发生理性评价 (空S评价);
+        BOOL reasonScore =  [AIScore FRS:curFo];
+        if (!reasonScore) {
+            NSLog(@"未发生理性评价(空S)-不通过");
+            outModel.status = TOModelStatus_ScoreNo;
+            [self.delegate toAction_SubModelFailure:outModel];
+            return;
+        }
+        
+        //6. MC反思: 回归tir反思,重新识别理性预测时序,预测价值; (预测到鸡蛋变脏,或者cpu损坏) (理性预测影响评价即理性评价)
         AIShortMatchModel *rtInModel = [self.delegate toAction_RethinkInnerFo:curFo];
         
-        //1. 子任务_对反思预测fo尝试转为子任务;
+        //7. 子任务_对反思预测fo尝试转为子任务;
         for (AIMatchFoModel *item in rtInModel.matchFos) {
             
             //2. 子任务_评分为负时才生成;
@@ -66,21 +85,16 @@
             ReasonDemandModel *subDemand = [ReasonDemandModel newWithMModel:item inModel:rtInModel baseFo:outModel];
             
             //3. 子任务_对其决策;
-            [self.delegate toAction_SubModelBegin:subDemand];   
+            [self.delegate toAction_SubModelBegin:subDemand];
+            
+            //4. 子任务Finish/ActYes时,不return,因为要继续父任务;
+            //return;
         }
         
+        //8. 子任务尝试完成后,进行FPS综合评价 (如果子任务完成后,依然有解决不了的不愿意的价值,则不通过);
         BOOL scoreSuccess = [AIScore FPS:outModel rtInModel:rtInModel];
         if (!scoreSuccess) {
             NSLog(@"未发生感性评价(反思)-不通过");
-            outModel.status = TOModelStatus_ScoreNo;
-            [self.delegate toAction_SubModelFailure:outModel];
-            return;
-        }
-        
-        //4. 未发生理性评价 (空S评价);
-        BOOL reasonScore =  [AIScore FRS:curFo];
-        if (!reasonScore) {
-            NSLog(@"未发生理性评价(空S)-不通过");
             outModel.status = TOModelStatus_ScoreNo;
             [self.delegate toAction_SubModelFailure:outModel];
             return;
@@ -233,21 +247,17 @@
         }
         
         //R-模式理性静默成功迭代: R-模式_Hav首先是为了避免forecastAlg,其次才是为了达成curFo解决方案 (参考22153);
-        //1. 判断当前是R-模式;
+        //1. 判断当前是R-模式,则进行ARS_Time评价;
         if (ISOK(outModel.baseOrGroup.baseOrGroup, ReasonDemandModel.class)) {
             ReasonDemandModel *rDemand = (ReasonDemandModel*)outModel.baseOrGroup.baseOrGroup;
-            
-            //2. 判断在RDemand.forecastFo中,cutIndex之后是否有和curAlg共同的抽象或本身就是抽具象关系的forecastAlg;
-            NSInteger findIndex = [TOUtils indexOfConOrAbsItem:curAlg.pointer atContent:rDemand.mModel.matchFo.content_ps layerDiff:2 startIndex:rDemand.mModel.cutIndex endIndex:NSIntegerMax];
-            NSLog(@"当前R任务matchFo:%@ mIsC:%@",Fo2FStr(rDemand.mModel.matchFo),findIndex == -1 ? @"失败" : @"通过");
-            
-            if (findIndex != -1) {
-                //3. 如果有,则直接ActYes,等待其自然出现 (参考22153-A2);
+            TOFoModel *dsFo = (TOFoModel*)outModel.baseOrGroup;
+            BOOL arsTime = [AIScore ARS_Time:dsFo demand:rDemand];
+            if (!arsTime) {
+                //2. 评价不通过,则直接ActYes,等待其自然出现 (参考22153-A2);
                 outModel.status = TOModelStatus_ActYes;
                 [self.delegate toAction_SubModelActYes:outModel];
                 return;
             }
-            //4. 如果无,则继续cHav;
         }
         
         //5. 去掉不应期
