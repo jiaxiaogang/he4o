@@ -481,6 +481,7 @@
  *  @param matchFo : protoFo是嵌套于matchFo之下的,要求matchFo.cmv_p不为空 (matchFo携带了实mv);
  *  @bug
  *      2021.02.02: 虚mv逻辑判反,导致执行不了 (修复后正常) T;
+ *      2021.04.02: dsPorts循环中,进行relate时删除item了,导致闪退,解决:copy一份进行循环 T;
  *  @version
  *      2021.03.25: 嵌套关联 & 外类比assFo改为使用嵌套关联来联想;
  */
@@ -512,7 +513,8 @@
     //5. 取嵌套前3条subFo,进行外类比;
     AIPort *protoPort = [AINetUtils findPort:protoFo.pointer fromPorts:matchFo.diffSubPorts];
     int analogyCount = 0;
-    for (AIPort *subPort in matchFo.diffSubPorts) {
+    NSArray *dsPorts = [[NSArray alloc] initWithArray:matchFo.diffSubPorts];
+    for (AIPort *subPort in dsPorts) {
         //6. 不可与proto重复;
         if ([subPort.target_p isEqual:protoPort.target_p]) continue;
         
