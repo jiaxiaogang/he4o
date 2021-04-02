@@ -20,6 +20,7 @@
 #import "AIPort.h"
 #import "AIScore.h"
 #import "ReasonDemandModel.h"
+#import "PerceptDemandModel.h"
 #import "AIMatchFoModel.h"
 #import "AINetIndex.h"
 
@@ -52,9 +53,8 @@
         return;
     }
     
-    //3. fo反思评价 (2020.12.18仅首帧,进行评价) (2021.01.22ReasonDemandModel不做反思和空S评价);
-    if (outModel.actionIndex == -1 && !ISOK(outModel.baseOrGroup, ReasonDemandModel.class)) {
-        
+    //3. 对R任务执行前做评价;
+    if (outModel.actionIndex == -1 && ISOK(outModel.baseOrGroup, ReasonDemandModel.class)) {
         //4. FRS_Time错过评价;
         BOOL frsTime = [AIScore FRS_Time:outModel demand:(ReasonDemandModel*)outModel.baseOrGroup];
         if (!frsTime) {
@@ -63,7 +63,10 @@
             [self.delegate toAction_SubModelFailure:outModel];
             return;
         }
-        
+    }
+    
+    //3. 对P任务执行前做评价 (2020.12.18仅首帧,进行评价 & 2021.01.22ReasonDemandModel不做反思和空S评价)
+    if (outModel.actionIndex == -1 && ISOK(outModel.baseOrGroup, PerceptDemandModel.class)) {
         //5. 未发生理性评价 (空S评价);
         BOOL reasonScore =  [AIScore FRS:curFo];
         if (!reasonScore) {
