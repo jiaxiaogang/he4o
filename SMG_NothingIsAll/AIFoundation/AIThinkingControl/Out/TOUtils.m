@@ -109,7 +109,7 @@
 //absItem是content中的抽象一员,返回index;
 +(NSInteger) indexOfAbsItem:(AIKVPointer*)absItem atConContent:(NSArray*)conContent layerDiff:(int)layerDiff startIndex:(NSInteger)startIndex endIndex:(NSInteger)endIndex{
     conContent = ARRTOOK(conContent);
-    endIndex = MAX(endIndex, conContent.count - 1);
+    endIndex = MIN(endIndex, conContent.count - 1);
     for (NSInteger i = startIndex; i <= endIndex; i++) {
         AIKVPointer *item_p = ARR_INDEX(conContent, i);
         if ([TOUtils mIsC:item_p c:absItem layerDiff:layerDiff]) {
@@ -122,7 +122,7 @@
 //conItem是content中的具象一员,返回index;
 +(NSInteger) indexOfConItem:(AIKVPointer*)conItem atAbsContent:(NSArray*)content layerDiff:(int)layerDiff startIndex:(NSInteger)startIndex endIndex:(NSInteger)endIndex{
     content = ARRTOOK(content);
-    endIndex = MAX(endIndex, content.count - 1);
+    endIndex = MIN(endIndex, content.count - 1);
     for (NSInteger i = startIndex; i <= endIndex; i++) {
         AIKVPointer *item_p = ARR_INDEX(content, i);
         if ([TOUtils mIsC:conItem c:item_p layerDiff:layerDiff]) {
