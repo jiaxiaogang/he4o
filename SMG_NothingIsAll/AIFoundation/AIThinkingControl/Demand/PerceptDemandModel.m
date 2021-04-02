@@ -10,7 +10,4 @@
 
 @implementation PerceptDemandModel
 
--(id)mModel{
-    return nil;
-}
 @end

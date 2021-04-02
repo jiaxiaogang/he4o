@@ -13,6 +13,4 @@
  */
 @interface PerceptDemandModel : DemandModel
 
-@property (strong, nonatomic) id mModel;
-
 @end
