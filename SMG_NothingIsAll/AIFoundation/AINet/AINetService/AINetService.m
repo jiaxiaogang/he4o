@@ -105,6 +105,80 @@
 }
 
 /**
+ *  MARK:--------------------联想GL经验--------------------
+ *  @version
+ *      2021.04.06: v3嵌套GL迭代: 联想方式改为直接从pAlg取嵌套GL经验,而不是先glValue索引,再mIsC判断 (参考22204&R-V4模式联想方式);
+ */
++(AIKVPointer*) getInnerAlgV3:(AIAlgNodeBase*)pAlg vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps{
+    
+    //TODOTOMORROW20210406:
+    //1. 参考21175&21192&21115?,看能否找出原网络结构图;
+    //2. 尽量在不修改,或少修改原网络结构图的基础上,支持现有嵌套改动;
+    
+    
+    
+    //1. 数据检查hAlg_根据type和value_p找ATHav
+    BOOL debugMode = Log4GetInnerAlg;//type == ATLess;
+    NSLog(@"-------------- getInnerAlg (%@) --------------\nATDS:%@&%@ 参照:%@\n不应期:%@",ATType2Str(type),vAT,vDS,Alg2FStr(pAlg),Pits2FStr(except_ps));
+    AIKVPointer *innerValue_p = [theNet getNetDataPointerWithData:@(type) algsType:vAT dataSource:vDS];
+    
+    //2. 对v.ref和a.abs进行交集,取得有效GLAlg;
+    NSArray *gl_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Value:innerValue_p]];
+    
+    //3. 找出合格的inner1Alg;
+    for (AIKVPointer *gl_p in gl_ps) {
+        AIAlgNodeBase *glAlg = [SMGUtils searchNode:gl_p];
+        
+        //4. 根据glAlg,向具象找出真正当时变"大小"的具象概念节点;
+        NSArray *glConAlg_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:glAlg]];
+        
+        //5. 这些节点中,哪个与pAlg有抽具象关系,就返回哪个;
+        if (debugMode) {
+            for (AIKVPointer *glConAlg_p in glConAlg_ps) {
+                BOOL mIsC = ([TOUtils mIsC_2:glConAlg_p c:pAlg.pointer] || [TOUtils mIsC_2:pAlg.pointer c:glConAlg_p]);
+                AIAlgNodeBase *item = [SMGUtils searchNode:glConAlg_p];
+                if (mIsC) {
+                    NSArray *relativeFo_ps = Ports2Pits([SMGUtils filterPorts:[AINetUtils refPorts_All4Alg:item] havTypes:@[@(type)] noTypes:nil]);
+                    NSLog(@"===== glConAlg_Item: %@ 共%lu个",AlgP2FStr(glConAlg_p),(unsigned long)relativeFo_ps.count);
+                    for (NSInteger i = 0; i < 10; i++) {
+                        AIKVPointer *item = ARR_INDEX(relativeFo_ps, i);
+                        AIFoNodeBase *itemFo = [SMGUtils searchNode:item];
+                        BOOL score = [AIScore FRS:itemFo];
+                        if (item) NSLog(@">> fos: %@ == %@",FoP2FStr(item),score ? @"通过" : @"未通过");
+                    }
+                }
+            }
+        }
+        
+        for (AIKVPointer *glConAlg_p in glConAlg_ps) {
+            if ([TOUtils mIsC_2:glConAlg_p c:pAlg.pointer] || [TOUtils mIsC_2:pAlg.pointer c:glConAlg_p]) {
+                
+                //6. 用mIsC有效的glAlg具象指向节点,向refPorts取到relativeFos返回;
+                AIAlgNodeBase *glConAlg = [SMGUtils searchNode:glConAlg_p];
+                NSArray *relativeFoPorts = [SMGUtils filterPorts:[AINetUtils refPorts_All4Alg:glConAlg] havTypes:@[@(type)] noTypes:nil];
+                NSArray *relativeFo_ps = [SMGUtils convertPointersFromPorts:ARR_SUB(relativeFoPorts, 0, cHavNoneAssFoCount)];
+                
+                //7. 去掉不应期;
+                relativeFo_ps = [SMGUtils removeSub_ps:except_ps parent_ps:relativeFo_ps];
+                for (AIKVPointer *item in relativeFo_ps) {
+                    
+                    //8. 当relativeFo末位为glConAlg_p时,结果才有效 (参考21183-3);
+                    AIFoNodeBase *itemFo = [SMGUtils searchNode:item];
+                    if (![glConAlg_p isEqual:ARR_INDEX_REVERSE(itemFo.content_ps, 0)]) continue;
+                    
+                    //9. 未发生理性评价 (空S评价);
+                    if (![AIScore FRS:itemFo]) continue;
+                    
+                    //10. 全部通过,返回;
+                    return item;
+                }
+            }
+        }
+    }
+    return nil;
+}
+
+/**
  *  MARK:--------------------从Alg中获取指定标识稀疏码的值--------------------
  */
 +(double) getValueDataFromAlg:(AIKVPointer*)alg_p valueIdentifier:(NSString*)valueIdentifier{
