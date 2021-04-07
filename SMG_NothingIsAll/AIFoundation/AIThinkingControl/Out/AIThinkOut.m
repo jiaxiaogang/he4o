@@ -69,7 +69,7 @@ static AIThinkOut *_instance;
     //2. 同区两个模式之R-;
     if (ISOK(demand, ReasonDemandModel.class)) {
         //a. R-
-        [self.tOR reasonSubV3:(ReasonDemandModel*)demand];
+        [self.tOR reasonSubV4:(ReasonDemandModel*)demand];
         
         //b. R+
         ////3. 同区两个模式之R+ (以最近的预测为准);
@@ -121,7 +121,7 @@ static AIThinkOut *_instance;
     if (ISOK(demand, PerceptDemandModel.class)) {
         [self.tOP perceptSub:demand];
     }else if (ISOK(demand, ReasonDemandModel.class)) {
-        [self.tOR reasonSubV3:(ReasonDemandModel*)demand];
+        [self.tOR reasonSubV4:(ReasonDemandModel*)demand];
     }
 }
 
