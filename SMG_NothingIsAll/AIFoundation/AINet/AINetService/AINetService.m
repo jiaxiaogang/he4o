@@ -127,6 +127,7 @@
     //2. 全不应期掉时,再向着pAlg的抽象,取其typePorts,再取前limit个尝试;
     
     
+    
     for (AIKVPointer *type_p in type_ps) {
         //6. 用mIsC有效的glAlg具象指向节点,向refPorts取到relativeFos返回;
         AIAlgNodeBase *typeAlg = [SMGUtils searchNode:type_p];

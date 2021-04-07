@@ -280,46 +280,46 @@
     return result;
 }
 
-+(NSArray*) collectionNodes:(AIKVPointer*)node_p absLimit:(NSInteger)absLimit conLimit:(NSInteger)conLimit{
-    //1. 数据准备
-    NSMutableArray *result = [[NSMutableArray alloc] init];
-    AINodeBase *node = [SMGUtils searchNode:node_p];
-    if (!node) return result;
-    
-    //2. 收集本身
-    [result addObject:node_p];
-    
-    //3. 收集抽象
-    if (absLimit > 0) {
-        NSArray *abs_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All_Normal:node]];
-        [result addObjectsFromArray:ARR_SUB(abs_ps, 0, absLimit)];
-    }
-    
-    //4. 收集具象
-    if (conLimit > 0) {
-        NSArray *con_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All_Normal:node]];
-        [result addObjectsFromArray:ARR_SUB(con_ps, 0, conLimit)];
-    }
-    return result;
-}
+//+(NSArray*) collectionNodes:(AIKVPointer*)node_p absLimit:(NSInteger)absLimit conLimit:(NSInteger)conLimit{
+//    //1. 数据准备
+//    NSMutableArray *result = [[NSMutableArray alloc] init];
+//    AINodeBase *node = [SMGUtils searchNode:node_p];
+//    if (!node) return result;
+//    
+//    //2. 收集本身
+//    [result addObject:node_p];
+//    
+//    //3. 收集抽象
+//    if (absLimit > 0) {
+//        NSArray *abs_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All_Normal:node]];
+//        [result addObjectsFromArray:ARR_SUB(abs_ps, 0, absLimit)];
+//    }
+//    
+//    //4. 收集具象
+//    if (conLimit > 0) {
+//        NSArray *con_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All_Normal:node]];
+//        [result addObjectsFromArray:ARR_SUB(con_ps, 0, conLimit)];
+//    }
+//    return result;
+//}
 
-+(NSMutableArray*) collectionAlgRefs:(NSArray*)alg_ps itemRefLimit:(NSInteger)itemRefLimit except_p:(AIKVPointer*)except_p{
-    //1. 数据准备
-    alg_ps = ARRTOOK(alg_ps);
-    NSMutableArray *result = [[NSMutableArray alloc] init];
-    
-    //2. 收集
-    NSMutableArray *iRef_ps = [[NSMutableArray alloc] init];
-    for (AIKVPointer *item_p in alg_ps) {
-        AIAlgNodeBase *item = [SMGUtils searchNode:item_p];
-        NSArray *itemRefs = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg_Normal:item]];
-        
-        //3. 去除不应期 & 保留itemRefLimit个;
-        if (except_p) [result removeObject:except_p];
-        [result addObjectsFromArray:ARR_SUB(itemRefs, 0, itemRefLimit)];
-    }
-    return result;
-}
+//+(NSMutableArray*) collectionAlgRefs:(NSArray*)alg_ps itemRefLimit:(NSInteger)itemRefLimit except_p:(AIKVPointer*)except_p{
+//    //1. 数据准备
+//    alg_ps = ARRTOOK(alg_ps);
+//    NSMutableArray *result = [[NSMutableArray alloc] init];
+//    
+//    //2. 收集
+//    NSMutableArray *iRef_ps = [[NSMutableArray alloc] init];
+//    for (AIKVPointer *item_p in alg_ps) {
+//        AIAlgNodeBase *item = [SMGUtils searchNode:item_p];
+//        NSArray *itemRefs = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg_Normal:item]];
+//        
+//        //3. 去除不应期 & 保留itemRefLimit个;
+//        if (except_p) [result removeObject:except_p];
+//        [result addObjectsFromArray:ARR_SUB(itemRefs, 0, itemRefLimit)];
+//    }
+//    return result;
+//}
 
 @end
 
