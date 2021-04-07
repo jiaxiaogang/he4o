@@ -124,9 +124,9 @@
     NSArray *type_ps = Ports2Pits([AINetUtils absPorts_All:pAlg type:type]);
     //TODOTOMORROW20210407:
     //1. 与glConAlg_ps取交集,取出有效的前limit个;
+    type_ps = [SMGUtils filterSame_ps:type_ps parent_ps:glConAlg_ps];
+    type_ps = ARR_SUB(type_ps, 0, 3);
     //2. 全不应期掉时,再向着pAlg的抽象,取其typePorts,再取前limit个尝试;
-    
-    
     
     for (AIKVPointer *type_p in type_ps) {
         //6. 用mIsC有效的glAlg具象指向节点,向refPorts取到relativeFos返回;
@@ -149,6 +149,12 @@
             return item;
         }
         //11.全不通过,while向pAlg的抽象继续找;
+        
+        
+        
+        
+        
+        
     }
     
     return nil;
