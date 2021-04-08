@@ -395,6 +395,7 @@
  *  3. 一个抽象了a1-range-a2的时序,必然是抽象的,必然是硬盘网络中的;所以此处不必考虑联想内存网络中的assAbFo;
  *  @param glhnAlg : 即glhn节点,根据之索引取conPorts,可取到所有"有无大小"概念经历;
  *  @param mModel : 最后一帧短时InModel (主要使用protoAlg识别到的局部匹配大全 (亦有全含的,排前面));
+ *  @param protoFo : 当前mModel.protoFo,为当前场景;
  *  @version
  *      2020.03.29: 将assFo依range来联想,而非"有/无/大/小";以解决类比抽象时容易过度收束的问题;
  *      2020.10.27: 新增partAlg_ps参数,找出最相似的assFo,再进行类比 (旧做法是只限Inner同类) (参考21102);
@@ -405,8 +406,51 @@
  *      2020.12.13: 使partAlg_ps/matchAlg_ps与conAlg_ps取交集时,保持原概念匹配的有序 (参考21194-todo2);
  *      2020.12.13: 同时支持parts和matchs,各取三条进行assFo联想 (参考21194-todo1);
  *      2020.12.13: assFo中,索引alg不在最后一位时,跳过不进行内中外类比 (因为调试测得有非末位被联想到的情况,参考代码valid非末位);
+ *      2021.04.08: v3_assFo联想方式:由左向右alg.refPorts,改为下向上protoFo.absPorts路径联想,这样更场景理性避免混乱 (参考22212);
  */
 +(void)analogyInner_Outside_V2:(AINetAbsFoNode*)abFo type:(AnalogyType)type mModel:(AIShortMatchModel*)mModel glhnAlg:(AIAlgNodeBase*)glhnAlg{
+    //1. 取所有GL经历 & 与此次类似GL经历;
+    NSArray *glConAlg_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:glhnAlg]];
+    NSArray *validPart_ps = [SMGUtils filterSame_ps:glConAlg_ps parent_ps:mModel.partAlg_ps];
+    NSArray *validMatch_ps = [SMGUtils filterSame_ps:glConAlg_ps parent_ps:[SMGUtils convertPointersFromNodes:mModel.matchAlgs]];
+    
+    //2. validParts和validMatchs各收集3条;
+    NSMutableArray *valids = [[NSMutableArray alloc] init];
+    [valids addObjectsFromArray:ARR_SUB(validPart_ps, 0, 2)];
+    [valids addObjectsFromArray:ARR_SUB(validMatch_ps, 0, 2)];
+    
+    //2. 类比准备_依次取出有效的fo_对与此次类似的前(3-4/*有可能与abFo重复一条*/)条;
+    if (Log4InOutAna) NSLog(@"--------- 内中外 ---------\n%@ 经验数:%ld",Fo2FStr(abFo),(long)valids.count);
+    for (AIKVPointer *valid in valids) {
+        NSArray *assFoPorts = [AINetUtils refPorts_All4Alg:[SMGUtils searchNode:valid]];
+        assFoPorts = [SMGUtils filterPorts:assFoPorts havTypes:@[@(type)] noTypes:nil];
+        assFoPorts = ARR_SUB(assFoPorts, 0, 3);
+        if (Log4InOutAna) NSLog(@"------ 内中外根据glConAlg:%@ 引用同类数:%lu",AlgP2FStr(valid),(long)assFoPorts.count);
+        
+        //4. 类比准备_取出assFo (不能是abFo);
+        for (AIPort *assFoPort in assFoPorts) {
+            //4. abFo和assFo一致时无效;
+            if ([assFoPort.target_p isEqual:abFo.pointer]) continue;
+            AIFoNodeBase *assFo = [SMGUtils searchNode:assFoPort.target_p];
+            
+            //4. 2020.12.13: valid非末位(backAlg),则无效;
+            if (![valid isEqual:ARR_INDEX_REVERSE(assFo.content_ps, 0)]) continue;
+            
+            //5. 对abFo和assAbFo进行类比;
+            if (Log4InOutAna) NSLog(@"\n------ 内中外类比 ------\n   Fo: %@ \nassFo: %@",Fo2FStr(abFo),Fo2FStr(assFo));
+            [self analogyOutside:abFo assFo:assFo type:type createAbsAlgBlock:^(AIAlgNodeBase *createAlg, NSInteger foIndex, NSInteger assFoIndex) {
+                
+                //6. 当abFo.lastAlg和assFo.lastAlg类比抽象得到absA后,应该让absA抽象指向glAlg (参考21115);
+                if (foIndex == abFo.count - 1 && assFoIndex == assFo.count - 1) {
+                    if (Log4InOutAna) NSLog(@"-> 内中外类比_关联:%@ ABSTO:%@",Alg2FStr(createAlg),Alg2FStr(glhnAlg));
+                    [AINetUtils relateAlgAbs:(AIAbsAlgNode*)glhnAlg conNodes:@[createAlg] isNew:false];
+                }
+            }];
+        }
+    }
+}
+
++(void)analogyInner_Outside_V3:(AINetAbsFoNode*)abFo protoFo:(AIFoNodeBase*)protoFo type:(AnalogyType)type mModel:(AIShortMatchModel*)mModel glhnAlg:(AIAlgNodeBase*)glhnAlg{
     //1. 取所有GL经历 & 与此次类似GL经历;
     NSArray *glConAlg_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:glhnAlg]];
     NSArray *validPart_ps = [SMGUtils filterSame_ps:glConAlg_ps parent_ps:mModel.partAlg_ps];
