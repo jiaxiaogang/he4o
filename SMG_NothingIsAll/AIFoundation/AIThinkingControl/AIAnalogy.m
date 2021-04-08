@@ -450,7 +450,7 @@
     }
 }
 
-+(void)analogyInner_Outside_V3:(AINetAbsFoNode*)abFo protoFo:(AIFoNodeBase*)protoFo type:(AnalogyType)type mModel:(AIShortMatchModel*)mModel glhnAlg:(AIAlgNodeBase*)glhnAlg{
++(void)analogyInner_Outside_V3:(AINetAbsFoNode*)abFo type:(AnalogyType)type mModel:(AIShortMatchModel*)mModel glhnAlg:(AIAlgNodeBase*)glhnAlg{
     //1. 取所有GL经历 & 与此次类似GL经历;
     NSArray *glConAlg_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:glhnAlg]];
     NSArray *validPart_ps = [SMGUtils filterSame_ps:glConAlg_ps parent_ps:mModel.partAlg_ps];
@@ -463,20 +463,25 @@
     
     //2. 类比准备_依次取出有效的fo_对与此次类似的前(3-4/*有可能与abFo重复一条*/)条;
     if (Log4InOutAna) NSLog(@"--------- 内中外 ---------\n%@ 经验数:%ld",Fo2FStr(abFo),(long)valids.count);
-    for (AIKVPointer *valid in valids) {
-        NSArray *assFoPorts = [AINetUtils refPorts_All4Alg:[SMGUtils searchNode:valid]];
-        assFoPorts = [SMGUtils filterPorts:assFoPorts havTypes:@[@(type)] noTypes:nil];
-        assFoPorts = ARR_SUB(assFoPorts, 0, 3);
-        if (Log4InOutAna) NSLog(@"------ 内中外根据glConAlg:%@ 引用同类数:%lu",AlgP2FStr(valid),(long)assFoPorts.count);
+    
+    //3. 优先从matchFos联想type经验做为assFo;
+    NSInteger analogyCount = 0;
+    for (AIMatchFoModel *mFoModel in mModel.matchFos) {
+        NSArray *type_ps = Ports2Pits([AINetUtils absPorts_All:mFoModel.matchFo type:type]);
         
-        //4. 类比准备_取出assFo (不能是abFo);
-        for (AIPort *assFoPort in assFoPorts) {
-            //4. abFo和assFo一致时无效;
-            if ([assFoPort.target_p isEqual:abFo.pointer]) continue;
+        //4. 检查type_ps元素的有效性 (比如必须为距小时序才可以参与外类比);
+        for (AIKVPointer *type_p in type_ps) {
+            
+            //6. 不可与abFo重复;
+            if ([type_p isEqual:abFo.pointer]) continue;
             AIFoNodeBase *assFo = [SMGUtils searchNode:assFoPort.target_p];
+            
+            //6. 与glConAlg_ps的元素有引用关系;
+            
             
             //4. 2020.12.13: valid非末位(backAlg),则无效;
             if (![valid isEqual:ARR_INDEX_REVERSE(assFo.content_ps, 0)]) continue;
+            
             
             //5. 对abFo和assAbFo进行类比;
             if (Log4InOutAna) NSLog(@"\n------ 内中外类比 ------\n   Fo: %@ \nassFo: %@",Fo2FStr(abFo),Fo2FStr(assFo));
@@ -488,7 +493,21 @@
                     [AINetUtils relateAlgAbs:(AIAbsAlgNode*)glhnAlg conNodes:@[createAlg] isNew:false];
                 }
             }];
+            
+            
+            if (!absFo) continue;
+            
+            //8. 将外类比抽象时做嵌套关联 & 指定强度 (目前由absPort+type表征);
+            [AINetUtils relateDiff:absFo baseNode:matchFo strongPorts:@[protoPort,subPort]];
+            
+            //9. 类比三条;
+            analogyCount ++;
+            if (analogyCount >= 3) break;
+            
         }
+        
+        
+        
     }
 }
 
@@ -528,6 +547,8 @@
  *      2021.04.02: dsPorts循环中,进行relate时删除item了,导致闪退,解决:copy一份进行循环 T;
  *  @version
  *      2021.03.25: 嵌套关联 & 外类比assFo改为使用嵌套关联来联想;
+ *  @todo
+ *      2021.04.08: 考虑支持从抽象protoFo.absPorts.dsPorts中找assFo;
  */
 +(void) analogy_Feedback_Diff:(AIFoNodeBase*)protoFo matchFo:(AIFoNodeBase*)matchFo{
     //1. 数据检查 (本身就是虚mv则返回:此方法仅对实mv做处理,本身就是虚mv则不做任何处理);
