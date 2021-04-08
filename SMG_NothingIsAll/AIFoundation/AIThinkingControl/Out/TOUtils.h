@@ -68,6 +68,7 @@
  *  @param conLayer : 从具象取几层 (不含当前层),一般取:1层当前层+1层具象层=共两层即可;
  */
 //+(NSArray*) collectAbsPs:(AINodeBase*)protoNode type:(AnalogyType)type conLayer:(NSInteger)conLayer absLayer:(NSInteger)absLayer;
++(NSMutableArray*) collectAbsPorts:(NSArray*)proto_ps singleLimit:(NSInteger)singleLimit havTypes:(NSArray*)havTypes noTypes:(NSArray*)noTypes;
 
 /**
  *  MARK:--------------------TOP.diff正负两个模式--------------------

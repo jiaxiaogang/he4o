@@ -120,14 +120,63 @@
     AIAlgNodeBase *glAlg = [SMGUtils searchNode:gl_p];
     NSArray *glConAlg_ps = Ports2Pits([AINetUtils conPorts_All:glAlg]);
     
-    //3. 根据参考pAlg向抽象路径,分别取gl嵌套 (目前由absPorts+type取);
-    NSArray *type_ps = Ports2Pits([AINetUtils absPorts_All:pAlg type:type]);
-    //TODOTOMORROW20210407:
-    //1. 与glConAlg_ps取交集,取出有效的前limit个;
-    type_ps = [SMGUtils filterSame_ps:type_ps parent_ps:glConAlg_ps];
-    type_ps = ARR_SUB(type_ps, 0, 3);
-    //2. 全不应期掉时,再向着pAlg的抽象,取其typePorts,再取前limit个尝试;
+    //3. 根据(pAlg & pAlg.abs & pAlg.abs.abs)抽象路径,取分别尝试联想(hnglAlg.refPorts)经验;
+    NSMutableArray *curMasks = [[NSMutableArray alloc] init];
+    for (NSInteger i = 0; i < cGetInnerAbsLayer; i++) {
+        //4. 取当前层的所有参考Alg_curMaskAlgs;
+        if (i == 0) {
+            //5. 第0层时,收集pAlg即可;
+            [curMasks addObject:pAlg.pointer];
+        }else{
+            //6. 非0层时,根据上层获取下层,并收集 (即上层全不应期掉了,向着pAlg抽象方向继续尝试);
+            curMasks = [TOUtils collectAbsPorts:curMasks singleLimit:cGetInnerAbsCount havTypes:nil noTypes:@[@(ATGreater),@(ATLess),@(ATHav),@(ATNone),@(ATPlus),@(ATSub)]];
+        }
+        
+        //7. 从当前层curMasks逐个尝试取hnglAlg.refPorts;
+        for (AIKVPointer *item in curMasks) {
+            AIKVPointer *result = [self getInner_Single:item type:type except_ps:except_ps glConAlg_ps:glConAlg_ps];
+            if (result) return result;
+        }
+        //8. 当前层失败_curMaskAlgs统统失败_循环继续下层;
+    }
+    return nil;
+}
+
+/**
+ *  MARK:--------------------从Alg中获取指定标识稀疏码的值--------------------
+ */
++(double) getValueDataFromAlg:(AIKVPointer*)alg_p valueIdentifier:(NSString*)valueIdentifier{
+    AIAlgNodeBase *alg = [SMGUtils searchNode:alg_p];
+    if (alg) {
+        AIKVPointer *value_p = ARR_INDEX([SMGUtils filterPointers:alg.content_ps identifier:valueIdentifier], 0);
+        return [NUMTOOK([AINetIndex getData:value_p]) doubleValue];
+    }
+    return 0;
+}
+
+//MARK:===============================================================
+//MARK:                     < privateMethod >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------指定单条maskAlg获取inner经验--------------------
+ *  @param glConAlg_ps : 所有可用的glConAlg (参考21115);
+ */
++(AIKVPointer*) getInner_Single:(AIKVPointer*)maskAlg_p type:(AnalogyType)type except_ps:(NSArray*)except_ps glConAlg_ps:(NSArray*)glConAlg_ps{
+    //1. 数据检查;
+    AIAlgNodeBase *maskAlg = [SMGUtils searchNode:maskAlg_p];
+    except_ps = ARRTOOK(except_ps);
+    glConAlg_ps = ARRTOOK(glConAlg_ps);
+    if (!maskAlg) return nil;
     
+    //2. 根据maskAlg,取gl嵌套 (目前由absPorts+type取);
+    NSArray *type_ps = Ports2Pits([AINetUtils absPorts_All:maskAlg type:type]);
+    
+    //3. 与glConAlg_ps取交集,取出有效的前limit个;
+    type_ps = [SMGUtils filterSame_ps:type_ps parent_ps:glConAlg_ps];
+    type_ps = ARR_SUB(type_ps, 0, cGetInnerHNGLCount);
+    
+    //4. 从type_ps逐个尝试取.refPorts;
     for (AIKVPointer *type_p in type_ps) {
         //6. 用mIsC有效的glAlg具象指向节点,向refPorts取到relativeFos返回;
         AIAlgNodeBase *typeAlg = [SMGUtils searchNode:type_p];
@@ -148,28 +197,8 @@
             //10. 全部通过,返回;
             return item;
         }
-        //11.全不通过,while向pAlg的抽象继续找;
-        
-        
-        
-        
-        
-        
     }
-    
     return nil;
-}
-
-/**
- *  MARK:--------------------从Alg中获取指定标识稀疏码的值--------------------
- */
-+(double) getValueDataFromAlg:(AIKVPointer*)alg_p valueIdentifier:(NSString*)valueIdentifier{
-    AIAlgNodeBase *alg = [SMGUtils searchNode:alg_p];
-    if (alg) {
-        AIKVPointer *value_p = ARR_INDEX([SMGUtils filterPointers:alg.content_ps identifier:valueIdentifier], 0);
-        return [NUMTOOK([AINetIndex getData:value_p]) doubleValue];
-    }
-    return 0;
 }
 
 @end

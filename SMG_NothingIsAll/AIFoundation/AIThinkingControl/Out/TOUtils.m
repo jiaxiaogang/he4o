@@ -219,6 +219,21 @@
 //    return result;
 //}
 
++(NSMutableArray*) collectAbsPorts:(NSArray*)proto_ps singleLimit:(NSInteger)singleLimit havTypes:(NSArray*)havTypes noTypes:(NSArray*)noTypes{
+    //1. 数据准备;
+    proto_ps = ARRTOOK(proto_ps);
+    
+    //2. 非0层时,根据上层获取下层,并收集 (即上层全不应期掉了,向着pAlg抽象方向继续尝试);
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    for (AIKVPointer *item in proto_ps) {
+        AINodeBase *protoNode = [SMGUtils searchNode:item];
+        NSArray *abs_ps = Ports2Pits([AINetUtils absPorts_All:protoNode havTypes:havTypes noTypes:noTypes]);
+        abs_ps = ARR_SUB(abs_ps, 0, singleLimit);
+        [result addObjectsFromArray:abs_ps];
+    }
+    return result;
+}
+
 /**
  *  MARK:--------------------TOP.diff正负两个模式--------------------
  *  @desc 联想方式,参考19192示图 (此行为后补注释);

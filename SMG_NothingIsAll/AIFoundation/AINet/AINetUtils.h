@@ -199,6 +199,7 @@
 +(NSArray*) absPorts_All:(AINodeBase*)node;
 +(NSArray*) absPorts_All_Normal:(AINodeBase*)node;
 +(NSArray*) absPorts_All:(AINodeBase*)node type:(AnalogyType)type;
++(NSArray*) absPorts_All:(AINodeBase*)node havTypes:(NSArray*)havTypes noTypes:(NSArray*)noTypes;
 
 /**
  *  MARK:--------------------取hdConPorts + memConPorts--------------------

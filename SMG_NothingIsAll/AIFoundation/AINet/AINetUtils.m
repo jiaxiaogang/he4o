@@ -502,8 +502,11 @@
     return [SMGUtils filterPorts_Normal:allPorts];
 }
 +(NSArray*) absPorts_All:(AINodeBase*)node type:(AnalogyType)type{
+    return [self absPorts_All:node havTypes:@[@(type)] noTypes:nil];
+}
++(NSArray*) absPorts_All:(AINodeBase*)node havTypes:(NSArray*)havTypes noTypes:(NSArray*)noTypes{
     NSArray *allPorts = [self absPorts_All:node];
-    return [SMGUtils filterPorts:allPorts havTypes:@[@(type)] noTypes:nil];
+    return [SMGUtils filterPorts:allPorts havTypes:havTypes noTypes:noTypes];
 }
 
 +(NSArray*) conPorts_All:(AINodeBase*)node{
