@@ -64,8 +64,9 @@
  *      2. tor_OPushM()中为focusModel.base;
  *      3. _Hav中R-模式时,为参数outModel的base (即SFo);
  */
-@property (strong, nonatomic) AIFoNodeBase *pm_Fo;
-@property (strong, nonatomic) AIAlgNodeBase *pm_ProtoAlg;//getInnerAlg(GL)时,用作联想参考;
+@property (strong, nonatomic) AIFoNodeBase *pm_Fo;          //当前解决方案fo (=baseAlg.baseFo);
+@property (strong, nonatomic) AIAlgNodeBase *pm_ProtoAlg;   //当前对应短时记忆中protoAlg (getInnerAlg时,用作联想参考);
+@property (strong, nonatomic) AIShortMatchModel *pm_inModel;//当前短时记忆 (getInnerV3用,用来从mFo更理性联想);
 
 /**
  *  MARK:--------------------实际发生的概念保留--------------------

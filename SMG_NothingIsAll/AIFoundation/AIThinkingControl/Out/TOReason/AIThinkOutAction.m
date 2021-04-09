@@ -230,6 +230,7 @@
                     //reModel.pm_MVAT = baseFo.cmvNode_p.algsType;
                     reModel.pm_Fo = baseFo;
                     reModel.pm_ProtoAlg = inModel.protoAlg;
+                    reModel.pm_inModel = inModel;
                     
                     //e. 理性评价
                     __block BOOL reasonScore = true;
