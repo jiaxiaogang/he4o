@@ -323,13 +323,18 @@
 //MARK:                     < 抽具象关联 Relate (外界调用,支持alg/fo) >
 //MARK:===============================================================
 +(void) relateAlgAbs:(AIAbsAlgNode*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew{
-    [self relateGeneralAbs:absNode absConPorts:absNode.conPorts conNodes:conNodes isNew:isNew];
+    [self relateGeneralAbs:absNode absConPorts:absNode.conPorts conNodes:conNodes isNew:isNew difStrong:1];
 }
 +(void) relateFoAbs:(AINetAbsFoNode*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew{
-    [self relateGeneralAbs:absNode absConPorts:absNode.conPorts conNodes:conNodes isNew:isNew];
+    [self relateGeneralAbs:absNode absConPorts:absNode.conPorts conNodes:conNodes isNew:isNew difStrong:1];
 }
 +(void) relateMvAbs:(AIAbsCMVNode*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew{
-    [self relateGeneralAbs:absNode absConPorts:absNode.conPorts conNodes:conNodes isNew:isNew];
+    [self relateGeneralAbs:absNode absConPorts:absNode.conPorts conNodes:conNodes isNew:isNew difStrong:1];
+}
+
++(void) relateFoAbs:(AINetAbsFoNode*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew strongPorts:(NSArray*)strongPorts{
+    NSInteger difStrong = [self getMaxStrong:strongPorts];
+    [self relateGeneralAbs:absNode absConPorts:absNode.conPorts conNodes:conNodes isNew:isNew difStrong:difStrong];
 }
 
 /**
@@ -339,7 +344,7 @@
  *  @version
  *      2021.01.11: 当SP节点时,difStrong为1 (参考22032);
  */
-+(void) relateGeneralAbs:(AINodeBase*)absNode absConPorts:(NSMutableArray*)absConPorts conNodes:(NSArray*)conNodes isNew:(BOOL)isNew{
++(void) relateGeneralAbs:(AINodeBase*)absNode absConPorts:(NSMutableArray*)absConPorts conNodes:(NSArray*)conNodes isNew:(BOOL)isNew difStrong:(NSInteger)difStrong{
     if (ISOK(absNode, AINodeBase.class)) {
         //1. 具象节点的 关联&存储
         conNodes = ARRTOOK(conNodes);
@@ -351,7 +356,6 @@
             
             //2. 计算disStrong (默认为1 & 当新节点且不是SP时从具象取maxStrong);
             AnalogyType type = [ThinkingUtils convertDS2AnalogyType:absNode.pointer.dataSource];
-            NSInteger difStrong = 1;
             if (isNew && type != ATSub && type != ATPlus) {
                 difStrong = [self getConMaxStrong:conNode];
             }

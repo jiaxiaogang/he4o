@@ -112,13 +112,9 @@
 +(AIKVPointer*) getInnerAlgV3:(AIAlgNodeBase*)pAlg vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps{
     //1. 数据检查hAlg_根据type和value_p找ATHav
     NSLog(@"-------------- getInnerAlg (%@) --------------\nATDS:%@&%@ 参照:%@\n不应期:%@",ATType2Str(type),vAT,vDS,Alg2FStr(pAlg),Pits2FStr(except_ps));
-    AIKVPointer *innerValue_p = [theNet getNetDataPointerWithData:@(type) algsType:vAT dataSource:vDS];
     
-    //2. 取glConAlg_ps,从glValue->glAlg->glConAlgs;
-    NSArray *gl_ps = Ports2Pits([AINetUtils refPorts_All4Value:innerValue_p]);
-    AIKVPointer *gl_p = ARR_INDEX(gl_ps, 0);//glAlg唯一
-    AIAlgNodeBase *glAlg = [SMGUtils searchNode:gl_p];
-    NSArray *glConAlg_ps = Ports2Pits([AINetUtils conPorts_All:glAlg]);
+    //2. 取glConAlg_ps;
+    NSArray *glConAlg_ps = [self getHNGLConAlg_ps:type vAT:vAT vDS:vDS];
     
     //3. 根据(pAlg & pAlg.abs & pAlg.abs.abs)抽象路径,取分别尝试联想(hnglAlg.refPorts)经验;
     NSMutableArray *curMasks = [[NSMutableArray alloc] init];
@@ -154,6 +150,19 @@
     return 0;
 }
 
+/**
+ *  MARK:--------------------获取glConAlg_ps--------------------
+ *  @desc 联想路径说明: (glConAlg_ps = glValue.refPorts->glAlg.conPorts->glConAlgs) (参考22211示图);
+ */
++(NSArray*) getHNGLConAlg_ps:(AnalogyType)type vAT:(NSString*)vAT vDS:(NSString*)vDS{
+    AIKVPointer *innerValue_p = [theNet getNetDataPointerWithData:@(type) algsType:vAT dataSource:vDS];
+    NSArray *gl_ps = Ports2Pits([AINetUtils refPorts_All4Value:innerValue_p]);
+    AIKVPointer *gl_p = ARR_INDEX(gl_ps, 0);//glAlg唯一
+    AIAlgNodeBase *glAlg = [SMGUtils searchNode:gl_p];
+    NSArray *glConAlg_ps = Ports2Pits([AINetUtils conPorts_All:glAlg]);
+    return glConAlg_ps;
+}
+
 //MARK:===============================================================
 //MARK:                     < privateMethod >
 //MARK:===============================================================
@@ -161,6 +170,7 @@
 /**
  *  MARK:--------------------指定单条maskAlg获取inner经验--------------------
  *  @param glConAlg_ps : 所有可用的glConAlg (参考21115);
+ *  @todo 改为用maskFo获取inner经验
  */
 +(AIKVPointer*) getInner_Single:(AIKVPointer*)maskAlg_p type:(AnalogyType)type except_ps:(NSArray*)except_ps glConAlg_ps:(NSArray*)glConAlg_ps{
     //1. 数据检查;
@@ -170,17 +180,17 @@
     if (!maskAlg) return nil;
     
     //2. 根据maskAlg,取gl嵌套 (目前由absPorts+type取);
-    NSArray *type_ps = Ports2Pits([AINetUtils absPorts_All:maskAlg type:type]);
+    NSArray *hnglAlg_ps = Ports2Pits([AINetUtils absPorts_All:maskAlg type:type]);
     
     //3. 与glConAlg_ps取交集,取出有效的前limit个;
-    type_ps = [SMGUtils filterSame_ps:type_ps parent_ps:glConAlg_ps];
-    type_ps = ARR_SUB(type_ps, 0, cGetInnerHNGLCount);
+    hnglAlg_ps = [SMGUtils filterSame_ps:hnglAlg_ps parent_ps:glConAlg_ps];
+    hnglAlg_ps = ARR_SUB(hnglAlg_ps, 0, cGetInnerHNGLCount);
     
     //4. 从type_ps逐个尝试取.refPorts;
-    for (AIKVPointer *type_p in type_ps) {
+    for (AIKVPointer *hnglAlg_p in hnglAlg_ps) {
         //6. 用mIsC有效的glAlg具象指向节点,向refPorts取到relativeFos返回;
-        AIAlgNodeBase *typeAlg = [SMGUtils searchNode:type_p];
-        NSArray *relativeFoPorts = [SMGUtils filterPorts:[AINetUtils refPorts_All4Alg:typeAlg] havTypes:@[@(type)] noTypes:nil];
+        AIAlgNodeBase *hnglAlg = [SMGUtils searchNode:hnglAlg_p];
+        NSArray *relativeFoPorts = [SMGUtils filterPorts:[AINetUtils refPorts_All4Alg:hnglAlg] havTypes:@[@(type)] noTypes:nil];
         NSArray *relativeFo_ps = [SMGUtils convertPointersFromPorts:ARR_SUB(relativeFoPorts, 0, cHavNoneAssFoCount)];
         
         //7. 去掉不应期;
@@ -189,7 +199,7 @@
             
             //8. 当relativeFo末位为glConAlg_p时,结果才有效 (参考21183-3);
             AIFoNodeBase *itemFo = [SMGUtils searchNode:item];
-            if (![type_p isEqual:ARR_INDEX_REVERSE(itemFo.content_ps, 0)]) continue;
+            if (![hnglAlg_p isEqual:ARR_INDEX_REVERSE(itemFo.content_ps, 0)]) continue;
             
             //9. 未发生理性评价 (空S评价);
             if (![AIScore FRS:itemFo]) continue;

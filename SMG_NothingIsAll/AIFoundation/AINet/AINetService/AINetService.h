@@ -28,4 +28,10 @@
  */
 +(double) getValueDataFromAlg:(AIKVPointer*)alg_p valueIdentifier:(NSString*)valueIdentifier;
 
+/**
+ *  MARK:--------------------获取glConAlg_ps--------------------
+ *  @desc 联想路径说明: (glConAlg_ps = glValue.refPorts->glAlg.conPorts->glConAlgs);
+ */
++(NSArray*) getHNGLConAlg_ps:(AnalogyType)type vAT:(NSString*)vAT vDS:(NSString*)vDS;
+
 @end
