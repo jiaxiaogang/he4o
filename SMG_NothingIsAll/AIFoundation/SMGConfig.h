@@ -48,7 +48,7 @@
 #define cDataOutAssAlgCount 5   //在决策过程中,algScheme横向最大检索条数;
 #define cDataOutAssAlgDeep 2    //在决策过程中,algScheme纵向最大检索深度;
 
-#define cHavNoneAssFoCount 5    //Hav和None在联想其fo时,最大条数;
+#define cHavNoneAssFoCount 5    //Hav和None在联想其fo时,最大条数 (getInnerV3迭代后,不需要refPorts了,所以废弃);
 #define cGetInnerAbsLayer 3     //getInner()中,Alg纵向尝试layer层;
 #define cGetInnerAbsCount 3     //getInner()中,Alg纵向每层取limit个;
 #define cGetInnerHNGLCount 3    //getInner()中,type嵌套取limit条;
