@@ -42,6 +42,7 @@
  *      2020.12.28: 返回前,直接进行未发生理性评价 (以简化流程控制,且"未发生"本来就是指未行为化前);
  *      2021.04.06: v3嵌套GL迭代: 联想方式由glValue索引向宏观,改为反过来:从maskFo场景取嵌套GL经验 (参考22204&R-V4模式联想方式);
  *      2021.04.10: 将从maskAlg出发联想,改成从maskFo出发联想 (参考22211);
+ *      2021.04.10: GL主方向为抽象,HN主方向为具象 (参考22213);
  *  @result : 返回relativeFo_ps,用backConAlg节点,由此节点取refPorts,再筛选type,可取到glFo经历;
  */
 +(AIKVPointer*) getInnerAlgV3:(AIFoNodeBase*)maskFo vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps{
@@ -60,7 +61,8 @@
             [curMasks addObject:maskFo.pointer];
         }else{
             //6. 非0层时,根据上层获取下层,并收集 (即上层全不应期掉了,向着pAlg抽象方向继续尝试);
-            curMasks = [TOUtils collectAbsPorts:curMasks singleLimit:cGetInnerAbsCount havTypes:nil noTypes:@[@(ATGreater),@(ATLess),@(ATHav),@(ATNone),@(ATPlus),@(ATSub)]];
+            BOOL isAbs = (type == ATLess || type == ATGreater);
+            curMasks = [TOUtils collectPorts:curMasks singleLimit:cGetInnerAbsCount havTypes:nil noTypes:@[@(ATGreater),@(ATLess),@(ATHav),@(ATNone),@(ATPlus),@(ATSub)] isAbs:isAbs];
         }
         
         //7. 从当前层curMasks逐个尝试取hnglAlg.refPorts;

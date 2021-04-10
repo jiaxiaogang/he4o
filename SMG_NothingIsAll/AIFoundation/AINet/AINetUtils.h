@@ -208,6 +208,7 @@
  */
 +(NSArray*) conPorts_All:(AINodeBase*)node;
 +(NSArray*) conPorts_All_Normal:(AINodeBase*)node;
++(NSArray*) conPorts_All:(AINodeBase*)node havTypes:(NSArray*)havTypes noTypes:(NSArray*)noTypes;
 
 /**
  *  MARK:--------------------取hdRefPorts + memRefPorts--------------------

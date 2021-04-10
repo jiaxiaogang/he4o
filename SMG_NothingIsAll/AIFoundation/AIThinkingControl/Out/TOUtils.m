@@ -220,6 +220,12 @@
 //}
 
 +(NSMutableArray*) collectAbsPorts:(NSArray*)proto_ps singleLimit:(NSInteger)singleLimit havTypes:(NSArray*)havTypes noTypes:(NSArray*)noTypes{
+    return [self collectPorts:proto_ps singleLimit:singleLimit havTypes:havTypes noTypes:noTypes isAbs:true];
+}
++(NSMutableArray*) collectConPorts:(NSArray*)proto_ps singleLimit:(NSInteger)singleLimit havTypes:(NSArray*)havTypes noTypes:(NSArray*)noTypes{
+    return [self collectPorts:proto_ps singleLimit:singleLimit havTypes:havTypes noTypes:noTypes isAbs:false];
+}
++(NSMutableArray*) collectPorts:(NSArray*)proto_ps singleLimit:(NSInteger)singleLimit havTypes:(NSArray*)havTypes noTypes:(NSArray*)noTypes isAbs:(BOOL)isAbs{
     //1. 数据准备;
     proto_ps = ARRTOOK(proto_ps);
     
@@ -227,9 +233,15 @@
     NSMutableArray *result = [[NSMutableArray alloc] init];
     for (AIKVPointer *item in proto_ps) {
         AINodeBase *protoNode = [SMGUtils searchNode:item];
-        NSArray *abs_ps = Ports2Pits([AINetUtils absPorts_All:protoNode havTypes:havTypes noTypes:noTypes]);
-        abs_ps = ARR_SUB(abs_ps, 0, singleLimit);
-        [result addObjectsFromArray:abs_ps];
+        NSArray *port_ps = nil;
+        if (isAbs) {
+            port_ps = Ports2Pits([AINetUtils absPorts_All:protoNode havTypes:havTypes noTypes:noTypes]);;
+        }else{
+            port_ps = Ports2Pits([AINetUtils conPorts_All:protoNode havTypes:havTypes noTypes:noTypes]);
+        }
+        
+        port_ps = ARR_SUB(port_ps, 0, singleLimit);
+        [result addObjectsFromArray:port_ps];
     }
     return result;
 }

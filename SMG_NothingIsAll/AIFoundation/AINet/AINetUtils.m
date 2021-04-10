@@ -529,6 +529,11 @@
     NSArray *allPorts = [self conPorts_All:node];
     return [SMGUtils filterPorts_Normal:allPorts];
 }
++(NSArray*) conPorts_All:(AINodeBase*)node havTypes:(NSArray*)havTypes noTypes:(NSArray*)noTypes{
+    NSArray *allPorts = [self conPorts_All:node];
+    return [SMGUtils filterPorts:allPorts havTypes:havTypes noTypes:noTypes];
+}
+
 +(NSArray*) refPorts_All4Alg:(AIAlgNodeBase*)node{
     NSMutableArray *allPorts = [[NSMutableArray alloc] init];
     if (ISOK(node, AIAlgNodeBase.class)) {
