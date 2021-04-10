@@ -107,11 +107,11 @@
 /**
  *  MARK:--------------------联想GL经验--------------------
  *  @version
- *      2021.04.06: v3嵌套GL迭代: 联想方式改为直接从pAlg取嵌套GL经验,而不是先glValue索引,再mIsC判断 (参考22204&R-V4模式联想方式);
+ *      2021.04.06: v3嵌套GL迭代: 联想方式由glValue索引向宏观,改为反过来:从maskFo场景取嵌套GL经验 (参考22204&R-V4模式联想方式);
  */
-+(AIKVPointer*) getInnerAlgV3:(AIAlgNodeBase*)pAlg vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps{
++(AIKVPointer*) getInnerAlgV3:(AIFoNodeBase*)maskFo vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps{
     //1. 数据检查hAlg_根据type和value_p找ATHav
-    NSLog(@"-------------- getInnerAlg (%@) --------------\nATDS:%@&%@ 参照:%@\n不应期:%@",ATType2Str(type),vAT,vDS,Alg2FStr(pAlg),Pits2FStr(except_ps));
+    NSLog(@"-------------- getInnerAlg (%@) --------------\nATDS:%@&%@ 参照:%@\n不应期:%@",ATType2Str(type),vAT,vDS,Fo2FStr(maskFo),Pits2FStr(except_ps));
     
     //2. 取glConAlg_ps;
     NSArray *glConAlg_ps = [self getHNGLConAlg_ps:type vAT:vAT vDS:vDS];

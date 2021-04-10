@@ -792,9 +792,7 @@
         [self.toAction convert2Out_Hav:(TOAlgModel*)beginModel];
     }else if(ISOK(beginModel, TOValueModel.class)){
         //a2. avdIsValue: 再决策,转移至TOAction;
-        TOAlgModel *baseAlg = (TOAlgModel*)beginModel.baseOrGroup;
-        //a2. 2020.10.18: 传递参数由baseAlg.sp_P改成pm_ProtoAlg (因为飞近上面的坚果,却飞向左) (参考2105c)
-        [self.toAction convert2Out_GL:baseAlg.pm_ProtoAlg outModel:(TOValueModel*)beginModel];
+        [self.toAction convert2Out_GL:(TOValueModel*)beginModel];
     }else if(ISOK(beginModel, DemandModel.class)){
         //a3. avdIsDemand: 再决策,转移至TOP.P-;
         [self.delegate aiTOR_MoveForDemand:(DemandModel*)beginModel];

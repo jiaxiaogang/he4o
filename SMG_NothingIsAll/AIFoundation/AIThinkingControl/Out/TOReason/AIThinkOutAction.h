@@ -86,6 +86,6 @@
 -(void) convert2Out_Hav:(TOAlgModel*)outModel;
 
 //用于Value.Begin时调用;
--(void) convert2Out_GL:(AIAlgNodeBase*)alg outModel:(TOValueModel*)outModel;
+-(void) convert2Out_GL:(TOValueModel*)outModel;
 
 @end

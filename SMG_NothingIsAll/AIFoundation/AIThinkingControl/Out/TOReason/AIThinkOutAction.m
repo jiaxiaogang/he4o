@@ -230,7 +230,7 @@
                     //reModel.pm_MVAT = baseFo.cmvNode_p.algsType;
                     reModel.pm_Fo = baseFo;
                     reModel.pm_ProtoAlg = inModel.protoAlg;
-                    reModel.pm_inModel = inModel;
+                    reModel.pm_InModel = inModel;
                     
                     //e. 理性评价
                     __block BOOL reasonScore = true;
@@ -293,18 +293,22 @@
  *          4. 未转移: success
  *          5. 转移: C条件->递归到convert2Out_Single_Alg();
  *  _param vAT & vDS : 用作查找"大/小"的标识;
- *  @param alg : GL(pAlg)的具象概念, (所有微信息变化不应脱离概念,比如鸡蛋可以通过烧成固态,但水不能,所以变成固态这种特征变化,不应脱离概念去操作);
- *          1. _SP时,将pAlg传入;
- *          2. _PM时,将M传入;
+ *  _param fo : 当前maskFo场景, (所有微信息变化不应脱离场景,
+ *          1. 比如鸡蛋可以通过烧成固态,但水不能,所以变成固态这种特征变化,不应脱离概念去操作);
+ 
  *  @version
  *      2020.12.17: getInnerAlg改为返回单条,此处调用支持,并并入流程控制fo.begin (参考21183);
+ *      2020.10.18: 传递参数由baseAlg.sp_P改成pm_ProtoAlg (因为飞近上面的坚果,却飞向左) (参考2105c)
+ *      2021.04.10: 传递参数由baseAlg.pm_ProtoAlg改成自取pm_InModel (因为getInnerV3要求maskFo做为联想起始) (参考22211);
  */
--(void) convert2Out_GL:(AIAlgNodeBase*)alg outModel:(TOValueModel*)outModel {
-    NSLog(@"\n\n=============================== 行为化_GL ===============================\n%@",Alg2FStr(alg));
+-(void) convert2Out_GL:(TOValueModel*)outModel {
+    NSLog(@"\n\n=============================== 行为化_GL ===============================\n加工%@ 现值:%@",Pit2FStr(outModel.content_p),Pit2FStr(outModel.sValue_p));
     //1. 数据准备
     AnalogyType type = [ThinkingUtils compare:outModel.sValue_p valueB_p:outModel.content_p];
     NSString *vAT = outModel.content_p.algsType;
     NSString *vDS = outModel.content_p.dataSource;
+    TOAlgModel *baseAlg = (TOAlgModel*)outModel.baseOrGroup;
+    
     if ((type != ATGreater && type != ATLess)) {
         WLog(@"value_行为化类参数type|value_p错误,相等不必行为化");
         //相等不必行为化,直接返回true;
@@ -318,7 +322,7 @@
     
     //2. 根据type和value_p找ATLess/ATGreater
     //3. 根据havAlg联想时序,并找出新的解决方案,与新的行为化的概念,与新的条件概念; (2020.11.06: 由getInner1Alg直接取relativeFos);
-    AIKVPointer *relativeFo_p = [AINetService getInner1Alg:alg vAT:vAT vDS:vDS type:type except_ps:except_ps];
+    AIKVPointer *relativeFo_p = [AINetService getInnerAlgV3:baseAlg.pm_InModel.protoFo vAT:vAT vDS:vDS type:type except_ps:except_ps];
     if (Log4ActGL) NSLog(@"getInnerAlg(%@): 根据:%@->%@ 找:%@%@ \n联想结果:%@ %@",ATType2Str(type),Pit2FStr(outModel.sValue_p),Pit2FStr(outModel.content_p),vDS,Data2FStr(type, vAT, vDS),Pit2FStr(relativeFo_p),relativeFo_p ? @"↓↓↓↓↓↓↓↓" : @"无计可施");
     
     //5. 转移至_fos

@@ -57,6 +57,11 @@
 //@property (assign, nonatomic) float pm_Score;
 //@property (strong, nonatomic) NSString *pm_MVAT;
 
+//MARK:===============================================================
+//MARK:                     < pm保留信息 >
+//MARK: @todo: 原本不应有这些保留信息,而是对输出期短时记忆树追加层,以使之可用或用别的方法来替代之;
+//MARK:===============================================================
+
 /**
  *  MARK:--------------------pmFo--------------------
  *  @desc 用来取conPorts的Fo
@@ -65,8 +70,23 @@
  *      3. _Hav中R-模式时,为参数outModel的base (即SFo);
  */
 @property (strong, nonatomic) AIFoNodeBase *pm_Fo;          //当前解决方案fo (=baseAlg.baseFo);
-@property (strong, nonatomic) AIAlgNodeBase *pm_ProtoAlg;   //当前对应短时记忆中protoAlg (getInnerAlg时,用作联想参考);
-@property (strong, nonatomic) AIShortMatchModel *pm_inModel;//当前短时记忆 (getInnerV3用,用来从mFo更理性联想);
+
+/**
+ *  MARK:--------------------pmProtoAlg--------------------
+ *  @desc
+ *      1. 来源: 当前对应短时记忆中protoAlg
+ *      2. 用途: getInnerAlg时,用作联想参考 (已由maskFo替代(参考22211));
+ *      3. 赋值说明: _SP时,将pAlg传入 (旧注释,时效存疑);
+ *      4. 赋值说明: _PM时,将M传入 (旧注释,时效存疑);
+ */
+@property (strong, nonatomic) AIAlgNodeBase *pm_ProtoAlg;
+
+/**
+ *  MARK:--------------------当前短时记忆--------------------
+ *  @desc
+ *      1. 用途: getInnerV3用,用来从mFo更理性联想;
+ */
+@property (strong, nonatomic) AIShortMatchModel *pm_InModel;
 
 /**
  *  MARK:--------------------实际发生的概念保留--------------------
