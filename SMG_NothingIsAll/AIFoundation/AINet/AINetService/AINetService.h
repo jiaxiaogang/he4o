@@ -16,12 +16,13 @@
 @interface AINetService : NSObject
 
 /**
- *  MARK:--------------------获取HAlg/GLAlg--------------------
+ *  MARK:--------------------联想HNGL经验--------------------
  *  @desc 获取概念的内类比结果,比如概念的GLHN
- *  @param pAlg : 取alg的大小有无;
+ *  @param maskFo
+ *              1. GL时,传入瞬时中匹配MC的matchAlg,所在的protoFo (即: 符合现实世界的当前场景)->向抽象取嵌套;
+ *              2. HN时,传入决策短时记忆中的alg.baseFo (即: 当前解决方案中,每次得到的坚果,是哪来的)->向具象取嵌套;
  *  @param vAT & vDS : 此内类比类型的微信息at&ds (GL时,为变大小稀疏码的at&ds) (HN时,为变有无的概念的at&ds);
  */
-+(AIKVPointer*) getInner1Alg:(AIAlgNodeBase*)pAlg vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps;
 +(AIKVPointer*) getInnerAlgV3:(AIFoNodeBase*)maskFo vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps;
 
 /**
