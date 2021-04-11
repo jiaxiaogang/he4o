@@ -72,6 +72,9 @@
         }
         //8. 当前层失败_curMaskAlgs统统失败_循环继续下层;
     }
+    [theNV tempRunForceMode:^{
+        [theNV setNodeData:maskFo.pointer lightStr:STRFORMAT(@"%@失败",ATType2Str(type))];
+    }];
     return nil;
 }
 
