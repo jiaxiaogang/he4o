@@ -153,6 +153,7 @@
  *      2020.11.18: mIsC不稳定BUG,将mIsC改为对matchAlgs依次判断 (参考21145);
  *      2020.12.24: isHNGL判断isL写错,导致L时无法触发ActYes与反省类比 (参考isHNGL方法) `T`;
  *      2021.03.15: R-静默成功模式中,mIsC判断将1层改为2层 (参考22163);
+ *      2021.04.11: getInnerV3传maskFo为alg类型的闪退BUG修复 (因为当PM的GL失败时,就会递归到的alg就是MC中的C,它的父节点还是Alg);
  */
 -(void) convert2Out_Hav:(TOAlgModel*)outModel {
     //1. 数据准备 (空白无需行为化);
@@ -195,8 +196,7 @@
         }
         
         //3. 第2级: 优先MC匹配 (当父级为时序,且mv有效时,执行) (参考21059-344图);
-        AIFoNodeBase *baseFo = [SMGUtils searchNode:outModel.baseOrGroup.content_p];
-        if (ISOK(outModel.baseOrGroup, TOFoModel.class) && baseFo) {
+        if (ISOK(outModel.baseOrGroup, TOFoModel.class)) {
             
             //a. 依次判断mModel,只要符合mIsC即可;
             for (NSInteger i = 0; i < theTC.inModelManager.models.count; i++) {
@@ -228,7 +228,7 @@
                     //d. 将理性评价"价值分"保留到短时记忆模型;
                     //reModel.pm_Score = [AIScore score4MV:baseFo.cmvNode_p ratio:1.0f];
                     //reModel.pm_MVAT = baseFo.cmvNode_p.algsType;
-                    reModel.pm_Fo = baseFo;
+                    reModel.pm_Fo = outModel.baseOrGroup.content_p;
                     reModel.pm_ProtoAlg = inModel.protoAlg;
                     reModel.pm_InModel = inModel;
                     
@@ -268,6 +268,10 @@
         NSArray *except_ps = [TOUtils convertPointersFromTOModels:outModel.actionFoModels];
         
         //4. 第3级: 数据检查hAlg_根据type和value_p找ATHav
+        AIKVPointer *baseFo_p = nil;
+        if (ISOK(outModel.baseOrGroup, TOFoModel.class)) baseFo_p = outModel.baseOrGroup.content_p;
+        if(ISOK(outModel.baseOrGroup.baseOrGroup, TOFoModel.class)) baseFo_p = outModel.baseOrGroup.baseOrGroup.content_p;
+        AIFoNodeBase *baseFo = [SMGUtils searchNode:baseFo_p];
         AIKVPointer *relativeFo_p = [AINetService getInnerAlgV3:baseFo vAT:outModel.content_p.algsType vDS:outModel.content_p.dataSource type:ATHav except_ps:except_ps];
         if (Log4ActHav) NSLog(@"getInnerAlg(有): 根据:%@ 找:%@_%@ \n联想结果:%@ %@",Alg2FStr(curAlg),outModel.content_p.algsType,outModel.content_p.dataSource,Pit2FStr(relativeFo_p),relativeFo_p ? @"↓↓↓↓↓↓↓↓" : @"无计可施");
         

@@ -174,7 +174,7 @@
     ////4. 将理性评价"价值分"保留到短时记忆模型;
     //mTOAlgModel.pm_Score = [AIScore score4MV:mModel.matchFo.cmvNode_p ratio:mModel.matchFoValue];
     //mTOAlgModel.pm_MVAT = mModel.matchFo.cmvNode_p.algsType;
-    //mTOAlgModel.pm_Fo = [SMGUtils searchNode:mTOAlgModel.baseOrGroup.content_p];
+    //mTOAlgModel.pm_Fo = mTOAlgModel.baseOrGroup.content_p;
     //
     ////5. 理性评价
     //[self reasonScorePM_V3:mTOAlgModel failure:nil success:nil notNeedPM:^{
@@ -449,7 +449,7 @@
         //5. 将理性评价"价值分"保留到短时记忆模型;
         //focusModel.pm_Score = -[AIScore score4MV:demand.algsType urgentTo:demand.urgentTo delta:demand.delta ratio:1.0f];
         //focusModel.pm_MVAT = demand.algsType;
-        focusModel.pm_Fo = [SMGUtils searchNode:focusModel.baseOrGroup.content_p];
+        focusModel.pm_Fo = focusModel.baseOrGroup.content_p;
         
         //6. 理性评价
         [self reasonScorePM_V3:focusModel failure:nil success:^{
@@ -517,7 +517,7 @@
         if (notNeedPM) notNeedPM();
         return;
     }
-    NSLog(@"\n\n=============================== PM ===============================\nM:%@\nMAtFo:%@",Pit2FStr(outModel.content_p),Fo2FStr(outModel.pm_Fo));
+    NSLog(@"\n\n=============================== PM ===============================\nM:%@\nMAtFo:%@",Pit2FStr(outModel.content_p),Pit2FStr(outModel.pm_Fo));
     if (Log4PM) NSLog(@"---> P独特码:%@",Pits2FStr(outModel.justPValues));
     if (Log4PM) NSLog(@"---> 不应期:%@",Pits2FStr(except_ps));
     if (Log4PM) NSLog(@"---> P有效独特码:%@",Pits2FStr(validJustPValues));

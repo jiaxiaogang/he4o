@@ -69,7 +69,7 @@
  *      2. tor_OPushM()中为focusModel.base;
  *      3. _Hav中R-模式时,为参数outModel的base (即SFo);
  */
-@property (strong, nonatomic) AIFoNodeBase *pm_Fo;          //当前解决方案fo (=baseAlg.baseFo);
+@property (strong, nonatomic) AIKVPointer *pm_Fo;          //当前解决方案fo (=baseAlg.baseFo);
 
 /**
  *  MARK:--------------------pmProtoAlg--------------------
