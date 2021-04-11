@@ -713,6 +713,7 @@
  *  @version
  *      2020.07.06: 当failureModel为TOFoModel时,直接尝试下一方案;
  *      2021.01.28: ReasonDemand.Failure时,直接移出任务池 (参考22081-todo2);
+ *      2021.04.11: 实Alg无需调用alg.begin,即ReplaceAlg时不进行再次alg.begin (参考23013);
  */
 -(void) singleLoopBackWithFailureModel:(TOModelBase*)failureModel {
     //1. 尝试向alg.replace转移Block;
@@ -755,6 +756,11 @@
     }else if(ISOK(failureModel, TOValueModel.class)){
         //a. Value失败时时,判断其右alg的replaceAlgs转移
         TOAlgModel *baseAlg = (TOAlgModel*)failureModel.baseOrGroup;
+        
+        //a. 当前baseAlg本身为实概念(MC的M,即replaceAlg)时,那么跳过,直接取虚概念base.base(MC的C)进行begin (参考23013);
+        if (ISOK(failureModel.baseOrGroup.baseOrGroup, TOAlgModel.class)) {
+            baseAlg = (TOAlgModel*)failureModel.baseOrGroup.baseOrGroup;
+        }
         
         //b. 2020.11.27: algModel永不言败 (永远传给_Hav,只有_Hav全部失败时,才会自行调用failure声明失败) (参考2114B);
         [self singleLoopBackWithBegin:baseAlg];
