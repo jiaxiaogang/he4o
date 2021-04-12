@@ -309,6 +309,11 @@
     if (!ISOK(protoFo, AIFoNodeBase.class)) {
         return;
     }
+    
+    //调试23014BUG
+    [theNV tempRunForceMode:^{
+        [theNV setNodeData:protoFo.pointer lightStr:@"tirProtoFo"];
+    }];
     AIAlgNodeBase *lastAlg = [SMGUtils searchNode:ARR_INDEX_REVERSE(protoFo.content_ps, 0)];
     if (!lastAlg) {
         return;
@@ -338,6 +343,16 @@
         for (AIKVPointer *assFo_p in assFo_ps) {
             AIFoNodeBase *assFo = [SMGUtils searchNode:assFo_p];
             
+            //调试23014BUG
+            if (!assFo.cmvNode_p) {
+                NSLog(@"cmv无效");
+            }else if([AINetUtils isVirtualMv:assFo.cmvNode_p]){
+                NSLog(@"cmv为虚");
+            }else if(ARRISOK([SMGUtils filterArr:inModel.matchFos checkValid:^BOOL(AIMatchFoModel *item) {
+                return [item.matchFo isEqual:assFo];
+            }])){
+                NSLog(@"防重");
+            }
             //5. 无cmv指向的,无效;
             if (!assFo.cmvNode_p || [AINetUtils isVirtualMv:assFo.cmvNode_p]) continue;
             
