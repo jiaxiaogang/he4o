@@ -974,9 +974,6 @@
         NSLog(@"===执行%@",invoked ? @"success" : @"failure");
     }
 }
--(AIShortMatchModel*) toAction_RethinkInnerFo:(AIFoNodeBase*)fo{
-    return [self.delegate aiTOR_RethinkInnerFo:fo];
-}
 -(void) toAction_SubModelFinish:(TOModelBase*)outModel{
     [self singleLoopBackWithFinishModel:outModel];
 }

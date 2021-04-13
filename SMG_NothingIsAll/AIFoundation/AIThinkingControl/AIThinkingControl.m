@@ -36,7 +36,7 @@
  *  2. 在联想中,遇到的mv,都叠加到当前demand下;
  *
  */
-@interface AIThinkingControl() <AIThinkInDelegate,AIThinkOutDelegate>
+@interface AIThinkingControl() <AIThinkInDelegate>
 
 @property (strong, nonatomic) DemandManager *demandManager;         //OUT短时记忆 (输出数据管理器);
 @property (strong, nonatomic) ShortMatchManager *shortMatchManager; //IN短时记忆 (输入数据管理器);
@@ -80,7 +80,6 @@ static AIThinkingControl *_instance;
     self.thinkIn = [[AIThinkIn alloc] init];
     self.thinkIn.delegate = self;
     self.thinkOut = [[AIThinkOut alloc] init];
-    self.thinkOut.delegate = self;
     self.shortMatchManager = [[ShortMatchManager alloc] init];
 }
 
@@ -96,6 +95,10 @@ static AIThinkingControl *_instance;
 
 -(void) commitInputWithModels:(NSArray*)dics algsType:(NSString*)algsType{
     [self.thinkIn dataInWithModels:dics algsType:algsType];
+}
+
+-(AIShortMatchModel *)to_Rethink:(TOFoModel*)toFoModel{
+    return [self.thinkIn dataInFromRethink:toFoModel];
 }
 
 /**
@@ -201,13 +204,6 @@ static AIThinkingControl *_instance;
 }
 -(void) aiThinkIn_addShortMatchModel:(AIShortMatchModel*)newMModel{
     [self.shortMatchManager add:newMModel];
-}
-
-//MARK:===============================================================
-//MARK:                     < AIThinkOutDelegate >
-//MARK:===============================================================
--(AIShortMatchModel *)aiTO_RethinkInnerFo:(AIFoNodeBase *)fo{
-    return [self.thinkIn dataInFromTORInnerFo:fo];
 }
 
 @end

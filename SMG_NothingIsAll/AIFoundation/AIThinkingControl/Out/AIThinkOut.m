@@ -153,9 +153,6 @@ static AIThinkOut *_instance;
 /**
  *  MARK:--------------------AIThinkOutReasonDelegate--------------------
  */
--(AIShortMatchModel*) aiTOR_RethinkInnerFo:(AIFoNodeBase*)fo{
-    return [self.delegate aiTO_RethinkInnerFo:fo];
-}
 -(void) aiTOR_MoveForDemand:(DemandModel*)demand{
     [self commitFromTOR_MoveForDemand:demand];
 }

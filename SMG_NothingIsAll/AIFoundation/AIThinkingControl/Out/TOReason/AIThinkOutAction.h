@@ -15,7 +15,6 @@
 @protocol TOActionDelegate <NSObject>
 
 -(void) toAction_Output:(NSArray*)actions;
--(AIShortMatchModel*) toAction_RethinkInnerFo:(AIFoNodeBase*)fo;
 -(void) toAction_SubModelFinish:(TOModelBase*)outModel;
 -(void) toAction_SubModelActYes:(TOModelBase*)outModel;
 -(void) toAction_SubModelFailure:(TOModelBase*)outModel;

@@ -11,8 +11,6 @@
 @class AIShortMatchModel,DemandModel;
 @protocol AIThinkOutReasonDelegate <NSObject>
 
-//反思innerFo
--(AIShortMatchModel*) aiTOR_RethinkInnerFo:(AIFoNodeBase*)fo;
 //转移DemandModel子任务
 -(void) aiTOR_MoveForDemand:(DemandModel*)demand;
 

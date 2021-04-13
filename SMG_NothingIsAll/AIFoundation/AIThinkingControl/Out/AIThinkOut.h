@@ -9,15 +9,8 @@
 #import <Foundation/Foundation.h>
 
 @class AIShortMatchModel,AIThinkOutPercept,AIThinkOutReason;
-@protocol AIThinkOutDelegate <NSObject>
-
--(AIShortMatchModel*) aiTO_RethinkInnerFo:(AIFoNodeBase*)fo;
-
-@end
-
 @interface AIThinkOut : NSObject
 
-@property (weak, nonatomic) id<AIThinkOutDelegate> delegate;
 @property (strong, nonatomic) AIThinkOutPercept *tOP;       //感性决策
 @property (strong, nonatomic) AIThinkOutReason *tOR;        //理性决策
 

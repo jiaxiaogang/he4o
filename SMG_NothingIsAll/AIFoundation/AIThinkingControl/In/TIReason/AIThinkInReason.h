@@ -27,7 +27,7 @@
 //MARK:===============================================================
 //MARK:                     < 时序识别 >
 //MARK:===============================================================
-+(void) TIR_Fo_FromRethink:(NSArray*)order decoratorInModel:(AIShortMatchModel*)inModel;
++(AIShortMatchModel*) TIR_Fo_FromRethink:(AIFoNodeBase*)fo;
 +(void) TIR_Fo_FromShortMem:(AIFoNodeBase*)protoFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel;
 
 

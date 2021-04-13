@@ -77,7 +77,6 @@
 //MARK:                     < FromTOR >
 //MARK:===============================================================
 
-//对innerFo进行反思 (目前仅支持最后一位rtAlg,随后可考虑支持更全面);
--(AIShortMatchModel*) dataInFromTORInnerFo:(AIFoNodeBase*)fo;
+-(AIShortMatchModel*) dataInFromRethink:(TOFoModel*)toFoModel;
 
 @end

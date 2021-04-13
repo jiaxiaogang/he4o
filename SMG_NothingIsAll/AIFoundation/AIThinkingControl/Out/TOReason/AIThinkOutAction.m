@@ -40,6 +40,10 @@
  *      2020.12.18: 仅在首帧时,进行感性反思评价;
  *      2020.12.25: 未发生理性评价 (range为空 & hngl节点 & 空S = 不通过) (参考21186 & 21188 & 21202);
  *      2020.12.26: 未发生理性评价,改为 (hngl节点 & 空S = 不通过) (参考21205);
+ *      2020.12.18: 仅首帧,进行评价;
+ *      2021.01.22: R-任务解决方案不做空S评价;
+ *      2021.01.22: R-任务直接解决方案不做反思,因为它评价必不通过;
+ *      2021.04.13: 所有fo都进行反思: (1.R-下挂mv0的fo; 2.P-下挂mv+的fo; 3.HNGL未指向mv),三者都可进行反思;
  */
 -(void) convert2Out_Fo:(TOFoModel*)outModel{
     //1. 取出需行为化的content_ps部分;
@@ -65,8 +69,8 @@
         }
     }
     
-    //3. 对P任务执行前做评价 (2020.12.18仅首帧,进行评价 & 2021.01.22ReasonDemandModel不做反思和空S评价)
-    if (outModel.actionIndex == -1 && ISOK(outModel.baseOrGroup, PerceptDemandModel.class)) {
+    //3. 对P任务首帧执行前做评价_2021.01.22: R-任务解决方案不做空S评价;
+    if (outModel.actionIndex == -1 && !ISOK(outModel.baseOrGroup, ReasonDemandModel.class)) {
         //5. 未发生理性评价 (空S评价);
         BOOL reasonScore =  [AIScore FRS:curFo];
         if (!reasonScore) {
@@ -75,9 +79,12 @@
             [self.delegate toAction_SubModelFailure:outModel];
             return;
         }
-        
+    }
+    
+    //3. 对HNGL任务首帧执行前做评价;
+    if (outModel.actionIndex == -1) {
         //6. MC反思: 回归tir反思,重新识别理性预测时序,预测价值; (预测到鸡蛋变脏,或者cpu损坏) (理性预测影响评价即理性评价)
-        AIShortMatchModel *rtInModel = [self.delegate toAction_RethinkInnerFo:curFo];
+        AIShortMatchModel *rtInModel = [theTC to_Rethink:outModel];
         
         //7. 子任务_对反思预测fo尝试转为子任务;
         for (AIMatchFoModel *item in rtInModel.matchFos) {

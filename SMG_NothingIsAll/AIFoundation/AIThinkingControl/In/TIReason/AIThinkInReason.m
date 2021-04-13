@@ -206,24 +206,24 @@
  *      4. 通过,"车-0-撞-疼"来计算时序相似度x% 与 通过"车距"y 计算= zMv;
  *      5. 将zMv提交给demandManager,做TOR处理;
  *  @version
- *      20200403 : 将assFoIndexAlg由proto.lastIndex改为replaceMatchAlg来代替 (因为lastAlg索引失败率太高);
- *      20200717 - 换上新版partMatching_FoV2时序识别算法;
+ *      2020.04.03 : 将assFoIndexAlg由proto.lastIndex改为replaceMatchAlg来代替 (因为lastAlg索引失败率太高);
+ *      2020.07.17 : 换上新版partMatching_FoV2时序识别算法;
+ *      2021.04.13 : 将装饰AIShortMatchModel改为result返回 & 参数由order直接改为fo传入;
  *  @todo :
  *      2020.04.03: 支持识别到多个时序 T;
  *      2020.04.03: 以识别到的多个时序,得到多个价值预测 (支持更多元的评价);
  *
  */
-+(void) TIR_Fo_FromRethink:(NSArray*)order decoratorInModel:(AIShortMatchModel*)inModel{
++(AIShortMatchModel*) TIR_Fo_FromRethink:(AIFoNodeBase*)fo{
     //1. 数据检查
-    if (!ARRISOK(order)) {
-        return;
-    }
-
-    inModel.matchAFo = [theNet createConFo:order isMem:true]; //将protoAlg_ps构建成时序;
-    NSLog(@"\n\n=============================== 反思时序识别 ===============================\n%@",Fo2FStr(inModel.matchAFo));
+    AIShortMatchModel *result = [[AIShortMatchModel alloc] init];
+    if (!fo || !ARRISOK(fo.content_ps)) return result;
+    NSLog(@"\n\n=============================== 反思时序识别 ===============================\n%@",Fo2FStr(fo));
     
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [self partMatching_FoV1Dot5:inModel.matchAFo except_ps:@[inModel.matchAFo.pointer] decoratorInModel:inModel];
+    [self partMatching_FoV1Dot5:fo except_ps:@[fo.pointer] decoratorInModel:result];
+    NSLog(@"反思时序: Finish >> %@",Fo2FStr(result.matchFo));
+    return result;
 }
 
 /**

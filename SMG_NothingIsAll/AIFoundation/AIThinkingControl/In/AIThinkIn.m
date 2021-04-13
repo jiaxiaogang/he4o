@@ -17,6 +17,8 @@
 #import "AIShortMatchModel.h"
 #import "AIFrontOrderNode.h"
 #import "AIShortMatchModel_Simple.h"
+#import "TOUtils.h"
+#import "TOFoModel.h"
 //temp
 #import "NVHeUtil.h"
 
@@ -119,23 +121,38 @@
 //MARK:===============================================================
 //MARK:                     < FromTOR >
 //MARK:===============================================================
--(AIShortMatchModel*) dataInFromTORInnerFo:(AIFoNodeBase*)fo{
-    //1. 数据准备 (收集除末位外的content为order);
-    __block AIShortMatchModel *mModel = [[AIShortMatchModel alloc] init];
-    NSMutableArray *order = [[NSMutableArray alloc] init];
-    for (NSInteger i = 0; i < fo.content_ps.count - 1; i++) {
-        AIShortMatchModel_Simple *simple = [[AIShortMatchModel_Simple alloc] init];
-        simple.alg_p = ARR_INDEX(fo.content_ps, i);
-        simple.inputTime = [NUMTOOK(ARR_INDEX(fo.deltaTimes, i)) longLongValue];
-        [order addObject:simple];
-    }
-    if (ARRISOK(order)) {
+
+/**
+ *  MARK:--------------------反思--------------------
+ *  @version
+ *      2021.04.13: 除了inner外,对其它时序进行全面支持;
+ */
+-(AIShortMatchModel*) dataInFromRethink:(TOFoModel*)toFoModel{
+    //1. 数据准备;
+    AIFoNodeBase *rethinkFo = nil;
+    
+    //2. 反思_HNGL类型;
+    if ([TOUtils isHNGL_toModel:toFoModel]) {
         
-        //2. 识别时序;
-        [AIThinkInReason TIR_Fo_FromRethink:order decoratorInModel:mModel];
+        //3. 数据准备 (收集除末位外的content为order);
+        AIFoNodeBase *fo = [SMGUtils searchNode:toFoModel.content_p];
+        NSMutableArray *order = [[NSMutableArray alloc] init];
+        for (NSInteger i = 0; i < fo.content_ps.count - 1; i++) {
+            AIShortMatchModel_Simple *simple = [[AIShortMatchModel_Simple alloc] init];
+            simple.alg_p = ARR_INDEX(fo.content_ps, i);
+            simple.inputTime = [NUMTOOK(ARR_INDEX(fo.deltaTimes, i)) longLongValue];
+            [order addObject:simple];
+        }
+        if (ARRISOK(order)) {
+            rethinkFo = [theNet createConFo:order isMem:true]; //将protoAlg_ps构建成时序;
+        }
+    }else{
+        //4. 其它类型,直接取outModel下的时序;
+        rethinkFo = [SMGUtils searchNode:toFoModel.content_p];
     }
-    NSLog(@"反思时序: Finish >> %@",Fo2FStr(mModel.matchFo));
-    return mModel;
+    
+    //5. 反思时序;
+    return [AIThinkInReason TIR_Fo_FromRethink:rethinkFo];
 }
 
 //MARK:===============================================================
@@ -159,6 +176,7 @@
  *      20201113 - 构建matchAFo时,MatchA为空时,兼容取part首条,否则会导致时序识别失败 (参考21144);
  *      20210118 - 支持生物钟触发器 (未完成) (参考22052-1);
  *      20210119 - 支持TIR_OPushM (参考22052-2);
+ *      20210413 - TIRFoFromShortMem的参数由matchAFo改为protoFo (参考23014-分析2);
  */
 -(void) dataIn_NoMV:(AIAlgNodeBase*)algNode fromGroup_ps:(NSArray*)fromGroup_ps{
     //1. 数据准备 (瞬时记忆,理性匹配出的模型);
@@ -182,7 +200,7 @@
     mModel.protoFo = [theNet createConFo:protoAShortMem isMem:false];
     
     //4. 识别时序;
-    [AIThinkInReason TIR_Fo_FromShortMem:mModel.matchAFo except_ps:@[mModel.protoFo.pointer,mModel.matchAFo.pointer] decoratorInModel:mModel];
+    [AIThinkInReason TIR_Fo_FromShortMem:mModel.protoFo except_ps:@[mModel.protoFo.pointer,mModel.matchAFo.pointer] decoratorInModel:mModel];
     
     //4. 预测;
     [AIThinkInReason tir_Forecast:mModel];
