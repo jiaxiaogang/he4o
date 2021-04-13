@@ -200,7 +200,7 @@
     mModel.protoFo = [theNet createConFo:protoAShortMem isMem:false];
     
     //4. 识别时序;
-    [AIThinkInReason TIR_Fo_FromShortMem:mModel.protoFo except_ps:@[mModel.protoFo.pointer,mModel.matchAFo.pointer] decoratorInModel:mModel];
+    [AIThinkInReason TIR_Fo_FromShortMem:mModel.matchAFo except_ps:@[mModel.protoFo.pointer,mModel.matchAFo.pointer] decoratorInModel:mModel];
     
     //4. 预测;
     [AIThinkInReason tir_Forecast:mModel];
