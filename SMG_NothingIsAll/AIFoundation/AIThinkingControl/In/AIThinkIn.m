@@ -176,7 +176,6 @@
  *      20201113 - 构建matchAFo时,MatchA为空时,兼容取part首条,否则会导致时序识别失败 (参考21144);
  *      20210118 - 支持生物钟触发器 (未完成) (参考22052-1);
  *      20210119 - 支持TIR_OPushM (参考22052-2);
- *      20210413 - TIRFoFromShortMem的参数由matchAFo改为protoFo (参考23014-分析2);
  */
 -(void) dataIn_NoMV:(AIAlgNodeBase*)algNode fromGroup_ps:(NSArray*)fromGroup_ps{
     //1. 数据准备 (瞬时记忆,理性匹配出的模型);
@@ -200,7 +199,7 @@
     mModel.protoFo = [theNet createConFo:protoAShortMem isMem:false];
     
     //4. 识别时序;
-    [AIThinkInReason TIR_Fo_FromShortMem:mModel.matchAFo except_ps:@[mModel.protoFo.pointer,mModel.matchAFo.pointer] decoratorInModel:mModel];
+    [AIThinkInReason TIR_Fo_FromShortMem:@[mModel.protoFo.pointer,mModel.matchAFo.pointer] decoratorInModel:mModel];
     
     //4. 预测;
     [AIThinkInReason tir_Forecast:mModel];

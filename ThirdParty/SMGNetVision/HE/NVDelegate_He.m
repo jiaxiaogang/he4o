@@ -19,11 +19,19 @@
 #import "NVNodeView.h"
 #import "AINetUtils.h"
 #import "AIPort.h"
+#import "TOUtils.h"
 
 #define ModuleName_Value @"稀疏码"
 #define ModuleName_Alg @"概念网络"
 #define ModuleName_Fo @"时序网络"
 #define ModuleName_Mv @"价值网络"
+
+#define ColorH UIColorWithRGBHex(0xFFFFFF)//有白
+#define ColorN UIColorWithRGBHex(0x000000)//无黑
+#define ColorG UIColorWithRGBHex(0x00FF00)//大绿
+#define ColorL UIColorWithRGBHex(0xFF0000)//小红
+#define ColorP UIColorWithRGBHex(0x0000FF)//好蓝
+#define ColorS UIColorWithRGBHex(0xFFFF00)//坏黄
 
 @implementation NVDelegate_He
 
@@ -44,12 +52,15 @@
             return (demand == MVDirection_None) ? UIColorWithRGBHex(0x00FF00) : UIColorWithRGBHex(0xFF0000);
         }
     }
-
-    //2. SP节点指定颜色 (S红,P绿)
-    if ([[ThinkingUtils getAnalogyTypeDS:ATPlus] isEqualToString:node_p.dataSource]) {
-        return UIColorWithRGBHex(0x00FF00);
-    }else if ([[ThinkingUtils getAnalogyTypeDS:ATSub] isEqualToString:node_p.dataSource]) {
-        return UIColorWithRGBHex(0xFF0000);
+    
+    //2. HNGLSP节点指定颜色;
+    if ([NVHeUtil isFo:node_p]) {
+        if ([TOUtils isH:node_p]) return ColorH;
+        else if ([TOUtils isN:node_p]) return ColorN;
+        else if ([TOUtils isG:node_p]) return ColorG;
+        else if ([TOUtils isL:node_p]) return ColorL;
+        else if ([TOUtils isS:node_p]) return ColorS;
+        else if ([TOUtils isP:node_p]) return ColorP;
     }
     
     //2. 坚果显示偏绿色 (抽象黄绿&具象蓝绿)

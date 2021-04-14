@@ -228,24 +228,25 @@
 
 /**
  *  MARK:--------------------瞬时时序识别--------------------
- *  @param protoFo : MemFo (由瞬时记忆中概念序列组成);
+ *  @param inModel : 当前帧输入期短时记忆;
  *  @version
  *      20200414 - protoFo由瞬时proto概念组成,改成瞬时match概念组成 (本方法中,去掉proto概念层到match层的联想);
  *      20200717 - 换上新版partMatching_FoV2时序识别算法;
  *      20210119 - 支持预测-触发器和反向反馈类比 (22052-1&3);
  *      20210124 - In反省类比触发器,支持多时序识别matchFos (参考22073-todo3);
+ *      20210413 - TIRFoFromShortMem的参数由matchAFo改为protoFo (参考23014-分析2);
+ *      20210414 - 将TIRFo参数改为matchAlg有效则protoFo,否则matchAFo (参考23015);
  *  @bug
  *      2020.11.10: 在21141训练第一步,发现外类比不执行BUG,因为传入无用的matchAlg参数判空return了 (参考21142);
  */
-+(void) TIR_Fo_FromShortMem:(AIFoNodeBase*)protoFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel{
++(void) TIR_Fo_FromShortMem:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel{
     //1. 数据检查
-    if (!protoFo) {
-        return;
-    }
+    if (!inModel) return;
+    AIFoNodeBase *maskFo = ARRISOK(inModel.matchAlgs) ? inModel.protoFo : inModel.matchAFo;
     
-    NSLog(@"\n\n------------------------------- 瞬时时序识别 -------------------------------\nprotoFo:%@->%@",Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p));
+    NSLog(@"\n\n------------------------------- 瞬时时序识别 -------------------------------\nprotoFo:%@->%@",Fo2FStr(maskFo),Mvp2Str(maskFo.cmvNode_p));
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [self partMatching_FoV1Dot5:protoFo except_ps:except_ps decoratorInModel:inModel];
+    [self partMatching_FoV1Dot5:maskFo except_ps:except_ps decoratorInModel:inModel];
 }
 
 
@@ -304,17 +305,17 @@
  *      2021.02.04: 将matchFos中的虚mv筛除掉,因为现在R-模式不使用matchFos做解决方案,现在留着没用,等有用时再打开;
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
-+(void) partMatching_FoV1Dot5:(AIFoNodeBase*)protoFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel{
++(void) partMatching_FoV1Dot5:(AIFoNodeBase*)maskFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel{
     //1. 数据准备
-    if (!ISOK(protoFo, AIFoNodeBase.class)) {
+    if (!ISOK(maskFo, AIFoNodeBase.class)) {
         return;
     }
     
     //调试23014BUG
     [theNV tempRunForceMode:^{
-        [theNV setNodeData:protoFo.pointer lightStr:@"tirProtoFo"];
+        [theNV setNodeData:maskFo.pointer lightStr:@"tirProtoFo"];
     }];
-    AIAlgNodeBase *lastAlg = [SMGUtils searchNode:ARR_INDEX_REVERSE(protoFo.content_ps, 0)];
+    AIAlgNodeBase *lastAlg = [SMGUtils searchNode:ARR_INDEX_REVERSE(maskFo.content_ps, 0)];
     if (!lastAlg) {
         return;
     }
@@ -337,7 +338,7 @@
         NSArray *assFo_ps = Ports2Pits(refFoPorts);
         assFo_ps = [SMGUtils removeSub_ps:except_ps parent_ps:assFo_ps];
         assFo_ps = ARR_SUB(assFo_ps, 0, cPartMatchingCheckRefPortsLimit_Fo);
-        if (Log4MFo) NSLog(@"-----> TIR_Fo 索引到有效时序数:%lu",(unsigned long)assFo_ps.count);
+        if (Log4MFo) NSLog(@"\n-----> TIR_Fo 索引:%@ 指向有效时序数:%lu",Alg2FStr(indexAlg),(unsigned long)assFo_ps.count);
         
         //5. 依次对assFos对应的时序,做匹配度评价; (参考: 160_TIRFO单线顺序模型)
         for (AIKVPointer *assFo_p in assFo_ps) {
@@ -361,7 +362,7 @@
                 return [item.matchFo isEqual:assFo];
             }]);
             if (!contains) {
-                [TIRUtils TIR_Fo_CheckFoValidMatch:protoFo assFo:assFo checkItemValid:^BOOL(AIKVPointer *itemAlg, AIKVPointer *assAlg) {
+                [TIRUtils TIR_Fo_CheckFoValidMatch:maskFo assFo:assFo checkItemValid:^BOOL(AIKVPointer *itemAlg, AIKVPointer *assAlg) {
                     return [TOUtils mIsC_1:itemAlg c:assAlg];
                 } success:^(NSInteger lastAssIndex, CGFloat matchValue) {
                     NSLog(@"时序识别item SUCCESS 完成度:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
