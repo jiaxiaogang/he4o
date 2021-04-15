@@ -373,6 +373,7 @@
             }];
         }
     }
+    NSLog(@"时序识别Finish P:%lu R:%lu",(unsigned long)inModel.matchPFos.count,(unsigned long)inModel.matchRFos.count);
 }
 
 /**
