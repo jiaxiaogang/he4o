@@ -76,7 +76,7 @@
     //2. 获取最近的识别模型;
     NSArray *mModels = ARRTOOK([self.delegate tir_getShortMatchModel]);
     for (AIShortMatchModel *mModel in mModels) {
-        for (AIMatchFoModel *foModel in mModel.matchFos) {
+        for (AIMatchFoModel *foModel in mModel.matchPFos) {
             
             //3. 正向反馈类比 (外类比);
             [AIAnalogy analogy_Feedback_Same:foModel.matchFo shortFo:protoFo];
@@ -101,7 +101,7 @@
     
     //3. 判断最近一次input是否与等待中outModel相匹配 (匹配,比如吃,确定自己是否真吃了);
     for (AIShortMatchModel *inModel in inModels) {
-        for (AIMatchFoModel *waitModel in inModel.matchFos) {
+        for (AIMatchFoModel *waitModel in inModel.matchPFos) {
             //3. 非等待中的跳过;
             AIFoNodeBase *waitMatchFo = waitModel.matchFo;
             if (Log4OPushM) NSLog(@"==> checkTIModel=MatchFo: %@ (%@)",Fo2FStr(waitMatchFo),TIStatus2Str(waitModel.status));

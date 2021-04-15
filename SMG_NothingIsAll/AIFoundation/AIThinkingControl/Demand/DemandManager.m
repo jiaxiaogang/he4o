@@ -120,11 +120,11 @@
  */
 -(void) updateCMVCache_RMV:(AIShortMatchModel*)inModel{
     //1. 数据检查;
-    if (!inModel || !inModel.protoFo || !ARRISOK(inModel.matchFos)) return;
+    if (!inModel || !inModel.protoFo || !ARRISOK(inModel.matchPFos)) return;
     NSLog(@"\n\n------------------------------- RMV -------------------------------");
     
     //2. 多时序识别预测分别进行处理;
-    for (AIMatchFoModel *mModel in inModel.matchFos) {
+    for (AIMatchFoModel *mModel in inModel.matchPFos) {
         
         //3. 单条数据准备;
         //2021.03.28: 此处algsType由urgentTo.at改成cmv.at,从mvNodeManager看这俩一致,如果出现bug再说;

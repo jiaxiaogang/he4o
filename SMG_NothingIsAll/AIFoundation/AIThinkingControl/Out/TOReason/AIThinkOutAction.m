@@ -87,7 +87,7 @@
         AIShortMatchModel *rtInModel = [theTC to_Rethink:outModel];
         
         //7. 子任务_对反思预测fo尝试转为子任务;
-        for (AIMatchFoModel *item in rtInModel.matchFos) {
+        for (AIMatchFoModel *item in rtInModel.matchPFos) {
             
             //2. 子任务_评分为负时才生成;
             CGFloat score = [AIScore score4MV:item.matchFo.cmvNode_p ratio:item.matchFoValue];

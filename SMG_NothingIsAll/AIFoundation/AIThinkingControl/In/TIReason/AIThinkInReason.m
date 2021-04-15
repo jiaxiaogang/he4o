@@ -303,6 +303,7 @@
  *      2021.01.31: 将无mv指向的,放开 (因为R-模式需要) (等支持反向反馈外类比后,再关掉) (参考n22p10);
  *      2021.02.03: 反向反馈外类比已支持,将无mv指向的关掉 (参考version上条);
  *      2021.02.04: 将matchFos中的虚mv筛除掉,因为现在R-模式不使用matchFos做解决方案,现在留着没用,等有用时再打开;
+ *      2021.04.15: 无mv指向的支持返回为matchRFos,原来有mv指向的重命名为matchPFos (参考23014-分析1&23016);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
 +(void) partMatching_FoV1Dot5:(AIFoNodeBase*)maskFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel{
@@ -344,31 +345,32 @@
         for (AIKVPointer *assFo_p in assFo_ps) {
             AIFoNodeBase *assFo = [SMGUtils searchNode:assFo_p];
             
-            //调试23014BUG
-            if (!assFo.cmvNode_p) {
-                NSLog(@"cmv无效");
-            }else if([AINetUtils isVirtualMv:assFo.cmvNode_p]){
-                NSLog(@"cmv为虚");
-            }else if(ARRISOK([SMGUtils filterArr:inModel.matchFos checkValid:^BOOL(AIMatchFoModel *item) {
-                return [item.matchFo isEqual:assFo];
-            }])){
-                NSLog(@"防重");
-            }
-            //5. 无cmv指向的,无效;
-            if (!assFo.cmvNode_p || [AINetUtils isVirtualMv:assFo.cmvNode_p]) continue;
+            //5. 虚mv,无效;
+            if (assFo.cmvNode_p && [AINetUtils isVirtualMv:assFo.cmvNode_p]) continue;
             
-            //6. 防重并对assFo做匹配判断;
-            BOOL contains = ARRISOK([SMGUtils filterArr:inModel.matchFos checkValid:^BOOL(AIMatchFoModel *item) {
+            //6. 防重;
+            BOOL pContains = ARRISOK([SMGUtils filterArr:inModel.matchPFos checkValid:^BOOL(AIMatchFoModel *item) {
                 return [item.matchFo isEqual:assFo];
             }]);
-            if (!contains) {
-                [TIRUtils TIR_Fo_CheckFoValidMatch:maskFo assFo:assFo checkItemValid:^BOOL(AIKVPointer *itemAlg, AIKVPointer *assAlg) {
-                    return [TOUtils mIsC_1:itemAlg c:assAlg];
-                } success:^(NSInteger lastAssIndex, CGFloat matchValue) {
-                    NSLog(@"时序识别item SUCCESS 完成度:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
-                    [inModel.matchFos addObject:[AIMatchFoModel newWithMatchFo:assFo matchFoValue:matchValue cutIndex:lastAssIndex]];
-                }];
-            }
+            if (pContains) continue;
+            
+            BOOL rContains = ARRISOK([SMGUtils filterArr:inModel.matchRFos checkValid:^BOOL(AIMatchFoModel *item) {
+                return [item.matchFo isEqual:assFo];
+            }]);
+            if (rContains) continue;
+            
+            //7. 全含判断;
+            [TIRUtils TIR_Fo_CheckFoValidMatch:maskFo assFo:assFo checkItemValid:^BOOL(AIKVPointer *itemAlg, AIKVPointer *assAlg) {
+                return [TOUtils mIsC_1:itemAlg c:assAlg];
+            } success:^(NSInteger lastAssIndex, CGFloat matchValue) {
+                NSLog(@"时序识别item SUCCESS 完成度:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
+                AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:assFo matchFoValue:matchValue cutIndex:lastAssIndex];
+                if (assFo.cmvNode_p) {
+                    [inModel.matchPFos addObject:newMatchFo];
+                }else{
+                    [inModel.matchRFos addObject:newMatchFo];
+                }
+            }];
         }
     }
 }
@@ -396,6 +398,9 @@
  *      2021.02.04: 虚mv也要支持In反省,否则无法形成对R-模式助益 (参考22108);
  *  @todo
  *      2021.03.22: 迭代提高预测的准确性(1.以更具象为准(猴子怕虎,悟空不怕) 2.以更全面为准(猴子有麻醉枪不怕虎)) (参考22182);
+ *  @status
+ *      1. 后半部分"有mv判断"生效中;
+ *      2. 前半部分"HNGL末位判断"未启用 (因为matchFos中未涵盖HNGL类型);
  */
 +(void) tir_Forecast:(AIShortMatchModel*)inModel{
     //1. 数据检查;
@@ -403,7 +408,7 @@
     AIFoNodeBase *protoFo = inModel.protoFo;
     
     //3. 预测处理_反向反馈类比_生物钟触发器;
-    for (AIMatchFoModel *item in inModel.matchFos) {
+    for (AIMatchFoModel *item in inModel.matchPFos) {
         AIFoNodeBase *matchFo = item.matchFo;
         BOOL isHNGL = [TOUtils isHNGL:matchFo.pointer];
         if (isHNGL) {
@@ -468,7 +473,7 @@
     
     //2. 判断最近一次input是否与等待中outModel相匹配 (匹配,比如吃,确定自己是否真吃了);
     for (AIShortMatchModel *inModel in inModels) {
-        for (AIMatchFoModel *waitModel in inModel.matchFos) {
+        for (AIMatchFoModel *waitModel in inModel.matchPFos) {
             //3. 取出等待中的_非wait状态的,不处理;
             if (waitModel.status != TIModelStatus_LastWait) continue;
             AIFoNodeBase *waitMatchFo = waitModel.matchFo;

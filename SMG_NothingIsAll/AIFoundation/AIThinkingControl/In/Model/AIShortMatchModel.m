@@ -16,11 +16,18 @@
     return ARR_INDEX(self.matchAlgs, 0);
 }
 
--(NSMutableArray *)matchFos{
-    if (!_matchFos) {
-        _matchFos = [[NSMutableArray alloc] init];
+-(NSMutableArray *)matchPFos{
+    if (!_matchPFos) {
+        _matchPFos = [[NSMutableArray alloc] init];
     }
-    return _matchFos;
+    return _matchPFos;
+}
+
+-(NSMutableArray *)matchRFos{
+    if (!_matchRFos) {
+        _matchRFos = [[NSMutableArray alloc] init];
+    }
+    return _matchRFos;
 }
 
 -(AIFoNodeBase *)matchFo{
@@ -50,7 +57,7 @@
 -(AIMatchFoModel*) mustUrgentMFo{
     //1. 找出最迫切的;
     AIMatchFoModel *result;
-    for (AIMatchFoModel *item in self.matchFos) {
+    for (AIMatchFoModel *item in self.matchPFos) {
         
         //2. 首个只要是有迫切度即可;
         CGFloat newScore = [AIScore score4MV:item.matchFo.cmvNode_p ratio:item.matchFoValue];

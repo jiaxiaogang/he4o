@@ -411,10 +411,10 @@
 +(void)analogyInner_Outside_V3:(AINetAbsFoNode*)abFo type:(AnalogyType)type mModel:(AIShortMatchModel*)mModel glhnAlg:(AIAlgNodeBase*)glhnAlg vAT:(NSString*)vAT vDS:(NSString*)vDS{
     //1. 取glConAlg_ps;
     NSArray *glConAlg_ps = [AINetService getHNGLConAlg_ps:type vAT:vAT vDS:vDS];
-    if (Log4InOutAna) NSLog(@"--------- 内中外类比 ---------\nABFo:%@ matchFos数:%lu",Fo2FStr(abFo),(unsigned long)mModel.matchFos.count);
+    if (Log4InOutAna) NSLog(@"--------- 内中外类比 ---------\nABFo:%@ matchFos数:%lu",Fo2FStr(abFo),(unsigned long)mModel.matchRFos.count);
     
     //2. 从matchFos联想type经验做为assFo;
-    for (AIMatchFoModel *mFoModel in mModel.matchFos) {
+    for (AIMatchFoModel *mFoModel in mModel.matchRFos) {
         NSInteger analogyCount = 0;//单个matchFo下最多类比两个assFo;
         NSArray *hnglFoPorts = [AINetUtils absPorts_All:mFoModel.matchFo type:type];
         if (Log4InOutAna) NSLog(@"\n------ 联想assFo组 ------\nMatchFo:%@",Fo2FStr(mFoModel.matchFo));

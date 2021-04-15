@@ -195,7 +195,7 @@
     //2. 对mModel进行评价;
     CGFloat sumScore = 0;
     int sumCount = 0;
-    for (AIMatchFoModel *item in rtInModel.matchFos) {
+    for (AIMatchFoModel *item in rtInModel.matchPFos) {
         
         //3. item子任务已决策成功时,不计分;
         BOOL subDemandSuccess = false;
@@ -211,7 +211,7 @@
         sumScore += score;
         sumCount++;
     }
-    CGFloat rtScore = rtInModel.matchFos.count == 0 ? 0 : sumScore / sumCount;
+    CGFloat rtScore = rtInModel.matchPFos.count == 0 ? 0 : sumScore / sumCount;
     
     //3. 对demand进行评价 (P-模式下demand为负分);
     DemandModel *demand = [TOUtils getDemandModelWithSubOutModel:outModel];
@@ -331,7 +331,6 @@
 //同区且反向
 +(BOOL) sameIdenDiffDelta:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p{
     return [self sameIdentifierOfMV1:mv1_p mv2:mv2_p] && [self diffDire:Mvp2Delta(mv1_p) v2:Mvp2Delta(mv2_p)];
-    return false;
 }
 
 //MARK:===============================================================
