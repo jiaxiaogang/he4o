@@ -275,11 +275,11 @@
         NSArray *except_ps = [TOUtils convertPointersFromTOModels:outModel.actionFoModels];
         
         //4. 第3级: 数据检查hAlg_根据type和value_p找ATHav
-        AIKVPointer *baseFo_p = nil;
-        if (ISOK(outModel.baseOrGroup, TOFoModel.class)) baseFo_p = outModel.baseOrGroup.content_p;
-        if(ISOK(outModel.baseOrGroup.baseOrGroup, TOFoModel.class)) baseFo_p = outModel.baseOrGroup.baseOrGroup.content_p;
-        AIFoNodeBase *baseFo = [SMGUtils searchNode:baseFo_p];
-        AIKVPointer *relativeFo_p = [AINetService getInnerAlgV3:baseFo vAT:outModel.content_p.algsType vDS:outModel.content_p.dataSource type:ATHav except_ps:except_ps];
+        //AIKVPointer *baseFo_p = nil;
+        //if (ISOK(outModel.baseOrGroup, TOFoModel.class)) baseFo_p = outModel.baseOrGroup.content_p;
+        //if(ISOK(outModel.baseOrGroup.baseOrGroup, TOFoModel.class)) baseFo_p = outModel.baseOrGroup.baseOrGroup.content_p;
+        //AIFoNodeBase *baseFo = [SMGUtils searchNode:baseFo_p];
+        AIKVPointer *relativeFo_p = [AINetService getInnerV3_HN:curAlg vAT:outModel.content_p.algsType vDS:outModel.content_p.dataSource type:ATHav except_ps:except_ps];
         if (Log4ActHav) NSLog(@"getInnerAlg(有): 根据:%@ 找:%@_%@ \n联想结果:%@ %@",Alg2FStr(curAlg),outModel.content_p.algsType,outModel.content_p.dataSource,Pit2FStr(relativeFo_p),relativeFo_p ? @"↓↓↓↓↓↓↓↓" : @"无计可施");
         
         //6. 只要有善可尝试的方式,即从首条开始尝试;
@@ -333,7 +333,7 @@
     
     //2. 根据type和value_p找ATLess/ATGreater
     //3. 根据havAlg联想时序,并找出新的解决方案,与新的行为化的概念,与新的条件概念; (2020.11.06: 由getInner1Alg直接取relativeFos);
-    AIKVPointer *relativeFo_p = [AINetService getInnerAlgV3:baseAlg.pm_InModel.protoFo vAT:vAT vDS:vDS type:type except_ps:except_ps];
+    AIKVPointer *relativeFo_p = [AINetService getInnerV3_GL:baseAlg.pm_InModel.protoFo vAT:vAT vDS:vDS type:type except_ps:except_ps];
     if (Log4ActGL) NSLog(@"getInnerAlg(%@): 根据:%@->%@ 找:%@%@ \n联想结果:%@ %@",ATType2Str(type),Pit2FStr(outModel.sValue_p),Pit2FStr(outModel.content_p),vDS,Data2FStr(type, vAT, vDS),Pit2FStr(relativeFo_p),relativeFo_p ? @"↓↓↓↓↓↓↓↓" : @"无计可施");
     
     //5. 转移至_fos
