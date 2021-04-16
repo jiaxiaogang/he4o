@@ -79,6 +79,19 @@
 }
 
 /**
+ *  MARK:--------------------getInnerHN--------------------
+ *  @desc 获取HN经验 (参考n23p03);
+ *  @example 比如:P-解决方案,想吃桃,步骤如下:
+ *          a. 此方法取得hn经验: [超市,买得到桃],返回决策;
+ *          b. 又需要找到超市,再到此取hn经验: [出发点,去超市],返回决策;
+ *          c. 出发点在瞬时记忆中发现自己在家,找到具象时序: [家出发,去X路美特好超市];
+ */
++(AIKVPointer*) getInnerHN:(AIFoNodeBase*)maskFo vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps{
+    //此处找出原来getInnerV3最初从alg联想的代码复制过来用;
+    return nil;
+}
+
+/**
  *  MARK:--------------------从Alg中获取指定标识稀疏码的值--------------------
  */
 +(double) getValueDataFromAlg:(AIKVPointer*)alg_p valueIdentifier:(NSString*)valueIdentifier{

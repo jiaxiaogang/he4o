@@ -444,9 +444,11 @@
                     }
                     
                     NSLog(@"---//触发器Mv_触发: %@ (%@ | %@)",Fo2FStr(matchFo),TIStatus2Str(item.status),ATType2Str(type));
+                    
+                    //4. 输入期反省类比 (有OutBack,SP类型时执行);
                     [AIAnalogy analogy_InRethink:item shortFo:protoFo type:type];
                     
-                    //5. 反向反馈外类比;
+                    //5. 反向反馈外类比 (无OutBack,为Wait时执行);
                     if (item.status == TIModelStatus_LastWait) {
                         [AIAnalogy analogy_Feedback_Diff:protoFo matchFo:matchFo];
                     }
