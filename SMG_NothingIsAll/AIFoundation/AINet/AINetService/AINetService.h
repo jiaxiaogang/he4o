@@ -23,6 +23,7 @@
  *              2. HN时,传入决策短时记忆中的alg.baseFo (即: 当前解决方案中,每次得到的坚果,是哪来的)->向具象取嵌套;
  *  @param vAT & vDS : 此内类比类型的微信息at&ds (GL时,为变大小稀疏码的at&ds) (HN时,为变有无的概念的at&ds);
  */
++(AIKVPointer*) testGL:(AIShortMatchModel*)inModel vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps;
 +(AIKVPointer*) getInnerV3_GL:(AIFoNodeBase*)maskFo vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps;
 +(AIKVPointer*) getInnerV3_HN:(AIAlgNodeBase*)maskAlg vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps;
 

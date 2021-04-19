@@ -12,6 +12,8 @@
 #import "TOUtils.h"
 #import "AINetIndex.h"
 #import "AIScore.h"
+#import "AIShortMatchModel.h"
+#import "AIMatchFoModel.h"
 
 @implementation AINetService
 
@@ -45,6 +47,37 @@
  *      2021.04.10: GL主方向为抽象,HN主方向为具象 (参考22213);
  *  @result : 返回relativeFo_ps,用backConAlg节点,由此节点取refPorts,再筛选type,可取到glFo经历;
  */
++(AIKVPointer*) testGL:(AIShortMatchModel*)inModel vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps{
+    
+    //TODOTOMORROW20210416:
+    //先查下inModel.matchRFos中,是否有GL;
+    
+    NSLog(@"matchRFos.count=%ld",inModel.matchRFos.count);
+    NSLog(@"matchPFos.count=%ld",inModel.matchPFos.count);
+    
+    //2. 取glConAlg_ps;
+    NSArray *glConAlg_ps = [self getHNGLConAlg_ps:type vAT:vAT vDS:vDS];
+    
+    //7. 从当前层curMasks逐个尝试取hnglAlg.refPorts;
+    for (AIMatchFoModel *item in inModel.matchRFos) {
+        AIKVPointer *result = [self getInnerByFo_Single:item.matchFo.pointer type:type except_ps:except_ps glConAlg_ps:glConAlg_ps];
+        NSLog(@"=====RItem: %@",Fo2FStr(item.matchFo));
+        
+        //TODOTOMORROW20210419:
+        //1. 查下为什么这里的matchRFos嵌套指向type都为0条;
+        //2. 再训练右投,右飞,看能否对matchRFos下,构建到GL经验;
+        //3. 或者直接将matchRFos打印到网络可视化中,看是肿么一回事;
+        
+        
+    }
+    
+    for (AIMatchFoModel *item in inModel.matchPFos) {
+        AIKVPointer *result = [self getInnerByFo_Single:item.matchFo.pointer type:type except_ps:except_ps glConAlg_ps:glConAlg_ps];
+    }
+    
+    
+    return nil;
+}
 +(AIKVPointer*) getInnerV3_GL:(AIFoNodeBase*)maskFo vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps{
     
     //TODOTOMORROW20210416: 将maskFo,改为maskInModel;
@@ -163,7 +196,7 @@
     //2. 根据maskAlg,取gl嵌套 (目前由absPorts+type取);
     NSArray *hnglFo_ps = Ports2Pits([AINetUtils absPorts_All:maskFo type:type]);
     if (Log4GetInnerAlg) NSLog(@"=====1 当前maskFo:%@ 粗方案共%lu个",Fo2FStr(maskFo),(unsigned long)hnglFo_ps.count);
-        
+    
     //3. 与glConAlg_ps取交集,取出有效的前limit个;
     [SMGUtils filterArr:hnglFo_ps checkValid:^BOOL(AIKVPointer *item) {
         AIFoNodeBase *hnglFo = [SMGUtils searchNode:item];
