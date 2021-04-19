@@ -223,6 +223,7 @@
                 
                 //TODOTOMORROW20210419:
                 //此处,仅对protoFo进行内类比,导致在getInnerGL时,从matchRFos中无法取到GL经验;
+                //考虑按照ds形成的方式,来联想assFo,和内中外类比,形成absGL,使之方便应用;
                 
                 
                 NSArray *rangeAlg_ps = ARR_SUB(protoFo.content_ps, i + 1, lastIndex - i - 1);
