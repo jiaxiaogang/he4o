@@ -162,7 +162,10 @@
         }
     }
     //调试短时序; (先仅打外类比日志);
-    NSLog(@"-> 外类比构建时序 Finish: %@->{%@} from: ↑↑↑(fo:assFo)",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
+    NSString *log = STRFORMAT(@"-> 外类比构建时序 Finish: %@->{%@} from: ↑↑↑(fo:assFo)",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
+    if (type == ATHav || type == ATNone){if (Log4InAnaHN) NSLog(@"%@",log);}
+    else if (type == ATGreater || type == ATLess){if (Log4InAnaGL) NSLog(@"%@",log);}
+    else {NSLog(@"%@",log);}
     return nil;
 }
 
@@ -217,6 +220,11 @@
                 if (Log4InAna) NSLog(@"-----------内类比大小-----------\n%ld: %@\n%ld: %@",(long)i,Alg2FStr(algA),(long)lastIndex,Alg2FStr(algB));
                 
                 //5. 内类比大小;
+                
+                //TODOTOMORROW20210419:
+                //此处,仅对protoFo进行内类比,导致在getInnerGL时,从matchRFos中无法取到GL经验;
+                
+                
                 NSArray *rangeAlg_ps = ARR_SUB(protoFo.content_ps, i + 1, lastIndex - i - 1);
                 [self analogyInner_GL:protoFo algA:algA algB:algB rangeAlg_ps:rangeAlg_ps mModel:mModel];
             }

@@ -240,7 +240,7 @@
 //内类比
 #define Log4InAna true
 #define Log4InOutAna false
-#define Log4InAnaGL false
+#define Log4InAnaGL true
 #define Log4InAnaHN false
 //外类比
 #define Log4OutAna false
