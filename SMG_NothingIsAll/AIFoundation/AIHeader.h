@@ -118,7 +118,8 @@
 
 //指针转字符串
 #define Pit2FStr(p) [NVHeUtil getLightStr:p simple:false header:true]
-#define Pits2FStr(ps) [NVHeUtil getLightStr4Ps:ps simple:false header:true]
+#define Pits2FStr(ps) [NVHeUtil getLightStr4Ps:ps simple:false header:true sep:@","]
+#define Pits2FStr_MultiLine(ps) [NVHeUtil getLightStr4Ps:ps simple:false header:true sep:@"\n"]
 
 #define Pit2SStr(p) [NVHeUtil getLightStr:p]
 #define Pits2SStr(ps) [NVHeUtil getLightStr4Ps:ps]
@@ -239,9 +240,8 @@
 #define Log4MFo false
 //内类比
 #define Log4InAna true
-#define Log4InOutAna false
-#define Log4InAnaGL true
-#define Log4InAnaHN false
+#define Log4InAnaGL(type) ((type == ATGreater || type == ATLess) && true)
+#define Log4InAnaHN(type) ((type == ATHav || type == ATNone) && false)
 //外类比
 #define Log4OutAna false
 //正向类比

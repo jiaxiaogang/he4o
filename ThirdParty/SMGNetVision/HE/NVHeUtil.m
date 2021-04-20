@@ -28,13 +28,13 @@
 }
 
 +(NSString*) getLightStr4Ps:(NSArray*)node_ps{
-    return [self getLightStr4Ps:node_ps simple:true header:false];
+    return [self getLightStr4Ps:node_ps simple:true header:false sep:@","];
 }
-+(NSString*) getLightStr4Ps:(NSArray*)node_ps simple:(BOOL)simple header:(BOOL)header{
++(NSString*) getLightStr4Ps:(NSArray*)node_ps simple:(BOOL)simple header:(BOOL)header sep:(NSString*)sep{
     //1. 数据检查
     NSMutableString *result = [[NSMutableString alloc] init];
     node_ps = ARRTOOK(node_ps);
-    NSString *sep = @",";
+    sep = STRTOOK(sep);
     
     //2. 拼接返回
     for (AIKVPointer *item_p in node_ps){
@@ -59,13 +59,13 @@
                     NSString *firstValueStr = [self getLightStr_ValueP:ARR_INDEX(algNode.content_ps, 0)];
                     lightStr = STRFORMAT(@"%@%@",firstValueStr,(algNode.content_ps.count > 1) ? @"..." : @"");
                 }else{
-                    lightStr = [self getLightStr4Ps:algNode.content_ps simple:simple header:header];
+                    lightStr = [self getLightStr4Ps:algNode.content_ps simple:simple header:header sep:@","];
                 }
             }
         }else if([self isFo:node_p]){
             AIFoNodeBase *foNode = [SMGUtils searchNode:node_p];
             if (foNode) {
-                lightStr = [self getLightStr4Ps:foNode.content_ps simple:simple header:header];
+                lightStr = [self getLightStr4Ps:foNode.content_ps simple:simple header:header sep:@","];
             }
         }else if([self isMv:node_p]){
             CGFloat score = [AIScore score4MV:node_p ratio:1.0f];
