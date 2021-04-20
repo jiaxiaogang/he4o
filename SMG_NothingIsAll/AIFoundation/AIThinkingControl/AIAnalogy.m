@@ -430,9 +430,34 @@
         NSArray *hnglFos = Ports2Pits([AINetUtils absPorts_All:mFoModel.matchFo]);
         if (debugMode) NSLog(@"\n---> 当前MatchRFo:%@",Fo2FStr(mFoModel.matchFo));
         
-        for (AIKVPointer *item in hnglFos) {
-            if (debugMode) NSLog(@"%@ => %@",item.identifier,Pit2FStr(item));
+        //4. 验证23018的方案是否可行 (不可行matchRFo的具象,都指向0条);
+        NSArray *seemProtoPorts = [AINetUtils conPorts_All:mFoModel.matchFo];
+        for (AIPort *itemPort in seemProtoPorts) {
+            AIFoNodeBase *item = [SMGUtils searchNode:itemPort.target_p];
+            NSArray *filterSeem = [SMGUtils filterSame_ps:item.content_ps parent_ps:mModel.partAlg_ps];
+            int seem = 0,notSeem = 0;
+            if (ARRISOK(filterSeem)) {
+                seem++;
+            }else{
+                notSeem++;
+            }
+            if (debugMode) {
+                NSLog(@"当前matchRFo:%@ 具象有效:%d 无效:%d",Fo2FStr(mFoModel.matchFo),seem,notSeem);
+            }
         }
+        
+        for (AIKVPointer *item in hnglFos) {
+            if (debugMode) NSLog(@"%@ => %@ 具象指向数:%ld",item.identifier,Pit2FStr(item),seemProtoPorts.count);
+        }
+        
+        //5. 查下为什么matchRFo无具象指向, (因为原本protoFo就没与matchAFo建立抽具象关联);
+        
+        
+        //6. 必须将protoFo和matchFo的关联建立起来,否则何谈复用嵌套GL;
+        //  a. 由protoFo直接指向matchFo;
+        //  b. protoFo和matchFo共同指向其外类比抽象absFo;
+        
+        
     }
     for (AIMatchFoModel *mFoModel in mModel.matchRFos) {
         NSInteger analogyCount = 0;//单个matchFo下最多类比两个assFo;
