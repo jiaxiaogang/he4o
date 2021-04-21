@@ -19,8 +19,7 @@
 #import "AIShortMatchModel_Simple.h"
 #import "TOUtils.h"
 #import "TOFoModel.h"
-//temp
-#import "NVHeUtil.h"
+#import "AIAnalogy.h"
 
 @interface AIThinkIn () <AIThinkInPerceptDelegate>
 
@@ -205,7 +204,7 @@
     [AIThinkInReason tir_Forecast:mModel];
     
     //5. 内类比
-    [AIThinkInReason analogyInner:mModel];
+    [AIAnalogy analogyInner:mModel];
     
     //6. 传给TOR,做下一步处理;
     [self.delegate aiThinkIn_Commit2TC:mModel];

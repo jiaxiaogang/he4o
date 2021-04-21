@@ -179,6 +179,9 @@
 
 /**
  *  MARK:--------------------fo内类比 (内中有外,找不同算法)--------------------
+ *  @desc 在理性中进行内类比;
+ *  @支持: 目前理性内类比不支持energy,待以后版本再考虑支持 (目前仅在TO阶段支持energy,TI阶段先用配置参数控制);
+ *
  *  _param checkFo      : 要处理的fo.orders;
  *  _param canAssBlock  : energy判断器 (为null时,无限能量);
  *  _param updateEnergy : energy消耗器 (为null时,不消耗能量值);

@@ -247,6 +247,11 @@
     NSLog(@"\n\n------------------------------- 瞬时时序识别 -------------------------------\nprotoFo:%@->%@",Fo2FStr(maskFo),Mvp2Str(maskFo.cmvNode_p));
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
     [self partMatching_FoV1Dot5:maskFo except_ps:except_ps decoratorInModel:inModel];
+    
+    //3. 加强RFos的抽具象关联;
+    for (AIMatchFoModel *item in inModel.matchRFos) {
+        [AIAnalogy analogyOutside:maskFo assFo:item.matchFo type:ATSame createAbsAlgBlock:nil];
+    }
 }
 
 
@@ -374,15 +379,6 @@
         }
     }
     NSLog(@"时序识别Finish P:%lu R:%lu",(unsigned long)inModel.matchPFos.count,(unsigned long)inModel.matchRFos.count);
-}
-
-/**
- *  MARK:--------------------内类比--------------------
- *  @desc 在理性中进行内类比;
- *  @支持: 目前理性内类比不支持energy,待以后版本再考虑支持 (目前仅在TO阶段支持energy,TI阶段先用配置参数控制);
- */
-+(void) analogyInner:(AIShortMatchModel*)mModel{
-    [AIAnalogy analogyInner:mModel];
 }
 
 /**
