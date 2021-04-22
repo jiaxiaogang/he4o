@@ -11,23 +11,17 @@
 @implementation AIFoNodeBase
 
 -(NSMutableArray *)deltaTimes{
-    if (!_deltaTimes) {
-        _deltaTimes = [[NSMutableArray alloc] init];
-    }
+    if (!_deltaTimes) _deltaTimes = [[NSMutableArray alloc] init];
     return _deltaTimes;
 }
 
 -(NSMutableArray *)diffBasePorts{
-    if (!ISOK(_diffBasePorts, NSMutableArray.class)) {
-        _diffBasePorts = [[NSMutableArray alloc] initWithArray:_diffBasePorts];
-    }
+    if (!ISOK(_diffBasePorts, NSMutableArray.class)) _diffBasePorts = [[NSMutableArray alloc] initWithArray:_diffBasePorts];
     return _diffBasePorts;
 }
 
 -(NSMutableArray *)diffSubPorts{
-    if (!ISOK(_diffSubPorts, NSMutableArray.class)) {
-        _diffSubPorts = [[NSMutableArray alloc] initWithArray:_diffSubPorts];
-    }
+    if (!ISOK(_diffSubPorts, NSMutableArray.class)) _diffSubPorts = [[NSMutableArray alloc] initWithArray:_diffSubPorts];
     return _diffSubPorts;
 }
 

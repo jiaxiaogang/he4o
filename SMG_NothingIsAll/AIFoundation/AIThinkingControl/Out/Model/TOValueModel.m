@@ -26,9 +26,7 @@
 }
 
 - (NSMutableArray *)actionFoModels {
-    if (_actionFoModels == nil) {
-        _actionFoModels = [[NSMutableArray alloc] init];
-    }
+    if (_actionFoModels == nil) _actionFoModels = [[NSMutableArray alloc] init];
     return _actionFoModels;
 }
 

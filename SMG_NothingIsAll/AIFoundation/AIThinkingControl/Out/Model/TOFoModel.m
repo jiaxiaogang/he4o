@@ -47,15 +47,11 @@
 //}
 
 -(NSMutableArray *)subModels {
-    if (_subModels == nil) {
-        _subModels = [[NSMutableArray alloc] init];
-    }
+    if (_subModels == nil) _subModels = [[NSMutableArray alloc] init];
     return _subModels;
 }
 -(NSMutableArray *)subDemands{
-    if (_subDemands == nil) {
-        _subDemands = [[NSMutableArray alloc] init];
-    }
+    if (_subDemands == nil) _subDemands = [[NSMutableArray alloc] init];
     return _subDemands;
 }
 

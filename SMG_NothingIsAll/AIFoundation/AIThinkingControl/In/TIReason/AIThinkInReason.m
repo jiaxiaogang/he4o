@@ -236,6 +236,8 @@
  *      20210124 - In反省类比触发器,支持多时序识别matchFos (参考22073-todo3);
  *      20210413 - TIRFoFromShortMem的参数由matchAFo改为protoFo (参考23014-分析2);
  *      20210414 - 将TIRFo参数改为matchAlg有效则protoFo,否则matchAFo (参考23015);
+ *      20210421 - 加强RFos的抽具象关联,对rFo与protoFo进行类比抽象;
+ *      20210422 - 将absRFo收集到inModel中 (用于GL联想assFo时方便使用,参考23041-示图);
  *  @bug
  *      2020.11.10: 在21141训练第一步,发现外类比不执行BUG,因为传入无用的matchAlg参数判空return了 (参考21142);
  */
@@ -250,7 +252,8 @@
     
     //3. 加强RFos的抽具象关联;
     for (AIMatchFoModel *item in inModel.matchRFos) {
-        [AIAnalogy analogyOutside:maskFo assFo:item.matchFo type:ATSame createAbsAlgBlock:nil];
+        AIFoNodeBase *absRFo = [AIAnalogy analogyOutside:maskFo assFo:item.matchFo type:ATSame createAbsAlgBlock:nil];
+        if (absRFo) [inModel.absRFos addObject:absRFo];
     }
 }
 

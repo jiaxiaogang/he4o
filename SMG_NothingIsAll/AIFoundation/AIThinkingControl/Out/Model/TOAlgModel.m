@@ -27,37 +27,27 @@
 }
 
 -(NSMutableArray *)actionFoModels{
-    if (_actionFoModels == nil) {
-        _actionFoModels = [[NSMutableArray alloc] init];
-    }
+    if (_actionFoModels == nil) _actionFoModels = [[NSMutableArray alloc] init];
     return _actionFoModels;
 }
 
 -(NSMutableArray *)subModels {
-    if (_subModels == nil) {
-        _subModels = [[NSMutableArray alloc] init];
-    }
+    if (_subModels == nil) _subModels = [[NSMutableArray alloc] init];
     return _subModels;
 }
 
 -(NSMutableDictionary *)cGLDic{
-    if (!_cGLDic) {
-        _cGLDic = [[NSMutableDictionary alloc] init];
-    }
+    if (!_cGLDic) _cGLDic = [[NSMutableDictionary alloc] init];
     return _cGLDic;
 }
 
 -(NSMutableArray *)replaceAlgs{
-    if (!_replaceAlgs) {
-        _replaceAlgs = [[NSMutableArray alloc] init];
-    }
+    if (!_replaceAlgs) _replaceAlgs = [[NSMutableArray alloc] init];
     return _replaceAlgs;
 }
 
 -(NSMutableArray *)justPValues{
-    if (!_justPValues) {
-        _justPValues = [[NSMutableArray alloc] init];
-    }
+    if (!_justPValues) _justPValues = [[NSMutableArray alloc] init];
     return _justPValues;
 }
 

@@ -17,17 +17,18 @@
 }
 
 -(NSMutableArray *)matchPFos{
-    if (!_matchPFos) {
-        _matchPFos = [[NSMutableArray alloc] init];
-    }
+    if (!_matchPFos) _matchPFos = [[NSMutableArray alloc] init];
     return _matchPFos;
 }
 
 -(NSMutableArray *)matchRFos{
-    if (!_matchRFos) {
-        _matchRFos = [[NSMutableArray alloc] init];
-    }
+    if (!_matchRFos) _matchRFos = [[NSMutableArray alloc] init];
     return _matchRFos;
+}
+
+-(NSMutableArray *)absRFos{
+    if (!_absRFos) _absRFos = [[NSMutableArray alloc] init];
+    return _absRFos;
 }
 
 -(AIFoNodeBase *)matchFo{

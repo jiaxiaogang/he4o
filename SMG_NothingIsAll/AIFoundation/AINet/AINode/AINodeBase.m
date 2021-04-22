@@ -12,16 +12,12 @@
 @implementation AINodeBase
 
 -(NSMutableArray *)absPorts{
-    if (!ISOK(_absPorts, NSMutableArray.class)) {
-        _absPorts = [[NSMutableArray alloc] initWithArray:_absPorts];
-    }
+    if (!ISOK(_absPorts, NSMutableArray.class)) _absPorts = [[NSMutableArray alloc] initWithArray:_absPorts];
     return _absPorts;
 }
 
 -(NSMutableArray *)content_ps{
-    if (_content_ps == nil) {
-        _content_ps = [[NSMutableArray alloc] init];
-    }
+    if (_content_ps == nil) _content_ps = [[NSMutableArray alloc] init];
     return _content_ps;
 }
 
