@@ -388,7 +388,7 @@
     if (Log4InAnaGL(type)) NSLog(@"--> 构建:%@ ConFrom:A%ld 构建Fo:%@",Alg2FStr(glAlg),(long)backConAlg.pointer.pointerId,Fo2FStr(result));
     
     //7. 内中有外
-    [self analogyInner_Outside_V3:result type:type mModel:mModel glhnAlg:glAlg vAT:algsType vDS:dataSource];
+    [self analogyInner_Outside_V4:result type:type mModel:mModel glhnAlg:glAlg vAT:algsType vDS:dataSource];
     return result;
 }
 
@@ -410,58 +410,60 @@
  *      2020.12.13: 同时支持parts和matchs,各取三条进行assFo联想 (参考21194-todo1);
  *      2020.12.13: assFo中,索引alg不在最后一位时,跳过不进行内中外类比 (因为调试测得有非末位被联想到的情况,参考代码valid非末位);
  *      2021.04.08: v3_assFo联想方式:由左向右alg.refPorts,改为下向上protoFo.absPorts路径联想,这样更场景理性避免混乱 (参考22212);
+ *      2021.04.22: v4_assFo联想方式:由absFo向具象,分别联想hngls (参考23041-TODO2);
  */
-+(void)analogyInner_Outside_V3:(AINetAbsFoNode*)abFo type:(AnalogyType)type mModel:(AIShortMatchModel*)mModel glhnAlg:(AIAlgNodeBase*)glhnAlg vAT:(NSString*)vAT vDS:(NSString*)vDS{
++(void)analogyInner_Outside_V4:(AINetAbsFoNode*)abFo type:(AnalogyType)type mModel:(AIShortMatchModel*)mModel glhnAlg:(AIAlgNodeBase*)glhnAlg vAT:(NSString*)vAT vDS:(NSString*)vDS{
     //1. 取glConAlg_ps;
     NSArray *glConAlg_ps = [AINetService getHNGLConAlg_ps:type vAT:vAT vDS:vDS];
     BOOL debugMode = Log4InAnaGL(type) || Log4InAnaHN(type);
     if (debugMode) NSLog(@"--------- 内中外类比 ---------\nABFo:%@ matchRFos数:%lu",Fo2FStr(abFo),(unsigned long)mModel.matchRFos.count);
     
-    //2. 从matchFos联想type经验做为assFo;
+    //2. 从absRFos与其具象,联想hngl经验做为assFo;
+    NSMutableArray *allHNGLs = [[NSMutableArray alloc] init];
     
-    //TODOTOMORROW20210419:
-    //发现matchRFos中,未指向GLPorts,导致无法执行内中外类比;
-    //从而导致在getInnerGL时,从matchRFos中无法取到GL经验;
-    
-    //分析:
-    //1. 因为内类比的是protoFo,每次protoFo都不同,无法互相识别;
-    //2. 所以protoFo之间的嵌套GL,永远无法互相"内中外类比";
-    //3. 所以matchFo永远不会指向GLPorts;
-    
-    
-    for (AIMatchFoModel *mFoModel in mModel.matchRFos) {
-        NSArray *hnglFos = Ports2Pits([AINetUtils absPorts_All:mFoModel.matchFo]);
-        if (debugMode) NSLog(@"\n---> 当前MatchRFo:%@",Fo2FStr(mFoModel.matchFo));
+    //3. 遍历absFo
+    for (AIFoNodeBase *absFo in mModel.absRFos) {
         
-        //4. 验证23018的方案是否可行 (不可行matchRFo的具象,都指向0条);
-        NSArray *seemProtoPorts = [AINetUtils conPorts_All:mFoModel.matchFo];
-        for (AIPort *itemPort in seemProtoPorts) {
-            AIFoNodeBase *item = [SMGUtils searchNode:itemPort.target_p];
-            NSArray *filterSeem = [SMGUtils filterSame_ps:item.content_ps parent_ps:mModel.partAlg_ps];
-            int seem = 0,notSeem = 0;
-            if (ARRISOK(filterSeem)) {
-                seem++;
-            }else{
-                notSeem++;
-            }
-            if (debugMode) {
-                NSLog(@"当前matchRFo:%@ 具象有效:%d 无效:%d",Fo2FStr(mFoModel.matchFo),seem,notSeem);
-            }
+        //4. 直接收集absFo;
+        NSMutableArray *base_ps = [[NSMutableArray alloc] init];
+        [base_ps addObject:absFo.pointer];
+        
+        //5. 向具象收集conFo;
+        NSArray *conFo_ps = Ports2Pits([AINetUtils conPorts_All:absFo]);
+        [base_ps addObjectsFromArray:conFo_ps];
+        
+        //6. 分别取hngls,收集到allHNGLs中;
+        int curHnglCount = 0;
+        for (AIKVPointer *item in base_ps) {
+            AIFoNodeBase *base = [SMGUtils searchNode:item];
+            NSArray *hngls = Ports2Pits([AINetUtils absPorts_All:base type:type]);
+            [allHNGLs addObjectsFromArray:hngls];
+            curHnglCount += hngls.count;
         }
-        
-        for (AIKVPointer *item in hnglFos) {
-            if (debugMode) NSLog(@"%@ => %@ 具象指向数:%ld",item.identifier,Pit2FStr(item),seemProtoPorts.count);
-        }
-        
-        //5. 查下为什么matchRFo无具象指向, (因为原本protoFo就没与matchAFo建立抽具象关联);
-        
-        
-        //6. 必须将protoFo和matchFo的关联建立起来,否则何谈复用嵌套GL;
-        //  a. 由protoFo直接指向matchFo;
-        //  b. protoFo和matchFo共同指向其外类比抽象absFo;
-        
-        
+        if (debugMode) NSLog(@"\n-----> 当前absFo:%@ 取得hngl个数:%d",Fo2FStr(absFo),curHnglCount);
     }
+    
+    //7. 去重 & 排除abFo自身 & 排除非同区;
+    allHNGLs = [SMGUtils removeRepeat:allHNGLs];
+    if (debugMode) NSLog(@"去重后:%d",allHNGLs.count);
+    allHNGLs = [SMGUtils removeSub_p:abFo.pointer parent_ps:allHNGLs];
+    if (debugMode) NSLog(@"排除自身后:%d",allHNGLs.count);
+    allHNGLs = [SMGUtils filterArr:allHNGLs checkValid:^BOOL(AIKVPointer *item) {
+        return [item.dataSource isEqualToString:vDS] && [item.algsType isEqualToString:vAT];
+    }];
+    if (debugMode) NSLog(@"排除非同区后:%d",allHNGLs.count);
+    
+    
+    //TODOTOMORROW20210422:
+    //8. 根据allHNGLs取出assFo,并进行外类比;
+    if (debugMode) NSLog(@"allHNGLs:\n%@",Pits2FStr_MultiLine(allHNGLs));
+    
+    
+    
+    
+    
+    
+    
     for (AIMatchFoModel *mFoModel in mModel.matchRFos) {
         NSInteger analogyCount = 0;//单个matchFo下最多类比两个assFo;
         NSArray *hnglFoPorts = [AINetUtils absPorts_All:mFoModel.matchFo type:type];
