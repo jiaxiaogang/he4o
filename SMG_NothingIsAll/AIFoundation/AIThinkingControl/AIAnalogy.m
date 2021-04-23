@@ -166,7 +166,7 @@
     if (Log4InAnaHN(type)) NSLog(@"%@",log);
     if (Log4InAnaGL(type)) NSLog(@"%@",log);
     if (type == ATDefault) NSLog(@"%@",log);
-    return nil;
+    return result;
 }
 
 @end
@@ -449,11 +449,12 @@
             }
             curHnglCount += hnglPorts.count;
         }
-        if (debugMode) NSLog(@"--> 当前absFo:%@ 取得hngl个数:%d",Fo2FStr(absFo),curHnglCount);
+        //if (debugMode) NSLog(@"--> 当前absFo:%@ 取得hngl个数:%d",Fo2FStr(absFo),curHnglCount);
     }
     if (debugMode) NSLog(@"-----> 结果=>总共联想到assDic:%ld条\n",assDic.count);
     
     //8. 根据allHNGLs取出assFo,并进行外类比;
+    int analogCount = 0;
     for (id key in assDic.allKeys) {
         AIPort *assPort = DATA2OBJ(key);
         NSArray *absFos = ARRTOOK([assDic objectForKey:key]);
@@ -483,8 +484,7 @@
         [AINetUtils relateFoAbs:absHNGLFo conNodes:absFos isNew:false strongPorts:@[assPort]];
         
         //14. 限制类比条数;
-        analogyLimit--;
-        if (analogyLimit <= 0) break;
+        if (++analogCount >= analogyLimit) break;
     }
 }
 

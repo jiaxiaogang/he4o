@@ -313,7 +313,7 @@
  *      2021.04.10: 传递参数由baseAlg.pm_ProtoAlg改成自取pm_InModel (因为getInnerV3要求maskFo做为联想起始) (参考22211);
  */
 -(void) convert2Out_GL:(TOValueModel*)outModel {
-    NSLog(@"\n\n=============================== 行为化_GL ===============================\n加工%@ 现值:%@",Pit2FStr(outModel.content_p),Pit2FStr(outModel.sValue_p));
+    NSLog(@"\n\n=============================== 行为化_GL ===============================\n加工值: (%@ -> %@) ",Pit2FStr(outModel.sValue_p),Pit2FStr(outModel.content_p));
     //1. 数据准备
     AnalogyType type = [ThinkingUtils compare:outModel.sValue_p valueB_p:outModel.content_p];
     NSString *vAT = outModel.content_p.algsType;
@@ -333,9 +333,6 @@
     
     //2. 根据type和value_p找ATLess/ATGreater
     //3. 根据havAlg联想时序,并找出新的解决方案,与新的行为化的概念,与新的条件概念; (2020.11.06: 由getInner1Alg直接取relativeFos);
-    NSLog(@"---------------START");
-    [AINetService testGL:baseAlg.pm_InModel vAT:vAT vDS:vDS type:type except_ps:except_ps];
-    NSLog(@"---------------FINISH");
     AIKVPointer *relativeFo_p = [AINetService getInnerV3_GL:baseAlg.pm_InModel.protoFo vAT:vAT vDS:vDS type:type except_ps:except_ps];
     if (Log4ActGL) NSLog(@"getInnerAlg(%@): 根据:%@->%@ 找:%@%@ \n联想结果:%@ %@",ATType2Str(type),Pit2FStr(outModel.sValue_p),Pit2FStr(outModel.content_p),vDS,Data2FStr(type, vAT, vDS),Pit2FStr(relativeFo_p),relativeFo_p ? @"↓↓↓↓↓↓↓↓" : @"无计可施");
     

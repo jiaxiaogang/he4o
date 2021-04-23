@@ -47,42 +47,7 @@
  *      2021.04.10: GL主方向为抽象,HN主方向为具象 (参考22213);
  *  @result : 返回relativeFo_ps,用backConAlg节点,由此节点取refPorts,再筛选type,可取到glFo经历;
  */
-+(AIKVPointer*) testGL:(AIShortMatchModel*)inModel vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps{
-    
-    //TODOTOMORROW20210416:
-    //先查下inModel.matchRFos中,是否有GL;
-    
-    NSLog(@"matchRFos.count=%ld",inModel.matchRFos.count);
-    NSLog(@"matchPFos.count=%ld",inModel.matchPFos.count);
-    
-    //2. 取glConAlg_ps;
-    NSArray *glConAlg_ps = [self getHNGLConAlg_ps:type vAT:vAT vDS:vDS];
-    
-    //7. 从当前层curMasks逐个尝试取hnglAlg.refPorts;
-    for (AIMatchFoModel *item in inModel.matchRFos) {
-        AIKVPointer *result = [self getInnerByFo_Single:item.matchFo.pointer type:type except_ps:except_ps glConAlg_ps:glConAlg_ps];
-        NSLog(@"=====RItem: %@",Fo2FStr(item.matchFo));
-        
-        //TODOTOMORROW20210419:
-        //1. 查下为什么这里的matchRFos嵌套指向type都为0条;
-        //2. 再训练右投,右飞,看能否对matchRFos下,构建到GL经验;
-        //3. 或者直接将matchRFos打印到网络可视化中,看是肿么一回事;
-        
-        
-    }
-    
-    for (AIMatchFoModel *item in inModel.matchPFos) {
-        AIKVPointer *result = [self getInnerByFo_Single:item.matchFo.pointer type:type except_ps:except_ps glConAlg_ps:glConAlg_ps];
-    }
-    
-    
-    return nil;
-}
 +(AIKVPointer*) getInnerV3_GL:(AIFoNodeBase*)maskFo vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps{
-    
-    //TODOTOMORROW20210416: 将maskFo,改为maskInModel;
-    //先查下inModel.matchRFos中,是否有GL;
-    
     //1. 数据检查hAlg_根据type和value_p找ATHav
     NSLog(@"-------------- getInnerAlg (%@) --------------\nATDS:%@&%@ 参照:%@\n不应期:%@",ATType2Str(type),vAT,vDS,Fo2FStr(maskFo),Pits2FStr(except_ps));
     
@@ -108,9 +73,6 @@
         }
         //8. 当前层失败_curMaskAlgs统统失败_循环继续下层;
     }
-    [theNV tempRunForceMode:^{
-        [theNV setNodeData:maskFo.pointer lightStr:STRFORMAT(@"%@失败",ATType2Str(type))];
-    }];
     return nil;
 }
 

@@ -253,7 +253,7 @@
     //3. 加强RFos的抽具象关联;
     for (AIMatchFoModel *item in inModel.matchRFos) {
         AIFoNodeBase *absRFo = [AIAnalogy analogyOutside:maskFo assFo:item.matchFo type:ATSame createAbsAlgBlock:nil];
-        if (absRFo) [inModel.absRFos addObject:absRFo];
+        if (absRFo && ![inModel.absRFos containsObject:absRFo]) [inModel.absRFos addObject:absRFo];
     }
 }
 
@@ -319,11 +319,6 @@
     if (!ISOK(maskFo, AIFoNodeBase.class)) {
         return;
     }
-    
-    //调试23014BUG
-    [theNV tempRunForceMode:^{
-        [theNV setNodeData:maskFo.pointer lightStr:@"tirProtoFo"];
-    }];
     AIAlgNodeBase *lastAlg = [SMGUtils searchNode:ARR_INDEX_REVERSE(maskFo.content_ps, 0)];
     if (!lastAlg) {
         return;
@@ -371,7 +366,7 @@
             [TIRUtils TIR_Fo_CheckFoValidMatch:maskFo assFo:assFo checkItemValid:^BOOL(AIKVPointer *itemAlg, AIKVPointer *assAlg) {
                 return [TOUtils mIsC_1:itemAlg c:assAlg];
             } success:^(NSInteger lastAssIndex, CGFloat matchValue) {
-                NSLog(@"时序识别item SUCCESS 完成度:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
+                if (Log4MFo) NSLog(@"时序识别item SUCCESS 完成度:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
                 AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:assFo matchFoValue:matchValue cutIndex:lastAssIndex];
                 if (assFo.cmvNode_p) {
                     [inModel.matchPFos addObject:newMatchFo];
@@ -381,7 +376,7 @@
             }];
         }
     }
-    NSLog(@"时序识别Finish P:%lu R:%lu",(unsigned long)inModel.matchPFos.count,(unsigned long)inModel.matchRFos.count);
+    NSLog(@"=====> 时序识别Finish (PFos数:%lu RFos数:%lu)",(unsigned long)inModel.matchPFos.count,(unsigned long)inModel.matchRFos.count);
 }
 
 /**
