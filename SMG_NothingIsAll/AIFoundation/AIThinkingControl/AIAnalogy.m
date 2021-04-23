@@ -416,12 +416,14 @@
     //1. 取glConAlg_ps;
     NSArray *glConAlg_ps = [AINetService getHNGLConAlg_ps:type vAT:vAT vDS:vDS];
     BOOL debugMode = Log4InAnaGL(type) || Log4InAnaHN(type);
-    if (debugMode) NSLog(@"--------- 内中外类比 ---------\nABFo:%@ matchRFos数:%lu",Fo2FStr(abFo),(unsigned long)mModel.matchRFos.count);
+    NSInteger analogyLimit = 5;//最多类比5个assFo;
+    if (debugMode) NSLog(@"--------- 内中外类比 ---------\nABFo:%@ vAT:%@ vDS:%@",Fo2FStr(abFo),vAT,vDS);
     
-    //2. 从absRFos与其具象,联想hngl经验做为assFo;
-    NSMutableArray *allHNGLs = [[NSMutableArray alloc] init];
+    //2. ass结果收集: assDic<assPort,absFos>,其中absFos用于嵌套到absFo时用 (参考23041-TODO2);
+    NSMutableDictionary *assDic = [[NSMutableDictionary alloc] init];
     
-    //3. 遍历absFo
+    //3. 从absRFos与其具象,联想hngl经验做为assFo;
+    if (debugMode) NSLog(@"\n-----> 开始=>从absRFos数:%ld 中取assFo",mModel.absRFos.count);
     for (AIFoNodeBase *absFo in mModel.absRFos) {
         
         //4. 直接收集absFo;
@@ -436,70 +438,53 @@
         int curHnglCount = 0;
         for (AIKVPointer *item in base_ps) {
             AIFoNodeBase *base = [SMGUtils searchNode:item];
-            NSArray *hngls = Ports2Pits([AINetUtils absPorts_All:base type:type]);
-            [allHNGLs addObjectsFromArray:hngls];
-            curHnglCount += hngls.count;
+            NSArray *hnglPorts = [AINetUtils absPorts_All:base type:type];
+            
+            //7. 将hnglPorts存到allHNGLDic中 (hnglPort作为key,absFo收集到value中);
+            for (AIPort *item in hnglPorts) {
+                NSData *key = OBJ2DATA(item);
+                NSMutableArray *absFos = [[NSMutableArray alloc] initWithArray:[assDic objectForKey:key]];
+                if (![absFos containsObject:absFo]) [absFos addObject:absFo];
+                [assDic setObject:absFos forKey:key];
+            }
+            curHnglCount += hnglPorts.count;
         }
-        if (debugMode) NSLog(@"\n-----> 当前absFo:%@ 取得hngl个数:%d",Fo2FStr(absFo),curHnglCount);
+        if (debugMode) NSLog(@"--> 当前absFo:%@ 取得hngl个数:%d",Fo2FStr(absFo),curHnglCount);
     }
+    if (debugMode) NSLog(@"-----> 结果=>总共联想到assDic:%ld条\n",assDic.count);
     
-    //7. 去重 & 排除abFo自身 & 排除非同区;
-    allHNGLs = [SMGUtils removeRepeat:allHNGLs];
-    if (debugMode) NSLog(@"去重后:%d",allHNGLs.count);
-    allHNGLs = [SMGUtils removeSub_p:abFo.pointer parent_ps:allHNGLs];
-    if (debugMode) NSLog(@"排除自身后:%d",allHNGLs.count);
-    allHNGLs = [SMGUtils filterArr:allHNGLs checkValid:^BOOL(AIKVPointer *item) {
-        return [item.dataSource isEqualToString:vDS] && [item.algsType isEqualToString:vAT];
-    }];
-    if (debugMode) NSLog(@"排除非同区后:%d",allHNGLs.count);
-    
-    
-    //TODOTOMORROW20210422:
     //8. 根据allHNGLs取出assFo,并进行外类比;
-    if (debugMode) NSLog(@"allHNGLs:\n%@",Pits2FStr_MultiLine(allHNGLs));
-    
-    
-    
-    
-    
-    
-    
-    for (AIMatchFoModel *mFoModel in mModel.matchRFos) {
-        NSInteger analogyCount = 0;//单个matchFo下最多类比两个assFo;
-        NSArray *hnglFoPorts = [AINetUtils absPorts_All:mFoModel.matchFo type:type];
-        if (debugMode) NSLog(@"\n---> 当前MatchRFo:%@ protoAssFo数:%ld",Fo2FStr(mFoModel.matchFo),hnglFoPorts.count);
+    for (id key in assDic.allKeys) {
+        AIPort *assPort = DATA2OBJ(key);
+        NSArray *absFos = ARRTOOK([assDic objectForKey:key]);
         
-        //3. 检查type_ps元素的有效性 (比如必须为距小时序才可以参与外类比);
-        for (AIPort *hnglFoPort in hnglFoPorts) {
+        //9. 排除abFo自身 (不可与abFo重复);
+        if ([assPort.target_p isEqual:abFo.pointer]) continue;
+        
+        //10. 有效检查_与glConAlg_ps的元素有引用关系 (用末位是否包含在glConAlgs中判断,如:必须为距小时序才可);
+        AIFoNodeBase *assFo = [SMGUtils searchNode:assPort.target_p];
+        if (![SMGUtils containsSub_p:ARR_INDEX_REVERSE(assFo.content_ps, 0) parent_ps:glConAlg_ps]) continue;
             
-            //4. 不可与abFo重复;
-            if ([hnglFoPort.target_p isEqual:abFo.pointer]) continue;
-            AIFoNodeBase *assFo = [SMGUtils searchNode:hnglFoPort.target_p];
+        //11. 对abFo和assAbFo进行类比;
+        if (debugMode) NSLog(@"---> item外类比abFo & assFo:%@ 当前ass收集到absFo个数:%ld",Fo2FStr(assFo),absFos.count);
+        AINetAbsFoNode *absHNGLFo = [self analogyOutside:abFo assFo:assFo type:type createAbsAlgBlock:^(AIAlgNodeBase *createAlg, NSInteger foIndex, NSInteger assFoIndex) {
             
-            //5. 与glConAlg_ps的元素有引用关系 (用末位是否包含在glConAlgs中判断);
-            if (![SMGUtils containsSub_p:ARR_INDEX_REVERSE(assFo.content_ps, 0) parent_ps:glConAlg_ps]) continue;
-            
-            //6. 对abFo和assAbFo进行类比;
-            if (debugMode) NSLog(@"--> item外类比abFo & assFo:%@",Fo2FStr(assFo));
-            AINetAbsFoNode *absFo = [self analogyOutside:abFo assFo:assFo type:type createAbsAlgBlock:^(AIAlgNodeBase *createAlg, NSInteger foIndex, NSInteger assFoIndex) {
-                
-                //7. 当abFo.lastAlg和assFo.lastAlg类比抽象得到absA后,应该让absA抽象指向glAlg (参考21115);
-                if (foIndex == abFo.count - 1 && assFoIndex == assFo.count - 1) {
-                    if (debugMode) NSLog(@"-> 内中外类比_关联:%@ ABSTO:%@",Alg2FStr(createAlg),Alg2FStr(glhnAlg));
-                    [AINetUtils relateAlgAbs:(AIAbsAlgNode*)glhnAlg conNodes:@[createAlg] isNew:false];
-                }
-            }];
-            if (!absFo) continue;
-            
-            //8. 将外类比抽象时做嵌套关联 & 指定强度 (目前由absPort+type表征);
-            //此处strongPorts只传hngl是因为abFo具象指向protoFo,而不是matchFo;
-            //而此处暂不对absFo和protoFo做抽具象关联,因为一般protoFo的嵌套经验不大用的着;
-            [AINetUtils relateFoAbs:absFo conNodes:@[mFoModel.matchFo] isNew:false strongPorts:@[hnglFoPort]];
-            
-            //9. 单个matchFo类比2条;
-            analogyCount ++;
-            if (analogyCount >= 2) break;
-        }
+            //12. 当abFo.lastAlg和assFo.lastAlg类比抽象得到absA后,应该让absA抽象指向glAlg (参考21115);
+            if (foIndex == abFo.count - 1 && assFoIndex == assFo.count - 1) {
+                if (debugMode) NSLog(@"-> 内中外类比_关联:%@ ABSTO:%@",Alg2FStr(createAlg),Alg2FStr(glhnAlg));
+                [AINetUtils relateAlgAbs:(AIAbsAlgNode*)glhnAlg conNodes:@[createAlg] isNew:false];
+            }
+        }];
+        if (!absHNGLFo) continue;
+        
+        //13. 将外类比抽象时做嵌套关联 & 指定强度 (目前由absPort+type表征);
+        //此处strongPorts只传assPort是因为abFo嵌套于protoFo,强度仅为初始;
+        //此处不将absFo嵌套于protoFo&assFo下,因为一般protoFo的嵌套经验用不着,并且在getInnerV3向抽象取同样可取到;
+        [AINetUtils relateFoAbs:absHNGLFo conNodes:absFos isNew:false strongPorts:@[assPort]];
+        
+        //14. 限制类比条数;
+        analogyLimit--;
+        if (analogyLimit <= 0) break;
     }
 }
 
