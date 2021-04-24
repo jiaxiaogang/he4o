@@ -159,8 +159,20 @@
     NSArray *hnglFo_ps = Ports2Pits([AINetUtils absPorts_All:maskFo type:type]);
     if (Log4GetInnerAlg) NSLog(@"=====1 当前maskFo:%@ 粗方案共%lu个",Fo2FStr(maskFo),(unsigned long)hnglFo_ps.count);
     
+    //3. 去掉不应期;
+    hnglFo_ps = [SMGUtils removeSub_ps:except_ps parent_ps:hnglFo_ps];
+    
+    //4. 调试;
+    if (Log4GetInnerAlg) {
+        for (AIKVPointer *item_p in hnglFo_ps) {
+            AIFoNodeBase *item = [SMGUtils searchNode:item_p];
+            BOOL reasonScore =  [AIScore FRS:item];
+            NSLog(@"== 可用方案:%@ \t空S评价: %@",Fo2FStr(item),reasonScore ? @"通过" : @"不通过");
+        }
+    }
+    
     //3. 与glConAlg_ps取交集,取出有效的前limit个;
-    [SMGUtils filterArr:hnglFo_ps checkValid:^BOOL(AIKVPointer *item) {
+    hnglFo_ps = [SMGUtils filterArr:hnglFo_ps checkValid:^BOOL(AIKVPointer *item) {
         AIFoNodeBase *hnglFo = [SMGUtils searchNode:item];
         //4. 当relativeFo末位为glConAlg_p时,结果才有效 (参考21183-3);
         if (![SMGUtils containsSub_p:ARR_INDEX_REVERSE(hnglFo.content_ps, 0) parent_ps:glConAlg_ps]) return false;
@@ -171,13 +183,6 @@
         //6. 全部通过,收集;
         return true;
     } limit:cGetInnerHNGLCount];
-    
-    //7. 去掉不应期;
-    hnglFo_ps = [SMGUtils removeSub_ps:except_ps parent_ps:hnglFo_ps];
-    if (Log4GetInnerAlg) {
-        NSLog(@"===2 可用方案共%lu个",(unsigned long)hnglFo_ps.count);
-        for (AIKVPointer *item in hnglFo_ps) NSLog(@"=3 方案:%@",Pit2FStr(item));
-    }
     
     //8. 逐个尝试作为解决方案返回;
     return ARR_INDEX(hnglFo_ps, 0);

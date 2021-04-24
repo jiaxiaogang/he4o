@@ -480,7 +480,7 @@
         //13. 将外类比抽象时做嵌套关联 & 指定强度 (目前由absPort+type表征);
         //此处strongPorts只传assPort是因为abFo嵌套于protoFo,强度仅为初始;
         //此处不将absFo嵌套于protoFo&assFo下,因为一般protoFo的嵌套经验用不着,并且在getInnerV3向抽象取同样可取到;
-        if (debugMode) NSLog(@"==== 结果嵌套到absFos下: ↓↓↓↓↓↓\n%@",Pits2FStr_MultiLine(Nodes2Pits(absFos)));
+        if (debugMode) NSLog(@"==== 结果:%@ 嵌套到absFos下: ↓↓↓↓↓↓\n%@",Fo2FStr(absHNGLFo),Pits2FStr_MultiLine(Nodes2Pits(absFos)));
         [AINetUtils relateFoAbs:absHNGLFo conNodes:absFos isNew:false strongPorts:@[assPort]];
         
         //14. 限制类比条数;

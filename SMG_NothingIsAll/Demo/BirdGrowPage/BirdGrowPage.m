@@ -119,8 +119,8 @@
     
     //4. 投食 & 打日志;
     if (targetPoint.x != 0 && targetPoint.y != 0) {
-        DemoLog(@"远投:%f,%f",targetPoint.x,targetPoint.y);
-        [theApp.heLogView addDemoLog:STRFORMAT(@"远投:%f,%f",targetPoint.x,targetPoint.y)];
+        DemoLog(@"远投 (X:%.2f Y:%.2f)",targetPoint.x,targetPoint.y);
+        [theApp.heLogView addDemoLog:STRFORMAT(@"远投 (X:%.2f Y:%.2f)",targetPoint.x,targetPoint.y)];
         [self food2Pos:targetPoint];
     }
 }
