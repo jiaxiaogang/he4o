@@ -246,13 +246,14 @@
     if (!inModel) return;
     AIFoNodeBase *maskFo = ARRISOK(inModel.matchAlgs) ? inModel.protoFo : inModel.matchAFo;
     
-    NSLog(@"\n\n------------------------------- 瞬时时序识别 -------------------------------\nprotoFo:%@->%@",Fo2FStr(maskFo),Mvp2Str(maskFo.cmvNode_p));
+    NSLog(@"\n\n------------------------------- 瞬时时序识别 -------------------------------\n%@:%@->%@",ARRISOK(inModel.matchAlgs) ? @"protoFo" : @"matchAFo",Fo2FStr(maskFo),Mvp2Str(maskFo.cmvNode_p));
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
     [self partMatching_FoV1Dot5:maskFo except_ps:except_ps decoratorInModel:inModel];
     
     //3. 加强RFos的抽具象关联;
     for (AIMatchFoModel *item in inModel.matchRFos) {
         AIFoNodeBase *absRFo = [AIAnalogy analogyOutside:maskFo assFo:item.matchFo type:ATSame createAbsAlgBlock:nil];
+        if (Log4AnalogyAbsRFo) NSLog(@">>> 抽象absRFo: %@\t\tFrom MatchRFo: %@",Fo2FStr(absRFo),Fo2FStr(item.matchFo));
         if (absRFo && ![inModel.absRFos containsObject:absRFo]) [inModel.absRFos addObject:absRFo];
     }
 }

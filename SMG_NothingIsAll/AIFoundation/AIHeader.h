@@ -238,6 +238,7 @@
 #define Log4FuzzyAlg false
 //识别时序
 #define Log4MFo false
+#define Log4AnalogyAbsRFo true
 //内类比
 #define Log4InAna true
 #define Log4InAnaGL(type) ((type == ATGreater || type == ATLess) && true)
