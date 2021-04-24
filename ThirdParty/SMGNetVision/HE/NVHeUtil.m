@@ -28,7 +28,7 @@
 }
 
 +(NSString*) getLightStr4Ps:(NSArray*)node_ps{
-    return [self getLightStr4Ps:node_ps simple:true header:false sep:@","];
+    return [self getLightStr4Ps:node_ps simple:true header:true sep:@","];
 }
 +(NSString*) getLightStr4Ps:(NSArray*)node_ps simple:(BOOL)simple header:(BOOL)header sep:(NSString*)sep{
     //1. 数据检查

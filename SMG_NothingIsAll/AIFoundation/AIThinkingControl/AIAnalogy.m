@@ -417,13 +417,12 @@
     NSArray *glConAlg_ps = [AINetService getHNGLConAlg_ps:type vAT:vAT vDS:vDS];
     BOOL debugMode = Log4InAnaGL(type) || Log4InAnaHN(type);
     NSInteger analogyLimit = 5;//最多类比5个assFo;
-    if (debugMode) NSLog(@"--------- 内中外类比 ---------\nABFo:%@ vAT:%@ vDS:%@",Fo2FStr(abFo),vAT,vDS);
+    if (debugMode) NSLog(@"\n--------- 内中外类比 ---------\nABFo:%@ vAT:%@ vDS:%@",Fo2FStr(abFo),vAT,vDS);
     
     //2. ass结果收集: assDic<assPort,absFos>,其中absFos用于嵌套到absFo时用 (参考23041-TODO2);
     NSMutableDictionary *assDic = [[NSMutableDictionary alloc] init];
     
     //3. 从absRFos与其具象,联想hngl经验做为assFo;
-    if (debugMode) NSLog(@"\n-----> 开始=>从absRFos数:%ld 中取assFo",mModel.absRFos.count);
     for (AIFoNodeBase *absFo in mModel.absRFos) {
         
         //4. 直接收集absFo;
@@ -451,7 +450,7 @@
         }
         //if (debugMode) NSLog(@"--> 当前absFo:%@ 取得hngl个数:%d",Fo2FStr(absFo),curHnglCount);
     }
-    if (debugMode) NSLog(@"-----> 结果=>总共联想到assDic:%ld条\n",assDic.count);
+    if (debugMode) NSLog(@">>> 从%ld条absRFos中取assFo=>总联想assDic%ld条",mModel.absRFos.count,assDic.count);
     
     //8. 根据allHNGLs取出assFo,并进行外类比;
     int analogCount = 0;
@@ -467,7 +466,7 @@
         if (![SMGUtils containsSub_p:ARR_INDEX_REVERSE(assFo.content_ps, 0) parent_ps:glConAlg_ps]) continue;
             
         //11. 对abFo和assAbFo进行类比;
-        if (debugMode) NSLog(@"---> item外类比abFo & assFo:%@ 当前ass收集到absFo个数:%ld",Fo2FStr(assFo),absFos.count);
+        if (debugMode) NSLog(@"\n------ item外类比 ------\nASSFo:%@",Fo2FStr(assFo));
         AINetAbsFoNode *absHNGLFo = [self analogyOutside:abFo assFo:assFo type:type createAbsAlgBlock:^(AIAlgNodeBase *createAlg, NSInteger foIndex, NSInteger assFoIndex) {
             
             //12. 当abFo.lastAlg和assFo.lastAlg类比抽象得到absA后,应该让absA抽象指向glAlg (参考21115);
@@ -481,6 +480,7 @@
         //13. 将外类比抽象时做嵌套关联 & 指定强度 (目前由absPort+type表征);
         //此处strongPorts只传assPort是因为abFo嵌套于protoFo,强度仅为初始;
         //此处不将absFo嵌套于protoFo&assFo下,因为一般protoFo的嵌套经验用不着,并且在getInnerV3向抽象取同样可取到;
+        if (debugMode) NSLog(@"==== 结果嵌套到absFos下: ↓↓↓↓↓↓\n%@",Pits2FStr_MultiLine(Nodes2Pits(absFos)));
         [AINetUtils relateFoAbs:absHNGLFo conNodes:absFos isNew:false strongPorts:@[assPort]];
         
         //14. 限制类比条数;
