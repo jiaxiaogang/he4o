@@ -123,8 +123,6 @@
  */
 +(AIAlgNodeBase*) createHdAlgNode_NoRepeat:(NSArray*)value_ps;
 
-//+(AIFrontOrderNode*)createConFo_NoRepeat_General:(NSArray*)content_ps isMem:(BOOL)isMem;
-
 @end
 
 

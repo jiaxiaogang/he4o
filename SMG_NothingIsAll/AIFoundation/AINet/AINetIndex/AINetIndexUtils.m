@@ -43,23 +43,6 @@
 
 
 //MARK:===============================================================
-//MARK:                     < 时序绝对匹配 >
-//MARK:===============================================================
-+(AIFoNodeBase*) getAbsoluteMatchingFoNodeWithContent_ps:(NSArray*)content_ps except_ps:(NSArray*)except_ps isMem:(BOOL)isMem ds:(NSString*)ds{
-    return [self getAbsoluteMatching_General:content_ps sort_ps:content_ps except_ps:except_ps getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
-        NSArray *refPorts = nil;
-        if (isMem) {
-            refPorts = ARRTOOK([SMGUtils searchObjectForFilePath:item_p.filePath fileName:kFNMemRefPorts time:cRTMemReference]);
-        }else{
-            AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
-            if (itemAlg) refPorts = itemAlg.refPorts;
-        }
-        return refPorts;
-    } ds:ds];
-}
-
-
-//MARK:===============================================================
 //MARK:                     < 绝对匹配 (概念/时序) 通用方法 >
 //MARK:===============================================================
 

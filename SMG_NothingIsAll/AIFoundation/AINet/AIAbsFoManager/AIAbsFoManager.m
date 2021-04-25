@@ -20,9 +20,7 @@
 #import "AINetUtils.h"
 #import "NSString+Extension.h"
 #import "AIAlgNodeBase.h"
-
-//temp
-#import "NVHeUtil.h"
+#import "AINetIndexUtils.h"
 
 @implementation AIAbsFoManager
 
@@ -93,7 +91,7 @@
  *  @version
  *      2020.04.26: 去掉时序的全局去重;
  *      2021.04.25: 打开防重,仅对content_ps防重,但没有对ds做同区要求判断 (参考23054-疑点);
- *      2021.04.25: 把ThinkingUtil.createAbsFo_NoRepeat_General()搬至此处;
+ *      2021.04.25: 把ThinkingUtils.createAbsFo_NoRepeat_General()搬至此处;
  *  @status
  *      2021.04.25: 打开后,gl经验全为0条,所以先关掉,后续测试打开后为什么为0条;
  */
@@ -101,18 +99,44 @@
     //1. 数据准备
     AINetAbsFoNode *result = nil;
     if (ARRISOK(conFos) && ARRISOK(content_ps)) {
-        //2. 有则加强 (防重开关);
-        AIFoNodeBase *absoluteFo = nil;//[AINetIndexUtils getAbsoluteMatchingFoNodeWithContent_ps:content_ps except_ps:conFos isMem:false ds:ds];
+        //2. 获取绝对匹配;
+        AIFoNodeBase *absoluteFo = [AINetIndexUtils getAbsoluteMatching_General:content_ps sort_ps:content_ps except_ps:conFos getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
+            AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
+            return [AINetUtils refPorts_All4Alg:itemAlg];
+        } ds:ds];
+        
+        //3. 有则加强 (防重开关);
         if (ISOK(absoluteFo, AINetAbsFoNode.class)) {
             result = (AINetAbsFoNode*)absoluteFo;
             [AINetUtils relateFoAbs:result conNodes:conFos isNew:false];
             [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
         }else{
-            //3. 无则构建
+            //4. 无则构建
             result = [theNet createAbsFo_General:conFos content_ps:content_ps difStrong:difStrong ds:ds];
         }
     }
     return result;
 }
+
+//+(AIFrontOrderNode*)createConFo_NoRepeat_General:(NSArray*)content_ps isMem:(BOOL)isMem{
+//    //1. 数据准备
+//    AIFrontOrderNode *result = nil;
+//    if (ARRISOK(content_ps)) {
+//2. 获取绝对匹配;
+//AIFoNodeBase *localFo = [AINetIndexUtils getAbsoluteMatching_General:content_ps sort_ps:content_ps except_ps:nil getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
+//    AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
+//    return [AINetUtils refPorts_All4Alg:itemAlg];
+//} ds:ds];
+//        //2. 有则加强;
+//        if (ISOK(localFo, AIFrontOrderNode.class)) {
+//            result = (AIFrontOrderNode*)localFo;
+//            [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
+//        }else{
+//            //3. 无则构建
+//            result = [theNet createConFo:content_ps isMem:isMem];
+//        }
+//    }
+//    return result;
+//}
 
 @end

@@ -342,24 +342,6 @@
     return [theNet createAbsAlg_NoRepeat:value_ps conAlgs:nil isMem:false isOut:false];
 }
 
-
-//+(AIFrontOrderNode*)createConFo_NoRepeat_General:(NSArray*)content_ps isMem:(BOOL)isMem{
-//    //1. 数据准备
-//    AIFrontOrderNode *result = nil;
-//    if (ARRISOK(content_ps)) {
-//        //2. 有则加强;
-//        AIFoNodeBase *localFo = [AINetIndexUtils getAbsoluteMatchingFoNodeWithContent_ps:content_ps except_ps:nil isMem:false];
-//        if (ISOK(localFo, AIFrontOrderNode.class)) {
-//            result = (AIFrontOrderNode*)localFo;
-//            [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
-//        }else{
-//            //3. 无则构建
-//            result = [theNet createConFo:content_ps isMem:isMem];
-//        }
-//    }
-//    return result;
-//}
-
 //+(BOOL) sameOfMV1:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p{
 //    if (mv1_p && mv2_p && [mv1_p.algsType isEqualToString:mv2_p.algsType]) {
 //        return [self sameIdenSameScore:mv1_p mv2:mv2_p];
