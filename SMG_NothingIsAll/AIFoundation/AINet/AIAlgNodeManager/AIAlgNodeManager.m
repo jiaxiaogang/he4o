@@ -152,6 +152,8 @@
 
 /**
  *  MARK:--------------------构建抽象概念_防重--------------------
+ *  @todo
+ *      2021.04.25: alg暂不支持对ds不同区间的防重,以后可考虑支持 (参考getAbsoluteMatching_General的ds参数);
  */
 +(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem dsBlock:(NSString*(^)())dsBlock isOutBlock:(BOOL(^)())isOutBlock{
     //1. 数据检查
@@ -168,7 +170,7 @@
             }
         }
         return result;
-    }];
+    } ds:nil];
     
     //3. 有则加强;
     if (ISOK(localAlg, AIAbsAlgNode.class)) {

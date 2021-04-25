@@ -175,7 +175,7 @@
  *  MARK:--------------------获取到某标识下的ATHav/ATNone/ATGreater/ATLess概念--------------------
  *  @desc : 根据概念标识,获取概念的"有无大小"节点
  */
-+(AIAlgNodeBase*) dataOut_GetAlgNodeWithInnerType:(AnalogyType)type algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
+//+(AIAlgNodeBase*) dataOut_GetAlgNodeWithInnerType:(AnalogyType)type algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
 
 /**
  *  MARK:--------------------PM算法获取有效SP概念--------------------

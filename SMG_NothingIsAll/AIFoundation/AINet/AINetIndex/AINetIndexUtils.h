@@ -30,15 +30,15 @@
  *      1. TIR_Alg识别算法中,绝对匹配部分;
  *      2. 内类比获取;
  */
-+(id) getAbsoluteMatchingAlgNodeWithValueP:(AIPointer*)value_p;
-+(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps;
-+(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps except_ps:(NSArray*)except_ps isMem:(BOOL)isMem;
+//+(id) getAbsoluteMatchingAlgNodeWithValueP:(AIPointer*)value_p;
+//+(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps;
+//+(AIAlgNodeBase*) getAbsoluteMatchingAlgNodeWithValuePs:(NSArray*)value_ps except_ps:(NSArray*)except_ps isMem:(BOOL)isMem;
 
 
 //MARK:===============================================================
 //MARK:                     < 时序绝对匹配 >
 //MARK:===============================================================
-+(AIFoNodeBase*) getAbsoluteMatchingFoNodeWithContent_ps:(NSArray*)content_ps except_ps:(NSArray*)except_ps isMem:(BOOL)isMem;
++(AIFoNodeBase*) getAbsoluteMatchingFoNodeWithContent_ps:(NSArray*)content_ps except_ps:(NSArray*)except_ps isMem:(BOOL)isMem ds:(NSString*)ds;
 
 
 //MARK:===============================================================
@@ -50,7 +50,8 @@
  *  @todo
  *      1. 随后支持只匹配抽象alg/fo (可由checkItemValid来实现) (可用于概念识别,因为概念识别为具象时,会导致无法建立抽具象关联);
  *          说明: 不过随后抽具象节点类会统一,所以如果这个影响不到v2.0则可不做;
+ *  @param ds : 当有ds防重要求时,传入ds (如fo的不同inner类型无需去重) (为empty时,不做防重要求);
  */
-+(id) getAbsoluteMatching_General:(NSArray*)content_ps sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps getRefPortsBlock:(NSArray*(^)(AIKVPointer *item_p))getRefPortsBlock;
++(id) getAbsoluteMatching_General:(NSArray*)content_ps sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps getRefPortsBlock:(NSArray*(^)(AIKVPointer *item_p))getRefPortsBlock ds:(NSString*)ds;
 
 @end

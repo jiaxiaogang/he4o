@@ -341,23 +341,30 @@
 +(AIAlgNodeBase*) createHdAlgNode_NoRepeat:(NSArray*)value_ps{
     return [theNet createAbsAlg_NoRepeat:value_ps conAlgs:nil isMem:false isOut:false];
 }
+
+/**
+ *  MARK:--------------------构建fo_防重版--------------------
+ *  @version
+ *      2021.04.25: 打开防重,仅对content_ps防重,但没有对ds做同区要求判断 (参考23054-疑点);
+ *  @status
+ *      2021.04.25: 打开后,gl经验全为0条,所以先关掉,后续测试打开后为什么为0条;
+ */
 +(AINetAbsFoNode*)createAbsFo_NoRepeat_General:(NSArray*)conFos content_ps:(NSArray*)content_ps ds:(NSString*)ds difStrong:(NSInteger)difStrong{
     //1. 数据准备
-    //AINetAbsFoNode *result = nil;
-    //if (ARRISOK(conFos) && ARRISOK(content_ps)) {
-    //    //2. 有则加强;
-    //    AIFoNodeBase *absoluteFo = [AINetIndexUtils getAbsoluteMatchingFoNodeWithContent_ps:content_ps except_ps:conFos isMem:false];
-    //    if (ISOK(absoluteFo, AINetAbsFoNode.class)) {
-    //        result = (AINetAbsFoNode*)absoluteFo;
-    //        [AINetUtils relateFoAbs:result conNodes:conFos isNew:false];
-    //        [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
-    //    }else{
-    //        //3. 无则构建
-    //        result = [theNet createAbsFo_General:conFos content_ps:content_ps difStrong:difStrong ds:ds];
-    //    }
-    //}
-    //return result;
-    return [theNet createAbsFo_General:conFos content_ps:content_ps difStrong:difStrong ds:ds];
+    AINetAbsFoNode *result = nil;
+    if (ARRISOK(conFos) && ARRISOK(content_ps)) {
+        //2. 有则加强 (防重开关);
+        AIFoNodeBase *absoluteFo = nil;//[AINetIndexUtils getAbsoluteMatchingFoNodeWithContent_ps:content_ps except_ps:conFos isMem:false ds:ds];
+        if (ISOK(absoluteFo, AINetAbsFoNode.class)) {
+            result = (AINetAbsFoNode*)absoluteFo;
+            [AINetUtils relateFoAbs:result conNodes:conFos isNew:false];
+            [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
+        }else{
+            //3. 无则构建
+            result = [theNet createAbsFo_General:conFos content_ps:content_ps difStrong:difStrong ds:ds];
+        }
+    }
+    return result;
 }
 //+(AIFrontOrderNode*)createConFo_NoRepeat_General:(NSArray*)content_ps isMem:(BOOL)isMem{
 //    //1. 数据准备
@@ -484,13 +491,13 @@
  *      问题: 因概念节点中,algsType&dataSource多为@" ",导致无法准确定位到对应结果;
  *      解决: 在概念节点的create中,将@"{pId}"作为概念节点的algsType;
  */
-+(AIAlgNodeBase*) dataOut_GetAlgNodeWithInnerType:(AnalogyType)type algsType:(NSString*)algsType dataSource:(NSString*)dataSource{
-    //1. 获取相应的微信息;
-    AIPointer *value_p = [theNet getNetDataPointerWithData:@(type) algsType:algsType dataSource:dataSource];
-    
-    //2. 从微信息,联想refPorts绝对匹配的概念节点;
-    return [AINetIndexUtils getAbsoluteMatchingAlgNodeWithValueP:value_p];
-}
+//+(AIAlgNodeBase*) dataOut_GetAlgNodeWithInnerType:(AnalogyType)type algsType:(NSString*)algsType dataSource:(NSString*)dataSource{
+//    //1. 获取相应的微信息;
+//    AIPointer *value_p = [theNet getNetDataPointerWithData:@(type) algsType:algsType dataSource:dataSource];
+//
+//    //2. 从微信息,联想refPorts绝对匹配的概念节点;
+//    return [AINetIndexUtils getAbsoluteMatchingAlgNodeWithValueP:value_p];
+//}
 
 /**
  *  MARK:--------------------PM算法获取有效SP概念--------------------

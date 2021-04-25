@@ -85,4 +85,9 @@
     return findAbsNode;
 }
 
+//TODOTOMORROW20210524:把ThinkingUtil.createAbsFo_NoRepeat_General()搬至此处;
+-(AINetAbsFoNode*) create_NoRepeat:(NSArray*)conFos orderSames:(NSArray*)orderSames difStrong:(NSInteger)difStrong dsBlock:(NSString*(^)())dsBlock{
+    return nil;
+}
+
 @end
