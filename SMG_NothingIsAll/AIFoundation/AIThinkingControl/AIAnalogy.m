@@ -148,7 +148,7 @@
             
             //5. 构建absFoNode
             NSString *foDS = [ThinkingUtils getAnalogyTypeDS:type];
-            result = [ThinkingUtils createAbsFo_NoRepeat_General:@[fo,assFo] content_ps:orderSames ds:foDS difStrong:foDifStrong];
+            result = [theNet createAbsFo_NoRepeat:@[fo,assFo] content_ps:orderSames difStrong:foDifStrong ds:foDS];
             
             //5. 从fo和conFo.mvDeltaTime中提取mv导致时间隔,在relateFo之前,赋值到result中;
             result.mvDeltaTime = MAX(fo.mvDeltaTime, assFo.mvDeltaTime);
@@ -675,7 +675,7 @@
     }
     
     //9. 构建SPFo;
-    AIFoNodeBase *spFo = [ThinkingUtils createAbsFo_NoRepeat_General:@[matchFo] content_ps:justPs ds:ds difStrong:1];
+    AIFoNodeBase *spFo = [theNet createAbsFo_NoRepeat:@[matchFo] content_ps:justPs difStrong:1 ds:ds];
     if (Log4InRethink) NSLog(@"--> In反省类比 构建SPFo %@",Fo2FStr(spFo));
 }
 

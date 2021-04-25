@@ -342,30 +342,7 @@
     return [theNet createAbsAlg_NoRepeat:value_ps conAlgs:nil isMem:false isOut:false];
 }
 
-/**
- *  MARK:--------------------构建fo_防重版--------------------
- *  @version
- *      2021.04.25: 打开防重,仅对content_ps防重,但没有对ds做同区要求判断 (参考23054-疑点);
- *  @status
- *      2021.04.25: 打开后,gl经验全为0条,所以先关掉,后续测试打开后为什么为0条;
- */
-+(AINetAbsFoNode*)createAbsFo_NoRepeat_General:(NSArray*)conFos content_ps:(NSArray*)content_ps ds:(NSString*)ds difStrong:(NSInteger)difStrong{
-    //1. 数据准备
-    AINetAbsFoNode *result = nil;
-    if (ARRISOK(conFos) && ARRISOK(content_ps)) {
-        //2. 有则加强 (防重开关);
-        AIFoNodeBase *absoluteFo = nil;//[AINetIndexUtils getAbsoluteMatchingFoNodeWithContent_ps:content_ps except_ps:conFos isMem:false ds:ds];
-        if (ISOK(absoluteFo, AINetAbsFoNode.class)) {
-            result = (AINetAbsFoNode*)absoluteFo;
-            [AINetUtils relateFoAbs:result conNodes:conFos isNew:false];
-            [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
-        }else{
-            //3. 无则构建
-            result = [theNet createAbsFo_General:conFos content_ps:content_ps difStrong:difStrong ds:ds];
-        }
-    }
-    return result;
-}
+
 //+(AIFrontOrderNode*)createConFo_NoRepeat_General:(NSArray*)content_ps isMem:(BOOL)isMem{
 //    //1. 数据准备
 //    AIFrontOrderNode *result = nil;

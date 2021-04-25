@@ -154,6 +154,9 @@ static AINet *_instance;
         return ds;
     }];
 }
+-(AINetAbsFoNode*) createAbsFo_NoRepeat:(NSArray*)conFos content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong ds:(NSString*)ds{
+    return [self.absFoManager create_NoRepeat:conFos content_ps:content_ps difStrong:difStrong ds:ds];
+}
 
 //MARK:===============================================================
 //MARK:                     < directionReference >

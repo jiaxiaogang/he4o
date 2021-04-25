@@ -24,4 +24,10 @@
  */
 -(AINetAbsFoNode*) create:(NSArray*)conFos orderSames:(NSArray*)orderSames difStrong:(NSInteger)difStrong dsBlock:(NSString*(^)())dsBlock;
 
+/**
+ *  MARK:--------------------构建fo_防重版--------------------
+ *  @param difStrong : 构建fo的被引用初始强度;
+ */
+-(AINetAbsFoNode*) create_NoRepeat:(NSArray*)conFos content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong ds:(NSString*)ds;
+
 @end
