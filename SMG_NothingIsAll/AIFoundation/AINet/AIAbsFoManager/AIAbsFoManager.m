@@ -97,7 +97,7 @@
  */
 -(AINetAbsFoNode*) create_NoRepeat:(NSArray*)conFos content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong ds:(NSString*)ds{
     //1. 数据准备
-    BOOL noRepeatSwitch = false;
+    BOOL noRepeatSwitch = true;
     AINetAbsFoNode *result = nil;
     if (ARRISOK(conFos) && ARRISOK(content_ps)) {
         //2. 获取绝对匹配;

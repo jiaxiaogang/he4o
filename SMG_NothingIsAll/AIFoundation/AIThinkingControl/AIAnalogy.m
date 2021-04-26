@@ -453,6 +453,15 @@
     if (debugMode) NSLog(@">>> 从%ld条absRFos中取assFo=>总联想assDic%ld条",mModel.absRFos.count,assDic.count);
     
     //8. 根据allHNGLs取出assFo,并进行外类比;
+    
+    if (debugMode) {
+        NSLog(@"glConAlgs:\n%@",Pits2FStr(glConAlg_ps));
+        for (id key in assDic.allKeys) {
+            AIPort *assPort = DATA2OBJ(key);
+            NSLog(@"\nassFo:%@",Pit2FStr(assPort.target_p));
+        }
+    }
+    
     int analogCount = 0;
     for (id key in assDic.allKeys) {
         AIPort *assPort = DATA2OBJ(key);
@@ -464,8 +473,11 @@
         //10. 有效检查_与glConAlg_ps的元素有引用关系 (用末位是否包含在glConAlgs中判断,如:必须为距小时序才可);
         AIFoNodeBase *assFo = [SMGUtils searchNode:assPort.target_p];
         if (![SMGUtils containsSub_p:ARR_INDEX_REVERSE(assFo.content_ps, 0) parent_ps:glConAlg_ps]) continue;
-            
+        
         //11. 对abFo和assAbFo进行类比;
+        if (debugMode) {
+            NSLog(@"");
+        }
         if (debugMode) NSLog(@"\n------ item外类比 ------\nASSFo:%@",Fo2FStr(assFo));
         AINetAbsFoNode *absHNGLFo = [self analogyOutside:abFo assFo:assFo type:type createAbsAlgBlock:^(AIAlgNodeBase *createAlg, NSInteger foIndex, NSInteger assFoIndex) {
             
