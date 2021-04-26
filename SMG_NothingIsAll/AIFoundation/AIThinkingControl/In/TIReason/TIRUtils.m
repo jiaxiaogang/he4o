@@ -331,7 +331,7 @@
     [absOrders addObject:backConAlg.pointer];
     
     //3. 构建 (内类比时序未指向mv,初始强度为1);
-    AINetAbsFoNode *result = [theNet createAbsFo_General:@[conFo] content_ps:absOrders difStrong:1 ds:ds];
+    AINetAbsFoNode *result = [theNet createAbsFo_NoRepeat:@[conFo] content_ps:absOrders difStrong:1 ds:ds];
     return result;
 }
 

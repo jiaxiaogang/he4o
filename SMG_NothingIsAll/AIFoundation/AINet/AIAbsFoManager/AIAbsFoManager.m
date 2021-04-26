@@ -100,7 +100,7 @@
     AINetAbsFoNode *result = nil;
     if (ARRISOK(conFos) && ARRISOK(content_ps)) {
         //2. 获取绝对匹配;
-        AIFoNodeBase *absoluteFo = [AINetIndexUtils getAbsoluteMatching_General:content_ps sort_ps:content_ps except_ps:conFos getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
+        AIFoNodeBase *absoluteFo = [AINetIndexUtils getAbsoluteMatching_General:content_ps sort_ps:content_ps except_ps:Nodes2Pits(conFos) getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
             AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
             return [AINetUtils refPorts_All4Alg:itemAlg];
         } ds:ds];
@@ -112,7 +112,9 @@
             [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
         }else{
             //4. 无则构建
-            result = [theNet createAbsFo_General:conFos content_ps:content_ps difStrong:difStrong ds:ds];
+            result = [self create:conFos orderSames:content_ps difStrong:difStrong dsBlock:^NSString *{
+                return ds;
+            }];
         }
     }
     return result;

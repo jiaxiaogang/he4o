@@ -738,7 +738,7 @@
     }
     
     //6. 构建SPFo
-    AINetAbsFoNode *spFo = [theNet createAbsFo_General:@[foNode] content_ps:spFoContent difStrong:1 ds:spDS];
+    AINetAbsFoNode *spFo = [theNet createAbsFo_NoRepeat:@[foNode] content_ps:spFoContent difStrong:1 ds:spDS];
     NSLog(@"createFo:%@ con:%@",Fo2FStr(spFo),Fo2FStr(foNode));
     
     if (spFo && ARRISOK(spFo.content_ps)) {
