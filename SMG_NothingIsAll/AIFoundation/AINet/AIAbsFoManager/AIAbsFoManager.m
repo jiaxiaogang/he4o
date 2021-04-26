@@ -97,10 +97,12 @@
  */
 -(AINetAbsFoNode*) create_NoRepeat:(NSArray*)conFos content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong ds:(NSString*)ds{
     //1. 数据准备
+    BOOL switch = false;//开关
     AINetAbsFoNode *result = nil;
     if (ARRISOK(conFos) && ARRISOK(content_ps)) {
         //2. 获取绝对匹配;
-        AIFoNodeBase *absoluteFo = [AINetIndexUtils getAbsoluteMatching_General:content_ps sort_ps:content_ps except_ps:Nodes2Pits(conFos) getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
+        AIFoNodeBase *absoluteFo = nil;
+        if (switch) absoluteFo = [AINetIndexUtils getAbsoluteMatching_General:content_ps sort_ps:content_ps except_ps:Nodes2Pits(conFos) getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
             AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
             return [AINetUtils refPorts_All4Alg:itemAlg];
         } ds:ds];
