@@ -124,7 +124,7 @@
 /**
  *  MARK:--------------------反思--------------------
  *  @version
- *      2021.04.13: 除了inner外,对其它时序进行全面支持;
+ *      2021.04.13: 除了inner外,对其它时序进行全面支持 (4月27号发现,hngl的代码也会执行);
  */
 -(AIShortMatchModel*) dataInFromRethink:(TOFoModel*)toFoModel{
     //1. 数据准备;
