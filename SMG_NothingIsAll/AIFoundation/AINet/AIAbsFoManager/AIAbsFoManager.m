@@ -92,32 +92,30 @@
  *      2020.04.26: 去掉时序的全局去重;
  *      2021.04.25: 打开防重,仅对content_ps防重,但没有对ds做同区要求判断 (参考23054-疑点);
  *      2021.04.25: 把ThinkingUtils.createAbsFo_NoRepeat_General()搬至此处;
+ *      2021.04.28: 修复当content_ps为空时,不构建新时序的BUG (参考23057);
  *  @status
  *      2021.04.25: 打开后,gl经验全为0条,所以先关掉,后续测试打开后为什么为0条;
  */
 -(AINetAbsFoNode*) create_NoRepeat:(NSArray*)conFos content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong ds:(NSString*)ds{
     //1. 数据准备
-    BOOL noRepeatSwitch = true;
-    AINetAbsFoNode *result = nil;
-    if (ARRISOK(conFos) && ARRISOK(content_ps)) {
-        //2. 获取绝对匹配;
-        AIFoNodeBase *absoluteFo = nil;
-        if (noRepeatSwitch) absoluteFo = [AINetIndexUtils getAbsoluteMatching_General:content_ps sort_ps:content_ps except_ps:Nodes2Pits(conFos) getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
-            AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
-            return [AINetUtils refPorts_All4Alg:itemAlg];
-        } ds:ds];
-        
-        //3. 有则加强 (防重开关);
-        if (ISOK(absoluteFo, AINetAbsFoNode.class)) {
-            result = (AINetAbsFoNode*)absoluteFo;
-            [AINetUtils relateFoAbs:result conNodes:conFos isNew:false];
-            [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
-        }else{
-            //4. 无则构建
-            result = [self create:conFos orderSames:content_ps difStrong:difStrong dsBlock:^NSString *{
-                return ds;
-            }];
-        }
+    conFos = ARRTOOK(conFos);
+    content_ps = ARRTOOK(content_ps);
+    
+    //2. 获取绝对匹配;
+    AINetAbsFoNode *result = [AINetIndexUtils getAbsoluteMatching_General:content_ps sort_ps:content_ps except_ps:Nodes2Pits(conFos) getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
+        AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
+        return [AINetUtils refPorts_All4Alg:itemAlg];
+    } ds:ds];
+    
+    //3. 有则加强关联;
+    if (ISOK(result, AINetAbsFoNode.class)) {
+        [AINetUtils relateFoAbs:result conNodes:conFos isNew:false];
+        [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
+    }else{
+        //4. 无则新构建;
+        result = [self create:conFos orderSames:content_ps difStrong:difStrong dsBlock:^NSString *{
+            return ds;
+        }];
     }
     return result;
 }
