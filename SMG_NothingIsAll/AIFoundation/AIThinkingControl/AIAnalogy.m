@@ -411,12 +411,13 @@
  *      2020.12.13: assFo中,索引alg不在最后一位时,跳过不进行内中外类比 (因为调试测得有非末位被联想到的情况,参考代码valid非末位);
  *      2021.04.08: v3_assFo联想方式:由左向右alg.refPorts,改为下向上protoFo.absPorts路径联想,这样更场景理性避免混乱 (参考22212);
  *      2021.04.22: v4_assFo联想方式:由absFo向具象,分别联想hngls (参考23041-TODO2);
+ *      2021.04.28: 右果嵌套GL始终为0条的BUG,调整配置参数后ok (参考23058);
  */
 +(void)analogyInner_Outside_V4:(AINetAbsFoNode*)abFo type:(AnalogyType)type mModel:(AIShortMatchModel*)mModel glhnAlg:(AIAlgNodeBase*)glhnAlg vAT:(NSString*)vAT vDS:(NSString*)vDS{
     //1. 取glConAlg_ps;
     NSArray *glConAlg_ps = [AINetService getHNGLConAlg_ps:type vAT:vAT vDS:vDS];
     BOOL debugMode = Log4InAnaGL(type) || Log4InAnaHN(type);
-    NSInteger analogyLimit = 5;//最多类比5个assFo;
+    NSInteger analogyLimit = 20;//最多类比5个assFo;
     if (debugMode) NSLog(@"\n--------- 内中外类比 ---------\nABFo:%@ vAT:%@ vDS:%@",Fo2FStr(abFo),vAT,vDS);
     
     //2. ass结果收集: assDic<assPort,absFos>,其中absFos用于嵌套到absFo时用 (参考23041-TODO2);
@@ -429,15 +430,17 @@
         NSMutableArray *base_ps = [[NSMutableArray alloc] init];
         [base_ps addObject:absFo.pointer];
         
-        //5. 向具象收集conFo;
+        //5. 向具象收集conFo (前3条);
         NSArray *conFo_ps = Ports2Pits([AINetUtils conPorts_All:absFo]);
+        conFo_ps = ARR_SUB(conFo_ps, 0, 3);
         [base_ps addObjectsFromArray:conFo_ps];
         
-        //6. 分别取hngls,收集到allHNGLs中;
+        //6. 分别取hngls,收集到allHNGLs中 (每item的前2条);
         int curHnglCount = 0;
         for (AIKVPointer *item in base_ps) {
             AIFoNodeBase *base = [SMGUtils searchNode:item];
             NSArray *hnglPorts = [AINetUtils absPorts_All:base type:type];
+            hnglPorts = ARR_SUB(hnglPorts, 0, 2);
             
             //7. 将hnglPorts存到allHNGLDic中 (hnglPort作为key,absFo收集到value中);
             for (AIPort *item in hnglPorts) {

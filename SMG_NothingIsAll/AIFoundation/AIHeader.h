@@ -265,7 +265,7 @@
 #define Log4OPushM true
 #define Log4TIROPushM false
 //VRS评价
-#define Log4VRS true
+#define Log4VRS false
 //In反省
 #define Log4InRethink true
 #define Log4OutRethink true
