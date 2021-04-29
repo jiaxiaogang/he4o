@@ -45,25 +45,11 @@
 
 -(void) initDisplay{
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(outputObserver:) name:kOutputObserver object:nil];
-    [self breathe];
 }
 
 //MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
-
--(void) breathe{
-    [UIView animateWithDuration:0.2f animations:^{
-        self.alpha = 0.9f;
-    } completion:^(BOOL finished) {
-        [UIView animateWithDuration:0.2f animations:^{
-            self.alpha = 1.0f;
-        } completion:^(BOOL finished) {
-            [self breathe];
-        }];
-    }];
-}
-
 -(void) flyAction:(CGFloat)value{
     //1. 数据检查
     value = MAX(MIN(1, value), 0);

@@ -19,6 +19,7 @@
 
 @property (strong, nonatomic) UILabel *tipLogLab;
 @property (strong, nonatomic) UIButton *openHeLogBtn;
+@property (strong, nonatomic) UIView *refreshDot;   //因为模拟器下的UI动画老是刷新不了,所以临时写这么个点,来推动UI线程被动刷新;
 
 @end
 
@@ -49,6 +50,14 @@
     [self.openHeLogBtn setTitle:@"LOG" forState:UIControlStateNormal];
     [self.openHeLogBtn addTarget:self action:@selector(openHeLogBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.window addSubview:self.openHeLogBtn];
+    
+    //3. 被动UI刷新
+    self.refreshDot = [[UIView alloc] initWithFrame:CGRectMake(ScreenWidth - 40, 8, 5, 5)];
+    [self.refreshDot setBackgroundColor:UIColorWithRGBHex(0x00FF00)];
+    [self.refreshDot.layer setCornerRadius:2.5f];
+    [self.refreshDot.layer setMasksToBounds:true];
+    [self.window addSubview:self.refreshDot];
+    [self startRefreshDotAnimation];
     
     //3. 清空记忆
     self.clearMemoryBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth - 162, StateBarHeight, 40, 20)];
@@ -111,6 +120,18 @@
     DemoLog(@"清空记忆");
     [theApp.heLogView addDemoLog:@"清空记忆"];
     [SMGUtils removeAllMemory];
+}
+
+-(void) startRefreshDotAnimation{
+    [UIView animateWithDuration:0.1f animations:^{
+        self.refreshDot.alpha = 0;
+    } completion:^(BOOL finished) {
+        [UIView animateWithDuration:0.1f animations:^{
+            self.refreshDot.alpha = 1.0f;
+        } completion:^(BOOL finished) {
+            [self startRefreshDotAnimation];
+        }];
+    }];
 }
 
 @end
