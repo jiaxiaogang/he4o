@@ -48,7 +48,7 @@
     BOOL result = !findSameIden;
     
     //3. 对sp评分
-    if (Log4VRS) NSLog(@"============== VRS ==============%@\nfrom:%@ 有同区码:%@",Pit2FStr(value_p),Alg2FStr(cAlg),findSameIden?@"是":@"否");
+    if (Log4VRS_Main) NSLog(@"============== VRS ==============%@\nfrom:%@ 有同区码:%@",Pit2FStr(value_p),Alg2FStr(cAlg),findSameIden?@"是":@"否");
     double sScore = [self score4Value:value_p spPorts:sPorts];
     double pScore = [self score4Value:value_p spPorts:pPorts];
     
@@ -58,7 +58,7 @@
     }else if (pScore - sScore >= 2) {
         result = true;
     }
-    if (Log4VRS) NSLog(@"----> S评分:%@ P评分:%@ 评价结果:%@",STRFORMAT(@"%.2f",sScore),STRFORMAT(@"%.2f",pScore),result?@"通过":@"未通过");
+    if (Log4VRS_Main) NSLog(@"----> S评分:%@ P评分:%@ 评价结果:%@",STRFORMAT(@"%.2f",sScore),STRFORMAT(@"%.2f",pScore),result?@"通过":@"未通过");
     return result;
 }
 //VRS评分
@@ -92,7 +92,7 @@
             double rate = scope > 0 ? (scope - distance) / scope : 1.0f;
             double itemStrong = rate * item.strong.value;
             result += itemStrong;
-            if (Log4VRS) NSLog(@"-> %@ 新增: %@ x %ld = %@ 累计:%f 依据:%@",ATType2Str([item.target_p.dataSource integerValue]),STRFORMAT(@"%.2f",rate),(long)item.strong.value,STRFORMAT(@"%.2f",itemStrong),result,Pit2FStr(item.target_p));
+            if (Log4VRS_Desc) NSLog(@"-> %@ 新增: %@ x %ld = %@ 累计:%f 依据:%@",ATType2Str([item.target_p.dataSource integerValue]),STRFORMAT(@"%.2f",rate),(long)item.strong.value,STRFORMAT(@"%.2f",itemStrong),result,Pit2FStr(item.target_p));
         }
     }
     return result;

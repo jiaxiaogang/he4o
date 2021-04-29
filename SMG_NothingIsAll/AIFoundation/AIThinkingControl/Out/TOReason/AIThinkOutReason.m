@@ -548,9 +548,8 @@
         //9. 将最接近的取出,并根据源于S或P作为理性评价结果,判断是否修正;
         AIAlgNodeBase *mostSimilarAlg = ARR_INDEX(sortPAlgs, 0);
         if (Log4PM) NSLog(@"> 当前修正:%@ 最近P:%@ 评价:%@",Pit2FStr(firstJustPValue),Alg2FStr(mostSimilarAlg),score?@"通过":@"未通过");
-        if (Log4PM) NSLog(@"--> S数:%lu [%@]",(unsigned long)sPorts.count,Pits2FStr(Ports2Pits(sPorts)));
-        if (Log4PM) NSLog(@"--> P数:%lu [%@]",(unsigned long)pPorts.count,Pits2FStr(Ports2Pits(pPorts)));
-        if (Log4PM) NSLog(@"--> SP From: %@ %@",Alg2FStr(curAlg),Fo2FStr(curFo));
+        if (Log4PM) NSLog(@"--> S数:%lu P数:%lu",(unsigned long)sPorts.count,(unsigned long)pPorts.count);
+        if (Log4PM) NSLog(@"--> SP From=>curAlg:%@ curFo:%@",Alg2FStr(curAlg),Fo2FStr(curFo));
         if (!score) {
             //10. 优先从MC的C中找同区码,作为修正GL的目标;
             AIKVPointer *glValue4M = [SMGUtils filterSameIdentifier_p:firstJustPValue b_ps:curAlg.content_ps];
