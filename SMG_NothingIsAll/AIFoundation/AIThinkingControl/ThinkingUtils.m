@@ -466,25 +466,28 @@
  *  @version
  *      2020.12.27: 把cPM_CheckSPFoLimit从3调整为100 (参考21207);
  *      2021.01.01: 返回由AIPinters改为AIPorts;
+ *      2021.04.30: 修复返回结果有重复的BUG (参考23062);
  */
 +(NSArray*) pm_GetValidSPAlg_ps:(AIAlgNodeBase*)curAlg curFo:(AIFoNodeBase*)curFo type:(AnalogyType)type{
     NSMutableArray *result = [[NSMutableArray alloc] init];
     if (curAlg && curFo && (type == ATSub || type == ATPlus)) {
         //1. 根据curFo取抽象SubFo3条,PlusFo3条;
-        NSArray *spFos = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:curFo type:type]];
-        spFos = ARR_SUB(spFos, 0, cPM_CheckSPFoLimit);
+        NSArray *spFo_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:curFo type:type]];
+        spFo_ps = ARR_SUB(spFo_ps, 0, cPM_CheckSPFoLimit);
+        NSArray *spFos = [SMGUtils searchNodes:spFo_ps];
         
         //2. 查对应在curAlg上是否长过教训S / 被助攻过P;
-        NSArray *spAlgs = [AINetUtils absPorts_All:curAlg type:type];
+        NSArray *spAlgPorts = [AINetUtils absPorts_All:curAlg type:type];
         
         //3. 从algSPs中,筛选有效的部分validAlgSPs
-        for (AIKVPointer *spFo_p in spFos) {
-            AIFoNodeBase *spFo = [SMGUtils searchNode:spFo_p];
-            NSArray *validAlgs = [SMGUtils filterArr:spAlgs checkValid:^BOOL(AIPort *item) {
-                return [spFo.content_ps containsObject:item.target_p];
-            }];
-            [result addObjectsFromArray:validAlgs];
-        }
+        result = [SMGUtils filterArr:spAlgPorts checkValid:^BOOL(AIPort *item) {
+            for (AIFoNodeBase *spFo in spFos) {
+                if ([spFo.content_ps containsObject:item.target_p]) {
+                    return true;
+                }
+            }
+            return false;
+        }];
     }
     return result;
 }
