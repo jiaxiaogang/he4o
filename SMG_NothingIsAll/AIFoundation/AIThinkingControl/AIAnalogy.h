@@ -15,6 +15,12 @@
  *      2. 内类比 (主入口)
  *      3. 反馈类比 (主入口)
  *      4. 反省类比 (主入口)
+ *  @callers
+ *      1. InReasonSame: 调用内类比
+ *      2. InPerceptSame: 调用正向反馈外类比
+ *      3. InPerceptDiff: 调用反向反馈外类比
+ *      4. InReasonDiff: 调用InRethink类比
+ *      5. Out三种ActYes: 调用OutRethink类比
  */
 
 //MARK:===============================================================

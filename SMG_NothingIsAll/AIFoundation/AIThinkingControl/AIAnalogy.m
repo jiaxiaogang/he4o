@@ -664,7 +664,7 @@
                 
                 //6. 差值有效,则构建新SPAlg节点;
                 AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:pSubM conAlgs:@[matchAlg] isMem:false ds:ds];
-                if (Log4InRethink) NSLog(@"--> In反省类比 构建SPAlg %@",Alg2FStr(spAlg));
+                if (Log4InRethink) NSLog(@"--> IRT构建SPAlg:%@ base:%@",Alg2FStr(spAlg),Alg2FStr(matchAlg));
                 
                 //7. 收集spAlg并更新nextStartJ & findShortAlg;
                 [justPs addObject:spAlg.pointer];
@@ -679,7 +679,7 @@
     
     //9. 构建SPFo;
     AIFoNodeBase *spFo = [theNet createAbsFo_NoRepeat:@[matchFo] content_ps:justPs difStrong:1 ds:ds];
-    if (Log4InRethink) NSLog(@"--> In反省类比 构建SPFo %@",Fo2FStr(spFo));
+    if (Log4InRethink) NSLog(@"--> IRT构建SPFo:%@ base:%@",Fo2FStr(spFo),Fo2FStr(matchFo));
 }
 
 /**
@@ -734,7 +734,7 @@
         AIAlgNodeBase *curAlg = [SMGUtils searchNode:toAlgModel.content_p];
         if (!ARRISOK(notFinish_ps)) continue;
         AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:notFinish_ps conAlgs:@[curAlg] isMem:false ds:spDS];
-        NSLog(@"createAlg:%@ from:%@",Alg2FStr(spAlg),AlgP2FStr(toAlgModel.content_p));
+        if (Log4OutRethink) NSLog(@"--> ORT构建SPAlg:%@ base:%@",Alg2FStr(spAlg),AlgP2FStr(curAlg.pointer));
         
         //5. 收集SP概念_用于构建SP时序;
         [spFoContent addObject:spAlg.pointer];
@@ -742,7 +742,7 @@
     
     //6. 构建SPFo
     AINetAbsFoNode *spFo = [theNet createAbsFo_NoRepeat:@[foNode] content_ps:spFoContent difStrong:1 ds:spDS];
-    NSLog(@"createFo:%@ con:%@",Fo2FStr(spFo),Fo2FStr(foNode));
+    if (Log4OutRethink) NSLog(@"--> ORT构建SPFo:%@ base:%@",Fo2FStr(spFo),Fo2FStr(foNode));
     
     if (spFo && ARRISOK(spFo.content_ps)) {
         //7. 向性左向右,以当前foNode为交集指引,找assSPFo,以进行外类比 (参考20205-原则3);
