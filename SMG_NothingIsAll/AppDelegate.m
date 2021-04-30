@@ -123,15 +123,10 @@
 }
 
 -(void) startRefreshDotAnimation{
-    [UIView animateWithDuration:0.1f animations:^{
-        self.refreshDot.alpha = 0;
-    } completion:^(BOOL finished) {
-        [UIView animateWithDuration:0.1f animations:^{
-            self.refreshDot.alpha = 1.0f;
-        } completion:^(BOOL finished) {
-            [self startRefreshDotAnimation];
-        }];
-    }];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        self.refreshDot.alpha = fabs(self.refreshDot.alpha - 1);
+        [self startRefreshDotAnimation];
+    });
 }
 
 @end
