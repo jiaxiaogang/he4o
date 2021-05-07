@@ -625,13 +625,15 @@
  *      20200421 - 取消构建sameAbsAlg,因为MC算法不需要同级MC判定,所以此处也没用,关于MC有效性检查可参考:19102;
  *      20210121 - 迭代为In反省类比 (参考22052);
  *      20210121 - P.Alg在M中未发现时,也要收集到P-M的差集中 T;
+ *      20210507 - 暂停IRT (参考23063);
  *  @todo
  *      20200823 - 一直以来,反向类比触发条件太苛刻的问题,通过反省类比迭代之,支持正与平也可触发 T;
  *      20210120 - 此处取mType和pType的SPType有误,S不表示负价值评分,而是表示不符合当前父场景的hope预期 (已废弃,改为直接传入type);
  */
 +(void) analogy_InRethink:(AIMatchFoModel*)matchFoModel shortFo:(AIFoNodeBase*)shortFo type:(AnalogyType)type{
     //1. 数据准备;
-    if (!matchFoModel || !matchFoModel.matchFo || !shortFo || (type != ATPlus && type != ATSub)) return;
+    BOOL tirSwitch = false;
+    if (!tirSwitch || !matchFoModel || !matchFoModel.matchFo || !shortFo || (type != ATPlus && type != ATSub)) return;
     AIFoNodeBase *matchFo = matchFoModel.matchFo;
     NSString *ds = [ThinkingUtils getAnalogyTypeDS:type];
     
