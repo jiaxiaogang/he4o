@@ -169,12 +169,19 @@
     return result;
 }
 
-//distance
+/**
+ *  MARK:--------------------distance--------------------
+ *  @version
+ *      2021.05.07: 有时距离明明是0,但却吃不到 (小鸟是方的不是圆的,所以在距离判断上,与eat方法保持一致) (无笔记,怀疑是此处导致就改了);
+ */
 +(NSInteger) distance:(UIView*)selfView target:(UIView*)target{
     CGPoint disPoint = [UIView distancePoint:selfView target:target];
     CGFloat disFloat = sqrt(powf(disPoint.x, 2) + powf(disPoint.y, 2));
     NSInteger distance = (NSInteger)(disFloat / 3.0f);
-    if (distance <= 5) distance = 0;//与身体重叠,则距离为0;
+    //与身体重叠,则距离为0;
+    if (fabs(disPoint.x) <= 15.0f && fabs(disPoint.y) <= 15.0f) {
+        distance = 0;
+    }
     return distance;
 }
 
