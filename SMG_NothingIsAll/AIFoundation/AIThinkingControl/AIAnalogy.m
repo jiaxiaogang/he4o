@@ -29,6 +29,7 @@
 #import "AIScore.h"
 #import "AIMatchFoModel.h"
 #import "AINetService.h"
+#import "NSArray+Extension.h"
 
 @implementation AIAnalogy
 
@@ -702,6 +703,7 @@
  *      2020.09.03: 支持ATPlus反省类比;
  *      2020.12.18: 支持GL反省类比 (本来就支持) (参考20205 & 21187);
  *      2020.12.24: 在spContent为0时,也构建spFo (构建空SP) (参考21202);
+ *      2021.05.08: 将sp外类比结果直接嵌套在同层fo下,以使其参与到VRS评价中,以及参与到今后的再外类比 (参考23064);
  *  @todo
  *      2020.12.23: 支持构建空SP (参考21188);
  *  @bug
@@ -748,7 +750,6 @@
     
     
     //TODOTOMORROW20210507: (参考23061);
-    //1. 此处absSP未参与到VRS评价中;
     //2. 此处责任在于gl修正失败的,而不是所有非finish全负责;
     
     
@@ -756,7 +757,8 @@
     
     if (spFo && ARRISOK(spFo.content_ps)) {
         //7. 向性左向右,以当前foNode为交集指引,找assSPFo,以进行外类比 (参考20205-原则3);
-        NSArray *assSPFos = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:foNode type:type]];
+        NSArray *spAbsPorts = [AINetUtils absPorts_All:foNode type:type];
+        NSArray *assSPFos = Ports2Pits(spAbsPorts);
         assSPFos = [SMGUtils removeSub_p:spFo.pointer parent_ps:assSPFos];
         assSPFos = ARR_SUB(assSPFos, 0, cRethinkActBack_AssSPFoLimit);
         
@@ -764,7 +766,13 @@
         if (spFo && ARRISOK(assSPFos)) {
             for (AIKVPointer *item in assSPFos) {
                 AINetAbsFoNode *assSPFo = [SMGUtils searchNode:item];
-                [AIAnalogy analogyOutside:spFo assFo:assSPFo type:type createAbsAlgBlock:nil];
+                AINetAbsFoNode *absSPFo = [AIAnalogy analogyOutside:spFo assFo:assSPFo type:type createAbsAlgBlock:nil];
+                
+                //9. 将absSP与foNode建立嵌套关联;
+                AIPort *spPort = [AINetUtils findPort:spFo.pointer fromPorts:spAbsPorts];
+                AIPort *assPort = [AINetUtils findPort:assSPFo.pointer fromPorts:spAbsPorts];
+                NSMutableArray *strongPorts = [[[[NSMutableArray alloc] init] append:spPort] append:assPort];
+                [AINetUtils relateFoAbs:absSPFo conNodes:@[foNode] isNew:false strongPorts:strongPorts];
             }
         }
     }
