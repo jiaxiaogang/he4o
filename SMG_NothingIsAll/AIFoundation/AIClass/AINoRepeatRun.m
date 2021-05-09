@@ -8,31 +8,14 @@
 
 #import "AINoRepeatRun.h"
 
-@interface AINoRepeatRun ()
-
-@property (strong, nonatomic) NSMutableDictionary *signDic;
-
-@end
+#define theData [AINoRepeatRun sharedData]
 
 @implementation AINoRepeatRun
 
-static AINoRepeatRun *_instance;
-//static NSMutableDictionary *dic;
-+(AINoRepeatRun*) sharedInstance{
-    if (_instance == nil) {
-        _instance = [[AINoRepeatRun alloc] init];
-    }
-    return _instance;
-}
-
-//MARK:===============================================================
-//MARK:                     < privateMethod >
-//MARK:===============================================================
--(NSMutableDictionary *)signDic{
-    if (_signDic == nil) {
-        _signDic = [[NSMutableDictionary alloc] init];
-    }
-    return _signDic;
+static NSMutableDictionary *_data;
++(NSMutableDictionary*) sharedData{
+    if (_data == nil) _data = [[NSMutableDictionary alloc] init];
+    return _data;
 }
 
 //MARK:===============================================================
@@ -41,17 +24,18 @@ static AINoRepeatRun *_instance;
 /**
  *  MARK:--------------------报名--------------------
  */
--(void) sign:(id)key{
-    [self.signDic setObject:@"" forKey:key];
++(void) sign:(id)key{
+    [theData setObject:@"" forKey:key];
 }
 
 /**
  *  MARK:--------------------执行--------------------
  */
--(void) run:(id)key block:(void(^)())block {
-    if ([self.signDic objectForKey:key] && block) {
-        [self.signDic removeObjectForKey:key];
-        block();
++(void) run:(id)key block:(void(^)())block {
+    //仅执行一次,就把登记key移除掉;
+    if ([theData objectForKey:key]) {
+        [theData removeObjectForKey:key];
+        if (block) block();
     }
 }
 

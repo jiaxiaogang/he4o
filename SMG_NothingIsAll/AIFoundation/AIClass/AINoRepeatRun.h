@@ -14,16 +14,14 @@
  */
 @interface AINoRepeatRun : NSObject
 
-+(AINoRepeatRun*) sharedInstance;
-
 /**
  *  MARK:--------------------报名--------------------
  */
--(void) sign:(id)key;
++(void) sign:(id)key;
 
 /**
  *  MARK:--------------------执行--------------------
  */
--(void) run:(id)key block:(void(^)())block;
++(void) run:(id)key block:(void(^)())block;
 
 @end
