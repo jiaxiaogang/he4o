@@ -147,6 +147,8 @@
  *  @desc byFo联想路径 (向性为右至左) (参考23031);
  *  @param glConAlg_ps : 所有可用的glConAlg (参考21115);
  *  @todo 改为用maskFo获取inner经验
+ *  @version
+ *      2021.05.09: 无论空S评价是否通过,最多取前cGetInnerByFoCount条 (否则经验多的没完没了);
  */
 +(AIKVPointer*) getInnerByFo_Single:(AIKVPointer*)maskFo_p type:(AnalogyType)type except_ps:(NSArray*)except_ps glConAlg_ps:(NSArray*)glConAlg_ps{
     //1. 数据检查;
@@ -162,6 +164,16 @@
     //3. 去掉不应期;
     hnglFo_ps = [SMGUtils removeSub_ps:except_ps parent_ps:hnglFo_ps];
     
+    //3. 与glConAlg_ps取交集,取出有效的前limit个;
+    hnglFo_ps = [SMGUtils filterArr:hnglFo_ps checkValid:^BOOL(AIKVPointer *item) {
+        AIFoNodeBase *hnglFo = [SMGUtils searchNode:item];
+        //4. 当relativeFo末位为glConAlg_p时,结果才有效 (参考21183-3);
+        if (![SMGUtils containsSub_p:ARR_INDEX_REVERSE(hnglFo.content_ps, 0) parent_ps:glConAlg_ps]) return false;
+        
+        //6. 全部通过,收集;
+        return true;
+    } limit:cGetInnerByFoCount];
+    
     //4. 调试;
     if (Log4GetInnerAlg) {
         for (AIKVPointer *item_p in hnglFo_ps) {
@@ -171,21 +183,17 @@
         }
     }
     
-    //3. 与glConAlg_ps取交集,取出有效的前limit个;
-    hnglFo_ps = [SMGUtils filterArr:hnglFo_ps checkValid:^BOOL(AIKVPointer *item) {
-        AIFoNodeBase *hnglFo = [SMGUtils searchNode:item];
-        //4. 当relativeFo末位为glConAlg_p时,结果才有效 (参考21183-3);
-        if (![SMGUtils containsSub_p:ARR_INDEX_REVERSE(hnglFo.content_ps, 0) parent_ps:glConAlg_ps]) return false;
-        
+    //8. 将空S评价通过的首条返回;
+    for (AIKVPointer *item in hnglFo_ps) {
         //5. 未发生理性评价 (空S评价);
+        AIFoNodeBase *hnglFo = [SMGUtils searchNode:item];
         if (![AIScore FRS:hnglFo]) return false;
         
-        //6. 全部通过,收集;
-        return true;
-    } limit:cGetInnerHNGLCount];
+        return item;
+    }
     
     //8. 逐个尝试作为解决方案返回;
-    return ARR_INDEX(hnglFo_ps, 0);
+    return nil;
 }
 
 /**
@@ -206,7 +214,7 @@
     
     //3. 与glConAlg_ps取交集,取出有效的前limit个;
     hnglAlg_ps = [SMGUtils filterSame_ps:hnglAlg_ps parent_ps:glConAlg_ps];
-    hnglAlg_ps = ARR_SUB(hnglAlg_ps, 0, cGetInnerHNGLCount);
+    hnglAlg_ps = ARR_SUB(hnglAlg_ps, 0, cGetInnerByAlgCount);
     
     //4. 从type_ps逐个尝试取.refPorts;
     for (AIKVPointer *hnglAlg_p in hnglAlg_ps) {

@@ -96,10 +96,12 @@
  *      2021.02.02 - 将从matchFos取解决方案,优先由matchFos提供,其次由"反向反馈外类比虚mv"提供 (参考22107);
  *      2021.02.04 - 因为老是取到非常具体的解决方案,所以注掉优先从matchFos取 (参考22114);
  *      2021.03.27 - V4迭代,支持从dsPorts找解决方案,而不是方向索引 (参考n22p19-todo1 & 22195);
+ *      2021.05.09 - 方便九测,暂将R模式关掉 (参考n23p07);
  */
 -(void) reasonSubV4:(ReasonDemandModel*)demand{
     //1. 数据检查
-    if (!demand) return;
+    BOOL rsSwitch = false;
+    if (!demand || !rsSwitch) return;
     AIFoNodeBase *matchFo = demand.mModel.matchFo;
     NSLog(@"\n\n=============================== TOP.R- ===============================\n任务:%@,发生%ld",demand.algsType,(long)demand.mModel.cutIndex);
     
