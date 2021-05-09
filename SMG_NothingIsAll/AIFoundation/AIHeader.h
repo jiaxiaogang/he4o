@@ -240,8 +240,8 @@
 #define Log4MFo false
 #define Log4AnalogyAbsRFo true
 //内类比
-#define Log4InAna true
-#define Log4InAnaGL(type) ((type == ATGreater || type == ATLess) && true)
+#define Log4InAna false
+#define Log4InAnaGL(type) ((type == ATGreater || type == ATLess) && false)
 #define Log4InAnaHN(type) ((type == ATHav || type == ATNone) && false)
 //外类比
 #define Log4OutAna false
@@ -270,3 +270,8 @@
 //In反省
 #define Log4InRethink true
 #define Log4OutRethink true
+
+//MARK:===============================================================
+//MARK:                     < 系统模块开关 >
+//MARK:===============================================================
+#define Switch4RS false

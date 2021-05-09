@@ -100,8 +100,7 @@
  */
 -(void) reasonSubV4:(ReasonDemandModel*)demand{
     //1. 数据检查
-    BOOL rsSwitch = false;
-    if (!demand || !rsSwitch) return;
+    if (!demand || !Switch4RS) return;
     AIFoNodeBase *matchFo = demand.mModel.matchFo;
     NSLog(@"\n\n=============================== TOP.R- ===============================\n任务:%@,发生%ld",demand.algsType,(long)demand.mModel.cutIndex);
     

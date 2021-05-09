@@ -120,7 +120,7 @@
  */
 -(void) updateCMVCache_RMV:(AIShortMatchModel*)inModel{
     //1. 数据检查;
-    if (!inModel || !inModel.protoFo || !ARRISOK(inModel.matchPFos)) return;
+    if (!inModel || !inModel.protoFo || !ARRISOK(inModel.matchPFos) || !Switch4RS) return;
     NSLog(@"\n\n------------------------------- RMV -------------------------------");
     
     //2. 多时序识别预测分别进行处理;
