@@ -356,9 +356,12 @@
     for (TOAlgModel *waitModel in waitModels) {
         if (Log4OPushM) NSLog(@"==> checkTOModel: %@",Pit2FStr(waitModel.content_p));
         if (ISOK(waitModel, TOAlgModel.class) && ISOK(waitModel.baseOrGroup, TOFoModel.class)) {
+            NSLog(@"========1");
             if ([TOUtils isHNGL_toModel:waitModel]) {
+                NSLog(@"========3");
                 //4. "H"的有效判断;
                 if ([TOUtils isH_toModel:waitModel]) {
+                    NSLog(@"========4");
                     TOAlgModel *targetModel = (TOAlgModel*)waitModel.baseOrGroup.baseOrGroup;
                     BOOL mIsC = [TOUtils mIsC_1:latestMModel.matchAlg.pointer c:targetModel.content_p];
                     if (Log4OPushM) NSLog(@"H有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(targetModel.content_p),mIsC);
@@ -376,6 +379,7 @@
                 }
                 //============= GL返回 =============
                 else if([TOUtils isG_toModel:waitModel] || [TOUtils isL_toModel:waitModel]){
+                    NSLog(@"========5");
                     //a. 从父级fo的父级取得原稀疏码值 (valueModel中有期望稀疏码sValue);
                     TOFoModel *bFo = (TOFoModel*)waitModel.baseOrGroup;         //waitModel所属glFo
                     TOValueModel *bbValue = (TOValueModel*)bFo.baseOrGroup;     //glFo是为了bbValue
@@ -390,6 +394,7 @@
                     
                     //c. 对期望与实际稀疏码比较得到实际ATType;
                     if (hopeValue_p && realValue_p) {
+                        NSLog(@"========7");
                         BOOL mIsC = false;
                         for (AIAlgNodeBase *item in latestMModel.matchAlgs) {
                             mIsC = [TOUtils mIsC_1:item.pointer c:targetModel.content_p] || [TOUtils mIsC_1:targetModel.content_p c:item.pointer];
@@ -401,6 +406,7 @@
                         
                         //e. mIsC判断 (20201226:在21204BUG修复后训练时,发现mIsC有时是cIsM,所以都判断下);
                         if (mIsC) {
+                            NSLog(@"========9");
                             //d. 当实际ATType与等待中的ATType一致时,符合预期 (20201226改为判断bFo,因为只有bFo才携带了waitTypeDS,参考21204);
                             AnalogyType realType = [ThinkingUtils compare:hopeValue_p valueB_p:realValue_p];
                             AnalogyType waitType = [ThinkingUtils convertDS2AnalogyType:bFo.content_p.dataSource];
@@ -420,12 +426,18 @@
                             
                             //1. 在ATHav时,执行到此处,说明waitModel和baseFo已完成;
                             waitModel.baseOrGroup.status = TOModelStatus_Finish;
-                            
+                            NSLog(@"========11,%ld,%ld",(long)realType,(long)waitType);
                             //2. 应跳到: baseFo.baseAlg与此处inputMModel.protoAlg之间,进行PM评价;
                             if (!focusModel) NSLog(@"=== OPushM成功 GL:%@ 继续PM:%@ bFo:%@",realType == waitType ? @"符合" : @"不符合",Pit2FStr(targetModel.content_p),Pit2FStr(bFo.content_p));
                             if (!focusModel) focusModel = targetModel;
+                        }else{
+                            NSLog(@"========10");
                         }
+                    }else{
+                        NSLog(@"========8");
                     }
+                }else{
+                    NSLog(@"========6");
                 }
             }else{
                 //7. "行为输出" 和 "demand.ActYes"的有效判断;
@@ -438,6 +450,8 @@
                     if (!focusModel) focusModel = waitModel;
                 }
             }
+        }else{
+            NSLog(@"========2");
         }
     }
     
