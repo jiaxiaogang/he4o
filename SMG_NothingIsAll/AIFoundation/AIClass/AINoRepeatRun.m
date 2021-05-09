@@ -25,6 +25,7 @@ static NSMutableDictionary *_data;
  *  MARK:--------------------报名--------------------
  */
 +(void) sign:(id)key{
+    NSLog(@"防重登记:%@",key);
     [theData setObject:@"" forKey:key];
 }
 
@@ -35,6 +36,7 @@ static NSMutableDictionary *_data;
     //仅执行一次,就把登记key移除掉;
     if ([theData objectForKey:key]) {
         [theData removeObjectForKey:key];
+        NSLog(@"防重执行:%@",key);
         if (block) block();
     }
 }

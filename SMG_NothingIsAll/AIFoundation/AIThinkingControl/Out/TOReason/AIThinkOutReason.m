@@ -29,6 +29,7 @@
 #import "ReasonDemandModel.h"
 #import "AIMatchFoModel.h"
 #import "AIPort.h"
+#import "AINoRepeatRun.h"
 
 @interface AIThinkOutReason() <TOActionDelegate>
 
@@ -333,6 +334,7 @@
  *      2021.01.02: 无论GL变化type是否与waitType符合,都对新的变化进行保留到realContent (参考2120B-BUG1);
  *      2021.01.02: GL中mIsC对matchAlgs的全面支持,因为有时洽逢C不是matchAlgs首个,而致mIsC失败;
  *      2021.03.17: 将latestAlg和waitAlg之间的mIsC判断由1层改为2层 (因为在22173BUG时,发现此处输入了隔层mIsC);
+ *      2021.05.09: 对OPushM反馈的GL触发ORT反省 (参考23071-方案2);
  *  @bug
  *      2020.09.22: 加上cutStopStatus,避免同一waitModel被多次触发,导致BUG (参考21042);
  *      2020.12.26: GL时,waitType的判断改为bFo,因为只有bFo才携带了waitTypeDS (参考21204);
@@ -370,11 +372,14 @@
                         if (!focusModel) NSLog(@"=== OPushM成功 Hav继续PM: %@",Pit2FStr(targetModel.content_p));
                         if (!focusModel) focusModel = targetModel;
                     }
-                }else if([TOUtils isG_toModel:waitModel] || [TOUtils isL_toModel:waitModel]){
+                }
+                //============= GL返回 =============
+                else if([TOUtils isG_toModel:waitModel] || [TOUtils isL_toModel:waitModel]){
                     //a. 从父级fo的父级取得原稀疏码值 (valueModel中有期望稀疏码sValue);
                     TOFoModel *bFo = (TOFoModel*)waitModel.baseOrGroup;         //waitModel所属glFo
                     TOValueModel *bbValue = (TOValueModel*)bFo.baseOrGroup;     //glFo是为了bbValue
                     TOAlgModel *targetModel = (TOAlgModel*)bbValue.baseOrGroup; //bbValue所属目标alg
+                    AIFoNodeBase *bFoNode = [SMGUtils searchNode:bFo.content_p];
                     
                     //5. "GL"的有效判断;
                     AIKVPointer *hopeValue_p = bbValue.sValue_p;
@@ -403,6 +408,13 @@
                             if (realType == waitType){
                                 waitModel.status = TOModelStatus_OuterBack;
                             }
+                            
+                            //f. 对OPushM反馈的GL触发ORT反省;
+                            [AINoRepeatRun run:STRFORMAT(@"%p",waitModel) block:^{
+                                AnalogyType type = (realType == waitType) ? ATPlus : ATSub;
+                                NSLog(@"OPushM_GL触发ORT: %@ from %@ (%@)",AlgP2FStr(waitModel.content_p),Fo2FStr(bFoNode),ATType2Str(type));
+                                [AIAnalogy analogy_OutRethink:bFo cutIndex:bFoNode.content_ps.count - 1 type:type];
+                            }];
                             waitModel.realContent_p = latestMModel.protoAlg.pointer;
                             
                             //1. 在ATHav时,执行到此处,说明waitModel和baseFo已完成;
@@ -825,6 +837,7 @@
  *      2021.01.28: R-模式的ActYes在此处触发Out反省,与昨天思考的In反省触发不冲突 (参考22082);
  *      2021.01.28: ReasonDemand触发后,无论成功失败,都移出任务池 (参考22081-todo2&3);
  *      2021.03.11: 支持第四个触发器,R-模式时理性帧推进的触发 (参考n22p15-静默成功);
+ *      2021.05.09: 对HNGL的触发,采用AINoRepeatRun防重触发 (参考23071-方案2);
  */
 -(void) singleLoopBackWithActYes:(TOModelBase*)actYesModel {
     NSLog(@"\n\n=============================== 流程控制:ActYes ===============================\nModel:%@ %@",actYesModel.class,Pit2FStr(actYesModel.content_p));
@@ -837,6 +850,7 @@
             //2. 如果TOAlgModel为HNGL时,
             NSInteger cutIndex = foNode.content_ps.count - 1;
             double deltaTime = [NUMTOOK(ARR_INDEX(foNode.deltaTimes, cutIndex)) doubleValue];
+            [AINoRepeatRun sign:STRFORMAT(@"%p",algModel)];
             
             //3. 触发器 (触发条件:未等到实际输入);
             NSLog(@"---//触发器A_生成: %@ from:%@ time:%f",AlgP2FStr(algModel.content_p),Fo2FStr(foNode),deltaTime);
@@ -844,8 +858,10 @@
                 
                 //4. 反省类比(成功/未成功)的主要原因;
                 AnalogyType type = (algModel.status == TOModelStatus_ActYes) ? ATSub : ATPlus;
-                NSLog(@"---//触发器A_触发: %@ from %@ (%@)",AlgP2FStr(algModel.content_p),Fo2FStr(foNode),ATType2Str(type));
-                [AIAnalogy analogy_OutRethink:foModel cutIndex:cutIndex type:type];
+                [AINoRepeatRun run:STRFORMAT(@"%p",algModel) block:^{
+                    NSLog(@"---//触发器A_触发: %@ from %@ (%@)",AlgP2FStr(algModel.content_p),Fo2FStr(foNode),ATType2Str(type));
+                    [AIAnalogy analogy_OutRethink:foModel cutIndex:cutIndex type:type];
+                }];
                 
                 //5. 失败时,转流程控制-失败 (会开始下一解决方案);
                 DemandModel *root = [TOUtils getDemandModelWithSubOutModel:algModel];
