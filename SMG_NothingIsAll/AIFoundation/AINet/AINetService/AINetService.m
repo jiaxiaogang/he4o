@@ -187,9 +187,7 @@
     for (AIKVPointer *item in hnglFo_ps) {
         //5. 未发生理性评价 (空S评价);
         AIFoNodeBase *hnglFo = [SMGUtils searchNode:item];
-        if (![AIScore FRS:hnglFo]) return false;
-        
-        return item;
+        if ([AIScore FRS:hnglFo]) return item;
     }
     
     //8. 逐个尝试作为解决方案返回;
