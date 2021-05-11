@@ -29,14 +29,16 @@
     }
     
     //4. 头尾
-    [mStr insertString:@"\n===========================\n" atIndex:0];
-    [mStr appendString:@"\n==========================="];
+    
+    [mStr insertString:@"\n︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹\n" atIndex:0];
+    [mStr appendString:@"\n︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺"];
     return mStr;
 }
 
 +(NSString*) singleVision:(TOModelBase*)model{
     if (model) {
-        return STRFORMAT(@"%@: %@",NSStringFromClass(model.class),Pit2FStr(model.content_p));
+        AnalogyType type = DS2ATType(model.content_p.dataSource);
+        return STRFORMAT(@"%@: %@ (%@)",NSStringFromClass(model.class),Pit2FStr(model.content_p),ATType2Str(type));
     }
     return nil;
 }

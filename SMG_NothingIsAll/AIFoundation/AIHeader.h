@@ -23,6 +23,7 @@
 #import "AIScore.h"
 #import "OutputModel.h"
 #import "XGDelegate.h"
+#import "ThinkingUtils.h"
 
 /**
  *  MARK:--------------------PathNameKey (kPH)--------------------
