@@ -457,35 +457,50 @@
     //8. 将首个focusModel进行PM修正 (理性评价);
     if (focusModel) {
         
-        //4. 先清空justPValues,再重新根据两种情况赋值;
-        [focusModel.justPValues removeAllObjects];
-        
-        //4. 为replaceAlg时,取"P-C取得独特稀疏码"保留到短时记忆模型;
+        //9. 不同类型不同处理 (当alg在base.replacAlges中时,说明是GL过来的);
         TOModelBase *baseAlg = focusModel.baseOrGroup;
-        if (ISOK(baseAlg, TOAlgModel.class) && [((TOAlgModel*)baseAlg).replaceAlgs containsObject:focusModel.content_p]) {
+        BOOL isGL = ISOK(baseAlg, TOAlgModel.class) && [((TOAlgModel*)baseAlg).replaceAlgs containsObject:focusModel.content_p];
+        
+        //10. =========== isGL时 ===========
+        if (isGL) {
+            //4. 为replaceAlg时,取"P-C取得独特稀疏码"保留到短时记忆模型
             AIAlgNodeBase *inHeartNeedAlg = [SMGUtils searchNode:baseAlg.content_p];
             [focusModel.justPValues addObjectsFromArray:[SMGUtils removeSub_ps:inHeartNeedAlg.content_ps parent_ps:latestMModel.protoAlg.content_ps]];
             NSLog(@"JustPValues重赋值-> P:%@ - C:%@ = %@",Alg2FStr(latestMModel.protoAlg),Alg2FStr(inHeartNeedAlg),Pits2FStr(focusModel.justPValues));
-        }else{
+            
+            //直接转至Begin;
+            
+            
+            
+            
+            
+            
+        }
+        
+        //11. =========== 非GL时 ===========
+        if (!isGL) {
+            //4. 先清空justPValues,再重新根据两种情况赋值;
+            [focusModel.justPValues removeAllObjects];
+            
             //非replaceAlg时,取"P-M取得独特码"保留到短时记忆模型;
             [focusModel.justPValues addObjectsFromArray:[SMGUtils removeSub_ps:latestMModel.matchAlg.content_ps parent_ps:latestMModel.protoAlg.content_ps]];
             NSLog(@"JustPValues重赋值-> P:%@ - M:%@ = %@",Alg2FStr(latestMModel.protoAlg),Alg2FStr(latestMModel.matchAlg),Pits2FStr(focusModel.justPValues));
+            
+            //5. 将理性评价"价值分"保留到短时记忆模型;
+            //focusModel.pm_Score = -[AIScore score4MV:demand.at urgentTo:demand.urgentTo delta:demand.delta ratio:1];
+            //focusModel.pm_MVAT = demand.algsType;
+            focusModel.pm_Fo = focusModel.baseOrGroup.content_p;
+            
+            //6. 理性评价
+            [self reasonScorePM_V3:focusModel failure:nil success:^{
+                NSLog(@"OPushM: 跳转成功");
+            } notNeedPM:^{
+                //7. 未跳转到PM,则将algModel设为Finish,并递归;
+                NSLog(@"OPushM: 不用跳转");
+                focusModel.status = TOModelStatus_Finish;
+                [self singleLoopBackWithFinishModel:focusModel];
+            }];
         }
-        
-        //5. 将理性评价"价值分"保留到短时记忆模型;
-        //focusModel.pm_Score = -[AIScore score4MV:demand.algsType urgentTo:demand.urgentTo delta:demand.delta ratio:1.0f];
-        //focusModel.pm_MVAT = demand.algsType;
-        focusModel.pm_Fo = focusModel.baseOrGroup.content_p;
-        
-        //6. 理性评价
-        [self reasonScorePM_V3:focusModel failure:nil success:^{
-            NSLog(@"OPushM: 跳转成功");
-        } notNeedPM:^{
-            //7. 未跳转到PM,则将algModel设为Finish,并递归;
-            NSLog(@"OPushM: 不用跳转");
-            focusModel.status = TOModelStatus_Finish;
-            [self singleLoopBackWithFinishModel:focusModel];
-        }];
         return true;
     }
     
