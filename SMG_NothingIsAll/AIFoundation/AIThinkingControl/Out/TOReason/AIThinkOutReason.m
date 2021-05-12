@@ -338,6 +338,7 @@
  *      2021.03.17: 将latestAlg和waitAlg之间的mIsC判断由1层改为2层 (因为在22173BUG时,发现此处输入了隔层mIsC);
  *      2021.05.09: 对OPushM反馈的GL触发ORT反省 (参考23071-方案2);
  *      2021.05.12: 整理tor_OPushM的代码易读性;
+ *      2021.05.12: GL返回时,直接调用focus.base(即C).begin() (参考23075-方案);
  *  @bug
  *      2020.09.22: 加上cutStopStatus,避免同一waitModel被多次触发,导致BUG (参考21042);
  *      2020.12.26: GL时,waitType的判断改为bFo,因为只有bFo才携带了waitTypeDS (参考21204);
@@ -463,18 +464,7 @@
         
         //10. =========== isGL时 ===========
         if (isGL) {
-            //4. 为replaceAlg时,取"P-C取得独特稀疏码"保留到短时记忆模型
-            AIAlgNodeBase *inHeartNeedAlg = [SMGUtils searchNode:baseAlg.content_p];
-            [focusModel.justPValues addObjectsFromArray:[SMGUtils removeSub_ps:inHeartNeedAlg.content_ps parent_ps:latestMModel.protoAlg.content_ps]];
-            NSLog(@"JustPValues重赋值-> P:%@ - C:%@ = %@",Alg2FStr(latestMModel.protoAlg),Alg2FStr(inHeartNeedAlg),Pits2FStr(focusModel.justPValues));
-            
-            //直接转至Begin;
-            
-            
-            
-            
-            
-            
+            [self singleLoopBackWithBegin:baseAlg];
         }
         
         //11. =========== 非GL时 ===========
