@@ -149,6 +149,7 @@
  *      2021.01.23 : 将R-模式改为调用PM满足 (参考22061-改4);
  &      2021.01.31 : R-模式V3迭代:将原R-模式彻底整合到原有流程中 (参考22105示图);
  *      2021.03.11 : R-模式理性静默成功迭代 (参考22153);
+ *      2021.05.13 : 不应期常切断决策流程的BUG: 将reModel的matchA改成protoA,并将不应期也改为有protoA来判断防重 (参考23076);
  *  @todo
  *      2020.07.05: 在下面MC中,转至PM时,是将C作为M的,随后需测下,看是否需要独立对MC做类似PM的理性评价,即将一步到位,细化成两步各自评价;
  *      2021.01.04: 支持APS评价 (以前原本支持替换Alg并反思fo,后来弃用了?代码找不到) (参考22012);
@@ -209,15 +210,8 @@
             for (NSInteger i = 0; i < theTC.inModelManager.models.count; i++) {
                 AIShortMatchModel *inModel = ARR_INDEX_REVERSE(theTC.inModelManager.models, i);
                 
-                
-                //TODOTOMORROW20210513 (参考23076):
-                //此处将reModel的matchA改成protoA,并将不应期也改为有protoA来判断防重;
-                
-                
-                
-                
                 //b. 2020.11.27: 不应期检查 (参考2114B);
-                if ([outModel.replaceAlgs containsObject:inModel.matchAlg.pointer]) {
+                if ([outModel.replaceAlgs containsObject:inModel.protoAlg.pointer]) {
                     continue;
                 }
                 
@@ -233,7 +227,7 @@
                     NSLog(@"===> 转至PM ↓↓↓↓↓↓↓↓↓ (C作为M,P作为P)");
                     
                     //b. 生成replaceAlg转移 & 保留到outModel.replaceAlgs;
-                    TOAlgModel *reModel = [TOAlgModel newWithAlg_p:inModel.matchAlg.pointer group:outModel];
+                    TOAlgModel *reModel = [TOAlgModel newWithAlg_p:inModel.protoAlg.pointer group:outModel];
                     [outModel.replaceAlgs addObject:reModel.content_p];
                     
                     //c. 将"P-M取得独特稀疏码"保留到短时记忆模型;

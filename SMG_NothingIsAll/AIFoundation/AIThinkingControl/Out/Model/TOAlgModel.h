@@ -51,6 +51,8 @@
  *      2. 比如: 吃瓜子,得到带皮瓜子,就得先去皮再吃;
  *      3. 在理性评价时,将要用到的MatchAlg就是当前模型中的content_p;
  *      4. 在理性评价时,将要用到的MatchFo就是当前模型中.baseOrGroup中包含的时序;
+ *  @todo
+ *      2021.05.13: 随后改为用self(reModel) 减去 base(C) = 得出justPValues (参考23076中已将reModel.content改为protoA);
  */
 @property (strong, nonatomic) NSMutableArray *justPValues;
 //保留字段 (score用于存M所在matchFo的价值分,mvAT用于存M所在的matchFo的价值at标识);
