@@ -404,6 +404,13 @@
             
             //e. mIsC判断 (20201226:在21204BUG修复后训练时,发现mIsC有时是cIsM,所以都判断下);
             NSLog(@"========7");
+            
+            //TODOTOMORROW20210513 (参考23076):
+            //_Hav()处将reModel的matchAlg改成protoAlg后,此处的mIsC判断也要相应改动和复测能否顺利工作;
+            
+            
+            
+            
             BOOL mIsC = false;
             for (AIAlgNodeBase *item in latestMModel.matchAlgs) {
                 mIsC = [TOUtils mIsC_1:item.pointer c:targetModel.content_p] || [TOUtils mIsC_1:targetModel.content_p c:item.pointer];

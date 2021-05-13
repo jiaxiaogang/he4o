@@ -209,6 +209,13 @@
             for (NSInteger i = 0; i < theTC.inModelManager.models.count; i++) {
                 AIShortMatchModel *inModel = ARR_INDEX_REVERSE(theTC.inModelManager.models, i);
                 
+                
+                //TODOTOMORROW20210513 (参考23076):
+                //此处将reModel的matchA改成protoA,并将不应期也改为有protoA来判断防重;
+                
+                
+                
+                
                 //b. 2020.11.27: 不应期检查 (参考2114B);
                 if ([outModel.replaceAlgs containsObject:inModel.matchAlg.pointer]) {
                     continue;
