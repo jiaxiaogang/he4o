@@ -57,6 +57,18 @@
     //3. 根据(pAlg & pAlg.abs & pAlg.abs.abs)抽象路径,取分别尝试联想(hnglAlg.refPorts)经验;
     NSMutableArray *curMasks = [[NSMutableArray alloc] init];
     for (NSInteger i = 0; i < cGetInnerAbsLayer; i++) {
+        
+        
+        //TODOTOMORROW20210514: 查此处即使训练多次成功,也会偶发性取不到GL经验的问题 (参考23078);
+        //分析:
+        //1. 因为fo在tirFo中的抽具象本来就没关联那么全;
+        //2. 而到了类比器中,内中外类比构建的抽象,(要去复查代码,看情况再来定);
+        //3. 如果当前仅扔坚果,发生了一帧,那么内中外类比也善未触发,又哪里来的fo抽象呢?
+        //4. 观察每次打出的日志,抽象一层,都打出哪些mask时序,这些时序又是在哪里构建的抽具象关联?
+        
+        
+        
+        
         //4. 取当前层的所有参考Alg_curMaskAlgs;
         if (i == 0) {
             //5. 第0层时,收集pAlg即可;
@@ -65,7 +77,7 @@
             //6. 非0层时,根据上层获取下层,并收集 (即上层全不应期掉了,向着pAlg抽象方向继续尝试);
             curMasks = [TOUtils collectAbsPorts:curMasks singleLimit:cGetInnerAbsCount havTypes:nil noTypes:@[@(ATGreater),@(ATLess),@(ATHav),@(ATNone),@(ATPlus),@(ATSub)]];
         }
-        NSLog(@"\n------------ 当前%ld层mask数:%lu ------------",(long)i,(unsigned long)curMasks.count);
+        NSLog(@"\n------------ 当前 %ld 层mask数:%lu ------------",(long)i,(unsigned long)curMasks.count);
         
         //7. 从当前层curMasks逐个尝试取hnglAlg.refPorts;
         for (AIKVPointer *item in curMasks) {
@@ -160,7 +172,7 @@
     
     //2. 根据maskAlg,取gl嵌套 (目前由absPorts+type取);
     NSArray *hnglFo_ps = Ports2Pits([AINetUtils absPorts_All:maskFo type:type]);
-    if (Log4GetInnerAlg) NSLog(@"---> 当前maskFo:%@ 粗方案共%lu个",Fo2FStr(maskFo),(unsigned long)hnglFo_ps.count);
+    if (Log4GetInnerAlg) NSLog(@"Group Of MaskFo:%@ 粗方案共%lu个 ↓↓↓",Fo2FStr(maskFo),(unsigned long)hnglFo_ps.count);
     
     //3. 去掉不应期;
     hnglFo_ps = [SMGUtils removeSub_ps:except_ps parent_ps:hnglFo_ps];
@@ -185,7 +197,7 @@
             if (reasonScore) scoreYesCount++;
             NSLog(@"[%@] item方案:%@",reasonScore ? @"✔" : @"✘",Fo2FStr(item));
         }
-        NSLog(@"--FINISH: 通过%d 不通过%d\n",scoreYesCount,scoreNoCount);
+        NSLog(@"FINISH: 通过%d 不通过%d\n",scoreYesCount,scoreNoCount);
     }
     
     //8. 将空S评价通过的首条返回;
