@@ -339,6 +339,7 @@
  *      2021.05.09: 对OPushM反馈的GL触发ORT反省 (参考23071-方案2);
  *      2021.05.12: 整理tor_OPushM的代码易读性;
  *      2021.05.12: GL返回时,直接调用focus.base(即C).begin() (参考23075-方案);
+ *      2021.05.14: 将reModel.content由matchA改成protoA后,此处GL时mIsC判断仅判断pIsM即可 (参考23076);
  *  @bug
  *      2020.09.22: 加上cutStopStatus,避免同一waitModel被多次触发,导致BUG (参考21042);
  *      2020.12.26: GL时,waitType的判断改为bFo,因为只有bFo才携带了waitTypeDS (参考21204);
@@ -404,18 +405,11 @@
             
             //e. mIsC判断 (20201226:在21204BUG修复后训练时,发现mIsC有时是cIsM,所以都判断下);
             NSLog(@"========7");
-            
-            //TODOTOMORROW20210513 (参考23076):
-            //_Hav()处将reModel的matchAlg改成protoAlg后,此处的mIsC判断也要相应改动和复测能否顺利工作;
-            
-            
-            
-            
             BOOL mIsC = false;
             for (AIAlgNodeBase *item in latestMModel.matchAlgs) {
-                mIsC = [TOUtils mIsC_1:item.pointer c:targetModel.content_p] || [TOUtils mIsC_1:targetModel.content_p c:item.pointer];
+                mIsC = [TOUtils mIsC_1:targetModel.content_p c:item.pointer];
                 if (mIsC) {
-                    if (Log4OPushM) NSLog(@"GL有效判断_mIsC:(M=%@ C=%@) 结果:%d",Alg2FStr(item), Pit2FStr(targetModel.content_p),mIsC);
+                    if (Log4OPushM) NSLog(@"GL有效判断_mIsC:(反馈M: %@ 修正中P: %@) 结果:%d",Alg2FStr(item), Pit2FStr(targetModel.content_p),mIsC);
                     break;
                 }
             }

@@ -65,6 +65,7 @@
             //6. 非0层时,根据上层获取下层,并收集 (即上层全不应期掉了,向着pAlg抽象方向继续尝试);
             curMasks = [TOUtils collectAbsPorts:curMasks singleLimit:cGetInnerAbsCount havTypes:nil noTypes:@[@(ATGreater),@(ATLess),@(ATHav),@(ATNone),@(ATPlus),@(ATSub)]];
         }
+        NSLog(@"\n------------ 当前%ld层mask数:%lu ------------",(long)i,(unsigned long)curMasks.count);
         
         //7. 从当前层curMasks逐个尝试取hnglAlg.refPorts;
         for (AIKVPointer *item in curMasks) {
@@ -159,7 +160,7 @@
     
     //2. 根据maskAlg,取gl嵌套 (目前由absPorts+type取);
     NSArray *hnglFo_ps = Ports2Pits([AINetUtils absPorts_All:maskFo type:type]);
-    if (Log4GetInnerAlg) NSLog(@"=====1 当前maskFo:%@ 粗方案共%lu个",Fo2FStr(maskFo),(unsigned long)hnglFo_ps.count);
+    if (Log4GetInnerAlg) NSLog(@"---> 当前maskFo:%@ 粗方案共%lu个",Fo2FStr(maskFo),(unsigned long)hnglFo_ps.count);
     
     //3. 去掉不应期;
     hnglFo_ps = [SMGUtils removeSub_ps:except_ps parent_ps:hnglFo_ps];
@@ -176,11 +177,15 @@
     
     //4. 调试;
     if (Log4GetInnerAlg) {
+        int scoreNoCount = 0,scoreYesCount = 0;
         for (AIKVPointer *item_p in hnglFo_ps) {
             AIFoNodeBase *item = [SMGUtils searchNode:item_p];
             BOOL reasonScore =  [AIScore FRS:item];
-            NSLog(@"== 可用方案:%@ \t空S评价: %@",Fo2FStr(item),reasonScore ? @"通过" : @"不通过");
+            if (!reasonScore) scoreNoCount++;
+            if (reasonScore) scoreYesCount++;
+            NSLog(@"[%@] item方案:%@",reasonScore ? @"✔" : @"✘",Fo2FStr(item));
         }
+        NSLog(@"--FINISH: 通过%d 不通过%d\n",scoreYesCount,scoreNoCount);
     }
     
     //8. 将空S评价通过的首条返回;
