@@ -45,46 +45,29 @@
  *      2021.04.06: v3嵌套GL迭代: 联想方式由glValue索引向宏观,改为反过来:从maskFo场景取嵌套GL经验 (参考22204&R-V4模式联想方式);
  *      2021.04.10: 将从maskAlg出发联想,改成从maskFo出发联想 (参考22211);
  *      2021.04.10: GL主方向为抽象,HN主方向为具象 (参考22213);
+ *      2021.05.17: 将mask改为收集protoFo+absRFos来联想GL经验 (参考23078);
  *  @result : 返回relativeFo_ps,用backConAlg节点,由此节点取refPorts,再筛选type,可取到glFo经历;
  */
-+(AIKVPointer*) getInnerV3_GL:(AIFoNodeBase*)maskFo vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps{
++(AIKVPointer*) getInnerV3_GL:(AIShortMatchModel*)maskInModel vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps{
     //1. 数据检查hAlg_根据type和value_p找ATHav
-    NSLog(@"-------------- getInnerAlg (%@) --------------\nATDS:%@&%@ 参照:%@\n不应期:%@",ATType2Str(type),vAT,vDS,Fo2FStr(maskFo),Pits2FStr(except_ps));
+    if (!maskInModel) return nil;
     
     //2. 取glConAlg_ps;
     NSArray *glConAlg_ps = [self getHNGLConAlg_ps:type vAT:vAT vDS:vDS];
     
-    //3. 根据(pAlg & pAlg.abs & pAlg.abs.abs)抽象路径,取分别尝试联想(hnglAlg.refPorts)经验;
+    //3. 收集masks (先把protoFo收入);
+    //TODO: protoFo有可能在上帧时,可行,但下帧又不可行,比如变向觅食训练 (所以此处存疑,略真有此问题,可改为不收集protoFo);
     NSMutableArray *curMasks = [[NSMutableArray alloc] init];
-    for (NSInteger i = 0; i < cGetInnerAbsLayer; i++) {
+    [curMasks addObject:maskInModel.protoFo];
+    
+    //4. 收集absRFos为masks (参考absRFos字段注释: callers2);
+    [curMasks addObjectsFromArray:maskInModel.absRFos];
+    NSLog(@"-------------- getInnerAlg (%@) --------------\nATDS:%@&%@ mask数:%lu 参照:%@\n不应期:%@",ATType2Str(type),vAT,vDS,curMasks.count,Fo2FStr(maskInModel.protoFo),Pits2FStr(except_ps));
         
-        
-        //TODOTOMORROW20210514: 查此处即使训练多次成功,也会偶发性取不到GL经验的问题 (参考23078);
-        //分析:
-        //1. 因为fo在tirFo中的抽具象本来就没关联那么全;
-        //2. 而到了类比器中,内中外类比构建的抽象,(要去复查代码,看情况再来定);
-        //3. 如果当前仅扔坚果,发生了一帧,那么内中外类比也善未触发,又哪里来的fo抽象呢?
-        //4. 观察每次打出的日志,抽象一层,都打出哪些mask时序,这些时序又是在哪里构建的抽具象关联?
-        
-        
-        
-        
-        //4. 取当前层的所有参考Alg_curMaskAlgs;
-        if (i == 0) {
-            //5. 第0层时,收集pAlg即可;
-            [curMasks addObject:maskFo.pointer];
-        }else{
-            //6. 非0层时,根据上层获取下层,并收集 (即上层全不应期掉了,向着pAlg抽象方向继续尝试);
-            curMasks = [TOUtils collectAbsPorts:curMasks singleLimit:cGetInnerAbsCount havTypes:nil noTypes:@[@(ATGreater),@(ATLess),@(ATHav),@(ATNone),@(ATPlus),@(ATSub)]];
-        }
-        NSLog(@"\n------------ 当前 %ld 层mask数:%lu ------------",(long)i,(unsigned long)curMasks.count);
-        
-        //7. 从当前层curMasks逐个尝试取hnglAlg.refPorts;
-        for (AIKVPointer *item in curMasks) {
-            AIKVPointer *result = [self getInnerByFo_Single:item type:type except_ps:except_ps glConAlg_ps:glConAlg_ps];
-            if (result) return result;
-        }
-        //8. 当前层失败_curMaskAlgs统统失败_循环继续下层;
+    //7. 从当前层curMasks逐个尝试取hnglAlg.refPorts;
+    for (AIFoNodeBase *item in curMasks) {
+        AIKVPointer *result = [self getInnerByFo_Single:item type:type except_ps:except_ps glConAlg_ps:glConAlg_ps];
+        if (result) return result;
     }
     return nil;
 }
@@ -163,9 +146,8 @@
  *  @version
  *      2021.05.09: 无论空S评价是否通过,最多取前cGetInnerByFoCount条 (否则经验多的没完没了);
  */
-+(AIKVPointer*) getInnerByFo_Single:(AIKVPointer*)maskFo_p type:(AnalogyType)type except_ps:(NSArray*)except_ps glConAlg_ps:(NSArray*)glConAlg_ps{
++(AIKVPointer*) getInnerByFo_Single:(AIFoNodeBase*)maskFo type:(AnalogyType)type except_ps:(NSArray*)except_ps glConAlg_ps:(NSArray*)glConAlg_ps{
     //1. 数据检查;
-    AIFoNodeBase *maskFo = [SMGUtils searchNode:maskFo_p];
     except_ps = ARRTOOK(except_ps);
     glConAlg_ps = ARRTOOK(glConAlg_ps);
     if (!maskFo) return nil;
@@ -187,28 +169,36 @@
         return true;
     } limit:cGetInnerByFoCount];
     
-    //4. 调试;
-    if (Log4GetInnerAlg) {
-        int scoreNoCount = 0,scoreYesCount = 0;
-        for (AIKVPointer *item_p in hnglFo_ps) {
-            AIFoNodeBase *item = [SMGUtils searchNode:item_p];
-            BOOL reasonScore =  [AIScore FRS:item];
-            if (!reasonScore) scoreNoCount++;
-            if (reasonScore) scoreYesCount++;
-            NSLog(@"[%@] item方案:%@",reasonScore ? @"✔" : @"✘",Fo2FStr(item));
-        }
-        NSLog(@"FINISH: 通过%d 不通过%d\n",scoreYesCount,scoreNoCount);
-    }
-    
     //8. 将空S评价通过的首条返回;
+    AIKVPointer *result = nil;
     for (AIKVPointer *item in hnglFo_ps) {
         //5. 未发生理性评价 (空S评价);
         AIFoNodeBase *hnglFo = [SMGUtils searchNode:item];
-        if ([AIScore FRS:hnglFo]) return item;
+        if ([AIScore FRS:hnglFo]) {
+            result = item;
+            break;
+        }
+    }
+    
+    //4. 调试;
+    if (Log4GetInnerAlg) {
+        if (result) {
+            int scoreNoCount = 0,scoreYesCount = 0;
+            for (AIKVPointer *item_p in hnglFo_ps) {
+                AIFoNodeBase *item = [SMGUtils searchNode:item_p];
+                BOOL reasonScore =  [AIScore FRS:item];
+                if (!reasonScore) scoreNoCount++;
+                if (reasonScore) scoreYesCount++;
+                NSLog(@"[%@] item方案:%@",reasonScore ? @"✔" : @"✘",Fo2FStr(item));
+            }
+            NSLog(@"FINISH: 通过%d 不通过%d\n",scoreYesCount,scoreNoCount);
+        }else{
+            NSLog(@"FINISH: 全不通过:%lu\n",(unsigned long)hnglFo_ps.count);
+        }
     }
     
     //8. 逐个尝试作为解决方案返回;
-    return nil;
+    return result;
 }
 
 /**

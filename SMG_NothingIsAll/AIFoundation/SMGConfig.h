@@ -52,7 +52,7 @@
 #define cGetInnerAbsLayer 2     //getInner()中,Alg纵向尝试layer层 (20210514改成2,因为1和8层也会直接抽具象关联);
 #define cGetInnerAbsCount 3     //getInner()中,Alg纵向每层取limit个;
 #define cGetInnerByAlgCount 3   //getInnerHN()中,type嵌套取limit条;
-#define cGetInnerByFoCount 10   //getInnerGL()中,type嵌套取limit条;
+#define cGetInnerByFoCount 3    //getInnerGL()中,type嵌套取limit条;
 
 #define cTOSubModelLimit 2      //在决策中,子模型limit
 

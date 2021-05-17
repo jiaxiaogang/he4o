@@ -312,6 +312,7 @@
  *      2020.12.17: getInnerAlg改为返回单条,此处调用支持,并并入流程控制fo.begin (参考21183);
  *      2020.10.18: 传递参数由baseAlg.sp_P改成pm_ProtoAlg (因为飞近上面的坚果,却飞向左) (参考2105c)
  *      2021.04.10: 传递参数由baseAlg.pm_ProtoAlg改成自取pm_InModel (因为getInnerV3要求maskFo做为联想起始) (参考22211);
+ *      2021.05.17: 将不应期改为仅ActNo和ScoreNo的,因为Finish的即使用过也可以再用 (23078修复后测时发现有可行方案被不应期掉了);
  */
 -(void) convert2Out_GL:(TOValueModel*)outModel {
     NSLog(@"\n\n=============================== 行为化_GL ===============================\n加工值: (%@ -> %@) ",Pit2FStr(outModel.sValue_p),Pit2FStr(outModel.content_p));
@@ -330,11 +331,13 @@
     }
     
     //4. 去掉不应期
-    NSArray *except_ps = [TOUtils convertPointersFromTOModels:outModel.actionFoModels];
+    NSArray *except_ps = [SMGUtils filterArr:outModel.actionFoModels checkValid:^BOOL(TOFoModel *item) {
+        return item.status == TOModelStatus_ActNo || item.status == TOModelStatus_ScoreNo;
+    }];
     
     //2. 根据type和value_p找ATLess/ATGreater
     //3. 根据havAlg联想时序,并找出新的解决方案,与新的行为化的概念,与新的条件概念; (2020.11.06: 由getInner1Alg直接取relativeFos);
-    AIKVPointer *relativeFo_p = [AINetService getInnerV3_GL:baseAlg.pm_InModel.protoFo vAT:vAT vDS:vDS type:type except_ps:except_ps];
+    AIKVPointer *relativeFo_p = [AINetService getInnerV3_GL:baseAlg.pm_InModel vAT:vAT vDS:vDS type:type except_ps:except_ps];
     if (Log4ActGL) NSLog(@"getInnerAlg(%@): 根据:%@->%@ 找:%@%@ \n联想结果:%@ %@",ATType2Str(type),Pit2FStr(outModel.sValue_p),Pit2FStr(outModel.content_p),vDS,Data2FStr(type, vAT, vDS),Pit2FStr(relativeFo_p),relativeFo_p ? @"↓↓↓↓↓↓↓↓" : @"无计可施");
     
     //5. 转移至_fos

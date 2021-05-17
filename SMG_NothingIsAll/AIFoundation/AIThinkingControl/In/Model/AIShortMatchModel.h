@@ -93,8 +93,11 @@
 /**
  *  MARK:--------------------时序抽象--------------------
  *  @desc
- *      内容说明: 由matchRFos与protoFo类比抽象而成 (元素为AIFoNodeBase) (参考23041-示图absFo);
+ *      内容说明: 在时序识别后,由matchRFos与protoFo类比抽象而成 (元素为AIFoNodeBase) (参考23041-示图absFo);
  *      用途说明: 作为RFo抽具象的"激活期",用于加强RFo的抽具象关联,从而解决GL嵌套在抽具象通路上打通的问题;
+ *  @callers
+ *      1. 在内中外类比中,会将抽象gl嵌套到对应的absRFo下;
+ *      2. 在getInnerGL中,会尝试从absRFos下取GL经验;
  *  @version
  *      2021.04.22: 初版 (参考23041);
  */
