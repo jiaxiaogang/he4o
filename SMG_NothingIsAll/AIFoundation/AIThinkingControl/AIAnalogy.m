@@ -741,6 +741,35 @@
         AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:notFinish_ps conAlgs:@[curAlg] isMem:false ds:spDS];
         if (Log4OutRethink) NSLog(@"--> ORT构建SPAlg:%@ base:%@",Alg2FStr(spAlg),AlgP2FStr(curAlg.pointer));
         
+        //调试分析"定责" (参考23065);
+        for (AIKVPointer *item in notFinish_ps) {
+            if (type == ATPlus) {
+                if ([item.dataSource isEqualToString:@"distance"]) {
+                    float value = [[AINetIndex getData:item] floatValue];
+                    if (value > 0) {
+                        NSLog(@"距>0进入P,查为什么? (%@) %@",ATType2Str(type),Pit2FStr(item));
+                        NSLog(@"");
+                    }
+                }
+            }else{
+                if (![item.dataSource isEqualToString:@"distance"]) {
+                    NSLog(@"非距进入S,查为什么? (%@) %@",ATType2Str(type),Pit2FStr(item));
+                    NSLog(@"");
+                }
+            }
+        }
+        //调试情况1:
+        //1. 再训练两三次上投,距>0的VRS评价又不通过了 (因为训练的这两三次,让它认识到S了,不可行了);
+        //2. 由此F15[A8]顺利上飞成功,并进行ORT(P) (720行:时序:F15[A8(速0,高5,距0,皮0),A1(吃1)]->M5{↓饿36});
+        //3. 问题1: 728行取到reModel不唯一,
+        //4. 问题2: 736行: item--> justPValues:(向↑,距20,Y距49,Y145,X365) - excepts:() = (向↑,距20,Y距49,Y145,X365)
+        //          上面excepts为nil,即全面进入notFinish;
+        //742行: --> ORT构建SPAlg:A52(向↑,距20,Y距49,Y145,X365) base:A8(速0,高5,距0,皮0)
+        
+        //P主要是查,谁不影响P发生,所以应该以Value最终值为准,即最终距已经为0,而不是20;
+        //并且即使是距20,已经是被修正,应该在except中才对;
+        
+        
         //5. 收集SP概念_用于构建SP时序;
         [spFoContent addObject:spAlg.pointer];
     }
