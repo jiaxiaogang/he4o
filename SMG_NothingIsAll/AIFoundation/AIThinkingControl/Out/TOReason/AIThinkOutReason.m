@@ -340,6 +340,7 @@
  *      2021.05.12: 整理tor_OPushM的代码易读性;
  *      2021.05.12: GL返回时,直接调用focus.base(即C).begin() (参考23075-方案);
  *      2021.05.14: 将reModel.content由matchA改成protoA后,此处GL时mIsC判断仅判断pIsM即可 (参考23076);
+ *      2021.05.18: 将GL返回时,更新baseGLFo和basebaseValue的status,以使ORT中可以判断其finish状态 (参考23065-474示图);
  *  @bug
  *      2020.09.22: 加上cutStopStatus,避免同一waitModel被多次触发,导致BUG (参考21042);
  *      2020.12.26: GL时,waitType的判断改为bFo,因为只有bFo才携带了waitTypeDS (参考21204);
@@ -422,8 +423,14 @@
             AnalogyType waitType = [ThinkingUtils convertDS2AnalogyType:bFo.content_p.dataSource];
             
             //e. 只有符合变化时,才改为OuterBack,否则不改,使之反省类比时,可以发现不符合问题;
+            NSLog(@"========11,%ld,%ld",(long)realType,(long)waitType);
             if (realType == waitType){
                 waitModel.status = TOModelStatus_OuterBack;
+                bFo.status = TOModelStatus_Finish;      //glFo已完成;
+                bbValue.status = TOModelStatus_Finish;  //bbValue已完成 (可能仅从20修正到10);
+            }else{
+                bFo.status = TOModelStatus_ActNo;      //glFo未完成;
+                bbValue.status = TOModelStatus_ActNo;  //bbValue未完成 (可能仅从20反成了30);
             }
             
             //f. 对OPushM反馈的GL触发ORT反省;
@@ -434,9 +441,6 @@
             }];
             waitModel.realContent_p = latestMModel.protoAlg.pointer;
             
-            //1. 在ATHav时,执行到此处,说明waitModel和baseFo已完成;
-            waitModel.baseOrGroup.status = TOModelStatus_Finish;
-            NSLog(@"========11,%ld,%ld",(long)realType,(long)waitType);
             //2. 应跳到: baseFo.baseAlg与此处inputMModel.protoAlg之间,进行PM评价;
             if (!focusModel) NSLog(@"=== OPushM成功 GL:%@ 继续PM:%@ bFo:%@",realType == waitType ? @"符合" : @"不符合",Pit2FStr(targetModel.content_p),Pit2FStr(bFo.content_p));
             if (!focusModel) focusModel = targetModel;
