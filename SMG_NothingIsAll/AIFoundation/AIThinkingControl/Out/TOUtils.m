@@ -414,19 +414,10 @@
 }
 
 +(NSMutableArray*) convertPointersFromTOModels:(NSArray*)toModels{
-    //1. 数据准备;
-    NSMutableArray *result = [[NSMutableArray alloc] init];
-    toModels = ARRTOOK(toModels);
-    
-    //2. 收集返回
-    for (TOModelBase *model in toModels) {
-        
-        //3. 防空,TOValueModel的目标pValue有为空的情况 (会导致此处闪退);
-        if (model.content_p) {
-            [result addObject:model.content_p];
-        }
-    }
-    return result;
+    //1. 收集返回 (不收集content_p为空的部分,如:TOValueModel的目标pValue有时为空);
+    return [SMGUtils convertArr:toModels convertBlock:^id(TOModelBase *obj) {
+        return obj.content_p;
+    }];
 }
 
 /**

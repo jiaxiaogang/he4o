@@ -24,6 +24,7 @@
 #import "OutputModel.h"
 #import "XGDelegate.h"
 #import "ThinkingUtils.h"
+#import "TOUtils.h"
 
 /**
  *  MARK:--------------------PathNameKey (kPH)--------------------
@@ -138,6 +139,7 @@
 #define Data2FStr(data,at,ds) [NVHeUtil getLightStr_Value:data algsType:at dataSource:ds]
 #define Ports2Pits(ports) [SMGUtils convertPointersFromPorts:ports]
 #define Nodes2Pits(nodes) [SMGUtils convertPointersFromNodes:nodes]
+#define TOModels2Pits(toModels) [TOUtils convertPointersFromTOModels:toModels];
 
 //AnalogType转字符串
 #define ATType2Str(type) [NSLog_Extension convertATType2Desc:type]

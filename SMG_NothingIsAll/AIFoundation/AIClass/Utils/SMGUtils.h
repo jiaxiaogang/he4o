@@ -172,8 +172,8 @@
 //2021.02.05: 概念嵌套早已废弃
 //+(NSMutableArray*) convertValuePs2MicroValuePs:(NSArray*)value_ps;
 
-//任意arr元素类型转换
-+(NSArray*) convertArr:(NSArray*)arr convertBlock:(id(^)(id obj))convertBlock;
+//任意arr元素类型转换 notnull
++(NSMutableArray*) convertArr:(NSArray*)arr convertBlock:(id(^)(id obj))convertBlock;
 
 @end
 

@@ -581,8 +581,8 @@
 //    return mic_ps;
 //}
 
-//任意arr元素类型转换
-+(NSArray*) convertArr:(NSArray*)arr convertBlock:(id(^)(id obj))convertBlock{
+//任意arr元素类型转换 notnull
++(NSMutableArray*) convertArr:(NSArray*)arr convertBlock:(id(^)(id obj))convertBlock{
     //1. 数据准备;
     arr = ARRTOOK(arr);
     NSMutableArray *result = [[NSMutableArray alloc] init];

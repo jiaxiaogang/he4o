@@ -728,6 +728,7 @@
         TOAlgModel *reModel = [ThinkingUtils analogyReasonRethink_GetFirstReModelIfHav:toAlgModel];
         
         //3. 排除掉Finish的;
+        //TODOTOMORROW20210507:此处责任在于gl修正失败的,而不是所有非finish全负责 (参考23061);
         NSArray *except_ps = [TOUtils convertPointersFromTOValueModelSValue:reModel.subModels validStatus:@[@(TOModelStatus_Finish)]];
         
         //3. 剩下 "未修正(无需修正NoNeedAct/修正失败ActNo)的稀疏码" (参考20205-原则2);
@@ -747,14 +748,6 @@
     //6. 构建SPFo
     AINetAbsFoNode *spFo = [theNet createAbsFo_NoRepeat:@[foNode] content_ps:spFoContent difStrong:1 ds:spDS];
     if (Log4OutRethink) NSLog(@"--> ORT构建SPFo:%@ base:%@",Fo2FStr(spFo),Fo2FStr(foNode));
-    
-    
-    //TODOTOMORROW20210507: (参考23061);
-    //2. 此处责任在于gl修正失败的,而不是所有非finish全负责;
-    
-    
-    
-    
     if (spFo && ARRISOK(spFo.content_ps)) {
         //7. 向性左向右,以当前foNode为交集指引,找assSPFo,以进行外类比 (参考20205-原则3);
         NSArray *spAbsPorts = [AINetUtils absPorts_All:foNode type:type];

@@ -334,6 +334,7 @@
     NSArray *except_ps = [SMGUtils filterArr:outModel.actionFoModels checkValid:^BOOL(TOFoModel *item) {
         return item.status == TOModelStatus_ActNo || item.status == TOModelStatus_ScoreNo;
     }];
+    except_ps = TOModels2Pits(except_ps);
     
     //2. 根据type和value_p找ATLess/ATGreater
     //3. 根据havAlg联想时序,并找出新的解决方案,与新的行为化的概念,与新的条件概念; (2020.11.06: 由getInner1Alg直接取relativeFos);
