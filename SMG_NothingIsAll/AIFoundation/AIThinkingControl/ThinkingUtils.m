@@ -496,7 +496,13 @@
     if (ISOK(baseAlg, TOAlgModel.class)) {
         TOAlgModel *reModel = ARR_INDEX(baseAlg.subModels, 0);
         if (ISOK(reModel, TOAlgModel.class)) {
-            if (baseAlg.subModels.count > 1) WLog(@"--------->>> 反省类比取reModel时,subModels长度>1,看是否需要更全面处理>1的情况");
+            if (baseAlg.subModels.count > 1) {
+                //TODO: 当reModel条数>1时,比如距20,距10各一条,那么在ORT中应该可以都支持;
+                //1. 更全面的发现X368和X378都ok;
+                //2. 全面发现距20距10全修正了,不影响;
+                //3. 暂时先不做,随后有空再做;
+                WLog(@"--------->>> 反省类比取reModel时,subModels长度>1,看是否需要更全面处理>1的情况");
+            }
             return reModel;
         }
     }
