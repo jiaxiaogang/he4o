@@ -492,9 +492,16 @@
     return result;
 }
 
+/**
+ *  MARK:--------------------取reModel--------------------
+ *  @version
+ *      2021.05.19: 改为取末位,比如距离从20->10->0,最终P反省时,更重要的是给距0加分;
+ *      2021.05.19: 改回取首位,因为F15[A8]中本来就包含距0,所以即使不给距0加分,也不影响觅食训练;
+ *      2021.05.19: 改回取末位,因为以最终稀疏码为准,比如Y30时已经开始飞,飞的过程中Y跟着变成了Y0,Y0为P不表示Y30也为P,所以末位更准确;
+ */
 +(TOAlgModel*) analogyReasonRethink_GetFirstReModelIfHav:(TOAlgModel*)baseAlg{
     if (ISOK(baseAlg, TOAlgModel.class)) {
-        TOAlgModel *reModel = ARR_INDEX(baseAlg.subModels, 0);
+        TOAlgModel *reModel = ARR_INDEX_REVERSE(baseAlg.subModels, 0);
         if (ISOK(reModel, TOAlgModel.class)) {
             if (baseAlg.subModels.count > 1) {
                 //TODO: 当reModel条数>1时,比如距20,距10各一条,那么在ORT中应该可以都支持;
