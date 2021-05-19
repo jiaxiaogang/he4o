@@ -742,29 +742,15 @@
         if (Log4OutRethink) NSLog(@"--> ORT构建SPAlg:%@ base:%@",Alg2FStr(spAlg),AlgP2FStr(curAlg.pointer));
         
         //调试分析"定责" (参考23065);
+        //3. S定罚 (未加工的全责 或 加工失败的那一条全责) (参考23066);
         for (AIKVPointer *item in notFinish_ps) {
-            if (type == ATPlus) {
-                if ([item.dataSource isEqualToString:@"distance"]) {
-                    float value = [[AINetIndex getData:item] floatValue];
-                    if (value > 0) {
-                        NSLog(@"距>0进入P,查为什么? (%@) %@",ATType2Str(type),Pit2FStr(item));
-                        NSLog(@"");
-                    }
-                }
-            }else{
+            if (type == ATSub) {
                 if (![item.dataSource isEqualToString:@"distance"]) {
                     NSLog(@"非距进入S,查为什么? (%@) %@",ATType2Str(type),Pit2FStr(item));
                     NSLog(@"");
                 }
             }
         }
-        //调试情况1:
-        //1. 再训练两三次上投,距>0的VRS评价又不通过了 (因为训练的这两三次,让它认识到S了,不可行了);
-        
-        
-        //2. P定赏 (justPValues - 已加工 = 均分赏);
-        //      P主要是查,谁不影响P发生,所以应该以Value最终值为准,即最终距已经为0,而不是20;
-        //3. S定罚 (加工失败的全责);
         
         
         //5. 收集SP概念_用于构建SP时序;
