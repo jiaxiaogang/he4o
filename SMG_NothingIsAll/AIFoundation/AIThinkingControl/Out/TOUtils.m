@@ -407,7 +407,7 @@
         
         //4. 递归收集子集;
         for (TOModelBase *subModel in subModels) {
-            [result addObjectsFromArray:[self getSubOutModels_AllDeep:subModel validStatus:validStatus]];
+            [result addObjectsFromArray:[self getSubOutModels_AllDeep:subModel validStatus:validStatus cutStopStatus:cutStopStatus]];
         }
     }
     return result;
