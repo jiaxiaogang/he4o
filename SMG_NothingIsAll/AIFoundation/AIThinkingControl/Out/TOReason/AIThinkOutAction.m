@@ -150,6 +150,7 @@
  &      2021.01.31 : R-模式V3迭代:将原R-模式彻底整合到原有流程中 (参考22105示图);
  *      2021.03.11 : R-模式理性静默成功迭代 (参考22153);
  *      2021.05.13 : 不应期常切断决策流程的BUG: 将reModel的matchA改成protoA,并将不应期也改为有protoA来判断防重 (参考23076);
+ *      2021.05.20 : 在mIsC判断中,仅对actNo的做为不应期 (参考23079);
  *  @todo
  *      2020.07.05: 在下面MC中,转至PM时,是将C作为M的,随后需测下,看是否需要独立对MC做类似PM的理性评价,即将一步到位,细化成两步各自评价;
  *      2021.01.04: 支持APS评价 (以前原本支持替换Alg并反思fo,后来弃用了?代码找不到) (参考22012);
@@ -206,12 +207,17 @@
         //3. 第2级: 优先MC匹配 (当父级为时序,且mv有效时,执行) (参考21059-344图);
         if (ISOK(outModel.baseOrGroup, TOFoModel.class)) {
             
+            //a. 取出不应期
+            NSArray *except_ps = TOModels2Pits([SMGUtils filterArr:outModel.subModels checkValid:^BOOL(TOModelBase *item) {
+                return item.status == TOModelStatus_ActNo;
+            }]);
+            
             //a. 依次判断mModel,只要符合mIsC即可;
             for (NSInteger i = 0; i < theTC.inModelManager.models.count; i++) {
                 AIShortMatchModel *inModel = ARR_INDEX_REVERSE(theTC.inModelManager.models, i);
                 
                 //b. 2020.11.27: 不应期检查 (参考2114B);
-                if ([outModel.replaceAlgs containsObject:inModel.protoAlg.pointer]) {
+                if ([except_ps containsObject:inModel.protoAlg.pointer]) {
                     continue;
                 }
                 
