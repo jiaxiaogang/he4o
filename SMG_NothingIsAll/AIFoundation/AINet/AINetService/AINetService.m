@@ -46,6 +46,7 @@
  *      2021.04.10: 将从maskAlg出发联想,改成从maskFo出发联想 (参考22211);
  *      2021.04.10: GL主方向为抽象,HN主方向为具象 (参考22213);
  *      2021.05.17: 将mask改为收集protoFo+absRFos来联想GL经验 (参考23078);
+ *      2021.05.21: curMasks不收集protoFo,因为protoFo太具象,且稳定性差 (参考2307a);
  *  @result : 返回relativeFo_ps,用backConAlg节点,由此节点取refPorts,再筛选type,可取到glFo经历;
  */
 +(AIKVPointer*) getInnerV3_GL:(AIShortMatchModel*)maskInModel vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps{
@@ -55,12 +56,8 @@
     //2. 取glConAlg_ps;
     NSArray *glConAlg_ps = [self getHNGLConAlg_ps:type vAT:vAT vDS:vDS];
     
-    //3. 收集masks (先把protoFo收入);
-    //TODO: protoFo有可能在上帧时,可行,但下帧又不可行,比如变向觅食训练 (所以此处存疑,略真有此问题,可改为不收集protoFo);
+    //3. 收集absRFos为masks (参考absRFos字段注释: callers2);
     NSMutableArray *curMasks = [[NSMutableArray alloc] init];
-    [curMasks addObject:maskInModel.protoFo];
-    
-    //4. 收集absRFos为masks (参考absRFos字段注释: callers2);
     [curMasks addObjectsFromArray:maskInModel.absRFos];
     NSLog(@"-------------- getInnerAlg (%@) --------------\nATDS:%@&%@ mask数:%lu 参照:%@\n不应期:%@",ATType2Str(type),vAT,vDS,curMasks.count,Fo2FStr(maskInModel.protoFo),Pits2FStr(except_ps));
         
