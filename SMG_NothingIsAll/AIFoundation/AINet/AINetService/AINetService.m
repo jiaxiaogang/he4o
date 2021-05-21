@@ -179,7 +179,9 @@
     
     //4. 调试;
     if (Log4GetInnerAlg) {
-        if (result) {
+        //TODOTOMORROW20210521: 调试sp跨场景误杀 (参考2307b);
+        BOOL logAny = true;//result;
+        if (logAny) {
             int scoreNoCount = 0,scoreYesCount = 0;
             for (AIKVPointer *item_p in hnglFo_ps) {
                 AIFoNodeBase *item = [SMGUtils searchNode:item_p];
