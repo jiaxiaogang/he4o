@@ -22,16 +22,6 @@
 }
 
 //MARK:===============================================================
-//MARK:                     < property >
-//MARK:===============================================================
--(NSInteger)baseFoId{
-    return [NUMTOOK([self.params objectForKey:@"baseFoId"]) integerValue];
-}
--(void)setBaseFoId:(NSInteger)baseFoId{
-    [self.params setObject:@(baseFoId) forKey:@"baseFoId"];
-}
-
-//MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
 -(NSString*) filePath:(NSString*)customFolderName{

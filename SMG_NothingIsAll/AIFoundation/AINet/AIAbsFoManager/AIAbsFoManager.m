@@ -93,6 +93,7 @@
  *      2021.04.25: 打开防重,仅对content_ps防重,但没有对ds做同区要求判断 (参考23054-疑点);
  *      2021.04.25: 把ThinkingUtils.createAbsFo_NoRepeat_General()搬至此处;
  *      2021.04.28: 修复当content_ps为空时,不构建新时序的BUG (参考23057);
+ *      2021.05.22: 对SP类型仅在当时场景下防重 (参考2307b-方案3);
  *  @status
  *      2021.04.25: 打开后,gl经验全为0条,所以先关掉,后续测试打开后为什么为0条;
  */
@@ -100,12 +101,23 @@
     //1. 数据准备
     conFos = ARRTOOK(conFos);
     content_ps = ARRTOOK(content_ps);
+    AINetAbsFoNode *result = nil;
     
-    //2. 获取绝对匹配;
-    AINetAbsFoNode *result = [AINetIndexUtils getAbsoluteMatching_General:content_ps sort_ps:content_ps except_ps:Nodes2Pits(conFos) getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
-        AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
-        return [AINetUtils refPorts_All4Alg:itemAlg];
-    } ds:ds];
+    //2. 防重_SP类型时,嵌套范围内绝对匹配;
+    int dsType = DS2ATType(ds);
+    if (dsType == ATSub || dsType == ATPlus) {
+        NSMutableArray *validPorts = [[NSMutableArray alloc] init];
+        for (AIFoNodeBase *conItem in conFos) {
+            [validPorts addObjectsFromArray:[AINetUtils absPorts_All:conItem type:dsType]];
+        }
+        result = [AINetIndexUtils getAbsoluteMatching_ValidPorts:validPorts sort_ps:content_ps except_ps:Nodes2Pits(conFos) ds:ds];
+    }else{
+        //3. 防重_其它类型时,全局绝对匹配;
+        result = [AINetIndexUtils getAbsoluteMatching_General:content_ps sort_ps:content_ps except_ps:Nodes2Pits(conFos) getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
+            AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
+            return [AINetUtils refPorts_All4Alg:itemAlg];
+        } ds:ds];
+    }
     
     //3. 有则加强关联;
     if (ISOK(result, AINetAbsFoNode.class)) {

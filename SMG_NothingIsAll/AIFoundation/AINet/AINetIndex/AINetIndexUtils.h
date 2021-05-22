@@ -48,4 +48,10 @@
  */
 +(id) getAbsoluteMatching_General:(NSArray*)content_ps sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps getRefPortsBlock:(NSArray*(^)(AIKVPointer *item_p))getRefPortsBlock ds:(NSString*)ds;
 
+/**
+ *  MARK:--------------------从指定范围中获取绝对匹配--------------------
+ *  @param validPorts : 指定范围域;
+ */
++(id) getAbsoluteMatching_ValidPorts:(NSArray*)validPorts sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps ds:(NSString*)ds;
+
 @end

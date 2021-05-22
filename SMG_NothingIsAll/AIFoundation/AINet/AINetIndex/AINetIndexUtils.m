@@ -78,4 +78,26 @@
     return nil;
 }
 
+/**
+ *  MARK:--------------------从指定范围中获取绝对匹配--------------------
+ *  @param validPorts : 指定范围域;
+ */
++(id) getAbsoluteMatching_ValidPorts:(NSArray*)validPorts sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps ds:(NSString*)ds{
+    //1. 数据检查
+    NSString *md5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:sort_ps]]);
+    except_ps = ARRTOOK(except_ps);
+    
+    //2. 从指定的validPorts中依次找header匹配;
+    for (AIPort *validPort in validPorts) {
+        //5. ds防重 (ds无效时,默认为true);
+        BOOL dsSeem = STRISOK(ds) ? [ds isEqualToString:validPort.target_p.dataSource] : true;
+        
+        //6. ds同区 & 将md5匹配header & 不在except_ps的找到并返回;
+        if (dsSeem && ![except_ps containsObject:validPort.target_p] && [md5 isEqualToString:validPort.header]) {
+            return [SMGUtils searchNode:validPort.target_p];
+        }
+    }
+    return nil;
+}
+
 @end
