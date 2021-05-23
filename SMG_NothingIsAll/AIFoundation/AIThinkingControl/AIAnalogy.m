@@ -757,22 +757,8 @@
         [spFoContent addObject:spAlg.pointer];
     }
     
-    AIKVPointer *firstA_p = ARR_INDEX(foNode.content_ps, 0);
-    AIAlgNodeBase *firstA = [SMGUtils searchNode:firstA_p];
-    BOOL debugMode = firstA.count == 1 && [Alg2FStr(firstA) containsString:@"←"];//[飞←,果近];
-    //分析23081: 感觉应该是GL的场景防重,而不是SP的;
-    //因为像F41[飞←,果近],这样的GL时序,只要有一条S,那么所有有F41的场景全挂了;
-    
-    
-    
-    
-    
     //6. 构建SPFo
     AINetAbsFoNode *spFo = [theNet createAbsFo_NoRepeat:@[foNode] content_ps:spFoContent difStrong:1 ds:spDS];
-    if (spFoContent.count == 0 && debugMode) {
-        NSLog(@"查为何左右果,会被否掉");
-    }
-    
     if (Log4OutRethink) NSLog(@"--> ORT构建SPFo:%@ base:%@",Fo2FStr(spFo),Fo2FStr(foNode));
     if (spFo && ARRISOK(spFo.content_ps)) {
         //7. 向性左向右,以当前foNode为交集指引,找assSPFo,以进行外类比 (参考20205-原则3);

@@ -94,6 +94,7 @@
  *      2021.04.25: 把ThinkingUtils.createAbsFo_NoRepeat_General()搬至此处;
  *      2021.04.28: 修复当content_ps为空时,不构建新时序的BUG (参考23057);
  *      2021.05.22: 对SP类型仅在当时场景下防重 (参考2307b-方案3);
+ *      2021.05.23: 对GL类型仅在当前场景下防重 (参考23081);
  *  @status
  *      2021.04.25: 打开后,gl经验全为0条,所以先关掉,后续测试打开后为什么为0条;
  */
@@ -105,7 +106,7 @@
     
     //2. 防重_SP类型时,嵌套范围内绝对匹配;
     int dsType = DS2ATType(ds);
-    if (dsType == ATSub || dsType == ATPlus) {
+    if (dsType == ATSub || dsType == ATPlus || dsType == ATGreater || dsType == ATLess) {
         NSMutableArray *validPorts = [[NSMutableArray alloc] init];
         for (AIFoNodeBase *conItem in conFos) {
             [validPorts addObjectsFromArray:[AINetUtils absPorts_All:conItem type:dsType]];
