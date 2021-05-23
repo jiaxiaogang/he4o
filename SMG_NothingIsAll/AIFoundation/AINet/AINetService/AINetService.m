@@ -142,6 +142,7 @@
  *  @todo 改为用maskFo获取inner经验
  *  @version
  *      2021.05.09: 无论空S评价是否通过,最多取前cGetInnerByFoCount条 (否则经验多的没完没了);
+ *      2021.05.23: 不应期也算在3条内,避免每次排除不应期后,重取又补成3条,没完了还;
  */
 +(AIKVPointer*) getInnerByFo_Single:(AIFoNodeBase*)maskFo type:(AnalogyType)type except_ps:(NSArray*)except_ps glConAlg_ps:(NSArray*)glConAlg_ps{
     //1. 数据检查;
@@ -153,9 +154,6 @@
     NSArray *hnglFo_ps = Ports2Pits([AINetUtils absPorts_All:maskFo type:type]);
     if (Log4GetInnerAlg) NSLog(@"Group Of MaskFo:%@ 粗方案共%lu个 ↓↓↓",Fo2FStr(maskFo),(unsigned long)hnglFo_ps.count);
     
-    //3. 去掉不应期;
-    hnglFo_ps = [SMGUtils removeSub_ps:except_ps parent_ps:hnglFo_ps];
-    
     //3. 与glConAlg_ps取交集,取出有效的前limit个;
     hnglFo_ps = [SMGUtils filterArr:hnglFo_ps checkValid:^BOOL(AIKVPointer *item) {
         AIFoNodeBase *hnglFo = [SMGUtils searchNode:item];
@@ -165,6 +163,9 @@
         //6. 全部通过,收集;
         return true;
     } limit:cGetInnerByFoCount];
+    
+    //3. 去掉不应期;
+    hnglFo_ps = [SMGUtils removeSub_ps:except_ps parent_ps:hnglFo_ps];
     
     //8. 将空S评价通过的首条返回;
     AIKVPointer *result = nil;
