@@ -159,14 +159,13 @@
                 AIAbsCMVNode *resultMv = [theNet createAbsCMVNode_Outside:nil aMv_p:fo.cmvNode_p bMv_p:assMv.pointer];
                 [AINetUtils relateFo:result mv:resultMv];//cmv模型连接;
             }
-            return result;
         }
     }
     //调试短时序; (先仅打外类比日志);
     NSString *log = STRFORMAT(@"-> 外类比构建时序 Finish: %@->{%@} from: ↑↑↑(fo:assFo)",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
     if (Log4InAnaHN(type)) NSLog(@"%@",log);
     if (Log4InAnaGL(type)) NSLog(@"%@",log);
-    if (type == ATDefault) NSLog(@"%@",log);
+    if (type == ATDefault || type == ATSame) NSLog(@"%@",log);
     return result;
 }
 
