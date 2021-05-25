@@ -377,7 +377,12 @@
             }];
         }
     }
-    NSLog(@"=====> 时序识别Finish (PFos数:%lu RFos数:%lu)",(unsigned long)inModel.matchPFos.count,(unsigned long)inModel.matchRFos.count);
+    NSLog(@"\n=====> 时序识别Finish (PFos数:%lu)",(unsigned long)inModel.matchPFos.count);
+    for (AIMatchFoModel *item in inModel.matchPFos)
+        NSLog(@"> %@->{%@} (匹配度:%@)",Fo2FStr(item.matchFo),Mvp2Str(item.matchFo.cmvNode_p),Double2Str_NDZ(item.matchFoValue));
+    NSLog(@"\n=====> 时序识别Finish (RFos数:%lu)",(unsigned long)inModel.matchRFos.count);
+    for (AIMatchFoModel *item in inModel.matchRFos)
+        NSLog(@"> %@ (匹配度:%@)",Fo2FStr(item.matchFo),Double2Str_NDZ(item.matchFoValue));
 }
 
 /**
