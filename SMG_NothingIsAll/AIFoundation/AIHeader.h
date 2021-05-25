@@ -246,6 +246,7 @@
 #define Log4InAna false
 #define Log4InAnaGL(type) ((type == ATGreater || type == ATLess) && false)
 #define Log4InAnaHN(type) ((type == ATHav || type == ATNone) && false)
+#define Log4InAnaDiff(type) (type == ATDiff && true)
 //外类比
 #define Log4OutAna true
 //正向类比
