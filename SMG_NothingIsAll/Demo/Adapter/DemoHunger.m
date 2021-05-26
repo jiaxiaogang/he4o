@@ -35,17 +35,16 @@
 }
 
 -(void) commit:(CGFloat)level state:(UIDeviceBatteryState)state{
-    //1,取值
+    //1,电量取值
     CGFloat toLevel = MIN(1, MAX(0, level));
-    CGFloat fromLevel = state == UIDeviceBatteryStateCharging ? toLevel - 0.03f : toLevel + 0.03f;
+    CGFloat fromLevel = state == UIDeviceBatteryStateCharging ? toLevel - 0.1f : toLevel + 0.1f;
     
-    //2. 转换0-10;
-    CGFloat from = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:fromLevel];
-    CGFloat to = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:toLevel];
+    //2. 转换为0-10的饥饿度;
+    CGFloat from = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:1 - fromLevel];
+    CGFloat to = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:1 - toLevel];
     
     //3. 传给Input
     [AIInput commitIMV:MVType_Hunger from:from to:to];
 }
 
 @end
-

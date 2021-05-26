@@ -38,13 +38,7 @@
 /**
  *  MARK:--------------------取mvType或algsType对应的targetType--------------------
  */
-+(AITargetType) getTargetType:(MVType)type;
-+(AITargetType) getTargetTypeWithAlgsType:(NSString*)algsType;
-
-/**
- *  MARK:--------------------检查是否顺心--------------------
- */
-+(MindHappyType) checkMindHappy:(NSString*)algsType delta:(NSInteger)delta;
++(BOOL) isBadWithAT:(NSString*)algsType;
 
 
 /**
@@ -53,7 +47,8 @@
  */
 +(BOOL) havDownDemand:(NSString*)algsType delta:(NSInteger)delta;
 +(BOOL) havUpDemand:(NSString*)algsType delta:(NSInteger)delta;
-+(MVDirection) havDemand:(NSString*)algsType delta:(NSInteger)delta;
++(BOOL) havDemand:(NSString*)algsType delta:(NSInteger)delta;
++(MVDirection) getDemandDirection:(NSString*)algsType delta:(NSInteger)delta;
 
 /**
  *  MARK:--------------------转为direction--------------------

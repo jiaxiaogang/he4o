@@ -191,7 +191,7 @@
     NSLog(@"\n\n------------------------------- 感官输入 -------------------------------");
     DemoLog(@"马上饿onClick");
     [theApp.heLogView addDemoLog:@"马上饿onClick"];
-    [[[DemoHunger alloc] init] commit:0.7 state:UIDeviceBatteryStateUnplugged];
+    [[[DemoHunger alloc] init] commit:0.6 state:UIDeviceBatteryStateUnplugged];
 }
 
 - (IBAction)touchWingBtnOnClick:(id)sender {

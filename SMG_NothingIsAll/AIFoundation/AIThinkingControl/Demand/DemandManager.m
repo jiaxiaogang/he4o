@@ -92,7 +92,7 @@
     
     //3. 有需求时且可加入时_加入新的
     //TODO:>>>>判断需求;(如饿,主动取当前状态,是否饿)
-    MVDirection direction = [ThinkingUtils havDemand:algsType delta:delta];
+    MVDirection direction = [ThinkingUtils getDemandDirection:algsType delta:delta];
     if (canNeed && (direction != MVDirection_None)) {
         PerceptDemandModel *newItem = [[PerceptDemandModel alloc] init];
         newItem.algsType = algsType;

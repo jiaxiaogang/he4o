@@ -58,7 +58,7 @@
     //1. 数据准备;
     if (!demandModel) return false;
     if (![theTC energyValid]) return false;
-    MVDirection direction = [ThinkingUtils havDemand:demandModel.algsType delta:demandModel.delta];
+    MVDirection direction = [ThinkingUtils getDemandDirection:demandModel.algsType delta:demandModel.delta];
     NSLog(@"\n\n=============================== TOP.P- ===============================\n任务:%@,发生%ld,方向%ld",demandModel.algsType,(long)demandModel.delta,(long)direction);
     
     //2. 调用通用diff模式方法;
@@ -94,7 +94,7 @@
 -(BOOL) perceptPlus:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel{
     //1. 数据准备;
     //if (!matchAlg || !demandModel) return false;
-    //MVDirection direction = [ThinkingUtils havDemand:demandModel.algsType delta:demandModel.delta];
+    //MVDirection direction = [ThinkingUtils getDemandDirection:demandModel.algsType delta:demandModel.delta];
     //direction = labs(direction - 1);//取反方向;
     
     //2. 调用通用diff模式方法;

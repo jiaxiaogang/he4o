@@ -89,52 +89,34 @@
 //MARK:===============================================================
 @implementation ThinkingUtils (CMV)
 
-+(AITargetType) getTargetType:(MVType)type{
-    if(type == MVType_Hunger){
-        return AITargetType_Down;
-    }else if(type == MVType_Anxious){
-        return AITargetType_Down;
-    }else{
-        return AITargetType_None;
-    }
-}
-
-+(AITargetType) getTargetTypeWithAlgsType:(NSString*)algsType{
++(BOOL) isBadWithAT:(NSString*)algsType{
     algsType = STRTOOK(algsType);
     if ([NSClassFromString(algsType) isSubclassOfClass:ImvBadModel.class]) {//饥饿感等
-        return AITargetType_Down;
+        return true;
     }else if ([NSClassFromString(algsType) isSubclassOfClass:ImvGoodModel.class]) {//爽感等;
-        return AITargetType_Up;
+        return false;
     }
-    return AITargetType_None;
+    return false;
 }
 
-+(MindHappyType) checkMindHappy:(NSString*)algsType delta:(NSInteger)delta{
-    //1. 数据
-    AITargetType targetType = [ThinkingUtils getTargetTypeWithAlgsType:algsType];
-    
-    //2. 判断返回结果
-    if (targetType == AITargetType_Down) {
-        return delta < 0 ? MindHappyType_Yes : delta > 0 ? MindHappyType_No : MindHappyType_None;
-    }else if(targetType == AITargetType_Up){
-        return delta > 0 ? MindHappyType_Yes : delta < 0 ? MindHappyType_No : MindHappyType_None;
-    }
-    return MindHappyType_None;
-}
-
-//是否有向下需求 (目标为下,但delta却+)
+//是否有向下需求 (目标为下,但delta却+) (饿感上升)
 +(BOOL) havDownDemand:(NSString*)algsType delta:(NSInteger)delta {
-    AITargetType targetType = [ThinkingUtils getTargetTypeWithAlgsType:algsType];
-    return targetType == AITargetType_Down && delta > 0;
+    BOOL isBad = [ThinkingUtils isBadWithAT:algsType];
+    return isBad && delta > 0;
 }
 
-//是否有向上需求 (目标为上,但delta却-)
+//是否有向上需求 (目标为上,但delta却-) (快乐下降)
 +(BOOL) havUpDemand:(NSString*)algsType delta:(NSInteger)delta {
-    AITargetType targetType = [ThinkingUtils getTargetTypeWithAlgsType:algsType];
-    return targetType == AITargetType_Up && delta < 0;
+    BOOL isGood = ![ThinkingUtils isBadWithAT:algsType];
+    return isGood && delta < 0;
 }
 
-+(MVDirection) havDemand:(NSString*)algsType delta:(NSInteger)delta {
+//是否有任意需求;
++(BOOL) havDemand:(NSString*)algsType delta:(NSInteger)delta{
+    return [self havDownDemand:algsType delta:delta] || [self havUpDemand:algsType delta:delta];
+}
+
++(MVDirection) getDemandDirection:(NSString*)algsType delta:(NSInteger)delta {
     BOOL downDemand = [self havDownDemand:algsType delta:delta];
     BOOL upDemand = [self havUpDemand:algsType delta:delta];
     if (downDemand) {

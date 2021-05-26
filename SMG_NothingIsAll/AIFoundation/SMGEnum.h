@@ -41,12 +41,12 @@ typedef NS_ENUM(NSInteger, CustomInputType) {
 /**
  *  MARK:--------------------MV目标类型--------------------
  */
-typedef NS_ENUM(NSInteger, AITargetType) {
-    AITargetType_None   = 0,//不变
-    AITargetType_Up     = 1,//增涨(欲望)
-    AITargetType_Down   = 2,//下降(饥饿,焦急,疼痛)
-    AITargetType_Repeat = 3,//重复(快乐)
-};
+//typedef NS_ENUM(NSInteger, AITargetType) {
+//    AITargetType_None   = 0,//不变
+//    AITargetType_Up     = 1,//增涨(欲望)
+//    AITargetType_Down   = 2,//下降(饥饿,焦急,疼痛)
+//    AITargetType_Repeat = 3,//重复(快乐)
+//};
 
 
 /**
@@ -56,15 +56,6 @@ typedef NS_ENUM(NSInteger, MVDirection) {
     MVDirection_None        =-1,//无
     MVDirection_Negative    = 0,//负
     MVDirection_Positive    = 1,//正
-};
-
-/**
- *  MARK:--------------------顺心类型--------------------
- */
-typedef NS_ENUM(NSInteger, MindHappyType) {
-    MindHappyType_None    = 0,//没影响
-    MindHappyType_Yes    = 1,//顺心
-    MindHappyType_No    = 2,//不顺心
 };
 
 /**

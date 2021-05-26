@@ -17,20 +17,26 @@
  *  @param from | to : 值域,转换为0-10;(例如:hunger时表示饥饿度,10为无电非常饿,0为满电不饿);
  */
 +(void) commitIMV:(MVType)type from:(CGFloat)from to:(CGFloat)to{
-    //1. 生成imvModel
+    //1. 数据准备;
+    ImvAlgsModelBase *imvModel = nil;
     if (type == MVType_Hunger) {
-        ImvAlgsHungerModel *imvModel = [[ImvAlgsHungerModel alloc] init];
-        imvModel.urgentTo = [self getBadImvUrgentValue:to];//36
-        CGFloat urgentFrom = [self getBadImvUrgentValue:from];//25
-        imvModel.delta = urgentFrom - imvModel.urgentTo;    //更饿为负 (-11);
-        [theTC commitInput:imvModel];
-    }else if(type == MVType_Anxious){
-        
+        //2. 生成imvModel_饿感;
+        imvModel = [[ImvAlgsHungerModel alloc] init];
     }else if(type == MVType_Hurt){
-        ImvAlgsHurtModel *imvModel = [[ImvAlgsHurtModel alloc] init];
-        imvModel.urgentTo = [self getBadImvUrgentValue:to];//9
-        CGFloat urgentFrom = [self getBadImvUrgentValue:from];//4
-        imvModel.delta = urgentFrom - imvModel.urgentTo;    //更痛为负 (－5)
+        //3. 生成imvModel_痛感;
+        imvModel = [[ImvAlgsHurtModel alloc] init];
+    }else if(type == MVType_Anxious){}
+    
+    //4. 对imvModel计算赋值;
+    if (imvModel) {
+        //5. 计算from to
+        imvModel.urgentTo = [self getBadImvUrgentValue:to];//痛9 饿16
+        CGFloat urgentFrom = [self getBadImvUrgentValue:from];//痛4 饿9
+        
+        //6. 计算delta (ISOK(imvModel, ImvBadModel.class))
+        imvModel.delta = imvModel.urgentTo - urgentFrom;    //更痛5 更饿7;
+        
+        //7. 提交;
         [theTC commitInput:imvModel];
     }
 }

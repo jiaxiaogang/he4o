@@ -291,16 +291,15 @@
 }
 +(CGFloat) score4MV:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta ratio:(CGFloat)ratio{
     //1. 检查absCmvNode是否顺心
-    MindHappyType type = [ThinkingUtils checkMindHappy:algsType delta:delta];
+    BOOL havDemand = [ThinkingUtils havDemand:algsType delta:delta];
     
     //2. 根据检查到的数据取到score;
     ratio = MIN(1,MAX(ratio,0));
-    if (type == MindHappyType_Yes) {
-        return urgentTo * ratio;
-    }else if(type == MindHappyType_No){
+    if (havDemand) {
         return  -urgentTo * ratio;
+    }else{
+        return urgentTo * ratio;
     }
-    return 0;
 }
 
 //MARK:===============================================================

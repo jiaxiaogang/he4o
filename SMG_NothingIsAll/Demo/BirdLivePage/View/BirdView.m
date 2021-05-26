@@ -154,8 +154,8 @@
             
             //5. 价值变化;
             if (foodView.status == FoodStatus_Eat) {
-                //a. 产生HungerMindValue;
-                [self sendHunger:1.0f];
+                //a. 产生HungerMindValue (饥饿感下降);
+                [self sendHunger:-1.0f];
             }else if(foodView.status == FoodStatus_Border){
                 //b. 产生HurtMindValue (坚果带皮时,不仅吃不到,还得嘴疼);
                 [AIInput commitIMV:MVType_Hurt from:2.0f to:3.0f];

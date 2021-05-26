@@ -48,7 +48,7 @@
         AICMVNodeBase *mvNode = [SMGUtils searchNode:node_p];
         if (mvNode) {
             NSInteger delta = [NUMTOOK([AINetIndex getData:mvNode.delta_p]) integerValue];
-            MVDirection demand = [ThinkingUtils havDemand:node_p.algsType delta:delta];
+            MVDirection demand = [ThinkingUtils getDemandDirection:node_p.algsType delta:delta];
             return (demand == MVDirection_None) ? UIColorWithRGBHex(0x00FF00) : UIColorWithRGBHex(0xFF0000);
         }
     }
