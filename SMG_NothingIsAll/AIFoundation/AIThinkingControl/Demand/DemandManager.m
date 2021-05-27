@@ -166,7 +166,9 @@
             [self.loopCache addObject:newItem];
             
             //8. 新需求时_将新需求迫切度的差值(>0时),增至活跃度;
-            [theTC updateEnergy:MAX(0, newItem.urgentTo - sameIdenOldMax)];
+            //2021.05.27: 为方便测试,所有imv都给20迫切度 (因为迫切度太低话,还没怎么思考就停了);
+            CGFloat newUrgentTo = 20;//newItem.urgentTo;
+            [theTC updateEnergy:MAX(0, newUrgentTo - sameIdenOldMax)];
             NSLog(@"demandManager-RMV >> 新需求+1=%lu 评分:%f\n%@->%@",(unsigned long)self.loopCache.count,score,Fo2FStr(mModel.matchFo),Pit2FStr(mModel.matchFo.cmvNode_p));
         }else{
             NSLog(@"当前,预测mv未形成需求:%@ 基于:%@ 评分:%f",algsType,Pit2FStr(mModel.matchFo.cmvNode_p),score);

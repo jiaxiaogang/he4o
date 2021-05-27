@@ -165,8 +165,9 @@
     NSString *log = STRFORMAT(@"-> 外类比构建时序 Finish: %@->{%@} from: ↑↑↑(fo:assFo)",Fo2FStr(result),Mvp2Str(result.cmvNode_p));
     if (Log4InAnaHN(type)) NSLog(@"%@",log);
     if (Log4InAnaGL(type)) NSLog(@"%@",log);
-    if (Log4InAnaDiff(type)) NSLog(@"%@",log);
-    if (type == ATDefault || type == ATSame) NSLog(@"%@",log);
+    if (Log4OutAnaDiff(type)) NSLog(@"%@",log);
+    if (Log4OutAnaDefault(type)) NSLog(@"%@",log);
+    if (Log4OutAnaSame(type)) NSLog(@"%@",log);
     return result;
 }
 
