@@ -110,7 +110,7 @@
         }
         
         //8. 子任务尝试完成后,进行FPS综合评价 (如果子任务完成后,依然有解决不了的不愿意的价值,则不通过);
-        BOOL scoreSuccess = [AIScore FPS:outModel rtInModel:rtInModel];
+        BOOL scoreSuccess = [AIScore FPS:outModel rtInModel:rtInModel except_ps:except_ps];
         if (!scoreSuccess) {
             NSLog(@"未发生感性评价(反思)-不通过");
             outModel.status = TOModelStatus_ScoreNo;

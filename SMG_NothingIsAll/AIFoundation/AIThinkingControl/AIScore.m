@@ -186,9 +186,11 @@
  *  @version
  *      2021.01.24: 对多时序识别,更准确多元的评价支持 (参考22073-todo2);
  *      2021.03.28: 对子任务已决策成功时,不计分 (参考22193);
+ *      2021.05.28: 支持不应期,主要针对与R任务重复的不对评分生效 (参考23092);
  */
-+(BOOL) FPS:(TOFoModel*)outModel rtInModel:(AIShortMatchModel*)rtInModel{
++(BOOL) FPS:(TOFoModel*)outModel rtInModel:(AIShortMatchModel*)rtInModel except_ps:(NSArray*)except_ps{
     //1. 数据检查
+    except_ps = ARRTOOK(except_ps);
     if (!outModel || !rtInModel) {
         return true;
     }
@@ -207,12 +209,15 @@
         }
         if (subDemandSuccess) continue;
         
+        //3. 不应期中的,不计分;
+        if ([except_ps containsObject:item.matchFo.pointer]) continue;
+        
         //4. 需计分的,累计总分;
         CGFloat score = [AIScore score4MV:item.matchFo.cmvNode_p ratio:item.matchFoValue];
         sumScore += score;
         sumCount++;
     }
-    CGFloat rtScore = rtInModel.matchPFos.count == 0 ? 0 : sumScore / sumCount;
+    CGFloat rtScore = sumCount == 0 ? 0 : sumScore / sumCount;
     
     //3. 对demand进行评价 (P-模式下demand为负分);
     DemandModel *demand = [TOUtils getDemandModelWithSubOutModel:outModel];

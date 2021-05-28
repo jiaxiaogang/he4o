@@ -23,7 +23,7 @@
 +(BOOL) FRS:(AIFoNodeBase*)fo;
 +(BOOL) FRS_Miss:(AIFoNodeBase*)sFo matchFo:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex;
 +(BOOL) FRS_Time:(TOFoModel*)toFo demand:(ReasonDemandModel*)demand;
-+(BOOL) FPS:(TOFoModel*)outModel rtInModel:(AIShortMatchModel*)rtInModel;
++(BOOL) FPS:(TOFoModel*)outModel rtInModel:(AIShortMatchModel*)rtInModel except_ps:(NSArray*)except_ps;
 +(BOOL) ARS;
 +(BOOL) ARS_Time:(TOFoModel*)dsFo demand:(ReasonDemandModel*)demand;
 
