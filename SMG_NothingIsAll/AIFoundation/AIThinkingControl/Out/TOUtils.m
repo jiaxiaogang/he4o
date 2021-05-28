@@ -18,6 +18,8 @@
 #import "AIShortMatchModel.h"
 #import "ThinkingUtils.h"
 #import "AINetIndex.h"
+#import "ReasonDemandModel.h"
+#import "AIMatchFoModel.h"
 
 @implementation TOUtils
 
@@ -378,6 +380,24 @@
     return nil;
 }
 
+/**
+ *  MARK:--------------------向着base方向取所有demands--------------------
+ *  @result 含子任务和root任务 notnull;
+ */
++(NSMutableArray*) getBaseDemands_AllDeep:(TOModelBase*)subModel{
+    //1. 数据准备;
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    if (!subModel) return result;
+    
+    //2. 向base取 (是Demand则收集);
+    TOModelBase *checkModel = subModel;
+    while (checkModel) {
+        if (ISOK(checkModel, DemandModel.class)) [result addObject:checkModel];
+        checkModel = checkModel.baseOrGroup;
+    }
+    return result;
+}
+
 +(NSArray*) getSubOutModels_AllDeep:(TOModelBase*)outModel validStatus:(NSArray*)validStatus{
     return [self getSubOutModels_AllDeep:outModel validStatus:validStatus cutStopStatus:@[@(TOModelStatus_Finish)]];
 }
@@ -413,6 +433,24 @@
     return result;
 }
 
+/**
+ *  MARK:--------------------将rDemands转为pointers--------------------
+ *  @result notnull
+ */
++(NSMutableArray*) convertPointersFromRDemands:(NSArray*)rDemands{
+    //2. 收集actionFos;
+    return [SMGUtils convertArr:rDemands convertBlock:^id(ReasonDemandModel *item) {
+        if (ISOK(item, ReasonDemandModel.class)) {
+            return item.mModel.matchFo.pointer;
+        }
+        return nil;
+    }];
+}
+
+/**
+ *  MARK:--------------------将TOModels转为Pointers--------------------
+ *  @result notnull
+ */
 +(NSMutableArray*) convertPointersFromTOModels:(NSArray*)toModels{
     //1. 收集返回 (不收集content_p为空的部分,如:TOValueModel的目标pValue有时为空);
     return [SMGUtils convertArr:toModels convertBlock:^id(TOModelBase *obj) {

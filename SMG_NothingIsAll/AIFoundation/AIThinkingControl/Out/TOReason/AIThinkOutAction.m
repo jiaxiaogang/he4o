@@ -44,6 +44,7 @@
  *      2021.01.22: R-任务解决方案不做空S评价;
  *      2021.01.22: R-任务直接解决方案不做反思,因为它评价必不通过;
  *      2021.04.13: 所有fo都进行反思: (1.R-下挂mv0的fo; 2.P-下挂mv+的fo; 3.HNGL未指向mv),三者都可进行反思;
+ *      2021.05.28: 反思子任务要防止与已有父级R任务重复 (避免子任务死循环) (参考23092);
  */
 -(void) convert2Out_Fo:(TOFoModel*)outModel{
     //1. 取出需行为化的content_ps部分;
@@ -83,11 +84,18 @@
     
     //3. 对HNGL任务首帧执行前做评价;
     if (outModel.actionIndex == -1) {
-        //6. MC反思: 回归tir反思,重新识别理性预测时序,预测价值; (预测到鸡蛋变脏,或者cpu损坏) (理性预测影响评价即理性评价)
+        //4. MC反思: 回归tir反思,重新识别理性预测时序,预测价值; (预测到鸡蛋变脏,或者cpu损坏) (理性预测影响评价即理性评价)
         AIShortMatchModel *rtInModel = [theTC to_Rethink:outModel];
         
-        //7. 子任务_对反思预测fo尝试转为子任务;
+        //5. 取出当前短时树上主子任务下,所有的解决方案,做为不应期 (避免子任务死循环) (参考23092);
+        NSMutableArray *exceptDemands = [TOUtils getBaseDemands_AllDeep:outModel];
+        NSArray *except_ps = RDemands2Pits(exceptDemands);
+        
+        //6. 子任务_对反思预测fo尝试转为子任务;
         for (AIMatchFoModel *item in rtInModel.matchPFos) {
+            
+            //7. 排除不应期
+            if ([except_ps containsObject:item.matchFo.pointer]) continue;
             
             //2. 子任务_评分为负时才生成;
             CGFloat score = [AIScore score4MV:item.matchFo.cmvNode_p ratio:item.matchFoValue];

@@ -83,11 +83,23 @@
 +(DemandModel*) getDemandModelWithSubOutModel:(TOModelBase*)subOutModel;
 
 /**
+ *  MARK:--------------------向着base方向取所有demands--------------------
+ *  @result 含子任务和root任务 notnull;
+ */
++(NSMutableArray*) getBaseDemands_AllDeep:(TOModelBase*)subModel;
+
+/**
  *  MARK:--------------------找出已行为输出等待外循环结果的outModels--------------------
  *  @result notnull NSArray<TOModelBase#>
  */
 +(NSArray*) getSubOutModels_AllDeep:(TOModelBase*)outModel validStatus:(NSArray*)validStatus;
 +(NSArray*) getSubOutModels_AllDeep:(TOModelBase*)outModel validStatus:(NSArray*)validStatus cutStopStatus:(NSArray*)cutStopStatus;
+
+/**
+ *  MARK:--------------------将rDemands转为pointers--------------------
+ *  @result notnull
+ */
++(NSMutableArray*) convertPointersFromRDemands:(NSArray*)rDemands;
 
 /**
  *  MARK:--------------------将TOModels转为Pointers--------------------

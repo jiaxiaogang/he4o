@@ -137,9 +137,12 @@
 
 //稀疏码值转字符串
 #define Data2FStr(data,at,ds) [NVHeUtil getLightStr_Value:data algsType:at dataSource:ds]
+
+//xxx转指针
 #define Ports2Pits(ports) [SMGUtils convertPointersFromPorts:ports]
 #define Nodes2Pits(nodes) [SMGUtils convertPointersFromNodes:nodes]
 #define TOModels2Pits(toModels) [TOUtils convertPointersFromTOModels:toModels];
+#define RDemands2Pits(rDemands) [TOUtils convertPointersFromRDemands:rDemands];
 
 //AnalogType转字符串
 #define ATType2Str(type) [NSLog_Extension convertATType2Desc:type]
