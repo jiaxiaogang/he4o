@@ -81,16 +81,20 @@
  *  MARK:--------------------获取subOutModel的demand--------------------
  */
 +(DemandModel*) getDemandModelWithSubOutModel:(TOModelBase*)subOutModel;
++(DemandModel*) getRootDemandModelWithSubOutModel:(TOModelBase*)subOutModel;
 
 /**
- *  MARK:--------------------向着base方向取所有demands--------------------
+ *  MARK:--------------------向着某方向取所有demands--------------------
  *  @result 含子任务和root任务 notnull;
  */
-+(NSMutableArray*) getBaseDemands_AllDeep:(TOModelBase*)subModel;
++(NSMutableArray*) getBaseDemands_AllDeep:(TOModelBase*)subModel;//base方向;
++(NSMutableArray*) getSubDemands_AllDeep:(DemandModel*)root validStatus:(NSArray*)validStatus;//sub方向
 
 /**
  *  MARK:--------------------找出已行为输出等待外循环结果的outModels--------------------
  *  @result notnull NSArray<TOModelBase#>
+ *  @param validStatus : 为nil时,将收集一切类型;
+ *  _param cutStopStatus : 为nil时,不进行任何中断;
  */
 +(NSArray*) getSubOutModels_AllDeep:(TOModelBase*)outModel validStatus:(NSArray*)validStatus;
 +(NSArray*) getSubOutModels_AllDeep:(TOModelBase*)outModel validStatus:(NSArray*)validStatus cutStopStatus:(NSArray*)cutStopStatus;

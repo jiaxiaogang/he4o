@@ -46,6 +46,7 @@
  *      2021.04.13: 所有fo都进行反思: (1.R-下挂mv0的fo; 2.P-下挂mv+的fo; 3.HNGL未指向mv),三者都可进行反思;
  *      2021.05.28: 反思子任务要防止与已有父级R任务重复 (避免子任务死循环) (参考23092);
  *      2021.06.01: 反思子任务死循环再现 (参考23094);
+ *      2021.06.01: 对已有的failure状态子任务,加入到子任务不应期中,避免明明无计可施的R子任务还不断尝试 (参考23095);
  */
 -(void) convert2Out_Fo:(TOFoModel*)outModel{
     //1. 取出需行为化的content_ps部分;
@@ -89,8 +90,18 @@
         AIShortMatchModel *rtInModel = [theTC to_Rethink:outModel];
         
         //5. 取出当前短时树上主子任务下,所有的解决方案,做为不应期 (避免子任务死循环) (参考23092);
-        NSMutableArray *exceptDemands = [TOUtils getBaseDemands_AllDeep:outModel];
-        NSArray *except_ps = RDemands2Pits(exceptDemands);
+        NSMutableArray *baseDemands = [TOUtils getBaseDemands_AllDeep:outModel];
+        NSArray *baseExcepts = RDemands2Pits(baseDemands);
+        
+        //5. 取出所有已无计可施的demand (参考23095);
+        DemandModel *rootDemand = ARR_INDEX_REVERSE(baseDemands, 0);
+        NSArray *failureDemans = [TOUtils getSubDemands_AllDeep:rootDemand validStatus:@[@(TOModelStatus_ActNo)]];
+        NSArray *failureExcepts = RDemands2Pits(failureDemans);
+        
+        //5. 收集不应期;
+        NSMutableArray *except_ps = [[NSMutableArray alloc] init];
+        [except_ps addObjectsFromArray:baseExcepts];
+        [except_ps addObjectsFromArray:failureExcepts];
         
         //6. 子任务_对反思预测fo尝试转为子任务;
         for (AIMatchFoModel *item in rtInModel.matchPFos) {
@@ -105,6 +116,7 @@
             
             //3. 子任务_对其决策;
             NSLog(@"=====> 生成R子任务:%@->%@",Fo2FStr(item.matchFo),Mvp2Str(item.matchFo.cmvNode_p));
+            NSLog(@"%@",TOModel2Root2Str(subDemand));
             [self.delegate toAction_SubModelBegin:subDemand];
             
             //4. 子任务Finish/ActYes时,不return,因为要继续父任务;

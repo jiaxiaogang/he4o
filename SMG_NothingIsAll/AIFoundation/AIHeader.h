@@ -25,6 +25,7 @@
 #import "XGDelegate.h"
 #import "ThinkingUtils.h"
 #import "TOUtils.h"
+#import "TOModelVision.h"
 
 /**
  *  MARK:--------------------PathNameKey (kPH)--------------------
@@ -159,6 +160,9 @@
 #define DS2ATType(ds) [ThinkingUtils convertDS2AnalogyType:ds]
 #define Mvp2Delta(mv_p) [AINetUtils getDeltaFromMv:mv_p]
 #define Mvp2Score(mv_p,ratio) [AIScore score4MV:mv_p ratio:ratio]
+
+//短时记忆转字符串
+#define TOModel2Root2Str(sub) [TOModelVision cur2Root:sub]
 
 
 /**

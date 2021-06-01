@@ -370,21 +370,21 @@
  *  MARK:--------------------获取subOutModel的demand--------------------
  */
 +(DemandModel*) getDemandModelWithSubOutModel:(TOModelBase*)subOutModel{
-    if (subOutModel) {
-        if (ISOK(subOutModel.baseOrGroup, DemandModel.class)) {
-            return (DemandModel*)subOutModel.baseOrGroup;
-        }else{
-            return [self getDemandModelWithSubOutModel:subOutModel.baseOrGroup];
-        }
-    }
-    return nil;
+    NSMutableArray *demands = [self getBaseDemands_AllDeep:subOutModel];
+    return ARR_INDEX(demands, 0);
+}
++(DemandModel*) getRootDemandModelWithSubOutModel:(TOModelBase*)subOutModel{
+    NSMutableArray *demands = [self getBaseDemands_AllDeep:subOutModel];
+    return ARR_INDEX_REVERSE(demands, 0);
 }
 
 /**
- *  MARK:--------------------向着base方向取所有demands--------------------
+ *  MARK:--------------------向着某方向取所有demands--------------------
  *  @version
  *      2021.06.01: 因为R子任务时baseOrGroup为空,导致链条中断获取不全的BUG修复 (参考23094);
+ *      2021.06.01: 支持getSubDemands_AllDeep (子方向);
  *  @result 含子任务和root任务 notnull;
+ *  @rank : base在后,sub在前;
  */
 +(NSMutableArray*) getBaseDemands_AllDeep:(TOModelBase*)subModel{
     //1. 数据准备;
@@ -399,6 +399,12 @@
     }
     return result;
 }
++(NSMutableArray*) getSubDemands_AllDeep:(DemandModel*)root validStatus:(NSArray*)validStatus{
+    NSArray *subModels = [self getSubOutModels_AllDeep:root validStatus:validStatus];
+    return [SMGUtils filterArr:subModels checkValid:^BOOL(TOModelBase *item) {
+        return ISOK(item, DemandModel.class);
+    }];
+}
 
 +(NSArray*) getSubOutModels_AllDeep:(TOModelBase*)outModel validStatus:(NSArray*)validStatus{
     return [self getSubOutModels_AllDeep:outModel validStatus:validStatus cutStopStatus:@[@(TOModelStatus_Finish)]];
@@ -410,26 +416,30 @@
     NSMutableArray *result = [[NSMutableArray alloc] init];
     if (!outModel) return result;
     
-    //2. 收集当前
-    if ([validStatus containsObject:@(outModel.status)]) {
+    //2. 收集当前 (当valid为空时,全收集);
+    if (!ARRISOK(validStatus) || [validStatus containsObject:@(outModel.status)]) {
         [result addObject:outModel];
     }
     
     //3. 找出子集 (Finish负责截停递归);
     if (![cutStopStatus containsObject:@(outModel.status)]) {
-        NSMutableArray *subModels = [[NSMutableArray alloc] init];
+        NSMutableArray *subs = [[NSMutableArray alloc] init];
         if (ISOK(outModel, DemandModel.class) || ISOK(outModel, TOAlgModel.class) || ISOK(outModel, TOValueModel.class)) {
             id<ITryActionFoDelegate> tryActionObj = (id<ITryActionFoDelegate>)outModel;
-            [subModels addObjectsFromArray:tryActionObj.actionFoModels];
+            [subs addObjectsFromArray:tryActionObj.actionFoModels];
         }
         if (ISOK(outModel, TOFoModel.class) || ISOK(outModel, TOAlgModel.class)) {
             id<ISubModelsDelegate> subModelsObj = (id<ISubModelsDelegate>)outModel;
-            [subModels addObjectsFromArray:subModelsObj.subModels];
+            [subs addObjectsFromArray:subModelsObj.subModels];
+        }
+        if (ISOK(outModel, TOFoModel.class)) {
+            id<ISubDemandDelegate> subDemandsObj = (id<ISubDemandDelegate>)outModel;
+            [subs addObjectsFromArray:subDemandsObj.subDemands];
         }
         
         //4. 递归收集子集;
-        for (TOModelBase *subModel in subModels) {
-            [result addObjectsFromArray:[self getSubOutModels_AllDeep:subModel validStatus:validStatus cutStopStatus:cutStopStatus]];
+        for (TOModelBase *sub in subs) {
+            [result addObjectsFromArray:[self getSubOutModels_AllDeep:sub validStatus:validStatus cutStopStatus:cutStopStatus]];
         }
     }
     return result;

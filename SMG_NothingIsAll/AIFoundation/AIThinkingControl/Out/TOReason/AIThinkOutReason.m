@@ -30,7 +30,6 @@
 #import "AIMatchFoModel.h"
 #import "AIPort.h"
 #import "AINoRepeatRun.h"
-#import "TOModelVision.h"
 
 @interface AIThinkOutReason() <TOActionDelegate>
 
@@ -448,7 +447,7 @@
             //2. 应跳到: baseFo.baseAlg与此处inputMModel.protoAlg之间,进行PM评价;
             if (!focusModel) NSLog(@"=== OPushM成功 GL:%@ 继续PM:%@ bFo:%@",realType == waitType ? @"符合" : @"不符合",Pit2FStr(targetModel.content_p),Pit2FStr(bFo.content_p));
             if (!focusModel) focusModel = targetModel;
-            NSLog(@"短时记忆可视化:%@",[TOModelVision cur2Root:waitModel]);
+            NSLog(@"短时记忆可视化:%@",TOModel2Root2Str(waitModel));
         }
         
         //7. ============= "行为输出" 和 "demand.ActYes"的有效判断 =============

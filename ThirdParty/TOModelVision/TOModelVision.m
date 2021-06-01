@@ -8,6 +8,9 @@
 
 #import "TOModelVision.h"
 #import "TOModelBase.h"
+#import "PerceptDemandModel.h"
+#import "ReasonDemandModel.h"
+#import "AIMatchFoModel.h"
 
 @implementation TOModelVision
 
@@ -29,16 +32,29 @@
     }
     
     //4. 头尾
-    
     [mStr insertString:@"\n︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹\n" atIndex:0];
     [mStr appendString:@"\n︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺"];
     return mStr;
 }
 
+/**
+ *  MARK:--------------------单model转str--------------------
+ *  @version
+ *      2021.06.01: 支持ReasonDemandModel;
+ */
 +(NSString*) singleVision:(TOModelBase*)model{
-    if (model) {
-        AnalogyType type = DS2ATType(model.content_p.dataSource);
-        return STRFORMAT(@"%@: %@ (%@)",NSStringFromClass(model.class),Pit2FStr(model.content_p),ATType2Str(type));
+    //1. 取content_p
+    AIKVPointer *content_p = nil;
+    if (ISOK(model, ReasonDemandModel.class)) {
+        content_p = ((ReasonDemandModel*)model).mModel.matchFo.pointer;
+    }else if(ISOK(model, TOModelBase.class)){
+        content_p = model.content_p;
+    }
+    
+    //2. 转成str
+    if (content_p) {
+        AnalogyType type = DS2ATType(content_p.dataSource);
+        return STRFORMAT(@"%@: %@ (%@)",NSStringFromClass(model.class),Pit2FStr(content_p),ATType2Str(type));
     }
     return nil;
 }
