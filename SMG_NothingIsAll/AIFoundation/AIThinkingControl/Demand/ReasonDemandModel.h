@@ -30,6 +30,5 @@
 
 @property (strong, nonatomic) AIMatchFoModel *mModel;       //R-预测时序
 @property (strong, nonatomic) AIShortMatchModel *inModel;   //需求来源inModel;
-@property (strong, nonatomic) TOFoModel *baseFo;            //当前为子任务时,baseFo表示基于哪个时序的任务;
 
 @end

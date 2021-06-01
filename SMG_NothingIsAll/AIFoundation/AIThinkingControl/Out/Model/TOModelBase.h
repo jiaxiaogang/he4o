@@ -22,6 +22,16 @@
 -(id) initWithContent_p:(AIKVPointer*)content_p;
 
 @property (strong, nonatomic) AIKVPointer *content_p;
+
+/**
+ *  MARK:--------------------base--------------------
+ *  @desc 因为决策短时记忆是结构化的,而baseOrGroup表示了其父节点;
+ *  @callers
+ *      1. TOFoModel时,base为: P满足/R避免/HNGL加工任务
+ *      2. TOAlgModel时,base为: 时序
+ *      3. TOValueModel时,base为: 概念
+ *      4. DemandModel时,baes为: 产生子任务基于的哪个时序 (一般为反思时序);
+ */
 @property (weak, nonatomic) TOModelBase *baseOrGroup;
 
 /**

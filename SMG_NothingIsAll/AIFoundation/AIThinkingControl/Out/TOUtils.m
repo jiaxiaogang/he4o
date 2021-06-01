@@ -382,6 +382,8 @@
 
 /**
  *  MARK:--------------------向着base方向取所有demands--------------------
+ *  @version
+ *      2021.06.01: 因为R子任务时baseOrGroup为空,导致链条中断获取不全的BUG修复 (参考23094);
  *  @result 含子任务和root任务 notnull;
  */
 +(NSMutableArray*) getBaseDemands_AllDeep:(TOModelBase*)subModel{

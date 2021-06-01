@@ -18,6 +18,7 @@
  *  MARK:--------------------newWith--------------------
  *  @version
  *      2021.03.28: 将at & delta & urgentTo也封装到此处取赋值;
+ *      2021.06.01: 将子任务时的base也兼容入baseOrGroup中 (参考23094);
  */
 +(ReasonDemandModel*) newWithMModel:(AIMatchFoModel*)mModel inModel:(AIShortMatchModel*)inModel baseFo:(TOFoModel*)baseFo{
     //1. 数据准备;
@@ -30,7 +31,7 @@
     
     //2. 短时结构;
     if (baseFo) [baseFo.subDemands addObject:result];
-    result.baseFo = baseFo;
+    result.baseOrGroup = baseFo;
     
     //3. 属性赋值;
     result.algsType = algsType;

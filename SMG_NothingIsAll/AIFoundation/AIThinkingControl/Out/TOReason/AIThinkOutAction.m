@@ -45,6 +45,7 @@
  *      2021.01.22: R-任务直接解决方案不做反思,因为它评价必不通过;
  *      2021.04.13: 所有fo都进行反思: (1.R-下挂mv0的fo; 2.P-下挂mv+的fo; 3.HNGL未指向mv),三者都可进行反思;
  *      2021.05.28: 反思子任务要防止与已有父级R任务重复 (避免子任务死循环) (参考23092);
+ *      2021.06.01: 反思子任务死循环再现 (参考23094);
  */
 -(void) convert2Out_Fo:(TOFoModel*)outModel{
     //1. 取出需行为化的content_ps部分;
@@ -103,6 +104,7 @@
             ReasonDemandModel *subDemand = [ReasonDemandModel newWithMModel:item inModel:rtInModel baseFo:outModel];
             
             //3. 子任务_对其决策;
+            NSLog(@"=====> 生成R子任务:%@->%@",Fo2FStr(item.matchFo),Mvp2Str(item.matchFo.cmvNode_p));
             [self.delegate toAction_SubModelBegin:subDemand];
             
             //4. 子任务Finish/ActYes时,不return,因为要继续父任务;
