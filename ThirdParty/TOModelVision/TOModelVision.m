@@ -38,6 +38,32 @@
 }
 
 /**
+ *  MARK:--------------------从当前到sub可视化日志--------------------
+ *  @desc 用无符号序列表示;
+ */
++(NSString*) cur2Sub:(TOModelBase*)curModel{
+    //1. 将所有子节点先转成字符串;
+    NSMutableDictionary *mDic = [[NSMutableDictionary alloc] init];
+    NSArray *allSubs = [TOUtils getSubOutModels_AllDeep:curModel validStatus:nil];
+    for (TOModelBase *item in allSubs) {
+        NSString *itemStr = [self singleVision:item];
+        [mDic setObject:itemStr forKey:STRFORMAT(@"%p",item)];
+    }
+    
+//    //2. 递归排版
+//    while (curmodel.subModels) {
+//        //4. 对sub各自显示到下一tab处;
+//        if (STRISOK(mStr)) [mStr insertString:@"\n   ↑\n" atIndex:0];
+//
+//    }
+//
+//    //4. 头尾
+//    [mStr insertString:@"\n︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹\n" atIndex:0];
+//    [mStr appendString:@"\n︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺"];
+    return nil;
+}
+
+/**
  *  MARK:--------------------单model转str--------------------
  *  @version
  *      2021.06.01: 支持ReasonDemandModel;

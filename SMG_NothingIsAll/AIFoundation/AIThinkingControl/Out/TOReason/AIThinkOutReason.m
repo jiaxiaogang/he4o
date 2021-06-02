@@ -97,6 +97,7 @@
  *      2021.02.04 - 因为老是取到非常具体的解决方案,所以注掉优先从matchFos取 (参考22114);
  *      2021.03.27 - V4迭代,支持从dsPorts找解决方案,而不是方向索引 (参考n22p19-todo1 & 22195);
  *      2021.05.09 - 方便九测,暂将R模式关掉 (参考n23p07);
+ *      2021.06.02 - 将无计可施的状态改为actNo,因为要计入不应期 (参考23095);
  */
 -(void) reasonSubV4:(ReasonDemandModel*)demand{
     //1. 数据检查
@@ -135,6 +136,7 @@
         [self commitReasonSub:foModel demand:demand];
         return;
     }
+    demand.status = TOModelStatus_ActNo;
     NSLog(@"------->>>>>> R-无计可施");
 }
 
