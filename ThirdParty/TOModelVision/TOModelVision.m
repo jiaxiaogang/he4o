@@ -93,7 +93,6 @@
     }else{
         return STRFORMAT(@"%@",NSStringFromClass(model.class));
     }
-    return @"";
 }
 
 @end
