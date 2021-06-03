@@ -435,22 +435,26 @@
     return result;
 }
 
+/**
+ *  MARK:--------------------获取子models--------------------
+ *  @version
+ *      2021.06.03: 将实现接口判断,改为使用conformsToProtocol,而非判断类名 (因为类名方式有新的类再实现后,易出bug);
+ */
 +(NSMutableArray*) getSubOutModels:(TOModelBase*)outModel {
     //1. 数据准备
     NSMutableArray *result = [[NSMutableArray alloc] init];
     if (!outModel) return result;
     
     //2. 找出子集 (Finish负责截停递归);
-    //TODO: 将此处isok改为responseSelect判断,或者isclassof/ismemberof判断;
-    if (ISOK(outModel, DemandModel.class) || ISOK(outModel, TOAlgModel.class) || ISOK(outModel, TOValueModel.class)) {
+    if ([outModel conformsToProtocol:@protocol(ITryActionFoDelegate)]) {
         id<ITryActionFoDelegate> tryActionObj = (id<ITryActionFoDelegate>)outModel;
         [result addObjectsFromArray:tryActionObj.actionFoModels];
     }
-    if (ISOK(outModel, TOFoModel.class) || ISOK(outModel, TOAlgModel.class)) {
+    if ([outModel conformsToProtocol:@protocol(ISubModelsDelegate)]) {
         id<ISubModelsDelegate> subModelsObj = (id<ISubModelsDelegate>)outModel;
         [result addObjectsFromArray:subModelsObj.subModels];
     }
-    if (ISOK(outModel, TOFoModel.class)) {
+    if ([outModel conformsToProtocol:@protocol(ISubDemandDelegate)]) {
         id<ISubDemandDelegate> subDemandsObj = (id<ISubDemandDelegate>)outModel;
         [result addObjectsFromArray:subDemandsObj.subDemands];
     }
