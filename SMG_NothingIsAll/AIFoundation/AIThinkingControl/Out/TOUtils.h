@@ -95,9 +95,11 @@
  *  @result notnull NSArray<TOModelBase#>
  *  @param validStatus : 为nil时,将收集一切类型;
  *  _param cutStopStatus : 为nil时,不进行任何中断;
+ *  @result notnull
  */
 +(NSArray*) getSubOutModels_AllDeep:(TOModelBase*)outModel validStatus:(NSArray*)validStatus;
 +(NSArray*) getSubOutModels_AllDeep:(TOModelBase*)outModel validStatus:(NSArray*)validStatus cutStopStatus:(NSArray*)cutStopStatus;
++(NSMutableArray*) getSubOutModels:(TOModelBase*)outModel;
 
 /**
  *  MARK:--------------------将rDemands转为pointers--------------------

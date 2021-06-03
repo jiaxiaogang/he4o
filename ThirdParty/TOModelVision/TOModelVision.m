@@ -11,6 +11,8 @@
 #import "PerceptDemandModel.h"
 #import "ReasonDemandModel.h"
 #import "AIMatchFoModel.h"
+#import "TOModelVisionUtil.h"
+#import "UnorderItemModel.h"
 
 @implementation TOModelVision
 
@@ -43,24 +45,37 @@
  */
 +(NSString*) cur2Sub:(TOModelBase*)curModel{
     //1. 将所有子节点先转成字符串;
-    NSMutableDictionary *mDic = [[NSMutableDictionary alloc] init];
-    NSArray *allSubs = [TOUtils getSubOutModels_AllDeep:curModel validStatus:nil];
-    for (TOModelBase *item in allSubs) {
-        NSString *itemStr = [self singleVision:item];
-        [mDic setObject:itemStr forKey:STRFORMAT(@"%p",item)];
+    //NSMutableDictionary *mDic = [[NSMutableDictionary alloc] init];
+    //NSArray *allSubs = [TOUtils getSubOutModels_AllDeep:curModel validStatus:nil];
+    //for (TOModelBase *item in allSubs) {
+    //    NSString *itemStr = [self singleVision:item];
+    //    [mDic setObject:itemStr forKey:STRFORMAT(@"%p",item)];
+    //}
+    
+    //1. 数据准备
+    NSMutableString *result = [[NSMutableString alloc] init];
+    
+    //2. 转为无序列表模型
+    NSMutableArray *unorderModels = [TOModelVisionUtil convertCur2Sub2UnorderModels:curModel];
+    
+    //3. 转为logStr
+    for (UnorderItemModel *unorder in unorderModels) {
+        
+        //4. 将unorderModel转为line日志;
+        NSMutableString *line = [[NSMutableString alloc] init];
+        [line appendString:@"\n"];//换行
+        for (int i = 0; i < unorder.tabNum; i++) [result appendString:@" "];//缩进
+        [result appendString:@"> "];//无序列标
+        [result appendString:[self singleVision:unorder.data]];//内容
+        
+        //5. 收集line
+        [result appendString:line];
     }
     
-//    //2. 递归排版
-//    while (curmodel.subModels) {
-//        //4. 对sub各自显示到下一tab处;
-//        if (STRISOK(mStr)) [mStr insertString:@"\n   ↑\n" atIndex:0];
-//
-//    }
-//
-//    //4. 头尾
-//    [mStr insertString:@"\n︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹\n" atIndex:0];
-//    [mStr appendString:@"\n︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺"];
-    return nil;
+    //6. 头尾
+    [result insertString:@"\n︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹" atIndex:0];
+    [result appendString:@"\n︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺"];
+    return result;
 }
 
 /**

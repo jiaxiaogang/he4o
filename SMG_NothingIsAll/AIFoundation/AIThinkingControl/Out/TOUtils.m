@@ -421,26 +421,38 @@
         [result addObject:outModel];
     }
     
-    //3. 找出子集 (Finish负责截停递归);
+    //3. Finish负责截停递归;
     if (![cutStopStatus containsObject:@(outModel.status)]) {
-        NSMutableArray *subs = [[NSMutableArray alloc] init];
-        if (ISOK(outModel, DemandModel.class) || ISOK(outModel, TOAlgModel.class) || ISOK(outModel, TOValueModel.class)) {
-            id<ITryActionFoDelegate> tryActionObj = (id<ITryActionFoDelegate>)outModel;
-            [subs addObjectsFromArray:tryActionObj.actionFoModels];
-        }
-        if (ISOK(outModel, TOFoModel.class) || ISOK(outModel, TOAlgModel.class)) {
-            id<ISubModelsDelegate> subModelsObj = (id<ISubModelsDelegate>)outModel;
-            [subs addObjectsFromArray:subModelsObj.subModels];
-        }
-        if (ISOK(outModel, TOFoModel.class)) {
-            id<ISubDemandDelegate> subDemandsObj = (id<ISubDemandDelegate>)outModel;
-            [subs addObjectsFromArray:subDemandsObj.subDemands];
-        }
+        
+        //3. 找出子集
+        NSMutableArray *subs = [self getSubOutModels:outModel];
         
         //4. 递归收集子集;
         for (TOModelBase *sub in subs) {
             [result addObjectsFromArray:[self getSubOutModels_AllDeep:sub validStatus:validStatus cutStopStatus:cutStopStatus]];
         }
+    }
+    return result;
+}
+
++(NSMutableArray*) getSubOutModels:(TOModelBase*)outModel {
+    //1. 数据准备
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    if (!outModel) return result;
+    
+    //2. 找出子集 (Finish负责截停递归);
+    //TODO: 将此处isok改为responseSelect判断,或者isclassof/ismemberof判断;
+    if (ISOK(outModel, DemandModel.class) || ISOK(outModel, TOAlgModel.class) || ISOK(outModel, TOValueModel.class)) {
+        id<ITryActionFoDelegate> tryActionObj = (id<ITryActionFoDelegate>)outModel;
+        [result addObjectsFromArray:tryActionObj.actionFoModels];
+    }
+    if (ISOK(outModel, TOFoModel.class) || ISOK(outModel, TOAlgModel.class)) {
+        id<ISubModelsDelegate> subModelsObj = (id<ISubModelsDelegate>)outModel;
+        [result addObjectsFromArray:subModelsObj.subModels];
+    }
+    if (ISOK(outModel, TOFoModel.class)) {
+        id<ISubDemandDelegate> subDemandsObj = (id<ISubDemandDelegate>)outModel;
+        [result addObjectsFromArray:subDemandsObj.subDemands];
     }
     return result;
 }
