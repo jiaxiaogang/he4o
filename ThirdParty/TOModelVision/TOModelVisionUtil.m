@@ -38,4 +38,22 @@
     return result;
 }
 
+/**
+ *  MARK:--------------------获取无序列表的前缀符号--------------------
+ */
++(NSString*) getUnorderPrefix:(int)tabNum{
+    if (tabNum % 5 == 0) {
+        return @"*";
+    }else if (tabNum % 5 == 1) {
+        return @">";
+    }else if (tabNum % 5 == 2) {
+        return @"-";
+    }else if (tabNum % 5 == 3) {
+        return @"#";
+    }else if (tabNum % 5 == 4) {
+        return @"⊙";
+    }
+    return @"符号错误";
+}
+
 @end

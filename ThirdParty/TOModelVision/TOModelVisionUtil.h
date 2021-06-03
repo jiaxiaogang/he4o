@@ -19,4 +19,9 @@
  */
 +(NSMutableArray*) convertCur2Sub2UnorderModels:(TOModelBase*)curModel;
 
+/**
+ *  MARK:--------------------获取无序列表的前缀符号--------------------
+ */
++(NSString*) getUnorderPrefix:(int)tabNum;
+
 @end

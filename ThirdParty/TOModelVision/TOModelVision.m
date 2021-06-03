@@ -41,17 +41,8 @@
 
 /**
  *  MARK:--------------------从当前到sub可视化日志--------------------
- *  @desc 用无符号序列表示;
  */
 +(NSString*) cur2Sub:(TOModelBase*)curModel{
-    //1. 将所有子节点先转成字符串;
-    //NSMutableDictionary *mDic = [[NSMutableDictionary alloc] init];
-    //NSArray *allSubs = [TOUtils getSubOutModels_AllDeep:curModel validStatus:nil];
-    //for (TOModelBase *item in allSubs) {
-    //    NSString *itemStr = [self singleVision:item];
-    //    [mDic setObject:itemStr forKey:STRFORMAT(@"%p",item)];
-    //}
-    
     //1. 数据准备
     NSMutableString *result = [[NSMutableString alloc] init];
     
@@ -64,9 +55,9 @@
         //4. 将unorderModel转为line日志;
         NSMutableString *line = [[NSMutableString alloc] init];
         [line appendString:@"\n"];//换行
-        for (int i = 0; i < unorder.tabNum; i++) [result appendString:@" "];//缩进
-        [result appendString:@"> "];//无序列标
-        [result appendString:[self singleVision:unorder.data]];//内容
+        for (int i = 0; i < unorder.tabNum; i++) [line appendString:@"  "];//缩进
+        [line appendString:STRFORMAT(@"%@ ",[TOModelVisionUtil getUnorderPrefix:unorder.tabNum])];//无序列标
+        [line appendString:[self singleVision:unorder.data]];//内容
         
         //5. 收集line
         [result appendString:line];

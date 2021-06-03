@@ -117,6 +117,7 @@
             //3. 子任务_对其决策;
             NSLog(@"=====> 生成R子任务:%@->%@",Fo2FStr(item.matchFo),Mvp2Str(item.matchFo.cmvNode_p));
             //NSLog(@"%@",TOModel2Root2Str(subDemand));
+            NSLog(@"%@",TOModel2Sub2Str(rootDemand));
             [self.delegate toAction_SubModelBegin:subDemand];
             
             //4. 子任务Finish/ActYes时,不return,因为要继续父任务;

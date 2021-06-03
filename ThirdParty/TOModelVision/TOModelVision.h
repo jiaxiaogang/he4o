@@ -16,7 +16,14 @@
 
 /**
  *  MARK:--------------------从当前到root可视化日志--------------------
+ *  @desc 以层级显示;
  */
 +(NSString*) cur2Root:(TOModelBase*)curModel;
+
+/**
+ *  MARK:--------------------从当前到sub可视化日志--------------------
+ *  @desc 以无序列表表示;
+ */
++(NSString*) cur2Sub:(TOModelBase*)curModel;
 
 @end
