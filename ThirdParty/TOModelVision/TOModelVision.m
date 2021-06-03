@@ -41,6 +41,8 @@
 
 /**
  *  MARK:--------------------从当前到sub可视化日志--------------------
+ *  @version
+ *      2021.06.03: 修复singleDesc为空时,appendString:nil,闪退的问题;
  */
 +(NSString*) cur2Sub:(TOModelBase*)curModel{
     //1. 数据准备
@@ -57,7 +59,7 @@
         [line appendString:@"\n"];//换行
         for (int i = 0; i < unorder.tabNum; i++) [line appendString:@"  "];//缩进
         [line appendString:STRFORMAT(@"%@ ",[TOModelVisionUtil getUnorderPrefix:unorder.tabNum])];//无序列标
-        [line appendString:[self singleVision:unorder.data]];//内容
+        [line appendString:STRTOOK([self singleVision:unorder.data])];//内容
         
         //5. 收集line
         [result appendString:line];
@@ -73,6 +75,7 @@
  *  MARK:--------------------单model转str--------------------
  *  @version
  *      2021.06.01: 支持ReasonDemandModel;
+ *  @result notnull
  */
 +(NSString*) singleVision:(TOModelBase*)model{
     //1. 取content_p
@@ -87,8 +90,10 @@
     if (content_p) {
         AnalogyType type = DS2ATType(content_p.dataSource);
         return STRFORMAT(@"%@: %@ (%@)",NSStringFromClass(model.class),Pit2FStr(content_p),ATType2Str(type));
+    }else{
+        return STRFORMAT(@"%@",NSStringFromClass(model.class));
     }
-    return nil;
+    return @"";
 }
 
 @end
