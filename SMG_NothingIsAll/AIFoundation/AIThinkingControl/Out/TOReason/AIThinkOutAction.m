@@ -23,6 +23,7 @@
 #import "PerceptDemandModel.h"
 #import "AIMatchFoModel.h"
 #import "AINetIndex.h"
+#import "DemandManager.h"
 
 @implementation AIThinkOutAction
 
@@ -47,6 +48,7 @@
  *      2021.05.28: 反思子任务要防止与已有父级R任务重复 (避免子任务死循环) (参考23092);
  *      2021.06.01: 反思子任务死循环再现 (参考23094);
  *      2021.06.01: 对已有的failure状态子任务,加入到子任务不应期中,避免明明无计可施的R子任务还不断尝试 (参考23095);
+ *      2021.06.04: 把子任务生成,重构到DemandManager中 (参考23096);
  */
 -(void) convert2Out_Fo:(TOFoModel*)outModel{
     //1. 取出需行为化的content_ps部分;
@@ -89,40 +91,16 @@
         //4. MC反思: 回归tir反思,重新识别理性预测时序,预测价值; (预测到鸡蛋变脏,或者cpu损坏) (理性预测影响评价即理性评价)
         AIShortMatchModel *rtInModel = [theTC to_Rethink:outModel];
         
-        //5. 取出当前短时树上主子任务下,所有的解决方案,做为不应期 (避免子任务死循环) (参考23092);
-        NSMutableArray *baseDemands = [TOUtils getBaseDemands_AllDeep:outModel];
-        NSArray *baseExcepts = RDemands2Pits(baseDemands);
-        
-        //5. 取出所有已无计可施的demand (参考23095);
-        DemandModel *rootDemand = ARR_INDEX_REVERSE(baseDemands, 0);
-        NSArray *failureDemans = [TOUtils getSubDemands_AllDeep:rootDemand validStatus:@[@(TOModelStatus_ActNo)]];
-        NSArray *failureExcepts = RDemands2Pits(failureDemans);
-        
-        //5. 收集不应期;
-        NSMutableArray *except_ps = [[NSMutableArray alloc] init];
-        [except_ps addObjectsFromArray:baseExcepts];
-        [except_ps addObjectsFromArray:failureExcepts];
-        
-        //6. 子任务_对反思预测fo尝试转为子任务;
-        for (AIMatchFoModel *item in rtInModel.matchPFos) {
+        //5. 提交子任务;
+        __block NSArray *except_ps = nil;
+        [DemandManager updateSubDemand:rtInModel baseFo:outModel createSubDemandBlock:^(ReasonDemandModel *subDemand) {
             
-            //7. 排除不应期
-            if ([except_ps containsObject:item.matchFo.pointer]) continue;
-            
-            //2. 子任务_评分为负时才生成;
-            CGFloat score = [AIScore score4MV:item.matchFo.cmvNode_p ratio:item.matchFoValue];
-            if (score >= 0) continue;
-            ReasonDemandModel *subDemand = [ReasonDemandModel newWithMModel:item inModel:rtInModel baseFo:outModel];
-            
-            //3. 子任务_对其决策;
-            NSLog(@"=====> 生成R子任务:%@->%@",Fo2FStr(item.matchFo),Mvp2Str(item.matchFo.cmvNode_p));
-            //NSLog(@"%@",TOModel2Root2Str(subDemand));
-            NSLog(@"%@",TOModel2Sub2Str(rootDemand));
+            //6. 子任务行为化;
             [self.delegate toAction_SubModelBegin:subDemand];
-            
-            //4. 子任务Finish/ActYes时,不return,因为要继续父任务;
-            //return;
-        }
+            //return;//子任务Finish/ActYes时,不return,因为要继续父任务;
+        } finishBlock:^(NSArray *_except_ps) {
+            except_ps = _except_ps;
+        }];
         
         //8. 子任务尝试完成后,进行FPS综合评价 (如果子任务完成后,依然有解决不了的不愿意的价值,则不通过);
         BOOL scoreSuccess = [AIScore FPS:outModel rtInModel:rtInModel except_ps:except_ps];

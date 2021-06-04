@@ -49,7 +49,7 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------joinToCMVCache--------------------
+ *  MARK:--------------------生成P任务--------------------
  *  1. 添加新的cmv到cache,并且自动撤消掉相对较弱的同类同向mv;
  *  2. 在assData等(内心活动,不抵消cmvCache中旧任务)
  *  3. 在dataIn时,抵消旧任务,并生成新任务;
@@ -107,7 +107,8 @@
 }
 
 /**
- *  MARK:--------------------RMV输入更新任务管理器--------------------
+ *  MARK:--------------------生成R任务--------------------
+ *  @desc RMV输入更新任务管理器 (理性思维预测mv加入)
  *  @todo
  *      2021.01.21: 抵销: 当汽车冲过来,突然又转向了,任务消除 (理性抵消 (仅能通过matchFo已发生的部分进行比对)) (参考22074-BUG2) T;
  *      2021.01.21: 抵销: 当另一辆更大的车又冲过来,两条matchFo都导致疼不能抵消 (理性抵消不以mv.algsType为准) (参考22074-BUG2) T;
@@ -173,6 +174,55 @@
         }else{
             NSLog(@"当前,预测mv未形成需求:%@ 基于:%@ 评分:%f",algsType,Pit2FStr(mModel.matchFo.cmvNode_p),score);
         }
+    }
+}
+
+/**
+ *  MARK:--------------------生成子任务--------------------
+ *  @param rtInModel : 反思结果;
+ *  @param baseFo : 反思基于此fo进行的,将反思产生的子任务挂在这下面;
+ */
++(void) updateSubDemand:(AIShortMatchModel*)rtInModel baseFo:(TOFoModel*)baseFo createSubDemandBlock:(void(^)(ReasonDemandModel*))createSubDemandBlock finishBlock:(void(^)(NSArray*))finishBlock{
+    //1. 数据检查;
+    if (!rtInModel || !baseFo) return;
+    
+    //5. 取出当前短时树上主子任务下,所有的解决方案,做为不应期 (避免子任务死循环) (参考23092);
+    NSMutableArray *baseDemands = [TOUtils getBaseDemands_AllDeep:baseFo];
+    NSArray *baseExcepts = RDemands2Pits(baseDemands);
+    
+    //5. 取出所有已无计可施的demand (参考23095);
+    DemandModel *rootDemand = ARR_INDEX_REVERSE(baseDemands, 0);
+    NSArray *failureDemans = [TOUtils getSubDemands_AllDeep:rootDemand validStatus:@[@(TOModelStatus_ActNo)]];
+    NSArray *failureExcepts = RDemands2Pits(failureDemans);
+    
+    //5. 收集不应期;
+    NSMutableArray *except_ps = [[NSMutableArray alloc] init];
+    [except_ps addObjectsFromArray:baseExcepts];
+    [except_ps addObjectsFromArray:failureExcepts];
+    
+    //6. 子任务_对反思预测fo尝试转为子任务;
+    for (AIMatchFoModel *item in rtInModel.matchPFos) {
+        
+        //7. 排除不应期
+        if ([except_ps containsObject:item.matchFo.pointer]) continue;
+        
+        //2. 子任务_评分为负时才生成;
+        CGFloat score = [AIScore score4MV:item.matchFo.cmvNode_p ratio:item.matchFoValue];
+        if (score >= 0) continue;
+        ReasonDemandModel *subDemand = [ReasonDemandModel newWithMModel:item inModel:rtInModel baseFo:baseFo];
+        
+        //3. 子任务_对其决策;
+        NSLog(@"=====> 生成R子任务:%@->%@",Fo2FStr(item.matchFo),Mvp2Str(item.matchFo.cmvNode_p));
+        //NSLog(@"%@",TOModel2Root2Str(subDemand));
+        NSLog(@"%@",TOModel2Sub2Str(rootDemand));
+        if (createSubDemandBlock) {
+            createSubDemandBlock(subDemand);
+        }
+    }
+    
+    //8. 完成;
+    if (finishBlock) {
+        finishBlock(except_ps);
     }
 }
 
