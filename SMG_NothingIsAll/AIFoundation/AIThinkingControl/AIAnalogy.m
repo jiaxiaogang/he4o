@@ -742,17 +742,8 @@
         AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:notFinish_ps conAlgs:@[curAlg] isMem:false ds:spDS];
         if (Log4OutRethink) NSLog(@"--> ORT构建SPAlg:%@ base:%@",Alg2FStr(spAlg),AlgP2FStr(curAlg.pointer));
         
-        //调试分析"定责" (参考23065);
+        //TODO调试分析"定责" (参考23065);
         //3. S定罚 (未加工的全责 或 加工失败的那一条全责) (参考23066);
-        for (AIKVPointer *item in notFinish_ps) {
-            if (type == ATSub) {
-                if (![item.dataSource isEqualToString:@"distance"]) {
-                    NSLog(@"非距进入S,查为什么? (%@) %@",ATType2Str(type),Pit2FStr(item));
-                    NSLog(@"");
-                }
-            }
-        }
-        
         
         //5. 收集SP概念_用于构建SP时序;
         [spFoContent addObject:spAlg.pointer];

@@ -181,46 +181,56 @@
  *  MARK:--------------------生成子任务--------------------
  *  @param rtInModel : 反思结果;
  *  @param baseFo : 反思基于此fo进行的,将反思产生的子任务挂在这下面;
+ *  @version
+ *      2021.06.05: v2_子任务协同,将先执行顺利的ds解决方案下的场景fos加入到不应期 (参考23102 & 23103);
  */
 +(void) updateSubDemand:(AIShortMatchModel*)rtInModel baseFo:(TOFoModel*)baseFo createSubDemandBlock:(void(^)(ReasonDemandModel*))createSubDemandBlock finishBlock:(void(^)(NSArray*))finishBlock{
     //1. 数据检查;
     if (!rtInModel || !baseFo) return;
     
-    //5. 取出当前短时树上主子任务下,所有的解决方案,做为不应期 (避免子任务死循环) (参考23092);
+    //2. 取出当前短时树上主子任务下,所有的解决方案,做为不应期 (避免子任务死循环) (参考23092);
     NSMutableArray *baseDemands = [TOUtils getBaseDemands_AllDeep:baseFo];
     NSArray *baseExcepts = RDemands2Pits(baseDemands);
     
-    //5. 取出所有已无计可施的demand (参考23095);
+    //3. 取出所有已无计可施的demand (参考23095);
     DemandModel *rootDemand = ARR_INDEX_REVERSE(baseDemands, 0);
     NSArray *failureDemans = [TOUtils getSubDemands_AllDeep:rootDemand validStatus:@[@(TOModelStatus_ActNo)]];
     NSArray *failureExcepts = RDemands2Pits(failureDemans);
     
-    //5. 收集不应期;
+    //4. 收集不应期_之(1.父级 2.子级已失败);
     NSMutableArray *except_ps = [[NSMutableArray alloc] init];
     [except_ps addObjectsFromArray:baseExcepts];
     [except_ps addObjectsFromArray:failureExcepts];
     
-    //6. 子任务_对反思预测fo尝试转为子任务;
+    //5. 子任务_对反思预测fo尝试转为子任务;
     for (AIMatchFoModel *item in rtInModel.matchPFos) {
         
-        //7. 排除不应期
+        //6. 排除不应期
         if ([except_ps containsObject:item.matchFo.pointer]) continue;
         
-        //2. 子任务_评分为负时才生成;
+        //7. 子任务_评分为负时才生成;
         CGFloat score = [AIScore score4MV:item.matchFo.cmvNode_p ratio:item.matchFoValue];
         if (score >= 0) continue;
         ReasonDemandModel *subDemand = [ReasonDemandModel newWithMModel:item inModel:rtInModel baseFo:baseFo];
         
-        //3. 子任务_对其决策;
+        //8. 子任务_对其决策;
         NSLog(@"=====> 生成R子任务:%@->%@",Fo2FStr(item.matchFo),Mvp2Str(item.matchFo.cmvNode_p));
         //NSLog(@"%@",TOModel2Root2Str(subDemand));
         NSLog(@"%@",TOModel2Sub2Str(rootDemand));
         if (createSubDemandBlock) {
             createSubDemandBlock(subDemand);
         }
+        
+        //9. 收集不应期之3: 已行为化的子任务中已顺利执行的ds解决方案,其下的所有场景fo加入不应期 (参考23102 & 23103);
+        for (TOFoModel *dsFoModel in subDemand.actionFoModels) {
+            if (dsFoModel.status == TOModelStatus_Finish || dsFoModel.status == TOModelStatus_ActYes) {
+                AIFoNodeBase *dsFo = [SMGUtils searchNode:dsFoModel.content_p];
+                [except_ps addObjectsFromArray:Ports2Pits(dsFo.diffBasePorts)];
+            }
+        }
     }
     
-    //8. 完成;
+    //10. 完成;
     if (finishBlock) {
         finishBlock(except_ps);
     }
