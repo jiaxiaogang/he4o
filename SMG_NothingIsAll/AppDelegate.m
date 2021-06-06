@@ -14,13 +14,15 @@
 #import "NVDelegate_He.h"
 #import "HeLogView.h"
 #import <UMCommon/UMCommon.h>
-#import "MemManager.h"
+#import "MemManagerWindow.h"
 
 @interface AppDelegate ()
 
 @property (strong, nonatomic) UILabel *tipLogLab;
 @property (strong, nonatomic) UIButton *openHeLogBtn;
 @property (strong, nonatomic) UIView *refreshDot;   //因为模拟器下的UI动画老是刷新不了,所以临时写这么个点,来推动UI线程被动刷新;
+@property (strong, nonatomic) MemManagerWindow *memManagerWindow;
+@property (strong, nonatomic) UIButton *memManagerBtn;
 
 @end
 
@@ -60,14 +62,14 @@
     [self.window addSubview:self.refreshDot];
     [self startRefreshDotAnimation];
     
-    //3. 清空记忆
-    self.clearMemoryBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth - 162, StateBarHeight, 40, 20)];
-    [self.clearMemoryBtn.titleLabel setFont:[UIFont systemFontOfSize:8]];
-    [self.clearMemoryBtn setTitleColor:UIColorWithRGBHex(0xEEEE00) forState:UIControlStateNormal];
-    [self.clearMemoryBtn setBackgroundColor:UIColorWithRGBHex(0xEE0000)];
-    [self.clearMemoryBtn setTitle:@"清除记忆" forState:UIControlStateNormal];
-    [self.clearMemoryBtn addTarget:self action:@selector(clearMemoryBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.window addSubview:self.clearMemoryBtn];
+    //3. 记忆管理按钮
+    self.memManagerBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth - 124, StateBarHeight, 40, 20)];
+    [self.memManagerBtn.titleLabel setFont:[UIFont systemFontOfSize:15]];
+    [self.memManagerBtn setTitleColor:UIColorWithRGBHex(0x0000EE) forState:UIControlStateNormal];
+    [self.memManagerBtn setBackgroundColor:UIColorWithRGBHex(0xEEFFEE)];
+    [self.memManagerBtn setTitle:@"MEM" forState:UIControlStateNormal];
+    [self.memManagerBtn addTarget:self action:@selector(memManagerBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.window addSubview:self.memManagerBtn];
     
     //4. 神经网络可视化
     self.nvView = [[NVView alloc] initWithDelegate:[NVDelegate_He new]];
@@ -83,6 +85,10 @@
     [self.tipLogLab setFont:[UIFont boldSystemFontOfSize:11]];
     [self.tipLogLab setTextColor:[UIColor redColor]];
     [self.window addSubview:self.tipLogLab];
+    
+    //7. 记忆管理器
+    self.memManagerWindow = [[MemManagerWindow alloc] init];
+    [self.window addSubview:self.memManagerWindow];
     return YES;
 }
 
@@ -117,10 +123,8 @@
     [self.heLogView open];
 }
 
--(void) clearMemoryBtnOnClick:(id)btn{
-    DemoLog(@"清空记忆");
-    [theApp.heLogView addDemoLog:@"清空记忆"];
-    [MemManager readAllMemory:@"202106"];
+-(void) memManagerBtnOnClick:(id)btn{
+    [self.memManagerWindow open];
 }
 
 -(void) startRefreshDotAnimation{

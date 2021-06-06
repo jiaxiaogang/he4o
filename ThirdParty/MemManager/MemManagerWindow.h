@@ -10,4 +10,7 @@
 
 @interface MemManagerWindow : UIView
 
+-(void) open;
+-(void) close;
+
 @end

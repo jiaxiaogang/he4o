@@ -13,4 +13,10 @@
 //所有子文件收集 notnull
 + (NSArray*)subFiles_AllDeep:(NSString*)dirString;
 
+//所有子文件夹收集 notnull;
++(NSArray*)subFolders:(NSString*)path;
+
+//所有子文件与文件夹全收集 notnull;
++(NSArray*)subPaths:(NSString*)path;
+
 @end

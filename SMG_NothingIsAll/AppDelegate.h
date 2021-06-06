@@ -14,7 +14,6 @@
 @property (strong, nonatomic) UIWindow *window;
 @property (strong, nonatomic) NVView *nvView;
 @property (strong, nonatomic) HeLogView *heLogView;
-@property (strong, nonatomic) UIButton *clearMemoryBtn;
 
 -(UIViewController*) getTopDisplayViewController;
 -(void) setTipLog:(NSString*)tipLog;
