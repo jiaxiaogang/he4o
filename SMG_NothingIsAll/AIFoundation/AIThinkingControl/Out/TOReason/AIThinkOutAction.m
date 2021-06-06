@@ -102,6 +102,12 @@
             except_ps = _except_ps;
         }];
         
+        //TODOTOMORROW20210606:
+        //a. 看下怎么测,当下飞时,并不急,即使看到木棒飞出,再躲避也来的及评价;
+        
+        
+        
+        
         //8. 子任务尝试完成后,进行FPS综合评价 (如果子任务完成后,依然有解决不了的不愿意的价值,则不通过);
         BOOL scoreSuccess = [AIScore FPS:outModel rtInModel:rtInModel except_ps:except_ps];
         if (!scoreSuccess) {
