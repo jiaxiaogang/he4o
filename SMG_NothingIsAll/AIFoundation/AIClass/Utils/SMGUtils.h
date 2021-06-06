@@ -282,13 +282,6 @@
  */
 +(NSArray*) filterAlgPorts:(NSArray*)algPorts valueIdentifier:(NSString*)valueIdentifier;
 
-/**
- *  MARK:--------------------清除记忆--------------------
- */
-+(void) removeAllMemory;
-+(void) saveAllMemory:(NSString*)saveName;
-+(void) readAllMemory:(NSString*)readName;
-
 @end
 
 //MARK:===============================================================

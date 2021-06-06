@@ -14,6 +14,7 @@
 #import "NVDelegate_He.h"
 #import "HeLogView.h"
 #import <UMCommon/UMCommon.h>
+#import "MemManager.h"
 
 @interface AppDelegate ()
 
@@ -119,7 +120,7 @@
 -(void) clearMemoryBtnOnClick:(id)btn{
     DemoLog(@"清空记忆");
     [theApp.heLogView addDemoLog:@"清空记忆"];
-    [SMGUtils readAllMemory:@"202106"];
+    [MemManager readAllMemory:@"202106"];
 }
 
 -(void) startRefreshDotAnimation{

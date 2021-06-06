@@ -37,6 +37,9 @@
 		0832AD4325BC5AEF001B4DB1 /* AIMatchFoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0832AD4225BC5AEF001B4DB1 /* AIMatchFoModel.m */; };
 		083352F521800AB1003931E5 /* MainPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 083352F321800AB1003931E5 /* MainPage.m */; };
 		083352F621800AB1003931E5 /* MainPage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 083352F421800AB1003931E5 /* MainPage.xib */; };
+		08355577266C6A1000ECFC51 /* MemManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 08355576266C6A1000ECFC51 /* MemManager.m */; };
+		0835557A266C6B5700ECFC51 /* MemManagerWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 08355579266C6B5700ECFC51 /* MemManagerWindow.m */; };
+		0835557C266C6B8400ECFC51 /* MemManagerWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0835557B266C6B8400ECFC51 /* MemManagerWindow.xib */; };
 		0838AE9C25C6C14A000F67D9 /* AIThinkOut.m in Sources */ = {isa = PBXBuildFile; fileRef = 0838AE9B25C6C14A000F67D9 /* AIThinkOut.m */; };
 		0839819F24DB7F8C00A020D2 /* HEView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0839819E24DB7F8C00A020D2 /* HEView.m */; };
 		083BC01F231C9CD900CA9039 /* AIThinkInReason.m in Sources */ = {isa = PBXBuildFile; fileRef = 083BC01E231C9CD900CA9039 /* AIThinkInReason.m */; };
@@ -221,6 +224,12 @@
 		083352F221800AB1003931E5 /* MainPage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainPage.h; sourceTree = "<group>"; };
 		083352F321800AB1003931E5 /* MainPage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainPage.m; sourceTree = "<group>"; };
 		083352F421800AB1003931E5 /* MainPage.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainPage.xib; sourceTree = "<group>"; };
+		08355574266C69D400ECFC51 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		08355575266C6A1000ECFC51 /* MemManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MemManager.h; sourceTree = "<group>"; };
+		08355576266C6A1000ECFC51 /* MemManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MemManager.m; sourceTree = "<group>"; };
+		08355578266C6B5700ECFC51 /* MemManagerWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MemManagerWindow.h; sourceTree = "<group>"; };
+		08355579266C6B5700ECFC51 /* MemManagerWindow.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MemManagerWindow.m; sourceTree = "<group>"; };
+		0835557B266C6B8400ECFC51 /* MemManagerWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MemManagerWindow.xib; sourceTree = "<group>"; };
 		0837F72322A89A0D00836689 /* ReadMe.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ReadMe.md; sourceTree = "<group>"; };
 		0838AE9A25C6C14A000F67D9 /* AIThinkOut.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIThinkOut.h; sourceTree = "<group>"; };
 		0838AE9B25C6C14A000F67D9 /* AIThinkOut.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIThinkOut.m; sourceTree = "<group>"; };
@@ -633,6 +642,19 @@
 				08DB40CA1F11A65E003162C8 /* TestHungryPage.xib */,
 			);
 			path = TestHungryPage;
+			sourceTree = "<group>";
+		};
+		08355573266C69AC00ECFC51 /* MemManager */ = {
+			isa = PBXGroup;
+			children = (
+				08355574266C69D400ECFC51 /* README.md */,
+				08355575266C6A1000ECFC51 /* MemManager.h */,
+				08355576266C6A1000ECFC51 /* MemManager.m */,
+				08355578266C6B5700ECFC51 /* MemManagerWindow.h */,
+				08355579266C6B5700ECFC51 /* MemManagerWindow.m */,
+				0835557B266C6B8400ECFC51 /* MemManagerWindow.xib */,
+			);
+			path = MemManager;
 			sourceTree = "<group>";
 		};
 		0838AE9D25C6C157000F67D9 /* TOPercept */ = {
@@ -1220,6 +1242,7 @@
 		88BC09D320B4EAA70006ABEF /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
+				08355573266C69AC00ECFC51 /* MemManager */,
 				0895FFE1264A139900DAD3EA /* TOModelVision */,
 				0827DAD024198E8A00A025D4 /* XGLog */,
 				08250ADD2281129300FC497C /* XGWedis */,
@@ -1322,6 +1345,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0858C5DD2194FB4600951BA5 /* LightView.xib in Resources */,
+				0835557C266C6B8400ECFC51 /* MemManagerWindow.xib in Resources */,
 				083352F621800AB1003931E5 /* MainPage.xib in Resources */,
 				0858C5E421950BC700951BA5 /* TreeView.xib in Resources */,
 				08AF45581E97D0B500377887 /* LaunchScreen.storyboard in Resources */,
@@ -1422,6 +1446,7 @@
 				0858C5CF2194F8B000951BA5 /* MASViewAttribute.m in Sources */,
 				88BC09D720B4EB920006ABEF /* XGRedis.m in Sources */,
 				084219E11FD8CEFD009DA6BC /* AIReactorControl.m in Sources */,
+				08355577266C6A1000ECFC51 /* MemManager.m in Sources */,
 				0808D34022B6F73D00D383BA /* NVLineView.m in Sources */,
 				08C7539225A3EEB800BCF011 /* AIScore.m in Sources */,
 				08EA48CE202932B80038B982 /* CustomAlgsChargeModel.m in Sources */,
@@ -1500,6 +1525,7 @@
 				0842ADC01FE209700048ADDC /* DemoCharge.m in Sources */,
 				08412CA3216C324300483B6B /* AICerebel.m in Sources */,
 				08F738061F7C714F005EAD56 /* AIPointer.m in Sources */,
+				0835557A266C6B5700ECFC51 /* MemManagerWindow.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
