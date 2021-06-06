@@ -119,7 +119,7 @@
 -(void) clearMemoryBtnOnClick:(id)btn{
     DemoLog(@"清空记忆");
     [theApp.heLogView addDemoLog:@"清空记忆"];
-    [SMGUtils removeAllMemory];
+    [SMGUtils readAllMemory:@"202106"];
 }
 
 -(void) startRefreshDotAnimation{

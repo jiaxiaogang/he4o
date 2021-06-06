@@ -287,6 +287,7 @@
  */
 +(void) removeAllMemory;
 +(void) saveAllMemory:(NSString*)saveName;
++(void) readAllMemory:(NSString*)readName;
 
 @end
 
