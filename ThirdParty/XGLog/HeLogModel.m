@@ -30,8 +30,8 @@
 }
 
 -(void) initData{
-    PINDiskCache *cache = [[PINDiskCache alloc] initWithName:kFolderName];
-    id file = [cache objectForKey:kFileName];
+    PINDiskCache *cache = [[PINDiskCache alloc] initWithName:kPath_HeLog];
+    id file = [cache objectForKey:kFile_HeLog];
     self.datas = [[NSMutableArray alloc] initWithArray:file];
     self.diskDatasMd5 = STRTOOK([HeLogUtil md5ByData:OBJ2DATA(self.datas)]);
     NSLog(@"===========HeLog Init Data %ld============",self.datas.count);
@@ -58,8 +58,8 @@
 }
 -(void) clear{
     [self.datas removeAllObjects];
-    PINDiskCache *cache = [[PINDiskCache alloc] initWithName:kFolderName];
-    [cache removeObjectForKey:kFileName];
+    PINDiskCache *cache = [[PINDiskCache alloc] initWithName:kPath_HeLog];
+    [cache removeObjectForKey:kFile_HeLog];
 }
 -(NSInteger) count{
     return self.datas.count;
@@ -76,8 +76,8 @@
     }
     
     //2. 存储 (随后需支持文件流广告写入);
-    PINDiskCache *cache = [[PINDiskCache alloc] initWithName:kFolderName];
-    [cache setObject:self.datas forKey:kFileName];
+    PINDiskCache *cache = [[PINDiskCache alloc] initWithName:kPath_HeLog];
+    [cache setObject:self.datas forKey:kFile_HeLog];
     
     //3. 记录硬盘日志文件的md5;
     self.diskDatasMd5 = memDatasMd5;

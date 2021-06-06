@@ -10,8 +10,8 @@
 
 #define kTime @"t"
 #define kLog @"l"
-#define kFolderName @"helog"
-#define kFileName @"datas"
+#define kPath_HeLog @"helog"
+#define kFile_HeLog @"datas"
 
 /**
  *  MARK:--------------------XGWedis--------------------

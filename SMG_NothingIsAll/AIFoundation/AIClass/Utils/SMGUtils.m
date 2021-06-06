@@ -887,6 +887,33 @@
     NSLog(@"======> 清空记忆Finish \t(%lu)",sumCount);
 }
 
++(void) saveAllMemory:(NSString*)saveName{
+    //1. 数据准备;
+    NSLog(@"存储记忆至:%@",saveName);
+    NSString *cachePath = kCachePath;
+    NSMutableString *toPath = [[NSMutableString alloc] initWithFormat:@"%@/save/%@",cachePath,saveName];
+    
+    //2. 备份UserDefaults记忆;
+    NSInteger sumCount = 0;
+    NSDictionary *dic = DICTOOK([[NSUserDefaults standardUserDefaults] dictionaryRepresentation]);
+    sumCount += dic.count;
+    NSLog(@"===> 存储UserDefaults记忆 \t(%lu)",(unsigned long)dic.count);
+    PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:toPath];
+    [cache setObject:dic forKey:@"UserDefaults"];
+    
+    //3. 备份KVFile
+    NSArray *folderNames = kFN_ALL;
+    for (NSString *folderName in folderNames) {
+        NSMutableString *fromFolder = [[NSMutableString alloc] initWithFormat:@"%@/%@",cachePath,folderName];
+        NSMutableString *toFolder = [[NSMutableString alloc] initWithFormat:@"%@/%@",toPath,folderName];
+        NSArray *subFiles = [NSFile_Extension subFiles_AllDeep:fromFolder];
+        NSLog(@"===> 存储KVFile记忆:%@ \t(%lu)",folderName,subFiles.count);
+        sumCount += subFiles.count;
+        [[NSFileManager defaultManager] copyItemAtPath:fromFolder toPath:toFolder error:nil];
+    }
+    NSLog(@"======> 存储记忆Finish \t(%lu)",sumCount);
+}
+
 @end
 
 //MARK:===============================================================

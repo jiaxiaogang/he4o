@@ -286,6 +286,7 @@
  *  MARK:--------------------清除记忆--------------------
  */
 +(void) removeAllMemory;
++(void) saveAllMemory:(NSString*)saveName;
 
 @end
 
