@@ -89,7 +89,7 @@
     //2. 转成str
     if (content_p) {
         AnalogyType type = DS2ATType(content_p.dataSource);
-        return STRFORMAT(@"%@: %@ (%@)",NSStringFromClass(model.class),Pit2FStr(content_p),ATType2Str(type));
+        return STRFORMAT(@"%@: %@ (%@ | %@)",NSStringFromClass(model.class),Pit2FStr(content_p),ATType2Str(type),TOStatus2Str(model.status));
     }else{
         return STRFORMAT(@"%@",NSStringFromClass(model.class));
     }

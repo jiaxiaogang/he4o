@@ -279,6 +279,7 @@
             BOOL arsTime = [AIScore ARS_Time:dsFo demand:rDemand];
             if (!arsTime) {
                 //2. 评价不通过,则直接ActYes,等待其自然出现 (参考22153-A2);
+                NSLog(@"==> arsTime评价不急,子弹再飞一会儿");
                 outModel.status = TOModelStatus_ActYes;
                 [self.delegate toAction_SubModelActYes:outModel];
                 return;
