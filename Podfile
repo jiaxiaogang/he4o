@@ -9,7 +9,7 @@ pod 'PINCache'
 #pod 'LKDBHelper+Transaction','~>1.0.4'
 
 #=============== 浮窗 ===============
-pod 'MBProgressHUD'
+#pod 'MBProgressHUD'
 
 #=============== 友盟统计 ===============
 pod 'UMCCommon'
