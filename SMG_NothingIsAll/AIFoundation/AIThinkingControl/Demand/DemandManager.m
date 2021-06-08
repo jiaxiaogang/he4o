@@ -183,6 +183,7 @@
  *  @param baseFo : 反思基于此fo进行的,将反思产生的子任务挂在这下面;
  *  @version
  *      2021.06.05: v2_子任务协同,将先执行顺利的ds解决方案下的场景fos加入到不应期 (参考23102 & 23103);
+ *      2021.06.08: 子任务的actYes状态由任意subModel为actYes状态为准 (参考23122);
  */
 +(void) updateSubDemand:(AIShortMatchModel*)rtInModel baseFo:(TOFoModel*)baseFo createSubDemandBlock:(void(^)(ReasonDemandModel*))createSubDemandBlock finishBlock:(void(^)(NSArray*))finishBlock{
     //1. 数据检查;
@@ -223,7 +224,8 @@
         
         //9. 收集不应期之3: 已行为化的子任务中已顺利执行的ds解决方案,其下的所有场景fo加入不应期 (参考23102 & 23103);
         for (TOFoModel *dsFoModel in subDemand.actionFoModels) {
-            if (dsFoModel.status == TOModelStatus_Finish || dsFoModel.status == TOModelStatus_ActYes) {
+            NSArray *subActYes = [TOUtils getSubOutModels_AllDeep:dsFoModel validStatus:@[@(TOModelStatus_ActYes)] cutStopStatus:@[@(TOModelStatus_ActNo),@(TOModelStatus_ScoreNo)]];
+            if (dsFoModel.status == TOModelStatus_Finish || ARRISOK(subActYes)) {
                 AIFoNodeBase *dsFo = [SMGUtils searchNode:dsFoModel.content_p];
                 [except_ps addObjectsFromArray:Ports2Pits(dsFo.diffBasePorts)];
             }
