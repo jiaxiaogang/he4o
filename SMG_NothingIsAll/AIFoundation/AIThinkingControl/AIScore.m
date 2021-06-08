@@ -253,29 +253,28 @@
  *          1. 说明: R子任务来的及评价 (后续考虑支持rootR任务) (参考22194 & 22195 & 22198);
  *          2. 决策时序AB 在 任务未发生部分D 中找mIsC (找到AB中index,index及之后需要等待静默成功,之前的可实行行为化) (参考22198);
  *          3. 必要性: ARSTime来的及评价是针对某帧的,而决策中,外界条件会变化,所以必须每帧都单独评价;
- *  @param dsFo : 当前正在推进的解决方案,其中actionIndex为当前帧;
+ *  @param dsFoModel : 当前正在推进的解决方案,其中actionIndex为当前帧;
  *  @param demand : 当前任务;
  *  @result (参考22194示图 & 22198);
  *      true    : 提前可预备部分:返回true以进行_hav实时行为化 (比如:在穿越森林前,在遇到老虎前,我们先带枪);
  *      false   : 来的及返回false则ActYes等待静默成功,并继续推进主任务 (比如:枪已取到,现在先穿越森林,等老虎出现时,再吓跑它);
  */
-+(BOOL) ARS_Time:(TOFoModel*)dsFo demand:(ReasonDemandModel*)demand{
++(BOOL) ARS_Time:(TOFoModel*)dsFoModel demand:(ReasonDemandModel*)demand{
     //1. 数据检查;
-    if (!dsFo || !demand) return true;
-    AIFoNodeBase *curFo = [SMGUtils searchNode:dsFo.content_p];
+    if (!dsFoModel || !demand) return true;
+    AIFoNodeBase *dsFo = [SMGUtils searchNode:dsFoModel.content_p];
     
     //2. 当dsAlg会导致弄巧成拙时,评价为否->ActYes;
-    for (NSInteger i = 0; i < curFo.count; i++) {
-        AIKVPointer *alg_p = ARR_INDEX(curFo.content_ps, i);
-        NSInteger findIndex = [TOUtils indexOfConOrAbsItem:alg_p atContent:demand.mModel.matchFo.content_ps layerDiff:2 startIndex:demand.mModel.cutIndex + 1 endIndex:NSUIntegerMax];
-        if (findIndex != -1) {
+    for (NSInteger i = 0; i < dsFo.count; i++) {
+        AIKVPointer *dsAlg_p = ARR_INDEX(dsFo.content_ps, i);
+        BOOL find = [TOUtils indexOfConOrAbsItem:dsAlg_p atContent:demand.mModel.matchFo.content_ps layerDiff:2 startIndex:demand.mModel.cutIndex + 1 endIndex:NSUIntegerMax] != -1;
+        if (find) {
             //3. ARSTime结果 (参考22194示图 & 22198);
-            return dsFo.actionIndex < i;
+            return dsFoModel.actionIndex < i;
         }
     }
     return true;
 }
-
 
 //MARK:===============================================================
 //MARK:                     < MPS评分 >

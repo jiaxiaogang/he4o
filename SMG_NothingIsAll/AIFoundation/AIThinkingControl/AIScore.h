@@ -25,7 +25,7 @@
 +(BOOL) FRS_Time:(TOFoModel*)toFo demand:(ReasonDemandModel*)demand;
 +(BOOL) FPS:(TOFoModel*)outModel rtInModel:(AIShortMatchModel*)rtInModel except_ps:(NSArray*)except_ps;
 +(BOOL) ARS;
-+(BOOL) ARS_Time:(TOFoModel*)dsFo demand:(ReasonDemandModel*)demand;
++(BOOL) ARS_Time:(TOFoModel*)dsFoModel demand:(ReasonDemandModel*)demand;
 
 /**
  *  MARK:--------------------指定ratio的评价重载--------------------

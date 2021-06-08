@@ -500,6 +500,13 @@
                 focusModel.status = TOModelStatus_Finish;
                 [self singleLoopBackWithFinishModel:focusModel];
             }];
+            
+            //8. TODOTOMORROW20210608:看是否对静默成功ActYes的支持,
+            //即,当静默成功返回outBack时,应继续推进dsFo,使之阻止R预测发生 (如老虎冲出来要咬人,我们开枪吓跑它);
+            //因为dsFo的继续推进,未必需要PM,而此处PM的推进,能否流程控制自己递归到dsFo推进?需要明天查下此代码;
+            
+            
+            
         }
         return true;
     }
@@ -920,6 +927,16 @@
             //3. R模式静默成功处理 (等待其自然出现) (参考22153-A2);
             ReasonDemandModel *rDemand = (ReasonDemandModel*)actYesModel.baseOrGroup.baseOrGroup;
             AIFoNodeBase *foNode = [SMGUtils searchNode:actYesModel.baseOrGroup.content_p];
+            
+            //TODOTOMORROW20210608: 当前actYesModel所在的dsFo本身就是依附于demand.matchFo存在的,所以如下两种方式取deltaTime:
+            //1. 此处用actYesModel是找不出findIndex的,因为有可能是foNode下任一个alg与demand.matchFo可findIndex (参考ARS_Time),找出findIndex后,再以demand.matchFo为准取deltaTime;
+            //2. 或者还有一种办法,即demand.matchFo仅是预测,后续本来就不一定会发生,所以只要把deltaTime填成intMax,如果它不自行发生,但这样的话,触发器就无法成功触发,dsFo假设已经有效阻止,也没法反省了;
+            //结论. 所以还是根据demand.matchFo取出deltaTime比较好;
+            
+            
+            
+            
+            
             
             NSInteger findIndex = [TOUtils indexOfConOrAbsItem:actYesModel.content_p atContent:rDemand.mModel.matchFo.content_ps layerDiff:1 startIndex:rDemand.mModel.cutIndex endIndex:NSIntegerMax];
             if (findIndex != -1) {
