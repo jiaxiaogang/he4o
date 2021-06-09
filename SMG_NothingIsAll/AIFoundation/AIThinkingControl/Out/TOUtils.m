@@ -575,18 +575,31 @@
 }
 
 /**
- *  MARK:--------------------求fo的cutIndex到mv的deltaTime之和--------------------
+ *  MARK:--------------------求fo的deltaTime之和--------------------
  */
+//从cutIndex取到mvDeltaTime;
 +(double) getSumDeltaTime2Mv:(AIFoNodeBase*)fo cutIndex:(NSInteger)cutIndex{
     //1. 数据准备
     double deltaTime = 0;
     if (!fo) return deltaTime;
     
+    //2. 取cutIndex后的所有deltaTime;
+    deltaTime += [self getSumDeltaTime:fo fromCutIndex:cutIndex toEndIndex:fo.count];
+    
+    //3. 取mvDeltaTime;
+    deltaTime += fo.mvDeltaTime;
+    return deltaTime;
+}
+//从cutIndex取到endIndex;
++(double) getSumDeltaTime:(AIFoNodeBase*)fo fromCutIndex:(NSInteger)cutIndex toEndIndex:(NSInteger)endIndex{
+    //1. 数据准备
+    double deltaTime = 0;
+    if (!fo) return deltaTime;
+    
     //2. 取 "cutIndex后deltaTime" 与 "mvDeltaTime" 之和,并返回;
-    for (NSInteger i = cutIndex; i < fo.count; i++) {
+    for (NSInteger i = cutIndex; i < endIndex; i++) {
         deltaTime += [NUMTOOK(ARR_INDEX(fo.deltaTimes, i)) doubleValue];
     }
-    deltaTime += fo.mvDeltaTime;
     return deltaTime;
 }
 

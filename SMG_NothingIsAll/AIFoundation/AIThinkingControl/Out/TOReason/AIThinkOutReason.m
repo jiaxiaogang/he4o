@@ -877,6 +877,7 @@
  *      2021.01.28: ReasonDemand触发后,无论成功失败,都移出任务池 (参考22081-todo2&3);
  *      2021.03.11: 支持第四个触发器,R-模式时理性帧推进的触发 (参考n22p15-静默成功);
  *      2021.05.09: 对HNGL的触发,采用AINoRepeatRun防重触发 (参考23071-方案2);
+ *      2021.06.09: 修复静默成功任务的deltaTime一直为0的BUG (参考23125);
  */
 -(void) singleLoopBackWithActYes:(TOModelBase*)actYesModel {
     NSLog(@"\n\n=============================== 流程控制:ActYes ===============================\nModel:%@ %@",actYesModel.class,Pit2FStr(actYesModel.content_p));
@@ -928,23 +929,17 @@
         }else if(ISOK(actYesModel.baseOrGroup.baseOrGroup, ReasonDemandModel.class)){
             //3. R模式静默成功处理 (等待其自然出现) (参考22153-A2);
             ReasonDemandModel *rDemand = (ReasonDemandModel*)actYesModel.baseOrGroup.baseOrGroup;
-            AIFoNodeBase *foNode = [SMGUtils searchNode:actYesModel.baseOrGroup.content_p];
+            TOFoModel *dsFoModel = (TOFoModel*)actYesModel.baseOrGroup;
             
-            //TODOTOMORROW20210608: 当前actYesModel所在的dsFo本身就是依附于demand.matchFo存在的,所以如下两种方式取deltaTime:
-            //1. 此处用actYesModel是找不出findIndex的,因为有可能是foNode下任一个alg与demand.matchFo可findIndex (参考ARS_Time),找出findIndex后,再以demand.matchFo为准取deltaTime;
-            //2. 或者还有一种办法,即demand.matchFo仅是预测,后续本来就不一定会发生,所以只要把deltaTime填成intMax,如果它不自行发生,但这样的话,触发器就无法成功触发,dsFo假设已经有效阻止,也没法反省了;
-            //结论. 所以还是根据demand.matchFo取出deltaTime比较好;
+            //4. 找出下标;
+            NSInteger findIndex = [AIScore score4ARSTime:dsFoModel demand:rDemand];
             
-            
-            
-            
-            
-            
-            NSInteger findIndex = [TOUtils indexOfConOrAbsItem:actYesModel.content_p atContent:rDemand.mModel.matchFo.content_ps layerDiff:1 startIndex:rDemand.mModel.cutIndex endIndex:NSIntegerMax];
             if (findIndex != -1) {
-                double deltaTime = [NUMTOOK(ARR_INDEX(foNode.deltaTimes, findIndex)) doubleValue];
+                //5. 从demand.matchFo的cutIndex到findIndex之间取deltaTime之和;
+                double deltaTime = [TOUtils getSumDeltaTime:rDemand.mModel.matchFo fromCutIndex:rDemand.mModel.cutIndex toEndIndex:findIndex];
+                
                 //3. 触发器;
-                NSLog(@"---//触发器R-_理性alg任务Create:%@ 解决方案:%@ time:%f",Fo2FStr(foNode),Pit2FStr(actYesModel.content_p),deltaTime);
+                NSLog(@"---//触发器R-_静默成功任务Create:%@ 解决方案:%@ time:%f",FoP2FStr(dsFoModel.content_p),Pit2FStr(actYesModel.content_p),deltaTime);
                 [AITime setTimeTrigger:deltaTime trigger:^{
                     
                     //3. 无root时,说明已被别的R-新matchFo抵消掉,抵消掉后是不做反省的 (参考22081-todo1);
@@ -952,7 +947,7 @@
                     if (havRoot) {
                         //3. Outback有返回,则R-方案当前帧阻止失败 (参考22153-A21);
                         AnalogyType type = (actYesModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;
-                        NSLog(@"---//触发器R-_理性alg任务Trigger:%@ 解决方案:%@ (%@)",Fo2FStr(foNode),Pit2FStr(actYesModel.content_p),ATType2Str(type));
+                        NSLog(@"---//触发器R-_理性alg任务Trigger:%@ 解决方案:%@ (%@)",FoP2FStr(dsFoModel.content_p),Pit2FStr(actYesModel.content_p),ATType2Str(type));
                     
                         //5. 成功时,则整个R-任务阻止成功 (OutBack未返回,静默成功) (参考22153-A22);
                         if (type == ATPlus) {

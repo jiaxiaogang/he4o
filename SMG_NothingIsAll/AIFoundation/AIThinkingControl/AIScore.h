@@ -20,12 +20,15 @@
 @interface AIScore : NSObject
 
 +(BOOL) VRS:(AIKVPointer*)value_p cAlg:(AIAlgNodeBase*)cAlg sPorts:(NSArray*)sPorts pPorts:(NSArray*)pPorts;
+
 +(BOOL) FRS:(AIFoNodeBase*)fo;
 +(BOOL) FRS_Miss:(AIFoNodeBase*)sFo matchFo:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex;
 +(BOOL) FRS_Time:(TOFoModel*)toFo demand:(ReasonDemandModel*)demand;
 +(BOOL) FPS:(TOFoModel*)outModel rtInModel:(AIShortMatchModel*)rtInModel except_ps:(NSArray*)except_ps;
+
 +(BOOL) ARS;
 +(BOOL) ARS_Time:(TOFoModel*)dsFoModel demand:(ReasonDemandModel*)demand;
++(NSInteger) score4ARSTime:(TOFoModel*)dsFoModel demand:(ReasonDemandModel*)demand;
 
 /**
  *  MARK:--------------------指定ratio的评价重载--------------------
