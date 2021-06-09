@@ -310,6 +310,15 @@
 /**
  *  MARK:--------------------"外层输入" 推进 "中层循环" 决策--------------------
  *  @title 外层输入对Out短时记忆的影响处理:
+ *  @callers : 所有的ActYes都会使用此处来收集外循环反馈;
+ *      1. HNGL
+ *      2. Demand
+ *      3. 静默成功说明 (例:穿越森林,出门前备好枪,老虎冲出来时,开枪吓跑它):
+ *          a. 备好枪后,等待老虎 (进入来的及,actYes状态);
+ *          b. 当静默成功返回outBack时,会在isNormal代码处判断到mIsC成立 (如老虎冲出来了);
+ *          c. 并在此方法最后提交到PM流程中 (判断这只老虎的特征是否符合被吓跑的可能);
+ *          d. 流程控制自行继续推进dsFo,使之阻止R预测发生 (如在老虎咬人前,我们开枪吓跑它);
+ //因为dsFo的继续推进,未必需要PM,而此处PM的推进,能否流程控制自己递归到dsFo推进?需要明天查下此代码;
  *  @desc
  *      1. 最新一帧,与上轮循环做匹配 (对单帧匹配到任务Finish的,要推动决策跳转下帧);
  *      2. 未输出行为,等待中的,也要进行下轮匹配,比如等开饭,等来开饭了; (等待的status是ActNo还是Runing?)
@@ -452,7 +461,7 @@
             NSLog(@"短时记忆可视化:%@",TOModel2Root2Str(waitModel));
         }
         
-        //7. ============= "行为输出" 和 "demand.ActYes"的有效判断 =============
+        //7. ============= "行为输出" 和 "demand.ActYes" 和 "静默成功 的有效判断 =============
         if (isNormal) {
             BOOL mIsC = [TOUtils mIsC_2:latestMModel.matchAlg.pointer c:waitModel.content_p];
             if (Log4OPushM) NSLog(@"Normal有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(waitModel.content_p),mIsC);
@@ -500,13 +509,6 @@
                 focusModel.status = TOModelStatus_Finish;
                 [self singleLoopBackWithFinishModel:focusModel];
             }];
-            
-            //8. TODOTOMORROW20210608:看是否对静默成功ActYes的支持,
-            //即,当静默成功返回outBack时,应继续推进dsFo,使之阻止R预测发生 (如老虎冲出来要咬人,我们开枪吓跑它);
-            //因为dsFo的继续推进,未必需要PM,而此处PM的推进,能否流程控制自己递归到dsFo推进?需要明天查下此代码;
-            
-            
-            
         }
         return true;
     }
