@@ -261,13 +261,18 @@
  */
 +(BOOL) ARS_Time:(TOFoModel*)dsFoModel demand:(ReasonDemandModel*)demand{
     //1. 找下标;
-    NSInteger findIndex = [self score4ARSTime:dsFoModel demand:demand];
+    __block NSInteger dsIndex = -1;
+    __block NSInteger demandIndex = -1;
+    [self score4ARSTime:dsFoModel demand:demand finishBlock:^(NSInteger _dsIndex, NSInteger _demandIndex) {
+        dsIndex = _dsIndex;
+        demandIndex = _demandIndex;
+    }];
     
     //2. 下标有效时,返回ARSTime结果 (参考22194示图 & 22198);;
-    if (findIndex != -1) {
-        //3a. 当dsAlg会导致弄巧成拙时,评价为否->ActYes (返回false);
-        //3b. 当dsAlg在demand预测中已发生时,立马行为化修正之 (返回true);
-        return dsFoModel.actionIndex < findIndex;
+    if (demandIndex != -1) {
+        //3a. ds下标后的dsFo部分,需要静默等待 (会导致弄巧成拙,评价为否->ActYes);
+        //3b. ds下标前的dsFo部分,可直接行为化 (当dsAlg在demand预测中已发生时,评价为是->立马行为化修正);
+        return dsFoModel.actionIndex < dsIndex;
     }
     return true;
 }
@@ -275,23 +280,24 @@
 /**
  *  MARK:--------------------来的及评分--------------------
  *  @desc 对dsFo的从前到后所有元素,在demand的预测中未发生的部分,找下标返回 (参考22198示图);
- *  @result 返回下标,使用说明如下;
- *              1. 下标前的dsFo可直接行为化;
- *              2. 下标后的dsFo部分,需要静默等待;
+ *  @param finishBlock notnull : 根据dsFo的哪个下标,发现了在demand预测fo中的哪个下标,使用说明如下;
  */
-+(NSInteger) score4ARSTime:(TOFoModel*)dsFoModel demand:(ReasonDemandModel*)demand{
++(void) score4ARSTime:(TOFoModel*)dsFoModel demand:(ReasonDemandModel*)demand finishBlock:(void(^)(NSInteger _dsIndex,NSInteger _demandIndex))finishBlock{
     //1. 数据检查;
-    NSInteger result = -1;
-    if (!dsFoModel || !demand) return result;
+    if (!dsFoModel || !demand) return;
     AIFoNodeBase *dsFo = [SMGUtils searchNode:dsFoModel.content_p];
     
     //2. 找下标 (参考注释@desc);
     for (NSInteger i = 0; i < dsFo.count; i++) {
         AIKVPointer *dsAlg_p = ARR_INDEX(dsFo.content_ps, i);
-        result = [TOUtils indexOfConOrAbsItem:dsAlg_p atContent:demand.mModel.matchFo.content_ps layerDiff:2 startIndex:demand.mModel.cutIndex + 1 endIndex:NSUIntegerMax];
-        if (result != -1) break;//仅需发现一个下标即可;
+        NSInteger demandIndex = [TOUtils indexOfConOrAbsItem:dsAlg_p atContent:demand.mModel.matchFo.content_ps layerDiff:2 startIndex:demand.mModel.cutIndex + 1 endIndex:NSUIntegerMax];
+        
+        //3. 根据dsIndex发现demandIndex成功 (仅需发现一个下标即可);
+        if (demandIndex != -1) {
+            finishBlock(i,demandIndex);  //根据i发现了result
+            return;
+        }
     }
-    return result;
 }
 
 //MARK:===============================================================

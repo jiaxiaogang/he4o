@@ -584,23 +584,30 @@
     if (!fo) return deltaTime;
     
     //2. 取cutIndex后的所有deltaTime;
-    deltaTime += [self getSumDeltaTime:fo fromCutIndex:cutIndex toEndIndex:fo.count];
+    deltaTime += [self getSumDeltaTime:fo startIndex:cutIndex endIndex:fo.count];
     
     //3. 取mvDeltaTime;
     deltaTime += fo.mvDeltaTime;
     return deltaTime;
 }
-//从cutIndex取到endIndex;
-+(double) getSumDeltaTime:(AIFoNodeBase*)fo fromCutIndex:(NSInteger)cutIndex toEndIndex:(NSInteger)endIndex{
-    //1. 数据准备
-    double deltaTime = 0;
-    if (!fo) return deltaTime;
-    
-    //2. 取 "cutIndex后deltaTime" 与 "mvDeltaTime" 之和,并返回;
-    for (NSInteger i = cutIndex; i < endIndex; i++) {
-        deltaTime += [NUMTOOK(ARR_INDEX(fo.deltaTimes, i)) doubleValue];
+
+/**
+ *  MARK:--------------------获取指定获取的deltaTime之和--------------------
+ *  _param startIndex   : 下标(不含);
+ *  _param endIndex     : 下标(含);
+ *  @templete : 如[0,1,2,3],因不含s和含e,取1到3位时,得出结果应该是2+3=5,即range应该是(2到4),所以range=(s+1,e-s);
+ *  @bug
+ *      2020.09.10: 原来取range(s,e-s)不对,更正为:range(s+1,e-s);
+ */
++(double) getSumDeltaTime:(AIFoNodeBase*)fo startIndex:(NSInteger)startIndex endIndex:(NSInteger)endIndex{
+    double result = 0;
+    if (fo) {
+        NSArray *valids = ARR_SUB(fo.deltaTimes, startIndex + 1, endIndex - startIndex);
+        for (NSNumber *valid in valids) {
+            result += [valid doubleValue];
+        }
     }
-    return deltaTime;
+    return result;
 }
 
 @end

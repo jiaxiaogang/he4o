@@ -30,6 +30,7 @@
 #import "AIMatchFoModel.h"
 #import "AIPort.h"
 #import "AINoRepeatRun.h"
+#import "TOUtils.h"
 
 @interface AIThinkOutReason() <TOActionDelegate>
 
@@ -932,11 +933,14 @@
             TOFoModel *dsFoModel = (TOFoModel*)actYesModel.baseOrGroup;
             
             //4. 找出下标;
-            NSInteger findIndex = [AIScore score4ARSTime:dsFoModel demand:rDemand];
+            __block NSInteger demandIndex = -1;
+            [AIScore score4ARSTime:dsFoModel demand:rDemand finishBlock:^(NSInteger _dsIndex, NSInteger _demandIndex) {
+                demandIndex = _demandIndex;
+            }];
             
-            if (findIndex != -1) {
+            if (demandIndex != -1) {
                 //5. 从demand.matchFo的cutIndex到findIndex之间取deltaTime之和;
-                double deltaTime = [TOUtils getSumDeltaTime:rDemand.mModel.matchFo fromCutIndex:rDemand.mModel.cutIndex toEndIndex:findIndex];
+                double deltaTime = [TOUtils getSumDeltaTime:rDemand.mModel.matchFo startIndex:rDemand.mModel.cutIndex endIndex:demandIndex];
                 
                 //3. 触发器;
                 NSLog(@"---//触发器R-_静默成功任务Create:%@ 解决方案:%@ time:%f",FoP2FStr(dsFoModel.content_p),Pit2FStr(actYesModel.content_p),deltaTime);

@@ -56,7 +56,7 @@
             NSInteger findIndex = [TOUtils indexOfAbsItem:absAlg_p atConContent:conFo.content_ps layerDiff:isHNGL ? 2 : 1 startIndex:lastIndex + 1 endIndex:NSIntegerMax];
             if (findIndex != -1) {
                 //b. 将有效间隔取出,并提取最大的deltaTime;
-                double sumDeltaTime = [AINetAbsFoUtils sumDeltaTime:conFo startIndex:lastIndex endIndex:findIndex];
+                double sumDeltaTime = [TOUtils getSumDeltaTime:conFo startIndex:lastIndex endIndex:findIndex];
                 maxDeltaTime = MAX(maxDeltaTime, sumDeltaTime);
                 
                 //c. 将新发现的下标记录 (1. lastIndex+1用于indexOfAbsItem 2. lastIndex用于sumDeltaTime);
@@ -79,25 +79,6 @@
             [result addObject:@(0.0f)];
         }else{
             [result addObject:@(maxDeltaTime)];
-        }
-    }
-    return result;
-}
-
-/**
- *  MARK:--------------------获取指定获取的deltaTime之和--------------------
- *  _param startIndex   : 下标(不含);
- *  _param endIndex     : 下标(含);
- *  @templete : 如[0,1,2,3],因不含s和含e,取1到3位时,得出结果应该是2+3=5,即range应该是(2到4),所以range=(s+1,e-s);
- *  @bug
- *      2020.09.10: 原来取range(s,e-s)不对,更正为:range(s+1,e-s);
- */
-+(double) sumDeltaTime:(AIFoNodeBase*)fo startIndex:(NSInteger)startIndex endIndex:(NSInteger)endIndex{
-    double result = 0;
-    if (fo) {
-        NSArray *valids = ARR_SUB(fo.deltaTimes, startIndex + 1, endIndex - startIndex);
-        for (NSNumber *valid in valids) {
-            result += [valid doubleValue];
         }
     }
     return result;

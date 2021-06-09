@@ -146,6 +146,11 @@
  *  MARK:--------------------求fo的deltaTime之和--------------------
  */
 +(double) getSumDeltaTime2Mv:(AIFoNodeBase*)fo cutIndex:(NSInteger)cutIndex;
-+(double) getSumDeltaTime:(AIFoNodeBase*)fo fromCutIndex:(NSInteger)cutIndex toEndIndex:(NSInteger)endIndex;
+/**
+ *  MARK:--------------------获取指定获取的deltaTime之和--------------------
+ *  _param startIndex   : 下标(不含);
+ *  _param endIndex     : 下标(含);
+ */
++(double) getSumDeltaTime:(AIFoNodeBase*)fo startIndex:(NSInteger)startIndex endIndex:(NSInteger)endIndex;
 
 @end

@@ -28,7 +28,7 @@
 
 +(BOOL) ARS;
 +(BOOL) ARS_Time:(TOFoModel*)dsFoModel demand:(ReasonDemandModel*)demand;
-+(NSInteger) score4ARSTime:(TOFoModel*)dsFoModel demand:(ReasonDemandModel*)demand;
++(void) score4ARSTime:(TOFoModel*)dsFoModel demand:(ReasonDemandModel*)demand finishBlock:(void(^)(NSInteger _dsIndex,NSInteger _demandIndex))finishBlock;
 
 /**
  *  MARK:--------------------指定ratio的评价重载--------------------
