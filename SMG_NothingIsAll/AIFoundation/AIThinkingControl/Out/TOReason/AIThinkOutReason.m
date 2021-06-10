@@ -879,6 +879,7 @@
  *      2021.03.11: 支持第四个触发器,R-模式时理性帧推进的触发 (参考n22p15-静默成功);
  *      2021.05.09: 对HNGL的触发,采用AINoRepeatRun防重触发 (参考23071-方案2);
  *      2021.06.09: 修复静默成功任务的deltaTime一直为0的BUG (参考23125);
+ *      2021.06.10: 子任务判断不了havRoot,改为判断root是否已经finish,因为在tor_OPushM中finish的任务actYes是不生效的;
  */
 -(void) singleLoopBackWithActYes:(TOModelBase*)actYesModel {
     NSLog(@"\n\n=============================== 流程控制:ActYes ===============================\nModel:%@ %@",actYesModel.class,Pit2FStr(actYesModel.content_p));
@@ -947,8 +948,11 @@
                 [AITime setTimeTrigger:deltaTime trigger:^{
                     
                     //3. 无root时,说明已被别的R-新matchFo抵消掉,抵消掉后是不做反省的 (参考22081-todo1);
-                    BOOL havRoot = [theTC.outModelManager.getAllDemand containsObject:rDemand];
-                    if (havRoot) {
+                    NSArray *baseDemands = [TOUtils getBaseDemands_AllDeep:actYesModel];
+                    BOOL finished = ARRISOK([SMGUtils filterArr:baseDemands checkValid:^BOOL(DemandModel *item) {
+                        return item.status == TOModelStatus_Finish;
+                    }]);
+                    if (!finished) {
                         //3. Outback有返回,则R-方案当前帧阻止失败 (参考22153-A21);
                         AnalogyType type = (actYesModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;
                         NSLog(@"---//触发器R-_理性alg任务Trigger:%@ 解决方案:%@ (%@)",FoP2FStr(dsFoModel.content_p),Pit2FStr(actYesModel.content_p),ATType2Str(type));
