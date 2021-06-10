@@ -104,7 +104,7 @@
     //1. 数据检查
     if (!demand || !Switch4RS) return;
     AIFoNodeBase *matchFo = demand.mModel.matchFo;
-    NSLog(@"\n\n=============================== TOP.R- ===============================\n任务:%@,发生%ld",demand.algsType,(long)demand.mModel.cutIndex);
+    NSLog(@"\n\n=============================== TOP.R- ===============================\n任务:%@->%@,发生%ld",Fo2FStr(matchFo),Mvp2Str(matchFo.cmvNode_p),(long)demand.mModel.cutIndex);
     
     //3. ActYes等待 或 OutBack反省等待 中时,不进行决策;
     NSArray *waitFos = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *item) {

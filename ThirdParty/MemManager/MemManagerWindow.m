@@ -116,6 +116,7 @@
     if (STRISOK(data)) {
         DemoLog(@"恢复记忆");
         [MemManager readAllMemory:data];
+        [self close];
     }
 }
 

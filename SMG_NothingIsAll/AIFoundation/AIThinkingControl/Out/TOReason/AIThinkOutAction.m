@@ -118,7 +118,19 @@
         outModel.actionIndex ++;
         AIKVPointer *move_p = ARR_INDEX(curFo.content_ps, outModel.actionIndex);
         TOAlgModel *moveAlg = [TOAlgModel newWithAlg_p:move_p group:outModel];
-        NSLog(@"_Fo行为化: 第%ld/%ld个: %@",(long)outModel.actionIndex,(long)curFo.count,Pit2FStr(move_p));
+        NSLog(@"_Fo行为化第 %ld/%ld 个: %@",(long)outModel.actionIndex,(long)curFo.count,Fo2FStr(curFo));
+        
+        
+        //TODOTOMORROW20210610:
+        //1. 查在子任务行为化后,actYes状态并没有让决策流程停下来等待;
+        //2. 而静默成功actYes触发器触发后,发现energy耗尽了;
+        //3. 是否全递归父级继续决策了?
+        //4. 递归父级决策,会直至energy耗尽吗?
+        
+        TOModelBase *root = [TOUtils getRootDemandModelWithSubOutModel:outModel];
+        NSLog(@"%@",TOModel2Sub2Str(root));
+        
+        
         [self.delegate toAction_SubModelBegin:moveAlg];
     }else{
         //c. 成功,递归 (参考流程控制Finish的注释version-20200916 / 参考22061-7);
