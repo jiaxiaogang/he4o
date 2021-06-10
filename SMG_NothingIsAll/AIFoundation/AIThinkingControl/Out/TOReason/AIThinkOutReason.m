@@ -673,6 +673,7 @@
  *      2020.09.16: TOFoModel不由此处Finish,而是由ActYes来处理,共有两种Fo (1. HNGL由末位转至ActYes  2. 普通Fo,直接转至ActYes);
  *      2020.12.18: TOFoModel不由此处跳帧,而是由toAction._Fo()来处理;
  *      2021.01.28: ReasonDemand.Finish时,直接从任务池移出 (参考22081-todo3);
+ *      2021.06.10: 当子任务finish时,继续baseFoModel的begin递归;
  */
 -(void) singleLoopBackWithFinishModel:(TOModelBase*)finishModel {
     if (ISOK(finishModel, TOAlgModel.class)) {
@@ -737,7 +738,10 @@
         //DemandModel *demand = (DemandModel*)finishModel;
         //[demand.actionFoModels removeAllObjects];
         //R-模式在完成后,直接移出任务池 (已躲撞成功);
-        if (ISOK(finishModel, ReasonDemandModel.class)) {
+        BOOL isSubDemand = finishModel.baseOrGroup;
+        if (isSubDemand) {
+            [self singleLoopBackWithBegin:finishModel.baseOrGroup];
+        }else if (ISOK(finishModel, ReasonDemandModel.class)) {
             [theTC.outModelManager removeDemand:(ReasonDemandModel*)finishModel];
         }
     }else{
