@@ -127,8 +127,7 @@
         //3. 是否全递归父级继续决策了?
         //4. 递归父级决策,会直至energy耗尽吗?
         
-        TOModelBase *root = [TOUtils getRootDemandModelWithSubOutModel:outModel];
-        NSLog(@"%@",TOModel2Sub2Str(root));
+        
         
         
         [self.delegate toAction_SubModelBegin:moveAlg];

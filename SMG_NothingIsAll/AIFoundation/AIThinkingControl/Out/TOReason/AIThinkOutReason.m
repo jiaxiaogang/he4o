@@ -842,6 +842,10 @@
  */
 -(void) singleLoopBackWithBegin:(TOModelBase*)beginModel {
     //1. 活跃度判断
+    NSInteger modelLayer = [TOUtils getBaseOutModels_AllDeep:beginModel].count;
+    NSInteger demandLayer = [TOUtils getBaseDemands_AllDeep:beginModel].count;
+    NSLog(@"FC-BEGIN (所在层:%ld / 任务层:%ld) %@",modelLayer,demandLayer,Pit2FStr(beginModel.content_p));
+    TOModel2Root2Str(beginModel);
     if (!beginModel || ![theTC energyValid]) {
         return;
     }

@@ -366,6 +366,10 @@
     }];
 }
 
+
+//MARK:===============================================================
+//MARK:                     < 从TO短时记忆取demand >
+//MARK:===============================================================
 /**
  *  MARK:--------------------获取subOutModel的demand--------------------
  */
@@ -387,18 +391,11 @@
  *  @rank : base在后,sub在前;
  */
 +(NSMutableArray*) getBaseDemands_AllDeep:(TOModelBase*)subModel{
-    //1. 数据准备;
-    NSMutableArray *result = [[NSMutableArray alloc] init];
-    if (!subModel) return result;
-    
-    //2. 向base取 (是Demand则收集);
-    TOModelBase *checkModel = subModel;
-    while (checkModel) {
-        if (ISOK(checkModel, DemandModel.class)) [result addObject:checkModel];
-        checkModel = checkModel.baseOrGroup;
-    }
-    return result;
+    return [SMGUtils filterArr:[self getBaseOutModels_AllDeep:subModel] checkValid:^BOOL(id item) {
+        return ISOK(item, DemandModel.class);
+    }];
 }
+
 +(NSMutableArray*) getSubDemands_AllDeep:(DemandModel*)root validStatus:(NSArray*)validStatus{
     NSArray *subModels = [self getSubOutModels_AllDeep:root validStatus:validStatus];
     return [SMGUtils filterArr:subModels checkValid:^BOOL(TOModelBase *item) {
@@ -406,6 +403,10 @@
     }];
 }
 
+
+//MARK:===============================================================
+//MARK:                     < 从TO短时记忆取outModel >
+//MARK:===============================================================
 +(NSArray*) getSubOutModels_AllDeep:(TOModelBase*)outModel validStatus:(NSArray*)validStatus{
     return [self getSubOutModels_AllDeep:outModel validStatus:validStatus cutStopStatus:@[@(TOModelStatus_Finish)]];
 }
@@ -461,6 +462,23 @@
     return result;
 }
 
++(NSMutableArray*) getBaseOutModels_AllDeep:(TOModelBase*)subModel{
+    //1. 数据准备;
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    if (!subModel) return result;
+    
+    //2. 向base取;
+    TOModelBase *checkModel = subModel;
+    while (checkModel) {
+        [result addObject:checkModel];
+        checkModel = checkModel.baseOrGroup;
+    }
+    return result;
+}
+
+//MARK:===============================================================
+//MARK:                     < convert >
+//MARK:===============================================================
 /**
  *  MARK:--------------------将rDemands转为pointers--------------------
  *  @result notnull

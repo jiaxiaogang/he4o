@@ -77,6 +77,10 @@
  */
 +(void) topPerceptModeV2:(DemandModel*)demandModel direction:(MVDirection)direction tryResult:(BOOL(^)(AIFoNodeBase *sameFo))tryResult canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy;
 
+
+//MARK:===============================================================
+//MARK:                     < 从TO短时记忆取demand >
+//MARK:===============================================================
 /**
  *  MARK:--------------------获取subOutModel的demand--------------------
  */
@@ -90,6 +94,10 @@
 +(NSMutableArray*) getBaseDemands_AllDeep:(TOModelBase*)subModel;//base方向;
 +(NSMutableArray*) getSubDemands_AllDeep:(DemandModel*)root validStatus:(NSArray*)validStatus;//sub方向
 
+
+//MARK:===============================================================
+//MARK:                     < 从TO短时记忆取outModel >
+//MARK:===============================================================
 /**
  *  MARK:--------------------找出已行为输出等待外循环结果的outModels--------------------
  *  @result notnull NSArray<TOModelBase#>
@@ -100,7 +108,12 @@
 +(NSArray*) getSubOutModels_AllDeep:(TOModelBase*)outModel validStatus:(NSArray*)validStatus;
 +(NSArray*) getSubOutModels_AllDeep:(TOModelBase*)outModel validStatus:(NSArray*)validStatus cutStopStatus:(NSArray*)cutStopStatus;
 +(NSMutableArray*) getSubOutModels:(TOModelBase*)outModel;
++(NSMutableArray*) getBaseOutModels_AllDeep:(TOModelBase*)subModel;
 
+
+//MARK:===============================================================
+//MARK:                     < convert >
+//MARK:===============================================================
 /**
  *  MARK:--------------------将rDemands转为pointers--------------------
  *  @result notnull

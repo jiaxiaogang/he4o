@@ -78,19 +78,34 @@
     NSString *cachePath = kCachePath;
     NSArray *paths = [NSFile_Extension subFolders:STRFORMAT(@"%@/save",cachePath)];
     
-    //2. 重加载数据_转为folderName;
+    //2. 按创建时间排序;
+    paths = [paths sortedArrayUsingComparator:^NSComparisonResult(NSString *path1, NSString *path2) {
+        NSDictionary *info1 = DICTOOK([[NSFileManager defaultManager] attributesOfItemAtPath:path1 error:nil]);
+        NSDictionary *info2 = DICTOOK([[NSFileManager defaultManager] attributesOfItemAtPath:path2 error:nil]);
+        NSDate *date1 = [info1 objectForKey:NSFileCreationDate];
+        NSDate *date2 = [info2 objectForKey:NSFileCreationDate];
+        NSTimeInterval time1 = [date1 timeIntervalSince1970];
+        NSTimeInterval time2 = [date2 timeIntervalSince1970];
+        return (time1 == time2) ? NSOrderedSame : ((time1 < time2) ? NSOrderedAscending : NSOrderedDescending);
+    }];
+    
+    //3. 重加载数据_转为folderName;
     NSArray *foloders = [SMGUtils convertArr:paths convertBlock:^id(NSString *path) {
         NSString *sep = @"/";
         NSString *folderName = STRTOOK(ARR_INDEX_REVERSE(STRTOARR(path, sep), 0));
         return folderName;
     }];
     
-    //3. 重加载数据_收集到datas中;
+    //4. 重加载数据_收集到datas中;
     [self.datas removeAllObjects];
     [self.datas addObjectsFromArray:foloders];
     
-    //4. 重显示;
+    //5. 重显示;
     [self.readTableView reloadData];
+    
+    //6. 默认选中最后一个cell;
+    NSIndexPath *row = [NSIndexPath indexPathForRow:self.datas.count - 1 inSection:0];
+    [self.readTableView selectRowAtIndexPath:row animated:true scrollPosition:UITableViewScrollPositionTop];
 }
 
 //MARK:===============================================================
