@@ -89,7 +89,13 @@
     //2. 转成str
     if (content_p) {
         AnalogyType type = DS2ATType(content_p.dataSource);
-        return STRFORMAT(@"%@: %@ (%@ | %@)",NSStringFromClass(model.class),Pit2FStr(content_p),ATType2Str(type),TOStatus2Str(model.status));
+        if (PitIsFo(content_p)) {
+            AIFoNodeBase *node = [SMGUtils searchNode:content_p];
+            return STRFORMAT(@"%@: %@->%@ (%@ | %@)",NSStringFromClass(model.class),Pit2FStr(content_p),Mvp2Str(node.cmvNode_p),ATType2Str(type),TOStatus2Str(model.status));
+        }else{
+            return STRFORMAT(@"%@: %@ (%@ | %@)",NSStringFromClass(model.class),Pit2FStr(content_p),ATType2Str(type),TOStatus2Str(model.status));
+        }
+        
     }else{
         return STRFORMAT(@"%@",NSStringFromClass(model.class));
     }

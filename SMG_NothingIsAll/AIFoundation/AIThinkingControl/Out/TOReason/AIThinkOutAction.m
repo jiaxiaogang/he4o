@@ -104,14 +104,25 @@
         
         //8. 子任务尝试完成后,进行FPS综合评价 (如果子任务完成后,依然有解决不了的不愿意的价值,则不通过);
         BOOL scoreSuccess = [AIScore FPS:outModel rtInModel:rtInModel except_ps:except_ps];
+        NSLog(@"未发生感性评价(反思)-%@",scoreSuccess ? @"通过 (继续父fo行为化)" : @"不通过 (中断父fo行为化)");
         if (!scoreSuccess) {
-            NSLog(@"未发生感性评价(反思)-不通过");
             outModel.status = TOModelStatus_ScoreNo;
             [self.delegate toAction_SubModelFailure:outModel];
             return;
         }
     }
 
+    //TODOTOMORROW20210615:
+    //当此处反思通过后,子任务虽然在actYes中,但父fo仍需继续行为化;
+    //父fo行为化失败时,会继续R-下一ds方案,并且再回到此处反思;
+    //这样来来回回的将energy耗尽;
+    //所以可考虑将子任务时的energy消耗调整小一些,以使子任务不会耗太多,,,,
+    //或者...actYes仅消耗一点点energy,而行为输出的才消耗更多energy,这样的话,所有反思子任务,甚至任何内思活动,并不会消耗太多,仅外在行为,才会消耗更多思维活跃度;
+    
+    
+    
+    
+    
     //4. 跳转下帧,
     if (outModel.actionIndex < curFo.count - 1) {
         //a. Alg转移 (下帧)

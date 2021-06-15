@@ -113,6 +113,11 @@
 
 //AIPointer
 #define POINTERISOK(p) [SMGUtils pointerIsOk:p]                         //指针强检查
+#define PitIsValue(p) [NVHeUtil isValue:p]                              //是否稀疏码
+#define PitIsAlg(p) [NVHeUtil isAlg:p]                                  //是否概念
+#define PitIsFo(p) [NVHeUtil isFo:p]                                    //是否时序
+#define PitIsMv(p) [NVHeUtil isMv:p]                                    //是否价值
+#define PitIsAbs(p) [NVHeUtil isAbs:p]                                  //是否抽象节点
 
 //ISOK
 #define ISOK(o, c) [SMGUtils isOk:o class:c]                            //obj强检查 (object class)
