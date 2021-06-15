@@ -35,6 +35,7 @@
 @interface AIThinkOutReason() <TOActionDelegate>
 
 @property (strong, nonatomic) AIThinkOutAction *toAction;
+@property (assign, nonatomic) BOOL debugMode;
 
 @end
 
@@ -841,11 +842,14 @@
  *      2020.12.15: 当begin为Fo时,向toAction._Fo执行 (因为原来不支持fo.begin,流程控制不完整);
  */
 -(void) singleLoopBackWithBegin:(TOModelBase*)beginModel {
+    if (self.debugMode) {
+        NSInteger modelLayer = [TOUtils getBaseOutModels_AllDeep:beginModel].count;
+        NSInteger demandLayer = [TOUtils getBaseDemands_AllDeep:beginModel].count;
+        NSLog(@"FC-BEGIN (所在层:%ld / 任务层:%ld) %@%@",modelLayer,demandLayer,Pit2FStr(beginModel.content_p),TOModel2Root2Str(beginModel));
+        self.debugMode = false;
+    }
+    
     //1. 活跃度判断
-    NSInteger modelLayer = [TOUtils getBaseOutModels_AllDeep:beginModel].count;
-    NSInteger demandLayer = [TOUtils getBaseDemands_AllDeep:beginModel].count;
-    NSLog(@"FC-BEGIN (所在层:%ld / 任务层:%ld) %@",modelLayer,demandLayer,Pit2FStr(beginModel.content_p));
-    TOModel2Root2Str(beginModel);
     if (!beginModel || ![theTC energyValid]) {
         return;
     }
@@ -953,6 +957,10 @@
                 
                 //3. 触发器;
                 NSLog(@"---//触发器R-_静默成功任务Create:%@ 解决方案:%@ time:%f",FoP2FStr(dsFoModel.content_p),Pit2FStr(actYesModel.content_p),deltaTime);
+                self.debugMode = true;
+                NSInteger modelLayer = [TOUtils getBaseOutModels_AllDeep:actYesModel].count;
+                NSInteger demandLayer = [TOUtils getBaseDemands_AllDeep:actYesModel].count;
+                NSLog(@"FC-ACTYES (所在层:%ld / 任务层:%ld) %@%@",modelLayer,demandLayer,Pit2FStr(actYesModel.content_p),TOModel2Root2Str(actYesModel));
                 [AITime setTimeTrigger:deltaTime trigger:^{
                     
                     //3. 无root时,说明已被别的R-新matchFo抵消掉,抵消掉后是不做反省的 (参考22081-todo1);
