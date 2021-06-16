@@ -840,6 +840,7 @@
  *  @version
  *      2020.07.06: 当begin为Fo时,直接向上递归;
  *      2020.12.15: 当begin为Fo时,向toAction._Fo执行 (因为原来不支持fo.begin,流程控制不完整);
+ *      2021.06.16: 降低内思时的energy消耗,改为0.1 (为行为输出消耗的十分之一) (参考23126-分析1);
  */
 -(void) singleLoopBackWithBegin:(TOModelBase*)beginModel {
     if (self.debugMode) {
@@ -853,7 +854,7 @@
     if (!beginModel || ![theTC energyValid]) {
         return;
     }
-    [theTC updateEnergy:-0.2f];
+    [theTC updateEnergy:-0.1f];
     
     //a. 转移
     if (ISOK(beginModel, TOAlgModel.class)) {
