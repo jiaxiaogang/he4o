@@ -215,6 +215,9 @@
         ReasonDemandModel *subDemand = [ReasonDemandModel newWithMModel:item inModel:rtInModel baseFo:baseFo];
         
         //8. 子任务_对其决策;
+        
+        NSInteger index = [rtInModel.matchPFos indexOfObject:item];
+        NSLog(@"=====> 基于%@的反思PFo结果:(%ld/%ld)",FoP2FStr(baseFo.content_p),index,rtInModel.matchPFos.count);
         NSLog(@"=====> 生成R子任务:%@->%@",Fo2FStr(item.matchFo),Mvp2Str(item.matchFo.cmvNode_p));
         //NSLog(@"%@",TOModel2Root2Str(subDemand));
         NSLog(@"%@",TOModel2Sub2Str(rootDemand));
