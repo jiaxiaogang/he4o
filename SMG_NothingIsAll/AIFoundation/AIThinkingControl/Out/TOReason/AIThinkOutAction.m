@@ -112,17 +112,6 @@
         }
     }
     
-    //TODOTOMORROW20210610:
-    //1. 查在子任务行为化后,actYes状态并没有让决策流程停下来等待;
-    //2. 而静默成功actYes触发器触发后,发现energy耗尽了;
-    //3. 是否全递归父级继续决策了?
-    //4. 递归父级决策,会直至energy耗尽吗?
-    
-    
-    
-    
-    
-    
     //4. 跳转下帧,
     if (outModel.actionIndex < curFo.count - 1) {
         //a. Alg转移 (下帧)
