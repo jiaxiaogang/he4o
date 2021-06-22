@@ -854,7 +854,7 @@
     if (!beginModel || ![theTC energyValid]) {
         return;
     }
-    [theTC updateEnergy:-0.1f];
+    [theTC updateEnergy:-0.3f];
     
     //a. 转移
     if (ISOK(beginModel, TOAlgModel.class)) {
