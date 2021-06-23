@@ -198,6 +198,13 @@
     NSArray *failureDemans = [TOUtils getSubDemands_AllDeep:rootDemand validStatus:@[@(TOModelStatus_ActNo)]];
     NSArray *failureExcepts = RDemands2Pits(failureDemans);
     
+    //4. TODOTOMORROW20210623: 收集不应期_之四(dsFo的全树不应期) (参考23142-方案);
+    //  a. 取出所有subRDemands (非actNo状态的);
+    //  b. 对subRDemands.actionFoModels下的dsFo做逐一判断,是否处于actYes状态 (参考收集不应期之三代码);
+    //  c. 将diffBasePorts收集到不应期 (参考收集不应期3代码);
+    
+    
+    
     //4. 收集不应期_之(1.父级 2.子级已失败);
     NSMutableArray *except_ps = [[NSMutableArray alloc] init];
     [except_ps addObjectsFromArray:baseExcepts];
@@ -215,7 +222,6 @@
         ReasonDemandModel *subDemand = [ReasonDemandModel newWithMModel:item inModel:rtInModel baseFo:baseFo];
         
         //8. 子任务_对其决策;
-        
         NSInteger index = [rtInModel.matchPFos indexOfObject:item];
         NSLog(@"=====> 基于%@的反思PFo结果:(%ld/%ld)",FoP2FStr(baseFo.content_p),index,rtInModel.matchPFos.count);
         NSLog(@"=====> 生成R子任务:%@->%@",Fo2FStr(item.matchFo),Mvp2Str(item.matchFo.cmvNode_p));
