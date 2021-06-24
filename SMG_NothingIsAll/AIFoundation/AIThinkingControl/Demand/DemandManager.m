@@ -184,6 +184,7 @@
  *  @version
  *      2021.06.05: v2_子任务协同,将先执行顺利的ds解决方案下的场景fos加入到不应期 (参考23102 & 23103);
  *      2021.06.08: 子任务的actYes状态由任意subModel为actYes状态为准 (参考23122);
+ *      2021.06.24: 第四类不应期,将全树中未失败任务下已成功或静默等待下的dsFo适用的任务全收集为不应期 (参考23142-方案);
  */
 +(void) updateSubDemand:(AIShortMatchModel*)rtInModel baseFo:(TOFoModel*)baseFo createSubDemandBlock:(void(^)(ReasonDemandModel*))createSubDemandBlock finishBlock:(void(^)(NSArray*))finishBlock{
     //1. 数据检查;
@@ -198,17 +199,19 @@
     NSArray *failureDemans = [TOUtils getSubDemands_AllDeep:rootDemand validStatus:@[@(TOModelStatus_ActNo)]];
     NSArray *failureExcepts = RDemands2Pits(failureDemans);
     
-    //4. TODOTOMORROW20210623: 收集不应期_之四(dsFo的全树不应期) (参考23142-方案);
-    //  a. 取出所有subRDemands (非actNo状态的);
-    //  b. 对subRDemands.actionFoModels下的dsFo做逐一判断,是否处于actYes状态 (参考收集不应期之三代码);
-    //  c. 将diffBasePorts收集到不应期 (参考收集不应期3代码);
+    //4. 收集不应期_之四(dsFo的全树不应期) (所有未失败的(用all减去actNo得出)dsFo可适用于的问题全不应期掉) (参考23142-方案);
+    NSArray *allSubDemands = [TOUtils getSubDemands_AllDeep:rootDemand validStatus:nil];
+    NSArray *noActNoDemands = [SMGUtils removeArr:allSubDemands checkValid:^BOOL(id item) {
+        return ![failureDemans containsObject:item];
+    }];
     
-    
-    
-    //4. 收集不应期_之(1.父级 2.子级已失败);
+    //4. 收集不应期_之(1.父级 2.子级已失败 3.当前全树dsFo可适用于的所有问题);
     NSMutableArray *except_ps = [[NSMutableArray alloc] init];
     [except_ps addObjectsFromArray:baseExcepts];
     [except_ps addObjectsFromArray:failureExcepts];
+    for (DemandModel *subDemand in noActNoDemands){
+        [except_ps addObjectsFromArray:[ThinkingUtils collectDiffBaseFoWhenDSFoIsFinishOrActYes:subDemand]];
+    }
     
     //5. 子任务_对反思预测fo尝试转为子任务;
     for (AIMatchFoModel *item in rtInModel.matchPFos) {
@@ -232,13 +235,7 @@
         }
         
         //9. 收集不应期之3: 已行为化的子任务中已顺利执行的ds解决方案,其下的所有场景fo加入不应期 (参考23102 & 23103);
-        for (TOFoModel *dsFoModel in subDemand.actionFoModels) {
-            NSArray *subActYes = [TOUtils getSubOutModels_AllDeep:dsFoModel validStatus:@[@(TOModelStatus_ActYes)] cutStopStatus:@[@(TOModelStatus_ActNo),@(TOModelStatus_ScoreNo)]];
-            if (dsFoModel.status == TOModelStatus_Finish || ARRISOK(subActYes)) {
-                AIFoNodeBase *dsFo = [SMGUtils searchNode:dsFoModel.content_p];
-                [except_ps addObjectsFromArray:Ports2Pits(dsFo.diffBasePorts)];
-            }
-        }
+        [except_ps addObjectsFromArray:[ThinkingUtils collectDiffBaseFoWhenDSFoIsFinishOrActYes:subDemand]];
     }
     
     //10. 完成;

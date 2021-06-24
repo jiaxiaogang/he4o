@@ -184,3 +184,18 @@
 +(BOOL) containsConAlg:(AIKVPointer*)conAlg_p absAlg:(AIPointer*)absAlg_p;
 
 @end
+
+
+//MARK:===============================================================
+//MARK:                     < ThinkingUtils (Demand) >
+//MARK:===============================================================
+@class DemandModel;
+@interface ThinkingUtils (Demand)
+
+/**
+ *  MARK:--------------------收集当前demand可适用于别的任务--------------------
+ *  @desc demand下dsFo为finish/actYes状态时,收集它能解决的所有问题
+ */
++(NSMutableArray*) collectDiffBaseFoWhenDSFoIsFinishOrActYes:(DemandModel*)curDemand;
+
+@end
