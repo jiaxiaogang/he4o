@@ -202,7 +202,7 @@
     //4. 收集不应期_之四(dsFo的全树不应期) (所有未失败的(用all减去actNo得出)dsFo可适用于的问题全不应期掉) (参考23142-方案);
     NSArray *allSubDemands = [TOUtils getSubDemands_AllDeep:rootDemand validStatus:nil];
     NSArray *noActNoDemands = [SMGUtils removeArr:allSubDemands checkValid:^BOOL(id item) {
-        return ![failureDemans containsObject:item];
+        return [failureDemans containsObject:item];
     }];
     
     //4. 收集不应期_之(1.父级 2.子级已失败 3.当前全树dsFo可适用于的所有问题);
