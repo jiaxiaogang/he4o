@@ -135,6 +135,16 @@
         TOFoModel *foModel = [TOFoModel newWithFo_p:dsPort.target_p base:demand];
         AIFoNodeBase *fo = [SMGUtils searchNode:dsPort.target_p];
         NSLog(@"------->>>>>> R- From mvRefs 新增一例解决方案: %@->%@",Pit2FStr(dsPort.target_p),Mvp2Str(fo.cmvNode_p));
+        
+        //查23151BUG
+        if (dsPort.target_p.pointerId == 123) {
+            NSLog(@"不应期:%@",Pits2FStr(except_ps));
+            for (AIPort *port in dsPorts) {
+                
+                NSLog(@"--->item: %ld %@",port.strong.value,Pit2FStr(port.target_p));
+            }
+            NSLog(@"");
+        }
         [self commitReasonSub:foModel demand:demand];
         return;
     }
