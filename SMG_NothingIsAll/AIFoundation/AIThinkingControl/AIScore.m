@@ -168,10 +168,10 @@
     //2. 对将要决策部分:B 和 已发生部分:C 之间进行mIsC判断;
     for (NSInteger i = toFo.actionIndex + 1; i < curFo.count; i++) {
         AIKVPointer *alg_p = ARR_INDEX(curFo.content_ps, i);
-        NSInteger findIndex = [TOUtils indexOfConOrAbsItem:alg_p atContent:demand.mModel.matchFo.content_ps layerDiff:2 startIndex:0 endIndex:demand.mModel.cutIndex];
+        NSInteger findIndex = [TOUtils indexOfConOrAbsItem:alg_p atContent:demand.mModel.matchFo.content_ps layerDiff:2 startIndex:0 endIndex:demand.mModel.cutIndex2];
         if (findIndex != -1) {
             //3. B < C = 已错过;
-            return findIndex <= demand.mModel.cutIndex;
+            return findIndex <= demand.mModel.cutIndex2;
         }
     }
     return true;
@@ -295,7 +295,7 @@
     //2. 找下标 (参考注释@desc);
     for (NSInteger i = 0; i < dsFo.count; i++) {
         AIKVPointer *dsAlg_p = ARR_INDEX(dsFo.content_ps, i);
-        NSInteger demandIndex = [TOUtils indexOfConOrAbsItem:dsAlg_p atContent:demand.mModel.matchFo.content_ps layerDiff:2 startIndex:demand.mModel.cutIndex + 1 endIndex:NSUIntegerMax];
+        NSInteger demandIndex = [TOUtils indexOfConOrAbsItem:dsAlg_p atContent:demand.mModel.matchFo.content_ps layerDiff:2 startIndex:demand.mModel.cutIndex2 + 1 endIndex:NSUIntegerMax];
         
         //3. 根据dsIndex发现demandIndex成功 (仅需发现一个下标即可);
         if (demandIndex != -1) {

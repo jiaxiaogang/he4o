@@ -10,11 +10,12 @@
 
 @implementation AIMatchFoModel
 
-+(AIMatchFoModel*) newWithMatchFo:(AIFoNodeBase*)matchFo matchFoValue:(CGFloat)matchFoValue cutIndex:(NSInteger)cutIndex{
++(AIMatchFoModel*) newWithMatchFo:(AIFoNodeBase*)matchFo matchFoValue:(CGFloat)matchFoValue lastMatchIndex:(NSInteger)lastMatchIndex cutIndex:(NSInteger)cutIndex{
     AIMatchFoModel *model = [[AIMatchFoModel alloc] init];
     model.matchFo = matchFo;
     model.matchFoValue = matchFoValue;
-    model.cutIndex = cutIndex;
+    model.lastMatchIndex = lastMatchIndex;
+    model.cutIndex2 = cutIndex;
     return model;
 }
 

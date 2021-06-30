@@ -105,7 +105,7 @@
     //1. 数据检查
     if (!demand || !Switch4RS) return;
     AIFoNodeBase *matchFo = demand.mModel.matchFo;
-    NSLog(@"\n\n=============================== TOP.R- ===============================\n任务:%@->%@,发生%ld",Fo2FStr(matchFo),Mvp2Str(matchFo.cmvNode_p),(long)demand.mModel.cutIndex);
+    NSLog(@"\n\n=============================== TOP.R- ===============================\n任务:%@->%@,发生%ld",Fo2FStr(matchFo),Mvp2Str(matchFo.cmvNode_p),(long)demand.mModel.cutIndex2);
     
     //3. ActYes等待 或 OutBack反省等待 中时,不进行决策;
     NSArray *waitFos = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
@@ -954,7 +954,7 @@
             
             if (demandIndex != -1) {
                 //5. 从demand.matchFo的cutIndex到findIndex之间取deltaTime之和;
-                double deltaTime = [TOUtils getSumDeltaTime:rDemand.mModel.matchFo startIndex:rDemand.mModel.cutIndex endIndex:demandIndex];
+                double deltaTime = [TOUtils getSumDeltaTime:rDemand.mModel.matchFo startIndex:rDemand.mModel.cutIndex2 endIndex:demandIndex];
                 
                 //3. 触发器;
                 NSLog(@"---//触发器R-_静默成功任务Create:%@ 解决方案:%@ time:%f",FoP2FStr(dsFoModel.content_p),Pit2FStr(actYesModel.content_p),deltaTime);
@@ -991,7 +991,7 @@
             
             //2. 取matchFo已发生,到末位mvDeltaTime,所有时间之和做触发;
             AIFoNodeBase *matchFo = demand.mModel.matchFo;
-            double deltaTime = [TOUtils getSumDeltaTime2Mv:matchFo cutIndex:demand.mModel.cutIndex];
+            double deltaTime = [TOUtils getSumDeltaTime2Mv:matchFo cutIndex:demand.mModel.cutIndex2];
             
             //3. 触发器;
             NSLog(@"---//触发器R-_感性mv任务:%@ 解决方案:%@ time:%f",Fo2FStr(matchFo),Pit2FStr(actYesModel.content_p),deltaTime);

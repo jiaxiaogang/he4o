@@ -135,7 +135,7 @@
         //4. 抵消_同一matchFo将旧有移除 (仅保留最新的);
         self.loopCache = [SMGUtils removeArr:self.loopCache checkValid:^BOOL(ReasonDemandModel *item) {
             if (ISOK(item, ReasonDemandModel.class)) {
-                if ([item.mModel.matchFo isEqual:mModel.matchFo] && item.mModel.cutIndex < mModel.cutIndex) {
+                if ([item.mModel.matchFo isEqual:mModel.matchFo] && item.mModel.cutIndex2 < mModel.cutIndex2) {
                     return true;
                 }
             }

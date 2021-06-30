@@ -41,11 +41,6 @@
     return mFo ? mFo.matchFoValue : 0;
 }
 
--(NSInteger)cutIndex{
-    AIMatchFoModel *mFo = [self mustUrgentMFo];
-    return mFo ? mFo.cutIndex : 0;
-}
-
 -(TIModelStatus)status{
     AIMatchFoModel *mFo = [self mustUrgentMFo];
     return mFo ? mFo.status : TIModelStatus_Default;

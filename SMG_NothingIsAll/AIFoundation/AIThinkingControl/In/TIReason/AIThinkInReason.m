@@ -368,7 +368,14 @@
                 return [TOUtils mIsC_1:itemAlg c:assAlg];
             } success:^(NSInteger lastAssIndex, CGFloat matchValue) {
                 if (Log4MFo) NSLog(@"时序识别item SUCCESS 完成度:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
-                AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:assFo matchFoValue:matchValue cutIndex:lastAssIndex];
+                
+                //TODOTOMORROW20210630:
+                //  1. 当fromTIM时,cutIndex=lastAssIndex;
+                //  2. 当fromRT时,cutIndex = -1 (或从父任务中加以判断);
+                
+                
+                
+                AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:assFo matchFoValue:matchValue lastMatchIndex:lastAssIndex cutIndex:-1];
                 if (assFo.cmvNode_p) {
                     [inModel.matchPFos addObject:newMatchFo];
                 }else{
@@ -414,7 +421,7 @@
         BOOL isHNGL = [TOUtils isHNGL:matchFo.pointer];
         if (isHNGL) {
             //末位判断;
-            if (item.cutIndex == matchFo.count - 2) {
+            if (item.cutIndex2 == matchFo.count - 2) {
                 item.status = TIModelStatus_LastWait;
                 double deltaTime = [NUMTOOK(ARR_INDEX_REVERSE(matchFo.deltaTimes, 0)) doubleValue];
                 [AITime setTimeTrigger:deltaTime trigger:^{
@@ -431,7 +438,7 @@
             //有mv判断;
             if (matchFo.cmvNode_p) {
                 item.status = TIModelStatus_LastWait;
-                double deltaTime = [TOUtils getSumDeltaTime2Mv:matchFo cutIndex:item.cutIndex];
+                double deltaTime = [TOUtils getSumDeltaTime2Mv:matchFo cutIndex:item.cutIndex2];
                 [AITime setTimeTrigger:deltaTime trigger:^{
                     //4. 反向反馈类比(成功/未成功)的主要原因 (参考tip_OPushM());
                     AnalogyType type = ATDefault;
