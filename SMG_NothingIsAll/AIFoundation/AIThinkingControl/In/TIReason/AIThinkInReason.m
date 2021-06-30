@@ -221,7 +221,16 @@
     NSLog(@"\n\n=============================== 反思时序识别 ===============================\n%@",Fo2FStr(fo));
     
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [self partMatching_FoV1Dot5:fo except_ps:@[fo.pointer] decoratorInModel:result];
+    [self partMatching_FoV1Dot5:fo except_ps:@[fo.pointer] decoratorInModel:result findCutIndex:^NSInteger(AIFoNodeBase *matchFo, NSInteger lastMatchIndex) {
+        
+        //TODOTOMORROW20210630: fromRT时,cutIndex需从父任务中判断 (默认为-1);
+        
+        
+        
+        
+        
+        return -1;
+    }];
     NSLog(@"反思时序: Finish >> %@",Fo2FStr(result.matchFo));
     return result;
 }
@@ -248,7 +257,10 @@
     
     NSLog(@"\n\n------------------------------- 瞬时时序识别 -------------------------------\n%@:%@->%@",ARRISOK(inModel.matchAlgs) ? @"protoFo" : @"matchAFo",Fo2FStr(maskFo),Mvp2Str(maskFo.cmvNode_p));
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [self partMatching_FoV1Dot5:maskFo except_ps:except_ps decoratorInModel:inModel];
+    [self partMatching_FoV1Dot5:maskFo except_ps:except_ps decoratorInModel:inModel findCutIndex:^NSInteger(AIFoNodeBase *matchFo, NSInteger lastMatchIndex) {
+        //3. 当fromTIM时,cutIndex=lastAssIndex;
+        return lastMatchIndex;
+    }];
     
     //3. 加强RFos的抽具象关联;
     for (AIMatchFoModel *item in inModel.matchRFos) {
@@ -267,6 +279,9 @@
  *  _param checkItemValid   : 检查item(fo.alg)的有效性 notnull (可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
  *  @param inModel          : 装饰结果到inModel中;
  *  _param indexProtoAlg    : assFoIndexAlg所对应的protoAlg,用来在不明确时,用其独特稀疏码指引向具象时序找"明确"预测;
+ *  @param findCutIndex     : 找出已发生部分的截点
+ *                              1. fromTIM时,cutIndex=lastAssIndex;
+ *                              2. fromRT时,cutIndex需从父任务中判断 (默认为-1);
  *  TODO_TEST_HERE:调试Pointer能否indexOfObject
  *  TODO_TEST_HERE:调试下item_p在indexOfObject中,有多个时,怎么办;
  *  TODO_TEST_HERE:测试下cPartMatchingThreshold配置值是否合理;
@@ -313,9 +328,10 @@
  *      2021.02.03: 反向反馈外类比已支持,将无mv指向的关掉 (参考version上条);
  *      2021.02.04: 将matchFos中的虚mv筛除掉,因为现在R-模式不使用matchFos做解决方案,现在留着没用,等有用时再打开;
  *      2021.04.15: 无mv指向的支持返回为matchRFos,原来有mv指向的重命名为matchPFos (参考23014-分析1&23016);
+ *      2021.06.30: 支持cutIndex回调,识别和反思时,分别走不同逻辑 (参考23152);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
-+(void) partMatching_FoV1Dot5:(AIFoNodeBase*)maskFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel{
++(void) partMatching_FoV1Dot5:(AIFoNodeBase*)maskFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel findCutIndex:(NSInteger(^)(AIFoNodeBase *matchFo,NSInteger lastMatchIndex))findCutIndex{
     //1. 数据准备
     if (!ISOK(maskFo, AIFoNodeBase.class)) {
         return;
@@ -368,14 +384,8 @@
                 return [TOUtils mIsC_1:itemAlg c:assAlg];
             } success:^(NSInteger lastAssIndex, CGFloat matchValue) {
                 if (Log4MFo) NSLog(@"时序识别item SUCCESS 完成度:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
-                
-                //TODOTOMORROW20210630:
-                //  1. 当fromTIM时,cutIndex=lastAssIndex;
-                //  2. 当fromRT时,cutIndex = -1 (或从父任务中加以判断);
-                
-                
-                
-                AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:assFo matchFoValue:matchValue lastMatchIndex:lastAssIndex cutIndex:-1];
+                NSInteger cutIndex = findCutIndex(assFo,lastAssIndex);
+                AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:assFo matchFoValue:matchValue lastMatchIndex:lastAssIndex cutIndex:cutIndex];
                 if (assFo.cmvNode_p) {
                     [inModel.matchPFos addObject:newMatchFo];
                 }else{
