@@ -223,20 +223,9 @@
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
     [self partMatching_FoV1Dot5:fo except_ps:@[fo.pointer] decoratorInModel:result findCutIndex:^NSInteger(AIFoNodeBase *matchFo, NSInteger lastMatchIndex) {
         
-        //TODOTOMORROW20210630: fromRT时,cutIndex需从父任务中判断 (默认为-1);
-        
-        //方案1: 无脑返回-1;
-        //因为action._Fo()中,现在仅actionIndex=-1时,才进行反思,所以此处按照所在fo解决方案的actionIndex来取的话,全是-1;
-        //至于真实情况并不是-1的问题,在acion._Hav()中,会自行推进决策等待等;
-        //但这似乎会影响到dsFo的实时行为化TIR_Time判断,比如会评价结果全是来的及,静默等待;
-        //即使父级中,已经出现了老虎,还要等待老虎出现,显然是不理性的;
-        
-        //方案2: 从父级R任务继承传递cutIndex;
-        //所以分析从所在demand的父级中,找cutIndex (已发现截点);
-        
-        //即: dsFo的actionIndex,并不能表示出哪些已经发生;
-        //而dsFo.baseRDemand.matchFo的cutIndex继承过来判断当前cutIndex较好;
-        //一直到rootRDemand.matchFo.cutIndex来自最初的TIR_Fo预测,即FromTIM的cutIndex;
+        //TODOTOMORROW20210630:
+        //仅需要从父一级demand中,取cutIndex进行继承,继承时,判断在当前中的位置;
+        //即从父级的0-cutIndex之间,在当前fo中匹配lastIndex,做为cutIndex;
         
         
         
