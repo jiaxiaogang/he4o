@@ -227,8 +227,34 @@
         //仅需要从父一级demand中,取cutIndex进行继承,继承时,判断在当前中的位置;
         //即从父级的0-cutIndex之间,在当前fo中匹配lastIndex,做为cutIndex;
         
-        
-        
+        //A: 是否判断全含分析:
+        //1. 是判断0-lastMatchIndex之间吗?
+        //2. 是判断全含?还是判断mIsC匹配?
+        //  dsFo和demandFo本来就不是一条线,所以不可能判断全含;
+        //  dsFo和demandFo可能匹配半程,所以要判定全含;
+    
+        //B: 举实例对继承分析:
+        /*
+         * rootPDemand: 为了开心
+            * dsFo: 穿过森林
+            * rtFo: 森林有虎咬人->危险
+            * baseDemandFo: 老虎咬人->危险
+                * dsFo: 带枪打虎
+                * rtFo: 打虎违法
+                * demandFo: 不能打虎->违法
+         
+         * rootRDemand: 飞下,有被木棒,撞的->危险 cutIndex = 0
+            * dsFo: 偏开撞来的木棒
+            * rtFo: 木棒,有危险
+            * subDemandFo: 木棒,有危险 cutIndex = -1
+    
+         * rootRDemand: 扔木棒,有撞的->危险 cutIndex = 0
+            * dsFo: 避开撞来的木棒
+            * rtFo: 木棒,有危险
+            * subDemandFo: 木棒,有危险 cutIndex = 0
+         
+         
+        */
         
         
         
