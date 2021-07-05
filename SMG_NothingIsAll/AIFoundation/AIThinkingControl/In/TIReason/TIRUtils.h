@@ -13,7 +13,7 @@
 /**
  *  MARK:--------------------时序识别之: protoFo&assFo匹配判断--------------------
  */
-+(void) TIR_Fo_CheckFoValidMatch:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo checkItemValid:(BOOL(^)(AIKVPointer *itemAlg,AIKVPointer *assAlg))checkItemValid success:(void(^)(NSInteger lastAssIndex,CGFloat matchValue))success;
++(void) TIR_Fo_CheckFoValidMatch:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo success:(void(^)(NSInteger lastAssIndex,CGFloat matchValue))success;
 
 
 //MARK:===============================================================

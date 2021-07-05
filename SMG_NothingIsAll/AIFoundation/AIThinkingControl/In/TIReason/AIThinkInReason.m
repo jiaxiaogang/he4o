@@ -189,6 +189,7 @@
  *  _param protoAlg_ps : RTFo
  *      1. 传入原始瞬时记忆序列 90% ,还是识别后的概念序列 10%;
  *      2. 传入行为化中的rethinkLSP重组fo;
+ *  @param baseDemand : 参数fo所处的r任务 (有可能非R任务,或者为nil,所以此参数用前需先做防错判断);
  *  @desc 向性:
  *      1. ↑
  *      2. →
@@ -214,7 +215,7 @@
  *      2020.04.03: 以识别到的多个时序,得到多个价值预测 (支持更多元的评价);
  *
  */
-+(AIShortMatchModel*) TIR_Fo_FromRethink:(AIFoNodeBase*)fo{
++(AIShortMatchModel*) TIR_Fo_FromRethink:(AIFoNodeBase*)fo baseDemand:(ReasonDemandModel*)baseDemand{
     //1. 数据检查
     AIShortMatchModel *result = [[AIShortMatchModel alloc] init];
     if (!fo || !ARRISOK(fo.content_ps)) return result;
@@ -223,41 +224,10 @@
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
     [self partMatching_FoV1Dot5:fo except_ps:@[fo.pointer] decoratorInModel:result findCutIndex:^NSInteger(AIFoNodeBase *matchFo, NSInteger lastMatchIndex) {
         
-        //TODOTOMORROW20210630:
-        //仅需要从父一级demand中,取cutIndex进行继承,继承时,判断在当前中的位置;
-        //即从父级的0-cutIndex之间,在当前fo中匹配lastIndex,做为cutIndex;
-        
-        //A: 是否判断全含分析:
-        //1. 是判断0-lastMatchIndex之间吗?
-        //2. 是判断全含?还是判断mIsC匹配?
-        //  dsFo和demandFo本来就不是一条线,所以不可能判断全含;
-        //  dsFo和demandFo可能匹配半程,所以要判定全含;
-    
-        //B: 举实例对继承分析:
-        /*
-         * rootPDemand: 为了开心
-            * dsFo: 穿过森林
-            * rtFo: 森林有虎咬人->危险
-            * baseDemandFo: 老虎咬人->危险
-                * dsFo: 带枪打虎
-                * rtFo: 打虎违法
-                * demandFo: 不能打虎->违法
-         
-         * rootRDemand: 飞下,有被木棒,撞的->危险 cutIndex = 0
-            * dsFo: 偏开撞来的木棒
-            * rtFo: 木棒,有危险
-            * subDemandFo: 木棒,有危险 cutIndex = -1
-    
-         * rootRDemand: 扔木棒,有撞的->危险 cutIndex = 0
-            * dsFo: 避开撞来的木棒
-            * rtFo: 木棒,有危险
-            * subDemandFo: 木棒,有危险 cutIndex = 0
-         
-         
-        */
-        
-        
-        
+        //TODOTOMORROW20210705: 从父级的0-cutIndex 向子级的0-lastMatchIndex 找最后匹配截点cutIndex;
+        [TIRUtils TIR_Fo_CheckFoValidMatch:nil/*base*/ assFo:nil/*sub*/ success:^(NSInteger lastAssIndex, CGFloat matchValue) {
+            NSInteger cutIndex = lastAssIndex;
+        }];
         return -1;
     }];
     NSLog(@"反思时序: Finish >> %@",Fo2FStr(result.matchFo));
@@ -409,9 +379,7 @@
             if (rContains) continue;
             
             //7. 全含判断;
-            [TIRUtils TIR_Fo_CheckFoValidMatch:maskFo assFo:assFo checkItemValid:^BOOL(AIKVPointer *itemAlg, AIKVPointer *assAlg) {
-                return [TOUtils mIsC_1:itemAlg c:assAlg];
-            } success:^(NSInteger lastAssIndex, CGFloat matchValue) {
+            [TIRUtils TIR_Fo_CheckFoValidMatch:maskFo assFo:assFo success:^(NSInteger lastAssIndex, CGFloat matchValue) {
                 if (Log4MFo) NSLog(@"时序识别item SUCCESS 完成度:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
                 NSInteger cutIndex = findCutIndex(assFo,lastAssIndex);
                 AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:assFo matchFoValue:matchValue lastMatchIndex:lastAssIndex cutIndex:cutIndex];

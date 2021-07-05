@@ -129,6 +129,8 @@
 -(AIShortMatchModel*) dataInFromRethink:(TOFoModel*)toFoModel{
     //1. 数据准备;
     AIFoNodeBase *rethinkFo = nil;
+    ReasonDemandModel *baseDemand = ARR_INDEX([TOUtils getBaseDemands_AllDeep:toFoModel], 0);
+    
     
     //2. 反思_HNGL类型;
     if ([TOUtils isHNGL_toModel:toFoModel]) {
@@ -151,7 +153,7 @@
     }
     
     //5. 反思时序;
-    return [AIThinkInReason TIR_Fo_FromRethink:rethinkFo];
+    return [AIThinkInReason TIR_Fo_FromRethink:rethinkFo baseDemand:baseDemand];
 }
 
 //MARK:===============================================================

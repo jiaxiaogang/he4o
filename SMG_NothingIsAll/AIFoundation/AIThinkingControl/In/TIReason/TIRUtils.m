@@ -31,9 +31,9 @@
  *  @param protoFo : 四层说明: 在fromShortMem时,protoFo中的概念元素为parent层, 而在fromRethink时,其元素为match层;
  *  _result 将protoFo与assFo判断是否全含,并将匹配度返回;
  */
-+(void) TIR_Fo_CheckFoValidMatch:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo checkItemValid:(BOOL(^)(AIKVPointer *itemAlg,AIKVPointer *assAlg))checkItemValid success:(void(^)(NSInteger lastAssIndex,CGFloat matchValue))success{
++(void) TIR_Fo_CheckFoValidMatch:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo success:(void(^)(NSInteger lastAssIndex,CGFloat matchValue))success{
     //1. 数据准备;
-    BOOL paramValid = protoFo && protoFo.content_ps.count > 0 && assFo && assFo.content_ps.count > 0 && success && checkItemValid;
+    BOOL paramValid = protoFo && protoFo.content_ps.count > 0 && assFo && assFo.content_ps.count > 0 && success;
     if (!paramValid) {
         NSLog(@"参数错误");
         return;
@@ -48,7 +48,8 @@
     for (NSInteger i = 0; i < assFo.content_ps.count; i++) {
         NSInteger curIndex = assFo.content_ps.count - i - 1;
         AIKVPointer *checkAssAlg_p = ARR_INDEX(assFo.content_ps, curIndex);
-        if (checkItemValid(lastProtoAlg_p,checkAssAlg_p)) {
+        BOOL mIsC = [TOUtils mIsC_1:lastProtoAlg_p c:checkAssAlg_p];
+        if (mIsC) {
             lastAssIndex = curIndex;
             break;
         }
@@ -68,7 +69,8 @@
             BOOL checkResult = false;
             for (NSInteger j = lastProtoIndex; j >= 0; j--) {
                 AIKVPointer *protoAlg_p = ARR_INDEX(protoFo.content_ps, j);
-                if (checkItemValid(protoAlg_p,checkAssAlg_p)) {
+                BOOL mIsC = [TOUtils mIsC_1:protoAlg_p c:checkAssAlg_p];
+                if (mIsC) {
                     lastProtoIndex = j; //成功匹配alg时,更新protoIndex (以达到只能向前匹配的目的);
                     checkResult = true;
                     validItemCount ++;  //有效数+1;
