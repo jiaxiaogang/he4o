@@ -27,6 +27,7 @@
 #import "TOUtils.h"
 #import "AITime.h"
 #import "AIMatchFoModel.h"
+#import "ReasonDemandModel.h"
 
 @implementation AIThinkInReason
 
@@ -225,7 +226,12 @@
     [self partMatching_FoV1Dot5:fo except_ps:@[fo.pointer] decoratorInModel:result findCutIndex:^NSInteger(AIFoNodeBase *matchFo, NSInteger lastMatchIndex) {
         
         //TODOTOMORROW20210705: 从父级的0-cutIndex 向子级的0-lastMatchIndex 找最后匹配截点cutIndex;
-        [TIRUtils TIR_Fo_CheckFoValidMatch:nil/*base*/ assFo:nil/*sub*/ success:^(NSInteger lastAssIndex, CGFloat matchValue) {
+        
+        //需要把有效范围传给TIR_Fo_CheckFoValidMatch
+        //即lastMatchIndex和baseDemand.mModel.cutIndex2
+        AIFoNodeBase *baseFo = baseDemand.mModel.matchFo;
+        AIFoNodeBase *subFo = matchFo;
+        [TIRUtils TIR_Fo_CheckFoValidMatch:baseFo assFo:subFo success:^(NSInteger lastAssIndex, CGFloat matchValue) {
             NSInteger cutIndex = lastAssIndex;
         }];
         return -1;
