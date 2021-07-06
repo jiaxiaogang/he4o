@@ -229,6 +229,31 @@
         
         //需要把有效范围传给TIR_Fo_CheckFoValidMatch
         //即lastMatchIndex和baseDemand.mModel.cutIndex2
+        
+        //反思: 此处subFo和baseFo相距甚远,甚至没任何关系,我们需要举更多示例,来分析更紧密的"已发生截点"传递机制;
+        //1. 主任务: 快乐;
+        //      > dsFo: 穿越森林
+        //      > 反思: 有可能遇虎,有危险 (已发生源于反思假想);
+        //2. 子任务: 解决危险;
+        //      > dsFo: 举枪打虎
+        //      > cutIndex: 现在还没老虎出现;
+        
+        //1. 主任务: 快乐;
+        //      > dsFo: 穿越森林
+        //      > 反思: 看到前边有老虎 (已发生源于识别预测);
+        //2. 子任务: 解决危险;
+        //      > dsFo: 捡石头吓跑它
+        //      > cutIndex: 现在已有老虎出现;
+        
+        //1. 主任务: 快乐;
+        //      > dsFo: 穿越森林
+        //      > 反思: 有可能遇虎,有危险 (已发生源于反思假想);
+        //2. 子任务: 解决危险;
+        //      > dsFo: 遇虎时大喊滚开
+        //      > cutIndex: ;
+        
+        //综上: 无论怎么分析,反思时已发生部分全是-1,后续真实发生时,预测,此时就一定不再是-1了;
+        
         AIFoNodeBase *baseFo = baseDemand.mModel.matchFo;
         AIFoNodeBase *subFo = matchFo;
         [TIRUtils TIR_Fo_CheckFoValidMatch:baseFo assFo:subFo success:^(NSInteger lastAssIndex, CGFloat matchValue) {
