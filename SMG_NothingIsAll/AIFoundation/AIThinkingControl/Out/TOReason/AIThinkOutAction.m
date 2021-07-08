@@ -65,8 +65,9 @@
     //3. 对R任务执行前做评价;
     if (outModel.actionIndex == -1 && ISOK(outModel.baseOrGroup, ReasonDemandModel.class)) {
         //4. FRS_Time没错过评价 (true表示没错过);
+        BOOL frsTimeSwitch = false;
         BOOL frsTimeOK = [AIScore FRS_Time:outModel demand:(ReasonDemandModel*)outModel.baseOrGroup];
-        if (!frsTimeOK) {
+        if (frsTimeSwitch && !frsTimeOK) {
             NSLog(@"FRSTime理性评价(错过)-不通过");
             outModel.status = TOModelStatus_ScoreNo;
             [self.delegate toAction_SubModelFailure:outModel];
@@ -271,6 +272,13 @@
             ReasonDemandModel *rDemand = (ReasonDemandModel*)outModel.baseOrGroup.baseOrGroup;
             TOFoModel *dsFo = (TOFoModel*)outModel.baseOrGroup;
             BOOL arsTime = [AIScore ARS_Time:dsFo demand:rDemand];
+            
+            //关掉FRSTime评价,回测此处是否正常工作;
+            if (dsFo.content_p.pointerId == 2 || dsFo.content_p.pointerId == 3) {
+                NSLog(@"F2F3的ARSTime评价结果:%@",arsTime ? @"找cHav" : @"静默等待");
+                NSLog(@"");
+            }
+            
             if (!arsTime) {
                 //2. 评价不通过,则直接ActYes,等待其自然出现 (参考22153-A2);
                 NSLog(@"==> arsTime评价不急,子弹再飞一会儿");

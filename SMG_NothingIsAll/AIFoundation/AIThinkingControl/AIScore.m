@@ -289,11 +289,6 @@
     if (!dsFoModel || !demand) return;
     AIFoNodeBase *dsFo = [SMGUtils searchNode:dsFoModel.content_p];
     
-    if (dsFoModel.content_p.pointerId == 2 || dsFoModel.content_p.pointerId == 3) {
-        NSLog(@"F2F3");
-        NSLog(@"");
-    }
-    
     //2. 找下标 (参考注释@desc);
     for (NSInteger i = 0; i < dsFo.count; i++) {
         AIKVPointer *dsAlg_p = ARR_INDEX(dsFo.content_ps, i);
