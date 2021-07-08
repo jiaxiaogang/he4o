@@ -156,7 +156,9 @@
 /**
  *  MARK:--------------------时序来的及评价--------------------
  *  @desc 对将要决策部分:B 和 已发生部分:C 之间进行mIsC判断 (B<=C=已错过) (参考22197);
- *  @result
+ *  @version
+ *      2021.07.08: BUG_返回结果是是否没错过,而不是是否已错过,所以当B>C时,说明没错过;
+ *  @result     : 返回是否来的及 (默认来的及);
  *      true    : 继续行为化 (比如:没错过,正常继续即可);
  *      false   : 已错过即:将任务推进到已发生处 (比如:穿越森林任务出门前带枪,但已经出门了,枪已经忘带);
  */
@@ -170,8 +172,8 @@
         AIKVPointer *alg_p = ARR_INDEX(curFo.content_ps, i);
         NSInteger findIndex = [TOUtils indexOfConOrAbsItem:alg_p atContent:demand.mModel.matchFo.content_ps layerDiff:2 startIndex:0 endIndex:demand.mModel.cutIndex2];
         if (findIndex != -1) {
-            //3. B < C = 已错过;
-            return findIndex <= demand.mModel.cutIndex2;
+            //3. B > C = 没错过 (B>C表示B还没发生,B<=C表示B已经发生);
+            return findIndex > demand.mModel.cutIndex2;
         }
     }
     return true;

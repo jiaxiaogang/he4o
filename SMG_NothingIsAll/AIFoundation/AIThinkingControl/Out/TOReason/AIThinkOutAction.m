@@ -64,9 +64,9 @@
     
     //3. 对R任务执行前做评价;
     if (outModel.actionIndex == -1 && ISOK(outModel.baseOrGroup, ReasonDemandModel.class)) {
-        //4. FRS_Time错过评价;
-        BOOL frsTime = [AIScore FRS_Time:outModel demand:(ReasonDemandModel*)outModel.baseOrGroup];
-        if (!frsTime) {
+        //4. FRS_Time没错过评价 (true表示没错过);
+        BOOL frsTimeOK = [AIScore FRS_Time:outModel demand:(ReasonDemandModel*)outModel.baseOrGroup];
+        if (!frsTimeOK) {
             NSLog(@"FRSTime理性评价(错过)-不通过");
             outModel.status = TOModelStatus_ScoreNo;
             [self.delegate toAction_SubModelFailure:outModel];
