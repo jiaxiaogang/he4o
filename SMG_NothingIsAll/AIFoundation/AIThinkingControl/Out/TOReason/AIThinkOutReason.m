@@ -846,7 +846,8 @@
     if (self.debugMode) {
         NSInteger modelLayer = [TOUtils getBaseOutModels_AllDeep:beginModel].count;
         NSInteger demandLayer = [TOUtils getBaseDemands_AllDeep:beginModel].count;
-        NSLog(@"FC-BEGIN (所在层:%ld / 任务层:%ld) %@%@",modelLayer,demandLayer,Pit2FStr(beginModel.content_p),TOModel2Root2Str(beginModel));
+        NSLog(@"FC-BEGIN (所在层:%ld / 任务层:%ld) %@",modelLayer,demandLayer,Pit2FStr(beginModel.content_p));
+        //NSLog(@"%@",TOModel2Root2Str(beginModel));
         self.debugMode = false;
     }
     
@@ -961,7 +962,8 @@
                 self.debugMode = true;
                 NSInteger modelLayer = [TOUtils getBaseOutModels_AllDeep:actYesModel].count;
                 NSInteger demandLayer = [TOUtils getBaseDemands_AllDeep:actYesModel].count;
-                NSLog(@"FC-ACTYES (所在层:%ld / 任务层:%ld) %@%@",modelLayer,demandLayer,Pit2FStr(actYesModel.content_p),TOModel2Root2Str(actYesModel));
+                NSLog(@"FC-ACTYES (所在层:%ld / 任务层:%ld) %@",modelLayer,demandLayer,Pit2FStr(actYesModel.content_p));
+                //NSLog(@"%@",TOModel2Root2Str(actYesModel));
                 [AITime setTimeTrigger:deltaTime trigger:^{
                     
                     //3. 无root时,说明已被别的R-新matchFo抵消掉,抵消掉后是不做反省的 (参考22081-todo1);
