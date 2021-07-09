@@ -124,6 +124,10 @@
     if (!inModel || !inModel.protoFo || !ARRISOK(inModel.matchPFos) || !Switch4RS) return;
     NSLog(@"\n\n------------------------------- RMV -------------------------------");
     
+    //TODOTOMORROW20210709: 查此处,为什么最后F5生成了R任务,而更抽象的F13没有 (参考23172);
+    
+    
+    
     //2. 多时序识别预测分别进行处理;
     for (AIMatchFoModel *mModel in inModel.matchPFos) {
         

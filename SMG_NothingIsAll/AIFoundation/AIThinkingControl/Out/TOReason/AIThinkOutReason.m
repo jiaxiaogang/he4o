@@ -138,6 +138,14 @@
         [self commitReasonSub:foModel demand:demand];
         return;
     }
+    
+    //TODOTOMORROW20210709: 查23172此处dsFo经验只有一条的问题;
+    for (AIPort *dsPort in dsPorts) {
+        BOOL except = [except_ps containsObject:dsPort.target_p];
+        BOOL spaceS = ![AIScore FRS:[SMGUtils searchNode:dsPort.target_p]];
+        NSLog(@"item强度:%ld => %@ (%@ | %@)",dsPort.strong.value,Pit2FStr(dsPort.target_p),except ? @"不应期" : @"",spaceS ? @"空S掉" : @"");
+    }
+    
     demand.status = TOModelStatus_ActNo;
     NSLog(@"------->>>>>> R-无计可施");
 }
