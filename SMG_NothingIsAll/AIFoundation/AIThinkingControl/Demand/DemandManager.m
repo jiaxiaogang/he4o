@@ -124,13 +124,8 @@
     if (!inModel || !inModel.protoFo || !ARRISOK(inModel.matchPFos) || !Switch4RS) return;
     NSLog(@"\n\n------------------------------- RMV -------------------------------");
     
-    //TODOTOMORROW20210709: 查此处,为什么最后F5生成了R任务,而更抽象的F13没有 (参考23172);
-    
-    
-    
     //2. 多时序识别预测分别进行处理;
     for (AIMatchFoModel *mModel in inModel.matchPFos) {
-        
         //3. 单条数据准备;
         //2021.03.28: 此处algsType由urgentTo.at改成cmv.at,从mvNodeManager看这俩一致,如果出现bug再说;
         if (!mModel.matchFo.cmvNode_p) continue;
@@ -174,7 +169,21 @@
             //2021.05.27: 为方便测试,所有imv都给20迫切度 (因为迫切度太低话,还没怎么思考就停了);
             CGFloat newUrgentTo = 20;//newItem.urgentTo;
             [theTC updateEnergy:MAX(0, newUrgentTo - sameIdenOldMax)];
-            NSLog(@"demandManager-RMV >> 新需求+1=%lu 评分:%f\n%@->%@",(unsigned long)self.loopCache.count,score,Fo2FStr(mModel.matchFo),Pit2FStr(mModel.matchFo.cmvNode_p));
+            NSLog(@"RMV新需求: %@->%@ (条数+1=%ld 评分:%@)",Fo2FStr(mModel.matchFo),Pit2FStr(mModel.matchFo.cmvNode_p),self.loopCache.count,Double2Str_NDZ(score));
+            
+            
+            
+            
+            //TODOTOMORROW20210709: 查此处,为什么最后F5生成了R任务,而更抽象的F13没有 (参考23172);
+            //1. 此处所有matchPFos都独立生成了R需求;
+            //2. 而pFos的排序是以更x在前;
+            //3. 而需求的取用getCurrentDemand.refreshCmvCacheSort()中排序,是以最迫切中的最晚initTime为优先的;
+            if (mModel.matchFo.pointer.pointerId == 13) {
+                NSLog(@"");
+            }
+            if (mModel.matchFo.pointer.pointerId == 5) {
+                NSLog(@"");
+            }
         }else{
             NSLog(@"当前,预测mv未形成需求:%@ 基于:%@ 评分:%f",algsType,Pit2FStr(mModel.matchFo.cmvNode_p),score);
         }
