@@ -119,10 +119,10 @@
     }];
     NSMutableArray *except_ps = [TOUtils convertPointersFromTOModels:exceptFoModels];
     [except_ps addObject:matchFo.pointer];
-    if (Log4DirecRef) NSLog(@"------->>>>>> Fo已有方案数:%lu 不应期数:%lu",(long)demand.actionFoModels.count,(long)except_ps.count);
     
     //6. 其次从方向索引找normalFo解决方案_找索引;
     NSArray *dsPorts = [AINetUtils dsPorts_All:demand.mModel.matchFo];
+    if (Log4DirecRef) NSLog(@"------->>>>>> Fo已有方案数:%ld 不应期数:%ld 共有方案数:%ld",demand.actionFoModels.count,except_ps.count,dsPorts.count);
     
     for (AIPort *dsPort in dsPorts) {
         //a. 不应期无效,继续找下个;

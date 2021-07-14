@@ -118,6 +118,7 @@
  *      2021.01.27: RMV仅对matchFoModel进行抵消防重 (否则会导致inModel预测处理不充分) (参考22074-BUG2);
  *      2021.02.05: 新增任务时,仅将"与旧有同区最大迫切度的差值"累增至活跃度 (参考22116);
  *      2021.03.01: 修复RMV一直在行为输出和被识别间重复死循环BUG (参考22142);
+ *      2021.07.14: 循环matchPFos时,采用反序,因为优先级和任务池优先级上弄反了 (参考23172);
  */
 -(void) updateCMVCache_RMV:(AIShortMatchModel*)inModel{
     //1. 数据检查;
@@ -125,7 +126,10 @@
     NSLog(@"\n\n------------------------------- RMV -------------------------------");
     
     //2. 多时序识别预测分别进行处理;
-    for (AIMatchFoModel *mModel in inModel.matchPFos) {
+    for (NSInteger i = 0; i < inModel.matchPFos.count; i++) {
+        
+        //2. 因为matchPFos排序是更好(引用强度强)的在先,而任务池是以迫切度+initTime靠后优先,所以倒序,使强度强的initTime更靠后;
+        AIMatchFoModel *mModel = ARR_INDEX_REVERSE(inModel.matchPFos, i);
         //3. 单条数据准备;
         //2021.03.28: 此处algsType由urgentTo.at改成cmv.at,从mvNodeManager看这俩一致,如果出现bug再说;
         if (!mModel.matchFo.cmvNode_p) continue;
@@ -170,20 +174,6 @@
             CGFloat newUrgentTo = 20;//newItem.urgentTo;
             [theTC updateEnergy:MAX(0, newUrgentTo - sameIdenOldMax)];
             NSLog(@"RMV新需求: %@->%@ (条数+1=%ld 评分:%@)",Fo2FStr(mModel.matchFo),Pit2FStr(mModel.matchFo.cmvNode_p),self.loopCache.count,Double2Str_NDZ(score));
-            
-            
-            
-            
-            //TODOTOMORROW20210709: 查此处,为什么最后F5生成了R任务,而更抽象的F13没有 (参考23172);
-            //1. 此处所有matchPFos都独立生成了R需求;
-            //2. 而pFos的排序是以更x在前;
-            //3. 而需求的取用getCurrentDemand.refreshCmvCacheSort()中排序,是以最迫切中的最晚initTime为优先的;
-            if (mModel.matchFo.pointer.pointerId == 13) {
-                NSLog(@"");
-            }
-            if (mModel.matchFo.pointer.pointerId == 5) {
-                NSLog(@"");
-            }
         }else{
             NSLog(@"当前,预测mv未形成需求:%@ 基于:%@ 评分:%f",algsType,Pit2FStr(mModel.matchFo.cmvNode_p),score);
         }
