@@ -158,26 +158,27 @@
  *  @desc 对将要决策部分:B 和 已发生部分:C 之间进行mIsC判断 (B<=C=已错过) (参考22197);
  *  @version
  *      2021.07.08: BUG_返回结果是是否没错过,而不是是否已错过,所以当B>C时,说明没错过;
+ *      2021.07.17: 废弃_因为FRSTime评价结果仅停留在Fo层,未深入Alg太粗略不够理性 (参考n23p18);
  *  @result     : 返回是否来的及 (默认来的及);
  *      true    : 继续行为化 (比如:没错过,正常继续即可);
  *      false   : 已错过即:将任务推进到已发生处 (比如:穿越森林任务出门前带枪,但已经出门了,枪已经忘带);
  */
-+(BOOL) FRS_Time:(TOFoModel*)toFo demand:(ReasonDemandModel*)demand{
-    //1. 数据检查;
-    if (!toFo || !demand) return true;
-    AIFoNodeBase *curFo = [SMGUtils searchNode:toFo.content_p];
-    
-    //2. 对将要决策部分:B 和 已发生部分:C 之间进行mIsC判断;
-    for (NSInteger i = toFo.actionIndex + 1; i < curFo.count; i++) {
-        AIKVPointer *alg_p = ARR_INDEX(curFo.content_ps, i);
-        NSInteger findIndex = [TOUtils indexOfConOrAbsItem:alg_p atContent:demand.mModel.matchFo.content_ps layerDiff:2 startIndex:0 endIndex:demand.mModel.cutIndex2];
-        if (findIndex != -1) {
-            //3. B > C = 没错过 (B>C表示B还没发生,B<=C表示B已经发生);
-            return findIndex > demand.mModel.cutIndex2;
-        }
-    }
-    return true;
-}
+//+(BOOL) FRS_Time:(TOFoModel*)toFo demand:(ReasonDemandModel*)demand{
+//    //1. 数据检查;
+//    if (!toFo || !demand) return true;
+//    AIFoNodeBase *curFo = [SMGUtils searchNode:toFo.content_p];
+//
+//    //2. 对将要决策部分:B 和 已发生部分:C 之间进行mIsC判断;
+//    for (NSInteger i = toFo.actionIndex + 1; i < curFo.count; i++) {
+//        AIKVPointer *alg_p = ARR_INDEX(curFo.content_ps, i);
+//        NSInteger findIndex = [TOUtils indexOfConOrAbsItem:alg_p atContent:demand.mModel.matchFo.content_ps layerDiff:2 startIndex:0 endIndex:demand.mModel.cutIndex2];
+//        if (findIndex != -1) {
+//            //3. B > C = 没错过 (B>C表示B还没发生,B<=C表示B已经发生);
+//            return findIndex > demand.mModel.cutIndex2;
+//        }
+//    }
+//    return true;
+//}
 
 //MARK:===============================================================
 //MARK:                     < FPS >

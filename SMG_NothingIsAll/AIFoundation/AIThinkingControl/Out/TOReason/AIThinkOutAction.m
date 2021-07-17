@@ -49,6 +49,7 @@
  *      2021.06.01: 反思子任务死循环再现 (参考23094);
  *      2021.06.01: 对已有的failure状态子任务,加入到子任务不应期中,避免明明无计可施的R子任务还不断尝试 (参考23095);
  *      2021.06.04: 把子任务生成,重构到DemandManager中 (参考23096);
+ *      2021.07.17: 废弃FRSTime评价 (参考n23p18);
  */
 -(void) convert2Out_Fo:(TOFoModel*)outModel{
     //1. 取出需行为化的content_ps部分;
@@ -60,19 +61,6 @@
         outModel.status = TOModelStatus_ActNo;
         [self.delegate toAction_SubModelFailure:outModel];
         return;
-    }
-    
-    //3. 对R任务执行前做评价;
-    if (outModel.actionIndex == -1 && ISOK(outModel.baseOrGroup, ReasonDemandModel.class)) {
-        //4. FRS_Time没错过评价 (true表示没错过);
-        BOOL frsTimeSwitch = true;
-        BOOL frsTimeOK = [AIScore FRS_Time:outModel demand:(ReasonDemandModel*)outModel.baseOrGroup];
-        if (frsTimeSwitch && !frsTimeOK) {
-            NSLog(@"FRSTime理性评价(错过)-不通过");
-            outModel.status = TOModelStatus_ScoreNo;
-            [self.delegate toAction_SubModelFailure:outModel];
-            return;
-        }
     }
     
     //3. 对P任务首帧执行前做评价_2021.01.22: R-任务解决方案不做空S评价;
