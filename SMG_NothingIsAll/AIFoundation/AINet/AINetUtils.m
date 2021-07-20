@@ -78,6 +78,18 @@
 }
 
 /**
+ *  MARK:--------------------获取absNode被conNode指向的强度--------------------
+ */
++(NSInteger) getStrong:(AINodeBase*)absNode atConNode:(AINodeBase*)conNode type:(AnalogyType)type{
+    if (absNode && conNode) {
+        NSArray *absPorts = [AINetUtils absPorts_All:conNode type:type];
+        AIPort *absPort = [AINetUtils findPort:absNode.pointer fromPorts:absPorts];
+        if (absPort) return absPort.strong.value;
+    }
+    return 0;
+}
+
+/**
  *  MARK:--------------------是否虚mv--------------------
  *  @desc 虚mv判断标准 (迫切度是否为0);
  */

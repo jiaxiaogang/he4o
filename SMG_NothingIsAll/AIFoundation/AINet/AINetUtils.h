@@ -44,6 +44,11 @@
 +(NSInteger) getMaxStrong:(NSArray*)ports;
 
 /**
+ *  MARK:--------------------获取absNode被conNode指向的强度--------------------
+ */
++(NSInteger) getStrong:(AINodeBase*)absNode atConNode:(AINodeBase*)conNode type:(AnalogyType)type;
+
+/**
  *  MARK:--------------------是否虚mv--------------------
  */
 +(BOOL) isVirtualMv:(AIKVPointer*)mv_p;
