@@ -207,7 +207,7 @@
     if (!mModel) return;
     AIFoNodeBase *matchAFo = mModel.matchAFo;
     AIFoNodeBase *protoFo = mModel.protoFo;
-    NSLog(@"\n\n------------------------------- 内类比 -------------------------------\nP:%@\nM:%@",Fo2FStr(protoFo),Fo2FStr(matchAFo));
+    IFTitleLog(@"内类比", @"\nP:%@\nM:%@",Fo2FStr(protoFo),Fo2FStr(matchAFo));
     
     //1. 用protoFo做内类比大小;
     if (ISOK(protoFo, AIFoNodeBase.class) && protoFo.count >= 2) {
@@ -511,11 +511,12 @@
     
     //2. 检查同向;
     BOOL isSame = [AIScore sameIdenSameScore:matchFo.cmvNode_p mv2:shortFo.cmvNode_p];
-    NSLog(@"\n\n------------------------------- 正向反馈外类比 (%@) -------------------------------\n短时MatchFo:%@->%@ \n输入ProtoFo:%@->%@",isSame ? @"执行" : @"未执行", Fo2FStr(matchFo),Mvp2Str(matchFo.cmvNode_p),Fo2FStr(shortFo),Mvp2Str(shortFo.cmvNode_p));
+    IFTitleLog(@"正向反馈外类比 (%@)", @"\n短时MatchFo:%@->%@ \n输入ProtoFo:%@->%@",isSame ? @"执行" : @"未执行", Fo2FStr(matchFo),Mvp2Str(matchFo.cmvNode_p),Fo2FStr(shortFo),Mvp2Str(shortFo.cmvNode_p));
     if (!isSame) return;
     
     //3. 类比 (与当前的analogy_Outside()较相似,所以暂不写,随后写时,也是将原有的_outside改成此_same类比方法);
-    [self analogyOutside:shortFo assFo:matchFo type:ATSame createAbsAlgBlock:nil];
+    AINetAbsFoNode *absFo = [self analogyOutside:shortFo assFo:matchFo type:ATSame createAbsAlgBlock:nil];
+    NSLog(@"抽象出: %@",Fo2FStr(absFo));
 }
 
 /**
@@ -554,8 +555,7 @@
     //4. 互指向 (将虚mv指定给protoFo & 嵌套互指向);
     [AINetUtils relateFo:protoFo mv:mvNode];
     [AINetUtils relateDiff:protoFo baseNode:matchFo strongPorts:nil];
-    
-    NSLog(@"\n\n------------------------------- 反向反馈外类比 -------------------------------\nprotoFo:%@->%@", Fo2FStr(protoFo),Mv2FStr(mvNode));
+    IFTitleLog(@"反向反馈外类比", @"\nprotoFo:%@->%@", Fo2FStr(protoFo),Mv2FStr(mvNode));
     
     //5. 取嵌套前3条subFo,进行外类比;
     AIPort *protoPort = [AINetUtils findPort:protoFo.pointer fromPorts:matchFo.diffSubPorts];
@@ -646,7 +646,7 @@
     }else{
         [matchContent addObjectsFromArray:matchFo.content_ps];
     }
-    NSLog(@"\n\n------------------------------- In反省类比 (%@) -------------------------------\nM:%@\nP:%@",ATType2Str(type),Fo2FStr(matchFo),Fo2FStr(shortFo));
+    IFTitleLog(@"In反省类比 (%@)", @"\nM:%@\nP:%@",ATType2Str(type),Fo2FStr(matchFo),Fo2FStr(shortFo));
     
     //3. 正向有序取差集 = M-P;
     NSMutableArray *justPs = [[NSMutableArray alloc] init];

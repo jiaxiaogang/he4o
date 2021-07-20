@@ -67,7 +67,7 @@
     //1. 数据准备
     AIAlgNodeBase *protoAlg = [SMGUtils searchNode:algNode_p];
     if (protoAlg == nil) return;
-    NSLog(@"\n\n------------------------------- 概念识别 -------------------------------\n%@",Alg2FStr(protoAlg));
+    IFTitleLog(@"概念识别",@"\n%@",Alg2FStr(protoAlg));
     
     //2. 对value.refPorts进行检查识别; (noMv信号已输入完毕,识别联想)
     __block NSMutableArray *matchAlgs = [[NSMutableArray alloc] init];
@@ -251,7 +251,7 @@
     if (!inModel) return;
     AIFoNodeBase *maskFo = ARRISOK(inModel.matchAlgs) ? inModel.protoFo : inModel.matchAFo;
     
-    NSLog(@"\n\n------------------------------- 瞬时时序识别 -------------------------------\n%@:%@->%@",ARRISOK(inModel.matchAlgs) ? @"protoFo" : @"matchAFo",Fo2FStr(maskFo),Mvp2Str(maskFo.cmvNode_p));
+    IFTitleLog(@"瞬时时序识别", @"\n%@:%@->%@",ARRISOK(inModel.matchAlgs) ? @"protoFo" : @"matchAFo",Fo2FStr(maskFo),Mvp2Str(maskFo.cmvNode_p));
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
     [self partMatching_FoV1Dot5:maskFo except_ps:except_ps decoratorInModel:inModel findCutIndex:^NSInteger(AIFoNodeBase *matchFo, NSInteger lastMatchIndex) {
         //3. 当fromTIM时,cutIndex=lastAssIndex;

@@ -53,7 +53,7 @@
 -(void) dataInWithModels:(NSArray*)dics algsType:(NSString*)algsType{
     //1. 数据检查 (小鸟不能仅传入foodView,而要传入整个视角场景)
     dics = ARRTOOK(dics);
-    NSLog(@"\n\n------------------------------- 皮层输入 -------------------------------");
+    ISTitleLog(@"皮层输入");
     
     //2. 收集所有具象父概念的value_ps
     NSMutableArray *parentValue_ps = [[NSMutableArray alloc] init];
