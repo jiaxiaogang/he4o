@@ -97,7 +97,7 @@
     //1. 数据检查
     NSArray *inModels = theTC.inModelManager.models;
     if (!newMv) return;
-    NSLog(@"\n\n=============================== tip_OPushM ===============================\n输入MV:%@",Mv2FStr(newMv));
+    OFTitleLog(@"tip_OPushM", @"\n输入MV:%@",Mv2FStr(newMv));
     
     //3. 判断最近一次input是否与等待中outModel相匹配 (匹配,比如吃,确定自己是否真吃了);
     for (AIShortMatchModel *inModel in inModels) {

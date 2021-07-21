@@ -105,7 +105,7 @@
     //1. 数据检查
     if (!demand || !Switch4RS) return;
     AIFoNodeBase *matchFo = demand.mModel.matchFo;
-    NSLog(@"\n\n=============================== TOP.R- ===============================\n任务:%@->%@,发生%ld",Fo2FStr(matchFo),Mvp2Str(matchFo.cmvNode_p),(long)demand.mModel.cutIndex2);
+    OFTitleLog(@"TOP.R-", @"\n任务:%@->%@,发生%ld",Fo2FStr(matchFo),Mvp2Str(matchFo.cmvNode_p),(long)demand.mModel.cutIndex2);
     
     //3. ActYes等待 或 OutBack反省等待 中时,不进行决策;
     NSArray *waitFos = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
@@ -375,7 +375,7 @@
     
     //2. 取出所有等待下轮的outModel (ActYes&Runing);
     NSArray *waitModels = [TOUtils getSubOutModels_AllDeep:demand validStatus:@[@(TOModelStatus_ActYes)] cutStopStatus:@[@(TOModelStatus_Finish),@(TOModelStatus_ActNo),@(TOModelStatus_ScoreNo)]];
-    NSLog(@"\n\n=============================== tor_OPushM ===============================\n输入M:%@\n输入P:%@\n等待中任务数:%lu",Alg2FStr(latestMModel.matchAlg),Alg2FStr(latestMModel.protoAlg),(long)waitModels.count);
+    OFTitleLog(@"tor_OPushM", @"\n输入M:%@\n输入P:%@\n等待中任务数:%lu",Alg2FStr(latestMModel.matchAlg),Alg2FStr(latestMModel.protoAlg),(long)waitModels.count);
     
     //3. 判断最近一次input是否与等待中outModel相匹配 (匹配,比如吃,确定自己是否真吃了);
     //3. 保留/更新实际发生到outModel (通过了有效判断的,将实际概念直接存留到waitModel);
@@ -578,7 +578,7 @@
         if (notNeedPM) notNeedPM();
         return;
     }
-    NSLog(@"\n\n=============================== PM ===============================\nM:%@\nMAtFo:%@",Pit2FStr(outModel.content_p),Pit2FStr(outModel.pm_Fo));
+    OFTitleLog(@"PM", @"\nM:%@\nMAtFo:%@",Pit2FStr(outModel.content_p),Pit2FStr(outModel.pm_Fo));
     if (Log4PM) NSLog(@"---> P独特码:%@",Pits2FStr(outModel.justPValues));
     if (Log4PM) NSLog(@"---> 不应期:%@",Pits2FStr(except_ps));
     if (Log4PM) NSLog(@"---> P有效独特码:%@",Pits2FStr(validJustPValues));
@@ -904,7 +904,7 @@
  *      2021.06.10: 子任务判断不了havRoot,改为判断root是否已经finish,因为在tor_OPushM中finish的任务actYes是不生效的;
  */
 -(void) singleLoopBackWithActYes:(TOModelBase*)actYesModel {
-    NSLog(@"\n\n=============================== 流程控制:ActYes ===============================\nModel:%@ %@",actYesModel.class,Pit2FStr(actYesModel.content_p));
+    OFTitleLog(@"流程控制:ActYes", @"\nModel:%@ %@",actYesModel.class,Pit2FStr(actYesModel.content_p));
     if (ISOK(actYesModel, TOAlgModel.class)) {
         //1. TOAlgModel时;
         TOAlgModel *algModel = (TOAlgModel*)actYesModel;

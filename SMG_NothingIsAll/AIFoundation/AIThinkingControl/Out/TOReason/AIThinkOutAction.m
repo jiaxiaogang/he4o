@@ -56,7 +56,7 @@
     AIFoNodeBase *curFo = [SMGUtils searchNode:outModel.content_p];
     
     //2. 数据检查
-    NSLog(@"\n\n=============================== 行为化Fo ===============================\n时序:%@->%@ 类型:(%@)",Fo2FStr(curFo),Mvp2Str(curFo.cmvNode_p),[NSLog_Extension convertATType2Desc:[curFo.pointer.dataSource integerValue]]);
+    OFTitleLog(@"行为化Fo", @"\n时序:%@->%@ 类型:(%@)",Fo2FStr(curFo),Mvp2Str(curFo.cmvNode_p),ATType2Str([curFo.pointer.dataSource integerValue]));
     if (curFo == nil || !ARRISOK(curFo.content_ps)) {
         outModel.status = TOModelStatus_ActNo;
         [self.delegate toAction_SubModelFailure:outModel];
@@ -170,7 +170,7 @@
         return;
     }else if (outModel.content_p.isOut) {
         //2. 第1级: 本身即是isOut时,直接行为化返回;
-        NSLog(@"\n\n=============================== 行为输出 ===============================\n%@",AlgP2FStr(outModel.content_p));
+        OFTitleLog(@"行为输出", @"\n%@",AlgP2FStr(outModel.content_p));
         //2. 输出前改为ActYes (避免重复决策当前demand) (isOut=true暂无需反省类比);
         outModel.status = TOModelStatus_ActYes;
         //[self.delegate toAction_SubModelActYes:outModel];
@@ -187,7 +187,7 @@
     }else{
         //3. 数据检查curAlg
         AIAlgNodeBase *curAlg = [SMGUtils searchNode:outModel.content_p];
-        NSLog(@"\n\n=============================== 行为化_Hav ===============================\nC:%@",Alg2FStr(curAlg));
+        OFTitleLog(@"行为化_Hav", @"\nC:%@",Alg2FStr(curAlg));
         if (!curAlg) {
             outModel.status = TOModelStatus_ActNo;
             [self.delegate toAction_SubModelFailure:outModel];
@@ -312,7 +312,7 @@
  *      2021.05.17: 将不应期改为仅ActNo和ScoreNo的,因为Finish的即使用过也可以再用 (23078修复后测时发现有可行方案被不应期掉了);
  */
 -(void) convert2Out_GL:(TOValueModel*)outModel {
-    NSLog(@"\n\n=============================== 行为化_GL ===============================\n加工值: (%@ -> %@) ",Pit2FStr(outModel.sValue_p),Pit2FStr(outModel.content_p));
+    OFTitleLog(@"行为化_GL", @"\n加工值: (%@ -> %@) ",Pit2FStr(outModel.sValue_p),Pit2FStr(outModel.content_p));
     //1. 数据准备
     AnalogyType type = [ThinkingUtils compare:outModel.sValue_p valueB_p:outModel.content_p];
     NSString *vAT = outModel.content_p.algsType;

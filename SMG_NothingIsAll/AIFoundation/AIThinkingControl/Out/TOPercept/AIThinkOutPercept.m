@@ -59,7 +59,7 @@
     if (!demandModel) return false;
     if (![theTC energyValid]) return false;
     MVDirection direction = [ThinkingUtils getDemandDirection:demandModel.algsType delta:demandModel.delta];
-    NSLog(@"\n\n=============================== TOP.P- ===============================\n任务:%@,发生%ld,方向%ld",demandModel.algsType,(long)demandModel.delta,(long)direction);
+    OFTitleLog(@"TOP.P-", @"\n任务:%@,发生%ld,方向%ld",demandModel.algsType,(long)demandModel.delta,(long)direction);
     
     //2. 调用通用diff模式方法;
     __block BOOL success = false;//默认为失败
@@ -133,7 +133,7 @@
     //1. 数据检查
     NSArray *demands = theTC.outModelManager.getAllDemand;
     if (!newMv) return;
-    NSLog(@"\n\n=============================== top_OPushM ===============================\n输入MV:%@",Mv2FStr(newMv));
+    OFTitleLog(@"top_OPushM", @"\n输入MV:%@",Mv2FStr(newMv));
     
     //2. 对所有ReasonDemandModel尝试处理 (是R-任务);
     for (ReasonDemandModel *demand in demands) {

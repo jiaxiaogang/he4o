@@ -221,7 +221,7 @@
     //1. 数据检查
     AIShortMatchModel *result = [[AIShortMatchModel alloc] init];
     if (!fo || !ARRISOK(fo.content_ps)) return result;
-    NSLog(@"\n\n=============================== 反思时序识别 ===============================\n%@",Fo2FStr(fo));
+    OFTitleLog(@"反思时序识别", @"\n%@",Fo2FStr(fo));
     
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
     [self partMatching_FoV1Dot5:fo except_ps:@[fo.pointer] decoratorInModel:result findCutIndex:^NSInteger(AIFoNodeBase *matchFo, NSInteger lastMatchIndex) {
@@ -483,7 +483,7 @@
     //1. 数据检查
     NSArray *inModels = theTC.inModelManager.models;
     if (!newInModel) return;
-    if (Log4TIROPushM) NSLog(@"\n\n=============================== tir_OPushM ===============================\n输入M:%@\n输入P:%@",Alg2FStr(newInModel.matchAlg),Alg2FStr(newInModel.protoAlg));
+    OFTitleLog(@"tir_OPushM", @"\n输入M:%@\n输入P:%@",Alg2FStr(newInModel.matchAlg),Alg2FStr(newInModel.protoAlg));
     
     //2. 判断最近一次input是否与等待中outModel相匹配 (匹配,比如吃,确定自己是否真吃了);
     for (AIShortMatchModel *inModel in inModels) {
