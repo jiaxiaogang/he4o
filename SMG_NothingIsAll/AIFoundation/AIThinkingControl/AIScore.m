@@ -66,7 +66,8 @@
     //1. 数据准备;
     double result = 0;
     spPorts = ARRTOOK([SMGUtils filterAlgPorts:spPorts valueIdentifier:value_p.identifier]);
-    if (!value_p || !ARRISOK(spPorts)) return result;
+    if (!value_p || !ARRISOK(spPorts))
+        return result;
     double value = [NUMTOOK([AINetIndex getData:value_p]) doubleValue];
     NSString *valueIden = value_p.identifier;
     
@@ -88,6 +89,11 @@
     for (AIPort *item in sortPorts) {
         double itemValue = [AINetService getValueDataFromAlg:item.target_p valueIdentifier:valueIden];
         double distance = fabs(itemValue - value);
+        
+        
+        
+        //TODOTOMORROW20210722: 查此处distance=102时,<scope30,此时distance是否应该参与评价;
+        //参考23196,因为此处Y距被评价通过了;
         if (distance <= scope) {
             double rate = scope > 0 ? (scope - distance) / scope : 1.0f;
             double itemStrong = rate * item.strong.value;
