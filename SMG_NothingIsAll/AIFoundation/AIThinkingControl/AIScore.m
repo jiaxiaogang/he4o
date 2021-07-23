@@ -49,6 +49,13 @@
     
     //3. 对sp评分
     if (Log4VRS_Main) NSLog(@"============== VRS ==============%@\nfrom:%@ 有同区码:%@",Pit2FStr(value_p),Alg2FStr(cAlg),findSameIden?@"是":@"否");
+    
+    
+    //TODOTOMORROW20210723: 23196在此处P是0分很正常,因为本来就是要撞到了;
+    //但为什么S也是0分,而sPorts直接就是0条,这个不正常,需要分析为什么没S经验;
+    
+    
+    
     double sScore = [self score4Value:value_p spPorts:sPorts];
     double pScore = [self score4Value:value_p spPorts:pPorts];
     
@@ -90,16 +97,16 @@
         double itemValue = [AINetService getValueDataFromAlg:item.target_p valueIdentifier:valueIden];
         double distance = fabs(itemValue - value);
         
-        
-        
-        //TODOTOMORROW20210722: 查此处distance=102时,<scope30,此时distance是否应该参与评价;
-        //参考23196,因为此处Y距被评价通过了;
+        //a. 当距离<受影响范围时,按照比例受到影响;
+        double itemStrong = 0,rate = 0;
         if (distance <= scope) {
-            double rate = scope > 0 ? (scope - distance) / scope : 1.0f;
-            double itemStrong = rate * item.strong.value;
-            result += itemStrong;
-            if (Log4VRS_Desc) NSLog(@"-> %@ 新增: %@ x %ld = %@ 累计:%f 依据:%@",ATType2Str([item.target_p.dataSource integerValue]),STRFORMAT(@"%.2f",rate),(long)item.strong.value,STRFORMAT(@"%.2f",itemStrong),result,Pit2FStr(item.target_p));
+            rate = scope > 0 ? (scope - distance) / scope : 1.0f;
+            itemStrong = rate * item.strong.value;
         }
+        
+        //b. 并将影响值累计到result中;
+        result += itemStrong;
+        if (Log4VRS_Desc) NSLog(@"-> %@ 新增: %@ x %ld = %@ 累计:%f 依据:%@",ATType2Str([item.target_p.dataSource integerValue]),STRFORMAT(@"%.2f",rate),(long)item.strong.value,STRFORMAT(@"%.2f",itemStrong),result,Pit2FStr(item.target_p));
     }
     return result;
 }
