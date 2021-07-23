@@ -49,13 +49,6 @@
     
     //3. 对sp评分
     if (Log4VRS_Main) NSLog(@"============== VRS ==============%@\nfrom:%@ 有同区码:%@",Pit2FStr(value_p),Alg2FStr(cAlg),findSameIden?@"是":@"否");
-    
-    
-    //TODOTOMORROW20210723: 23196在此处P是0分很正常,因为本来就是要撞到了;
-    //但为什么S也是0分,而sPorts直接就是0条,这个不正常,需要分析为什么没S经验;
-    
-    
-    
     double sScore = [self score4Value:value_p spPorts:sPorts];
     double pScore = [self score4Value:value_p spPorts:pPorts];
     

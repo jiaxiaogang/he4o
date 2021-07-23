@@ -635,6 +635,14 @@
  *      20210120 - 此处取mType和pType的SPType有误,S不表示负价值评分,而是表示不符合当前父场景的hope预期 (已废弃,改为直接传入type);
  */
 +(void) analogy_InRethink:(AIMatchFoModel*)matchFoModel shortFo:(AIFoNodeBase*)shortFo type:(AnalogyType)type{
+    
+    //TODOTOMORROW20210723: 23196在此处P是0分很正常,因为本来就是要撞到了;
+    //但为什么S也是0分,而sPorts直接就是0条,这个不正常,需要分析为什么没S经验;
+    //经查,此处switch关掉了,irt关掉,当然不会再生成S节点;
+    //回查下23063,为什么这里要关掉;
+    
+    
+    
     //1. 数据准备;
     BOOL tirSwitch = false;
     if (!tirSwitch || !matchFoModel || !matchFoModel.matchFo || !shortFo || (type != ATPlus && type != ATSub)) return;
