@@ -636,15 +636,32 @@
  */
 +(void) analogy_InRethink:(AIMatchFoModel*)matchFoModel shortFo:(AIFoNodeBase*)shortFo type:(AnalogyType)type{
     
-    //TODOTOMORROW20210723: 23196在此处P是0分很正常,因为本来就是要撞到了;
-    //但为什么S也是0分,而sPorts直接就是0条,这个不正常,需要分析为什么没S经验;
-    //经查,此处switch关掉了,irt关掉,当然不会再生成S节点;
-    //回查下23063,为什么这里要关掉;
+    //TODOTOMORROW20210729: 打开IRT
+    //1. 分析absSP的指导性和稳定性,是否正常工作,尤其是稳定性,因为VRS评价是纯稀疏码的竞争;
+    //2. 看能否在AF模块使用SP来体现指导性与稳定性 => 而V模块,只做最后的VRS评价用;
+    //3. 事实上,AF仅能体现出指导性,而真正的稳定性,几乎都会涉及到多V竞争的VRS评价,如下:
     
+    //指导的:
+    //      > F1[AB]
+    //稳定的:
+    //      > F1[AB]
+    //      > F2[ABC]
+    //      > F3[ABD]
+    //      > F4[ABCD]
+    //V竞争的:
+    //      > F1[AB,C(8-10),D(0-5)]
+    //      > F2[ABC,D(0-8)]
+    //      > F3[ABD,C(6-7)]
+    //      > F4[ABCD]
     
+    //如上例中,F1,F2,F3,F4中:
+    //      > F4更稳定
+    //      > F2,F3介于之间
+    //      > F1更指导
+    //      > 三种情况自由竞争;
     
     //1. 数据准备;
-    BOOL tirSwitch = false;
+    BOOL tirSwitch = true;
     if (!tirSwitch || !matchFoModel || !matchFoModel.matchFo || !shortFo || (type != ATPlus && type != ATSub)) return;
     AIFoNodeBase *matchFo = matchFoModel.matchFo;
     NSString *ds = [ThinkingUtils getAnalogyTypeDS:type];
