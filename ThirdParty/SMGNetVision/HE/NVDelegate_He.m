@@ -28,10 +28,10 @@
 
 #define ColorH UIColorWithRGBHex(0xFFFFFF)//有白
 #define ColorN UIColorWithRGBHex(0x000000)//无黑
-#define ColorG UIColorWithRGBHex(0x00FF00)//大绿
-#define ColorL UIColorWithRGBHex(0xFF0000)//小红
-#define ColorP UIColorWithRGBHex(0x0000FF)//好蓝
-#define ColorS UIColorWithRGBHex(0xFFFF00)//坏黄
+#define ColorG UIColorWithRGBHex(0x0000FF)//大蓝
+#define ColorL UIColorWithRGBHex(0xFFFF00)//小黄
+#define ColorP UIColorWithRGBHex(0x00FF00)//好绿
+#define ColorS UIColorWithRGBHex(0xFF0000)//坏红
 
 @implementation NVDelegate_He
 
@@ -54,7 +54,7 @@
     }
     
     //2. HNGLSP节点指定颜色;
-    if ([NVHeUtil isFo:node_p]) {
+    if ([TOUtils isHNGLSP:node_p]) {
         if ([TOUtils isH:node_p]) return ColorH;
         else if ([TOUtils isN:node_p]) return ColorN;
         else if ([TOUtils isG:node_p]) return ColorG;
