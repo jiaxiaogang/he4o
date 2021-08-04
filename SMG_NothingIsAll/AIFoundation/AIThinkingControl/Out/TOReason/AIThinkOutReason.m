@@ -614,10 +614,28 @@
         
         //20210804: 用神经网络可视化_调试打开IRT后,sPorts还是0条的BUG;
         if ([@"distanceY" isEqualToString:firstJustPValue.dataSource]) {
+            int count = 0;
+            NSMutableArray *fos = [[NSMutableArray alloc] init];
+            NSArray *absPorts = [AINetUtils absPorts_All_Normal:curFo];
+            [fos addObjectsFromArray:Ports2Pits(absPorts)];
+            [fos addObject:curFo.pointer];
+            
+            for (AIKVPointer *item_p in fos) {
+                AIFoNodeBase *item = [SMGUtils searchNode:item_p];
+                NSArray *sPorts = [ThinkingUtils pm_GetValidSPAlg_ps:curAlg curFo:item type:ATSub];
+                count += sPorts.count;
+            }
+            NSLog(@"共:%d",count);
+            
             [theNV tempRunForceMode:^{
                 [theNV setNodeData:curAlg.pointer lightStr:@"Y距A"];
                 [theNV setNodeData:curFo.pointer lightStr:@"Y距F"];
             }];
+            [theTC updateEnergy:-999];
+            //还是得查SP的构建,为什么curFo没构建到S,或者说R-别的解决方案有构建到S?
+            
+            
+            
         }
         if (!score) {
             //10. 优先从MC的C中找同区码,作为修正GL的目标;
