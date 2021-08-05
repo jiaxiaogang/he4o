@@ -56,7 +56,7 @@
  */
 -(BOOL) perceptSub:(DemandModel*)demandModel{
     //1. 数据准备;
-    if (!demandModel) return false;
+    if (!Switch4PS || !demandModel) return false;
     if (![theTC energyValid]) return false;
     MVDirection direction = [ThinkingUtils getDemandDirection:demandModel.algsType delta:demandModel.delta];
     OFTitleLog(@"TOP.P-", @"\n任务:%@,发生%ld,方向%ld",demandModel.algsType,(long)demandModel.delta,(long)direction);

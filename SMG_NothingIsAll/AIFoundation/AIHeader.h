@@ -304,3 +304,4 @@
 //MARK:                     < 系统模块开关 >
 //MARK:===============================================================
 #define Switch4RS true
+#define Switch4PS false

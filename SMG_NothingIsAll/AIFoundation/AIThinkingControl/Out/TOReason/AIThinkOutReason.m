@@ -124,6 +124,18 @@
     NSArray *dsPorts = [AINetUtils dsPorts_All:demand.mModel.matchFo];
     if (Log4DirecRef) NSLog(@"------->>>>>> Fo已有方案数:%ld 不应期数:%ld 共有方案数:%ld",demand.actionFoModels.count,except_ps.count,dsPorts.count);
     
+    //TODOTOMORROW20210709: 查23172此处dsFo经验只有一条的问题 | 查23204取得dsFo的S嵌套太少的问题;
+    for (AIPort *dsPort in dsPorts) if (Log4DirecRef) NSLog(@"强度:%ld 不应期:%d FRS评价:%d | %@",dsPort.strong.value,[except_ps containsObject:dsPort.target_p],[AIScore FRS:[SMGUtils searchNode:dsPort.target_p]],Pit2FStr(dsPort.target_p));
+    //TODOTOMORROW20210805:
+    //  1. 经测23204-FZ6: 前两条F2[木棒,木棒],F3[木棒]
+    //  2. 都仅嵌套了一条S,而有以下两个方向方案;
+    //      1. 为什么F指向S,而A指向P (是不是构建时A防重,导致S和P未被考虑入内,重复错乱?
+    //      2. 为什么F2,F3都指向这么少SP?难道是经历太少?设计两步训练步骤,能使F2F3有更多SP经历?然后调试下IRT中,有没有能F2,F3生成新的SP;
+    
+    
+    
+    
+    
     for (AIPort *dsPort in dsPorts) {
         //a. 不应期无效,继续找下个;
         if ([except_ps containsObject:dsPort.target_p]) continue;
@@ -138,14 +150,6 @@
         [self commitReasonSub:foModel demand:demand];
         return;
     }
-    
-    //TODOTOMORROW20210709: 查23172此处dsFo经验只有一条的问题;
-    for (AIPort *dsPort in dsPorts) {
-        BOOL except = [except_ps containsObject:dsPort.target_p];
-        BOOL spaceS = ![AIScore FRS:[SMGUtils searchNode:dsPort.target_p]];
-        NSLog(@"item强度:%ld => %@ (%@ | %@)",dsPort.strong.value,Pit2FStr(dsPort.target_p),except ? @"不应期" : @"",spaceS ? @"空S掉" : @"");
-    }
-    
     demand.status = TOModelStatus_ActNo;
     NSLog(@"------->>>>>> R-无计可施");
 }
@@ -612,27 +616,20 @@
         if (Log4PM) NSLog(@"--> S数:%lu P数:%lu",(unsigned long)sPorts.count,(unsigned long)pPorts.count);
         if (Log4PM) NSLog(@"--> SP From=>curAlg:%@ curFo:%@",Alg2FStr(curAlg),Fo2FStr(curFo));
         
-        //20210804: 用神经网络可视化_调试打开IRT后,sPorts还是0条的BUG;
+        //TODOTOMORROW20210804: 用神经网络可视化_调试打开IRT后,sPorts还是0条的BUG;
         if ([@"distanceY" isEqualToString:firstJustPValue.dataSource]) {
-            int count = 0;
-            NSMutableArray *fos = [[NSMutableArray alloc] init];
-            NSArray *absPorts = [AINetUtils absPorts_All_Normal:curFo];
-            [fos addObjectsFromArray:Ports2Pits(absPorts)];
-            [fos addObject:curFo.pointer];
-            
-            for (AIKVPointer *item_p in fos) {
-                AIFoNodeBase *item = [SMGUtils searchNode:item_p];
-                NSArray *sPorts = [ThinkingUtils pm_GetValidSPAlg_ps:curAlg curFo:item type:ATSub];
-                count += sPorts.count;
-            }
-            NSLog(@"共:%d",count);
             
             [theNV tempRunForceMode:^{
                 [theNV setNodeData:curAlg.pointer lightStr:@"Y距A"];
                 [theNV setNodeData:curFo.pointer lightStr:@"Y距F"];
             }];
             [theTC updateEnergy:-999];
-            //还是得查SP的构建,为什么curFo没构建到S,或者说R-别的解决方案有构建到S?
+            //还是得查SP的构建,为什么curFo没构建到S?
+            //经查:
+            //  1. curFo的抽象时序也没构建到S;
+            //  2. R-别的解决方案也没构建到S;
+            
+            
             
             
             
