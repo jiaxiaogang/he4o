@@ -164,7 +164,7 @@
     //调试短时序; (先仅打外类比日志);
     NSInteger foStrong = [AINetUtils getStrong:result atConNode:fo type:type];
     NSInteger assFoStrong = [AINetUtils getStrong:result atConNode:assFo type:type];
-    NSString *log = STRFORMAT(@"-> 外类比构建时序 Finish: %@->{%@} from: ↑↑↑(fo(%ld):assFo(%ld))",Fo2FStr(result),Mvp2Str(result.cmvNode_p),foStrong,assFoStrong);
+    NSString *log = STRFORMAT(@"-> 外类比构建时序 (%@): %@->{%@} from: ↑↑↑(fo(%ld):assFo(%ld))",ATType2Str(type),Fo2FStr(result),Mvp2Str(result.cmvNode_p),foStrong,assFoStrong);
     if (Log4InAnaHN(type)) NSLog(@"%@",log);
     if (Log4InAnaGL(type)) NSLog(@"%@",log);
     if (Log4OutAnaDiff(type)) NSLog(@"%@",log);

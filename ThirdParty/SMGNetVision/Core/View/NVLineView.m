@@ -33,7 +33,7 @@
 -(void) initView{
     //self
     [self setBackgroundColor:[UIColor clearColor]];
-    self.height = 1.0f;//1.0f / UIScreen.mainScreen.scale;
+    self.height = 1.0f;
     [self setUserInteractionEnabled:false];
     [self.layer setMasksToBounds:true];
     [self.layer setMasksToBounds:false];
@@ -50,12 +50,9 @@
     [self.lightLab setTextColor:UIColorWithRGBHex(0xFF0000)];
     [self addSubview:self.lightLab];
     [self.lightLab setAlpha:0.2f];
-    [self.lightLab setFrame:CGRectMake(0, 0, 50, 10)];
+    [self.lightLab setHeight:10];
+    [self.lightLab setTextAlignment:NSTextAlignmentCenter];
     [self.lightLab setFont:[UIFont systemFontOfSize:8]];
-    [self.lightLab mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.center.mas_equalTo(self);
-    }];
-    
 }
 
 -(void) initData{
@@ -91,9 +88,16 @@
     
 }
 
+/**
+ *  MARK:--------------------setFrame--------------------
+ *  @version
+ *      2021.08.05: 修复lightLab排版错乱的问题;
+ */
 -(void)setFrame:(CGRect)frame{
     [super setFrame:frame];
     [self.lineView setFrame:CGRectMake(cNodeSize * 0.5f, 0, self.width - cNodeSize, self.height)];
+    [self.lightLab setWidth:self.width];
+    [self.lightLab setCenter:CGPointMake(self.width / 2.0f, self.height / 2.0f)];
 }
 
 @end
