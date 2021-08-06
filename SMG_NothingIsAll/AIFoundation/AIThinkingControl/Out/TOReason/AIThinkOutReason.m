@@ -124,7 +124,7 @@
     NSArray *dsPorts = [AINetUtils dsPorts_All:demand.mModel.matchFo];
     if (Log4DirecRef) NSLog(@"------->>>>>> Fo已有方案数:%ld 不应期数:%ld 共有方案数:%ld",demand.actionFoModels.count,except_ps.count,dsPorts.count);
     
-    //TODOTOMORROW20210709: 查23172此处dsFo经验只有一条的问题 | 查23204取得dsFo的S嵌套太少的问题;
+    //7. 打出每条解决方案: 查23172此处dsFo经验只有一条的问题 | 查23204取得dsFo的S嵌套太少的问题;
     for (AIPort *dsPort in dsPorts) if (Log4DirecRef) NSLog(@"强度:%ld 不应期:%d FRS评价:%d | %@",dsPort.strong.value,[except_ps containsObject:dsPort.target_p],[AIScore FRS:[SMGUtils searchNode:dsPort.target_p]],Pit2FStr(dsPort.target_p));
     //TODOTOMORROW20210805:
     //  1. 经测23204-FZ6: 前两条F2[木棒,木棒],F3[木棒]

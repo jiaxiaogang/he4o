@@ -672,6 +672,8 @@
                 //6. 差值有效,则构建新SPAlg节点;
                 AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:pSubM conAlgs:@[matchAlg] isMem:false ds:ds];
                 if (Log4InRethink) NSLog(@"--> IRT构建SPAlg:%@ base:%@",Alg2FStr(spAlg),Alg2FStr(matchAlg));
+                if (![spAlg.pointer.dataSource isEqualToString:ds])
+                    NSLog(@"类型错误,AF的SP类型不一致");
                 
                 //7. 收集spAlg并更新nextStartJ & findShortAlg;
                 [justPs addObject:spAlg.pointer];
@@ -744,6 +746,8 @@
         if (!ARRISOK(notFinish_ps)) continue;
         AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:notFinish_ps conAlgs:@[curAlg] isMem:false ds:spDS];
         if (Log4OutRethink) NSLog(@"--> ORT构建SPAlg:%@ base:%@",Alg2FStr(spAlg),AlgP2FStr(curAlg.pointer));
+        if (![spAlg.pointer.dataSource isEqualToString:spDS])
+            NSLog(@"类型错误,AF的SP类型不一致");
         
         //TODO调试分析"定责" (参考23065);
         //3. S定罚 (未加工的全责 或 加工失败的那一条全责) (参考23066);
