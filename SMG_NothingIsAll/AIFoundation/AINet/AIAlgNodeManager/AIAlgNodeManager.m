@@ -175,6 +175,15 @@
         return result;
     } ds:nil];
     
+    AnalogyType type = DS2ATType(ds);
+    AnalogyType localType = DS2ATType(localAlg.pointer.dataSource);
+    if (type == ATSub || type == ATPlus){
+        if (localType != type) {
+            NSLog(@"类型错误,AF的SP类型不一致");
+        }
+    }
+    
+    
     //3. 有则加强;
     if (ISOK(localAlg, AIAbsAlgNode.class)) {
         [AINetUtils relateAlgAbs:localAlg conNodes:conAlgs isNew:false];
