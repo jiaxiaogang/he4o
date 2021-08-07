@@ -299,6 +299,7 @@
 //In反省
 #define Log4InRethink true
 #define Log4OutRethink true
+#define Log4Rethink true
 
 //MARK:===============================================================
 //MARK:                     < 系统模块开关 >

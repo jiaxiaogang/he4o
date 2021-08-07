@@ -631,6 +631,7 @@
  *      20210121 - P.Alg在M中未发现时,也要收集到P-M的差集中 T;
  *      20210507 - 暂停IRT (参考23063);
  *      20210729 - 打开IRT (参考n23p20);
+ *      20210807 - IRT支持外类比,
  *  @todo
  *      20200823 - 一直以来,反向类比触发条件太苛刻的问题,通过反省类比迭代之,支持正与平也可触发 T;
  *      20210120 - 此处取mType和pType的SPType有误,S不表示负价值评分,而是表示不符合当前父场景的hope预期 (已废弃,改为直接传入type);
@@ -687,6 +688,11 @@
     //9. 构建SPFo;
     AIFoNodeBase *spFo = [theNet createAbsFo_NoRepeat:@[matchFo] content_ps:justPs difStrong:1 ds:ds];
     if (Log4InRethink) NSLog(@"--> IRT构建SPFo:%@ base:%@",Fo2FStr(spFo),Fo2FStr(matchFo));
+    
+    //10. SP外类比;
+    [self analogy_RT_Outside:spFo type:type baseFo:matchFo createAbsBlock:^(AIFoNodeBase *absSP) {
+        if (Log4InRethink) NSLog(@"--> IRT构建absFo:%@ \t| base:%@",Fo2FStr(absSP),Fo2FStr(matchFo));
+    }];
 }
 
 /**
@@ -755,25 +761,38 @@
     //6. 构建SPFo
     AINetAbsFoNode *spFo = [theNet createAbsFo_NoRepeat:@[foNode] content_ps:spFoContent difStrong:1 ds:spDS];
     if (Log4OutRethink) NSLog(@"--> ORT构建SPFo:%@ base:%@",Fo2FStr(spFo),Fo2FStr(foNode));
-    if (spFo && ARRISOK(spFo.content_ps)) {
-        //7. 向性左向右,以当前foNode为交集指引,找assSPFo,以进行外类比 (参考20205-原则3);
-        NSArray *spAbsPorts = [AINetUtils absPorts_All:foNode type:type];
-        NSArray *assSPFos = Ports2Pits(spAbsPorts);
-        assSPFos = [SMGUtils removeSub_p:spFo.pointer parent_ps:assSPFos];
-        assSPFos = ARR_SUB(assSPFos, 0, cRethinkActBack_AssSPFoLimit);
-        
-        //8. 外类比;
-        if (spFo && ARRISOK(assSPFos)) {
-            for (AIKVPointer *item in assSPFos) {
-                AINetAbsFoNode *assSPFo = [SMGUtils searchNode:item];
-                AINetAbsFoNode *absSPFo = [AIAnalogy analogyOutside:spFo assFo:assSPFo type:type createAbsAlgBlock:nil];
-                
-                //9. 将absSP与foNode建立嵌套关联;
-                AIPort *spPort = [AINetUtils findPort:spFo.pointer fromPorts:spAbsPorts];
-                AIPort *assPort = [AINetUtils findPort:assSPFo.pointer fromPorts:spAbsPorts];
-                NSMutableArray *strongPorts = [[[[NSMutableArray alloc] init] append:spPort] append:assPort];
-                [AINetUtils relateFoAbs:absSPFo conNodes:@[foNode] isNew:false strongPorts:strongPorts];
-            }
+    
+    //7. SP外类比;
+    [self analogy_RT_Outside:spFo type:type baseFo:foNode createAbsBlock:^(AIFoNodeBase *absSP) {
+        if (Log4OutRethink) NSLog(@"--> ORT构建absFo:%@ \t| base:%@",Fo2FStr(absSP),Fo2FStr(foNode));
+    }];
+}
+
+/**
+ *  MARK:--------------------RT的SP外类比--------------------
+ */
++(void) analogy_RT_Outside:(AIFoNodeBase*)spFo type:(AnalogyType)type baseFo:(AIFoNodeBase*)baseFo createAbsBlock:(void(^)(AIFoNodeBase *absSP))createAbsBlock{
+    //1. 数据检查;
+    if (!spFo || !ARRISOK(spFo.content_ps) || !baseFo) return;
+    
+    //2. 向性左向右,以当前baseFo为交集指引,找assSPFo,以进行外类比 (参考20205-原则3);
+    NSArray *spAbsPorts = [AINetUtils absPorts_All:baseFo type:type];
+    NSArray *assSPFos = Ports2Pits(spAbsPorts);
+    assSPFos = [SMGUtils removeSub_p:spFo.pointer parent_ps:assSPFos];
+    assSPFos = ARR_SUB(assSPFos, 0, cRethinkActBack_AssSPFoLimit);
+    
+    //3. 外类比;
+    if (spFo && ARRISOK(assSPFos)) {
+        for (AIKVPointer *item in assSPFos) {
+            AINetAbsFoNode *assSPFo = [SMGUtils searchNode:item];
+            AINetAbsFoNode *absSPFo = [AIAnalogy analogyOutside:spFo assFo:assSPFo type:type createAbsAlgBlock:nil];
+            
+            //4. 将absSP与baseFo建立嵌套关联;
+            AIPort *spPort = [AINetUtils findPort:spFo.pointer fromPorts:spAbsPorts];
+            AIPort *assPort = [AINetUtils findPort:assSPFo.pointer fromPorts:spAbsPorts];
+            NSMutableArray *strongPorts = [[[[NSMutableArray alloc] init] append:spPort] append:assPort];
+            [AINetUtils relateFoAbs:absSPFo conNodes:@[baseFo] isNew:false strongPorts:strongPorts];
+            if (createAbsBlock) createAbsBlock(absSPFo);
         }
     }
 }
