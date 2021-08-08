@@ -1025,6 +1025,12 @@
             //2. 取matchFo已发生,到末位mvDeltaTime,所有时间之和做触发;
             AIFoNodeBase *matchFo = demand.mModel.matchFo;
             double deltaTime = [TOUtils getSumDeltaTime2Mv:matchFo cutIndex:demand.mModel.cutIndex2];
+            //TODOTOMORROW20210808:
+            //1. 这里从actYesModel.node取下mvDeltaTime;
+            //2. FZ10,右上飞,直击;
+            
+            
+            
             
             //3. 触发器;
             NSLog(@"---//触发器R-_感性mv任务:%@ 解决方案:%@ time:%f",Fo2FStr(matchFo),Pit2FStr(actYesModel.content_p),deltaTime);
