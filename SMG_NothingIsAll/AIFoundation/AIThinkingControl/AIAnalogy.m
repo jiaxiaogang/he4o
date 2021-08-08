@@ -526,18 +526,20 @@
  *  @use : 用于R-任务取解决方案;
  *  @caller : 由预测触发器触发,当mv未发生时,构建虚mv时序,并进行外类比;
  *  @desc : 主要用于R-模式决策时使用 (参考22107);
- *  @param matchFo : protoFo是嵌套于matchFo之下的,要求matchFo.cmv_p不为空 (matchFo携带了实mv);
+ *  @param mModel : 识别的帧(用里面的matchFo & 用来计算当前mvDeltaTime),protoFo是嵌套于matchFo之下的,要求matchFo.cmv_p不为空 (matchFo携带了实mv);
  *  @bug
  *      2021.02.02: 虚mv逻辑判反,导致执行不了 (修复后正常) T;
  *      2021.04.02: dsPorts循环中,进行relate时删除item了,导致闪退,解决:copy一份进行循环 T;
  *  @version
  *      2021.03.25: 嵌套关联 & 外类比assFo改为使用嵌套关联来联想;
+ *      2021.08.08: 对指定虚mv的protoFo,也赋值mvDeltaTime,否则作为R解决方案时,dsFo没mvDeltaTime会导致反省触发为0秒 (参考23212);
  *  @todo
  *      2021.04.08: 考虑支持从抽象protoFo.absPorts.dsPorts中找assFo;
  */
-+(void) analogy_Feedback_Diff:(AIFoNodeBase*)protoFo matchFo:(AIFoNodeBase*)matchFo{
++(void) analogy_Feedback_Diff:(AIFoNodeBase*)protoFo mModel:(AIMatchFoModel*)mModel{
     //1. 数据检查 (本身就是虚mv则返回:此方法仅对实mv做处理,本身就是虚mv则不做任何处理);
-    if (!protoFo || !matchFo || [AINetUtils isVirtualMv:matchFo.cmvNode_p]) return;
+    if (!protoFo || !mModel || !mModel.matchFo || [AINetUtils isVirtualMv:mModel.matchFo.cmvNode_p]) return;
+    AIFoNodeBase *matchFo = mModel.matchFo;
     
     //2. 取出实mv的值;
     AICMVNodeBase *baseMv = [SMGUtils searchNode:matchFo.cmvNode_p];
@@ -558,6 +560,9 @@
     [AINetUtils relateFo:protoFo mv:mvNode];
     [AINetUtils relateDiff:protoFo baseNode:matchFo strongPorts:nil];
     IFTitleLog(@"反向反馈外类比", @"\nprotoFo:%@->%@", Fo2FStr(protoFo),Mv2FStr(mvNode));
+    
+    //5. 指定mvDeltaTime
+    protoFo.mvDeltaTime = [TOUtils getSumDeltaTime2Mv:matchFo cutIndex:mModel.cutIndex2];;
     
     //5. 取嵌套前3条subFo,进行外类比;
     AIPort *protoPort = [AINetUtils findPort:protoFo.pointer fromPorts:matchFo.diffSubPorts];

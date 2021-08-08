@@ -461,7 +461,7 @@
                     
                     //5. 反向反馈外类比 (无OutBack,为Wait时执行);
                     if (item.status == TIModelStatus_LastWait) {
-                        [AIAnalogy analogy_Feedback_Diff:protoFo matchFo:matchFo];
+                        [AIAnalogy analogy_Feedback_Diff:protoFo mModel:item];
                     }
                     
                     //5. 失败状态标记;
