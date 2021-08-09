@@ -272,6 +272,7 @@
     //NSString *logStr = STRFORMAT(@"扔木棒 %@",canHit ? @"撞到" : @"撞不到");
     //DemoLog(@"%@",logStr);
     //[theApp.heLogView addDemoLog:logStr];
+    DemoLog(@"扔木棒");
     if (canHit) {
         //5. 撞到的时间判断 (撞需距离 / 总扔距离 * 总扔时间);
         CGFloat hitTime = ((birdMinX - woodMaxX) / ScreenWidth) * 2.0f;

@@ -122,6 +122,7 @@
  *      20200416 - TODO_NEXT_VERSION:方法中absFo是防重的,如果absFo并非新构建,而又为其构建了absMv,则会有多个mv指向同一个fo的问题;
  *  @version
  *      2020.07.22: 在外类比无需构建时 (即具象和抽象一致时),其方向索引强度+1;
+ *      2021.08.10: 在RFos的再抽象调用时,有可能将防重的带mvDeltaTime的值重置为0的BUG (参考23212-问题2);
  */
 +(AINetAbsFoNode*)analogyOutside_Creater:(NSArray*)orderSames fo:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type{
     //2. 数据检查;
@@ -154,11 +155,10 @@
             //5. 从fo和conFo.mvDeltaTime中提取mv导致时间隔,在relateFo之前,赋值到result中;
             //TODOTOMORROW20210809: 调试此处是否导致23212问题2的mvDeltaTime又重置为0的问题;
             double oldTime = result.mvDeltaTime;
-            result.mvDeltaTime = MAX(fo.mvDeltaTime, assFo.mvDeltaTime);
-            if (result.pointer.pointerId == 11 && type == ATDefault) {
-                if (result.mvDeltaTime == 0) {
-                    NSLog(@"发现了问题!! %f,%f,%f",oldTime,fo.mvDeltaTime,assFo.mvDeltaTime);
-                }
+            result.mvDeltaTime = MAX(MAX(fo.mvDeltaTime, assFo.mvDeltaTime), result.mvDeltaTime);
+            if (result.pointer.pointerId == 11 && (type == ATDefault || type == ATSame)) {
+                NSLog(@"回测问题!! %f,%f,%f",oldTime,fo.mvDeltaTime,assFo.mvDeltaTime);
+                NSLog(@"");
             }
             
             //6. createAbsCmvNode (当正向类比,且result没有cmv指向时);
