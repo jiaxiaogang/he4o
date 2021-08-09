@@ -1025,9 +1025,11 @@
             //2. 取matchFo已发生,到末位mvDeltaTime,所有时间之和做触发;
             AIFoNodeBase *matchFo = demand.mModel.matchFo;
             double deltaTime = [TOUtils getSumDeltaTime2Mv:matchFo cutIndex:demand.mModel.cutIndex2];
-            //TODOTOMORROW20210808:
-            //1. 这里从actYesModel.node取下mvDeltaTime;
-            //2. FZ10,右上飞,直击;
+            
+            
+            //此处dsFo可以取到mvDeltaTime,不过不使用它 (参考23212-问题1);
+            AIFoNodeBase *actYesFo = [SMGUtils searchNode:actYesModel.content_p];
+            double mvDeltaTime = actYesFo.mvDeltaTime;
             
             
             

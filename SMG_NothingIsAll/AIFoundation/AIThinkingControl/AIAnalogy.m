@@ -152,7 +152,14 @@
             result = [theNet createAbsFo_NoRepeat:@[fo,assFo] content_ps:orderSames difStrong:foDifStrong ds:foDS];
             
             //5. 从fo和conFo.mvDeltaTime中提取mv导致时间隔,在relateFo之前,赋值到result中;
+            //TODOTOMORROW20210809: 调试此处是否导致23212问题2的mvDeltaTime又重置为0的问题;
+            double oldTime = result.mvDeltaTime;
             result.mvDeltaTime = MAX(fo.mvDeltaTime, assFo.mvDeltaTime);
+            if (result.pointer.pointerId == 11) {
+                if (result.mvDeltaTime == 0) {
+                    NSLog(@"发现了问题!! %f,%f,%f",oldTime,fo.mvDeltaTime,assFo.mvDeltaTime);
+                }
+            }
             
             //6. createAbsCmvNode (当正向类比,且result没有cmv指向时);
             if ((type == ATSame || type == ATDiff) && assMv && !result.cmvNode_p) {
@@ -518,7 +525,7 @@
     
     //3. 类比 (与当前的analogy_Outside()较相似,所以暂不写,随后写时,也是将原有的_outside改成此_same类比方法);
     AINetAbsFoNode *absFo = [self analogyOutside:shortFo assFo:matchFo type:ATSame createAbsAlgBlock:nil];
-    NSLog(@"抽象出: %@",Fo2FStr(absFo));
+    NSLog(@"抽象出: %@ mvDeltaTime:%f",Fo2FStr(absFo),absFo.mvDeltaTime);
 }
 
 /**
