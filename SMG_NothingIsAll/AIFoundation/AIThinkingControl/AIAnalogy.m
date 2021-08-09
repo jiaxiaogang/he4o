@@ -153,13 +153,7 @@
             result = [theNet createAbsFo_NoRepeat:@[fo,assFo] content_ps:orderSames difStrong:foDifStrong ds:foDS];
             
             //5. 从fo和conFo.mvDeltaTime中提取mv导致时间隔,在relateFo之前,赋值到result中;
-            //TODOTOMORROW20210809: 调试此处是否导致23212问题2的mvDeltaTime又重置为0的问题;
-            double oldTime = result.mvDeltaTime;
             result.mvDeltaTime = MAX(MAX(fo.mvDeltaTime, assFo.mvDeltaTime), result.mvDeltaTime);
-            if (result.pointer.pointerId == 11 && (type == ATDefault || type == ATSame)) {
-                NSLog(@"回测问题!! %f,%f,%f",oldTime,fo.mvDeltaTime,assFo.mvDeltaTime);
-                NSLog(@"");
-            }
             
             //6. createAbsCmvNode (当正向类比,且result没有cmv指向时);
             if ((type == ATSame || type == ATDiff) && assMv && !result.cmvNode_p) {

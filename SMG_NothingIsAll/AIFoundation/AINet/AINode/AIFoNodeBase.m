@@ -25,20 +25,6 @@
     return _diffSubPorts;
 }
 
--(void)setMvDeltaTime:(NSTimeInterval)mvDeltaTime{
-    AnalogyType type = DS2ATType(self.pointer.dataSource);
-    if ((type == ATDefault || type == ATSame) && self.pointer.pointerId == 11 && mvDeltaTime == 0) {
-        NSLog(@"发现问题!! 23212-问题2");
-    }
-    if ((type == ATDefault || type == ATSame) && self.pointer.pointerId == 3 && mvDeltaTime == 0) {
-        NSLog(@"发现问题!! 23212-问题2");
-    }
-    if ((type == ATDefault || type == ATSame) && self.pointer.pointerId == 10 && mvDeltaTime == 0) {
-        NSLog(@"发现问题!! 23212-问题2");
-    }
-    _mvDeltaTime = mvDeltaTime;
-}
-
 /**
  *  MARK:--------------------NSCoding--------------------
  */

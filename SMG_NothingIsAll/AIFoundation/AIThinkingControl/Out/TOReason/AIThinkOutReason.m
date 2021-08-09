@@ -1026,14 +1026,6 @@
             AIFoNodeBase *matchFo = demand.mModel.matchFo;
             double deltaTime = [TOUtils getSumDeltaTime2Mv:matchFo cutIndex:demand.mModel.cutIndex2];
             
-            
-            //此处dsFo可以取到mvDeltaTime,不过不使用它 (参考23212-问题1);
-            AIFoNodeBase *actYesFo = [SMGUtils searchNode:actYesModel.content_p];
-            double mvDeltaTime = actYesFo.mvDeltaTime;
-            
-            
-            
-            
             //3. 触发器;
             NSLog(@"---//触发器R-_感性mv任务:%@ 解决方案:%@ time:%f",Fo2FStr(matchFo),Pit2FStr(actYesModel.content_p),deltaTime);
             [AITime setTimeTrigger:deltaTime trigger:^{
