@@ -155,7 +155,7 @@
             //TODOTOMORROW20210809: 调试此处是否导致23212问题2的mvDeltaTime又重置为0的问题;
             double oldTime = result.mvDeltaTime;
             result.mvDeltaTime = MAX(fo.mvDeltaTime, assFo.mvDeltaTime);
-            if (result.pointer.pointerId == 11) {
+            if (result.pointer.pointerId == 11 && type == ATDefault) {
                 if (result.mvDeltaTime == 0) {
                     NSLog(@"发现了问题!! %f,%f,%f",oldTime,fo.mvDeltaTime,assFo.mvDeltaTime);
                 }
