@@ -25,6 +25,12 @@
     return _diffSubPorts;
 }
 
+-(void)setMvDeltaTime:(NSTimeInterval)mvDeltaTime{
+    if (self.pointer.pointerId == 11 && mvDeltaTime == 0) {
+        NSLog(@"发现问题!! 23212-问题2");
+    }
+}
+
 /**
  *  MARK:--------------------NSCoding--------------------
  */
