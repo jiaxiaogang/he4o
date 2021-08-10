@@ -30,18 +30,30 @@
 }
 
 -(void) initData{
-    PINDiskCache *cache = [[PINDiskCache alloc] initWithName:kPath_HeLog];
-    id file = [cache objectForKey:kFile_HeLog];
-    self.datas = [[NSMutableArray alloc] initWithArray:file];
-    self.diskDatasMd5 = STRTOOK([HeLogUtil md5ByData:OBJ2DATA(self.datas)]);
-    NSLog(@"===========HeLog Init Data %ld============",self.datas.count);
+    //1. 初始化内存datas等;
+    self.datas = [[NSMutableArray alloc] init];
     self.timer = [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
+    
+    //2. 重新加载硬盘;
+    [self reloadData];
 }
 
 
 //MARK:===============================================================
 //MARK:                     < publicMethod >
 //MARK:===============================================================
+
+/**
+ *  MARK:--------------------重加载--------------------
+ */
+-(void) reloadData{
+    PINDiskCache *cache = [[PINDiskCache alloc] initWithName:kPath_HeLog];
+    id file = [cache objectForKey:kFile_HeLog];
+    [self.datas removeAllObjects];
+    [self.datas addObjectsFromArray:file];
+    self.diskDatasMd5 = STRTOOK([HeLogUtil md5ByData:OBJ2DATA(self.datas)]);
+    NSLog(@"===========HeLog Load Data %ld============",self.datas.count);
+}
 
 /**
  *  MARK:--------------------addLog--------------------

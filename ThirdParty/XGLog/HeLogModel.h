@@ -24,6 +24,11 @@
 @interface HeLogModel : NSObject
 
 /**
+ *  MARK:--------------------重加载--------------------
+ */
+-(void) reloadData;
+
+/**
  *  MARK:--------------------addLog--------------------
  */
 -(NSDictionary*) addLog:(NSString*)log;

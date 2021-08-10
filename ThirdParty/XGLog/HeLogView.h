@@ -16,5 +16,6 @@
 -(void) close;
 -(void) clear;
 -(NSInteger) count;
+-(void) reloadData:(BOOL)reloadHd;
 
 @end

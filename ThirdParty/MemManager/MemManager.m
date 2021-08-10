@@ -77,6 +77,15 @@
         sumCount += subFiles.count;
         [[NSFileManager defaultManager] copyItemAtPath:fromFolder toPath:toFolder error:nil];
     }
+    
+    //4. 备份heLog
+    PINDiskCache *readHeLogCache = [[PINDiskCache alloc] initWithName:kPath_HeLog];//读
+    NSMutableArray *heLogDatas = [[NSMutableArray alloc] initWithArray:[readHeLogCache objectForKey:kFile_HeLog]];
+    sumCount += heLogDatas.count;
+    NSLog(@"===> 存储HeLog条数:%lu",heLogDatas.count);
+    PINDiskCache *toHeLogCache = [[PINDiskCache alloc] initWithName:kPath_HeLog rootPath:savePath];//写
+    [toHeLogCache setObject:heLogDatas forKey:kFile_HeLog];
+    
     NSLog(@"======> 存储记忆Finish \t(%lu)",sumCount);
 }
 
@@ -107,6 +116,16 @@
         sumCount += subFiles.count;
         [[NSFileManager defaultManager] copyItemAtPath:fromFolder toPath:toFolder error:nil];
     }
+    
+    //4. 备份heLog
+    PINDiskCache *readHeLogCache = [[PINDiskCache alloc] initWithName:kPath_HeLog rootPath:readPath];//读
+    NSMutableArray *heLogDatas = [[NSMutableArray alloc] initWithArray:[readHeLogCache objectForKey:kFile_HeLog]];
+    sumCount += heLogDatas.count;
+    NSLog(@"===> 读取HeLog条数:%lu",heLogDatas.count);
+    PINDiskCache *toHeLogCache = [[PINDiskCache alloc] initWithName:kPath_HeLog];//写
+    [toHeLogCache setObject:heLogDatas forKey:kFile_HeLog];
+    [theApp.heLogView reloadData:true];//重新加载显示;
+    
     NSLog(@"======> 读取记忆Finish \t(%lu)",sumCount);
 }
 

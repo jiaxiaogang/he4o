@@ -86,7 +86,7 @@
 -(void) open{
     [self setHidden:false];
     self.isOpen = true;
-    [self reloadData];
+    [self reloadData:false];
 }
 
 -(void) close{
@@ -102,14 +102,20 @@
     return self.model.count;
 }
 
-//MARK:===============================================================
-//MARK:                     < privateMethod >
-//MARK:===============================================================
--(void) reloadData{
-    //清空 & 重加载
+-(void) reloadData:(BOOL)reloadHd{
+    //1. 重新加载硬盘;
+    if (reloadHd) {
+        [self.model reloadData];
+    }
+    
+    //2. UI清空 & 重加载
     [self.str setString:@""];
     [self appendData:self.model.getDatas];
 }
+
+//MARK:===============================================================
+//MARK:                     < privateMethod >
+//MARK:===============================================================
 -(void) appendData:(NSArray*)datas{
     //1. 筛选 (时间 & 关键字)
     NSArray *timeValids = [HeLogUtil filterByTime:self.startTF.text endT:self.endTF.text checkDatas:datas];
@@ -151,7 +157,7 @@
 //MARK:                     < onClick >
 //MARK:===============================================================
 - (IBAction)filterBtnOnClick:(id)sender {
-    [self reloadData];
+    [self reloadData:false];
 }
 - (IBAction)closeBtnOnClick:(id)sender {
     [self close];
@@ -166,7 +172,7 @@
     }else if (textField == self.endTF) {
         [self.keywordTF becomeFirstResponder];
     }else if (textField == self.keywordTF) {
-        [self reloadData];
+        [self reloadData:false];
     }
     return true;
 }
