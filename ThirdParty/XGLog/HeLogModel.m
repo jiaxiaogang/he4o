@@ -36,6 +36,7 @@
     
     //2. 重新加载硬盘;
     [self reloadData];
+    NSLog(@"===========HeLog Init Data %ld============",self.datas.count);
 }
 
 
@@ -52,7 +53,6 @@
     [self.datas removeAllObjects];
     [self.datas addObjectsFromArray:file];
     self.diskDatasMd5 = STRTOOK([HeLogUtil md5ByData:OBJ2DATA(self.datas)]);
-    NSLog(@"===========HeLog Load Data %ld============",self.datas.count);
 }
 
 /**
