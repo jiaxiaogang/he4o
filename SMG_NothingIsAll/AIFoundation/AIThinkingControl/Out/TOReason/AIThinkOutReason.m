@@ -154,7 +154,8 @@
     
     
     //TODOTOMORROW20210810: 当首条R无计可施时,是否继续下一条R任务 (参考23214);
-    //即,调用[self.delegate aiTOR_MoveForDemand:(DemandModel*)beginModel]看看能否实现继续下一条R任务;
+    //1. 即,调用[self.delegate aiTOR_MoveForDemand:(DemandModel*)beginModel]看看能否实现继续下一条R任务;
+    //2. 查下F230是否抽象指向F11,如果有,那么是否可以通过抽象取dsFo来找到解决方案;
     
     
     
