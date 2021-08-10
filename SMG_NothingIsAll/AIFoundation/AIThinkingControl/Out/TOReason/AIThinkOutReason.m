@@ -151,6 +151,14 @@
         return;
     }
     demand.status = TOModelStatus_ActNo;
+    
+    
+    //TODOTOMORROW20210810: 当首条R无计可施时,是否继续下一条R任务 (参考23214);
+    //即,调用[self.delegate aiTOR_MoveForDemand:(DemandModel*)beginModel]看看能否实现继续下一条R任务;
+    
+    
+    
+    
     NSLog(@"------->>>>>> R-无计可施");
 }
 

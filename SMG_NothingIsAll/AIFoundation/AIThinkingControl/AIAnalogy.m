@@ -693,11 +693,11 @@
     
     //9. 构建SPFo;
     AIFoNodeBase *spFo = [theNet createAbsFo_NoRepeat:@[matchFo] content_ps:justPs difStrong:1 ds:ds];
-    if (Log4InRethink) NSLog(@"--> IRT构建SPFo:%@ base:%@",Fo2FStr(spFo),Fo2FStr(matchFo));
+    if (Log4InRethink) NSLog(@"--> IRT构建SPFo:%@ base:F%ld",Fo2FStr(spFo),matchFo.pointer.pointerId);
     
     //10. SP外类比;
     [self analogy_RT_Outside:spFo type:type baseFo:matchFo createAbsBlock:^(AIFoNodeBase *absSP) {
-        if (Log4InRethink) NSLog(@"--> IRT构建absFo:%@ \t| base:%@",Fo2FStr(absSP),Fo2FStr(matchFo));
+        if (Log4InRethink) NSLog(@"--> IRT构建absFo:%@ \t| base:F%ld",Fo2FStr(absSP),matchFo.pointer.pointerId);
     }];
 }
 
@@ -766,11 +766,11 @@
     
     //6. 构建SPFo
     AINetAbsFoNode *spFo = [theNet createAbsFo_NoRepeat:@[foNode] content_ps:spFoContent difStrong:1 ds:spDS];
-    if (Log4OutRethink) NSLog(@"--> ORT构建SPFo:%@ base:%@",Fo2FStr(spFo),Fo2FStr(foNode));
+    if (Log4OutRethink) NSLog(@"--> ORT构建SPFo:%@ base:F%ld",Fo2FStr(spFo),foNode.pointer.pointerId);
     
     //7. SP外类比;
     [self analogy_RT_Outside:spFo type:type baseFo:foNode createAbsBlock:^(AIFoNodeBase *absSP) {
-        if (Log4OutRethink) NSLog(@"--> ORT构建absFo:%@ \t| base:%@",Fo2FStr(absSP),Fo2FStr(foNode));
+        if (Log4OutRethink) NSLog(@"--> ORT构建absFo:%@ \t| base:F%ld",Fo2FStr(absSP),foNode.pointer.pointerId);
     }];
 }
 
