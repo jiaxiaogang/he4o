@@ -126,16 +126,8 @@
     
     //7. 打出每条解决方案: 查23172此处dsFo经验只有一条的问题 | 查23204取得dsFo的S嵌套太少的问题;
     for (AIPort *dsPort in dsPorts) if (Log4DirecRef) NSLog(@"强度:%ld 不应期:%d FRS评价:%d | %@",dsPort.strong.value,[except_ps containsObject:dsPort.target_p],[AIScore FRS:[SMGUtils searchNode:dsPort.target_p]],Pit2FStr(dsPort.target_p));
-    //TODOTOMORROW20210805:
-    //  1. 经测23204-FZ6: 前两条F2[木棒,木棒],F3[木棒]
-    //  2. 都仅嵌套了一条S,而有以下两个方向方案;
-    //      2. 为什么F2,F3都指向这么少SP?难道是经历太少?设计两步训练步骤,能使F2F3有更多SP经历?然后调试下IRT中,有没有能F2,F3生成新的SP;
-    //      3. 为FZ8设置新的训练步骤,使之能够获取更多SP;
     
-    
-    
-    
-    
+    //8. 从matchFo找dsPorts解决方案;
     for (AIPort *dsPort in dsPorts) {
         //a. 不应期无效,继续找下个;
         if ([except_ps containsObject:dsPort.target_p]) continue;
@@ -150,6 +142,12 @@
         [self commitReasonSub:foModel demand:demand];
         return;
     }
+    
+    //9. 从matchFo的抽象找dsPorts解决方案;
+    NSArray *matchAbsFos = [AINetUtils absPorts_All_Normal:demand.mModel.matchFo];
+    
+    
+    
     demand.status = TOModelStatus_ActNo;
     
     
