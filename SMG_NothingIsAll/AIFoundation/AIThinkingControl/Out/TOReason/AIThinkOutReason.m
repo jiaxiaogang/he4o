@@ -90,6 +90,7 @@
  *  @todo
  *      xxxx.xx.xx: 对抽象也尝试取brotherFo,比如车撞与落石撞,其实都是需要躲开"撞过来的物体"; T(过期)
  *      2021.03.29: V4取dsPorts要支持向matchFo的抽象取,并思考下整合后是否按强度排序 (参考22192-3&22195);
+ *      2021.08.12: 当首条R无计可施时,是否继续下一条R任务 (参考23214-方案2) (暂不实现);
  *  @version
  *      2020.05.12 - 支持cutIndex的判断,必须是未发生的部分才可以被修正 (如车将撞上,躲开是对的,但将已过去的出门改成不出门,是错的);
  *      2021.01.23 - R-模式支持决策前空S评价 (参考22061-1);
@@ -100,6 +101,7 @@
  *      2021.03.27 - V4迭代,支持从dsPorts找解决方案,而不是方向索引 (参考n22p19-todo1 & 22195);
  *      2021.05.09 - 方便九测,暂将R模式关掉 (参考n23p07);
  *      2021.06.02 - 将无计可施的状态改为actNo,因为要计入不应期 (参考23095);
+ *      2021.08.12 - 支持当matchFo没dsFo时,从它的抽象找dsFo解决方案 (参考23214-方案1);
  */
 -(void) reasonSubV4:(ReasonDemandModel*)demand{
     //1. 数据检查
@@ -120,45 +122,37 @@
     NSMutableArray *except_ps = [TOUtils convertPointersFromTOModels:exceptFoModels];
     [except_ps addObject:matchFo.pointer];
     
-    //6. 其次从方向索引找normalFo解决方案_找索引;
-    NSArray *dsPorts = [AINetUtils dsPorts_All:demand.mModel.matchFo];
-    if (Log4DirecRef) NSLog(@"------->>>>>> Fo已有方案数:%ld 不应期数:%ld 共有方案数:%ld",demand.actionFoModels.count,except_ps.count,dsPorts.count);
+    //4. 收集baseFos (优先从matchFo找dsFo解决方案,其次从matchFo的抽象找dsFo解决方案);
+    NSMutableArray *baseFo_ps = [[NSMutableArray alloc] init];
+    [baseFo_ps addObject:demand.mModel.matchFo.pointer];
+    [baseFo_ps addObjectsFromArray:Ports2Pits([AINetUtils absPorts_All_Normal:demand.mModel.matchFo])];
     
-    //7. 打出每条解决方案: 查23172此处dsFo经验只有一条的问题 | 查23204取得dsFo的S嵌套太少的问题;
-    for (AIPort *dsPort in dsPorts) if (Log4DirecRef) NSLog(@"强度:%ld 不应期:%d FRS评价:%d | %@",dsPort.strong.value,[except_ps containsObject:dsPort.target_p],[AIScore FRS:[SMGUtils searchNode:dsPort.target_p]],Pit2FStr(dsPort.target_p));
-    
-    //8. 从matchFo找dsPorts解决方案;
-    for (AIPort *dsPort in dsPorts) {
-        //a. 不应期无效,继续找下个;
-        if ([except_ps containsObject:dsPort.target_p]) continue;
+    //5. 从baseFo取dsFo解决方案;
+    for (AIKVPointer *baseFo_p in baseFo_ps) {
+        AIFoNodeBase *baseFo = [SMGUtils searchNode:baseFo_p];
+        NSArray *dsPorts = [AINetUtils dsPorts_All:baseFo];
+        if (Log4DirecRef) NSLog(@"\n------- baseFo:%@ -------\n已有方案数:%ld 不应期数:%ld 共有方案数:%ld",Fo2FStr(baseFo),demand.actionFoModels.count,except_ps.count,dsPorts.count);
         
-        //b. 未发生理性评价 (空S评价);
-        if (![AIScore FRS:[SMGUtils searchNode:dsPort.target_p]]) continue;
+        //7. 打出每条解决方案: 查23172此处dsFo经验只有一条的问题 | 查23204取得dsFo的S嵌套太少的问题;
+        for (AIPort *dsPort in dsPorts) if (Log4DirecRef) NSLog(@"强度:%ld 不应期:%d FRS评价:%d | %@",dsPort.strong.value,[except_ps containsObject:dsPort.target_p],[AIScore FRS:[SMGUtils searchNode:dsPort.target_p]],Pit2FStr(dsPort.target_p));
         
-        //c. 直接提交行为化 (废弃场景判断,因为fo场景一般mIsC会不通过,而alg判断,完全可以放到行为化过程中判断);
-        TOFoModel *foModel = [TOFoModel newWithFo_p:dsPort.target_p base:demand];
-        AIFoNodeBase *fo = [SMGUtils searchNode:dsPort.target_p];
-        NSLog(@"------->>>>>> R- From mvRefs 新增一例解决方案: %@->%@",Pit2FStr(dsPort.target_p),Mvp2Str(fo.cmvNode_p));
-        [self commitReasonSub:foModel demand:demand];
-        return;
+        //8. 从matchFo找dsPorts解决方案;
+        for (AIPort *dsPort in dsPorts) {
+            //a. 不应期无效,继续找下个;
+            if ([except_ps containsObject:dsPort.target_p]) continue;
+            
+            //b. 未发生理性评价 (空S评价);
+            if (![AIScore FRS:[SMGUtils searchNode:dsPort.target_p]]) continue;
+            
+            //c. 直接提交行为化 (废弃场景判断,因为fo场景一般mIsC会不通过,而alg判断,完全可以放到行为化过程中判断);
+            TOFoModel *foModel = [TOFoModel newWithFo_p:dsPort.target_p base:demand];
+            AIFoNodeBase *fo = [SMGUtils searchNode:dsPort.target_p];
+            NSLog(@"------->>>>>> R- From mvRefs 新增一例解决方案: %@->%@",Pit2FStr(dsPort.target_p),Mvp2Str(fo.cmvNode_p));
+            [self commitReasonSub:foModel demand:demand];
+            return;
+        }
     }
-    
-    //9. 从matchFo的抽象找dsPorts解决方案;
-    NSArray *matchAbsFos = [AINetUtils absPorts_All_Normal:demand.mModel.matchFo];
-    
-    
-    
     demand.status = TOModelStatus_ActNo;
-    
-    
-    //TODOTOMORROW20210810: 当首条R无计可施时,是否继续下一条R任务 (参考23214);
-    //1. 即,调用[self.delegate aiTOR_MoveForDemand:(DemandModel*)beginModel]看看能否实现继续下一条R任务;
-    //2. 查下F230是否抽象指向F11,如果有,那么是否可以通过抽象取dsFo来找到解决方案;
-    //经查识别结果F11是抽象有关联,参考23214-方案1;
-    
-    
-    
-    
     NSLog(@"------->>>>>> R-无计可施");
 }
 
