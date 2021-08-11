@@ -179,7 +179,7 @@
     return nv ? [nv getLightStr] : @"";
 }
 
--(void) tempRunForceMode:(void(^)())block{
+-(void) invokeForceMode:(void(^)())block{
     if (block) {
         BOOL bakForceMode = self.forceMode;
         [self setForceMode:true];

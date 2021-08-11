@@ -156,6 +156,7 @@
     //TODOTOMORROW20210810: 当首条R无计可施时,是否继续下一条R任务 (参考23214);
     //1. 即,调用[self.delegate aiTOR_MoveForDemand:(DemandModel*)beginModel]看看能否实现继续下一条R任务;
     //2. 查下F230是否抽象指向F11,如果有,那么是否可以通过抽象取dsFo来找到解决方案;
+    //经查识别结果F11是抽象有关联,参考23214-方案1;
     
     
     
@@ -628,7 +629,7 @@
         //TODOTOMORROW20210804: 用神经网络可视化_调试打开IRT后,sPorts还是0条的BUG;
         if ([@"distanceY" isEqualToString:firstJustPValue.dataSource]) {
             
-            [theNV tempRunForceMode:^{
+            [theNV invokeForceMode:^{
                 [theNV setNodeData:curAlg.pointer lightStr:@"Y距A"];
                 [theNV setNodeData:curFo.pointer lightStr:@"Y距F"];
             }];

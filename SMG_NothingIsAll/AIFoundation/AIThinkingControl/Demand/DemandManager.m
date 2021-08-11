@@ -174,6 +174,9 @@
             CGFloat newUrgentTo = 20;//newItem.urgentTo;
             [theTC updateEnergy:MAX(0, newUrgentTo - sameIdenOldMax)];
             NSLog(@"RMV新需求: %@->%@ (条数+1=%ld 评分:%@)",Fo2FStr(mModel.matchFo),Pit2FStr(mModel.matchFo.cmvNode_p),self.loopCache.count,Double2Str_NDZ(score));
+            [theNV invokeForceMode:^{
+                [theNV setNodeData:mModel.matchFo.pointer lightStr:@"RMV"];
+            }];
         }else{
             NSLog(@"当前,预测mv未形成需求:%@ 基于:%@ 评分:%f",algsType,Pit2FStr(mModel.matchFo.cmvNode_p),score);
         }
