@@ -100,6 +100,29 @@
     [self refreshDisplay_Line:nodeDatas];
 }
 
+-(void) removeNodeDatas:(NSArray*)nodeDatas{
+    //1. 数据检查;
+    nodeDatas = ARRTOOK(nodeDatas);
+    
+    //2. 取到符合的NodeView
+    NSArray *allNode = [self.containerView subViews_AllDeepWithClass:NVNodeView.class];
+    allNode = [SMGUtils filterArr:allNode checkValid:^BOOL(NVNodeView *item) {
+        return [nodeDatas containsObject:item.data];
+    }];
+    
+    //3. 删除数据,删除NodeView;
+    [self.nodeArr removeObjectsInArray:nodeDatas];
+    for (UIView *view in allNode) {
+        [view removeFromSuperview];
+    }
+    
+    //4. 节点排版算法,重置计算所有节点坐标;
+    [self refreshDisplay_Node];
+    
+    //5. 刷新即有线的坐标;
+    [self refreshDisplay_Line:self.nodeArr];
+}
+
 -(void) clear{
     //1. 清数据
     [self.nodeArr removeAllObjects];

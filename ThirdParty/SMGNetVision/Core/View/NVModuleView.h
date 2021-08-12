@@ -70,6 +70,7 @@
 -(void) setDataWithModuleId:(NSString*)moduleId;
 -(void) setDataWithNodeData:(id)nodeData;
 -(void) setDataWithNodeDatas:(NSArray*)nodeDatas;
+-(void) removeNodeDatas:(NSArray*)nodeDatas;
 -(void) clear;
 
 @end

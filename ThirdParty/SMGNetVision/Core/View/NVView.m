@@ -132,6 +132,31 @@
     [self setNodeData:nodeData lightStr:lightStr];
 }
 
+-(void) removeNodeDatas:(NSArray*)nodeDatas{
+    //1. 数据准备
+    nodeDatas = ARRTOOK(nodeDatas);
+    NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
+    
+    //2. 分组
+    for (id data in nodeDatas) {
+        NSString *mId = STRTOOK([self nv_GetModuleId:data]);
+        NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[dic objectForKey:mId]];
+        [mArr addObject:data];
+        [dic setObject:mArr forKey:mId];
+    }
+    
+    //3. 移除节点;
+    for (NSString *mId in dic.allKeys) {
+        NVModuleView *mView = [self getNVModuleViewWithModuleId:mId];
+        if (mView) {
+            [mView removeNodeDatas:[dic objectForKey:mId]];
+        }
+    }
+    
+    //4. 移除线段;
+    [self moduleView_ClearLine:nodeDatas];
+}
+
 -(void) clear{
     //1. 清模块
     NSArray *mViews = ARRTOOK([self subViews_AllDeepWithClass:NVModuleView.class]);

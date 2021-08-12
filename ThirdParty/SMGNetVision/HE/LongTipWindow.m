@@ -75,21 +75,53 @@
 //MARK:                     < onclick >
 //MARK:===============================================================
 - (IBAction)normalClick:(UIButton*)sender {
+    [self generalClick:sender filter:^NSArray *(NSArray *ports) {
+        return [SMGUtils filterPorts_Normal:ports];
+    }];
+}
+- (IBAction)hnClick:(UIButton*)sender {
+    [self generalClick:sender filter:^NSArray *(NSArray *ports) {
+        return [SMGUtils filterPorts:ports havTypes:@[@(ATHav),@(ATNone)] noTypes:nil];
+    }];
+}
+- (IBAction)glClick:(UIButton*)sender {
+    [self generalClick:sender filter:^NSArray *(NSArray *ports) {
+        return [SMGUtils filterPorts:ports havTypes:@[@(ATGreater),@(ATLess)] noTypes:nil];
+    }];
+}
+- (IBAction)spClick:(UIButton*)sender {
+    [self generalClick:sender filter:^NSArray *(NSArray *ports) {
+        return [SMGUtils filterPorts:ports havTypes:@[@(ATSub),@(ATPlus)] noTypes:nil];
+    }];
+}
+- (IBAction)dsdfClick:(UIButton*)sender {
+    NSLog(@"%@",sender.titleLabel.text);
+    //目前仅top方向的fo支持dsPorts;
+    if (PitIsFo(self.data) && self.type == DirectionType_Top) {
+        AIFoNodeBase *node = [SMGUtils searchNode:self.data];
+        NSArray *dsPorts = [AINetUtils dsPorts_All:node];
+        [theNV setNodeDatas:Ports2Pits(dsPorts)];
+    }
+    [self close];
+}
+- (IBAction)recallClick:(UIButton*)sender {
+    NSLog(@"%@",sender.titleLabel.text);
+    NSArray *removeDatas = [self generalGetDatas:^NSArray *(NSArray *ports) {
+        return ports;
+    }];
+    [theNV removeNodeDatas:removeDatas];
+    [self close];
+}
+- (IBAction)closeClick:(id)sender {
+    [self close];
+}
+
+-(void)generalClick:(UIButton*)sender filter:(NSArray*(^)(NSArray *ports))filter{
     //1. 数据准备;
     NSLog(@"%@",sender.titleLabel.text);
-    AINodeBase *node = [SMGUtils searchNode:self.data];
-    NSArray *addDatas = nil;
     
     //2. 取新增节点;
-    if (self.type == DirectionType_Top) {
-        addDatas = Ports2Pits([SMGUtils filterPorts_Normal:[AINetUtils absPorts_All:node]]);
-    }else if (self.type == DirectionType_Bottom) {
-        addDatas = Ports2Pits([SMGUtils filterPorts_Normal:[AINetUtils conPorts_All:node]]);
-    }else if (self.type == DirectionType_Left) {
-        addDatas = node.content_ps;
-    }else if (self.type == DirectionType_Bottom) {
-        addDatas = Ports2Pits([SMGUtils filterPorts_Normal:[AINetUtils refPorts_All:self.data]]);
-    }
+    NSArray *addDatas = [self generalGetDatas:filter];
     
     //3. 显示到网络可视化;
     [theNV setNodeDatas:addDatas];
@@ -97,28 +129,23 @@
     //4. 关闭
     [self close];
 }
-- (IBAction)hnClick:(UIButton*)sender {
-    NSLog(@"%@",sender.titleLabel.text);
-    [self close];
-}
-- (IBAction)glClick:(UIButton*)sender {
-    NSLog(@"%@",sender.titleLabel.text);
-    [self close];
-}
-- (IBAction)spClick:(UIButton*)sender {
-    NSLog(@"%@",sender.titleLabel.text);
-    [self close];
-}
-- (IBAction)dsdfClick:(UIButton*)sender {
-    NSLog(@"%@",sender.titleLabel.text);
-    [self close];
-}
-- (IBAction)recallClick:(UIButton*)sender {
-    NSLog(@"%@",sender.titleLabel.text);
-    [self close];
-}
-- (IBAction)closeClick:(id)sender {
-    [self close];
+
+-(NSArray*)generalGetDatas:(NSArray*(^)(NSArray *ports))filter{
+    //1. 数据准备;
+    AINodeBase *node = [SMGUtils searchNode:self.data];
+    NSArray *result = nil;
+    
+    //2. 取新增节点;
+    if (self.type == DirectionType_Top) {
+        result = Ports2Pits(filter([AINetUtils absPorts_All:node]));
+    }else if (self.type == DirectionType_Bottom) {
+        result = Ports2Pits(filter([AINetUtils conPorts_All:node]));
+    }else if (self.type == DirectionType_Left) {
+        result = node.content_ps;
+    }else if (self.type == DirectionType_Bottom) {
+        result = Ports2Pits(filter([AINetUtils refPorts_All:self.data]));
+    }
+    return result;
 }
 
 @end

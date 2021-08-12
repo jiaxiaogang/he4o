@@ -74,6 +74,11 @@
 -(void) setNodeData:(id)nodeData appendLightStr:(NSString*)appendLightStr;
 
 /**
+ *  MARK:--------------------移除内容--------------------
+ */
+-(void) removeNodeDatas:(NSArray*)nodeDatas;
+
+/**
  *  MARK:--------------------清空网络--------------------
  */
 -(void) clear;
