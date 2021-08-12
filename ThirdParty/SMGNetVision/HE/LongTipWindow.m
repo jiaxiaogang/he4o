@@ -142,7 +142,7 @@
         result = Ports2Pits(filter([AINetUtils conPorts_All:node]));
     }else if (self.type == DirectionType_Left) {
         result = node.content_ps;
-    }else if (self.type == DirectionType_Bottom) {
+    }else if (self.type == DirectionType_Right) {
         result = Ports2Pits(filter([AINetUtils refPorts_All:self.data]));
     }
     return result;

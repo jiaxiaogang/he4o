@@ -125,15 +125,15 @@
                     </constraints>
                 </view>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wIu-CF-fd7">
-                    <rect key="frame" x="304.5" y="217.5" width="50" height="50"/>
-                    <color key="backgroundColor" red="1" green="0.1019250594" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <rect key="frame" x="154.5" y="217.5" width="350" height="50"/>
+                    <color key="backgroundColor" red="1" green="0.62643009439999997" blue="0.55188864469999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="50" id="FNM-eY-dqu"/>
-                        <constraint firstAttribute="width" constant="50" id="eEa-hw-hl7"/>
+                        <constraint firstAttribute="width" constant="350" id="eEa-hw-hl7"/>
                     </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="40"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="33"/>
                     <state key="normal" title="X">
-                        <color key="titleColor" red="0.97668207699999998" green="1" blue="0.69268770619999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="titleColor" red="1" green="0.1019250594" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </state>
                     <connections>
                         <action selector="closeClick:" destination="-1" eventType="touchUpInside" id="MkB-6V-qim"/>
