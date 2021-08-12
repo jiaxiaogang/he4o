@@ -425,6 +425,10 @@
     [self.delegate nv_DirectionClick:type mView:mView nData:nData targetDatas:targetDatas];
 }
 
+-(void)moduleView_LongClick:(DirectionType)type mView:(NVModuleView*)mView nData:(id)nData{
+    [self.delegate nv_LongClick:type mView:mView nData:nData];
+}
+
 //MARK:===============================================================
 //MARK:                     < SelfDelegate >
 //MARK:===============================================================

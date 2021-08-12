@@ -20,6 +20,7 @@
 #import "AINetUtils.h"
 #import "AIPort.h"
 #import "TOUtils.h"
+#import "LongTipWindow.h"
 
 #define ModuleName_Value @"稀疏码"
 #define ModuleName_Alg @"概念网络"
@@ -317,6 +318,14 @@
     for (id absData in targetDatas) {
         [theNV lightLineStrong:nData nodeDataB:absData];
     }
+}
+
+//方向触发角长按事件;
+-(void)nv_LongClick:(int)type mView:(NVModuleView*)mView nData:(id)nData{
+    LongTipWindow *window = [[LongTipWindow alloc] init];
+    [theApp.window addSubview:window];
+    [window setData:mView.moduleId data:nData direction:type];
+     
 }
 
 @end

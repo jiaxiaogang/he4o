@@ -279,6 +279,9 @@
     TPLog(@"refPorts:%lu",(unsigned long)refNodeDatas.count);
     [self.delegate moduleView_DirectionClick:DirectionType_Right mView:self nData:nodeData targetDatas:refNodeDatas];
 }
+-(void) nodeView_LongClick:(id)nodeData direction:(DirectionType)direction{
+    [self.delegate moduleView_LongClick:direction mView:self nData:nodeData];
+}
 
 //MARK:===============================================================
 //MARK:                     < SelfDelegate >

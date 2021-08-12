@@ -565,6 +565,14 @@
     [allPorts addObjectsFromArray:[self refPorts_All4Value:value_p isMem:true]];
     return allPorts;
 }
++(NSArray*) refPorts_All:(AIKVPointer*)node_p{
+    if (PitIsValue(node_p)) {
+        return [self refPorts_All4Value:node_p];
+    }else if(PitIsAlg(node_p)){
+        return [self refPorts_All4Alg:[SMGUtils searchNode:node_p]];
+    }
+    return nil;
+}
 
 +(NSArray*) refPorts_All4Value:(AIKVPointer*)value_p isMem:(BOOL)isMem{
     NSMutableArray *allPorts = [[NSMutableArray alloc] init];

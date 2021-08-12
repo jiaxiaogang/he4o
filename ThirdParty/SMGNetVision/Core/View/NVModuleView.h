@@ -53,6 +53,9 @@
 //directionClick
 -(void)moduleView_DirectionClick:(DirectionType)type mView:(NVModuleView*)mView nData:(id)nData targetDatas:(NSArray*)targetDatas;
 
+//longClick
+-(void)moduleView_LongClick:(DirectionType)type mView:(NVModuleView*)mView nData:(id)nData;
+
 @end
 
 /**

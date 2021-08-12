@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		080228E1227282F80087FE69 /* TOModelBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 080228E0227282F80087FE69 /* TOModelBase.m */; };
 		08057B342355574600E9B6F1 /* AIShortMatchModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08057B332355574600E9B6F1 /* AIShortMatchModel.m */; };
+		0805EB3126C54A00005F6341 /* LongTipWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0805EB3026C54A00005F6341 /* LongTipWindow.xib */; };
+		0805EB3426C54A0D005F6341 /* LongTipWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 0805EB3326C54A0D005F6341 /* LongTipWindow.m */; };
 		08081DD821DD8BDC005B867F /* AIAlgNodeBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 08081DD721DD8BDC005B867F /* AIAlgNodeBase.m */; };
 		0808927A215AF5F400710636 /* AINodeBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 08089279215AF5F400710636 /* AINodeBase.m */; };
 		08089280215B07FC00710636 /* AICMVNodeBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 0808927F215B07FC00710636 /* AICMVNodeBase.m */; };
@@ -167,6 +169,9 @@
 		08042E7D1F43CE9400A1FFCB /* SMGEnum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMGEnum.h; sourceTree = "<group>"; };
 		08057B322355574600E9B6F1 /* AIShortMatchModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIShortMatchModel.h; sourceTree = "<group>"; };
 		08057B332355574600E9B6F1 /* AIShortMatchModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIShortMatchModel.m; sourceTree = "<group>"; };
+		0805EB3026C54A00005F6341 /* LongTipWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LongTipWindow.xib; sourceTree = "<group>"; };
+		0805EB3226C54A0D005F6341 /* LongTipWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LongTipWindow.h; sourceTree = "<group>"; };
+		0805EB3326C54A0D005F6341 /* LongTipWindow.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LongTipWindow.m; sourceTree = "<group>"; };
 		08081DD621DD8BDC005B867F /* AIAlgNodeBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIAlgNodeBase.h; sourceTree = "<group>"; };
 		08081DD721DD8BDC005B867F /* AIAlgNodeBase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIAlgNodeBase.m; sourceTree = "<group>"; };
 		08089278215AF5F400710636 /* AINodeBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINodeBase.h; sourceTree = "<group>"; };
@@ -883,6 +888,9 @@
 				08A5D5E422AF2B8200E56BB4 /* NVDelegate_He.m */,
 				08AA10E622CAD8520077DE36 /* NVHeUtil.h */,
 				08AA10E722CAD8520077DE36 /* NVHeUtil.m */,
+				0805EB3226C54A0D005F6341 /* LongTipWindow.h */,
+				0805EB3326C54A0D005F6341 /* LongTipWindow.m */,
+				0805EB3026C54A00005F6341 /* LongTipWindow.xib */,
 			);
 			path = HE;
 			sourceTree = "<group>";
@@ -1347,6 +1355,7 @@
 				0858C5DD2194FB4600951BA5 /* LightView.xib in Resources */,
 				0835557C266C6B8400ECFC51 /* MemManagerWindow.xib in Resources */,
 				083352F621800AB1003931E5 /* MainPage.xib in Resources */,
+				0805EB3126C54A00005F6341 /* LongTipWindow.xib in Resources */,
 				0858C5E421950BC700951BA5 /* TreeView.xib in Resources */,
 				08AF45581E97D0B500377887 /* LaunchScreen.storyboard in Resources */,
 				0858C5E921950CAA00951BA5 /* FoodView.xib in Resources */,
@@ -1458,6 +1467,7 @@
 				0858C5DB2194FB3F00951BA5 /* LightView.m in Sources */,
 				08E8F7B221798AEE004F51DE /* AIFoNodeBase.m in Sources */,
 				0842ADBD1FE207500048ADDC /* DemoHunger.m in Sources */,
+				0805EB3426C54A0D005F6341 /* LongTipWindow.m in Sources */,
 				08AF454D1E97D0B500377887 /* AppDelegate.m in Sources */,
 				08F3E9312241B6E800545795 /* AIAnalogy.m in Sources */,
 				087268E0219CF3B500B5490F /* AIVisionAlgs.m in Sources */,

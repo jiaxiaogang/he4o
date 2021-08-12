@@ -664,14 +664,15 @@
                 NSArray *ref_ps = Ports2Pits([AINetUtils refPorts_All4Alg_Normal:alg]);
             
                 //3. 筛选出有效部分fo;
-                NSArray *conFo_ps = [AINetUtils conPorts_All_Normal:curFo];
+                NSArray *conFo_ps = Ports2Pits([AINetUtils conPorts_All_Normal:curFo]);
                 conFo_ps = [SMGUtils filterSame_ps:conFo_ps parent_ps:ref_ps];
             
                 //4. 依次对有效的fo,找到其pPorts;
                 for (AIKVPointer *fo_p in conFo_ps) {
                     AIFoNodeBase *fo = [SMGUtils searchNode:fo_p];
                     NSArray *pPorts = [ThinkingUtils pm_GetValidSPAlg_ps:alg curFo:fo type:ATPlus];
-                    
+                 
+                    //此处训练有时,指向有一个S,有时指向有一个P,需要再测测看;
                     if (pPorts.count > 0) {
                         NSLog(@"");
                     }

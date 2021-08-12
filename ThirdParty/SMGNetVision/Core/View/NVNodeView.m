@@ -70,10 +70,10 @@
     CGRect bottomF = CGRectMake(btnMargin,btnW * -0.5f + cNodeSize,btnL,btnW);
     
     //createEdgeBtn
-    self.leftBtn = [self createEdgeBtn:leftF onClick:@selector(leftBtnOnClick:)];
-    self.rightBtn = [self createEdgeBtn:rightF onClick:@selector(rightBtnOnClick:)];
-    self.topBtn = [self createEdgeBtn:topF onClick:@selector(topBtnOnClick:)];
-    self.bottomBtn = [self createEdgeBtn:bottomF onClick:@selector(bottomBtnOnClick:)];
+    self.leftBtn = [self createEdgeBtn:leftF onClick:@selector(leftBtnOnClick:) longClick:@selector(btnLongClick:)];
+    self.rightBtn = [self createEdgeBtn:rightF onClick:@selector(rightBtnOnClick:) longClick:@selector(btnLongClick:)];
+    self.topBtn = [self createEdgeBtn:topF onClick:@selector(topBtnOnClick:) longClick:@selector(btnLongClick:)];
+    self.bottomBtn = [self createEdgeBtn:bottomF onClick:@selector(bottomBtnOnClick:) longClick:@selector(btnLongClick:)];
     
     //ligthLab
     [self.lightLab setUserInteractionEnabled:false];
@@ -162,10 +162,13 @@
 //MARK:===============================================================
 //MARK:                     < privateMethod >
 //MARK:===============================================================
--(UIButton*) createEdgeBtn:(CGRect)frame onClick:(SEL)onClick{
+-(UIButton*) createEdgeBtn:(CGRect)frame onClick:(SEL)onClick longClick:(SEL)longClick{
     UIButton *btn = [[UIButton alloc] initWithFrame:frame];
     [btn setBackgroundColor:[UIColor blackColor]];
     [btn addTarget:self action:onClick forControlEvents:UIControlEventTouchUpInside];
+    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:longClick];
+    longPress.minimumPressDuration = 0.8;
+    [btn addGestureRecognizer:longPress];
     [self.contentView addSubview:btn];
     [btn.layer setCornerRadius:MAX(frame.size.width,frame.size.height) * 0.5f];
     [btn.layer setBorderWidth:1.0f / UIScreen.mainScreen.scale];
@@ -204,6 +207,25 @@
 - (void)rightBtnOnClick:(UIControl*)sender {
     [self nodeView_RightClick:self.data];
     [self animationClick:sender];
+}
+- (void)btnLongClick:(UILongPressGestureRecognizer*)sender{
+    //1. 防止重复触发
+    if (sender.state != UIGestureRecognizerStateBegan) return;
+    
+    //2. 取方向
+    DirectionType direction = DirectionType_Top;
+    if ([self.leftBtn isEqual:sender.view]) {
+        direction = DirectionType_Left;
+    }else if ([self.rightBtn isEqual:sender.view]) {
+        direction = DirectionType_Right;
+    }else if ([self.bottomBtn isEqual:sender.view]) {
+        direction = DirectionType_Bottom;
+    }
+    
+    //3. 触发事件回调;
+    if (self.delegate && [self.delegate respondsToSelector:@selector(nodeView_LongClick:direction:)]) {
+        [self.delegate nodeView_LongClick:self.data direction:direction];
+    }
 }
 
 //MARK:===============================================================

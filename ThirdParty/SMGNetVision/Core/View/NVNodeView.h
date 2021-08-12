@@ -22,6 +22,7 @@
 -(void) nodeView_BottomClick:(id)nodeData;
 -(void) nodeView_LeftClick:(id)nodeData;
 -(void) nodeView_RightClick:(id)nodeData;
+-(void) nodeView_LongClick:(id)nodeData direction:(DirectionType)direction;
 
 @end
 
