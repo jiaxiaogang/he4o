@@ -643,6 +643,51 @@
             
             //12. ------> 未找到GL的目标 (如距离0),直接计为失败;
             if (Log4PM) NSLog(@"-> 未找到GL目标,转至流程控制Failure");
+            
+            //========================================================================
+            //TODOTOMORROW20210812: 调试23215-PM不通过时修正无目标的问题;
+            [theNV invokeForceMode:^{
+                [theNV setNodeData:curFo.pointer lightStr:@"curFo"];
+                [theNV setNodeData:curAlg.pointer lightStr:@"curAlg"];
+                for (AIPort *port in pPorts) {
+                    [theNV setNodeData:port.target_p lightStr:@"pPort"];
+                }
+            }];
+            //1. 尝试从具象中,找出pPorts
+            NSMutableArray *allAlg_ps = [[NSMutableArray alloc] init];
+            [allAlg_ps addObject:curAlg.pointer];
+            [allAlg_ps addObjectsFromArray:Ports2Pits([AINetUtils conPorts_All_Normal:curAlg])];
+            
+            //2. 取每条alg的refFos;
+            for (AIKVPointer *alg_p in allAlg_ps) {
+                AIAlgNodeBase *alg = [SMGUtils searchNode:alg_p];
+                NSArray *ref_ps = Ports2Pits([AINetUtils refPorts_All4Alg_Normal:alg]);
+            
+                //3. 筛选出有效部分fo;
+                NSArray *conFo_ps = [AINetUtils conPorts_All_Normal:curFo];
+                conFo_ps = [SMGUtils filterSame_ps:conFo_ps parent_ps:ref_ps];
+            
+                //4. 依次对有效的fo,找到其pPorts;
+                for (AIKVPointer *fo_p in conFo_ps) {
+                    AIFoNodeBase *fo = [SMGUtils searchNode:fo_p];
+                    NSArray *pPorts = [ThinkingUtils pm_GetValidSPAlg_ps:alg curFo:fo type:ATPlus];
+                    
+                    if (pPorts.count > 0) {
+                        NSLog(@"");
+                    }
+                }
+            }
+            //========================================================================
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             if (failure) failure();
             return;
         }else {
