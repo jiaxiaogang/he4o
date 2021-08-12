@@ -617,25 +617,6 @@
         if (Log4PM) NSLog(@"> 当前修正:%@ 最近P:%@ 评价:%@",Pit2FStr(firstJustPValue),Alg2FStr(mostSimilarAlg),score?@"通过":@"未通过");
         if (Log4PM) NSLog(@"--> S数:%lu P数:%lu",(unsigned long)sPorts.count,(unsigned long)pPorts.count);
         if (Log4PM) NSLog(@"--> SP From=>curAlg:%@ curFo:%@",Alg2FStr(curAlg),Fo2FStr(curFo));
-        
-        //TODOTOMORROW20210804: 用神经网络可视化_调试打开IRT后,sPorts还是0条的BUG;
-        if ([@"distanceY" isEqualToString:firstJustPValue.dataSource]) {
-            
-            [theNV invokeForceMode:^{
-                [theNV setNodeData:curAlg.pointer lightStr:@"Y距A"];
-                [theNV setNodeData:curFo.pointer lightStr:@"Y距F"];
-            }];
-            [theTC updateEnergy:-999];
-            //还是得查SP的构建,为什么curFo没构建到S?
-            //经查:
-            //  1. curFo的抽象时序也没构建到S;
-            //  2. R-别的解决方案也没构建到S;
-            
-            
-            
-            
-            
-        }
         if (!score) {
             //10. 优先从MC的C中找同区码,作为修正GL的目标;
             AIKVPointer *glValue4M = [SMGUtils filterSameIdentifier_p:firstJustPValue b_ps:curAlg.content_ps];
