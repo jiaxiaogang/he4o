@@ -456,7 +456,12 @@
     NSMutableArray *result = [[NSMutableArray alloc] init];
     if (curAlg && curFo && (type == ATSub || type == ATPlus)) {
         //1. 根据curFo取抽象SubFo3条,PlusFo3条;
-        NSArray *spFo_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:curFo type:type]];
+        NSArray *spFo_ps = [AINetUtils absPorts_All:curFo];
+        if (curFo.pointer.pointerId == 8 && curAlg.pointer.pointerId == 6) {
+            NSLog(@"");
+        }
+        spFo_ps = [SMGUtils filterPorts:spFo_ps havTypes:@[@(type)] noTypes:nil];
+        spFo_ps = Ports2Pits(spFo_ps);
         spFo_ps = ARR_SUB(spFo_ps, 0, cPM_CheckSPFoLimit);
         NSArray *spFos = [SMGUtils searchNodes:spFo_ps];
         
