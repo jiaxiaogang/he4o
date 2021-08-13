@@ -100,6 +100,11 @@
     [self refreshDisplay_Line:nodeDatas];
 }
 
+/**
+ *  MARK:--------------------移除节点--------------------
+ *  @version
+ *      2021.08.13: 修复removeArr方法错误,导致移除不全面,改用removeSub_ps方法后ok;
+ */
 -(void) removeNodeDatas:(NSArray*)nodeDatas{
     //1. 数据检查;
     nodeDatas = ARRTOOK(nodeDatas);
@@ -111,7 +116,7 @@
     }];
     
     //3. 删除数据,删除NodeView;
-    [self.nodeArr removeObjectsInArray:nodeDatas];
+    _nodeArr = [SMGUtils removeSub_ps:nodeDatas parent_ps:self.nodeArr];
     for (UIView *view in allNode) {
         [view removeFromSuperview];
     }

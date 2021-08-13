@@ -672,6 +672,10 @@
                     AIFoNodeBase *fo = [SMGUtils searchNode:fo_p];
                     NSArray *pPorts = [ThinkingUtils pm_GetValidSPAlg_ps:alg curFo:fo type:ATPlus];
                  
+                    if (fo_p.pointerId == 8 && alg_p.pointerId == 6) {
+                        NSLog(@"");
+                    }
+                    
                     //此处训练有时,指向有一个S,有时指向有一个P,需要再测测看;
                     if (pPorts.count > 0) {
                         NSLog(@"");
