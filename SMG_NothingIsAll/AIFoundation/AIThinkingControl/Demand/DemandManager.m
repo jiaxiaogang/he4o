@@ -184,10 +184,18 @@
  *  MARK:--------------------生成子任务--------------------
  *  @param rtInModel : 反思结果;
  *  @param baseFo : 反思基于此fo进行的,将反思产生的子任务挂在这下面;
+ *  @desc
+ *      2021.08.14: 防重说明:
+ *                  1. 同树防重: 同树不可有一模一样的树叶;
+ *                  2. ds范围防重: 将dsFo可用于解决的所有任务都做防重 (不能因为十个钉子准备十把锤子);
+ *                  3. 纵向防重: 对于抽象子任务,其下的任何具象子任务都不再生成子任务 (吃过饭了,有面条也不吃了);
+ *
  *  @version
  *      2021.06.05: v2_子任务协同,将先执行顺利的ds解决方案下的场景fos加入到不应期 (参考23102 & 23103);
  *      2021.06.08: 子任务的actYes状态由任意subModel为actYes状态为准 (参考23122);
  *      2021.06.24: 第四类不应期,将全树中未失败任务下已成功或静默等待下的dsFo适用的任务全收集为不应期 (参考23142-方案);
+ *  @todo
+ *      2021.08.14: 抽象的R任务,可对其具象的R进行防重 (参考23216);
  */
 +(void) updateSubDemand:(AIShortMatchModel*)rtInModel baseFo:(TOFoModel*)baseFo createSubDemandBlock:(void(^)(ReasonDemandModel*))createSubDemandBlock finishBlock:(void(^)(NSArray*))finishBlock{
     //1. 数据检查;

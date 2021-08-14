@@ -644,8 +644,12 @@
             //12. ------> 未找到GL的目标 (如距离0),直接计为失败;
             if (Log4PM) NSLog(@"-> 未找到GL目标,转至流程控制Failure");
             
+            
+            
             //========================================================================
             //TODOTOMORROW20210812: 调试23215-PM不通过时修正无目标的问题;
+            //推进1: 经测,在具象找依然没有SP经验,所以还是得走23215-方案2,重新制定训练步骤,使SP生成;
+            //推进2: 但在重新规划训练步骤时,发现反思相似R太多,导致一个错误右飞行为,可能执行N次右飞,导致飞不知道哪了,SP生成也不太好测试,所以先解决这问题;
             [theNV invokeForceMode:^{
                 [theNV setNodeData:curFo.pointer lightStr:@"curFo"];
                 [theNV setNodeData:curAlg.pointer lightStr:@"curAlg"];
