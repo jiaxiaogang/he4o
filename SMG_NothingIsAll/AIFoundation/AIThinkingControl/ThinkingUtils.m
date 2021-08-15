@@ -541,6 +541,8 @@
 /**
  *  MARK:--------------------收集当前demand可适用于别的任务--------------------
  *  @desc demand下dsFo为finish/actYes状态时,收集它能解决的所有问题
+ *  @version
+ *      2021.08.15: 不止ActYes,扩展本方法对Runing的支持 (参考23217);
  */
 +(NSMutableArray*) collectDiffBaseFoWhenDSFoIsFinishOrActYes:(DemandModel*)curDemand{
     //1. 数据检查;
@@ -551,7 +553,7 @@
     for (TOFoModel *dsFoModel in curDemand.actionFoModels) {
         
         //3. 检查dsFo是否为actYes状态;
-        NSArray *subActYes = [TOUtils getSubOutModels_AllDeep:dsFoModel validStatus:@[@(TOModelStatus_ActYes)] cutStopStatus:@[@(TOModelStatus_ActNo),@(TOModelStatus_ScoreNo)]];
+        NSArray *subActYes = [TOUtils getSubOutModels_AllDeep:dsFoModel validStatus:@[@(TOModelStatus_ActYes),@(TOModelStatus_Runing)] cutStopStatus:@[@(TOModelStatus_ActNo),@(TOModelStatus_ScoreNo)]];
         
         //4. 当dsFo为finish或actYes状态时,将diffBasePorts收集到返回结果中;
         if (dsFoModel.status == TOModelStatus_Finish || ARRISOK(subActYes)) {
