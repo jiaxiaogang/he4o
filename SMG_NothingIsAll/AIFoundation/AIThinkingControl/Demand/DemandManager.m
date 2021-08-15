@@ -18,6 +18,7 @@
 #import "AITime.h"
 #import "TOFoModel.h"
 #import "AIAnalogy.h"
+#import "AINetUtils.h"
 
 @interface DemandManager()
 
@@ -188,14 +189,14 @@
  *      2021.08.14: 防重说明:
  *                  1. 同树防重: 同树不可有一模一样的树叶;
  *                  2. ds范围防重: 将dsFo可用于解决的所有任务都做防重 (不能因为十个钉子准备十把锤子);
- *                  3. 纵向防重: 对于抽象子任务,其下的任何具象子任务都不再生成子任务 (吃过饭了,有面条也不吃了);
+ *                  3. 抽象防重: 对于抽象子任务,其下的任何具象子任务都不再生成子任务 (吃过饭了,有面条也不吃了);
  *
  *  @version
  *      2021.06.05: v2_子任务协同,将先执行顺利的ds解决方案下的场景fos加入到不应期 (参考23102 & 23103);
  *      2021.06.08: 子任务的actYes状态由任意subModel为actYes状态为准 (参考23122);
  *      2021.06.24: 第四类不应期,将全树中未失败任务下已成功或静默等待下的dsFo适用的任务全收集为不应期 (参考23142-方案);
- *  @todo
- *      2021.08.14: 抽象的R任务,可对其具象的R进行防重 (参考23216);
+ *      2021.08.14: 抽象防重: 对于抽象任务下的具象子任务都进行防重 (参考23216);
+ *
  */
 +(void) updateSubDemand:(AIShortMatchModel*)rtInModel baseFo:(TOFoModel*)baseFo createSubDemandBlock:(void(^)(ReasonDemandModel*))createSubDemandBlock finishBlock:(void(^)(NSArray*))finishBlock{
     //1. 数据检查;
@@ -215,14 +216,25 @@
     NSArray *noActNoDemands = [SMGUtils removeArr:allSubDemands checkValid:^BOOL(id item) {
         return [failureDemans containsObject:item];
     }];
+    NSMutableArray *dsExcepts = [[NSMutableArray alloc] init];
+    for (DemandModel *subDemand in noActNoDemands){
+        [dsExcepts addObjectsFromArray:[ThinkingUtils collectDiffBaseFoWhenDSFoIsFinishOrActYes:subDemand]];
+    }
+    
+    //4. 收集不应期_之抽象防重_收集当前还未失败所有任务的具象;
+    NSMutableArray *absExcepts = [[NSMutableArray alloc] init];
+//    for (ReasonDemandModel *subDemand in noActNoDemands){
+//        if (ISOK(subDemand, ReasonDemandModel.class)) {
+//            [absExcepts addObjectsFromArray:Ports2Pits([AINetUtils conPorts_All:subDemand.mModel.matchFo])];
+//        }
+//    }
     
     //4. 收集不应期_之(1.父级 2.子级已失败 3.当前全树dsFo可适用于的所有问题);
     NSMutableArray *except_ps = [[NSMutableArray alloc] init];
     [except_ps addObjectsFromArray:baseExcepts];
     [except_ps addObjectsFromArray:failureExcepts];
-    for (DemandModel *subDemand in noActNoDemands){
-        [except_ps addObjectsFromArray:[ThinkingUtils collectDiffBaseFoWhenDSFoIsFinishOrActYes:subDemand]];
-    }
+    [except_ps addObjectsFromArray:dsExcepts];
+    [except_ps addObjectsFromArray:absExcepts];
     
     //5. 子任务_对反思预测fo尝试转为子任务;
     for (AIMatchFoModel *item in rtInModel.matchPFos) {
@@ -239,6 +251,16 @@
         NSInteger index = [rtInModel.matchPFos indexOfObject:item];
         NSLog(@"=====> 基于%@的反思PFo结果:(%ld/%ld)",FoP2FStr(baseFo.content_p),index,rtInModel.matchPFos.count);
         NSLog(@"=====> 生成R子任务:%@->%@",Fo2FStr(item.matchFo),Mvp2Str(item.matchFo.cmvNode_p));
+        
+        
+        //TODOTOMORROW20210815: 查23216有相似子任务4种13条的问题;
+        [theNV invokeForceMode:^{
+            [theNV setNodeData:item.matchFo.pointer lightStr:@"子任务"];
+        }];
+        if (item.matchFo.pointer.pointerId == 115) {
+            NSLog(@"");
+        }
+        
         //NSLog(@"%@",TOModel2Root2Str(subDemand));
         NSLog(@"%@",TOModel2Sub2Str(rootDemand));
         if (createSubDemandBlock) {
@@ -247,6 +269,9 @@
         
         //9. 收集不应期之3: 已行为化的子任务中已顺利执行的ds解决方案,其下的所有场景fo加入不应期 (参考23102 & 23103);
         [except_ps addObjectsFromArray:[ThinkingUtils collectDiffBaseFoWhenDSFoIsFinishOrActYes:subDemand]];
+        
+        //9. 收集不应期_之抽象防重_收集当前还未失败所有任务的具象;
+//        [except_ps addObjectsFromArray:Ports2Pits([AINetUtils conPorts_All:subDemand.mModel.matchFo])];
     }
     
     //10. 完成;
