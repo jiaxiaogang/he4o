@@ -592,8 +592,8 @@
         
         //7. 进行外类比
         AIFoNodeBase *assFo = [SMGUtils searchNode:subPort.target_p];
+        if (Log4DiffAna) NSLog(@"\nassFo:%@->%@",Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
         AINetAbsFoNode *absFo = [self analogyOutside:protoFo assFo:assFo type:ATDiff createAbsAlgBlock:nil];
-        if (Log4DiffAna) NSLog(@"\nassFo:%@->%@\n抽象为:%@->%@",Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p),Fo2FStr(absFo),Mvp2Str(absFo.cmvNode_p));
         if (!absFo) continue;
         
         //8. 将外类比抽象时做嵌套关联 & 指定强度;
