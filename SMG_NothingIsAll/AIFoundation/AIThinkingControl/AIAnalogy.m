@@ -56,6 +56,7 @@
  *      20200215: 有序外类比: 将forin循环fo和assFo改为反序,并记录上次类比位置jMax (因出现了[果,果,吃,吃]这样的异常时序) 参考n18p11;
  *      20200831: 支持反省外类比,得出更确切的ATSub原因,参考:20205-步骤4;
  *      20201203: 修复21175BUG (因createAbsAlgBlock忘记调用,导致absAlg和glAlg间未关联) (参考21115);
+ *      20210819: 修复长1和长2类比时,类比出长2的BUG (参考23221-BUG2);
  */
 +(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type createAbsAlgBlock:(void(^)(AIAlgNodeBase *createAlg,NSInteger foIndex,NSInteger assFoIndex))createAbsAlgBlock{
     //1. 类比orders的规律
@@ -69,6 +70,9 @@
             for (NSInteger j = jMax; j >= 0; j--) {
                 AIKVPointer *algNodeA_p = fo.content_ps[i];
                 AIKVPointer *algNodeB_p = assFo.content_ps[j];
+                if (Log4OutAna) NSLog(@"Fo    I: %ld -> %@",i,Pit2FStr(algNodeA_p));
+                if (Log4OutAna) NSLog(@"AssFo J: %ld -> %@",j,Pit2FStr(algNodeB_p));
+                
                 //2. A与B直接一致则直接添加 & 不一致则如下代码;
                 if ([algNodeA_p isEqual:algNodeB_p]) {
                     [orderSames insertObject:algNodeA_p atIndex:0];
@@ -101,6 +105,7 @@
                                 
                                 //3. 构建absAlg时,回调构建和glhnAlg的关联 (参考21115);
                                 if (createAbsAlgBlock) createAbsAlgBlock(createAbsNode,i,j);
+                                break;
                             }
                             ///4. 构建时,消耗能量值; updateEnergy(-0.1f);
                         }
