@@ -560,7 +560,7 @@
     //4. 互指向 (将虚mv指定给protoFo & 嵌套互指向);
     [AINetUtils relateFo:protoFo mv:mvNode];
     [AINetUtils relateDiff:protoFo baseNode:matchFo strongPorts:nil];
-    IFTitleLog(@"反向反馈外类比", @"\nprotoFo:%@->%@", Fo2FStr(protoFo),Mv2FStr(mvNode));
+    IFTitleLog(@"反向反馈外类比", @"\n新构建dsFo:%@->%@\n基于MFo:%@->%@", Fo2FStr(protoFo),Mv2FStr(mvNode),Fo2FStr(matchFo),Mvp2Str(matchFo.cmvNode_p));
     
     //5. 指定mvDeltaTime
     protoFo.mvDeltaTime = [TOUtils getSumDeltaTime2Mv:matchFo cutIndex:mModel.cutIndex2];;
@@ -573,8 +573,10 @@
     //1. 结合FZ14日志7975行;
     //2. 此处protoFo:F150->{0} matchFo:F100->{-9}
     //3. 此处F150是F100的dsFo解决方案;
-    //4. 而针对F150又做了内中外类比 (日志里没有取到assFo,所以并没有进行外类比,查下日志里后面,是不是再也没对F100的dsFos进行外类比);
-    //5. 然后导致最终"FZ14在重启直击时,F100没有取到较抽象的dsFo";
+    //4. 而针对F150又做了内中外类比 (初次基于F100进行反向反馈,所以这才构建首条dsFo,后面也再没有对其diff过,所以内中外类比未有执行机会);
+    //5. F100能取到3条dsFo: F155,F150,F3,但都不够抽象;
+    //6. 处理建议: 继续训练,并观察日志,是否能对F100构建更多absDSFo;
+    
     
     
     
@@ -590,8 +592,8 @@
         
         //7. 进行外类比
         AIFoNodeBase *assFo = [SMGUtils searchNode:subPort.target_p];
-        if (Log4DiffAna) NSLog(@"\nassFo:%@->%@",Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
         AINetAbsFoNode *absFo = [self analogyOutside:protoFo assFo:assFo type:ATDiff createAbsAlgBlock:nil];
+        if (Log4DiffAna) NSLog(@"\nassFo:%@->%@\n抽象为:%@->%@",Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p),Fo2FStr(absFo),Mvp2Str(absFo.cmvNode_p));
         if (!absFo) continue;
         
         //8. 将外类比抽象时做嵌套关联 & 指定强度;
