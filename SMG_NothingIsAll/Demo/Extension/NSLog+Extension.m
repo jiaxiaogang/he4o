@@ -41,6 +41,7 @@
     if (atType == ATLess) return @"小";
     if (atType == ATSub) return @"逆";
     if (atType == ATPlus) return @"顺";
+    if (atType == ATDiff) return @"DS";
     return @"普";
 }
 
