@@ -380,6 +380,12 @@
                 if (Log4MFo) NSLog(@"时序识别item SUCCESS 完成度:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
                 NSInteger cutIndex = findCutIndex(assFo,lastAssIndex);
                 AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:assFo matchFoValue:matchValue lastMatchIndex:lastAssIndex cutIndex:cutIndex];
+                
+                //8. 被引用强度;
+                AIPort *newMatchFoFromPort = [AINetUtils findPort:assFo_p fromPorts:refFoPorts];
+                newMatchFo.matchFoStrong = newMatchFoFromPort ? newMatchFoFromPort.strong.value : 0;
+                
+                //9. 收集到pFos/rFos;
                 if (assFo.cmvNode_p) {
                     [inModel.matchPFos addObject:newMatchFo];
                 }else{
@@ -390,10 +396,10 @@
     }
     NSLog(@"\n=====> 时序识别Finish (PFos数:%lu)",(unsigned long)inModel.matchPFos.count);
     for (AIMatchFoModel *item in inModel.matchPFos)
-        NSLog(@"> %@->%@ (匹配度:%@)",Fo2FStr(item.matchFo),Mvp2Str(item.matchFo.cmvNode_p),Double2Str_NDZ(item.matchFoValue));
+        NSLog(@"强度:(%ld)\t> %@->%@ (匹配度:%@)",item.matchFoStrong,Fo2FStr(item.matchFo),Mvp2Str(item.matchFo.cmvNode_p),Double2Str_NDZ(item.matchFoValue));
     NSLog(@"\n=====> 时序识别Finish (RFos数:%lu)",(unsigned long)inModel.matchRFos.count);
     for (AIMatchFoModel *item in inModel.matchRFos)
-        NSLog(@"> %@ (匹配度:%@)",Fo2FStr(item.matchFo),Double2Str_NDZ(item.matchFoValue));
+        NSLog(@"强度:(%ld)\t> %@ (匹配度:%@)",item.matchFoStrong,Fo2FStr(item.matchFo),Double2Str_NDZ(item.matchFoValue));
 }
 
 /**

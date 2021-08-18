@@ -36,4 +36,6 @@
  */
 @property (assign, nonatomic) NSInteger cutIndex2;
 
+@property (assign, nonatomic) NSInteger matchFoStrong;  //时序识别中被引用强度 (目前仅用于调试);
+
 @end
