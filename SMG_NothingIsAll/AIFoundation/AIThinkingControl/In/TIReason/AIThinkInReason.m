@@ -325,6 +325,7 @@
  *      2021.02.04: 将matchFos中的虚mv筛除掉,因为现在R-模式不使用matchFos做解决方案,现在留着没用,等有用时再打开;
  *      2021.04.15: 无mv指向的支持返回为matchRFos,原来有mv指向的重命名为matchPFos (参考23014-分析1&23016);
  *      2021.06.30: 支持cutIndex回调,识别和反思时,分别走不同逻辑 (参考23152);
+ *      2021.08.19: 结果PFos和RFos按(强度x匹配度)排序 (参考23222-BUG2);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
 +(void) partMatching_FoV1Dot5:(AIFoNodeBase*)maskFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel findCutIndex:(NSInteger(^)(AIFoNodeBase *matchFo,NSInteger lastMatchIndex))findCutIndex{
@@ -394,6 +395,16 @@
             }];
         }
     }
+    
+    //10. 按照 (强度x匹配度) 排序,强度最重要,包含了价值初始和使用频率,其次匹配度也重要 (参考23222-BUG2);
+    inModel.matchPFos = [[NSMutableArray alloc] initWithArray:[SMGUtils sortBig2Small:inModel.matchPFos compareBlock:^double(AIMatchFoModel *obj) {
+        return obj.matchFoStrong * obj.matchFoValue;
+    }]];
+    inModel.matchRFos = [[NSMutableArray alloc] initWithArray:[SMGUtils sortBig2Small:inModel.matchRFos compareBlock:^double(AIMatchFoModel *obj) {
+        return obj.matchFoStrong * obj.matchFoValue;
+    }]];
+    
+    //11. 调试日志;
     NSLog(@"\n=====> 时序识别Finish (PFos数:%lu)",(unsigned long)inModel.matchPFos.count);
     for (AIMatchFoModel *item in inModel.matchPFos)
         NSLog(@"强度:(%ld)\t> %@->%@ (匹配度:%@)",item.matchFoStrong,Fo2FStr(item.matchFo),Mvp2Str(item.matchFo.cmvNode_p),Double2Str_NDZ(item.matchFoValue));

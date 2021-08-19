@@ -624,7 +624,7 @@
     return [arr sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
         //3. 一级对比;
         NSComparisonResult result = NSOrderedSame;
-        if (compareBlock2) {
+        if (compareBlock1) {
             result = [SMGUtils compareDoubleA:compareBlock1(obj1) doubleB:compareBlock1(obj2)];
         }
         
