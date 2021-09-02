@@ -166,7 +166,7 @@ static AIThinkingControl *_instance;
         return;
     }
     
-    //2. OPushM
+    //2. top_OPushM
     [AIThinkOutPercept top_OPushM:cmvNode];
     
     //2. 将联想到的cmv更新energy & 更新demandManager & decisionLoop

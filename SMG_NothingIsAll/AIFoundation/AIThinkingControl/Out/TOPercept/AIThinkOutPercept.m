@@ -144,6 +144,13 @@
         
         //4. 将等待中的foModel改为OutBack;
         for (TOFoModel *foModel in demand.actionFoModels) {
+            
+            //TODOTOMORROW20210902: 召回任务池里的R任务,因为P反馈已至 (参考23224-方案);
+            //考虑不止actYes任务,而是所有从pFos生成的R任务全部判断,并进行销毁 / 或改成outerBack状态;
+            
+            
+            
+            
             if (foModel.status != TOModelStatus_ActYes) continue;
             if (Log4OPushM) NSLog(@"==> top_OPushM_mv有效改为OutBack,SFo: %@",Pit2FStr(foModel.content_p));
             foModel.status = TOModelStatus_OuterBack;

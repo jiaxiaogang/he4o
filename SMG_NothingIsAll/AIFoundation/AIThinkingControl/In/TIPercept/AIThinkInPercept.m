@@ -46,7 +46,7 @@
     //3. 学习
     [self dataIn_FindMV_Learning:protoFo cmvNode:cmvNode];
     
-    //4. OPushM
+    //4. tip_OPushM
     [AIThinkInPercept tip_OPushM:cmvNode];
     
     //5. 思考mv,需求处理
