@@ -144,40 +144,6 @@
         
         //4. 将等待中的foModel改为OutBack;
         for (TOFoModel *foModel in demand.actionFoModels) {
-            
-            //TODOTOMORROW20210902: 召回任务池里的R任务,因为P反馈已至 (参考23224-方案);
-            //考虑不止actYes任务,而是所有从pFos生成的R任务全部判断,并进行销毁 / 或改成outerBack状态;
-            
-            //未在actYes状态的,直接设为finish或failure;
-            //  a. 判断rDemand是否与当前P输入,是否符合: 预测的发生;
-            //      > 三辆车撞过来,各一个R,共有三个R -> 一辆撞到,另外两辆还得躲;
-            //      > 一只毒火虫飞来,有烧疼,撞疼,毒疼三种R -> 一只虫撞到,另外两个任务也不用躲了;
-            //      > 综上: 要从理性上分析是否来不及,即从PFos来分析,或从RDemand的来源:inModel来分析;
-            //      > 所以: 在R帧输入时,即同步更新RDemand任务,即F346飞出木棒时,应该同步推进rDemand.curIndex + 1;
-            //  a. 然后调用ort反省,
-            //  b. 再调用流程控制的failure或finish;
-            
-            /*
-             //3. 反省类比 (当OutBack发生,则破壁失败S,否则成功P) (参考top_OPushM());
-             AnalogyType type = (actYesModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;
-             NSLog(@"---//触发器R-_感性mv任务:%@ 解决方案:%@ (%@)",Fo2FStr(matchFo),Pit2FStr(actYesModel.content_p),ATType2Str(type));
-             
-             //4. 暂不开通反省类比,等做兼容PM后,再打开反省类比;
-             [AIAnalogy analogy_OutRethink:(TOFoModel*)actYesModel cutIndex:NSIntegerMax type:type];
-             
-             //4. 失败时,转流程控制-失败 (会开始下一解决方案) (参考22061-8);
-             //2021.01.28: 失败后不用再尝试下一方案了,因为R任务已过期 (已经被撞了,你再躲也没用) (参考22081-todo3);
-             if (type == ATSub) {
-             actYesModel.status = TOModelStatus_ScoreNo;
-             [self singleLoopBackWithFailureModel:demand];
-             }else{
-             //5. SFo破壁成功,完成任务 (参考22061-9);
-             actYesModel.status = TOModelStatus_Finish;
-             [self singleLoopBackWithFinishModel:demand];
-             }
-             */
-            
-            
             if (foModel.status != TOModelStatus_ActYes) continue;
             if (Log4OPushM) NSLog(@"==> top_OPushM_mv有效改为OutBack,SFo: %@",Pit2FStr(foModel.content_p));
             foModel.status = TOModelStatus_OuterBack;
