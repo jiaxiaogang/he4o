@@ -90,24 +90,34 @@
                     limit--;
                     i--;
                 }
-            }else if(ISOK(checkItem, ReasonDemandModel.class)){
-                ReasonDemandModel *rDemand = (ReasonDemandModel*)checkItem;
-                //1. 当已发生cutIndex所有content发生完毕时,PMV反馈可销毁R任务;
-                if (rDemand.mModel.cutIndex2 + 1 >= rDemand.mModel.matchFo.count) {
+            }
+        }
+    }
+    
+    //3. R任务未决策,就已错过的,销毁掉;
+    self.loopCache = [SMGUtils removeArr:self.loopCache checkValid:^BOOL(ReasonDemandModel *item) {
+        if (ISOK(item, ReasonDemandModel.class)) {
+            
+            //a. 当现发生的mv与R预测的mv同区同向;
+            if ([STRTOOK(algsType) isEqualToString:item.algsType] && (delta > 0 == item.delta > 0)) {
+                
+                //b. 当已发生cutIndex所有content发生完毕时,PMV反馈可销毁R任务;
+                if (item.mModel.cutIndex2 + 1 >= item.mModel.matchFo.count) {
                     
-                    //a. 判断rDemand是否处于actYes/outBack状态;
-                    BOOL isActYesOrOutBack = ARRISOK([SMGUtils filterArr:rDemand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
-                        return item.status == TOModelStatus_ActYes || item.status == TOModelStatus_OuterBack;
+                    //c. 判断rDemand是否处于actYes/outBack状态;
+                    BOOL isActYesOrOutBack = ARRISOK([SMGUtils filterArr:item.actionFoModels checkValid:^BOOL(TOFoModel *foModel) {
+                        return foModel.status == TOModelStatus_ActYes || foModel.status == TOModelStatus_OuterBack;
                     }]);
                     
-                    //b. 理性概念预测发生完毕,感性价值预测也发生完毕,且rDemand并不在等待反馈状态,则废弃移除出任务池;
+                    //d. 理性概念预测发生完毕,感性价值预测也发生完毕,且rDemand并不在等待反馈状态,则废弃移除出任务池;
                     if (!isActYesOrOutBack) {
-                        [self.loopCache removeObjectAtIndex:i];
+                        return false;
                     }
                 }
             }
         }
-    }
+        return true;
+    }];
     
     //3. 有需求时且可加入时_加入新的
     //TODO:>>>>判断需求;(如饿,主动取当前状态,是否饿)
