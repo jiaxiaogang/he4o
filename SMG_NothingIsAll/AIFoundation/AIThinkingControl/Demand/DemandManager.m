@@ -76,7 +76,7 @@
                     //1) 同向较弱的撤消
                     if (labs(urgentTo) > labs(checkItem.urgentTo)) {
                         [self.loopCache removeObjectAtIndex:i];
-                        NSLog(@"demandManager >> 同向较弱撤消 %lu",(unsigned long)self.loopCache.count);
+                        NSLog(@"demandManager >> PMV移除P任务: 同向较弱撤消 %@,%ld",checkItem.algsType,(long)checkItem.delta);
                         limit--;
                         i--;
                     }else{
@@ -86,7 +86,7 @@
                     //2) 反向抵消
                     [self.loopCache removeObjectAtIndex:i];
                     checkItem.status = TOModelStatus_Finish;
-                    NSLog(@"demandManager >> 反向抵消 %lu",(unsigned long)self.loopCache.count);
+                    NSLog(@"demandManager >> PMV移除P任务: 反向抵消 %@,%ld",checkItem.algsType,(long)checkItem.delta);
                     limit--;
                     i--;
                 }
@@ -111,12 +111,13 @@
                     
                     //d. 理性概念预测发生完毕,感性价值预测也发生完毕,且rDemand并不在等待反馈状态,则废弃移除出任务池;
                     if (!isActYesOrOutBack) {
-                        return false;
+                        NSLog(@"demandManager >> PMV移除已过期R任务:%@",Fo2FStr(item.mModel.matchFo));
+                        return true;
                     }
                 }
             }
         }
-        return true;
+        return false;
     }];
     
     //3. 有需求时且可加入时_加入新的
@@ -168,6 +169,7 @@
         self.loopCache = [SMGUtils removeArr:self.loopCache checkValid:^BOOL(ReasonDemandModel *item) {
             if (ISOK(item, ReasonDemandModel.class)) {
                 if ([item.mModel.matchFo isEqual:mModel.matchFo] && item.mModel.cutIndex2 < mModel.cutIndex2) {
+                    NSLog(@"RMV移除R任务(更新的抵消旧的):%@",Fo2FStr(item.mModel.matchFo));
                     return true;
                 }
             }
@@ -389,6 +391,7 @@
  *  MARK:--------------------移除某任务--------------------
  */
 -(void) removeDemand:(DemandModel*)demand{
+    if (ISOK(demand, ReasonDemandModel.class)) NSLog(@"demandManager >> 移除R任务:%@",Fo2FStr(((ReasonDemandModel*)demand).mModel.matchFo));
     if (demand) [self.loopCache removeObject:demand];
 }
 
