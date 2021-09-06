@@ -22,6 +22,7 @@
 @property (weak, nonatomic) IBOutlet UIView *farView;
 @property (weak, nonatomic) IBOutlet UIView *borderView;
 @property (weak, nonatomic) IBOutlet UIButton *throwWoodBtn;
+@property (strong, nonatomic) WoodView *woodView;
 
 @end
 
@@ -63,6 +64,10 @@
     [self.borderView addGestureRecognizer:self.singleTap];
     [self.borderView addGestureRecognizer:self.doubleTap];
     [self.borderView.layer setBorderWidth:20];
+    
+    //6. woodView
+    self.woodView = [[WoodView alloc] init];
+    [self.view addSubview:self.woodView];
 }
 
 //MARK:===============================================================
@@ -249,16 +254,16 @@
  *      2021.02.26: NSTimer改为SEL方式,因为block方式在模拟器运行闪退;
  */
 - (IBAction)throwWoodOnClick:(id)sender {
-    //1. 生成木棒
-    WoodView *wood = [[WoodView alloc] init];
-    [self.view addSubview:wood];
+    //1. 扔木棒
+    [self.woodView reset];
+    DemoLog(@"扔木棒");
     
     //2. 看到木棒
-    [self.birdView see:wood];
+    [self.birdView see:self.woodView];
     
     //3. 撞到时疼下;
     CGRect birdRect = [UIWindow convertWorldRect:self.birdView];
-    CGRect woodRect = [UIWindow convertWorldRect:wood];
+    CGRect woodRect = [UIWindow convertWorldRect:self.woodView];
     CGFloat birdMinX = birdRect.origin.x;
     CGFloat birdMinY = birdRect.origin.y;
     CGFloat birdMaxY = birdMinY + birdRect.size.height;
@@ -272,7 +277,6 @@
     //NSString *logStr = STRFORMAT(@"扔木棒 %@",canHit ? @"撞到" : @"撞不到");
     //DemoLog(@"%@",logStr);
     //[theApp.heLogView addDemoLog:logStr];
-    DemoLog(@"扔木棒");
     if (canHit) {
         //5. 撞到的时间判断 (撞需距离 / 总扔距离 * 总扔时间);
         CGFloat hitTime = ((birdMinX - woodMaxX) / ScreenWidth) * 2.0f;
@@ -283,7 +287,7 @@
     }
     
     //7. 扔出
-    [wood throw];
+    [self.woodView throw];
 }
 
 /**

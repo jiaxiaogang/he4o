@@ -148,14 +148,20 @@
  */
 +(CGPoint) convertWorldPoint:(UIView*)selfView{
     if(selfView && selfView.superview){
-        return [selfView.superview convertPoint:selfView.center toView:theApp.window];
+        CGRect rect = [self convertWorldRect:selfView];
+        return CGPointMake(rect.origin.x + selfView.width / 2.0f, rect.origin.y + selfView.height / 2.0f);
     }
     return CGPointZero;
 }
 
+/**
+ *  MARK:--------------------转换世界rect--------------------
+ *  @version
+ *      2021.09.07: 动画中的frame不准确,改为从layer.presentationLayer取才准确;
+ */
 +(CGRect) convertWorldRect:(UIView*)selfView{
     if(selfView && selfView.superview){
-        return [selfView.superview convertRect:selfView.frame toView:theApp.window];
+        return [selfView.superview convertRect:selfView.layer.presentationLayer.frame toView:theApp.window];
     }
     return CGRectZero;
 }

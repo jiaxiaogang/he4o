@@ -14,13 +14,21 @@
 
 @implementation AIVisionAlgs
 
+/**
+ *  MARK:--------------------新视觉帧--------------------
+ *  @version
+ *      2021.09.07: 取消rect限制 (因为木棒或鸟都有可能飞出屏幕);
+ */
 +(void) commitView:(UIView*)selfView targetView:(UIView*)targetView rect:(CGRect)rect{
     //1. 数据准备;
     if (!selfView || !targetView) {
         return;
     }
     NSMutableArray *dics = [[NSMutableArray alloc] init];
-    NSMutableArray *views = [targetView subViews_AllDeepWithRect:rect];
+    NSMutableArray *views = [targetView subViews_AllDeep];//subViews_AllDeepWithRect:rect];
+    views = [SMGUtils filterArr:views checkValid:^BOOL(UIView *item) {
+        return item.tag == visibleTag;
+    }];
     if (ARRISOK(views)) ISTitleLog(@"皮层算法");
     
     //2. 生成model

@@ -7,6 +7,7 @@
 //
 
 #import "WoodView.h"
+#import "UIView+Extension.h"
 
 @implementation WoodView
 
@@ -26,18 +27,26 @@
 }
 
 -(void) initDisplay{
-    
+    [self reset];
 }
 
 //MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
+
+//复位
+-(void) reset{
+    self.x = 0;
+    self.alpha = 0;
+}
+
+//扔出
 -(void) throw{
-    //1. 扔出
+    self.alpha = 1;
     [UIView animateWithDuration:2.0f delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
         self.x += ScreenWidth;
     } completion:^(BOOL finished) {
-        [self removeFromSuperview];
+        [self reset];
     }];
 }
 

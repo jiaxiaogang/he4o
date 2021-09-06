@@ -10,6 +10,10 @@
 
 @interface WoodView : HEView
 
+//复位
+-(void) reset;
+
+//扔出
 -(void) throw;
 
 @end
