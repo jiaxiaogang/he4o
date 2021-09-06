@@ -265,7 +265,7 @@
 #define Log4AnalogyAbsRFo true
 //内类比
 #define Log4InAna false
-#define Log4InAnaGL(type) ((type == ATGreater || type == ATLess) && false)
+#define Log4InAnaGL(type) ((type == ATGreater || type == ATLess) && true)
 #define Log4InAnaHN(type) ((type == ATHav || type == ATNone) && false)
 
 //外类比

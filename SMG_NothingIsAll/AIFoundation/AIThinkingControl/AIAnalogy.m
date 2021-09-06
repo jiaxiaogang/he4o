@@ -678,7 +678,7 @@
     }else{
         [matchContent addObjectsFromArray:matchFo.content_ps];
     }
-    IFTitleLog(@"In反省类比 (%@)", @"\nM:%@\nP:%@",ATType2Str(type),Fo2FStr(matchFo),Fo2FStr(shortFo));
+    IFTitleLog(@"In反省类比 (%@)", @"\nM:%@->%@\nP:%@->%@",ATType2Str(type),Fo2FStr(matchFo),Mvp2Str(matchFo.cmvNode_p),Fo2FStr(shortFo),Mvp2Str(shortFo.cmvNode_p));
     
     //3. 正向有序取差集 = M-P;
     NSMutableArray *justPs = [[NSMutableArray alloc] init];
