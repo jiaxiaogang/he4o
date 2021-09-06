@@ -27,7 +27,7 @@
     NSMutableArray *dics = [[NSMutableArray alloc] init];
     NSMutableArray *views = [targetView subViews_AllDeep];//subViews_AllDeepWithRect:rect];
     views = [SMGUtils filterArr:views checkValid:^BOOL(UIView *item) {
-        return item.tag == visibleTag;
+        return item.tag == visibleTag && item.alpha > 0;
     }];
     if (ARRISOK(views)) ISTitleLog(@"皮层算法");
     
