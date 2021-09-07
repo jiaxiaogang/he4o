@@ -70,11 +70,11 @@
 
 //size
 +(CGFloat) sizeWidth:(UIView*)target{
-    if (target) return target.width;
+    if (target) return target.showW;
     return 0;
 }
 +(CGFloat) sizeHeight:(UIView*)target{
-    if (target) return target.height;
+    if (target) return target.showH;
     return 0;
 }
 
@@ -201,7 +201,7 @@
  *      2021.01.24: 经分析评价为否是因为很少经历多变的DisY,所以将直投到乌鸦身上的位置更随机些,此处又改为真实距离了 (经训练多向飞行ok);
  */
 +(NSInteger) distanceY:(UIView*)selfView target:(UIView*)target{
-    return selfView.y - target.y;
+    return selfView.showY - target.showY;
     //1. 数据准备;
     //CGFloat selfY = [UIView convertWorldRect:selfView].origin.y;
     //CGFloat selfMaxY = selfY + selfView.height;

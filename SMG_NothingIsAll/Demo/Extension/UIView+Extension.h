@@ -20,6 +20,17 @@
 @property (nonatomic) CGPoint origin;
 @property (nonatomic) CGSize size;
 
+//MARK:===============================================================
+//MARK:                     < show (一般用于动画中,取真实显示数据) >
+//MARK:===============================================================
+@property (nonatomic,readonly) CGFloat showX;
+@property (nonatomic,readonly) CGFloat showY;
+@property (nonatomic,readonly) CGFloat showW;
+@property (nonatomic,readonly) CGFloat showH;
+@property (nonatomic,readonly) CGRect showFrame;
+@property (nonatomic,readonly) CGPoint showOrigin;
+@property (nonatomic,readonly) CGSize showSize;
+
 
 //MARK:===============================================================
 //MARK:                     < subView >

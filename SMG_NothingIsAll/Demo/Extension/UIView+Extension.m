@@ -74,6 +74,37 @@
 }
 
 //MARK:===============================================================
+//MARK:                     < show (一般用于动画中,取真实显示数据) >
+//MARK:===============================================================
+- (CGFloat)showX {
+    return self.showOrigin.x;
+}
+
+- (CGFloat)showY {
+    return self.showOrigin.y;
+}
+
+- (CGFloat)showW {
+    return self.showSize.width;
+}
+
+- (CGFloat)showH {
+    return self.showSize.height;
+}
+
+- (CGRect)showFrame {
+    return self.layer.presentationLayer.frame;
+}
+
+- (CGPoint) showOrigin{
+    return self.showFrame.origin;
+}
+
+-(CGSize) showSize{
+    return self.showFrame.size;
+}
+
+//MARK:===============================================================
 //MARK:                     < subView >
 //MARK:===============================================================
 -(NSMutableArray*) subViews_AllDeep{
@@ -161,7 +192,7 @@
  */
 +(CGRect) convertWorldRect:(UIView*)selfView{
     if(selfView && selfView.superview){
-        return [selfView.superview convertRect:selfView.layer.presentationLayer.frame toView:theApp.window];
+        return [selfView.superview convertRect:selfView.showFrame toView:theApp.window];
     }
     return CGRectZero;
 }
