@@ -258,9 +258,6 @@
     [self.woodView reset];
     DemoLog(@"扔木棒");
     
-    //2. 看到木棒
-    [self.birdView see:self.woodView];
-    
     //3. 撞到时疼下;
     CGRect birdRect = [UIWindow convertWorldRect:self.birdView];
     CGRect woodRect = [UIWindow convertWorldRect:self.woodView];
@@ -288,6 +285,9 @@
     
     //7. 扔出
     [self.woodView throw];
+    
+    //8. 扔出后才能看到木棒
+    [self.birdView see:self.woodView];
 }
 
 /**
