@@ -154,6 +154,11 @@
     NSArray *hnglFo_ps = Ports2Pits([AINetUtils absPorts_All:maskFo type:type]);
     if (Log4GetInnerAlg) NSLog(@"Group Of MaskFo:%@ 粗方案共%lu个 ↓↓↓",Fo2FStr(maskFo),(unsigned long)hnglFo_ps.count);
     
+    //TODOTOMORROW20210909: Y距的GL经验为0的问题 (参考:23228);
+    [theNV invokeForceMode:^{
+        [theNV setNodeData:maskFo.pointer];
+    }];
+    
     //3. 与glConAlg_ps取交集,取出有效的前limit个;
     hnglFo_ps = [SMGUtils filterArr:hnglFo_ps checkValid:^BOOL(AIKVPointer *item) {
         AIFoNodeBase *hnglFo = [SMGUtils searchNode:item];
