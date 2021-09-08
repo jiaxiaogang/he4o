@@ -255,45 +255,30 @@
  *      2021.02.26: NSTimer改为SEL方式,因为block方式在模拟器运行闪退;
  */
 - (IBAction)throwWoodOnClick:(id)sender {
-    //1. 扔木棒
-    [self.woodView reset];
-    DemoLog(@"扔木棒");
+    //1. 复位木棒
+    [self.woodView reset:false];
     
-    //3. 撞到时疼下;
-    CGRect birdRect = [UIWindow convertWorldRect:self.birdView];
-    CGRect woodRect = [UIWindow convertWorldRect:self.woodView];
-    CGFloat birdMinX = birdRect.origin.x;
-    CGFloat birdMinY = birdRect.origin.y;
-    CGFloat birdMaxY = birdMinY + birdRect.size.height;
-    CGFloat woodMinX = woodRect.origin.x;
-    CGFloat woodMaxX = woodMinX + woodRect.size.width;
-    CGFloat woodMinY = woodRect.origin.y;
-    CGFloat woodMaxY = woodMinY + woodRect.size.height;
-    
-    //4. 会撞到判断;
-    BOOL canHit = birdMaxY > woodMinY && birdMinY < woodMaxY;
-    //NSString *logStr = STRFORMAT(@"扔木棒 %@",canHit ? @"撞到" : @"撞不到");
-    //DemoLog(@"%@",logStr);
-    //[theApp.heLogView addDemoLog:logStr];
-    if (canHit) {
-        //5. 撞到的时间判断 (撞需距离 / 总扔距离 * 总扔时间);
-        CGFloat hitTime = ((birdMinX - woodMaxX) / ScreenWidth) * 2.0f;
-        [NSTimer scheduledTimerWithTimeInterval:hitTime target:self selector:@selector(notificationTimer:) userInfo:^(){
-            //6. 触发疼痛感;
-            //TODOTOMORROW20210908:
-            //woodView.showFrame和birdView.frame在一定范围内或已通过 木棒x > 鸟x && 木棒y == 鸟y;
-            //判断birdView和woodView有没有真实相撞,相撞时才触发疼痛;
-            
-            
-            [self.birdView hurt];
-        } repeats:false];
-    }
-    
-    //7. 扔出
-    [self.woodView throw];
-    
-    //8. 扔出后才能看到木棒
+    //2. 扔前木棒视觉帧
     [self.birdView see:self.woodView];
+    DemoLog(@"木棒扔前视觉");
+    
+    //3. 预计撞到的时间 (撞需距离 / 总扔距离 * 总扔时间);
+    CGFloat hitTime = ((self.birdView.showMinX - self.woodView.showMaxX) / ScreenWidth) * 2.0f;
+    
+    //4. 扔出
+    DemoLog(@"扔木棒 (预撞hitTime:%f)",hitTime);
+    [self.woodView throw:hitTime hitBlock:^BOOL{
+        BOOL xHited = self.woodView.showMaxX >= self.birdView.showMinX;
+        BOOL YHited = self.birdView.showMinY < self.woodView.showMaxY && self.birdView.showMaxY > self.woodView.showMinY;
+        if (xHited && YHited) {
+            //5. 触发疼痛感;
+            NSLog(@"---> success 撞到了 鸟左:%f 木右:%f",self.birdView.showMinX,self.woodView.showMaxX);
+            [self.birdView hurt];
+            return true;
+        }
+        NSLog(@"---> failure 没撞到 鸟左:%f 木右:%f",self.birdView.showMinX,self.woodView.showMaxX);
+        return false;
+    }];
 }
 
 - (IBAction)stopWoodBtnOnClick:(id)sender {
@@ -349,11 +334,6 @@
             view.alpha = 1.0f;
         }];
     }
-}
-
--(void)notificationTimer:(NSTimer*)timer{
-    Act0 act = timer.userInfo;
-    act();
 }
 
 @end

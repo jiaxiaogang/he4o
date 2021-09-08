@@ -11,9 +11,12 @@
 @interface WoodView : HEView
 
 //复位
--(void) reset;
+-(void) reset:(BOOL)hidden;
 
-//扔出
--(void) throw;
+/**
+ *  MARK:--------------------扔出--------------------
+ *  @param hitBlock : 碰撞检测 (碰撞时刻检测一次,如果没撞到到终点后再检测一次) notnull
+ */
+-(void) throw:(CGFloat)hitTime hitBlock:(BOOL(^)())hitBlock;
 
 @end

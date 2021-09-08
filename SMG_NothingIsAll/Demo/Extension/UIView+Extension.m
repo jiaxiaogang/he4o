@@ -104,6 +104,22 @@
     return self.showFrame.size;
 }
 
+- (CGFloat)showMinX {
+    return self.showX - self.showW / 2.0f;
+}
+
+- (CGFloat)showMinY {
+    return self.showY - self.showH / 2.0f;
+}
+
+- (CGFloat)showMaxX {
+    return self.showX + self.showW / 2.0f;
+}
+
+- (CGFloat)showMaxY {
+    return self.showY + self.showH / 2.0f;
+}
+
 //MARK:===============================================================
 //MARK:                     < subView >
 //MARK:===============================================================

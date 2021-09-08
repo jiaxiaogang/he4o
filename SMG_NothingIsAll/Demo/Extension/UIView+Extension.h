@@ -31,6 +31,11 @@
 @property (nonatomic,readonly) CGPoint showOrigin;
 @property (nonatomic,readonly) CGSize showSize;
 
+@property (nonatomic,readonly) CGFloat showMinX;
+@property (nonatomic,readonly) CGFloat showMinY;
+@property (nonatomic,readonly) CGFloat showMaxX;
+@property (nonatomic,readonly) CGFloat showMaxY;
+
 
 //MARK:===============================================================
 //MARK:                     < subView >
