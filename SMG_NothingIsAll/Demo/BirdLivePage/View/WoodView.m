@@ -42,11 +42,18 @@
 
 //扔出
 -(void) throw{
+    //1. 扔出前复位;
+    self.x = 0;
     self.alpha = 1;
+    [self.layer removeAllAnimations];
+    
+    //2. 扔出
     [UIView animateWithDuration:2.0f delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
         self.x += ScreenWidth;
     } completion:^(BOOL finished) {
-        [self reset];
+        if (finished) {
+            [self reset];
+        }
     }];
 }
 

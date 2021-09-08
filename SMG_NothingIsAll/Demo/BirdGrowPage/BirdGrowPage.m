@@ -290,6 +290,12 @@
     [self.birdView see:self.woodView];
 }
 
+- (IBAction)stopWoodBtnOnClick:(id)sender {
+    CGRect frame = [self.woodView showFrame];
+    [self.woodView.layer removeAllAnimations];
+    [self.woodView setFrame:frame];
+}
+
 /**
  *  MARK:--------------------BirdViewDelegate--------------------
  */
