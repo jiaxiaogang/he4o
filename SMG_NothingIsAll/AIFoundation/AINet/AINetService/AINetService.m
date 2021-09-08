@@ -155,6 +155,7 @@
     if (Log4GetInnerAlg) NSLog(@"Group Of MaskFo:%@ 粗方案共%lu个 ↓↓↓",Fo2FStr(maskFo),(unsigned long)hnglFo_ps.count);
     
     //TODOTOMORROW20210909: Y距的GL经验为0的问题 (参考:23228);
+    //结果: GL不为0条,L经验有的,只是没有G经验 (参考23228-Q2);
     [theNV invokeForceMode:^{
         [theNV setNodeData:maskFo.pointer];
     }];
