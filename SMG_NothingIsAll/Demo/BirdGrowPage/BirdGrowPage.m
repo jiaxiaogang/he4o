@@ -14,7 +14,7 @@
 #import "NVViewUtil.h"
 #import "WoodView.h"
 
-@interface BirdGrowPage ()<UIGestureRecognizerDelegate,BirdViewDelegate>
+@interface BirdGrowPage ()<UIGestureRecognizerDelegate,BirdViewDelegate,UIDynamicAnimatorDelegate>
 
 @property (strong,nonatomic) BirdView *birdView;
 @property (strong,nonatomic) UITapGestureRecognizer *singleTap;
@@ -23,6 +23,8 @@
 @property (weak, nonatomic) IBOutlet UIView *borderView;
 @property (weak, nonatomic) IBOutlet UIButton *throwWoodBtn;
 @property (strong, nonatomic) WoodView *woodView;
+
+@property (nonatomic,strong) UIDynamicAnimator *animator;
 
 @end
 
@@ -68,11 +70,21 @@
     //6. woodView
     self.woodView = [[WoodView alloc] init];
     [self.view addSubview:self.woodView];
+    
+    //7. 创建物理仿真器（ReferenceView:参照视图，设置仿真范围）
+    self.animator=[[UIDynamicAnimator alloc]initWithReferenceView:self.view];
+    UICollisionBehavior *collision=[[UICollisionBehavior alloc]init];   //A.碰撞检测行为
+    [collision addItem:self.woodView];                                  //B.参与检测View
+    [collision addItem:self.birdView];
+    collision.translatesReferenceBoundsIntoBoundary=YES;                //C.让参照视图的边框成为碰撞检测的边界
+    [self.animator addBehavior:collision];                              //D.执行仿真
+    [self.animator setDelegate:self];                                   //E.代理
 }
 
 //MARK:===============================================================
 //MARK:                     < onclick >
 //MARK:===============================================================
+
 /**
  *  MARK:--------------------直投--------------------
  *  @version
@@ -279,6 +291,10 @@
         CGFloat hitTime = ((birdMinX - woodMaxX) / ScreenWidth) * 2.0f;
         [NSTimer scheduledTimerWithTimeInterval:hitTime target:self selector:@selector(notificationTimer:) userInfo:^(){
             //6. 触发疼痛感;
+            //TODOTOMORROW20210908:
+            //判断birdView和woodView有没有真实相撞,相撞时才触发疼痛;
+            
+            
             [self.birdView hurt];
         } repeats:false];
     }
@@ -316,6 +332,16 @@
 
 -(CGRect)birdView_GetSeeRect{
     return CGRectMake(0, 64, ScreenWidth, ScreenHeight - 64 - 64);//naviBar和btmBtn
+}
+
+/**
+ *  MARK:--------------------UIDynamicAnimatorDelegate--------------------
+ */
+- (void)dynamicAnimatorWillResume:(UIDynamicAnimator *)animator{
+    NSLog(@"bbbb1");
+}
+- (void)dynamicAnimatorDidPause:(UIDynamicAnimator *)animator{
+    NSLog(@"bbbb2");
 }
 
 //MARK:===============================================================

@@ -55,6 +55,9 @@
             [self reset];
         }
     }];
+    
+    
+    
 }
 
 @end
