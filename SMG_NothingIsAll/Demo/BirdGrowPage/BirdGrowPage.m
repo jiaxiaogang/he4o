@@ -14,7 +14,7 @@
 #import "NVViewUtil.h"
 #import "WoodView.h"
 
-@interface BirdGrowPage ()<UIGestureRecognizerDelegate,BirdViewDelegate,UIDynamicAnimatorDelegate>
+@interface BirdGrowPage ()<UIGestureRecognizerDelegate,BirdViewDelegate>
 
 @property (strong,nonatomic) BirdView *birdView;
 @property (strong,nonatomic) UITapGestureRecognizer *singleTap;
@@ -23,8 +23,6 @@
 @property (weak, nonatomic) IBOutlet UIView *borderView;
 @property (weak, nonatomic) IBOutlet UIButton *throwWoodBtn;
 @property (strong, nonatomic) WoodView *woodView;
-
-@property (nonatomic,strong) UIDynamicAnimator *animator;
 
 @end
 
@@ -70,15 +68,6 @@
     //6. woodView
     self.woodView = [[WoodView alloc] init];
     [self.view addSubview:self.woodView];
-    
-    //7. 创建物理仿真器（ReferenceView:参照视图，设置仿真范围）
-    self.animator=[[UIDynamicAnimator alloc]initWithReferenceView:self.view];
-    UICollisionBehavior *collision=[[UICollisionBehavior alloc]init];   //A.碰撞检测行为
-    [collision addItem:self.woodView];                                  //B.参与检测View
-    [collision addItem:self.birdView];
-    collision.translatesReferenceBoundsIntoBoundary=YES;                //C.让参照视图的边框成为碰撞检测的边界
-    [self.animator addBehavior:collision];                              //D.执行仿真
-    [self.animator setDelegate:self];                                   //E.代理
 }
 
 //MARK:===============================================================
@@ -292,6 +281,7 @@
         [NSTimer scheduledTimerWithTimeInterval:hitTime target:self selector:@selector(notificationTimer:) userInfo:^(){
             //6. 触发疼痛感;
             //TODOTOMORROW20210908:
+            //woodView.showFrame和birdView.frame在一定范围内或已通过 木棒x > 鸟x && 木棒y == 鸟y;
             //判断birdView和woodView有没有真实相撞,相撞时才触发疼痛;
             
             
@@ -334,15 +324,6 @@
     return CGRectMake(0, 64, ScreenWidth, ScreenHeight - 64 - 64);//naviBar和btmBtn
 }
 
-/**
- *  MARK:--------------------UIDynamicAnimatorDelegate--------------------
- */
-- (void)dynamicAnimatorWillResume:(UIDynamicAnimator *)animator{
-    NSLog(@"bbbb1");
-}
-- (void)dynamicAnimatorDidPause:(UIDynamicAnimator *)animator{
-    NSLog(@"bbbb2");
-}
 
 //MARK:===============================================================
 //MARK:                     < privateMethod >
