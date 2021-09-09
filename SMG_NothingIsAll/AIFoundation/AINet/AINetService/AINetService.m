@@ -60,6 +60,16 @@
     NSMutableArray *curMasks = [[NSMutableArray alloc] init];
     [curMasks addObjectsFromArray:maskInModel.absRFos];
     NSLog(@"-------------- getInnerAlg (%@) --------------\nATDS:%@&%@ mask数:%lu 参照:%@\n不应期:%@",ATType2Str(type),vAT,vDS,curMasks.count,Fo2FStr(maskInModel.protoFo),Pits2FStr(except_ps));
+    
+    
+    //TODOTOMORROW20210909:
+    //使curMasks扩展支持maskInModel.matchRFos (参考23229-方案3);
+    
+    
+    
+    
+    
+    
         
     //7. 从当前层curMasks逐个尝试取hnglAlg.refPorts;
     for (AIFoNodeBase *item in curMasks) {
@@ -153,12 +163,6 @@
     //2. 根据maskAlg,取gl嵌套 (目前由absPorts+type取);
     NSArray *hnglFo_ps = Ports2Pits([AINetUtils absPorts_All:maskFo type:type]);
     if (Log4GetInnerAlg) NSLog(@"Group Of MaskFo:%@ 粗方案共%lu个 ↓↓↓",Fo2FStr(maskFo),(unsigned long)hnglFo_ps.count);
-    
-    //TODOTOMORROW20210909: Y距的GL经验为0的问题 (参考:23228);
-    //结果: GL不为0条,L经验有的,只是没有G经验 (参考23228-Q2);
-    [theNV invokeForceMode:^{
-        [theNV setNodeData:maskFo.pointer];
-    }];
     
     //3. 与glConAlg_ps取交集,取出有效的前limit个;
     hnglFo_ps = [SMGUtils filterArr:hnglFo_ps checkValid:^BOOL(AIKVPointer *item) {
