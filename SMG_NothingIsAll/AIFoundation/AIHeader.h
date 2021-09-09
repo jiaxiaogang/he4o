@@ -270,9 +270,11 @@
 
 //外类比
 #define Log4OutAna false
-#define Log4OutAnaDiff(type) (type == ATDiff && true)
-#define Log4OutAnaSame(type) (type == ATSame && false)
-#define Log4OutAnaDefault(type) (type == ATDefault && false)
+#define Log4OutAnaGL(type) (!Log4OutAna && ((type == ATGreater || type == ATLess) && false))
+#define Log4OutAnaHN(type) (!Log4OutAna && ((type == ATHav || type == ATNone) && false))
+#define Log4OutAnaDiff(type) (!Log4OutAna && (type == ATDiff && true))
+#define Log4OutAnaSame(type) (!Log4OutAna && (type == ATSame && false))
+#define Log4OutAnaDefault(type) (!Log4OutAna && (type == ATDefault && false))
 
 //正向类比
 #define Log4SameAna true
