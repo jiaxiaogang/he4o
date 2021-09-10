@@ -435,6 +435,20 @@
     NSMutableDictionary *assDic = [[NSMutableDictionary alloc] init];
     
     //3. 从absRFos与其具象,联想hngl经验做为assFo;
+    
+    
+    
+    //TODOTOMORROW20210910: 从absRFos与其具象,取glFo为assFo进行内中外类比 (参考24012);
+    //考虑改为从matchRFos与其抽象,找assFo
+    //认知期: 抽象优先;
+    //  a. 因为从absRFos很难有GL经验或太抽象没啥意义;
+    //  b. 因为从absRFos.conPorts找gl,会脱离当前场景,导致混乱;
+    
+    
+    
+    
+    
+    
     for (AIFoNodeBase *absFo in mModel.absRFos) {
         
         //4. 直接收集absFo;

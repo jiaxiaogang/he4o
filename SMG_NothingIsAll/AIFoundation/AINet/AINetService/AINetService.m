@@ -72,6 +72,13 @@
     //}]];
     
     
+    //TODOTOMORROW20210910: 从absRFos,取glFo为经验进行GL修正 (参考24012);
+    //考虑改为matchRFos与其抽象取GL经验;
+    //决策期: 具象优先;
+    //  a. 因为absRFos太过抽象且gl经验较少;
+    //  b. 而从matchRFos虽然只匹配部分,但更匹配当前场景 (大不了加cutIndex),更精准;
+    //  c. 而从抽象再取gl能找找更普适,且还稳定的层;
+    
     
     
     
