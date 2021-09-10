@@ -58,7 +58,24 @@
     NSArray *glConAlg_ps = [self getHNGLConAlg_ps:type vAT:vAT vDS:vDS];
     
     //3. 收集absRFos为masks (参考absRFos字段注释: callers2);
-    NSMutableArray *curMasks = [SMGUtils collectArrA_NoRepeat:maskInModel.absRFos arrB:maskInModel.matchRFos];
+    NSMutableArray *curMasks = [[NSMutableArray alloc] initWithArray:maskInModel.absRFos];
+    
+    
+    //TODOTOMORROW20210910: Y距的GL经验太抽象的问题 (参考:23229-方案3);
+    for (AIFoNodeBase *maskFo in curMasks) {
+        [theNV invokeForceMode:^{
+            [theNV setNodeData:maskFo.pointer];
+        }];
+    }
+    //[curMasks addObjectsFromArray:[SMGUtils convertArr:maskInModel.matchRFos convertBlock:^id(AIMatchFoModel *obj) {
+    //    return obj.matchFo;
+    //}]];
+    
+    
+    
+    
+    
+    
     NSLog(@"-------------- getInnerAlg (%@) --------------\nATDS:%@&%@ mask数:%lu 参照:%@\n不应期:%@",ATType2Str(type),vAT,vDS,curMasks.count,Fo2FStr(maskInModel.protoFo),Pits2FStr(except_ps));
         
     //7. 从当前层curMasks逐个尝试取hnglAlg.refPorts;
