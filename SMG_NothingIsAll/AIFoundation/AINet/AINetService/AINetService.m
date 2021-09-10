@@ -47,6 +47,7 @@
  *      2021.04.10: GL主方向为抽象,HN主方向为具象 (参考22213);
  *      2021.05.17: 将mask改为收集protoFo+absRFos来联想GL经验 (参考23078);
  *      2021.05.21: curMasks不收集protoFo,因为protoFo太具象,且稳定性差 (参考2307a);
+ *      2021.09.10: 将mask改为收集absRFos+matchRFos,因为absRFos太抽象,它的GL经验也太抽象 (参考23229-方案3);
  *  @result : 返回relativeFo_ps,用backConAlg节点,由此节点取refPorts,再筛选type,可取到glFo经历;
  */
 +(AIKVPointer*) getInnerV3_GL:(AIShortMatchModel*)maskInModel vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps{
@@ -57,19 +58,8 @@
     NSArray *glConAlg_ps = [self getHNGLConAlg_ps:type vAT:vAT vDS:vDS];
     
     //3. 收集absRFos为masks (参考absRFos字段注释: callers2);
-    NSMutableArray *curMasks = [[NSMutableArray alloc] init];
-    [curMasks addObjectsFromArray:maskInModel.absRFos];
+    NSMutableArray *curMasks = [SMGUtils collectArrA_NoRepeat:maskInModel.absRFos arrB:maskInModel.matchRFos];
     NSLog(@"-------------- getInnerAlg (%@) --------------\nATDS:%@&%@ mask数:%lu 参照:%@\n不应期:%@",ATType2Str(type),vAT,vDS,curMasks.count,Fo2FStr(maskInModel.protoFo),Pits2FStr(except_ps));
-    
-    
-    //TODOTOMORROW20210909:
-    //使curMasks扩展支持maskInModel.matchRFos (参考23229-方案3);
-    
-    
-    
-    
-    
-    
         
     //7. 从当前层curMasks逐个尝试取hnglAlg.refPorts;
     for (AIFoNodeBase *item in curMasks) {
