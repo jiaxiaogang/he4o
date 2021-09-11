@@ -535,18 +535,24 @@
         
         //4. 分别取baseFo嵌套的hngl经验,作为assFos;
         NSArray *assPorts = [AINetUtils absPorts_All:baseFo type:type];
-        assPorts = ARR_SUB(assPorts, 0, 5);
         
-        //5. 取出assFo,并进行外类比;
-        for (AIPort *assPort in assPorts) {
-            
+        //5. 每条baseFo仅最多保留5条进行外类比;
+        assPorts = [SMGUtils filterArr:assPorts checkValid:^BOOL(AIPort *item) {
             //6. 排除abFo自身 (不可与abFo重复);
-            if ([assPort.target_p isEqual:abFo.pointer]) continue;
-        
+            if ([item.target_p isEqual:abFo.pointer]) return false;
+            
             //7. 有效检查_与glConAlg_ps的元素有引用关系 (用末位是否包含在glConAlgs中判断,如:必须为距小时序才可);
-            AIFoNodeBase *assFo = [SMGUtils searchNode:assPort.target_p];
-            if (![SMGUtils containsSub_p:ARR_INDEX_REVERSE(assFo.content_ps, 0) parent_ps:glConAlg_ps]) continue;
+            AIFoNodeBase *assFo = [SMGUtils searchNode:item.target_p];
+            if (![SMGUtils containsSub_p:ARR_INDEX_REVERSE(assFo.content_ps, 0) parent_ps:glConAlg_ps]) return false;
+            
+            //8. 全部通过,收集;
+            return true;
+        } limit:5];
         
+        //9. 取出assFo,并进行外类比;
+        for (AIPort *assPort in assPorts) {
+            AIFoNodeBase *assFo = [SMGUtils searchNode:assPort.target_p];
+            
             //8. 对abFo和assAbFo进行类比;
             AINetAbsFoNode *absHNGLFo = [self analogyOutside:abFo assFo:assFo type:type createAbsAlgBlock:^(AIAlgNodeBase *createAlg, NSInteger foIndex, NSInteger assFoIndex) {
                 //a. 当abFo.lastAlg和assFo.lastAlg类比抽象得到absA后,应该让absA抽象指向glAlg (参考21115);

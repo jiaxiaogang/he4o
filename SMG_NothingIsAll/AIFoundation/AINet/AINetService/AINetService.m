@@ -48,47 +48,33 @@
  *      2021.05.17: 将mask改为收集protoFo+absRFos来联想GL经验 (参考23078);
  *      2021.05.21: curMasks不收集protoFo,因为protoFo太具象,且稳定性差 (参考2307a);
  *      2021.09.10: 将mask改为收集absRFos+matchRFos,因为absRFos太抽象,它的GL经验也太抽象 (参考23229-方案3);
+ *      2021.09.11: v4_将mask改为:matchRFos + matchRFos.absPorts (参考24012);
  *  @result : 返回relativeFo_ps,用backConAlg节点,由此节点取refPorts,再筛选type,可取到glFo经历;
  */
-+(AIKVPointer*) getInnerV3_GL:(AIShortMatchModel*)maskInModel vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps{
++(AIKVPointer*) getInnerV4_GL:(AIShortMatchModel*)maskInModel vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps{
     //1. 数据检查hAlg_根据type和value_p找ATHav
     if (!maskInModel) return nil;
-    
-    //2. 取glConAlg_ps;
     NSArray *glConAlg_ps = [self getHNGLConAlg_ps:type vAT:vAT vDS:vDS];
-    
-    //3. 收集absRFos为masks (参考absRFos字段注释: callers2);
-    NSMutableArray *curMasks = [[NSMutableArray alloc] initWithArray:maskInModel.absRFos];
-    
-    
-    //TODOTOMORROW20210910: Y距的GL经验太抽象的问题 (参考:23229-方案3);
-    for (AIFoNodeBase *maskFo in curMasks) {
-        [theNV invokeForceMode:^{
-            [theNV setNodeData:maskFo.pointer];
-        }];
-    }
-    //[curMasks addObjectsFromArray:[SMGUtils convertArr:maskInModel.matchRFos convertBlock:^id(AIMatchFoModel *obj) {
-    //    return obj.matchFo;
-    //}]];
-    
-    
-    //TODOTOMORROW20210910: 从absRFos,取glFo为经验进行GL修正 (参考24012);
-    //考虑改为matchRFos与其抽象取GL经验;
-    //决策期: 具象优先;
-    //  a. 因为absRFos太过抽象且gl经验较少;
-    //  b. 而从matchRFos虽然只匹配部分,但更匹配当前场景 (大不了加cutIndex),更精准;
-    //  c. 而从抽象再取gl能找找更普适,且还稳定的层;
-    
-    
-    
-    
-    
-    NSLog(@"-------------- getInnerAlg (%@) --------------\nATDS:%@&%@ mask数:%lu 参照:%@\n不应期:%@",ATType2Str(type),vAT,vDS,curMasks.count,Fo2FStr(maskInModel.protoFo),Pits2FStr(except_ps));
+    NSLog(@"-------------- getInnerAlg (%@) --------------\nATDS:%@&%@ matchRFos数:%lu 参照:%@\n不应期:%@",ATType2Str(type),vAT,vDS,maskInModel.matchRFos.count,Fo2FStr(maskInModel.protoFo),Pits2FStr(except_ps));
         
-    //7. 从当前层curMasks逐个尝试取hnglAlg.refPorts;
-    for (AIFoNodeBase *item in curMasks) {
-        AIKVPointer *result = [self getInnerByFo_Single:item type:type except_ps:except_ps glConAlg_ps:glConAlg_ps];
+    //2. 从matchRFos逐个尝试取GL嵌套 (参考24012);
+    for (AIMatchFoModel *item in maskInModel.matchRFos) {
+        AIKVPointer *result = [self getInnerByFo_Single:item.matchFo type:type except_ps:except_ps glConAlg_ps:glConAlg_ps];
         if (result) return result;
+    }
+    
+    //3. 延展抽象_从matchRFos.absPorts逐个尝试取GL嵌套 (参考24012);
+    for (AIMatchFoModel *item in maskInModel.matchRFos) {
+        
+        //a. 每个rFo最多取抽象5条;
+        NSArray *absFo_ps = ARR_SUB(Ports2Pits([AINetUtils absPorts_All_Normal:item.matchFo]), 0, 5);
+        
+        //b. 依次对五条,尝试取GL经验;
+        for (AIKVPointer *absFo_p in absFo_ps) {
+            AIFoNodeBase *absFo = [SMGUtils searchNode:absFo_p];
+            AIKVPointer *result = [self getInnerByFo_Single:absFo type:type except_ps:except_ps glConAlg_ps:glConAlg_ps];
+            if (result) return result;
+        }
     }
     return nil;
 }
