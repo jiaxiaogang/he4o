@@ -423,6 +423,7 @@
  *      2021.04.08: v3_assFo联想方式:由左向右alg.refPorts,改为下向上protoFo.absPorts路径联想,这样更场景理性避免混乱 (参考22212);
  *      2021.04.22: v4_assFo联想方式:由absFo向具象,分别联想hngls (参考23041-TODO2);
  *      2021.04.28: 右果嵌套GL始终为0条的BUG,调整配置参数后ok (参考23058);
+ *      2021.09.11: v5_assFo联想方式:由抽象优先(absRFos)+照顾具象(matchRFos) (参考24012);
  */
 +(void)analogyInner_Outside_V4:(AINetAbsFoNode*)abFo type:(AnalogyType)type mModel:(AIShortMatchModel*)mModel glhnAlg:(AIAlgNodeBase*)glhnAlg vAT:(NSString*)vAT vDS:(NSString*)vDS{
     //1. 取glConAlg_ps;
@@ -513,6 +514,58 @@
         
         //14. 限制类比条数;
         if (++analogCount >= analogyLimit) break;
+    }
+}
+
++(void)analogyInner_Outside_V5:(AINetAbsFoNode*)abFo type:(AnalogyType)type mModel:(AIShortMatchModel*)mModel glhnAlg:(AIAlgNodeBase*)glhnAlg vAT:(NSString*)vAT vDS:(NSString*)vDS{
+    //1. 取glConAlg_ps;
+    NSArray *glConAlg_ps = [AINetService getHNGLConAlg_ps:type vAT:vAT vDS:vDS];
+    BOOL debugMode = Log4InAnaGL(type) || Log4InAnaHN(type);
+    NSInteger aleardayAnalogCount = 0,analogyLimit = 20;//最多类比5个assFo;
+    //if (debugMode) NSLog(@"\n--------- 内中外类比 ---------\nABFo:%@ vAT:%@ vDS:%@",Fo2FStr(abFo),vAT,vDS);
+    
+    //2. ass结果收集 = absFos + matchRFos (参考:24012);
+    NSArray *matchRFos = [SMGUtils convertArr:mModel.matchRFos convertBlock:^id(AIMatchFoModel *obj) {
+        return obj.matchFo;
+    }];
+    NSMutableArray *baseFos = [SMGUtils collectArrA_NoRepeat:mModel.absRFos arrB:matchRFos];
+    
+    //3. 从absRFos与其具象,联想hngl经验做为assFo;
+    for (AIFoNodeBase *baseFo in baseFos) {
+        
+        //4. 分别取baseFo嵌套的hngl经验,作为assFos;
+        NSArray *assPorts = [AINetUtils absPorts_All:baseFo type:type];
+        assPorts = ARR_SUB(assPorts, 0, 5);
+        
+        //5. 取出assFo,并进行外类比;
+        for (AIPort *assPort in assPorts) {
+            
+            //6. 排除abFo自身 (不可与abFo重复);
+            if ([assPort.target_p isEqual:abFo.pointer]) continue;
+        
+            //7. 有效检查_与glConAlg_ps的元素有引用关系 (用末位是否包含在glConAlgs中判断,如:必须为距小时序才可);
+            AIFoNodeBase *assFo = [SMGUtils searchNode:assPort.target_p];
+            if (![SMGUtils containsSub_p:ARR_INDEX_REVERSE(assFo.content_ps, 0) parent_ps:glConAlg_ps]) continue;
+        
+            //8. 对abFo和assAbFo进行类比;
+            AINetAbsFoNode *absHNGLFo = [self analogyOutside:abFo assFo:assFo type:type createAbsAlgBlock:^(AIAlgNodeBase *createAlg, NSInteger foIndex, NSInteger assFoIndex) {
+                //a. 当abFo.lastAlg和assFo.lastAlg类比抽象得到absA后,应该让absA抽象指向glAlg (参考21115);
+                if (foIndex == abFo.count - 1 && assFoIndex == assFo.count - 1) {
+                    //if (debugMode) NSLog(@"-> 内中外类比_关联:%@ ABSTO:%@",Alg2FStr(createAlg),Alg2FStr(glhnAlg));
+                    [AINetUtils relateAlgAbs:(AIAbsAlgNode*)glhnAlg conNodes:@[createAlg] isNew:false];
+                }
+            }];
+            if (!absHNGLFo) continue;
+        
+            //9. 将外类比抽象时做嵌套关联 & 指定强度 (目前由absPort+type表征);
+            //此处strongPorts只传assPort是因为abFo嵌套于protoFo,强度仅为初始;
+            //此处不将absFo嵌套于protoFo&assFo下,因为一般protoFo的嵌套经验用不着,并且在getInnerV3向抽象取同样可取到;
+            if (debugMode) NSLog(@"副: 内中外构建:%@ assFo:%@ 嵌套于: %@",Fo2FStr(absHNGLFo),Fo2FStr(assFo),Fo2FStr(baseFo));
+            [AINetUtils relateFoAbs:absHNGLFo conNodes:@[baseFo] isNew:false strongPorts:@[assPort]];
+            
+            //10. 限制类比条数;
+            if (++aleardayAnalogCount >= analogyLimit) return;
+        }
     }
 }
 
