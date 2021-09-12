@@ -231,7 +231,7 @@
             
             //4. 内类比找不同 (比大小:同区不同值)
             if (algA && algB){
-                if (Log4InAna) NSLog(@"\n----------------内类比大小----------------\n%ld: %@\n%ld: %@",(long)i,Alg2FStr(algA),(long)lastIndex,Alg2FStr(algB));
+                if (Log4InAnaGL(ATGreater)) NSLog(@"\n----------------内类比大小----------------\n%ld: %@\n%ld: %@",(long)i,Alg2FStr(algA),(long)lastIndex,Alg2FStr(algB));
                 
                 //5. 内类比大小;
                 NSArray *rangeAlg_ps = ARR_SUB(protoFo.content_ps, i + 1, lastIndex - i - 1);
@@ -253,13 +253,13 @@
             
             //9. 内类比找不同 (比有无)
             if (algA && algB){
-                if (Log4InAna) NSLog(@"\n----------------内类比有无----------------\n%ld: %@\n%ld: %@",(long)i,Alg2FStr(algA),(long)lastIndex,Alg2FStr(algB));
+                if (Log4InAnaHN(ATHav)) NSLog(@"\n----------------内类比有无----------------\n%ld: %@\n%ld: %@",(long)i,Alg2FStr(algA),(long)lastIndex,Alg2FStr(algB));
                 
                 //10. 取a和b交集,并构建抽象概念;
                 NSArray *same_ps = [SMGUtils filterSame_ps:algA.content_ps parent_ps:algB.content_ps];
                 if (ARRISOK(same_ps)) {
                     AIAbsAlgNode *createAbsAlg = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[algA,algB] isMem:false];
-                    if (Log4InAna) NSLog(@"抽象出: %@",Alg2FStr(createAbsAlg));
+                    if (Log4InAnaHN(ATHav)) NSLog(@"抽象出: %@",Alg2FStr(createAbsAlg));
                 }
                 
                 //11. 内类比有无;
@@ -437,6 +437,12 @@
         return obj.matchFo;
     }];
     NSMutableArray *baseFos = [SMGUtils collectArrA_NoRepeat:mModel.absRFos arrB:matchRFos];
+    
+    
+    //TODOTOMORROW20210912: 查此处无法联想到assFo,做内中外类比 (参考24013);
+    //1.
+    
+    
     
     //3. 从absRFos与其具象,联想hngl经验做为assFo;
     for (AIFoNodeBase *baseFo in baseFos) {
