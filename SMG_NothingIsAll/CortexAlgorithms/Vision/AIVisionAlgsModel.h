@@ -12,6 +12,8 @@
 /**
  *  MARK:--------------------视觉算法结果模型--------------------
  *  1. 用于输入到ThinkingControl;
+ *  @version
+ *      2021.09.14: 废弃速度,因为HE视觉是离散的,速度不重要 (参考24017-问题1);
  */
 @interface AIVisionAlgsModel : NSObject
 
@@ -28,7 +30,7 @@
 //@property (assign,nonatomic) CGFloat radius;
 
 //speed
-@property (assign,nonatomic) NSInteger speed;
+//@property (assign,nonatomic) NSInteger speed;
 
 //direction
 @property (assign,nonatomic) CGFloat direction;

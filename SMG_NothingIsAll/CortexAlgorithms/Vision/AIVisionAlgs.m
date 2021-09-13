@@ -18,6 +18,7 @@
  *  MARK:--------------------新视觉帧--------------------
  *  @version
  *      2021.09.07: 取消rect限制 (因为木棒或鸟都有可能飞出屏幕);
+ *      2021.09.14: 废弃速度,因为HE视觉是离散的,速度不重要 (参考24017-问题1);
  */
 +(void) commitView:(UIView*)selfView targetView:(UIView*)targetView rect:(CGRect)rect{
     //1. 数据准备;
@@ -41,7 +42,7 @@
             //model.colorGreen = [self colorGreen:curView];
             //model.colorBlue = [self colorBlue:curView];
             //model.radius = [self radius:curView];
-            model.speed = [self speed:curView];
+            //model.speed = [self speed:curView];
             model.direction = [self direction:selfView target:curView];
             model.distance = [self distance:selfView target:curView];
             model.distanceY = [self distanceY:selfView target:curView];
@@ -106,50 +107,51 @@
  *  @version
  *      2020.07.07: 将主观速度,改为客观速度 (因为主观速度对识别略有影响,虽可克服,但懒得设计训练步骤,正好改成客观速度更符合今后的设计);
  *      2020.08.06: 将lastXY位置记录,加上initTime,因为ios的复用机制,会导致复用已销毁同内存地址的view (参考20151-BUG11);
+ *      2021.09.14: 废弃速度,因为HE视觉是离散的,速度不重要 (参考24017-问题1);
  */
-+(NSInteger) speed:(HEView*)target{
-    //>> 主观速度代码;
-    //CGFloat speed = 0;
-    //CGPoint targetPoint = [UIView convertWorldPoint:target];
-    //CGPoint selfPoint = [UIView convertWorldPoint:selfView];
-    //CGFloat distanceX = (targetPoint.x - selfPoint.x);
-    //CGFloat distanceY = (targetPoint.y - selfPoint.y);
-    //CGFloat distance = sqrt(powf(distanceX, 2) + powf(distanceY, 2));
-    //
-    //NSString *key = STRFORMAT(@"lastDistanceOf_%p_%p",selfView,target);
-    //NSObject *lastDistanceNum = [[XGRedis sharedInstance] objectForKey:key];
-    //if (ISOK(lastDistanceNum, NSNumber.class)) {
-    //    CGFloat lastDistance = [((NSNumber*)lastDistanceNum) floatValue];
-    //    speed = distance - lastDistance;
-    //}
-    //[[XGRedis sharedInstance] setObject:[NSNumber numberWithFloat:distance] forKey:key time:cRTDefault];
-    //return (NSInteger)speed;
-
-    //1. 当前位置
-    CGFloat speed = 0;
-    CGPoint targetPoint = [UIView convertWorldPoint:target];
-    //2. 上帧位置
-    NSString *lastXKey = STRFORMAT(@"lastX_%p_%lld",target,target.initTime);
-    NSString *lastYKey = STRFORMAT(@"lastY_%p_%lld",target,target.initTime);
-    NSObject *lastXObj = [[XGRedis sharedInstance] objectForKey:lastXKey];
-    NSObject *lastYObj = [[XGRedis sharedInstance] objectForKey:lastYKey];
-    if (ISOK(lastXObj, NSNumber.class) && ISOK(lastYObj, NSNumber.class)) {
-        CGFloat lastX = [((NSNumber*)lastXObj) floatValue];
-        CGFloat lastY = [((NSNumber*)lastYObj) floatValue];
-        
-        //3. 计算位置差
-        CGFloat distanceX = (targetPoint.x - lastX);
-        CGFloat distanceY = (targetPoint.y - lastY);
-        speed = sqrt(powf(distanceX, 2) + powf(distanceY, 2));
-    }
-    
-    //4. 存位置下帧用
-    [[XGRedis sharedInstance] setObject:[NSNumber numberWithFloat:targetPoint.x] forKey:lastXKey time:cRTDefault];
-    [[XGRedis sharedInstance] setObject:[NSNumber numberWithFloat:targetPoint.y] forKey:lastYKey time:cRTDefault];
-    
-    //5. 返回结果 (保留整数位)
-    return (NSInteger)speed;
-}
+//+(NSInteger) speed:(HEView*)target{
+//    //>> 主观速度代码;
+//    //CGFloat speed = 0;
+//    //CGPoint targetPoint = [UIView convertWorldPoint:target];
+//    //CGPoint selfPoint = [UIView convertWorldPoint:selfView];
+//    //CGFloat distanceX = (targetPoint.x - selfPoint.x);
+//    //CGFloat distanceY = (targetPoint.y - selfPoint.y);
+//    //CGFloat distance = sqrt(powf(distanceX, 2) + powf(distanceY, 2));
+//    //
+//    //NSString *key = STRFORMAT(@"lastDistanceOf_%p_%p",selfView,target);
+//    //NSObject *lastDistanceNum = [[XGRedis sharedInstance] objectForKey:key];
+//    //if (ISOK(lastDistanceNum, NSNumber.class)) {
+//    //    CGFloat lastDistance = [((NSNumber*)lastDistanceNum) floatValue];
+//    //    speed = distance - lastDistance;
+//    //}
+//    //[[XGRedis sharedInstance] setObject:[NSNumber numberWithFloat:distance] forKey:key time:cRTDefault];
+//    //return (NSInteger)speed;
+//
+//    //1. 当前位置
+//    CGFloat speed = 0;
+//    CGPoint targetPoint = [UIView convertWorldPoint:target];
+//    //2. 上帧位置
+//    NSString *lastXKey = STRFORMAT(@"lastX_%p_%lld",target,target.initTime);
+//    NSString *lastYKey = STRFORMAT(@"lastY_%p_%lld",target,target.initTime);
+//    NSObject *lastXObj = [[XGRedis sharedInstance] objectForKey:lastXKey];
+//    NSObject *lastYObj = [[XGRedis sharedInstance] objectForKey:lastYKey];
+//    if (ISOK(lastXObj, NSNumber.class) && ISOK(lastYObj, NSNumber.class)) {
+//        CGFloat lastX = [((NSNumber*)lastXObj) floatValue];
+//        CGFloat lastY = [((NSNumber*)lastYObj) floatValue];
+//
+//        //3. 计算位置差
+//        CGFloat distanceX = (targetPoint.x - lastX);
+//        CGFloat distanceY = (targetPoint.y - lastY);
+//        speed = sqrt(powf(distanceX, 2) + powf(distanceY, 2));
+//    }
+//
+//    //4. 存位置下帧用
+//    [[XGRedis sharedInstance] setObject:[NSNumber numberWithFloat:targetPoint.x] forKey:lastXKey time:cRTDefault];
+//    [[XGRedis sharedInstance] setObject:[NSNumber numberWithFloat:targetPoint.y] forKey:lastYKey time:cRTDefault];
+//
+//    //5. 返回结果 (保留整数位)
+//    return (NSInteger)speed;
+//}
 
 //direction
 +(CGFloat) direction:(UIView*)selfView target:(UIView*)target{
