@@ -425,6 +425,7 @@
  *      2021.04.28: 右果嵌套GL始终为0条的BUG,调整配置参数后ok (参考23058);
  *      2021.09.11: v5_assFo联想方式:由抽象优先(absRFos)+照顾具象(matchRFos) (参考24012);
  *      2021.09.12: v4_回滚到v4,并将assFo联想方式改为(absRFos+matchRFos) + (absRFos+matchRFos).conPorts (参考24013);
+ *      2021.09.13: 将limit配置由2,3调高为5,5 (参考24016);
  */
 +(void)analogyInner_Outside_V4:(AINetAbsFoNode*)abFo type:(AnalogyType)type mModel:(AIShortMatchModel*)mModel glhnAlg:(AIAlgNodeBase*)glhnAlg vAT:(NSString*)vAT vDS:(NSString*)vDS{
     //1. 取glConAlg_ps;
@@ -451,7 +452,7 @@
         
         //5. 向具象收集conFo (前3条);
         NSArray *conFo_ps = Ports2Pits([AINetUtils conPorts_All:absFo]);
-        conFo_ps = ARR_SUB(conFo_ps, 0, 3);
+        conFo_ps = ARR_SUB(conFo_ps, 0, 5);
         [base_ps addObjectsFromArray:conFo_ps];
         
         //6. 分别取hngls,收集到allHNGLs中 (每item的前2条);
@@ -459,7 +460,7 @@
         for (AIKVPointer *item in base_ps) {
             AIFoNodeBase *base = [SMGUtils searchNode:item];
             NSArray *hnglPorts = [AINetUtils absPorts_All:base type:type];
-            hnglPorts = ARR_SUB(hnglPorts, 0, 2);
+            hnglPorts = ARR_SUB(hnglPorts, 0, 5);
             
             //7. 将hnglPorts存到allHNGLDic中 (hnglPort作为key,absFo收集到value中);
             for (AIPort *item in hnglPorts) {
@@ -470,7 +471,7 @@
             }
             curHnglCount += hnglPorts.count;
         }
-        //if (debugMode) NSLog(@"--> 当前absFo:%@ 取得hngl个数:%d",Fo2FStr(absFo),curHnglCount);
+        if (debugMode) NSLog(@"--> 当前absFo:%@ 取得hngl个数:%d",Fo2FStr(absFo),curHnglCount);
     }
     //if (debugMode) NSLog(@">>> 从%ld条absRFos中取assFo=>总联想assDic%ld条",mModel.absRFos.count,assDic.count);
     
