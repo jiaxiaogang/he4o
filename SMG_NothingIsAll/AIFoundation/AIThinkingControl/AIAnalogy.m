@@ -444,34 +444,34 @@
     NSMutableArray *baseFos = [SMGUtils collectArrA_NoRepeat:mModel.absRFos arrB:matchRFos];
     
     //3. 分别对baseFo的3条conPorts,各取2条gl,作为ass参与内中外类比;
-    for (AIFoNodeBase *absFo in baseFos) {
+    for (AIFoNodeBase *baseFo in baseFos) {
         
         //4. 直接收集absFo;
-        NSMutableArray *base_ps = [[NSMutableArray alloc] init];
-        [base_ps addObject:absFo.pointer];
+        NSMutableArray *mask_ps = [[NSMutableArray alloc] init];
+        [mask_ps addObject:baseFo.pointer];
         
         //5. 向具象收集conFo (前3条);
-        NSArray *conFo_ps = Ports2Pits([AINetUtils conPorts_All:absFo]);
-        conFo_ps = ARR_SUB(conFo_ps, 0, 5);
-        [base_ps addObjectsFromArray:conFo_ps];
+        NSArray *conBase_ps = Ports2Pits([AINetUtils conPorts_All:baseFo]);
+        conBase_ps = ARR_SUB(conBase_ps, 0, 5);
+        [mask_ps addObjectsFromArray:conBase_ps];
         
         //6. 分别取hngls,收集到allHNGLs中 (每item的前2条);
-        int curHnglCount = 0;
-        for (AIKVPointer *item in base_ps) {
-            AIFoNodeBase *base = [SMGUtils searchNode:item];
-            NSArray *hnglPorts = [AINetUtils absPorts_All:base type:type];
-            hnglPorts = ARR_SUB(hnglPorts, 0, 5);
+        int assCount = 0;
+        for (AIKVPointer *mask_p in mask_ps) {
+            AIFoNodeBase *maskFo = [SMGUtils searchNode:mask_p];
+            NSArray *assPorts = [AINetUtils absPorts_All:maskFo type:type];
+            assPorts = ARR_SUB(assPorts, 0, 5);
             
             //7. 将hnglPorts存到allHNGLDic中 (hnglPort作为key,absFo收集到value中);
-            for (AIPort *item in hnglPorts) {
-                NSData *key = OBJ2DATA(item);
-                NSMutableArray *absFos = [[NSMutableArray alloc] initWithArray:[assDic objectForKey:key]];
-                if (![absFos containsObject:absFo]) [absFos addObject:absFo];
-                [assDic setObject:absFos forKey:key];
+            for (AIPort *assPort in assPorts) {
+                NSData *key = OBJ2DATA(assPort);
+                NSMutableArray *baseFos = [[NSMutableArray alloc] initWithArray:[assDic objectForKey:key]];
+                if (![baseFos containsObject:baseFo]) [baseFos addObject:baseFo];
+                [assDic setObject:baseFos forKey:key];
             }
-            curHnglCount += hnglPorts.count;
+            assCount += assPorts.count;
         }
-        if (debugMode) NSLog(@"--> 当前absFo:%@ 取得hngl个数:%d",Fo2FStr(absFo),curHnglCount);
+        if (debugMode) NSLog(@"--> 当前baseFo:%@ 取到maskFo:%ld 取得assFo数:%d",Fo2FStr(baseFo),mask_ps.count,assCount);
     }
     //if (debugMode) NSLog(@">>> 从%ld条absRFos中取assFo=>总联想assDic%ld条",mModel.absRFos.count,assDic.count);
     
