@@ -425,13 +425,14 @@
  *      2021.04.28: 右果嵌套GL始终为0条的BUG,调整配置参数后ok (参考23058);
  *      2021.09.11: v5_assFo联想方式:由抽象优先(absRFos)+照顾具象(matchRFos) (参考24012);
  *      2021.09.12: v4_回滚到v4,并将assFo联想方式改为(absRFos+matchRFos) + (absRFos+matchRFos).conPorts (参考24013);
- *      2021.09.13: 将limit配置由2,3调高为5,5 (参考24016);
+ *      2021.09.13: 将limit配置由2,3,20调高为5,5,20 (参考24016);
+ *      2021.09.14: 因为性能差,将limit配置由5,5,20调整为6,2,10 (参考24017-问题2);
  */
 +(void)analogyInner_Outside_V4:(AINetAbsFoNode*)abFo type:(AnalogyType)type mModel:(AIShortMatchModel*)mModel glhnAlg:(AIAlgNodeBase*)glhnAlg vAT:(NSString*)vAT vDS:(NSString*)vDS{
     //1. 取glConAlg_ps;
     NSArray *glConAlg_ps = [AINetService getHNGLConAlg_ps:type vAT:vAT vDS:vDS];
     BOOL debugMode = Log4InAnaGL(type) || Log4InAnaHN(type);
-    NSInteger analogyLimit = 20;//最多类比5个assFo;
+    NSInteger conBaseLimit = 6,itemAssLimit = 2,analogyLimit = 10;
     //if (debugMode) NSLog(@"\n--------- 内中外类比 ---------\nABFo:%@ vAT:%@ vDS:%@",Fo2FStr(abFo),vAT,vDS);
     
     //2. ass结果收集: assDic<assPort,absFos>,其中absFos用于嵌套到absFo时用 (参考23041-TODO2);
@@ -452,7 +453,7 @@
         
         //5. 向具象收集conFo (前3条);
         NSArray *conBase_ps = Ports2Pits([AINetUtils conPorts_All:baseFo]);
-        conBase_ps = ARR_SUB(conBase_ps, 0, 5);
+        conBase_ps = ARR_SUB(conBase_ps, 0, conBaseLimit);
         [mask_ps addObjectsFromArray:conBase_ps];
         
         //6. 分别取hngls,收集到allHNGLs中 (每item的前2条);
@@ -460,7 +461,7 @@
         for (AIKVPointer *mask_p in mask_ps) {
             AIFoNodeBase *maskFo = [SMGUtils searchNode:mask_p];
             NSArray *assPorts = [AINetUtils absPorts_All:maskFo type:type];
-            assPorts = ARR_SUB(assPorts, 0, 5);
+            assPorts = ARR_SUB(assPorts, 0, itemAssLimit);
             
             //7. 将hnglPorts存到allHNGLDic中 (hnglPort作为key,absFo收集到value中);
             for (AIPort *assPort in assPorts) {
