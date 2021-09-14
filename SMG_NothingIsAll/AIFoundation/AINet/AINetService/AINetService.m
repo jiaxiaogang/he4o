@@ -162,7 +162,7 @@
     
     //2. 根据maskAlg,取gl嵌套 (目前由absPorts+type取);
     NSArray *hnglFo_ps = Ports2Pits([AINetUtils absPorts_All:maskFo type:type]);
-    if (Log4GetInnerAlg) NSLog(@"Group Of MaskFo:%@ 粗方案共%lu个 ↓↓↓",Fo2FStr(maskFo),(unsigned long)hnglFo_ps.count);
+    if (Log4GetInnerAlg && hnglFo_ps.count > 0) NSLog(@"Group Of MaskFo:%@ 粗方案共%lu个 ↓↓↓",Fo2FStr(maskFo),(unsigned long)hnglFo_ps.count);
     
     //3. 与glConAlg_ps取交集,取出有效的前limit个;
     hnglFo_ps = [SMGUtils filterArr:hnglFo_ps checkValid:^BOOL(AIKVPointer *item) {
@@ -189,7 +189,7 @@
     }
     
     //4. 调试;
-    if (Log4GetInnerAlg) {
+    if (Log4GetInnerAlg && hnglFo_ps.count > 0) {
         //TODOTOMORROW20210521: 调试sp跨场景误杀 (参考2307b);
         BOOL logAny = true;//result;
         if (logAny) {

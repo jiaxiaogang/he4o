@@ -261,7 +261,7 @@
     //3. 加强RFos的抽具象关联;
     for (AIMatchFoModel *item in inModel.matchRFos) {
         AIFoNodeBase *absRFo = [AIAnalogy analogyOutside:maskFo assFo:item.matchFo type:ATSame createAbsAlgBlock:nil];
-        if (Log4AnalogyAbsRFo) NSLog(@">>> 抽象absRFo: %@\t\tFrom MatchRFo: %@",Fo2FStr(absRFo),Fo2FStr(item.matchFo));
+        if (Log4AnalogyAbsRFo) NSLog(@">>> 抽象absRFo: %@\t\tFrom MatchRFo: F%ld",Fo2FStr(absRFo),item.matchFo.pointer.pointerId);
         if (absRFo && ![inModel.absRFos containsObject:absRFo]) [inModel.absRFos addObject:absRFo];
     }
 }
