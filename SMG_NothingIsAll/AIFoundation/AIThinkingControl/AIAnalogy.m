@@ -173,6 +173,7 @@
     NSString *log = STRFORMAT(@"-> 外类比构建时序 (%@): %@->{%@} from: ↑↑↑(fo(%ld):assFo(%ld))",ATType2Str(type),Fo2FStr(result),Mvp2Str(result.cmvNode_p),foStrong,assFoStrong);
     if (Log4OutAnaHN(type)) NSLog(@"%@",log);
     if (Log4OutAnaGL(type)) NSLog(@"%@",log);
+    if (Log4OutAnaSP(type)) NSLog(@"%@",log);
     if (Log4OutAnaDiff(type)) NSLog(@"%@",log);
     if (Log4OutAnaDefault(type)) NSLog(@"%@",log);
     if (Log4OutAnaSame(type)) NSLog(@"%@",log);

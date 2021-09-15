@@ -339,9 +339,15 @@
     if (Log4ActGL) NSLog(@"getInnerAlg(%@): 根据:%@->%@ 找:%@%@ \n联想结果:%@ %@",ATType2Str(type),Pit2FStr(outModel.sValue_p),Pit2FStr(outModel.content_p),vDS,Data2FStr(type, vAT, vDS),Pit2FStr(relativeFo_p),relativeFo_p ? @"↓↓↓↓↓↓↓↓" : @"无计可施");
     
     //TODOTOMORROW20210915: 调试gl经验被大量空S否掉的原因;
-    if ([vDS isEqualToString:@"posY"]) {
+    if (relativeFo_p && [vDS isEqualToString:@"distanceY"]) {
+        //用FZ25直击,或飞某方向再直击,都无法复现;
+        //明天尝试恢复FZ25-3或别的记忆快照,再次尝试下复现;
         NSLog(@"");
     }
+    
+    
+    
+    
     
     //5. 转移至_fos
     if (relativeFo_p) {
