@@ -10,7 +10,8 @@
 
 /**
  *  MARK:--------------------防重触发器--------------------
- *  @desc 每个登记后的key,仅执行一次;
+ *  @desc 无论登记多少次,仅执行一次;
+ *  @property key : 防重标识码;
  */
 @interface AINoRepeatRun : NSObject
 

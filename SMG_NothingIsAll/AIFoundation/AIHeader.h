@@ -27,6 +27,10 @@
 #import "TOUtils.h"
 #import "TOModelVision.h"
 
+//MARK:===============================================================
+//MARK:                         < 内核宏 >
+//MARK:===============================================================
+
 /**
  *  MARK:--------------------PathNameKey (kPH)--------------------
  */
@@ -264,8 +268,8 @@
 #define Log4MFo false
 #define Log4AnalogyAbsRFo true
 //内类比
-#define Log4InAna true
-#define Log4InAnaGL(type) ((type == ATGreater || type == ATLess) && true)
+#define Log4InAna false
+#define Log4InAnaGL(type) ((type == ATGreater || type == ATLess) && false)
 #define Log4InAnaHN(type) ((type == ATHav || type == ATNone) && false)
 
 //外类比
@@ -283,7 +287,7 @@
 //方向索引
 #define Log4DirecRef true
 //行为化_GL
-#define Log4ActGL false
+#define Log4ActGL true
 //行为化_Hav
 #define Log4ActHav false
 //行为化_RelativeFos
@@ -306,5 +310,8 @@
 //MARK:===============================================================
 //MARK:                     < 系统模块开关 >
 //MARK:===============================================================
+
+//R决策模式
 #define Switch4RS true
+//P决策模式
 #define Switch4PS false
