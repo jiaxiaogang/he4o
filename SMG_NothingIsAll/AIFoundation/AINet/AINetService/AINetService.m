@@ -137,6 +137,18 @@
     NSArray *gl_ps = Ports2Pits([AINetUtils refPorts_All4Value:innerValue_p]);
     AIKVPointer *gl_p = ARR_INDEX(gl_ps, 0);//glAlg唯一
     AIAlgNodeBase *glAlg = [SMGUtils searchNode:gl_p];
+    
+    //TODOTOMORROW20210916: 查getInnerGL的路径是否有混乱情况 (参考24018-线索2);
+    if ([vAT isEqualToString:@"AIVisionAlgs"]) {
+        [theNV invokeForceMode:^{
+            [theNV setNodeData:glAlg.pointer lightStr:STRFORMAT(@"%@->glAlg",vDS)];
+        }];
+    }
+    
+    
+    
+    
+    
     NSArray *glConAlg_ps = Ports2Pits([AINetUtils conPorts_All:glAlg]);
     return glConAlg_ps;
 }
@@ -165,9 +177,12 @@
     if (Log4GetInnerAlg && hnglFo_ps.count > 0) NSLog(@"Group Of MaskFo:%@ 粗方案共%lu个 ↓↓↓",Fo2FStr(maskFo),(unsigned long)hnglFo_ps.count);
     
     //TODOTOMORROW20210916: 查24018-线索2,的问题;
-    [theNV invokeForceMode:^{
-        [theNV setNodeData:maskFo.pointer];
-    }];
+    if (maskFo.pointer.pointerId == 179 || maskFo.pointer.pointerId == 116 || maskFo.pointer.pointerId == 132) {
+        [theNV invokeForceMode:^{
+            [theNV setNodeData:maskFo.pointer];
+        }];
+    }
+    
     
     
     

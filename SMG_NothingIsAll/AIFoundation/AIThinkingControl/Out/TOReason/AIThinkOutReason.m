@@ -644,23 +644,6 @@
             //12. ------> 未找到GL的目标 (如距离0),直接计为失败;
             if (Log4PM) NSLog(@"-> 未找到GL目标,转至流程控制Failure");
             
-            
-            
-            //========================================================================
-            //TODOTOMORROW20210812: 调试23215-PM不通过时修正无目标的问题;
-            //推进1: 经测,在具象找依然没有SP经验,所以还是得走23215-方案2,重新制定训练步骤,使SP生成;
-            //推进2: 在通过23219两种训练方式训练后,看SP生成是否够用,不够话,再分析加训些步骤试试;
-            
-            //在修复此BUG后,此处调试代码可删掉;
-            
-            
-            [theNV invokeForceMode:^{
-                [theNV setNodeData:curFo.pointer lightStr:@"curFo"];
-                [theNV setNodeData:curAlg.pointer lightStr:@"curAlg"];
-                for (AIPort *port in pPorts) {
-                    [theNV setNodeData:port.target_p lightStr:@"pPort"];
-                }
-            }];
             //1. 尝试从具象中,找出pPorts
             NSMutableArray *allAlg_ps = [[NSMutableArray alloc] init];
             [allAlg_ps addObject:curAlg.pointer];
