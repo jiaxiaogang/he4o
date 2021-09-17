@@ -10,7 +10,7 @@
 
 @implementation AIKVPointer
 
-+(AIKVPointer*) newWithPointerId:(NSInteger)pointerId folderName:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem{
++(AIKVPointer*) newWithPointerId:(NSInteger)pointerId folderName:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem type:(AnalogyType)type{
     AIKVPointer *pointer = [[AIKVPointer alloc] init];
     pointer.pointerId = pointerId;
     pointer.isMem = isMem;
@@ -18,6 +18,7 @@
     [pointer.params setObject:STRTOOK(algsType) forKey:@"algsType"];
     [pointer.params setObject:STRTOOK(dataSource) forKey:@"dataSource"];
     [pointer.params setObject:STRFORMAT(@"%d",isOut) forKey:@"isOut"];
+    [pointer.params setObject:STRFORMAT(@"%ld",(long)type) forKey:@"type"];
     return pointer;
 }
 
@@ -35,7 +36,7 @@
 -(NSString*) filePath{
     NSString *pIdStr = STRFORMAT(@"%ld",self.pointerId);
     NSString *cachePath = kCachePath;
-    NSMutableString *fileRootPath = [[NSMutableString alloc] initWithFormat:@"%@/%@/%@/%@/%d",cachePath,self.folderName,self.algsType,self.dataSource,self.isOut];
+    NSMutableString *fileRootPath = [[NSMutableString alloc] initWithFormat:@"%@/%@/%@/%@/%@/%d",cachePath,self.folderName,self.typeStr,self.algsType,self.dataSource,self.isOut];
     for (NSInteger j = 0; j < pIdStr.length; j++) {
         [fileRootPath appendFormat:@"/%@",[pIdStr substringWithRange:NSMakeRange(j, 1)]];
     }
@@ -43,8 +44,12 @@
 }
 
 -(NSString*) identifier{
-    return STRFORMAT(@"%@_%@_%d",self.algsType,self.dataSource,self.isOut);
+    return STRFORMAT(@"%@_%@_%@_%d",self.typeStr,self.algsType,self.dataSource,self.isOut);
 }
+
+//MARK:===============================================================
+//MARK:                     < 单属性取值 >
+//MARK:===============================================================
 
 -(NSString*) folderName{
     return [self.params objectForKey:@"folderName"];
@@ -60,6 +65,14 @@
 
 -(BOOL) isOut{
     return [STRTOOK([self.params objectForKey:@"isOut"]) boolValue];
+}
+
+-(NSString*) typeStr{
+    return ATType2Str(self.type);
+}
+
+-(AnalogyType) type{
+    return [STRTOOK([self.params objectForKey:@"type"]) intValue];
 }
 
 @end
