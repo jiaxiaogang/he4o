@@ -15,12 +15,13 @@
 
 @property (strong,nonatomic) IBOutlet UIView *containerView;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *moduleSegment;
-@property (weak, nonatomic) IBOutlet UISegmentedControl *typeSegment;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *absConSegment;
 @property (weak, nonatomic) IBOutlet UITextField *pointerIdTF;
 @property (weak, nonatomic) IBOutlet UISwitch *isOutSwitch;
 @property (weak, nonatomic) IBOutlet UISwitch *isMemSwitch;
 @property (weak, nonatomic) IBOutlet UITextField *algsTypeTF;
 @property (weak, nonatomic) IBOutlet UITextField *dataSourceTF;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *typeSegment;
 
 @end
 
@@ -64,7 +65,7 @@
 //MARK:===============================================================
 - (IBAction)commitBtnOnClick:(id)sender {
     //1. 抽具象;
-    BOOL isAbs = self.typeSegment.selectedSegmentIndex == 0;
+    BOOL isAbs = self.absConSegment.selectedSegmentIndex == 0;
     
     //2. folderName
     NSString *folderName = nil;
@@ -93,13 +94,31 @@
     //7. dataSource
     NSString *dataSource = STRISOK(self.dataSourceTF.text) ? self.dataSourceTF.text : DefaultDataSource;
     
+    //8. type
+    AnalogyType type = ATDefault;
+    if (self.typeSegment.selectedSegmentIndex == 1) {
+        type = ATHav;
+    }else if (self.typeSegment.selectedSegmentIndex == 2) {
+        type = ATNone;
+    }else if (self.typeSegment.selectedSegmentIndex == 3) {
+        type = ATGreater;
+    }else if (self.typeSegment.selectedSegmentIndex == 4) {
+        type = ATLess;
+    }else if (self.typeSegment.selectedSegmentIndex == 5) {
+        type = ATSub;
+    }else if (self.typeSegment.selectedSegmentIndex == 6) {
+        type = ATPlus;
+    }else if (self.typeSegment.selectedSegmentIndex == 7) {
+        type = ATDiff;
+    }
+    
     //8. 提交到网络
-    AIKVPointer *node_p = [AIKVPointer newWithPointerId:pointerId folderName:folderName algsType:algsType dataSource:dataSource isOut:isOut isMem:isMem];
+    AIKVPointer *node_p = [AIKVPointer newWithPointerId:pointerId folderName:folderName algsType:algsType dataSource:dataSource isOut:isOut isMem:isMem type:type];
     [theNV setNodeData:node_p];
     
     //9. 关闭窗口
     [self removeFromSuperview];
-    TPLog(@"追加节点: %@/%@/%@/%d/%d",node_p.folderName,node_p.algsType,node_p.dataSource,node_p.isOut,node_p.pointerId);
+    TPLog(@"追加节点: %@/%@/%@/%@/%d/%ld",node_p.folderName,ATType2Str(type),node_p.algsType,node_p.dataSource,node_p.isOut,node_p.pointerId);
 }
 - (IBAction)closeBtnOnClick:(id)sender {
     [self removeFromSuperview];
