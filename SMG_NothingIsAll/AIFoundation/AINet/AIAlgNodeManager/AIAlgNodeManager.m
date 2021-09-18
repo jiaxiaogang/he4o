@@ -67,7 +67,7 @@
  *  @version
  *      2021.01.03: 判断abs已存在抽象节点时,加上ATDS的匹配判断,因为不同类型节点不必去重 (参考2120B-BUG2);
  */
-+(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem dsBlock:(NSString*(^)())dsBlock isOutBlock:(BOOL(^)())isOutBlock{
++(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem dsBlock:(NSString*(^)())dsBlock isOutBlock:(BOOL(^)())isOutBlock type:(AnalogyType)type{
     //1. 数据准备
     NSString *dataSource = dsBlock ? dsBlock() : [self getDataSource:value_ps];
     BOOL isOut = isOutBlock ? isOutBlock() : [AINetUtils checkAllOfOut:value_ps];
@@ -125,7 +125,7 @@
     if (!result) {
         absIsNew = true;
         result = [[AIAbsAlgNode alloc] init];
-        result.pointer = [SMGUtils createPointerForAlg:kPN_ALG_ABS_NODE dataSource:dataSource isOut:isOut isMem:isMem];
+        result.pointer = [SMGUtils createPointerForAlg:kPN_ALG_ABS_NODE dataSource:dataSource isOut:isOut isMem:isMem type:type];
         result.content_ps = [[NSMutableArray alloc] initWithArray:sortSames];
     }
     
@@ -157,7 +157,7 @@
  *  @version
  *      2021.08.06: 本地去重,支持ds防重,因为不去重导致同内容的S和P混乱 (参考23205);
  */
-+(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem dsBlock:(NSString*(^)())dsBlock isOutBlock:(BOOL(^)())isOutBlock{
++(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem dsBlock:(NSString*(^)())dsBlock isOutBlock:(BOOL(^)())isOutBlock type:(AnalogyType)type{
     //1. 数据检查
     value_ps = ARRTOOK(value_ps);
     NSArray *sort_ps = [SMGUtils sortPointers:value_ps];
@@ -183,7 +183,7 @@
         return localAlg;
     }else{
         //4. 无则构建
-        return [self createAbsAlgNode:value_ps conAlgs:conAlgs isMem:isMem dsBlock:dsBlock isOutBlock:isOutBlock];
+        return [self createAbsAlgNode:value_ps conAlgs:conAlgs isMem:isMem dsBlock:dsBlock isOutBlock:isOutBlock type:type];
     }
 }
 
