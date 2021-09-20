@@ -65,7 +65,7 @@
     }
     
     //3. 构建父概念 & 将空场景加入瞬时记忆;
-    AIAbsAlgNode *parentAlgNode = [theNet createAbsAlg_NoRepeat:parentValue_ps conAlgs:nil isMem:true isOut:false ds:algsType];
+    AIAbsAlgNode *parentAlgNode = [theNet createAbsAlg_NoRepeat:parentValue_ps conAlgs:nil isMem:true isOut:false ds:algsType type:ATDefault];
     //if (parentValue_ps.count == 0) [self.delegate aiThinkIn_AddToShortMemory:parentAlgNode.pointer isMatch:false];
     if (Log4TCInput) NSLog(@"---> 构建InputParent节点:%@",Alg2FStr(parentAlgNode));
     
@@ -74,7 +74,7 @@
     
     //5. 构建子概念 (抽象概念,并嵌套);
     for (NSArray *subValue_ps in subValuePsArr) {
-        AIAbsAlgNode *subAlgNode = [theNet createAbsAlg_NoRepeat:subValue_ps conAlgs:@[parentAlgNode] isMem:true ds:algsType];
+        AIAbsAlgNode *subAlgNode = [theNet createAbsAlg_NoRepeat:subValue_ps conAlgs:@[parentAlgNode] isMem:true ds:algsType type:ATDefault];
         [fromGroup_ps addObject:subAlgNode.pointer];
         
         //6. 将所有子概念添加到瞬时记忆 (2020.08.17: 由短时记忆替代);
@@ -99,7 +99,7 @@
         [self dataIn_FindMV:algsArr];
     }else{
         //1. 打包成algTypeNode;
-        AIAlgNodeBase *algNode = [theNet createAbsAlg_NoRepeat:algsArr conAlgs:nil isMem:true isOut:false ds:algsType];
+        AIAlgNodeBase *algNode = [theNet createAbsAlg_NoRepeat:algsArr conAlgs:nil isMem:true isOut:false ds:algsType type:ATDefault];
         
         //2. 加入瞬时记忆 & 识别等;
         [self dataIn_NoMV:algNode fromGroup_ps:@[algNode.pointer]];
@@ -111,7 +111,18 @@
     outValue_ps = ARRTOOK(outValue_ps);
     
     //2. 构建概念
-    AIAbsAlgNode *outAlg = [theNet createAbsAlg_NoRepeat:outValue_ps conAlgs:nil isMem:false isOut:true];
+    AIAbsAlgNode *outAlg = [theNet createAbsAlg_NoRepeat:outValue_ps conAlgs:nil isMem:false isOut:true type:ATDefault];
+    
+    
+    //TODOTOMORROW20210920:
+    //1. 全局搜索createAbsAlg_NoRepeat:并继续从此处开始补充type值;
+    //2. 将Same类型全改成ATDefault类型;
+    //3. 将`distanceY`这些赋值到ds;
+    
+    
+    
+    
+    
     
     //3. 加瞬时记忆 & 进行识别
     [self dataIn_NoMV:outAlg fromGroup_ps:@[outAlg.pointer]];
