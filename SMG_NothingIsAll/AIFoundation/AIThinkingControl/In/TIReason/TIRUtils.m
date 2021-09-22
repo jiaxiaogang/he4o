@@ -322,7 +322,7 @@
  *  @version
  *      2020.11.05: 将backAlg(glAlg)改成backConAlg传入,使glFo改为[range+backConAlg] (参考21115);
  */
-+(AINetAbsFoNode*)createInnerAbsFo:(AIAlgNodeBase*)backConAlg rangeAlg_ps:(NSArray*)rangeAlg_ps conFo:(AIFoNodeBase*)conFo ds:(NSString*)ds{
++(AINetAbsFoNode*)createInnerAbsFo:(AIAlgNodeBase*)backConAlg rangeAlg_ps:(NSArray*)rangeAlg_ps conFo:(AIFoNodeBase*)conFo ds:(NSString*)ds type:(AnalogyType)type{
     //1. 数据检查
     if (!backConAlg || !conFo) return nil;
     rangeAlg_ps = ARRTOOK(rangeAlg_ps);
@@ -333,7 +333,7 @@
     [absOrders addObject:backConAlg.pointer];
     
     //3. 构建 (内类比时序未指向mv,初始强度为1);
-    AINetAbsFoNode *result = [theNet createAbsFo_NoRepeat:@[conFo] content_ps:absOrders difStrong:1 ds:ds];
+    AINetAbsFoNode *result = [theNet createAbsFo_NoRepeat:@[conFo] content_ps:absOrders difStrong:1 ds:ds type:type];
     return result;
 }
 

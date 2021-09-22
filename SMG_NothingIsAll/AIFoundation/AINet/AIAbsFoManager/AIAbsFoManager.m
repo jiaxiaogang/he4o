@@ -26,7 +26,7 @@
 
 /**
  *  MARK:--------------------在foNode基础上构建抽象--------------------
- *  @params conFos      : 具象节点们 (item类型为AIFoNodeBase) (外类比时,传入foA和foB) (内类比时传入conFo即可)
+ *  @params conFos      : 具象节点们 (外类比时,传入foA和foB) (内类比时传入baseFo即可)
  *  @params orderSames  : algNode组
  *  注: 转移: 仅概念支持内存网络向硬盘网络的转移,fo不进行转移;
  *
@@ -93,6 +93,8 @@
  *  @callers : 被外类比构建器调用;
  *  @功能说明: 1. 未支持内存去重;
  *  @param difStrong : 构建fo的被引用初始强度;
+ *  @param ds : 新构建时传入指定ds,尤其是GL类型时,一般要将value.dataSource传递过来 (参考24019-概念部分);
+ *              非新构建时,可传nil,此时尝试从conFos继承获取 (如果它们有共同的ds);
  *  @version
  *      2020.04.26: 去掉时序的全局去重;
  *      2021.04.25: 打开防重,仅对content_ps防重,但没有对ds做同区要求判断 (参考23054-疑点);
@@ -101,6 +103,7 @@
  *      2021.05.22: 对SP类型仅在当时场景下防重 (参考2307b-方案3);
  *      2021.05.23: 对GL类型仅在当前场景下防重 (参考23081);
  *      2021.09.22: fo支持type防重 (参考24019);
+ *      2021.09.23: fo支持从conFos中继承ds,如果conFos的ds都相同的话 (参考24019-时序部分);
  *  @status
  *      2021.04.25: 打开后,gl经验全为0条,所以先关掉,后续测试打开后为什么为0条;
  */
@@ -108,12 +111,12 @@
     //1. 数据准备
     conFos = ARRTOOK(conFos);
     content_ps = ARRTOOK(content_ps);
+    ds = ds ? ds : [AIAbsFoManager getDataSource:conFos];
     AINetAbsFoNode *result = nil;
     
-    
     //TODOTOMORROW20210923:
-    //1. 对所有调用createAbsFo_NoRepeat()处,传入type;
-    //2. 对所有调用createAbsFo_NoRepeat()处,传入ds做检查 (HNGL时,传入原value&alg的ds);
+    //1. 对所有调用createAbsFo_NoRepeat()处,传入type; T
+    //2. 对所有调用createAbsFo_NoRepeat()处,传入ds做检查 (GL时,传入原value&alg的ds); T
     
     
     
@@ -173,5 +176,26 @@
 //    }
 //    return result;
 //}
+
+//MARK:===============================================================
+//MARK:                     < privateMethod >
+//MARK:===============================================================
+
+//从具象组中,提取时序节点的dataSource;
++(NSString*) getDataSource:(NSArray*)conFos{
+    //1. 数据准备
+    NSString *ds = DefaultDataSource;
+    
+    //2. 假如全一样,提出来;
+    for (NSInteger i = 0; i < conFos.count; i++) {
+        AIFoNodeBase *conFo = ARR_INDEX(conFos, i);
+        if (i == 0) {
+            ds = conFo.pointer.dataSource;
+        }else if(![ds isEqualToString:conFo.pointer.dataSource]){
+            ds = DefaultDataSource;
+        }
+    }
+    return ds;
+}
 
 @end

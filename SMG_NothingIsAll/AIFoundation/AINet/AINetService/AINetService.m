@@ -131,6 +131,8 @@
 /**
  *  MARK:--------------------获取glConAlg_ps--------------------
  *  @desc 联想路径说明: (glConAlg_ps = glValue.refPorts->glAlg.conPorts->glConAlgs) (参考22211示图);
+ *  @todo
+ *      2021.09.23: 废弃glConAlg_ps,因为上面的联想路径已废弃 (参考24019-TODO);
  */
 +(NSArray*) getHNGLConAlg_ps:(AnalogyType)type vAT:(NSString*)vAT vDS:(NSString*)vDS{
     AIKVPointer *innerValue_p = [theNet getNetDataPointerWithData:@(type) algsType:vAT dataSource:vDS];

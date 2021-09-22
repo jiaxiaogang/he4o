@@ -130,6 +130,7 @@
  *  @version
  *      2020.07.22: 在外类比无需构建时 (即具象和抽象一致时),其方向索引强度+1;
  *      2021.08.10: 在RFos的再抽象调用时,有可能将防重的带mvDeltaTime的值重置为0的BUG (参考23212-问题2);
+ *      2021.09.23: 构建fo时,新增type参数,废弃原foDS(typeStr)的做法 (参考24019-时序部分);
  */
 +(AINetAbsFoNode*)analogyOutside_Creater:(NSArray*)orderSames fo:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type{
     //2. 数据检查;
@@ -156,8 +157,7 @@
             }
             
             //5. 构建absFoNode
-            NSString *foDS = [ThinkingUtils getAnalogyTypeDS:type];
-            result = [theNet createAbsFo_NoRepeat:@[fo,assFo] content_ps:orderSames difStrong:foDifStrong ds:foDS];
+            result = [theNet createAbsFo_NoRepeat:@[fo,assFo] content_ps:orderSames difStrong:foDifStrong ds:nil type:type];
             
             //5. 从fo和conFo.mvDeltaTime中提取mv导致时间隔,在relateFo之前,赋值到result中;
             result.mvDeltaTime = MAX(MAX(fo.mvDeltaTime, assFo.mvDeltaTime), result.mvDeltaTime);
@@ -361,7 +361,7 @@
  *  @param backConAlg   :
  *      1. 构建有无时,以变有/无的概念为backConAlg;
  *      2. 构建大小时,以"微信息所在的概念algB为backConAlg;
- *  @param conFo : 用来构建抽象具象时序时,作为具象节点使用;
+ *  @param conFo : 用来构建抽象具象时序时,作为具象节点使用 (其实就是baseFo,把新生成的glFo嵌套在它的abs上);
  *  @作用
  *      1. 构建动态微信息 (有去重);
  *      2. 构建动态概念 (有去重);
@@ -371,7 +371,8 @@
  *      2020.03.29: 将frontAlg去掉,只保留backAlg (以使方便TOR中联想使用);
  *      2020.04.19: 将构建alg和fo指定ds为:backData的值 (以便此后取absPorts时,可以根据指针进行类型筛选);
  *      2020.11.05: 将glFo改为[range+backConAlg] (参考21115);
- *      2021.09.23: 取glAlg,复用value的dataSource,因为atType独立了,不再借用ds的位置 (参考24019-概念部分-3);
+ *      2021.09.23: 构建glAlg,复用value的dataSource,因为atType独立了,不再借用ds的位置 (参考24019-概念部分-3);
+ *      2021.09.23: 构建glFo,复用value的dataSource,因为atType独立了,不再借用ds的位置 (参考24019-时序部分-2);
  *  @todo
  *      2020.10.23: GL时,将GL的构建,延伸至支持abs (至少涉及到两个absAlg,参考21091绿黄指向的A66&A8) (由内中外类比实现,参考21115) T;
  *  @bug
@@ -392,11 +393,11 @@
     glValue_p = [theNet getNetDataPointerWithData:@(backData) algsType:algsType dataSource:dataSource];
 
     //4. 构建抽象概念 (20190809注:此处可考虑,type为大/小时,不做具象指向,因为大小概念,本来就是独立的节点);
-    NSString *afDS = [ThinkingUtils getAnalogyTypeDS:type];
+    //NSString *afDS = [ThinkingUtils getAnalogyTypeDS:type];
     AIAlgNodeBase *glAlg = [theNet createAbsAlg_NoRepeat:@[glValue_p] conAlgs:@[backConAlg] isMem:false ds:dataSource type:type];
     
     //5. 构建抽象时序; (小动致大 / 大动致小) (之间的信息为balabala)
-    AINetAbsFoNode *result = [TIRUtils createInnerAbsFo:backConAlg rangeAlg_ps:rangeAlg_ps conFo:conFo ds:afDS];
+    AINetAbsFoNode *result = [TIRUtils createInnerAbsFo:backConAlg rangeAlg_ps:rangeAlg_ps conFo:conFo ds:dataSource type:type];
 
     //6. 调试;
     if (Log4InAnaHN(type)) NSLog(@"主: 内类比构建:%@ ConFrom:%@ 构建Fo:%@",Alg2FStr(glAlg),Alg2FStr(backConAlg),Fo2FStr(result));
@@ -684,7 +685,7 @@
     BOOL tirSwitch = true;
     if (!tirSwitch || !matchFoModel || !matchFoModel.matchFo || !shortFo || (type != ATPlus && type != ATSub)) return;
     AIFoNodeBase *matchFo = matchFoModel.matchFo;
-    NSString *ds = [ThinkingUtils getAnalogyTypeDS:type];
+    //NSString *ds = [ThinkingUtils getAnalogyTypeDS:type];
     
     //2. 取有效的matchFo部分 (HNGL取range部分 | MV取所有);
     NSMutableArray *matchContent = [[NSMutableArray alloc] init];
@@ -714,7 +715,7 @@
                 if (!ARRISOK(pSubM)) continue;
                 
                 //6. 差值有效,则构建新SPAlg节点;
-                AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:pSubM conAlgs:@[matchAlg] isMem:false ds:ds type:type];
+                AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:pSubM conAlgs:@[matchAlg] isMem:false ds:nil type:type];
                 if (Log4InRethink) NSLog(@"--> IRT构建SPAlg:%@ base:%@",Alg2FStr(spAlg),Alg2FStr(matchAlg));
                 
                 //7. 收集spAlg并更新nextStartJ & findShortAlg;
@@ -729,7 +730,7 @@
     }
     
     //9. 构建SPFo;
-    AIFoNodeBase *spFo = [theNet createAbsFo_NoRepeat:@[matchFo] content_ps:justPs difStrong:1 ds:ds];
+    AIFoNodeBase *spFo = [theNet createAbsFo_NoRepeat:@[matchFo] content_ps:justPs difStrong:1 ds:nil type:type];
     if (Log4InRethink) NSLog(@"--> IRT构建SPFo:%@ base:F%ld",Fo2FStr(spFo),matchFo.pointer.pointerId);
     
     //10. SP外类比;
@@ -769,7 +770,7 @@
     if (!foModel || (type != ATSub && type != ATPlus)) return;
     AIFoNodeBase *foNode = [SMGUtils searchNode:foModel.content_p];
     NSMutableArray *spFoContent = [[NSMutableArray alloc] init];
-    NSString *spDS = [ThinkingUtils getAnalogyTypeDS:type];
+    //NSString *spDS = [ThinkingUtils getAnalogyTypeDS:type];
     OFTitleLog(@"Out反省类比 (%@)", @"\n时序:%@->%@",ATType2Str(type),Fo2FStr(foNode),Mvp2Str(foNode.cmvNode_p));
     
     //2. 构建SPAlg (触发反省类比_实际fo数据收集 (不用收集realFo,而是直接对未修正部分构建,参考20205-原则1));
@@ -791,7 +792,7 @@
         //4. 未修正部分构建为: "SP概念"
         AIAlgNodeBase *curAlg = [SMGUtils searchNode:toAlgModel.content_p];
         if (!ARRISOK(notFinish_ps)) continue;
-        AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:notFinish_ps conAlgs:@[curAlg] isMem:false ds:spDS type:type];
+        AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:notFinish_ps conAlgs:@[curAlg] isMem:false ds:nil type:type];
         if (Log4OutRethink) NSLog(@"--> ORT构建SPAlg:%@ base:%@",Alg2FStr(spAlg),AlgP2FStr(curAlg.pointer));
         
         //TODO调试分析"定责" (参考23065);
@@ -802,7 +803,7 @@
     }
     
     //6. 构建SPFo
-    AINetAbsFoNode *spFo = [theNet createAbsFo_NoRepeat:@[foNode] content_ps:spFoContent difStrong:1 ds:spDS];
+    AINetAbsFoNode *spFo = [theNet createAbsFo_NoRepeat:@[foNode] content_ps:spFoContent difStrong:1 ds:nil type:type];
     if (Log4OutRethink) NSLog(@"--> ORT构建SPFo:%@ base:F%ld",Fo2FStr(spFo),foNode.pointer.pointerId);
     
     //7. SP外类比;
