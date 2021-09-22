@@ -46,7 +46,7 @@
  *          说明: 不过随后抽具象节点类会统一,所以如果这个影响不到v2.0则可不做;
  *  @param ds : 当有ds防重要求时,传入ds (如fo的不同inner类型无需去重) (为empty时,不做防重要求);
  */
-+(id) getAbsoluteMatching_General:(NSArray*)content_ps sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps getRefPortsBlock:(NSArray*(^)(AIKVPointer *item_p))getRefPortsBlock ds:(NSString*)ds;
++(id) getAbsoluteMatching_General:(NSArray*)content_ps sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps getRefPortsBlock:(NSArray*(^)(AIKVPointer *item_p))getRefPortsBlock ds:(NSString*)ds type:(AnalogyType)type;
 
 /**
  *  MARK:--------------------从指定范围中获取绝对匹配--------------------

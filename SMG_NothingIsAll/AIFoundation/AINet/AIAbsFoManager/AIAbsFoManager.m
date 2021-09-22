@@ -26,9 +26,14 @@
 
 /**
  *  MARK:--------------------在foNode基础上构建抽象--------------------
+ *  @params conFos      : 具象节点们 (item类型为AIFoNodeBase) (外类比时,传入foA和foB) (内类比时传入conFo即可)
+ *  @params orderSames  : algNode组
+ *  注: 转移: 仅概念支持内存网络向硬盘网络的转移,fo不进行转移;
+ *
  *  @version
  *      2020.08.18: 支持deltaTimes (抽象时序的deltaTime全部由conFos得出,参考:20201);
  *      2021.01.03: 判断abs已存在抽象节点时,加上ATDS的匹配判断,因为不同类型节点不必去重 (参考2120B-BUG2);
+ *  @result : notnull
  */
 -(AINetAbsFoNode*) create:(NSArray*)conFos orderSames:(NSArray*)orderSames difStrong:(NSInteger)difStrong dsBlock:(NSString*(^)())dsBlock{
     //1. 数据准备
@@ -95,14 +100,29 @@
  *      2021.04.28: 修复当content_ps为空时,不构建新时序的BUG (参考23057);
  *      2021.05.22: 对SP类型仅在当时场景下防重 (参考2307b-方案3);
  *      2021.05.23: 对GL类型仅在当前场景下防重 (参考23081);
+ *      2021.09.22: fo支持type防重 (参考24019);
  *  @status
  *      2021.04.25: 打开后,gl经验全为0条,所以先关掉,后续测试打开后为什么为0条;
  */
--(AINetAbsFoNode*) create_NoRepeat:(NSArray*)conFos content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong ds:(NSString*)ds{
+-(AINetAbsFoNode*) create_NoRepeat:(NSArray*)conFos content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong ds:(NSString*)ds type:(AnalogyType)type{
     //1. 数据准备
     conFos = ARRTOOK(conFos);
     content_ps = ARRTOOK(content_ps);
     AINetAbsFoNode *result = nil;
+    
+    
+    //TODOTOMORROW20210922:
+    //0. 检查createAbsAlg_NoRepeat()传入的ds (HNGL时,传入原value&alg的ds);
+    //1. 对所有调用处,传入type;
+    //2. 对所有调用处,传入ds做检查 (HNGL时,传入原value&alg的ds);
+    
+    
+    
+    
+    
+    
+    
+    
     
     //2. 防重_SP类型时,嵌套范围内绝对匹配;
     int dsType = DS2ATType(ds);
@@ -117,7 +137,7 @@
         result = [AINetIndexUtils getAbsoluteMatching_General:content_ps sort_ps:content_ps except_ps:Nodes2Pits(conFos) getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
             AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
             return [AINetUtils refPorts_All4Alg:itemAlg];
-        } ds:ds];
+        } ds:ds type:type];
     }
     
     //3. 有则加强关联;

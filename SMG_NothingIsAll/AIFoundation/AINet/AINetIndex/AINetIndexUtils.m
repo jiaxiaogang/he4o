@@ -51,8 +51,9 @@
  *  @version
  *      2021.04.25: 支持ds同区判断 (参考23054-疑点);
  *      2021.04.27: 修复因ds为空时默认dsSeem为true逻辑错误,导致alg防重失败,永远返回nil的BUG;
+ *      2021.09.22: 支持type防重;
  */
-+(id) getAbsoluteMatching_General:(NSArray*)content_ps sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps getRefPortsBlock:(NSArray*(^)(AIKVPointer *item_p))getRefPortsBlock ds:(NSString*)ds{
++(id) getAbsoluteMatching_General:(NSArray*)content_ps sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps getRefPortsBlock:(NSArray*(^)(AIKVPointer *item_p))getRefPortsBlock ds:(NSString*)ds type:(AnalogyType)type{
     //1. 数据检查
     if (!getRefPortsBlock) return nil;
     content_ps = ARRTOOK(content_ps);
@@ -68,9 +69,10 @@
         for (AIPort *refPort in refPorts) {
             //5. ds防重 (ds无效时,默认为true);
             BOOL dsSeem = STRISOK(ds) ? [ds isEqualToString:refPort.target_p.dataSource] : true;
+            BOOL typeSeem = type == refPort.target_p.type;
             
             //6. ds同区 & 将md5匹配header & 不在except_ps的找到并返回;
-            if (dsSeem && ![except_ps containsObject:refPort.target_p] && [md5 isEqualToString:refPort.header]) {
+            if (typeSeem && dsSeem && ![except_ps containsObject:refPort.target_p] && [md5 isEqualToString:refPort.header]) {
                 return [SMGUtils searchNode:refPort.target_p];
             }
         }

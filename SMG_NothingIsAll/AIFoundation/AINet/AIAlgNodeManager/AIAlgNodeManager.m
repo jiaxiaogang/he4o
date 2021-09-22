@@ -156,6 +156,7 @@
  *      2021.04.25: alg暂不支持对ds不同区间的防重,以后可考虑支持 (参考getAbsoluteMatching_General的ds参数);
  *  @version
  *      2021.08.06: 本地去重,支持ds防重,因为不去重导致同内容的S和P混乱 (参考23205);
+ *      2021.09.22: 支持type防重 (参考24019);
  */
 +(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem dsBlock:(NSString*(^)())dsBlock isOutBlock:(BOOL(^)())isOutBlock type:(AnalogyType)type{
     //1. 数据检查
@@ -173,7 +174,7 @@
             }
         }
         return result;
-    } ds:ds];
+    } ds:ds type:type];
     
     //3. 有则加强;
     if (ISOK(localAlg, AIAbsAlgNode.class)) {

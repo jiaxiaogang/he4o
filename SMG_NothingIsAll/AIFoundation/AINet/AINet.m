@@ -149,11 +149,11 @@ static AINet *_instance;
 //MARK:===============================================================
 //MARK:                     < absFo >
 //MARK:===============================================================
--(AINetAbsFoNode*) createAbsFo_General:(NSArray*)conFos content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong ds:(NSString*)ds{
-    return [self.absFoManager create:conFos orderSames:content_ps difStrong:difStrong dsBlock:^NSString *{
-        return ds;
-    }];
-}
+//-(AINetAbsFoNode*) createAbsFo_General:(NSArray*)conFos content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong ds:(NSString*)ds{
+//    return [self.absFoManager create:conFos orderSames:content_ps difStrong:difStrong dsBlock:^NSString *{
+//        return ds;
+//    }];
+//}
 -(AINetAbsFoNode*) createAbsFo_NoRepeat:(NSArray*)conFos content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong ds:(NSString*)ds{
     return [self.absFoManager create_NoRepeat:conFos content_ps:content_ps difStrong:difStrong ds:ds];
 }
