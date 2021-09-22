@@ -113,17 +113,6 @@
     //2. 构建概念
     AIAbsAlgNode *outAlg = [theNet createAbsAlg_NoRepeat:outValue_ps conAlgs:nil isMem:false isOut:true type:ATDefault];
     
-    
-    //TODOTOMORROW20210920:
-    //1. 全局搜索createAbsAlg_NoRepeat:并继续从此处开始补充type值;
-    //2. 将Same类型全改成ATDefault类型;
-    //3. 将`distanceY`这些赋值到ds;
-    
-    
-    
-    
-    
-    
     //3. 加瞬时记忆 & 进行识别
     [self dataIn_NoMV:outAlg fromGroup_ps:@[outAlg.pointer]];
 }

@@ -96,7 +96,9 @@
                             }
                         }
                         if (ARRISOK(sameValue_ps)) {
-                            AIAbsAlgNode *createAbsNode = [theNet createAbsAlg_NoRepeat:sameValue_ps conAlgs:@[algNodeA,algNodeB] isMem:false];
+                            //3. 当为same类型时,节点设为default类型即可 (参考24019);
+                            AnalogyType nodeType = type == ATSame ? ATDefault : type;
+                            AIAbsAlgNode *createAbsNode = [theNet createAbsAlg_NoRepeat:sameValue_ps conAlgs:@[algNodeA,algNodeB] isMem:false type:nodeType];
                             if (createAbsNode) {
                                 //3. 收集并更新jMax;
                                 [orderSames insertObject:createAbsNode.pointer atIndex:0];
@@ -259,7 +261,7 @@
                 //10. 取a和b交集,并构建抽象概念;
                 NSArray *same_ps = [SMGUtils filterSame_ps:algA.content_ps parent_ps:algB.content_ps];
                 if (ARRISOK(same_ps)) {
-                    AIAbsAlgNode *createAbsAlg = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[algA,algB] isMem:false];
+                    AIAbsAlgNode *createAbsAlg = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[algA,algB] isMem:false type:ATDefault];
                     if (Log4InAnaHN(ATHav)) NSLog(@"抽象出: %@",Alg2FStr(createAbsAlg));
                 }
                 
@@ -390,7 +392,7 @@
 
     //4. 构建抽象概念 (20190809注:此处可考虑,type为大/小时,不做具象指向,因为大小概念,本来就是独立的节点);
     NSString *afDS = [ThinkingUtils getAnalogyTypeDS:type];
-    AIAlgNodeBase *glAlg = [theNet createAbsAlg_NoRepeat:@[glValue_p] conAlgs:@[backConAlg] isMem:false ds:afDS];
+    AIAlgNodeBase *glAlg = [theNet createAbsAlg_NoRepeat:@[glValue_p] conAlgs:@[backConAlg] isMem:false ds:afDS type:type];
     
     //5. 构建抽象时序; (小动致大 / 大动致小) (之间的信息为balabala)
     AINetAbsFoNode *result = [TIRUtils createInnerAbsFo:backConAlg rangeAlg_ps:rangeAlg_ps conFo:conFo ds:afDS];
@@ -711,7 +713,7 @@
                 if (!ARRISOK(pSubM)) continue;
                 
                 //6. 差值有效,则构建新SPAlg节点;
-                AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:pSubM conAlgs:@[matchAlg] isMem:false ds:ds];
+                AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:pSubM conAlgs:@[matchAlg] isMem:false ds:ds type:type];
                 if (Log4InRethink) NSLog(@"--> IRT构建SPAlg:%@ base:%@",Alg2FStr(spAlg),Alg2FStr(matchAlg));
                 
                 //7. 收集spAlg并更新nextStartJ & findShortAlg;
@@ -788,7 +790,7 @@
         //4. 未修正部分构建为: "SP概念"
         AIAlgNodeBase *curAlg = [SMGUtils searchNode:toAlgModel.content_p];
         if (!ARRISOK(notFinish_ps)) continue;
-        AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:notFinish_ps conAlgs:@[curAlg] isMem:false ds:spDS];
+        AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:notFinish_ps conAlgs:@[curAlg] isMem:false ds:spDS type:type];
         if (Log4OutRethink) NSLog(@"--> ORT构建SPAlg:%@ base:%@",Alg2FStr(spAlg),AlgP2FStr(curAlg.pointer));
         
         //TODO调试分析"定责" (参考23065);

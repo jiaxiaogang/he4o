@@ -112,12 +112,6 @@
  */
 +(BOOL) dataIn_CheckMV:(NSArray*)algResult_ps;
 
-/**
- *  MARK:--------------------构建硬盘概念节点_去重--------------------
- *  @callers : 无调用;
- */
-+(AIAlgNodeBase*) createHdAlgNode_NoRepeat:(NSArray*)value_ps;
-
 @end
 
 

@@ -322,10 +322,6 @@
     return false;
 }
 
-+(AIAlgNodeBase*) createHdAlgNode_NoRepeat:(NSArray*)value_ps{
-    return [theNet createAbsAlg_NoRepeat:value_ps conAlgs:nil isMem:false isOut:false];
-}
-
 //+(BOOL) sameOfMV1:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p{
 //    if (mv1_p && mv2_p && [mv1_p.algsType isEqualToString:mv2_p.algsType]) {
 //        return [self sameIdenSameScore:mv1_p mv2:mv2_p];
