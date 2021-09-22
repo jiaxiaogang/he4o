@@ -52,6 +52,6 @@
  *  MARK:--------------------从指定范围中获取绝对匹配--------------------
  *  @param validPorts : 指定范围域;
  */
-+(id) getAbsoluteMatching_ValidPorts:(NSArray*)validPorts sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps ds:(NSString*)ds;
++(id) getAbsoluteMatching_ValidPorts:(NSArray*)validPorts sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps ds:(NSString*)ds type:(AnalogyType)type;
 
 @end

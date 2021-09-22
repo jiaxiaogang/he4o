@@ -111,10 +111,11 @@
     AINetAbsFoNode *result = nil;
     
     
-    //TODOTOMORROW20210922:
-    //0. 检查createAbsAlg_NoRepeat()传入的ds (HNGL时,传入原value&alg的ds);
-    //1. 对所有调用处,传入type;
-    //2. 对所有调用处,传入ds做检查 (HNGL时,传入原value&alg的ds);
+    //TODOTOMORROW20210923:
+    //1. 对所有调用createAbsFo_NoRepeat()处,传入type;
+    //2. 对所有调用createAbsFo_NoRepeat()处,传入ds做检查 (HNGL时,传入原value&alg的ds);
+    
+    
     
     
     
@@ -125,13 +126,12 @@
     
     
     //2. 防重_SP类型时,嵌套范围内绝对匹配;
-    int dsType = DS2ATType(ds);
-    if (dsType == ATSub || dsType == ATPlus || dsType == ATGreater || dsType == ATLess) {
+    if (type == ATSub || type == ATPlus || type == ATGreater || type == ATLess) {
         NSMutableArray *validPorts = [[NSMutableArray alloc] init];
         for (AIFoNodeBase *conItem in conFos) {
-            [validPorts addObjectsFromArray:[AINetUtils absPorts_All:conItem type:dsType]];
+            [validPorts addObjectsFromArray:[AINetUtils absPorts_All:conItem type:type]];
         }
-        result = [AINetIndexUtils getAbsoluteMatching_ValidPorts:validPorts sort_ps:content_ps except_ps:Nodes2Pits(conFos) ds:ds];
+        result = [AINetIndexUtils getAbsoluteMatching_ValidPorts:validPorts sort_ps:content_ps except_ps:Nodes2Pits(conFos) ds:ds type:type];
     }else{
         //3. 防重_其它类型时,全局绝对匹配;
         result = [AINetIndexUtils getAbsoluteMatching_General:content_ps sort_ps:content_ps except_ps:Nodes2Pits(conFos) getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {

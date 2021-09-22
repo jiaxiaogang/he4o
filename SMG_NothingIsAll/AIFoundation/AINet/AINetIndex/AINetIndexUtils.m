@@ -83,8 +83,10 @@
 /**
  *  MARK:--------------------从指定范围中获取绝对匹配--------------------
  *  @param validPorts : 指定范围域;
+ *  @version
+ *      2021.09.23: 指定范围获取绝对匹配,也要判断type类型 (但有时传入的validPorts本来就是已筛选过type的) (参考24019);
  */
-+(id) getAbsoluteMatching_ValidPorts:(NSArray*)validPorts sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps ds:(NSString*)ds{
++(id) getAbsoluteMatching_ValidPorts:(NSArray*)validPorts sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps ds:(NSString*)ds type:(AnalogyType)type{
     //1. 数据检查
     NSString *md5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:sort_ps]]);
     except_ps = ARRTOOK(except_ps);
@@ -93,9 +95,10 @@
     for (AIPort *validPort in validPorts) {
         //5. ds防重 (ds无效时,默认为true);
         BOOL dsSeem = STRISOK(ds) ? [ds isEqualToString:validPort.target_p.dataSource] : true;
+        BOOL typeSeem = type == validPort.target_p.type;
         
         //6. ds同区 & 将md5匹配header & 不在except_ps的找到并返回;
-        if (dsSeem && ![except_ps containsObject:validPort.target_p] && [md5 isEqualToString:validPort.header]) {
+        if (typeSeem && dsSeem && ![except_ps containsObject:validPort.target_p] && [md5 isEqualToString:validPort.header]) {
             return [SMGUtils searchNode:validPort.target_p];
         }
     }
