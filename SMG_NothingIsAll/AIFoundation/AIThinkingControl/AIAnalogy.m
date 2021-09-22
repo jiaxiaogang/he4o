@@ -371,6 +371,7 @@
  *      2020.03.29: 将frontAlg去掉,只保留backAlg (以使方便TOR中联想使用);
  *      2020.04.19: 将构建alg和fo指定ds为:backData的值 (以便此后取absPorts时,可以根据指针进行类型筛选);
  *      2020.11.05: 将glFo改为[range+backConAlg] (参考21115);
+ *      2021.09.23: 取glAlg,复用value的dataSource,因为atType独立了,不再借用ds的位置 (参考24019-概念部分-3);
  *  @todo
  *      2020.10.23: GL时,将GL的构建,延伸至支持abs (至少涉及到两个absAlg,参考21091绿黄指向的A66&A8) (由内中外类比实现,参考21115) T;
  *  @bug
@@ -392,7 +393,7 @@
 
     //4. 构建抽象概念 (20190809注:此处可考虑,type为大/小时,不做具象指向,因为大小概念,本来就是独立的节点);
     NSString *afDS = [ThinkingUtils getAnalogyTypeDS:type];
-    AIAlgNodeBase *glAlg = [theNet createAbsAlg_NoRepeat:@[glValue_p] conAlgs:@[backConAlg] isMem:false ds:afDS type:type];
+    AIAlgNodeBase *glAlg = [theNet createAbsAlg_NoRepeat:@[glValue_p] conAlgs:@[backConAlg] isMem:false ds:dataSource type:type];
     
     //5. 构建抽象时序; (小动致大 / 大动致小) (之间的信息为balabala)
     AINetAbsFoNode *result = [TIRUtils createInnerAbsFo:backConAlg rangeAlg_ps:rangeAlg_ps conFo:conFo ds:afDS];
