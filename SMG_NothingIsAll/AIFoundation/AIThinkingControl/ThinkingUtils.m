@@ -59,15 +59,20 @@
     }
 }
 
-+(AnalogyType) convertDS2AnalogyType:(NSString*)ds{
-    NSArray *tryResults = @[@(ATHav),@(ATNone),@(ATGreater),@(ATLess),@(ATSub),@(ATPlus),@(ATSame),@(ATDiff)];
-    for (NSNumber *tryResult in tryResults) {
-        if ([[ThinkingUtils getAnalogyTypeDS:[tryResult intValue]] isEqualToString:ds]) {
-            return [tryResult intValue];
-        }
-    }
-    return ATDefault;
-}
+/**
+ *  MARK:--------------------ds转atType--------------------
+ *  @version
+ *      2021.09.23: 废弃,type集成到AIKVPointer后,ds不再充当type作用 (参考24019-使用部分-1);
+ */
+//+(AnalogyType) convertDS2AnalogyType:(NSString*)ds{
+//    NSArray *tryResults = @[@(ATHav),@(ATNone),@(ATGreater),@(ATLess),@(ATSub),@(ATPlus),@(ATSame),@(ATDiff)];
+//    for (NSNumber *tryResult in tryResults) {
+//        if ([ATType2DS([tryResult intValue)] isEqualToString:ds]) {
+//            return [tryResult intValue];
+//        }
+//    }
+//    return ATDefault;
+//}
 
 +(AnalogyType) compare:(AIKVPointer*)valueA_p valueB_p:(AIKVPointer*)valueB_p{
     NSNumber *aValue = NUMTOOK([AINetIndex getData:valueA_p]);

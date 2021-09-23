@@ -545,22 +545,22 @@
     return [self isH:p] || [self isN:p] || [self isG:p] || [self isL:p] || [self isS:p] || [self isP:p];
 }
 +(BOOL) isH:(AIKVPointer*)p{
-    return p && [p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATHav]];
+    return p && [p.dataSource isEqualToString:ATType2DS(ATHav)];
 }
 +(BOOL) isN:(AIKVPointer*)p{
-    return p && [p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATNone]];
+    return p && [p.dataSource isEqualToString:ATType2DS(ATNone)];
 }
 +(BOOL) isG:(AIKVPointer*)p{
-    return p && [p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATGreater]];
+    return p && [p.dataSource isEqualToString:ATType2DS(ATGreater)];
 }
 +(BOOL) isL:(AIKVPointer*)p{
-    return p && [p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATLess]];
+    return p && [p.dataSource isEqualToString:ATType2DS(ATLess)];
 }
 +(BOOL) isS:(AIKVPointer*)p{
-    return p && [p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATSub]];
+    return p && [p.dataSource isEqualToString:ATType2DS(ATSub)];
 }
 +(BOOL) isP:(AIKVPointer*)p{
-    return p && [p.dataSource isEqualToString:[ThinkingUtils getAnalogyTypeDS:ATPlus]];
+    return p && [p.dataSource isEqualToString:ATType2DS(ATPlus)];
 }
 
 /**

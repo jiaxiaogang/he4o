@@ -191,8 +191,8 @@ static AINet *_instance;
     for (AIPort *item in mvRefs) {
         //a. analogyType处理 (仅支持normal的fo);
         AICMVNodeBase *itemMV = [SMGUtils searchNode:item.target_p];
-        NSString *plusDS = [ThinkingUtils getAnalogyTypeDS:ATPlus];
-        NSString *subDS = [ThinkingUtils getAnalogyTypeDS:ATSub];
+        NSString *plusDS = ATType2DS(ATPlus);
+        NSString *subDS = ATType2DS(ATSub);
         NSString *foDS = itemMV.foNode_p.dataSource;
         if (![plusDS isEqualToString:foDS] && ![subDS isEqualToString:foDS]) {
             if (Log4DirecRef) NSLog(@"方向索引_尝试_索引强度:%ld 方案:%@",item.strong.value,FoP2FStr(itemMV.foNode_p));

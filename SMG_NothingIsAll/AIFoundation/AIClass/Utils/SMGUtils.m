@@ -780,7 +780,7 @@
     NSArray*(^ Convert2DSArr)(NSArray*)= ^ (NSArray *types){
         NSMutableArray *result = [[NSMutableArray alloc] init];
         for (NSNumber *type in types) {
-            NSString *ds = [ThinkingUtils getAnalogyTypeDS:[type integerValue]];
+            NSString *ds = ATType2DS([type integerValue]);
             [result addObject:ds];
         }
         return result;

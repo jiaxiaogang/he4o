@@ -367,7 +367,7 @@
             NSArray *conContent_ps = conNode.content_ps;
             
             //2. 计算disStrong (默认为1 & 当新节点且不是SP时从具象取maxStrong);
-            AnalogyType type = [ThinkingUtils convertDS2AnalogyType:absNode.pointer.dataSource];
+            AnalogyType type = absNode.pointer.type;//DS2ATType(absNode.pit.ds);
             if (isNew && type != ATSub && type != ATPlus) {
                 difStrong = [self getConMaxStrong:conNode];
             }

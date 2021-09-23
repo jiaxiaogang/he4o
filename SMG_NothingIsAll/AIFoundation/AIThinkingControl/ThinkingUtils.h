@@ -21,7 +21,7 @@
 
 //根据analogyType取其构建Alg/Fo的dataSource; notnull
 +(NSString*) getAnalogyTypeDS:(AnalogyType)type;
-+(AnalogyType) convertDS2AnalogyType:(NSString*)ds;
+//+(AnalogyType) convertDS2AnalogyType:(NSString*)ds;
 
 //根据稀疏码对比反思类比大小结果;
 +(AnalogyType) compare:(AIKVPointer*)valueA_p valueB_p:(AIKVPointer*)valueB_p;

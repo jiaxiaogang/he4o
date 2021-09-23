@@ -393,7 +393,7 @@
     glValue_p = [theNet getNetDataPointerWithData:@(backData) algsType:algsType dataSource:dataSource];
 
     //4. 构建抽象概念 (20190809注:此处可考虑,type为大/小时,不做具象指向,因为大小概念,本来就是独立的节点);
-    //NSString *afDS = [ThinkingUtils getAnalogyTypeDS:type];
+    //NSString *afDS = ATType2DS(type);
     AIAlgNodeBase *glAlg = [theNet createAbsAlg_NoRepeat:@[glValue_p] conAlgs:@[backConAlg] isMem:false ds:dataSource type:type];
     
     //5. 构建抽象时序; (小动致大 / 大动致小) (之间的信息为balabala)
@@ -684,7 +684,7 @@
     BOOL tirSwitch = true;
     if (!tirSwitch || !matchFoModel || !matchFoModel.matchFo || !shortFo || (type != ATPlus && type != ATSub)) return;
     AIFoNodeBase *matchFo = matchFoModel.matchFo;
-    //NSString *ds = [ThinkingUtils getAnalogyTypeDS:type];
+    //NSString *ds = ATType2DS(type);
     
     //2. 取有效的matchFo部分 (HNGL取range部分 | MV取所有);
     NSMutableArray *matchContent = [[NSMutableArray alloc] init];
@@ -769,7 +769,7 @@
     if (!foModel || (type != ATSub && type != ATPlus)) return;
     AIFoNodeBase *foNode = [SMGUtils searchNode:foModel.content_p];
     NSMutableArray *spFoContent = [[NSMutableArray alloc] init];
-    //NSString *spDS = [ThinkingUtils getAnalogyTypeDS:type];
+    //NSString *spDS = ATType2DS(type);
     OFTitleLog(@"Out反省类比 (%@)", @"\n时序:%@->%@",ATType2Str(type),Fo2FStr(foNode),Mvp2Str(foNode.cmvNode_p));
     
     //2. 构建SPAlg (触发反省类比_实际fo数据收集 (不用收集realFo,而是直接对未修正部分构建,参考20205-原则1));

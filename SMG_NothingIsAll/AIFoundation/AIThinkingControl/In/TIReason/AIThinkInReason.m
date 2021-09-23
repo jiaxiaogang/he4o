@@ -546,7 +546,7 @@
                     //c. 对期望与实际稀疏码比较得到实际ATType;
                     //d. 当实际ATType与等待中的ATType一致时,符合预期 (20201226改为判断bFo,因为只有bFo才携带了waitTypeDS,参考21204);
                     AnalogyType realType = [ThinkingUtils compare:hopeValue_p valueB_p:realValue_p];
-                    AnalogyType waitType = [ThinkingUtils convertDS2AnalogyType:waitMatchFo.pointer.dataSource];
+                    AnalogyType waitType = waitMatchFo.pointer.type;//DS2ATType(waitMatchFo.pointer.dataSource);
                     
                     //e. 只有符合变化时,才改为OuterBack,否则不改,使之反省类比时,可以发现不符合问题;
                     if (realType == waitType){
