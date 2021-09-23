@@ -35,7 +35,7 @@
  *      2021.01.03: 判断abs已存在抽象节点时,加上ATDS的匹配判断,因为不同类型节点不必去重 (参考2120B-BUG2);
  *  @result : notnull
  */
--(AINetAbsFoNode*) create:(NSArray*)conFos orderSames:(NSArray*)orderSames difStrong:(NSInteger)difStrong dsBlock:(NSString*(^)())dsBlock{
+-(AINetAbsFoNode*) create:(NSArray*)conFos orderSames:(NSArray*)orderSames difStrong:(NSInteger)difStrong dsBlock:(NSString*(^)())dsBlock type:(AnalogyType)type{
     //1. 数据准备
     NSString *ds = dsBlock ? dsBlock() : DefaultDataSource;
     if (!ARRISOK(conFos)) return nil;
@@ -69,7 +69,7 @@
     if (!findAbsNode) {
         isNew = true;
         findAbsNode = [[AINetAbsFoNode alloc] init];
-        findAbsNode.pointer = [SMGUtils createPointerForFo:kPN_FO_ABS_NODE ds:ds];
+        findAbsNode.pointer = [SMGUtils createPointerForFo:kPN_FO_ABS_NODE ds:ds type:type];
         
         //3. 收集order_ps (将不在hdNet中的转移)
         findAbsNode.content_ps = [AINetUtils move2Hd4Alg_ps:orderSames];
@@ -114,20 +114,6 @@
     ds = ds ? ds : [AIAbsFoManager getDataSource:conFos];
     AINetAbsFoNode *result = nil;
     
-    //TODOTOMORROW20210923:
-    //1. 对所有调用createAbsFo_NoRepeat()处,传入type; T
-    //2. 对所有调用createAbsFo_NoRepeat()处,传入ds做检查 (GL时,传入原value&alg的ds); T
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     //2. 防重_SP类型时,嵌套范围内绝对匹配;
     if (type == ATSub || type == ATPlus || type == ATGreater || type == ATLess) {
         NSMutableArray *validPorts = [[NSMutableArray alloc] init];
@@ -151,7 +137,7 @@
         //4. 无则新构建;
         result = [self create:conFos orderSames:content_ps difStrong:difStrong dsBlock:^NSString *{
             return ds;
-        }];
+        } type:type];
     }
     return result;
 }

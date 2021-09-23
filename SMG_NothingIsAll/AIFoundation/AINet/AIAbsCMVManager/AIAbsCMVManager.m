@@ -78,7 +78,7 @@
 
     //2. 创建absCMVNode;
     AIAbsCMVNode *result = [[AIAbsCMVNode alloc] init];
-    result.pointer = [SMGUtils createPointer:kPN_ABS_CMV_NODE algsType:at dataSource:ds isOut:false isMem:false];
+    result.pointer = [SMGUtils createPointer:kPN_ABS_CMV_NODE algsType:at dataSource:ds isOut:false isMem:false type:ATDefault];
     result.foNode_p = absFo_p;
     result.urgentTo_p = (AIKVPointer*)urgentTo_p;
     result.delta_p = (AIKVPointer*)delta_p;

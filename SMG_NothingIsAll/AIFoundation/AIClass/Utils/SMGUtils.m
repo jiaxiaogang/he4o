@@ -50,7 +50,7 @@
 //MARK:===============================================================
 
 //General指针
-+(AIKVPointer*) createPointer:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem{
++(AIKVPointer*) createPointer:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem type:(AnalogyType)type{
     NSInteger pointerId = [SMGUtils createPointerId:algsType dataSource:dataSource];
     
     //TODOTOMORROW: 查20151-BUG9 (此处新指针有重复,导致问题);
@@ -58,41 +58,41 @@
         WLog(@"---------引用强度BUG-mv新指针:%ld",pointerId);
         HeLog(@"---------引用强度BUG-mv新指针:%ld",pointerId);
     }
-    AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:folderName algsType:algsType dataSource:dataSource isOut:isOut isMem:isMem];
+    AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:folderName algsType:algsType dataSource:dataSource isOut:isOut isMem:isMem type:type];
     return kvPointer;
 }
 
 //Direction的mv分区pointer;(存引用序列)
 +(AIKVPointer*) createPointerForDirection:(NSString*)mvAlgsType direction:(MVDirection)direction{
     NSInteger pointerId = 0;
-    AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:kPN_DIRECTION((long)direction) algsType:mvAlgsType dataSource:DefaultDataSource isOut:false isMem:false];
+    AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:kPN_DIRECTION((long)direction) algsType:mvAlgsType dataSource:DefaultDataSource isOut:false isMem:false type:ATDefault];
     return kvPointer;
 }
 
 //生成小脑CanOut指针;
 +(AIKVPointer*) createPointerForCerebelCanOut{
-    AIKVPointer *pointer = [AIKVPointer newWithPointerId:0 folderName:kPN_CEREBEL_CANOUT algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false isMem:false];
+    AIKVPointer *pointer = [AIKVPointer newWithPointerId:0 folderName:kPN_CEREBEL_CANOUT algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false isMem:false type:ATDefault];
     return pointer;
 }
 
 //生成indexValue的指针;
 +(AIKVPointer*) createPointerForValue:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut{
     NSInteger pointerId = [self createPointerId:algsType dataSource:dataSource];
-    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_VALUE algsType:algsType dataSource:dataSource isOut:isOut isMem:false];
+    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_VALUE algsType:algsType dataSource:dataSource isOut:isOut isMem:false type:ATDefault];
 }
 
 +(AIKVPointer*) createPointerForValue:(NSInteger)pointerId algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut{
-    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_VALUE algsType:algsType dataSource:dataSource isOut:isOut isMem:false];
+    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_VALUE algsType:algsType dataSource:dataSource isOut:isOut isMem:false type:ATDefault];
 }
 
 +(AIKVPointer*) createPointerForIndex{
     NSInteger pointerId = 0;
-    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_INDEX algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false isMem:false];
+    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_INDEX algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false isMem:false type:ATDefault];
 }
 
 +(AIKVPointer*) createPointerForData:(NSString*)algsType dataSource:(NSString*)dataSource{
     NSInteger pointerId = 0;
-    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_DATA algsType:algsType dataSource:dataSource isOut:false isMem:false];
+    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_DATA algsType:algsType dataSource:dataSource isOut:false isMem:false type:ATDefault];
 }
 
 +(AIKVPointer*) createPointerForAlg:(NSString*)folderName dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem type:(AnalogyType)type{
@@ -100,8 +100,8 @@
     return [AIKVPointer newWithPointerId:pointerId folderName:folderName algsType:AlgNodeAlgsType(pointerId) dataSource:dataSource isOut:isOut isMem:isMem type:type];
 }
 
-+(AIKVPointer*) createPointerForFo:(NSString*)folderName ds:(NSString*)ds{
-    return [self createPointer:folderName algsType:DefaultAlgsType dataSource:ds isOut:false isMem:false];
++(AIKVPointer*) createPointerForFo:(NSString*)folderName ds:(NSString*)ds type:(AnalogyType)type{
+    return [self createPointer:folderName algsType:DefaultAlgsType dataSource:ds isOut:false isMem:false type:type];
 }
 
 @end

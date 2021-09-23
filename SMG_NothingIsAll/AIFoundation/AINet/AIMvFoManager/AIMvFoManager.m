@@ -56,7 +56,7 @@
 
     //2. 打包cmvNode;
     AICMVNode *cmvNode = [[AICMVNode alloc] init];
-    cmvNode.pointer = [SMGUtils createPointer:kPN_CMV_NODE algsType:at dataSource:DefaultDataSource isOut:false isMem:isMem];
+    cmvNode.pointer = [SMGUtils createPointer:kPN_CMV_NODE algsType:at dataSource:DefaultDataSource isOut:false isMem:isMem type:ATDefault];
     cmvNode.delta_p = delta_p;
     cmvNode.urgentTo_p = urgentTo_p;
     [AINetUtils insertRefPorts_AllMvNode:cmvNode.pointer value_p:cmvNode.delta_p difStrong:1];//引用插线
@@ -68,6 +68,14 @@
     return cmvNode;
 }
 
+
+/**
+ *  MARK:--------------------构建conFo--------------------
+ *  @result notnull
+ *  @callers
+ *      1. 新帧输入时,构建matchAFo;
+ *      2. 新帧输入时,构建protoFo;
+ */
 +(AIFrontOrderNode*) createConFo:(NSArray*)order isMem:(BOOL)isMem{
     return [self createConFo:order isMem:isMem difStrong:1];
 }
@@ -75,8 +83,8 @@
     //1. foNode
     AIFrontOrderNode *foNode = [[AIFrontOrderNode alloc] init];
 
-    //2. pointer
-    foNode.pointer = [SMGUtils createPointer:kPN_FRONT_ORDER_NODE algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false isMem:isMem];
+    //2. pointer (最终生成conFo时,全是ATDefault类型);
+    foNode.pointer = [SMGUtils createPointer:kPN_FRONT_ORDER_NODE algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false isMem:isMem type:ATDefault];
 
     //3. 将order_ps转移硬盘 (如有必要)
     NSArray *content_ps = [AINetAbsFoUtils convertOrder2Alg_ps:order];
