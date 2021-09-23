@@ -50,7 +50,7 @@
         [allAbsPorts addObjectsFromArray:[AINetUtils absPorts_All:conItem]];
     }
     for (AIPort *port in allAbsPorts) {
-        if ([samesMd5 isEqualToString:port.header] && [port.target_p.dataSource isEqualToString:ds]) {
+        if ([samesMd5 isEqualToString:port.header] && [port.target_p.dataSource isEqualToString:ds] && port.target_p.type == type) {
             findAbsNode = [SMGUtils searchNode:port.target_p];
             if (findAbsNode.pointer.isMem) {
                 ///3. 转移foNode到硬盘网络;

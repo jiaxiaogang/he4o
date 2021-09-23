@@ -56,7 +56,7 @@
     AIFoNodeBase *curFo = [SMGUtils searchNode:outModel.content_p];
     
     //2. 数据检查
-    OFTitleLog(@"行为化Fo", @"\n时序:%@->%@ 类型:(%@)",Fo2FStr(curFo),Mvp2Str(curFo.cmvNode_p),ATType2Str([curFo.pointer.dataSource integerValue]));
+    OFTitleLog(@"行为化Fo", @"\n时序:%@->%@ 类型:(%@)",Fo2FStr(curFo),Mvp2Str(curFo.cmvNode_p),curFo.pointer.typeStr);
     if (curFo == nil || !ARRISOK(curFo.content_ps)) {
         outModel.status = TOModelStatus_ActNo;
         [self.delegate toAction_SubModelFailure:outModel];

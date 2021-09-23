@@ -103,7 +103,7 @@
             NSArray *absPorts_All = [AINetUtils absPorts_All:conNode];
             for (AIPort *absPort in absPorts_All) {
                 //1> 遍历找抽象是否已存在;
-                if ([samesMd5 isEqualToString:absPort.header] && [absPort.target_p.dataSource isEqualToString:dataSource]) {
+                if ([samesMd5 isEqualToString:absPort.header] && [absPort.target_p.dataSource isEqualToString:dataSource] && absPort.target_p.type == type) {
                     AIAbsAlgNode *absNode = [SMGUtils searchNode:absPort.target_p];
                     //2> 已存在,则转移到硬盘网络;
                     if (absNode.pointer.isMem) {
