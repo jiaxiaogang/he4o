@@ -20,7 +20,7 @@
 +(AnalogyType) getInnerType:(AIKVPointer*)frontValue_p backValue_p:(AIKVPointer*)backValue_p;
 
 //根据analogyType取其构建Alg/Fo的dataSource; notnull
-+(NSString*) getAnalogyTypeDS:(AnalogyType)type;
+//+(NSString*) getAnalogyTypeDS:(AnalogyType)type;
 //+(AnalogyType) convertDS2AnalogyType:(NSString*)ds;
 
 //根据稀疏码对比反思类比大小结果;

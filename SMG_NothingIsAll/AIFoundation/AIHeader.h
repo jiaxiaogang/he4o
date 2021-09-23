@@ -168,7 +168,7 @@
 #define Double2Str_NDZ(value) [NSString double2Str_NoDotZero:value]
 
 //思维控制器相关转换
-#define ATType2DS(type) [ThinkingUtils getAnalogyTypeDS:type]
+//#define ATType2DS(type) [ThinkingUtils getAnalogyTypeDS:type]
 //#define DS2ATType(ds) [ThinkingUtils convertDS2AnalogyType:ds]
 #define Mvp2Delta(mv_p) [AINetUtils getDeltaFromMv:mv_p]
 #define Mvp2Score(mv_p,ratio) [AIScore score4MV:mv_p ratio:ratio]

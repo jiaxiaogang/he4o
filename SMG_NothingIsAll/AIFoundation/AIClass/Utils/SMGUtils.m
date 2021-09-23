@@ -776,24 +776,12 @@
     noTypes = ARRTOOK(noTypes);
     ports = ARRTOOK(ports);
     
-    //2. 转换types为dses
-    NSArray*(^ Convert2DSArr)(NSArray*)= ^ (NSArray *types){
-        NSMutableArray *result = [[NSMutableArray alloc] init];
-        for (NSNumber *type in types) {
-            NSString *ds = ATType2DS([type integerValue]);
-            [result addObject:ds];
-        }
-        return result;
-    };
-    NSArray *havDSArr = Convert2DSArr(havTypes);
-    NSArray *noDSArr = Convert2DSArr(noTypes);
-    
     //3. 筛选类型
     return [SMGUtils filterArr:ports checkValid:^BOOL(AIPort *item) {
         //a. hav筛选 (必须被havDSArr包含);
-        if (ARRISOK(havDSArr) && ![havDSArr containsObject:item.target_p.dataSource]) return false;
+        if (ARRISOK(havTypes) && ![havTypes containsObject:@(item.target_p.type)]) return false;
         //b. no筛选 (必须不被noDSArr包含);
-        if (ARRISOK(noDSArr) && [noDSArr containsObject:item.target_p.dataSource]) return false;
+        if (ARRISOK(noTypes) && [noTypes containsObject:@(item.target_p.type)]) return false;
         //c. 干不死的,有效;
         return true;
     }];

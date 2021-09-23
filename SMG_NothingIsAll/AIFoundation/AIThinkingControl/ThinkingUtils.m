@@ -51,13 +51,18 @@
     return ATDefault;
 }
 
-+(NSString*) getAnalogyTypeDS:(AnalogyType)type{
-    if (type == ATDefault || type == ATSame) {
-        return DefaultDataSource;
-    }else{
-        return STRFORMAT(@"%ld",(long)type);
-    }
-}
+/**
+ *  MARK:--------------------atType转ds--------------------
+ *  @version
+ *      2021.09.23: 废弃,type集成到AIKVPointer后,ds不再充当type作用 (参考24019-使用部分-1);
+ */
+//+(NSString*) getAnalogyTypeDS:(AnalogyType)type{
+//    if (type == ATDefault || type == ATSame) {
+//        return DefaultDataSource;
+//    }else{
+//        return STRFORMAT(@"%ld",(long)type);
+//    }
+//}
 
 /**
  *  MARK:--------------------ds转atType--------------------

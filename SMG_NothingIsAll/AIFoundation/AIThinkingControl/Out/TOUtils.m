@@ -545,22 +545,22 @@
     return [self isH:p] || [self isN:p] || [self isG:p] || [self isL:p] || [self isS:p] || [self isP:p];
 }
 +(BOOL) isH:(AIKVPointer*)p{
-    return p && [p.dataSource isEqualToString:ATType2DS(ATHav)];
+    return p && p.type == ATHav;
 }
 +(BOOL) isN:(AIKVPointer*)p{
-    return p && [p.dataSource isEqualToString:ATType2DS(ATNone)];
+    return p && p.type == ATNone;
 }
 +(BOOL) isG:(AIKVPointer*)p{
-    return p && [p.dataSource isEqualToString:ATType2DS(ATGreater)];
+    return p && p.type == ATGreater;
 }
 +(BOOL) isL:(AIKVPointer*)p{
-    return p && [p.dataSource isEqualToString:ATType2DS(ATLess)];
+    return p && p.type == ATLess;
 }
 +(BOOL) isS:(AIKVPointer*)p{
-    return p && [p.dataSource isEqualToString:ATType2DS(ATSub)];
+    return p && p.type == ATSub;
 }
 +(BOOL) isP:(AIKVPointer*)p{
-    return p && [p.dataSource isEqualToString:ATType2DS(ATPlus)];
+    return p && p.type == ATPlus);
 }
 
 /**
