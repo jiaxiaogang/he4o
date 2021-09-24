@@ -560,7 +560,7 @@
     return p && p.type == ATSub;
 }
 +(BOOL) isP:(AIKVPointer*)p{
-    return p && p.type == ATPlus);
+    return p && p.type == ATPlus;
 }
 
 /**

@@ -54,12 +54,11 @@
 +(AIKVPointer*) getInnerV4_GL:(AIShortMatchModel*)maskInModel vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps{
     //1. 数据检查hAlg_根据type和value_p找ATHav
     if (!maskInModel) return nil;
-    NSArray *glConAlg_ps = [self getHNGLConAlg_ps:type vAT:vAT vDS:vDS];
     NSLog(@"-------------- getInnerAlg (%@) --------------\nATDS:%@&%@ matchRFos数:%lu 参照:%@\n不应期:%@",ATType2Str(type),vAT,vDS,maskInModel.matchRFos.count,Fo2FStr(maskInModel.protoFo),Pits2FStr(except_ps));
         
     //2. 从matchRFos逐个尝试取GL嵌套 (参考24012);
     for (AIMatchFoModel *item in maskInModel.matchRFos) {
-        AIKVPointer *result = [self getInnerByFo_Single:item.matchFo type:type except_ps:except_ps glConAlg_ps:glConAlg_ps];
+        AIKVPointer *result = [self getInnerByFo_Single:item.matchFo type:type except_ps:except_ps vDS:vDS];
         if (result) return result;
     }
     
@@ -72,7 +71,7 @@
         //b. 依次对五条,尝试取GL经验;
         for (AIKVPointer *absFo_p in absFo_ps) {
             AIFoNodeBase *absFo = [SMGUtils searchNode:absFo_p];
-            AIKVPointer *result = [self getInnerByFo_Single:absFo type:type except_ps:except_ps glConAlg_ps:glConAlg_ps];
+            AIKVPointer *result = [self getInnerByFo_Single:absFo type:type except_ps:except_ps vDS:vDS];
             if (result) return result;
         }
     }
@@ -91,9 +90,6 @@
     //1. 数据检查hAlg_根据type和value_p找ATHav
     NSLog(@"-------------- getInnerHN (%@) --------------\nATDS:%@&%@ 参照:%@\n不应期:%@",ATType2Str(type),vAT,vDS,Alg2FStr(maskAlg),Pits2FStr(except_ps));
     
-    //2. 取glConAlg_ps;
-    NSArray *glConAlg_ps = [self getHNGLConAlg_ps:type vAT:vAT vDS:vDS];
-    
     //3. 根据(pAlg & pAlg.abs & pAlg.abs.abs)抽象路径,取分别尝试联想(hnglAlg.refPorts)经验;
     NSMutableArray *curMasks = [[NSMutableArray alloc] init];
     for (NSInteger i = 0; i < cGetInnerAbsLayer; i++) {
@@ -108,7 +104,7 @@
         
         //7. 从当前层curMasks逐个尝试取hnglAlg.refPorts;
         for (AIKVPointer *item in curMasks) {
-            AIKVPointer *result = [self getInnerByAlg_Single:item type:type except_ps:except_ps glConAlg_ps:glConAlg_ps];
+            AIKVPointer *result = [self getInnerByAlg_Single:item type:type except_ps:except_ps vDS:vDS];
             if (result) return result;
         }
         //8. 当前层失败_curMaskAlgs统统失败_循环继续下层;
@@ -131,29 +127,24 @@
 /**
  *  MARK:--------------------获取glConAlg_ps--------------------
  *  @desc 联想路径说明: (glConAlg_ps = glValue.refPorts->glAlg.conPorts->glConAlgs) (参考22211示图);
- *  @todo
- *      2021.09.23: 废弃glConAlg_ps,因为上面的联想路径已废弃 (参考24019-TODO);
+ *  @version
+ *      2021.09.24: 废弃glConAlg_ps,因为上面的联想路径已废弃 (参考24019-使用部分-2);
  */
-+(NSArray*) getHNGLConAlg_ps:(AnalogyType)type vAT:(NSString*)vAT vDS:(NSString*)vDS{
-    AIKVPointer *innerValue_p = [theNet getNetDataPointerWithData:@(type) algsType:vAT dataSource:vDS];
-    NSArray *gl_ps = Ports2Pits([AINetUtils refPorts_All4Value:innerValue_p]);
-    AIKVPointer *gl_p = ARR_INDEX(gl_ps, 0);//glAlg唯一
-    AIAlgNodeBase *glAlg = [SMGUtils searchNode:gl_p];
-    
-    //TODOTOMORROW20210916: 查getInnerGL的路径是否有混乱情况 (参考24018-线索2);
-    if ([vAT isEqualToString:@"AIVisionAlgs"]) {
-        [theNV invokeForceMode:^{
-            [theNV setNodeData:glAlg.pointer lightStr:STRFORMAT(@"%@->glAlg",vDS)];
-        }];
-    }
-    
-    
-    
-    
-    
-    NSArray *glConAlg_ps = Ports2Pits([AINetUtils conPorts_All:glAlg]);
-    return glConAlg_ps;
-}
+//+(NSArray*) getHNGLConAlg_ps:(AnalogyType)type vAT:(NSString*)vAT vDS:(NSString*)vDS{
+//    AIKVPointer *innerValue_p = [theNet getNetDataPointerWithData:@(type) algsType:vAT dataSource:vDS];
+//    NSArray *gl_ps = Ports2Pits([AINetUtils refPorts_All4Value:innerValue_p]);
+//    AIKVPointer *gl_p = ARR_INDEX(gl_ps, 0);//glAlg唯一
+//    AIAlgNodeBase *glAlg = [SMGUtils searchNode:gl_p];
+//
+//    //TODOTOMORROW20210916: 查getInnerGL的路径是否有混乱情况 (参考24018-线索2);
+//    if ([vAT isEqualToString:@"AIVisionAlgs"]) {
+//        [theNV invokeForceMode:^{
+//            [theNV setNodeData:glAlg.pointer lightStr:STRFORMAT(@"%@->glAlg",vDS)];
+//        }];
+//    }
+//    NSArray *glConAlg_ps = Ports2Pits([AINetUtils conPorts_All:glAlg]);
+//    return glConAlg_ps;
+//}
 
 //MARK:===============================================================
 //MARK:                     < privateMethod >
@@ -162,20 +153,26 @@
 /**
  *  MARK:--------------------指定单条maskAlg获取inner经验--------------------
  *  @desc byFo联想路径 (向性为右至左) (参考23031);
- *  @param glConAlg_ps : 所有可用的glConAlg (参考21115);
+ *  _param glConAlg_ps : 所有可用的glConAlg (参考21115) (20210924废弃);
  *  @todo 改为用maskFo获取inner经验
  *  @version
  *      2021.05.09: 无论空S评价是否通过,最多取前cGetInnerByFoCount条 (否则经验多的没完没了);
  *      2021.05.23: 不应期也算在3条内,避免每次排除不应期后,重取又补成3条,没完了还;
+ *      2021.09.24: 废弃glConAlgs对assFo末位判断,因为ds与vDS相同即可判断了 (参考24019-使用部分-2);
  */
-+(AIKVPointer*) getInnerByFo_Single:(AIFoNodeBase*)maskFo type:(AnalogyType)type except_ps:(NSArray*)except_ps glConAlg_ps:(NSArray*)glConAlg_ps{
++(AIKVPointer*) getInnerByFo_Single:(AIFoNodeBase*)maskFo type:(AnalogyType)type except_ps:(NSArray*)except_ps vDS:(NSString*)vDS{
     //1. 数据检查;
     except_ps = ARRTOOK(except_ps);
-    glConAlg_ps = ARRTOOK(glConAlg_ps);
     if (!maskFo) return nil;
     
     //2. 根据maskAlg,取gl嵌套 (目前由absPorts+type取);
     NSArray *hnglFo_ps = Ports2Pits([AINetUtils absPorts_All:maskFo type:type]);
+    
+    //3. 仅vDS相同的有效,且限制cGetInnerByFoCount条;
+    hnglFo_ps = [SMGUtils filterArr:hnglFo_ps checkValid:^BOOL(AIKVPointer *item) {
+        return [item.dataSource isEqualToString:vDS];
+    } limit:cGetInnerByFoCount];
+    
     if (Log4GetInnerAlg && hnglFo_ps.count > 0) NSLog(@"Group Of MaskFo:%@ 粗方案共%lu个 ↓↓↓",Fo2FStr(maskFo),(unsigned long)hnglFo_ps.count);
     
     //TODOTOMORROW20210916: 查24018-线索2,的问题;
@@ -184,21 +181,6 @@
             [theNV setNodeData:maskFo.pointer];
         }];
     }
-    
-    
-    
-    
-    
-    
-    //3. 与glConAlg_ps取交集,取出有效的前limit个;
-    hnglFo_ps = [SMGUtils filterArr:hnglFo_ps checkValid:^BOOL(AIKVPointer *item) {
-        AIFoNodeBase *hnglFo = [SMGUtils searchNode:item];
-        //4. 当relativeFo末位为glConAlg_p时,结果才有效 (参考21183-3);
-        if (![SMGUtils containsSub_p:ARR_INDEX_REVERSE(hnglFo.content_ps, 0) parent_ps:glConAlg_ps]) return false;
-        
-        //6. 全部通过,收集;
-        return true;
-    } limit:cGetInnerByFoCount];
     
     //3. 去掉不应期;
     hnglFo_ps = [SMGUtils removeSub_ps:except_ps parent_ps:hnglFo_ps];
@@ -240,22 +222,29 @@
 /**
  *  MARK:--------------------指定单条maskAlg获取inner经验--------------------
  *  @desc byAlg联想路径 (向性为右至右) (参考23031);
- *  @param glConAlg_ps : 所有可用的glConAlg (参考21115);
+ *  _param glConAlg_ps : 所有可用的glConAlg (参考21115);
  *  @todo 改为用maskFo获取inner经验
  */
-+(AIKVPointer*) getInnerByAlg_Single:(AIKVPointer*)maskAlg_p type:(AnalogyType)type except_ps:(NSArray*)except_ps glConAlg_ps:(NSArray*)glConAlg_ps{
++(AIKVPointer*) getInnerByAlg_Single:(AIKVPointer*)maskAlg_p type:(AnalogyType)type except_ps:(NSArray*)except_ps vDS:(NSString*)vDS{
     //1. 数据检查;
     AIAlgNodeBase *maskAlg = [SMGUtils searchNode:maskAlg_p];
     except_ps = ARRTOOK(except_ps);
-    glConAlg_ps = ARRTOOK(glConAlg_ps);
     if (!maskAlg) return nil;
     
     //2. 根据maskAlg,取gl嵌套 (目前由absPorts+type取);
     NSArray *hnglAlg_ps = Ports2Pits([AINetUtils absPorts_All:maskAlg type:type]);
     
-    //3. 与glConAlg_ps取交集,取出有效的前limit个;
-    hnglAlg_ps = [SMGUtils filterSame_ps:hnglAlg_ps parent_ps:glConAlg_ps];
-    hnglAlg_ps = ARR_SUB(hnglAlg_ps, 0, cGetInnerByAlgCount);
+    //TODOTOMORROW20210924 (参考24021-检1):
+    //1. 自检告警机制,当HN时,依赖type即可判断,而ds匹配其实不用判断,检测下下面filterArr代码是否多余 (未完成);
+    
+    
+    
+    
+    
+    //3. 取出ds匹配的,并限制cGetInnerByAlgCount条;
+    hnglAlg_ps = [SMGUtils filterArr:hnglAlg_ps checkValid:^BOOL(AIKVPointer *item) {
+        return [vDS isEqualToString:item.dataSource];
+    } limit:cGetInnerByAlgCount];
     
     //4. 从type_ps逐个尝试取.refPorts;
     for (AIKVPointer *hnglAlg_p in hnglAlg_ps) {

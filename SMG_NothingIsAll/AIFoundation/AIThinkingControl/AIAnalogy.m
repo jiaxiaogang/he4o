@@ -432,10 +432,10 @@
  *      2021.09.12: v4_回滚到v4,并将assFo联想方式改为(absRFos+matchRFos) + (absRFos+matchRFos).conPorts (参考24013);
  *      2021.09.13: 将limit配置由2,3,20调高为5,5,20 (参考24016);
  *      2021.09.14: 因为性能差,将limit配置由5,5,20调整为6,2,10 (参考24017-问题2);
+ *      2021.09.24: 废弃glConAlgs对assFo末位判断,因为ds与vDS相同即可判断了 (参考24019-使用部分-2);
  */
 +(void)analogyInner_Outside_V4:(AINetAbsFoNode*)abFo type:(AnalogyType)type mModel:(AIShortMatchModel*)mModel glhnAlg:(AIAlgNodeBase*)glhnAlg vAT:(NSString*)vAT vDS:(NSString*)vDS{
     //1. 取glConAlg_ps;
-    NSArray *glConAlg_ps = [AINetService getHNGLConAlg_ps:type vAT:vAT vDS:vDS];
     BOOL debugMode = Log4InAnaGL(type) || Log4InAnaHN(type);
     NSInteger conBaseLimit = 6,itemAssLimit = 2,analogyLimit = 10;
     //if (debugMode) NSLog(@"\n--------- 内中外类比 ---------\nABFo:%@ vAT:%@ vDS:%@",Fo2FStr(abFo),vAT,vDS);
@@ -466,7 +466,11 @@
         for (AIKVPointer *mask_p in mask_ps) {
             AIFoNodeBase *maskFo = [SMGUtils searchNode:mask_p];
             NSArray *assPorts = [AINetUtils absPorts_All:maskFo type:type];
-            assPorts = ARR_SUB(assPorts, 0, itemAssLimit);
+            
+            //6. 仅取出ds匹配的,并且限制itemAssLimit条;
+            assPorts = [SMGUtils filterArr:assPorts checkValid:^BOOL(AIPort *item) {
+                return [vDS isEqualToString:item.target_p.dataSource];
+            } limit:itemAssLimit];
             
             //7. 将hnglPorts存到allHNGLDic中 (hnglPort作为key,absFo收集到value中);
             for (AIPort *assPort in assPorts) {
@@ -489,10 +493,7 @@
         
         //9. 排除abFo自身 (不可与abFo重复);
         if ([assPort.target_p isEqual:abFo.pointer]) continue;
-        
-        //10. 有效检查_与glConAlg_ps的元素有引用关系 (用末位是否包含在glConAlgs中判断,如:必须为距小时序才可);
         AIFoNodeBase *assFo = [SMGUtils searchNode:assPort.target_p];
-        if (![SMGUtils containsSub_p:ARR_INDEX_REVERSE(assFo.content_ps, 0) parent_ps:glConAlg_ps]) continue;
         
         //11. 对abFo和assAbFo进行类比;
         //if (debugMode) NSLog(@"----- 外类比 ------\nASSFo:%@",Fo2FStr(assFo));
