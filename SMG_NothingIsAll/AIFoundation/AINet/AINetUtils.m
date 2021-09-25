@@ -45,10 +45,10 @@
 //MARK:                     < Other >
 //MARK:===============================================================
 
-+(BOOL) checkAllOfOut:(NSArray*)value_ps{
-    if (ARRISOK(value_ps)) {
-        for (AIKVPointer *value_p in value_ps) {
-            if (!value_p.isOut) {
++(BOOL) checkAllOfOut:(NSArray*)conAlgs{
+    if (ARRISOK(conAlgs)) {
+        for (AIAbsAlgNode *checkNode in conAlgs) {
+            if (!checkNode.pointer.isOut) {
                 return false;
             }
         }

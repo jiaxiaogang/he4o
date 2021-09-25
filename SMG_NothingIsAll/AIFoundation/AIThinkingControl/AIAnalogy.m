@@ -301,7 +301,7 @@
         if (Log4InAnaGL(type)) NSLog(@"\n---------- %@ -> %@ ----------",Pit2FStr(a_p),Pit2FStr(b_p));
         //d. 构建小/大;
         if (type != ATDefault) {
-            [self analogyInner_Creater:type algsType:a_p.algsType dataSource:a_p.dataSource frontConAlg:algA backConAlg:algB rangeAlg_ps:rangeAlg_ps conFo:checkFo mModel:mModel];
+            [self analogyInner_Creater:type algsType:a_p.algsType dataSource:a_p.dataSource vIsOut:a_p.isOut frontConAlg:algA backConAlg:algB rangeAlg_ps:rangeAlg_ps conFo:checkFo mModel:mModel];
         }
     }
 }
@@ -337,13 +337,13 @@
     if (Log4InAnaHN(ATHav)) NSLog(@"------ 内类比有无 ------\n[%@] -> [%@]",Pits2FStr(aSub_ps),Pits2FStr(bSub_ps));
     for (AIKVPointer *sub_p in aSub_ps) {
         AIAlgNodeBase *target = [SMGUtils searchNode:sub_p];
-        [self analogyInner_Creater:ATNone algsType:sub_p.algsType dataSource:sub_p.dataSource frontConAlg:target backConAlg:target rangeAlg_ps:rangeAlg_ps conFo:checkFo mModel:mModel];
+        [self analogyInner_Creater:ATNone algsType:sub_p.algsType dataSource:sub_p.dataSource vIsOut:sub_p.isOut frontConAlg:target backConAlg:target rangeAlg_ps:rangeAlg_ps conFo:checkFo mModel:mModel];
     }
 
     //4. b变有
     for (AIKVPointer *sub_p in bSub_ps) {
         AIAlgNodeBase *target = [SMGUtils searchNode:sub_p];
-        [self analogyInner_Creater:ATHav algsType:sub_p.algsType dataSource:sub_p.dataSource frontConAlg:target backConAlg:target rangeAlg_ps:rangeAlg_ps conFo:checkFo mModel:mModel];
+        [self analogyInner_Creater:ATHav algsType:sub_p.algsType dataSource:sub_p.dataSource vIsOut:sub_p.isOut frontConAlg:target backConAlg:target rangeAlg_ps:rangeAlg_ps conFo:checkFo mModel:mModel];
     }
 }
 
@@ -378,7 +378,7 @@
  *  @bug
  *      2020.06.19: 调试找不到glAlg的bug (经查,内类比的两个概念中,其中一个没有"距离"稀疏码,导致无法类比出"距离"GL节点,查为什么n20p2BUG3会有距50的节点参与到内类比中来?) (过期BUG,不必再改);
  */
-+(AINetAbsFoNode*)analogyInner_Creater:(AnalogyType)type algsType:(NSString*)algsType dataSource:(NSString*)dataSource frontConAlg:(AIAlgNodeBase*)frontConAlg backConAlg:(AIAlgNodeBase*)backConAlg rangeAlg_ps:(NSArray*)rangeAlg_ps conFo:(AIFoNodeBase*)conFo mModel:(AIShortMatchModel*)mModel{
++(AINetAbsFoNode*)analogyInner_Creater:(AnalogyType)type algsType:(NSString*)algsType dataSource:(NSString*)dataSource vIsOut:(BOOL)vIsOut frontConAlg:(AIAlgNodeBase*)frontConAlg backConAlg:(AIAlgNodeBase*)backConAlg rangeAlg_ps:(NSArray*)rangeAlg_ps conFo:(AIFoNodeBase*)conFo mModel:(AIShortMatchModel*)mModel{
     //1. 数据检查
     rangeAlg_ps = ARRTOOK(rangeAlg_ps);
     algsType = STRTOOK(algsType);
@@ -390,7 +390,7 @@
 
     //3. 构建微信息;
     AIKVPointer *glValue_p = nil;
-    glValue_p = [theNet getNetDataPointerWithData:@(backData) algsType:algsType dataSource:dataSource];
+    glValue_p = [theNet getNetDataPointerWithData:@(backData) algsType:algsType dataSource:dataSource isOut:vIsOut];
 
     //4. 构建抽象概念 (20190809注:此处可考虑,type为大/小时,不做具象指向,因为大小概念,本来就是独立的节点);
     //NSString *afDS = ATType2DS(type);

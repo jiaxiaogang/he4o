@@ -90,14 +90,19 @@
     return [AIKVPointer newWithPointerId:pointerId folderName:kPN_INDEX algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false isMem:false type:ATDefault];
 }
 
-+(AIKVPointer*) createPointerForData:(NSString*)algsType dataSource:(NSString*)dataSource{
++(AIKVPointer*) createPointerForData:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut{
     NSInteger pointerId = 0;
-    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_DATA algsType:algsType dataSource:dataSource isOut:false isMem:false type:ATDefault];
+    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_DATA algsType:algsType dataSource:dataSource isOut:isOut isMem:false type:ATDefault];
 }
 
+/**
+ *  MARK:--------------------生成alg指针--------------------
+ *  @version
+ *      2021.09.25: 将algsType由pointerId改为" ";
+ */
 +(AIKVPointer*) createPointerForAlg:(NSString*)folderName dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem type:(AnalogyType)type{
     NSInteger pointerId = [SMGUtils createPointerId:DefaultAlgsType dataSource:dataSource];
-    return [AIKVPointer newWithPointerId:pointerId folderName:folderName algsType:AlgNodeAlgsType(pointerId) dataSource:dataSource isOut:isOut isMem:isMem type:type];
+    return [AIKVPointer newWithPointerId:pointerId folderName:folderName algsType:DefaultAlgsType dataSource:dataSource isOut:isOut isMem:isMem type:type];
 }
 
 +(AIKVPointer*) createPointerForFo:(NSString*)folderName ds:(NSString*)ds type:(AnalogyType)type{

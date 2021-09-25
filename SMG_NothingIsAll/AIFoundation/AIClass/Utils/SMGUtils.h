@@ -41,7 +41,7 @@
 +(AIKVPointer*) createPointerForIndex;
 
 //微信息值指针
-+(AIKVPointer*) createPointerForData:(NSString*)algsType dataSource:(NSString*)dataSource;
++(AIKVPointer*) createPointerForData:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut;
 
 /**
  *  MARK:--------------------概念节点指针--------------------

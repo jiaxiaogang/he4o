@@ -61,8 +61,8 @@
     //4. 取absUrgentTo & absDelta;
     NSInteger absUrgentTo = [AINetAbsCMVUtil getAbsUrgentTo:conMvs];
     NSInteger absDelta = [AINetAbsCMVUtil getAbsDelta:conMvs];
-    AIKVPointer *urgentTo_p = [theNet getNetDataPointerWithData:@(absUrgentTo) algsType:algsType dataSource:dataSource];
-    AIKVPointer *delta_p = [theNet getNetDataPointerWithData:@(absDelta) algsType:algsType dataSource:dataSource];
+    AIKVPointer *urgentTo_p = [theNet getNetDataPointerWithData:@(absUrgentTo) algsType:algsType dataSource:dataSource isOut:false];
+    AIKVPointer *delta_p = [theNet getNetDataPointerWithData:@(absDelta) algsType:algsType dataSource:dataSource isOut:false];
 
     //5. 构建返回
     return [self create_General:absFo_p conMvs:conMvs at:algsType ds:dataSource urgentTo_p:urgentTo_p delta_p:delta_p];

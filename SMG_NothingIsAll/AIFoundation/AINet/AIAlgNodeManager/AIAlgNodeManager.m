@@ -56,7 +56,7 @@
  *  @param isMem        : 是否持久化,(如thinkIn中,视觉场景下的subView就不进行持久化,只存在内存网络中)
  *  _param dataSource   : 概念节点的dataSource就是稀疏码信息的algsType; (不传时,从algsArr提取) (废弃,参考24021);
  *  @param ds           : 为nil时,默认为DefaultDataSource;
- *  @param isOutBlock   : 指定isOut (默认从value_ps获取) (概念节点的isOut状态; (思维控制器知道它是行为还是认知));
+ *  @param isOutBlock   : 指定isOut (默认从conAlgs获取) (概念节点的isOut状态; (思维控制器知道它是行为还是认知));
  *
  *  @问题记录:
  *    1. 思考下,conAlgs中去重,能不能将md5匹配的conAlg做为absAlg的问题?
@@ -69,7 +69,7 @@
  */
 +(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem ds:(NSString*)ds isOutBlock:(BOOL(^)())isOutBlock type:(AnalogyType)type{
     //1. 数据准备
-    BOOL isOut = isOutBlock ? isOutBlock() : [AINetUtils checkAllOfOut:value_ps];
+    BOOL isOut = isOutBlock ? isOutBlock() : [AINetUtils checkAllOfOut:conAlgs];
     conAlgs = ARRTOOK(conAlgs);
     value_ps = ARRTOOK(value_ps);
     if (!ds) ds = DefaultDataSource;
