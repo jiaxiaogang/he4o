@@ -30,6 +30,7 @@
 #import "AIMatchFoModel.h"
 #import "AINetService.h"
 #import "NSArray+Extension.h"
+#import "AIAlgNodeManager.h"
 
 @implementation AIAnalogy
 
@@ -57,6 +58,7 @@
  *      20200831: 支持反省外类比,得出更确切的ATSub原因,参考:20205-步骤4;
  *      20201203: 修复21175BUG (因createAbsAlgBlock忘记调用,导致absAlg和glAlg间未关联) (参考21115);
  *      20210819: 修复长1和长2类比时,类比出长2的BUG (参考23221-BUG2);
+ *      20210926: 修复glFo外类比时非末位alg类比构建absAlg时,也使用了GLType的问题 (参考24022-BUG1);
  */
 +(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type createAbsAlgBlock:(void(^)(AIAlgNodeBase *createAlg,NSInteger foIndex,NSInteger assFoIndex))createAbsAlgBlock{
     //1. 类比orders的规律
@@ -97,20 +99,9 @@
                         }
                         if (ARRISOK(sameValue_ps)) {
                             //3. 当为same类型时,节点设为default类型即可 (参考24019);
-                            AnalogyType nodeType = type == ATSame ? ATDefault : type;
-                            
-                            //TODOTOMORROW20210925:此处type值,应该来自到algA和algB;
-                            //1. 将Log4OutAna日志打开,看此处是否没影响到backGLAlg;
-                            //2. 复现: 直击,左下,直击,左,直击,左下,直击,左... => 断点停到自检5,然后来看此处日志;
-                            
-                            
-                            //显然此处,飞大,的Gtype,不应该作用于非末位的alg类比构建absAlg;
-                            
-                            
-                            
-                            
-                            
-                            AIAbsAlgNode *createAbsNode = [theNet createAbsAlg_NoRepeat:sameValue_ps conAlgs:@[algNodeA,algNodeB] isMem:false at:nil type:nodeType];
+                            NSArray *conAlgs = @[algNodeA,algNodeB];
+                            AnalogyType nodeType = [AIAlgNodeManager getType:conAlgs];
+                            AIAbsAlgNode *createAbsNode = [theNet createAbsAlg_NoRepeat:sameValue_ps conAlgs:conAlgs isMem:false at:nil type:nodeType];
                             if (createAbsNode) {
                                 //3. 收集并更新jMax;
                                 [orderSames insertObject:createAbsNode.pointer atIndex:0];

@@ -17,4 +17,9 @@
  */
 +(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem at:(NSString*)at ds:(NSString*)ds isOutBlock:(BOOL(^)())isOutBlock type:(AnalogyType)type;
 
+/**
+ *  MARK:--------------------从conAlgs中取type--------------------
+ */
++(AnalogyType) getType:(NSArray*)conAlgs;
+
 @end

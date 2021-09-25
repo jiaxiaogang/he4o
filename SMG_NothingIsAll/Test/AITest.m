@@ -70,4 +70,11 @@
     }
 }
 
++(void) test6:(NSArray*)types{
+    types = ARRTOOK(types);
+    if (types.count > 1) {
+        NSLog(@"自检6. 测从conAlgs取type应唯一,否则查为何不同type的alg会类比抽象");
+    }
+}
+
 @end

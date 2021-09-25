@@ -190,6 +190,20 @@
     }
 }
 
+/**
+ *  MARK:--------------------从conAlgs中取type--------------------
+ */
++(AnalogyType) getType:(NSArray*)conAlgs{
+    NSArray *types = [SMGUtils removeRepeat:[SMGUtils convertArr:conAlgs convertBlock:^id(AIAlgNodeBase *obj) {
+        return @(obj.pointer.type);
+    }]];
+    [AITest test6:types];
+    if (types.count == 1) {
+        return [NUMTOOK(ARR_INDEX(types, 0)) intValue];
+    }
+    return ATDefault;
+}
+
 @end
 
 /**
