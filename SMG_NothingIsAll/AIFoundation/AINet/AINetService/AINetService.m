@@ -86,9 +86,9 @@
  *          b. 又需要找到超市,再到此取hn经验: [出发点,去超市],返回决策;
  *          c. 出发点在瞬时记忆中发现自己在家,找到具象时序: [家出发,去X路美特好超市];
  */
-+(AIKVPointer*) getInnerV3_HN:(AIAlgNodeBase*)maskAlg vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps{
++(AIKVPointer*) getInnerV3_HN:(AIAlgNodeBase*)maskAlg aAT:(NSString*)aAT aDS:(NSString*)aDS type:(AnalogyType)type except_ps:(NSArray*)except_ps{
     //1. 数据检查hAlg_根据type和value_p找ATHav
-    NSLog(@"-------------- getInnerHN (%@) --------------\nATDS:%@&%@ 参照:%@\n不应期:%@",ATType2Str(type),vAT,vDS,Alg2FStr(maskAlg),Pits2FStr(except_ps));
+    NSLog(@"-------------- getInnerHN (%@) --------------\nATDS:%@&%@ 参照:%@\n不应期:%@",ATType2Str(type),aAT,aDS,Alg2FStr(maskAlg),Pits2FStr(except_ps));
     
     //3. 根据(pAlg & pAlg.abs & pAlg.abs.abs)抽象路径,取分别尝试联想(hnglAlg.refPorts)经验;
     NSMutableArray *curMasks = [[NSMutableArray alloc] init];
@@ -104,7 +104,7 @@
         
         //7. 从当前层curMasks逐个尝试取hnglAlg.refPorts;
         for (AIKVPointer *item in curMasks) {
-            AIKVPointer *result = [self getInnerByAlg_Single:item type:type except_ps:except_ps vDS:vDS];
+            AIKVPointer *result = [self getInnerByAlg_Single:item type:type except_ps:except_ps aDS:aDS];
             if (result) return result;
         }
         //8. 当前层失败_curMaskAlgs统统失败_循环继续下层;
@@ -225,7 +225,7 @@
  *  _param glConAlg_ps : 所有可用的glConAlg (参考21115);
  *  @todo 改为用maskFo获取inner经验
  */
-+(AIKVPointer*) getInnerByAlg_Single:(AIKVPointer*)maskAlg_p type:(AnalogyType)type except_ps:(NSArray*)except_ps vDS:(NSString*)vDS{
++(AIKVPointer*) getInnerByAlg_Single:(AIKVPointer*)maskAlg_p type:(AnalogyType)type except_ps:(NSArray*)except_ps aDS:(NSString*)aDS{
     //1. 数据检查;
     AIAlgNodeBase *maskAlg = [SMGUtils searchNode:maskAlg_p];
     except_ps = ARRTOOK(except_ps);
@@ -236,8 +236,8 @@
     
     //3. 取出ds匹配的,并限制cGetInnerByAlgCount条;
     hnglAlg_ps = [SMGUtils filterArr:hnglAlg_ps checkValid:^BOOL(AIKVPointer *item) {
-        NSLog(@"自检1. 测下getHN经验时vDS匹配判断代码是否多余,多余告警");
-        return [vDS isEqualToString:item.dataSource];
+        [AITest test1:aDS hnAlgDS:item.dataSource];
+        return [aDS isEqualToString:item.dataSource];
     } limit:cGetInnerByAlgCount];
     
     //4. 从type_ps逐个尝试取.refPorts;

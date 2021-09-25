@@ -25,7 +25,7 @@
  *  @param vAT & vDS : 此内类比类型的微信息at&ds (GL时,为变大小稀疏码的at&ds) (HN时,为变有无的概念的at&ds);
  */
 +(AIKVPointer*) getInnerV4_GL:(AIShortMatchModel*)maskInModel vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps;
-+(AIKVPointer*) getInnerV3_HN:(AIAlgNodeBase*)maskAlg vAT:(NSString*)vAT vDS:(NSString*)vDS type:(AnalogyType)type except_ps:(NSArray*)except_ps;
++(AIKVPointer*) getInnerV3_HN:(AIAlgNodeBase*)maskAlg aAT:(NSString*)aAT aDS:(NSString*)aDS type:(AnalogyType)type except_ps:(NSArray*)except_ps;
 
 /**
  *  MARK:--------------------从Alg中获取指定标识稀疏码的值--------------------

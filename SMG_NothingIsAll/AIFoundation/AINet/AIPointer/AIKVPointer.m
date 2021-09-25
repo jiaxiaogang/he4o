@@ -20,41 +20,11 @@
     [pointer.params setObject:STRFORMAT(@"%d",isOut) forKey:@"isOut"];
     [pointer.params setObject:STRFORMAT(@"%ld",(long)type) forKey:@"type"];
     
-    
+    //自检;
+    [AITest test2:pointer type:type at:algsType ds:dataSource];
+    [AITest test3:pointer type:type ds:dataSource];
     [AITest test4:pointer at:algsType isOut:isOut];
-    
-    if (PitIsFo(pointer) || PitIsAlg(pointer)) {
-        if (type == ATGreater || type == ATLess) {
-            
-            if (![@"AIVisionAlgs" isEqualToString:algsType] &&
-                ![FLY_RDS isEqualToString:algsType]) {
-                NSLog(@"自检5. 测生成GL的AIKVPointer时的at是否正常赋值,因为它影响node防重");
-            }
-            
-            if ([@"AIVisionAlgs" isEqualToString:algsType]){
-                if (![dataSource isEqualToString:@"sizeWidth"] &&
-                    ![dataSource isEqualToString:@"sizeHeight"] &&
-                    ![dataSource isEqualToString:@"colorRed"] &&
-                    ![dataSource isEqualToString:@"colorBlue"] &&
-                    ![dataSource isEqualToString:@"colorGreen"] &&
-                    ![dataSource isEqualToString:@"radius"] &&
-                    ![dataSource isEqualToString:@"direction"] &&
-                    ![dataSource isEqualToString:@"distance"] &&
-                    ![dataSource isEqualToString:@"distanceY"] &&
-                    ![dataSource isEqualToString:@"speed"] &&
-                    ![dataSource isEqualToString:@"border"] &&
-                    ![dataSource isEqualToString:@"posX"] &&
-                    ![dataSource isEqualToString:@"posY"]) {
-                    NSLog(@"自检2. 测生成GL的AIKVPointer时的ds是否正常赋值,因为它影响node防重;");
-                }
-            }
-        }else{
-            
-            if (![dataSource isEqualToString:@" "]) {
-                NSLog(@"自检3. 测生成非GL的AIKVPointer时的ds是否为" ",因为它影响node防重;");
-            }
-        }
-    }
+    [AITest test5:pointer type:type at:algsType];
     
     return pointer;
 }
