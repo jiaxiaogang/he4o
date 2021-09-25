@@ -234,15 +234,9 @@
     //2. 根据maskAlg,取gl嵌套 (目前由absPorts+type取);
     NSArray *hnglAlg_ps = Ports2Pits([AINetUtils absPorts_All:maskAlg type:type]);
     
-    //TODOTOMORROW20210924 (参考24021-检1):
-    //1. 自检告警机制,当HN时,依赖type即可判断,而ds匹配其实不用判断,检测下下面filterArr代码是否多余 (未完成);
-    
-    
-    
-    
-    
     //3. 取出ds匹配的,并限制cGetInnerByAlgCount条;
     hnglAlg_ps = [SMGUtils filterArr:hnglAlg_ps checkValid:^BOOL(AIKVPointer *item) {
+        NSLog(@"自检1. 测下getHN经验时vDS匹配判断代码是否多余,多余告警");
         return [vDS isEqualToString:item.dataSource];
     } limit:cGetInnerByAlgCount];
     

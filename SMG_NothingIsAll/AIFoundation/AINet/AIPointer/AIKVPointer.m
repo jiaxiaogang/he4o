@@ -11,6 +11,29 @@
 @implementation AIKVPointer
 
 +(AIKVPointer*) newWithPointerId:(NSInteger)pointerId folderName:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem type:(AnalogyType)type{
+    if (type == ATGreater || type == ATLess) {
+        if (![dataSource isEqualToString:@"sizeWidth"] ||
+            ![dataSource isEqualToString:@"sizeHeight"] ||
+            ![dataSource isEqualToString:@"colorRed"] ||
+            ![dataSource isEqualToString:@"colorBlue"] ||
+            ![dataSource isEqualToString:@"colorGreen"] ||
+            ![dataSource isEqualToString:@"radius"] ||
+            ![dataSource isEqualToString:@"direction"] ||
+            ![dataSource isEqualToString:@"distance"] ||
+            ![dataSource isEqualToString:@"distanceY"] ||
+            ![dataSource isEqualToString:@"speed"] ||
+            ![dataSource isEqualToString:@"border"] ||
+            ![dataSource isEqualToString:@"posX"] ||
+            ![dataSource isEqualToString:@"posY"]) {
+            NSLog(@"自检2. 测生成GL的AIKVPointer时的ds是否正常赋值,因为它影响node防重;");
+            
+        }
+    }else{
+        if (![dataSource isEqualToString:@" "]) {
+            NSLog(@"自检3. 测生成非GL的AIKVPointer时的ds是否为" ",因为它影响node防重;");
+            
+        }
+    }
     AIKVPointer *pointer = [[AIKVPointer alloc] init];
     pointer.pointerId = pointerId;
     pointer.isMem = isMem;
