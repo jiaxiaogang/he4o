@@ -105,13 +105,13 @@
         AIAlgNodeBase *firstPartAlg = [SMGUtils searchNode:ARR_INDEX(partAlg_ps, 0)];
         AIAlgNodeBase *firstMatchAlg = ARR_INDEX(matchAlgs, 0);
         NSArray *same_ps = [SMGUtils filterSame_ps:protoAlg.content_ps parent_ps:firstPartAlg.content_ps];
-        AIAlgNodeBase *seemProtoAbs = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[firstPartAlg,protoAlg] isMem:false type:ATDefault];
+        AIAlgNodeBase *seemProtoAbs = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[firstPartAlg,protoAlg] isMem:false at:nil type:ATDefault];
         NSLog(@"构建相似抽象:%@",Alg2FStr(seemProtoAbs));
         
         //7. 关联处理_对seemProtoAbs与matchAlg建立抽具象关联 (参考21091-黄线);
         if (seemProtoAbs && firstMatchAlg) {
             NSArray *same_ps = [SMGUtils filterSame_ps:seemProtoAbs.content_ps parent_ps:firstMatchAlg.content_ps];
-            AIAlgNodeBase *topAbs = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[seemProtoAbs,firstMatchAlg] isMem:false type:ATDefault];
+            AIAlgNodeBase *topAbs = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[seemProtoAbs,firstMatchAlg] isMem:false at:nil type:ATDefault];
             NSLog(@"构建TopAbs抽象:%@",Alg2FStr(topAbs));
         }
     }

@@ -154,8 +154,8 @@ static AINet *_instance;
 //        return ds;
 //    }];
 //}
--(AINetAbsFoNode*) createAbsFo_NoRepeat:(NSArray*)conFos content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong ds:(NSString*)ds type:(AnalogyType)type{
-    return [self.absFoManager create_NoRepeat:conFos content_ps:content_ps difStrong:difStrong ds:ds type:type];
+-(AINetAbsFoNode*) createAbsFo_NoRepeat:(NSArray*)conFos content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type{
+    return [self.absFoManager create_NoRepeat:conFos content_ps:content_ps difStrong:difStrong at:at ds:ds type:type];
 }
 
 //MARK:===============================================================
@@ -250,19 +250,19 @@ static AINet *_instance;
 /**
  *  MARK:--------------------构建抽象概念_防重--------------------
  */
--(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem type:(AnalogyType)type{
-    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs isMem:isMem ds:nil isOutBlock:nil type:type];
+-(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem at:(NSString*)at type:(AnalogyType)type{
+    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs isMem:isMem at:at ds:nil isOutBlock:nil type:type];
 }
--(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem ds:(NSString*)ds type:(AnalogyType)type{
-    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs isMem:isMem ds:ds isOutBlock:nil type:type];
+-(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type{
+    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs isMem:isMem at:at ds:ds isOutBlock:nil type:type];
 }
--(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem isOut:(BOOL)isOut type:(AnalogyType)type{
-    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs isMem:isMem ds:nil isOutBlock:^BOOL{
+-(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem isOut:(BOOL)isOut at:(NSString*)at type:(AnalogyType)type{
+    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs isMem:isMem at:at ds:nil isOutBlock:^BOOL{
         return isOut;
     } type:type];
 }
--(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem isOut:(BOOL)isOut ds:(NSString*)ds type:(AnalogyType)type{
-    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs isMem:isMem ds:ds isOutBlock:^BOOL{
+-(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem isOut:(BOOL)isOut at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type{
+    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs isMem:isMem at:at ds:ds isOutBlock:^BOOL{
         return isOut;
     } type:type];
 }

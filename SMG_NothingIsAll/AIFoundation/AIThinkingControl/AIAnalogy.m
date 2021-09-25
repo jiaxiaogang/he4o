@@ -98,7 +98,7 @@
                         if (ARRISOK(sameValue_ps)) {
                             //3. 当为same类型时,节点设为default类型即可 (参考24019);
                             AnalogyType nodeType = type == ATSame ? ATDefault : type;
-                            AIAbsAlgNode *createAbsNode = [theNet createAbsAlg_NoRepeat:sameValue_ps conAlgs:@[algNodeA,algNodeB] isMem:false type:nodeType];
+                            AIAbsAlgNode *createAbsNode = [theNet createAbsAlg_NoRepeat:sameValue_ps conAlgs:@[algNodeA,algNodeB] isMem:false at:nil type:nodeType];
                             if (createAbsNode) {
                                 //3. 收集并更新jMax;
                                 [orderSames insertObject:createAbsNode.pointer atIndex:0];
@@ -157,7 +157,7 @@
             }
             
             //5. 构建absFoNode
-            result = [theNet createAbsFo_NoRepeat:@[fo,assFo] content_ps:orderSames difStrong:foDifStrong ds:nil type:type];
+            result = [theNet createAbsFo_NoRepeat:@[fo,assFo] content_ps:orderSames difStrong:foDifStrong at:nil ds:nil type:type];
             
             //5. 从fo和conFo.mvDeltaTime中提取mv导致时间隔,在relateFo之前,赋值到result中;
             result.mvDeltaTime = MAX(MAX(fo.mvDeltaTime, assFo.mvDeltaTime), result.mvDeltaTime);
@@ -261,7 +261,7 @@
                 //10. 取a和b交集,并构建抽象概念;
                 NSArray *same_ps = [SMGUtils filterSame_ps:algA.content_ps parent_ps:algB.content_ps];
                 if (ARRISOK(same_ps)) {
-                    AIAbsAlgNode *createAbsAlg = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[algA,algB] isMem:false type:ATDefault];
+                    AIAbsAlgNode *createAbsAlg = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[algA,algB] isMem:false at:nil type:ATDefault];
                     if (Log4InAnaHN(ATHav)) NSLog(@"抽象出: %@",Alg2FStr(createAbsAlg));
                 }
                 
@@ -394,10 +394,10 @@
 
     //4. 构建抽象概念 (20190809注:此处可考虑,type为大/小时,不做具象指向,因为大小概念,本来就是独立的节点);
     //NSString *afDS = ATType2DS(type);
-    AIAlgNodeBase *glAlg = [theNet createAbsAlg_NoRepeat:@[glValue_p] conAlgs:@[backConAlg] isMem:false ds:dataSource type:type];
+    AIAlgNodeBase *glAlg = [theNet createAbsAlg_NoRepeat:@[glValue_p] conAlgs:@[backConAlg] isMem:false at:algsType ds:dataSource type:type];
     
     //5. 构建抽象时序; (小动致大 / 大动致小) (之间的信息为balabala)
-    AINetAbsFoNode *result = [TIRUtils createInnerAbsFo:backConAlg rangeAlg_ps:rangeAlg_ps conFo:conFo ds:dataSource type:type];
+    AINetAbsFoNode *result = [TIRUtils createInnerAbsFo:backConAlg rangeAlg_ps:rangeAlg_ps conFo:conFo at:algsType ds:dataSource type:type];
 
     //6. 调试;
     if (Log4InAnaHN(type)) NSLog(@"主: 内类比构建:%@ ConFrom:%@ 构建Fo:%@",Alg2FStr(glAlg),Alg2FStr(backConAlg),Fo2FStr(result));
@@ -715,7 +715,7 @@
                 if (!ARRISOK(pSubM)) continue;
                 
                 //6. 差值有效,则构建新SPAlg节点;
-                AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:pSubM conAlgs:@[matchAlg] isMem:false ds:nil type:type];
+                AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:pSubM conAlgs:@[matchAlg] isMem:false at:nil ds:nil type:type];
                 if (Log4InRethink) NSLog(@"--> IRT构建SPAlg:%@ base:%@",Alg2FStr(spAlg),Alg2FStr(matchAlg));
                 
                 //7. 收集spAlg并更新nextStartJ & findShortAlg;
@@ -730,7 +730,7 @@
     }
     
     //9. 构建SPFo;
-    AIFoNodeBase *spFo = [theNet createAbsFo_NoRepeat:@[matchFo] content_ps:justPs difStrong:1 ds:nil type:type];
+    AIFoNodeBase *spFo = [theNet createAbsFo_NoRepeat:@[matchFo] content_ps:justPs difStrong:1 at:nil ds:nil type:type];
     if (Log4InRethink) NSLog(@"--> IRT构建SPFo:%@ base:F%ld",Fo2FStr(spFo),matchFo.pointer.pointerId);
     
     //10. SP外类比;
@@ -792,7 +792,7 @@
         //4. 未修正部分构建为: "SP概念"
         AIAlgNodeBase *curAlg = [SMGUtils searchNode:toAlgModel.content_p];
         if (!ARRISOK(notFinish_ps)) continue;
-        AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:notFinish_ps conAlgs:@[curAlg] isMem:false ds:nil type:type];
+        AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:notFinish_ps conAlgs:@[curAlg] isMem:false at:nil ds:nil type:type];
         if (Log4OutRethink) NSLog(@"--> ORT构建SPAlg:%@ base:%@",Alg2FStr(spAlg),AlgP2FStr(curAlg.pointer));
         
         //TODO调试分析"定责" (参考23065);
@@ -803,7 +803,7 @@
     }
     
     //6. 构建SPFo
-    AINetAbsFoNode *spFo = [theNet createAbsFo_NoRepeat:@[foNode] content_ps:spFoContent difStrong:1 ds:nil type:type];
+    AINetAbsFoNode *spFo = [theNet createAbsFo_NoRepeat:@[foNode] content_ps:spFoContent difStrong:1 at:nil ds:nil type:type];
     if (Log4OutRethink) NSLog(@"--> ORT构建SPFo:%@ base:F%ld",Fo2FStr(spFo),foNode.pointer.pointerId);
     
     //7. SP外类比;

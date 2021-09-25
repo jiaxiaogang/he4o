@@ -67,11 +67,12 @@
  *  @version
  *      2021.01.03: 判断abs已存在抽象节点时,加上ATDS的匹配判断,因为不同类型节点不必去重 (参考2120B-BUG2);
  */
-+(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem ds:(NSString*)ds isOutBlock:(BOOL(^)())isOutBlock type:(AnalogyType)type{
++(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem at:(NSString*)at ds:(NSString*)ds isOutBlock:(BOOL(^)())isOutBlock type:(AnalogyType)type{
     //1. 数据准备
     BOOL isOut = isOutBlock ? isOutBlock() : [AINetUtils checkAllOfOut:conAlgs];
     conAlgs = ARRTOOK(conAlgs);
     value_ps = ARRTOOK(value_ps);
+    if (!at) at = DefaultAlgsType;
     if (!ds) ds = DefaultDataSource;
     NSArray *sortSames = ARRTOOK([SMGUtils sortPointers:value_ps]);
     NSString *samesStr = [SMGUtils convertPointers2String:sortSames];
@@ -125,7 +126,7 @@
     if (!result) {
         absIsNew = true;
         result = [[AIAbsAlgNode alloc] init];
-        result.pointer = [SMGUtils createPointerForAlg:kPN_ALG_ABS_NODE dataSource:ds isOut:isOut isMem:isMem type:type];
+        result.pointer = [SMGUtils createPointerForAlg:kPN_ALG_ABS_NODE at:at dataSource:ds isOut:isOut isMem:isMem type:type];
         result.content_ps = [[NSMutableArray alloc] initWithArray:sortSames];
     }
     
@@ -158,10 +159,11 @@
  *      2021.08.06: 本地去重,支持ds防重,因为不去重导致同内容的S和P混乱 (参考23205);
  *      2021.09.22: 支持type防重 (参考24019);
  */
-+(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem ds:(NSString*)ds isOutBlock:(BOOL(^)())isOutBlock type:(AnalogyType)type{
++(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem at:(NSString*)at ds:(NSString*)ds isOutBlock:(BOOL(^)())isOutBlock type:(AnalogyType)type{
     //1. 数据检查
     value_ps = ARRTOOK(value_ps);
     NSArray *sort_ps = [SMGUtils sortPointers:value_ps];
+    if (!at) at = DefaultAlgsType;
     if (!ds) ds = DefaultDataSource;
     
     //2. 去重找本地 (仅抽象);
@@ -174,7 +176,7 @@
             }
         }
         return result;
-    } ds:ds type:type];
+    } at:at ds:ds type:type];
     
     //3. 有则加强;
     if (ISOK(localAlg, AIAbsAlgNode.class)) {
@@ -184,7 +186,7 @@
         return localAlg;
     }else{
         //4. 无则构建
-        return [self createAbsAlgNode:value_ps conAlgs:conAlgs isMem:isMem ds:ds isOutBlock:isOutBlock type:type];
+        return [self createAbsAlgNode:value_ps conAlgs:conAlgs isMem:isMem at:at ds:ds isOutBlock:isOutBlock type:type];
     }
 }
 

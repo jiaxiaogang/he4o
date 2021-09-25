@@ -99,14 +99,20 @@
  *  MARK:--------------------生成alg指针--------------------
  *  @version
  *      2021.09.25: 将algsType由pointerId改为" ";
+ *      2021.09.25: 将at由参数传入,因为有些稀疏码没有ds(如FLY_RDS),此时构建glAlg,就只能传来at (参考24021-概念部分-4);
  */
-+(AIKVPointer*) createPointerForAlg:(NSString*)folderName dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem type:(AnalogyType)type{
++(AIKVPointer*) createPointerForAlg:(NSString*)folderName at:(NSString*)at dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem type:(AnalogyType)type{
     NSInteger pointerId = [SMGUtils createPointerId:DefaultAlgsType dataSource:dataSource];
-    return [AIKVPointer newWithPointerId:pointerId folderName:folderName algsType:DefaultAlgsType dataSource:dataSource isOut:isOut isMem:isMem type:type];
+    return [AIKVPointer newWithPointerId:pointerId folderName:folderName algsType:at dataSource:dataSource isOut:isOut isMem:isMem type:type];
 }
 
-+(AIKVPointer*) createPointerForFo:(NSString*)folderName ds:(NSString*)ds type:(AnalogyType)type{
-    return [self createPointer:folderName algsType:DefaultAlgsType dataSource:ds isOut:false isMem:false type:type];
+/**
+ *  MARK:--------------------生成fo指针--------------------
+ *  @version
+ *      2021.09.25: 将at由参数传入,因为有些稀疏码没有ds(如FLY_RDS),此时构建glFo,就只能传来at (参考24021-时序部分-3);
+ */
++(AIKVPointer*) createPointerForFo:(NSString*)folderName at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type{
+    return [self createPointer:folderName algsType:at dataSource:ds isOut:false isMem:false type:type];
 }
 
 @end

@@ -50,7 +50,7 @@
  *      2. 类比构建器时,概念的ds就是类比源,比如:有无大小同异;
  *      3. 默认(其它)时,概念节点的ds是其content_ps中稀疏码共同的at;
  */
-+(AIKVPointer*) createPointerForAlg:(NSString*)folderName dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem type:(AnalogyType)type;
++(AIKVPointer*) createPointerForAlg:(NSString*)folderName at:(NSString*)at dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem type:(AnalogyType)type;
 
 /**
  *  MARK:--------------------时序节点指针--------------------
@@ -58,7 +58,7 @@
  *      1. 类比构建器时,时序的ds就是类比源,比如:有无大小同异;
  *      2. 默认(其它)时,时序节点的ds=DefaultDataSource;
  */
-+(AIKVPointer*) createPointerForFo:(NSString*)folderName ds:(NSString*)ds type:(AnalogyType)type;
++(AIKVPointer*) createPointerForFo:(NSString*)folderName at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type;
 
 @end
 

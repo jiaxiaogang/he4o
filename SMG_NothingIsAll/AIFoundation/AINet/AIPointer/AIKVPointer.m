@@ -28,20 +28,28 @@
     
     if (PitIsFo(pointer) || PitIsAlg(pointer)) {
         if (type == ATGreater || type == ATLess) {
-            if (![dataSource isEqualToString:@"sizeWidth"] &&
-                ![dataSource isEqualToString:@"sizeHeight"] &&
-                ![dataSource isEqualToString:@"colorRed"] &&
-                ![dataSource isEqualToString:@"colorBlue"] &&
-                ![dataSource isEqualToString:@"colorGreen"] &&
-                ![dataSource isEqualToString:@"radius"] &&
-                ![dataSource isEqualToString:@"direction"] &&
-                ![dataSource isEqualToString:@"distance"] &&
-                ![dataSource isEqualToString:@"distanceY"] &&
-                ![dataSource isEqualToString:@"speed"] &&
-                ![dataSource isEqualToString:@"border"] &&
-                ![dataSource isEqualToString:@"posX"] &&
-                ![dataSource isEqualToString:@"posY"]) {
-                NSLog(@"自检2. 测生成GL的AIKVPointer时的ds是否正常赋值,因为它影响node防重;");
+            
+            if (![@"AIVisionAlgs" isEqualToString:algsType] &&
+                ![FLY_RDS isEqualToString:algsType]) {
+                NSLog(@"自检5. 测生成GL的AIKVPointer时的at是否正常赋值,因为它影响node防重");
+            }
+            
+            if ([@"AIVisionAlgs" isEqualToString:algsType]){
+                if (![dataSource isEqualToString:@"sizeWidth"] &&
+                    ![dataSource isEqualToString:@"sizeHeight"] &&
+                    ![dataSource isEqualToString:@"colorRed"] &&
+                    ![dataSource isEqualToString:@"colorBlue"] &&
+                    ![dataSource isEqualToString:@"colorGreen"] &&
+                    ![dataSource isEqualToString:@"radius"] &&
+                    ![dataSource isEqualToString:@"direction"] &&
+                    ![dataSource isEqualToString:@"distance"] &&
+                    ![dataSource isEqualToString:@"distanceY"] &&
+                    ![dataSource isEqualToString:@"speed"] &&
+                    ![dataSource isEqualToString:@"border"] &&
+                    ![dataSource isEqualToString:@"posX"] &&
+                    ![dataSource isEqualToString:@"posY"]) {
+                    NSLog(@"自检2. 测生成GL的AIKVPointer时的ds是否正常赋值,因为它影响node防重;");
+                }
             }
         }else{
             

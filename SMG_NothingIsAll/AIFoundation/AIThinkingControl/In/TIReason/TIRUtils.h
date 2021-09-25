@@ -38,7 +38,7 @@
 //MARK:===============================================================
 
 //内类比构建抽象时序
-+(AINetAbsFoNode*)createInnerAbsFo:(AIAlgNodeBase*)backConAlg rangeAlg_ps:(NSArray*)rangeAlg_ps conFo:(AIFoNodeBase*)conFo ds:(NSString*)ds type:(AnalogyType)type;
++(AINetAbsFoNode*)createInnerAbsFo:(AIAlgNodeBase*)backConAlg rangeAlg_ps:(NSArray*)rangeAlg_ps conFo:(AIFoNodeBase*)conFo at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type;
 
 //MARK:===============================================================
 //MARK:                     < 输入概念判断 >

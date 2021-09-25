@@ -35,8 +35,9 @@
  *      2021.01.03: 判断abs已存在抽象节点时,加上ATDS的匹配判断,因为不同类型节点不必去重 (参考2120B-BUG2);
  *  @result : notnull
  */
--(AINetAbsFoNode*) create:(NSArray*)conFos orderSames:(NSArray*)orderSames difStrong:(NSInteger)difStrong dsBlock:(NSString*(^)())dsBlock type:(AnalogyType)type{
+-(AINetAbsFoNode*) create:(NSArray*)conFos orderSames:(NSArray*)orderSames difStrong:(NSInteger)difStrong at:(NSString*)at dsBlock:(NSString*(^)())dsBlock type:(AnalogyType)type{
     //1. 数据准备
+    if(!at) at = [AIAbsFoManager getAlgsType:conFos];
     NSString *ds = dsBlock ? dsBlock() : DefaultDataSource;
     if (!ARRISOK(conFos)) return nil;
     orderSames = ARRTOOK(orderSames);
@@ -69,7 +70,7 @@
     if (!findAbsNode) {
         isNew = true;
         findAbsNode = [[AINetAbsFoNode alloc] init];
-        findAbsNode.pointer = [SMGUtils createPointerForFo:kPN_FO_ABS_NODE ds:ds type:type];
+        findAbsNode.pointer = [SMGUtils createPointerForFo:kPN_FO_ABS_NODE at:at ds:ds type:type];
         
         //3. 收集order_ps (将不在hdNet中的转移)
         findAbsNode.content_ps = [AINetUtils move2Hd4Alg_ps:orderSames];
@@ -107,10 +108,11 @@
  *  @status
  *      2021.04.25: 打开后,gl经验全为0条,所以先关掉,后续测试打开后为什么为0条;
  */
--(AINetAbsFoNode*) create_NoRepeat:(NSArray*)conFos content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong ds:(NSString*)ds type:(AnalogyType)type{
+-(AINetAbsFoNode*) create_NoRepeat:(NSArray*)conFos content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type{
     //1. 数据准备
     conFos = ARRTOOK(conFos);
     content_ps = ARRTOOK(content_ps);
+    at = at ? at : [AIAbsFoManager getAlgsType:conFos];
     ds = ds ? ds : [AIAbsFoManager getDataSource:conFos];
     AINetAbsFoNode *result = nil;
     
@@ -120,13 +122,13 @@
         for (AIFoNodeBase *conItem in conFos) {
             [validPorts addObjectsFromArray:[AINetUtils absPorts_All:conItem type:type]];
         }
-        result = [AINetIndexUtils getAbsoluteMatching_ValidPorts:validPorts sort_ps:content_ps except_ps:Nodes2Pits(conFos) ds:ds type:type];
+        result = [AINetIndexUtils getAbsoluteMatching_ValidPorts:validPorts sort_ps:content_ps except_ps:Nodes2Pits(conFos) at:at ds:ds type:type];
     }else{
         //3. 防重_其它类型时,全局绝对匹配;
         result = [AINetIndexUtils getAbsoluteMatching_General:content_ps sort_ps:content_ps except_ps:Nodes2Pits(conFos) getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
             AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
             return [AINetUtils refPorts_All4Alg:itemAlg];
-        } ds:ds type:type];
+        } at:at ds:ds type:type];
     }
     
     //3. 有则加强关联;
@@ -135,7 +137,7 @@
         [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
     }else{
         //4. 无则新构建;
-        result = [self create:conFos orderSames:content_ps difStrong:difStrong dsBlock:^NSString *{
+        result = [self create:conFos orderSames:content_ps difStrong:difStrong at:at dsBlock:^NSString *{
             return ds;
         } type:type];
     }
@@ -182,6 +184,22 @@
         }
     }
     return ds;
+}
+
++(NSString*) getAlgsType:(NSArray*)conFos{
+    //1. 数据准备
+    NSString *at = DefaultAlgsType;
+    
+    //2. 假如全一样,提出来;
+    for (NSInteger i = 0; i < conFos.count; i++) {
+        AIFoNodeBase *conFo = ARR_INDEX(conFos, i);
+        if (i == 0) {
+            at = conFo.pointer.algsType;
+        }else if(![at isEqualToString:conFo.pointer.algsType]){
+            at = DefaultAlgsType;
+        }
+    }
+    return at;
 }
 
 @end
