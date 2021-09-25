@@ -98,6 +98,16 @@
                         if (ARRISOK(sameValue_ps)) {
                             //3. 当为same类型时,节点设为default类型即可 (参考24019);
                             AnalogyType nodeType = type == ATSame ? ATDefault : type;
+                            
+                            //TODOTOMORROW20210925:此处type值,应该来自到algA和algB;
+                            //1. 将Log4OutAna日志打开,看此处是否没影响到backGLAlg;
+                            //2. 复现: 直击,左下,直击,左,直击,左下,直击,左... => 断点停到自检5,然后来看此处日志;
+                            
+                            
+                            
+                            
+                            
+                            
                             AIAbsAlgNode *createAbsNode = [theNet createAbsAlg_NoRepeat:sameValue_ps conAlgs:@[algNodeA,algNodeB] isMem:false at:nil type:nodeType];
                             if (createAbsNode) {
                                 //3. 收集并更新jMax;

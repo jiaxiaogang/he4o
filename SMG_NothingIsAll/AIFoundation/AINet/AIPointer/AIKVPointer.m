@@ -20,11 +20,8 @@
     [pointer.params setObject:STRFORMAT(@"%d",isOut) forKey:@"isOut"];
     [pointer.params setObject:STRFORMAT(@"%ld",(long)type) forKey:@"type"];
     
-    if (PitIsValue(pointer)) {
-        if ([algsType isEqualToString:FLY_RDS] && !isOut) {
-            NSLog(@"自检4. 行为飞稀疏码的isOut为false的问题");
-        }
-    }
+    
+    [AITest test4:pointer at:algsType isOut:isOut];
     
     if (PitIsFo(pointer) || PitIsAlg(pointer)) {
         if (type == ATGreater || type == ATLess) {

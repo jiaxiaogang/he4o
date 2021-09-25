@@ -20,6 +20,7 @@
 #import "AIHeader.h"
 #import "HEView.h"
 #import "NSLog+Extension.h"
+#import "AITest.h"
 #endif
 
 //MARK:===============================================================

@@ -56,6 +56,7 @@
 		084B4B0824433AA900FB3670 /* ShortMatchManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 084B4B0724433AA900FB3670 /* ShortMatchManager.m */; };
 		084C3A6B21926D5700DAA08A /* BirdView.m in Sources */ = {isa = PBXBuildFile; fileRef = 084C3A6A21926D5700DAA08A /* BirdView.m */; };
 		084C3A6D21926D7800DAA08A /* BirdView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 084C3A6C21926D7800DAA08A /* BirdView.xib */; };
+		084F132226FF6E1200E9D455 /* AITest.m in Sources */ = {isa = PBXBuildFile; fileRef = 084F132126FF6E1200E9D455 /* AITest.m */; };
 		0850496B2474A4200017F9A0 /* AIThinkOutAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 085049692474A41F0017F9A0 /* AIThinkOutAction.m */; };
 		0858C5AE2194F5DA00951BA5 /* CarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0858C5AD2194F5DA00951BA5 /* CarView.m */; };
 		0858C5B02194F5E400951BA5 /* CarView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0858C5AF2194F5E400951BA5 /* CarView.xib */; };
@@ -263,6 +264,8 @@
 		084C3A6921926D5700DAA08A /* BirdView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BirdView.h; sourceTree = "<group>"; };
 		084C3A6A21926D5700DAA08A /* BirdView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BirdView.m; sourceTree = "<group>"; };
 		084C3A6C21926D7800DAA08A /* BirdView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BirdView.xib; sourceTree = "<group>"; };
+		084F132026FF6E1200E9D455 /* AITest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AITest.h; sourceTree = "<group>"; };
+		084F132126FF6E1200E9D455 /* AITest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AITest.m; sourceTree = "<group>"; };
 		085049692474A41F0017F9A0 /* AIThinkOutAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIThinkOutAction.m; sourceTree = "<group>"; };
 		0850496A2474A41F0017F9A0 /* AIThinkOutAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIThinkOutAction.h; sourceTree = "<group>"; };
 		0858C5AC2194F5DA00951BA5 /* CarView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CarView.h; sourceTree = "<group>"; };
@@ -822,6 +825,15 @@
 			path = View;
 			sourceTree = "<group>";
 		};
+		084F131F26FF6DE900E9D455 /* Test */ = {
+			isa = PBXGroup;
+			children = (
+				084F132026FF6E1200E9D455 /* AITest.h */,
+				084F132126FF6E1200E9D455 /* AITest.m */,
+			);
+			path = Test;
+			sourceTree = "<group>";
+		};
 		0858C5B32194F8B000951BA5 /* Masonry */ = {
 			isa = PBXGroup;
 			children = (
@@ -972,6 +984,7 @@
 		08AF45471E97D0B500377887 /* SMG_NothingIsAll */ = {
 			isa = PBXGroup;
 			children = (
+				084F131F26FF6DE900E9D455 /* Test */,
 				08E65A0722F3BAE3009ED1CF /* CortexAlgorithms */,
 				082F9D581EB236AC0009F6A9 /* Demo */,
 				08D7DA401ED1499C004B1018 /* AIFoundation */,
@@ -1436,6 +1449,7 @@
 				88BC09DA20B4ECAB0006ABEF /* XGRedisUtil.m in Sources */,
 				083112F21F05E12600051DE6 /* MBProgressHUD+Add.m in Sources */,
 				08A232E5243557110090D4B5 /* TOUtils.m in Sources */,
+				084F132226FF6E1200E9D455 /* AITest.m in Sources */,
 				0895FFE4264A13C500DAD3EA /* TOModelVision.m in Sources */,
 				084219ED1FD8CF81009DA6BC /* AIThinkingControl.m in Sources */,
 				089614A9219A4D5200343FAC /* BirdGrowPage.m in Sources */,
