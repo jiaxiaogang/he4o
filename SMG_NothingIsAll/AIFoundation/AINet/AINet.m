@@ -251,22 +251,18 @@ static AINet *_instance;
  *  MARK:--------------------构建抽象概念_防重--------------------
  */
 -(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem type:(AnalogyType)type{
-    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs isMem:isMem dsBlock:nil isOutBlock:nil type:type];
+    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs isMem:isMem ds:nil isOutBlock:nil type:type];
 }
 -(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem ds:(NSString*)ds type:(AnalogyType)type{
-    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs isMem:isMem dsBlock:^NSString *{
-        return ds;
-    } isOutBlock:nil type:type];
+    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs isMem:isMem ds:ds isOutBlock:nil type:type];
 }
 -(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem isOut:(BOOL)isOut type:(AnalogyType)type{
-    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs isMem:isMem dsBlock:nil isOutBlock:^BOOL{
+    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs isMem:isMem ds:nil isOutBlock:^BOOL{
         return isOut;
     } type:type];
 }
 -(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem isOut:(BOOL)isOut ds:(NSString*)ds type:(AnalogyType)type{
-    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs isMem:isMem dsBlock:^NSString *{
-        return ds;
-    } isOutBlock:^BOOL{
+    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs isMem:isMem ds:ds isOutBlock:^BOOL{
         return isOut;
     } type:type];
 }

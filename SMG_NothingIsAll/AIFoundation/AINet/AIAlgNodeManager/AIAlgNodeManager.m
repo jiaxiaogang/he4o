@@ -54,8 +54,8 @@
  *  @param value_ps     : 要构建absAlgNode的content_ps (稀疏码组) notnull;
  *  @param conAlgs      : 具象AIAlgNode数组:(外类比时的algA&algB / 内类比时仅有一个元素) //不可为空数组
  *  @param isMem        : 是否持久化,(如thinkIn中,视觉场景下的subView就不进行持久化,只存在内存网络中)
- *  _param dataSource   : 概念节点的dataSource就是稀疏码信息的algsType; (不传时,从algsArr提取)
- *  @param dsBlock      : 指定ds (默认从value_ps获取);
+ *  _param dataSource   : 概念节点的dataSource就是稀疏码信息的algsType; (不传时,从algsArr提取) (废弃,参考24021);
+ *  @param ds           : 为nil时,默认为DefaultDataSource;
  *  @param isOutBlock   : 指定isOut (默认从value_ps获取) (概念节点的isOut状态; (思维控制器知道它是行为还是认知));
  *
  *  @问题记录:
@@ -67,12 +67,12 @@
  *  @version
  *      2021.01.03: 判断abs已存在抽象节点时,加上ATDS的匹配判断,因为不同类型节点不必去重 (参考2120B-BUG2);
  */
-+(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem dsBlock:(NSString*(^)())dsBlock isOutBlock:(BOOL(^)())isOutBlock type:(AnalogyType)type{
++(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem ds:(NSString*)ds isOutBlock:(BOOL(^)())isOutBlock type:(AnalogyType)type{
     //1. 数据准备
-    NSString *dataSource = dsBlock ? dsBlock() : [self getDataSource:value_ps];
     BOOL isOut = isOutBlock ? isOutBlock() : [AINetUtils checkAllOfOut:value_ps];
     conAlgs = ARRTOOK(conAlgs);
     value_ps = ARRTOOK(value_ps);
+    if (!ds) ds = DefaultDataSource;
     NSArray *sortSames = ARRTOOK([SMGUtils sortPointers:value_ps]);
     NSString *samesStr = [SMGUtils convertPointers2String:sortSames];
     NSString *samesMd5 = STRTOOK([NSString md5:samesStr]);
@@ -103,7 +103,7 @@
             NSArray *absPorts_All = [AINetUtils absPorts_All:conNode];
             for (AIPort *absPort in absPorts_All) {
                 //1> 遍历找抽象是否已存在;
-                if ([samesMd5 isEqualToString:absPort.header] && [absPort.target_p.dataSource isEqualToString:dataSource] && absPort.target_p.type == type) {
+                if ([samesMd5 isEqualToString:absPort.header] && [absPort.target_p.dataSource isEqualToString:ds] && absPort.target_p.type == type) {
                     AIAbsAlgNode *absNode = [SMGUtils searchNode:absPort.target_p];
                     //2> 已存在,则转移到硬盘网络;
                     if (absNode.pointer.isMem) {
@@ -125,7 +125,7 @@
     if (!result) {
         absIsNew = true;
         result = [[AIAbsAlgNode alloc] init];
-        result.pointer = [SMGUtils createPointerForAlg:kPN_ALG_ABS_NODE dataSource:dataSource isOut:isOut isMem:isMem type:type];
+        result.pointer = [SMGUtils createPointerForAlg:kPN_ALG_ABS_NODE dataSource:ds isOut:isOut isMem:isMem type:type];
         result.content_ps = [[NSMutableArray alloc] initWithArray:sortSames];
     }
     
@@ -158,11 +158,11 @@
  *      2021.08.06: 本地去重,支持ds防重,因为不去重导致同内容的S和P混乱 (参考23205);
  *      2021.09.22: 支持type防重 (参考24019);
  */
-+(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem dsBlock:(NSString*(^)())dsBlock isOutBlock:(BOOL(^)())isOutBlock type:(AnalogyType)type{
++(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem ds:(NSString*)ds isOutBlock:(BOOL(^)())isOutBlock type:(AnalogyType)type{
     //1. 数据检查
     value_ps = ARRTOOK(value_ps);
     NSArray *sort_ps = [SMGUtils sortPointers:value_ps];
-    NSString *ds = dsBlock ? dsBlock() : nil;
+    if (!ds) ds = DefaultDataSource;
     
     //2. 去重找本地 (仅抽象);
     AIAbsAlgNode *localAlg = [AINetIndexUtils getAbsoluteMatching_General:value_ps sort_ps:sort_ps except_ps:nil getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
@@ -184,31 +184,8 @@
         return localAlg;
     }else{
         //4. 无则构建
-        return [self createAbsAlgNode:value_ps conAlgs:conAlgs isMem:isMem dsBlock:dsBlock isOutBlock:isOutBlock type:type];
+        return [self createAbsAlgNode:value_ps conAlgs:conAlgs isMem:isMem ds:ds isOutBlock:isOutBlock type:type];
     }
-}
-
-//MARK:===============================================================
-//MARK:                     < privateMethod >
-//MARK:===============================================================
-
-//从稀疏码组中,提取概念节点的dataSource;
-+(NSString*) getDataSource:(NSArray*)value_ps{
-    //1. 数据准备
-    value_ps = ARRTOOK(value_ps);
-    NSString *dataSource = DefaultDataSource;
-    
-    //2. 假如全一样,提出来;
-    for (NSInteger i = 0; i < value_ps.count; i++) {
-        AIKVPointer *value_p = ARR_INDEX(value_ps, i);
-        if (i == 0) {
-            dataSource = value_p.algsType;
-        }else if([dataSource isEqualToString:value_p.algsType]){
-            dataSource = DefaultDataSource;
-        }
-    }
-    //TODOTEST20210923: 当GLHN节点时,此处返回从value继承来的ds (如果不是,查analogyInner_Creater()中传的ds参数);
-    return dataSource;
 }
 
 @end
