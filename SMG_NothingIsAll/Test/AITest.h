@@ -16,5 +16,6 @@
 +(void) test4:(AIKVPointer*)pointer at:(NSString*)at isOut:(BOOL)isOut;
 +(void) test5:(AIKVPointer*)pointer type:(AnalogyType)type at:(NSString*)at;
 +(void) test6:(NSArray*)types;
++(void) test7:(NSArray*)arr type:(AnalogyType)type;
 
 @end

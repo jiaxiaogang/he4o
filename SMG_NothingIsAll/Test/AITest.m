@@ -77,4 +77,15 @@
     }
 }
 
++(void) test7:(NSArray*)arr type:(AnalogyType)type{
+    if (type == ATPlus || type == ATSub) {
+        NSArray *types = [SMGUtils removeRepeat:[SMGUtils convertArr:arr convertBlock:^id(AIKVPointer *obj) {
+            return @(obj.type);
+        }]];
+        if (types.count > 1) {
+            NSLog(@"自检7. 测构建SPFo时,元素有两种类型的原因(参考24022BUG3)");
+        }
+    }
+}
+
 @end

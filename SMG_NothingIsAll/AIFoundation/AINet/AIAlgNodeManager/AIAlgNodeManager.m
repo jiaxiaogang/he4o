@@ -66,6 +66,7 @@
  *  注: TODO:判断algSames是否就是algsA或algB本身; (等conAlgNode和absAlgNode统一不区分后,再判断本身)
  *  @version
  *      2021.01.03: 判断abs已存在抽象节点时,加上ATDS的匹配判断,因为不同类型节点不必去重 (参考2120B-BUG2);
+ *      2021.09.26: 从conAlgs中防重返回时,要判断at&ds&type (参考24022-BUG3);
  */
 +(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem at:(NSString*)at ds:(NSString*)ds isOutBlock:(BOOL(^)())isOutBlock type:(AnalogyType)type{
     //1. 数据准备
@@ -87,7 +88,7 @@
             
             //b. 并且md5与orderSames相同时,即发现checkNode本身就是抽象节点;
             NSString *checkMd5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:[SMGUtils sortPointers:checkNode.content_ps]]]);
-            if ([samesMd5 isEqualToString:checkMd5]) {
+            if ([samesMd5 isEqualToString:checkMd5] && [checkNode.pointer.algsType isEqualToString:at] && [checkNode.pointer.dataSource isEqualToString:ds] && checkNode.pointer.type == type) {
                 
                 //c. 则把conAlgs去掉checkNode;
                 [validConAlgs removeObject:checkNode];
@@ -104,7 +105,7 @@
             NSArray *absPorts_All = [AINetUtils absPorts_All:conNode];
             for (AIPort *absPort in absPorts_All) {
                 //1> 遍历找抽象是否已存在;
-                if ([samesMd5 isEqualToString:absPort.header] && [absPort.target_p.dataSource isEqualToString:ds] && absPort.target_p.type == type) {
+                if ([samesMd5 isEqualToString:absPort.header] && [absPort.target_p.algsType isEqualToString:at] && [absPort.target_p.dataSource isEqualToString:ds] && absPort.target_p.type == type) {
                     AIAbsAlgNode *absNode = [SMGUtils searchNode:absPort.target_p];
                     //2> 已存在,则转移到硬盘网络;
                     if (absNode.pointer.isMem) {

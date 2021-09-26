@@ -61,7 +61,7 @@
  */
 +(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type createAbsAlgBlock:(void(^)(AIAlgNodeBase *createAlg,NSInteger foIndex,NSInteger assFoIndex))createAbsAlgBlock{
     //1. 类比orders的规律
-    if (Log4OutAna) NSLog(@"\n----------- 外类比(%@) -----------\nfo:%@ \nassFo:%@",ATType2Str(type),Fo2FStr(fo),Fo2FStr(assFo));
+    NSLog(@"\n----------- 外类比(%@) -----------\nfo:%@ \nassFo:%@",ATType2Str(type),Fo2FStr(fo),Fo2FStr(assFo));
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
     if (fo && assFo) {
 
@@ -685,6 +685,7 @@
  *      20210507 - 暂停IRT (参考23063);
  *      20210729 - 打开IRT (参考n23p20);
  *      20210807 - IRT支持外类比,
+ *      20210926 - 修复spFo中有非SP类型的元素问题 (参考24022-BUG3);
  *  @todo
  *      20200823 - 一直以来,反向类比触发条件太苛刻的问题,通过反省类比迭代之,支持正与平也可触发 T;
  *      20210120 - 此处取mType和pType的SPType有误,S不表示负价值评分,而是表示不符合当前父场景的hope预期 (已废弃,改为直接传入type);
@@ -711,6 +712,7 @@
     for (NSInteger i = 0; i < shortFo.count; i++) {
         BOOL findShortAlg = false;
         AIKVPointer *shortAlg_p = ARR_INDEX(shortFo.content_ps, i);
+        AIAlgNodeBase *shortAlg = [SMGUtils searchNode:shortAlg_p];
         for (NSInteger j = nextStartJ; j < matchContent.count; j++) {
             //4. 判断mIsC是否成立;
             AIKVPointer *matchAlg_p = ARR_INDEX(matchContent, j);
@@ -719,13 +721,12 @@
             //5. shortAlg和matchAlg判断mIsC成立,则取差值;
             if (mIsC) {
                 AIAlgNodeBase *matchAlg = [SMGUtils searchNode:matchAlg_p];
-                AIAlgNodeBase *shortAlg = [SMGUtils searchNode:shortAlg_p];
                 NSArray *pSubM = [SMGUtils removeSub_ps:matchAlg.content_ps parent_ps:shortAlg.content_ps];
                 if (!ARRISOK(pSubM)) continue;
                 
                 //6. 差值有效,则构建新SPAlg节点;
                 AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:pSubM conAlgs:@[matchAlg] isMem:false at:nil ds:nil type:type];
-                if (Log4InRethink) NSLog(@"--> IRT构建SPAlg:%@ base:%@",Alg2FStr(spAlg),Alg2FStr(matchAlg));
+                if (Log4InRethink) NSLog(@"--> IRT部分V构建SPAlg:%@ baseM:%@",Alg2FStr(spAlg),Alg2FStr(matchAlg));
                 
                 //7. 收集spAlg并更新nextStartJ & findShortAlg;
                 [justPs addObject:spAlg.pointer];
@@ -735,7 +736,11 @@
         }
         
         //8. P在M中未找到时,也要收集 (比如乌鸦带了交警时,车不敢撞);
-        if (!findShortAlg) [justPs addObject:shortAlg_p];
+        if (!findShortAlg) {
+            AIAbsAlgNode *spAlg = [theNet createAbsAlg_NoRepeat:shortAlg.content_ps conAlgs:@[shortAlg] isMem:false at:nil type:type];
+            if (Log4InRethink) NSLog(@"--> IRT全部V构建SPAlg:%@ baseP:%@",Alg2FStr(spAlg),Alg2FStr(shortAlg));
+            [justPs addObject:spAlg.pointer];
+        }
     }
     
     //9. 构建SPFo;
