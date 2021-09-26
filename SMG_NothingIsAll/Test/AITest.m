@@ -70,10 +70,10 @@
     }
 }
 
-+(void) test6:(NSArray*)types{
-    types = ARRTOOK(types);
-    if (types.count > 1) {
-        NSLog(@"自检6. 测从conAlgs取type应唯一,否则查为何不同type的alg会类比抽象");
++(void) test6:(NSArray*)arr{
+    arr = ARRTOOK(arr);
+    if (arr.count > 1) {
+        NSLog(@"自检6. 测从conNodes取at&ds&type应唯一,否则查为何不同的node会类比抽象");
     }
 }
 

@@ -35,10 +35,10 @@
  *      2021.01.03: 判断abs已存在抽象节点时,加上ATDS的匹配判断,因为不同类型节点不必去重 (参考2120B-BUG2);
  *  @result : notnull
  */
--(AINetAbsFoNode*) create:(NSArray*)conFos orderSames:(NSArray*)orderSames difStrong:(NSInteger)difStrong at:(NSString*)at dsBlock:(NSString*(^)())dsBlock type:(AnalogyType)type{
+-(AINetAbsFoNode*) create:(NSArray*)conFos orderSames:(NSArray*)orderSames difStrong:(NSInteger)difStrong at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type{
     //1. 数据准备
-    if(!at) at = [AIAbsFoManager getAlgsType:conFos];
-    NSString *ds = dsBlock ? dsBlock() : DefaultDataSource;
+    if(!at) at = DefaultAlgsType;
+    if(!ds) ds = DefaultDataSource;
     if (!ARRISOK(conFos)) return nil;
     orderSames = ARRTOOK(orderSames);
     NSString *samesStr = [SMGUtils convertPointers2String:orderSames];
@@ -112,8 +112,8 @@
     //1. 数据准备
     conFos = ARRTOOK(conFos);
     content_ps = ARRTOOK(content_ps);
-    at = at ? at : [AIAbsFoManager getAlgsType:conFos];
-    ds = ds ? ds : [AIAbsFoManager getDataSource:conFos];
+    if(!at) at = DefaultAlgsType;
+    if(!ds) ds = DefaultDataSource;
     AINetAbsFoNode *result = nil;
     
     //2. 防重_SP类型时,嵌套范围内绝对匹配;
@@ -137,9 +137,7 @@
         [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
     }else{
         //4. 无则新构建;
-        result = [self create:conFos orderSames:content_ps difStrong:difStrong at:at dsBlock:^NSString *{
-            return ds;
-        } type:type];
+        result = [self create:conFos orderSames:content_ps difStrong:difStrong at:at ds:ds type:type];
     }
     return result;
 }
@@ -164,42 +162,5 @@
 //    }
 //    return result;
 //}
-
-//MARK:===============================================================
-//MARK:                     < privateMethod >
-//MARK:===============================================================
-
-//从具象组中,提取时序节点的dataSource;
-+(NSString*) getDataSource:(NSArray*)conFos{
-    //1. 数据准备
-    NSString *ds = DefaultDataSource;
-    
-    //2. 假如全一样,提出来;
-    for (NSInteger i = 0; i < conFos.count; i++) {
-        AIFoNodeBase *conFo = ARR_INDEX(conFos, i);
-        if (i == 0) {
-            ds = conFo.pointer.dataSource;
-        }else if(![ds isEqualToString:conFo.pointer.dataSource]){
-            ds = DefaultDataSource;
-        }
-    }
-    return ds;
-}
-
-+(NSString*) getAlgsType:(NSArray*)conFos{
-    //1. 数据准备
-    NSString *at = DefaultAlgsType;
-    
-    //2. 假如全一样,提出来;
-    for (NSInteger i = 0; i < conFos.count; i++) {
-        AIFoNodeBase *conFo = ARR_INDEX(conFos, i);
-        if (i == 0) {
-            at = conFo.pointer.algsType;
-        }else if(![at isEqualToString:conFo.pointer.algsType]){
-            at = DefaultAlgsType;
-        }
-    }
-    return at;
-}
 
 @end

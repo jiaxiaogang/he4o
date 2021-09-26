@@ -30,7 +30,6 @@
 #import "AIMatchFoModel.h"
 #import "AINetService.h"
 #import "NSArray+Extension.h"
-#import "AIAlgNodeManager.h"
 
 @implementation AIAnalogy
 
@@ -100,7 +99,7 @@
                         if (ARRISOK(sameValue_ps)) {
                             //3. 当为same类型时,节点设为default类型即可 (参考24019);
                             NSArray *conAlgs = @[algNodeA,algNodeB];
-                            AnalogyType nodeType = [AIAlgNodeManager getType:conAlgs];
+                            AnalogyType nodeType = [AINetUtils getTypeFromConNodes:conAlgs];
                             AIAbsAlgNode *createAbsNode = [theNet createAbsAlg_NoRepeat:sameValue_ps conAlgs:conAlgs isMem:false at:nil type:nodeType];
                             if (createAbsNode) {
                                 //3. 收集并更新jMax;
@@ -134,6 +133,7 @@
  *      2020.07.22: 在外类比无需构建时 (即具象和抽象一致时),其方向索引强度+1;
  *      2021.08.10: 在RFos的再抽象调用时,有可能将防重的带mvDeltaTime的值重置为0的BUG (参考23212-问题2);
  *      2021.09.23: 构建fo时,新增type参数,废弃原foDS(typeStr)的做法 (参考24019-时序部分);
+ *      2021.09.26: 仅构建glFo时才从conNodes取at&ds值,避免SFo也有值的问题 (参考24022-BUG2);
  */
 +(AINetAbsFoNode*)analogyOutside_Creater:(NSArray*)orderSames fo:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type{
     //2. 数据检查;
@@ -159,8 +159,14 @@
                 foDifStrong = absUrgentTo;
             }
             
-            //5. 构建absFoNode
-            result = [theNet createAbsFo_NoRepeat:@[fo,assFo] content_ps:orderSames difStrong:foDifStrong at:nil ds:nil type:type];
+            //5. 构建absFoNode (当GL时,传入at&ds);
+            NSArray *conFos = @[fo,assFo];
+            NSString *at = DefaultAlgsType,*ds = DefaultDataSource;
+            if (type == ATGreater || type == ATLess) {
+                ds = [AINetUtils getDSFromConNodes:conFos];
+                at = [AINetUtils getATFromConNodes:conFos];
+            }
+            result = [theNet createAbsFo_NoRepeat:conFos content_ps:orderSames difStrong:foDifStrong at:at ds:ds type:type];
             
             //5. 从fo和conFo.mvDeltaTime中提取mv导致时间隔,在relateFo之前,赋值到result中;
             result.mvDeltaTime = MAX(MAX(fo.mvDeltaTime, assFo.mvDeltaTime), result.mvDeltaTime);

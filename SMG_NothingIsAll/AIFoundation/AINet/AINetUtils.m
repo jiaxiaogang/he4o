@@ -113,6 +113,58 @@
     return 0;
 }
 
+//MARK:===============================================================
+//MARK:                     < 取at&ds&type >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------从conNodes中取type--------------------
+ *  @desc 具象是什么类型,抽象就是什么类型;
+ *  @callers 目前在外类比中,任何type类型都可能调用;
+ */
++(AnalogyType) getTypeFromConNodes:(NSArray*)conNodes{
+    NSArray *types = [SMGUtils removeRepeat:[SMGUtils convertArr:conNodes convertBlock:^id(AINodeBase *obj) {
+        return @(obj.pointer.type);
+    }]];
+    [AITest test6:types];
+    if (types.count == 1) {
+        return [NUMTOOK(ARR_INDEX(types, 0)) intValue];
+    }
+    return ATDefault;
+}
+
+/**
+ *  MARK:--------------------从conNodes中取ds--------------------
+ *  @desc 具象是什么类型,抽象就是什么类型;
+ *  @callers 目前在外类比中,仅GL类型会调用;
+ */
++(NSString*) getDSFromConNodes:(NSArray*)conNodes{
+    NSArray *dses = [SMGUtils removeRepeat:[SMGUtils convertArr:conNodes convertBlock:^id(AIFoNodeBase *obj) {
+        return obj.pointer.dataSource;
+    }]];
+    [AITest test6:dses];
+    if (dses.count == 1) {
+        return ARR_INDEX(dses, 0);
+    }
+    return DefaultDataSource;
+}
+
+/**
+ *  MARK:--------------------从conNodes中取ds--------------------
+ *  @desc 具象是什么类型,抽象就是什么类型;
+ *  @callers 目前在外类比中,仅GL类型会调用;
+ */
++(NSString*) getATFromConNodes:(NSArray*)conNodes{
+    NSArray *ates = [SMGUtils removeRepeat:[SMGUtils convertArr:conNodes convertBlock:^id(AIFoNodeBase *obj) {
+        return obj.pointer.algsType;
+    }]];
+    [AITest test6:ates];
+    if (ates.count == 1) {
+        return ARR_INDEX(ates, 0);
+    }
+    return DefaultAlgsType;
+}
+
 @end
 
 

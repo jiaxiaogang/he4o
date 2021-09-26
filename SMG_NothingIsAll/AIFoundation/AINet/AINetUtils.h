@@ -58,6 +58,18 @@
  */
 +(NSInteger) getDeltaFromMv:(AIKVPointer*)mv_p;
 
+
+//MARK:===============================================================
+//MARK:                     < 取at&ds&type >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------从conNodes中取at&ds&type--------------------
+ */
++(AnalogyType) getTypeFromConNodes:(NSArray*)conNodes;
++(NSString*) getDSFromConNodes:(NSArray*)conNodes;
++(NSString*) getATFromConNodes:(NSArray*)conNodes;
+
 @end
 
 
