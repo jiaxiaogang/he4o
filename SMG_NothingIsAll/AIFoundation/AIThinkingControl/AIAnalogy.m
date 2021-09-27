@@ -61,7 +61,7 @@
  */
 +(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type createAbsAlgBlock:(void(^)(AIAlgNodeBase *createAlg,NSInteger foIndex,NSInteger assFoIndex))createAbsAlgBlock{
     //1. 类比orders的规律
-    NSLog(@"\n----------- 外类比(%@) -----------\nfo:%@ \nassFo:%@",ATType2Str(type),Fo2FStr(fo),Fo2FStr(assFo));
+    if (Log4OutAnaType(type)) NSLog(@"\n----------- 外类比(%@) -----------\nfo:%@ \nassFo:%@",ATType2Str(type),Fo2FStr(fo),Fo2FStr(assFo));
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
     if (fo && assFo) {
 
@@ -183,13 +183,7 @@
     NSInteger foStrong = [AINetUtils getStrong:result atConNode:fo type:type];
     NSInteger assFoStrong = [AINetUtils getStrong:result atConNode:assFo type:type];
     NSString *log = STRFORMAT(@"-> 外类比构建时序 (%@): %@->{%@} from: ↑↑↑(fo(%ld):assFo(%ld))",ATType2Str(type),Fo2FStr(result),Mvp2Str(result.cmvNode_p),foStrong,assFoStrong);
-    if (Log4OutAnaHN(type)) NSLog(@"%@",log);
-    if (Log4OutAnaGL(type)) NSLog(@"%@",log);
-    if (Log4OutAnaSP(type)) NSLog(@"%@",log);
-    if (Log4OutAnaDefault(type)) NSLog(@"%@",log);
-    //if (Log4OutAnaDiff(type)) NSLog(@"%@",log);
-    //if (Log4OutAnaSame(type)) NSLog(@"%@",log);
-    if (Log4OutAna) NSLog(@"%@",log);
+    if (Log4OutAnaType(type)) NSLog(@"%@",log);
     return result;
 }
 

@@ -129,7 +129,8 @@
     //}
     
     //4. 调试日志
-    NSLog(@"概念识别: Finish >>>\n全含:%@\n局部:%@",Pits2FStr(Nodes2Pits(matchAlgs)),Pits2FStr(ARR_SUB(partAlg_ps, 0, 3)));
+    NSLog(@"--->>> 概念识别Finish 全含:\n%@",Pits2FStr_MultiLine(Nodes2Pits(matchAlgs)));
+    NSLog(@"--->>> 概念识别Finish 局部:\n%@",Pits2FStr_MultiLine(ARR_SUB(partAlg_ps, 0, 3)));
     complete(matchAlgs,partAlg_ps);
 }
 
@@ -407,10 +408,10 @@
     //11. 调试日志;
     NSLog(@"\n=====> 时序识别Finish (PFos数:%lu)",(unsigned long)inModel.matchPFos.count);
     for (AIMatchFoModel *item in inModel.matchPFos)
-        NSLog(@"强度:(%ld)\t> %@(%@)->%@ (匹配度:%@)",item.matchFoStrong,Fo2FStr(item.matchFo),ATType2Str(item.matchFo.pointer.type), Mvp2Str(item.matchFo.cmvNode_p),Double2Str_NDZ(item.matchFoValue));
+        NSLog(@"强度:(%ld)\t> %@->%@ (匹配度:%@)",item.matchFoStrong,Fo2FStr(item.matchFo), Mvp2Str(item.matchFo.cmvNode_p),Double2Str_NDZ(item.matchFoValue));
     NSLog(@"\n=====> 时序识别Finish (RFos数:%lu)",(unsigned long)inModel.matchRFos.count);
     for (AIMatchFoModel *item in inModel.matchRFos)
-        NSLog(@"强度:(%ld)\t> %@(%@) (匹配度:%@)",item.matchFoStrong,Fo2FStr(item.matchFo),ATType2Str(item.matchFo.pointer.type),Double2Str_NDZ(item.matchFoValue));
+        NSLog(@"强度:(%ld)\t> %@ (匹配度:%@)",item.matchFoStrong,Fo2FStr(item.matchFo),Double2Str_NDZ(item.matchFoValue));
 }
 
 /**
