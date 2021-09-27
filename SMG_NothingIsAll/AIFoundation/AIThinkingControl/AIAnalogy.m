@@ -134,6 +134,7 @@
  *      2021.08.10: 在RFos的再抽象调用时,有可能将防重的带mvDeltaTime的值重置为0的BUG (参考23212-问题2);
  *      2021.09.23: 构建fo时,新增type参数,废弃原foDS(typeStr)的做法 (参考24019-时序部分);
  *      2021.09.26: 仅构建glFo时才从conNodes取at&ds值,避免SFo也有值的问题 (参考24022-BUG2);
+ *      2021.09.28: ATSame和ATDiff两个type是描述是否包含cmv指向的,改为传ATDefault过来 (参考24022-BUG5);
  */
 +(AINetAbsFoNode*)analogyOutside_Creater:(NSArray*)orderSames fo:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type{
     //2. 数据检查;
@@ -147,7 +148,7 @@
             result = (AINetAbsFoNode*)assFo;
             [AINetUtils relateFoAbs:result conNodes:@[fo] isNew:false];
             [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
-            if (type == ATSame || type == ATDiff) [theNet setMvNodeToDirectionReference:[SMGUtils searchNode:result.cmvNode_p] difStrong:1];
+            if (result.cmvNode_p) [theNet setMvNodeToDirectionReference:[SMGUtils searchNode:result.cmvNode_p] difStrong:1];
         }else{
             //4. 取foDifStrong
             NSInteger foDifStrong = 1;
@@ -172,7 +173,7 @@
             result.mvDeltaTime = MAX(MAX(fo.mvDeltaTime, assFo.mvDeltaTime), result.mvDeltaTime);
             
             //6. createAbsCmvNode (当正向类比,且result没有cmv指向时);
-            if ((type == ATSame || type == ATDiff) && assMv && !result.cmvNode_p) {
+            if (fo.cmvNode_p && assMv && !result.cmvNode_p) {
                 AIAbsCMVNode *resultMv = [theNet createAbsCMVNode_Outside:nil aMv_p:fo.cmvNode_p bMv_p:assMv.pointer];
                 [AINetUtils relateFo:result mv:resultMv];//cmv模型连接;
             }
@@ -185,9 +186,9 @@
     if (Log4OutAnaHN(type)) NSLog(@"%@",log);
     if (Log4OutAnaGL(type)) NSLog(@"%@",log);
     if (Log4OutAnaSP(type)) NSLog(@"%@",log);
-    if (Log4OutAnaDiff(type)) NSLog(@"%@",log);
     if (Log4OutAnaDefault(type)) NSLog(@"%@",log);
-    if (Log4OutAnaSame(type)) NSLog(@"%@",log);
+    //if (Log4OutAnaDiff(type)) NSLog(@"%@",log);
+    //if (Log4OutAnaSame(type)) NSLog(@"%@",log);
     if (Log4OutAna) NSLog(@"%@",log);
     return result;
 }
@@ -538,6 +539,8 @@
 /**
  *  MARK:--------------------正向反馈外类比--------------------
  *  @use : 用于P-任务取解决方案;
+ *  @version
+ *      2021.09.28: ATSame改为传ATDefault (参考24022-BUG5);
  */
 +(void) analogy_Feedback_Same:(AIFoNodeBase*)matchFo shortFo:(AIFoNodeBase*)shortFo{
     //1. 数据检查;
@@ -549,7 +552,7 @@
     if (!isSame) return;
     
     //3. 类比 (与当前的analogy_Outside()较相似,所以暂不写,随后写时,也是将原有的_outside改成此_same类比方法);
-    AINetAbsFoNode *absFo = [self analogyOutside:shortFo assFo:matchFo type:ATSame createAbsAlgBlock:nil];
+    AINetAbsFoNode *absFo = [self analogyOutside:shortFo assFo:matchFo type:ATDefault createAbsAlgBlock:nil];
     NSLog(@"抽象出: %@ mvDeltaTime:%f",Fo2FStr(absFo),absFo.mvDeltaTime);
 }
 
@@ -565,6 +568,7 @@
  *  @version
  *      2021.03.25: 嵌套关联 & 外类比assFo改为使用嵌套关联来联想;
  *      2021.08.08: 对指定虚mv的protoFo,也赋值mvDeltaTime,否则作为R解决方案时,dsFo没mvDeltaTime会导致反省触发为0秒 (参考23212);
+ *      2021.09.28: ATDiff改为传ATDefault (参考24022-BUG5);
  *  @todo
  *      2021.04.08: 考虑支持从抽象protoFo.absPorts.dsPorts中找assFo;
  */
@@ -623,7 +627,7 @@
         //7. 进行外类比
         AIFoNodeBase *assFo = [SMGUtils searchNode:subPort.target_p];
         if (Log4DiffAna) NSLog(@"\nassFo:%@->%@",Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
-        AINetAbsFoNode *absFo = [self analogyOutside:protoFo assFo:assFo type:ATDiff createAbsAlgBlock:nil];
+        AINetAbsFoNode *absFo = [self analogyOutside:protoFo assFo:assFo type:ATDefault createAbsAlgBlock:nil];
         if (!absFo) continue;
         
         //8. 将外类比抽象时做嵌套关联 & 指定强度;

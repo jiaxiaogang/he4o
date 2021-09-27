@@ -277,8 +277,8 @@
 #define Log4OutAnaGL(type) (!Log4OutAna && ((type == ATGreater || type == ATLess) && false))
 #define Log4OutAnaHN(type) (!Log4OutAna && ((type == ATHav || type == ATNone) && false))
 #define Log4OutAnaSP(type) (!Log4OutAna && ((type == ATSub || type == ATPlus) && true))
-#define Log4OutAnaDiff(type) (!Log4OutAna && (type == ATDiff && true))
-#define Log4OutAnaSame(type) (!Log4OutAna && (type == ATSame && false))
+//#define Log4OutAnaDiff(type) (!Log4OutAna && (type == ATDiff && true))
+//#define Log4OutAnaSame(type) (!Log4OutAna && (type == ATSame && false))
 #define Log4OutAnaDefault(type) (!Log4OutAna && (type == ATDefault && false))
 
 //正向类比
