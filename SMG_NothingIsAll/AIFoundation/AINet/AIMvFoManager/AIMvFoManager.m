@@ -101,6 +101,7 @@
     
     //7. 存储foNode
     [SMGUtils insertNode:foNode];
+    [AITest test8:foNode.content_ps type:ATDefault];
     return foNode;
 }
 

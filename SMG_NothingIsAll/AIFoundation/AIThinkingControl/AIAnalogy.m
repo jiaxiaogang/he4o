@@ -105,7 +105,7 @@
                                 //3. 收集并更新jMax;
                                 [orderSames insertObject:createAbsNode.pointer atIndex:0];
                                 jMax = j - 1;
-                                if (Log4OutAna) NSLog(@"-> 外类比构建概念 Finish: %@ from: ↑↑↑(A%ld:A%ld)",Alg2FStr(createAbsNode),(long)algNodeA.pointer.pointerId,(long)algNodeB.pointer.pointerId);
+                                if (Log4OutAna) NSLog(@"-> 外类比构建概念 Finish: %@(%@) from: ↑↑↑(A%ld:A%ld)",Alg2FStr(createAbsNode),ATType2Str(nodeType),(long)algNodeA.pointer.pointerId,(long)algNodeB.pointer.pointerId);
                                 
                                 //3. 构建absAlg时,回调构建和glhnAlg的关联 (参考21115);
                                 if (createAbsAlgBlock) createAbsAlgBlock(createAbsNode,i,j);
@@ -333,9 +333,9 @@
     AIAlgNodeBase *bFocusAlg = algB;
     
     //2. 收集a和b的概念辐射合集 (取自身 + 自身的一层抽象);
-    NSMutableArray *aSum_ps = Ports2Pits([SMGUtils filterPorts_Normal:[AINetUtils absPorts_All:aFocusAlg]]);
+    NSMutableArray *aSum_ps = Ports2Pits([AINetUtils absPorts_All_Normal:aFocusAlg]);
     [aSum_ps addObject:aFocusAlg.pointer];
-    NSMutableArray *bSum_ps = Ports2Pits([SMGUtils filterPorts_Normal:[AINetUtils absPorts_All:bFocusAlg]]);
+    NSMutableArray *bSum_ps = Ports2Pits([AINetUtils absPorts_All_Normal:bFocusAlg]);
     [bSum_ps addObject:bFocusAlg.pointer];
 
     //2. 取a差集和b差集;

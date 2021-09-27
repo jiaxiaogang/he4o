@@ -87,6 +87,7 @@
     
     [SMGUtils insertNode:findAbsNode];
     [AITest test7:findAbsNode.content_ps type:type];
+    [AITest test8:findAbsNode.content_ps type:type];
     return findAbsNode;
 }
 
