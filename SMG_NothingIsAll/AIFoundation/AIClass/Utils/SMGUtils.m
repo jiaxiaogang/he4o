@@ -778,7 +778,7 @@
 //用analogyType来筛选ports
 +(NSArray*) filterPorts_Normal:(NSArray*)ports{
     NSArray *noTypes = @[@(ATGreater),@(ATLess),@(ATHav),@(ATNone),
-                         @(ATPlus),@(ATSub)];
+                         @(ATPlus),@(ATSub),@(ATDiff),@(ATSame)];
     return [SMGUtils filterPorts:ports havTypes:nil noTypes:noTypes];
 }
 +(NSArray*) filterPorts:(NSArray*)ports havTypes:(NSArray*)havTypes noTypes:(NSArray*)noTypes{

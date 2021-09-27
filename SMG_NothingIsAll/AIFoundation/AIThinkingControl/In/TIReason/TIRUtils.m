@@ -104,6 +104,8 @@
 /**
  *  MARK:--------------------概念局部匹配--------------------
  *  @param except_ps : 排除_ps; (如:同一批次输入的概念组,不可用来识别自己)
+ *  @version
+ *      2021.09.27: 仅识别ATDefault类型 (参考24022-BUG4);
  */
 +(void) partMatching_Alg:(AIAlgNodeBase*)algNode isMem:(BOOL)isMem except_ps:(NSArray*)except_ps complete:(void(^)(NSArray *matchAlgs,NSArray *partAlg_ps))complete{
     //1. 数据准备;
@@ -114,7 +116,7 @@
     [self partMatching_General:algNode refPortsBlock:^NSArray *(AIKVPointer *item_p) {
         if (item_p) {
             //1> 数据准备 (value_p的refPorts是单独存储的);
-            return [AINetUtils refPorts_All4Value:item_p isMem:isMem];
+            return [SMGUtils filterPorts_Normal:[AINetUtils refPorts_All4Value:item_p isMem:isMem]];
         }
         return nil;
     } checkBlock:^BOOL(AIPointer *target_p) {

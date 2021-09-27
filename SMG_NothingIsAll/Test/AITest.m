@@ -92,12 +92,6 @@
     for (AIKVPointer *item_p in content_ps) {
         if (item_p.type != ATDefault && item_p.type != type) {
             NSLog(@"自检8. 测构建Fo时,有不匹配type的元素原因(参考24022BUG4)");
-            //TODOTOMORROW20210927: 继续查matchAFo中,可能识别时就有SP类型的Alg?
-            //复现: FZ26-1,先直击,左下,直击,左,直击,左下....
-            
-            
-            
-            
         }
     }
 }
