@@ -277,10 +277,10 @@
 #define Log4OutAnaGL(type) (!Log4OutAna && ((type == ATGreater || type == ATLess) && false))
 #define Log4OutAnaHN(type) (!Log4OutAna && ((type == ATHav || type == ATNone) && false))
 #define Log4OutAnaSP(type) (!Log4OutAna && ((type == ATSub || type == ATPlus) && true))
-//#define Log4OutAnaDiff(type) (!Log4OutAna && (type == ATDiff && true))
+#define Log4OutAnaDiff(type) (!Log4OutAna && (type == ATDiff && false))
 //#define Log4OutAnaSame(type) (!Log4OutAna && (type == ATSame && false))
 #define Log4OutAnaDefault(type) (!Log4OutAna && (type == ATDefault && false))
-#define Log4OutAnaType(type) Log4OutAna || Log4OutAnaGL(type) || Log4OutAnaHN(type) || Log4OutAnaSP(type) || Log4OutAnaDefault(type)//有一项符合时,则打印
+#define Log4OutAnaType(type) Log4OutAna || Log4OutAnaGL(type) || Log4OutAnaHN(type) || Log4OutAnaSP(type) || Log4OutAnaDiff(type) || Log4OutAnaDefault(type)//有一项符合时,则打印
 
 //正向类比
 #define Log4SameAna true

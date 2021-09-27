@@ -70,7 +70,7 @@ typedef NS_ENUM(NSInteger,  AnalogyType) {
     ATPlus      = INT_MAX - 147,//2147483500    反省_可行
     ATSub       = INT_MIN + 148,//-2147483500   反省_不可行
     ATSame      = INT_MAX - 247,//2147483400    正向外类比 (仅用于表示是否指向实mv,不做为节点类型使用)
-    ATDiff      = INT_MIN + 247,//-2147483400   反向外类比 (仅用于表示是否指向虚mv,不做为节点类型使用)
+    ATDiff      = INT_MIN + 247,//-2147483400   反向外类比 (即用于表示是否指向虚mv,也做为节点类型使用)
 };
 
 /**

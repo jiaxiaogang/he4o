@@ -134,8 +134,10 @@
         if (Log4DirecRef) NSLog(@"\n------- baseFo:%@ -------\n已有方案数:%ld 不应期数:%ld 共有方案数:%ld",Fo2FStr(baseFo),demand.actionFoModels.count,except_ps.count,dsPorts.count);
         
         //7. 打出每条解决方案: 查23172此处dsFo经验只有一条的问题 | 查23204取得dsFo的S嵌套太少的问题;
-        for (AIPort *dsPort in dsPorts) if (Log4DirecRef) NSLog(@"强度:%ld 不应期:%d FRS评价:%d | %@",dsPort.strong.value,[except_ps containsObject:dsPort.target_p],[AIScore FRS:[SMGUtils searchNode:dsPort.target_p]],Pit2FStr(dsPort.target_p));
-        
+        for (AIPort *dsPort in dsPorts) if (Log4DirecRef) {
+            AIFoNodeBase *dsFo = [SMGUtils searchNode:dsPort.target_p];
+            NSLog(@"强度:%ld 不应期:%d FRS评价:%d | %@->%@ (%@)",dsPort.strong.value,[except_ps containsObject:dsPort.target_p],[AIScore FRS:[SMGUtils searchNode:dsPort.target_p]],Pit2FStr(dsPort.target_p),Mvp2Str(dsFo.cmvNode_p),ATType2Str(dsPort.target_p.type));
+        }
         //8. 从matchFo找dsPorts解决方案;
         for (AIPort *dsPort in dsPorts) {
             //a. 不应期无效,继续找下个;

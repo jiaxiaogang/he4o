@@ -563,6 +563,7 @@
  *      2021.03.25: 嵌套关联 & 外类比assFo改为使用嵌套关联来联想;
  *      2021.08.08: 对指定虚mv的protoFo,也赋值mvDeltaTime,否则作为R解决方案时,dsFo没mvDeltaTime会导致反省触发为0秒 (参考23212);
  *      2021.09.28: ATDiff改为传ATDefault (参考24022-BUG5);
+ *      2021.09.28: ATDiff改回传ATDiff (参考24022-BUG6);
  *  @todo
  *      2021.04.08: 考虑支持从抽象protoFo.absPorts.dsPorts中找assFo;
  */
@@ -621,7 +622,7 @@
         //7. 进行外类比
         AIFoNodeBase *assFo = [SMGUtils searchNode:subPort.target_p];
         if (Log4DiffAna) NSLog(@"\nassFo:%@->%@",Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
-        AINetAbsFoNode *absFo = [self analogyOutside:protoFo assFo:assFo type:ATDefault createAbsAlgBlock:nil];
+        AINetAbsFoNode *absFo = [self analogyOutside:protoFo assFo:assFo type:ATDiff createAbsAlgBlock:nil];
         if (!absFo) continue;
         
         //8. 将外类比抽象时做嵌套关联 & 指定强度;
