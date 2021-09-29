@@ -259,8 +259,8 @@
     [self.woodView reset:false];
     
     //2. 扔前木棒视觉帧
-    [self.birdView see:self.woodView];
     DemoLog(@"木棒扔前视觉");
+    [self.birdView see:self.woodView];
     
     //3. 预计撞到的时间 (撞需距离 / 总扔距离 * 总扔时间);
     CGFloat hitTime = ((self.birdView.showMinX - self.woodView.showMaxX) / ScreenWidth) * 2.0f;
