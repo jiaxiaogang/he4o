@@ -619,6 +619,31 @@
         if (Log4PM) NSLog(@"> 当前修正:%@ 最近P:%@ 评价:%@",Pit2FStr(firstJustPValue),Alg2FStr(mostSimilarAlg),score?@"通过":@"未通过");
         if (Log4PM) NSLog(@"--> S数:%lu P数:%lu",(unsigned long)sPorts.count,(unsigned long)pPorts.count);
         if (Log4PM) NSLog(@"--> SP From=>curAlg:%@ curFo:%@",Alg2FStr(curAlg),Fo2FStr(curFo));
+        
+        
+        //TODOTOMORROW20211009: 调试rMatchFo下,是否有充分的SP,供R模式时dsFo调用PM使用 (参考24053);
+        //复现: 截入FZ27,直击;
+        ReasonDemandModel *curRDemand = curFoModel.baseOrGroup;
+        if (ISOK(curRDemand, ReasonDemandModel.class)) {
+            AIFoNodeBase *rMatchFo = curRDemand.mModel.matchFo;
+            [theNV invokeForceMode:^{
+                [theNV setNodeData:rMatchFo.pointer lightStr:@"rMatchFo"];
+            }];
+            
+            NSArray *sPorts = ARRTOOK([AINetUtils absPorts_All:rMatchFo type:ATSub]);
+            NSArray *pPorts = ARRTOOK([AINetUtils absPorts_All:rMatchFo type:ATPlus]);
+            NSLog(@"rMatchFo:%@ (S数:%ld P数:%ld)",Fo2FStr(rMatchFo),sPorts.count,pPorts.count);
+            //1. 经查结果为:S30多条,P10多条;
+            //2. 明天查pm_GetValidSPAlg_ps()方法中,取sPorts和pPorts的方式,并使之兼容rMatchFo;
+            
+            
+        }
+        
+        
+        
+        
+        
+        
         if (!score) {
             //10. 优先从MC的C中找同区码,作为修正GL的目标;
             AIKVPointer *glValue4M = [SMGUtils filterSameIdentifier_p:firstJustPValue b_ps:curAlg.content_ps];
