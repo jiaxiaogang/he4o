@@ -128,8 +128,14 @@
         }
         
         //b. 并将影响值累计到result中;
+        
+        
+        //TODOTOMORROW20211010: 24053回测得,-> 码:posX(逆) 新增: 0.98 x 83361792 = 81361108.99 累计:81361108.992000 依据:F726[A623(高100,Y207,皮0)],
+        //即有时,posX后面的依据上,没有posX特征值,,,,,,
+        
+        
         result += itemStrong;
-        if (Log4VRS_Desc) NSLog(@"-> %@ 新增: %@ x %ld = %@ 累计:%f 依据:%@",item.target_p.typeStr,STRFORMAT(@"%.2f",rate),(long)item.strong.value,STRFORMAT(@"%.2f",itemStrong),result,Pit2FStr(item.target_p));
+        if (Log4VRS_Desc) NSLog(@"-> 码:%@(%@) 新增: %@ x %ld = %@ 累计:%f 依据:%@",value_p.dataSource,item.target_p.typeStr,STRFORMAT(@"%.2f",rate),(long)item.strong.value,STRFORMAT(@"%.2f",itemStrong),result,Pit2FStr(item.target_p));
     }
     return result;
 }
