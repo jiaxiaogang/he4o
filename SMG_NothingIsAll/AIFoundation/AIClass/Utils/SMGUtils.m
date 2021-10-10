@@ -852,6 +852,24 @@
         return ARRISOK([SMGUtils filterPointers:alg.content_ps identifier:valueIdentifier]);
     }];
 }
++(NSArray*) filterFoPorts:(NSArray*)foPorts valueIdentifier:(NSString*)valueIdentifier{
+    return [SMGUtils filterArr:foPorts checkValid:^BOOL(AIPort *item) {
+        //1. fo无效时,返回false;
+        AIFoNodeBase *fo = [SMGUtils searchNode:item.target_p];
+        if (!fo) return false;
+        
+        //2. 分别检查alg元素是否包含同区码 (有一条包含返回true);
+        for (AIKVPointer *alg_p in fo.content_ps) {
+            AIAlgNodeBase *alg = [SMGUtils searchNode:alg_p];
+            if (ARRISOK([SMGUtils filterPointers:alg.content_ps identifier:valueIdentifier])) {
+                return true;
+            }
+        }
+        
+        //3. 都不包含返回false
+        return false;
+    }];
+}
 
 @end
 

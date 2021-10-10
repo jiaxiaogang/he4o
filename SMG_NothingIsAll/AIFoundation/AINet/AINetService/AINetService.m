@@ -123,6 +123,26 @@
     }
     return 0;
 }
++(double) getValueDataFromFo:(AIKVPointer*)fo_p valueIdentifier:(NSString*)valueIdentifier{
+    //1. 数据准备;
+    AIFoNodeBase *fo = [SMGUtils searchNode:fo_p];
+    if (!fo) return 0;
+    
+    //2. 分别对alg元素进行找value同区码;
+    for (AIKVPointer *alg_p in fo.content_ps) {
+        AIAlgNodeBase *alg = [SMGUtils searchNode:alg_p];
+        if (!alg) continue;
+        
+        //3. 找到一个同区码时即返回;
+        AIKVPointer *value_p = ARR_INDEX([SMGUtils filterPointers:alg.content_ps identifier:valueIdentifier], 0);
+        if (value_p) {
+            return [NUMTOOK([AINetIndex getData:value_p]) doubleValue];
+        }
+    }
+    
+    //4. 全找不到时,返回0;
+    return 0;
+}
 
 /**
  *  MARK:--------------------获取glConAlg_ps--------------------

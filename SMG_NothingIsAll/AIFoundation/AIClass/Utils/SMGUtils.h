@@ -281,6 +281,7 @@
  *  MARK:--------------------筛选端口 by 指定标识--------------------
  */
 +(NSArray*) filterAlgPorts:(NSArray*)algPorts valueIdentifier:(NSString*)valueIdentifier;
++(NSArray*) filterFoPorts:(NSArray*)foPorts valueIdentifier:(NSString*)valueIdentifier;
 
 @end
 

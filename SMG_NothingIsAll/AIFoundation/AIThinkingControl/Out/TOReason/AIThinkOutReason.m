@@ -602,6 +602,9 @@
         TOFoModel *curFoModel = (TOFoModel*)outModel.baseOrGroup.baseOrGroup;
         AIFoNodeBase *curFo = [SMGUtils searchNode:curFoModel.content_p];
         
+        //6. 取当前的demand任务;
+        DemandModel *baseDemand = (DemandModel*)curFoModel.baseOrGroup;
+        
         //7. 根据curAlg和curFo取有效的部分validAlgSPs (参考20206-步骤图-第1步);
         NSArray *sPorts = [ThinkingUtils pm_GetValidSPAlg_ps:@[curAlg] curFo:curFo type:ATSub];
         
@@ -609,7 +612,7 @@
         NSArray *pPorts = [ThinkingUtils pm_GetValidSPAlg_ps:@[curAlg] curFo:curFo type:ATPlus];
         
         //8. 2021.01.01: 个性评价依据,以值域求和方式来实现 (参考2120A & n21p21);
-        BOOL score = [AIScore VRS:firstJustPValue cAlg:curAlg sPorts:sPorts pPorts:pPorts];
+        BOOL score = [AIScore VRS:firstJustPValue cAlg:curAlg sPorts:sPorts pPorts:pPorts baseDemand:baseDemand];
         
         //8. 从validAlgSs和validAlgPs中,以firstJustPValue同区稀疏码相近排序 (参考20206-步骤图-第2步);
         NSArray *sortPAlgs = [ThinkingUtils getFuzzySortWithMaskValue:firstJustPValue fromProto_ps:Ports2Pits(pPorts)];
@@ -621,35 +624,18 @@
         if (Log4PM) NSLog(@"--> SP From=>curAlg:%@ curFo:%@",Alg2FStr(curAlg),Fo2FStr(curFo));
         
         
-        //TODOTOMORROW20211009: 调试rMatchFo下,是否有充分的SP,供R模式时dsFo调用PM使用 (参考24053);
+        //TODOTOMORROW20211009: 支持从rMatchFo取最近的P (参考24053-实践5);
         //复现: 截入FZ27,直击;
-        ReasonDemandModel *curRDemand = curFoModel.baseOrGroup;
-        if (ISOK(curRDemand, ReasonDemandModel.class)) {
-            AIFoNodeBase *rMatchFo = curRDemand.mModel.matchFo;
+        if (ISOK(baseDemand, ReasonDemandModel.class)) {
+            AIFoNodeBase *rMatchFo = ((ReasonDemandModel*)baseDemand).mModel.matchFo;
             [theNV invokeForceMode:^{
                 [theNV setNodeData:rMatchFo.pointer lightStr:@"rMatchFo"];
             }];
             
-            NSArray *sPorts = ARRTOOK([AINetUtils absPorts_All:rMatchFo type:ATSub]);
-            NSArray *pPorts = ARRTOOK([AINetUtils absPorts_All:rMatchFo type:ATPlus]);
-            
-            
-            BOOL score = [AIScore VRS:firstJustPValue cAlg:curAlg sPorts:sPorts pPorts:pPorts];
-            NSArray *sortPAlgs = [ThinkingUtils getFuzzySortWithMaskValue:firstJustPValue fromProto_ps:Ports2Pits(pPorts)];
+            NSArray *pFoPorts = ARRTOOK([AINetUtils absPorts_All:rMatchFo type:ATPlus]);
+            NSArray *sortPAlgs = [ThinkingUtils getFuzzySortWithMaskValue:firstJustPValue fromProto_ps:Ports2Pits(pFoPorts)];
             AIAlgNodeBase *mostSimilarAlg = ARR_INDEX(sortPAlgs, 0);
-            NSLog(@"rMatchFo:%@ (S数:%ld P数:%ld)",Fo2FStr(rMatchFo),sPorts.count,pPorts.count);
-            if (Log4PM) NSLog(@"rMatchFo > 当前修正:%@ 最近P:%@ 评价:%@",Pit2FStr(firstJustPValue),Alg2FStr(mostSimilarAlg),score?@"通过":@"未通过");
-            
-            
-            //1. 经查结果为:S30多条,P10多条;
-            //2. 明天查pm_GetValidSPAlg_ps()方法中,取sPorts和pPorts的方式,并使之兼容rMatchFo; T
-            //3. 兼容了,但发现没必要,直接取用AINetUtils.spPorts()来取即可;
-            //4. 取出SP,但发现却没有任何一条同区码 (rMatchFo.SP没同区码,评分全是0);
-            //5. 查为什么在IRT中,明明是用protoFo-matchFo得出SP结果,但此处却没有一条是同区码......
-            
-            
-            
-            
+            if (Log4PM) NSLog(@"rMatchFo > 当前修正:%@ 最近P:%@",Pit2FStr(firstJustPValue),Alg2FStr(mostSimilarAlg));
         }
         
         

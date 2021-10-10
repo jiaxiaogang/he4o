@@ -30,64 +30,94 @@
  *  MARK:--------------------VRS评价--------------------
  *  @desc 值域求和V2: 束波求和简化版,采取线函数来替代找交点 (参考21212 & 21213);
  *  @param sPorts : 传入Alg.ATSub的端口组;
+ *  @param baseDemand : 传入当前所在的任务 (最近的任务,如果挂在子任务下,则传子任务);
  *  @result <-2 时评价为否 (参考22025-分析2);
  *  @todo
  *      2021.01.01: 在排序后对同值的元素抵消(s3+p5=p2) (先不实现,因为同值此时交点即会直接取到值,在评价时,似乎这样并没有什么问题);
+ *      2021.10.10: 不仅支持rDemand的评分,也要支持pDemand的评分 (参考24053-TODO);
  *  @version
  *      2021.01.02: 解决sort未被接收,导致排序不生效的BUG;
  *      2021.01.02: 支持maskIdentifier,因为原来把alg当成value来取值,导致生成sumModels和评价完全错误 (参考21216);
  *      2021.01.10: v2迭代,由偶发性导致的评价BUG引出迭代 (参考n22p2);
  *      2021.01.10: v2迭代,之直线范围累计法 (参考22025-方案5);
  *      2021.01.14: 改为根据是否有同区码决定默认评价结果,起因:稀有值无法评价的问题 (参考22034-代码);
+ *      2021.10.10: 支持对baseDemand下的matchFo做评分 (参考24053-实践2);
  */
-+(BOOL) VRS:(AIKVPointer*)value_p cAlg:(AIAlgNodeBase*)cAlg sPorts:(NSArray*)sPorts pPorts:(NSArray*)pPorts {
++(BOOL) VRS:(AIKVPointer*)value_p cAlg:(AIAlgNodeBase*)cAlg sPorts:(NSArray*)sPorts pPorts:(NSArray*)pPorts baseDemand:(DemandModel*)baseDemand{
     //1. value_p与cAlg是否有同区码判定;
-    BOOL findSameIden = ARRISOK([SMGUtils filterPointers:cAlg.content_ps identifier:value_p.identifier]);
+    NSString *valueIden = value_p.identifier;
+    BOOL findSameIden = ARRISOK([SMGUtils filterPointers:cAlg.content_ps identifier:valueIden]);
     
     //2. 有同区码时默认为false,无时默认为true (参考22034);
     BOOL result = !findSameIden;
     
-    //3. 对sp评分
+    //3. 对s评分
     if (Log4VRS_Main) NSLog(@"============== VRS ==============%@\nfrom:%@ 有同区码:%@",Pit2FStr(value_p),Alg2FStr(cAlg),findSameIden?@"是":@"否");
-    double sScore = [self score4Value:value_p spPorts:sPorts];
-    double pScore = [self score4Value:value_p spPorts:pPorts];
+    sPorts = ARRTOOK([SMGUtils filterAlgPorts:sPorts valueIdentifier:valueIden]);
+    double sScore_ORT = [self score4Value:value_p spPorts:sPorts singleScoreBlock:^double(AIPort *port) {
+        return [AINetService getValueDataFromAlg:port.target_p valueIdentifier:value_p.identifier];
+    }];
+    
+    //4. 对p评分
+    pPorts = ARRTOOK([SMGUtils filterAlgPorts:pPorts valueIdentifier:valueIden]);
+    double pScore_ORT = [self score4Value:value_p spPorts:pPorts singleScoreBlock:^double(AIPort *port) {
+        return [AINetService getValueDataFromAlg:port.target_p valueIdentifier:value_p.identifier];
+    }];
+    
+    //5. 对当前所在的rDemand下的SP评分 (目前仅支持rDemand,参考24053-方案&实践2&TODO);
+    double sScore_IRT = 0,pScore_IRT = 0;
+    if (ISOK(baseDemand, ReasonDemandModel.class)) {
+        
+        //a. 预测了当前R任务的matchFo (参考24053-简写);
+        AIFoNodeBase *rMatchFo = ((ReasonDemandModel*)baseDemand).mModel.matchFo;
+        
+        //b. 对rMatchFo进行s评分;
+        NSArray *sFoPorts = ARRTOOK([AINetUtils absPorts_All:rMatchFo type:ATSub]);
+        sScore_IRT = [self score4Value:value_p spPorts:sFoPorts singleScoreBlock:^double(AIPort *port) {
+            return [AINetService getValueDataFromFo:port.target_p valueIdentifier:valueIden];
+        }];
+        
+        //c. 对rMatchFo进行p评分;
+        NSArray *pFoPorts = ARRTOOK([AINetUtils absPorts_All:rMatchFo type:ATPlus]);
+        pScore_IRT = [self score4Value:value_p spPorts:pFoPorts singleScoreBlock:^double(AIPort *port) {
+            return [AINetService getValueDataFromFo:port.target_p valueIdentifier:valueIden];
+        }];
+        NSLog(@"rMatchFo:%@ (S数:%ld P数:%ld)",Fo2FStr(rMatchFo),sFoPorts.count,pFoPorts.count);
+    }
     
     //4. 评价 (容错区间为2) (参考22034 & 22025-分析2);
-    if (sScore - pScore >= 2) {
+    if (sScore_ORT - pScore_ORT >= 2) {
         result = false;
-    }else if (pScore - sScore >= 2) {
+    }else if (pScore_ORT - sScore_ORT >= 2) {
         result = true;
     }
-    if (Log4VRS_Main) NSLog(@"----> S评分:%@ P评分:%@ 评价结果:%@",STRFORMAT(@"%.2f",sScore),STRFORMAT(@"%.2f",pScore),result?@"通过":@"未通过");
+    if (Log4VRS_Main) NSLog(@"----> S_ORT评分:%@ P_ORT评分:%@ S_IRT评分:%@ P_IRT评分:%@ 评价结果:%@",STRFORMAT(@"%.2f",sScore_ORT),STRFORMAT(@"%.2f",pScore_ORT),STRFORMAT(@"%.2f",sScore_IRT),STRFORMAT(@"%.2f",pScore_IRT),result?@"通过":@"未通过");
     return result;
 }
 //VRS评分
-+(double) score4Value:(AIKVPointer*)value_p spPorts:(NSArray*)spPorts {
++(double) score4Value:(AIKVPointer*)value_p spPorts:(NSArray*)spPorts singleScoreBlock:(double(^)(AIPort *port))singleScoreBlock{
     //1. 数据准备;
     double result = 0;
-    spPorts = ARRTOOK([SMGUtils filterAlgPorts:spPorts valueIdentifier:value_p.identifier]);
-    if (!value_p || !ARRISOK(spPorts))
-        return result;
+    if (!value_p || !ARRISOK(spPorts) || !singleScoreBlock) return result;
     double value = [NUMTOOK([AINetIndex getData:value_p]) doubleValue];
-    NSString *valueIden = value_p.identifier;
     
     //2. 从小到大排序;
     NSArray *sortPorts = [spPorts sortedArrayUsingComparator:^NSComparisonResult(AIPort *p1, AIPort *p2) {
-        double v1 = [AINetService getValueDataFromAlg:p1.target_p valueIdentifier:valueIden];
-        double v2 = [AINetService getValueDataFromAlg:p2.target_p valueIdentifier:valueIden];
+        double v1 = singleScoreBlock(p1);
+        double v2 = singleScoreBlock(p2);
         return [SMGUtils compareFloatA:v2 floatB:v1];
     }];
     
     //3. 找出max-min (影响范围为1/3,一边一半);
     AIPort *minPort = ARR_INDEX(sortPorts, 0);
     AIPort *maxPort = ARR_INDEX_REVERSE(sortPorts, 0);
-    double minValue = [AINetService getValueDataFromAlg:minPort.target_p valueIdentifier:valueIden];
-    double maxValue = [AINetService getValueDataFromAlg:maxPort.target_p valueIdentifier:valueIden];
+    double minValue = singleScoreBlock(minPort);
+    double maxValue = singleScoreBlock(maxPort);
     double scope = (maxValue - minValue) / 3.0f / 2.0f;
     
     //4. 累计 (参考22025评分图);
     for (AIPort *item in sortPorts) {
-        double itemValue = [AINetService getValueDataFromAlg:item.target_p valueIdentifier:valueIden];
+        double itemValue = singleScoreBlock(item);
         double distance = fabs(itemValue - value);
         
         //a. 当距离<受影响范围时,按照比例受到影响;

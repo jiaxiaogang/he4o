@@ -458,7 +458,7 @@
  *      2020.12.27: 把cPM_CheckSPFoLimit从3调整为100 (参考21207);
  *      2021.01.01: 返回由AIPinters改为AIPorts;
  *      2021.04.30: 修复返回结果有重复的BUG (参考23062);
- *      2021.10.10: 支持rMatchFo获取spPorts (参考24053-方案) (废弃);
+ *      2021.10.10: 支持rMatchFo获取spPorts (参考24053-方案) (废弃,参考24053-实践1);
  */
 +(NSArray*) pm_GetValidSPAlg_ps:(NSArray*)curAlgs curFo:(AIFoNodeBase*)curFo type:(AnalogyType)type{
     NSMutableArray *result = [[NSMutableArray alloc] init];

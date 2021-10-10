@@ -31,6 +31,7 @@
  *  MARK:--------------------从Alg中获取指定标识稀疏码的值--------------------
  */
 +(double) getValueDataFromAlg:(AIKVPointer*)alg_p valueIdentifier:(NSString*)valueIdentifier;
++(double) getValueDataFromFo:(AIKVPointer*)fo_p valueIdentifier:(NSString*)valueIdentifier;
 
 /**
  *  MARK:--------------------获取glConAlg_ps--------------------
