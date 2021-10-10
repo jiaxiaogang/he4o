@@ -603,10 +603,10 @@
         AIFoNodeBase *curFo = [SMGUtils searchNode:curFoModel.content_p];
         
         //7. 根据curAlg和curFo取有效的部分validAlgSPs (参考20206-步骤图-第1步);
-        NSArray *sPorts = [ThinkingUtils pm_GetValidSPAlg_ps:curAlg curFo:curFo type:ATSub];
+        NSArray *sPorts = [ThinkingUtils pm_GetValidSPAlg_ps:@[curAlg] curFo:curFo type:ATSub];
         
         //8. 根据curAlg和curFo取有效部分的pPorts,并筛选有效分区部分;
-        NSArray *pPorts = [ThinkingUtils pm_GetValidSPAlg_ps:curAlg curFo:curFo type:ATPlus];
+        NSArray *pPorts = [ThinkingUtils pm_GetValidSPAlg_ps:@[curAlg] curFo:curFo type:ATPlus];
         
         //8. 2021.01.01: 个性评价依据,以值域求和方式来实现 (参考2120A & n21p21);
         BOOL score = [AIScore VRS:firstJustPValue cAlg:curAlg sPorts:sPorts pPorts:pPorts];
@@ -632,9 +632,22 @@
             
             NSArray *sPorts = ARRTOOK([AINetUtils absPorts_All:rMatchFo type:ATSub]);
             NSArray *pPorts = ARRTOOK([AINetUtils absPorts_All:rMatchFo type:ATPlus]);
+            
+            
+            BOOL score = [AIScore VRS:firstJustPValue cAlg:curAlg sPorts:sPorts pPorts:pPorts];
+            NSArray *sortPAlgs = [ThinkingUtils getFuzzySortWithMaskValue:firstJustPValue fromProto_ps:Ports2Pits(pPorts)];
+            AIAlgNodeBase *mostSimilarAlg = ARR_INDEX(sortPAlgs, 0);
             NSLog(@"rMatchFo:%@ (S数:%ld P数:%ld)",Fo2FStr(rMatchFo),sPorts.count,pPorts.count);
+            if (Log4PM) NSLog(@"rMatchFo > 当前修正:%@ 最近P:%@ 评价:%@",Pit2FStr(firstJustPValue),Alg2FStr(mostSimilarAlg),score?@"通过":@"未通过");
+            
+            
             //1. 经查结果为:S30多条,P10多条;
-            //2. 明天查pm_GetValidSPAlg_ps()方法中,取sPorts和pPorts的方式,并使之兼容rMatchFo;
+            //2. 明天查pm_GetValidSPAlg_ps()方法中,取sPorts和pPorts的方式,并使之兼容rMatchFo; T
+            //3. 兼容了,但发现没必要,直接取用AINetUtils.spPorts()来取即可;
+            //4. 取出SP,但发现却没有任何一条同区码 (rMatchFo.SP没同区码,评分全是0);
+            //5. 查为什么在IRT中,明明是用protoFo-matchFo得出SP结果,但此处却没有一条是同区码......
+            
+            
             
             
         }

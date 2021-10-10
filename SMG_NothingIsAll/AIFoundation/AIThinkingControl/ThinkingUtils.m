@@ -450,6 +450,7 @@
 
 /**
  *  MARK:--------------------PM算法获取有效SP概念--------------------
+ *  @param curAlgs : 传入解决方案dsFo的当前截点alg 或 传入R任务的源rMatchFo的所有用于验证有效的contentAlgs (参考24053-方案);
  *  @desc
  *      1. 向性: 从右向左;
  *      2. 参考20206-步骤图-第1步
@@ -457,17 +458,21 @@
  *      2020.12.27: 把cPM_CheckSPFoLimit从3调整为100 (参考21207);
  *      2021.01.01: 返回由AIPinters改为AIPorts;
  *      2021.04.30: 修复返回结果有重复的BUG (参考23062);
+ *      2021.10.10: 支持rMatchFo获取spPorts (参考24053-方案) (废弃);
  */
-+(NSArray*) pm_GetValidSPAlg_ps:(AIAlgNodeBase*)curAlg curFo:(AIFoNodeBase*)curFo type:(AnalogyType)type{
++(NSArray*) pm_GetValidSPAlg_ps:(NSArray*)curAlgs curFo:(AIFoNodeBase*)curFo type:(AnalogyType)type{
     NSMutableArray *result = [[NSMutableArray alloc] init];
-    if (curAlg && curFo && (type == ATSub || type == ATPlus)) {
+    if (ARRISOK(curAlgs) && curFo && (type == ATSub || type == ATPlus)) {
         //1. 根据curFo取抽象SubFo3条,PlusFo3条;
         NSArray *spFo_ps = Ports2Pits([AINetUtils absPorts_All:curFo type:type]);
         spFo_ps = ARR_SUB(spFo_ps, 0, cPM_CheckSPFoLimit);
         NSArray *spFos = [SMGUtils searchNodes:spFo_ps];
         
         //2. 查对应在curAlg上是否长过教训S / 被助攻过P;
-        NSArray *spAlgPorts = [AINetUtils absPorts_All:curAlg type:type];
+        NSMutableArray *spAlgPorts = [[NSMutableArray alloc] init];
+        for (AIAlgNodeBase *curAlg in curAlgs) {
+            spAlgPorts = [SMGUtils collectArrA_NoRepeat:spAlgPorts arrB:[AINetUtils absPorts_All:curAlg type:type]];
+        }
         
         //3. 从algSPs中,筛选有效的部分validAlgSPs
         result = [SMGUtils filterArr:spAlgPorts checkValid:^BOOL(AIPort *item) {

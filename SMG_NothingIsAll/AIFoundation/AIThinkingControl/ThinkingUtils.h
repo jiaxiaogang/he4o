@@ -158,7 +158,7 @@
 /**
  *  MARK:--------------------PM算法获取有效SP概念--------------------
  */
-+(NSArray*) pm_GetValidSPAlg_ps:(AIAlgNodeBase*)curAlg curFo:(AIFoNodeBase*)curFo type:(AnalogyType)type;
++(NSArray*) pm_GetValidSPAlg_ps:(NSArray*)curAlgs curFo:(AIFoNodeBase*)curFo type:(AnalogyType)type;
 
 /**
  *  MARK:--------------------获取reModel--------------------
