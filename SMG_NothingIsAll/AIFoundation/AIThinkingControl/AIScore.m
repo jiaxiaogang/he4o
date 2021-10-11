@@ -54,12 +54,14 @@
     
     //3. 对s评分
     if (Log4VRS_Main) NSLog(@"============== VRS ==============%@\nfrom:%@ 有同区码:%@",Pit2FStr(value_p),Alg2FStr(cAlg),findSameIden?@"是":@"否");
+    if (Log4VRS_Desc) NSLog(@"------ S_IRT 评分 ------");
     sPorts = ARRTOOK([SMGUtils filterAlgPorts:sPorts valueIdentifier:valueIden]);
     double sScore_ORT = [self score4Value:value_p spPorts:sPorts singleScoreBlock:^double(AIPort *port) {
         return [AINetService getValueDataFromAlg:port.target_p valueIdentifier:value_p.identifier];
     }];
     
     //4. 对p评分
+    if (Log4VRS_Desc) NSLog(@"------ P_ORT 评分 ------");
     pPorts = ARRTOOK([SMGUtils filterAlgPorts:pPorts valueIdentifier:valueIden]);
     double pScore_ORT = [self score4Value:value_p spPorts:pPorts singleScoreBlock:^double(AIPort *port) {
         return [AINetService getValueDataFromAlg:port.target_p valueIdentifier:value_p.identifier];
@@ -73,6 +75,7 @@
         AIFoNodeBase *rMatchFo = ((ReasonDemandModel*)baseDemand).mModel.matchFo;
         
         //b. 对rMatchFo进行s评分;
+        if (Log4VRS_Desc) NSLog(@"------ S_IRT 评分 ------");
         NSArray *sFoPorts = ARRTOOK([AINetUtils absPorts_All:rMatchFo type:ATSub]);
         sFoPorts = [SMGUtils filterFoPorts:sFoPorts valueIdentifier:valueIden];
         sScore_IRT = [self score4Value:value_p spPorts:sFoPorts singleScoreBlock:^double(AIPort *port) {
@@ -80,6 +83,7 @@
         }];
         
         //c. 对rMatchFo进行p评分;
+        if (Log4VRS_Desc) NSLog(@"------ P_IRT 评分 ------");
         NSArray *pFoPorts = ARRTOOK([AINetUtils absPorts_All:rMatchFo type:ATPlus]);
         pFoPorts = [SMGUtils filterFoPorts:pFoPorts valueIdentifier:valueIden];
         pScore_IRT = [self score4Value:value_p spPorts:pFoPorts singleScoreBlock:^double(AIPort *port) {
@@ -89,13 +93,13 @@
     }
     
     //4. 评价 (容错区间为2) (参考22034 & 22025-分析2);
-    double score = sScore_ORT + sScore_IRT - pScore_ORT - pScore_IRT;
-    if (score >= 2) {
+    double score = pScore_ORT + pScore_IRT - sScore_ORT - sScore_IRT;
+    if (score <= -2) {
         result = false;
     }else if (score >= 2) {
         result = true;
     }
-    if (Log4VRS_Main) NSLog(@"%@ 评分结果: S_ORT(%@) + P_ORT(%@) + S_IRT(%@) + P_IRT(%@) = %@(%@)",Pit2FStr(value_p),STRFORMAT(@"%.2f",sScore_ORT),STRFORMAT(@"%.2f",pScore_ORT),STRFORMAT(@"%.2f",sScore_IRT),STRFORMAT(@"%.2f",pScore_IRT),result?@"通过":@"未通过",STRFORMAT(@"%.2f",score));
+    if (Log4VRS_Main) NSLog(@"%@ ==> 评价结果: P_ORT(%@) + P_IRT(%@) - S_ORT(%@) - S_IRT(%@) = %@(%@)",Pit2FStr(value_p),STRFORMAT(@"%.2f",pScore_ORT),STRFORMAT(@"%.2f",pScore_IRT),STRFORMAT(@"%.2f",sScore_ORT),STRFORMAT(@"%.2f",sScore_IRT),result?@"通过":@"未通过",STRFORMAT(@"%.2f",score));
     return result;
 }
 
