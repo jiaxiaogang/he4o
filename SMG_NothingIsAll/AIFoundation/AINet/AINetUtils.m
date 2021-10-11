@@ -99,7 +99,7 @@
         NSInteger urgentTo = [NUMTOOK([AINetIndex getData:mv.urgentTo_p]) integerValue];
         return urgentTo == 0;
     }
-    return true;
+    return false;
 }
 
 /**

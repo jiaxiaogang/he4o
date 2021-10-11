@@ -426,6 +426,7 @@
  *      2021.02.01: 支持反向反馈外类比 (参考22107);
  *      2021.02.04: 虚mv不会触发In反省,否则几乎永远为逆 (因为本来虚mv就不会有输入的);
  *      2021.02.04: 虚mv也要支持In反省,否则无法形成对R-模式助益 (参考22108);
+ *      2021.10.12: SP的定义由顺逆改为好坏,所以此处相应触发SP的反省改正 (参考24054-实践);
  *  @todo
  *      2021.03.22: 迭代提高预测的准确性(1.以更具象为准(猴子怕虎,悟空不怕) 2.以更全面为准(猴子有麻醉枪不怕虎)) (参考22182);
  *  @status
@@ -468,10 +469,15 @@
                         //a. 虚mv反馈反向:S,未反馈:P;
                         type = (item.status == TIModelStatus_OutBackDiffDelta) ? ATSub : ATPlus;
                     }else{
-                        //b. 实mv反馈正向:P,未反馈:S;
-                        type = (item.status == TIModelStatus_OutBackSameDelta) ? ATPlus : ATSub;
+                        CGFloat score = [AIScore score4MV:matchFo.cmvNode_p ratio:1.0f];
+                        if (score > 0) {
+                            //b. 实mv+反馈同向:P(好),未反馈:S(坏);
+                            type = (item.status == TIModelStatus_OutBackSameDelta) ? ATPlus : ATSub;
+                        }else if(score < 0){
+                            //b. 实mv-反馈同向:S(坏),未反馈:P(好);
+                            type = (item.status == TIModelStatus_OutBackSameDelta) ? ATSub : ATPlus;
+                        }
                     }
-                    
                     NSLog(@"---//触发器Mv_触发: %@ (%@ | %@)",Fo2FStr(matchFo),TIStatus2Str(item.status),ATType2Str(type));
                     
                     //4. 输入期反省类比 (有OutBack,SP类型时执行);
