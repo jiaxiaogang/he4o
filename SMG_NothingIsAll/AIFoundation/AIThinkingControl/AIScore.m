@@ -42,6 +42,7 @@
  *      2021.01.10: v2迭代,之直线范围累计法 (参考22025-方案5);
  *      2021.01.14: 改为根据是否有同区码决定默认评价结果,起因:稀有值无法评价的问题 (参考22034-代码);
  *      2021.10.10: 支持对baseDemand下的matchFo做评分 (参考24053-实践2);
+ *      2021.10.10: 支持将baseDemand.matchFo的评分作用于评价结果 (参考24053-实践4);
  */
 +(BOOL) VRS:(AIKVPointer*)value_p cAlg:(AIAlgNodeBase*)cAlg sPorts:(NSArray*)sPorts pPorts:(NSArray*)pPorts baseDemand:(DemandModel*)baseDemand{
     //1. value_p与cAlg是否有同区码判定;
@@ -88,14 +89,16 @@
     }
     
     //4. 评价 (容错区间为2) (参考22034 & 22025-分析2);
-    if (sScore_ORT - pScore_ORT >= 2) {
+    double score = sScore_ORT + sScore_IRT - pScore_ORT - pScore_IRT;
+    if (score >= 2) {
         result = false;
-    }else if (pScore_ORT - sScore_ORT >= 2) {
+    }else if (score >= 2) {
         result = true;
     }
-    if (Log4VRS_Main) NSLog(@"----> S_ORT评分:%@ P_ORT评分:%@ S_IRT评分:%@ P_IRT评分:%@ 评价结果:%@",STRFORMAT(@"%.2f",sScore_ORT),STRFORMAT(@"%.2f",pScore_ORT),STRFORMAT(@"%.2f",sScore_IRT),STRFORMAT(@"%.2f",pScore_IRT),result?@"通过":@"未通过");
+    if (Log4VRS_Main) NSLog(@"%@ 评分结果: S_ORT(%@) + P_ORT(%@) + S_IRT(%@) + P_IRT(%@) = %@(%@)",Pit2FStr(value_p),STRFORMAT(@"%.2f",sScore_ORT),STRFORMAT(@"%.2f",pScore_ORT),STRFORMAT(@"%.2f",sScore_IRT),STRFORMAT(@"%.2f",pScore_IRT),result?@"通过":@"未通过",STRFORMAT(@"%.2f",score));
     return result;
 }
+
 //VRS评分
 +(double) score4Value:(AIKVPointer*)value_p spPorts:(NSArray*)spPorts singleScoreBlock:(double(^)(AIPort *port))singleScoreBlock{
     //1. 数据准备;
@@ -131,7 +134,7 @@
         
         //b. 并将影响值累计到result中;
         result += itemStrong;
-        if (Log4VRS_Desc) NSLog(@"-> 码:%@(%@) 新增: %@ x %ld = %@ 累计:%f 依据:%@",value_p.dataSource,item.target_p.typeStr,STRFORMAT(@"%.2f",rate),(long)item.strong.value,STRFORMAT(@"%.2f",itemStrong),result,Pit2FStr(item.target_p));
+        if (Log4VRS_Desc) NSLog(@"-> %@ 新增: %@ x %ld = %@ 累计:%f 依据:%@",item.target_p.typeStr,STRFORMAT(@"%.2f",rate),(long)item.strong.value,STRFORMAT(@"%.2f",itemStrong),result,Pit2FStr(item.target_p));
     }
     return result;
 }
