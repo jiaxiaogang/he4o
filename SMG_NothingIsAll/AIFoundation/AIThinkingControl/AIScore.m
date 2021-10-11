@@ -73,12 +73,14 @@
         
         //b. 对rMatchFo进行s评分;
         NSArray *sFoPorts = ARRTOOK([AINetUtils absPorts_All:rMatchFo type:ATSub]);
+        sFoPorts = [SMGUtils filterFoPorts:sFoPorts valueIdentifier:valueIden];
         sScore_IRT = [self score4Value:value_p spPorts:sFoPorts singleScoreBlock:^double(AIPort *port) {
             return [AINetService getValueDataFromFo:port.target_p valueIdentifier:valueIden];
         }];
         
         //c. 对rMatchFo进行p评分;
         NSArray *pFoPorts = ARRTOOK([AINetUtils absPorts_All:rMatchFo type:ATPlus]);
+        pFoPorts = [SMGUtils filterFoPorts:pFoPorts valueIdentifier:valueIden];
         pScore_IRT = [self score4Value:value_p spPorts:pFoPorts singleScoreBlock:^double(AIPort *port) {
             return [AINetService getValueDataFromFo:port.target_p valueIdentifier:valueIden];
         }];
@@ -128,12 +130,6 @@
         }
         
         //b. 并将影响值累计到result中;
-        
-        
-        //TODOTOMORROW20211010: 24053回测得,-> 码:posX(逆) 新增: 0.98 x 83361792 = 81361108.99 累计:81361108.992000 依据:F726[A623(高100,Y207,皮0)],
-        //即有时,posX后面的依据上,没有posX特征值,,,,,,
-        
-        
         result += itemStrong;
         if (Log4VRS_Desc) NSLog(@"-> 码:%@(%@) 新增: %@ x %ld = %@ 累计:%f 依据:%@",value_p.dataSource,item.target_p.typeStr,STRFORMAT(@"%.2f",rate),(long)item.strong.value,STRFORMAT(@"%.2f",itemStrong),result,Pit2FStr(item.target_p));
     }
