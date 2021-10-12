@@ -39,8 +39,8 @@
     if (atType == ATNone) return @"无";
     if (atType == ATGreater) return @"大";
     if (atType == ATLess) return @"小";
-    if (atType == ATSub) return @"好";
-    if (atType == ATPlus) return @"坏";
+    if (atType == ATSub) return @"坏";
+    if (atType == ATPlus) return @"好";
     if (atType == ATDiff) return @"虚";
     if (atType == ATSame) return @"实";
     return @"普";
