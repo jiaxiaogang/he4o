@@ -54,7 +54,7 @@
     
     //3. 对s评分
     if (Log4VRS_Main) NSLog(@"============== VRS ==============%@\nfrom:%@ 有同区码:%@",Pit2FStr(value_p),Alg2FStr(cAlg),findSameIden?@"是":@"否");
-    if (Log4VRS_Desc) NSLog(@"------ S_IRT 评分 ------");
+    if (Log4VRS_Desc) NSLog(@"------ S_ORT 评分 ------");
     sPorts = ARRTOOK([SMGUtils filterAlgPorts:sPorts valueIdentifier:valueIden]);
     double sScore_ORT = [self score4Value:value_p spPorts:sPorts singleScoreBlock:^double(AIPort *port) {
         return [AINetService getValueDataFromAlg:port.target_p valueIdentifier:value_p.identifier];
@@ -89,7 +89,7 @@
         pScore_IRT = [self score4Value:value_p spPorts:pFoPorts singleScoreBlock:^double(AIPort *port) {
             return [AINetService getValueDataFromFo:port.target_p valueIdentifier:valueIden];
         }];
-        NSLog(@"rMatchFo:%@ (S数:%ld P数:%ld)",Fo2FStr(rMatchFo),sFoPorts.count,pFoPorts.count);
+        NSLog(@"外数:(S数:%ld P数:%ld) rMatchFo:%@",sFoPorts.count,pFoPorts.count,Fo2FStr(rMatchFo));
     }
     
     //4. 评价 (容错区间为2) (参考22034 & 22025-分析2);

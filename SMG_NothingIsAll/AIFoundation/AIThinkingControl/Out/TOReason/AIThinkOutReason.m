@@ -554,6 +554,7 @@
  *      2021.01.01: v3_评价依据改为值域求和 (参考2120A & n21p21);
  *      2021.01.23: 兼容支持R-模式 (满足SAlg) (参考22061-改4);
  *      2021.01.31: R-模式迭代V3 (将S的判断去掉,因为R-模式迭代后与P-模式处理一致) (参考22105);
+ *      2021.10.12: 从pPorts取最近修正目标值时,涵盖从rMatchFo中取值 (参考24053-实践5);
  *  _result moveValueSuccess : 转移到稀疏码行为化了,转移成功则返回true,未转移则返回false;
  *  @bug
  *      2020.07.05: BUG,在用MatchConF.content找交集同区稀疏码肯定找不到,改为用MatchConA后,ok了;
@@ -614,34 +615,21 @@
         //8. 2021.01.01: 个性评价依据,以值域求和方式来实现 (参考2120A & n21p21);
         BOOL score = [AIScore VRS:firstJustPValue cAlg:curAlg sPorts:sPorts pPorts:pPorts baseDemand:baseDemand];
         
-        //8. 从validAlgSs和validAlgPs中,以firstJustPValue同区稀疏码相近排序 (参考20206-步骤图-第2步);
-        NSArray *sortPAlgs = [ThinkingUtils getFuzzySortWithMaskValue:firstJustPValue fromProto_ps:Ports2Pits(pPorts)];
+        //8. 当R模式时,从rMatchFo中取出符合的pPorts,也参与到最近P分析中;
+        NSMutableArray *allP_ps = [[NSMutableArray alloc] initWithArray:Ports2Pits(pPorts)];
+        if (ISOK(baseDemand, ReasonDemandModel.class)) {
+            NSArray *rMatchFoPPorts = ARRTOOK([AINetUtils absPorts_All:((ReasonDemandModel*)baseDemand).mModel.matchFo type:ATPlus]);
+            NSArray *rMatchAlgP_ps = [SMGUtils convertAlgPsFromFoPorts:rMatchFoPPorts valueIden:firstJustPValue.identifier];
+            [allP_ps addObjectsFromArray:rMatchAlgP_ps];
+        }
+        
+        //8. 从allP_ps中,以firstJustPValue同区稀疏码相近排序 (参考20206-步骤图-第2步);
+        NSArray *sortPAlgs = [ThinkingUtils getFuzzySortWithMaskValue:firstJustPValue fromProto_ps:allP_ps];
         
         //9. 将最接近的取出,并根据源于S或P作为理性评价结果,判断是否修正;
         AIAlgNodeBase *mostSimilarAlg = ARR_INDEX(sortPAlgs, 0);
-        if (Log4PM) NSLog(@"> 当前修正:%@ 最近P:%@ 评价:%@",Pit2FStr(firstJustPValue),Alg2FStr(mostSimilarAlg),score?@"通过":@"未通过");
-        if (Log4PM) NSLog(@"--> S数:%lu P数:%lu",(unsigned long)sPorts.count,(unsigned long)pPorts.count);
-        if (Log4PM) NSLog(@"--> SP From=>curAlg:%@ curFo:%@",Alg2FStr(curAlg),Fo2FStr(curFo));
-        
-        
-        //TODOTOMORROW20211009: 支持从rMatchFo取最近的P (参考24053-实践5);
-        //复现: 截入FZ27,直击;
-        if (ISOK(baseDemand, ReasonDemandModel.class)) {
-            AIFoNodeBase *rMatchFo = ((ReasonDemandModel*)baseDemand).mModel.matchFo;
-            [theNV invokeForceMode:^{
-                [theNV setNodeData:rMatchFo.pointer lightStr:@"rMatchFo"];
-            }];
-            
-            NSArray *pFoPorts = ARRTOOK([AINetUtils absPorts_All:rMatchFo type:ATPlus]);
-            NSArray *sortPAlgs = [ThinkingUtils getFuzzySortWithMaskValue:firstJustPValue fromProto_ps:Ports2Pits(pFoPorts)];
-            AIAlgNodeBase *mostSimilarAlg = ARR_INDEX(sortPAlgs, 0);
-            if (Log4PM) NSLog(@"rMatchFo > 当前修正:%@ 最近P:%@",Pit2FStr(firstJustPValue),Alg2FStr(mostSimilarAlg));
-        }
-        
-        
-        
-        
-        
+        if (Log4PM) NSLog(@"内数:(S数:%ld P数:%ld) curA:%@ curF:%@",sPorts.count,pPorts.count,Alg2FStr(curAlg),Fo2FStr(curFo));
+        if (Log4PM) NSLog(@"> 当前修正:%@ 最近P:%@",Pit2FStr(firstJustPValue),Alg2FStr(mostSimilarAlg));
         
         if (!score) {
             //10. 优先从MC的C中找同区码,作为修正GL的目标;
@@ -649,13 +637,10 @@
             if (Log4PM) NSLog(@"find glValue4M %@ from C:(%@->%@) conF:%@ conA:%@",glValue4M ? @"success" : @"failure", Pit2FStr(firstJustPValue),Pit2FStr(glValue4M),Fo2FStr(curFo),Alg2FStr(curAlg));
             
             //10. 其次,找不到时,再从Plus中找: 评价结果为S -> 需要修正,找最近的P:mostSimilarPAlg, 作为GL修正目标值 (参考20207-示图);
-            if (!glValue4M) {
-                for (AIAlgNodeBase *item in sortPAlgs) {
-                    //10. 仅找P第一条即可;
-                    glValue4M = [SMGUtils filterSameIdentifier_p:firstJustPValue b_ps:item.content_ps];
-                    if (Log4PM) NSLog(@"find glValue4M %@ from P:(%@->%@) conF:%@ conA:%@",glValue4M ? @"success" : @"failure", Pit2FStr(firstJustPValue),Pit2FStr(glValue4M),Fo2FStr(curFo),Alg2FStr(curAlg));
-                    break;
-                }
+            if (!glValue4M && mostSimilarAlg) {
+                //10. glValue4M为空 & 最相近P有效时 => 对glValue4M从最近P中取值;
+                glValue4M = [SMGUtils filterSameIdentifier_p:firstJustPValue b_ps:mostSimilarAlg.content_ps];
+                if (Log4PM) NSLog(@"find glValue4M %@ from P:(%@->%@) conF:%@ conA:%@",glValue4M ? @"success" : @"failure", Pit2FStr(firstJustPValue),Pit2FStr(glValue4M),Fo2FStr(curFo),Alg2FStr(curAlg));
             }
             
             //11. 修正找到时,转至Begin-TOValueModel,并转移_GL;
@@ -670,45 +655,36 @@
             //12. ------> 未找到GL的目标 (如距离0),直接计为失败;
             if (Log4PM) NSLog(@"-> 未找到GL目标,转至流程控制Failure");
             
-            //1. 尝试从具象中,找出pPorts
-            NSMutableArray *allAlg_ps = [[NSMutableArray alloc] init];
-            [allAlg_ps addObject:curAlg.pointer];
-            [allAlg_ps addObjectsFromArray:Ports2Pits([AINetUtils conPorts_All_Normal:curAlg])];
-            
-            //2. 取每条alg的refFos;
-            for (AIKVPointer *alg_p in allAlg_ps) {
-                AIAlgNodeBase *alg = [SMGUtils searchNode:alg_p];
-                NSArray *ref_ps = Ports2Pits([AINetUtils refPorts_All4Alg_Normal:alg]);
-            
-                //3. 筛选出有效部分fo;
-                NSArray *conFo_ps = Ports2Pits([AINetUtils conPorts_All_Normal:curFo]);
-                conFo_ps = [SMGUtils filterSame_ps:conFo_ps parent_ps:ref_ps];
-            
-                //4. 依次对有效的fo,找到其pPorts;
-                for (AIKVPointer *fo_p in conFo_ps) {
-                    AIFoNodeBase *fo = [SMGUtils searchNode:fo_p];
-                    NSArray *pPorts = [ThinkingUtils pm_GetValidSPAlg_ps:alg curFo:fo type:ATPlus];
-                    NSArray *sPorts = [ThinkingUtils pm_GetValidSPAlg_ps:alg curFo:fo type:ATSub];
-                    
-                    //此处训练有时,指向有一个S,有时指向有一个P,需要再测测看;
-                    if (pPorts.count > 0) {
-                        NSLog(@"");
-                    }
-                    if (sPorts.count > 0) {
-                        NSLog(@"");
-                    }
-                }
-            }
+            ////1. 尝试从具象中,找出pPorts
+            //NSMutableArray *allAlg_ps = [[NSMutableArray alloc] init];
+            //[allAlg_ps addObject:curAlg.pointer];
+            //[allAlg_ps addObjectsFromArray:Ports2Pits([AINetUtils conPorts_All_Normal:curAlg])];
+            //
+            ////2. 取每条alg的refFos;
+            //for (AIKVPointer *alg_p in allAlg_ps) {
+            //    AIAlgNodeBase *alg = [SMGUtils searchNode:alg_p];
+            //    NSArray *ref_ps = Ports2Pits([AINetUtils refPorts_All4Alg_Normal:alg]);
+            //
+            //    //3. 筛选出有效部分fo;
+            //    NSArray *conFo_ps = Ports2Pits([AINetUtils conPorts_All_Normal:curFo]);
+            //    conFo_ps = [SMGUtils filterSame_ps:conFo_ps parent_ps:ref_ps];
+            //
+            //    //4. 依次对有效的fo,找到其pPorts;
+            //    for (AIKVPointer *fo_p in conFo_ps) {
+            //        AIFoNodeBase *fo = [SMGUtils searchNode:fo_p];
+            //        NSArray *pPorts = [ThinkingUtils pm_GetValidSPAlg_ps:alg curFo:fo type:ATPlus];
+            //        NSArray *sPorts = [ThinkingUtils pm_GetValidSPAlg_ps:alg curFo:fo type:ATSub];
+            //
+            //        //此处训练有时,指向有一个S,有时指向有一个P,需要再测测看;
+            //        if (pPorts.count > 0) {
+            //            NSLog(@"");
+            //        }
+            //        if (sPorts.count > 0) {
+            //            NSLog(@"");
+            //        }
+            //    }
+            //}
             //========================================================================
-            
-            
-            
-            
-            
-            
-            
-            
-            
             
             if (failure) failure();
             return;

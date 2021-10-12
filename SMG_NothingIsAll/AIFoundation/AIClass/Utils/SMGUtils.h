@@ -175,6 +175,12 @@
 //任意arr元素类型转换 notnull
 +(NSMutableArray*) convertArr:(NSArray*)arr convertBlock:(id(^)(id obj))convertBlock;
 
+/**
+ *  MARK:--------------------从foPorts中找出含valueIden的元素并返回--------------------
+ *  @desc 每个fo,仅判断首条符合的alg;
+ */
++(NSMutableArray*) convertAlgPsFromFoPorts:(NSArray*)foPorts valueIden:(NSString*)valueIden;
+
 @end
 
 

@@ -606,6 +606,24 @@
     return result;
 }
 
+/**
+ *  MARK:--------------------从foPorts中找出含valueIden的元素并返回--------------------
+ *  @desc 每个fo,仅判断首条符合的alg;
+ */
++(NSMutableArray*) convertAlgPsFromFoPorts:(NSArray*)foPorts valueIden:(NSString*)valueIden{
+    return [SMGUtils convertArr:foPorts convertBlock:^id(AIPort *item) {
+        //1. 从fo中检查alg元素是否包含同区码 (将首条符合的返回);
+        AIFoNodeBase *fo = [SMGUtils searchNode:item.target_p];
+        NSArray *validAlg_ps = [SMGUtils filterAlg_Ps:fo.content_ps valueIdentifier:valueIden itemValid:nil];
+        if (ARRISOK(validAlg_ps)) {
+            return ARR_INDEX(validAlg_ps, 0);
+        }
+        
+        //2. 找不到返空;
+        return nil;
+    }];
+}
+
 @end
 
 
@@ -859,11 +877,8 @@
         if (!fo) return false;
         
         //2. 分别检查alg元素是否包含同区码 (有一条包含返回true);
-        for (AIKVPointer *alg_p in fo.content_ps) {
-            AIAlgNodeBase *alg = [SMGUtils searchNode:alg_p];
-            if (ARRISOK([SMGUtils filterPointers:alg.content_ps identifier:valueIdentifier])) {
-                return true;
-            }
+        if (ARRISOK([SMGUtils filterAlg_Ps:fo.content_ps valueIdentifier:valueIdentifier itemValid:nil])) {
+            return true;
         }
         
         //3. 都不包含返回false
