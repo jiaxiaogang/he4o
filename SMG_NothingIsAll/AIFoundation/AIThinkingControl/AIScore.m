@@ -89,7 +89,7 @@
         pScore_IRT = [self score4Value:value_p spPorts:pFoPorts singleScoreBlock:^double(AIPort *port) {
             return [AINetService getValueDataFromFo:port.target_p valueIdentifier:valueIden];
         }];
-        NSLog(@"外数:(S数:%ld P数:%ld) rMatchFo:%@",sFoPorts.count,pFoPorts.count,Fo2FStr(rMatchFo));
+        NSLog(@"外IRT数:(S数:%ld P数:%ld) rMatchFo:%@",sFoPorts.count,pFoPorts.count,Fo2FStr(rMatchFo));
     }
     
     //4. 评价 (容错区间为2) (参考22034 & 22025-分析2);

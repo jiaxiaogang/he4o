@@ -628,8 +628,8 @@
         
         //9. 将最接近的取出,并根据源于S或P作为理性评价结果,判断是否修正;
         AIAlgNodeBase *mostSimilarAlg = ARR_INDEX(sortPAlgs, 0);
-        if (Log4PM) NSLog(@"内数:(S数:%ld P数:%ld) curA:%@ curF:%@",sPorts.count,pPorts.count,Alg2FStr(curAlg),Fo2FStr(curFo));
-        if (Log4PM) NSLog(@"> 当前修正:%@ 最近P:%@",Pit2FStr(firstJustPValue),Alg2FStr(mostSimilarAlg));
+        if (Log4PM) NSLog(@"内ORT数:(S数:%ld P数:%ld) curA:%@ curF:%@",sPorts.count,pPorts.count,Alg2FStr(curAlg),Fo2FStr(curFo));
+        if (Log4PM) NSLog(@">>>>> 当前修正:%@ 最近P:%@",Pit2FStr(firstJustPValue),Alg2FStr(mostSimilarAlg));
         
         if (!score) {
             //10. 优先从MC的C中找同区码,作为修正GL的目标;

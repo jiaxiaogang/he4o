@@ -462,6 +462,7 @@
             if (matchFo.cmvNode_p) {
                 item.status = TIModelStatus_LastWait;
                 double deltaTime = [TOUtils getSumDeltaTime2Mv:matchFo cutIndex:item.cutIndex2];
+                NSLog(@"---//IRT触发器新增:%p %@ (%@ | useTime:%f)",matchFo,Fo2FStr(matchFo),TIStatus2Str(item.status),deltaTime);
                 [AITime setTimeTrigger:deltaTime trigger:^{
                     //4. 反向反馈类比(成功/未成功)的主要原因 (参考tip_OPushM());
                     AnalogyType type = ATDefault;
@@ -478,7 +479,7 @@
                             type = (item.status == TIModelStatus_OutBackSameDelta) ? ATSub : ATPlus;
                         }
                     }
-                    NSLog(@"---//触发器Mv_触发: %@ (%@ | %@)",Fo2FStr(matchFo),TIStatus2Str(item.status),ATType2Str(type));
+                    NSLog(@"---//IRT触发器执行:%p %@ (%@ | %@)",matchFo,Fo2FStr(matchFo),TIStatus2Str(item.status),ATType2Str(type));
                     
                     //4. 输入期反省类比 (有OutBack,SP类型时执行);
                     [AIAnalogy analogy_InRethink:item shortFo:protoFo type:type];

@@ -62,7 +62,6 @@
 +(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type createAbsAlgBlock:(void(^)(AIAlgNodeBase *createAlg,NSInteger foIndex,NSInteger assFoIndex))createAbsAlgBlock{
     //1. 类比orders的规律
     if (Log4OutAnaType(type)) NSLog(@"\n----------- 外类比(%@) -----------\nfo:%@ \nassFo:%@",ATType2Str(type),Fo2FStr(fo),Fo2FStr(assFo));
-    [AITest test9:fo assFo:assFo type:type];
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
     if (fo && assFo) {
 
@@ -746,7 +745,7 @@
     //9. 构建SPFo;
     AIFoNodeBase *spFo = [theNet createAbsFo_NoRepeat:@[matchFo] content_ps:justPs difStrong:1 at:nil ds:nil type:type];
     if (Log4InRethink) NSLog(@"--> IRT构建SPFo:%@ base:F%ld",Fo2FStr(spFo),matchFo.pointer.pointerId);
-    [AITest test9:spFo assFo:nil type:type];
+    [AITest test9:spFo type:type];
     
     //10. SP外类比;
     [self analogy_RT_Outside:spFo type:type baseFo:matchFo createAbsBlock:^(AIFoNodeBase *absSP) {
