@@ -96,10 +96,4 @@
     }
 }
 
-+(void) test9:(NSInteger)oldCount newCount:(NSInteger)newCount{
-    if (oldCount != 0 && newCount == 0) {
-        NSLog(@"自检9. spPorts长度在过滤后有归0 (怀疑在恢复记忆后有fo取不到) (参考FZ28-README.md)");
-    }
-}
-
 @end

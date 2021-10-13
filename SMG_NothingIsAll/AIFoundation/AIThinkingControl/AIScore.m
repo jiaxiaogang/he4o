@@ -55,7 +55,6 @@
     //3. 对s评分
     if (Log4VRS_Main) NSLog(@"============== VRS ==============%@\nfrom:%@ 有同区码:%@",Pit2FStr(value_p),Alg2FStr(cAlg),findSameIden?@"是":@"否");
     if (Log4VRS_Desc) NSLog(@"------ S_ORT 评分 ------");
-    NSInteger oldCount = sPorts.count;
     sPorts = ARRTOOK([SMGUtils filterAlgPorts:sPorts valueIdentifier:valueIden]);
     double sScore_ORT = [self score4Value:value_p spPorts:sPorts singleScoreBlock:^double(AIPort *port) {
         return [AINetService getValueDataFromAlg:port.target_p valueIdentifier:value_p.identifier];
@@ -63,9 +62,7 @@
     
     //4. 对p评分
     if (Log4VRS_Desc) NSLog(@"------ P_ORT 评分 ------");
-    oldCount = pPorts.count;
     pPorts = ARRTOOK([SMGUtils filterAlgPorts:pPorts valueIdentifier:valueIden]);
-    [AITest test9:oldCount newCount:pPorts.count];
     double pScore_ORT = [self score4Value:value_p spPorts:pPorts singleScoreBlock:^double(AIPort *port) {
         return [AINetService getValueDataFromAlg:port.target_p valueIdentifier:value_p.identifier];
     }];
@@ -80,9 +77,7 @@
         //b. 对rMatchFo进行s评分;
         if (Log4VRS_Desc) NSLog(@"------ S_IRT 评分 ------");
         NSArray *sFoPorts = ARRTOOK([AINetUtils absPorts_All:rMatchFo type:ATSub]);
-        oldCount = sFoPorts.count;
         sFoPorts = [SMGUtils filterFoPorts:sFoPorts valueIdentifier:valueIden];
-        [AITest test9:oldCount newCount:sFoPorts.count];
         sScore_IRT = [self score4Value:value_p spPorts:sFoPorts singleScoreBlock:^double(AIPort *port) {
             return [AINetService getValueDataFromFo:port.target_p valueIdentifier:valueIden];
         }];
@@ -90,9 +85,7 @@
         //c. 对rMatchFo进行p评分;
         if (Log4VRS_Desc) NSLog(@"------ P_IRT 评分 ------");
         NSArray *pFoPorts = ARRTOOK([AINetUtils absPorts_All:rMatchFo type:ATPlus]);
-        oldCount = pFoPorts.count;
         pFoPorts = [SMGUtils filterFoPorts:pFoPorts valueIdentifier:valueIden];
-        [AITest test9:oldCount newCount:pFoPorts.count];
         pScore_IRT = [self score4Value:value_p spPorts:pFoPorts singleScoreBlock:^double(AIPort *port) {
             return [AINetService getValueDataFromFo:port.target_p valueIdentifier:valueIden];
         }];
