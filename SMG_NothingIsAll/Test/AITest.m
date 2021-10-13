@@ -96,4 +96,12 @@
     }
 }
 
++(void) test9:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type{
+    if (type == ATPlus) {
+        if ([Fo2FStr(fo) containsString:@"Y距35"] | [Fo2FStr(assFo) containsString:@"Y距35"]) {
+            NSLog(@"自检9. 测构建了Y距35的P节点原因(参考24057)");
+        }
+    }
+}
+
 @end

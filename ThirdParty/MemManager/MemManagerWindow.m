@@ -104,8 +104,10 @@
     [self.readTableView reloadData];
     
     //6. 默认选中最后一个cell;
-    NSIndexPath *row = [NSIndexPath indexPathForRow:self.datas.count - 1 inSection:0];
-    [self.readTableView selectRowAtIndexPath:row animated:true scrollPosition:UITableViewScrollPositionTop];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        NSIndexPath *row = [NSIndexPath indexPathForRow:self.datas.count - 1 inSection:0];
+        [self.readTableView selectRowAtIndexPath:row animated:true scrollPosition:UITableViewScrollPositionTop];
+    });
 }
 
 //MARK:===============================================================
