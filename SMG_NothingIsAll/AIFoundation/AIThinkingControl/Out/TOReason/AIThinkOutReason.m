@@ -102,19 +102,11 @@
  *      2021.05.09 - 方便九测,暂将R模式关掉 (参考n23p07);
  *      2021.06.02 - 将无计可施的状态改为actNo,因为要计入不应期 (参考23095);
  *      2021.08.12 - 支持当matchFo没dsFo时,从它的抽象找dsFo解决方案 (参考23214-方案1);
+ *      2021.10.15 - 整个TO不占用主线程执行 (参考24057-方案2);
  */
 -(void) reasonSubV4:(ReasonDemandModel*)demand{
-    
-    
-    //TODOTOMORROW20211015: 整个TC不占用主线程执行 (参考24057-方案2);
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [self reasonSubV4_Run:demand];
-        //在输出到UI时,重新调用回主线程,比如输出行为(当然也可以由Demo自行处理),或网络可视化(当然也可以由网络可视化自行处理);
-        //dispatch_main_async_safe(^{
-        //    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        //
-        //    });
-        //});
     });
 }
 -(void) reasonSubV4_Run:(ReasonDemandModel*)demand{
