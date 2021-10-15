@@ -104,6 +104,20 @@
  *      2021.08.12 - 支持当matchFo没dsFo时,从它的抽象找dsFo解决方案 (参考23214-方案1);
  */
 -(void) reasonSubV4:(ReasonDemandModel*)demand{
+    
+    
+    //TODOTOMORROW20211015: 整个TC不占用主线程执行 (参考24057-方案2);
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self reasonSubV4_Run:demand];
+        //在输出到UI时,重新调用回主线程,比如输出行为(当然也可以由Demo自行处理),或网络可视化(当然也可以由网络可视化自行处理);
+        //dispatch_main_async_safe(^{
+        //    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        //
+        //    });
+        //});
+    });
+}
+-(void) reasonSubV4_Run:(ReasonDemandModel*)demand{
     //1. 数据检查
     if (!demand || !Switch4RS) return;
     AIFoNodeBase *matchFo = demand.mModel.matchFo;
