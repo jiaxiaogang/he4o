@@ -828,6 +828,8 @@
 
 /**
  *  MARK:--------------------RT的SP外类比--------------------
+ *  @version
+ *      2021.10.16: 将absFo的初始强度由继承具象改为1 (参考24057-方案5);
  */
 +(void) analogy_RT_Outside:(AIFoNodeBase*)spFo type:(AnalogyType)type baseFo:(AIFoNodeBase*)baseFo createAbsBlock:(void(^)(AIFoNodeBase *absSP))createAbsBlock{
     //1. 数据检查;
@@ -846,10 +848,7 @@
             AINetAbsFoNode *absSPFo = [AIAnalogy analogyOutside:spFo assFo:assSPFo type:type createAbsAlgBlock:nil];
             
             //4. 将absSP与baseFo建立嵌套关联;
-            AIPort *spPort = [AINetUtils findPort:spFo.pointer fromPorts:spAbsPorts];
-            AIPort *assPort = [AINetUtils findPort:assSPFo.pointer fromPorts:spAbsPorts];
-            NSMutableArray *strongPorts = [[[[NSMutableArray alloc] init] append:spPort] append:assPort];
-            [AINetUtils relateFoAbs:absSPFo conNodes:@[baseFo] isNew:false strongPorts:strongPorts];
+            [AINetUtils relateFoAbs:absSPFo conNodes:@[baseFo] isNew:false strongPorts:nil];
             if (createAbsBlock) createAbsBlock(absSPFo);
         }
     }

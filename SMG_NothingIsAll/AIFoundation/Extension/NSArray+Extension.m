@@ -1,18 +1,18 @@
+////
+////  NSArray+Extension.m
+////  SMG_NothingIsAll
+////
+////  Created by jia on 2021/5/8.
+////  Copyright © 2021年 XiaoGang. All rights reserved.
+////
 //
-//  NSArray+Extension.m
-//  SMG_NothingIsAll
+//#import "NSArray+Extension.h"
 //
-//  Created by jia on 2021/5/8.
-//  Copyright © 2021年 XiaoGang. All rights reserved.
+//@implementation NSMutableArray (Collect)
 //
-
-#import "NSArray+Extension.h"
-
-@implementation NSMutableArray (Collect)
-
--(NSMutableArray*)append:(id)item{
-    if (item) [self addObject:item];
-    return self;
-}
-
-@end
+////-(NSMutableArray*)append:(id)item{
+////    if (item) [self addObject:item];
+////    return self;
+////}
+//
+//@end

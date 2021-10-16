@@ -83,6 +83,7 @@
         ReasonDemandModel *rDemand = (ReasonDemandModel*)outModel.baseOrGroup;
         double deltaTime = [TOUtils getSumDeltaTime2Mv:rDemand.mModel.matchFo cutIndex:rDemand.mModel.cutIndex2];
         rIsTooLate = deltaTime < 3;
+        NSLog(@"紧急状态 (%d) 预计-mv时间:%f",rIsTooLate,deltaTime);
     }
     
     //3. 对HNGL任务首帧执行前做评价;
