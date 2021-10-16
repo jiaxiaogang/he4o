@@ -103,11 +103,12 @@
  *      2021.06.02 - 将无计可施的状态改为actNo,因为要计入不应期 (参考23095);
  *      2021.08.12 - 支持当matchFo没dsFo时,从它的抽象找dsFo解决方案 (参考23214-方案1);
  *      2021.10.15 - 整个TO不占用主线程执行 (参考24057-方案2);
+ *      2021.10.16 - 打开异步后,训练日志较乱,先关掉;
  */
 -(void) reasonSubV4:(ReasonDemandModel*)demand{
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [self reasonSubV4_Run:demand];
-    });
+    //});
 }
 -(void) reasonSubV4_Run:(ReasonDemandModel*)demand{
     //1. 数据检查

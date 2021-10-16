@@ -82,7 +82,7 @@
     if (isRDemand) {
         ReasonDemandModel *rDemand = (ReasonDemandModel*)outModel.baseOrGroup;
         double deltaTime = [TOUtils getSumDeltaTime2Mv:rDemand.mModel.matchFo cutIndex:rDemand.mModel.cutIndex2];
-        rIsTooLate = deltaTime < 3;
+        rIsTooLate = deltaTime < 30;
         NSLog(@"紧急状态 (%d) 预计-mv时间:%f",rIsTooLate,deltaTime);
     }
     
