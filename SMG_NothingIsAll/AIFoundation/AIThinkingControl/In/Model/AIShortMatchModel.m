@@ -31,41 +31,41 @@
     return _absRFos;
 }
 
--(AIFoNodeBase *)matchFo{
-    AIMatchFoModel *mFo = [self mustUrgentMFo];
-    return mFo ? mFo.matchFo : nil;
-}
+//-(AIFoNodeBase *)matchFo{
+//    AIMatchFoModel *mFo = [self mustUrgentMFo];
+//    return mFo ? mFo.matchFo : nil;
+//}
 
--(CGFloat)matchFoValue{
-    AIMatchFoModel *mFo = [self mustUrgentMFo];
-    return mFo ? mFo.matchFoValue : 0;
-}
+//-(CGFloat)matchFoValue{
+//    AIMatchFoModel *mFo = [self mustUrgentMFo];
+//    return mFo ? mFo.matchFoValue : 0;
+//}
 
--(TIModelStatus)status{
-    AIMatchFoModel *mFo = [self mustUrgentMFo];
-    return mFo ? mFo.status : TIModelStatus_Default;
-}
+//-(TIModelStatus)status{
+//    AIMatchFoModel *mFo = [self mustUrgentMFo];
+//    return mFo ? mFo.status : TIModelStatus_Default;
+//}
 
 /**
  *  MARK:--------------------取最迫切的matchFoModel--------------------
  *  @desc 即是评分<0,且最小的那个;
  */
--(AIMatchFoModel*) mustUrgentMFo{
-    //1. 找出最迫切的;
-    AIMatchFoModel *result;
-    for (AIMatchFoModel *item in self.matchPFos) {
-        
-        //2. 首个只要是有迫切度即可;
-        CGFloat newScore = [AIScore score4MV:item.matchFo.cmvNode_p ratio:item.matchFoValue];
-        if (!result && newScore < 0) result = item;
-        
-        //3. 将更迫切的替换到result;
-        CGFloat oldScore = [AIScore score4MV:result.matchFo.cmvNode_p ratio:result.matchFoValue];
-        if (newScore < oldScore) {
-            result = item;
-        }
-    }
-    return result;
-}
+//-(AIMatchFoModel*) mustUrgentMFo{
+//    //1. 找出最迫切的;
+//    AIMatchFoModel *result;
+//    for (AIMatchFoModel *item in self.matchPFos) {
+//
+//        //2. 首个只要是有迫切度即可;
+//        CGFloat newScore = [AIScore score4MV:item.matchFo.cmvNode_p ratio:item.matchFoValue];
+//        if (!result && newScore < 0) result = item;
+//
+//        //3. 将更迫切的替换到result;
+//        CGFloat oldScore = [AIScore score4MV:result.matchFo.cmvNode_p ratio:result.matchFoValue];
+//        if (newScore < oldScore) {
+//            result = item;
+//        }
+//    }
+//    return result;
+//}
 
 @end

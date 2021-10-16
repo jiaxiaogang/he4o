@@ -50,6 +50,7 @@
  *      2021.06.01: 对已有的failure状态子任务,加入到子任务不应期中,避免明明无计可施的R子任务还不断尝试 (参考23095);
  *      2021.06.04: 把子任务生成,重构到DemandManager中 (参考23096);
  *      2021.07.17: 废弃FRSTime评价 (参考n23p18);
+ *      2021.10.16: 在紧急状态时,不进行反思子任务 (参考24057-方案3);
  */
 -(void) convert2Out_Fo:(TOFoModel*)outModel{
     //1. 取出需行为化的content_ps部分;
@@ -64,7 +65,8 @@
     }
     
     //3. 对P任务首帧执行前做评价_2021.01.22: R-任务解决方案不做空S评价;
-    if (outModel.actionIndex == -1 && !ISOK(outModel.baseOrGroup, ReasonDemandModel.class)) {
+    BOOL isRDemand = ISOK(outModel.baseOrGroup, ReasonDemandModel.class);
+    if (outModel.actionIndex == -1 && !isRDemand) {
         //5. 未发生理性评价 (空S评价);
         BOOL reasonScore =  [AIScore FRS:curFo];
         if (!reasonScore) {
@@ -75,8 +77,17 @@
         }
     }
     
+    //5. 紧急状态判断 (当R模式在3s以内会触发-mv时,属于紧急状态) (参考24057-方案3);
+    BOOL rIsTooLate = false;
+    if (isRDemand) {
+        ReasonDemandModel *rDemand = (ReasonDemandModel*)outModel.baseOrGroup;
+        double deltaTime = [TOUtils getSumDeltaTime2Mv:rDemand.mModel.matchFo cutIndex:rDemand.mModel.cutIndex2];
+        rIsTooLate = deltaTime < 3;
+    }
+    
     //3. 对HNGL任务首帧执行前做评价;
-    if (outModel.actionIndex == -1) {
+    if (outModel.actionIndex == -1 && !rIsTooLate) {
+        
         //4. MC反思: 回归tir反思,重新识别理性预测时序,预测价值; (预测到鸡蛋变脏,或者cpu损坏) (理性预测影响评价即理性评价)
         AIShortMatchModel *rtInModel = [theTC to_Rethink:outModel];
         

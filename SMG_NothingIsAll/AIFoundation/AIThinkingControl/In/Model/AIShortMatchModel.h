@@ -106,8 +106,8 @@
 /**
  *  MARK:--------------------含mv且迫切度最高的一条mFo--------------------
  */
-@property (strong, nonatomic) AIFoNodeBase *matchFo;    //matchFo
-@property (assign, nonatomic) CGFloat matchFoValue;     //时序匹配度
-@property (assign, nonatomic) TIModelStatus status;     //状态
+//@property (strong, nonatomic) AIFoNodeBase *matchFo;    //matchFo
+//@property (assign, nonatomic) CGFloat matchFoValue;     //时序匹配度
+//@property (assign, nonatomic) TIModelStatus status;     //状态
 
 @end

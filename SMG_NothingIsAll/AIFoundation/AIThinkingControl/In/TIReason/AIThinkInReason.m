@@ -228,7 +228,7 @@
     [self partMatching_FoV1Dot5:fo except_ps:@[fo.pointer] decoratorInModel:result findCutIndex:^NSInteger(AIFoNodeBase *matchFo, NSInteger lastMatchIndex) {
         return -1;
     }];
-    NSLog(@"反思时序: Finish >> %@",Fo2FStr(result.matchFo));
+    //NSLog(@"反思时序: Finish >> %@",Fo2FStr(result.matchFo));
     return result;
 }
 
