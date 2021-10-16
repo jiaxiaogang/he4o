@@ -177,6 +177,7 @@
  *      20201113 - 构建matchAFo时,MatchA为空时,兼容取part首条,否则会导致时序识别失败 (参考21144);
  *      20210118 - 支持生物钟触发器 (未完成) (参考22052-1);
  *      20210119 - 支持TIR_OPushM (参考22052-2);
+ *      20211016 - 将预测调整到R决策之后,因为R决策总会卡住,而预测中将来的UI变化迟迟不来 (参考24058-方案1);
  */
 -(void) dataIn_NoMV:(AIAlgNodeBase*)algNode fromGroup_ps:(NSArray*)fromGroup_ps{
     //1. 数据准备 (瞬时记忆,理性匹配出的模型);
@@ -202,17 +203,17 @@
     //4. 识别时序;
     [AIThinkInReason TIR_Fo_FromShortMem:@[mModel.protoFo.pointer,mModel.matchAFo.pointer] decoratorInModel:mModel];
     
-    //4. 预测;
-    [AIThinkInReason tir_Forecast:mModel];
-    
     //5. 内类比
     [AIAnalogy analogyInner:mModel];
     
     //6. 传给TOR,做下一步处理;
-    [self.delegate aiThinkIn_Commit2TC:mModel];
+    [self.delegate aiThinkIn_CommitNoMv2TC:mModel];
     
     //7. 传给TIR,做下一步处理;
     [AIThinkInReason tir_OPushM:mModel];
+    
+    //8. 预测;
+    [AIThinkInReason tir_Forecast:mModel];
 }
 
 
@@ -228,7 +229,7 @@
         return [self.delegate aiThinkIn_CreateCMVModel:algsArr inputTime:inputTime isMatch:isMatch];
     } finishBlock:^(AICMVNode *commitMvNode) {
         //3. 思考mv,需求处理
-        [self.delegate aiThinkIn_CommitPercept:commitMvNode];
+        [self.delegate aiThinkIn_CommitMv2TC:commitMvNode];
     }];
 }
 

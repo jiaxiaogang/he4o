@@ -156,7 +156,10 @@ static AIThinkingControl *_instance;
     return foNode;
 }
 
--(void) aiThinkIn_CommitPercept:(AICMVNodeBase*)cmvNode{
+/**
+ *  MARK:--------------------感性mv输入处理--------------------
+ */
+-(void) aiThinkIn_CommitMv2TC:(AICMVNodeBase*)cmvNode{
     //1. 数据检查
     if (!ISOK(cmvNode, AICMVNodeBase.class)) {
         return;
@@ -177,11 +180,12 @@ static AIThinkingControl *_instance;
 }
 
 /**
- *  MARK:--------------------提交InModel短时处理--------------------
+ *  MARK:--------------------理性noMv输入处理--------------------
+ *  @desc 输入noMv时调用,执行OPushM + 更新R任务池 + 执行R决策;
  *  @version
  *      2020.10.19: 将add至ShortMatchManager代码前迁;
  */
--(void) aiThinkIn_Commit2TC:(AIShortMatchModel*)inModel {
+-(void) aiThinkIn_CommitNoMv2TC:(AIShortMatchModel*)inModel {
     //1. 数据检查
     if (!inModel) return;
     

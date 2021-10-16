@@ -16,19 +16,21 @@
 
 /**
  *  MARK:--------------------感性mv输入处理--------------------
+ *  @desc 输入mv时调用,执行OPushM + 更新P任务池 + 执行P决策;
  *  @param cmvNode  : 要处理的mvNode
  *  @desc 功能说明:
  *      1. 更新energy值
  *      2. 更新需求池
  *      3. 进行dataOut决策行为化;
  */
--(void) aiThinkIn_CommitPercept:(AICMVNodeBase*)cmvNode;
+-(void) aiThinkIn_CommitMv2TC:(AICMVNodeBase*)cmvNode;
 
 /**
- *  MARK:--------------------提交InModel短时处理--------------------
+ *  MARK:--------------------理性noMv输入处理--------------------
+ *  @desc 输入noMv时调用,执行OPushM + 更新R任务池 + 执行R决策;
  *  联想网络杏仁核得来的则false;
  */
--(void) aiThinkIn_Commit2TC:(AIShortMatchModel*)shortMatchModel;
+-(void) aiThinkIn_CommitNoMv2TC:(AIShortMatchModel*)shortMatchModel;
 -(NSArray*) aiThinkIn_getShortMatchModel;                           //获取mModel模型
 -(void) aiThinkIn_addShortMatchModel:(AIShortMatchModel*)newMModel; //提交新mModel模型
 

@@ -53,7 +53,7 @@ static AIThinkOut *_instance;
  *      2. 调用者只管调用触发,模型生成,参数保留;
  *  @version
  *      20200430 : v2,四种工作模式版;
- *      20200824 : 将外循环输入推进中循环,改到上一步aiThinkIn_Commit2TC()中;
+ *      20200824 : 将外循环输入推进中循环,改到上一步aiThinkIn_CommitNoMv2TC()中;
  *  @todo
  *      1. 集成活跃度的判断和消耗;
  *      2. 集成outModel;
