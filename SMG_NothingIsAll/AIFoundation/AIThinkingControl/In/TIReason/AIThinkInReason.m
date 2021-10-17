@@ -522,6 +522,18 @@
     //2. IRT理性失效 (旧有IRT触发器等待中的fo,在场景情况更新时,标记OutBackReason);
     for (AIShortMatchModel *inModel in inModels) {
         for (AIMatchFoModel *waitModel in inModel.matchPFos) {
+            
+            
+            //TODOTOMORROW20211017: 训练FZ31,测试此处:
+            //1. 一般protoFo和waitFo很难mIsC成立,因为做出行为后,时序变化的可能很大;
+            //2. 当"FZ31-1,直击"在行为左飞后,马上被撞到,此时再识别左飞,并预测F335仍会被撞,但此时其实已经撞完了;
+            //> F335[A1(高100,Y207,X2,距121,Y距35,向←,皮0),A5(飞←),A321(高100,Y207,Y距35,向←,皮0,X304,距11)]->M44{↑疼-9} (匹配度:0.666667)
+            //2.1: 所以有时候Y距35被列为P是正常的,比如此处它已撞过;
+            //2.2: 分析下,都有哪些情况下Y距35列为P是正常的,,,对自检9排除这些情况;
+            
+            
+            
+            
             //a. 取出等待中的_非wait状态的,不处理;
             if (waitModel.status != TIModelStatus_LastWait) continue;
             if (Log4TIROPushM) NSLog(@"==> checkTIModel=MatchFo: %@",Fo2FStr(waitModel.matchFo));

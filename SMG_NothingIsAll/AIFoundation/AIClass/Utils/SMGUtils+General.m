@@ -43,6 +43,14 @@
     }
     return STRFORMAT(@"%@%@",fileNameStr,lineStr);
 }
++(NSString*) logLineNumFormat{
+    //1. 转lineStr够5位 (不够的前面加空格);
+    NSString *lineStr = STRFORMAT(@"%d",++logLineNum);
+    for (NSInteger i = lineStr.length; i < 5; i++) {
+        lineStr = STRFORMAT(@" %@",lineStr);
+    }
+    return lineStr;
+}
 
 +(NSString*) nsLogFormat:(NSString*)fileName line:(NSInteger)line protoLog:(NSString*)protoLog headerMode:(LogHeaderMode)headerMode{
     //1. 数据准备
@@ -56,10 +64,10 @@
         NSString *sep = @"\n";
         NSArray *logLines = ARRTOOK(STRTOARR(protoLog, sep));
         for (NSString *logLine in logLines) {
-            [result appendFormat:@"[%@ %@] %@\n",timeStr,codeStr,logLine];
+            [result appendFormat:@"%@ [%@ %@] %@\n",[SMGUtils logLineNumFormat],timeStr,codeStr,logLine];
         }
     }else if(headerMode == LogHeaderMode_First){
-        [result appendFormat:@"[%@ %@] %@\n",timeStr,codeStr,protoLog];
+        [result appendFormat:@"%@ [%@ %@] %@\n",[SMGUtils logLineNumFormat],timeStr,codeStr,protoLog];
     }else{
         [result appendFormat:@"%@\n",protoLog];
     }

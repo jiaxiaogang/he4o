@@ -12,6 +12,7 @@
 #define kHHmmssSSS @"HH:mm:ss:SSS"
 #define kyyyyMMddHHmmssSSS @"yyyy-MM-dd HH:mm:ss:SSS"
 #define kyyyyMMddHHmmssSSS_Simple @"yyyyMMddHHmmssSSS"
+static int logLineNum;
 
 @interface SMGUtils (General)
 

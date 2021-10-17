@@ -99,7 +99,7 @@
     }else if (score >= 2) {
         result = true;
     }
-    if (Log4VRS_Main) NSLog(@"VRS评价结果(%@->%@) 得分(%@) = P_ORT(%@) + P_IRT(%@) - S_ORT(%@) - S_IRT(%@)",Pit2FStr(value_p),result?@"通过":@"未通过",STRFORMAT(@"%.2f",score),STRFORMAT(@"%.2f",pScore_ORT),STRFORMAT(@"%.2f",pScore_IRT),STRFORMAT(@"%.2f",sScore_ORT),STRFORMAT(@"%.2f",sScore_IRT));
+    if (Log4VRS_Main) NSLog(@"Score(%@) = P_ORT(%@) + P_IRT(%@) - S_ORT(%@) - S_IRT(%@)           < %@ -- %@ >",STRFORMAT(@"%.2f",score),STRFORMAT(@"%.2f",pScore_ORT),STRFORMAT(@"%.2f",pScore_IRT),STRFORMAT(@"%.2f",sScore_ORT),STRFORMAT(@"%.2f",sScore_IRT),Pit2FStr(value_p),result?@"通过":@"未通过");
     return result;
 }
 
