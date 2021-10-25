@@ -585,25 +585,6 @@
         return;
     }
     
-    
-    //TODOTOMORROW20211022: PMV4迭代 (参考24073);
-    //1 从所有rFos&pFos出发,负责指导性 (准确性,如当前是F2还是F3);
-    //2 不同的rFos&pFos出发点,它的独特码也不相同;
-    //3 PM对多独特码同时向具象筛选稳定P `参考24075`;
-    //4 结合网络可视化,看SP怎样判断稳定性 (交集 或 content包含) `参考24075`;
-    //5 并对稳定的pPorts结果进行强度排序,取得修正目标;
-    //6 对稳定性结果指出的修正目标,做逐一返回做GL修正 (并支持不应期);
-    //7 对修正failure时,继续递归尝试;
-    //8 对修正actYes时,其它独特码全过期,重新进入本表第3步PM稳定性评价;
-    //9 对修正finish成功时,继续下一条独特码的修正;
-    //10 全部`finish完成`或`无需修正`时,PM返回成功;
-    
-    //可以行本次核心改动: 稳定性评价代码;
-    
-    
-    
-    
-    
     //3. 将理性评价数据存到短时记忆模型 (excepts收集所有已PM过的);
     NSArray *except_ps = [TOUtils convertPointersFromTOValueModelSValue:outModel.subModels validStatus:nil];
     NSArray *validJustPValues = [SMGUtils removeSub_ps:except_ps parent_ps:outModel.justPValues];
@@ -735,6 +716,25 @@
         if (notNeedPM) notNeedPM();
         return;
     }
+    
+    //TODOTOMORROW20211022: PMV4迭代 (参考24073);
+    //1 从所有rFos&pFos出发,负责指导性 (准确性,如当前是F2还是F3);
+    //2 不同的rFos&pFos出发点,它的独特码也不相同;
+    //3 PM对多独特码同时向具象筛选稳定P `参考24075`;
+    //4 结合网络可视化,看SP怎样判断稳定性 (交集 或 content包含) `参考24075`;
+    //5 并对稳定的pPorts结果进行强度排序,取得修正目标;
+    //6 对稳定性结果指出的修正目标,做逐一返回做GL修正 (并支持不应期);
+    //7 对修正failure时,继续递归尝试;
+    //8 对修正actYes时,其它独特码全过期,重新进入本表第3步PM稳定性评价;
+    //9 对修正finish成功时,继续下一条独特码的修正;
+    //10 全部`finish完成`或`无需修正`时,PM返回成功;
+    
+    //可以行本次核心改动: 稳定性评价代码;
+    //分析怎么判断稳定性;
+    
+    
+    
+    
     
     //3. 将理性评价数据存到短时记忆模型 (excepts收集所有已PM过的);
     NSArray *except_ps = [TOUtils convertPointersFromTOValueModelSValue:outModel.subModels validStatus:nil];
