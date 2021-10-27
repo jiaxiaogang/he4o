@@ -583,6 +583,11 @@
  *      2021.05.12: 整理备忘:PM应迁移到action中,命名为_ValuePM_V4() (介于_Hav和_GL之间);
  */
 -(void) reasonScorePM_V3:(TOAlgModel*)outModel failure:(void(^)())failure success:(void(^)())success notNeedPM:(void(^)())notNeedPM{
+    
+    //测试v4;
+    [self reasonScorePM_V4:outModel failure:failure success:success notNeedPM:notNeedPM];
+    return;
+    
     //1. 数据准备
     if (!outModel || !outModel.pm_Fo) {
         if (notNeedPM) notNeedPM();
@@ -737,12 +742,6 @@
     //分析怎么判断稳定性;
     
     
-    //TODOTOMORROW20211027: 稳定性判断 (参考24081);
-    //当"FZ31,直投"后,发现许多情况下PM中,并没有pFos&rFos;
-    //需要分析下,此处没有pFos&rFos时,该怎么办,重新执行FZ31,直投,观察下当Y距35进入PM时,它的curFo的来源,是行为化中联想来的,还是ti输入来的;
-    //它源于R任务的dsFo,而r任务是可以取到inModel的;
-    //明天先分析下,rDemand.inModel.rFos&pFos中,最具象与最抽象,之间的束波曲线对比;
-    
     
     
     //3. 将理性评价数据存到短时记忆模型 (excepts收集所有已PM过的);
@@ -788,6 +787,30 @@
             NSArray *rMatchFoPPorts = ARRTOOK([AINetUtils absPorts_All:((ReasonDemandModel*)baseDemand).mModel.matchFo type:ATPlus]);
             NSArray *rMatchAlgP_ps = [SMGUtils convertAlgPsFromFoPorts:rMatchFoPPorts valueIden:firstJustPValue.identifier];
             [allP_ps addObjectsFromArray:rMatchAlgP_ps];
+            
+            
+            //TODOTOMORROW20211027: 稳定性判断 (参考24081);
+            //当"FZ31,直投"后,发现许多情况下PM中,并没有pFos&rFos;
+            //需要分析下,此处没有pFos&rFos时,该怎么办,重新执行FZ31,直投,观察下当Y距35进入PM时,它的curFo的来源,是行为化中联想来的,还是ti输入来的;
+            //它源于R任务的dsFo,而r任务是可以取到inModel的;
+            //明天先分析下,rDemand.inModel.rFos&pFos中,最具象与最抽象,之间的束波曲线对比;
+            
+            
+            if ([Pit2FStr(firstJustPValue) isEqualToString:@"Y距35"]) {
+                ReasonDemandModel *rDemand = (ReasonDemandModel*)baseDemand;
+                
+                for (AIMatchFoModel *rFo in rDemand.inModel.matchRFos) {
+                    //取出spPorts并绘制束波曲线;
+                }
+                for (AIMatchFoModel *pFo in rDemand.inModel.matchPFos) {
+                    //取出spPorts并绘制束波曲线;
+                }
+                
+                NSLog(@"");
+            }
+            
+            
+            
         }
         
         //8. 从allP_ps中,以firstJustPValue同区稀疏码相近排序 (参考20206-步骤图-第2步);
