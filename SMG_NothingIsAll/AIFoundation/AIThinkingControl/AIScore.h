@@ -20,6 +20,7 @@
 @interface AIScore : NSObject
 
 +(BOOL) VRS:(AIKVPointer*)value_p cAlg:(AIAlgNodeBase*)cAlg sPorts:(NSArray*)sPorts pPorts:(NSArray*)pPorts baseDemand:(DemandModel*)baseDemand;
++(double) score4Value:(AIKVPointer*)value_p spPorts:(NSArray*)spPorts singleScoreBlock:(double(^)(AIPort *port))singleScoreBlock;
 
 +(BOOL) FRS:(AIFoNodeBase*)fo;
 +(BOOL) FRS_Miss:(AIFoNodeBase*)sFo matchFo:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex;

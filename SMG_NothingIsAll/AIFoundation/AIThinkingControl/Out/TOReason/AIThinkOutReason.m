@@ -31,6 +31,7 @@
 #import "AIPort.h"
 #import "AINoRepeatRun.h"
 #import "TOUtils.h"
+#import "AINetService.h"
 
 @interface AIThinkOutReason() <TOActionDelegate>
 
@@ -808,13 +809,33 @@
 //                    }];
 //                    //取出spPorts并绘制束波曲线;
 //                }
+                
+                
+                //实测pFos的vrsScore稳定性评分PK (FZ31-直击);
                 for (AIMatchFoModel *pFo in rDemand.inModel.matchPFos) {
-                    NSArray *pPorts = [AINetUtils absPorts_All:pFo.matchFo type:ATPlus];
-                    NSArray *sPorts = [AINetUtils absPorts_All:pFo.matchFo type:ATSub];
-                    NSLog(@"pFo:%@ S:%ld P:%ld",Fo2FStr(pFo.matchFo),sPorts.count,pPorts.count)
-                    [theNV invokeForceMode:^{
-                        [theNV setNodeData:pFo.matchFo.pointer lightStr:@"pFo"];
-                    }];
+                    if (![Fo2FStr(pFo.matchFo) containsString:@"Y距35"]) {
+                        
+                        NSArray *pPorts = [AINetUtils absPorts_All:pFo.matchFo type:ATPlus];
+                        NSArray *sPorts = [AINetUtils absPorts_All:pFo.matchFo type:ATSub];
+                        
+                        [theNV invokeForceMode:^{
+                            [theNV setNodeData:pFo.matchFo.pointer lightStr:@"pFo"];
+                        }];
+                        
+                        double sScore = [AIScore score4Value:firstJustPValue spPorts:sPorts singleScoreBlock:^double(AIPort *port) {
+                            return [AINetService getValueDataFromFo:port.target_p valueIdentifier:firstJustPValue.identifier];
+                        }];
+                        
+                        double pScore = [AIScore score4Value:firstJustPValue spPorts:pPorts singleScoreBlock:^double(AIPort *port) {
+                            return [AINetService getValueDataFromFo:port.target_p valueIdentifier:firstJustPValue.identifier];
+                        }];
+                        
+                        NSLog(@"pFo:%@ \nS:%ld P:%ld 得分(P:%f - S%f = %f)\n",Fo2FStr(pFo.matchFo),sPorts.count,pPorts.count,pScore,sScore,pScore - sScore);
+
+                    }
+                    
+                    
+                    
                     //取出spPorts并绘制束波曲线;
                     
                     /*
@@ -851,11 +872,14 @@
                      Y距35稳定性评价分析:
                      pFo:F334[A327(高100,Y207,皮0)] S:28 P:34
                      //不稳定,没方向;
+                     S:28 P:34 得分(P:16.798319 - S25.142857 = -8.344538)
+                     
                      
                      含Y距35: pFo:F335[A322(高100,Y207,Y距35,皮0)] S:12 P:7
                      
                      pFo:F57[A46(高100,Y207,X2,向←,皮0)] S:15 P:27
                      //发现挺稳定,可以做为束波的baseFo;
+                     S:15 P:27 得分(P:3.290323 - S16.000000 = -12.709677)
                      
                      含Y距35: pFo:F28[A16(高100,Y207,X2,Y距35,向←,皮0)] S:6 P:6
                      含Y距35: pFo:F1805[A1(高100,Y207,X2,距121,Y距35,向←,皮0)] S:0 P:0
@@ -864,6 +888,8 @@
                      
                      pFo:F2056[A2028(高100,Y207,向←,皮0)] S:0 P:11
                      //发现挺稳定,不过有点单调,即S仅有Y距35,P仅有116和146,但这个还好,如果选它做baseFo,它的SP会因此丰富起来;
+                     S:1 P:11 得分(P:0.000000 - S1.000000 = -1.000000)
+                     
                      
                      含Y距35: pFo:F1831[A1(高100,Y207,X2,距121,Y距35,向←,皮0),A1814(飞↘),A1819(高100,Y207,X2,向←,皮0,Y距56,距129)] S:0 P:0
                      含Y距35: pFo:F333[A1(高100,Y207,X2,距121,Y距35,向←,皮0),A5(飞←),A321(高100,Y207,Y距35,皮0,X338,向→,距0)] S:1 P:1
@@ -871,6 +897,8 @@
                      
                      pFo:F1299[A46(高100,Y207,X2,向←,皮0),A5(飞←),A1112(高100,Y207,皮0,向↓)] S:10 P:22
                      //SP范围丰富,稳定性佳,但指导性差;
+                     S:10 P:22 得分(P:1.290323 - S11.000000 = -9.709677)
+                     
                      
                      ///1. 目前稳定性分析无结果;
                      ///2. 但稳定性的最终由SP决定,在指导性抽具象分支上,是找不到标准的;
