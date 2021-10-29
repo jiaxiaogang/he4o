@@ -287,7 +287,10 @@
  *  MARK:--------------------筛选端口 by 指定标识--------------------
  */
 +(NSArray*) filterAlgPorts:(NSArray*)algPorts valueIdentifier:(NSString*)valueIdentifier;
+//筛选foPorts中,包含稀疏码同区码的;
 +(NSArray*) filterFoPorts:(NSArray*)foPorts valueIdentifier:(NSString*)valueIdentifier;
+//筛选fos中,包含稀疏码同区码的;
++(NSArray*) filterFos:(NSArray*)fos valueIdentifier:(NSString*)valueIdentifier;
 
 @end
 

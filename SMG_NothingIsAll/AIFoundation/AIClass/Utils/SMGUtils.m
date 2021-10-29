@@ -870,19 +870,19 @@
         return ARRISOK([SMGUtils filterPointers:alg.content_ps identifier:valueIdentifier]);
     }];
 }
+//筛选foPorts中,包含稀疏码同区码的;
 +(NSArray*) filterFoPorts:(NSArray*)foPorts valueIdentifier:(NSString*)valueIdentifier{
     return [SMGUtils filterArr:foPorts checkValid:^BOOL(AIPort *item) {
-        //1. fo无效时,返回false;
+        //检查fo.content是否包含某同区码稀疏码;
         AIFoNodeBase *fo = [SMGUtils searchNode:item.target_p];
-        if (!fo) return false;
-        
-        //2. 分别检查alg元素是否包含同区码 (有一条包含返回true);
-        if (ARRISOK([SMGUtils filterAlg_Ps:fo.content_ps valueIdentifier:valueIdentifier itemValid:nil])) {
-            return true;
-        }
-        
-        //3. 都不包含返回false
-        return false;
+        return ARRISOK([SMGUtils filterAlg_Ps:fo.content_ps valueIdentifier:valueIdentifier itemValid:nil]);
+    }];
+}
+//筛选fos中,包含稀疏码同区码的;
++(NSArray*) filterFos:(NSArray*)fos valueIdentifier:(NSString*)valueIdentifier{
+    return [SMGUtils filterArr:fos checkValid:^BOOL(AIFoNodeBase *fo) {
+        //检查fo.content是否包含某同区码稀疏码;
+        return ARRISOK([SMGUtils filterAlg_Ps:fo.content_ps valueIdentifier:valueIdentifier itemValid:nil]);
     }];
 }
 

@@ -19,6 +19,7 @@
 #import "AIAlgNodeBase.h"
 #import "AIMatchFoModel.h"
 #import "ReasonDemandModel.h"
+#import "VRSReasonResultModel.h"
 
 @implementation AIScore
 
@@ -100,6 +101,41 @@
         result = true;
     }
     if (Log4VRS_Main) NSLog(@"Score(%@) = P_ORT(%@) + P_IRT(%@) - S_ORT(%@) - S_IRT(%@)           < %@ -- %@ >",STRFORMAT(@"%.2f",score),STRFORMAT(@"%.2f",pScore_ORT),STRFORMAT(@"%.2f",pScore_IRT),STRFORMAT(@"%.2f",sScore_ORT),STRFORMAT(@"%.2f",sScore_IRT),Pit2FStr(value_p),result?@"通过":@"未通过");
+    return result;
+}
+
++(VRSReasonResultModel*) VRS_Reason:(AIKVPointer*)value_p matchPFos:(NSArray*)pFos {
+    //1. 数据准备;
+    if (Log4VRS_Main) NSLog(@"============== VRS_Reason (%@) ==============",Pit2FStr(value_p));
+    NSString *valueIden = value_p.identifier;
+    VRSReasonResultModel *result = [[VRSReasonResultModel alloc] init];
+    
+    //2. 移除包含value_p同区码的pFo;
+    pFos = [SMGUtils removeArr:pFos checkValid:^BOOL(AIFoNodeBase *fo) {
+        return ARRISOK([SMGUtils filterAlg_Ps:fo.content_ps valueIdentifier:valueIden itemValid:nil]);
+    }];
+    
+    //3. 剩下的pFos逐个进行稳定性评分;
+    for (AIFoNodeBase *fo in pFos) {
+        NSArray *pPorts = [AINetUtils absPorts_All:fo type:ATPlus];
+        NSArray *sPorts = [AINetUtils absPorts_All:fo type:ATSub];
+        double sScore = [AIScore score4Value:value_p spPorts:sPorts singleScoreBlock:^double(AIPort *port) {
+            return [AINetService getValueDataFromFo:port.target_p valueIdentifier:valueIden];
+        }];
+        double pScore = [AIScore score4Value:value_p spPorts:pPorts singleScoreBlock:^double(AIPort *port) {
+            return [AINetService getValueDataFromFo:port.target_p valueIdentifier:valueIden];
+        }];
+        double score = pScore - sScore;
+        if (Log4VRS_Desc) NSLog(@"pFo:%@ \n条数(S%ld P%ld) 得分(P%f - S%f = %f)\n",Fo2FStr(fo),sPorts.count,pPorts.count,pScore,sScore,score);
+        
+        //4. 评分绝对值最大的最稳定,存至result中;
+        if (fabs(score) > fabs(result.score)) {
+            result.baseFo = fo;
+            result.score = score;
+            result.pPorts = pPorts;
+        }
+    }
+    if (Log4VRS_Main) NSLog(@"VRSReason最稳定得分:%f 通过:%@",result.score,result.score < 0 ? @"否" : @"是");
     return result;
 }
 
