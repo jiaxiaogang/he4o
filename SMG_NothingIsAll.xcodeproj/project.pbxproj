@@ -743,8 +743,6 @@
 				08B31E7D20648C3700FD96EA /* ThinkingUtils.m */,
 				08F3E92F2241B6E800545795 /* AIAnalogy.h */,
 				08F3E9302241B6E800545795 /* AIAnalogy.m */,
-				08C7539025A3EEB800BCF011 /* AIScore.h */,
-				08C7539125A3EEB800BCF011 /* AIScore.m */,
 			);
 			path = AIThinkingControl;
 			sourceTree = "<group>";
@@ -1152,6 +1150,8 @@
 		08F38D62272C39C1001CD764 /* Score */ = {
 			isa = PBXGroup;
 			children = (
+				08C7539025A3EEB800BCF011 /* AIScore.h */,
+				08C7539125A3EEB800BCF011 /* AIScore.m */,
 				08F38D63272C39E3001CD764 /* VRSReasonResultModel.h */,
 				08F38D64272C39E3001CD764 /* VRSReasonResultModel.m */,
 			);
