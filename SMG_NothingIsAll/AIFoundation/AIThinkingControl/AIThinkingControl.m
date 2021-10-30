@@ -136,7 +136,7 @@ static AIThinkingControl *_instance;
  */
 -(void) updateEnergy:(CGFloat)delta{
     self.energy = [ThinkingUtils updateEnergy:self.energy delta:delta];
-    NSLog(@"inner > delta:%f = energy:%f",delta,self.energy);
+    NSLog(@"inner > delta:%.2f = energy:%.2f",delta,self.energy);
 }
 -(BOOL) energyValid{
     return self.energy > 0;

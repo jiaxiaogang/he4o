@@ -464,7 +464,7 @@
             if (matchFo.cmvNode_p) {
                 item.status = TIModelStatus_LastWait;
                 double deltaTime = [TOUtils getSumDeltaTime2Mv:matchFo cutIndex:item.cutIndex2];
-                NSLog(@"---//IRT触发器新增:%p %@ (%@ | useTime:%f)",matchFo,Fo2FStr(matchFo),TIStatus2Str(item.status),deltaTime);
+                NSLog(@"---//IRT触发器新增:%p %@ (%@ | useTime:%.2f)",matchFo,Fo2FStr(matchFo),TIStatus2Str(item.status),deltaTime);
                 [AITime setTimeTrigger:deltaTime trigger:^{
                     //3. 如果状态已改成OutBackReason,触发器失效,不进行反省;
                     if (item.status == TIModelStatus_OutBackReason) {
