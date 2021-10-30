@@ -144,6 +144,7 @@
         
         //2. 查为什么X2不通过;
         //是否pFos中已经有节点带x2,并且非常稳定的指向了通过呢?如果有,那么x2是否可以直接算做通过,而不用管别的节点中,是否有不稳定的情况;
+        //X2几乎没有别的值,因为木棒全是X2,所以同区码排除,可考虑去掉,因为同值码的pFo,它的评分也应该参与稳定性竞争;
         
         
         //============== VRS_Reason (X2) ==============
@@ -168,7 +169,12 @@
     return result;
 }
 
-//VRS评分
+/**
+ *  MARK:--------------------VRS评分--------------------
+ *  @desc 目前是以影响33%的线性衰减;
+ *  @todo
+ *      2021.10.30: 以后可以将线性衰减改为牛顿冷却曲线衰减;
+ */
 +(double) score4Value:(AIKVPointer*)value_p spPorts:(NSArray*)spPorts singleScoreBlock:(double(^)(AIPort *port))singleScoreBlock{
     //1. 数据准备;
     double result = 0;
