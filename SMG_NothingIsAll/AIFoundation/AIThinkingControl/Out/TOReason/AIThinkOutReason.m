@@ -32,6 +32,7 @@
 #import "AINoRepeatRun.h"
 #import "TOUtils.h"
 #import "AINetService.h"
+#import "VRSReasonResultModel.h"
 
 @interface AIThinkOutReason() <TOActionDelegate>
 
@@ -777,14 +778,18 @@
             NSArray *rMatchFoPPorts = ARRTOOK([AINetUtils absPorts_All:((ReasonDemandModel*)baseDemand).mModel.matchFo type:ATPlus]);
             NSArray *rMatchAlgP_ps = [SMGUtils convertAlgPsFromFoPorts:rMatchFoPPorts valueIden:firstJustPValue.identifier];
             [allP_ps addObjectsFromArray:rMatchAlgP_ps];
+        }
         
-        
+        //9. 对R任务时,此处单独调用新的VRSReason评价器,对score结果和allP_ps重新赋值;
+        if (ISOK(baseDemand, ReasonDemandModel.class)) {
+            //a. 评价
             ReasonDemandModel *rDemand = (ReasonDemandModel*)baseDemand;
-            
-            //实测pFos的vrsScore稳定性评分PK (FZ31-直击);
             VRSReasonResultModel *vrsResult = [AIScore VRS_Reason:firstJustPValue matchPFos:rDemand.inModel.matchPFos];
-        
             
+            //b. 重新赋值score结果 和 allP_ps结果;
+            score = vrsResult.score >= 0;
+            [allP_ps removeAllObjects];
+            [allP_ps addObjectsFromArray:[SMGUtils convertAlgPsFromFoPorts:vrsResult.pPorts valueIden:firstJustPValue.identifier]];
         }
         
         //8. 从allP_ps中,以firstJustPValue同区稀疏码相近排序 (参考20206-步骤图-第2步);
