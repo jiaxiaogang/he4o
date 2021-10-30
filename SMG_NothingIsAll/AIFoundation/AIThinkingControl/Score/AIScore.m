@@ -104,6 +104,10 @@
     return result;
 }
 
+/**
+ *  MARK:--------------------VRS_对R任务的评价器--------------------
+ *  @desc 对pFos中不含value_p同区码的部分,分别进行束波求和评分,并竞争出最稳定的返回 (参考24081-实测1 & 24101-第一阶段);
+ */
 +(VRSReasonResultModel*) VRS_Reason:(AIKVPointer*)value_p matchPFos:(NSArray*)pFos {
     //1. 数据准备;
     if (Log4VRS_Main) NSLog(@"============== VRS_Reason (%@) ==============",Pit2FStr(value_p));
@@ -126,6 +130,9 @@
             return [AINetService getValueDataFromFo:port.target_p valueIdentifier:valueIden];
         }];
         double score = pScore - sScore;
+        //[theNV invokeForceMode:^{
+        //    [theNV setNodeData:pFo.matchFo.pointer lightStr:@"pFo"];
+        //}];
         if (Log4VRS_Desc) NSLog(@"pFo:%@ \n条数(S%ld P%ld) 得分(P%f - S%f = %f)\n",Fo2FStr(fo),sPorts.count,pPorts.count,pScore,sScore,score);
         
         //4. 评分绝对值最大的最稳定,存至result中;

@@ -548,6 +548,11 @@
  *  @desc
  *      1. 对当前输入帧进行PM理性评价 (稀疏码检查,参考20063);
  *      2. 白话: 当具象要替代抽象时,对其多态性进行检查加工;
+ *      3. 独特码修正流程说明:
+ *          a. 对单条GL修正failure时,则当前PM整体失败;
+ *          b. 对单条GL修正actYes时,其它独特码全过期,重新OPushM反馈,并回到PM中,继续修正GL直至达到VRS评价通过;
+ *          c. 对单条GL修正finish成功时,继续下一条独特码的修正 (已修正的独特码VRS评价通过,所以继续循环尝试下条独特码);
+ *          d. 全部`finish完成`或`无需修正`时,PM返回成功;
  *  @param outModel :
  *              1. 因本文是验证其多态性,所以传入的outModel.cotent即M必须是P的抽象;
  *              2. R-模式时为outModel即是SAlg,而outModel.base即是SFo;
@@ -563,7 +568,9 @@
  *      2021.01.23: 兼容支持R-模式 (满足SAlg) (参考22061-改4);
  *      2021.01.31: R-模式迭代V3 (将S的判断去掉,因为R-模式迭代后与P-模式处理一致) (参考22105);
  *      2021.10.12: 从pPorts取最近修正目标值时,涵盖从rMatchFo中取值 (参考24053-实践5);
+ *      2021.10.30: 对R任务迭代VRS稳定性评价 (
  *  _result moveValueSuccess : 转移到稀疏码行为化了,转移成功则返回true,未转移则返回false;
+ *
  *  @bug
  *      2020.07.05: BUG,在用MatchConF.content找交集同区稀疏码肯定找不到,改为用MatchConA后,ok了;
  *      2020.07.06: 此处M.conPorts,即sameLevelAlg_ps为空,明天查下原因 (因为MC以C做M,C有可能本来就是最具象概念);
@@ -727,24 +734,6 @@
         return;
     }
     
-    //TODOTOMORROW20211022: PMV4迭代 (参考24073);
-    //1 从所有rFos&pFos出发,负责指导性 (准确性,如当前是F2还是F3);
-    //2 不同的rFos&pFos出发点,它的独特码也不相同;
-    //3 PM对多独特码同时向具象筛选稳定P `参考24075`;
-    //4 结合网络可视化,看SP怎样判断稳定性 (交集 或 content包含) `参考24075`;
-    //5 并对稳定的pPorts结果进行强度排序,取得修正目标;
-    //6 对稳定性结果指出的修正目标,做逐一返回做GL修正 (并支持不应期);
-    //7 对修正failure时,继续递归尝试;
-    //8 对修正actYes时,其它独特码全过期,重新进入本表第3步PM稳定性评价;
-    //9 对修正finish成功时,继续下一条独特码的修正;
-    //10 全部`finish完成`或`无需修正`时,PM返回成功;
-    
-    //可以行本次核心改动: 稳定性评价代码;
-    //分析怎么判断稳定性;
-    
-    
-    
-    
     //3. 将理性评价数据存到短时记忆模型 (excepts收集所有已PM过的);
     NSArray *except_ps = [TOUtils convertPointersFromTOValueModelSValue:outModel.subModels validStatus:nil];
     NSArray *validJustPValues = [SMGUtils removeSub_ps:except_ps parent_ps:outModel.justPValues];
@@ -788,145 +777,13 @@
             NSArray *rMatchFoPPorts = ARRTOOK([AINetUtils absPorts_All:((ReasonDemandModel*)baseDemand).mModel.matchFo type:ATPlus]);
             NSArray *rMatchAlgP_ps = [SMGUtils convertAlgPsFromFoPorts:rMatchFoPPorts valueIden:firstJustPValue.identifier];
             [allP_ps addObjectsFromArray:rMatchAlgP_ps];
+        
+        
+            ReasonDemandModel *rDemand = (ReasonDemandModel*)baseDemand;
             
-            
-            //TODOTOMORROW20211027: 稳定性判断 (参考24081);
-            //当"FZ31,直投"后,发现许多情况下PM中,并没有pFos&rFos;
-            //需要分析下,此处没有pFos&rFos时,该怎么办,重新执行FZ31,直投,观察下当Y距35进入PM时,它的curFo的来源,是行为化中联想来的,还是ti输入来的;
-            //它源于R任务的dsFo,而r任务是可以取到inModel的;
-            //明天先分析下,rDemand.inModel.rFos&pFos中,最具象与最抽象,之间的束波曲线对比;
-            
-            
-            if ([Pit2FStr(firstJustPValue) isEqualToString:@"Y距35"]) {
-                ReasonDemandModel *rDemand = (ReasonDemandModel*)baseDemand;
-                
-//                for (AIMatchFoModel *rFo in rDemand.inModel.matchRFos) {
-//                    NSArray *pPorts = [AINetUtils absPorts_All:rFo.matchFo type:ATPlus];
-//                    NSArray *sPorts = [AINetUtils absPorts_All:rFo.matchFo type:ATSub];
-//                    NSLog(@"rFo:%@ S:%ld P:%ld",Fo2FStr(rFo.matchFo),sPorts.count,pPorts.count)
-//                    [theNV invokeForceMode:^{
-//                        [theNV setNodeData:rFo.matchFo.pointer lightStr:@"rFo"];
-//                    }];
-//                    //取出spPorts并绘制束波曲线;
-//                }
-                
-                
-                //实测pFos的vrsScore稳定性评分PK (FZ31-直击);
-                for (AIMatchFoModel *pFo in rDemand.inModel.matchPFos) {
-                    if (![Fo2FStr(pFo.matchFo) containsString:@"Y距35"]) {
-                        
-                        NSArray *pPorts = [AINetUtils absPorts_All:pFo.matchFo type:ATPlus];
-                        NSArray *sPorts = [AINetUtils absPorts_All:pFo.matchFo type:ATSub];
-                        
-                        [theNV invokeForceMode:^{
-                            [theNV setNodeData:pFo.matchFo.pointer lightStr:@"pFo"];
-                        }];
-                        
-                        double sScore = [AIScore score4Value:firstJustPValue spPorts:sPorts singleScoreBlock:^double(AIPort *port) {
-                            return [AINetService getValueDataFromFo:port.target_p valueIdentifier:firstJustPValue.identifier];
-                        }];
-                        
-                        double pScore = [AIScore score4Value:firstJustPValue spPorts:pPorts singleScoreBlock:^double(AIPort *port) {
-                            return [AINetService getValueDataFromFo:port.target_p valueIdentifier:firstJustPValue.identifier];
-                        }];
-                        
-                        NSLog(@"pFo:%@ \nS:%ld P:%ld 得分(P:%f - S%f = %f)\n",Fo2FStr(pFo.matchFo),sPorts.count,pPorts.count,pScore,sScore,pScore - sScore);
-
-                    }
-                    
-                    
-                    
-                    //取出spPorts并绘制束波曲线;
-                    
-                    /*
-                     =====> 时序识别Finish (PFos数:12)
-                     强度:(43)    > F334[A327(高100,Y207,皮0)]->M45{↑疼-9} (匹配度:1)
-                     强度:(25)    > F335[A322(高100,Y207,Y距35,皮0)]->M46{↑疼-9} (匹配度:1)
-                     强度:(19)    > F57[A46(高100,Y207,X2,向←,皮0)]->M7{↑疼-9} (匹配度:1)
-                     强度:(11)    > F28[A16(高100,Y207,X2,Y距35,向←,皮0)]->M5{↑疼-9} (匹配度:1)
-                     强度:(9)    > F1805[A1(高100,Y207,X2,距121,Y距35,向←,皮0)]->M430{↑疼-9} (匹配度:1)
-                     强度:(9)    > F1804[A1(高100,Y207,X2,距121,Y距35,向←,皮0)]->M429{↑疼-9} (匹配度:1)
-                     强度:(9)    > F4[A1(高100,Y207,X2,距121,Y距35,向←,皮0)]->M1{↑疼-9} (匹配度:1)
-                     强度:(9)    > F2056[A2028(高100,Y207,向←,皮0)]->M460{↑疼-9} (匹配度:1)
-                     强度:(9)    > F1831[A1(高100,Y207,X2,距121,Y距35,向←,皮0),A1814(飞↘),A1819(高100,Y207,X2,向←,皮0,Y距56,距129)]->M431{↑疼-9} (匹配度:0.33)
-                     强度:(9)    > F333[A1(高100,Y207,X2,距121,Y距35,向←,皮0),A5(飞←),A321(高100,Y207,Y距35,皮0,X338,向→,距0)]->M44{↑疼-9} (匹配度:0.33)
-                     强度:(9)    > F27[A1(高100,Y207,X2,距121,Y距35,向←,皮0),A5(飞←),A15(高100,Y207,X2,Y距35,向←,皮0,距111)]->M2{↑疼-9} (匹配度:0.33)
-                     强度:(9)    > F1299[A46(高100,Y207,X2,向←,皮0),A5(飞←),A1112(高100,Y207,皮0,向↓)]->M227{↑疼-9} (匹配度:0.33)
-                     
-                     
-                     RMV新需求;
-                     F1299 ----> (在pFos中最具象)
-                     F27 ----> (在pFos中最具象)
-                     F333 ----> (在pFos中最具象)
-                     F1831 ----> (在pFos中最具象)
-                     F2056
-                     F4 ----> (在pFos中最具象)
-                     F1804 ----> (在pFos中最具象)
-                     F1805
-                     F28
-                     F57
-                     F335
-                     F334 ----> 最大优先级
-                     
-                     
-                     Y距35稳定性评价分析:
-                     pFo:F334[A327(高100,Y207,皮0)] S:28 P:34
-                     //不稳定,没方向;
-                     S:28 P:34 得分(P:16.798319 - S25.142857 = -8.344538)
-                     
-                     
-                     含Y距35: pFo:F335[A322(高100,Y207,Y距35,皮0)] S:12 P:7
-                     
-                     pFo:F57[A46(高100,Y207,X2,向←,皮0)] S:15 P:27
-                     //发现挺稳定,可以做为束波的baseFo;
-                     S:15 P:27 得分(P:3.290323 - S16.000000 = -12.709677)
-                     
-                     含Y距35: pFo:F28[A16(高100,Y207,X2,Y距35,向←,皮0)] S:6 P:6
-                     含Y距35: pFo:F1805[A1(高100,Y207,X2,距121,Y距35,向←,皮0)] S:0 P:0
-                     含Y距35: pFo:F1804[A1(高100,Y207,X2,距121,Y距35,向←,皮0)] S:0 P:0
-                     含Y距35: pFo:F4[A1(高100,Y207,X2,距121,Y距35,向←,皮0)] S:3 P:0
-                     
-                     pFo:F2056[A2028(高100,Y207,向←,皮0)] S:0 P:11
-                     //发现挺稳定,不过有点单调,即S仅有Y距35,P仅有116和146,但这个还好,如果选它做baseFo,它的SP会因此丰富起来;
-                     S:1 P:11 得分(P:0.000000 - S1.000000 = -1.000000)
-                     
-                     
-                     含Y距35: pFo:F1831[A1(高100,Y207,X2,距121,Y距35,向←,皮0),A1814(飞↘),A1819(高100,Y207,X2,向←,皮0,Y距56,距129)] S:0 P:0
-                     含Y距35: pFo:F333[A1(高100,Y207,X2,距121,Y距35,向←,皮0),A5(飞←),A321(高100,Y207,Y距35,皮0,X338,向→,距0)] S:1 P:1
-                     含Y距35: pFo:F27[A1(高100,Y207,X2,距121,Y距35,向←,皮0),A5(飞←),A15(高100,Y207,X2,Y距35,向←,皮0,距111)] S:3 P:1
-                     
-                     pFo:F1299[A46(高100,Y207,X2,向←,皮0),A5(飞←),A1112(高100,Y207,皮0,向↓)] S:10 P:22
-                     //SP范围丰富,稳定性佳,但指导性差;
-                     S:10 P:22 得分(P:1.290323 - S11.000000 = -9.709677)
-                     
-                     
-                     ///1. 目前稳定性分析无结果;
-                     ///2. 但稳定性的最终由SP决定,在指导性抽具象分支上,是找不到标准的;
-                     ///3. 如果要从SP决定,那么就对F334,F57,F2056,F1299分别做束波求和,然后得出最大分的,为最稳定;
-                     ///3.1 如果失败,则不应期 & ORT.S加一分;
-                     ///3.2 如果成功,则R任务完成 & ORT.P加一分;
-                     
-                     
-                     
-                     //MARK: ======= 根据此处做法?似乎dsFo可废弃? (如果成立,可以设定一个开关,先将dsFo关掉,主要是反向反馈类比和R模式V4两处代码);
-                     //1. dsFo与P没啥区别,然后dsFo还没P理性;
-                     //2. 这样的话,R任务不用反思了,因为没有dsFo,它本身就仅仅是修正自己来解决任务;
-                     //3. PFo替代了dsFo的位置,同样也要在R模式V4中进行递归作为R任务解决方案;
-                     //4. 但这似乎违背原则,主fo和嵌套fo之间的区别导致的矛盾,分析如下:
-                     
-                     //5. 如果pFo做R解决方案的话(单条),而pFo还要多条互相竞争出结果(多条),那么看来R任务不需要解决方案,它的pPorts就是它的解决方案;
-                     //6. 问: 但如果解决方案中有"无关的概念"呢?比如:"吓跑老虎可以防止危险",那么"吓"这个就是P中独立的概念;
-                     //7. 答: "吓"看起来是PFo独立概念,但却并不重要,对P当前危险场景而言,真正重要的是"老虎的距离",即搞远些,这个搞远的方式是另一个时序,可以是吓跑,也可以是传送走;
-                     
-                     //原来的ORT是建立在dsFo上的,如果此处废弃它,那么ORT的SP构建在IRT.SP的baseMatchFo上?这样的话IRT和ORT的SP就完成没区别了;
-                     
-                     */
-                }
-                
-                NSLog(@"");
-            }
-            
-            
+            //实测pFos的vrsScore稳定性评分PK (FZ31-直击);
+            VRSReasonResultModel *vrsResult = [AIScore VRS_Reason:firstJustPValue matchPFos:rDemand.inModel.matchPFos];
+        
             
         }
         
