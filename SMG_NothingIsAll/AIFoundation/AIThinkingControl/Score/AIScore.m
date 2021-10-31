@@ -109,6 +109,8 @@
  *  @desc 对pFos中不含value_p同区码的部分,分别进行束波求和评分,并竞争出最稳定的返回 (参考24081-实测1 & 24101-第一阶段);
  *  @todo
  *      2021.10.30: 对pFo.cutIndex已发生部分的支持 (支持后可以避免未发生部分的影响);
+ *  @version
+ *      2021.10.31: 取消排除同区码的pFos (参考24102-思路1&3);
  */
 +(VRSReasonResultModel*) VRS_Reason:(AIKVPointer*)value_p matchPFos:(NSArray*)pFos {
     //1. 数据准备;
@@ -117,9 +119,9 @@
     VRSReasonResultModel *result = [[VRSReasonResultModel alloc] init];
     
     //2. 移除包含value_p同区码的pFo;
-    pFos = [SMGUtils removeArr:pFos checkValid:^BOOL(AIMatchFoModel *pFo) {
-        return ARRISOK([SMGUtils filterAlg_Ps:pFo.matchFo.content_ps valueIdentifier:valueIden itemValid:nil]);
-    }];
+    //pFos = [SMGUtils removeArr:pFos checkValid:^BOOL(AIMatchFoModel *pFo) {
+    //    return ARRISOK([SMGUtils filterAlg_Ps:pFo.matchFo.content_ps valueIdentifier:valueIden itemValid:nil]);
+    //}];
     
     //3. 剩下的pFos逐个进行稳定性评分;
     for (AIMatchFoModel *pFo in pFos) {
@@ -136,27 +138,7 @@
         //[theNV invokeForceMode:^{
         //    [theNV setNodeData:pFo.matchFo.pointer lightStr:@"pFo"];
         //}];
-        
-        
-        //1. 查下为什么"FZ31,直击"后,Y56是通过评价的;
-        //============== VRS_Reason (Y距56) ==============
-        //VRSReason最稳定得分:12.882353 通过:是
-        
-        //2. 查为什么X2不通过;
-        //是否pFos中已经有节点带x2,并且非常稳定的指向了通过呢?如果有,那么x2是否可以直接算做通过,而不用管别的节点中,是否有不稳定的情况;
-        //X2几乎没有别的值,因为木棒全是X2,所以同区码排除,可考虑去掉,因为同值码的pFo,它的评分也应该参与稳定性竞争;
-        
-        
-        //============== VRS_Reason (X2) ==============
-        //item:F334[A327(高100,Y207,皮0)] ==> P28条71.96分 - S34条54.53分 = 17.43
-        //item:F335[A322(高100,Y207,Y距35,皮0)] ==> P12条3.95分 - S7条21.82分 = -17.87
-        //item:F2056[A2028(高100,Y207,向←,皮0)] ==> P0条12.00分 - S11条0.00分 = 12.00
-        //VRSReason最稳定结果 得分:-17.87 通过:否
-        
-        
-        
-        
-        if (Log4VRS_Main) NSLog(@"item:%@ ==> P%ld条%.2f分 - S%ld条%.2f分 = %.2f",Fo2FStr(fo),sPorts.count,pScore,pPorts.count,sScore,score);
+        if (Log4VRS_Main) NSLog(@"item:%@ ==> P%ld条%.2f分 - S%ld条%.2f分 = %.2f",Fo2FStr(fo),pPorts.count,pScore,sPorts.count,sScore,score);
         
         //4. 评分绝对值最大的最稳定,存至result中;
         if (fabs(score) > fabs(result.score)) {
