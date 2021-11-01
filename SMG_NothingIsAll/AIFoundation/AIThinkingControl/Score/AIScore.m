@@ -111,6 +111,7 @@
  *      2021.10.30: 对pFo.cutIndex已发生部分的支持 (支持后可以避免未发生部分的影响);
  *  @version
  *      2021.10.31: 取消排除同区码的pFos (参考24102-思路1&3);
+ *      2021.11.01: 迭代稳定性计算与竞争方法 (参考24103-BUG1);
  */
 +(VRSReasonResultModel*) VRS_Reason:(AIKVPointer*)value_p matchPFos:(NSArray*)pFos {
     //1. 数据准备;
@@ -134,39 +135,18 @@
         double pScore = [AIScore score4Value:value_p spPorts:pPorts singleScoreBlock:^double(AIPort *port) {
             return [AINetService getValueDataFromFo:port.target_p valueIdentifier:valueIden];
         }];
-        double newPPercent = [ThinkingUtils getPPercent:pScore sScore:sScore];
         //[theNV invokeForceMode:^{
         //    [theNV setNodeData:pFo.matchFo.pointer lightStr:@"pFo"];
         //}];
-        if (Log4VRS_Main) NSLog(@"item:%@ ==> P%ld条%.2f分 - S%ld条%.2f分 = %.2f",Fo2FStr(fo),pPorts.count,pScore,sPorts.count,sScore,newPPercent);
+        VRSReasonResultModel *newResult = [VRSReasonResultModel newWithBaseFo:fo pScore:pScore sScore:sScore];
+        if (Log4VRS_Main) NSLog(@"item:%@ ==> P%ld条%.2f分 - S%ld条%.2f分 = 评分%.2f",Fo2FStr(fo),pPorts.count,pScore,sPorts.count,sScore,newResult.score);
         
-        //4. 评分绝对值最大的最稳定,存至result中;
-        if (!result) {
-            result = [[VRSReasonResultModel alloc] init];
-            result.baseFo = fo;
-            result.pScore = pScore;
-            result.sScore = sScore;
-            result.pPorts = pPorts;
-        }else {
-            double oldPPercent = [ThinkingUtils getPPercent:result.pScore sScore:result.sScore];
-            double newMargin = [ThinkingUtils getMarginWithPPercent:newPPercent];
-            double oldMargin = [ThinkingUtils getMarginWithPPercent:oldPPercent];
-            if (newMargin > oldMargin) {
-                result.baseFo = fo;
-                result.pScore = pScore;
-                result.sScore = sScore;
-                result.pPorts = pPorts;
-                
-                //TODOTOMORROW20211101;
-                //把赋值封装到init方法中;
-                //将pPercent和margin封装到模型中,
-                
-                
-                
-            }
+        //4. 评分绝对值最大的最稳定,存至result中 (为空时直接赋值,不为空时更迫切才赋值);
+        if (!result || newResult.stablity > result.stablity) {
+            result = newResult;
         }
     }
-    if (Log4VRS_Main) NSLog(@"VRSReason最稳定结果 得分:%.2f                      < %@ -- %@ >\n",result.score,Pit2FStr(value_p),result.score < 0 ? @"未通过" : @"通过");
+    if (Log4VRS_Main) NSLog(@"VRSReason最稳定结果 迫切分:%.2f                      < %@ -- %@ >\n",result.score,Pit2FStr(value_p),result.score < 0 ? @"未通过" : @"通过");
     return result;
 }
 

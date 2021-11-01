@@ -193,13 +193,3 @@
 +(NSMutableArray*) collectDiffBaseFoWhenDSFoIsFinishOrActYes:(DemandModel*)curDemand;
 
 @end
-
-@interface ThinkingUtils (Score)
-
-//取P稳定性 (@result 返回0-1);
-+(double) getPPercent:(double)pScore sScore:(double)sScore;
-
-//获取稳定性的margin值 (@result 越靠近1,则越稳定)
-+(double) getMarginWithPPercent:(double)pPercent;
-
-@end
