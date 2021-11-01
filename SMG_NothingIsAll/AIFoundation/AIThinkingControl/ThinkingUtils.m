@@ -576,3 +576,17 @@
 }
 
 @end
+
+@implementation ThinkingUtils (Score)
+
+//取P稳定性 (@result 返回0-1);
++(double) getPPercent:(double)pScore sScore:(double)sScore{
+    return pScore + sScore == 0 ? 0 : pScore / (pScore + sScore);
+}
+
+//获取稳定性的margin值 (@result 越靠近1,则越稳定)
++(double) getMarginWithPPercent:(double)pPercent{
+    return fabs((pPercent * 2) - 1);
+}
+
+@end

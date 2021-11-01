@@ -12,6 +12,7 @@
 
 @property (strong, nonatomic) AIFoNodeBase *baseFo; //保留baseFo;
 @property (strong, nonatomic) NSArray *pPorts;      //保留baseFo.pPorts;
-@property (assign, nonatomic) double score;         //最终得分;
+@property (assign, nonatomic) double pScore;         //最终得分;
+@property (assign, nonatomic) double sScore;         //最终得分;
 
 @end

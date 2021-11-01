@@ -116,7 +116,7 @@
     //1. 数据准备;
     if (Log4VRS_Main) NSLog(@"\n============== VRS_Reason (%@) ==============",Pit2FStr(value_p));
     NSString *valueIden = value_p.identifier;
-    VRSReasonResultModel *result = [[VRSReasonResultModel alloc] init];
+    VRSReasonResultModel *result = nil;
     
     //2. 移除包含value_p同区码的pFo;
     //pFos = [SMGUtils removeArr:pFos checkValid:^BOOL(AIMatchFoModel *pFo) {
@@ -134,17 +134,36 @@
         double pScore = [AIScore score4Value:value_p spPorts:pPorts singleScoreBlock:^double(AIPort *port) {
             return [AINetService getValueDataFromFo:port.target_p valueIdentifier:valueIden];
         }];
-        double score = pScore - sScore;
+        double newPPercent = [ThinkingUtils getPPercent:pScore sScore:sScore];
         //[theNV invokeForceMode:^{
         //    [theNV setNodeData:pFo.matchFo.pointer lightStr:@"pFo"];
         //}];
-        if (Log4VRS_Main) NSLog(@"item:%@ ==> P%ld条%.2f分 - S%ld条%.2f分 = %.2f",Fo2FStr(fo),pPorts.count,pScore,sPorts.count,sScore,score);
+        if (Log4VRS_Main) NSLog(@"item:%@ ==> P%ld条%.2f分 - S%ld条%.2f分 = %.2f",Fo2FStr(fo),pPorts.count,pScore,sPorts.count,sScore,newPPercent);
         
         //4. 评分绝对值最大的最稳定,存至result中;
-        if (fabs(score) > fabs(result.score)) {
+        if (!result) {
+            result = [[VRSReasonResultModel alloc] init];
             result.baseFo = fo;
-            result.score = score;
+            result.pScore = pScore;
+            result.sScore = sScore;
             result.pPorts = pPorts;
+        }else {
+            double oldPPercent = [ThinkingUtils getPPercent:result.pScore sScore:result.sScore];
+            double newMargin = [ThinkingUtils getMarginWithPPercent:newPPercent];
+            double oldMargin = [ThinkingUtils getMarginWithPPercent:oldPPercent];
+            if (newMargin > oldMargin) {
+                result.baseFo = fo;
+                result.pScore = pScore;
+                result.sScore = sScore;
+                result.pPorts = pPorts;
+                
+                //TODOTOMORROW20211101;
+                //把赋值封装到init方法中;
+                //将pPercent和margin封装到模型中,
+                
+                
+                
+            }
         }
     }
     if (Log4VRS_Main) NSLog(@"VRSReason最稳定结果 得分:%.2f                      < %@ -- %@ >\n",result.score,Pit2FStr(value_p),result.score < 0 ? @"未通过" : @"通过");
