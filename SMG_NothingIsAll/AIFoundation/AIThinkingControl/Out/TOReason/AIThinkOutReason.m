@@ -782,14 +782,13 @@
         
         //9. 对R任务时,此处单独调用新的VRSReason评价器,对score结果和allP_ps重新赋值;
         if (ISOK(baseDemand, ReasonDemandModel.class)) {
-            //a. 评价
+            //a. 评价 & 取修正目标
             ReasonDemandModel *rDemand = (ReasonDemandModel*)baseDemand;
             VRSReasonResultModel *vrsResult = [AIScore VRS_Reason:firstJustPValue matchPFos:rDemand.inModel.matchPFos];
+            VRSTargetModel *vrsTarget = [AIScore VRS_Target:rDemand.inModel.matchPFos vrsResult:vrsResult];
             
-            //b. 重新赋值score结果 和 allP_ps结果;
+            //b. 重新赋值score结果;
             score = vrsResult.score >= 0;
-            [allP_ps removeAllObjects];
-            [allP_ps addObjectsFromArray:[SMGUtils convertAlgPsFromFoPorts:vrsResult.pPorts valueIden:firstJustPValue.identifier]];
         }
         
         //8. 从allP_ps中,以firstJustPValue同区稀疏码相近排序 (参考20206-步骤图-第2步);

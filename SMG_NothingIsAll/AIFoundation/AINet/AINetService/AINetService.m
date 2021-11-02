@@ -125,8 +125,15 @@
 }
 +(double) getValueDataFromFo:(AIKVPointer*)fo_p valueIdentifier:(NSString*)valueIdentifier{
     //1. 数据准备;
+    AIKVPointer *value_p = [self getValuePFromFo:fo_p valueIdentifier:valueIdentifier];
+    
+    //2. 空时,返回0;
+    return value_p ? [NUMTOOK([AINetIndex getData:value_p]) doubleValue] : 0;
+}
++(AIKVPointer*) getValuePFromFo:(AIKVPointer*)fo_p valueIdentifier:(NSString*)valueIdentifier{
+    //1. 数据准备;
     AIFoNodeBase *fo = [SMGUtils searchNode:fo_p];
-    if (!fo) return 0;
+    if (!fo) return nil;
     
     //2. 分别对alg元素进行找value同区码;
     for (AIKVPointer *alg_p in fo.content_ps) {
@@ -136,12 +143,12 @@
         //3. 找到一个同区码时即返回;
         AIKVPointer *value_p = ARR_INDEX([SMGUtils filterPointers:alg.content_ps identifier:valueIdentifier], 0);
         if (value_p) {
-            return [NUMTOOK([AINetIndex getData:value_p]) doubleValue];
+            return value_p;
         }
     }
     
     //4. 全找不到时,返回0;
-    return 0;
+    return nil;
 }
 
 /**

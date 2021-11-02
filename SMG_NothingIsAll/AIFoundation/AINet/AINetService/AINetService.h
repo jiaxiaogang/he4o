@@ -32,6 +32,7 @@
  */
 +(double) getValueDataFromAlg:(AIKVPointer*)alg_p valueIdentifier:(NSString*)valueIdentifier;
 +(double) getValueDataFromFo:(AIKVPointer*)fo_p valueIdentifier:(NSString*)valueIdentifier;
++(AIKVPointer*) getValuePFromFo:(AIKVPointer*)fo_p valueIdentifier:(NSString*)valueIdentifier;
 
 /**
  *  MARK:--------------------获取glConAlg_ps--------------------

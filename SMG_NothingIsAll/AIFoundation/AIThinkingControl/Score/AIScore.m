@@ -20,6 +20,7 @@
 #import "AIMatchFoModel.h"
 #import "ReasonDemandModel.h"
 #import "VRSReasonResultModel.h"
+#import "VRSTargetModel.h"
 
 @implementation AIScore
 
@@ -56,17 +57,11 @@
     //3. 对s评分
     if (Log4VRS_Main) NSLog(@"============== VRS ==============%@\nfrom:%@ 有同区码:%@",Pit2FStr(value_p),Alg2FStr(cAlg),findSameIden?@"是":@"否");
     if (Log4VRS_Desc) NSLog(@"------ S_ORT 评分 ------");
-    sPorts = ARRTOOK([SMGUtils filterAlgPorts:sPorts valueIdentifier:valueIden]);
-    double sScore_ORT = [self score4Value:value_p spPorts:sPorts singleScoreBlock:^double(AIPort *port) {
-        return [AINetService getValueDataFromAlg:port.target_p valueIdentifier:value_p.identifier];
-    }];
+    double sScore_ORT = [self score4Value:value_p spPorts:sPorts];
     
     //4. 对p评分
     if (Log4VRS_Desc) NSLog(@"------ P_ORT 评分 ------");
-    pPorts = ARRTOOK([SMGUtils filterAlgPorts:pPorts valueIdentifier:valueIden]);
-    double pScore_ORT = [self score4Value:value_p spPorts:pPorts singleScoreBlock:^double(AIPort *port) {
-        return [AINetService getValueDataFromAlg:port.target_p valueIdentifier:value_p.identifier];
-    }];
+    double pScore_ORT = [self score4Value:value_p spPorts:pPorts];
     
     //5. 对当前所在的rDemand下的SP评分 (目前仅支持rDemand,参考24053-方案&实践2&TODO);
     double sScore_IRT = 0,pScore_IRT = 0;
@@ -78,18 +73,12 @@
         //b. 对rMatchFo进行s评分;
         if (Log4VRS_Desc) NSLog(@"------ S_IRT 评分 ------");
         NSArray *sFoPorts = ARRTOOK([AINetUtils absPorts_All:rMatchFo type:ATSub]);
-        sFoPorts = [SMGUtils filterFoPorts:sFoPorts valueIdentifier:valueIden];
-        sScore_IRT = [self score4Value:value_p spPorts:sFoPorts singleScoreBlock:^double(AIPort *port) {
-            return [AINetService getValueDataFromFo:port.target_p valueIdentifier:valueIden];
-        }];
+        sScore_IRT = [self score4Value:value_p spPorts:sFoPorts];
         
         //c. 对rMatchFo进行p评分;
         if (Log4VRS_Desc) NSLog(@"------ P_IRT 评分 ------");
         NSArray *pFoPorts = ARRTOOK([AINetUtils absPorts_All:rMatchFo type:ATPlus]);
-        pFoPorts = [SMGUtils filterFoPorts:pFoPorts valueIdentifier:valueIden];
-        pScore_IRT = [self score4Value:value_p spPorts:pFoPorts singleScoreBlock:^double(AIPort *port) {
-            return [AINetService getValueDataFromFo:port.target_p valueIdentifier:valueIden];
-        }];
+        pScore_IRT = [self score4Value:value_p spPorts:pFoPorts];
         NSLog(@"外IRT数:(S数:%ld P数:%ld) rMatchFo:%@",sFoPorts.count,pFoPorts.count,Fo2FStr(rMatchFo));
     }
     
@@ -116,70 +105,130 @@
 +(VRSReasonResultModel*) VRS_Reason:(AIKVPointer*)value_p matchPFos:(NSArray*)pFos {
     //1. 数据准备;
     if (Log4VRS_Main) NSLog(@"\n============== VRS_Reason (%@) ==============",Pit2FStr(value_p));
-    NSString *valueIden = value_p.identifier;
     VRSReasonResultModel *result = nil;
-    
-    //2. 移除包含value_p同区码的pFo;
-    //pFos = [SMGUtils removeArr:pFos checkValid:^BOOL(AIMatchFoModel *pFo) {
-    //    return ARRISOK([SMGUtils filterAlg_Ps:pFo.matchFo.content_ps valueIdentifier:valueIden itemValid:nil]);
-    //}];
     
     //3. 剩下的pFos逐个进行稳定性评分;
     for (AIMatchFoModel *pFo in pFos) {
         AIFoNodeBase *fo = pFo.matchFo;
         NSArray *pPorts = [AINetUtils absPorts_All:fo type:ATPlus];
         NSArray *sPorts = [AINetUtils absPorts_All:fo type:ATSub];
-        double sScore = [AIScore score4Value:value_p spPorts:sPorts singleScoreBlock:^double(AIPort *port) {
-            return [AINetService getValueDataFromFo:port.target_p valueIdentifier:valueIden];
-        }];
-        double pScore = [AIScore score4Value:value_p spPorts:pPorts singleScoreBlock:^double(AIPort *port) {
-            return [AINetService getValueDataFromFo:port.target_p valueIdentifier:valueIden];
-        }];
-        //[theNV invokeForceMode:^{
-        //    [theNV setNodeData:pFo.matchFo.pointer lightStr:@"pFo"];
-        //}];
-        VRSReasonResultModel *newResult = [VRSReasonResultModel newWithBaseFo:fo pScore:pScore sScore:sScore];
-        if (Log4VRS_Main) NSLog(@"item:%@ ==> P%ld条%.2f分 - S%ld条%.2f分 = 评分%.2f",Fo2FStr(fo),pPorts.count,pScore,sPorts.count,sScore,newResult.score);
+        double sScore = [AIScore score4Value:value_p spPorts:sPorts];
+        double pScore = [AIScore score4Value:value_p spPorts:pPorts];
+        VRSReasonResultModel *newResult = [VRSReasonResultModel newWithBaseFo:fo pScore:pScore sScore:sScore proto:value_p];
         
-        //4. 评分绝对值最大的最稳定,存至result中 (为空时直接赋值,不为空时更迫切才赋值);
+        //4. 评分绝对值最大的最稳定,存至result中 (为空时直接赋值,不为空时更迫切才赋值) (参考24103-BUG1);
         if (!result || newResult.stablity > result.stablity) {
             result = newResult;
         }
+        //[theNV invokeForceMode:^{
+        //    [theNV setNodeData:pFo.matchFo.pointer lightStr:@"pFo"];
+        //}];
+        if (Log4VRS_Main) NSLog(@"item:%@ ==> P%ld条%.2f分 - S%ld条%.2f分 = 评分%.2f",Fo2FStr(fo),pPorts.count,pScore,sPorts.count,sScore,newResult.score);
     }
-    if (Log4VRS_Main) NSLog(@"VRSReason最稳定结果 迫切分:%.2f                      < %@ -- %@ >\n",result.score,Pit2FStr(value_p),result.score < 0 ? @"未通过" : @"通过");
+    if (Log4VRS_Main) NSLog(@"VRSReason最稳定结果 稳定性:%.2f 评分:%.2f                      < %@ -- %@ >\n",result.stablity,result.score,Pit2FStr(value_p),result.score < 0 ? @"未通过" : @"通过");
+    return result;
+}
+
+/**
+ *  MARK:--------------------VRS修正目标算法--------------------
+ */
++(VRSTargetModel*) VRS_Target:(NSArray*)pFos vrsResult:(VRSReasonResultModel*)vrsResult{
+    //1. 评价通过时,不取修正目标;
+    VRSTargetModel *result = nil;
+    if (vrsResult.score >= 0) return result;
+    NSString *valueIden = vrsResult.protoValue_p.identifier;
+    
+    //2. 移除包含value_p同区码的pFo (参考24103-BUG2-改动1);
+    pFos = [SMGUtils removeArr:pFos checkValid:^BOOL(AIMatchFoModel *pFo) {
+        return ARRISOK([SMGUtils filterAlg_Ps:pFo.matchFo.content_ps valueIdentifier:valueIden itemValid:nil]);
+    }];
+    
+    //3. 用vrsResult.baseFo.abs和pFos取交集 (参考24103-BUG2-改动2);
+    NSArray *absFo_ps = Ports2Pits([AINetUtils absPorts_All_Normal:vrsResult.baseFo]);
+    pFos = [SMGUtils filterArr:pFos checkValid:^BOOL(AIMatchFoModel *pFo) {
+        return [absFo_ps containsObject:pFo.matchFo.pointer];
+    }];
+    
+    //4. 剩下的pFos逐个进行评分;
+    for (AIMatchFoModel *pFo in pFos) {
+        AIFoNodeBase *fo = pFo.matchFo;
+        NSArray *pPorts = [AINetUtils absPorts_All:fo type:ATPlus];
+        NSArray *sPorts = [AINetUtils absPorts_All:fo type:ATSub];
+        NSArray *spPorts = [SMGUtils collectArrA:pPorts arrB:sPorts];
+        
+        //5. 筛选出spPort中,包含同区码的 (参考24103-BUG2-改动3);
+        for (AIPort *spPort in spPorts) {
+            AIKVPointer *sameIdenValue = [AINetService getValuePFromFo:spPort.target_p valueIdentifier:valueIden];
+            if (sameIdenValue) {
+                //6. 进行评分 (参考24103-BUG2-改动4);
+                double sScore = [AIScore score4Value:sameIdenValue spPorts:sPorts];
+                double pScore = [AIScore score4Value:sameIdenValue spPorts:pPorts];
+                VRSTargetModel *newResult = [VRSTargetModel newWithBaseFo:fo pScore:pScore sScore:sScore target:sameIdenValue];
+                
+                //7. 评分最高的设为修正目标 (参考24103-BUG2-改动5);
+                if (!result || newResult.score > result.score) {
+                    result = newResult;
+                }
+            }
+        }
+    }
+    if (Log4VRS_Main) NSLog(@"VRSTarget最高分修正结果 评分:%.2f  (现码:%@ -> 修正目标:%@)\n",result.score,Pit2FStr(vrsResult.protoValue_p),Pit2FStr(result.targetValue_p));
     return result;
 }
 
 /**
  *  MARK:--------------------VRS评分--------------------
- *  @desc 目前是以影响33%的线性衰减;
+ *  @desc 目前是以影响33%的线性衰减 (找出x轴的value_p值在spPorts曲线上的y轴得分);
+ *  @param spPorts : 目前仅支持alg和fo两种类型的ports;
  *  @todo
  *      2021.10.30: 以后可以将线性衰减改为牛顿冷却曲线衰减;
  */
-+(double) score4Value:(AIKVPointer*)value_p spPorts:(NSArray*)spPorts singleScoreBlock:(double(^)(AIPort *port))singleScoreBlock{
++(double) score4Value:(AIKVPointer*)value_p spPorts:(NSArray*)spPorts {
     //1. 数据准备;
     double result = 0;
-    if (!value_p || !ARRISOK(spPorts) || !singleScoreBlock) return result;
+    if (!value_p) return result;
     double value = [NUMTOOK([AINetIndex getData:value_p]) doubleValue];
+    NSString *valueIden = value_p.identifier;
+    
+    //1. 对spPort筛选含同区码的部分;
+    AIPort *firstPort = ARR_INDEX(spPorts, 0);
+    if (PitIsFo(firstPort.target_p)) {
+        spPorts = [SMGUtils filterFoPorts:spPorts valueIdentifier:valueIden];
+    }else if(PitIsAlg(firstPort.target_p)){
+        spPorts = ARRTOOK([SMGUtils filterAlgPorts:spPorts valueIdentifier:valueIden]);
+    }else{
+        return result;
+    }
+    if (!ARRISOK(spPorts)) return result;
+    
+    //1. 单条评分block (返回double的NSNumber类型);
+    Func1 singleScoreFunc = ^(AIPort *p){
+        if (PitIsFo(p.target_p)) {
+            return @([AINetService getValueDataFromFo:p.target_p valueIdentifier:valueIden]);
+        }else if(PitIsAlg(p.target_p)){
+            return @([AINetService getValueDataFromAlg:p.target_p valueIdentifier:valueIden]);
+        }
+        return @(0);
+    };
     
     //2. 从小到大排序;
     NSArray *sortPorts = [spPorts sortedArrayUsingComparator:^NSComparisonResult(AIPort *p1, AIPort *p2) {
-        double v1 = singleScoreBlock(p1);
-        double v2 = singleScoreBlock(p2);
-        return [SMGUtils compareFloatA:v2 floatB:v1];
+        NSNumber *v1 = singleScoreFunc(p1);
+        NSNumber *v2 = singleScoreFunc(p2);
+        return [SMGUtils compareFloatA:v2.doubleValue floatB:v1.doubleValue];
     }];
     
     //3. 找出max-min (影响范围为1/3,一边一半);
     AIPort *minPort = ARR_INDEX(sortPorts, 0);
     AIPort *maxPort = ARR_INDEX_REVERSE(sortPorts, 0);
-    double minValue = singleScoreBlock(minPort);
-    double maxValue = singleScoreBlock(maxPort);
-    double scope = (maxValue - minValue) / 3.0f / 2.0f;
+    NSNumber *minValue = singleScoreFunc(minPort);
+    NSNumber *maxValue = singleScoreFunc(maxPort);
+    double scope = (maxValue.doubleValue - minValue.doubleValue) / 3.0f / 2.0f;
     
     //4. 累计 (参考22025评分图);
     for (AIPort *item in sortPorts) {
-        double itemValue = singleScoreBlock(item);
-        double distance = fabs(itemValue - value);
+        NSNumber *itemValue = singleScoreFunc(item);
+        double distance = fabs(itemValue.doubleValue - value);
         
         //a. 当距离<受影响范围时,按照比例受到影响;
         double itemStrong = 0,rate = 0;

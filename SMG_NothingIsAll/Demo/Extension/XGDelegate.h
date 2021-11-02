@@ -10,8 +10,12 @@
 
 /**
  *  MARK:--------------------使用说明--------------------
- *  1. 直接使用Act0 act = ^(){ //执行代码 },使用时调用act();
- *  2. 使用void(^act)() = ^(){ //执行代码 },使用时调用act();
+ *  @act使用示例:
+ *      本用法: Act0 act = ^(){ //执行代码 },使用时调用act();
+ *      相当于: void(^act)() = ^(){ //执行代码 },使用时调用act();
+ *  @func使用示例:
+ *      本用法: Func1 func = ^(){return yourClass;};,使用时:YourClass yc = func();
+ *      相当于: YourClass(^func)() = ^(){ return yourClass; },使用时:YourClass yc = func();
  */
 
 typedef void (^Act0)();
