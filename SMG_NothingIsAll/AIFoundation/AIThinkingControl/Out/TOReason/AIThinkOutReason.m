@@ -32,7 +32,8 @@
 #import "AINoRepeatRun.h"
 #import "TOUtils.h"
 #import "AINetService.h"
-#import "VRSReasonResultModel.h"
+#import "VRSResultModel.h"
+#import "VRSTargetModel.h"
 
 @interface AIThinkOutReason() <TOActionDelegate>
 
@@ -570,6 +571,7 @@
  *      2021.01.31: R-模式迭代V3 (将S的判断去掉,因为R-模式迭代后与P-模式处理一致) (参考22105);
  *      2021.10.12: 从pPorts取最近修正目标值时,涵盖从rMatchFo中取值 (参考24053-实践5);
  *      2021.10.30: 对R任务迭代VRS稳定性评价 (
+ *      2021.11.02: 将Percept和Reason暂时分开,等dsFo废弃后,再考虑整合 (参考24103-稳定性和修正目标算法);
  *  _result moveValueSuccess : 转移到稀疏码行为化了,转移成功则返回true,未转移则返回false;
  *
  *  @bug
@@ -594,7 +596,7 @@
 -(void) reasonScorePM_V3:(TOAlgModel*)outModel failure:(void(^)())failure success:(void(^)())success notNeedPM:(void(^)())notNeedPM{
     
     //测试v4;
-    [self reasonScorePM_V4:outModel failure:failure success:success notNeedPM:notNeedPM];
+    [self reasonScorePM_V4_Percept:outModel failure:failure success:success notNeedPM:notNeedPM];
     return;
     
     //1. 数据准备
@@ -728,7 +730,7 @@
     if (notNeedPM) notNeedPM();
 }
 
--(void) reasonScorePM_V4:(TOAlgModel*)outModel failure:(void(^)())failure success:(void(^)())success notNeedPM:(void(^)())notNeedPM{
+-(void) reasonScorePM_V4_Percept:(TOAlgModel*)outModel failure:(void(^)())failure success:(void(^)())success notNeedPM:(void(^)())notNeedPM{
     //1. 数据准备
     if (!outModel || !outModel.pm_Fo) {
         if (notNeedPM) notNeedPM();
@@ -780,17 +782,6 @@
             [allP_ps addObjectsFromArray:rMatchAlgP_ps];
         }
         
-        //9. 对R任务时,此处单独调用新的VRSReason评价器,对score结果和allP_ps重新赋值;
-        if (ISOK(baseDemand, ReasonDemandModel.class)) {
-            //a. 评价 & 取修正目标
-            ReasonDemandModel *rDemand = (ReasonDemandModel*)baseDemand;
-            VRSReasonResultModel *vrsResult = [AIScore VRS_Reason:firstJustPValue matchPFos:rDemand.inModel.matchPFos];
-            VRSTargetModel *vrsTarget = [AIScore VRS_Target:rDemand.inModel.matchPFos vrsResult:vrsResult];
-            
-            //b. 重新赋值score结果;
-            score = vrsResult.score >= 0;
-        }
-        
         //8. 从allP_ps中,以firstJustPValue同区稀疏码相近排序 (参考20206-步骤图-第2步);
         NSArray *sortPAlgs = [ThinkingUtils getFuzzySortWithMaskValue:firstJustPValue fromProto_ps:allP_ps];
         
@@ -819,6 +810,63 @@
                 if (success) success();
                 return;
             }
+            
+            //12. ------> 未找到GL的目标 (如距离0),直接计为失败;
+            if (Log4PM) NSLog(@"-> 未找到GL目标,转至流程控制Failure");
+            if (failure) failure();
+            return;
+        }else {
+            //13. ------> 评价结果为P -> 无需修正,直接Finish (注:在TOValueModel构造方法中: proto中的value,就是subValue);
+            if (Log4PM) NSLog(@"-> 无需PM,转至流程控制Finish");
+            TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:nil group:outModel];
+            toValueModel.status = TOModelStatus_NoNeedAct;
+            [self singleLoopBackWithFinishModel:toValueModel];
+            if (success) success();
+            return;
+        }
+    }
+    
+    //14. 无justP目标需转移,直接返回false,调用PM者会使outModel直接Finish;
+    if (notNeedPM) notNeedPM();
+}
+
+-(void) reasonScorePM_V4_Reason:(TOAlgModel*)outModel failure:(void(^)())failure success:(void(^)())success notNeedPM:(void(^)())notNeedPM baseDemand:(ReasonDemandModel*)baseDemand{
+    //1. 数据准备
+    if (!outModel || !outModel.pm_Fo) {
+        if (notNeedPM) notNeedPM();
+        return;
+    }
+    
+    //3. 将理性评价数据存到短时记忆模型 (excepts收集所有已PM过的);
+    NSArray *except_ps = [TOUtils convertPointersFromTOValueModelSValue:outModel.subModels validStatus:nil];
+    NSArray *validJustPValues = [SMGUtils removeSub_ps:except_ps parent_ps:outModel.justPValues];
+    
+    //4. 不用PM评价 (则交由流程控制方法,推动继续决策(跳转下帧/别的);
+    if (!ARRISOK(validJustPValues)) {
+        if (notNeedPM) notNeedPM();
+        return;
+    }
+    OFTitleLog(@"PM", @"\nM:%@\nMAtFo:%@",Pit2FStr(outModel.content_p),Pit2FStr(outModel.pm_Fo));
+    if (Log4PM) NSLog(@"---> P独特码:%@",Pits2FStr(outModel.justPValues));
+    if (Log4PM) NSLog(@"---> 不应期:%@",Pits2FStr(except_ps));
+    if (Log4PM) NSLog(@"---> P有效独特码:%@",Pits2FStr(validJustPValues));
+    
+    //5. 理性评价: 取到首个P独特稀疏码 (判断是否需要行为化);
+    AIKVPointer *firstJustPValue = ARR_INDEX(validJustPValues, 0);
+    if (firstJustPValue) {
+        
+        //a. 评价 & 取修正目标
+        ReasonDemandModel *rDemand = (ReasonDemandModel*)baseDemand;
+        VRSResultModel *vrsResult = [AIScore VRS_Reason:firstJustPValue matchPFos:rDemand.inModel.matchPFos];
+        VRSTargetModel *vrsTarget = [AIScore VRS_Target:rDemand.inModel.matchPFos vrsResult:vrsResult];
+        
+        if (vrsTarget) {
+            //11. 修正找到时,转至Begin-TOValueModel,并转移_GL;
+            if (Log4PM) NSLog(@"-> 转移 Success:(%@->%@)",Pit2FStr(firstJustPValue),Pit2FStr(vrsTarget.targetValue_p));
+            TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:vrsTarget.targetValue_p group:outModel];
+            [self singleLoopBackWithBegin:toValueModel];
+            if (success) success();
+            return;
             
             //12. ------> 未找到GL的目标 (如距离0),直接计为失败;
             if (Log4PM) NSLog(@"-> 未找到GL目标,转至流程控制Failure");

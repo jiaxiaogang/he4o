@@ -16,12 +16,12 @@
 //MARK: 2. 理性评价 (反省)
 //MARK:     > VRS & ARS & FRS
 //MARK:===============================================================
-@class AIShortMatchModel,TOFoModel,ReasonDemandModel,DemandModel,VRSReasonResultModel,VRSTargetModel;
+@class AIShortMatchModel,TOFoModel,ReasonDemandModel,DemandModel,VRSResultModel,VRSTargetModel;
 @interface AIScore : NSObject
 
 +(BOOL) VRS:(AIKVPointer*)value_p cAlg:(AIAlgNodeBase*)cAlg sPorts:(NSArray*)sPorts pPorts:(NSArray*)pPorts baseDemand:(DemandModel*)baseDemand;
-+(VRSReasonResultModel*) VRS_Reason:(AIKVPointer*)value_p matchPFos:(NSArray*)pFos;     //VRS评价算法
-+(VRSTargetModel*) VRS_Target:(NSArray*)pFos vrsResult:(VRSReasonResultModel*)vrsResult;//修正目标算法
++(VRSResultModel*) VRS_Reason:(AIKVPointer*)value_p matchPFos:(NSArray*)pFos;     //VRS评价算法
++(VRSTargetModel*) VRS_Target:(NSArray*)pFos vrsResult:(VRSResultModel*)vrsResult;//修正目标算法
 
 +(BOOL) FRS:(AIFoNodeBase*)fo;
 +(BOOL) FRS_Miss:(AIFoNodeBase*)sFo matchFo:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex;

@@ -19,7 +19,7 @@
 #import "AIAlgNodeBase.h"
 #import "AIMatchFoModel.h"
 #import "ReasonDemandModel.h"
-#import "VRSReasonResultModel.h"
+#import "VRSResultModel.h"
 #import "VRSTargetModel.h"
 
 @implementation AIScore
@@ -102,10 +102,10 @@
  *      2021.10.31: 取消排除同区码的pFos (参考24102-思路1&3);
  *      2021.11.01: 迭代稳定性计算与竞争方法 (参考24103-BUG1);
  */
-+(VRSReasonResultModel*) VRS_Reason:(AIKVPointer*)value_p matchPFos:(NSArray*)pFos {
++(VRSResultModel*) VRS_Reason:(AIKVPointer*)value_p matchPFos:(NSArray*)pFos {
     //1. 数据准备;
     if (Log4VRS_Main) NSLog(@"\n============== VRS_Reason (%@) ==============",Pit2FStr(value_p));
-    VRSReasonResultModel *result = nil;
+    VRSResultModel *result = nil;
     
     //3. 剩下的pFos逐个进行稳定性评分;
     for (AIMatchFoModel *pFo in pFos) {
@@ -114,7 +114,7 @@
         NSArray *sPorts = [AINetUtils absPorts_All:fo type:ATSub];
         double sScore = [AIScore score4Value:value_p spPorts:sPorts];
         double pScore = [AIScore score4Value:value_p spPorts:pPorts];
-        VRSReasonResultModel *newResult = [VRSReasonResultModel newWithBaseFo:fo pScore:pScore sScore:sScore proto:value_p];
+        VRSResultModel *newResult = [VRSResultModel newWithBaseFo:fo pScore:pScore sScore:sScore proto:value_p];
         
         //4. 评分绝对值最大的最稳定,存至result中 (为空时直接赋值,不为空时更迫切才赋值) (参考24103-BUG1);
         if (!result || newResult.stablity > result.stablity) {
@@ -132,7 +132,7 @@
 /**
  *  MARK:--------------------VRS修正目标算法--------------------
  */
-+(VRSTargetModel*) VRS_Target:(NSArray*)pFos vrsResult:(VRSReasonResultModel*)vrsResult{
++(VRSTargetModel*) VRS_Target:(NSArray*)pFos vrsResult:(VRSResultModel*)vrsResult{
     //1. 评价通过时,不取修正目标;
     VRSTargetModel *result = nil;
     if (vrsResult.score >= 0) return result;

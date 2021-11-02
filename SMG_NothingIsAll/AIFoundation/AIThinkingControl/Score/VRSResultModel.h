@@ -1,5 +1,5 @@
 //
-//  VRSReasonResultModel.h
+//  VRSResultModel.h
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2021/10/29.
@@ -15,9 +15,9 @@
  *      2021.11.01: 将pPercent和margin集成 (参考24103-BUG1);
  *      2021.11.02: 封装VRSModelBase,因为修正目标也要继承它;
  */
-@interface VRSReasonResultModel : VRSModelBase
+@interface VRSResultModel : VRSModelBase
 
-+(VRSReasonResultModel*) newWithBaseFo:(AIFoNodeBase*)baseFo pScore:(double)pScore sScore:(double)sScore proto:(AIKVPointer*)protoValue_p;
++(VRSResultModel*) newWithBaseFo:(AIFoNodeBase*)baseFo pScore:(double)pScore sScore:(double)sScore proto:(AIKVPointer*)protoValue_p;
 @property (strong, nonatomic) AIKVPointer *protoValue_p; //对谁进行的评价;
 
 @end
