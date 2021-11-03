@@ -570,7 +570,7 @@
  *      2021.01.23: 兼容支持R-模式 (满足SAlg) (参考22061-改4);
  *      2021.01.31: R-模式迭代V3 (将S的判断去掉,因为R-模式迭代后与P-模式处理一致) (参考22105);
  *      2021.10.12: 从pPorts取最近修正目标值时,涵盖从rMatchFo中取值 (参考24053-实践5);
- *      2021.10.30: 对R任务迭代VRS稳定性评价 (
+ *      2021.10.30: 对R任务迭代VRS稳定性评价 和 修正目标 (参考24103);
  *      2021.11.02: 将Percept和Reason暂时分开,等dsFo废弃后,再考虑整合 (参考24103-稳定性和修正目标算法);
  *  _result moveValueSuccess : 转移到稀疏码行为化了,转移成功则返回true,未转移则返回false;
  *
@@ -594,140 +594,19 @@
  *      2021.05.12: 整理备忘:PM应迁移到action中,命名为_ValuePM_V4() (介于_Hav和_GL之间);
  */
 -(void) reasonScorePM_V3:(TOAlgModel*)outModel failure:(void(^)())failure success:(void(^)())success notNeedPM:(void(^)())notNeedPM{
+    //1. 数据准备;
+    TOAlgModel *baseAlg = (TOAlgModel*)outModel.baseOrGroup;
+    TOFoModel *baseFo = (TOFoModel*)baseAlg.baseOrGroup;
+    DemandModel *baseDemand = (DemandModel*)baseFo.baseOrGroup;
     
-    //测试v4;
-    [self reasonScorePM_V4_Percept:outModel failure:failure success:success notNeedPM:notNeedPM];
-    return;
-    
-    //1. 数据准备
-    if (!outModel || !outModel.pm_Fo) {
-        if (notNeedPM) notNeedPM();
-        return;
+    //2. 根据类型调用P或R类型;
+    if (ISOK(baseDemand, ReasonDemandModel.class)) {
+        //a. R模式调用新的PMV4Reason();
+        [self reasonScorePM_V4_Reason:outModel failure:failure success:success notNeedPM:notNeedPM baseDemand:(ReasonDemandModel*)baseDemand];
+    }else{
+        //b. P模式暂时不变,和v3代码保持一致 (等再回测P模式时,此处再相应的迭代);
+        [self reasonScorePM_V4_Percept:outModel failure:failure success:success notNeedPM:notNeedPM];
     }
-    
-    //3. 将理性评价数据存到短时记忆模型 (excepts收集所有已PM过的);
-    NSArray *except_ps = [TOUtils convertPointersFromTOValueModelSValue:outModel.subModels validStatus:nil];
-    NSArray *validJustPValues = [SMGUtils removeSub_ps:except_ps parent_ps:outModel.justPValues];
-    
-    //4. 不用PM评价 (则交由流程控制方法,推动继续决策(跳转下帧/别的);
-    if (!ARRISOK(validJustPValues)) {
-        if (notNeedPM) notNeedPM();
-        return;
-    }
-    OFTitleLog(@"PM", @"\nM:%@\nMAtFo:%@",Pit2FStr(outModel.content_p),Pit2FStr(outModel.pm_Fo));
-    if (Log4PM) NSLog(@"---> P独特码:%@",Pits2FStr(outModel.justPValues));
-    if (Log4PM) NSLog(@"---> 不应期:%@",Pits2FStr(except_ps));
-    if (Log4PM) NSLog(@"---> P有效独特码:%@",Pits2FStr(validJustPValues));
-    
-    //5. 理性评价: 取到首个P独特稀疏码 (判断是否需要行为化);
-    AIKVPointer *firstJustPValue = ARR_INDEX(validJustPValues, 0);
-    if (firstJustPValue) {
-        //5. 取得当前帧alg模型 (参考20206-结构图) 如: A22(速0,高5,距0,向→,皮0);
-        TOAlgModel *curAlgModel = (TOAlgModel*)outModel.baseOrGroup;
-        AIAlgNodeBase *curAlg = [SMGUtils searchNode:curAlgModel.content_p];
-        
-        //6. 取当前方案fo模型 (参考20206-结构图) 如: P+新增一例解决方案: F23[A22(速0,高5,距0,向→,皮0),A1(吃1)]->M7{64};
-        TOFoModel *curFoModel = (TOFoModel*)outModel.baseOrGroup.baseOrGroup;
-        AIFoNodeBase *curFo = [SMGUtils searchNode:curFoModel.content_p];
-        
-        //6. 取当前的demand任务;
-        DemandModel *baseDemand = (DemandModel*)curFoModel.baseOrGroup;
-        
-        //7. 根据curAlg和curFo取有效的部分validAlgSPs (参考20206-步骤图-第1步);
-        NSArray *sPorts = [ThinkingUtils pm_GetValidSPAlg_ps:@[curAlg] curFo:curFo type:ATSub];
-        
-        //8. 根据curAlg和curFo取有效部分的pPorts,并筛选有效分区部分;
-        NSArray *pPorts = [ThinkingUtils pm_GetValidSPAlg_ps:@[curAlg] curFo:curFo type:ATPlus];
-        
-        //8. 2021.01.01: 个性评价依据,以值域求和方式来实现 (参考2120A & n21p21);
-        BOOL score = [AIScore VRS:firstJustPValue cAlg:curAlg sPorts:sPorts pPorts:pPorts baseDemand:baseDemand];
-        
-        //8. 当R模式时,从rMatchFo中取出符合的pPorts,也参与到最近P分析中;
-        NSMutableArray *allP_ps = [[NSMutableArray alloc] initWithArray:Ports2Pits(pPorts)];
-        if (ISOK(baseDemand, ReasonDemandModel.class)) {
-            NSArray *rMatchFoPPorts = ARRTOOK([AINetUtils absPorts_All:((ReasonDemandModel*)baseDemand).mModel.matchFo type:ATPlus]);
-            NSArray *rMatchAlgP_ps = [SMGUtils convertAlgPsFromFoPorts:rMatchFoPPorts valueIden:firstJustPValue.identifier];
-            [allP_ps addObjectsFromArray:rMatchAlgP_ps];
-        }
-        
-        //8. 从allP_ps中,以firstJustPValue同区稀疏码相近排序 (参考20206-步骤图-第2步);
-        NSArray *sortPAlgs = [ThinkingUtils getFuzzySortWithMaskValue:firstJustPValue fromProto_ps:allP_ps];
-        
-        //9. 将最接近的取出,并根据源于S或P作为理性评价结果,判断是否修正;
-        AIAlgNodeBase *mostSimilarAlg = ARR_INDEX(sortPAlgs, 0);
-        if (Log4PM) NSLog(@"内ORT数:(S数:%ld P数:%ld) curA:%@ curF:%@",sPorts.count,pPorts.count,Alg2FStr(curAlg),Fo2FStr(curFo));
-        if (Log4PM) NSLog(@">>>>> 当前修正:%@ 最近P:%@",Pit2FStr(firstJustPValue),Alg2FStr(mostSimilarAlg));
-        
-        if (!score) {
-            //10. 优先从MC的C中找同区码,作为修正GL的目标;
-            AIKVPointer *glValue4M = [SMGUtils filterSameIdentifier_p:firstJustPValue b_ps:curAlg.content_ps];
-            if (Log4PM) NSLog(@"find glValue4M %@ from C:(%@->%@) conF:%@ conA:%@",glValue4M ? @"success" : @"failure", Pit2FStr(firstJustPValue),Pit2FStr(glValue4M),Fo2FStr(curFo),Alg2FStr(curAlg));
-            
-            //10. 其次,找不到时,再从Plus中找: 评价结果为S -> 需要修正,找最近的P:mostSimilarPAlg, 作为GL修正目标值 (参考20207-示图);
-            if (!glValue4M && mostSimilarAlg) {
-                //10. glValue4M为空 & 最相近P有效时 => 对glValue4M从最近P中取值;
-                glValue4M = [SMGUtils filterSameIdentifier_p:firstJustPValue b_ps:mostSimilarAlg.content_ps];
-                if (Log4PM) NSLog(@"find glValue4M %@ from P:(%@->%@) conF:%@ conA:%@",glValue4M ? @"success" : @"failure", Pit2FStr(firstJustPValue),Pit2FStr(glValue4M),Fo2FStr(curFo),Alg2FStr(curAlg));
-            }
-            
-            //11. 修正找到时,转至Begin-TOValueModel,并转移_GL;
-            if (glValue4M) {
-                if (Log4PM) NSLog(@"-> 转移 Success:(%@->%@)",Pit2FStr(firstJustPValue),Pit2FStr(glValue4M));
-                TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:glValue4M group:outModel];
-                [self singleLoopBackWithBegin:toValueModel];
-                if (success) success();
-                return;
-            }
-            
-            //12. ------> 未找到GL的目标 (如距离0),直接计为失败;
-            if (Log4PM) NSLog(@"-> 未找到GL目标,转至流程控制Failure");
-            
-            ////1. 尝试从具象中,找出pPorts
-            //NSMutableArray *allAlg_ps = [[NSMutableArray alloc] init];
-            //[allAlg_ps addObject:curAlg.pointer];
-            //[allAlg_ps addObjectsFromArray:Ports2Pits([AINetUtils conPorts_All_Normal:curAlg])];
-            //
-            ////2. 取每条alg的refFos;
-            //for (AIKVPointer *alg_p in allAlg_ps) {
-            //    AIAlgNodeBase *alg = [SMGUtils searchNode:alg_p];
-            //    NSArray *ref_ps = Ports2Pits([AINetUtils refPorts_All4Alg_Normal:alg]);
-            //
-            //    //3. 筛选出有效部分fo;
-            //    NSArray *conFo_ps = Ports2Pits([AINetUtils conPorts_All_Normal:curFo]);
-            //    conFo_ps = [SMGUtils filterSame_ps:conFo_ps parent_ps:ref_ps];
-            //
-            //    //4. 依次对有效的fo,找到其pPorts;
-            //    for (AIKVPointer *fo_p in conFo_ps) {
-            //        AIFoNodeBase *fo = [SMGUtils searchNode:fo_p];
-            //        NSArray *pPorts = [ThinkingUtils pm_GetValidSPAlg_ps:alg curFo:fo type:ATPlus];
-            //        NSArray *sPorts = [ThinkingUtils pm_GetValidSPAlg_ps:alg curFo:fo type:ATSub];
-            //
-            //        //此处训练有时,指向有一个S,有时指向有一个P,需要再测测看;
-            //        if (pPorts.count > 0) {
-            //            NSLog(@"");
-            //        }
-            //        if (sPorts.count > 0) {
-            //            NSLog(@"");
-            //        }
-            //    }
-            //}
-            //========================================================================
-            
-            if (failure) failure();
-            return;
-        }else {
-            //13. ------> 评价结果为P -> 无需修正,直接Finish (注:在TOValueModel构造方法中: proto中的value,就是subValue);
-            if (Log4PM) NSLog(@"-> 无需PM,转至流程控制Finish");
-            TOValueModel *toValueModel = [TOValueModel newWithSValue:firstJustPValue pValue:nil group:outModel];
-            toValueModel.status = TOModelStatus_NoNeedAct;
-            [self singleLoopBackWithFinishModel:toValueModel];
-            if (success) success();
-            return;
-        }
-    }
-    
-    //14. 无justP目标需转移,直接返回false,调用PM者会使outModel直接Finish;
-    if (notNeedPM) notNeedPM();
 }
 
 -(void) reasonScorePM_V4_Percept:(TOAlgModel*)outModel failure:(void(^)())failure success:(void(^)())success notNeedPM:(void(^)())notNeedPM{
