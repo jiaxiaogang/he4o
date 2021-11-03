@@ -125,7 +125,7 @@
         //}];
         if (Log4VRS_Main) NSLog(@"item:%@ ==> P%ld条%.2f分 - S%ld条%.2f分 = 评分%.2f",Fo2FStr(fo),pPorts.count,pScore,sPorts.count,sScore,newResult.score);
     }
-    if (Log4VRS_Main) NSLog(@"VRSReason最稳定结果 稳定性:%.2f 评分:%.2f                      < %@ -- %@ >\n",result.stablity,result.score,Pit2FStr(value_p),result.score < 0 ? @"未通过" : @"通过");
+    if (Log4VRS_Main) NSLog(@"VRSReason最稳定结果:F%ld 稳定性:%.2f 评分:%.2f                      < %@ -- %@ >\n",result.baseFo.pointer.pointerId,result.stablity,result.score,Pit2FStr(value_p),result.score < 0 ? @"未通过" : @"通过");
     return result;
 }
 
@@ -155,6 +155,7 @@
         NSArray *pPorts = [AINetUtils absPorts_All:fo type:ATPlus];
         NSArray *sPorts = [AINetUtils absPorts_All:fo type:ATSub];
         NSArray *spPorts = [SMGUtils collectArrA:pPorts arrB:sPorts];
+        if (Log4VRS_Main) NSLog(@"itemTarget:%@ ==> P%ld条 - S%ld条",Fo2FStr(fo),pPorts.count,sPorts.count);
         
         //5. 筛选出spPort中,包含同区码的 (参考24103-BUG2-改动3);
         for (AIPort *spPort in spPorts) {
@@ -172,7 +173,7 @@
             }
         }
     }
-    if (Log4VRS_Main) NSLog(@"VRSTarget最高分修正结果 评分:%.2f  (现码:%@ -> 修正目标:%@)\n",result.score,Pit2FStr(vrsResult.protoValue_p),Pit2FStr(result.targetValue_p));
+    if (Log4VRS_Main) NSLog(@"VRSTarget最高分修正结果:F%ld 评分:%.2f  (现码:%@ -> 修正目标:%@)\n",result.baseFo.pointer.pointerId,result.score,Pit2FStr(vrsResult.protoValue_p),Pit2FStr(result.targetValue_p));
     return result;
 }
 
