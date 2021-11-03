@@ -155,7 +155,7 @@
         NSArray *pPorts = [AINetUtils absPorts_All:fo type:ATPlus];
         NSArray *sPorts = [AINetUtils absPorts_All:fo type:ATSub];
         NSArray *spPorts = [SMGUtils collectArrA:pPorts arrB:sPorts];
-        if (Log4VRS_Main) NSLog(@"itemTarget:%@ ==> P%ld条 - S%ld条",Fo2FStr(fo),pPorts.count,sPorts.count);
+        if (Log4VRS_Main) NSLog(@"\n尝试从%@找修正目标 ==> P%ld条 - S%ld条",Fo2FStr(fo),pPorts.count,sPorts.count);
         
         //5. 筛选出spPort中,包含同区码的 (参考24103-BUG2-改动3);
         for (AIPort *spPort in spPorts) {
@@ -170,6 +170,7 @@
                 if (!result || newResult.score > result.score) {
                     result = newResult;
                 }
+                if (Log4VRS_Main) NSLog(@"--> 尝试V值:%@ score:%.2f",Pit2FStr(sameIdenValue),newResult.score);
             }
         }
     }
