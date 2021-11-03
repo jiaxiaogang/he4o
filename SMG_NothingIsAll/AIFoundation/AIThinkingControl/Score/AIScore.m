@@ -131,6 +131,8 @@
 
 /**
  *  MARK:--------------------VRS修正目标算法--------------------
+ *  @version
+ *      2021.11.04: 改为仅从pPorts池中,计算修正目标 (sPorts虽然有可能有用,但可能性小,不浪费那性能先,后确实需要再支持喽);
  */
 +(VRSTargetModel*) VRS_Target:(NSArray*)pFos vrsResult:(VRSResultModel*)vrsResult{
     //1. 评价通过时,不取修正目标;
@@ -154,7 +156,7 @@
         AIFoNodeBase *fo = pFo.matchFo;
         NSArray *pPorts = [AINetUtils absPorts_All:fo type:ATPlus];
         NSArray *sPorts = [AINetUtils absPorts_All:fo type:ATSub];
-        NSArray *spPorts = [SMGUtils collectArrA:pPorts arrB:sPorts];
+        NSArray *spPorts = [SMGUtils collectArrA:pPorts arrB:nil/*sPorts*/];
         if (Log4VRS_Main) NSLog(@"\n尝试从%@找修正目标 ==> P%ld条 - S%ld条",Fo2FStr(fo),pPorts.count,sPorts.count);
         
         //5. 筛选出spPort中,包含同区码的 (参考24103-BUG2-改动3);
