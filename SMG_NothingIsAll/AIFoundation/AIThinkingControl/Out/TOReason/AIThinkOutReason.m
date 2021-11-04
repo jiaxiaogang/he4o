@@ -592,6 +592,9 @@
  *      2021.01.26: a.迭代计划,因为PM逻辑复杂,建议拆分掉,将整体分布到流程控制中,方案如下;
  *      2021.01.26: b.废弃justPValues,直接在_Hav循环V调用_GL,并进行稀疏码评价,不属于justPValues的本来已实现,评价为true而已;
  *      2021.05.12: 整理备忘:PM应迁移到action中,命名为_ValuePM_V4() (介于_Hav和_GL之间);
+ *      2021.11.04: 整理备忘1:随着PM_Reason中VRS评价方式的迭代,PM越来越像介于_Fo和_Hav之间了;
+ *      2021.11.04: 整理备忘2:等dsFo废弃掉,此处的VRS取得的P目标,才是_Fo,而原先的PMPercept模式还是在_Hav和_GL之间;
+ *      2021.11.04: 整理备忘3:或者针对R模式,得单独写一套Action_Reason行为化,原来的叫Action_Percept;
  */
 -(void) reasonScorePM_V3:(TOAlgModel*)outModel failure:(void(^)())failure success:(void(^)())success notNeedPM:(void(^)())notNeedPM{
     //1. 数据准备;
@@ -715,6 +718,21 @@
         if (notNeedPM) notNeedPM();
         return;
     }
+    
+    
+    //TODOTOMORROW20211104: 流程控制改动 (参考24111-BUG2);
+    //1. 此处有一项GL无计可施时,就废弃了整个reModel;
+    //2. 应改为所有justPValues全失败时,才算reModel失败;
+    //3. 即GL失败时,不应直接调用_Hav(base.base),而应该调用PM(base);
+    //4. 而在PM中,所有独特码失败时,再调用_Hav(reModel.base);
+    
+    
+    //PM_Percept迭代计划:
+    //1. SP的评价也要综合评定,有可能有多个独特码,但只需要改动一部分后,即可符合非常稳定的ATPlusFo结果了;
+    //2. 更况有些独特码,靠IRT的SP结果是评不出所以然的,比如X2,明明很危险,但你还没法加工;
+    //3. 这种情况下只有PM知道它不可加工,也只有PM先尝试别的独特码,并最终不管X2的情况下亦解决了问题,才能逐步发现X2的没所谓;
+    
+    
     
     //3. 将理性评价数据存到短时记忆模型 (excepts收集所有已PM过的);
     NSArray *except_ps = [TOUtils convertPointersFromTOValueModelSValue:outModel.subModels validStatus:nil];
