@@ -726,11 +726,28 @@
     //3. 即GL失败时,不应直接调用_Hav(base.base),而应该调用PM(base);
     //4. 而在PM中,所有独特码失败时,再调用_Hav(reModel.base);
     
+    //TODOTOMORROW20211105: 思考备忘;
+    //1. PM到底在action中算什么位置?重命名之;
+    
+    //2. 评价器理性迭代;
+    //整: 整个fo的SP评价器 (即将sPorts和pPorts的强度和,计算为得分);
+    //分: 在VRS中,对单码进行评分;
+    
+    //3. IRT迭代分析;
+    //IRT中,matchValue<1的不做反省,或者说,IRT中;
+    //IRT中,已发生部分担P责?未发生部分担S责?
+    
+    
+    
+    
     
     //PM_Percept迭代计划:
     //1. SP的评价也要综合评定,有可能有多个独特码,但只需要改动一部分后,即可符合非常稳定的ATPlusFo结果了;
     //2. 更况有些独特码,靠IRT的SP结果是评不出所以然的,比如X2,明明很危险,但你还没法加工;
     //3. 这种情况下只有PM知道它不可加工,也只有PM先尝试别的独特码,并最终不管X2的情况下亦解决了问题,才能逐步发现X2的没所谓;
+    //4. 可以将解决方案的: curAlg看做matchAlg,而reModel设为protoAlg;此时,curFo解决方案就是pFos,而
+    //5. 将_Hav中的mIsC判断,改为inModel.matchAlgs中是否包含curAlg;
+    
     
     
     

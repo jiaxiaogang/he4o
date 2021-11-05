@@ -705,7 +705,7 @@
     }
     IFTitleLog(@"In反省类比 (%@)", @"\nM:%@->%@\nP:%@->%@",ATType2Str(type),Fo2FStr(matchFo),Mvp2Str(matchFo.cmvNode_p),Fo2FStr(shortFo),Mvp2Str(shortFo.cmvNode_p));
     
-    //3. 正向有序取差集 = M-P;
+    //3. 正向有序取差集 = P-M;
     NSMutableArray *justPs = [[NSMutableArray alloc] init];
     NSInteger nextStartJ = 0;
     for (NSInteger i = 0; i < shortFo.count; i++) {
