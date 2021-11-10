@@ -17,6 +17,7 @@
 		0808D34022B6F73D00D383BA /* NVLineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0808D33F22B6F73D00D383BA /* NVLineView.m */; };
 		0808D34822B6FDD100D383BA /* NVViewUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 0808D34722B6FDD100D383BA /* NVViewUtil.m */; };
 		080A74321F60C6490025DBA3 /* AIPort.m in Sources */ = {isa = PBXBuildFile; fileRef = 080A74311F60C6490025DBA3 /* AIPort.m */; };
+		080B5362273C6EB9006859FA /* AIActionReason.m in Sources */ = {isa = PBXBuildFile; fileRef = 080B5361273C6EB9006859FA /* AIActionReason.m */; };
 		080BFAAF2304D06A00046D22 /* HEViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 080BFAAE2304D06A00046D22 /* HEViewController.m */; };
 		0810E50F236A637500B33226 /* AINetIndexUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0810E50E236A637500B33226 /* AINetIndexUtils.m */; };
 		0817D6AB219E3CC7000E45AB /* UIColor+expanded.m in Sources */ = {isa = PBXBuildFile; fileRef = 0817D6A9219E3CC6000E45AB /* UIColor+expanded.m */; };
@@ -188,6 +189,8 @@
 		0808D34722B6FDD100D383BA /* NVViewUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NVViewUtil.m; sourceTree = "<group>"; };
 		080A74301F60C6490025DBA3 /* AIPort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIPort.h; sourceTree = "<group>"; };
 		080A74311F60C6490025DBA3 /* AIPort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIPort.m; sourceTree = "<group>"; };
+		080B5360273C6EB9006859FA /* AIActionReason.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIActionReason.h; sourceTree = "<group>"; };
+		080B5361273C6EB9006859FA /* AIActionReason.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIActionReason.m; sourceTree = "<group>"; };
 		080BFAAD2304D06A00046D22 /* HEViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HEViewController.h; sourceTree = "<group>"; };
 		080BFAAE2304D06A00046D22 /* HEViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HEViewController.m; sourceTree = "<group>"; };
 		0810E50D236A637500B33226 /* AINetIndexUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetIndexUtils.h; sourceTree = "<group>"; };
@@ -686,10 +689,10 @@
 		0838AE9E25C6C162000F67D9 /* TOReason */ = {
 			isa = PBXGroup;
 			children = (
-				0850496A2474A41F0017F9A0 /* AIThinkOutAction.h */,
-				085049692474A41F0017F9A0 /* AIThinkOutAction.m */,
 				08FE031C231DEE8C001ED8B4 /* AIThinkOutReason.h */,
 				08FE031D231DEE8C001ED8B4 /* AIThinkOutReason.m */,
+				080B5360273C6EB9006859FA /* AIActionReason.h */,
+				080B5361273C6EB9006859FA /* AIActionReason.m */,
 			);
 			path = TOReason;
 			sourceTree = "<group>";
@@ -894,6 +897,8 @@
 				08A232E4243557110090D4B5 /* TOUtils.m */,
 				0838AE9A25C6C14A000F67D9 /* AIThinkOut.h */,
 				0838AE9B25C6C14A000F67D9 /* AIThinkOut.m */,
+				0850496A2474A41F0017F9A0 /* AIThinkOutAction.h */,
+				085049692474A41F0017F9A0 /* AIThinkOutAction.m */,
 			);
 			path = Out;
 			sourceTree = "<group>";
@@ -1516,6 +1521,7 @@
 				08057B342355574600E9B6F1 /* AIShortMatchModel.m in Sources */,
 				080228E1227282F80087FE69 /* TOModelBase.m in Sources */,
 				88E1F84E211591D80036B616 /* DemandManager.m in Sources */,
+				080B5362273C6EB9006859FA /* AIActionReason.m in Sources */,
 				88C258C1209E99B00042CB6A /* AIMvFoManager.m in Sources */,
 				08EF706421E5743F009B5194 /* OutputModel.m in Sources */,
 				0832AD4325BC5AEF001B4DB1 /* AIMatchFoModel.m in Sources */,

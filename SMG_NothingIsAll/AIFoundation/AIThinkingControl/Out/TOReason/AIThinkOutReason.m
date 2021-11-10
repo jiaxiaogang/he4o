@@ -107,15 +107,76 @@
  *      2021.08.12 - 支持当matchFo没dsFo时,从它的抽象找dsFo解决方案 (参考23214-方案1);
  *      2021.10.15 - 整个TO不占用主线程执行 (参考24057-方案2);
  *      2021.10.16 - 打开异步后,训练日志较乱,先关掉;
+ *      2021.11.11 - V5迭代-废弃dsFo (参考24101-第3阶段);
  */
 -(void) reasonSubV4:(ReasonDemandModel*)demand{
-    //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [self reasonSubV4_Run:demand];
-    //});
-}
--(void) reasonSubV4_Run:(ReasonDemandModel*)demand{
+    //0. 当需要思维在后台执行时,打开此代码;
+    //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{});
+    
     //1. 数据检查
     if (!demand || !Switch4RS) return;
+    AIFoNodeBase *matchFo = demand.mModel.matchFo;
+    OFTitleLog(@"TOP.R-", @"\n任务:%@->%@,发生%ld",Fo2FStr(matchFo),Mvp2Str(matchFo.cmvNode_p),(long)demand.mModel.cutIndex2);
+    
+    //3. ActYes等待 或 OutBack反省等待 中时,不进行决策;
+    NSArray *waitFos = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
+        return item.status == TOModelStatus_ActYes || item.status == TOModelStatus_OuterBack;
+    }];
+    if (ARRISOK(waitFos)) return;
+    
+    //3. 不应期 (可以考虑改为将整个demand.actionFoModels全加入不应期);
+    NSArray *exceptFoModels = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOModelBase *item) {
+        return item.status == TOModelStatus_ActNo || item.status == TOModelStatus_ScoreNo;
+    }];
+    NSMutableArray *except_ps = [TOUtils convertPointersFromTOModels:exceptFoModels];
+    [except_ps addObject:matchFo.pointer];
+    
+    //4. 收集baseFos (优先从matchFo找dsFo解决方案,其次从matchFo的抽象找dsFo解决方案);
+    NSMutableArray *baseFo_ps = [[NSMutableArray alloc] init];
+    [baseFo_ps addObject:demand.mModel.matchFo.pointer];
+    [baseFo_ps addObjectsFromArray:Ports2Pits([AINetUtils absPorts_All_Normal:demand.mModel.matchFo])];
+    
+    //5. 从baseFo取dsFo解决方案;
+    for (AIKVPointer *baseFo_p in baseFo_ps) {
+        AIFoNodeBase *baseFo = [SMGUtils searchNode:baseFo_p];
+        NSArray *dsPorts = [AINetUtils dsPorts_All:baseFo];
+        if (Log4DirecRef) NSLog(@"\n------- baseFo:%@ -------\n已有方案数:%ld 不应期数:%ld 共有方案数:%ld",Fo2FStr(baseFo),demand.actionFoModels.count,except_ps.count,dsPorts.count);
+        
+        //7. 打出每条解决方案: 查23172此处dsFo经验只有一条的问题 | 查23204取得dsFo的S嵌套太少的问题;
+        for (AIPort *dsPort in dsPorts) if (Log4DirecRef) {
+            AIFoNodeBase *dsFo = [SMGUtils searchNode:dsPort.target_p];
+            NSLog(@"强度:%ld 不应期:%d FRS评价:%d | %@->%@ (%@)",dsPort.strong.value,[except_ps containsObject:dsPort.target_p],[AIScore FRS:[SMGUtils searchNode:dsPort.target_p]],Pit2FStr(dsPort.target_p),Mvp2Str(dsFo.cmvNode_p),ATType2Str(dsPort.target_p.type));
+        }
+        //8. 从matchFo找dsPorts解决方案;
+        for (AIPort *dsPort in dsPorts) {
+            //a. 不应期无效,继续找下个;
+            if ([except_ps containsObject:dsPort.target_p]) continue;
+            
+            //b. 未发生理性评价 (空S评价);
+            if (![AIScore FRS:[SMGUtils searchNode:dsPort.target_p]]) continue;
+            
+            //c. 直接提交行为化 (废弃场景判断,因为fo场景一般mIsC会不通过,而alg判断,完全可以放到行为化过程中判断);
+            TOFoModel *foModel = [TOFoModel newWithFo_p:dsPort.target_p base:demand];
+            AIFoNodeBase *fo = [SMGUtils searchNode:dsPort.target_p];
+            NSLog(@"------->>>>>> R- From mvRefs 新增一例解决方案: %@->%@",Pit2FStr(dsPort.target_p),Mvp2Str(fo.cmvNode_p));
+            [self commitReasonSub:foModel demand:demand];
+            return;
+        }
+    }
+    demand.status = TOModelStatus_ActNo;
+    NSLog(@"------->>>>>> R-无计可施");
+}
+-(void) reasonSubV5:(ReasonDemandModel*)demand{
+    
+    //1. 数据检查
+    if (!demand || !Switch4RS) return;
+    
+    //TODOTOMORROW20211111-废弃dsFo;
+    //1. 将mModel改成数组;
+    //2. 将整个rDemand传给action,对所有fo进行SP竞争评价;
+    
+    
+    
     AIFoNodeBase *matchFo = demand.mModel.matchFo;
     OFTitleLog(@"TOP.R-", @"\n任务:%@->%@,发生%ld",Fo2FStr(matchFo),Mvp2Str(matchFo.cmvNode_p),(long)demand.mModel.cutIndex2);
     
