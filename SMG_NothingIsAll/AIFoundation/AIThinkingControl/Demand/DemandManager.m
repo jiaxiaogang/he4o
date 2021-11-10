@@ -149,11 +149,20 @@
  *      2021.02.05: 新增任务时,仅将"与旧有同区最大迫切度的差值"累增至活跃度 (参考22116);
  *      2021.03.01: 修复RMV一直在行为输出和被识别间重复死循环BUG (参考22142);
  *      2021.07.14: 循环matchPFos时,采用反序,因为优先级和任务池优先级上弄反了 (参考23172);
+ *      2021.11.11: 迭代RMV的生成机制 (参考24105);
  */
 -(void) updateCMVCache_RMV:(AIShortMatchModel*)inModel{
     //1. 数据检查;
     if (!inModel || !inModel.protoFo || !ARRISOK(inModel.matchPFos) || !Switch4RS) return;
     ISTitleLog(@"RMV");
+    
+    //TODOTOMORROW20211111-迭代RMV生成机制;
+    //  a. 按照mv标识分组,分成一组组mModels,每一种mv标识生成一个R任务;
+    //  b. 防重也以mModels为判断;
+    //  c. 并将新的mModels更新到旧的mModels中;
+    
+    
+    
     
     //2. 多时序识别预测分别进行处理;
     for (NSInteger i = 0; i < inModel.matchPFos.count; i++) {
