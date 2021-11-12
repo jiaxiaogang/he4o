@@ -162,6 +162,10 @@
     //  c. 并将新的mModels更新到旧的mModels中;
     
     
+    //  a. RMV的池子还按数组,每个R任务挂载一个场景contentModel;
+    //  b. mModels(contentModel的抽具象路径)写成方法,实时从rmvCache中获取;
+    //  c. 当一条完成时,整个mModels路径全设为一个状态;
+    //  d. 当一条失败时,别的mModels可继续尝试;
     
     
     //2. 多时序识别预测分别进行处理;
