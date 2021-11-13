@@ -48,5 +48,6 @@
  */
 -(void) updateEnergy:(CGFloat)delta;
 -(BOOL) energyValid;
+-(void) setEnergy:(CGFloat)energy;
 
 @end

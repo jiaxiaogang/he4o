@@ -149,20 +149,12 @@
  *      2021.02.05: 新增任务时,仅将"与旧有同区最大迫切度的差值"累增至活跃度 (参考22116);
  *      2021.03.01: 修复RMV一直在行为输出和被识别间重复死循环BUG (参考22142);
  *      2021.07.14: 循环matchPFos时,采用反序,因为优先级和任务池优先级上弄反了 (参考23172);
- *      2021.11.11: 迭代RMV的生成机制 (参考24107);
+ *      2021.11.11: 迭代RMV的生成机制,此代码其实啥也没改,就是单独写了取抽具象路径的方法 (参考24107);
  */
 -(void) updateCMVCache_RMV:(AIShortMatchModel*)inModel{
     //1. 数据检查;
     if (!inModel || !inModel.protoFo || !ARRISOK(inModel.matchPFos) || !Switch4RS) return;
     ISTitleLog(@"RMV");
-    
-    //TODOTOMORROW20211111-迭代RMV生成机制;
-    //  a. RMV的池子还按数组,每个R任务挂载一个场景contentModel;
-    //  a. 防重也以contentModel.matchFo为判断 (新的替换旧的);
-    //  b. mModels(contentModel的抽具象路径)写成方法,实时从rmvCache中获取;
-    //  c. 当一条完成时,整个mModels路径全设为一个状态;
-    //  d. 当一条失败时,别的mModels可继续尝试;
-    
     
     //2. 多时序识别预测分别进行处理;
     for (NSInteger i = 0; i < inModel.matchPFos.count; i++) {
@@ -197,22 +189,21 @@
         CGFloat score = [AIScore score4MV:mModel.matchFo.cmvNode_p ratio:mModel.matchFoValue];
         if (score < 0 && !containsRepeat) {
             
-            //6. 新需求时_取同区旧有最大迫切度;
-            NSInteger sameIdenOldMax = 0;
-            for (DemandModel *item in self.loopCache) {
-                if ([item.algsType isEqualToString:algsType]) {
-                    sameIdenOldMax = MAX(sameIdenOldMax, item.urgentTo);
-                }
-            }
-            
             //7. 有需求时,则加到需求序列中;
             ReasonDemandModel *newItem = [ReasonDemandModel newWithMModel:mModel inModel:inModel baseFo:nil];
             [self.loopCache addObject:newItem];
             
-            //8. 新需求时_将新需求迫切度的差值(>0时),增至活跃度;
+            //8. 新需求时_将新需求迫切度的差值(>0时) (增至活跃度 = 新迫切度 - 旧有最大迫切度);
             //2021.05.27: 为方便测试,所有imv都给20迫切度 (因为迫切度太低话,还没怎么思考就停了);
-            CGFloat newUrgentTo = 20;//newItem.urgentTo;
-            [theTC updateEnergy:MAX(0, newUrgentTo - sameIdenOldMax)];
+            //NSInteger sameIdenOldMax = 0;
+            //for (DemandModel *item in self.loopCache) {
+            //    if ([item.algsType isEqualToString:algsType]) {
+            //        sameIdenOldMax = MAX(sameIdenOldMax, item.urgentTo);
+            //    }
+            //}
+            //[theTC updateEnergy:MAX(0, newItem.urgentTo - sameIdenOldMax)];
+            [theTC setEnergy:20];
+            
             NSLog(@"RMV新需求: %@->%@ (条数+1=%ld 评分:%@)",Fo2FStr(mModel.matchFo),Pit2FStr(mModel.matchFo.cmvNode_p),self.loopCache.count,Double2Str_NDZ(score));
         }else{
             NSLog(@"当前,预测mv未形成需求:%@ 基于:%@ 评分:%f",algsType,Pit2FStr(mModel.matchFo.cmvNode_p),score);
@@ -401,6 +392,22 @@
 -(void) removeDemand:(DemandModel*)demand{
     if (ISOK(demand, ReasonDemandModel.class)) NSLog(@"demandManager >> 移除R任务:%@",Fo2FStr(((ReasonDemandModel*)demand).mModel.matchFo));
     if (demand) [self.loopCache removeObject:demand];
+}
+
+/**
+ *  MARK:--------------------获取R任务的抽具象路径上的所有R任务--------------------
+ *  @desc 获取同类场景RDemands (参考24107-3);
+ */
+-(NSArray*) getRDemandsBySameClass:(ReasonDemandModel *)rDemand{
+    //  b. mModels(contentModel的抽具象路径)写成方法,实时从rmvCache中获取;
+    //  c. 当一条完成时,整个mModels路径全设为一个状态;
+    //  d. 当一条失败时,别的mModels可继续尝试;
+    
+    //1. 获取抽象方向;
+    //2. 获取具象方向;
+    
+    
+    return nil;
 }
 
 @end
