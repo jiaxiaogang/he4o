@@ -149,7 +149,7 @@
  *      2021.02.05: 新增任务时,仅将"与旧有同区最大迫切度的差值"累增至活跃度 (参考22116);
  *      2021.03.01: 修复RMV一直在行为输出和被识别间重复死循环BUG (参考22142);
  *      2021.07.14: 循环matchPFos时,采用反序,因为优先级和任务池优先级上弄反了 (参考23172);
- *      2021.11.11: 迭代RMV的生成机制 (参考24105);
+ *      2021.11.11: 迭代RMV的生成机制 (参考24107);
  */
 -(void) updateCMVCache_RMV:(AIShortMatchModel*)inModel{
     //1. 数据检查;
@@ -157,12 +157,8 @@
     ISTitleLog(@"RMV");
     
     //TODOTOMORROW20211111-迭代RMV生成机制;
-    //  a. 按照mv标识分组,分成一组组mModels,每一种mv标识生成一个R任务;
-    //  b. 防重也以mModels为判断;
-    //  c. 并将新的mModels更新到旧的mModels中;
-    
-    
     //  a. RMV的池子还按数组,每个R任务挂载一个场景contentModel;
+    //  a. 防重也以contentModel.matchFo为判断 (新的替换旧的);
     //  b. mModels(contentModel的抽具象路径)写成方法,实时从rmvCache中获取;
     //  c. 当一条完成时,整个mModels路径全设为一个状态;
     //  d. 当一条失败时,别的mModels可继续尝试;
@@ -320,16 +316,15 @@
  *  @version
  *      2021.01.02: loopCache排序后未被接收,所以一直是未生效的BUG;
  *      2021.01.27: 支持第二级排序:initTime (参考22074-BUG2);
+ *      2021.11.13: R任务排序根据 "迫切度*匹配度" 得出 (参考24107-2);
  */
 -(void) refreshCmvCacheSort{
-    NSArray *sort = [self.loopCache sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-        DemandModel *itemA = (DemandModel*)obj1;
-        DemandModel *itemB = (DemandModel*)obj2;
-        NSComparisonResult result = [SMGUtils compareIntA:itemA.urgentTo intB:itemB.urgentTo];
-        if (result == NSOrderedSame) {
-            result = [SMGUtils compareDoubleA:itemA.initTime doubleB:itemB.initTime];
+    NSArray *sort = [self.loopCache sortedArrayUsingComparator:^NSComparisonResult(DemandModel *o1, DemandModel *o2) {
+        if (o1.demandUrgentTo != o2.demandUrgentTo){
+            return [SMGUtils compareFloatA:o1.demandUrgentTo floatB:o2.urgentTo];;
+        }else {
+            return [SMGUtils compareDoubleA:o1.initTime doubleB:o2.initTime];
         }
-        return result;
     }];
     [self.loopCache removeAllObjects];
     [self.loopCache addObjectsFromArray:sort];

@@ -42,4 +42,11 @@
     return result;
 }
 
+/**
+ *  MARK:--------------------获取任务迫切度 (用于排序)--------------------
+ */
+-(CGFloat) demandUrgentTo{
+    return self.urgentTo * self.mModel.matchFoValue;
+}
+
 @end

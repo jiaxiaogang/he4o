@@ -41,4 +41,10 @@
  */
 @property (assign, nonatomic) double updateTime;
 
+/**
+ *  MARK:--------------------获取任务迫切度 (用于排序)--------------------
+ *  @desc P任务返回urgentTo,R任务返回urgentTo*matchFoValue;
+ */
+-(CGFloat) demandUrgentTo;
+
 @end
