@@ -149,7 +149,7 @@
  *      2021.02.05: 新增任务时,仅将"与旧有同区最大迫切度的差值"累增至活跃度 (参考22116);
  *      2021.03.01: 修复RMV一直在行为输出和被识别间重复死循环BUG (参考22142);
  *      2021.07.14: 循环matchPFos时,采用反序,因为优先级和任务池优先级上弄反了 (参考23172);
- *      2021.11.11: 迭代RMV的生成机制,此代码其实啥也没改,就是单独写了取抽具象路径的方法 (参考24107);
+ *      2021.11.11: 迭代RMV的生成机制,此代码其实啥也没改 (参考24107-1);
  */
 -(void) updateCMVCache_RMV:(AIShortMatchModel*)inModel{
     //1. 数据检查;
@@ -331,11 +331,6 @@
 //    }];
 //}
 
-
-/**
- *  MARK:--------------------获取任务--------------------
- */
-
 /**
  *  MARK:--------------------获取当前,最紧急任务--------------------
  *  @version
@@ -397,17 +392,52 @@
 /**
  *  MARK:--------------------获取R任务的抽具象路径上的所有R任务--------------------
  *  @desc 获取同类场景RDemands (参考24107-3);
+ *  @version
+ *      2021.11.13: mModel的抽具象路径写成方法,实时从loopCache中获取 (参考24107-3);
  */
 -(NSArray*) getRDemandsBySameClass:(ReasonDemandModel *)rDemand{
-    //  b. mModels(contentModel的抽具象路径)写成方法,实时从rmvCache中获取;
-    //  c. 当一条完成时,整个mModels路径全设为一个状态;
-    //  d. 当一条失败时,别的mModels可继续尝试;
-    
     //1. 获取抽象方向;
-    //2. 获取具象方向;
+    NSMutableArray *result = [[NSMutableArray alloc] initWithObjects:rDemand, nil];
     
+    //2. 获取抽象方向;
+    [result addObjectsFromArray:[self getRDemandBySameClass:rDemand isAbs:true]];
     
+    //3. 获取具象方向;
+    [result addObjectsFromArray:[self getRDemandBySameClass:rDemand isAbs:false]];
     return nil;
+}
+
+/**
+ *  MARK:--------------------获取同抽/具象路径的R任务组--------------------
+ *  @param isAbs    : 抽象方向/具象方向;
+ *  @param rDemand  : 出发R任务;
+ */
+-(NSArray*) getRDemandBySameClass:(ReasonDemandModel*)rDemand isAbs:(BOOL)isAbs{
+    NSMutableArray *result = [[NSMutableArray alloc] initWithObjects:rDemand, nil];
+    NSArray *curLayerRs = @[rDemand];
+    do {
+        //1. 分别对当前层元素取下一层;
+        NSMutableArray *nextLayerRs = [[NSMutableArray alloc] init];
+        for (ReasonDemandModel *curR in curLayerRs) {
+            NSArray *nextFos = nil;
+            if (isAbs) {
+                nextFos = Ports2Pits([AINetUtils absPorts_All_Normal:curR.mModel.matchFo]);
+            }else{
+                nextFos = Ports2Pits([AINetUtils conPorts_All_Normal:curR.mModel.matchFo]);
+            }
+            
+            //2. 将当前元素下,在nextFos且在loopCache中的R,新收集到nextLayerRs中;
+            NSArray *curRs = [SMGUtils filterArr:self.loopCache checkValid:^BOOL(ReasonDemandModel *item) {
+                return ISOK(item, ReasonDemandModel.class) && [SMGUtils containsSub_p:item.mModel.matchFo.pointer parent_ps:nextFos];
+            }];
+            [nextLayerRs addObjectsFromArray:curRs];
+        }
+        
+        //3. 下一层更新至当前层,并收集至总result中;
+        curLayerRs = nextLayerRs;
+        [result addObjectsFromArray:nextLayerRs];
+    } while (ARRISOK(curLayerRs));
+    return result;
 }
 
 @end
