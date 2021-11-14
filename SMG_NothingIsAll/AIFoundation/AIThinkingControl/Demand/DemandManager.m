@@ -394,13 +394,17 @@
  *  @desc 获取同类场景RDemands (参考24107-3);
  *  @version
  *      2021.11.13: mModel的抽具象路径写成方法,实时从loopCache中获取 (参考24107-3);
+ *      2021.11.14: 返回结果排序为抽象有前具象在后 (参考24127-示图-需要它有序);
+ *  @result notnull 元素类型为ReasonDemandModel,排序方式: 越抽象排在前面,反之越后;
  */
 -(NSArray*) getRDemandsBySameClass:(ReasonDemandModel *)rDemand{
     //1. 获取抽象方向;
     NSMutableArray *result = [[NSMutableArray alloc] initWithObjects:rDemand, nil];
     
-    //2. 获取抽象方向;
-    [result addObjectsFromArray:[self getRDemandBySameClass:rDemand isAbs:true]];
+    //2. 获取抽象方向 (倒序,使更抽象的排在更前面);
+    NSArray *absSameClass = [self getRDemandBySameClass:rDemand isAbs:true];
+    absSameClass = [[absSameClass reverseObjectEnumerator] allObjects];
+    [result addObjectsFromArray:absSameClass];
     
     //3. 获取具象方向;
     [result addObjectsFromArray:[self getRDemandBySameClass:rDemand isAbs:false]];
@@ -411,6 +415,7 @@
  *  MARK:--------------------获取同抽/具象路径的R任务组--------------------
  *  @param isAbs    : 抽象方向/具象方向;
  *  @param rDemand  : 出发R任务;
+ *  @result notnull : 元素类型为ReasonDemandModel,抽具象层离rDemand越远,越排在后面;
  */
 -(NSArray*) getRDemandBySameClass:(ReasonDemandModel*)rDemand isAbs:(BOOL)isAbs{
     NSMutableArray *result = [[NSMutableArray alloc] initWithObjects:rDemand, nil];
@@ -433,8 +438,16 @@
             [nextLayerRs addObjectsFromArray:curRs];
         }
         
-        //3. 下一层更新至当前层,并收集至总result中;
+        //3. nextLayerRs防重;
+        nextLayerRs = [SMGUtils removeRepeat:nextLayerRs];
+        
+        //4. 下一层更新至当前层;
         curLayerRs = nextLayerRs;
+        
+        //5. 如果已包含,则先移除掉,再重新收集至总result中 (使更后层的,放在result更后面);
+        result = [SMGUtils removeArr:result checkValid:^BOOL(ReasonDemandModel *item) {
+            return [nextLayerRs containsObject:item];
+        }];
         [result addObjectsFromArray:nextLayerRs];
     } while (ARRISOK(curLayerRs));
     return result;
