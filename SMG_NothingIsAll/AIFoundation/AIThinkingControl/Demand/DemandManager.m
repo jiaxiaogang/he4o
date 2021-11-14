@@ -415,9 +415,13 @@
  *  MARK:--------------------获取同抽/具象路径的R任务组--------------------
  *  @param isAbs    : 抽象方向/具象方向;
  *  @param rDemand  : 出发R任务;
+ *  @version
+ *      2021.11.14: 只有同区mv的才作为结果返回 (参考24127-步骤1);
  *  @result notnull : 元素类型为ReasonDemandModel,抽具象层离rDemand越远,越排在后面;
  */
 -(NSArray*) getRDemandBySameClass:(ReasonDemandModel*)rDemand isAbs:(BOOL)isAbs{
+    //0. 数据准备;
+    NSString *mvIden = STRTOOK(rDemand.mModel.matchFo.cmvNode_p.identifier);
     NSMutableArray *result = [[NSMutableArray alloc] initWithObjects:rDemand, nil];
     NSArray *curLayerRs = @[rDemand];
     do {
@@ -433,7 +437,10 @@
             
             //2. 将当前元素下,在nextFos且在loopCache中的R,新收集到nextLayerRs中;
             NSArray *curRs = [SMGUtils filterArr:self.loopCache checkValid:^BOOL(ReasonDemandModel *item) {
-                return ISOK(item, ReasonDemandModel.class) && [SMGUtils containsSub_p:item.mModel.matchFo.pointer parent_ps:nextFos];
+                BOOL isR = ISOK(item, ReasonDemandModel.class);
+                BOOL sameMvIden = [mvIden isEqualToString:item.mModel.matchFo.cmvNode_p.identifier];
+                BOOL inNextFos = [SMGUtils containsSub_p:item.mModel.matchFo.pointer parent_ps:nextFos];
+                return isR && sameMvIden && inNextFos;
             }];
             [nextLayerRs addObjectsFromArray:curRs];
         }

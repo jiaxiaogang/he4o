@@ -59,4 +59,9 @@
  */
 -(void) removeDemand:(DemandModel*)demand;
 
+/**
+ *  MARK:--------------------获取R任务的抽具象路径上的所有R任务--------------------
+ */
+-(NSArray*) getRDemandsBySameClass:(ReasonDemandModel *)rDemand;
+
 @end

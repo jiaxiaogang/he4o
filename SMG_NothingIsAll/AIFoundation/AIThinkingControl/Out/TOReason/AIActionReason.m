@@ -12,6 +12,7 @@
 #import "AINetUtils.h"
 #import "AIPort.h"
 #import "TOFoModel.h"
+#import "DemandManager.h"
 
 @implementation AIActionReason
 
@@ -21,17 +22,27 @@
  *      2021.11.13: 初版,废弃dsFo,并将reasonSubV5由TOR迁移至此RAction中 (参考24101-第3阶段);
  */
 -(void) convert2Out_Demand:(ReasonDemandModel*)demand{
-    
-    
-    //TODOTOMORROW20211111-废弃dsFo;
     //1. 根据demand取抽具象路径rs;
-    //2. 对所有fo进行FRS-SP稳定性竞争评价;
+    NSArray *rs = [theTC.outModelManager getRDemandsBySameClass:demand];
     
-    //3. 不用束波求和,仅对场景直接做稳定性竞争,并以场景为目标修正A和V (注: A有可能不必管,只需要修正V);
-    //4. 理清此处,是直接对负mv的RDemand.Fo;
-    //          a. 之间做稳定性竞争 (本来就是负mv的fo,它的SP经历肯定是S,不大好吧?);
-    //          b. 还是对它下面的SPFo之间做竞争 (即找出其中P的部分,并做竞争);
-    //          c. 需结合此处习得的数据,对比下,看怎样更合适;
+    //2. 从具象出抽象,逐一取conPorts (前5条) (参考24127-步骤1);
+    for (NSInteger i = 0; i < rs.count; i++) {
+        ReasonDemandModel *baseDemand = ARR_INDEX_REVERSE(rs, i);
+        NSArray *conPorts = [AINetUtils conPorts_All_Normal:baseDemand.mModel.matchFo];
+        conPorts = ARR_SUB(conPorts, 0, 5);
+        
+        //3. 对conPorts进行FRS稳定性竞争 (参考24127-步骤2);
+        //TODOTOMORROW20211114: 写FRS稳定性评价;
+        
+        
+        
+        //4. 对稳定性评价失败的,加入不应期,并继续循环 (参考24127-步骤3);
+        
+        
+        //5. 将取到稳定性ok的,作为解决方案(加工目标),转_Fo()行为化 (参考24132-行为化1);
+        
+        
+    }
     
     
     
