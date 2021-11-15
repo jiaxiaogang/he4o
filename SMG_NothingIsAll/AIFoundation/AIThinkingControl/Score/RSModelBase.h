@@ -1,5 +1,5 @@
 //
-//  VRSModelBase.h
+//  RSModelBase.h
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2021/11/2.
@@ -9,12 +9,15 @@
 #import <Foundation/Foundation.h>
 
 /**
- *  MARK:--------------------VRS评价器模型--------------------
+ *  MARK:--------------------ReasonScore评价器模型--------------------
  *  @desc
  *      1. 用于VRS评价结果模型;
  *      2. 用于VRS修正目标模型;
+ *      3. 用于FRS评价结果模型;
  */
-@interface VRSModelBase : NSObject
+@interface RSModelBase : NSObject
+
++(RSModelBase*) newWithBaseFo:(AIFoNodeBase*)baseFo pScore:(double)pScore sScore:(double)sScore;
 
 @property (strong, nonatomic) AIFoNodeBase *baseFo; //保留baseFo;
 @property (assign, nonatomic) double pScore;        //最终得分;

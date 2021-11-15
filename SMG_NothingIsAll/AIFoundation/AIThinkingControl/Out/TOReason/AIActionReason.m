@@ -25,25 +25,25 @@
     //1. 根据demand取抽具象路径rs;
     NSArray *rs = [theTC.outModelManager getRDemandsBySameClass:demand];
     
-    //2. 从具象出抽象,逐一取conPorts (前5条) (参考24127-步骤1);
+    //2. 从具象出抽象,逐一取conPorts (前3条) (参考24127-步骤1);
+    NSMutableArray *sumConPorts = [[NSMutableArray alloc] init];
     for (NSInteger i = 0; i < rs.count; i++) {
         ReasonDemandModel *baseDemand = ARR_INDEX_REVERSE(rs, i);
         NSArray *conPorts = [AINetUtils conPorts_All_Normal:baseDemand.mModel.matchFo];
-        conPorts = ARR_SUB(conPorts, 0, 5);
-        
-        //3. 对conPorts进行FRS稳定性竞争 (参考24127-步骤2);
-        //TODOTOMORROW20211114: 写FRS稳定性评价;
-        
-        
-        
-        //4. 对稳定性评价失败的,加入不应期,并继续循环 (参考24127-步骤3);
-        
-        
-        //5. 将取到稳定性ok的,作为解决方案(加工目标),转_Fo()行为化 (参考24132-行为化1);
-        
-        
+        conPorts = ARR_SUB(conPorts, 0, 3);
+        [sumConPorts addObjectsFromArray:conPorts];
     }
     
+    //3. 对conPorts进行FRS稳定性竞争 (参考24127-步骤2);
+    //TODOTOMORROW20211114: 写FRS稳定性评价;
+    NSArray *sortConPorts = [AIScore FRS_Stablity:sumConPorts];
+    
+    
+    
+    //4. 对稳定性评价失败的,加入不应期,并继续循环 (参考24127-步骤3);
+    
+    
+    //5. 将取到稳定性ok的,作为解决方案(加工目标),转_Fo()行为化 (参考24132-行为化1);
     
     
     

@@ -1,17 +1,26 @@
 //
-//  VRSModelBase.m
+//  RSModelBase.m
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2021/11/2.
 //  Copyright © 2021年 XiaoGang. All rights reserved.
 //
 
-#import "VRSModelBase.h"
+#import "RSModelBase.h"
 
-@implementation VRSModelBase
+@implementation RSModelBase
+
++(RSModelBase*) newWithBaseFo:(AIFoNodeBase*)baseFo pScore:(double)pScore sScore:(double)sScore{
+    RSModelBase *result = [[RSModelBase alloc] init];
+    result.baseFo = baseFo;
+    result.pScore = pScore;
+    result.sScore = sScore;
+    return result;
+}
 
 /**
  *  MARK:--------------------获取评分--------------------
+ *  @desc 返回-1到1的值,其中负为稳定性<50%,正为>50%;
  */
 -(double) score{
     //1. SP都为0时,稳定性为0;
