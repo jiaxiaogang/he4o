@@ -13,6 +13,7 @@
 #import "AIPort.h"
 #import "TOFoModel.h"
 #import "DemandManager.h"
+#import "RSResultModelBase.h"
 
 @implementation AIActionReason
 
@@ -35,8 +36,19 @@
     }
     
     //3. 对conPorts进行FRS稳定性竞争 (参考24127-步骤2);
-    //TODOTOMORROW20211114: 写FRS稳定性评价;
-    NSArray *sortConPorts = [AIScore FRS_Stablity:sumConPorts];
+    NSArray *frsResults = [AIScore FRS_PK:sumConPorts];
+    
+    //不应期源于反思评价为否 & 且反思子任务也失败的;
+    //NSArray *except_ps =
+    for (RSResultModelBase *frs in frsResults) {
+        
+        //a. 排除不应期;
+        
+        //b. 对首条解决方案,进行行为化_Fo();
+        
+        //c. 在_Fo()中,进行反思;
+        
+    }
     
     
     
@@ -94,6 +106,13 @@
     }
     demand.status = TOModelStatus_ActNo;
     NSLog(@"------->>>>>> R-无计可施");
+}
+
+/**
+ *  MARK:--------------------Fo行为化--------------------
+ */
+-(void) convert2Out_Fo:(AIFoNodeBase*)fo{
+    
 }
 
 @end

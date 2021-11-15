@@ -167,10 +167,10 @@
         NSString *algsType = mModel.matchFo.cmvNode_p.algsType;
             
         //4. 抵消_同一matchFo将旧有移除 (仅保留最新的);
-        self.loopCache = [SMGUtils removeArr:self.loopCache checkValid:^BOOL(ReasonDemandModel *item) {
-            if (ISOK(item, ReasonDemandModel.class)) {
-                if ([item.mModel.matchFo isEqual:mModel.matchFo] && item.mModel.cutIndex2 < mModel.cutIndex2) {
-                    NSLog(@"RMV移除R任务(更新的抵消旧的):%@",Fo2FStr(item.mModel.matchFo));
+        self.loopCache = [SMGUtils removeArr:self.loopCache checkValid:^BOOL(ReasonDemandModel *oldItem) {
+            if (ISOK(oldItem, ReasonDemandModel.class)) {
+                if ([oldItem.mModel.matchFo isEqual:mModel.matchFo] && oldItem.mModel.cutIndex2 < mModel.cutIndex2) {
+                    NSLog(@"RMV移除R任务(更新的抵消旧的):%@",Fo2FStr(oldItem.mModel.matchFo));
                     return true;
                 }
             }

@@ -284,13 +284,13 @@
  *  MARK:--------------------FRS稳定性竞争--------------------
  *  @desc R任务评分越高的排越前 (参考24127-2);
  */
-+(NSArray*) FRS_Stablity:(NSArray*)conPorts{
++(NSArray*) FRS_PK:(NSArray*)conPorts{
     conPorts = ARRTOOK(conPorts);
     return [conPorts sortedArrayUsingComparator:^NSComparisonResult(AIPort *o1, AIPort *o2) {
         AIFoNodeBase *fo1 = [SMGUtils searchNode:o1.target_p];
         AIFoNodeBase *fo2 = [SMGUtils searchNode:o2.target_p];
-        RSModelBase *rs1 = [self score4FRS:fo1];
-        RSModelBase *rs2 = [self score4FRS:fo2];
+        RSResultModelBase *rs1 = [self score4FRS:fo1];
+        RSResultModelBase *rs2 = [self score4FRS:fo2];
         return [SMGUtils compareDoubleA:rs1.score doubleB:rs2.score];
     }];
 }
@@ -299,7 +299,7 @@
  *  MARK:--------------------FRS评分--------------------
  *  @desc 对场景的p稳定性评分;
  */
-+(RSModelBase*) score4FRS:(AIFoNodeBase*)fo{
++(RSResultModelBase*) score4FRS:(AIFoNodeBase*)fo{
     //1. 取出spPorts;
     NSArray *sPorts = [AINetUtils absPorts_All:fo type:ATSub];
     NSArray *pPorts = [AINetUtils absPorts_All:fo type:ATPlus];
@@ -310,7 +310,7 @@
     for (AIPort *item in pPorts) pScore += item.strong.value;
     
     //3. 返回评分;
-    return [RSModelBase newWithBaseFo:fo pScore:pScore sScore:sScore];
+    return [RSResultModelBase newWithBaseFo:fo pScore:pScore sScore:sScore];
 }
 
 /**

@@ -1,17 +1,17 @@
 //
-//  RSModelBase.m
+//  RSResultModelBase.m
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2021/11/2.
 //  Copyright © 2021年 XiaoGang. All rights reserved.
 //
 
-#import "RSModelBase.h"
+#import "RSResultModelBase.h"
 
-@implementation RSModelBase
+@implementation RSResultModelBase
 
-+(RSModelBase*) newWithBaseFo:(AIFoNodeBase*)baseFo pScore:(double)pScore sScore:(double)sScore{
-    RSModelBase *result = [[RSModelBase alloc] init];
++(RSResultModelBase*) newWithBaseFo:(AIFoNodeBase*)baseFo pScore:(double)pScore sScore:(double)sScore{
+    RSResultModelBase *result = [[RSResultModelBase alloc] init];
     result.baseFo = baseFo;
     result.pScore = pScore;
     result.sScore = sScore;

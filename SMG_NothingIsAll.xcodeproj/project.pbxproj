@@ -79,7 +79,7 @@
 		0858C5E721950CA300951BA5 /* FoodView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0858C5E621950CA300951BA5 /* FoodView.m */; };
 		0858C5E921950CAA00951BA5 /* FoodView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0858C5E821950CAA00951BA5 /* FoodView.xib */; };
 		085BA9F4241C421500829450 /* HeLogUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 085BA9F3241C421500829450 /* HeLogUtil.m */; };
-		085D4BA42730CBED00B04773 /* RSModelBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 085D4BA32730CBED00B04773 /* RSModelBase.m */; };
+		085D4BA42730CBED00B04773 /* RSResultModelBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 085D4BA32730CBED00B04773 /* RSResultModelBase.m */; };
 		085D4BA72730CCF800B04773 /* VRSTargetModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 085D4BA62730CCF800B04773 /* VRSTargetModel.m */; };
 		0860617621F92F5200113366 /* AIThinkOutPercept.m in Sources */ = {isa = PBXBuildFile; fileRef = 0860617521F92F5200113366 /* AIThinkOutPercept.m */; };
 		0860617921F92F7100113366 /* AIThinkIn.m in Sources */ = {isa = PBXBuildFile; fileRef = 0860617821F92F7100113366 /* AIThinkIn.m */; };
@@ -314,8 +314,8 @@
 		0858C5E821950CAA00951BA5 /* FoodView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FoodView.xib; sourceTree = "<group>"; };
 		085BA9F2241C421500829450 /* HeLogUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HeLogUtil.h; sourceTree = "<group>"; };
 		085BA9F3241C421500829450 /* HeLogUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HeLogUtil.m; sourceTree = "<group>"; };
-		085D4BA22730CBED00B04773 /* RSModelBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSModelBase.h; sourceTree = "<group>"; };
-		085D4BA32730CBED00B04773 /* RSModelBase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RSModelBase.m; sourceTree = "<group>"; };
+		085D4BA22730CBED00B04773 /* RSResultModelBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSResultModelBase.h; sourceTree = "<group>"; };
+		085D4BA32730CBED00B04773 /* RSResultModelBase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RSResultModelBase.m; sourceTree = "<group>"; };
 		085D4BA52730CCF800B04773 /* VRSTargetModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRSTargetModel.h; sourceTree = "<group>"; };
 		085D4BA62730CCF800B04773 /* VRSTargetModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VRSTargetModel.m; sourceTree = "<group>"; };
 		0860617421F92F5200113366 /* AIThinkOutPercept.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIThinkOutPercept.h; sourceTree = "<group>"; };
@@ -1167,8 +1167,8 @@
 				08F38D64272C39E3001CD764 /* VRSResultModel.m */,
 				085D4BA52730CCF800B04773 /* VRSTargetModel.h */,
 				085D4BA62730CCF800B04773 /* VRSTargetModel.m */,
-				085D4BA22730CBED00B04773 /* RSModelBase.h */,
-				085D4BA32730CBED00B04773 /* RSModelBase.m */,
+				085D4BA22730CBED00B04773 /* RSResultModelBase.h */,
+				085D4BA32730CBED00B04773 /* RSResultModelBase.m */,
 			);
 			path = Score;
 			sourceTree = "<group>";
@@ -1472,7 +1472,7 @@
 				08A5D5D822AF1E3400E56BB4 /* NVView.m in Sources */,
 				0830DAB721D6E8AD003065CD /* NSString+Extension.m in Sources */,
 				08C84A8E1E9A866200897D8B /* AIInput.m in Sources */,
-				085D4BA42730CBED00B04773 /* RSModelBase.m in Sources */,
+				085D4BA42730CBED00B04773 /* RSResultModelBase.m in Sources */,
 				08EA48BF2029242B0038B982 /* ImvAlgsHungerModel.m in Sources */,
 				082F9D561EB234750009F6A9 /* Output.m in Sources */,
 				0858C5CD2194F8B000951BA5 /* MASConstraintMaker.m in Sources */,
