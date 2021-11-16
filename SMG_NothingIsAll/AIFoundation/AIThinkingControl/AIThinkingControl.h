@@ -13,8 +13,11 @@
  *  1. 主要负责思维 (前额叶) 功能;
  *  2. 次要负责分发激活等 (丘脑) 功能;
  */
-@class ShortMatchManager,DemandManager,AIShortMatchModel,TOFoModel;
+@class ShortMatchManager,DemandManager,AIShortMatchModel,TOFoModel,AIThinkIn,AIThinkOut;
 @interface AIThinkingControl : NSObject
+
+@property (strong, nonatomic) AIThinkIn *thinkIn;
+@property (strong, nonatomic) AIThinkOut *thinkOut;
 
 +(AIThinkingControl*) shareInstance;
 

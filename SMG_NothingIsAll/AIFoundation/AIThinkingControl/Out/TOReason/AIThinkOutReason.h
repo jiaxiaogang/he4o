@@ -80,4 +80,13 @@
  */
 -(BOOL) tor_OPushM:(DemandModel*)demand latestMModel:(AIShortMatchModel*)latestMModel;
 
+
+//MARK:===============================================================
+//MARK:                   < 理性决策流程控制方法 >
+//MARK:===============================================================
+-(void) singleLoopBackWithFinishModel:(TOModelBase*)finishModel;
+-(void) singleLoopBackWithFailureModel:(TOModelBase*)failureModel;
+-(void) singleLoopBackWithBegin:(TOModelBase*)beginModel;
+-(void) singleLoopBackWithActYes:(TOModelBase*)actYesModel;
+
 @end

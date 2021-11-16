@@ -52,9 +52,6 @@
  */
 @property (assign, nonatomic) CGFloat energy;
 
-@property (strong, nonatomic) AIThinkIn *thinkIn;
-@property (strong, nonatomic) AIThinkOut *thinkOut;
-
 @end
 
 @implementation AIThinkingControl
