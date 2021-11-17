@@ -29,7 +29,7 @@
     //1. 根据demand取抽具象路径rs;
     NSArray *rs = [theTC.outModelManager getRDemandsBySameClass:demand];
     
-    //2. 不应期 (可以考虑改为将整个demand.actionFoModels全加入不应期) (源于:反思且子任务失败的 或 fo行为化最终失败的);
+    //2. 不应期 (可以考虑改为将整个demand.actionFoModels全加入不应期) (源于:反思且子任务失败的 或 fo行为化最终失败的,参考24135);
     NSArray *exceptFoModels = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOModelBase *item) {
         return item.status == TOModelStatus_ActNo || item.status == TOModelStatus_ScoreNo;
     }];
@@ -77,17 +77,6 @@
  *  @callers : 可以供_Demand和_Hav等调用;
  */
 -(void) convert2Out_Fo:(TOFoModel*)foModel{
-    
-    
-    
-    
-    //d. 子任务再失败的,此解决方案改为actNo (计为不应期);
-    
-    //e. 反思通过的,直接转_Hav行为化;
-    
-    
-    
-    
     //1. 数据准备
     AIFoNodeBase *curFo = [SMGUtils searchNode:foModel.content_p];
     OFTitleLog(@"行为化Fo", @"\n时序:%@->%@ 类型:(%@)",Fo2FStr(curFo),Mvp2Str(curFo.cmvNode_p),curFo.pointer.typeStr);
@@ -104,21 +93,6 @@
     
     //3. 对HNGL任务首帧执行前做评价;
     if (foModel.actionIndex == -1 && !rIsTooLate) {
-        
-        //TODOTOMORROW20211117: 反思相关;
-        //1. 重组fo供反思;
-        //2. 问题: 反思子任务与父任务经常性非常相似的问题,导致循环嵌套太多;
-        //3. 解答: 本质是防重问题,以前已经做过许多,似乎还不够;
-        //子任务: 转为规划决策状态,即反思只为评分,比如反思一次仅深入一层,并累计评分,挂起等待pk;
-        //或者为了简单(毕竟现在鸟也不涉及太多种选择),就单纯对反思子任务进行"实时决策"解决 (比如想吃坚果,车撞来,子任务防撞,解决为等红灯);
-        
-        
-        
-        //简单些先跑:
-        //a. 防重机制: 完全不同mv标识的子任务才生成,比如父任务是饿,那么子任务只能是非饿 (比如疼);
-        //b. 重组时序: 先不进行重组,目前乌鸦实验不需要这么周到,先把重组写到TODO里; (或者不难的话,把重组写了也行);
-        
-        
         
         //4. MC反思: 回归tir反思,重新识别理性预测时序,预测价值; (预测到鸡蛋变脏,或者cpu损坏) (理性预测影响评价即理性评价)
         AIShortMatchModel *rtInModel = [theTC to_Rethink:foModel];
