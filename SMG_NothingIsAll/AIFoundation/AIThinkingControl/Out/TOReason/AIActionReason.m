@@ -29,7 +29,7 @@
     //1. 根据demand取抽具象路径rs;
     NSArray *rs = [theTC.outModelManager getRDemandsBySameClass:demand];
     
-    //2. 不应期 (可以考虑改为将整个demand.actionFoModels全加入不应期) (不应期源于反思评价为否 & 且反思子任务也失败的);
+    //2. 不应期 (可以考虑改为将整个demand.actionFoModels全加入不应期) (源于:反思且子任务失败的 或 fo行为化最终失败的);
     NSArray *exceptFoModels = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOModelBase *item) {
         return item.status == TOModelStatus_ActNo || item.status == TOModelStatus_ScoreNo;
     }];
@@ -72,14 +72,14 @@
  *  MARK:--------------------Fo行为化--------------------
  *  @desc 解决方案fo即(加工目标),转_Fo()行为化 (参考24132-行为化1);
  *  @param foModel : notnull
+ *  @version
+ *      2021.11.17: 需调用者自行对foModel进行FRS稳定性竞争评价,本方法不再进行 (因为fo间的竞争,需由外界,fo内部问题在此方法内解决);
+ *  @callers : 可以供_Demand和_Hav等调用;
  */
 -(void) convert2Out_Fo:(TOFoModel*)foModel{
     
-    //a. 对首条解决方案,进行行为化_Fo();
     
-    //b. 在_Fo()中,进行反思;
     
-    //c. 反思不通过的形成子任务;
     
     //d. 子任务再失败的,此解决方案改为actNo (计为不应期);
     
@@ -88,26 +88,12 @@
     
     
     
-    //1. 取出需行为化的content_ps部分;
+    //1. 数据准备
     AIFoNodeBase *curFo = [SMGUtils searchNode:foModel.content_p];
-    
-    //2. 数据检查
     OFTitleLog(@"行为化Fo", @"\n时序:%@->%@ 类型:(%@)",Fo2FStr(curFo),Mvp2Str(curFo.cmvNode_p),curFo.pointer.typeStr);
-    
-    //3. 对P任务首帧执行前做评价_2021.01.22: R-任务解决方案不做空S评价;
     BOOL isRDemand = ISOK(foModel.baseOrGroup, ReasonDemandModel.class);
-    if (foModel.actionIndex == -1 && !isRDemand) {
-        //5. 未发生理性评价 (空S评价);
-        BOOL reasonScore =  [AIScore FRS:curFo];
-        if (!reasonScore) {
-            NSLog(@"未发生理性评价(空S)-不通过");
-            foModel.status = TOModelStatus_ScoreNo;
-            [self.delegate toAction_SubModelFailure:foModel];
-            return;
-        }
-    }
     
-    //5. 紧急状态判断 (当R模式在3s以内会触发-mv时,属于紧急状态) (参考24057-方案3);
+    //2. 紧急状态判断 (当R模式在3s以内会触发-mv时,属于紧急状态) (参考24057-方案3);
     BOOL rIsTooLate = false;
     if (isRDemand) {
         ReasonDemandModel *rDemand = (ReasonDemandModel*)foModel.baseOrGroup;
@@ -118,6 +104,17 @@
     
     //3. 对HNGL任务首帧执行前做评价;
     if (foModel.actionIndex == -1 && !rIsTooLate) {
+        
+        //TODOTOMORROW20211117: 反思相关;
+        //1. 重组fo供反思;
+        //2. 问题: 反思子任务与父任务经常性非常相似的问题,导致循环嵌套太多;
+        //3. 解答: 本质是防重问题,以前已经做过许多,似乎还不够;
+        //子任务: 转为规划决策状态,即反思只为评分,比如反思一次仅深入一层,并累计评分,挂起等待pk;
+        //或者为了简单(毕竟现在鸟也不涉及太多种选择),就单纯对反思子任务进行"实时决策"解决 (比如想吃坚果,车撞来,子任务防撞,解决为等红灯);
+        
+        
+        
+        
         
         //4. MC反思: 回归tir反思,重新识别理性预测时序,预测价值; (预测到鸡蛋变脏,或者cpu损坏) (理性预测影响评价即理性评价)
         AIShortMatchModel *rtInModel = [theTC to_Rethink:foModel];
