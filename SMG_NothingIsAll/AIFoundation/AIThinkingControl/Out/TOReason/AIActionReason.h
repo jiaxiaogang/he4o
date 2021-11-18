@@ -10,6 +10,9 @@
 
 /**
  *  MARK:--------------------R行为化--------------------
+ *  @version
+ *      2021.11.11: 独立RAction (参考24128);
+ *      2021.11.18: 迭代R决策模式的模型架构 (参考24147);
  */
 @interface AIActionReason : AIThinkOutAction
 
