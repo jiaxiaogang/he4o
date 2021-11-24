@@ -17,7 +17,5 @@
  */
 @interface AIActionReason : AIThinkOutAction
 
-//用于RDemand.Begin时调用;
--(void) convert2Out_Demand:(ReasonDemandModel*)demand;
 
 @end
