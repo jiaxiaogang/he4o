@@ -17,5 +17,6 @@
  */
 @interface AIActionReason : AIThinkOutAction
 
+-(void) solution:(ReasonDemandModel*)demand;
 
 @end

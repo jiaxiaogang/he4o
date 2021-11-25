@@ -182,7 +182,7 @@
     if (ARRISOK(waitFos)) return;
     
     //3. 行为化;
-    [self.rAction convert2Out_Demand:demand];
+    [self.rAction solution:demand];
 }
 
 //MARK:===============================================================
