@@ -156,10 +156,14 @@
     //1. 无论是P-模式的Alg,还是R-中非S的Alg,都要走以下第1,第2,第3级流程;
     //1. 第0级: 本身即是cHav节点,不用行为化,即成功 (但不用递归,等外循环返回行为结果);
     if ([TOUtils isHNGL_toModel:algModel]) {
+        
+        //TODOTOMORROW20211126: actYes转feedback;
         algModel.status = TOModelStatus_ActYes;//只需要等
         [self.delegate toAction_SubModelActYes:algModel];
         return;
     }else if (algModel.content_p.isOut) {
+        
+        //TODOTOMORROW20211126: isOut转input;
         //2. 第1级: 本身即是isOut时,直接行为化返回;
         OFTitleLog(@"行为输出", @"\n%@",AlgP2FStr(algModel.content_p));
         //2. 输出前改为ActYes (避免重复决策当前demand) (isOut=true暂无需反省类比);
@@ -170,6 +174,8 @@
         [self.delegate toAction_Output:@[algModel.content_p]];
         return;
     }else{
+        
+        //TODOTOMORROW20211126: notOut转jump;
         //3. 数据检查curAlg
         AIAlgNodeBase *curAlg = [SMGUtils searchNode:algModel.content_p];
         OFTitleLog(@"行为化_Hav", @"\nC:%@",Alg2FStr(curAlg));
