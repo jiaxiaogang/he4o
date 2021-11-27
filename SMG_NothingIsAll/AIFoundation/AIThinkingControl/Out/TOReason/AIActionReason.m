@@ -232,7 +232,11 @@
         [self.delegate toAction_SubModelBegin:foModel];
 
         //TODOTOMORROW20211125: 将jump跳转到TI中做为新的输入流程 (并进行识别in反思);
-        [theTI regroup];
+        //1. jump通过后,此处转action();
+        
+        
+        [theTI jump];
+        
         
         
         return;
