@@ -19,6 +19,8 @@
 #import "HeLogHeader.h"
 #import "AIKVPointer.h"
 #import "AIThinkingControl.h"
+#import "AIThinkIn.h"
+#import "AIThinkOut.h"
 #import "NSString+Extension.h"
 #import "AIScore.h"
 #import "OutputModel.h"
@@ -199,7 +201,10 @@
 //2017.11.13后启用N8规则DOP架构;
 #define theNet [AINet sharedInstance]
 #define theTC [AIThinkingControl shareInstance]
-
+#define theTI theTC.thinkIn
+#define theTO theTC.thinkOut
+#define theTOP theTC.thinkOut.tOP
+#define theTOR theTC.thinkOut.tOR
 
 /**
  *  MARK:--------------------OutputObserverKey--------------------
