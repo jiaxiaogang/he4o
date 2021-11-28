@@ -10,6 +10,6 @@
 
 @interface TOOut : NSObject
 
--(void) out:(TOAlgModel*)algModel;
++(void) out:(TOAlgModel*)algModel;
 
 @end

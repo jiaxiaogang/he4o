@@ -10,4 +10,7 @@
 
 @interface TIInput : NSObject
 
++(void) input;
++(void) jump:(TOAlgModel*)algModel;
+
 @end

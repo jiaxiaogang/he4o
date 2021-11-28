@@ -24,7 +24,7 @@
  *      2021.11.25: 迭代为功能架构 (参考24154-单轮示图);
  *  @callers : 用于RDemand.Begin时调用;
  */
--(void) solution:(ReasonDemandModel*)demand{
++(void) rSolution:(ReasonDemandModel*)demand{
     //1. 根据demand取抽具象路径rs;
     NSArray *rs = [theTC.outModelManager getRDemandsBySameClass:demand];
     
@@ -69,6 +69,48 @@
         
         
         NSLog(@"------->>>>>> R-无计可施");
+    }
+}
+
++(void) hSolution:(HDemandModel*)hDemand{
+    //3. 数据检查curAlg
+    TOAlgModel *algModel = hDemand.algModel;
+    AIAlgNodeBase *curAlg = [SMGUtils searchNode:algModel.content_p];
+    OFTitleLog(@"行为化_Hav", @"\nC:%@",Alg2FStr(curAlg));
+    
+    //TODOTOMORROW20211125: PM废弃 & HN暂不废弃;
+    //1. 此处废除mIsC判断,因为PM废除,mIsC不再需要,而短时记忆树里的任何cutIndex已发生的部分,都可用于帮助cHav取解决方案;
+    //2. cHav取到的结果sulutionFo做为理性子任务,然后将HNFo的末位,传到TO.regroup(),然后inReflect...
+    //3. 此处HN内类比先不废弃,先这么写,等后面再考虑废弃之 (参考24171-3);
+    
+    
+    
+    //5. 去掉不应期 (以下两种用哪个留哪个);
+    NSArray *except_ps = TOModels2Pits([SMGUtils filterArr:algModel.subModels checkValid:^BOOL(TOModelBase *item) {
+        return item.status == TOModelStatus_ActNo;
+    }]);
+    NSArray *except_ps2 = [TOUtils convertPointersFromTOModels:algModel.actionFoModels];
+    
+    //4. 第3级: 数据检查hAlg_根据type和value_p找ATHav
+    AIKVPointer *relativeFo_p = [AINetService getInnerV3_HN:curAlg aAT:algModel.content_p.algsType aDS:algModel.content_p.dataSource type:ATHav except_ps:except_ps];
+    if (Log4ActHav) NSLog(@"getInnerAlg(有): 根据:%@ 找:%@_%@ \n联想结果:%@ %@",Alg2FStr(curAlg),algModel.content_p.algsType,algModel.content_p.dataSource,Pit2FStr(relativeFo_p),relativeFo_p ? @"↓↓↓↓↓↓↓↓" : @"无计可施");
+    
+    //6. 只要有善可尝试的方式,即从首条开始尝试;
+    if (relativeFo_p) {
+        TOFoModel *foModel = [TOFoModel newWithFo_p:relativeFo_p base:algModel];
+        [self.delegate toAction_SubModelBegin:foModel];
+        
+        //TODOTOMORROW20211125: 将jump跳转到TI中做为新的输入流程 (并进行识别in反思);
+        //1. jump通过后,此处转action();
+        
+        [TOAction action:foModel];
+    }else{
+        
+        //10. 所有mModel都没成功行为化一条,则失败 (无计可施);
+        hDemand.status = TOModelStatus_ActNo;
+        //TODOTOMORROW20211128: 没有任何H经验时,递归到上一轮demand;
+        
+        
     }
 }
 

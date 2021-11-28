@@ -10,7 +10,7 @@
 
 @implementation TIRecognition
 
--(void) recognition:(TOFoModel*)foModel{
++(void) recognition:(TOFoModel*)foModel{
     //1. 数据准备
     AIFoNodeBase *curFo = [SMGUtils searchNode:foModel.content_p];
     OFTitleLog(@"行为化Fo", @"\n时序:%@->%@ 类型:(%@)",Fo2FStr(curFo),Mvp2Str(curFo.cmvNode_p),curFo.pointer.typeStr);

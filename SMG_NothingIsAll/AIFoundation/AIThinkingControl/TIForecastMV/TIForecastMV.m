@@ -10,7 +10,7 @@
 
 @implementation TIForecastMV
 
--(void) foreastMv{
++(void) foreastMv{
     
 }
 

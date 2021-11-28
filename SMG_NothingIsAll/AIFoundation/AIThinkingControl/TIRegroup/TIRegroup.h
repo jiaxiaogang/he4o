@@ -10,4 +10,6 @@
 
 @interface TIRegroup : NSObject
 
++(void) regroup;
+
 @end

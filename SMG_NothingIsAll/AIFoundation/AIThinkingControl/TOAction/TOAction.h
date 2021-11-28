@@ -10,6 +10,6 @@
 
 @interface TOAction : NSObject
 
--(void) action:(TOFoModel*)foModel;
++(void) action:(TOFoModel*)foModel;
 
 @end

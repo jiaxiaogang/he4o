@@ -11,5 +11,7 @@
 
 @interface TIRecognition : NSObject
 
++(void) recognition:(TOFoModel*)foModel;
+
 @end
 

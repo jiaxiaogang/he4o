@@ -10,7 +10,7 @@
 
 @implementation TIRegroup
 
--(void) regroup{
++(void) regroup{
     //交由TIR生成时序完成;
 }
 

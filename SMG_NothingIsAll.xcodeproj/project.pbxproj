@@ -96,6 +96,7 @@
 		087705B72753747300BA4EFB /* TOSolution.m in Sources */ = {isa = PBXBuildFile; fileRef = 087705B62753747300BA4EFB /* TOSolution.m */; };
 		087705BA2753747E00BA4EFB /* TOAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 087705B92753747E00BA4EFB /* TOAction.m */; };
 		087705BD2753748A00BA4EFB /* TOOut.m in Sources */ = {isa = PBXBuildFile; fileRef = 087705BC2753748A00BA4EFB /* TOOut.m */; };
+		087705C32753B9F400BA4EFB /* HDemandModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 087705C22753B9F400BA4EFB /* HDemandModel.m */; };
 		087E7FCB258053D90097E0B9 /* NSFile+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 087E7FCA258053D90097E0B9 /* NSFile+Extension.m */; };
 		0881965F21800F2B00D5DB36 /* BirdLivePage.m in Sources */ = {isa = PBXBuildFile; fileRef = 0881965D21800F2B00D5DB36 /* BirdLivePage.m */; };
 		0881966021800F2B00D5DB36 /* BirdLivePage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0881965E21800F2B00D5DB36 /* BirdLivePage.xib */; };
@@ -355,6 +356,8 @@
 		087705BB2753748A00BA4EFB /* TOOut.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOOut.h; sourceTree = "<group>"; };
 		087705BC2753748A00BA4EFB /* TOOut.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOOut.m; sourceTree = "<group>"; };
 		087705BE2753786700BA4EFB /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		087705C12753B9F400BA4EFB /* HDemandModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HDemandModel.h; sourceTree = "<group>"; };
+		087705C22753B9F400BA4EFB /* HDemandModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HDemandModel.m; sourceTree = "<group>"; };
 		087E7FC9258053D90097E0B9 /* NSFile+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSFile+Extension.h"; sourceTree = "<group>"; };
 		087E7FCA258053D90097E0B9 /* NSFile+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSFile+Extension.m"; sourceTree = "<group>"; };
 		0881965C21800F2B00D5DB36 /* BirdLivePage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BirdLivePage.h; sourceTree = "<group>"; };
@@ -585,6 +588,8 @@
 				081BD08725B94F1B003C3038 /* ReasonDemandModel.m */,
 				081BD08925B94F24003C3038 /* PerceptDemandModel.h */,
 				081BD08A25B94F24003C3038 /* PerceptDemandModel.m */,
+				087705C12753B9F400BA4EFB /* HDemandModel.h */,
+				087705C22753B9F400BA4EFB /* HDemandModel.m */,
 			);
 			path = Demand;
 			sourceTree = "<group>";
@@ -1645,6 +1650,7 @@
 				08EA48C7202929A40038B982 /* ImvAlgsModelBase.m in Sources */,
 				0858C5AE2194F5DA00951BA5 /* CarView.m in Sources */,
 				0858C5D02194F8B000951BA5 /* MASViewConstraint.m in Sources */,
+				087705C32753B9F400BA4EFB /* HDemandModel.m in Sources */,
 				083BC01F231C9CD900CA9039 /* AIThinkInReason.m in Sources */,
 				88C20B8220C7696A0076BB52 /* AINetAbsFoUtils.m in Sources */,
 				0858C5D22194F8B000951BA5 /* NSLayoutConstraint+MASDebugAdditions.m in Sources */,

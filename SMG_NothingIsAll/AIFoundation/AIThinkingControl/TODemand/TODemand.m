@@ -11,7 +11,7 @@
 @implementation TODemand
 
 //交由DemandManager构建任务完成;
--(void) demand:(AIShortMatchModel*)rtInModel{
++(void) demand:(AIShortMatchModel*)rtInModel{
     
     
     //TODOTOMORROW20211128: 构建任务树 (将DemandManager代码整理过来);
@@ -47,6 +47,14 @@
     }
     
     
+}
+
++(void) hDemand:(TOAlgModel*)algModel{
+    //对algModel生成H任务,并挂载在当前短时记忆分支下;
+    HDemandModel *hDemand = [HDemandModel newWithAlgModel:algModel];
+    [TOSolution hSolution:hDemand];
+    
+    //TODOTOMORROW20211128: 如果algModel失败,可以考虑对它的具象生成H任务,比如找武器时,可以想到拿刀,然后再想到厨房,而不是直接根据武器就想到厨房;
 }
 
 @end

@@ -10,4 +10,6 @@
 
 @interface TIForecastMV : NSObject
 
++(void) foreastMv;
+
 @end

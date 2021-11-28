@@ -42,9 +42,14 @@
 //任务池
 #import "ReasonDemandModel.h"
 #import "AIMatchFoModel.h"
+#import "HDemandModel.h"
 
 //短时记忆
 #import "TOAlgModel.h"
+#import "TOFoModel.h"
+
+//网络
+#import "AIAlgNodeBase.h"
 
 //MARK:===============================================================
 //MARK:                         < 内核宏 >

@@ -10,4 +10,7 @@
 
 @interface TOSolution : NSObject
 
++(void) rSolution:(ReasonDemandModel*)demand;
++(void) hSolution:(HDemandModel*)hDemand;
+
 @end

@@ -10,8 +10,12 @@
 
 @implementation TIInput
 
--(void) input{
++(void) input{
     
+}
+
++(void) jump:(TOAlgModel*)algModel{
+    [TODemand hDemand:algModel];
 }
 
 @end

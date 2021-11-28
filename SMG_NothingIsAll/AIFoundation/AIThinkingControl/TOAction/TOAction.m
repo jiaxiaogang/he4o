@@ -22,7 +22,7 @@
  *      2021.11.25: 迭代为功能架构 (参考24154-单轮示图);
  *  @callers : 可以供_Demand和_Hav等调用;
  */
--(void) action:(TOFoModel*)foModel{
++(void) action:(TOFoModel*)foModel{
     
     
     
