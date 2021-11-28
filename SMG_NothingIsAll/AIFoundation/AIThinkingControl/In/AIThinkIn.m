@@ -246,24 +246,4 @@
     return [self.delegate aiThinkIn_getShortMatchModel];
 }
 
-//MARK:===============================================================
-//MARK:                     < 新架构 (参考24163) >
-//MARK:===============================================================
--(void) jump{
-    
-}
-
--(void) regroup{
-    //交由TIR生成时序完成;
-}
-
--(void) inReflect{
-    //交由TIR识别完成;
-}
-
--(void) subDemand{
-    //交由DemandManager构建任务完成;
-}
-
-
 @end

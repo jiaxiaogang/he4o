@@ -81,16 +81,4 @@
 
 -(AIShortMatchModel*) dataInFromRethink:(TOFoModel*)toFoModel;
 
-
-//MARK:===============================================================
-//MARK:                     < 新架构 (参考24163) >
-//MARK:===============================================================
--(void) jump;
-
--(void) regroup;
-
--(void) inReflect;
-
--(void) subDemand;
-
 @end

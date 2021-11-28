@@ -29,6 +29,23 @@
 #import "TOUtils.h"
 #import "TOModelVision.h"
 
+//2021新TC架构
+#import "TIInput.h"
+#import "TIRegroup.h"
+#import "TIRecognition.h"
+#import "TIForecastMV.h"
+#import "TODemand.h"
+#import "TOSolution.h"
+#import "TOAction.h"
+#import "TOOut.h"
+
+//任务池
+#import "ReasonDemandModel.h"
+#import "AIMatchFoModel.h"
+
+//短时记忆
+#import "TOAlgModel.h"
+
 //MARK:===============================================================
 //MARK:                         < 内核宏 >
 //MARK:===============================================================
