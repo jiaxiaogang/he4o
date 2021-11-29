@@ -10,6 +10,8 @@
 
 @interface TIRegroup : NSObject
 
-+(void) regroup;
++(void) rRegroup:(AIShortMatchModel*)model;
++(void) pRegroup;
++(void) hRegroup;
 
 @end

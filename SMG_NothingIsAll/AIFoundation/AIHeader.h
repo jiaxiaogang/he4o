@@ -29,6 +29,9 @@
 #import "TOUtils.h"
 #import "TOModelVision.h"
 
+//旧TC
+#import "AIThinkInReason.h"
+
 //2021新TC架构
 #import "TIInput.h"
 #import "TIRegroup.h"
@@ -47,9 +50,12 @@
 //短时记忆
 #import "TOAlgModel.h"
 #import "TOFoModel.h"
+#import "AIShortMatchModel.h"
+#import "ShortMatchManager.h"
 
 //网络
 #import "AIAlgNodeBase.h"
+#import "AIFoNodeBase.h"
 
 //MARK:===============================================================
 //MARK:                         < 内核宏 >

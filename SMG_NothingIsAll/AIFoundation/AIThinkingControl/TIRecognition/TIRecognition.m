@@ -10,6 +10,9 @@
 
 @implementation TIRecognition
 
++(void) rRecognition:(AIShortMatchModel*)model{
+    
+}
 +(void) recognition:(TOFoModel*)foModel{
     //1. 数据准备
     AIFoNodeBase *curFo = [SMGUtils searchNode:foModel.content_p];

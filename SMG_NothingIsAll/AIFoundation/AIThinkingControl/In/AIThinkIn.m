@@ -193,13 +193,18 @@
     }];
     
     //3. 将mModel保留 (只有先保留后,构建时序时,才会含新帧概念);
-    [self.delegate aiThinkIn_addShortMatchModel:mModel];
+    [theTC.inModelManager add:mModel];
     
     //3. 构建时序 (把每次dic输入,都作为一个新的内存时序);
-    NSArray *matchAShortMem = [self.delegate aiThinkIn_GetShortMemory:true];
+    NSArray *matchAShortMem = [theTC.inModelManager shortCache:true];
     mModel.matchAFo = [theNet createConFo:matchAShortMem isMem:false];
-    NSArray *protoAShortMem = [self.delegate aiThinkIn_GetShortMemory:false];
+    NSArray *protoAShortMem = [theTC.inModelManager shortCache:false];
     mModel.protoFo = [theNet createConFo:protoAShortMem isMem:false];
+    
+    //TODOTOMORROW20211129: 以上已迁移新架构完成,分隔线------------------
+    
+    
+    
     
     //4. 识别时序;
     [AIThinkInReason TIR_Fo_FromShortMem:@[mModel.protoFo.pointer,mModel.matchAFo.pointer] decoratorInModel:mModel];

@@ -218,6 +218,7 @@
  *      2020.03.24: 内类比多码支持 (大小支持多个稀疏码变大/小 & 有无支持match.absPorts中多个变有/无);
  *      2020.07.30: 对matchAFo的AB元素进行内类比有无时,构建其抽象概念;
  *      2020.07.30: 内类比大小用protoFo,内类比有无用matchAFo (参考20151-BUG4 & n20p15-todo5);
+ *      2021.11.29: 废弃GL,但保留HN (参考24171-3&6);
  */
 +(void) analogyInner:(AIShortMatchModel*)mModel{
     if (!mModel) return;
@@ -226,7 +227,8 @@
     IFTitleLog(@"内类比", @"\nP:%@\nM:%@",Fo2FStr(protoFo),Fo2FStr(matchAFo));
     
     //1. 用protoFo做内类比大小;
-    if (ISOK(protoFo, AIFoNodeBase.class) && protoFo.count >= 2) {
+    BOOL glSwitch = false;
+    if (ISOK(protoFo, AIFoNodeBase.class) && protoFo.count >= 2 && glSwitch) {
         
         //2. 最后一个元素,向前分别与orders后面所有元素进行类比
         for (NSInteger i = protoFo.count - 2; i >= 0; i--) {

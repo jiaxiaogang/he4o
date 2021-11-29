@@ -10,8 +10,16 @@
 
 @implementation TIRegroup
 
-+(void) regroup{
-    //交由TIR生成时序完成;
++(void) rRegroup:(AIShortMatchModel*)model{
+    //1. 构建时序 (把每次dic输入,都作为一个新的内存时序);
+    NSArray *matchAShortMem = [theTC.inModelManager shortCache:true];
+    model.matchAFo = [theNet createConFo:matchAShortMem isMem:false];
+    NSArray *protoAShortMem = [theTC.inModelManager shortCache:false];
+    model.protoFo = [theNet createConFo:protoAShortMem isMem:false];
+    
+    //2. 识别
+    [TIRecognition rRecognition:model];
+    
 }
 
 @end

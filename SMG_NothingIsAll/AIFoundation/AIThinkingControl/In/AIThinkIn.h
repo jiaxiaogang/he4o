@@ -11,7 +11,6 @@
 @class AIPointer,AICMVNodeBase,AIFrontOrderNode,AIAlgNodeBase,AIShortMatchModel;
 @protocol AIThinkInDelegate <NSObject>
 
--(NSArray*) aiThinkIn_GetShortMemory:(BOOL)isMatch;
 -(AIFrontOrderNode*) aiThinkIn_CreateCMVModel:(NSArray*)algsArr inputTime:(NSTimeInterval)inputTime isMatch:(BOOL)isMatch;//构建cmv模型;
 
 /**
@@ -32,7 +31,6 @@
  */
 -(void) aiThinkIn_CommitNoMv2TC:(AIShortMatchModel*)shortMatchModel;
 -(NSArray*) aiThinkIn_getShortMatchModel;                           //获取mModel模型
--(void) aiThinkIn_addShortMatchModel:(AIShortMatchModel*)newMModel; //提交新mModel模型
 
 @end
 

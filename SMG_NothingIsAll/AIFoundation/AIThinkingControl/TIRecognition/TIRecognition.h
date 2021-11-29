@@ -11,6 +11,7 @@
 
 @interface TIRecognition : NSObject
 
++(void) rRecognition:(AIShortMatchModel*)model;
 +(void) recognition:(TOFoModel*)foModel;
 
 @end
