@@ -10,9 +10,24 @@
 
 @implementation TODemand
 
-+(void) rDemand:(AIShortMatchModel*)model{
++(void) rDemandFront:(AIShortMatchModel*)model{
     //2. 预测处理_把mv加入到demandManager;
     [theTC.outModelManager updateCMVCache_RMV:model];
+}
+
++(void) rDemandBack:(AIShortMatchModel*)model{
+    [TOSolution solution];
+}
+
++(void) pDemand:(AICMVNode*)cmvNode{
+    //1. 将联想到的cmv更新energy & 更新demandManager & decisionLoop
+    NSInteger delta = [NUMTOOK([AINetIndex getData:cmvNode.delta_p]) integerValue];
+    NSString *algsType = cmvNode.urgentTo_p.algsType;
+    NSInteger urgentTo = [NUMTOOK([AINetIndex getData:cmvNode.urgentTo_p]) integerValue];
+    [theTC.outModelManager updateCMVCache_PMV:algsType urgentTo:urgentTo delta:delta];
+    
+    //2. 转向执行;
+    [TOSolution solution];
 }
 
 //交由DemandManager构建任务完成;

@@ -58,12 +58,14 @@
 #import "ShortMatchManager.h"
 
 //网络
+#import "AINetUtils.h"
+#import "AINetIndex.h"
+#import "AINetService.h"
+
 #import "AIAlgNodeBase.h"
 #import "AIFoNodeBase.h"
 #import "AIFrontOrderNode.h"
 #import "AICMVNode.h"
-#import "AINetUtils.h"
-#import "AINetIndex.h"
 
 //类比器,评价器,触发器
 #import "AIAnalogy.h"

@@ -67,14 +67,14 @@
  */
 +(void) rForecast:(AIShortMatchModel*)model{
     //6. 传给TOR,做下一步处理;
-    [TODemand rDemand:model];
+    [TODemand rDemandFront:model];
     
     //7. TOR反馈;
     BOOL pushOldDemand = [self feedbackTOR:model];
     
     //6. 此处推进不成功,则运行TOP四模式;
     if (!pushOldDemand) {
-        [theTO dataOut];
+        [TODemand rDemandBack:model];
     }
 }
 
@@ -91,20 +91,11 @@
     //4. tip_OPushM
     [self feedbackTIP:cmvNode];
     
-    //5. 思考mv,需求处理
-    NSInteger delta = [NUMTOOK([AINetIndex getData:cmvNode.delta_p]) integerValue];
-    if (delta == 0) {
-        return;
-    }
-    
     //2. top_OPushM
     [self feedbackTOP:cmvNode];
     
-    //2. 将联想到的cmv更新energy & 更新demandManager & decisionLoop
-    NSString *algsType = cmvNode.urgentTo_p.algsType;
-    NSInteger urgentTo = [NUMTOOK([AINetIndex getData:cmvNode.urgentTo_p]) integerValue];
-    [theTC.outModelManager updateCMVCache_PMV:algsType urgentTo:urgentTo delta:delta];
-    [theTO dataOut];
+    //3. p任务;
+    [TODemand pDemand:cmvNode];
 }
 
 

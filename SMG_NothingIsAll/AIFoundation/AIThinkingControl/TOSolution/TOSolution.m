@@ -15,6 +15,14 @@
 
 @implementation TOSolution
 
++(void) solution{
+    [theTO dataOut];
+    
+    //TODOTOMORROW20211130: 将dataOut之后的逻辑,整理继续写到新架构中来;
+    
+    
+    
+}
 
 /**
  *  MARK:--------------------solution--------------------

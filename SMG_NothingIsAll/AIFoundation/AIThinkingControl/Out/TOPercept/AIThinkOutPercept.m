@@ -130,6 +130,12 @@
  *      2021.02.04: 将R同区同向(会导致永远为false因为虚mv得分为0)判断,改为同区反向判断 (参考22115BUG & 22108虚mv反馈判断方法);
  */
 +(void) top_OPushM:(AICMVNodeBase*)newMv{
+    //0. 数据检查
+    NSInteger delta = [NUMTOOK([AINetIndex getData:newMv.delta_p]) integerValue];
+    if (delta == 0) {
+        return;
+    }
+    
     //1. 数据检查
     NSArray *demands = theTC.outModelManager.getAllDemand;
     if (!newMv) return;
