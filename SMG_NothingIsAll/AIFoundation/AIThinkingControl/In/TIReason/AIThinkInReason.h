@@ -34,7 +34,6 @@
 //MARK:===============================================================
 //MARK:                     < 预测 >
 //MARK:===============================================================
-+(void) tir_Forecast:(AIShortMatchModel*)inModel;
 +(void) tir_OPushM:(AIShortMatchModel*)newInModel;
 
 @end

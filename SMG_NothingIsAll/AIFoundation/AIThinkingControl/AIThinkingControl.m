@@ -36,7 +36,7 @@
  *  2. 在联想中,遇到的mv,都叠加到当前demand下;
  *
  */
-@interface AIThinkingControl() <AIThinkInDelegate>
+@interface AIThinkingControl()
 
 @property (strong, nonatomic) DemandManager *demandManager;         //OUT短时记忆 (输出数据管理器);
 @property (strong, nonatomic) ShortMatchManager *shortMatchManager; //IN短时记忆 (输入数据管理器);
@@ -75,7 +75,6 @@ static AIThinkingControl *_instance;
 -(void) initData{
     self.demandManager = [[DemandManager alloc] init];
     self.thinkIn = [[AIThinkIn alloc] init];
-    self.thinkIn.delegate = self;
     self.thinkOut = [[AIThinkOut alloc] init];
     self.shortMatchManager = [[ShortMatchManager alloc] init];
 }
@@ -141,43 +140,6 @@ static AIThinkingControl *_instance;
 -(void) setEnergy:(CGFloat)energy{
     self.energy = energy;
     NSLog(@"inner > setEnergy:%.2f",self.energy);
-}
-
-/**
- *  MARK:--------------------AIThinkInDelegate--------------------
- */
--(AIFrontOrderNode*)aiThinkIn_CreateCMVModel:(NSArray *)algsArr inputTime:(NSTimeInterval)inputTime isMatch:(BOOL)isMatch{
-    AIFrontOrderNode *foNode = [theNet createCMV:algsArr inputTime:inputTime order:[self.shortMatchManager shortCache:isMatch]];
-    //20200120 瞬时记忆改为不清空,为解决外层死循环问题 (因为外层循环需要行为输出后,将时序连起来) 参考n18p5-BUG9
-    //[self.shortMemory clear];
-    return foNode;
-}
-
-/**
- *  MARK:--------------------感性mv输入处理--------------------
- */
--(void) aiThinkIn_CommitMv2TC:(AICMVNodeBase*)cmvNode{
-    //1. 数据检查
-    if (!ISOK(cmvNode, AICMVNodeBase.class)) {
-        return;
-    }
-    NSInteger delta = [NUMTOOK([AINetIndex getData:cmvNode.delta_p]) integerValue];
-    if (delta == 0) {
-        return;
-    }
-    
-    //2. top_OPushM
-    [AIThinkOutPercept top_OPushM:cmvNode];
-    
-    //2. 将联想到的cmv更新energy & 更新demandManager & decisionLoop
-    NSString *algsType = cmvNode.urgentTo_p.algsType;
-    NSInteger urgentTo = [NUMTOOK([AINetIndex getData:cmvNode.urgentTo_p]) integerValue];
-    [self.demandManager updateCMVCache_PMV:algsType urgentTo:urgentTo delta:delta];
-    [self.thinkOut dataOut];
-}
-
--(NSArray*) aiThinkIn_getShortMatchModel{
-    return self.shortMatchManager.models;
 }
 
 @end

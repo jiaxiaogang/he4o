@@ -11,7 +11,11 @@
 @interface TIForecast : NSObject
 
 +(void) feedbackTIR:(AIShortMatchModel*)model;
-+(void) foreastMv:(AIShortMatchModel*)model;
-+(void) foreastIRT:(AIShortMatchModel*)model;
++(void) feedbackLearning:(AIFoNodeBase*)protoFo;
+
++(void) rForecast:(AIShortMatchModel*)model;
++(void) pForecast:(AICMVNode*)cmvNode;
++(void) forecastIRT:(AIShortMatchModel*)model;
++(void) forecastSubDemand:(AIShortMatchModel*)model;
 
 @end

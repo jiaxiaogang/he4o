@@ -8,33 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIPointer,AICMVNodeBase,AIFrontOrderNode,AIAlgNodeBase,AIShortMatchModel;
-@protocol AIThinkInDelegate <NSObject>
-
--(AIFrontOrderNode*) aiThinkIn_CreateCMVModel:(NSArray*)algsArr inputTime:(NSTimeInterval)inputTime isMatch:(BOOL)isMatch;//构建cmv模型;
-
-/**
- *  MARK:--------------------感性mv输入处理--------------------
- *  @desc 输入mv时调用,执行OPushM + 更新P任务池 + 执行P决策;
- *  @param cmvNode  : 要处理的mvNode
- *  @desc 功能说明:
- *      1. 更新energy值
- *      2. 更新需求池
- *      3. 进行dataOut决策行为化;
- */
--(void) aiThinkIn_CommitMv2TC:(AICMVNodeBase*)cmvNode;
--(NSArray*) aiThinkIn_getShortMatchModel;                           //获取mModel模型
-
-@end
-
-
 /**
  *  MARK:--------------------输入思维控制器--------------------
  *  皮层算法调用,类比,规律,抽象,构建,认知,学习,激活思维,发现需求等;
  */
 @interface AIThinkIn : NSObject
-
-@property (weak, nonatomic) id<AIThinkInDelegate> delegate;
 
 
 //MARK:===============================================================

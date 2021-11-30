@@ -29,8 +29,8 @@
     [TIRegroup rRegroup:mModel];
 }
 
-+(void) pInput{
-    
++(void) pInput:(NSArray*)algsArr{
+    [TIRegroup pRegroup:algsArr];
 }
 
 +(void) jump:(TOAlgModel*)algModel{

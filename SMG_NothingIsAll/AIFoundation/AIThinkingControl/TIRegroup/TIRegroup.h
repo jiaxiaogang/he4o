@@ -11,7 +11,7 @@
 @interface TIRegroup : NSObject
 
 +(void) rRegroup:(AIShortMatchModel*)model;
-+(void) pRegroup;
++(void) pRegroup:(NSArray*)algsArr;
 +(void) hRegroup;
 
 @end

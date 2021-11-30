@@ -570,6 +570,12 @@
  *      2021.04.08: 考虑支持从抽象protoFo.absPorts.dsPorts中找assFo;
  */
 +(void) analogy_Feedback_Diff:(AIFoNodeBase*)protoFo mModel:(AIMatchFoModel*)mModel{
+    //1. 废弃dsFo (参考24126)
+    BOOL isSwitch = false;
+    if (!isSwitch) {
+        return;
+    }
+    
     //1. 数据检查 (本身就是虚mv则返回:此方法仅对实mv做处理,本身就是虚mv则不做任何处理);
     if (!protoFo || !mModel || !mModel.matchFo || [AINetUtils isVirtualMv:mModel.matchFo.cmvNode_p]) return;
     AIFoNodeBase *matchFo = mModel.matchFo;

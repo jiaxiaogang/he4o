@@ -21,7 +21,7 @@
 #import "TOFoModel.h"
 #import "AIAnalogy.h"
 
-@interface AIThinkIn () <AIThinkInPerceptDelegate>
+@interface AIThinkIn ()
 
 @property (strong, nonatomic) AIThinkInPercept *tip;
 
@@ -39,7 +39,6 @@
 
 -(void) initData{
     self.tip = [[AIThinkInPercept alloc] init];
-    self.tip.delegate = self;
 }
 
 //MARK:===============================================================
@@ -190,27 +189,7 @@
 //MARK:===============================================================
 
 -(void) dataIn_FindMV:(NSArray*)algsArr{
-    //1. 联想到mv时,创建CmvModel取到FoNode;
-    NSTimeInterval inputTime = [[NSDate date] timeIntervalSince1970];
-    [self.tip dataIn_FindMV:algsArr createMvModelBlock:^AIFrontOrderNode *(NSArray *algsArr,BOOL isMatch) {
-        //2. 创建CmvModel取到FoNode;
-        return [self.delegate aiThinkIn_CreateCMVModel:algsArr inputTime:inputTime isMatch:isMatch];
-    } finishBlock:^(AICMVNode *commitMvNode) {
-        //3. 思考mv,需求处理
-        [self.delegate aiThinkIn_CommitMv2TC:commitMvNode];
-    }];
-}
-
-
-//MARK:===============================================================
-//MARK:                     < private_Method >
-//MARK:===============================================================
-
-/**
- *  MARK:--------------------AIThinkInPerceptDelegate--------------------
- */
--(NSArray *)tir_getShortMatchModel{
-    return [self.delegate aiThinkIn_getShortMatchModel];
+    [TIInput pInput:(NSArray*)algsArr];
 }
 
 @end

@@ -11,7 +11,7 @@
 @interface TODemand : NSObject
 
 +(void) rDemand:(AIShortMatchModel*)model;
-+(void) demand:(AIShortMatchModel*)rtInModel;
++(void) subDemand:(AIShortMatchModel*)rtInModel;
 +(void) hDemand:(TOAlgModel*)algModel;    //H任务 (用来转移某概念的H任务);
 
 @end

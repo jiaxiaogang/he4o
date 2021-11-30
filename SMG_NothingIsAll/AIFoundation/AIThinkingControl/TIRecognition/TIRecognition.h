@@ -13,6 +13,7 @@
 
 +(void) rRecognition:(AIShortMatchModel*)model;
 +(void) recognition:(TOFoModel*)foModel;
++(void) pRecognition:(AIFoNodeBase*)protoFo;
 
 @end
 

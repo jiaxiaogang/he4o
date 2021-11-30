@@ -31,7 +31,9 @@
 
 //旧TC
 #import "AIThinkInReason.h"
+#import "AIThinkInPercept.h"
 #import "AIThinkOutReason.h"
+#import "AIThinkOutPercept.h"
 
 //2021新TC架构
 #import "TIInput.h"
@@ -58,9 +60,14 @@
 //网络
 #import "AIAlgNodeBase.h"
 #import "AIFoNodeBase.h"
+#import "AIFrontOrderNode.h"
+#import "AICMVNode.h"
+#import "AINetUtils.h"
+#import "AINetIndex.h"
 
-//类比器评价器
+//类比器,评价器,触发器
 #import "AIAnalogy.h"
+#import "AITime.h"
 
 //MARK:===============================================================
 //MARK:                         < 内核宏 >

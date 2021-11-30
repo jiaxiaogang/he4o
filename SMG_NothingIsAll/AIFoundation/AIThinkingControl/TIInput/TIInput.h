@@ -11,7 +11,7 @@
 @interface TIInput : NSObject
 
 +(void) rInput:(AIAlgNodeBase*)algNode fromGroup_ps:(NSArray*)fromGroup_ps;
-+(void) pInput;
++(void) pInput:(NSArray*)algsArr;
 +(void) jump:(TOAlgModel*)algModel;
 
 @end

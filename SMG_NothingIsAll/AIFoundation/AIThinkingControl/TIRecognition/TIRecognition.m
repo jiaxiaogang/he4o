@@ -21,11 +21,12 @@
     [TIForecast feedbackTIR:model];
     
     //7. R任务_预测mv价值变化;
-    [TIForecast foreastMv:model];
+    [TIForecast rForecast:model];
     
     //8. IRT触发器;
-    [TIForecast foreastIRT:model];
+    [TIForecast forecastIRT:model];
 }
+
 +(void) recognition:(TOFoModel*)foModel{
     //1. 数据准备
     AIFoNodeBase *curFo = [SMGUtils searchNode:foModel.content_p];
@@ -37,7 +38,22 @@
     //4. MC反思: 回归tir反思,重新识别理性预测时序,预测价值; (预测到鸡蛋变脏,或者cpu损坏) (理性预测影响评价即理性评价)
     AIShortMatchModel *rtInModel = [theTC to_Rethink:foModel];
     
+    //5. 生成子任务;
+    [TIForecast forecastSubDemand:rtInModel];
+}
+
++(void) pRecognition:(AIFoNodeBase*)protoFo{
+    //2. 取cmvNode
+    AICMVNode *cmvNode = [SMGUtils searchNode:protoFo.cmvNode_p];
+    if (!ISOK(cmvNode, AICMVNode.class)) {
+        return;
+    }
     
+    //3. 学习
+    [TIForecast feedbackLearning:protoFo];
+    
+    //4. tip反馈 & 生成p任务;
+    [TIForecast pForecast:cmvNode];
 }
 
 @end

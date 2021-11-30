@@ -16,7 +16,7 @@
 }
 
 //交由DemandManager构建任务完成;
-+(void) demand:(AIShortMatchModel*)rtInModel{
++(void) subDemand:(AIShortMatchModel*)rtInModel{
     
     
     //TODOTOMORROW20211128: 构建任务树 (将DemandManager代码整理过来);
