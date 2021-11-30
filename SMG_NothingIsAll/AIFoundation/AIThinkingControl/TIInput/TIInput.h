@@ -13,6 +13,5 @@
 +(void) rInput:(AIAlgNodeBase*)algNode fromGroup_ps:(NSArray*)fromGroup_ps;
 +(void) pInput;
 +(void) jump:(TOAlgModel*)algModel;
-+(void) feedback;
 
 @end

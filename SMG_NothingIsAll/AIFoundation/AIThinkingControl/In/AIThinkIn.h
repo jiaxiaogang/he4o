@@ -23,13 +23,6 @@
  *      3. 进行dataOut决策行为化;
  */
 -(void) aiThinkIn_CommitMv2TC:(AICMVNodeBase*)cmvNode;
-
-/**
- *  MARK:--------------------理性noMv输入处理--------------------
- *  @desc 输入noMv时调用,执行OPushM + 更新R任务池 + 执行R决策;
- *  联想网络杏仁核得来的则false;
- */
--(void) aiThinkIn_CommitNoMv2TC:(AIShortMatchModel*)shortMatchModel;
 -(NSArray*) aiThinkIn_getShortMatchModel;                           //获取mModel模型
 
 @end

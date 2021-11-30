@@ -11,7 +11,20 @@
 @implementation TIRecognition
 
 +(void) rRecognition:(AIShortMatchModel*)model{
+    //4. 识别时序;
+    [AIThinkInReason TIR_Fo_FromShortMem:@[model.protoFo.pointer,model.matchAFo.pointer] decoratorInModel:model];
     
+    //5. 内类比
+    [AIAnalogy analogyInner:model];
+    
+    //6. 理性反馈;
+    [TIForecast feedbackTIR:model];
+    
+    //7. R任务_预测mv价值变化;
+    [TIForecast foreastMv:model];
+    
+    //8. IRT触发器;
+    [TIForecast foreastIRT:model];
 }
 +(void) recognition:(TOFoModel*)foModel{
     //1. 数据准备

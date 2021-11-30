@@ -10,6 +10,11 @@
 
 @implementation TODemand
 
++(void) rDemand:(AIShortMatchModel*)model{
+    //2. 预测处理_把mv加入到demandManager;
+    [theTC.outModelManager updateCMVCache_RMV:model];
+}
+
 //交由DemandManager构建任务完成;
 +(void) demand:(AIShortMatchModel*)rtInModel{
     

@@ -176,30 +176,6 @@ static AIThinkingControl *_instance;
     [self.thinkOut dataOut];
 }
 
-/**
- *  MARK:--------------------理性noMv输入处理--------------------
- *  @desc 输入noMv时调用,执行OPushM + 更新R任务池 + 执行R决策;
- *  @version
- *      2020.10.19: 将add至ShortMatchManager代码前迁;
- */
--(void) aiThinkIn_CommitNoMv2TC:(AIShortMatchModel*)inModel {
-    //1. 数据检查
-    if (!inModel) return;
-    
-    //2. 预测处理_把mv加入到demandManager;
-    [self.demandManager updateCMVCache_RMV:inModel];
-    
-    //4. 将新一帧数据报告给TOR,以进行短时记忆的更新,比如我输出行为"打",短时记忆由此知道输出"打"成功;
-    DemandModel *demand = [self.demandManager getCurrentDemand];
-    
-    //5. 外循环入->推进->中循环出;
-    BOOL pushOldDemand = [self.thinkOut.tOR tor_OPushM:demand latestMModel:inModel];
-    
-    //6. 此处推进不成功,则运行TOP四模式;
-    if (!pushOldDemand) {
-        [self.thinkOut dataOut];
-    }
-}
 -(NSArray*) aiThinkIn_getShortMatchModel{
     return self.shortMatchManager.models;
 }

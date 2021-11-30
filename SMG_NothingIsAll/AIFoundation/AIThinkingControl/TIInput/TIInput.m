@@ -37,8 +37,4 @@
     [TODemand hDemand:algModel];
 }
 
-+(void) feedback{
-    //1. 从短时记忆树上,取所有actYes模型,并与新输入的概念做mIsC判断;
-}
-
 @end

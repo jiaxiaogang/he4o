@@ -31,12 +31,13 @@
 
 //旧TC
 #import "AIThinkInReason.h"
+#import "AIThinkOutReason.h"
 
 //2021新TC架构
 #import "TIInput.h"
 #import "TIRegroup.h"
 #import "TIRecognition.h"
-#import "TIForecastMV.h"
+#import "TIForecast.h"
 #import "TODemand.h"
 #import "TOSolution.h"
 #import "TOAction.h"
@@ -46,6 +47,7 @@
 #import "ReasonDemandModel.h"
 #import "AIMatchFoModel.h"
 #import "HDemandModel.h"
+#import "DemandManager.h"
 
 //短时记忆
 #import "TOAlgModel.h"
@@ -56,6 +58,9 @@
 //网络
 #import "AIAlgNodeBase.h"
 #import "AIFoNodeBase.h"
+
+//类比器评价器
+#import "AIAnalogy.h"
 
 //MARK:===============================================================
 //MARK:                         < 内核宏 >

@@ -19,6 +19,13 @@
     
     //2. 识别
     [TIRecognition rRecognition:model];
+}
+
++(void) pRegroup{
+    
+}
+
++(void) hRegroup{
     
 }
 

@@ -181,45 +181,7 @@
  *      20211017 - 在执行决策前,先到OPushM将TIModel.status更新了,因为有些IRT触发器已经失效了 (参考24061);
  */
 -(void) dataIn_NoMV:(AIAlgNodeBase*)algNode fromGroup_ps:(NSArray*)fromGroup_ps{
-    //1. 数据准备 (瞬时记忆,理性匹配出的模型);
-    __block AIShortMatchModel *mModel = [[AIShortMatchModel alloc] init];
-    mModel.protoAlg = algNode;
-    mModel.inputTime = [[NSDate date] timeIntervalSince1970];
-    
-    //2. 识别概念;
-    [AIThinkInReason TIR_Alg:algNode.pointer fromGroup_ps:fromGroup_ps complete:^(NSArray *_matchAlgs, NSArray *_partAlg_ps) {
-        mModel.matchAlgs = _matchAlgs;
-        mModel.partAlg_ps = _partAlg_ps;
-    }];
-    
-    //3. 将mModel保留 (只有先保留后,构建时序时,才会含新帧概念);
-    [theTC.inModelManager add:mModel];
-    
-    //3. 构建时序 (把每次dic输入,都作为一个新的内存时序);
-    NSArray *matchAShortMem = [theTC.inModelManager shortCache:true];
-    mModel.matchAFo = [theNet createConFo:matchAShortMem isMem:false];
-    NSArray *protoAShortMem = [theTC.inModelManager shortCache:false];
-    mModel.protoFo = [theNet createConFo:protoAShortMem isMem:false];
-    
-    //TODOTOMORROW20211129: 以上已迁移新架构完成,分隔线------------------
-    
-    
-    
-    
-    //4. 识别时序;
-    [AIThinkInReason TIR_Fo_FromShortMem:@[mModel.protoFo.pointer,mModel.matchAFo.pointer] decoratorInModel:mModel];
-    
-    //5. 内类比
-    [AIAnalogy analogyInner:mModel];
-    
-    //7. 传给TIR,做下一步处理;
-    [AIThinkInReason tir_OPushM:mModel];
-    
-    //6. 传给TOR,做下一步处理;
-    [self.delegate aiThinkIn_CommitNoMv2TC:mModel];
-    
-    //8. 预测;
-    [AIThinkInReason tir_Forecast:mModel];
+    [TIInput rInput:algNode fromGroup_ps:fromGroup_ps];
 }
 
 
