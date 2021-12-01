@@ -8,10 +8,15 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ *  MARK:--------------------反馈 & 预测--------------------
+ */
 @interface TIForecast : NSObject
 
 +(void) feedbackTIR:(AIShortMatchModel*)model;
-+(void) feedbackLearning:(AIFoNodeBase*)protoFo;
++(BOOL) feedbackTOR:(AIShortMatchModel*)model;
++(void) feedbackTIP:(AICMVNode*)cmvNode;
++(void) feedbackTOP:(AICMVNode*)cmvNode;
 
 +(void) rForecast:(AIShortMatchModel*)model;
 +(void) pForecast:(AICMVNode*)cmvNode;

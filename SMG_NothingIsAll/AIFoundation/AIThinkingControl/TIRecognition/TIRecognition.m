@@ -14,8 +14,8 @@
     //4. 识别时序;
     [AIThinkInReason TIR_Fo_FromShortMem:@[model.protoFo.pointer,model.matchAFo.pointer] decoratorInModel:model];
     
-    //5. 内类比
-    [AIAnalogy analogyInner:model];
+    //5. 学习;
+    [self rLearning:model];
     
     //6. 理性反馈;
     [TIForecast feedbackTIR:model];
@@ -60,10 +60,41 @@
     }
     
     //3. 学习
-    [TIForecast feedbackLearning:protoFo];
+    [self pLearning:protoFo];
     
     //4. tip反馈 & 生成p任务;
     [TIForecast pForecast:cmvNode];
+}
+
+/**
+ *  MARK:--------------------学习--------------------
+ *  分为:
+ *   1. 外类比
+ *   2. 内类比
+ *  解释:
+ *   1. 无需求时,找出以往同样经历,类比规律,抽象出更确切的意义;
+ *   2. 注:此方法为abs方向的思维方法总入口;(与其相对的决策处
+ *  步骤:
+ *   > 联想->类比->规律->抽象->关联->网络
+ *  @version
+ *      2020.03.04: a.去掉外类比; b.外类比拆分为:正向类比和反向类比;
+ *      2021.01.24: 支持多时序识别,更全面的触发外类比 (参考22073-todo4);
+ */
++(void) pLearning:(AIFoNodeBase*)protoFo{
+    
+    //2. 获取最近的识别模型;
+    NSArray *inModels = ARRTOOK(theTC.inModelManager.models);
+    for (AIShortMatchModel *item in inModels) {
+        for (AIMatchFoModel *pFo in item.matchPFos) {
+            
+            //3. 正向反馈类比 (外类比);
+            [AIAnalogy analogy_Feedback_Same:pFo.matchFo shortFo:protoFo];
+        }
+    }
+}
++(void) rLearning:(AIShortMatchModel*)model{
+    //5. 内类比
+    [AIAnalogy analogyInner:model];
 }
 
 @end

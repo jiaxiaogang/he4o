@@ -10,38 +10,19 @@
 
 @implementation TIForecast
 
+//MARK:===============================================================
+//MARK:                     < feedback部分 >
+//MARK:===============================================================
+
+
+
+//TODOTOMORROW20211202: 将四个feedback方法迁移过来; (原来的直接删掉,把所有调用处也查下看有没有了);==========
+
 +(void) feedbackTIR:(AIShortMatchModel*)model{
     //1. 从短时记忆树上,取所有actYes模型,并与新输入的概念做mIsC判断;
     
     //7. 传给TIR,做下一步处理;
     [AIThinkInReason tir_OPushM:model];
-}
-
-/**
- *  MARK:--------------------学习--------------------
- *  分为:
- *   1. 外类比
- *   2. 内类比
- *  解释:
- *   1. 无需求时,找出以往同样经历,类比规律,抽象出更确切的意义;
- *   2. 注:此方法为abs方向的思维方法总入口;(与其相对的决策处
- *  步骤:
- *   > 联想->类比->规律->抽象->关联->网络
- *  @version
- *      2020.03.04: a.去掉外类比; b.外类比拆分为:正向类比和反向类比;
- *      2021.01.24: 支持多时序识别,更全面的触发外类比 (参考22073-todo4);
- */
-+(void) feedbackLearning:(AIFoNodeBase*)protoFo{
-    
-    //2. 获取最近的识别模型;
-    NSArray *inModels = ARRTOOK(theTC.inModelManager.models);
-    for (AIShortMatchModel *item in inModels) {
-        for (AIMatchFoModel *pFo in item.matchPFos) {
-            
-            //3. 正向反馈类比 (外类比);
-            [AIAnalogy analogy_Feedback_Same:pFo.matchFo shortFo:protoFo];
-        }
-    }
 }
 
 +(BOOL) feedbackTOR:(AIShortMatchModel*)model{

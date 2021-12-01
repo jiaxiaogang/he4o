@@ -8,7 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
-
+/**
+ *  MARK:--------------------识别 & 学习--------------------
+ */
 @interface TIRecognition : NSObject
 
 +(void) rRecognition:(AIShortMatchModel*)model;
