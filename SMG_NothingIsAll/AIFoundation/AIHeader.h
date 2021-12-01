@@ -23,7 +23,6 @@
 #import "AIThinkOut.h"
 #import "NSString+Extension.h"
 #import "AIScore.h"
-#import "OutputModel.h"
 #import "XGDelegate.h"
 #import "ThinkingUtils.h"
 #import "TOUtils.h"
@@ -67,9 +66,12 @@
 #import "AIFrontOrderNode.h"
 #import "AICMVNode.h"
 
-//类比器,评价器,触发器
+//其它: 类比器,评价器,触发器,防重器,输入,输出
 #import "AIAnalogy.h"
 #import "AITime.h"
+#import "OutputModel.h"
+#import "Output.h"
+#import "AINoRepeatRun.h"
 
 //MARK:===============================================================
 //MARK:                         < 内核宏 >

@@ -1013,6 +1013,8 @@
         TOFoModel *foModel = (TOFoModel*)algModel.baseOrGroup;
         AIFoNodeBase *foNode = [SMGUtils searchNode:foModel.content_p];
         if ([TOUtils isHNGL_toModel:algModel]) {
+            
+            //一: ------------------------ H模式 ------------------------
             //2. 如果TOAlgModel为HNGL时,
             NSInteger cutIndex = foNode.content_ps.count - 1;
             double deltaTime = [NUMTOOK(ARR_INDEX(foNode.deltaTimes, cutIndex)) doubleValue];
@@ -1053,6 +1055,8 @@
             //    //2. 对上述ATSubAlgs构建成ATSub时序;
             //}];
         }else if(ISOK(actYesModel.baseOrGroup.baseOrGroup, ReasonDemandModel.class)){
+            
+            //二: ------------------------ 弄巧成拙模式 ------------------------
             //3. R模式静默成功处理 (等待其自然出现) (参考22153-A2);
             ReasonDemandModel *rDemand = (ReasonDemandModel*)actYesModel.baseOrGroup.baseOrGroup;
             TOFoModel *dsFoModel = (TOFoModel*)actYesModel.baseOrGroup;
@@ -1097,6 +1101,8 @@
         }
     }else if(ISOK(actYesModel, TOFoModel.class)){
         if (ISOK(actYesModel.baseOrGroup, ReasonDemandModel.class)) {
+            
+            //三: ------------------------ R-模式 ------------------------
             //1. R-模式ActYes处理,仅赋值,等待R-触发器;
             ReasonDemandModel *demand = (ReasonDemandModel*)actYesModel.baseOrGroup;
             demand.status = TOModelStatus_ActYes;
@@ -1131,32 +1137,33 @@
                     }
                 }
             }];
-            return;
+        }else{
+            
+            //四. ------------------------ P-模式 ------------------------
+            //1. P-模式ActYes处理 (TOFoModel时,数据准备);
+            TOFoModel *foModel = (TOFoModel*)actYesModel;
+            AIFoNodeBase *actYesFo = [SMGUtils searchNode:foModel.content_p];
+            DemandModel *demand = (DemandModel*)actYesModel.baseOrGroup;
+            if (!ISOK(demand, DemandModel.class)) WLog(@"HNGL应该直接转至HNGL.actYes,如果转到这儿,说明出了BUG");
+            
+            //2. 触发器 (触发条件:任务未在demandManager中抵消);
+            NSLog(@"---//触发器F_生成: %p -> %@ time:%f",demand,Fo2FStr(actYesFo),actYesFo.mvDeltaTime);
+            [AITime setTimeTrigger:actYesFo.mvDeltaTime trigger:^{
+                
+                //3. 反省类比(成功/未成功)的主要原因;
+                AnalogyType type = (demand.status != TOModelStatus_Finish) ? ATSub : ATPlus;
+                NSLog(@"---//触发器F_触发: %p -> %@ (%@)",demand,Fo2FStr(actYesFo),ATType2Str(type));
+                [AIAnalogy analogy_OutRethink:foModel cutIndex:NSIntegerMax type:type];
+                
+                //4. 失败时,转流程控制-失败 (会开始下一解决方案);
+                BOOL havRoot = [theTC.outModelManager.getAllDemand containsObject:demand];
+                if (demand.status != TOModelStatus_Finish && havRoot) {
+                    NSLog(@"====ActYes is Fo update status");
+                    actYesModel.status = TOModelStatus_ScoreNo;
+                    [self singleLoopBackWithFailureModel:actYesModel];
+                }
+            }];
         }
-        
-        //1. P-模式ActYes处理 (TOFoModel时,数据准备);
-        TOFoModel *foModel = (TOFoModel*)actYesModel;
-        AIFoNodeBase *actYesFo = [SMGUtils searchNode:foModel.content_p];
-        DemandModel *demand = (DemandModel*)actYesModel.baseOrGroup;
-        if (!ISOK(demand, DemandModel.class)) WLog(@"HNGL应该直接转至HNGL.actYes,如果转到这儿,说明出了BUG");
-        
-        //2. 触发器 (触发条件:任务未在demandManager中抵消);
-        NSLog(@"---//触发器F_生成: %p -> %@ time:%f",demand,Fo2FStr(actYesFo),actYesFo.mvDeltaTime);
-        [AITime setTimeTrigger:actYesFo.mvDeltaTime trigger:^{
-            
-            //3. 反省类比(成功/未成功)的主要原因;
-            AnalogyType type = (demand.status != TOModelStatus_Finish) ? ATSub : ATPlus;
-            NSLog(@"---//触发器F_触发: %p -> %@ (%@)",demand,Fo2FStr(actYesFo),ATType2Str(type));
-            [AIAnalogy analogy_OutRethink:foModel cutIndex:NSIntegerMax type:type];
-            
-            //4. 失败时,转流程控制-失败 (会开始下一解决方案);
-            BOOL havRoot = [theTC.outModelManager.getAllDemand containsObject:demand];
-            if (demand.status != TOModelStatus_Finish && havRoot) {
-                NSLog(@"====ActYes is Fo update status");
-                actYesModel.status = TOModelStatus_ScoreNo;
-                [self singleLoopBackWithFailureModel:actYesModel];
-            }
-        }];
     }
 }
 
