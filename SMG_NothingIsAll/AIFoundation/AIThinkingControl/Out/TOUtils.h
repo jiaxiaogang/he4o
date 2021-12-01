@@ -72,11 +72,6 @@
 +(NSMutableArray*) collectConPorts:(NSArray*)proto_ps singleLimit:(NSInteger)singleLimit havTypes:(NSArray*)havTypes noTypes:(NSArray*)noTypes;
 +(NSMutableArray*) collectPorts:(NSArray*)proto_ps singleLimit:(NSInteger)singleLimit havTypes:(NSArray*)havTypes noTypes:(NSArray*)noTypes isAbs:(BOOL)isAbs;
 
-/**
- *  MARK:--------------------TOP.diff正负两个模式--------------------
- */
-+(void) topPerceptModeV2:(DemandModel*)demandModel direction:(MVDirection)direction tryResult:(BOOL(^)(AIFoNodeBase *sameFo))tryResult canAss:(BOOL(^)())canAssBlock updateEnergy:(void(^)(CGFloat))updateEnergy;
-
 
 //MARK:===============================================================
 //MARK:                     < 从TO短时记忆取demand >

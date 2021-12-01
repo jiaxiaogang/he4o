@@ -15,17 +15,85 @@
 
 @implementation TOSolution
 
-+(void) solution{
-    [theTO dataOut];
-    
-    //TODOTOMORROW20211130: 将dataOut之后的逻辑,整理继续写到新架构中来;
-    
-    
-    
-}
 
 /**
- *  MARK:--------------------solution--------------------
+ *  MARK:--------------------topV2--------------------
+ *  注:assExp联想经验(饿了找瓜)(递归)
+ *  注:loopAssExp中本身已经是内心活动联想到的mv
+ *  @desc
+ *      1. 四种(2x2)TOP模式 (优先取同区工作模式,不行再以不同区工作模式);
+ *      2. 调用者只管调用触发,模型生成,参数保留;
+ *  @desc P决策模式 (框架: index -> mvNode -> foNode -> algNode -> action);
+ *      3. 不指定model (从cmvCache取) (旧注释)
+ *      4. 每一轮循环不仅是想下一个singleMvPort;也有可能在当前port上,进行二次思考; (旧注释)
+ *      5. 从expCache下,根据可行性,选定一个解决方案; (旧注释)
+ *      6. 有需求时,找出outMvModel,尝试决策并解决; (旧注释)
+ *  @version
+ *      20200430 : v2,四种工作模式版;
+ *      20200824 : 将外循环输入推进中循环,改到上一步aiThinkIn_CommitNoMv2TC()中;
+ *  @todo
+ *      1. 集成活跃度的判断和消耗;
+ *      2. 集成outModel;
+ *      3. TODOTOMORROW: 下面传给四模式的代码,用bool方式直接返回finish的判断不妥,改之;
+ *      2021.01.22: 对ActYes或者OutBack的Demand进行不应期处理 (未完成);
+ *  @status
+ *      1. R+模式: 废弃状态,此模式暂时用不着;
+ *      2. R-模式: 启用状态;
+ *      3. P+模式: 废弃状态,此模式暂时用不着;
+ *      4. P-模式: 启用状态;
+ */
++(void) solution{
+    //TODOTOMORROW20211130: 将dataOut之后的逻辑,整理继续写到新架构中来;
+    
+    //1. 数据准备
+    DemandModel *demand = [theTC.outModelManager getCanDecisionDemand];
+    NSArray *mModels = theTC.inModelManager.models;
+    if (!demand || !ARRISOK(mModels)) return;
+    
+    //2. 同区两个模式之R-;
+    if (ISOK(demand, ReasonDemandModel.class)) {
+        //a. R-
+        ReasonDemandModel *rDemand = (ReasonDemandModel*)demand;
+        
+        //1. 数据检查
+        if (!Switch4RS) return;
+        AIFoNodeBase *matchFo = rDemand.mModel.matchFo;
+        OFTitleLog(@"TOP.R-", @"\n任务:%@->%@,发生%ld",Fo2FStr(matchFo),Mvp2Str(matchFo.cmvNode_p),(long)rDemand.mModel.cutIndex2);
+        
+        //2. ActYes等待 或 OutBack反省等待 中时,不进行决策;
+        NSArray *waitFos = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
+            return item.status == TOModelStatus_ActYes || item.status == TOModelStatus_OuterBack;
+        }];
+        if (ARRISOK(waitFos)) return;
+        
+        //3. 行为化;
+        [self rSolution:rDemand];
+    }else{
+        
+        //TODOTOMORROW20211201: 此处改为和R模式一样,全套从短时记忆树来触发和工作;
+        //  a. 此处的mModels循环没啥用,后看该删就删了;
+        
+        
+        
+        //3. 不同区两个模式 (以最近的识别优先);
+        for (NSInteger i = 0; i < mModels.count; i++) {
+            AIShortMatchModel *mModel = ARR_INDEX_REVERSE(mModels, i);
+            AIAlgNodeBase *matchAlg = mModel.matchAlg;
+            
+            //a. 识别有效性判断 (优先直接mv+,不行再mv-迂回);
+            if (matchAlg) {
+                //b. P-
+                [self pSolution:demand];
+            }
+        }
+    }
+}
+
+
+
+
+/**
+ *  MARK:--------------------rSolution--------------------
  *  @desc 参考24154-单轮;
  *  @version
  *      2021.11.13: 初版,废弃dsFo,并将reasonSubV5由TOR迁移至此RAction中 (参考24101-第3阶段);
@@ -79,6 +147,99 @@
         NSLog(@"------->>>>>> R-无计可施");
     }
 }
+
+/**
+ *  MARK:-------------------- pSolution --------------------
+ *  @desc
+ *      1. 简介: mv方向索引找正价值解决方案;
+ *      2. 实例: 饿了,现有面粉,做面吃可以解决;
+ *      3. 步骤: 用A.refPorts ∩ F.conPorts (参考P+模式模型图);
+ *      4. 联想方式: 参考19192示图 (此行为后补注释);
+ *  @todo :
+ *      1. 集成原有的能量判断与消耗 T;
+ *      2. 评价机制1: 比如土豆我超不爱吃,在mvScheme中评价,入不应期,并继续下轮循环;
+ *      3. 评价机制2: 比如炒土豆好麻烦,在行为化中反思评价,入不应期,并继续下轮循环;
+ *  @version
+ *      2020.05.27: 将isOut=false时等待改成进行cHav行为化;
+ *      2020.07.23: 联想方式迭代至V2_将19192示图的联想方式去掉,仅将方向索引除去不应期的返回,而解决方案到底是否实用,放到行为化中去判断;
+ *      2020.09.23: 取消参数matchAlg (最近识别的M),如果今后还要使用短时优先功能,直接从theTC.shortManager取);
+ *      2020.09.23: 只要得到解决方案,就返回true中断,因为即使行为化失败,也会交由流程控制继续决策,而非由此处处理;
+ *      2020.12.17: 将此方法,归由流程控制控制 (跑下来逻辑与原来没啥不同);
+ *  @bug
+ *      1. 查点击马上饿,找不到解决方案的BUG,经查,MatchAlg与解决方案无明确关系,但MatchAlg.conPorts中,有与解决方案有直接关系的,改后解决 (参考20073)
+ *      2020.07.09: 修改方向索引的解决方案不应期,解决只持续飞行两次就停住的BUG (参考n20p8-BUG1);
+ */
++(void) pSolution:(DemandModel*)demandModel{
+    //1. 数据准备;
+    MVDirection direction = [ThinkingUtils getDemandDirection:demandModel.algsType delta:demandModel.delta];
+    if (!Switch4PS || direction == MVDirection_None) return;
+    OFTitleLog(@"TOP.P-", @"\n任务:%@,发生%ld,方向%ld",demandModel.algsType,(long)demandModel.delta,(long)direction);
+    
+    //2. 调用通用diff模式方法 (以下代码全是由diff模式方法迁移而来);
+    //3. 不应期
+    NSArray *exceptFoModels = [SMGUtils filterArr:demandModel.actionFoModels checkValid:^BOOL(TOModelBase *item) {
+        return item.status == TOModelStatus_ActNo || item.status == TOModelStatus_ScoreNo || item.status == TOModelStatus_ActYes;
+    }];
+    NSArray *except_ps = [TOUtils convertPointersFromTOModels:exceptFoModels];
+    if (Log4DirecRef) NSLog(@"------->>>>>> Fo已有方案数:%lu 不应期数:%lu",(long)demandModel.actionFoModels.count,(long)except_ps.count);
+    
+    //4. 用方向索引找normalFo解决方案 (P例:饿了,该怎么办 S例:累了,肿么肥事);
+    [self getNormalFoByDirectionReference:demandModel.algsType direction:direction tryResult:^BOOL(AIKVPointer *fo_p) {
+        //5. 方向索引找到一条normalFo解决方案 (P例:吃可以解决饿; S例:运动导致累);
+        if (![except_ps containsObject:fo_p]) {
+            //8. 消耗活跃度;
+            [theTC updateEnergy:-2];
+            AIFoNodeBase *fo = [SMGUtils searchNode:fo_p];
+            
+            //a. 构建TOFoModel
+            TOFoModel *toFoModel = [TOFoModel newWithFo_p:fo.pointer base:demandModel];
+            
+            //b. 取自身,实现吃,则可不饿 (提交C给TOR行为化);
+            NSLog(@"------->>>>>> P-新增一例解决方案: %@->%@",Fo2FStr(fo),Mvp2Str(fo.cmvNode_p));
+            [theTOR singleLoopBackWithBegin:toFoModel];
+            
+            //8. 只要有一次tryResult成功,中断回调循环;
+            return true;
+        }
+        return false;//fo解决方案无效,继续找下个;
+    }];
+}
+
+
+
+/**
+ *  MARK:--------------------方向索引,找normalFo,逐个尝试返回 (有效时中止)--------------------
+ *  @version
+ *      2020-06-10 : 去除fo的不应期,因为此处不应期应该针对mv,而fo的不应期是针对此处取得fo及其具象conPorts.fos的,所以将fo不应期前置了;
+ */
++(void) getNormalFoByDirectionReference:(NSString*)at direction:(MVDirection)direction tryResult:(BOOL(^)(AIKVPointer *fo_p))tryResult{
+    
+    //2. 方向索引 (排除不应期);
+    NSArray *mvRefs = [theNet getNetNodePointersFromDirectionReference:at direction:direction isMem:false filter:nil];
+    
+    //3. 逐个返回;
+    if (Log4DirecRef){
+        for (NSInteger i = 0; i < 10; i++) {
+            AIPort *item = ARR_INDEX(mvRefs, i);
+            AICMVNodeBase *itemMV = [SMGUtils searchNode:item.target_p];
+            if (item && itemMV && itemMV.foNode_p) NSLog(@"item-> 强度:%ld 方案:%@->%@",(long)item.strong.value,FoP2FStr(itemMV.foNode_p),Mv2FStr(itemMV));
+        }
+    }
+    for (AIPort *item in mvRefs) {
+        //a. analogyType处理 (仅支持normal的fo);
+        AICMVNodeBase *itemMV = [SMGUtils searchNode:item.target_p];
+        AnalogyType foType = itemMV.foNode_p.type;
+        if (ATPlus != foType && ATSub != foType) {
+            if (Log4DirecRef) NSLog(@"方向索引_尝试_索引强度:%ld 方案:%@",item.strong.value,FoP2FStr(itemMV.foNode_p));
+            BOOL stop = tryResult(itemMV.foNode_p);
+            if (stop) {
+                return;
+            }
+        }
+    }
+}
+
+
 
 +(void) hSolution:(HDemandModel*)hDemand{
     //3. 数据检查curAlg

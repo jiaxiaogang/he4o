@@ -11,8 +11,6 @@
 @class DemandModel,TOFoModel,AIShortMatchModel,ReasonDemandModel;
 @protocol AIThinkOutPerceptDelegate <NSObject>
 
-//提交C给TOR行为化;
--(void) aiTOP_2TOR_PerceptSub:(TOFoModel*)outModel;
 -(BOOL) aiTOP_2TOR_PerceptPlus:(AIFoNodeBase *)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo checkFo:(AIFoNodeBase*)checkFo;
 
 @end
@@ -35,6 +33,8 @@
 //MARK:     2. 而到TOFoModel之后,找出1个方案逐个尝试,失败则不应期,成功则输出;
 //MARK:     3. 所有方法,递归总方法; (参考n16p5)
 //MARK:     4. score的取值,取各具象层次第一名 (即最好学校的最好班级的最好学生) (参考n16p5)
+//MARK: @version
+//MARK:     2019.02.15: 去掉tryout执行 >> 对某标识ds&at的数据输出的激活功能; (已由吸吮反射等反射方式替代);
 //MARK:
 //MARK:===============================================================
 @interface AIThinkOutPercept : NSObject
@@ -42,20 +42,8 @@
 @property (weak, nonatomic) id<AIThinkOutPerceptDelegate> delegate;
 
 /**
- *  MARK:--------------------fromTO主入口--------------------
- */
--(BOOL) perceptSub:(DemandModel*)demandModel;
--(BOOL) perceptPlus:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel;
-
-/**
  *  MARK:--------------------"外层输入" 推进 "中层循环" 决策--------------------
  */
 +(void) top_OPushM:(AICMVNodeBase*)newMv;
 
 @end
-
-
-/**
- *  MARK:--------------------日志--------------------
- *  20190215:去掉tryout执行 >> 对某标识ds&at的数据输出的激活功能; (已由吸吮反射等反射方式替代);
- */

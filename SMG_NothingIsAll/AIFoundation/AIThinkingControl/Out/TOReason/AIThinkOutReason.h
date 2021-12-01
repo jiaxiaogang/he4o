@@ -51,7 +51,6 @@
  */
 -(void) commitReasonPlus:(TOFoModel*)outModel mModel:(AIShortMatchModel*)mModel;
 -(void) commitReasonSub:(TOFoModel*)foModel demand:(ReasonDemandModel*)demand;
--(void) commitPerceptSub:(TOFoModel*)outModel;
 -(void) commitPerceptPlus:(AIFoNodeBase*)matchFo plusFo:(AIFoNodeBase*)plusFo subFo:(AIFoNodeBase*)subFo checkFo:(AIFoNodeBase*)checkFo complete:(void(^)(BOOL actSuccess,NSArray *acts))complete;
 
 /**

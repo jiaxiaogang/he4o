@@ -173,35 +173,6 @@ static AINet *_instance;
     return [self.netDirectionReference getNodePointersFromDirectionReference:mvAlgsType direction:direction isMem:isMem filter:filter];
 }
 
--(void) getNormalFoByDirectionReference:(NSString*)at direction:(MVDirection)direction tryResult:(BOOL(^)(AIKVPointer *fo_p))tryResult{
-    //1. 数据准备
-    if (direction == MVDirection_None) return;
-    
-    //2. 方向索引 (排除不应期);
-    NSArray *mvRefs = [theNet getNetNodePointersFromDirectionReference:at direction:direction isMem:false filter:nil];
-    
-    //3. 逐个返回;
-    if (Log4DirecRef){
-        for (NSInteger i = 0; i < 10; i++) {
-            AIPort *item = ARR_INDEX(mvRefs, i);
-            AICMVNodeBase *itemMV = [SMGUtils searchNode:item.target_p];
-            if (item && itemMV && itemMV.foNode_p) NSLog(@"item-> 强度:%ld 方案:%@->%@",(long)item.strong.value,FoP2FStr(itemMV.foNode_p),Mv2FStr(itemMV));
-        }
-    }
-    for (AIPort *item in mvRefs) {
-        //a. analogyType处理 (仅支持normal的fo);
-        AICMVNodeBase *itemMV = [SMGUtils searchNode:item.target_p];
-        AnalogyType foType = itemMV.foNode_p.type;
-        if (ATPlus != foType && ATSub != foType) {
-            if (Log4DirecRef) NSLog(@"方向索引_尝试_索引强度:%ld 方案:%@",item.strong.value,FoP2FStr(itemMV.foNode_p));
-            BOOL stop = tryResult(itemMV.foNode_p);
-            if (stop) {
-                return;
-            }
-        }
-    }
-}
-
 -(void) setMvNodeToDirectionReference:(AICMVNodeBase*)cmvNode difStrong:(NSInteger)difStrong {
     //1. 数据检查
     if (cmvNode) {

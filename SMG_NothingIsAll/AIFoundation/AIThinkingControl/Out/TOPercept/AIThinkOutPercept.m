@@ -41,55 +41,11 @@
 //MARK: @desc 事实上,主要就P+和R-会触发思维工作;
 //MARK:===============================================================
 
+
 /**
- *  MARK:-------------------- P- --------------------
- *  @desc
- *      1. 简介: mv方向索引找正价值解决方案;
- *      2. 实例: 饿了,现有面粉,做面吃可以解决;
- *      3. 步骤: 用A.refPorts ∩ F.conPorts (参考P+模式模型图);
- *  @todo :
- *      1. 集成原有的能量判断与消耗 T;
- *      2. 评价机制1: 比如土豆我超不爱吃,在mvScheme中评价,入不应期,并继续下轮循环;
- *      3. 评价机制2: 比如炒土豆好麻烦,在行为化中反思评价,入不应期,并继续下轮循环;
- *  @version
- *      2020.09.23: 只要得到解决方案,就返回true中断,因为即使行为化失败,也会交由流程控制继续决策,而非由此处处理;
- */
--(BOOL) perceptSub:(DemandModel*)demandModel{
-    //1. 数据准备;
-    if (!Switch4PS || !demandModel) return false;
-    if (![theTC energyValid]) return false;
-    MVDirection direction = [ThinkingUtils getDemandDirection:demandModel.algsType delta:demandModel.delta];
-    OFTitleLog(@"TOP.P-", @"\n任务:%@,发生%ld,方向%ld",demandModel.algsType,(long)demandModel.delta,(long)direction);
-    
-    //2. 调用通用diff模式方法;
-    __block BOOL success = false;//默认为失败
-    [TOUtils topPerceptModeV2:demandModel direction:direction tryResult:^BOOL(AIFoNodeBase *sameFo) {
-        
-        //a. 构建TOFoModel
-        TOFoModel *toFoModel = [TOFoModel newWithFo_p:sameFo.pointer base:demandModel];
-        
-        //b. 取自身,实现吃,则可不饿;
-        NSLog(@"------->>>>>> P-新增一例解决方案: %@->%@",Fo2FStr(sameFo),Mvp2Str(sameFo.cmvNode_p));
-        [self.delegate aiTOP_2TOR_PerceptSub:toFoModel];
-        
-        //c. 用success记录下,是否本次成功找到候选方案;
-        success = true;
-        
-        //d. 一次只尝试一条,行为化中途失败时,自然会由流程控制方法递归TOP.P+重来;
-        return true;
-    } canAss:^BOOL{
-        return [theTC energyValid];
-    } updateEnergy:^(CGFloat delta) {
-        [theTC updateEnergy:delta];
-    }];
-    
-    //3. 返回P+模式结果;
-    return success;
-}
-/**
- *  MARK:-------------------- P- --------------------
+ *  MARK:-------------------- P+ --------------------
  *  @desc mv方向索引找负价值的兄弟节点解决方案 (比如:打球打累了,不打了,避免更累);
- *  @废弃: 因为P-是不存在的(或者说目前不需要的),可以以P+&R-替代之;
+ *  @废弃: 因为P+是不存在的(或者说目前不需要的),可以以P-&R-替代之;
  */
 -(BOOL) perceptPlus:(AIAlgNodeBase*)matchAlg demandModel:(DemandModel*)demandModel{
     //1. 数据准备;
@@ -99,6 +55,7 @@
     
     //2. 调用通用diff模式方法;
     __block BOOL success = false;//默认为失败
+    //topPerceptModeV2方法,已迁移到TOSolution.pSolution()中;
     //[TOUtils topPerceptModeV2:demandModel direction:direction tryResult:^BOOL(AIFoNodeBase *sameFo) {
     //
     //    //a. 取兄弟节点,停止打球,则不再累;

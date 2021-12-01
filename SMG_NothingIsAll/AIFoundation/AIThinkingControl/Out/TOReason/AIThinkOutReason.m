@@ -167,22 +167,6 @@
     demand.status = TOModelStatus_ActNo;
     NSLog(@"------->>>>>> R-无计可施");
 }
--(void) reasonSubV5:(ReasonDemandModel*)demand{
-    
-    //1. 数据检查
-    if (!demand || !Switch4RS) return;
-    AIFoNodeBase *matchFo = demand.mModel.matchFo;
-    OFTitleLog(@"TOP.R-", @"\n任务:%@->%@,发生%ld",Fo2FStr(matchFo),Mvp2Str(matchFo.cmvNode_p),(long)demand.mModel.cutIndex2);
-    
-    //2. ActYes等待 或 OutBack反省等待 中时,不进行决策;
-    NSArray *waitFos = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
-        return item.status == TOModelStatus_ActYes || item.status == TOModelStatus_OuterBack;
-    }];
-    if (ARRISOK(waitFos)) return;
-    
-    //3. 行为化;
-    [self.rAction solution:demand];
-}
 
 //MARK:===============================================================
 //MARK:                     < 决策行为化 >
@@ -258,19 +242,6 @@
     
     //2. 提交_Fo,逐个满足S;
     [self singleLoopBackWithBegin:foModel];
-}
-
-/**
- *  MARK:--------------------P+行为化--------------------
- *  @desc P+行为化,两级判断,参考:19166;
- *          1. isOut则输出;
- *          2. notOut则进行cHav行为化;
- *  @version
- *      2020.05.27: 将isOut=false时等待改成进行cHav行为化;
- *      2020.12.17: 将此方法,归由流程控制控制 (跑下来逻辑与原来没啥不同);
- */
--(void) commitPerceptSub:(TOFoModel*)outModel{
-    [self singleLoopBackWithBegin:outModel];
 }
 
 /**
