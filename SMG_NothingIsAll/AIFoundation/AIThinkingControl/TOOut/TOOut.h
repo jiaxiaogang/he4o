@@ -11,5 +11,6 @@
 @interface TOOut : NSObject
 
 +(void) out:(TOAlgModel*)algModel;
++(void) rActYes:(TOFoModel*)foModel;
 
 @end

@@ -76,5 +76,8 @@
     //TODOTOMORROW20211128: 输出,用旧有代码;
     //[self.delegate toAction_Output:@[algModel.content_p]];
 }
++(void) rActYes:(TOFoModel*)foModel{
+    //fo执行完成时,actYes;
+}
 
 @end

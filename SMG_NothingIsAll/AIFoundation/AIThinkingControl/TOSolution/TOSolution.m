@@ -134,7 +134,7 @@
     if (firstResult) {
         TOFoModel *foModel = [TOFoModel newWithFo_p:firstResult.baseFo.pointer base:demand];
         NSLog(@"------->>>>>> R- 新增一例解决方案: %@->%@ FRS_PK评分:%.2f",Fo2FStr(firstResult.baseFo),Mvp2Str(firstResult.baseFo.cmvNode_p),firstResult.score);
-        [TOAction action:foModel];
+        [TOAction rAction:foModel];
     }else{
         //7. 转流程控制_无则转failure;
         demand.status = TOModelStatus_ActNo;
@@ -238,7 +238,7 @@
     
     
     
-    //5. 去掉不应期 (以下两种用哪个留哪个);
+    //5. TODOTOMORROW2021112x去掉不应期 (以下两种用哪个留哪个);
     NSArray *except_ps = TOModels2Pits([SMGUtils filterArr:algModel.subModels checkValid:^BOOL(TOModelBase *item) {
         return item.status == TOModelStatus_ActNo;
     }]);
@@ -251,12 +251,7 @@
     //6. 只要有善可尝试的方式,即从首条开始尝试;
     if (relativeFo_p) {
         TOFoModel *foModel = [TOFoModel newWithFo_p:relativeFo_p base:algModel];
-        [theTOR singleLoopBackWithBegin:foModel];
-        
-        //TODOTOMORROW20211125: 将jump跳转到TI中做为新的输入流程 (并进行识别in反思);
-        //1. jump通过后,此处转action();
-        
-        [TOAction action:foModel];
+        [TOAction hAction:foModel];
     }else{
         
         //10. 所有mModel都没成功行为化一条,则失败 (无计可施);

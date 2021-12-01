@@ -11,18 +11,17 @@
 
 @implementation TOAction
 
-
-
 /**
- *  MARK:--------------------out反思--------------------
+ *  MARK:--------------------out行为化--------------------
  *  @desc 解决方案fo即(加工目标),转_Fo()行为化 (参考24132-行为化1);
  *  @param foModel : notnull
  *  @version
  *      2021.11.17: 需调用者自行对foModel进行FRS稳定性竞争评价,本方法不再进行 (因为fo间的竞争,需由外界,fo内部问题在此方法内解决);
  *      2021.11.25: 迭代为功能架构 (参考24154-单轮示图);
+ *      2021.11.xx: 废弃outReflect反思功能 (全部待到inReflect统一再反思);
  *  @callers : 可以供_Demand和_Hav等调用;
  */
-+(void) action:(TOFoModel*)foModel{
++(void) rAction:(TOFoModel*)foModel{
     
     
     
@@ -51,9 +50,19 @@
         //c. 成功,递归 (参考流程控制Finish的注释version-20200916 / 参考22061-7);
         foModel.status = TOModelStatus_ActYes;
         NSLog(@"_Fo行为化: Finish %ld/%ld 到ActYes",(long)foModel.actionIndex,(long)curFo.count);
-        [self.delegate toAction_SubModelActYes:foModel];
+        [TOOut rActYes:foModel];
     }
 }
 
++(void) hAction:(TOFoModel*)foModel{
+    
+    //TODOTOMORROW20211125:
+    //1. hAction执行到regroup时,要代入jump重组,并进行识别in反思;
+    
+    //TODOTOMORROW20211201-----------------
+    //对首帧行为化;
+    
+    
+}
 
 @end
