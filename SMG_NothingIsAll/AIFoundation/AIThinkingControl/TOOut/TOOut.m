@@ -49,7 +49,7 @@
         BOOL arsTime = [AIScore ARS_Time:dsFo demand:rDemand];
         if (!arsTime) {
             //2. 评价不通过,则直接ActYes,等待其自然出现 (参考22153-A2);
-            NSLog(@"==> arsTime评价不急,子弹再飞一会儿");
+            NSLog(@"==> arsTime弄巧成拙评价,子弹再飞一会儿");
             algModel.status = TOModelStatus_ActYes;
             [self actYes:algModel];
             return;
@@ -68,8 +68,14 @@
 }
 
 +(void) actYes:(TOAlgModel*)algModel{
-    //TODOTOMORROW20211128: 初始化触发器等 (从旧有actYes处复制代码过来用);
+    //TODOTOMORROW20211201: 初始化触发器等 (从旧有actYes处复制代码过来用);-------------
     //[self.delegate toAction_SubModelActYes:algModel];
+    
+    
+    
+    
+    
+    
 }
 
 +(void) output:(TOAlgModel*)algModel{

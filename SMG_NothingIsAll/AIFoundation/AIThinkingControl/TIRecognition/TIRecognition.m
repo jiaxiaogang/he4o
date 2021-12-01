@@ -40,6 +40,16 @@
     
     //5. 生成子任务;
     [TIForecast forecastSubDemand:rtInModel];
+    
+    
+    //TODOTOMORROW20211201: 反思子任务
+    //1. 所有反思有子任务的,都形成子任务;
+    //2. 子任务能解决便解决,解决不了的(也有可能是因为来不及,所以解决方案失败);
+    //3. 无论子任务是否解决,都回来判综合评分pk,比如子任务不解决我也要继续父任务;
+    
+    
+    
+    
 }
 
 +(void) pRecognition:(AIFoNodeBase*)protoFo{

@@ -41,6 +41,9 @@
 }
 
 +(void) hRegroup{
+    //TODOTOMORROW20211201: 反馈feedback后
+    //1. 判断是否h输出来的反馈,如果是,则对重组后的时序;
+    //2. 提交到TIRecognition做反思识别;
     
 }
 
