@@ -1,5 +1,5 @@
 //
-//  TILearning.h
+//  TCLearning.h
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2021/12/2.
@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface TILearning : NSObject
+@interface TCLearning : NSObject
 
 +(void) pLearning:(AIFoNodeBase*)protoFo;
 +(void) rLearning:(AIShortMatchModel*)model recognitionMaskFo:(AIFoNodeBase*)recognitionMaskFo;

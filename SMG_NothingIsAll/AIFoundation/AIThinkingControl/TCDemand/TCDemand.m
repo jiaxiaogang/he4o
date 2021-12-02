@@ -1,14 +1,14 @@
 //
-//  TODemand.m
+//  TCDemand.m
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2021/11/28.
 //  Copyright © 2021年 XiaoGang. All rights reserved.
 //
 
-#import "TODemand.h"
+#import "TCDemand.h"
 
-@implementation TODemand
+@implementation TCDemand
 
 +(void) rDemandFront:(AIShortMatchModel*)model{
     //2. 预测处理_把mv加入到demandManager;
@@ -16,7 +16,7 @@
 }
 
 +(void) rDemandBack:(AIShortMatchModel*)model{
-    [TOSolution solution];
+    [TCSolution solution];
 }
 
 /**
@@ -34,7 +34,7 @@
     [theTC.outModelManager updateCMVCache_PMV:algsType urgentTo:urgentTo delta:delta];
     
     //2. 转向执行;
-    [TOSolution solution];
+    [TCSolution solution];
 }
 
 //交由DemandManager构建任务完成;
@@ -47,9 +47,11 @@
     __block NSArray *except_ps = nil;
     [DemandManager updateSubDemand:rtInModel baseFo:foModel createSubDemandBlock:^(ReasonDemandModel *subDemand) {
         
+        //TODOTOMORROW20211202: 子任务行为化,改为转TCSolution;
         //6. 子任务行为化;
-        [self.delegate toAction_SubModelBegin:subDemand];
+        //[self.delegate toAction_SubModelBegin:subDemand];
         //return;//子任务Finish/ActYes时,不return,因为要继续父任务;
+        
     } finishBlock:^(NSArray *_except_ps) {
         except_ps = _except_ps;
     }];
@@ -79,7 +81,7 @@
 +(void) hDemand:(TOAlgModel*)algModel{
     //对algModel生成H任务,并挂载在当前短时记忆分支下;
     HDemandModel *hDemand = [HDemandModel newWithAlgModel:algModel];
-    [TOSolution hSolution:hDemand];
+    [TCSolution hSolution:hDemand];
     
     //TODOTOMORROW20211128: 如果algModel失败,可以考虑对它的具象生成H任务,比如找武器时,可以想到拿刀,然后再想到厨房,而不是直接根据武器就想到厨房;
 }

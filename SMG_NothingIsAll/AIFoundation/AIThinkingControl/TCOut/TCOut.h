@@ -1,5 +1,5 @@
 //
-//  TOOut.h
+//  TCOut.h
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2021/11/28.
@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface TOOut : NSObject
+@interface TCOut : NSObject
 
 +(void) out:(TOAlgModel*)algModel;
 +(void) rActYes:(TOFoModel*)foModel;

@@ -1,19 +1,19 @@
 //
-//  TOSolution.m
+//  TCSolution.m
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2021/11/28.
 //  Copyright © 2021年 XiaoGang. All rights reserved.
 //
 
-#import "TOSolution.h"
+#import "TCSolution.h"
 #import "DemandManager.h"
 #import "ReasonDemandModel.h"
 #import "AIMatchFoModel.h"
 #import "AINetUtils.h"
 #import "RSResultModelBase.h"
 
-@implementation TOSolution
+@implementation TCSolution
 
 
 /**
@@ -134,7 +134,7 @@
     if (firstResult) {
         TOFoModel *foModel = [TOFoModel newWithFo_p:firstResult.baseFo.pointer base:demand];
         NSLog(@"------->>>>>> R- 新增一例解决方案: %@->%@ FRS_PK评分:%.2f",Fo2FStr(firstResult.baseFo),Mvp2Str(firstResult.baseFo.cmvNode_p),firstResult.score);
-        [TOAction rAction:foModel];
+        [TCAction rAction:foModel];
     }else{
         //7. 转流程控制_无则转failure;
         demand.status = TOModelStatus_ActNo;
@@ -251,7 +251,7 @@
     //6. 只要有善可尝试的方式,即从首条开始尝试;
     if (relativeFo_p) {
         TOFoModel *foModel = [TOFoModel newWithFo_p:relativeFo_p base:algModel];
-        [TOAction hAction:foModel];
+        [TCAction hAction:foModel];
     }else{
         
         //10. 所有mModel都没成功行为化一条,则失败 (无计可施);

@@ -1,14 +1,14 @@
 //
-//  TILearning.m
+//  TCLearning.m
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2021/12/2.
 //  Copyright © 2021年 XiaoGang. All rights reserved.
 //
 
-#import "TILearning.h"
+#import "TCLearning.h"
 
-@implementation TILearning
+@implementation TCLearning
 
 /**
  *  MARK:--------------------学习--------------------
@@ -22,7 +22,7 @@
  *  @version
  *      2020.03.04: a.去掉外类比; b.外类比拆分为:正向类比和反向类比;
  *      2021.01.24: 支持多时序识别,更全面的触发外类比 (参考22073-todo4);
- *      2021.12.02: 将TILearning独立成类 (参考24164);
+ *      2021.12.02: 将TCLearning独立成类 (参考24164);
  */
 +(void) pLearning:(AIFoNodeBase*)protoFo{
     
@@ -43,10 +43,10 @@
     }
     
     //4. tip_OPushM
-    [TIFeedback feedbackTIP:cmvNode];
+    [TCFeedback feedbackTIP:cmvNode];
     
     //2. top_OPushM
-    [TIFeedback feedbackTOP:cmvNode];
+    [TCFeedback feedbackTOP:cmvNode];
 }
 
 /**
@@ -68,14 +68,14 @@
     [AIAnalogy analogyInner:model];
     
     //5. TIR反馈;
-    [TIFeedback feedbackTIR:model];
+    [TCFeedback feedbackTIR:model];
     
     //7. TOR反馈;
-    [TIFeedback feedbackTOR:model];
+    [TCFeedback feedbackTOR:model];
 }
 
 +(void) subDemandLearning:(AIShortMatchModel*)model{
-    [TIFeedback feedbackSubDemand:model];
+    [TCFeedback feedbackSubDemand:model];
 }
 
 @end

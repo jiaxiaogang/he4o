@@ -1,15 +1,15 @@
 //
-//  TOAction.m
+//  TCAction.m
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2021/11/28.
 //  Copyright © 2021年 XiaoGang. All rights reserved.
 //
 
-#import "TOAction.h"
+#import "TCAction.h"
 #import "TOFoModel.h"
 
-@implementation TOAction
+@implementation TCAction
 
 /**
  *  MARK:--------------------out行为化--------------------
@@ -45,12 +45,12 @@
         AIKVPointer *move_p = ARR_INDEX(curFo.content_ps, foModel.actionIndex);
         TOAlgModel *moveAlg = [TOAlgModel newWithAlg_p:move_p group:foModel];
         NSLog(@"_Fo行为化第 %ld/%ld 个: %@",(long)foModel.actionIndex,(long)curFo.count,Fo2FStr(curFo));
-        [TOOut out:moveAlg];
+        [TCOut out:moveAlg];
     }else{
         //c. 成功,递归 (参考流程控制Finish的注释version-20200916 / 参考22061-7);
         foModel.status = TOModelStatus_ActYes;
         NSLog(@"_Fo行为化: Finish %ld/%ld 到ActYes",(long)foModel.actionIndex,(long)curFo.count);
-        [TOOut rActYes:foModel];
+        [TCOut rActYes:foModel];
     }
 }
 

@@ -1,5 +1,5 @@
 //
-//  TIInput.h
+//  TCInput.h
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2021/11/28.
@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface TIInput : NSObject
+@interface TCInput : NSObject
 
 +(void) rInput:(AIAlgNodeBase*)algNode fromGroup_ps:(NSArray*)fromGroup_ps;
 +(void) pInput:(NSArray*)algsArr;

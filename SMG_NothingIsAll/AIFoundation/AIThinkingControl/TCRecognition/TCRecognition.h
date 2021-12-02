@@ -1,5 +1,5 @@
 //
-//  TIRecognition.h
+//  TCRecognition.h
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2021/11/28.
@@ -11,7 +11,7 @@
 /**
  *  MARK:--------------------识别 & 学习--------------------
  */
-@interface TIRecognition : NSObject
+@interface TCRecognition : NSObject
 
 +(void) rRecognition:(AIShortMatchModel*)model;
 +(void) reflectRecognition:(TOFoModel*)foModel;

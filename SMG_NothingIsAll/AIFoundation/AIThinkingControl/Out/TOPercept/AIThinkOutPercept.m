@@ -55,7 +55,7 @@
     
     //2. 调用通用diff模式方法;
     __block BOOL success = false;//默认为失败
-    //topPerceptModeV2方法,已迁移到TOSolution.pSolution()中;
+    //topPerceptModeV2方法,已迁移到TCSolution.pSolution()中;
     //[TOUtils topPerceptModeV2:demandModel direction:direction tryResult:^BOOL(AIFoNodeBase *sameFo) {
     //
     //    //a. 取兄弟节点,停止打球,则不再累;

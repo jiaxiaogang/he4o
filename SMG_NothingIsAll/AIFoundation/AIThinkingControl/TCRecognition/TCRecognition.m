@@ -1,14 +1,14 @@
 //
-//  TIRecognition.m
+//  TCRecognition.m
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2021/11/28.
 //  Copyright © 2021年 XiaoGang. All rights reserved.
 //
 
-#import "TIRecognition.h"
+#import "TCRecognition.h"
 
-@implementation TIRecognition
+@implementation TCRecognition
 
 /**
  *  MARK:--------------------瞬时时序识别--------------------
@@ -42,7 +42,7 @@
     }];
     
     //5. 学习;
-    [TILearning rLearning:model recognitionMaskFo:maskFo];
+    [TCLearning rLearning:model recognitionMaskFo:maskFo];
 }
 
 /**
@@ -63,7 +63,7 @@
     AIShortMatchModel *rtInModel = [theTC to_Rethink:foModel];
     
     //5. 生成子任务;
-    [TILearning subDemandLearning:rtInModel];
+    [TCLearning subDemandLearning:rtInModel];
     
     
     //TODOTOMORROW20211201: 反思子任务
@@ -78,7 +78,7 @@
 
 +(void) pRecognition:(AIFoNodeBase*)protoFo{
     //3. 学习
-    [TILearning pLearning:protoFo];
+    [TCLearning pLearning:protoFo];
 }
 
 @end

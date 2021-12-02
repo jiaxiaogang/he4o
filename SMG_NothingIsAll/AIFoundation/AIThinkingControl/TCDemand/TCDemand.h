@@ -1,5 +1,5 @@
 //
-//  TODemand.h
+//  TCDemand.h
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2021/11/28.
@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface TODemand : NSObject
+@interface TCDemand : NSObject
 
 +(void) rDemandFront:(AIShortMatchModel*)model;
 +(void) rDemandBack:(AIShortMatchModel*)model;

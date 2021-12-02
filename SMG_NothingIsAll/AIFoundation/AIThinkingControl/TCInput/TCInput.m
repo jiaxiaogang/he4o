@@ -1,14 +1,14 @@
 //
-//  TIInput.m
+//  TCInput.m
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2021/11/28.
 //  Copyright © 2021年 XiaoGang. All rights reserved.
 //
 
-#import "TIInput.h"
+#import "TCInput.h"
 
-@implementation TIInput
+@implementation TCInput
 
 /**
  *  MARK:--------------------输入非mv信息时--------------------
@@ -47,15 +47,15 @@
     [theTC.inModelManager add:mModel];
     
     //4. 转regroup
-    [TIRegroup rRegroup:mModel];
+    [TCRegroup rRegroup:mModel];
 }
 
 +(void) pInput:(NSArray*)algsArr{
-    [TIRegroup pRegroup:algsArr];
+    [TCRegroup pRegroup:algsArr];
 }
 
 +(void) jump:(TOAlgModel*)algModel{
-    [TODemand hDemand:algModel];
+    [TCDemand hDemand:algModel];
 }
 
 @end

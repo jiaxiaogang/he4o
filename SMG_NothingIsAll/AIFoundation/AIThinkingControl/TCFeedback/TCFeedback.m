@@ -1,14 +1,14 @@
 //
-//  TIFeedback.m
+//  TCFeedback.m
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2021/12/2.
 //  Copyright © 2021年 XiaoGang. All rights reserved.
 //
 
-#import "TIFeedback.h"
+#import "TCFeedback.h"
 
-@implementation TIFeedback
+@implementation TCFeedback
 
 
 //TODOTOMORROW20211202: 将四个feedback方法迁移过来; (原来的直接删掉,把所有调用处也查下看有没有了);==========
@@ -20,7 +20,7 @@
     [AIThinkInReason tir_OPushM:model];
     
     //6. 传给TOR,做下一步处理: R任务_预测mv价值变化;
-    [TIForecast rForecastFront:model];
+    [TCForecast rForecastFront:model];
 }
 
 +(void) feedbackTOR:(AIShortMatchModel*)model{
@@ -28,10 +28,10 @@
     BOOL pushOldDemand = [theTOR tor_OPushM:theTC.outModelManager.getCurrentDemand latestMModel:model];
     
     //7. 任务预测处理;
-    [TIForecast rForecastBack:model pushOldDemand:pushOldDemand];
+    [TCForecast rForecastBack:model pushOldDemand:pushOldDemand];
     
     //8. IRT触发器;
-    [TIForecast forecastIRT:model pushOldDemand:pushOldDemand];
+    [TCForecast forecastIRT:model pushOldDemand:pushOldDemand];
 }
 
 +(void) feedbackTIP:(AICMVNode*)cmvNode{
@@ -43,12 +43,12 @@
     [AIThinkOutPercept top_OPushM:cmvNode];
     
     //3. p任务;
-    [TIForecast pForecast:cmvNode];
+    [TCForecast pForecast:cmvNode];
 }
 
 +(void) feedbackSubDemand:(AIShortMatchModel*)model{
     //5. 生成子任务;
-    [TIForecast forecastSubDemand:model];
+    [TCForecast forecastSubDemand:model];
 }
 
 @end

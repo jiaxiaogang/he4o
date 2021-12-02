@@ -1,14 +1,14 @@
 //
-//  TIRegroup.m
+//  TCRegroup.m
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2021/11/28.
 //  Copyright © 2021年 XiaoGang. All rights reserved.
 //
 
-#import "TIRegroup.h"
+#import "TCRegroup.h"
 
-@implementation TIRegroup
+@implementation TCRegroup
 
 +(void) rRegroup:(AIShortMatchModel*)model{
     //1. 构建时序 (把每次dic输入,都作为一个新的内存时序);
@@ -18,7 +18,7 @@
     model.protoFo = [theNet createConFo:protoAShortMem isMem:false];
     
     //2. 识别
-    [TIRecognition rRecognition:model];
+    [TCRecognition rRecognition:model];
 }
 
 /**
@@ -37,13 +37,13 @@
     //[self.shortMemory clear] (参考注释2020.01.20);
     
     //3. 提交学习识别;
-    [TIRecognition pRecognition:protoFo];
+    [TCRecognition pRecognition:protoFo];
 }
 
 +(void) hRegroup{
     //TODOTOMORROW20211201: 反馈feedback后
     //1. 判断是否h输出来的反馈,如果是,则对重组后的时序;
-    //2. 提交到TIRecognition做反思识别;
+    //2. 提交到TCRecognition做反思识别;
     
 }
 

@@ -1,30 +1,30 @@
 //
-//  TIForecast.m
+//  TCForecast.m
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2021/11/28.
 //  Copyright © 2021年 XiaoGang. All rights reserved.
 //
 
-#import "TIForecast.h"
+#import "TCForecast.h"
 
-@implementation TIForecast
+@implementation TCForecast
 
 +(void) rForecastFront:(AIShortMatchModel*)model{
     //6. 传给TOR,做下一步处理: R任务_预测mv价值变化;
-    [TODemand rDemandFront:model];
+    [TCDemand rDemandFront:model];
 }
 
 +(void) rForecastBack:(AIShortMatchModel*)model pushOldDemand:(BOOL)pushOldDemand{
-    //TODOTOMORROW20211202: 新架构应在末尾调用TODemand,但旧架构代码放在头部,先不动,等发现放末尾没影响时再放末尾;
+    //TODOTOMORROW20211202: 新架构应在末尾调用TCDemand,但旧架构代码放在头部,先不动,等发现放末尾没影响时再放末尾;
     //6. 此处推进不成功,则运行TOP四模式;
     if (!pushOldDemand) {
-        [TODemand rDemandBack:model];
+        [TCDemand rDemandBack:model];
     }
 }
 
 +(void) pForecast:(AICMVNode*)cmvNode{
-    [TODemand pDemand:cmvNode];
+    [TCDemand pDemand:cmvNode];
 }
 
 /**
@@ -121,7 +121,7 @@
 }
 
 +(void) forecastSubDemand:(AIShortMatchModel*)model{
-    [TODemand subDemand:model];
+    [TCDemand subDemand:model];
 }
 
 @end

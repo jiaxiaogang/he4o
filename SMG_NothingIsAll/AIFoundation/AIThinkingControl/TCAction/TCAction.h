@@ -1,5 +1,5 @@
 //
-//  TOAction.h
+//  TCAction.h
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2021/11/28.
@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface TOAction : NSObject
+@interface TCAction : NSObject
 
 +(void) rAction:(TOFoModel*)foModel;
 +(void) hAction:(TOFoModel*)foModel;

@@ -1,14 +1,14 @@
 //
-//  TOOut.m
+//  TCOut.m
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2021/11/28.
 //  Copyright © 2021年 XiaoGang. All rights reserved.
 //
 
-#import "TOOut.h"
+#import "TCOut.h"
 
-@implementation TOOut
+@implementation TCOut
 
 /**
  *  MARK:--------------------入口--------------------
@@ -64,7 +64,7 @@
 //MARK:                     < 出口 (三个) >
 //MARK:===============================================================
 +(void) chav:(TOAlgModel*)algModel{
-    [TIInput jump:algModel];
+    [TCInput jump:algModel];
 }
 
 /**

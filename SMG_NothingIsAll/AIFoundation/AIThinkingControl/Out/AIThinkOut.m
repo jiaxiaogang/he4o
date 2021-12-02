@@ -55,7 +55,7 @@ static AIThinkOut *_instance;
 -(void) commitFromTOR_MoveForDemand:(DemandModel*)demand{
     //1. 识别有效性判断 (转至P-/R-);
     if (ISOK(demand, PerceptDemandModel.class)) {
-        [TOSolution pSolution:demand];
+        [TCSolution pSolution:demand];
     }else if (ISOK(demand, ReasonDemandModel.class)) {
         [self.tOR reasonSubV4:(ReasonDemandModel*)demand];
     }

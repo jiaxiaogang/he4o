@@ -1,5 +1,5 @@
 //
-//  TIForecast.h
+//  TCForecast.h
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2021/11/28.
@@ -11,7 +11,7 @@
 /**
  *  MARK:--------------------反馈 & 预测--------------------
  */
-@interface TIForecast : NSObject
+@interface TCForecast : NSObject
 
 +(void) rForecastFront:(AIShortMatchModel*)model;
 +(void) rForecastBack:(AIShortMatchModel*)model pushOldDemand:(BOOL)pushOldDemand;

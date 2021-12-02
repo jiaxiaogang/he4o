@@ -35,16 +35,16 @@
 #import "AIThinkOutPercept.h"
 
 //2021新TC架构
-#import "TIInput.h"
-#import "TIRegroup.h"
-#import "TIRecognition.h"
-#import "TILearning.h"
-#import "TIFeedback.h"
-#import "TIForecast.h"
-#import "TODemand.h"
-#import "TOSolution.h"
-#import "TOAction.h"
-#import "TOOut.h"
+#import "TCInput.h"
+#import "TCRegroup.h"
+#import "TCRecognition.h"
+#import "TCLearning.h"
+#import "TCFeedback.h"
+#import "TCForecast.h"
+#import "TCDemand.h"
+#import "TCSolution.h"
+#import "TCAction.h"
+#import "TCOut.h"
 
 //任务池
 #import "ReasonDemandModel.h"

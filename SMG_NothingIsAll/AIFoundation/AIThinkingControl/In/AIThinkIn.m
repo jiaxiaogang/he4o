@@ -82,7 +82,7 @@
     
     //6. NoMv处理;
     for (AIKVPointer *alg_p in fromGroup_ps) {
-        [TIInput rInput:[SMGUtils searchNode:alg_p] fromGroup_ps:fromGroup_ps];
+        [TCInput rInput:[SMGUtils searchNode:alg_p] fromGroup_ps:fromGroup_ps];
     }
 }
 
@@ -95,13 +95,13 @@
     
     //3. 分流_mv时
     if (findMV) {
-        [TIInput pInput:algsArr];
+        [TCInput pInput:algsArr];
     }else{
         //1. 打包成algTypeNode;
         AIAlgNodeBase *algNode = [theNet createAbsAlg_NoRepeat:algsArr conAlgs:nil isMem:true isOut:false at:nil ds:nil type:ATDefault];
         
         //2. 加入瞬时记忆 & 识别等;
-        [TIInput rInput:algNode fromGroup_ps:@[algNode.pointer]];
+        [TCInput rInput:algNode fromGroup_ps:@[algNode.pointer]];
     }
 }
 
@@ -113,7 +113,7 @@
     AIAbsAlgNode *outAlg = [theNet createAbsAlg_NoRepeat:outValue_ps conAlgs:nil isMem:false isOut:true at:nil type:ATDefault];
     
     //3. 加瞬时记忆 & 进行识别
-    [TIInput rInput:outAlg fromGroup_ps:@[outAlg.pointer]];
+    [TCInput rInput:outAlg fromGroup_ps:@[outAlg.pointer]];
 }
 
 //MARK:===============================================================

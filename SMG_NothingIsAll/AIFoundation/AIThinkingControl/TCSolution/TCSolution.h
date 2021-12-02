@@ -1,5 +1,5 @@
 //
-//  TOSolution.h
+//  TCSolution.h
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2021/11/28.
@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface TOSolution : NSObject
+@interface TCSolution : NSObject
 
 +(void) solution;
 +(void) rSolution:(ReasonDemandModel*)demand;

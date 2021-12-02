@@ -1,5 +1,5 @@
 //
-//  TIFeedback.h
+//  TCFeedback.h
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2021/12/2.
@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface TIFeedback : NSObject
+@interface TCFeedback : NSObject
 
 +(void) feedbackTIR:(AIShortMatchModel*)model;
 +(void) feedbackTOR:(AIShortMatchModel*)model;

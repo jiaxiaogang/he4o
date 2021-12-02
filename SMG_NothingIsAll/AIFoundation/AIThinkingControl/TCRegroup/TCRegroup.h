@@ -1,5 +1,5 @@
 //
-//  TIRegroup.h
+//  TCRegroup.h
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2021/11/28.
@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface TIRegroup : NSObject
+@interface TCRegroup : NSObject
 
 +(void) rRegroup:(AIShortMatchModel*)model;
 +(void) pRegroup:(NSArray*)algsArr;
