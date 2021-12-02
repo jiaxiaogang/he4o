@@ -31,10 +31,4 @@
 
 +(void) partMatching_FoV1Dot5:(AIFoNodeBase*)maskFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel findCutIndex:(NSInteger(^)(AIFoNodeBase *matchFo,NSInteger lastMatchIndex))findCutIndex;
 
-
-//MARK:===============================================================
-//MARK:                     < 预测 >
-//MARK:===============================================================
-+(void) tir_OPushM:(AIShortMatchModel*)newInModel;
-
 @end

@@ -43,7 +43,7 @@
  *      4. P-模式: 启用状态;
  */
 +(void) solution{
-    //TODOTOMORROW20211130: 将dataOut之后的逻辑,整理继续写到新架构中来;
+    //-----------TODOTOMORROW20211202: 理一理此之后的代码,看r决策的运行能不能预演顺利运行
     
     //1. 数据准备
     DemandModel *demand = [theTC.outModelManager getCanDecisionDemand];

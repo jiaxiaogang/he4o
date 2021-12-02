@@ -24,15 +24,14 @@
  *      20210422 - 将absRFo收集到inModel中 (用于GL联想assFo时方便使用,参考23041-示图);
  *  @bug
  *      2020.11.10: 在21141训练第一步,发现外类比不执行BUG,因为传入无用的matchAlg参数判空return了 (参考21142);
+ *  @todo
+ *      2021.12.12: 随后把时序识别的代码移过来,现在旧有反思代码在调用,就先不移了;
  */
 +(void) rRecognition:(AIShortMatchModel*)model{
     //1. 数据准备;
     NSArray*except_ps = @[model.protoFo.pointer,model.matchAFo.pointer];
     AIFoNodeBase *maskFo = ARRISOK(model.matchAlgs) ? model.protoFo : model.matchAFo;
     IFTitleLog(@"瞬时时序识别", @"\n%@:%@->%@",ARRISOK(model.matchAlgs) ? @"protoFo" : @"matchAFo",Fo2FStr(maskFo),Mvp2Str(maskFo.cmvNode_p));
-    
-    
-    //TODOTOMORROW20211202: 将识别算法移过来----------------
     
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
     [AIThinkInReason partMatching_FoV1Dot5:maskFo except_ps:except_ps decoratorInModel:model findCutIndex:^NSInteger(AIFoNodeBase *matchFo, NSInteger lastMatchIndex) {

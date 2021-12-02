@@ -16,7 +16,6 @@
 }
 
 +(void) rForecastBack:(AIShortMatchModel*)model pushOldDemand:(BOOL)pushOldDemand{
-    //TODOTOMORROW20211202: 新架构应在末尾调用TCDemand,但旧架构代码放在头部,先不动,等发现放末尾没影响时再放末尾;
     //6. 此处推进不成功,则运行TOP四模式;
     if (!pushOldDemand) {
         [TCDemand rDemandBack:model];

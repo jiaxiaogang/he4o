@@ -41,9 +41,4 @@
 
 @property (weak, nonatomic) id<AIThinkOutPerceptDelegate> delegate;
 
-/**
- *  MARK:--------------------"外层输入" 推进 "中层循环" 决策--------------------
- */
-+(void) top_OPushM:(AICMVNodeBase*)newMv;
-
 @end

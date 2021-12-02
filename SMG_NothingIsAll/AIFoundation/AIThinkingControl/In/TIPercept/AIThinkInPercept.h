@@ -16,9 +16,5 @@
 @class AIFrontOrderNode,AICMVNode;
 @interface AIThinkInPercept : NSObject
 
-/**
- *  MARK:--------------------"外层输入" 推进 "中层循环" 决策--------------------
- */
-+(void) tip_OPushM:(AICMVNode*)newMv;
 
 @end
