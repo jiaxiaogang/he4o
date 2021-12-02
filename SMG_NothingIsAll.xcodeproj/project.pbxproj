@@ -20,6 +20,8 @@
 		080BFAAF2304D06A00046D22 /* HEViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 080BFAAE2304D06A00046D22 /* HEViewController.m */; };
 		0810E50F236A637500B33226 /* AINetIndexUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0810E50E236A637500B33226 /* AINetIndexUtils.m */; };
 		0817D6AB219E3CC7000E45AB /* UIColor+expanded.m in Sources */ = {isa = PBXBuildFile; fileRef = 0817D6A9219E3CC6000E45AB /* UIColor+expanded.m */; };
+		0819F4F427583AA9007396D0 /* TIFeedback.m in Sources */ = {isa = PBXBuildFile; fileRef = 0819F4F327583AA9007396D0 /* TIFeedback.m */; };
+		0819F4F727583B27007396D0 /* TILearning.m in Sources */ = {isa = PBXBuildFile; fileRef = 0819F4F627583B27007396D0 /* TILearning.m */; };
 		081B3ACC1F6E2155008A7F36 /* AITime.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3ACB1F6E2155008A7F36 /* AITime.m */; };
 		081B3AD61F6E2994008A7F36 /* AIStringAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3AD51F6E2994008A7F36 /* AIStringAlgs.m */; };
 		081B3ADB1F6E2CCD008A7F36 /* AINet.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3ADA1F6E2CCD008A7F36 /* AINet.m */; };
@@ -204,6 +206,10 @@
 		0812679523022ADB003A85DE /* NVConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVConfig.h; sourceTree = "<group>"; };
 		0817D6A9219E3CC6000E45AB /* UIColor+expanded.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+expanded.m"; sourceTree = "<group>"; };
 		0817D6AA219E3CC6000E45AB /* UIColor+expanded.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+expanded.h"; sourceTree = "<group>"; };
+		0819F4F227583AA9007396D0 /* TIFeedback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TIFeedback.h; sourceTree = "<group>"; };
+		0819F4F327583AA9007396D0 /* TIFeedback.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TIFeedback.m; sourceTree = "<group>"; };
+		0819F4F527583B27007396D0 /* TILearning.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TILearning.h; sourceTree = "<group>"; };
+		0819F4F627583B27007396D0 /* TILearning.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TILearning.m; sourceTree = "<group>"; };
 		081B3ACA1F6E2155008A7F36 /* AITime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AITime.h; sourceTree = "<group>"; };
 		081B3ACB1F6E2155008A7F36 /* AITime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AITime.m; sourceTree = "<group>"; };
 		081B3AD41F6E2994008A7F36 /* AIStringAlgs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIStringAlgs.h; sourceTree = "<group>"; };
@@ -770,6 +776,8 @@
 				0877059E275373A700BA4EFB /* TIInput */,
 				0877059F275373B800BA4EFB /* TIRegroup */,
 				087705A0275373C000BA4EFB /* TIRecognition */,
+				08CFBDCB27584B1000B1F070 /* TILearning */,
+				08CFBDCC27584B2600B1F070 /* TIFeedback */,
 				087705A1275373D200BA4EFB /* TIForecastMV */,
 				087705A2275373E100BA4EFB /* TODemand */,
 				087705A3275373FA00BA4EFB /* TOSolution */,
@@ -1183,6 +1191,24 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		08CFBDCB27584B1000B1F070 /* TILearning */ = {
+			isa = PBXGroup;
+			children = (
+				0819F4F527583B27007396D0 /* TILearning.h */,
+				0819F4F627583B27007396D0 /* TILearning.m */,
+			);
+			path = TILearning;
+			sourceTree = "<group>";
+		};
+		08CFBDCC27584B2600B1F070 /* TIFeedback */ = {
+			isa = PBXGroup;
+			children = (
+				0819F4F227583AA9007396D0 /* TIFeedback.h */,
+				0819F4F327583AA9007396D0 /* TIFeedback.m */,
+			);
+			path = TIFeedback;
+			sourceTree = "<group>";
+		};
 		08D7DA401ED1499C004B1018 /* AIFoundation */ = {
 			isa = PBXGroup;
 			children = (
@@ -1558,6 +1584,7 @@
 				0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */,
 				88E1F851211591E50036B616 /* DemandModel.m in Sources */,
 				0881965F21800F2B00D5DB36 /* BirdLivePage.m in Sources */,
+				0819F4F427583AA9007396D0 /* TIFeedback.m in Sources */,
 				4591E02D247F11DE00484B51 /* TOValueModel.m in Sources */,
 				086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */,
 				08D471DE1FEB3FFF00C61322 /* AIImvAlgs.m in Sources */,
@@ -1581,6 +1608,7 @@
 				08A5D5D822AF1E3400E56BB4 /* NVView.m in Sources */,
 				0830DAB721D6E8AD003065CD /* NSString+Extension.m in Sources */,
 				08C84A8E1E9A866200897D8B /* AIInput.m in Sources */,
+				0819F4F727583B27007396D0 /* TILearning.m in Sources */,
 				085D4BA42730CBED00B04773 /* RSResultModelBase.m in Sources */,
 				08EA48BF2029242B0038B982 /* ImvAlgsHungerModel.m in Sources */,
 				082F9D561EB234750009F6A9 /* Output.m in Sources */,

@@ -13,14 +13,10 @@
  */
 @interface TIForecast : NSObject
 
-+(void) feedbackTIR:(AIShortMatchModel*)model;
-+(BOOL) feedbackTOR:(AIShortMatchModel*)model;
-+(void) feedbackTIP:(AICMVNode*)cmvNode;
-+(void) feedbackTOP:(AICMVNode*)cmvNode;
-
-+(void) rForecast:(AIShortMatchModel*)model;
++(void) rForecastFront:(AIShortMatchModel*)model;
++(void) rForecastBack:(AIShortMatchModel*)model pushOldDemand:(BOOL)pushOldDemand;
 +(void) pForecast:(AICMVNode*)cmvNode;
-+(void) forecastIRT:(AIShortMatchModel*)model;
++(void) forecastIRT:(AIShortMatchModel*)model pushOldDemand:(BOOL)pushOldDemand;
 +(void) forecastSubDemand:(AIShortMatchModel*)model;
 
 @end

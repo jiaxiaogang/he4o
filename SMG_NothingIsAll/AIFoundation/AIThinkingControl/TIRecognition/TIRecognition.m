@@ -10,24 +10,48 @@
 
 @implementation TIRecognition
 
+/**
+ *  MARK:--------------------瞬时时序识别--------------------
+ *  @param model : 当前帧输入期短时记忆;
+ *  @version
+ *      20200414 - protoFo由瞬时proto概念组成,改成瞬时match概念组成 (本方法中,去掉proto概念层到match层的联想);
+ *      20200717 - 换上新版partMatching_FoV2时序识别算法;
+ *      20210119 - 支持预测-触发器和反向反馈类比 (22052-1&3);
+ *      20210124 - In反省类比触发器,支持多时序识别matchFos (参考22073-todo3);
+ *      20210413 - TIRFoFromShortMem的参数由matchAFo改为protoFo (参考23014-分析2);
+ *      20210414 - 将TIRFo参数改为matchAlg有效则protoFo,否则matchAFo (参考23015);
+ *      20210421 - 加强RFos的抽具象关联,对rFo与protoFo进行类比抽象;
+ *      20210422 - 将absRFo收集到inModel中 (用于GL联想assFo时方便使用,参考23041-示图);
+ *  @bug
+ *      2020.11.10: 在21141训练第一步,发现外类比不执行BUG,因为传入无用的matchAlg参数判空return了 (参考21142);
+ */
 +(void) rRecognition:(AIShortMatchModel*)model{
-    //4. 识别时序;
-    [AIThinkInReason TIR_Fo_FromShortMem:@[model.protoFo.pointer,model.matchAFo.pointer] decoratorInModel:model];
+    //1. 数据准备;
+    NSArray*except_ps = @[model.protoFo.pointer,model.matchAFo.pointer];
+    AIFoNodeBase *maskFo = ARRISOK(model.matchAlgs) ? model.protoFo : model.matchAFo;
+    IFTitleLog(@"瞬时时序识别", @"\n%@:%@->%@",ARRISOK(model.matchAlgs) ? @"protoFo" : @"matchAFo",Fo2FStr(maskFo),Mvp2Str(maskFo.cmvNode_p));
+    
+    
+    //TODOTOMORROW20211202: 将识别算法移过来----------------
+    
+    //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
+    [AIThinkInReason partMatching_FoV1Dot5:maskFo except_ps:except_ps decoratorInModel:model findCutIndex:^NSInteger(AIFoNodeBase *matchFo, NSInteger lastMatchIndex) {
+        
+        //3. 当fromTIM时,cutIndex=lastAssIndex;
+        return lastMatchIndex;
+    }];
     
     //5. 学习;
-    [self rLearning:model];
-    
-    //6. 理性反馈;
-    [TIForecast feedbackTIR:model];
-    
-    //7. R任务_预测mv价值变化;
-    [TIForecast rForecast:model];
-    
-    //8. IRT触发器;
-    [TIForecast forecastIRT:model];
+    [TILearning rLearning:model recognitionMaskFo:maskFo];
 }
 
-+(void) recognition:(TOFoModel*)foModel{
+/**
+ *  MARK:--------------------反思--------------------
+ *  @status
+ *      1. 输出反思已废弃;
+ *      2. 输入反思功能整合回正向识别中 (即由重组,来调用识别实现);
+ */
++(void) reflectRecognition:(TOFoModel*)foModel{
     //1. 数据准备
     AIFoNodeBase *curFo = [SMGUtils searchNode:foModel.content_p];
     OFTitleLog(@"行为化Fo", @"\n时序:%@->%@ 类型:(%@)",Fo2FStr(curFo),Mvp2Str(curFo.cmvNode_p),curFo.pointer.typeStr);
@@ -39,7 +63,7 @@
     AIShortMatchModel *rtInModel = [theTC to_Rethink:foModel];
     
     //5. 生成子任务;
-    [TIForecast forecastSubDemand:rtInModel];
+    [TILearning subDemandLearning:rtInModel];
     
     
     //TODOTOMORROW20211201: 反思子任务
@@ -53,48 +77,8 @@
 }
 
 +(void) pRecognition:(AIFoNodeBase*)protoFo{
-    //2. 取cmvNode
-    AICMVNode *cmvNode = [SMGUtils searchNode:protoFo.cmvNode_p];
-    if (!ISOK(cmvNode, AICMVNode.class)) {
-        return;
-    }
-    
     //3. 学习
-    [self pLearning:protoFo];
-    
-    //4. tip反馈 & 生成p任务;
-    [TIForecast pForecast:cmvNode];
-}
-
-/**
- *  MARK:--------------------学习--------------------
- *  分为:
- *   1. 外类比
- *   2. 内类比
- *  解释:
- *   1. 无需求时,找出以往同样经历,类比规律,抽象出更确切的意义;
- *   2. 注:此方法为abs方向的思维方法总入口;(与其相对的决策处
- *  步骤:
- *   > 联想->类比->规律->抽象->关联->网络
- *  @version
- *      2020.03.04: a.去掉外类比; b.外类比拆分为:正向类比和反向类比;
- *      2021.01.24: 支持多时序识别,更全面的触发外类比 (参考22073-todo4);
- */
-+(void) pLearning:(AIFoNodeBase*)protoFo{
-    
-    //2. 获取最近的识别模型;
-    NSArray *inModels = ARRTOOK(theTC.inModelManager.models);
-    for (AIShortMatchModel *item in inModels) {
-        for (AIMatchFoModel *pFo in item.matchPFos) {
-            
-            //3. 正向反馈类比 (外类比);
-            [AIAnalogy analogy_Feedback_Same:pFo.matchFo shortFo:protoFo];
-        }
-    }
-}
-+(void) rLearning:(AIShortMatchModel*)model{
-    //5. 内类比
-    [AIAnalogy analogyInner:model];
+    [TILearning pLearning:protoFo];
 }
 
 @end

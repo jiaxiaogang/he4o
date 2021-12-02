@@ -38,6 +38,8 @@
 #import "TIInput.h"
 #import "TIRegroup.h"
 #import "TIRecognition.h"
+#import "TILearning.h"
+#import "TIFeedback.h"
 #import "TIForecast.h"
 #import "TODemand.h"
 #import "TOSolution.h"

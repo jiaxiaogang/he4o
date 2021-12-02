@@ -19,6 +19,13 @@
     [TOSolution solution];
 }
 
+/**
+ *  MARK:--------------------p任务--------------------
+ *  @desc 功能说明:
+ *      1. 更新energy值
+ *      2. 更新需求池
+ *      3. 进行dataOut决策行为化;
+ */
 +(void) pDemand:(AICMVNode*)cmvNode{
     //1. 将联想到的cmv更新energy & 更新demandManager & decisionLoop
     NSInteger delta = [NUMTOOK([AINetIndex getData:cmvNode.delta_p]) integerValue];

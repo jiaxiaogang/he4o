@@ -232,41 +232,6 @@
     return result;
 }
 
-/**
- *  MARK:--------------------瞬时时序识别--------------------
- *  @param inModel : 当前帧输入期短时记忆;
- *  @version
- *      20200414 - protoFo由瞬时proto概念组成,改成瞬时match概念组成 (本方法中,去掉proto概念层到match层的联想);
- *      20200717 - 换上新版partMatching_FoV2时序识别算法;
- *      20210119 - 支持预测-触发器和反向反馈类比 (22052-1&3);
- *      20210124 - In反省类比触发器,支持多时序识别matchFos (参考22073-todo3);
- *      20210413 - TIRFoFromShortMem的参数由matchAFo改为protoFo (参考23014-分析2);
- *      20210414 - 将TIRFo参数改为matchAlg有效则protoFo,否则matchAFo (参考23015);
- *      20210421 - 加强RFos的抽具象关联,对rFo与protoFo进行类比抽象;
- *      20210422 - 将absRFo收集到inModel中 (用于GL联想assFo时方便使用,参考23041-示图);
- *  @bug
- *      2020.11.10: 在21141训练第一步,发现外类比不执行BUG,因为传入无用的matchAlg参数判空return了 (参考21142);
- */
-+(void) TIR_Fo_FromShortMem:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel{
-    //1. 数据检查
-    if (!inModel) return;
-    AIFoNodeBase *maskFo = ARRISOK(inModel.matchAlgs) ? inModel.protoFo : inModel.matchAFo;
-    
-    IFTitleLog(@"瞬时时序识别", @"\n%@:%@->%@",ARRISOK(inModel.matchAlgs) ? @"protoFo" : @"matchAFo",Fo2FStr(maskFo),Mvp2Str(maskFo.cmvNode_p));
-    //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [self partMatching_FoV1Dot5:maskFo except_ps:except_ps decoratorInModel:inModel findCutIndex:^NSInteger(AIFoNodeBase *matchFo, NSInteger lastMatchIndex) {
-        //3. 当fromTIM时,cutIndex=lastAssIndex;
-        return lastMatchIndex;
-    }];
-    
-    //3. 加强RFos的抽具象关联;
-    for (AIMatchFoModel *item in inModel.matchRFos) {
-        AIFoNodeBase *absRFo = [AIAnalogy analogyOutside:maskFo assFo:item.matchFo type:ATSame createAbsAlgBlock:nil];
-        if (Log4AnalogyAbsRFo) NSLog(@">>> 抽象absRFo: %@\t\tFrom MatchRFo: F%ld",Fo2FStr(absRFo),item.matchFo.pointer.pointerId);
-        if (absRFo && ![inModel.absRFos containsObject:absRFo]) [inModel.absRFos addObject:absRFo];
-    }
-}
-
 
 /**
  *  MARK:--------------------时序局部匹配算法V1--------------------
