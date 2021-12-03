@@ -8,6 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ *  MARK:--------------------解决方案--------------------
+ *  @注意:
+ *      1. 取解决方案-不得脱离场景;
+ *      2. 行为化过程-不得脱离场景;
+ */
 @interface TCSolution : NSObject
 
 +(void) solution;

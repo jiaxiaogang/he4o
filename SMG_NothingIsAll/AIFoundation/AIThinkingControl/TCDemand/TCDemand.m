@@ -47,9 +47,8 @@
     __block NSArray *except_ps = nil;
     [DemandManager updateSubDemand:rtInModel baseFo:foModel createSubDemandBlock:^(ReasonDemandModel *subDemand) {
         
-        //TODOTOMORROW20211202: 子任务行为化,改为转TCSolution;
-        //6. 子任务行为化;
-        //[self.delegate toAction_SubModelBegin:subDemand];
+        //6. 子任务行为化,转TCSolution;
+        [TCSolution rSolution:subDemand];
         //return;//子任务Finish/ActYes时,不return,因为要继续父任务;
         
     } finishBlock:^(NSArray *_except_ps) {

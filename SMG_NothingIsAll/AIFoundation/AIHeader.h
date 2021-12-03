@@ -48,9 +48,10 @@
 
 //任务池
 #import "ReasonDemandModel.h"
-#import "AIMatchFoModel.h"
+#import "PerceptDemandModel.h"
 #import "HDemandModel.h"
 #import "DemandManager.h"
+#import "AIMatchFoModel.h"
 
 //短时记忆
 #import "TOAlgModel.h"

@@ -43,12 +43,12 @@
  *      4. P-模式: 启用状态;
  */
 +(void) solution{
-    //-----------TODOTOMORROW20211202: 理一理此之后的代码,看r决策的运行能不能预演顺利运行
-    
     //1. 数据准备
     DemandModel *demand = [theTC.outModelManager getCanDecisionDemand];
-    NSArray *mModels = theTC.inModelManager.models;
-    if (!demand || !ARRISOK(mModels)) return;
+    [self solution:demand];
+}
+
++(void) solution:(DemandModel*)demand{
     
     //2. 同区两个模式之R-;
     if (ISOK(demand, ReasonDemandModel.class)) {
@@ -68,16 +68,14 @@
         
         //3. 行为化;
         [self rSolution:rDemand];
-    }else{
+    }else if(ISOK(demand, PerceptDemandModel.class)){
         
         //TODOTOMORROW20211201: 此处改为和R模式一样,全套从短时记忆树来触发和工作;
         //  a. 此处的mModels循环没啥用,后看该删就删了;
         
-        
-        
         //3. 不同区两个模式 (以最近的识别优先);
-        for (NSInteger i = 0; i < mModels.count; i++) {
-            AIShortMatchModel *mModel = ARR_INDEX_REVERSE(mModels, i);
+        for (NSInteger i = 0; i < theTC.inModelManager.models.count; i++) {
+            AIShortMatchModel *mModel = ARR_INDEX_REVERSE(theTC.inModelManager.models, i);
             AIAlgNodeBase *matchAlg = mModel.matchAlg;
             
             //a. 识别有效性判断 (优先直接mv+,不行再mv-迂回);
@@ -86,6 +84,8 @@
                 [self pSolution:demand];
             }
         }
+    }else if(ISOK(demand, HDemandModel.class)){
+        [self hSolution:demand];
     }
 }
 
@@ -136,11 +136,35 @@
         NSLog(@"------->>>>>> R- 新增一例解决方案: %@->%@ FRS_PK评分:%.2f",Fo2FStr(firstResult.baseFo),Mvp2Str(firstResult.baseFo.cmvNode_p),firstResult.score);
         [TCAction rAction:foModel];
     }else{
+        
+        //-----TODOTOMORROW20211203:
+        //0. 理一理rSolution之后的代码,看r决策的运行能不能预演顺利运行
+        //1. rSolution要支持subDemand;
+        //2. 解决方案反思子任务的失败,不表示解决方案失败,它还可以参与最终pk池竞争;
+        //3. 解决此处failure无计可施后的逻辑;
+        
+        
+        
+        
+        
         //7. 转流程控制_无则转failure;
         demand.status = TOModelStatus_ActNo;
-        [theTC.thinkOut.tOR singleLoopBackWithFailureModel:demand];
+        NSArray *baseDemands = [TOUtils getBaseDemands_AllDeep:demand];
+        DemandModel *baseDemand = ARR_INDEX(baseDemands, 1);
         
-        //TODOTOMORROW20211125: 向base上一轮递归,
+        if (baseDemand) {
+            //8. 向上一轮递归,继续base.下一解决方案;
+            [TCSolution solution:baseDemand];
+        }else{
+            //9. 当前就是root了,开始清算;
+            
+            
+            
+        }
+        
+        
+        //a. 子任务失败,则转向下一子任务
+        //b. 所有子任务失败,则转向父任务下一解决方案 (不脱离场景的情况下,仅取三条);
         
         
         
@@ -235,14 +259,12 @@
     //1. 此处废除mIsC判断,因为PM废除,mIsC不再需要,而短时记忆树里的任何cutIndex已发生的部分,都可用于帮助cHav取解决方案;
     //2. cHav取到的结果sulutionFo做为理性子任务,然后将HNFo的末位,传到TO.regroup(),然后inReflect...
     //3. 此处HN内类比先不废弃,先这么写,等后面再考虑废弃之 (参考24171-3);
+    //4. 可将当前瞬时记忆序列做为mask进行cHav联想 (比如在家时,不会想到点外卖,在工作地就首先想到外卖);
     
     
     
-    //5. TODOTOMORROW2021112x去掉不应期 (以下两种用哪个留哪个);
-    NSArray *except_ps = TOModels2Pits([SMGUtils filterArr:algModel.subModels checkValid:^BOOL(TOModelBase *item) {
-        return item.status == TOModelStatus_ActNo;
-    }]);
-    NSArray *except_ps2 = [TOUtils convertPointersFromTOModels:algModel.actionFoModels];
+    //5. 取不应期;
+    NSArray *except_ps = [TOUtils convertPointersFromTOModels:algModel.actionFoModels];
     
     //4. 第3级: 数据检查hAlg_根据type和value_p找ATHav
     AIKVPointer *relativeFo_p = [AINetService getInnerV3_HN:curAlg aAT:algModel.content_p.algsType aDS:algModel.content_p.dataSource type:ATHav except_ps:except_ps];
