@@ -46,11 +46,11 @@
     //3. 将mModel保留 (只有先保留后,构建时序时,才会含新帧概念);
     [theTC.inModelManager add:mModel];
     
-    //4. 转regroup
-    [TCRegroup rRegroup:mModel];
-    
     //3. 概念反馈 -> 重组
     [TCFeedbackTOR feedbackTOR:mModel];
+    
+    //4. 转regroup
+    [TCRegroup rRegroup:mModel];
 }
 
 +(void) pInput:(NSArray*)algsArr{

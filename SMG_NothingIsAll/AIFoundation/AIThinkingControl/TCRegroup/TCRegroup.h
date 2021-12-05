@@ -12,6 +12,6 @@
 
 +(void) rRegroup:(AIShortMatchModel*)model;
 +(void) pRegroup:(NSArray*)algsArr;
-+(void) hRegroup;
++(void) feedbackRegroup:(TOFoModel*)foModel;
 
 @end

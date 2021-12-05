@@ -272,7 +272,7 @@
     
     //6. 只要有善可尝试的方式,即从首条开始尝试;
     if (relativeFo_p) {
-        TOFoModel *foModel = [TOFoModel newWithFo_p:relativeFo_p base:algModel];
+        TOFoModel *foModel = [TOFoModel newWithFo_p:relativeFo_p base:hDemand];
         [TCAction hAction:foModel];
     }else{
         

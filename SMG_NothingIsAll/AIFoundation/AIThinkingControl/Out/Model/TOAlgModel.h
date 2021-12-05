@@ -96,6 +96,6 @@
  *      1. 在tor_OPushM中进行保留;
  *      2. 在ActYes流程控制中,生物钟触发器触发时,进行使用,用于反省类比;
  */
-@property (strong, nonatomic) AIKVPointer *realContent_p;
+@property (strong, nonatomic) AIAlgNodeBase *feedbackAlg;
 
 @end

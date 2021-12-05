@@ -10,9 +10,10 @@
 
 @implementation HDemandModel
 
-+(HDemandModel*) newWithAlgModel:(TOAlgModel*)algModel{
++(HDemandModel*) newWithAlgModel:(TOAlgModel*)base{
     HDemandModel *result = [[HDemandModel alloc] init];
-    result.algModel = algModel;
+    result.baseOrGroup = base;
+    [base.subModels addObject:result];
     return result;
 }
 

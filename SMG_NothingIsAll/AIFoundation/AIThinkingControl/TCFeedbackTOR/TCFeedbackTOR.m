@@ -35,7 +35,7 @@
  *      1. 此处在for循环中,所以有可能推进多条,比如我有了一只狗,可以拉雪撬,或者送给爷爷陪爷爷 (涉及多任务间的价值自由竞争),暂仅支持一条,后再支持;
  *      2020.08.23: 在inputMv时,支持当前actYes的fo进行抵消 (或设置为Finish) (T 由demandManager完成);
  *      2020.08.23: 在waitModel为ActYes且为HNGL时,仅判定其是否符合HNGL变化; T
- *      2020.08.23: 对realAlg进行收集,收集到waitTOAlgModel.realContent_p下; T
+ *      2020.08.23: 对realAlg进行收集,收集到waitTOAlgModel.feedbackAlg下; T
  *      2020.08.26: 在GL时,需要判断其"期望"与"真实"概念间是否是同一物体 (参考20204-示例);
  *  @version
  *      xxxx.xx.xx: 返回pushMiddle是否成功,如果推进成功,则不再执行TOP四模式;
@@ -46,7 +46,7 @@
  *      2020.12.22: 在以往isNormal之外,再支持对isH,isGL的节点进行PM理性评价;
  *      2020.12.22: 将所有waitModel有效的返回都赋值OuterBack,而仅将首个focusModel进行PM理性评价;
  *      2020.12.28: waitModels仅对ActYes响应,将Runing去掉,因为Running应该到任务推进中自行进行PM匹配mModel,而非此处 (参考21208);
- *      2021.01.02: 无论GL变化type是否与waitType符合,都对新的变化进行保留到realContent (参考2120B-BUG1);
+ *      2021.01.02: 无论GL变化type是否与waitType符合,都对新的变化进行保留到feedbackAlg (参考2120B-BUG1);
  *      2021.01.02: GL中mIsC对matchAlgs的全面支持,因为有时洽逢C不是matchAlgs首个,而致mIsC失败;
  *      2021.03.17: 将latestAlg和waitAlg之间的mIsC判断由1层改为2层 (因为在22173BUG时,发现此处输入了隔层mIsC);
  *      2021.05.09: 对OPushM反馈的GL触发ORT反省 (参考23071-方案2);
@@ -64,7 +64,6 @@
  *      2020.12.26: 在OPushM继续PM前,replaceAlg时,重新赋值JustPValues=P-C (参考21206);
  */
 +(void) feedbackTOR:(AIShortMatchModel*)model{
-    BOOL pushOldDemand = false;
     //4. 将新一帧数据报告给TOR,以进行短时记忆的更新,比如我输出行为"打",短时记忆由此知道输出"打"成功 (外循环入->推进->中循环出);
     //2. 取出所有等待下轮的outModel (ActYes&Runing);
     NSArray *waitModels = [TOUtils getSubOutModels_AllDeep:theTC.outModelManager.getCurrentDemand validStatus:@[@(TOModelStatus_ActYes)] cutStopStatus:@[@(TOModelStatus_Finish),@(TOModelStatus_ActNo),@(TOModelStatus_ScoreNo)]];
@@ -72,7 +71,6 @@
     
     //3. 判断最近一次input是否与等待中outModel相匹配 (匹配,比如吃,确定自己是否真吃了);
     //3. 保留/更新实际发生到outModel (通过了有效判断的,将实际概念直接存留到waitModel);
-    TOAlgModel *focusModel = nil;
     for (TOAlgModel *waitModel in waitModels) {
         
         //3. waitModel有效检查;
@@ -88,63 +86,39 @@
         //4. ============= H返回的有效判断 =============
         if (isH) {
             NSLog(@"========4");
-            TOAlgModel *targetModel = (TOAlgModel*)waitModel.baseOrGroup.baseOrGroup;
-            BOOL mIsC = [TOUtils mIsC_1:model.matchAlg.pointer c:targetModel.content_p];
-            if (Log4OPushM) NSLog(@"H有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(targetModel.content_p),mIsC);
+            TOFoModel *hFoModel = (TOFoModel*)waitModel.baseOrGroup;    //h解决方案;
+            HDemandModel *hDemand = (HDemandModel*)hFoModel.baseOrGroup;//h需求模型
+            TOAlgModel *targetAlg = (TOAlgModel*)hDemand.baseOrGroup;   //hDemand的目标alg;
+            TOFoModel *targetFo = (TOFoModel*)targetAlg.baseOrGroup;    //hDemand的目标alg所在的fo;
+            BOOL mIsC = [TOUtils mIsC_1:model.matchAlg.pointer c:targetAlg.content_p];
+            if (Log4OPushM) NSLog(@"H有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(targetAlg.content_p),mIsC);
             if (mIsC) {
-                waitModel.status = TOModelStatus_OuterBack;
-                waitModel.realContent_p = model.protoAlg.pointer;
-                
                 //1. 在ATHav时,执行到此处,说明waitModel和baseFo已完成;
-                waitModel.baseOrGroup.status = TOModelStatus_Finish;
+                waitModel.status = TOModelStatus_OuterBack;
+                hFoModel.status = TOModelStatus_Finish;
+                targetAlg.status = TOModelStatus_OuterBack;
+                targetAlg.feedbackAlg = model.protoAlg;
                 
-                //2. 应跳到: baseFo.baseAlg与此处inputMModel.protoAlg之间,进行PM评价;
-                if (!focusModel) NSLog(@"=== OPushM成功 Hav继续PM: %@",Pit2FStr(targetModel.content_p));
-                if (!focusModel) focusModel = targetModel;
+                //2. 重组;
+                [TCRegroup feedbackRegroup:targetFo];
             }
         }
         
         //7. ============= "行为输出" 和 "demand.ActYes" 和 "静默成功 的有效判断 =============
         if (isNormal) {
-            BOOL mIsC = [TOUtils mIsC_2:model.matchAlg.pointer c:waitModel.content_p];
-            if (Log4OPushM) NSLog(@"Normal有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(waitModel.content_p),mIsC);
+            TOAlgModel *targetAlg = waitModel;                          //等待中的目标alg;
+            TOFoModel *targetFo = (TOFoModel*)targetAlg.baseOrGroup;    //目标alg所在的fo;
+            BOOL mIsC = [TOUtils mIsC_2:model.matchAlg.pointer c:targetAlg.content_p];
+            if (Log4OPushM) NSLog(@"Normal有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(targetAlg.content_p),mIsC);
             if (mIsC) {
-                waitModel.status = TOModelStatus_OuterBack;
-                waitModel.realContent_p = model.protoAlg.pointer;
-                if (!focusModel) NSLog(@"=== OPushM成功 Normal继续PM: %@",Pit2FStr(waitModel.content_p));
-                if (!focusModel) focusModel = waitModel;
+                //1. 赋值
+                targetAlg.status = TOModelStatus_OuterBack;
+                targetAlg.feedbackAlg = model.protoAlg;
+                
+                //2. 重组
+                [TCRegroup feedbackRegroup:targetFo];
             }
         }
-    }
-    
-    //8. 将首个focusModel进行PM修正 (理性评价);
-    if (focusModel) {
-        //5. 将理性评价"价值分"保留到短时记忆模型;
-        focusModel.pm_Fo = focusModel.baseOrGroup.content_p;
-        
-        //6. 理性评价
-        //----------TODOTOMORROW20211205:
-        //  a. 此处不再调用PM,而是转向重组和识别反思,并生成子任务;
-        //  b. 流程: 先输入,概念识别,反馈TOR,时序重组,时序识别;
-        //代码实践1: 将model.protoAlg重组到focusModel所在的时序;
-        //代码实践2: 将此处feedback移到概念识别之后就调用;
-        
-        [TCRegroup hRegroup];
-        //  c. 此处支持h重组,也应支持normal类型的重组?
-        
-        //TODO:
-        //此处并非仅保留一个focusModel,而是对所有的focusModel都进行重组;
-        //并且将所有重组的时序,都进行识别;
-        //并分别把识别结果挂载到focusFo下做子任务 (好的坏的全挂载,比如做的饭我爱吃{MV+},但是又太麻烦{MV-});
-        //然后分析下,到TCDemand中,能否从root自动调用继续决策螺旋 (一个个一层层进行综合pk);
-        //如果不能,那么就得从sub开始,但sub处明显不太合适,比如: 同时有多个feedback推进,那么跑哪个?这个只能root向下来决定;
-        
-        
-        
-        
-        pushOldDemand = true;
-    }else{
-        NSLog(@"OPushM: 无一被需要");
     }
 }
 

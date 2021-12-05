@@ -40,10 +40,22 @@
     [TCRecognition pRecognition:protoFo];
 }
 
-+(void) hRegroup{
-    //TODOTOMORROW20211201: 反馈feedback后
-    //1. 判断是否h输出来的反馈,如果是,则对重组后的时序;
+/**
+ *  MARK:--------------------feedbackTOR后重组--------------------
+ *  @desc
+ *      说明: 在foModel下找到subAlgModel,其中feedbackAlg有值的,替换到foModel中,并重组成新的时序;
+ *      例如: [我要吃水果],结果反馈了榴莲,重组成[我要吃榴莲];
+ */
++(void) feedbackRegroup:(TOFoModel*)foModel{
+    
+    
+    
+    //----------TODOTOMORROW20211205: 反馈feedback后
+    //1. 判断foModel.subModels中,哪个feedbackAlg有值,将它与当前fo重组成新的fo,并进行识别;
     //2. 提交到TCRecognition做反思识别;
+    //3. 识别结果pFos挂载到focusFo下做子任务 (好的坏的全挂载,比如做的饭我爱吃{MV+},但是又太麻烦{MV-});
+    //4. 然后分析下,到TCDemand中,能否从root自动调用继续决策螺旋 (一个个一层层进行综合pk);
+    
     
 }
 
