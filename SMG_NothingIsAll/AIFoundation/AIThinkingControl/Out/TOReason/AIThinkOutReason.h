@@ -74,11 +74,6 @@
  */
 -(void) dataOut_ActionScheme:(NSArray*)outArr;
 
-/**
- *  MARK:--------------------"外层输入" 推进 "中层循环" 决策--------------------
- */
--(BOOL) tor_OPushM:(DemandModel*)demand latestMModel:(AIShortMatchModel*)latestMModel;
-
 
 //MARK:===============================================================
 //MARK:                   < 理性决策流程控制方法 >
