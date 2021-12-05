@@ -132,6 +132,14 @@
         [TCRegroup hRegroup];
         //  c. 此处支持h重组,也应支持normal类型的重组?
         
+        //TODO:
+        //此处并非仅保留一个focusModel,而是对所有的focusModel都进行重组;
+        //并且将所有重组的时序,都进行识别;
+        //并分别把识别结果挂载到focusFo下做子任务 (好的坏的全挂载,比如做的饭我爱吃{MV+},但是又太麻烦{MV-});
+        //然后分析下,到TCDemand中,能否从root自动调用继续决策螺旋 (一个个一层层进行综合pk);
+        //如果不能,那么就得从sub开始,但sub处明显不太合适,比如: 同时有多个feedback推进,那么跑哪个?这个只能root向下来决定;
+        
+        
         
         
         pushOldDemand = true;
