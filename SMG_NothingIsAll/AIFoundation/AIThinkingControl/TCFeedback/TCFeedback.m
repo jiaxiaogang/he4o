@@ -151,9 +151,4 @@
     [TCForecast pForecast:cmvNode];
 }
 
-+(void) feedbackSubDemand:(AIShortMatchModel*)model{
-    //5. 生成子任务;
-    [TCForecast forecastSubDemand:model];
-}
-
 @end

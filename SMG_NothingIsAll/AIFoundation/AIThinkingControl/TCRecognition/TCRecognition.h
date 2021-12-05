@@ -14,8 +14,8 @@
 @interface TCRecognition : NSObject
 
 +(void) rRecognition:(AIShortMatchModel*)model;
-+(void) reflectRecognition:(TOFoModel*)foModel;
 +(void) pRecognition:(AIFoNodeBase*)protoFo;
++(void) feedbackRecognition:(AIFoNodeBase*)fo;
 
 @end
 

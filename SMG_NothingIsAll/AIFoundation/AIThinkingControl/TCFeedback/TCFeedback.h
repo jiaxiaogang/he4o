@@ -18,6 +18,5 @@
 +(void) feedbackTIR:(AIShortMatchModel*)model;
 +(void) feedbackTIP:(AICMVNode*)cmvNode;
 +(void) feedbackTOP:(AICMVNode*)cmvNode;
-+(void) feedbackSubDemand:(AIShortMatchModel*)model;
 
 @end

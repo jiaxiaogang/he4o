@@ -16,6 +16,6 @@
 +(void) rForecast:(AIShortMatchModel*)model;
 +(void) pForecast:(AICMVNode*)cmvNode;
 +(void) forecastIRT:(AIShortMatchModel*)model;
-+(void) forecastSubDemand:(AIShortMatchModel*)model;
++(void) feedbackForecast:(AIShortMatchModel*)model;
 
 @end

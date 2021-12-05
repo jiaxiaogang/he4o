@@ -128,8 +128,6 @@
 -(AIShortMatchModel*) dataInFromRethink:(TOFoModel*)toFoModel{
     //1. 数据准备;
     AIFoNodeBase *rethinkFo = nil;
-    ReasonDemandModel *baseDemand = ARR_INDEX([TOUtils getBaseDemands_AllDeep:toFoModel], 0);
-    
     
     //2. 反思_HNGL类型;
     if ([TOUtils isHNGL_toModel:toFoModel]) {
@@ -138,9 +136,7 @@
         AIFoNodeBase *fo = [SMGUtils searchNode:toFoModel.content_p];
         NSMutableArray *order = [[NSMutableArray alloc] init];
         for (NSInteger i = 0; i < fo.content_ps.count - 1; i++) {
-            AIShortMatchModel_Simple *simple = [[AIShortMatchModel_Simple alloc] init];
-            simple.alg_p = ARR_INDEX(fo.content_ps, i);
-            simple.inputTime = [NUMTOOK(ARR_INDEX(fo.deltaTimes, i)) longLongValue];
+            AIShortMatchModel_Simple *simple = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(fo.content_ps, i) inputTime:[NUMTOOK(ARR_INDEX(fo.deltaTimes, i)) longLongValue]];
             [order addObject:simple];
         }
         if (ARRISOK(order)) {
@@ -152,7 +148,7 @@
     }
     
     //5. 反思时序;
-    return [AIThinkInReason TIR_Fo_FromRethink:rethinkFo baseDemand:baseDemand];
+    return [AIThinkInReason TIR_Fo_FromRethink:rethinkFo];
 }
 
 @end

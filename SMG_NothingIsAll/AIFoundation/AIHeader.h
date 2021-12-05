@@ -58,6 +58,7 @@
 #import "TOAlgModel.h"
 #import "TOFoModel.h"
 #import "AIShortMatchModel.h"
+#import "AIShortMatchModel_Simple.h"
 #import "ShortMatchManager.h"
 
 //网络

@@ -115,7 +115,16 @@
     }
 }
 
-+(void) forecastSubDemand:(AIShortMatchModel*)model{
++(void) feedbackForecast:(AIShortMatchModel*)model{
+    
+    
+    //----------TODOTOMORROW20211205: 反馈feedback后,生成子任务;
+    //2. 子任务能解决便解决,解决不了的(也有可能是因为来不及,所以解决方案失败);
+    //3. 识别结果pFos挂载到focusFo下做子任务 (好的坏的全挂载,比如做的饭我爱吃{MV+},但是又太麻烦{MV-});
+    //4. 然后分析下,到TCDemand中,能否从root自动调用继续决策螺旋 (一个个一层层进行综合pk);
+    //3. 无论子任务是否解决,都回来判综合评分pk,比如子任务不解决我也要继续父任务;
+    
+    
     [TCDemand subDemand:model];
 }
 

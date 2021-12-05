@@ -27,7 +27,7 @@
 //MARK:===============================================================
 //MARK:                     < 时序识别 >
 //MARK:===============================================================
-+(AIShortMatchModel*) TIR_Fo_FromRethink:(AIFoNodeBase*)fo baseDemand:(ReasonDemandModel*)baseDemand;
++(AIShortMatchModel*) TIR_Fo_FromRethink:(AIFoNodeBase*)fo;
 
 +(void) partMatching_FoV1Dot5:(AIFoNodeBase*)maskFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel findCutIndex:(NSInteger(^)(AIFoNodeBase *matchFo,NSInteger lastMatchIndex))findCutIndex;
 

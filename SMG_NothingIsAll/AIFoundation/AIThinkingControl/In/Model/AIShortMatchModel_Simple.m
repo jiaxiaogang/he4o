@@ -10,4 +10,11 @@
 
 @implementation AIShortMatchModel_Simple
 
++(AIShortMatchModel_Simple*) newWithAlg_p:(AIKVPointer*)alg_p inputTime:(NSTimeInterval)inputTime{
+    AIShortMatchModel_Simple *result = [[AIShortMatchModel_Simple alloc] init];
+    result.alg_p = alg_p;
+    result.inputTime = inputTime;
+    return result;
+}
+
 @end

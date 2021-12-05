@@ -44,40 +44,59 @@
     [TCLearning rLearning:model recognitionMaskFo:maskFo];
 }
 
++(void) pRecognition:(AIFoNodeBase*)protoFo{
+    //3. 学习
+    [TCLearning pLearning:protoFo];
+}
+
 /**
- *  MARK:--------------------反思--------------------
+ *  MARK:--------------------重组时序识别--------------------
+ *  @desc 即以前的反思,
+ *  _param protoAlg_ps : RTFo
+ *      1. 传入原始瞬时记忆序列 90% ,还是识别后的概念序列 10%;
+ *      2. 传入行为化中的rethinkLSP重组fo;
+ *  _param baseDemand : 参数fo所处的r任务 (有可能非R任务,或者为nil,所以此参数用前需先做防错判断);
+ *  @desc 向性:
+ *      1. ↑
+ *      2. →
+ *
+ *  @desc 代码步骤:
+ *      1. 用内类比的方式,发现概念的变化与有无; (理性结果)
+ *      2. 用外类比的方式,匹配出靠前limit个中最相似抽象时序,并取到预测mv结果; (感性结果)
+ *      3. 根据时序相似性 与 微信息差异度 得出 修正mv的紧迫度; (综合预测)
+ *      4. 将fixMv添加到任务序列demandManager,做TOR处理;
+ *
+ *  @desc 举例步骤:
+ *      1. 通过,内类比发现有一物体:方向不变 & 越来越近;
+ *      2. 通过,识别概念,发现此物体是汽车; (注:已识别过,可以直接查看抽象指向);
+ *      3. 通过,外类比,发现以此下去,"汽车距离变0"会撞到疼痛;
+ *      4. 通过,"车-0-撞-疼"来计算时序相似度x% 与 通过"车距"y 计算= zMv;
+ *      5. 将zMv提交给demandManager,做TOR处理;
+ *  @version
+ *      2020.04.03 : 将assFoIndexAlg由proto.lastIndex改为replaceMatchAlg来代替 (因为lastAlg索引失败率太高);
+ *      2020.07.17 : 换上新版partMatching_FoV2时序识别算法;
+ *      2021.04.13 : 将装饰AIShortMatchModel改为result返回 & 参数由order直接改为fo传入;
+ *      2021.07.07 : 反思时,cutIndex全部返-1 (参考23156);
+ *  @todo :
+ *      2020.04.03: 支持识别到多个时序 T;
+ *      2020.04.03: 以识别到的多个时序,得到多个价值预测 (支持更多元的评价);
  *  @status
  *      1. 输出反思已废弃;
  *      2. 输入反思功能整合回正向识别中 (即由重组,来调用识别实现);
  */
-+(void) reflectRecognition:(TOFoModel*)foModel{
-    //1. 数据准备
-    AIFoNodeBase *curFo = [SMGUtils searchNode:foModel.content_p];
-    OFTitleLog(@"行为化Fo", @"\n时序:%@->%@ 类型:(%@)",Fo2FStr(curFo),Mvp2Str(curFo.cmvNode_p),curFo.pointer.typeStr);
++(void) feedbackRecognition:(AIFoNodeBase*)fo {
+    //1. 数据检查
+    AIShortMatchModel *result = [[AIShortMatchModel alloc] init];
+    OFTitleLog(@"反思时序识别", @"\n%@",Fo2FStr(fo));
     
+    //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
+    [AIThinkInReason partMatching_FoV1Dot5:fo except_ps:@[fo.pointer] decoratorInModel:result findCutIndex:^NSInteger(AIFoNodeBase *matchFo, NSInteger lastMatchIndex) {
+        return -1;
+    }];
+    //NSLog(@"反思时序: Finish >> %@",Fo2FStr(result.matchFo));
     
-    //3. 对HNGL任务首帧执行前做评价;
-    
-    //4. MC反思: 回归tir反思,重新识别理性预测时序,预测价值; (预测到鸡蛋变脏,或者cpu损坏) (理性预测影响评价即理性评价)
-    AIShortMatchModel *rtInModel = [theTC to_Rethink:foModel];
-    
-    //5. 生成子任务;
-    [TCLearning subDemandLearning:rtInModel];
-    
-    
-    //TODOTOMORROW20211201: 反思子任务
-    //1. 所有反思有子任务的,都形成子任务;
-    //2. 子任务能解决便解决,解决不了的(也有可能是因为来不及,所以解决方案失败);
-    //3. 无论子任务是否解决,都回来判综合评分pk,比如子任务不解决我也要继续父任务;
-    
-    
-    
-    
-}
-
-+(void) pRecognition:(AIFoNodeBase*)protoFo{
-    //3. 学习
-    [TCLearning pLearning:protoFo];
+    //3. 调用更新到短时记忆树;
+    [TCForecast feedbackForecast:result];
 }
 
 @end

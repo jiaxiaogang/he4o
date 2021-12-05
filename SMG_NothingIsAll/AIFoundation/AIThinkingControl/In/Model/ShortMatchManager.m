@@ -60,9 +60,7 @@
         
         //3. 有效则收集;
         if (itemAlg_p) {
-            AIShortMatchModel_Simple *simple = [[AIShortMatchModel_Simple alloc] init];
-            simple.alg_p = itemAlg_p;
-            simple.inputTime = mModel.inputTime;
+            AIShortMatchModel_Simple *simple = [AIShortMatchModel_Simple newWithAlg_p:itemAlg_p inputTime:mModel.inputTime];
             [result addObject:simple];
         }
     }

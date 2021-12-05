@@ -47,16 +47,31 @@
  *      例如: [我要吃水果],结果反馈了榴莲,重组成[我要吃榴莲];
  */
 +(void) feedbackRegroup:(TOFoModel*)foModel{
+    //1. 数据准备;
+    AIFoNodeBase *fo = [SMGUtils searchNode:foModel.content_p];
     
+    //3. 数据准备 (收集除末位外的content为order);
+    NSMutableArray *order = [[NSMutableArray alloc] init];
+    for (NSInteger i = 0; i < fo.content_ps.count - 1; i++) {
+        AIKVPointer *alg_p = ARR_INDEX(fo.content_ps, i);
+        
+        //4. 将反馈代入;
+        for (TOAlgModel *item in foModel.subModels) {
+            if (item.status == TOModelStatus_OuterBack && [item.content_p isEqual:alg_p]) {
+                alg_p = item.feedbackAlg.pointer;
+            }
+        }
+        
+        //5. 生成时序元素;
+        NSTimeInterval inputTime = [NUMTOOK(ARR_INDEX(fo.deltaTimes, i)) longLongValue];
+        [order addObject:[AIShortMatchModel_Simple newWithAlg_p:alg_p inputTime:inputTime]];
+    }
     
-    
-    //----------TODOTOMORROW20211205: 反馈feedback后
-    //1. 判断foModel.subModels中,哪个feedbackAlg有值,将它与当前fo重组成新的fo,并进行识别;
-    //2. 提交到TCRecognition做反思识别;
-    //3. 识别结果pFos挂载到focusFo下做子任务 (好的坏的全挂载,比如做的饭我爱吃{MV+},但是又太麻烦{MV-});
-    //4. 然后分析下,到TCDemand中,能否从root自动调用继续决策螺旋 (一个个一层层进行综合pk);
-    
-    
+    //6. 将时序元素生成新时序;
+    AIFoNodeBase *protoFo = [theNet createConFo:order isMem:true];
+
+    //7. 识别时序 (预测到鸡蛋变脏,或者cpu损坏) (理性预测影响评价即理性评价);
+    [TCRecognition feedbackRecognition:protoFo];
 }
 
 @end

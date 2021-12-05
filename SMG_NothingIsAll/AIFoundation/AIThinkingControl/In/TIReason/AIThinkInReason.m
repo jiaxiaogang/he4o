@@ -218,7 +218,7 @@
  *      2020.04.03: 以识别到的多个时序,得到多个价值预测 (支持更多元的评价);
  *
  */
-+(AIShortMatchModel*) TIR_Fo_FromRethink:(AIFoNodeBase*)fo baseDemand:(ReasonDemandModel*)baseDemand{
++(AIShortMatchModel*) TIR_Fo_FromRethink:(AIFoNodeBase*)fo {
     //1. 数据检查
     AIShortMatchModel *result = [[AIShortMatchModel alloc] init];
     if (!fo || !ARRISOK(fo.content_ps)) return result;

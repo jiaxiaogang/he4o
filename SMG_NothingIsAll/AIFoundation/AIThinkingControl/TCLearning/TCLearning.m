@@ -72,8 +72,4 @@
     [TCFeedback feedbackTIR:model];
 }
 
-+(void) subDemandLearning:(AIShortMatchModel*)model{
-    [TCFeedback feedbackSubDemand:model];
-}
-
 @end

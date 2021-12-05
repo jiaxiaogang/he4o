@@ -12,6 +12,5 @@
 
 +(void) pLearning:(AIFoNodeBase*)protoFo;
 +(void) rLearning:(AIShortMatchModel*)model recognitionMaskFo:(AIFoNodeBase*)recognitionMaskFo;
-+(void) subDemandLearning:(AIShortMatchModel*)model;
 
 @end
