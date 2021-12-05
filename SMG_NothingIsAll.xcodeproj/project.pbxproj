@@ -60,6 +60,7 @@
 		084C3A6D21926D7800DAA08A /* BirdView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 084C3A6C21926D7800DAA08A /* BirdView.xib */; };
 		084F132226FF6E1200E9D455 /* AITest.m in Sources */ = {isa = PBXBuildFile; fileRef = 084F132126FF6E1200E9D455 /* AITest.m */; };
 		0850496B2474A4200017F9A0 /* AIThinkOutAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 085049692474A41F0017F9A0 /* AIThinkOutAction.m */; };
+		08573166275C7DB900182AA7 /* TCFeedbackTOR.m in Sources */ = {isa = PBXBuildFile; fileRef = 08573165275C7DB900182AA7 /* TCFeedbackTOR.m */; };
 		0858C5AE2194F5DA00951BA5 /* CarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0858C5AD2194F5DA00951BA5 /* CarView.m */; };
 		0858C5B02194F5E400951BA5 /* CarView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0858C5AF2194F5E400951BA5 /* CarView.xib */; };
 		0858C5CB2194F8B000951BA5 /* MASCompositeConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 0858C5B52194F8B000951BA5 /* MASCompositeConstraint.m */; };
@@ -286,6 +287,8 @@
 		084F132126FF6E1200E9D455 /* AITest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AITest.m; sourceTree = "<group>"; };
 		085049692474A41F0017F9A0 /* AIThinkOutAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIThinkOutAction.m; sourceTree = "<group>"; };
 		0850496A2474A41F0017F9A0 /* AIThinkOutAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIThinkOutAction.h; sourceTree = "<group>"; };
+		08573164275C7DB900182AA7 /* TCFeedbackTOR.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCFeedbackTOR.h; sourceTree = "<group>"; };
+		08573165275C7DB900182AA7 /* TCFeedbackTOR.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCFeedbackTOR.m; sourceTree = "<group>"; };
 		0858C5AC2194F5DA00951BA5 /* CarView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CarView.h; sourceTree = "<group>"; };
 		0858C5AD2194F5DA00951BA5 /* CarView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CarView.m; sourceTree = "<group>"; };
 		0858C5AF2194F5E400951BA5 /* CarView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CarView.xib; sourceTree = "<group>"; };
@@ -774,6 +777,7 @@
 			isa = PBXGroup;
 			children = (
 				0877059E275373A700BA4EFB /* TCInput */,
+				08573163275C7D6E00182AA7 /* TCFeedbackTOR */,
 				0877059F275373B800BA4EFB /* TCRegroup */,
 				087705A0275373C000BA4EFB /* TCRecognition */,
 				08CFBDCB27584B1000B1F070 /* TCLearning */,
@@ -885,6 +889,15 @@
 				084F132126FF6E1200E9D455 /* AITest.m */,
 			);
 			path = Test;
+			sourceTree = "<group>";
+		};
+		08573163275C7D6E00182AA7 /* TCFeedbackTOR */ = {
+			isa = PBXGroup;
+			children = (
+				08573164275C7DB900182AA7 /* TCFeedbackTOR.h */,
+				08573165275C7DB900182AA7 /* TCFeedbackTOR.m */,
+			);
+			path = TCFeedbackTOR;
 			sourceTree = "<group>";
 		};
 		0858C5B32194F8B000951BA5 /* Masonry */ = {
@@ -1586,6 +1599,7 @@
 				0881965F21800F2B00D5DB36 /* BirdLivePage.m in Sources */,
 				0819F4F427583AA9007396D0 /* TCFeedback.m in Sources */,
 				4591E02D247F11DE00484B51 /* TOValueModel.m in Sources */,
+				08573166275C7DB900182AA7 /* TCFeedbackTOR.m in Sources */,
 				086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */,
 				08D471DE1FEB3FFF00C61322 /* AIImvAlgs.m in Sources */,
 				08A5D5E522AF2B8200E56BB4 /* NVDelegate_He.m in Sources */,

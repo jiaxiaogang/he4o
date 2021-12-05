@@ -10,8 +10,7 @@
 
 @interface TCDemand : NSObject
 
-+(void) rDemandFront:(AIShortMatchModel*)model;
-+(void) rDemandBack:(AIShortMatchModel*)model;
++(void) rDemand:(AIShortMatchModel*)model;
 +(void) pDemand:(AICMVNode*)cmvNode;
 +(void) subDemand:(AIShortMatchModel*)rtInModel;
 +(void) hDemand:(TOAlgModel*)algModel;    //H任务 (用来转移某概念的H任务);

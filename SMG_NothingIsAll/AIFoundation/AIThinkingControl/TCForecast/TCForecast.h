@@ -13,10 +13,9 @@
  */
 @interface TCForecast : NSObject
 
-+(void) rForecastFront:(AIShortMatchModel*)model;
-+(void) rForecastBack:(AIShortMatchModel*)model pushOldDemand:(BOOL)pushOldDemand;
++(void) rForecast:(AIShortMatchModel*)model;
 +(void) pForecast:(AICMVNode*)cmvNode;
-+(void) forecastIRT:(AIShortMatchModel*)model pushOldDemand:(BOOL)pushOldDemand;
++(void) forecastIRT:(AIShortMatchModel*)model;
 +(void) forecastSubDemand:(AIShortMatchModel*)model;
 
 @end

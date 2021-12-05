@@ -55,6 +55,7 @@
  *  联想网络杏仁核得来的则false;
  *  @version
  *      2020.10.19: 将add至ShortMatchManager代码前迁;
+ *      2021.12.05: 将feedbackTOR前迁到概念识别之后 (参考24171-9);
  */
 +(void) rLearning:(AIShortMatchModel*)model recognitionMaskFo:(AIFoNodeBase*)recognitionMaskFo{
     //3. 学习 for RFos: 加强RFos的抽具象关联;
@@ -69,9 +70,6 @@
     
     //5. TIR反馈;
     [TCFeedback feedbackTIR:model];
-    
-    //7. TOR反馈;
-    [TCFeedback feedbackTOR:model];
 }
 
 +(void) subDemandLearning:(AIShortMatchModel*)model{

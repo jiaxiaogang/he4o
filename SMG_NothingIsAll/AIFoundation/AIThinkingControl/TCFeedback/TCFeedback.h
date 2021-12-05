@@ -16,7 +16,6 @@
 @interface TCFeedback : NSObject
 
 +(void) feedbackTIR:(AIShortMatchModel*)model;
-+(void) feedbackTOR:(AIShortMatchModel*)model;
 +(void) feedbackTIP:(AICMVNode*)cmvNode;
 +(void) feedbackTOP:(AICMVNode*)cmvNode;
 +(void) feedbackSubDemand:(AIShortMatchModel*)model;

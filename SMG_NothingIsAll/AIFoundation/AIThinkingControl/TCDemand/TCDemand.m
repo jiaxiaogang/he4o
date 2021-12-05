@@ -10,13 +10,20 @@
 
 @implementation TCDemand
 
-+(void) rDemandFront:(AIShortMatchModel*)model{
+/**
+ *  MARK:--------------------r预测--------------------
+ *  @version
+ *      2021.12.05: 原本只有tor受阻时才执行solution,现改为不依赖tor,因为tor改到概念识别之后了 (参考24171-9);
+ */
++(void) rDemand:(AIShortMatchModel*)model{
     //2. 预测处理_把mv加入到demandManager;
     [theTC.outModelManager updateCMVCache_RMV:model];
-}
-
-+(void) rDemandBack:(AIShortMatchModel*)model{
-    [TCSolution solution];
+    
+    //6. 此处推进不成功,则运行TOP四模式;
+    BOOL torOPushMSuccess = false;
+    if (!torOPushMSuccess) {
+        [TCSolution solution];
+    }
 }
 
 /**

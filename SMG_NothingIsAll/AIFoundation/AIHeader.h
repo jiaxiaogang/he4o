@@ -36,6 +36,7 @@
 
 //2021新TC架构
 #import "TCInput.h"
+#import "TCFeedbackTOR.h"
 #import "TCRegroup.h"
 #import "TCRecognition.h"
 #import "TCLearning.h"

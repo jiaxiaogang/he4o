@@ -10,16 +10,12 @@
 
 @implementation TCForecast
 
-+(void) rForecastFront:(AIShortMatchModel*)model{
+/**
+ *  MARK:--------------------r预测--------------------
+ */
++(void) rForecast:(AIShortMatchModel*)model{
     //6. 传给TOR,做下一步处理: R任务_预测mv价值变化;
-    [TCDemand rDemandFront:model];
-}
-
-+(void) rForecastBack:(AIShortMatchModel*)model pushOldDemand:(BOOL)pushOldDemand{
-    //6. 此处推进不成功,则运行TOP四模式;
-    if (!pushOldDemand) {
-        [TCDemand rDemandBack:model];
-    }
+    [TCDemand rDemand:model];
 }
 
 +(void) pForecast:(AICMVNode*)cmvNode{
@@ -51,12 +47,12 @@
     //TODOTOMORROW20211130: 考虑将IRT触发器,交由任务树来完成,即每一条输入都很更新到任务树,任务树里的每一个分支都自带IRT预测;
     
     //1. 数据检查;
-    if (!inModel) return;
-    AIFoNodeBase *protoFo = inModel.protoFo;
+    if (!model) return;
+    AIFoNodeBase *protoFo = model.protoFo;
     IFTitleLog(@"预测",@"\nprotoFo:%@",Fo2FStr(protoFo));
     
     //3. 预测处理_反向反馈类比_生物钟触发器;
-    for (AIMatchFoModel *item in inModel.matchPFos) {
+    for (AIMatchFoModel *item in model.matchPFos) {
         AIFoNodeBase *matchFo = item.matchFo;
         BOOL isHNGL = [TOUtils isHNGL:matchFo.pointer];
         if (isHNGL) {
