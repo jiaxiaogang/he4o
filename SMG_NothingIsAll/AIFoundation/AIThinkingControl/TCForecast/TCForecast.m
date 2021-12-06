@@ -54,64 +54,43 @@
     //3. 预测处理_反向反馈类比_生物钟触发器;
     for (AIMatchFoModel *item in model.matchPFos) {
         AIFoNodeBase *matchFo = item.matchFo;
-        BOOL isHNGL = [TOUtils isHNGL:matchFo.pointer];
-        if (isHNGL) {
-            ////末位判断;
-            //if (item.cutIndex2 == matchFo.count - 2) {
-            //    item.status = TIModelStatus_LastWait;
-            //    double deltaTime = [NUMTOOK(ARR_INDEX_REVERSE(matchFo.deltaTimes, 0)) doubleValue];
-            //    [AITime setTimeTrigger:deltaTime trigger:^{
-            //        //4. 反向反馈类比(成功/未成功)的主要原因;
-            //        AnalogyType type = (item.status == TIModelStatus_LastWait) ? ATSub : ATPlus;
-            //        NSLog(@"---//触发器HNGL_触发: %@ (%@)",Fo2FStr(matchFo),ATType2Str(type));
-            //        [AIAnalogy analogy_InRethink:item shortFo:protoFo type:type];
-            //
-            //        //5. 失败状态标记;
-            //        if (item.status == TIModelStatus_LastWait) item.status = TIModelStatus_OutBackNone;
-            //    }];
-            //}
-        }else{
-            //有mv判断;
-            if (matchFo.cmvNode_p) {
-                item.status = TIModelStatus_LastWait;
-                double deltaTime = [TOUtils getSumDeltaTime2Mv:matchFo cutIndex:item.cutIndex2];
-                NSLog(@"---//IRT触发器新增:%p %@ (%@ | useTime:%.2f)",matchFo,Fo2FStr(matchFo),TIStatus2Str(item.status),deltaTime);
-                [AITime setTimeTrigger:deltaTime trigger:^{
-                    //3. 如果状态已改成OutBackReason,触发器失效,不进行反省;
-                    if (item.status == TIModelStatus_OutBackReason) {
-                        return;
-                    }
-                    
-                    //4. 反向反馈类比(成功/未成功)的主要原因 (参考tip_OPushM());
-                    AnalogyType type = ATDefault;
-                    if ([AINetUtils isVirtualMv:matchFo.cmvNode_p]) {
-                        //a. 虚mv反馈反向:S,未反馈:P;
-                        type = (item.status == TIModelStatus_OutBackDiffDelta) ? ATSub : ATPlus;
-                    }else{
-                        CGFloat score = [AIScore score4MV:matchFo.cmvNode_p ratio:1.0f];
-                        if (score > 0) {
-                            //b. 实mv+反馈同向:P(好),未反馈:S(坏);
-                            type = (item.status == TIModelStatus_OutBackSameDelta) ? ATPlus : ATSub;
-                        }else if(score < 0){
-                            //b. 实mv-反馈同向:S(坏),未反馈:P(好);
-                            type = (item.status == TIModelStatus_OutBackSameDelta) ? ATSub : ATPlus;
-                        }
-                    }
-                    NSLog(@"---//IRT触发器执行:%p %@ (%@ | %@)",matchFo,Fo2FStr(matchFo),TIStatus2Str(item.status),ATType2Str(type));
-                    
-                    //4. 输入期反省类比 (有OutBack,SP类型时执行);
-                    [AIAnalogy analogy_InRethink:item shortFo:protoFo type:type];
-                    
-                    //5. 反向反馈外类比 (无OutBack,为Wait时执行);
-                    if (item.status == TIModelStatus_LastWait) {
-                        [AIAnalogy analogy_Feedback_Diff:protoFo mModel:item];
-                    }
-                    
-                    //5. 失败状态标记;
-                    if (item.status == TIModelStatus_LastWait) item.status = TIModelStatus_OutBackNone;
-                }];
+        item.status = TIModelStatus_LastWait;
+        double deltaTime = [TOUtils getSumDeltaTime2Mv:matchFo cutIndex:item.cutIndex2];
+        NSLog(@"---//IRT触发器新增:%p %@ (%@ | useTime:%.2f)",matchFo,Fo2FStr(matchFo),TIStatus2Str(item.status),deltaTime);
+        [AITime setTimeTrigger:deltaTime trigger:^{
+            //3. 如果状态已改成OutBackReason,触发器失效,不进行反省;
+            if (item.status == TIModelStatus_OutBackReason) {
+                return;
             }
-        }
+            
+            //4. 反向反馈类比(成功/未成功)的主要原因 (参考tip_OPushM());
+            AnalogyType type = ATDefault;
+            if ([AINetUtils isVirtualMv:matchFo.cmvNode_p]) {
+                //a. 虚mv反馈反向:S,未反馈:P;
+                type = (item.status == TIModelStatus_OutBackDiffDelta) ? ATSub : ATPlus;
+            }else{
+                CGFloat score = [AIScore score4MV:matchFo.cmvNode_p ratio:1.0f];
+                if (score > 0) {
+                    //b. 实mv+反馈同向:P(好),未反馈:S(坏);
+                    type = (item.status == TIModelStatus_OutBackSameDelta) ? ATPlus : ATSub;
+                }else if(score < 0){
+                    //b. 实mv-反馈同向:S(坏),未反馈:P(好);
+                    type = (item.status == TIModelStatus_OutBackSameDelta) ? ATSub : ATPlus;
+                }
+            }
+            NSLog(@"---//IRT触发器执行:%p %@ (%@ | %@)",matchFo,Fo2FStr(matchFo),TIStatus2Str(item.status),ATType2Str(type));
+            
+            //4. 输入期反省类比 (有OutBack,SP类型时执行);
+            [AIAnalogy analogy_InRethink:item shortFo:protoFo type:type];
+            
+            //5. 反向反馈外类比 (无OutBack,为Wait时执行);
+            if (item.status == TIModelStatus_LastWait) {
+                [AIAnalogy analogy_Feedback_Diff:protoFo mModel:item];
+            }
+            
+            //5. 失败状态标记;
+            if (item.status == TIModelStatus_LastWait) item.status = TIModelStatus_OutBackNone;
+        }];
     }
 }
 
