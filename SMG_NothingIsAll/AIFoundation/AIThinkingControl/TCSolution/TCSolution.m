@@ -46,6 +46,12 @@
     //1. 数据准备
     DemandModel *demand = [theTC.outModelManager getCanDecisionDemand];
     [self solution:demand];
+    
+    
+    
+    //----------TODOTOMORROW20211205:
+    //3. 无论子任务是否解决,都回来判综合评分pk,比如子任务不解决我也要继续父任务;
+    //4. 分析此从root出发,对各rootDemand的竞争,针对子任务,能否自动调用继续决策螺旋 (一个个一层层进行综合pk);
 }
 
 +(void) solution:(DemandModel*)demand{

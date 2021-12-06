@@ -13,7 +13,7 @@
 +(void) rDemand:(AIShortMatchModel*)model;  //R任务
 +(void) pDemand:(AICMVNode*)cmvNode;        //P任务
 +(void) subDemand:(AIShortMatchModel*)rtInModel foModel:(TOFoModel*)foModel;
-+(void) feedbackDemand:(AIShortMatchModel*)model;
++(void) feedbackDemand:(AIShortMatchModel*)model foModel:(TOFoModel*)foModel;
 +(void) hDemand:(TOAlgModel*)algModel;      //H任务 (用来转移某概念的H任务);
 
 @end

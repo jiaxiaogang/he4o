@@ -84,19 +84,19 @@
  *      1. 输出反思已废弃;
  *      2. 输入反思功能整合回正向识别中 (即由重组,来调用识别实现);
  */
-+(void) feedbackRecognition:(AIFoNodeBase*)fo {
++(void) feedbackRecognition:(AIFoNodeBase*)regroupFo foModel:(TOFoModel*)foModel{
     //1. 数据检查
     AIShortMatchModel *result = [[AIShortMatchModel alloc] init];
-    OFTitleLog(@"反思时序识别", @"\n%@",Fo2FStr(fo));
+    OFTitleLog(@"反思时序识别", @"\n%@",Fo2FStr(regroupFo));
     
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [AIThinkInReason partMatching_FoV1Dot5:fo except_ps:@[fo.pointer] decoratorInModel:result findCutIndex:^NSInteger(AIFoNodeBase *matchFo, NSInteger lastMatchIndex) {
+    [AIThinkInReason partMatching_FoV1Dot5:fo except_ps:@[regroupFo.pointer] decoratorInModel:result findCutIndex:^NSInteger(AIFoNodeBase *matchFo, NSInteger lastMatchIndex) {
         return -1;
     }];
     //NSLog(@"反思时序: Finish >> %@",Fo2FStr(result.matchFo));
     
     //3. 调用更新到短时记忆树;
-    [TCForecast feedbackForecast:result];
+    [TCForecast feedbackForecast:result foModel:foModel];
 }
 
 @end

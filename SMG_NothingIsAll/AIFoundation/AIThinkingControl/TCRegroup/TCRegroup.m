@@ -68,10 +68,10 @@
     }
     
     //6. 将时序元素生成新时序;
-    AIFoNodeBase *protoFo = [theNet createConFo:order isMem:true];
+    AIFoNodeBase *regroupFo = [theNet createConFo:order isMem:true];
 
     //7. 识别时序 (预测到鸡蛋变脏,或者cpu损坏) (理性预测影响评价即理性评价);
-    [TCRecognition feedbackRecognition:protoFo];
+    [TCRecognition feedbackRecognition:regroupFo foModel:foModel];
 }
 
 @end

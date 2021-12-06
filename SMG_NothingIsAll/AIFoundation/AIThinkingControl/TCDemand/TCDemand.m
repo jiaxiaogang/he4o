@@ -20,10 +20,7 @@
     [theTC.outModelManager updateCMVCache_RMV:model];
     
     //6. 此处推进不成功,则运行TOP四模式;
-    BOOL torOPushMSuccess = false;
-    if (!torOPushMSuccess) {
-        [TCSolution solution];
-    }
+    [TCSolution solution];
 }
 
 /**
@@ -84,16 +81,16 @@
     
 }
 
-+(void) feedbackDemand:(AIShortMatchModel*)model{
-    
-    
-    //----------TODOTOMORROW20211205: 反馈feedback后,生成子任务;
-    //2. 子任务能解决便解决,解决不了的(也有可能是因为来不及,所以解决方案失败);
-    //3. 识别结果pFos挂载到focusFo下做子任务 (好的坏的全挂载,比如做的饭我爱吃{MV+},但是又太麻烦{MV-});
-    //4. 然后分析下,到TCDemand中,能否从root自动调用继续决策螺旋 (一个个一层层进行综合pk);
-    //3. 无论子任务是否解决,都回来判综合评分pk,比如子任务不解决我也要继续父任务;
-    
-
+/**
+ *  MARK:--------------------反馈生成子任务--------------------
+ *  @version
+ *      2021.12.06: 反馈feedback后生成子任务,但并不触发solution决策 (参考24171-9de);
+ */
++(void) feedbackDemand:(AIShortMatchModel*)model foModel:(TOFoModel*)foModel{
+    //1. 识别结果pFos挂载到targetFoModel下做子任务 (好的坏的全挂载,比如做的饭我爱吃{MV+},但是又太麻烦{MV-});
+    for (AIMatchFoModel *item in model.matchPFos) {
+        [ReasonDemandModel newWithMModel:item inModel:model baseFo:foModel];
+    }
 }
 
 +(void) hDemand:(TOAlgModel*)algModel{

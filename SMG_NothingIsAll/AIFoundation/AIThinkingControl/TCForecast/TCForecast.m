@@ -94,8 +94,8 @@
     }
 }
 
-+(void) feedbackForecast:(AIShortMatchModel*)model{    
-    [TCDemand feedbackDemand:model];
++(void) feedbackForecast:(AIShortMatchModel*)model foModel:(TOFoModel*)foModel{
+    [TCDemand feedbackDemand:model foModel:foModel];
 }
 
 @end
