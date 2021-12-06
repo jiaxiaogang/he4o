@@ -45,7 +45,7 @@
 }
 
 //交由DemandManager构建任务完成;
-+(void) subDemand:(AIShortMatchModel*)rtInModel{
++(void) subDemand:(AIShortMatchModel*)rtInModel foModel:(TOFoModel*)foModel{
     
     
     //TODOTOMORROW20211128: 构建任务树 (将DemandManager代码整理过来);
@@ -72,16 +72,28 @@
     //  a2: 全部子任务决策过后,剩下无法实践解决的价值之和,是否使其足够放弃当前父任务; (比如又累又烦的活,赚钱也不干) --> 失败递归;
     
     //8. 子任务尝试完成后,进行FPS综合评价 (如果子任务完成后,依然有解决不了的不愿意的价值,则不通过);
-    __block NSArray *except_ps = nil;//不应期 = 当前所有子任务 - 已解决的 - actYes中的;
+    NSArray *except_ps = nil;//不应期 = 当前所有子任务 - 已解决的 - actYes中的;
     BOOL scoreSuccess = [AIScore FPS:foModel rtInModel:rtInModel except_ps:except_ps];
     NSLog(@"未发生感性评价(反思)-%@",scoreSuccess ? @"通过 (继续父fo行为化)" : @"不通过 (中断父fo行为化)");
     if (!scoreSuccess) {
         foModel.status = TOModelStatus_ScoreNo;
-        [self.delegate toAction_SubModelFailure:foModel];
+        [theTOR singleLoopBackWithFailureModel:foModel];
         return;
     }
     
     
+}
+
++(void) feedbackDemand:(AIShortMatchModel*)model{
+    
+    
+    //----------TODOTOMORROW20211205: 反馈feedback后,生成子任务;
+    //2. 子任务能解决便解决,解决不了的(也有可能是因为来不及,所以解决方案失败);
+    //3. 识别结果pFos挂载到focusFo下做子任务 (好的坏的全挂载,比如做的饭我爱吃{MV+},但是又太麻烦{MV-});
+    //4. 然后分析下,到TCDemand中,能否从root自动调用继续决策螺旋 (一个个一层层进行综合pk);
+    //3. 无论子任务是否解决,都回来判综合评分pk,比如子任务不解决我也要继续父任务;
+    
+
 }
 
 +(void) hDemand:(TOAlgModel*)algModel{
