@@ -52,6 +52,19 @@
     //----------TODOTOMORROW20211205:
     //3. 无论子任务是否解决,都回来判综合评分pk,比如子任务不解决我也要继续父任务;
     //4. 分析此从root出发,对各rootDemand的竞争,针对子任务,能否自动调用继续决策螺旋 (一个个一层层进行综合pk);
+    
+    //方案池pk
+    //1. 枝节下: solution多选一,而demand全算数;
+    //2. pk规则:
+    //  a. 理性淘汰;
+    //  b. 感性淘汰;
+    //  c. 剩余按评分排序,求出最优路径;
+    
+    //3. 当选择执行哪个末尾(subDemand)继续决策时,将最后一层评分不计入综评中,
+    //  a. 然后pk出的结果为主线 (如选择吃饭,而不是吃水果);
+    //  b. 最后一层多条subdemand之间的pk为辅线 (如选择下馆子,而不是做饭或点外卖);
+    //  c. 对下馆子看哪家更好吃,或者哪家更卫生,更近等;
+    
 }
 
 +(void) solution:(DemandModel*)demand{
@@ -257,7 +270,7 @@
 
 +(void) hSolution:(HDemandModel*)hDemand{
     //3. 数据检查curAlg
-    TOAlgModel *algModel = hDemand.algModel;
+    TOAlgModel *algModel = (TOAlgModel*)hDemand.baseOrGroup;
     AIAlgNodeBase *curAlg = [SMGUtils searchNode:algModel.content_p];
     OFTitleLog(@"行为化_Hav", @"\nC:%@",Alg2FStr(curAlg));
     
