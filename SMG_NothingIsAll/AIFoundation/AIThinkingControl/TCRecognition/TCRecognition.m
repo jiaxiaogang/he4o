@@ -90,7 +90,7 @@
     OFTitleLog(@"反思时序识别", @"\n%@",Fo2FStr(regroupFo));
     
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [AIThinkInReason partMatching_FoV1Dot5:fo except_ps:@[regroupFo.pointer] decoratorInModel:result findCutIndex:^NSInteger(AIFoNodeBase *matchFo, NSInteger lastMatchIndex) {
+    [AIThinkInReason partMatching_FoV1Dot5:regroupFo except_ps:@[regroupFo.pointer] decoratorInModel:result findCutIndex:^NSInteger(AIFoNodeBase *matchFo, NSInteger lastMatchIndex) {
         return -1;
     }];
     //NSLog(@"反思时序: Finish >> %@",Fo2FStr(result.matchFo));

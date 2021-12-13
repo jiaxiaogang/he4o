@@ -48,7 +48,7 @@
     //TODOTOMORROW20211128: 构建任务树 (将DemandManager代码整理过来);
     
     //5. 提交子任务;
-    __block NSArray *except_ps = nil;
+    __block NSArray *except_ps0 = nil;
     [DemandManager updateSubDemand:rtInModel baseFo:foModel createSubDemandBlock:^(ReasonDemandModel *subDemand) {
         
         //6. 子任务行为化,转TCSolution;
@@ -56,7 +56,7 @@
         //return;//子任务Finish/ActYes时,不return,因为要继续父任务;
         
     } finishBlock:^(NSArray *_except_ps) {
-        except_ps = _except_ps;
+        except_ps0 = _except_ps;
     }];
     
     
