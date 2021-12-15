@@ -20,7 +20,7 @@
     [theTC.outModelManager updateCMVCache_RMV:model];
     
     //6. 此处推进不成功,则运行TOP四模式;
-    [TCSolution solution];
+    [TCPlan plan];
 }
 
 /**
@@ -38,7 +38,7 @@
     [theTC.outModelManager updateCMVCache_PMV:algsType urgentTo:urgentTo delta:delta];
     
     //2. 转向执行;
-    [TCSolution solution];
+    [TCPlan plan];
 }
 
 //交由DemandManager构建任务完成;

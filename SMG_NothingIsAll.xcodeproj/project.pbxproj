@@ -125,6 +125,7 @@
 		08AF454D1E97D0B500377887 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF454C1E97D0B500377887 /* AppDelegate.m */; };
 		08AF45551E97D0B500377887 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45541E97D0B500377887 /* Assets.xcassets */; };
 		08AF45581E97D0B500377887 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45561E97D0B500377887 /* LaunchScreen.storyboard */; };
+		08AFC5F0276979D8000BAB26 /* TCPlan.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AFC5EF276979D8000BAB26 /* TCPlan.m */; };
 		08B31E7E20648C3700FD96EA /* ThinkingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B31E7D20648C3700FD96EA /* ThinkingUtils.m */; };
 		08C6C2632518E49400DDE6BF /* NSLog+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C6C2622518E49400DDE6BF /* NSLog+Extension.m */; };
 		08C7539225A3EEB800BCF011 /* AIScore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C7539125A3EEB800BCF011 /* AIScore.m */; };
@@ -412,6 +413,8 @@
 		08AF45541E97D0B500377887 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		08AF45571E97D0B500377887 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		08AF45591E97D0B500377887 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		08AFC5EE276979D8000BAB26 /* TCPlan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCPlan.h; sourceTree = "<group>"; };
+		08AFC5EF276979D8000BAB26 /* TCPlan.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCPlan.m; sourceTree = "<group>"; };
 		08B31E7C20648C3700FD96EA /* ThinkingUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThinkingUtils.h; sourceTree = "<group>"; };
 		08B31E7D20648C3700FD96EA /* ThinkingUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ThinkingUtils.m; sourceTree = "<group>"; };
 		08B4DAEC25E881D200E32DB1 /* XGDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XGDelegate.h; sourceTree = "<group>"; };
@@ -784,6 +787,7 @@
 				08CFBDCC27584B2600B1F070 /* TCFeedback */,
 				087705A1275373D200BA4EFB /* TCForecast */,
 				087705A2275373E100BA4EFB /* TCDemand */,
+				08AFC5ED276979A2000BAB26 /* TCPlan */,
 				087705A3275373FA00BA4EFB /* TCSolution */,
 				087705A42753740600BA4EFB /* TCAction */,
 				087705A52753740F00BA4EFB /* TCOut */,
@@ -1144,6 +1148,15 @@
 				08AF45491E97D0B500377887 /* main.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		08AFC5ED276979A2000BAB26 /* TCPlan */ = {
+			isa = PBXGroup;
+			children = (
+				08AFC5EE276979D8000BAB26 /* TCPlan.h */,
+				08AFC5EF276979D8000BAB26 /* TCPlan.m */,
+			);
+			path = TCPlan;
 			sourceTree = "<group>";
 		};
 		08B3677321530FA10046F1F8 /* Extension */ = {
@@ -1706,6 +1719,7 @@
 				08AF454A1E97D0B500377887 /* main.m in Sources */,
 				085BA9F4241C421500829450 /* HeLogUtil.m in Sources */,
 				88988524208979E6001D1ADC /* AINetIndex.m in Sources */,
+				08AFC5F0276979D8000BAB26 /* TCPlan.m in Sources */,
 				081BD08B25B94F24003C3038 /* PerceptDemandModel.m in Sources */,
 				8868F6EB210A946A000EAC9B /* AIAbsCMVManager.m in Sources */,
 				0858C5D12194F8B000951BA5 /* NSArray+MASAdditions.m in Sources */,
