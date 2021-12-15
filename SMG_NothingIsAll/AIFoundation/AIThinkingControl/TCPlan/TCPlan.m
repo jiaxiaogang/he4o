@@ -66,6 +66,22 @@
     
 }
 
+/**
+ *  MARK:--------------------对toModel综合评分--------------------
+ *  @desc 对解决方案S进行综合评分;
+ *  @result 将rootModel及其下分枝评分全部计算,并存为字典返回 <K=foModel,V=score>;
+ */
++(NSDictionary*) score4Solution:(TOFoModel*)model{
+    //1. 数据准备;
+    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
+    
+    //2. 从model向下取subModels,遇到R就求和,遇到S就竞争;
+    
+    
+    
+    return result;
+}
+
 +(void) plan:(DemandModel*)demand{
     
     //2. 同区两个模式之R-;
