@@ -12,7 +12,8 @@
 @interface TOAlgModel()
 
 @property (strong, nonatomic) NSMutableArray *actionFoModels;
-@property (strong, nonatomic) NSMutableArray *subModels;
+@property (strong, nonatomic) NSMutableArray *subModels;    //旧版本用于存subValueModel;
+@property (strong, nonatomic) NSMutableArray *subDemands;   //新版用于放hDemand;
 
 @end
 
@@ -34,6 +35,11 @@
 -(NSMutableArray *)subModels {
     if (_subModels == nil) _subModels = [[NSMutableArray alloc] init];
     return _subModels;
+}
+
+-(NSMutableArray*) subDemands{
+    if (_subDemands == nil) _subDemands = [[NSMutableArray alloc] init];
+    return _subDemands;
 }
 
 -(NSMutableDictionary *)cGLDic{

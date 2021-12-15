@@ -13,7 +13,7 @@
 +(HDemandModel*) newWithAlgModel:(TOAlgModel*)base{
     HDemandModel *result = [[HDemandModel alloc] init];
     result.baseOrGroup = base;
-    [base.subModels addObject:result];
+    [base.subDemands addObject:result];
     return result;
 }
 

@@ -9,6 +9,7 @@
 #import "TOModelBase.h"
 #import "ITryActionFoDelegate.h"
 #import "ISubModelsDelegate.h"
+#import "ISubDemandDelegate.h"
 
 /**
  *  MARK:--------------------决策中的概念模型--------------------
@@ -22,7 +23,7 @@
  *      4. 在Act_Yes后,外循环有了结果后,要先进行方案(三)的理性评价,才可以转为Finish;
  */
 @class TOFoModel;
-@interface TOAlgModel : TOModelBase <ITryActionFoDelegate,ISubModelsDelegate>
+@interface TOAlgModel : TOModelBase <ITryActionFoDelegate,ISubModelsDelegate,ISubDemandDelegate>
 
 +(TOAlgModel*) newWithAlg_p:(AIKVPointer*)alg_p group:(id<ISubModelsDelegate>)group;
 

@@ -77,6 +77,11 @@
     
     //2. 从model向下取subModels,遇到R就求和,遇到S就竞争;
     
+    model.subDemands
+    
+    //RDemand在FoModel.subDemands下; (R求和);
+    //HDemand在AlgModel.subDemands下; (H必须有解决方案,否则理性淘汰);
+    
     
     
     return result;
