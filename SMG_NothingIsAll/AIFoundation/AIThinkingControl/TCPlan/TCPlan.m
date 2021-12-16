@@ -64,39 +64,32 @@
     //  c. 判断最终最优路径是否感性淘汰->淘汰的话继续下一个secondRoot,尝试第a步;
     //  d. 判断最优路径是否感性淘汰->未淘汰的话继续行为化;
     
+    //1. 对firstRootDemand取最优解决方案 & 和得分字典;
+    NSMutableDictionary *scoreDic = [[NSMutableDictionary alloc] init];
+    TOFoModel *foModel = [self score4Solution_Best:demand.actionFoModels scoreDic:scoreDic];
     
+    //2. 取应当前行为化的fo解决方案;
+    double demandScore = [AIScore score4MV:demand.algsType urgentTo:demand.urgentTo delta:demand.delta ratio:1.0f];
+    TOFoModel *todoFo = [self getCurToDo:scoreDic baseFo:foModel demandScore:demandScore];
     
-    
-    
-    
-    
+    //3. 继续执行决策;
+    [TCSolution hSolution:nil];
 }
 
-/**
- *  MARK:--------------------对toModel综合评分--------------------
- *  @desc 对解决方案S进行综合评分 (参考24192);
- *  @result 将rootModel及其下分枝评分全部计算,并存为字典返回 <K=foModel,V=score>;
- */
-+(NSArray*) getPlanSolution:(TOFoModel*)rootFo{
-    //1. 数据准备;
-    NSMutableDictionary *scoreDic = [[NSMutableDictionary alloc] init];
-    
-    //2. 算出得分字典;
-    [self score4Solution_Single:rootFo scoreDic:scoreDic];
-    
-    //3. 得出最优路径;
-    NSArray *bestWay = [self bestWay:scoreDic rootFo:rootFo];
-    return bestWay;
-}
+//MARK:===============================================================
+//MARK:                     < 综合评分和最优路径 >
+//MARK:===============================================================
 
 /**
  *  MARK:--------------------短时记忆树综合评分--------------------
+ *  @desc 对解决方案S进行综合评分 (参考24192);
  *  @desc
  *      1. 缩写说明: 1.sr=SubRDemand 2.ss=SubSolution 3.sa=SubAlgModel 4.sh=SubHDemand
  *      2. 每执行一次single方法,则scoreDic中收集一条model的得分 <foModel,score>;
  *      3. S竞争方法由_Best方法实现;
  *      4. R求和方法主要在_Single中实现;
  *      5. 先将所有得分算完后,再重新从root开始算最优路径,因为只有子枝算完,父枝才能知道怎么算最优路径;
+ *  _result 将model及其下有效的分枝评分计算,并收集到评分字典 <K=foModel,V=score>;
  */
 +(void) score4Solution_Single:(TOFoModel*)model scoreDic:(NSMutableDictionary*)scoreDic{
     //1. 数据检查;
@@ -180,10 +173,47 @@
 }
 
 /**
- *  MARK:--------------------取最优路径--------------------
+ *  MARK:--------------------取当前要执行的解决方案--------------------
+ *  @desc 从最优路径的末尾取 (最优路径可能有在subRDemands处分叉口,那么依次解决叉口任务);
  */
-+(NSArray*) bestWay:(NSMutableDictionary*)scoreDic rootFo:(TOFoModel*)rootFo{
-
++(TOFoModel*) getCurToDo:(NSMutableDictionary*)scoreDic baseFo:(TOFoModel*)baseFo demandScore:(double)demandScore{
+    //1. 只要直接对baseFo取得分;
+    double baseScore = [NUMTOOK([scoreDic objectForKey:baseFo.content_p]) doubleValue];
+    
+    //2. 未感性淘汰,那么它的子R和H任务中,肯定就没有一个是"理性淘汰"的;
+    if (baseScore > demandScore) {
+        
+        //1. 先解决子R任务 (副作用,磨刀不误砍柴功);
+        for (ReasonDemandModel *rDemand in baseFo.subDemands) {
+            //判断itemR.status是否已finish;
+            
+            //判断,任何S全先做感性淘汰判断;
+            
+            //从未finish的,也未感性淘汰的,一条路走到黑(while循环),然后把最后的结果return返回;
+            
+            for (TOFoModel *itemFo in rDemand.actionFoModels) {
+                //  b. 那么它的子解决方案中,肯定至少有一个是未"理性淘汰"的;
+            }
+            
+            
+        }
+        
+        //2. 再解决子H任务,即推进时序跳下一帧 (磨完刀了去继续砍柴);
+        for (TOAlgModel *item in baseFo.subModels) {
+            HDemandModel *hDemand = ARR_INDEX(item.subDemands, 0);
+            for (TOFoModel *itemFo in hDemand.actionFoModels) {
+                //  b. 那么它的子解决方案中,肯定至少有一个是未"理性淘汰"的;
+            }
+            
+        }
+        
+        
+        
+        
+        
+    }
+    
+    
     return nil;
 }
 
