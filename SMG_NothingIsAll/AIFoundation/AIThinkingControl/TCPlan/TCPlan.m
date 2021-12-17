@@ -183,37 +183,41 @@
     //2. 未感性淘汰,那么它的子R和H任务中,肯定就没有一个是"理性淘汰"的;
     if (baseScore > demandScore) {
         
-        //1. 先解决子R任务 (副作用,磨刀不误砍柴功);
-        for (ReasonDemandModel *rDemand in baseFo.subDemands) {
-            //判断itemR.status是否已finish;
-            
-            //判断,任何S全先做感性淘汰判断;
-            
-            //从未finish的,也未感性淘汰的,一条路走到黑(while循环),然后把最后的结果return返回;
-            
-            for (TOFoModel *itemFo in rDemand.actionFoModels) {
-                //  b. 那么它的子解决方案中,肯定至少有一个是未"理性淘汰"的;
-            }
-            
-            
-        }
+        //3. 收集所有子需求;
+        NSMutableArray *allSubDemands = [[NSMutableArray alloc] init];
         
-        //2. 再解决子H任务,即推进时序跳下一帧 (磨完刀了去继续砍柴);
-        for (TOAlgModel *item in baseFo.subModels) {
+        //4. 先解决子R任务 (副作用,磨刀不误砍柴功);
+        [allSubDemands addObjectsFromArray:baseFo.subDemands];
+        
+        //5. 再解决子H任务,即推进时序跳下一帧 (磨完刀了去继续砍柴);
+        NSArray *subHDemands = [SMGUtils convertArr:baseFo.subModels convertBlock:^id(TOAlgModel *item) {
             HDemandModel *hDemand = ARR_INDEX(item.subDemands, 0);
-            for (TOFoModel *itemFo in hDemand.actionFoModels) {
-                //  b. 那么它的子解决方案中,肯定至少有一个是未"理性淘汰"的;
+            return hDemand;
+        }];
+        [allSubDemands addObjectsFromArray:subHDemands];
+        
+        //6. 从R到H逐一尝试最优路径,并返回;
+        for (DemandModel *subDemand in allSubDemands) {
+            //7. 判断subDemand.status是否已finish;
+            if (subDemand.status == TOModelStatus_Finish) {
+                continue;
             }
             
+            //8. 因为未感性淘汰,它的子解决方案中,必有至少一个是未"理性淘汰"的;
+            for (TOFoModel *itemFo in subDemand.actionFoModels) {
+                //9. 判断,任何S全先做感性淘汰判断;
+                double itemScore = [NUMTOOK([scoreDic objectForKey:itemFo.content_p]) doubleValue];
+                if (itemScore < demandScore) {
+                    continue;
+                }
+                
+                //10. 未感性淘汰的,一条路走到黑(递归循环),然后把最后的结果return返回;
+                return [self getCurToDo:scoreDic baseFo:itemFo demandScore:demandScore];
+            }
         }
-        
-        
-        
-        
-        
     }
     
-    
+    //11. 所有subDemands都决策完,或者感性就已经淘汰...那么开始下一个rootDemand?
     return nil;
 }
 
