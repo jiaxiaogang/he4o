@@ -11,68 +11,24 @@
 @implementation TCPlan
 
 /**
- *  MARK:--------------------topV2--------------------
- *  注:assExp联想经验(饿了找瓜)(递归)
- *  注:loopAssExp中本身已经是内心活动联想到的mv
+ *  MARK:--------------------新螺旋架构plan方法--------------------
  *  @desc
- *      1. 四种(2x2)TOP模式 (优先取同区工作模式,不行再以不同区工作模式);
- *      2. 调用者只管调用触发,模型生成,参数保留;
- *  @desc P决策模式 (框架: index -> mvNode -> foNode -> algNode -> action);
- *      3. 不指定model (从cmvCache取) (旧注释)
- *      4. 每一轮循环不仅是想下一个singleMvPort;也有可能在当前port上,进行二次思考; (旧注释)
- *      5. 从expCache下,根据可行性,选定一个解决方案; (旧注释)
- *      6. 有需求时,找出outMvModel,尝试决策并解决; (旧注释)
- *  @version
- *      20200430 : v2,四种工作模式版;
- *      20200824 : 将外循环输入推进中循环,改到上一步aiThinkIn_CommitNoMv2TC()中;
  *  @todo
- *      1. 集成活跃度的判断和消耗;
- *      2. 集成outModel;
- *      3. TODOTOMORROW: 下面传给四模式的代码,用bool方式直接返回finish的判断不妥,改之;
- *      2021.01.22: 对ActYes或者OutBack的Demand进行不应期处理 (未完成);
- *  @status
- *      1. R+模式: 废弃状态,此模式暂时用不着;
- *      2. R-模式: 启用状态;
- *      3. P+模式: 废弃状态,此模式暂时用不着;
- *      4. P-模式: 启用状态;
+ *      2021.12.08: 后续solution行为化处理,根据>cutIndex筛选 (参考24185-方案1-代码);
  */
 +(void) plan{
-    //1. 数据准备
+    //1. 取当前任务 (参考24195-1);
     DemandModel *demand = [theTC.outModelManager getCanDecisionDemand];
-    [self plan:demand];
     
-    
-    //----------TODOTOMORROW20211208: solution代码规划 (参考24192);
-    //1. 从root出发,逐层综评;
-    //2. 综评之: 理性淘汰的判断;
-    //3. 综评之: 感性pk,并继续向sub深入;
-    //4. 逐层综评pk,深入到最终节点 (当最终枝点S超过3条时,向前1节,取nextSolution);
-    //5. 最终所有层全取完3条solution后,可以做感性淘汰;
-    //6. 最终未淘汰且竞争在首位的枝点: 继续solution推进行为化: 取解决方案或输出行为;
-    
-    
-    //后续solution行为化处理:
-    //1. 根据>cutIndex筛选 (参考24185-方案1-代码);
-    //2. ...
-    
-    
-    
-    //TODOTOMORROW20211216: 单纯对rootDemand的迫切度进行竞争 (参考24194);
-    //1. 从任务树取出几个rootDemand,对每个root,直接进行迫切度竞争,取出老大进行行为化;
-    //  a. 对firstRoot进行single综合评分,并取最优路径;
-    //  b. 判断最优路径是否为负分->为负分的话,进行下一S解决方案;
-    //  c. 判断最终最优路径是否感性淘汰->淘汰的话继续下一个secondRoot,尝试第a步;
-    //  d. 判断最优路径是否感性淘汰->未淘汰的话继续行为化;
-    
-    //1. 对firstRootDemand取最优解决方案 & 和得分字典;
+    //2. 对firstRootDemand取得分字典 (参考24195-2);
     NSMutableDictionary *scoreDic = [[NSMutableDictionary alloc] init];
-    TOFoModel *foModel = [self score4Solution_Best:demand.actionFoModels scoreDic:scoreDic];
+    TOFoModel *foModel = [self score4Plan_Multi:demand.actionFoModels scoreDic:scoreDic];
     
-    //2. 取应当前行为化的fo解决方案;
+    //3. 根据得分字典,从root向sub,取最优路径 (参考24195-3);
     double demandScore = [AIScore score4MV:demand.algsType urgentTo:demand.urgentTo delta:demand.delta ratio:1.0f];
-    TOFoModel *todoFo = [self getCurToDo:scoreDic baseFo:foModel demandScore:demandScore];
+    TOFoModel *endBranch = [self bestEndBranch4Plan:scoreDic baseFo:foModel demandScore:demandScore];
     
-    //3. 继续执行决策;
+    //4. 从最优路径末枝的解决方案,转给TCSolution执行 (参考24195-4);
     [TCSolution hSolution:nil];
 }
 
@@ -91,7 +47,7 @@
  *      5. 先将所有得分算完后,再重新从root开始算最优路径,因为只有子枝算完,父枝才能知道怎么算最优路径;
  *  _result 将model及其下有效的分枝评分计算,并收集到评分字典 <K=foModel,V=score>;
  */
-+(void) score4Solution_Single:(TOFoModel*)model scoreDic:(NSMutableDictionary*)scoreDic{
++(void) score4Plan_Single:(TOFoModel*)model scoreDic:(NSMutableDictionary*)scoreDic{
     //1. 数据检查;
     if (!scoreDic) scoreDic = [[NSMutableDictionary alloc] init];
     double modelScore = 0;
@@ -107,12 +63,12 @@
             if (ARRISOK(sh.actionFoModels)) {
                 
                 //a. 对S竞争;
-                TOFoModel *bestSS = [self score4Solution_Best:sh.actionFoModels scoreDic:scoreDic];
+                TOFoModel *bestSS = [self score4Plan_Multi:sh.actionFoModels scoreDic:scoreDic];
                 
                 //b. 将竞争胜者计入modelScore;
                 modelScore += [NUMTOOK([scoreDic objectForKey:bestSS.content_p]) doubleValue];
             }else{
-                //5. H无解决方案时,则理性淘汰;
+                //5. H无解决方案时,则理性淘汰 (参考24192-H14);
                 [scoreDic setObject:@(INT_MIN) forKey:model.content_p];
                 return;
             }
@@ -127,7 +83,7 @@
         if (ARRISOK(sr.actionFoModels)) {
             
             //a. 对S竞争;
-            TOFoModel *bestSS = [self score4Solution_Best:sr.actionFoModels scoreDic:scoreDic];
+            TOFoModel *bestSS = [self score4Plan_Multi:sr.actionFoModels scoreDic:scoreDic];
             
             //b. 将竞争胜者计入modelScore;
             modelScore += [NUMTOOK([scoreDic objectForKey:bestSS.content_p]) doubleValue];
@@ -144,17 +100,18 @@
 
 /**
  *  MARK:--------------------S解决方案竞争--------------------
+ *  @desc 感性竞争 (参考24192-R9);
  *  @param foModels : 解决方案S数,必须>=1条;
  *  @param scoreDic : notnull
  *  @result 将bestFo返回;
  */
-+(TOFoModel*) score4Solution_Best:(NSArray*)foModels scoreDic:(NSMutableDictionary*)scoreDic{
++(TOFoModel*) score4Plan_Multi:(NSArray*)foModels scoreDic:(NSMutableDictionary*)scoreDic{
     //1. 取出子任务的每个解决方案S (竞争);
     TOFoModel *bestFoModel = nil;
     for (TOFoModel *foModel in foModels) {
         
         //2. 评分
-        [self score4Solution_Single:foModel scoreDic:scoreDic];
+        [self score4Plan_Single:foModel scoreDic:scoreDic];
         
         //3. 竞争
         if (!bestFoModel) {
@@ -176,7 +133,7 @@
  *  MARK:--------------------取当前要执行的解决方案--------------------
  *  @desc 从最优路径的末尾取 (最优路径可能有在subRDemands处分叉口,那么依次解决叉口任务);
  */
-+(TOFoModel*) getCurToDo:(NSMutableDictionary*)scoreDic baseFo:(TOFoModel*)baseFo demandScore:(double)demandScore{
++(TOFoModel*) bestEndBranch4Plan:(NSMutableDictionary*)scoreDic baseFo:(TOFoModel*)baseFo demandScore:(double)demandScore{
     //1. 只要直接对baseFo取得分;
     double baseScore = [NUMTOOK([scoreDic objectForKey:baseFo.content_p]) doubleValue];
     
@@ -212,16 +169,44 @@
                 }
                 
                 //10. 未感性淘汰的,一条路走到黑(递归循环),然后把最后的结果return返回;
-                return [self getCurToDo:scoreDic baseFo:itemFo demandScore:demandScore];
+                return [self bestEndBranch4Plan:scoreDic baseFo:itemFo demandScore:demandScore];
             }
         }
     }
     
-    //11. 所有subDemands都决策完,或者感性就已经淘汰...那么开始下一个rootDemand?
-    return nil;
+    //11. 所有subDemands都决策完,或者感性就已经淘汰,那么直接返回baseFo;
+    return baseFo;
 }
 
-+(void) plan:(DemandModel*)demand{
+/**
+ *  MARK:--------------------旧有plan方法--------------------
+ *  注:assExp联想经验(饿了找瓜)(递归)
+ *  注:loopAssExp中本身已经是内心活动联想到的mv
+ *  @desc
+ *      1. 四种(2x2)TOP模式 (优先取同区工作模式,不行再以不同区工作模式);
+ *      2. 调用者只管调用触发,模型生成,参数保留;
+ *  @desc P决策模式 (框架: index -> mvNode -> foNode -> algNode -> action);
+ *      3. 不指定model (从cmvCache取) (旧注释)
+ *      4. 每一轮循环不仅是想下一个singleMvPort;也有可能在当前port上,进行二次思考; (旧注释)
+ *      5. 从expCache下,根据可行性,选定一个解决方案; (旧注释)
+ *      6. 有需求时,找出outMvModel,尝试决策并解决; (旧注释)
+ *  @version
+ *      20200430 : v2,四种工作模式版;
+ *      20200824 : 将外循环输入推进中循环,改到上一步aiThinkIn_CommitNoMv2TC()中;
+ *  @todo
+ *      1. 集成活跃度的判断和消耗;
+ *      2. 集成outModel;
+ *      3. TODOTOMORROW: 下面传给四模式的代码,用bool方式直接返回finish的判断不妥,改之;
+ *      2021.01.22: 对ActYes或者OutBack的Demand进行不应期处理 (未完成);
+ *  @status
+ *      1. R+模式: 废弃状态,此模式暂时用不着;
+ *      2. R-模式: 启用状态;
+ *      3. P+模式: 废弃状态,此模式暂时用不着;
+ *      4. P-模式: 启用状态;
+ */
++(void) plan_Old{
+    //1. 取当前任务;
+    DemandModel *demand = [theTC.outModelManager getCanDecisionDemand];
     
     //2. 同区两个模式之R-;
     if (ISOK(demand, ReasonDemandModel.class)) {

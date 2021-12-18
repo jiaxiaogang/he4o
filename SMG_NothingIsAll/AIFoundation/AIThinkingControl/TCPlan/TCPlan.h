@@ -10,13 +10,13 @@
 
 /**
  *  MARK:--------------------TCPlan计划--------------------
- *  @desc 即旧架构中的dataOut方法;
+ *  @desc 即旧架构中的dataOut方法 (参考24195);
  *  @version
  *      2021.11.28: 将dataOut迁移到TCSolution中做为入口方法;
  *      2021.12.15: 再将它迁移到TCPlan独立出来;
  */
 @interface TCPlan : NSObject
 
-+(void) plan;
++(void) plan_Old;
 
 @end
