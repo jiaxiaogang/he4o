@@ -101,7 +101,7 @@
 /**
  *  MARK:--------------------S解决方案竞争--------------------
  *  @desc 感性竞争 (参考24192-R9);
- *  @param foModels : 解决方案S数,必须>=1条;
+ *  @param foModels : 解决方案S数,single传入>=1条,plan传入可能为0条;
  *  @param scoreDic : notnull
  *  @result 将bestFo返回;
  */
