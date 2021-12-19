@@ -18,9 +18,31 @@
 /**
  *  MARK:--------------------新螺旋架构solution方法--------------------
  *  @desc 参考24203;
+ *  @param endScore : 末枝S方案的综合评分;
  */
-+(void) solution:(TOModelBase*)endBranch{
++(void) solution:(TOFoModel*)endBranch endScore:(double)endScore{
+    //1. 数据准备;
+    DemandModel *endDemand = (DemandModel*)endBranch.baseOrGroup;
     
+    //2. endBranch >= 0分时,执行TCAction (参考24203-1);
+    if (endScore >= 0) {
+        [TCAction action:endBranch];
+    }else{
+        //3. endBranch < 0分时,且末枝S小于3条,执行TCSolution取下一方案 (参考24203-2);
+        if (endDemand.actionFoModels.count < cTCSolutionBranchLimit) {
+            
+            //TODOTOMORROW20211219: 继续写solution接入;
+            //  a) 下一方案成功时,标记waitAct,并下轮循环 (重新竞争末枝转Action);
+            //  b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action);
+            
+            
+            
+            
+        }else{
+            //4. endBranch < 0分时,且末枝S达到3条时,则最优执行TCAction (参考24203-3);
+            [TCAction action:endBranch];
+        }
+    }
 }
 
 /**

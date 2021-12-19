@@ -12,6 +12,13 @@
 @implementation TCAction
 
 /**
+ *  MARK:--------------------新螺旋架构action--------------------
+ */
++(void) action:(TOFoModel*)foModel{
+    
+}
+
+/**
  *  MARK:--------------------out行为化--------------------
  *  @desc 解决方案fo即(加工目标),转_Fo()行为化 (参考24132-行为化1);
  *  @param foModel : notnull
