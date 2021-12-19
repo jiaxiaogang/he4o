@@ -226,6 +226,7 @@
  *      2021.06.08: 子任务的actYes状态由任意subModel为actYes状态为准 (参考23122);
  *      2021.06.24: 第四类不应期,将全树中未失败任务下已成功或静默等待下的dsFo适用的任务全收集为不应期 (参考23142-方案);
  *      2021.08.14: 抽象防重: 对于抽象任务下的具象子任务都进行防重 (参考23216);
+ *      2021.11.28: 新螺旋架构完全交由TCDemand.feedbackDemand()来完成,弃用此处 (参考24183);
  *
  */
 +(void) updateSubDemand:(AIShortMatchModel*)rtInModel baseFo:(TOFoModel*)baseFo createSubDemandBlock:(void(^)(ReasonDemandModel*))createSubDemandBlock finishBlock:(void(^)(NSArray*))finishBlock{

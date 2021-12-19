@@ -18,6 +18,5 @@
 @interface TCPlan : NSObject
 
 +(void) plan:(DemandModel*)rootDemand rootFo:(TOFoModel*)rootFo scoreDic:(NSMutableDictionary*)scoreDic;
-+(void) plan_Old;
 
 @end

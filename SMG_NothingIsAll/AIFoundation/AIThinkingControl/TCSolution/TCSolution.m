@@ -31,15 +31,24 @@
         //3. endBranch < 0分时,且末枝S小于3条,执行TCSolution取下一方案 (参考24203-2);
         if (endDemand.actionFoModels.count < cTCSolutionBranchLimit) {
             
-            //TODOTOMORROW20211219: 继续写solution接入;
-            //  a) 下一方案成功时,标记waitAct,并下轮循环 (重新竞争末枝转Action);
-            //  b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action);
-            
-            
-            
-            
+            //4. 无更多S时_直接TCAction行为化 (参考24203-2b);
+            if (endDemand.status == TOModelStatus_WithOut) {
+                [TCAction action:endBranch];
+            }else{
+                //5. 尝试取更多S;
+                if (ISOK(endDemand, ReasonDemandModel.class)) {
+                    //6. R任务继续取解决方案 (参考24203-2);
+                    [self rSolution:(ReasonDemandModel*)endDemand oldBestSolution:endBranch];
+                }else if (ISOK(endDemand, PerceptDemandModel.class)) {
+                    //7. P任务继续取解决方案 (参考24203-2);
+                    [self pSolution:endDemand];
+                }else if (ISOK(endDemand, HDemandModel.class)) {
+                    //8. H任务继续取解决方案 (参考24203-2);
+                    [self hSolution:endDemand];
+                }
+            }
         }else{
-            //4. endBranch < 0分时,且末枝S达到3条时,则最优执行TCAction (参考24203-3);
+            //9. endBranch < 0分时,且末枝S达到3条时,则最优执行TCAction (参考24203-3);
             [TCAction action:endBranch];
         }
     }
@@ -53,7 +62,7 @@
  *      2021.11.25: 迭代为功能架构 (参考24154-单轮示图);
  *  @callers : 用于RDemand.Begin时调用;
  */
-+(void) rSolution:(ReasonDemandModel*)demand{
++(void) rSolution:(ReasonDemandModel*)demand oldBestSolution:(TOFoModel*)oldBestSolution{
     //1. 根据demand取抽具象路径rs;
     NSArray *rs = [theTC.outModelManager getRDemandsBySameClass:demand];
     
@@ -85,42 +94,14 @@
     //6. 转流程控制_有解决方案则转begin;
     RSResultModelBase *firstResult = ARR_INDEX(frsResults, 0);
     if (firstResult) {
+        //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
         TOFoModel *foModel = [TOFoModel newWithFo_p:firstResult.baseFo.pointer base:demand];
         NSLog(@"------->>>>>> R- 新增一例解决方案: %@->%@ FRS_PK评分:%.2f",Fo2FStr(firstResult.baseFo),Mvp2Str(firstResult.baseFo.cmvNode_p),firstResult.score);
         [TCAction rAction:foModel];
     }else{
-        
-        //-----TODOTOMORROW20211203:
-        //0. 理一理rSolution之后的代码,看r决策的运行能不能预演顺利运行
-        //1. rSolution要支持subDemand;
-        //2. 解决方案反思子任务的失败,不表示解决方案失败,它还可以参与最终pk池竞争;
-        //3. 解决此处failure无计可施后的逻辑;
-        
-        
-        
-        
-        
-        //7. 转流程控制_无则转failure;
-        demand.status = TOModelStatus_ActNo;
-        NSArray *baseDemands = [TOUtils getBaseDemands_AllDeep:demand];
-        DemandModel *baseDemand = ARR_INDEX(baseDemands, 1);
-        
-        if (baseDemand) {
-            //8. 向上一轮递归,继续base.下一解决方案;
-            [TCSolution solution:baseDemand];
-        }else{
-            //9. 当前就是root了,开始清算;
-            
-            
-            
-        }
-        
-        
-        //a. 子任务失败,则转向下一子任务
-        //b. 所有子任务失败,则转向父任务下一解决方案 (不脱离场景的情况下,仅取三条);
-        
-        
-        
+        //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
+        demand.status = TOModelStatus_WithOut;
+        [TCScore score];
         NSLog(@"------->>>>>> R-无计可施");
     }
 }
@@ -192,14 +173,19 @@
                 TOFoModel *toFoModel = [TOFoModel newWithFo_p:fo.pointer base:demandModel];
                 
                 //b. 取自身,实现吃,则可不饿 (提交C给TOR行为化);
+                //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
                 NSLog(@"------->>>>>> P-新增一例解决方案: %@->%@",Fo2FStr(fo),Mvp2Str(fo.cmvNode_p));
-                [theTOR singleLoopBackWithBegin:toFoModel];
+                [TCAction action:toFoModel];//[theTOR singleLoopBackWithBegin:toFoModel];
                 
                 //8. 只要有一次tryResult成功,中断回调循环;
                 return;
             }
         }
     }
+    
+    //9. 无计可施,下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
+    demandModel.status = TOModelStatus_WithOut;
+    [TCScore score];
 }
 
 /**
@@ -213,7 +199,7 @@
     AIAlgNodeBase *curAlg = [SMGUtils searchNode:algModel.content_p];
     OFTitleLog(@"行为化_Hav", @"\nC:%@",Alg2FStr(curAlg));
     
-    //TODOTOMORROW20211125: PM废弃 & HN暂不废弃;
+    //-------TODOTOMORROW20211125: PM废弃 & HN暂不废弃;
     //1. 此处废除mIsC判断,因为PM废除,mIsC不再需要,而短时记忆树里的任何cutIndex已发生的部分,都可用于帮助cHav取解决方案;
     //2. cHav取到的结果sulutionFo做为理性子任务,然后将HNFo的末位,传到TO.regroup(),然后inReflect...
     //3. 此处HN内类比先不废弃,先这么写,等后面再考虑废弃之 (参考24171-3);
@@ -230,15 +216,13 @@
     
     //6. 只要有善可尝试的方式,即从首条开始尝试;
     if (relativeFo_p) {
+        //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
         TOFoModel *foModel = [TOFoModel newWithFo_p:relativeFo_p base:hDemand];
         [TCAction hAction:foModel];
     }else{
-        
-        //10. 所有mModel都没成功行为化一条,则失败 (无计可施);
-        hDemand.status = TOModelStatus_ActNo;
-        //TODOTOMORROW20211128: 没有任何H经验时,递归到上一轮demand;
-        
-        
+        //b) 无计可施,下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
+        hDemand.status = TOModelStatus_WithOut;
+        [TCScore score];
     }
 }
 

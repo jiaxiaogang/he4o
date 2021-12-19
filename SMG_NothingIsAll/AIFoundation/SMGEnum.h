@@ -121,6 +121,7 @@ typedef NS_ENUM(NSInteger, TOModelStatus) {
     TOModelStatus_OuterBack= 6,//外循环结果返回符合的标记 (mIsC 或 GL符合变化);
     TOModelStatus_Finish   = 7,//最终成功 (完成后向下帧跳转,发生在事实发生之后,即新的input匹配到);
     TOModelStatus_VSWait   = 8,//在多任务竞争中,被暂时击退 (等待继续博弈);
+    TOModelStatus_WithOut  = 9,//TCSolution无计可施标记,没S解决方案了;
 };
 
 /**
