@@ -97,7 +97,7 @@
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
         TOFoModel *foModel = [TOFoModel newWithFo_p:firstResult.baseFo.pointer base:demand];
         NSLog(@"------->>>>>> R- 新增一例解决方案: %@->%@ FRS_PK评分:%.2f",Fo2FStr(firstResult.baseFo),Mvp2Str(firstResult.baseFo.cmvNode_p),firstResult.score);
-        [TCAction rAction:foModel];
+        [TCAction action:foModel];
     }else{
         //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
         demand.status = TOModelStatus_WithOut;
@@ -218,7 +218,7 @@
     if (relativeFo_p) {
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
         TOFoModel *foModel = [TOFoModel newWithFo_p:relativeFo_p base:hDemand];
-        [TCAction hAction:foModel];
+        [TCAction action:foModel];
     }else{
         //b) 无计可施,下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
         hDemand.status = TOModelStatus_WithOut;

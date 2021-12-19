@@ -13,32 +13,30 @@
 
 /**
  *  MARK:--------------------新螺旋架构action--------------------
- */
-+(void) action:(TOFoModel*)foModel{
-    
-}
-
-/**
- *  MARK:--------------------out行为化--------------------
  *  @desc 解决方案fo即(加工目标),转_Fo()行为化 (参考24132-行为化1);
  *  @param foModel : notnull
  *  @version
  *      2021.11.17: 需调用者自行对foModel进行FRS稳定性竞争评价,本方法不再进行 (因为fo间的竞争,需由外界,fo内部问题在此方法内解决);
  *      2021.11.25: 迭代为功能架构 (参考24154-单轮示图);
+ *      2021.11.25: H类型在Action后,最终行为化完毕后,调用hActYes后,在feedbackTOR反馈,并重组反思,下轮循环;
  *      2021.11.xx: 废弃outReflect反思功能 (全部待到inReflect统一再反思);
+ *      2021.12.01: 支持hAction;
  *  @callers : 可以供_Demand和_Hav等调用;
  */
-+(void) rAction:(TOFoModel*)foModel{
++(void) action:(TOFoModel*)foModel{
     
+    //TODOTOMORROW20211128: 时间是否来的及_紧急情况迭代 (参考24171-7);
+    //  a. 解决方案所需时间 > 父任务能给的时间
     
-    
-    //TODOTOMORROW20211128: 紧急情况迭代 (参考24171-7);
     //2. 紧急状态判断 (当R模式在3s以内会触发-mv时,属于紧急状态) (参考24057-方案3);
     BOOL rIsTooLate = false;
     ReasonDemandModel *rDemand = (ReasonDemandModel*)foModel.baseOrGroup;
     double deltaTime = [TOUtils getSumDeltaTime2Mv:rDemand.mModel.matchFo cutIndex:rDemand.mModel.cutIndex2];
     rIsTooLate = deltaTime < 30;
     NSLog(@"紧急状态 (%d) 预计-mv时间:%f",rIsTooLate,deltaTime);
+    
+    //TODOTOMORROW20211219: 下标是否来的及_做弄巧成拙评价 (参考24171-12);
+    //  a. 也有可能在TCOut中更适合;
     
     //1. 数据准备
     AIFoNodeBase *curFo = [SMGUtils searchNode:foModel.content_p];
@@ -59,18 +57,6 @@
         NSLog(@"_Fo行为化: Finish %ld/%ld 到ActYes",(long)foModel.actionIndex,(long)curFo.count);
         [TCOut rActYes:foModel];
     }
-}
-
-+(void) hAction:(TOFoModel*)foModel{
-    
-    //TODOTOMORROW20211125:
-    //1. hAction执行到regroup时,要代入jump重组,并进行识别in反思;
-    
-    //TODOTOMORROW20211201: 代码规划;
-    //1. 做紧急状态,来的及评价,来不及的算失败 (参考24171-7);
-    //2. 逐帧试输出;
-    
-    
 }
 
 @end

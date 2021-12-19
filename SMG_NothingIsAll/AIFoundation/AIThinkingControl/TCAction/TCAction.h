@@ -11,7 +11,5 @@
 @interface TCAction : NSObject
 
 +(void) action:(TOFoModel*)foModel;
-+(void) rAction:(TOFoModel*)foModel;
-+(void) hAction:(TOFoModel*)foModel;
 
 @end

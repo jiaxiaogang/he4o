@@ -31,7 +31,10 @@
         
         //2. 消耗活跃度并输出
         [theTC updateEnergy:-1.0f];
-        [self output:algModel];
+        
+        //3. 输出_用旧有代码;
+        BOOL invoked = [Output output_FromTC:algModel.content_p];
+        NSLog(@"===执行%@",invoked ? @"success" : @"failure");
     }else{
         
         //TODOTOMORROW20211125: dsFo废弃
@@ -56,25 +59,8 @@
         }
         
         //TODOTOMORROW20211126: notOut转jump;
-        [self chav:algModel];
+        [TCInput jump:algModel];
     }
-}
-
-//MARK:===============================================================
-//MARK:                     < 出口 (三个) >
-//MARK:===============================================================
-+(void) chav:(TOAlgModel*)algModel{
-    [TCInput jump:algModel];
-}
-
-/**
- *  MARK:--------------------输出--------------------
- *  @version
- *      2021.11.28: 用旧有代码;
- */
-+(void) output:(TOAlgModel*)algModel{
-    BOOL invoked = [Output output_FromTC:algModel.content_p];
-    NSLog(@"===执行%@",invoked ? @"success" : @"failure");
 }
 
 
