@@ -25,8 +25,10 @@
  */
 +(void) action:(TOFoModel*)foModel{
     
-    //TODOTOMORROW20211128: 时间是否来的及_紧急情况迭代 (参考24171-7);
+    //------TODOTOMORROW20211128: 时间紧急评价_紧急情况迭代 (参考24171-7);
     //  a. 解决方案所需时间 > 父任务能给的时间
+    
+    
     
     //2. 紧急状态判断 (当R模式在3s以内会触发-mv时,属于紧急状态) (参考24057-方案3);
     BOOL rIsTooLate = false;
@@ -35,13 +37,9 @@
     rIsTooLate = deltaTime < 30;
     NSLog(@"紧急状态 (%d) 预计-mv时间:%f",rIsTooLate,deltaTime);
     
-    //TODOTOMORROW20211219: 下标是否来的及_做弄巧成拙评价 (参考24171-12);
-    //  a. 也有可能在TCOut中更适合;
-    
     //1. 数据准备
     AIFoNodeBase *curFo = [SMGUtils searchNode:foModel.content_p];
     OFTitleLog(@"行为化Fo", @"\n时序:%@->%@ 类型:(%@)",Fo2FStr(curFo),Mvp2Str(curFo.cmvNode_p),curFo.pointer.typeStr);
-    
     
     //4. 跳转下帧,
     if (foModel.actionIndex < curFo.count - 1) {
