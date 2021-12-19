@@ -16,6 +16,14 @@
 @implementation TCSolution
 
 /**
+ *  MARK:--------------------新螺旋架构solution方法--------------------
+ *  @desc 参考24203;
+ */
++(void) solution:(TOModelBase*)endBranch{
+    
+}
+
+/**
  *  MARK:--------------------rSolution--------------------
  *  @desc 参考24154-单轮;
  *  @version

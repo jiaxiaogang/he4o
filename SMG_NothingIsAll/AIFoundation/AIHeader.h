@@ -43,6 +43,7 @@
 #import "TCFeedback.h"
 #import "TCForecast.h"
 #import "TCDemand.h"
+#import "TCScore.h"
 #import "TCPlan.h"
 #import "TCSolution.h"
 #import "TCAction.h"

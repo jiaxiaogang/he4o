@@ -110,6 +110,7 @@
 		0895FFE4264A13C500DAD3EA /* TOModelVision.m in Sources */ = {isa = PBXBuildFile; fileRef = 0895FFE3264A13C500DAD3EA /* TOModelVision.m */; };
 		089614A9219A4D5200343FAC /* BirdGrowPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 089614A7219A4D5200343FAC /* BirdGrowPage.m */; };
 		089614AA219A4D5200343FAC /* BirdGrowPage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 089614A8219A4D5200343FAC /* BirdGrowPage.xib */; };
+		0898BD67276ED44F003449BF /* TCScore.m in Sources */ = {isa = PBXBuildFile; fileRef = 0898BD66276ED44F003449BF /* TCScore.m */; };
 		089E66B121B9F5D100ECA28A /* AIAbsAlgNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 089E66B021B9F5D100ECA28A /* AIAbsAlgNode.m */; };
 		089E66B421B9F84500ECA28A /* AIAlgNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 089E66B321B9F84500ECA28A /* AIAlgNode.m */; };
 		08A1E57C2193BAFA0046C4AC /* UIView+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 08A1E57B2193BAFA0046C4AC /* UIView+Extension.m */; };
@@ -386,6 +387,8 @@
 		089614A6219A4D5200343FAC /* BirdGrowPage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BirdGrowPage.h; sourceTree = "<group>"; };
 		089614A7219A4D5200343FAC /* BirdGrowPage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BirdGrowPage.m; sourceTree = "<group>"; };
 		089614A8219A4D5200343FAC /* BirdGrowPage.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BirdGrowPage.xib; sourceTree = "<group>"; };
+		0898BD65276ED44F003449BF /* TCScore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCScore.h; sourceTree = "<group>"; };
+		0898BD66276ED44F003449BF /* TCScore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCScore.m; sourceTree = "<group>"; };
 		089E66AF21B9F5D100ECA28A /* AIAbsAlgNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIAbsAlgNode.h; sourceTree = "<group>"; };
 		089E66B021B9F5D100ECA28A /* AIAbsAlgNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIAbsAlgNode.m; sourceTree = "<group>"; };
 		089E66B221B9F84500ECA28A /* AIAlgNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIAlgNode.h; sourceTree = "<group>"; };
@@ -787,6 +790,7 @@
 				08CFBDCC27584B2600B1F070 /* TCFeedback */,
 				087705A1275373D200BA4EFB /* TCForecast */,
 				087705A2275373E100BA4EFB /* TCDemand */,
+				0898BD64276ED430003449BF /* TCScore */,
 				08AFC5ED276979A2000BAB26 /* TCPlan */,
 				087705A3275373FA00BA4EFB /* TCSolution */,
 				087705A42753740600BA4EFB /* TCAction */,
@@ -1072,6 +1076,15 @@
 				089614A8219A4D5200343FAC /* BirdGrowPage.xib */,
 			);
 			path = BirdGrowPage;
+			sourceTree = "<group>";
+		};
+		0898BD64276ED430003449BF /* TCScore */ = {
+			isa = PBXGroup;
+			children = (
+				0898BD65276ED44F003449BF /* TCScore.h */,
+				0898BD66276ED44F003449BF /* TCScore.m */,
+			);
+			path = TCScore;
 			sourceTree = "<group>";
 		};
 		08A562A3233C483F0093A88E /* TIReason */ = {
@@ -1648,6 +1661,7 @@
 				084219ED1FD8CF81009DA6BC /* AIThinkingControl.m in Sources */,
 				089614A9219A4D5200343FAC /* BirdGrowPage.m in Sources */,
 				083F61381F048329000330E1 /* AILine.m in Sources */,
+				0898BD67276ED44F003449BF /* TCScore.m in Sources */,
 				083352F521800AB1003931E5 /* MainPage.m in Sources */,
 				0817D6AB219E3CC7000E45AB /* UIColor+expanded.m in Sources */,
 				08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */,
