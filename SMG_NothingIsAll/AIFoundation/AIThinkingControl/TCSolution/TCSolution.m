@@ -206,6 +206,8 @@
     //4. 可将当前瞬时记忆序列做为mask进行cHav联想 (比如在家时,不会想到点外卖,在工作地就首先想到外卖);
     
     
+    //TODOTOMORROW20211128: 可以考虑对curAlg的具象生成H任务,比如找武器时,可以想到拿刀,然后再想到厨房,而不是直接根据武器就想到厨房;
+    
     
     //5. 取不应期;
     NSArray *except_ps = [TOUtils convertPointersFromTOModels:algModel.actionFoModels];

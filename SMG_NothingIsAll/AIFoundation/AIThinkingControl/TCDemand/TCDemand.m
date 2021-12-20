@@ -78,15 +78,15 @@
 
 /**
  *  MARK:--------------------hDemand--------------------
- *  @todo
- *      2021.12.19: 此处可以改为调用TCScore而不是hSolution,但同时需将TCScore中判断理性淘汰处判断改为: 当0条且为WithOut时才理性淘汰 (注: 也可先不动);
+ *  @version
+ *      2021.12.19: 改为调用TCScore而不是hSolution;
  */
 +(void) hDemand:(TOAlgModel*)algModel{
-    //对algModel生成H任务,并挂载在当前短时记忆分支下;
-    HDemandModel *hDemand = [HDemandModel newWithAlgModel:algModel];
-    [TCSolution hSolution:hDemand];
+    //1. 对algModel生成H任务,并挂载在当前短时记忆分支下;
+    [HDemandModel newWithAlgModel:algModel];
     
-    //TODOTOMORROW20211128: 如果algModel失败,可以考虑对它的具象生成H任务,比如找武器时,可以想到拿刀,然后再想到厨房,而不是直接根据武器就想到厨房;
+    //2. 调用TCScore继续决策;
+    [TCScore score];//[TCSolution hSolution:hDemand];
 }
 
 @end
