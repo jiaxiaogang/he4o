@@ -62,6 +62,12 @@
                 modelScore += [NUMTOOK([scoreDic objectForKey:bestSS.content_p]) doubleValue];
             }else{
                 //5. H无解决方案时,则理性淘汰 (参考24192-H14);
+                //-----TODOTOMORROW20211220: 当状态为WithOut的处理;
+                //-----TODOTOMORROW20211220: 当状态为ActNo时(比如为时间紧急淘汰掉的)的理性淘汰;
+                
+                
+                
+                
                 [scoreDic setObject:@(INT_MIN) forKey:model.content_p];
                 return;
             }

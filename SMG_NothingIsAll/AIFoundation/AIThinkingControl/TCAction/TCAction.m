@@ -42,10 +42,12 @@
         NSLog(@"紧急状态 (%d) = 方案所需要时间:%f > 任务能给时间:%f",rIsTooLate,needTime,giveTime);
     }
     
-    //TODOTOMORROW20211220: 分析如果时间紧急,那么下步有什么影响;
-    //1. 影响反思子任务的深度;
-    //2. 导致当前解决方案直接论为失败;
-    
+    //2. 时间紧急的结果 (当前解决方案直接论为失败);
+    if (rIsTooLate) {
+        foModel.status = TOModelStatus_ActNo;
+        [TCScore score];//决策受阻且无输出时,直接下轮循环跳到决策之始;
+        return;
+    }
     
     //1. 数据准备
     AIFoNodeBase *curFo = [SMGUtils searchNode:foModel.content_p];
