@@ -38,6 +38,7 @@
     }else{
         //@desc: 下标不急评价说明: R模式_Hav首先是为了避免forecastAlg,其次才是为了达成curFo解决方案 (参考22153);
         //5. 下标不急(弄巧成拙)评价_数据准备 (参考24171-12);
+        //TODO: 考虑改成,取base最近的一个R任务;
         TOFoModel *solutionFo = (TOFoModel*)algModel.baseOrGroup;
         ReasonDemandModel *baseDemand = (ReasonDemandModel*)solutionFo.baseOrGroup;
         
