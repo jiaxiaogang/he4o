@@ -38,6 +38,10 @@
  *      3. S竞争方法由_Best方法实现;
  *      4. R求和方法主要在_Single中实现;
  *      5. 先将所有得分算完后,再重新从root开始算最优路径,因为只有子枝算完,父枝才能知道怎么算最优路径;
+ *  @version
+ *      2021.12.21: 支持状态为WithOut的处理 (只有WithOut状态的才可能理性淘汰,不然就有可能死灰复燃);
+ *      2021.12.21: 支持状态为ActNo (如为时间紧急淘汰掉) 的处理 (子解决方案全ActNo之后且WithOut的理性淘汰);
+ *
  *  _result 将model及其下有效的分枝评分计算,并收集到评分字典 <K=foModel,V=score>;
  */
 +(void) score_Single:(TOFoModel*)model scoreDic:(NSMutableDictionary*)scoreDic{
@@ -52,24 +56,22 @@
         //3. 取出sh (一条sa最多只能生成一个sh任务);
         HDemandModel *sh = ARR_INDEX(sa.subDemands, 0);
         if (sh) {
-            //4. H有解决方案时,对S竞争,并将最高分计入modelScore;
-            if (ARRISOK(sh.actionFoModels)) {
-                
-                //a. 对S竞争;
-                TOFoModel *bestSS = [self score_Multi:sh.actionFoModels scoreDic:scoreDic];
-                
-                //b. 将竞争胜者计入modelScore;
-                modelScore += [NUMTOOK([scoreDic objectForKey:bestSS.content_p]) doubleValue];
-            }else{
-                //5. H无解决方案时,则理性淘汰 (参考24192-H14);
-                //-----TODOTOMORROW20211220: 当状态为WithOut的处理;
-                //-----TODOTOMORROW20211220: 当状态为ActNo时(比如为时间紧急淘汰掉的)的理性淘汰;
-                
-                
-                
-                
+            
+            //4. 取出还未理性失败的解决方案;
+            NSArray *validActionFos = [SMGUtils filterArr:sh.actionFoModels checkValid:^BOOL(TOFoModel *actionFo) {
+                return actionFo.status != TOModelStatus_ActNo;
+            }];
+            
+            //4. 当H已经withOut状态,且其解决方案全部actNo时,则理性淘汰 (参考24192-H14);
+            if (sh.status == TOModelStatus_WithOut && !ARRISOK(validActionFos)) {
                 [scoreDic setObject:@(INT_MIN) forKey:model.content_p];
                 return;
+            }else{
+                //4. H有解决方案时,对S竞争;
+                TOFoModel *bestSS = [self score_Multi:sh.actionFoModels scoreDic:scoreDic];
+                
+                //4. 并将竞争最高分胜者计入modelScore;
+                modelScore += [NUMTOOK([scoreDic objectForKey:bestSS.content_p]) doubleValue];
             }
         }
     }
