@@ -14,9 +14,7 @@
 @implementation NSLog_Extension
 
 +(NSString*) convertTOStatus2Desc:(TOModelStatus)status{
-    if(status == TOModelStatus_Wait){
-        return @"Wait";
-    }else if(status == TOModelStatus_Runing){
+    if(status == TOModelStatus_Runing){
         return @"Runing";
     }else if(status == TOModelStatus_ActYes){
         return @"ActYes";

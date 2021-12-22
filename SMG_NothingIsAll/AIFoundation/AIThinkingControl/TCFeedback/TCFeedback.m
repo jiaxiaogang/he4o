@@ -120,6 +120,7 @@
  *  @title 外层输入对Out短时记忆的ReasonDemandModel影响处理 (参考22061-8);
  *  @version
  *      2021.02.04: 将R同区同向(会导致永远为false因为虚mv得分为0)判断,改为同区反向判断 (参考22115BUG & 22108虚mv反馈判断方法);
+ *      2021.12.23: feedback时,将root设回runing状态 (参考24212-8);
  */
 +(void) feedbackTOP:(AICMVNode*)cmvNode{
     //0. 数据检查
@@ -144,6 +145,10 @@
             if (foModel.status != TOModelStatus_ActYes) continue;
             if (Log4OPushM) NSLog(@"==> top_OPushM_mv有效改为OutBack,SFo: %@",Pit2FStr(foModel.content_p));
             foModel.status = TOModelStatus_OuterBack;
+            
+            //4. root设回runing
+            DemandModel *root = ARR_INDEX([TOUtils getBaseDemands_AllDeep:foModel], 0);
+            root.status = TOModelStatus_Runing;
         }
     }
     

@@ -57,6 +57,7 @@
  *      2021.05.20: 在waitModels收集中,将任何层的actNo之下都切断收集,避免距21飞错又飞回来,重复相符判断 (参考23073-假想2);
  *      2021.05.20: 当GL相符判断有结果后,targetModel(replaceAlg)也设为finish或actNo,以便_GL()中做不应期判断 (参考23079);
  *      2021.12.05: 将feedbackTOR前置到概念识别后,所以推进成功,才执行TOP四模式的逻辑作废 (参考24171-9);
+ *      2021.12.23: feedback时,将root设回runing状态 (参考24212-8);
  *  @bug
  *      2020.09.22: 加上cutStopStatus,避免同一waitModel被多次触发,导致BUG (参考21042);
  *      2020.12.26: GL时,waitType的判断改为bFo,因为只有bFo才携带了waitTypeDS (参考21204);
@@ -99,6 +100,10 @@
                 targetAlg.status = TOModelStatus_OuterBack;
                 targetAlg.feedbackAlg = model.protoAlg;
                 
+                //2. root设回runing
+                DemandModel *root = ARR_INDEX([TOUtils getBaseDemands_AllDeep:waitModel], 0);
+                root.status = TOModelStatus_Runing;
+                
                 //2. 重组;
                 [TCRegroup feedbackRegroup:targetFo];
             }
@@ -114,6 +119,10 @@
                 //1. 赋值
                 targetAlg.status = TOModelStatus_OuterBack;
                 targetAlg.feedbackAlg = model.protoAlg;
+                
+                //2. root设回runing
+                DemandModel *root = ARR_INDEX([TOUtils getBaseDemands_AllDeep:targetAlg], 0);
+                root.status = TOModelStatus_Runing;
                 
                 //2. 重组
                 [TCRegroup feedbackRegroup:targetFo];

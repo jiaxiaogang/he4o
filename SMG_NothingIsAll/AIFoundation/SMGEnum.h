@@ -110,9 +110,10 @@ typedef NS_ENUM(NSInteger, LogHeaderMode) {
  *  MARK:--------------------TOModelStatus--------------------
  *  @title 输出模型状态
  *  @todo 考虑支持ScorePK,即迟疑时,尝试别的方案,与当前方案进行竞争;
+ *  @version
+ *      2021.12.23: 废弃Wait状态,由Runing替代;
  */
 typedef NS_ENUM(NSInteger, TOModelStatus) {
-    TOModelStatus_Wait     = 0,//等待行为化 (行为化前,尝试找各种解决方案);
     TOModelStatus_Runing   = 1,//运行中 (其subModel正在尝试行为化中);
     TOModelStatus_ActYes   = 2,//行为化成功 (等待外循环结果,等待反馈) (预测);
     TOModelStatus_ActNo    = 3,//行为化失败 (等待条件满足时继续);
