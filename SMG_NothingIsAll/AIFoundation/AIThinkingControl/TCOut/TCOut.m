@@ -89,9 +89,13 @@
 //arsTime模式,当评价需等待时,actYes;
 +(void) arsTimeActYes:(TOAlgModel*)algModel{
     
-    //3. R模式静默成功处理 (等待其自然出现,避免弄巧成拙) (参考22153-A2);
+    //1. R模式静默成功处理 (等待其自然出现,避免弄巧成拙) (参考22153-A2);
     ReasonDemandModel *rDemand = (ReasonDemandModel*)algModel.baseOrGroup.baseOrGroup;
     TOFoModel *dsFoModel = (TOFoModel*)algModel.baseOrGroup;
+    
+    //2. root设为actYes
+    DemandModel *root = ARR_INDEX([TOUtils getBaseDemands_AllDeep:algModel], 0);
+    root.status = TOModelStatus_ActYes;
     
     //4. 找出下标;
     __block NSInteger demandIndex = -1;
@@ -148,6 +152,10 @@
     ReasonDemandModel *demand = (ReasonDemandModel*)foModel.baseOrGroup;
     demand.status = TOModelStatus_ActYes;
     
+    //1. root设为actYes
+    DemandModel *root = ARR_INDEX([TOUtils getBaseDemands_AllDeep:foModel], 0);
+    root.status = TOModelStatus_ActYes;
+    
     //2. 取matchFo已发生,到末位mvDeltaTime,所有时间之和做触发;
     AIFoNodeBase *matchFo = demand.mModel.matchFo;
     double deltaTime = [TOUtils getSumDeltaTime2Mv:matchFo cutIndex:demand.mModel.cutIndex2];
@@ -189,6 +197,10 @@
     //1. 数据准备
     TOFoModel *foModel = (TOFoModel*)algModel.baseOrGroup;
     AIFoNodeBase *foNode = [SMGUtils searchNode:foModel.content_p];
+    
+    //1. root设为actYes
+    DemandModel *root = ARR_INDEX([TOUtils getBaseDemands_AllDeep:algModel], 0);
+    root.status = TOModelStatus_ActYes;
     
     //2. 如果TOAlgModel为HNGL时,
     NSInteger cutIndex = foNode.content_ps.count - 1;

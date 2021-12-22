@@ -351,6 +351,7 @@
  *  @version
  *      xxxx.xx.xx: (未完成 & 非等待反馈ActYes);
  *      2021.12.23: root非WithOut状态的 (参考24212-6);
+ *      2021.12.23: 最优末枝处在actYes状态时,继续secondRoot (参考24212-7);
  */
 -(DemandModel*) getCanDecisionDemand{
     //1. 数据检查
@@ -369,12 +370,8 @@
         //4. 已无计可施,下一个 (TCPlan会优先从末枝执行,所以当root就是末枝时,说明整个三条大树干全烂透没用了);
         if (item.status == TOModelStatus_WithOut) continue;
         
-        //5. 等待反馈中,下一个;
-        NSArray *actYeses = [TOUtils getSubOutModels_AllDeep:item validStatus:@[@(TOModelStatus_ActYes)]];
-        if (ARRISOK(actYeses)) {
-            //2021.03.17: 当actYes时,return nil即为单任务,continue即是多任务 (现为多任务,为调试直观可临时调为单任务,参考22173);
-            continue;
-        }
+        //5. 最优末枝处在actYes状态时,继续secondRoot;
+        if (item.status == TOModelStatus_ActYes) continue;
         
         //6. 有效,则返回;
         return item;
