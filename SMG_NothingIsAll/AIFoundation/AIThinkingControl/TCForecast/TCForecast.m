@@ -29,6 +29,7 @@
  *      2. 支持:
  *          a.HNGL(因为时序识别处关闭,所以假启用状态);
  *          b.MV(启用);
+ *      3. 等待feedbackTIR反馈;
  *  @version
  *      2021.01.27: 非末位也支持mv触发器 (参考22074-BUG2);
  *      2021.02.01: 支持反向反馈外类比 (参考22107);
@@ -59,6 +60,7 @@
         NSLog(@"---//IRT触发器新增:%p %@ (%@ | useTime:%.2f)",matchFo,Fo2FStr(matchFo),TIStatus2Str(item.status),deltaTime);
         [AITime setTimeTrigger:deltaTime trigger:^{
             //3. 如果状态已改成OutBackReason,触发器失效,不进行反省;
+            //TODOTOMORROW20211224: 可以在理性反馈时,执行理性反省构建SP;
             if (item.status == TIModelStatus_OutBackReason) {
                 return;
             }
