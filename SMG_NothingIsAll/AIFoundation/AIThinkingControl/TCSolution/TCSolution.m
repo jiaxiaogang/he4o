@@ -223,4 +223,73 @@
     }
 }
 
++(void) hSolution:(HDemandModel*)hDemand endBranch:(TOFoModel*)endBranch{
+    
+    
+    
+    //TODOTOMORROW20211224: 迭代hSolution (参考25014-H & 25015);
+    //1. 核实下sp的构建和使用，对h功能的支撑是否自洽跑顺
+    //  a. 核实SP的反省触发器;
+    //  b. 核实SP的反省构建
+    //  c. 核实feedbackTIR和TOR对此处有什么支持;
+    //  d. 分析SP的内容中,如何找到H,哪些是H,为什么;
+    
+    
+    //1. 数据准备;
+    AIFoNodeBase *solutionFo = [SMGUtils searchNode:endBranch.content_p];
+    
+    //2. 取自身 + 向抽象 + 向具象 (目前仅取一层,如果发现一层不够,可以改为取多层) (参考25014-H描述);
+    NSMutableArray *maskFos = [[NSMutableArray alloc] init];
+    [maskFos addObject:solutionFo.pointer];
+    [maskFos addObjectsFromArray:Ports2Pits([AINetUtils absPorts_All_Normal:solutionFo])];
+    [maskFos addObjectsFromArray:Ports2Pits([AINetUtils conPorts_All_Normal:solutionFo])];
+    
+    
+    
+    
+    
+    
+    //1. 根据demand取抽具象路径rs;
+    NSArray *rs = [theTC.outModelManager getRDemandsBySameClass:demand];
+    
+    //2. 不应期 (可以考虑改为将整个demand.actionFoModels全加入不应期) (源于:反思且子任务失败的 或 fo行为化最终失败的,参考24135);
+    NSArray *exceptFoModels = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOModelBase *item) {
+        return item.status == TOModelStatus_ActNo || item.status == TOModelStatus_ScoreNo;
+    }];
+    NSMutableArray *except_ps = [TOUtils convertPointersFromTOModels:exceptFoModels];
+    [except_ps addObject:demand.mModel.matchFo.pointer];
+    
+    //3. 从具象出抽象,逐一取conPorts (前3条) (参考24127-步骤1);
+    NSMutableArray *sumConPorts = [[NSMutableArray alloc] init];
+    for (NSInteger i = 0; i < rs.count; i++) {
+        ReasonDemandModel *baseDemand = ARR_INDEX_REVERSE(rs, i);
+        NSArray *conPorts = [AINetUtils conPorts_All_Normal:baseDemand.mModel.matchFo];
+        conPorts = ARR_SUB(conPorts, 0, 3);
+        [sumConPorts addObjectsFromArray:conPorts];
+    }
+    
+    //4. 对conPorts进行FRS稳定性竞争 (参考24127-步骤2);
+    NSArray *frsResults = [AIScore FRS_PK:sumConPorts];
+    
+    //5. frsResults排除不应期;
+    frsResults = [SMGUtils removeArr:frsResults checkValid:^BOOL(RSResultModelBase *item) {
+        return [except_ps containsObject:item.baseFo.pointer];
+    }];
+    if (Log4DirecRef) NSLog(@"\n------- baseFo:%@ -------\n已有方案数:%ld 不应期数:%ld 还有方案数:%ld",Fo2FStr(demand.mModel.matchFo),demand.actionFoModels.count,except_ps.count,frsResults.count);
+    
+    //6. 转流程控制_有解决方案则转begin;
+    RSResultModelBase *firstResult = ARR_INDEX(frsResults, 0);
+    if (firstResult) {
+        //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
+        TOFoModel *foModel = [TOFoModel newWithFo_p:firstResult.baseFo.pointer base:demand];
+        NSLog(@"------->>>>>> R- 新增一例解决方案: %@->%@ FRS_PK评分:%.2f",Fo2FStr(firstResult.baseFo),Mvp2Str(firstResult.baseFo.cmvNode_p),firstResult.score);
+        [TCAction action:foModel];
+    }else{
+        //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
+        demand.status = TOModelStatus_WithOut;
+        [TCScore score];
+        NSLog(@"------->>>>>> R-无计可施");
+    }
+}
+
 @end
