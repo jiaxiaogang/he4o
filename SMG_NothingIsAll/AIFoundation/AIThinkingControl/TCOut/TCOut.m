@@ -19,6 +19,7 @@
     //1. 无论是P-模式的Alg,还是R-中非S的Alg,都要走以下第1,第2,第3级流程;
     //1. 第0级: 本身即是cHav节点,不用行为化,即成功 (但不用递归,等外循环返回行为结果);
     if ([TOUtils isHNGL_toModel:algModel]) {
+        //TODOTOMORROW20211224: H类型已弃用,此处改为判断algModel属于HDemand下,且algModel与HDemand.content有mIsC关联;
         
         //2. actYes转feedback;
         algModel.status = TOModelStatus_ActYes;//只需要等
@@ -146,7 +147,7 @@
     }
 }
 
-//R模式,fo执行完成时,actYes;
+//R模式,fo执行完成时,actYes->(feedbackTOP);
 +(void) rActYes:(TOFoModel*)foModel{
     //1. R-模式ActYes处理,仅赋值,等待R-触发器;
     ReasonDemandModel *demand = (ReasonDemandModel*)foModel.baseOrGroup;
@@ -192,7 +193,7 @@
     }];
 }
 
-//H模式,等待hAlg输入反馈;
+//H模式,等待hAlg输入反馈->(feedbackTOR);
 +(void) hActYes:(TOAlgModel*)algModel{
     //1. 数据准备
     TOFoModel *foModel = (TOFoModel*)algModel.baseOrGroup;
@@ -232,7 +233,7 @@
     }];
 }
 
-//P模式,fo执行完成时,actYes
+//P模式,fo执行完成时,actYes->feedbackT(IO)P
 +(void) pActYes:(TOFoModel*)foModel{
     //1. P-模式ActYes处理 (TOFoModel时,数据准备);
     AIFoNodeBase *actYesFo = [SMGUtils searchNode:foModel.content_p];

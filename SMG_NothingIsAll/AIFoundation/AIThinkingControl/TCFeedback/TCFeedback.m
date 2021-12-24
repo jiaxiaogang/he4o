@@ -134,6 +134,7 @@
     OFTitleLog(@"top_OPushM", @"\n输入MV:%@",Mv2FStr(cmvNode));
     
     //2. 对所有ReasonDemandModel尝试处理 (是R-任务);
+    //TODOTOMORROW20211224: 应对整个工作记忆树进行支持,而不是仅rootDemands;
     for (ReasonDemandModel *demand in demands) {
         if (!ISOK(demand, ReasonDemandModel.class)) continue;
         
