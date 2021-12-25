@@ -219,6 +219,7 @@
  *      2020.07.30: 对matchAFo的AB元素进行内类比有无时,构建其抽象概念;
  *      2020.07.30: 内类比大小用protoFo,内类比有无用matchAFo (参考20151-BUG4 & n20p15-todo5);
  *      2021.11.29: 废弃GL,但保留HN (参考24171-3&6);
+ *      2021.12.25: 废弃HN,但先不删代码 (参考25013 & 25025-3);
  */
 +(void) analogyInner:(AIShortMatchModel*)mModel{
     if (!mModel) return;
@@ -250,7 +251,8 @@
     }
     
     //6. 用matchAFo,做内类比有无;
-    if (ISOK(matchAFo, AIFoNodeBase.class) && matchAFo.count >= 2) {
+    BOOL hnSwitch = false;
+    if (ISOK(matchAFo, AIFoNodeBase.class) && matchAFo.count >= 2 && hnSwitch) {
         
         //7. 最后一个元素,向前分别与orders后面所有元素进行类比
         for (NSInteger i = matchAFo.count - 2; i >= 0; i--) {

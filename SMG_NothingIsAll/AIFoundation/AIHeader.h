@@ -73,6 +73,7 @@
 #import "AIAlgNodeBase.h"
 #import "AIFoNodeBase.h"
 #import "AIFrontOrderNode.h"
+#import "AINetAbsFoNode.h"
 #import "AICMVNode.h"
 
 //其它: 类比器,评价器,触发器,防重器,输入,输出

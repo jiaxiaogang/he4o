@@ -41,14 +41,14 @@
 
 /**
  *  MARK:--------------------SP强度值--------------------
- *  @desc <key:index, value:spModel>
+ *  @desc <key:forIndex, value:spStrong> (其中mv的key为-1) (参考25031-3);
  */
 @property (strong, nonatomic) NSMutableDictionary *spDic;
 
 
 /**
  *  MARK:--------------------更新SP强度值--------------------
- *  @param cutIndex : 当前要更新sp强度值的下标 (如果是mv则输入-1);
+ *  @param cutIndex : 当前要更新sp强度值的下标 (如果是mv则输入-1) (参考25031-3);
  */
 -(void) updateSPStrong:(NSInteger)cutIndex type:(AnalogyType)type;
 

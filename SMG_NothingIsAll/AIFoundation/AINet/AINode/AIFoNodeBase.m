@@ -43,7 +43,7 @@
     AISPStrong *value = [self.spDic objectForKey:key];
     if (!value) value = [[AISPStrong alloc] init];
     
-    //2. 更新强度;
+    //2. 更新强度_线性+1 (参考25031-7);
     if (type == ATSub) {
         value.sStrong++;
     }else if(type == ATPlus){
