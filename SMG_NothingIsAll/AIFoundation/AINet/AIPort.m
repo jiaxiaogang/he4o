@@ -94,3 +94,28 @@
 }
 
 @end
+
+
+//MARK:===============================================================
+//MARK:                     < SP强度模型 >
+//MARK:===============================================================
+@implementation AISPStrong
+
+/**
+ *  MARK:--------------------NSCoding--------------------
+ */
+- (instancetype)initWithCoder:(NSCoder *)coder {
+    self = [super init];
+    if (self) {
+        self.sStrong = [coder decodeIntegerForKey:@"sStrong"];
+        self.pStrong = [coder decodeIntegerForKey:@"pStrong"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [coder encodeInteger:self.sStrong forKey:@"sStrong"];
+    [coder encodeInteger:self.pStrong forKey:@"pStrong"];
+}
+
+@end

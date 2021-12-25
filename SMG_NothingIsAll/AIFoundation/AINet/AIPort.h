@@ -52,3 +52,15 @@
 -(void) updateValue;//更新衰减值(1,时间衰减; 2,衰减曲线;)(目前先每天减1;)
 
 @end
+
+/**
+ *  MARK:--------------------SP强度--------------------
+ *  @version
+ *      2021.12.25: 初版,用于Fo下记录某元素的SP强度值 (也可用于mv的SP强度值);
+ */
+@interface AISPStrong : NSObject <NSCoding>
+
+@property (assign,nonatomic) NSInteger sStrong;
+@property (assign,nonatomic) NSInteger pStrong;
+
+@end

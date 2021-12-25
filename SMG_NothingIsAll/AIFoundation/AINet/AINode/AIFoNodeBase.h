@@ -39,4 +39,17 @@
 @property (strong, nonatomic) NSMutableArray *diffSubPorts; //反向反馈-虚mv时序
 @property (strong, nonatomic) NSMutableArray *diffBasePorts;//反向反馈-实mv时序
 
+/**
+ *  MARK:--------------------SP强度值--------------------
+ *  @desc <key:index, value:spModel>
+ */
+@property (strong, nonatomic) NSMutableDictionary *spDic;
+
+
+/**
+ *  MARK:--------------------更新SP强度值--------------------
+ *  @param cutIndex : 当前要更新sp强度值的下标 (如果是mv则输入-1);
+ */
+-(void) updateSPStrong:(NSInteger)cutIndex type:(AnalogyType)type;
+
 @end

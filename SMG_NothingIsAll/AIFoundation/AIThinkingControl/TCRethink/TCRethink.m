@@ -10,15 +10,13 @@
 
 @implementation TCRethink
 
+//理性IRT反省;
 +(void) reasonInRethink:(AIMatchFoModel*)model type:(AnalogyType)type{
-    //理性IRT反省;
-    //1. 对model.matchFo的cutIndex下一步,type值增强;
-    
-    
+    [model.matchFo updateSPStrong:model.cutIndex2 + 1 type:type];
 }
 
 +(void) perceptInRethink:(AIMatchFoModel*)model type:(AnalogyType)type{
-    
+    [model.matchFo updateSPStrong:-1 type:type];
 }
 
 +(void) reasonOutRethink:(AIMatchFoModel*)model type:(AnalogyType)type{

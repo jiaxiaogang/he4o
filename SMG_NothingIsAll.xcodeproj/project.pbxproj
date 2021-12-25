@@ -108,6 +108,7 @@
 		0889258122B0703700A0DBDD /* NVModuleView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0889258022B0703700A0DBDD /* NVModuleView.xib */; };
 		088DD7232201216500E0A786 /* TOFoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088DD7222201216500E0A786 /* TOFoModel.m */; };
 		0892BAE62776D6920024B43C /* TCRethink.m in Sources */ = {isa = PBXBuildFile; fileRef = 0892BAE52776D6920024B43C /* TCRethink.m */; };
+		0892BAE927770DBF0024B43C /* SPStrong.m in Sources */ = {isa = PBXBuildFile; fileRef = 0892BAE827770DBF0024B43C /* SPStrong.m */; };
 		0895FFE4264A13C500DAD3EA /* TOModelVision.m in Sources */ = {isa = PBXBuildFile; fileRef = 0895FFE3264A13C500DAD3EA /* TOModelVision.m */; };
 		089614A9219A4D5200343FAC /* BirdGrowPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 089614A7219A4D5200343FAC /* BirdGrowPage.m */; };
 		089614AA219A4D5200343FAC /* BirdGrowPage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 089614A8219A4D5200343FAC /* BirdGrowPage.xib */; };
@@ -385,6 +386,8 @@
 		088DD7222201216500E0A786 /* TOFoModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOFoModel.m; sourceTree = "<group>"; };
 		0892BAE42776D6920024B43C /* TCRethink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCRethink.h; sourceTree = "<group>"; };
 		0892BAE52776D6920024B43C /* TCRethink.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCRethink.m; sourceTree = "<group>"; };
+		0892BAE727770DBF0024B43C /* SPStrong.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SPStrong.h; sourceTree = "<group>"; };
+		0892BAE827770DBF0024B43C /* SPStrong.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SPStrong.m; sourceTree = "<group>"; };
 		0895FFE2264A13C500DAD3EA /* TOModelVision.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOModelVision.h; sourceTree = "<group>"; };
 		0895FFE3264A13C500DAD3EA /* TOModelVision.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOModelVision.m; sourceTree = "<group>"; };
 		089614A6219A4D5200343FAC /* BirdGrowPage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BirdGrowPage.h; sourceTree = "<group>"; };
@@ -1353,6 +1356,8 @@
 				085D4BA62730CCF800B04773 /* VRSTargetModel.m */,
 				085D4BA22730CBED00B04773 /* RSResultModelBase.h */,
 				085D4BA32730CBED00B04773 /* RSResultModelBase.m */,
+				0892BAE727770DBF0024B43C /* SPStrong.h */,
+				0892BAE827770DBF0024B43C /* SPStrong.m */,
 			);
 			path = Score;
 			sourceTree = "<group>";
@@ -1734,6 +1739,7 @@
 				0858C5D02194F8B000951BA5 /* MASViewConstraint.m in Sources */,
 				087705C32753B9F400BA4EFB /* HDemandModel.m in Sources */,
 				083BC01F231C9CD900CA9039 /* AIThinkInReason.m in Sources */,
+				0892BAE927770DBF0024B43C /* SPStrong.m in Sources */,
 				88C20B8220C7696A0076BB52 /* AINetAbsFoUtils.m in Sources */,
 				0858C5D22194F8B000951BA5 /* NSLayoutConstraint+MASDebugAdditions.m in Sources */,
 				0860617621F92F5200113366 /* AIThinkOutPercept.m in Sources */,

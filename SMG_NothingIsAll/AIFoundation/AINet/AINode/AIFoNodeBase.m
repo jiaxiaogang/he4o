@@ -25,6 +25,33 @@
     return _diffSubPorts;
 }
 
+-(NSMutableDictionary *)spDic{
+    if (!ISOK(_spDic, NSMutableDictionary.class)) _spDic = [[NSMutableDictionary alloc] initWithDictionary:_spDic];
+    return _spDic;
+}
+
+//MARK:===============================================================
+//MARK:                     < publicMethod >
+//MARK:===============================================================
+/**
+ *  MARK:--------------------更新SP强度值--------------------
+ *  @param cutIndex : 当前要更新sp强度值的下标 (如果是mv则输入-1);
+ */
+-(void) updateSPStrong:(NSInteger)cutIndex type:(AnalogyType)type{
+    //1. 取kv;
+    NSNumber *key = @(cutIndex);
+    AISPStrong *value = [self.spDic objectForKey:key];
+    if (!value) value = [[AISPStrong alloc] init];
+    
+    //2. 更新强度;
+    if (type == ATSub) {
+        value.sStrong++;
+    }else if(type == ATPlus){
+        value.pStrong++;
+    }
+    [self.spDic setObject:value forKey:key];
+}
+
 /**
  *  MARK:--------------------NSCoding--------------------
  */
@@ -36,6 +63,7 @@
         self.mvDeltaTime = [aDecoder decodeDoubleForKey:@"mvDeltaTime"];
         self.diffBasePorts = [aDecoder decodeObjectForKey:@"diffBasePorts"];
         self.diffSubPorts = [aDecoder decodeObjectForKey:@"diffSubPorts"];
+        self.spDic = [aDecoder decodeObjectForKey:@"spDic"];
     }
     return self;
 }
@@ -47,6 +75,7 @@
     [aCoder encodeDouble:self.mvDeltaTime forKey:@"mvDeltaTime"];
     [aCoder encodeObject:[self.diffBasePorts copy] forKey:@"diffBasePorts"];
     [aCoder encodeObject:[self.diffSubPorts copy] forKey:@"diffSubPorts"];
+    [aCoder encodeObject:[self.spDic copy] forKey:@"spDic"];
 }
 
 @end
