@@ -16,32 +16,34 @@
  *  @version
  *      2021.01.24: 多时序识别支持,使之更全面的支持每个matchFo的status更新 (参考22073-todo6);
  *      2021.10.17: 支持IRT的理性失效,场景更新时,状态设为OutBackReason (参考24059&24061-方案2);
+ *      2021.12.25: 针对理性IRT反省的支持 (判断非末位为理性预测中) (参考25021-②);
  *  @status
  *      xxxx.xx.xx: 非启动状态,因为时序识别中,未涵盖HNGL类型,所以并未对HNGL进行预测;
  *      2021.10.17: 启动,支持对IRT的理性失效 (参考24059&24061-方案2);
  */
 +(void) feedbackTIR:(AIShortMatchModel*)model{
-    
-    //-----TODOTOMORROW20211225: 看TIR和TIP两个feedback反馈器,对此处理性的兼容处理;
-    
-    
-    
-    
-    //1. 从短时记忆树上,取所有actYes模型,并与新输入的概念做mIsC判断;
-    //7. 传给TIR,做下一步处理;
+    //1. 取所有lastWait模型,并与新输入的概念做mIsC判断;
     NSArray *inModels = theTC.inModelManager.models;
     OFTitleLog(@"tir_OPushM", @"\n输入M:%@\n输入P:%@",Alg2FStr(model.matchAlg),Alg2FStr(model.protoAlg));
     
     //2. IRT理性失效 (旧有IRT触发器等待中的fo,在场景情况更新时,标记OutBackReason);
     for (AIShortMatchModel *inModel in inModels) {
-        for (AIMatchFoModel *waitModel in inModel.matchPFos) {
-            
-            //a. 取出等待中的_非wait状态的,不处理;
+        
+        //3. 对pFos+rFos都做理性反馈;
+        NSMutableArray *matchs = [[NSMutableArray alloc] initWithArray:inModel.matchPFos];
+        [matchs addObjectsFromArray:inModel.matchRFos];
+        for (AIMatchFoModel *waitModel in matchs) {
+            //4. 取出等待中的_非wait状态的,不处理;
             if (waitModel.status != TIModelStatus_LastWait) continue;
             if (Log4TIROPushM) NSLog(@"==> checkTIModel=MatchFo: %@",Fo2FStr(waitModel.matchFo));
             
-            //b. 直接判断protoFo与waitFo之间mIsC,成立则OutBackYes;
-            BOOL mIsC = [TOUtils mIsC_1:model.protoFo.pointer c:waitModel.matchFo.pointer];
+            //5. 非末位跳过 (参考25031-2);
+            NSInteger maxCutIndex = waitModel.matchFo.count - 1;
+            if (waitModel.cutIndex2 < maxCutIndex) continue;
+            
+            //6. 判断protoAlg与waitAlg之间mIsC,成立则OutBackYes;
+            AIKVPointer *waitAlg_p = ARR_INDEX(waitModel.matchFo.content_ps, waitModel.cutIndex2 + 1);
+            BOOL mIsC = [TOUtils mIsC_1:model.protoAlg.pointer c:waitAlg_p];
             if (mIsC) {
                 waitModel.status = TIModelStatus_OutBackReason;
                 NSLog(@"tir_OPushM: waitFo场景更新,原IRT理性失效");
@@ -49,30 +51,7 @@
         }
     }
     
-    //2. 判断最近一次input是否与等待中outModel相匹配 (匹配,比如吃,确定自己是否真吃了) (原HNGL部分,关闭状态);
-    //3. 在入短时记忆inModels中是没有H的,只有出短时记忆中才有,所以H在feedbackTOR中处理,而不是此处;
-    for (AIShortMatchModel *inModel in inModels) {
-        for (AIMatchFoModel *waitModel in inModel.matchRFos) {
-            ////3. 取出等待中的_非wait状态的,不处理;
-            //if (waitModel.status != TIModelStatus_LastWait) continue;
-            //AIFoNodeBase *waitMatchFo = waitModel.matchFo;
-            //if (Log4TIROPushM) NSLog(@"==> checkTIModel=MatchFo: %@",Fo2FStr(waitMatchFo));
-            //AIKVPointer *waitLastAlg_p = ARR_INDEX_REVERSE(waitMatchFo.content_ps, 0);
-            //if (!waitLastAlg_p) continue;
-            
-            //4. 对H和GL分别做处理;
-            //if([TOUtils isH:waitMatchFo.pointer]){
-            ////2. 直接判断H是否mIsC,是则OutBackYes;
-            //BOOL mIsC = [TOUtils mIsC_1:newInModel.protoAlg.pointer c:waitLastAlg_p];
-            //if (mIsC) {
-            //    waitModel.status = TIModelStatus_OutBackReason;
-            //    NSLog(@"tir_OPushM: H有效");
-            //}
-            //}
-        }
-    }
-    
-    //6. 传给TOR,做下一步处理: R任务_预测mv价值变化;
+    //7. 传给TOR,做下一步处理: R任务_预测mv价值变化;
     //2021.12.01: R任务(新架构应在forecastIRT之后,调用rForecastBack.rDemand,但旧架构在前面,先不动,等测没影响再改后面);
     //2021.12.05: 将tor移到概念识别后了,此处front和back合并 (参考24171-9);
     [TCForecast rForecast:model];
