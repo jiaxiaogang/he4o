@@ -24,8 +24,6 @@
 +(VRSTargetModel*) VRS_Target:(NSArray*)pFos vrsResult:(VRSResultModel*)vrsResult;//修正目标算法
 
 +(BOOL) FRS:(AIFoNodeBase*)fo;
-+(NSArray*) FRS_PK:(NSArray*)conPorts;
-+(RSResultModelBase*) score4FRS:(AIFoNodeBase*)fo;
 +(BOOL) FRS_Miss:(AIFoNodeBase*)sFo matchFo:(AIFoNodeBase*)matchFo cutIndex:(NSInteger)cutIndex;
 +(BOOL) FPS:(TOFoModel*)outModel rtInModel:(AIShortMatchModel*)rtInModel except_ps:(NSArray*)except_ps;
 

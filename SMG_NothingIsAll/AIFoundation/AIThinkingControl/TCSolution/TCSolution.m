@@ -68,7 +68,9 @@
  *  @desc 参考24154-单轮;
  *  @version
  *      2021.11.13: 初版,废弃dsFo,并将reasonSubV5由TOR迁移至此RAction中 (参考24101-第3阶段);
+ *      2021.11.15: R任务FRS稳定性竞争,评分越高的场景排越前 (参考24127-2);
  *      2021.11.25: 迭代为功能架构 (参考24154-单轮示图);
+ *      2021.12.25: 将FRS稳定性竞争废弃,改为仅取bestSP评分,取最稳定的一条 (参考25032-4);
  *  @callers : 用于RDemand.Begin时调用;
  */
 +(void) rSolution:(ReasonDemandModel*)demand oldBestSolution:(TOFoModel*)oldBestSolution{
@@ -91,21 +93,29 @@
         [sumConPorts addObjectsFromArray:conPorts];
     }
     
-    //4. 对conPorts进行FRS稳定性竞争 (参考24127-步骤2);
-    NSArray *frsResults = [AIScore FRS_PK:sumConPorts];
-    
-    //5. frsResults排除不应期;
-    frsResults = [SMGUtils removeArr:frsResults checkValid:^BOOL(RSResultModelBase *item) {
-        return [except_ps containsObject:item.baseFo.pointer];
-    }];
-    if (Log4DirecRef) NSLog(@"\n------- baseFo:%@ -------\n已有方案数:%ld 不应期数:%ld 还有方案数:%ld",Fo2FStr(demand.mModel.matchFo),demand.actionFoModels.count,except_ps.count,frsResults.count);
+    //4. 从conPorts中找出最优秀的result (稳定性竞争) (参考24127-步骤2);
+    RSResultModelBase *bestRSResult = nil;
+    for (AIPort *maskPort in sumConPorts) {
+        //5. 排除不应期;
+        if ([except_ps containsObject:maskPort.target_p]) continue;
+        
+        //6. 判断SP评分;
+        AIFoNodeBase *maskFo = [SMGUtils searchNode:maskPort.target_p];
+        AISPStrong *spStrong = [maskFo.spDic objectForKey:@(-1)];
+        RSResultModelBase *checkResult = [RSResultModelBase newWithBaseFo:maskFo pScore:spStrong.pStrong sScore:spStrong.sStrong];
+        
+        //7. 当best为空 或 check评分比best更高时 => 将check赋值到best;
+        if(!bestRSResult || checkResult.score > bestRSResult.score){
+            bestRSResult = checkResult;
+        }
+    }
+    if (Log4DirecRef) NSLog(@"\n------- baseFo:%@ -------\n已有方案数:%ld 不应期数:%ld",Fo2FStr(demand.mModel.matchFo),demand.actionFoModels.count,except_ps.count);
     
     //6. 转流程控制_有解决方案则转begin;
-    RSResultModelBase *firstResult = ARR_INDEX(frsResults, 0);
-    if (firstResult) {
+    if (bestRSResult) {
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
-        TOFoModel *foModel = [TOFoModel newWithFo_p:firstResult.baseFo.pointer base:demand];
-        NSLog(@"------->>>>>> R- 新增一例解决方案: %@->%@ FRS_PK评分:%.2f",Fo2FStr(firstResult.baseFo),Mvp2Str(firstResult.baseFo.cmvNode_p),firstResult.score);
+        TOFoModel *foModel = [TOFoModel newWithFo_p:bestRSResult.baseFo.pointer base:demand];
+        NSLog(@"------->>>>>> R- 新增一例解决方案: %@->%@ FRS_PK评分:%.2f",Fo2FStr(bestRSResult.baseFo),Mvp2Str(bestRSResult.baseFo.cmvNode_p),bestRSResult.score);
         [TCAction action:foModel];
     }else{
         //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);

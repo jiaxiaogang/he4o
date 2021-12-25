@@ -283,39 +283,6 @@
 }
 
 /**
- *  MARK:--------------------FRS稳定性竞争--------------------
- *  @desc R任务评分越高的排越前 (参考24127-2);
- */
-+(NSArray*) FRS_PK:(NSArray*)conPorts{
-    conPorts = ARRTOOK(conPorts);
-    return [conPorts sortedArrayUsingComparator:^NSComparisonResult(AIPort *o1, AIPort *o2) {
-        AIFoNodeBase *fo1 = [SMGUtils searchNode:o1.target_p];
-        AIFoNodeBase *fo2 = [SMGUtils searchNode:o2.target_p];
-        RSResultModelBase *rs1 = [self score4FRS:fo1];
-        RSResultModelBase *rs2 = [self score4FRS:fo2];
-        return [SMGUtils compareDoubleA:rs1.score doubleB:rs2.score];
-    }];
-}
-
-/**
- *  MARK:--------------------FRS评分--------------------
- *  @desc 对场景的p稳定性评分;
- */
-+(RSResultModelBase*) score4FRS:(AIFoNodeBase*)fo{
-    //1. 取出spPorts;
-    NSArray *sPorts = [AINetUtils absPorts_All:fo type:ATSub];
-    NSArray *pPorts = [AINetUtils absPorts_All:fo type:ATPlus];
-    
-    //2. 取SP评分;
-    NSInteger sScore = 0,pScore = 0;
-    for (AIPort *item in sPorts) sScore += item.strong.value;
-    for (AIPort *item in pPorts) pScore += item.strong.value;
-    
-    //3. 返回评分;
-    return [RSResultModelBase newWithBaseFo:fo pScore:pScore sScore:sScore];
-}
-
-/**
  *  MARK:--------------------时序错过评价--------------------
  *  @desc
  *      1. 车已经撞了,再去修正Y距离,已经太晚了;
