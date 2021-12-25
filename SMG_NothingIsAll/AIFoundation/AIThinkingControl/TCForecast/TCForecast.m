@@ -96,6 +96,86 @@
     }
 }
 
+/**
+ *  MARK:--------------------IRT预测--------------------
+ *  @version
+ *      2021.11.30: 将IRT触发器交由任务树来完成,即每条输入更新到任务树,任务树里每个分支都自带IRT预测;
+ *                  > 弃做,何必绕圈子,原有做法: 时序预测直接做触发器就行;
+ *      2021.12.25: 支持理性IRT反省;
+ */
++(void) forecastIRTV2:(AIShortMatchModel*)model {
+    //1. 数据检查 (参考25031-1);
+    IFTitleLog(@"预测",@"\nprotoFo:%@",Fo2FStr(model.protoFo));
+    NSMutableArray *matchs = [[NSMutableArray alloc] init];
+    [matchs addObjectsFromArray:model.matchRFos];
+    [matchs addObjectsFromArray:model.matchPFos];
+    
+    //2. 预测下一帧 (参考25031-2);
+    for (AIMatchFoModel *item in matchs) {
+        
+        //3. 非末位时,理性反省 (参考25031-2);
+        AIFoNodeBase *matchFo = item.matchFo;
+        NSInteger maxCutIndex = matchFo.count - 1;
+        if (item.cutIndex2 < maxCutIndex) {
+            
+            //4. 设为等待反馈状态 & 构建反省触发器;
+            item.status = TIModelStatus_LastWait;
+            double deltaTime = [NUMTOOK(ARR_INDEX(matchFo.deltaTimes, item.cutIndex2 + 1)) doubleValue];
+            
+            NSLog(@"---//理性IRT触发器新增:%p %@ (%@ | useTime:%.2f)",matchFo,Fo2FStr(matchFo),TIStatus2Str(item.status),deltaTime);
+            [AITime setTimeTrigger:deltaTime trigger:^{
+                //5. 如果状态已改成OutBackReason,说明有反馈;
+                AnalogyType type = item.status == TIModelStatus_LastWait ? ATSub : ATPlus;
+                
+                //6. 则进行理性IRT反省;
+                [TCRethink reasonInRethink:item type:type];
+                NSLog(@"---//理性IRT触发器执行:%p %@ (%@ | %@)",matchFo,Fo2FStr(matchFo),TIStatus2Str(item.status),ATType2Str(type));
+                
+                //7. 失败状态标记;
+                if (item.status == TIModelStatus_LastWait) item.status = TIModelStatus_OutBackNone;
+            }];
+        }
+        //8. 末位且有mv时,感性反省 (参考25031-2);
+        else if(matchFo.cmvNode_p){
+            
+            //9. 设为等待反馈状态 & 构建反省触发器;
+            item.status = TIModelStatus_LastWait;
+            double deltaTime = matchFo.mvDeltaTime;
+            
+            NSLog(@"---//感性IRT触发器新增:%p %@ (%@ | useTime:%.2f)",matchFo,Fo2FStr(matchFo),TIStatus2Str(item.status),deltaTime);
+            [AITime setTimeTrigger:deltaTime trigger:^{
+                //10. 如果状态已改成OutBack,说明有反馈;
+                AnalogyType type = ATDefault;
+                CGFloat score = [AIScore score4MV:matchFo.cmvNode_p ratio:1.0f];
+                if (score > 0) {
+                    //b. 实mv+反馈同向:P(好),未反馈:S(坏);
+                    type = (item.status == TIModelStatus_OutBackSameDelta) ? ATPlus : ATSub;
+                }else if(score < 0){
+                    //b. 实mv-反馈同向:S(坏),未反馈:P(好);
+                    type = (item.status == TIModelStatus_OutBackSameDelta) ? ATSub : ATPlus;
+                }
+                
+                //11. 则进行感性IRT反省;
+                if (type != ATDefault) {
+                    [TCRethink perceptInRethink:item type:type];
+                    NSLog(@"---//感性IRT触发器执行:%p %@ (%@ | %@)",matchFo,Fo2FStr(matchFo),TIStatus2Str(item.status),ATType2Str(type));
+                }
+                
+                //12. 失败状态标记;
+                if (item.status == TIModelStatus_LastWait) item.status = TIModelStatus_OutBackNone;
+            }];
+        }
+    }
+    
+    //-----TODOTOMORROW20211225: 看TIR和TIP两个feedback反馈器,对此处理性的兼容处理;
+    
+    
+    
+    
+    
+    
+}
+
 +(void) feedbackForecast:(AIShortMatchModel*)model foModel:(TOFoModel*)foModel{
     [TCDemand feedbackDemand:model foModel:foModel];
 }

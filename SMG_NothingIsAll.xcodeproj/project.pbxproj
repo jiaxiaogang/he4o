@@ -107,6 +107,7 @@
 		0889257F22B0702A00A0DBDD /* NVModuleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0889257E22B0702A00A0DBDD /* NVModuleView.m */; };
 		0889258122B0703700A0DBDD /* NVModuleView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0889258022B0703700A0DBDD /* NVModuleView.xib */; };
 		088DD7232201216500E0A786 /* TOFoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088DD7222201216500E0A786 /* TOFoModel.m */; };
+		0892BAE62776D6920024B43C /* TCRethink.m in Sources */ = {isa = PBXBuildFile; fileRef = 0892BAE52776D6920024B43C /* TCRethink.m */; };
 		0895FFE4264A13C500DAD3EA /* TOModelVision.m in Sources */ = {isa = PBXBuildFile; fileRef = 0895FFE3264A13C500DAD3EA /* TOModelVision.m */; };
 		089614A9219A4D5200343FAC /* BirdGrowPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 089614A7219A4D5200343FAC /* BirdGrowPage.m */; };
 		089614AA219A4D5200343FAC /* BirdGrowPage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 089614A8219A4D5200343FAC /* BirdGrowPage.xib */; };
@@ -382,6 +383,8 @@
 		0889258022B0703700A0DBDD /* NVModuleView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NVModuleView.xib; sourceTree = "<group>"; };
 		088DD7212201216500E0A786 /* TOFoModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOFoModel.h; sourceTree = "<group>"; };
 		088DD7222201216500E0A786 /* TOFoModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOFoModel.m; sourceTree = "<group>"; };
+		0892BAE42776D6920024B43C /* TCRethink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCRethink.h; sourceTree = "<group>"; };
+		0892BAE52776D6920024B43C /* TCRethink.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCRethink.m; sourceTree = "<group>"; };
 		0895FFE2264A13C500DAD3EA /* TOModelVision.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOModelVision.h; sourceTree = "<group>"; };
 		0895FFE3264A13C500DAD3EA /* TOModelVision.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOModelVision.m; sourceTree = "<group>"; };
 		089614A6219A4D5200343FAC /* BirdGrowPage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BirdGrowPage.h; sourceTree = "<group>"; };
@@ -795,6 +798,7 @@
 				087705A3275373FA00BA4EFB /* TCSolution */,
 				087705A42753740600BA4EFB /* TCAction */,
 				087705A52753740F00BA4EFB /* TCOut */,
+				0892BAE32776D6710024B43C /* TCRethink */,
 				08F38D62272C39C1001CD764 /* Score */,
 				081BD08525B94F09003C3038 /* Demand */,
 				0860617321F92F3E00113366 /* Out */,
@@ -1053,6 +1057,15 @@
 				087705BC2753748A00BA4EFB /* TCOut.m */,
 			);
 			path = TCOut;
+			sourceTree = "<group>";
+		};
+		0892BAE32776D6710024B43C /* TCRethink */ = {
+			isa = PBXGroup;
+			children = (
+				0892BAE42776D6920024B43C /* TCRethink.h */,
+				0892BAE52776D6920024B43C /* TCRethink.m */,
+			);
+			path = TCRethink;
 			sourceTree = "<group>";
 		};
 		0895FFE1264A139900DAD3EA /* TOModelVision */ = {
@@ -1757,6 +1770,7 @@
 				083BC022231CA14E00CA9039 /* AIThinkInPercept.m in Sources */,
 				080A74321F60C6490025DBA3 /* AIPort.m in Sources */,
 				08DB40CB1F11A65E003162C8 /* TestHungryPage.m in Sources */,
+				0892BAE62776D6920024B43C /* TCRethink.m in Sources */,
 				087E7FCB258053D90097E0B9 /* NSFile+Extension.m in Sources */,
 				08250AE0228112C000FC497C /* XGWedis.m in Sources */,
 				88A43F432109589600281348 /* AICMVNode.m in Sources */,
