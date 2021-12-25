@@ -21,6 +21,12 @@
  *      2021.10.17: 启动,支持对IRT的理性失效 (参考24059&24061-方案2);
  */
 +(void) feedbackTIR:(AIShortMatchModel*)model{
+    
+    //-----TODOTOMORROW20211225: 看TIR和TIP两个feedback反馈器,对此处理性的兼容处理;
+    
+    
+    
+    
     //1. 从短时记忆树上,取所有actYes模型,并与新输入的概念做mIsC判断;
     //7. 传给TIR,做下一步处理;
     NSArray *inModels = theTC.inModelManager.models;
@@ -81,6 +87,8 @@
  *  @version
  *      2021.01.24: 对多时序识别结果支持,及时全面的改变status为OutBackYes (参考22073-todo5);
  *      2021.02.04: In反省支持虚mv,所以此处也要支持虚mv的OPush判断 (参考22108);
+ *      2021.12.25: 废弃虚mv的代码 (因为虚mv早已不在时序识别的结果中,并且整个dsFo都已废弃掉了) (参考Note24);
+ *      2021.12.25: 针对感性IRT反省的支持 (判断末位为感性预测中) (参考25022-②);
  *  @bug
  *      2021.01.25: 修复witMatchFo.cmvNode_p空判断逻辑反了,导致无法执行修改状态为OutBackYes,从而反省类比永远为"逆";
  */
@@ -89,27 +97,25 @@
     NSArray *inModels = theTC.inModelManager.models;
     OFTitleLog(@"tip_OPushM", @"\n输入MV:%@",Mv2FStr(cmvNode));
     
-    //3. 判断最近一次input是否与等待中outModel相匹配 (匹配,比如吃,确定自己是否真吃了);
+    //2. 判断最近一次input是否与等待中outModel相匹配 (匹配,比如吃,确定自己是否真吃了);
     for (AIShortMatchModel *inModel in inModels) {
         for (AIMatchFoModel *waitModel in inModel.matchPFos) {
-            //3. 非等待中的跳过;
-            AIFoNodeBase *waitMatchFo = waitModel.matchFo;
-            if (Log4OPushM) NSLog(@"==> checkTIModel=MatchFo: %@ (%@)",Fo2FStr(waitMatchFo),TIStatus2Str(waitModel.status));
-            if (waitModel.status != TIModelStatus_LastWait || !waitMatchFo.cmvNode_p) continue;
             
-            //4. 等待中的inModel_判断hope(wait)和real(new)之间是否相符;
-            if ([AINetUtils isVirtualMv:waitMatchFo.cmvNode_p]) {
-                //a. 虚mv仅标记同区反向反馈;
-                if ([AIScore sameIdenDiffDelta:waitMatchFo.cmvNode_p mv2:cmvNode.pointer]) {
-                    waitModel.status = TIModelStatus_OutBackDiffDelta;
-                    NSLog(@"tip_OPushM: 虚MV 反向反馈");
-                }
-            }else{
-                //b. 实mv仅标记同区同向反馈;
-                if ([AIScore sameIdenSameScore:waitMatchFo.cmvNode_p mv2:cmvNode.pointer]) {
-                    waitModel.status = TIModelStatus_OutBackSameDelta;
-                    NSLog(@"tip_OPushM: 实MV 正向反馈");
-                }
+            //3. 数据准备;
+            AIFoNodeBase *waitMatchFo = waitModel.matchFo;
+            NSInteger maxCutIndex = waitModel.matchFo.count - 1;
+            
+            //4. 非等待中的跳过;
+            if (Log4OPushM) NSLog(@"==> checkTIModel=MatchFo: %@ (%@)",Fo2FStr(waitMatchFo),TIStatus2Str(waitModel.status));
+            if (waitModel.status != TIModelStatus_LastWait) continue;
+            
+            //5. 非末位跳过 (参考25031-2);
+            if (waitModel.cutIndex2 < maxCutIndex) continue;
+            
+            //6. 等待中的inModel_判断hope(wait)和real(new)之间是否相符 (仅标记同区同向反馈);
+            if ([AIScore sameIdenSameScore:waitMatchFo.cmvNode_p mv2:cmvNode.pointer]) {
+                waitModel.status = TIModelStatus_OutBackSameDelta;
+                NSLog(@"tip_OPushM: 实MV 正向反馈");
             }
         }
     }

@@ -166,14 +166,6 @@
             }];
         }
     }
-    
-    //-----TODOTOMORROW20211225: 看TIR和TIP两个feedback反馈器,对此处理性的兼容处理;
-    
-    
-    
-    
-    
-    
 }
 
 +(void) feedbackForecast:(AIShortMatchModel*)model foModel:(TOFoModel*)foModel{
