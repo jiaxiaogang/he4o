@@ -58,6 +58,7 @@
  *      2021.05.20: 当GL相符判断有结果后,targetModel(replaceAlg)也设为finish或actNo,以便_GL()中做不应期判断 (参考23079);
  *      2021.12.05: 将feedbackTOR前置到概念识别后,所以推进成功,才执行TOP四模式的逻辑作废 (参考24171-9);
  *      2021.12.23: feedback时,将root设回runing状态 (参考24212-8);
+ *      2021.12.26: 废弃HN后,类型判断处理 & 兼容hActYes输出 (参考25032-6);
  *  @bug
  *      2020.09.22: 加上cutStopStatus,避免同一waitModel被多次触发,导致BUG (参考21042);
  *      2020.12.26: GL时,waitType的判断改为bFo,因为只有bFo才携带了waitTypeDS (参考21204);
@@ -80,12 +81,8 @@
         if (!waitIsAlgAndBaseIsFo) continue;
         
         //3. 不同类型不同处理;
-        NSLog(@"========3");
-        BOOL isH = [TOUtils isH_toModel:waitModel];
-        BOOL isNormal = ![TOUtils isHNGL_toModel:waitModel];
-        
         //4. ============= H返回的有效判断 =============
-        if (isH) {
+        if (ISOK(waitModel.baseOrGroup.baseOrGroup, HDemandModel.class)) {
             NSLog(@"========4");
             TOFoModel *hFoModel = (TOFoModel*)waitModel.baseOrGroup;    //h解决方案;
             HDemandModel *hDemand = (HDemandModel*)hFoModel.baseOrGroup;//h需求模型
@@ -110,7 +107,7 @@
         }
         
         //7. ============= "行为输出" 和 "demand.ActYes" 和 "静默成功 的有效判断 =============
-        if (isNormal) {
+        if (ISOK(waitModel.baseOrGroup.baseOrGroup, ReasonDemandModel.class)) {
             TOAlgModel *targetAlg = waitModel;                          //等待中的目标alg;
             TOFoModel *targetFo = (TOFoModel*)targetAlg.baseOrGroup;    //目标alg所在的fo;
             BOOL mIsC = [TOUtils mIsC_2:model.matchAlg.pointer c:targetAlg.content_p];

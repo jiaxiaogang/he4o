@@ -32,6 +32,7 @@
  *      1. 首位为0;
  *      2. 末位为N或L时,为0 (因为N和L抽象自frontAlg);
  *      3. isOut=true时,为0,比如反射反应触发"吃",是即时触发的,自然是0;
+ *  _result 2021.12.26: 传入index,取出的结果为:"从index-1到index的时间";
  */
 @property (strong, nonatomic) NSMutableArray *deltaTimes;
 @property (assign, nonatomic) NSTimeInterval mvDeltaTime;

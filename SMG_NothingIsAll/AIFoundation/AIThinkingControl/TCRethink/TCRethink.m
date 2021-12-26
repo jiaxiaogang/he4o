@@ -10,7 +10,6 @@
 
 @implementation TCRethink
 
-//理性IRT反省;
 +(void) reasonInRethink:(AIMatchFoModel*)model type:(AnalogyType)type{
     [model.matchFo updateSPStrong:model.cutIndex2 + 1 type:type];
 }
@@ -20,11 +19,13 @@
 }
 
 +(void) reasonOutRethink:(TOFoModel*)model type:(AnalogyType)type{
-    
+    AIFoNodeBase *fo = [SMGUtils searchNode:model.content_p];
+    [fo updateSPStrong:model.targetSPIndex type:type];
 }
 
 +(void) perceptOutRethink:(TOFoModel*)model type:(AnalogyType)type{
-    
+    AIFoNodeBase *fo = [SMGUtils searchNode:model.content_p];
+    [fo updateSPStrong:fo.count type:type];
 }
 
 @end

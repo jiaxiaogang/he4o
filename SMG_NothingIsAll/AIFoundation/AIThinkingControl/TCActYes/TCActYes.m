@@ -144,7 +144,12 @@
     }];
 }
 
-//H模式,等待hAlg输入反馈->(feedbackTOR)->->调用理性ORT反省;
+/**
+ *  MARK:--------------------hActYes--------------------
+ *  @desc H模式,等待hAlg输入反馈->(feedbackTOR)->->调用理性ORT反省;
+ *  @version
+ *      2021.12.26: 接入理性ORT反省 (参考25032-5);
+ */
 +(void) hActYes:(TOAlgModel*)algModel{
     //1. 数据准备
     TOFoModel *foModel = (TOFoModel*)algModel.baseOrGroup;
@@ -154,9 +159,8 @@
     DemandModel *root = ARR_INDEX([TOUtils getBaseDemands_AllDeep:algModel], 0);
     root.status = TOModelStatus_ActYes;
     
-    //2. 如果TOAlgModel为HNGL时,
-    NSInteger cutIndex = foNode.count - 1;
-    double deltaTime = [NUMTOOK(ARR_INDEX(foNode.deltaTimes, cutIndex)) doubleValue];
+    //2. 如果TOAlgModel为HNGL时 (所需时间为"target-1到target"时间);
+    double deltaTime = [NUMTOOK(ARR_INDEX(foNode.deltaTimes, foModel.targetSPIndex)) doubleValue];
     [AINoRepeatRun sign:STRFORMAT(@"%p",algModel)];
     
     //3. 触发器 (触发条件:未等到实际输入);
@@ -167,19 +171,18 @@
         AnalogyType type = (algModel.status == TOModelStatus_ActYes) ? ATSub : ATPlus;
         [AINoRepeatRun run:STRFORMAT(@"%p",algModel) block:^{
             NSLog(@"---//触发器A_触发: %@ from %@ (%@)",AlgP2FStr(algModel.content_p),Fo2FStr(foNode),ATType2Str(type));
-            [AIAnalogy analogy_OutRethink:foModel cutIndex:cutIndex type:type];
+            [TCRethink reasonOutRethink:foModel type:type];
         }];
         
-        //5. 失败时,转流程控制-失败 (会开始下一解决方案);
-        DemandModel *root = [TOUtils getDemandModelWithSubOutModel:algModel];
+        //5. 失败时_继续决策 (成功时,由feedback的IN流程继续);
         BOOL havRoot = [theTC.outModelManager.getAllDemand containsObject:root];
         if (algModel.status == TOModelStatus_ActYes && havRoot) {
             NSLog(@"====ActYes is ATSub -> 递归alg");
             //5. 2020.11.28: alg本级递归 (只有_Hav全部失败时,才会自行调用failure声明失败) (参考2114C);
             algModel.status = TOModelStatus_ActNo;
             
-            //TODOTOMORROW20211202: 失败时,此处递归到base,尝试下一H方案;
-            //[self singleLoopBackWithFailureModel:algModel];
+            //6. 2021.12.02: 失败时,继续决策;
+            [TCScore score];
         }
     }];
 }
