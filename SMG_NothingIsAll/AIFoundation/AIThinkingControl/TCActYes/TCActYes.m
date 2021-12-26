@@ -93,7 +93,16 @@
     }
 }
 
-//R模式,fo执行完成时,actYes->(feedbackTOP)->调用感性ORT反省;
+
+/**
+ *  MARK:--------------------rActYes--------------------
+ *  @desc R模式,fo执行完成时,actYes->(feedbackTOP)->调用感性ORT反省;
+ *  @version
+ *      2021.12.26: 触发器时间由baseDemand取改成solutionFo取,因为当前就是在执行solutionFo (参考25031-11);
+ *                  > 而baseDemand"时间紧急"自有其评价决定,此处只管触发器的直接时间;
+ *      2021.12.26: 触发器和反省都针对solutionFo,而不是baseDemand.matchFo (参考25031-11);
+ *      2021.12.26: 接入新的感性ORT反省 (参考25032-5);
+ */
 +(void) rActYes:(TOFoModel*)foModel{
     //1. R-模式ActYes处理,仅赋值,等待R-触发器;
     ReasonDemandModel *demand = (ReasonDemandModel*)foModel.baseOrGroup;
@@ -103,37 +112,33 @@
     DemandModel *root = ARR_INDEX([TOUtils getBaseDemands_AllDeep:foModel], 0);
     root.status = TOModelStatus_ActYes;
     
-    //2. 取matchFo已发生,到末位mvDeltaTime,所有时间之和做触发;
-    AIFoNodeBase *matchFo = demand.mModel.matchFo;
-    double deltaTime = [TOUtils getSumDeltaTime2Mv:matchFo cutIndex:demand.mModel.cutIndex2];
+    //2. solutionFo已执行完成,直接取mvDeltaTime做触发器时间;
+    AIFoNodeBase *solutionFo = [SMGUtils searchNode:foModel.content_p];
+    double deltaTime = solutionFo.mvDeltaTime;
     
     //3. 触发器;
-    NSLog(@"---//触发器R-_感性mv任务:%@ 解决方案:%@ time:%f",Fo2FStr(matchFo),Pit2FStr(foModel.content_p),deltaTime);
+    NSLog(@"---//触发器R-_感性mv任务:%@ 解决方案:%@ time:%f",Fo2FStr(demand.mModel.matchFo),Pit2FStr(foModel.content_p),deltaTime);
     [AITime setTimeTrigger:deltaTime trigger:^{
         
         //3. 无root时,说明已被别的R-新matchFo抵消掉,抵消掉后是不做反省的 (参考22081-todo1);
-        BOOL havRoot = [theTC.outModelManager.getAllDemand containsObject:demand];
+        BOOL havRoot = [theTC.outModelManager.getAllDemand containsObject:root];
         if (havRoot) {
-            //3. 反省类比 (当OutBack发生,则破壁失败S,否则成功P) (参考top_OPushM());
-            AnalogyType type = (foModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;
-            NSLog(@"---//触发器R-_感性mv任务:%@ 解决方案:%@ (%@)",Fo2FStr(matchFo),Pit2FStr(foModel.content_p),ATType2Str(type));
             
-            //4. 暂不开通反省类比,等做兼容PM后,再打开反省类比;
-            [AIAnalogy analogy_OutRethink:(TOFoModel*)foModel cutIndex:NSIntegerMax type:type];
+            //10. 如果状态已改成OutBack,说明有反馈;
+            AnalogyType type = ATDefault;
+            CGFloat score = [AIScore score4MV:solutionFo.cmvNode_p ratio:1.0f];
+            if (score > 0) {
+                //b. 实mv+反馈同向:P(好),未反馈:S(坏);
+                type = (foModel.status == TOModelStatus_OuterBack) ? ATPlus : ATSub;
+            }else if(score < 0){
+                //b. 实mv-反馈同向:S(坏),未反馈:P(好);
+                type = (foModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;
+            }
             
-            //4. 失败时,转流程控制-失败 (会开始下一解决方案) (参考22061-8);
-            //2021.01.28: 失败后不用再尝试下一方案了,因为R任务已过期 (已经被撞了,你再躲也没用) (参考22081-todo3);
-            if (type == ATSub) {
-                foModel.status = TOModelStatus_ScoreNo;
-                
-                //TODOTOMORROW20211202: 失败时,递归到base,并尝试下一解决方案;
-                //[self singleLoopBackWithFailureModel:demand];
-            }else{
-                //5. SFo破壁成功,完成任务 (参考22061-9);
-                foModel.status = TOModelStatus_Finish;
-                
-                //TODOTOMORROW20211202: 成功时,递归到base,继续下一任务,或全部完成;
-                //[self singleLoopBackWithFinishModel:demand];
+            //11. 则进行感性IRT反省;
+            if (type != ATDefault) {
+                [TCRethink perceptOutRethink:foModel type:type];
+                NSLog(@"---//感性ORT触发器执行:%p %@ (%@ | %@)",foModel,Fo2FStr(solutionFo),TOStatus2Str(foModel.status),ATType2Str(type));
             }
         }
     }];

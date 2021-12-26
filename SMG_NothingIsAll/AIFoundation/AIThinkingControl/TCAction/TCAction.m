@@ -88,6 +88,7 @@
         NSLog(@"_Fo行为化: Finish %ld/%ld 到ActYes",(long)foModel.actionIndex,(long)curFo.count);
         if (ISOK(foModel.baseOrGroup, ReasonDemandModel.class)) {
             [TCActYes rActYes:foModel];
+            [TCScore score];//r输出完成时,继续决策;
         }else if(ISOK(foModel.baseOrGroup, HDemandModel.class)){
             
             //9. H目标帧只需要等 (转hActYes) (参考25031-9);
@@ -95,7 +96,7 @@
             AIKVPointer *hTarget_p = ARR_INDEX(curFo.content_ps, foModel.actionIndex);
             TOAlgModel *hTargetAlg = [TOAlgModel newWithAlg_p:hTarget_p group:foModel];
             hTargetAlg.status = TOModelStatus_ActYes;
-            [TCActYes hActYes:hTargetAlg];
+            [TCActYes hActYes:hTargetAlg];//h输出成功时,等待反馈;
         }
     }
 }

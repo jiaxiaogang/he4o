@@ -16,7 +16,7 @@
 
 +(void) reasonInRethink:(AIMatchFoModel*)model type:(AnalogyType)type;
 +(void) perceptInRethink:(AIMatchFoModel*)model type:(AnalogyType)type;
-+(void) reasonOutRethink:(AIMatchFoModel*)model type:(AnalogyType)type;
-+(void) perceptOutRethink:(AIMatchFoModel*)model type:(AnalogyType)type;
++(void) reasonOutRethink:(TOFoModel*)model type:(AnalogyType)type;
++(void) perceptOutRethink:(TOFoModel*)model type:(AnalogyType)type;
 
 @end

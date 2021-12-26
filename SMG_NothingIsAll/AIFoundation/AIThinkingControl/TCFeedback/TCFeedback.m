@@ -106,35 +106,35 @@
  *  @version
  *      2021.02.04: 将R同区同向(会导致永远为false因为虚mv得分为0)判断,改为同区反向判断 (参考22115BUG & 22108虚mv反馈判断方法);
  *      2021.12.23: feedback时,将root设回runing状态 (参考24212-8);
+ *      2021.12.24: 应对整个工作记忆树进行支持,而不是仅rootDemands (参考25032-6);
+ *      2021.12.26: 针对rSolution的感性反馈 (参考25031-11 & 25032-6);
  */
 +(void) feedbackTOP:(AICMVNode*)cmvNode{
     //0. 数据检查
     NSInteger delta = [NUMTOOK([AINetIndex getData:cmvNode.delta_p]) integerValue];
-    if (delta == 0) {
-        return;
-    }
-    
-    //1. 数据检查
-    NSArray *demands = theTC.outModelManager.getAllDemand;
+    if (delta == 0) return;
     OFTitleLog(@"top_OPushM", @"\n输入MV:%@",Mv2FStr(cmvNode));
     
-    //2. 对所有ReasonDemandModel尝试处理 (是R-任务);
-    //TODOTOMORROW20211224: 应对整个工作记忆树进行支持,而不是仅rootDemands;
-    for (ReasonDemandModel *demand in demands) {
-        if (!ISOK(demand, ReasonDemandModel.class)) continue;
-        
-        //3. 判断hope(wait)和real(new)之间是否相符 (当反馈了"同区反向"时,即表明任务失败,为S) (匹配,比如撞疼,确定疼了);
-        if ([AIScore sameIdenDiffDelta:demand.mModel.matchFo.cmvNode_p mv2:cmvNode.pointer]) continue;
-        
-        //4. 将等待中的foModel改为OutBack;
-        for (TOFoModel *foModel in demand.actionFoModels) {
-            if (foModel.status != TOModelStatus_ActYes) continue;
-            if (Log4OPushM) NSLog(@"==> top_OPushM_mv有效改为OutBack,SFo: %@",Pit2FStr(foModel.content_p));
-            foModel.status = TOModelStatus_OuterBack;
+    //2. 对所有等待中的任务尝试处理 (R-任务);
+    for (ReasonDemandModel *root in theTC.outModelManager.getAllDemand) {
+        NSArray *waitModels = [TOUtils getSubOutModels_AllDeep:root validStatus:@[@(TOModelStatus_ActYes)]];
+        for (TOFoModel *waitModel in waitModels) {
             
-            //4. root设回runing
-            DemandModel *root = ARR_INDEX([TOUtils getBaseDemands_AllDeep:foModel], 0);
-            root.status = TOModelStatus_Runing;
+            //3. 非R任务解决方案不处理;
+            if (!ISOK(waitModel, TOFoModel.class) || !ISOK(waitModel.baseOrGroup, ReasonDemandModel.class)) continue;
+            
+            //4. 非actYes状态不处理;
+            if (waitModel.status != TOModelStatus_ActYes) continue;
+            
+            //3. 判断hope(wait)和real(new)之间是否相符 (当反馈了"同区反向"时,即表明任务失败,为S) (匹配,比如撞疼,确定疼了);
+            AIFoNodeBase *waitFo = [SMGUtils searchNode:waitModel.content_p];
+            if ([AIScore sameIdenSameScore:waitFo.cmvNode_p mv2:cmvNode.pointer]) {
+                waitModel.status = TOModelStatus_OuterBack;
+                NSLog(@"top_OPushM: 实MV 正向反馈");
+                
+                //4. root设回runing
+                root.status = TOModelStatus_Runing;
+            }
         }
     }
     
