@@ -44,10 +44,4 @@
 -(void) dataInFromOutput:(NSArray*)outValue_ps;
 
 
-//MARK:===============================================================
-//MARK:                     < FromTOR >
-//MARK:===============================================================
-
--(AIShortMatchModel*) dataInFromRethink:(TOFoModel*)toFoModel;
-
 @end

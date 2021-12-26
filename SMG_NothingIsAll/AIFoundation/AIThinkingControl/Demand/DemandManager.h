@@ -29,13 +29,6 @@
 -(void) updateCMVCache_RMV:(AIShortMatchModel*)inModel;
 
 /**
- *  MARK:--------------------生成子任务--------------------
- *  @param rtInModel : 反思结果;
- *  @param baseFo : 反思基于此fo进行的,将反思产生的子任务挂在这下面;
- */
-+(void) updateSubDemand:(AIShortMatchModel*)rtInModel baseFo:(TOFoModel*)baseFo createSubDemandBlock:(void(^)(ReasonDemandModel*))createSubDemandBlock finishBlock:(void(^)(NSArray*))finishBlock;
-
-/**
  *  MARK:--------------------dataIn_Mv时及时加到manager--------------------
  */
 //-(void) dataIn_CmvAlgsArr:(NSArray*)algsArr;

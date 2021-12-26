@@ -56,6 +56,7 @@
  *  @version
  *      2020.10.19: 将add至ShortMatchManager代码前迁;
  *      2021.12.05: 将feedbackTOR前迁到概念识别之后 (参考24171-9);
+ *      2021.12.26: GL和HN已全废弃了,所以删掉内类比调用 (参考Note24 & Note25);
  */
 +(void) rLearning:(AIShortMatchModel*)model recognitionMaskFo:(AIFoNodeBase*)recognitionMaskFo{
     //3. 学习 for RFos: 加强RFos的抽具象关联;
@@ -64,9 +65,6 @@
         if (Log4AnalogyAbsRFo) NSLog(@">>> 抽象absRFo: %@\t\tFrom MatchRFo: F%ld",Fo2FStr(absRFo),item.matchFo.pointer.pointerId);
         if (absRFo && ![model.absRFos containsObject:absRFo]) [model.absRFos addObject:absRFo];
     }
-    
-    //5. 学习 for 内类比
-    [AIAnalogy analogyInner:model];
     
     //5. TIR反馈;
     [TCFeedback feedbackTIR:model];

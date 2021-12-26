@@ -99,7 +99,7 @@
     //目前仅top方向的fo支持dsPorts;
     if (PitIsFo(self.data) && self.type == DirectionType_Top) {
         AIFoNodeBase *node = [SMGUtils searchNode:self.data];
-        NSArray *dsPorts = [AINetUtils dsPorts_All:node];
+        NSArray *dsPorts = @[];
         [theNV setNodeDatas:Ports2Pits(dsPorts)];
     }
     [self close];

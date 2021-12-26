@@ -451,18 +451,6 @@
 +(BOOL) isHNGL_toModel:(TOModelBase*)toModel{
     return [self isHNGL:[self convertLastAlg2FoModel:toModel].content_p];
 }
-+(BOOL) isH_toModel:(TOModelBase*)toModel{
-    return [self isH:[self convertLastAlg2FoModel:toModel].content_p];
-}
-+(BOOL) isN_toModel:(TOModelBase*)toModel{
-    return [self isN:[self convertLastAlg2FoModel:toModel].content_p];
-}
-+(BOOL) isG_toModel:(TOModelBase*)toModel{
-    return [self isG:[self convertLastAlg2FoModel:toModel].content_p];
-}
-+(BOOL) isL_toModel:(TOModelBase*)toModel{
-    return [self isL:[self convertLastAlg2FoModel:toModel].content_p];
-}
 +(TOModelBase*) convertLastAlg2FoModel:(TOModelBase*)toModel{
     //当alg所处的fo是末位节点,则返回所处的foModel;
     if (!ISOK(toModel, TOFoModel.class) && ISOK(toModel.baseOrGroup, TOFoModel.class)) {

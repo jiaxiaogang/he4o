@@ -12,7 +12,6 @@
 #import "AIAlgNode.h"
 #import "AIAbsAlgNode.h"
 #import "AIThinkInReason.h"
-#import "AIThinkInPercept.h"
 #import "AICMVNode.h"
 #import "AIShortMatchModel.h"
 #import "AIFrontOrderNode.h"
@@ -21,24 +20,13 @@
 #import "TOFoModel.h"
 #import "AIAnalogy.h"
 
-@interface AIThinkIn ()
-
-@property (strong, nonatomic) AIThinkInPercept *tip;
-
-@end
-
 @implementation AIThinkIn
 
 -(id) init{
     self = [super init];
     if (self) {
-        [self initData];
     }
     return self;
-}
-
--(void) initData{
-    self.tip = [[AIThinkInPercept alloc] init];
 }
 
 //MARK:===============================================================
@@ -114,41 +102,6 @@
     
     //3. 加瞬时记忆 & 进行识别
     [TCInput rInput:outAlg fromGroup_ps:@[outAlg.pointer]];
-}
-
-//MARK:===============================================================
-//MARK:                     < FromTOR >
-//MARK:===============================================================
-
-/**
- *  MARK:--------------------反思--------------------
- *  @version
- *      2021.04.13: 除了inner外,对其它时序进行全面支持 (4月27号发现,hngl的代码也会执行);
- */
--(AIShortMatchModel*) dataInFromRethink:(TOFoModel*)toFoModel{
-    //1. 数据准备;
-    AIFoNodeBase *rethinkFo = nil;
-    
-    //2. 反思_HNGL类型;
-    if ([TOUtils isHNGL_toModel:toFoModel]) {
-        
-        //3. 数据准备 (收集除末位外的content为order);
-        AIFoNodeBase *fo = [SMGUtils searchNode:toFoModel.content_p];
-        NSMutableArray *order = [[NSMutableArray alloc] init];
-        for (NSInteger i = 0; i < fo.content_ps.count - 1; i++) {
-            AIShortMatchModel_Simple *simple = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(fo.content_ps, i) inputTime:[NUMTOOK(ARR_INDEX(fo.deltaTimes, i)) longLongValue]];
-            [order addObject:simple];
-        }
-        if (ARRISOK(order)) {
-            rethinkFo = [theNet createConFo:order isMem:true]; //将protoAlg_ps构建成时序;
-        }
-    }else{
-        //4. 其它类型,直接取outModel下的时序;
-        rethinkFo = [SMGUtils searchNode:toFoModel.content_p];
-    }
-    
-    //5. 反思时序;
-    return [AIThinkInReason TIR_Fo_FromRethink:rethinkFo];
 }
 
 @end

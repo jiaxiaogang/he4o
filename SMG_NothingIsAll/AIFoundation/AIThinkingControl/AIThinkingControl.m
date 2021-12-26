@@ -9,9 +9,6 @@
 #import "AIThinkingControl.h"
 #import "DemandManager.h"
 #import "AIThinkIn.h"
-#import "AIThinkOut.h"
-#import "AIThinkOutPercept.h"
-#import "AIThinkOutReason.h"
 #import "OutputModel.h"
 #import "AINet.h"
 #import "AINetUtils.h"
@@ -29,7 +26,6 @@
 /**
  *  MARK:--------------------思维控制器--------------------
  *
- *  >> ThinkIn & ThinkOut
  *
  *  >> assExp
  *  1. 在联想中,遇到的数据,都存到thinkFeedCache;
@@ -75,7 +71,6 @@ static AIThinkingControl *_instance;
 -(void) initData{
     self.demandManager = [[DemandManager alloc] init];
     self.thinkIn = [[AIThinkIn alloc] init];
-    self.thinkOut = [[AIThinkOut alloc] init];
     self.shortMatchManager = [[ShortMatchManager alloc] init];
 }
 
@@ -91,10 +86,6 @@ static AIThinkingControl *_instance;
 
 -(void) commitInputWithModels:(NSArray*)dics algsType:(NSString*)algsType{
     [self.thinkIn dataInWithModels:dics algsType:algsType];
-}
-
--(AIShortMatchModel *)to_Rethink:(TOFoModel*)toFoModel{
-    return [self.thinkIn dataInFromRethink:toFoModel];
 }
 
 /**

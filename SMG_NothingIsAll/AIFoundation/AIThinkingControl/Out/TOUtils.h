@@ -145,10 +145,6 @@
  *  MARK:--------------------是否HNGL的TOModel--------------------
  */
 +(BOOL) isHNGL_toModel:(TOModelBase*)toModel;
-+(BOOL) isH_toModel:(TOModelBase*)toModel;
-+(BOOL) isN_toModel:(TOModelBase*)toModel;
-+(BOOL) isG_toModel:(TOModelBase*)toModel;
-+(BOOL) isL_toModel:(TOModelBase*)toModel;
 
 /**
  *  MARK:--------------------求fo的deltaTime之和--------------------

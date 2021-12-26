@@ -238,10 +238,4 @@
 +(NSArray*) refPorts_All4Value:(AIKVPointer*)value_p isMem:(BOOL)isMem;
 +(NSArray*) refPorts_All:(AIKVPointer*)node_p;
 
-/**
- *  MARK:--------------------取hdDSPorts + memDSPorts--------------------
- *  @result notnull
- */
-+(NSArray*) dsPorts_All:(AIFoNodeBase*)node;
-
 @end

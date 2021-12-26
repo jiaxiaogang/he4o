@@ -68,6 +68,7 @@
 +(void) feedbackTOR:(AIShortMatchModel*)model{
     //4. 将新一帧数据报告给TOR,以进行短时记忆的更新,比如我输出行为"打",短时记忆由此知道输出"打"成功 (外循环入->推进->中循环出);
     //2. 取出所有等待下轮的outModel (ActYes&Runing);
+    //TODOTOMORROW20211226: 此处由currentDemand改为支持所有rootDemands;
     NSArray *waitModels = [TOUtils getSubOutModels_AllDeep:theTC.outModelManager.getCurrentDemand validStatus:@[@(TOModelStatus_ActYes)] cutStopStatus:@[@(TOModelStatus_Finish),@(TOModelStatus_ActNo),@(TOModelStatus_ScoreNo)]];
     OFTitleLog(@"tor_OPushM", @"\n输入M:%@\n输入P:%@\n等待中任务数:%lu",Alg2FStr(model.matchAlg),Alg2FStr(model.protoAlg),(long)waitModels.count);
     

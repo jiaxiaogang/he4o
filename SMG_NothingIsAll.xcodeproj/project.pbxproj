@@ -44,10 +44,8 @@
 		08355577266C6A1000ECFC51 /* MemManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 08355576266C6A1000ECFC51 /* MemManager.m */; };
 		0835557A266C6B5700ECFC51 /* MemManagerWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 08355579266C6B5700ECFC51 /* MemManagerWindow.m */; };
 		0835557C266C6B8400ECFC51 /* MemManagerWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0835557B266C6B8400ECFC51 /* MemManagerWindow.xib */; };
-		0838AE9C25C6C14A000F67D9 /* AIThinkOut.m in Sources */ = {isa = PBXBuildFile; fileRef = 0838AE9B25C6C14A000F67D9 /* AIThinkOut.m */; };
 		0839819F24DB7F8C00A020D2 /* HEView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0839819E24DB7F8C00A020D2 /* HEView.m */; };
 		083BC01F231C9CD900CA9039 /* AIThinkInReason.m in Sources */ = {isa = PBXBuildFile; fileRef = 083BC01E231C9CD900CA9039 /* AIThinkInReason.m */; };
-		083BC022231CA14E00CA9039 /* AIThinkInPercept.m in Sources */ = {isa = PBXBuildFile; fileRef = 083BC021231CA14E00CA9039 /* AIThinkInPercept.m */; };
 		083F61381F048329000330E1 /* AILine.m in Sources */ = {isa = PBXBuildFile; fileRef = 083F61371F048329000330E1 /* AILine.m */; };
 		08412CA3216C324300483B6B /* AICerebel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08412CA2216C324300483B6B /* AICerebel.m */; };
 		084219E11FD8CEFD009DA6BC /* AIReactorControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 084219E01FD8CEFD009DA6BC /* AIReactorControl.m */; };
@@ -59,7 +57,6 @@
 		084C3A6B21926D5700DAA08A /* BirdView.m in Sources */ = {isa = PBXBuildFile; fileRef = 084C3A6A21926D5700DAA08A /* BirdView.m */; };
 		084C3A6D21926D7800DAA08A /* BirdView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 084C3A6C21926D7800DAA08A /* BirdView.xib */; };
 		084F132226FF6E1200E9D455 /* AITest.m in Sources */ = {isa = PBXBuildFile; fileRef = 084F132126FF6E1200E9D455 /* AITest.m */; };
-		0850496B2474A4200017F9A0 /* AIThinkOutAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 085049692474A41F0017F9A0 /* AIThinkOutAction.m */; };
 		08573166275C7DB900182AA7 /* TCFeedbackTOR.m in Sources */ = {isa = PBXBuildFile; fileRef = 08573165275C7DB900182AA7 /* TCFeedbackTOR.m */; };
 		0858C5AE2194F5DA00951BA5 /* CarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0858C5AD2194F5DA00951BA5 /* CarView.m */; };
 		0858C5B02194F5E400951BA5 /* CarView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0858C5AF2194F5E400951BA5 /* CarView.xib */; };
@@ -82,8 +79,6 @@
 		0858C5E921950CAA00951BA5 /* FoodView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0858C5E821950CAA00951BA5 /* FoodView.xib */; };
 		085BA9F4241C421500829450 /* HeLogUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 085BA9F3241C421500829450 /* HeLogUtil.m */; };
 		085D4BA42730CBED00B04773 /* RSResultModelBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 085D4BA32730CBED00B04773 /* RSResultModelBase.m */; };
-		085D4BA72730CCF800B04773 /* VRSTargetModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 085D4BA62730CCF800B04773 /* VRSTargetModel.m */; };
-		0860617621F92F5200113366 /* AIThinkOutPercept.m in Sources */ = {isa = PBXBuildFile; fileRef = 0860617521F92F5200113366 /* AIThinkOutPercept.m */; };
 		0860617921F92F7100113366 /* AIThinkIn.m in Sources */ = {isa = PBXBuildFile; fileRef = 0860617821F92F7100113366 /* AIThinkIn.m */; };
 		0860A3BB22C9851800A48682 /* CustomAddNodeWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 0860A3BA22C9851800A48682 /* CustomAddNodeWindow.m */; };
 		0860A3BD22C9859200A48682 /* CustomAddNodeWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0860A3BC22C9859200A48682 /* CustomAddNodeWindow.xib */; };
@@ -108,7 +103,6 @@
 		0889258122B0703700A0DBDD /* NVModuleView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0889258022B0703700A0DBDD /* NVModuleView.xib */; };
 		088DD7232201216500E0A786 /* TOFoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088DD7222201216500E0A786 /* TOFoModel.m */; };
 		0892BAE62776D6920024B43C /* TCRethink.m in Sources */ = {isa = PBXBuildFile; fileRef = 0892BAE52776D6920024B43C /* TCRethink.m */; };
-		0892BAE927770DBF0024B43C /* SPStrong.m in Sources */ = {isa = PBXBuildFile; fileRef = 0892BAE827770DBF0024B43C /* SPStrong.m */; };
 		0892BAED277808F80024B43C /* TCActYes.m in Sources */ = {isa = PBXBuildFile; fileRef = 0892BAEC277808F80024B43C /* TCActYes.m */; };
 		0895FFE4264A13C500DAD3EA /* TOModelVision.m in Sources */ = {isa = PBXBuildFile; fileRef = 0895FFE3264A13C500DAD3EA /* TOModelVision.m */; };
 		089614A9219A4D5200343FAC /* BirdGrowPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 089614A7219A4D5200343FAC /* BirdGrowPage.m */; };
@@ -140,7 +134,6 @@
 		08D4EC512160501000DA646B /* AINetUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D4EC502160501000DA646B /* AINetUtils.m */; };
 		08DB40CB1F11A65E003162C8 /* TestHungryPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 08DB40C91F11A65E003162C8 /* TestHungryPage.m */; };
 		08DB40CC1F11A65E003162C8 /* TestHungryPage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 08DB40CA1F11A65E003162C8 /* TestHungryPage.xib */; };
-		08E290C5264616AC00E66D60 /* NSArray+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E290C4264616AC00E66D60 /* NSArray+Extension.m */; };
 		08E6885B22FA562600653545 /* BorderLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E6885A22FA562600653545 /* BorderLabel.m */; };
 		08E8CF5525B2880600AA18DB /* WoodView.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E8CF5425B2880600AA18DB /* WoodView.m */; };
 		08E8CF5825B2F07100AA18DB /* ImvAlgsHurtModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E8CF5725B2F07100AA18DB /* ImvAlgsHurtModel.m */; };
@@ -152,14 +145,12 @@
 		08EA48CE202932B80038B982 /* CustomAlgsChargeModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08EA48CD202932B80038B982 /* CustomAlgsChargeModel.m */; };
 		08EA48D1202932E70038B982 /* AICustomAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 08EA48D0202932E70038B982 /* AICustomAlgs.m */; };
 		08EF706421E5743F009B5194 /* OutputModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08EF706321E5743F009B5194 /* OutputModel.m */; };
-		08F38D65272C39E3001CD764 /* VRSResultModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F38D64272C39E3001CD764 /* VRSResultModel.m */; };
 		08F3E9312241B6E800545795 /* AIAnalogy.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F3E9302241B6E800545795 /* AIAnalogy.m */; };
 		08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F4C98D1EA7A03900F3EDA8 /* SMGUtils.m */; };
 		08F738051F7C714F005EAD56 /* AIKVPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F737FF1F7C714F005EAD56 /* AIKVPointer.m */; };
 		08F738061F7C714F005EAD56 /* AIPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738011F7C714F005EAD56 /* AIPointer.m */; };
 		08F738071F7C714F005EAD56 /* AISqlPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738031F7C714F005EAD56 /* AISqlPointer.m */; };
 		08FBE10E22D56F360088EF1A /* NVModuleUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FBE10D22D56F360088EF1A /* NVModuleUtil.m */; };
-		08FE031E231DEE8C001ED8B4 /* AIThinkOutReason.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FE031D231DEE8C001ED8B4 /* AIThinkOutReason.m */; };
 		2753D7CF7BAEDFEACAF9264A /* libPods-SMG_NothingIsAll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */; };
 		456F2C322476BD5E0015ADB8 /* AINetService.m in Sources */ = {isa = PBXBuildFile; fileRef = 456F2C312476BD5E0015ADB8 /* AINetService.m */; };
 		4591E02A247F11B600484B51 /* TOAlgModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 4591E029247F11B600484B51 /* TOAlgModel.m */; };
@@ -261,14 +252,10 @@
 		08355579266C6B5700ECFC51 /* MemManagerWindow.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MemManagerWindow.m; sourceTree = "<group>"; };
 		0835557B266C6B8400ECFC51 /* MemManagerWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MemManagerWindow.xib; sourceTree = "<group>"; };
 		0837F72322A89A0D00836689 /* ReadMe.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ReadMe.md; sourceTree = "<group>"; };
-		0838AE9A25C6C14A000F67D9 /* AIThinkOut.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIThinkOut.h; sourceTree = "<group>"; };
-		0838AE9B25C6C14A000F67D9 /* AIThinkOut.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIThinkOut.m; sourceTree = "<group>"; };
 		0839819D24DB7F8C00A020D2 /* HEView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HEView.h; sourceTree = "<group>"; };
 		0839819E24DB7F8C00A020D2 /* HEView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HEView.m; sourceTree = "<group>"; };
 		083BC01D231C9CD900CA9039 /* AIThinkInReason.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIThinkInReason.h; sourceTree = "<group>"; };
 		083BC01E231C9CD900CA9039 /* AIThinkInReason.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIThinkInReason.m; sourceTree = "<group>"; };
-		083BC020231CA14E00CA9039 /* AIThinkInPercept.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIThinkInPercept.h; sourceTree = "<group>"; };
-		083BC021231CA14E00CA9039 /* AIThinkInPercept.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIThinkInPercept.m; sourceTree = "<group>"; };
 		083F61361F048329000330E1 /* AILine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AILine.h; sourceTree = "<group>"; };
 		083F61371F048329000330E1 /* AILine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AILine.m; sourceTree = "<group>"; };
 		08412CA1216C324300483B6B /* AICerebel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AICerebel.h; sourceTree = "<group>"; };
@@ -290,8 +277,6 @@
 		084C3A6C21926D7800DAA08A /* BirdView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BirdView.xib; sourceTree = "<group>"; };
 		084F132026FF6E1200E9D455 /* AITest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AITest.h; sourceTree = "<group>"; };
 		084F132126FF6E1200E9D455 /* AITest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AITest.m; sourceTree = "<group>"; };
-		085049692474A41F0017F9A0 /* AIThinkOutAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIThinkOutAction.m; sourceTree = "<group>"; };
-		0850496A2474A41F0017F9A0 /* AIThinkOutAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIThinkOutAction.h; sourceTree = "<group>"; };
 		08573164275C7DB900182AA7 /* TCFeedbackTOR.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCFeedbackTOR.h; sourceTree = "<group>"; };
 		08573165275C7DB900182AA7 /* TCFeedbackTOR.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCFeedbackTOR.m; sourceTree = "<group>"; };
 		0858C5AC2194F5DA00951BA5 /* CarView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CarView.h; sourceTree = "<group>"; };
@@ -336,10 +321,6 @@
 		085BA9F3241C421500829450 /* HeLogUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HeLogUtil.m; sourceTree = "<group>"; };
 		085D4BA22730CBED00B04773 /* RSResultModelBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSResultModelBase.h; sourceTree = "<group>"; };
 		085D4BA32730CBED00B04773 /* RSResultModelBase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RSResultModelBase.m; sourceTree = "<group>"; };
-		085D4BA52730CCF800B04773 /* VRSTargetModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRSTargetModel.h; sourceTree = "<group>"; };
-		085D4BA62730CCF800B04773 /* VRSTargetModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VRSTargetModel.m; sourceTree = "<group>"; };
-		0860617421F92F5200113366 /* AIThinkOutPercept.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIThinkOutPercept.h; sourceTree = "<group>"; };
-		0860617521F92F5200113366 /* AIThinkOutPercept.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIThinkOutPercept.m; sourceTree = "<group>"; };
 		0860617721F92F7100113366 /* AIThinkIn.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIThinkIn.h; sourceTree = "<group>"; };
 		0860617821F92F7100113366 /* AIThinkIn.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIThinkIn.m; sourceTree = "<group>"; };
 		0860A3B922C9851800A48682 /* CustomAddNodeWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomAddNodeWindow.h; sourceTree = "<group>"; };
@@ -387,8 +368,6 @@
 		088DD7222201216500E0A786 /* TOFoModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOFoModel.m; sourceTree = "<group>"; };
 		0892BAE42776D6920024B43C /* TCRethink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCRethink.h; sourceTree = "<group>"; };
 		0892BAE52776D6920024B43C /* TCRethink.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCRethink.m; sourceTree = "<group>"; };
-		0892BAE727770DBF0024B43C /* SPStrong.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SPStrong.h; sourceTree = "<group>"; };
-		0892BAE827770DBF0024B43C /* SPStrong.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SPStrong.m; sourceTree = "<group>"; };
 		0892BAEB277808F80024B43C /* TCActYes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCActYes.h; sourceTree = "<group>"; };
 		0892BAEC277808F80024B43C /* TCActYes.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCActYes.m; sourceTree = "<group>"; };
 		0895FFE2264A13C500DAD3EA /* TOModelVision.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOModelVision.h; sourceTree = "<group>"; };
@@ -449,8 +428,6 @@
 		08DB40C81F11A65E003162C8 /* TestHungryPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestHungryPage.h; sourceTree = "<group>"; };
 		08DB40C91F11A65E003162C8 /* TestHungryPage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestHungryPage.m; sourceTree = "<group>"; };
 		08DB40CA1F11A65E003162C8 /* TestHungryPage.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TestHungryPage.xib; sourceTree = "<group>"; };
-		08E290C3264616AC00E66D60 /* NSArray+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSArray+Extension.h"; sourceTree = "<group>"; };
-		08E290C4264616AC00E66D60 /* NSArray+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSArray+Extension.m"; sourceTree = "<group>"; };
 		08E6885922FA562600653545 /* BorderLabel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BorderLabel.h; sourceTree = "<group>"; };
 		08E6885A22FA562600653545 /* BorderLabel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BorderLabel.m; sourceTree = "<group>"; };
 		08E8CF5325B2880600AA18DB /* WoodView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WoodView.h; sourceTree = "<group>"; };
@@ -473,8 +450,6 @@
 		08EA48D0202932E70038B982 /* AICustomAlgs.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AICustomAlgs.m; sourceTree = "<group>"; };
 		08EF706221E5743F009B5194 /* OutputModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OutputModel.h; sourceTree = "<group>"; };
 		08EF706321E5743F009B5194 /* OutputModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OutputModel.m; sourceTree = "<group>"; };
-		08F38D63272C39E3001CD764 /* VRSResultModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRSResultModel.h; sourceTree = "<group>"; };
-		08F38D64272C39E3001CD764 /* VRSResultModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VRSResultModel.m; sourceTree = "<group>"; };
 		08F3E92F2241B6E800545795 /* AIAnalogy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIAnalogy.h; sourceTree = "<group>"; };
 		08F3E9302241B6E800545795 /* AIAnalogy.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIAnalogy.m; sourceTree = "<group>"; };
 		08F4C98C1EA7A03900F3EDA8 /* SMGUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMGUtils.h; sourceTree = "<group>"; };
@@ -488,8 +463,6 @@
 		08FAEC95215EED48004DCEAD /* NVHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVHeader.h; sourceTree = "<group>"; };
 		08FBE10C22D56F360088EF1A /* NVModuleUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVModuleUtil.h; sourceTree = "<group>"; };
 		08FBE10D22D56F360088EF1A /* NVModuleUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NVModuleUtil.m; sourceTree = "<group>"; };
-		08FE031C231DEE8C001ED8B4 /* AIThinkOutReason.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIThinkOutReason.h; sourceTree = "<group>"; };
-		08FE031D231DEE8C001ED8B4 /* AIThinkOutReason.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIThinkOutReason.m; sourceTree = "<group>"; };
 		456F2C302476BD5E0015ADB8 /* AINetService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetService.h; sourceTree = "<group>"; };
 		456F2C312476BD5E0015ADB8 /* AINetService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetService.m; sourceTree = "<group>"; };
 		4591E028247F11B600484B51 /* TOAlgModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOAlgModel.h; sourceTree = "<group>"; };
@@ -728,24 +701,6 @@
 			path = MemManager;
 			sourceTree = "<group>";
 		};
-		0838AE9D25C6C157000F67D9 /* TOPercept */ = {
-			isa = PBXGroup;
-			children = (
-				0860617421F92F5200113366 /* AIThinkOutPercept.h */,
-				0860617521F92F5200113366 /* AIThinkOutPercept.m */,
-			);
-			path = TOPercept;
-			sourceTree = "<group>";
-		};
-		0838AE9E25C6C162000F67D9 /* TOReason */ = {
-			isa = PBXGroup;
-			children = (
-				08FE031C231DEE8C001ED8B4 /* AIThinkOutReason.h */,
-				08FE031D231DEE8C001ED8B4 /* AIThinkOutReason.m */,
-			);
-			path = TOReason;
-			sourceTree = "<group>";
-		};
 		083F612C1F04830F000330E1 /* AINet */ = {
 			isa = PBXGroup;
 			children = (
@@ -953,7 +908,6 @@
 			isa = PBXGroup;
 			children = (
 				08A562A3233C483F0093A88E /* TIReason */,
-				08A562A4233C48500093A88E /* TIPercept */,
 				084B4B0524433A3100FB3670 /* Model */,
 				0860617721F92F7100113366 /* AIThinkIn.h */,
 				0860617821F92F7100113366 /* AIThinkIn.m */,
@@ -964,15 +918,9 @@
 		0860617321F92F3E00113366 /* Out */ = {
 			isa = PBXGroup;
 			children = (
-				0838AE9E25C6C162000F67D9 /* TOReason */,
-				0838AE9D25C6C157000F67D9 /* TOPercept */,
 				080228E2227282FF0087FE69 /* Model */,
 				08A232E3243557110090D4B5 /* TOUtils.h */,
 				08A232E4243557110090D4B5 /* TOUtils.m */,
-				0838AE9A25C6C14A000F67D9 /* AIThinkOut.h */,
-				0838AE9B25C6C14A000F67D9 /* AIThinkOut.m */,
-				0850496A2474A41F0017F9A0 /* AIThinkOutAction.h */,
-				085049692474A41F0017F9A0 /* AIThinkOutAction.m */,
 			);
 			path = Out;
 			sourceTree = "<group>";
@@ -1127,15 +1075,6 @@
 			path = TIReason;
 			sourceTree = "<group>";
 		};
-		08A562A4233C48500093A88E /* TIPercept */ = {
-			isa = PBXGroup;
-			children = (
-				083BC020231CA14E00CA9039 /* AIThinkInPercept.h */,
-				083BC021231CA14E00CA9039 /* AIThinkInPercept.m */,
-			);
-			path = TIPercept;
-			sourceTree = "<group>";
-		};
 		08A5D5D522AF1C1E00E56BB4 /* Core */ = {
 			isa = PBXGroup;
 			children = (
@@ -1208,8 +1147,6 @@
 				0825AFF21F748F67003B86C7 /* NSObject+Extension.m */,
 				0830DAB521D6E8AD003065CD /* NSString+Extension.h */,
 				0830DAB621D6E8AD003065CD /* NSString+Extension.m */,
-				08E290C3264616AC00E66D60 /* NSArray+Extension.h */,
-				08E290C4264616AC00E66D60 /* NSArray+Extension.m */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -1363,14 +1300,8 @@
 			children = (
 				08C7539025A3EEB800BCF011 /* AIScore.h */,
 				08C7539125A3EEB800BCF011 /* AIScore.m */,
-				08F38D63272C39E3001CD764 /* VRSResultModel.h */,
-				08F38D64272C39E3001CD764 /* VRSResultModel.m */,
-				085D4BA52730CCF800B04773 /* VRSTargetModel.h */,
-				085D4BA62730CCF800B04773 /* VRSTargetModel.m */,
 				085D4BA22730CBED00B04773 /* RSResultModelBase.h */,
 				085D4BA32730CBED00B04773 /* RSResultModelBase.m */,
-				0892BAE727770DBF0024B43C /* SPStrong.h */,
-				0892BAE827770DBF0024B43C /* SPStrong.m */,
 			);
 			path = Score;
 			sourceTree = "<group>";
@@ -1645,10 +1576,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				085D4BA72730CCF800B04773 /* VRSTargetModel.m in Sources */,
 				087705A82753743500BA4EFB /* TCInput.m in Sources */,
 				0858C5D62194FABA00951BA5 /* RoadView.m in Sources */,
-				0838AE9C25C6C14A000F67D9 /* AIThinkOut.m in Sources */,
 				087705B12753745D00BA4EFB /* TCForecast.m in Sources */,
 				0860A3BB22C9851800A48682 /* CustomAddNodeWindow.m in Sources */,
 				0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */,
@@ -1662,7 +1591,6 @@
 				08A5D5E522AF2B8200E56BB4 /* NVDelegate_He.m in Sources */,
 				087705AB2753744300BA4EFB /* TCRegroup.m in Sources */,
 				0839819F24DB7F8C00A020D2 /* HEView.m in Sources */,
-				08E290C5264616AC00E66D60 /* NSArray+Extension.m in Sources */,
 				081B3ADB1F6E2CCD008A7F36 /* AINet.m in Sources */,
 				08C6C2632518E49400DDE6BF /* NSLog+Extension.m in Sources */,
 				0858C5E021950BB300951BA5 /* TreeView.m in Sources */,
@@ -1741,7 +1669,6 @@
 				88A43F3A2109571300281348 /* AIAbsCMVNode.m in Sources */,
 				08D4EC512160501000DA646B /* AINetUtils.m in Sources */,
 				08D322A91EBA28B0009D734A /* Foundation+Log.m in Sources */,
-				08F38D65272C39E3001CD764 /* VRSResultModel.m in Sources */,
 				087705BD2753748A00BA4EFB /* TCOut.m in Sources */,
 				88A43F40210957C300281348 /* AINetAbsFoNode.m in Sources */,
 				08E8CF5825B2F07100AA18DB /* ImvAlgsHurtModel.m in Sources */,
@@ -1753,12 +1680,9 @@
 				0858C5D02194F8B000951BA5 /* MASViewConstraint.m in Sources */,
 				087705C32753B9F400BA4EFB /* HDemandModel.m in Sources */,
 				083BC01F231C9CD900CA9039 /* AIThinkInReason.m in Sources */,
-				0892BAE927770DBF0024B43C /* SPStrong.m in Sources */,
 				88C20B8220C7696A0076BB52 /* AINetAbsFoUtils.m in Sources */,
 				0858C5D22194F8B000951BA5 /* NSLayoutConstraint+MASDebugAdditions.m in Sources */,
-				0860617621F92F5200113366 /* AIThinkOutPercept.m in Sources */,
 				8822852020F58BDA009884DC /* AINetDirectionReference.m in Sources */,
-				0850496B2474A4200017F9A0 /* AIThinkOutAction.m in Sources */,
 				88960C6B209BDA2B004EF419 /* AINetIndexReference.m in Sources */,
 				081BD08825B94F1B003C3038 /* ReasonDemandModel.m in Sources */,
 				08F738071F7C714F005EAD56 /* AISqlPointer.m in Sources */,
@@ -1772,7 +1696,6 @@
 				0858C5D12194F8B000951BA5 /* NSArray+MASAdditions.m in Sources */,
 				087705B72753747300BA4EFB /* TCSolution.m in Sources */,
 				0858C5CC2194F8B000951BA5 /* MASConstraint.m in Sources */,
-				08FE031E231DEE8C001ED8B4 /* AIThinkOutReason.m in Sources */,
 				0860617921F92F7100113366 /* AIThinkIn.m in Sources */,
 				0889257F22B0702A00A0DBDD /* NVModuleView.m in Sources */,
 				0858C5CE2194F8B000951BA5 /* MASLayoutConstraint.m in Sources */,
@@ -1787,7 +1710,6 @@
 				087705B42753746800BA4EFB /* TCDemand.m in Sources */,
 				089E66B121B9F5D100ECA28A /* AIAbsAlgNode.m in Sources */,
 				88E87A6721016EAA0071513F /* OutputUtils.m in Sources */,
-				083BC022231CA14E00CA9039 /* AIThinkInPercept.m in Sources */,
 				080A74321F60C6490025DBA3 /* AIPort.m in Sources */,
 				08DB40CB1F11A65E003162C8 /* TestHungryPage.m in Sources */,
 				0892BAE62776D6920024B43C /* TCRethink.m in Sources */,

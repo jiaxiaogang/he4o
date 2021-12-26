@@ -26,26 +26,9 @@
 //MARK:===============================================================
 //MARK:                     < Analogy类比 >
 //MARK:===============================================================
-@class AIAbsAlgNode,AIAlgNode,AIShortMatchModel,TOFoModel,AIMatchFoModel;
 @interface AIAnalogy : NSObject
 
 +(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type createAbsAlgBlock:(void(^)(AIAlgNodeBase *createAlg,NSInteger foIndex,NSInteger assFoIndex))createAbsAlgBlock;
-
-@end
-
-
-//MARK:===============================================================
-//MARK:                     < 内类比 >
-//MARK:===============================================================
-@interface AIAnalogy (In)
-
-/**
- *  MARK:--------------------fo内类比 (内中有外,找不同算法)--------------------
- *  _param checkFo      : 要处理的fo.orders;
- *  _param canAssBlock  : energy判断器 (为null时,无限能量);
- *  _param updateEnergy : energy消耗器 (为null时,不消耗能量值);
- */
-+(void) analogyInner:(AIShortMatchModel*)mModel;
 
 @end
 
@@ -62,37 +45,5 @@
  *  @param shortFo : 传瞬时记忆的protoFo;
  */
 +(void) analogy_Feedback_Same:(AIFoNodeBase*)matchFo shortFo:(AIFoNodeBase*)shortFo;
-
-/**
- *  MARK:--------------------反向反馈外类比--------------------
- *  @param protoFo  : 真实发生的时序;
- *  @param mModel   : protoFo是嵌套于mModel.matchFo之下的,要求matchFo.cmv_p不为空 (matchFo携带了实mv);
- */
-+(void) analogy_Feedback_Diff:(AIFoNodeBase*)protoFo mModel:(AIMatchFoModel*)mModel;
-
-@end
-
-
-//MARK:===============================================================
-//MARK:                     < 反省类比 >
-//MARK:===============================================================
-@interface AIAnalogy (Rethink)
-
-/**
- *  MARK:--------------------In反省类比--------------------
- *  @callers : 由TIP调用;
- *  @param shortFo  : 在TIP中,输入mv,新生成的protoFo;
- *  @param matchFoModel : 在上一桢的识别预测模型;
- *  @desc
- *      1. 执行条件: 当imv与预测mv不符时,执行类比;
- *      2. 功能作用: 用类比的方式,分析出预测不符的原因(两种,见下),并抽象之;
- *      3. 不符的原因: a.该出现的未出现; b.不该出现的出现;
- */
-+(void) analogy_InRethink:(AIMatchFoModel*)matchFoModel shortFo:(AIFoNodeBase*)shortFo type:(AnalogyType)type;
-
-/**
- *  MARK:--------------------Out反省类比--------------------
- */
-+(void) analogy_OutRethink:(TOFoModel*)foModel cutIndex:(NSInteger)cutIndex type:(AnalogyType)type;
 
 @end

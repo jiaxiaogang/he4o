@@ -13,11 +13,10 @@
  *  1. 主要负责思维 (前额叶) 功能;
  *  2. 次要负责分发激活等 (丘脑) 功能;
  */
-@class ShortMatchManager,DemandManager,AIShortMatchModel,TOFoModel,AIThinkIn,AIThinkOut;
+@class ShortMatchManager,DemandManager,AIShortMatchModel,TOFoModel,AIThinkIn;
 @interface AIThinkingControl : NSObject
 
 @property (strong, nonatomic) AIThinkIn *thinkIn;
-@property (strong, nonatomic) AIThinkOut *thinkOut;
 
 +(AIThinkingControl*) shareInstance;
 
@@ -27,10 +26,6 @@
 -(void) commitInput:(NSObject*)algsModel;
 -(void) commitInputWithModels:(NSArray*)dics algsType:(NSString*)algsType;
 
-/**
- *  MARK:--------------------toRethink--------------------
- */
--(AIShortMatchModel *)to_Rethink:(TOFoModel*)toFoModel;
 
 /**
  *  MARK:--------------------输出的日志入网(输入小脑)--------------------

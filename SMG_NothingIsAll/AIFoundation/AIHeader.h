@@ -20,7 +20,7 @@
 #import "AIKVPointer.h"
 #import "AIThinkingControl.h"
 #import "AIThinkIn.h"
-#import "AIThinkOut.h"
+//#import "AIThinkOut.h"
 #import "NSString+Extension.h"
 #import "AIScore.h"
 #import "XGDelegate.h"
@@ -30,9 +30,9 @@
 
 //旧TC
 #import "AIThinkInReason.h"
-#import "AIThinkInPercept.h"
-#import "AIThinkOutReason.h"
-#import "AIThinkOutPercept.h"
+//#import "AIThinkInPercept.h"
+//#import "AIThinkOutReason.h"
+//#import "AIThinkOutPercept.h"
 
 //任务池
 #import "ReasonDemandModel.h"
@@ -224,8 +224,6 @@
 #define Double2Str_NDZ(value) [NSString double2Str_NoDotZero:value]
 
 //思维控制器相关转换
-//#define ATType2DS(type) [ThinkingUtils getAnalogyTypeDS:type]
-//#define DS2ATType(ds) [ThinkingUtils convertDS2AnalogyType:ds]
 #define Mvp2Delta(mv_p) [AINetUtils getDeltaFromMv:mv_p]
 #define Mvp2Score(mv_p,ratio) [AIScore score4MV:mv_p ratio:ratio]
 
@@ -255,10 +253,6 @@
 //2017.11.13后启用N8规则DOP架构;
 #define theNet [AINet sharedInstance]
 #define theTC [AIThinkingControl shareInstance]
-#define theTI theTC.thinkIn
-#define theTO theTC.thinkOut
-#define theTOP theTC.thinkOut.tOP
-#define theTOR theTC.thinkOut.tOR
 
 /**
  *  MARK:--------------------OutputObserverKey--------------------
