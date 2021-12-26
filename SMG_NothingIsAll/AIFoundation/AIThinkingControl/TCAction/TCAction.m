@@ -24,6 +24,7 @@
  *      2021.12.01: 支持hAction;
  *      2021.12.26: action将foModel执行到spIndex之前一帧 (25032-4);
  *      2021.12.26: hSolution达到目标帧转hActYes的处理 (参考25031-9);
+ *      2021.12.26: 下标不急(弄巧成拙)评价,支持isOut=true的情况 (参考25031-10);
  *  @callers : 可以供_Demand和_Hav等调用;
  */
 +(void) action:(TOFoModel*)foModel{
@@ -62,15 +63,34 @@
         AIKVPointer *move_p = ARR_INDEX(curFo.content_ps, foModel.actionIndex);
         TOAlgModel *moveAlg = [TOAlgModel newWithAlg_p:move_p group:foModel];
         NSLog(@"_Fo行为化第 %ld/%ld 个: %@",(long)foModel.actionIndex,(long)curFo.count,Fo2FStr(curFo));
+        
+        //@desc: 下标不急评价说明: R模式_Hav首先是为了避免forecastAlg,其次才是为了达成curFo解决方案 (参考22153);
+        //5. 下标不急(弄巧成拙)评价_数据准备 (参考24171-12);
+        //TODO: 考虑改成,取base最近的一个R任务;
+        //6. 只有R类型,才参与下标不急评价;
+        ReasonDemandModel *baseDemand = (ReasonDemandModel*)foModel.baseOrGroup;
+        if(ISOK(baseDemand, ReasonDemandModel.class)){
+            BOOL arsTime = [AIScore ARS_Time:foModel demand:baseDemand];
+            if (!arsTime) {
+                //7. 评价不通过,则直接ActYes,等待其自然出现 (参考22153-A2);
+                NSLog(@"==> arsTime弄巧成拙评价,子弹再飞一会儿");
+                moveAlg.status = TOModelStatus_ActYes;
+                [TCActYes arsTimeActYes:moveAlg];
+                return;
+            }
+        }
+        
+        //7. 尝试行为当前帧;
         [TCOut out:moveAlg];
     }else{
-        //c. 成功,递归 (参考流程控制Finish的注释version-20200916 / 参考22061-7);
+        //8. R成功,转actYes等待反馈 & 触发反省 (原递归参考流程控制Finish的注释version-20200916 / 参考22061-7);
         foModel.status = TOModelStatus_ActYes;
         NSLog(@"_Fo行为化: Finish %ld/%ld 到ActYes",(long)foModel.actionIndex,(long)curFo.count);
         if (ISOK(foModel.baseOrGroup, ReasonDemandModel.class)) {
             [TCActYes rActYes:foModel];
         }else if(ISOK(foModel.baseOrGroup, HDemandModel.class)){
-            //d. h目标帧只需要等 (转hActYes) (参考25031-9);
+            
+            //9. H目标帧只需要等 (转hActYes) (参考25031-9);
             foModel.actionIndex ++;
             AIKVPointer *hTarget_p = ARR_INDEX(curFo.content_ps, foModel.actionIndex);
             TOAlgModel *hTargetAlg = [TOAlgModel newWithAlg_p:hTarget_p group:foModel];
