@@ -16,7 +16,7 @@
 }
 
 +(void) perceptInRethink:(AIMatchFoModel*)model type:(AnalogyType)type{
-    [model.matchFo updateSPStrong:-1 type:type];
+    [model.matchFo updateSPStrong:model.matchFo.count type:type];
 }
 
 +(void) reasonOutRethink:(AIMatchFoModel*)model type:(AnalogyType)type{

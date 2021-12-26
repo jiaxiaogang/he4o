@@ -10,9 +10,10 @@
 
 @implementation RSResultModelBase
 
-+(RSResultModelBase*) newWithBaseFo:(AIFoNodeBase*)baseFo pScore:(double)pScore sScore:(double)sScore{
++(RSResultModelBase*) newWithBaseFo:(AIFoNodeBase*)baseFo spIndex:(NSInteger)spIndex pScore:(double)pScore sScore:(double)sScore{
     RSResultModelBase *result = [[RSResultModelBase alloc] init];
     result.baseFo = baseFo;
+    result.spIndex = spIndex;
     result.pScore = pScore;
     result.sScore = sScore;
     return result;

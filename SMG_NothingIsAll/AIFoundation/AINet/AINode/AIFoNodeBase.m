@@ -35,11 +35,11 @@
 //MARK:===============================================================
 /**
  *  MARK:--------------------更新SP强度值--------------------
- *  @param cutIndex : 当前要更新sp强度值的下标 (如果是mv则输入-1);
+ *  @param spIndex : 当前要更新sp强度值的下标 (如果是mv则输入content.count);
  */
--(void) updateSPStrong:(NSInteger)cutIndex type:(AnalogyType)type{
+-(void) updateSPStrong:(NSInteger)spIndex type:(AnalogyType)type{
     //1. 取kv;
-    NSNumber *key = @(cutIndex);
+    NSNumber *key = @(spIndex);
     AISPStrong *value = [self.spDic objectForKey:key];
     if (!value) value = [[AISPStrong alloc] init];
     

@@ -36,6 +36,16 @@
  *  @todo 将actionIndex赋值,改为生成TOAlgModel模型,并挂在subModels下;
  */
 @property (assign, nonatomic) NSInteger actionIndex;
+
+/**
+ *  MARK:--------------------执行目标index--------------------
+ *  @desc foModel要行为化的index目标 (默认目标为mv_即全执行);
+ *      1. 如全执行完,则是为了mv结果;
+ *      2. 如执行到某一帧,则是为了实现HDemand;
+ *      3. 注: 其中要执行的不包括targetIndex,比如为1时,则目标为1,只执行到0(第1帧),为content.count时,则目标为mv;
+ */
+@property (assign, nonatomic) NSInteger targetSPIndex;
+
 //@property (strong, nonatomic) NSMutableDictionary *itemSubModels;   //每个下标,对应的subModels字典;
 
 

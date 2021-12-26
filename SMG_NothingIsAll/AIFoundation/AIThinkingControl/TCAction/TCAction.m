@@ -22,6 +22,8 @@
  *      2021.11.xx: 废弃outReflect反思功能 (全部待到inReflect统一再反思);
  *      2021.11.28: 时间紧急评价,改为: 紧急情况 = 解决方案所需时间 > 父任务能给的时间 (参考24171-7);
  *      2021.12.01: 支持hAction;
+ *      2021.12.26: action将foModel执行到spIndex之前一帧 (25032-4);
+ *      2021.12.26: hSolution达到目标帧转hActYes的处理 (参考25031-9);
  *  @callers : 可以供_Demand和_Hav等调用;
  */
 +(void) action:(TOFoModel*)foModel{
@@ -54,7 +56,7 @@
     OFTitleLog(@"行为化Fo", @"\n时序:%@->%@ 类型:(%@)",Fo2FStr(curFo),Mvp2Str(curFo.cmvNode_p),curFo.pointer.typeStr);
     
     //4. 跳转下帧,
-    if (foModel.actionIndex < curFo.count - 1) {
+    if (foModel.actionIndex < foModel.targetSPIndex - 1) {
         //a. Alg转移 (下帧)
         foModel.actionIndex ++;
         AIKVPointer *move_p = ARR_INDEX(curFo.content_ps, foModel.actionIndex);
@@ -65,7 +67,16 @@
         //c. 成功,递归 (参考流程控制Finish的注释version-20200916 / 参考22061-7);
         foModel.status = TOModelStatus_ActYes;
         NSLog(@"_Fo行为化: Finish %ld/%ld 到ActYes",(long)foModel.actionIndex,(long)curFo.count);
-        [TCOut rActYes:foModel];
+        if (ISOK(foModel.baseOrGroup, ReasonDemandModel.class)) {
+            [TCActYes rActYes:foModel];
+        }else if(ISOK(foModel.baseOrGroup, HDemandModel.class)){
+            //d. h目标帧只需要等 (转hActYes) (参考25031-9);
+            foModel.actionIndex ++;
+            AIKVPointer *hTarget_p = ARR_INDEX(curFo.content_ps, foModel.actionIndex);
+            TOAlgModel *hTargetAlg = [TOAlgModel newWithAlg_p:hTarget_p group:foModel];
+            hTargetAlg.status = TOModelStatus_ActYes;
+            [TCActYes hActYes:hTargetAlg];
+        }
     }
 }
 

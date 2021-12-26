@@ -52,7 +52,7 @@
     
     //3. 数据准备 (收集除末位外的content为order);
     NSMutableArray *order = [[NSMutableArray alloc] init];
-    for (NSInteger i = 0; i < fo.content_ps.count - 1; i++) {
+    for (NSInteger i = 0; i < fo.count - 1; i++) {
         AIKVPointer *alg_p = ARR_INDEX(fo.content_ps, i);
         
         //4. 将反馈代入;

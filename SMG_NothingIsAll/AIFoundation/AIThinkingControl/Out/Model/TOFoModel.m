@@ -18,11 +18,16 @@
 @implementation TOFoModel
 
 +(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(id<ITryActionFoDelegate>)base{
+    //1. 数据准备;
+    AIFoNodeBase *fo = [SMGUtils searchNode:fo_p];
     TOFoModel *result = [[TOFoModel alloc] initWithContent_p:fo_p];
+    
+    //2. 赋值;
     result.status = TOModelStatus_Runing;
     if (base) [base.actionFoModels addObject:result];
     result.baseOrGroup = base;
     result.actionIndex = -1;//当前帧,初始为-1;
+    result.targetSPIndex = fo.count;
     return result;
 }
 

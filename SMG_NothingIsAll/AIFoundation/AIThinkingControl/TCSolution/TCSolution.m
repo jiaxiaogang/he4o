@@ -101,8 +101,8 @@
         
         //6. 判断SP评分;
         AIFoNodeBase *maskFo = [SMGUtils searchNode:maskPort.target_p];
-        AISPStrong *spStrong = [maskFo.spDic objectForKey:@(-1)];
-        RSResultModelBase *checkResult = [RSResultModelBase newWithBaseFo:maskFo pScore:spStrong.pStrong sScore:spStrong.sStrong];
+        AISPStrong *spStrong = [maskFo.spDic objectForKey:@(maskFo.count)];
+        RSResultModelBase *checkResult = [RSResultModelBase newWithBaseFo:maskFo spIndex:maskFo.count pScore:spStrong.pStrong sScore:spStrong.sStrong];
         
         //7. 当best为空 或 check评分比best更高时 => 将check赋值到best;
         if(!bestRSResult || checkResult.score > bestRSResult.score){
@@ -237,12 +237,12 @@
         
         //5. 从maskFo中找targetAlg (找targetAlg 或 其抽具象概念);
         AIFoNodeBase *maskFo = [SMGUtils searchNode:maskFo_p];
-        NSInteger findIndex = [TOUtils indexOfConOrAbsItem:targetAlg.pointer atContent:maskFo.content_ps layerDiff:1 startIndex:1 endIndex:NSUIntegerMax];
+        NSInteger spIndex = [TOUtils indexOfConOrAbsItem:targetAlg.pointer atContent:maskFo.content_ps layerDiff:1 startIndex:1 endIndex:NSUIntegerMax];
         
         //6. 如找到_则判断SP评分;
-        if (findIndex != -1) {
-            AISPStrong *spStrong = [maskFo.spDic objectForKey:@(findIndex)];
-            RSResultModelBase *checkResult = [RSResultModelBase newWithBaseFo:maskFo pScore:spStrong.pStrong sScore:spStrong.sStrong];
+        if (spIndex != -1) {
+            AISPStrong *spStrong = [maskFo.spDic objectForKey:@(spIndex)];
+            RSResultModelBase *checkResult = [RSResultModelBase newWithBaseFo:maskFo spIndex:spIndex pScore:spStrong.pStrong sScore:spStrong.sStrong];
             
             //7. 当best为空 或 check评分比best更高时 => 将check赋值到best;
             if(!bestRSResult || checkResult.score > bestRSResult.score){
@@ -255,6 +255,7 @@
     if (bestRSResult) {
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
         TOFoModel *foModel = [TOFoModel newWithFo_p:bestRSResult.baseFo.pointer base:hDemand];
+        foModel.targetSPIndex = bestRSResult.spIndex;
         NSLog(@"------->>>>>> HDemand 新增一例解决方案: %@->%@ FRS_PK评分:%.2f",Fo2FStr(bestRSResult.baseFo),Mvp2Str(bestRSResult.baseFo.cmvNode_p),bestRSResult.score);
         [TCAction action:foModel];
     }else{

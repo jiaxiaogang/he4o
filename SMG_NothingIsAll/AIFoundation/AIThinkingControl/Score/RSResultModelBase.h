@@ -17,9 +17,10 @@
  */
 @interface RSResultModelBase : NSObject
 
-+(RSResultModelBase*) newWithBaseFo:(AIFoNodeBase*)baseFo pScore:(double)pScore sScore:(double)sScore;
++(RSResultModelBase*) newWithBaseFo:(AIFoNodeBase*)baseFo spIndex:(NSInteger)spIndex pScore:(double)pScore sScore:(double)sScore;
 
 @property (strong, nonatomic) AIFoNodeBase *baseFo; //保留baseFo;
+@property (assign, nonatomic) NSInteger spIndex;    //当前foSP评分的spIndex;
 @property (assign, nonatomic) double pScore;        //最终得分;
 @property (assign, nonatomic) double sScore;        //最终得分;
 
