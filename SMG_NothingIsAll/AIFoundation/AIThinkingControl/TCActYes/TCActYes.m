@@ -139,6 +139,12 @@
             if (type != ATDefault) {
                 [TCRethink perceptOutRethink:foModel type:type];
                 NSLog(@"---//感性ORT触发器执行:%p %@ (%@ | %@)",foModel,Fo2FStr(solutionFo),TOStatus2Str(foModel.status),ATType2Str(type));
+                
+                //12. 如果无反馈,则设为失败,并继续决策;
+                if (foModel.status == TOModelStatus_ActYes) {
+                    foModel.status = TOModelStatus_ActNo;
+                    [TCScore score];
+                }
             }
         }
     }];
@@ -187,31 +193,36 @@
     }];
 }
 
-//P模式,fo执行完成时,actYes->feedbackT(IO)P
+//P模式,fo执行完成时,actYes->feedbackTOP
 +(void) pActYes:(TOFoModel*)foModel{
-    //TODOTOMORROW20211226: pActYes在action调用到尾帧时且为P任务时,调用
+    //1. root设为actYes
+    DemandModel *root = ARR_INDEX([TOUtils getBaseDemands_AllDeep:foModel], 0);
+    root.status = TOModelStatus_ActYes;
     
-    //1. P-模式ActYes处理 (TOFoModel时,数据准备);
-    AIFoNodeBase *actYesFo = [SMGUtils searchNode:foModel.content_p];
-    DemandModel *demand = (DemandModel*)foModel.baseOrGroup;
+    //2. P-模式ActYes处理 (TOFoModel时,数据准备);
+    AIFoNodeBase *solutionFo = [SMGUtils searchNode:foModel.content_p];
+    PerceptDemandModel *demand = (PerceptDemandModel*)foModel.baseOrGroup;
     
-    //2. 触发器 (触发条件:任务未在demandManager中抵消);
-    NSLog(@"---//触发器F_生成: %p -> %@ time:%f",demand,Fo2FStr(actYesFo),actYesFo.mvDeltaTime);
-    [AITime setTimeTrigger:actYesFo.mvDeltaTime trigger:^{
+    //3. 触发器 (触发条件:任务未在demandManager中抵消);
+    NSLog(@"---//触发器pActYes_生成: %p -> %@ time:%f",demand,Fo2FStr(solutionFo),solutionFo.mvDeltaTime);
+    [AITime setTimeTrigger:solutionFo.mvDeltaTime trigger:^{
         
-        //3. 反省类比(成功/未成功)的主要原因;
-        AnalogyType type = (demand.status != TOModelStatus_Finish) ? ATSub : ATPlus;
-        NSLog(@"---//触发器F_触发: %p -> %@ (%@)",demand,Fo2FStr(actYesFo),ATType2Str(type));
-        [TCRethink perceptOutRethink:foModel type:type];
-        
-        //4. 失败时,转流程控制-失败 (会开始下一解决方案);
-        BOOL havRoot = [theTC.outModelManager.getAllDemand containsObject:demand];
-        if (demand.status != TOModelStatus_Finish && havRoot) {
-            NSLog(@"====ActYes is Fo update status");
-            foModel.status = TOModelStatus_ScoreNo;
+        //4. 无root时,说明已被别的R-新matchFo抵消掉,抵消掉后是不做反省的 (参考22081-todo1);
+        BOOL havRoot = [theTC.outModelManager.getAllDemand containsObject:root];
+        if (havRoot) {
             
-            //TODOTOMORROW20211202: 失败时,递归base尝试下一解决方案;
-            //[self singleLoopBackWithFailureModel:actYesModel];
+            //5. 如果状态已改成OutBack,说明有反馈;
+            AnalogyType type = (foModel.status == TOModelStatus_OuterBack) ? ATPlus : ATSub;
+            
+            //6. 则进行感性ORT反省;
+            [TCRethink perceptOutRethink:foModel type:type];
+            NSLog(@"---//pActYes感性ORT触发器执行:%p %@ (%@ | %@)",foModel,Fo2FStr(solutionFo),TOStatus2Str(foModel.status),ATType2Str(type));
+            
+            //7. 如果无反馈,则继续决策;
+            if (foModel.status == TOModelStatus_ActYes) {
+                foModel.status = TOModelStatus_ActNo;
+                [TCScore score];
+            }
         }
     }];
 }

@@ -97,6 +97,8 @@
             TOAlgModel *hTargetAlg = [TOAlgModel newWithAlg_p:hTarget_p group:foModel];
             hTargetAlg.status = TOModelStatus_ActYes;
             [TCActYes hActYes:hTargetAlg];//h输出成功时,等待反馈;
+        }else if(ISOK(foModel.baseOrGroup, PerceptDemandModel.class)){
+            [TCActYes pActYes:foModel];//p输出成功时,等待反馈;
         }
     }
 }

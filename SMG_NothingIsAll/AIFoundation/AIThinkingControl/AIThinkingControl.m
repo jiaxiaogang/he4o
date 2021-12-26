@@ -128,9 +128,5 @@ static AIThinkingControl *_instance;
 -(BOOL) energyValid{
     return self.energy > 0;
 }
--(void) setEnergy:(CGFloat)energy{
-    self.energy = energy;
-    NSLog(@"inner > setEnergy:%.2f",self.energy);
-}
 
 @end

@@ -49,7 +49,7 @@
     if (!scoreDic) scoreDic = [[NSMutableDictionary alloc] init];
     double modelScore = 0;
     
-    //===== 第一部分: RDemand在FoModel.subDemands下 (有解决方案:参与求和 & 无解决方案:理性淘汰);
+    //===== 第一部分: HDemand在FoModel.subModels下 (有解决方案:参与求和 & 无解决方案:理性淘汰);
     //2. 用每个sa取sh子任务 (求和);
     for (TOAlgModel *sa in model.subModels) {
         
@@ -76,7 +76,11 @@
         }
     }
     
-    //===== 第二部分: HDemand在AlgModel.subDemands下 (有解决方案:参与求和 & 无解决方案:R自身计入综合评分中);
+    
+    //TODOTOMORROW20211226: 当solutionFo在OutBack反馈后,demand设为finish状态,此处支持其评分为完成 (0分?);
+    
+    
+    //===== 第二部分: RDemand在AlgModel.subDemands下 (有解决方案:参与求和 & 无解决方案:R自身计入综合评分中);
     //10. 取出subRDemands子任务 (求和);
     for (ReasonDemandModel *sr in model.subDemands) {
         

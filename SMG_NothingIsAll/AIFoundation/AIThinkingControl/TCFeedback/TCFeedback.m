@@ -110,7 +110,7 @@
  *      2021.12.26: 针对rSolution的感性反馈 (参考25031-11 & 25032-6);
  */
 +(void) feedbackTOP:(AICMVNode*)cmvNode{
-    //0. 数据检查
+    //1. 数据检查
     NSInteger delta = [NUMTOOK([AINetIndex getData:cmvNode.delta_p]) integerValue];
     if (delta == 0) return;
     OFTitleLog(@"top_OPushM", @"\n输入MV:%@",Mv2FStr(cmvNode));
@@ -120,20 +120,29 @@
         NSArray *waitModels = [TOUtils getSubOutModels_AllDeep:root validStatus:@[@(TOModelStatus_ActYes)]];
         for (TOFoModel *waitModel in waitModels) {
             
-            //3. 非R任务解决方案不处理;
-            if (!ISOK(waitModel, TOFoModel.class) || !ISOK(waitModel.baseOrGroup, ReasonDemandModel.class)) continue;
+            //3. wait不为fo解决方案时不处理;
+            if (!ISOK(waitModel, TOFoModel.class)) continue;
             
-            //4. 非actYes状态不处理;
+            //4. 非R也非P任务时,不处理;
+            if (!ISOK(waitModel.baseOrGroup, ReasonDemandModel.class) && !ISOK(waitModel.baseOrGroup, PerceptDemandModel.class)) continue;
+            
+            //5. 非actYes状态不处理;
             if (waitModel.status != TOModelStatus_ActYes) continue;
             
-            //3. 判断hope(wait)和real(new)之间是否相符 (当反馈了"同区反向"时,即表明任务失败,为S) (匹配,比如撞疼,确定疼了);
+            //6. 判断hope(wait)和real(new)之间是否相符 (当反馈了"同区反向"时,即表明任务失败,为S) (匹配,比如撞疼,确定疼了);
             AIFoNodeBase *waitFo = [SMGUtils searchNode:waitModel.content_p];
             if ([AIScore sameIdenSameScore:waitFo.cmvNode_p mv2:cmvNode.pointer]) {
                 waitModel.status = TOModelStatus_OuterBack;
                 NSLog(@"top_OPushM: 实MV 正向反馈");
                 
-                //4. root设回runing
+                //7. root设回runing
                 root.status = TOModelStatus_Runing;
+                
+                //8. solutionFo反馈好时,baseDemand为完成状态;
+                CGFloat score = [AIScore score4MV:waitFo.cmvNode_p ratio:1.0f];
+                if (score > 0) {
+                    waitModel.baseOrGroup.status = TOModelStatus_Finish;
+                }
             }
         }
     }
