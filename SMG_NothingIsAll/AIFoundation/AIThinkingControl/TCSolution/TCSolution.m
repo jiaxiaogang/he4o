@@ -49,7 +49,7 @@
                     [self pSolution:endDemand];
                 }else if (ISOK(endDemand, HDemandModel.class)) {
                     //8. H任务继续取解决方案 (参考24203-2);
-                    [self hSolution:endDemand];
+                    [self hSolution:(HDemandModel*)endDemand];
                 }
             }
         }else{

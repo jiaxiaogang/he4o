@@ -59,6 +59,7 @@
  *      2021.12.05: 将feedbackTOR前置到概念识别后,所以推进成功,才执行TOP四模式的逻辑作废 (参考24171-9);
  *      2021.12.23: feedback时,将root设回runing状态 (参考24212-8);
  *      2021.12.26: 废弃HN后,类型判断处理 & 兼容hActYes输出 (参考25032-6);
+ *      2021.12.26: waitModels由currentDemand改为支持所有rootDemands (新螺旋架构迭代了短时记忆树,全树更新);
  *  @bug
  *      2020.09.22: 加上cutStopStatus,避免同一waitModel被多次触发,导致BUG (参考21042);
  *      2020.12.26: GL时,waitType的判断改为bFo,因为只有bFo才携带了waitTypeDS (参考21204);
@@ -68,8 +69,10 @@
 +(void) feedbackTOR:(AIShortMatchModel*)model{
     //4. 将新一帧数据报告给TOR,以进行短时记忆的更新,比如我输出行为"打",短时记忆由此知道输出"打"成功 (外循环入->推进->中循环出);
     //2. 取出所有等待下轮的outModel (ActYes&Runing);
-    //TODOTOMORROW20211226: 此处由currentDemand改为支持所有rootDemands;
-    NSArray *waitModels = [TOUtils getSubOutModels_AllDeep:theTC.outModelManager.getCurrentDemand validStatus:@[@(TOModelStatus_ActYes)] cutStopStatus:@[@(TOModelStatus_Finish),@(TOModelStatus_ActNo),@(TOModelStatus_ScoreNo)]];
+    NSMutableArray *waitModels = [[NSMutableArray alloc] init];
+    for (ReasonDemandModel *root in theTC.outModelManager.getAllDemand) {
+        [waitModels addObjectsFromArray:[TOUtils getSubOutModels_AllDeep:root validStatus:@[@(TOModelStatus_ActYes)]]];
+    }
     OFTitleLog(@"tor_OPushM", @"\n输入M:%@\n输入P:%@\n等待中任务数:%lu",Alg2FStr(model.matchAlg),Alg2FStr(model.protoAlg),(long)waitModels.count);
     
     //3. 判断最近一次input是否与等待中outModel相匹配 (匹配,比如吃,确定自己是否真吃了);
