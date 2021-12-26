@@ -34,23 +34,6 @@
 #import "AIThinkOutReason.h"
 #import "AIThinkOutPercept.h"
 
-//2021新TC架构
-#import "TCInput.h"
-#import "TCFeedbackTOR.h"
-#import "TCRegroup.h"
-#import "TCRecognition.h"
-#import "TCLearning.h"
-#import "TCFeedback.h"
-#import "TCForecast.h"
-#import "TCRethink.h"
-#import "TCDemand.h"
-#import "TCScore.h"
-#import "TCPlan.h"
-#import "TCSolution.h"
-#import "TCAction.h"
-#import "TCActYes.h"
-#import "TCOut.h"
-
 //任务池
 #import "ReasonDemandModel.h"
 #import "PerceptDemandModel.h"
@@ -82,6 +65,23 @@
 #import "OutputModel.h"
 #import "Output.h"
 #import "AINoRepeatRun.h"
+
+//2021新TC架构
+#import "TCInput.h"
+#import "TCFeedbackTOR.h"
+#import "TCRegroup.h"
+#import "TCRecognition.h"
+#import "TCLearning.h"
+#import "TCFeedback.h"
+#import "TCForecast.h"
+#import "TCRethink.h"
+#import "TCDemand.h"
+#import "TCScore.h"
+#import "TCPlan.h"
+#import "TCSolution.h"
+#import "TCAction.h"
+#import "TCActYes.h"
+#import "TCOut.h"
 
 //MARK:===============================================================
 //MARK:                         < 内核宏 >

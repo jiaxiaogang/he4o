@@ -7,10 +7,6 @@
 //
 
 #import "TCSolution.h"
-#import "DemandManager.h"
-#import "ReasonDemandModel.h"
-#import "AIMatchFoModel.h"
-#import "AINetUtils.h"
 #import "RSResultModelBase.h"
 
 @implementation TCSolution

@@ -38,7 +38,6 @@
 @interface AIThinkOutReason() <TOActionDelegate>
 
 @property (strong, nonatomic) AIThinkOutAction *toAction;
-@property (strong, nonatomic) AIActionReason *rAction;
 @property (assign, nonatomic) BOOL debugMode;
 
 @end
