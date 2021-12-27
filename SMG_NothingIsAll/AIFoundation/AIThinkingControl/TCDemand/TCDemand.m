@@ -42,27 +42,6 @@
 }
 
 /**
- *  MARK:--------------------原子任务流程 (已废弃)--------------------
- */
-//+(void) subDemand:(AIShortMatchModel*)rtInModel foModel:(TOFoModel*)foModel{
-//
-//    //TODOTOMORROW20211128: 当前父任务下挂载的:所有子任务处理;
-//    //  a1: 有子任务还没决策时,转solution找解决方案 --> 转solution();
-//    //  a2: 全部子任务决策过后,剩下无法实践解决的价值之和,是否使其足够放弃当前父任务; (比如又累又烦的活,赚钱也不干) --> 失败递归;
-//    //  即: 综合评价 (参考24195);
-//
-//    //8. 子任务尝试完成后,进行FPS综合评价 (如果子任务完成后,依然有解决不了的不愿意的价值,则不通过);
-//    //NSArray *except_ps = nil;//不应期 = 当前所有子任务 - 已解决的 - actYes中的;
-//    //BOOL scoreSuccess = [AIScore FPS:foModel rtInModel:rtInModel except_ps:except_ps];
-//    //NSLog(@"未发生感性评价(反思)-%@",scoreSuccess ? @"通过 (继续父fo行为化)" : @"不通过 (中断父fo行为化)");
-//    //if (!scoreSuccess) {
-//    //    foModel.status = TOModelStatus_ScoreNo;
-//    //    [theTOR singleLoopBackWithFailureModel:foModel];
-//    //    return;
-//    //}
-//}
-
-/**
  *  MARK:--------------------反馈生成子任务--------------------
  *  @version
  *      2021.12.06: 反馈feedback后生成子任务,但并不触发solution决策 (参考24171-9de);

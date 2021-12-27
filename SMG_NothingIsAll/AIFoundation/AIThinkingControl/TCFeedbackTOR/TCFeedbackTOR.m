@@ -60,6 +60,7 @@
  *      2021.12.23: feedback时,将root设回runing状态 (参考24212-8);
  *      2021.12.26: 废弃HN后,类型判断处理 & 兼容hActYes输出 (参考25032-6);
  *      2021.12.26: waitModels由currentDemand改为支持所有rootDemands (新螺旋架构迭代了短时记忆树,全树更新);
+ *      2021.12.27: 当H反馈成功时,把hDemand设为finish;
  *  @bug
  *      2020.09.22: 加上cutStopStatus,避免同一waitModel被多次触发,导致BUG (参考21042);
  *      2020.12.26: GL时,waitType的判断改为bFo,因为只有bFo才携带了waitTypeDS (参考21204);
@@ -100,6 +101,7 @@
                 hFoModel.status = TOModelStatus_Finish;
                 targetAlg.status = TOModelStatus_OuterBack;
                 targetAlg.feedbackAlg = model.protoAlg;
+                hDemand.status = TOModelStatus_Finish;
                 
                 //2. root设回runing
                 DemandModel *root = ARR_INDEX([TOUtils getBaseDemands_AllDeep:waitModel], 0);
