@@ -29,12 +29,12 @@
     //      2. 如果无则hSolution取新方案;
     //      3. 如果无h方案,则endBranch可能才是hDemand,此时也要进行支持 (现不支持);
     
+    
     //PRH三个任务生成后,都转向了TCScore;
-    //方案1. 前面都收集
-    //方案2. 后面判断subDemand
+    //方案2. 前面scoreDic只收集S,然后在此处判断subDemand
     
-    
-    
+    //子subDemands中,finish和without的不做处理,actYes状态的继续等待,其它的就以先HDemand后RDemands的优先级处理;
+    //这个就不用竞争路径了,best竞争不了这些,这些就是死规则优先级;
     
     
     //2. endBranch >= 0分时,执行TCAction (参考24203-1);

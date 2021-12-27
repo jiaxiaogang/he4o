@@ -47,8 +47,8 @@
     TOFoModel *endBranch = [self bestEndBranch4Plan:scoreDic baseFo:rootFo demandScore:demandScore];
     
     //2. 从最优路径末枝的解决方案,转给TCSolution执行 (参考24195-4);
-    double endBrahcnScore = [NUMTOOK([scoreDic objectForKey:endBranch.content_p]) doubleValue];
-    [TCSolution solution:endBranch endScore:endBrahcnScore];
+    double endBranchScore = [NUMTOOK([scoreDic objectForKey:endBranch.content_p]) doubleValue];
+    [TCSolution solution:endBranch endScore:endBranchScore];
 }
 
 /**

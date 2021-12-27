@@ -21,6 +21,11 @@
     NSMutableDictionary *scoreDic = [[NSMutableDictionary alloc] init];
     TOFoModel *foModel = [self score_Multi:demand.actionFoModels scoreDic:scoreDic];
     
+    //TODOTOMORROW20211228:
+    //1. 始: 无actionFoModels时,应该传入rootDemand;
+    //2. 末-1: 末枝为0条S时,应该取首条S;
+    //3. 末: 末枝>0条时,应该取最优继续;
+    
     //3. 转给TCPlan取最优路径;
     [TCPlan plan:demand rootFo:foModel scoreDic:scoreDic];
 }
