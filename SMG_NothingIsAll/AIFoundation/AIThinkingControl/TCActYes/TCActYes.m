@@ -31,6 +31,7 @@
  *      2021.06.09: 修复静默成功任务的deltaTime一直为0的BUG (参考23125);
  *      2021.06.10: 子任务判断不了havRoot,改为判断root是否已经finish,因为在tor_OPushM中finish的任务actYes是不生效的;
  *      2021.12.02: 将旧架构actYes的代码移过来 (参考24164);
+ *      2021.12.27: arsTime触发后的反馈处理 (有反馈则继续解决方案,无反馈则父任务自愈);
  */
 
 //arsTime模式,当评价需等待时,actYes;
@@ -72,21 +73,14 @@
                 AnalogyType type = (algModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;
                 NSLog(@"---//触发器R-_理性alg任务Trigger:%@ 解决方案:%@ (%@)",FoP2FStr(dsFoModel.content_p),Pit2FStr(algModel.content_p),ATType2Str(type));
                 
-                //5. 成功时,则整个R-任务阻止成功 (OutBack未返回,静默成功) (参考22153-A22);
+                //5. 有反馈时,algModel自然出现成功,则设为finish并继续决策;
                 if (type == ATPlus) {
                     algModel.status = TOModelStatus_Finish;
-                    
-                    //TODOTOMORROW20211202任务完成,递归到baseDemand完成;=====START
-                    //1. 由短时记忆树来决定它递归的base是什么,也决定它下一步应该继续下一子任务,还是父任务全完成了;
-                    //[self singleLoopBackWithFinishModel:rDemand];
-                    ////R-模式在完成后,直接移出任务池 (已躲撞成功);
-                    //BOOL isSubDemand = finishModel.baseOrGroup;
-                    //if (isSubDemand) {
-                    //    [self singleLoopBackWithBegin:finishModel.baseOrGroup];
-                    //}else if (ISOK(finishModel, ReasonDemandModel.class)) {
-                    //    [theTC.outModelManager removeDemand:(ReasonDemandModel*)finishModel];
-                    //}
-                    //====================================================END
+                    [TCScore score];
+                }else{
+                    //6. 无反馈时,则R预测的坏事自然未发生 (OutBack未返回,静默成功) (参考22153-A22);
+                    rDemand.status = TOModelStatus_Finish;
+                    [TCScore score];//并继续决策;
                 }
             }
         }];
