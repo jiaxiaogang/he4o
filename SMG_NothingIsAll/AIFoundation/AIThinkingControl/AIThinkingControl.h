@@ -13,19 +13,20 @@
  *  1. 主要负责思维 (前额叶) 功能;
  *  2. 次要负责分发激活等 (丘脑) 功能;
  */
-@class ShortMatchManager,DemandManager,AIShortMatchModel,TOFoModel,AIThinkIn;
+@class ShortMatchManager,DemandManager;
 @interface AIThinkingControl : NSObject
 
-@property (strong, nonatomic) AIThinkIn *thinkIn;
-
 +(AIThinkingControl*) shareInstance;
+
+//MARK:===============================================================
+//MARK:                     < 数据输入 >
+//MARK:===============================================================
 
 /**
  *  MARK:--------------------流入input--------------------
  */
 -(void) commitInput:(NSObject*)algsModel;
 -(void) commitInputWithModels:(NSArray*)dics algsType:(NSString*)algsType;
-
 
 /**
  *  MARK:--------------------输出的日志入网(输入小脑)--------------------
@@ -34,16 +35,17 @@
  */
 -(void) commitOutputLog:(NSArray*)outputModels;
 
-/**
- *  MARK:--------------------短时记忆模型--------------------
- */
+
+//MARK:===============================================================
+//MARK:                     < 短时记忆 >
+//MARK:===============================================================
 -(ShortMatchManager*) inModelManager;
 -(DemandManager*) outModelManager;
 
-/**
- *  MARK:--------------------活跃度--------------------
- *  @desc 直接开放到public,省得传来传去;
- */
+
+//MARK:===============================================================
+//MARK:                     < 活跃度 >
+//MARK:===============================================================
 -(void) updateEnergy:(CGFloat)delta;
 -(BOOL) energyValid;
 -(void) setEnergy:(CGFloat)energy;

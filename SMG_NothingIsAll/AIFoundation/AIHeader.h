@@ -19,8 +19,6 @@
 #import "HeLogHeader.h"
 #import "AIKVPointer.h"
 #import "AIThinkingControl.h"
-#import "AIThinkIn.h"
-//#import "AIThinkOut.h"
 #import "NSString+Extension.h"
 #import "AIScore.h"
 #import "XGDelegate.h"
@@ -28,12 +26,6 @@
 #import "TOUtils.h"
 #import "TIUtils.h"
 #import "TOModelVision.h"
-
-//旧TC
-//#import "AIThinkInReason.h"
-//#import "AIThinkInPercept.h"
-//#import "AIThinkOutReason.h"
-//#import "AIThinkOutPercept.h"
 
 //任务池
 #import "ReasonDemandModel.h"

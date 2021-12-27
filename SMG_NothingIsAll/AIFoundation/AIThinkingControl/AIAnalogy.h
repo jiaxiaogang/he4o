@@ -21,6 +21,8 @@
  *      3. InPerceptDiff: 调用反向反馈外类比
  *      4. InReasonDiff: 调用InRethink类比
  *      5. Out三种ActYes: 调用OutRethink类比
+ *  @version
+ *      2021.12.26: 仅留下外类比,其它全废弃删掉 (参考Note24-TC新螺旋架构整理);
  */
 
 //MARK:===============================================================
