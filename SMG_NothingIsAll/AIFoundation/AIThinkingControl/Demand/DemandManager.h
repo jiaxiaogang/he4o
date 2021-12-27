@@ -29,12 +29,6 @@
 -(void) updateCMVCache_RMV:(AIShortMatchModel*)inModel;
 
 /**
- *  MARK:--------------------dataIn_Mv时及时加到manager--------------------
- */
-//-(void) dataIn_CmvAlgsArr:(NSArray*)algsArr;
-
-
-/**
  *  MARK:--------------------获取任务--------------------
  */
 -(DemandModel*) getCurrentDemand;       //获取当前,最紧急任务;

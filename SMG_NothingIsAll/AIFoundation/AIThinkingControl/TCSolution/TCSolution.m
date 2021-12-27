@@ -29,6 +29,14 @@
     //      2. 如果无则hSolution取新方案;
     //      3. 如果无h方案,则endBranch可能才是hDemand,此时也要进行支持 (现不支持);
     
+    //PRH三个任务生成后,都转向了TCScore;
+    //方案1. 前面都收集
+    //方案2. 后面判断subDemand
+    
+    
+    
+    
+    
     //2. endBranch >= 0分时,执行TCAction (参考24203-1);
     if (endScore >= 0) {
         [TCAction action:endBranch];

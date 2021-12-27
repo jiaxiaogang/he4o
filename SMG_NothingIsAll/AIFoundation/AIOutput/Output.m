@@ -34,7 +34,6 @@
     for (AIKVPointer *value_p in algNode.content_ps) {
         
         //3. 取dataSource & algsType
-        //TODOTOMORROW: 此处取得dataSource = @" ",所以,导致"吃"输出失败,,,,,,,,
         NSString *identify = value_p.algsType;
         if (!value_p.isOut) {
             identify = [OutputUtils convertOutType2dataSource:value_p.algsType];

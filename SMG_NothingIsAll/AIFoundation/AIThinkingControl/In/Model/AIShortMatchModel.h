@@ -21,7 +21,6 @@
  *  @todo
  *      1. 支持多条matchAlg,多条matchFo,将fuzzys独立列出;
  *      2. 在多条matchFo.mv价值预测下,可以相应的跑多个正向反馈类比,和反向反馈类比;
- *      3. TODOTOMORROW: 将瞬时记忆AIShortMemory整合到AIShortMatchModel短时记忆中来;
  *  @version
  *      2020.10.30: 将seemAlg改成partAlg_ps,即将所有相似返回 (参考21113-步骤1);
  */
