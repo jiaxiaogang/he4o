@@ -42,7 +42,7 @@
     TOFoModel *dsFoModel = (TOFoModel*)algModel.baseOrGroup;
     
     //2. root设为actYes
-    DemandModel *root = ARR_INDEX([TOUtils getBaseDemands_AllDeep:algModel], 0);
+    DemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:algModel];
     root.status = TOModelStatus_ActYes;
     
     //4. 找出下标;
@@ -103,7 +103,7 @@
     demand.status = TOModelStatus_ActYes;
     
     //1. root设为actYes
-    DemandModel *root = ARR_INDEX([TOUtils getBaseDemands_AllDeep:foModel], 0);
+    DemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:foModel];
     root.status = TOModelStatus_ActYes;
     
     //2. solutionFo已执行完成,直接取mvDeltaTime做触发器时间;
@@ -156,7 +156,7 @@
     AIFoNodeBase *foNode = [SMGUtils searchNode:foModel.content_p];
     
     //1. root设为actYes
-    DemandModel *root = ARR_INDEX([TOUtils getBaseDemands_AllDeep:algModel], 0);
+    DemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:algModel];
     root.status = TOModelStatus_ActYes;
     
     //2. 如果TOAlgModel为HNGL时 (所需时间为"target-1到target"时间);
@@ -190,7 +190,7 @@
 //P模式,fo执行完成时,actYes->feedbackTOP
 +(void) pActYes:(TOFoModel*)foModel{
     //1. root设为actYes
-    DemandModel *root = ARR_INDEX([TOUtils getBaseDemands_AllDeep:foModel], 0);
+    DemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:foModel];
     root.status = TOModelStatus_ActYes;
     
     //2. P-模式ActYes处理 (TOFoModel时,数据准备);

@@ -26,10 +26,11 @@
 #import "XGDelegate.h"
 #import "ThinkingUtils.h"
 #import "TOUtils.h"
+#import "TIUtils.h"
 #import "TOModelVision.h"
 
 //旧TC
-#import "AIThinkInReason.h"
+//#import "AIThinkInReason.h"
 //#import "AIThinkInPercept.h"
 //#import "AIThinkOutReason.h"
 //#import "AIThinkOutPercept.h"
@@ -58,6 +59,7 @@
 #import "AIFrontOrderNode.h"
 #import "AINetAbsFoNode.h"
 #import "AICMVNode.h"
+#import "AIAbsAlgNode.h"
 
 //其它: 类比器,评价器,触发器,防重器,输入,输出
 #import "AIAnalogy.h"
@@ -211,7 +213,6 @@
 #define Ports2Pits(ports) [SMGUtils convertPointersFromPorts:ports]
 #define Nodes2Pits(nodes) [SMGUtils convertPointersFromNodes:nodes]
 #define TOModels2Pits(toModels) [TOUtils convertPointersFromTOModels:toModels];
-#define RDemands2Pits(rDemands) [TOUtils convertPointersFromRDemands:rDemands];
 
 //AnalogType转字符串
 #define ATType2Str(type) [NSLog_Extension convertATType2Desc:type]

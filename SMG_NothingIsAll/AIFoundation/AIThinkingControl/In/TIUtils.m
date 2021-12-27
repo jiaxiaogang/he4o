@@ -1,38 +1,18 @@
 //
-//  AIThinkInReason.m
+//  TIUtils.m
 //  SMG_NothingIsAll
 //
-//  Created by jia on 2019/9/2.
-//  Copyright © 2019年 XiaoGang. All rights reserved.
+//  Created by jia on 2021/12/27.
+//  Copyright © 2021年 XiaoGang. All rights reserved.
 //
 
-#import "AIThinkInReason.h"
-#import "AINetUtils.h"
-#import "AIKVPointer.h"
-#import "NVHeader.h"
-#import "NSString+Extension.h"
-#import "AIPort.h"
-#import "AINetIndexUtils.h"
-#import "AIAlgNode.h"
-#import "AICMVNode.h"
-#import "AINetAbsFoNode.h"
-#import "AIFrontOrderNode.h"
-#import "AIAbsAlgNode.h"
-#import "AINetIndex.h"
-#import "TIRUtils.h"
-#import "AIAnalogy.h"
-#import "AIShortMatchModel.h"
-#import "ShortMatchManager.h"
-#import "ThinkingUtils.h"
-#import "TOUtils.h"
-#import "AITime.h"
-#import "AIMatchFoModel.h"
-#import "ReasonDemandModel.h"
+#import "TIUtils.h"
 
-@implementation AIThinkInReason
+@implementation TIUtils
+
 
 //MARK:===============================================================
-//MARK:                     < TIR_Alg >
+//MARK:                     < 概念识别 >
 //MARK:===============================================================
 
 /**
@@ -73,7 +53,7 @@
     __block NSMutableArray *matchAlgs = [[NSMutableArray alloc] init];
     __block NSArray *partAlg_ps = nil;
     ///1. 自身匹配 (Self匹配);
-    if ([TIRUtils inputAlgIsOld:protoAlg]) {
+    if ([self inputAlgIsOld:protoAlg]) {
         [matchAlgs addObject:protoAlg];
     }
     
@@ -86,7 +66,7 @@
     //}
     
     ///4. 局部匹配 (Abs匹配 和 Seem匹配);
-    [TIRUtils partMatching_Alg:protoAlg isMem:false except_ps:fromGroup_ps complete:^(NSArray *_matchAlgs, NSArray *_partAlg_ps) {
+    [self partMatching_Alg:protoAlg isMem:false except_ps:fromGroup_ps complete:^(NSArray *_matchAlgs, NSArray *_partAlg_ps) {
         [matchAlgs addObjectsFromArray:_matchAlgs];
         partAlg_ps = _partAlg_ps;
     }];
@@ -118,7 +98,7 @@
     
     //3. 全含时,可进行模糊匹配 (Fuzzy匹配) //因TOR未支持fuzzy,故目前仅将最相似的fuzzy放到AIShortMatchModel中当matchAlg用;
     //if (matchType == MatchType_Abs) {
-    //    NSArray *fuzzys = ARRTOOK([TIRUtils matchAlg2FuzzyAlgV2:algNode matchAlg:assAlgNode except_ps:fromGroup_ps]);
+    //    NSArray *fuzzys = ARRTOOK([self matchAlg2FuzzyAlgV2:algNode matchAlg:assAlgNode except_ps:fromGroup_ps]);
     //    AIAlgNodeBase *fuzzyAlg = ARR_INDEX(fuzzys, 0);
     //    //a. 模糊匹配有效时,增强关联,并截胡;
     //    if (fuzzyAlg) {
@@ -135,106 +115,98 @@
 }
 
 /**
- *  MARK:--------------------重新识别rtAlg方法--------------------
- *  @version 20200406 : 由复用fromMem的识别M再Fuzzy(),改为仅识别硬盘MatchAlg,并返回;
- *  @desc 功能说明:
- *      1. result必须包含mUniqueValue;
- *      2. result必须被rtAlg全含 (代码见partMatching_General());
- *      3. result不进行fuzzy模糊匹配 (因为mUniqueValue并非新输入,并且fuzzy会导致多出杂项码(如:m为经26,fuzzyAlg却包含距20));
+ *  MARK:--------------------概念局部匹配--------------------
+ *  注: 根据引用找出相似度最高且达到阀值的结果返回; (相似度匹配)
+ *  从content_ps的所有value.refPorts找前cPartMatchingCheckRefPortsLimit个, 如:contentCount9*limit5=45个;
+ *
+ *  @param complete : 根据匹配度排序,并返回 (全含+局部);
+ *  @param except_ps : 排除_ps; (如:同一批次输入的概念组,不可用来识别自己)
+ *
+ *  @version:
+ *      2021.09.27: 仅识别ATDefault类型 (参考24022-BUG4);
+ *      2019.12.23 - 迭代支持全含,参考17215 (代码中由判断相似度,改为判断全含)
+ *      2020.04.13 - 将结果通过complete返回,支持全含 或 仅相似 (因为正向反馈类比的死循环切入问题,参考:n19p6);
+ *      2020.07.21 - 当Seem结果时,对seem和proto进行类比抽象,并将抽象概念返回 (参考:20142);
+ *      2020.07.21 - 当Seem结果时,虽然构建了absAlg,但还是将seemAlg返回 (参考20142-Q1);
+ *      2020.10.22 - 支持matchAlg和seemAlg二者都返回 (参考21091);
+ *      2020.11.18 - 支持多全含识别 (将所有全含matchAlgs返回) (参考21145方案1);
+ *      2020.11.18 - partAlg_ps将matchAlgs移除掉,仅保留非全含的部分;
  */
-//+(AIAlgNodeBase*) TIR_Alg_FromRethink:(AIAlgNodeBase*)rtAlg mUniqueV_p:(AIKVPointer*)mUniqueV_p{
-//    //1. 数据检查
-//    if (!rtAlg || !mUniqueV_p) return nil;
-//    NSArray *mUniqueRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Value:mUniqueV_p]];
-//    NSLog(@"---------- TIR_Alg_FromRT START ----------");
-//    NSLog(@"----> 特码:%@ 被引:%ld个 RTAlg:%@",[NVHeUtil getLightStr:mUniqueV_p],mUniqueRef_ps.count,Alg2FStr(rtAlg));
-//
-//    //2. 识别
-//    __block AIAlgNodeBase *matchAlg = nil;
-//    [TIRUtils partMatching_General:rtAlg.content_ps refPortsBlock:^NSArray *(AIKVPointer *item_p) {
-//        if (item_p) {
-//            //1> 数据准备 (value_p的refPorts是单独存储的);
-//            return ARRTOOK([SMGUtils searchObjectForFilePath:item_p.filePath fileName:kFNRefPorts time:cRTReference]);
-//        }
-//        return nil;
-//    } checkBlock:^BOOL(AIPointer *target_p) {
-//        if (target_p) {
-//            //2> 自身 && 包含M特有码;
-//            return ![target_p isEqual:rtAlg.pointer] && [mUniqueRef_ps containsObject:target_p];
-//        }
-//        return false;
-//    } complete:^(AIAlgNodeBase *outMatchAlg, MatchType type) {
-//        if (type == MatchType_Abs) {
-//            matchAlg = outMatchAlg;
-//        }
-//    }];
-//
-//    //3. 直接将assAlgNode设置为algNode的抽象; (这样后面TOR理性决策时,才可以直接对当前瞬时实物进行很好的理性评价);
-//    if (ISOK(matchAlg, AIAlgNodeBase.class)) {
-//        //4. 识别到时,value.refPorts -> 更新/加强微信息的引用序列
-//        [AINetUtils insertRefPorts_AllAlgNode:matchAlg.pointer content_ps:matchAlg.content_ps difStrong:1];
-//
-//        //5. 识别到时,进行抽具象 -> 关联 & 存储 (20200103:测得,algNode为内存节点时,关联也在内存)
-//        [AINetUtils relateAlgAbs:(AIAbsAlgNode*)matchAlg conNodes:@[rtAlg] isNew:false];
-//    }
-//    NSLog(@"识别Alg_FromRT Finish:%@",Alg2FStr(matchAlg));
-//    return matchAlg;
-//}
-
-//MARK:===============================================================
-//MARK:                     < TIR_Fo >
-//MARK: @desc : 目前仅支持局部匹配;
-//MARK:===============================================================
-
-/**
- *  MARK:--------------------理性时序--------------------
- *  _param protoAlg_ps : RTFo
- *      1. 传入原始瞬时记忆序列 90% ,还是识别后的概念序列 10%;
- *      2. 传入行为化中的rethinkLSP重组fo;
- *  @param baseDemand : 参数fo所处的r任务 (有可能非R任务,或者为nil,所以此参数用前需先做防错判断);
- *  @desc 向性:
- *      1. ↑
- *      2. →
- *
- *  @desc 代码步骤:
- *      1. 用内类比的方式,发现概念的变化与有无; (理性结果)
- *      2. 用外类比的方式,匹配出靠前limit个中最相似抽象时序,并取到预测mv结果; (感性结果)
- *      3. 根据时序相似性 与 微信息差异度 得出 修正mv的紧迫度; (综合预测)
- *      4. 将fixMv添加到任务序列demandManager,做TOR处理;
- *
- *  @desc 举例步骤:
- *      1. 通过,内类比发现有一物体:方向不变 & 越来越近;
- *      2. 通过,识别概念,发现此物体是汽车; (注:已识别过,可以直接查看抽象指向);
- *      3. 通过,外类比,发现以此下去,"汽车距离变0"会撞到疼痛;
- *      4. 通过,"车-0-撞-疼"来计算时序相似度x% 与 通过"车距"y 计算= zMv;
- *      5. 将zMv提交给demandManager,做TOR处理;
- *  @version
- *      2020.04.03 : 将assFoIndexAlg由proto.lastIndex改为replaceMatchAlg来代替 (因为lastAlg索引失败率太高);
- *      2020.07.17 : 换上新版partMatching_FoV2时序识别算法;
- *      2021.04.13 : 将装饰AIShortMatchModel改为result返回 & 参数由order直接改为fo传入;
- *      2021.07.07 : 反思时,cutIndex全部返-1 (参考23156);
- *  @todo :
- *      2020.04.03: 支持识别到多个时序 T;
- *      2020.04.03: 以识别到的多个时序,得到多个价值预测 (支持更多元的评价);
- *
- */
-+(AIShortMatchModel*) TIR_Fo_FromRethink:(AIFoNodeBase*)fo {
-    //1. 数据检查
-    AIShortMatchModel *result = [[AIShortMatchModel alloc] init];
-    if (!fo || !ARRISOK(fo.content_ps)) return result;
-    OFTitleLog(@"反思时序识别", @"\n%@",Fo2FStr(fo));
++(void) partMatching_Alg:(AIAlgNodeBase*)protoAlg isMem:(BOOL)isMem except_ps:(NSArray*)except_ps complete:(void(^)(NSArray *matchAlgs,NSArray *partAlg_ps))complete{
+    //1. 数据准备;
+    if (!ISOK(protoAlg, AIAlgNodeBase.class)) return;
+    except_ps = ARRTOOK(except_ps);
+    NSMutableArray *matchAlgs = [[NSMutableArray alloc] init];
+    NSArray *partAlg_ps = nil;
+    NSMutableDictionary *countDic = [[NSMutableDictionary alloc] init];
     
-    //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [self partMatching_FoV1Dot5:fo except_ps:@[fo.pointer] decoratorInModel:result findCutIndex:^NSInteger(AIFoNodeBase *matchFo, NSInteger lastMatchIndex) {
-        return -1;
-    }];
-    //NSLog(@"反思时序: Finish >> %@",Fo2FStr(result.matchFo));
-    return result;
+    //2. 对每个微信息,取被引用的强度前cPartMatchingCheckRefPortsLimit个;
+    for (AIKVPointer *item_p in protoAlg.content_ps) {
+        
+        //1> 数据准备 (value_p的refPorts是单独存储的);
+        NSArray *refPorts = [SMGUtils filterPorts_Normal:[AINetUtils refPorts_All4Value:item_p isMem:isMem]];
+        refPorts = ARR_SUB(refPorts, 0, cPartMatchingCheckRefPortsLimit_Alg);
+        if (Log4MAlg) NSLog(@"当前item_p:%@ -------------------数量:%lu",[NVHeUtil getLightStr:item_p],(unsigned long)refPorts.count);
+        //3. 进行计数
+        for (AIPort *refPort in refPorts) {
+            
+            //2> 自身 | 不应期 -> 不可激活;
+            if ([refPort.target_p isEqual:protoAlg.pointer]) continue;
+            if ([SMGUtils containsSub_p:refPort.target_p parent_ps:except_ps]) continue;
+            
+            //3> 计数;
+            NSData *key = OBJ2DATA(refPort.target_p);
+            int oldCount = [NUMTOOK([countDic objectForKey:key]) intValue];
+            [countDic setObject:@(oldCount + 1) forKey:key];
+        }
+        if (Log4MAlg) if (countDic.count) NSLog(@"匹配情况: %@ -----------------",countDic.allValues);
+    }
+    
+    //4. 排序相似数从大到小;
+    NSArray *sortKeys = ARRTOOK([countDic.allKeys sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+        int matchingCount1 = [NUMTOOK([countDic objectForKey:obj1]) intValue];
+        int matchingCount2 = [NUMTOOK([countDic objectForKey:obj2]) intValue];
+        return matchingCount1 < matchingCount2;
+    }]);
+    
+    //5. 从大到小,依次取到对应的node和matchingCount
+    for (NSData *key in sortKeys) {
+        AIKVPointer *key_p = DATA2OBJ(key);
+        AIAlgNodeBase *result = [SMGUtils searchNode:key_p];
+        int matchingCount = [NUMTOOK([countDic objectForKey:key]) intValue];
+        
+        //6. 判断全含; (matchingCount == assAlg.content.count) (且只能识别为抽象节点)
+        if (ISOK(result, AIAbsAlgNode.class) && result.content_ps.count == matchingCount) {
+            [matchAlgs addObject:result];
+        }
+    }
+    
+    //7. 未将全含返回,则返回最相似;
+    //2020.10.22: 全含返回,也要返回seemAlg;
+    partAlg_ps = DATAS2OBJS(sortKeys);
+    partAlg_ps = [SMGUtils removeSub_ps:[SMGUtils convertPointersFromNodes:matchAlgs] parent_ps:partAlg_ps];
+    if (Log4MAlg) NSLog(@"识别结果 >> 总数:%ld = 全含:%ld + 非全含数:%ld",sortKeys.count,matchAlgs.count,partAlg_ps.count);
+    complete(matchAlgs,partAlg_ps);
+}
+
+//输入概念判断
++(BOOL) inputAlgIsOld:(AIAlgNodeBase*)inputAlg{
+    if (inputAlg) {
+        NSArray *refPorts = [AINetUtils refPorts_All4Alg:inputAlg];
+        if (refPorts.count > 0) return true;
+    }
+    return false;
 }
 
 
+//MARK:===============================================================
+//MARK:                     < 时序识别 >
+//MARK:===============================================================
+
 /**
- *  MARK:--------------------时序局部匹配算法V1--------------------
+ *  MARK:--------------------时序局部匹配算法--------------------
+ *
+ *  --------------------V1--------------------
  *  参考: n17p7 TIR_FO模型到代码
  *  _param assFoIndexAlg    : 用来联想fo的索引概念 (shortMem的第3层 或 rethink的第1层) (match层,参考n18p2)
  *  _param assFoBlock       : 联想fos (联想有效的5个)
@@ -260,14 +232,14 @@
  *      20200627: 支持明确价值预测 & 支持更匹配的时序预测 (参考:20052);
  *      20200703: 废弃明确价值预测功能,因为认知期要广入,决策期再细修 (参考20063);
  *
- *  MARK:--------------------时序局部匹配算法V1.5--------------------
+ *  --------------------V1.5--------------------
  *  @desc
  *      1. 由v1整理而来,逻辑与v1一致 (将v1中checkItemValid和assFoBlock回调,直接写在方法中,而不由外界传入);
  *      2. 时序识别v1.5 (在V1的基础上改的,与V2最大的区别,是其未按照索引计数排序);
  *
  *  @status 启用,因为v2按照countDic排序的方式,不利于找出更确切的抽象结果;
  *
- *  MARK:--------------------时序全含匹配算法v2--------------------
+ *  --------------------v2--------------------
  *  @desc 功能说明:
  *      1. 本次v2迭代,主要在识别率上进行改进,因为v1识别率太低 (参考20111),所以迭代了v2版 (参考20112);
  *      2. 目前判断有效引用,不支持"必须包含某protoAlg" (代码第5步),以前需要再支持即可;
@@ -343,7 +315,7 @@
             if (rContains) continue;
             
             //7. 全含判断;
-            [TIRUtils TIR_Fo_CheckFoValidMatch:maskFo assFo:assFo success:^(NSInteger lastAssIndex, CGFloat matchValue) {
+            [self TIR_Fo_CheckFoValidMatch:maskFo assFo:assFo success:^(NSInteger lastAssIndex, CGFloat matchValue) {
                 if (Log4MFo) NSLog(@"时序识别item SUCCESS 完成度:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
                 NSInteger cutIndex = findCutIndex(assFo,lastAssIndex);
                 AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:assFo matchFoValue:matchValue lastMatchIndex:lastAssIndex cutIndex:cutIndex];
@@ -377,6 +349,83 @@
     NSLog(@"\n=====> 时序识别Finish (RFos数:%lu)",(unsigned long)inModel.matchRFos.count);
     for (AIMatchFoModel *item in inModel.matchRFos)
         NSLog(@"强度:(%ld)\t> %@ (匹配度:%@)",item.matchFoStrong,Fo2FStr(item.matchFo),Double2Str_NDZ(item.matchFoValue));
+}
+
+
+/**
+ *  MARK:--------------------时序识别之: protoFo&assFo匹配判断--------------------
+ *  要求: protoFo必须全含assFo对应的last匹配下标之前的所有元素;
+ *  例如: 如: protFo:[abcde] 全含 assFo:[acefg]
+ *  名词说明:
+ *      1. 全含: 指从lastAssIndex向前,所有的assItemAlg都匹配成功;
+ *      2. 非全含: 指从lastAssIndex向前,只要有一个assItemAlg匹配失败,则非全含;
+ *  @param success : lastAssIndex指已发生到的index,后面则为时序预测; matchValue指匹配度(0-1);
+ *  @param protoFo : 四层说明: 在fromShortMem时,protoFo中的概念元素为parent层, 而在fromRethink时,其元素为match层;
+ *  _result 将protoFo与assFo判断是否全含,并将匹配度返回;
+ */
++(void) TIR_Fo_CheckFoValidMatch:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo success:(void(^)(NSInteger lastAssIndex,CGFloat matchValue))success{
+    //1. 数据准备;
+    BOOL paramValid = protoFo && protoFo.content_ps.count > 0 && assFo && assFo.content_ps.count > 0 && success;
+    if (!paramValid) {
+        NSLog(@"参数错误");
+        return;
+    }
+    if (Log4MFo) NSLog(@"------------------------ 时序全含检查 ------------------------\nproto:%@->%@\nass:%@->%@",Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p),Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
+    AIKVPointer *lastProtoAlg_p = ARR_INDEX_REVERSE(protoFo.content_ps, 0); //最后一个protoAlg指针
+    int validItemCount = 1;                                                 //默认有效数为1 (因为lastAlg肯定有效);
+    NSInteger lastAssIndex = -1;                                            //在assFo已发生到的index,后面为预测;
+    NSInteger lastProtoIndex = protoFo.content_ps.count - 2;                //protoAlg匹配判断从倒数第二个开始,向前逐个匹配;
+    
+    //2. 找出lastIndex
+    for (NSInteger i = 0; i < assFo.content_ps.count; i++) {
+        NSInteger curIndex = assFo.content_ps.count - i - 1;
+        AIKVPointer *checkAssAlg_p = ARR_INDEX(assFo.content_ps, curIndex);
+        BOOL mIsC = [TOUtils mIsC_1:lastProtoAlg_p c:checkAssAlg_p];
+        if (mIsC) {
+            lastAssIndex = curIndex;
+            break;
+        }
+    }
+    if (lastAssIndex == -1) {
+        NSLog(@"时序识别: lastItem匹配失败,查看是否在联想时就出bug了");
+        return;
+    }
+    
+    //3. 从lastAssIndex向前逐个匹配;
+    if (Log4MFo)NSLog(@"--->>>>> 在%ld位,找到LastItem匹配",lastAssIndex);
+    for (NSInteger i = lastAssIndex - 1; i >= 0; i--) {
+        AIKVPointer *checkAssAlg_p = ARR_INDEX(assFo.content_ps, i);
+        if (checkAssAlg_p) {
+            
+            //4. 在protoFo中同样从lastProtoIndex依次向前找匹配;
+            BOOL checkResult = false;
+            for (NSInteger j = lastProtoIndex; j >= 0; j--) {
+                AIKVPointer *protoAlg_p = ARR_INDEX(protoFo.content_ps, j);
+                BOOL mIsC = [TOUtils mIsC_1:protoAlg_p c:checkAssAlg_p];
+                if (mIsC) {
+                    lastProtoIndex = j; //成功匹配alg时,更新protoIndex (以达到只能向前匹配的目的);
+                    checkResult = true;
+                    validItemCount ++;  //有效数+1;
+                    if (Log4MFo)NSLog(@"时序识别: item有效+1");
+                    break;
+                }else{
+                    if (Log4MFo)NSLog(@"---->匹配失败:\n%@\n%@",AlgP2FStr(lastProtoAlg_p),AlgP2FStr(checkAssAlg_p));
+                }
+            }
+            
+            //5. 非全含 (一个失败,全盘皆输);
+            if (!checkResult) {
+                if (Log4MFo) NSLog(@"时序识别: item无效,未在protoFo中找到,所有非全含,不匹配");
+                return;
+            }
+        }
+    }
+    
+    //6. 到此全含成功 之: 匹配度计算
+    CGFloat matchValue = (float)validItemCount / assFo.content_ps.count;
+    
+    //7. 到此全含成功 之: 返回success
+    success(lastAssIndex,matchValue);
 }
 
 @end

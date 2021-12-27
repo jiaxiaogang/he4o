@@ -104,7 +104,7 @@
                 hDemand.status = TOModelStatus_Finish;
                 
                 //2. root设回runing
-                DemandModel *root = ARR_INDEX([TOUtils getBaseDemands_AllDeep:waitModel], 0);
+                DemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:waitModel];
                 root.status = TOModelStatus_Runing;
                 
                 //2. 重组;
@@ -124,7 +124,7 @@
                 targetAlg.feedbackAlg = model.protoAlg;
                 
                 //2. root设回runing
-                DemandModel *root = ARR_INDEX([TOUtils getBaseDemands_AllDeep:targetAlg], 0);
+                DemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:targetAlg];
                 root.status = TOModelStatus_Runing;
                 
                 //2. 重组

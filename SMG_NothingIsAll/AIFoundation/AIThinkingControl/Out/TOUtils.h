@@ -12,13 +12,6 @@
 @interface TOUtils : NSObject
 
 /**
- *  MARK:--------------------找价值确切的具象概念--------------------
- *  @desc 时序的抽具象是价值确切的,而概念不是,所以本方法,在时序的具象指引下,找具象概念,以使概念也是价值确切的;
- *  @note 参考:18206示图;
- */
-+(void) findConAlg_StableMV:(AIAlgNodeBase*)curAlg curFo:(AIFoNodeBase*)curFo itemBlock:(BOOL(^)(AIAlgNodeBase* validAlg))itemBlock;
-
-/**
  *  MARK:--------------------判断mIsC--------------------
  *  @desc 从M向上,找匹配C,支持三层 (含本层):
  *  @version
@@ -52,26 +45,6 @@
 //conItem是content中的具象或抽象一员,返回index;
 +(NSInteger) indexOfConOrAbsItem:(AIKVPointer*)item atContent:(NSArray*)content layerDiff:(int)layerDiff startIndex:(NSInteger)startIndex endIndex:(NSInteger)endIndex;
 
-/**
- *  MARK:--------------------判断mc同级--------------------
- */
-+(BOOL) mcSameLayer:(AIKVPointer*)m c:(AIKVPointer*)c;
-
-/**
- *  MARK:--------------------收集概念节点的稀疏码--------------------
- */
-+(NSArray*) convertValuesFromAlg_ps:(NSArray*)alg_ps;
-
-/**
- *  MARK:--------------------收集多层的absPorts--------------------
- *  @desc 从alg取指定type的absPorts,再从具象,从抽象,各取指定层absPorts,收集返回;
- *  @param conLayer : 从具象取几层 (不含当前层),一般取:1层当前层+1层具象层=共两层即可;
- */
-//+(NSArray*) collectAbsPs:(AINodeBase*)protoNode type:(AnalogyType)type conLayer:(NSInteger)conLayer absLayer:(NSInteger)absLayer;
-+(NSMutableArray*) collectAbsPorts:(NSArray*)proto_ps singleLimit:(NSInteger)singleLimit havTypes:(NSArray*)havTypes noTypes:(NSArray*)noTypes;
-+(NSMutableArray*) collectConPorts:(NSArray*)proto_ps singleLimit:(NSInteger)singleLimit havTypes:(NSArray*)havTypes noTypes:(NSArray*)noTypes;
-+(NSMutableArray*) collectPorts:(NSArray*)proto_ps singleLimit:(NSInteger)singleLimit havTypes:(NSArray*)havTypes noTypes:(NSArray*)noTypes isAbs:(BOOL)isAbs;
-
 
 //MARK:===============================================================
 //MARK:                     < 从TO短时记忆取demand >
@@ -79,7 +52,6 @@
 /**
  *  MARK:--------------------获取subOutModel的demand--------------------
  */
-+(DemandModel*) getDemandModelWithSubOutModel:(TOModelBase*)subOutModel;
 +(DemandModel*) getRootDemandModelWithSubOutModel:(TOModelBase*)subOutModel;
 
 /**
@@ -87,7 +59,6 @@
  *  @result 含子任务和root任务 notnull;
  */
 +(NSMutableArray*) getBaseDemands_AllDeep:(TOModelBase*)subModel;//base方向;
-+(NSMutableArray*) getSubDemands_AllDeep:(DemandModel*)root validStatus:(NSArray*)validStatus;//sub方向
 
 
 //MARK:===============================================================
@@ -109,22 +80,12 @@
 //MARK:===============================================================
 //MARK:                     < convert >
 //MARK:===============================================================
-/**
- *  MARK:--------------------将rDemands转为pointers--------------------
- *  @result notnull
- */
-+(NSMutableArray*) convertPointersFromRDemands:(NSArray*)rDemands;
 
 /**
  *  MARK:--------------------将TOModels转为Pointers--------------------
  *  @result notnull
  */
 +(NSMutableArray*) convertPointersFromTOModels:(NSArray*)toModels;
-
-/**
- *  MARK:--------------------将TOModels中TOValue部分的sValue_p收集返回--------------------
- */
-+(NSArray*) convertPointersFromTOValueModelSValue:(NSArray*)toModels validStatus:(NSArray*)validStatus;
 
 /**
  *  MARK:--------------------是否HNGL节点--------------------
@@ -141,10 +102,6 @@
 +(BOOL) isS:(AIKVPointer*)p;
 +(BOOL) isP:(AIKVPointer*)p;
 
-/**
- *  MARK:--------------------是否HNGL的TOModel--------------------
- */
-+(BOOL) isHNGL_toModel:(TOModelBase*)toModel;
 
 /**
  *  MARK:--------------------求fo的deltaTime之和--------------------

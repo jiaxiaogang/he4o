@@ -23,27 +23,6 @@
 
 @implementation TOUtils
 
-+(void) findConAlg_StableMV:(AIAlgNodeBase*)curAlg curFo:(AIFoNodeBase*)curFo itemBlock:(BOOL(^)(AIAlgNodeBase* validAlg))itemBlock{
-    //1. 取概念和时序的具象端口;
-    if (!itemBlock) return;
-    NSArray *conAlg_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:curAlg]];
-    NSArray *conFo_ps = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:curFo]];
-    
-    //2. 筛选具象概念,将合格的回调返回;
-    for (AIKVPointer *conAlg_p in conAlg_ps) {
-        //a. 根据具象概念,取被哪些时序引用了;
-        AIAlgNodeBase *conAlg = [SMGUtils searchNode:conAlg_p];
-        NSArray *conAlgRef_ps = [SMGUtils convertPointersFromPorts:[AINetUtils refPorts_All4Alg:conAlg]];
-        
-        //b. 被引用的时序是curFo的具象时序,则有效;
-        NSArray *validRef_ps = [SMGUtils filterSame_ps:conAlgRef_ps parent_ps:conFo_ps];
-        if (validRef_ps.count > 0) {
-            BOOL goOn = itemBlock(conAlg);
-            if (!goOn) return;
-        }
-    }
-}
-
 +(BOOL) mIsC:(AIKVPointer*)m c:(AIKVPointer*)c layerDiff:(int)layerDiff{
     if (layerDiff == 0) return [self mIsC_0:m c:c];
     if (layerDiff == 1) return [self mIsC_1:m c:c];
@@ -143,111 +122,6 @@
     return findIndex;
 }
 
-+(BOOL) mcSameLayer:(AIKVPointer*)m c:(AIKVPointer*)c{
-    AINodeBase *mNode = [SMGUtils searchNode:m];
-    AINodeBase *cNode = [SMGUtils searchNode:c];
-    if (mNode && cNode) {
-        //1. 判断0-1级抽象;
-        NSArray *mAbs_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:mNode]];
-        NSArray *cAbs_ps = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:cNode]];
-        
-        //2. 判断有无共同抽象;
-        return [SMGUtils filterSame_ps:mAbs_ps parent_ps:cAbs_ps].count > 0;
-    }
-    return false;
-}
-
-+(NSArray*) convertValuesFromAlg_ps:(NSArray*)alg_ps{
-    NSMutableArray *result = [[NSMutableArray alloc] init];
-    NSArray *algs = [SMGUtils searchNodes:alg_ps];
-    for (AIAlgNodeBase *item in algs) [result addObjectsFromArray:item.content_ps];
-    return result;
-}
-
-//+(NSArray*) collectAbsPs:(AINodeBase*)protoNode type:(AnalogyType)type conLayer:(NSInteger)conLayer absLayer:(NSInteger)absLayer{
-//    return [SMGUtils convertPointersFromPorts:[self collectAbsPorts:protoNode type:type conLayer:conLayer absLayer:absLayer]];
-//}
-//+(NSArray*) collectAbsPorts:(AINodeBase*)protoNode type:(AnalogyType)type conLayer:(NSInteger)conLayer absLayer:(NSInteger)absLayer{
-//    //1. 数据准备
-//    NSMutableArray *result = [[NSMutableArray alloc] init];
-//    if (!protoNode) return result;
-//    
-//    //2. 收集本层
-//    [result addObjectsFromArray:[AINetUtils absPorts_All:protoNode type:type]];
-//    
-//    //3. 具象所需层循环;
-//    [result addObjectsFromArray:[self collectAbsPorts:protoNode type:type nextlayer:conLayer nextBlock:^NSArray *(AINodeBase *curAlg) {
-//        return [AINetUtils conPorts_All:curAlg];
-//    }]];
-//    
-//    //4. 抽象所需层循环;
-//    [result addObjectsFromArray:[self collectAbsPorts:protoNode type:type nextlayer:absLayer nextBlock:^NSArray *(AINodeBase *curAlg) {
-//        return [AINetUtils absPorts_All_Normal:curAlg];
-//    }]];
-//    return result;
-//}
-//
-///**
-// *  MARK:--------------------收集AbsPorts--------------------
-// *  @desc 收集后几层 (不含当前层);
-// *  @result notnull
-// */
-//+(NSArray*) collectAbsPorts:(AINodeBase*)protoNode type:(AnalogyType)type nextlayer:(NSInteger)nextlayer nextBlock:(NSArray*(^)(AINodeBase *curAlg))nextBlock{
-//    //1. 数据检查;
-//    NSMutableArray *result = [[NSMutableArray alloc] init];
-//    if (!protoNode || !nextBlock) {
-//        return result;
-//    }
-//    
-//    //2. 层数循环
-//    NSMutableArray *curNodes = [[NSMutableArray alloc] initWithObjects:protoNode, nil];
-//    for (NSInteger i = 0; i < nextlayer; i++) {
-//        NSMutableArray *nextNodes = [[NSMutableArray alloc] init];
-//        //a. 当前层逐个循环;
-//        for (AINodeBase *curNode in curNodes) {
-//            //b. 下层逐个收集循环;
-//            NSArray *nextPorts = ARRTOOK(nextBlock(curNode));
-//            for (AIPort *nextPort in nextPorts) {
-//                AINodeBase *nextNode = [SMGUtils searchNode:nextPort.target_p];
-//                [result addObjectsFromArray:[AINetUtils absPorts_All:nextNode type:type]];
-//                [nextNodes addObject:nextNode];
-//            }
-//        }
-//        //c. 完成一层,将下层变成当前层,将下层清空;
-//        [curNodes removeAllObjects];
-//        [curNodes addObjectsFromArray:nextNodes];
-//        [nextNodes removeAllObjects];
-//    }
-//    return result;
-//}
-
-+(NSMutableArray*) collectAbsPorts:(NSArray*)proto_ps singleLimit:(NSInteger)singleLimit havTypes:(NSArray*)havTypes noTypes:(NSArray*)noTypes{
-    return [self collectPorts:proto_ps singleLimit:singleLimit havTypes:havTypes noTypes:noTypes isAbs:true];
-}
-+(NSMutableArray*) collectConPorts:(NSArray*)proto_ps singleLimit:(NSInteger)singleLimit havTypes:(NSArray*)havTypes noTypes:(NSArray*)noTypes{
-    return [self collectPorts:proto_ps singleLimit:singleLimit havTypes:havTypes noTypes:noTypes isAbs:false];
-}
-+(NSMutableArray*) collectPorts:(NSArray*)proto_ps singleLimit:(NSInteger)singleLimit havTypes:(NSArray*)havTypes noTypes:(NSArray*)noTypes isAbs:(BOOL)isAbs{
-    //1. 数据准备;
-    proto_ps = ARRTOOK(proto_ps);
-    
-    //2. 非0层时,根据上层获取下层,并收集 (即上层全不应期掉了,向着pAlg抽象方向继续尝试);
-    NSMutableArray *result = [[NSMutableArray alloc] init];
-    for (AIKVPointer *item in proto_ps) {
-        AINodeBase *protoNode = [SMGUtils searchNode:item];
-        NSArray *port_ps = nil;
-        if (isAbs) {
-            port_ps = Ports2Pits([AINetUtils absPorts_All:protoNode havTypes:havTypes noTypes:noTypes]);;
-        }else{
-            port_ps = Ports2Pits([AINetUtils conPorts_All:protoNode havTypes:havTypes noTypes:noTypes]);
-        }
-        
-        port_ps = ARR_SUB(port_ps, 0, singleLimit);
-        [result addObjectsFromArray:port_ps];
-    }
-    return result;
-}
-
 
 //MARK:===============================================================
 //MARK:                     < 从TO短时记忆取demand >
@@ -255,10 +129,6 @@
 /**
  *  MARK:--------------------获取subOutModel的demand--------------------
  */
-+(DemandModel*) getDemandModelWithSubOutModel:(TOModelBase*)subOutModel{
-    NSMutableArray *demands = [self getBaseDemands_AllDeep:subOutModel];
-    return ARR_INDEX(demands, 0);
-}
 +(DemandModel*) getRootDemandModelWithSubOutModel:(TOModelBase*)subOutModel{
     NSMutableArray *demands = [self getBaseDemands_AllDeep:subOutModel];
     return ARR_INDEX_REVERSE(demands, 0);
@@ -274,13 +144,6 @@
  */
 +(NSMutableArray*) getBaseDemands_AllDeep:(TOModelBase*)subModel{
     return [SMGUtils filterArr:[self getBaseOutModels_AllDeep:subModel] checkValid:^BOOL(id item) {
-        return ISOK(item, DemandModel.class);
-    }];
-}
-
-+(NSMutableArray*) getSubDemands_AllDeep:(DemandModel*)root validStatus:(NSArray*)validStatus{
-    NSArray *subModels = [self getSubOutModels_AllDeep:root validStatus:validStatus];
-    return [SMGUtils filterArr:subModels checkValid:^BOOL(TOModelBase *item) {
         return ISOK(item, DemandModel.class);
     }];
 }
@@ -361,19 +224,6 @@
 //MARK:===============================================================
 //MARK:                     < convert >
 //MARK:===============================================================
-/**
- *  MARK:--------------------将rDemands转为pointers--------------------
- *  @result notnull
- */
-+(NSMutableArray*) convertPointersFromRDemands:(NSArray*)rDemands{
-    //2. 收集actionFos;
-    return [SMGUtils convertArr:rDemands convertBlock:^id(ReasonDemandModel *item) {
-        if (ISOK(item, ReasonDemandModel.class)) {
-            return item.mModel.matchFo.pointer;
-        }
-        return nil;
-    }];
-}
 
 /**
  *  MARK:--------------------将TOModels转为Pointers--------------------
@@ -384,33 +234,6 @@
     return [SMGUtils convertArr:toModels convertBlock:^id(TOModelBase *obj) {
         return obj.content_p;
     }];
-}
-
-/**
- *  MARK:--------------------将TOModels中TOValue部分的sValue_p收集返回--------------------
- *  @version
- *      2020.08.27: 支持validStatus,有效status才收集 (默认nil时,全收集);
- *
- */
-+(NSArray*) convertPointersFromTOValueModelSValue:(NSArray*)toModels validStatus:(NSArray*)validStatus{
-    //1. 数据准备;
-    NSMutableArray *result = [[NSMutableArray alloc] init];
-    validStatus = ARRTOOK(validStatus);
-    
-    //2. 收集返回
-    [SMGUtils filterArr:toModels checkValid:^BOOL(TOValueModel *model) {
-        if (ISOK(model, TOValueModel.class) && model.sValue_p) {
-            //3. 不要求validStatus时,全收集;
-            if (!ARRISOK(validStatus)) {
-                [result addObject:model.sValue_p];
-            }else if ([validStatus containsObject:@(model.status)]) {
-                //4. 要求validStatus时,有效才收集;
-                [result addObject:model.sValue_p];
-            }
-        }
-        return false;
-    }];
-    return result;
 }
 
 /**
@@ -443,23 +266,6 @@
 }
 +(BOOL) isP:(AIKVPointer*)p{
     return p && p.type == ATPlus;
-}
-
-/**
- *  MARK:--------------------是否HNGL的TOModel--------------------
- */
-+(BOOL) isHNGL_toModel:(TOModelBase*)toModel{
-    return [self isHNGL:[self convertLastAlg2FoModel:toModel].content_p];
-}
-+(TOModelBase*) convertLastAlg2FoModel:(TOModelBase*)toModel{
-    //当alg所处的fo是末位节点,则返回所处的foModel;
-    if (!ISOK(toModel, TOFoModel.class) && ISOK(toModel.baseOrGroup, TOFoModel.class)) {
-        AIFoNodeBase *baseFo = [SMGUtils searchNode:toModel.baseOrGroup.content_p];
-        if ([toModel.content_p isEqual:[baseFo.content_ps lastObject]]) {
-            return toModel.baseOrGroup;
-        }
-    }
-    return toModel;
 }
 
 /**
