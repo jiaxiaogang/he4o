@@ -44,7 +44,7 @@
 +(void) plan:(DemandModel*)rootDemand rootFo:(TOFoModel*)rootFo scoreDic:(NSMutableDictionary*)scoreDic{
     //1. 根据得分字典,从root向sub,取最优路径 (参考24195-3);
     double demandScore = [AIScore score4MV:rootDemand.algsType urgentTo:rootDemand.urgentTo delta:rootDemand.delta ratio:1.0f];
-    TOFoModel *endBranch = [self bestEndBranch4Plan:scoreDic baseFo:rootFo demandScore:demandScore];
+    TOModelBase *endBranch = [self bestEndBranch4Plan:scoreDic curDemand:rootDemand demandScore:demandScore];
     
     //2. 从最优路径末枝的解决方案,转给TCSolution执行 (参考24195-4);
     double endBranchScore = [NUMTOOK([scoreDic objectForKey:endBranch.content_p]) doubleValue];
@@ -54,50 +54,62 @@
 /**
  *  MARK:--------------------取当前要执行的解决方案--------------------
  *  @desc 从最优路径的末尾取 (最优路径可能有在subRDemands处分叉口,那么依次解决叉口任务);
+ *  @version
+ *      2021.12.28: 工作记忆树任务下_首条S的支持 (参考25042);
+ *      2021.12.28: 重新整理整个方法,参考评分字典数据结构做最优路径 (参考24196-示图);
+ *  @result
+ *      1. 返回空S的Demand时,执行solution找解决方案;
+ *      2. 返回路径末枝BestFo时,执行action行为化;
+ *      3. 返回nil时,中止决策继续等待;
  */
-+(TOFoModel*) bestEndBranch4Plan:(NSMutableDictionary*)scoreDic baseFo:(TOFoModel*)baseFo demandScore:(double)demandScore{
-    //1. 只要直接对baseFo取得分;
-    double baseScore = [NUMTOOK([scoreDic objectForKey:baseFo.content_p]) doubleValue];
++(TOModelBase*) bestEndBranch4Plan:(NSMutableDictionary*)scoreDic curDemand:(DemandModel*)curDemand demandScore:(double)demandScore{
     
-    //2. 未感性淘汰,那么它的子R和H任务中,肯定就没有一个是"理性淘汰"的;
-    if (baseScore > demandScore) {
-        
-        //3. 收集所有子需求;
-        NSMutableArray *allSubDemands = [[NSMutableArray alloc] init];
-        
-        //4. 先解决子R任务 (副作用,磨刀不误砍柴功);
-        [allSubDemands addObjectsFromArray:baseFo.subDemands];
-        
-        //5. 再解决子H任务,即推进时序跳下一帧 (磨完刀了去继续砍柴);
-        NSArray *subHDemands = [SMGUtils convertArr:baseFo.subModels convertBlock:^id(TOAlgModel *item) {
-            HDemandModel *hDemand = ARR_INDEX(item.subDemands, 0);
-            return hDemand;
-        }];
-        [allSubDemands addObjectsFromArray:subHDemands];
-        
-        //6. 从R到H逐一尝试最优路径,并返回;
-        for (DemandModel *subDemand in allSubDemands) {
-            //7. 判断subDemand.status是否已finish;
-            if (subDemand.status == TOModelStatus_Finish) {
-                continue;
-            }
-            
-            //8. 因为未感性淘汰,它的子解决方案中,必有至少一个是未"理性淘汰"的;
-            for (TOFoModel *itemFo in subDemand.actionFoModels) {
-                //9. 判断,任何S全先做感性淘汰判断;
-                double itemScore = [NUMTOOK([scoreDic objectForKey:itemFo.content_p]) doubleValue];
-                if (itemScore < demandScore) {
-                    continue;
-                }
-                
-                //10. 未感性淘汰的,一条路走到黑(递归循环),然后把最后的结果return返回;
-                return [self bestEndBranch4Plan:scoreDic baseFo:itemFo demandScore:demandScore];
-            }
-        }
+    //1. 如果curDemand为空S,则直接返回 (参考25042-5);
+    if (!ARRISOK(curDemand.actionFoModels)) return curDemand;
+    
+    //2. 从actionFoModels找出最好的分支继续 (参考24196-示图 & 25042-6);
+    TOFoModel *bestFo = nil;
+    for (TOFoModel *itemFo in curDemand.actionFoModels) {
+        double itemScore = [NUMTOOK([scoreDic objectForKey:itemFo.content_p]) doubleValue];
+        double bestScore = [NUMTOOK([scoreDic objectForKey:bestFo.content_p]) doubleValue];
+        if (!bestFo || itemScore > bestScore) bestFo = itemFo;
     }
     
-    //11. 所有subDemands都决策完,或者感性就已经淘汰,那么直接返回baseFo;
-    return baseFo;
+    //3. 感性淘汰则中止深入 (判断条件 = bestFo得分 < demandScore) (参考25042-7);
+    double bestScore = [NUMTOOK([scoreDic objectForKey:bestFo.content_p]) doubleValue];
+    if (bestScore < demandScore) return curDemand;
+    
+    //4. 感性未淘汰则继续深入分支 (判断条件 = bestFo得分 > demandScore) (参考25042-6);
+    //4. 未感性淘汰,那么它的子R和H任务中,肯定有一个是未"理性淘汰"的: 收集R和H任务;
+    NSMutableArray *allSubDemands = [[NSMutableArray alloc] init];
+    
+    //5. 优先级: 先解决子R任务 (副作用,磨刀不误砍柴功) (参考25042-4);
+    [allSubDemands addObjectsFromArray:bestFo.subDemands];
+    
+    //6. 优先级: 再解决子H任务,即推进时序跳下一帧 (磨完刀了去继续砍柴) (参考25042-4);
+    NSArray *subHDemands = [SMGUtils convertArr:bestFo.subModels convertBlock:^id(TOAlgModel *item) {
+        HDemandModel *hDemand = ARR_INDEX(item.subDemands, 0);
+        return hDemand;
+    }];
+    [allSubDemands addObjectsFromArray:subHDemands];
+    
+    //7. 向末枝路径探索: 从R到H逐一尝试最优路径,从中找出那个未"理性淘汰"的,递归判断;
+    for (DemandModel *subDemand in allSubDemands) {
+        //8. 判断subDemand.status是否已finish -> 无需解决 (参考25042-2);
+        if (subDemand.status == TOModelStatus_Finish) continue;
+        
+        //9. 判断subDemand.status是withOut状态 -> 无解认命 (参考25042-2);
+        if (subDemand.status == TOModelStatus_WithOut) continue;
+        
+        //10. 判断subDemand.status是actYes状态 -> 继续等待 (参考25042-3);
+        if (subDemand.status == TOModelStatus_ActYes) return nil;
+        
+        //11. 未感性淘汰的,一条路走到黑(递归循环),然后把最后的结果return返回;
+        return [self bestEndBranch4Plan:scoreDic curDemand:subDemand demandScore:demandScore];
+    }
+    
+    //12. bestFo没有子任务subDemands可决策的,则直接执行bestFo为末枝 (参考25042-8);
+    return bestFo;
 }
 
 @end

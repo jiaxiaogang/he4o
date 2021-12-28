@@ -14,55 +14,51 @@
 /**
  *  MARK:--------------------新螺旋架构solution方法--------------------
  *  @desc 参考24203;
- *  @param endScore : 末枝S方案的综合评分;
+ *  @param endScore : 当传入endBranch为solutionFo时,endScore为:末枝S方案的综合评分;
+ *  @version
+ *      2021.12.28: 对首条S的支持 (参考25042);
+ *      2021.12.28: 支持actYes时最优路径末枝为nil,并中止决策 (参考25042-3);
  */
-+(void) solution:(TOFoModel*)endBranch endScore:(double)endScore{
-    //1. 数据准备;
-    DemandModel *endDemand = (DemandModel*)endBranch.baseOrGroup;
++(void) solution:(TOModelBase*)endBranch endScore:(double)endScore{
+    //1. 无末枝时 (可能正在ActYes等待状态),中断决策;
+    if (!endBranch) return;
     
-    //TODOTOMORROW20211225: 对第1条hSolution的支持;
-    //  a. 此处对endBranch的baseDemand有支持;
-    //  b. 但如果endBranch本来就有subModels且正在进行RDemand,但还没有解决方案;则还没支持这种情况;
-    //  c. 即: hDemand = endBranch.subModels.subDemand[0];
-    //  d. 各情况支持:
-    //      1. 如果hDemand有endBranch>=0的直接执行
-    //      2. 如果无则hSolution取新方案;
-    //      3. 如果无h方案,则endBranch可能才是hDemand,此时也要进行支持 (现不支持);
+    //2. 尝试取更多S;
+    Act1 runSolutionAct = ^(DemandModel *demand){
+        if (ISOK(demand, ReasonDemandModel.class)) {
+            //a. R任务继续取解决方案 (参考24203-2);
+            [self rSolution:(ReasonDemandModel*)demand];
+        }else if (ISOK(demand, PerceptDemandModel.class)) {
+            //b. P任务继续取解决方案 (参考24203-2);
+            [self pSolution:demand];
+        }else if (ISOK(demand, HDemandModel.class)) {
+            //c. H任务继续取解决方案 (参考24203-2);
+            [self hSolution:(HDemandModel*)demand];
+        }
+    };
     
+    //3. 传入solutionFo时;
+    if (ISOK(endBranch, TOFoModel.class)) {
+        DemandModel *baseDemand = (DemandModel*)endBranch.baseOrGroup;
+        TOFoModel *solutionFo = (TOFoModel*)endBranch;
+        
+        //4. endBranch >= 0分时,执行TCAction (参考24203-1);
+        if (endScore > 0) [TCAction action:solutionFo];
+        
+        //5. 无更多S时_直接TCAction行为化 (参考24203-2b);
+        else if(baseDemand.status == TOModelStatus_WithOut) [TCAction action:solutionFo];
+        
+        //6. 末枝S达到3条时,则最优执行TCAction (参考24203-3);
+        else if(baseDemand.actionFoModels.count >= cTCSolutionBranchLimit) [TCAction action:solutionFo];
+        
+        //7. endBranch < 0分时,且末枝S小于3条,执行TCSolution取下一方案 (参考24203-2);
+        else if (baseDemand.status != TOModelStatus_WithOut && baseDemand.actionFoModels.count < cTCSolutionBranchLimit) runSolutionAct(baseDemand);
+    }
     
-    //PRH三个任务生成后,都转向了TCScore;
-    //方案2. 前面scoreDic只收集S,然后在此处判断subDemand
-    
-    //子subDemands中,finish和without的不做处理,actYes状态的继续等待,其它的就以先HDemand后RDemands的优先级处理;
-    //这个就不用竞争路径了,best竞争不了这些,这些就是死规则优先级;
-    
-    
-    //2. endBranch >= 0分时,执行TCAction (参考24203-1);
-    if (endScore >= 0) {
-        [TCAction action:endBranch];
-    }else{
-        //3. endBranch < 0分时,且末枝S小于3条,执行TCSolution取下一方案 (参考24203-2);
-        if (endDemand.actionFoModels.count < cTCSolutionBranchLimit) {
-            
-            //4. 无更多S时_直接TCAction行为化 (参考24203-2b);
-            if (endDemand.status == TOModelStatus_WithOut) {
-                [TCAction action:endBranch];
-            }else{
-                //5. 尝试取更多S;
-                if (ISOK(endDemand, ReasonDemandModel.class)) {
-                    //6. R任务继续取解决方案 (参考24203-2);
-                    [self rSolution:(ReasonDemandModel*)endDemand oldBestSolution:endBranch];
-                }else if (ISOK(endDemand, PerceptDemandModel.class)) {
-                    //7. P任务继续取解决方案 (参考24203-2);
-                    [self pSolution:endDemand];
-                }else if (ISOK(endDemand, HDemandModel.class)) {
-                    //8. H任务继续取解决方案 (参考24203-2);
-                    [self hSolution:(HDemandModel*)endDemand];
-                }
-            }
-        }else{
-            //9. endBranch < 0分时,且末枝S达到3条时,则最优执行TCAction (参考24203-3);
-            [TCAction action:endBranch];
+    //8. 传入demand时,且demand还可继续时,尝试执行TCSolution取下一方案 (参考24203);
+    if (ISOK(endBranch, DemandModel.class)) {
+        if (endBranch.status != TOModelStatus_ActNo && endBranch.status != TOModelStatus_ActYes && endBranch.status != TOModelStatus_WithOut) {
+            runSolutionAct((DemandModel*)endBranch);
         }
     }
 }
@@ -77,7 +73,7 @@
  *      2021.12.25: 将FRS稳定性竞争废弃,改为仅取bestSP评分,取最稳定的一条 (参考25032-4);
  *  @callers : 用于RDemand.Begin时调用;
  */
-+(void) rSolution:(ReasonDemandModel*)demand oldBestSolution:(TOFoModel*)oldBestSolution{
++(void) rSolution:(ReasonDemandModel*)demand {
     //1. 根据demand取抽具象路径rs;
     NSArray *rs = [theTC.outModelManager getRDemandsBySameClass:demand];
     
