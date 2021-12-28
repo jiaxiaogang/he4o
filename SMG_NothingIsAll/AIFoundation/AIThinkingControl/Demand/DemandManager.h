@@ -10,6 +10,8 @@
 
 /**
  *  MARK:--------------------思维控制器-循环管理器--------------------
+ *  @version
+ *      2021.12.28: 废弃取同抽具象路径rs的方法 (参考24107-3 & 25051);
  */
 @class DemandModel,AIShortMatchModel;
 @interface DemandManager : NSObject
@@ -45,10 +47,5 @@
  *  MARK:--------------------移除某任务--------------------
  */
 -(void) removeDemand:(DemandModel*)demand;
-
-/**
- *  MARK:--------------------获取R任务的抽具象路径上的所有R任务--------------------
- */
--(NSArray*) getRDemandsBySameClass:(ReasonDemandModel *)rDemand;
 
 @end

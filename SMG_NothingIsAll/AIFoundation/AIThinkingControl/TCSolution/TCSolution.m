@@ -71,11 +71,14 @@
  *      2021.11.15: R任务FRS稳定性竞争,评分越高的场景排越前 (参考24127-2);
  *      2021.11.25: 迭代为功能架构 (参考24154-单轮示图);
  *      2021.12.25: 将FRS稳定性竞争废弃,改为仅取bestSP评分,取最稳定的一条 (参考25032-4);
+ *      2021.12.28: 将抽具象路径rs改为从pFos中取同标识mv部分 (参考25051);
  *  @callers : 用于RDemand.Begin时调用;
  */
 +(void) rSolution:(ReasonDemandModel*)demand {
-    //1. 根据demand取抽具象路径rs;
-    NSArray *rs = [theTC.outModelManager getRDemandsBySameClass:demand];
+    //1. 根据demand取;
+    NSArray *validPFos = [SMGUtils filterArr:demand.inModel.matchPFos checkValid:^BOOL(AIMatchFoModel *item) {
+        return [demand.mModel.matchFo.cmvNode_p.identifier isEqualToString:item.matchFo.cmvNode_p.identifier];
+    }];
     
     //2. 不应期 (可以考虑改为将整个demand.actionFoModels全加入不应期) (源于:反思且子任务失败的 或 fo行为化最终失败的,参考24135);
     NSArray *exceptFoModels = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOModelBase *item) {
@@ -84,11 +87,10 @@
     NSMutableArray *except_ps = [TOUtils convertPointersFromTOModels:exceptFoModels];
     [except_ps addObject:demand.mModel.matchFo.pointer];
     
-    //3. 从具象出抽象,逐一取conPorts (前3条) (参考24127-步骤1);
+    //3. 逐一对validPFos,取其conPorts (前3条) (参考24127-步骤1);
     NSMutableArray *sumConPorts = [[NSMutableArray alloc] init];
-    for (NSInteger i = 0; i < rs.count; i++) {
-        ReasonDemandModel *baseDemand = ARR_INDEX_REVERSE(rs, i);
-        NSArray *conPorts = [AINetUtils conPorts_All_Normal:baseDemand.mModel.matchFo];
+    for (AIMatchFoModel *pFo in validPFos) {
+        NSArray *conPorts = [AINetUtils conPorts_All_Normal:pFo.matchFo];
         conPorts = ARR_SUB(conPorts, 0, 3);
         [sumConPorts addObjectsFromArray:conPorts];
     }
