@@ -7,16 +7,10 @@
 //
 
 #import "SMGUtils.h"
-#import "AIKVPointer.h"
 #import "PINCache.h"
 #import "XGRedisUtil.h"
-#import "AIPort.h"
 #import "XGRedis.h"
-#import "AIPointer.h"
-#import "AIAlgNodeBase.h"
 #import "XGWedis.h"
-#import "ThinkingUtils.h"
-#import "NSFile+Extension.h"
 
 @implementation SMGUtils
 

@@ -7,23 +7,8 @@
 //
 
 #import "AINetAbsFoUtils.h"
-#import "AIKVPointer.h"
-#import "AIPort.h"
-#import "TOUtils.h"
-#import "AIShortMatchModel_Simple.h"
 
 @implementation AINetAbsFoUtils
-
-+(AIPort*) searchPortWithTargetP:(AIKVPointer*)target_p fromPorts:(NSArray*)ports{
-    for (AIPort *checkPort in ARRTOOK(ports)) {
-        if (ISOK(checkPort, AIPort.class) && ISOK(checkPort.target_p, AIKVPointer.class)) {
-            if ([checkPort.target_p isEqual:target_p]) {
-                return checkPort;
-            }
-        }
-    }
-    return nil;
-}
 
 /**
  *  MARK:--------------------从conFos中提取deltaTimes--------------------

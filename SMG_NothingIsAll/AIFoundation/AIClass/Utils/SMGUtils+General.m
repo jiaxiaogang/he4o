@@ -7,7 +7,6 @@
 //
 
 #import "SMGUtils+General.h"
-#import "AIPointer.h"
 
 @implementation SMGUtils (General)
 

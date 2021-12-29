@@ -7,7 +7,6 @@
 //
 
 #import "AITime.h"
-#import "TOModelBase.h"
 
 //@interface AITime ()
 //@property (strong,nonatomic) NSTimer *timer;            //计时器

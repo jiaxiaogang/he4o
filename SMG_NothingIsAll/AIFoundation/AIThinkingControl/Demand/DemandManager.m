@@ -7,18 +7,6 @@
 //
 
 #import "DemandManager.h"
-#import "ReasonDemandModel.h"
-#import "PerceptDemandModel.h"
-#import "ThinkingUtils.h"
-#import "TOUtils.h"
-#import "AIShortMatchModel.h"
-#import "AINetIndex.h"
-#import "AIScore.h"
-#import "AIMatchFoModel.h"
-#import "AITime.h"
-#import "TOFoModel.h"
-#import "AIAnalogy.h"
-#import "AINetUtils.h"
 
 @interface DemandManager()
 

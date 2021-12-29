@@ -7,10 +7,7 @@
 //
 
 #import "AIAnalogy.h"
-#import "AIAbsAlgNode.h"
-#import "AICMVNode.h"
 #import "AINetAbsCMVUtil.h"
-#import "AIScore.h"
 
 @implementation AIAnalogy
 

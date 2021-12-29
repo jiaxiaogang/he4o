@@ -7,10 +7,6 @@
 //
 
 #import "ThinkingUtils.h"
-#import "AIKVPointer.h"
-#import "AINet.h"
-#import "AINetIndex.h"
-#import "AIScore.h"
 #import "ImvGoodModel.h"
 #import "ImvBadModel.h"
 

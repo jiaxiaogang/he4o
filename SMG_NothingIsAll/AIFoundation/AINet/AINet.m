@@ -16,7 +16,6 @@
 #import "AIAbsCMVManager.h"
 #import "AIAbsCMVNode.h"
 #import "AIKVPointer.h"
-#import "AINetIndexReference.h"
 #import "AIFrontOrderNode.h"
 #import "AINetUtils.h"
 #import "AIAlgNodeManager.h"
@@ -34,7 +33,6 @@
 @property (strong, nonatomic) AIAbsFoManager *absFoManager; //抽象时序管理器
 @property (strong, nonatomic) AINetDirectionReference *netDirectionReference;
 @property (strong, nonatomic) AIAbsCMVManager *absCmvManager;//抽象mv管理器;
-@property (strong, nonatomic) AINetIndexReference *reference;
 
 @end
 
@@ -63,7 +61,6 @@ static AINet *_instance;
     self.mvFoManager = [[AIMvFoManager alloc] init];
     self.absFoManager = [[AIAbsFoManager alloc] init];
     self.netDirectionReference = [[AINetDirectionReference alloc] init];
-    self.reference = [[AINetIndexReference alloc] init];
     self.absCmvManager = [[AIAbsCMVManager alloc] init];
 }
 
@@ -101,23 +98,6 @@ static AINet *_instance;
     }
     return nil;
 }
-
-
-//MARK:===============================================================
-//MARK:                     < reference >
-//MARK:===============================================================
-
-//-(void) setNetReference:(AIKVPointer*)value_p target_p:(AIKVPointer*)target_p difValue:(int)difValue{
-//    if (!target_p.isMem) {
-//        [self.reference setReference:value_p target_p:target_p difStrong:difValue];
-//    }else{
-//        [AINetUtils insertRefPorts_MemNode:target_p passiveRef_p:value_p];
-//    }
-//}
-
-//-(NSArray*) getNetReference:(AIKVPointer*)pointer limit:(NSInteger)limit {
-//    return [self.reference getReference:pointer limit:limit];
-//}
 
 
 //MARK:===============================================================
@@ -161,9 +141,6 @@ static AINet *_instance;
 //MARK:===============================================================
 //MARK:                     < directionReference >
 //MARK:===============================================================
-//-(AIPort*) getNetNodePointersFromDirectionReference_Single:(NSString*)mvAlgsType direction:(MVDirection)direction {
-//    return ARR_INDEX([self.netDirectionReference getNodePointersFromDirectionReference:mvAlgsType direction:direction limit:1], 0);
-//}
 
 -(NSArray*) getNetNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction isMem:(BOOL)isMem limit:(int)limit {
     return [self.netDirectionReference getNodePointersFromDirectionReference:mvAlgsType direction:direction isMem:isMem limit:limit];

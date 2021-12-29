@@ -7,7 +7,6 @@
 //
 
 #import "TOAlgModel.h"
-#import "TOFoModel.h"
 
 @interface TOAlgModel()
 

@@ -7,10 +7,6 @@
 //
 
 #import "ReasonDemandModel.h"
-#import "TOFoModel.h"
-#import "AIShortMatchModel.h"
-#import "AIMatchFoModel.h"
-#import "AINetIndex.h"
 
 @implementation ReasonDemandModel
 

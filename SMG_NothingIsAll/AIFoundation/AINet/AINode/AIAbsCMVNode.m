@@ -22,21 +22,6 @@
     return _conPorts;
 }
 
--(AIPort*) getConPort:(NSInteger)index{
-    return ARR_INDEX(self.conPorts, index);
-}
-
--(AIPort*) getConPortWithExcept:(NSArray*)except_ps{
-    for (AIPort *conPort in self.conPorts) {
-        if (![SMGUtils containsSub_p:conPort.target_p parent_ps:except_ps]) {
-            conPort.strong.value += 1;//被激活强度+1;
-            return conPort;
-        }
-    }
-    return nil;
-}
-
-
 /**
  *  MARK:--------------------NSCoding--------------------
  */

@@ -12,12 +12,6 @@
 @interface AINetAbsFoUtils : NSObject
 
 /**
- *  MARK:--------------------从ports中搜索出某个port--------------------
- *  判断条件 : port的指针是target_p;
- */
-+(AIPort*) searchPortWithTargetP:(AIKVPointer*)target_p fromPorts:(NSArray*)ports;
-
-/**
  *  MARK:--------------------从conFos中提取deltaTimes--------------------
  *  @result notnull
  */

@@ -151,6 +151,7 @@
  */
 +(void) pSolution:(DemandModel*)demandModel{
     //1. 数据准备;
+    //TODO: 2021.12.29: 此处方向索引,可以改成和rh任务一样的从pFos&rFos中取具象得来 (因为方向索引应该算脱离场景);
     MVDirection direction = [ThinkingUtils getDemandDirection:demandModel.algsType delta:demandModel.delta];
     if (!Switch4PS || direction == MVDirection_None) return;
     OFTitleLog(@"TOP.P-", @"\n任务:%@,发生%ld,方向%ld",demandModel.algsType,(long)demandModel.delta,(long)direction);

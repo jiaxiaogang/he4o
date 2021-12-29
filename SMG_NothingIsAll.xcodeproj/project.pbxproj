@@ -150,13 +150,10 @@
 		08F738071F7C714F005EAD56 /* AISqlPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738031F7C714F005EAD56 /* AISqlPointer.m */; };
 		08FBE10E22D56F360088EF1A /* NVModuleUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FBE10D22D56F360088EF1A /* NVModuleUtil.m */; };
 		2753D7CF7BAEDFEACAF9264A /* libPods-SMG_NothingIsAll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */; };
-		456F2C322476BD5E0015ADB8 /* AINetService.m in Sources */ = {isa = PBXBuildFile; fileRef = 456F2C312476BD5E0015ADB8 /* AINetService.m */; };
 		4591E02A247F11B600484B51 /* TOAlgModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 4591E029247F11B600484B51 /* TOAlgModel.m */; };
-		4591E02D247F11DE00484B51 /* TOValueModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 4591E02C247F11DE00484B51 /* TOValueModel.m */; };
 		8822852020F58BDA009884DC /* AINetDirectionReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 8822851F20F58BDA009884DC /* AINetDirectionReference.m */; };
 		8868F6EB210A946A000EAC9B /* AIAbsCMVManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8868F6EA210A946A000EAC9B /* AIAbsCMVManager.m */; };
 		8868F6EE210AA00B000EAC9B /* AINetAbsCMVUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 8868F6ED210AA00B000EAC9B /* AINetAbsCMVUtil.m */; };
-		88960C6B209BDA2B004EF419 /* AINetIndexReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 88960C6A209BDA2B004EF419 /* AINetIndexReference.m */; };
 		88988524208979E6001D1ADC /* AINetIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = 88988523208979E6001D1ADC /* AINetIndex.m */; };
 		88A43F3A2109571300281348 /* AIAbsCMVNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 88A43F392109571300281348 /* AIAbsCMVNode.m */; };
 		88A43F3D2109576D00281348 /* AIFrontOrderNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 88A43F3C2109576D00281348 /* AIFrontOrderNode.m */; };
@@ -457,12 +454,8 @@
 		08FAEC95215EED48004DCEAD /* NVHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVHeader.h; sourceTree = "<group>"; };
 		08FBE10C22D56F360088EF1A /* NVModuleUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVModuleUtil.h; sourceTree = "<group>"; };
 		08FBE10D22D56F360088EF1A /* NVModuleUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NVModuleUtil.m; sourceTree = "<group>"; };
-		456F2C302476BD5E0015ADB8 /* AINetService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetService.h; sourceTree = "<group>"; };
-		456F2C312476BD5E0015ADB8 /* AINetService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetService.m; sourceTree = "<group>"; };
 		4591E028247F11B600484B51 /* TOAlgModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOAlgModel.h; sourceTree = "<group>"; };
 		4591E029247F11B600484B51 /* TOAlgModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOAlgModel.m; sourceTree = "<group>"; };
-		4591E02B247F11DE00484B51 /* TOValueModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOValueModel.h; sourceTree = "<group>"; };
-		4591E02C247F11DE00484B51 /* TOValueModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOValueModel.m; sourceTree = "<group>"; };
 		4591E02E247F1E1A00484B51 /* ISubModelsDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ISubModelsDelegate.h; sourceTree = "<group>"; };
 		4591E030247F1F4000484B51 /* ITryActionFoDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ITryActionFoDelegate.h; sourceTree = "<group>"; };
 		8822851E20F58BDA009884DC /* AINetDirectionReference.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetDirectionReference.h; sourceTree = "<group>"; };
@@ -471,8 +464,6 @@
 		8868F6EA210A946A000EAC9B /* AIAbsCMVManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIAbsCMVManager.m; sourceTree = "<group>"; };
 		8868F6EC210AA00B000EAC9B /* AINetAbsCMVUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetAbsCMVUtil.h; sourceTree = "<group>"; };
 		8868F6ED210AA00B000EAC9B /* AINetAbsCMVUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetAbsCMVUtil.m; sourceTree = "<group>"; };
-		88960C69209BDA2B004EF419 /* AINetIndexReference.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetIndexReference.h; sourceTree = "<group>"; };
-		88960C6A209BDA2B004EF419 /* AINetIndexReference.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetIndexReference.m; sourceTree = "<group>"; };
 		88988522208979E6001D1ADC /* AINetIndex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetIndex.h; sourceTree = "<group>"; };
 		88988523208979E6001D1ADC /* AINetIndex.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetIndex.m; sourceTree = "<group>"; };
 		88A43F3521094BF900281348 /* SMGConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMGConfig.h; sourceTree = "<group>"; };
@@ -528,8 +519,6 @@
 				088DD7222201216500E0A786 /* TOFoModel.m */,
 				4591E028247F11B600484B51 /* TOAlgModel.h */,
 				4591E029247F11B600484B51 /* TOAlgModel.m */,
-				4591E02B247F11DE00484B51 /* TOValueModel.h */,
-				4591E02C247F11DE00484B51 /* TOValueModel.m */,
 				4591E02E247F1E1A00484B51 /* ISubModelsDelegate.h */,
 				4591E030247F1F4000484B51 /* ITryActionFoDelegate.h */,
 				088587DC26103F30001B9ADE /* ISubDemandDelegate.h */,
@@ -698,7 +687,6 @@
 		083F612C1F04830F000330E1 /* AINet */ = {
 			isa = PBXGroup;
 			children = (
-				456F2C2F2476BD480015ADB8 /* AINetService */,
 				08497A9021C3228E009E7D69 /* AIAlgNodeManager */,
 				08412CA0216C322100483B6B /* AICerebel */,
 				8868F6E8210A9457000EAC9B /* AIAbsCMVManager */,
@@ -1357,15 +1345,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		456F2C2F2476BD480015ADB8 /* AINetService */ = {
-			isa = PBXGroup;
-			children = (
-				456F2C302476BD5E0015ADB8 /* AINetService.h */,
-				456F2C312476BD5E0015ADB8 /* AINetService.m */,
-			);
-			path = AINetService;
-			sourceTree = "<group>";
-		};
 		8868F6E8210A9457000EAC9B /* AIAbsCMVManager */ = {
 			isa = PBXGroup;
 			children = (
@@ -1393,8 +1372,6 @@
 			children = (
 				88988522208979E6001D1ADC /* AINetIndex.h */,
 				88988523208979E6001D1ADC /* AINetIndex.m */,
-				88960C69209BDA2B004EF419 /* AINetIndexReference.h */,
-				88960C6A209BDA2B004EF419 /* AINetIndexReference.m */,
 				8822851E20F58BDA009884DC /* AINetDirectionReference.h */,
 				8822851F20F58BDA009884DC /* AINetDirectionReference.m */,
 				0810E50D236A637500B33226 /* AINetIndexUtils.h */,
@@ -1566,7 +1543,6 @@
 				88E1F851211591E50036B616 /* DemandModel.m in Sources */,
 				0881965F21800F2B00D5DB36 /* BirdLivePage.m in Sources */,
 				0819F4F427583AA9007396D0 /* TCFeedback.m in Sources */,
-				4591E02D247F11DE00484B51 /* TOValueModel.m in Sources */,
 				08573166275C7DB900182AA7 /* TCFeedbackTOR.m in Sources */,
 				086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */,
 				08D471DE1FEB3FFF00C61322 /* AIImvAlgs.m in Sources */,
@@ -1663,7 +1639,6 @@
 				88C20B8220C7696A0076BB52 /* AINetAbsFoUtils.m in Sources */,
 				0858C5D22194F8B000951BA5 /* NSLayoutConstraint+MASDebugAdditions.m in Sources */,
 				8822852020F58BDA009884DC /* AINetDirectionReference.m in Sources */,
-				88960C6B209BDA2B004EF419 /* AINetIndexReference.m in Sources */,
 				081BD08825B94F1B003C3038 /* ReasonDemandModel.m in Sources */,
 				08F738071F7C714F005EAD56 /* AISqlPointer.m in Sources */,
 				0886889E26479A7F00B7C75D /* AINoRepeatRun.m in Sources */,
@@ -1679,7 +1654,6 @@
 				0858C5CC2194F8B000951BA5 /* MASConstraint.m in Sources */,
 				0889257F22B0702A00A0DBDD /* NVModuleView.m in Sources */,
 				0858C5CE2194F8B000951BA5 /* MASLayoutConstraint.m in Sources */,
-				456F2C322476BD5E0015ADB8 /* AINetService.m in Sources */,
 				0827DAD724199C9E00A025D4 /* HeLogView.m in Sources */,
 				08E8CF5525B2880600AA18DB /* WoodView.m in Sources */,
 				0808927A215AF5F400710636 /* AINodeBase.m in Sources */,

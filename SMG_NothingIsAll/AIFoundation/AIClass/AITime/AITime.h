@@ -19,9 +19,6 @@
 
 //@property (assign, nonatomic) NSTimeInterval time;          //AI运行的时间
 //@property (assign,nonatomic) NSTimeInterval *awarenessTime; //意识时间
-//
-//@property (strong, nonatomic) AIFoNodeBase *actionFo;       //预想fo
-//@property (strong, nonatomic) AIFoNodeBase *realFo;         //实际fo
 
 /**
  *  MARK:--------------------生物钟触发器--------------------

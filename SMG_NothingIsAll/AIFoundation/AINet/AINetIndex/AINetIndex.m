@@ -7,8 +7,6 @@
 //
 
 #import "AINetIndex.h"
-#import "AIKVPointer.h"
-#import "SMGUtils.h"
 #import "PINCache.h"
 #import "XGRedisUtil.h"
 

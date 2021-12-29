@@ -7,8 +7,6 @@
 //
 
 #import "AIShortMatchModel.h"
-#import "AIMatchFoModel.h"
-#import "AIScore.h"
 
 @implementation AIShortMatchModel
 

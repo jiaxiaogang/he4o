@@ -8,24 +8,8 @@
 
 #import "AINetDirectionReference.h"
 #import "PINCache.h"
-#import "XGRedisUtil.h"
-#import "AIKVPointer.h"
-#import "AIPort.h"
-#import "AINetUtils.h"
 
 @implementation AINetDirectionReference
-
--(id) init{
-    self = [super init];
-    if (self) {
-        [self initData];
-    }
-    return self;
-}
-
--(void) initData{
-    
-}
 
 //MARK:===============================================================
 //MARK:                     < publicMethod >

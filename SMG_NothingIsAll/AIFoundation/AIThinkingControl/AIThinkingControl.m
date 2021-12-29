@@ -7,20 +7,7 @@
 //
 
 #import "AIThinkingControl.h"
-#import "DemandManager.h"
-#import "OutputModel.h"
-#import "AINet.h"
-#import "AINetUtils.h"
-#import "ThinkingUtils.h"
-#import "AIKVPointer.h"
-#import "AIAlgNode.h"
-#import "AINetIndex.h"
 #import "NSObject+Extension.h"
-#import "AIShortMatchModel.h"
-#import "ShortMatchManager.h"
-#import "TOFoModel.h"
-#import "AIFrontOrderNode.h"
-#import "ReasonDemandModel.h"
 
 /**
  *  MARK:--------------------思维控制器--------------------

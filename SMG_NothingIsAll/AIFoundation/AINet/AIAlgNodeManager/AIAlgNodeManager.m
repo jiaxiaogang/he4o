@@ -7,47 +7,9 @@
 //
 
 #import "AIAlgNodeManager.h"
-#import "AIAlgNode.h"
-#import "AIAbsAlgNode.h"
-#import "AIPort.h"
-#import "AIKVPointer.h"
-#import "AINetUtils.h"
-#import "NSString+Extension.h"
 #import "AINetIndexUtils.h"
 
 @implementation AIAlgNodeManager
-
-/**
- *  MARK:--------------------构建algNode--------------------
- *  1. 自动将algsArr中的元素分别生成absAlgNode
- *  2. absAlgNode根据索引的去重而去重;
- *  3. 具象algNode根据网络中联想而去重; (for(abs1.cons) & for(abs2.cons))
- *  4. abs和con都要有关联强度序列; (目前不需要,以后有需求的时候再加上)
- *  5. 微信息引用处理: value索引中,加上refPorts;类似algNode.refPorts的方式使用;并且使用单文件的方式存储和插线;
- *
- *  @param algsArr      : 算法值的装箱数组;
- *  @param isMem        : 为false时,持久化构建(如commitOutput),为true时仅内存网络中(如dataIn);
- *  _param dataSource  : 概念节点的dataSource就是稀疏码信息的algsType (不传时,从algsArr提取)
- *  @result notnull     : 返回具象algNode
- */
-//+(AIAlgNode*) createAlgNode:(NSArray*)algsArr dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem{
-//    //1. 数据
-//    algsArr = ARRTOOK(algsArr);
-//    
-//    //2. 构建具象节点 (优先用本地已有,否则new)
-//    AIAlgNode *conNode = [[AIAlgNode alloc] init];
-//    conNode.pointer = [SMGUtils createPointerForAlg:kPN_ALG_NODE dataSource:dataSource isOut:isOut isMem:isMem];
-//    
-//    //3. 指定value_ps
-//    conNode.content_ps = [[NSMutableArray alloc] initWithArray:[SMGUtils sortPointers:algsArr]];
-// 
-//    //4. value.refPorts (更新引用序列)
-//    [AINetUtils insertRefPorts_AllAlgNode:conNode.pointer content_ps:conNode.content_ps difStrong:1];
-//    
-//    //5. 存储
-//    [SMGUtils insertNode:conNode];
-//    return conNode;
-//}
 
 /**
  *  MARK:--------------------构建抽象概念--------------------
@@ -192,63 +154,3 @@
 }
 
 @end
-
-/**
- *  MARK:--------------------查找网络中即有具象节点--------------------
- *  注: 性能优化:如果在查找过程中,共同具象节点有上百个,而又因数量等不符合,则会有卡在IO上的可能;所以此处届时可考虑使用二分法索引等来优化;
- */
-//+(AIAlgNode*) findLocalConNode:(NSArray*)absNodes{
-//    //1.  数据准备
-//    absNodes = ARRTOOK(absNodes);
-//    AIAlgNode *result = nil;
-//
-//    //2. 筛选出conPort最短的absNode;
-//    AIAbsAlgNode *minNode = nil;
-//    for (AIAbsAlgNode *absNode in absNodes) {
-//        if (minNode == nil || minNode.conPorts.count > absNode.conPorts.count) {
-//            minNode = absNode;
-//        }
-//    }
-//
-//    //3. 正向查找出absAlgNodes的共同关联的具象节点;
-//    if (minNode) {
-//        ///1. 循环查最小absNode的"具象路由";
-//        for (AIPort *checkPort in minNode.conPorts) {
-//            AIPointer *checkPointer = checkPort.target_p;
-//
-//            ///2. 检查是否 同时存在所有其它absNode的"具象路由"中;
-//            BOOL checkSuccess = true;
-//            for (AIAbsAlgNode *item in absNodes) {
-//                if (![item isEqual:minNode]) {
-//                    NSArray *con_ps = [SMGUtils convertPointersFromPorts:item.conPorts];
-//                    if (![SMGUtils containsSub_p:checkPointer parent_ps:con_ps]) {
-//                        checkSuccess = false;
-//                        break;
-//                    }
-//                }
-//            }
-//
-//            ///3. 反过来检查 "找到的具象节点" 是否也指向 "这些抽象节点";
-//            if (checkSuccess) {
-//                BOOL singleSuccess = true;
-//                AIAlgNode *single = [SMGUtils searchObjectForPointer:checkPointer fileName:kFNNode time:cRTNode];
-//                if (ISOK(single, AIAlgNode.class) && single.absPorts.count == absNodes.count) {
-//                    NSArray *single_ps = [SMGUtils convertPointersFromPorts:single.absPorts];
-//                    for (AIAbsAlgNode *absNode in absNodes) {
-//                        if (![SMGUtils containsSub_p:absNode.pointer parent_ps:single_ps]) {
-//                            singleSuccess = false;
-//                            break;
-//                        }
-//                    }
-//                }
-//
-//                ///4. 正反搜索都匹配,则重复使用;
-//                if (singleSuccess) {
-//                    result = single;
-//                    break;
-//                }
-//            }
-//        }
-//    }
-//    return result;
-//}

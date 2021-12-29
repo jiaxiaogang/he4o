@@ -44,14 +44,15 @@
 //网络
 #import "AINetUtils.h"
 #import "AINetIndex.h"
-#import "AINetService.h"
 #import "AIPort.h"
+#import "AIAbsAlgNode.h"
 #import "AIAlgNodeBase.h"
-#import "AIFoNodeBase.h"
 #import "AIFrontOrderNode.h"
+#import "AIFoNodeBase.h"
 #import "AINetAbsFoNode.h"
 #import "AICMVNode.h"
-#import "AIAbsAlgNode.h"
+#import "AIAbsCMVNode.h"
+
 
 //其它: 类比器,评价器,触发器,防重器,输入,输出
 #import "AIAnalogy.h"

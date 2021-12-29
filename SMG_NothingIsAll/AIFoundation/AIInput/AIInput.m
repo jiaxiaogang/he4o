@@ -7,7 +7,6 @@
 //
 
 #import "AIInput.h"
-#import "AINet.h"
 #import "AIReactorControl.h"
 
 @implementation AIInput
