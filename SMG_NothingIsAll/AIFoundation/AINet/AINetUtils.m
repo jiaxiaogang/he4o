@@ -455,34 +455,6 @@
     }
 }
 
-/**
- *  MARK:--------------------Diff嵌套关联--------------------
- *  @desc 构建虚mv时序时,虚mv是解决实mv的,所以protoFo要嵌套在matchFo之下;
- *  @param strongPorts : 用来取difStrong的节点集
- *              1. 当外类比时传入参与外类比的ports,difStrong=MaxStrong;
- *              2. 否则传空即可,difStrong=1;
- */
-+(void) relateDiff:(AIFoNodeBase*)subNode baseNode:(AIFoNodeBase*)baseNode strongPorts:(NSArray*)strongPorts{
-    //1. 数据准备;
-    if (!baseNode || !subNode) return;
-    NSInteger difStrong = [self getMaxStrong:strongPorts];
-    
-    //2. 关联&存储
-    if (!baseNode.pointer.isMem) {
-        //2. hd_具象节点插"抽象端口";
-        [AINetUtils insertPointer_Hd:subNode.pointer toPorts:baseNode.diffSubPorts ps:subNode.content_ps difStrong:difStrong];
-        //3. hd_抽象节点插"具象端口";
-        [AINetUtils insertPointer_Hd:baseNode.pointer toPorts:subNode.diffBasePorts ps:baseNode.content_ps difStrong:difStrong];
-        //4. hd_存储
-        [SMGUtils insertNode:baseNode];
-        [SMGUtils insertNode:subNode];
-    }else{
-        //5. 内存插端口;
-        [self insertDiffBasePorts_MemNode:baseNode.pointer sub_p:subNode.pointer baseContent:baseNode.content_ps difStrong:difStrong];
-        [self insertDiffSubPorts_MemNode:subNode.pointer base_p:baseNode.pointer subContent:subNode.content_ps difStrong:difStrong];
-    }
-}
-
 @end
 
 

@@ -37,9 +37,6 @@
 @property (strong, nonatomic) NSMutableArray *deltaTimes;
 @property (assign, nonatomic) NSTimeInterval mvDeltaTime;
 
-@property (strong, nonatomic) NSMutableArray *diffSubPorts; //反向反馈-虚mv时序
-@property (strong, nonatomic) NSMutableArray *diffBasePorts;//反向反馈-实mv时序
-
 /**
  *  MARK:--------------------SP强度值--------------------
  *  @desc <key:spIndex, value:spStrong> (其中mv的key为content.count) (参考25031-3);
