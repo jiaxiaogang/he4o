@@ -48,7 +48,7 @@
  */
 +(void) forecastIRT:(AIShortMatchModel*)model {
     //1. 数据检查 (参考25031-1);
-    IFTitleLog(@"预测",@"\nprotoFo:%@",Fo2FStr(model.protoFo));
+    IFTitleLog(@"IRT预测",@"\nprotoFo:%@",Fo2FStr(model.protoFo));
     NSMutableArray *matchs = [[NSMutableArray alloc] init];
     [matchs addObjectsFromArray:model.matchRFos];
     [matchs addObjectsFromArray:model.matchPFos];

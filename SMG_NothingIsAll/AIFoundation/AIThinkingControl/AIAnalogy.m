@@ -166,31 +166,3 @@
 }
 
 @end
-
-
-//MARK:===============================================================
-//MARK:                     < 反馈类比 >
-//MARK:===============================================================
-@implementation AIAnalogy (Feedback)
-
-/**
- *  MARK:--------------------正向反馈外类比--------------------
- *  @use : 用于P-任务取解决方案;
- *  @version
- *      2021.09.28: ATSame改为传ATDefault (参考24022-BUG5);
- */
-+(void) analogy_Feedback_Same:(AIFoNodeBase*)matchFo shortFo:(AIFoNodeBase*)shortFo{
-    //1. 数据检查;
-    if (!matchFo || !shortFo || !matchFo.cmvNode_p || !shortFo.cmvNode_p) return;
-    
-    //2. 检查同向;
-    BOOL isSame = [AIScore sameIdenSameScore:matchFo.cmvNode_p mv2:shortFo.cmvNode_p];
-    IFTitleLog(@"正向反馈外类比 (%@)", @"\n短时MatchFo:%@->%@ \n输入ProtoFo:%@->%@",isSame ? @"执行" : @"未执行", Fo2FStr(matchFo),Mvp2Str(matchFo.cmvNode_p),Fo2FStr(shortFo),Mvp2Str(shortFo.cmvNode_p));
-    if (!isSame) return;
-    
-    //3. 类比 (与当前的analogy_Outside()较相似,所以暂不写,随后写时,也是将原有的_outside改成此_same类比方法);
-    AINetAbsFoNode *absFo = [self analogyOutside:shortFo assFo:matchFo type:ATDefault createAbsAlgBlock:nil];
-    NSLog(@"抽象出: %@ mvDeltaTime:%f",Fo2FStr(absFo),absFo.mvDeltaTime);
-}
-
-@end

@@ -24,7 +24,7 @@
 +(void) feedbackTIR:(AIShortMatchModel*)model{
     //1. 取所有lastWait模型,并与新输入的概念做mIsC判断;
     NSArray *inModels = theTC.inModelManager.models;
-    OFTitleLog(@"tir_OPushM", @"\n输入M:%@\n输入P:%@",Alg2FStr(model.matchAlg),Alg2FStr(model.protoAlg));
+    OFTitleLog(@"TIR反馈", @"\n输入M:%@\n输入P:%@",Alg2FStr(model.matchAlg),Alg2FStr(model.protoAlg));
     
     //2. IRT理性失效 (旧有IRT触发器等待中的fo,在场景情况更新时,标记OutBackReason);
     for (AIShortMatchModel *inModel in inModels) {

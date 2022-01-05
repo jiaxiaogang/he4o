@@ -321,36 +321,14 @@
 
 //外类比
 #define Log4OutAna false
-#define Log4OutAnaGL(type) (!Log4OutAna && ((type == ATGreater || type == ATLess) && false))
-#define Log4OutAnaHN(type) (!Log4OutAna && ((type == ATHav || type == ATNone) && false))
-#define Log4OutAnaSP(type) (!Log4OutAna && ((type == ATSub || type == ATPlus) && true))
-#define Log4OutAnaDiff(type) (!Log4OutAna && (type == ATDiff && false))
-//#define Log4OutAnaSame(type) (!Log4OutAna && (type == ATSame && false))
-#define Log4OutAnaDefault(type) (!Log4OutAna && (type == ATDefault && false))
-#define Log4OutAnaType(type) Log4OutAna || Log4OutAnaGL(type) || Log4OutAnaHN(type) || Log4OutAnaSP(type) || Log4OutAnaDiff(type) || Log4OutAnaDefault(type)//有一项符合时,则打印
+#define Log4OutAnaDefault(type) (!Log4OutAna && (type == ATDefault && true))
+#define Log4OutAnaType(type) Log4OutAna || Log4OutAnaDefault(type)
 
-//正向类比
-#define Log4SameAna true
-//反向类比
-#define Log4DiffAna true
 //方向索引
 #define Log4DirecRef true
-//行为化_GL
-#define Log4ActGL true
-//行为化_Hav
-#define Log4ActHav false
-//行为化_RelativeFos
-#define Log4ActRelativeFos false
-//行为化_GetInnerAlg
-#define Log4GetInnerAlg true
-//PM算法
-#define Log4PM true
 //外输入推进中循环
 #define Log4OPushM true
 #define Log4TIROPushM false
-//VRS评价
-#define Log4VRS_Main true
-#define Log4VRS_Desc false
 //In反省
 #define Log4InRethink true
 #define Log4OutRethink true

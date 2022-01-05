@@ -33,19 +33,3 @@
 +(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type createAbsAlgBlock:(void(^)(AIAlgNodeBase *createAlg,NSInteger foIndex,NSInteger assFoIndex))createAbsAlgBlock;
 
 @end
-
-
-//MARK:===============================================================
-//MARK:                     < 反馈类比 >
-//MARK:===============================================================
-@interface AIAnalogy (Feedback)
-
-/**
- *  MARK:--------------------正向反馈外类比--------------------
- *  @desc 由TIP调用,执行条件为:当imv与预测mv相符时,执行类比;
- *  @desc 如: (距20,经233) 与 (距20,经244) 可类比为: (距20)->{mv};
- *  @param shortFo : 传瞬时记忆的protoFo;
- */
-+(void) analogy_Feedback_Same:(AIFoNodeBase*)matchFo shortFo:(AIFoNodeBase*)shortFo;
-
-@end

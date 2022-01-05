@@ -79,7 +79,7 @@
     for (ReasonDemandModel *root in theTC.outModelManager.getAllDemand) {
         [waitModels addObjectsFromArray:[TOUtils getSubOutModels_AllDeep:root validStatus:@[@(TOModelStatus_ActYes)]]];
     }
-    OFTitleLog(@"tor_OPushM", @"\n输入M:%@\n输入P:%@\n等待中任务数:%lu",Alg2FStr(model.matchAlg),Alg2FStr(model.protoAlg),(long)waitModels.count);
+    OFTitleLog(@"TOR反馈", @"\n输入M:%@\n输入P:%@\n等待中任务数:%lu",Alg2FStr(model.matchAlg),Alg2FStr(model.protoAlg),(long)waitModels.count);
     
     //3. 判断最近一次input是否与等待中outModel相匹配 (匹配,比如吃,确定自己是否真吃了);
     //3. 保留/更新实际发生到outModel (通过了有效判断的,将实际概念直接存留到waitModel);

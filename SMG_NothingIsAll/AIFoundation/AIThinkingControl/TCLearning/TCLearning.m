@@ -14,25 +14,32 @@
  *  MARK:--------------------学习--------------------
  *  @desc 外类比;
  *  @desc 输入mv时调用,执行OPushM + 更新P任务池 + 执行P决策;
+ *  @desc 由TIP调用,执行条件为:当imv与预测mv相符时,执行类比;
+ *  @desc 如: (距20,经233) 与 (距20,经244) 可类比为: (距20)->{mv};
  *  解释:
  *   1. 无需求时,找出以往同样经历,类比规律,抽象出更确切的意义;
  *   2. 注:此方法为abs方向的思维方法总入口;(与其相对的决策处
  *  步骤:
  *   > 联想->类比->规律->抽象->关联->网络
+ *  @param protoFo : 传瞬时记忆的protoFo;
  *  @version
  *      2020.03.04: a.去掉外类比; b.外类比拆分为:正向类比和反向类比;
  *      2021.01.24: 支持多时序识别,更全面的触发外类比 (参考22073-todo4);
+ *      2021.09.28: ATSame改为传ATDefault (参考24022-BUG5);
  *      2021.12.02: 将TCLearning独立成类 (参考24164);
  */
 +(void) pLearning:(AIFoNodeBase*)protoFo{
-    
-    //2. 获取最近的识别模型;
+    //1. 获取最近的识别模型;
+    IFTitleLog(@"P学习", @"\n输入ProtoFo:%@->%@", Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p));
     NSArray *inModels = ARRTOOK(theTC.inModelManager.models);
     for (AIShortMatchModel *item in inModels) {
         for (AIMatchFoModel *pFo in item.matchPFos) {
+            //2. 检查同向;
+            BOOL isSame = [AIScore sameIdenSameScore:pFo.matchFo.cmvNode_p mv2:protoFo.cmvNode_p];
+            if (!isSame) continue;
             
             //3. 正向反馈类比 (外类比);
-            [AIAnalogy analogy_Feedback_Same:pFo.matchFo shortFo:protoFo];
+            [AIAnalogy analogyOutside:protoFo assFo:pFo.matchFo type:ATDefault createAbsAlgBlock:nil];
         }
     }
     
