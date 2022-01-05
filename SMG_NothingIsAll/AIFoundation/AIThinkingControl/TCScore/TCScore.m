@@ -50,6 +50,12 @@
     if (!scoreDic) scoreDic = [[NSMutableDictionary alloc] init];
     double modelScore = 0;
     
+    //===== 第0部分: foModel自身理性淘汰判断 (比如时间紧急评否后,为actNo状态) (参考24053);
+    if (model.status == TOModelStatus_ActNo) {
+        [scoreDic setObject:@(INT_MIN) forKey:model.content_p];
+        return;
+    }
+    
     //===== 第一部分: HDemand在FoModel.subModels下 (有解决方案:参与求和 & 无解决方案:理性淘汰);
     //2. 用每个sa取sh子任务 (求和);
     for (TOAlgModel *sa in model.subModels) {
