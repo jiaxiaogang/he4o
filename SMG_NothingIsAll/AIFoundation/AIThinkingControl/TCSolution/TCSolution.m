@@ -72,6 +72,7 @@
  *      2021.11.25: 迭代为功能架构 (参考24154-单轮示图);
  *      2021.12.25: 将FRS稳定性竞争废弃,改为仅取bestSP评分,取最稳定的一条 (参考25032-4);
  *      2021.12.28: 将抽具象路径rs改为从pFos中取同标识mv部分 (参考25051);
+ *      2022.01.07: 改为将整个demand.actionFoModels全加入不应期 (因为还在决策中的S会重复);
  *  @callers : 用于RDemand.Begin时调用;
  */
 +(void) rSolution:(ReasonDemandModel*)demand {
@@ -80,11 +81,8 @@
         return [demand.mModel.matchFo.cmvNode_p.identifier isEqualToString:item.matchFo.cmvNode_p.identifier];
     }];
     
-    //2. 不应期 (可以考虑改为将整个demand.actionFoModels全加入不应期) (源于:反思且子任务失败的 或 fo行为化最终失败的,参考24135);
-    NSArray *exceptFoModels = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOModelBase *item) {
-        return item.status == TOModelStatus_ActNo || item.status == TOModelStatus_ScoreNo;
-    }];
-    NSMutableArray *except_ps = [TOUtils convertPointersFromTOModels:exceptFoModels];
+    //2. 不应期 (可以考虑) (源于:反思且子任务失败的 或 fo行为化最终失败的,参考24135);
+    NSMutableArray *except_ps = [TOUtils convertPointersFromTOModels:demand.actionFoModels];
     [except_ps addObject:demand.mModel.matchFo.pointer];
     
     //3. 逐一对validPFos,取其conPorts (前3条) (参考24127-步骤1);
@@ -154,10 +152,10 @@
     //TODO: 2021.12.29: 此处方向索引,可以改成和rh任务一样的从pFos&rFos中取具象得来 (因为方向索引应该算脱离场景);
     MVDirection direction = [ThinkingUtils getDemandDirection:demandModel.algsType delta:demandModel.delta];
     if (!Switch4PS || direction == MVDirection_None) return;
-    OFTitleLog(@"TOP.P-", @"\n任务:%@,发生%ld,方向%ld",demandModel.algsType,(long)demandModel.delta,(long)direction);
+    OFTitleLog(@"pSolution", @"\n任务:%@,发生%ld,方向%ld",demandModel.algsType,(long)demandModel.delta,(long)direction);
     
     //2. =======以下: 调用通用diff模式方法 (以下代码全是由diff模式方法迁移而来);
-    //3. 不应期
+    //3. 不应期 (考虑改为所有actionFoModels都不应期);
     NSArray *exceptFoModels = [SMGUtils filterArr:demandModel.actionFoModels checkValid:^BOOL(TOModelBase *item) {
         return item.status == TOModelStatus_ActNo || item.status == TOModelStatus_ScoreNo || item.status == TOModelStatus_ActYes;
     }];

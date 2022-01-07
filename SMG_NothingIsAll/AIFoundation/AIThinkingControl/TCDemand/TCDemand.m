@@ -61,6 +61,10 @@
 +(void) hDemand:(TOAlgModel*)algModel{
     //1. 对algModel生成H任务,并挂载在当前短时记忆分支下;
     [HDemandModel newWithAlgModel:algModel];
+    IFTitleLog(@"生成HDemand",@"%@",Pit2FStr(algModel.content_p));
+    
+    //TODOTOMORROW20220107: BUG2,此处生成hDemand后,在score后未对它进行hSolution;
+    
     
     //2. 调用TCScore继续决策;
     [TCScore score];//[TCSolution hSolution:hDemand];

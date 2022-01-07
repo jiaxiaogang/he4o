@@ -74,7 +74,7 @@
 +(void) feedbackTIP:(AICMVNode*)cmvNode{
     //1. 数据检查
     NSArray *inModels = theTC.inModelManager.models;
-    OFTitleLog(@"tip_OPushM", @"\n输入MV:%@",Mv2FStr(cmvNode));
+    OFTitleLog(@"feedbackTIP", @"\n输入MV:%@",Mv2FStr(cmvNode));
     
     //2. 判断最近一次input是否与等待中outModel相匹配 (匹配,比如吃,确定自己是否真吃了);
     for (AIShortMatchModel *inModel in inModels) {
@@ -113,7 +113,7 @@
     //1. 数据检查
     NSInteger delta = [NUMTOOK([AINetIndex getData:cmvNode.delta_p]) integerValue];
     if (delta == 0) return;
-    OFTitleLog(@"top_OPushM", @"\n输入MV:%@",Mv2FStr(cmvNode));
+    OFTitleLog(@"feedbackTOP", @"\n输入MV:%@",Mv2FStr(cmvNode));
     
     //2. 对所有等待中的任务尝试处理 (R-任务);
     for (ReasonDemandModel *root in theTC.outModelManager.getAllDemand) {
