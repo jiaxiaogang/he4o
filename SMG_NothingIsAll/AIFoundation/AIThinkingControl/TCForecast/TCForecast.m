@@ -53,7 +53,7 @@
     [matchs addObjectsFromArray:model.matchRFos];
     [matchs addObjectsFromArray:model.matchPFos];
     
-    //2. 预测下一帧 (参考25031-2);
+    //2. 预测下一帧 (参考25031-2) ->feedbackTIR;
     for (AIMatchFoModel *item in matchs) {
         
         //3. 非末位时,理性反省 (参考25031-2);
@@ -78,7 +78,7 @@
                 if (item.status == TIModelStatus_LastWait) item.status = TIModelStatus_OutBackNone;
             }];
         }
-        //8. 末位且有mv时,感性反省 (参考25031-2);
+        //8. 末位且有mv时,感性反省 (参考25031-2) ->feedbackTIP;
         else if(matchFo.cmvNode_p){
             
             //9. 设为等待反馈状态 & 构建反省触发器;

@@ -8,6 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ *  MARK:--------------------feedbackTOR--------------------
+ *  @desc 四个feedback分别对应四个rethink反省 (参考25031-12);
+ */
 @interface TCFeedbackTOR : NSObject
 
 +(void) feedbackTOR:(AIShortMatchModel*)model;

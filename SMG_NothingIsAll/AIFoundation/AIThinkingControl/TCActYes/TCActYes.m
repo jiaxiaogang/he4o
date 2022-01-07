@@ -146,7 +146,7 @@
 
 /**
  *  MARK:--------------------hActYes--------------------
- *  @desc H模式,等待hAlg输入反馈->(feedbackTOR)->->调用理性ORT反省;
+ *  @desc H模式,等待hAlg输入反馈 -> 调用理性ORT反省 ->feedbackTOR;
  *  @version
  *      2021.12.26: 接入理性ORT反省 (参考25032-5);
  */
