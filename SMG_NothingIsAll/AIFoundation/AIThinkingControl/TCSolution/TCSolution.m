@@ -109,19 +109,19 @@
             bestRSResult = checkResult;
         }
     }
-    if (Log4DirecRef) NSLog(@"\n------- baseFo:%@ -------\n已有方案数:%ld 不应期数:%ld",Fo2FStr(demand.mModel.matchFo),demand.actionFoModels.count,except_ps.count);
+    OFTitleLog(@"rSolution", @"\n任务源:%@ 已有方案数:%ld 不应期数:%ld",Fo2FStr(demand.mModel.matchFo),demand.actionFoModels.count,except_ps.count);
     
     //6. 转流程控制_有解决方案则转begin;
     if (bestRSResult) {
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
         TOFoModel *foModel = [TOFoModel newWithFo_p:bestRSResult.baseFo.pointer base:demand];
-        NSLog(@"------->>>>>> R- 新增一例解决方案: %@->%@ FRS_PK评分:%.2f",Fo2FStr(bestRSResult.baseFo),Mvp2Str(bestRSResult.baseFo.cmvNode_p),bestRSResult.score);
+        NSLog(@">>>>>> rSolution 新增一例解决方案: %@->%@ FRS_PK评分:%.2f",Fo2FStr(bestRSResult.baseFo),Mvp2Str(bestRSResult.baseFo.cmvNode_p),bestRSResult.score);
         [TCAction action:foModel];
     }else{
         //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
         demand.status = TOModelStatus_WithOut;
         [TCScore score];
-        NSLog(@"------->>>>>> R-无计可施");
+        NSLog(@">>>>>> rSolution 无计可施");
     }
 }
 

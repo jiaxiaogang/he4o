@@ -132,7 +132,7 @@
             //11. 则进行感性IRT反省;
             if (type != ATDefault) {
                 [TCRethink perceptOutRethink:foModel type:type];
-                NSLog(@"---//感性ORT触发器执行:%p %@ (%@ | %@)",foModel,Fo2FStr(solutionFo),TOStatus2Str(foModel.status),ATType2Str(type));
+                NSLog(@"---//OP反省触发器执行(R任务):%p F%ld 状态:%@",foModel,foModel.content_p.pointerId,TOStatus2Str(foModel.status));
                 
                 //12. 如果无反馈,则设为失败,并继续决策;
                 if (foModel.status == TOModelStatus_ActYes) {
@@ -170,8 +170,8 @@
         //4. 反省类比(成功/未成功)的主要原因;
         AnalogyType type = (algModel.status == TOModelStatus_ActYes) ? ATSub : ATPlus;
         [AINoRepeatRun run:STRFORMAT(@"%p",algModel) block:^{
-            NSLog(@"---//触发器A_触发: %@ from %@ (%@)",AlgP2FStr(algModel.content_p),Fo2FStr(foNode),ATType2Str(type));
             [TCRethink reasonOutRethink:foModel type:type];
+            NSLog(@"---//OR反省触发器执行:%p A%ld 状态:%@",algModel,algModel.content_p.pointerId,TOStatus2Str(algModel.status));
         }];
         
         //5. 失败时_继续决策 (成功时,由feedback的IN流程继续);
@@ -210,7 +210,7 @@
             
             //6. 则进行感性ORT反省;
             [TCRethink perceptOutRethink:foModel type:type];
-            NSLog(@"---//pActYes感性ORT触发器执行:%p %@ (%@ | %@)",foModel,Fo2FStr(solutionFo),TOStatus2Str(foModel.status),ATType2Str(type));
+            NSLog(@"---//OP反省触发器执行(P任务):%p F%ld 状态:%@",foModel,foModel.content_p.pointerId,TOStatus2Str(foModel.status));
             
             //7. 如果无反馈,则继续决策;
             if (foModel.status == TOModelStatus_ActYes) {

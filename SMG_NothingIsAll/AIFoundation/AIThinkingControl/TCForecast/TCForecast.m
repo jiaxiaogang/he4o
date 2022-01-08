@@ -72,7 +72,7 @@
                 
                 //6. 则进行理性IRT反省;
                 [TCRethink reasonInRethink:item type:type];
-                NSLog(@"---//理性IRT触发器执行:%p %@ (%@ | %@)",matchFo,Fo2FStr(matchFo),TIStatus2Str(item.status),ATType2Str(type));
+                NSLog(@"---//IR反省触发器执行:%p F%ld 状态:%@",matchFo,matchFo.pointer.pointerId,TIStatus2Str(item.status));
                 
                 //7. 失败状态标记;
                 if (item.status == TIModelStatus_LastWait) item.status = TIModelStatus_OutBackNone;
@@ -101,7 +101,7 @@
                 //11. 则进行感性IRT反省;
                 if (type != ATDefault) {
                     [TCRethink perceptInRethink:item type:type];
-                    NSLog(@"---//感性IRT触发器执行:%p %@ (%@ | %@)",matchFo,Fo2FStr(matchFo),TIStatus2Str(item.status),ATType2Str(type));
+                    NSLog(@"---//IP反省触发器执行:%p F%ld 状态:%@",matchFo,matchFo.pointer.pointerId,TIStatus2Str(item.status));
                 }
                 
                 //12. 失败状态标记;
