@@ -66,6 +66,7 @@
  *      2021.12.26: 废弃HN后,类型判断处理 & 兼容hActYes输出 (参考25032-6);
  *      2021.12.26: waitModels由currentDemand改为支持所有rootDemands (新螺旋架构迭代了短时记忆树,全树更新);
  *      2021.12.27: 当H反馈成功时,把hDemand设为finish;
+ *      2022.01.08: HDemand时,非actYes状态也处理反馈 (参考24054);
  *  @bug
  *      2020.09.22: 加上cutStopStatus,避免同一waitModel被多次触发,导致BUG (参考21042);
  *      2020.12.26: GL时,waitType的判断改为bFo,因为只有bFo才携带了waitTypeDS (参考21204);
@@ -73,66 +74,70 @@
  *      2020.12.26: 在OPushM继续PM前,replaceAlg时,重新赋值JustPValues=P-C (参考21206);
  */
 +(void) feedbackTOR:(AIShortMatchModel*)model{
-    //4. 将新一帧数据报告给TOR,以进行短时记忆的更新,比如我输出行为"打",短时记忆由此知道输出"打"成功 (外循环入->推进->中循环出);
-    //2. 取出所有等待下轮的outModel (ActYes&Runing);
+    //1. 将新一帧数据报告给TOR,以进行短时记忆的更新,比如我输出行为"打",短时记忆由此知道输出"打"成功 (外循环入->推进->中循环出);
     NSMutableArray *waitModels = [[NSMutableArray alloc] init];
     for (ReasonDemandModel *root in theTC.outModelManager.getAllDemand) {
-        [waitModels addObjectsFromArray:[TOUtils getSubOutModels_AllDeep:root validStatus:@[@(TOModelStatus_ActYes)]]];
+        [waitModels addObjectsFromArray:[TOUtils getSubOutModels_AllDeep:root validStatus:nil]];
     }
     OFTitleLog(@"TOR反馈", @"\n输入M:%@\n输入P:%@\n等待中任务数:%lu",Alg2FStr(model.matchAlg),Alg2FStr(model.protoAlg),(long)waitModels.count);
     
-    //3. 判断最近一次input是否与等待中outModel相匹配 (匹配,比如吃,确定自己是否真吃了);
-    //3. 保留/更新实际发生到outModel (通过了有效判断的,将实际概念直接存留到waitModel);
+    //2. 保留/更新实际发生到outModel (通过了有效判断的,将实际概念直接存留到waitModel);
     for (TOAlgModel *waitModel in waitModels) {
         
         //3. waitModel有效检查;
+        if (!ISOK(waitModel, TOAlgModel.class) || !ISOK(waitModel.baseOrGroup, TOFoModel.class)) continue;
         if (Log4OPushM) NSLog(@"==> checkTOModel: %@",Pit2FStr(waitModel.content_p));
-        BOOL waitIsAlgAndBaseIsFo = ISOK(waitModel, TOAlgModel.class) && ISOK(waitModel.baseOrGroup, TOFoModel.class);
-        if (!waitIsAlgAndBaseIsFo) continue;
         
-        //3. 不同类型不同处理;
         //4. ============= H返回的有效判断 =============
         if (ISOK(waitModel.baseOrGroup.baseOrGroup, HDemandModel.class)) {
-            NSLog(@"========4");
+            
+            //5. HDemand即使waitModel不是actYes状态也处理反馈;
             TOFoModel *hFoModel = (TOFoModel*)waitModel.baseOrGroup;    //h解决方案;
             HDemandModel *hDemand = (HDemandModel*)hFoModel.baseOrGroup;//h需求模型
             TOAlgModel *targetAlg = (TOAlgModel*)hDemand.baseOrGroup;   //hDemand的目标alg;
             TOFoModel *targetFo = (TOFoModel*)targetAlg.baseOrGroup;    //hDemand的目标alg所在的fo;
+            
+            //6. 判断input是否与hAlg相匹配 (匹配,比如找锤子,看到锤子了);
             BOOL mIsC = [TOUtils mIsC_1:model.matchAlg.pointer c:targetAlg.content_p];
             if (Log4OPushM) NSLog(@"H有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(targetAlg.content_p),mIsC);
             if (mIsC) {
-                //1. 在ATHav时,执行到此处,说明waitModel和baseFo已完成;
+                //a. 在H时,执行到此处,说明waitModel和baseFo已完成;
                 waitModel.status = TOModelStatus_OuterBack;
                 hFoModel.status = TOModelStatus_Finish;
                 targetAlg.status = TOModelStatus_OuterBack;
                 targetAlg.feedbackAlg = model.protoAlg;
                 hDemand.status = TOModelStatus_Finish;
                 
-                //2. root设回runing
+                //b. root设回runing
                 DemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:waitModel];
                 root.status = TOModelStatus_Runing;
                 
-                //2. 重组;
+                //c. 重组;
                 [TCRegroup feedbackRegroup:targetFo];
             }
         }
         
         //7. ============= "行为输出" 和 "demand.ActYes" 和 "静默成功 的有效判断 =============
         if (ISOK(waitModel.baseOrGroup.baseOrGroup, ReasonDemandModel.class)) {
+            
+            //8. RDemand只处理ActYes状态的;
+            if (waitModel.status != TOModelStatus_ActYes) continue;
+            
+            //9. 判断input是否与等待中waitModel相匹配 (匹配,比如吃,确定自己是否真吃了);
             TOAlgModel *targetAlg = waitModel;                          //等待中的目标alg;
             TOFoModel *targetFo = (TOFoModel*)targetAlg.baseOrGroup;    //目标alg所在的fo;
             BOOL mIsC = [TOUtils mIsC_2:model.matchAlg.pointer c:targetAlg.content_p];
             if (Log4OPushM) NSLog(@"Normal有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(targetAlg.content_p),mIsC);
             if (mIsC) {
-                //1. 赋值
+                //a. 赋值
                 targetAlg.status = TOModelStatus_OuterBack;
                 targetAlg.feedbackAlg = model.protoAlg;
                 
-                //2. root设回runing
+                //b. root设回runing
                 DemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:targetAlg];
                 root.status = TOModelStatus_Runing;
                 
-                //2. 重组
+                //c. 重组
                 [TCRegroup feedbackRegroup:targetFo];
             }
         }
