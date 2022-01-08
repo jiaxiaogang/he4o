@@ -47,7 +47,7 @@
     TOModelBase *endBranch = [self bestEndBranch4Plan:scoreDic curDemand:rootDemand demandScore:demandScore];
     
     //2. 从最优路径末枝的解决方案,转给TCSolution执行 (参考24195-4);
-    double endBranchScore = [NUMTOOK([scoreDic objectForKey:endBranch.content_p]) doubleValue];
+    double endBranchScore = [NUMTOOK([scoreDic objectForKey:Pit2FStr(endBranch.content_p)]) doubleValue];
     [TCSolution solution:endBranch endScore:endBranchScore];
 }
 
@@ -70,13 +70,13 @@
     //2. 从actionFoModels找出最好的分支继续 (参考24196-示图 & 25042-6);
     TOFoModel *bestFo = nil;
     for (TOFoModel *itemFo in curDemand.actionFoModels) {
-        double itemScore = [NUMTOOK([scoreDic objectForKey:itemFo.content_p]) doubleValue];
-        double bestScore = [NUMTOOK([scoreDic objectForKey:bestFo.content_p]) doubleValue];
+        double itemScore = [NUMTOOK([scoreDic objectForKey:Pit2FStr(itemFo.content_p)]) doubleValue];
+        double bestScore = [NUMTOOK([scoreDic objectForKey:Pit2FStr(bestFo.content_p)]) doubleValue];
         if (!bestFo || itemScore > bestScore) bestFo = itemFo;
     }
     
     //3. 感性淘汰则中止深入 (判断条件 = bestFo得分 < demandScore) (参考25042-7);
-    double bestScore = [NUMTOOK([scoreDic objectForKey:bestFo.content_p]) doubleValue];
+    double bestScore = [NUMTOOK([scoreDic objectForKey:Pit2FStr(bestFo.content_p)]) doubleValue];
     if (bestScore < demandScore) return curDemand;
     
     //4. 感性未淘汰则继续深入分支 (判断条件 = bestFo得分 > demandScore) (参考25042-6);
@@ -109,6 +109,11 @@
     }
     
     //12. bestFo没有子任务subDemands可决策的,则直接执行bestFo为末枝 (参考25042-8);
+    if(bestFo.status == TOModelStatus_ActNo){
+        double tmp = [NUMTOOK([scoreDic objectForKey:Pit2FStr(bestFo.content_p)]) doubleValue];
+        NSLog(@"----bbb: %p => %f by:%@",scoreDic,tmp,Pit2FStr(bestFo.content_p));
+        NSLog(@"");
+    }
     return bestFo;
 }
 

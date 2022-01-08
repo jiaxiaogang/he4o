@@ -22,7 +22,6 @@
 +(void) solution:(TOModelBase*)endBranch endScore:(double)endScore{
     //1. 无末枝时 (可能正在ActYes等待状态),中断决策;
     if (!endBranch) return;
-    
     //2. 尝试取更多S;
     Act1 runSolutionAct = ^(DemandModel *demand){
         if (ISOK(demand, ReasonDemandModel.class)) {

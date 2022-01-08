@@ -14,6 +14,7 @@
  *  MARK:--------------------新螺旋架构score方法--------------------
  */
 +(void) score{
+    NSLog(@"新一轮 score 循环 => ");
     //1. 取当前任务 (参考24195-1);
     DemandModel *demand = [theTC.outModelManager getCanDecisionDemand];
     
@@ -42,17 +43,19 @@
  *      2021.12.21: 支持状态为WithOut的处理 (只有WithOut状态的才可能理性淘汰,不然就有可能死灰复燃);
  *      2021.12.21: 支持状态为ActNo (如为时间紧急淘汰掉) 的处理 (子解决方案全ActNo之后且WithOut的理性淘汰);
  *      2021.12.26: 支持当rDemand和hDemand已finish时不计分,并中断向子枝评分;
+ *  @param scoreDic : notnull;
  *
  *  _result 将model及其下有效的分枝评分计算,并收集到评分字典 <K=foModel,V=score>;
  */
 +(void) score_Single:(TOFoModel*)model scoreDic:(NSMutableDictionary*)scoreDic{
     //1. 数据检查;
-    if (!scoreDic) scoreDic = [[NSMutableDictionary alloc] init];
     double modelScore = 0;
     
     //===== 第0部分: foModel自身理性淘汰判断 (比如时间紧急评否后,为actNo状态) (参考24053);
     if (model.status == TOModelStatus_ActNo) {
-        [scoreDic setObject:@(INT_MIN) forKey:model.content_p];
+        [scoreDic setObject:@(INT_MIN) forKey:Pit2FStr(model.content_p)];
+        double tmp = [NUMTOOK([scoreDic objectForKey:Pit2FStr(model.content_p)]) doubleValue];
+        NSLog(@"----aaa1: %p => %f by:%@",scoreDic,tmp,Pit2FStr(model.content_p));
         return;
     }
     
@@ -74,14 +77,16 @@
             
             //4. 当H已经withOut状态,且其解决方案全部actNo时,则理性淘汰 (参考24192-H14);
             if (sh.status == TOModelStatus_WithOut && !ARRISOK(validActionFos)) {
-                [scoreDic setObject:@(INT_MIN) forKey:model.content_p];
+                [scoreDic setObject:@(INT_MIN) forKey:Pit2FStr(model.content_p)];
+                double tmp = [NUMTOOK([scoreDic objectForKey:Pit2FStr(model.content_p)]) doubleValue];
+                NSLog(@"----aaa2: %p => %f by:%@",scoreDic,tmp,Pit2FStr(model.content_p));
                 return;
             }else{
                 //4. H有解决方案时,对S竞争;
                 TOFoModel *bestSS = [self score_Multi:sh.actionFoModels scoreDic:scoreDic];
                 
                 //4. 并将竞争最高分胜者计入modelScore;
-                modelScore += [NUMTOOK([scoreDic objectForKey:bestSS.content_p]) doubleValue];
+                modelScore += [NUMTOOK([scoreDic objectForKey:Pit2FStr(bestSS.content_p)]) doubleValue];
             }
         }
     }
@@ -100,7 +105,7 @@
             TOFoModel *bestSS = [self score_Multi:sr.actionFoModels scoreDic:scoreDic];
             
             //b. 将竞争胜者计入modelScore;
-            modelScore += [NUMTOOK([scoreDic objectForKey:bestSS.content_p]) doubleValue];
+            modelScore += [NUMTOOK([scoreDic objectForKey:Pit2FStr(bestSS.content_p)]) doubleValue];
         }else{
             //12. R无解决方案时,直接将sr评分计入modelScore;
             double score = [AIScore score4MV:sr.algsType urgentTo:sr.urgentTo delta:sr.delta ratio:1.0f];
@@ -109,7 +114,9 @@
     }
     
     //13. 将求和得分,计入dic (当没有sr也没有sa子任务 = 0分);
-    [scoreDic setObject:@(modelScore) forKey:model.content_p];
+    [scoreDic setObject:@(modelScore) forKey:Pit2FStr(model.content_p)];
+    double tmp = [NUMTOOK([scoreDic objectForKey:Pit2FStr(model.content_p)]) doubleValue];
+    NSLog(@"----aaa3: %p => %f by:%@",scoreDic,tmp,Pit2FStr(model.content_p));
 }
 
 /**
@@ -131,8 +138,8 @@
         if (!bestFoModel) {
             bestFoModel = foModel;
         }else{
-            double oldScore = [NUMTOOK([scoreDic objectForKey:bestFoModel.content_p]) doubleValue];
-            double newScore = [NUMTOOK([scoreDic objectForKey:foModel.content_p]) doubleValue];
+            double oldScore = [NUMTOOK([scoreDic objectForKey:Pit2FStr(bestFoModel.content_p)]) doubleValue];
+            double newScore = [NUMTOOK([scoreDic objectForKey:Pit2FStr(foModel.content_p)]) doubleValue];
             if (newScore > oldScore) {
                 bestFoModel = foModel;
             }
