@@ -109,10 +109,11 @@
     }
     
     //12. bestFo没有子任务subDemands可决策的,则直接执行bestFo为末枝 (参考25042-8);
+    double tmp = [NUMTOOK([scoreDic objectForKey:Pit2FStr(bestFo.content_p)]) doubleValue];
+    NSLog(@"取分: %p => %.2f by:%@",bestFo,tmp,Pit2FStr(bestFo.content_p));
+    
     if(bestFo.status == TOModelStatus_ActNo){
-        double tmp = [NUMTOOK([scoreDic objectForKey:Pit2FStr(bestFo.content_p)]) doubleValue];
-        NSLog(@"----bbb: %p => %f by:%@",scoreDic,tmp,Pit2FStr(bestFo.content_p));
-        NSLog(@"");
+        WLog(@"BUG: Plan结果为已ActNo失败的!");
     }
     return bestFo;
 }

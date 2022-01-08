@@ -14,8 +14,8 @@
  *  MARK:--------------------新螺旋架构score方法--------------------
  */
 +(void) score{
-    NSLog(@"新一轮 score 循环 => ");
     //1. 取当前任务 (参考24195-1);
+    OSTitleLog(@"TCScore");
     DemandModel *demand = [theTC.outModelManager getCanDecisionDemand];
     
     //2. 对firstRootDemand取得分字典 (参考24195-2 & 24196示图);
@@ -55,7 +55,7 @@
     if (model.status == TOModelStatus_ActNo) {
         [scoreDic setObject:@(INT_MIN) forKey:Pit2FStr(model.content_p)];
         double tmp = [NUMTOOK([scoreDic objectForKey:Pit2FStr(model.content_p)]) doubleValue];
-        NSLog(@"----aaa1: %p => %f by:%@",scoreDic,tmp,Pit2FStr(model.content_p));
+        NSLog(@"评分1: %p => %.2f by:%@",model,tmp,Pit2FStr(model.content_p));
         return;
     }
     
@@ -79,7 +79,7 @@
             if (sh.status == TOModelStatus_WithOut && !ARRISOK(validActionFos)) {
                 [scoreDic setObject:@(INT_MIN) forKey:Pit2FStr(model.content_p)];
                 double tmp = [NUMTOOK([scoreDic objectForKey:Pit2FStr(model.content_p)]) doubleValue];
-                NSLog(@"----aaa2: %p => %f by:%@",scoreDic,tmp,Pit2FStr(model.content_p));
+                NSLog(@"评分2: %p => %.2f by:%@",model,tmp,Pit2FStr(model.content_p));
                 return;
             }else{
                 //4. H有解决方案时,对S竞争;
@@ -116,7 +116,7 @@
     //13. 将求和得分,计入dic (当没有sr也没有sa子任务 = 0分);
     [scoreDic setObject:@(modelScore) forKey:Pit2FStr(model.content_p)];
     double tmp = [NUMTOOK([scoreDic objectForKey:Pit2FStr(model.content_p)]) doubleValue];
-    NSLog(@"----aaa3: %p => %f by:%@",scoreDic,tmp,Pit2FStr(model.content_p));
+    NSLog(@"评分3: %p => %.2f by:%@",model,tmp,Pit2FStr(model.content_p));
 }
 
 /**
