@@ -291,4 +291,8 @@
     return result;
 }
 
++(NSString*) toModel2Key:(TOModelBase*)toModel{
+    return STRFORMAT(@"%p_%@",toModel,Pit2FStr(toModel.content_p));
+}
+
 @end

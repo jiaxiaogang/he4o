@@ -53,9 +53,8 @@
     
     //===== 第0部分: foModel自身理性淘汰判断 (比如时间紧急评否后,为actNo状态) (参考24053);
     if (model.status == TOModelStatus_ActNo) {
-        [scoreDic setObject:@(INT_MIN) forKey:Pit2FStr(model.content_p)];
-        double tmp = [NUMTOOK([scoreDic objectForKey:Pit2FStr(model.content_p)]) doubleValue];
-        NSLog(@"评分1: %p => %.2f by:%@",model,tmp,Pit2FStr(model.content_p));
+        [scoreDic setObject:@(INT_MIN) forKey:TOModel2Key(model)];
+        NSLog(@"评分1: K:%@ => V:%@分",TOModel2Key(model),[scoreDic objectForKey:TOModel2Key(model)]);
         return;
     }
     
@@ -77,16 +76,15 @@
             
             //4. 当H已经withOut状态,且其解决方案全部actNo时,则理性淘汰 (参考24192-H14);
             if (sh.status == TOModelStatus_WithOut && !ARRISOK(validActionFos)) {
-                [scoreDic setObject:@(INT_MIN) forKey:Pit2FStr(model.content_p)];
-                double tmp = [NUMTOOK([scoreDic objectForKey:Pit2FStr(model.content_p)]) doubleValue];
-                NSLog(@"评分2: %p => %.2f by:%@",model,tmp,Pit2FStr(model.content_p));
+                [scoreDic setObject:@(INT_MIN) forKey:TOModel2Key(model)];
+                NSLog(@"评分2: K:%@ => V:%@分",TOModel2Key(model),[scoreDic objectForKey:TOModel2Key(model)]);
                 return;
             }else{
                 //4. H有解决方案时,对S竞争;
                 TOFoModel *bestSS = [self score_Multi:sh.actionFoModels scoreDic:scoreDic];
                 
                 //4. 并将竞争最高分胜者计入modelScore;
-                modelScore += [NUMTOOK([scoreDic objectForKey:Pit2FStr(bestSS.content_p)]) doubleValue];
+                modelScore += [NUMTOOK([scoreDic objectForKey:TOModel2Key(bestSS)]) doubleValue];
             }
         }
     }
@@ -105,7 +103,7 @@
             TOFoModel *bestSS = [self score_Multi:sr.actionFoModels scoreDic:scoreDic];
             
             //b. 将竞争胜者计入modelScore;
-            modelScore += [NUMTOOK([scoreDic objectForKey:Pit2FStr(bestSS.content_p)]) doubleValue];
+            modelScore += [NUMTOOK([scoreDic objectForKey:TOModel2Key(bestSS)]) doubleValue];
         }else{
             //12. R无解决方案时,直接将sr评分计入modelScore;
             double score = [AIScore score4MV:sr.algsType urgentTo:sr.urgentTo delta:sr.delta ratio:1.0f];
@@ -114,9 +112,8 @@
     }
     
     //13. 将求和得分,计入dic (当没有sr也没有sa子任务 = 0分);
-    [scoreDic setObject:@(modelScore) forKey:Pit2FStr(model.content_p)];
-    double tmp = [NUMTOOK([scoreDic objectForKey:Pit2FStr(model.content_p)]) doubleValue];
-    NSLog(@"评分3: %p => %.2f by:%@",model,tmp,Pit2FStr(model.content_p));
+    [scoreDic setObject:@(modelScore) forKey:TOModel2Key(model)];
+    NSLog(@"评分3: K:%@ => V:%@分",TOModel2Key(model),[scoreDic objectForKey:TOModel2Key(model)]);
 }
 
 /**
@@ -138,8 +135,8 @@
         if (!bestFoModel) {
             bestFoModel = foModel;
         }else{
-            double oldScore = [NUMTOOK([scoreDic objectForKey:Pit2FStr(bestFoModel.content_p)]) doubleValue];
-            double newScore = [NUMTOOK([scoreDic objectForKey:Pit2FStr(foModel.content_p)]) doubleValue];
+            double oldScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(bestFoModel)]) doubleValue];
+            double newScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(foModel)]) doubleValue];
             if (newScore > oldScore) {
                 bestFoModel = foModel;
             }

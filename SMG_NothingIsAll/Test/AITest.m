@@ -102,4 +102,11 @@
     }
 }
 
++(void) test10:(TOModelBase*)toModel{
+    //plan取得结果为actNo状态的自检;
+    if(toModel.status == TOModelStatus_ActNo){
+        WLog(@"自检10: Plan结果为已ActNo状态");
+    }
+}
+
 @end

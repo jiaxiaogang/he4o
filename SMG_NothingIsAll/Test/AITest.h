@@ -19,5 +19,6 @@
 +(void) test7:(NSArray*)arr type:(AnalogyType)type;
 +(void) test8:(NSArray*)content_ps type:(AnalogyType)type;
 +(void) test9:(AIFoNodeBase*)fo type:(AnalogyType)type;
++(void) test10:(TOModelBase*)toModel;
 
 @end
