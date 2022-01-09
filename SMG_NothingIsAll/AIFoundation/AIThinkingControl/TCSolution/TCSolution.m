@@ -72,9 +72,18 @@
  *      2021.12.25: 将FRS稳定性竞争废弃,改为仅取bestSP评分,取最稳定的一条 (参考25032-4);
  *      2021.12.28: 将抽具象路径rs改为从pFos中取同标识mv部分 (参考25051);
  *      2022.01.07: 改为将整个demand.actionFoModels全加入不应期 (因为还在决策中的S会重复);
+ *      2022.01.09: 达到limit条时的处理;
  *  @callers : 用于RDemand.Begin时调用;
  */
 +(void) rSolution:(ReasonDemandModel*)demand {
+    //0. S数达到limit时设为WithOut;
+    if (demand.actionFoModels.count >= cTCSolutionBranchLimit) {
+        demand.status = TOModelStatus_WithOut;
+        [TCScore score];
+        NSLog(@">>>>>> rSolution 已达limit条");
+        return;
+    }
+    
     //1. 根据demand取;
     NSArray *validPFos = [SMGUtils filterArr:demand.inModel.matchPFos checkValid:^BOOL(AIMatchFoModel *item) {
         return [demand.mModel.matchFo.cmvNode_p.identifier isEqualToString:item.matchFo.cmvNode_p.identifier];
@@ -114,7 +123,7 @@
     if (bestRSResult) {
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
         TOFoModel *foModel = [TOFoModel newWithFo_p:bestRSResult.baseFo.pointer base:demand];
-        NSLog(@">>>>>> rSolution 新增一例解决方案: %@->%@ FRS_PK评分:%.2f",Fo2FStr(bestRSResult.baseFo),Mvp2Str(bestRSResult.baseFo.cmvNode_p),bestRSResult.score);
+        NSLog(@">>>>>> rSolution 新增第%ld例解决方案: %@->%@ FRS_PK评分:%.2f",demand.actionFoModels.count, Fo2FStr(bestRSResult.baseFo),Mvp2Str(bestRSResult.baseFo.cmvNode_p),bestRSResult.score);
         [TCAction action:foModel];
     }else{
         //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
@@ -193,7 +202,7 @@
                 
                 //b. 取自身,实现吃,则可不饿 (提交C给TOR行为化);
                 //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
-                NSLog(@"------->>>>>> P-新增一例解决方案: %@->%@",Fo2FStr(fo),Mvp2Str(fo.cmvNode_p));
+                NSLog(@">>>>>> pSolution 新增第%ld例解决方案: %@->%@",demandModel.actionFoModels.count,Fo2FStr(fo),Mvp2Str(fo.cmvNode_p));
                 [TCAction action:toFoModel];//[theTOR singleLoopBackWithBegin:toFoModel];
                 
                 //8. 只要有一次tryResult成功,中断回调循环;
@@ -214,8 +223,17 @@
  *  @version
  *      2021.11.25: 由旧有action._Hav第3级迁移而来;
  *      2021.12.25: 迭代hSolution (参考25014-H & 25015-6);
+ *      2022.01.09: 达到limit条时的处理;
  */
 +(void) hSolution:(HDemandModel*)hDemand{
+    //0. S数达到limit时设为WithOut;
+    if (hDemand.actionFoModels.count >= cTCSolutionBranchLimit) {
+        hDemand.status = TOModelStatus_WithOut;
+        [TCScore score];
+        NSLog(@"------->>>>>> HDemand 已达limit条");
+        return;
+    }
+    
     //1. 数据准备;
     AIAlgNodeBase *targetAlg = [SMGUtils searchNode:hDemand.baseOrGroup.content_p];
     AIFoNodeBase *targetFo = [SMGUtils searchNode:hDemand.baseOrGroup.baseOrGroup.content_p];
@@ -256,13 +274,13 @@
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
         TOFoModel *foModel = [TOFoModel newWithFo_p:bestRSResult.baseFo.pointer base:hDemand];
         foModel.targetSPIndex = bestRSResult.spIndex;
-        NSLog(@"------->>>>>> HDemand 新增一例解决方案: %@->%@ FRS_PK评分:%.2f",Fo2FStr(bestRSResult.baseFo),Mvp2Str(bestRSResult.baseFo.cmvNode_p),bestRSResult.score);
+        NSLog(@">>>>>> hSolution 新增第%ld例解决方案: %@->%@ FRS_PK评分:%.2f",hDemand.actionFoModels.count,Fo2FStr(bestRSResult.baseFo),Mvp2Str(bestRSResult.baseFo.cmvNode_p),bestRSResult.score);
         [TCAction action:foModel];
     }else{
         //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
         hDemand.status = TOModelStatus_WithOut;
         [TCScore score];
-        NSLog(@"------->>>>>> HDemand 无计可施");
+        NSLog(@">>>>>> hSolution 无计可施");
     }
 }
 
