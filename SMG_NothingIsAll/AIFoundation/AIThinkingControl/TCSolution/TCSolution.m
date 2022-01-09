@@ -121,6 +121,10 @@
     
     //6. 转流程控制_有解决方案则转begin;
     if (bestRSResult) {
+        //7. 消耗活跃度;
+        if ([theTC energyValid]) return;
+        [theTC updateEnergy:-1];
+        
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
         TOFoModel *foModel = [TOFoModel newWithFo_p:bestRSResult.baseFo.pointer base:demand];
         NSLog(@">>>>>> rSolution 新增第%ld例解决方案: %@->%@ FRS_PK评分:%.2f",demand.actionFoModels.count, Fo2FStr(bestRSResult.baseFo),Mvp2Str(bestRSResult.baseFo.cmvNode_p),bestRSResult.score);
@@ -194,7 +198,8 @@
             //5. 方向索引找到一条normalFo解决方案 (P例:吃可以解决饿; S例:运动导致累);
             if (![except_ps containsObject:itemMV.foNode_p]) {
                 //8. 消耗活跃度;
-                [theTC updateEnergy:-2];
+                if ([theTC energyValid]) return;
+                [theTC updateEnergy:-1];
                 AIFoNodeBase *fo = [SMGUtils searchNode:itemMV.foNode_p];
                 
                 //a. 构建TOFoModel
@@ -271,10 +276,24 @@
     
     //8. 新解决方案_的结果处理;
     if (bestRSResult) {
+        //8. 消耗活跃度;
+        if ([theTC energyValid]) return;
+        [theTC updateEnergy:-0.5f];
+        
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
         TOFoModel *foModel = [TOFoModel newWithFo_p:bestRSResult.baseFo.pointer base:hDemand];
         foModel.targetSPIndex = bestRSResult.spIndex;
-        NSLog(@">>>>>> hSolution 新增第%ld例解决方案: %@->%@ FRS_PK评分:%.2f",hDemand.actionFoModels.count,Fo2FStr(bestRSResult.baseFo),Mvp2Str(bestRSResult.baseFo.cmvNode_p),bestRSResult.score);
+        NSLog(@">>>>>> hSolution 新增第%ld例解决方案: %@->%@ FRS_PK评分:%.2f targetSPIndex:%ld",hDemand.actionFoModels.count,Fo2FStr(bestRSResult.baseFo),Mvp2Str(bestRSResult.baseFo.cmvNode_p),bestRSResult.score,foModel.targetSPIndex);
+        
+        //调试24057BUG;
+        if (foModel.content_p.pointerId == 118) {
+            [theNV invokeForceMode:^{
+                [theNV setNodeData:foModel.content_p lightStr:STRFORMAT(@"spIndex:%ld",foModel.targetSPIndex)];
+            }];
+            [theTC setEnergy:0];
+            return;
+        }
+        
         [TCAction action:foModel];
     }else{
         //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
