@@ -77,6 +77,7 @@
  */
 +(void) rSolution:(ReasonDemandModel*)demand {
     //0. S数达到limit时设为WithOut;
+    OFTitleLog(@"rSolution", @"\n任务源:%@ 已有方案数:%ld",Fo2FStr(demand.mModel.matchFo),demand.actionFoModels.count);
     if (demand.actionFoModels.count >= cTCSolutionBranchLimit) {
         demand.status = TOModelStatus_WithOut;
         [TCScore score];
@@ -117,7 +118,6 @@
             bestRSResult = checkResult;
         }
     }
-    OFTitleLog(@"rSolution", @"\n任务源:%@ 已有方案数:%ld 不应期数:%ld",Fo2FStr(demand.mModel.matchFo),demand.actionFoModels.count,except_ps.count);
     
     //6. 转流程控制_有解决方案则转begin;
     if (bestRSResult) {
@@ -132,8 +132,8 @@
     }else{
         //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
         demand.status = TOModelStatus_WithOut;
-        [TCScore score];
         NSLog(@">>>>>> rSolution 无计可施");
+        [TCScore score];
     }
 }
 
@@ -164,7 +164,13 @@
     //TODO: 2021.12.29: 此处方向索引,可以改成和rh任务一样的从pFos&rFos中取具象得来 (因为方向索引应该算脱离场景);
     MVDirection direction = [ThinkingUtils getDemandDirection:demandModel.algsType delta:demandModel.delta];
     if (!Switch4PS || direction == MVDirection_None) return;
-    OFTitleLog(@"pSolution", @"\n任务:%@,发生%ld,方向%ld",demandModel.algsType,(long)demandModel.delta,(long)direction);
+    OFTitleLog(@"pSolution", @"\n任务:%@,发生%ld,方向%ld,已有方案数:%ld",demandModel.algsType,(long)demandModel.delta,(long)direction,demandModel.actionFoModels.count);
+    if (demandModel.actionFoModels.count >= cTCSolutionBranchLimit) {
+        demandModel.status = TOModelStatus_WithOut;
+        [TCScore score];
+        NSLog(@"------->>>>>> pSolution 已达limit条");
+        return;
+    }
     
     //2. =======以下: 调用通用diff模式方法 (以下代码全是由diff模式方法迁移而来);
     //3. 不应期 (考虑改为所有actionFoModels都不应期);
@@ -218,6 +224,7 @@
     
     //9. 无计可施,下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
     demandModel.status = TOModelStatus_WithOut;
+    NSLog(@">>>>>> pSolution 无计可施");
     [TCScore score];
 }
 
@@ -233,10 +240,11 @@
  */
 +(void) hSolution:(HDemandModel*)hDemand{
     //0. S数达到limit时设为WithOut;
+    OFTitleLog(@"hSolution", @"\n目标:%@ 已有S数:%ld",Pit2FStr(hDemand.baseOrGroup.content_p),hDemand.actionFoModels.count);
     if (hDemand.actionFoModels.count >= cTCSolutionBranchLimit) {
         hDemand.status = TOModelStatus_WithOut;
         [TCScore score];
-        NSLog(@"------->>>>>> HDemand 已达limit条");
+        NSLog(@"------->>>>>> hSolution 已达limit条");
         return;
     }
     
@@ -244,7 +252,6 @@
     AIAlgNodeBase *targetAlg = [SMGUtils searchNode:hDemand.baseOrGroup.content_p];
     AIFoNodeBase *targetFo = [SMGUtils searchNode:hDemand.baseOrGroup.baseOrGroup.content_p];
     NSArray *except_ps = [TOUtils convertPointersFromTOModels:hDemand.actionFoModels];
-    OFTitleLog(@"hSolution", @"\n目标:%@",Alg2FStr(targetAlg));
     
     //2. 取自身 + 向抽象 + 向具象 (目前仅取一层,如果发现一层不够,可以改为取多层) (参考25014-H描述);
     NSMutableArray *maskFos = [[NSMutableArray alloc] init];
@@ -289,8 +296,8 @@
     }else{
         //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
         hDemand.status = TOModelStatus_WithOut;
-        [TCScore score];
         NSLog(@">>>>>> hSolution 无计可施");
+        [TCScore score];
     }
 }
 
