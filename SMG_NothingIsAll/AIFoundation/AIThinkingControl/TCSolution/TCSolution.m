@@ -122,7 +122,7 @@
     //6. 转流程控制_有解决方案则转begin;
     if (bestRSResult) {
         //7. 消耗活跃度;
-        if ([theTC energyValid]) return;
+        if (![theTC energyValid]) return;
         [theTC updateEnergy:-1];
         
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
@@ -198,7 +198,7 @@
             //5. 方向索引找到一条normalFo解决方案 (P例:吃可以解决饿; S例:运动导致累);
             if (![except_ps containsObject:itemMV.foNode_p]) {
                 //8. 消耗活跃度;
-                if ([theTC energyValid]) return;
+                if (![theTC energyValid]) return;
                 [theTC updateEnergy:-1];
                 AIFoNodeBase *fo = [SMGUtils searchNode:itemMV.foNode_p];
                 
@@ -229,6 +229,7 @@
  *      2021.11.25: 由旧有action._Hav第3级迁移而来;
  *      2021.12.25: 迭代hSolution (参考25014-H & 25015-6);
  *      2022.01.09: 达到limit条时的处理;
+ *      2022.01.09: 首条就是HAlg不能做H解决方案 (参考24057);
  */
 +(void) hSolution:(HDemandModel*)hDemand{
     //0. S数达到limit时设为WithOut;
@@ -260,10 +261,10 @@
         
         //5. 从maskFo中找targetAlg (找targetAlg 或 其抽具象概念);
         AIFoNodeBase *maskFo = [SMGUtils searchNode:maskFo_p];
-        NSInteger spIndex = [TOUtils indexOfConOrAbsItem:targetAlg.pointer atContent:maskFo.content_ps layerDiff:1 startIndex:1 endIndex:NSUIntegerMax];
+        NSInteger spIndex = [TOUtils indexOfConOrAbsItem:targetAlg.pointer atContent:maskFo.content_ps layerDiff:1 startIndex:0 endIndex:NSUIntegerMax];
         
-        //6. 如找到_则判断SP评分;
-        if (spIndex != -1) {
+        //6. 如>0则找到 (HAlg不能是首条)_则判断SP评分 (参考24057);
+        if (spIndex > 0) {
             AISPStrong *spStrong = [maskFo.spDic objectForKey:@(spIndex)];
             RSResultModelBase *checkResult = [RSResultModelBase newWithBaseFo:maskFo spIndex:spIndex pScore:spStrong.pStrong sScore:spStrong.sStrong];
             
@@ -277,23 +278,13 @@
     //8. 新解决方案_的结果处理;
     if (bestRSResult) {
         //8. 消耗活跃度;
-        if ([theTC energyValid]) return;
-        [theTC updateEnergy:-0.5f];
+        if (![theTC energyValid]) return;
+        [theTC updateEnergy:-1];
         
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
         TOFoModel *foModel = [TOFoModel newWithFo_p:bestRSResult.baseFo.pointer base:hDemand];
         foModel.targetSPIndex = bestRSResult.spIndex;
         NSLog(@">>>>>> hSolution 新增第%ld例解决方案: %@->%@ FRS_PK评分:%.2f targetSPIndex:%ld",hDemand.actionFoModels.count,Fo2FStr(bestRSResult.baseFo),Mvp2Str(bestRSResult.baseFo.cmvNode_p),bestRSResult.score,foModel.targetSPIndex);
-        
-        //调试24057BUG;
-        if (foModel.content_p.pointerId == 118) {
-            [theNV invokeForceMode:^{
-                [theNV setNodeData:foModel.content_p lightStr:STRFORMAT(@"spIndex:%ld",foModel.targetSPIndex)];
-            }];
-            [theTC setEnergy:0];
-            return;
-        }
-        
         [TCAction action:foModel];
     }else{
         //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
