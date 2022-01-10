@@ -51,7 +51,6 @@
     if (delta == 0) {
         return;
     }
-    ISTitleLog(@"生成P任务");
     
     //2. 去重_同向撤弱,反向抵消;
     BOOL canNeed = true;
@@ -142,7 +141,6 @@
 -(void) updateCMVCache_RMV:(AIShortMatchModel*)inModel{
     //1. 数据检查;
     if (!inModel || !inModel.protoFo || !ARRISOK(inModel.matchPFos) || !Switch4RS) return;
-    ISTitleLog(@"生成R任务");
     
     //2. 多时序识别预测分别进行处理;
     for (NSInteger i = 0; i < inModel.matchPFos.count; i++) {

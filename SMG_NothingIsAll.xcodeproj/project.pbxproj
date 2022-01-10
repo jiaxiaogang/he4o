@@ -361,6 +361,7 @@
 		0892BAE52776D6920024B43C /* TCRethink.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCRethink.m; sourceTree = "<group>"; };
 		0892BAEB277808F80024B43C /* TCActYes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCActYes.h; sourceTree = "<group>"; };
 		0892BAEC277808F80024B43C /* TCActYes.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCActYes.m; sourceTree = "<group>"; };
+		0893B80D278BC38A00B5C860 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		0895FFE2264A13C500DAD3EA /* TOModelVision.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOModelVision.h; sourceTree = "<group>"; };
 		0895FFE3264A13C500DAD3EA /* TOModelVision.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOModelVision.m; sourceTree = "<group>"; };
 		089614A6219A4D5200343FAC /* BirdGrowPage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BirdGrowPage.h; sourceTree = "<group>"; };
@@ -1206,6 +1207,7 @@
 		08E65A0722F3BAE3009ED1CF /* CortexAlgorithms */ = {
 			isa = PBXGroup;
 			children = (
+				0893B80D278BC38A00B5C860 /* README.md */,
 				08E8CF5F25B2F6B600AA18DB /* Imv */,
 				08E65A0822F3BAF8009ED1CF /* Vision */,
 			);

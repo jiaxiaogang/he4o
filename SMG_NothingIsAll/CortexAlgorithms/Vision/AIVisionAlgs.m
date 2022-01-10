@@ -30,7 +30,7 @@
     views = [SMGUtils filterArr:views checkValid:^BOOL(UIView *item) {
         return item.tag == visibleTag && item.alpha > 0;
     }];
-    if (ARRISOK(views)) ISTitleLog(@"皮层算法");
+    if (ARRISOK(views)) ISTitleLog(@"感官算法");
     
     //2. 生成model
     for (HEView *curView in views) {
