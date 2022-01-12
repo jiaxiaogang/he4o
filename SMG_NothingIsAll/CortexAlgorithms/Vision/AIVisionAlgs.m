@@ -50,7 +50,7 @@
             model.posX = [self posX:curView];
             model.posY = [self posY:curView];
             //NSLog(@"视觉目标 [距离:%ld 角度:%f 宽:%f 高:%f 皮:%f 圆角:%f]",(long)model.distance,model.direction,model.sizeWidth,model.sizeHeight,model.border,model.radius);
-            NSLog(@"视觉目标 [距离:%ld 角度:%f 高:%f 皮:%f]",(long)model.distance,model.direction,model.sizeHeight,model.border);
+            NSLog(@"视觉目标 [距离:%ld 角度:%f 高:%ld 皮:%ld]",(long)model.distance,model.direction,model.sizeHeight,model.border);
             NSMutableDictionary *modelDic = [NSObject getDic:model containParent:true];
             //for (NSString *key in modelDic.allKeys) {
             //    if ([NUMTOOK([modelDic objectForKey:key]) isEqualToNumber:@(0)]) {
@@ -70,12 +70,12 @@
 //MARK:===============================================================
 
 //size
-+(CGFloat) sizeWidth:(UIView*)target{
-    if (target) return target.showW;
++(NSInteger) sizeWidth:(UIView*)target{
+    if (target) return (int)target.showW;
     return 0;
 }
-+(CGFloat) sizeHeight:(UIView*)target{
-    if (target) return target.showH;
++(NSInteger) sizeHeight:(UIView*)target{
+    if (target) return (int)target.showH;
     return 0;
 }
 
@@ -96,8 +96,8 @@
 }
 
 //radius
-+(CGFloat) radius:(UIView*)target{
-    if (target) return target.layer.cornerRadius;
++(NSInteger) radius:(UIView*)target{
+    if (target) return (int)(target.layer.cornerRadius * 100);//精度100
     return 0;
 }
 
@@ -222,8 +222,8 @@
 }
 
 //border
-+(CGFloat) border:(UIView*)target{
-    if (target) return target.layer.borderWidth;
++(NSInteger) border:(UIView*)target{
+    if (target) return (int)(target.layer.borderWidth * 100);//精度100
     return 0;
 }
 

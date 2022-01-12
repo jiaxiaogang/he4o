@@ -175,6 +175,10 @@
         AIAlgNodeBase *result = [SMGUtils searchNode:key_p];
         int matchingCount = [NUMTOOK([countDic objectForKey:key]) intValue];
         
+        //TODOTOMORROW20220112: 迭代为matchValue (参考25073-3);
+        
+        
+        
         //6. 判断全含; (matchingCount == assAlg.content.count) (且只能识别为抽象节点)
         if (ISOK(result, AIAbsAlgNode.class) && result.content_ps.count == matchingCount) {
             [matchAlgs addObject:result];

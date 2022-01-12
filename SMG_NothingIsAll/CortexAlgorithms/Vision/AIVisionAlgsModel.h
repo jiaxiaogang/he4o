@@ -18,8 +18,8 @@
 @interface AIVisionAlgsModel : NSObject
 
 //size
-//@property (assign,nonatomic) CGFloat sizeWidth;
-@property (assign,nonatomic) CGFloat sizeHeight;
+//@property (assign,nonatomic) NSInteger sizeWidth;
+@property (assign,nonatomic) NSInteger sizeHeight;
 
 //color
 //@property (assign,nonatomic) NSInteger colorRed;
@@ -27,7 +27,7 @@
 //@property (assign,nonatomic) NSInteger colorBlue;
 
 //radius
-//@property (assign,nonatomic) CGFloat radius;
+//@property (assign,nonatomic) NSInteger radius;
 
 //speed
 //@property (assign,nonatomic) NSInteger speed;
@@ -40,7 +40,7 @@
 @property (assign,nonatomic) NSInteger distanceY;
 
 //border
-@property (assign,nonatomic) CGFloat border;
+@property (assign,nonatomic) NSInteger border;
 
 //20190723: originX和originY由direction和distance替代;
 //20200317: 二测训练时,再打开,与distance共存,并更名为posX/Y;
