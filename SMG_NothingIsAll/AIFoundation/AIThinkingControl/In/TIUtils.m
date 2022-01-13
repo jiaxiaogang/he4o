@@ -143,6 +143,11 @@
     //2. 对每个微信息,取被引用的强度前cPartMatchingCheckRefPortsLimit个;
     for (AIKVPointer *item_p in protoAlg.content_ps) {
         
+        //TODOTOMORROW20220113: 迭代支持相近匹配 (参考25082);
+        //1. 查下装箱代码,封装一个支持取索引序列delta相近度排序,并取到此处用来分别取refPorts;
+        
+        
+        
         //1> 数据准备 (value_p的refPorts是单独存储的);
         NSArray *refPorts = [SMGUtils filterPorts_Normal:[AINetUtils refPorts_All4Value:item_p isMem:isMem]];
         refPorts = ARR_SUB(refPorts, 0, cPartMatchingCheckRefPortsLimit_Alg);
@@ -174,10 +179,6 @@
         AIKVPointer *key_p = DATA2OBJ(key);
         AIAlgNodeBase *result = [SMGUtils searchNode:key_p];
         int matchingCount = [NUMTOOK([countDic objectForKey:key]) intValue];
-        
-        //TODOTOMORROW20220112: 迭代为matchValue (参考25073-3);
-        
-        
         
         //6. 判断全含; (matchingCount == assAlg.content.count) (且只能识别为抽象节点)
         if (ISOK(result, AIAbsAlgNode.class) && result.content_ps.count == matchingCount) {
