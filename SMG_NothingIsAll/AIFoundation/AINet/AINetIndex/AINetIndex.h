@@ -38,6 +38,11 @@
  */
 +(NSNumber*) getData:(AIKVPointer*)value_p;
 
+/**
+ *  MARK:--------------------获取mask相近序列--------------------
+ */
++(NSArray*) getNearValues:(AIKVPointer*)maskValue_p;
+
 @end
 
 
