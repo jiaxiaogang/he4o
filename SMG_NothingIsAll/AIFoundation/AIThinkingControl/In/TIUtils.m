@@ -145,7 +145,8 @@
         
         //TODOTOMORROW20220113: 迭代支持相近匹配 (参考25082);
         //1. 查下装箱代码,封装一个支持取索引序列delta相近度排序,并取到此处用来分别取refPorts;
-        
+        //2. 此处nears仅保证提供min条有效的refPorts (参考25082-结果);
+        NSArray *nears = [AINetIndex getNearValues:item_p];
         
         
         //1> 数据准备 (value_p的refPorts是单独存储的);
