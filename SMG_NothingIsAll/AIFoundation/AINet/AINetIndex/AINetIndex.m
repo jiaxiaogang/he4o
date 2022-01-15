@@ -101,9 +101,6 @@
     
     //4. 计算值域;
     double span = maxData.doubleValue - minData.doubleValue;
-    if (span < 0) {
-        WLog(@"值域不能为负,查是否min和max取反了");
-    }
     return span;
 }
 

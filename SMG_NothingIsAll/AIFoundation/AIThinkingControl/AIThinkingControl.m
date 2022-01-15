@@ -87,7 +87,7 @@ static AIThinkingControl *_instance;
         AIAlgNodeBase *algNode = [theNet createAbsAlg_NoRepeat:algsArr conAlgs:nil isMem:true isOut:false at:nil ds:nil type:ATDefault];
         
         //2. 加入瞬时记忆 & 识别等;
-        [TCInput rInput:algNode fromGroup_ps:@[algNode.pointer]];
+        [TCInput rInput:algNode except_ps:nil];
     }
 }
 
@@ -138,7 +138,7 @@ static AIThinkingControl *_instance;
     
     //6. NoMv处理;
     for (AIKVPointer *alg_p in fromGroup_ps) {
-        [TCInput rInput:[SMGUtils searchNode:alg_p] fromGroup_ps:fromGroup_ps];
+        [TCInput rInput:[SMGUtils searchNode:alg_p] except_ps:[SMGUtils removeSub_p:alg_p parent_ps:fromGroup_ps]];
     }
 }
 
@@ -166,7 +166,7 @@ static AIThinkingControl *_instance;
     AIAbsAlgNode *outAlg = [theNet createAbsAlg_NoRepeat:value_ps conAlgs:nil isMem:false isOut:true at:nil type:ATDefault];
     
     //3. 提交到ThinkIn进行识别_加瞬时记忆 & 进行识别
-    [TCInput rInput:outAlg fromGroup_ps:@[outAlg.pointer]];
+    [TCInput rInput:outAlg except_ps:nil];
 }
 
 

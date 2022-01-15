@@ -31,14 +31,14 @@
  *      20211016 - 将预测调整到R决策之后,因为R决策总会卡住,而预测中将来的UI变化迟迟不来 (参考24058-方案1);
  *      20211017 - 在执行决策前,先到OPushM将TIModel.status更新了,因为有些IRT触发器已经失效了 (参考24061);
  */
-+(void) rInput:(AIAlgNodeBase*)algNode fromGroup_ps:(NSArray*)fromGroup_ps{
++(void) rInput:(AIAlgNodeBase*)algNode except_ps:(NSArray*)except_ps{
     //1. 数据准备 (瞬时记忆,理性匹配出的模型);
     __block AIShortMatchModel *mModel = [[AIShortMatchModel alloc] init];
     mModel.protoAlg = algNode;
     mModel.inputTime = [[NSDate date] timeIntervalSince1970];
     
     //2. 识别概念;
-    [TIUtils TIR_Alg:algNode.pointer fromGroup_ps:fromGroup_ps complete:^(NSArray *_matchAlgs, NSArray *_partAlgs) {
+    [TIUtils TIR_Alg:algNode.pointer except_ps:except_ps complete:^(NSArray *_matchAlgs, NSArray *_partAlgs) {
         mModel.matchAlgs = _matchAlgs;
         mModel.partAlgs = _partAlgs;
     }];

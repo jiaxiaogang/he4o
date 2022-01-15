@@ -43,7 +43,7 @@
  *      20201022: 将seem的抽象搬过来,且支持三种关联处理 (参考21091-蓝绿黄三种线);
  *  @param complete : 共支持三种返回: 匹配效果从高到低分别为:fuzzyAlg废弃,matchAlg全含,seemAlg局部;
  */
-+(void) TIR_Alg:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps complete:(void(^)(NSArray *matchAlgs,NSArray *partAlgs))complete{
++(void) TIR_Alg:(AIKVPointer*)algNode_p except_ps:(NSArray*)except_ps complete:(void(^)(NSArray *matchAlgs,NSArray *partAlgs))complete{
     //1. 数据准备
     AIAlgNodeBase *protoAlg = [SMGUtils searchNode:algNode_p];
     if (protoAlg == nil) return;
@@ -62,11 +62,11 @@
     ///190625放开,因采用内存网络后,靠这识别;
     ///200116注掉,因为识别仅是建立抽象关联,此处会极易匹配到内存中大量的具象alg,导致无法建立关联,而在硬盘网络时,这种几率则低许多;
     //if (!assAlgNode) {
-    //    assAlgNode = [AINetIndexUtils partMatching_Alg:algNode isMem:true except_ps:fromGroup_ps];
+    //    assAlgNode = [AINetIndexUtils partMatching_Alg:algNode isMem:true except_ps:except_ps];
     //}
     
     ///4. 局部匹配 (Abs匹配 和 Seem匹配);
-    [self partMatching_Alg:protoAlg isMem:false except_ps:fromGroup_ps complete:^(NSArray *_matchAlgs, NSArray *_partAlgs) {
+    [self partMatching_Alg:protoAlg isMem:false except_ps:except_ps complete:^(NSArray *_matchAlgs, NSArray *_partAlgs) {
         [matchAlgs addObjectsFromArray:_matchAlgs];
         partAlgs = _partAlgs;
     }];
@@ -98,7 +98,7 @@
     
     //3. 全含时,可进行模糊匹配 (Fuzzy匹配) //因TOR未支持fuzzy,故目前仅将最相似的fuzzy放到AIShortMatchModel中当matchAlg用;
     //if (matchType == MatchType_Abs) {
-    //    NSArray *fuzzys = ARRTOOK([self matchAlg2FuzzyAlgV2:algNode matchAlg:assAlgNode except_ps:fromGroup_ps]);
+    //    NSArray *fuzzys = ARRTOOK([self matchAlg2FuzzyAlgV2:algNode matchAlg:assAlgNode except_ps:except_ps]);
     //    AIAlgNodeBase *fuzzyAlg = ARR_INDEX(fuzzys, 0);
     //    //a. 模糊匹配有效时,增强关联,并截胡;
     //    if (fuzzyAlg) {
@@ -107,10 +107,6 @@
     //        matchType = MatchType_Fuzzy;
     //    }
     //}
-    
-    //4. 调试日志
-    NSLog(@"--->>> 概念识别Finish 全含:\n%@",Pits2FStr_MultiLine(Nodes2Pits(matchAlgs)));
-    NSLog(@"--->>> 概念识别Finish 局部:\n%@",Pits2FStr_MultiLine(Nodes2Pits(ARR_SUB(partAlgs, 0, 3))));
     complete(matchAlgs,partAlgs);
 }
 
@@ -132,6 +128,7 @@
  *      2020.11.18 - 支持多全含识别 (将所有全含matchAlgs返回) (参考21145方案1);
  *      2020.11.18 - partAlgs将matchAlgs移除掉,仅保留非全含的部分;
  *      2022.01.13 - 迭代支持相近匹配 (参考25082 & 25083);
+ *      2022.01.15 - 识别结果可为自身: 比如(飞↑)如果不识别自身,又全局防重,就识别不到最全含最相近匹配结果了;
  */
 +(void) partMatching_Alg:(AIAlgNodeBase*)protoAlg isMem:(BOOL)isMem except_ps:(NSArray*)except_ps complete:(void(^)(NSArray *matchAlgs,NSArray *partAlgs))complete{
     //1. 数据准备;
@@ -166,8 +163,7 @@
             //7. 每个refPort做两件事:
             for (AIPort *refPort in refPorts) {
                 
-                //8. 自身 | 不应期 -> 不可激活;
-                if ([refPort.target_p isEqual:protoAlg.pointer]) continue;
+                //8. 不应期 -> 不可激活;
                 if ([SMGUtils containsSub_p:refPort.target_p parent_ps:except_ps]) continue;
                 
                 //9. 第1_统计匹配度;
@@ -213,9 +209,10 @@
         }
     }
     
-    //16. 未将全含返回,则返回最相似;
-    //2020.10.22: 全含返回,也要返回seemAlg;
-    if (Log4MAlg) NSLog(@"识别结果 >> 总数:%ld = 全含:%ld + 非全含数:%ld",sortKeys.count,matchAlgs.count,partAlgs.count);
+    //16. 未将全含返回,则返回最相似 (2020.10.22: 全含返回,也要返回seemAlg) (2022.01.15: 支持相近匹配后,全是全含没局部了);
+    NSLog(@"\n识别结果 >> 总数:%ld = 全含匹配数:%ld + 局部匹配数:%ld",sortKeys.count,matchAlgs.count,partAlgs.count);
+    for (AIAlgNodeBase *item in matchAlgs) NSLog(@"-->>> 全含item: %@   \t相近度 => %.2f",Alg2FStr(item),[NUMTOOK([sumNearVDic objectForKey:OBJ2DATA(item.pointer)]) doubleValue] / [NUMTOOK([countDic objectForKey:OBJ2DATA(item.pointer)]) intValue]);
+    for (AIAlgNodeBase *item in partAlgs) NSLog(@"-->>> 局部item: %@",Alg2FStr(item));
     complete(matchAlgs,partAlgs);
 }
 
