@@ -9,6 +9,7 @@
 #import "AINetIndex.h"
 #import "PINCache.h"
 #import "XGRedisUtil.h"
+#import "AINetIndexUtils.h"
 
 @implementation AINetIndex
 
@@ -20,25 +21,11 @@
     if (!ISOK(data, NSNumber.class)) {
         return nil;
     }
-    AIKVPointer *index_p = [SMGUtils createPointerForIndex];
     AIKVPointer *data_p = [SMGUtils createPointerForData:algsType dataSource:dataSource isOut:isOut];
-    NSMutableArray *indexModels = [[NSMutableArray alloc] initWithArray:ARRTOOK([SMGUtils searchObjectForPointer:index_p fileName:kFNIndex(isOut) time:cRTIndex])];//加载索引序列
     NSMutableDictionary *dataDic = [[NSMutableDictionary alloc] initWithDictionary:DICTOOK([SMGUtils searchObjectForPointer:data_p fileName:kFNData(isOut) time:cRTData])];//加载微信息值字典(key为pointer.filePath)
     
-    //2. 查找model,没则new
-    AINetIndexModel *model = nil;
-    for (AINetIndexModel *itemModel in indexModels) {
-        if ([STRTOOK(algsType) isEqualToString:itemModel.algsType] && [STRTOOK(dataSource) isEqualToString:itemModel.dataSource]) {
-            model = itemModel;
-            break;
-        }
-    }
-    if (model == nil) {
-        model = [[AINetIndexModel alloc] init];
-        model.algsType = algsType;
-        model.dataSource = dataSource;
-        [indexModels addObject:model];
-    }
+    //2. 取indexModel
+    AINetIndexModel *model = [AINetIndexUtils searchIndexModel:algsType ds:dataSource isOut:isOut];
     
     //3. 使用二分法查找data
     __block AIKVPointer *resultPointer;
@@ -69,7 +56,7 @@
         }
         
         //5. 存
-        [SMGUtils insertObject:indexModels pointer:index_p fileName:kFNIndex(isOut) time:cRTIndex];
+        [AINetIndexUtils insertIndexModel:model isOut:isOut];
         [SMGUtils insertObject:dataDic pointer:data_p fileName:kFNData(isOut) time:cRTData];
     }];
     
@@ -111,6 +98,34 @@
     NSArray *sort = [model.pointerIds sortedArrayUsingComparator:^NSComparisonResult(NSNumber *o1, NSNumber *o2) {
         double data1 = [NUMTOOK([dataDic objectForKey:STRFORMAT(@"%@",o1)]) doubleValue];
         double data2 = [NUMTOOK([dataDic objectForKey:STRFORMAT(@"%@",o2)]) doubleValue];
+        double near1 = fabs(data1 - maskData);
+        double near2 = fabs(data2 - maskData);
+        return [SMGUtils compareDoubleA:near2 doubleB:near1];
+    }];
+    
+    //5. 转为稀疏码指针数组返回;
+    NSArray *result = [SMGUtils convertArr:sort convertBlock:^id(NSNumber *obj) {
+        return [SMGUtils createPointerForValue:[NUMTOOK(obj) longValue] algsType:at dataSource:ds isOut:isOut];
+    }];
+    return result;
+}
+
++(double) getMaxSubMin:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
+    //1. 取索引序列;
+    AINetIndexModel *model = [AINetIndexUtils searchIndexModel:at ds:ds isOut:isOut];
+    
+    //2. 取出最大最小pointerId;
+    long minPId = [NUMTOOK(ARR_INDEX(model.pointerIds, 0)) longValue];
+    long maxPId = [NUMTOOK(ARR_INDEX_REVERSE(model.pointerIds, 0)) longValue];
+    
+    
+    //3. TODO: 把createPointerForData封装到AINetIndexUtils中.... & 继续写完此处方法;
+    
+    double data1 = [NUMTOOK([dataDic objectForKey:STRFORMAT(@"%@",o1)]) doubleValue];
+    double data2 = [NUMTOOK([dataDic objectForKey:STRFORMAT(@"%@",o2)]) doubleValue];
+    
+    NSArray *sort = [model.pointerIds sortedArrayUsingComparator:^NSComparisonResult(NSNumber *o1, NSNumber *o2) {
+        
         double near1 = fabs(data1 - maskData);
         double near2 = fabs(data2 - maskData);
         return [SMGUtils compareDoubleA:near2 doubleB:near1];

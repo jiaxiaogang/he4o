@@ -33,4 +33,13 @@
  */
 +(id) getAbsoluteMatching_ValidPorts:(NSArray*)validPorts sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type;
 
+//MARK:===============================================================
+//MARK:                     < 索引序列 >
+//MARK:===============================================================
+/**
+ *  MARK:--------------------获取索引序列--------------------
+ */
++(AINetIndexModel*) searchIndexModel:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;
++(void) insertIndexModel:(AINetIndexModel*)model isOut:(BOOL)isOut;
+
 @end

@@ -77,4 +77,47 @@
     return nil;
 }
 
+//MARK:===============================================================
+//MARK:                     < 索引序列 >
+//MARK:===============================================================
+/**
+ *  MARK:--------------------获取索引序列--------------------
+ *  @desc 取现有索引序列 (无则新建);
+ *  @result notnull
+ */
++(AINetIndexModel*) searchIndexModel:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut{
+    //1. 取出所有索引序列;
+    NSMutableArray *indexModels = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:[SMGUtils createPointerForIndex] fileName:kFNIndex(isOut) time:cRTIndex]];
+    
+    //2. 找出同标识相符的;
+    AINetIndexModel *model = ARR_INDEX([SMGUtils filterArr:indexModels checkValid:^BOOL(AINetIndexModel *item) {
+        return [item.algsType isEqualToString:at] && [item.dataSource isEqualToString:ds];
+    }], 0);
+    
+    //3. 找不到则新建
+    if (model == nil) {
+        model = [[AINetIndexModel alloc] init];
+        model.algsType = at;
+        model.dataSource = ds;
+        [indexModels addObject:model];
+    }
+    return model;
+}
+
++(void) insertIndexModel:(AINetIndexModel*)model isOut:(BOOL)isOut{
+    //1. 取出所有索引序列;
+    NSMutableArray *models = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:[SMGUtils createPointerForIndex] fileName:kFNIndex(isOut) time:cRTIndex]];
+    
+    //2. 将旧同标识model移除;
+    models = [SMGUtils filterArr:models checkValid:^BOOL(AINetIndexModel *item) {
+        return ![item.dataSource isEqualToString:model.dataSource] || ![item.algsType isEqualToString:model.algsType];
+    }];
+    
+    //3. 将新的model加入;
+    [models addObject:model];
+    
+    //4. 存新models;
+    [SMGUtils insertObject:models pointer:[SMGUtils createPointerForIndex] fileName:kFNIndex(isOut) time:cRTIndex];
+}
+
 @end
