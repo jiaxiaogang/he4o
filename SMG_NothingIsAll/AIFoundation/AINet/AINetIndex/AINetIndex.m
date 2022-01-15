@@ -100,7 +100,11 @@
     if (!NUMISOK(minData) || !NUMISOK(maxData)) return 0;
     
     //4. 计算值域;
-    return maxData.doubleValue - minData.doubleValue;
+    double span = maxData.doubleValue - minData.doubleValue;
+    if (span < 0) {
+        WLog(@"值域不能为负,查是否min和max取反了");
+    }
+    return span;
 }
 
 //MARK:===============================================================

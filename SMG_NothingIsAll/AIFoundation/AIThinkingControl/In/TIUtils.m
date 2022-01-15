@@ -131,63 +131,64 @@
  *      2020.10.22 - 支持matchAlg和seemAlg二者都返回 (参考21091);
  *      2020.11.18 - 支持多全含识别 (将所有全含matchAlgs返回) (参考21145方案1);
  *      2020.11.18 - partAlg_ps将matchAlgs移除掉,仅保留非全含的部分;
+ *      2022.01.13 - 迭代支持相近匹配 (参考25082 & 25083);
  */
 +(void) partMatching_Alg:(AIAlgNodeBase*)protoAlg isMem:(BOOL)isMem except_ps:(NSArray*)except_ps complete:(void(^)(NSArray *matchAlgs,NSArray *partAlg_ps))complete{
     //1. 数据准备;
     if (!ISOK(protoAlg, AIAlgNodeBase.class)) return;
-    except_ps = ARRTOOK(except_ps);
-    NSMutableArray *matchAlgs = [[NSMutableArray alloc] init];
-    NSArray *partAlg_ps = nil;
-    NSMutableDictionary *countDic = [[NSMutableDictionary alloc] init];
+    except_ps = ARRTOOK(except_ps);                                     //不应期
+    NSMutableArray *matchAlgs = [[NSMutableArray alloc] init];          //用来收集全含匹配结果;
+    NSArray *partAlg_ps = nil;                                          //用来收集局部匹配结果;
+    NSMutableDictionary *countDic = [[NSMutableDictionary alloc] init]; //匹配度计数字典;
     
-    //2. 对每个微信息,取被引用的强度前cPartMatchingCheckRefPortsLimit个;
+    //2. 对每个protoAlg的元素取索引序列,并计算相近度 <key=near_p,value=nearV值>;
+    NSMutableDictionary *nearVDic = [[NSMutableDictionary alloc] init];
+    
+    //3. 广入: 对每个元素,分别收集refPorts,最终再进行交集 (参考25083-1);
     for (AIKVPointer *item_p in protoAlg.content_ps) {
         
-        //TODOTOMORROW20220113: 迭代支持相近匹配 (参考25082);
-        //2. 取当前稀疏码值;
-        double maskData = [NUMTOOK([AINetIndex getData:item_p]) doubleValue];
+        //4. 数据准备;
+        NSMutableArray *refPorts = [[NSMutableArray alloc] init];                                           //用来收集当前元素下所有的refPorts (参考25083-1);
+        double maskData = [NUMTOOK([AINetIndex getData:item_p]) doubleValue];                               //取当前稀疏码值;
+        double span = [AINetIndex getIndexSpan:item_p.algsType ds:item_p.dataSource isOut:item_p.isOut];    //获取当前码所在索引序列的值域 (参考25082-公式1);
+        NSArray *near_ps = [AINetIndex getIndex_ps:item_p.algsType ds:item_p.dataSource isOut:item_p.isOut];//取当前元素的所在的索引序列;
         
-        //3. 获取当前码所在索引序列的值域 (参考25082-公式1);
-        double span = [AINetIndex getIndexSpan:item_p.algsType ds:item_p.dataSource isOut:item_p.isOut];
-        if (span < 0) {
-            WLog(@"值域不为负!!");
-        }
-        
-        //4. 分别收集当前码所在索引序列的refPorts (参考25083-1);
-        NSArray *index_ps = [AINetIndex getIndex_ps:item_p.algsType ds:item_p.dataSource isOut:item_p.isOut];
-        for (AIKVPointer *index_p in index_ps) {
+        //5. 每个near_p做两件事:
+        for (AIKVPointer *near_p in near_ps) {
             
-            //5. 计算出nearV (参考25082-公式1);
-            double indexData = [NUMTOOK([AINetIndex getData:index_p]) doubleValue];
-            double delta = fabs(maskData - indexData);
+            //6. 第1_计算出nearV (参考25082-公式1);
+            double nearData = [NUMTOOK([AINetIndex getData:near_p]) doubleValue];
+            double delta = fabs(maskData - nearData);
             double nearV = (span == 0) ? 1 : (1 - delta / span);
+            [nearVDic setObject:@(nearV) forKey:OBJ2DATA(near_p)];
             
-            
-            
-            
-            
-            
+            //7. 第2_收集near_p的refPorts (参考25083-1);
+            NSArray *nearRefPorts = [SMGUtils filterPorts_Normal:[AINetUtils refPorts_All4Value:near_p isMem:isMem]];
+            nearRefPorts = ARR_SUB(nearRefPorts, 0, cPartMatchingCheckRefPortsLimit_Alg);
+            [refPorts addObjectsFromArray:nearRefPorts];
         }
+        if (Log4MAlg) NSLog(@"当前item_p:%@ --ref数量:%lu",[NVHeUtil getLightStr:item_p],(unsigned long)refPorts.count);
         
-        
-        //1> 数据准备 (value_p的refPorts是单独存储的);
-        NSArray *refPorts = [SMGUtils filterPorts_Normal:[AINetUtils refPorts_All4Value:item_p isMem:isMem]];
-        refPorts = ARR_SUB(refPorts, 0, cPartMatchingCheckRefPortsLimit_Alg);
-        if (Log4MAlg) NSLog(@"当前item_p:%@ -------------------数量:%lu",[NVHeUtil getLightStr:item_p],(unsigned long)refPorts.count);
-        //3. 进行计数
+        //8. 对refPorts进行计数,用于局部匹配与全含验证;
         for (AIPort *refPort in refPorts) {
             
-            //2> 自身 | 不应期 -> 不可激活;
+            //9. 自身 | 不应期 -> 不可激活;
             if ([refPort.target_p isEqual:protoAlg.pointer]) continue;
             if ([SMGUtils containsSub_p:refPort.target_p parent_ps:except_ps]) continue;
             
-            //3> 计数;
+            //10. 计数;
             NSData *key = OBJ2DATA(refPort.target_p);
             int oldCount = [NUMTOOK([countDic objectForKey:key]) intValue];
             [countDic setObject:@(oldCount + 1) forKey:key];
         }
-        if (Log4MAlg) if (countDic.count) NSLog(@"匹配情况: %@ -----------------",countDic.allValues);
+        if (Log4MAlg) if (countDic.count) NSLog(@"计数字典匹配情况: %@ ------",countDic.allValues);
     }
+    
+    
+    //TODOTOMORROW20220115: 支持相近度排序;
+    //1. 全含按相近度nearA排序;
+    //2. 局部按相近度nearA * matchValue排序;
+    
     
     //4. 排序相似数从大到小;
     NSArray *sortKeys = ARRTOOK([countDic.allKeys sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
