@@ -13,7 +13,7 @@
 //MARK:===============================================================
 //MARK:                     < 概念识别 >
 //MARK:===============================================================
-+(void) TIR_Alg:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps complete:(void(^)(NSArray *matchAlgs,NSArray *partAlg_ps))complete;
++(void) TIR_Alg:(AIKVPointer*)algNode_p fromGroup_ps:(NSArray*)fromGroup_ps complete:(void(^)(NSArray *matchAlgs,NSArray *partAlgs))complete;
 
 
 //MARK:===============================================================

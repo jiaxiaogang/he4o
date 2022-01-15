@@ -22,7 +22,7 @@
  *      1. 支持多条matchAlg,多条matchFo,将fuzzys独立列出;
  *      2. 在多条matchFo.mv价值预测下,可以相应的跑多个正向反馈类比,和反向反馈类比;
  *  @version
- *      2020.10.30: 将seemAlg改成partAlg_ps,即将所有相似返回 (参考21113-步骤1);
+ *      2020.10.30: 将seemAlg改成partAlgs,即将所有相似返回 (参考21113-步骤1);
  */
 @interface AIShortMatchModel : NSObject
 
@@ -48,9 +48,9 @@
  *  @desc 排序方式: 仅按照matchCount排序 (不含全含部分);
  *  @todo
  *      2020.11.18: 随后可考虑,将是否"全含"作为第一排序标准,matchCount作为第二排序标准 (转至下条);
- *      2020.11.18: 随后可考虑,是否将"全含"部分移出去,此处仅保留partAlg_ps即可 T;
+ *      2020.11.18: 随后可考虑,是否将"全含"部分移出去,此处仅保留partAlgs即可 T;
  */
-@property (strong, nonatomic) NSArray *partAlg_ps;
+@property (strong, nonatomic) NSArray *partAlgs;
 @property (assign, nonatomic) NSTimeInterval inputTime; //原始概念输入时间
 
 

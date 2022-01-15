@@ -49,8 +49,9 @@
         if (isMatch) {
             if (mModel.matchAlg) {
                 itemAlg_p = mModel.matchAlg.pointer;
-            }else if(ARRISOK(mModel.partAlg_ps)){
-                itemAlg_p = ARR_INDEX(mModel.partAlg_ps, 0);
+            }else if(ARRISOK(mModel.partAlgs)){
+                AIAlgNodeBase *firstPartAlg = ARR_INDEX(mModel.partAlgs, 0);
+                itemAlg_p = firstPartAlg.pointer;
             }
         }
         if (!itemAlg_p) itemAlg_p = mModel.protoAlg.pointer;
