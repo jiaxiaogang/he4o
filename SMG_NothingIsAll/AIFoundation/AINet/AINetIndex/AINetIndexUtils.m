@@ -81,7 +81,7 @@
 //MARK:                     < 索引序列 >
 //MARK:===============================================================
 /**
- *  MARK:--------------------获取索引序列--------------------
+ *  MARK:--------------------索引序列--------------------
  *  @desc 取现有索引序列 (无则新建);
  *  @result notnull
  */
@@ -119,5 +119,18 @@
     //4. 存新models;
     [SMGUtils insertObject:models pointer:[SMGUtils createPointerForIndex] fileName:kFNIndex(isOut) time:cRTIndex];
 }
+
+/**
+ *  MARK:--------------------稀疏码值字典--------------------
+ *  @result notnull
+ */
++(NSDictionary*) searchDataDic:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut{
+    return DICTOOK([SMGUtils searchObjectForPointer:[SMGUtils createPointerForData:at dataSource:ds isOut:isOut] fileName:kFNData(isOut) time:cRTData]);
+}
+
++(void) insertDataDic:(NSDictionary*)dataDic at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut{
+    [SMGUtils insertObject:DICTOOK(dataDic) pointer:[SMGUtils createPointerForData:at dataSource:ds isOut:isOut] fileName:kFNData(isOut) time:cRTData];
+}
+
 
 @end

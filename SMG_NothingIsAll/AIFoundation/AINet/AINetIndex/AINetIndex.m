@@ -21,11 +21,10 @@
     if (!ISOK(data, NSNumber.class)) {
         return nil;
     }
-    AIKVPointer *data_p = [SMGUtils createPointerForData:algsType dataSource:dataSource isOut:isOut];
-    NSMutableDictionary *dataDic = [[NSMutableDictionary alloc] initWithDictionary:DICTOOK([SMGUtils searchObjectForPointer:data_p fileName:kFNData(isOut) time:cRTData])];//加载微信息值字典(key为pointer.filePath)
     
-    //2. 取indexModel
+    //2. 取索引序列 和 稀疏码值字典;
     AINetIndexModel *model = [AINetIndexUtils searchIndexModel:algsType ds:dataSource isOut:isOut];
+    NSMutableDictionary *dataDic = [[NSMutableDictionary alloc] initWithDictionary:[AINetIndexUtils searchDataDic:algsType ds:dataSource isOut:isOut]];
     
     //3. 使用二分法查找data
     __block AIKVPointer *resultPointer;
@@ -57,17 +56,15 @@
         
         //5. 存
         [AINetIndexUtils insertIndexModel:model isOut:isOut];
-        [SMGUtils insertObject:dataDic pointer:data_p fileName:kFNData(isOut) time:cRTData];
+        [AINetIndexUtils insertDataDic:dataDic at:algsType ds:dataSource isOut:isOut];
     }];
     
     return resultPointer;
 }
 
 +(NSNumber*) getData:(AIKVPointer*)value_p{
-    AIKVPointer *data_p = [SMGUtils createPointerForData:value_p.algsType dataSource:value_p.dataSource isOut:value_p.isOut];
-    NSDictionary *dataDic = DICTOOK([SMGUtils searchObjectForPointer:data_p fileName:kFNData(value_p.isOut) time:cRTData]);
-    NSString *key = STRFORMAT(@"%ld",(long)value_p.pointerId);
-    return [dataDic objectForKey:key];
+    NSDictionary *dataDic = [AINetIndexUtils searchDataDic:value_p.algsType ds:value_p.dataSource isOut:value_p.isOut];
+    return [dataDic objectForKey:STRFORMAT(@"%ld",(long)value_p.pointerId)];
 }
 
 /**
@@ -110,32 +107,25 @@
     return result;
 }
 
-+(double) getMaxSubMin:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
-    //1. 取索引序列;
+/**
+ *  MARK:--------------------获取某标识索引序列的值域--------------------
+ */
++(double) getIndexSpan:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
+    //1. 取索引序列 & 稀疏码值字典;
     AINetIndexModel *model = [AINetIndexUtils searchIndexModel:at ds:ds isOut:isOut];
+    NSDictionary *dataDic = [AINetIndexUtils searchDataDic:at ds:ds isOut:isOut];
     
     //2. 取出最大最小pointerId;
     long minPId = [NUMTOOK(ARR_INDEX(model.pointerIds, 0)) longValue];
     long maxPId = [NUMTOOK(ARR_INDEX_REVERSE(model.pointerIds, 0)) longValue];
     
+    //3. 取出最大最小的稀疏码值;
+    NSNumber *minData = [dataDic objectForKey:STRFORMAT(@"%ld",minPId)];
+    NSNumber *maxData = [dataDic objectForKey:STRFORMAT(@"%ld",maxPId)];
+    if (!NUMISOK(minData) || !NUMISOK(maxData)) return 0;
     
-    //3. TODO: 把createPointerForData封装到AINetIndexUtils中.... & 继续写完此处方法;
-    
-    double data1 = [NUMTOOK([dataDic objectForKey:STRFORMAT(@"%@",o1)]) doubleValue];
-    double data2 = [NUMTOOK([dataDic objectForKey:STRFORMAT(@"%@",o2)]) doubleValue];
-    
-    NSArray *sort = [model.pointerIds sortedArrayUsingComparator:^NSComparisonResult(NSNumber *o1, NSNumber *o2) {
-        
-        double near1 = fabs(data1 - maskData);
-        double near2 = fabs(data2 - maskData);
-        return [SMGUtils compareDoubleA:near2 doubleB:near1];
-    }];
-    
-    //5. 转为稀疏码指针数组返回;
-    NSArray *result = [SMGUtils convertArr:sort convertBlock:^id(NSNumber *obj) {
-        return [SMGUtils createPointerForValue:[NUMTOOK(obj) longValue] algsType:at dataSource:ds isOut:isOut];
-    }];
-    return result;
+    //4. 计算值域;
+    return maxData.doubleValue - minData.doubleValue;
 }
 
 //MARK:===============================================================

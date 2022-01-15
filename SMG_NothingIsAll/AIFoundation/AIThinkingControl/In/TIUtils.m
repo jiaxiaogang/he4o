@@ -148,6 +148,9 @@
         //2. 此处nears仅保证提供min条有效的refPorts (参考25082-结果);
         NSArray *nears = [AINetIndex getNearValues:item_p];
         
+        //3. 获取当前码所在索引序列的值域 (参考25082-相近度公式);
+        double span = [AINetIndex getIndexSpan:item_p.algsType ds:item_p.dataSource isOut:item_p.isOut];
+        
         
         //1> 数据准备 (value_p的refPorts是单独存储的);
         NSArray *refPorts = [SMGUtils filterPorts_Normal:[AINetUtils refPorts_All4Value:item_p isMem:isMem]];

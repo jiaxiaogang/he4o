@@ -43,6 +43,11 @@
  */
 +(NSArray*) getNearValues:(AIKVPointer*)maskValue_p;
 
+/**
+ *  MARK:--------------------获取某标识索引序列的值域--------------------
+ */
++(double) getIndexSpan:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;
+
 @end
 
 

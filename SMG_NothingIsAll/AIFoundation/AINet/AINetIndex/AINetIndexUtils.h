@@ -37,9 +37,15 @@
 //MARK:                     < 索引序列 >
 //MARK:===============================================================
 /**
- *  MARK:--------------------获取索引序列--------------------
+ *  MARK:--------------------索引序列--------------------
  */
 +(AINetIndexModel*) searchIndexModel:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;
 +(void) insertIndexModel:(AINetIndexModel*)model isOut:(BOOL)isOut;
+
+/**
+ *  MARK:--------------------稀疏码值字典--------------------
+ */
++(NSDictionary*) searchDataDic:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;
++(void) insertDataDic:(NSDictionary*)dataDic at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;
 
 @end
