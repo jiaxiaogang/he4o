@@ -9,7 +9,6 @@
 #import "AIAbsFoManager.h"
 #import "AIMvFoManager.h"
 #import "AINetAbsFoUtils.h"
-#import "AINetIndexUtils.h"
 
 @implementation AIAbsFoManager
 

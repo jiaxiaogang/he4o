@@ -39,9 +39,9 @@
 +(NSNumber*) getData:(AIKVPointer*)value_p;
 
 /**
- *  MARK:--------------------获取mask相近序列--------------------
+ *  MARK:--------------------获取索引序列--------------------
  */
-+(NSArray*) getNearValues:(AIKVPointer*)maskValue_p;
++(NSArray*) getIndex_ps:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;
 
 /**
  *  MARK:--------------------获取某标识索引序列的值域--------------------

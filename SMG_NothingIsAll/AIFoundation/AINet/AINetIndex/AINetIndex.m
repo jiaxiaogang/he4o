@@ -9,7 +9,6 @@
 #import "AINetIndex.h"
 #import "PINCache.h"
 #import "XGRedisUtil.h"
-#import "AINetIndexUtils.h"
 
 @implementation AINetIndex
 
@@ -68,47 +67,23 @@
 }
 
 /**
- *  MARK:--------------------获取mask相近序列--------------------
- *  @desc
- *      1. 获取mask所在的索引序列;
- *      2. 将索引序列按与mask相近排序;
- *      3. 并转为稀疏码指针数组返回;
+ *  MARK:--------------------获取索引序列--------------------
+ *  @desc 将索引序列转为稀疏码指针数组返回;
+ *  @result notnull
  */
-+(NSArray*) getNearValues:(AIKVPointer*)maskValue_p {
-    //1. 数据准备
-    NSString *at = maskValue_p.algsType;
-    NSString *ds = maskValue_p.dataSource;
-    BOOL isOut = maskValue_p.isOut;
++(NSArray*) getIndex_ps:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut{
+    //1. 取出索引序列;
+    AINetIndexModel *indexModel = [AINetIndexUtils searchIndexModel:at ds:ds isOut:isOut];
     
-    //2. 取出data字典 (用于取稀疏码数值) <pId,data值>;
-    AIKVPointer *data_p = [SMGUtils createPointerForData:at dataSource:ds isOut:isOut];
-    NSDictionary *dataDic = DICTOOK([SMGUtils searchObjectForPointer:data_p fileName:kFNData(isOut) time:cRTData]);
-    double maskData = [NUMTOOK([dataDic objectForKey:STRFORMAT(@"%ld",maskValue_p.pointerId)]) doubleValue];
-    
-    //3. 取出索引序列 (当前标识的有序序列);
-    NSArray *indexModels = ARRTOOK([SMGUtils searchObjectForPointer:[SMGUtils createPointerForIndex] fileName:kFNIndex(isOut) time:cRTIndex]);
-    AINetIndexModel *model = ARR_INDEX([SMGUtils filterArr:indexModels checkValid:^BOOL(AINetIndexModel *item) {
-        return [item.algsType isEqualToString:at] && [item.dataSource isEqualToString:ds];
-    }], 0);
-    
-    //4. 对索引序列按照相近排序 (越相近越排前);
-    NSArray *sort = [model.pointerIds sortedArrayUsingComparator:^NSComparisonResult(NSNumber *o1, NSNumber *o2) {
-        double data1 = [NUMTOOK([dataDic objectForKey:STRFORMAT(@"%@",o1)]) doubleValue];
-        double data2 = [NUMTOOK([dataDic objectForKey:STRFORMAT(@"%@",o2)]) doubleValue];
-        double near1 = fabs(data1 - maskData);
-        double near2 = fabs(data2 - maskData);
-        return [SMGUtils compareDoubleA:near2 doubleB:near1];
-    }];
-    
-    //5. 转为稀疏码指针数组返回;
-    NSArray *result = [SMGUtils convertArr:sort convertBlock:^id(NSNumber *obj) {
+    //2. 转为稀疏码指针数组返回;
+    return [SMGUtils convertArr:indexModel.pointerIds convertBlock:^id(NSNumber *obj) {
         return [SMGUtils createPointerForValue:[NUMTOOK(obj) longValue] algsType:at dataSource:ds isOut:isOut];
     }];
-    return result;
 }
 
 /**
  *  MARK:--------------------获取某标识索引序列的值域--------------------
+ *  @result 值域不为负
  */
 +(double) getIndexSpan:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
     //1. 取索引序列 & 稀疏码值字典;

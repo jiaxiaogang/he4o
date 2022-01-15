@@ -144,12 +144,30 @@
     for (AIKVPointer *item_p in protoAlg.content_ps) {
         
         //TODOTOMORROW20220113: 迭代支持相近匹配 (参考25082);
-        //1. 查下装箱代码,封装一个支持取索引序列delta相近度排序,并取到此处用来分别取refPorts;
-        //2. 此处nears仅保证提供min条有效的refPorts (参考25082-结果);
-        NSArray *nears = [AINetIndex getNearValues:item_p];
+        //2. 取当前稀疏码值;
+        double maskData = [NUMTOOK([AINetIndex getData:item_p]) doubleValue];
         
-        //3. 获取当前码所在索引序列的值域 (参考25082-相近度公式);
+        //3. 获取当前码所在索引序列的值域 (参考25082-公式1);
         double span = [AINetIndex getIndexSpan:item_p.algsType ds:item_p.dataSource isOut:item_p.isOut];
+        if (span < 0) {
+            WLog(@"值域不为负!!");
+        }
+        
+        //4. 分别收集当前码所在索引序列的refPorts (参考25083-1);
+        NSArray *index_ps = [AINetIndex getIndex_ps:item_p.algsType ds:item_p.dataSource isOut:item_p.isOut];
+        for (AIKVPointer *index_p in index_ps) {
+            
+            //5. 计算出nearV (参考25082-公式1);
+            double indexData = [NUMTOOK([AINetIndex getData:index_p]) doubleValue];
+            double delta = fabs(maskData - indexData);
+            double nearV = (span == 0) ? 1 : (1 - delta / span);
+            
+            
+            
+            
+            
+            
+        }
         
         
         //1> 数据准备 (value_p的refPorts是单独存储的);
