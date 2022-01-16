@@ -66,7 +66,7 @@
  *      2021.12.26: 废弃HN后,类型判断处理 & 兼容hActYes输出 (参考25032-6);
  *      2021.12.26: waitModels由currentDemand改为支持所有rootDemands (新螺旋架构迭代了短时记忆树,全树更新);
  *      2021.12.27: 当H反馈成功时,把hDemand设为finish;
- *      2022.01.08: HDemand时,非actYes状态也处理反馈 (参考24054);
+ *      2022.01.08: HDemand时,非actYes状态也处理反馈 (参考25054);
  *  @bug
  *      2020.09.22: 加上cutStopStatus,避免同一waitModel被多次触发,导致BUG (参考21042);
  *      2020.12.26: GL时,waitType的判断改为bFo,因为只有bFo才携带了waitTypeDS (参考21204);

@@ -236,7 +236,7 @@
  *      2021.11.25: 由旧有action._Hav第3级迁移而来;
  *      2021.12.25: 迭代hSolution (参考25014-H & 25015-6);
  *      2022.01.09: 达到limit条时的处理;
- *      2022.01.09: 首条就是HAlg不能做H解决方案 (参考24057);
+ *      2022.01.09: 首条就是HAlg不能做H解决方案 (参考25057);
  */
 +(void) hSolution:(HDemandModel*)hDemand{
     //0. S数达到limit时设为WithOut;
@@ -270,7 +270,7 @@
         AIFoNodeBase *maskFo = [SMGUtils searchNode:maskFo_p];
         NSInteger spIndex = [TOUtils indexOfConOrAbsItem:targetAlg.pointer atContent:maskFo.content_ps layerDiff:1 startIndex:0 endIndex:NSUIntegerMax];
         
-        //6. 如>0则找到 (HAlg不能是首条)_则判断SP评分 (参考24057);
+        //6. 如>0则找到 (HAlg不能是首条)_则判断SP评分 (参考25057);
         if (spIndex > 0) {
             AISPStrong *spStrong = [maskFo.spDic objectForKey:@(spIndex)];
             RSResultModelBase *checkResult = [RSResultModelBase newWithBaseFo:maskFo spIndex:spIndex pScore:spStrong.pStrong sScore:spStrong.sStrong];

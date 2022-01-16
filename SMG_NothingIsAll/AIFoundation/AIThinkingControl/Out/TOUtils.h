@@ -116,7 +116,7 @@
 
 /**
  *  MARK:--------------------toModel转key--------------------
- *  @desc 用于字典数据的key,可以避免因pointer防重失效 (比如scoreDic) (参考24056);
+ *  @desc 用于字典数据的key,可以避免因pointer防重失效 (比如scoreDic) (参考25056);
  *  @param toModel : notnull
  */
 +(NSString*) toModel2Key:(TOModelBase*)toModel;
