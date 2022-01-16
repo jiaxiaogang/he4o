@@ -297,6 +297,11 @@
         //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
         hDemand.status = TOModelStatus_WithOut;
         NSLog(@">>>>>> hSolution 无计可施");
+        
+        //TODOTOMORROW20220116: 调试25103BUG;
+        [theNV invokeForceMode:^{
+            [theNV setNodeData:targetFo.pointer];
+        }];
         [TCScore score];
     }
 }

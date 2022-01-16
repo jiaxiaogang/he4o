@@ -291,6 +291,7 @@
  *      2021.04.15: 无mv指向的支持返回为matchRFos,原来有mv指向的重命名为matchPFos (参考23014-分析1&23016);
  *      2021.06.30: 支持cutIndex回调,识别和反思时,分别走不同逻辑 (参考23152);
  *      2021.08.19: 结果PFos和RFos按(强度x匹配度)排序 (参考23222-BUG2);
+ *      2022.01.16: 仅保留10条rFos和pFos (因为在十四测中,发现它们太多了,都有40条rFos的时候,依窄出原则,太多没必要);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
 +(void) partMatching_FoV1Dot5:(AIFoNodeBase*)maskFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel findCutIndex:(NSInteger(^)(AIFoNodeBase *matchFo,NSInteger lastMatchIndex))findCutIndex{
@@ -362,12 +363,16 @@
     }
     
     //10. 按照 (强度x匹配度) 排序,强度最重要,包含了价值初始和使用频率,其次匹配度也重要 (参考23222-BUG2);
-    inModel.matchPFos = [[NSMutableArray alloc] initWithArray:[SMGUtils sortBig2Small:inModel.matchPFos compareBlock:^double(AIMatchFoModel *obj) {
+    NSArray *sortPFos = [SMGUtils sortBig2Small:inModel.matchPFos compareBlock:^double(AIMatchFoModel *obj) {
         return obj.matchFoStrong * obj.matchFoValue;
-    }]];
-    inModel.matchRFos = [[NSMutableArray alloc] initWithArray:[SMGUtils sortBig2Small:inModel.matchRFos compareBlock:^double(AIMatchFoModel *obj) {
+    }];
+    NSArray *sortRFos = [SMGUtils sortBig2Small:inModel.matchRFos compareBlock:^double(AIMatchFoModel *obj) {
         return obj.matchFoStrong * obj.matchFoValue;
-    }]];
+    }];
+    
+    //11. 仅各保留10条;
+    inModel.matchPFos = [[NSMutableArray alloc] initWithArray:ARR_SUB(sortPFos, 0, 10)];
+    inModel.matchRFos = [[NSMutableArray alloc] initWithArray:ARR_SUB(sortRFos, 0, 10)];
     
     //11. 调试日志;
     NSLog(@"\n=====> 时序识别Finish (PFos数:%lu)",(unsigned long)inModel.matchPFos.count);
