@@ -29,7 +29,7 @@
  */
 +(void) rRecognition:(AIShortMatchModel*)model{
     //1. 数据准备;
-    NSArray*except_ps = @[model.protoFo.pointer,model.matchAFo.pointer];
+    NSArray *except_ps = @[model.protoFo.pointer,model.matchAFo.pointer];
     AIFoNodeBase *maskFo = ARRISOK(model.matchAlgs) ? model.protoFo : model.matchAFo;
     IFTitleLog(@"瞬时时序识别", @"\n%@:%@->%@",ARRISOK(model.matchAlgs) ? @"protoFo" : @"matchAFo",Fo2FStr(maskFo),Mvp2Str(maskFo.cmvNode_p));
     
@@ -39,6 +39,17 @@
         //3. 当fromTIM时,cutIndex=lastAssIndex;
         return lastMatchIndex;
     }];
+    
+    //TODOTOMORROW20220116: 找不到hSolution经验的问题 (参考25104);
+    //1. 此处rLearning中,仅对rFos和proto间进行外类比学习了;
+    //2. 而pLearning中,在input有mv时,才对pFos做了外类比;
+    //3. 思考下这两者能不能融合工作,单纯从rDemand.fo中很难找到H解决方案;
+    
+    //4.1. 在实践前,可以在此处看能不能网络可视化实际调试下hSolution是否从rFos中可得;
+    //4.2. 或者在hSolution中,直接看能不能调用前帧的rFos,从中找下hSolution,并将结果打印出来看下;
+    
+    
+    
     
     //5. 学习;
     [TCLearning rLearning:model recognitionMaskFo:maskFo];
