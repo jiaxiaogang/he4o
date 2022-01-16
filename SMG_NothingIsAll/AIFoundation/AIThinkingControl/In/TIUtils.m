@@ -40,79 +40,47 @@
  *      20200703: 废弃fuzzy模糊匹配功能,因为识别期要广入 (参考20062);
  *      20201022: 同时支持matchAlg和seemAlg结果 (参考21091);
  *      20201022: 将seem的抽象搬过来,且支持三种关联处理 (参考21091-蓝绿黄三种线);
- *  @param complete : 共支持三种返回: 匹配效果从高到低分别为:fuzzyAlg废弃,matchAlg全含,seemAlg局部;
+ *      20220115: 识别结果可为自身,参考partMatching_Alg(),所以不需要此处再add(self)了;
+ *      20220116: 全含可能也只是相似,由直接构建抽具象关联,改成概念外类比 (参考25105);
+ *
+ *  _result
+ *      xxxx.xx.xx: completeBlock : 共支持三种返回: 匹配效果从高到低分别为:fuzzyAlg废弃,matchAlg全含,seemAlg局部;
+ *      2022.01.16: 改为直接传入inModel模型,识别后赋值到inModel中即可;
  */
-+(void) TIR_Alg:(AIKVPointer*)algNode_p except_ps:(NSArray*)except_ps complete:(void(^)(NSArray *matchAlgs,NSArray *partAlgs))complete{
++(void) TIR_Alg:(AIKVPointer*)algNode_p except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
     //1. 数据准备
     AIAlgNodeBase *protoAlg = [SMGUtils searchNode:algNode_p];
     if (protoAlg == nil) return;
     IFTitleLog(@"概念识别",@"\n%@",Alg2FStr(protoAlg));
     
-    //2. 对value.refPorts进行检查识别; (noMv信号已输入完毕,识别联想)
-    __block NSMutableArray *matchAlgs = [[NSMutableArray alloc] init];
-    __block NSArray *partAlgs = nil;
-    ///1. 自身匹配 (Self匹配);
-    if ([self inputAlgIsOld:protoAlg]) {
-        [matchAlgs addObject:protoAlg];
-    }
-    
     ///3. 局部匹配 -> 内存网络;
-    ///19xxxx注掉,不能太过于脱离持久网络做思考,所以先注掉;
-    ///190625放开,因采用内存网络后,靠这识别;
     ///200116注掉,因为识别仅是建立抽象关联,此处会极易匹配到内存中大量的具象alg,导致无法建立关联,而在硬盘网络时,这种几率则低许多;
-    //if (!assAlgNode) {
-    //    assAlgNode = [AINetIndexUtils partMatching_Alg:algNode isMem:true except_ps:except_ps];
-    //}
+    //if (!assAlgNode) assAlgNode = [AINetIndexUtils partMatching_Alg:algNode isMem:true except_ps:except_ps];
     
     ///4. 局部匹配 (Abs匹配 和 Seem匹配);
-    [self partMatching_Alg:protoAlg isMem:false except_ps:except_ps complete:^(NSArray *_matchAlgs, NSArray *_partAlgs) {
-        [matchAlgs addObjectsFromArray:_matchAlgs];
-        partAlgs = _partAlgs;
-    }];
+    [self partMatching_Alg:protoAlg isMem:false except_ps:except_ps inModel:inModel];
     
-    //TODOTOMORROW20220116: 全含可能也只是相似,不能直接构建抽具象关联 (参考25105);
-    
-    
-    
-    
-    
-    //5. 关联处理_直接将match设置为proto的抽象; (这样后面TOR理性决策时,才可以直接对当前瞬时实物进行很好的理性评价) (参考21091-蓝线);
-    for (AIAlgNodeBase *matchAlg in matchAlgs) {
+    //5. 关联处理 & 外类比 (这样后面TOR理性决策时,才可以直接对当前瞬时实物进行很好的理性评价) (参考21091-蓝线);
+    for (AIAlgNodeBase *matchAlg in inModel.matchAlgs) {
         //4. 识别到时,value.refPorts -> 更新/加强微信息的引用序列
         [AINetUtils insertRefPorts_AllAlgNode:matchAlg.pointer content_ps:matchAlg.content_ps difStrong:1];
         
-        //5. 识别且全含时,进行抽具象关联 & 存储 (20200103:测得,algNode为内存节点时,关联也在内存)
-        [AINetUtils relateAlgAbs:(AIAbsAlgNode*)matchAlg conNodes:@[protoAlg] isNew:false];
+        //5. 识别且全含时,进行外类比 (参考25105);
+        [AIAnalogy analogyAlg:protoAlg algB:matchAlg];
     }
     
     //6. 关联处理_对seem和proto进行类比抽象 (参考21091-绿线);
-    if (ARRISOK(partAlgs)) {
-        AIAlgNodeBase *firstPartAlg = ARR_INDEX(partAlgs, 0);
-        AIAlgNodeBase *firstMatchAlg = ARR_INDEX(matchAlgs, 0);
-        NSArray *same_ps = [SMGUtils filterSame_ps:protoAlg.content_ps parent_ps:firstPartAlg.content_ps];
-        AIAlgNodeBase *seemProtoAbs = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[firstPartAlg,protoAlg] isMem:false at:nil type:ATDefault];
-        NSLog(@"构建相似抽象:%@",Alg2FStr(seemProtoAbs));
+    if (ARRISOK(inModel.partAlgs)) {
+        NSLog(@"对局部匹配首条构建TopAbs抽象");
+        AIAlgNodeBase *firstPartAlg = ARR_INDEX(inModel.partAlgs, 0);
+        AIAlgNodeBase *firstMatchAlg = ARR_INDEX(inModel.matchAlgs, 0);
+        AIAlgNodeBase *seemProtoAbs = [AIAnalogy analogyAlg:protoAlg algB:firstPartAlg];
         
         //7. 关联处理_对seemProtoAbs与matchAlg建立抽具象关联 (参考21091-黄线);
         if (seemProtoAbs && firstMatchAlg) {
-            NSArray *same_ps = [SMGUtils filterSame_ps:seemProtoAbs.content_ps parent_ps:firstMatchAlg.content_ps];
-            AIAlgNodeBase *topAbs = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[seemProtoAbs,firstMatchAlg] isMem:false at:nil type:ATDefault];
-            NSLog(@"构建TopAbs抽象:%@",Alg2FStr(topAbs));
+            [AIAnalogy analogyAlg:seemProtoAbs algB:firstMatchAlg];
         }
     }
-    
-    //3. 全含时,可进行模糊匹配 (Fuzzy匹配) //因TOR未支持fuzzy,故目前仅将最相似的fuzzy放到AIShortMatchModel中当matchAlg用;
-    //if (matchType == MatchType_Abs) {
-    //    NSArray *fuzzys = ARRTOOK([self matchAlg2FuzzyAlgV2:algNode matchAlg:assAlgNode except_ps:except_ps]);
-    //    AIAlgNodeBase *fuzzyAlg = ARR_INDEX(fuzzys, 0);
-    //    //a. 模糊匹配有效时,增强关联,并截胡;
-    //    if (fuzzyAlg) {
-    //        [AINetUtils insertRefPorts_AllAlgNode:fuzzyAlg.pointer content_ps:fuzzyAlg.content_ps difStrong:1];
-    //        assAlgNode = fuzzyAlg;
-    //        matchType = MatchType_Fuzzy;
-    //    }
-    //}
-    complete(matchAlgs,partAlgs);
 }
 
 /**
@@ -120,7 +88,6 @@
  *  注: 根据引用找出相似度最高且达到阀值的结果返回; (相似度匹配)
  *  从content_ps的所有value.refPorts找前cPartMatchingCheckRefPortsLimit个, 如:contentCount9*limit5=45个;
  *
- *  @param complete : 根据匹配度排序,并返回 (全含+局部);
  *  @param except_ps : 排除_ps; (如:同一批次输入的概念组,不可用来识别自己)
  *
  *  @version:
@@ -135,7 +102,7 @@
  *      2022.01.13 - 迭代支持相近匹配 (参考25082 & 25083);
  *      2022.01.15 - 识别结果可为自身: 比如(飞↑)如果不识别自身,又全局防重,就识别不到最全含最相近匹配结果了;
  */
-+(void) partMatching_Alg:(AIAlgNodeBase*)protoAlg isMem:(BOOL)isMem except_ps:(NSArray*)except_ps complete:(void(^)(NSArray *matchAlgs,NSArray *partAlgs))complete{
++(void) partMatching_Alg:(AIAlgNodeBase*)protoAlg isMem:(BOOL)isMem except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
     //1. 数据准备;
     if (!ISOK(protoAlg, AIAlgNodeBase.class)) return;
     except_ps = ARRTOOK(except_ps);                                     //不应期
@@ -218,18 +185,9 @@
     NSLog(@"\n识别结果 >> 总数:%ld = 全含匹配数:%ld + 局部匹配数:%ld",sortKeys.count,matchAlgs.count,partAlgs.count);
     for (AIAlgNodeBase *item in matchAlgs) NSLog(@"-->>> 全含item: %@   \t相近度 => %.2f",Alg2FStr(item),[NUMTOOK([sumNearVDic objectForKey:OBJ2DATA(item.pointer)]) doubleValue] / [NUMTOOK([countDic objectForKey:OBJ2DATA(item.pointer)]) intValue]);
     for (AIAlgNodeBase *item in partAlgs) NSLog(@"-->>> 局部item: %@",Alg2FStr(item));
-    complete(matchAlgs,partAlgs);
+    inModel.matchAlgs = matchAlgs;
+    inModel.partAlgs = partAlgs;
 }
-
-//输入概念判断
-+(BOOL) inputAlgIsOld:(AIAlgNodeBase*)inputAlg{
-    if (inputAlg) {
-        NSArray *refPorts = [AINetUtils refPorts_All4Alg:inputAlg];
-        if (refPorts.count > 0) return true;
-    }
-    return false;
-}
-
 
 //MARK:===============================================================
 //MARK:                     < 时序识别 >

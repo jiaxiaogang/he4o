@@ -13,7 +13,7 @@
 //MARK:===============================================================
 //MARK:                     < 概念识别 >
 //MARK:===============================================================
-+(void) TIR_Alg:(AIKVPointer*)algNode_p except_ps:(NSArray*)except_ps complete:(void(^)(NSArray *matchAlgs,NSArray *partAlgs))complete;
++(void) TIR_Alg:(AIKVPointer*)algNode_p except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel;
 
 
 //MARK:===============================================================

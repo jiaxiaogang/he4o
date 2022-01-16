@@ -38,10 +38,7 @@
     mModel.inputTime = [[NSDate date] timeIntervalSince1970];
     
     //2. 识别概念;
-    [TIUtils TIR_Alg:algNode.pointer except_ps:except_ps complete:^(NSArray *_matchAlgs, NSArray *_partAlgs) {
-        mModel.matchAlgs = _matchAlgs;
-        mModel.partAlgs = _partAlgs;
-    }];
+    [TIUtils TIR_Alg:algNode.pointer except_ps:except_ps inModel:mModel];
     
     //3. 将mModel保留 (只有先保留后,构建时序时,才会含新帧概念);
     [theTC.inModelManager add:mModel];

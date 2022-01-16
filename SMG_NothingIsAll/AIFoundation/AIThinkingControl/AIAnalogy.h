@@ -24,12 +24,16 @@
  *  @version
  *      2021.12.26: 仅留下外类比,其它全废弃删掉 (参考Note24-TC新螺旋架构整理);
  */
-
-//MARK:===============================================================
-//MARK:                     < Analogy类比 >
-//MARK:===============================================================
 @interface AIAnalogy : NSObject
 
+//MARK:===============================================================
+//MARK:                     < 外类比时序 >
+//MARK:===============================================================
 +(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type createAbsAlgBlock:(void(^)(AIAlgNodeBase *createAlg,NSInteger foIndex,NSInteger assFoIndex))createAbsAlgBlock;
+
+//MARK:===============================================================
+//MARK:                     < 概念外类比 >
+//MARK:===============================================================
++(AIAlgNodeBase*) analogyAlg:(AIAlgNodeBase*)algA algB:(AIAlgNodeBase*)algB;
 
 @end

@@ -12,7 +12,7 @@
 @implementation AIAnalogy
 
 //MARK:===============================================================
-//MARK:                     < 外类比部分 >
+//MARK:                     < 外类比时序 >
 //MARK:===============================================================
 
 /**
@@ -162,6 +162,16 @@
     NSInteger assFoStrong = [AINetUtils getStrong:result atConNode:assFo type:type];
     NSString *log = STRFORMAT(@"-> 外类比构建时序 (%@): %@->{%@} from: ↑↑↑(fo(%ld):assFo(%ld))",ATType2Str(type),Fo2FStr(result),Mvp2Str(result.cmvNode_p),foStrong,assFoStrong);
     if (Log4OutAnaType(type)) NSLog(@"%@",log);
+    return result;
+}
+
+//MARK:===============================================================
+//MARK:                     < 概念外类比 >
+//MARK:===============================================================
++(AIAlgNodeBase*) analogyAlg:(AIAlgNodeBase*)algA algB:(AIAlgNodeBase*)algB{
+    NSArray *same_ps = [SMGUtils filterSame_ps:algA.content_ps parent_ps:algB.content_ps];
+    AIAlgNodeBase *result = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[algA,algB] isMem:false at:nil type:ATDefault];
+    NSLog(@"外类比=> A%ld : A%ld = %@",algA.pointer.pointerId,algB.pointer.pointerId,Alg2FStr(result));
     return result;
 }
 
