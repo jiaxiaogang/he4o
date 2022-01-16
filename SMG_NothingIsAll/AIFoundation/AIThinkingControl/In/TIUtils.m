@@ -17,7 +17,6 @@
 
 /**
  *  MARK:--------------------识别是什么(这是西瓜)--------------------
- *  @param fromGroup_ps : 当前输入批次的整组概念指针;
  *
  *  注: 无条件 & 目前无能量消耗 (以后有基础思维活力值后可energy-1)
  *  注: 局部匹配_后面通过调整参数,来达到99%以上的识别率;
@@ -70,6 +69,12 @@
         [matchAlgs addObjectsFromArray:_matchAlgs];
         partAlgs = _partAlgs;
     }];
+    
+    //TODOTOMORROW20220116: 全含可能也只是相似,不能直接构建抽具象关联 (参考25105);
+    
+    
+    
+    
     
     //5. 关联处理_直接将match设置为proto的抽象; (这样后面TOR理性决策时,才可以直接对当前瞬时实物进行很好的理性评价) (参考21091-蓝线);
     for (AIAlgNodeBase *matchAlg in matchAlgs) {
