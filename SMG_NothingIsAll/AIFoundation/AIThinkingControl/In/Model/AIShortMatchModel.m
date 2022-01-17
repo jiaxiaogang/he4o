@@ -24,11 +24,6 @@
     return _matchRFos;
 }
 
--(NSMutableArray *)absRFos{
-    if (!_absRFos) _absRFos = [[NSMutableArray alloc] init];
-    return _absRFos;
-}
-
 //-(AIFoNodeBase *)matchFo{
 //    AIMatchFoModel *mFo = [self mustUrgentMFo];
 //    return mFo ? mFo.matchFo : nil;

@@ -298,7 +298,9 @@
         hDemand.status = TOModelStatus_WithOut;
         NSLog(@">>>>>> hSolution 无计可施");
         
-        //TODOTOMORROW20220116: 调试25103BUG;
+        
+        //TODOTOMORROW20220116: 调试25104BUG;
+        //重新训练,回测25104BUG,在两树衔接后,是否还是取不到H.S解决方案;
         [theNV invokeForceMode:^{
             [theNV setNodeData:targetFo.pointer];
         }];

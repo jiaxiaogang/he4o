@@ -23,6 +23,7 @@
  *      2. 在多条matchFo.mv价值预测下,可以相应的跑多个正向反馈类比,和反向反馈类比;
  *  @version
  *      2020.10.30: 将seemAlg改成partAlgs,即将所有相似返回 (参考21113-步骤1);
+ *      2022.01.17: 废弃matchRFos,因其主要用于GL已被废弃,且现rLearning再抽象不仅针对rFos也支持pFos (参考25104);
  */
 @interface AIShortMatchModel : NSObject
 
@@ -88,19 +89,6 @@
  */
 @property (strong, nonatomic) NSMutableArray *matchPFos; //有mv指向匹配时序 (元素为AIMatchFoModel);
 @property (strong, nonatomic) NSMutableArray *matchRFos; //无mv指向匹配时序 (元素为AIMatchFoModel);
-
-/**
- *  MARK:--------------------时序抽象--------------------
- *  @desc
- *      内容说明: 在时序识别后,由matchRFos与protoFo类比抽象而成 (元素为AIFoNodeBase) (参考23041-示图absFo);
- *      用途说明: 作为RFo抽具象的"激活期",用于加强RFo的抽具象关联,从而解决GL嵌套在抽具象通路上打通的问题;
- *  @callers
- *      1. 在内中外类比中,会将抽象gl嵌套到对应的absRFo下;
- *      2. 在getInnerGL中,会尝试从absRFos下取GL经验;
- *  @version
- *      2021.04.22: 初版 (参考23041);
- */
-@property (strong, nonatomic) NSMutableArray *absRFos;
 
 /**
  *  MARK:--------------------含mv且迫切度最高的一条mFo--------------------

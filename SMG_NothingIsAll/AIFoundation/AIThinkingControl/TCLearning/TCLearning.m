@@ -64,16 +64,19 @@
  *      2020.10.19: 将add至ShortMatchManager代码前迁;
  *      2021.12.05: 将feedbackTOR前迁到概念识别之后 (参考24171-9);
  *      2021.12.26: GL和HN已全废弃了,所以删掉内类比调用 (参考Note24 & Note25);
+ *      2022.01.17: BUG_找不到hSolution经验的问题,将P树R树衔接,共参与抽象 (参考25104);
  */
 +(void) rLearning:(AIShortMatchModel*)model recognitionMaskFo:(AIFoNodeBase*)recognitionMaskFo{
-    //3. 学习 for RFos: 加强RFos的抽具象关联;
-    for (AIMatchFoModel *item in model.matchRFos) {
+    //1. 收集pFos和rFos都用于外类比学习;
+    NSArray *matchFos = [SMGUtils collectArrA:model.matchRFos arrB:model.matchPFos];
+    
+    //2. 学习 for matchFos: 加强matchFos的抽具象关联;
+    for (AIMatchFoModel *item in matchFos) {
         AIFoNodeBase *absRFo = [AIAnalogy analogyOutside:recognitionMaskFo assFo:item.matchFo type:ATSame createAbsAlgBlock:nil];
-        if (Log4AnalogyAbsRFo) NSLog(@">>> 抽象absRFo: %@\t\tFrom MatchRFo: F%ld",Fo2FStr(absRFo),item.matchFo.pointer.pointerId);
-        if (absRFo && ![model.absRFos containsObject:absRFo]) [model.absRFos addObject:absRFo];
+        if (Log4AnalogyAbsRFo) NSLog(@">>> 再抽象absFo: %@\t\tFrom MatchFo: F%ld",Fo2FStr(absRFo),item.matchFo.pointer.pointerId);
     }
     
-    //5. TIR反馈;
+    //3. TIR反馈;
     [TCFeedback feedbackTIR:model];
 }
 
