@@ -323,7 +323,7 @@
 
 //外类比
 #define Log4OutAna false
-#define Log4OutAnaDefault(type) (!Log4OutAna && (type == ATDefault && true))
+#define Log4OutAnaDefault(type) (!Log4OutAna && (type == ATDefault && false))
 #define Log4OutAnaType(type) Log4OutAna || Log4OutAnaDefault(type)
 
 //方向索引

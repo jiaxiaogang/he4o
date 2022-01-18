@@ -11,6 +11,6 @@
 @interface TCLearning : NSObject
 
 +(void) pLearning:(AIFoNodeBase*)protoFo;
-+(void) rLearning:(AIShortMatchModel*)model recognitionMaskFo:(AIFoNodeBase*)recognitionMaskFo;
++(void) rLearning:(AIShortMatchModel*)model protoFo:(AIFoNodeBase*)protoFo;
 
 @end

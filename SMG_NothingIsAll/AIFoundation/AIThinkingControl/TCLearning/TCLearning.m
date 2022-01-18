@@ -66,14 +66,19 @@
  *      2021.12.26: GL和HN已全废弃了,所以删掉内类比调用 (参考Note24 & Note25);
  *      2022.01.17: BUG_找不到hSolution经验的问题,将P树R树衔接,共参与抽象 (参考25104);
  */
-+(void) rLearning:(AIShortMatchModel*)model recognitionMaskFo:(AIFoNodeBase*)recognitionMaskFo{
-    //1. 收集pFos和rFos都用于外类比学习;
-    NSArray *matchFos = [SMGUtils collectArrA:model.matchRFos arrB:model.matchPFos];
++(void) rLearning:(AIShortMatchModel*)model protoFo:(AIFoNodeBase*)protoFo{
     
-    //2. 学习 for matchFos: 加强matchFos的抽具象关联;
-    for (AIMatchFoModel *item in matchFos) {
-        AIFoNodeBase *absRFo = [AIAnalogy analogyOutside:recognitionMaskFo assFo:item.matchFo type:ATSame createAbsAlgBlock:nil];
-        if (Log4AnalogyAbsRFo) NSLog(@">>> 再抽象absFo: %@\t\tFrom MatchFo: F%ld",Fo2FStr(absRFo),item.matchFo.pointer.pointerId);
+    IFTitleLog(@"rLearning","\npFos:%ld rFos:%ld",model.matchPFos.count,model.matchRFos.count);
+    //1. 学习 for pFos: 加强pFos的抽具象关联;
+    for (AIMatchFoModel *item in model.matchPFos) {
+        AIFoNodeBase *absFo = [AIAnalogy analogyOutside:protoFo assFo:item.matchFo type:ATDefault createAbsAlgBlock:nil];
+        if (Log4AnalogyAbsRFo) NSLog(@"pFo外类比=> F%ld : F%ld = %@->%@",item.matchFo.pointer.pointerId,protoFo.pointer.pointerId,Fo2FStr(absFo),Mvp2Str(absFo.cmvNode_p));
+    }
+    
+    //2. 学习 for rFos: 加强rFos的抽具象关联;
+    for (AIMatchFoModel *item in model.matchRFos) {
+        AIFoNodeBase *absFo = [AIAnalogy analogyOutside:protoFo assFo:item.matchFo type:ATDefault createAbsAlgBlock:nil];
+        if (Log4AnalogyAbsRFo) NSLog(@"rFo外类比=> F%ld : F%ld = %@->%@",item.matchFo.pointer.pointerId,protoFo.pointer.pointerId,Fo2FStr(absFo),Mvp2Str(absFo.cmvNode_p));
     }
     
     //3. TIR反馈;

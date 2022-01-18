@@ -31,7 +31,7 @@
     //1. 数据准备;
     NSArray *except_ps = @[model.protoFo.pointer,model.matchAFo.pointer];
     AIFoNodeBase *maskFo = ARRISOK(model.matchAlgs) ? model.protoFo : model.matchAFo;
-    IFTitleLog(@"瞬时时序识别", @"\n%@:%@->%@",ARRISOK(model.matchAlgs) ? @"protoFo" : @"matchAFo",Fo2FStr(maskFo),Mvp2Str(maskFo.cmvNode_p));
+    IFTitleLog(@"rRecognition", @"\n%@:%@->%@",ARRISOK(model.matchAlgs) ? @"protoFo" : @"matchAFo",Fo2FStr(maskFo),Mvp2Str(maskFo.cmvNode_p));
     
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
     [TIUtils partMatching_FoV1Dot5:maskFo except_ps:except_ps decoratorInModel:model findCutIndex:^NSInteger(AIFoNodeBase *matchFo, NSInteger lastMatchIndex) {
@@ -41,7 +41,7 @@
     }];
     
     //5. 学习;
-    [TCLearning rLearning:model recognitionMaskFo:maskFo];
+    [TCLearning rLearning:model protoFo:maskFo];
 }
 
 +(void) pRecognition:(AIFoNodeBase*)protoFo{
