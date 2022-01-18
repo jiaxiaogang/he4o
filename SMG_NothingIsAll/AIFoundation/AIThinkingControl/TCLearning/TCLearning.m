@@ -65,20 +65,21 @@
  *      2021.12.05: 将feedbackTOR前迁到概念识别之后 (参考24171-9);
  *      2021.12.26: GL和HN已全废弃了,所以删掉内类比调用 (参考Note24 & Note25);
  *      2022.01.17: BUG_找不到hSolution经验的问题,将P树R树衔接,共参与抽象 (参考25104);
+ *      2022.01.18: 改成使用ATDefault类型,因为ATSame已废弃;
  */
 +(void) rLearning:(AIShortMatchModel*)model protoFo:(AIFoNodeBase*)protoFo{
     IFTitleLog(@"rLearning","\nprotoFo: %@->%@",Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p));
-    //2. 学习 for rFos: 加强rFos的抽具象关联;
-    NSLog(@"\nrFo外类比 => %ld条",model.matchRFos.count);
-    for (AIMatchFoModel *item in model.matchRFos) {
-        AIFoNodeBase *absFo = [AIAnalogy analogyOutside:protoFo assFo:item.matchFo type:ATSame createAbsAlgBlock:nil];
-        if (Log4AnalogyAbsRFo) NSLog(@"抽象: %@->%@ (from:F%ld)",Fo2FStr(absFo),Mvp2Str(absFo.cmvNode_p),item.matchFo.pointer.pointerId);
-    }
-    
     //1. 学习 for pFos: 加强pFos的抽具象关联;
     NSLog(@"\npFo外类比 => %ld条",model.matchPFos.count);
     for (AIMatchFoModel *item in model.matchPFos) {
-        AIFoNodeBase *absFo = [AIAnalogy analogyOutside:protoFo assFo:item.matchFo type:ATSame createAbsAlgBlock:nil];
+        AIFoNodeBase *absFo = [AIAnalogy analogyOutside:protoFo assFo:item.matchFo type:ATDefault createAbsAlgBlock:nil];
+        if (Log4AnalogyAbsRFo) NSLog(@"抽象: %@->%@ (from:F%ld)",Fo2FStr(absFo),Mvp2Str(absFo.cmvNode_p),item.matchFo.pointer.pointerId);
+    }
+    
+    //2. 学习 for rFos: 加强rFos的抽具象关联;
+    NSLog(@"\nrFo外类比 => %ld条",model.matchRFos.count);
+    for (AIMatchFoModel *item in model.matchRFos) {
+        AIFoNodeBase *absFo = [AIAnalogy analogyOutside:protoFo assFo:item.matchFo type:ATDefault createAbsAlgBlock:nil];
         if (Log4AnalogyAbsRFo) NSLog(@"抽象: %@->%@ (from:F%ld)",Fo2FStr(absFo),Mvp2Str(absFo.cmvNode_p),item.matchFo.pointer.pointerId);
     }
     
