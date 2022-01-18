@@ -73,6 +73,7 @@
  *      2021.12.28: 将抽具象路径rs改为从pFos中取同标识mv部分 (参考25051);
  *      2022.01.07: 改为将整个demand.actionFoModels全加入不应期 (因为还在决策中的S会重复);
  *      2022.01.09: 达到limit条时的处理;
+ *      2022.01.19: 将时间不急评价封装为FRS_Time() (参考25106);
  *  @callers : 用于RDemand.Begin时调用;
  */
 +(void) rSolution:(ReasonDemandModel*)demand {
@@ -108,8 +109,11 @@
         //5. 排除不应期;
         if ([except_ps containsObject:maskPort.target_p]) continue;
         
-        //6. 判断SP评分;
+        //5. 时间不急评价: 不急 = 解决方案所需时间 <= 父任务能给的时间 (参考:24057-方案3,24171-7);
         AIFoNodeBase *maskFo = [SMGUtils searchNode:maskPort.target_p];
+        if (![AIScore FRS_Time:demand solutionFo:maskFo]) continue;
+        
+        //6. 判断SP评分;
         AISPStrong *spStrong = [maskFo.spDic objectForKey:@(maskFo.count)];
         RSResultModelBase *checkResult = [RSResultModelBase newWithBaseFo:maskFo spIndex:maskFo.count pScore:spStrong.pStrong sScore:spStrong.sStrong];
         
@@ -133,6 +137,12 @@
         //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
         demand.status = TOModelStatus_WithOut;
         NSLog(@">>>>>> rSolution 无计可施");
+        
+        //TODOTOMORROW20220116: 调试25106BUG (有时获取不到rSolution任务的问题);
+        [theNV invokeForceMode:^{
+            [theNV setNodeData:demand.mModel.matchFo.pointer];
+        }];
+        
         [TCScore score];
     }
 }

@@ -20,7 +20,7 @@
  *      2021.11.25: 迭代为功能架构 (参考24154-单轮示图);
  *      2021.11.25: H类型在Action后,最终行为化完毕后,调用hActYes后,在feedbackTOR反馈,并重组反思,下轮循环;
  *      2021.11.xx: 废弃outReflect反思功能 (全部待到inReflect统一再反思);
- *      2021.11.28: 时间紧急评价,改为: 紧急情况 = 解决方案所需时间 > 父任务能给的时间 (参考24171-7);
+ *      2021.11.28: 时间不急评价,改为: 紧急情况 = 解决方案所需时间 > 父任务能给的时间 (参考24171-7);
  *      2021.12.01: 支持hAction;
  *      2021.12.26: action将foModel执行到spIndex之前一帧 (25032-4);
  *      2021.12.26: hSolution达到目标帧转hActYes的处理 (参考25031-9);
@@ -28,30 +28,6 @@
  *  @callers : 可以供_Demand和_Hav等调用;
  */
 +(void) action:(TOFoModel*)foModel{
-    
-    //1. 时间紧急评价: 紧急情况 = 解决方案所需时间 > 父任务能给的时间 (参考:24057-方案3,24171-7);
-    BOOL rIsTooLate = false;
-    ReasonDemandModel *rDemand = (ReasonDemandModel*)foModel.baseOrGroup;
-    if (ISOK(rDemand, ReasonDemandModel.class)) {
-        //a. 取解决方案所需时间;
-        AIFoNodeBase *solutionFo = [SMGUtils searchNode:foModel.content_p];
-        double needTime = [TOUtils getSumDeltaTime2Mv:solutionFo cutIndex:foModel.actionIndex];
-        
-        //b. 取父任务能给的时间;
-        double giveTime = [TOUtils getSumDeltaTime2Mv:rDemand.mModel.matchFo cutIndex:rDemand.mModel.cutIndex2];
-        
-        //c. 判断是否时间紧急;
-        rIsTooLate = needTime > giveTime;
-        NSLog(@"紧急状态 (%d) = 方案所需要时间:%f > 任务能给时间:%f",rIsTooLate,needTime,giveTime);
-    }
-    
-    //2. 时间紧急的结果 (当前解决方案直接论为失败);
-    if (rIsTooLate) {
-        foModel.status = TOModelStatus_ActNo;
-        [TCScore score];//决策受阻且无输出时,直接下轮循环跳到决策之始;
-        return;
-    }
-    
     //1. 数据准备
     AIFoNodeBase *curFo = [SMGUtils searchNode:foModel.content_p];
     OFTitleLog(@"行为化Fo", @"\n时序:%@->%@ 类型:(%@)",Fo2FStr(curFo),Mvp2Str(curFo.cmvNode_p),curFo.pointer.typeStr);

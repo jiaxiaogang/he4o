@@ -93,7 +93,7 @@
  *  @desc R模式,fo执行完成时,actYes->feedbackTOP->调用感性ORT反省;
  *  @version
  *      2021.12.26: 触发器时间由baseDemand取改成solutionFo取,因为当前就是在执行solutionFo (参考25031-11);
- *                  > 而baseDemand"时间紧急"自有其评价决定,此处只管触发器的直接时间;
+ *                  > 而baseDemand"时间不急"自有其评价决定,此处只管触发器的直接时间;
  *      2021.12.26: 触发器和反省都针对solutionFo,而不是baseDemand.matchFo (参考25031-11);
  *      2021.12.26: 接入新的感性ORT反省 (参考25032-5);
  */

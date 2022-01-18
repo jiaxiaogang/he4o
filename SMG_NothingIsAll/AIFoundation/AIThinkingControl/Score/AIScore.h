@@ -19,8 +19,17 @@
 @class AIShortMatchModel,TOFoModel,ReasonDemandModel,DemandModel,RSResultModelBase;
 @interface AIScore : NSObject
 
+//MARK:===============================================================
+//MARK:                     < 下标不急评价 >
+//MARK:===============================================================
 +(BOOL) ARS_Time:(TOFoModel*)dsFoModel demand:(ReasonDemandModel*)demand;
 +(void) score4ARSTime:(TOFoModel*)dsFoModel demand:(ReasonDemandModel*)demand finishBlock:(void(^)(NSInteger _dsIndex,NSInteger _demandIndex))finishBlock;
+
+
+//MARK:===============================================================
+//MARK:                     < 时间不急评价 >
+//MARK:===============================================================
++(BOOL) FRS_Time:(ReasonDemandModel*)demand solutionFo:(AIFoNodeBase*)solutionFo;
 
 /**
  *  MARK:--------------------指定ratio的评价重载--------------------

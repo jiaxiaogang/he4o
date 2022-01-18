@@ -41,7 +41,7 @@
  *      5. 先将所有得分算完后,再重新从root开始算最优路径,因为只有子枝算完,父枝才能知道怎么算最优路径;
  *  @version
  *      2021.12.21: 支持状态为WithOut的处理 (只有WithOut状态的才可能理性淘汰,不然就有可能死灰复燃);
- *      2021.12.21: 支持状态为ActNo (如为时间紧急淘汰掉) 的处理 (子解决方案全ActNo之后且WithOut的理性淘汰);
+ *      2021.12.21: 支持状态为ActNo (如为时间不急淘汰掉) 的处理 (子解决方案全ActNo之后且WithOut的理性淘汰);
  *      2021.12.26: 支持当rDemand和hDemand已finish时不计分,并中断向子枝评分;
  *  @param scoreDic : notnull;
  *
@@ -51,7 +51,7 @@
     //1. 数据检查;
     double modelScore = 0;
     
-    //===== 第0部分: foModel自身理性淘汰判断 (比如时间紧急评否后,为actNo状态) (参考24053);
+    //===== 第0部分: foModel自身理性淘汰判断 (比如时间不急评否后,为actNo状态) (参考24053);
     if (model.status == TOModelStatus_ActNo) {
         [scoreDic setObject:@(INT_MIN) forKey:TOModel2Key(model)];
         NSLog(@"评分1: K:%@ => V:%@分",TOModel2Key(model),[scoreDic objectForKey:TOModel2Key(model)]);

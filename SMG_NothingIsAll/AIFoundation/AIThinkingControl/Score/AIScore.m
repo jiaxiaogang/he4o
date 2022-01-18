@@ -10,6 +10,10 @@
 
 @implementation AIScore
 
+//MARK:===============================================================
+//MARK:                     < 下标不急评价 >
+//MARK:===============================================================
+
 /**
  *  MARK:--------------------下标不急(弄巧成拙)评价--------------------
  *  @desc
@@ -18,7 +22,7 @@
  *          3. 必要性: ARSTime来的及评价是针对某帧的,而决策中,外界条件会变化,所以必须每帧都单独评价;
  *  @param dsFoModel : 当前正在推进的解决方案,其中actionIndex为当前帧;
  *  @param demand : 当前任务;
- *  @result (参考22194示图 & 22198);
+ *  @result (参考22194示图 & 22198) (默认为ture);
  *      true    : 提前可预备部分:返回true以进行_hav实时行为化 (比如:在穿越森林前,在遇到老虎前,我们先带枪);
  *      false   : 来的及返回false则ActYes等待静默成功,并继续推进主任务 (比如:枪已取到,现在先穿越森林,等老虎出现时,再吓跑它);
  */
@@ -61,6 +65,33 @@
             return;
         }
     }
+}
+
+//MARK:===============================================================
+//MARK:                     < 时间不急评价 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------时间不急评价--------------------
+ *  @desc 时间不急评价: 紧急情况 = 解决方案所需时间 > 父任务能给的时间 (参考:24057-方案3,24171-7);
+ *  @version
+ *      2022.01.19: 从action前置到rSolution中,因为三条全紧急,就完蛋了,放到action则不受此限制 (参考25106);
+ *  @result 返回是否时间不急 (默认为true);
+ *      true    : 不急,时间够用,这方案可继续act;
+ *      false   : 紧急,这方案来不及执行,直接ActNo掉;
+ */
++(BOOL) FRS_Time:(ReasonDemandModel*)demand solutionFo:(AIFoNodeBase*)solutionFo{
+    //1. 取解决方案所需时间;
+    int cutIndex = -1;//foModel.actionIndex
+    double needTime = [TOUtils getSumDeltaTime2Mv:solutionFo cutIndex:cutIndex];
+    
+    //2. 取父任务能给的时间;
+    double giveTime = [TOUtils getSumDeltaTime2Mv:demand.mModel.matchFo cutIndex:demand.mModel.cutIndex2];
+    
+    //3. 判断是否时间不急;
+    BOOL timeIsEnough = needTime <= giveTime;
+    NSLog(@"不急状态 (%d) = 方案所需要时间:%f <= 任务能给时间:%f",timeIsEnough,needTime,giveTime);
+    return timeIsEnough;
 }
 
 //MARK:===============================================================
