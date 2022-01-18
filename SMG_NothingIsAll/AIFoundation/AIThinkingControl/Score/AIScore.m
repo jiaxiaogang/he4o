@@ -90,7 +90,7 @@
     
     //3. 判断是否时间不急;
     BOOL timeIsEnough = needTime <= giveTime;
-    NSLog(@"不急状态 (%d) = 方案所需要时间:%f <= 任务能给时间:%f",timeIsEnough,needTime,giveTime);
+    NSLog(@"F%ld不急状态 (%d) = 方案所需要时间:%f <= 任务能给时间:%f",solutionFo.pointer.pointerId,timeIsEnough,needTime,giveTime);
     return timeIsEnough;
 }
 

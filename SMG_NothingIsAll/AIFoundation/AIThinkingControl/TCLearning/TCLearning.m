@@ -73,14 +73,14 @@
     NSLog(@"\npFo外类比 => %ld条",model.matchPFos.count);
     for (AIMatchFoModel *item in model.matchPFos) {
         AIFoNodeBase *absFo = [AIAnalogy analogyOutside:protoFo assFo:item.matchFo type:ATDefault createAbsAlgBlock:nil];
-        if (Log4AnalogyAbsRFo) NSLog(@"抽象: %@->%@ (from:F%ld)",Fo2FStr(absFo),Mvp2Str(absFo.cmvNode_p),item.matchFo.pointer.pointerId);
+        if (Log4AnalogyAbsRFo) NSLog(@"F%ld再抽象: %@->%@",item.matchFo.pointer.pointerId,Fo2FStr(absFo),Mvp2Str(absFo.cmvNode_p));
     }
     
     //2. 学习 for rFos: 加强rFos的抽具象关联;
     NSLog(@"\nrFo外类比 => %ld条",model.matchRFos.count);
     for (AIMatchFoModel *item in model.matchRFos) {
         AIFoNodeBase *absFo = [AIAnalogy analogyOutside:protoFo assFo:item.matchFo type:ATDefault createAbsAlgBlock:nil];
-        if (Log4AnalogyAbsRFo) NSLog(@"抽象: %@->%@ (from:F%ld)",Fo2FStr(absFo),Mvp2Str(absFo.cmvNode_p),item.matchFo.pointer.pointerId);
+        if (Log4AnalogyAbsRFo) NSLog(@"F%ld再抽象: %@->%@",item.matchFo.pointer.pointerId,Fo2FStr(absFo),Mvp2Str(absFo.cmvNode_p));
     }
     
     //3. TIR反馈;
