@@ -31,6 +31,7 @@
  *      20211017 - 在执行决策前,先到OPushM将TIModel.status更新了,因为有些IRT触发器已经失效了 (参考24061);
  */
 +(void) rInput:(AIAlgNodeBase*)algNode except_ps:(NSArray*)except_ps{
+    ISGroupLog(@"input R");
     //1. 数据准备 (瞬时记忆,理性匹配出的模型);
     __block AIShortMatchModel *mModel = [[AIShortMatchModel alloc] init];
     mModel.protoAlg = algNode;
@@ -50,10 +51,12 @@
 }
 
 +(void) pInput:(NSArray*)algsArr{
+    ISGroupLog(@"input P");
     [TCRegroup pRegroup:algsArr];
 }
 
-+(void) jump:(TOAlgModel*)algModel{
++(void) hInput:(TOAlgModel*)algModel{
+    ISGroupLog(@"input H");
     [TCDemand hDemand:algModel];
 }
 

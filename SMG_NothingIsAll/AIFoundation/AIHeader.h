@@ -286,12 +286,15 @@
 //warnLog
 #define WLog(fmt, ...) NSLog((@"<警告> " fmt), ##__VA_ARGS__);
 //demoLog (Demo交互信息)
-#define DemoLog(fmt, ...) NSLog((@"\n********************************************* " fmt @" *********************************************"), ##__VA_ARGS__);
+#define DemoLog(fmt, ...) NSLog((@"\n******************************* " fmt @" *******************************"), ##__VA_ARGS__);
 //titleLog (控制台日志组块title) (其实S为简化版,F为全版,I为输入期,O为输出期);
 #define ISTitleLog(title) IFTitleLog(title,@"")
 #define IFTitleLog(title,fmt, ...) NSLog((@"\n\n------------------------------- " title @" -------------------------------"fmt), ##__VA_ARGS__);
 #define OSTitleLog(title) OFTitleLog(title,@"")
 #define OFTitleLog(title,fmt, ...) NSLog((@"\n\n=============================== " title @" ==============================="fmt), ##__VA_ARGS__);
+//groupLog (每轮循环之始可用)
+#define ISGroupLog(title) IFGroupLog(title,@"")
+#define IFGroupLog(title,fmt, ...) NSLog((@"\n\n#########################################################################################################\n                                                <" title @"> \n#########################################################################################################"fmt), ##__VA_ARGS__);
 //系统log (格式化)
 #define NSLog(FORMAT, ...) fprintf(stderr,"%s",[[SMGUtils nsLogFormat:FILENAME line:__LINE__ protoLog:[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] headerMode:DefaultHeaderMode] UTF8String]);
 #define NSLog_Mode(mode,FORMAT, ...) fprintf(stderr,"%s",[[SMGUtils nsLogFormat:FILENAME line:__LINE__ protoLog:[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] headerMode:mode] UTF8String]);

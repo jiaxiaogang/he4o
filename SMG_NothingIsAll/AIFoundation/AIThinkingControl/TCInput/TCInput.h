@@ -12,6 +12,6 @@
 
 +(void) rInput:(AIAlgNodeBase*)algNode except_ps:(NSArray*)except_ps;
 +(void) pInput:(NSArray*)algsArr;
-+(void) jump:(TOAlgModel*)algModel;
++(void) hInput:(TOAlgModel*)algModel;
 
 @end

@@ -33,7 +33,7 @@
         NSLog(@"===执行%@",invoked ? @"success" : @"failure");
     }else{
         //8. notOut转jump;
-        [TCInput jump:algModel];
+        [TCInput hInput:algModel];
     }
 }
 
