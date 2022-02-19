@@ -23,6 +23,7 @@ static int logLineNum;
 +(NSString*) subStr:(NSString*)s toIndex:(NSInteger)index;
 +(NSString*) codeLocateFormat:(NSString*)fileName line:(NSInteger)line;
 +(NSString*) nsLogFormat:(NSString*)fileName line:(NSInteger)line protoLog:(NSString*)protoLog headerMode:(LogHeaderMode)headerMode;//NSLog自定义格式化;
++(NSString*) cleanStr:(id)str;
 
 //array
 +(BOOL) arrIsOk:(NSArray*)a;                            //数组有效判断

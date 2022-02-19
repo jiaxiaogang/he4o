@@ -91,6 +91,14 @@
     return (STRISOK(s) ? [s substringToIndex:MIN(s.length, MAX(0, index))] : @"");
 }
 
++(NSString*) cleanStr:(id)str{
+    NSString *validStr = STRTOOK(str);
+    validStr = [validStr stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+    validStr = [validStr stringByReplacingOccurrencesOfString:@"\t" withString:@""];
+    //validStr = [validStr stringByReplacingOccurrencesOfString:@" " withString:@""];
+    return validStr;
+}
+
 //array
 +(BOOL) arrIsOk:(NSArray*)a{
     return a && [a isKindOfClass:[NSArray class]] && a.count;

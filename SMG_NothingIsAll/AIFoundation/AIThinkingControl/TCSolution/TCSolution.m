@@ -114,7 +114,7 @@
         //6. 判断SP评分;
         AISPStrong *spStrong = [maskFo.spDic objectForKey:@(maskFo.count)];
         RSResultModelBase *checkResult = [RSResultModelBase newWithBaseFo:maskFo spIndex:maskFo.count pScore:spStrong.pStrong sScore:spStrong.sStrong];
-        NSLog(@"\t稳定性==> P:%@ S:%@ 评分:%@",Double2Str_NDZ(checkResult.pScore),Double2Str_NDZ(checkResult.sScore),Double2Str_NDZ(checkResult.score));
+        NSLog(@"\t稳定性==> P:%@ S:%@ 评分:%@ from:%@",Double2Str_NDZ(checkResult.pScore),Double2Str_NDZ(checkResult.sScore),Double2Str_NDZ(checkResult.score),CLEANSTR(maskFo.spDic));
         
         //6. 时间不急评价: 不急 = 解决方案所需时间 <= 父任务能给的时间 (参考:24057-方案3,24171-7);
         if (![AIScore FRS_Time:demand solutionFo:maskFo]) continue;

@@ -101,6 +101,10 @@
 //MARK:===============================================================
 @implementation AISPStrong
 
+-(NSString *)description{
+    return STRFORMAT(@"S%ldP%ld",(long)self.sStrong,(long)self.pStrong);
+}
+
 /**
  *  MARK:--------------------NSCoding--------------------
  */
