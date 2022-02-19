@@ -40,6 +40,9 @@
         value.pStrong++;
     }
     [self.spDic setObject:value forKey:key];
+    
+    //3. 保存fo
+    [SMGUtils insertNode:self];
 }
 
 /**
