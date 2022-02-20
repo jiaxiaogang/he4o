@@ -295,4 +295,28 @@
     return STRFORMAT(@"%p_%@",toModel,Pit2FStr(toModel.content_p));
 }
 
+/**
+ *  MARK:--------------------计算spScore--------------------
+ *  @desc 计算综合稳定性评分 (参考25114);
+ *  @version
+ *      2022.02.20: 改为综合评分,替代掉RSResultModelBase;
+ */
++(CGFloat) getSPScore:(AIFoNodeBase*)fo startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex{
+    
+    //AISPStrong *spStrong = [maskFo.spDic objectForKey:@(spIndex)];
+    //AISPStrong *spStrong = [maskFo.spDic objectForKey:@(maskFo.count)];
+    
+//    //1. SP都为0时,稳定性为0;
+//    if (self.pScore == 0 && self.sScore == 0) {
+//        return 0;
+//    }
+//
+//    //2. 否则根据SP得分,算出稳定性;
+//    double totalScore = self.pScore + self.sScore;
+//    double pPercent = self.pScore / totalScore;
+//    return (pPercent * 2) - 1;
+//
+    return 0;
+}
+
 @end

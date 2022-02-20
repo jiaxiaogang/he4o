@@ -121,4 +121,10 @@
  */
 +(NSString*) toModel2Key:(TOModelBase*)toModel;
 
+/**
+ *  MARK:--------------------计算spScore--------------------
+ *  @param endSPIndex : 目标index,比如感性mv时,则为fo.count (求结果时,需包含endSPIndex);
+ */
++(CGFloat) getSPScore:(AIFoNodeBase*)fo startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex;
+
 @end

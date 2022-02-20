@@ -76,7 +76,6 @@
 		0858C5E721950CA300951BA5 /* FoodView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0858C5E621950CA300951BA5 /* FoodView.m */; };
 		0858C5E921950CAA00951BA5 /* FoodView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0858C5E821950CAA00951BA5 /* FoodView.xib */; };
 		085BA9F4241C421500829450 /* HeLogUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 085BA9F3241C421500829450 /* HeLogUtil.m */; };
-		085D4BA42730CBED00B04773 /* RSResultModelBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 085D4BA32730CBED00B04773 /* RSResultModelBase.m */; };
 		0860A3BB22C9851800A48682 /* CustomAddNodeWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 0860A3BA22C9851800A48682 /* CustomAddNodeWindow.m */; };
 		0860A3BD22C9859200A48682 /* CustomAddNodeWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0860A3BC22C9859200A48682 /* CustomAddNodeWindow.xib */; };
 		086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */ = {isa = PBXBuildFile; fileRef = 086D93361F8CA782002BAF3F /* RuntimeInvoker.m */; };
@@ -311,8 +310,6 @@
 		0858C5E821950CAA00951BA5 /* FoodView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FoodView.xib; sourceTree = "<group>"; };
 		085BA9F2241C421500829450 /* HeLogUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HeLogUtil.h; sourceTree = "<group>"; };
 		085BA9F3241C421500829450 /* HeLogUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HeLogUtil.m; sourceTree = "<group>"; };
-		085D4BA22730CBED00B04773 /* RSResultModelBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSResultModelBase.h; sourceTree = "<group>"; };
-		085D4BA32730CBED00B04773 /* RSResultModelBase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RSResultModelBase.m; sourceTree = "<group>"; };
 		0860A3B922C9851800A48682 /* CustomAddNodeWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomAddNodeWindow.h; sourceTree = "<group>"; };
 		0860A3BA22C9851800A48682 /* CustomAddNodeWindow.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomAddNodeWindow.m; sourceTree = "<group>"; };
 		0860A3BC22C9859200A48682 /* CustomAddNodeWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomAddNodeWindow.xib; sourceTree = "<group>"; };
@@ -1277,8 +1274,6 @@
 			children = (
 				08C7539025A3EEB800BCF011 /* AIScore.h */,
 				08C7539125A3EEB800BCF011 /* AIScore.m */,
-				085D4BA22730CBED00B04773 /* RSResultModelBase.h */,
-				085D4BA32730CBED00B04773 /* RSResultModelBase.m */,
 			);
 			path = Score;
 			sourceTree = "<group>";
@@ -1574,7 +1569,6 @@
 				0830DAB721D6E8AD003065CD /* NSString+Extension.m in Sources */,
 				08C84A8E1E9A866200897D8B /* AIInput.m in Sources */,
 				0819F4F727583B27007396D0 /* TCLearning.m in Sources */,
-				085D4BA42730CBED00B04773 /* RSResultModelBase.m in Sources */,
 				08EA48BF2029242B0038B982 /* ImvAlgsHungerModel.m in Sources */,
 				082F9D561EB234750009F6A9 /* Output.m in Sources */,
 				0858C5CD2194F8B000951BA5 /* MASConstraintMaker.m in Sources */,

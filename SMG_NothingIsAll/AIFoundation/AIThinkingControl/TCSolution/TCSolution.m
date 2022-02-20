@@ -7,7 +7,6 @@
 //
 
 #import "TCSolution.h"
-#import "RSResultModelBase.h"
 
 @implementation TCSolution
 
@@ -104,7 +103,7 @@
     }
     
     //4. 从conPorts中找出最优秀的result (稳定性竞争) (参考24127-步骤2);
-    RSResultModelBase *bestRSResult = nil;
+    AIFoNodeBase *bestResult = nil;
     for (AIPort *maskPort in sumConPorts) {
         //5. 排除不应期;
         if ([except_ps containsObject:maskPort.target_p]) continue;
@@ -112,28 +111,29 @@
         NSLog(@"checkResult: %@->%@",Fo2FStr(maskFo),Mvp2Str(maskFo.cmvNode_p));
         
         //6. 判断SP评分;
-        AISPStrong *spStrong = [maskFo.spDic objectForKey:@(maskFo.count)];
-        RSResultModelBase *checkResult = [RSResultModelBase newWithBaseFo:maskFo spIndex:maskFo.count pScore:spStrong.pStrong sScore:spStrong.sStrong];
-        NSLog(@"\t稳定性==> P:%@ S:%@ 评分:%@ from:%@",Double2Str_NDZ(checkResult.pScore),Double2Str_NDZ(checkResult.sScore),Double2Str_NDZ(checkResult.score),CLEANSTR(maskFo.spDic));
+        CGFloat checkSPScore = [TOUtils getSPScore:maskFo startSPIndex:0 endSPIndex:maskFo.count];
+        NSLog(@"\t稳定性==> 评分:%@ from:%@",Double2Str_NDZ(checkSPScore),CLEANSTR(maskFo.spDic));
         
         //6. 时间不急评价: 不急 = 解决方案所需时间 <= 父任务能给的时间 (参考:24057-方案3,24171-7);
         if (![AIScore FRS_Time:demand solutionFo:maskFo]) continue;
         
         //7. 当best为空 或 check评分比best更高时 => 将check赋值到best;
-        if(!bestRSResult || checkResult.score > bestRSResult.score){
-            bestRSResult = checkResult;
+        CGFloat bestSPScore = [TOUtils getSPScore:bestResult startSPIndex:0 endSPIndex:bestResult.count];
+        if(!bestResult || checkSPScore > bestSPScore){
+            bestResult = maskFo;
         }
     }
     
     //6. 转流程控制_有解决方案则转begin;
-    if (bestRSResult) {
+    if (bestResult) {
         //7. 消耗活跃度;
         if (![theTC energyValid]) return;
         [theTC updateEnergy:-1];
         
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
-        TOFoModel *foModel = [TOFoModel newWithFo_p:bestRSResult.baseFo.pointer base:demand];
-        NSLog(@">>>>>> rSolution 新增第%ld例解决方案: %@->%@ FRS_PK评分:%.2f",demand.actionFoModels.count, Fo2FStr(bestRSResult.baseFo),Mvp2Str(bestRSResult.baseFo.cmvNode_p),bestRSResult.score);
+        TOFoModel *foModel = [TOFoModel newWithFo_p:bestResult.pointer base:demand];
+        CGFloat bestSPScore = [TOUtils getSPScore:bestResult startSPIndex:0 endSPIndex:bestResult.count];
+        NSLog(@">>>>>> rSolution 新增第%ld例解决方案: %@->%@ FRS_PK评分:%.2f",demand.actionFoModels.count, Fo2FStr(bestResult),Mvp2Str(bestResult.cmvNode_p),bestSPScore);
         [TCAction action:foModel];
     }else{
         //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
@@ -272,7 +272,8 @@
     [maskFos addObjectsFromArray:Ports2Pits([AINetUtils conPorts_All_Normal:targetFo])];
     
     //3. 从maskFos中找出最优秀的result;
-    RSResultModelBase *bestRSResult = nil;
+    AIFoNodeBase *bestResult = nil;
+    NSInteger bestSPIndex = 0;
     for (AIKVPointer *maskFo_p in maskFos) {
         
         //4. 排除不应期;
@@ -284,26 +285,28 @@
         
         //6. 如>0则找到 (HAlg不能是首条)_则判断SP评分 (参考25057);
         if (spIndex > 0) {
-            AISPStrong *spStrong = [maskFo.spDic objectForKey:@(spIndex)];
-            RSResultModelBase *checkResult = [RSResultModelBase newWithBaseFo:maskFo spIndex:spIndex pScore:spStrong.pStrong sScore:spStrong.sStrong];
+            CGFloat checkSPScore = [TOUtils getSPScore:maskFo startSPIndex:0 endSPIndex:spIndex];
+            CGFloat bestSPScore = [TOUtils getSPScore:bestResult startSPIndex:0 endSPIndex:bestSPIndex];
             
             //7. 当best为空 或 check评分比best更高时 => 将check赋值到best;
-            if(!bestRSResult || checkResult.score > bestRSResult.score){
-                bestRSResult = checkResult;
+            if(!bestResult || checkSPScore > bestSPScore){
+                bestResult = maskFo;
+                bestSPIndex = spIndex;
             }
         }
     }
     
     //8. 新解决方案_的结果处理;
-    if (bestRSResult) {
+    if (bestResult) {
         //8. 消耗活跃度;
         if (![theTC energyValid]) return;
         [theTC updateEnergy:-1];
         
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
-        TOFoModel *foModel = [TOFoModel newWithFo_p:bestRSResult.baseFo.pointer base:hDemand];
-        foModel.targetSPIndex = bestRSResult.spIndex;
-        NSLog(@">>>>>> hSolution 新增第%ld例解决方案: %@->%@ FRS_PK评分:%.2f targetSPIndex:%ld",hDemand.actionFoModels.count,Fo2FStr(bestRSResult.baseFo),Mvp2Str(bestRSResult.baseFo.cmvNode_p),bestRSResult.score,foModel.targetSPIndex);
+        TOFoModel *foModel = [TOFoModel newWithFo_p:bestResult.pointer base:hDemand];
+        foModel.targetSPIndex = bestSPIndex;
+        CGFloat bestSPScore = [TOUtils getSPScore:bestResult startSPIndex:0 endSPIndex:bestResult.count];
+        NSLog(@">>>>>> hSolution 新增第%ld例解决方案: %@->%@ FRS_PK评分:%.2f targetSPIndex:%ld",hDemand.actionFoModels.count,Fo2FStr(bestResult),Mvp2Str(bestResult.cmvNode_p),bestSPScore,foModel.targetSPIndex);
         [TCAction action:foModel];
     }else{
         //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);

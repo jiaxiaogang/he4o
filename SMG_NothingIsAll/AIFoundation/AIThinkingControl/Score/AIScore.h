@@ -16,7 +16,7 @@
 //MARK: 2. 理性评价 (反省)
 //MARK:     > VRS & ARS & FRS
 //MARK:===============================================================
-@class AIShortMatchModel,TOFoModel,ReasonDemandModel,DemandModel,RSResultModelBase;
+@class AIShortMatchModel,TOFoModel,ReasonDemandModel,DemandModel;
 @interface AIScore : NSObject
 
 //MARK:===============================================================
