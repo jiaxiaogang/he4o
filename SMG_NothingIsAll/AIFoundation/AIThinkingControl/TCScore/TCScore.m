@@ -18,6 +18,13 @@
     OSTitleLog(@"TCScore");
     DemandModel *demand = [theTC.outModelManager getCanDecisionDemand];
     
+    //TODOTOMORROW20220221:
+    //1. 此处,计算评分时,可以考虑是否使用稳定性综合评分,而不是单纯的匹配度;如果改成稳定性综评,是否会对决策树到solution产生什么影响;
+    //2. 在时序识别matchFos的排序处,是否考虑改为稳定性综评来排序,而不是单纯匹配度;
+    
+    
+    
+    
     //2. 对firstRootDemand取得分字典 (参考24195-2 & 24196示图);
     NSMutableDictionary *scoreDic = [[NSMutableDictionary alloc] init];
     TOFoModel *foModel = [self score_Multi:demand.actionFoModels scoreDic:scoreDic];

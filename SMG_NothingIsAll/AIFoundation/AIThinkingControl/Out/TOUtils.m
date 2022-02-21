@@ -302,21 +302,26 @@
  *      2022.02.20: 改为综合评分,替代掉RSResultModelBase;
  */
 +(CGFloat) getSPScore:(AIFoNodeBase*)fo startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex{
+    //1. 数据检查;
+    if (!fo) return 0;
+    CGFloat result = 1.0f;
     
-    //AISPStrong *spStrong = [maskFo.spDic objectForKey:@(spIndex)];
-    //AISPStrong *spStrong = [maskFo.spDic objectForKey:@(maskFo.count)];
-    
-//    //1. SP都为0时,稳定性为0;
-//    if (self.pScore == 0 && self.sScore == 0) {
-//        return 0;
-//    }
-//
-//    //2. 否则根据SP得分,算出稳定性;
-//    double totalScore = self.pScore + self.sScore;
-//    double pPercent = self.pScore / totalScore;
-//    return (pPercent * 2) - 1;
-//
-    return 0;
+    //2. 从start到end各计算spScore;
+    for (NSInteger i = startSPIndex; i <= endSPIndex; i++) {
+        AISPStrong *spStrong = [fo.spDic objectForKey:@(i)];
+        
+        //3. 当sp经历都为0条时,默认评分为1;
+        CGFloat itemSPScore = 1.0f;
+        
+        //4. SP不为0时,计算稳定性评分;
+        if (spStrong.pStrong != 0 && spStrong.sStrong != 0) {
+            itemSPScore = spStrong.pStrong / (spStrong.sStrong + spStrong.pStrong);
+        }
+        
+        //5. 将itemSPScore计入综合评分;
+        result *= itemSPScore;
+    }
+    return result;
 }
 
 @end
