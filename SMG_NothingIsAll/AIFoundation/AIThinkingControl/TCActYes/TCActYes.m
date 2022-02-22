@@ -33,7 +33,6 @@
  *      2021.12.02: 将旧架构actYes的代码移过来 (参考24164);
  *      2021.12.27: arsTime触发后的反馈处理 (有反馈则继续解决方案,无反馈则父任务自愈);
  */
-
 //arsTime模式,当评价需等待时,actYes;
 +(void) arsTimeActYes:(TOAlgModel*)algModel{
     

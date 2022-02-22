@@ -300,6 +300,7 @@
  *  @desc 计算综合稳定性评分 (参考25114);
  *  @version
  *      2022.02.20: 改为综合评分,替代掉RSResultModelBase;
+ *      2022.02.22: 修复明明S有值,P为0,但综评为1分的问题 (||写成了&&导致的);
  */
 +(CGFloat) getSPScore:(AIFoNodeBase*)fo startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex{
     //1. 数据检查;
@@ -314,7 +315,7 @@
         CGFloat itemSPScore = 1.0f;
         
         //4. SP不为0时,计算稳定性评分;
-        if (spStrong.pStrong != 0 && spStrong.sStrong != 0) {
+        if (spStrong.pStrong != 0 || spStrong.sStrong != 0) {
             itemSPScore = spStrong.pStrong / (spStrong.sStrong + spStrong.pStrong);
         }
         

@@ -76,6 +76,7 @@
  *  @desc 时间不急评价: 紧急情况 = 解决方案所需时间 > 父任务能给的时间 (参考:24057-方案3,24171-7);
  *  @version
  *      2022.01.19: 从action前置到rSolution中,因为三条全紧急,就完蛋了,放到action则不受此限制 (参考25106);
+ *      2022.02.22: 将needTime取到mv改为仅取下帧,因为很多solution只需要一帧就改到正确的道路上了 (参考25113-方案2);
  *  @result 返回是否时间不急 (默认为true);
  *      true    : 不急,时间够用,这方案可继续act;
  *      false   : 紧急,这方案来不及执行,直接ActNo掉;
@@ -83,14 +84,14 @@
 +(BOOL) FRS_Time:(ReasonDemandModel*)demand solutionFo:(AIFoNodeBase*)solutionFo{
     //1. 取解决方案所需时间;
     int cutIndex = -1;//foModel.actionIndex
-    double needTime = [TOUtils getSumDeltaTime2Mv:solutionFo cutIndex:cutIndex];
+    double needTime = [TOUtils getSumDeltaTime:solutionFo startIndex:cutIndex endIndex:1];
     
     //2. 取父任务能给的时间;
     double giveTime = [TOUtils getSumDeltaTime2Mv:demand.mModel.matchFo cutIndex:demand.mModel.cutIndex2];
     
     //3. 判断是否时间不急;
     BOOL timeIsEnough = needTime <= giveTime;
-    NSLog(@"\t时间不急==> 状态(%d) = 方案所需要时间:%f <= 任务能给时间:%f",timeIsEnough,needTime,giveTime);
+    NSLog(@"\t时间不急==> 状态(%d) = 方案所需要时间:%.2f <= 任务能给时间:%.2f",timeIsEnough,needTime,giveTime);
     return timeIsEnough;
 }
 
