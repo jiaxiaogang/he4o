@@ -297,15 +297,17 @@
 
 /**
  *  MARK:--------------------计算spScore--------------------
- *  @desc 计算综合稳定性评分 (参考25114);
+ *  @desc 计算综合稳定性评分 (参考25114 & 25122-负公式);
  *  @version
  *      2022.02.20: 改为综合评分,替代掉RSResultModelBase;
  *      2022.02.22: 修复明明S有值,P为0,但综评为1分的问题 (||写成了&&导致的);
+ *      2022.02.24: 支持负mv时序的稳定性评分公式 (参考25122-负公式);
  */
 +(CGFloat) getSPScore:(AIFoNodeBase*)fo startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex{
     //1. 数据检查;
     if (!fo) return 0;
-    CGFloat result = 1.0f;
+    CGFloat totalSPScore = 1.0f;                                    //正mv默认为1分;
+    BOOL isBadMv = [AIScore score4MV:fo.cmvNode_p ratio:1.0f] < 0;  //正负mv的公式是不同的 (参考25122-公式)
     
     //2. 从start到end各计算spScore;
     for (NSInteger i = startSPIndex; i <= endSPIndex; i++) {
@@ -319,10 +321,20 @@
             itemSPScore = spStrong.pStrong / (spStrong.sStrong + spStrong.pStrong);
         }
         
-        //5. 将itemSPScore计入综合评分;
-        result *= itemSPScore;
+        //5. 当为末位mv时,负mv则取1-itemSPScore (参考25122-负公式);
+        if (i == fo.count && isBadMv) {
+            itemSPScore = 1 - itemSPScore;
+        }
+        
+        //6. 将itemSPScore计入综合评分 (参考25114 & 25122-公式);
+        totalSPScore *= itemSPScore;
     }
-    return result;
+    
+    //7. 负mv时,返回1-totalSPScore (参考25122-负公式);
+    if (isBadMv) {
+        return 1 - totalSPScore;
+    }
+    return totalSPScore;
 }
 
 @end
