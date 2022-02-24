@@ -302,6 +302,8 @@
  *      2022.02.20: 改为综合评分,替代掉RSResultModelBase;
  *      2022.02.22: 修复明明S有值,P为0,但综评为1分的问题 (||写成了&&导致的);
  *      2022.02.24: 支持负mv时序的稳定性评分公式 (参考25122-负公式);
+ *      2022.02.24: 修复因代码逻辑错误,导致负mv在全顺状态下,评为1分的BUG (修复: 明确itemSPScore的定义,整理代码后ok);
+ *  @result 返回spScore稳定性综合评分: 越接近1分越好,越接近0分越差;
  */
 +(CGFloat) getSPScore:(AIFoNodeBase*)fo startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex{
     //1. 数据检查;
@@ -313,17 +315,24 @@
     for (NSInteger i = startSPIndex; i <= endSPIndex; i++) {
         AISPStrong *spStrong = [fo.spDic objectForKey:@(i)];
         
-        //3. 当sp经历都为0条时,默认评分为1;
+        //3. 当sp经历都为0条时 (正mv时,表示多好评分 | 负mv时,表示多坏评分) 默认评分都为1;
         CGFloat itemSPScore = 1.0f;
         
-        //4. SP不为0时,计算稳定性评分;
-        if (spStrong.pStrong != 0 || spStrong.sStrong != 0) {
-            itemSPScore = spStrong.pStrong / (spStrong.sStrong + spStrong.pStrong);
-        }
-        
-        //5. 当为末位mv时,负mv则取1-itemSPScore (参考25122-负公式);
-        if (i == fo.count && isBadMv) {
-            itemSPScore = 1 - itemSPScore;
+        //4. SP有效且其中之一不为0时,计算稳定性评分;
+        if (spStrong && spStrong.pStrong + spStrong.sStrong > 0) {
+            
+            //4. 取"多好"程度;
+            CGFloat pRate = spStrong.pStrong / (spStrong.sStrong + spStrong.pStrong);
+            
+            //5.1 在感性的负mv时,itemSPScore = 1 - pRate (参考25122-负公式);
+            if (i == fo.count && isBadMv) {
+                itemSPScore = 1 - pRate;
+            }else{
+                
+                //5.2 在理性评分中,pStrong表示顺利程度,与mv正负成正比;
+                //5.3 在感性正mv时,pRate与它的稳定性评分一致;
+                itemSPScore = pRate;
+            }
         }
         
         //6. 将itemSPScore计入综合评分 (参考25114 & 25122-公式);
