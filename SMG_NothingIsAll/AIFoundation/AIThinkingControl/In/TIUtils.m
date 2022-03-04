@@ -290,6 +290,7 @@
         //5. 依次对assFos对应的时序,做匹配度评价; (参考: 160_TIRFO单线顺序模型)
         for (AIKVPointer *assFo_p in assFo_ps) {
             AIFoNodeBase *assFo = [SMGUtils searchNode:assFo_p];
+            NSLog(@"指: %@->%@",Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
             
             //5. 虚mv,无效;
             if (assFo.cmvNode_p && [AINetUtils isVirtualMv:assFo.cmvNode_p]) continue;
@@ -332,6 +333,27 @@
     NSArray *sortRFos = [SMGUtils sortBig2Small:inModel.matchRFos compareBlock:^double(AIMatchFoModel *obj) {
         return obj.matchFoStrong * obj.matchFoValue;
     }];
+    
+    
+    //TODOTOMORROW20220304: 调试: 25134BUG
+    //经测,rFos出来许多单帧结果,pFo单帧还Ok,但rFos的单帧真没啥用,没预测作用,还占位置;
+    //前10条几乎全是单帧的结果,把多帧更有用的结果都顶掉了;
+    for (AIMatchFoModel *item in sortPFos){
+        NSInteger index = [sortPFos indexOfObject:item];
+        NSInteger pId = item.matchFo.pointer.pointerId;
+        if (pId == 365 || pId == 362 || pId == 369 || pId == 564 || pId == 566 || pId == 561) {
+            NSLog(@"---->%ld pFo:%@",index,Fo2FStr(item.matchFo));
+        }
+    }
+    for (AIMatchFoModel *item in sortRFos){
+        NSInteger index = [sortRFos indexOfObject:item];
+        NSInteger pId = item.matchFo.pointer.pointerId;
+        if (pId == 365 || pId == 362 || pId == 369 || pId == 564 || pId == 566 || pId == 561) {
+            NSLog(@"---->%ld rFo:%@",index,Fo2FStr(item.matchFo));
+        }
+    }
+    
+    
     
     //11. 仅各保留10条;
     inModel.matchPFos = [[NSMutableArray alloc] initWithArray:ARR_SUB(sortPFos, 0, 10)];
