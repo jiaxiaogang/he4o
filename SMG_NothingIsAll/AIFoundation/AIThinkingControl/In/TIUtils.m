@@ -338,6 +338,12 @@
     //TODOTOMORROW20220304: 调试: 25134BUG
     //经测,rFos出来许多单帧结果,pFo单帧还Ok,但rFos的单帧真没啥用,没预测作用,还占位置;
     //前10条几乎全是单帧的结果,把多帧更有用的结果都顶掉了;
+    //1. 本质问题在于,用于rLearning的和用于IRT的,其需求不一样;
+    //2. 所以此处rFos应该全保留;
+    //2.1 然后在rLearning时,取全含matchValue=1且fo.count更长的优先进行;
+    //2.2 然后在用于IRT预测时,取非全含的优先进行;
+    
+    
     for (AIMatchFoModel *item in sortPFos){
         NSInteger index = [sortPFos indexOfObject:item];
         NSInteger pId = item.matchFo.pointer.pointerId;
