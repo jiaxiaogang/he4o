@@ -38,11 +38,6 @@
             
             //5. 末位跳过,不需要反馈 (参考25031-2 & 25134-方案2);
             NSInteger maxCutIndex = waitModel.matchFo.count - 1;
-            if (waitModel.cutIndex2 >= maxCutIndex) {
-                WLog(@"回测此处判断continue的逻辑是否改对了: 已达到末帧,跳过不计反馈 (已发生:%ld 末帧值:%ld)",waitModel.cutIndex2,maxCutIndex);
-            }else{
-                WLog(@"回测此处判断continue的逻辑是否改对了: 未达到末帧,跳过不计反馈 (已发生:%ld 末帧值:%ld)",waitModel.cutIndex2,maxCutIndex);
-            }
             if (waitModel.cutIndex2 >= maxCutIndex) continue;
             
             //6. 判断protoAlg与waitAlg之间mIsC,成立则OutBackYes;

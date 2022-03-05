@@ -333,6 +333,8 @@
     NSArray *sortRFos = [SMGUtils sortBig2Small:inModel.matchRFos compareBlock:^double(AIMatchFoModel *obj) {
         return obj.matchFoStrong * obj.matchFoValue;
     }];
+    inModel.matchPFos = [[NSMutableArray alloc] initWithArray:sortPFos];
+    inModel.matchRFos = [[NSMutableArray alloc] initWithArray:sortRFos];
     
     //11. 调试日志;
     NSLog(@"\n=====> 时序识别Finish (PFos数:%lu)",(unsigned long)inModel.matchPFos.count);
