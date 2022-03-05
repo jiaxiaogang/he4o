@@ -255,6 +255,7 @@
  *      2021.06.30: 支持cutIndex回调,识别和反思时,分别走不同逻辑 (参考23152);
  *      2021.08.19: 结果PFos和RFos按(强度x匹配度)排序 (参考23222-BUG2);
  *      2022.01.16: 仅保留10条rFos和pFos (因为在十四测中,发现它们太多了,都有40条rFos的时候,依窄出原则,太多没必要);
+ *      2022.03.05: 将保留10条改为全保留,因为不同调用处,需要不同的筛选排序方式 (参考25134-方案2);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
 +(void) partMatching_FoV1Dot5:(AIFoNodeBase*)maskFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel findCutIndex:(NSInteger(^)(AIFoNodeBase *matchFo,NSInteger lastMatchIndex))findCutIndex{
@@ -335,15 +336,7 @@
     }];
     
     
-    //TODOTOMORROW20220304: 25134BUG-方案2-代码规划;
-    //1. 此处prFos改为全保留;
-    //2. 理性学习筛选出全含 & 以fo长度排序;
-    //3. 理性预测筛选出非全含 & 以匹配度排序;
-    
-    
-    
-    
-    
+    //TODOTOMORROW20220304: 25134BUG-方案2-回测观察日志;
     for (AIMatchFoModel *item in sortPFos){
         NSInteger index = [sortPFos indexOfObject:item];
         NSInteger pId = item.matchFo.pointer.pointerId;
@@ -358,12 +351,6 @@
             NSLog(@"---->%ld rFo:%@",index,Fo2FStr(item.matchFo));
         }
     }
-    
-    
-    
-    //11. 仅各保留10条;
-    inModel.matchPFos = [[NSMutableArray alloc] initWithArray:ARR_SUB(sortPFos, 0, 10)];
-    inModel.matchRFos = [[NSMutableArray alloc] initWithArray:ARR_SUB(sortRFos, 0, 10)];
     
     //11. 调试日志;
     NSLog(@"\n=====> 时序识别Finish (PFos数:%lu)",(unsigned long)inModel.matchPFos.count);

@@ -86,7 +86,7 @@
     }
     
     //1. 根据demand取;
-    NSArray *validPFos = [SMGUtils filterArr:demand.inModel.matchPFos checkValid:^BOOL(AIMatchFoModel *item) {
+    NSArray *validPFos = [SMGUtils filterArr:demand.inModel.fos4Demand checkValid:^BOOL(AIMatchFoModel *item) {
         return [demand.mModel.matchFo.cmvNode_p.identifier isEqualToString:item.matchFo.cmvNode_p.identifier];
     }];
     

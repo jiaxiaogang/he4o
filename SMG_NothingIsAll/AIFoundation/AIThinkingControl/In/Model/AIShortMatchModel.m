@@ -61,4 +61,67 @@
 //    return result;
 //}
 
+
+//MARK:===============================================================
+//MARK:           < 不同用途时取不同prFos (参考25134-方案2) >
+//MARK:===============================================================
+
+//用于学习 (参考:25134-方案2-A学习);
+-(NSArray*) fos4RLearning{
+    return [SMGUtils collectArrA:[AIShortMatchModel fullMatchs:self.matchPFos] arrB:[AIShortMatchModel fullMatchs:self.matchRFos]];
+}
+-(NSArray*) fos4PLearning{
+    return ARR_SUB(self.matchPFos, 0, 10);
+}
+
+//用于预测 (参考:25134-方案2-B预测);
+-(NSArray*) fos4RForecast{
+    return [SMGUtils collectArrA:[AIShortMatchModel partMatchs:self.matchPFos] arrB:[AIShortMatchModel partMatchs:self.matchRFos]];
+}
+-(NSArray*) fos4PForecast{
+    return [AIShortMatchModel fullMatchs:self.matchPFos];
+}
+
+//用于需求 (参考:25134-方案2-C需求);
+-(NSArray*) fos4Demand{
+    return ARR_SUB(self.matchPFos, 0, 10);
+}
+
+//MARK:===============================================================
+//MARK:                     < 筛选全含与非全含的fos >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------筛选出全含的--------------------
+ *  @desc 排序: 全含,以时序长度排序;
+ */
++(NSArray*) fullMatchs:(NSArray*)matchs {
+    //1. 筛选;
+    NSArray *fullMatchs = [SMGUtils filterArr:matchs checkValid:^BOOL(AIMatchFoModel *item) {
+        return item.matchFoValue > 0.99f;
+    }];
+    
+    //2. 排序;
+    fullMatchs = [fullMatchs sortedArrayUsingComparator:^NSComparisonResult(AIMatchFoModel *o1, AIMatchFoModel *o2) {
+        return [SMGUtils compareIntA:o1.matchFo.count intB:o2.matchFo.count];
+    }];
+    
+    //3. 返10条;
+    return ARR_SUB(fullMatchs, 0, 10);
+}
+
+/**
+ *  MARK:--------------------筛选出非全含的--------------------
+ *  @desc 排序: 非全含,以匹配度(默认)排序;
+ */
++(NSArray*) partMatchs:(NSArray*)matchs {
+    //1. 筛选;
+    NSArray *partMatchs = [SMGUtils filterArr:matchs checkValid:^BOOL(AIMatchFoModel *item) {
+        return item.matchFoValue < 0.99f;
+    }];
+    
+    //2. 返10条;
+    return ARR_SUB(partMatchs, 0, 10);
+}
+
 @end

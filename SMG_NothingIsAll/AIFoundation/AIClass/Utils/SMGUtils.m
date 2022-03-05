@@ -304,6 +304,8 @@
     }
     
     //2. 默认按StrongValue从大到小排序 (self.strongValue越大越排前面)
+    //TODOTOMORROW20220305: 怀疑此处排序为从小到大,而不是从大到小;
+    WLog(@"查下排序是不是反了;");
     if (pA.strong.value > pB.strong.value) {
         return NSOrderedDescending;
     }else if(pA.strong.value < pB.strong.value){

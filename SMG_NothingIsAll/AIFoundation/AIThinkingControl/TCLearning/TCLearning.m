@@ -33,7 +33,7 @@
     IFTitleLog(@"P学习", @"\n输入ProtoFo:%@->%@", Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p));
     NSArray *inModels = ARRTOOK(theTC.inModelManager.models);
     for (AIShortMatchModel *item in inModels) {
-        for (AIMatchFoModel *pFo in item.matchPFos) {
+        for (AIMatchFoModel *pFo in item.fos4PLearning) {
             //2. 检查同向;
             BOOL isSame = [AIScore sameIdenSameScore:pFo.matchFo.cmvNode_p mv2:protoFo.cmvNode_p];
             if (!isSame) continue;
@@ -69,21 +69,14 @@
  */
 +(void) rLearning:(AIShortMatchModel*)model protoFo:(AIFoNodeBase*)protoFo{
     IFTitleLog(@"rLearning","\nprotoFo: %@->%@",Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p));
-    //1. 学习 for pFos: 加强pFos的抽具象关联;
-    NSLog(@"\npFo外类比 => %ld条",model.matchPFos.count);
-    for (AIMatchFoModel *item in model.matchPFos) {
+    //1. 学习 for prFos: 加强pFos的抽具象关联;
+    NSLog(@"\npFo外类比 =>");
+    for (AIMatchFoModel *item in model.fos4RLearning) {
         AIFoNodeBase *absFo = [AIAnalogy analogyOutside:protoFo assFo:item.matchFo type:ATDefault createAbsAlgBlock:nil];
         if (Log4AnalogyAbsRFo) NSLog(@"F%ld再抽象: %@->%@",item.matchFo.pointer.pointerId,Fo2FStr(absFo),Mvp2Str(absFo.cmvNode_p));
     }
     
-    //2. 学习 for rFos: 加强rFos的抽具象关联;
-    NSLog(@"\nrFo外类比 => %ld条",model.matchRFos.count);
-    for (AIMatchFoModel *item in model.matchRFos) {
-        AIFoNodeBase *absFo = [AIAnalogy analogyOutside:protoFo assFo:item.matchFo type:ATDefault createAbsAlgBlock:nil];
-        if (Log4AnalogyAbsRFo) NSLog(@"F%ld再抽象: %@->%@",item.matchFo.pointer.pointerId,Fo2FStr(absFo),Mvp2Str(absFo.cmvNode_p));
-    }
-    
-    //3. TIR反馈;
+    //2. TIR反馈;
     [TCFeedback feedbackTIR:model];
 }
 

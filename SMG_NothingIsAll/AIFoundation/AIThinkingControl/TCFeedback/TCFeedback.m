@@ -17,6 +17,7 @@
  *      2021.01.24: 多时序识别支持,使之更全面的支持每个matchFo的status更新 (参考22073-todo6);
  *      2021.10.17: 支持IRT的理性失效,场景更新时,状态设为OutBackReason (参考24059&24061-方案2);
  *      2021.12.25: 针对理性IRT反省的支持 (判断非末位为理性预测中) (参考25021-②);
+ *      2022.03.05: BUG_将仅末位才反馈,改成非末位才反馈 (原来逻辑写反了);
  *  @status
  *      xxxx.xx.xx: 非启动状态,因为时序识别中,未涵盖HNGL类型,所以并未对HNGL进行预测;
  *      2021.10.17: 启动,支持对IRT的理性失效 (参考24059&24061-方案2);
@@ -30,16 +31,15 @@
     for (AIShortMatchModel *inModel in inModels) {
         
         //3. 对pFos+rFos都做理性反馈;
-        NSMutableArray *matchs = [[NSMutableArray alloc] initWithArray:inModel.matchPFos];
-        [matchs addObjectsFromArray:inModel.matchRFos];
-        for (AIMatchFoModel *waitModel in matchs) {
+        for (AIMatchFoModel *waitModel in inModel.fos4RForecast) {
             //4. 取出等待中的_非wait状态的,不处理;
             if (waitModel.status != TIModelStatus_LastWait) continue;
             if (Log4TIROPushM) NSLog(@"==> checkTIModel=MatchFo: %@",Fo2FStr(waitModel.matchFo));
             
-            //5. 非末位跳过 (参考25031-2);
+            //5. 末位跳过,不需要反馈 (参考25031-2 & 25134-方案2);
             NSInteger maxCutIndex = waitModel.matchFo.count - 1;
-            if (waitModel.cutIndex2 < maxCutIndex) continue;
+            WLog(@"回测下,此处判断continue的逻辑是否改对了;");
+            if (waitModel.cutIndex2 >= maxCutIndex) continue;
             
             //6. 判断protoAlg与waitAlg之间mIsC,成立则OutBackYes;
             AIKVPointer *waitAlg_p = ARR_INDEX(waitModel.matchFo.content_ps, waitModel.cutIndex2 + 1);
@@ -57,7 +57,8 @@
     [TCForecast rForecast:model];
     
     //8. IRT触发器;
-    [TCForecast forecastIRT:model];
+    [TCForecast forecastReasonIRT:model];
+    [TCForecast forecastPerceptIRT:model];
 }
 
 /**
@@ -78,7 +79,7 @@
     
     //2. 判断最近一次input是否与等待中outModel相匹配 (匹配,比如吃,确定自己是否真吃了);
     for (AIShortMatchModel *inModel in inModels) {
-        for (AIMatchFoModel *waitModel in inModel.matchPFos) {
+        for (AIMatchFoModel *waitModel in inModel.fos4PForecast) {
             
             //3. 数据准备;
             AIFoNodeBase *waitMatchFo = waitModel.matchFo;

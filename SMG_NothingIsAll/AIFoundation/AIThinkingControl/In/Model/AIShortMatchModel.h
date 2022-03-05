@@ -97,4 +97,20 @@
 //@property (assign, nonatomic) CGFloat matchFoValue;     //时序匹配度
 //@property (assign, nonatomic) TIModelStatus status;     //状态
 
+
+//MARK:===============================================================
+//MARK:           < 不同用途时取不同prFos (参考25134-方案2) >
+//MARK:===============================================================
+
+//用于学习 (参考:25134-方案2-A学习);
+-(NSArray*) fos4RLearning;
+-(NSArray*) fos4PLearning;
+
+//用于预测 (参考:25134-方案2-B预测);
+-(NSArray*) fos4RForecast;
+-(NSArray*) fos4PForecast;
+
+//用于预测 (参考:25134-方案2-B预测);
+-(NSArray*) fos4Demand;
+
 @end
