@@ -291,7 +291,6 @@
         //5. 依次对assFos对应的时序,做匹配度评价; (参考: 160_TIRFO单线顺序模型)
         for (AIKVPointer *assFo_p in assFo_ps) {
             AIFoNodeBase *assFo = [SMGUtils searchNode:assFo_p];
-            NSLog(@"指: %@->%@",Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
             
             //5. 虚mv,无效;
             if (assFo.cmvNode_p && [AINetUtils isVirtualMv:assFo.cmvNode_p]) continue;
@@ -334,23 +333,6 @@
     NSArray *sortRFos = [SMGUtils sortBig2Small:inModel.matchRFos compareBlock:^double(AIMatchFoModel *obj) {
         return obj.matchFoStrong * obj.matchFoValue;
     }];
-    
-    
-    //TODOTOMORROW20220304: 25134BUG-方案2-回测观察日志;
-    for (AIMatchFoModel *item in sortPFos){
-        NSInteger index = [sortPFos indexOfObject:item];
-        NSInteger pId = item.matchFo.pointer.pointerId;
-        if (pId == 365 || pId == 362 || pId == 369 || pId == 564 || pId == 566 || pId == 561) {
-            NSLog(@"---->%ld pFo:%@",index,Fo2FStr(item.matchFo));
-        }
-    }
-    for (AIMatchFoModel *item in sortRFos){
-        NSInteger index = [sortRFos indexOfObject:item];
-        NSInteger pId = item.matchFo.pointer.pointerId;
-        if (pId == 365 || pId == 362 || pId == 369 || pId == 564 || pId == 566 || pId == 561) {
-            NSLog(@"---->%ld rFo:%@",index,Fo2FStr(item.matchFo));
-        }
-    }
     
     //11. 调试日志;
     NSLog(@"\n=====> 时序识别Finish (PFos数:%lu)",(unsigned long)inModel.matchPFos.count);
