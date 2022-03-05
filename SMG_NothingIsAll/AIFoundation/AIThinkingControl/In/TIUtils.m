@@ -343,6 +343,12 @@
     //2.1 然后在rLearning时,取全含matchValue=1且fo.count更长的优先进行;
     //2.2 然后在用于IRT预测时,取非全含的优先进行;
     
+    //时序识别结果只做三件事:
+    //1. 理性预测; (非全含匹配)
+    //2. 感性预测; (有mv指向)
+    //3. 学习; (建议较全含的)
+    
+    
     
     for (AIMatchFoModel *item in sortPFos){
         NSInteger index = [sortPFos indexOfObject:item];
