@@ -282,10 +282,10 @@
     BOOL aIsOk = ISOK(pA, AIKVPointer.class);
     BOOL bIsOk = ISOK(pB, AIKVPointer.class);
     if (!aIsOk || !bIsOk) {
-        return (aIsOk == bIsOk) ? NSOrderedSame : (aIsOk ? NSOrderedDescending : NSOrderedAscending);
+        return (aIsOk == bIsOk) ? NSOrderedSame : (aIsOk ? NSOrderedAscending : NSOrderedDescending);
     }
     
-    //2. PointerId越大越排前面
+    //2. PointerId越小越排前面
     if (pA.pointerId > pB.pointerId) {
         return NSOrderedDescending;
     }else if(pA.pointerId < pB.pointerId){
@@ -300,12 +300,10 @@
     BOOL aIsOk = ISOK(pA, AIPort.class);
     BOOL bIsOk = ISOK(pB, AIPort.class);
     if (!aIsOk || !bIsOk) {
-        return (aIsOk == bIsOk) ? NSOrderedSame : (aIsOk ? NSOrderedDescending : NSOrderedAscending);
+        return (aIsOk == bIsOk) ? NSOrderedSame : (aIsOk ? NSOrderedAscending : NSOrderedDescending);
     }
     
-    //2. 默认按StrongValue从大到小排序 (self.strongValue越大越排前面)
-    //TODOTOMORROW20220305: 怀疑此处排序为从小到大,而不是从大到小;
-    WLog(@"查下排序是不是反了;");
+    //2. 默认按StrongValue从小到大排序 (self.strongValue越小越排前面)
     if (pA.strong.value > pB.strong.value) {
         return NSOrderedDescending;
     }else if(pA.strong.value < pB.strong.value){
