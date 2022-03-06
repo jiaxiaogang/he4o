@@ -73,6 +73,7 @@
  *      2022.01.07: 改为将整个demand.actionFoModels全加入不应期 (因为还在决策中的S会重复);
  *      2022.01.09: 达到limit条时的处理;
  *      2022.01.19: 将时间不急评价封装为FRS_Time() (参考25106);
+ *      2022.03.06: 当稳定性综评为0分时,不做为解决方案 (参考25131-思路2);
  *  @callers : 用于RDemand.Begin时调用;
  */
 +(void) rSolution:(ReasonDemandModel*)demand {
@@ -125,14 +126,14 @@
     }
     
     //6. 转流程控制_有解决方案则转begin;
-    if (bestResult) {
+    CGFloat bestSPScore = [TOUtils getSPScore:bestResult startSPIndex:0 endSPIndex:bestResult.count];
+    if (bestResult && bestSPScore > 0) {
         //7. 消耗活跃度;
         if (![theTC energyValid]) return;
         [theTC updateEnergy:-1];
         
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
         TOFoModel *foModel = [TOFoModel newWithFo_p:bestResult.pointer base:demand];
-        CGFloat bestSPScore = [TOUtils getSPScore:bestResult startSPIndex:0 endSPIndex:bestResult.count];
         NSLog(@">>>>>> rSolution 新增第%ld例解决方案: %@->%@ FRS_PK评分:%.2f",demand.actionFoModels.count, Fo2FStr(bestResult),Mvp2Str(bestResult.cmvNode_p),bestSPScore);
         [TCAction action:foModel];
     }else{
