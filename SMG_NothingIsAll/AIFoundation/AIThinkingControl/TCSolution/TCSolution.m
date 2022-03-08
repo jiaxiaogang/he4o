@@ -99,7 +99,12 @@
     NSMutableArray *sumConPorts = [[NSMutableArray alloc] init];
     for (AIMatchFoModel *pFo in validPFos) {
         NSArray *conPorts = [AINetUtils conPorts_All_Normal:pFo.matchFo];
-        conPorts = ARR_SUB(conPorts, 0, 3);
+        
+        //TODOTOMORROW20220308: 25134-将限制条数,排除掉评分为0 或 时间不急评价否掉,的影响;避免前三条经常都不能用;
+        
+        
+        
+        conPorts = ARR_SUB(conPorts, 0, 30);
         [sumConPorts addObjectsFromArray:conPorts];
     }
     
