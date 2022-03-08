@@ -140,12 +140,6 @@
         //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
         demand.status = TOModelStatus_WithOut;
         NSLog(@">>>>>> rSolution 无计可施");
-        
-        //TODOTOMORROW20220116: 调试25106BUG (有时获取不到rSolution任务的问题);
-        [theNV invokeForceMode:^{
-            [theNV setNodeData:demand.mModel.matchFo.pointer];
-        }];
-        
         [TCScore score];
     }
 }
@@ -313,13 +307,6 @@
         //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
         hDemand.status = TOModelStatus_WithOut;
         NSLog(@">>>>>> hSolution 无计可施");
-        
-        
-        //TODOTOMORROW20220116: 调试25104BUG;
-        //重新训练,回测25104BUG,在两树衔接后,是否还是取不到H.S解决方案;
-        [theNV invokeForceMode:^{
-            [theNV setNodeData:targetFo.pointer];
-        }];
         [TCScore score];
     }
 }

@@ -190,6 +190,10 @@
             //[theTC updateEnergy:MAX(0, newItem.urgentTo - sameIdenOldMax)];
             [theTC setEnergy:20];
             
+            //可视化测25133具象没指向解决方案问题BUG;
+            [theNV invokeForceMode:^{
+                [theNV setNodeData:mModel.matchFo.pointer];
+            }];
             NSLog(@"RMV新需求: %@->%@ (条数+1=%ld 评分:%@)",Fo2FStr(mModel.matchFo),Pit2FStr(mModel.matchFo.cmvNode_p),self.loopCache.count,Double2Str_NDZ(score));
         }else{
             NSLog(@"当前,预测mv未形成需求:%@ 基于:%@ 评分:%f",algsType,Pit2FStr(mModel.matchFo.cmvNode_p),score);
