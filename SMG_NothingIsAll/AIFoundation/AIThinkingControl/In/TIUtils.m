@@ -256,6 +256,7 @@
  *      2021.08.19: 结果PFos和RFos按(强度x匹配度)排序 (参考23222-BUG2);
  *      2022.01.16: 仅保留10条rFos和pFos (因为在十四测中,发现它们太多了,都有40条rFos的时候,依窄出原则,太多没必要);
  *      2022.03.05: 将保留10条改为全保留,因为不同调用处,需要不同的筛选排序方式 (参考25134-方案2);
+ *      2022.03.09: 将排序规则由"强度x匹配度",改成直接由SP综合评分来做 (参考25142 & 25114-TODO2);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
 +(void) partMatching_FoV1Dot5:(AIFoNodeBase*)maskFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel findCutIndex:(NSInteger(^)(AIFoNodeBase *matchFo,NSInteger lastMatchIndex))findCutIndex{
@@ -328,10 +329,12 @@
     
     //10. 按照 (强度x匹配度) 排序,强度最重要,包含了价值初始和使用频率,其次匹配度也重要 (参考23222-BUG2);
     NSArray *sortPFos = [SMGUtils sortBig2Small:inModel.matchPFos compareBlock:^double(AIMatchFoModel *obj) {
-        return obj.matchFoStrong * obj.matchFoValue;
+        //return obj.matchFoStrong * obj.matchFoValue;
+        return [TOUtils getSPScore:obj.matchFo startSPIndex:obj.cutIndex2 + 1 endSPIndex:obj.matchFo.count];
     }];
     NSArray *sortRFos = [SMGUtils sortBig2Small:inModel.matchRFos compareBlock:^double(AIMatchFoModel *obj) {
-        return obj.matchFoStrong * obj.matchFoValue;
+        //return obj.matchFoStrong * obj.matchFoValue;
+        return [TOUtils getSPScore:obj.matchFo startSPIndex:obj.cutIndex2 + 1 endSPIndex:obj.matchFo.count - 1];
     }];
     inModel.matchPFos = [[NSMutableArray alloc] initWithArray:sortPFos];
     inModel.matchRFos = [[NSMutableArray alloc] initWithArray:sortRFos];

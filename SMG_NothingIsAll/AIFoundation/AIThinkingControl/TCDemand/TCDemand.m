@@ -52,6 +52,10 @@
     //1. 识别结果pFos挂载到targetFoModel下做子任务 (好的坏的全挂载,比如做的饭我爱吃{MV+},但是又太麻烦{MV-});
     OFTitleLog(@"subDemand",@"\n子任务数:%ld baseFo:%@",model.fos4Demand.count,Pit2FStr(foModel.content_p));
     for (AIMatchFoModel *item in model.fos4Demand) {
+        
+        //TODOTOMORROW20220309:
+        //1. 将SP评分,计入到updateEnergy;
+        //2. 将SP评分,计入到TCScore竞争;
         [ReasonDemandModel newWithMModel:item inModel:model baseFo:foModel];
     }
 }
