@@ -74,6 +74,7 @@
  *      2022.01.09: 达到limit条时的处理;
  *      2022.01.19: 将时间不急评价封装为FRS_Time() (参考25106);
  *      2022.03.06: 当稳定性综评为0分时,不做为解决方案 (参考25131-思路2);
+ *      2022.03.09: 将conPorts取前3条改成15条 (参考25134);
  *  @callers : 用于RDemand.Begin时调用;
  */
 +(void) rSolution:(ReasonDemandModel*)demand {
@@ -99,12 +100,7 @@
     NSMutableArray *sumConPorts = [[NSMutableArray alloc] init];
     for (AIMatchFoModel *pFo in validPFos) {
         NSArray *conPorts = [AINetUtils conPorts_All_Normal:pFo.matchFo];
-        
-        //TODOTOMORROW20220308: 25134-将限制条数,排除掉评分为0 或 时间不急评价否掉,的影响;避免前三条经常都不能用;
-        //最终RBranch一共就需要三条,广入窄出,30条足够了,然后排除掉各种筛选条件后,仅取bestSPScore这个逻辑不变;
-        
-        
-        conPorts = ARR_SUB(conPorts, 0, 30);
+        conPorts = ARR_SUB(conPorts, 0, 15);
         [sumConPorts addObjectsFromArray:conPorts];
     }
     
