@@ -309,7 +309,7 @@
     //1. 数据检查;
     if (!fo) return 0;
     CGFloat totalSPScore = 1.0f;                                    //正mv默认为1分;
-    BOOL isBadMv = [AIScore score4MV:fo.cmvNode_p ratio:1.0f] < 0;  //正负mv的公式是不同的 (参考25122-公式)
+    BOOL isBadMv = [ThinkingUtils havDemand:fo.cmvNode_p];          //正负mv的公式是不同的 (参考25122-公式)
     
     //2. 从start到end各计算spScore;
     for (NSInteger i = startSPIndex; i <= endSPIndex; i++) {

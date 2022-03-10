@@ -137,6 +137,7 @@
  *      2021.03.01: 修复RMV一直在行为输出和被识别间重复死循环BUG (参考22142);
  *      2021.07.14: 循环matchPFos时,采用反序,因为优先级和任务池优先级上弄反了 (参考23172);
  *      2021.11.11: 迭代RMV的生成机制,此代码其实啥也没改 (参考24107-1);
+ *      2022.03.10: 为使鸟躲避及时停下,将迫切度再改回受评分迫切度等影响 (参考25142-改进);
  */
 -(void) updateCMVCache_RMV:(AIShortMatchModel*)inModel{
     //1. 数据检查;
@@ -172,8 +173,8 @@
         }
         
         //5. 取迫切度评分: 判断matchingFo.mv有值才加入demandManager,同台竞争,执行顺应mv;
-        CGFloat score = [AIScore score4MV:mModel.matchFo.cmvNode_p ratio:mModel.matchFoValue];
-        if (score < 0 && !containsRepeat) {
+        CGFloat pFoScore = [AIScore score4PFo:mModel];
+        if (pFoScore < 0 && !containsRepeat) {
             
             //7. 有需求时,则加到需求序列中;
             ReasonDemandModel *newItem = [ReasonDemandModel newWithMModel:mModel inModel:inModel baseFo:nil];
@@ -181,22 +182,16 @@
             
             //8. 新需求时_将新需求迫切度的差值(>0时) (增至活跃度 = 新迫切度 - 旧有最大迫切度);
             //2021.05.27: 为方便测试,所有imv都给20迫切度 (因为迫切度太低话,还没怎么思考就停了);
-            //NSInteger sameIdenOldMax = 0;
-            //for (DemandModel *item in self.loopCache) {
-            //    if ([item.algsType isEqualToString:algsType]) {
-            //        sameIdenOldMax = MAX(sameIdenOldMax, item.urgentTo);
-            //    }
-            //}
-            //[theTC updateEnergy:MAX(0, newItem.urgentTo - sameIdenOldMax)];
-            [theTC setEnergy:20];
+            //2022.03.10: 为使鸟躲避及时停下,将迫切度再改回受评分迫切度等影响;
+            //1. 将最大的任务x2取负值,为当前活跃度 (参考25142-改进);
+            CGFloat newEnergy = -pFoScore * 2;//分越低,越需要更多活跃度来解决它;
             
-            //TODOTOMORROW20220309:
-            //1. 将最大的任务x2取负值,为当前活跃度;
             //2. 如果新任务低于目前活跃度,则不变动;
-            
-            NSLog(@"RMV新需求: %@->%@ (条数+1=%ld 评分:%@)",Fo2FStr(mModel.matchFo),Pit2FStr(mModel.matchFo.cmvNode_p),self.loopCache.count,Double2Str_NDZ(score));
+            //[theTC updateEnergy:MAX(0, newItem.urgentTo - sameIdenOldMax)];
+            if (newEnergy > theTC.energy) theTC.energy = newEnergy;
+            NSLog(@"RMV新需求: %@->%@ (条数+1=%ld 评分:%@)",Fo2FStr(mModel.matchFo),Pit2FStr(mModel.matchFo.cmvNode_p),self.loopCache.count,Double2Str_NDZ(pFoScore));
         }else{
-            NSLog(@"当前,预测mv未形成需求:%@ 基于:%@ 评分:%f",algsType,Pit2FStr(mModel.matchFo.cmvNode_p),score);
+            NSLog(@"当前,预测mv未形成需求:%@ 基于:%@ 评分:%f",algsType,Pit2FStr(mModel.matchFo.cmvNode_p),pFoScore);
         }
     }
 }

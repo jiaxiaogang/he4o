@@ -54,6 +54,11 @@
 +(BOOL) havDemand:(NSString*)algsType delta:(NSInteger)delta{
     return [self havDownDemand:algsType delta:delta] || [self havUpDemand:algsType delta:delta];
 }
++(BOOL) havDemand:(AIKVPointer*)cmvNode_p{
+    AICMVNodeBase *cmvNode = [SMGUtils searchNode:cmvNode_p];
+    NSInteger delta = [NUMTOOK([AINetIndex getData:cmvNode.delta_p]) integerValue];
+    return [self havDemand:cmvNode_p.algsType delta:delta];
+}
 
 +(MVDirection) getDemandDirection:(NSString*)algsType delta:(NSInteger)delta {
     BOOL downDemand = [self havDownDemand:algsType delta:delta];

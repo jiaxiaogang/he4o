@@ -23,17 +23,6 @@
 @property (strong, nonatomic) DemandManager *demandManager;         //OUT短时记忆 (输出数据管理器);
 @property (strong, nonatomic) ShortMatchManager *shortMatchManager; //IN短时记忆 (输入数据管理器);
 
-/**
- *  MARK:--------------------当前能量值--------------------
- *  1. 激活: mv输入时激活;
- *  2. 消耗: 思维的循环中消耗;
- *      1. 构建"概念节点"消耗0.1;
- *      2. 构建"时序节点"消耗1;
- *
- *  3. 范围: 0-20;
- */
-@property (assign, nonatomic) CGFloat energy;
-
 @end
 
 @implementation AIThinkingControl

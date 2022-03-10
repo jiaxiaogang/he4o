@@ -125,6 +125,18 @@
     }
 }
 
+/**
+ *  MARK:--------------------对预测价值时序评分--------------------
+ *  @result 1. 返回评分越低说明越不好,越高越好;
+ *          2. 返回正值为正mv,返回负值为负mv;
+ */
++(CGFloat) score4PFo:(AIMatchFoModel*)inModel{
+    BOOL isBadMv = [ThinkingUtils havDemand:inModel.matchFo.cmvNode_p];
+    CGFloat spScore = [TOUtils getSPScore:inModel.matchFo startSPIndex:inModel.cutIndex2 + 1 endSPIndex:inModel.matchFo.count];
+    CGFloat ratio = isBadMv ? (1 - spScore) : spScore;
+    return [AIScore score4MV:inModel.matchFo.cmvNode_p ratio:ratio];//价值迫切度 * 匹配度
+}
+
 //MARK:===============================================================
 //MARK:                     < MPS评价 >
 //MARK:===============================================================

@@ -16,7 +16,7 @@
 //MARK: 2. 理性评价 (反省)
 //MARK:     > VRS & ARS & FRS
 //MARK:===============================================================
-@class AIShortMatchModel,TOFoModel,ReasonDemandModel,DemandModel;
+@class AIShortMatchModel,TOFoModel,ReasonDemandModel,DemandModel,AIMatchFoModel;
 @interface AIScore : NSObject
 
 //MARK:===============================================================
@@ -47,6 +47,9 @@
 +(CGFloat) score4MV:(AIPointer*)cmvNode_p ratio:(CGFloat)ratio;
 +(CGFloat) score4MV:(NSString*)algsType urgentTo_p:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p ratio:(CGFloat)ratio;
 +(CGFloat) score4MV:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta ratio:(CGFloat)ratio;
+
+//对预测价值时序评分;
++(CGFloat) score4PFo:(AIMatchFoModel*)inModel;
 
 /**
  *  MARK:--------------------获取mv1和mv2是否同向或反向--------------------

@@ -36,6 +36,7 @@
  *  @result 返回为目标方向: 向上任务(delta>0),向下任务(delta<0),和无任务;
  */
 +(BOOL) havDownDemand:(NSString*)algsType delta:(NSInteger)delta;
++(BOOL) havDemand:(AIKVPointer*)cmvNode_p;
 +(BOOL) havUpDemand:(NSString*)algsType delta:(NSInteger)delta;
 +(BOOL) havDemand:(NSString*)algsType delta:(NSInteger)delta;
 +(MVDirection) getDemandDirection:(NSString*)algsType delta:(NSInteger)delta;
