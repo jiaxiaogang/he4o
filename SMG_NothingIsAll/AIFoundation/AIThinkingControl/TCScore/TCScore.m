@@ -43,6 +43,7 @@
  *      2021.12.21: 支持状态为WithOut的处理 (只有WithOut状态的才可能理性淘汰,不然就有可能死灰复燃);
  *      2021.12.21: 支持状态为ActNo (如为时间不急淘汰掉) 的处理 (子解决方案全ActNo之后且WithOut的理性淘汰);
  *      2021.12.26: 支持当rDemand和hDemand已finish时不计分,并中断向子枝评分;
+ *      2022.03.11: 升级支持mvScoreV2 (参考25142-TODO4);
  *  @param scoreDic : notnull;
  *
  *  _result 将model及其下有效的分枝评分计算,并收集到评分字典 <K=foModel,V=score>;
@@ -106,12 +107,7 @@
             modelScore += [NUMTOOK([scoreDic objectForKey:TOModel2Key(bestSS)]) doubleValue];
         }else{
             //12. R无解决方案时,直接将sr评分计入modelScore;
-            
-            //TODOTOMORROW20220311: 升级mvScoreV2;
-            
-            
-            
-            double score = [AIScore score4MV:sr.algsType urgentTo:sr.urgentTo delta:sr.delta ratio:1.0f];
+            double score = [AIScore score4MV_v2:sr.mModel];
             modelScore += score;
         }
     }

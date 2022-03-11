@@ -50,6 +50,12 @@
 +(CGFloat) score4MV_v2:(AIMatchFoModel*)inModel;
 
 /**
+ *  MARK:--------------------对Demand综合评分--------------------
+ *  @param demand : 仅支持PR两种类型
+ */
++(CGFloat) score4Demand:(DemandModel*)demand;
+
+/**
  *  MARK:--------------------获取mv1和mv2是否同向或反向--------------------
  *  @result 默认返回false;
  */

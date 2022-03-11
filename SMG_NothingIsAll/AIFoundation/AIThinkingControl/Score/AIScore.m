@@ -137,17 +137,19 @@
     CGFloat ratio = isBadMv ? (1 - spScore) : spScore;
     return [AIScore score4MV:inModel.matchFo.cmvNode_p ratio:ratio];//价值迫切度 * 匹配度
 }
+
+/**
+ *  MARK:--------------------对Demand综合评分--------------------
+ *  @param demand : 仅支持PR两种类型
+ */
 +(CGFloat) score4Demand:(DemandModel*)demand{
     if (ISOK(demand, ReasonDemandModel.class) ) {
         return [AIScore score4MV_v2:((ReasonDemandModel*)demand).mModel];
-    }else{
-        HDemandModel *hdemand;
-        hdemand.
+    }else if (ISOK(demand, PerceptDemandModel.class) ) {
+        PerceptDemandModel *pDemand = (PerceptDemandModel*)demand;
+        return [AIScore score4MV:pDemand.algsType urgentTo:pDemand.urgentTo delta:pDemand.delta ratio:1.0f];
     }
-    BOOL isBadMv = [ThinkingUtils havDemand:inModel.matchFo.cmvNode_p];
-    CGFloat spScore = [TOUtils getSPScore:inModel.matchFo startSPIndex:inModel.cutIndex2 + 1 endSPIndex:inModel.matchFo.count];
-    CGFloat ratio = isBadMv ? (1 - spScore) : spScore;
-    return [AIScore score4MV:inModel.matchFo.cmvNode_p ratio:ratio];//价值迫切度 * 匹配度
+    return 0;
 }
 
 //MARK:===============================================================
