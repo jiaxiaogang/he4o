@@ -42,6 +42,13 @@
  *      2021.12.08: 后续solution行为化处理,根据>cutIndex筛选 (参考24185-方案1-代码);
  */
 +(void) plan:(DemandModel*)rootDemand rootFo:(TOFoModel*)rootFo scoreDic:(NSMutableDictionary*)scoreDic{
+    
+    //TODOTOMORROW20220309:
+    //2. 将SP评分,计入到TCScore竞争;
+    
+    
+    
+    
     //1. 根据得分字典,从root向sub,取最优路径 (参考24195-3);
     double demandScore = [AIScore score4MV:rootDemand.algsType urgentTo:rootDemand.urgentTo delta:rootDemand.delta ratio:1.0f];
     TOModelBase *endBranch = [self bestEndBranch4Plan:scoreDic curDemand:rootDemand demandScore:demandScore];

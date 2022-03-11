@@ -173,8 +173,8 @@
         }
         
         //5. 取迫切度评分: 判断matchingFo.mv有值才加入demandManager,同台竞争,执行顺应mv;
-        CGFloat pFoScore = [AIScore score4PFo:mModel];
-        if (pFoScore < 0 && !containsRepeat) {
+        CGFloat score = [AIScore score4MV_v2:mModel];
+        if (score < 0 && !containsRepeat) {
             
             //7. 有需求时,则加到需求序列中;
             ReasonDemandModel *newItem = [ReasonDemandModel newWithMModel:mModel inModel:inModel baseFo:nil];
@@ -184,14 +184,14 @@
             //2021.05.27: 为方便测试,所有imv都给20迫切度 (因为迫切度太低话,还没怎么思考就停了);
             //2022.03.10: 为使鸟躲避及时停下,将迫切度再改回受评分迫切度等影响;
             //1. 将最大的任务x2取负值,为当前活跃度 (参考25142-改进);
-            CGFloat newEnergy = -pFoScore * 2;//分越低,越需要更多活跃度来解决它;
+            CGFloat newEnergy = -score * 2;//分越低,越需要更多活跃度来解决它;
             
             //2. 如果新任务低于目前活跃度,则不变动;
             //[theTC updateEnergy:MAX(0, newItem.urgentTo - sameIdenOldMax)];
             if (newEnergy > theTC.energy) theTC.energy = newEnergy;
-            NSLog(@"RMV新需求: %@->%@ (条数+1=%ld 评分:%@)",Fo2FStr(mModel.matchFo),Pit2FStr(mModel.matchFo.cmvNode_p),self.loopCache.count,Double2Str_NDZ(pFoScore));
+            NSLog(@"RMV新需求: %@->%@ (条数+1=%ld 评分:%@)",Fo2FStr(mModel.matchFo),Pit2FStr(mModel.matchFo.cmvNode_p),self.loopCache.count,Double2Str_NDZ(score));
         }else{
-            NSLog(@"当前,预测mv未形成需求:%@ 基于:%@ 评分:%f",algsType,Pit2FStr(mModel.matchFo.cmvNode_p),pFoScore);
+            NSLog(@"当前,预测mv未形成需求:%@ 基于:%@ 评分:%f",algsType,Pit2FStr(mModel.matchFo.cmvNode_p),score);
         }
     }
 }

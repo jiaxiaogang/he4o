@@ -126,11 +126,12 @@
 }
 
 /**
- *  MARK:--------------------对预测价值时序评分--------------------
+ *  MARK:--------------------对预测价值时序评分V2--------------------
+ *  @desc score = spScore * mvScore (即将原匹配度,改为由spScore来替代);
  *  @result 1. 返回评分越低说明越不好,越高越好;
  *          2. 返回正值为正mv,返回负值为负mv;
  */
-+(CGFloat) score4PFo:(AIMatchFoModel*)inModel{
++(CGFloat) score4MV_v2:(AIMatchFoModel*)inModel{
     BOOL isBadMv = [ThinkingUtils havDemand:inModel.matchFo.cmvNode_p];
     CGFloat spScore = [TOUtils getSPScore:inModel.matchFo startSPIndex:inModel.cutIndex2 + 1 endSPIndex:inModel.matchFo.count];
     CGFloat ratio = isBadMv ? (1 - spScore) : spScore;

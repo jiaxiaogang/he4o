@@ -47,15 +47,13 @@
  *  MARK:--------------------反馈生成子任务--------------------
  *  @version
  *      2021.12.06: 反馈feedback后生成子任务,但并不触发solution决策 (参考24171-9de);
+ *  @todo
+ *      2022.03.11: 根据fos4Demand生成子任务后,根据它的mvScoreV2限制它的下辖分支数 (参考25142-TODO3);
  */
 +(void) feedbackDemand:(AIShortMatchModel*)model foModel:(TOFoModel*)foModel{
     //1. 识别结果pFos挂载到targetFoModel下做子任务 (好的坏的全挂载,比如做的饭我爱吃{MV+},但是又太麻烦{MV-});
     OFTitleLog(@"subDemand",@"\n子任务数:%ld baseFo:%@",model.fos4Demand.count,Pit2FStr(foModel.content_p));
     for (AIMatchFoModel *item in model.fos4Demand) {
-        
-        //TODOTOMORROW20220309:
-        //1. 将SP评分,计入到updateEnergy;
-        //2. 将SP评分,计入到TCScore竞争;
         [ReasonDemandModel newWithMModel:item inModel:model baseFo:foModel];
     }
 }

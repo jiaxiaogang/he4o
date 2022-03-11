@@ -329,7 +329,7 @@
     
     //10. 按照 (强度x匹配度) 排序,强度最重要,包含了价值初始和使用频率,其次匹配度也重要 (参考23222-BUG2);
     NSArray *sortPFos = [SMGUtils sortBig2Small:inModel.matchPFos compareBlock:^double(AIMatchFoModel *obj) {
-        return fabs([AIScore score4PFo:obj]);//abs(价值评分 * 匹配度) 如: [9,-8,3]
+        return fabs([AIScore score4MV_v2:obj]);//abs(价值评分 * 匹配度) 如: [9,-8,3]
     }];
     NSArray *sortRFos = [SMGUtils sortBig2Small:inModel.matchRFos compareBlock:^double(AIMatchFoModel *obj) {
         CGFloat spScore = [TOUtils getSPScore:obj.matchFo startSPIndex:obj.cutIndex2 + 1 endSPIndex:obj.matchFo.count - 1];
