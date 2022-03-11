@@ -106,6 +106,11 @@
             modelScore += [NUMTOOK([scoreDic objectForKey:TOModel2Key(bestSS)]) doubleValue];
         }else{
             //12. R无解决方案时,直接将sr评分计入modelScore;
+            
+            //TODOTOMORROW20220311: 升级mvScoreV2;
+            
+            
+            
             double score = [AIScore score4MV:sr.algsType urgentTo:sr.urgentTo delta:sr.delta ratio:1.0f];
             modelScore += score;
         }

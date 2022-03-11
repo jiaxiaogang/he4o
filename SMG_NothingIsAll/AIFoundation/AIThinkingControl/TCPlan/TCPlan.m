@@ -50,6 +50,12 @@
     
     
     //1. 根据得分字典,从root向sub,取最优路径 (参考24195-3);
+    cgfloat score = [AIScore score4Demand:rootDemand];
+    
+    
+    
+    
+    
     double demandScore = [AIScore score4MV:rootDemand.algsType urgentTo:rootDemand.urgentTo delta:rootDemand.delta ratio:1.0f];
     TOModelBase *endBranch = [self bestEndBranch4Plan:scoreDic curDemand:rootDemand demandScore:demandScore];
     
