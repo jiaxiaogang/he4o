@@ -145,6 +145,7 @@
 		08EF706421E5743F009B5194 /* OutputModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08EF706321E5743F009B5194 /* OutputModel.m */; };
 		08F3E9312241B6E800545795 /* AIAnalogy.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F3E9302241B6E800545795 /* AIAnalogy.m */; };
 		08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F4C98D1EA7A03900F3EDA8 /* SMGUtils.m */; };
+		08F5334027DE3A8F0038812E /* WorkingMemVision.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F5333F27DE3A8F0038812E /* WorkingMemVision.m */; };
 		08F738051F7C714F005EAD56 /* AIKVPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F737FF1F7C714F005EAD56 /* AIKVPointer.m */; };
 		08F738061F7C714F005EAD56 /* AIPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738011F7C714F005EAD56 /* AIPointer.m */; };
 		08F738071F7C714F005EAD56 /* AISqlPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738031F7C714F005EAD56 /* AISqlPointer.m */; };
@@ -446,6 +447,8 @@
 		08F3E9302241B6E800545795 /* AIAnalogy.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIAnalogy.m; sourceTree = "<group>"; };
 		08F4C98C1EA7A03900F3EDA8 /* SMGUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMGUtils.h; sourceTree = "<group>"; };
 		08F4C98D1EA7A03900F3EDA8 /* SMGUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMGUtils.m; sourceTree = "<group>"; };
+		08F5333E27DE3A8F0038812E /* WorkingMemVision.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WorkingMemVision.h; sourceTree = "<group>"; };
+		08F5333F27DE3A8F0038812E /* WorkingMemVision.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WorkingMemVision.m; sourceTree = "<group>"; };
 		08F737FE1F7C714F005EAD56 /* AIKVPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIKVPointer.h; sourceTree = "<group>"; };
 		08F737FF1F7C714F005EAD56 /* AIKVPointer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIKVPointer.m; sourceTree = "<group>"; };
 		08F738001F7C714F005EAD56 /* AIPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIPointer.h; sourceTree = "<group>"; };
@@ -1278,6 +1281,15 @@
 			path = Score;
 			sourceTree = "<group>";
 		};
+		08F5333D27DE39500038812E /* WorkingMemVision */ = {
+			isa = PBXGroup;
+			children = (
+				08F5333E27DE3A8F0038812E /* WorkingMemVision.h */,
+				08F5333F27DE3A8F0038812E /* WorkingMemVision.m */,
+			);
+			path = WorkingMemVision;
+			sourceTree = "<group>";
+		};
 		08F737EE1F7C7131005EAD56 /* AINode */ = {
 			isa = PBXGroup;
 			children = (
@@ -1385,6 +1397,7 @@
 		88BC09D320B4EAA70006ABEF /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
+				08F5333D27DE39500038812E /* WorkingMemVision */,
 				08355573266C69AC00ECFC51 /* MemManager */,
 				0895FFE1264A139900DAD3EA /* TOModelVision */,
 				0827DAD024198E8A00A025D4 /* XGLog */,
@@ -1580,6 +1593,7 @@
 				084219ED1FD8CF81009DA6BC /* AIThinkingControl.m in Sources */,
 				089614A9219A4D5200343FAC /* BirdGrowPage.m in Sources */,
 				083F61381F048329000330E1 /* AILine.m in Sources */,
+				08F5334027DE3A8F0038812E /* WorkingMemVision.m in Sources */,
 				0898BD67276ED44F003449BF /* TCScore.m in Sources */,
 				083352F521800AB1003931E5 /* MainPage.m in Sources */,
 				0817D6AB219E3CC7000E45AB /* UIColor+expanded.m in Sources */,
