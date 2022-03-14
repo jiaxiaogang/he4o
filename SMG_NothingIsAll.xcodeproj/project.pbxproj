@@ -97,6 +97,7 @@
 		0881965F21800F2B00D5DB36 /* BirdLivePage.m in Sources */ = {isa = PBXBuildFile; fileRef = 0881965D21800F2B00D5DB36 /* BirdLivePage.m */; };
 		0881966021800F2B00D5DB36 /* BirdLivePage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0881965E21800F2B00D5DB36 /* BirdLivePage.xib */; };
 		0886889E26479A7F00B7C75D /* AINoRepeatRun.m in Sources */ = {isa = PBXBuildFile; fileRef = 0886889D26479A7F00B7C75D /* AINoRepeatRun.m */; };
+		0887FE2A27DFEE60005EE691 /* TOMVision2.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0887FE2927DFEE60005EE691 /* TOMVision2.xib */; };
 		0889257F22B0702A00A0DBDD /* NVModuleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0889257E22B0702A00A0DBDD /* NVModuleView.m */; };
 		0889258122B0703700A0DBDD /* NVModuleView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0889258022B0703700A0DBDD /* NVModuleView.xib */; };
 		088DD7232201216500E0A786 /* TOFoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088DD7222201216500E0A786 /* TOFoModel.m */; };
@@ -145,7 +146,7 @@
 		08EF706421E5743F009B5194 /* OutputModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08EF706321E5743F009B5194 /* OutputModel.m */; };
 		08F3E9312241B6E800545795 /* AIAnalogy.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F3E9302241B6E800545795 /* AIAnalogy.m */; };
 		08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F4C98D1EA7A03900F3EDA8 /* SMGUtils.m */; };
-		08F5334027DE3A8F0038812E /* WorkingMemVision.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F5333F27DE3A8F0038812E /* WorkingMemVision.m */; };
+		08F5334027DE3A8F0038812E /* TOMVision2.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F5333F27DE3A8F0038812E /* TOMVision2.m */; };
 		08F738051F7C714F005EAD56 /* AIKVPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F737FF1F7C714F005EAD56 /* AIKVPointer.m */; };
 		08F738061F7C714F005EAD56 /* AIPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738011F7C714F005EAD56 /* AIPointer.m */; };
 		08F738071F7C714F005EAD56 /* AISqlPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738031F7C714F005EAD56 /* AISqlPointer.m */; };
@@ -353,6 +354,7 @@
 		088587DC26103F30001B9ADE /* ISubDemandDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ISubDemandDelegate.h; sourceTree = "<group>"; };
 		0886889C26479A7F00B7C75D /* AINoRepeatRun.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINoRepeatRun.h; sourceTree = "<group>"; };
 		0886889D26479A7F00B7C75D /* AINoRepeatRun.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINoRepeatRun.m; sourceTree = "<group>"; };
+		0887FE2927DFEE60005EE691 /* TOMVision2.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TOMVision2.xib; sourceTree = "<group>"; };
 		0889257D22B0702A00A0DBDD /* NVModuleView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVModuleView.h; sourceTree = "<group>"; };
 		0889257E22B0702A00A0DBDD /* NVModuleView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NVModuleView.m; sourceTree = "<group>"; };
 		0889258022B0703700A0DBDD /* NVModuleView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NVModuleView.xib; sourceTree = "<group>"; };
@@ -447,8 +449,8 @@
 		08F3E9302241B6E800545795 /* AIAnalogy.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIAnalogy.m; sourceTree = "<group>"; };
 		08F4C98C1EA7A03900F3EDA8 /* SMGUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMGUtils.h; sourceTree = "<group>"; };
 		08F4C98D1EA7A03900F3EDA8 /* SMGUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMGUtils.m; sourceTree = "<group>"; };
-		08F5333E27DE3A8F0038812E /* WorkingMemVision.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WorkingMemVision.h; sourceTree = "<group>"; };
-		08F5333F27DE3A8F0038812E /* WorkingMemVision.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WorkingMemVision.m; sourceTree = "<group>"; };
+		08F5333E27DE3A8F0038812E /* TOMVision2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOMVision2.h; sourceTree = "<group>"; };
+		08F5333F27DE3A8F0038812E /* TOMVision2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOMVision2.m; sourceTree = "<group>"; };
 		08F737FE1F7C714F005EAD56 /* AIKVPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIKVPointer.h; sourceTree = "<group>"; };
 		08F737FF1F7C714F005EAD56 /* AIKVPointer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIKVPointer.m; sourceTree = "<group>"; };
 		08F738001F7C714F005EAD56 /* AIPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIPointer.h; sourceTree = "<group>"; };
@@ -1281,13 +1283,14 @@
 			path = Score;
 			sourceTree = "<group>";
 		};
-		08F5333D27DE39500038812E /* WorkingMemVision */ = {
+		08F5333D27DE39500038812E /* TOMVision2 */ = {
 			isa = PBXGroup;
 			children = (
-				08F5333E27DE3A8F0038812E /* WorkingMemVision.h */,
-				08F5333F27DE3A8F0038812E /* WorkingMemVision.m */,
+				08F5333E27DE3A8F0038812E /* TOMVision2.h */,
+				08F5333F27DE3A8F0038812E /* TOMVision2.m */,
+				0887FE2927DFEE60005EE691 /* TOMVision2.xib */,
 			);
-			path = WorkingMemVision;
+			path = TOMVision2;
 			sourceTree = "<group>";
 		};
 		08F737EE1F7C7131005EAD56 /* AINode */ = {
@@ -1397,7 +1400,7 @@
 		88BC09D320B4EAA70006ABEF /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
-				08F5333D27DE39500038812E /* WorkingMemVision */,
+				08F5333D27DE39500038812E /* TOMVision2 */,
 				08355573266C69AC00ECFC51 /* MemManager */,
 				0895FFE1264A139900DAD3EA /* TOModelVision */,
 				0827DAD024198E8A00A025D4 /* XGLog */,
@@ -1501,6 +1504,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0858C5DD2194FB4600951BA5 /* LightView.xib in Resources */,
+				0887FE2A27DFEE60005EE691 /* TOMVision2.xib in Resources */,
 				0835557C266C6B8400ECFC51 /* MemManagerWindow.xib in Resources */,
 				083352F621800AB1003931E5 /* MainPage.xib in Resources */,
 				0805EB3126C54A00005F6341 /* LongTipWindow.xib in Resources */,
@@ -1593,7 +1597,7 @@
 				084219ED1FD8CF81009DA6BC /* AIThinkingControl.m in Sources */,
 				089614A9219A4D5200343FAC /* BirdGrowPage.m in Sources */,
 				083F61381F048329000330E1 /* AILine.m in Sources */,
-				08F5334027DE3A8F0038812E /* WorkingMemVision.m in Sources */,
+				08F5334027DE3A8F0038812E /* TOMVision2.m in Sources */,
 				0898BD67276ED44F003449BF /* TCScore.m in Sources */,
 				083352F521800AB1003931E5 /* MainPage.m in Sources */,
 				0817D6AB219E3CC7000E45AB /* UIColor+expanded.m in Sources */,
