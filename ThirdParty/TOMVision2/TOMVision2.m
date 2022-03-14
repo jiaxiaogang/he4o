@@ -10,20 +10,25 @@
 #import "MASConstraint.h"
 #import "View+MASAdditions.h"
 #import "AIKVPointer.h"
+#import "TOMVisionItemModel.h"
+#import "UIView+Extension.h"
+#import "TOMVisionNodeView.h"
 
 @interface TOMVision2 ()
 
 @property (strong,nonatomic) IBOutlet UIView *containerView;
-@property (strong, nonatomic) UIScrollView *scrollView;
-@property (assign, nonatomic) BOOL isOpen;
 @property (weak, nonatomic) IBOutlet UIButton *openCloseBtn;
+@property (strong, nonatomic) UIScrollView *scrollView;
 @property (strong, nonatomic) UIView *contentView;
+@property (assign, nonatomic) BOOL isOpen;
+@property (assign, nonatomic) NSInteger loopId;     //当前循环Id
+@property (strong, nonatomic) NSMutableArray *datas;//所有帧数据 List<TOMVisionItemModel>
 
 @end
 
 @implementation TOMVision2
 
--(id) initWithDelegate:(id<NVViewDelegate>)delegate {
+-(id) init {
     self = [super init];
     if(self != nil){
         [self initView];
@@ -81,6 +86,26 @@
     if (!self.isOpen && !self.forceMode) return;
     nodeDatas = ARRTOOK(nodeDatas);
     
+    
+}
+-(void) updateLoopId{
+    self.loopId++;
+}
+
+-(void) updateFrame{
+    //1. 记录快照;
+    TOMVisionItemModel *newFrame = [[TOMVisionItemModel alloc] init];
+    newFrame.loopId = self.loopId;
+    newFrame.data = theTC.outModelManager.getAllDemand;
+    [self.datas addObject:newFrame];
+    
+    //2. 更新UI
+    NSArray *nodeViews = [self.contentView subViews_AllDeepWithClass:TOMVisionNodeView.class];
+    for (TOMVisionNodeView *nodeView in nodeViews) {
+        //3. 每个节点有则更新,无则新建;
+        
+        
+    }
     
 }
 

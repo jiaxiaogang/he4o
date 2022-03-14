@@ -16,6 +16,8 @@
  *  MARK:--------------------设置内容--------------------
  */
 -(void) setNodeData:(id)nodeData;
+-(void) updateLoopId;
+-(void) updateFrame;
 
 /**
  *  MARK:--------------------清空网络--------------------

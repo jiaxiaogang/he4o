@@ -12,6 +12,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TOMVision2">
             <connections>
                 <outlet property="containerView" destination="iN0-l3-epB" id="Ve8-Z1-pp1"/>
+                <outlet property="openCloseBtn" destination="9kZ-gc-2CG" id="8ON-q9-zrk"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
@@ -26,6 +27,9 @@
                         <constraint firstAttribute="height" constant="30" id="hIm-oD-IWQ"/>
                     </constraints>
                     <state key="normal" title="X"/>
+                    <connections>
+                        <action selector="openCloseBtnOnClick:" destination="-1" eventType="touchUpInside" id="qSc-i4-lBJ"/>
+                    </connections>
                 </button>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

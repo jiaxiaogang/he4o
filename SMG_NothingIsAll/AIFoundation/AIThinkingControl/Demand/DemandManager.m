@@ -203,14 +203,13 @@
  *      2021.01.02: loopCache排序后未被接收,所以一直是未生效的BUG;
  *      2021.01.27: 支持第二级排序:initTime (参考22074-BUG2);
  *      2021.11.13: R任务排序根据 "迫切度*匹配度" 得出 (参考24107-2);
+ *      2022.03.15: 将排序方式更新为用score4Demand (参考25142);
  */
 -(void) refreshCmvCacheSort{
-    NSArray *sort = [self.loopCache sortedArrayUsingComparator:^NSComparisonResult(DemandModel *o1, DemandModel *o2) {
-        if (o1.demandUrgentTo != o2.demandUrgentTo){
-            return [SMGUtils compareFloatA:o1.demandUrgentTo floatB:o2.urgentTo];;
-        }else {
-            return [SMGUtils compareDoubleA:o1.initTime doubleB:o2.initTime];
-        }
+    NSArray *sort = [SMGUtils sortBig2Small:self.loopCache compareBlock1:^double(DemandModel *obj) {
+        return [AIScore score4Demand:obj];
+    } compareBlock2:^double(DemandModel *obj) {
+        return obj.initTime;
     }];
     [self.loopCache removeAllObjects];
     [self.loopCache addObjectsFromArray:sort];

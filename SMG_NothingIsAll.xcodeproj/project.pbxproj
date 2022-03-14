@@ -43,6 +43,8 @@
 		08355577266C6A1000ECFC51 /* MemManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 08355576266C6A1000ECFC51 /* MemManager.m */; };
 		0835557A266C6B5700ECFC51 /* MemManagerWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 08355579266C6B5700ECFC51 /* MemManagerWindow.m */; };
 		0835557C266C6B8400ECFC51 /* MemManagerWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0835557B266C6B8400ECFC51 /* MemManagerWindow.xib */; };
+		08366B9027DFFCC3004EBBB9 /* TOMVisionItemModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08366B8F27DFFCC3004EBBB9 /* TOMVisionItemModel.m */; };
+		08366B9327E00232004EBBB9 /* TOMVisionNodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 08366B9227E00232004EBBB9 /* TOMVisionNodeView.m */; };
 		0839819F24DB7F8C00A020D2 /* HEView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0839819E24DB7F8C00A020D2 /* HEView.m */; };
 		083F61381F048329000330E1 /* AILine.m in Sources */ = {isa = PBXBuildFile; fileRef = 083F61371F048329000330E1 /* AILine.m */; };
 		08412CA3216C324300483B6B /* AICerebel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08412CA2216C324300483B6B /* AICerebel.m */; };
@@ -246,6 +248,10 @@
 		08355578266C6B5700ECFC51 /* MemManagerWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MemManagerWindow.h; sourceTree = "<group>"; };
 		08355579266C6B5700ECFC51 /* MemManagerWindow.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MemManagerWindow.m; sourceTree = "<group>"; };
 		0835557B266C6B8400ECFC51 /* MemManagerWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MemManagerWindow.xib; sourceTree = "<group>"; };
+		08366B8E27DFFCC3004EBBB9 /* TOMVisionItemModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOMVisionItemModel.h; sourceTree = "<group>"; };
+		08366B8F27DFFCC3004EBBB9 /* TOMVisionItemModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOMVisionItemModel.m; sourceTree = "<group>"; };
+		08366B9127E00232004EBBB9 /* TOMVisionNodeView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOMVisionNodeView.h; sourceTree = "<group>"; };
+		08366B9227E00232004EBBB9 /* TOMVisionNodeView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOMVisionNodeView.m; sourceTree = "<group>"; };
 		0837F72322A89A0D00836689 /* ReadMe.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ReadMe.md; sourceTree = "<group>"; };
 		0839819D24DB7F8C00A020D2 /* HEView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HEView.h; sourceTree = "<group>"; };
 		0839819E24DB7F8C00A020D2 /* HEView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HEView.m; sourceTree = "<group>"; };
@@ -1289,6 +1295,10 @@
 				08F5333E27DE3A8F0038812E /* TOMVision2.h */,
 				08F5333F27DE3A8F0038812E /* TOMVision2.m */,
 				0887FE2927DFEE60005EE691 /* TOMVision2.xib */,
+				08366B8E27DFFCC3004EBBB9 /* TOMVisionItemModel.h */,
+				08366B8F27DFFCC3004EBBB9 /* TOMVisionItemModel.m */,
+				08366B9127E00232004EBBB9 /* TOMVisionNodeView.h */,
+				08366B9227E00232004EBBB9 /* TOMVisionNodeView.m */,
 			);
 			path = TOMVision2;
 			sourceTree = "<group>";
@@ -1593,6 +1603,7 @@
 				083112F21F05E12600051DE6 /* MBProgressHUD+Add.m in Sources */,
 				08A232E5243557110090D4B5 /* TOUtils.m in Sources */,
 				084F132226FF6E1200E9D455 /* AITest.m in Sources */,
+				08366B9327E00232004EBBB9 /* TOMVisionNodeView.m in Sources */,
 				0895FFE4264A13C500DAD3EA /* TOModelVision.m in Sources */,
 				084219ED1FD8CF81009DA6BC /* AIThinkingControl.m in Sources */,
 				089614A9219A4D5200343FAC /* BirdGrowPage.m in Sources */,
@@ -1639,6 +1650,7 @@
 				080228E1227282F80087FE69 /* TOModelBase.m in Sources */,
 				88E1F84E211591D80036B616 /* DemandManager.m in Sources */,
 				88C258C1209E99B00042CB6A /* AIMvFoManager.m in Sources */,
+				08366B9027DFFCC3004EBBB9 /* TOMVisionItemModel.m in Sources */,
 				08EF706421E5743F009B5194 /* OutputModel.m in Sources */,
 				0832AD4325BC5AEF001B4DB1 /* AIMatchFoModel.m in Sources */,
 				08EA48D1202932E70038B982 /* AICustomAlgs.m in Sources */,
