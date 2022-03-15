@@ -143,6 +143,11 @@
         NSLog(@">>>>>> rSolution 无计可施");
         [TCScore score];
     }
+    
+    [theTOMVision invokeForceMode:^{
+        [theTOMVision updateFrame];
+    }];
+    
 }
 
 /**

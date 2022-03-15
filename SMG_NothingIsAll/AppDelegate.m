@@ -23,6 +23,7 @@
 @property (strong, nonatomic) UIView *refreshDot;   //因为模拟器下的UI动画老是刷新不了,所以临时写这么个点,来推动UI线程被动刷新;
 @property (strong, nonatomic) MemManagerWindow *memManagerWindow;
 @property (strong, nonatomic) UIButton *memManagerBtn;
+@property (strong, nonatomic) UIButton *tomVisionBtn;
 
 @end
 
@@ -71,6 +72,15 @@
     [self.memManagerBtn addTarget:self action:@selector(memManagerBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.window addSubview:self.memManagerBtn];
     
+    //3. 工作记忆按钮
+    self.tomVisionBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth - 166, StateBarHeight, 40, 20)];
+    [self.tomVisionBtn.titleLabel setFont:[UIFont systemFontOfSize:15]];
+    [self.tomVisionBtn setTitleColor:UIColorWithRGBHex(0x0000EE) forState:UIControlStateNormal];
+    [self.tomVisionBtn setBackgroundColor:UIColorWithRGBHex(0xEEFFEE)];
+    [self.tomVisionBtn setTitle:@"TOM" forState:UIControlStateNormal];
+    [self.tomVisionBtn addTarget:self action:@selector(tomVisionBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.window addSubview:self.tomVisionBtn];
+    
     //4. 神经网络可视化
     self.nvView = [[NVView alloc] initWithDelegate:[NVDelegate_He new]];
     [self.nvView setAlpha:0.9f];
@@ -89,6 +99,10 @@
     //7. 记忆管理器
     self.memManagerWindow = [[MemManagerWindow alloc] init];
     [self.window addSubview:self.memManagerWindow];
+    
+    //8. 工作记忆可视化
+    self.tomVision2 = [[TOMVision2 alloc] init];
+    [self.window addSubview:self.tomVision2];
     return YES;
 }
 
@@ -125,6 +139,10 @@
 
 -(void) memManagerBtnOnClick:(id)btn{
     [self.memManagerWindow open];
+}
+
+-(void) tomVisionBtnOnClick:(id)btn{
+    [self.tomVision2 open];
 }
 
 -(void) startRefreshDotAnimation{

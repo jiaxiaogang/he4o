@@ -26,6 +26,7 @@
 #import "TOUtils.h"
 #import "TIUtils.h"
 #import "TOModelVision.h"
+#import "TOMVision2.h"
 
 //任务池
 #import "ReasonDemandModel.h"
