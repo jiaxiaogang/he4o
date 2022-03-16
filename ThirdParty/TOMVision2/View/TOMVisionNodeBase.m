@@ -10,19 +10,19 @@
 
 @interface TOMVisionNodeBase ()
 
-@property (strong, nonatomic) TOModelBase *data;
+@property (strong, nonatomic) TOModelBase *mData;
 
 @end
 
 @implementation TOMVisionNodeBase
 
--(void) setData:(TOModelBase*)data{
-    _data = data;
+-(void) setData:(TOModelBase*)value{
+    _mData = value;
 }
 -(TOModelBase *)data{
-    return self.data;
+    return _mData;
 }
--(BOOL) isEqualByData:(DemandModel*)checkData{
+-(BOOL) isEqualByData:(TOModelBase*)checkData{
     return [self.data isEqual:checkData];
 }
 

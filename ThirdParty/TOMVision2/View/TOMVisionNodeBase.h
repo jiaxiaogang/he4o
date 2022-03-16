@@ -10,8 +10,8 @@
 
 @interface TOMVisionNodeBase : UIView
 
--(void) setData:(TOModelBase*)data;
+-(void) setData:(TOModelBase*)value;
 -(TOModelBase *)data;
--(BOOL) isEqualByData:(DemandModel*)checkData;
+-(BOOL) isEqualByData:(TOModelBase*)checkData;
 
 @end
