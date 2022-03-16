@@ -12,8 +12,9 @@
 #import "AIKVPointer.h"
 #import "TOMVisionItemModel.h"
 #import "UIView+Extension.h"
-#import "TOMVisionNodeView.h"
+#import "TOMVisionFoView.h"
 #import "TOMVisionDemandView.h"
+#import "TOModelVisionUtil.h"
 
 @interface TOMVision2 ()
 
@@ -95,24 +96,32 @@
 }
 
 -(void) updateFrame{
-    //1. 记录快照;
+    //1. 数据检查;
+    if (theTC.outModelManager.getAllDemand.count <= 0) {
+        return;
+    }
+    
+    //2. 记录快照;
     TOMVisionItemModel *newFrame = [[TOMVisionItemModel alloc] init];
     newFrame.loopId = self.loopId;
     newFrame.data = theTC.outModelManager.getAllDemand;
     [self.datas addObject:newFrame];
     
-    //2. 更新UI
-    CGFloat curX = 0,curY = 0;
+    //3. 更新UI
+    CGFloat demandWidth = ScreenWidth / newFrame.data.count * 0.6f; //组宽(参考25182-4);
+    CGFloat curX = demandWidth * 0.2f,curY = 0;
     for (DemandModel *demand in newFrame.data) {
         
+        //4. 新建根节点;
         TOMVisionNodeBase *demandView = [self getOrCreateNode:demand];
         [self.contentView addSubview:demandView];
-        curX += 60;
-        [demandView setX:curX];
-        [demandView setY:curY];
+        [demandView setFrame:CGRectMake(curX, curY, demandWidth, demandView.height)];
         
-        //3. 从每个demand递归它的枝,
+        //5. 更新curX值;
+        curX += demandWidth;
         
+        //6. 从根节点递归生长出它的分枝,
+        NSMutableArray *unorderModels = [TOModelVisionUtil convertCur2Sub2UnorderModels:demand];
         
         
         

@@ -16,6 +16,29 @@
 
 @implementation TOMVisionNodeBase
 
+-(id) init {
+    self = [super init];
+    if(self != nil){
+        [self initView];
+        [self initData];
+        [self initDisplay];
+    }
+    return self;
+}
+
+-(void) initView{
+    [self setFrame:CGRectMake(0, 0, 80, 10)];
+}
+
+-(void) initData{
+}
+
+-(void) initDisplay{
+}
+
+-(void) refreshDisplay{
+}
+
 -(void) setData:(TOModelBase*)value{
     _mData = value;
 }

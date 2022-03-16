@@ -21,16 +21,6 @@
 
 @implementation TOMVisionDemandView
 
--(id) init {
-    self = [super init];
-    if(self != nil){
-        [self initView];
-        [self initData];
-        [self initDisplay];
-    }
-    return self;
-}
-
 -(void) initView{
     //self
     [self setFrame:CGRectMake(0, 0, 40, 10)];
@@ -44,12 +34,6 @@
         make.top.mas_equalTo(self);
         make.bottom.mas_equalTo(self);
     }];
-}
-
--(void) initData{
-}
-
--(void) initDisplay{
 }
 
 -(void) refreshDisplay{
