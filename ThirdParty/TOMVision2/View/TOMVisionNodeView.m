@@ -7,6 +7,14 @@
 //
 
 #import "TOMVisionNodeView.h"
+#import "MASConstraint.h"
+#import "View+MASAdditions.h"
+
+@interface TOMVisionNodeView ()
+
+@property (strong, nonatomic) IBOutlet UIView *containerView;
+
+@end
 
 @implementation TOMVisionNodeView
 

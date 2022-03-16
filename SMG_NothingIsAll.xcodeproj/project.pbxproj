@@ -102,6 +102,9 @@
 		0887FE2A27DFEE60005EE691 /* TOMVision2.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0887FE2927DFEE60005EE691 /* TOMVision2.xib */; };
 		0889257F22B0702A00A0DBDD /* NVModuleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0889257E22B0702A00A0DBDD /* NVModuleView.m */; };
 		0889258122B0703700A0DBDD /* NVModuleView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0889258022B0703700A0DBDD /* NVModuleView.xib */; };
+		088A147C27E1754800FA1097 /* TOMVisionNodeView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 088A147B27E1754800FA1097 /* TOMVisionNodeView.xib */; };
+		088A147F27E177AC00FA1097 /* TOMVisionRDemandView.m in Sources */ = {isa = PBXBuildFile; fileRef = 088A147E27E177AC00FA1097 /* TOMVisionRDemandView.m */; };
+		088A148127E177B500FA1097 /* TOMVisionRDemandView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 088A148027E177B500FA1097 /* TOMVisionRDemandView.xib */; };
 		088DD7232201216500E0A786 /* TOFoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088DD7222201216500E0A786 /* TOFoModel.m */; };
 		0892BAE62776D6920024B43C /* TCRethink.m in Sources */ = {isa = PBXBuildFile; fileRef = 0892BAE52776D6920024B43C /* TCRethink.m */; };
 		0892BAED277808F80024B43C /* TCActYes.m in Sources */ = {isa = PBXBuildFile; fileRef = 0892BAEC277808F80024B43C /* TCActYes.m */; };
@@ -364,6 +367,10 @@
 		0889257D22B0702A00A0DBDD /* NVModuleView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVModuleView.h; sourceTree = "<group>"; };
 		0889257E22B0702A00A0DBDD /* NVModuleView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NVModuleView.m; sourceTree = "<group>"; };
 		0889258022B0703700A0DBDD /* NVModuleView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NVModuleView.xib; sourceTree = "<group>"; };
+		088A147B27E1754800FA1097 /* TOMVisionNodeView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TOMVisionNodeView.xib; sourceTree = "<group>"; };
+		088A147D27E177AC00FA1097 /* TOMVisionRDemandView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOMVisionRDemandView.h; sourceTree = "<group>"; };
+		088A147E27E177AC00FA1097 /* TOMVisionRDemandView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOMVisionRDemandView.m; sourceTree = "<group>"; };
+		088A148027E177B500FA1097 /* TOMVisionRDemandView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TOMVisionRDemandView.xib; sourceTree = "<group>"; };
 		088DD7212201216500E0A786 /* TOFoModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOFoModel.h; sourceTree = "<group>"; };
 		088DD7222201216500E0A786 /* TOFoModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOFoModel.m; sourceTree = "<group>"; };
 		0892BAE42776D6920024B43C /* TCRethink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCRethink.h; sourceTree = "<group>"; };
@@ -1009,6 +1016,28 @@
 			path = TCOut;
 			sourceTree = "<group>";
 		};
+		088A148227E1782B00FA1097 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				08366B9127E00232004EBBB9 /* TOMVisionNodeView.h */,
+				08366B9227E00232004EBBB9 /* TOMVisionNodeView.m */,
+				088A147B27E1754800FA1097 /* TOMVisionNodeView.xib */,
+				088A147D27E177AC00FA1097 /* TOMVisionRDemandView.h */,
+				088A147E27E177AC00FA1097 /* TOMVisionRDemandView.m */,
+				088A148027E177B500FA1097 /* TOMVisionRDemandView.xib */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		088A148327E1783100FA1097 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				08366B8E27DFFCC3004EBBB9 /* TOMVisionItemModel.h */,
+				08366B8F27DFFCC3004EBBB9 /* TOMVisionItemModel.m */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		0892BAE32776D6710024B43C /* TCRethink */ = {
 			isa = PBXGroup;
 			children = (
@@ -1292,13 +1321,11 @@
 		08F5333D27DE39500038812E /* TOMVision2 */ = {
 			isa = PBXGroup;
 			children = (
+				088A148327E1783100FA1097 /* Model */,
+				088A148227E1782B00FA1097 /* View */,
 				08F5333E27DE3A8F0038812E /* TOMVision2.h */,
 				08F5333F27DE3A8F0038812E /* TOMVision2.m */,
 				0887FE2927DFEE60005EE691 /* TOMVision2.xib */,
-				08366B8E27DFFCC3004EBBB9 /* TOMVisionItemModel.h */,
-				08366B8F27DFFCC3004EBBB9 /* TOMVisionItemModel.m */,
-				08366B9127E00232004EBBB9 /* TOMVisionNodeView.h */,
-				08366B9227E00232004EBBB9 /* TOMVisionNodeView.m */,
 			);
 			path = TOMVision2;
 			sourceTree = "<group>";
@@ -1515,6 +1542,7 @@
 			files = (
 				0858C5DD2194FB4600951BA5 /* LightView.xib in Resources */,
 				0887FE2A27DFEE60005EE691 /* TOMVision2.xib in Resources */,
+				088A147C27E1754800FA1097 /* TOMVisionNodeView.xib in Resources */,
 				0835557C266C6B8400ECFC51 /* MemManagerWindow.xib in Resources */,
 				083352F621800AB1003931E5 /* MainPage.xib in Resources */,
 				0805EB3126C54A00005F6341 /* LongTipWindow.xib in Resources */,
@@ -1533,6 +1561,7 @@
 				0860A3BD22C9859200A48682 /* CustomAddNodeWindow.xib in Resources */,
 				089614AA219A4D5200343FAC /* BirdGrowPage.xib in Resources */,
 				084C3A6D21926D7800DAA08A /* BirdView.xib in Resources */,
+				088A148127E177B500FA1097 /* TOMVisionRDemandView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1624,6 +1653,7 @@
 				0858C5CF2194F8B000951BA5 /* MASViewAttribute.m in Sources */,
 				88BC09D720B4EB920006ABEF /* XGRedis.m in Sources */,
 				084219E11FD8CEFD009DA6BC /* AIReactorControl.m in Sources */,
+				088A147F27E177AC00FA1097 /* TOMVisionRDemandView.m in Sources */,
 				08355577266C6A1000ECFC51 /* MemManager.m in Sources */,
 				087705BA2753747E00BA4EFB /* TCAction.m in Sources */,
 				0808D34022B6F73D00D383BA /* NVLineView.m in Sources */,

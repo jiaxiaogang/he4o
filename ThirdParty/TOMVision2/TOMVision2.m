@@ -13,6 +13,7 @@
 #import "TOMVisionItemModel.h"
 #import "UIView+Extension.h"
 #import "TOMVisionNodeView.h"
+#import "TOMVisionRDemandView.h"
 
 @interface TOMVision2 ()
 
@@ -22,7 +23,6 @@
 @property (strong, nonatomic) UIView *contentView;
 @property (assign, nonatomic) NSInteger loopId;     //当前循环Id
 @property (strong, nonatomic) NSMutableArray *datas;//所有帧数据 List<TOMVisionItemModel>
-@property (strong, nonatomic) UILabel *lab;
 
 @end
 
@@ -65,15 +65,6 @@
     [self.scrollView addSubview:self.contentView];
     [self.contentView setBackgroundColor:[UIColor clearColor]];
     [self.contentView setFrame:CGRectMake(0, 0, ScreenWidth, ScreenHeight * 2)];
-    
-    //lab
-    self.lab = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, ScreenWidth, ScreenHeight)];
-    [self.contentView addSubview:self.lab];
-    [self.lab setTextColor:UIColorWithRGBHex(0x000000)];
-    [self.lab setFont:[UIFont systemFontOfSize:8]];
-    [self.lab setBackgroundColor:UIColorWithRGBHex(0xEEEEEE)];
-    [self.lab setNumberOfLines:0];
-    [self.lab setText:@"contentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontent"];
 }
 
 -(void) initData{
@@ -112,7 +103,14 @@
     
     //2. 更新UI
     for (DemandModel *demand in newFrame.data) {
-        [self.lab setText:STRFORMAT(@"content: %@",CLEANSTR([TOModelVision cur2Sub:demand]))];
+        
+        //3. 每个demand构建一个demandNode;
+        TOMVisionRDemandView *demandView = [[TOMVisionRDemandView alloc] init];
+        [self.contentView addSubview:demandView];
+        
+        //3. 从每个demand递归它的枝,
+        
+        
     }
     
     //2. 更新UI
