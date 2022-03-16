@@ -13,7 +13,7 @@
 #import "TOMVisionItemModel.h"
 #import "UIView+Extension.h"
 #import "TOMVisionNodeView.h"
-#import "TOMVisionRDemandView.h"
+#import "TOMVisionDemandView.h"
 
 @interface TOMVision2 ()
 
@@ -102,21 +102,20 @@
     [self.datas addObject:newFrame];
     
     //2. 更新UI
+    CGFloat curX = 0,curY = 0;
     for (DemandModel *demand in newFrame.data) {
         
-        //3. 每个demand构建一个demandNode;
-        TOMVisionRDemandView *demandView = [[TOMVisionRDemandView alloc] init];
+        TOMVisionNodeBase *demandView = [self getOrCreateNode:demand];
         [self.contentView addSubview:demandView];
+        curX += 60;
+        [demandView setX:curX];
+        [demandView setY:curY];
         
         //3. 从每个demand递归它的枝,
         
         
-    }
-    
-    //2. 更新UI
-    NSArray *nodeViews = [self.contentView subViews_AllDeepWithClass:TOMVisionNodeView.class];
-    for (TOMVisionNodeView *nodeView in nodeViews) {
-        //3. 每个节点有则更新,无则新建;
+        
+        
         
         
     }
@@ -151,6 +150,33 @@
 //MARK:===============================================================
 -(BOOL) isOpen{
     return !self.isHidden;
+}
+
+/**
+ *  MARK:--------------------创建新节点--------------------
+ *  @result notnull
+ */
+-(TOMVisionNodeBase*) getOrCreateNode:(id)data{
+    //1. 数据准备;
+    TOMVisionNodeBase *result = nil;
+    NSArray *subViews = [self.contentView subViews_AllDeepWithClass:TOMVisionNodeBase.class];
+    
+    //2. 优先找复用;
+    result = ARR_INDEX([SMGUtils filterArr:subViews checkValid:^BOOL(TOMVisionNodeBase *subView) {
+        return [subView isEqualByData:data];
+    } limit:1], 0);
+    
+    //3. 没复用则新建;
+    if (!result) {
+        
+        //4. demand节点;
+        if (ISOK(data, DemandModel.class)) {
+            result = [[TOMVisionDemandView alloc] init];
+            [result setData:data];
+        }
+    }
+    
+    return result;
 }
 
 //MARK:===============================================================

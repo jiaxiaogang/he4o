@@ -6,8 +6,8 @@
 //  Copyright © 2022年 XiaoGang. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "TOMVisionNodeBase.h"
 
-@interface TOMVisionNodeView : UIView
+@interface TOMVisionNodeView : TOMVisionNodeBase
 
 @end

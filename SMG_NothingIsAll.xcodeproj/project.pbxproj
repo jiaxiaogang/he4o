@@ -80,6 +80,7 @@
 		085BA9F4241C421500829450 /* HeLogUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 085BA9F3241C421500829450 /* HeLogUtil.m */; };
 		0860A3BB22C9851800A48682 /* CustomAddNodeWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 0860A3BA22C9851800A48682 /* CustomAddNodeWindow.m */; };
 		0860A3BD22C9859200A48682 /* CustomAddNodeWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0860A3BC22C9859200A48682 /* CustomAddNodeWindow.xib */; };
+		0864936127E216B5003EF661 /* TOMVisionNodeBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 0864936027E216B5003EF661 /* TOMVisionNodeBase.m */; };
 		086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */ = {isa = PBXBuildFile; fileRef = 086D93361F8CA782002BAF3F /* RuntimeInvoker.m */; };
 		0871C27626685D4800CB3889 /* TOModelVisionUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 0871C27526685D4800CB3889 /* TOModelVisionUtil.m */; };
 		0871C27926685DA200CB3889 /* UnorderItemModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0871C27826685DA200CB3889 /* UnorderItemModel.m */; };
@@ -103,8 +104,8 @@
 		0889257F22B0702A00A0DBDD /* NVModuleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0889257E22B0702A00A0DBDD /* NVModuleView.m */; };
 		0889258122B0703700A0DBDD /* NVModuleView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0889258022B0703700A0DBDD /* NVModuleView.xib */; };
 		088A147C27E1754800FA1097 /* TOMVisionNodeView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 088A147B27E1754800FA1097 /* TOMVisionNodeView.xib */; };
-		088A147F27E177AC00FA1097 /* TOMVisionRDemandView.m in Sources */ = {isa = PBXBuildFile; fileRef = 088A147E27E177AC00FA1097 /* TOMVisionRDemandView.m */; };
-		088A148127E177B500FA1097 /* TOMVisionRDemandView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 088A148027E177B500FA1097 /* TOMVisionRDemandView.xib */; };
+		088A147F27E177AC00FA1097 /* TOMVisionDemandView.m in Sources */ = {isa = PBXBuildFile; fileRef = 088A147E27E177AC00FA1097 /* TOMVisionDemandView.m */; };
+		088A148127E177B500FA1097 /* TOMVisionDemandView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 088A148027E177B500FA1097 /* TOMVisionDemandView.xib */; };
 		088DD7232201216500E0A786 /* TOFoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088DD7222201216500E0A786 /* TOFoModel.m */; };
 		0892BAE62776D6920024B43C /* TCRethink.m in Sources */ = {isa = PBXBuildFile; fileRef = 0892BAE52776D6920024B43C /* TCRethink.m */; };
 		0892BAED277808F80024B43C /* TCActYes.m in Sources */ = {isa = PBXBuildFile; fileRef = 0892BAEC277808F80024B43C /* TCActYes.m */; };
@@ -324,6 +325,8 @@
 		0860A3B922C9851800A48682 /* CustomAddNodeWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomAddNodeWindow.h; sourceTree = "<group>"; };
 		0860A3BA22C9851800A48682 /* CustomAddNodeWindow.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomAddNodeWindow.m; sourceTree = "<group>"; };
 		0860A3BC22C9859200A48682 /* CustomAddNodeWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomAddNodeWindow.xib; sourceTree = "<group>"; };
+		0864935F27E216B5003EF661 /* TOMVisionNodeBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOMVisionNodeBase.h; sourceTree = "<group>"; };
+		0864936027E216B5003EF661 /* TOMVisionNodeBase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOMVisionNodeBase.m; sourceTree = "<group>"; };
 		086D93351F8CA782002BAF3F /* RuntimeInvoker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RuntimeInvoker.h; sourceTree = "<group>"; };
 		086D93361F8CA782002BAF3F /* RuntimeInvoker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RuntimeInvoker.m; sourceTree = "<group>"; };
 		0871C27426685D4800CB3889 /* TOModelVisionUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOModelVisionUtil.h; sourceTree = "<group>"; };
@@ -368,9 +371,9 @@
 		0889257E22B0702A00A0DBDD /* NVModuleView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NVModuleView.m; sourceTree = "<group>"; };
 		0889258022B0703700A0DBDD /* NVModuleView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NVModuleView.xib; sourceTree = "<group>"; };
 		088A147B27E1754800FA1097 /* TOMVisionNodeView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TOMVisionNodeView.xib; sourceTree = "<group>"; };
-		088A147D27E177AC00FA1097 /* TOMVisionRDemandView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOMVisionRDemandView.h; sourceTree = "<group>"; };
-		088A147E27E177AC00FA1097 /* TOMVisionRDemandView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOMVisionRDemandView.m; sourceTree = "<group>"; };
-		088A148027E177B500FA1097 /* TOMVisionRDemandView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TOMVisionRDemandView.xib; sourceTree = "<group>"; };
+		088A147D27E177AC00FA1097 /* TOMVisionDemandView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOMVisionDemandView.h; sourceTree = "<group>"; };
+		088A147E27E177AC00FA1097 /* TOMVisionDemandView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOMVisionDemandView.m; sourceTree = "<group>"; };
+		088A148027E177B500FA1097 /* TOMVisionDemandView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TOMVisionDemandView.xib; sourceTree = "<group>"; };
 		088DD7212201216500E0A786 /* TOFoModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOFoModel.h; sourceTree = "<group>"; };
 		088DD7222201216500E0A786 /* TOFoModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOFoModel.m; sourceTree = "<group>"; };
 		0892BAE42776D6920024B43C /* TCRethink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCRethink.h; sourceTree = "<group>"; };
@@ -1019,12 +1022,14 @@
 		088A148227E1782B00FA1097 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				0864935F27E216B5003EF661 /* TOMVisionNodeBase.h */,
+				0864936027E216B5003EF661 /* TOMVisionNodeBase.m */,
 				08366B9127E00232004EBBB9 /* TOMVisionNodeView.h */,
 				08366B9227E00232004EBBB9 /* TOMVisionNodeView.m */,
 				088A147B27E1754800FA1097 /* TOMVisionNodeView.xib */,
-				088A147D27E177AC00FA1097 /* TOMVisionRDemandView.h */,
-				088A147E27E177AC00FA1097 /* TOMVisionRDemandView.m */,
-				088A148027E177B500FA1097 /* TOMVisionRDemandView.xib */,
+				088A147D27E177AC00FA1097 /* TOMVisionDemandView.h */,
+				088A147E27E177AC00FA1097 /* TOMVisionDemandView.m */,
+				088A148027E177B500FA1097 /* TOMVisionDemandView.xib */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -1561,7 +1566,7 @@
 				0860A3BD22C9859200A48682 /* CustomAddNodeWindow.xib in Resources */,
 				089614AA219A4D5200343FAC /* BirdGrowPage.xib in Resources */,
 				084C3A6D21926D7800DAA08A /* BirdView.xib in Resources */,
-				088A148127E177B500FA1097 /* TOMVisionRDemandView.xib in Resources */,
+				088A148127E177B500FA1097 /* TOMVisionDemandView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1653,7 +1658,7 @@
 				0858C5CF2194F8B000951BA5 /* MASViewAttribute.m in Sources */,
 				88BC09D720B4EB920006ABEF /* XGRedis.m in Sources */,
 				084219E11FD8CEFD009DA6BC /* AIReactorControl.m in Sources */,
-				088A147F27E177AC00FA1097 /* TOMVisionRDemandView.m in Sources */,
+				088A147F27E177AC00FA1097 /* TOMVisionDemandView.m in Sources */,
 				08355577266C6A1000ECFC51 /* MemManager.m in Sources */,
 				087705BA2753747E00BA4EFB /* TCAction.m in Sources */,
 				0808D34022B6F73D00D383BA /* NVLineView.m in Sources */,
@@ -1718,6 +1723,7 @@
 				0858C5CE2194F8B000951BA5 /* MASLayoutConstraint.m in Sources */,
 				0827DAD724199C9E00A025D4 /* HeLogView.m in Sources */,
 				08E8CF5525B2880600AA18DB /* WoodView.m in Sources */,
+				0864936127E216B5003EF661 /* TOMVisionNodeBase.m in Sources */,
 				0808927A215AF5F400710636 /* AINodeBase.m in Sources */,
 				089E66B421B9F84500ECA28A /* AIAlgNode.m in Sources */,
 				081B3ACC1F6E2155008A7F36 /* AITime.m in Sources */,
