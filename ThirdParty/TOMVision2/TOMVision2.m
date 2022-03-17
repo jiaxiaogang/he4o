@@ -14,7 +14,9 @@
 #import "UIView+Extension.h"
 #import "TOMVisionFoView.h"
 #import "TOMVisionDemandView.h"
+#import "TOMVisionFoView.h"
 #import "TOModelVisionUtil.h"
+#import "UnorderItemModel.h"
 
 @interface TOMVision2 ()
 
@@ -59,13 +61,13 @@
     [self.scrollView setFrame:CGRectMake(0, 20, ScreenWidth, ScreenHeight - 20)];
     [self.scrollView setShowsVerticalScrollIndicator:NO];
     [self.scrollView setShowsHorizontalScrollIndicator:NO];
-    [self.scrollView setContentSize:CGSizeMake(ScreenWidth, ScreenHeight * 2)];
+    [self.scrollView setContentSize:CGSizeMake(ScreenWidth, ScreenHeight)];
     
     //contentView
     self.contentView = [[UIView alloc] init];
     [self.scrollView addSubview:self.contentView];
     [self.contentView setBackgroundColor:[UIColor clearColor]];
-    [self.contentView setFrame:CGRectMake(0, 0, ScreenWidth, ScreenHeight * 2)];
+    [self.contentView setFrame:CGRectMake(0, 0, ScreenWidth, ScreenHeight)];
 }
 
 -(void) initData{
@@ -78,25 +80,13 @@
 //MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
--(void) setNodeData:(id)nodeData{
-    if (nodeData) {
-        [self setNodeDatas:@[nodeData]];
-    }
-}
-
--(void) setNodeDatas:(NSArray*)nodeDatas{
-    //1. 数据准备
-    if (!self.isOpen && !self.forceMode) return;
-    nodeDatas = ARRTOOK(nodeDatas);
-    
-    
-}
 -(void) updateLoopId{
     self.loopId++;
 }
 
 -(void) updateFrame{
     //1. 数据检查;
+    //if (!self.isOpen && !self.forceMode) return;
     if (theTC.outModelManager.getAllDemand.count <= 0) {
         return;
     }
@@ -109,26 +99,28 @@
     
     //3. 更新UI
     CGFloat demandWidth = ScreenWidth / newFrame.data.count * 0.6f; //组宽(参考25182-4);
-    CGFloat curX = demandWidth * 0.2f,curY = 0;
+    CGFloat curX = demandWidth * 0.2f;
     for (DemandModel *demand in newFrame.data) {
-        
-        //4. 新建根节点;
-        TOMVisionNodeBase *demandView = [self getOrCreateNode:demand];
-        [self.contentView addSubview:demandView];
-        [demandView setFrame:CGRectMake(curX, curY, demandWidth, demandView.height)];
-        
-        //5. 更新curX值;
-        curX += demandWidth;
         
         //6. 从根节点递归生长出它的分枝,
         NSMutableArray *unorderModels = [TOModelVisionUtil convertCur2Sub2UnorderModels:demand];
         
+        //3. 转为nodeView
+        for (UnorderItemModel *unorder in unorderModels) {
+            
+            //4. 新建根节点;
+            TOMVisionNodeBase *demandView = [self getOrCreateNode:unorder.data];
+            [self.contentView addSubview:demandView];
+            [demandView setFrame:CGRectMake(curX, unorder.tabNum * 60, demandWidth, demandView.height)];
+            
+            //TODOTOMORROW20220317:
+            //5. 根据当前tabNum,对curX值进行更新;
+            //6. 根据当前tabNum,对nodeView进行缩放;
+        }
         
-        
-        
-        
+        //5. 更新curX值;
+        curX += demandWidth;
     }
-    
 }
 
 -(void) clear{
@@ -182,6 +174,14 @@
         if (ISOK(data, DemandModel.class)) {
             result = [[TOMVisionDemandView alloc] init];
             [result setData:data];
+        }else if(ISOK(data, TOFoModel.class)){
+            result = [[TOMVisionFoView alloc] init];
+            [result setData:data];
+        }else{
+            //TODOTOMORROW20220317: 别的类型还没支持,就先返回baseView;
+            result = [[TOMVisionNodeBase alloc] init];
+            [result setData:data];
+            [result setBackgroundColor:UIColor.redColor];
         }
     }
     
