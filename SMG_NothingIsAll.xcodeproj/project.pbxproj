@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		080228E1227282F80087FE69 /* TOModelBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 080228E0227282F80087FE69 /* TOModelBase.m */; };
+		0802962727E4D77D0050C767 /* TVPanelView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0802962627E4D77D0050C767 /* TVPanelView.m */; };
+		0802962927E4D7920050C767 /* TVPanelView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0802962827E4D7920050C767 /* TVPanelView.xib */; };
 		08057B342355574600E9B6F1 /* AIShortMatchModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08057B332355574600E9B6F1 /* AIShortMatchModel.m */; };
 		0805EB3126C54A00005F6341 /* LongTipWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0805EB3026C54A00005F6341 /* LongTipWindow.xib */; };
 		0805EB3426C54A0D005F6341 /* LongTipWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 0805EB3326C54A0D005F6341 /* LongTipWindow.m */; };
@@ -183,6 +185,9 @@
 /* Begin PBXFileReference section */
 		080228DF227282F80087FE69 /* TOModelBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOModelBase.h; sourceTree = "<group>"; };
 		080228E0227282F80087FE69 /* TOModelBase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOModelBase.m; sourceTree = "<group>"; };
+		0802962527E4D77D0050C767 /* TVPanelView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TVPanelView.h; sourceTree = "<group>"; };
+		0802962627E4D77D0050C767 /* TVPanelView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TVPanelView.m; sourceTree = "<group>"; };
+		0802962827E4D7920050C767 /* TVPanelView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TVPanelView.xib; sourceTree = "<group>"; };
 		08042E7D1F43CE9400A1FFCB /* SMGEnum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMGEnum.h; sourceTree = "<group>"; };
 		08057B322355574600E9B6F1 /* AIShortMatchModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIShortMatchModel.h; sourceTree = "<group>"; };
 		08057B332355574600E9B6F1 /* AIShortMatchModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIShortMatchModel.m; sourceTree = "<group>"; };
@@ -551,6 +556,16 @@
 				088587DC26103F30001B9ADE /* ISubDemandDelegate.h */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		0802962427E4D6BB0050C767 /* Panel */ = {
+			isa = PBXGroup;
+			children = (
+				0802962527E4D77D0050C767 /* TVPanelView.h */,
+				0802962627E4D77D0050C767 /* TVPanelView.m */,
+				0802962827E4D7920050C767 /* TVPanelView.xib */,
+			);
+			path = Panel;
 			sourceTree = "<group>";
 		};
 		08196B80200073FF007B72C5 /* Utils */ = {
@@ -1334,6 +1349,7 @@
 		08F5333D27DE39500038812E /* TOMVision2 */ = {
 			isa = PBXGroup;
 			children = (
+				0802962427E4D6BB0050C767 /* Panel */,
 				088A148327E1783100FA1097 /* Model */,
 				088A148227E1782B00FA1097 /* View */,
 				08F5333E27DE3A8F0038812E /* TOMVision2.h */,
@@ -1566,6 +1582,7 @@
 				08A5D5DA22AF1E9D00E56BB4 /* NVView.xib in Resources */,
 				0858C5B02194F5E400951BA5 /* CarView.xib in Resources */,
 				0889258122B0703700A0DBDD /* NVModuleView.xib in Resources */,
+				0802962927E4D7920050C767 /* TVPanelView.xib in Resources */,
 				08AF45551E97D0B500377887 /* Assets.xcassets in Resources */,
 				0827DAD924199CC100A025D4 /* HeLogView.xib in Resources */,
 				08DB40CC1F11A65E003162C8 /* TestHungryPage.xib in Resources */,
@@ -1688,6 +1705,7 @@
 				087268E0219CF3B500B5490F /* AIVisionAlgs.m in Sources */,
 				08F738051F7C714F005EAD56 /* AIKVPointer.m in Sources */,
 				88A43F3D2109576D00281348 /* AIFrontOrderNode.m in Sources */,
+				0802962727E4D77D0050C767 /* TVPanelView.m in Sources */,
 				087705AE2753745100BA4EFB /* TCRecognition.m in Sources */,
 				0858C5CB2194F8B000951BA5 /* MASCompositeConstraint.m in Sources */,
 				08057B342355574600E9B6F1 /* AIShortMatchModel.m in Sources */,
