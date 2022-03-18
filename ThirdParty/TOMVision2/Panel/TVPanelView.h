@@ -11,6 +11,15 @@
 /**
  *  MARK:--------------------播放控制面板--------------------
  */
+@protocol TVPanelViewDelegate <NSObject>
+
+-(void) panelSubBtnClicked;
+-(void) panelPlusBtnClicked;
+
+@end
+
 @interface TVPanelView : UIView
+
+@property (weak, nonatomic) id<TVPanelViewDelegate> delegate;//notnull
 
 @end

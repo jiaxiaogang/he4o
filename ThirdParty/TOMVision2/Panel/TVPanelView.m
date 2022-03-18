@@ -13,13 +13,14 @@
 @interface TVPanelView ()
 
 @property (strong, nonatomic) IBOutlet UIView *containerView;
-@property (weak, nonatomic) IBOutlet UIProgressView *progressView;
+@property (weak, nonatomic) IBOutlet UISlider *sliderView;
 @property (weak, nonatomic) IBOutlet UIButton *playBtn;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *speedSegment;
 @property (weak, nonatomic) IBOutlet UIButton *frameBtn;
 @property (weak, nonatomic) IBOutlet UIButton *timeBtn;
 @property (weak, nonatomic) IBOutlet UIButton *loopBtn;
-@property (weak, nonatomic) IBOutlet UIStepper *shotStep;
+@property (weak, nonatomic) IBOutlet UIButton *plusBtn;
+@property (weak, nonatomic) IBOutlet UIButton *subBtn;
 
 @end
 
@@ -68,13 +69,24 @@
 - (IBAction)frameBtnClicked:(id)sender {
 }
 
-- (IBAction)speedSegmentChanged:(id)sender {
+- (IBAction)sliderChanged:(UISlider*)sender {
+    NSLog(@"%f",sender.value);
+}
+
+- (IBAction)speedSegmentChanged:(UISegmentedControl*)sender {
+    NSLog(@"%ld",(long)sender.selectedSegmentIndex);
 }
 
 - (IBAction)playBtnClicked:(id)sender {
+    
 }
 
-- (IBAction)shotStepChanged:(id)sender {
+- (IBAction)plusBtnClicked:(id)sender {
+    [self.delegate panelPlusBtnClicked];
+}
+
+- (IBAction)subBtnClicked:(id)sender {
+    [self.delegate panelSubBtnClicked];
 }
 
 @end

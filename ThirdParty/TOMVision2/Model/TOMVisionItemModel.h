@@ -14,6 +14,6 @@
 @interface TOMVisionItemModel : NSObject
 
 @property (assign, nonatomic) NSInteger loopId; //当前循环Id (自增);
-@property (strong, nonatomic) NSArray *data;    //当前帧在DemandManager中的loopCache快照;
+@property (strong, nonatomic) NSArray *roots;   //当前帧在DemandManager中的loopCache快照;
 
 @end
