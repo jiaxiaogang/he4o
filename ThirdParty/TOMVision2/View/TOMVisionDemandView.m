@@ -81,8 +81,4 @@
     return (DemandModel*)[super data];
 }
 
--(BOOL) isEqualByData:(DemandModel*)checkData{
-    return [self.data isEqual:checkData] && [self.data.baseOrGroup isEqual:checkData.baseOrGroup];
-}
-
 @end

@@ -46,7 +46,9 @@
     return _mData;
 }
 -(BOOL) isEqualByData:(TOModelBase*)checkData{
-    return [self.data isEqual:checkData];
+    BOOL dataEqual = [self.data isEqual:checkData];
+    BOOL baseEqual = (!self.data.baseOrGroup && !checkData.baseOrGroup) || [self.data.baseOrGroup isEqual:checkData.baseOrGroup];
+    return dataEqual && baseEqual;
 }
 
 @end

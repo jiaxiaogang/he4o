@@ -33,6 +33,8 @@
 		0827DAD324198EAC00A025D4 /* HeLogModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0827DAD224198EAC00A025D4 /* HeLogModel.m */; };
 		0827DAD724199C9E00A025D4 /* HeLogView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0827DAD624199C9E00A025D4 /* HeLogView.m */; };
 		0827DAD924199CC100A025D4 /* HeLogView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0827DAD824199CC100A025D4 /* HeLogView.xib */; };
+		082B910A27E414FB00EE4DF2 /* TOMVisionAlgView.m in Sources */ = {isa = PBXBuildFile; fileRef = 082B910927E414FB00EE4DF2 /* TOMVisionAlgView.m */; };
+		082B910C27E4150800EE4DF2 /* TOMVisionAlgView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 082B910B27E4150800EE4DF2 /* TOMVisionAlgView.xib */; };
 		082D03DF22D40AF000BB0B7A /* SMGUtils+General.m in Sources */ = {isa = PBXBuildFile; fileRef = 082D03DE22D40AF000BB0B7A /* SMGUtils+General.m */; };
 		082F9D561EB234750009F6A9 /* Output.m in Sources */ = {isa = PBXBuildFile; fileRef = 082F9D551EB234750009F6A9 /* Output.m */; };
 		0830DAB721D6E8AD003065CD /* NSString+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 0830DAB621D6E8AD003065CD /* NSString+Extension.m */; };
@@ -233,6 +235,9 @@
 		0827DAD624199C9E00A025D4 /* HeLogView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HeLogView.m; sourceTree = "<group>"; };
 		0827DAD824199CC100A025D4 /* HeLogView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HeLogView.xib; sourceTree = "<group>"; };
 		0827DADC2419A46600A025D4 /* HeLogHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HeLogHeader.h; sourceTree = "<group>"; };
+		082B910827E414FB00EE4DF2 /* TOMVisionAlgView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOMVisionAlgView.h; sourceTree = "<group>"; };
+		082B910927E414FB00EE4DF2 /* TOMVisionAlgView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOMVisionAlgView.m; sourceTree = "<group>"; };
+		082B910B27E4150800EE4DF2 /* TOMVisionAlgView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TOMVisionAlgView.xib; sourceTree = "<group>"; };
 		082D03DD22D40AF000BB0B7A /* SMGUtils+General.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SMGUtils+General.h"; sourceTree = "<group>"; };
 		082D03DE22D40AF000BB0B7A /* SMGUtils+General.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "SMGUtils+General.m"; sourceTree = "<group>"; };
 		082F9D541EB234750009F6A9 /* Output.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Output.h; sourceTree = "<group>"; };
@@ -1030,6 +1035,9 @@
 				088A147D27E177AC00FA1097 /* TOMVisionDemandView.h */,
 				088A147E27E177AC00FA1097 /* TOMVisionDemandView.m */,
 				088A148027E177B500FA1097 /* TOMVisionDemandView.xib */,
+				082B910827E414FB00EE4DF2 /* TOMVisionAlgView.h */,
+				082B910927E414FB00EE4DF2 /* TOMVisionAlgView.m */,
+				082B910B27E4150800EE4DF2 /* TOMVisionAlgView.xib */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -1553,6 +1561,7 @@
 				0805EB3126C54A00005F6341 /* LongTipWindow.xib in Resources */,
 				0858C5E421950BC700951BA5 /* TreeView.xib in Resources */,
 				08AF45581E97D0B500377887 /* LaunchScreen.storyboard in Resources */,
+				082B910C27E4150800EE4DF2 /* TOMVisionAlgView.xib in Resources */,
 				0858C5E921950CAA00951BA5 /* FoodView.xib in Resources */,
 				08A5D5DA22AF1E9D00E56BB4 /* NVView.xib in Resources */,
 				0858C5B02194F5E400951BA5 /* CarView.xib in Resources */,
@@ -1716,6 +1725,7 @@
 				08AFC5F0276979D8000BAB26 /* TCPlan.m in Sources */,
 				081BD08B25B94F24003C3038 /* PerceptDemandModel.m in Sources */,
 				8868F6EB210A946A000EAC9B /* AIAbsCMVManager.m in Sources */,
+				082B910A27E414FB00EE4DF2 /* TOMVisionAlgView.m in Sources */,
 				0858C5D12194F8B000951BA5 /* NSArray+MASAdditions.m in Sources */,
 				087705B72753747300BA4EFB /* TCSolution.m in Sources */,
 				0858C5CC2194F8B000951BA5 /* MASConstraint.m in Sources */,

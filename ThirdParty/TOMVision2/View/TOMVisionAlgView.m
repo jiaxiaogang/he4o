@@ -1,22 +1,22 @@
 //
-//  TOMVisionFoView.m
+//  TOMVisionAlgView.m
 //  SMG_NothingIsAll
 //
-//  Created by jia on 2022/3/15.
+//  Created by jia on 2022/3/18.
 //  Copyright © 2022年 XiaoGang. All rights reserved.
 //
 
-#import "TOMVisionFoView.h"
+#import "TOMVisionAlgView.h"
 #import "MASConstraint.h"
 #import "View+MASAdditions.h"
 
-@interface TOMVisionFoView ()
+@interface TOMVisionAlgView ()
 
 @property (strong, nonatomic) IBOutlet UIView *containerView;
 
 @end
 
-@implementation TOMVisionFoView
+@implementation TOMVisionAlgView
 
 -(void) initView{
     //self
@@ -36,26 +36,21 @@
 -(void) refreshDisplay{
     //1. 检查数据;
     if (!self.data) return;
-    AIFoNodeBase *fo = [SMGUtils searchNode:self.data.content_p];
     
-    //2. 刷新UI;
-    for (AIKVPointer *alg_p in fo.content_ps) {
-        //可以显示一些容易看懂的,比如某方向飞行,或者吃,果,棒,这些;
-        
-        
-    }
+    
+    
 }
 
 //MARK:===============================================================
 //MARK:                     < override >
 //MARK:===============================================================
--(void) setData:(TOFoModel*)value{
-    [super setData:value];
+-(void) setData:(TOAlgModel*)data{
+    [super setData:data];
     [self refreshDisplay];
 }
 
--(TOFoModel*) data{
-    return (TOFoModel*)[super data];
+-(TOAlgModel *)data{
+    return (DemandModel*)[super data];
 }
 
 @end

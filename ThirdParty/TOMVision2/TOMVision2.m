@@ -15,6 +15,7 @@
 #import "TOMVisionFoView.h"
 #import "TOMVisionDemandView.h"
 #import "TOMVisionFoView.h"
+#import "TOMVisionAlgView.h"
 #import "TOModelVisionUtil.h"
 #import "UnorderItemModel.h"
 
@@ -98,8 +99,8 @@
     [self.datas addObject:newFrame];
     
     //3. 更新UI
-    CGFloat demandWidth = ScreenWidth / newFrame.data.count * 0.6f; //组宽(参考25182-4);
-    CGFloat curX = demandWidth * 0.2f;
+    CGFloat rootWidth = ScreenWidth / newFrame.data.count * 0.6f; //组宽(参考25182-4);
+    CGFloat curX = rootWidth * 0.2f;
     for (DemandModel *demand in newFrame.data) {
         
         //6. 从根节点递归生长出它的分枝,
@@ -109,17 +110,35 @@
         for (UnorderItemModel *unorder in unorderModels) {
             
             //4. 新建根节点;
-            TOMVisionNodeBase *demandView = [self getOrCreateNode:unorder.data];
-            [self.contentView addSubview:demandView];
-            [demandView setFrame:CGRectMake(curX, unorder.tabNum * 60, demandWidth, demandView.height)];
+            TOMVisionNodeBase *nodeView = [self getOrCreateNode:unorder.data];
+            [self.contentView addSubview:nodeView];
+            [nodeView setFrame:CGRectMake(curX, unorder.tabNum * 60, rootWidth, nodeView.height)];
             
             //TODOTOMORROW20220317:
             //5. 根据当前tabNum,对curX值进行更新;
-            //6. 根据当前tabNum,对nodeView进行缩放;
+            
+            //6. 对nodeView进行缩放;
+            if (nodeView.data.baseOrGroup) {
+                
+                //8. 有base时: 子元素宽度 = base宽度 / 子元素数;
+                TOMVisionNodeBase *baseView = [self getOrCreateNode:nodeView.data];
+                NSMutableArray *subModels = [TOUtils getSubOutModels:nodeView.data];
+                if (baseView && ARRISOK(subModels)) {
+                    CGFloat subWidth = baseView.width / subModels.count;
+                    
+                    //9. 然后: 缩放比例 = 子元素宽度 / rootWidth;
+                    CGFloat scale = subWidth / rootWidth;
+                    
+                    //10. 缩放;
+                    NSLog(@"缩放比例:%f",scale);
+                    [nodeView setTransform:CGAffineTransformScale(nodeView.transform, scale, scale)];
+                }
+            }
+            
         }
         
         //5. 更新curX值;
-        curX += demandWidth;
+        curX += rootWidth;
     }
 }
 
@@ -176,6 +195,9 @@
             [result setData:data];
         }else if(ISOK(data, TOFoModel.class)){
             result = [[TOMVisionFoView alloc] init];
+            [result setData:data];
+        }else if(ISOK(data, TOAlgModel.class)){
+            result = [[TOMVisionAlgView alloc] init];
             [result setData:data];
         }else{
             //TODOTOMORROW20220317: 别的类型还没支持,就先返回baseView;
