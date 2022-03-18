@@ -18,6 +18,7 @@
 #import "TOMVisionAlgView.h"
 #import "TOModelVisionUtil.h"
 #import "UnorderItemModel.h"
+#import "TVPanelView.h"
 
 @interface TOMVision2 ()
 
@@ -27,6 +28,7 @@
 @property (strong, nonatomic) UIView *contentView;
 @property (assign, nonatomic) NSInteger loopId;     //当前循环Id
 @property (strong, nonatomic) NSMutableArray *datas;//所有帧数据 List<TOMVisionItemModel>
+@property (strong, nonatomic) TVPanelView *panelView;
 
 @end
 
@@ -69,6 +71,10 @@
     [self.scrollView addSubview:self.contentView];
     [self.contentView setBackgroundColor:[UIColor clearColor]];
     [self.contentView setFrame:CGRectMake(0, 0, ScreenWidth, ScreenHeight)];
+    
+    //panelView
+    self.panelView = [[TVPanelView alloc] init];
+    [self.containerView addSubview:self.panelView];
 }
 
 -(void) initData{

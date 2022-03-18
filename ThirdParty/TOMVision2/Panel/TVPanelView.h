@@ -8,10 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-NS_ASSUME_NONNULL_BEGIN
-
+/**
+ *  MARK:--------------------播放控制面板--------------------
+ */
 @interface TVPanelView : UIView
 
 @end
-
-NS_ASSUME_NONNULL_END
