@@ -33,6 +33,13 @@
 
 @end
 
+//TODOTOMORROW20220319:
+//1. 将models移到panelView下;
+//2. 将nodeView下显示出pointerId;
+
+
+
+
 @implementation TOMVision2
 
 -(id) init {
@@ -114,6 +121,11 @@
     [self refreshDisplay];
 }
 
+/**
+ *  MARK:--------------------refreshDisplay--------------------
+ *  @version
+ *      2022.03.19: 子节点与根节点同尺寸,只是缩放了而已 (如果调小尺寸,缩放就没意义了);
+ */
 -(void) refreshDisplay{
     //1. 数据检查;
     TOMVisionItemModel *model = ARR_INDEX(self.models, self.curIndex);
@@ -156,10 +168,10 @@
                 if (baseView && ARRISOK(subModels)) {
                     
                     //7. 子组最左X = 父组X - 左侧空白处(为节点宽的1/3);
-                    CGFloat subGroupMinX = baseView.x - baseView.width / 3.0f;
+                    CGFloat subGroupMinX = baseView.x - baseView.showW / 3.0f;
                     
                     //7. 子元素宽度 = base宽度 / 子元素数;
-                    CGFloat subGroupW = baseView.width / 0.6f / subModels.count;
+                    CGFloat subGroupW = baseView.showW / 0.6f / subModels.count;
                     CGFloat subNodeW = subGroupW * 0.6f;
                     
                     //7. nodeX = (左侧空白0.2 + 下标) x 组宽 + groupMinX;
@@ -167,17 +179,13 @@
                     CGFloat nodeX = subGroupW * (0.2f + index) + subGroupMinX;
                     
                     //8. sub节点的frame指定;
-                    [nodeView setFrame:CGRectMake(nodeX, unorder.tabNum * 60, subNodeW, nodeView.height)];
-                    
-                    //TODOTOMORROW20220319: 此处又放小尺寸,又缩放小,成了两次放小,尺寸不应放小;
-                    
-                    
+                    [nodeView setFrame:CGRectMake(nodeX, unorder.tabNum * 60, rootNodeW, nodeView.height)];
                     
                     //9. 对nodeView进行缩放 (缩放比例 = 子元素宽度 / rootWidth);
                     CGFloat scale = subGroupW / rootGroupW;
-                    [nodeView setTransform:CGAffineTransformIdentity];
-                    [nodeView setTransform:CGAffineTransformScale(nodeView.transform, scale, scale)];
-                    NSLog(@"%@ X:%f Y:%f W:%f H:%f S:%f",Pit2FStr(nodeView.data.content_p),nodeView.x,nodeView.y,nodeView.width,nodeView.height,scale);
+                    [nodeView.layer setTransform:CATransform3DIdentity];
+                    [nodeView.layer setTransform:CATransform3DMakeScale(scale, 1.0f, 1.0f)];
+                    NSLog(@"%@ X:%f Y:%f W:%f H:%f S:%f",Pit2FStr(nodeView.data.content_p),nodeView.x,nodeView.y,nodeView.showW,nodeView.showH,scale);
                 }
             }
         }
