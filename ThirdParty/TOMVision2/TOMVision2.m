@@ -124,11 +124,13 @@
     [self.contentView removeAllSubviews];
     
     //2. 刷新显示_计算根节点宽度 (参考25182-4);
-    CGFloat rootWidth = ScreenWidth / model.roots.count * 0.6f;
-    CGFloat curX = rootWidth * 0.2f;
+    //注: 排版为[-NNN--NNN-],其中-为节点间距,NNN为节点宽度,占60%;
+    CGFloat rootGroupW = ScreenWidth / model.roots.count;
+    CGFloat rootNodeW = rootGroupW * 0.6f;
     for (DemandModel *demand in model.roots) {
+        NSLog(@"----------> root下树为:\n%@",[TOModelVision cur2Sub:demand]);
         
-        //6. 从根节点递归生长出它的分枝,
+        //3. 从demand根节点递归生长出它的分枝,
         NSMutableArray *unorderModels = [TOModelVisionUtil convertCur2Sub2UnorderModels:demand];
         
         //3. 转为nodeView
@@ -137,33 +139,42 @@
             //4. 新建根节点;
             TOMVisionNodeBase *nodeView = [self getOrCreateNode:unorder.data oldSubViews:subViews];
             [self.contentView addSubview:nodeView];
-            [nodeView setFrame:CGRectMake(curX, unorder.tabNum * 60, rootWidth, nodeView.height)];
             
-            //TODOTOMORROW20220317:
-            //5. 根据当前tabNum,对curX值进行更新;
-            
-            //6. 对nodeView进行缩放;
-            if (nodeView.data.baseOrGroup) {
+            if (!nodeView.data.baseOrGroup) {
                 
-                //8. 有base时: 子元素宽度 = base宽度 / 子元素数;
-                TOMVisionNodeBase *baseView = [self getOrCreateNode:nodeView.data oldSubViews:subViews];
-                NSMutableArray *subModels = [TOUtils getSubOutModels:nodeView.data];
+                //4. nodeX = (左侧空白0.2 + 下标) x 组宽;
+                NSInteger index = [model.roots indexOfObject:nodeView.data];
+                CGFloat nodeX = rootGroupW * (index + 0.2f);
+                
+                //5. root节点的frame指定;
+                [nodeView setFrame:CGRectMake(nodeX, unorder.tabNum * 60, rootNodeW, nodeView.height)];
+            }else {
+                
+                //6. 子节点的frame指定;
+                TOMVisionNodeBase *baseView = [self getOrCreateNode:nodeView.data.baseOrGroup oldSubViews:subViews];
+                NSMutableArray *subModels = [TOUtils getSubOutModels:nodeView.data.baseOrGroup];
                 if (baseView && ARRISOK(subModels)) {
-                    CGFloat subWidth = baseView.width / subModels.count;
                     
-                    //9. 然后: 缩放比例 = 子元素宽度 / rootWidth;
-                    CGFloat scale = subWidth / rootWidth;
+                    //7. 子组最左X = 父组X - 左侧空白处(为节点宽的1/3);
+                    CGFloat subGroupMinX = baseView.x - baseView.width / 3.0f;
                     
-                    //10. 缩放;
-                    NSLog(@"缩放比例:%f",scale);
+                    //7. 子元素宽度 = base宽度 / 子元素数;
+                    CGFloat subGroupW = baseView.width / 0.6f / subModels.count;
+                    CGFloat subNodeW = subGroupW * 0.6f;
+                    
+                    //7. nodeX = (左侧空白0.2 + 下标) x 组宽 + groupMinX;
+                    NSInteger index = [subModels indexOfObject:nodeView.data];
+                    CGFloat nodeX = subGroupW * (0.2f + index) + subGroupMinX;
+                    
+                    //8. sub节点的frame指定;
+                    [nodeView setFrame:CGRectMake(nodeX, unorder.tabNum * 60, subNodeW, nodeView.height)];
+                    
+                    //9. 对nodeView进行缩放 (缩放比例 = 子元素宽度 / rootWidth);
+                    CGFloat scale = subGroupW / rootGroupW;
                     [nodeView setTransform:CGAffineTransformScale(nodeView.transform, scale, scale)];
                 }
             }
-            
         }
-        
-        //5. 更新curX值;
-        curX += rootWidth;
     }
 }
 
