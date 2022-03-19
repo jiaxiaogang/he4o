@@ -27,9 +27,7 @@
 @property (strong, nonatomic) UIScrollView *scrollView;
 @property (strong, nonatomic) UIView *contentView;
 @property (strong, nonatomic) TVPanelView *panelView;
-@property (assign, nonatomic) NSInteger loopId;         //当前循环Id
-@property (strong, nonatomic) NSMutableArray *models;   //所有帧数据 List<TOMVisionItemModel>
-@property (assign, nonatomic) NSInteger curIndex;       //当前显示的data下标
+@property (strong, nonatomic) TOMVisionItemModel *model;
 
 @end
 
@@ -87,7 +85,6 @@
 }
 
 -(void) initData{
-    self.models = [[NSMutableArray alloc] init];
 }
 
 -(void) initDisplay{
@@ -97,28 +94,12 @@
 //MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
--(void) updateLoopId{
-    self.loopId++;
+-(void) updateFrame{
+    [self.panelView updateFrame:false];
 }
 
--(void) updateFrame{
-    //1. 数据检查;
-    //if (!self.isOpen && !self.forceMode) return;
-    if (theTC.outModelManager.getAllDemand.count <= 0) {
-        return;
-    }
-    
-    //2. 记录快照;
-    TOMVisionItemModel *newFrame = [[TOMVisionItemModel alloc] init];
-    newFrame.loopId = self.loopId;
-    newFrame.roots = theTC.outModelManager.getAllDemand;
-    [self.models addObject:newFrame];
-    
-    //3. 当前为末帧;
-    self.curIndex = self.models.count - 1;
-    
-    //3. 更新UI
-    [self refreshDisplay];
+-(void) updateFrame:(BOOL)newLoop{
+    [self.panelView updateFrame:newLoop];
 }
 
 /**
@@ -128,8 +109,7 @@
  */
 -(void) refreshDisplay{
     //1. 数据检查;
-    TOMVisionItemModel *model = ARR_INDEX(self.models, self.curIndex);
-    if (!model) return;
+    if (!self.model) return;
     
     //2. 取出旧有节点缓存 & 并清空画板;
     NSArray *oldSubViews = [self.contentView subViews_AllDeepWithClass:TOMVisionNodeBase.class];
@@ -137,9 +117,9 @@
     
     //2. 刷新显示_计算根节点宽度 (参考25182-4);
     //注: 排版为[-NNN--NNN-],其中-为节点间距,NNN为节点宽度,占60%;
-    CGFloat rootGroupW = ScreenWidth / model.roots.count;
+    CGFloat rootGroupW = ScreenWidth / self.model.roots.count;
     CGFloat rootNodeW = rootGroupW * 0.6f;
-    for (DemandModel *demand in model.roots) {
+    for (DemandModel *demand in self.model.roots) {
         NSLog(@"----------> root下树为:\n%@",[TOModelVision cur2Sub:demand]);
         
         //3. 从demand根节点递归生长出它的分枝,
@@ -155,7 +135,7 @@
             if (!nodeView.data.baseOrGroup) {
                 
                 //4. nodeX = (左侧空白0.2 + 下标) x 组宽;
-                NSInteger index = [model.roots indexOfObject:nodeView.data];
+                NSInteger index = [self.model.roots indexOfObject:nodeView.data];
                 CGFloat nodeX = rootGroupW * (index + 0.2f);
                 
                 //5. root节点的frame指定;
@@ -172,7 +152,7 @@
                     
                     //7. 子元素宽度 = base宽度 / 子元素数;
                     CGFloat subGroupW = baseView.showW / 0.6f / subModels.count;
-                    CGFloat subNodeW = subGroupW * 0.6f;
+                    //CGFloat subNodeW = subGroupW * 0.6f; (不需要了,根据sub/root组宽就能算出缩放比例);
                     
                     //7. nodeX = (左侧空白0.2 + 下标) x 组宽 + groupMinX;
                     NSInteger index = [subModels indexOfObject:nodeView.data];
@@ -272,16 +252,9 @@
 //MARK:===============================================================
 //MARK:                     < TVPanelViewDelegate >
 //MARK:===============================================================
--(void) panelSubBtnClicked{
-    if (self.curIndex > 0) {
-        self.curIndex--;
-        [self refreshDisplay];
-    }
-}
-
--(void) panelPlusBtnClicked{
-    if (self.curIndex < self.models.count - 1) {
-        self.curIndex++;
+-(void) panelPlay:(TOMVisionItemModel*)model{
+    if (![model isEqual:self.model]) {
+        self.model = model;
         [self refreshDisplay];
     }
 }

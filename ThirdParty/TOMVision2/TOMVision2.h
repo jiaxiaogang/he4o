@@ -15,8 +15,8 @@
 /**
  *  MARK:--------------------设置内容--------------------
  */
--(void) updateLoopId;
 -(void) updateFrame;
+-(void) updateFrame:(BOOL)newLoop;
 
 /**
  *  MARK:--------------------清空网络--------------------

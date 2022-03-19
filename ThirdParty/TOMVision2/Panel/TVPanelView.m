@@ -9,6 +9,7 @@
 #import "TVPanelView.h"
 #import "MASConstraint.h"
 #import "View+MASAdditions.h"
+#import "TOMVisionItemModel.h"
 
 @interface TVPanelView ()
 
@@ -21,6 +22,9 @@
 @property (weak, nonatomic) IBOutlet UIButton *loopBtn;
 @property (weak, nonatomic) IBOutlet UIButton *plusBtn;
 @property (weak, nonatomic) IBOutlet UIButton *subBtn;
+@property (assign, nonatomic) BOOL playing;             //播放中;
+@property (assign, nonatomic) NSInteger curIndex;       //当前帧
+@property (assign, nonatomic) CGFloat speed;            //播放速度 (其中0为直播);
 
 @end
 
@@ -52,9 +56,71 @@
 }
 
 -(void) initData{
+    self.models = [[NSMutableArray alloc] init];
+    self.playing = true;
+    self.speed = 0;
 }
 
 -(void) initDisplay{
+}
+
+-(void) updateFrame:(BOOL)newLoop{
+    //1. 数据检查;
+    //if (!self.isOpen && !self.forceMode) return;
+    if (theTC.outModelManager.getAllDemand.count <= 0) {
+        return;
+    }
+    
+    //2. 记录快照;
+    TOMVisionItemModel *newFrame = [[TOMVisionItemModel alloc] init];
+    newFrame.roots = theTC.outModelManager.getAllDemand;
+    [self.models addObject:newFrame];
+    
+    //3. 新轮循环Id;
+    if (newLoop) {
+        TOMVisionItemModel *lastFrame = ARR_INDEX_REVERSE(self.models, 0);
+        NSInteger oldLoopId = lastFrame ? lastFrame.loopId : 0;
+        newFrame.loopId = oldLoopId + 1;
+    }
+    
+    //3. 当前直播播放中,则实时更新;
+    if (self.playing && self.speed == 0) {
+        self.curIndex = self.models.count - 1;
+        [self refreshDisplay];
+    }
+}
+
+-(void) refreshDisplay{
+    [self refreshDisplay:true];
+}
+-(void) refreshDisplay:(BOOL)refreshSlider{
+    //1. 取model
+    TOMVisionItemModel *playModel = ARR_INDEX(self.models, self.curIndex);
+    TOMVisionItemModel *lastModel = ARR_INDEX_REVERSE(self.models, 0);
+    if (!playModel || !lastModel) return;
+    
+    //2. 播放
+    [self.delegate panelPlay:playModel];
+    
+    //3. 更新帧进度和循环数进度;
+    [self.frameBtn setTitle:STRFORMAT(@"帧数: %ld/%ld",self.curIndex,self.models.count) forState:UIControlStateNormal];
+    [self.loopBtn setTitle:STRFORMAT(@"循环: %ld/%ld",playModel.loopId,lastModel.loopId) forState:UIControlStateNormal];
+    
+    //4. 更新进度条 (当前sliderValue与curIndex不匹配时,更新进度条);
+    if (refreshSlider) {
+        CGFloat sliderValue = self.curIndex / (float)(self.models.count - 1);
+        [self.sliderView setValue:sliderValue];
+    }
+    
+    //4. 更新时间进度;
+    if (self.speed == 0) {
+        [self.timeBtn setTitle:@"时长: --/--" forState:UIControlStateNormal];
+    }else{
+        NSInteger allS = self.models.count / self.speed;
+        NSInteger curS = self.sliderView.value * allS;
+        NSString *timeStr = STRFORMAT(@"时长: %ld:%ld/%ld:%ld",curS / 60,curS % 60,allS / 60,allS % 60);
+        [self.timeBtn setTitle:timeStr forState:UIControlStateNormal];
+    }
 }
 
 //MARK:===============================================================
@@ -70,23 +136,46 @@
 }
 
 - (IBAction)sliderChanged:(UISlider*)sender {
-    NSLog(@"%f",sender.value);
+    self.curIndex = (self.models.count - 1) * sender.value;
+    [self refreshDisplay:false];
 }
 
 - (IBAction)speedSegmentChanged:(UISegmentedControl*)sender {
-    NSLog(@"%ld",(long)sender.selectedSegmentIndex);
+    if (sender.selectedSegmentIndex == 0) {
+        self.speed = 0.25f;
+    }else if (sender.selectedSegmentIndex == 1) {
+        self.speed = 0.5f;
+    }else if (sender.selectedSegmentIndex == 2) {
+        self.speed = 1;
+    }else if (sender.selectedSegmentIndex == 3) {
+        self.speed = 2.0f;
+    }else if (sender.selectedSegmentIndex == 4) {
+        self.speed = 3.0f;
+    }else if (sender.selectedSegmentIndex == 5) {
+        self.speed = 4.0f;
+    }else if (sender.selectedSegmentIndex == 6) {
+        self.speed = 0;
+    }
+    [self refreshDisplay];
 }
 
 - (IBAction)playBtnClicked:(id)sender {
-    
+    self.playing = !self.playing;
+    [self.playBtn setTitle:(self.playing ? @"||" : @"▶") forState:UIControlStateNormal];
 }
 
 - (IBAction)plusBtnClicked:(id)sender {
-    [self.delegate panelPlusBtnClicked];
+    if (!self.playing && self.curIndex < self.models.count - 1) {
+        self.curIndex++;
+        [self refreshDisplay];
+    }
 }
 
 - (IBAction)subBtnClicked:(id)sender {
-    [self.delegate panelSubBtnClicked];
+    if (!self.playing && self.curIndex > 0) {
+        self.curIndex--;
+        [self refreshDisplay];
+    }
 }
 
 @end

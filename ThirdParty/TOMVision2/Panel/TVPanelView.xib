@@ -33,23 +33,24 @@
                         <constraint firstAttribute="width" constant="40" id="LAT-X1-gUg"/>
                         <constraint firstAttribute="height" constant="20" id="yhc-Pq-9ec"/>
                     </constraints>
-                    <state key="normal" title="|&gt;"/>
+                    <state key="normal" title="||"/>
                     <connections>
                         <action selector="playBtnClicked:" destination="-1" eventType="touchUpInside" id="e1f-eP-ol8"/>
                     </connections>
                 </button>
-                <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="2sX-8J-nQ2">
+                <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="6" translatesAutoresizingMaskIntoConstraints="NO" id="2sX-8J-nQ2">
                     <rect key="frame" x="100" y="23" width="175" height="21"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="20" id="UPs-Nx-ZYV"/>
                     </constraints>
                     <segments>
-                        <segment title="1/4"/>
-                        <segment title="1/2"/>
-                        <segment title="1.0"/>
-                        <segment title="2.0"/>
-                        <segment title="3.0"/>
-                        <segment title="4.0"/>
+                        <segment title=".25"/>
+                        <segment title=".5"/>
+                        <segment title="1x"/>
+                        <segment title="2x"/>
+                        <segment title="3x"/>
+                        <segment title="4x"/>
+                        <segment title="实"/>
                     </segments>
                     <connections>
                         <action selector="speedSegmentChanged:" destination="-1" eventType="valueChanged" id="P9a-xf-732"/>
@@ -63,7 +64,7 @@
                         <constraint firstAttribute="width" constant="95" id="oxY-Hl-JlH"/>
                     </constraints>
                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                    <state key="normal" title="帧数: 10/100"/>
+                    <state key="normal" title="帧数: 0/0"/>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
                             <integer key="value" value="2"/>
@@ -84,7 +85,7 @@
                         <constraint firstAttribute="height" constant="12" id="a57-sy-6c1"/>
                     </constraints>
                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                    <state key="normal" title="时间: 1:00 / 3:48"/>
+                    <state key="normal" title="时长: --/--"/>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
                             <integer key="value" value="2"/>
@@ -105,7 +106,7 @@
                         <constraint firstAttribute="height" constant="12" id="3no-M4-Ddi"/>
                     </constraints>
                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                    <state key="normal" title="循环: 48 / 420"/>
+                    <state key="normal" title="循环: 0/0"/>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
                             <integer key="value" value="2"/>
@@ -125,7 +126,7 @@
                         <constraint firstAttribute="height" constant="1" id="P1T-Dz-gSO"/>
                     </constraints>
                 </view>
-                <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="Zj4-vQ-Cas">
+                <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="Zj4-vQ-Cas">
                     <rect key="frame" x="98" y="-8" width="434" height="31"/>
                     <connections>
                         <action selector="sliderChanged:" destination="-1" eventType="valueChanged" id="Q4d-mg-8kb"/>

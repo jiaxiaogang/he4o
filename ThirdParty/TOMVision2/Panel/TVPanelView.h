@@ -11,15 +11,18 @@
 /**
  *  MARK:--------------------播放控制面板--------------------
  */
+@class TOMVisionItemModel;
 @protocol TVPanelViewDelegate <NSObject>
 
--(void) panelSubBtnClicked;
--(void) panelPlusBtnClicked;
+-(void) panelPlay:(TOMVisionItemModel*)model;
 
 @end
 
 @interface TVPanelView : UIView
 
+@property (strong, nonatomic) NSMutableArray *models;   //所有帧数据 List<TOMVisionItemModel>
 @property (weak, nonatomic) id<TVPanelViewDelegate> delegate;//notnull
+
+-(void) updateFrame:(BOOL)newLoop;
 
 @end
