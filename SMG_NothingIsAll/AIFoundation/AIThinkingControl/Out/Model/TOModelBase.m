@@ -18,11 +18,16 @@
     return self;
 }
 
+/**
+ *  MARK:--------------------isEqual--------------------
+ *  @version
+ *      2022.03.19: content_p为空时,返回super.Equal(),因为Demand的content_p全是空的;
+ */
 -(BOOL) isEqual:(TOModelBase*)object{
     if (object && object.content_p) {
         return [object.content_p isEqual:self.content_p];
     }
-    return false;
+    return [super isEqual:object];
 }
 
 -(void)setStatus:(TOModelStatus)status{

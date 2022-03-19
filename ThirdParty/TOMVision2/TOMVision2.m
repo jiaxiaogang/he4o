@@ -120,7 +120,7 @@
     if (!model) return;
     
     //2. 取出旧有节点缓存 & 并清空画板;
-    NSArray *subViews = [self.contentView subViews_AllDeepWithClass:TOMVisionNodeBase.class];
+    NSArray *oldSubViews = [self.contentView subViews_AllDeepWithClass:TOMVisionNodeBase.class];
     [self.contentView removeAllSubviews];
     
     //2. 刷新显示_计算根节点宽度 (参考25182-4);
@@ -137,7 +137,7 @@
         for (UnorderItemModel *unorder in unorderModels) {
             
             //4. 新建根节点;
-            TOMVisionNodeBase *nodeView = [self getOrCreateNode:unorder.data oldSubViews:subViews];
+            TOMVisionNodeBase *nodeView = [self getOrCreateNode:unorder.data oldSubViews:oldSubViews];
             [self.contentView addSubview:nodeView];
             
             if (!nodeView.data.baseOrGroup) {
@@ -151,7 +151,7 @@
             }else {
                 
                 //6. 子节点的frame指定;
-                TOMVisionNodeBase *baseView = [self getOrCreateNode:nodeView.data.baseOrGroup oldSubViews:subViews];
+                TOMVisionNodeBase *baseView = [self getOrCreateNode:nodeView.data.baseOrGroup oldSubViews:oldSubViews];
                 NSMutableArray *subModels = [TOUtils getSubOutModels:nodeView.data.baseOrGroup];
                 if (baseView && ARRISOK(subModels)) {
                     
@@ -169,9 +169,15 @@
                     //8. sub节点的frame指定;
                     [nodeView setFrame:CGRectMake(nodeX, unorder.tabNum * 60, subNodeW, nodeView.height)];
                     
+                    //TODOTOMORROW20220319: 此处又放小尺寸,又缩放小,成了两次放小,尺寸不应放小;
+                    
+                    
+                    
                     //9. 对nodeView进行缩放 (缩放比例 = 子元素宽度 / rootWidth);
                     CGFloat scale = subGroupW / rootGroupW;
+                    [nodeView setTransform:CGAffineTransformIdentity];
                     [nodeView setTransform:CGAffineTransformScale(nodeView.transform, scale, scale)];
+                    NSLog(@"%@ X:%f Y:%f W:%f H:%f S:%f",Pit2FStr(nodeView.data.content_p),nodeView.x,nodeView.y,nodeView.width,nodeView.height,scale);
                 }
             }
         }
@@ -210,14 +216,17 @@
 
 /**
  *  MARK:--------------------创建新节点--------------------
+ *  @version
+ *      2022.03.19: 将newSubViews和oldSubViews都参与复用 (本帧生成的node也需要复用,否则会找不到刚生成的父枝);
  *  @result notnull
  */
--(TOMVisionNodeBase*) getOrCreateNode:(id)data oldSubViews:(NSArray*)subViews{
-    //1. 数据准备;
-    TOMVisionNodeBase *result = nil;
+-(TOMVisionNodeBase*) getOrCreateNode:(id)data oldSubViews:(NSArray*)oldSubViews{
+    //1. 数据准备 (原有和现有子views全用于复用);
+    NSArray *newSubViews = [self.contentView subViews_AllDeepWithClass:TOMVisionNodeBase.class];
+    NSMutableArray *allSubViews = [SMGUtils collectArrA:oldSubViews arrB:newSubViews];
     
     //2. 优先找复用;
-    result = ARR_INDEX([SMGUtils filterArr:subViews checkValid:^BOOL(TOMVisionNodeBase *subView) {
+    TOMVisionNodeBase *result = ARR_INDEX([SMGUtils filterArr:allSubViews checkValid:^BOOL(TOMVisionNodeBase *subView) {
         return [subView isEqualByData:data];
     } limit:1], 0);
     

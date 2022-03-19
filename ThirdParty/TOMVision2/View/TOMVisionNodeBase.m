@@ -45,9 +45,18 @@
 -(TOModelBase *)data{
     return _mData;
 }
+
+/**
+ *  MARK:--------------------判断一致--------------------
+ *  @desc 用于复用view
+ *      1. 现在判断data.Equal而不是content_p的Equal,因为同一content_p也有可能不能复用;
+ *      2. 比如: 多帧matchFo都生成了RDemand,但cutIndex等细节有差异,是不能复用的;
+ */
 -(BOOL) isEqualByData:(TOModelBase*)checkData{
     BOOL dataEqual = [self.data isEqual:checkData];
-    BOOL baseEqual = (!self.data.baseOrGroup && !checkData.baseOrGroup) || [self.data.baseOrGroup isEqual:checkData.baseOrGroup];
+    BOOL baseSeemNil = !self.data.baseOrGroup && !checkData.baseOrGroup;
+    BOOL baseSeemPit = self.data.baseOrGroup && [self.data.baseOrGroup isEqual:checkData.baseOrGroup];
+    BOOL baseEqual = baseSeemNil || baseSeemPit;
     return dataEqual && baseEqual;
 }
 
