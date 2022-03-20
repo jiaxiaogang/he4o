@@ -20,14 +20,13 @@
 #import "UnorderItemModel.h"
 #import "TVPanelView.h"
 
-@interface TOMVision2 () <TVPanelViewDelegate>
+@interface TOMVision2 () <TVPanelViewDelegate,UIScrollViewDelegate>
 
 @property (strong,nonatomic) IBOutlet UIView *containerView;
 @property (strong, nonatomic) UIScrollView *scrollView;
 @property (strong, nonatomic) UIView *contentView;
 @property (strong, nonatomic) TVPanelView *panelView;
 @property (strong, nonatomic) TOMVisionItemModel *model;
-@property (assign, nonatomic) CGFloat contentViewScale;
 
 @end
 
@@ -64,6 +63,9 @@
     [self.scrollView setShowsVerticalScrollIndicator:NO];
     [self.scrollView setShowsHorizontalScrollIndicator:NO];
     [self.scrollView setContentSize:CGSizeMake(ScreenWidth, ScreenHeight - 60)];
+    self.scrollView.delegate = self;
+    self.scrollView.minimumZoomScale = 0.1f;    //设置最小缩放倍数
+    self.scrollView.maximumZoomScale = 20.0f;   //设置最大缩放倍数
     
     //contentView
     self.contentView = [[UIView alloc] init];
@@ -75,14 +77,9 @@
     self.panelView = [[TVPanelView alloc] init];
     self.panelView.delegate = self;
     [self.containerView addSubview:self.panelView];
-    
-    //scaleGes
-    UIPinchGestureRecognizer *scaleGes = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(scaleGesAction:)];
-    [self.contentView addGestureRecognizer:scaleGes];
 }
 
 -(void) initData{
-    self.contentViewScale = 1.0f;
 }
 
 -(void) initDisplay{
@@ -240,27 +237,6 @@
     return result;
 }
 
--(void) refreshDisplay_ContentView{
-    //1. 缩放显示;
-    [self.contentView setTransform:CGAffineTransformMakeScale(self.contentViewScale, self.contentViewScale)];
-    
-    //2. 中间对齐 (避免显示内容出界);
-    self.contentView.center = CGPointMake(self.contentView.width / 2, self.contentView.height / 2);
-    
-    //3. 更新scrollView滑动内容尺寸;
-    [self.scrollView setContentSize:self.contentView.size];
-}
-
-//MARK:===============================================================
-//MARK:                     < onclick >
-//MARK:===============================================================
--(void) scaleGesAction:(UIPinchGestureRecognizer*)ges{
-    if (ges.state == UIGestureRecognizerStateChanged) {
-        self.contentViewScale *= ges.scale;
-        [self refreshDisplay_ContentView];
-    }
-}
-
 //MARK:===============================================================
 //MARK:                     < TVPanelViewDelegate >
 //MARK:===============================================================
@@ -276,8 +252,14 @@
 }
 
 -(void) panelScaleChanged:(CGFloat)scale{
-    self.contentViewScale = scale;
-    [self refreshDisplay_ContentView];
+    self.scrollView.zoomScale = scale;
+}
+
+//MARK:===============================================================
+//MARK:                     < UIScrollViewDelegate >
+//MARK:===============================================================
+-(UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView{
+    return self.contentView;
 }
 
 @end

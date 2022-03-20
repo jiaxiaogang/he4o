@@ -103,7 +103,7 @@
     [self.delegate panelPlay:playModel];
     
     //3. 更新帧进度和循环数进度;
-    [self.frameBtn setTitle:STRFORMAT(@"帧数: %ld/%ld",self.curIndex,self.models.count) forState:UIControlStateNormal];
+    [self.frameBtn setTitle:STRFORMAT(@"帧数: %ld/%ld",self.curIndex + 1,self.models.count) forState:UIControlStateNormal];
     [self.loopBtn setTitle:STRFORMAT(@"循环: %ld/%ld",playModel.loopId,lastModel.loopId) forState:UIControlStateNormal];
     
     //4. 更新进度条 (当前sliderValue与curIndex不匹配时,更新进度条);
