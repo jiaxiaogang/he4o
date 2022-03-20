@@ -23,8 +23,6 @@
 @interface TOMVision2 () <TVPanelViewDelegate>
 
 @property (strong,nonatomic) IBOutlet UIView *containerView;
-@property (weak, nonatomic) IBOutlet UIButton *openCloseBtn;
-@property (weak, nonatomic) IBOutlet UIButton *bigBtn;
 @property (strong, nonatomic) UIScrollView *scrollView;
 @property (strong, nonatomic) UIView *contentView;
 @property (strong, nonatomic) TVPanelView *panelView;
@@ -32,13 +30,6 @@
 @property (assign, nonatomic) CGFloat contentViewScale;
 
 @end
-
-//TODOTOMORROW20220319:
-//1. 将models移到panelView下;
-//2. 将nodeView下显示出pointerId;
-
-
-
 
 @implementation TOMVision2
 
@@ -68,22 +59,26 @@
     
     //scrollView
     self.scrollView = [[UIScrollView alloc] init];
-    [self.containerView insertSubview:self.scrollView belowSubview:self.openCloseBtn];
-    [self.scrollView setFrame:CGRectMake(0, 20, ScreenWidth, ScreenHeight - 20)];
+    [self.containerView addSubview:self.scrollView];
+    [self.scrollView setFrame:CGRectMake(0, 20, ScreenWidth, ScreenHeight - 20 - 40)];
     [self.scrollView setShowsVerticalScrollIndicator:NO];
     [self.scrollView setShowsHorizontalScrollIndicator:NO];
-    [self.scrollView setContentSize:CGSizeMake(ScreenWidth, ScreenHeight)];
+    [self.scrollView setContentSize:CGSizeMake(ScreenWidth, ScreenHeight - 60)];
     
     //contentView
     self.contentView = [[UIView alloc] init];
     [self.scrollView addSubview:self.contentView];
     [self.contentView setBackgroundColor:[UIColor clearColor]];
-    [self.contentView setFrame:CGRectMake(0, 0, ScreenWidth, ScreenHeight)];
+    [self.contentView setFrame:CGRectMake(0, 0, ScreenWidth, ScreenHeight - 60)];
     
     //panelView
     self.panelView = [[TVPanelView alloc] init];
     self.panelView.delegate = self;
     [self.containerView addSubview:self.panelView];
+    
+    //scaleGes
+    UIPinchGestureRecognizer *scaleGes = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(scaleGesAction:)];
+    [self.contentView addGestureRecognizer:scaleGes];
 }
 
 -(void) initData{
@@ -245,18 +240,25 @@
     return result;
 }
 
+-(void) refreshDisplay_ContentView{
+    //1. 缩放显示;
+    [self.contentView setTransform:CGAffineTransformMakeScale(self.contentViewScale, self.contentViewScale)];
+    
+    //2. 中间对齐 (避免显示内容出界);
+    self.contentView.center = CGPointMake(self.contentView.width / 2, self.contentView.height / 2);
+    
+    //3. 更新scrollView滑动内容尺寸;
+    [self.scrollView setContentSize:self.contentView.size];
+}
+
 //MARK:===============================================================
 //MARK:                     < onclick >
 //MARK:===============================================================
-- (IBAction)openCloseBtnOnClick:(id)sender {
-    [self close];
-}
-
-- (IBAction)bigBtnOnClick:(id)sender {
-    self.contentViewScale *= 1.5f;
-    [self.contentView setTransform:CGAffineTransformMakeScale(self.contentViewScale, self.contentViewScale)];
-    NSLog(@"%f %f",self.contentView.width,self.contentView.height);
-    NSLog(@"");
+-(void) scaleGesAction:(UIPinchGestureRecognizer*)ges{
+    if (ges.state == UIGestureRecognizerStateChanged) {
+        self.contentViewScale *= ges.scale;
+        [self refreshDisplay_ContentView];
+    }
 }
 
 //MARK:===============================================================
@@ -267,6 +269,15 @@
         self.model = model;
         [self refreshDisplay];
     }
+}
+
+-(void) panelCloseBtnClicked{
+    [self close];
+}
+
+-(void) panelScaleChanged:(CGFloat)scale{
+    self.contentViewScale = scale;
+    [self refreshDisplay_ContentView];
 }
 
 @end

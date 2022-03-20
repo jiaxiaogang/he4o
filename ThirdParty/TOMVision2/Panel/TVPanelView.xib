@@ -156,6 +156,37 @@
                         <action selector="subBtnClicked:" destination="-1" eventType="touchUpInside" id="NVH-bs-Hkz"/>
                     </connections>
                 </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3eE-Ui-Qib">
+                    <rect key="frame" x="500" y="23" width="30" height="20"/>
+                    <color key="backgroundColor" red="1" green="0.1019250594" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="30" id="OJP-JT-OCP"/>
+                        <constraint firstAttribute="height" constant="20" id="jcV-NB-yWc"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <color key="tintColor" red="0.96529980959999995" green="0.96529980959999995" blue="0.96529980959999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <state key="normal" title="关闭"/>
+                    <connections>
+                        <action selector="closeBtnClicked:" destination="-1" eventType="touchUpInside" id="RRd-Xu-7vW"/>
+                    </connections>
+                </button>
+                <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" translatesAutoresizingMaskIntoConstraints="NO" id="d8B-gS-vDl">
+                    <rect key="frame" x="355" y="23" width="145" height="21"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="20" id="oUL-UL-fMV"/>
+                    </constraints>
+                    <segments>
+                        <segment title=".25"/>
+                        <segment title=".5"/>
+                        <segment title="1x"/>
+                        <segment title="2x"/>
+                        <segment title="3x"/>
+                        <segment title="4x"/>
+                    </segments>
+                    <connections>
+                        <action selector="scaleSegmentChanged:" destination="-1" eventType="valueChanged" id="LoZ-5Z-4cY"/>
+                    </connections>
+                </segmentedControl>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
@@ -167,14 +198,19 @@
                 <constraint firstItem="kod-Kk-AEY" firstAttribute="leading" secondItem="X4m-Bu-VDS" secondAttribute="leading" id="82p-NB-JUE"/>
                 <constraint firstItem="EED-69-c0I" firstAttribute="top" secondItem="lJM-PU-Yce" secondAttribute="bottom" id="Ito-gq-Cpv"/>
                 <constraint firstItem="24m-LP-Gkc" firstAttribute="centerX" secondItem="X4m-Bu-VDS" secondAttribute="centerX" id="JEA-L2-Onu"/>
+                <constraint firstAttribute="bottom" secondItem="3eE-Ui-Qib" secondAttribute="bottom" id="JT8-hN-gFi"/>
+                <constraint firstItem="7Q1-qM-wyy" firstAttribute="leading" secondItem="d8B-gS-vDl" secondAttribute="trailing" constant="35" id="JnF-f3-tXH"/>
                 <constraint firstAttribute="bottom" secondItem="EED-69-c0I" secondAttribute="bottom" id="Lsq-3L-kET"/>
                 <constraint firstItem="Zj4-vQ-Cas" firstAttribute="leading" secondItem="X4m-Bu-VDS" secondAttribute="leading" constant="100" id="Qyq-wQ-ABS"/>
                 <constraint firstItem="EED-69-c0I" firstAttribute="leading" secondItem="7Q1-qM-wyy" secondAttribute="trailing" constant="1" id="SjZ-BJ-dkT"/>
+                <constraint firstAttribute="bottom" secondItem="d8B-gS-vDl" secondAttribute="bottom" id="Tx6-EX-jL7"/>
                 <constraint firstItem="SoA-Rv-0Cg" firstAttribute="leading" secondItem="X4m-Bu-VDS" secondAttribute="leading" id="W5C-hD-ucD"/>
                 <constraint firstItem="24m-LP-Gkc" firstAttribute="leading" secondItem="2sX-8J-nQ2" secondAttribute="trailing" constant="20" id="XCc-lN-yut"/>
                 <constraint firstAttribute="bottom" secondItem="7Q1-qM-wyy" secondAttribute="bottom" id="Za0-SZ-JPr"/>
+                <constraint firstItem="d8B-gS-vDl" firstAttribute="leading" secondItem="24m-LP-Gkc" secondAttribute="trailing" constant="20" id="b7v-m0-yBf"/>
                 <constraint firstAttribute="bottom" secondItem="2sX-8J-nQ2" secondAttribute="bottom" id="cn5-gB-Rch"/>
                 <constraint firstItem="2sX-8J-nQ2" firstAttribute="leading" secondItem="X4m-Bu-VDS" secondAttribute="leading" constant="100" id="dJy-KX-LII"/>
+                <constraint firstItem="3eE-Ui-Qib" firstAttribute="leading" secondItem="d8B-gS-vDl" secondAttribute="trailing" id="dik-9p-27f"/>
                 <constraint firstItem="SoA-Rv-0Cg" firstAttribute="top" secondItem="X4m-Bu-VDS" secondAttribute="top" constant="1" id="mDZ-vc-mi7"/>
                 <constraint firstAttribute="bottom" secondItem="24m-LP-Gkc" secondAttribute="bottom" id="pSq-fF-DsQ"/>
                 <constraint firstAttribute="trailing" secondItem="Zj4-vQ-Cas" secondAttribute="trailing" constant="100" id="pfi-xx-mci"/>

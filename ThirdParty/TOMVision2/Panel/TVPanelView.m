@@ -159,6 +159,24 @@
     [self refreshDisplay];
 }
 
+- (IBAction)scaleSegmentChanged:(UISegmentedControl*)sender {
+    CGFloat scale = 1.0f;
+    if (sender.selectedSegmentIndex == 0) {
+        scale = 0.25f;
+    }else if (sender.selectedSegmentIndex == 1) {
+        scale = 0.5f;
+    }else if (sender.selectedSegmentIndex == 2) {
+        scale = 1;
+    }else if (sender.selectedSegmentIndex == 3) {
+        scale = 2.0f;
+    }else if (sender.selectedSegmentIndex == 4) {
+        scale = 3.0f;
+    }else if (sender.selectedSegmentIndex == 5) {
+        scale = 4.0f;
+    }
+    [self.delegate panelScaleChanged:scale];
+}
+
 - (IBAction)playBtnClicked:(id)sender {
     self.playing = !self.playing;
     [self.playBtn setTitle:(self.playing ? @"||" : @"▶") forState:UIControlStateNormal];
@@ -176,6 +194,10 @@
         self.curIndex--;
         [self refreshDisplay];
     }
+}
+
+- (IBAction)closeBtnClicked:(id)sender {
+    [self.delegate panelCloseBtnClicked];
 }
 
 @end

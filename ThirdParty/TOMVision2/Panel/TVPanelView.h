@@ -15,6 +15,8 @@
 @protocol TVPanelViewDelegate <NSObject>
 
 -(void) panelPlay:(TOMVisionItemModel*)model;
+-(void) panelCloseBtnClicked;
+-(void) panelScaleChanged:(CGFloat)scale;
 
 @end
 
