@@ -19,52 +19,40 @@
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="iN0-l3-epB">
-            <rect key="frame" x="0.0" y="0.0" width="36" height="11"/>
+            <rect key="frame" x="0.0" y="0.0" width="229" height="46"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sIt-VK-4uN">
-                    <rect key="frame" x="0.0" y="0.0" width="10" height="11"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="10" id="DQw-qi-uaa"/>
-                    </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <rect key="frame" x="0.0" y="-13" width="31" height="72"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="50"/>
                     <state key="normal" title="R">
                         <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </state>
                 </button>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="疼" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XfL-nd-hOE">
-                    <rect key="frame" x="10" y="0.0" width="10" height="11"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="10" id="Pdm-EZ-CS8"/>
-                    </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <rect key="frame" x="31" y="-1" width="40.5" height="48"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="40"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="88.8" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IhU-UL-wYe">
-                    <rect key="frame" x="20" y="0.0" width="16" height="11"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="16" id="eIA-nB-MKA"/>
-                    </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="7"/>
+                    <rect key="frame" x="71.5" y="-1" width="83" height="48"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="40"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
             </subviews>
             <color key="backgroundColor" red="1" green="0.62643009439999997" blue="0.55188864469999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
+                <constraint firstItem="XfL-nd-hOE" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="3sb-iF-8qM"/>
                 <constraint firstItem="IhU-UL-wYe" firstAttribute="leading" secondItem="XfL-nd-hOE" secondAttribute="trailing" id="7vR-O8-Ixg"/>
-                <constraint firstAttribute="bottom" secondItem="XfL-nd-hOE" secondAttribute="bottom" id="A4z-1g-ubQ"/>
+                <constraint firstItem="sIt-VK-4uN" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="8tO-gh-K8C"/>
                 <constraint firstItem="sIt-VK-4uN" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="HF1-pt-7AN"/>
-                <constraint firstItem="IhU-UL-wYe" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="XWD-sB-Bvo"/>
-                <constraint firstItem="sIt-VK-4uN" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="bgd-6w-J2X"/>
-                <constraint firstAttribute="bottom" secondItem="IhU-UL-wYe" secondAttribute="bottom" id="jJ3-EA-Ahe"/>
-                <constraint firstItem="XfL-nd-hOE" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="qwr-hW-Uds"/>
+                <constraint firstItem="IhU-UL-wYe" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="hYN-nH-O0Y"/>
                 <constraint firstItem="XfL-nd-hOE" firstAttribute="leading" secondItem="sIt-VK-4uN" secondAttribute="trailing" id="wju-ym-ivJ"/>
-                <constraint firstAttribute="bottom" secondItem="sIt-VK-4uN" secondAttribute="bottom" id="z6k-04-PNY"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <point key="canvasLocation" x="-139.19999999999999" y="-147.07646176911544"/>
+            <point key="canvasLocation" x="15.199999999999999" y="-131.33433283358323"/>
         </view>
     </objects>
 </document>

@@ -27,6 +27,7 @@
 }
 
 -(void) initView{
+    //[self.layer setMasksToBounds:true];
     [self setFrame:CGRectMake(0, 0, 80, 10)];
 }
 
@@ -58,6 +59,24 @@
     BOOL baseSeemPit = self.data.baseOrGroup && [self.data.baseOrGroup isEqual:checkData.baseOrGroup];
     BOOL baseEqual = baseSeemNil || baseSeemPit;
     return dataEqual && baseEqual;
+}
+
+-(void) scaleContainer:(CGFloat)scale{
+    for (UIView *view in self.subviews) {
+        //1. 先拉长;
+        view.width = (scale == 0) ? 0 : (self.width / scale);
+        view.height = (scale == 0) ? 0 : (self.height / scale);
+        
+        //2. 缩放是中心缩放的,所以先中心对齐;
+        view.center = CGPointMake(self.width / 2, self.height / 2);
+        
+        //3. 多次缩放导致bounds和frame大小不统一,所以每次缩放时强行重置bounds尺寸;
+        view.bounds = CGRectMake(0, 0, view.width, view.height);
+        
+        //4. 再缩小;
+        [view setTransform:CGAffineTransformIdentity];
+        [view setTransform:CGAffineTransformMakeScale(scale, scale)];
+    }
 }
 
 @end

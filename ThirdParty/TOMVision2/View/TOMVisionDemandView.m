@@ -7,8 +7,6 @@
 //
 
 #import "TOMVisionDemandView.h"
-#import "MASConstraint.h"
-#import "View+MASAdditions.h"
 
 @interface TOMVisionDemandView ()
 
@@ -23,21 +21,17 @@
 
 -(void) initView{
     //self
+    [super initView];
     [self setFrame:CGRectMake(0, 0, 40, 10)];
     
     //containerView
     [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];
     [self addSubview:self.containerView];
-    [self.containerView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.leading.mas_equalTo(self);
-        make.trailing.mas_equalTo(self);
-        make.top.mas_equalTo(self);
-        make.bottom.mas_equalTo(self);
-    }];
 }
 
 -(void) refreshDisplay{
     //1. 检查数据;
+    [super refreshDisplay];
     if (!self.data) return;
     CGFloat score = [AIScore score4Demand:self.data];
     
@@ -79,6 +73,11 @@
 
 -(DemandModel *)data{
     return (DemandModel*)[super data];
+}
+
+-(void) setFrame:(CGRect)frame{
+    [super setFrame:frame];
+    [self.containerView setFrame:CGRectMake(0, 0, self.width, self.height)];
 }
 
 @end

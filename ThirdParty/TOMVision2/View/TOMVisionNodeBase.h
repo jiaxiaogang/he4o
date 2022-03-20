@@ -8,6 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
+/**
+ *  MARK:--------------------nodeView--------------------
+ *  @version
+ *      2022.03.20: 将containerView由Constraints改成重写frame (因为nodeView要缩放就不能用autoLayout);
+ */
 @interface TOMVisionNodeBase : UIView
 
 -(void) initView;
@@ -18,5 +23,6 @@
 -(void) setData:(TOModelBase*)value;
 -(TOModelBase *)data;
 -(BOOL) isEqualByData:(TOModelBase*)checkData;
+-(void) scaleContainer:(CGFloat)scale;
 
 @end

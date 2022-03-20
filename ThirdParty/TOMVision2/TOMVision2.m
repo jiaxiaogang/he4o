@@ -24,10 +24,12 @@
 
 @property (strong,nonatomic) IBOutlet UIView *containerView;
 @property (weak, nonatomic) IBOutlet UIButton *openCloseBtn;
+@property (weak, nonatomic) IBOutlet UIButton *bigBtn;
 @property (strong, nonatomic) UIScrollView *scrollView;
 @property (strong, nonatomic) UIView *contentView;
 @property (strong, nonatomic) TVPanelView *panelView;
 @property (strong, nonatomic) TOMVisionItemModel *model;
+@property (assign, nonatomic) CGFloat contentViewScale;
 
 @end
 
@@ -85,6 +87,7 @@
 }
 
 -(void) initData{
+    self.contentViewScale = 1.0f;
 }
 
 -(void) initDisplay{
@@ -117,7 +120,8 @@
     
     //2. 刷新显示_计算根节点宽度 (参考25182-4);
     //注: 排版为[-NNN--NNN-],其中-为节点间距,NNN为节点宽度,占60%;
-    CGFloat rootGroupW = ScreenWidth / self.model.roots.count;
+    //注: rootGroupW最大宽度为250;
+    CGFloat rootGroupW = MIN(ScreenWidth / self.model.roots.count, 420);
     CGFloat rootNodeW = rootGroupW * 0.6f;
     for (DemandModel *demand in self.model.roots) {
         NSLog(@"----------> root下树为:\n%@",[TOModelVision cur2Sub:demand]);
@@ -139,7 +143,7 @@
                 CGFloat nodeX = rootGroupW * (index + 0.2f);
                 
                 //5. root节点的frame指定;
-                [nodeView setFrame:CGRectMake(nodeX, unorder.tabNum * 60, rootNodeW, nodeView.height)];
+                [nodeView setFrame:CGRectMake(nodeX, unorder.tabNum * 60, rootNodeW, rootNodeW / 5)];
             }else {
                 
                 //6. 子节点的frame指定;
@@ -148,24 +152,23 @@
                 if (baseView && ARRISOK(subModels)) {
                     
                     //7. 子组最左X = 父组X - 左侧空白处(为节点宽的1/3);
-                    CGFloat subGroupMinX = baseView.x - baseView.showW / 3.0f;
+                    CGFloat subGroupMinX = baseView.x - baseView.width / 3.0f;
                     
                     //7. 子元素宽度 = base宽度 / 子元素数;
-                    CGFloat subGroupW = baseView.showW / 0.6f / subModels.count;
-                    //CGFloat subNodeW = subGroupW * 0.6f; (不需要了,根据sub/root组宽就能算出缩放比例);
+                    CGFloat subGroupW = baseView.width / 0.6f / subModels.count;
+                    CGFloat subNodeW = subGroupW * 0.6f;// (不需要了,根据sub/root组宽就能算出缩放比例);
                     
                     //7. nodeX = (左侧空白0.2 + 下标) x 组宽 + groupMinX;
                     NSInteger index = [subModels indexOfObject:nodeView.data];
                     CGFloat nodeX = subGroupW * (0.2f + index) + subGroupMinX;
                     
                     //8. sub节点的frame指定;
-                    [nodeView setFrame:CGRectMake(nodeX, unorder.tabNum * 60, rootNodeW, nodeView.height)];
+                    [nodeView setFrame:CGRectMake(nodeX, unorder.tabNum * 60, subNodeW, subNodeW / 5)];
                     
                     //9. 对nodeView进行缩放 (缩放比例 = 子元素宽度 / rootWidth);
                     CGFloat scale = subGroupW / rootGroupW;
-                    [nodeView.layer setTransform:CATransform3DIdentity];
-                    [nodeView.layer setTransform:CATransform3DMakeScale(scale, 1.0f, 1.0f)];
-                    NSLog(@"%@ X:%f Y:%f W:%f H:%f S:%f",Pit2FStr(nodeView.data.content_p),nodeView.x,nodeView.y,nodeView.showW,nodeView.showH,scale);
+                    [nodeView scaleContainer:scale];
+                    NSLog(@"%@ X:%f Y:%f W:%f H:%f S:%f",Pit2FStr(nodeView.data.content_p),nodeView.x,nodeView.y,nodeView.width,nodeView.height,scale);
                 }
             }
         }
@@ -247,6 +250,13 @@
 //MARK:===============================================================
 - (IBAction)openCloseBtnOnClick:(id)sender {
     [self close];
+}
+
+- (IBAction)bigBtnOnClick:(id)sender {
+    self.contentViewScale *= 1.5f;
+    [self.contentView setTransform:CGAffineTransformMakeScale(self.contentViewScale, self.contentViewScale)];
+    NSLog(@"%f %f",self.contentView.width,self.contentView.height);
+    NSLog(@"");
 }
 
 //MARK:===============================================================

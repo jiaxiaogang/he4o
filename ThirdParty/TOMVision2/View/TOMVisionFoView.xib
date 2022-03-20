@@ -16,15 +16,12 @@
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="iN0-l3-epB">
-            <rect key="frame" x="0.0" y="0.0" width="86" height="12"/>
+            <rect key="frame" x="0.0" y="0.0" width="236" height="54"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="40x-Wi-JKd">
-                    <rect key="frame" x="0.0" y="0.0" width="10" height="12"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="10" id="T8e-gk-hTC"/>
-                    </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <rect key="frame" x="0.0" y="-9" width="30" height="72"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="50"/>
                     <state key="normal" title="F">
                         <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </state>
@@ -33,11 +30,10 @@
             <color key="backgroundColor" red="0.86788150379999995" green="0.73940406660000002" blue="0.032496435970000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
                 <constraint firstItem="40x-Wi-JKd" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="7Kk-2N-H1p"/>
-                <constraint firstItem="40x-Wi-JKd" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="Efc-aB-rBS"/>
-                <constraint firstAttribute="bottom" secondItem="40x-Wi-JKd" secondAttribute="bottom" id="dpO-6f-bNd"/>
+                <constraint firstItem="40x-Wi-JKd" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="Afw-qS-mhC"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <point key="canvasLocation" x="-171.19999999999999" y="-241.07946026986508"/>
+            <point key="canvasLocation" x="-51.200000000000003" y="-222.1889055472264"/>
         </view>
     </objects>
 </document>
