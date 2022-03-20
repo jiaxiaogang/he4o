@@ -12,8 +12,6 @@
  *  MARK:--------------------nodeView--------------------
  *  @version
  *      2022.03.20: 将containerView由Constraints改成重写frame (因为nodeView要缩放就不能用autoLayout);
- *  @todo
- *      2022.03.19: 将nodeView下显示出pointerId;
  */
 @interface TOMVisionNodeBase : UIView
 

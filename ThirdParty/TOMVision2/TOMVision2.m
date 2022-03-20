@@ -97,6 +97,15 @@
     [self.panelView updateFrame:newLoop];
 }
 
+
+//TODOTOMORROW20220320:
+//1. 加上连接线;
+//2. 放大后,发现scrollView拖动不到底部 (显示不全);
+//3. 太小的枝节,不需要显示HSpace60,太高了 (可以统一成,比如高的1.8倍);
+//4. 可以彻底弃用autolayout,避免缩放后排版混乱问题;
+
+
+
 /**
  *  MARK:--------------------refreshDisplay--------------------
  *  @version
