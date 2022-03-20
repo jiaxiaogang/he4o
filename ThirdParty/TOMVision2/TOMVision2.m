@@ -104,7 +104,7 @@
  */
 -(void) refreshDisplay{
     //1. 数据检查;
-    if (!self.model) return;
+    if (!self.model || self.isHidden) return;
     
     //2. 取出旧有节点缓存 & 并清空画板;
     NSArray *oldSubViews = [self.contentView subViews_AllDeepWithClass:TOMVisionNodeBase.class];
@@ -171,19 +171,9 @@
     
 }
 
--(void) invokeForceMode:(void(^)())block{
-    if (block) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            BOOL bakForceMode = self.forceMode;
-            [self setForceMode:true];
-            block();
-            [self setForceMode:bakForceMode];
-        });
-    }
-}
-
 -(void) open{
     [self setHidden:false];
+    [self refreshDisplay];
 }
 
 -(void) close{

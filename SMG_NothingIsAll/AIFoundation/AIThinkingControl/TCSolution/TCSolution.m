@@ -144,10 +144,7 @@
         [TCScore score];
     }
     
-    [theTOMVision invokeForceMode:^{
-        [theTOMVision updateFrame];
-    }];
-    
+    [theTOMVision updateFrame];
 }
 
 /**
