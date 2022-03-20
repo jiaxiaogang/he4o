@@ -12,9 +12,9 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TOMVisionDemandView">
             <connections>
                 <outlet property="containerView" destination="iN0-l3-epB" id="02E-pg-UQb"/>
+                <outlet property="headerBtn" destination="sIt-VK-4uN" id="dv8-gy-uJZ"/>
                 <outlet property="mvDescLab" destination="XfL-nd-hOE" id="zeK-p0-brl"/>
                 <outlet property="scoreLab" destination="IhU-UL-wYe" id="Qd9-cO-D7p"/>
-                <outlet property="typeBtn" destination="sIt-VK-4uN" id="4aV-3d-bNK"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>

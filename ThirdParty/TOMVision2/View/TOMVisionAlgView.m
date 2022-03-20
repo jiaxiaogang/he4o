@@ -11,6 +11,7 @@
 @interface TOMVisionAlgView ()
 
 @property (strong, nonatomic) IBOutlet UIView *containerView;
+@property (weak, nonatomic) IBOutlet UIButton *headerBtn;
 
 @end
 
@@ -31,6 +32,7 @@
     [super refreshDisplay];
     if (!self.data) return;
     
+    [self.headerBtn setTitle:STRFORMAT(@"A%ld",self.data.content_p.pointerId) forState:UIControlStateNormal];
     
     
 }

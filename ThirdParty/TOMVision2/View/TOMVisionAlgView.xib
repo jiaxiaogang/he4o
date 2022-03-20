@@ -12,6 +12,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TOMVisionAlgView">
             <connections>
                 <outlet property="containerView" destination="iN0-l3-epB" id="Gff-qg-ffV"/>
+                <outlet property="headerBtn" destination="YoK-2K-ttp" id="z0U-81-gVa"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>

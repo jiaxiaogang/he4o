@@ -11,7 +11,7 @@
 @interface TOMVisionDemandView ()
 
 @property (strong, nonatomic) IBOutlet UIView *containerView;
-@property (weak, nonatomic) IBOutlet UIButton *typeBtn;
+@property (weak, nonatomic) IBOutlet UIButton *headerBtn;
 @property (weak, nonatomic) IBOutlet UILabel *mvDescLab;
 @property (weak, nonatomic) IBOutlet UILabel *scoreLab;
 
@@ -37,11 +37,13 @@
     
     //2. 类型;
     if (ISOK(self.data, ReasonDemandModel.class)) {
-        [self.typeBtn setTitle:@"R" forState:UIControlStateNormal];
+        ReasonDemandModel *rData = (ReasonDemandModel*)self.data;
+        [self.headerBtn setTitle:STRFORMAT(@"R%ld",rData.mModel.matchFo.pointer.pointerId) forState:UIControlStateNormal];
     }else if (ISOK(self.data, PerceptDemandModel.class)) {
-        [self.typeBtn setTitle:@"P" forState:UIControlStateNormal];
+        [self.headerBtn setTitle:@"P" forState:UIControlStateNormal];
     }else if (ISOK(self.data, HDemandModel.class)) {
-        [self.typeBtn setTitle:@"H" forState:UIControlStateNormal];
+        HDemandModel *hData = (HDemandModel*)self.data;
+        [self.headerBtn setTitle:STRFORMAT(@"H%ld",hData.baseOrGroup.content_p.pointerId) forState:UIControlStateNormal];
     }
     
     //3. mv描述颜色

@@ -11,6 +11,7 @@
 @interface TOMVisionFoView ()
 
 @property (strong, nonatomic) IBOutlet UIView *containerView;
+@property (weak, nonatomic) IBOutlet UIButton *headerBtn;
 
 @end
 
@@ -31,6 +32,8 @@
     [super refreshDisplay];
     if (!self.data) return;
     AIFoNodeBase *fo = [SMGUtils searchNode:self.data.content_p];
+    
+    [self.headerBtn setTitle:STRFORMAT(@"F%ld",self.data.content_p.pointerId) forState:UIControlStateNormal];
     
     //2. 刷新UI;
     for (AIKVPointer *alg_p in fo.content_ps) {
