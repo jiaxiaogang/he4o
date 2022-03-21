@@ -10,10 +10,4 @@
 
 @interface TOMVisionDemandView : TOMVisionNodeBase
 
-//MARK:===============================================================
-//MARK:                     < override >
-//MARK:===============================================================
--(void) setData:(DemandModel*)data;
--(DemandModel *)data;
-
 @end

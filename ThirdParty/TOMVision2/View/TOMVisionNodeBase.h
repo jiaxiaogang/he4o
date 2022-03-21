@@ -15,11 +15,13 @@
  */
 @interface TOMVisionNodeBase : UIView
 
+@property (strong, nonatomic) UIView *containerView;
+@property (strong, nonatomic) UIButton *headerBtn;
+
 -(void) initView;
 -(void) initData;
 -(void) initDisplay;
 -(void) refreshDisplay;
-
 -(void) setData:(TOModelBase*)value;
 -(TOModelBase *)data;
 -(BOOL) isEqualByData:(TOModelBase*)checkData;

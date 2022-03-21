@@ -28,7 +28,17 @@
 
 -(void) initView{
     //[self.layer setMasksToBounds:true];
-    [self setFrame:CGRectMake(0, 0, 80, 10)];
+    [self setFrame:CGRectMake(0, 0, 40, 10)];
+    
+    //containerView
+    self.containerView = [[UIView alloc] init];
+    [self addSubview:self.containerView];
+    
+    //headerBtn
+    self.headerBtn = [[UIButton alloc] init];
+    [self.containerView addSubview:self.headerBtn];
+    [self.headerBtn.titleLabel setFont:[UIFont systemFontOfSize:30]];
+    [self.headerBtn setOrigin:CGPointZero];
 }
 
 -(void) initData{
@@ -42,6 +52,7 @@
 
 -(void) setData:(TOModelBase*)value{
     _mData = value;
+    [self refreshDisplay];
 }
 -(TOModelBase *)data{
     return _mData;
@@ -65,21 +76,20 @@
 }
 
 -(void) scaleContainer:(CGFloat)scale{
-    for (UIView *view in self.subviews) {
-        //1. 先拉长;
-        view.width = (scale == 0) ? 0 : (self.width / scale);
-        view.height = (scale == 0) ? 0 : (self.height / scale);
-        
-        //2. 缩放是中心缩放的,所以先中心对齐;
-        view.center = CGPointMake(self.width / 2, self.height / 2);
-        
-        //3. 多次缩放导致bounds和frame大小不统一,所以每次缩放时强行重置bounds尺寸;
-        view.bounds = CGRectMake(0, 0, view.width, view.height);
-        
-        //4. 再缩小;
-        [view setTransform:CGAffineTransformIdentity];
-        [view setTransform:CGAffineTransformMakeScale(scale, scale)];
-    }
+    //1. 先拉长;
+    self.containerView.width = (scale == 0) ? 0 : (self.width / scale);
+    self.containerView.height = (scale == 0) ? 0 : (self.height / scale);
+    [self.headerBtn setSize:self.containerView.size];
+    
+    //2. 缩放是中心缩放的,所以先中心对齐;
+    self.containerView.center = CGPointMake(self.width / 2, self.height / 2);
+    
+    //3. 多次缩放导致bounds和frame大小不统一,所以每次缩放时强行重置bounds尺寸;
+    self.containerView.bounds = CGRectMake(0, 0, self.containerView.width, self.containerView.height);
+    
+    //4. 再缩小;
+    [self.containerView setTransform:CGAffineTransformIdentity];
+    [self.containerView setTransform:CGAffineTransformMakeScale(scale, scale)];
 }
 
 @end

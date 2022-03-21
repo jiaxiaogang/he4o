@@ -8,32 +8,22 @@
 
 #import "TOMVisionFoView.h"
 
-@interface TOMVisionFoView ()
-
-@property (strong, nonatomic) IBOutlet UIView *containerView;
-@property (weak, nonatomic) IBOutlet UIButton *headerBtn;
-
-@end
-
 @implementation TOMVisionFoView
 
 -(void) initView{
     //self
     [super initView];
-    [self setFrame:CGRectMake(0, 0, 40, 10)];
-    
-    //containerView
-    [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];
-    [self addSubview:self.containerView];
+    [self setBackgroundColor:UIColorWithRGBHex(0xDDBD08)];
 }
 
 -(void) refreshDisplay{
     //1. 检查数据;
+    TOFoModel *data = (TOFoModel*)self.data;
     [super refreshDisplay];
-    if (!self.data) return;
-    AIFoNodeBase *fo = [SMGUtils searchNode:self.data.content_p];
+    if (!data) return;
+    AIFoNodeBase *fo = [SMGUtils searchNode:data.content_p];
     
-    [self.headerBtn setTitle:STRFORMAT(@"F%ld",self.data.content_p.pointerId) forState:UIControlStateNormal];
+    [self.headerBtn setTitle:STRFORMAT(@"F%ld",data.content_p.pointerId) forState:UIControlStateNormal];
     
     //2. 刷新UI;
     for (AIKVPointer *alg_p in fo.content_ps) {
@@ -41,24 +31,6 @@
         
         
     }
-}
-
-//MARK:===============================================================
-//MARK:                     < override >
-//MARK:===============================================================
--(void) setData:(TOFoModel*)value{
-    [super setData:value];
-    [self refreshDisplay];
-}
-
--(TOFoModel*) data{
-    return (TOFoModel*)[super data];
-}
-
--(void) setFrame:(CGRect)frame{
-    [super setFrame:frame];
-    [self.containerView setFrame:CGRectMake(0, 0, self.width, self.height)];
-    [self.headerBtn setFrame:CGRectMake(0, 0, self.width, self.height)];
 }
 
 @end

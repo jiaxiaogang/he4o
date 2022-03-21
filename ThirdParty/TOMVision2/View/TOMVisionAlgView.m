@@ -8,49 +8,21 @@
 
 #import "TOMVisionAlgView.h"
 
-@interface TOMVisionAlgView ()
-
-@property (strong, nonatomic) IBOutlet UIView *containerView;
-@property (weak, nonatomic) IBOutlet UIButton *headerBtn;
-
-@end
-
 @implementation TOMVisionAlgView
 
 -(void) initView{
     //self
     [super initView];
-    [self setFrame:CGRectMake(0, 0, 40, 10)];
-    
-    //containerView
-    [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];
-    [self addSubview:self.containerView];
+    [self setBackgroundColor:UIColorWithRGBHex(0xAAAAAA)];
 }
 
 -(void) refreshDisplay{
     //1. 检查数据;
     [super refreshDisplay];
-    if (!self.data) return;
+    TOAlgModel *data = (TOAlgModel*)self.data;
+    if (!data) return;
     
-    [self.headerBtn setTitle:STRFORMAT(@"A%ld",self.data.content_p.pointerId) forState:UIControlStateNormal];
-}
-
-//MARK:===============================================================
-//MARK:                     < override >
-//MARK:===============================================================
--(void) setData:(TOAlgModel*)data{
-    [super setData:data];
-    [self refreshDisplay];
-}
-
--(TOAlgModel *)data{
-    return (TOAlgModel*)[super data];
-}
-
--(void) setFrame:(CGRect)frame{
-    [super setFrame:frame];
-    [self.containerView setFrame:CGRectMake(0, 0, self.width, self.height)];
-    [self.headerBtn setFrame:CGRectMake(0, 0, self.width, self.height)];
+    [self.headerBtn setTitle:STRFORMAT(@"A%ld",data.content_p.pointerId) forState:UIControlStateNormal];
 }
 
 @end
