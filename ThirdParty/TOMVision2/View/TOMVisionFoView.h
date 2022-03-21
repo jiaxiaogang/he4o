@@ -10,10 +10,4 @@
 
 @interface TOMVisionFoView : TOMVisionNodeBase
 
-//MARK:===============================================================
-//MARK:                     < override >
-//MARK:===============================================================
--(void) setData:(TOFoModel*)value;
--(TOFoModel*) data;
-
 @end

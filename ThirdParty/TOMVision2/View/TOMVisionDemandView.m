@@ -8,78 +8,50 @@
 
 #import "TOMVisionDemandView.h"
 
-@interface TOMVisionDemandView ()
-
-@property (strong, nonatomic) IBOutlet UIView *containerView;
-@property (weak, nonatomic) IBOutlet UIButton *headerBtn;
-@property (weak, nonatomic) IBOutlet UILabel *mvDescLab;
-@property (weak, nonatomic) IBOutlet UILabel *scoreLab;
-
-@end
-
 @implementation TOMVisionDemandView
 
 -(void) initView{
     //self
     [super initView];
-    [self setFrame:CGRectMake(0, 0, 40, 10)];
-    
-    //containerView
-    [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];
-    [self addSubview:self.containerView];
+    [self setBackgroundColor:UIColorWithRGBHex(0xFFA08D)];
 }
 
 -(void) refreshDisplay{
     //1. 检查数据;
     [super refreshDisplay];
-    if (!self.data) return;
-    CGFloat score = [AIScore score4Demand:self.data];
+    DemandModel *data = (DemandModel*)self.data;
+    if (!data) return;
+    CGFloat score = [AIScore score4Demand:data];
     
     //2. 类型;
-    if (ISOK(self.data, ReasonDemandModel.class)) {
-        ReasonDemandModel *rData = (ReasonDemandModel*)self.data;
-        [self.headerBtn setTitle:STRFORMAT(@"R%ld",rData.mModel.matchFo.pointer.pointerId) forState:UIControlStateNormal];
-    }else if (ISOK(self.data, PerceptDemandModel.class)) {
-        [self.headerBtn setTitle:@"P" forState:UIControlStateNormal];
-    }else if (ISOK(self.data, HDemandModel.class)) {
-        HDemandModel *hData = (HDemandModel*)self.data;
-        [self.headerBtn setTitle:STRFORMAT(@"H%ld",hData.baseOrGroup.content_p.pointerId) forState:UIControlStateNormal];
+    NSMutableString *mStr = [[NSMutableString alloc] init];
+    if (ISOK(data, ReasonDemandModel.class)) {
+        ReasonDemandModel *rData = (ReasonDemandModel*)data;
+        [mStr appendFormat:@"R%ld",rData.mModel.matchFo.pointer.pointerId];
+    }else if (ISOK(data, PerceptDemandModel.class)) {
+        [mStr appendString:@"P"];
+    }else if (ISOK(data, HDemandModel.class)) {
+        HDemandModel *hData = (HDemandModel*)data;
+        [mStr appendFormat:@"H%ld",hData.baseOrGroup.content_p.pointerId];
     }
     
     //3. mv描述颜色
     if (score < 0) {
-        [self.mvDescLab setTextColor:UIColor.redColor];
-        [self.scoreLab setTextColor:UIColor.redColor];
+        [self.headerBtn setTitleColor:UIColor.redColor forState:UIControlStateNormal];
     }else if(score > 0){
-        [self.mvDescLab setTextColor:UIColor.greenColor];
-        [self.scoreLab setTextColor:UIColor.greenColor];
+        [self.headerBtn setTitleColor:UIColor.greenColor forState:UIControlStateNormal];
     }else {
-        [self.mvDescLab setTextColor:UIColor.grayColor];
-        [self.scoreLab setTextColor:UIColor.grayColor];
+        [self.headerBtn setTitleColor:UIColor.grayColor forState:UIControlStateNormal];
     }
     
     //4. 类型text
-    [self.mvDescLab setText:Class2Str(NSClassFromString(self.data.algsType))];
+    [mStr appendString:Class2Str(NSClassFromString(data.algsType))];
     
     //5. 评分
-    [self.scoreLab setText:STRFORMAT(@"%.1f",score)];
-}
-
-//MARK:===============================================================
-//MARK:                     < override >
-//MARK:===============================================================
--(void) setData:(DemandModel*)data{
-    [super setData:data];
-    [self refreshDisplay];
-}
-
--(DemandModel *)data{
-    return (DemandModel*)[super data];
-}
-
--(void) setFrame:(CGRect)frame{
-    [super setFrame:frame];
-    [self.containerView setFrame:CGRectMake(0, 0, self.width, self.height)];
+    [mStr appendFormat:@"%.1f",score];
+    
+    //6. 显示
+    [self.headerBtn setTitle:mStr forState:UIControlStateNormal];
 }
 
 @end

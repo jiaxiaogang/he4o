@@ -10,7 +10,4 @@
 
 @interface TOMVisionAlgView : TOMVisionNodeBase
 
--(void) setData:(TOAlgModel*)data;
--(TOAlgModel *)data;
-
 @end

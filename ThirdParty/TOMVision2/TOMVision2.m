@@ -101,7 +101,6 @@
 
 //TODOTOMORROW20220320:
 //3. 太小的枝节,不需要显示HSpace60,太高了 (可以统一成,比如高的1.8倍);
-//4. 可以彻底弃用autolayout,避免缩放后排版混乱问题;
 
 
 
@@ -144,6 +143,9 @@
                 
                 //5. root节点的frame指定;
                 [nodeView setFrame:CGRectMake(nodeX, unorder.tabNum * 60, rootNodeW, rootNodeW / 5)];
+                
+                //6. 缩放比例
+                [nodeView scaleContainer:1.0f];
             }else {
                 
                 //6. 子节点的frame指定;
