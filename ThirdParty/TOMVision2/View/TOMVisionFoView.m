@@ -58,6 +58,7 @@
 -(void) setFrame:(CGRect)frame{
     [super setFrame:frame];
     [self.containerView setFrame:CGRectMake(0, 0, self.width, self.height)];
+    [self.headerBtn setFrame:CGRectMake(0, 0, self.width, self.height)];
 }
 
 @end

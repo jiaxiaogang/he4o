@@ -33,8 +33,6 @@
     if (!self.data) return;
     
     [self.headerBtn setTitle:STRFORMAT(@"A%ld",self.data.content_p.pointerId) forState:UIControlStateNormal];
-    
-    
 }
 
 //MARK:===============================================================
@@ -52,6 +50,7 @@
 -(void) setFrame:(CGRect)frame{
     [super setFrame:frame];
     [self.containerView setFrame:CGRectMake(0, 0, self.width, self.height)];
+    [self.headerBtn setFrame:CGRectMake(0, 0, self.width, self.height)];
 }
 
 @end
