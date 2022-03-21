@@ -19,6 +19,7 @@
 #import "TOModelVisionUtil.h"
 #import "UnorderItemModel.h"
 #import "TVPanelView.h"
+#import "TVLineView.h"
 
 @interface TOMVision2 () <TVPanelViewDelegate,UIScrollViewDelegate>
 
@@ -99,7 +100,6 @@
 
 
 //TODOTOMORROW20220320:
-//1. 加上连接线;
 //2. 放大后,发现scrollView拖动不到底部 (显示不全);
 //3. 太小的枝节,不需要显示HSpace60,太高了 (可以统一成,比如高的1.8倍);
 //4. 可以彻底弃用autolayout,避免缩放后排版混乱问题;
@@ -170,6 +170,11 @@
                     CGFloat scale = subGroupW / rootGroupW;
                     [nodeView scaleContainer:scale];
                     NSLog(@"%@ X:%f Y:%f W:%f H:%f S:%f",Pit2FStr(nodeView.data.content_p),nodeView.x,nodeView.y,nodeView.width,nodeView.height,scale);
+                    
+                    //10. 连接线
+                    TVLineView *line = [[TVLineView alloc] init];
+                    [self.contentView insertSubview:line atIndex:0];
+                    [line refreshDisplayWithDataA:nodeView nodeB:baseView];
                 }
             }
         }

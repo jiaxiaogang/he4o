@@ -74,7 +74,7 @@
     self.width = width;
     
     //6. 线显示长度;
-    [self.lineView setFrame:CGRectMake(cNodeSize * 0.5f, 0, self.width - cNodeSize, self.height)];
+    [self.lineView setFrame:CGRectMake(0, 0, self.width, self.height)];
     
     //7. 旋转指向方向;
     [self.layer setTransform:CATransform3DMakeRotation(angle, 0, 0, 1)];
