@@ -63,7 +63,7 @@
     [self.scrollView setFrame:CGRectMake(0, 20, ScreenWidth, ScreenHeight - 20 - 40)];
     [self.scrollView setShowsVerticalScrollIndicator:NO];
     [self.scrollView setShowsHorizontalScrollIndicator:NO];
-    [self.scrollView setContentSize:CGSizeMake(ScreenWidth, ScreenHeight - 60)];
+    //[self.scrollView setContentSize:CGSizeMake(ScreenWidth, ScreenHeight - 60)];
     self.scrollView.delegate = self;
     self.scrollView.minimumZoomScale = 0.1f;    //设置最小缩放倍数
     self.scrollView.maximumZoomScale = 20.0f;   //设置最大缩放倍数
@@ -100,7 +100,6 @@
 
 
 //TODOTOMORROW20220320:
-//2. 放大后,发现scrollView拖动不到底部 (显示不全);
 //3. 太小的枝节,不需要显示HSpace60,太高了 (可以统一成,比如高的1.8倍);
 //4. 可以彻底弃用autolayout,避免缩放后排版混乱问题;
 
@@ -179,6 +178,14 @@
             }
         }
     }
+    
+    //11. 更新画板大小 (避免出屏的拖不到);
+    CGFloat contentW = ScreenWidth,contentH = ScreenHeight - 60;
+    for (UIView *subV in self.contentView.subviews) {
+        contentW = MAX(contentW, CGRectGetMaxX(subV.frame) + 10.0f);
+        contentH = MAX(contentH, CGRectGetMaxY(subV.frame) + 10.0f);
+    }
+    [self.contentView setSize:CGSizeMake(contentW, contentH)];
 }
 
 -(void) clear{
@@ -231,7 +238,7 @@
             result = [[TOMVisionAlgView alloc] init];
             [result setData:data];
         }else{
-            //TODOTOMORROW20220317: 别的类型还没支持,就先返回baseView;
+            //还没支持的类型,就先返回baseView;
             result = [[TOMVisionNodeBase alloc] init];
             [result setData:data];
             [result setBackgroundColor:UIColor.redColor];
