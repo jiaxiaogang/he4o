@@ -98,16 +98,11 @@
     [self.panelView updateFrame:newLoop];
 }
 
-
-//TODOTOMORROW20220320:
-//3. 太小的枝节,不需要显示HSpace60,太高了 (可以统一成,比如高的1.8倍);
-
-
-
 /**
  *  MARK:--------------------refreshDisplay--------------------
  *  @version
  *      2022.03.19: 子节点与根节点同尺寸,只是缩放了而已 (如果调小尺寸,缩放就没意义了);
+ *      2022.03.22: 每层hSpace间隔为当前层的1.8倍 (避免末枝很小却间距好远);
  */
 -(void) refreshDisplay{
     //1. 数据检查;
@@ -164,8 +159,11 @@
                     NSInteger index = [subModels indexOfObject:nodeView.data];
                     CGFloat nodeX = subGroupW * (0.2f + index) + subGroupMinX;
                     
+                    //8. 算出Y坐标 (baseView下方,自身高度的1.8倍);
+                    CGFloat nodeY = CGRectGetMaxY(baseView.frame) + subNodeW / 5 * 1.8f;
+                    
                     //8. sub节点的frame指定;
-                    [nodeView setFrame:CGRectMake(nodeX, unorder.tabNum * 60, subNodeW, subNodeW / 5)];
+                    [nodeView setFrame:CGRectMake(nodeX, nodeY, subNodeW, subNodeW / 5)];
                     
                     //9. 对nodeView进行缩放 (缩放比例 = 子元素宽度 / rootWidth);
                     CGFloat scale = subGroupW / rootGroupW;
