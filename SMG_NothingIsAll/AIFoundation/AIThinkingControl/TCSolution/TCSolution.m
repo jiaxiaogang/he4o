@@ -136,6 +136,7 @@
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
         TOFoModel *foModel = [TOFoModel newWithFo_p:bestResult.pointer base:demand];
         NSLog(@">>>>>> rSolution 新增第%ld例解决方案: %@->%@ FRS_PK评分:%.2f",demand.actionFoModels.count, Fo2FStr(bestResult),Mvp2Str(bestResult.cmvNode_p),bestSPScore);
+        [theTV updateFrame];
         [TCAction action:foModel];
     }else{
         //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
@@ -143,8 +144,6 @@
         NSLog(@">>>>>> rSolution 无计可施");
         [TCScore score];
     }
-    
-    [theTOMVision updateFrame];
 }
 
 /**
@@ -224,6 +223,7 @@
                 //b. 取自身,实现吃,则可不饿 (提交C给TOR行为化);
                 //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
                 NSLog(@">>>>>> pSolution 新增第%ld例解决方案: %@->%@",demandModel.actionFoModels.count,Fo2FStr(fo),Mvp2Str(fo.cmvNode_p));
+                [theTV updateFrame];
                 [TCAction action:toFoModel];//[theTOR singleLoopBackWithBegin:toFoModel];
                 
                 //8. 只要有一次tryResult成功,中断回调循环;
@@ -305,6 +305,7 @@
         foModel.targetSPIndex = bestSPIndex;
         CGFloat bestSPScore = [TOUtils getSPScore:bestResult startSPIndex:0 endSPIndex:bestSPIndex];
         NSLog(@">>>>>> hSolution 新增第%ld例解决方案: %@->%@ FRS_PK评分:%.2f targetSPIndex:%ld",hDemand.actionFoModels.count,Fo2FStr(bestResult),Mvp2Str(bestResult.cmvNode_p),bestSPScore,foModel.targetSPIndex);
+        [theTV updateFrame];
         [TCAction action:foModel];
     }else{
         //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);

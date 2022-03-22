@@ -14,7 +14,7 @@
 @property (strong, nonatomic) UIWindow *window;
 @property (strong, nonatomic) NVView *nvView;
 @property (strong, nonatomic) HeLogView *heLogView;
-@property (strong, nonatomic) TOMVision2 *tomVision2;
+@property (strong, nonatomic) TOMVision2 *tv;
 
 -(UIViewController*) getTopDisplayViewController;
 -(void) setTipLog:(NSString*)tipLog;

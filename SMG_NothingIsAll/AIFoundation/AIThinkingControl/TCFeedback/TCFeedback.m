@@ -45,6 +45,7 @@
             BOOL mIsC = [TOUtils mIsC_1:model.protoAlg.pointer c:waitAlg_p];
             if (mIsC) {
                 waitModel.status = TIModelStatus_OutBackReason;
+                [theTV updateFrame];
                 NSLog(@"tir_OPushM: waitFo场景更新,原IRT理性失效");
             }
         }
@@ -94,6 +95,7 @@
             //6. 等待中的inModel_判断hope(wait)和real(new)之间是否相符 (仅标记同区同向反馈);
             if ([AIScore sameIdenSameScore:waitMatchFo.cmvNode_p mv2:cmvNode.pointer]) {
                 waitModel.status = TIModelStatus_OutBackSameDelta;
+                [theTV updateFrame];
                 NSLog(@"tip_OPushM: 实MV 正向反馈");
             }
         }
@@ -142,6 +144,7 @@
                 CGFloat score = [AIScore score4MV:waitFo.cmvNode_p ratio:1.0f];
                 if (score > 0) {
                     waitModel.baseOrGroup.status = TOModelStatus_Finish;
+                    [theTV updateFrame];
                 }
             }
         }

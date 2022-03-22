@@ -23,7 +23,7 @@
 @property (strong, nonatomic) UIView *refreshDot;   //因为模拟器下的UI动画老是刷新不了,所以临时写这么个点,来推动UI线程被动刷新;
 @property (strong, nonatomic) MemManagerWindow *memManagerWindow;
 @property (strong, nonatomic) UIButton *memManagerBtn;
-@property (strong, nonatomic) UIButton *tomVisionBtn;
+@property (strong, nonatomic) UIButton *tvBtn;
 
 @end
 
@@ -51,7 +51,7 @@
     [self.openHeLogBtn.titleLabel setFont:[UIFont systemFontOfSize:15]];
     [self.openHeLogBtn setTitleColor:UIColorWithRGBHex(0x0000EE) forState:UIControlStateNormal];
     [self.openHeLogBtn setBackgroundColor:UIColorWithRGBHex(0xEEFFEE)];
-    [self.openHeLogBtn setTitle:@"LOG" forState:UIControlStateNormal];
+    [self.openHeLogBtn setTitle:@"经历" forState:UIControlStateNormal];
     [self.openHeLogBtn addTarget:self action:@selector(openHeLogBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.window addSubview:self.openHeLogBtn];
     
@@ -68,18 +68,18 @@
     [self.memManagerBtn.titleLabel setFont:[UIFont systemFontOfSize:15]];
     [self.memManagerBtn setTitleColor:UIColorWithRGBHex(0x0000EE) forState:UIControlStateNormal];
     [self.memManagerBtn setBackgroundColor:UIColorWithRGBHex(0xEEFFEE)];
-    [self.memManagerBtn setTitle:@"MEM" forState:UIControlStateNormal];
+    [self.memManagerBtn setTitle:@"记忆" forState:UIControlStateNormal];
     [self.memManagerBtn addTarget:self action:@selector(memManagerBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.window addSubview:self.memManagerBtn];
     
     //3. 工作记忆按钮
-    self.tomVisionBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth - 166, StateBarHeight, 40, 20)];
-    [self.tomVisionBtn.titleLabel setFont:[UIFont systemFontOfSize:15]];
-    [self.tomVisionBtn setTitleColor:UIColorWithRGBHex(0x0000EE) forState:UIControlStateNormal];
-    [self.tomVisionBtn setBackgroundColor:UIColorWithRGBHex(0xEEFFEE)];
-    [self.tomVisionBtn setTitle:@"TOM" forState:UIControlStateNormal];
-    [self.tomVisionBtn addTarget:self action:@selector(tomVisionBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.window addSubview:self.tomVisionBtn];
+    self.tvBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth - 166, StateBarHeight, 40, 20)];
+    [self.tvBtn.titleLabel setFont:[UIFont systemFontOfSize:15]];
+    [self.tvBtn setTitleColor:UIColorWithRGBHex(0x0000EE) forState:UIControlStateNormal];
+    [self.tvBtn setBackgroundColor:UIColorWithRGBHex(0xEEFFEE)];
+    [self.tvBtn setTitle:@"思维" forState:UIControlStateNormal];
+    [self.tvBtn addTarget:self action:@selector(tvBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.window addSubview:self.tvBtn];
     
     //4. 神经网络可视化
     self.nvView = [[NVView alloc] initWithDelegate:[NVDelegate_He new]];
@@ -101,8 +101,8 @@
     [self.window addSubview:self.memManagerWindow];
     
     //8. 工作记忆可视化
-    self.tomVision2 = [[TOMVision2 alloc] init];
-    [self.window addSubview:self.tomVision2];
+    self.tv = [[TOMVision2 alloc] init];
+    [self.window addSubview:self.tv];
     return YES;
 }
 
@@ -141,8 +141,8 @@
     [self.memManagerWindow open];
 }
 
--(void) tomVisionBtnOnClick:(id)btn{
-    [self.tomVision2 open];
+-(void) tvBtnOnClick:(id)btn{
+    [self.tv open];
 }
 
 -(void) startRefreshDotAnimation{

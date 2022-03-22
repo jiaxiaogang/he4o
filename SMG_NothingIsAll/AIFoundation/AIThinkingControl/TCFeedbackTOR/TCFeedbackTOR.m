@@ -112,6 +112,7 @@
                 //b. root设回runing
                 DemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:waitModel];
                 root.status = TOModelStatus_Runing;
+                [theTV updateFrame];
                 
                 //c. 重组;
                 [TCRegroup feedbackRegroup:targetFo];
@@ -137,6 +138,7 @@
                 //b. root设回runing
                 DemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:targetAlg];
                 root.status = TOModelStatus_Runing;
+                [theTV updateFrame];
                 
                 //c. 重组
                 [TCRegroup feedbackRegroup:targetFo];

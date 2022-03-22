@@ -29,6 +29,7 @@
         [theTC updateEnergy:-1.0f];
         
         //3. 输出_用旧有代码->输出后转给TCInput.rInput();
+        [theTV updateFrame];
         BOOL invoked = [Output output_FromTC:algModel.content_p];
         NSLog(@"===执行%@",invoked ? @"success" : @"failure");
     }else{

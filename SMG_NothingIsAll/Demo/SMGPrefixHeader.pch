@@ -57,7 +57,7 @@
  */
 #define TPLog(a,...) [theApp setTipLog:STRFORMAT(a,##__VA_ARGS__)]
 #define theNV (theApp.nvView)
-#define theTOMVision (theApp.tomVision2)
+#define theTV (theApp.tv)
 
 /**
  *  MARK:--------------------感官算法--------------------

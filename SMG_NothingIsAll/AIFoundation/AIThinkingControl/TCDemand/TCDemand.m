@@ -19,6 +19,7 @@
     //2. 预测处理_把mv加入到demandManager;
     OSTitleLog(@"rDemand");
     [theTC.outModelManager updateCMVCache_RMV:model];
+    [theTV updateFrame];
     
     //6. 此处推进不成功,则运行TOP四模式;
     [TCScore score];
@@ -38,6 +39,7 @@
     NSString *algsType = cmvNode.urgentTo_p.algsType;
     NSInteger urgentTo = [NUMTOOK([AINetIndex getData:cmvNode.urgentTo_p]) integerValue];
     [theTC.outModelManager updateCMVCache_PMV:algsType urgentTo:urgentTo delta:delta];
+    [theTV updateFrame];
     
     //2. 转向执行;
     [TCScore score];
@@ -56,6 +58,7 @@
     for (AIMatchFoModel *item in model.fos4Demand) {
         [ReasonDemandModel newWithMModel:item inModel:model baseFo:foModel];
     }
+    [theTV updateFrame];
 }
 
 /**
@@ -67,6 +70,7 @@
     //1. 对algModel生成H任务,并挂载在当前短时记忆分支下;
     OFTitleLog(@"hDemand",@"\n%@",Pit2FStr(algModel.content_p));
     [HDemandModel newWithAlgModel:algModel];
+    [theTV updateFrame];
     
     //2. 调用TCScore继续决策;
     [TCScore score];//[TCSolution hSolution:hDemand];
