@@ -32,12 +32,10 @@
  *  MARK:--------------------isEqual--------------------
  *  @version
  *      2022.03.19: content_p为空时,返回super.Equal(),因为Demand的content_p全是空的;
+ *      2022.03.23: 改成用fromIden对比,因为它是初次内存唯一,content_p一致并不能说明一致;
  */
 -(BOOL) isEqual:(TOModelBase*)object{
-    if (object && object.content_p) {
-        return [object.content_p isEqual:self.content_p];
-    }
-    return [super isEqual:object];
+    return [self.fromIden isEqual:object.fromIden];
 }
 
 -(void)setStatus:(TOModelStatus)status{
