@@ -96,7 +96,9 @@
  *  @desc
  *      1. 在tor_OPushM中进行保留;
  *      2. 在ActYes流程控制中,生物钟触发器触发时,进行使用,用于反省类比;
+ *  @version
+ *      2022.03.23: 改成AIKVPointer类型,为了防止序列化时冗余导致的性能问题;
  */
-@property (strong, nonatomic) AIAlgNodeBase *feedbackAlg;
+@property (strong, nonatomic) AIKVPointer *feedbackAlg;
 
 @end

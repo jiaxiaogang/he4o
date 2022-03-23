@@ -35,11 +35,12 @@
     for (AIShortMatchModel *item in inModels) {
         for (AIMatchFoModel *pFo in item.fos4PLearning) {
             //2. 检查同向;
-            BOOL isSame = [AIScore sameIdenSameScore:pFo.matchFo.cmvNode_p mv2:protoFo.cmvNode_p];
+            AIFoNodeBase *matchFo = [SMGUtils searchNode:pFo.matchFo];
+            BOOL isSame = [AIScore sameIdenSameScore:matchFo.cmvNode_p mv2:protoFo.cmvNode_p];
             if (!isSame) continue;
             
             //3. 正向反馈类比 (外类比);
-            [AIAnalogy analogyOutside:protoFo assFo:pFo.matchFo type:ATDefault createAbsAlgBlock:nil];
+            [AIAnalogy analogyOutside:protoFo assFo:matchFo type:ATDefault createAbsAlgBlock:nil];
         }
     }
     
@@ -72,8 +73,9 @@
     //1. 学习 for prFos: 加强pFos的抽具象关联;
     NSLog(@"\npFo外类比 =>");
     for (AIMatchFoModel *item in model.fos4RLearning) {
-        AIFoNodeBase *absFo = [AIAnalogy analogyOutside:protoFo assFo:item.matchFo type:ATDefault createAbsAlgBlock:nil];
-        if (Log4AnalogyAbsRFo) NSLog(@"F%ld再抽象: %@->%@",item.matchFo.pointer.pointerId,Fo2FStr(absFo),Mvp2Str(absFo.cmvNode_p));
+        AIFoNodeBase *itemMFo = [SMGUtils searchNode:item.matchFo];
+        AIFoNodeBase *absFo = [AIAnalogy analogyOutside:protoFo assFo:itemMFo type:ATDefault createAbsAlgBlock:nil];
+        if (Log4AnalogyAbsRFo) NSLog(@"F%ld再抽象: %@->%@",itemMFo.pointer.pointerId,Fo2FStr(absFo),Mvp2Str(absFo.cmvNode_p));
     }
     
     //2. TIR反馈;

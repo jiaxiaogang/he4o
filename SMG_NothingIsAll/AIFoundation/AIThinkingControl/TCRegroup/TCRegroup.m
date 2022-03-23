@@ -58,7 +58,7 @@
         //4. 将反馈代入;
         for (TOAlgModel *item in foModel.subModels) {
             if (item.status == TOModelStatus_OuterBack && [item.content_p isEqual:alg_p]) {
-                alg_p = item.feedbackAlg.pointer;
+                alg_p = item.feedbackAlg;
             }
         }
         

@@ -89,7 +89,8 @@
             if ([STRTOOK(algsType) isEqualToString:item.algsType] && (delta > 0 == item.delta > 0)) {
                 
                 //b. 当已发生cutIndex所有content发生完毕时,PMV反馈可销毁R任务;
-                if (item.mModel.cutIndex2 + 1 >= item.mModel.matchFo.count) {
+                AIFoNodeBase *itemMFo = [SMGUtils searchNode:item.mModel.matchFo];
+                if (item.mModel.cutIndex2 + 1 >= itemMFo.count) {
                     
                     //c. 判断rDemand是否处于actYes/outBack状态;
                     BOOL isActYesOrOutBack = ARRISOK([SMGUtils filterArr:item.actionFoModels checkValid:^BOOL(TOFoModel *foModel) {
@@ -98,7 +99,7 @@
                     
                     //d. 理性概念预测发生完毕,感性价值预测也发生完毕,且rDemand并不在等待反馈状态,则废弃移除出任务池;
                     if (!isActYesOrOutBack) {
-                        NSLog(@"demandManager >> PMV移除已过期R任务:%@",Fo2FStr(item.mModel.matchFo));
+                        NSLog(@"demandManager >> PMV移除已过期R任务:%@",Fo2FStr(itemMFo));
                         return true;
                     }
                 }
@@ -150,14 +151,15 @@
         AIMatchFoModel *mModel = ARR_INDEX_REVERSE(inModel.fos4Demand, i);
         //3. 单条数据准备;
         //2021.03.28: 此处algsType由urgentTo.at改成cmv.at,从mvNodeManager看这俩一致,如果出现bug再说;
-        if (!mModel.matchFo.cmvNode_p) continue;
-        NSString *algsType = mModel.matchFo.cmvNode_p.algsType;
+        AIFoNodeBase *mFo = [SMGUtils searchNode:mModel.matchFo];
+        if (!mFo.cmvNode_p) continue;
+        NSString *algsType = mFo.cmvNode_p.algsType;
             
         //4. 抵消_同一matchFo将旧有移除 (仅保留最新的);
         self.loopCache = [SMGUtils removeArr:self.loopCache checkValid:^BOOL(ReasonDemandModel *oldItem) {
             if (ISOK(oldItem, ReasonDemandModel.class)) {
                 if ([oldItem.mModel.matchFo isEqual:mModel.matchFo] && oldItem.mModel.cutIndex2 < mModel.cutIndex2) {
-                    NSLog(@"RMV移除R任务(更新的抵消旧的):%@",Fo2FStr(oldItem.mModel.matchFo));
+                    NSLog(@"RMV移除R任务(更新的抵消旧的):%@",Pit2FStr(oldItem.mModel.matchFo));
                     return true;
                 }
             }
@@ -189,9 +191,9 @@
             //2. 如果新任务低于目前活跃度,则不变动;
             //[theTC updateEnergy:MAX(0, newItem.urgentTo - sameIdenOldMax)];
             if (newEnergy > theTC.energy) theTC.energy = newEnergy;
-            NSLog(@"RMV新需求: %@->%@ (条数+1=%ld 评分:%@)",Fo2FStr(mModel.matchFo),Pit2FStr(mModel.matchFo.cmvNode_p),self.loopCache.count,Double2Str_NDZ(score));
+            NSLog(@"RMV新需求: %@->%@ (条数+1=%ld 评分:%@)",Fo2FStr(mFo),Pit2FStr(mFo.cmvNode_p),self.loopCache.count,Double2Str_NDZ(score));
         }else{
-            NSLog(@"当前,预测mv未形成需求:%@ 基于:%@ 评分:%f",algsType,Pit2FStr(mModel.matchFo.cmvNode_p),score);
+            NSLog(@"当前,预测mv未形成需求:%@ 基于:%@ 评分:%f",algsType,Pit2FStr(mFo.cmvNode_p),score);
         }
     }
 }
@@ -275,7 +277,7 @@
  *  MARK:--------------------移除某任务--------------------
  */
 -(void) removeDemand:(DemandModel*)demand{
-    if (ISOK(demand, ReasonDemandModel.class)) NSLog(@"demandManager >> 移除R任务:%@",Fo2FStr(((ReasonDemandModel*)demand).mModel.matchFo));
+    if (ISOK(demand, ReasonDemandModel.class)) NSLog(@"demandManager >> 移除R任务:%@",Pit2FStr(((ReasonDemandModel*)demand).mModel.matchFo));
     if (demand) [self.loopCache removeObject:demand];
 }
 

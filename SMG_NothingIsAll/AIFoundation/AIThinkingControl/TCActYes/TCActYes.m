@@ -52,7 +52,8 @@
     
     if (demandIndex != -1) {
         //5. 从demand.matchFo的cutIndex到findIndex之间取deltaTime之和;
-        double deltaTime = [TOUtils getSumDeltaTime:rDemand.mModel.matchFo startIndex:rDemand.mModel.cutIndex2 endIndex:demandIndex];
+        AIFoNodeBase *matchFo = [SMGUtils searchNode:rDemand.mModel.matchFo];
+        double deltaTime = [TOUtils getSumDeltaTime:matchFo startIndex:rDemand.mModel.cutIndex2 endIndex:demandIndex];
         
         //3. 触发器;
         NSLog(@"---//触发器R-_静默成功任务Create:%@ 解决方案:%@ time:%f",FoP2FStr(dsFoModel.content_p),Pit2FStr(algModel.content_p),deltaTime);
@@ -110,7 +111,7 @@
     double deltaTime = solutionFo.mvDeltaTime;
     
     //3. 触发器;
-    NSLog(@"---//触发器R-_感性mv任务:%@ 解决方案:%@ time:%f",Fo2FStr(demand.mModel.matchFo),Pit2FStr(foModel.content_p),deltaTime);
+    NSLog(@"---//触发器R-_感性mv任务:%@ 解决方案:%@ time:%f",Pit2FStr(demand.mModel.matchFo),Pit2FStr(foModel.content_p),deltaTime);
     [AITime setTimeTrigger:deltaTime trigger:^{
         
         //3. 无root时,说明已被别的R-新matchFo抵消掉,抵消掉后是不做反省的 (参考22081-todo1);

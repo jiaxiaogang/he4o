@@ -11,13 +11,15 @@
 @implementation TCRethink
 
 +(void) reasonInRethink:(AIMatchFoModel*)model type:(AnalogyType)type{
-    IFTitleLog(@"IR反省", @"\n%@ spIndex:%ld -> (%@)",Fo2FStr(model.matchFo),model.cutIndex2 + 1,ATType2Str(type));
-    [model.matchFo updateSPStrong:model.cutIndex2 + 1 type:type];
+    AIFoNodeBase *matchFo = [SMGUtils searchNode:model.matchFo];
+    IFTitleLog(@"IR反省", @"\n%@ spIndex:%ld -> (%@)",Fo2FStr(matchFo),model.cutIndex2 + 1,ATType2Str(type));
+    [matchFo updateSPStrong:model.cutIndex2 + 1 type:type];
 }
 
 +(void) perceptInRethink:(AIMatchFoModel*)model type:(AnalogyType)type{
-    IFTitleLog(@"IP反省", @"\n%@ spIndex:%ld -> (%@)",Fo2FStr(model.matchFo),model.matchFo.count,ATType2Str(type));
-    [model.matchFo updateSPStrong:model.matchFo.count type:type];
+    AIFoNodeBase *matchFo = [SMGUtils searchNode:model.matchFo];
+    IFTitleLog(@"IP反省", @"\n%@ spIndex:%ld -> (%@)",Fo2FStr(matchFo),matchFo.count,ATType2Str(type));
+    [matchFo updateSPStrong:matchFo.count type:type];
 }
 
 +(void) reasonOutRethink:(TOFoModel*)model type:(AnalogyType)type{

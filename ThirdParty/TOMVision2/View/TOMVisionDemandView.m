@@ -27,7 +27,7 @@
     NSMutableString *mStr = [[NSMutableString alloc] init];
     if (ISOK(data, ReasonDemandModel.class)) {
         ReasonDemandModel *rData = (ReasonDemandModel*)data;
-        [mStr appendFormat:@"R%ld",rData.mModel.matchFo.pointer.pointerId];
+        [mStr appendFormat:@"R%ld",rData.mModel.matchFo.pointerId];
     }else if (ISOK(data, PerceptDemandModel.class)) {
         [mStr appendString:@"P"];
     }else if (ISOK(data, HDemandModel.class)) {

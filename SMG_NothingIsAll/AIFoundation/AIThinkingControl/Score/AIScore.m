@@ -57,7 +57,8 @@
     //2. 找下标 (参考注释@desc);
     for (NSInteger i = 0; i < dsFo.count; i++) {
         AIKVPointer *dsAlg_p = ARR_INDEX(dsFo.content_ps, i);
-        NSInteger demandIndex = [TOUtils indexOfConOrAbsItem:dsAlg_p atContent:demand.mModel.matchFo.content_ps layerDiff:2 startIndex:demand.mModel.cutIndex2 + 1 endIndex:NSUIntegerMax];
+        AIFoNodeBase *demandMFo = [SMGUtils searchNode:demand.mModel.matchFo];
+        NSInteger demandIndex = [TOUtils indexOfConOrAbsItem:dsAlg_p atContent:demandMFo.content_ps layerDiff:2 startIndex:demand.mModel.cutIndex2 + 1 endIndex:NSUIntegerMax];
         
         //3. 根据dsIndex发现demandIndex成功 (仅需发现一个下标即可);
         if (demandIndex != -1) {
@@ -87,7 +88,8 @@
     double needTime = [TOUtils getSumDeltaTime:solutionFo startIndex:cutIndex endIndex:1];
     
     //2. 取父任务能给的时间;
-    double giveTime = [TOUtils getSumDeltaTime2Mv:demand.mModel.matchFo cutIndex:demand.mModel.cutIndex2];
+    AIFoNodeBase *demandMFo = [SMGUtils searchNode:demand.mModel.matchFo];
+    double giveTime = [TOUtils getSumDeltaTime2Mv:demandMFo cutIndex:demand.mModel.cutIndex2];
     
     //3. 判断是否时间不急;
     BOOL timeIsEnough = needTime <= giveTime;
@@ -132,10 +134,11 @@
  *          2. 返回正值为正mv,返回负值为负mv;
  */
 +(CGFloat) score4MV_v2:(AIMatchFoModel*)inModel{
-    BOOL isBadMv = [ThinkingUtils havDemand:inModel.matchFo.cmvNode_p];
-    CGFloat spScore = [TOUtils getSPScore:inModel.matchFo startSPIndex:inModel.cutIndex2 + 1 endSPIndex:inModel.matchFo.count];
+    AIFoNodeBase *mFo = [SMGUtils searchNode:inModel.matchFo];
+    BOOL isBadMv = [ThinkingUtils havDemand:mFo.cmvNode_p];
+    CGFloat spScore = [TOUtils getSPScore:mFo startSPIndex:inModel.cutIndex2 + 1 endSPIndex:mFo.count];
     CGFloat ratio = isBadMv ? (1 - spScore) : spScore;
-    return [AIScore score4MV:inModel.matchFo.cmvNode_p ratio:ratio];//价值迫切度 * 匹配度
+    return [AIScore score4MV:mFo.cmvNode_p ratio:ratio];//价值迫切度 * 匹配度
 }
 
 /**

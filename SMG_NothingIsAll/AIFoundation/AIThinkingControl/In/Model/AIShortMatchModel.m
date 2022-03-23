@@ -103,7 +103,9 @@
     
     //2. 排序;
     fullMatchs = [fullMatchs sortedArrayUsingComparator:^NSComparisonResult(AIMatchFoModel *o1, AIMatchFoModel *o2) {
-        return [SMGUtils compareIntA:o1.matchFo.count intB:o2.matchFo.count];
+        AIFoNodeBase *mFo1 = [SMGUtils searchNode:o1.matchFo];
+        AIFoNodeBase *mFo2 = [SMGUtils searchNode:o2.matchFo];
+        return [SMGUtils compareIntA:mFo1.count intB:mFo2.count];
     }];
     
     //3. 返10条;

@@ -19,7 +19,8 @@
 +(ReasonDemandModel*) newWithMModel:(AIMatchFoModel*)mModel inModel:(AIShortMatchModel*)inModel baseFo:(TOFoModel*)baseFo{
     //1. 数据准备;
     ReasonDemandModel *result = [[ReasonDemandModel alloc] init];
-    AICMVNodeBase *mvNode = [SMGUtils searchNode:mModel.matchFo.cmvNode_p];
+    AIFoNodeBase *matchFo = [SMGUtils searchNode:mModel.matchFo];
+    AICMVNodeBase *mvNode = [SMGUtils searchNode:matchFo.cmvNode_p];
     NSInteger delta = [NUMTOOK([AINetIndex getData:mvNode.delta_p]) integerValue];
     NSString *algsType = mvNode.urgentTo_p.algsType;
     NSInteger urgentTo = [NUMTOOK([AINetIndex getData:mvNode.urgentTo_p]) integerValue];

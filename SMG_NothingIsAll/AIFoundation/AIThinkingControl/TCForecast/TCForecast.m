@@ -56,7 +56,7 @@
     for (AIMatchFoModel *item in matchs) {
         
         //3. 非末位时,理性反省 (参考25031-2);
-        AIFoNodeBase *matchFo = item.matchFo;
+        AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
         NSInteger maxCutIndex = matchFo.count - 1;
         if (item.cutIndex2 < maxCutIndex) {
             
@@ -89,7 +89,7 @@
     for (AIMatchFoModel *item in matchs) {
         
         //9. 设为等待反馈状态 & 构建反省触发器;
-        AIFoNodeBase *matchFo = item.matchFo;
+        AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
         item.status = TIModelStatus_LastWait;
         double deltaTime = matchFo.mvDeltaTime;
         

@@ -106,7 +106,7 @@
                 waitModel.status = TOModelStatus_OuterBack;
                 hFoModel.status = TOModelStatus_Finish;
                 targetAlg.status = TOModelStatus_OuterBack;
-                targetAlg.feedbackAlg = model.protoAlg;
+                targetAlg.feedbackAlg = model.protoAlg.pointer;
                 hDemand.status = TOModelStatus_Finish;
                 
                 //b. root设回runing
@@ -133,7 +133,7 @@
             if (mIsC) {
                 //a. 赋值
                 targetAlg.status = TOModelStatus_OuterBack;
-                targetAlg.feedbackAlg = model.protoAlg;
+                targetAlg.feedbackAlg = model.protoAlg.pointer;
                 
                 //b. root设回runing
                 DemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:targetAlg];

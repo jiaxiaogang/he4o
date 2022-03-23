@@ -298,12 +298,12 @@
             
             //6. 防重;
             BOOL pContains = ARRISOK([SMGUtils filterArr:inModel.matchPFos checkValid:^BOOL(AIMatchFoModel *item) {
-                return [item.matchFo isEqual:assFo];
+                return [item.matchFo isEqual:assFo.pointer];
             }]);
             if (pContains) continue;
             
             BOOL rContains = ARRISOK([SMGUtils filterArr:inModel.matchRFos checkValid:^BOOL(AIMatchFoModel *item) {
-                return [item.matchFo isEqual:assFo];
+                return [item.matchFo isEqual:assFo.pointer];
             }]);
             if (rContains) continue;
             
@@ -311,7 +311,7 @@
             [self TIR_Fo_CheckFoValidMatch:maskFo assFo:assFo success:^(NSInteger lastAssIndex, CGFloat matchValue) {
                 if (Log4MFo) NSLog(@"时序识别item SUCCESS 完成度:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
                 NSInteger cutIndex = findCutIndex(assFo,lastAssIndex);
-                AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:assFo matchFoValue:matchValue lastMatchIndex:lastAssIndex cutIndex:cutIndex];
+                AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:assFo.pointer matchFoValue:matchValue lastMatchIndex:lastAssIndex cutIndex:cutIndex];
                 
                 //8. 被引用强度;
                 AIPort *newMatchFoFromPort = [AINetUtils findPort:assFo_p fromPorts:refFoPorts];
@@ -332,7 +332,8 @@
         return fabs([AIScore score4MV_v2:obj]);//abs(价值评分 * 匹配度) 如: [9,-8,3]
     }];
     NSArray *sortRFos = [SMGUtils sortBig2Small:inModel.matchRFos compareBlock:^double(AIMatchFoModel *obj) {
-        CGFloat spScore = [TOUtils getSPScore:obj.matchFo startSPIndex:obj.cutIndex2 + 1 endSPIndex:obj.matchFo.count - 1];
+        AIFoNodeBase *matchFo = [SMGUtils searchNode:obj.matchFo];
+        CGFloat spScore = [TOUtils getSPScore:matchFo startSPIndex:obj.cutIndex2 + 1 endSPIndex:matchFo.count - 1];
         return obj.matchFoStrong * spScore;//强度 * 匹配度
     }];
     inModel.matchPFos = [[NSMutableArray alloc] initWithArray:sortPFos];
@@ -340,11 +341,15 @@
     
     //11. 调试日志;
     NSLog(@"\n=====> 时序识别Finish (PFos数:%lu)",(unsigned long)inModel.matchPFos.count);
-    for (AIMatchFoModel *item in inModel.matchPFos)
-        NSLog(@"强度:(%ld)\t> %@->%@ (匹配度:%@)",item.matchFoStrong,Fo2FStr(item.matchFo), Mvp2Str(item.matchFo.cmvNode_p),Double2Str_NDZ(item.matchFoValue));
+    for (AIMatchFoModel *item in inModel.matchPFos) {
+        AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
+        NSLog(@"强度:(%ld)\t> %@->%@ (匹配度:%@)",item.matchFoStrong,Fo2FStr(matchFo), Mvp2Str(matchFo.cmvNode_p),Double2Str_NDZ(item.matchFoValue));
+    }
+        
     NSLog(@"\n=====> 时序识别Finish (RFos数:%lu)",(unsigned long)inModel.matchRFos.count);
-    for (AIMatchFoModel *item in inModel.matchRFos)
-        NSLog(@"强度:(%ld)\t> %@ (匹配度:%@)",item.matchFoStrong,Fo2FStr(item.matchFo),Double2Str_NDZ(item.matchFoValue));
+    for (AIMatchFoModel *item in inModel.matchRFos){
+        NSLog(@"强度:(%ld)\t> %@ (匹配度:%@)",item.matchFoStrong,Pit2FStr(item.matchFo),Double2Str_NDZ(item.matchFoValue));
+    }
 }
 
 

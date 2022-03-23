@@ -34,14 +34,15 @@
         for (AIMatchFoModel *waitModel in inModel.fos4RForecast) {
             //4. 取出等待中的_非wait状态的,不处理;
             if (waitModel.status != TIModelStatus_LastWait) continue;
-            if (Log4TIROPushM) NSLog(@"==> checkTIModel=MatchFo: %@",Fo2FStr(waitModel.matchFo));
+            AIFoNodeBase *matchFo = [SMGUtils searchNode:waitModel.matchFo];
+            if (Log4TIROPushM) NSLog(@"==> checkTIModel=MatchFo: %@",Fo2FStr(matchFo));
             
             //5. 末位跳过,不需要反馈 (参考25031-2 & 25134-方案2);
-            NSInteger maxCutIndex = waitModel.matchFo.count - 1;
+            NSInteger maxCutIndex = matchFo.count - 1;
             if (waitModel.cutIndex2 >= maxCutIndex) continue;
             
             //6. 判断protoAlg与waitAlg之间mIsC,成立则OutBackYes;
-            AIKVPointer *waitAlg_p = ARR_INDEX(waitModel.matchFo.content_ps, waitModel.cutIndex2 + 1);
+            AIKVPointer *waitAlg_p = ARR_INDEX(matchFo.content_ps, waitModel.cutIndex2 + 1);
             BOOL mIsC = [TOUtils mIsC_1:model.protoAlg.pointer c:waitAlg_p];
             if (mIsC) {
                 waitModel.status = TIModelStatus_OutBackReason;
@@ -82,8 +83,8 @@
         for (AIMatchFoModel *waitModel in inModel.fos4PForecast) {
             
             //3. 数据准备;
-            AIFoNodeBase *waitMatchFo = waitModel.matchFo;
-            NSInteger maxCutIndex = waitModel.matchFo.count - 1;
+            AIFoNodeBase *waitMatchFo = [SMGUtils searchNode:waitModel.matchFo];
+            NSInteger maxCutIndex = waitMatchFo.count - 1;
             
             //4. 非等待中的跳过;
             if (Log4OPushM) NSLog(@"==> checkTIModel=MatchFo: %@ (%@)",Fo2FStr(waitMatchFo),TIStatus2Str(waitModel.status));
