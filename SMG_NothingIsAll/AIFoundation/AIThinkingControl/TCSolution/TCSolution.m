@@ -88,8 +88,8 @@
     }
     
     //1. 根据demand取;
-    NSArray *seemFromIdenRDemands = [TOUtils getSeemFromIdenRDemands:demand];
-    NSArray *validPFos = [SMGUtils filterArr:seemFromIdenRDemands checkValid:^BOOL(ReasonDemandModel *item) {
+    NSArray *friends = [TOUtils getSeemFromIdenRDemands:demand];
+    NSArray *validFriends = [SMGUtils filterArr:friends checkValid:^BOOL(ReasonDemandModel *item) {
         return [demand.mModel.matchFo.cmvNode_p.identifier isEqualToString:item.mModel.matchFo.cmvNode_p.identifier];
     }];
     
@@ -99,8 +99,8 @@
     
     //3. 逐一对validPFos,取其conPorts (前3条) (参考24127-步骤1);
     NSMutableArray *sumConPorts = [[NSMutableArray alloc] init];
-    for (AIMatchFoModel *pFo in validPFos) {
-        NSArray *conPorts = [AINetUtils conPorts_All_Normal:pFo.matchFo];
+    for (ReasonDemandModel *friend in validFriends) {
+        NSArray *conPorts = [AINetUtils conPorts_All_Normal:friend.mModel.matchFo];
         conPorts = ARR_SUB(conPorts, 0, 15);
         [sumConPorts addObjectsFromArray:conPorts];
     }

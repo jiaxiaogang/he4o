@@ -184,6 +184,7 @@
 #define OBJ2DATA(obj) [NSKeyedArchiver archivedDataWithRootObject:obj]
 #define DATA2OBJ(data) [NSKeyedUnarchiver unarchiveObjectWithData:data]
 #define DATAS2OBJS(datas) [SMGUtils datas2Objs:datas]
+#define CopyByCoding(obj) DATA2OBJ(OBJ2DATA(obj))
 
 //指针转字符串
 #define Pit2FStr(p) [NVHeUtil getLightStr:p simple:false header:true]

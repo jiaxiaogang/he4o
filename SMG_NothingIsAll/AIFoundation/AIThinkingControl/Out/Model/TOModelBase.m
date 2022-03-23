@@ -19,6 +19,16 @@
 }
 
 /**
+ *  MARK:--------------------来源标识--------------------
+ */
+-(NSString *)fromIden{
+    if (!_fromIden) {
+        _fromIden = STRFORMAT(@"%p",self);
+    }
+    return _fromIden;
+}
+
+/**
  *  MARK:--------------------isEqual--------------------
  *  @version
  *      2022.03.19: content_p为空时,返回super.Equal(),因为Demand的content_p全是空的;
@@ -44,6 +54,7 @@
         self.content_p = [aDecoder decodeObjectForKey:@"content_p"];
         self.status = [aDecoder decodeIntegerForKey:@"status"];
         self.baseOrGroup = [aDecoder decodeObjectForKey:@"baseOrGroup"];
+        self.fromIden = [aDecoder decodeObjectForKey:@"fromIden"];
     }
     return self;
 }
@@ -52,6 +63,7 @@
     [aCoder encodeObject:self.content_p forKey:@"content_p"];
     [aCoder encodeInteger:self.status forKey:@"status"];
     [aCoder encodeObject:self.baseOrGroup forKey:@"baseOrGroup"];
+    [aCoder encodeObject:self.fromIden forKey:@"fromIden"];
 }
 
 @end

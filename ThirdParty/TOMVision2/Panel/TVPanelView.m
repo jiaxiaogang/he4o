@@ -73,7 +73,7 @@
     
     //2. 记录快照;
     TOMVisionItemModel *newFrame = [[TOMVisionItemModel alloc] init];
-    newFrame.roots = theTC.outModelManager.getAllDemand;
+    newFrame.roots = CopyByCoding(theTC.outModelManager.getAllDemand);
     [self.models addObject:newFrame];
     
     //3. 新轮循环Id;

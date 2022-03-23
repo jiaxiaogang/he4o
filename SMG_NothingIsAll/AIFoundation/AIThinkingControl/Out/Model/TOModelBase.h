@@ -65,4 +65,13 @@
  */
 //@property (strong, nonatomic) NSDictionary *params;
 
+
+/**
+ *  MARK:--------------------来源标识--------------------
+ *  @desc 初次实例化时的内存地址,此后序列化过,也保留此值 (参考25185-方案1);
+ *  @version
+ *      2022.03.23: 来源标识为: TOModel初次实例化时的内存地址 (参考25185-方案1-实践1);
+ */
+@property (strong, nonatomic) NSString *fromIden;
+
 @end
