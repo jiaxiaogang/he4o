@@ -41,19 +41,38 @@
     return _subDemands;
 }
 
--(NSMutableDictionary *)cGLDic{
-    if (!_cGLDic) _cGLDic = [[NSMutableDictionary alloc] init];
-    return _cGLDic;
+//-(NSMutableDictionary *)cGLDic{
+//    if (!_cGLDic) _cGLDic = [[NSMutableDictionary alloc] init];
+//    return _cGLDic;
+//}
+//-(NSMutableArray *)replaceAlgs{
+//    if (!_replaceAlgs) _replaceAlgs = [[NSMutableArray alloc] init];
+//    return _replaceAlgs;
+//}
+//-(NSMutableArray *)justPValues{
+//    if (!_justPValues) _justPValues = [[NSMutableArray alloc] init];
+//    return _justPValues;
+//}
+
+/**
+ *  MARK:--------------------NSCoding--------------------
+ */
+- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
+    self = [super init];
+    if (self) {
+        self.subModels = [aDecoder decodeObjectForKey:@"subModels"];
+        self.subDemands = [aDecoder decodeObjectForKey:@"subDemands"];
+        self.actionFoModels = [aDecoder decodeObjectForKey:@"actionFoModels"];
+        self.feedbackAlg = [aDecoder decodeObjectForKey:@"feedbackAlg"];
+    }
+    return self;
 }
 
--(NSMutableArray *)replaceAlgs{
-    if (!_replaceAlgs) _replaceAlgs = [[NSMutableArray alloc] init];
-    return _replaceAlgs;
-}
-
--(NSMutableArray *)justPValues{
-    if (!_justPValues) _justPValues = [[NSMutableArray alloc] init];
-    return _justPValues;
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [aCoder encodeObject:self.subModels forKey:@"subModels"];
+    [aCoder encodeObject:self.subDemands forKey:@"subDemands"];
+    [aCoder encodeObject:self.actionFoModels forKey:@"actionFoModels"];
+    [aCoder encodeObject:self.feedbackAlg forKey:@"feedbackAlg"];
 }
 
 @end

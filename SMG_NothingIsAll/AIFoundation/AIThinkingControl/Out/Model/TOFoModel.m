@@ -17,7 +17,7 @@
 
 @implementation TOFoModel
 
-+(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(id<ITryActionFoDelegate>)base{
++(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(TOModelBase<ITryActionFoDelegate>*)base{
     //1. 数据准备;
     AIFoNodeBase *fo = [SMGUtils searchNode:fo_p];
     TOFoModel *result = [[TOFoModel alloc] initWithContent_p:fo_p];
@@ -64,5 +64,26 @@
 //    NSLog(@"toFo.setActionIndex:%ld -> %ld",self.actionIndex,actionIndex);
 //    _actionIndex = actionIndex;
 //}
+
+/**
+ *  MARK:--------------------NSCoding--------------------
+ */
+- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
+    self = [super init];
+    if (self) {
+        self.subModels = [aDecoder decodeObjectForKey:@"subModels"];
+        self.actionIndex = [aDecoder decodeIntegerForKey:@"actionIndex"];
+        self.targetSPIndex = [aDecoder decodeIntegerForKey:@"targetSPIndex"];
+        self.subDemands = [aDecoder decodeObjectForKey:@"subDemands"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [aCoder encodeObject:self.subModels forKey:@"subModels"];
+    [aCoder encodeInteger:self.actionIndex forKey:@"actionIndex"];
+    [aCoder encodeInteger:self.targetSPIndex forKey:@"targetSPIndex"];
+    [aCoder encodeObject:self.subDemands forKey:@"subDemands"];
+}
 
 @end

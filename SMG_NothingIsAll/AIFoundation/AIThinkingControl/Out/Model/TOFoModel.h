@@ -22,7 +22,7 @@
  */
 @interface TOFoModel : TOModelBase <ISubModelsDelegate,ISubDemandDelegate>
 
-+(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(id<ITryActionFoDelegate>)base;
++(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(TOModelBase<ITryActionFoDelegate>*)base;
 
 /**
  *  MARK:--------------------行为化数据--------------------

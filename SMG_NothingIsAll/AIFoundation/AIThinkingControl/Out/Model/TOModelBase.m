@@ -35,4 +35,23 @@
     _status = status;
 }
 
+/**
+ *  MARK:--------------------NSCoding--------------------
+ */
+- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
+    self = [super init];
+    if (self) {
+        self.content_p = [aDecoder decodeObjectForKey:@"content_p"];
+        self.status = [aDecoder decodeIntegerForKey:@"status"];
+        self.baseOrGroup = [aDecoder decodeObjectForKey:@"baseOrGroup"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [aCoder encodeObject:self.content_p forKey:@"content_p"];
+    [aCoder encodeInteger:self.status forKey:@"status"];
+    [aCoder encodeObject:self.baseOrGroup forKey:@"baseOrGroup"];
+}
+
 @end

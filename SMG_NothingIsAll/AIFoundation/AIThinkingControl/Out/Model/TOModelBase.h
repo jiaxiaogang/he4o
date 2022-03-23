@@ -17,7 +17,7 @@
  *  @desc
  *      1. 集成原则: 在方法被调用前,将outModel实例化好,并当参数传递进去,在方法执行中status变化的,重新对status赋值即可;
  */
-@interface TOModelBase : NSObject
+@interface TOModelBase : NSObject <NSCoding>
 
 -(id) initWithContent_p:(AIKVPointer*)content_p;
 

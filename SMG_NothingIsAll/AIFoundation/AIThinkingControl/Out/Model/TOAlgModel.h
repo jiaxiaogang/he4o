@@ -33,13 +33,13 @@
  *      1. 因为TOAction.SP算法执行时,将checkAlg和checkAlg的同层可替代的替身存于此,只要成功一个即可,不过失败时,方便转移;
  *      2. 在Action._Hav中,将每一次尝试PM的reModel存于此,下次再执行时,用作不应期,避免死循环;
  */
-@property (strong, nonatomic) NSMutableArray *replaceAlgs;
+//@property (strong, nonatomic) NSMutableArray *replaceAlgs;
 
 /**
  *  MARK:-------------------- 二: 保留params之cGLDic短记--------------------
  *  @desc 因为TOAction.SP算法执行时,将cGLDic存此,以便其中一个稀疏码成功时,顺利转移下一个;
  */
-@property (strong, nonatomic) NSMutableDictionary *cGLDic;
+//@property (strong, nonatomic) NSMutableDictionary *cGLDic;
 //在TOAction.SP算法执行时,将pAlg存此,TOValueAlg转移时调用_GL方法会用到 (2021.01.23: 发出也没调用,仅在PM跳转GL行为化时有赋值而已);
 //@property (strong, nonatomic) AIAlgNodeBase *sp_P;
 
@@ -55,7 +55,7 @@
  *  @todo
  *      2021.05.13: 随后改为用self(reModel) 减去 base(C) = 得出justPValues (参考23076中已将reModel.content改为protoA);
  */
-@property (strong, nonatomic) NSMutableArray *justPValues;
+//@property (strong, nonatomic) NSMutableArray *justPValues;
 //保留字段 (score用于存M所在matchFo的价值分,mvAT用于存M所在的matchFo的价值at标识);
 //@property (assign, nonatomic) float pm_Score;
 //@property (strong, nonatomic) NSString *pm_MVAT;
@@ -72,7 +72,7 @@
  *      2. tor_OPushM()中为focusModel.base;
  *      3. _Hav中R-模式时,为参数outModel的base (即SFo);
  */
-@property (strong, nonatomic) AIKVPointer *pm_Fo;          //当前解决方案fo (=baseAlg.baseFo);
+//@property (strong, nonatomic) AIKVPointer *pm_Fo;          //当前解决方案fo (=baseAlg.baseFo);
 
 /**
  *  MARK:--------------------pmProtoAlg--------------------
@@ -82,14 +82,14 @@
  *      3. 赋值说明: _SP时,将pAlg传入 (旧注释,时效存疑);
  *      4. 赋值说明: _PM时,将M传入 (旧注释,时效存疑);
  */
-@property (strong, nonatomic) AIAlgNodeBase *pm_ProtoAlg;
+//@property (strong, nonatomic) AIAlgNodeBase *pm_ProtoAlg;
 
 /**
  *  MARK:--------------------当前短时记忆--------------------
  *  @desc
  *      1. 用途: getInnerV3用,用来从mFo更理性联想;
  */
-@property (strong, nonatomic) AIShortMatchModel *pm_InModel;
+//@property (strong, nonatomic) AIShortMatchModel *pm_InModel;
 
 /**
  *  MARK:--------------------实际发生的概念保留--------------------
