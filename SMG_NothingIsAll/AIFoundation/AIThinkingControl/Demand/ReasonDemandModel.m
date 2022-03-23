@@ -45,4 +45,27 @@
     return self.urgentTo * self.mModel.matchFoValue;
 }
 
+/**
+ *  MARK:--------------------NSCoding--------------------
+ */
+- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
+    self = [super init];
+    if (self) {
+        self.mModel = [aDecoder decodeObjectForKey:@"mModel"];
+        
+        
+        
+        //TODOTOMORROW20220223: 此处inModel应该不用支持吧?或者看把它转走,
+        //1. 换成仅生成任务的那几条pFos?
+        //2. 改成入批次(比如用inModel的内存地址),取用pFos时,从树中遍历出同批次的RDemands即可;
+        self.inModel = [aDecoder decodeObjectForKey:@"inModel"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [aCoder encodeObject:self.mModel forKey:@"mModel"];
+    [aCoder encodeObject:self.inModel forKey:@"inModel"];
+}
+
 @end

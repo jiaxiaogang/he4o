@@ -19,4 +19,29 @@
     return model;
 }
 
+/**
+ *  MARK:--------------------NSCoding--------------------
+ */
+- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
+    self = [super init];
+    if (self) {
+        self.matchFo = [aDecoder decodeObjectForKey:@"matchFo"];
+        self.matchFoValue = [aDecoder decodeFloatForKey:@"matchFoValue"];
+        self.status = [aDecoder decodeIntegerForKey:@"status"];
+        self.lastMatchIndex = [aDecoder decodeIntegerForKey:@"lastMatchIndex"];
+        self.cutIndex2 = [aDecoder decodeIntegerForKey:@"cutIndex2"];
+        self.matchFoStrong = [aDecoder decodeIntegerForKey:@"matchFoStrong"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [aCoder encodeObject:self.matchFo forKey:@"matchFo"];
+    [aCoder encodeFloat:self.matchFoValue forKey:@"matchFoValue"];
+    [aCoder encodeInteger:self.status forKey:@"status"];
+    [aCoder encodeInteger:self.lastMatchIndex forKey:@"lastMatchIndex"];
+    [aCoder encodeInteger:self.cutIndex2 forKey:@"cutIndex2"];
+    [aCoder encodeInteger:self.matchFoStrong forKey:@"matchFoStrong"];
+}
+
 @end

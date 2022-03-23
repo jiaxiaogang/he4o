@@ -66,4 +66,29 @@
 //    }];
 //}
 
+/**
+ *  MARK:--------------------NSCoding--------------------
+ */
+- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
+    self = [super init];
+    if (self) {
+        self.actionFoModels = [aDecoder decodeObjectForKey:@"actionFoModels"];
+        self.urgentTo = [aDecoder decodeIntegerForKey:@"urgentTo"];
+        self.delta = [aDecoder decodeIntegerForKey:@"delta"];
+        self.algsType = [aDecoder decodeObjectForKey:@"algsType"];
+        self.initTime = [aDecoder decodeDoubleForKey:@"initTime"];
+        self.updateTime = [aDecoder decodeDoubleForKey:@"updateTime"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [aCoder encodeObject:self.actionFoModels forKey:@"actionFoModels"];
+    [aCoder encodeInteger:self.urgentTo forKey:@"urgentTo"];
+    [aCoder encodeInteger:self.delta forKey:@"delta"];
+    [aCoder encodeObject:self.algsType forKey:@"algsType"];
+    [aCoder encodeDouble:self.initTime forKey:@"initTime"];
+    [aCoder encodeDouble:self.updateTime forKey:@"updateTime"];
+}
+
 @end
