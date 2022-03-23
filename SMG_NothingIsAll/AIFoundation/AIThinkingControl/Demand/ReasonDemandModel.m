@@ -49,7 +49,7 @@
  *  MARK:--------------------NSCoding--------------------
  */
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
-    self = [super init];
+    self = [super initWithCoder:aDecoder];
     if (self) {
         self.mModel = [aDecoder decodeObjectForKey:@"mModel"];
         self.fromIden = [aDecoder decodeObjectForKey:@"fromIden"];
@@ -58,6 +58,7 @@
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
+    [super encodeWithCoder:aCoder];
     [aCoder encodeObject:self.mModel forKey:@"mModel"];
     [aCoder encodeObject:self.fromIden forKey:@"fromIden"];
 }

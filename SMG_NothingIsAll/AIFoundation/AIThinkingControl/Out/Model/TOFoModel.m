@@ -69,7 +69,7 @@
  *  MARK:--------------------NSCoding--------------------
  */
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
-    self = [super init];
+    self = [super initWithCoder:aDecoder];
     if (self) {
         self.subModels = [aDecoder decodeObjectForKey:@"subModels"];
         self.actionIndex = [aDecoder decodeIntegerForKey:@"actionIndex"];
@@ -80,6 +80,7 @@
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
+    [super encodeWithCoder:aCoder];
     [aCoder encodeObject:self.subModels forKey:@"subModels"];
     [aCoder encodeInteger:self.actionIndex forKey:@"actionIndex"];
     [aCoder encodeInteger:self.targetSPIndex forKey:@"targetSPIndex"];
