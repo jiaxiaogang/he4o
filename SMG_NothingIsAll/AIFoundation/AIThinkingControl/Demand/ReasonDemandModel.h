@@ -29,6 +29,13 @@
 +(ReasonDemandModel*) newWithMModel:(AIMatchFoModel*)mModel inModel:(AIShortMatchModel*)inModel baseFo:(TOFoModel*)baseFo;
 
 @property (strong, nonatomic) AIMatchFoModel *mModel;       //R-预测时序
-@property (strong, nonatomic) AIShortMatchModel *inModel;   //需求来源inModel;
+
+/**
+ *  MARK:--------------------需求来源inModel--------------------
+ *  @version
+ *      2022.03.23: 弃用inModel,改用fromIden标识 (参考25184);
+ */
+//@property (strong, nonatomic) AIShortMatchModel *inModel;
+@property (strong, nonatomic) NSString *fromIden;
 
 @end

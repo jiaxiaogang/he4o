@@ -88,8 +88,9 @@
     }
     
     //1. 根据demand取;
-    NSArray *validPFos = [SMGUtils filterArr:demand.inModel.fos4Demand checkValid:^BOOL(AIMatchFoModel *item) {
-        return [demand.mModel.matchFo.cmvNode_p.identifier isEqualToString:item.matchFo.cmvNode_p.identifier];
+    NSArray *seemFromIdenRDemands = [TOUtils getSeemFromIdenRDemands:demand];
+    NSArray *validPFos = [SMGUtils filterArr:seemFromIdenRDemands checkValid:^BOOL(ReasonDemandModel *item) {
+        return [demand.mModel.matchFo.cmvNode_p.identifier isEqualToString:item.mModel.matchFo.cmvNode_p.identifier];
     }];
     
     //2. 不应期 (可以考虑) (源于:反思且子任务失败的 或 fo行为化最终失败的,参考24135);

@@ -135,6 +135,27 @@
     }];
 }
 
+/**
+ *  MARK:--------------------获取rDemand的来源同伴--------------------
+ *  @version
+ *      2022.03.23: 初版 (参考25184-方案2-分析);
+ */
++(NSArray*) getSeemFromIdenRDemands:(ReasonDemandModel*)rDemand{
+    //1. 数据准备;
+    NSString *fromIden = STRTOOK(rDemand.fromIden);
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    
+    //2. 分别从root出发,收集同fromIden的RDemands;
+    for (DemandModel *item in theTC.outModelManager.getAllDemand) {
+        NSArray *subs = [self getSubOutModels_AllDeep:item validStatus:nil cutStopStatus:nil];
+        NSArray *validSubs = [SMGUtils filterArr:subs checkValid:^BOOL(ReasonDemandModel *sub) {
+            return ISOK(sub, ReasonDemandModel.class) && [fromIden isEqualToString:sub.fromIden];
+        }];
+        [result addObjectsFromArray:validSubs];
+    }
+    return result;
+}
+
 
 //MARK:===============================================================
 //MARK:                     < 从TO短时记忆取outModel >
