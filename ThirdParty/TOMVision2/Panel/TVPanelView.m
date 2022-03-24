@@ -26,6 +26,7 @@
 @property (assign, nonatomic) NSInteger curIndex;       //当前帧
 @property (assign, nonatomic) CGFloat speed;            //播放速度 (其中0为直播);
 @property (strong, nonatomic) id timer;           //用于播放时计时触发器;
+@property (strong, nonatomic) NSNumber *num;
 
 @end
 
@@ -134,11 +135,7 @@
     //2. 速度变化时,调整播放器播放间隔;
     if (speed > 0) {
         
-        //3. CADisplayLink计时器;
-        
-        CADisplayLink *link = [CADisplayLink displayLinkWithTarget:self selector:@selector(test)];
-        [link addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-        
+            [self test];
     }
 }
 
@@ -184,7 +181,6 @@
 }
 
 - (IBAction)scaleSegmentChanged:(UISegmentedControl*)sender {
-    NSLog(@"%ld",self.curIndex);
     CGFloat scale = 1.0f;
     if (sender.selectedSegmentIndex == 0) {
         scale = 0.25f;
@@ -224,18 +220,22 @@
     [self.delegate panelCloseBtnClicked];
 }
 
-
 -(void) test{
-    NSLog(@"%f",self.speed);
-    if (self.playing) {
-        NSLog(@"playing");
-        
-        if (self.curIndex < self.models.count - 1) {
-            NSLog(@"播放下帧");
-            self.curIndex ++;
-        }else{
-            NSLog(@"停止播放");
-        }
+    if (self.speed != 0) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0f / self.speed * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            NSLog(@"%f",self.speed);
+            if (self.playing) {
+                NSLog(@"playing");
+                
+                if (self.curIndex < self.models.count - 1) {
+                    NSLog(@"播放下帧 %ld < %ld",self.curIndex,self.models.count - 1);
+                    self.curIndex ++;
+                }else{
+                    NSLog(@"停止播放");
+                }
+                [self test];
+            }
+        });
     }
 }
 
