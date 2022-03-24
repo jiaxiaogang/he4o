@@ -133,27 +133,28 @@
     
     //2. 速度变化时,调整播放器播放间隔;
     if (speed > 0) {
+        
+        //3. GCD计时器;
         double timeInterval = 1.0f / _speed;
-//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(timeInterval * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//
-//        });
-        
-        
         dispatch_queue_t queue1 = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
         dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue1);
-        
         self.timer = timer;
-        
-        dispatch_source_set_timer(timer, DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC, 0 * NSEC_PER_SEC);
+        dispatch_source_set_timer(timer, DISPATCH_TIME_NOW, timeInterval * NSEC_PER_SEC, 0 * NSEC_PER_SEC);
         
         dispatch_source_set_event_handler(timer, ^{
-            NSLog(@"%@",[NSThread currentThread]);
+            NSLog(@"%f",self.speed);
+            if (self.playing) {
+                NSLog(@"playing");
+                
+                if (self.curIndex < self.models.count - 1) {
+                    NSLog(@"播放下帧");
+                    self.curIndex ++;
+                }else{
+                    NSLog(@"停止播放");
+                }
+            }
         });
         dispatch_resume(timer);
-        
-        
-        
-        
     }
 }
 
@@ -241,24 +242,6 @@
 
 -(void) timeBlock:(NSTimer*)timer {
     TVPanelView *sf = timer.userInfo;
-//    __weak typeof(self) weakSelf = self;
-//    weakSelf.curIndex++;
-//    if (weakSelf.curIndex % 10 == 9) {
-//        NSLog(@"aa");
-//    }
-    
-    
-    if (sf.playing) {
-        NSLog(@"playing");
-        
-        if (sf.curIndex < sf.models.count) {
-            NSLog(@"播放下帧");
-            sf.curIndex ++;
-        }else{
-            sf.curIndex --;
-            NSLog(@"停止播放");
-        }
-    }
     
     //            if (weakSelf.playing) {
     //                //1. 播放中时,播放下帧;
