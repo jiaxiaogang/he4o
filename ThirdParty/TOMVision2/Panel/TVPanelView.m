@@ -25,6 +25,7 @@
 @property (assign, nonatomic) BOOL playing;             //播放中;
 @property (assign, nonatomic) NSInteger curIndex;       //当前帧
 @property (assign, nonatomic) CGFloat speed;            //播放速度 (其中0为直播);
+@property (strong, nonatomic) id timer;           //用于播放时计时触发器;
 
 @end
 
@@ -59,6 +60,7 @@
     self.models = [[NSMutableArray alloc] init];
     self.playing = true;
     self.speed = 0;
+    self.curIndex = 0;
 }
 
 -(void) initDisplay{
@@ -124,6 +126,43 @@
 }
 
 //MARK:===============================================================
+//MARK:                     < getset >
+//MARK:===============================================================
+-(void)setSpeed:(CGFloat)speed{
+    _speed = speed;
+    
+    //2. 速度变化时,调整播放器播放间隔;
+    if (speed > 0) {
+        double timeInterval = 1.0f / _speed;
+//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(timeInterval * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//
+//        });
+        
+        
+        dispatch_queue_t queue1 = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+        dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue1);
+        
+        self.timer = timer;
+        
+        dispatch_source_set_timer(timer, DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC, 0 * NSEC_PER_SEC);
+        
+        dispatch_source_set_event_handler(timer, ^{
+            NSLog(@"%@",[NSThread currentThread]);
+        });
+        dispatch_resume(timer);
+        
+        
+        
+        
+    }
+}
+
+-(void) setPlaying:(BOOL)playing{
+    _playing = playing;
+    [self.playBtn setTitle:(self.playing ? @"||" : @"▶") forState:UIControlStateNormal];
+}
+
+//MARK:===============================================================
 //MARK:                     < onclick >
 //MARK:===============================================================
 - (IBAction)loopBtnClicked:(id)sender {
@@ -160,6 +199,7 @@
 }
 
 - (IBAction)scaleSegmentChanged:(UISegmentedControl*)sender {
+    NSLog(@"%ld",self.curIndex);
     CGFloat scale = 1.0f;
     if (sender.selectedSegmentIndex == 0) {
         scale = 0.25f;
@@ -179,7 +219,6 @@
 
 - (IBAction)playBtnClicked:(id)sender {
     self.playing = !self.playing;
-    [self.playBtn setTitle:(self.playing ? @"||" : @"▶") forState:UIControlStateNormal];
 }
 
 - (IBAction)plusBtnClicked:(id)sender {
@@ -198,6 +237,41 @@
 
 - (IBAction)closeBtnClicked:(id)sender {
     [self.delegate panelCloseBtnClicked];
+}
+
+-(void) timeBlock:(NSTimer*)timer {
+    TVPanelView *sf = timer.userInfo;
+//    __weak typeof(self) weakSelf = self;
+//    weakSelf.curIndex++;
+//    if (weakSelf.curIndex % 10 == 9) {
+//        NSLog(@"aa");
+//    }
+    
+    
+    if (sf.playing) {
+        NSLog(@"playing");
+        
+        if (sf.curIndex < sf.models.count) {
+            NSLog(@"播放下帧");
+            sf.curIndex ++;
+        }else{
+            sf.curIndex --;
+            NSLog(@"停止播放");
+        }
+    }
+    
+    //            if (weakSelf.playing) {
+    //                //1. 播放中时,播放下帧;
+    //                if (weakSelf.curIndex < weakSelf.models.count - 1) {
+    //                    NSLog(@"播放下帧: %ld < %ld = true",weakSelf.curIndex,weakSelf.models.count - 1);
+    //                    weakSelf.curIndex++;
+    //                    [weakSelf refreshDisplay];
+    //                }else{
+    //                    //2. 播放完成时,停止计时器,停止播放;
+    //                    weakSelf.playing = false;
+    //                    NSLog(@"播完停止");
+    //                }
+    //            }
 }
 
 @end
