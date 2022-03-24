@@ -134,27 +134,11 @@
     //2. 速度变化时,调整播放器播放间隔;
     if (speed > 0) {
         
-        //3. GCD计时器;
-        double timeInterval = 1.0f / _speed;
-        dispatch_queue_t queue1 = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-        dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue1);
-        self.timer = timer;
-        dispatch_source_set_timer(timer, DISPATCH_TIME_NOW, timeInterval * NSEC_PER_SEC, 0 * NSEC_PER_SEC);
+        //3. CADisplayLink计时器;
         
-        dispatch_source_set_event_handler(timer, ^{
-            NSLog(@"%f",self.speed);
-            if (self.playing) {
-                NSLog(@"playing");
-                
-                if (self.curIndex < self.models.count - 1) {
-                    NSLog(@"播放下帧");
-                    self.curIndex ++;
-                }else{
-                    NSLog(@"停止播放");
-                }
-            }
-        });
-        dispatch_resume(timer);
+        CADisplayLink *link = [CADisplayLink displayLinkWithTarget:self selector:@selector(test)];
+        [link addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+        
     }
 }
 
@@ -238,6 +222,21 @@
 
 - (IBAction)closeBtnClicked:(id)sender {
     [self.delegate panelCloseBtnClicked];
+}
+
+
+-(void) test{
+    NSLog(@"%f",self.speed);
+    if (self.playing) {
+        NSLog(@"playing");
+        
+        if (self.curIndex < self.models.count - 1) {
+            NSLog(@"播放下帧");
+            self.curIndex ++;
+        }else{
+            NSLog(@"停止播放");
+        }
+    }
 }
 
 -(void) timeBlock:(NSTimer*)timer {
