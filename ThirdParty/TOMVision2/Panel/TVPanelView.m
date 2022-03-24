@@ -25,8 +25,7 @@
 @property (assign, nonatomic) BOOL playing;             //播放中;
 @property (assign, nonatomic) NSInteger curIndex;       //当前帧
 @property (assign, nonatomic) CGFloat speed;            //播放速度 (其中0为直播);
-@property (strong, nonatomic) id timer;           //用于播放时计时触发器;
-@property (strong, nonatomic) NSNumber *num;
+@property (strong, nonatomic) NSTimer *timer;           //用于播放时计时触发器;
 
 @end
 
@@ -130,12 +129,13 @@
 //MARK:                     < getset >
 //MARK:===============================================================
 -(void)setSpeed:(CGFloat)speed{
+    //1. set
     _speed = speed;
     
     //2. 速度变化时,调整播放器播放间隔;
+    if (self.timer) [self.timer invalidate];
     if (speed > 0) {
-        
-            [self test];
+        self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0f / speed target:self selector:@selector(timeBlock) userInfo:nil repeats:true];
     }
 }
 
@@ -220,40 +220,19 @@
     [self.delegate panelCloseBtnClicked];
 }
 
--(void) test{
-    if (self.speed != 0) {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0f / self.speed * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            NSLog(@"%f",self.speed);
-            if (self.playing) {
-                NSLog(@"playing");
-                
-                if (self.curIndex < self.models.count - 1) {
-                    NSLog(@"播放下帧 %ld < %ld",self.curIndex,self.models.count - 1);
-                    self.curIndex ++;
-                }else{
-                    NSLog(@"停止播放");
-                }
-                [self test];
-            }
-        });
+-(void) timeBlock {
+    if (self.playing) {
+        //1. 播放中时,播放下帧;
+        long lastIndex = (long)self.models.count - 1;//models.count是UInt类型,为0条时再-1会越界;
+        if (self.curIndex < lastIndex) {
+            self.curIndex ++;
+            [self refreshDisplay];
+        }else{
+            //2. 播放完成时,停止计时器,停止播放;
+            self.playing = false;
+            NSLog(@"播放完成");
+        }
     }
-}
-
--(void) timeBlock:(NSTimer*)timer {
-    TVPanelView *sf = timer.userInfo;
-    
-    //            if (weakSelf.playing) {
-    //                //1. 播放中时,播放下帧;
-    //                if (weakSelf.curIndex < weakSelf.models.count - 1) {
-    //                    NSLog(@"播放下帧: %ld < %ld = true",weakSelf.curIndex,weakSelf.models.count - 1);
-    //                    weakSelf.curIndex++;
-    //                    [weakSelf refreshDisplay];
-    //                }else{
-    //                    //2. 播放完成时,停止计时器,停止播放;
-    //                    weakSelf.playing = false;
-    //                    NSLog(@"播完停止");
-    //                }
-    //            }
 }
 
 @end
