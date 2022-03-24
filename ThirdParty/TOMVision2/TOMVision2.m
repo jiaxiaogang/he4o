@@ -230,21 +230,19 @@
         //4. demand节点;
         if (ISOK(data, DemandModel.class)) {
             result = [[TOMVisionDemandView alloc] init];
-            [result setData:data];
         }else if(ISOK(data, TOFoModel.class)){
             result = [[TOMVisionFoView alloc] init];
-            [result setData:data];
         }else if(ISOK(data, TOAlgModel.class)){
             result = [[TOMVisionAlgView alloc] init];
-            [result setData:data];
         }else{
             //还没支持的类型,就先返回baseView;
             result = [[TOMVisionNodeBase alloc] init];
-            [result setData:data];
             [result setBackgroundColor:UIColor.redColor];
         }
     }
     
+    //4. 无论是复用,还是新建,都更新data (复用时,每帧同一个data也在更新);
+    [result setData:data];
     return result;
 }
 
