@@ -11,8 +11,9 @@
 #import "View+MASAdditions.h"
 #import "TOMVisionItemModel.h"
 #import "PINDiskCache.h"
+#import "TVideoWindow.h"
 
-@interface TVPanelView ()
+@interface TVPanelView () <TVideoWindowDelegate>
 
 @property (strong, nonatomic) IBOutlet UIView *containerView;
 @property (weak, nonatomic) IBOutlet UISlider *sliderView;
@@ -23,6 +24,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *loopBtn;
 @property (weak, nonatomic) IBOutlet UIButton *plusBtn;
 @property (weak, nonatomic) IBOutlet UIButton *subBtn;
+@property (strong, nonatomic) TVideoWindow *tvideoWindow;
 @property (assign, nonatomic) BOOL playing;             //播放中;
 @property (assign, nonatomic) NSInteger curIndex;       //当前帧
 @property (assign, nonatomic) CGFloat speed;            //播放速度 (其中0为直播);
@@ -55,6 +57,11 @@
         make.top.mas_equalTo(self);
         make.bottom.mas_equalTo(self);
     }];
+    
+    //tvideoWindow
+    self.tvideoWindow = [[TVideoWindow alloc] init];
+    [self addSubview:self.tvideoWindow];
+    self.tvideoWindow.delegate = self;
 }
 
 -(void) initData{
@@ -126,17 +133,6 @@
     }
 }
 
--(void) saveTVideo:(NSString*)saveName{
-    //1. 数据准备;
-    NSString *cachePath = kCachePath;
-    NSMutableString *savePath = [[NSMutableString alloc] initWithFormat:@"%@/tvideo/%@",cachePath,saveName];
-    
-    //2. 备份UserDefaults记忆;
-    PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:savePath];
-    [cache setObject:self.models forKey:@"video.file"];
-    NSLog(@"======> 存储思维录像成功: (%@)",savePath);
-}
-
 //MARK:===============================================================
 //MARK:                     < getset >
 //MARK:===============================================================
@@ -154,6 +150,24 @@
 -(void) setPlaying:(BOOL)playing{
     _playing = playing;
     [self.playBtn setTitle:(self.playing ? @"||" : @"▶") forState:UIControlStateNormal];
+}
+
+//MARK:===============================================================
+//MARK:                     < block >
+//MARK:===============================================================
+-(void) timeBlock {
+    if (self.playing) {
+        //1. 播放中时,播放下帧;
+        long lastIndex = (long)self.models.count - 1;//models.count是UInt类型,为0条时再-1会越界;
+        if (self.curIndex < lastIndex) {
+            self.curIndex ++;
+            [self refreshDisplay];
+        }else{
+            //2. 播放完成时,停止计时器,停止播放;
+            self.playing = false;
+            NSLog(@"播放完成");
+        }
+    }
 }
 
 //MARK:===============================================================
@@ -233,25 +247,36 @@
 }
 
 - (IBAction)saveBtnOnClicked:(id)sender {
-    [self saveTVideo:@"下飞直击录制"];
+    [self.tvideoWindow open];
 }
 
 - (IBAction)readBtnOnClicked:(id)sender {
 }
 
--(void) timeBlock {
-    if (self.playing) {
-        //1. 播放中时,播放下帧;
-        long lastIndex = (long)self.models.count - 1;//models.count是UInt类型,为0条时再-1会越界;
-        if (self.curIndex < lastIndex) {
-            self.curIndex ++;
-            [self refreshDisplay];
-        }else{
-            //2. 播放完成时,停止计时器,停止播放;
-            self.playing = false;
-            NSLog(@"播放完成");
-        }
-    }
+//MARK:===============================================================
+//MARK:                     < TVideoWindowDelegate >
+//MARK:===============================================================
+-(void) tvideo_ClearModels{
+    [self.models removeAllObjects];
+    [self refreshDisplay];
+}
+
+-(void) tvideo_Save:(NSString*)fileName{
+    //1. 数据准备;
+    NSString *cachePath = kCachePath;
+    NSURL *fileURL = [NSURL fileURLWithPath:STRFORMAT(@"%@/tvideo/%@.tv",cachePath,fileName)];
+    NSData *data = OBJ2DATA(self.models);
+    BOOL success = [data writeToURL:fileURL options:NSDataWritingAtomic error:nil];
+    
+    //2. 备份UserDefaults记忆;
+    NSLog(@"======> 存储思维录像《%@.tv》%@",fileName,success ? @"成功" : @"失败");
+}
+
+-(void) tvideo_Read:(NSString*)fileName{
+    //TODOTOMORROW20220325
+    
+    
+    
 }
 
 @end

@@ -10,6 +10,7 @@
 
 #define kHHmmss @"HH:mm:ss"
 #define kHHmmssSSS @"HH:mm:ss:SSS"
+#define kyyyyMMddHHmmss @"yyyy-MM-dd HH:mm:ss"
 #define kyyyyMMddHHmmssSSS @"yyyy-MM-dd HH:mm:ss:SSS"
 #define kyyyyMMddHHmmssSSS_Simple @"yyyyMMddHHmmssSSS"
 static int logLineNum;
@@ -51,6 +52,7 @@ static int logLineNum;
 //date2Str (性能说明: stringFromDate较慢,所以批量处理时建议使用异步);
 +(NSString*) date2HHMMSS;
 +(NSString*) date2HHMMSSSSS;
++(NSString*) date2yyyyMMddHHmmss;
 +(NSString*) date2yyyyMMddHHmmssSSS:(NSDate*)date;
 +(NSString*) date2Str:(NSString*)format date:(NSDate*)date;
 

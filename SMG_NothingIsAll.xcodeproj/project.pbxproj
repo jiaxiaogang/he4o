@@ -29,6 +29,8 @@
 		081B3ADB1F6E2CCD008A7F36 /* AINet.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3ADA1F6E2CCD008A7F36 /* AINet.m */; };
 		081BD08825B94F1B003C3038 /* ReasonDemandModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 081BD08725B94F1B003C3038 /* ReasonDemandModel.m */; };
 		081BD08B25B94F24003C3038 /* PerceptDemandModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 081BD08A25B94F24003C3038 /* PerceptDemandModel.m */; };
+		082075F627EDFFE70005D7A8 /* TVideoWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 082075F427EDFFE70005D7A8 /* TVideoWindow.xib */; };
+		082075F727EDFFE70005D7A8 /* TVideoWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 082075F527EDFFE70005D7A8 /* TVideoWindow.m */; };
 		08236CEC21A23439008D8761 /* AIVisionAlgsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08236CEB21A23439008D8761 /* AIVisionAlgsModel.m */; };
 		08250AE0228112C000FC497C /* XGWedis.m in Sources */ = {isa = PBXBuildFile; fileRef = 08250ADF228112C000FC497C /* XGWedis.m */; };
 		0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 0825AFF21F748F67003B86C7 /* NSObject+Extension.m */; };
@@ -225,6 +227,9 @@
 		081BD08725B94F1B003C3038 /* ReasonDemandModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReasonDemandModel.m; sourceTree = "<group>"; };
 		081BD08925B94F24003C3038 /* PerceptDemandModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PerceptDemandModel.h; sourceTree = "<group>"; };
 		081BD08A25B94F24003C3038 /* PerceptDemandModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PerceptDemandModel.m; sourceTree = "<group>"; };
+		082075F327EDFFE60005D7A8 /* TVideoWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TVideoWindow.h; sourceTree = "<group>"; };
+		082075F427EDFFE70005D7A8 /* TVideoWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TVideoWindow.xib; sourceTree = "<group>"; };
+		082075F527EDFFE70005D7A8 /* TVideoWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TVideoWindow.m; sourceTree = "<group>"; };
 		08236CEA21A23439008D8761 /* AIVisionAlgsModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIVisionAlgsModel.h; sourceTree = "<group>"; };
 		08236CEB21A23439008D8761 /* AIVisionAlgsModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIVisionAlgsModel.m; sourceTree = "<group>"; };
 		08250ADE228112C000FC497C /* XGWedis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XGWedis.h; sourceTree = "<group>"; };
@@ -561,6 +566,9 @@
 				0802962527E4D77D0050C767 /* TVPanelView.h */,
 				0802962627E4D77D0050C767 /* TVPanelView.m */,
 				0802962827E4D7920050C767 /* TVPanelView.xib */,
+				082075F327EDFFE60005D7A8 /* TVideoWindow.h */,
+				082075F527EDFFE70005D7A8 /* TVideoWindow.m */,
+				082075F427EDFFE70005D7A8 /* TVideoWindow.xib */,
 			);
 			path = Panel;
 			sourceTree = "<group>";
@@ -1582,6 +1590,7 @@
 				08AF45581E97D0B500377887 /* LaunchScreen.storyboard in Resources */,
 				0858C5E921950CAA00951BA5 /* FoodView.xib in Resources */,
 				08A5D5DA22AF1E9D00E56BB4 /* NVView.xib in Resources */,
+				082075F627EDFFE70005D7A8 /* TVideoWindow.xib in Resources */,
 				0858C5B02194F5E400951BA5 /* CarView.xib in Resources */,
 				0889258122B0703700A0DBDD /* NVModuleView.xib in Resources */,
 				0802962927E4D7920050C767 /* TVPanelView.xib in Resources */,
@@ -1662,6 +1671,7 @@
 				0858C5CD2194F8B000951BA5 /* MASConstraintMaker.m in Sources */,
 				88BC09DA20B4ECAB0006ABEF /* XGRedisUtil.m in Sources */,
 				083112F21F05E12600051DE6 /* MBProgressHUD+Add.m in Sources */,
+				082075F727EDFFE70005D7A8 /* TVideoWindow.m in Sources */,
 				08A232E5243557110090D4B5 /* TOUtils.m in Sources */,
 				084F132226FF6E1200E9D455 /* AITest.m in Sources */,
 				08366B9327E00232004EBBB9 /* TOMVisionFoView.m in Sources */,

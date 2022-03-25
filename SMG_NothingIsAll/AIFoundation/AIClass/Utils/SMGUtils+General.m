@@ -164,6 +164,9 @@
 +(NSString*) date2HHMMSSSSS{
     return [SMGUtils date2Str:kHHmmssSSS date:nil];
 }
++(NSString*) date2yyyyMMddHHmmss{
+    return [SMGUtils date2Str:kyyyyMMddHHmmss date:nil];
+}
 +(NSString*) date2yyyyMMddHHmmssSSS:(NSDate*)date{
     return [SMGUtils date2Str:kyyyyMMddHHmmssSSS date:date];
 }
