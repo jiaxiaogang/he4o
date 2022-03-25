@@ -72,6 +72,6 @@
  *  @version
  *      2022.03.23: 来源标识为: TOModel初次实例化时的内存地址 (参考25185-方案1-实践1);
  */
-@property (strong, nonatomic) NSString *fromIden;
+@property (strong, nonatomic) NSString *selfIden;
 
 @end

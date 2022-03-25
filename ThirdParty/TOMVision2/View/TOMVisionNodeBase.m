@@ -65,7 +65,7 @@
  *      2. 比如: 多帧matchFo都生成了RDemand,但cutIndex等细节有差异,是不能复用的;
  *  @version
  *      2022.03.20: 用内存地址是否匹配来判断equal,因为树上可能同时出现多处同节点,且它们的base也一样 (导致过度复用);
- *      2022.03.23: 改用fromIden替代内存地址 (参考25185-方案1-优点);
+ *      2022.03.23: 改用selfIden替代内存地址 (参考25185-方案1-优点);
  */
 -(BOOL) isEqualByData:(TOModelBase*)checkData{
     //BOOL dataEqual = [self.data isEqual:checkData];
@@ -73,7 +73,7 @@
     //BOOL baseSeemPit = self.data.baseOrGroup && [self.data.baseOrGroup isEqual:checkData.baseOrGroup];
     //BOOL baseEqual = baseSeemNil || baseSeemPit;
     //return dataEqual && baseEqual;
-    return [self.data.fromIden isEqualToString:checkData.fromIden];
+    return [self.data.selfIden isEqualToString:checkData.selfIden];
 }
 
 -(void) scaleContainer:(CGFloat)scale{

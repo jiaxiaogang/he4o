@@ -21,21 +21,21 @@
 /**
  *  MARK:--------------------来源标识--------------------
  */
--(NSString *)fromIden{
-    if (!_fromIden) {
-        _fromIden = STRFORMAT(@"%p",self);
+-(NSString *)selfIden{
+    if (!_selfIden) {
+        _selfIden = STRFORMAT(@"%p",self);
     }
-    return _fromIden;
+    return _selfIden;
 }
 
 /**
  *  MARK:--------------------isEqual--------------------
  *  @version
  *      2022.03.19: content_p为空时,返回super.Equal(),因为Demand的content_p全是空的;
- *      2022.03.23: 改成用fromIden对比,因为它是初次内存唯一,content_p一致并不能说明一致;
+ *      2022.03.23: 改成用selfIden对比,因为它是初次内存唯一,content_p一致并不能说明一致;
  */
 -(BOOL) isEqual:(TOModelBase*)object{
-    return [self.fromIden isEqual:object.fromIden];
+    return [self.selfIden isEqual:object.selfIden];
 }
 
 -(void)setStatus:(TOModelStatus)status{
@@ -52,7 +52,7 @@
         self.content_p = [aDecoder decodeObjectForKey:@"content_p"];
         self.status = [aDecoder decodeIntegerForKey:@"status"];
         self.baseOrGroup = [aDecoder decodeObjectForKey:@"baseOrGroup"];
-        self.fromIden = [aDecoder decodeObjectForKey:@"fromIden"];
+        self.selfIden = [aDecoder decodeObjectForKey:@"selfIden"];
     }
     return self;
 }
@@ -61,7 +61,7 @@
     [aCoder encodeObject:self.content_p forKey:@"content_p"];
     [aCoder encodeInteger:self.status forKey:@"status"];
     [aCoder encodeObject:self.baseOrGroup forKey:@"baseOrGroup"];
-    [aCoder encodeObject:self.fromIden forKey:@"fromIden"];
+    [aCoder encodeObject:self.selfIden forKey:@"selfIden"];
 }
 
 @end
