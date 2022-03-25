@@ -10,6 +10,7 @@
 #import "MASConstraint.h"
 #import "View+MASAdditions.h"
 #import "TOMVisionItemModel.h"
+#import "PINDiskCache.h"
 
 @interface TVPanelView ()
 
@@ -125,6 +126,17 @@
     }
 }
 
+-(void) saveTVideo:(NSString*)saveName{
+    //1. 数据准备;
+    NSString *cachePath = kCachePath;
+    NSMutableString *savePath = [[NSMutableString alloc] initWithFormat:@"%@/tvideo/%@",cachePath,saveName];
+    
+    //2. 备份UserDefaults记忆;
+    PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:savePath];
+    [cache setObject:self.models forKey:@"video.file"];
+    NSLog(@"======> 存储思维录像成功: (%@)",savePath);
+}
+
 //MARK:===============================================================
 //MARK:                     < getset >
 //MARK:===============================================================
@@ -218,6 +230,13 @@
 
 - (IBAction)closeBtnClicked:(id)sender {
     [self.delegate panelCloseBtnClicked];
+}
+
+- (IBAction)saveBtnOnClicked:(id)sender {
+    [self saveTVideo:@"下飞直击录制"];
+}
+
+- (IBAction)readBtnOnClicked:(id)sender {
 }
 
 -(void) timeBlock {

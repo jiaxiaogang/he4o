@@ -11,7 +11,7 @@
 /**
  *  MARK:--------------------用于存单帧TOModel数据--------------------
  */
-@interface TOMVisionItemModel : NSObject
+@interface TOMVisionItemModel : NSObject <NSCoding>
 
 @property (assign, nonatomic) NSInteger loopId; //当前循环Id (自增);
 @property (strong, nonatomic) NSArray *roots;   //当前帧在DemandManager中的loopCache快照;
