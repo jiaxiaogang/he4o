@@ -66,17 +66,17 @@
 //MARK:                     < publicMethod >
 //MARK:===============================================================
 -(void) open{
-    [self setHidden:false];
+    [theApp.window addSubview:self];
 }
 
 -(void) close{
-    [self setHidden:true];
+    [self removeFromSuperview];
 }
 
 -(void) refreshDisplay{
     //1. 重加载数据_加载save下的路径;
     NSString *cachePath = kCachePath;
-    NSArray *paths = [NSFile_Extension subFolders:STRFORMAT(@"%@/tvideo",cachePath)];
+    NSArray *paths = [NSFile_Extension subFiles:STRFORMAT(@"%@/tvideo",cachePath)];
     
     //2. 按创建时间排序;
     paths = [paths sortedArrayUsingComparator:^NSComparisonResult(NSString *path1, NSString *path2) {

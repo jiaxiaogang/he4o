@@ -106,7 +106,7 @@
  */
 -(void) refreshDisplay{
     //1. 数据检查;
-    if (!self.model || self.isHidden) return;
+    if (self.isHidden) return;
     
     //2. 取出旧有节点缓存 & 并清空画板;
     NSArray *oldSubViews = [self.contentView subViews_AllDeepWithClass:TOMVisionNodeBase.class];
@@ -115,6 +115,7 @@
     //2. 刷新显示_计算根节点宽度 (参考25182-4);
     //注: 排版为[-NNN--NNN-],其中-为节点间距,NNN为节点宽度,占60%;
     //注: rootGroupW最大宽度为250;
+    if (!self.model) return;
     CGFloat rootGroupW = MIN(ScreenWidth / self.model.roots.count, 420);
     CGFloat rootNodeW = rootGroupW * 0.6f;
     for (DemandModel *demand in self.model.roots) {
@@ -250,10 +251,11 @@
 //MARK:                     < TVPanelViewDelegate >
 //MARK:===============================================================
 -(void) panelPlay:(TOMVisionItemModel*)model{
-    if (![model isEqual:self.model]) {
-        self.model = model;
-        [self refreshDisplay];
+    if (model && [model isEqual:self.model]) {
+        return;
     }
+    self.model = model;
+    [self refreshDisplay];
 }
 
 -(void) panelCloseBtnClicked{

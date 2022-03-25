@@ -60,7 +60,6 @@
     
     //tvideoWindow
     self.tvideoWindow = [[TVideoWindow alloc] init];
-    [self addSubview:self.tvideoWindow];
     self.tvideoWindow.delegate = self;
 }
 
@@ -250,9 +249,6 @@
     [self.tvideoWindow open];
 }
 
-- (IBAction)readBtnOnClicked:(id)sender {
-}
-
 //MARK:===============================================================
 //MARK:                     < TVideoWindowDelegate >
 //MARK:===============================================================
@@ -273,10 +269,17 @@
 }
 
 -(void) tvideo_Read:(NSString*)fileName{
-    //TODOTOMORROW20220325
-    
-    
-    
+    //1. 数据准备
+    NSString *cachePath = kCachePath;
+    NSURL *fileURL = [NSURL fileURLWithPath:STRFORMAT(@"%@/tvideo/%@",cachePath,fileName)];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        @try {
+            NSArray *object = [NSKeyedUnarchiver unarchiveObjectWithFile:[fileURL path]];
+            [self.models removeAllObjects];
+            [self.models addObjectsFromArray:object];
+            [self refreshDisplay];
+        }@catch (NSException *exception) {}
+    });
 }
 
 @end

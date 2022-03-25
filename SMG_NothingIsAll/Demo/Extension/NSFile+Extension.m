@@ -10,6 +10,17 @@
 
 @implementation NSFile_Extension
 
++(NSArray*)subFiles:(NSString*)path{
+    //1. 数据准备
+    NSArray *subPaths = [self subPaths:path];
+    
+    //2. 筛选文件夹返回
+    return [SMGUtils filterArr:subPaths checkValid:^BOOL(NSString *subPath) {
+        BOOL isDirectory = YES;
+        return [[NSFileManager defaultManager] fileExistsAtPath:subPath isDirectory:&isDirectory] && !isDirectory;
+    }];
+}
+
 + (NSArray*)subFiles_AllDeep:(NSString*)path{
     //1. 数据准备
     NSMutableArray *array = [[NSMutableArray alloc] init];

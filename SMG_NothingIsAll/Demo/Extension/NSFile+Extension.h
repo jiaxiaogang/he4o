@@ -11,6 +11,7 @@
 @interface NSFile_Extension : NSObject
 
 //所有子文件收集 notnull
++(NSArray*)subFiles:(NSString*)path;
 + (NSArray*)subFiles_AllDeep:(NSString*)dirString;
 
 //所有子文件夹收集 notnull;
