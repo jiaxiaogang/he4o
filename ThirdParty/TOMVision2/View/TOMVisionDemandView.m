@@ -41,7 +41,7 @@
     }else if(score > 0){
         [self.headerBtn setTitleColor:UIColor.greenColor forState:UIControlStateNormal];
     }else {
-        [self.headerBtn setTitleColor:UIColor.grayColor forState:UIControlStateNormal];
+        [self.headerBtn setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
     }
     
     //4. 类型text

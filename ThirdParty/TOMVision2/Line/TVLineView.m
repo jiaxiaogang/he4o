@@ -40,7 +40,7 @@
     self.lineView = [[UIView alloc] init];
     [self.lineView setBackgroundColor:UIColorWithRGBHex(0xBB5500)];
     [self addSubview:self.lineView];
-    [self.lineView setAlpha:0.2f];
+    [self.lineView setAlpha:0.8f];
     [self.lineView.layer setMasksToBounds:false];
 }
 
@@ -79,8 +79,6 @@
     //7. 旋转指向方向;
     [self.layer setTransform:CATransform3DMakeRotation(angle, 0, 0, 1)];
     self.center = CGPointMake(centerX, centerY);
-    
-    
 }
 
 @end

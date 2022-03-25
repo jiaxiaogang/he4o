@@ -12,14 +12,14 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TVPanelView">
             <connections>
                 <outlet property="containerView" destination="X4m-Bu-VDS" id="Z77-rL-teb"/>
-                <outlet property="frameBtn" destination="SoA-Rv-0Cg" id="1PH-Jv-RdZ"/>
-                <outlet property="loopBtn" destination="WYa-gM-2j9" id="v2a-vD-h6Q"/>
+                <outlet property="frameLab" destination="xZS-VL-f6l" id="0ke-so-HGV"/>
+                <outlet property="loopLab" destination="xvx-a6-30F" id="Cx8-zD-fkR"/>
                 <outlet property="playBtn" destination="24m-LP-Gkc" id="F6c-88-Bj9"/>
                 <outlet property="plusBtn" destination="EED-69-c0I" id="D0Q-ak-PYE"/>
                 <outlet property="sliderView" destination="Zj4-vQ-Cas" id="U1g-hn-JtI"/>
                 <outlet property="speedSegment" destination="2sX-8J-nQ2" id="2Re-l4-dv0"/>
                 <outlet property="subBtn" destination="7Q1-qM-wyy" id="t3j-Ko-rJ3"/>
-                <outlet property="timeBtn" destination="kod-Kk-AEY" id="XS9-bB-PCa"/>
+                <outlet property="timeLab" destination="8WI-2t-JSH" id="0IP-ud-G29"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
@@ -56,69 +56,6 @@
                         <action selector="speedSegmentChanged:" destination="-1" eventType="valueChanged" id="P9a-xf-732"/>
                     </connections>
                 </segmentedControl>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SoA-Rv-0Cg">
-                    <rect key="frame" x="0.0" y="1" width="95" height="12"/>
-                    <color key="backgroundColor" red="0.92233105959999995" green="0.92233105959999995" blue="0.92233105959999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="12" id="3gL-fL-Zhr"/>
-                        <constraint firstAttribute="width" constant="95" id="oxY-Hl-JlH"/>
-                    </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                    <state key="normal" title="帧数: 0/0"/>
-                    <userDefinedRuntimeAttributes>
-                        <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
-                            <integer key="value" value="2"/>
-                        </userDefinedRuntimeAttribute>
-                        <userDefinedRuntimeAttribute type="color" keyPath="layer.borderColor">
-                            <color key="value" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        </userDefinedRuntimeAttribute>
-                    </userDefinedRuntimeAttributes>
-                    <connections>
-                        <action selector="frameBtnClicked:" destination="-1" eventType="touchUpInside" id="EYX-AJ-Lij"/>
-                    </connections>
-                </button>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kod-Kk-AEY">
-                    <rect key="frame" x="0.0" y="14" width="95" height="12"/>
-                    <color key="backgroundColor" red="0.92233105959999995" green="0.92233105959999995" blue="0.92233105959999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="95" id="OYA-3g-5fO"/>
-                        <constraint firstAttribute="height" constant="12" id="a57-sy-6c1"/>
-                    </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                    <state key="normal" title="时长: --/--"/>
-                    <userDefinedRuntimeAttributes>
-                        <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
-                            <integer key="value" value="2"/>
-                        </userDefinedRuntimeAttribute>
-                        <userDefinedRuntimeAttribute type="color" keyPath="layer.borderColor">
-                            <color key="value" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        </userDefinedRuntimeAttribute>
-                    </userDefinedRuntimeAttributes>
-                    <connections>
-                        <action selector="timeBtnClicked:" destination="-1" eventType="touchUpInside" id="XJO-Uz-QgG"/>
-                    </connections>
-                </button>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WYa-gM-2j9">
-                    <rect key="frame" x="0.0" y="27" width="95" height="12"/>
-                    <color key="backgroundColor" red="0.97668207699999998" green="1" blue="0.69268770619999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="95" id="0gi-gY-rz0"/>
-                        <constraint firstAttribute="height" constant="12" id="3no-M4-Ddi"/>
-                    </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                    <state key="normal" title="循环: 0/0"/>
-                    <userDefinedRuntimeAttributes>
-                        <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
-                            <integer key="value" value="2"/>
-                        </userDefinedRuntimeAttribute>
-                        <userDefinedRuntimeAttribute type="color" keyPath="layer.borderColor">
-                            <color key="value" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        </userDefinedRuntimeAttribute>
-                    </userDefinedRuntimeAttributes>
-                    <connections>
-                        <action selector="loopBtnClicked:" destination="-1" eventType="touchUpInside" id="29Z-K0-Ug6"/>
-                    </connections>
-                </button>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lJM-PU-Yce">
                     <rect key="frame" x="0.0" y="0.0" width="630" height="1"/>
                     <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -197,41 +134,74 @@
                         <action selector="closeBtnClicked:" destination="-1" eventType="touchUpInside" id="RRd-Xu-7vW"/>
                     </connections>
                 </button>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="循环: 0/0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xvx-a6-30F">
+                    <rect key="frame" x="0.0" y="29.5" width="95" height="13.5"/>
+                    <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="95" id="UGz-Hr-1Je"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="时长: --/--" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8WI-2t-JSH">
+                    <rect key="frame" x="0.0" y="15.5" width="95" height="13"/>
+                    <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="95" id="1rB-9e-DzO"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="帧数: 0/0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xZS-VL-f6l">
+                    <rect key="frame" x="0.0" y="1" width="95" height="13.5"/>
+                    <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="95" id="D6r-VA-uhz"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
-                <constraint firstItem="kod-Kk-AEY" firstAttribute="top" secondItem="SoA-Rv-0Cg" secondAttribute="bottom" constant="1" id="0uY-vn-ySZ"/>
                 <constraint firstAttribute="trailing" secondItem="EED-69-c0I" secondAttribute="trailing" constant="32" id="3IH-Fe-eqQ"/>
                 <constraint firstAttribute="trailing" secondItem="Dra-01-dGQ" secondAttribute="trailing" id="4yp-aC-Udo"/>
                 <constraint firstItem="7Q1-qM-wyy" firstAttribute="top" secondItem="lJM-PU-Yce" secondAttribute="bottom" id="5t8-6w-SZs"/>
                 <constraint firstItem="Zj4-vQ-Cas" firstAttribute="top" secondItem="X4m-Bu-VDS" secondAttribute="top" constant="-8" id="61J-zW-flk"/>
-                <constraint firstItem="WYa-gM-2j9" firstAttribute="top" secondItem="kod-Kk-AEY" secondAttribute="bottom" constant="1" id="73f-Ae-ZA3"/>
                 <constraint firstItem="Dra-01-dGQ" firstAttribute="top" secondItem="X4m-Bu-VDS" secondAttribute="top" constant="1" id="7Fn-g6-LGI"/>
-                <constraint firstItem="kod-Kk-AEY" firstAttribute="leading" secondItem="X4m-Bu-VDS" secondAttribute="leading" id="82p-NB-JUE"/>
+                <constraint firstItem="xvx-a6-30F" firstAttribute="height" secondItem="xZS-VL-f6l" secondAttribute="height" id="BEE-Z2-rpm"/>
                 <constraint firstItem="EED-69-c0I" firstAttribute="top" secondItem="lJM-PU-Yce" secondAttribute="bottom" id="Ito-gq-Cpv"/>
                 <constraint firstItem="24m-LP-Gkc" firstAttribute="centerX" secondItem="X4m-Bu-VDS" secondAttribute="centerX" id="JEA-L2-Onu"/>
                 <constraint firstAttribute="bottom" secondItem="3eE-Ui-Qib" secondAttribute="bottom" id="JT8-hN-gFi"/>
+                <constraint firstItem="8WI-2t-JSH" firstAttribute="height" secondItem="xZS-VL-f6l" secondAttribute="height" id="Koe-ha-llW"/>
                 <constraint firstAttribute="bottom" secondItem="EED-69-c0I" secondAttribute="bottom" id="Lsq-3L-kET"/>
                 <constraint firstAttribute="trailing" secondItem="3eE-Ui-Qib" secondAttribute="trailing" id="MeO-TE-oby"/>
                 <constraint firstItem="Zj4-vQ-Cas" firstAttribute="leading" secondItem="X4m-Bu-VDS" secondAttribute="leading" constant="100" id="Qyq-wQ-ABS"/>
+                <constraint firstItem="xvx-a6-30F" firstAttribute="leading" secondItem="X4m-Bu-VDS" secondAttribute="leading" id="RqD-kn-Kd9"/>
+                <constraint firstItem="xvx-a6-30F" firstAttribute="top" secondItem="8WI-2t-JSH" secondAttribute="bottom" constant="1" id="S1E-gK-aUc"/>
                 <constraint firstItem="EED-69-c0I" firstAttribute="leading" secondItem="7Q1-qM-wyy" secondAttribute="trailing" constant="1" id="SjZ-BJ-dkT"/>
                 <constraint firstAttribute="bottom" secondItem="d8B-gS-vDl" secondAttribute="bottom" id="Tx6-EX-jL7"/>
-                <constraint firstItem="SoA-Rv-0Cg" firstAttribute="leading" secondItem="X4m-Bu-VDS" secondAttribute="leading" id="W5C-hD-ucD"/>
+                <constraint firstAttribute="bottom" secondItem="xvx-a6-30F" secondAttribute="bottom" id="UzO-Qh-pVa"/>
                 <constraint firstItem="24m-LP-Gkc" firstAttribute="leading" secondItem="2sX-8J-nQ2" secondAttribute="trailing" constant="20" id="XCc-lN-yut"/>
+                <constraint firstItem="8WI-2t-JSH" firstAttribute="leading" secondItem="X4m-Bu-VDS" secondAttribute="leading" id="XMf-fC-Wob"/>
+                <constraint firstItem="xZS-VL-f6l" firstAttribute="top" secondItem="X4m-Bu-VDS" secondAttribute="top" constant="1" id="XXp-Q0-1hs"/>
                 <constraint firstAttribute="bottom" secondItem="7Q1-qM-wyy" secondAttribute="bottom" id="Za0-SZ-JPr"/>
                 <constraint firstItem="d8B-gS-vDl" firstAttribute="leading" secondItem="24m-LP-Gkc" secondAttribute="trailing" constant="20" id="b7v-m0-yBf"/>
                 <constraint firstAttribute="trailing" secondItem="d8B-gS-vDl" secondAttribute="trailing" constant="100" id="bSj-6q-uQe"/>
                 <constraint firstAttribute="bottom" secondItem="2sX-8J-nQ2" secondAttribute="bottom" id="cn5-gB-Rch"/>
                 <constraint firstItem="2sX-8J-nQ2" firstAttribute="leading" secondItem="X4m-Bu-VDS" secondAttribute="leading" constant="100" id="dJy-KX-LII"/>
                 <constraint firstItem="3eE-Ui-Qib" firstAttribute="leading" secondItem="EED-69-c0I" secondAttribute="trailing" constant="1" id="fNJ-l1-jG6"/>
+                <constraint firstItem="xZS-VL-f6l" firstAttribute="leading" secondItem="X4m-Bu-VDS" secondAttribute="leading" id="g3O-fU-lFm"/>
                 <constraint firstItem="Dra-01-dGQ" firstAttribute="leading" secondItem="EED-69-c0I" secondAttribute="trailing" constant="1" id="hAE-RV-gVu"/>
-                <constraint firstItem="SoA-Rv-0Cg" firstAttribute="top" secondItem="X4m-Bu-VDS" secondAttribute="top" constant="1" id="mDZ-vc-mi7"/>
                 <constraint firstAttribute="bottom" secondItem="24m-LP-Gkc" secondAttribute="bottom" id="pSq-fF-DsQ"/>
                 <constraint firstAttribute="trailing" secondItem="Zj4-vQ-Cas" secondAttribute="trailing" constant="100" id="pfi-xx-mci"/>
                 <constraint firstItem="lJM-PU-Yce" firstAttribute="top" secondItem="X4m-Bu-VDS" secondAttribute="top" id="rdp-41-9pf"/>
                 <constraint firstItem="lJM-PU-Yce" firstAttribute="leading" secondItem="X4m-Bu-VDS" secondAttribute="leading" id="reu-gQ-b1q"/>
                 <constraint firstAttribute="trailing" secondItem="lJM-PU-Yce" secondAttribute="trailing" id="txq-re-zlC"/>
-                <constraint firstItem="WYa-gM-2j9" firstAttribute="leading" secondItem="X4m-Bu-VDS" secondAttribute="leading" id="z2v-kI-bW3"/>
+                <constraint firstItem="8WI-2t-JSH" firstAttribute="top" secondItem="xZS-VL-f6l" secondAttribute="bottom" constant="1" id="uVA-3o-i4Y"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <point key="canvasLocation" x="388.80000000000001" y="20.239880059970016"/>

@@ -19,9 +19,9 @@
 @property (weak, nonatomic) IBOutlet UISlider *sliderView;
 @property (weak, nonatomic) IBOutlet UIButton *playBtn;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *speedSegment;
-@property (weak, nonatomic) IBOutlet UIButton *frameBtn;
-@property (weak, nonatomic) IBOutlet UIButton *timeBtn;
-@property (weak, nonatomic) IBOutlet UIButton *loopBtn;
+@property (weak, nonatomic) IBOutlet UILabel *frameLab;
+@property (weak, nonatomic) IBOutlet UILabel *timeLab;
+@property (weak, nonatomic) IBOutlet UILabel *loopLab;
 @property (weak, nonatomic) IBOutlet UIButton *plusBtn;
 @property (weak, nonatomic) IBOutlet UIButton *subBtn;
 @property (strong, nonatomic) TVideoWindow *tvideoWindow;
@@ -106,29 +106,29 @@
     //1. 取model
     TOMVisionItemModel *playModel = ARR_INDEX(self.models, self.curIndex);
     TOMVisionItemModel *lastModel = ARR_INDEX_REVERSE(self.models, 0);
-    if (!playModel || !lastModel) return;
+    self.curIndex = MAX(MIN(self.curIndex, (long)self.models.count - 1), 0);
     
     //2. 播放
     [self.delegate panelPlay:playModel];
     
     //3. 更新帧进度和循环数进度;
-    [self.frameBtn setTitle:STRFORMAT(@"帧数: %ld/%ld",self.curIndex + 1,self.models.count) forState:UIControlStateNormal];
-    [self.loopBtn setTitle:STRFORMAT(@"循环: %ld/%ld",playModel.loopId,lastModel.loopId) forState:UIControlStateNormal];
+    self.frameLab.text = STRFORMAT(@"帧数: %ld/%ld",self.curIndex + 1,self.models.count);
+    self.loopLab.text = STRFORMAT(@"循环: %ld/%ld",playModel ? playModel.loopId : 0,lastModel ? lastModel.loopId : 0);
     
     //4. 更新进度条 (当前sliderValue与curIndex不匹配时,更新进度条);
     if (refreshSlider) {
-        CGFloat sliderValue = self.curIndex / (float)(self.models.count - 1);
+        CGFloat sliderValue = self.curIndex / (float)((long)self.models.count - 1);
         [self.sliderView setValue:sliderValue];
     }
     
     //4. 更新时间进度;
     if (self.speed == 0) {
-        [self.timeBtn setTitle:@"时长: --/--" forState:UIControlStateNormal];
+        self.timeLab.text = @"时长: --/--";
     }else{
         NSInteger allS = self.models.count / self.speed;
         NSInteger curS = self.sliderView.value * allS;
         NSString *timeStr = STRFORMAT(@"时长: %ld:%ld/%ld:%ld",curS / 60,curS % 60,allS / 60,allS % 60);
-        [self.timeBtn setTitle:timeStr forState:UIControlStateNormal];
+        self.timeLab.text = timeStr;
     }
 }
 
@@ -172,17 +172,8 @@
 //MARK:===============================================================
 //MARK:                     < onclick >
 //MARK:===============================================================
-- (IBAction)loopBtnClicked:(id)sender {
-}
-
-- (IBAction)timeBtnClicked:(id)sender {
-}
-
-- (IBAction)frameBtnClicked:(id)sender {
-}
-
 - (IBAction)sliderChanged:(UISlider*)sender {
-    self.curIndex = (self.models.count - 1) * sender.value;
+    self.curIndex = ((long)self.models.count - 1) * sender.value;
     [self refreshDisplay:false];
 }
 
@@ -228,14 +219,14 @@
 }
 
 - (IBAction)plusBtnClicked:(id)sender {
-    if (!self.playing && self.curIndex < self.models.count - 1) {
+    if (self.curIndex < (long)self.models.count - 1) {
         self.curIndex++;
         [self refreshDisplay];
     }
 }
 
 - (IBAction)subBtnClicked:(id)sender {
-    if (!self.playing && self.curIndex > 0) {
+    if (self.curIndex > 0) {
         self.curIndex--;
         [self refreshDisplay];
     }
@@ -274,10 +265,15 @@
     NSURL *fileURL = [NSURL fileURLWithPath:STRFORMAT(@"%@/tvideo/%@",cachePath,fileName)];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         @try {
+            //2. 异步取数据;
             NSArray *object = [NSKeyedUnarchiver unarchiveObjectWithFile:[fileURL path]];
-            [self.models removeAllObjects];
-            [self.models addObjectsFromArray:object];
-            [self refreshDisplay];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                //3. 主线程同步更新UI;
+                [self.models removeAllObjects];
+                [self.models addObjectsFromArray:object];
+                [self refreshDisplay];
+            });
         }@catch (NSException *exception) {}
     });
 }
