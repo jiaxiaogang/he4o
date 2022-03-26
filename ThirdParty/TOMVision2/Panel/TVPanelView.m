@@ -12,6 +12,7 @@
 #import "TOMVisionItemModel.h"
 #import "PINDiskCache.h"
 #import "TVideoWindow.h"
+#import "TVUtil.h"
 
 @interface TVPanelView () <TVideoWindowDelegate>
 
@@ -27,9 +28,10 @@
 @property (weak, nonatomic) IBOutlet UIButton *subBtn;
 @property (strong, nonatomic) TVideoWindow *tvideoWindow;
 @property (assign, nonatomic) BOOL playing;             //播放中;
-@property (assign, nonatomic) NSInteger curIndex;       //当前帧
+@property (assign, nonatomic) NSInteger curIndex;       //当前播放中变数下标 (用变数下标可取得帧下标和变数子下标)
 @property (assign, nonatomic) CGFloat speed;            //播放速度 (其中0为直播);
 @property (strong, nonatomic) NSTimer *timer;           //用于播放时计时触发器;
+@property (strong, nonatomic) NSMutableDictionary *changeDic;   //变化数字典 <K:后帧下标, V:变化数组>;
 
 @end
 
@@ -66,6 +68,7 @@
 
 -(void) initData{
     self.models = [[NSMutableArray alloc] init];
+    self.changeDic = [[NSMutableDictionary alloc] init];
     self.playing = true;
     self.speed = 0;
     self.curIndex = 0;
@@ -76,7 +79,6 @@
 
 -(void) updateFrame:(BOOL)newLoop{
     //1. 数据检查;
-    //if (!self.isOpen && !self.forceMode) return;
     if (theTC.outModelManager.getAllDemand.count <= 0) {
         return;
     }
@@ -93,7 +95,11 @@
         newFrame.loopId = oldLoopId + 1;
     }
     
-    //3. 当前直播播放中,则实时更新;
+    //4. 计算变化数 (也不大耗能,就全重算吧);
+    [self.changeDic removeAllObjects];
+    [self.changeDic setDictionary:[TVUtil getChange_List:self.models]];
+    
+    //5. 当前直播播放中,则实时更新;
     if (self.playing && self.speed == 0) {
         self.curIndex = self.models.count - 1;
         [self refreshDisplay];
@@ -122,7 +128,7 @@
         [self.sliderView setValue:sliderValue];
     }
     
-    //4. 更新时间进度;
+    //5. 更新时间进度;
     if (self.speed == 0) {
         self.timeLab.text = @"时长: --/--";
     }else{
@@ -131,6 +137,15 @@
         NSString *timeStr = STRFORMAT(@"时长: %ld:%ld/%ld:%ld",curS / 60,curS % 60,allS / 60,allS % 60);
         self.timeLab.text = timeStr;
     }
+    
+    //6. 更新变数;
+    NSInteger curC = 0, allC = 0;
+    for (NSNumber *key in self.changeDic.allKeys) {
+        NSArray *value = [self.changeDic objectForKey:key];
+        curC += key.integerValue > self.curIndex ? 0 : MAX(1, value.count);
+        allC += MAX(1, value.count);
+    }
+    self.changeLab.text = STRFORMAT(@"变数: %ld/%ld", curC, allC);
 }
 
 //MARK:===============================================================
@@ -268,11 +283,19 @@
         @try {
             //2. 异步取数据;
             NSArray *object = [NSKeyedUnarchiver unarchiveObjectWithFile:[fileURL path]];
+            
+            //3. 主线程同步数据和UI;
             dispatch_async(dispatch_get_main_queue(), ^{
                 
-                //3. 主线程同步更新UI;
+                //4. 更新models
                 [self.models removeAllObjects];
                 [self.models addObjectsFromArray:object];
+                
+                //5. 计算变化数;
+                [self.changeDic removeAllObjects];
+                [self.changeDic setDictionary:[TVUtil getChange_List:self.models]];
+                
+                //6. 更新UI;
                 [self refreshDisplay];
             });
         }@catch (NSException *exception) {}

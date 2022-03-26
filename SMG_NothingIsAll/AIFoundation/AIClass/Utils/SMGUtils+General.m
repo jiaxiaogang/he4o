@@ -107,7 +107,7 @@
     return (a && [a isKindOfClass:[NSArray class]]) ? a : [NSArray new];
 }
 +(id) arrIndex:(NSArray*)a index:(NSInteger)i{
-    return (a && [a isKindOfClass:[NSArray class]] && a.count > i) ? a[i] : nil;
+    return [self arrIndexIsOk:a index:i] ? a[i] : nil;
 }
 +(id) arrTransIndex:(NSArray*)a index:(NSInteger)i{
     NSInteger index = ARRTOOK(a).count - 1 - i;
