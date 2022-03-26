@@ -45,10 +45,14 @@
     }
     
     //4. 类型text
-    [mStr appendString:Class2Str(NSClassFromString(data.algsType))];
+    if (!ISOK(data, HDemandModel.class)) {
+        [mStr appendString:Class2Str(NSClassFromString(data.algsType))];
+    }
     
     //5. 评分
-    [mStr appendFormat:@"%.1f",score];
+    if (!ISOK(data, HDemandModel.class)) {
+        [mStr appendFormat:@"%.1f",score];
+    }
     
     //6. 显示
     [self.headerBtn setTitle:mStr forState:UIControlStateNormal];

@@ -19,6 +19,7 @@
 @property (weak, nonatomic) IBOutlet UISlider *sliderView;
 @property (weak, nonatomic) IBOutlet UIButton *playBtn;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *speedSegment;
+@property (weak, nonatomic) IBOutlet UILabel *changeLab;
 @property (weak, nonatomic) IBOutlet UILabel *frameLab;
 @property (weak, nonatomic) IBOutlet UILabel *timeLab;
 @property (weak, nonatomic) IBOutlet UILabel *loopLab;
