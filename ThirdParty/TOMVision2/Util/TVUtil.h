@@ -21,4 +21,16 @@
  */
 +(NSArray*) getChange_Item:(TOMVisionItemModel*)itemA itemB:(TOMVisionItemModel*)itemB;
 
+/**
+ *  MARK:--------------------changeDic的变化总数--------------------
+ */
++(NSInteger) count4ChangeDic:(NSDictionary*)changeDic;
+
+/**
+ *  MARK:--------------------changeIndex转index--------------------
+ */
++(NSInteger) mainIndexOfChangeIndex:(NSInteger)changeIndex changeDic:(NSDictionary*)changeDic;
++(NSInteger) subIndexOfChangeIndex:(NSInteger)changeIndex changeDic:(NSDictionary*)changeDic;
++(NSRange) indexOfChangeIndex:(NSInteger)changeIndex changeDic:(NSDictionary*)changeDic;
+
 @end

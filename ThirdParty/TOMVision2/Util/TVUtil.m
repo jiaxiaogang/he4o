@@ -64,4 +64,56 @@
     return result;
 }
 
+/**
+ *  MARK:--------------------changeDic的变化总数--------------------
+ *  @result 取值为1-length
+ */
++(NSInteger) count4ChangeDic:(NSDictionary*)changeDic{
+    //1. 数据准备;
+    changeDic = DICTOOK(changeDic);
+    NSInteger result = 0;
+    
+    //2. 累计changeCount;
+    for (NSArray *value in changeDic.allValues) {
+        result += MAX(1, value.count);
+    }
+    return result;
+}
+
+/**
+ *  MARK:--------------------changeIndex转index--------------------
+ *  @result 返回NSRange的第1位表示mainIndex,第2位表示subIndex
+ *      1. 未找到结果时为-1;
+ *      2. 其中mainIndex和subIndex的范围都是"0-(count-1)";
+ */
++(NSInteger) mainIndexOfChangeIndex:(NSInteger)changeIndex changeDic:(NSDictionary*)changeDic{
+    return [self indexOfChangeIndex:changeIndex changeDic:changeDic].location;
+}
++(NSInteger) subIndexOfChangeIndex:(NSInteger)changeIndex changeDic:(NSDictionary*)changeDic{
+    return [self indexOfChangeIndex:changeIndex changeDic:changeDic].length;
+}
++(NSRange) indexOfChangeIndex:(NSInteger)changeIndex changeDic:(NSDictionary*)changeDic {
+    //1. 数据准备;
+    changeDic = DICTOOK(changeDic);
+    NSInteger sumChangeCount = 0;
+    
+    //2. 累计changeCount;
+    for (NSInteger i = 0; i < changeDic.count; i++) {
+        NSNumber *key = @(i+1); //key为1-changeCount
+        NSArray *value = [changeDic objectForKey:key];
+        
+        //3. 当sum + curCount < changeIndex时,说明还没达到,累计并继续for向下找;
+        if (sumChangeCount + MAX(1, value.count) < changeIndex) {
+            sumChangeCount += MAX(1, value.count);
+        }else {
+            
+            //4. 否则,说明要找的目标就在当前key中;
+            NSInteger mainIndex = key.integerValue - 1;//mainIndex
+            NSInteger subIndex = value.count ? changeIndex - sumChangeCount - 1 : -1;
+            return NSMakeRange(mainIndex, subIndex);
+        }
+    }
+    return NSMakeRange(-1, -1);
+}
+
 @end

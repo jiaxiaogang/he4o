@@ -28,13 +28,12 @@
 @property (weak, nonatomic) IBOutlet UIButton *subBtn;
 @property (strong, nonatomic) TVideoWindow *tvideoWindow;
 @property (assign, nonatomic) BOOL playing;             //播放中;
-@property (assign, nonatomic) NSInteger curIndex;       //当前播放中变数下标 (用变数下标可取得帧下标和变数子下标)
 @property (assign, nonatomic) CGFloat speed;            //播放速度 (其中0为直播);
 @property (strong, nonatomic) NSTimer *timer;           //用于播放时计时触发器;
+@property (assign, nonatomic) NSInteger changeIndex;            //当前播放中变数下标 (范围1-changeCount);
 @property (strong, nonatomic) NSMutableDictionary *changeDic;   //变化数字典 <K:后帧下标, V:变化数组>;
 
 //TODOTOMORROW20220326:
-//1. 将curIndex由帧下标,改成变数下标;
 //2. 写聚焦功能;
 
 
@@ -77,7 +76,7 @@
     self.changeDic = [[NSMutableDictionary alloc] init];
     self.playing = true;
     self.speed = 0;
-    self.curIndex = 0;
+    self.changeIndex = 0;
 }
 
 -(void) initDisplay{
@@ -107,7 +106,7 @@
     
     //5. 当前直播播放中,则实时更新;
     if (self.playing && self.speed == 0) {
-        self.curIndex = self.models.count - 1;
+        self.changeIndex = [TVUtil count4ChangeDic:self.changeDic];
         [self refreshDisplay];
     }
 }
@@ -117,20 +116,24 @@
 }
 -(void) refreshDisplay:(BOOL)refreshSlider{
     //1. 取model
-    TOMVisionItemModel *playModel = ARR_INDEX(self.models, self.curIndex);
+    NSRange index = [TVUtil indexOfChangeIndex:self.changeIndex changeDic:self.changeDic];
+    NSInteger mainIndex = index.location;
+    NSInteger changeCount = [TVUtil count4ChangeDic:self.changeDic];
+    TOMVisionItemModel *playModel = ARR_INDEX(self.models, mainIndex);
     TOMVisionItemModel *lastModel = ARR_INDEX_REVERSE(self.models, 0);
-    self.curIndex = MAX(MIN(self.curIndex, (long)self.models.count - 1), 0);
+    self.changeIndex = MAX(MIN(self.changeIndex, changeCount), 1);
     
     //2. 播放
     [self.delegate panelPlay:playModel];
     
     //3. 更新帧进度和循环数进度;
-    self.frameLab.text = STRFORMAT(@"帧数: %ld/%ld",self.curIndex + 1,self.models.count);
+    self.frameLab.text = STRFORMAT(@"帧数: %ld/%ld",mainIndex + 1,self.models.count);
     self.loopLab.text = STRFORMAT(@"循环: %ld/%ld",playModel ? playModel.loopId : 0,lastModel ? lastModel.loopId : 0);
     
-    //4. 更新进度条 (当前sliderValue与curIndex不匹配时,更新进度条);
+    //4. 更新进度条 (当前sliderValue与changeIndex不匹配时,更新进度条);
+    // 2022.03.26: 分子分母都-1,不然slider永远显示到0的位置 (因为changeIndex最小为1);
     if (refreshSlider) {
-        CGFloat sliderValue = self.curIndex / (float)((long)self.models.count - 1);
+        CGFloat sliderValue = (self.changeIndex - 1) / (float)(changeCount - 1);
         [self.sliderView setValue:sliderValue];
     }
     
@@ -138,20 +141,14 @@
     if (self.speed == 0) {
         self.timeLab.text = @"时长: --/--";
     }else{
-        NSInteger allS = self.models.count / self.speed;
-        NSInteger curS = self.sliderView.value * allS;
+        NSInteger allS = changeCount / self.speed;
+        NSInteger curS = self.changeIndex / self.speed;
         NSString *timeStr = STRFORMAT(@"时长: %ld:%ld/%ld:%ld",curS / 60,curS % 60,allS / 60,allS % 60);
         self.timeLab.text = timeStr;
     }
     
     //6. 更新变数;
-    NSInteger curC = 0, allC = 0;
-    for (NSNumber *key in self.changeDic.allKeys) {
-        NSArray *value = [self.changeDic objectForKey:key];
-        curC += key.integerValue > self.curIndex ? 0 : MAX(1, value.count);
-        allC += MAX(1, value.count);
-    }
-    self.changeLab.text = STRFORMAT(@"变数: %ld/%ld", curC, allC);
+    self.changeLab.text = STRFORMAT(@"变数: %ld/%ld", self.changeIndex, changeCount);
 }
 
 //MARK:===============================================================
@@ -179,9 +176,9 @@
 -(void) timeBlock {
     if (self.playing) {
         //1. 播放中时,播放下帧;
-        long lastIndex = (long)self.models.count - 1;//models.count是UInt类型,为0条时再-1会越界;
-        if (self.curIndex < lastIndex) {
-            self.curIndex ++;
+        NSInteger changeCount = [TVUtil count4ChangeDic:self.changeDic];
+        if (self.changeIndex < changeCount) {
+            self.changeIndex ++;
             [self refreshDisplay];
         }else{
             //2. 播放完成时,停止计时器,停止播放;
@@ -195,7 +192,8 @@
 //MARK:                     < onclick >
 //MARK:===============================================================
 - (IBAction)sliderChanged:(UISlider*)sender {
-    self.curIndex = ((long)self.models.count - 1) * sender.value;
+    NSInteger changeCount = [TVUtil count4ChangeDic:self.changeDic];
+    self.changeIndex = changeCount * sender.value;
     [self refreshDisplay:false];
 }
 
@@ -241,15 +239,16 @@
 }
 
 - (IBAction)plusBtnClicked:(id)sender {
-    if (self.curIndex < (long)self.models.count - 1) {
-        self.curIndex++;
+    NSInteger changeCount = [TVUtil count4ChangeDic:self.changeDic];
+    if (self.changeIndex < changeCount) {
+        self.changeIndex++;
         [self refreshDisplay];
     }
 }
 
 - (IBAction)subBtnClicked:(id)sender {
-    if (self.curIndex > 0) {
-        self.curIndex--;
+    if (self.changeIndex > 0) {
+        self.changeIndex--;
         [self refreshDisplay];
     }
 }

@@ -65,7 +65,10 @@
                     </constraints>
                 </view>
                 <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="Zj4-vQ-Cas">
-                    <rect key="frame" x="98" y="-8" width="434" height="31"/>
+                    <rect key="frame" x="98" y="0.0" width="434" height="21"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="20" id="y6Q-Gg-GCy"/>
+                    </constraints>
                     <connections>
                         <action selector="sliderChanged:" destination="-1" eventType="valueChanged" id="Q4d-mg-8kb"/>
                     </connections>
@@ -136,7 +139,7 @@
                     </connections>
                 </button>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="循环: 0/0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xvx-a6-30F">
-                    <rect key="frame" x="0.0" y="33" width="95" height="10"/>
+                    <rect key="frame" x="0.0" y="33.5" width="95" height="9.5"/>
                     <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="95" id="UGz-Hr-1Je"/>
@@ -146,7 +149,7 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="时长: --/--" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8WI-2t-JSH">
-                    <rect key="frame" x="0.0" y="22" width="95" height="10"/>
+                    <rect key="frame" x="0.0" y="22.5" width="95" height="10"/>
                     <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="95" id="1rB-9e-DzO"/>
@@ -156,7 +159,7 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="帧数: 0/0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xZS-VL-f6l">
-                    <rect key="frame" x="0.0" y="11" width="95" height="10"/>
+                    <rect key="frame" x="0.0" y="12" width="95" height="9.5"/>
                     <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="95" id="D6r-VA-uhz"/>
@@ -166,7 +169,7 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="变数: 0/0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0N8-uy-V5F">
-                    <rect key="frame" x="0.0" y="0.0" width="95" height="10"/>
+                    <rect key="frame" x="0.0" y="1" width="95" height="10"/>
                     <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="95" id="Nmi-OA-1UA"/>
@@ -183,10 +186,10 @@
                 <constraint firstAttribute="trailing" secondItem="Dra-01-dGQ" secondAttribute="trailing" id="4yp-aC-Udo"/>
                 <constraint firstItem="xZS-VL-f6l" firstAttribute="height" secondItem="0N8-uy-V5F" secondAttribute="height" id="5Mu-1e-dMK"/>
                 <constraint firstItem="7Q1-qM-wyy" firstAttribute="top" secondItem="lJM-PU-Yce" secondAttribute="bottom" id="5t8-6w-SZs"/>
-                <constraint firstItem="Zj4-vQ-Cas" firstAttribute="top" secondItem="X4m-Bu-VDS" secondAttribute="top" constant="-8" id="61J-zW-flk"/>
+                <constraint firstItem="Zj4-vQ-Cas" firstAttribute="top" secondItem="X4m-Bu-VDS" secondAttribute="top" id="61J-zW-flk"/>
                 <constraint firstItem="Dra-01-dGQ" firstAttribute="top" secondItem="X4m-Bu-VDS" secondAttribute="top" constant="1" id="7Fn-g6-LGI"/>
                 <constraint firstItem="xvx-a6-30F" firstAttribute="height" secondItem="xZS-VL-f6l" secondAttribute="height" id="BEE-Z2-rpm"/>
-                <constraint firstItem="0N8-uy-V5F" firstAttribute="top" secondItem="X4m-Bu-VDS" secondAttribute="top" id="Df3-xS-B5k"/>
+                <constraint firstItem="0N8-uy-V5F" firstAttribute="top" secondItem="X4m-Bu-VDS" secondAttribute="top" constant="1" id="Df3-xS-B5k"/>
                 <constraint firstItem="0N8-uy-V5F" firstAttribute="leading" secondItem="X4m-Bu-VDS" secondAttribute="leading" id="E4e-Ao-Thz"/>
                 <constraint firstItem="EED-69-c0I" firstAttribute="top" secondItem="lJM-PU-Yce" secondAttribute="bottom" id="Ito-gq-Cpv"/>
                 <constraint firstItem="24m-LP-Gkc" firstAttribute="centerX" secondItem="X4m-Bu-VDS" secondAttribute="centerX" id="JEA-L2-Onu"/>
