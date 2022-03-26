@@ -33,6 +33,12 @@
 @property (strong, nonatomic) NSTimer *timer;           //用于播放时计时触发器;
 @property (strong, nonatomic) NSMutableDictionary *changeDic;   //变化数字典 <K:后帧下标, V:变化数组>;
 
+//TODOTOMORROW20220326:
+//1. 将curIndex由帧下标,改成变数下标;
+//2. 写聚焦功能;
+
+
+
 @end
 
 @implementation TVPanelView
