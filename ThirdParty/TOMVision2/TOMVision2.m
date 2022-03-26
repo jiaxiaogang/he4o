@@ -27,7 +27,7 @@
 @property (strong, nonatomic) UIScrollView *scrollView;
 @property (strong, nonatomic) UIView *contentView;
 @property (strong, nonatomic) TVPanelView *panelView;
-@property (strong, nonatomic) TOMVisionItemModel *model;
+@property (assign, nonatomic) NSInteger changeIndex; //当前显示的index;
 
 @end
 
@@ -105,8 +105,23 @@
  *      2022.03.22: 每层hSpace间隔为当前层的1.8倍 (避免末枝很小却间距好远);
  */
 -(void) refreshDisplay{
-    //1. 数据检查;
+    [self refreshDisplay:false];
+}
+-(void) refreshDisplay:(BOOL)focusMode{
+    //1. 数据准备;
     if (self.isHidden) return;
+    __block TOMVisionItemModel *frameModel = nil;
+    __block TOModelBase *changeModel = nil;
+    [self.panelView getModel:self.changeIndex complete:^(TOMVisionItemModel *_frameModel, TOModelBase *_changeModel) {
+        frameModel = _frameModel;
+        changeModel = _changeModel;
+    }];
+    
+    //TODOTOMORROW20220326:
+    //2. 写聚焦功能;
+    
+    
+    
     
     //2. 取出旧有节点缓存 & 并清空画板;
     NSArray *oldSubViews = [self.contentView subViews_AllDeepWithClass:TOMVisionNodeBase.class];
@@ -115,10 +130,10 @@
     //2. 刷新显示_计算根节点宽度 (参考25182-4);
     //注: 排版为[-NNN--NNN-],其中-为节点间距,NNN为节点宽度,占60%;
     //注: rootGroupW最大宽度为250;
-    if (!self.model) return;
-    CGFloat rootGroupW = MIN(ScreenWidth / self.model.roots.count, 420);
+    if (!frameModel) return;
+    CGFloat rootGroupW = MIN(ScreenWidth / frameModel.roots.count, 420);
     CGFloat rootNodeW = rootGroupW * 0.6f;
-    for (DemandModel *demand in self.model.roots) {
+    for (DemandModel *demand in frameModel.roots) {
         NSLog(@"----------> root下树为:\n%@",[TOModelVision cur2Sub:demand]);
         
         //3. 从demand根节点递归生长出它的分枝,
@@ -134,7 +149,7 @@
             if (!nodeView.data.baseOrGroup) {
                 
                 //4. nodeX = (左侧空白0.2 + 下标) x 组宽;
-                NSInteger index = [self.model.roots indexOfObject:nodeView.data];
+                NSInteger index = [frameModel.roots indexOfObject:nodeView.data];
                 CGFloat nodeX = rootGroupW * (index + 0.2f);
                 
                 //5. root节点的frame指定;
@@ -250,12 +265,10 @@
 //MARK:===============================================================
 //MARK:                     < TVPanelViewDelegate >
 //MARK:===============================================================
--(void) panelPlay:(TOMVisionItemModel*)model{
-    if (model && [model isEqual:self.model]) {
-        return;
-    }
-    self.model = model;
-    [self refreshDisplay];
+-(void) panelPlay:(NSInteger)changeIndex{
+    BOOL focusMode = changeIndex - self.changeIndex == 1;
+    self.changeIndex = changeIndex;
+    [self refreshDisplay:focusMode];
 }
 
 -(void) panelCloseBtnClicked{

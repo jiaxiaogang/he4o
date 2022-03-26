@@ -11,20 +11,21 @@
 /**
  *  MARK:--------------------播放控制面板--------------------
  */
-@class TOMVisionItemModel;
 @protocol TVPanelViewDelegate <NSObject>
 
--(void) panelPlay:(TOMVisionItemModel*)model;
+-(void) panelPlay:(NSInteger)changeIndex;
 -(void) panelCloseBtnClicked;
 -(void) panelScaleChanged:(CGFloat)scale;
 
 @end
 
+@class TOMVisionItemModel;
 @interface TVPanelView : UIView
 
 @property (strong, nonatomic) NSMutableArray *models;   //所有帧数据 List<TOMVisionItemModel>
 @property (weak, nonatomic) id<TVPanelViewDelegate> delegate;//notnull
 
 -(void) updateFrame:(BOOL)newLoop;
+-(void) getModel:(NSInteger)changeIndex complete:(void(^)(TOMVisionItemModel*,TOModelBase*))complete;
 
 @end

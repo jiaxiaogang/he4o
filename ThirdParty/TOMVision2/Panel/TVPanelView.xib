@@ -64,15 +64,6 @@
                         <constraint firstAttribute="height" constant="1" id="P1T-Dz-gSO"/>
                     </constraints>
                 </view>
-                <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="Zj4-vQ-Cas">
-                    <rect key="frame" x="98" y="0.0" width="434" height="21"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="20" id="y6Q-Gg-GCy"/>
-                    </constraints>
-                    <connections>
-                        <action selector="sliderChanged:" destination="-1" eventType="valueChanged" id="Q4d-mg-8kb"/>
-                    </connections>
-                </slider>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EED-69-c0I">
                     <rect key="frame" x="567" y="1" width="31" height="42"/>
                     <color key="backgroundColor" red="0.89952432829999995" green="1" blue="0.9039793196" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -178,6 +169,15 @@
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
+                <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="Zj4-vQ-Cas">
+                    <rect key="frame" x="98" y="0.0" width="434" height="21"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="20" id="y6Q-Gg-GCy"/>
+                    </constraints>
+                    <connections>
+                        <action selector="sliderChanged:" destination="-1" eventType="valueChanged" id="Q4d-mg-8kb"/>
+                    </connections>
+                </slider>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>

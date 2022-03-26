@@ -38,7 +38,7 @@
     
     //lineView
     self.lineView = [[UIView alloc] init];
-    [self.lineView setBackgroundColor:UIColorWithRGBHex(0xBB5500)];
+    [self.lineView setBackgroundColor:UIColorWithRGBHex(0xDDDDDD)];
     [self addSubview:self.lineView];
     [self.lineView setAlpha:0.8f];
     [self.lineView.layer setMasksToBounds:false];

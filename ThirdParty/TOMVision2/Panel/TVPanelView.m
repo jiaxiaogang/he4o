@@ -33,11 +33,6 @@
 @property (assign, nonatomic) NSInteger changeIndex;            //当前播放中变数下标 (范围1-changeCount);
 @property (strong, nonatomic) NSMutableDictionary *changeDic;   //变化数字典 <K:后帧下标, V:变化数组>;
 
-//TODOTOMORROW20220326:
-//2. 写聚焦功能;
-
-
-
 @end
 
 @implementation TVPanelView
@@ -82,6 +77,49 @@
 -(void) initDisplay{
 }
 
+-(void) refreshDisplay{
+    [self refreshDisplay:true];
+}
+-(void) refreshDisplay:(BOOL)refreshSlider{
+    //1. 取model
+    NSRange index = [TVUtil indexOfChangeIndex:self.changeIndex changeDic:self.changeDic];
+    NSInteger mainIndex = index.location;
+    NSInteger changeCount = [TVUtil count4ChangeDic:self.changeDic];
+    TOMVisionItemModel *playModel = ARR_INDEX(self.models, mainIndex);
+    TOMVisionItemModel *lastModel = ARR_INDEX_REVERSE(self.models, 0);
+    self.changeIndex = MAX(MIN(self.changeIndex, changeCount), 1);
+    
+    //2. 播放
+    [self.delegate panelPlay:self.changeIndex];
+    
+    //3. 更新帧进度和循环数进度;
+    self.frameLab.text = STRFORMAT(@"帧数: %ld/%ld",mainIndex + 1,self.models.count);
+    self.loopLab.text = STRFORMAT(@"循环: %ld/%ld",playModel ? playModel.loopId : 0,lastModel ? lastModel.loopId : 0);
+    
+    //4. 更新进度条 (当前sliderValue与changeIndex不匹配时,更新进度条);
+    // 2022.03.26: 分子分母都-1,不然slider永远显示到0的位置 (因为changeIndex最小为1);
+    if (refreshSlider) {
+        CGFloat sliderValue = (self.changeIndex - 1) / (float)(changeCount - 1);
+        [self.sliderView setValue:sliderValue];
+    }
+    
+    //5. 更新时间进度;
+    if (self.speed == 0) {
+        self.timeLab.text = @"时长: --/--";
+    }else{
+        NSInteger allS = changeCount / self.speed;
+        NSInteger curS = self.changeIndex / self.speed;
+        NSString *timeStr = STRFORMAT(@"时长: %ld:%ld/%ld:%ld",curS / 60,curS % 60,allS / 60,allS % 60);
+        self.timeLab.text = timeStr;
+    }
+    
+    //6. 更新变数;
+    self.changeLab.text = STRFORMAT(@"变数: %ld/%ld", self.changeIndex, changeCount);
+}
+
+//MARK:===============================================================
+//MARK:                     < publicMethod >
+//MARK:===============================================================
 -(void) updateFrame:(BOOL)newLoop{
     //1. 数据检查;
     if (theTC.outModelManager.getAllDemand.count <= 0) {
@@ -111,44 +149,17 @@
     }
 }
 
--(void) refreshDisplay{
-    [self refreshDisplay:true];
-}
--(void) refreshDisplay:(BOOL)refreshSlider{
-    //1. 取model
-    NSRange index = [TVUtil indexOfChangeIndex:self.changeIndex changeDic:self.changeDic];
-    NSInteger mainIndex = index.location;
-    NSInteger changeCount = [TVUtil count4ChangeDic:self.changeDic];
-    TOMVisionItemModel *playModel = ARR_INDEX(self.models, mainIndex);
-    TOMVisionItemModel *lastModel = ARR_INDEX_REVERSE(self.models, 0);
-    self.changeIndex = MAX(MIN(self.changeIndex, changeCount), 1);
+-(void) getModel:(NSInteger)changeIndex complete:(void(^)(TOMVisionItemModel*,TOModelBase*))complete{
+    //1. 取下标;
+    NSRange index = [TVUtil indexOfChangeIndex:changeIndex changeDic:self.changeDic];
     
-    //2. 播放
-    [self.delegate panelPlay:playModel];
+    //2. 取change变数组;
+    NSArray *changes = [self.changeDic objectForKey:@(changeIndex)];
     
-    //3. 更新帧进度和循环数进度;
-    self.frameLab.text = STRFORMAT(@"帧数: %ld/%ld",mainIndex + 1,self.models.count);
-    self.loopLab.text = STRFORMAT(@"循环: %ld/%ld",playModel ? playModel.loopId : 0,lastModel ? lastModel.loopId : 0);
-    
-    //4. 更新进度条 (当前sliderValue与changeIndex不匹配时,更新进度条);
-    // 2022.03.26: 分子分母都-1,不然slider永远显示到0的位置 (因为changeIndex最小为1);
-    if (refreshSlider) {
-        CGFloat sliderValue = (self.changeIndex - 1) / (float)(changeCount - 1);
-        [self.sliderView setValue:sliderValue];
-    }
-    
-    //5. 更新时间进度;
-    if (self.speed == 0) {
-        self.timeLab.text = @"时长: --/--";
-    }else{
-        NSInteger allS = changeCount / self.speed;
-        NSInteger curS = self.changeIndex / self.speed;
-        NSString *timeStr = STRFORMAT(@"时长: %ld:%ld/%ld:%ld",curS / 60,curS % 60,allS / 60,allS % 60);
-        self.timeLab.text = timeStr;
-    }
-    
-    //6. 更新变数;
-    self.changeLab.text = STRFORMAT(@"变数: %ld/%ld", self.changeIndex, changeCount);
+    //3. 将模型和变数返回;
+    TOMVisionItemModel *frameModel = ARR_INDEX(self.models, index.location);
+    TOModelBase *changeModel = ARR_INDEX(changes, index.length);
+    complete(frameModel,changeModel);
 }
 
 //MARK:===============================================================
