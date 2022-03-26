@@ -295,9 +295,22 @@
     NSArray *subs = [self.contentView subViews_AllDeepWithClass:TOMVisionNodeBase.class];
     for (TOMVisionNodeBase *view in subs) {
         if ([view.data isEqual:self.focusModel]) {
-            [sender setTitle:STRFORMAT(@"%.0f %.0f %.0f %.0f",view.x,view.y,view.width,view.height) forState:UIControlStateNormal];
+//            [sender setTitle:STRFORMAT(@"%.0f %.0f %.0f %.0f",view.x,view.y,view.width,view.height) forState:UIControlStateNormal];
             
             
+            
+            
+            CGFloat offsetX = view.center.x - self.scrollView.width / 2.0f;
+            CGFloat offsetY = view.center.y - self.scrollView.height / 2.0f;
+            
+            //scrollOffset要把放大比例计算进去;不然不 准;
+            
+            [sender setTitle:STRFORMAT(@"%@ X%.0fY%.0f ost:X%.0fY%.0f",view.headerBtn.titleLabel.text,view.center.x,view.center.y,offsetX,offsetY) forState:UIControlStateNormal];
+            [self.scrollView setContentOffset:CGPointMake(offsetX, offsetY) animated:true];
+            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self.scrollView setZoomScale:(300.0f / view.width) animated:true];
+            });
             
             
             return;

@@ -21,13 +21,13 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GmO-e7-FA1">
-                    <rect key="frame" x="100" y="100" width="100" height="30"/>
+                    <rect key="frame" x="100" y="100" width="200" height="20"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="30" id="SYg-OT-NAj"/>
-                        <constraint firstAttribute="width" constant="100" id="pN7-TI-3jc"/>
+                        <constraint firstAttribute="height" constant="20" id="SYg-OT-NAj"/>
+                        <constraint firstAttribute="width" constant="200" id="pN7-TI-3jc"/>
                     </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="8"/>
                     <state key="normal" title="Button"/>
                     <connections>
                         <action selector="tempClick:" destination="-1" eventType="touchUpInside" id="sfo-tA-hIc"/>
