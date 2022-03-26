@@ -188,7 +188,7 @@
     if (self.playing) {
         //1. 播放中时,播放下帧;
         NSInteger changeCount = [TVUtil countOfChangeDic:self.changeDic];
-        if (self.changeIndex < changeCount) {
+        if (self.changeIndex < changeCount - 1) {
             self.changeIndex ++;
             [self refreshDisplay];
         }else{
@@ -204,7 +204,7 @@
 //MARK:===============================================================
 - (IBAction)sliderChanged:(UISlider*)sender {
     NSInteger changeCount = [TVUtil countOfChangeDic:self.changeDic];
-    self.changeIndex = changeCount * sender.value;
+    self.changeIndex = (changeCount - 1) * sender.value;
     [self refreshDisplay:false];
 }
 
@@ -251,7 +251,7 @@
 
 - (IBAction)plusBtnClicked:(id)sender {
     NSInteger changeCount = [TVUtil countOfChangeDic:self.changeDic];
-    if (self.changeIndex < changeCount) {
+    if (self.changeIndex < changeCount - 1) {
         self.changeIndex++;
         [self refreshDisplay];
     }
