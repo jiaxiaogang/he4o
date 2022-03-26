@@ -16,7 +16,9 @@
 /**
  *  MARK:--------------------获取所有帧工作记忆的两两更新比对--------------------
  *  @desc 注: 包括首帧时,也要和-1帧nil比对;
- *  @result DIC<K:后帧下标, V:变化数组> notnull;
+ *  @result notnull;
+ *      1. 类型: DIC<K:后帧下标, V:变化数组>
+ *      2. 范围: key范围为:"0 -> models.count-1";
  */
 +(NSMutableDictionary*) getChange_List:(NSArray*)models {
     //1. 数据检查;
@@ -68,7 +70,7 @@
  *  MARK:--------------------changeDic的变化总数--------------------
  *  @result 取值为1-length
  */
-+(NSInteger) count4ChangeDic:(NSDictionary*)changeDic{
++(NSInteger) countOfChangeDic:(NSDictionary*)changeDic{
     //1. 数据准备;
     changeDic = DICTOOK(changeDic);
     NSInteger result = 0;
@@ -84,7 +86,7 @@
  *  MARK:--------------------changeIndex转index--------------------
  *  @result 返回NSRange的第1位表示mainIndex,第2位表示subIndex
  *      1. 未找到结果时为-1;
- *      2. 其中mainIndex和subIndex的范围都是"0-(count-1)";
+ *      2. 其中mainIndex和subIndex的范围都是: 0 -> count-1;
  */
 +(NSInteger) mainIndexOfChangeIndex:(NSInteger)changeIndex changeDic:(NSDictionary*)changeDic{
     return [self indexOfChangeIndex:changeIndex changeDic:changeDic].location;
@@ -97,19 +99,18 @@
     changeDic = DICTOOK(changeDic);
     NSInteger sumChangeCount = 0;
     
-    //2. 累计changeCount;
-    for (NSInteger i = 0; i < changeDic.count; i++) {
-        NSNumber *key = @(i+1); //key为1-changeCount
-        NSArray *value = [changeDic objectForKey:key];
+    //2. 累计changeCount (key范围参考getChange_List()的key范围说明);
+    for (NSInteger k = 0; k < changeDic.count; k++) {
+        NSArray *value = [changeDic objectForKey:@(k)];
         
-        //3. 当sum + curCount < changeIndex时,说明还没达到,累计并继续for向下找;
-        if (sumChangeCount + MAX(1, value.count) < changeIndex) {
+        //3. 目标为changeIndex+1,当前sum+valueCount小于目标时,说明仍未达到,累计并继续for向下找;
+        if (sumChangeCount + MAX(1, value.count) < changeIndex + 1) {
             sumChangeCount += MAX(1, value.count);
         }else {
             
             //4. 否则,说明要找的目标就在当前key中;
-            NSInteger mainIndex = key.integerValue - 1;//mainIndex
-            NSInteger subIndex = value.count ? changeIndex - sumChangeCount - 1 : -1;
+            NSInteger mainIndex = k;
+            NSInteger subIndex = value.count ? changeIndex - sumChangeCount : -1;
             return NSMakeRange(mainIndex, subIndex);
         }
     }

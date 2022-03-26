@@ -30,7 +30,7 @@
 @property (assign, nonatomic) BOOL playing;             //播放中;
 @property (assign, nonatomic) CGFloat speed;            //播放速度 (其中0为直播);
 @property (strong, nonatomic) NSTimer *timer;           //用于播放时计时触发器;
-@property (assign, nonatomic) NSInteger changeIndex;            //当前播放中变数下标 (范围1-changeCount);
+@property (assign, nonatomic) NSInteger changeIndex;            //当前播放中变数下标
 @property (strong, nonatomic) NSMutableDictionary *changeDic;   //变化数字典 <K:后帧下标, V:变化数组>;
 
 @end
@@ -84,10 +84,10 @@
     //1. 取model
     NSRange index = [TVUtil indexOfChangeIndex:self.changeIndex changeDic:self.changeDic];
     NSInteger mainIndex = index.location;
-    NSInteger changeCount = [TVUtil count4ChangeDic:self.changeDic];
+    NSInteger changeCount = [TVUtil countOfChangeDic:self.changeDic];
     TOMVisionItemModel *playModel = ARR_INDEX(self.models, mainIndex);
     TOMVisionItemModel *lastModel = ARR_INDEX_REVERSE(self.models, 0);
-    self.changeIndex = MAX(MIN(self.changeIndex, changeCount), 1);
+    self.changeIndex = MAX(MIN(self.changeIndex, changeCount - 1), 0);
     
     //2. 播放
     [self.delegate panelPlay:self.changeIndex];
@@ -97,9 +97,9 @@
     self.loopLab.text = STRFORMAT(@"循环: %ld/%ld",playModel ? playModel.loopId : 0,lastModel ? lastModel.loopId : 0);
     
     //4. 更新进度条 (当前sliderValue与changeIndex不匹配时,更新进度条);
-    // 2022.03.26: 分子分母都-1,不然slider永远显示到0的位置 (因为changeIndex最小为1);
+    // 2022.03.26: 分母-1,不然slider永远显示不到1的位置 (因为changeIndex最大为changeCount - 1);
     if (refreshSlider) {
-        CGFloat sliderValue = (self.changeIndex - 1) / (float)(changeCount - 1);
+        CGFloat sliderValue = self.changeIndex / ((float)changeCount - 1);
         [self.sliderView setValue:sliderValue];
     }
     
@@ -108,13 +108,13 @@
         self.timeLab.text = @"时长: --/--";
     }else{
         NSInteger allS = changeCount / self.speed;
-        NSInteger curS = self.changeIndex / self.speed;
+        NSInteger curS = (self.changeIndex + 1) / self.speed;
         NSString *timeStr = STRFORMAT(@"时长: %ld:%ld/%ld:%ld",curS / 60,curS % 60,allS / 60,allS % 60);
         self.timeLab.text = timeStr;
     }
     
     //6. 更新变数;
-    self.changeLab.text = STRFORMAT(@"变数: %ld/%ld", self.changeIndex, changeCount);
+    self.changeLab.text = STRFORMAT(@"变数: %ld/%ld", self.changeIndex + 1, changeCount);
 }
 
 //MARK:===============================================================
@@ -144,7 +144,7 @@
     
     //5. 当前直播播放中,则实时更新;
     if (self.playing && self.speed == 0) {
-        self.changeIndex = [TVUtil count4ChangeDic:self.changeDic];
+        self.changeIndex = [TVUtil countOfChangeDic:self.changeDic] - 1;
         [self refreshDisplay];
     }
 }
@@ -154,7 +154,7 @@
     NSRange index = [TVUtil indexOfChangeIndex:changeIndex changeDic:self.changeDic];
     
     //2. 取change变数组;
-    NSArray *changes = [self.changeDic objectForKey:@(changeIndex)];
+    NSArray *changes = [self.changeDic objectForKey:@(index.location)];
     
     //3. 将模型和变数返回;
     TOMVisionItemModel *frameModel = ARR_INDEX(self.models, index.location);
@@ -187,7 +187,7 @@
 -(void) timeBlock {
     if (self.playing) {
         //1. 播放中时,播放下帧;
-        NSInteger changeCount = [TVUtil count4ChangeDic:self.changeDic];
+        NSInteger changeCount = [TVUtil countOfChangeDic:self.changeDic];
         if (self.changeIndex < changeCount) {
             self.changeIndex ++;
             [self refreshDisplay];
@@ -203,7 +203,7 @@
 //MARK:                     < onclick >
 //MARK:===============================================================
 - (IBAction)sliderChanged:(UISlider*)sender {
-    NSInteger changeCount = [TVUtil count4ChangeDic:self.changeDic];
+    NSInteger changeCount = [TVUtil countOfChangeDic:self.changeDic];
     self.changeIndex = changeCount * sender.value;
     [self refreshDisplay:false];
 }
@@ -250,7 +250,7 @@
 }
 
 - (IBAction)plusBtnClicked:(id)sender {
-    NSInteger changeCount = [TVUtil count4ChangeDic:self.changeDic];
+    NSInteger changeCount = [TVUtil countOfChangeDic:self.changeDic];
     if (self.changeIndex < changeCount) {
         self.changeIndex++;
         [self refreshDisplay];

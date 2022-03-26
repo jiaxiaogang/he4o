@@ -73,7 +73,7 @@
     //BOOL baseSeemPit = self.data.baseOrGroup && [self.data.baseOrGroup isEqual:checkData.baseOrGroup];
     //BOOL baseEqual = baseSeemNil || baseSeemPit;
     //return dataEqual && baseEqual;
-    return [self.data.selfIden isEqualToString:checkData.selfIden];
+    return [self.data isEqual:checkData];
 }
 
 -(void) scaleContainer:(CGFloat)scale{

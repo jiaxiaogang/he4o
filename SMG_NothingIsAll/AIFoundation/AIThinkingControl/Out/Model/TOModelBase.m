@@ -35,7 +35,7 @@
  *      2022.03.23: 改成用selfIden对比,因为它是初次内存唯一,content_p一致并不能说明一致;
  */
 -(BOOL) isEqual:(TOModelBase*)object{
-    return [self.selfIden isEqual:object.selfIden];
+    return [self.selfIden isEqualToString:object.selfIden];
 }
 
 -(void)setStatus:(TOModelStatus)status{

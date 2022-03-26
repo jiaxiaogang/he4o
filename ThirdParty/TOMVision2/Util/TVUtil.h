@@ -24,7 +24,7 @@
 /**
  *  MARK:--------------------changeDic的变化总数--------------------
  */
-+(NSInteger) count4ChangeDic:(NSDictionary*)changeDic;
++(NSInteger) countOfChangeDic:(NSDictionary*)changeDic;
 
 /**
  *  MARK:--------------------changeIndex转index--------------------

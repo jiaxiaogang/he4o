@@ -12,13 +12,33 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TOMVision2">
             <connections>
                 <outlet property="containerView" destination="iN0-l3-epB" id="Ve8-Z1-pp1"/>
+                <outlet property="tmpBtn" destination="GmO-e7-FA1" id="bnH-mn-cbR"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="iN0-l3-epB" userLabel="containerView">
             <rect key="frame" x="0.0" y="0.0" width="634" height="372"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GmO-e7-FA1">
+                    <rect key="frame" x="100" y="100" width="100" height="30"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="30" id="SYg-OT-NAj"/>
+                        <constraint firstAttribute="width" constant="100" id="pN7-TI-3jc"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <state key="normal" title="Button"/>
+                    <connections>
+                        <action selector="tempClick:" destination="-1" eventType="touchUpInside" id="sfo-tA-hIc"/>
+                    </connections>
+                </button>
+            </subviews>
             <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <constraints>
+                <constraint firstItem="GmO-e7-FA1" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="100" id="BJY-2q-Iis"/>
+                <constraint firstItem="GmO-e7-FA1" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="100" id="Cqh-h5-zzO"/>
+            </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <point key="canvasLocation" x="246.40000000000001" y="-86.35682158920541"/>
         </view>

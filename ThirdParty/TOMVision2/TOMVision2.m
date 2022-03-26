@@ -29,6 +29,9 @@
 @property (strong, nonatomic) TVPanelView *panelView;
 @property (assign, nonatomic) NSInteger changeIndex; //当前显示的index;
 
+@property (strong, nonatomic) TOModelBase *focusModel;
+@property (weak, nonatomic) IBOutlet UIButton *tmpBtn;
+
 @end
 
 @implementation TOMVision2
@@ -78,6 +81,9 @@
     self.panelView = [[TVPanelView alloc] init];
     self.panelView.delegate = self;
     [self.containerView addSubview:self.panelView];
+    
+    
+    [self.containerView bringSubviewToFront:self.tmpBtn];
 }
 
 -(void) initData{
@@ -119,7 +125,7 @@
     
     //TODOTOMORROW20220326:
     //2. 写聚焦功能;
-    
+    self.focusModel = changeModel;
     
     
     
@@ -284,6 +290,20 @@
 //MARK:===============================================================
 -(UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView{
     return self.contentView;
+}
+- (IBAction)tempClick:(UIButton*)sender {
+    NSArray *subs = [self.contentView subViews_AllDeepWithClass:TOMVisionNodeBase.class];
+    for (TOMVisionNodeBase *view in subs) {
+        if ([view.data isEqual:self.focusModel]) {
+            [sender setTitle:STRFORMAT(@"%.0f %.0f %.0f %.0f",view.x,view.y,view.width,view.height) forState:UIControlStateNormal];
+            
+            
+            
+            
+            return;
+        }
+    }
+    
 }
 
 @end
