@@ -293,26 +293,70 @@
 }
 - (IBAction)tempClick:(UIButton*)sender {
     NSArray *subs = [self.contentView subViews_AllDeepWithClass:TOMVisionNodeBase.class];
+    
     for (TOMVisionNodeBase *view in subs) {
         if ([view.data isEqual:self.focusModel]) {
-//            [sender setTitle:STRFORMAT(@"%.0f %.0f %.0f %.0f",view.x,view.y,view.width,view.height) forState:UIControlStateNormal];
+            
+            
+            //CGFloat scale = 300.0f / view.width;
+            //CGFloat offsetX = view.center.x - self.scrollView.width / 2.0f;
+            //CGFloat offsetY = view.center.y - self.scrollView.height / 2.0f;
+
+            
+            //1. 方案1: 直接设置zoom和offset并采用scrollView的动画;
+            //[self.scrollView setContentOffset:CGPointMake(offsetX*scale, offsetY*scale) animated:true];
+            
+            //2. 方案2: 设置scala和offset + UIAnimation动画;
+            //[self.scrollView setZoomScale:scale];
+            //[self.scrollView setContentOffset:CGPointMake(offsetX * scale, offsetY * scale)];
+            
+            //3. 方案3: 设置frame+bounds+UIAnimation动画;
+            //[UIView animateWithDuration:1.0f animations:^{
+            //    //[self.contentView setFrame:CGRectZero];
+            //    //[self.contentView setBounds:CGRectZero];
+            //    [self.contentView.layer setAnchorPoint:CGPointZero];
+            //}];
+
+            
+            //4. 方案4: 直接设置zoom2rect
+            //[self.scrollView zoomToRect:view.frame animated:true];
+            
+            //5. 方案5: 设置offset + anchor + UIAnimation动画;
+            //  a. 数据准备_设置anchor为中心0;
+            CGFloat scale = MAX(100.0f / view.width, 1.0f);
+            CGFloat offsetX = view.center.x;
+            CGFloat offsetY = view.center.y;
+            [self.contentView.layer setAnchorPoint:CGPointZero];
+
+            //  b. 第1动画: 重置大小,位置;
+            [UIView animateWithDuration:0.5f animations:^{
+                self.scrollView.zoomScale = 1.0f;
+                self.scrollView.contentOffset = CGPointMake(self.scrollView.width * 0.5f, self.scrollView.height * 0.5f);
+                
+            } completion:^(BOOL finished) {
+                //  c. 第2动画: 居中;
+                [UIView animateWithDuration:0.5f animations:^{
+                    [self.scrollView setContentOffset:CGPointMake(offsetX, offsetY) animated:false];
+                } completion:^(BOOL finished) {
+                    
+                    //  c. 第3动画: 放大显示;
+                    [UIView animateWithDuration:1.0f animations:^{
+                        self.scrollView.zoomScale = scale;
+                        self.scrollView.contentOffset = CGPointMake(offsetX * scale, offsetY * scale);
+                    }];
+                }];
+            }];
             
             
             
-            
-            CGFloat offsetX = view.center.x - self.scrollView.width / 2.0f;
-            CGFloat offsetY = view.center.y - self.scrollView.height / 2.0f;
-            
-            //scrollOffset要把放大比例计算进去;不然不 准;
-            
-            [sender setTitle:STRFORMAT(@"%@ X%.0fY%.0f ost:X%.0fY%.0f",view.headerBtn.titleLabel.text,view.center.x,view.center.y,offsetX,offsetY) forState:UIControlStateNormal];
-            [self.scrollView setContentOffset:CGPointMake(offsetX, offsetY) animated:true];
-            
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [self.scrollView setZoomScale:(300.0f / view.width) animated:true];
+            //      c. 放大显示;
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                
             });
             
             
+            
+            [sender setTitle:STRFORMAT(@"%@ X%.0fY%.0f ost:X%.0fY%.0f",view.headerBtn.titleLabel.text,view.center.x,view.center.y,offsetX,offsetY) forState:UIControlStateNormal];
             return;
         }
     }
