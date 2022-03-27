@@ -63,10 +63,12 @@
     [self.scrollView setFrame:CGRectMake(0, 20, ScreenWidth, ScreenHeight - 20 - 40)];
     [self.scrollView setShowsVerticalScrollIndicator:NO];
     [self.scrollView setShowsHorizontalScrollIndicator:NO];
-    //[self.scrollView setContentSize:CGSizeMake(ScreenWidth, ScreenHeight - 60)];
     self.scrollView.delegate = self;
     self.scrollView.minimumZoomScale = 0.1f;    //设置最小缩放倍数
     self.scrollView.maximumZoomScale = 20.0f;   //设置最大缩放倍数
+    self.scrollView.showsHorizontalScrollIndicator = true;
+    self.scrollView.showsVerticalScrollIndicator = true;
+    self.scrollView.indicatorStyle = UIScrollViewIndicatorStyleWhite;
     
     //contentView
     self.contentView = [[UIView alloc] init];
@@ -189,13 +191,8 @@
         }
     }
     
-    //11. 更新画板大小 (避免出屏的拖不到);
-    CGFloat contentW = ScreenWidth,contentH = ScreenHeight - 60;
-    for (UIView *subV in self.contentView.subviews) {
-        contentW = MAX(contentW, CGRectGetMaxX(subV.frame) + 10.0f);
-        contentH = MAX(contentH, CGRectGetMaxY(subV.frame) + 10.0f);
-    }
-    [self.contentView setSize:CGSizeMake(contentW, contentH)];
+    //11. 更新画板;
+    [self autoAdjustContentSize];
     
     //12. 渲染完成_执行聚焦动画;
     [self focusAnimation:changeModel];
@@ -221,11 +218,8 @@
     return !self.isHidden;
 }
 
+//聚焦动画
 -(void) focusAnimation:(TOModelBase*)focusModel{
-    //TODOTOMORROW20220327: 随后把动画时长,与帧时长挂勾;
-    
-    
-    
     //1. 取单帧展示时长;
     CGFloat time = self.panelView.getFrameShowTime;
     if (time == 0) return;
@@ -264,8 +258,12 @@
     //解: 右下滑时offsetXY为正,所以anchor不设为0时,左上角应该是原点,现在的动画目标值相应+0.5屏即可;
     [self.contentView.layer setAnchorPoint:CGPointZero];
     
+    //测得改变anchor会导致整个content坐标系变成中间,subView的0,0位置也是中间,左上区间侧会留白,右和下却会显示不全;
+    //方案1: 改subView的 坐标 也可以,但不建议;
+    //方案2: 取消改anchor,然后动画也相应改下调整好;就行;
+    
     //8. 第1动画: 重置大小,位置;
-    [UIView animateWithDuration:0.5f animations:^{
+    [UIView animateWithDuration:time / 4.0f animations:^{
         self.scrollView.zoomScale = 1.0f;
         self.scrollView.contentOffset = CGPointMake(svOriginX, svOriginY);
     } completion:^(BOOL finished) {
@@ -273,7 +271,7 @@
         //self.scrollView.contentOffset = CGPointMake(offsetX, offsetY)];
         
         //10. 第3动画: 居中 & 放大 同时动画;
-        [UIView animateWithDuration:1.0f animations:^{
+        [UIView animateWithDuration:time / 2.0f animations:^{
             self.scrollView.zoomScale = scale;
             self.scrollView.contentOffset = CGPointMake(offsetX * scale, offsetY * scale);
         }];
@@ -318,6 +316,22 @@
     return result;
 }
 
+//更新画板大小 (避免出屏的拖不到等问题);
+-(void) autoAdjustContentSize{
+    //1. 取最小尺寸;
+    CGFloat contentW = ScreenWidth,contentH = ScreenHeight - 60;
+    
+    //2. 根据subView自动计算尺寸;
+    for (UIView *subV in self.contentView.subviews) {
+        contentW = MAX(contentW, CGRectGetMaxX(subV.frame) + 10.0f);
+        contentH = MAX(contentH, CGRectGetMaxY(subV.frame) + 10.0f);
+    }
+    
+    //3. 更新contentSize;
+    [self.contentView setSize:CGSizeMake(contentW, contentH)];
+    [self.scrollView setContentSize:CGSizeMake(contentW * self.scrollView.zoomScale, contentH * self.scrollView.zoomScale)];
+}
+
 //MARK:===============================================================
 //MARK:                     < TVPanelViewDelegate >
 //MARK:===============================================================
@@ -333,6 +347,7 @@
 
 -(void) panelScaleChanged:(CGFloat)scale{
     self.scrollView.zoomScale = scale;
+    [self autoAdjustContentSize];
 }
 
 //MARK:===============================================================
