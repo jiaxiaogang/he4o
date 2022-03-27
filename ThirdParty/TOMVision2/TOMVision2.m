@@ -322,38 +322,42 @@
             //[self.scrollView zoomToRect:view.frame animated:true];
             
             //5. 方案5: 设置offset + anchor + UIAnimation动画;
-            //  a. 数据准备_设置anchor为中心0;
+            //  a. scale只放大(至少100宽),不缩小;
             CGFloat scale = MAX(100.0f / view.width, 1.0f);
+            
+            //2. 取scrollView左上角原点 (offset设为此值时,scrollView复原位);
+            CGFloat svOriginX = self.scrollView.width * 0.5f;
+            CGFloat svOriginY = self.scrollView.height * 0.5f;
+            
+            //2. offsetXY取中心点值 (即让nodeView居中);
             CGFloat offsetX = view.center.x;
             CGFloat offsetY = view.center.y;
+            
+            //3. 当不需要缩放时,且offsetXY在左上区间时,则保持原位不居中;
+            if (scale == 1.0f) {
+                offsetX = MAX(svOriginX, offsetX);
+                offsetY = MAX(svOriginY, offsetY);
+            }
+            
+            //a. 只有anchor在0中心点时,同时做缩放和offset动画,才显得轨迹线性不混乱;
+            //注: 其实只要二者缩放和动画目标值设置对了,都不混乱,不过未指定anchor为0的我没算好:(解如下,但懒得验证了);
+            //解: 右下滑时offsetXY为正,所以anchor不设为0时,左上角应该是原点,现在的动画目标值相应+0.5屏即可;
             [self.contentView.layer setAnchorPoint:CGPointZero];
 
-            //  b. 第1动画: 重置大小,位置;
+            //1. 第1动画: 重置大小,位置;
             [UIView animateWithDuration:0.5f animations:^{
                 self.scrollView.zoomScale = 1.0f;
-                self.scrollView.contentOffset = CGPointMake(self.scrollView.width * 0.5f, self.scrollView.height * 0.5f);
-                
+                self.scrollView.contentOffset = CGPointMake(svOriginX, svOriginY);
             } completion:^(BOOL finished) {
-                //  c. 第2动画: 居中;
-                [UIView animateWithDuration:0.5f animations:^{
-                    [self.scrollView setContentOffset:CGPointMake(offsetX, offsetY) animated:false];
-                } completion:^(BOOL finished) {
-                    
-                    //  c. 第3动画: 放大显示;
-                    [UIView animateWithDuration:1.0f animations:^{
-                        self.scrollView.zoomScale = scale;
-                        self.scrollView.contentOffset = CGPointMake(offsetX * scale, offsetY * scale);
-                    }];
+                //2. 第2动画: 居中动画;
+                //self.scrollView.contentOffset = CGPointMake(offsetX, offsetY)];
+                
+                //3. 第3动画: 居中 & 放大 同时动画;
+                [UIView animateWithDuration:1.0f animations:^{
+                    self.scrollView.zoomScale = scale;
+                    self.scrollView.contentOffset = CGPointMake(offsetX * scale, offsetY * scale);
                 }];
             }];
-            
-            
-            
-            //      c. 放大显示;
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                
-            });
-            
             
             
             [sender setTitle:STRFORMAT(@"%@ X%.0fY%.0f ost:X%.0fY%.0f",view.headerBtn.titleLabel.text,view.center.x,view.center.y,offsetX,offsetY) forState:UIControlStateNormal];
