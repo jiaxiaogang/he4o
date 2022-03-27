@@ -195,7 +195,9 @@
     [self autoAdjustContentSize];
     
     //12. 渲染完成_执行聚焦动画;
-    [self focusAnimation:changeModel];
+    if (focusMode) {
+        [self focusAnimation:changeModel];
+    }
 }
 
 -(void) clear{
@@ -218,10 +220,16 @@
     return !self.isHidden;
 }
 
-//聚焦动画
+/**
+ *  MARK:--------------------聚焦动画--------------------
+ *  @version
+ *      2022.03.27: 改变anchor0会导致整个contentView坐标系变成中间0点,subView的xy都得跟着改,所以取消它并重调动画;
+ */
 -(void) focusAnimation:(TOModelBase*)focusModel{
     //1. 取单帧展示时长;
     CGFloat time = self.panelView.getFrameShowTime;
+    CGFloat svW = self.scrollView.width;
+    CGFloat svH = self.scrollView.height;
     if (time == 0) return;
     
     //2. 取focusView
@@ -234,46 +242,38 @@
         }
     }
     if (!focusView) return;
-    NSLog(@"%@",focusView.headerBtn.titleLabel.text);
+    NSLog(@"聚焦nodeView: %@",focusView.headerBtn.titleLabel.text);
     
     //3. scale只放大(至少100宽),不缩小;
     CGFloat scale = MAX(100.0f / focusView.width, 1.0f);
     
-    //4. 取scrollView左上角原点 (offset设为此值时,scrollView复原位);
-    CGFloat svOriginX = self.scrollView.width * 0.5f;
-    CGFloat svOriginY = self.scrollView.height * 0.5f;
-    
-    //5. offsetXY取中心点值 (即让nodeView居中);
-    CGFloat offsetX = focusView.center.x;
-    CGFloat offsetY = focusView.center.y;
-    
-    //6. 当不需要缩放时,且offsetXY在左上区间时,则保持原位不居中;
-    if (scale == 1.0f) {
-        offsetX = MAX(svOriginX, offsetX);
-        offsetY = MAX(svOriginY, offsetY);
-    }
-    
-    //7. 设anchor中心点为0,因为这个点调好了同时做缩放和offset动画,轨迹线性不混乱;
-    //注: 其实只要二者缩放和动画目标值设置对了,都不混乱,不过未指定anchor为0的我没算好:(解如下,但懒得验证了);
-    //解: 右下滑时offsetXY为正,所以anchor不设为0时,左上角应该是原点,现在的动画目标值相应+0.5屏即可;
-    [self.contentView.layer setAnchorPoint:CGPointZero];
-    
-    //测得改变anchor会导致整个content坐标系变成中间,subView的0,0位置也是中间,左上区间侧会留白,右和下却会显示不全;
-    //方案1: 改subView的 坐标 也可以,但不建议;
-    //方案2: 取消改anchor,然后动画也相应改下调整好;就行;
-    
-    //8. 第1动画: 重置大小,位置;
+    //4. 第1动画: 重置大小,位置;
     [UIView animateWithDuration:time / 4.0f animations:^{
         self.scrollView.zoomScale = 1.0f;
-        self.scrollView.contentOffset = CGPointMake(svOriginX, svOriginY);
+        self.scrollView.contentOffset = CGPointZero;
     } completion:^(BOOL finished) {
-        //9. 第2动画: 居中动画 (先居中后放大时,可打开这个动画);
-        //self.scrollView.contentOffset = CGPointMake(offsetX, offsetY)];
+        //5. 第2动画_坐标计算1: 用于将nodeView调整到左上角显示;
+        CGFloat offsetX = focusView.center.x;
+        CGFloat offsetY = focusView.center.y;
         
-        //10. 第3动画: 居中 & 放大 同时动画;
+        //6. 第2动画_坐标计算2: 先在左上角缩放 (必须在anchor点缩放);
+        offsetX *= scale;
+        offsetY *= scale;
+        
+        //7. 第2动画_坐标计算3: 再减半屏,使之从左上角移到屏正中 (无论缩放比例多少,左上角中心到屏幕中心,都是半屏距离);
+        offsetX -= svW / 2;
+        offsetY -= svH / 2;
+        
+        //8. 第2动画_坐标计算4: 当不缩放 且 offsetXY在左上区间时,则保持原位不居中;
+        if (scale == 1.0f) {
+            if (focusView.center.x < svW / 2) offsetX = 0;
+            if (focusView.center.y < svH / 2) offsetY = 0;
+        }
+        
+        //9. 第2动画_执行动画 (居中 & 放大);
         [UIView animateWithDuration:time / 2.0f animations:^{
             self.scrollView.zoomScale = scale;
-            self.scrollView.contentOffset = CGPointMake(offsetX * scale, offsetY * scale);
+            self.scrollView.contentOffset = CGPointMake(offsetX, offsetY);
         }];
     }];
 }
