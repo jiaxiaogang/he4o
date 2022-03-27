@@ -12,6 +12,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TOMVision2">
             <connections>
                 <outlet property="containerView" destination="iN0-l3-epB" id="Ve8-Z1-pp1"/>
+                <outlet property="tipLab" destination="zwQ-B7-sYQ" id="EmI-aW-Sdo"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
@@ -33,16 +34,25 @@
                         <constraint firstAttribute="height" constant="1" id="rya-Hp-phV"/>
                     </constraints>
                 </view>
-                <label opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WKn-dT-QIZ">
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uA4-BN-qNw">
                     <rect key="frame" x="0.0" y="0.0" width="634" height="20"/>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zwQ-B7-sYQ">
+                            <rect key="frame" x="70" y="0.0" width="0.0" height="20"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="9"/>
+                            <color key="textColor" red="1" green="0.1019250594" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.5" colorSpace="calibratedRGB"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="20" id="nsz-vv-thA"/>
+                        <constraint firstAttribute="bottom" secondItem="zwQ-B7-sYQ" secondAttribute="bottom" id="84C-Xw-vCx"/>
+                        <constraint firstAttribute="height" constant="20" id="IY5-Zt-OE3"/>
+                        <constraint firstItem="zwQ-B7-sYQ" firstAttribute="leading" secondItem="uA4-BN-qNw" secondAttribute="leading" constant="70" id="XeP-1y-BZh"/>
+                        <constraint firstItem="zwQ-B7-sYQ" firstAttribute="top" secondItem="uA4-BN-qNw" secondAttribute="top" id="yhE-CF-wZ2"/>
                     </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                    <nil key="textColor"/>
-                    <nil key="highlightedColor"/>
-                </label>
+                </view>
             </subviews>
             <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
@@ -50,11 +60,11 @@
                 <constraint firstItem="C1c-ep-7La" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="1Mk-19-NaU"/>
                 <constraint firstAttribute="bottom" secondItem="tcg-od-saX" secondAttribute="bottom" constant="40" id="2rc-x7-5GR"/>
                 <constraint firstItem="tcg-od-saX" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="20" id="5XC-sL-MqJ"/>
+                <constraint firstAttribute="trailing" secondItem="uA4-BN-qNw" secondAttribute="trailing" id="6FZ-Tl-MuD"/>
                 <constraint firstItem="tcg-od-saX" firstAttribute="centerY" secondItem="C1c-ep-7La" secondAttribute="centerY" id="AbH-Jx-Frr"/>
-                <constraint firstItem="WKn-dT-QIZ" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="Ma4-en-QvD"/>
                 <constraint firstAttribute="trailing" secondItem="C1c-ep-7La" secondAttribute="trailing" id="Nvj-fq-CRq"/>
-                <constraint firstItem="WKn-dT-QIZ" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="Sq1-GB-sJh"/>
-                <constraint firstAttribute="trailing" secondItem="WKn-dT-QIZ" secondAttribute="trailing" id="xvq-Hu-Hgl"/>
+                <constraint firstItem="uA4-BN-qNw" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="Olo-sq-Pcq"/>
+                <constraint firstItem="uA4-BN-qNw" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="ocb-kC-Hw3"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <point key="canvasLocation" x="246.40000000000001" y="-86.35682158920541"/>

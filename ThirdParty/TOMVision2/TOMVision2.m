@@ -28,6 +28,7 @@
 @property (strong, nonatomic) UIView *contentView;
 @property (strong, nonatomic) TVPanelView *panelView;
 @property (assign, nonatomic) NSInteger changeIndex; //当前显示的index;
+@property (weak, nonatomic) IBOutlet UILabel *tipLab;
 
 @end
 
@@ -130,7 +131,7 @@
     CGFloat rootGroupW = MIN(ScreenWidth / frameModel.roots.count, 420);
     CGFloat rootNodeW = rootGroupW * 0.6f;
     for (DemandModel *demand in frameModel.roots) {
-        NSLog(@"----------> root下树为:\n%@",[TOModelVision cur2Sub:demand]);
+        //NSLog(@"----------> root下树为:\n%@",[TOModelVision cur2Sub:demand]);
         
         //3. 从demand根节点递归生长出它的分枝,
         NSMutableArray *unorderModels = [TOModelVisionUtil convertCur2Sub2UnorderModels:demand];
@@ -180,7 +181,6 @@
                     //9. 对nodeView进行缩放 (缩放比例 = 子元素宽度 / rootWidth);
                     CGFloat scale = subGroupW / rootGroupW;
                     [nodeView scaleContainer:scale];
-                    NSLog(@"%@ X:%f Y:%f W:%f H:%f S:%f",Pit2FStr(nodeView.data.content_p),nodeView.x,nodeView.y,nodeView.width,nodeView.height,scale);
                     
                     //10. 连接线
                     TVLineView *line = [[TVLineView alloc] init];
@@ -242,7 +242,7 @@
         }
     }
     if (!focusView) return;
-    NSLog(@"聚焦nodeView: %@",focusView.headerBtn.titleLabel.text);
+    self.tipLab.text = STRFORMAT(@"聚焦: %@",focusView.headerBtn.titleLabel.text);
     
     //3. scale只放大(至少100宽),不缩小;
     CGFloat scale = MAX(100.0f / focusView.width, 1.0f);
