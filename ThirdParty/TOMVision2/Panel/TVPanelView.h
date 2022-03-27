@@ -27,5 +27,6 @@
 
 -(void) updateFrame:(BOOL)newLoop;
 -(void) getModel:(NSInteger)changeIndex complete:(void(^)(TOMVisionItemModel*,TOModelBase*))complete;
+-(CGFloat) getFrameShowTime;
 
 @end

@@ -162,6 +162,14 @@
     complete(frameModel,changeModel);
 }
 
+//返回单帧展示时长;
+-(CGFloat) getFrameShowTime{
+    if (self.speed != 0) {
+        return 1.0f / self.speed;
+    }
+    return 0;
+}
+
 //MARK:===============================================================
 //MARK:                     < getset >
 //MARK:===============================================================
