@@ -285,6 +285,7 @@
 //MARK:===============================================================
 -(void) tvideo_ClearModels{
     [self.models removeAllObjects];
+    [self.changeDic removeAllObjects];
     [self refreshDisplay];
 }
 
