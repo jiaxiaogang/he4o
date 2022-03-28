@@ -39,6 +39,7 @@
     [self.containerView addSubview:self.headerBtn];
     [self.headerBtn.titleLabel setFont:[UIFont systemFontOfSize:30]];
     [self.headerBtn setOrigin:CGPointZero];
+    self.headerBtn.titleLabel.adjustsFontSizeToFitWidth = YES;
 }
 
 -(void) initData{

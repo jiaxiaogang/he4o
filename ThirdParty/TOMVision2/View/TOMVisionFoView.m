@@ -23,9 +23,19 @@
     if (!data) return;
     AIFoNodeBase *fo = [SMGUtils searchNode:data.content_p];
     
-    [self.headerBtn setTitle:STRFORMAT(@"F%ld",data.content_p.pointerId) forState:UIControlStateNormal];
+    //2. 收集要展示的文本;
+    NSMutableString *mStr = [[NSMutableString alloc] init];
+    [mStr appendFormat:@"F%ld",data.content_p.pointerId];
+    if (ISOK(data.baseOrGroup, ReasonDemandModel.class)) {
+        CGFloat spScore = [TOUtils getSPScore:fo startSPIndex:0 endSPIndex:fo.count];
+        [mStr appendFormat:@" SP分:%.2f",spScore];
+    }else if(ISOK(data.baseOrGroup, HDemandModel.class)){
+        CGFloat spScore = [TOUtils getSPScore:fo startSPIndex:0 endSPIndex:data.targetSPIndex];
+        [mStr appendFormat:@" SP分:%.2f",spScore];
+    }
     
-    //2. 刷新UI;
+    //3. 刷新UI;
+    [self.headerBtn setTitle:mStr forState:UIControlStateNormal];
     for (AIKVPointer *alg_p in fo.content_ps) {
         //可以显示一些容易看懂的,比如某方向飞行,或者吃,果,棒,这些;
         
