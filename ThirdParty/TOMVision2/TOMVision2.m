@@ -20,12 +20,13 @@
 #import "UnorderItemModel.h"
 #import "TVPanelView.h"
 #import "TVLineView.h"
+#import "TVContentView.h"
 
 @interface TOMVision2 () <TVPanelViewDelegate,UIScrollViewDelegate>
 
 @property (strong,nonatomic) IBOutlet UIView *containerView;
 @property (strong, nonatomic) UIScrollView *scrollView;
-@property (strong, nonatomic) UIView *contentView;
+@property (strong, nonatomic) TVContentView *contentView;
 @property (strong, nonatomic) TVPanelView *panelView;
 @property (assign, nonatomic) NSInteger changeIndex; //当前显示的index;
 @property (weak, nonatomic) IBOutlet UILabel *tipLab;
@@ -72,7 +73,7 @@
     self.scrollView.indicatorStyle = UIScrollViewIndicatorStyleWhite;
     
     //contentView
-    self.contentView = [[UIView alloc] init];
+    self.contentView = [[TVContentView alloc] init];
     [self.scrollView addSubview:self.contentView];
     [self.contentView setBackgroundColor:[UIColor clearColor]];
     [self.contentView setFrame:CGRectMake(0, 0, ScreenWidth, ScreenHeight - 60)];
@@ -198,6 +199,9 @@
     if (focusMode) {
         [self focusAnimation:changeModel];
     }
+    
+    //13. 更新contentView的变化流数据;
+    [self updateContentViewBezier];
 }
 
 -(void) clear{
@@ -330,6 +334,37 @@
     //3. 更新contentSize;
     [self.contentView setSize:CGSizeMake(contentW, contentH)];
     [self.scrollView setContentSize:CGSizeMake(contentW * self.scrollView.zoomScale, contentH * self.scrollView.zoomScale)];
+}
+
+//更新contentView的变化流数据;
+-(void) updateContentViewBezier {
+    //1. 数据准备;
+    __block NSMutableArray *points = [[NSMutableArray alloc] init];
+    
+    //2. 取出nodes
+    NSArray *subViews = [self.contentView subViews_AllDeepWithClass:TOMVisionNodeBase.class];
+    
+    //3. 对变化过程,分别收集坐标;
+    for (NSInteger i = 0; i < self.changeIndex; i++) {
+        
+        //4. 判断当前changeIndex有没有变化点;
+        [self.panelView getModel:i complete:^(TOMVisionItemModel *_frameModel, TOModelBase *_changeModel) {
+            if (_changeModel) {
+                
+                //5. 有的话,收集它的中心坐标;
+                for (TOMVisionNodeBase *view in subViews) {
+                    if ([view.data isEqual:_changeModel]) {
+                        [points addObject:[NSValue valueWithCGPoint:view.center]];
+                        break;
+                    }
+                }
+            }
+        }];
+    }
+    
+    //6. 将坐标流更新到contentView;
+    self.contentView.bezierPoints = points;
+    [self.contentView setNeedsDisplay];
 }
 
 //MARK:===============================================================

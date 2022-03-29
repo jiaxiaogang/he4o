@@ -27,11 +27,11 @@
     NSMutableString *mStr = [[NSMutableString alloc] init];
     [mStr appendFormat:@"F%ld",data.content_p.pointerId];
     if (ISOK(data.baseOrGroup, ReasonDemandModel.class)) {
-        CGFloat spScore = [TOUtils getSPScore:fo startSPIndex:0 endSPIndex:fo.count];
-        [mStr appendFormat:@" SP分:%.2f",spScore];
+        //CGFloat spScore = [TOUtils getSPScore:fo startSPIndex:0 endSPIndex:fo.count];
+        [mStr appendFormat:@" SP:%@",CLEANSTR(fo.spDic)];
     }else if(ISOK(data.baseOrGroup, HDemandModel.class)){
-        CGFloat spScore = [TOUtils getSPScore:fo startSPIndex:0 endSPIndex:data.targetSPIndex];
-        [mStr appendFormat:@" SP分:%.2f",spScore];
+        //CGFloat spScore = [TOUtils getSPScore:fo startSPIndex:0 endSPIndex:data.targetSPIndex];
+        [mStr appendFormat:@" SP:%@",CLEANSTR(fo.spDic)];
     }
     
     //3. 刷新UI;

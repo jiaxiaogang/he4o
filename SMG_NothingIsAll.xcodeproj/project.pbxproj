@@ -161,6 +161,7 @@
 		08F738051F7C714F005EAD56 /* AIKVPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F737FF1F7C714F005EAD56 /* AIKVPointer.m */; };
 		08F738061F7C714F005EAD56 /* AIPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738011F7C714F005EAD56 /* AIPointer.m */; };
 		08F738071F7C714F005EAD56 /* AISqlPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738031F7C714F005EAD56 /* AISqlPointer.m */; };
+		08F9A2ED27F33AD200A6BA0B /* TVContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F9A2EC27F33AD200A6BA0B /* TVContentView.m */; };
 		08FBE10E22D56F360088EF1A /* NVModuleUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FBE10D22D56F360088EF1A /* NVModuleUtil.m */; };
 		2753D7CF7BAEDFEACAF9264A /* libPods-SMG_NothingIsAll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */; };
 		4591E02A247F11B600484B51 /* TOAlgModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 4591E029247F11B600484B51 /* TOAlgModel.m */; };
@@ -488,6 +489,8 @@
 		08F738011F7C714F005EAD56 /* AIPointer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIPointer.m; sourceTree = "<group>"; };
 		08F738021F7C714F005EAD56 /* AISqlPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AISqlPointer.h; sourceTree = "<group>"; };
 		08F738031F7C714F005EAD56 /* AISqlPointer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AISqlPointer.m; sourceTree = "<group>"; };
+		08F9A2EB27F33AD200A6BA0B /* TVContentView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TVContentView.h; sourceTree = "<group>"; };
+		08F9A2EC27F33AD200A6BA0B /* TVContentView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TVContentView.m; sourceTree = "<group>"; };
 		08FAEC95215EED48004DCEAD /* NVHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVHeader.h; sourceTree = "<group>"; };
 		08FBE10C22D56F360088EF1A /* NVModuleUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVModuleUtil.h; sourceTree = "<group>"; };
 		08FBE10D22D56F360088EF1A /* NVModuleUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NVModuleUtil.m; sourceTree = "<group>"; };
@@ -913,6 +916,8 @@
 			children = (
 				08586DE327E80C8B008D2F8C /* TVLineView.h */,
 				08586DE427E80C8B008D2F8C /* TVLineView.m */,
+				08F9A2EB27F33AD200A6BA0B /* TVContentView.h */,
+				08F9A2EC27F33AD200A6BA0B /* TVContentView.m */,
 			);
 			path = Line;
 			sourceTree = "<group>";
@@ -1649,6 +1654,7 @@
 			files = (
 				087705A82753743500BA4EFB /* TCInput.m in Sources */,
 				0858C5D62194FABA00951BA5 /* RoadView.m in Sources */,
+				08F9A2ED27F33AD200A6BA0B /* TVContentView.m in Sources */,
 				087705B12753745D00BA4EFB /* TCForecast.m in Sources */,
 				0860A3BB22C9851800A48682 /* CustomAddNodeWindow.m in Sources */,
 				0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */,
