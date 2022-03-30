@@ -200,13 +200,13 @@
     //11. 更新画板;
     [self autoAdjustContentSize];
     
-    //12. 渲染完成_执行聚焦动画;
+    //12. 更新contentView的变化流数据;
+    [self updateContentViewBezier];
+    
+    //13. 渲染完成_执行聚焦动画;
     if (focusMode) {
         [self focusAnimation:changeModel];
     }
-    
-    //13. 更新contentView的变化流数据;
-    [self updateContentViewBezier];
 }
 
 -(void) clear{
