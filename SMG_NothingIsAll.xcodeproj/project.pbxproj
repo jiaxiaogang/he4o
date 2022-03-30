@@ -134,6 +134,7 @@
 		08AF45551E97D0B500377887 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45541E97D0B500377887 /* Assets.xcassets */; };
 		08AF45581E97D0B500377887 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45561E97D0B500377887 /* LaunchScreen.storyboard */; };
 		08AFC5F0276979D8000BAB26 /* TCPlan.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AFC5EF276979D8000BAB26 /* TCPlan.m */; };
+		08B180D327F495340069F11E /* TVTimeLine.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B180D227F495340069F11E /* TVTimeLine.m */; };
 		08B31E7E20648C3700FD96EA /* ThinkingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B31E7D20648C3700FD96EA /* ThinkingUtils.m */; };
 		08C6C2632518E49400DDE6BF /* NSLog+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C6C2622518E49400DDE6BF /* NSLog+Extension.m */; };
 		08C7539225A3EEB800BCF011 /* AIScore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C7539125A3EEB800BCF011 /* AIScore.m */; };
@@ -161,7 +162,6 @@
 		08F738051F7C714F005EAD56 /* AIKVPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F737FF1F7C714F005EAD56 /* AIKVPointer.m */; };
 		08F738061F7C714F005EAD56 /* AIPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738011F7C714F005EAD56 /* AIPointer.m */; };
 		08F738071F7C714F005EAD56 /* AISqlPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738031F7C714F005EAD56 /* AISqlPointer.m */; };
-		08F9A2ED27F33AD200A6BA0B /* TVContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F9A2EC27F33AD200A6BA0B /* TVContentView.m */; };
 		08FBE10E22D56F360088EF1A /* NVModuleUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FBE10D22D56F360088EF1A /* NVModuleUtil.m */; };
 		2753D7CF7BAEDFEACAF9264A /* libPods-SMG_NothingIsAll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */; };
 		4591E02A247F11B600484B51 /* TOAlgModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 4591E029247F11B600484B51 /* TOAlgModel.m */; };
@@ -433,6 +433,8 @@
 		08AF45591E97D0B500377887 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		08AFC5EE276979D8000BAB26 /* TCPlan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCPlan.h; sourceTree = "<group>"; };
 		08AFC5EF276979D8000BAB26 /* TCPlan.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCPlan.m; sourceTree = "<group>"; };
+		08B180D127F495340069F11E /* TVTimeLine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TVTimeLine.h; sourceTree = "<group>"; };
+		08B180D227F495340069F11E /* TVTimeLine.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TVTimeLine.m; sourceTree = "<group>"; };
 		08B31E7C20648C3700FD96EA /* ThinkingUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThinkingUtils.h; sourceTree = "<group>"; };
 		08B31E7D20648C3700FD96EA /* ThinkingUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ThinkingUtils.m; sourceTree = "<group>"; };
 		08B4DAEC25E881D200E32DB1 /* XGDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XGDelegate.h; sourceTree = "<group>"; };
@@ -489,8 +491,6 @@
 		08F738011F7C714F005EAD56 /* AIPointer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIPointer.m; sourceTree = "<group>"; };
 		08F738021F7C714F005EAD56 /* AISqlPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AISqlPointer.h; sourceTree = "<group>"; };
 		08F738031F7C714F005EAD56 /* AISqlPointer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AISqlPointer.m; sourceTree = "<group>"; };
-		08F9A2EB27F33AD200A6BA0B /* TVContentView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TVContentView.h; sourceTree = "<group>"; };
-		08F9A2EC27F33AD200A6BA0B /* TVContentView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TVContentView.m; sourceTree = "<group>"; };
 		08FAEC95215EED48004DCEAD /* NVHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVHeader.h; sourceTree = "<group>"; };
 		08FBE10C22D56F360088EF1A /* NVModuleUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVModuleUtil.h; sourceTree = "<group>"; };
 		08FBE10D22D56F360088EF1A /* NVModuleUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NVModuleUtil.m; sourceTree = "<group>"; };
@@ -916,8 +916,8 @@
 			children = (
 				08586DE327E80C8B008D2F8C /* TVLineView.h */,
 				08586DE427E80C8B008D2F8C /* TVLineView.m */,
-				08F9A2EB27F33AD200A6BA0B /* TVContentView.h */,
-				08F9A2EC27F33AD200A6BA0B /* TVContentView.m */,
+				08B180D127F495340069F11E /* TVTimeLine.h */,
+				08B180D227F495340069F11E /* TVTimeLine.m */,
 			);
 			path = Line;
 			sourceTree = "<group>";
@@ -1654,7 +1654,6 @@
 			files = (
 				087705A82753743500BA4EFB /* TCInput.m in Sources */,
 				0858C5D62194FABA00951BA5 /* RoadView.m in Sources */,
-				08F9A2ED27F33AD200A6BA0B /* TVContentView.m in Sources */,
 				087705B12753745D00BA4EFB /* TCForecast.m in Sources */,
 				0860A3BB22C9851800A48682 /* CustomAddNodeWindow.m in Sources */,
 				0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */,
@@ -1768,6 +1767,7 @@
 				08F738071F7C714F005EAD56 /* AISqlPointer.m in Sources */,
 				0886889E26479A7F00B7C75D /* AINoRepeatRun.m in Sources */,
 				08AF454A1E97D0B500377887 /* main.m in Sources */,
+				08B180D327F495340069F11E /* TVTimeLine.m in Sources */,
 				0872E1682779EF7C0067C97D /* TIUtils.m in Sources */,
 				085BA9F4241C421500829450 /* HeLogUtil.m in Sources */,
 				88988524208979E6001D1ADC /* AINetIndex.m in Sources */,

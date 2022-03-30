@@ -1,20 +1,20 @@
 //
-//  TVContentView.m
+//  TVTimeLine.m
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2022/3/29.
 //  Copyright © 2022年 XiaoGang. All rights reserved.
 //
 
-#import "TVContentView.h"
+#import "TVTimeLine.h"
 
-@implementation TVContentView
+@implementation TVTimeLine
 
 - (void)drawRect:(CGRect)rect {
     //1. 数据准备;
     [super drawRect:rect];
     self.bezierPoints = ARRTOOK(self.bezierPoints);
-    [UIColor.redColor set];
+    [UIColor.greenColor set];
     
     //2. 生成贝塞尔曲线
     UIBezierPath *path = [UIBezierPath bezierPath];
@@ -43,16 +43,8 @@
         }
     }
     
-    //TODOTOMORROW20220330:
-    //1. 此处在缩放时,未自动更新;
-    //2. 在出屏范围的可能绘制不到;
-    //3. 建议查下当contentView.frame改变时,自动重绘的那个方法叫什么调用一下;
-    
-    
-    
-    
     //3. 绘制
-    path.lineWidth = 2.0;
+    path.lineWidth = 1.0;
     path.lineCapStyle = kCGLineCapRound; //终点处理
     path.lineJoinStyle = kCGLineJoinBevel; //线条拐角
     [path stroke];

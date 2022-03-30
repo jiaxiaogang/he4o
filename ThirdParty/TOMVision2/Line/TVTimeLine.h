@@ -1,5 +1,5 @@
 //
-//  TVContentView.h
+//  TVTimeLine.h
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2022/3/29.
@@ -8,7 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-@interface TVContentView : UIView
+/**
+ *  MARK:--------------------树生长时间线--------------------
+ */
+@interface TVTimeLine : UIView
 
 /**
  *  MARK:--------------------曲线流程 List<NSValue(CGPoint)>--------------------

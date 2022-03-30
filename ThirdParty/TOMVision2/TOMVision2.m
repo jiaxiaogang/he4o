@@ -20,14 +20,15 @@
 #import "UnorderItemModel.h"
 #import "TVPanelView.h"
 #import "TVLineView.h"
-#import "TVContentView.h"
+#import "TVTimeLine.h"
 
 @interface TOMVision2 () <TVPanelViewDelegate,UIScrollViewDelegate>
 
 @property (strong,nonatomic) IBOutlet UIView *containerView;
 @property (strong, nonatomic) UIScrollView *scrollView;
-@property (strong, nonatomic) TVContentView *contentView;
+@property (strong, nonatomic) UIView *contentView;
 @property (strong, nonatomic) TVPanelView *panelView;
+@property (strong, nonatomic) TVTimeLine *timeLine;
 @property (assign, nonatomic) NSInteger changeIndex; //当前显示的index;
 @property (weak, nonatomic) IBOutlet UILabel *tipLab;
 
@@ -73,7 +74,7 @@
     self.scrollView.indicatorStyle = UIScrollViewIndicatorStyleWhite;
     
     //contentView
-    self.contentView = [[TVContentView alloc] init];
+    self.contentView = [[UIView alloc] init];
     [self.scrollView addSubview:self.contentView];
     [self.contentView setBackgroundColor:[UIColor clearColor]];
     [self.contentView setFrame:CGRectMake(0, 0, ScreenWidth, ScreenHeight - 60)];
@@ -82,6 +83,10 @@
     self.panelView = [[TVPanelView alloc] init];
     self.panelView.delegate = self;
     [self.containerView addSubview:self.panelView];
+    
+    //timeLine
+    self.timeLine = [[TVTimeLine alloc] init];
+    self.timeLine.backgroundColor = UIColorWithRGBHexA(0xFFFFFF, 0);
 }
 
 -(void) initData{
@@ -336,7 +341,7 @@
     [self.scrollView setContentSize:CGSizeMake(contentW * self.scrollView.zoomScale, contentH * self.scrollView.zoomScale)];
 }
 
-//更新contentView的变化流数据;
+//更新树生长时间线;
 -(void) updateContentViewBezier {
     //1. 数据准备;
     __block NSMutableArray *points = [[NSMutableArray alloc] init];
@@ -345,7 +350,7 @@
     NSArray *subViews = [self.contentView subViews_AllDeepWithClass:TOMVisionNodeBase.class];
     
     //3. 对变化过程,分别收集坐标;
-    for (NSInteger i = 0; i < self.changeIndex; i++) {
+    for (NSInteger i = 0; i <= self.changeIndex; i++) {
         
         //4. 判断当前changeIndex有没有变化点;
         [self.panelView getModel:i complete:^(TOMVisionItemModel *_frameModel, TOModelBase *_changeModel) {
@@ -363,8 +368,12 @@
     }
     
     //6. 将坐标流更新到contentView;
-    self.contentView.bezierPoints = points;
-    [self.contentView setNeedsDisplay];
+    self.timeLine.bezierPoints = points;
+    
+    //7. 更新树生长时间线;
+    [self.contentView insertSubview:self.timeLine atIndex:0];
+    [self.timeLine setFrame:self.contentView.frame];
+    [self.timeLine setNeedsDisplay];
 }
 
 //MARK:===============================================================
