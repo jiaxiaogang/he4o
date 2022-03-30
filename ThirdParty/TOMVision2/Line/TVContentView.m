@@ -24,9 +24,32 @@
         if (i == 0) {
             [path moveToPoint:point];
         }else{
-            [path addLineToPoint:point];
+            
+            //a. 前一点
+            CGPoint startPt = [[self.bezierPoints objectAtIndex: i-1] CGPointValue];
+            
+            //b. 控制点
+            CGPoint cPt1, cPt2;
+            if(ABS(startPt.x - point.x) > ABS(startPt.y - point.y)) {
+                cPt1 = (CGPoint){(startPt.x + point.x)/2, startPt.y};
+                cPt2 = (CGPoint){cPt1.x, point.y};
+            } else {
+                cPt1 = (CGPoint){startPt.x, (startPt.y + point.y)/2};
+                cPt2 = (CGPoint){point.x, cPt1.y};
+            }
+            
+            //3. 添加曲线点
+            [path addCurveToPoint:point controlPoint1:cPt1 controlPoint2:cPt2];
         }
     }
+    
+    //TODOTOMORROW20220330:
+    //1. 此处在缩放时,未自动更新;
+    //2. 在出屏范围的可能绘制不到;
+    //3. 建议查下当contentView.frame改变时,自动重绘的那个方法叫什么调用一下;
+    
+    
+    
     
     //3. 绘制
     path.lineWidth = 2.0;
