@@ -16,11 +16,16 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self initView];
+    [self initData];
 }
 
 -(void) initView{
     //1. self
     self.title = @"和";
+}
+
+-(void) initData{
+    [theRT regist:kGrowPage target:self selector:@selector(birdGrowBtnOnClick:)];
 }
 
 //MARK:===============================================================

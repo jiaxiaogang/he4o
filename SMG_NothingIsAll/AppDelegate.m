@@ -24,6 +24,7 @@
 @property (strong, nonatomic) MemManagerWindow *memManagerWindow;
 @property (strong, nonatomic) UIButton *memManagerBtn;
 @property (strong, nonatomic) UIButton *tvBtn;
+@property (strong, nonatomic) UIButton *rtBtn;
 
 @end
 
@@ -80,6 +81,15 @@
     [self.tvBtn setTitle:@"思维" forState:UIControlStateNormal];
     [self.tvBtn addTarget:self action:@selector(tvBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.window addSubview:self.tvBtn];
+    
+    //3. 强化训练按钮
+    self.rtBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth - 208, StateBarHeight, 40, 20)];
+    [self.rtBtn.titleLabel setFont:[UIFont systemFontOfSize:15]];
+    [self.rtBtn setTitleColor:UIColorWithRGBHex(0x0000EE) forState:UIControlStateNormal];
+    [self.rtBtn setBackgroundColor:UIColorWithRGBHex(0xEEFFEE)];
+    [self.rtBtn setTitle:@"强训" forState:UIControlStateNormal];
+    [self.rtBtn addTarget:self action:@selector(rtBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.window addSubview:self.rtBtn];
     
     //4. 神经网络可视化
     self.nvView = [[NVView alloc] initWithDelegate:[NVDelegate_He new]];
@@ -143,6 +153,10 @@
 
 -(void) tvBtnOnClick:(id)btn{
     [self.tv open];
+}
+
+-(void) rtBtnOnClick:(id)btn{
+    [theRT invoke:kGrowPage];
 }
 
 -(void) startRefreshDotAnimation{

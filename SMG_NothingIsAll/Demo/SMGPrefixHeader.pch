@@ -21,6 +21,7 @@
 #import "HEView.h"
 #import "NSLog+Extension.h"
 #import "AITest.h"
+#import "RLTrainer.h"
 #endif
 
 //MARK:===============================================================
@@ -58,6 +59,7 @@
 #define TPLog(a,...) [theApp setTipLog:STRFORMAT(a,##__VA_ARGS__)]
 #define theNV (theApp.nvView)
 #define theTV (theApp.tv)
+#define theRT [RLTrainer sharedInstance]
 
 /**
  *  MARK:--------------------感官算法--------------------
