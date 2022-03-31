@@ -156,7 +156,8 @@
 }
 
 -(void) rtBtnOnClick:(id)btn{
-    [theRT invoke:kGrowPage];
+    [theRT queue:kGrowPage];
+    [theRT queue:kFly count:1000];
 }
 
 -(void) startRefreshDotAnimation{

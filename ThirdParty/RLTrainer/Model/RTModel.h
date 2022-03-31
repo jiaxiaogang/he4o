@@ -11,6 +11,6 @@
 @interface RTModel : NSObject
 
 -(void) regist:(NSString*)name target:(NSObject*)target selector:(SEL)selector;
--(void) invoke:(NSString*)name;
+-(void) queue:(NSString*)name count:(NSInteger)count;
 
 @end

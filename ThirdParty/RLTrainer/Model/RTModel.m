@@ -10,20 +10,27 @@
 
 @interface RTModel ()
 
-@property (strong, nonatomic) NSMutableDictionary *dic;
+@property (strong, nonatomic) NSMutableDictionary *dic;     //技能字典
+@property (strong, nonatomic) NSMutableArray *queues;       //训练队列
+@property (assign, nonatomic) NSInteger queueIndex;         //训练进度
+@property (strong, nonatomic) NSTimer *timer;               //间隔计时器;
 
 @end
 
 @implementation RTModel
 
-//MARK:===============================================================
-//MARK:                     < getset >
-//MARK:===============================================================
--(NSMutableDictionary*)dic {
-    if (!_dic) {
-        _dic = [[NSMutableDictionary alloc] init];
+-(id) init {
+    self = [super init];
+    if(self != nil){
+        [self initData];
     }
-    return _dic;
+    return self;
+}
+
+-(void) initData{
+    self.dic = [[NSMutableDictionary alloc] init];
+    self.queues = [[NSMutableArray alloc] init];
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:0.6f target:self selector:@selector(timeBlock) userInfo:nil repeats:true];
 }
 
 //MARK:===============================================================
@@ -46,9 +53,40 @@
     [self.dic setObject:invocation forKey:name];
 }
 
+-(void) queue:(NSString*)name count:(NSInteger)count{
+    for (NSInteger i = 0; i < count; i++) {
+        [self.queues addObject:name];
+    }
+}
+
+//MARK:===============================================================
+//MARK:                     < privateMethod >
+//MARK:===============================================================
 -(void) invoke:(NSString*)name{
     NSInvocation *invc = [self.dic objectForKey:name];
     [invc invoke];
+}
+
+//MARK:===============================================================
+//MARK:                     < block >
+//MARK:===============================================================
+-(void) timeBlock {
+    //TODOTOMORROW20220331: 加入对HE负载状态的判断,
+    //1. 可以以循环计数器,或者对任何TCXXX算一次操作计数;
+    //2. 当计数速率(负载)<某值时,为空闲状态;
+    
+    
+    
+    //1. 执行中时,执行下帧;
+    if (self.queueIndex < self.queues.count) {
+        NSString *name = ARR_INDEX(self.queues, self.queueIndex);
+        NSLog(@"队列执行:%ld => %@", self.queueIndex, name);
+        self.queueIndex++;
+        [self invoke:name];
+    }else{
+        //2. 完成时,停止执行;
+        //NSLog(@"队列执行完成");
+    }
 }
 
 @end

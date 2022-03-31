@@ -9,12 +9,14 @@
 #import <Foundation/Foundation.h>
 
 #define kGrowPage @"GrowPage"
+#define kFly @"Fly"
 
 @interface RLTrainer : NSObject
 
 +(RLTrainer*) sharedInstance;
 
 -(void) regist:(NSString*)name target:(NSObject*)target selector:(SEL)selector;
--(void) invoke:(NSString*)name;
+-(void) queue:(NSString*)name;
+-(void) queue:(NSString*)name count:(NSInteger)count;
 
 @end

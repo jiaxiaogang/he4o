@@ -31,6 +31,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self initView];
+    [self initData];
 }
 
 -(void) initView{
@@ -68,6 +69,10 @@
     //6. woodView
     self.woodView = [[WoodView alloc] init];
     [self.view addSubview:self.woodView];
+}
+
+-(void) initData{
+    [theRT regist:kFly target:self selector:@selector(touchWingBtnOnClick:)];
 }
 
 //MARK:===============================================================
@@ -204,7 +209,24 @@
     ISTitleLog(@"现实世界");
     DemoLog(@"摸翅膀onClick");
     [theApp.heLogView addDemoLog:@"摸翅膀onClick"];
-    int random = (arc4random() % 8);
+    //1. 计算random
+    int random = 0;
+    if (self.birdView.showX < 0) {
+        //2. 左屏外,仅向3,4,5飞;
+        random = arc4random() % 3 + 3;
+    }else if(self.birdView.showMaxX > ScreenWidth){
+        //3. 右屏外,仅向7,0,1飞;
+        random = ((arc4random() % 3) + 7) % 8;
+    }else if(self.birdView.y < 64) {
+        //4. 上屏外,仅向5,6,7飞;
+        random = arc4random() % 3 + 5;
+    }else if(self.birdView.showMaxY > ScreenHeight){
+        //5. 下屏外,仅向1,2,3飞;
+        random = arc4random() % 3 + 1;
+    }else {
+        //6. 屏中,任意方向;
+        random = arc4random() % 8;
+    }
     [self.birdView touchWing:random];
 }
 - (IBAction)touchWingLeftOnClick:(id)sender {
