@@ -25,6 +25,7 @@
 +(void) feedbackTIR:(AIShortMatchModel*)model{
     //1. 取所有lastWait模型,并与新输入的概念做mIsC判断;
     NSArray *inModels = theTC.inModelManager.models;
+    [theTC updateOperCount];
     IFTitleLog(@"feedbackTIR", @"\n输入M:%@\n输入P:%@",Alg2FStr(model.matchAlg),Alg2FStr(model.protoAlg));
     
     //2. IRT理性失效 (旧有IRT触发器等待中的fo,在场景情况更新时,标记OutBackReason);
@@ -76,6 +77,7 @@
 +(void) feedbackTIP:(AICMVNode*)cmvNode{
     //1. 数据检查
     NSArray *inModels = theTC.inModelManager.models;
+    [theTC updateOperCount];
     IFTitleLog(@"feedbackTIP", @"\n输入MV:%@",Mv2FStr(cmvNode));
     
     //2. 判断最近一次input是否与等待中outModel相匹配 (匹配,比如吃,确定自己是否真吃了);
@@ -116,6 +118,7 @@
     //1. 数据检查
     NSInteger delta = [NUMTOOK([AINetIndex getData:cmvNode.delta_p]) integerValue];
     if (delta == 0) return;
+    [theTC updateOperCount];
     IFTitleLog(@"feedbackTOP", @"\n输入MV:%@",Mv2FStr(cmvNode));
     
     //2. 对所有等待中的任务尝试处理 (R-任务);

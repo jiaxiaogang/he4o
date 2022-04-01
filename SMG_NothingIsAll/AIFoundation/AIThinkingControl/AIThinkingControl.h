@@ -60,4 +60,10 @@
 -(void) updateEnergy:(CGFloat)delta;
 -(BOOL) energyValid;
 
+//MARK:===============================================================
+//MARK:                     < 操作计数 >
+//MARK:===============================================================
+-(void) updateOperCount;
+-(long long) getOperCount;
+
 @end

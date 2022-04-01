@@ -13,7 +13,8 @@
 @property (strong, nonatomic) NSMutableDictionary *dic;     //技能字典
 @property (strong, nonatomic) NSMutableArray *queues;       //训练队列
 @property (assign, nonatomic) NSInteger queueIndex;         //训练进度
-@property (strong, nonatomic) NSTimer *timer;               //间隔计时器;
+@property (strong, nonatomic) NSTimer *timer;               //间隔计时器
+@property (assign, nonatomic) long long lastOperCount;      //思维操作计数
 
 @end
 
@@ -75,6 +76,8 @@
     //1. 可以以循环计数器,或者对任何TCXXX算一次操作计数;
     //2. 当计数速率(负载)<某值时,为空闲状态;
     
+    NSLog(@"0.1s操作次: %lld",theTC.getOperCount - self.lastOperCount);
+    self.lastOperCount = theTC.getOperCount;
     
     
     //1. 执行中时,执行下帧;

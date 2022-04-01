@@ -22,6 +22,7 @@
 
 @property (strong, nonatomic) DemandManager *demandManager;         //OUT短时记忆 (输出数据管理器);
 @property (strong, nonatomic) ShortMatchManager *shortMatchManager; //IN短时记忆 (输入数据管理器);
+@property (assign, nonatomic) long long operCount;                  //思想操作计数;
 
 @end
 
@@ -179,6 +180,17 @@ static AIThinkingControl *_instance;
 }
 -(BOOL) energyValid{
     return self.energy > 0;
+}
+
+//MARK:===============================================================
+//MARK:                     < 操作计数 >
+//MARK:===============================================================
+-(void) updateOperCount{
+    self.operCount++;
+}
+
+-(long long) getOperCount{
+    return _operCount;
 }
 
 @end

@@ -37,6 +37,7 @@
 +(void) arsTimeActYes:(TOAlgModel*)algModel{
     
     //1. R模式静默成功处理 (等待其自然出现,避免弄巧成拙) (参考22153-A2);
+    [theTC updateOperCount];
     ReasonDemandModel *rDemand = (ReasonDemandModel*)algModel.baseOrGroup.baseOrGroup;
     TOFoModel *dsFoModel = (TOFoModel*)algModel.baseOrGroup;
     
@@ -99,6 +100,7 @@
  */
 +(void) rActYes:(TOFoModel*)foModel{
     //1. R-模式ActYes处理,仅赋值,等待R-触发器;
+    [theTC updateOperCount];
     ReasonDemandModel *demand = (ReasonDemandModel*)foModel.baseOrGroup;
     demand.status = TOModelStatus_ActYes;
     
@@ -152,6 +154,7 @@
  */
 +(void) hActYes:(TOAlgModel*)algModel{
     //1. 数据准备
+    [theTC updateOperCount];
     TOFoModel *foModel = (TOFoModel*)algModel.baseOrGroup;
     AIFoNodeBase *foNode = [SMGUtils searchNode:foModel.content_p];
     
@@ -190,6 +193,7 @@
 //P模式,fo执行完成时,actYes->feedbackTOP
 +(void) pActYes:(TOFoModel*)foModel{
     //1. root设为actYes
+    [theTC updateOperCount];
     DemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:foModel];
     root.status = TOModelStatus_ActYes;
     

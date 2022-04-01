@@ -45,6 +45,7 @@
  */
 +(void) plan:(DemandModel*)rootDemand rootFo:(TOFoModel*)rootFo scoreDic:(NSMutableDictionary*)scoreDic{
     //1. 根据得分字典,从root向sub,取最优路径 (参考24195-3);
+    [theTC updateOperCount];
     double demandScore = [AIScore score4Demand:rootDemand];
     TOModelBase *endBranch = [self bestEndBranch4Plan:scoreDic curDemand:rootDemand demandScore:demandScore];
     

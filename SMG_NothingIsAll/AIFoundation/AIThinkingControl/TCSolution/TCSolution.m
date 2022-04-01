@@ -87,6 +87,7 @@
         NSLog(@">>>>>> rSolution 已达limit条");
         return;
     }
+    [theTC updateOperCount];
     
     //1. 根据demand取;
     NSArray *friends = [TOUtils getSeemFromIdenRDemands:demand];
@@ -184,6 +185,7 @@
         NSLog(@"------->>>>>> pSolution 已达limit条");
         return;
     }
+    [theTC updateOperCount];
     
     //2. =======以下: 调用通用diff模式方法 (以下代码全是由diff模式方法迁移而来);
     //3. 不应期 (考虑改为所有actionFoModels都不应期);
@@ -261,6 +263,7 @@
         NSLog(@"------->>>>>> hSolution 已达limit条");
         return;
     }
+    [theTC updateOperCount];
     
     //1. 数据准备;
     AIAlgNodeBase *targetAlg = [SMGUtils searchNode:hDemand.baseOrGroup.content_p];

@@ -32,6 +32,7 @@
  */
 +(void) rInput:(AIAlgNodeBase*)algNode except_ps:(NSArray*)except_ps{
     ISGroupLog(@"input R");
+    [theTC updateOperCount];
     //1. 数据准备 (瞬时记忆,理性匹配出的模型);
     __block AIShortMatchModel *mModel = [[AIShortMatchModel alloc] init];
     mModel.protoAlg = algNode;
@@ -52,11 +53,13 @@
 
 +(void) pInput:(NSArray*)algsArr{
     ISGroupLog(@"input P");
+    [theTC updateOperCount];
     [TCRegroup pRegroup:algsArr];
 }
 
 +(void) hInput:(TOAlgModel*)algModel{
     ISGroupLog(@"input H");
+    [theTC updateOperCount];
     [TCDemand hDemand:algModel];
 }
 
