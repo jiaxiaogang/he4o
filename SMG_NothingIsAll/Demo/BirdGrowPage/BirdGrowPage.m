@@ -73,6 +73,7 @@
 
 -(void) initData{
     [theRT regist:kFly target:self selector:@selector(touchWingBtnOnClick:)];
+    [theRT regist:kWood target:self selector:@selector(throwWoodOnClick:)];
 }
 
 //MARK:===============================================================

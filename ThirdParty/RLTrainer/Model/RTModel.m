@@ -54,9 +54,15 @@
     [self.dic setObject:invocation forKey:name];
 }
 
--(void) queue:(NSString*)name count:(NSInteger)count{
+-(void) queue:(NSArray*)names count:(NSInteger)count{
+    //1. 数据检查;
+    names = ARRTOOK(names);
+    
+    //2. 更新训练队列;
     for (NSInteger i = 0; i < count; i++) {
-        [self.queues addObject:name];
+        for (NSString *name in names) {
+            [self.queues addObject:name];
+        }
     }
 }
 
@@ -73,17 +79,18 @@
 //MARK:===============================================================
 -(void) timeBlock {
     //1. TC忙碌状态则返回 (计数速率(负载)>10时,为忙状态);
-    BOOL busyStatus = (theTC.getOperCount - self.lastOperCount) > 10;
+    NSInteger operDelta = theTC.getOperCount - self.lastOperCount;
+    BOOL busyStatus = operDelta > 3;
     self.lastOperCount = theTC.getOperCount;
     if (busyStatus) {
-        NSLog(@"忙碌_暂不执行队列");
+        NSLog(@"----> 思维负载(%ld) -> 等待",operDelta);
         return;
     }
     
     //2. 执行中时,执行下帧;
     if (self.queueIndex < self.queues.count) {
         NSString *name = ARR_INDEX(self.queues, self.queueIndex);
-        NSLog(@"执行队列:%ld/%ld => %@", self.queueIndex,self.queues.count, name);
+        NSLog(@"思维负载(%ld) -> 执行:%@ (%ld/%ld)",operDelta,name,self.queueIndex+1,self.queues.count);
         self.queueIndex++;
         [self invoke:name];
     }

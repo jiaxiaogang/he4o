@@ -43,11 +43,14 @@ static RLTrainer *_instance;
 -(void) regist:(NSString*)name target:(NSObject*)target selector:(SEL)selector{
     [self.model regist:name target:target selector:selector];
 }
--(void) queue:(NSString*)name{
-    [self.model queue:name count:1];
+-(void) queue1:(NSString*)name{
+    [self.model queue:@[name] count:1];
 }
--(void) queue:(NSString*)name count:(NSInteger)count{
-    [self.model queue:name count:count];
+-(void) queue1:(NSString*)name count:(NSInteger)count{
+    [self.model queue:@[name] count:count];
+}
+-(void) queueN:(NSArray*)names count:(NSInteger)count{
+    [self.model queue:names count:count];
 }
 
 @end

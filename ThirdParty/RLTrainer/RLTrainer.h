@@ -10,13 +10,15 @@
 
 #define kGrowPage @"GrowPage"
 #define kFly @"Fly"
+#define kWood @"Wood"
 
 @interface RLTrainer : NSObject
 
 +(RLTrainer*) sharedInstance;
 
 -(void) regist:(NSString*)name target:(NSObject*)target selector:(SEL)selector;
--(void) queue:(NSString*)name;
--(void) queue:(NSString*)name count:(NSInteger)count;
+-(void) queue1:(NSString*)name;
+-(void) queue1:(NSString*)name count:(NSInteger)count;
+-(void) queueN:(NSArray*)names count:(NSInteger)count;
 
 @end
