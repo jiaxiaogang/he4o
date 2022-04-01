@@ -212,16 +212,16 @@
     [theApp.heLogView addDemoLog:@"摸翅膀onClick"];
     //1. 计算random
     int random = 0;
-    if (self.birdView.showX < 0) {
+    if ([self birdLeftOut]) {
         //2. 左屏外,仅向3,4,5飞;
         random = arc4random() % 3 + 3;
-    }else if(self.birdView.showMaxX > ScreenWidth){
+    }else if([self birdRightOut]){
         //3. 右屏外,仅向7,0,1飞;
         random = ((arc4random() % 3) + 7) % 8;
-    }else if(self.birdView.y < 64) {
+    }else if([self birdTopOut]) {
         //4. 上屏外,仅向5,6,7飞;
         random = arc4random() % 3 + 5;
-    }else if(self.birdView.showMaxY > ScreenHeight){
+    }else if([self birdBottomOut]){
         //5. 下屏外,仅向1,2,3飞;
         random = arc4random() % 3 + 1;
     }else {
@@ -278,6 +278,11 @@
  *      2021.02.26: NSTimer改为SEL方式,因为block方式在模拟器运行闪退;
  */
 - (IBAction)throwWoodOnClick:(id)sender {
+    //0. 鸟不在,则跳过;
+    if ([self birdOut]) {
+        return;
+    }
+    
     //1. 复位木棒
     [self.woodView reset:false];
     
@@ -357,6 +362,22 @@
             view.alpha = 1.0f;
         }];
     }
+}
+
+-(BOOL) birdOut{
+    return [self birdLeftOut] || [self birdRightOut] || [self birdTopOut] || [self birdBottomOut];
+}
+-(BOOL) birdLeftOut{
+    return self.birdView.showX < 0;
+}
+-(BOOL) birdRightOut{
+    return self.birdView.showMaxX > ScreenWidth;
+}
+-(BOOL) birdTopOut{
+    return self.birdView.y < 64;
+}
+-(BOOL) birdBottomOut{
+    return self.birdView.showMaxY > ScreenHeight;
 }
 
 @end
