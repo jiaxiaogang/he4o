@@ -72,23 +72,20 @@
 //MARK:                     < block >
 //MARK:===============================================================
 -(void) timeBlock {
-    //TODOTOMORROW20220331: 加入对HE负载状态的判断,
-    //1. 可以以循环计数器,或者对任何TCXXX算一次操作计数;
-    //2. 当计数速率(负载)<某值时,为空闲状态;
-    
-    NSLog(@"0.1s操作次: %lld",theTC.getOperCount - self.lastOperCount);
+    //1. TC忙碌状态则返回 (计数速率(负载)>10时,为忙状态);
+    BOOL busyStatus = (theTC.getOperCount - self.lastOperCount) > 10;
     self.lastOperCount = theTC.getOperCount;
+    if (busyStatus) {
+        NSLog(@"忙碌_暂不执行队列");
+        return;
+    }
     
-    
-    //1. 执行中时,执行下帧;
+    //2. 执行中时,执行下帧;
     if (self.queueIndex < self.queues.count) {
         NSString *name = ARR_INDEX(self.queues, self.queueIndex);
-        NSLog(@"队列执行:%ld => %@", self.queueIndex, name);
+        NSLog(@"执行队列:%ld/%ld => %@", self.queueIndex,self.queues.count, name);
         self.queueIndex++;
         [self invoke:name];
-    }else{
-        //2. 完成时,停止执行;
-        //NSLog(@"队列执行完成");
     }
 }
 
