@@ -138,6 +138,8 @@
 		08AFC5F0276979D8000BAB26 /* TCPlan.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AFC5EF276979D8000BAB26 /* TCPlan.m */; };
 		08B180D327F495340069F11E /* TVTimeLine.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B180D227F495340069F11E /* TVTimeLine.m */; };
 		08B31E7E20648C3700FD96EA /* ThinkingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B31E7D20648C3700FD96EA /* ThinkingUtils.m */; };
+		08C159C02808F47100983717 /* RLTPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C159BF2808F47100983717 /* RLTPanel.m */; };
+		08C159C22808F4CB00983717 /* RLTPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 08C159C12808F4CB00983717 /* RLTPanel.xib */; };
 		08C6C2632518E49400DDE6BF /* NSLog+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C6C2622518E49400DDE6BF /* NSLog+Extension.m */; };
 		08C7539225A3EEB800BCF011 /* AIScore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C7539125A3EEB800BCF011 /* AIScore.m */; };
 		08C84A8E1E9A866200897D8B /* AIInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A8D1E9A866200897D8B /* AIInput.m */; };
@@ -445,6 +447,9 @@
 		08B31E7C20648C3700FD96EA /* ThinkingUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThinkingUtils.h; sourceTree = "<group>"; };
 		08B31E7D20648C3700FD96EA /* ThinkingUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ThinkingUtils.m; sourceTree = "<group>"; };
 		08B4DAEC25E881D200E32DB1 /* XGDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XGDelegate.h; sourceTree = "<group>"; };
+		08C159BE2808F47100983717 /* RLTPanel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RLTPanel.h; sourceTree = "<group>"; };
+		08C159BF2808F47100983717 /* RLTPanel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RLTPanel.m; sourceTree = "<group>"; };
+		08C159C12808F4CB00983717 /* RLTPanel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RLTPanel.xib; sourceTree = "<group>"; };
 		08C6C2612518E49400DDE6BF /* NSLog+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSLog+Extension.h"; sourceTree = "<group>"; };
 		08C6C2622518E49400DDE6BF /* NSLog+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSLog+Extension.m"; sourceTree = "<group>"; };
 		08C7539025A3EEB800BCF011 /* AIScore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIScore.h; sourceTree = "<group>"; };
@@ -662,6 +667,7 @@
 		082A904B27F5E01E003D15BE /* RLTrainer */ = {
 			isa = PBXGroup;
 			children = (
+				08C159BD2808F44300983717 /* View */,
 				082A905027F5E418003D15BE /* Model */,
 				082A904C27F5E04D003D15BE /* RLTrainer.h */,
 				082A904D27F5E04D003D15BE /* RLTrainer.m */,
@@ -1247,6 +1253,16 @@
 			path = Extension;
 			sourceTree = "<group>";
 		};
+		08C159BD2808F44300983717 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				08C159BE2808F47100983717 /* RLTPanel.h */,
+				08C159BF2808F47100983717 /* RLTPanel.m */,
+				08C159C12808F4CB00983717 /* RLTPanel.xib */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
 		08C84A8F1E9A86B900897D8B /* AIOutput */ = {
 			isa = PBXGroup;
 			children = (
@@ -1634,6 +1650,7 @@
 				0805EB3126C54A00005F6341 /* LongTipWindow.xib in Resources */,
 				0858C5E421950BC700951BA5 /* TreeView.xib in Resources */,
 				08AF45581E97D0B500377887 /* LaunchScreen.storyboard in Resources */,
+				08C159C22808F4CB00983717 /* RLTPanel.xib in Resources */,
 				0858C5E921950CAA00951BA5 /* FoodView.xib in Resources */,
 				08A5D5DA22AF1E9D00E56BB4 /* NVView.xib in Resources */,
 				082075F627EDFFE70005D7A8 /* TVideoWindow.xib in Resources */,
@@ -1778,6 +1795,7 @@
 				88A43F3A2109571300281348 /* AIAbsCMVNode.m in Sources */,
 				08D4EC512160501000DA646B /* AINetUtils.m in Sources */,
 				08D322A91EBA28B0009D734A /* Foundation+Log.m in Sources */,
+				08C159C02808F47100983717 /* RLTPanel.m in Sources */,
 				087705BD2753748A00BA4EFB /* TCOut.m in Sources */,
 				88A43F40210957C300281348 /* AINetAbsFoNode.m in Sources */,
 				08E8CF5825B2F07100AA18DB /* ImvAlgsHurtModel.m in Sources */,
