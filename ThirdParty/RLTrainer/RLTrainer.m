@@ -8,10 +8,12 @@
 
 #import "RLTrainer.h"
 #import "RTModel.h"
+#import "RLTPanel.h"
 
-@interface RLTrainer ()
+@interface RLTrainer () <RTModelDelegate,RLTPanelDelegate>
 
 @property (strong, nonatomic) RTModel *model;
+@property (strong, nonatomic) RLTPanel *panel;
 
 @end
 
@@ -35,6 +37,10 @@ static RLTrainer *_instance;
 
 -(void) initData{
     self.model = [[RTModel alloc] init];
+    self.model.delegate = self;
+    self.panel = [[RLTPanel alloc] init];
+    self.panel.delegate = self;
+    [theApp.window addSubview:self.panel];
 }
 
 //MARK:===============================================================
@@ -51,6 +57,20 @@ static RLTrainer *_instance;
 }
 -(void) queueN:(NSArray*)names count:(NSInteger)count{
     [self.model queue:names count:count];
+}
+
+//MARK:===============================================================
+//MARK:                     < RTModelDelegate >
+//MARK:===============================================================
+-(BOOL)RTModel_Playing{
+    return self.panel.playing;
+}
+
+//MARK:===============================================================
+//MARK:                     < RLTPanelDelegate >
+//MARK:===============================================================
+-(void)RLTPanel_Stop{
+    
 }
 
 @end

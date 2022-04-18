@@ -23,8 +23,10 @@
 @property (weak, nonatomic) IBOutlet UILabel *totalSPLab;
 @property (weak, nonatomic) IBOutlet UILabel *branchSPLab;
 @property (weak, nonatomic) IBOutlet UILabel *sulutionLab;
-@property (weak, nonatomic) IBOutlet UILabel *descProgressLab;
-@property (weak, nonatomic) IBOutlet UILabel *traningProgressLab;
+@property (weak, nonatomic) IBOutlet UILabel *progressLab;
+@property (weak, nonatomic) IBOutlet UILabel *timeLab;
+@property (weak, nonatomic) IBOutlet UIButton *playBtn;
+@property (weak, nonatomic) IBOutlet UIButton *stopBtn;
 
 @end
 
@@ -53,9 +55,11 @@
         make.top.mas_equalTo(self);
         make.bottom.mas_equalTo(self);
     }];
+    [self.containerView.layer setCornerRadius:1.0f];
+    [self.containerView.layer setBorderColor:UIColorWithRGBHex(0x000000).CGColor];
     
     //scrollView
-    //加上边框显示 & delegate;
+    
     
     
     
@@ -66,10 +70,20 @@
 }
 
 -(void) initDisplay{
+    
 }
 
 -(void) refreshDisplay{
     
+}
+
+//MARK:===============================================================
+//MARK:                     < onclick >
+//MARK:===============================================================
+- (IBAction)playBtnOnClick:(id)sender {
+}
+
+- (IBAction)stopBtnOnClick:(id)sender {
 }
 
 @end

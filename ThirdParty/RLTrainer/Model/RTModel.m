@@ -78,19 +78,25 @@
 //MARK:                     < block >
 //MARK:===============================================================
 -(void) timeBlock {
+    //0. 播放状态
+    if (![self.delegate RTModel_Playing]) {
+        NSLog(@"强化训练_非播放状态");
+        return;
+    }
+    
     //1. TC忙碌状态则返回 (计数速率(负载)>10时,为忙状态);
     NSInteger operDelta = theTC.getOperCount - self.lastOperCount;
     BOOL busyStatus = operDelta > 3;
     self.lastOperCount = theTC.getOperCount;
     if (busyStatus) {
-        NSLog(@"----> 思维负载(%ld) -> 等待",operDelta);
+        NSLog(@"----> 强化训练_思维负载(%ld) -> 等待",operDelta);
         return;
     }
     
     //2. 执行中时,执行下帧;
     if (self.queueIndex < self.queues.count) {
         NSString *name = ARR_INDEX(self.queues, self.queueIndex);
-        NSLog(@"思维负载(%ld) -> 执行:%@ (%ld/%ld)",operDelta,name,self.queueIndex+1,self.queues.count);
+        NSLog(@"强化训练 -> 执行:%@ (%ld/%ld)",name,self.queueIndex+1,self.queues.count);
         self.queueIndex++;
         [self invoke:name];
     }
