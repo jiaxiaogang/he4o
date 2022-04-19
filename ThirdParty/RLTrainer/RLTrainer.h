@@ -20,5 +20,6 @@
 -(void) queue1:(NSString*)name;
 -(void) queue1:(NSString*)name count:(NSInteger)count;
 -(void) queueN:(NSArray*)names count:(NSInteger)count;
+-(void) open;
 
 @end

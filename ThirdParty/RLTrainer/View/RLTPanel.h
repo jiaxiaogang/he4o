@@ -21,5 +21,7 @@
 
 @property (weak, nonatomic) id<RLTPanelDelegate> delegate;
 @property (assign, nonatomic) BOOL playing;
+-(void) open;
+-(void) close;
 
 @end

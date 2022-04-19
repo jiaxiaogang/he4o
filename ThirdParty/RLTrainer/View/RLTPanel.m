@@ -44,7 +44,8 @@
 
 -(void) initView{
     //self
-    [self setFrame:CGRectMake(0, ScreenHeight - 40, ScreenWidth, 40)];
+    [self setAlpha:0.3f];
+    [self setFrame:CGRectMake(ScreenWidth / 3.0f * 2.0f - 20, 64, ScreenWidth / 3.0f, ScreenHeight - 128)];
     
     //containerView
     [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];
@@ -55,22 +56,21 @@
         make.top.mas_equalTo(self);
         make.bottom.mas_equalTo(self);
     }];
-    [self.containerView.layer setCornerRadius:1.0f];
+    [self.containerView.layer setCornerRadius:8.0f];
+    [self.containerView.layer setBorderWidth:1.0f];
     [self.containerView.layer setBorderColor:UIColorWithRGBHex(0x000000).CGColor];
     
     //scrollView
-    
-    
-    
-    
+    [self.scrollView.layer setBorderWidth:1.0f];
+    [self.scrollView.layer setBorderColor:UIColorWithRGBHex(0x0000FF).CGColor];
 }
 
 -(void) initData{
-    
+    self.playing = false;
 }
 
 -(void) initDisplay{
-    
+    [self close];
 }
 
 -(void) refreshDisplay{
@@ -78,12 +78,41 @@
 }
 
 //MARK:===============================================================
+//MARK:                     < getset >
+//MARK:===============================================================
+-(void)setPlaying:(BOOL)playing{
+    _playing = playing;
+    [self.playBtn setTitle: self.playing ? @"暂停" : @"播放" forState:UIControlStateNormal];
+}
+
+//MARK:===============================================================
+//MARK:                     < publicMethod >
+//MARK:===============================================================
+-(void) open{
+    [self setHidden:false];
+}
+-(void) close{
+    [self setHidden:true];
+}
+
+//MARK:===============================================================
 //MARK:                     < onclick >
 //MARK:===============================================================
 - (IBAction)playBtnOnClick:(id)sender {
+    self.playing = !self.playing;
 }
 
 - (IBAction)stopBtnOnClick:(id)sender {
+    NSLog(@"stopClick");
+}
+
+- (IBAction)loadBtnOnClick:(id)sender {
+    [theRT queue1:kGrowPage];
+    [theRT queueN:@[kFly,kWood] count:5];
+}
+
+- (IBAction)closeBtnOnClick:(id)sender {
+    [self close];
 }
 
 @end
