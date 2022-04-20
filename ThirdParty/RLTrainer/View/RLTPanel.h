@@ -10,7 +10,8 @@
 
 @protocol RLTPanelDelegate <NSObject>
 
--(void) RLTPanel_Stop;
+-(void) rltPanel_Stop;
+-(NSArray*) rltPanel_getQueues;
 
 @end
 
@@ -21,6 +22,7 @@
 
 @property (weak, nonatomic) id<RLTPanelDelegate> delegate;
 @property (assign, nonatomic) BOOL playing;
+-(void) reloadData;
 -(void) open;
 -(void) close;
 

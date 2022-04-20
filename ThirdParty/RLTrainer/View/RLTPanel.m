@@ -14,10 +14,10 @@
 #import "TVideoWindow.h"
 #import "TVUtil.h"
 
-@interface RLTPanel ()
+@interface RLTPanel () <UITableViewDelegate,UITableViewDataSource>
 
 @property (strong, nonatomic) IBOutlet UIView *containerView;
-@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (weak, nonatomic) IBOutlet UITableView *tv;
 @property (weak, nonatomic) IBOutlet UILabel *totalScoreLab;
 @property (weak, nonatomic) IBOutlet UILabel *branchScoreLab;
 @property (weak, nonatomic) IBOutlet UILabel *totalSPLab;
@@ -27,6 +27,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *timeLab;
 @property (weak, nonatomic) IBOutlet UIButton *playBtn;
 @property (weak, nonatomic) IBOutlet UIButton *stopBtn;
+@property (strong, nonatomic) NSArray *tvDatas;
 
 @end
 
@@ -60,9 +61,11 @@
     [self.containerView.layer setBorderWidth:1.0f];
     [self.containerView.layer setBorderColor:UIColorWithRGBHex(0x000000).CGColor];
     
-    //scrollView
-    [self.scrollView.layer setBorderWidth:1.0f];
-    [self.scrollView.layer setBorderColor:UIColorWithRGBHex(0x0000FF).CGColor];
+    //tv
+    self.tv.delegate = self;
+    self.tv.dataSource = self;
+    [self.tv.layer setBorderWidth:1.0f];
+    [self.tv.layer setBorderColor:UIColorWithRGBHex(0x0000FF).CGColor];
 }
 
 -(void) initData{
@@ -74,6 +77,16 @@
 }
 
 -(void) refreshDisplay{
+    //1. tv
+    self.tvDatas = ARRTOOK([self.delegate rltPanel_getQueues]);
+    [self.tv reloadData];
+    
+    //2. progressLab
+    self.progressLab.text = STRFORMAT(@"0 / %ld",self.tvDatas.count);
+    
+    
+    //TODOTOMORROW20220420: 继续别的显示;
+    
     
 }
 
@@ -88,11 +101,28 @@
 //MARK:===============================================================
 //MARK:                     < publicMethod >
 //MARK:===============================================================
+-(void) reloadData{
+    [self refreshDisplay];
+}
 -(void) open{
     [self setHidden:false];
 }
 -(void) close{
     [self setHidden:true];
+}
+
+//MARK:===============================================================
+//MARK:                     < privateMethod >
+//MARK:===============================================================
+-(NSString*) cellStr:(NSString*)queue {
+    if ([kGrowPage isEqualToString:queue]) {
+        return @"页 - 进入成长页";
+    }else if ([kFly isEqualToString:queue]) {
+        return @"飞 - 随机";
+    }else if ([kWood isEqualToString:queue]) {
+        return @"棒 - 扔木棒";
+    }
+    return @"";
 }
 
 //MARK:===============================================================
@@ -103,7 +133,7 @@
 }
 
 - (IBAction)stopBtnOnClick:(id)sender {
-    NSLog(@"stopClick");
+    [self.delegate rltPanel_Stop];
 }
 
 - (IBAction)loadBtnOnClick:(id)sender {
@@ -113,6 +143,27 @@
 
 - (IBAction)closeBtnOnClick:(id)sender {
     [self close];
+}
+
+//MARK:===============================================================
+//MARK:       < UITableViewDataSource &  UITableViewDelegate>
+//MARK:===============================================================
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return self.tvDatas.count;
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    UITableViewCell *cell = [[UITableViewCell alloc] init];
+    NSString *queue = STRTOOK(ARR_INDEX(self.tvDatas, indexPath.row));
+    NSString *cellStr = [self cellStr:queue];
+    [cell.textLabel setFont:[UIFont systemFontOfSize:8]];
+    [cell.textLabel setText:STRFORMAT(@"%ld. %@",indexPath.row+1, cellStr)];
+    return cell;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    CGFloat maskHeight = 10.0f;
+    int size = (int)(self.tv.height / maskHeight);
+    size = size / 2 * 2 + 1;
+    return self.tv.height / size;
 }
 
 @end

@@ -10,7 +10,8 @@
 
 @protocol RTModelDelegate <NSObject>
 
--(BOOL) RTModel_Playing;
+-(BOOL) rtModel_Playing;
+-(void) rtModel_Invoked;
 
 @end
 
@@ -19,5 +20,7 @@
 @property (weak, nonatomic) id<RTModelDelegate> delegate;
 -(void) regist:(NSString*)name target:(NSObject*)target selector:(SEL)selector;
 -(void) queue:(NSArray*)names count:(NSInteger)count;
+-(void) clear;
+-(NSMutableArray *)queues;
 
 @end

@@ -66,6 +66,15 @@
     }
 }
 
+-(void) clear{
+    [self.queues removeAllObjects];
+    self.queueIndex = 0;
+}
+
+-(NSMutableArray *)queues{
+    return _queues;
+}
+
 //MARK:===============================================================
 //MARK:                     < privateMethod >
 //MARK:===============================================================
@@ -79,7 +88,7 @@
 //MARK:===============================================================
 -(void) timeBlock {
     //0. 播放状态
-    if (![self.delegate RTModel_Playing]) {
+    if (![self.delegate rtModel_Playing]) {
         NSLog(@"强化训练_非播放状态");
         return;
     }

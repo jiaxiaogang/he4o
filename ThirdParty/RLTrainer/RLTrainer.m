@@ -58,8 +58,8 @@ static RLTrainer *_instance;
 -(void) queueN:(NSArray*)names count:(NSInteger)count{
     [self.panel open];
     [self.model queue:names count:count];
+    [self.panel reloadData];
 }
-
 -(void) open{
     [self.panel open];
 }
@@ -67,15 +67,24 @@ static RLTrainer *_instance;
 //MARK:===============================================================
 //MARK:                     < RTModelDelegate >
 //MARK:===============================================================
--(BOOL)RTModel_Playing{
+-(BOOL) rtModel_Playing{
     return self.panel.playing;
+}
+
+-(void) rtModel_Invoked{
+    [self.panel reloadData];
 }
 
 //MARK:===============================================================
 //MARK:                     < RLTPanelDelegate >
 //MARK:===============================================================
--(void)RLTPanel_Stop{
-    
+-(void) rltPanel_Stop{
+    [self.model clear];
+    [self.panel reloadData];
+}
+
+-(NSArray*) rltPanel_getQueues{
+    return self.model.queues;
 }
 
 @end
