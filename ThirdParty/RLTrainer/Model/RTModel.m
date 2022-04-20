@@ -8,6 +8,8 @@
 
 #import "RTModel.h"
 
+#define TimerInterval 0.6f
+
 @interface RTModel ()
 
 @property (strong, nonatomic) NSMutableDictionary *dic;     //技能字典
@@ -15,6 +17,7 @@
 @property (assign, nonatomic) NSInteger queueIndex;         //训练进度
 @property (strong, nonatomic) NSTimer *timer;               //间隔计时器
 @property (assign, nonatomic) long long lastOperCount;      //思维操作计数
+@property (assign, nonatomic) double useTimed;              //已使用时间
 
 @end
 
@@ -31,7 +34,7 @@
 -(void) initData{
     self.dic = [[NSMutableDictionary alloc] init];
     self.queues = [[NSMutableArray alloc] init];
-    self.timer = [NSTimer scheduledTimerWithTimeInterval:0.6f target:self selector:@selector(timeBlock) userInfo:nil repeats:true];
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:TimerInterval target:self selector:@selector(timeBlock) userInfo:nil repeats:true];
 }
 
 //MARK:===============================================================
@@ -43,6 +46,10 @@
 
 -(NSInteger)queueIndex{
     return _queueIndex;
+}
+
+-(double)useTimed{
+    return _useTimed;
 }
 
 //MARK:===============================================================
@@ -80,6 +87,7 @@
 -(void) clear{
     [self.queues removeAllObjects];
     self.queueIndex = 0;
+    self.useTimed = 0;
 }
 
 //MARK:===============================================================
@@ -94,13 +102,19 @@
 //MARK:                     < block >
 //MARK:===============================================================
 -(void) timeBlock {
-    //0. 播放状态
+    //1. 播放状态
     if (![self.delegate rtModel_Playing]) {
         NSLog(@"强化训练_非播放状态");
         return;
     }
     
-    //1. TC忙碌状态则返回 (计数速率(负载)>10时,为忙状态);
+    //2. 执行完时,返回;
+    if (self.queueIndex >= self.queues.count) {
+        return;
+    }
+    self.useTimed += TimerInterval;
+    
+    //3. TC忙碌状态则返回 (计数速率(负载)>10时,为忙状态);
     NSInteger operDelta = theTC.getOperCount - self.lastOperCount;
     BOOL busyStatus = operDelta > 3;
     self.lastOperCount = theTC.getOperCount;
@@ -109,14 +123,12 @@
         return;
     }
     
-    //2. 执行中时,执行下帧;
-    if (self.queueIndex < self.queues.count) {
-        NSString *name = ARR_INDEX(self.queues, self.queueIndex);
-        NSLog(@"强化训练 -> 执行:%@ (%ld/%ld)",name,self.queueIndex+1,self.queues.count);
-        self.queueIndex++;
-        [self invoke:name];
-        [self.delegate rtModel_Invoked];
-    }
+    //3. 执行下帧;
+    NSString *name = ARR_INDEX(self.queues, self.queueIndex);
+    NSLog(@"强化训练 -> 执行:%@ (%ld/%ld)",name,self.queueIndex+1,self.queues.count);
+    self.queueIndex++;
+    [self invoke:name];
+    [self.delegate rtModel_Invoked];
 }
 
 @end

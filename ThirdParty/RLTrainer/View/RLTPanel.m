@@ -46,7 +46,7 @@
 
 -(void) initView{
     //self
-    [self setAlpha:0.3f];
+    [self setAlpha:0.5f];
     [self setFrame:CGRectMake(ScreenWidth / 3.0f * 2.0f - 20, 64, ScreenWidth / 3.0f, ScreenHeight - 128)];
     
     //containerView
@@ -90,6 +90,12 @@
     //3. progressLab
     self.progressLab.text = STRFORMAT(@"%ld / %ld",self.tvIndex,self.tvDatas.count);
     
+    //4. 使用时间;
+    double useTimed = [self.delegate rltPanel_getUseTimed];
+    double totalTime = self.tvIndex == 0 ? 0 : useTimed * self.tvDatas.count / self.tvIndex;
+    int useT = (int)useTimed, totT = (int)totalTime;
+    NSString *timeStr = STRFORMAT(@"%d:%d / %d:%d", useT / 60, useT % 60, totT / 60, totT % 60);
+    [self.timeLab setText:timeStr];
     
     //TODOTOMORROW20220420: 继续别的显示;
     

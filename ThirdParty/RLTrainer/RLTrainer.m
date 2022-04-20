@@ -91,4 +91,8 @@ static RLTrainer *_instance;
     return self.model.queueIndex;
 }
 
+-(double) rltPanel_getUseTimed{
+    return self.model.useTimed;
+}
+
 @end

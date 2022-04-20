@@ -13,6 +13,7 @@
 -(void) rltPanel_Stop;
 -(NSArray*) rltPanel_getQueues;
 -(NSInteger) rltPanel_getQueueIndex;
+-(double) rltPanel_getUseTimed;
 
 @end
 

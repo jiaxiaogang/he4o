@@ -24,6 +24,7 @@
 //MARK:===============================================================
 -(NSMutableArray *)queues;
 -(NSInteger)queueIndex;
+-(double)useTimed;
 
 //MARK:===============================================================
 //MARK:                     < publicMethod >
