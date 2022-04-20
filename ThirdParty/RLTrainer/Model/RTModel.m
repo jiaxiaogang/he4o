@@ -35,6 +35,17 @@
 }
 
 //MARK:===============================================================
+//MARK:                     < getset >
+//MARK:===============================================================
+-(NSMutableArray *)queues{
+    return _queues;
+}
+
+-(NSInteger)queueIndex{
+    return _queueIndex;
+}
+
+//MARK:===============================================================
 //MARK:                     < publicMethod >
 //MARK:===============================================================
 -(void) regist:(NSString*)name target:(NSObject*)target selector:(SEL)selector{
@@ -71,10 +82,6 @@
     self.queueIndex = 0;
 }
 
--(NSMutableArray *)queues{
-    return _queues;
-}
-
 //MARK:===============================================================
 //MARK:                     < privateMethod >
 //MARK:===============================================================
@@ -108,6 +115,7 @@
         NSLog(@"强化训练 -> 执行:%@ (%ld/%ld)",name,self.queueIndex+1,self.queues.count);
         self.queueIndex++;
         [self invoke:name];
+        [self.delegate rtModel_Invoked];
     }
 }
 

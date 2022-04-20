@@ -18,9 +18,18 @@
 @interface RTModel : NSObject
 
 @property (weak, nonatomic) id<RTModelDelegate> delegate;
+
+//MARK:===============================================================
+//MARK:                     < getset >
+//MARK:===============================================================
+-(NSMutableArray *)queues;
+-(NSInteger)queueIndex;
+
+//MARK:===============================================================
+//MARK:                     < publicMethod >
+//MARK:===============================================================
 -(void) regist:(NSString*)name target:(NSObject*)target selector:(SEL)selector;
 -(void) queue:(NSArray*)names count:(NSInteger)count;
 -(void) clear;
--(NSMutableArray *)queues;
 
 @end

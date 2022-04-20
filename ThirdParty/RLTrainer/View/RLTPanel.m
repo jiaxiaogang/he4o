@@ -28,6 +28,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *playBtn;
 @property (weak, nonatomic) IBOutlet UIButton *stopBtn;
 @property (strong, nonatomic) NSArray *tvDatas;
+@property (assign, nonatomic) NSInteger tvIndex;
 
 @end
 
@@ -66,6 +67,8 @@
     self.tv.dataSource = self;
     [self.tv.layer setBorderWidth:1.0f];
     [self.tv.layer setBorderColor:UIColorWithRGBHex(0x0000FF).CGColor];
+    [self.tv registerClass:[UITableViewCell class] forCellReuseIdentifier:@"spaceCell"];
+    [self.tv registerClass:[UITableViewCell class] forCellReuseIdentifier:@"queueCell"];
 }
 
 -(void) initData{
@@ -77,12 +80,15 @@
 }
 
 -(void) refreshDisplay{
-    //1. tv
+    //1. 取数据
     self.tvDatas = ARRTOOK([self.delegate rltPanel_getQueues]);
+    self.tvIndex = [self.delegate rltPanel_getQueueIndex];
+    
+    //2. tv
     [self.tv reloadData];
     
-    //2. progressLab
-    self.progressLab.text = STRFORMAT(@"0 / %ld",self.tvDatas.count);
+    //3. progressLab
+    self.progressLab.text = STRFORMAT(@"%ld / %ld",self.tvIndex,self.tvDatas.count);
     
     
     //TODOTOMORROW20220420: 继续别的显示;
@@ -125,6 +131,18 @@
     return @"";
 }
 
+-(CGFloat) queueCellHeight{
+    CGFloat maskHeight = 10.0f;//大概计算10左右高;
+    int size = (int)(self.tv.height / maskHeight);
+    size = size / 2 * 2 + 1;
+    return self.tv.height / size;
+}
+
+-(CGFloat) spaceCellHeight{
+    CGFloat cellH = [self queueCellHeight];
+    return (self.tv.height - cellH) * 0.5f;
+}
+
 //MARK:===============================================================
 //MARK:                     < onclick >
 //MARK:===============================================================
@@ -148,22 +166,41 @@
 //MARK:===============================================================
 //MARK:       < UITableViewDataSource &  UITableViewDelegate>
 //MARK:===============================================================
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    return 3;
+}
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return self.tvDatas.count;
+    if (section == 1) {
+        return self.tvDatas.count;
+    }
+    return 1;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    UITableViewCell *cell = [[UITableViewCell alloc] init];
-    NSString *queue = STRTOOK(ARR_INDEX(self.tvDatas, indexPath.row));
-    NSString *cellStr = [self cellStr:queue];
-    [cell.textLabel setFont:[UIFont systemFontOfSize:8]];
-    [cell.textLabel setText:STRFORMAT(@"%ld. %@",indexPath.row+1, cellStr)];
-    return cell;
+    //1. 返回spaceCell
+    if (indexPath.section != 1) {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"spaceCell"];
+        [cell setFrame:CGRectMake(0, 0, self.tv.width, [self spaceCellHeight])];
+        return cell;
+    }else {
+        //2. 正常返回queueCell_数据准备;
+        NSString *queue = STRTOOK(ARR_INDEX(self.tvDatas, indexPath.row));
+        NSString *cellStr = [self cellStr:queue];
+        BOOL trained = indexPath.row < self.tvIndex;
+        
+        //3. 创建cell;
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"queueCell"];
+        [cell.textLabel setFont:[UIFont systemFontOfSize:8]];
+        [cell.textLabel setText:STRFORMAT(@"%ld. %@",indexPath.row+1, cellStr)];
+        [cell.textLabel setTextColor:trained ? UIColor.greenColor : UIColor.orangeColor];
+        return cell;
+    }
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    CGFloat maskHeight = 10.0f;
-    int size = (int)(self.tv.height / maskHeight);
-    size = size / 2 * 2 + 1;
-    return self.tv.height / size;
+    if (indexPath.section == 1) {
+        return [self queueCellHeight];
+    }else{
+        return [self spaceCellHeight];
+    }
 }
 
 @end

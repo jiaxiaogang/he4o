@@ -87,4 +87,8 @@ static RLTrainer *_instance;
     return self.model.queues;
 }
 
+-(NSInteger) rltPanel_getQueueIndex{
+    return self.model.queueIndex;
+}
+
 @end
