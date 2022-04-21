@@ -18,4 +18,7 @@
 
 +(void) score;
 
+//得出综评字典;
++(TOFoModel*) score_Multi:(NSArray*)foModels scoreDic:(NSMutableDictionary*)scoreDic;
+
 @end

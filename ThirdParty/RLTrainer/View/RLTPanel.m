@@ -105,6 +105,9 @@
     //TODOTOMORROW20220420: 继续别的显示;
     
     //1. 综评分;
+    NSString *scoreStr = [self scoreStr];
+    [self.totalScoreLab setText:scoreStr];
+    
     //2. 稳定性;
     //3. 平均SP数;
     //4. 有解率;
@@ -161,6 +164,28 @@
 -(CGFloat) spaceCellHeight{
     CGFloat cellH = [self queueCellHeight];
     return (self.tv.height - cellH) * 0.5f;
+}
+
+-(NSString*) scoreStr {
+    //1. 数据准备;
+    NSArray *roots = theTC.outModelManager.getAllDemand;
+    NSMutableString *mStr = [[NSMutableString alloc] init];
+    
+    //2. 分别对每个根任务,进行评分;
+    for (DemandModel *root in roots) {
+        
+        //3. 取最佳解决方案;
+        NSMutableDictionary *scoreDic = [[NSMutableDictionary alloc] init];
+        TOFoModel *bestFo = [TCScore score_Multi:root.actionFoModels scoreDic:scoreDic];
+        
+        //4. 综合评分 = 最佳解决方案评分 + 任务评分;
+        double rootScore = [AIScore score4Demand:root];
+        double bestFoScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(bestFo)]) doubleValue];
+        
+        //5. 收集结果;
+        [mStr appendFormat:@"%.1f ",rootScore + bestFoScore];
+    }
+    return mStr;
 }
 
 //MARK:===============================================================
