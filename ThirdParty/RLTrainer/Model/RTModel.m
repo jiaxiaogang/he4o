@@ -17,7 +17,8 @@
 @property (assign, nonatomic) NSInteger queueIndex;         //训练进度
 @property (strong, nonatomic) NSTimer *timer;               //间隔计时器
 @property (assign, nonatomic) long long lastOperCount;      //思维操作计数
-@property (assign, nonatomic) double useTimed;              //已使用时间
+@property (assign, nonatomic) long long useTimed;           //已使用时间
+@property (assign, nonatomic) long long lastStartTime;      //最后一次开始时间
 
 @end
 
@@ -46,10 +47,6 @@
 
 -(NSInteger)queueIndex{
     return _queueIndex;
-}
-
--(double)useTimed{
-    return _useTimed;
 }
 
 //MARK:===============================================================
@@ -88,6 +85,16 @@
     [self.queues removeAllObjects];
     self.queueIndex = 0;
     self.useTimed = 0;
+    self.lastStartTime = 0;
+}
+
+//返回useTimed + 现在播放中已用时;
+-(long long) getTotalUseTimed{
+    if (self.lastStartTime > 0) {
+        long long now = [[NSDate new] timeIntervalSince1970];
+        return self.useTimed + now - self.lastStartTime;
+    }
+    return self.useTimed;
 }
 
 //MARK:===============================================================
@@ -98,21 +105,38 @@
     [invc invoke];
 }
 
+//暂停时,把最后一次训练用时收集到已用时:useTimed中;
+-(void) pauseCollectUseTimed{
+    if (self.lastStartTime > 0) {
+        long long now = [[NSDate new] timeIntervalSince1970];
+        self.useTimed += now - self.lastStartTime;
+        self.lastStartTime = 0;
+    }
+}
+
+//开始播放时,记下开始播放的时间;
+-(void) playSetLastStartTime{
+    if (self.lastStartTime == 0) {
+        self.lastStartTime = [[NSDate new] timeIntervalSince1970];
+    }
+}
+
 //MARK:===============================================================
 //MARK:                     < block >
 //MARK:===============================================================
 -(void) timeBlock {
     //1. 播放状态
     if (![self.delegate rtModel_Playing]) {
-        NSLog(@"强化训练_非播放状态");
+        [self pauseCollectUseTimed];
         return;
     }
     
     //2. 执行完时,返回;
     if (self.queueIndex >= self.queues.count) {
+        [self pauseCollectUseTimed];
         return;
     }
-    self.useTimed += TimerInterval;
+    [self playSetLastStartTime];
     
     //3. TC忙碌状态则返回 (计数速率(负载)>10时,为忙状态);
     NSInteger operDelta = theTC.getOperCount - self.lastOperCount;

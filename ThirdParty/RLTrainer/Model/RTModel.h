@@ -24,7 +24,6 @@
 //MARK:===============================================================
 -(NSMutableArray *)queues;
 -(NSInteger)queueIndex;
--(double)useTimed;
 
 //MARK:===============================================================
 //MARK:                     < publicMethod >
@@ -32,5 +31,6 @@
 -(void) regist:(NSString*)name target:(NSObject*)target selector:(SEL)selector;
 -(void) queue:(NSArray*)names count:(NSInteger)count;
 -(void) clear;
+-(long long) getTotalUseTimed;
 
 @end

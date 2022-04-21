@@ -92,7 +92,7 @@ static RLTrainer *_instance;
 }
 
 -(double) rltPanel_getUseTimed{
-    return self.model.useTimed;
+    return self.model.getTotalUseTimed;
 }
 
 @end

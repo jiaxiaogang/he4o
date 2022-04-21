@@ -86,6 +86,11 @@
     
     //2. tv
     [self.tv reloadData];
+    if (self.tvIndex < self.tvDatas.count) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.tv scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.tvIndex inSection:1] atScrollPosition:UITableViewScrollPositionMiddle animated:true];
+        });
+    }
     
     //3. progressLab
     self.progressLab.text = STRFORMAT(@"%ld / %ld",self.tvIndex,self.tvDatas.count);
@@ -98,6 +103,15 @@
     [self.timeLab setText:timeStr];
     
     //TODOTOMORROW20220420: 继续别的显示;
+    
+    //1. 综评分;
+    //2. 稳定性;
+    //3. 平均SP数;
+    //4. 有解率;
+    
+    
+    
+    
     
     
 }
