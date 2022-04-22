@@ -22,6 +22,11 @@
 +(NSArray*) getChange_Item:(TOMVisionItemModel*)itemA itemB:(TOMVisionItemModel*)itemB;
 
 /**
+ *  MARK:--------------------收集roots所有树枝--------------------
+ */
++(NSMutableArray*) collectAllSubTOModelByRoots:(NSArray*)roots;
+
+/**
  *  MARK:--------------------changeDic的变化总数--------------------
  */
 +(NSInteger) countOfChangeDic:(NSDictionary*)changeDic;
