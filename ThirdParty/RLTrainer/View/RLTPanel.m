@@ -192,44 +192,36 @@
     //1. 收集根下所有树枝;
     NSArray *roots = theTC.outModelManager.getAllDemand;
     NSArray *branchs = [TVUtil collectAllSubTOModelByRoots:roots];
+    NSArray *solutions = [SMGUtils filterArr:branchs checkValid:^BOOL(TOModelBase *item) {
+        return ISOK(item, TOFoModel.class);
+    }];
     
     //2. 逐一对任务,的解决方案树枝进行sp计算;
-    for (TOModelBase *branch in branchs) {
+    for (TOFoModel *solution in solutions) {
         
-        
-        if (ISOK(branch, HDemandModel.class)) {
-            HDemandModel *hDemand = (HDemandModel*)branch;
-            //1. HDemand评分;
+        //3. 计算spIndex;
+        AIFoNodeBase *fo = [SMGUtils searchNode:solution.content_p];
+        NSInteger spIndex = -1;
+        if (ISOK(solution.baseOrGroup, HDemandModel.class)) {
+            HDemandModel *hDemand = (HDemandModel*)solution.baseOrGroup;
             AIAlgNodeBase *hAlg = [SMGUtils searchNode:hDemand.baseOrGroup.content_p];
+            spIndex = [TOUtils indexOfConOrAbsItem:hAlg.pointer atContent:fo.content_ps layerDiff:1 startIndex:0 endIndex:NSUIntegerMax];
+        }else if(ISOK(solution.baseOrGroup, ReasonDemandModel.class)){
+            spIndex = fo.count;
+        }
+        
+        //4. 根据spIndex计算稳定性和SP统计;
+        if (spIndex > 0) {
             
-            for (TOFoModel *hSolution in hDemand.actionFoModels) {
-                AIFoNodeBase *hFo = [SMGUtils searchNode:hSolution.content_p];
-                NSInteger spIndex = [TOUtils indexOfConOrAbsItem:hAlg.pointer atContent:hFo.content_ps layerDiff:1 startIndex:0 endIndex:NSUIntegerMax];
-                if (spIndex > 0) {
-                    CGFloat checkSPScore = [TOUtils getSPScore:hFo startSPIndex:0 endSPIndex:spIndex];
-                    //计入sp分;
-                    
-                    for (NSInteger i = 0; i <= spIndex; i++) {
-                        AISPStrong *spStrong = [hFo.spDic objectForKey:@(i)];
-                        //计入sp值;
-                    }
-                }
-                
+            CGFloat checkSPScore = [TOUtils getSPScore:fo startSPIndex:0 endSPIndex:spIndex];
+            //计入sp分;
+            
+            for (NSInteger i = 0; i <= spIndex; i++) {
+                AISPStrong *spStrong = [fo.spDic objectForKey:@(i)];
+                //计入sp值;
             }
             
-        }else if(ISOK(branch, ReasonDemandModel.class)){
-            ReasonDemandModel *rDemand = (ReasonDemandModel*)branch;
-            //2. RDemand评分;
-            for (TOFoModel *rSolution in rDemand.actionFoModels) {
-                AIFoNodeBase *rFo = [SMGUtils searchNode:rSolution.content_p];
-                CGFloat checkSPScore = [TOUtils getSPScore:rFo startSPIndex:0 endSPIndex:maskFo.count];
-                //计入sp分;
-                
-                for (NSInteger i = 0; i <= rFo.count; i++) {
-                    AISPStrong *spStrong = [rFo.spDic objectForKey:@(i)];
-                    //计入sp值;
-                }
-            }
+            
         }
     }
 }
