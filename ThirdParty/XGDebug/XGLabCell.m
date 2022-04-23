@@ -31,7 +31,7 @@
         self.lab = [[UILabel alloc] init];
         [self addSubview:self.lab];
         [self.lab mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.leading.mas_equalTo(self);
+            make.leading.mas_offset(3).mas_equalTo(self);
             make.trailing.mas_equalTo(self);
             make.top.mas_equalTo(self);
             make.bottom.mas_equalTo(self);

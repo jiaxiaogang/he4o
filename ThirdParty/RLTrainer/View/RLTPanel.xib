@@ -106,7 +106,7 @@
                     <rect key="frame" x="5" y="93" width="349" height="162"/>
                     <subviews>
                         <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="xlQ-nb-JrG">
-                            <rect key="frame" x="0.0" y="0.0" width="99" height="162"/>
+                            <rect key="frame" x="0.0" y="0.0" width="95" height="162"/>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         </tableView>
                         <view alpha="0.29999999999999999" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NEP-je-1W8">
@@ -126,7 +126,7 @@
                     </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
-                        <constraint firstItem="wVW-eL-acl" firstAttribute="leading" secondItem="xlQ-nb-JrG" secondAttribute="trailing" id="4gA-eu-K3j"/>
+                        <constraint firstItem="wVW-eL-acl" firstAttribute="leading" secondItem="xlQ-nb-JrG" secondAttribute="trailing" constant="4" id="4gA-eu-K3j"/>
                         <constraint firstItem="NEP-je-1W8" firstAttribute="leading" secondItem="zlc-ae-wio" secondAttribute="leading" id="Ay9-ym-XBW"/>
                         <constraint firstAttribute="bottom" secondItem="wVW-eL-acl" secondAttribute="bottom" id="BSh-EH-5SQ"/>
                         <constraint firstAttribute="bottom" secondItem="xlQ-nb-JrG" secondAttribute="bottom" id="CkV-bp-pXz"/>

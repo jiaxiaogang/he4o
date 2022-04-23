@@ -65,10 +65,10 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     //1. 数据准备;
     XGDebugModel *model = ARR_INDEX(self.models, indexPath.row);
-    NSTimeInterval sumTime = model.sumTime / 1000;
+    NSTimeInterval sumTime = model.sumTime;
     NSTimeInterval onceTime = sumTime / model.sumCount;
-    double rate = sumTime / self.modelsSumTime;
-    NSString *cellStr = STRFORMAT(@"%@ 执行次:%ld x 均耗时:%.1f = 总耗时:%.1f (占比:%.1f％)",model.key,model.sumCount,onceTime,sumTime,rate);
+    double rate = sumTime / self.modelsSumTime * 100;
+    NSString *cellStr = STRFORMAT(@"%@ 执行次:%ld x 均耗时:%.1f = 总耗时:%.0f (占比:%.1f％)",model.key,model.sumCount,onceTime,sumTime,rate);
     
     //2. 创建cell;
     XGLabCell *cell = [tableView dequeueReusableCellWithIdentifier:@"debugCell"];

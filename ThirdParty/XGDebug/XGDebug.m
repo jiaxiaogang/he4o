@@ -13,6 +13,7 @@
 
 @property (assign, nonatomic) NSTimeInterval lastTime;
 @property (strong, nonatomic) NSString *lastKey;
+@property (assign, nonatomic) NSInteger lastLine;
 @property (strong, nonatomic) NSMutableArray *models;   //List<XGDebugModel>
 
 @end
@@ -27,7 +28,7 @@ static XGDebug *_instance;
 
 -(void) debug:(NSString*)key line:(NSInteger)line{
     //1. 上帧结算;
-    NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
+    NSTimeInterval now = [[NSDate date] timeIntervalSince1970] * 1000;
     if (self.lastKey && self.lastTime > 0) {
         
         //a. 旧有model;
@@ -42,14 +43,15 @@ static XGDebug *_instance;
         }
         
         //c. 统计更新;
-        lastModel.key = key;
-        lastModel.line = line;
+        lastModel.key = self.lastKey;
+        lastModel.line = self.lastLine;
         lastModel.sumTime += now - self.lastTime;
         lastModel.sumCount++;
     }
     
     //2. 当前帧记录;
     self.lastKey = key;
+    self.lastLine = line;
     self.lastTime = now;
 }
 
