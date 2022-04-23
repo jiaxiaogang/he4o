@@ -17,9 +17,9 @@
                 <outlet property="playBtn" destination="NNu-wC-xvV" id="ntR-kf-fGd"/>
                 <outlet property="progressLab" destination="2AM-zV-FhK" id="vml-kU-QKm"/>
                 <outlet property="sStrongLab" destination="zI1-wb-YHx" id="xdF-F1-K9V"/>
+                <outlet property="solutionLab" destination="KF7-HK-hEh" id="V5l-BJ-uW6"/>
                 <outlet property="spScoreLab" destination="RA5-k0-NFg" id="0BQ-Hz-nnC"/>
                 <outlet property="stopBtn" destination="ONT-3X-RTK" id="kPB-KE-Zlp"/>
-                <outlet property="sulutionLab" destination="KF7-HK-hEh" id="lgr-O0-k0Y"/>
                 <outlet property="timeLab" destination="Uaq-Pp-zkv" id="n00-gk-z2c"/>
                 <outlet property="tv" destination="xlQ-nb-JrG" id="Ksv-55-ZhI"/>
             </connections>

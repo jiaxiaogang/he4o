@@ -22,7 +22,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *spScoreLab;
 @property (weak, nonatomic) IBOutlet UILabel *sStrongLab;
 @property (weak, nonatomic) IBOutlet UILabel *pStrongLab;
-@property (weak, nonatomic) IBOutlet UILabel *sulutionLab;
+@property (weak, nonatomic) IBOutlet UILabel *solutionLab;
 @property (weak, nonatomic) IBOutlet UILabel *progressLab;
 @property (weak, nonatomic) IBOutlet UILabel *timeLab;
 @property (weak, nonatomic) IBOutlet UIButton *playBtn;
@@ -102,13 +102,11 @@
     NSString *timeStr = STRFORMAT(@"%d:%d / %d:%d", useT / 60, useT % 60, totT / 60, totT % 60);
     [self.timeLab setText:timeStr];
     
-    //TODOTOMORROW20220420: 继续别的显示;
-    
-    //1. 综评分;
+    //5. 综评分;
     NSString *scoreStr = [self mvScoreStr];
     [self.mvScoreLab setText:scoreStr];
     
-    //2. 稳定性 & 平均SP强度;
+    //6. 稳定性 & 平均SP强度;
     __block typeof(self) weakSelf = self;
     [self spStr:^(CGFloat rateSPScore, CGFloat rateSStrong, CGFloat ratePStrong) {
         [weakSelf.spScoreLab setText:STRFORMAT(@"%.1f",rateSPScore)];
@@ -116,13 +114,9 @@
         [weakSelf.pStrongLab setText:STRFORMAT(@"%.1f",ratePStrong)];
     }];
     
-    //4. 有解率;
-    
-    
-    
-    
-    
-    
+    //7. 有解率;
+    CGFloat rateSolution = [self solutionStr];
+    [self.solutionLab setText:STRFORMAT(@"%.0f％",rateSolution * 100)];
 }
 
 //MARK:===============================================================
@@ -250,6 +244,24 @@
     CGFloat rateSStrong = spStrongArr.count == 0 ? 0 : sumSStrong / spStrongArr.count;
     CGFloat ratePStrong = spStrongArr.count == 0 ? 0 : sumPStrong / spStrongArr.count;
     complete(rateSPScore,rateSStrong,ratePStrong);
+}
+
+-(CGFloat) solutionStr{
+    //1. 收集根下所有树枝;
+    NSArray *roots = theTC.outModelManager.getAllDemand;
+    NSArray *branchs = [TVUtil collectAllSubTOModelByRoots:roots];
+    NSArray *demands = [SMGUtils filterArr:branchs checkValid:^BOOL(TOModelBase *item) {
+        return ISOK(item, DemandModel.class);
+    }];
+    
+    //2. 统计有解率;
+    NSInteger havSolutionCount = 0;
+    for (DemandModel *demand in demands) {
+        if (ARRISOK(demand.actionFoModels)) {
+            havSolutionCount++;
+        }
+    }
+    return demands.count > 0 ? (float)havSolutionCount / demands.count : 0;
 }
 
 //MARK:===============================================================
