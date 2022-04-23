@@ -59,6 +59,8 @@
 		084219ED1FD8CF81009DA6BC /* AIThinkingControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 084219EA1FD8CF81009DA6BC /* AIThinkingControl.m */; };
 		0842ADBD1FE207500048ADDC /* DemoHunger.m in Sources */ = {isa = PBXBuildFile; fileRef = 0842ADBC1FE207500048ADDC /* DemoHunger.m */; };
 		0842ADC01FE209700048ADDC /* DemoCharge.m in Sources */ = {isa = PBXBuildFile; fileRef = 0842ADBF1FE209700048ADDC /* DemoCharge.m */; };
+		0843AADC28141711002B9AA9 /* XGDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 0843AADB28141711002B9AA9 /* XGDebug.m */; };
+		0843AADF281419C2002B9AA9 /* XGDebugModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0843AADE281419C2002B9AA9 /* XGDebugModel.m */; };
 		08497A9921C32E17009E7D69 /* AIAlgNodeManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 08497A9821C32E17009E7D69 /* AIAlgNodeManager.m */; };
 		084B4B0824433AA900FB3670 /* ShortMatchManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 084B4B0724433AA900FB3670 /* ShortMatchManager.m */; };
 		084C3A6B21926D5700DAA08A /* BirdView.m in Sources */ = {isa = PBXBuildFile; fileRef = 084C3A6A21926D5700DAA08A /* BirdView.m */; };
@@ -294,6 +296,10 @@
 		0842ADBC1FE207500048ADDC /* DemoHunger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemoHunger.m; sourceTree = "<group>"; };
 		0842ADBE1FE209700048ADDC /* DemoCharge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DemoCharge.h; sourceTree = "<group>"; };
 		0842ADBF1FE209700048ADDC /* DemoCharge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemoCharge.m; sourceTree = "<group>"; };
+		0843AADA28141711002B9AA9 /* XGDebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XGDebug.h; sourceTree = "<group>"; };
+		0843AADB28141711002B9AA9 /* XGDebug.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XGDebug.m; sourceTree = "<group>"; };
+		0843AADD281419C2002B9AA9 /* XGDebugModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XGDebugModel.h; sourceTree = "<group>"; };
+		0843AADE281419C2002B9AA9 /* XGDebugModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XGDebugModel.m; sourceTree = "<group>"; };
 		08497A9721C32E17009E7D69 /* AIAlgNodeManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIAlgNodeManager.h; sourceTree = "<group>"; };
 		08497A9821C32E17009E7D69 /* AIAlgNodeManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIAlgNodeManager.m; sourceTree = "<group>"; };
 		084B4B0624433AA900FB3670 /* ShortMatchManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShortMatchManager.h; sourceTree = "<group>"; };
@@ -853,6 +859,17 @@
 				0842ADBF1FE209700048ADDC /* DemoCharge.m */,
 			);
 			path = Adapter;
+			sourceTree = "<group>";
+		};
+		0843AAD9281416D9002B9AA9 /* XGDebug */ = {
+			isa = PBXGroup;
+			children = (
+				0843AADA28141711002B9AA9 /* XGDebug.h */,
+				0843AADB28141711002B9AA9 /* XGDebug.m */,
+				0843AADD281419C2002B9AA9 /* XGDebugModel.h */,
+				0843AADE281419C2002B9AA9 /* XGDebugModel.m */,
+			);
+			path = XGDebug;
 			sourceTree = "<group>";
 		};
 		0844618B22BB038D008E86CC /* View */ = {
@@ -1539,6 +1556,7 @@
 		88BC09D320B4EAA70006ABEF /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
+				0843AAD9281416D9002B9AA9 /* XGDebug */,
 				082A904B27F5E01E003D15BE /* RLTrainer */,
 				08F5333D27DE39500038812E /* TOMVision2 */,
 				08355573266C69AC00ECFC51 /* MemManager */,
@@ -1787,6 +1805,7 @@
 				080228E1227282F80087FE69 /* TOModelBase.m in Sources */,
 				88E1F84E211591D80036B616 /* DemandManager.m in Sources */,
 				88C258C1209E99B00042CB6A /* AIMvFoManager.m in Sources */,
+				0843AADF281419C2002B9AA9 /* XGDebugModel.m in Sources */,
 				08366B9027DFFCC3004EBBB9 /* TOMVisionItemModel.m in Sources */,
 				08EF706421E5743F009B5194 /* OutputModel.m in Sources */,
 				0832AD4325BC5AEF001B4DB1 /* AIMatchFoModel.m in Sources */,
@@ -1839,6 +1858,7 @@
 				089E66B121B9F5D100ECA28A /* AIAbsAlgNode.m in Sources */,
 				082A905327F5E447003D15BE /* RTModel.m in Sources */,
 				88E87A6721016EAA0071513F /* OutputUtils.m in Sources */,
+				0843AADC28141711002B9AA9 /* XGDebug.m in Sources */,
 				080A74321F60C6490025DBA3 /* AIPort.m in Sources */,
 				08DB40CB1F11A65E003162C8 /* TestHungryPage.m in Sources */,
 				0892BAE62776D6920024B43C /* TCRethink.m in Sources */,
