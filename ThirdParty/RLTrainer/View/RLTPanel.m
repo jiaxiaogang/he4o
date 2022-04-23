@@ -18,10 +18,10 @@
 
 @property (strong, nonatomic) IBOutlet UIView *containerView;
 @property (weak, nonatomic) IBOutlet UITableView *tv;
-@property (weak, nonatomic) IBOutlet UILabel *totalScoreLab;
-@property (weak, nonatomic) IBOutlet UILabel *branchScoreLab;
-@property (weak, nonatomic) IBOutlet UILabel *totalSPLab;
-@property (weak, nonatomic) IBOutlet UILabel *branchSPLab;
+@property (weak, nonatomic) IBOutlet UILabel *mvScoreLab;
+@property (weak, nonatomic) IBOutlet UILabel *spScoreLab;
+@property (weak, nonatomic) IBOutlet UILabel *sStrongLab;
+@property (weak, nonatomic) IBOutlet UILabel *pStrongLab;
 @property (weak, nonatomic) IBOutlet UILabel *sulutionLab;
 @property (weak, nonatomic) IBOutlet UILabel *progressLab;
 @property (weak, nonatomic) IBOutlet UILabel *timeLab;
@@ -105,11 +105,17 @@
     //TODOTOMORROW20220420: 继续别的显示;
     
     //1. 综评分;
-    NSString *scoreStr = [self scoreStr];
-    [self.totalScoreLab setText:scoreStr];
+    NSString *scoreStr = [self mvScoreStr];
+    [self.mvScoreLab setText:scoreStr];
     
-    //2. 稳定性;
-    //3. 平均SP数;
+    //2. 稳定性 & 平均SP强度;
+    __block typeof(self) weakSelf = self;
+    [self spStr:^(CGFloat rateSPScore, CGFloat rateSStrong, CGFloat ratePStrong) {
+        [weakSelf.spScoreLab setText:STRFORMAT(@"%.1f",rateSPScore)];
+        [weakSelf.sStrongLab setText:STRFORMAT(@"%.1f",rateSStrong)];
+        [weakSelf.pStrongLab setText:STRFORMAT(@"%.1f",ratePStrong)];
+    }];
+    
     //4. 有解率;
     
     
@@ -166,7 +172,7 @@
     return (self.tv.height - cellH) * 0.5f;
 }
 
--(NSString*) scoreStr {
+-(NSString*) mvScoreStr {
     //1. 数据准备;
     NSArray *roots = theTC.outModelManager.getAllDemand;
     NSMutableString *mStr = [[NSMutableString alloc] init];
@@ -188,7 +194,11 @@
     return mStr;
 }
 
--(void) spStr:(void(^)(NSString*,NSString*))complete{
+-(void) spStr:(void(^)(CGFloat rateSPScore, CGFloat rateSStrong, CGFloat ratePStrong))complete{
+    //0. 数据准备;
+    NSMutableArray *spScoreArr = [[NSMutableArray alloc] init];
+    NSMutableArray *spStrongArr = [[NSMutableArray alloc] init];
+    
     //1. 收集根下所有树枝;
     NSArray *roots = theTC.outModelManager.getAllDemand;
     NSArray *branchs = [TVUtil collectAllSubTOModelByRoots:roots];
@@ -213,17 +223,31 @@
         //4. 根据spIndex计算稳定性和SP统计;
         if (spIndex > 0) {
             
+            //5. 计入sp分;
             CGFloat checkSPScore = [TOUtils getSPScore:fo startSPIndex:0 endSPIndex:spIndex];
-            //计入sp分;
+            [spScoreArr addObject:@(checkSPScore)];
             
+            //6. 计入sp值;
             for (NSInteger i = 0; i <= spIndex; i++) {
                 AISPStrong *spStrong = [fo.spDic objectForKey:@(i)];
-                //计入sp值;
+                [spStrongArr addObject:spStrong];
             }
-            
-            
         }
     }
+    
+    //7. 得出平均结果,并返回;
+    CGFloat sumSPScore = 0,sumSStrong = 0,sumPStrong = 0;
+    for (NSNumber *item in spScoreArr){
+        sumSPScore += item.floatValue;
+    }
+    for (AISPStrong *item in spStrongArr){
+        sumSStrong += item.sStrong;
+        sumPStrong += item.pStrong;
+    }
+    CGFloat rateSPScore = spScoreArr.count == 0 ? 0 : sumSPScore / spScoreArr.count;
+    CGFloat rateSStrong = spStrongArr.count == 0 ? 0 : sumSStrong / spStrongArr.count;
+    CGFloat ratePStrong = spStrongArr.count == 0 ? 0 : sumPStrong / spStrongArr.count;
+    complete(rateSPScore,rateSStrong,ratePStrong);
 }
 
 //MARK:===============================================================
