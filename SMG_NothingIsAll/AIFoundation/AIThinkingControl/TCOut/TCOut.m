@@ -20,6 +20,7 @@
 +(void) out:(TOAlgModel*)algModel{
     //1. 无论是P-模式的Alg,还是R-中非S的Alg,都要走以下第1,第2,第3级流程;
     [theTC updateOperCount];
+    Debug();
     if (algModel.content_p.isOut) {
         //2. 第1级: 本身即是isOut时,直接行为化返回;
         OFTitleLog(@"行为输出", @"\n%@",AlgP2FStr(algModel.content_p));

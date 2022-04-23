@@ -11,6 +11,7 @@
 @interface XGDebugModel : NSObject
 
 @property (strong, nonatomic) NSString *key;            //key
+@property (assign, nonatomic) NSInteger line;           //调用代码行号
 @property (assign, nonatomic) NSTimeInterval sumTime;   //总耗时
 @property (assign, nonatomic) NSInteger sumCount;       //总执行次数
 

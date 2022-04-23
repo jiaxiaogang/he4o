@@ -13,11 +13,14 @@
 #import "PINDiskCache.h"
 #import "TVideoWindow.h"
 #import "TVUtil.h"
+#import "XGDebugTV.h"
+#import "XGLabCell.h"
 
 @interface RLTPanel () <UITableViewDelegate,UITableViewDataSource>
 
 @property (strong, nonatomic) IBOutlet UIView *containerView;
 @property (weak, nonatomic) IBOutlet UITableView *tv;
+@property (weak, nonatomic) IBOutlet XGDebugTV *debugTV;
 @property (weak, nonatomic) IBOutlet UILabel *mvScoreLab;
 @property (weak, nonatomic) IBOutlet UILabel *spScoreLab;
 @property (weak, nonatomic) IBOutlet UILabel *sStrongLab;
@@ -47,7 +50,8 @@
 -(void) initView{
     //self
     [self setAlpha:0.5f];
-    [self setFrame:CGRectMake(ScreenWidth / 3.0f * 2.0f - 20, 64, ScreenWidth / 3.0f, ScreenHeight - 128)];
+    CGFloat width = 350;//ScreenWidth * 0.667f;
+    [self setFrame:CGRectMake(ScreenWidth - width - 20, 64, width, ScreenHeight - 128)];
     
     //containerView
     [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];
@@ -68,7 +72,11 @@
     [self.tv.layer setBorderWidth:1.0f];
     [self.tv.layer setBorderColor:UIColorWithRGBHex(0x0000FF).CGColor];
     [self.tv registerClass:[UITableViewCell class] forCellReuseIdentifier:@"spaceCell"];
-    [self.tv registerClass:[UITableViewCell class] forCellReuseIdentifier:@"queueCell"];
+    [self.tv registerClass:[XGLabCell class] forCellReuseIdentifier:@"queueCell"];
+    
+    //debugTV
+    [self.debugTV.layer setBorderWidth:1.0f];
+    [self.debugTV.layer setBorderColor:UIColorWithRGBHex(0x0000FF).CGColor];
 }
 
 -(void) initData{
@@ -117,6 +125,9 @@
     //7. 有解率;
     CGFloat rateSolution = [self solutionStr];
     [self.solutionLab setText:STRFORMAT(@"%.0f％",rateSolution * 100)];
+    
+    //8. 性能分析;
+    [self.debugTV updateModels];
 }
 
 //MARK:===============================================================
@@ -305,14 +316,13 @@
     }else {
         //2. 正常返回queueCell_数据准备;
         NSString *queue = STRTOOK(ARR_INDEX(self.tvDatas, indexPath.row));
-        NSString *cellStr = [self cellStr:queue];
+        NSString *cellStr = STRFORMAT(@"%ld. %@",indexPath.row+1, [self cellStr:queue]);
         BOOL trained = indexPath.row < self.tvIndex;
+        UIColor *color = trained ? UIColor.greenColor : UIColor.orangeColor;
         
         //3. 创建cell;
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"queueCell"];
-        [cell.textLabel setFont:[UIFont systemFontOfSize:8]];
-        [cell.textLabel setText:STRFORMAT(@"%ld. %@",indexPath.row+1, cellStr)];
-        [cell.textLabel setTextColor:trained ? UIColor.greenColor : UIColor.orangeColor];
+        XGLabCell *cell = [tableView dequeueReusableCellWithIdentifier:@"queueCell"];
+        [cell setText:cellStr color:color font:8];
         return cell;
     }
 }

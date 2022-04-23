@@ -25,7 +25,7 @@ static XGDebug *_instance;
     return _instance;
 }
 
--(void) debug:(NSString*)key{
+-(void) debug:(NSString*)key line:(NSInteger)line{
     //1. 上帧结算;
     NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
     if (self.lastKey && self.lastTime > 0) {
@@ -43,6 +43,7 @@ static XGDebug *_instance;
         
         //c. 统计更新;
         lastModel.key = key;
+        lastModel.line = line;
         lastModel.sumTime += now - self.lastTime;
         lastModel.sumCount++;
     }
@@ -50,6 +51,13 @@ static XGDebug *_instance;
     //2. 当前帧记录;
     self.lastKey = key;
     self.lastTime = now;
+}
+
+-(NSMutableArray *)models{
+    if (!_models) {
+        _models = [[NSMutableArray alloc] init];
+    }
+    return _models;
 }
 
 @end

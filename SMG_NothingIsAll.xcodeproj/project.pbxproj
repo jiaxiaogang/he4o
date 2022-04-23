@@ -61,6 +61,8 @@
 		0842ADC01FE209700048ADDC /* DemoCharge.m in Sources */ = {isa = PBXBuildFile; fileRef = 0842ADBF1FE209700048ADDC /* DemoCharge.m */; };
 		0843AADC28141711002B9AA9 /* XGDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 0843AADB28141711002B9AA9 /* XGDebug.m */; };
 		0843AADF281419C2002B9AA9 /* XGDebugModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0843AADE281419C2002B9AA9 /* XGDebugModel.m */; };
+		0843AAE228142A49002B9AA9 /* XGDebugTV.m in Sources */ = {isa = PBXBuildFile; fileRef = 0843AAE128142A49002B9AA9 /* XGDebugTV.m */; };
+		0843AAE5281436EF002B9AA9 /* XGLabCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0843AAE4281436EF002B9AA9 /* XGLabCell.m */; };
 		08497A9921C32E17009E7D69 /* AIAlgNodeManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 08497A9821C32E17009E7D69 /* AIAlgNodeManager.m */; };
 		084B4B0824433AA900FB3670 /* ShortMatchManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 084B4B0724433AA900FB3670 /* ShortMatchManager.m */; };
 		084C3A6B21926D5700DAA08A /* BirdView.m in Sources */ = {isa = PBXBuildFile; fileRef = 084C3A6A21926D5700DAA08A /* BirdView.m */; };
@@ -300,6 +302,10 @@
 		0843AADB28141711002B9AA9 /* XGDebug.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XGDebug.m; sourceTree = "<group>"; };
 		0843AADD281419C2002B9AA9 /* XGDebugModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XGDebugModel.h; sourceTree = "<group>"; };
 		0843AADE281419C2002B9AA9 /* XGDebugModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XGDebugModel.m; sourceTree = "<group>"; };
+		0843AAE028142A49002B9AA9 /* XGDebugTV.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XGDebugTV.h; sourceTree = "<group>"; };
+		0843AAE128142A49002B9AA9 /* XGDebugTV.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XGDebugTV.m; sourceTree = "<group>"; };
+		0843AAE3281436EF002B9AA9 /* XGLabCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XGLabCell.h; sourceTree = "<group>"; };
+		0843AAE4281436EF002B9AA9 /* XGLabCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XGLabCell.m; sourceTree = "<group>"; };
 		08497A9721C32E17009E7D69 /* AIAlgNodeManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIAlgNodeManager.h; sourceTree = "<group>"; };
 		08497A9821C32E17009E7D69 /* AIAlgNodeManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIAlgNodeManager.m; sourceTree = "<group>"; };
 		084B4B0624433AA900FB3670 /* ShortMatchManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShortMatchManager.h; sourceTree = "<group>"; };
@@ -868,6 +874,10 @@
 				0843AADB28141711002B9AA9 /* XGDebug.m */,
 				0843AADD281419C2002B9AA9 /* XGDebugModel.h */,
 				0843AADE281419C2002B9AA9 /* XGDebugModel.m */,
+				0843AAE028142A49002B9AA9 /* XGDebugTV.h */,
+				0843AAE128142A49002B9AA9 /* XGDebugTV.m */,
+				0843AAE3281436EF002B9AA9 /* XGLabCell.h */,
+				0843AAE4281436EF002B9AA9 /* XGLabCell.m */,
 			);
 			path = XGDebug;
 			sourceTree = "<group>";
@@ -1777,6 +1787,7 @@
 				88BC09D720B4EB920006ABEF /* XGRedis.m in Sources */,
 				084219E11FD8CEFD009DA6BC /* AIReactorControl.m in Sources */,
 				088A147F27E177AC00FA1097 /* TOMVisionDemandView.m in Sources */,
+				0843AAE5281436EF002B9AA9 /* XGLabCell.m in Sources */,
 				08355577266C6A1000ECFC51 /* MemManager.m in Sources */,
 				087705BA2753747E00BA4EFB /* TCAction.m in Sources */,
 				0808D34022B6F73D00D383BA /* NVLineView.m in Sources */,
@@ -1801,6 +1812,7 @@
 				0802962727E4D77D0050C767 /* TVPanelView.m in Sources */,
 				087705AE2753745100BA4EFB /* TCRecognition.m in Sources */,
 				0858C5CB2194F8B000951BA5 /* MASCompositeConstraint.m in Sources */,
+				0843AAE228142A49002B9AA9 /* XGDebugTV.m in Sources */,
 				08057B342355574600E9B6F1 /* AIShortMatchModel.m in Sources */,
 				080228E1227282F80087FE69 /* TOModelBase.m in Sources */,
 				88E1F84E211591D80036B616 /* DemandManager.m in Sources */,

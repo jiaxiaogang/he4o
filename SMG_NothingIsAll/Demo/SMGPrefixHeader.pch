@@ -8,7 +8,6 @@
 
 #import <Availability.h>
 
-
 #ifdef __OBJC__
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
@@ -22,6 +21,7 @@
 #import "NSLog+Extension.h"
 #import "AITest.h"
 #import "RLTrainer.h"
+#import "XGDebug.h"
 #endif
 
 //MARK:===============================================================
@@ -60,6 +60,7 @@
 #define theNV (theApp.nvView)
 #define theTV (theApp.tv)
 #define theRT [RLTrainer sharedInstance]
+#define theDebug [XGDebug sharedInstance]
 
 /**
  *  MARK:--------------------感官算法--------------------
@@ -71,3 +72,8 @@
  */
 #define EAT_RDS @"EAT_RDS"  //吸吮反射标识
 #define FLY_RDS @"FLY_RDS"  //扇翅膀反射标识 (类似人类的抓握反射)
+
+/**
+ *  MARK:--------------------debug--------------------
+ */
+#define Debug() [theDebug debug:FILENAME line:__LINE__]
