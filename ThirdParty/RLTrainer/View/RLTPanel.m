@@ -230,7 +230,9 @@
             //6. 计入sp值;
             for (NSInteger i = 0; i <= spIndex; i++) {
                 AISPStrong *spStrong = [fo.spDic objectForKey:@(i)];
-                [spStrongArr addObject:spStrong];
+                if (spStrong) {
+                    [spStrongArr addObject:spStrong];
+                }
             }
         }
     }

@@ -39,7 +39,9 @@
 }
 
 -(void)setStatus:(TOModelStatus)status{
-    NSLog(@"toModel.setStatus:%@ (%@ -> %@)",Pit2FStr(self.content_p),TOStatus2Str(self.status),TOStatus2Str(status));
+    if (status != self.status) {
+        NSLog(@"toModel.setStatus:%@ (%@ -> %@)",Pit2FStr(self.content_p),TOStatus2Str(self.status),TOStatus2Str(status));
+    }
     _status = status;
 }
 
