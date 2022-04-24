@@ -14,6 +14,7 @@
 
 @property (strong, nonatomic) NSMutableArray *models;       //刷新显示时的models;
 @property (assign, nonatomic) NSTimeInterval modelsSumTime; //刷新显示时的总耗时;
+@property (assign, nonatomic) NSTimeInterval modelsOnceTime;//models的平均时间之和;
 
 @end
 
@@ -45,11 +46,13 @@
     //1. 数据准备;
     [self.models removeAllObjects];
     self.modelsSumTime = 0;
+    self.modelsOnceTime = 0;
     
     //2. 更新数据;
     [self.models addObjectsFromArray:theDebug.models];
     for (XGDebugModel *model in self.models) {
         self.modelsSumTime += model.sumTime;
+        self.modelsOnceTime += model.sumTime / model.sumCount;
     }
     
     //3. 刷新显示;
@@ -65,10 +68,11 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     //1. 数据准备;
     XGDebugModel *model = ARR_INDEX(self.models, indexPath.row);
-    NSTimeInterval sumTime = model.sumTime;
-    NSTimeInterval onceTime = sumTime / model.sumCount;
-    double rate = sumTime / self.modelsSumTime * 100;
-    NSString *cellStr = STRFORMAT(@"%@ 执行次:%ld x 均耗时:%.1f = 总耗时:%.0f (占比:%.1f％)",model.key,model.sumCount,onceTime,sumTime,rate);
+    NSTimeInterval onceTime = model.sumTime / model.sumCount;
+    double onceRate = onceTime / self.modelsOnceTime * 100;
+    NSTimeInterval sumTime = model.sumTime / 1000;
+    double sumRate = model.sumTime / self.modelsSumTime * 100;
+    NSString *cellStr = STRFORMAT(@"%@ 次:%ld x 均耗:%.0f (%.0f％) = 总耗:%.1f (%.0f％)",model.key,model.sumCount,onceTime,onceRate,sumTime,sumRate);
     
     //2. 创建cell;
     XGLabCell *cell = [tableView dequeueReusableCellWithIdentifier:@"debugCell"];
