@@ -14,5 +14,7 @@
 @property (assign, nonatomic) NSInteger line;           //调用代码行号
 @property (assign, nonatomic) NSTimeInterval sumTime;   //总耗时
 @property (assign, nonatomic) NSInteger sumCount;       //总执行次数
+@property (assign, nonatomic) NSInteger sumWriteCount;  //写硬盘数
+@property (assign, nonatomic) NSInteger sumReadCount;   //读硬盘数
 
 @end

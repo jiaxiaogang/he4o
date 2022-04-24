@@ -76,4 +76,6 @@
 /**
  *  MARK:--------------------debug--------------------
  */
-#define Debug() [theDebug debug:FILENAME line:__LINE__]
+#define Debug() [theDebug debugModule:FILENAME line:__LINE__]
+#define DebugW() [theDebug debugWrite]
+#define DebugR() [theDebug debugRead]

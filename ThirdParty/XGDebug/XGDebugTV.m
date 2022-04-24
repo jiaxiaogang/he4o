@@ -70,9 +70,11 @@
     XGDebugModel *model = ARR_INDEX(self.models, indexPath.row);
     NSTimeInterval onceTime = model.sumTime / model.sumCount;
     double onceRate = onceTime / self.modelsOnceTime * 100;
+    NSInteger onceR = model.sumReadCount / model.sumCount;
+    NSInteger onceW = model.sumWriteCount / model.sumCount;
     NSTimeInterval sumTime = model.sumTime / 1000;
     double sumRate = model.sumTime / self.modelsSumTime * 100;
-    NSString *cellStr = STRFORMAT(@"%@ 次:%ld x 均耗:%.0f (%.0f％) = 总耗:%.1f (%.0f％)",model.key,model.sumCount,onceTime,onceRate,sumTime,sumRate);
+    NSString *cellStr = STRFORMAT(@"%@ 次:%ld x 均耗:%.0f (%.0f％ 读:%ld 写:%ld) = 总耗:%.1f (%.0f％)",model.key,model.sumCount,onceTime,onceRate,onceR,onceW,sumTime,sumRate);
     
     //2. 创建cell;
     XGLabCell *cell = [tableView dequeueReusableCellWithIdentifier:@"debugCell"];
