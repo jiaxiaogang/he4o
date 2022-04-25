@@ -51,6 +51,7 @@
             BOOL arsTime = [AIScore ARS_Time:foModel demand:baseDemand];
             if (!arsTime) {
                 //7. 评价不通过,则直接ActYes,等待其自然出现 (参考22153-A2);
+                DebugE();
                 NSLog(@"==> arsTime弄巧成拙评价,子弹再飞一会儿");
                 moveAlg.status = TOModelStatus_ActYes;
                 [TCActYes arsTimeActYes:moveAlg];
@@ -59,9 +60,11 @@
         }
         
         //7. 尝试行为当前帧;
+        DebugE();
         [TCOut out:moveAlg];
     }else{
         //8. R成功,转actYes等待反馈 & 触发反省 (原递归参考流程控制Finish的注释version-20200916 / 参考22061-7);
+        DebugE();
         foModel.status = TOModelStatus_ActYes;
         NSLog(@"_Fo行为化: Finish %ld/%ld 到ActYes",(long)foModel.actionIndex,(long)curFo.count);
         if (ISOK(foModel.baseOrGroup, ReasonDemandModel.class)) {

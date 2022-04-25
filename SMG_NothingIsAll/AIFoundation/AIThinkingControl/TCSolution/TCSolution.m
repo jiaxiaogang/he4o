@@ -134,6 +134,7 @@
     
     //6. 转流程控制_有解决方案则转begin;
     CGFloat bestSPScore = [TOUtils getSPScore:bestResult startSPIndex:0 endSPIndex:bestResult.count];
+    DebugE();
     if (bestResult && bestSPScore > 0) {
         //7. 消耗活跃度;
         if (![theTC energyValid]) return;
@@ -232,6 +233,7 @@
                 //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
                 NSLog(@">>>>>> pSolution 新增第%ld例解决方案: %@->%@",demandModel.actionFoModels.count,Fo2FStr(fo),Mvp2Str(fo.cmvNode_p));
                 [theTV updateFrame];
+                DebugE();
                 [TCAction action:toFoModel];//[theTOR singleLoopBackWithBegin:toFoModel];
                 
                 //8. 只要有一次tryResult成功,中断回调循环;
@@ -241,6 +243,7 @@
     }
     
     //9. 无计可施,下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
+    DebugE();
     demandModel.status = TOModelStatus_WithOut;
     NSLog(@">>>>>> pSolution 无计可施");
     [TCScore score];
@@ -305,6 +308,7 @@
     }
     
     //8. 新解决方案_的结果处理;
+    DebugE();
     if (bestResult) {
         //8. 消耗活跃度;
         if (![theTC energyValid]) return;

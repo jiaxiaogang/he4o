@@ -28,7 +28,12 @@ static XGDebug *_instance;
     return _instance;
 }
 
--(void) debugModule:(NSString*)key line:(NSInteger)line{
+-(void) debugModule:(NSString*)name suffix:(NSString*)suffix line:(NSInteger)line{
+    //0. 数据准备;
+    name = STRTOOK(name);
+    NSString *prefix = SUBSTR2INDEX(name, name.length - 2);
+    NSString *key = STRISOK(suffix) ? STRFORMAT(@"%@_%@",prefix,suffix) : prefix;
+    
     //1. 上帧结算;
     NSTimeInterval now = [[NSDate date] timeIntervalSince1970] * 1000;
     if (self.lastKey && self.lastTime > 0) {

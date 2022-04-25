@@ -24,6 +24,7 @@
     [theTV updateFrame];
     
     //6. 此处推进不成功,则运行TOP四模式;
+    DebugE();
     [TCScore score];
 }
 
@@ -46,6 +47,7 @@
     [theTV updateFrame];
     
     //2. 转向执行;
+    DebugE();
     [TCScore score];
 }
 
@@ -65,6 +67,7 @@
         [ReasonDemandModel newWithMModel:item inModel:model baseFo:foModel];
     }
     [theTV updateFrame];
+    DebugE();
 }
 
 /**
@@ -81,6 +84,7 @@
     [theTV updateFrame];
     
     //2. 调用TCScore继续决策;
+    DebugE();
     [TCScore score];//[TCSolution hSolution:hDemand];
 }
 

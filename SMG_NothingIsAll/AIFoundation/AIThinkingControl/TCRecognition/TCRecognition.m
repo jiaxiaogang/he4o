@@ -43,6 +43,7 @@
     }];
     
     //5. 学习;
+    DebugE();
     [TCLearning rLearning:model protoFo:maskFo];
 }
 
@@ -50,6 +51,7 @@
     //3. 学习
     [theTC updateOperCount];
     Debug();
+    DebugE();
     [TCLearning pLearning:protoFo];
 }
 
@@ -102,6 +104,7 @@
     //NSLog(@"反思时序: Finish >> %@",Fo2FStr(result.matchFo));
     
     //3. 调用更新到短时记忆树;
+    DebugE();
     [TCForecast feedbackForecast:result foModel:foModel];
 }
 

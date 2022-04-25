@@ -14,7 +14,7 @@
 @interface XGDebug : NSObject
 
 +(XGDebug*) sharedInstance;
--(void) debugModule:(NSString*)key line:(NSInteger)line;
+-(void) debugModule:(NSString*)name suffix:(NSString*)suffix line:(NSInteger)line;
 -(void) debugWrite;
 -(void) debugRead;
 -(NSMutableArray *)models; //notnull

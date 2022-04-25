@@ -25,6 +25,7 @@
     TOFoModel *foModel = [self score_Multi:demand.actionFoModels scoreDic:scoreDic];
     
     //3. 转给TCPlan取最优路径;
+    DebugE();
     [TCPlan plan:demand rootFo:foModel scoreDic:scoreDic];
 }
 

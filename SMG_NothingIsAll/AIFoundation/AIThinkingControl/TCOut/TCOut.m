@@ -32,10 +32,12 @@
         
         //3. 输出_用旧有代码->输出后转给TCInput.rInput();
         [theTV updateFrame];
+        DebugE();
         BOOL invoked = [Output output_FromTC:algModel.content_p];
         NSLog(@"===执行%@",invoked ? @"success" : @"failure");
     }else{
         //8. notOut转jump;
+        DebugE();
         [TCInput hInput:algModel];
     }
 }

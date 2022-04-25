@@ -53,6 +53,7 @@
     }
     
     //4. tip_OPushM
+    DebugE();
     [TCFeedback feedbackTIP:cmvNode];
     
     //2. top_OPushM
@@ -83,6 +84,7 @@
     }
     
     //2. TIR反馈;
+    DebugE();
     [TCFeedback feedbackTIR:model];
 }
 

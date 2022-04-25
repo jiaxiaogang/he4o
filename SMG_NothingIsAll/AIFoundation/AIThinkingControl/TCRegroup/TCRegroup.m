@@ -20,6 +20,7 @@
     model.protoFo = [theNet createConFo:protoAShortMem isMem:false];
     
     //2. 识别
+    DebugE();
     [TCRecognition rRecognition:model];
 }
 
@@ -41,6 +42,7 @@
     //[self.shortMemory clear] (参考注释2020.01.20);
     
     //3. 提交学习识别;
+    DebugE();
     [TCRecognition pRecognition:protoFo];
 }
 
@@ -75,8 +77,9 @@
     
     //6. 将时序元素生成新时序;
     AIFoNodeBase *regroupFo = [theNet createConFo:order isMem:true];
-
+    
     //7. 识别时序 (预测到鸡蛋变脏,或者cpu损坏) (理性预测影响评价即理性评价);
+    DebugE();
     [TCRecognition feedbackRecognition:regroupFo foModel:foModel];
 }
 

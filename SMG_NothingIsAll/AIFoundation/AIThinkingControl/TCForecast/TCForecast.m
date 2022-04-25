@@ -17,12 +17,14 @@
     //6. 传给TOR,做下一步处理: R任务_预测mv价值变化;
     [theTC updateOperCount];
     Debug();
+    DebugE();
     [TCDemand rDemand:model];
 }
 
 +(void) pForecast:(AICMVNode*)cmvNode{
     [theTC updateOperCount];
     Debug();
+    DebugE();
     [TCDemand pDemand:cmvNode];
 }
 
@@ -84,6 +86,7 @@
             }];
         }
     }
+    DebugE();
 }
 
 +(void) forecastPerceptIRT:(AIShortMatchModel*)model {

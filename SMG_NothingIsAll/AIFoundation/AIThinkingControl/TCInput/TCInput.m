@@ -44,6 +44,7 @@
     
     //3. 将mModel保留 (只有先保留后,构建时序时,才会含新帧概念);
     [theTC.inModelManager add:mModel];
+    DebugE();
     
     //3. 概念反馈 -> 重组
     [TCFeedbackTOR feedbackTOR:mModel];
@@ -56,6 +57,7 @@
     ISGroupLog(@"input P");
     [theTC updateOperCount];
     Debug();
+    DebugE();
     [TCRegroup pRegroup:algsArr];
 }
 
@@ -63,6 +65,7 @@
     ISGroupLog(@"input H");
     [theTC updateOperCount];
     Debug();
+    DebugE();
     [TCDemand hDemand:algModel];
 }
 

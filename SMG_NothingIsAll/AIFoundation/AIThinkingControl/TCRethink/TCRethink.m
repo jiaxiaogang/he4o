@@ -16,6 +16,7 @@
     Debug();
     IFTitleLog(@"IR反省", @"\n%@ spIndex:%ld -> (%@)",Fo2FStr(matchFo),model.cutIndex2 + 1,ATType2Str(type));
     [matchFo updateSPStrong:model.cutIndex2 + 1 type:type];
+    DebugE();
 }
 
 +(void) perceptInRethink:(AIMatchFoModel*)model type:(AnalogyType)type{
@@ -24,6 +25,7 @@
     Debug();
     IFTitleLog(@"IP反省", @"\n%@ spIndex:%ld -> (%@)",Fo2FStr(matchFo),matchFo.count,ATType2Str(type));
     [matchFo updateSPStrong:matchFo.count type:type];
+    DebugE();
 }
 
 +(void) reasonOutRethink:(TOFoModel*)model type:(AnalogyType)type{
@@ -32,6 +34,7 @@
     Debug();
     IFTitleLog(@"OR反省", @"\n%@ spIndex:%ld -> (%@)",FoP2FStr(model.content_p),model.targetSPIndex,ATType2Str(type));
     [fo updateSPStrong:model.targetSPIndex type:type];
+    DebugE();
 }
 
 +(void) perceptOutRethink:(TOFoModel*)model type:(AnalogyType)type{
@@ -40,6 +43,7 @@
     Debug();
     IFTitleLog(@"OP反省", @"\n%@ spIndex:%ld -> (%@)",FoP2FStr(model.content_p),fo.count,ATType2Str(type));
     [fo updateSPStrong:fo.count type:type];
+    DebugE();
 }
 
 @end

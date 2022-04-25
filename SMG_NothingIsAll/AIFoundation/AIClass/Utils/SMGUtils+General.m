@@ -87,6 +87,7 @@
 //    return result;
 //}
 
+//notnull
 +(NSString*) subStr:(NSString*)s toIndex:(NSInteger)index{
     return (STRISOK(s) ? [s substringToIndex:MIN(s.length, MAX(0, index))] : @"");
 }

@@ -21,7 +21,7 @@ static int logLineNum;
 +(BOOL) strIsOk:(NSString*)s;
 +(NSString*) strToOk:(NSString*)s;
 +(NSArray*) strToArr:(NSString*)str sep:(NSString*)sep;     //str分隔arr
-+(NSString*) subStr:(NSString*)s toIndex:(NSInteger)index;
++(NSString*) subStr:(NSString*)s toIndex:(NSInteger)index;  //notnull
 +(NSString*) codeLocateFormat:(NSString*)fileName line:(NSInteger)line;
 +(NSString*) nsLogFormat:(NSString*)fileName line:(NSInteger)line protoLog:(NSString*)protoLog headerMode:(LogHeaderMode)headerMode;//NSLog自定义格式化;
 +(NSString*) cleanStr:(id)str;

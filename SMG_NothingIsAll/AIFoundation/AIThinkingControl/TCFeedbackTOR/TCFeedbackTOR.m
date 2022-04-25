@@ -76,12 +76,12 @@
  */
 +(void) feedbackTOR:(AIShortMatchModel*)model{
     //1. 将新一帧数据报告给TOR,以进行短时记忆的更新,比如我输出行为"打",短时记忆由此知道输出"打"成功 (外循环入->推进->中循环出);
+    [theTC updateOperCount];
+    Debug();
     NSMutableArray *waitModels = [[NSMutableArray alloc] init];
     for (ReasonDemandModel *root in theTC.outModelManager.getAllDemand) {
         [waitModels addObjectsFromArray:[TOUtils getSubOutModels_AllDeep:root validStatus:nil]];
     }
-    [theTC updateOperCount];
-    Debug();
     IFTitleLog(@"TOR反馈", @"\n输入M:%@\n输入P:%@\n等待中任务数:%lu",Alg2FStr(model.matchAlg),Alg2FStr(model.protoAlg),(long)waitModels.count);
     
     //2. 保留/更新实际发生到outModel (通过了有效判断的,将实际概念直接存留到waitModel);
@@ -117,6 +117,7 @@
                 [theTV updateFrame];
                 
                 //c. 重组;
+                DebugE();
                 [TCRegroup feedbackRegroup:targetFo];
             }
         }
@@ -143,10 +144,12 @@
                 [theTV updateFrame];
                 
                 //c. 重组
+                DebugE();
                 [TCRegroup feedbackRegroup:targetFo];
             }
         }
     }
+    DebugE();
 }
 
 @end

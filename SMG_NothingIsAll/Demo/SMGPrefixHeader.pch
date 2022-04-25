@@ -76,6 +76,8 @@
 /**
  *  MARK:--------------------debug--------------------
  */
-#define Debug() [theDebug debugModule:FILENAME line:__LINE__]
+#define Debug() [theDebug debugModule:FILENAME suffix:nil line:__LINE__]
+#define DebugS() [theDebug debugModule:FILENAME suffix:@"START" line:__LINE__]
+#define DebugE() [theDebug debugModule:FILENAME suffix:@"END" line:__LINE__]
 #define DebugW() [theDebug debugWrite]
 #define DebugR() [theDebug debugRead]

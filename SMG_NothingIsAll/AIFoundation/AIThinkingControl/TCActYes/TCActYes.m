@@ -76,6 +76,7 @@
                 NSLog(@"---//触发器R-_理性alg任务Trigger:%@ 解决方案:%@ (%@)",FoP2FStr(dsFoModel.content_p),Pit2FStr(algModel.content_p),ATType2Str(type));
                 
                 //5. 有反馈时,algModel自然出现成功,则设为finish并继续决策;
+                DebugE();
                 if (type == ATPlus) {
                     algModel.status = TOModelStatus_Finish;
                     [TCScore score];
@@ -139,6 +140,7 @@
                 NSLog(@"---//OP反省触发器执行(R任务):%p F%ld 状态:%@",foModel,foModel.content_p.pointerId,TOStatus2Str(foModel.status));
                 
                 //12. 如果无反馈,则设为失败,并继续决策;
+                DebugE();
                 if (foModel.status == TOModelStatus_ActYes) {
                     foModel.status = TOModelStatus_ActNo;
                     [TCScore score];
@@ -182,6 +184,7 @@
         
         //5. 失败时_继续决策 (成功时,由feedback的IN流程继续);
         BOOL havRoot = [theTC.outModelManager.getAllDemand containsObject:root];
+        DebugE();
         if (algModel.status == TOModelStatus_ActYes && havRoot) {
             NSLog(@"====ActYes is ATSub -> 递归alg");
             //5. 2020.11.28: alg本级递归 (只有_Hav全部失败时,才会自行调用failure声明失败) (参考2114C);
@@ -221,6 +224,7 @@
             NSLog(@"---//OP反省触发器执行(P任务):%p F%ld 状态:%@",foModel,foModel.content_p.pointerId,TOStatus2Str(foModel.status));
             
             //7. 如果无反馈,则继续决策;
+            DebugE();
             if (foModel.status == TOModelStatus_ActYes) {
                 foModel.status = TOModelStatus_ActNo;
                 [TCScore score];
