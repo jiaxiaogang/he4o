@@ -342,6 +342,10 @@
 #define Log4OutRethink true
 #define Log4Rethink true
 
+//Score
+#define Log4Score false
+#define Log4Solution false
+
 //MARK:===============================================================
 //MARK:                     < 系统模块开关 >
 //MARK:===============================================================

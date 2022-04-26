@@ -276,6 +276,7 @@
  *  @version
  *      2021.01.16: 用NSTimer替代after延时,因为after时间不准,总会推后150ms左右,而timer非常准时;
  *      2021.02.26: NSTimer改为SEL方式,因为block方式在模拟器运行闪退;
+ *      2022.04.27: 将扔出木棒速度变慢 (参考25222);
  */
 - (IBAction)throwWoodOnClick:(id)sender {
     //0. 鸟不在,则跳过;
@@ -291,7 +292,7 @@
     [self.birdView see:self.woodView];
     
     //3. 预计撞到的时间 (撞需距离 / 总扔距离 * 总扔时间);
-    CGFloat hitTime = ((self.birdView.showMinX - self.woodView.showMaxX) / ScreenWidth) * 2.0f;
+    CGFloat hitTime = ((self.birdView.showMinX - self.woodView.showMaxX) / ScreenWidth) * ThrowTime;
     
     //4. 扔出
     DemoLog(@"扔木棒 (预撞hitTime:%f)",hitTime);

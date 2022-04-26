@@ -116,11 +116,11 @@
         //5. 排除不应期;
         if ([except_ps containsObject:maskPort.target_p]) continue;
         AIFoNodeBase *maskFo = [SMGUtils searchNode:maskPort.target_p];
-        NSLog(@"checkResult: %@->%@",Fo2FStr(maskFo),Mvp2Str(maskFo.cmvNode_p));
+        if (Log4Solution) NSLog(@"checkResult: %@->%@",Fo2FStr(maskFo),Mvp2Str(maskFo.cmvNode_p));
         
         //6. 判断SP评分;
         CGFloat checkSPScore = [TOUtils getSPScore:maskFo startSPIndex:0 endSPIndex:maskFo.count];
-        NSLog(@"\t稳定性==> 评分:%@ from:%@",Double2Str_NDZ(checkSPScore),CLEANSTR(maskFo.spDic));
+        if (Log4Solution) NSLog(@"\t稳定性==> 评分:%@ from:%@",Double2Str_NDZ(checkSPScore),CLEANSTR(maskFo.spDic));
         
         //6. 时间不急评价: 不急 = 解决方案所需时间 <= 父任务能给的时间 (参考:24057-方案3,24171-7);
         if (![AIScore FRS_Time:demand solutionFo:maskFo]) continue;
