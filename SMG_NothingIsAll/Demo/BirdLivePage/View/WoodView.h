@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-#define ThrowTime 5.0f //满屏飞过用时
+#define ThrowTime 2.0f //满屏飞过用时
 
 @interface WoodView : HEView
 
