@@ -343,8 +343,8 @@
 #define Log4Rethink true
 
 //Score
-#define Log4Score false
-#define Log4Solution false
+#define Log4Score true
+#define Log4Solution true
 
 //MARK:===============================================================
 //MARK:                     < 系统模块开关 >
