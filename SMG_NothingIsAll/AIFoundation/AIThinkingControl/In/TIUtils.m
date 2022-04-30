@@ -203,9 +203,9 @@
  *  _param checkItemValid   : 检查item(fo.alg)的有效性 notnull (可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
  *  @param inModel          : 装饰结果到inModel中;
  *  _param indexProtoAlg    : assFoIndexAlg所对应的protoAlg,用来在不明确时,用其独特稀疏码指引向具象时序找"明确"预测;
- *  @param findCutIndex     : 找出已发生部分的截点
- *                              1. fromTIM时,cutIndex=lastAssIndex;
- *                              2. fromRT时,cutIndex需从父任务中判断 (默认为-1);
+ *  _param fromRegroup      : 调用者
+ *                              1. 正常识别时: cutIndex=lastAssIndex;
+ *                              2. 源自regroup时: cutIndex需从父任务中判断 (默认为-1);
  *  TODO_TEST_HERE:调试Pointer能否indexOfObject
  *  TODO_TEST_HERE:调试下item_p在indexOfObject中,有多个时,怎么办;
  *  TODO_TEST_HERE:测试下cPartMatchingThreshold配置值是否合理;
@@ -257,9 +257,10 @@
  *      2022.01.16: 仅保留10条rFos和pFos (因为在十四测中,发现它们太多了,都有40条rFos的时候,依窄出原则,太多没必要);
  *      2022.03.05: 将保留10条改为全保留,因为不同调用处,需要不同的筛选排序方式 (参考25134-方案2);
  *      2022.03.09: 将排序规则由"强度x匹配度",改成直接由SP综合评分来做 (参考25142 & 25114-TODO2);
+ *      2022.04.30: 识别时assIndexes取proto+matchs+parts (参考25234-1);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
-+(void) partMatching_FoV1Dot5:(AIFoNodeBase*)maskFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel findCutIndex:(NSInteger(^)(AIFoNodeBase *matchFo,NSInteger lastMatchIndex))findCutIndex{
++(void) partMatching_FoV1Dot5:(AIFoNodeBase*)maskFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup{
     //1. 数据准备
     if (!ISOK(maskFo, AIFoNodeBase.class)) {
         return;
@@ -269,10 +270,16 @@
         return;
     }
     
-    //2. 取assIndexes (取递归两层)
+    //2. 取assIndexes (反思时: 取本身+抽象一层; 识别时: 取proto+matchs+parts);
     NSMutableArray *assIndexes = [[NSMutableArray alloc] init];
-    [assIndexes addObject:lastAlg.pointer];
-    [assIndexes addObjectsFromArray:[SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All_Normal:lastAlg]]];
+    if (fromRegroup) {
+        [assIndexes addObject:lastAlg.pointer];
+        [assIndexes addObjectsFromArray:Ports2Pits([AINetUtils absPorts_All_Normal:lastAlg])];
+    }else{
+        [assIndexes addObject:inModel.protoAlg.pointer];
+        [assIndexes addObjectsFromArray:Nodes2Pits(inModel.matchAlgs)];
+        [assIndexes addObjectsFromArray:Nodes2Pits(inModel.partAlgs)];
+    }
     
     //3. 递归进行assFos
     if (Log4MFo) NSLog(@"------------ TIR_Fo ------------索引数:%lu",(unsigned long)assIndexes.count);
@@ -310,7 +317,8 @@
             //7. 全含判断;
             [self TIR_Fo_CheckFoValidMatch:maskFo assFo:assFo success:^(NSInteger lastAssIndex, CGFloat matchValue) {
                 if (Log4MFo) NSLog(@"时序识别item SUCCESS 完成度:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
-                NSInteger cutIndex = findCutIndex(assFo,lastAssIndex);
+                
+                NSInteger cutIndex = fromRegroup ? -1 : lastAssIndex;
                 AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:assFo.pointer matchFoValue:matchValue lastMatchIndex:lastAssIndex cutIndex:cutIndex];
                 
                 //8. 被引用强度;
@@ -365,6 +373,14 @@
  *  _result 将protoFo与assFo判断是否全含,并将匹配度返回;
  */
 +(void) TIR_Fo_CheckFoValidMatch:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo success:(void(^)(NSInteger lastAssIndex,CGFloat matchValue))success{
+    
+    //TODOTOMORROW20220430: 将每帧里的matchAlgs和partAlgs都用于全含判断,而不是单纯用protoFo来判断;
+    
+    
+    
+    
+    
+    
     //1. 数据准备;
     BOOL paramValid = protoFo && protoFo.content_ps.count > 0 && assFo && assFo.content_ps.count > 0 && success;
     if (!paramValid) {
