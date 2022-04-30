@@ -206,6 +206,7 @@
  *  _param fromRegroup      : 调用者
  *                              1. 正常识别时: cutIndex=lastAssIndex;
  *                              2. 源自regroup时: cutIndex需从父任务中判断 (默认为-1);
+ *  @param maskFo           : 识别时:protoFo中的概念元素为parent层, 而在反思时,其元素为match层;
  *  TODO_TEST_HERE:调试Pointer能否indexOfObject
  *  TODO_TEST_HERE:调试下item_p在indexOfObject中,有多个时,怎么办;
  *  TODO_TEST_HERE:测试下cPartMatchingThreshold配置值是否合理;
@@ -315,7 +316,7 @@
             if (rContains) continue;
             
             //7. 全含判断;
-            [self TIR_Fo_CheckFoValidMatch:maskFo assFo:assFo success:^(NSInteger lastAssIndex, CGFloat matchValue) {
+            [self TIR_Fo_CheckFoValidMatch:assFo success:^(NSInteger lastAssIndex, CGFloat matchValue) {
                 if (Log4MFo) NSLog(@"时序识别item SUCCESS 完成度:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
                 
                 NSInteger cutIndex = fromRegroup ? -1 : lastAssIndex;
@@ -360,7 +361,6 @@
     }
 }
 
-
 /**
  *  MARK:--------------------时序识别之: protoFo&assFo匹配判断--------------------
  *  要求: protoFo必须全含assFo对应的last匹配下标之前的所有元素;
@@ -368,37 +368,36 @@
  *  名词说明:
  *      1. 全含: 指从lastAssIndex向前,所有的assItemAlg都匹配成功;
  *      2. 非全含: 指从lastAssIndex向前,只要有一个assItemAlg匹配失败,则非全含;
- *  @param success : lastAssIndex指已发生到的index,后面则为时序预测; matchValue指匹配度(0-1);
- *  @param protoFo : 四层说明: 在fromShortMem时,protoFo中的概念元素为parent层, 而在fromRethink时,其元素为match层;
+ *  @param success : lastAssIndex指已发生到的index,后面则为时序预测; matchValue指匹配度(0-1) notnull;
+ *  @version
+ *      2022.04.30: 将每帧的matchAlgs和partAlgs用于全含判断,而不是单纯用protoFo来判断 (参考25234-6);
  *  _result 将protoFo与assFo判断是否全含,并将匹配度返回;
  */
-+(void) TIR_Fo_CheckFoValidMatch:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo success:(void(^)(NSInteger lastAssIndex,CGFloat matchValue))success{
-    
-    //TODOTOMORROW20220430: 将每帧里的matchAlgs和partAlgs都用于全含判断,而不是单纯用protoFo来判断;
-    
-    
-    
-    
-    
-    
++(void) TIR_Fo_CheckFoValidMatch:(AIFoNodeBase*)assFo success:(void(^)(NSInteger lastAssIndex,CGFloat matchValue))success{
     //1. 数据准备;
-    BOOL paramValid = protoFo && protoFo.content_ps.count > 0 && assFo && assFo.content_ps.count > 0 && success;
+    BOOL paramValid = assFo && assFo.content_ps.count > 0 && success;
     if (!paramValid) {
         NSLog(@"参数错误");
         return;
     }
-    if (Log4MFo) NSLog(@"------------------------ 时序全含检查 ------------------------\nproto:%@->%@\nass:%@->%@",Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p),Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
-    AIKVPointer *lastProtoAlg_p = ARR_INDEX_REVERSE(protoFo.content_ps, 0); //最后一个protoAlg指针
-    int validItemCount = 1;                                                 //默认有效数为1 (因为lastAlg肯定有效);
-    NSInteger lastAssIndex = -1;                                            //在assFo已发生到的index,后面为预测;
-    NSInteger lastProtoIndex = protoFo.content_ps.count - 2;                //protoAlg匹配判断从倒数第二个开始,向前逐个匹配;
+    if (Log4MFo) NSLog(@"------------------------ 时序全含检查 ------------------------\nass:%@->%@",Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
+    
+    //1. 最后一个matchAlgs+partAlgs指针
+    NSArray *inModels = theTC.inModelManager.models;
+    NSArray *lastAlgs = [self getMatchAndPartAlgPs:inModels.count - 1];
+    
+    //1. 默认有效数为1 (因为lastAlg肯定有效);
+    int validItemCount = 1;
+    //1. 在assFo已发生到的index,后面为预测;
+    NSInteger lastAssIndex = -1;
+    //1. protoAlg匹配判断从倒数第二个开始,向前逐个匹配;
+    NSInteger lastProtoIndex = inModels.count - 2;
     
     //2. 找出lastIndex
     for (NSInteger i = 0; i < assFo.content_ps.count; i++) {
         NSInteger curIndex = assFo.content_ps.count - i - 1;
         AIKVPointer *checkAssAlg_p = ARR_INDEX(assFo.content_ps, curIndex);
-        BOOL mIsC = [TOUtils mIsC_1:lastProtoAlg_p c:checkAssAlg_p];
-        if (mIsC) {
+        if ([lastAlgs containsObject:checkAssAlg_p]) {
             lastAssIndex = curIndex;
             break;
         }
@@ -417,16 +416,15 @@
             //4. 在protoFo中同样从lastProtoIndex依次向前找匹配;
             BOOL checkResult = false;
             for (NSInteger j = lastProtoIndex; j >= 0; j--) {
-                AIKVPointer *protoAlg_p = ARR_INDEX(protoFo.content_ps, j);
-                BOOL mIsC = [TOUtils mIsC_1:protoAlg_p c:checkAssAlg_p];
-                if (mIsC) {
+                NSArray *frameAlgs = [self getMatchAndPartAlgPs:j];
+                if ([frameAlgs containsObject:checkAssAlg_p]) {
                     lastProtoIndex = j; //成功匹配alg时,更新protoIndex (以达到只能向前匹配的目的);
                     checkResult = true;
                     validItemCount ++;  //有效数+1;
                     if (Log4MFo)NSLog(@"时序识别: item有效+1");
                     break;
                 }else{
-                    if (Log4MFo)NSLog(@"---->匹配失败:\n%@\n%@",AlgP2FStr(lastProtoAlg_p),AlgP2FStr(checkAssAlg_p));
+                    if (Log4MFo)NSLog(@"---->匹配失败:\n%@",AlgP2FStr(checkAssAlg_p));
                 }
             }
             
@@ -443,6 +441,15 @@
     
     //7. 到此全含成功 之: 返回success
     success(lastAssIndex,matchValue);
+}
+
+//获取某帧shortModel的matchAlgs+partAlgs;
++(NSArray*) getMatchAndPartAlgPs:(NSInteger)frameIndex {
+    NSArray *inModels = theTC.inModelManager.models;
+    AIShortMatchModel *inModel = ARR_INDEX(inModels, frameIndex);
+    NSArray *lastAlgs = [SMGUtils collectArrA:inModel.matchAlgs arrB:inModel.partAlgs];
+    NSArray *result = Nodes2Pits(lastAlgs);
+    return result;
 }
 
 @end
