@@ -90,6 +90,14 @@
     [theTC updateOperCount];
     Debug();
     
+    //TODOTOMORROW20220430: 两步稳定性竞争;
+    //第1步. 对等价fos做稳定性竞争;
+    //第2步. 对解决方案做稳定性竞争;
+    
+    
+    
+    
+    
     //1. 根据demand取;
     NSArray *friends = [TOUtils getSeemFromIdenRDemands:demand];
     NSArray *validFriends = [SMGUtils filterArr:friends checkValid:^BOOL(ReasonDemandModel *item) {
