@@ -75,6 +75,7 @@
  *      2022.01.19: 将时间不急评价封装为FRS_Time() (参考25106);
  *      2022.03.06: 当稳定性综评为0分时,不做为解决方案 (参考25131-思路2);
  *      2022.03.09: 将conPorts取前3条改成15条 (参考25144);
+ *      2022.05.01: 废弃从等价demands下取解决方案 (参考25236);
  *  @callers : 用于RDemand.Begin时调用;
  */
 +(void) rSolution:(ReasonDemandModel*)demand {
@@ -90,37 +91,17 @@
     [theTC updateOperCount];
     Debug();
     
-    //TODOTOMORROW20220430: 两步稳定性竞争;
-    //第1步. 对等价fos做稳定性竞争 (在任务池中本就支持,更综合"稳定性 x MV评分"的竞争);
-    //第2步. 对解决方案做稳定性竞争 (本就支持);
-    
-    
-    
-    
-    
-    //1. 根据demand取;
-    NSArray *friends = [TOUtils getSeemFromIdenRDemands:demand];
-    NSArray *validFriends = [SMGUtils filterArr:friends checkValid:^BOOL(ReasonDemandModel *item) {
-        AIFoNodeBase *itemMatchFo = [SMGUtils searchNode:item.mModel.matchFo];
-        return [demandMatchFo.cmvNode_p.identifier isEqualToString:itemMatchFo.cmvNode_p.identifier];
-    }];
-    
     //2. 不应期 (可以考虑) (源于:反思且子任务失败的 或 fo行为化最终失败的,参考24135);
     NSMutableArray *except_ps = [TOUtils convertPointersFromTOModels:demand.actionFoModels];
     [except_ps addObject:demandMatchFo.pointer];
     
-    //3. 逐一对validPFos,取其conPorts (前3条) (参考24127-步骤1);
-    NSMutableArray *sumConPorts = [[NSMutableArray alloc] init];
-    for (ReasonDemandModel *friend in validFriends) {
-        AIFoNodeBase *friendMatchFo = [SMGUtils searchNode:friend.mModel.matchFo];
-        NSArray *conPorts = [AINetUtils conPorts_All_Normal:friendMatchFo];
-        conPorts = ARR_SUB(conPorts, 0, 15);
-        [sumConPorts addObjectsFromArray:conPorts];
-    }
+    //3. 取demand.conPorts (前15条) (参考24127-步骤1);
+    NSArray *conPorts = [AINetUtils conPorts_All_Normal:demandMatchFo];
+    conPorts = ARR_SUB(conPorts, 0, 15);
     
     //4. 从conPorts中找出最优秀的result (稳定性竞争) (参考24127-步骤2);
     AIFoNodeBase *bestResult = nil;
-    for (AIPort *maskPort in sumConPorts) {
+    for (AIPort *maskPort in conPorts) {
         //5. 排除不应期;
         if ([except_ps containsObject:maskPort.target_p]) continue;
         AIFoNodeBase *maskFo = [SMGUtils searchNode:maskPort.target_p];

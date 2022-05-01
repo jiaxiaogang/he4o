@@ -60,12 +60,6 @@
  */
 +(NSMutableArray*) getBaseDemands_AllDeep:(TOModelBase*)subModel;//base方向;
 
-/**
- *  MARK:--------------------获取rDemand的来源同伴--------------------
- *  @result notnull
- */
-+(NSArray*) getSeemFromIdenRDemands:(ReasonDemandModel*)rDemand;
-
 
 //MARK:===============================================================
 //MARK:                     < 从TO短时记忆取outModel >
