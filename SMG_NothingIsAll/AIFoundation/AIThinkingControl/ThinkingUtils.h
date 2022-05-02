@@ -11,11 +11,6 @@
 @class AIFrontOrderNode,AIAlgNodeBase,AIShortMatchModel,TOAlgModel;
 @interface ThinkingUtils : NSObject
 
-/**
- *  MARK:--------------------更新能量值--------------------
- */
-+(CGFloat) updateEnergy:(CGFloat)oriEnergy delta:(CGFloat)delta;
-
 @end
 
 

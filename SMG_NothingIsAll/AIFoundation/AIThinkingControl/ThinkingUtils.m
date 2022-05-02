@@ -12,14 +12,6 @@
 
 @implementation ThinkingUtils
 
-/**
- *  MARK:--------------------更新能量值--------------------
- */
-+(CGFloat) updateEnergy:(CGFloat)oriEnergy delta:(CGFloat)delta{
-    oriEnergy += delta;
-    return MAX(cMinEnergy, MIN(cMaxEnergy, oriEnergy));
-}
-
 @end
 
 

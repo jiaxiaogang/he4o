@@ -24,6 +24,17 @@
 @property (strong, nonatomic) ShortMatchManager *shortMatchManager; //IN短时记忆 (输入数据管理器);
 @property (assign, nonatomic) long long operCount;                  //思想操作计数;
 
+/**
+ *  MARK:--------------------当前能量值--------------------
+ *  1. 激活: mv输入时激活;
+ *  2. 消耗: 思维的循环中消耗;
+ *      1. 构建"概念节点"消耗0.1;
+ *      2. 构建"时序节点"消耗1;
+ *
+ *  3. 范围: 0-20;
+ */
+@property (assign, nonatomic) CGFloat energy;
+
 @end
 
 @implementation AIThinkingControl
@@ -174,13 +185,24 @@ static AIThinkingControl *_instance;
 //MARK:===============================================================
 //MARK:                     < 活跃度 >
 //MARK:===============================================================
--(void) updateEnergy:(CGFloat)delta{
-    self.energy = [ThinkingUtils updateEnergy:self.energy delta:delta];
+
+/**
+ *  MARK:--------------------消耗活跃度--------------------
+ */
+-(void) updateEnergyDelta:(CGFloat)delta{
+    self.energy = MAX(cMinEnergy, MIN(cMaxEnergy, self.energy + delta));
     NSLog(@"energy > delta:%.2f = energy:%.2f",delta,self.energy);
 }
--(void) setEnergy:(CGFloat)energy{
-    _energy = MAX(cMinEnergy, MIN(cMaxEnergy, energy));
-    NSLog(@"energy > newValue:%.2f = energy:%.2f",energy,self.energy);
+
+/**
+ *  MARK:--------------------设新活跃度--------------------
+ *  @desc 只有当新的更大时,才有效;
+ */
+-(void) updateEnergyValue:(CGFloat)value{
+    if (value > self.energy) {
+        self.energy = MAX(cMinEnergy, MIN(cMaxEnergy, value));
+        NSLog(@"energy > newValue:%.2f = energy:%.2f",value,self.energy);
+    }
 }
 -(BOOL) energyValid{
     return self.energy > 0;

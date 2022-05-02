@@ -28,7 +28,7 @@
         algModel.status = TOModelStatus_ActYes;
         
         //2. 消耗活跃度并输出
-        [theTC updateEnergy:-1.0f];
+        [theTC updateEnergyDelta:-1.0f];
         
         //3. 输出_用旧有代码->输出后转给TCInput.rInput();
         [theTV updateFrame];

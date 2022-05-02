@@ -127,7 +127,7 @@
     if (bestResult && bestSPScore > 0) {
         //7. 消耗活跃度;
         if (![theTC energyValid]) return;
-        [theTC updateEnergy:-1];
+        [theTC updateEnergyDelta:-1];
         
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
         TOFoModel *foModel = [TOFoModel newWithFo_p:bestResult.pointer base:demand];
@@ -212,7 +212,7 @@
             if (![except_ps containsObject:itemMV.foNode_p]) {
                 //8. 消耗活跃度;
                 if (![theTC energyValid]) return;
-                [theTC updateEnergy:-1];
+                [theTC updateEnergyDelta:-1];
                 AIFoNodeBase *fo = [SMGUtils searchNode:itemMV.foNode_p];
                 
                 //a. 构建TOFoModel
@@ -301,7 +301,7 @@
     if (bestResult) {
         //8. 消耗活跃度;
         if (![theTC energyValid]) return;
-        [theTC updateEnergy:-1];
+        [theTC updateEnergyDelta:-1];
         
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
         TOFoModel *foModel = [TOFoModel newWithFo_p:bestResult.pointer base:hDemand];

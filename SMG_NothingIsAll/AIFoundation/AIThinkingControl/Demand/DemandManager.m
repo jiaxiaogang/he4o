@@ -119,7 +119,7 @@
         [self.loopCache addObject:newItem];
         
         //2. 新需求时,加上活跃度;
-        [theTC updateEnergy:urgentTo];
+        [theTC updateEnergyDelta:urgentTo];
         NSLog(@"demandManager-PMV >> 新需求 %lu",(unsigned long)self.loopCache.count);
     }
 }
@@ -167,6 +167,10 @@
         }];
         
         //4. 防重
+        //TODOTOMORROW20220502: 当finish和failure等状态时,不做防重 (参考2523a);
+        
+        
+        
         BOOL containsRepeat = false;
         for (ReasonDemandModel *item in self.loopCache) {
             if (ISOK(item, ReasonDemandModel.class) && [item.mModel.matchFo isEqual:mModel.matchFo]) {
@@ -182,15 +186,11 @@
             ReasonDemandModel *newItem = [ReasonDemandModel newWithMModel:mModel inModel:inModel baseFo:nil];
             [self.loopCache addObject:newItem];
             
-            //8. 新需求时_将新需求迫切度的差值(>0时) (增至活跃度 = 新迫切度 - 旧有最大迫切度);
+            //8. 设活跃度_将最大的任务x2取负值,为当前活跃度 (参考25142-改进);;
             //2021.05.27: 为方便测试,所有imv都给20迫切度 (因为迫切度太低话,还没怎么思考就停了);
             //2022.03.10: 为使鸟躲避及时停下,将迫切度再改回受评分迫切度等影响;
-            //1. 将最大的任务x2取负值,为当前活跃度 (参考25142-改进);
             CGFloat newEnergy = -score * 2;//分越低,越需要更多活跃度来解决它;
-            
-            //2. 如果新任务低于目前活跃度,则不变动;
-            //[theTC updateEnergy:MAX(0, newItem.urgentTo - sameIdenOldMax)];
-            if (newEnergy > theTC.energy) theTC.energy = newEnergy;
+            [theTC updateEnergyValue:newEnergy];
             NSLog(@"RMV新需求: %@->%@ (条数+1=%ld 评分:%@)",Fo2FStr(mFo),Pit2FStr(mFo.cmvNode_p),self.loopCache.count,Double2Str_NDZ(score));
         }else{
             NSLog(@"当前,预测mv未形成需求:%@ 基于:%@ 评分:%f",algsType,Pit2FStr(mFo.cmvNode_p),score);
