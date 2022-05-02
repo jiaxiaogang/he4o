@@ -330,6 +330,7 @@
  *      2022.02.22: 修复明明S有值,P为0,但综评为1分的问题 (||写成了&&导致的);
  *      2022.02.24: 支持负mv时序的稳定性评分公式 (参考25122-负公式);
  *      2022.02.24: 修复因代码逻辑错误,导致负mv在全顺状态下,评为1分的BUG (修复: 明确itemSPScore的定义,整理代码后ok);
+ *      2022.05.02: 修复因Int值类型,导致返回result只可能是0或1的问题;
  *  @result 返回spScore稳定性综合评分: 越接近1分越好,越接近0分越差;
  */
 +(CGFloat) getSPScore:(AIFoNodeBase*)fo startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex{
@@ -349,7 +350,7 @@
         if (spStrong && spStrong.pStrong + spStrong.sStrong > 0) {
             
             //4. 取"多好"程度;
-            CGFloat pRate = spStrong.pStrong / (spStrong.sStrong + spStrong.pStrong);
+            CGFloat pRate = spStrong.pStrong / (float)(spStrong.sStrong + spStrong.pStrong);
             
             //5.1 在感性的负mv时,itemSPScore = 1 - pRate (参考25122-负公式);
             if (i == fo.count && isBadMv) {
