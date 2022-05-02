@@ -139,6 +139,7 @@
  *      2021.07.14: 循环matchPFos时,采用反序,因为优先级和任务池优先级上弄反了 (参考23172);
  *      2021.11.11: 迭代RMV的生成机制,此代码其实啥也没改 (参考24107-1);
  *      2022.03.10: 为使鸟躲避及时停下,将迫切度再改回受评分迫切度等影响 (参考25142-改进);
+ *      2022.05.02: 未形成新需求时,也更新energy (参考2523a-方案1);
  */
 -(void) updateCMVCache_RMV:(AIShortMatchModel*)inModel{
     //1. 数据检查;
@@ -167,10 +168,6 @@
         }];
         
         //4. 防重
-        //TODOTOMORROW20220502: 当finish和failure等状态时,不做防重 (参考2523a);
-        
-        
-        
         BOOL containsRepeat = false;
         for (ReasonDemandModel *item in self.loopCache) {
             if (ISOK(item, ReasonDemandModel.class) && [item.mModel.matchFo isEqual:mModel.matchFo]) {
@@ -189,10 +186,10 @@
             //8. 设活跃度_将最大的任务x2取负值,为当前活跃度 (参考25142-改进);;
             //2021.05.27: 为方便测试,所有imv都给20迫切度 (因为迫切度太低话,还没怎么思考就停了);
             //2022.03.10: 为使鸟躲避及时停下,将迫切度再改回受评分迫切度等影响;
-            CGFloat newEnergy = -score * 2;//分越低,越需要更多活跃度来解决它;
-            [theTC updateEnergyValue:newEnergy];
+            [theTC updateEnergyValue:-score * 2];
             NSLog(@"RMV新需求: %@->%@ (条数+1=%ld 评分:%@)",Fo2FStr(mFo),Pit2FStr(mFo.cmvNode_p),self.loopCache.count,Double2Str_NDZ(score));
         }else{
+            [theTC updateEnergyValue:-score * 2];
             NSLog(@"当前,预测mv未形成需求:%@ 基于:%@ 评分:%f",algsType,Pit2FStr(mFo.cmvNode_p),score);
         }
     }
