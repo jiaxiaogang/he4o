@@ -18,6 +18,7 @@
  *      2021.10.17: 支持IRT的理性失效,场景更新时,状态设为OutBackReason (参考24059&24061-方案2);
  *      2021.12.25: 针对理性IRT反省的支持 (判断非末位为理性预测中) (参考25021-②);
  *      2022.03.05: BUG_将仅末位才反馈,改成非末位才反馈 (原来逻辑写反了);
+ *      2022.05.02: 用matchAlgs+partAlgs替代mIsC (参考25234-8);
  *  @status
  *      xxxx.xx.xx: 非启动状态,因为时序识别中,未涵盖HNGL类型,所以并未对HNGL进行预测;
  *      2021.10.17: 启动,支持对IRT的理性失效 (参考24059&24061-方案2);
@@ -28,6 +29,7 @@
     [theTC updateOperCount];
     Debug();
     IFTitleLog(@"feedbackTIR", @"\n输入M:%@\n输入P:%@",Alg2FStr(model.matchAlg),Alg2FStr(model.protoAlg));
+    NSArray *recognitionAlgs = [TIUtils getMatchAndPartAlgPsByModel:model];
     
     //2. IRT理性失效 (旧有IRT触发器等待中的fo,在场景情况更新时,标记OutBackReason);
     for (AIShortMatchModel *inModel in inModels) {
@@ -45,7 +47,7 @@
             
             //6. 判断protoAlg与waitAlg之间mIsC,成立则OutBackYes;
             AIKVPointer *waitAlg_p = ARR_INDEX(matchFo.content_ps, waitModel.cutIndex2 + 1);
-            BOOL mIsC = [TOUtils mIsC_1:model.protoAlg.pointer c:waitAlg_p];
+            BOOL mIsC = [recognitionAlgs containsObject:waitAlg_p];
             if (mIsC) {
                 waitModel.status = TIModelStatus_OutBackReason;
                 [theTV updateFrame];

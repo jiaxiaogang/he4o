@@ -443,12 +443,17 @@
     success(lastAssIndex,matchValue);
 }
 
-//获取某帧shortModel的matchAlgs+partAlgs;
+/**
+ *  MARK:--------------------获取某帧shortModel的matchAlgs+partAlgs--------------------
+ */
 +(NSArray*) getMatchAndPartAlgPs:(NSInteger)frameIndex {
     NSArray *inModels = theTC.inModelManager.models;
     AIShortMatchModel *inModel = ARR_INDEX(inModels, frameIndex);
-    NSArray *lastAlgs = [SMGUtils collectArrA:inModel.matchAlgs arrB:inModel.partAlgs];
-    NSArray *result = Nodes2Pits(lastAlgs);
+    return [self getMatchAndPartAlgPsByModel:inModel];
+}
++(NSArray*) getMatchAndPartAlgPsByModel:(AIShortMatchModel*)frameModel {
+    NSArray *algs = [SMGUtils collectArrA:frameModel.matchAlgs arrB:frameModel.partAlgs];
+    NSArray *result = Nodes2Pits(algs);
     return result;
 }
 

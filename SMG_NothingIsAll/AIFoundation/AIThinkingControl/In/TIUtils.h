@@ -21,4 +21,11 @@
 //MARK:===============================================================
 +(void) partMatching_FoV1Dot5:(AIFoNodeBase*)maskFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup;
 
+
+/**
+ *  MARK:--------------------获取某帧shortModel的matchAlgs+partAlgs--------------------
+ */
++(NSArray*) getMatchAndPartAlgPs:(NSInteger)frameIndex;
++(NSArray*) getMatchAndPartAlgPsByModel:(AIShortMatchModel*)frameModel;
+
 @end

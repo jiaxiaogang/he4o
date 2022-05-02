@@ -68,6 +68,7 @@
  *      2021.12.27: 当H反馈成功时,把hDemand设为finish;
  *      2022.01.08: HDemand时,非actYes状态也处理反馈 (参考25054);
  *      2022.03.13: 将mIsC改成proto或matchAlgs中任一条mIsC成立即可 (参考25146-转疑3-方案);
+ *      2022.05.02: 用matchAlgs+partAlgs替代mIsC (参考25234-8);
  *  @bug
  *      2020.09.22: 加上cutStopStatus,避免同一waitModel被多次触发,导致BUG (参考21042);
  *      2020.12.26: GL时,waitType的判断改为bFo,因为只有bFo才携带了waitTypeDS (参考21204);
@@ -79,6 +80,7 @@
     [theTC updateOperCount];
     Debug();
     NSMutableArray *waitModels = [[NSMutableArray alloc] init];
+    NSArray *recognitionAlgs = [TIUtils getMatchAndPartAlgPsByModel:model];
     for (ReasonDemandModel *root in theTC.outModelManager.getAllDemand) {
         [waitModels addObjectsFromArray:[TOUtils getSubOutModels_AllDeep:root validStatus:nil]];
     }
@@ -101,7 +103,7 @@
             TOFoModel *targetFo = (TOFoModel*)targetAlg.baseOrGroup;    //hDemand的目标alg所在的fo;
             
             //6. 判断input是否与hAlg相匹配 (匹配,比如找锤子,看到锤子了);
-            BOOL mIsC = [TOUtils mIsC_2:model.protoAlg.pointer c:targetAlg.content_p];
+            BOOL mIsC = [recognitionAlgs containsObject:targetAlg.content_p];
             if (Log4OPushM) NSLog(@"H有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(targetAlg.content_p),mIsC);
             if (mIsC) {
                 //a. 在H时,执行到此处,说明waitModel和baseFo已完成;
@@ -131,7 +133,7 @@
             //9. 判断input是否与等待中waitModel相匹配 (匹配,比如吃,确定自己是否真吃了);
             TOAlgModel *targetAlg = waitModel;                          //等待中的目标alg;
             TOFoModel *targetFo = (TOFoModel*)targetAlg.baseOrGroup;    //目标alg所在的fo;
-            BOOL mIsC = [TOUtils mIsC_2:model.protoAlg.pointer c:targetAlg.content_p];
+            BOOL mIsC = [recognitionAlgs containsObject:targetAlg.content_p];
             if (Log4OPushM) NSLog(@"Normal有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(targetAlg.content_p),mIsC);
             if (mIsC) {
                 //a. 赋值
