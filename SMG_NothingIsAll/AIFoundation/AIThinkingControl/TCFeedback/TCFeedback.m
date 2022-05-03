@@ -47,6 +47,7 @@
             
             //6. 判断protoAlg与waitAlg之间mIsC,成立则OutBackYes;
             AIKVPointer *waitAlg_p = ARR_INDEX(matchFo.content_ps, waitModel.cutIndex2 + 1);
+            //BOOL mIsC = [TOUtils mIsC_1:model.protoAlg.pointer c:waitAlg_p];
             BOOL mIsC = [recognitionAlgs containsObject:waitAlg_p];
             if (mIsC) {
                 waitModel.status = TIModelStatus_OutBackReason;

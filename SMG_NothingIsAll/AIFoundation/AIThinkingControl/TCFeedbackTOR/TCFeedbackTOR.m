@@ -103,6 +103,7 @@
             TOFoModel *targetFo = (TOFoModel*)targetAlg.baseOrGroup;    //hDemand的目标alg所在的fo;
             
             //6. 判断input是否与hAlg相匹配 (匹配,比如找锤子,看到锤子了);
+            //BOOL mIsC = [TOUtils mIsC_1:model.protoAlg.pointer c:targetAlg.content_p];
             BOOL mIsC = [recognitionAlgs containsObject:targetAlg.content_p];
             if (Log4OPushM) NSLog(@"H有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(targetAlg.content_p),mIsC);
             if (mIsC) {
@@ -133,6 +134,29 @@
             //9. 判断input是否与等待中waitModel相匹配 (匹配,比如吃,确定自己是否真吃了);
             TOAlgModel *targetAlg = waitModel;                          //等待中的目标alg;
             TOFoModel *targetFo = (TOFoModel*)targetAlg.baseOrGroup;    //目标alg所在的fo;
+            
+            
+            //TODOTOMORROW20220503: 2523c-旧有方式,没问题,新的方式有问题;
+            
+            NSArray *mAbs = Ports2Pits([AINetUtils absPorts_All:model.protoAlg]);
+            BOOL oldMIsC = [mAbs containsObject:targetAlg.content_p];
+            BOOL newMIsC = [recognitionAlgs containsObject:targetAlg.content_p];
+            
+            if (oldMIsC && !newMIsC) {
+                NSLog(@"对比下mAbs和recognitionAlgs,看下区别,为什么导致newMIsC未匹配到");
+            }
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            //BOOL mIsC = [TOUtils mIsC_1:model.protoAlg.pointer c:targetAlg.content_p];
             BOOL mIsC = [recognitionAlgs containsObject:targetAlg.content_p];
             if (Log4OPushM) NSLog(@"Normal有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(targetAlg.content_p),mIsC);
             if (mIsC) {
