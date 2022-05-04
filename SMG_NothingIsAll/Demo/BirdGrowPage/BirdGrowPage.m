@@ -281,6 +281,7 @@
 - (IBAction)throwWoodOnClick:(id)sender {
     //0. 鸟不在,则跳过;
     if ([self birdOut]) {
+        [theRT invoked:kWoodSEL];
         return;
     }
     

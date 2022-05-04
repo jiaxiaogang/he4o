@@ -79,6 +79,8 @@
                 //6. 标记执行完成;
                 [theRT invoked:kWoodSEL];
             }];
+        }else{
+            [theRT invoked:kWoodSEL];
         }
     }];
 }
