@@ -120,16 +120,36 @@
 //MARK:===============================================================
 //MARK:                     < publicMethod >
 //MARK:===============================================================
+
+/**
+ *  MARK:--------------------添加新帧--------------------
+ *  @version
+ *      2022.05.04: 内存优化_减少无用帧 (无变化不记录 & 仅保留300帧);
+ */
 -(void) updateFrame:(BOOL)newLoop{
     //1. 数据检查;
     if (theTC.outModelManager.getAllDemand.count <= 0) {
         return;
     }
     
-    //2. 记录快照;
+    //2. 新快照;
     TOMVisionItemModel *newFrame = [[TOMVisionItemModel alloc] init];
     newFrame.roots = CopyByCoding(theTC.outModelManager.getAllDemand);
+    
+    //2. 无变化时,不记录;
+    TOMVisionItemModel *lastFrame = ARR_INDEX_REVERSE(self.models, 0);
+    NSInteger changeCount = [TVUtil getChange_Item:lastFrame itemB:newFrame].count;
+    if (changeCount <= 0) {
+        return;
+    }
+    
+    //2. 记录快照
     [self.models addObject:newFrame];
+    
+    //3. 仅保留后x00帧;
+    NSArray *subModels = ARR_SUB(self.models, self.models.count - 300, 300);
+    [self.models removeAllObjects];
+    [self.models addObjectsFromArray:ARRTOOK(subModels)];
     
     //3. 新轮循环Id;
     if (newLoop) {

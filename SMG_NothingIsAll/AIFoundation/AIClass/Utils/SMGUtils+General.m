@@ -126,7 +126,9 @@
  */
 +(NSArray*) arrSub:(NSArray*)a start:(NSInteger)s length:(NSInteger)l{
     NSInteger count = ARRISOK(a) ? a.count : 1;
-    return (ARRISOK(a) ? [a subarrayWithRange:NSMakeRange(MAX(0, MIN(s,count)), MAX(0, MIN(count - s, l)))] : [NSArray new]);
+    s = MAX(0, MIN(s,count));
+    l = MAX(0, MIN(count - s, l));
+    return (ARRISOK(a) ? [a subarrayWithRange:NSMakeRange(s, l)] : [NSArray new]);
 }
 
 //number
