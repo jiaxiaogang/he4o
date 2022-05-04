@@ -204,8 +204,14 @@ static AIThinkingControl *_instance;
         NSLog(@"energy > newValue:%.2f = energy:%.2f",value,self.energy);
     }
 }
+
+/**
+ *  MARK:--------------------活跃度有效判断--------------------
+ *  @version
+ *      2022.05.04: 工作记忆树在限宽基础上,又加上限深后,此处弃用,都返回true (参考2523c-分析代码2);
+ */
 -(BOOL) energyValid{
-    return self.energy > 0;
+    return true;//self.energy > 0;
 }
 
 //MARK:===============================================================
