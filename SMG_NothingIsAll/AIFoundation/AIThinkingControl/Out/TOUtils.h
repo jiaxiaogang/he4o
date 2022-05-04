@@ -59,6 +59,7 @@
  *  @result 含子任务和root任务 notnull;
  */
 +(NSMutableArray*) getBaseDemands_AllDeep:(TOModelBase*)subModel;//base方向;
++(NSInteger) getBaseDemandsDeepCount:(TOModelBase*)subModel;
 
 
 //MARK:===============================================================

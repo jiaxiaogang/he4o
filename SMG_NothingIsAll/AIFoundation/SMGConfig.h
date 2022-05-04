@@ -67,6 +67,7 @@
 #define cRethinkActBack_AssSPFoLimit 3 //反省_联想ATSubFo的数量
 
 #define cTCSolutionBranchLimit 3 //短时记忆解决方案分枝数;
+#define cDemandDeepLimit 8 //短时记忆树最高demand层数;
 
 
 //MARK:===============================================================

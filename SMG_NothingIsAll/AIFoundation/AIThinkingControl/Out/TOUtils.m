@@ -134,6 +134,9 @@
         return ISOK(item, DemandModel.class);
     }];
 }
++(NSInteger) getBaseDemandsDeepCount:(TOModelBase*)subModel{
+    return [self getBaseDemands_AllDeep:subModel].count;
+}
 
 /**
  *  MARK:--------------------获取rDemand的来源同伴--------------------

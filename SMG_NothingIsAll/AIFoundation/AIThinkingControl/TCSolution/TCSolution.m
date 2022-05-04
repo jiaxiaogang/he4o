@@ -76,13 +76,17 @@
  *      2022.03.06: 当稳定性综评为0分时,不做为解决方案 (参考25131-思路2);
  *      2022.03.09: 将conPorts取前3条改成15条 (参考25144);
  *      2022.05.01: 废弃从等价demands下取解决方案 (参考25236);
+ *      2022.05.04: 树限宽也限深 (参考2523c-分析代码1);
  *  @callers : 用于RDemand.Begin时调用;
  */
 +(void) rSolution:(ReasonDemandModel*)demand {
     //0. S数达到limit时设为WithOut;
     AIFoNodeBase *demandMatchFo = [SMGUtils searchNode:demand.mModel.matchFo];
     OFTitleLog(@"rSolution", @"\n任务源:%@ 已有方案数:%ld",Fo2FStr(demandMatchFo),demand.actionFoModels.count);
-    if (demand.actionFoModels.count >= cTCSolutionBranchLimit) {
+    
+    //1. 树限宽且限深;
+    NSInteger deepCount = [TOUtils getBaseDemandsDeepCount:demand];
+    if (deepCount >= cDemandDeepLimit || demand.actionFoModels.count >= cTCSolutionBranchLimit) {
         demand.status = TOModelStatus_WithOut;
         [TCScore score];
         NSLog(@">>>>>> rSolution 已达limit条");
@@ -160,6 +164,7 @@
  *      2020.09.23: 取消参数matchAlg (最近识别的M),如果今后还要使用短时优先功能,直接从theTC.shortManager取);
  *      2020.09.23: 只要得到解决方案,就返回true中断,因为即使行为化失败,也会交由流程控制继续决策,而非由此处处理;
  *      2020.12.17: 将此方法,归由流程控制控制 (跑下来逻辑与原来没啥不同);
+ *      2022.05.04: 树限宽也限深 (参考2523c-分析代码1);
  *  @bug
  *      1. 查点击马上饿,找不到解决方案的BUG,经查,MatchAlg与解决方案无明确关系,但MatchAlg.conPorts中,有与解决方案有直接关系的,改后解决 (参考20073)
  *      2020.07.09: 修改方向索引的解决方案不应期,解决只持续飞行两次就停住的BUG (参考n20p8-BUG1);
@@ -170,7 +175,10 @@
     MVDirection direction = [ThinkingUtils getDemandDirection:demandModel.algsType delta:demandModel.delta];
     if (!Switch4PS || direction == MVDirection_None) return;
     OFTitleLog(@"pSolution", @"\n任务:%@,发生%ld,方向%ld,已有方案数:%ld",demandModel.algsType,(long)demandModel.delta,(long)direction,demandModel.actionFoModels.count);
-    if (demandModel.actionFoModels.count >= cTCSolutionBranchLimit) {
+    
+    //1. 树限宽且限深;
+    NSInteger deepCount = [TOUtils getBaseDemandsDeepCount:demandModel];
+    if (deepCount >= cDemandDeepLimit || demandModel.actionFoModels.count >= cTCSolutionBranchLimit) {
         demandModel.status = TOModelStatus_WithOut;
         [TCScore score];
         NSLog(@"------->>>>>> pSolution 已达limit条");
@@ -247,11 +255,15 @@
  *      2021.12.25: 迭代hSolution (参考25014-H & 25015-6);
  *      2022.01.09: 达到limit条时的处理;
  *      2022.01.09: 首条就是HAlg不能做H解决方案 (参考25057);
+ *      2022.05.04: 树限宽也限深 (参考2523c-分析代码1);
  */
 +(void) hSolution:(HDemandModel*)hDemand{
     //0. S数达到limit时设为WithOut;
     OFTitleLog(@"hSolution", @"\n目标:%@ 已有S数:%ld",Pit2FStr(hDemand.baseOrGroup.content_p),hDemand.actionFoModels.count);
-    if (hDemand.actionFoModels.count >= cTCSolutionBranchLimit) {
+    
+    //1. 树限宽且限深;
+    NSInteger deepCount = [TOUtils getBaseDemandsDeepCount:hDemand];
+    if (deepCount >= cDemandDeepLimit || hDemand.actionFoModels.count >= cTCSolutionBranchLimit) {
         hDemand.status = TOModelStatus_WithOut;
         [TCScore score];
         NSLog(@"------->>>>>> hSolution 已达limit条");
