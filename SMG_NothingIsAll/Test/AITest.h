@@ -20,5 +20,6 @@
 +(void) test8:(NSArray*)content_ps type:(AnalogyType)type;
 +(void) test9:(AIFoNodeBase*)fo type:(AnalogyType)type;
 +(void) test10:(TOModelBase*)toModel;
++(void) test11:(AIShortMatchModel*)shortModel waitAlg_p:(AIKVPointer*)waitAlg_p;
 
 @end

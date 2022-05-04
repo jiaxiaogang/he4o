@@ -44,9 +44,10 @@
             //5. 末位跳过,不需要反馈 (参考25031-2 & 25134-方案2);
             NSInteger maxCutIndex = matchFo.count - 1;
             if (waitModel.cutIndex2 >= maxCutIndex) continue;
-            
-            //6. 判断protoAlg与waitAlg之间mIsC,成立则OutBackYes;
             AIKVPointer *waitAlg_p = ARR_INDEX(matchFo.content_ps, waitModel.cutIndex2 + 1);
+            
+            //6. 判断protoAlg与waitAlg之间匹配,成立则OutBackYes;
+            [AITest test11:model waitAlg_p:waitAlg_p];//测下2523c-此处是否会导致匹配不到;
 //            BOOL mIsC = [TOUtils mIsC_1:model.protoAlg.pointer c:waitAlg_p];
             BOOL mIsC = [recognitionAlgs containsObject:waitAlg_p];
             if (mIsC) {
