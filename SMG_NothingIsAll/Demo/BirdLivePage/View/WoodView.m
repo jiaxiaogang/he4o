@@ -75,6 +75,9 @@
                 if (finished) {
                     [self reset:true];
                 }
+                
+                //6. 标记执行完成;
+                [theRT invoked:kWoodSEL];
             }];
         }
     }];

@@ -155,11 +155,11 @@
 //MARK:                     < privateMethod >
 //MARK:===============================================================
 -(NSString*) cellStr:(NSString*)queue {
-    if ([kGrowPage isEqualToString:queue]) {
+    if ([kGrowPageSEL isEqualToString:queue]) {
         return @"页 - 进入成长页";
-    }else if ([kFly isEqualToString:queue]) {
+    }else if ([kFlySEL isEqualToString:queue]) {
         return @"飞 - 随机";
-    }else if ([kWood isEqualToString:queue]) {
+    }else if ([kWoodSEL isEqualToString:queue]) {
         return @"棒 - 扔木棒";
     }
     return @"";
@@ -287,8 +287,8 @@
 }
 
 - (IBAction)loadBtnOnClick:(id)sender {
-    [theRT queue1:kGrowPage];
-    [theRT queueN:@[kFly,kWood] count:5];
+    [theRT queue1:kGrowPageSEL];
+    [theRT queueN:@[kFlySEL,kWoodSEL] count:5];
 }
 
 - (IBAction)closeBtnOnClick:(id)sender {

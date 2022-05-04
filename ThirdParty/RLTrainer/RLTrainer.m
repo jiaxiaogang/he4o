@@ -60,6 +60,9 @@ static RLTrainer *_instance;
     [self.model queue:names count:count];
     [self.panel reloadData];
 }
+-(void) invoked:(NSString*)name{
+    [self.model invoked:name];
+}
 -(void) open{
     [self.panel open];
 }

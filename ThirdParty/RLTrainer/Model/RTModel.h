@@ -30,6 +30,7 @@
 //MARK:===============================================================
 -(void) regist:(NSString*)name target:(NSObject*)target selector:(SEL)selector;
 -(void) queue:(NSArray*)names count:(NSInteger)count;
+-(void) invoked:(NSString*)name;
 -(void) clear;
 -(long long) getTotalUseTimed;
 

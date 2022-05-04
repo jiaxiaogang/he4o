@@ -65,7 +65,9 @@
     [UIView animateWithDuration:0.1f animations:^{
         [self setX:self.x + (cos(angle) * 30.0f)];
         [self setY:self.y + (sin(angle) * 30.0f)];
-    }completion:nil];
+    }completion:^(BOOL finished) {
+        [theRT invoked:kFlySEL];
+    }];
 }
 -(void) flyResult:(CGFloat)value{
     //1. 飞后视觉
@@ -134,7 +136,9 @@
         //2. 吃完动作
         [UIView animateWithDuration:0.1f animations:^{
             [self.containerView.layer setTransform:CATransform3DIdentity];
-        }completion:nil];
+        }completion:^(BOOL finished) {
+            [theRT invoked:kEatSEL];
+        }];
     }];
 }
 -(void) eatResult:(CGFloat)value{

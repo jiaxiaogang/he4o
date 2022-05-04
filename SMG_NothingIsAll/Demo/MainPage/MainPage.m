@@ -25,7 +25,7 @@
 }
 
 -(void) initData{
-    [theRT regist:kGrowPage target:self selector:@selector(birdGrowBtnOnClick:)];
+    [theRT regist:kGrowPageSEL target:self selector:@selector(birdGrowBtnOnClick:)];
 }
 
 //MARK:===============================================================
@@ -44,6 +44,7 @@
 - (IBAction)birdGrowBtnOnClick:(id)sender {
     BirdGrowPage *page = [[BirdGrowPage alloc] init];
     [self.navigationController pushViewController:page animated:true];
+    [theRT invoked:kGrowPageSEL];
 }
 
 @end

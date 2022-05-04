@@ -19,6 +19,7 @@
 @property (assign, nonatomic) long long lastOperCount;      //思维操作计数
 @property (assign, nonatomic) long long useTimed;           //已使用时间
 @property (assign, nonatomic) long long lastStartTime;      //最后一次开始时间
+@property (strong, nonatomic) NSString *invokingName;       //当前执行中name;
 
 @end
 
@@ -81,6 +82,13 @@
     }
 }
 
+//单步训练执行完成报告;
+-(void) invoked:(NSString*)name{
+    if ([STRTOOK(name) isEqualToString:self.invokingName]) {
+        self.invokingName = nil;
+    }
+}
+
 -(void) clear{
     [self.queues removeAllObjects];
     self.queueIndex = 0;
@@ -125,20 +133,26 @@
 //MARK:                     < block >
 //MARK:===============================================================
 -(void) timeBlock {
-    //1. 播放状态
+    //1. 不用执行: 播放状态
     if (![self.delegate rtModel_Playing]) {
         [self pauseCollectUseTimed];
         return;
     }
     
-    //2. 执行完时,返回;
+    //2. 不用执行: 执行完时,返回;
     if (self.queueIndex >= self.queues.count) {
         [self pauseCollectUseTimed];
         return;
     }
     [self playSetLastStartTime];
     
-    //3. TC忙碌状态则返回 (计数速率(负载)>10时,为忙状态);
+    //2. 没轮到下帧: 上帧还未执行完成时,等待完成再执行下帧;
+    if (STRISOK(self.invokingName)) {
+        NSLog(@"----> 强化训练_上帧执行中 -> 等待");
+        return;
+    }
+    
+    //3. 没轮到下帧: TC忙碌状态则返回 (计数速率(负载)>10时,为忙状态);
     NSInteger operDelta = theTC.getOperCount - self.lastOperCount;
     BOOL busyStatus = operDelta > 3;
     self.lastOperCount = theTC.getOperCount;
@@ -151,6 +165,7 @@
     NSString *name = ARR_INDEX(self.queues, self.queueIndex);
     NSLog(@"强化训练 -> 执行:%@ (%ld/%ld)",name,self.queueIndex+1,self.queues.count);
     self.queueIndex++;
+    self.invokingName = name;
     [self invoke:name];
     [self.delegate rtModel_Invoked];
 }
