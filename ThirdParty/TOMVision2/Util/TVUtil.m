@@ -166,26 +166,26 @@
 
 
 +(NSString*) getLightStr4Ps:(NSArray*)node_ps{
-    return [self getLightStr4Ps:node_ps simple:true header:true sep:@","];
+    return [self getLightStr4Ps:node_ps header:true];
 }
-+(NSString*) getLightStr4Ps:(NSArray*)node_ps simple:(BOOL)simple header:(BOOL)header sep:(NSString*)sep{
++(NSString*) getLightStr4Ps:(NSArray*)node_ps header:(BOOL)header{
     //1. 数据检查
     NSMutableString *result = [[NSMutableString alloc] init];
     node_ps = ARRTOOK(node_ps);
-    sep = STRTOOK(sep);
+    NSString *sep = @",";
     
     //2. 拼接返回
     for (AIKVPointer *item_p in node_ps){
-        NSString *str = [NVHeUtil getLightStr:item_p simple:simple header:header];
+        NSString *str = [self getLightStr:item_p header:header];
         [result appendFormat:@"%@%@",str,sep];
     }
     return SUBSTR2INDEX(result, result.length - sep.length);
 }
 
 +(NSString*) getLightStr:(AIKVPointer*)node_p {
-    return [self getLightStr:node_p simple:true header:false];
+    return [self getLightStr:node_p header:false];
 }
-+(NSString*) getLightStr:(AIKVPointer*)node_p simple:(BOOL)simple header:(BOOL)header{
++(NSString*) getLightStr:(AIKVPointer*)node_p header:(BOOL)header{
     NSString *lightStr = @"";
     if (ISOK(node_p, AIKVPointer.class)) {
         if (PitIsValue(node_p)) {
@@ -193,17 +193,12 @@
         }else if (PitIsAlg(node_p)) {
             AIAlgNodeBase *algNode = [SMGUtils searchNode:node_p];
             if (algNode) {
-                if (simple) {
-                    NSString *firstValueStr = [self getLightStr_ValueP:ARR_INDEX(algNode.content_ps, 0)];
-                    lightStr = STRFORMAT(@"%@%@",firstValueStr,(algNode.content_ps.count > 1) ? @"..." : @"");
-                }else{
-                    lightStr = [self getLightStr4Ps:algNode.content_ps simple:simple header:header sep:@","];
-                }
+                lightStr = [self getLightStr4Ps:algNode.content_ps header:header];
             }
         }else if(PitIsFo(node_p)){
             AIFoNodeBase *foNode = [SMGUtils searchNode:node_p];
             if (foNode) {
-                lightStr = [self getLightStr4Ps:foNode.content_ps simple:simple header:header sep:@","];
+                lightStr = [self getLightStr4Ps:foNode.content_ps header:header];
             }
         }else if(PitIsMv(node_p)){
             CGFloat score = [AIScore score4MV:node_p ratio:1.0f];
