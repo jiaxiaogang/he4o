@@ -38,4 +38,24 @@
 +(NSInteger) subIndexOfChangeIndex:(NSInteger)changeIndex changeDic:(NSDictionary*)changeDic;
 +(NSRange) indexOfChangeIndex:(NSInteger)changeIndex changeDic:(NSDictionary*)changeDic;
 
+
+/**
+ *  MARK:--------------------Y距描述--------------------
+ */
++(NSString*) distanceYDesc:(CGFloat)birdPosY;
+
+
+//MARK:===============================================================
+//MARK:                     < 节点描述 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------获取value微信息的light描述--------------------
+ */
++(NSString*) getLightStr4Ps:(NSArray*)node_ps;
++(NSString*) getLightStr4Ps:(NSArray*)node_ps simple:(BOOL)simple header:(BOOL)header sep:(NSString*)sep;
++(NSString*) getLightStr:(AIKVPointer*)node_p;
++(NSString*) getLightStr:(AIKVPointer*)node_p simple:(BOOL)simple header:(BOOL)header;
++(NSString*) getLightStr_Value:(double)value algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
+
 @end

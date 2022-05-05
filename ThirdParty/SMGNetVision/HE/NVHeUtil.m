@@ -13,6 +13,7 @@
 #import "NSString+Extension.h"
 #import "ThinkingUtils.h"
 #import "AIScore.h"
+#import "TVUtil.h"
 
 @implementation NVHeUtil
 
@@ -99,7 +100,7 @@
     }else if ([@"distance" isEqualToString:value_p.dataSource]) {
         return STRFORMAT(@"距%@",valueStr);
     }else if ([@"distanceY" isEqualToString:value_p.dataSource]) {
-        return STRFORMAT(@"Y距%@",valueStr);
+        return STRFORMAT(@"Y距_%@_%@",[TVUtil distanceYDesc:value],valueStr);
     }else if ([@"speed" isEqualToString:value_p.dataSource]) {
         return STRFORMAT(@"速%@",valueStr);
     }else if ([@"border" isEqualToString:value_p.dataSource]) {

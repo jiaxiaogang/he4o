@@ -23,15 +23,21 @@
     if (!data) return;
     AIFoNodeBase *fo = [SMGUtils searchNode:data.content_p];
     
+    //2. SP计数求和;
+    NSInteger sumSP = 0;
+    for (AISPStrong *sp in fo.spDic.allValues) {
+        sumSP += sp.sStrong + sp.pStrong;
+    }
+    
     //2. 收集要展示的文本;
     NSMutableString *mStr = [[NSMutableString alloc] init];
     [mStr appendFormat:@"F%ld",data.content_p.pointerId];
     if (ISOK(data.baseOrGroup, ReasonDemandModel.class)) {
         //CGFloat spScore = [TOUtils getSPScore:fo startSPIndex:0 endSPIndex:fo.count];
-        [mStr appendFormat:@" SP:%@",CLEANSTR(fo.spDic)];
+        [mStr appendFormat:@" SP:%ld",sumSP];
     }else if(ISOK(data.baseOrGroup, HDemandModel.class)){
         //CGFloat spScore = [TOUtils getSPScore:fo startSPIndex:0 endSPIndex:data.targetSPIndex];
-        [mStr appendFormat:@" SP:%@",CLEANSTR(fo.spDic)];
+        [mStr appendFormat:@" SP:%ld",sumSP];
     }
     
     //3. 刷新UI;

@@ -117,4 +117,150 @@
     return NSMakeRange(-1, -1);
 }
 
++(NSString*) distanceYDesc:(CGFloat)distanceY{
+    //1. 中间点是35,转成中间点为0;
+    CGFloat centerDistanceY = distanceY - 50 + 15;
+    
+    //2. 出屏
+    if(centerDistanceY < -ScreenHeight * 0.5f){
+        return @"上出屏";
+    }else if(centerDistanceY > ScreenHeight * 0.5f) {
+        return @"下出屏";
+    }
+    
+    //2. 屏内
+    CGFloat yPos = [self onRoadDistanceY:distanceY];
+    if (yPos > 1) {
+        return @"路下";
+    }else if (yPos > 0) {
+        return STRFORMAT(@"偏下%.1f",yPos);
+    }else if (yPos == 0) {
+        return @"正中";
+    }else if (yPos > -1) {
+        return STRFORMAT(@"偏上%.1f",-yPos);
+    }else{
+        return @"路上";
+    }
+}
+
+/**
+ *  MARK:--------------------路上的位置: 偏上或偏下--------------------
+ *  @result -1到1 (正偏下,负偏上);
+ */
++(CGFloat) onRoadDistanceY:(CGFloat)distanceY{
+    //1. 中间点是35,转成中间点为0;
+    CGFloat centerDistanceY = distanceY - 50 + 15;
+    
+    //2. 出路距离;
+    CGFloat roadH = 100,birdH = 30;
+    CGFloat outRoadDistance = roadH * 0.5f + birdH;
+    
+    //2. 偏上为0到-1,偏下为0到1 (0为中心,1和-1是路边缘点);
+    CGFloat result = centerDistanceY / outRoadDistance;
+    return result;
+}
+
+//MARK:===============================================================
+//MARK:                     < 节点描述 >
+//MARK:===============================================================
+
+
++(NSString*) getLightStr4Ps:(NSArray*)node_ps{
+    return [self getLightStr4Ps:node_ps simple:true header:true sep:@","];
+}
++(NSString*) getLightStr4Ps:(NSArray*)node_ps simple:(BOOL)simple header:(BOOL)header sep:(NSString*)sep{
+    //1. 数据检查
+    NSMutableString *result = [[NSMutableString alloc] init];
+    node_ps = ARRTOOK(node_ps);
+    sep = STRTOOK(sep);
+    
+    //2. 拼接返回
+    for (AIKVPointer *item_p in node_ps){
+        NSString *str = [NVHeUtil getLightStr:item_p simple:simple header:header];
+        [result appendFormat:@"%@%@",str,sep];
+    }
+    return SUBSTR2INDEX(result, result.length - sep.length);
+}
+
++(NSString*) getLightStr:(AIKVPointer*)node_p {
+    return [self getLightStr:node_p simple:true header:false];
+}
++(NSString*) getLightStr:(AIKVPointer*)node_p simple:(BOOL)simple header:(BOOL)header{
+    NSString *lightStr = @"";
+    if (ISOK(node_p, AIKVPointer.class)) {
+        if (PitIsValue(node_p)) {
+            lightStr = [self getLightStr_ValueP:node_p];
+        }else if (PitIsAlg(node_p)) {
+            AIAlgNodeBase *algNode = [SMGUtils searchNode:node_p];
+            if (algNode) {
+                if (simple) {
+                    NSString *firstValueStr = [self getLightStr_ValueP:ARR_INDEX(algNode.content_ps, 0)];
+                    lightStr = STRFORMAT(@"%@%@",firstValueStr,(algNode.content_ps.count > 1) ? @"..." : @"");
+                }else{
+                    lightStr = [self getLightStr4Ps:algNode.content_ps simple:simple header:header sep:@","];
+                }
+            }
+        }else if(PitIsFo(node_p)){
+            AIFoNodeBase *foNode = [SMGUtils searchNode:node_p];
+            if (foNode) {
+                lightStr = [self getLightStr4Ps:foNode.content_ps simple:simple header:header sep:@","];
+            }
+        }else if(PitIsMv(node_p)){
+            CGFloat score = [AIScore score4MV:node_p ratio:1.0f];
+            lightStr = STRFORMAT(@"%@%@%@",Mvp2DeltaStr(node_p),Class2Str(NSClassFromString(node_p.algsType)),Double2Str_NDZ(score));
+        }
+    }
+    //2. 返回;
+    if (header) lightStr = [self decoratorHeader:lightStr node_p:node_p];
+    return lightStr;
+}
+
+//获取value_p的light描述;
++(NSString*) getLightStr_ValueP:(AIKVPointer*)value_p{
+    if (!value_p) return @"";
+    double value = [NUMTOOK([AINetIndex getData:value_p]) doubleValue];
+    NSString *valueStr = [self getLightStr_Value:value algsType:value_p.algsType dataSource:value_p.dataSource];
+    if ([@"sizeHeight" isEqualToString:value_p.dataSource]) {
+        return STRFORMAT(@"高%@",valueStr);
+    }else if ([@"distanceY" isEqualToString:value_p.dataSource]) {
+        return STRFORMAT(@"Y距_%@_%@",[TVUtil distanceYDesc:value],valueStr);
+    }else if([FLY_RDS isEqualToString:value_p.algsType]){
+        return STRFORMAT(@"%@",valueStr);
+    }
+    return valueStr;
+}
+
+//获取value的light描述;
++(NSString*) getLightStr_Value:(double)value algsType:(NSString*)algsType dataSource:(NSString*)dataSource{
+    if([FLY_RDS isEqualToString:algsType] || [@"direction" isEqualToString:dataSource]){
+        int caseValue = value * 8;
+        switch (caseValue) {
+            case 0: return @"←";
+            case 1: return @"↖";
+            case 2: return @"↑";
+            case 3: return @"↗";
+            case 4: return @"→";
+            case 5: return @"↘";
+            case 6: return @"↓";
+            case 7: return @"↙";
+        }
+    }
+    return Double2Str_NDZ(value);
+}
+
+//MARK:===============================================================
+//MARK:                     < privateMethod >
+//MARK:===============================================================
++(NSString*) decoratorHeader:(NSString*)lightStr node_p:(AIKVPointer*)node_p{
+    NSString *pIdStr = node_p ? STRFORMAT(@"%ld",node_p.pointerId) : @"";
+    if (PitIsAlg(node_p)) {
+        return STRFORMAT(@"A%@(%@)",pIdStr,lightStr);
+    }else if(PitIsFo(node_p)){
+        return STRFORMAT(@"F%@[%@]",pIdStr,lightStr);
+    }else if(PitIsMv(node_p)){
+        return STRFORMAT(@"M%@{%@}",pIdStr,lightStr);
+    }
+    return lightStr;
+}
+
 @end
