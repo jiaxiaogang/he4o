@@ -262,4 +262,17 @@
     return lightStr;
 }
 
+//MARK:===============================================================
+//MARK:                     < UI与View相关 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------点在框内--------------------
+ */
++(BOOL) inRect:(CGRect)rect point:(CGPoint)point{
+    BOOL inX = point.x >= CGRectGetMinX(rect) && point.x <= CGRectGetMaxX(rect);
+    BOOL inY = point.y >= CGRectGetMinY(rect) && point.y <= CGRectGetMaxY(rect);
+    return inX && inY;
+}
+
 @end

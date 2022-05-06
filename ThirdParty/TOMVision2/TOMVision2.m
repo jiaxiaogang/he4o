@@ -21,6 +21,7 @@
 #import "TVPanelView.h"
 #import "TVLineView.h"
 #import "TVTimeLine.h"
+#import "TVUtil.h"
 
 @interface TOMVision2 () <TVPanelViewDelegate,UIScrollViewDelegate,TOMVisionNodeBaseDelegate>
 
@@ -395,30 +396,49 @@
     }];
 }
 
+//返回手势选中的节点;
+-(TOMVisionNodeBase*) tapedNode:(CGPoint)contentPoint{
+    NSArray *nodes = [self.contentView subViews_AllDeepWithClass:TOMVisionNodeBase.class];
+    for (TOMVisionNodeBase *node in nodes) {
+        if ([TVUtil inRect:node.frame point:contentPoint]) {
+            return node;
+        }
+    }
+    return nil;
+}
+
 //MARK:===============================================================
 //MARK:                     < onclick >
 //MARK:===============================================================
 - (void)longTap:(UILongPressGestureRecognizer*)sender{
-    //1. 防止重复触发
-    if (sender.state != UIGestureRecognizerStateBegan) return;
-    
-    //2. 点击坐标
-    CGPoint point = [sender locationInView:sender.view];
-    CGPoint contentPoint = [sender.view convertPoint:point toView:self.contentView];
-    
-    //3. 新缩放比例;
-    CGFloat newScale = self.scrollView.zoomScale / 1.5f;
-    [self animation4Scale:newScale focusPoint:contentPoint time:0.5f];
+    if (sender.state != UIGestureRecognizerStateBegan) return;//1. 防止重复触发
+    [self tapBlock:sender defaultScale:self.scrollView.zoomScale / 1.5f];
 }
 
 - (void)doubleTap:(UITapGestureRecognizer *)sender{
+    [self tapBlock:sender defaultScale:self.scrollView.zoomScale * 1.5f];
+}
+
+-(void) tapBlock:(UIGestureRecognizer*)sender defaultScale:(CGFloat)defaultScale{
     //1. 点击坐标
     CGPoint point = [sender locationInView:sender.view];
     CGPoint contentPoint = [sender.view convertPoint:point toView:self.contentView];
     
-    //2. 新缩放比例;
-    CGFloat newScale = self.scrollView.zoomScale * 1.5f;
-    [self animation4Scale:newScale focusPoint:contentPoint time:0.5f];
+    //2. 动画缩放 & 坐标;
+    CGPoint focusPoint = contentPoint;
+    CGFloat newScale = defaultScale;
+    //[self.tipLab setText:STRFORMAT(@"tap:%.0f %.0f",focusPoint.x,focusPoint.y)];
+    
+    //3. 点中节点时,强行: 缩放100宽 & 坐标居中;
+    UIView *tapedNode = [self tapedNode:contentPoint];
+    if (tapedNode) {
+        newScale = 100 / tapedNode.width;
+        focusPoint = tapedNode.center;
+        //[self.tipLab setText:STRFORMAT(@"center:%.0f %.0f",tapedNode.center.x,tapedNode.center.y)];
+    }
+    
+    //4. 执行动画;
+    [self animation4Scale:newScale focusPoint:focusPoint time:0.5f];
 }
 
 //MARK:===============================================================
