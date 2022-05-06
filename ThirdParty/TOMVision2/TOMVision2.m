@@ -31,6 +31,8 @@
 @property (strong, nonatomic) TVTimeLine *timeLine;
 @property (assign, nonatomic) NSInteger changeIndex; //当前显示的index;
 @property (weak, nonatomic) IBOutlet UILabel *tipLab;
+@property (strong,nonatomic) UITapGestureRecognizer *doubleTap;
+@property (strong,nonatomic) UILongPressGestureRecognizer *longTap;
 
 @end
 
@@ -87,6 +89,17 @@
     //timeLine
     self.timeLine = [[TVTimeLine alloc] init];
     self.timeLine.backgroundColor = UIColorWithRGBHexA(0xFFFFFF, 0);
+    
+    //doubleTap
+    self.doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(doubleTap:)];
+    self.doubleTap.numberOfTapsRequired = 2;
+    self.doubleTap.numberOfTouchesRequired = 1;
+    [self.contentView addGestureRecognizer:self.doubleTap];
+    
+    //4. longTap
+    self.longTap = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longTap:)];
+    self.longTap.minimumPressDuration = 0.4;
+    [self.contentView addGestureRecognizer:self.longTap];
 }
 
 -(void) initData{
@@ -237,8 +250,6 @@
 -(void) focusAnimation:(TOModelBase*)focusModel{
     //1. 取单帧展示时长;
     CGFloat time = self.panelView.getFrameShowTime;
-    CGFloat svW = self.scrollView.width;
-    CGFloat svH = self.scrollView.height;
     if (time == 0) return;
     
     //2. 取focusView
@@ -261,29 +272,8 @@
         self.scrollView.zoomScale = 1.0f;
         self.scrollView.contentOffset = CGPointZero;
     } completion:^(BOOL finished) {
-        //5. 第2动画_坐标计算1: 用于将nodeView调整到左上角显示;
-        CGFloat offsetX = focusView.center.x;
-        CGFloat offsetY = focusView.center.y;
-        
-        //6. 第2动画_坐标计算2: 先在左上角缩放 (必须在anchor点缩放);
-        offsetX *= scale;
-        offsetY *= scale;
-        
-        //7. 第2动画_坐标计算3: 再减半屏,使之从左上角移到屏正中 (无论缩放比例多少,左上角中心到屏幕中心,都是半屏距离);
-        offsetX -= svW / 2;
-        offsetY -= svH / 2;
-        
-        //8. 第2动画_坐标计算4: 当不缩放 且 offsetXY在左上区间时,则保持原位不居中;
-        if (scale == 1.0f) {
-            if (focusView.center.x < svW / 2) offsetX = 0;
-            if (focusView.center.y < svH / 2) offsetY = 0;
-        }
-        
-        //9. 第2动画_执行动画 (居中 & 放大);
-        [UIView animateWithDuration:time / 2.0f animations:^{
-            self.scrollView.zoomScale = scale;
-            self.scrollView.contentOffset = CGPointMake(offsetX, offsetY);
-        }];
+        //5. 第2动画: 焦点view显示在屏幕中心;
+        [self animation4Scale:scale focusPoint:focusView.center time:time / 2.0f];
     }];
 }
 
@@ -375,6 +365,54 @@
     [self.contentView insertSubview:self.timeLine atIndex:0];
     [self.timeLine setFrame:self.contentView.frame];
     [self.timeLine setNeedsDisplay];
+}
+
+-(void) animation4Scale:(CGFloat)newScale focusPoint:(CGPoint)focusPoint time:(CGFloat)time{
+    //6. 坐标计算;
+    CGFloat offsetX = newScale * focusPoint.x;
+    CGFloat offsetY = newScale * focusPoint.y;
+    
+    //7. 坐标计算2: 减半屏,使之从左上角移到屏正中 (无论缩放比例多少,左上角中心到屏幕中心,都是半屏距离);
+    CGFloat svW = self.scrollView.width;
+    CGFloat svH = self.scrollView.height;
+    offsetX -= svW / 2;
+    offsetY -= svH / 2;
+    
+    //8. 坐标计算3: 当不缩放 且 offsetXY在左上区间时,则保持原位不居中;
+    if (newScale <= 1.0f) {
+        if (focusPoint.x < svW / 2) offsetX = 0;
+        if (focusPoint.y < svH / 2) offsetY = 0;
+    }
+    
+    //9. 动画_执行动画 (居中 & 缩放);
+    [UIView animateWithDuration:time animations:^{
+        self.scrollView.zoomScale = newScale;
+        self.scrollView.contentOffset = CGPointMake(offsetX, offsetY);
+    }];
+}
+
+//MARK:===============================================================
+//MARK:                     < onclick >
+//MARK:===============================================================
+- (void)longTap:(UILongPressGestureRecognizer*)sender{
+    //1. 防止重复触发
+    if (sender.state != UIGestureRecognizerStateBegan) return;
+    
+    //2. 点击坐标
+    CGPoint point = [sender locationInView:sender.view];
+    
+    //3. 新缩放比例;
+    CGFloat newScale = self.scrollView.zoomScale / 1.5f;
+    [self animation4Scale:newScale focusPoint:point time:0.5f];
+}
+
+- (void)doubleTap:(UITapGestureRecognizer *)sender{
+    //1. 点击坐标
+    CGPoint point = [sender locationInView:sender.view];
+    
+    //2. 新缩放比例;
+    CGFloat newScale = self.scrollView.zoomScale * 1.5f;
+    [self animation4Scale:newScale focusPoint:point time:0.5f];
 }
 
 //MARK:===============================================================
