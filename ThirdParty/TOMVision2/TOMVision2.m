@@ -70,8 +70,8 @@
     [self.scrollView setShowsVerticalScrollIndicator:NO];
     [self.scrollView setShowsHorizontalScrollIndicator:NO];
     self.scrollView.delegate = self;
-    self.scrollView.minimumZoomScale = 0.1f;    //设置最小缩放倍数
-    self.scrollView.maximumZoomScale = 20.0f;   //设置最大缩放倍数
+    self.scrollView.minimumZoomScale = CGFLOAT_MIN;
+    self.scrollView.maximumZoomScale = CGFLOAT_MAX;
     self.scrollView.showsHorizontalScrollIndicator = true;
     self.scrollView.showsVerticalScrollIndicator = true;
     self.scrollView.indicatorStyle = UIScrollViewIndicatorStyleWhite;
