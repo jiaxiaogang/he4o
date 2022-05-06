@@ -37,9 +37,12 @@
     //headerBtn
     self.headerBtn = [[UIButton alloc] init];
     [self.containerView addSubview:self.headerBtn];
-    [self.headerBtn.titleLabel setFont:[UIFont systemFontOfSize:30]];
+    [self.headerBtn.titleLabel setFont:[UIFont systemFontOfSize:8]];
     [self.headerBtn setOrigin:CGPointZero];
     self.headerBtn.titleLabel.adjustsFontSizeToFitWidth = YES;
+    [self.headerBtn addTarget:self action:@selector(headerBtnOnClick) forControlEvents:UIControlEventTouchUpInside];
+    //self.headerBtn.titleLabel.numberOfLines = 0;
+    self.headerBtn.titleLabel.lineBreakMode = NSLineBreakByCharWrapping;
 }
 
 -(void) initData{
@@ -92,6 +95,10 @@
     //4. 再缩小;
     [self.containerView setTransform:CGAffineTransformIdentity];
     [self.containerView setTransform:CGAffineTransformMakeScale(scale, scale)];
+}
+
+-(void) headerBtnOnClick{
+    [self.delegate tomVisionNode_OnClick:self.headerBtn.titleLabel.text];
 }
 
 @end

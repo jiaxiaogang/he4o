@@ -52,10 +52,6 @@
 /**
  *  MARK:--------------------获取value微信息的light描述--------------------
  */
-+(NSString*) getLightStr4Ps:(NSArray*)node_ps;
-+(NSString*) getLightStr4Ps:(NSArray*)node_ps header:(BOOL)header;
 +(NSString*) getLightStr:(AIKVPointer*)node_p;
-+(NSString*) getLightStr:(AIKVPointer*)node_p header:(BOOL)header;
-+(NSString*) getLightStr_Value:(double)value algsType:(NSString*)algsType dataSource:(NSString*)dataSource;
 
 @end

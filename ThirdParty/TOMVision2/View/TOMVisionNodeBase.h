@@ -8,6 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol TOMVisionNodeBaseDelegate <NSObject>
+
+-(void) tomVisionNode_OnClick:(NSString*)headerStr;
+
+@end
+
 /**
  *  MARK:--------------------nodeView--------------------
  *  @version
@@ -17,6 +23,7 @@
 
 @property (strong, nonatomic) UIView *containerView;
 @property (strong, nonatomic) UIButton *headerBtn;
+@property (weak, nonatomic) id<TOMVisionNodeBaseDelegate> delegate;
 
 -(void) initView;
 -(void) initData;

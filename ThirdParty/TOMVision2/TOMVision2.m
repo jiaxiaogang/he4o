@@ -22,7 +22,7 @@
 #import "TVLineView.h"
 #import "TVTimeLine.h"
 
-@interface TOMVision2 () <TVPanelViewDelegate,UIScrollViewDelegate>
+@interface TOMVision2 () <TVPanelViewDelegate,UIScrollViewDelegate,TOMVisionNodeBaseDelegate>
 
 @property (strong,nonatomic) IBOutlet UIView *containerView;
 @property (strong, nonatomic) UIScrollView *scrollView;
@@ -321,6 +321,7 @@
     }
     
     //4. 无论是复用,还是新建,都更新data (复用时,每帧同一个data也在更新);
+    result.delegate = self;
     [result setData:data];
     return result;
 }
@@ -399,6 +400,13 @@
 //MARK:===============================================================
 -(UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView{
     return self.contentView;
+}
+
+//MARK:===============================================================
+//MARK:               < TOMVisionNodeBaseDelegate >
+//MARK:===============================================================
+- (void)tomVisionNode_OnClick:(NSString *)headerStr{
+    [self.tipLab setText:CLEANSTR(headerStr)];
 }
 
 @end

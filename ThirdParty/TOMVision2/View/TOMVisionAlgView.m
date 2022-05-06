@@ -7,6 +7,7 @@
 //
 
 #import "TOMVisionAlgView.h"
+#import "TVUtil.h"
 
 @implementation TOMVisionAlgView
 
@@ -22,7 +23,13 @@
     TOAlgModel *data = (TOAlgModel*)self.data;
     if (!data) return;
     
-    [self.headerBtn setTitle:STRFORMAT(@"A%ld",data.content_p.pointerId) forState:UIControlStateNormal];
+    //2. 内容;
+    NSMutableString *mStr = [[NSMutableString alloc] init];
+    [mStr appendFormat:@"A%ld",data.content_p.pointerId];
+    [mStr appendFormat:@"\n%@",[TVUtil getLightStr:data.content_p]];
+    
+    //3. 显示;
+    [self.headerBtn setTitle:mStr forState:UIControlStateNormal];
 }
 
 @end

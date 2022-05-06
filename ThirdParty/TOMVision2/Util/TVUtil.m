@@ -164,26 +164,23 @@
 //MARK:                     < 节点描述 >
 //MARK:===============================================================
 
-
-+(NSString*) getLightStr4Ps:(NSArray*)node_ps{
-    return [self getLightStr4Ps:node_ps header:true];
-}
 +(NSString*) getLightStr4Ps:(NSArray*)node_ps header:(BOOL)header{
     //1. 数据检查
     NSMutableString *result = [[NSMutableString alloc] init];
     node_ps = ARRTOOK(node_ps);
-    NSString *sep = @",";
     
     //2. 拼接返回
     for (AIKVPointer *item_p in node_ps){
         NSString *str = [self getLightStr:item_p header:header];
-        [result appendFormat:@"%@%@",str,sep];
+        if (STRISOK(str)) {
+            [result appendFormat:@"%@%@",str,PitIsValue(item_p) ? @"_" : @","];
+        }
     }
-    return SUBSTR2INDEX(result, result.length - sep.length);
+    return SUBSTR2INDEX(result, result.length - 1);
 }
 
 +(NSString*) getLightStr:(AIKVPointer*)node_p {
-    return [self getLightStr:node_p header:false];
+    return [self getLightStr:node_p header:true];
 }
 +(NSString*) getLightStr:(AIKVPointer*)node_p header:(BOOL)header{
     NSString *lightStr = @"";
@@ -216,13 +213,20 @@
     double value = [NUMTOOK([AINetIndex getData:value_p]) doubleValue];
     NSString *valueStr = [self getLightStr_Value:value algsType:value_p.algsType dataSource:value_p.dataSource];
     if ([@"sizeHeight" isEqualToString:value_p.dataSource]) {
+        if (value == 30) {
+            return @"鸟";
+        }else if(value == 100) {
+            return @"棒";
+        }else if(value == 5) {
+            return @"果";
+        }
         return STRFORMAT(@"高%@",valueStr);
     }else if ([@"distanceY" isEqualToString:value_p.dataSource]) {
-        return STRFORMAT(@"Y距_%@_%@",[TVUtil distanceYDesc:value],valueStr);
+        return [TVUtil distanceYDesc:value];
     }else if([FLY_RDS isEqualToString:value_p.algsType]){
         return STRFORMAT(@"%@",valueStr);
     }
-    return valueStr;
+    return @"";//valueStr
 }
 
 //获取value的light描述;
@@ -249,9 +253,9 @@
 +(NSString*) decoratorHeader:(NSString*)lightStr node_p:(AIKVPointer*)node_p{
     NSString *pIdStr = node_p ? STRFORMAT(@"%ld",node_p.pointerId) : @"";
     if (PitIsAlg(node_p)) {
-        return STRFORMAT(@"A%@(%@)",pIdStr,lightStr);
+        return lightStr;
     }else if(PitIsFo(node_p)){
-        return STRFORMAT(@"F%@[%@]",pIdStr,lightStr);
+        return STRFORMAT(@"[%@]",lightStr);
     }else if(PitIsMv(node_p)){
         return STRFORMAT(@"M%@{%@}",pIdStr,lightStr);
     }

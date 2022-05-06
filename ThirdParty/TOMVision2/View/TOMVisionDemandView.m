@@ -7,6 +7,7 @@
 //
 
 #import "TOMVisionDemandView.h"
+#import "TVUtil.h"
 
 @implementation TOMVisionDemandView
 
@@ -52,6 +53,15 @@
     //5. 评分
     if (!ISOK(data, HDemandModel.class)) {
         [mStr appendFormat:@"%.1f",score];
+    }
+    
+    //5. 内容;
+    if (ISOK(data, ReasonDemandModel.class)) {
+        ReasonDemandModel *rData = (ReasonDemandModel*)data;
+        [mStr appendFormat:@"\n%@",[TVUtil getLightStr:rData.mModel.matchFo]];
+    }else if (ISOK(data, HDemandModel.class)) {
+        HDemandModel *hData = (HDemandModel*)data;
+        [mStr appendFormat:@"\n%@",[TVUtil getLightStr:hData.baseOrGroup.content_p]];
     }
     
     //6. 显示

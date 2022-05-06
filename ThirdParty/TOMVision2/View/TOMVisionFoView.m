@@ -7,6 +7,7 @@
 //
 
 #import "TOMVisionFoView.h"
+#import "TVUtil.h"
 
 @implementation TOMVisionFoView
 
@@ -39,6 +40,9 @@
         //CGFloat spScore = [TOUtils getSPScore:fo startSPIndex:0 endSPIndex:data.targetSPIndex];
         [mStr appendFormat:@" SP:%ld",sumSP];
     }
+    
+    //2. 内容;
+    [mStr appendFormat:@"\n%@",[TVUtil getLightStr:data.content_p]];
     
     //3. 刷新UI;
     [self.headerBtn setTitle:mStr forState:UIControlStateNormal];
