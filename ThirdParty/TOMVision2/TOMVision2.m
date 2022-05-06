@@ -94,12 +94,12 @@
     self.doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(doubleTap:)];
     self.doubleTap.numberOfTapsRequired = 2;
     self.doubleTap.numberOfTouchesRequired = 1;
-    [self.contentView addGestureRecognizer:self.doubleTap];
+    [self.scrollView addGestureRecognizer:self.doubleTap];
     
     //4. longTap
     self.longTap = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longTap:)];
     self.longTap.minimumPressDuration = 0.4;
-    [self.contentView addGestureRecognizer:self.longTap];
+    [self.scrollView addGestureRecognizer:self.longTap];
 }
 
 -(void) initData{
@@ -367,6 +367,10 @@
     [self.timeLine setNeedsDisplay];
 }
 
+/**
+ *  MARK:--------------------缩放动画--------------------
+ *  @param focusPoint : contentView上的点,此动画可将此点移到屏幕中心显示;
+ */
 -(void) animation4Scale:(CGFloat)newScale focusPoint:(CGPoint)focusPoint time:(CGFloat)time{
     //6. 坐标计算;
     CGFloat offsetX = newScale * focusPoint.x;
@@ -400,19 +404,21 @@
     
     //2. 点击坐标
     CGPoint point = [sender locationInView:sender.view];
+    CGPoint contentPoint = [sender.view convertPoint:point toView:self.contentView];
     
     //3. 新缩放比例;
     CGFloat newScale = self.scrollView.zoomScale / 1.5f;
-    [self animation4Scale:newScale focusPoint:point time:0.5f];
+    [self animation4Scale:newScale focusPoint:contentPoint time:0.5f];
 }
 
 - (void)doubleTap:(UITapGestureRecognizer *)sender{
     //1. 点击坐标
     CGPoint point = [sender locationInView:sender.view];
+    CGPoint contentPoint = [sender.view convertPoint:point toView:self.contentView];
     
     //2. 新缩放比例;
     CGFloat newScale = self.scrollView.zoomScale * 1.5f;
-    [self animation4Scale:newScale focusPoint:point time:0.5f];
+    [self animation4Scale:newScale focusPoint:contentPoint time:0.5f];
 }
 
 //MARK:===============================================================
