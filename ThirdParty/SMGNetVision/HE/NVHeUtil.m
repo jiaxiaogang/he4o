@@ -122,18 +122,10 @@
     if(value == ATHav || value == ATNone || value == ATGreater ||
        value == ATLess || value == ATPlus || value == ATSub){
         return [NSLog_Extension convertATType2Desc:value];
-    }else if([FLY_RDS isEqualToString:algsType] || [@"direction" isEqualToString:dataSource]){
-        int caseValue = value * 8;
-        switch (caseValue) {
-            case 0: return @"←";
-            case 1: return @"↖";
-            case 2: return @"↑";
-            case 3: return @"↗";
-            case 4: return @"→";
-            case 5: return @"↘";
-            case 6: return @"↓";
-            case 7: return @"↙";
-        }
+    }else if([FLY_RDS isEqualToString:algsType]){
+        return [NVHeUtil fly2Str:value];
+    }else if([@"direction" isEqualToString:dataSource]){
+        return [NVHeUtil direction2Str:value];
     }
     return Double2Str_NDZ(value);
 }
@@ -175,6 +167,36 @@
         return STRFORMAT(@"M%@{%@}",pIdStr,lightStr);
     }
     return lightStr;
+}
+
++(NSString*) direction2Str:(CGFloat)value{
+    int caseValue = value * 8;
+    switch (caseValue) {
+        case 0: return @"⇦";
+        case 1: return @"⇖";
+        case 2: return @"⇧";
+        case 3: return @"⇗";
+        case 4: return @"⇨";
+        case 5: return @"⇘";
+        case 6: return @"⇩";
+        case 7: return @"⇙";
+    }
+    return @"";
+}
+
++(NSString*) fly2Str:(CGFloat)value{
+    int caseValue = value * 8;
+    switch (caseValue) {
+        case 0: return @"←";
+        case 1: return @"↰";
+        case 2: return @"↑";
+        case 3: return @"↱";
+        case 4: return @"→";
+        case 5: return @"↳";
+        case 6: return @"↓";
+        case 7: return @"↲";
+    }
+    return @"";
 }
 
 @end

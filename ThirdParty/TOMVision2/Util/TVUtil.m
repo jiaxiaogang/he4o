@@ -231,18 +231,10 @@
 
 //获取value的light描述;
 +(NSString*) getLightStr_Value:(double)value algsType:(NSString*)algsType dataSource:(NSString*)dataSource{
-    if([FLY_RDS isEqualToString:algsType] || [@"direction" isEqualToString:dataSource]){
-        int caseValue = value * 8;
-        switch (caseValue) {
-            case 0: return @"←";
-            case 1: return @"↖";
-            case 2: return @"↑";
-            case 3: return @"↗";
-            case 4: return @"→";
-            case 5: return @"↘";
-            case 6: return @"↓";
-            case 7: return @"↙";
-        }
+    if([FLY_RDS isEqualToString:algsType]){
+        return [NVHeUtil fly2Str:value];
+    }else if([@"direction" isEqualToString:dataSource]){
+        return [NVHeUtil direction2Str:value];
     }
     return Double2Str_NDZ(value);
 }

@@ -35,4 +35,10 @@
 +(BOOL) isMv:(AIKVPointer*)node_p;
 +(BOOL) isAbs:(AIKVPointer*)node_p;
 
+/**
+ *  MARK:--------------------稀疏码转str--------------------
+ */
++(NSString*) direction2Str:(CGFloat)value;
++(NSString*) fly2Str:(CGFloat)value;
+
 @end
