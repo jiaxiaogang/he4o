@@ -34,6 +34,12 @@
     self.containerView = [[UIView alloc] init];
     [self addSubview:self.containerView];
     
+    //statusView
+    self.statusView = [[UIView alloc] init];
+    [self.statusView setOrigin:CGPointZero];
+    [self.containerView addSubview:self.statusView];
+    [self.statusView setBackgroundColor:UIColorWithRGBHexA(0xFFFFFF, 0)];
+    
     //headerBtn
     self.headerBtn = [[UIButton alloc] init];
     [self.containerView addSubview:self.headerBtn];
@@ -41,7 +47,6 @@
     [self.headerBtn setOrigin:CGPointZero];
     self.headerBtn.titleLabel.adjustsFontSizeToFitWidth = YES;
     [self.headerBtn addTarget:self action:@selector(headerBtnOnClick) forControlEvents:UIControlEventTouchUpInside];
-    //self.headerBtn.titleLabel.numberOfLines = 0;
     self.headerBtn.titleLabel.lineBreakMode = NSLineBreakByCharWrapping;
 }
 
@@ -52,6 +57,16 @@
 }
 
 -(void) refreshDisplay{
+    if (self.data.status == TOModelStatus_ActYes) {
+        self.statusView.backgroundColor = UIColorWithRGBHexA(0xFFFFFF, 0.8f);
+    }else if (self.data.status == TOModelStatus_ActNo) {
+        self.statusView.backgroundColor = UIColorWithRGBHexA(0xFF0000, 0.8f);
+    }if (self.data.status == TOModelStatus_Finish) {
+        self.statusView.backgroundColor = UIColorWithRGBHexA(0x00FF00, 0.8f);
+    }if (self.data.status == TOModelStatus_OuterBack) {
+        self.statusView.backgroundColor = UIColorWithRGBHexA(0x000000, 0.8f);
+    }
+    //self.statusView.backgroundColor = UIColorWithRGBHexA(0x000000, 0);
 }
 
 -(void) setData:(TOModelBase*)value{
@@ -82,9 +97,14 @@
 
 -(void) scaleContainer:(CGFloat)scale{
     //1. 先拉长;
-    self.containerView.width = (scale == 0) ? 0 : (self.width / scale);
-    self.containerView.height = (scale == 0) ? 0 : (self.height / scale);
+    CGFloat conW = (scale == 0) ? 0 : (self.width / scale);
+    CGFloat conH = (scale == 0) ? 0 : (self.height / scale);
+    self.containerView.width = conW;
+    self.containerView.height = conH;
+    
+    //1. 其它view尺寸;
     [self.headerBtn setSize:self.containerView.size];
+    [self.statusView setFrame:CGRectMake(conH * 0.2f, conH * 0.2f, conH * 0.6f, conH * 0.6f)];
     
     //2. 缩放是中心缩放的,所以先中心对齐;
     self.containerView.center = CGPointMake(self.width / 2, self.height / 2);

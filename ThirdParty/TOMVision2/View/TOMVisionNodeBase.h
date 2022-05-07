@@ -23,6 +23,7 @@
 
 @property (strong, nonatomic) UIView *containerView;
 @property (strong, nonatomic) UIButton *headerBtn;
+@property (strong, nonatomic) UIView *statusView;
 @property (weak, nonatomic) id<TOMVisionNodeBaseDelegate> delegate;
 
 -(void) initView;

@@ -97,9 +97,9 @@
     self.doubleTap.numberOfTouchesRequired = 1;
     [self.scrollView addGestureRecognizer:self.doubleTap];
     
-    //4. longTap
+    //longTap
     self.longTap = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longTap:)];
-    self.longTap.minimumPressDuration = 0.4;
+    self.longTap.minimumPressDuration = 0.2;
     [self.scrollView addGestureRecognizer:self.longTap];
 }
 
@@ -432,7 +432,7 @@
     //3. 点中节点时,强行: 缩放100宽 & 坐标居中;
     UIView *tapedNode = [self tapedNode:contentPoint];
     if (tapedNode) {
-        newScale = 100 / tapedNode.width;
+        newScale = 200 / tapedNode.width;
         focusPoint = tapedNode.center;
         //[self.tipLab setText:STRFORMAT(@"center:%.0f %.0f",tapedNode.center.x,tapedNode.center.y)];
     }
