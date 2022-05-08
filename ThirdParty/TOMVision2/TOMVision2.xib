@@ -20,6 +20,13 @@
             <rect key="frame" x="0.0" y="0.0" width="634" height="372"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zwQ-B7-sYQ">
+                    <rect key="frame" x="317" y="322" width="0.0" height="0.0"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <fontDescription key="fontDescription" name="PingFangSC-Regular" family="PingFang SC" pointSize="8"/>
+                    <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <nil key="highlightedColor"/>
+                </label>
                 <view alpha="0.29999999999999999" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tcg-od-saX">
                     <rect key="frame" x="316.5" y="20" width="1" height="312"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -36,21 +43,9 @@
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uA4-BN-qNw">
                     <rect key="frame" x="0.0" y="0.0" width="634" height="20"/>
-                    <subviews>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zwQ-B7-sYQ">
-                            <rect key="frame" x="70" y="0.0" width="0.0" height="20"/>
-                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            <fontDescription key="fontDescription" name="PingFangSC-Regular" family="PingFang SC" pointSize="9"/>
-                            <color key="textColor" red="1" green="0.1019250594" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                            <nil key="highlightedColor"/>
-                        </label>
-                    </subviews>
                     <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.5" colorSpace="calibratedRGB"/>
                     <constraints>
-                        <constraint firstAttribute="bottom" secondItem="zwQ-B7-sYQ" secondAttribute="bottom" id="84C-Xw-vCx"/>
                         <constraint firstAttribute="height" constant="20" id="IY5-Zt-OE3"/>
-                        <constraint firstItem="zwQ-B7-sYQ" firstAttribute="leading" secondItem="uA4-BN-qNw" secondAttribute="leading" constant="70" id="XeP-1y-BZh"/>
-                        <constraint firstItem="zwQ-B7-sYQ" firstAttribute="top" secondItem="uA4-BN-qNw" secondAttribute="top" id="yhE-CF-wZ2"/>
                     </constraints>
                 </view>
             </subviews>
@@ -64,6 +59,8 @@
                 <constraint firstItem="tcg-od-saX" firstAttribute="centerY" secondItem="C1c-ep-7La" secondAttribute="centerY" id="AbH-Jx-Frr"/>
                 <constraint firstAttribute="trailing" secondItem="C1c-ep-7La" secondAttribute="trailing" id="Nvj-fq-CRq"/>
                 <constraint firstItem="uA4-BN-qNw" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="Olo-sq-Pcq"/>
+                <constraint firstAttribute="bottom" secondItem="zwQ-B7-sYQ" secondAttribute="bottom" constant="50" id="ZUi-7a-taC"/>
+                <constraint firstItem="zwQ-B7-sYQ" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="mdh-vS-Agl"/>
                 <constraint firstItem="uA4-BN-qNw" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="ocb-kC-Hw3"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>

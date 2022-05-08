@@ -8,12 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@protocol TOMVisionNodeBaseDelegate <NSObject>
-
--(void) tomVisionNode_OnClick:(NSString*)headerStr;
-
-@end
-
 /**
  *  MARK:--------------------nodeView--------------------
  *  @version
@@ -22,9 +16,8 @@
 @interface TOMVisionNodeBase : UIView
 
 @property (strong, nonatomic) UIView *containerView;
-@property (strong, nonatomic) UIButton *headerBtn;
+@property (strong, nonatomic) UILabel *headerLab;
 @property (strong, nonatomic) UIView *statusView;
-@property (weak, nonatomic) id<TOMVisionNodeBaseDelegate> delegate;
 
 -(void) initView;
 -(void) initData;
@@ -34,5 +27,6 @@
 -(TOModelBase *)data;
 -(BOOL) isEqualByData:(TOModelBase*)checkData;
 -(void) scaleContainer:(CGFloat)scale;
+-(NSString*) getNodeDesc;
 
 @end

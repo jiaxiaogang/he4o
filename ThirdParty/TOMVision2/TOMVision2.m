@@ -23,7 +23,7 @@
 #import "TVTimeLine.h"
 #import "TVUtil.h"
 
-@interface TOMVision2 () <TVPanelViewDelegate,UIScrollViewDelegate,TOMVisionNodeBaseDelegate>
+@interface TOMVision2 () <TVPanelViewDelegate,UIScrollViewDelegate>
 
 @property (strong,nonatomic) IBOutlet UIView *containerView;
 @property (strong, nonatomic) UIScrollView *scrollView;
@@ -33,6 +33,7 @@
 @property (assign, nonatomic) NSInteger changeIndex; //当前显示的index;
 @property (weak, nonatomic) IBOutlet UILabel *tipLab;
 @property (strong,nonatomic) UITapGestureRecognizer *doubleTap;
+@property (strong,nonatomic) UITapGestureRecognizer *singleTap;
 @property (strong,nonatomic) UILongPressGestureRecognizer *longTap;
 
 @end
@@ -96,6 +97,13 @@
     self.doubleTap.numberOfTapsRequired = 2;
     self.doubleTap.numberOfTouchesRequired = 1;
     [self.scrollView addGestureRecognizer:self.doubleTap];
+    
+    //singleTap
+    self.singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTap:)];
+    self.singleTap.numberOfTapsRequired = 1;
+    self.singleTap.numberOfTouchesRequired = 1;
+    [self.singleTap requireGestureRecognizerToFail:self.doubleTap];
+    [self.scrollView addGestureRecognizer:self.singleTap];
     
     //longTap
     self.longTap = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longTap:)];
@@ -263,7 +271,7 @@
         }
     }
     if (!focusView) return;
-    self.tipLab.text = STRFORMAT(@"聚焦: %@",focusView.headerBtn.titleLabel.text);
+    self.tipLab.text = STRFORMAT(@"聚焦: %@",focusView.getNodeDesc);
     
     //3. scale只放大(至少100宽),不缩小;
     CGFloat scale = MAX(100.0f / focusView.width, 1.0f);
@@ -312,7 +320,6 @@
     }
     
     //4. 无论是复用,还是新建,都更新data (复用时,每帧同一个data也在更新);
-    result.delegate = self;
     [result setData:data];
     return result;
 }
@@ -411,34 +418,45 @@
 //MARK:                     < onclick >
 //MARK:===============================================================
 - (void)longTap:(UILongPressGestureRecognizer*)sender{
-    if (sender.state != UIGestureRecognizerStateBegan) return;//1. 防止重复触发
-    [self tapBlock:sender defaultScale:self.scrollView.zoomScale / 1.5f];
+    //1. 防止重复触发
+    if (sender.state != UIGestureRecognizerStateBegan) return;
+    
+    //2. 取点击坐标和默认缩放值;
+    CGPoint scrollPoint = [sender locationInView:sender.view];
+    CGPoint contentPoint = [sender.view convertPoint:scrollPoint toView:self.contentView];
+    CGFloat newScale = self.scrollView.zoomScale / 1.5f;
+    
+    //3. 执行动画;
+    [self animation4Scale:newScale focusPoint:contentPoint time:0.5f];
 }
 
 - (void)doubleTap:(UITapGestureRecognizer *)sender{
-    [self tapBlock:sender defaultScale:self.scrollView.zoomScale * 1.5f];
-}
-
--(void) tapBlock:(UIGestureRecognizer*)sender defaultScale:(CGFloat)defaultScale{
-    //1. 点击坐标
-    CGPoint point = [sender locationInView:sender.view];
-    CGPoint contentPoint = [sender.view convertPoint:point toView:self.contentView];
+    //1. 取点击坐标和默认缩放值;
+    CGPoint scrollPoint = [sender locationInView:sender.view];
+    CGPoint contentPoint = [sender.view convertPoint:scrollPoint toView:self.contentView];
+    CGFloat newScale = self.scrollView.zoomScale * 1.5f;
     
-    //2. 动画缩放 & 坐标;
-    CGPoint focusPoint = contentPoint;
-    CGFloat newScale = defaultScale;
-    //[self.tipLab setText:STRFORMAT(@"tap:%.0f %.0f",focusPoint.x,focusPoint.y)];
-    
-    //3. 点中节点时,强行: 缩放100宽 & 坐标居中;
+    //2. 点中节点时,强行: 缩放200宽 & 坐标居中;
     UIView *tapedNode = [self tapedNode:contentPoint];
     if (tapedNode) {
         newScale = 200 / tapedNode.width;
-        focusPoint = tapedNode.center;
-        //[self.tipLab setText:STRFORMAT(@"center:%.0f %.0f",tapedNode.center.x,tapedNode.center.y)];
+        contentPoint = tapedNode.center;
     }
     
-    //4. 执行动画;
-    [self animation4Scale:newScale focusPoint:focusPoint time:0.5f];
+    //3. 执行动画;
+    [self animation4Scale:newScale focusPoint:contentPoint time:0.5f];
+}
+
+- (void)singleTap:(UITapGestureRecognizer *)sender{
+    //1. 取点击坐标;
+    CGPoint scrollPoint = [sender locationInView:sender.view];
+    CGPoint contentPoint = [sender.view convertPoint:scrollPoint toView:self.contentView];
+    
+    //2. 点中节点;
+    TOMVisionNodeBase *tapedNode = [self tapedNode:contentPoint];
+    if (tapedNode) {
+        [self.tipLab setText:tapedNode.getNodeDesc];
+    }
 }
 
 //MARK:===============================================================
@@ -464,13 +482,6 @@
 //MARK:===============================================================
 -(UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView{
     return self.contentView;
-}
-
-//MARK:===============================================================
-//MARK:               < TOMVisionNodeBaseDelegate >
-//MARK:===============================================================
-- (void)tomVisionNode_OnClick:(NSString *)headerStr{
-    [self.tipLab setText:CLEANSTR(headerStr)];
 }
 
 @end

@@ -29,7 +29,11 @@
     [mStr appendFormat:@"\n%@",[TVUtil getLightStr:data.content_p]];
     
     //3. 显示;
-    [self.headerBtn setTitle:mStr forState:UIControlStateNormal];
+    [self.headerLab setText:mStr];
+}
+
+-(NSString*) getNodeDesc{
+    return Pit2FStr(self.data.content_p);
 }
 
 @end

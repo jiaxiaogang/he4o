@@ -40,14 +40,14 @@
     [self.containerView addSubview:self.statusView];
     [self.statusView setBackgroundColor:UIColorWithRGBHexA(0xFFFFFF, 0)];
     
-    //headerBtn
-    self.headerBtn = [[UIButton alloc] init];
-    [self.containerView addSubview:self.headerBtn];
-    [self.headerBtn.titleLabel setFont:[UIFont fontWithName:@"PingFang SC" size:8.0f]];
-    [self.headerBtn setOrigin:CGPointZero];
-    self.headerBtn.titleLabel.adjustsFontSizeToFitWidth = YES;
-    [self.headerBtn addTarget:self action:@selector(headerBtnOnClick) forControlEvents:UIControlEventTouchUpInside];
-    self.headerBtn.titleLabel.lineBreakMode = NSLineBreakByCharWrapping;
+    //headerLab
+    self.headerLab = [[UILabel alloc] init];
+    [self.containerView addSubview:self.headerLab];
+    [self.headerLab setFont:[UIFont fontWithName:@"PingFang SC" size:8.0f]];
+    [self.headerLab setOrigin:CGPointZero];
+    self.headerLab.adjustsFontSizeToFitWidth = YES;
+    self.headerLab.lineBreakMode = NSLineBreakByCharWrapping;
+    [self.headerLab setTextColor:UIColor.whiteColor];
 }
 
 -(void) initData{
@@ -103,7 +103,7 @@
     self.containerView.height = conH;
     
     //1. 其它view尺寸;
-    [self.headerBtn setSize:self.containerView.size];
+    [self.headerLab setSize:self.containerView.size];
     [self.statusView setFrame:CGRectMake(conH * 0.2f, conH * 0.2f, conH * 0.6f, conH * 0.6f)];
     
     //2. 缩放是中心缩放的,所以先中心对齐;
@@ -117,8 +117,8 @@
     [self.containerView setTransform:CGAffineTransformMakeScale(scale, scale)];
 }
 
--(void) headerBtnOnClick{
-    [self.delegate tomVisionNode_OnClick:self.headerBtn.titleLabel.text];
+-(NSString*) getNodeDesc{
+    return self.headerLab.text;
 }
 
 @end

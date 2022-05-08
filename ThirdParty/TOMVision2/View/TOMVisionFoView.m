@@ -45,12 +45,16 @@
     [mStr appendFormat:@"\n%@",[TVUtil getLightStr:data.content_p]];
     
     //3. 刷新UI;
-    [self.headerBtn setTitle:mStr forState:UIControlStateNormal];
+    [self.headerLab setText:mStr];
     for (AIKVPointer *alg_p in fo.content_ps) {
         //可以显示一些容易看懂的,比如某方向飞行,或者吃,果,棒,这些;
         
         
     }
+}
+
+-(NSString*) getNodeDesc{
+    return Pit2FStr(self.data.content_p);
 }
 
 @end

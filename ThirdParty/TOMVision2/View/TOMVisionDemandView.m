@@ -38,11 +38,11 @@
     
     //3. mv描述颜色
     if (score < 0) {
-        [self.headerBtn setTitleColor:UIColor.redColor forState:UIControlStateNormal];
+        [self.headerLab setTextColor:UIColor.redColor];
     }else if(score > 0){
-        [self.headerBtn setTitleColor:UIColor.greenColor forState:UIControlStateNormal];
+        [self.headerLab setTextColor:UIColor.greenColor];
     }else {
-        [self.headerBtn setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
+        [self.headerLab setTextColor:UIColor.whiteColor];
     }
     
     //4. 类型text
@@ -65,7 +65,18 @@
     }
     
     //6. 显示
-    [self.headerBtn setTitle:mStr forState:UIControlStateNormal];
+    [self.headerLab setText:mStr];
+}
+
+-(NSString*) getNodeDesc{
+    if (ISOK(self.data, ReasonDemandModel.class)) {
+        ReasonDemandModel *rData = (ReasonDemandModel*)self.data;
+        return Pit2FStr(rData.mModel.matchFo);
+    }else if (ISOK(self.data, HDemandModel.class)) {
+        HDemandModel *hData = (HDemandModel*)self.data;
+        return Pit2FStr(hData.baseOrGroup.content_p);
+    }
+    return @"";
 }
 
 @end
