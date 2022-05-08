@@ -10,18 +10,16 @@
 #import "MASConstraint.h"
 #import "View+MASAdditions.h"
 #import "AIKVPointer.h"
+#import "ImvAlgsHungerModel.h"
+#import "ImvAlgsHurtModel.h"
 
 @interface CustomAddNodeWindow ()
 
 @property (strong,nonatomic) IBOutlet UIView *containerView;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *moduleSegment;
-@property (weak, nonatomic) IBOutlet UISegmentedControl *absConSegment;
 @property (weak, nonatomic) IBOutlet UITextField *pointerIdTF;
-@property (weak, nonatomic) IBOutlet UISwitch *isOutSwitch;
-@property (weak, nonatomic) IBOutlet UISwitch *isMemSwitch;
 @property (weak, nonatomic) IBOutlet UITextField *algsTypeTF;
 @property (weak, nonatomic) IBOutlet UITextField *dataSourceTF;
-@property (weak, nonatomic) IBOutlet UISegmentedControl *typeSegment;
 
 @end
 
@@ -64,62 +62,58 @@
 //MARK:                     < onclick >
 //MARK:===============================================================
 - (IBAction)commitBtnOnClick:(id)sender {
-    //1. 抽具象;
-    BOOL isAbs = self.absConSegment.selectedSegmentIndex == 0;
-    
     //2. folderName
-    NSString *folderName = nil;
+    NSArray *folderNames = nil;
     if (self.moduleSegment.selectedSegmentIndex == 0) {
-        folderName = kPN_VALUE;
-    }if (self.moduleSegment.selectedSegmentIndex == 1) {
-        folderName = isAbs ? kPN_ALG_ABS_NODE : kPN_ALG_NODE;
-    }if (self.moduleSegment.selectedSegmentIndex == 2) {
-        folderName = isAbs ? kPN_FO_ABS_NODE : kPN_FRONT_ORDER_NODE;
-    }if (self.moduleSegment.selectedSegmentIndex == 3) {
-        folderName = isAbs ? kPN_ABS_CMV_NODE : kPN_CMV_NODE;
+        folderNames = @[kPN_VALUE];
+    }else if (self.moduleSegment.selectedSegmentIndex == 1) {
+        folderNames = @[kPN_ALG_ABS_NODE,kPN_ALG_NODE];
+    }else if (self.moduleSegment.selectedSegmentIndex == 2) {
+        folderNames = @[kPN_FO_ABS_NODE,kPN_FRONT_ORDER_NODE];
+    }else if (self.moduleSegment.selectedSegmentIndex == 3) {
+        folderNames = @[kPN_ABS_CMV_NODE,kPN_CMV_NODE];
     }
     
     //3. pointerId
     NSInteger pointerId = [STRTOOK(self.pointerIdTF.text) integerValue];
     
-    //4. isOut
-    BOOL isOut = self.isOutSwitch.on;
-    
-    //5. isMem
-    BOOL isMem = self.isMemSwitch.on;
-    
     //6. algsType
-    NSString *algsType = STRISOK(self.algsTypeTF.text) ? self.algsTypeTF.text : DefaultAlgsType;
+    NSArray *ats = nil;
+    if (STRISOK(self.algsTypeTF.text)) {
+        ats = @[self.algsTypeTF.text];
+    }else if (self.moduleSegment.selectedSegmentIndex == 3) {
+        ats = @[@"ImvAlgsHungerModel",@"ImvAlgsHurtModel"];
+    }else {
+        ats = @[DefaultAlgsType];
+    }
     
     //7. dataSource
     NSString *dataSource = STRISOK(self.dataSourceTF.text) ? self.dataSourceTF.text : DefaultDataSource;
     
-    //8. type
-    AnalogyType type = ATDefault;
-    if (self.typeSegment.selectedSegmentIndex == 1) {
-        type = ATHav;
-    }else if (self.typeSegment.selectedSegmentIndex == 2) {
-        type = ATNone;
-    }else if (self.typeSegment.selectedSegmentIndex == 3) {
-        type = ATGreater;
-    }else if (self.typeSegment.selectedSegmentIndex == 4) {
-        type = ATLess;
-    }else if (self.typeSegment.selectedSegmentIndex == 5) {
-        type = ATSub;
-    }else if (self.typeSegment.selectedSegmentIndex == 6) {
-        type = ATPlus;
-    }else if (self.typeSegment.selectedSegmentIndex == 7) {
-        type = ATDiff;
-    }
-    
     //8. 提交到网络
-    AIKVPointer *node_p = [AIKVPointer newWithPointerId:pointerId folderName:folderName algsType:algsType dataSource:dataSource isOut:isOut isMem:isMem type:type];
-    [theNV setNodeData:node_p];
+    for (NSNumber *isOut in @[@(true),@(false)]) {
+        for (NSString *fn in folderNames) {
+            for (NSString *at in ats) {
+                AIKVPointer *node_p = [AIKVPointer newWithPointerId:pointerId
+                                                         folderName:fn
+                                                           algsType:at
+                                                         dataSource:dataSource
+                                                              isOut:isOut.boolValue
+                                                              isMem:false
+                                                               type:ATDefault];
+                AINodeBase *node = [SMGUtils searchNode:node_p];
+                if (node) {
+                    [theNV setNodeData:node_p];
+                    TPLog(@"追加节点:%@",Pit2FStr(node_p));
+                }
+            }
+        }
+    }
     
     //9. 关闭窗口
     [self removeFromSuperview];
-    TPLog(@"追加节点: %@/%@/%@/%@/%d/%ld",node_p.folderName,ATType2Str(type),node_p.algsType,node_p.dataSource,node_p.isOut,node_p.pointerId);
 }
+
 - (IBAction)closeBtnOnClick:(id)sender {
     [self removeFromSuperview];
 }
