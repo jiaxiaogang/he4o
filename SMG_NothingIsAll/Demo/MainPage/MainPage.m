@@ -13,18 +13,14 @@
 
 @implementation MainPage
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    [self initView];
-    [self initData];
-}
-
 -(void) initView{
     //1. self
+    [super initView];
     self.title = @"和";
 }
 
 -(void) initData{
+    [super initData];
     [theRT regist:kGrowPageSEL target:self selector:@selector(birdGrowBtnOnClick:)];
 }
 
@@ -44,7 +40,9 @@
 - (IBAction)birdGrowBtnOnClick:(id)sender {
     BirdGrowPage *page = [[BirdGrowPage alloc] init];
     [self.navigationController pushViewController:page animated:true];
-    [theRT invoked:kGrowPageSEL];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [theRT invoked:kGrowPageSEL];
+    });
 }
 
 @end

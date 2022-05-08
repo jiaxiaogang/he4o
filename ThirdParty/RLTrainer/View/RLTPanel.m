@@ -161,6 +161,10 @@
         return @"飞 - 随机";
     }else if ([kWoodSEL isEqualToString:queue]) {
         return @"棒 - 扔木棒";
+    }else if ([kMainPageSEL isEqualToString:queue]) {
+        return @"页 - 回主页";
+    }else if ([kClearTCSEL isEqualToString:queue]) {
+        return @"页 - 重启";
     }
     return @"";
 }
@@ -287,12 +291,22 @@
 }
 
 - (IBAction)loadBtnOnClick:(id)sender {
-    [theRT queue1:kGrowPageSEL];
-    [theRT queueN:@[kFlySEL,kWoodSEL] count:5];
+    [self trainer2];
 }
 
 - (IBAction)closeBtnOnClick:(id)sender {
     [self close];
+}
+
+//MARK:===============================================================
+//MARK:                     < 训练项 >
+//MARK:===============================================================
+-(void) trainer1{
+    [theRT queue1:kGrowPageSEL];
+    [theRT queueN:@[kFlySEL,kWoodSEL] count:5];
+}
+-(void) trainer2{
+    [theRT queueN:@[kGrowPageSEL,kFlySEL,kFlySEL,kWoodSEL,kMainPageSEL,kClearTCSEL] count:20];
 }
 
 //MARK:===============================================================

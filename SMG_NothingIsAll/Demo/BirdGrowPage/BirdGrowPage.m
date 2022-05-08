@@ -28,13 +28,8 @@
 
 @implementation BirdGrowPage
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    [self initView];
-    [self initData];
-}
-
 -(void) initView{
+    [super initView];
     //1. self
     self.title = @"小鸟成长演示";
     
@@ -72,6 +67,7 @@
 }
 
 -(void) initData{
+    [super initData];
     [theRT regist:kFlySEL target:self selector:@selector(touchWingBtnOnClick:)];
     [theRT regist:kWoodSEL target:self selector:@selector(throwWoodOnClick:)];
 }

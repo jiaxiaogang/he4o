@@ -10,4 +10,8 @@
 
 @interface HEViewController : UIViewController
 
+-(void) initView;
+-(void) initData;
+-(void) initDisplay;
+
 @end

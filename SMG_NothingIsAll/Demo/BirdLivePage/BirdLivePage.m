@@ -23,12 +23,8 @@
 
 @implementation BirdLivePage
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    [self initView];
-}
-
 -(void) initView{
+    [super initView];
     //1. self
     self.title = @"小鸟生存演示";
     

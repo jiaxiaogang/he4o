@@ -34,15 +34,9 @@
 
 @implementation TestHungryPage
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    [self initView];
-    [self initData];
-    [self initDisplay];
-}
-
 -(void) initView{
     //1. self
+    [super initView];
     self.title = @"充电演示";
     
     //2. tf
@@ -59,11 +53,13 @@
 }
 
 -(void) initData{
+    [super initData];
     self.timer = [NSTimer scheduledTimerWithTimeInterval:0.03f target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
     self.outputMStr = [[NSMutableString alloc] init];
 }
 
 -(void) initDisplay{
+    [super initDisplay];
     //1,thinkStatusBtn
     [self.thinkStatusBtn setBackgroundColor:[UIColor greenColor]];
 }
