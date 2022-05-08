@@ -72,6 +72,7 @@
     //5. 线框长度;
     [self.layer setTransform:CATransform3DMakeRotation(0, 0, 0, 1)];
     self.width = width;
+    self.height = (nodeA.height + nodeB.height) * 0.05f;
     
     //6. 线显示长度;
     [self.lineView setFrame:CGRectMake(0, 0, self.width, self.height)];
