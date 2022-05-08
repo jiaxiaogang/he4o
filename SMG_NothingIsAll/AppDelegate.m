@@ -15,6 +15,8 @@
 #import "HeLogView.h"
 #import <UMCommon/UMCommon.h>
 #import "MemManagerWindow.h"
+#import "MASConstraint.h"
+#import "View+MASAdditions.h"
 
 @interface AppDelegate ()
 
@@ -101,10 +103,17 @@
     [self.window addSubview:self.heLogView];
     
     //6. tipLogLab
-    self.tipLogLab = [[UILabel alloc] initWithFrame:CGRectMake(0, ScreenHeight - 11, ScreenWidth, 11)];
-    [self.tipLogLab setFont:[UIFont boldSystemFontOfSize:11]];
+    self.tipLogLab = [[UILabel alloc] init];
     [self.tipLogLab setTextColor:[UIColor redColor]];
+    [self.tipLogLab setFont:[UIFont fontWithName:@"PingFang SC" size:8.0f]];
+    self.tipLogLab.lineBreakMode = NSLineBreakByCharWrapping;
+    [self.tipLogLab setNumberOfLines:0];
     [self.window addSubview:self.tipLogLab];
+    [self.tipLogLab mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.leading.mas_equalTo(self.window);
+        make.trailing.mas_equalTo(self.window);
+        make.bottom.mas_equalTo(self.window);
+    }];
     
     //7. 记忆管理器
     self.memManagerWindow = [[MemManagerWindow alloc] init];
@@ -160,7 +169,7 @@
 }
 
 -(void) startRefreshDotAnimation{
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         self.refreshDot.alpha = fabs(self.refreshDot.alpha - 1);
         [self startRefreshDotAnimation];
     });
