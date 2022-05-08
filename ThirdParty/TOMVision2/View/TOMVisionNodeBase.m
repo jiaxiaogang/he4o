@@ -43,7 +43,7 @@
     //headerBtn
     self.headerBtn = [[UIButton alloc] init];
     [self.containerView addSubview:self.headerBtn];
-    [self.headerBtn.titleLabel setFont:[UIFont systemFontOfSize:8]];
+    [self.headerBtn.titleLabel setFont:[UIFont fontWithName:@"PingFang SC" size:8.0f]];
     [self.headerBtn setOrigin:CGPointZero];
     self.headerBtn.titleLabel.adjustsFontSizeToFitWidth = YES;
     [self.headerBtn addTarget:self action:@selector(headerBtnOnClick) forControlEvents:UIControlEventTouchUpInside];

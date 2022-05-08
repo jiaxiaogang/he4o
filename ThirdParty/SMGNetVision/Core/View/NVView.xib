@@ -28,7 +28,7 @@
                         <constraint firstAttribute="height" constant="20" id="ahc-Ga-vg9"/>
                     </constraints>
                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                    <state key="normal" title="知识"/>
+                    <state key="normal" title="网络"/>
                     <connections>
                         <action selector="openCloseBtnOnClick:" destination="-1" eventType="touchUpInside" id="vcB-kT-Et9"/>
                     </connections>
