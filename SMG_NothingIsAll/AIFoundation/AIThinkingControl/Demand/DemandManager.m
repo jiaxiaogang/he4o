@@ -278,4 +278,8 @@
     if (demand) [self.loopCache removeObject:demand];
 }
 
+-(void) clear{
+    [self.loopCache removeAllObjects];
+}
+
 @end

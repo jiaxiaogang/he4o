@@ -29,4 +29,6 @@
  */
 -(NSMutableArray*) shortCache:(BOOL)isMatch;
 
+-(void) clear;
+
 @end

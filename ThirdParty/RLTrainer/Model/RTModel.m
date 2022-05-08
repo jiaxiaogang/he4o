@@ -154,7 +154,7 @@
     
     //3. 没轮到下帧: TC忙碌状态则返回 (计数速率(负载)>10时,为忙状态);
     NSInteger operDelta = theTC.getOperCount - self.lastOperCount;
-    BOOL busyStatus = operDelta > 3;
+    BOOL busyStatus = operDelta > 0;
     self.lastOperCount = theTC.getOperCount;
     if (busyStatus) {
         NSLog(@"----> 强化训练_思维负载(%ld) -> 等待",operDelta);

@@ -65,4 +65,8 @@
     return result;
 }
 
+-(void) clear{
+    [self.models removeAllObjects];
+}
+
 @end

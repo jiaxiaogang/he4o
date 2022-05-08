@@ -9,9 +9,11 @@
 #import <Foundation/Foundation.h>
 
 #define kGrowPageSEL @"GrowPage"
+#define kMainPageSEL @"MainPage"
 #define kFlySEL @"Fly"
 #define kWoodSEL @"Wood"
 #define kEatSEL @"Eat"
+#define kClearTCSEL @"ClearTC"
 
 /**
  *  MARK:--------------------强化训练器--------------------

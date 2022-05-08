@@ -58,6 +58,7 @@ static AIThinkingControl *_instance;
 -(void) initData{
     self.demandManager = [[DemandManager alloc] init];
     self.shortMatchManager = [[ShortMatchManager alloc] init];
+    [theRT regist:kClearTCSEL target:self selector:@selector(clear)];
 }
 
 
@@ -225,6 +226,21 @@ static AIThinkingControl *_instance;
 
 -(long long) getOperCount{
     return _operCount;
+}
+
+//MARK:===============================================================
+//MARK:                     < 清思维 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------清思维--------------------
+ *  @desc 模拟重启 (参考26014-4);
+ */
+-(void) clear{
+    [self.inModelManager clear];
+    [self.outModelManager clear];
+    self.energy = 0;
+    [theRT invoked:kClearTCSEL];
 }
 
 @end
