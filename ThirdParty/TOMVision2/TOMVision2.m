@@ -399,13 +399,13 @@
         if (focusPoint.y < svH / 2) offsetY = 0;
     }
     
+    //9. 流程线粗
+    [self.timeLine setData:newScale];
+    
     //9. 动画_执行动画 (居中 & 缩放);
     [UIView animateWithDuration:time animations:^{
         self.scrollView.zoomScale = newScale;
         self.scrollView.contentOffset = CGPointMake(offsetX, offsetY);
-    }completion:^(BOOL finished) {
-        //9. 流程线粗
-        [self.timeLine setData:self.scrollView.zoomScale];
     }];
 }
 
