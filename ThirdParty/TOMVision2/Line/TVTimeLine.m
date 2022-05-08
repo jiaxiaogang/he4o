@@ -8,6 +8,15 @@
 
 #import "TVTimeLine.h"
 
+#define MaxLineWidth 2.0f
+#define MinLineWidth 0.2f
+
+@interface TVTimeLine ()
+
+@property (assign, nonatomic) CGFloat lineWidth;
+
+@end
+
 @implementation TVTimeLine
 
 - (void)drawRect:(CGRect)rect {
@@ -44,10 +53,19 @@
     }
     
     //3. 绘制
-    path.lineWidth = 1.0;
+    path.lineWidth = self.lineWidth > 0 ? self.lineWidth : MaxLineWidth;
     path.lineCapStyle = kCGLineCapRound; //终点处理
     path.lineJoinStyle = kCGLineJoinBevel; //线条拐角
     [path stroke];
+}
+
+-(void)setData:(CGFloat)scale{
+    self.lineWidth = MAX(MinLineWidth, MIN(MaxLineWidth, 6.0f / scale));
+    [self refreshDisplay];
+}
+
+-(void) refreshDisplay{
+    [self setNeedsDisplay];
 }
 
 @end

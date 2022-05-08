@@ -281,6 +281,9 @@
         self.scrollView.zoomScale = 1.0f;
         self.scrollView.contentOffset = CGPointZero;
     } completion:^(BOOL finished) {
+        //4. 流程线粗;
+        [self.timeLine setData:self.scrollView.zoomScale];
+        
         //5. 第2动画: 焦点view显示在屏幕中心;
         [self animation4Scale:scale focusPoint:focusView.center time:time / 2.0f];
     }];
@@ -372,7 +375,7 @@
     //7. 更新树生长时间线;
     [self.contentView insertSubview:self.timeLine atIndex:0];
     [self.timeLine setFrame:self.contentView.frame];
-    [self.timeLine setNeedsDisplay];
+    [self.timeLine setData:self.scrollView.zoomScale];
 }
 
 /**
@@ -400,6 +403,9 @@
     [UIView animateWithDuration:time animations:^{
         self.scrollView.zoomScale = newScale;
         self.scrollView.contentOffset = CGPointMake(offsetX, offsetY);
+    }completion:^(BOOL finished) {
+        //9. 流程线粗
+        [self.timeLine setData:self.scrollView.zoomScale];
     }];
 }
 
@@ -475,6 +481,9 @@
 -(void) panelScaleChanged:(CGFloat)scale{
     self.scrollView.zoomScale = scale;
     [self autoAdjustContentSize];
+    
+    //流程线粗
+    [self.timeLine setData:self.scrollView.zoomScale];
 }
 
 //MARK:===============================================================

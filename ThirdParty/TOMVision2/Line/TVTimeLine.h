@@ -18,5 +18,6 @@
  *  @desc 用于绘制"树"生长时间线;
  */
 @property (strong, nonatomic) NSArray *bezierPoints;
+-(void)setData:(CGFloat)scale;
 
 @end
