@@ -167,6 +167,16 @@
     //13. 仅保留最相近的20条 (参考25083-3);
     sortKeys = ARR_SUB(sortKeys, 0, 20);
     
+    //TODOTOMORROW20220509: 把20条改成不限,然后再进行TIR_Fo,看能不能匹配到有mv指向的 (参考26013一测);
+    //说明: 这里收的太窄,会导致后面相似匹配的,识别不到pFo;
+    //TODO: 直接在此处写代码,打印出有mv指向的数量;
+    
+    
+    
+    
+    
+    
+    
     //14. 全含或局部匹配判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);
     for (NSData *key in sortKeys) {
         AIKVPointer *key_p = DATA2OBJ(key);
