@@ -16,6 +16,7 @@
 
 //获取节点颜色
 -(UIColor *)nv_GetNodeColor:(id)nodeData;
+-(UIColor *)nv_GetRightColor:(id)nodeData;
 
 //获取节点透明度
 -(CGFloat)nv_GetNodeAlpha:(id)nodeData;

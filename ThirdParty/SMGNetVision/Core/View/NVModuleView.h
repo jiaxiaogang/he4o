@@ -16,6 +16,7 @@
 
 //获取节点颜色
 -(UIColor *)moduleView_GetNodeColor:(id)nodeData;
+-(UIColor *)moduleView_GetRightColor:(id)nodeData;
 
 //获取节点透明度
 -(CGFloat)moduleView_GetNodeAlpha:(id)nodeData;

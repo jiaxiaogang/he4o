@@ -136,6 +136,12 @@
         CGFloat alpha = [self.delegate nodeView_GetNodeAlpha:self.data];
         [self.contentView setAlpha:alpha];
     }
+    
+    //7. rightColor
+    UIColor *rightColor = [self.delegate nodeView_GetRightColor:self.data];
+    if (rightColor) {
+        [self.rightBtn setBackgroundColor:rightColor];
+    }
 }
 
 -(void) light:(NSString*)lightStr{

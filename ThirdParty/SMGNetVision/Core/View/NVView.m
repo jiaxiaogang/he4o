@@ -298,6 +298,10 @@
     return nil;
 }
 
+-(UIColor *)moduleView_GetRightColor:(id)nodeData{
+    return [self.delegate nv_GetRightColor:nodeData];
+}
+
 -(CGFloat)moduleView_GetNodeAlpha:(id)nodeData{
     if (self.delegate && [self.delegate respondsToSelector:@selector(nv_GetNodeAlpha:)]) {
         return [self.delegate nv_GetNodeAlpha:nodeData];

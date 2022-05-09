@@ -16,6 +16,7 @@
 
 -(UIView*) nodeView_GetCustomSubView:(id)nodeData;
 -(UIColor *)nodeView_GetNodeColor:(id)nodeData;
+-(UIColor *)nodeView_GetRightColor:(id)nodeData;
 -(CGFloat)nodeView_GetNodeAlpha:(id)nodeData;
 -(NSString*) nodeView_OnClick:(id)nodeData;
 -(void) nodeView_TopClick:(id)nodeData;

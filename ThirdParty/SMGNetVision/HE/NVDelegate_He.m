@@ -86,6 +86,19 @@
     return nil;
 }
 
+-(UIColor *)nv_GetRightColor:(id)nodeData{
+    if (PitIsFo(nodeData)) {
+        AIFoNodeBase *fo = [SMGUtils searchNode:nodeData];
+        CGFloat score = [AIScore score4MV:fo.cmvNode_p ratio:1.0f];
+        if (score > 0) {
+            return UIColorWithRGBHex(0xAAFFAA);
+        }else if(score < 0) {
+            return UIColorWithRGBHex(0xFFAAAA);
+        }
+    }
+    return nil;
+}
+
 -(CGFloat)nv_GetNodeAlpha:(AIKVPointer*)node_p{
     if (node_p && node_p.isMem) {
         return 0.5f;

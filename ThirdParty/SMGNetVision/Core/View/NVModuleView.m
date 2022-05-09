@@ -271,6 +271,9 @@
 -(UIColor *)nodeView_GetNodeColor:(id)nodeData{
     return [self moduleView_GetNodeColor:nodeData];
 }
+-(UIColor *)nodeView_GetRightColor:(id)nodeData{
+    return [self.delegate moduleView_GetRightColor:nodeData];
+}
 -(CGFloat)nodeView_GetNodeAlpha:(id)nodeData{
     if (self.delegate && [self.delegate respondsToSelector:@selector(moduleView_GetNodeAlpha:)]) {
         return [self.delegate moduleView_GetNodeAlpha:nodeData];
