@@ -102,6 +102,7 @@ static int _tmpCount;
  *      2020.11.18 - partAlgs将matchAlgs移除掉,仅保留非全含的部分;
  *      2022.01.13 - 迭代支持相近匹配 (参考25082 & 25083);
  *      2022.01.15 - 识别结果可为自身: 比如(飞↑)如果不识别自身,又全局防重,就识别不到最全含最相近匹配结果了;
+ *      2022.05.11 - 全含不要求必须是抽象节点,因为相近匹配时,可能最具象也会全含;
  */
 +(void) partMatching_Alg:(AIAlgNodeBase*)protoAlg isMem:(BOOL)isMem except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
     //1. 数据准备;
@@ -169,24 +170,20 @@ static int _tmpCount;
     //TODOTOMORROW20220509: 把20条改成不限,然后再进行TIR_Fo,看能不能匹配到有mv指向的 (参考26013一测);
     //说明: 这里收的太窄,会导致后面相似匹配的,识别不到pFo;
     //TODO: 直接在此处写代码,打印出有mv指向的数量;
-    
     if ([Alg2FStr(protoAlg) containsString:@"高100"]) {
         if (_tmpCount == 0) {
-            [theNV invokeForceMode:^{
-                for (NSInteger i = 20; i < 40; i++) {
-                    NSData *item = ARR_INDEX(sortKeys, i);
-                    AIKVPointer *alg_p = DATA2OBJ(item);
-                    AIAlgNodeBase *result = [SMGUtils searchNode:alg_p];
-                    if (result) {
-                        int matchingCount = [NUMTOOK([countDic objectForKey:item]) intValue];
-                        if (result.content_ps.count == matchingCount) {
-                            [theNV setNodeData:alg_p lightStr:STRFORMAT(@"全%ld",i)];
-                        }else{
-                            [theNV setNodeData:alg_p lightStr:STRFORMAT(@"局%ld",i)];
-                        }
-                    }
+            
+            for (NSInteger i = 0; i < 20; i++) {
+                NSData *item = ARR_INDEX_REVERSE(sortKeys, i);
+                AIKVPointer *alg_p = DATA2OBJ(item);
+                AIAlgNodeBase *result = [SMGUtils searchNode:alg_p];
+                if (result) {
+                    double nearV = [NUMTOOK([sumNearVDic objectForKey:item]) doubleValue] / [NUMTOOK([countDic objectForKey:item]) intValue];
+                    [theNV invokeForceMode:^{
+                        [theNV setNodeData:alg_p lightStr:STRFORMAT(@"%.2f %ld",nearV,i)];
+                    }];
                 }
-            }];
+            }
         }
         _tmpCount++;
         NSLog(@"====> %d",_tmpCount);
@@ -208,8 +205,8 @@ static int _tmpCount;
         AIAlgNodeBase *result = [SMGUtils searchNode:key_p];
         int matchingCount = [NUMTOOK([countDic objectForKey:key]) intValue];
         
-        //15. 判断全含; (matchingCount == assAlg.content.count) (且只能识别为抽象节点)
-        if (ISOK(result, AIAbsAlgNode.class) && result.content_ps.count == matchingCount) {
+        //15. 判断全含; (matchingCount == assAlg.content.count)
+        if (result.content_ps.count == matchingCount) {
             [matchAlgs addObject:result];
         }else{
             [partAlgs addObject:result];
