@@ -10,6 +10,7 @@
 
 @implementation TIUtils
 
+static int _tmpCount;
 
 //MARK:===============================================================
 //MARK:                     < 概念识别 >
@@ -164,18 +165,42 @@
         return [SMGUtils compareDoubleA:nearA1 doubleB:nearA2];
     }]);
     
-    //13. 仅保留最相近的20条 (参考25083-3);
-    sortKeys = ARR_SUB(sortKeys, 0, 20);
     
     //TODOTOMORROW20220509: 把20条改成不限,然后再进行TIR_Fo,看能不能匹配到有mv指向的 (参考26013一测);
     //说明: 这里收的太窄,会导致后面相似匹配的,识别不到pFo;
     //TODO: 直接在此处写代码,打印出有mv指向的数量;
     
+    if ([Alg2FStr(protoAlg) containsString:@"高100"]) {
+        if (_tmpCount == 0) {
+            [theNV invokeForceMode:^{
+                for (NSInteger i = 20; i < 40; i++) {
+                    NSData *item = ARR_INDEX(sortKeys, i);
+                    AIKVPointer *alg_p = DATA2OBJ(item);
+                    AIAlgNodeBase *result = [SMGUtils searchNode:alg_p];
+                    if (result) {
+                        int matchingCount = [NUMTOOK([countDic objectForKey:item]) intValue];
+                        if (result.content_ps.count == matchingCount) {
+                            [theNV setNodeData:alg_p lightStr:STRFORMAT(@"全%ld",i)];
+                        }else{
+                            [theNV setNodeData:alg_p lightStr:STRFORMAT(@"局%ld",i)];
+                        }
+                    }
+                }
+            }];
+        }
+        _tmpCount++;
+        NSLog(@"====> %d",_tmpCount);
+    }
     
     
     
     
     
+    
+    
+    
+    //13. 仅保留最相近的20条 (参考25083-3);
+    sortKeys = ARR_SUB(sortKeys, 0, 20);
     
     //14. 全含或局部匹配判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);
     for (NSData *key in sortKeys) {
