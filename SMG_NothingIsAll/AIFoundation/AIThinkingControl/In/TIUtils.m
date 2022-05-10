@@ -102,7 +102,7 @@ static int _tmpCount;
  *      2020.11.18 - partAlgs将matchAlgs移除掉,仅保留非全含的部分;
  *      2022.01.13 - 迭代支持相近匹配 (参考25082 & 25083);
  *      2022.01.15 - 识别结果可为自身: 比如(飞↑)如果不识别自身,又全局防重,就识别不到最全含最相近匹配结果了;
- *      2022.05.11 - 全含不要求必须是抽象节点,因为相近匹配时,可能最具象也会全含;
+ *      2022.05.11 - 全含不要求必须是抽象节点,因为相近匹配时,可能最具象也会全含 (且现在全是absNode类型);
  */
 +(void) partMatching_Alg:(AIAlgNodeBase*)protoAlg isMem:(BOOL)isMem except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
     //1. 数据准备;
@@ -173,15 +173,54 @@ static int _tmpCount;
     if ([Alg2FStr(protoAlg) containsString:@"高100"]) {
         if (_tmpCount == 0) {
             
-            for (NSInteger i = 0; i < 20; i++) {
-                NSData *item = ARR_INDEX_REVERSE(sortKeys, i);
+            for (NSInteger i = 0; i < sortKeys.count; i++) {
+                NSData *item = ARR_INDEX(sortKeys, i);
                 AIKVPointer *alg_p = DATA2OBJ(item);
-                AIAlgNodeBase *result = [SMGUtils searchNode:alg_p];
-                if (result) {
+                AIAlgNodeBase *alg = [SMGUtils searchNode:alg_p];
+                if (alg) {
                     double nearV = [NUMTOOK([sumNearVDic objectForKey:item]) doubleValue] / [NUMTOOK([countDic objectForKey:item]) intValue];
-                    [theNV invokeForceMode:^{
-                        [theNV setNodeData:alg_p lightStr:STRFORMAT(@"%.2f %ld",nearV,i)];
-                    }];
+                    
+                    NSArray *refFos = [AINetUtils refPorts_All4Alg:alg];
+                    for (NSInteger j = 0; j < refFos.count; j++) {
+                        AIPort *port = ARR_INDEX(refFos, j);
+                        AIFoNodeBase *fo = [SMGUtils searchNode:port.target_p];
+                        if (fo && fo.cmvNode_p) {
+                            [theNV invokeForceMode:^{
+                                [theNV setNodeData:alg.pointer lightStr:STRFORMAT(@"i%ld v%.2f",i,nearV)];
+                                [theNV setNodeData:fo.pointer lightStr:STRFORMAT(@"j%ld v%.2f",j,nearV)];
+                            }];
+                            NSLog(@"发现mvFo: A%ld F%ld (algIndex:%ld foIndex:%ld nearV:%.2f)",alg.pointer.pointerId,fo.pointer.pointerId,i,j,nearV);
+                            
+                            //------------------------------- 概念识别 -----------------------
+                            //A2475(高100,Y207,X2,向←,皮0,距129,Y距_偏下0.6_84)
+                            //发现mvFo: A88 F92 (algIndex:2 foIndex:0 nearV:1.00)
+                            //发现mvFo: A88 F94 (algIndex:2 foIndex:1 nearV:1.00)
+                            //发现mvFo: A88 F180 (algIndex:2 foIndex:3 nearV:1.00)
+                            //发现mvFo: A88 F91 (algIndex:2 foIndex:5 nearV:1.00)
+                            //发现mvFo: A13 F94 (algIndex:3 foIndex:2 nearV:1.00)
+                            //发现mvFo: A61 F72 (algIndex:17 foIndex:0 nearV:0.99)
+                            //发现mvFo: A1533 F1538 (algIndex:21 foIndex:0 nearV:0.99)
+                            //发现mvFo: A1533 F1537 (algIndex:21 foIndex:1 nearV:0.99)
+                            //发现mvFo: A52 F162 (algIndex:31 foIndex:0 nearV:0.98)
+                            //发现mvFo: A52 F72 (algIndex:31 foIndex:1 nearV:0.98)
+                            //发现mvFo: A52 F55 (algIndex:31 foIndex:2 nearV:0.98)
+                            //发现mvFo: A52 F71 (algIndex:31 foIndex:3 nearV:0.98)
+                            //发现mvFo: A52 F161 (algIndex:31 foIndex:4 nearV:0.98)
+                            //发现mvFo: A1526 F1536 (algIndex:32 foIndex:0 nearV:0.98)
+                            //发现mvFo: A407 F423 (algIndex:33 foIndex:0 nearV:0.98)
+                            //发现mvFo: A859 F870 (algIndex:37 foIndex:0 nearV:0.97)
+                            //发现mvFo: A417 F423 (algIndex:60 foIndex:0 nearV:0.90)
+                            //发现mvFo: A1532 F1536 (algIndex:68 foIndex:0 nearV:0.86)
+                            //发现mvFo: A867 F870 (algIndex:77 foIndex:0 nearV:0.83)
+                            
+                            //如上,mvFo是存在的,只是比较分散,
+                            //因为refPorts是强度有序,除非:
+                            //  方案1:加上mv有序,
+                            //  方案2:或者加上mv值标记,
+                            
+                        }
+                    }
+                    
                 }
             }
         }
