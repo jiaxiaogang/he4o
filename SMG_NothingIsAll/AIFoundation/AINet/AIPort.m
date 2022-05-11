@@ -21,6 +21,7 @@
         self.target_p = [coder decodeObjectForKey:@"target_p"];
         self.strong = [coder decodeObjectForKey:@"strong"];
         self.header = [coder decodeObjectForKey:@"header"];
+        self.targetHavMv = [coder decodeBoolForKey:@"targetHavMv"];
     }
     return self;
 }
@@ -29,6 +30,7 @@
     [coder encodeObject:self.target_p forKey:@"target_p"];
     [coder encodeObject:self.strong forKey:@"strong"];
     [coder encodeObject:self.header forKey:@"header"];
+    [coder encodeBool:self.targetHavMv forKey:@"targetHavMv"];
 }
 
 

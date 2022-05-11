@@ -233,4 +233,9 @@
 +(NSArray*) refPorts_All4Value:(AIKVPointer*)value_p isMem:(BOOL)isMem;
 +(NSArray*) refPorts_All:(AIKVPointer*)node_p;
 
+/**
+ *  MARK:--------------------对fo.content.refPort标记havMv--------------------
+ */
++(void) maskHavMv:(AIFoNodeBase*)foNode;
+
 @end

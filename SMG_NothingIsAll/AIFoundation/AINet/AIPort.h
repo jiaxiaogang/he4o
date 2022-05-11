@@ -14,12 +14,15 @@
  *  @desc:
  *      1. 每一个关联,有两个端口;
  *      2. 每一个端口,都有关联强度;
+ *  @version
+ *      2022.05.11: 新增targetHavMv标记 (参考26022-1);
  */
 @class AIKVPointer,AIPortStrong;
 @interface AIPort : NSObject <NSCoding>
 
 @property (strong,nonatomic) AIKVPointer *target_p;   //指向目标的地址
 @property (strong,nonatomic) AIPortStrong *strong;
+@property (assign, nonatomic) BOOL targetHavMv;       //指向目标有mv指向;
 
 /**
  *  MARK:--------------------指向节点的header--------------------
@@ -28,7 +31,6 @@
  *  替代方案: 也可以用value_ps的值序列来作有序,然后二分法匹配;
  */
 @property (strong,nonatomic) NSString *header;
-
 
 -(void) strongPlus;
 

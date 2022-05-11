@@ -443,13 +443,21 @@
     }
 }
 
+/**
+ *  MARK:--------------------cmv基本模型--------------------
+ *  @version
+ *      2022.05.11: cmv模型ralate时,将foNode的content.refPort标记mv指向 (参考26022-1);
+ */
 +(void) relateFo:(AIFoNodeBase*)foNode mv:(AICMVNodeBase*)mvNode{
     if (foNode && mvNode) {
         //1. 互指向
         mvNode.foNode_p = foNode.pointer;
         foNode.cmvNode_p = mvNode.pointer;
         
-        //2. 存储foNode & cmvNode
+        //2. 对content.refPort标记mv;
+        [AINetUtils maskHavMv:foNode];
+        
+        //3. 存储foNode & cmvNode
         [SMGUtils insertNode:mvNode];
         [SMGUtils insertNode:foNode];
     }
@@ -604,6 +612,44 @@
         [allPorts addObjectsFromArray:[SMGUtils searchObjectForFilePath:value_p.filePath fileName:kFNRefPorts_All(isMem) time:cRTReference_All(isMem)]];
     }
     return allPorts;
+}
+
+/**
+ *  MARK:--------------------对fo.content.refPort标记havMv--------------------
+ *  @desc 根据fo标记alg,再根据alg标记value (参考26022-1);
+ */
++(void) maskHavMv:(AIFoNodeBase*)foNode{
+    //TODOTOMORROW20220511: 新构建有mv指向的fo,此时cmv模型连接时,回溯content.refPorts并新增mv标记 (参考26022-1);
+    
+    
+    
+    
+    //1. 标记alg.refPort;
+    for (AIKVPointer *alg_p in foNode.content_ps) {
+        AIAlgNodeBase *algNode = [SMGUtils searchNode:alg_p];
+        NSArray *algRefPorts = [AINetUtils refPorts_All4Alg:algNode];
+        for (AIPort *algRefPort in algRefPorts) {
+            
+            //2. 当refPort是当前fo,则标记为true;
+            if ([algRefPort.target_p isEqual:foNode.pointer]) {
+                algRefPort.targetHavMv = true;
+                //TODO:保存algRefPorts;
+                
+                //3. 标记value.refPort;
+                for (AIKVPointer *value_p in algNode.content_ps) {
+                    NSArray *valueRefPorts = [AINetUtils refPorts_All4Value:value_p];
+                    for (AIPort *valueRefPort in valueRefPorts) {
+                        
+                        //4. 当refPort是当前alg,则标记为true;
+                        if ([valueRefPort.target_p isEqual:algNode.pointer]) {
+                            valueRefPort.targetHavMv = true;
+                            //TODO:保存valueRefPorts;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 @end
