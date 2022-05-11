@@ -446,7 +446,7 @@
 /**
  *  MARK:--------------------cmv基本模型--------------------
  *  @version
- *      2022.05.11: cmv模型ralate时,将foNode的content.refPort标记mv指向 (参考26022-1);
+ *      2022.05.11: cmv模型ralate时,将foNode的content.refPort标记mv指向 (参考26022-2);
  */
 +(void) relateFo:(AIFoNodeBase*)foNode mv:(AICMVNodeBase*)mvNode{
     if (foNode && mvNode) {
@@ -455,7 +455,7 @@
         foNode.cmvNode_p = mvNode.pointer;
         
         //2. 对content.refPort标记mv;
-        [AINetUtils maskHavMv:foNode];
+        [AINetUtils maskHavMv_AlgWithFo:foNode];
         
         //3. 存储foNode & cmvNode
         [SMGUtils insertNode:mvNode];
@@ -616,14 +616,9 @@
 
 /**
  *  MARK:--------------------对fo.content.refPort标记havMv--------------------
- *  @desc 根据fo标记alg,再根据alg标记value (参考26022-1);
+ *  @desc 根据fo标记alg.refPort的havMv (参考26022-2);
  */
-+(void) maskHavMv:(AIFoNodeBase*)foNode{
-    //TODOTOMORROW20220511: 新构建有mv指向的fo,此时cmv模型连接时,回溯content.refPorts并新增mv标记 (参考26022-1);
-    
-    
-    
-    
++(void) maskHavMv_AlgWithFo:(AIFoNodeBase*)foNode{
     //1. 标记alg.refPort;
     for (AIKVPointer *alg_p in foNode.content_ps) {
         AIAlgNodeBase *algNode = [SMGUtils searchNode:alg_p];
@@ -633,20 +628,33 @@
             //2. 当refPort是当前fo,则标记为true;
             if ([algRefPort.target_p isEqual:foNode.pointer]) {
                 algRefPort.targetHavMv = true;
-                //TODO:保存algRefPorts;
+                //3. 保存algRefPorts到db;
+                [SMGUtils insertNode:algNode];
                 
-                //3. 标记value.refPort;
-                for (AIKVPointer *value_p in algNode.content_ps) {
-                    NSArray *valueRefPorts = [AINetUtils refPorts_All4Value:value_p];
-                    for (AIPort *valueRefPort in valueRefPorts) {
-                        
-                        //4. 当refPort是当前alg,则标记为true;
-                        if ([valueRefPort.target_p isEqual:algNode.pointer]) {
-                            valueRefPort.targetHavMv = true;
-                            //TODO:保存valueRefPorts;
-                        }
-                    }
-                }
+                //4. 继续向微观标记;
+                [self maskHavMv_ValueWithAlg:algNode];
+            }
+        }
+    }
+}
+
+/**
+ *  MARK:--------------------对alg.content.refPort标记havMv--------------------
+ *  @desc 根据alg标记value.refPort的havMv (参考26022-2);
+ *  @test 取了db+mem的refPorts,但保存时,都保存到了db中 (但应该没啥影响,先不管);
+ */
++(void) maskHavMv_ValueWithAlg:(AIAlgNodeBase*)algNode{
+    //1. 标记value.refPort;
+    for (AIKVPointer *value_p in algNode.content_ps) {
+        NSArray *valueRefPorts = [AINetUtils refPorts_All4Value:value_p];
+        for (AIPort *valueRefPort in valueRefPorts) {
+            
+            //2. 当refPort是当前alg,则标记为true;
+            if ([valueRefPort.target_p isEqual:algNode.pointer]) {
+                valueRefPort.targetHavMv = true;
+                
+                //3. 保存valueRefPorts到db;
+                [SMGUtils insertObject:valueRefPorts rootPath:value_p.filePath fileName:kFNRefPorts time:cRTReference saveDB:true];
             }
         }
     }

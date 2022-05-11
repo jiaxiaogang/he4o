@@ -236,6 +236,6 @@
 /**
  *  MARK:--------------------对fo.content.refPort标记havMv--------------------
  */
-+(void) maskHavMv:(AIFoNodeBase*)foNode;
++(void) maskHavMv_AlgWithFo:(AIFoNodeBase*)foNode;
 
 @end
