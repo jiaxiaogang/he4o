@@ -103,6 +103,7 @@ static int _tmpCount;
  *      2022.01.13 - 迭代支持相近匹配 (参考25082 & 25083);
  *      2022.01.15 - 识别结果可为自身: 比如(飞↑)如果不识别自身,又全局防重,就识别不到最全含最相近匹配结果了;
  *      2022.05.11 - 全含不要求必须是抽象节点,因为相近匹配时,可能最具象也会全含 (且现在全是absNode类型);
+ *      2022.05.12 - 仅识别有mv指向的结果 (参考26022-3);
  */
 +(void) partMatching_Alg:(AIAlgNodeBase*)protoAlg isMem:(BOOL)isMem except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
     //1. 数据准备;
@@ -132,6 +133,11 @@ static int _tmpCount;
             //6. 第2_取near_p的refPorts (参考25083-1);
             NSArray *refPorts = [SMGUtils filterPorts_Normal:[AINetUtils refPorts_All4Value:near_p isMem:isMem]];
             refPorts = ARR_SUB(refPorts, 0, cPartMatchingCheckRefPortsLimit_Alg);
+            
+            //6. 第3_仅保留有mv指向的部分 (参考26022-3);
+            refPorts = [SMGUtils filterArr:refPorts checkValid:^BOOL(AIPort *item) {
+                return item.targetHavMv;
+            }];
             if (Log4MAlg) NSLog(@"当前near_p:%@ --ref数量:%lu",[NVHeUtil getLightStr:near_p],(unsigned long)refPorts.count);
             
             //7. 每个refPort做两件事:
@@ -261,6 +267,7 @@ static int _tmpCount;
  *      2022.03.05: 将保留10条改为全保留,因为不同调用处,需要不同的筛选排序方式 (参考25134-方案2);
  *      2022.03.09: 将排序规则由"强度x匹配度",改成直接由SP综合评分来做 (参考25142 & 25114-TODO2);
  *      2022.04.30: 识别时assIndexes取proto+matchs+parts (参考25234-1);
+ *      2022.05.12: 仅识别有mv指向的结果 (参考26022-3);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
 +(void) partMatching_FoV1Dot5:(AIFoNodeBase*)maskFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup{
@@ -294,9 +301,13 @@ static int _tmpCount;
         //refFoPorts = [SMGUtils filterPorts:refFoPorts havTypes:nil noTypes:@[@(ATPlus),@(ATSub)]];//a. Normal+HNGL_2
         NSArray *refFoPorts = [AINetUtils refPorts_All4Alg_Normal:indexAlg];//b. 仅Normal
         
+        //6. 仅保留有mv指向的部分 (参考26022-3);
+        refFoPorts = [SMGUtils filterArr:refFoPorts checkValid:^BOOL(AIPort *item) {
+            return item.targetHavMv;
+        }];
+        
         NSArray *assFo_ps = Ports2Pits(refFoPorts);
         assFo_ps = [SMGUtils removeSub_ps:except_ps parent_ps:assFo_ps];
-        assFo_ps = ARR_SUB(assFo_ps, 0, cPartMatchingCheckRefPortsLimit_Fo);
         if (Log4MFo) NSLog(@"\n-----> TIR_Fo 索引:%@ 指向有效时序数:%lu",Alg2FStr(indexAlg),(unsigned long)assFo_ps.count);
         
         //5. 依次对assFos对应的时序,做匹配度评价; (参考: 160_TIRFO单线顺序模型)
@@ -347,8 +358,10 @@ static int _tmpCount;
         CGFloat spScore = [TOUtils getSPScore:matchFo startSPIndex:obj.cutIndex2 + 1 endSPIndex:matchFo.count - 1];
         return obj.matchFoStrong * spScore;//强度 * 匹配度
     }];
-    inModel.matchPFos = [[NSMutableArray alloc] initWithArray:sortPFos];
-    inModel.matchRFos = [[NSMutableArray alloc] initWithArray:sortRFos];
+    
+    //11. 仅保留前20条;
+    inModel.matchPFos = [[NSMutableArray alloc] initWithArray:ARR_SUB(sortPFos, 0, cPartMatchingCheckRefPortsLimit_Fo)];
+    inModel.matchRFos = [[NSMutableArray alloc] initWithArray:ARR_SUB(sortRFos, 0, cPartMatchingCheckRefPortsLimit_Fo)];
     
     //11. 调试日志;
     NSLog(@"\n=====> 时序识别Finish (PFos数:%lu)",(unsigned long)inModel.matchPFos.count);
