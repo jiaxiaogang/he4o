@@ -104,6 +104,7 @@ static int _tmpCount;
  *      2022.01.15 - 识别结果可为自身: 比如(飞↑)如果不识别自身,又全局防重,就识别不到最全含最相近匹配结果了;
  *      2022.05.11 - 全含不要求必须是抽象节点,因为相近匹配时,可能最具象也会全含 (且现在全是absNode类型);
  *      2022.05.12 - 仅识别有mv指向的结果 (参考26022-3);
+ *      2022.05.13 - 弃用partAlgs (参考26024);
  */
 +(void) partMatching_Alg:(AIAlgNodeBase*)protoAlg isMem:(BOOL)isMem except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
     //1. 数据准备;
@@ -185,7 +186,7 @@ static int _tmpCount;
         if (result.content_ps.count == matchingCount) {
             [matchAlgs addObject:result];
         }else{
-            [partAlgs addObject:result];
+            //[partAlgs addObject:result];
         }
     }
     

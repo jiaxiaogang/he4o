@@ -583,6 +583,7 @@
     if (ISOK(node, AIAlgNodeBase.class)) {
         [allPorts addObjectsFromArray:node.refPorts];
         [allPorts addObjectsFromArray:[SMGUtils searchObjectForPointer:node.pointer fileName:kFNMemRefPorts time:cRTMemPort]];
+        allPorts = [SMGUtils removeRepeat:allPorts];
     }
     return allPorts;
 }
@@ -595,6 +596,7 @@
     NSMutableArray *allPorts = [[NSMutableArray alloc] init];
     [allPorts addObjectsFromArray:[self refPorts_All4Value:value_p isMem:false]];
     [allPorts addObjectsFromArray:[self refPorts_All4Value:value_p isMem:true]];
+    allPorts = [SMGUtils removeRepeat:allPorts];
     return allPorts;
 }
 +(NSArray*) refPorts_All:(AIKVPointer*)node_p{
@@ -642,6 +644,8 @@
  *  MARK:--------------------对alg.content.refPort标记havMv--------------------
  *  @desc 根据alg标记value.refPort的havMv (参考26022-2);
  *  @test 取了db+mem的refPorts,但保存时,都保存到了db中 (但应该没啥影响,先不管);
+ *  @version
+ *      2022.05.13: 将refPorts_All4Value()中防重处理,避免此处存到db后有重复 (参考26023);
  */
 +(void) maskHavMv_ValueWithAlg:(AIAlgNodeBase*)algNode{
     //1. 标记value.refPort;
