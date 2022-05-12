@@ -291,7 +291,7 @@
 }
 
 - (IBAction)loadBtnOnClick:(id)sender {
-    [self trainer2];
+    [self trainer1];
 }
 
 - (IBAction)closeBtnOnClick:(id)sender {
