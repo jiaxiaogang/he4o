@@ -256,6 +256,10 @@
         if (item.status == TOModelStatus_ActYes) continue;
         
         //6. 有效,则返回;
+        NSArray *statuses = [SMGUtils convertArr:ARR_SUB(self.loopCache, 0, i) convertBlock:^id(DemandModel *obj) {
+            return obj.status == TOModelStatus_ActYes ? @"等待反馈" : obj.status == TOModelStatus_WithOut ? @"无计可施" : STRFORMAT(@"%ld",obj.status);
+        }];
+        NSLog(@"当前执行任务:%ld 不应期root任务的状态:%@",i,CLEANSTR(statuses));
         return item;
     }
     return nil;
