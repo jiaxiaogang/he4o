@@ -93,7 +93,7 @@
     
     //3. 判断是否时间不急;
     BOOL timeIsEnough = needTime <= giveTime;
-    if (Log4Score) NSLog(@"\t时间不急==> 状态(%d) = 方案所需要时间:%.2f <= 任务能给时间:%.2f",timeIsEnough,needTime,giveTime);
+    if (Log4Score && timeIsEnough) NSLog(@"checkResult=> (时间不急%d = 方案T:%.2f <= 任务T:%.2f )\n\t%@->%@",timeIsEnough,needTime,giveTime,Fo2FStr(solutionFo),Mvp2Str(solutionFo.cmvNode_p));
     return timeIsEnough;
 }
 
