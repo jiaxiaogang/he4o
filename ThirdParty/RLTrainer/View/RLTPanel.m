@@ -312,6 +312,9 @@
 }
 //步骤参考26029-加长版强化加训;
 -(void) trainer3{
+    //0. 无日志模式;
+    [self.delegate rltPanel_setNoLogMode:true];
+    
     //0. 加长版训练100轮
     for (int j = 0; j < 100; j++) {
         

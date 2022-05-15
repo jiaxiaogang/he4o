@@ -235,6 +235,10 @@
     
 }
 
+-(void) setStop:(BOOL)stop{
+    self.panelView.stop = stop;
+}
+
 -(void) open{
     [self setHidden:false];
     [self refreshDisplay];

@@ -133,17 +133,21 @@
 //MARK:                     < block >
 //MARK:===============================================================
 -(void) timeBlock {
-    //1. 不用执行: 播放状态
+    //1. 不用执行: 非播放状态,return;
     if (![self.delegate rtModel_Playing]) {
         [self pauseCollectUseTimed];
         return;
     }
     
-    //2. 不用执行: 执行完时,返回;
-    if (self.queueIndex >= self.queues.count) {
+    //2. 不用执行: 执行播放完时,return;
+    if (self.queueIndex == self.queues.count){
         [self pauseCollectUseTimed];
+        [self.delegate rtModel_Finished];
         return;
     }
+    
+    //2. 意外>count时处理;
+    if (self.queueIndex > self.queues.count) return;
     [self playSetLastStartTime];
     
     //2. 没轮到下帧: 上帧还未执行完成时,等待完成再执行下帧;

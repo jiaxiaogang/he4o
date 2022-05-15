@@ -60,6 +60,7 @@
 #define theNV (theApp.nvView)
 #define theTV (theApp.tv)
 #define theRT [RLTrainer sharedInstance]
+#define theHeLog (theApp.heLogView)
 #define theDebug [XGDebug sharedInstance]
 
 /**

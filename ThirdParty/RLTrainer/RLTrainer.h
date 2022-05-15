@@ -26,6 +26,8 @@
 
 +(RLTrainer*) sharedInstance;
 
+@property (assign, nonatomic) BOOL noLogMode;   //无日志模式
+
 /**
  *  MARK:--------------------注册可执行训练项--------------------
  */

@@ -12,6 +12,7 @@
 
 -(BOOL) rtModel_Playing;
 -(void) rtModel_Invoked;
+-(void) rtModel_Finished;
 
 @end
 

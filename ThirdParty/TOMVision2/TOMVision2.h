@@ -21,6 +21,11 @@
  */
 -(void) clear;
 
+/**
+ *  MARK:--------------------停止工作--------------------
+ */
+-(void) setStop:(BOOL)stop;
+
 //开关
 -(void) open;
 -(void) close;

@@ -10,6 +10,8 @@
 
 @interface HeLogView : UIView
 
+@property (assign, nonatomic) BOOL stop;//停止工作;
+
 -(void) addLog:(NSString*)log;
 -(void) addDemoLog:(NSString*)log;
 -(void) open;

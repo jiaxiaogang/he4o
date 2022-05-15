@@ -70,6 +70,9 @@
 //MARK:                     < publicMethod >
 //MARK:===============================================================
 -(void) addLog:(NSString*)log{
+    if (self.stop) {
+        return;
+    }
     if (log) {
         NSDictionary *addDic = [self.model addLog:log];
         if (self.isOpen) {
@@ -79,6 +82,9 @@
 }
 
 -(void) addDemoLog:(NSString*)log{
+    if (self.stop) {
+        return;
+    }
     log = STRFORMAT(@"********************************************* %@ *********************************************",log);
     [self.model addLog:log];
 }
@@ -103,6 +109,11 @@
 }
 
 -(void) reloadData:(BOOL)reloadHd{
+    //0. 工作状态
+    if (self.stop) {
+        return;
+    }
+    
     //1. 重新加载硬盘;
     if (reloadHd) {
         [self.model reloadData];

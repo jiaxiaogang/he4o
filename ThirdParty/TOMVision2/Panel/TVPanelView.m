@@ -147,7 +147,8 @@
     [self.models addObject:newFrame];
     
     //3. 仅保留后x00帧;
-    NSArray *subModels = ARR_SUB(self.models, self.models.count - 300, 300);
+    NSInteger limit = self.stop ? 0 : 300;
+    NSArray *subModels = ARR_SUB(self.models, self.models.count - limit, limit);
     [self.models removeAllObjects];
     [self.models addObjectsFromArray:ARRTOOK(subModels)];
     
