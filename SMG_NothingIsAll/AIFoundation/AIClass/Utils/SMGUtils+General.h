@@ -23,6 +23,7 @@ static int logLineNum;
 +(NSArray*) strToArr:(NSString*)str sep:(NSString*)sep;     //str分隔arr
 +(NSString*) subStr:(NSString*)s toIndex:(NSInteger)index;  //notnull
 +(NSString*) codeLocateFormat:(NSString*)fileName line:(NSInteger)line;
++(void) checkPrintNSLog:(NSString*)fileName line:(NSInteger)line protoLog:(NSString*)protoLog headerMode:(LogHeaderMode)headerMode;
 +(NSString*) nsLogFormat:(NSString*)fileName line:(NSInteger)line protoLog:(NSString*)protoLog headerMode:(LogHeaderMode)headerMode;//NSLog自定义格式化;
 +(NSString*) cleanStr:(id)str;
 

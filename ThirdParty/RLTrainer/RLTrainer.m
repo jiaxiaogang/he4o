@@ -70,6 +70,7 @@ static RLTrainer *_instance;
     _noLogMode = noLogMode;
     [theTV setStop:_noLogMode];
     [theHeLog setStop:_noLogMode];
+    theApp.noNSLog = _noLogMode;
 }
 
 //MARK:===============================================================

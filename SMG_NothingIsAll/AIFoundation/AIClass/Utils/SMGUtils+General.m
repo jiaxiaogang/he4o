@@ -51,6 +51,13 @@
     return lineStr;
 }
 
++(void) checkPrintNSLog:(NSString*)fileName line:(NSInteger)line protoLog:(NSString*)protoLog headerMode:(LogHeaderMode)headerMode{
+    if (!theApp.noNSLog) {
+        NSString *log = [self nsLogFormat:fileName line:line protoLog:protoLog headerMode:headerMode];
+        PrintLog(log);
+    }
+}
+
 +(NSString*) nsLogFormat:(NSString*)fileName line:(NSInteger)line protoLog:(NSString*)protoLog headerMode:(LogHeaderMode)headerMode{
     //1. 数据准备
     protoLog = STRTOOK(protoLog);
