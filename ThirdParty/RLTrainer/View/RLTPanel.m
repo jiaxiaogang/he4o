@@ -316,14 +316,14 @@
     [self.delegate rltPanel_setNoLogMode:true];
     
     //0. 加长版训练100轮
-    for (int j = 0; j < 100; j++) {
+    for (int j = 0; j < 5; j++) {
         
         //1. 进入训练页
         NSMutableArray *names = [[NSMutableArray alloc] init];
         [names addObject:kGrowPageSEL];
         
         //2. 随机飞或扔木棒,五步;
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 2; i++) {
             NSArray *randomNames = @[kFlySEL,kWoodSEL];
             int randomIndex = arc4random() % 2;
             NSString *randomName = ARR_INDEX(randomNames, randomIndex);
