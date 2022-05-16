@@ -295,14 +295,19 @@
     DemoLog(@"扔木棒 (预撞hitTime:%f)",hitTime);
     [self.woodView throw:hitTime hitBlock:^BOOL{
         BOOL xHited = self.woodView.showMaxX >= self.birdView.showMinX;
-        BOOL YHited = self.birdView.showMinY < self.woodView.showMaxY && self.birdView.showMaxY > self.woodView.showMinY;
+        BOOL YHit1 = self.birdView.showMinY < self.woodView.showMaxY;
+        BOOL YHit2 = self.birdView.showMaxY > self.woodView.showMinY;
+        BOOL YHited = YHit1 && YHit2;
+        NSLog(@"1. 鸟左:%f>=木右:%f = %@",self.birdView.showMinX,self.woodView.showMaxX,xHited ? @"撞到":@"没撞");
+        NSLog(@"2. 鸟上:%f<木下:%f = %@",self.birdView.showMinY,self.woodView.showMaxY,YHit1 ? @"撞到":@"没撞");
+        NSLog(@"3. 鸟下:%f>木上:%f = %@",self.birdView.showMaxY,self.woodView.showMinY,YHit2 ? @"撞到":@"没撞");
         if (xHited && YHited) {
             //5. 触发疼痛感;
-            NSLog(@"---> success 撞到了 鸟左:%f 木右:%f",self.birdView.showMinX,self.woodView.showMaxX);
+            NSLog(@"---> success 撞到了");
             [self.birdView hurt];
             return true;
         }
-        NSLog(@"---> failure 没撞到 鸟左:%f 木右:%f",self.birdView.showMinX,self.woodView.showMaxX);
+        NSLog(@"---> failure 没撞到");
         return false;
     }];
 }
