@@ -291,7 +291,7 @@
 }
 
 - (IBAction)loadBtnOnClick:(id)sender {
-    [self trainer3];
+    [self trainer4];
 }
 
 - (IBAction)closeBtnOnClick:(id)sender {
@@ -310,20 +310,20 @@
 -(void) trainer2{
     [theRT queueN:@[kGrowPageSEL,kFlySEL,kFlySEL,kWoodSEL,kMainPageSEL,kClearTCSEL] count:20];
 }
-//步骤参考26029-加长版强化加训;
+//步骤参考26029-加长版强化加训 (参考26031-2);
 -(void) trainer3{
     //0. 无日志模式;
     [self.delegate rltPanel_setNoLogMode:true];
     
     //0. 加长版训练100轮
-    for (int j = 0; j < 5; j++) {
+    for (int j = 0; j < 50; j++) {
         
         //1. 进入训练页
         NSMutableArray *names = [[NSMutableArray alloc] init];
         [names addObject:kGrowPageSEL];
         
         //2. 随机飞或扔木棒,五步;
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 5; i++) {
             NSArray *randomNames = @[kFlySEL,kWoodSEL];
             int randomIndex = arc4random() % 2;
             NSString *randomName = ARR_INDEX(randomNames, randomIndex);
@@ -336,6 +336,10 @@
         //4. 训练names;
         [theRT queueN:names count:1];
     }
+}
+//步骤: 先在各位置被扔木棒50轮 (参考26031-1);
+-(void) trainer4{
+    [theRT queueN:@[kGrowPageSEL,kWoodSEL,kMainPageSEL,kClearTCSEL] count:50];
 }
 
 //MARK:===============================================================
