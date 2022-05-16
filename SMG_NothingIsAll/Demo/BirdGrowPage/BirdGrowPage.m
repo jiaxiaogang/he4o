@@ -36,7 +36,7 @@
     //2. birdView
     self.birdView = [[BirdView alloc] init];
     [self.view addSubview:self.birdView];
-    [self.birdView setCenter:CGPointMake(ScreenWidth / 2.0f, ScreenHeight / 2.0f)];
+    [self.birdView setCenter:[self getBirdBirthPos]];
     self.birdView.delegate = self;
     
     //3. doubleTap
@@ -376,6 +376,75 @@
 }
 -(BOOL) birdBottomOut{
     return self.birdView.showMaxY > ScreenHeight;
+}
+
+/**
+ *  MARK:--------------------随机计算小鸟出生地点--------------------
+ *  @desc 先根号,再平方,使使其离屏幕中心更近的概率更大,步骤举例如下:
+ *          1. 取屏幕大小 (比如屏宽=800);
+ *          2. 我们要先取根号随机值 (取值范围为-20到20);
+ *          3. 然后再二次方 (取值范围为-400到400);
+ *          4. 再转换成绝对坐标返回 (取值范围为0到800);
+ *  @desc 优缺点:
+ *          1. 优点是,离中心越近越概率大;
+ *          2. 缺点是,它还是有可能离屏幕中心很远,比如上方在navBar挡住,再比如左侧离木棒很近;
+ */
+-(CGPoint) getBirdBirthPos{
+    //1. 取根值20;
+    int modW = (int)sqrtf(ScreenWidth * 0.5f);
+    int modH = (int)sqrtf(ScreenHeight * 0.5f);
+    
+    //2. 取随机值 (范围-20到20);
+    long randomW = random() % (modW * 2) - modW;
+    long randomH = random() % (modH * 2) - modH;
+    
+    //3. 求二次方,得出相对XY坐标 (范围-400到400);
+    float relativeX = randomW * randomW * (randomW < 0 ? -1 : 1);
+    float relativeY = randomH * randomH * (randomH < 0 ? -1 : 1);
+    
+    //4. 转成绝对XY坐标 (范围0-800);
+    float x = relativeX + ScreenWidth * 0.5f;
+    float y = relativeY + ScreenHeight * 0.5f;
+    return CGPointMake(x, y);
+}
+
+/**
+ *  MARK:--------------------随机计算小鸟出生地点V2--------------------
+ *  @desc 取值范围为离中心-80到80 (X和Y都是这范围);
+ *  @desc 优缺点:
+ *          1. 优点是: 限定的范围固定,不会离谱;
+ *          2. 缺点是: 限定范围内每个位置的概率都一样;
+ */
+-(CGPoint) getBirdBirthPosV2{
+    //1. 取随机值 (范围-80到80);
+    long randomX = random() % (160) - 80;
+    long randomY = random() % (160) - 80;
+    
+    //2. 转成左上角锚点;
+    float x = randomX + ScreenWidth * 0.5f;
+    float y = randomY + ScreenHeight * 0.5f;
+    return CGPointMake(x, y);
+}
+
+-(CGPoint) getBirdBirthPosV3{
+    //1. 取根值20;
+    CGFloat areaW = 160;
+    CGFloat areaH = 300;
+    int modW = (int)sqrtf(areaW * 0.5f);
+    int modH = (int)sqrtf(areaH * 0.5f);
+    
+    //2. 取随机值 (范围-20到20);
+    long randomW = random() % (modW * 2) - modW;
+    long randomH = random() % (modH * 2) - modH;
+    
+    //3. 求二次方,得出相对XY坐标 (范围-400到400);
+    float relativeX = randomW * randomW * (randomW < 0 ? -1 : 1);
+    float relativeY = randomH * randomH * (randomH < 0 ? -1 : 1);
+    
+    //4. 转成绝对XY坐标 (范围0-800);
+    float x = relativeX + ScreenWidth * 0.5f;
+    float y = relativeY + ScreenHeight * 0.5f;
+    return CGPointMake(x, y);
 }
 
 @end
