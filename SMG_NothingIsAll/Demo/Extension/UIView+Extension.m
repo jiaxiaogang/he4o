@@ -105,19 +105,19 @@
 }
 
 - (CGFloat)showMinX {
-    return self.showX - self.showW / 2.0f;
+    return self.showX;
 }
 
 - (CGFloat)showMinY {
-    return self.showY - self.showH / 2.0f;
+    return self.showY;
 }
 
 - (CGFloat)showMaxX {
-    return self.showX + self.showW / 2.0f;
+    return self.showX + self.showW;
 }
 
 - (CGFloat)showMaxY {
-    return self.showY + self.showH / 2.0f;
+    return self.showY + self.showH;
 }
 
 //MARK:===============================================================
