@@ -84,7 +84,17 @@
 
 //用于需求 (参考:25134-方案2-C需求);
 -(NSArray*) fos4Demand{
-    return ARR_SUB(self.matchPFos, 0, 10);
+    //1. 按迫切度排序;
+    NSArray *sort = [SMGUtils sortBig2Small:self.matchPFos compareBlock:^double(AIMatchFoModel *pFo) {
+        return [AIScore score4MV_v2:pFo];
+    }];
+    
+    //2. 根据at去重;
+    NSArray *rmRepeat = [SMGUtils removeRepeat:sort convertBlock:^id(AIMatchFoModel *obj) {
+        AIFoNodeBase *fo = [SMGUtils searchNode:obj.matchFo];
+        return fo.cmvNode_p.algsType;
+    }];
+    return rmRepeat;
 }
 
 //MARK:===============================================================

@@ -143,13 +143,14 @@
  */
 -(void) updateCMVCache_RMV:(AIShortMatchModel*)inModel{
     //1. 数据检查;
-    if (!inModel || !inModel.protoFo || !ARRISOK(inModel.fos4Demand) || !Switch4RS) return;
+    NSArray *fos4Demand = inModel.fos4Demand;
+    if (!inModel || !inModel.protoFo || !ARRISOK(fos4Demand) || !Switch4RS) return;
     
     //2. 多时序识别预测分别进行处理;
-    for (NSInteger i = 0; i < inModel.fos4Demand.count; i++) {
+    for (NSInteger i = 0; i < fos4Demand.count; i++) {
         
         //2. 因为matchPFos排序是更好(引用强度强)的在先,而任务池是以迫切度+initTime靠后优先,所以倒序,使强度强的initTime更靠后;
-        AIMatchFoModel *mModel = ARR_INDEX_REVERSE(inModel.fos4Demand, i);
+        AIMatchFoModel *mModel = ARR_INDEX_REVERSE(fos4Demand, i);
         //3. 单条数据准备;
         //2021.03.28: 此处algsType由urgentTo.at改成cmv.at,从mvNodeManager看这俩一致,如果出现bug再说;
         AIFoNodeBase *mFo = [SMGUtils searchNode:mModel.matchFo];

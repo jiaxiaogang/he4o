@@ -214,9 +214,11 @@
 
 /**
  *  MARK:--------------------防重--------------------
+ *  _param convertBlock : 用于转换"判断防重的数据类型";
  *  @result notnull
  */
 +(NSMutableArray*) removeRepeat:(NSArray*)protoArr;
++(NSMutableArray*) removeRepeat:(NSArray*)protoArr convertBlock:(id(^)(id obj))convertBlock;
 
 /**
  *  MARK:--------------------取交集--------------------
