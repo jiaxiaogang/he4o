@@ -291,7 +291,7 @@
 }
 
 - (IBAction)loadBtnOnClick:(id)sender {
-    [self trainer4];
+    [self trainer3];
 }
 
 - (IBAction)closeBtnOnClick:(id)sender {
@@ -316,7 +316,7 @@
     [self.delegate rltPanel_setNoLogMode:true];
     
     //0. 加长版训练100轮
-    for (int j = 0; j < 50; j++) {
+    for (int j = 0; j < 20; j++) {
         
         //1. 进入训练页
         NSMutableArray *names = [[NSMutableArray alloc] init];
