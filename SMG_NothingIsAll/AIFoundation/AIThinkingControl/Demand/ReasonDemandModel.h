@@ -22,13 +22,20 @@
 
 /**
  *  MARK:--------------------newWith--------------------
- *  @param mModel   : notnull
+ *  @param pFos     : List<AIMatchFoModel>
  *  @param inModel  : notnull
  *  @param baseFo   : 当前为子任务时,传入baseFo,非子任务传空即可;
  */
-+(ReasonDemandModel*) newWithMModel:(AIMatchFoModel*)mModel inModel:(AIShortMatchModel*)inModel baseFo:(TOFoModel*)baseFo;
++(ReasonDemandModel*) newWithAlgsType:(NSString*)algsType pFos:(NSArray*)pFos inModel:(AIShortMatchModel*)inModel baseFo:(TOFoModel*)baseFo;
 
-@property (strong, nonatomic) AIMatchFoModel *mModel;       //R-预测时序
+
+/**
+ *  MARK:--------------------R-的预测时序们--------------------
+ *  @类型 List<AIMatchFoModel>
+ *  @version
+ *      2022.05.18: 替换原单个mModel,改成pFos多个 (参考26042-TODO2);
+ */
+@property (strong, nonatomic) NSArray *pFos;
 
 /**
  *  MARK:--------------------需求来源inModel--------------------

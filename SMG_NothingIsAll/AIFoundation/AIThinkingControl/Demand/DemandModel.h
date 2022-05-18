@@ -20,7 +20,7 @@
 
 @property (assign, nonatomic) NSInteger urgentTo;   //一级排序因素 (高在前)
 @property (assign, nonatomic) NSInteger delta;
-@property (strong, nonatomic) NSString *algsType;
+@property (strong, nonatomic) NSString *algsType;   //mv的标识
 @property (assign, nonatomic) double initTime;      //二级排序因素 (新在前)
 
 /**

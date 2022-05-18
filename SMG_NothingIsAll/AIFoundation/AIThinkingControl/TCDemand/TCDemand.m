@@ -57,15 +57,17 @@
  *      2021.12.06: 反馈feedback后生成子任务,但并不触发solution决策 (参考24171-9de);
  *  @todo
  *      2022.03.11: 根据fos4Demand生成子任务后,根据它的mvScoreV2限制它的下辖分支数 (参考25142-TODO3);
+ *      2022.05.18: 多pFos形成单个任务 (参考26042-TODO1);
  */
 +(void) feedbackDemand:(AIShortMatchModel*)model foModel:(TOFoModel*)foModel{
     //1. 识别结果pFos挂载到targetFoModel下做子任务 (好的坏的全挂载,比如做的饭我爱吃{MV+},但是又太麻烦{MV-});
     [theTC updateOperCount];
     Debug();
-    NSArray *fos4Demand = model.fos4Demand;
+    NSDictionary *fos4Demand = model.fos4Demand;
     OFTitleLog(@"subDemand",@"\n子任务数:%ld baseFo:%@",fos4Demand.count,Pit2FStr(foModel.content_p));
-    for (AIMatchFoModel *item in fos4Demand) {
-        [ReasonDemandModel newWithMModel:item inModel:model baseFo:foModel];
+    for (NSString *atKey in fos4Demand.allKeys) {
+        NSArray *pFosValue = [fos4Demand objectForKey:atKey];
+        [ReasonDemandModel newWithAlgsType:atKey pFos:pFosValue inModel:model baseFo:foModel];
     }
     [theTV updateFrame];
     DebugE();

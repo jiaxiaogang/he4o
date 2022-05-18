@@ -16,15 +16,15 @@
  *      2021.03.28: 将at & delta & urgentTo也封装到此处取赋值;
  *      2021.06.01: 将子任务时的base也兼容入baseOrGroup中 (参考23094);
  */
-+(ReasonDemandModel*) newWithMModel:(AIMatchFoModel*)mModel inModel:(AIShortMatchModel*)inModel baseFo:(TOFoModel*)baseFo{
++(ReasonDemandModel*) newWithAlgsType:(NSString*)algsType pFos:(NSArray*)pFos inModel:(AIShortMatchModel*)inModel baseFo:(TOFoModel*)baseFo{
     //1. 数据准备;
     ReasonDemandModel *result = [[ReasonDemandModel alloc] init];
-    AIFoNodeBase *matchFo = [SMGUtils searchNode:mModel.matchFo];
+    AIMatchFoModel *firstPFo = ARR_INDEX(pFos, 0);
+    AIFoNodeBase *matchFo = [SMGUtils searchNode:firstPFo.matchFo];
     AICMVNodeBase *mvNode = [SMGUtils searchNode:matchFo.cmvNode_p];
     NSInteger delta = [NUMTOOK([AINetIndex getData:mvNode.delta_p]) integerValue];
-    NSString *algsType = mvNode.urgentTo_p.algsType;
     NSInteger urgentTo = [NUMTOOK([AINetIndex getData:mvNode.urgentTo_p]) integerValue];
-    urgentTo = (int)(urgentTo * mModel.matchFoValue);
+    urgentTo = (int)(urgentTo * firstPFo.matchFoValue);
     
     //2. 短时结构;
     if (baseFo) [baseFo.subDemands addObject:result];
@@ -34,7 +34,7 @@
     result.algsType = algsType;
     result.delta = delta;
     result.urgentTo = urgentTo;
-    result.mModel = mModel;
+    result.pFos = pFos;
     result.fromIden = STRFORMAT(@"%p",inModel);
     return result;
 }

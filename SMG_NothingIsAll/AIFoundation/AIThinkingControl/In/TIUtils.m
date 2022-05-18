@@ -269,6 +269,7 @@ static int _tmpCount;
  *      2022.03.09: 将排序规则由"强度x匹配度",改成直接由SP综合评分来做 (参考25142 & 25114-TODO2);
  *      2022.04.30: 识别时assIndexes取proto+matchs+parts (参考25234-1);
  *      2022.05.12: 仅识别有mv指向的结果 (参考26022-3);
+ *      2022.05.18: 把pFo排序因子由评分绝对值,改成取负,因为正价值不构成任务,所以把它排到最后去;
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
 +(void) partMatching_FoV1Dot5:(AIFoNodeBase*)maskFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup{
@@ -352,7 +353,7 @@ static int _tmpCount;
     
     //10. 按照 (强度x匹配度) 排序,强度最重要,包含了价值初始和使用频率,其次匹配度也重要 (参考23222-BUG2);
     NSArray *sortPFos = [SMGUtils sortBig2Small:inModel.matchPFos compareBlock:^double(AIMatchFoModel *obj) {
-        return fabs([AIScore score4MV_v2:obj]);//abs(价值评分 * 匹配度) 如: [9,-8,3]
+        return -[AIScore score4MV_v2:obj];//负(价值评分 * 匹配度) 如: [-8,-3,2,9]
     }];
     NSArray *sortRFos = [SMGUtils sortBig2Small:inModel.matchRFos compareBlock:^double(AIMatchFoModel *obj) {
         AIFoNodeBase *matchFo = [SMGUtils searchNode:obj.matchFo];

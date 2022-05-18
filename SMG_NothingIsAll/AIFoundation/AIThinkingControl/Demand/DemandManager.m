@@ -136,62 +136,61 @@
  *      2021.01.27: RMV仅对matchFoModel进行抵消防重 (否则会导致inModel预测处理不充分) (参考22074-BUG2);
  *      2021.02.05: 新增任务时,仅将"与旧有同区最大迫切度的差值"累增至活跃度 (参考22116);
  *      2021.03.01: 修复RMV一直在行为输出和被识别间重复死循环BUG (参考22142);
+ *      2021.03.28: 此处algsType由urgentTo.at改成cmv.at,从mvNodeManager看这俩一致,如果出现bug再说;
  *      2021.07.14: 循环matchPFos时,采用反序,因为优先级和任务池优先级上弄反了 (参考23172);
  *      2021.11.11: 迭代RMV的生成机制,此代码其实啥也没改 (参考24107-1);
  *      2022.03.10: 为使鸟躲避及时停下,将迫切度再改回受评分迫切度等影响 (参考25142-改进);
  *      2022.05.02: 未形成新需求时,也更新energy (参考2523a-方案1);
+ *      2022.05.18: 多pFos形成单个任务 (参考26042-TODO1);
  */
--(void) updateCMVCache_RMV:(AIShortMatchModel*)inModel{
+-(void) updateCMVCache_RMV:(NSString*)algsType inModel:(AIShortMatchModel*)inModel{
     //1. 数据检查;
-    NSArray *fos4Demand = inModel.fos4Demand;
-    if (!inModel || !inModel.protoFo || !ARRISOK(fos4Demand) || !Switch4RS) return;
+    if (!inModel || !inModel.protoFo || !Switch4RS) return;
+    NSDictionary *fos4Demand = inModel.fos4Demand;
     
     //2. 多时序识别预测分别进行处理;
-    for (NSInteger i = 0; i < fos4Demand.count; i++) {
+    for (NSString *atKey in fos4Demand.allKeys) {
         
-        //2. 因为matchPFos排序是更好(引用强度强)的在先,而任务池是以迫切度+initTime靠后优先,所以倒序,使强度强的initTime更靠后;
-        AIMatchFoModel *mModel = ARR_INDEX_REVERSE(fos4Demand, i);
-        //3. 单条数据准备;
-        //2021.03.28: 此处algsType由urgentTo.at改成cmv.at,从mvNodeManager看这俩一致,如果出现bug再说;
-        AIFoNodeBase *mFo = [SMGUtils searchNode:mModel.matchFo];
-        if (!mFo.cmvNode_p) continue;
-        NSString *algsType = mFo.cmvNode_p.algsType;
-            
+        //3. 数据准备
+        NSArray *pFosValue = [fos4Demand objectForKey:atKey];
+        AIMatchFoModel *firstPFo = ARR_INDEX(pFosValue, 0);
+        CGFloat score = [AIScore score4MV_v2:firstPFo];
+        
         //4. 抵消_同一matchFo将旧有移除 (仅保留最新的);
-        self.loopCache = [SMGUtils removeArr:self.loopCache checkValid:^BOOL(ReasonDemandModel *oldItem) {
-            if (ISOK(oldItem, ReasonDemandModel.class)) {
-                if ([oldItem.mModel.matchFo isEqual:mModel.matchFo] && oldItem.mModel.cutIndex2 < mModel.cutIndex2) {
-                    NSLog(@"RMV移除R任务(更新的抵消旧的):%@",Pit2FStr(oldItem.mModel.matchFo));
-                    return true;
-                }
-            }
-            return false;
-        }];
+        //2022.05.18: 废弃抵消和防重功能,现在root各自工作,共用R和P反馈即可各自工作;
+        //self.loopCache = [SMGUtils removeArr:self.loopCache checkValid:^BOOL(ReasonDemandModel *oldItem) {
+        //    if (ISOK(oldItem, ReasonDemandModel.class)) {
+        //        if ([oldItem.mModel.matchFo isEqual:mModel.matchFo] && oldItem.mModel.cutIndex2 < mModel.cutIndex2) {
+        //            NSLog(@"RMV移除R任务(更新的抵消旧的):%@",Pit2FStr(oldItem.mModel.matchFo));
+        //            return true;
+        //        }
+        //    }
+        //    return false;
+        //}];
         
         //4. 防重
         BOOL containsRepeat = false;
-        for (ReasonDemandModel *item in self.loopCache) {
-            if (ISOK(item, ReasonDemandModel.class) && [item.mModel.matchFo isEqual:mModel.matchFo]) {
-                containsRepeat = true;
-            }
-        }
+        //for (ReasonDemandModel *item in self.loopCache) {
+        //    if (ISOK(item, ReasonDemandModel.class) && [item.mModel.matchFo isEqual:mModel.matchFo]) {
+        //        containsRepeat = true;
+        //    }
+        //}
         
         //5. 取迫切度评分: 判断matchingFo.mv有值才加入demandManager,同台竞争,执行顺应mv;
-        CGFloat score = [AIScore score4MV_v2:mModel];
         if (score < 0 && !containsRepeat) {
             
             //7. 有需求时,则加到需求序列中;
-            ReasonDemandModel *newItem = [ReasonDemandModel newWithMModel:mModel inModel:inModel baseFo:nil];
+            ReasonDemandModel *newItem = [ReasonDemandModel newWithAlgsType:algsType pFos:pFosValue inModel:inModel baseFo:nil];
             [self.loopCache addObject:newItem];
             
             //8. 设活跃度_将最大的任务x2取负值,为当前活跃度 (参考25142-改进);;
             //2021.05.27: 为方便测试,所有imv都给20迫切度 (因为迫切度太低话,还没怎么思考就停了);
             //2022.03.10: 为使鸟躲避及时停下,将迫切度再改回受评分迫切度等影响;
             [theTC updateEnergyValue:-score * 2];
-            NSLog(@"RMV新需求: %@->%@ (条数+1=%ld 评分:%@)",Fo2FStr(mFo),Pit2FStr(mFo.cmvNode_p),self.loopCache.count,Double2Str_NDZ(score));
+            NSLog(@"RMV新需求: %@ (条数+1=%ld 评分:%@)",algsType,self.loopCache.count,Double2Str_NDZ(score));
         }else{
             [theTC updateEnergyValue:-score * 2];
-            NSLog(@"当前,预测mv未形成需求:%@ 基于:%@ 评分:%f",algsType,Pit2FStr(mFo.cmvNode_p),score);
+            NSLog(@"当前,预测mv未形成需求:%@ 评分:%f",algsType,score);
         }
     }
 }

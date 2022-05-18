@@ -87,6 +87,7 @@
  *  @version
  *      2022.05.17: pFos防重 (参考:25134-方案2-C需求);
  *      2022.05.18: 修改为dic分组 (参考26042-TODO1);
+ *  @result notnull
  */
 -(NSDictionary*) fos4Demand{
     //1. 返回分组字典;
