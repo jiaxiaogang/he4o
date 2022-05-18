@@ -25,6 +25,7 @@
  *      2021.12.26: action将foModel执行到spIndex之前一帧 (25032-4);
  *      2021.12.26: hSolution达到目标帧转hActYes的处理 (参考25031-9);
  *      2021.12.26: 下标不急(弄巧成拙)评价,支持isOut=true的情况 (参考25031-10);
+ *      2022.05.19: 废弃ARSTime评价 (参考26051);
  *  @callers : 可以供_Demand和_Hav等调用;
  */
 +(void) action:(TOFoModel*)foModel{
@@ -46,18 +47,18 @@
         //5. 下标不急(弄巧成拙)评价_数据准备 (参考24171-12);
         //TODO: 考虑改成,取base最近的一个R任务;
         //6. 只有R类型,才参与下标不急评价;
-        ReasonDemandModel *baseDemand = (ReasonDemandModel*)foModel.baseOrGroup;
-        if(ISOK(baseDemand, ReasonDemandModel.class)){
-            BOOL arsTime = [AIScore ARS_Time:foModel demand:baseDemand];
-            if (!arsTime) {
-                //7. 评价不通过,则直接ActYes,等待其自然出现 (参考22153-A2);
-                DebugE();
-                NSLog(@"==> arsTime弄巧成拙评价,子弹再飞一会儿");
-                moveAlg.status = TOModelStatus_ActYes;
-                [TCActYes arsTimeActYes:moveAlg];
-                return;
-            }
-        }
+        //ReasonDemandModel *baseDemand = (ReasonDemandModel*)foModel.baseOrGroup;
+        //if(ISOK(baseDemand, ReasonDemandModel.class)){
+        //    BOOL arsTime = [AIScore ARS_Time:foModel demand:baseDemand];
+        //    if (!arsTime) {
+        //        //7. 评价不通过,则直接ActYes,等待其自然出现 (参考22153-A2);
+        //        DebugE();
+        //        NSLog(@"==> arsTime弄巧成拙评价,子弹再飞一会儿");
+        //        moveAlg.status = TOModelStatus_ActYes;
+        //        [TCActYes arsTimeActYes:moveAlg];
+        //        return;
+        //    }
+        //}
         
         //7. 尝试行为当前帧;
         DebugE();

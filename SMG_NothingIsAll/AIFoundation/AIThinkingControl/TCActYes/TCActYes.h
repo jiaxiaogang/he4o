@@ -10,7 +10,7 @@
 
 @interface TCActYes : NSObject
 
-+(void) arsTimeActYes:(TOAlgModel*)algModel;
+//+(void) arsTimeActYes:(TOAlgModel*)algModel;
 +(void) rActYes:(TOFoModel*)foModel;
 +(void) hActYes:(TOAlgModel*)algModel;
 +(void) pActYes:(TOFoModel*)foModel;

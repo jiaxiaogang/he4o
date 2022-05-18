@@ -25,48 +25,50 @@
  *  @result (参考22194示图 & 22198) (默认为ture);
  *      true    : 提前可预备部分:返回true以进行_hav实时行为化 (比如:在穿越森林前,在遇到老虎前,我们先带枪);
  *      false   : 来的及返回false则ActYes等待静默成功,并继续推进主任务 (比如:枪已取到,现在先穿越森林,等老虎出现时,再吓跑它);
+ *  @version
+ *      2022.05.19: 废弃 (参考26051);
  */
-+(BOOL) ARS_Time:(TOFoModel*)dsFoModel demand:(ReasonDemandModel*)demand{
-    //1. 找下标;
-    __block NSInteger dsIndex = -1;
-    __block NSInteger demandIndex = -1;
-    [self score4ARSTime:dsFoModel demand:demand finishBlock:^(NSInteger _dsIndex, NSInteger _demandIndex) {
-        dsIndex = _dsIndex;
-        demandIndex = _demandIndex;
-    }];
-    
-    //2. 下标有效时,返回ARSTime结果 (参考22194示图 & 22198);;
-    if (demandIndex != -1) {
-        //3a. ds下标后的dsFo部分,需要静默等待 (会导致弄巧成拙,评价为否->ActYes);
-        //3b. ds下标前的dsFo部分,可直接行为化 (当dsAlg在demand预测中已发生时,评价为是->立马行为化修正);
-        return dsFoModel.actionIndex < dsIndex;
-    }
-    return true;
-}
+//+(BOOL) ARS_Time:(TOFoModel*)dsFoModel demand:(ReasonDemandModel*)demand{
+//    //1. 找下标;
+//    __block NSInteger dsIndex = -1;
+//    __block NSInteger demandIndex = -1;
+//    [self score4ARSTime:dsFoModel demand:demand finishBlock:^(NSInteger _dsIndex, NSInteger _demandIndex) {
+//        dsIndex = _dsIndex;
+//        demandIndex = _demandIndex;
+//    }];
+//
+//    //2. 下标有效时,返回ARSTime结果 (参考22194示图 & 22198);;
+//    if (demandIndex != -1) {
+//        //3a. ds下标后的dsFo部分,需要静默等待 (会导致弄巧成拙,评价为否->ActYes);
+//        //3b. ds下标前的dsFo部分,可直接行为化 (当dsAlg在demand预测中已发生时,评价为是->立马行为化修正);
+//        return dsFoModel.actionIndex < dsIndex;
+//    }
+//    return true;
+//}
 
 /**
  *  MARK:--------------------来的及评分--------------------
  *  @desc 对dsFo的从前到后所有元素,在demand的预测中未发生的部分,找下标返回 (参考22198示图);
  *  @param finishBlock notnull : 根据dsFo的哪个下标,发现了在demand预测fo中的哪个下标,使用说明如下;
  */
-+(void) score4ARSTime:(TOFoModel*)dsFoModel demand:(ReasonDemandModel*)demand finishBlock:(void(^)(NSInteger _dsIndex,NSInteger _demandIndex))finishBlock{
-    //1. 数据检查;
-    if (!dsFoModel || !demand) return;
-    AIFoNodeBase *dsFo = [SMGUtils searchNode:dsFoModel.content_p];
-    
-    //2. 找下标 (参考注释@desc);
-    for (NSInteger i = 0; i < dsFo.count; i++) {
-        AIKVPointer *dsAlg_p = ARR_INDEX(dsFo.content_ps, i);
-        AIFoNodeBase *demandMFo = [SMGUtils searchNode:demand.mModel.matchFo];
-        NSInteger demandIndex = [TOUtils indexOfConOrAbsItem:dsAlg_p atContent:demandMFo.content_ps layerDiff:2 startIndex:demand.mModel.cutIndex2 + 1 endIndex:NSUIntegerMax];
-        
-        //3. 根据dsIndex发现demandIndex成功 (仅需发现一个下标即可);
-        if (demandIndex != -1) {
-            finishBlock(i,demandIndex);  //根据i发现了result
-            return;
-        }
-    }
-}
+//+(void) score4ARSTime:(TOFoModel*)dsFoModel demand:(ReasonDemandModel*)demand finishBlock:(void(^)(NSInteger _dsIndex,NSInteger _demandIndex))finishBlock{
+//    //1. 数据检查;
+//    if (!dsFoModel || !demand) return;
+//    AIFoNodeBase *dsFo = [SMGUtils searchNode:dsFoModel.content_p];
+//
+//    //2. 找下标 (参考注释@desc);
+//    for (NSInteger i = 0; i < dsFo.count; i++) {
+//        AIKVPointer *dsAlg_p = ARR_INDEX(dsFo.content_ps, i);
+//        AIFoNodeBase *demandMFo = [SMGUtils searchNode:demand.mModel.matchFo];
+//        NSInteger demandIndex = [TOUtils indexOfConOrAbsItem:dsAlg_p atContent:demandMFo.content_ps layerDiff:2 startIndex:demand.mModel.cutIndex2 + 1 endIndex:NSUIntegerMax];
+//
+//        //3. 根据dsIndex发现demandIndex成功 (仅需发现一个下标即可);
+//        if (demandIndex != -1) {
+//            finishBlock(i,demandIndex);  //根据i发现了result
+//            return;
+//        }
+//    }
+//}
 
 //MARK:===============================================================
 //MARK:                     < 时间不急评价 >
@@ -144,10 +146,12 @@
 /**
  *  MARK:--------------------对Demand综合评分--------------------
  *  @param demand : 仅支持PR两种类型
+ *  @version
+ *      2022.05.19: demand的评分,继承firstPFo的评分 (参考26042-TODO4);
  */
 +(CGFloat) score4Demand:(DemandModel*)demand{
     if (ISOK(demand, ReasonDemandModel.class) ) {
-        return [AIScore score4MV_v2:((ReasonDemandModel*)demand).mModel];
+        return [AIScore score4MV_v2:((ReasonDemandModel*)demand).firstPFo];
     }else if (ISOK(demand, PerceptDemandModel.class) ) {
         PerceptDemandModel *pDemand = (PerceptDemandModel*)demand;
         return [AIScore score4MV:pDemand.algsType urgentTo:pDemand.urgentTo delta:pDemand.delta ratio:1.0f];

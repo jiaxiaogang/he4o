@@ -32,63 +32,64 @@
  *      2021.06.10: 子任务判断不了havRoot,改为判断root是否已经finish,因为在tor_OPushM中finish的任务actYes是不生效的;
  *      2021.12.02: 将旧架构actYes的代码移过来 (参考24164);
  *      2021.12.27: arsTime触发后的反馈处理 (有反馈则继续解决方案,无反馈则父任务自愈);
+ *      2022.05.19: 废弃 (参考26051);
  */
 //arsTime模式,当评价需等待时,actYes;
-+(void) arsTimeActYes:(TOAlgModel*)algModel{
-    
-    //1. R模式静默成功处理 (等待其自然出现,避免弄巧成拙) (参考22153-A2);
-    [theTC updateOperCount];
-    Debug();
-    ReasonDemandModel *rDemand = (ReasonDemandModel*)algModel.baseOrGroup.baseOrGroup;
-    TOFoModel *dsFoModel = (TOFoModel*)algModel.baseOrGroup;
-    
-    //2. root设为actYes
-    DemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:algModel];
-    root.status = TOModelStatus_ActYes;
-    
-    //4. 找出下标;
-    __block NSInteger demandIndex = -1;
-    [AIScore score4ARSTime:dsFoModel demand:rDemand finishBlock:^(NSInteger _dsIndex, NSInteger _demandIndex) {
-        demandIndex = _demandIndex;
-    }];
-    
-    if (demandIndex != -1) {
-        //5. 从demand.matchFo的cutIndex到findIndex之间取deltaTime之和;
-        AIFoNodeBase *matchFo = [SMGUtils searchNode:rDemand.mModel.matchFo];
-        double deltaTime = [TOUtils getSumDeltaTime:matchFo startIndex:rDemand.mModel.cutIndex2 endIndex:demandIndex];
-        
-        //3. 触发器;
-        NSLog(@"---//触发器R-_静默成功任务Create:%@ 解决方案:%@ time:%f",FoP2FStr(dsFoModel.content_p),Pit2FStr(algModel.content_p),deltaTime);
-        NSInteger modelLayer = [TOUtils getBaseOutModels_AllDeep:algModel].count;
-        NSInteger demandLayer = [TOUtils getBaseDemands_AllDeep:algModel].count;
-        NSLog(@"FC-ACTYES (所在层:%ld / 任务层:%ld) %@",modelLayer,demandLayer,Pit2FStr(algModel.content_p));
-        //NSLog(@"%@",TOModel2Root2Str(actYesModel));
-        [AITime setTimeTrigger:deltaTime trigger:^{
-            
-            //3. 无root时,说明已被别的R-新matchFo抵消掉,抵消掉后是不做反省的 (参考22081-todo1);
-            NSArray *baseDemands = [TOUtils getBaseDemands_AllDeep:algModel];
-            BOOL finished = ARRISOK([SMGUtils filterArr:baseDemands checkValid:^BOOL(DemandModel *item) {
-                return item.status == TOModelStatus_Finish;
-            }]);
-            if (!finished) {
-                //3. Outback有返回,则R-方案当前帧阻止失败 (参考22153-A21);
-                AnalogyType type = (algModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;
-                NSLog(@"---//触发器R-_理性alg任务Trigger:%@ 解决方案:%@ (%@)",FoP2FStr(dsFoModel.content_p),Pit2FStr(algModel.content_p),ATType2Str(type));
-                
-                //5. 有反馈时,algModel自然出现成功,则设为finish并继续决策;
-                DebugE();
-                if (type == ATPlus) {
-                    algModel.status = TOModelStatus_Finish;
-                    [TCScore score];
-                }else{
-                    //6. 无反馈时,则R预测的坏事自然未发生 (OutBack未返回,静默成功) (参考22153-A22);
-                    rDemand.status = TOModelStatus_Finish;
-                    [TCScore score];//并继续决策;
-                }
-            }
-        }];
-    }
-}
+//+(void) arsTimeActYes:(TOAlgModel*)algModel{
+//    
+//    //1. R模式静默成功处理 (等待其自然出现,避免弄巧成拙) (参考22153-A2);
+//    [theTC updateOperCount];
+//    Debug();
+//    ReasonDemandModel *rDemand = (ReasonDemandModel*)algModel.baseOrGroup.baseOrGroup;
+//    TOFoModel *dsFoModel = (TOFoModel*)algModel.baseOrGroup;
+//    
+//    //2. root设为actYes
+//    DemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:algModel];
+//    root.status = TOModelStatus_ActYes;
+//    
+//    //4. 找出下标;
+//    __block NSInteger demandIndex = -1;
+//    [AIScore score4ARSTime:dsFoModel demand:rDemand finishBlock:^(NSInteger _dsIndex, NSInteger _demandIndex) {
+//        demandIndex = _demandIndex;
+//    }];
+//    
+//    if (demandIndex != -1) {
+//        //5. 从demand.matchFo的cutIndex到findIndex之间取deltaTime之和;
+//        AIFoNodeBase *matchFo = [SMGUtils searchNode:rDemand.mModel.matchFo];
+//        double deltaTime = [TOUtils getSumDeltaTime:matchFo startIndex:rDemand.mModel.cutIndex2 endIndex:demandIndex];
+//        
+//        //3. 触发器;
+//        NSLog(@"---//触发器R-_静默成功任务Create:%@ 解决方案:%@ time:%f",FoP2FStr(dsFoModel.content_p),Pit2FStr(algModel.content_p),deltaTime);
+//        NSInteger modelLayer = [TOUtils getBaseOutModels_AllDeep:algModel].count;
+//        NSInteger demandLayer = [TOUtils getBaseDemands_AllDeep:algModel].count;
+//        NSLog(@"FC-ACTYES (所在层:%ld / 任务层:%ld) %@",modelLayer,demandLayer,Pit2FStr(algModel.content_p));
+//        //NSLog(@"%@",TOModel2Root2Str(actYesModel));
+//        [AITime setTimeTrigger:deltaTime trigger:^{
+//            
+//            //3. 无root时,说明已被别的R-新matchFo抵消掉,抵消掉后是不做反省的 (参考22081-todo1);
+//            NSArray *baseDemands = [TOUtils getBaseDemands_AllDeep:algModel];
+//            BOOL finished = ARRISOK([SMGUtils filterArr:baseDemands checkValid:^BOOL(DemandModel *item) {
+//                return item.status == TOModelStatus_Finish;
+//            }]);
+//            if (!finished) {
+//                //3. Outback有返回,则R-方案当前帧阻止失败 (参考22153-A21);
+//                AnalogyType type = (algModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;
+//                NSLog(@"---//触发器R-_理性alg任务Trigger:%@ 解决方案:%@ (%@)",FoP2FStr(dsFoModel.content_p),Pit2FStr(algModel.content_p),ATType2Str(type));
+//                
+//                //5. 有反馈时,algModel自然出现成功,则设为finish并继续决策;
+//                DebugE();
+//                if (type == ATPlus) {
+//                    algModel.status = TOModelStatus_Finish;
+//                    [TCScore score];
+//                }else{
+//                    //6. 无反馈时,则R预测的坏事自然未发生 (OutBack未返回,静默成功) (参考22153-A22);
+//                    rDemand.status = TOModelStatus_Finish;
+//                    [TCScore score];//并继续决策;
+//                }
+//            }
+//        }];
+//    }
+//}
 
 
 /**
@@ -116,7 +117,7 @@
     double deltaTime = solutionFo.mvDeltaTime;
     
     //3. 触发器;
-    NSLog(@"---//触发器R-_感性mv任务:%@ 解决方案:%@ time:%f",Pit2FStr(demand.mModel.matchFo),Pit2FStr(foModel.content_p),deltaTime);
+    NSLog(@"---//触发器R-_感性mv任务:%@ 解决方案:%@ time:%f",demand.algsType,Pit2FStr(foModel.content_p),deltaTime);
     [AITime setTimeTrigger:deltaTime trigger:^{
         
         //3. 无root时,说明已被别的R-新matchFo抵消掉,抵消掉后是不做反省的 (参考22081-todo1);
