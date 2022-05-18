@@ -46,6 +46,10 @@
     return self.urgentTo * self.mModel.matchFoValue;
 }
 
+-(AIMatchFoModel*) firstPFo{
+    return ARR_INDEX(self.pFos, 0);
+}
+
 /**
  *  MARK:--------------------NSCoding--------------------
  */

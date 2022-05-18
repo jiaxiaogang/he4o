@@ -81,7 +81,8 @@
     //1. 取content_p
     AIKVPointer *content_p = nil;
     if (ISOK(model, ReasonDemandModel.class)) {
-        content_p = ((ReasonDemandModel*)model).mModel.matchFo;
+        ReasonDemandModel *rData = (ReasonDemandModel*)model;
+        content_p = rData.firstPFo.matchFo;
     }else if(ISOK(model, TOModelBase.class)){
         content_p = model.content_p;
     }

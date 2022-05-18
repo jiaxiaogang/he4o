@@ -77,12 +77,12 @@
  *      2022.03.09: 将conPorts取前3条改成15条 (参考25144);
  *      2022.05.01: 废弃从等价demands下取解决方案 (参考25236);
  *      2022.05.04: 树限宽也限深 (参考2523c-分析代码1);
+ *      2022.05.18: 改成多个pFos下的解决方案进行竞争 (参考26042-TODO3);
  *  @callers : 用于RDemand.Begin时调用;
  */
 +(void) rSolution:(ReasonDemandModel*)demand {
     //0. S数达到limit时设为WithOut;
-    AIFoNodeBase *demandMatchFo = [SMGUtils searchNode:demand.mModel.matchFo];
-    OFTitleLog(@"rSolution", @"\n任务源:%@ 已有方案数:%ld",Fo2FStr(demandMatchFo),demand.actionFoModels.count);
+    OFTitleLog(@"rSolution", @"\n任务源:%@ 已有方案数:%ld",demand.algsType,demand.actionFoModels.count);
     
     //1. 树限宽且限深;
     NSInteger deepCount = [TOUtils getBaseDemandsDeepCount:demand];
@@ -97,11 +97,22 @@
     
     //2. 不应期 (可以考虑) (源于:反思且子任务失败的 或 fo行为化最终失败的,参考24135);
     NSMutableArray *except_ps = [TOUtils convertPointersFromTOModels:demand.actionFoModels];
-    [except_ps addObject:demandMatchFo.pointer];
+    [except_ps addObjectsFromArray:[SMGUtils convertArr:demand.pFos convertBlock:^id(AIMatchFoModel *obj) {
+        return obj.matchFo;
+    }]];
     
     //3. 取demand.conPorts (前15条) (参考24127-步骤1);
-    NSArray *conPorts = [AINetUtils conPorts_All_Normal:demandMatchFo];
-    conPorts = ARR_SUB(conPorts, 0, 15);
+    NSMutableArray *conPorts = [[NSMutableArray alloc] init];
+    for (AIMatchFoModel *pFo in demand.pFos) {
+        
+        //3. 每个pFo取10条候选解决方案;
+        AIFoNodeBase *fo = [SMGUtils searchNode:pFo.matchFo];
+        NSArray *itemConPorts = [AINetUtils conPorts_All_Normal:fo];
+        itemConPorts = ARR_SUB(itemConPorts, 0, 10);
+        
+        //4. 收集候选解决方案到conPorts;
+        [conPorts addObjectsFromArray:itemConPorts];
+    }
     
     //4. 从conPorts中找出最优秀的result (稳定性竞争) (参考24127-步骤2);
     AIFoNodeBase *bestResult = nil;

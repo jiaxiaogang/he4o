@@ -45,6 +45,9 @@
  *  @version
  *      2020.08.24: 在inputMv时,当前demand进行抵消时,其状态设置为Finish;
  *      2021.09.04: 当R任务的 (R部分发生完毕 & P部分也发生完毕 & R任务又没在ActYes/OutBack状态),则销毁这一任务 (参考23224-方案-代码2);
+ *      2022.05.18: 废弃抵消功能 (反馈功能早已由TCFeedback来做,不需要这里弄);
+ *  @todo
+ *      2022.xx.xx: 废弃P模式 (参考xx);
  */
 -(void) updateCMVCache_PMV:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta{
     //1. 数据检查
@@ -80,33 +83,6 @@
             }
         }
     }
-    
-    //3. R任务未决策,就已错过的,销毁掉;
-    self.loopCache = [SMGUtils removeArr:self.loopCache checkValid:^BOOL(ReasonDemandModel *item) {
-        if (ISOK(item, ReasonDemandModel.class)) {
-            
-            //a. 当现发生的mv与R预测的mv同区同向;
-            if ([STRTOOK(algsType) isEqualToString:item.algsType] && (delta > 0 == item.delta > 0)) {
-                
-                //b. 当已发生cutIndex所有content发生完毕时,PMV反馈可销毁R任务;
-                AIFoNodeBase *itemMFo = [SMGUtils searchNode:item.mModel.matchFo];
-                if (item.mModel.cutIndex2 + 1 >= itemMFo.count) {
-                    
-                    //c. 判断rDemand是否处于actYes/outBack状态;
-                    BOOL isActYesOrOutBack = ARRISOK([SMGUtils filterArr:item.actionFoModels checkValid:^BOOL(TOFoModel *foModel) {
-                        return foModel.status == TOModelStatus_ActYes || foModel.status == TOModelStatus_OuterBack;
-                    }]);
-                    
-                    //d. 理性概念预测发生完毕,感性价值预测也发生完毕,且rDemand并不在等待反馈状态,则废弃移除出任务池;
-                    if (!isActYesOrOutBack) {
-                        NSLog(@"demandManager >> PMV移除已过期R任务:%@",Fo2FStr(itemMFo));
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }];
     
     //3. 有需求时且可加入时_加入新的
     //TODO:>>>>判断需求;(如饿,主动取当前状态,是否饿)
@@ -259,7 +235,7 @@
  *  MARK:--------------------移除某任务--------------------
  */
 -(void) removeDemand:(DemandModel*)demand{
-    if (ISOK(demand, ReasonDemandModel.class)) NSLog(@"demandManager >> 移除R任务:%@",Pit2FStr(((ReasonDemandModel*)demand).mModel.matchFo));
+    if (ISOK(demand, ReasonDemandModel.class)) NSLog(@"demandManager >> 移除R任务:%@",((ReasonDemandModel*)demand).algsType);
     if (demand) [self.loopCache removeObject:demand];
 }
 
