@@ -102,36 +102,32 @@
     }]];
     
     //3. 取demand.conPorts (前15条) (参考24127-步骤1);
-    NSMutableArray *conPorts = [[NSMutableArray alloc] init];
+    AIFoNodeBase *bestResult = nil;
     for (AIMatchFoModel *pFo in demand.pFos) {
         
         //3. 每个pFo取10条候选解决方案;
         AIFoNodeBase *fo = [SMGUtils searchNode:pFo.matchFo];
-        NSArray *itemConPorts = [AINetUtils conPorts_All_Normal:fo];
-        itemConPorts = ARR_SUB(itemConPorts, 0, 10);
+        NSArray *conPorts = [AINetUtils conPorts_All_Normal:fo];
+        conPorts = ARR_SUB(conPorts, 0, 10);
         
-        //4. 收集候选解决方案到conPorts;
-        [conPorts addObjectsFromArray:itemConPorts];
-    }
-    
-    //4. 从conPorts中找出最优秀的result (稳定性竞争) (参考24127-步骤2);
-    AIFoNodeBase *bestResult = nil;
-    for (AIPort *maskPort in conPorts) {
-        //5. 排除不应期;
-        if ([except_ps containsObject:maskPort.target_p]) continue;
-        AIFoNodeBase *maskFo = [SMGUtils searchNode:maskPort.target_p];
-        
-        //6. 时间不急评价: 不急 = 解决方案所需时间 <= 父任务能给的时间 (参考:24057-方案3,24171-7);
-        if (![AIScore FRS_Time:demand solutionFo:maskFo]) continue;
-        
-        //6. 判断SP评分;
-        CGFloat checkSPScore = [TOUtils getSPScore:maskFo startSPIndex:0 endSPIndex:maskFo.count];
-        if (Log4Solution) NSLog(@"\t稳定性==> 评分:%.2f from:%@",checkSPScore,CLEANSTR(maskFo.spDic));
-        
-        //7. 当best为空 或 check评分比best更高时 => 将check赋值到best;
-        CGFloat bestSPScore = [TOUtils getSPScore:bestResult startSPIndex:0 endSPIndex:bestResult.count];
-        if(!bestResult || checkSPScore > bestSPScore){
-            bestResult = maskFo;
+        //4. 从conPorts中找出最优秀的result (稳定性竞争) (参考24127-步骤2);
+        for (AIPort *maskPort in conPorts) {
+            //5. 排除不应期;
+            if ([except_ps containsObject:maskPort.target_p]) continue;
+            AIFoNodeBase *maskFo = [SMGUtils searchNode:maskPort.target_p];
+            
+            //6. 时间不急评价: 不急 = 解决方案所需时间 <= 父任务能给的时间 (参考:24057-方案3,24171-7);
+            if (![AIScore FRS_Time:pFo solutionFo:maskFo]) continue;
+            
+            //6. 判断SP评分;
+            CGFloat checkSPScore = [TOUtils getSPScore:maskFo startSPIndex:0 endSPIndex:maskFo.count];
+            if (Log4Solution) NSLog(@"\t稳定性==> 评分:%.2f from:%@",checkSPScore,CLEANSTR(maskFo.spDic));
+            
+            //7. 当best为空 或 check评分比best更高时 => 将check赋值到best;
+            CGFloat bestSPScore = [TOUtils getSPScore:bestResult startSPIndex:0 endSPIndex:bestResult.count];
+            if(!bestResult || checkSPScore > bestSPScore){
+                bestResult = maskFo;
+            }
         }
     }
     

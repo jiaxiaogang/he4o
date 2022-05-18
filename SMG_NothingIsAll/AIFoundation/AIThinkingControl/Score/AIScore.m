@@ -84,14 +84,14 @@
  *      true    : 不急,时间够用,这方案可继续act;
  *      false   : 紧急,这方案来不及执行,直接ActNo掉;
  */
-+(BOOL) FRS_Time:(ReasonDemandModel*)demand solutionFo:(AIFoNodeBase*)solutionFo{
++(BOOL) FRS_Time:(AIMatchFoModel*)demandPFo solutionFo:(AIFoNodeBase*)solutionFo{
     //1. 取解决方案所需时间;
     int cutIndex = -1;//foModel.actionIndex
     double needTime = [TOUtils getSumDeltaTime:solutionFo startIndex:cutIndex endIndex:1];
     
     //2. 取父任务能给的时间;
-    AIFoNodeBase *demandMFo = [SMGUtils searchNode:demand.mModel.matchFo];
-    double giveTime = [TOUtils getSumDeltaTime2Mv:demandMFo cutIndex:demand.mModel.cutIndex2];
+    AIFoNodeBase *pFo = [SMGUtils searchNode:demandPFo.matchFo];
+    double giveTime = [TOUtils getSumDeltaTime2Mv:pFo cutIndex:demandPFo.cutIndex2];
     
     //3. 判断是否时间不急;
     BOOL timeIsEnough = needTime <= giveTime;

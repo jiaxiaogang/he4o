@@ -31,10 +31,6 @@
     return _actionFoModels;
 }
 
--(CGFloat) demandUrgentTo{
-    return self.urgentTo;
-}
-
 //-(id) getCurSubModel{
 //    TOFoModel *maxModel = nil;
 //    for (TOModelBase *model in self.subModels) {

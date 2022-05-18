@@ -39,13 +39,6 @@
     return result;
 }
 
-/**
- *  MARK:--------------------获取任务迫切度 (用于排序)--------------------
- */
--(CGFloat) demandUrgentTo{
-    return self.urgentTo * self.mModel.matchFoValue;
-}
-
 -(AIMatchFoModel*) firstPFo{
     return ARR_INDEX(self.pFos, 0);
 }
@@ -56,7 +49,7 @@
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     if (self) {
-        self.mModel = [aDecoder decodeObjectForKey:@"mModel"];
+        self.pFos = [aDecoder decodeObjectForKey:@"pFos"];
         self.fromIden = [aDecoder decodeObjectForKey:@"fromIden"];
     }
     return self;
@@ -64,7 +57,7 @@
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:self.mModel forKey:@"mModel"];
+    [aCoder encodeObject:self.pFos forKey:@"pFos"];
     [aCoder encodeObject:self.fromIden forKey:@"fromIden"];
 }
 

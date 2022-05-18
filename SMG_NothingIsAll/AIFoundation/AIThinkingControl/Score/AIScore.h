@@ -29,7 +29,7 @@
 //MARK:===============================================================
 //MARK:                     < 时间不急评价 >
 //MARK:===============================================================
-+(BOOL) FRS_Time:(ReasonDemandModel*)demand solutionFo:(AIFoNodeBase*)solutionFo;
++(BOOL) FRS_Time:(AIMatchFoModel*)demandPFo solutionFo:(AIFoNodeBase*)solutionFo;
 
 /**
  *  MARK:--------------------指定ratio的评价重载--------------------
