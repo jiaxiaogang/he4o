@@ -142,6 +142,7 @@
  *      2022.03.10: 为使鸟躲避及时停下,将迫切度再改回受评分迫切度等影响 (参考25142-改进);
  *      2022.05.02: 未形成新需求时,也更新energy (参考2523a-方案1);
  *      2022.05.18: 多pFos形成单个任务 (参考26042-TODO1);
+ *      2022.05.18: 废弃抵消和防重功能,现在root各自工作,共用R和P反馈即可各自工作;
  */
 -(void) updateCMVCache_RMV:(NSString*)algsType inModel:(AIShortMatchModel*)inModel{
     //1. 数据检查;
@@ -156,28 +157,8 @@
         AIMatchFoModel *firstPFo = ARR_INDEX(pFosValue, 0);
         CGFloat score = [AIScore score4MV_v2:firstPFo];
         
-        //4. 抵消_同一matchFo将旧有移除 (仅保留最新的);
-        //2022.05.18: 废弃抵消和防重功能,现在root各自工作,共用R和P反馈即可各自工作;
-        //self.loopCache = [SMGUtils removeArr:self.loopCache checkValid:^BOOL(ReasonDemandModel *oldItem) {
-        //    if (ISOK(oldItem, ReasonDemandModel.class)) {
-        //        if ([oldItem.mModel.matchFo isEqual:mModel.matchFo] && oldItem.mModel.cutIndex2 < mModel.cutIndex2) {
-        //            NSLog(@"RMV移除R任务(更新的抵消旧的):%@",Pit2FStr(oldItem.mModel.matchFo));
-        //            return true;
-        //        }
-        //    }
-        //    return false;
-        //}];
-        
-        //4. 防重
-        BOOL containsRepeat = false;
-        //for (ReasonDemandModel *item in self.loopCache) {
-        //    if (ISOK(item, ReasonDemandModel.class) && [item.mModel.matchFo isEqual:mModel.matchFo]) {
-        //        containsRepeat = true;
-        //    }
-        //}
-        
         //5. 取迫切度评分: 判断matchingFo.mv有值才加入demandManager,同台竞争,执行顺应mv;
-        if (score < 0 && !containsRepeat) {
+        if (score < 0) {
             
             //7. 有需求时,则加到需求序列中;
             ReasonDemandModel *newItem = [ReasonDemandModel newWithAlgsType:algsType pFos:pFosValue inModel:inModel baseFo:nil];
