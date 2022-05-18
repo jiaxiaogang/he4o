@@ -28,7 +28,7 @@
  *  MARK:--------------------生成R任务--------------------
  *  @desc RMV输入更新任务管理器 (理性思维预测mv加入)
  */
--(void) updateCMVCache_RMV:(NSString*)algsType inModel:(AIShortMatchModel*)inModel;
+-(void) updateCMVCache_RMV:(AIShortMatchModel*)inModel;
 
 /**
  *  MARK:--------------------获取任务--------------------

@@ -120,7 +120,7 @@
  *      2022.05.18: 多pFos形成单个任务 (参考26042-TODO1);
  *      2022.05.18: 废弃抵消和防重功能,现在root各自工作,共用R和P反馈即可各自工作;
  */
--(void) updateCMVCache_RMV:(NSString*)algsType inModel:(AIShortMatchModel*)inModel{
+-(void) updateCMVCache_RMV:(AIShortMatchModel*)inModel{
     //1. 数据检查;
     if (!inModel || !inModel.protoFo || !Switch4RS) return;
     NSDictionary *fos4Demand = inModel.fos4Demand;
@@ -137,17 +137,17 @@
         if (score < 0) {
             
             //7. 有需求时,则加到需求序列中;
-            ReasonDemandModel *newItem = [ReasonDemandModel newWithAlgsType:algsType pFos:pFosValue inModel:inModel baseFo:nil];
+            ReasonDemandModel *newItem = [ReasonDemandModel newWithAlgsType:atKey pFos:pFosValue inModel:inModel baseFo:nil];
             [self.loopCache addObject:newItem];
             
             //8. 设活跃度_将最大的任务x2取负值,为当前活跃度 (参考25142-改进);;
             //2021.05.27: 为方便测试,所有imv都给20迫切度 (因为迫切度太低话,还没怎么思考就停了);
             //2022.03.10: 为使鸟躲避及时停下,将迫切度再改回受评分迫切度等影响;
             [theTC updateEnergyValue:-score * 2];
-            NSLog(@"RMV新需求: %@ (条数+1=%ld 评分:%@)",algsType,self.loopCache.count,Double2Str_NDZ(score));
+            NSLog(@"RMV新需求: %@ (条数+1=%ld 评分:%@)",atKey,self.loopCache.count,Double2Str_NDZ(score));
         }else{
             [theTC updateEnergyValue:-score * 2];
-            NSLog(@"当前,预测mv未形成需求:%@ 评分:%f",algsType,score);
+            NSLog(@"当前,预测mv未形成需求:%@ 评分:%f",atKey,score);
         }
     }
 }
