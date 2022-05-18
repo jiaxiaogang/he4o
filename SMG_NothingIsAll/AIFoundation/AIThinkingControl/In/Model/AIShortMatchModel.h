@@ -111,6 +111,6 @@
 -(NSArray*) fos4PForecast;
 
 //用于预测 (参考:25134-方案2-B预测);
--(NSArray*) fos4Demand;
+-(NSDictionary*) fos4Demand;
 
 @end

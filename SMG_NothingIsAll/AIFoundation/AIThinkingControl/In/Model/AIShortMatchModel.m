@@ -82,14 +82,29 @@
     return [AIShortMatchModel fullMatchs:self.matchPFos];
 }
 
-//用于需求 (参考:25134-方案2-C需求);
--(NSArray*) fos4Demand{
-    //1. 根据at去重;
-    NSArray *rmRepeat = [SMGUtils removeRepeat:self.matchPFos convertBlock:^id(AIMatchFoModel *obj) {
-        AIFoNodeBase *fo = [SMGUtils searchNode:obj.matchFo];
-        return fo.cmvNode_p.algsType;
-    }];
-    return rmRepeat;
+/**
+ *  MARK:--------------------用于需求--------------------
+ *  @version
+ *      2022.05.17: pFos防重 (参考:25134-方案2-C需求);
+ *      2022.05.18: 修改为dic分组 (参考26042-TODO1);
+ */
+-(NSDictionary*) fos4Demand{
+    //1. 返回分组字典;
+    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
+    
+    //2. 根据mv的AT标识分组;
+    for (AIMatchFoModel *pFo in self.matchPFos) {
+        AIFoNodeBase *fo = [SMGUtils searchNode:pFo.matchFo];
+        
+        //3. 取分组;
+        NSMutableArray *itemArr = [result objectForKey:fo.cmvNode_p.algsType];
+        if (!itemArr) itemArr = [[NSMutableArray alloc] init];
+        
+        //4. 收集到分组;
+        [itemArr addObject:fo];
+        [result setObject:itemArr forKey:fo.cmvNode_p.algsType];
+    }
+    return result;
 }
 
 //MARK:===============================================================
