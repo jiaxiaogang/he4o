@@ -313,7 +313,16 @@
 //步骤参考26029-加长版强化加训 (参考26031-2);
 -(void) trainer3{
     //0. 无日志模式;
-    [self.delegate rltPanel_setNoLogMode:true];
+    //[self.delegate rltPanel_setNoLogMode:true];
+    
+    //TODOTOMORROW20220519: FZ4802训练一会,就会卡住的问题;
+    //1. 强行中止训练,然后看TV,有60个左右的root,应该是进入到root循环中去了;
+    //2. 分析下怎么打破这种循环,然后再继续训练;
+    
+    
+    
+    
+    
     
     //0. 加长版训练100轮
     for (int j = 0; j < 20; j++) {

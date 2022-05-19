@@ -102,7 +102,7 @@
         if (!itemArr) itemArr = [[NSMutableArray alloc] init];
         
         //4. 收集到分组;
-        [itemArr addObject:fo];
+        [itemArr addObject:pFo];
         [result setObject:itemArr forKey:fo.cmvNode_p.algsType];
     }
     return result;
