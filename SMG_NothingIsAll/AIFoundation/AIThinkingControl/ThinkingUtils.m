@@ -42,7 +42,7 @@
     return isGood && delta < 0;
 }
 
-//是否有任意需求;
+//是否有任意需求 (坏增加 或 好减少);
 +(BOOL) havDemand:(NSString*)algsType delta:(NSInteger)delta{
     return [self havDownDemand:algsType delta:delta] || [self havUpDemand:algsType delta:delta];
 }

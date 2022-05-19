@@ -78,6 +78,7 @@
  *      2022.05.01: 废弃从等价demands下取解决方案 (参考25236);
  *      2022.05.04: 树限宽也限深 (参考2523c-分析代码1);
  *      2022.05.18: 改成多个pFos下的解决方案进行竞争 (参考26042-TODO3);
+ *      2022.05.20: 过滤掉负价值不做为解决方案 (参考26063);
  *  @callers : 用于RDemand.Begin时调用;
  */
 +(void) rSolution:(ReasonDemandModel*)demand {
@@ -116,12 +117,15 @@
             if ([except_ps containsObject:maskPort.target_p]) continue;
             AIFoNodeBase *maskFo = [SMGUtils searchNode:maskPort.target_p];
             
+            //6. 负价值不做为解决方案 (参考26063);
+            if ([ThinkingUtils havDemand:maskFo.cmvNode_p]) continue;
+            
             //6. 时间不急评价: 不急 = 解决方案所需时间 <= 父任务能给的时间 (参考:24057-方案3,24171-7);
             if (![AIScore FRS_Time:pFo solutionFo:maskFo]) continue;
             
             //6. 判断SP评分;
             CGFloat checkSPScore = [TOUtils getSPScore:maskFo startSPIndex:0 endSPIndex:maskFo.count];
-            if (Log4Solution) NSLog(@"\t稳定性==> 评分:%.2f from:%@",checkSPScore,CLEANSTR(maskFo.spDic));
+            if (Log4Solution) NSLog(@"checkResult: %@ %@\n\t稳定性评分:(%.2f) from:%@\n----------------------------------------------------------------",Fo2FStr(maskFo),Mvp2Str(maskFo.cmvNode_p),checkSPScore,CLEANSTR(maskFo.spDic));
             
             //7. 当best为空 或 check评分比best更高时 => 将check赋值到best;
             CGFloat bestSPScore = [TOUtils getSPScore:bestResult startSPIndex:0 endSPIndex:bestResult.count];

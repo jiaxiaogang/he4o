@@ -95,14 +95,17 @@
     
     //3. 判断是否时间不急;
     BOOL timeIsEnough = needTime <= giveTime;
-    if (Log4Score && timeIsEnough) NSLog(@"checkResult=> (时间不急%d = 方案T:%.2f <= 任务T:%.2f )\n\t%@->%@",timeIsEnough,needTime,giveTime,Fo2FStr(solutionFo),Mvp2Str(solutionFo.cmvNode_p));
+    if (Log4Score && timeIsEnough) NSLog(@"====> (时间不急%d = 方案T:%.2f <= 任务T:%.2f )",timeIsEnough,needTime,giveTime);
     return timeIsEnough;
 }
 
 //MARK:===============================================================
 //MARK:                     < MPS评分 >
 //MARK:===============================================================
-//MPS评分
+/**
+ *  MARK:--------------------MPS评分--------------------
+ *  @result 负价值返回负分,正价值返回正分;
+ */
 +(CGFloat) score4MV:(AIPointer*)cmvNode_p ratio:(CGFloat)ratio{
     AICMVNodeBase *cmvNode = [SMGUtils searchNode:cmvNode_p];
     if (ISOK(cmvNode, AICMVNodeBase.class)) {
