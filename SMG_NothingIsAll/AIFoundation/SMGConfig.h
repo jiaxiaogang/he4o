@@ -86,6 +86,6 @@
 //MARK:===============================================================
 //MARK:                     < 窄出 >
 //MARK:===============================================================
-#define cValueNarrowLimit 10
+#define cValueNarrowLimit 1000
 #define cAlgNarrowLimit 5
 #define cFoNarrowLimit 5

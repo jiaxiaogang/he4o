@@ -392,7 +392,7 @@
  */
 -(CGPoint) getBirdBirthPosV2{
     //1. 取随机值 (范围-80到80);
-    NSInteger areaW = 160;
+    NSInteger areaW = 260;
     NSInteger areaH = ScreenHeight - 100;
     float randomX = (arc4random() % areaW) - areaW * 0.5f;
     float randomY = (arc4random() % areaH) - areaH * 0.5f;

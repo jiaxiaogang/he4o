@@ -71,6 +71,7 @@
  *  @desc 将索引序列转为稀疏码指针数组返回;
  *  @version
  *      2022.05.20: 支持宽入窄出,仅返回前NarrowLimit条 (参考26073-TODO1);
+ *      2022.05.21: V索引不能太窄,改成1000 (参考26075);
  *  @result notnull
  */
 +(NSArray*) getIndex_ps:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut{
