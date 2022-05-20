@@ -36,7 +36,7 @@
     //2. birdView
     self.birdView = [[BirdView alloc] init];
     [self.view addSubview:self.birdView];
-    [self.birdView setCenter:[self getBirdBirthPosV3]];
+    [self.birdView setCenter:[self getBirdBirthPosV2]];
     self.birdView.delegate = self;
     
     //3. doubleTap
@@ -88,8 +88,8 @@
     [foodView hit];
     [foodView setOrigin:CGPointMake(ScreenWidth * 0.375f, ScreenHeight - 66)];
     [self.view addSubview:foodView];
-    CGFloat targetX = self.birdView.center.x + (random() % 20 - 10);
-    CGFloat targetY = self.birdView.center.y + (random() % 20 - 10);
+    CGFloat targetX = self.birdView.center.x + (arc4random() % 20 - 10);
+    CGFloat targetY = self.birdView.center.y + (arc4random() % 20 - 10);
     CGPoint targetPoint = CGPointMake(targetX, targetY);
     [UIView animateWithDuration:0.3f animations:^{
         [foodView setCenter:targetPoint];
@@ -392,8 +392,10 @@
  */
 -(CGPoint) getBirdBirthPosV2{
     //1. 取随机值 (范围-80到80);
-    long randomX = random() % (160) - 80;
-    long randomY = random() % (160) - 80;
+    NSInteger areaW = 160;
+    NSInteger areaH = ScreenHeight - 100;
+    float randomX = (arc4random() % areaW) - areaW * 0.5f;
+    float randomY = (arc4random() % areaH) - areaH * 0.5f;
     
     //2. 转成左上角锚点;
     float x = randomX + ScreenWidth * 0.5f;
@@ -420,8 +422,8 @@
     float modH = sqrtf(areaH * 0.5f);
     
     //2. 取随机值 (范围-10到10);
-    float randomW = (random() % (int)(modW * 2 + 0.5f)) - modW;
-    float randomH = (random() % (int)(modH * 2 + 0.5f)) - modH;
+    float randomW = (arc4random() % (int)(modW * 2 + 0.5f)) - modW;
+    float randomH = (arc4random() % (int)(modH * 2 + 0.5f)) - modH;
     
     //3. 求二次方,得出相对XY坐标 (范围-100到100);
     float relativeX = randomW * randomW * (randomW < 0 ? -1 : 1);

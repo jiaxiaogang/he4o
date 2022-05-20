@@ -108,6 +108,7 @@ static int _tmpCount;
  *      2022.05.20 - 1. 窄出,仅返回前NarrowLimit条 (参考26073-TODO2);
  *      2022.05.20 - 2. 改匹配度公式: matchCount改成protoCount (参考26073-TODO3);
  *      2022.05.20 - 3. 所有结果全放到matchAlgs中 (参考26073-TODO4);
+ *      2022.05.20 - 4. 废弃仅识别有mv指向的 (参考26073-TODO5);
  */
 +(void) partMatching_Alg:(AIAlgNodeBase*)protoAlg isMem:(BOOL)isMem except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
     //1. 数据准备;
@@ -139,9 +140,9 @@ static int _tmpCount;
             refPorts = ARR_SUB(refPorts, 0, cPartMatchingCheckRefPortsLimit_Alg);
             
             //6. 第3_仅保留有mv指向的部分 (参考26022-3);
-            refPorts = [SMGUtils filterArr:refPorts checkValid:^BOOL(AIPort *item) {
-                return item.targetHavMv;
-            }];
+            //refPorts = [SMGUtils filterArr:refPorts checkValid:^BOOL(AIPort *item) {
+            //    return item.targetHavMv;
+            //}];
             if (Log4MAlg) NSLog(@"当前near_p:%@ --ref数量:%lu",[NVHeUtil getLightStr:near_p],(unsigned long)refPorts.count);
             
             //7. 每个refPort做两件事:
@@ -268,6 +269,7 @@ static int _tmpCount;
  *      2022.04.30: 识别时assIndexes取proto+matchs+parts (参考25234-1);
  *      2022.05.12: 仅识别有mv指向的结果 (参考26022-3);
  *      2022.05.18: 把pFo排序因子由评分绝对值,改成取负,因为正价值不构成任务,所以把它排到最后去;
+ *      2022.05.20: 1. 废弃仅识别有mv指向的 (参考26073-TODO7);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
 +(void) partMatching_FoV1Dot5:(AIFoNodeBase*)maskFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup{
@@ -302,9 +304,9 @@ static int _tmpCount;
         NSArray *refFoPorts = [AINetUtils refPorts_All4Alg_Normal:indexAlg];//b. 仅Normal
         
         //6. 仅保留有mv指向的部分 (参考26022-3);
-        refFoPorts = [SMGUtils filterArr:refFoPorts checkValid:^BOOL(AIPort *item) {
-            return item.targetHavMv;
-        }];
+        //refFoPorts = [SMGUtils filterArr:refFoPorts checkValid:^BOOL(AIPort *item) {
+        //    return item.targetHavMv;
+        //}];
         
         NSArray *assFo_ps = Ports2Pits(refFoPorts);
         assFo_ps = [SMGUtils removeSub_ps:except_ps parent_ps:assFo_ps];
