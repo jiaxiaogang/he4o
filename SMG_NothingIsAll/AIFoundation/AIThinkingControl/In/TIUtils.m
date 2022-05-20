@@ -270,6 +270,9 @@ static int _tmpCount;
  *      2022.05.12: 仅识别有mv指向的结果 (参考26022-3);
  *      2022.05.18: 把pFo排序因子由评分绝对值,改成取负,因为正价值不构成任务,所以把它排到最后去;
  *      2022.05.20: 1. 废弃仅识别有mv指向的 (参考26073-TODO7);
+ *      2022.05.20: 2. RFos排序,不受被引用强度影响 (参考26073-TODO9);
+ *      2022.05.20: 3. prFos排序,以SP稳定性为准 (参考26073-TODO8);
+ *      2022.05.20: 4. 提升识别准确度: 窄入,调整结果20条为NarrowLimit=5条 (参考26073-TODO6);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
 +(void) partMatching_FoV1Dot5:(AIFoNodeBase*)maskFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup{
@@ -299,8 +302,6 @@ static int _tmpCount;
         AIAlgNodeBase *indexAlg = [SMGUtils searchNode:assIndex_p];
         
         //4. indexAlg.refPorts; (取识别到过的抽象节点(如苹果));
-        //NSArray *refFoPorts = [AINetUtils refPorts_All4Alg:indexAlg];//a. Normal+HNGL_1
-        //refFoPorts = [SMGUtils filterPorts:refFoPorts havTypes:nil noTypes:@[@(ATPlus),@(ATSub)]];//a. Normal+HNGL_2
         NSArray *refFoPorts = [AINetUtils refPorts_All4Alg_Normal:indexAlg];//b. 仅Normal
         
         //6. 仅保留有mv指向的部分 (参考26022-3);
@@ -353,28 +354,31 @@ static int _tmpCount;
     
     //10. 按照 (强度x匹配度) 排序,强度最重要,包含了价值初始和使用频率,其次匹配度也重要 (参考23222-BUG2);
     NSArray *sortPFos = [SMGUtils sortBig2Small:inModel.matchPFos compareBlock:^double(AIMatchFoModel *obj) {
-        return -[AIScore score4MV_v2:obj];//负(价值评分 * 匹配度) 如: [-8,-3,2,9]
+        AIFoNodeBase *matchFo = [SMGUtils searchNode:obj.matchFo];
+        return [TOUtils getSPScore:matchFo startSPIndex:obj.cutIndex2 + 1 endSPIndex:matchFo.count];
     }];
     NSArray *sortRFos = [SMGUtils sortBig2Small:inModel.matchRFos compareBlock:^double(AIMatchFoModel *obj) {
         AIFoNodeBase *matchFo = [SMGUtils searchNode:obj.matchFo];
-        CGFloat spScore = [TOUtils getSPScore:matchFo startSPIndex:obj.cutIndex2 + 1 endSPIndex:matchFo.count - 1];
-        return obj.matchFoStrong * spScore;//强度 * 匹配度
+        return [TOUtils getSPScore:matchFo startSPIndex:obj.cutIndex2 + 1 endSPIndex:matchFo.count - 1];
     }];
     
-    //11. 仅保留前20条;
-    inModel.matchPFos = [[NSMutableArray alloc] initWithArray:ARR_SUB(sortPFos, 0, cPartMatchingCheckRefPortsLimit_Fo)];
-    inModel.matchRFos = [[NSMutableArray alloc] initWithArray:ARR_SUB(sortRFos, 0, cPartMatchingCheckRefPortsLimit_Fo)];
+    //11. 仅保留前NarrowLimit条;
+    inModel.matchPFos = [[NSMutableArray alloc] initWithArray:ARR_SUB(sortPFos, 0, cFoNarrowLimit)];
+    inModel.matchRFos = [[NSMutableArray alloc] initWithArray:ARR_SUB(sortRFos, 0, cFoNarrowLimit)];
     
     //11. 调试日志;
     NSLog(@"\n=====> 时序识别Finish (PFos数:%lu)",(unsigned long)inModel.matchPFos.count);
     for (AIMatchFoModel *item in inModel.matchPFos) {
         AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
-        NSLog(@"强度:(%ld)\t> %@->%@ (匹配度:%@)",item.matchFoStrong,Fo2FStr(matchFo), Mvp2Str(matchFo.cmvNode_p),Double2Str_NDZ(item.matchFoValue));
+        CGFloat spScore = [TOUtils getSPScore:matchFo startSPIndex:item.cutIndex2 + 1 endSPIndex:matchFo.count];
+        NSLog(@"强度:(%ld)\t> %@->%@ (稳定分:%.2f)",item.matchFoStrong,Fo2FStr(matchFo), Mvp2Str(matchFo.cmvNode_p),spScore);
     }
         
     NSLog(@"\n=====> 时序识别Finish (RFos数:%lu)",(unsigned long)inModel.matchRFos.count);
     for (AIMatchFoModel *item in inModel.matchRFos){
-        NSLog(@"强度:(%ld)\t> %@ (匹配度:%@)",item.matchFoStrong,Pit2FStr(item.matchFo),Double2Str_NDZ(item.matchFoValue));
+        AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
+        CGFloat spScore = [TOUtils getSPScore:matchFo startSPIndex:item.cutIndex2 + 1 endSPIndex:matchFo.count - 1];
+        NSLog(@"强度:(%ld)\t> %@ (稳定性:%.2f)",item.matchFoStrong,Pit2FStr(item.matchFo),spScore);
     }
 }
 

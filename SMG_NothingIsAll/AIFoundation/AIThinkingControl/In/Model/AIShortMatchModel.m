@@ -90,6 +90,11 @@
  *  @result notnull
  */
 -(NSDictionary*) fos4Demand{
+    //TODOTOMORROW20220520: 排序方式,可更新为mv综评分;
+    //return -[AIScore score4MV_v2:obj];//负(价值评分 * 匹配度) 如: [-8,-3,2,9]
+    
+    
+    
     //1. 返回分组字典;
     NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
     
