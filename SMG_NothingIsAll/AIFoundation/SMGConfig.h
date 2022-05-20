@@ -84,3 +84,9 @@
 
 #define cPartMatchingThreshold 0.3  //局部匹配时_匹配阀值 (相似度) 20191224ALG改为全含方式 FO懒先不改
 #define cTIRFoAbsIndexLimit 5       //时序识别时,取抽象索引的条数
+
+//MARK:===============================================================
+//MARK:                     < 窄出 >
+//MARK:===============================================================
+#define cValueNarrowLimit 10
+#define cAlgNarrowLimit 5

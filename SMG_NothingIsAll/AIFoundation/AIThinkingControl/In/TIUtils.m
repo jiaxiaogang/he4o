@@ -105,22 +105,25 @@ static int _tmpCount;
  *      2022.05.11 - 全含不要求必须是抽象节点,因为相近匹配时,可能最具象也会全含 (且现在全是absNode类型);
  *      2022.05.12 - 仅识别有mv指向的结果 (参考26022-3);
  *      2022.05.13 - 弃用partAlgs (参考26024);
+ *      2022.05.20 - 1. 窄出,仅返回前NarrowLimit条 (参考26073-TODO2);
+ *      2022.05.20 - 2. 改匹配度公式: matchCount改成protoCount (参考26073-TODO3);
+ *      2022.05.20 - 3. 所有结果全放到matchAlgs中 (参考26073-TODO4);
  */
 +(void) partMatching_Alg:(AIAlgNodeBase*)protoAlg isMem:(BOOL)isMem except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
     //1. 数据准备;
     if (!ISOK(protoAlg, AIAlgNodeBase.class)) return;
-    except_ps = ARRTOOK(except_ps);                                     //不应期
-    NSMutableArray *matchAlgs = [[NSMutableArray alloc] init];          //用来收集全含匹配结果;
-    NSMutableArray *partAlgs = [[NSMutableArray alloc] init];           //用来收集局部匹配结果;
-    NSMutableDictionary *countDic = [[NSMutableDictionary alloc] init]; //匹配度计数字典 <K:refAlg_p,V:matchCount>;
-    NSMutableDictionary *sumNearVDic = [NSMutableDictionary new];       //相近度字典 <K:refAlg_p,V:sum(nearV)> (参考25082-公式2分子部分);
+    except_ps = ARRTOOK(except_ps);                                 //不应期
+    NSMutableArray *matchAlgs = [[NSMutableArray alloc] init];      //用来收集全含匹配结果;
+    NSMutableArray *partAlgs = [[NSMutableArray alloc] init];       //用来收集局部匹配结果;
+    NSMutableDictionary *countDic = [NSMutableDictionary new];      //匹配度计数字典 <K:refAlg_p,V:matchCount>;
+    NSMutableDictionary *sumNearVDic = [NSMutableDictionary new];   //相近度字典 <K:refAlg_p,V:sum(nearV)> (参考25082-公式2分子部分);
     
     //2. 广入: 对每个元素,分别取索引序列 (参考25083-1);
     for (AIKVPointer *item_p in protoAlg.content_ps) {
         
         //3. 数据准备;
-        double maskData = [NUMTOOK([AINetIndex getData:item_p]) doubleValue];                               //取当前稀疏码值;
-        double span = [AINetIndex getIndexSpan:item_p.algsType ds:item_p.dataSource isOut:item_p.isOut];    //获取当前码所在索引序列的值域 (参考25082-公式1);
+        double maskData = [NUMTOOK([AINetIndex getData:item_p]) doubleValue];//取当前稀疏码值;
+        double span = [AINetIndex getIndexSpan:item_p.algsType ds:item_p.dataSource isOut:item_p.isOut];//获取当前码所在索引序列的值域 (参考25082-公式1);
         NSArray *near_ps = [AINetIndex getIndex_ps:item_p.algsType ds:item_p.dataSource isOut:item_p.isOut];//取当前元素的所在的索引序列;
         
         //4. 每个near_p做两件事:
@@ -162,37 +165,32 @@ static int _tmpCount;
     
     //11. 按nearA排序 (参考25083-2 & 25084-1);
     NSArray *sortKeys = ARRTOOK([countDic.allKeys sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-        int matchingCount1 = [NUMTOOK([countDic objectForKey:obj1]) intValue];
-        int matchingCount2 = [NUMTOOK([countDic objectForKey:obj2]) intValue];
         double sumNearV1 = [NUMTOOK([sumNearVDic objectForKey:obj1]) doubleValue];
         double sumNearV2 = [NUMTOOK([sumNearVDic objectForKey:obj2]) doubleValue];
         
         //12. 求出nearA (参考25082-公式2);
-        double nearA1 = sumNearV1 / matchingCount1;
-        double nearA2 = sumNearV2 / matchingCount2;
+        double nearA1 = sumNearV1 / protoAlg.count;//[NUMTOOK([countDic objectForKey:obj1]) intValue]
+        double nearA2 = sumNearV2 / protoAlg.count;//[NUMTOOK([countDic objectForKey:obj2]) intValue]
         return [SMGUtils compareDoubleA:nearA1 doubleB:nearA2];
     }]);
     
     //13. 仅保留最相近的20条 (参考25083-3);
-    sortKeys = ARR_SUB(sortKeys, 0, 20);
+    sortKeys = ARR_SUB(sortKeys, 0, cAlgNarrowLimit);
     
     //14. 全含或局部匹配判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);
     for (NSData *key in sortKeys) {
         AIKVPointer *key_p = DATA2OBJ(key);
         AIAlgNodeBase *result = [SMGUtils searchNode:key_p];
-        int matchingCount = [NUMTOOK([countDic objectForKey:key]) intValue];
         
-        //15. 判断全含; (matchingCount == assAlg.content.count)
-        if (result.content_ps.count == matchingCount) {
-            [matchAlgs addObject:result];
-        }else{
-            //[partAlgs addObject:result];
-        }
+        //15. 判断全含;
+        //if (result.content_ps.count == [NUMTOOK([countDic objectForKey:key]) intValue]) {
+        [matchAlgs addObject:result];
+        //}else{ //[partAlgs addObject:result]; }
     }
     
     //16. 未将全含返回,则返回最相似 (2020.10.22: 全含返回,也要返回seemAlg) (2022.01.15: 支持相近匹配后,全是全含没局部了);
     NSLog(@"\n识别结果 >> 总数:%ld = 全含匹配数:%ld + 局部匹配数:%ld",sortKeys.count,matchAlgs.count,partAlgs.count);
-    for (AIAlgNodeBase *item in matchAlgs) NSLog(@"-->>> 全含item: %@   \t相近度 => %.2f",Alg2FStr(item),[NUMTOOK([sumNearVDic objectForKey:OBJ2DATA(item.pointer)]) doubleValue] / [NUMTOOK([countDic objectForKey:OBJ2DATA(item.pointer)]) intValue]);
+    for (AIAlgNodeBase *item in matchAlgs) NSLog(@"-->>> 全含item: %@   \t相近度 => %.2f",Alg2FStr(item),[NUMTOOK([sumNearVDic objectForKey:OBJ2DATA(item.pointer)]) doubleValue] / protoAlg.count);
     for (AIAlgNodeBase *item in partAlgs) NSLog(@"-->>> 局部item: %@",Alg2FStr(item));
     inModel.matchAlgs = matchAlgs;
     inModel.partAlgs = partAlgs;

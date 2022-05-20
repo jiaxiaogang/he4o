@@ -69,6 +69,8 @@
 /**
  *  MARK:--------------------获取索引序列--------------------
  *  @desc 将索引序列转为稀疏码指针数组返回;
+ *  @version
+ *      2022.05.20: 支持宽入窄出,仅返回前NarrowLimit条 (参考26073-TODO1);
  *  @result notnull
  */
 +(NSArray*) getIndex_ps:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut{
@@ -76,9 +78,12 @@
     AINetIndexModel *indexModel = [AINetIndexUtils searchIndexModel:at ds:ds isOut:isOut];
     
     //2. 转为稀疏码指针数组返回;
-    return [SMGUtils convertArr:indexModel.pointerIds convertBlock:^id(NSNumber *obj) {
+    NSArray *nears = [SMGUtils convertArr:indexModel.pointerIds convertBlock:^id(NSNumber *obj) {
         return [SMGUtils createPointerForValue:[NUMTOOK(obj) longValue] algsType:at dataSource:ds isOut:isOut];
     }];
+    
+    //3. 窄出,仅返回前NarrowLimit条;
+    return ARR_SUB(nears, 0, cValueNarrowLimit);
 }
 
 /**
