@@ -16,6 +16,7 @@
 @property (strong, nonatomic) HeLogView *heLogView;
 @property (strong, nonatomic) TOMVision2 *tv;
 @property (assign, nonatomic) BOOL noNSLog;
+@property (assign, nonatomic) NSInteger birthPosMode;//0随机,1随机偏屏中,2屏中;
 
 -(UIViewController*) getTopDisplayViewController;
 -(void) setTipLog:(NSString*)tipLog;

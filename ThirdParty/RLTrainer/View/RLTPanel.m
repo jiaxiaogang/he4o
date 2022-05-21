@@ -165,6 +165,10 @@
         return @"页 - 回主页";
     }else if ([kClearTCSEL isEqualToString:queue]) {
         return @"页 - 重启";
+    }else if ([kBirthPosRdmSEL isEqualToString:queue]) {
+        return @"参 - 出生地随机";
+    }else if ([kBirthPosRdmCentSEL isEqualToString:queue]) {
+        return @"参 - 出生地随机偏路上";
     }
     return @"";
 }
@@ -291,7 +295,7 @@
 }
 
 - (IBAction)loadBtnOnClick:(id)sender {
-    [self trainer4];
+    [self trainer3];
 }
 
 - (IBAction)closeBtnOnClick:(id)sender {
@@ -315,8 +319,11 @@
     //0. 无日志模式;
     //[self.delegate rltPanel_setNoLogMode:true];
     
+    //0. 出生在随机偏中位置 (以方便训练被撞和躲开经验);
+    [theRT queue1:kBirthPosRdmCentSEL];
+    
     //0. 加长版训练100轮
-    for (int j = 0; j < 20; j++) {
+    for (int j = 0; j < 100; j++) {
         
         //1. 进入训练页
         NSMutableArray *names = [[NSMutableArray alloc] init];
@@ -324,8 +331,8 @@
         
         //2. 随机飞或扔木棒,五步;
         for (int i = 0; i < 5; i++) {
-            NSArray *randomNames = @[kFlySEL,kWoodSEL];
-            int randomIndex = arc4random() % 2;
+            NSArray *randomNames = @[kFlySEL,kFlySEL,kWoodSEL];
+            int randomIndex = arc4random() % 3;
             NSString *randomName = ARR_INDEX(randomNames, randomIndex);
             [names addObject:randomName];
         }

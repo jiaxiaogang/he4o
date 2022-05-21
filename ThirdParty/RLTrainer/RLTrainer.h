@@ -8,12 +8,16 @@
 
 #import <Foundation/Foundation.h>
 
-#define kGrowPageSEL @"GrowPage"
-#define kMainPageSEL @"MainPage"
-#define kFlySEL @"Fly"
-#define kWoodSEL @"Wood"
-#define kEatSEL @"Eat"
-#define kClearTCSEL @"ClearTC"
+#define kGrowPageSEL @"GrowPage"                //成长页
+#define kMainPageSEL @"MainPage"                //回主页
+#define kFlySEL @"Fly"                          //飞
+#define kWoodSEL @"Wood"                        //扔木棒
+#define kEatSEL @"Eat"                          //吃
+#define kClearTCSEL @"ClearTC"                  //模拟重启
+
+#define kBirthPosRdmSEL @"BirthPosRdm"          //出生在随机
+#define kBirthPosRdmCentSEL @"BirthPosRdmCent"  //出生在随机偏中间
+#define kBirthPosCentSEL @"BirthPosCent"        //出生在中间
 
 /**
  *  MARK:--------------------强化训练器--------------------

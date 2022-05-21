@@ -93,6 +93,11 @@
     [self.rtBtn addTarget:self action:@selector(rtBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.window addSubview:self.rtBtn];
     
+    //3. 强化训练配置->鸟出生地点;
+    [theRT regist:kBirthPosRdmCentSEL target:self selector:@selector(setBirthPosMode_RdmCent)];
+    [theRT regist:kBirthPosRdmSEL target:self selector:@selector(setBirthPosMode_Rdm)];
+    [theRT regist:kBirthPosCentSEL target:self selector:@selector(setBirthPosMode_Cent)];
+    
     //4. 神经网络可视化
     self.nvView = [[NVView alloc] initWithDelegate:[NVDelegate_He new]];
     [self.nvView setAlpha:0.9f];
@@ -173,6 +178,22 @@
         self.refreshDot.alpha = fabs(self.refreshDot.alpha - 1);
         [self startRefreshDotAnimation];
     });
+}
+
+//MARK:===============================================================
+//MARK:                     < 小鸟出生地配置 >
+//MARK:===============================================================
+- (void)setBirthPosMode_RdmCent{
+    self.birthPosMode = 1;
+    [theRT invoked:kBirthPosRdmCentSEL];//标记执行完成;
+}
+- (void)setBirthPosMode_Rdm{
+    self.birthPosMode = 0;
+    [theRT invoked:kBirthPosRdmSEL];    //标记执行完成;
+}
+- (void)setBirthPosMode_Cent{
+    self.birthPosMode = 2;
+    [theRT invoked:kBirthPosCentSEL];   //标记执行完成;
 }
 
 @end

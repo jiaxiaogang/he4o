@@ -36,7 +36,7 @@
     //2. birdView
     self.birdView = [[BirdView alloc] init];
     [self.view addSubview:self.birdView];
-    [self.birdView setCenter:[self getBirdBirthPosV2]];
+    [self.birdView setCenter:[self getBirdBirthPos]];
     self.birdView.delegate = self;
     
     //3. doubleTap
@@ -383,14 +383,29 @@
     return self.birdView.showMaxY > ScreenHeight;
 }
 
+//MARK:===============================================================
+//MARK:                     < 小鸟出生地点 >
+//MARK:===============================================================
+
+//获取坐标;
+-(CGPoint) getBirdBirthPos{
+    if (theApp.birthPosMode == 1) {
+        return [self getBirdBirthPos_RandomCenter];
+    }else if(theApp.birthPosMode == 1){
+        return [self getBirdBirthPos_Center];
+    }else{
+        return [self getBirdBirthPos_Random];
+    }
+}
+
 /**
- *  MARK:--------------------随机计算小鸟出生地点V2--------------------
+ *  MARK:--------------------随机--------------------
  *  @desc 取值范围为离中心-80到80 (X和Y都是这范围);
  *  @desc 优缺点:
  *          1. 优点是: 限定的范围固定,不会离谱;
  *          2. 缺点是: 限定范围内每个位置的概率都一样;
  */
--(CGPoint) getBirdBirthPosV2{
+-(CGPoint) getBirdBirthPos_Random{
     //1. 取随机值 (范围-80到80);
     NSInteger areaW = 260;
     NSInteger areaH = ScreenHeight - 100;
@@ -404,7 +419,7 @@
 }
 
 /**
- *  MARK:--------------------随机计算小鸟出生地点V3--------------------
+ *  MARK:--------------------随机偏中--------------------
  *  @desc 先根号,再平方,使使其离屏幕中心更近的概率更大,步骤举例如下:
  *          1. 限制出生范围 (比如宽200范围内);
  *          2. 我们要先取根号随机值 (取值范围为-10到10);
@@ -414,7 +429,7 @@
  *          1. 限定的范围固定,不会离谱;
  *          2. 限定范围内离屏中心概率更大;
  */
--(CGPoint) getBirdBirthPosV3{
+-(CGPoint) getBirdBirthPos_RandomCenter{
     //1. 取根值10;
     CGFloat areaW = 200;
     CGFloat areaH = 300;
@@ -433,6 +448,13 @@
     float x = relativeX + ScreenWidth * 0.5f;
     float y = relativeY + ScreenHeight * 0.5f;
     return CGPointMake(x, y);
+}
+
+/**
+ *  MARK:--------------------中心--------------------
+ */
+-(CGPoint) getBirdBirthPos_Center{
+    return CGPointMake(ScreenWidth * 0.5f, ScreenHeight * 0.5f);
 }
 
 @end
