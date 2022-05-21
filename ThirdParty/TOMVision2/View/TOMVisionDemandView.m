@@ -28,7 +28,8 @@
     NSMutableString *mStr = [[NSMutableString alloc] init];
     if (ISOK(data, ReasonDemandModel.class)) {
         ReasonDemandModel *rData = (ReasonDemandModel*)data;
-        [mStr appendFormat:@"R%ld",rData.firstPFo.matchFo.pointerId];
+        AIMatchFoModel *firstPFo = ARR_INDEX(rData.pFos, 0);
+        [mStr appendFormat:@"R%ld",firstPFo.matchFo.pointerId];
     }else if (ISOK(data, PerceptDemandModel.class)) {
         [mStr appendString:@"P"];
     }else if (ISOK(data, HDemandModel.class)) {
@@ -58,7 +59,8 @@
     //5. 内容;
     if (ISOK(data, ReasonDemandModel.class)) {
         ReasonDemandModel *rData = (ReasonDemandModel*)data;
-        [mStr appendFormat:@"\n%@",[TVUtil getLightStr:rData.firstPFo.matchFo]];
+        AIMatchFoModel *firstPFo = ARR_INDEX(rData.pFos, 0);
+        [mStr appendFormat:@"\n%@",[TVUtil getLightStr:firstPFo.matchFo]];
     }else if (ISOK(data, HDemandModel.class)) {
         HDemandModel *hData = (HDemandModel*)data;
         [mStr appendFormat:@"\n%@",[TVUtil getLightStr:hData.baseOrGroup.content_p]];
@@ -71,7 +73,8 @@
 -(NSString*) getNodeDesc{
     if (ISOK(self.data, ReasonDemandModel.class)) {
         ReasonDemandModel *rData = (ReasonDemandModel*)self.data;
-        return Pit2FStr(rData.firstPFo.matchFo);
+        AIMatchFoModel *firstPFo = ARR_INDEX(rData.pFos, 0);
+        return Pit2FStr(firstPFo.matchFo);
     }else if (ISOK(self.data, HDemandModel.class)) {
         HDemandModel *hData = (HDemandModel*)self.data;
         return Pit2FStr(hData.baseOrGroup.content_p);

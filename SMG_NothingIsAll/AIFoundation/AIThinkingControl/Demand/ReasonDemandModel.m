@@ -39,10 +39,6 @@
     return result;
 }
 
--(AIMatchFoModel*) firstPFo{
-    return ARR_INDEX(self.pFos, 0);
-}
-
 /**
  *  MARK:--------------------NSCoding--------------------
  */

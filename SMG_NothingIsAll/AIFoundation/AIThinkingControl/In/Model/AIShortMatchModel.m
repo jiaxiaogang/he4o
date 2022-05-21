@@ -87,19 +87,20 @@
  *  @version
  *      2022.05.17: pFos防重 (参考:25134-方案2-C需求);
  *      2022.05.18: 修改为dic分组 (参考26042-TODO1);
+ *      2022.05.21: 排序方式以价值综评分为准 (参考26073-TODO11);
  *  @result notnull
  */
 -(NSDictionary*) fos4Demand{
-    //TODOTOMORROW20220520: 排序方式,可更新为mv综评分;
-    //return -[AIScore score4MV_v2:obj];//负(价值评分 * 匹配度) 如: [-8,-3,2,9]
-    
-    
-    
     //1. 返回分组字典;
     NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
     
+    //2. 排序方式;
+    NSArray *sortPFos = [SMGUtils sortBig2Small:self.matchPFos compareBlock:^double(AIMatchFoModel *obj) {
+        return -[AIScore score4MV_v2:obj];//负(价值评分 * 匹配度) 如: [-8,-3,2,9]
+    }];
+    
     //2. 根据mv的AT标识分组;
-    for (AIMatchFoModel *pFo in self.matchPFos) {
+    for (AIMatchFoModel *pFo in sortPFos) {
         AIFoNodeBase *fo = [SMGUtils searchNode:pFo.matchFo];
         
         //3. 取分组;

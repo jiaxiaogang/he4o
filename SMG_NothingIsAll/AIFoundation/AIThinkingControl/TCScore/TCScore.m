@@ -110,7 +110,7 @@
             modelScore += [NUMTOOK([scoreDic objectForKey:TOModel2Key(bestSS)]) doubleValue];
         }else{
             //12. R无解决方案时,直接将sr评分计入modelScore;
-            double score = [AIScore score4MV_v2:sr.firstPFo];
+            double score = [AIScore score4Demand:sr];
             modelScore += score;
         }
     }

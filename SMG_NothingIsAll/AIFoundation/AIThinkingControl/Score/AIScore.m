@@ -151,10 +151,15 @@
  *  @param demand : 仅支持PR两种类型
  *  @version
  *      2022.05.19: demand的评分,继承firstPFo的评分 (参考26042-TODO4);
+ *      2022.05.21: demand的评分,改为综合sumPFoScore评分 (参考26076);
  */
 +(CGFloat) score4Demand:(DemandModel*)demand{
     if (ISOK(demand, ReasonDemandModel.class) ) {
-        return [AIScore score4MV_v2:((ReasonDemandModel*)demand).firstPFo];
+        CGFloat sumScore = 0;
+        for (AIMatchFoModel *pFo in ((ReasonDemandModel*)demand).pFos) {
+            sumScore += [AIScore score4MV_v2:pFo];
+        }
+        return sumScore;
     }else if (ISOK(demand, PerceptDemandModel.class) ) {
         PerceptDemandModel *pDemand = (PerceptDemandModel*)demand;
         return [AIScore score4MV:pDemand.algsType urgentTo:pDemand.urgentTo delta:pDemand.delta ratio:1.0f];
