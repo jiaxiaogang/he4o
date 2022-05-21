@@ -80,6 +80,7 @@
  *      2022.05.18: 改成多个pFos下的解决方案进行竞争 (参考26042-TODO3);
  *      2022.05.20: 过滤掉负价值不做为解决方案 (参考26063);
  *      2022.05.21: 窄出排序方式,以效用分为准 (参考26077-方案);
+ *      2022.05.21: 窄出排序方式,退回到以SP稳定性排序 (参考26084);
  *  @callers : 用于RDemand.Begin时调用;
  */
 +(void) rSolution:(ReasonDemandModel*)demand {
@@ -105,11 +106,8 @@
     
     //3. 取demand.conPorts (前15条) (参考24127-步骤1);
     AIFoNodeBase *bestResult = nil;
-    CGFloat bestEffectScore = 0;
+    CGFloat bestSPScore = 0;
     for (AIMatchFoModel *pFo in demand.pFos) {
-        
-        //3. 对pFo进行价值评分;
-        CGFloat pFoScore = [AIScore score4MV_v2:pFo];
         
         //3. 每个pFo取10条候选解决方案;
         AIFoNodeBase *fo = [SMGUtils searchNode:pFo.matchFo];
@@ -130,28 +128,26 @@
             
             //6. 判断SP评分;
             CGFloat checkSPScore = [TOUtils getSPScore:maskFo startSPIndex:0 endSPIndex:maskFo.count];
-            CGFloat checkEffectScore = checkSPScore * -pFoScore;
-            if (Log4Solution) NSLog(@"checkResult: %@ %@\n\t(稳定性:%.2f 效用:%.2f) from:%@\n----------------------------------------------------------------",Fo2FStr(maskFo),Mvp2Str(maskFo.cmvNode_p),checkSPScore,checkEffectScore,CLEANSTR(maskFo.spDic));
+            if (Log4Solution) NSLog(@"checkResult: %@ %@\n\t(稳定性:%.2f) from:%@\n----------------------------------------------------------------",Fo2FStr(maskFo),Mvp2Str(maskFo.cmvNode_p),checkSPScore,CLEANSTR(maskFo.spDic));
             
             //7. 当best为空 或 check评分比best更高时 => 将check赋值到best;
-            if(!bestResult || checkEffectScore > bestEffectScore){
+            if(!bestResult || checkSPScore > bestSPScore){
                 bestResult = maskFo;
-                bestEffectScore = checkEffectScore;
+                bestSPScore = checkSPScore;
             }
         }
     }
     
     //6. 转流程控制_有解决方案则转begin;
     DebugE();
-    CGFloat bestSPScore = [TOUtils getSPScore:bestResult startSPIndex:0 endSPIndex:bestResult.count];
-    if (bestResult && bestEffectScore > 0) {
+    if (bestResult && bestSPScore > 0) {
         //7. 消耗活跃度;
         if (![theTC energyValid]) return;
         [theTC updateEnergyDelta:-1];
         
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
         TOFoModel *foModel = [TOFoModel newWithFo_p:bestResult.pointer base:demand];
-        NSLog(@">>>>>> rSolution 新增第%ld例解决方案: %@->%@ (稳定性:%.2f 效用:%.2f",demand.actionFoModels.count, Fo2FStr(bestResult),Mvp2Str(bestResult.cmvNode_p),bestSPScore,bestEffectScore);
+        NSLog(@">>>>>> rSolution 新增第%ld例解决方案: %@->%@ (稳定性:%.2f)",demand.actionFoModels.count, Fo2FStr(bestResult),Mvp2Str(bestResult.cmvNode_p),bestSPScore);
         [theTV updateFrame];
         [TCAction action:foModel];
     }else{
