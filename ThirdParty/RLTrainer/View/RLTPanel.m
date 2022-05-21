@@ -294,12 +294,12 @@
     [self.delegate rltPanel_Stop];
 }
 
-- (IBAction)loadBtnOnClick:(id)sender {
-    [self trainer3];
-}
-
 - (IBAction)closeBtnOnClick:(id)sender {
     [self close];
+}
+
+- (IBAction)loadBtnOnClick:(id)sender {
+    [self trainer5];
 }
 
 //MARK:===============================================================
@@ -331,8 +331,8 @@
         
         //2. 随机飞或扔木棒,五步;
         for (int i = 0; i < 5; i++) {
-            NSArray *randomNames = @[kFlySEL,kFlySEL,kWoodSEL];
-            int randomIndex = arc4random() % 3;
+            NSArray *randomNames = @[kFlySEL,kWoodSEL];
+            int randomIndex = arc4random() % 2;
             NSString *randomName = ARR_INDEX(randomNames, randomIndex);
             [names addObject:randomName];
         }
@@ -347,6 +347,14 @@
 //步骤: 先在各位置被扔木棒50轮 (耗时约30min) (参考26031-1);
 -(void) trainer4{
     [theRT queueN:@[kGrowPageSEL,kWoodSEL,kMainPageSEL,kClearTCSEL] count:200];
+}
+//步骤: 训练躲避 (参考26081-2);
+-(void) trainer5{
+    //0. 出生在随机偏中位置 (以方便训练被撞和躲开经验);
+    [theRT queue1:kBirthPosRdmCentSEL];
+    
+    //1. 加长版训练100轮
+    [theRT queueN:@[kGrowPageSEL,kWoodSEL,kFlySEL,kFlySEL,kFlySEL,kWoodSEL,kMainPageSEL,kClearTCSEL] count:100];
 }
 
 //MARK:===============================================================
