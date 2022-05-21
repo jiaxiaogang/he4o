@@ -123,15 +123,15 @@
     
     //2. 出屏
     if(centerDistanceY < -ScreenHeight * 0.5f){
-        return @"上出屏";
+        return STRFORMAT(@"上出屏%.0f",centerDistanceY + ScreenHeight * 0.5f);
     }else if(centerDistanceY > ScreenHeight * 0.5f) {
-        return @"下出屏";
+        return STRFORMAT(@"下出屏%.0f",centerDistanceY - ScreenHeight * 0.5f);
     }
     
     //2. 屏内
     CGFloat yPos = [self onRoadDistanceY:distanceY];
     if (yPos > 1) {
-        return @"路下";
+        return STRFORMAT(@"路下%.1f",yPos);
     }else if (yPos > 0) {
         return STRFORMAT(@"偏下%.1f",yPos);
     }else if (yPos == 0) {
@@ -139,7 +139,7 @@
     }else if (yPos > -1) {
         return STRFORMAT(@"偏上%.1f",-yPos);
     }else{
-        return @"路上";
+        return STRFORMAT(@"路上%.1f",-yPos);
     }
 }
 
@@ -153,7 +153,7 @@
     
     //2. 出路距离;
     CGFloat roadH = 100,birdH = 30;
-    CGFloat outRoadDistance = roadH * 0.5f + birdH;
+    CGFloat outRoadDistance = (roadH + birdH) * 0.5f;
     
     //2. 偏上为0到-1,偏下为0到1 (0为中心,1和-1是路边缘点);
     CGFloat result = centerDistanceY / outRoadDistance;
