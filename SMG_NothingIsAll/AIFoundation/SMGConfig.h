@@ -65,8 +65,6 @@
 #define cTOPPModeConAssLimit 5  //在TOP的P模式下,下具象联想的条数
 
 #define cRethinkActBack_AssSPFoLimit 3 //反省_联想ATSubFo的数量
-
-#define cTCSolutionBranchLimit 3 //短时记忆解决方案分枝数;
 #define cDemandDeepLimit 8 //短时记忆树最高demand层数;
 
 
@@ -89,3 +87,4 @@
 #define cValueNarrowLimit 1000
 #define cAlgNarrowLimit 5
 #define cFoNarrowLimit 5
+#define cSolutionNarrowLimit 3

@@ -47,10 +47,10 @@
         else if(baseDemand.status == TOModelStatus_WithOut) [TCAction action:solutionFo];
         
         //6. 末枝S达到3条时,则最优执行TCAction (参考24203-3);
-        else if(baseDemand.actionFoModels.count >= cTCSolutionBranchLimit) [TCAction action:solutionFo];
+        else if(baseDemand.actionFoModels.count >= cSolutionNarrowLimit) [TCAction action:solutionFo];
         
         //7. endBranch < 0分时,且末枝S小于3条,执行TCSolution取下一方案 (参考24203-2);
-        else if (baseDemand.status != TOModelStatus_WithOut && baseDemand.actionFoModels.count < cTCSolutionBranchLimit) runSolutionAct(baseDemand);
+        else if (baseDemand.status != TOModelStatus_WithOut && baseDemand.actionFoModels.count < cSolutionNarrowLimit) runSolutionAct(baseDemand);
     }
     
     //8. 传入demand时,且demand还可继续时,尝试执行TCSolution取下一方案 (参考24203);
@@ -79,6 +79,7 @@
  *      2022.05.04: 树限宽也限深 (参考2523c-分析代码1);
  *      2022.05.18: 改成多个pFos下的解决方案进行竞争 (参考26042-TODO3);
  *      2022.05.20: 过滤掉负价值不做为解决方案 (参考26063);
+ *      2022.05.21: 窄出排序方式,以效用分为准 (参考26077-方案);
  *  @callers : 用于RDemand.Begin时调用;
  */
 +(void) rSolution:(ReasonDemandModel*)demand {
@@ -87,10 +88,10 @@
     
     //1. 树限宽且限深;
     NSInteger deepCount = [TOUtils getBaseDemandsDeepCount:demand];
-    if (deepCount >= cDemandDeepLimit || demand.actionFoModels.count >= cTCSolutionBranchLimit) {
+    if (deepCount >= cDemandDeepLimit || demand.actionFoModels.count >= cSolutionNarrowLimit) {
         demand.status = TOModelStatus_WithOut;
         [TCScore score];
-        NSLog(@">>>>>> rSolution 已达limit条");
+        NSLog(@">>>>>> rSolution 已达limit条 (S数:%ld 层数:%ld)",demand.actionFoModels.count,deepCount);
         return;
     }
     [theTC updateOperCount];
@@ -104,7 +105,11 @@
     
     //3. 取demand.conPorts (前15条) (参考24127-步骤1);
     AIFoNodeBase *bestResult = nil;
+    CGFloat bestEffectScore = 0;
     for (AIMatchFoModel *pFo in demand.pFos) {
+        
+        //3. 对pFo进行价值评分;
+        CGFloat pFoScore = [AIScore score4MV_v2:pFo];
         
         //3. 每个pFo取10条候选解决方案;
         AIFoNodeBase *fo = [SMGUtils searchNode:pFo.matchFo];
@@ -125,27 +130,28 @@
             
             //6. 判断SP评分;
             CGFloat checkSPScore = [TOUtils getSPScore:maskFo startSPIndex:0 endSPIndex:maskFo.count];
-            if (Log4Solution) NSLog(@"checkResult: %@ %@\n\t稳定性评分:(%.2f) from:%@\n----------------------------------------------------------------",Fo2FStr(maskFo),Mvp2Str(maskFo.cmvNode_p),checkSPScore,CLEANSTR(maskFo.spDic));
+            CGFloat checkEffectScore = checkSPScore * -pFoScore;
+            if (Log4Solution) NSLog(@"checkResult: %@ %@\n\t(稳定性:%.2f 效用:%.2f) from:%@\n----------------------------------------------------------------",Fo2FStr(maskFo),Mvp2Str(maskFo.cmvNode_p),checkSPScore,checkEffectScore,CLEANSTR(maskFo.spDic));
             
             //7. 当best为空 或 check评分比best更高时 => 将check赋值到best;
-            CGFloat bestSPScore = [TOUtils getSPScore:bestResult startSPIndex:0 endSPIndex:bestResult.count];
-            if(!bestResult || checkSPScore > bestSPScore){
+            if(!bestResult || checkEffectScore > bestEffectScore){
                 bestResult = maskFo;
+                bestEffectScore = checkEffectScore;
             }
         }
     }
     
     //6. 转流程控制_有解决方案则转begin;
-    CGFloat bestSPScore = [TOUtils getSPScore:bestResult startSPIndex:0 endSPIndex:bestResult.count];
     DebugE();
-    if (bestResult && bestSPScore > 0) {
+    CGFloat bestSPScore = [TOUtils getSPScore:bestResult startSPIndex:0 endSPIndex:bestResult.count];
+    if (bestResult && bestEffectScore > 0) {
         //7. 消耗活跃度;
         if (![theTC energyValid]) return;
         [theTC updateEnergyDelta:-1];
         
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
         TOFoModel *foModel = [TOFoModel newWithFo_p:bestResult.pointer base:demand];
-        NSLog(@">>>>>> rSolution 新增第%ld例解决方案: %@->%@ FRS_PK评分:%.2f",demand.actionFoModels.count, Fo2FStr(bestResult),Mvp2Str(bestResult.cmvNode_p),bestSPScore);
+        NSLog(@">>>>>> rSolution 新增第%ld例解决方案: %@->%@ (稳定性:%.2f 效用:%.2f",demand.actionFoModels.count, Fo2FStr(bestResult),Mvp2Str(bestResult.cmvNode_p),bestSPScore,bestEffectScore);
         [theTV updateFrame];
         [TCAction action:foModel];
     }else{
@@ -188,7 +194,7 @@
     
     //1. 树限宽且限深;
     NSInteger deepCount = [TOUtils getBaseDemandsDeepCount:demandModel];
-    if (deepCount >= cDemandDeepLimit || demandModel.actionFoModels.count >= cTCSolutionBranchLimit) {
+    if (deepCount >= cDemandDeepLimit || demandModel.actionFoModels.count >= cSolutionNarrowLimit) {
         demandModel.status = TOModelStatus_WithOut;
         [TCScore score];
         NSLog(@"------->>>>>> pSolution 已达limit条");
@@ -273,7 +279,7 @@
     
     //1. 树限宽且限深;
     NSInteger deepCount = [TOUtils getBaseDemandsDeepCount:hDemand];
-    if (deepCount >= cDemandDeepLimit || hDemand.actionFoModels.count >= cTCSolutionBranchLimit) {
+    if (deepCount >= cDemandDeepLimit || hDemand.actionFoModels.count >= cSolutionNarrowLimit) {
         hDemand.status = TOModelStatus_WithOut;
         [TCScore score];
         NSLog(@"------->>>>>> hSolution 已达limit条");
