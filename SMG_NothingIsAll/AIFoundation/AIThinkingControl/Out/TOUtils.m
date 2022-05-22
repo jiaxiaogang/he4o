@@ -385,4 +385,30 @@
     return totalSPScore;
 }
 
+/**
+ *  MARK:--------------------计算effectScore--------------------
+ *  @desc 计算有效率性评分 (参考26095-8);
+ *  @param demandFo     : R任务时传pFo即可, H任务时传hDemand.base.baseFo;
+ *  @param effectIndex  : R任务时传demandFo.count, H任务时传hDemand.base.baseFo.actionIndex;
+ *  @param solutionFo   : 用于检查有效率的solutionFo;
+ *  @version
+ *      2022.05.22: 初版,可返回解决方案的有效率 (参考26095-8);
+ */
++(CGFloat) getEffectScore:(AIFoNodeBase*)demandFo effectIndex:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo{
+    //1. 取有效率解决方案数组;
+    NSArray *strongs = ARRTOOK([demandFo.effectDic objectForKey:@(effectIndex)]);
+    
+    //2. 取得匹配的strong;
+    AIEffectStrong *strong = [SMGUtils filterSingleFromArr:strongs checkValid:^BOOL(AIEffectStrong *item) {
+        return [item.solutionFo isEqual:solutionFo];
+    }];
+    
+    //3. 返回有效率;
+    if (strong.hStrong + strong.nStrong > 0) {
+        return (float)strong.hStrong / (strong.hStrong + strong.nStrong);
+    }else{
+        return 0.5f;
+    }
+}
+
 @end

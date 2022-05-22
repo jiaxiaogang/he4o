@@ -129,4 +129,12 @@
  */
 +(CGFloat) getSPScore:(AIFoNodeBase*)fo startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex;
 
+/**
+ *  MARK:--------------------计算effectScore--------------------
+ *  @param demandFo     : R任务时传pFo即可, H任务时传hDemand.base.baseFo;
+ *  @param effectIndex  : R任务时传demandFo.count, H任务时传hDemand.base.baseFo.actionIndex;
+ *  @param solutionFo   : 用于检查有效率的solutionFo;
+ */
++(CGFloat) getEffectScore:(AIFoNodeBase*)demandFo effectIndex:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo;
+
 @end

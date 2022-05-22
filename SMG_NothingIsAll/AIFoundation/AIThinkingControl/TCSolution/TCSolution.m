@@ -81,6 +81,7 @@
  *      2022.05.20: 过滤掉负价值不做为解决方案 (参考26063);
  *      2022.05.21: 窄出排序方式,以效用分为准 (参考26077-方案);
  *      2022.05.21: 窄出排序方式,退回到以SP稳定性排序 (参考26084);
+ *      2022.05.22: 窄出排序方式,改为有效率排序 (参考26095-9);
  *  @callers : 用于RDemand.Begin时调用;
  */
 +(void) rSolution:(ReasonDemandModel*)demand {
@@ -106,7 +107,7 @@
     
     //3. 取demand.conPorts (前15条) (参考24127-步骤1);
     AIFoNodeBase *bestResult = nil;
-    CGFloat bestSPScore = 0;
+    CGFloat bestEffectScore = 0;
     for (AIMatchFoModel *pFo in demand.pFos) {
         
         //3. 每个pFo取10条候选解决方案;
@@ -127,27 +128,27 @@
             if (![AIScore FRS_Time:pFo solutionFo:maskFo]) continue;
             
             //6. 判断SP评分;
-            CGFloat checkSPScore = [TOUtils getSPScore:maskFo startSPIndex:0 endSPIndex:maskFo.count];
-            if (Log4Solution) NSLog(@"checkResult: %@ %@\n\t(稳定性:%.2f) from:%@\n----------------------------------------------------------------",Fo2FStr(maskFo),Mvp2Str(maskFo.cmvNode_p),checkSPScore,CLEANSTR(maskFo.spDic));
+            CGFloat checkEffectScore = [TOUtils getEffectScore:fo effectIndex:fo.count solutionFo:maskFo.pointer];
+            if (Log4Solution) NSLog(@"checkResult: %@ %@\n\t(有效率:%.2f)\n----------------------------------------------------------------",Fo2FStr(maskFo),Mvp2Str(maskFo.cmvNode_p),bestEffectScore);
             
             //7. 当best为空 或 check评分比best更高时 => 将check赋值到best;
-            if(!bestResult || checkSPScore > bestSPScore){
+            if(!bestResult || checkEffectScore > bestEffectScore){
                 bestResult = maskFo;
-                bestSPScore = checkSPScore;
+                bestEffectScore = checkEffectScore;
             }
         }
     }
     
     //6. 转流程控制_有解决方案则转begin;
     DebugE();
-    if (bestResult && bestSPScore > 0) {
+    if (bestResult) {
         //7. 消耗活跃度;
         if (![theTC energyValid]) return;
         [theTC updateEnergyDelta:-1];
         
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
         TOFoModel *foModel = [TOFoModel newWithFo_p:bestResult.pointer base:demand];
-        NSLog(@">>>>>> rSolution 新增第%ld例解决方案: %@->%@ (稳定性:%.2f)",demand.actionFoModels.count, Fo2FStr(bestResult),Mvp2Str(bestResult.cmvNode_p),bestSPScore);
+        NSLog(@">>>>>> rSolution 新增第%ld例解决方案: %@->%@ (有效率:%.2f)",demand.actionFoModels.count, Fo2FStr(bestResult),Mvp2Str(bestResult.cmvNode_p),bestEffectScore);
         
         //a) 有效率
         [TCEffect rEffect:foModel];
@@ -271,6 +272,7 @@
  *      2022.01.09: 达到limit条时的处理;
  *      2022.01.09: 首条就是HAlg不能做H解决方案 (参考25057);
  *      2022.05.04: 树限宽也限深 (参考2523c-分析代码1);
+ *      2022.05.22: 窄出排序方式改为有效率为准 (参考26095-9);
  */
 +(void) hSolution:(HDemandModel*)hDemand{
     //0. S数达到limit时设为WithOut;
@@ -289,7 +291,8 @@
     
     //1. 数据准备;
     AIAlgNodeBase *targetAlg = [SMGUtils searchNode:hDemand.baseOrGroup.content_p];
-    AIFoNodeBase *targetFo = [SMGUtils searchNode:hDemand.baseOrGroup.baseOrGroup.content_p];
+    TOFoModel *targetFoModel = (TOFoModel*)hDemand.baseOrGroup.baseOrGroup;
+    AIFoNodeBase *targetFo = [SMGUtils searchNode:targetFoModel.content_p];
     NSArray *except_ps = [TOUtils convertPointersFromTOModels:hDemand.actionFoModels];
     
     //2. 取自身 + 向抽象 + 向具象 (目前仅取一层,如果发现一层不够,可以改为取多层) (参考25014-H描述);
@@ -301,6 +304,7 @@
     //3. 从maskFos中找出最优秀的result;
     AIFoNodeBase *bestResult = nil;
     NSInteger bestSPIndex = 0;
+    CGFloat bestEffectScore = 0;
     for (AIKVPointer *maskFo_p in maskFos) {
         
         //4. 排除不应期;
@@ -312,13 +316,13 @@
         
         //6. 如>0则找到 (HAlg不能是首条)_则判断SP评分 (参考25057);
         if (spIndex > 0) {
-            CGFloat checkSPScore = [TOUtils getSPScore:maskFo startSPIndex:0 endSPIndex:spIndex];
-            CGFloat bestSPScore = [TOUtils getSPScore:bestResult startSPIndex:0 endSPIndex:bestSPIndex];
+            CGFloat checkEffectScore = [TOUtils getEffectScore:targetFo effectIndex:targetFoModel.actionIndex solutionFo:maskFo_p];
             
             //7. 当best为空 或 check评分比best更高时 => 将check赋值到best;
-            if(!bestResult || checkSPScore > bestSPScore){
+            if(!bestResult || checkEffectScore > bestEffectScore){
                 bestResult = maskFo;
                 bestSPIndex = spIndex;
+                bestEffectScore = checkEffectScore;
             }
         }
     }
@@ -333,8 +337,7 @@
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
         TOFoModel *foModel = [TOFoModel newWithFo_p:bestResult.pointer base:hDemand];
         foModel.targetSPIndex = bestSPIndex;
-        CGFloat bestSPScore = [TOUtils getSPScore:bestResult startSPIndex:0 endSPIndex:bestSPIndex];
-        NSLog(@">>>>>> hSolution 新增第%ld例解决方案: %@->%@ FRS_PK评分:%.2f targetSPIndex:%ld",hDemand.actionFoModels.count,Fo2FStr(bestResult),Mvp2Str(bestResult.cmvNode_p),bestSPScore,foModel.targetSPIndex);
+        NSLog(@">>>>>> hSolution 新增第%ld例解决方案: %@->%@ 有效率:%.2f targetSPIndex:%ld",hDemand.actionFoModels.count,Fo2FStr(bestResult),Mvp2Str(bestResult.cmvNode_p),bestEffectScore,foModel.targetSPIndex);
         
         //a) 有效率;
         [TCEffect hEffect:foModel];
