@@ -22,6 +22,7 @@
 @property (assign, nonatomic) NSInteger delta;
 @property (strong, nonatomic) NSString *algsType;   //mv的标识
 @property (assign, nonatomic) double initTime;      //二级排序因素 (新在前)
+@property (assign, nonatomic) EffectStatus effectStatus;//任务解决是否有效状态;
 
 /**
  *  MARK:--------------------获取当前最强的outSubModel--------------------

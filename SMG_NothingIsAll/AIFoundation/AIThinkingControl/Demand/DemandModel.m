@@ -74,6 +74,7 @@
         self.algsType = [aDecoder decodeObjectForKey:@"algsType"];
         self.initTime = [aDecoder decodeDoubleForKey:@"initTime"];
         self.updateTime = [aDecoder decodeDoubleForKey:@"updateTime"];
+        self.effectStatus = [aDecoder decodeIntegerForKey:@"effectStatus"];
     }
     return self;
 }
@@ -86,6 +87,7 @@
     [aCoder encodeObject:self.algsType forKey:@"algsType"];
     [aCoder encodeDouble:self.initTime forKey:@"initTime"];
     [aCoder encodeDouble:self.updateTime forKey:@"updateTime"];
+    [aCoder encodeInteger:self.effectStatus forKey:@"effectStatus"];
 }
 
 @end

@@ -13,6 +13,7 @@
 +(NSString*) convertTOStatus2Desc:(TOModelStatus)status;
 +(NSString*) convertATType2Desc:(AnalogyType)atType;
 +(NSString*) convertTIStatus2Desc:(TIModelStatus)status;
++(NSString*) convertEffectStatus2Desc:(EffectStatus)status;
 +(NSString*) convertClass2Desc:(Class)clazz;
 +(NSString*) convertMvp2DeltaDesc:(AIKVPointer*)mv_p;
 

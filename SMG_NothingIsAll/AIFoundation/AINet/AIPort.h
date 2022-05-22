@@ -66,3 +66,16 @@
 @property (assign,nonatomic) NSInteger pStrong;
 
 @end
+
+/**
+ *  MARK:--------------------有效强度--------------------
+ *  @version
+ *      2022.05.22: 初版,用于Fo下记录解决方案的有效性 (参考26094);
+ */
+@interface AIEffectStrong : NSObject <NSCoding>
+
+@property (strong, nonatomic) AIKVPointer *solutionFo;  //解决方案
+@property (assign,nonatomic) NSInteger hStrong; //有效
+@property (assign,nonatomic) NSInteger nStrong; //无效
+
+@end

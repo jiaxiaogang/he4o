@@ -121,6 +121,7 @@
  *      2021.12.23: feedback时,将root设回runing状态 (参考24212-8);
  *      2021.12.24: 应对整个工作记忆树进行支持,而不是仅rootDemands (参考25032-6);
  *      2021.12.26: 针对rSolution的感性反馈 (参考25031-11 & 25032-6);
+ *      2022.05.22: R任务有效性反馈状态更新 (参考26095-3);
  */
 +(void) feedbackTOP:(AICMVNode*)cmvNode{
     //1. 数据检查
@@ -130,7 +131,7 @@
     Debug();
     IFTitleLog(@"feedbackTOP", @"\n输入MV:%@",Mv2FStr(cmvNode));
     
-    //2. 对所有等待中的任务尝试处理 (R-任务);
+    //2. ============== 对所有等待中的任务尝试处理 (R-任务); ==============
     for (ReasonDemandModel *root in theTC.outModelManager.getAllDemand) {
         NSArray *waitModels = [TOUtils getSubOutModels_AllDeep:root validStatus:@[@(TOModelStatus_ActYes)]];
         for (TOFoModel *waitModel in waitModels) {
@@ -159,6 +160,28 @@
                     waitModel.baseOrGroup.status = TOModelStatus_Finish;
                     [theTV updateFrame];
                 }
+            }
+        }
+    }
+    
+    //2. ============== 对Demand反馈判断 ==============
+    //a. 收集所有工作记忆树的R任务;
+    NSMutableArray *allRDemands = [[NSMutableArray alloc] init];
+    for (ReasonDemandModel *root in theTC.outModelManager.getAllDemand) {
+        NSArray *singleRDemands = [SMGUtils filterArr:[TOUtils getSubOutModels_AllDeep:root validStatus:nil] checkValid:^BOOL(TOModelBase *item) {
+            return ISOK(item, ReasonDemandModel.class);
+        }];
+        [allRDemands addObjectsFromArray:singleRDemands];
+    }
+    
+    //b. 反馈匹配 => 同区判断 且 都为负价值 (比如撞疼,确定疼了);
+    for (ReasonDemandModel *rDemand in allRDemands) {
+        if ([rDemand.algsType isEqualToString:cmvNode.pointer.algsType]) {
+            CGFloat newMvScore = [AIScore score4MV:cmvNode.pointer ratio:1.0f];
+            if (newMvScore < 0) {
+                //c. 明确无效;
+                rDemand.effectStatus = ES_NoEff;
+                rDemand.status = TOModelStatus_ActNo;
             }
         }
     }

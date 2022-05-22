@@ -69,6 +69,7 @@
  *      2022.01.08: HDemand时,非actYes状态也处理反馈 (参考25054);
  *      2022.03.13: 将mIsC改成proto或matchAlgs中任一条mIsC成立即可 (参考25146-转疑3-方案);
  *      2022.05.02: 用matchAlgs+partAlgs替代mIsC (参考25234-8);
+ *      2022.05.22: H任务有效性反馈状态更新 (参考26095-6);
  *  @bug
  *      2020.09.22: 加上cutStopStatus,避免同一waitModel被多次触发,导致BUG (参考21042);
  *      2020.12.26: GL时,waitType的判断改为bFo,因为只有bFo才携带了waitTypeDS (参考21204);
@@ -153,6 +154,27 @@
                 DebugE();
                 [TCRegroup feedbackRegroup:targetFo];
             }
+        }
+    }
+    
+    //2. ============== 对HDemand反馈判断 ==============
+    //a. 收集所有工作记忆树的H任务;
+    NSMutableArray *allRDemands = [[NSMutableArray alloc] init];
+    for (DemandModel *root in theTC.outModelManager.getAllDemand) {
+        NSArray *singleRDemands = [SMGUtils filterArr:[TOUtils getSubOutModels_AllDeep:root validStatus:nil] checkValid:^BOOL(TOModelBase *item) {
+            return ISOK(item, HDemandModel.class);
+        }];
+        [allRDemands addObjectsFromArray:singleRDemands];
+    }
+    
+    //b. 反馈匹配 (比如找锤子,看到锤子了);
+    for (HDemandModel *hDemand in allRDemands) {
+        TOAlgModel *targetAlg = (TOAlgModel*)hDemand.baseOrGroup;   //hDemand的目标alg;
+        if ([recognitionAlgs containsObject:targetAlg.content_p]) {
+            
+            //c. 明确有效;
+            hDemand.effectStatus = ES_HavEff;
+            hDemand.status = TOModelStatus_Finish;
         }
     }
     DebugE();

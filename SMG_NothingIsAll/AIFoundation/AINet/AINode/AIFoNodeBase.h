@@ -43,11 +43,21 @@
  */
 @property (strong, nonatomic) NSMutableDictionary *spDic;
 
+/**
+ *  MARK:--------------------有效率--------------------
+ *  @desc <key:effectIndex, value:effectStrong> (其中mv的key为content.count) (参考26094);
+ */
+@property (strong, nonatomic) NSMutableDictionary *effectDic;
 
 /**
  *  MARK:--------------------更新SP强度值--------------------
  *  @param spIndex : 当前要更新sp强度值的下标 (如果是mv则输入content.count) (参考25031-3);
  */
 -(void) updateSPStrong:(NSInteger)spIndex type:(AnalogyType)type;
+
+/**
+ *  MARK:--------------------更新有效率值--------------------
+ */
+-(void) updateEffectStrong:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo status:(EffectStatus)status;
 
 @end

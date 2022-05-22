@@ -215,6 +215,7 @@
 #define ATType2Str(type) [NSLog_Extension convertATType2Desc:type]
 #define TOStatus2Str(status) [NSLog_Extension convertTOStatus2Desc:status]
 #define TIStatus2Str(status) [NSLog_Extension convertTIStatus2Desc:status]
+#define EffectStatus2Str(status) [NSLog_Extension convertEffectStatus2Desc:status]
 #define Class2Str(c) [NSLog_Extension convertClass2Desc:c]
 #define Mvp2DeltaStr(mv_p) [NSLog_Extension convertMvp2DeltaDesc:mv_p]
 

@@ -20,6 +20,11 @@
     return _spDic;
 }
 
+-(NSMutableDictionary *)effectDic{
+    if (!ISOK(_effectDic, NSMutableDictionary.class)) _effectDic = [[NSMutableDictionary alloc] initWithDictionary:_effectDic];
+    return _effectDic;
+}
+
 //MARK:===============================================================
 //MARK:                     < publicMethod >
 //MARK:===============================================================
@@ -46,6 +51,35 @@
 }
 
 /**
+ *  MARK:--------------------更新有效率值--------------------
+ */
+-(void) updateEffectStrong:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo status:(EffectStatus)status{
+    //1. 取kv (无则新建);
+    NSNumber *key = @(effectIndex);
+    NSMutableArray *value = [[NSMutableArray alloc] initWithArray:[self.effectDic objectForKey:key]];
+    [self.effectDic setObject:value forKey:key];
+    
+    //2. 取旧有strong (无则新建);
+    AIEffectStrong *strong = [SMGUtils filterSingleFromArr:value checkValid:^BOOL(AIEffectStrong *item) {
+        return [item.solutionFo isEqual:solutionFo];
+    }];
+    if (!strong) {
+        strong = [[AIEffectStrong alloc] init];
+        [value addObject:strong];
+    }
+    
+    //3. 更新强度_线性+1 (参考25031-7);
+    if (status == ES_NoEff) {
+        strong.nStrong++;
+    }else if(status == ES_HavEff){
+        strong.hStrong++;
+    }
+    
+    //3. 保存fo
+    [SMGUtils insertNode:self];
+}
+
+/**
  *  MARK:--------------------NSCoding--------------------
  */
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
@@ -55,6 +89,7 @@
         self.deltaTimes = [aDecoder decodeObjectForKey:@"deltaTimes"];
         self.mvDeltaTime = [aDecoder decodeDoubleForKey:@"mvDeltaTime"];
         self.spDic = [aDecoder decodeObjectForKey:@"spDic"];
+        self.effectDic = [aDecoder decodeObjectForKey:@"effectDic"];
     }
     return self;
 }
@@ -65,6 +100,7 @@
     [aCoder encodeObject:self.deltaTimes forKey:@"deltaTimes"];
     [aCoder encodeDouble:self.mvDeltaTime forKey:@"mvDeltaTime"];
     [aCoder encodeObject:[self.spDic copy] forKey:@"spDic"];
+    [aCoder encodeObject:[self.effectDic copy] forKey:@"effectDic"];
 }
 
 @end
