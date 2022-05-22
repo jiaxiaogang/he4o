@@ -45,7 +45,7 @@
             rSolution.status = TOModelStatus_Finish;
             rDemand.status = TOModelStatus_Finish;
         }
-        NSLog(@"---//rEffect触发器执行:%p 有效性:%@ 任务状态:%@",rDemand,EffectStatus2Str(es),TOStatus2Str(rDemand.status));
+        IFTitleLog(@"R有效率", @"\n%p S:%@ (有效性:%@ 任务状态:%@)",rDemand,Pit2FStr(rSolution.content_p),EffectStatus2Str(es),TOStatus2Str(rDemand.status));
     }];
     DebugE();
 }
@@ -79,7 +79,7 @@
 
         //6. 无效,则当前方案失败;
         if (es == ES_NoEff) hSolution.status = TOModelStatus_ActNo;
-        NSLog(@"---//hEffect触发器执行:%p 有效性:%@ 当前方案状态:%@",hSolution,EffectStatus2Str(es),TOStatus2Str(hSolution.status));
+        IFTitleLog(@"H有效率", @"\n%p S:%@ (有效性:%@ 当前方案状态:%@)",hSolution,Pit2FStr(hSolution.content_p),EffectStatus2Str(es),TOStatus2Str(hSolution.status));
     }];
     DebugE();
 }

@@ -132,6 +132,12 @@
 //MARK:===============================================================
 @implementation AIEffectStrong
 
++(AIEffectStrong*) newWithSolutionFo:(AIKVPointer*)solutionFo{
+    AIEffectStrong *result = [[AIEffectStrong alloc] init];
+    result.solutionFo = solutionFo;
+    return result;
+}
+
 -(NSString *)description{
     return STRFORMAT(@"H%ldN%ld",(long)self.hStrong,(long)self.nStrong);
 }

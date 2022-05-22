@@ -64,7 +64,7 @@
         return [item.solutionFo isEqual:solutionFo];
     }];
     if (!strong) {
-        strong = [[AIEffectStrong alloc] init];
+        strong = [AIEffectStrong newWithSolutionFo:solutionFo];
         [value addObject:strong];
     }
     
