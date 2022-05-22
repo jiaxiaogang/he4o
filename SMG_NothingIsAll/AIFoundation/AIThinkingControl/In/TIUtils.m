@@ -357,6 +357,7 @@
             if (rContains) continue;
             
             //7. 全含判断;
+            AIFoNodeBase *regroupFo = fromRegroup ? maskFo : nil;
             [self TIR_Fo_CheckFoValidMatch:assFo success:^(NSInteger lastAssIndex, CGFloat matchValue) {
                 if (Log4MFo) NSLog(@"时序识别item SUCCESS 完成度:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
                 
@@ -373,7 +374,7 @@
                 }else{
                     [inModel.matchRFos addObject:newMatchFo];
                 }
-            }];
+            } regroupFo:regroupFo];
         }
     }
     
@@ -417,9 +418,10 @@
  *  @param success : lastAssIndex指已发生到的index,后面则为时序预测; matchValue指匹配度(0-1) notnull;
  *  @version
  *      2022.04.30: 将每帧的matchAlgs和partAlgs用于全含判断,而不是单纯用protoFo来判断 (参考25234-6);
+ *      2022.05.23: 反思时,改回旧有mIsC判断方式 (参考26096-BUG6);
  *  _result 将protoFo与assFo判断是否全含,并将匹配度返回;
  */
-+(void) TIR_Fo_CheckFoValidMatch:(AIFoNodeBase*)assFo success:(void(^)(NSInteger lastAssIndex,CGFloat matchValue))success{
++(void) TIR_Fo_CheckFoValidMatch:(AIFoNodeBase*)assFo success:(void(^)(NSInteger lastAssIndex,CGFloat matchValue))success regroupFo:(AIFoNodeBase*)regroupFo{
     //1. 数据准备;
     BOOL paramValid = assFo && assFo.content_ps.count > 0 && success;
     if (!paramValid) {
@@ -428,22 +430,28 @@
     }
     if (Log4MFo) NSLog(@"------------------------ 时序全含检查 ------------------------\nass:%@->%@",Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
     
-    //1. 最后一个matchAlgs+partAlgs指针
-    NSArray *inModels = theTC.inModelManager.models;
-    NSArray *lastAlgs = [self getMatchAndPartAlgPs:inModels.count - 1];
-    
     //1. 默认有效数为1 (因为lastAlg肯定有效);
     int validItemCount = 1;
     //1. 在assFo已发生到的index,后面为预测;
     NSInteger lastAssIndex = -1;
-    //1. protoAlg匹配判断从倒数第二个开始,向前逐个匹配;
-    NSInteger lastProtoIndex = inModels.count - 2;
     
     //2. 找出lastIndex
     for (NSInteger i = 0; i < assFo.content_ps.count; i++) {
         NSInteger curIndex = assFo.content_ps.count - i - 1;
         AIKVPointer *checkAssAlg_p = ARR_INDEX(assFo.content_ps, curIndex);
-        if ([lastAlgs containsObject:checkAssAlg_p]) {
+        
+        //2. 匹配判断: 反思时用mIsC判断 & 识别时用瞬时末帧matchAlgs+partAlgs包含来判断;
+        BOOL mIsC = false;
+        if (regroupFo) {
+            AIKVPointer *reoupAlg_p = ARR_INDEX_REVERSE(regroupFo.content_ps, 0);
+            mIsC = [TOUtils mIsC_1:reoupAlg_p c:checkAssAlg_p];
+        }else{
+            NSArray *lastAlgs = [self getMatchAndPartAlgPs:theTC.inModelManager.models.count - 1];
+            mIsC = [lastAlgs containsObject:checkAssAlg_p];
+        }
+        
+        //2. 匹配则记录lastAssIndex值;
+        if (mIsC) {
             lastAssIndex = curIndex;
             break;
         }
@@ -459,11 +467,22 @@
         AIKVPointer *checkAssAlg_p = ARR_INDEX(assFo.content_ps, i);
         if (checkAssAlg_p) {
             
-            //4. 在protoFo中同样从lastProtoIndex依次向前找匹配;
+            //4. 在protoFo中同样从lastProtoIndex依次向前找匹配 (从倒数第二个开始);
             BOOL checkResult = false;
+            NSInteger lastProtoIndex = (regroupFo ? regroupFo.count : theTC.inModelManager.models.count) - 2;
             for (NSInteger j = lastProtoIndex; j >= 0; j--) {
-                NSArray *frameAlgs = [self getMatchAndPartAlgPs:j];
-                if ([frameAlgs containsObject:checkAssAlg_p]) {
+                //2. 匹配判断: 反思时用mIsC判断 & 识别时用瞬时末帧matchAlgs+partAlgs包含来判断;
+                BOOL mIsC = false;
+                if (regroupFo) {
+                    AIKVPointer *reoupAlg_p = ARR_INDEX(regroupFo.content_ps, j);
+                    mIsC = [TOUtils mIsC_1:reoupAlg_p c:checkAssAlg_p];
+                }else{
+                    NSArray *frameAlgs = [self getMatchAndPartAlgPs:j];
+                    mIsC = [frameAlgs containsObject:checkAssAlg_p];
+                }
+                
+                //2. 匹配时处理;
+                if (mIsC) {
                     lastProtoIndex = j; //成功匹配alg时,更新protoIndex (以达到只能向前匹配的目的);
                     checkResult = true;
                     validItemCount ++;  //有效数+1;
