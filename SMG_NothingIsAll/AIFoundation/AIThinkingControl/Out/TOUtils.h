@@ -123,14 +123,21 @@
 +(NSString*) toModel2Key:(TOModelBase*)toModel;
 
 /**
- *  MARK:--------------------计算spScore--------------------
+ *  MARK:--------------------稳定性评分--------------------
+ *  @param endSPIndex   : 目标index,比如感性mv时,则为fo.count (求结果时,需包含endSPIndex);
+ *  @param startSPIndex : 起始index,比如理性时,常为0到fo.count-1之间 (求结果时,需包含startSPIndex);
+ */
++(CGFloat) getStableScore:(AIFoNodeBase*)fo startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex;
+
+/**
+ *  MARK:--------------------SP好坏评分--------------------
  *  @param endSPIndex   : 目标index,比如感性mv时,则为fo.count (求结果时,需包含endSPIndex);
  *  @param startSPIndex : 起始index,比如理性时,常为0到fo.count-1之间 (求结果时,需包含startSPIndex);
  */
 +(CGFloat) getSPScore:(AIFoNodeBase*)fo startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex;
 
 /**
- *  MARK:--------------------计算effectScore--------------------
+ *  MARK:--------------------有效率评分--------------------
  *  @param demandFo     : R任务时传pFo即可, H任务时传hDemand.base.baseFo;
  *  @param effectIndex  : R任务时传demandFo.count, H任务时传hDemand.base.baseFo.actionIndex;
  *  @param solutionFo   : 用于检查有效率的solutionFo;

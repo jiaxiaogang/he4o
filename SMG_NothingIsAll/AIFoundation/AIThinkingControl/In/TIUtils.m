@@ -355,11 +355,11 @@ static int _tmpCount;
     //10. 按照 (强度x匹配度) 排序,强度最重要,包含了价值初始和使用频率,其次匹配度也重要 (参考23222-BUG2);
     NSArray *sortPFos = [SMGUtils sortBig2Small:inModel.matchPFos compareBlock:^double(AIMatchFoModel *obj) {
         AIFoNodeBase *matchFo = [SMGUtils searchNode:obj.matchFo];
-        return [TOUtils getSPScore:matchFo startSPIndex:obj.cutIndex2 + 1 endSPIndex:matchFo.count];
+        return [TOUtils getStableScore:matchFo startSPIndex:obj.cutIndex2 + 1 endSPIndex:matchFo.count];
     }];
     NSArray *sortRFos = [SMGUtils sortBig2Small:inModel.matchRFos compareBlock:^double(AIMatchFoModel *obj) {
         AIFoNodeBase *matchFo = [SMGUtils searchNode:obj.matchFo];
-        return [TOUtils getSPScore:matchFo startSPIndex:obj.cutIndex2 + 1 endSPIndex:matchFo.count - 1];
+        return [TOUtils getStableScore:matchFo startSPIndex:obj.cutIndex2 + 1 endSPIndex:matchFo.count - 1];
     }];
     
     //11. 仅保留前NarrowLimit条;
@@ -370,15 +370,15 @@ static int _tmpCount;
     NSLog(@"\n=====> 时序识别Finish (PFos数:%lu)",(unsigned long)inModel.matchPFos.count);
     for (AIMatchFoModel *item in inModel.matchPFos) {
         AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
-        CGFloat spScore = [TOUtils getSPScore:matchFo startSPIndex:item.cutIndex2 + 1 endSPIndex:matchFo.count];
-        NSLog(@"强度:(%ld)\t> %@->%@ (SP好坏分:%.2f)",item.matchFoStrong,Fo2FStr(matchFo), Mvp2Str(matchFo.cmvNode_p),spScore);
+        CGFloat stableScore = [TOUtils getStableScore:matchFo startSPIndex:item.cutIndex2 + 1 endSPIndex:matchFo.count];
+        NSLog(@"强度:(%ld)\t> %@->%@ (SP好坏分:%.2f)",item.matchFoStrong,Fo2FStr(matchFo), Mvp2Str(matchFo.cmvNode_p),stableScore);
     }
         
     NSLog(@"\n=====> 时序识别Finish (RFos数:%lu)",(unsigned long)inModel.matchRFos.count);
     for (AIMatchFoModel *item in inModel.matchRFos){
         AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
-        CGFloat spScore = [TOUtils getSPScore:matchFo startSPIndex:item.cutIndex2 + 1 endSPIndex:matchFo.count - 1];
-        NSLog(@"强度:(%ld)\t> %@ (SP好坏分:%.2f)",item.matchFoStrong,Pit2FStr(item.matchFo),spScore);
+        CGFloat stableScore = [TOUtils getStableScore:matchFo startSPIndex:item.cutIndex2 + 1 endSPIndex:matchFo.count - 1];
+        NSLog(@"强度:(%ld)\t> %@ (SP好坏分:%.2f)",item.matchFoStrong,Pit2FStr(item.matchFo),stableScore);
     }
 }
 

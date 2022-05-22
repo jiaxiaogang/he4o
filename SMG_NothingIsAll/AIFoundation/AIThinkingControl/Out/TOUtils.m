@@ -326,8 +326,38 @@
 }
 
 /**
- *  MARK:--------------------计算spScore--------------------
- *  @desc 计算综合稳定性评分 (参考25114 & 25122-负公式);
+ *  MARK:--------------------稳定性评分--------------------
+ *  @desc 根据SP计算"稳定性"分 (稳定性指顺,就是能顺利发生的率);
+ *  @version
+ *      2022.05.23: 初版 (参考26096-BUG1);
+ */
++(CGFloat) getStableScore:(AIFoNodeBase*)fo startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex{
+    //1. 数据检查;
+    if (!fo) return 0;
+    CGFloat totalStable = 1.0f;
+    
+    //2. 从start到end各计算spScore;
+    for (NSInteger i = startSPIndex; i <= endSPIndex; i++) {
+        AISPStrong *spStrong = [fo.spDic objectForKey:@(i)];
+        
+        //3. SP有效且其中之一不为0时,将itemSPScore计入稳定性 (参考25114 & 25122-公式);
+        if (spStrong && spStrong.pStrong + spStrong.sStrong > 0) {
+            totalStable *= spStrong.pStrong / (float)(spStrong.sStrong + spStrong.pStrong);
+        }
+    }
+    
+    //8. 统计SP总strong值: 当sp总值为0时,默认为0.5;
+    int sumSPStrong = 0;
+    for (AISPStrong *item in fo.spDic.allValues) sumSPStrong += (item.sStrong + item.pStrong);
+    totalStable = sumSPStrong == 0 ? 0.5f : totalStable;
+    
+    //9. 返回稳定性评分;
+    return totalStable;
+}
+
+/**
+ *  MARK:--------------------SP好坏评分--------------------
+ *  @desc 根据综合稳定性计算"多好"评分 (参考25114 & 25122-负公式);
  *  @version
  *      2022.02.20: 改为综合评分,替代掉RSResultModelBase;
  *      2022.02.22: 修复明明S有值,P为0,但综评为1分的问题 (||写成了&&导致的);
@@ -386,7 +416,7 @@
 }
 
 /**
- *  MARK:--------------------计算effectScore--------------------
+ *  MARK:--------------------有效率评分--------------------
  *  @desc 计算有效率性评分 (参考26095-8);
  *  @param demandFo     : R任务时传pFo即可, H任务时传hDemand.base.baseFo;
  *  @param effectIndex  : R任务时传demandFo.count, H任务时传hDemand.base.baseFo.actionIndex;
