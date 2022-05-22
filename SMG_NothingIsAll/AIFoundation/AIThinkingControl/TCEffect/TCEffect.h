@@ -18,7 +18,7 @@
  */
 @interface TCEffect : NSObject
 
-+(void) rEffect:(ReasonDemandModel*)rDemand;
-+(void) hEffect:(HDemandModel*)hDemand;
++(void) rEffect:(TOFoModel*)rSolution;
++(void) hEffect:(TOFoModel*)hSolution;
 
 @end

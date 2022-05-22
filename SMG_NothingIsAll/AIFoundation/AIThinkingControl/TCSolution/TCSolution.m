@@ -148,6 +148,9 @@
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
         TOFoModel *foModel = [TOFoModel newWithFo_p:bestResult.pointer base:demand];
         NSLog(@">>>>>> rSolution 新增第%ld例解决方案: %@->%@ (稳定性:%.2f)",demand.actionFoModels.count, Fo2FStr(bestResult),Mvp2Str(bestResult.cmvNode_p),bestSPScore);
+        
+        //a) 有效率
+        [TCEffect rEffect:foModel];
         [theTV updateFrame];
         [TCAction action:foModel];
     }else{
@@ -332,6 +335,9 @@
         foModel.targetSPIndex = bestSPIndex;
         CGFloat bestSPScore = [TOUtils getSPScore:bestResult startSPIndex:0 endSPIndex:bestSPIndex];
         NSLog(@">>>>>> hSolution 新增第%ld例解决方案: %@->%@ FRS_PK评分:%.2f targetSPIndex:%ld",hDemand.actionFoModels.count,Fo2FStr(bestResult),Mvp2Str(bestResult.cmvNode_p),bestSPScore,foModel.targetSPIndex);
+        
+        //a) 有效率;
+        [TCEffect hEffect:foModel];
         [theTV updateFrame];
         [TCAction action:foModel];
     }else{
