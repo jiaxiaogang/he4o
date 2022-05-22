@@ -94,7 +94,7 @@
     //1. 返回分组字典;
     NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
     
-    //2. 排序方式;
+    //2. 排序方式 (从小到大);
     NSArray *sortPFos = [SMGUtils sortBig2Small:self.matchPFos compareBlock:^double(AIMatchFoModel *obj) {
         return -[AIScore score4MV_v2:obj];//负(价值评分 * 匹配度) 如: [-8,-3,2,9]
     }];

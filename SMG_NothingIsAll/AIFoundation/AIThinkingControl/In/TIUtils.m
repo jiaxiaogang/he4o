@@ -10,7 +10,32 @@
 
 @implementation TIUtils
 
-static int _tmpCount;
+//MARK:===============================================================
+//MARK:                     < 稀疏码识别 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------稀疏码识别--------------------
+ *  @version
+ *      2022.05.23: 初版,排序和限制limit条数放到此处,原来getIndex_ps()方法里并没有相近度排序 (参考26096-BUG5);
+ *  @result 返回当前码识别的相近序列;
+ */
++(NSArray*) TIR_Value:(AIKVPointer*)protoV_p{
+    //1. 取索引序列 & 当前稀疏码值;
+    NSArray *index_ps = [AINetIndex getIndex_ps:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];
+    double maskData = [NUMTOOK([AINetIndex getData:protoV_p]) doubleValue];
+    
+    //2. 按照相近度排序;
+    NSArray *near_ps = [SMGUtils sortSmall2Big:index_ps compareBlock:^double(AIKVPointer *obj) {
+        double objData = [NUMTOOK([AINetIndex getData:obj]) doubleValue];
+        return fabs(objData - maskData);
+    }];
+    
+    //3. 窄出,仅返回前NarrowLimit条 (最多narrowLimit条(但不超过10%),最少1条);
+    NSInteger narrowLimit = MAX(1, MIN(cValueNarrowLimit,near_ps.count / 10));
+    return ARR_SUB(near_ps, 0, narrowLimit);
+}
+
 
 //MARK:===============================================================
 //MARK:                     < 概念识别 >
@@ -122,10 +147,10 @@ static int _tmpCount;
     //2. 广入: 对每个元素,分别取索引序列 (参考25083-1);
     for (AIKVPointer *item_p in protoAlg.content_ps) {
         
-        //3. 数据准备;
-        double maskData = [NUMTOOK([AINetIndex getData:item_p]) doubleValue];//取当前稀疏码值;
-        double span = [AINetIndex getIndexSpan:item_p.algsType ds:item_p.dataSource isOut:item_p.isOut];//获取当前码所在索引序列的值域 (参考25082-公式1);
-        NSArray *near_ps = [AINetIndex getIndex_ps:item_p.algsType ds:item_p.dataSource isOut:item_p.isOut];//取当前元素的所在的索引序列;
+        //3. 数据准备: 当前稀疏码值 & 当前码值域span & 稀疏码识别;
+        double maskData = [NUMTOOK([AINetIndex getData:item_p]) doubleValue];
+        double span = [AINetIndex getIndexSpan:item_p.algsType ds:item_p.dataSource isOut:item_p.isOut];
+        NSArray *near_ps = [self TIR_Value:item_p];
         
         //4. 每个near_p做两件事:
         for (AIKVPointer *near_p in near_ps) {

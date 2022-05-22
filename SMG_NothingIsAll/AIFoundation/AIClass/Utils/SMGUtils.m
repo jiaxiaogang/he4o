@@ -660,6 +660,12 @@
         return result;
     }];
 }
+//从小到大,就是大到小的值取负 (反过来);
++(NSArray*) sortSmall2Big:(NSArray*)arr compareBlock:(double(^)(id obj))compareBlock{
+    return [SMGUtils sortBig2Small:arr compareBlock:^double(id obj) {
+        return -compareBlock(obj);
+    }];
+}
 
 @end
 

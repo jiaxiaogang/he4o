@@ -101,8 +101,17 @@
                                                               isOut:isOut.boolValue
                                                               isMem:false
                                                                type:ATDefault];
-                AINodeBase *node = [SMGUtils searchNode:node_p];
-                if (node) {
+                
+                //9. 验证是否存在;
+                BOOL isValid = false;
+                if (PitIsValue(node_p)) {
+                    isValid = NUMISOK([AINetIndex getData:node_p]);//稀疏码读value类型
+                }else{
+                    isValid = [SMGUtils searchNode:node_p];//读node类型
+                }
+                
+                //11. 追加到网;
+                if (isValid) {
                     [theNV setNodeData:node_p];
                     TPLog(@"追加节点:%@",Pit2FStr(node_p));
                 }

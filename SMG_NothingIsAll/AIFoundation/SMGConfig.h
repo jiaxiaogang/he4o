@@ -84,7 +84,8 @@
 //MARK:===============================================================
 //MARK:                     < 窄出 >
 //MARK:===============================================================
-#define cValueNarrowLimit 1000
+#define cIndexNarrowLimit 1000
+#define cValueNarrowLimit 10
 #define cAlgNarrowLimit 5
 #define cFoNarrowLimit 5
 #define cSolutionNarrowLimit 3

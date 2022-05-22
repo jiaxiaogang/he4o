@@ -84,11 +84,12 @@
     }];
     
     //3. 窄出,仅返回前NarrowLimit条;
-    return ARR_SUB(nears, 0, cValueNarrowLimit);
+    return ARR_SUB(nears, 0, cIndexNarrowLimit);
 }
 
 /**
  *  MARK:--------------------获取某标识索引序列的值域--------------------
+ *  @desc 获取索引序列的值域 (参考25082-公式1);
  *  @result 值域不为负
  */
 +(double) getIndexSpan:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
