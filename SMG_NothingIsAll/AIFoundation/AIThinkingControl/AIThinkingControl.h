@@ -17,6 +17,7 @@
 @interface AIThinkingControl : NSObject
 
 +(AIThinkingControl*) shareInstance;
+@property (assign, nonatomic) BOOL stopThink;   //强行停止思维工作
 
 //MARK:===============================================================
 //MARK:                     < 数据输入 >

@@ -210,9 +210,13 @@ static AIThinkingControl *_instance;
  *  MARK:--------------------活跃度有效判断--------------------
  *  @version
  *      2022.05.04: 工作记忆树在限宽基础上,又加上限深后,此处弃用,都返回true (参考2523c-分析代码2);
+ *      2022.05.22: roots又有循环卡顿问题,此处加上强行停止思考的功能,以方便调试);
  */
 -(BOOL) energyValid{
-    return true;//self.energy > 0;
+    if (self.stopThink) {
+        return false;
+    }
+    return self.energy > 0;
 }
 
 //MARK:===============================================================

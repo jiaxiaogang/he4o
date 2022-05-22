@@ -98,6 +98,15 @@
     [theRT regist:kBirthPosRdmSEL target:self selector:@selector(setBirthPosMode_Rdm)];
     [theRT regist:kBirthPosCentSEL target:self selector:@selector(setBirthPosMode_Cent)];
     
+    //3. 强行停止思考能力按钮
+    UIButton *stopThinkBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth - 250, StateBarHeight, 40, 20)];
+    [stopThinkBtn.titleLabel setFont:[UIFont systemFontOfSize:15]];
+    [stopThinkBtn setTitleColor:UIColorWithRGBHex(0x0000EE) forState:UIControlStateNormal];
+    [stopThinkBtn setBackgroundColor:UIColorWithRGBHex(0xFFEEEE)];
+    [stopThinkBtn setTitle:@"植物" forState:UIControlStateNormal];
+    [stopThinkBtn addTarget:self action:@selector(stopThinkBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.window addSubview:stopThinkBtn];
+    
     //4. 神经网络可视化
     self.nvView = [[NVView alloc] initWithDelegate:[NVDelegate_He new]];
     [self.nvView setAlpha:0.9f];
@@ -171,6 +180,11 @@
 
 -(void) rtBtnOnClick:(id)btn{
     [theRT open];
+}
+
+-(void) stopThinkBtnOnClick:(UIButton*)btn{
+    theTC.stopThink = !theTC.stopThink;
+    [btn setTitle:theTC.stopThink ? @"动物" : @"植物" forState:UIControlStateNormal];
 }
 
 -(void) startRefreshDotAnimation{
