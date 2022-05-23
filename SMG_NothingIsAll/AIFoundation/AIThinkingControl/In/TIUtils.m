@@ -18,6 +18,7 @@
  *  MARK:--------------------稀疏码识别--------------------
  *  @version
  *      2022.05.23: 初版,排序和限制limit条数放到此处,原来getIndex_ps()方法里并没有相近度排序 (参考26096-BUG5);
+ *      2022.05.23: 废弃掉不超过10%的条件,因为它会导致过窄问题 (参考26096-BUG3-方案1);
  *  @result 返回当前码识别的相近序列;
  */
 +(NSArray*) TIR_Value:(AIKVPointer*)protoV_p{
@@ -31,9 +32,8 @@
         return fabs(objData - maskData);
     }];
     
-    //3. 窄出,仅返回前NarrowLimit条 (最多narrowLimit条(但不超过10%),最少1条);
-    NSInteger narrowLimit = MAX(1, MIN(cValueNarrowLimit,near_ps.count / 10));
-    return ARR_SUB(near_ps, 0, narrowLimit);
+    //3. 窄出,仅返回前NarrowLimit条 (最多narrowLimit条,最少1条);
+    return ARR_SUB(near_ps, 0, cValueNarrowLimit);
 }
 
 
@@ -134,6 +134,7 @@
  *      2022.05.20 - 2. 改匹配度公式: matchCount改成protoCount (参考26073-TODO3);
  *      2022.05.20 - 3. 所有结果全放到matchAlgs中 (参考26073-TODO4);
  *      2022.05.20 - 4. 废弃仅识别有mv指向的 (参考26073-TODO5);
+ *      2022.05.23 - 将匹配度<90%的过滤掉 (参考26096-BUG3);
  */
 +(void) partMatching_Alg:(AIAlgNodeBase*)protoAlg isMem:(BOOL)isMem except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
     //1. 数据准备;
@@ -205,10 +206,15 @@
     
     //14. 全含或局部匹配判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);
     for (NSData *key in sortKeys) {
+        //14. 过滤掉匹配度<85%的;
+        double matchV = [NUMTOOK([sumNearVDic objectForKey:key]) doubleValue] / protoAlg.count;
+        if (matchV < 0.90f) {
+            continue;
+        }
+        
+        //15. 判断全含 & 收集;
         AIKVPointer *key_p = DATA2OBJ(key);
         AIAlgNodeBase *result = [SMGUtils searchNode:key_p];
-        
-        //15. 判断全含;
         //if (result.content_ps.count == [NUMTOOK([countDic objectForKey:key]) intValue]) {
         [matchAlgs addObject:result];
         //}else{ //[partAlgs addObject:result]; }

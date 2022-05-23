@@ -299,7 +299,7 @@
 }
 
 - (IBAction)loadBtnOnClick:(id)sender {
-    [self trainer5];
+    [self trainer4];
 }
 
 //MARK:===============================================================

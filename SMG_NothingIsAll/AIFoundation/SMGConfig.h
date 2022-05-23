@@ -13,7 +13,7 @@
 //MARK:===============================================================
 #define cRTIndex 315360000  //常驻内存(十年)
 #define cRTData 315360000   //常驻内存(十年)
-#define cRTReference 600    //微信息索引序列时间;
+#define cRTReference 9999   //微信息索引序列时间;
 #define cRTNode 200         //所有node时间
 #define cRTDefault 60       //默认,例如:小脑canout序列;
 #define cRTPort 200         //refPorts(概念),absPorts,conPorts的时间;
@@ -22,7 +22,7 @@
 #define cRTMemDefault 1800  //内存网络_默认生存时间;
 #define cRTMemNode 1800     //内存网络_Node时间;
 #define cRTMemPort 1800     //内存网络_Port时间;
-#define cRTMemReference 1800//内存网络_微信息引用序列
+#define cRTMemReference 9999//内存网络_微信息引用序列
 #define cRTMemMvRef 1800    //mv方向索引时间;
 
 #define cRTNode_All(isMem) (isMem ? cRTMemNode : cRTNode)
@@ -84,8 +84,8 @@
 //MARK:===============================================================
 //MARK:                     < 窄出 >
 //MARK:===============================================================
-#define cIndexNarrowLimit 1000
-#define cValueNarrowLimit 10
+#define cIndexNarrowLimit 1000  //所以每个稀疏码的精度,不允许大于1k;
+#define cValueNarrowLimit 500   //不能太小,不然概念识别时,没交集了 (参考26075);
 #define cAlgNarrowLimit 5
 #define cFoNarrowLimit 5
 #define cSolutionNarrowLimit 3
