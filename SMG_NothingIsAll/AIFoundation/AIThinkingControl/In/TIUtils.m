@@ -298,6 +298,7 @@
  *      2022.05.20: 2. RFos排序,不受被引用强度影响 (参考26073-TODO9);
  *      2022.05.20: 3. prFos排序,以SP稳定性为准 (参考26073-TODO8);
  *      2022.05.20: 4. 提升识别准确度: 窄入,调整结果20条为NarrowLimit=5条 (参考26073-TODO6);
+ *      2022.05.23: 将稳定性低的识别结果过滤掉 (参考26096-BUG4);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
 +(void) partMatching_FoV1Dot5:(AIFoNodeBase*)maskFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup{
@@ -360,9 +361,14 @@
             AIFoNodeBase *regroupFo = fromRegroup ? maskFo : nil;
             [self TIR_Fo_CheckFoValidMatch:assFo success:^(NSInteger lastAssIndex, CGFloat matchValue) {
                 if (Log4MFo) NSLog(@"时序识别item SUCCESS 完成度:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
-                
                 NSInteger cutIndex = fromRegroup ? -1 : lastAssIndex;
                 AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:assFo.pointer matchFoValue:matchValue lastMatchIndex:lastAssIndex cutIndex:cutIndex];
+                
+                //7. 稳定性<0.4的过滤掉;
+                CGFloat stableScore = [TOUtils getStableScore:assFo startSPIndex:cutIndex + 1 endSPIndex:assFo.count];
+                if (stableScore < 0.4f) {
+                    return;
+                }
                 
                 //8. 被引用强度;
                 AIPort *newMatchFoFromPort = [AINetUtils findPort:assFo_p fromPorts:refFoPorts];
@@ -397,14 +403,14 @@
     for (AIMatchFoModel *item in inModel.matchPFos) {
         AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
         CGFloat stableScore = [TOUtils getStableScore:matchFo startSPIndex:item.cutIndex2 + 1 endSPIndex:matchFo.count];
-        NSLog(@"强度:(%ld)\t> %@->%@ (SP好坏分:%.2f)",item.matchFoStrong,Fo2FStr(matchFo), Mvp2Str(matchFo.cmvNode_p),stableScore);
+        NSLog(@"强度:(%ld)\t> %@->%@ (SP好坏分:%.2f from:%@)",item.matchFoStrong,Fo2FStr(matchFo), Mvp2Str(matchFo.cmvNode_p),stableScore,CLEANSTR(matchFo.spDic));
     }
         
     NSLog(@"\n=====> 时序识别Finish (RFos数:%lu)",(unsigned long)inModel.matchRFos.count);
     for (AIMatchFoModel *item in inModel.matchRFos){
         AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
         CGFloat stableScore = [TOUtils getStableScore:matchFo startSPIndex:item.cutIndex2 + 1 endSPIndex:matchFo.count - 1];
-        NSLog(@"强度:(%ld)\t> %@ (SP好坏分:%.2f)",item.matchFoStrong,Pit2FStr(item.matchFo),stableScore);
+        NSLog(@"强度:(%ld)\t> %@ (SP好坏分:%.2f from:%@)",item.matchFoStrong,Pit2FStr(item.matchFo),stableScore,CLEANSTR(matchFo.spDic));
     }
 }
 

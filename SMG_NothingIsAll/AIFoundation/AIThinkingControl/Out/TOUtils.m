@@ -330,48 +330,15 @@
  *  @desc 根据SP计算"稳定性"分 (稳定性指顺,就是能顺利发生的率);
  *  @version
  *      2022.05.23: 初版 (参考26096-BUG1);
+ *  @result 1. 负价值时序时返回多坏(0-1);
+ *          2. 正价值时序时返回多好(0-1);
+ *          3. 无价值时序时返回多顺(0-1);
  */
 +(CGFloat) getStableScore:(AIFoNodeBase*)fo startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex{
-    //1. 数据检查;
+    //1. 数据检查 & 稳定性默认为1分 & 正负mv的公式是不同的 (参考25122-公式);
     if (!fo) return 0;
-    CGFloat totalStable = 1.0f;
-    
-    //2. 从start到end各计算spScore;
-    for (NSInteger i = startSPIndex; i <= endSPIndex; i++) {
-        AISPStrong *spStrong = [fo.spDic objectForKey:@(i)];
-        
-        //3. SP有效且其中之一不为0时,将itemSPScore计入稳定性 (参考25114 & 25122-公式);
-        if (spStrong && spStrong.pStrong + spStrong.sStrong > 0) {
-            totalStable *= spStrong.pStrong / (float)(spStrong.sStrong + spStrong.pStrong);
-        }
-    }
-    
-    //8. 统计SP总strong值: 当sp总值为0时,默认为0.5;
-    int sumSPStrong = 0;
-    for (AISPStrong *item in fo.spDic.allValues) sumSPStrong += (item.sStrong + item.pStrong);
-    totalStable = sumSPStrong == 0 ? 0.5f : totalStable;
-    
-    //9. 返回稳定性评分;
-    return totalStable;
-}
-
-/**
- *  MARK:--------------------SP好坏评分--------------------
- *  @desc 根据综合稳定性计算"多好"评分 (参考25114 & 25122-负公式);
- *  @version
- *      2022.02.20: 改为综合评分,替代掉RSResultModelBase;
- *      2022.02.22: 修复明明S有值,P为0,但综评为1分的问题 (||写成了&&导致的);
- *      2022.02.24: 支持负mv时序的稳定性评分公式 (参考25122-负公式);
- *      2022.02.24: 修复因代码逻辑错误,导致负mv在全顺状态下,评为1分的BUG (修复: 明确itemSPScore的定义,整理代码后ok);
- *      2022.05.02: 修复因Int值类型,导致返回result只可能是0或1的问题;
- *      2022.05.14: 当SP全为0时,默认返回0.5 (参考26026-BUG2);
- *  @result 返回spScore稳定性综合评分: 越接近1分越好,越接近0分越差;
- */
-+(CGFloat) getSPScore:(AIFoNodeBase*)fo startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex{
-    //1. 数据检查;
-    if (!fo) return 0;
-    CGFloat totalSPScore = 1.0f;                                    //正mv默认为1分;
-    BOOL isBadMv = [ThinkingUtils havDemand:fo.cmvNode_p];          //正负mv的公式是不同的 (参考25122-公式)
+    CGFloat totalSPScore = 1.0f;
+    BOOL isBadMv = [ThinkingUtils havDemand:fo.cmvNode_p];
     
     //2. 从start到end各计算spScore;
     for (NSInteger i = startSPIndex; i <= endSPIndex; i++) {
@@ -401,18 +368,39 @@
         totalSPScore *= itemSPScore;
     }
     
-    //7. 负mv时,返回1-totalSPScore (参考25122-负公式);
-    if (isBadMv) {
-        return 1 - totalSPScore;
-    }
-    
     //8. 统计SP总strong值: 当sp总值为0时,默认为0.5;
     int sumSPStrong = 0;
     for (AISPStrong *item in fo.spDic.allValues) sumSPStrong += (item.sStrong + item.pStrong);
     totalSPScore = sumSPStrong == 0 ? 0.5f : totalSPScore;
     
-    //9. 返回SP评分;
+    //9. 返回SP评分 (多坏或多好);
     return totalSPScore;
+}
+
+/**
+ *  MARK:--------------------SP好坏评分--------------------
+ *  @desc 根据综合稳定性计算"多好"评分 (参考25114 & 25122-负公式);
+ *  @version
+ *      2022.02.20: 改为综合评分,替代掉RSResultModelBase;
+ *      2022.02.22: 修复明明S有值,P为0,但综评为1分的问题 (||写成了&&导致的);
+ *      2022.02.24: 支持负mv时序的稳定性评分公式 (参考25122-负公式);
+ *      2022.02.24: 修复因代码逻辑错误,导致负mv在全顺状态下,评为1分的BUG (修复: 明确itemSPScore的定义,整理代码后ok);
+ *      2022.05.02: 修复因Int值类型,导致返回result只可能是0或1的问题;
+ *      2022.05.14: 当SP全为0时,默认返回0.5 (参考26026-BUG2);
+ *  @result 返回spScore稳定性综合评分: 越接近1分越好,越接近0分越差;
+ */
++(CGFloat) getSPScore:(AIFoNodeBase*)fo startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex{
+    //1. 获取稳定性评分;
+    CGFloat stableScore = [self getStableScore:fo startSPIndex:startSPIndex endSPIndex:endSPIndex];
+    
+    //2. 负mv的公式是: 1-stableScore (参考25122-公式&负公式);
+    BOOL isBadMv = [ThinkingUtils havDemand:fo.cmvNode_p];
+    if (isBadMv) {
+        stableScore = 1 - stableScore;
+    }
+    
+    //3. 返回好坏评分;
+    return stableScore;
 }
 
 /**
@@ -425,6 +413,14 @@
  *      2022.05.22: 初版,可返回解决方案的有效率 (参考26095-8);
  */
 +(CGFloat) getEffectScore:(AIFoNodeBase*)demandFo effectIndex:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo{
+    AIEffectStrong *strong = [self getEffectStrong:demandFo effectIndex:effectIndex solutionFo:solutionFo];
+    if (strong.hStrong + strong.nStrong > 0) {
+        return (float)strong.hStrong / (strong.hStrong + strong.nStrong);
+    }else{
+        return 0.5f;
+    }
+}
++(AIEffectStrong*) getEffectStrong:(AIFoNodeBase*)demandFo effectIndex:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo{
     //1. 取有效率解决方案数组;
     NSArray *strongs = ARRTOOK([demandFo.effectDic objectForKey:@(effectIndex)]);
     
@@ -434,11 +430,11 @@
     }];
     
     //3. 返回有效率;
-    if (strong.hStrong + strong.nStrong > 0) {
-        return (float)strong.hStrong / (strong.hStrong + strong.nStrong);
-    }else{
-        return 0.5f;
-    }
+    return strong;
+}
++(NSString*) getEffectDesc:(AIFoNodeBase*)demandFo effectIndex:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo{
+    AIEffectStrong *strong = [self getEffectStrong:demandFo effectIndex:effectIndex solutionFo:solutionFo];
+    return STRFORMAT(@"%ld/%ld",strong.hStrong,strong.hStrong + strong.nStrong);
 }
 
 @end

@@ -108,6 +108,7 @@
     //3. 取demand.conPorts (前15条) (参考24127-步骤1);
     AIFoNodeBase *bestResult = nil;
     CGFloat bestEffectScore = 0;
+    AIFoNodeBase *bestDicFo = nil;//bestResult的有效率字典所在fo;
     for (AIMatchFoModel *pFo in demand.pFos) {
         
         //3. 每个pFo取10条候选解决方案;
@@ -134,6 +135,7 @@
             //7. 当best为空 或 check评分比best更高时 => 将check赋值到best;
             if(!bestResult || checkEffectScore > bestEffectScore){
                 bestResult = maskFo;
+                bestDicFo = fo;
                 bestEffectScore = checkEffectScore;
             }
         }
@@ -148,7 +150,8 @@
         
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
         TOFoModel *foModel = [TOFoModel newWithFo_p:bestResult.pointer base:demand];
-        NSLog(@">>>>>> rSolution 新增第%ld例解决方案: %@->%@ (有效率:%.2f)",demand.actionFoModels.count, Fo2FStr(bestResult),Mvp2Str(bestResult.cmvNode_p),bestEffectScore);
+        NSString *effectDesc = [TOUtils getEffectDesc:bestDicFo effectIndex:bestDicFo.count solutionFo:bestResult.pointer];
+        NSLog(@">>>>>> rSolution 新增第%ld例解决方案: %@->%@ (有效率:%.2f = %@)",demand.actionFoModels.count, Fo2FStr(bestResult),Mvp2Str(bestResult.cmvNode_p),bestEffectScore,effectDesc);
         
         //a) 有效率
         [TCEffect rEffect:foModel];
@@ -337,7 +340,8 @@
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
         TOFoModel *foModel = [TOFoModel newWithFo_p:bestResult.pointer base:hDemand];
         foModel.targetSPIndex = bestSPIndex;
-        NSLog(@">>>>>> hSolution 新增第%ld例解决方案: %@->%@ 有效率:%.2f targetSPIndex:%ld",hDemand.actionFoModels.count,Fo2FStr(bestResult),Mvp2Str(bestResult.cmvNode_p),bestEffectScore,foModel.targetSPIndex);
+        NSString *effectDesc = [TOUtils getEffectDesc:targetFo effectIndex:targetFoModel.actionIndex solutionFo:bestResult.pointer];
+        NSLog(@">>>>>> hSolution 新增第%ld例解决方案: %@->%@ (有效率:%.2f = %@) targetSPIndex:%ld",hDemand.actionFoModels.count,Fo2FStr(bestResult),Mvp2Str(bestResult.cmvNode_p),bestEffectScore,effectDesc,foModel.targetSPIndex);
         
         //a) 有效率;
         [TCEffect hEffect:foModel];

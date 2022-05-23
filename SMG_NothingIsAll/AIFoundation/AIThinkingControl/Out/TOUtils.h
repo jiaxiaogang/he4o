@@ -143,5 +143,6 @@
  *  @param solutionFo   : 用于检查有效率的solutionFo;
  */
 +(CGFloat) getEffectScore:(AIFoNodeBase*)demandFo effectIndex:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo;
++(NSString*) getEffectDesc:(AIFoNodeBase*)demandFo effectIndex:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo;
 
 @end
