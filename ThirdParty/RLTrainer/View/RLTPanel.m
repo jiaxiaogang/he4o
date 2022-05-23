@@ -344,7 +344,7 @@
         [theRT queueN:names count:1];
     }
 }
-//步骤: 先在各位置被扔木棒50轮 (耗时约30min) (参考26031-1);
+//步骤: 先在各位置被扔木棒200轮,主要用于训练识别功能 (耗时约40min) (参考26031-1);
 -(void) trainer4{
     [theRT queueN:@[kGrowPageSEL,kWoodSEL,kMainPageSEL,kClearTCSEL] count:200];
 }

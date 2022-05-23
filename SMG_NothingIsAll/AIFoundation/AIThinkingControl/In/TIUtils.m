@@ -135,6 +135,7 @@
  *      2022.05.20 - 3. 所有结果全放到matchAlgs中 (参考26073-TODO4);
  *      2022.05.20 - 4. 废弃仅识别有mv指向的 (参考26073-TODO5);
  *      2022.05.23 - 将匹配度<90%的过滤掉 (参考26096-BUG3);
+ *      2022.05.24 - 排序公式改为sumNear / matchCount (参考26103-代码);
  */
 +(void) partMatching_Alg:(AIAlgNodeBase*)protoAlg isMem:(BOOL)isMem except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
     //1. 数据准备;
@@ -196,18 +197,18 @@
         double sumNearV2 = [NUMTOOK([sumNearVDic objectForKey:obj2]) doubleValue];
         
         //12. 求出nearA (参考25082-公式2);
-        double nearA1 = sumNearV1 / protoAlg.count;//[NUMTOOK([countDic objectForKey:obj1]) intValue]
-        double nearA2 = sumNearV2 / protoAlg.count;//[NUMTOOK([countDic objectForKey:obj2]) intValue]
+        double nearA1 = sumNearV1 / [NUMTOOK([countDic objectForKey:obj1]) intValue];
+        double nearA2 = sumNearV2 / [NUMTOOK([countDic objectForKey:obj2]) intValue];
         return [SMGUtils compareDoubleA:nearA1 doubleB:nearA2];
     }]);
     
     //13. 仅保留最相近的20条 (参考25083-3);
-    sortKeys = ARR_SUB(sortKeys, 0, cAlgNarrowLimit);
+    sortKeys = ARR_SUB(sortKeys, 0, cAlgNarrowLimit(protoAlg.count));
     
     //14. 全含或局部匹配判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);
     for (NSData *key in sortKeys) {
         //14. 过滤掉匹配度<85%的;
-        double matchV = [NUMTOOK([sumNearVDic objectForKey:key]) doubleValue] / protoAlg.count;
+        double matchV = [NUMTOOK([sumNearVDic objectForKey:key]) doubleValue] / [NUMTOOK([countDic objectForKey:key]) intValue];
         if (matchV < 0.90f) {
             continue;
         }
@@ -222,7 +223,10 @@
     
     //16. 未将全含返回,则返回最相似 (2020.10.22: 全含返回,也要返回seemAlg) (2022.01.15: 支持相近匹配后,全是全含没局部了);
     NSLog(@"\n识别结果 >> 总数:%ld = 全含匹配数:%ld + 局部匹配数:%ld",sortKeys.count,matchAlgs.count,partAlgs.count);
-    for (AIAlgNodeBase *item in matchAlgs) NSLog(@"-->>> 全含item: %@   \t相近度 => %.2f (count:%@)",Alg2FStr(item),[NUMTOOK([sumNearVDic objectForKey:OBJ2DATA(item.pointer)]) doubleValue] / protoAlg.count,[countDic objectForKey:OBJ2DATA(item.pointer)]);
+    for (AIAlgNodeBase *item in matchAlgs) {
+        id key = OBJ2DATA(item.pointer);
+        NSLog(@"-->>> 全含item: %@   \t相近度 => %.2f (count:%@)",Alg2FStr(item),[NUMTOOK([sumNearVDic objectForKey:key]) doubleValue] / [NUMTOOK([countDic objectForKey:key]) intValue],[countDic objectForKey:OBJ2DATA(item.pointer)]);
+    }
     for (AIAlgNodeBase *item in partAlgs) NSLog(@"-->>> 局部item: %@",Alg2FStr(item));
     inModel.matchAlgs = matchAlgs;
     inModel.partAlgs = partAlgs;
@@ -409,14 +413,14 @@
     for (AIMatchFoModel *item in inModel.matchPFos) {
         AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
         CGFloat stableScore = [TOUtils getStableScore:matchFo startSPIndex:item.cutIndex2 + 1 endSPIndex:matchFo.count];
-        NSLog(@"强度:(%ld)\t> %@->%@ (SP好坏分:%.2f from:%@)",item.matchFoStrong,Fo2FStr(matchFo), Mvp2Str(matchFo.cmvNode_p),stableScore,CLEANSTR(matchFo.spDic));
+        NSLog(@"强度:(%ld)\t> %@->%@ (稳定性:%.2f from:%@)",item.matchFoStrong,Fo2FStr(matchFo), Mvp2Str(matchFo.cmvNode_p),stableScore,CLEANSTR(matchFo.spDic));
     }
         
     NSLog(@"\n=====> 时序识别Finish (RFos数:%lu)",(unsigned long)inModel.matchRFos.count);
     for (AIMatchFoModel *item in inModel.matchRFos){
         AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
         CGFloat stableScore = [TOUtils getStableScore:matchFo startSPIndex:item.cutIndex2 + 1 endSPIndex:matchFo.count - 1];
-        NSLog(@"强度:(%ld)\t> %@ (SP好坏分:%.2f from:%@)",item.matchFoStrong,Pit2FStr(item.matchFo),stableScore,CLEANSTR(matchFo.spDic));
+        NSLog(@"强度:(%ld)\t> %@ (稳定性:%.2f from:%@)",item.matchFoStrong,Pit2FStr(item.matchFo),stableScore,CLEANSTR(matchFo.spDic));
     }
 }
 
