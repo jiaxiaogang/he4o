@@ -130,7 +130,8 @@
             
             //6. 判断SP评分;
             CGFloat checkEffectScore = [TOUtils getEffectScore:fo effectIndex:fo.count solutionFo:maskFo.pointer];
-            if (Log4Solution) NSLog(@"checkResult:(有效率:%.2f) %@ %@",checkEffectScore,Fo2FStr(maskFo),Mvp2Str(maskFo.cmvNode_p));
+            NSString *effectDesc = [TOUtils getEffectDesc:fo effectIndex:fo.count solutionFo:maskFo.pointer];
+            if (Log4Solution) NSLog(@"by:F%ld checkResult:(有效率:%.2f = %@) %@ %@",fo.pointer.pointerId,checkEffectScore,effectDesc,Fo2FStr(maskFo),Mvp2Str(maskFo.cmvNode_p));
             
             //7. 当best为空 或 check评分比best更高时 => 将check赋值到best;
             if(!bestResult || checkEffectScore > bestEffectScore){

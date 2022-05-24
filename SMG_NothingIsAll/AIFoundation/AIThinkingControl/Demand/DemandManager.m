@@ -145,6 +145,9 @@
             //2022.03.10: 为使鸟躲避及时停下,将迫切度再改回受评分迫切度等影响;
             [theTC updateEnergyValue:-score * 20];
             NSLog(@"RMV新需求: %@ (条数+1=%ld 评分:%@)",atKey,self.loopCache.count,Double2Str_NDZ(score));
+            for (AIMatchFoModel *pFo in pFosValue) {
+                NSLog(@"\t pFo:%@->{%.2f}",Pit2FStr(pFo.matchFo),[AIScore score4MV_v2:pFo]);
+            }
         }else{
             [theTC updateEnergyValue:-score * 20];
             NSLog(@"当前,预测mv未形成需求:%@ 评分:%f",atKey,score);
