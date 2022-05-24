@@ -10,10 +10,11 @@
 
 @implementation AIMatchFoModel
 
-+(AIMatchFoModel*) newWithMatchFo:(AIKVPointer*)matchFo matchFoValue:(CGFloat)matchFoValue lastMatchIndex:(NSInteger)lastMatchIndex cutIndex:(NSInteger)cutIndex{
++(AIMatchFoModel*) newWithMatchFo:(AIKVPointer*)matchFo matchFoValue:(CGFloat)matchFoValue colStableScore:(CGFloat)colStableScore lastMatchIndex:(NSInteger)lastMatchIndex cutIndex:(NSInteger)cutIndex{
     AIMatchFoModel *model = [[AIMatchFoModel alloc] init];
     model.matchFo = matchFo;
     model.matchFoValue = matchFoValue;
+    model.colStableScore = colStableScore;
     model.lastMatchIndex = lastMatchIndex;
     model.cutIndex2 = cutIndex;
     return model;
@@ -27,6 +28,7 @@
     if (self) {
         self.matchFo = [aDecoder decodeObjectForKey:@"matchFo"];
         self.matchFoValue = [aDecoder decodeFloatForKey:@"matchFoValue"];
+        self.colStableScore = [aDecoder decodeFloatForKey:@"colStableScore"];
         self.status = [aDecoder decodeIntegerForKey:@"status"];
         self.lastMatchIndex = [aDecoder decodeIntegerForKey:@"lastMatchIndex"];
         self.cutIndex2 = [aDecoder decodeIntegerForKey:@"cutIndex2"];
@@ -38,6 +40,7 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [aCoder encodeObject:self.matchFo forKey:@"matchFo"];
     [aCoder encodeFloat:self.matchFoValue forKey:@"matchFoValue"];
+    [aCoder encodeFloat:self.colStableScore forKey:@"colStableScore"];
     [aCoder encodeInteger:self.status forKey:@"status"];
     [aCoder encodeInteger:self.lastMatchIndex forKey:@"lastMatchIndex"];
     [aCoder encodeInteger:self.cutIndex2 forKey:@"cutIndex2"];

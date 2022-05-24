@@ -16,9 +16,10 @@
 @class AIFoNodeBase;
 @interface AIMatchFoModel : NSObject
 
-+(AIMatchFoModel*) newWithMatchFo:(AIKVPointer*)matchFo matchFoValue:(CGFloat)matchFoValue lastMatchIndex:(NSInteger)lastMatchIndex cutIndex:(NSInteger)cutIndex;
-@property (strong, nonatomic) AIKVPointer *matchFo;    //匹配时序
++(AIMatchFoModel*) newWithMatchFo:(AIKVPointer*)matchFo matchFoValue:(CGFloat)matchFoValue colStableScore:(CGFloat)colStableScore lastMatchIndex:(NSInteger)lastMatchIndex cutIndex:(NSInteger)cutIndex;
+@property (strong, nonatomic) AIKVPointer *matchFo;     //匹配时序
 @property (assign, nonatomic) CGFloat matchFoValue;     //时序匹配度
+@property (assign, nonatomic) CGFloat colStableScore;   //衰减稳定性
 @property (assign, nonatomic) TIModelStatus status;     //状态
 
 /**

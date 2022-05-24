@@ -340,6 +340,7 @@
         
         //4. indexAlg.refPorts; (取识别到过的抽象节点(如苹果));
         NSArray *refFoPorts = [AINetUtils refPorts_All4Alg_Normal:indexAlg];//b. 仅Normal
+        refFoPorts = ARR_SUB(refFoPorts, 0, 5);
         
         //6. 仅保留有mv指向的部分 (参考26022-3);
         //refFoPorts = [SMGUtils filterArr:refFoPorts checkValid:^BOOL(AIPort *item) {
@@ -370,16 +371,10 @@
             
             //7. 全含判断;
             AIFoNodeBase *regroupFo = fromRegroup ? maskFo : nil;
-            [self TIR_Fo_CheckFoValidMatch:assFo success:^(NSInteger lastAssIndex, CGFloat matchValue) {
+            [self TIR_Fo_CheckFoValidMatch:assFo outOfFos:assFo_ps success:^(NSInteger lastAssIndex, CGFloat matchValue,CGFloat colStableScore) {
                 if (Log4MFo) NSLog(@"时序识别item SUCCESS 完成度:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
                 NSInteger cutIndex = fromRegroup ? -1 : lastAssIndex;
-                AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:assFo.pointer matchFoValue:matchValue lastMatchIndex:lastAssIndex cutIndex:cutIndex];
-                
-                //7. 稳定性<0.4的过滤掉;
-                CGFloat stableScore = [TOUtils getStableScore:assFo startSPIndex:cutIndex + 1 endSPIndex:assFo.count];
-                if (stableScore < 0.4f) {
-                    return;
-                }
+                AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:assFo.pointer matchFoValue:matchValue colStableScore:colStableScore lastMatchIndex:lastAssIndex cutIndex:cutIndex];
                 
                 //8. 被引用强度;
                 AIPort *newMatchFoFromPort = [AINetUtils findPort:assFo_p fromPorts:refFoPorts];
@@ -395,22 +390,12 @@
         }
     }
     
-    //9. 用于计算衰减值;
-    NSArray *matchPFo_ps = [SMGUtils convertArr:inModel.matchPFos convertBlock:^id(AIMatchFoModel *obj) {
-        return obj.matchFo;
-    }];
-    NSArray *matchRFo_ps = [SMGUtils convertArr:inModel.matchRFos convertBlock:^id(AIMatchFoModel *obj) {
-        return obj.matchFo;
-    }];
-    
     //10. 按照 (强度x匹配度) 排序,强度最重要,包含了价值初始和使用频率,其次匹配度也重要 (参考23222-BUG2);
     NSArray *sortPFos = [SMGUtils sortBig2Small:inModel.matchPFos compareBlock:^double(AIMatchFoModel *obj) {
-        AIFoNodeBase *matchFo = [SMGUtils searchNode:obj.matchFo];
-        return [TOUtils getColStableScore:matchFo outOfFos:matchPFo_ps startSPIndex:obj.cutIndex2 + 1 endSPIndex:matchFo.count];
+        return obj.colStableScore;
     }];
     NSArray *sortRFos = [SMGUtils sortBig2Small:inModel.matchRFos compareBlock:^double(AIMatchFoModel *obj) {
-        AIFoNodeBase *matchFo = [SMGUtils searchNode:obj.matchFo];
-        return [TOUtils getColStableScore:matchFo outOfFos:matchRFo_ps startSPIndex:obj.cutIndex2 + 1 endSPIndex:matchFo.count - 1];
+        return obj.colStableScore;
     }];
     
     //11. 仅保留前NarrowLimit条;
@@ -421,15 +406,13 @@
     NSLog(@"\n=====> 时序识别Finish (PFos数:%lu)",(unsigned long)inModel.matchPFos.count);
     for (AIMatchFoModel *item in inModel.matchPFos) {
         AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
-        CGFloat colStableScore = [TOUtils getColStableScore:matchFo outOfFos:matchPFo_ps startSPIndex:item.cutIndex2 + 1 endSPIndex:matchFo.count];
-        NSLog(@"强度:(%ld)\t> %@->%@ (衰后稳定性:%.2f from:%@)",item.matchFoStrong,Fo2FStr(matchFo), Mvp2Str(matchFo.cmvNode_p),colStableScore,CLEANSTR(matchFo.spDic));
+        NSLog(@"强度:(%ld)\t> %@->%@ (衰后稳定性:%.2f from:%@)",item.matchFoStrong,Fo2FStr(matchFo), Mvp2Str(matchFo.cmvNode_p),item.colStableScore,CLEANSTR(matchFo.spDic));
     }
         
     NSLog(@"\n=====> 时序识别Finish (RFos数:%lu)",(unsigned long)inModel.matchRFos.count);
     for (AIMatchFoModel *item in inModel.matchRFos){
         AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
-        CGFloat colStableScore = [TOUtils getColStableScore:matchFo outOfFos:matchRFo_ps startSPIndex:item.cutIndex2 + 1 endSPIndex:matchFo.count - 1];
-        NSLog(@"强度:(%ld)\t> %@ (衰后稳定性:%.2f from:%@)",item.matchFoStrong,Pit2FStr(item.matchFo),colStableScore,CLEANSTR(matchFo.spDic));
+        NSLog(@"强度:(%ld)\t> %@ (衰后稳定性:%.2f from:%@)",item.matchFoStrong,Pit2FStr(item.matchFo),item.colStableScore,CLEANSTR(matchFo.spDic));
     }
 }
 
@@ -440,13 +423,15 @@
  *  名词说明:
  *      1. 全含: 指从lastAssIndex向前,所有的assItemAlg都匹配成功;
  *      2. 非全含: 指从lastAssIndex向前,只要有一个assItemAlg匹配失败,则非全含;
- *  @param success : lastAssIndex指已发生到的index,后面则为时序预测; matchValue指匹配度(0-1) notnull;
+ *  @param success  : lastAssIndex指已发生到的index,后面则为时序预测; matchValue指匹配度(0-1) notnull;
+ *  @param outOfFos : 用于计算衰减值;
  *  @version
  *      2022.04.30: 将每帧的matchAlgs和partAlgs用于全含判断,而不是单纯用protoFo来判断 (参考25234-6);
  *      2022.05.23: 反思时,改回旧有mIsC判断方式 (参考26096-BUG6);
+ *      2022.05.25: 将衰后稳定性计算集成到全含判断方法中 (这样性能好些);
  *  _result 将protoFo与assFo判断是否全含,并将匹配度返回;
  */
-+(void) TIR_Fo_CheckFoValidMatch:(AIFoNodeBase*)assFo success:(void(^)(NSInteger lastAssIndex,CGFloat matchValue))success regroupFo:(AIFoNodeBase*)regroupFo{
++(void) TIR_Fo_CheckFoValidMatch:(AIFoNodeBase*)assFo outOfFos:(NSArray*)outOfFos success:(void(^)(NSInteger lastAssIndex,CGFloat matchValue,CGFloat colStableScore))success regroupFo:(AIFoNodeBase*)regroupFo{
     //1. 数据准备;
     BOOL paramValid = assFo && assFo.content_ps.count > 0 && success;
     if (!paramValid) {
@@ -483,6 +468,14 @@
     }
     if (lastAssIndex == -1) {
         NSLog(@"时序识别: lastItem匹配失败,查看是否在联想时就出bug了");
+        return;
+    }
+    
+    //3. 稳定性<0.4的过滤掉;
+    NSInteger cutIndex = regroupFo ? -1 : lastAssIndex;
+    CGFloat colStableScore = [TOUtils getColStableScore:assFo outOfFos:outOfFos startSPIndex:cutIndex + 1 endSPIndex:assFo.count];
+    CGFloat needScore = assFo.cmvNode_p ? 0.1f : 0.4f;
+    if (colStableScore < needScore) {
         return;
     }
     
@@ -530,7 +523,7 @@
     CGFloat matchValue = (float)validItemCount / assFo.content_ps.count;
     
     //7. 到此全含成功 之: 返回success
-    success(lastAssIndex,matchValue);
+    success(lastAssIndex,matchValue,colStableScore);
 }
 
 /**

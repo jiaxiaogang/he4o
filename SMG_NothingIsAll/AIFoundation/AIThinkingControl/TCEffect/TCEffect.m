@@ -51,7 +51,7 @@
         for (AIMatchFoModel *pFoModel in rDemand.pFos) {
             AIFoNodeBase *pFo = [SMGUtils searchNode:pFoModel.matchFo];
             NSString *desc = [TOUtils getEffectDesc:pFo effectIndex:pFo.count solutionFo:rSolution.content_p];
-            NSLog(@"=>pFo:%@ (index:%ld mv有效率:%@)",Fo2FStr(pFo),pFo.count,desc);
+            NSLog(@"\t=>pFo:%@ (index:%ld mv有效率:%@)",Fo2FStr(pFo),pFo.count,desc);
         }
     }];
     DebugE();
@@ -89,7 +89,8 @@
         
         //7. log
         NSString *desc = [TOUtils getEffectDesc:targetFoNode effectIndex:targetFo.actionIndex solutionFo:hSolution.content_p];
-        IFTitleLog(@"H有效率", @"\n%p S:%@ (有效性:%@ 当前方案状态:%@) [index:%ld %@]",hSolution,Pit2FStr(hSolution.content_p),EffectStatus2Str(es),TOStatus2Str(hSolution.status),targetFo.actionIndex,desc);
+        IFTitleLog(@"H有效率", @"\n%p S:%@ (有效性:%@ 当前方案状态:%@)",hSolution,Pit2FStr(hSolution.content_p),EffectStatus2Str(es),TOStatus2Str(hSolution.status));
+        NSLog(@"\t=>targetFo:%@ (index:%ld mv有效率:%@)",Fo2FStr(targetFoNode),targetFo.actionIndex,desc);
     }];
     DebugE();
 }
