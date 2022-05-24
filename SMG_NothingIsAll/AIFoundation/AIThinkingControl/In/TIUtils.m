@@ -340,12 +340,15 @@
         
         //4. indexAlg.refPorts; (取识别到过的抽象节点(如苹果));
         NSArray *refFoPorts = [AINetUtils refPorts_All4Alg_Normal:indexAlg];//b. 仅Normal
-        refFoPorts = ARR_SUB(refFoPorts, 0, 5);
         
-        //6. 仅保留有mv指向的部分 (参考26022-3);
-        //refFoPorts = [SMGUtils filterArr:refFoPorts checkValid:^BOOL(AIPort *item) {
-        //    return item.targetHavMv;
-        //}];
+        //6. 无mv指向的仅保留两条 (参考26022-3);
+        __block int rCount = 0;
+        refFoPorts = [SMGUtils filterArr:refFoPorts checkValid:^BOOL(AIPort *item) {
+            if (!item.targetHavMv && ++rCount > 2) {
+                return false;
+            }
+            return true;
+        }];
         
         NSArray *assFo_ps = Ports2Pits(refFoPorts);
         assFo_ps = [SMGUtils removeSub_ps:except_ps parent_ps:assFo_ps];
