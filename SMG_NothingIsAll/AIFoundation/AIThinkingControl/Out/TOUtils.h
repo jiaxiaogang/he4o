@@ -145,4 +145,17 @@
 +(CGFloat) getEffectScore:(AIFoNodeBase*)demandFo effectIndex:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo;
 +(NSString*) getEffectDesc:(AIFoNodeBase*)demandFo effectIndex:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo;
 
+
+/**
+ *  MARK:--------------------获取fo衰减后的值--------------------
+ *  @param fo_p         : 计算fo的衰减后的值;
+ *  @param outOfFo_ps   : fo的竞争者 (包含fo);
+ */
++(double) getColValue:(AIKVPointer*)fo_p outOfFos:(NSArray*)outOfFo_ps ;
+
+/**
+ *  MARK:--------------------获取衰减后的稳定性--------------------
+ */
++(CGFloat) getColStableScore:(AIFoNodeBase*)fo outOfFos:(NSArray*)outOfFo_ps startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex;
+
 @end

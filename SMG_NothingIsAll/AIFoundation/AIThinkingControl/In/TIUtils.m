@@ -309,6 +309,7 @@
  *      2022.05.20: 3. prFos排序,以SP稳定性为准 (参考26073-TODO8);
  *      2022.05.20: 4. 提升识别准确度: 窄入,调整结果20条为NarrowLimit=5条 (参考26073-TODO6);
  *      2022.05.23: 将稳定性低的识别结果过滤掉 (参考26096-BUG4);
+ *      2022.05.24: 稳定性支持衰减 (参考26104-方案);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
 +(void) partMatching_FoV1Dot5:(AIFoNodeBase*)maskFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup{
@@ -394,14 +395,22 @@
         }
     }
     
+    //9. 用于计算衰减值;
+    NSArray *matchPFo_ps = [SMGUtils convertArr:inModel.matchPFos convertBlock:^id(AIMatchFoModel *obj) {
+        return obj.matchFo;
+    }];
+    NSArray *matchRFo_ps = [SMGUtils convertArr:inModel.matchRFos convertBlock:^id(AIMatchFoModel *obj) {
+        return obj.matchFo;
+    }];
+    
     //10. 按照 (强度x匹配度) 排序,强度最重要,包含了价值初始和使用频率,其次匹配度也重要 (参考23222-BUG2);
     NSArray *sortPFos = [SMGUtils sortBig2Small:inModel.matchPFos compareBlock:^double(AIMatchFoModel *obj) {
         AIFoNodeBase *matchFo = [SMGUtils searchNode:obj.matchFo];
-        return [TOUtils getStableScore:matchFo startSPIndex:obj.cutIndex2 + 1 endSPIndex:matchFo.count];
+        return [TOUtils getColStableScore:matchFo outOfFos:matchPFo_ps startSPIndex:obj.cutIndex2 + 1 endSPIndex:matchFo.count];
     }];
     NSArray *sortRFos = [SMGUtils sortBig2Small:inModel.matchRFos compareBlock:^double(AIMatchFoModel *obj) {
         AIFoNodeBase *matchFo = [SMGUtils searchNode:obj.matchFo];
-        return [TOUtils getStableScore:matchFo startSPIndex:obj.cutIndex2 + 1 endSPIndex:matchFo.count - 1];
+        return [TOUtils getColStableScore:matchFo outOfFos:matchRFo_ps startSPIndex:obj.cutIndex2 + 1 endSPIndex:matchFo.count - 1];
     }];
     
     //11. 仅保留前NarrowLimit条;
@@ -412,15 +421,15 @@
     NSLog(@"\n=====> 时序识别Finish (PFos数:%lu)",(unsigned long)inModel.matchPFos.count);
     for (AIMatchFoModel *item in inModel.matchPFos) {
         AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
-        CGFloat stableScore = [TOUtils getStableScore:matchFo startSPIndex:item.cutIndex2 + 1 endSPIndex:matchFo.count];
-        NSLog(@"强度:(%ld)\t> %@->%@ (稳定性:%.2f from:%@)",item.matchFoStrong,Fo2FStr(matchFo), Mvp2Str(matchFo.cmvNode_p),stableScore,CLEANSTR(matchFo.spDic));
+        CGFloat colStableScore = [TOUtils getColStableScore:matchFo outOfFos:matchPFo_ps startSPIndex:item.cutIndex2 + 1 endSPIndex:matchFo.count];
+        NSLog(@"强度:(%ld)\t> %@->%@ (衰后稳定性:%.2f from:%@)",item.matchFoStrong,Fo2FStr(matchFo), Mvp2Str(matchFo.cmvNode_p),colStableScore,CLEANSTR(matchFo.spDic));
     }
         
     NSLog(@"\n=====> 时序识别Finish (RFos数:%lu)",(unsigned long)inModel.matchRFos.count);
     for (AIMatchFoModel *item in inModel.matchRFos){
         AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
-        CGFloat stableScore = [TOUtils getStableScore:matchFo startSPIndex:item.cutIndex2 + 1 endSPIndex:matchFo.count - 1];
-        NSLog(@"强度:(%ld)\t> %@ (稳定性:%.2f from:%@)",item.matchFoStrong,Pit2FStr(item.matchFo),stableScore,CLEANSTR(matchFo.spDic));
+        CGFloat colStableScore = [TOUtils getColStableScore:matchFo outOfFos:matchRFo_ps startSPIndex:item.cutIndex2 + 1 endSPIndex:matchFo.count - 1];
+        NSLog(@"强度:(%ld)\t> %@ (衰后稳定性:%.2f from:%@)",item.matchFoStrong,Pit2FStr(item.matchFo),colStableScore,CLEANSTR(matchFo.spDic));
     }
 }
 

@@ -437,4 +437,60 @@
     return STRFORMAT(@"%ld/%ld",strong.hStrong,strong.hStrong + strong.nStrong);
 }
 
+//MARK:===============================================================
+//MARK:                     < 衰减曲线 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------获取fo衰减后的值--------------------
+ *  @param fo_p         : 计算fo的衰减后的值;
+ *  @param outOfFo_ps   : fo的竞争者 (包含fo);
+ *  @desc 使用牛顿冷却函数,步骤说明:
+ *      1. 根据F指针地址排序,比如(F1,F3,F5,F7,F9)
+ *      2. 默认衰减时间为F总数,即5;
+ *      3. 当sp强度都为1时,最新的F9为热度为1,最旧的F1热度为minValue;
+ *      4. 当sp强度>1时,衰减时长 = 默认时长5 * 根号sp强度;
+ *  @version
+ *      2022.05.24: 初版,用于解决fo的衰减,避免时序识别时,明明fo很老且SP都是0,却可以排在很前面 (参考26104-方案);
+ */
++(double) getColValue:(AIKVPointer*)fo_p outOfFos:(NSArray*)outOfFo_ps {
+    //0. 数据检查;
+    if (!fo_p || ![outOfFo_ps containsObject:fo_p]) {
+        return 1.0f;
+    }
+    
+    //1. 对fos排序 & 计算衰减区 (从1到minValue的默认区间: 即每强度系数单位可支撑区间);
+    outOfFo_ps = [SMGUtils sortBig2Small:outOfFo_ps compareBlock:^double(AIKVPointer *obj) {
+        return obj.pointerId;
+    }];
+    float defaultColSpace = outOfFo_ps.count;
+    
+    //2. 计算fo的sp强度系数 (总强度 + 1,然后开根号);
+    AIFoNodeBase *fo = [SMGUtils searchNode:fo_p];
+    int sumSPStrong = 1;
+    for (AISPStrong *item in fo.spDic.allValues) sumSPStrong += (item.sStrong + item.pStrong);
+    float strongXiSu = sqrtf(sumSPStrong);
+    
+    //3. fo的实际衰减区间 (默认区间 x 强度系数);
+    float colSpace = defaultColSpace * strongXiSu;
+    
+    //4. 衰减系数 (在colTime结束后,衰减到最小值);
+    float minValue = 0.1f;
+    double colXiSu = log(minValue) / colSpace;
+    
+    //5. 取当前fo的age & 计算牛顿衰减后的值;
+    NSInteger foAge = [outOfFo_ps indexOfObject:fo_p];
+    double result = exp(colXiSu * foAge);
+    return result;
+}
+
+/**
+ *  MARK:--------------------获取衰减后的稳定性--------------------
+ */
++(CGFloat) getColStableScore:(AIFoNodeBase*)fo outOfFos:(NSArray*)outOfFo_ps startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex {
+    double colValue = [TOUtils getColValue:fo.pointer outOfFos:outOfFo_ps];
+    CGFloat stableScore = [TOUtils getStableScore:fo startSPIndex:startSPIndex endSPIndex:endSPIndex];
+    return colValue * stableScore;
+}
+
 @end
