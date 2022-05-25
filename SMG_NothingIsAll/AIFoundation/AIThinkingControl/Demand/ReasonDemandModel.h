@@ -45,4 +45,10 @@
 //@property (strong, nonatomic) AIShortMatchModel *inModel;
 @property (strong, nonatomic) NSString *fromIden;
 
+/**
+ *  MARK:--------------------触发了此任务的protoFo记录--------------------
+ *  @desc 作用: 可用于Solution思考;
+ */
+@property (strong, nonatomic) AIKVPointer *protoFo;
+
 @end

@@ -166,6 +166,84 @@
     }
 }
 
++(void) rSolutionV2:(ReasonDemandModel *)demand{
+    //1. 取pFos;
+    NSArray *pFos = [SMGUtils convertArr:demand.pFos convertBlock:^id(AIMatchFoModel *obj) {
+        return obj.matchFo;
+    }];
+    NSLog(@"第1步 pFos数:%ld",pFos.count);//测时8条
+    
+    //2. 取absPFos
+    NSMutableArray *absPFos = [[NSMutableArray alloc] init];
+    for (AIKVPointer *pFo in pFos) {
+        AIFoNodeBase *fo = [SMGUtils searchNode:pFo];
+        NSArray *itemAbsPFos = Ports2Pits([AINetUtils absPorts_All:fo]);
+        [absPFos addObjectsFromArray:itemAbsPFos];
+    }
+    absPFos = [SMGUtils removeRepeat:absPFos];
+    NSLog(@"第2步 absPFos数:%ld",absPFos.count);//测时9条
+    
+    //3. 取同级;
+    NSMutableArray *sameLayerPFos = [[NSMutableArray alloc] init];
+    for (AIKVPointer *absPFo in absPFos) {
+        AIFoNodeBase *fo = [SMGUtils searchNode:absPFo];
+        NSArray *itemSameLayerPFos = Ports2Pits([AINetUtils conPorts_All:fo]);
+        [sameLayerPFos addObjectsFromArray:itemSameLayerPFos];
+    }
+    sameLayerPFos = [SMGUtils removeRepeat:sameLayerPFos];
+    NSLog(@"第3步 sameLayerPFos数:%ld",sameLayerPFos.count);//测时746条
+    
+    //4. 收集起来
+    NSMutableArray *allPFos = [[NSMutableArray alloc] init];
+    [allPFos addObjectsFromArray:pFos];
+    [allPFos addObjectsFromArray:absPFos];
+    [allPFos addObjectsFromArray:sameLayerPFos];
+    allPFos = [SMGUtils removeRepeat:allPFos];
+    NSLog(@"第4步 allPFos数:%ld",allPFos.count);//测时755条
+    
+    //5. 过滤掉无mv的;
+    allPFos = [SMGUtils filterArr:allPFos checkValid:^BOOL(AIKVPointer *item) {
+        AIFoNodeBase *fo = [SMGUtils searchNode:item];
+        return fo.cmvNode_p;
+    }];
+    NSLog(@"第5步 过滤掉无Mv后:%ld",allPFos.count);//测时228条
+    
+    //6. 过滤掉无effectDic也无具象的;
+    allPFos = [SMGUtils filterArr:allPFos checkValid:^BOOL(AIKVPointer *item) {
+        AIFoNodeBase *fo = [SMGUtils searchNode:item];
+        NSArray *conPorts = [AINetUtils conPorts_All:fo];
+        return DICISOK(fo.effectDic) || ARRISOK(conPorts);
+    }];
+    NSLog(@"第6步 过滤掉无方案的:%ld",allPFos.count);//测时46条
+    
+    //7. 过滤掉content数量比proto还多的 (因为这种不可能全含);
+    AIFoNodeBase *protoFo = [SMGUtils searchNode:demand.protoFo];
+    allPFos = [SMGUtils filterArr:allPFos checkValid:^BOOL(AIKVPointer *item) {
+        AIFoNodeBase *fo = [SMGUtils searchNode:item];
+        return fo.count <= protoFo.count;
+    }];
+    NSLog(@"第7步 过滤掉元素数比proto还多的:%ld",allPFos.count);//测时43条
+    
+    //6. 判断匹配度;
+    NSLog(@"protoFo: %@",Pit2FStr(demand.protoFo));
+    for (AIKVPointer *item in allPFos) {
+        NSLog(@"item: %@",Pit2FStr(item));
+    }
+    
+    
+    ////6. 过滤掉有效率低的;
+    //allPFos = [SMGUtils filterArr:allPFos checkValid:^BOOL(AIKVPointer *item) {
+    //    AIFoNodeBase *fo = [SMGUtils searchNode:item];
+    //    for (NSNumber *key in fo.effectDic.allKeys) {
+    //
+    //    }
+    //    [TOUtils getEffectScore:fo effectIndex:0 solutionFo:nil];
+    //}];
+    //NSLog(@"第5步 过滤掉无Mv后:%ld",allPFos.count);
+    
+    NSLog(@"");
+}
+
 /**
  *  MARK:-------------------- pSolution --------------------
  *  @desc

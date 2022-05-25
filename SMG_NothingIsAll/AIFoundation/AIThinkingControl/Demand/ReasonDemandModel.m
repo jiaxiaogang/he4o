@@ -36,6 +36,7 @@
     result.urgentTo = urgentTo;
     result.pFos = pFos;
     result.fromIden = STRFORMAT(@"%p",inModel);
+    result.protoFo = inModel.protoFo.pointer;
     return result;
 }
 
@@ -47,6 +48,7 @@
     if (self) {
         self.pFos = [aDecoder decodeObjectForKey:@"pFos"];
         self.fromIden = [aDecoder decodeObjectForKey:@"fromIden"];
+        self.protoFo = [aDecoder decodeObjectForKey:@"protoFo"];
     }
     return self;
 }
@@ -55,6 +57,7 @@
     [super encodeWithCoder:aCoder];
     [aCoder encodeObject:self.pFos forKey:@"pFos"];
     [aCoder encodeObject:self.fromIden forKey:@"fromIden"];
+    [aCoder encodeObject:self.protoFo forKey:@"protoFo"];
 }
 
 @end
