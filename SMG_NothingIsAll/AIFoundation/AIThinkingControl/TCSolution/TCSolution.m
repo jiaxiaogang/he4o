@@ -85,6 +85,8 @@
  *  @callers : 用于RDemand.Begin时调用;
  */
 +(void) rSolution:(ReasonDemandModel*)demand {
+    [self rSolutionV2:demand];
+    
     //0. S数达到limit时设为WithOut;
     OFTitleLog(@"rSolution", @"\n任务源:%@ 已有方案数:%ld",demand.algsType,demand.actionFoModels.count);
     
@@ -227,11 +229,15 @@
     //6. 判断匹配度;
     NSLog(@"protoFo: %@",Pit2FStr(demand.protoFo));
     for (AIKVPointer *item in allPFos) {
-        NSLog(@"item: %@",Pit2FStr(item));
+        AIFoNodeBase *fo = [SMGUtils searchNode:item];
+        NSLog(@"item: %@\n\t稳定性:%@\n\t有效率:%@",Fo2FStr(fo),CLEANSTR(fo.spDic),CLEANSTR(fo.effectDic));
+        //TIPS: 此处最后打印出来唯一的候选方案F383,却是个没有飞行方向的无效解决方案;
     }
     
     
     ////6. 过滤掉有效率低的;
+    //最终是为了找到有效率高的候选集,所以,用这个排序下很有必要;
+    
     //allPFos = [SMGUtils filterArr:allPFos checkValid:^BOOL(AIKVPointer *item) {
     //    AIFoNodeBase *fo = [SMGUtils searchNode:item];
     //    for (NSNumber *key in fo.effectDic.allKeys) {

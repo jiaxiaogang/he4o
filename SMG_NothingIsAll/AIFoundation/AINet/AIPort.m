@@ -139,7 +139,7 @@
 }
 
 -(NSString *)description{
-    return STRFORMAT(@"H%ldN%ld",(long)self.hStrong,(long)self.nStrong);
+    return STRFORMAT(@"F%ld:H%ldN%ld",self.solutionFo.pointerId,(long)self.hStrong,(long)self.nStrong);
 }
 
 /**
