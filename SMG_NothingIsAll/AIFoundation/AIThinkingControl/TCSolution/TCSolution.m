@@ -215,13 +215,19 @@
         AIFoNodeBase *fo = [SMGUtils searchNode:item];
         return ![ThinkingUtils havDemand:fo.cmvNode_p];
     }];
-    NSLog(@"第6步 非负价值:%ld",cansetFos.count);//测时149条
+    NSLog(@"第6步 非负价值:%ld",cansetFos.count);//测时95条
     
     //5. 转为(标识+度),以计算匹配与全含;
     NSLog(@"protoFo: %@",Pit2FStr(demand.protoFo));
     for (AIKVPointer *item in cansetFos) {
         AIFoNodeBase *fo = [SMGUtils searchNode:item];
         NSLog(@"> %@ %@",Fo2FStr(fo),CLEANSTR(fo.spDic));
+        
+        
+        //TODOTOMORROW20220526:
+        //1. cansetFo从前到后在protoDic中找匹配,必须每位都找到
+        //2. 直至匹配到protoDic的末位为止;
+        //3. 此时判断cansetFo后面还有位数,即可通过;
         
         
         
