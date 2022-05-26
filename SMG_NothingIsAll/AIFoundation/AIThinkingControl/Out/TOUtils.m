@@ -326,6 +326,20 @@
 }
 
 /**
+ *  MARK:--------------------effectDic的HN求和--------------------
+ */
++(NSRange) getSumEffectHN:(NSDictionary*)effectDic{
+    int sumH = 0,sumN = 0;
+    for (NSArray *value in effectDic.allValues) {
+        for (AIEffectStrong *strong in value) {
+            sumH += strong.hStrong;
+            sumN += strong.nStrong;
+        }
+    }
+    return NSMakeRange(sumH, sumN);
+}
+
+/**
  *  MARK:--------------------稳定性评分--------------------
  *  @desc 根据SP计算"稳定性"分 (稳定性指顺,就是能顺利发生的率);
  *  @version

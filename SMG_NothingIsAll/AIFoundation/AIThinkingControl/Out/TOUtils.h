@@ -123,6 +123,11 @@
 +(NSString*) toModel2Key:(TOModelBase*)toModel;
 
 /**
+ *  MARK:--------------------effectDic的HN求和--------------------
+ */
++(NSRange) getSumEffectHN:(NSDictionary*)effectDic;
+
+/**
  *  MARK:--------------------稳定性评分--------------------
  *  @param endSPIndex   : 目标index,比如感性mv时,则为fo.count (求结果时,需包含endSPIndex);
  *  @param startSPIndex : 起始index,比如理性时,常为0到fo.count-1之间 (求结果时,需包含startSPIndex);

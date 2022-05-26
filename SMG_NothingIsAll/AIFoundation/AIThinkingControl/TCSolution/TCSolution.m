@@ -210,13 +210,13 @@
     }];
     NSLog(@"第5步 过滤掉无Mv后:%ld",allPFos.count);//测时228条
     
-    //6. 过滤掉无effectDic也无具象的;
+    //6. 过滤器: 仅保留有效effect 且 有具象的;
     allPFos = [SMGUtils filterArr:allPFos checkValid:^BOOL(AIKVPointer *item) {
         AIFoNodeBase *fo = [SMGUtils searchNode:item];
         NSArray *conPorts = [AINetUtils conPorts_All:fo];
-        return DICISOK(fo.effectDic) || ARRISOK(conPorts);
+        return DICISOK(fo.effectDic) && ARRISOK(conPorts);
     }];
-    NSLog(@"第6步 过滤掉无方案的:%ld",allPFos.count);//测时46条
+    NSLog(@"第6步 过滤掉无方案的:%ld",allPFos.count);//测时6条
     
     //7. 过滤掉content数量比proto还多的 (因为这种不可能全含);
     AIFoNodeBase *protoFo = [SMGUtils searchNode:demand.protoFo];
@@ -224,15 +224,55 @@
         AIFoNodeBase *fo = [SMGUtils searchNode:item];
         return fo.count <= protoFo.count;
     }];
-    NSLog(@"第7步 过滤掉元素数比proto还多的:%ld",allPFos.count);//测时43条
+    NSLog(@"第7步 过滤掉元素数比proto还多的:%ld",allPFos.count);//测时6条
     
     //6. 判断匹配度;
     NSLog(@"protoFo: %@",Pit2FStr(demand.protoFo));
     for (AIKVPointer *item in allPFos) {
         AIFoNodeBase *fo = [SMGUtils searchNode:item];
         NSLog(@"item: %@\n\t稳定性:%@\n\t有效率:%@",Fo2FStr(fo),CLEANSTR(fo.spDic),CLEANSTR(fo.effectDic));
-        //TIPS: 此处最后打印出来唯一的候选方案F383,却是个没有飞行方向的无效解决方案;
+    
+        //protoFo: F2618[A2615(高100,Y207,X2,向←,皮0,距158,Y距_偏上0.5_3)]
+        //item: F384[A161(高100,Y207,X2,向←,皮0,距98,Y距_偏下0.7_79)]
+        //    稳定性:{1 = S17P8;}
+        //    有效率:{1 =(F383:H7N13);}
+        //item: F1947[A1243(高100,Y207,X2,向←,皮0,距122,Y距_偏上0.1_29)]
+        //    稳定性:{1 = S6P0;}
+        //    有效率:{1 =(F1946:H0N6);}
+        //item: F1547[A1361(高100,Y207,X2,向←,皮0,Y距_偏下0.7_80,距125)]
+        //    稳定性:{1 = S6P2;}
+        //    有效率:{1 =(F1546:H1N5,F1807:H1N0);}
+        //item: F1808[A899(高100,Y207,X2,向←,皮0,距120,Y距_偏下0.2_49)]
+        //    稳定性:{1 = S3P1;}
+        //    有效率:{1 =(F1807:H1N2,F1546:H0N1);}
+        //item: F2144[A1129(高100,Y207,X2,向←,皮0,Y距_偏上0.4_7,距100)]
+        //    稳定性:{1 = S2P0;}
+        //    有效率:{1 =(F2143:H0N2);}
+        //item: F2002[A1443(高100,Y207,X2,向←,皮0,Y距_偏上0.8_-17,距120)]
+        //    稳定性:{1 = S2P1;}
+        //    有效率:{1 =(F2001:H0N2);}
+        
+        //解读
+        //1. F383[A161(高100,Y207,X2,向←,皮0,距98,Y距_偏下0.7_79)]
+        //      > 无效方案: 它H7N13,应该是第1步训练遗留问题,但它的N越来越多,有效率低下;
+        //2. F1946[A1243(高100,Y207,X2,向←,皮0,距122,Y距_偏上0.1_29)]
+        //      > 无效方案: 它H0N6,可见没啥竞争力;
+        //3. F1546[A1361(高100,Y207,X2,向←,皮0,Y距_偏下0.7_80,距125)]
+        //      > 无效方案: 它H1N6,效率低下;
+        //4. F1807[A911(飞↘),A854(飞↙),A785(飞←),A899(高100,Y207,X2,向←,皮0,距120,Y距_偏下0.2_49)]
+        //      > 有效方案: 它H2N2,虽然不那么优美,但好歹对于偏下的危险,还算管用;
+        //5. F2143[A1129(高100,Y207,X2,向←,皮0,Y距_偏上0.4_7,距100)]
+        //      > 无效方案: 它H0N2,效率低下;
+        //6. F2001[A1443(高100,Y207,X2,向←,皮0,Y距_偏上0.8_-17,距120)]
+        //      > 无效方案: 它H0N2,效率低下;
+        
+        //分析
+        //> 从以上确实可以分析得出F1807,但有两个问题;
+        //1. 在effectDic全都为空时,怎么起步 (答: 拿H0N0的先来试用);
+        //2. 这些候选方案自由竞争的流程设计;
+        //3. F1807还是有些太杂,有没有抽象设计?
     }
+    
     
     
     ////6. 过滤掉有效率低的;
