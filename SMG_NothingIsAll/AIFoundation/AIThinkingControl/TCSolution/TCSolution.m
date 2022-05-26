@@ -210,11 +210,11 @@
     }];
     NSLog(@"第5步 过滤掉无Mv后:%ld",allPFos.count);//测时228条
     
-    //6. 过滤器: 仅保留有效effect 且 有具象的;
+    //6. 过滤器: 仅保留有具象的;
     allPFos = [SMGUtils filterArr:allPFos checkValid:^BOOL(AIKVPointer *item) {
         AIFoNodeBase *fo = [SMGUtils searchNode:item];
         NSArray *conPorts = [AINetUtils conPorts_All:fo];
-        return DICISOK(fo.effectDic) && ARRISOK(conPorts);
+        return ARRISOK(conPorts);
     }];
     NSLog(@"第6步 过滤掉无方案的:%ld",allPFos.count);//测时6条
     
