@@ -28,7 +28,7 @@
     }
     
     //2. 触发器;
-    maxDeltaTime *= 1.5f;
+    maxDeltaTime *= 3.0f;
     NSLog(@"---//rEffect触发器新增:%p (%@ | 触发时间:%.2f)",rDemand,TOStatus2Str(rDemand.status),maxDeltaTime);
     [AITime setTimeTrigger:maxDeltaTime trigger:^{
         //2. 取有效性 (默认即有效);
@@ -75,7 +75,7 @@
     AIFoNodeBase *targetFoNode = [SMGUtils searchNode:targetFo.content_p];
     
     //3. 触发器;
-    deltaTime *= 1.5f;
+    deltaTime *= 3.0f;
     NSLog(@"---//hEffect触发器新增:%p (%@ | 触发时间:%.2f)",hSolution,TOStatus2Str(hDemand.status),deltaTime);
     [AITime setTimeTrigger:deltaTime trigger:^{
         //4. 取有效性 (默认即无效);

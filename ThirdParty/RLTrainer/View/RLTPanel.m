@@ -348,13 +348,18 @@
 -(void) trainer4{
     [theRT queueN:@[kGrowPageSEL,kWoodSEL,kMainPageSEL,kClearTCSEL] count:200];
 }
-//步骤: 训练躲避 (参考26081-2);
+/**
+ *  MARK:-------------------- 训练躲避 --------------------
+ *  @version
+ *      xxxx.xx.xx: 初版 (参考26081-2);
+ *      2022.05.26: 少飞一步,变成[棒,飞,飞,棒],因为瞬时记忆只有4条;
+ */
 -(void) trainer5{
     //0. 出生在随机偏中位置 (以方便训练被撞和躲开经验);
     [theRT queue1:kBirthPosRdmCentSEL];
     
     //1. 加长版训练100轮
-    [theRT queueN:@[kGrowPageSEL,kWoodSEL,kFlySEL,kFlySEL,kFlySEL,kWoodSEL,kMainPageSEL,kClearTCSEL] count:100];
+    [theRT queueN:@[kGrowPageSEL,kWoodSEL,kFlySEL,kFlySEL,kWoodSEL,kMainPageSEL,kClearTCSEL] count:100];
 }
 
 //MARK:===============================================================

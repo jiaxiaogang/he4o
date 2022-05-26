@@ -507,4 +507,12 @@
     return colValue * stableScore;
 }
 
+/**
+ *  MARK:--------------------获取衰减后的SP好坏评分--------------------
+ */
++(CGFloat) getColSPScore:(AIFoNodeBase*)fo outOfFos:(NSArray*)outOfFo_ps startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex{
+    CGFloat stableScore = [self getColStableScore:fo outOfFos:outOfFo_ps startSPIndex:startSPIndex endSPIndex:endSPIndex];
+    return [ThinkingUtils havDemand:fo.cmvNode_p] ? 1 - stableScore : stableScore;
+}
+
 @end
