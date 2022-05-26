@@ -515,4 +515,38 @@
     return [ThinkingUtils havDemand:fo.cmvNode_p] ? 1 - stableScore : stableScore;
 }
 
++(void) compareCansetFo:(AIKVPointer*)cansetFo_p protoFo:(AIKVPointer*)protoFo_p{
+    //1. 数据准备;
+    AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
+    AIFoNodeBase *protoFo = [SMGUtils searchNode:protoFo_p];
+    
+    
+    //TODOTOMORROW20220526:
+    //1. cansetFo从前到后在protoDic中找匹配,必须每位都找到
+    //2. 直至匹配到protoDic的末位为止;
+    //3. 此时判断cansetFo后面还有位数,即可通过;
+    
+    
+    //2. cansetFo从前到后,分别在proto中找匹配;
+    NSInteger lastMatchJ = 0;
+    for (NSInteger i = 0; i < cansetFo.count; i++) {
+        AIKVPointer *cansetA_p = ARR_INDEX(cansetFo.content_ps, i);
+        AIAlgNodeBase *cansetA = [SMGUtils searchNode:cansetA_p];
+        
+        //3. 必须每一位都找到,直至匹配到proto的末位为止;
+        for (NSInteger j = lastMatchJ + 1; j < protoFo.count; j++) {
+            
+        }
+    }
+    
+}
+
++(void) compareCansetAlg:(AIKVPointer*)cansetAlg_p protoAlg:(AIKVPointer*)protoAlg_p{
+    //1. 数据准备;
+    AIAlgNodeBase *cansetAlg = [SMGUtils searchNode:cansetAlg_p];
+    AIAlgNodeBase *protoAlg = [SMGUtils searchNode:protoAlg_p];
+    
+    //2. 先对比稀疏码标识分区相近度 (需要>30%);
+}
+
 @end
