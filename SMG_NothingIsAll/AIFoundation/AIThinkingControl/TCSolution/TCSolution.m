@@ -85,7 +85,7 @@
  *  @callers : 用于RDemand.Begin时调用;
  */
 +(void) rSolution:(ReasonDemandModel*)demand {
-    //[self rSolutionV2:demand];
+    [self rSolutionV2:demand];
     
     //0. S数达到limit时设为WithOut;
     OFTitleLog(@"rSolution", @"\n任务源:%@ 已有方案数:%ld",demand.algsType,demand.actionFoModels.count);
@@ -210,11 +210,18 @@
     }];
     NSLog(@"第5步 最小长度2:%ld",cansetFos.count);//测时149条
     
+    //4. 过滤掉有负mv指向的;
+    cansetFos = [SMGUtils filterArr:cansetFos checkValid:^BOOL(AIKVPointer *item) {
+        AIFoNodeBase *fo = [SMGUtils searchNode:item];
+        return ![ThinkingUtils havDemand:fo.cmvNode_p];
+    }];
+    NSLog(@"第6步 非负价值:%ld",cansetFos.count);//测时149条
+    
     //5. 转为(标识+度),以计算匹配与全含;
     NSLog(@"protoFo: %@",Pit2FStr(demand.protoFo));
     for (AIKVPointer *item in cansetFos) {
         AIFoNodeBase *fo = [SMGUtils searchNode:item];
-        NSLog(@"item: %@\n\t稳定性:%@\n\t有效率:%@",Fo2FStr(fo),CLEANSTR(fo.spDic),CLEANSTR(fo.effectDic));
+        NSLog(@"> %@ %@",Fo2FStr(fo),CLEANSTR(fo.spDic));
         
         
         
