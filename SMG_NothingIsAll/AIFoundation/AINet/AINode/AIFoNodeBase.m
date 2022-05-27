@@ -30,7 +30,9 @@
 //MARK:===============================================================
 /**
  *  MARK:--------------------更新SP强度值--------------------
- *  @param spIndex : 当前要更新sp强度值的下标 (如果是mv则输入content.count);
+ *  @param spIndex : 当前要更新sp强度值的下标 (参考25031-3);
+ *                    1. 表示责任帧下标,比如为1时,则表示第2帧的责任;
+ *                    2. 如果是mv则输入content.count;
  */
 -(void) updateSPStrong:(NSInteger)spIndex type:(AnalogyType)type{
     //1. 取kv;

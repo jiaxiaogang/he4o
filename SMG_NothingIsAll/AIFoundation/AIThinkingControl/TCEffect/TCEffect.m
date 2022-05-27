@@ -14,6 +14,7 @@
  *  MARK:--------------------R任务有效率--------------------
  *  @version
  *      2022.05.22: 初版,任务有效率强化 (将ES状态更新至任务pFo下的effectDic中) (参考26095-1&2);
+ *      2022.05.27: 将effect改为反省的一种 (参考26127-TODO1);
  */
 +(void) rEffect:(TOFoModel*)rSolution{
     [theTC updateOperCount];
@@ -32,25 +33,27 @@
     NSLog(@"---//rEffect触发器新增:%p (%@ | 触发时间:%.2f)",rDemand,TOStatus2Str(rDemand.status),maxDeltaTime);
     [AITime setTimeTrigger:maxDeltaTime trigger:^{
         //2. 取有效性 (默认即有效);
-        EffectStatus es = rDemand.effectStatus == ES_NoEff ? ES_NoEff : ES_HavEff;
+        //EffectStatus es = rDemand.effectStatus == ES_NoEff ? ES_NoEff : ES_HavEff;
+        AnalogyType tp = rDemand.effectStatus == ES_NoEff ? ATSub : ATPlus;
         
         //3. 更新effectDic;
         for (AIMatchFoModel *pFoModel in rDemand.pFos) {
             AIFoNodeBase *pFo = [SMGUtils searchNode:pFoModel.matchFo];
-            [pFo updateEffectStrong:pFo.count solutionFo:rSolution.content_p status:es];
+            //[pFo updateEffectStrong:pFo.count solutionFo:rSolution.content_p status:es];
+            [pFo updateSPStrong:pFo.count type:tp];
         }
         
         //3. 有效,则解决方案成功 & 任务成功;
-        if (es == ES_HavEff) {
+        if (tp == ATPlus) {
             rSolution.status = TOModelStatus_Finish;
             rDemand.status = TOModelStatus_Finish;
         }
         
         //4. log;
-        IFTitleLog(@"R有效率", @"\n%p S:%@ (有效性:%@ 任务状态:%@)",rDemand,Pit2FStr(rSolution.content_p),EffectStatus2Str(es),TOStatus2Str(rDemand.status));
+        IFTitleLog(@"rSolution反省", @"\n%p S:%@ (有效性:%@ 任务状态:%@)",rDemand,Pit2FStr(rSolution.content_p),ATType2Str(tp),TOStatus2Str(rDemand.status));
         for (AIMatchFoModel *pFoModel in rDemand.pFos) {
             AIFoNodeBase *pFo = [SMGUtils searchNode:pFoModel.matchFo];
-            NSString *desc = [TOUtils getEffectDesc:pFo effectIndex:pFo.count solutionFo:rSolution.content_p];
+            NSString *desc = nil;//[TOUtils getEffectDesc:pFo effectIndex:pFo.count solutionFo:rSolution.content_p];
             NSLog(@"\t=>pFo:%@ (index:%ld mv有效率:%@)",Fo2FStr(pFo),pFo.count,desc);
         }
     }];
@@ -61,6 +64,7 @@
  *  MARK:--------------------H任务有效率--------------------
  *  @version
  *      2022.05.22: 初版,任务有效率强化 (将ES状态更新至任务targetFo下的effectDic中) (参考26095-4&5);
+ *      2022.05.27: 将effect改为反省的一种 (参考26127-TODO1);
  */
 +(void) hEffect:(TOFoModel*)hSolution{
     [theTC updateOperCount];
@@ -79,17 +83,19 @@
     NSLog(@"---//hEffect触发器新增:%p (%@ | 触发时间:%.2f)",hSolution,TOStatus2Str(hDemand.status),deltaTime);
     [AITime setTimeTrigger:deltaTime trigger:^{
         //4. 取有效性 (默认即无效);
-        EffectStatus es = hDemand.effectStatus == ES_HavEff ? ES_HavEff : ES_NoEff;
+        //EffectStatus es = hDemand.effectStatus == ES_HavEff ? ES_HavEff : ES_NoEff;
+        AnalogyType tp = hDemand.effectStatus == ES_HavEff ? ATPlus : ATSub;
         
         //5. 更新effectDic;
-        [targetFoNode updateEffectStrong:targetFo.actionIndex solutionFo:hSolution.content_p status:es];
+        //[targetFoNode updateEffectStrong:targetFo.actionIndex solutionFo:hSolution.content_p status:es];
+        [targetFoNode updateSPStrong:targetFo.actionIndex type:tp];
 
         //6. 无效,则当前方案失败;
-        if (es == ES_NoEff) hSolution.status = TOModelStatus_ActNo;
+        if (tp == ATSub) hSolution.status = TOModelStatus_ActNo;
         
         //7. log
-        NSString *desc = [TOUtils getEffectDesc:targetFoNode effectIndex:targetFo.actionIndex solutionFo:hSolution.content_p];
-        IFTitleLog(@"H有效率", @"\n%p S:%@ (有效性:%@ 当前方案状态:%@)",hSolution,Pit2FStr(hSolution.content_p),EffectStatus2Str(es),TOStatus2Str(hSolution.status));
+        NSString *desc = nil;//[TOUtils getEffectDesc:targetFoNode effectIndex:targetFo.actionIndex solutionFo:hSolution.content_p];
+        IFTitleLog(@"HSolution反省", @"\n%p S:%@ (有效性:%@ 当前方案状态:%@)",hSolution,Pit2FStr(hSolution.content_p),ATType2Str(tp),TOStatus2Str(hSolution.status));
         NSLog(@"\t=>targetFo:%@ (index:%ld mv有效率:%@)",Fo2FStr(targetFoNode),targetFo.actionIndex,desc);
     }];
     DebugE();

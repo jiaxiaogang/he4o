@@ -34,6 +34,7 @@
 /**
  *  MARK:--------------------当前正在行为化的下标--------------------
  *  @todo 将actionIndex赋值,改为生成TOAlgModel模型,并挂在subModels下;
+ *  @desc actionIndex表示当前从执行到执行下帧前 (即actionIndex一般表示已执行);
  */
 @property (assign, nonatomic) NSInteger actionIndex;
 

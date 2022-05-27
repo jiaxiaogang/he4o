@@ -51,13 +51,17 @@
 
 /**
  *  MARK:--------------------更新SP强度值--------------------
- *  @param spIndex : 当前要更新sp强度值的下标 (如果是mv则输入content.count) (参考25031-3);
+ *  @param spIndex : 当前要更新sp强度值的下标 (参考25031-3);
+ *                    1. 表示责任帧下标,比如为1时,则表示第2帧的责任;
+ *                    2. 如果是mv则输入content.count;
  */
 -(void) updateSPStrong:(NSInteger)spIndex type:(AnalogyType)type;
 
 /**
  *  MARK:--------------------更新有效率值--------------------
+ *  @version
+ *      2022.05.27; 废弃,eff改成反省的一种了,所以不再需要effDic了 (参考26127-TODO1);
  */
--(void) updateEffectStrong:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo status:(EffectStatus)status;
+//-(void) updateEffectStrong:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo status:(EffectStatus)status;
 
 @end
