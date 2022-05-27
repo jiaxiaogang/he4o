@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIAlgNodeBase,DemandModel,TOFoModel,AIShortMatchModel,TOModelBase,TOAlgModel;
+@class AIAlgNodeBase,DemandModel,TOFoModel,AIShortMatchModel,TOModelBase,TOAlgModel,AISolutionModel;
 @interface TOUtils : NSObject
 
 /**
@@ -171,7 +171,7 @@
 /**
  *  MARK:--------------------对比节点相同度--------------------
  */
-+(void) compareCansetFo:(AIKVPointer*)cansetFo_p protoFo:(AIKVPointer*)protoFo_p complete:(void(^)(CGFloat matchValue,NSInteger cutIndex))complete;
++(AISolutionModel*) compareCansetFo:(AIKVPointer*)cansetFo_p protoFo:(AIKVPointer*)protoFo_p;
 +(CGFloat) compareCansetValue:(AIKVPointer*)cansetV_p protoValue:(AIKVPointer*)protoV_p;
 
 @end

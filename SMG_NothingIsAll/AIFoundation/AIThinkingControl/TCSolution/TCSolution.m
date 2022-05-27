@@ -215,28 +215,34 @@
         AIFoNodeBase *fo = [SMGUtils searchNode:item];
         return ![ThinkingUtils havDemand:fo.cmvNode_p];
     }];
-    NSLog(@"第6步 非负价值:%ld",cansetFos.count);//测时95条
+    NSLog(@"第6步 非负价值:%ld",cansetFos.count);//测时96条
     
-    //5. 转为(标识+度),以计算匹配与全含;
-    NSLog(@"protoFo: %@",Pit2FStr(demand.protoFo));
-    for (AIKVPointer *item in cansetFos) {
-        AIFoNodeBase *fo = [SMGUtils searchNode:item];
-        NSLog(@"> %@ %@",Fo2FStr(fo),CLEANSTR(fo.spDic));
-        
-        
-        
-        [TOUtils compareCansetFo:item protoFo:demand.protoFo complete:^(CGFloat matchValue, NSInteger cutIndex) {
-            if (matchValue > 0) {
-                NSLog(@"匹配成功");
-            }else{
-                NSLog(@"匹配失败");
-            }
-        }];
-        
-        
-        
-        
+    //5. 对比cansetFo和protoFo匹配,得出对比结果 (参考26128-第1步);
+    NSArray *solutionModels = [SMGUtils convertArr:cansetFos convertBlock:^id(AIKVPointer *obj) {
+        return [TOUtils compareCansetFo:obj protoFo:demand.protoFo];
+    }];
+    cansetFos = [SMGUtils convertArr:solutionModels convertBlock:^id(AISolutionModel *obj) {
+        return obj.cansetFo;
+    }];
+    NSLog(@"第7步 对比匹配成功:%ld",cansetFos.count);//测时94条
+    
+    //6. 计算衰后stableScore (参考26128-2-1);
+    for (AISolutionModel *model in solutionModels) {
+        AIFoNodeBase *cansetFo = [SMGUtils searchNode:model.cansetFo];
+        model.stableScore = [TOUtils getColStableScore:cansetFo outOfFos:cansetFos startSPIndex:model.cutIndex + 1 endSPIndex:cansetFo.count];
     }
+    
+    //7. 取出最好的结果 (参考26128-2-2);
+    AISolutionModel *best = nil;
+    for (AISolutionModel *model in solutionModels) {
+        if (!best || model.stableScore * model.matchValue > best.stableScore * best.matchValue) {
+            best = model;
+        }
+    }
+    
+    NSLog(@"protoFo: %@",Pit2FStr(demand.protoFo));
+    AIFoNodeBase *bestFo = [SMGUtils searchNode:best.cansetFo];
+    NSLog(@"bestS: %@ %@",Pit2FStr(best.cansetFo),CLEANSTR(bestFo.spDic));
     
     //6. 得出末位后,计算SP好坏评分;
     //NSArray *sortFos = [SMGUtils sortBig2Small:cansetFos compareBlock:^double(AIKVPointer *obj) {

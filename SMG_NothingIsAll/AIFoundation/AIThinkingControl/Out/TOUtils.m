@@ -518,10 +518,11 @@
 /**
  *  MARK:--------------------时序对比--------------------
  *  @desc 初步对比候选集是否适用于protoFo (参考26128-第1步);
- *  @param complete : 返回cansetFo前段匹配度 & 以及已匹配的cutIndex截点;
+ *  @result 返回cansetFo前段匹配度 & 以及已匹配的cutIndex截点;
  */
-+(void) compareCansetFo:(AIKVPointer*)cansetFo_p protoFo:(AIKVPointer*)protoFo_p complete:(void(^)(CGFloat matchValue,NSInteger cutIndex))complete{
++(AISolutionModel*) compareCansetFo:(AIKVPointer*)cansetFo_p protoFo:(AIKVPointer*)protoFo_p {
     //1. 数据准备;
+    AISolutionModel *result = nil;
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
     AIFoNodeBase *protoFo = [SMGUtils searchNode:protoFo_p];
     NSInteger lastMatchAtProtoIndex = -1;   //proto的匹配进度;
@@ -558,8 +559,7 @@
             }
         }else{
             //8. 匹配失败时: 有一帧canset在proto里没匹配到,说明proto未全含canset,则整体匹配度为0 (参考26128-1-1);
-            complete(0,cansetCutIndex);
-            return;
+            return result;
         }
     }
     
@@ -568,10 +568,11 @@
         
         //10. 匹配度 (参考26128-1-4);
         CGFloat matchValue = sumMatchValue / (cansetCutIndex + 1);
-        complete(matchValue,cansetCutIndex);
-    }else{
-        complete(0,cansetCutIndex);
+        if (matchValue > 0) {
+            result = [AISolutionModel newWithCansetFo:cansetFo_p protoFo:protoFo_p matchValue:matchValue stableScore:-1 cutIndex:cansetCutIndex];
+        }
     }
+    return result;
 }
 
 /**

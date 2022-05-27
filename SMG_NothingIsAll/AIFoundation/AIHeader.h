@@ -41,6 +41,7 @@
 #import "AIShortMatchModel.h"
 #import "AIShortMatchModel_Simple.h"
 #import "ShortMatchManager.h"
+#import "AISolutionModel.h"
 
 //网络
 #import "AINetUtils.h"

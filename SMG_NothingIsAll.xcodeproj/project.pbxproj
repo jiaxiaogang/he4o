@@ -124,6 +124,7 @@
 		089614A9219A4D5200343FAC /* BirdGrowPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 089614A7219A4D5200343FAC /* BirdGrowPage.m */; };
 		089614AA219A4D5200343FAC /* BirdGrowPage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 089614A8219A4D5200343FAC /* BirdGrowPage.xib */; };
 		0898BD67276ED44F003449BF /* TCScore.m in Sources */ = {isa = PBXBuildFile; fileRef = 0898BD66276ED44F003449BF /* TCScore.m */; };
+		089A2DEC2840F19600B66674 /* AISolutionModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 089A2DEB2840F19600B66674 /* AISolutionModel.m */; };
 		089E66B121B9F5D100ECA28A /* AIAbsAlgNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 089E66B021B9F5D100ECA28A /* AIAbsAlgNode.m */; };
 		089E66B421B9F84500ECA28A /* AIAlgNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 089E66B321B9F84500ECA28A /* AIAlgNode.m */; };
 		08A1E57C2193BAFA0046C4AC /* UIView+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 08A1E57B2193BAFA0046C4AC /* UIView+Extension.m */; };
@@ -426,6 +427,8 @@
 		089614A8219A4D5200343FAC /* BirdGrowPage.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BirdGrowPage.xib; sourceTree = "<group>"; };
 		0898BD65276ED44F003449BF /* TCScore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCScore.h; sourceTree = "<group>"; };
 		0898BD66276ED44F003449BF /* TCScore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCScore.m; sourceTree = "<group>"; };
+		089A2DEA2840F19600B66674 /* AISolutionModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AISolutionModel.h; sourceTree = "<group>"; };
+		089A2DEB2840F19600B66674 /* AISolutionModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AISolutionModel.m; sourceTree = "<group>"; };
 		089E66AF21B9F5D100ECA28A /* AIAbsAlgNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIAbsAlgNode.h; sourceTree = "<group>"; };
 		089E66B021B9F5D100ECA28A /* AIAbsAlgNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIAbsAlgNode.m; sourceTree = "<group>"; };
 		089E66B221B9F84500ECA28A /* AIAlgNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIAlgNode.h; sourceTree = "<group>"; };
@@ -1110,6 +1113,7 @@
 		087705A3275373FA00BA4EFB /* TCSolution */ = {
 			isa = PBXGroup;
 			children = (
+				089A2DE92840F15400B66674 /* Model */,
 				087705B52753747300BA4EFB /* TCSolution.h */,
 				087705B62753747300BA4EFB /* TCSolution.m */,
 			);
@@ -1206,6 +1210,15 @@
 				0898BD66276ED44F003449BF /* TCScore.m */,
 			);
 			path = TCScore;
+			sourceTree = "<group>";
+		};
+		089A2DE92840F15400B66674 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				089A2DEA2840F19600B66674 /* AISolutionModel.h */,
+				089A2DEB2840F19600B66674 /* AISolutionModel.m */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		08A5D5D522AF1C1E00E56BB4 /* Core */ = {
@@ -1876,6 +1889,7 @@
 				08E8CF5525B2880600AA18DB /* WoodView.m in Sources */,
 				0864936127E216B5003EF661 /* TOMVisionNodeBase.m in Sources */,
 				0808927A215AF5F400710636 /* AINodeBase.m in Sources */,
+				089A2DEC2840F19600B66674 /* AISolutionModel.m in Sources */,
 				089E66B421B9F84500ECA28A /* AIAlgNode.m in Sources */,
 				081B3ACC1F6E2155008A7F36 /* AITime.m in Sources */,
 				08A7E06A24EE07C40042C7A9 /* AIShortMatchModel_Simple.m in Sources */,
