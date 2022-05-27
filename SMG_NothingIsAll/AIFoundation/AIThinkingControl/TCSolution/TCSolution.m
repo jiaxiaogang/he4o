@@ -82,13 +82,13 @@
  *      2022.05.21: 窄出排序方式,以效用分为准 (参考26077-方案);
  *      2022.05.21: 窄出排序方式,退回到以SP稳定性排序 (参考26084);
  *      2022.05.22: 窄出排序方式,改为有效率排序 (参考26095-9);
+ *      2022.05.27: 集成新的取S的方法 (参考26128);
+ *      2022.05.27: 新解决方案从cutIndex开始行为化,而不是-1 (参考26127-TODO9);
  *  @callers : 用于RDemand.Begin时调用;
  */
 +(void) rSolution:(ReasonDemandModel*)demand {
-    [self rSolutionV2:demand];
-    
     //0. S数达到limit时设为WithOut;
-    OFTitleLog(@"rSolution", @"\n任务源:%@ 已有方案数:%ld",demand.algsType,demand.actionFoModels.count);
+    OFTitleLog(@"rSolution", @"\n任务源:%@ protoFo:%@ 已有方案数:%ld",demand.algsType,Pit2FStr(demand.protoFo),demand.actionFoModels.count);
     
     //1. 树限宽且限深;
     NSInteger deepCount = [TOUtils getBaseDemandsDeepCount:demand];
@@ -108,42 +108,8 @@
     }]];
     
     //3. 取demand.conPorts (前15条) (参考24127-步骤1);
-    AIFoNodeBase *bestResult = nil;
-    CGFloat bestEffectScore = 0;
-    AIFoNodeBase *bestDicFo = nil;//bestResult的有效率字典所在fo;
-    for (AIMatchFoModel *pFo in demand.pFos) {
-        
-        //3. 每个pFo取10条候选解决方案;
-        AIFoNodeBase *fo = [SMGUtils searchNode:pFo.matchFo];
-        NSArray *conPorts = [AINetUtils conPorts_All_Normal:fo];
-        conPorts = ARR_SUB(conPorts, 0, 10);
-        
-        //4. 从conPorts中找出最优秀的result (稳定性竞争) (参考24127-步骤2);
-        for (AIPort *maskPort in conPorts) {
-            //5. 排除不应期;
-            if ([except_ps containsObject:maskPort.target_p]) continue;
-            AIFoNodeBase *maskFo = [SMGUtils searchNode:maskPort.target_p];
-            
-            //6. 负价值不做为解决方案 (参考26063);
-            if ([ThinkingUtils havDemand:maskFo.cmvNode_p]) continue;
-            
-            //6. 时间不急评价: 不急 = 解决方案所需时间 <= 父任务能给的时间 (参考:24057-方案3,24171-7);
-            if (![AIScore FRS_Time:pFo solutionFo:maskFo]) continue;
-            
-            //6. 判断SP评分;
-            CGFloat checkEffectScore = [TOUtils getEffectScore:fo effectIndex:fo.count solutionFo:maskFo.pointer];
-            NSString *effectDesc = [TOUtils getEffectDesc:fo effectIndex:fo.count solutionFo:maskFo.pointer];
-            if (Log4Solution) NSLog(@"by:F%ld checkResult:(有效率:%.2f = %@) %@ %@",fo.pointer.pointerId,checkEffectScore,effectDesc,Fo2FStr(maskFo),Mvp2Str(maskFo.cmvNode_p));
-            
-            //7. 当best为空 或 check评分比best更高时 => 将check赋值到best;
-            if(!bestResult || checkEffectScore > bestEffectScore){
-                bestResult = maskFo;
-                bestDicFo = fo;
-                bestEffectScore = checkEffectScore;
-            }
-        }
-    }
-    
+    AISolutionModel *bestResult = [self rSolution_Single:demand except_ps:except_ps];
+
     //6. 转流程控制_有解决方案则转begin;
     DebugE();
     if (bestResult) {
@@ -152,9 +118,11 @@
         [theTC updateEnergyDelta:-1];
         
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
-        TOFoModel *foModel = [TOFoModel newWithFo_p:bestResult.pointer base:demand];
-        NSString *effectDesc = [TOUtils getEffectDesc:bestDicFo effectIndex:bestDicFo.count solutionFo:bestResult.pointer];
-        NSLog(@">>>>>> rSolution 新增第%ld例解决方案: %@->%@ (有效率:%.2f = %@)",demand.actionFoModels.count, Fo2FStr(bestResult),Mvp2Str(bestResult.cmvNode_p),bestEffectScore,effectDesc);
+        AIFoNodeBase *bestSFo = [SMGUtils searchNode:bestResult.cansetFo];
+        TOFoModel *foModel = [TOFoModel newWithFo_p:bestSFo.pointer base:demand];
+        foModel.actionIndex = bestResult.cutIndex;
+        CGFloat score = bestResult.stableScore * bestResult.matchValue;
+        NSLog(@">>>>>> rSolution 新增第%ld例解决方案: %@\n评分:%.2f = 前匹配:%.2f x 后稳定:%.2f >> %@",demand.actionFoModels.count,Fo2FStr(bestSFo),score,bestResult.matchValue,bestResult.stableScore,CLEANSTR(bestSFo.spDic));
         
         //a) 有效率
         [TCEffect rEffect:foModel];
@@ -168,7 +136,11 @@
     }
 }
 
-+(void) rSolutionV2:(ReasonDemandModel *)demand{
++(AISolutionModel*) rSolution_Single:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps{
+    //0. 数据准备;
+    except_ps = ARRTOOK(except_ps);
+    AISolutionModel *result = nil;
+    
     //1. 取pFos;
     NSArray *pFos = [SMGUtils convertArr:demand.pFos convertBlock:^id(AIMatchFoModel *obj) {
         return obj.matchFo;
@@ -210,7 +182,7 @@
     }];
     NSLog(@"第5步 最小长度2:%ld",cansetFos.count);//测时149条
     
-    //4. 过滤掉有负mv指向的;
+    //4. 过滤掉有负mv指向的 (参考26063 & 26127-TODO8);
     cansetFos = [SMGUtils filterArr:cansetFos checkValid:^BOOL(AIKVPointer *item) {
         AIFoNodeBase *fo = [SMGUtils searchNode:item];
         return ![ThinkingUtils havDemand:fo.cmvNode_p];
@@ -238,18 +210,28 @@
     }];
     
     //8. 取最佳解决方案;
-    AISolutionModel *best = ARR_INDEX(sortModels, 0);
-    NSLog(@"protoFo: %@",Pit2FStr(demand.protoFo));
-    AIFoNodeBase *bestFo = [SMGUtils searchNode:best.cansetFo];
+    for (AISolutionModel *item in sortModels) {
+        
+        //9. 排序不应期;
+        if ([except_ps containsObject:item.cansetFo]) continue;
     
-    //9. debugLog
+        //10. 时间不急评价: 不急 = 解决方案所需时间 <= 父任务能给的时间 (参考:24057-方案3,24171-7);
+        AIFoNodeBase *cansetFo = [SMGUtils searchNode:item.cansetFo];
+        AIMatchFoModel *firstPFo = ARR_INDEX(demand.pFos, 0);
+        if (![AIScore FRS_Time:firstPFo solutionFo:cansetFo solutionCutIndex:item.cutIndex]) continue;
+        
+        //11. 找到最佳方案;
+        result = item;
+        break;
+    }
+    
+    //12. debugLog
     for (AISolutionModel *model in sortModels) {
         CGFloat solutionScore = model.stableScore * model.matchValue;
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:model.cansetFo];
-        NSLog(@"> %@\n\t评分:%.2f = 前匹配:%.2f x 后稳定:%.2f >> %@",Pit2FStr(model.cansetFo),solutionScore,model.matchValue,model.stableScore,CLEANSTR(cansetFo.spDic));
+        if (Log4Solution_Single) NSLog(@"> %@\n\t评分:%.2f = 前匹配:%.2f x 后稳定:%.2f >> %@",Pit2FStr(model.cansetFo),solutionScore,model.matchValue,model.stableScore,CLEANSTR(cansetFo.spDic));
     }
-    
-    NSLog(@"");
+    return result;
 }
 
 /**
