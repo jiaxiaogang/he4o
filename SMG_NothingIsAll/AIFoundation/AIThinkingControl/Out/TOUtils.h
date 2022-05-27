@@ -168,4 +168,10 @@
  */
 +(CGFloat) getColSPScore:(AIFoNodeBase*)fo outOfFos:(NSArray*)outOfFo_ps startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex;
 
+/**
+ *  MARK:--------------------对比节点相同度--------------------
+ */
++(void) compareCansetFo:(AIKVPointer*)cansetFo_p protoFo:(AIKVPointer*)protoFo_p complete:(void(^)(CGFloat matchValue,NSInteger cutIndex))complete;
++(CGFloat) compareCansetValue:(AIKVPointer*)cansetV_p protoValue:(AIKVPointer*)protoV_p;
+
 @end

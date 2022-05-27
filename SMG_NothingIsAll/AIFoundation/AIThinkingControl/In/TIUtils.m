@@ -150,18 +150,14 @@
     //2. 广入: 对每个元素,分别取索引序列 (参考25083-1);
     for (AIKVPointer *item_p in protoAlg.content_ps) {
         
-        //3. 数据准备: 当前稀疏码值 & 当前码值域span & 稀疏码识别;
-        double maskData = [NUMTOOK([AINetIndex getData:item_p]) doubleValue];
-        double span = [AINetIndex getIndexSpan:item_p.algsType ds:item_p.dataSource isOut:item_p.isOut];
+        //3. 取相近度序列 (按相近程度排序);
         NSArray *near_ps = [self TIR_Value:item_p];
         
         //4. 每个near_p做两件事:
         for (AIKVPointer *near_p in near_ps) {
             
             //5. 第1_计算出nearV (参考25082-公式1);
-            double nearData = [NUMTOOK([AINetIndex getData:near_p]) doubleValue];
-            double delta = fabs(maskData - nearData);
-            double nearV = (span == 0) ? 1 : (1 - delta / span);
+            double nearV = [TOUtils compareCansetValue:near_p protoValue:item_p];
             
             //6. 第2_取near_p的refPorts (参考25083-1);
             NSArray *refPorts = [SMGUtils filterPorts_Normal:[AINetUtils refPorts_All4Value:near_p isMem:isMem]];

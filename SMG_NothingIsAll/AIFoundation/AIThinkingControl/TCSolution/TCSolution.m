@@ -224,11 +224,14 @@
         NSLog(@"> %@ %@",Fo2FStr(fo),CLEANSTR(fo.spDic));
         
         
-        //TODOTOMORROW20220526:
-        //1. cansetFo从前到后在protoDic中找匹配,必须每位都找到
-        //2. 直至匹配到protoDic的末位为止;
-        //3. 此时判断cansetFo后面还有位数,即可通过;
         
+        [TOUtils compareCansetFo:item protoFo:demand.protoFo complete:^(CGFloat matchValue, NSInteger cutIndex) {
+            if (matchValue > 0) {
+                NSLog(@"匹配成功");
+            }else{
+                NSLog(@"匹配失败");
+            }
+        }];
         
         
         

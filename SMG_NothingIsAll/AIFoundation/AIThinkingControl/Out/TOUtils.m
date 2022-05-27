@@ -515,38 +515,111 @@
     return [ThinkingUtils havDemand:fo.cmvNode_p] ? 1 - stableScore : stableScore;
 }
 
-+(void) compareCansetFo:(AIKVPointer*)cansetFo_p protoFo:(AIKVPointer*)protoFo_p{
+/**
+ *  MARK:--------------------时序对比--------------------
+ *  @desc 初步对比候选集是否适用于protoFo (参考26128-第1步);
+ *  @param complete : 返回cansetFo前段匹配度 & 以及已匹配的cutIndex截点;
+ */
++(void) compareCansetFo:(AIKVPointer*)cansetFo_p protoFo:(AIKVPointer*)protoFo_p complete:(void(^)(CGFloat matchValue,NSInteger cutIndex))complete{
     //1. 数据准备;
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
     AIFoNodeBase *protoFo = [SMGUtils searchNode:protoFo_p];
+    NSInteger lastMatchAtProtoIndex = -1;   //proto的匹配进度;
+    CGFloat sumMatchValue = 0;              //累计匹配度;
+    NSInteger cansetCutIndex = -1;          //canset的cutIndex,也已在proto中发生;
     
-    
-    //TODOTOMORROW20220526:
-    //1. cansetFo从前到后在protoDic中找匹配,必须每位都找到
-    //2. 直至匹配到protoDic的末位为止;
-    //3. 此时判断cansetFo后面还有位数,即可通过;
-    
-    
-    //2. cansetFo从前到后,分别在proto中找匹配;
-    NSInteger lastMatchJ = 0;
+    //2. 前段: cansetFo从前到后,分别在proto中找匹配;
     for (NSInteger i = 0; i < cansetFo.count; i++) {
         AIKVPointer *cansetA_p = ARR_INDEX(cansetFo.content_ps, i);
-        AIAlgNodeBase *cansetA = [SMGUtils searchNode:cansetA_p];
+        CGFloat itemMatchValue = 0;
         
-        //3. 必须每一位都找到,直至匹配到proto的末位为止;
-        for (NSInteger j = lastMatchJ + 1; j < protoFo.count; j++) {
+        //3. 继续从proto后面未找过的部分里,找匹配;
+        for (NSInteger j = lastMatchAtProtoIndex + 1; j < protoFo.count; j++) {
+            AIKVPointer *protoA_p = ARR_INDEX(protoFo.content_ps, j);
             
+            //4. 对比两个概念匹配度;
+            itemMatchValue = [self compareCansetAlg:cansetA_p protoAlg:protoA_p];
+            
+            //5. 匹配成功,则更新匹配进度,并break报喜;
+            if (itemMatchValue > 0) {
+                lastMatchAtProtoIndex = j;
+                break;
+            }
+        }
+        
+        //6. 匹配成功时: 结算这一位,继续下一位;
+        if (itemMatchValue > 0) {
+            sumMatchValue += itemMatchValue;
+            
+            //7. 中段: 如果已匹配到了proto的末位,则无需再匹配,停止循环;
+            if (lastMatchAtProtoIndex == protoFo.count - 1) {
+                cansetCutIndex = i;
+                break;
+            }
+        }else{
+            //8. 匹配失败时: 有一帧canset在proto里没匹配到,说明proto未全含canset,则整体匹配度为0 (参考26128-1-1);
+            complete(0,cansetCutIndex);
+            return;
         }
     }
     
+    //9. 找到了`已发生`截点 & 还有后段 => 则为有效方案 (参考26128-1-3);
+    if (cansetCutIndex != -1 && cansetCutIndex < cansetFo.count - 1) {
+        
+        //10. 匹配度 (参考26128-1-4);
+        CGFloat matchValue = sumMatchValue / (cansetCutIndex + 1);
+        complete(matchValue,cansetCutIndex);
+    }else{
+        complete(0,cansetCutIndex);
+    }
 }
 
-+(void) compareCansetAlg:(AIKVPointer*)cansetAlg_p protoAlg:(AIKVPointer*)protoAlg_p{
+/**
+ *  MARK:--------------------对比两个概念匹配度--------------------
+ *  @result 返回0到1 (0:完全不一样 & 1:完全一样) (参考26127-TODO5);
+ */
++(CGFloat) compareCansetAlg:(AIKVPointer*)cansetAlg_p protoAlg:(AIKVPointer*)protoAlg_p{
     //1. 数据准备;
     AIAlgNodeBase *cansetAlg = [SMGUtils searchNode:cansetAlg_p];
     AIAlgNodeBase *protoAlg = [SMGUtils searchNode:protoAlg_p];
+    AIKVPointer *cansetFirstV_p = ARR_INDEX(cansetAlg.content_ps, 0);
+    AIKVPointer *protoFirstV_p = ARR_INDEX(protoAlg.content_ps, 0);
+    NSString *cansetAT = cansetFirstV_p.algsType;
+    NSString *protoAT = protoFirstV_p.algsType;
     
-    //2. 先对比稀疏码标识分区相近度 (需要>30%);
+    //2. 先对比二者是否同区;
+    if (![cansetAT isEqualToString:protoAT]) {
+        return 0;
+    }
+    
+    //3. 找出二者稀疏码同标识的;
+    __block CGFloat sumNear = 0;
+    for (AIKVPointer *cansetV in cansetAlg.content_ps) {
+        for (AIKVPointer *protoV in protoAlg.content_ps) {
+            if ([cansetV.dataSource isEqualToString:protoV.dataSource]) {
+                
+                //4. 对比稀疏码相近度 & 并累计;
+                sumNear += [self compareCansetValue:cansetV protoValue:protoV];
+            }
+        }
+    }
+    return sumNear / protoAlg.count;
+}
+
+/**
+ *  MARK:--------------------对比稀疏码相近度--------------------
+ *  @result 返回0到1 (0:稀疏码完全不同, 1稀疏码完全相同) (参考26127-TODO6);
+ */
++(CGFloat) compareCansetValue:(AIKVPointer*)cansetV_p protoValue:(AIKVPointer*)protoV_p{
+    //1. 取稀疏码值;
+    double cansetData = [NUMTOOK([AINetIndex getData:cansetV_p]) doubleValue];
+    double protoData = [NUMTOOK([AINetIndex getData:protoV_p]) doubleValue];
+    
+    //2. 计算出nearV (参考25082-公式1);
+    double delta = fabs(cansetData - protoData);
+    double span = [AINetIndex getIndexSpan:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];
+    double nearV = (span == 0) ? 1 : (1 - delta / span);
+    return nearV;
 }
 
 @end
