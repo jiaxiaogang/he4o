@@ -232,24 +232,22 @@
         model.stableScore = [TOUtils getColStableScore:cansetFo outOfFos:cansetFos startSPIndex:model.cutIndex + 1 endSPIndex:cansetFo.count];
     }
     
-    //7. 取出最好的结果 (参考26128-2-2);
-    AISolutionModel *best = nil;
-    for (AISolutionModel *model in solutionModels) {
-        if (!best || model.stableScore * model.matchValue > best.stableScore * best.matchValue) {
-            best = model;
-        }
-    }
+    //7. 根据候选集综合分排序 (参考26128-2-2);
+    NSArray *sortModels = [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
+        return obj.stableScore * obj.matchValue;
+    }];
     
+    //8. 取最佳解决方案;
+    AISolutionModel *best = ARR_INDEX(sortModels, 0);
     NSLog(@"protoFo: %@",Pit2FStr(demand.protoFo));
     AIFoNodeBase *bestFo = [SMGUtils searchNode:best.cansetFo];
-    NSLog(@"bestS: %@ %@",Pit2FStr(best.cansetFo),CLEANSTR(bestFo.spDic));
     
-    //6. 得出末位后,计算SP好坏评分;
-    //NSArray *sortFos = [SMGUtils sortBig2Small:cansetFos compareBlock:^double(AIKVPointer *obj) {
-    //    AIFoNodeBase *fo = [SMGUtils searchNode:obj];
-    //    return [TOUtils getColSPScore:fo outOfFos:cansetFos startSPIndex:全含算出末位 endSPIndex:fo.count];
-    //}];
-    
+    //9. debugLog
+    for (AISolutionModel *model in sortModels) {
+        CGFloat solutionScore = model.stableScore * model.matchValue;
+        AIFoNodeBase *cansetFo = [SMGUtils searchNode:model.cansetFo];
+        NSLog(@"> %@\n\t评分:%.2f = 前匹配:%.2f x 后稳定:%.2f >> %@",Pit2FStr(model.cansetFo),solutionScore,model.matchValue,model.stableScore,CLEANSTR(cansetFo.spDic));
+    }
     
     NSLog(@"");
 }
