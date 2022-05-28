@@ -124,7 +124,7 @@
         NSLog(@">>>>>> rSolution 新增第%ld例解决方案: \n> %@ %@",demand.actionFoModels.count,Fo2FStr(bestSFo),CLEANSTR(bestSFo.spDic));
         
         //a) 有效率
-        [TCEffect rEffect:foModel];
+        //[TCEffect rEffect:foModel];
         [theTV updateFrame];
         [TCAction action:foModel];
     }else{
@@ -415,7 +415,7 @@
         NSLog(@">>>>>> hSolution 新增第%ld例解决方案: %@->%@ (有效率:%.2f = %@) targetSPIndex:%ld",hDemand.actionFoModels.count,Fo2FStr(bestResult),Mvp2Str(bestResult.cmvNode_p),bestEffectScore,effectDesc,foModel.targetSPIndex);
         
         //a) 有效率;
-        [TCEffect hEffect:foModel];
+        //[TCEffect hEffect:foModel];
         [theTV updateFrame];
         [TCAction action:foModel];
     }else{
