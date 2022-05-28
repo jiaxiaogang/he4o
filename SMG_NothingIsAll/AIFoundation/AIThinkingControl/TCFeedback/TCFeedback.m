@@ -145,8 +145,11 @@
             //5. 非actYes状态不处理;
             if (waitModel.status != TOModelStatus_ActYes) continue;
             
-            //6. 判断hope(wait)和real(new)之间是否相符 (当反馈了"同区反向"时,即表明任务失败,为S) (匹配,比如撞疼,确定疼了);
+            //6. 未到末尾,不处理;
             AIFoNodeBase *waitFo = [SMGUtils searchNode:waitModel.content_p];
+            if (waitModel.actionIndex < waitFo.count) continue;
+            
+            //6. 判断hope(wait)和real(new)之间是否相符 (当反馈了"同区反向"时,即表明任务失败,为S) (匹配,比如撞疼,确定疼了);
             if ([AIScore sameIdenSameScore:waitFo.cmvNode_p mv2:cmvNode.pointer]) {
                 waitModel.status = TOModelStatus_OuterBack;
                 NSLog(@"top_OPushM: 实MV 正向反馈");

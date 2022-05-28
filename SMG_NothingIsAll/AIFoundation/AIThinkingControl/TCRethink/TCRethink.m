@@ -32,8 +32,8 @@
     AIFoNodeBase *fo = [SMGUtils searchNode:model.content_p];
     [theTC updateOperCount];
     Debug();
-    IFTitleLog(@"OR反省", @"\n%@ spIndex:%ld -> (%@)",FoP2FStr(model.content_p),model.targetSPIndex,ATType2Str(type));
-    [fo updateSPStrong:model.targetSPIndex type:type];
+    IFTitleLog(@"OR反省", @"\n%@ spIndex:%ld -> (%@)",FoP2FStr(model.content_p),model.actionIndex,ATType2Str(type));
+    [fo updateSPStrong:model.actionIndex type:type];
     DebugE();
 }
 

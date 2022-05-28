@@ -100,137 +100,224 @@
  *                  > 而baseDemand"时间不急"自有其评价决定,此处只管触发器的直接时间;
  *      2021.12.26: 触发器和反省都针对solutionFo,而不是baseDemand.matchFo (参考25031-11);
  *      2021.12.26: 接入新的感性ORT反省 (参考25032-5);
+ *      2022.05.28: 被frameActYes()替代 (参考26137-TODO2);
  */
-+(void) rActYes:(TOFoModel*)foModel{
-    //1. R-模式ActYes处理,仅赋值,等待R-触发器;
-    [theTC updateOperCount];
-    Debug();
-    ReasonDemandModel *demand = (ReasonDemandModel*)foModel.baseOrGroup;
-    demand.status = TOModelStatus_ActYes;
-    
-    //1. root设为actYes
-    DemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:foModel];
-    root.status = TOModelStatus_ActYes;
-    
-    //2. solutionFo已执行完成,直接取mvDeltaTime做触发器时间;
-    AIFoNodeBase *solutionFo = [SMGUtils searchNode:foModel.content_p];
-    double deltaTime = solutionFo.mvDeltaTime;
-    
-    //3. 触发器;
-    NSLog(@"---//触发器R-_感性mv任务:%@ 解决方案:%@ time:%f",demand.algsType,Pit2FStr(foModel.content_p),deltaTime);
-    [AITime setTimeTrigger:deltaTime trigger:^{
-        
-        //3. 无root时,说明已被别的R-新matchFo抵消掉,抵消掉后是不做反省的 (参考22081-todo1);
-        BOOL havRoot = [theTC.outModelManager.getAllDemand containsObject:root];
-        if (havRoot) {
-            
-            //10. 如果状态已改成OutBack,说明有反馈;
-            AnalogyType type = ATDefault;
-            CGFloat score = [AIScore score4MV:solutionFo.cmvNode_p ratio:1.0f];
-            if (score > 0) {
-                //b. 实mv+反馈同向:P(好),未反馈:S(坏);
-                type = (foModel.status == TOModelStatus_OuterBack) ? ATPlus : ATSub;
-            }else if(score < 0){
-                //b. 实mv-反馈同向:S(坏),未反馈:P(好);
-                type = (foModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;
-            }
-            
-            //11. 则进行感性IRT反省;
-            if (type != ATDefault) {
-                [TCRethink perceptOutRethink:foModel type:type];
-                NSLog(@"---//OP反省触发器执行(R任务):%p F%ld 状态:%@",foModel,foModel.content_p.pointerId,TOStatus2Str(foModel.status));
-                
-                //12. 如果无反馈,则设为失败,并继续决策;
-                DebugE();
-                if (foModel.status == TOModelStatus_ActYes) {
-                    foModel.status = TOModelStatus_ActNo;
-                    [TCScore score];
-                }
-            }
-        }
-    }];
-}
+//+(void) rActYes:(TOFoModel*)foModel{
+//    //1. R-模式ActYes处理,仅赋值,等待R-触发器;
+//    [theTC updateOperCount];
+//    Debug();
+//    ReasonDemandModel *demand = (ReasonDemandModel*)foModel.baseOrGroup;
+//    demand.status = TOModelStatus_ActYes;
+//
+//    //1. root设为actYes
+//    DemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:foModel];
+//    root.status = TOModelStatus_ActYes;
+//
+//    //2. solutionFo已执行完成,直接取mvDeltaTime做触发器时间;
+//    AIFoNodeBase *solutionFo = [SMGUtils searchNode:foModel.content_p];
+//    double deltaTime = solutionFo.mvDeltaTime;
+//
+//    //3. 触发器;
+//    NSLog(@"---//触发器R-_感性mv任务:%@ 解决方案:%@ time:%f",demand.algsType,Pit2FStr(foModel.content_p),deltaTime);
+//    [AITime setTimeTrigger:deltaTime trigger:^{
+//
+//        //3. 无root时,说明已被别的R-新matchFo抵消掉,抵消掉后是不做反省的 (参考22081-todo1);
+//        BOOL havRoot = [theTC.outModelManager.getAllDemand containsObject:root];
+//        if (havRoot) {
+//
+//            //10. 如果状态已改成OutBack,说明有反馈;
+//            AnalogyType type = ATDefault;
+//            CGFloat score = [AIScore score4MV:solutionFo.cmvNode_p ratio:1.0f];
+//            if (score > 0) {
+//                //b. 实mv+反馈同向:P(好),未反馈:S(坏);
+//                type = (foModel.status == TOModelStatus_OuterBack) ? ATPlus : ATSub;
+//            }else if(score < 0){
+//                //b. 实mv-反馈同向:S(坏),未反馈:P(好);
+//                type = (foModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;
+//            }
+//
+//            //11. 则进行感性IRT反省;
+//            if (type != ATDefault) {
+//                [TCRethink perceptOutRethink:foModel type:type];
+//                NSLog(@"---//OP反省触发器执行(R任务):%p F%ld 状态:%@",foModel,foModel.content_p.pointerId,TOStatus2Str(foModel.status));
+//
+//                //12. 如果无反馈,则设为失败,并继续决策;
+//                DebugE();
+//                if (foModel.status == TOModelStatus_ActYes) {
+//                    foModel.status = TOModelStatus_ActNo;
+//                    [TCScore score];
+//                }
+//            }
+//        }
+//    }];
+//}
 
 /**
  *  MARK:--------------------hActYes--------------------
  *  @desc H模式,等待hAlg输入反馈 -> 调用理性ORT反省 ->feedbackTOR;
  *  @version
  *      2021.12.26: 接入理性ORT反省 (参考25032-5);
+ *      2022.05.28: 被frameActYes()替代 (参考26137-TODO3);
  */
-+(void) hActYes:(TOAlgModel*)algModel{
-    //1. 数据准备
+//+(void) hActYes:(TOAlgModel*)algModel{
+//    //1. 数据准备
+//    [theTC updateOperCount];
+//    Debug();
+//    TOFoModel *foModel = (TOFoModel*)algModel.baseOrGroup;
+//    AIFoNodeBase *foNode = [SMGUtils searchNode:foModel.content_p];
+//
+//    //1. root设为actYes
+//    DemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:algModel];
+//    root.status = TOModelStatus_ActYes;
+//
+//    //2. 如果TOAlgModel为HNGL时 (所需时间为"target-1到target"时间);
+//    double deltaTime = [NUMTOOK(ARR_INDEX(foNode.deltaTimes, foModel.targetSPIndex)) doubleValue];
+//    [AINoRepeatRun sign:STRFORMAT(@"%p",algModel)];
+//
+//    //3. 触发器 (触发条件:未等到实际输入);
+//    NSLog(@"---//触发器A_生成: %@ from:%@ time:%f",AlgP2FStr(algModel.content_p),Fo2FStr(foNode),deltaTime);
+//    [AITime setTimeTrigger:deltaTime trigger:^{
+//
+//        //4. 反省类比(成功/未成功)的主要原因;
+//        AnalogyType type = (algModel.status == TOModelStatus_ActYes) ? ATSub : ATPlus;
+//        [AINoRepeatRun run:STRFORMAT(@"%p",algModel) block:^{
+//            [TCRethink reasonOutRethink:foModel type:type];
+//            NSLog(@"---//OR反省触发器执行:%p A%ld 状态:%@",algModel,algModel.content_p.pointerId,TOStatus2Str(algModel.status));
+//        }];
+//
+//        //5. 失败时_继续决策 (成功时,由feedback的IN流程继续);
+//        BOOL havRoot = [theTC.outModelManager.getAllDemand containsObject:root];
+//        DebugE();
+//        if (algModel.status == TOModelStatus_ActYes && havRoot) {
+//            NSLog(@"====ActYes is ATSub -> 递归alg");
+//            //5. 2020.11.28: alg本级递归 (只有_Hav全部失败时,才会自行调用failure声明失败) (参考2114C);
+//            algModel.status = TOModelStatus_ActNo;
+//
+//            //6. 2021.12.02: 失败时,继续决策;
+//            [TCScore score];
+//        }
+//    }];
+//}
+
+/**
+ *  MARK:--------------------P模式,fo执行完成时,actYes->feedbackTOP--------------------
+ *  @version
+ *      2022.05.28: 被frameActYes()替代 (参考26137-TODO4);
+ */
+//+(void) pActYes:(TOFoModel*)foModel{
+//    //1. root设为actYes
+//    [theTC updateOperCount];
+//    Debug();
+//    DemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:foModel];
+//    root.status = TOModelStatus_ActYes;
+//    
+//    //2. P-模式ActYes处理 (TOFoModel时,数据准备);
+//    AIFoNodeBase *solutionFo = [SMGUtils searchNode:foModel.content_p];
+//    PerceptDemandModel *demand = (PerceptDemandModel*)foModel.baseOrGroup;
+//    
+//    //3. 触发器 (触发条件:任务未在demandManager中抵消);
+//    NSLog(@"---//触发器pActYes_生成: %p -> %@ time:%f",demand,Fo2FStr(solutionFo),solutionFo.mvDeltaTime);
+//    [AITime setTimeTrigger:solutionFo.mvDeltaTime trigger:^{
+//        
+//        //4. 无root时,说明已被别的R-新matchFo抵消掉,抵消掉后是不做反省的 (参考22081-todo1);
+//        BOOL havRoot = [theTC.outModelManager.getAllDemand containsObject:root];
+//        if (havRoot) {
+//            
+//            //5. 如果状态已改成OutBack,说明有反馈;
+//            AnalogyType type = (foModel.status == TOModelStatus_OuterBack) ? ATPlus : ATSub;
+//            
+//            //6. 则进行感性ORT反省;
+//            [TCRethink perceptOutRethink:foModel type:type];
+//            NSLog(@"---//OP反省触发器执行(P任务):%p F%ld 状态:%@",foModel,foModel.content_p.pointerId,TOStatus2Str(foModel.status));
+//            
+//            //7. 如果无反馈,则继续决策;
+//            DebugE();
+//            if (foModel.status == TOModelStatus_ActYes) {
+//                foModel.status = TOModelStatus_ActNo;
+//                [TCScore score];
+//            }
+//        }
+//    }];
+//}
+
+/**
+ *  MARK:--------------------帧静默等待--------------------
+ *  @desc 每帧都触发等待反馈 (参考26136-方案);
+ */
++(void) frameActYes:(TOFoModel*)solutionModel{
     [theTC updateOperCount];
     Debug();
-    TOFoModel *foModel = (TOFoModel*)algModel.baseOrGroup;
-    AIFoNodeBase *foNode = [SMGUtils searchNode:foModel.content_p];
+    //0. 数据准备 (从上到下,取root,demand,solutionFo,frameAlg);
+    DemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:solutionModel];
+    DemandModel *demand = (DemandModel*)solutionModel.baseOrGroup;
+    AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.content_p];
+    AIKVPointer *frameAlg_p = ARR_INDEX(solutionFo.content_ps, solutionModel.actionIndex);
+    TOAlgModel *frameModel = [SMGUtils filterSingleFromArr:solutionModel.subModels checkValid:^BOOL(TOAlgModel *item) {
+        return [item.content_p isEqual:frameAlg_p];
+    }];
     
-    //1. root设为actYes
-    DemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:algModel];
+    //1. 设为actYes
+    solutionModel.status = TOModelStatus_ActYes;
+    demand.status = TOModelStatus_ActYes;
     root.status = TOModelStatus_ActYes;
+    if (frameModel) frameModel.status = TOModelStatus_ActYes;
     
-    //2. 如果TOAlgModel为HNGL时 (所需时间为"target-1到target"时间);
-    double deltaTime = [NUMTOOK(ARR_INDEX(foNode.deltaTimes, foModel.targetSPIndex)) doubleValue];
-    [AINoRepeatRun sign:STRFORMAT(@"%p",algModel)];
+    //2. solutionFo已执行完成,直接取mvDeltaTime做触发器时间;
+    double deltaTime = 0;
+    if (solutionModel.actionIndex >= solutionFo.count) {
+        deltaTime = solutionFo.mvDeltaTime;
+    }else{
+        deltaTime = [NUMTOOK(ARR_INDEX(solutionFo.deltaTimes, solutionModel.actionIndex)) doubleValue];
+    }
     
-    //3. 触发器 (触发条件:未等到实际输入);
-    NSLog(@"---//触发器A_生成: %@ from:%@ time:%f",AlgP2FStr(algModel.content_p),Fo2FStr(foNode),deltaTime);
+    //3. 触发器;
+    NSLog(@"---//行为化帧触发器:%@ time:%f\n解决方案:%@ (%ld/%ld)",demand.algsType,deltaTime,Fo2FStr(solutionFo),solutionModel.actionIndex,solutionModel.targetSPIndex);
     [AITime setTimeTrigger:deltaTime trigger:^{
         
-        //4. 反省类比(成功/未成功)的主要原因;
-        AnalogyType type = (algModel.status == TOModelStatus_ActYes) ? ATSub : ATPlus;
-        [AINoRepeatRun run:STRFORMAT(@"%p",algModel) block:^{
-            [TCRethink reasonOutRethink:foModel type:type];
-            NSLog(@"---//OR反省触发器执行:%p A%ld 状态:%@",algModel,algModel.content_p.pointerId,TOStatus2Str(algModel.status));
-        }];
-        
-        //5. 失败时_继续决策 (成功时,由feedback的IN流程继续);
-        BOOL havRoot = [theTC.outModelManager.getAllDemand containsObject:root];
-        DebugE();
-        if (algModel.status == TOModelStatus_ActYes && havRoot) {
-            NSLog(@"====ActYes is ATSub -> 递归alg");
-            //5. 2020.11.28: alg本级递归 (只有_Hav全部失败时,才会自行调用failure声明失败) (参考2114C);
-            algModel.status = TOModelStatus_ActNo;
+        //4. 末尾为mv感性目标;
+        if (solutionModel.actionIndex >= solutionFo.count) {
+            //a. 如果状态已改成OutBack,说明有反馈;
+            AnalogyType type = ATDefault;
+            CGFloat score = [AIScore score4MV:solutionFo.cmvNode_p ratio:1.0f];
+            if (score > 0) {
+                //b. 实mv+反馈同向:P(好),未反馈:S(坏);
+                type = (solutionModel.status == TOModelStatus_OuterBack) ? ATPlus : ATSub;
+            }else if(score < 0){
+                //c. 实mv-反馈同向:S(坏),未反馈:P(好);
+                type = (solutionModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;
+            }
             
-            //6. 2021.12.02: 失败时,继续决策;
-            [TCScore score];
+            //d. 则进行感性IRT反省;
+            if (type != ATDefault) {
+                [TCRethink perceptOutRethink:solutionModel type:type];
+                NSLog(@"---//行为化帧触发感性反省:%p F%ld 状态:%@",solutionModel,solutionFo.pointer.pointerId,TOStatus2Str(solutionModel.status));
+                
+                //e. 如果无反馈,则设为失败,并继续决策;
+                if (solutionModel.status == TOModelStatus_ActYes) {
+                    solutionModel.status = TOModelStatus_ActNo;
+                    [TCScore score];
+                }
+            }
         }
-    }];
-}
-
-//P模式,fo执行完成时,actYes->feedbackTOP
-+(void) pActYes:(TOFoModel*)foModel{
-    //1. root设为actYes
-    [theTC updateOperCount];
-    Debug();
-    DemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:foModel];
-    root.status = TOModelStatus_ActYes;
-    
-    //2. P-模式ActYes处理 (TOFoModel时,数据准备);
-    AIFoNodeBase *solutionFo = [SMGUtils searchNode:foModel.content_p];
-    PerceptDemandModel *demand = (PerceptDemandModel*)foModel.baseOrGroup;
-    
-    //3. 触发器 (触发条件:任务未在demandManager中抵消);
-    NSLog(@"---//触发器pActYes_生成: %p -> %@ time:%f",demand,Fo2FStr(solutionFo),solutionFo.mvDeltaTime);
-    [AITime setTimeTrigger:solutionFo.mvDeltaTime trigger:^{
-        
-        //4. 无root时,说明已被别的R-新matchFo抵消掉,抵消掉后是不做反省的 (参考22081-todo1);
-        BOOL havRoot = [theTC.outModelManager.getAllDemand containsObject:root];
-        if (havRoot) {
+        //5. 中间为帧理性目标;
+        else{
             
-            //5. 如果状态已改成OutBack,说明有反馈;
-            AnalogyType type = (foModel.status == TOModelStatus_OuterBack) ? ATPlus : ATSub;
+            //a. 反省类比(成功/未成功)的主要原因;
+            AnalogyType type = (frameModel.status == TOModelStatus_ActYes) ? ATSub : ATPlus;
+            [TCRethink reasonOutRethink:solutionModel type:type];
+            NSLog(@"---//行为化帧触发理性反省:%p A%ld 状态:%@",frameModel,frameAlg_p.pointerId,TOStatus2Str(frameModel.status));
             
-            //6. 则进行感性ORT反省;
-            [TCRethink perceptOutRethink:foModel type:type];
-            NSLog(@"---//OP反省触发器执行(P任务):%p F%ld 状态:%@",foModel,foModel.content_p.pointerId,TOStatus2Str(foModel.status));
             
-            //7. 如果无反馈,则继续决策;
-            DebugE();
-            if (foModel.status == TOModelStatus_ActYes) {
-                foModel.status = TOModelStatus_ActNo;
+            //5. 失败时_继续决策 (成功时,由feedback的IN流程继续);
+            if (frameModel.status == TOModelStatus_ActYes) {
+                //5. 2020.11.28: alg本级递归 (只有_Hav全部失败时,才会自行调用failure声明失败) (参考2114C);
+                frameModel.status = TOModelStatus_ActNo;
+                
+                //6. 2021.12.02: 失败时,继续决策;
                 [TCScore score];
             }
         }
+        DebugE();
     }];
 }
 

@@ -41,7 +41,7 @@
         foModel.actionIndex ++;
         AIKVPointer *move_p = ARR_INDEX(curFo.content_ps, foModel.actionIndex);
         TOAlgModel *moveAlg = [TOAlgModel newWithAlg_p:move_p group:foModel];
-        NSLog(@"_Fo行为化第 %ld/%ld 个: %@",(long)foModel.actionIndex,(long)curFo.count,Fo2FStr(curFo));
+        NSLog(@"_Fo行为化第 %ld/%ld 个: %@",(long)foModel.actionIndex,foModel.targetSPIndex,Fo2FStr(curFo));
         
         //@desc: 下标不急评价说明: R模式_Hav首先是为了避免forecastAlg,其次才是为了达成curFo解决方案 (参考22153);
         //5. 下标不急(弄巧成拙)评价_数据准备 (参考24171-12);
@@ -60,27 +60,29 @@
         //    }
         //}
         
+        //6. 输出前,先调用frameActYes();
+        [TCActYes frameActYes:foModel];
+        
         //7. 尝试行为当前帧;
         DebugE();
         [TCOut out:moveAlg];
     }else{
         //8. R成功,转actYes等待反馈 & 触发反省 (原递归参考流程控制Finish的注释version-20200916 / 参考22061-7);
         DebugE();
-        foModel.status = TOModelStatus_ActYes;
+        foModel.actionIndex ++;
         NSLog(@"_Fo行为化: Finish %ld/%ld 到ActYes",(long)foModel.actionIndex,(long)curFo.count);
+        
         if (ISOK(foModel.baseOrGroup, ReasonDemandModel.class)) {
-            [TCActYes rActYes:foModel];
+            [TCActYes frameActYes:foModel];
             [TCScore score];//r输出完成时,继续决策;
         }else if(ISOK(foModel.baseOrGroup, HDemandModel.class)){
             
             //9. H目标帧只需要等 (转hActYes) (参考25031-9);
-            foModel.actionIndex ++;
             AIKVPointer *hTarget_p = ARR_INDEX(curFo.content_ps, foModel.actionIndex);
-            TOAlgModel *hTargetAlg = [TOAlgModel newWithAlg_p:hTarget_p group:foModel];
-            hTargetAlg.status = TOModelStatus_ActYes;
-            [TCActYes hActYes:hTargetAlg];//h输出成功时,等待反馈;
+            [TOAlgModel newWithAlg_p:hTarget_p group:foModel];
+            [TCActYes frameActYes:foModel];//h输出成功时,等待反馈;
         }else if(ISOK(foModel.baseOrGroup, PerceptDemandModel.class)){
-            [TCActYes pActYes:foModel];//p输出成功时,等待反馈;
+            [TCActYes frameActYes:foModel];//p输出成功时,等待反馈;
         }
     }
 }
