@@ -80,13 +80,14 @@
  *  @version
  *      2022.01.19: 从action前置到rSolution中,因为三条全紧急,就完蛋了,放到action则不受此限制 (参考25106);
  *      2022.02.22: 将needTime取到mv改为仅取下帧,因为很多solution只需要一帧就改到正确的道路上了 (参考25113-方案2);
+ *      2022.05.28: 判断目标向后一帧 (参考26132-方案2);
  *  @result 返回是否时间不急 (默认为true);
  *      true    : 不急,时间够用,这方案可继续act;
  *      false   : 紧急,这方案来不及执行,直接ActNo掉;
  */
 +(BOOL) FRS_Time:(AIMatchFoModel*)demandPFo solutionFo:(AIFoNodeBase*)solutionFo solutionCutIndex:(NSInteger)solutionCutIndex{
     //1. 取解决方案所需时间;
-    double needTime = [TOUtils getSumDeltaTime:solutionFo startIndex:solutionCutIndex endIndex:solutionCutIndex + 1];
+    double needTime = [TOUtils getSumDeltaTime:solutionFo startIndex:solutionCutIndex + 1 endIndex:solutionCutIndex + 2];
     
     //2. 取父任务能给的时间;
     AIFoNodeBase *pFo = [SMGUtils searchNode:demandPFo.matchFo];
@@ -94,7 +95,7 @@
     
     //3. 判断是否时间不急;
     BOOL timeIsEnough = needTime <= giveTime;
-    if (Log4Score && timeIsEnough) NSLog(@"====> (时间不急%d = 方案T:%.2f <= 任务T:%.2f )",timeIsEnough,needTime,giveTime);
+    if (Log4Score && timeIsEnough) NSLog(@"> 时间不急%d = 方案T:%.2f <= 任务T:%.2f",timeIsEnough,needTime,giveTime);
     return timeIsEnough;
 }
 

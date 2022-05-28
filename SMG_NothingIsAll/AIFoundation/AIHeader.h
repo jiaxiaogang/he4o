@@ -351,7 +351,7 @@
 #define Log4Rethink true
 
 //Score
-#define Log4Score false
+#define Log4Score true
 #define Log4Solution true
 #define Log4Solution_Single false
 
