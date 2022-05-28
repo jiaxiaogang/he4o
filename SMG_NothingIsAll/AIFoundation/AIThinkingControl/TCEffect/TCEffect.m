@@ -53,7 +53,7 @@
         IFTitleLog(@"rSolution反省", @"\n%p S:%@ (有效性:%@ 任务状态:%@)",rDemand,Pit2FStr(rSolution.content_p),ATType2Str(tp),TOStatus2Str(rDemand.status));
         for (AIMatchFoModel *pFoModel in rDemand.pFos) {
             AIFoNodeBase *pFo = [SMGUtils searchNode:pFoModel.matchFo];
-            NSString *desc = nil;//[TOUtils getEffectDesc:pFo effectIndex:pFo.count solutionFo:rSolution.content_p];
+            NSString *desc = CLEANSTR(pFo.spDic);//[TOUtils getEffectDesc:pFo effectIndex:pFo.count solutionFo:rSolution.content_p];
             NSLog(@"\t=>pFo:%@ (index:%ld mv有效率:%@)",Fo2FStr(pFo),pFo.count,desc);
         }
     }];
@@ -94,7 +94,7 @@
         if (tp == ATSub) hSolution.status = TOModelStatus_ActNo;
         
         //7. log
-        NSString *desc = nil;//[TOUtils getEffectDesc:targetFoNode effectIndex:targetFo.actionIndex solutionFo:hSolution.content_p];
+        NSString *desc = CLEANSTR(targetFoNode.spDic);//[TOUtils getEffectDesc:targetFoNode effectIndex:targetFo.actionIndex solutionFo:hSolution.content_p];
         IFTitleLog(@"HSolution反省", @"\n%p S:%@ (有效性:%@ 当前方案状态:%@)",hSolution,Pit2FStr(hSolution.content_p),ATType2Str(tp),TOStatus2Str(hSolution.status));
         NSLog(@"\t=>targetFo:%@ (index:%ld mv有效率:%@)",Fo2FStr(targetFoNode),targetFo.actionIndex,desc);
     }];

@@ -88,4 +88,5 @@
 #define cValueNarrowLimit 500   //不能太小,不然概念识别时,没交集了 (参考26075);
 #define cAlgNarrowLimit(protoCount) protoCount * 2
 #define cFoNarrowLimit 10
+#define cRFoNarrowLimit 2
 #define cSolutionNarrowLimit 3

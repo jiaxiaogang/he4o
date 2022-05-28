@@ -68,6 +68,7 @@
  *      20201022: 将seem的抽象搬过来,且支持三种关联处理 (参考21091-蓝绿黄三种线);
  *      20220115: 识别结果可为自身,参考partMatching_Alg(),所以不需要此处再add(self)了;
  *      20220116: 全含可能也只是相似,由直接构建抽具象关联,改成概念外类比 (参考25105);
+ *      20220528: 把概念外类比关掉 (参考26129-方案2-1);
  *
  *  _result
  *      xxxx.xx.xx: completeBlock : 共支持三种返回: 匹配效果从高到低分别为:fuzzyAlg废弃,matchAlg全含,seemAlg局部;
@@ -92,7 +93,7 @@
         [AINetUtils insertRefPorts_AllAlgNode:matchAlg.pointer content_ps:matchAlg.content_ps difStrong:1];
         
         //5. 识别且全含时,进行外类比 (参考25105);
-        [AIAnalogy analogyAlg:protoAlg algB:matchAlg];
+        //[AIAnalogy analogyAlg:protoAlg algB:matchAlg];
     }
     
     //6. 关联处理_对seem和proto进行类比抽象 (参考21091-绿线);
@@ -137,6 +138,7 @@
  *      2022.05.23 - 将匹配度<90%的过滤掉 (参考26096-BUG3);
  *      2022.05.24 - 排序公式改为sumNear / matchCount (参考26103-代码);
  *      2022.05.25 - 排序公式改为sumNear / proto.count (参考26114-1);
+ *      2022.05.28 - 优化性能 (参考26129-方案2);
  */
 +(void) partMatching_Alg:(AIAlgNodeBase*)protoAlg isMem:(BOOL)isMem except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
     //1. 数据准备;
@@ -145,6 +147,7 @@
     NSMutableArray *matchAlgs = [[NSMutableArray alloc] init];      //用来收集全含匹配结果;
     NSMutableArray *partAlgs = [[NSMutableArray alloc] init];       //用来收集局部匹配结果;
     NSMutableDictionary *countDic = [NSMutableDictionary new];      //匹配度计数字典 <K:refAlg_p,V:matchCount>;
+    NSMutableDictionary *recordDic = [NSMutableDictionary new];     //pit不能做key,所以存这字典里 <K:pId,V:pit>
     NSMutableDictionary *sumNearVDic = [NSMutableDictionary new];   //相近度字典 <K:refAlg_p,V:sum(nearV)> (参考25082-公式2分子部分);
     
     //2. 广入: 对每个元素,分别取索引序列 (参考25083-1);
@@ -176,13 +179,17 @@
                 if ([SMGUtils containsSub_p:refPort.target_p parent_ps:except_ps]) continue;
                 
                 //9. 第1_统计匹配度;
-                NSData *key = OBJ2DATA(refPort.target_p);
+                //NSData *key = OBJ2DATA(refPort.target_p);
+                NSNumber *key = @(refPort.target_p.pointerId);
                 int oldCount = [NUMTOOK([countDic objectForKey:key]) intValue];
                 [countDic setObject:@(oldCount + 1) forKey:key];
                 
                 //10. 第2_统计相近度;
                 double oldSumNearV = [NUMTOOK([sumNearVDic objectForKey:key]) doubleValue];
                 [sumNearVDic setObject:@(oldSumNearV + nearV) forKey:key];
+                
+                //11. 将指针存记录着后面用;
+                [recordDic setObject:refPort.target_p forKey:key];
             }
         }
         if (Log4MAlg) if (countDic.count) NSLog(@"计数字典匹配情况: %@ ------",countDic.allValues);
@@ -203,7 +210,7 @@
     sortKeys = ARR_SUB(sortKeys, 0, cAlgNarrowLimit(protoAlg.count));
     
     //14. 全含或局部匹配判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);
-    for (NSData *key in sortKeys) {
+    for (NSNumber *key in sortKeys) {
         //14. 过滤掉匹配度<85%的;
         double matchV = [NUMTOOK([sumNearVDic objectForKey:key]) doubleValue] / protoAlg.count;
         if (matchV < 0.90f) {
@@ -211,7 +218,8 @@
         }
         
         //15. 判断全含 & 收集;
-        AIKVPointer *key_p = DATA2OBJ(key);
+        //AIKVPointer *key_p = DATA2OBJ(key);
+        AIKVPointer *key_p = [recordDic objectForKey:key];
         AIAlgNodeBase *result = [SMGUtils searchNode:key_p];
         //if (result.content_ps.count == [NUMTOOK([countDic objectForKey:key]) intValue]) {
         [matchAlgs addObject:result];
@@ -221,8 +229,9 @@
     //16. 未将全含返回,则返回最相似 (2020.10.22: 全含返回,也要返回seemAlg) (2022.01.15: 支持相近匹配后,全是全含没局部了);
     NSLog(@"\n识别结果 >> 总数:%ld = 全含匹配数:%ld + 局部匹配数:%ld",sortKeys.count,matchAlgs.count,partAlgs.count);
     for (AIAlgNodeBase *item in matchAlgs) {
-        id key = OBJ2DATA(item.pointer);
-        NSLog(@"-->>> 全含item: %@   \t相近度 => %.2f (count:%@)",Alg2FStr(item),[NUMTOOK([sumNearVDic objectForKey:key]) doubleValue] / protoAlg.count,[countDic objectForKey:OBJ2DATA(item.pointer)]);
+        //id key = OBJ2DATA(item.pointer);
+        id key = @(item.pointer.pointerId);
+        NSLog(@"-->>> 全含item: %@   \t相近度 => %.2f (count:%@)",Alg2FStr(item),[NUMTOOK([sumNearVDic objectForKey:key]) doubleValue] / protoAlg.count,[countDic objectForKey:key]);
     }
     for (AIAlgNodeBase *item in partAlgs) NSLog(@"-->>> 局部item: %@",Alg2FStr(item));
     inModel.matchAlgs = matchAlgs;
@@ -341,7 +350,7 @@
         //6. 无mv指向的仅保留两条 (参考26022-3);
         __block int rCount = 0;
         refFoPorts = [SMGUtils filterArr:refFoPorts checkValid:^BOOL(AIPort *item) {
-            if (!item.targetHavMv && ++rCount > 2) {
+            if (!item.targetHavMv && ++rCount > cRFoNarrowLimit) {
                 return false;
             }
             return true;
