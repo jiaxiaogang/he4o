@@ -84,6 +84,7 @@
  *      2022.05.22: 窄出排序方式,改为有效率排序 (参考26095-9);
  *      2022.05.27: 集成新的取S的方法 (参考26128);
  *      2022.05.27: 新解决方案从cutIndex开始行为化,而不是-1 (参考26127-TODO9);
+ *      2022.05.29: 前3条优先取快思考,后2条或快思考无效时,再取慢思考 (参考26143-TODO2);
  *  @callers : 用于RDemand.Begin时调用;
  */
 +(void) rSolution:(ReasonDemandModel*)demand {
@@ -107,8 +108,17 @@
         return obj.matchFo;
     }]];
     
-    //3. 取demand.conPorts (前15条) (参考24127-步骤1);
-    AISolutionModel *bestResult = [self rSolution_Slow:demand except_ps:except_ps];
+    
+    //3. 前3条,优先快思考;
+    AISolutionModel *bestResult = nil;
+    if (demand.actionFoModels.count <= 3) {
+        bestResult = [self rSolution_Fast:demand except_ps:except_ps];
+    }
+    
+    //4. 快思考无果或后2条,再做慢思考;
+    if (!bestResult) {
+        bestResult = [self rSolution_Slow:demand except_ps:except_ps];
+    }
 
     //6. 转流程控制_有解决方案则转begin;
     DebugE();

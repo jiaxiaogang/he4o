@@ -89,4 +89,4 @@
 #define cAlgNarrowLimit(protoCount) protoCount * 2
 #define cFoNarrowLimit 10
 #define cRFoNarrowLimit 2
-#define cSolutionNarrowLimit 3
+#define cSolutionNarrowLimit 5

@@ -435,7 +435,7 @@
         if (strong.hStrong + strong.nStrong > 0) {
             return (float)strong.hStrong / (strong.hStrong + strong.nStrong);
         }else{
-            return 0.5f;
+            return 0.0f;
         }
     }
     return 0;
