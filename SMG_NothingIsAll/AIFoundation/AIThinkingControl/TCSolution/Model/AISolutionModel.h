@@ -13,7 +13,7 @@
  */
 @interface AISolutionModel : NSObject
 
-+(AISolutionModel*) newWithCansetFo:(AIKVPointer*)cansetFo protoFo:(AIKVPointer*)protoFo matchValue:(CGFloat)matchValue stableScore:(CGFloat)stableScore cutIndex:(NSInteger)cutIndex;
++(AISolutionModel*) newWithCansetFo:(AIKVPointer*)cansetFo protoFo:(AIKVPointer*)protoFo matchValue:(CGFloat)matchValue cutIndex:(NSInteger)cutIndex;
 
 @property (strong, nonatomic) AIKVPointer *cansetFo;
 @property (strong, nonatomic) AIKVPointer *protoFo;

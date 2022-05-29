@@ -145,6 +145,10 @@
     }
 }
 
+/**
+ *  MARK:--------------------快思考--------------------
+ *  @desc 习惯 (参考26142);
+ */
 +(AISolutionModel*) rSolution_Fast:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps{
     //1. 数据准备;
     except_ps = ARRTOOK(except_ps);
@@ -156,6 +160,11 @@
         NSArray *itemCansets = [pFo.effectDic objectForKey:@(pFo.count)];
         [cansets addObjectsFromArray:itemCansets];
     }
+    
+    //2. 过滤掉有效率为0的无效候选集;
+    cansets = [SMGUtils filterArr:cansets checkValid:^BOOL(AIEffectStrong *item) {
+        return [TOUtils getEffectScore:item] > 0;
+    }];
     
     //3. 对候选集按有效率排序;
     NSArray *sortCansets = [SMGUtils sortBig2Small:cansets compareBlock:^double(AIEffectStrong *obj) {
@@ -184,6 +193,10 @@
     return nil;
 }
 
+/**
+ *  MARK:--------------------慢思考--------------------
+ *  @desc 思考求解 (参考26127);
+ */
 +(AISolutionModel*) rSolution_Slow:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps{
     //0. 数据准备;
     except_ps = ARRTOOK(except_ps);
