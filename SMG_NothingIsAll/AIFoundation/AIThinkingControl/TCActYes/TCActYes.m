@@ -243,6 +243,8 @@
 /**
  *  MARK:--------------------帧静默等待--------------------
  *  @desc 每帧都触发等待反馈 (参考26136-方案);
+ *  @version
+ *      2022.05.29: 不判断solutionFo.mv价值分因为它一般为空;
  */
 +(void) frameActYes:(TOFoModel*)solutionModel{
     [theTC updateOperCount];
@@ -264,45 +266,36 @@
     
     //2. solutionFo已执行完成,直接取mvDeltaTime做触发器时间;
     double deltaTime = 0;
-    if (solutionModel.actionIndex >= solutionFo.count) {
+    BOOL actYes4Mv = solutionModel.actionIndex >= solutionFo.count;
+    if (actYes4Mv) {
         deltaTime = solutionFo.mvDeltaTime;
     }else{
         deltaTime = [NUMTOOK(ARR_INDEX(solutionFo.deltaTimes, solutionModel.actionIndex)) doubleValue];
     }
     
     //3. 触发器;
-    NSLog(@"---//行为化帧触发器:%@ time:%f\n解决方案:%@ (%ld/%ld)",demand.algsType,deltaTime,Fo2FStr(solutionFo),solutionModel.actionIndex,solutionModel.targetSPIndex);
+    NSLog(@"---//行为化帧%@性触发器:%@ time:%f\n解决方案:%@ (%ld/%ld)",actYes4Mv?@" 感":@"理",demand.algsType,deltaTime,Fo2FStr(solutionFo),solutionModel.actionIndex,solutionModel.targetSPIndex);
     [AITime setTimeTrigger:deltaTime trigger:^{
         
         //4. 末尾为mv感性目标;
         if (solutionModel.actionIndex >= solutionFo.count) {
-            //a. 如果状态已改成OutBack,说明有反馈;
-            AnalogyType type = ATDefault;
-            CGFloat score = [AIScore score4MV:solutionFo.cmvNode_p ratio:1.0f];
-            if (score > 0) {
-                //b. 实mv+反馈同向:P(好),未反馈:S(坏);
-                type = (solutionModel.status == TOModelStatus_OuterBack) ? ATPlus : ATSub;
-            }else if(score < 0){
-                //c. 实mv-反馈同向:S(坏),未反馈:P(好);
-                type = (solutionModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;
-            }
+            //a. 如果状态已改成OutBack,说明有反馈(坏),否则未反馈(好) (参考feedbackTOP);
+            AnalogyType type = (solutionModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;
             
-            //d. 则进行感性IRT反省;
-            if (type != ATDefault) {
-                [TCRethink perceptOutRethink:solutionModel type:type];
-                NSLog(@"---//行为化帧触发感性反省:%p F%ld 状态:%@",solutionModel,solutionFo.pointer.pointerId,TOStatus2Str(solutionModel.status));
-                
-                //e. 如果无反馈,则设为失败,并继续决策;
-                if (solutionModel.status == TOModelStatus_ActYes) {
-                    solutionModel.status = TOModelStatus_ActNo;
-                    [TCScore score];
-                }
+            //d. 则进行感性PORT反省;
+            [TCRethink perceptOutRethink:solutionModel type:type];
+            NSLog(@"---//行为化帧触发感性反省:%p F%ld 状态:%@",solutionModel,solutionFo.pointer.pointerId,TOStatus2Str(solutionModel.status));
+            
+            //e. 如果无反馈,则设为失败,并继续决策;
+            if (solutionModel.status == TOModelStatus_ActYes) {
+                solutionModel.status = TOModelStatus_ActNo;
+                [TCScore score];
             }
         }
         //5. 中间为帧理性目标;
         else{
             
-            //a. 反省类比(成功/未成功)的主要原因;
+            //a. 反省类比(成功/未成功)的主要原因,进行RORT反省;
             AnalogyType type = (frameModel.status == TOModelStatus_ActYes) ? ATSub : ATPlus;
             [TCRethink reasonOutRethink:solutionModel type:type];
             NSLog(@"---//行为化帧触发理性反省:%p A%ld 状态:%@",frameModel,frameAlg_p.pointerId,TOStatus2Str(frameModel.status));
