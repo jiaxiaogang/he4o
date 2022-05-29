@@ -492,4 +492,25 @@
     }
 }
 
++(void) hSolution_Slow:(HDemandModel *)hDemand{
+    //1. 数据准备;
+    AIAlgNodeBase *targetAlg = [SMGUtils searchNode:hDemand.baseOrGroup.content_p];
+    TOFoModel *targetFoModel = (TOFoModel*)hDemand.baseOrGroup.baseOrGroup;
+    AIFoNodeBase *targetFo = [SMGUtils searchNode:targetFoModel.content_p];
+    NSArray *except_ps = [TOUtils convertPointersFromTOModels:hDemand.actionFoModels];
+    
+    //2. 取自身 + 向抽象 + 向具象 (目前仅取一层,如果发现一层不够,可以改为取多层) (参考25014-H描述);
+    NSMutableArray *maskFos = [[NSMutableArray alloc] init];
+    [maskFos addObject:targetFo.pointer];
+    [maskFos addObjectsFromArray:Ports2Pits([AINetUtils absPorts_All_Normal:targetFo])];
+    [maskFos addObjectsFromArray:Ports2Pits([AINetUtils conPorts_All_Normal:targetFo])];
+    
+    //TODOTOMORROW20220529:
+    //复制rSolution慢思考算法,过来一样改即可;
+    
+    
+    
+    
+}
+
 @end
