@@ -197,6 +197,7 @@
                 model.useTime = 0.1f;
             }else if(OutputObserverType_Back == model.type){
                 //b. 飞后 => 视觉;
+                NSLog(@"飞后视觉");
                 [self flyResult:[model.data floatValue]];
             }
         }

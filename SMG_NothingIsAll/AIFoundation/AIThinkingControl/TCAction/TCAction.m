@@ -41,7 +41,7 @@
         foModel.actionIndex ++;
         AIKVPointer *move_p = ARR_INDEX(curFo.content_ps, foModel.actionIndex);
         TOAlgModel *moveAlg = [TOAlgModel newWithAlg_p:move_p group:foModel];
-        NSLog(@"_Fo行为化第 %ld/%ld 个: %@",(long)foModel.actionIndex,foModel.targetSPIndex,Fo2FStr(curFo));
+        NSLog(@"_Fo行为化第 %ld/%ld 个: %@",(long)foModel.actionIndex + 1,foModel.targetSPIndex,Fo2FStr(curFo));
         
         //@desc: 下标不急评价说明: R模式_Hav首先是为了避免forecastAlg,其次才是为了达成curFo解决方案 (参考22153);
         //5. 下标不急(弄巧成拙)评价_数据准备 (参考24171-12);
@@ -70,7 +70,7 @@
         //8. R成功,转actYes等待反馈 & 触发反省 (原递归参考流程控制Finish的注释version-20200916 / 参考22061-7);
         DebugE();
         foModel.actionIndex ++;
-        NSLog(@"_Fo行为化: Finish %ld/%ld 到ActYes",(long)foModel.actionIndex,(long)curFo.count);
+        NSLog(@"_Fo行为化: Finish %ld/%ld 到ActYes",(long)foModel.actionIndex + 1,(long)curFo.count);
         
         if (ISOK(foModel.baseOrGroup, ReasonDemandModel.class)) {
             [TCActYes frameActYes:foModel];

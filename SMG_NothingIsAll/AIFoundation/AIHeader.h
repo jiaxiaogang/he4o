@@ -353,7 +353,8 @@
 //Score
 #define Log4Score true
 #define Log4Solution true
-#define Log4Solution_Single false
+#define Log4Solution_Slow false
+#define Log4Solution_Fast true
 
 //MARK:===============================================================
 //MARK:                     < 系统模块开关 >

@@ -289,6 +289,8 @@
             //e. 如果无反馈,则设为失败,并继续决策;
             if (solutionModel.status == TOModelStatus_ActYes) {
                 solutionModel.status = TOModelStatus_ActNo;
+                demand.status = TOModelStatus_Runing;
+                root.status = TOModelStatus_Runing;
                 [TCScore score];
             }
         }
@@ -305,6 +307,9 @@
             if (frameModel.status == TOModelStatus_ActYes) {
                 //5. 2020.11.28: alg本级递归 (只有_Hav全部失败时,才会自行调用failure声明失败) (参考2114C);
                 frameModel.status = TOModelStatus_ActNo;
+                solutionModel.status = TOModelStatus_Runing;
+                demand.status = TOModelStatus_Runing;
+                root.status = TOModelStatus_Runing;
                 
                 //6. 2021.12.02: 失败时,继续决策;
                 [TCScore score];

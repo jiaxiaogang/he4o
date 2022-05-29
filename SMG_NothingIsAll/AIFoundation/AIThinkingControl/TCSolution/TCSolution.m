@@ -41,7 +41,7 @@
         TOFoModel *solutionFo = (TOFoModel*)endBranch;
         
         //4. endBranch >= 0分时,执行TCAction (参考24203-1);
-        if (endScore > 0) [TCAction action:solutionFo];
+        if (endScore >= 0) [TCAction action:solutionFo];
         
         //5. 无更多S时_直接TCAction行为化 (参考24203-2b);
         else if(baseDemand.status == TOModelStatus_WithOut) [TCAction action:solutionFo];
@@ -131,7 +131,7 @@
         AIFoNodeBase *bestSFo = [SMGUtils searchNode:bestResult.cansetFo];
         TOFoModel *foModel = [TOFoModel newWithFo_p:bestSFo.pointer base:demand];
         foModel.actionIndex = bestResult.cutIndex;
-        NSLog(@">>>>>> rSolution 新增第%ld例解决方案: \n> %@ %@",demand.actionFoModels.count,Fo2FStr(bestSFo),CLEANSTR(bestSFo.spDic));
+        NSLog(@"> newS 第%ld例: %@",demand.actionFoModels.count,Fo2FStr(bestSFo));
         
         //a) 有效率
         [TCEffect rEffect:foModel];
@@ -159,6 +159,9 @@
         AIFoNodeBase *pFo = [SMGUtils searchNode:pFoModel.matchFo];
         NSArray *itemCansets = [pFo.effectDic objectForKey:@(pFo.count)];
         [cansets addObjectsFromArray:itemCansets];
+        if (Log4Solution_Fast) NSLog(@"快思考候选集:F%ld effectDic{%ld:%@}",pFo.pointer.pointerId,pFo.count,CLEANSTR([SMGUtils filterArr:itemCansets checkValid:^BOOL(AIEffectStrong *item) {
+            return item.hStrong > 0;
+        }]));
     }
     
     //2. 过滤掉有效率为0的无效候选集;
@@ -290,11 +293,12 @@
     for (AISolutionModel *model in sortModels) {
         CGFloat solutionScore = model.stableScore * model.matchValue;
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:model.cansetFo];
-        if (Log4Solution_Single) NSLog(@"> %@\n\t评分:%.2f = 前匹配:%.2f x 后稳定:%.2f >> %@",Pit2FStr(model.cansetFo),solutionScore,model.matchValue,model.stableScore,CLEANSTR(cansetFo.spDic));
+        if (Log4Solution_Slow) NSLog(@"> %@\n\t评分:%.2f = 前匹配:%.2f x 后稳定:%.2f >> %@",Pit2FStr(model.cansetFo),solutionScore,model.matchValue,model.stableScore,CLEANSTR(cansetFo.spDic));
     }
     CGFloat score = result.stableScore * result.matchValue;
     NSInteger resultIndex = [sortModels indexOfObject:result];
-    NSLog(@"从第%ld取得慢思考最佳结果:F%ld 评分:%.2f = 前匹配:%.2f x 后稳定:%.2f",resultIndex,result.cansetFo.pointerId,score,result.matchValue,result.stableScore);
+    AIFoNodeBase *resultFo = [SMGUtils searchNode:result.cansetFo];
+    NSLog(@"从第%ld取得慢思考最佳结果:F%ld 评分:%.2f = 前匹配:%.2f x 后稳定:%.2f %@",resultIndex,result.cansetFo.pointerId,score,result.matchValue,result.stableScore,CLEANSTR(resultFo.spDic));
     return result;
 }
 
@@ -474,7 +478,7 @@
         TOFoModel *foModel = [TOFoModel newWithFo_p:bestResult.pointer base:hDemand];
         foModel.targetSPIndex = bestSPIndex;
         NSString *effectDesc = [TOUtils getEffectDesc:targetFo effectIndex:targetFoModel.actionIndex solutionFo:bestResult.pointer];
-        NSLog(@">>>>>> hSolution 新增第%ld例解决方案: %@->%@ (有效率:%.2f = %@) targetSPIndex:%ld",hDemand.actionFoModels.count,Fo2FStr(bestResult),Mvp2Str(bestResult.cmvNode_p),bestEffectScore,effectDesc,foModel.targetSPIndex);
+        NSLog(@"> newH 第%ld例: %@->%@ (有效率:%.2f = %@) targetSPIndex:%ld",hDemand.actionFoModels.count,Fo2FStr(bestResult),Mvp2Str(bestResult.cmvNode_p),bestEffectScore,effectDesc,foModel.targetSPIndex);
         
         //a) 有效率;
         [TCEffect hEffect:foModel];
