@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIAlgNodeBase,DemandModel,TOFoModel,AIShortMatchModel,TOModelBase,TOAlgModel,AISolutionModel;
+@class AIAlgNodeBase,DemandModel,TOFoModel,AIShortMatchModel,TOModelBase,TOAlgModel,AISolutionModel,AIEffectStrong;
 @interface TOUtils : NSObject
 
 /**
@@ -148,6 +148,7 @@
  *  @param solutionFo   : 用于检查有效率的solutionFo;
  */
 +(CGFloat) getEffectScore:(AIFoNodeBase*)demandFo effectIndex:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo;
++(CGFloat) getEffectScore:(AIEffectStrong*)strong;
 +(NSString*) getEffectDesc:(AIFoNodeBase*)demandFo effectIndex:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo;
 
 

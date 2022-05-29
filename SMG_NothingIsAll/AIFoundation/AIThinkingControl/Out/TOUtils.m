@@ -428,11 +428,17 @@
  */
 +(CGFloat) getEffectScore:(AIFoNodeBase*)demandFo effectIndex:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo{
     AIEffectStrong *strong = [self getEffectStrong:demandFo effectIndex:effectIndex solutionFo:solutionFo];
-    if (strong.hStrong + strong.nStrong > 0) {
-        return (float)strong.hStrong / (strong.hStrong + strong.nStrong);
-    }else{
-        return 0.5f;
+    return [self getEffectScore:strong];
+}
++(CGFloat) getEffectScore:(AIEffectStrong*)strong{
+    if (strong) {
+        if (strong.hStrong + strong.nStrong > 0) {
+            return (float)strong.hStrong / (strong.hStrong + strong.nStrong);
+        }else{
+            return 0.5f;
+        }
     }
+    return 0;
 }
 +(AIEffectStrong*) getEffectStrong:(AIFoNodeBase*)demandFo effectIndex:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo{
     //1. 取有效率解决方案数组;
@@ -569,7 +575,7 @@
         //10. 匹配度 (参考26128-1-4);
         CGFloat matchValue = sumMatchValue / (cansetCutIndex + 1);
         if (matchValue > 0) {
-            result = [AISolutionModel newWithCansetFo:cansetFo_p protoFo:protoFo_p matchValue:matchValue stableScore:-1 cutIndex:cansetCutIndex];
+            result = [AISolutionModel newWithCansetFo:cansetFo_p protoFo:protoFo_p matchValue:matchValue cutIndex:cansetCutIndex];
         }
     }
     return result;

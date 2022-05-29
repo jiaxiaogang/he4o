@@ -10,12 +10,11 @@
 
 @implementation AISolutionModel
 
-+(AISolutionModel*) newWithCansetFo:(AIKVPointer*)cansetFo protoFo:(AIKVPointer*)protoFo matchValue:(CGFloat)matchValue stableScore:(CGFloat)stableScore cutIndex:(NSInteger)cutIndex{
++(AISolutionModel*) newWithCansetFo:(AIKVPointer*)cansetFo protoFo:(AIKVPointer*)protoFo matchValue:(CGFloat)matchValue cutIndex:(NSInteger)cutIndex{
     AISolutionModel *model = [[AISolutionModel alloc] init];
     model.cansetFo = cansetFo;
     model.protoFo = protoFo;
     model.matchValue = matchValue;
-    model.stableScore = stableScore;
     model.cutIndex = cutIndex;
     return model;
 }
