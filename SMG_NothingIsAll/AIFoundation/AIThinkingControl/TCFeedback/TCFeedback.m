@@ -122,6 +122,7 @@
  *      2021.12.24: 应对整个工作记忆树进行支持,而不是仅rootDemands (参考25032-6);
  *      2021.12.26: 针对rSolution的感性反馈 (参考25031-11 & 25032-6);
  *      2022.05.22: R任务有效性反馈状态更新 (参考26095-3);
+ *      2022.05.29: 反馈与demand.mv对比匹配,而不是solutionFo (参考26141-BUG1);
  */
 +(void) feedbackTOP:(AICMVNode*)cmvNode{
     //1. 数据检查
@@ -149,20 +150,26 @@
             AIFoNodeBase *waitFo = [SMGUtils searchNode:waitModel.content_p];
             if (waitModel.actionIndex < waitFo.count) continue;
             
-            //6. 判断hope(wait)和real(new)之间是否相符 (当反馈了"同区反向"时,即表明任务失败,为S) (匹配,比如撞疼,确定疼了);
-            if ([AIScore sameIdenSameScore:waitFo.cmvNode_p mv2:cmvNode.pointer]) {
-                waitModel.status = TOModelStatus_OuterBack;
-                NSLog(@"top_OPushM: 实MV 正向反馈");
+            //7. waitFo是为了解决任务,所以要取出原任务的mv标识来比较;
+            //7. 判断hope(wait)和real(new)之间是否相符 (当反馈了"同区反向"时,即表明任务失败,为S);
+            DemandModel *demand = (DemandModel*)waitModel.baseOrGroup;
+            BOOL sameIden = [cmvNode.pointer.algsType isEqualToString:demand.algsType];
+            if (sameIden) {
                 
-                //7. root设回runing
-                root.status = TOModelStatus_Runing;
-                
-                //8. solutionFo反馈好时,baseDemand为完成状态;
-                CGFloat score = [AIScore score4MV:waitFo.cmvNode_p ratio:1.0f];
-                if (score > 0) {
+                //7. 同向匹配 (比如撞疼,确定疼了);
+                CGFloat score = [AIScore score4MV:cmvNode.pointer ratio:1.0f];
+                if (score < 0) {
+                    waitModel.status = TOModelStatus_OuterBack;
+                    NSLog(@"top_OPushM: 方案失败反馈OutBack");
+                    
+                    //7. root设回runing
+                    demand.status = TOModelStatus_Runing;
+                    root.status = TOModelStatus_Runing;
+                }else{
+                    //8. solutionFo反馈好时,baseDemand为完成状态;
                     waitModel.baseOrGroup.status = TOModelStatus_Finish;
-                    [theTV updateFrame];
                 }
+                [theTV updateFrame];
             }
         }
     }
