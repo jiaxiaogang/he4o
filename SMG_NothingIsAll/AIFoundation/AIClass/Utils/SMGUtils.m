@@ -602,6 +602,19 @@
     return result;
 }
 
++(NSMutableArray*) convertArr:(NSArray*)arr convertItemArrBlock:(NSArray*(^)(id obj))convertItemArrBlock{
+    //1. 数据准备;
+    arr = ARRTOOK(arr);
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    
+    //2. 转换
+    for (id obj in arr) {
+        NSArray *convertItemArr = convertItemArrBlock(obj);
+        if (ARRISOK(convertItemArr)) [result addObjectsFromArray:convertItemArr];
+    }
+    return result;
+}
+
 /**
  *  MARK:--------------------从foPorts中找出含valueIden的元素并返回--------------------
  *  @desc 每个fo,仅判断首条符合的alg;

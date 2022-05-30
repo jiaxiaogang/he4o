@@ -185,9 +185,7 @@
         sModel.effectScore = [TOUtils getEffectScore:canset];
             
         //7. 时间不急评价: 不急 = 解决方案所需时间 <= 父任务能给的时间 (参考:24057-方案3,24171-7);
-        AIFoNodeBase *cansetFo = [SMGUtils searchNode:sModel.cansetFo];
-        AIMatchFoModel *firstPFo = ARR_INDEX(demand.pFos, 0);
-        if (![AIScore FRS_Time:firstPFo solutionFo:cansetFo solutionCutIndex:sModel.cutIndex]) continue;
+        if (![AIScore FRS_Time:demand solutionModel:sModel]) continue;
         
         //8. 找到最佳方案;
         if (Log4Solution) NSLog(@"快思考最佳结果:F%ld 有效率:%.2f (H%ldN%ld)",sModel.cansetFo.pointerId,sModel.effectScore,canset.hStrong,canset.nStrong);
@@ -212,22 +210,18 @@
     NSLog(@"第1步 pFos数:%ld",pFos.count);//测时9条
     
     //2. 取absPFos
-    NSMutableArray *absFos = [[NSMutableArray alloc] init];
-    for (AIKVPointer *pFo in pFos) {
-        AIFoNodeBase *fo = [SMGUtils searchNode:pFo];
-        NSArray *itemAbsFos = Ports2Pits([AINetUtils absPorts_All:fo]);
-        [absFos addObjectsFromArray:itemAbsFos];
-    }
+    NSArray *absFos = [SMGUtils convertArr:pFos convertItemArrBlock:^NSArray *(AIKVPointer *obj) {
+        AIFoNodeBase *pFo = [SMGUtils searchNode:obj];
+        return Ports2Pits([AINetUtils absPorts_All:pFo]);
+    }];
     absFos = [SMGUtils removeRepeat:absFos];
     NSLog(@"第2步 absFos数:%ld",absFos.count);//测时10条
     
     //3. 取同级;
-    NSMutableArray *sameLayerFos = [[NSMutableArray alloc] init];
-    for (AIKVPointer *absFo in absFos) {
-        AIFoNodeBase *fo = [SMGUtils searchNode:absFo];
-        NSArray *itemSameLayerFos = Ports2Pits([AINetUtils conPorts_All:fo]);
-        [sameLayerFos addObjectsFromArray:itemSameLayerFos];
-    }
+    NSArray *sameLayerFos = [SMGUtils convertArr:absFos convertItemArrBlock:^NSArray *(AIKVPointer *obj) {
+        AIFoNodeBase *absFo = [SMGUtils searchNode:obj];
+        return Ports2Pits([AINetUtils conPorts_All:absFo]);
+    }];
     sameLayerFos = [SMGUtils removeRepeat:sameLayerFos];
     NSLog(@"第3步 sameLayerFos数:%ld",sameLayerFos.count);//测时749条
     
@@ -280,9 +274,7 @@
         if ([except_ps containsObject:item.cansetFo]) continue;
     
         //10. 时间不急评价: 不急 = 解决方案所需时间 <= 父任务能给的时间 (参考:24057-方案3,24171-7);
-        AIFoNodeBase *cansetFo = [SMGUtils searchNode:item.cansetFo];
-        AIMatchFoModel *firstPFo = ARR_INDEX(demand.pFos, 0);
-        if (![AIScore FRS_Time:firstPFo solutionFo:cansetFo solutionCutIndex:item.cutIndex]) continue;
+        if (![AIScore FRS_Time:demand solutionModel:item]) continue;
         
         //11. 找到最佳方案;
         result = item;
@@ -511,16 +503,14 @@
     NSLog(@"第1步 absFos数:%ld",absFos.count);//测时10条
     
     //2. 取同级;
-    NSMutableArray *sameLayerFos = [[NSMutableArray alloc] init];
-    for (AIKVPointer *item in absFos) {
-        AIFoNodeBase *absFo = [SMGUtils searchNode:item];
-        NSArray *itemSameLayerFos = Ports2Pits([AINetUtils conPorts_All:absFo]);
-        [sameLayerFos addObjectsFromArray:itemSameLayerFos];
-    }
+    NSArray *sameLayerFos = [SMGUtils convertArr:absFos convertItemArrBlock:^NSArray *(AIKVPointer *obj) {
+        AIFoNodeBase *absFo = [SMGUtils searchNode:obj];
+        return Ports2Pits([AINetUtils conPorts_All:absFo]);
+    }];
     sameLayerFos = [SMGUtils removeRepeat:sameLayerFos];
     NSLog(@"第2步 sameLayerFos数:%ld",sameLayerFos.count);//测时749条
     
-    //3. 收集起来
+    //3. 收集起来 (参考26161-0);
     NSMutableArray *cansetFos = [[NSMutableArray alloc] init];
     [cansetFos addObject:targetFo.pointer];
     [cansetFos addObjectsFromArray:absFos];
@@ -542,31 +532,22 @@
     }];
     NSLog(@"第5步 非负价值:%ld",cansetFos.count);//测时96条
     
-    
-    
-    
-    
-    //TODOTOMORROW20220530:
-    
-    
-    
-    
-    //5. 对比cansetFo和protoFo匹配,得出对比结果 (参考26128-第1步);
+    //5. 对比cansetFo和targetFo匹配,得出对比结果 (参考26161-1&2&3);
     NSArray *solutionModels = [SMGUtils convertArr:cansetFos convertBlock:^id(AIKVPointer *obj) {
         return [TOUtils compareHCansetFo:obj targetFo:targetFoModel];
     }];
     cansetFos = [SMGUtils convertArr:solutionModels convertBlock:^id(AISolutionModel *obj) {
         return obj.cansetFo;
     }];
-    NSLog(@"第7步 对比匹配成功:%ld",cansetFos.count);//测时94条
+    NSLog(@"第6步 对比匹配成功:%ld",cansetFos.count);//测时94条
     
-    //6. 计算衰后stableScore (参考26128-2-1);
+    //6. 计算衰后stableScore (参考26161-5);
     for (AISolutionModel *model in solutionModels) {
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:model.cansetFo];
-        model.stableScore = [TOUtils getColStableScore:cansetFo outOfFos:cansetFos startSPIndex:model.cutIndex + 1 endSPIndex:cansetFo.count];
+        model.stableScore = [TOUtils getColStableScore:cansetFo outOfFos:cansetFos startSPIndex:model.cutIndex + 1 endSPIndex:model.targetIndex];
     }
     
-    //7. 根据候选集综合分排序 (参考26128-2-2);
+    //7. 根据候选集综合分排序 (参考26161-4);
     NSArray *sortModels = [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
         return obj.stableScore * obj.frontMatchValue * obj.backMatchValue;
     }];
@@ -577,10 +558,8 @@
         //9. 排序不应期;
         if ([except_ps containsObject:item.cansetFo]) continue;
         
-        //10. 时间不急评价: 不急 = 解决方案所需时间 <= 父任务能给的时间 (参考:24057-方案3,24171-7);
-        AIFoNodeBase *cansetFo = [SMGUtils searchNode:item.cansetFo];
-        AIMatchFoModel *firstPFo = ARR_INDEX(demand.pFos, 0);
-        if (![AIScore FRS_Time:firstPFo solutionFo:cansetFo solutionCutIndex:item.cutIndex]) continue;
+        //10. 对下一帧做时间不急评价: 不急 = 解决方案所需时间 <= 父任务能给的时间 (参考:24057-方案3,24171-7);
+        if (![AIScore FRS_Time:hDemand solutionModel:item]) continue;
         
         //11. 找到最佳方案;
         result = item;

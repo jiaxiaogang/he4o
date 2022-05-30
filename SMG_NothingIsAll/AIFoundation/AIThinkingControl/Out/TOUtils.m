@@ -290,16 +290,7 @@
  */
 //从cutIndex取到mvDeltaTime;
 +(double) getSumDeltaTime2Mv:(AIFoNodeBase*)fo cutIndex:(NSInteger)cutIndex{
-    //1. 数据准备
-    double deltaTime = 0;
-    if (!fo) return deltaTime;
-    
-    //2. 取cutIndex后的所有deltaTime;
-    deltaTime += [self getSumDeltaTime:fo startIndex:cutIndex endIndex:fo.count];
-    
-    //3. 取mvDeltaTime;
-    deltaTime += fo.mvDeltaTime;
-    return deltaTime;
+    return [self getSumDeltaTime:fo startIndex:cutIndex endIndex:fo.count];
 }
 
 /**
@@ -313,9 +304,15 @@
 +(double) getSumDeltaTime:(AIFoNodeBase*)fo startIndex:(NSInteger)startIndex endIndex:(NSInteger)endIndex{
     double result = 0;
     if (fo) {
+        //1. 累计deltaTimes中值;
         NSArray *valids = ARR_SUB(fo.deltaTimes, startIndex + 1, endIndex - startIndex);
         for (NSNumber *valid in valids) {
             result += [valid doubleValue];
+        }
+        
+        //2. 累计mvDeltaTime值;
+        if (endIndex >= fo.count) {
+            result += fo.mvDeltaTime;
         }
     }
     return result;
@@ -626,7 +623,7 @@
             }
         }else{
             //11. 后段: R不判断后段;
-            result = [AISolutionModel newWithCansetFo:cansetFo_p maskFo:maskFo.pointer frontMatchValue:frontMatchValue backMatchValue:1 cutIndex:cansetCutIndex targetIndex:-1];
+            result = [AISolutionModel newWithCansetFo:cansetFo_p maskFo:maskFo.pointer frontMatchValue:frontMatchValue backMatchValue:1 cutIndex:cansetCutIndex targetIndex:cansetFo.count];
         }
     }
     return result;

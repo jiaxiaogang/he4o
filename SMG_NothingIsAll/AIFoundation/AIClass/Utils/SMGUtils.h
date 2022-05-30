@@ -174,6 +174,7 @@
 
 //任意arr元素类型转换 notnull
 +(NSMutableArray*) convertArr:(NSArray*)arr convertBlock:(id(^)(id obj))convertBlock;
++(NSMutableArray*) convertArr:(NSArray*)arr convertItemArrBlock:(NSArray*(^)(id obj))convertItemArrBlock;
 
 /**
  *  MARK:--------------------从foPorts中找出含valueIden的元素并返回--------------------

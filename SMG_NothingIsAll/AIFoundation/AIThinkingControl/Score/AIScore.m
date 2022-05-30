@@ -77,23 +77,38 @@
 /**
  *  MARK:--------------------时间不急评价--------------------
  *  @desc 时间不急评价: 紧急情况 = 解决方案所需时间 > 父任务能给的时间 (参考:24057-方案3,24171-7);
+ *  @param demand : 当前任务
  *  @version
  *      2022.01.19: 从action前置到rSolution中,因为三条全紧急,就完蛋了,放到action则不受此限制 (参考25106);
  *      2022.02.22: 将needTime取到mv改为仅取下帧,因为很多solution只需要一帧就改到正确的道路上了 (参考25113-方案2);
  *      2022.05.28: 判断目标向后一帧 (参考26132-方案2);
+ *      2022.05.31: 兼容支持H任务 (参考26161-6);
  *  @result 返回是否时间不急 (默认为true);
  *      true    : 不急,时间够用,这方案可继续act;
  *      false   : 紧急,这方案来不及执行,直接ActNo掉;
  */
-+(BOOL) FRS_Time:(AIMatchFoModel*)demandPFo solutionFo:(AIFoNodeBase*)solutionFo solutionCutIndex:(NSInteger)solutionCutIndex{
-    //1. 取解决方案所需时间;
-    double needTime = [TOUtils getSumDeltaTime:solutionFo startIndex:solutionCutIndex + 1 endIndex:solutionCutIndex + 2];
++(BOOL) FRS_Time:(DemandModel*)demand solutionModel:(AISolutionModel*)solutionModel{
+    //1. 中段为0条时,直接返回true,评价通过;
+    if (solutionModel.targetIndex - solutionModel.cutIndex <= 1) {
+        return true;
+    }
+
+    //2. 最近的R任务 (R任务时取自身,H任务时取最近的baseRDemand);
+    ReasonDemandModel *nearRDemand = [SMGUtils filterSingleFromArr:[TOUtils getBaseOutModels_AllDeep:demand] checkValid:^BOOL(id item) {
+        return ISOK(item, ReasonDemandModel.class);
+    }];
+    if (!nearRDemand) return false;
     
-    //2. 取父任务能给的时间;
-    AIFoNodeBase *pFo = [SMGUtils searchNode:demandPFo.matchFo];
-    double giveTime = [TOUtils getSumDeltaTime2Mv:pFo cutIndex:demandPFo.cutIndex2];
+    //3. 取解决方案所需时间;
+    AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.cansetFo];
+    double needTime = [TOUtils getSumDeltaTime:solutionFo startIndex:solutionModel.cutIndex + 1 endIndex:solutionModel.cutIndex + 2];
     
-    //3. 判断是否时间不急;
+    //4. 取父任务能给的时间;
+    AIMatchFoModel *firstPFo = ARR_INDEX(nearRDemand.pFos, 0);
+    AIFoNodeBase *pFo = [SMGUtils searchNode:firstPFo.matchFo];
+    double giveTime = [TOUtils getSumDeltaTime2Mv:pFo cutIndex:firstPFo.cutIndex2];
+    
+    //5. 判断是否时间不急;
     BOOL timeIsEnough = needTime <= giveTime;
     if (Log4Score && timeIsEnough) NSLog(@"> 时间不急%d = 方案T:%.2f <= 任务T:%.2f",timeIsEnough,needTime,giveTime);
     return timeIsEnough;
