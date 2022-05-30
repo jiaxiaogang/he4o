@@ -513,11 +513,11 @@
     //2. 过滤掉abs中无targetAlg抽具象关联的;
     for (AIKVPointer *item in absFos) {
         AIFoNodeBase *absFo = [SMGUtils searchNode:item];
-        NSInteger spIndex = [TOUtils indexOfConItem:targetAlg.pointer atAbsContent:absFo.content_ps layerDiff:1 startIndex:0 endIndex:NSUIntegerMax];
+        NSInteger absTargetIndex = [TOUtils indexOfConItem:targetAlg.pointer atAbsContent:absFo.content_ps layerDiff:1 startIndex:0 endIndex:NSUIntegerMax];
         
         //a. 前段至少有1位,所以spIndex至少>0;
-        if (spIndex > 0) {
-            [spIndexDic setObject:@(spIndex) forKey:@(absFo.pointer.pointerId)];
+        if (absTargetIndex > 0) {
+            [spIndexDic setObject:@(absTargetIndex) forKey:@(absFo.pointer.pointerId)];
         }
     }
     absFos = [SMGUtils filterArr:absFos checkValid:^BOOL(AIKVPointer *item) {
@@ -530,15 +530,16 @@
     for (AIKVPointer *absFo in absFos) {
         AIFoNodeBase *fo = [SMGUtils searchNode:absFo];
         NSArray *itemSameLayerFos = Ports2Pits([AINetUtils conPorts_All:fo]);
+        int absTargetIndex = [NUMTOOK([spIndexDic objectForKey:@(fo.pointer.pointerId)]) intValue];
+        AIKVPointer *absTargetAlg = ARR_INDEX(fo.content_ps, absTargetIndex);
         
-        
-        //TODOTOMORROW20220530
-        //1. 筛选出有效的,(indexofconitem取到absItem,然后再判断与具象有关联index);
-        //2. 明天看下这里改也,因为目标H帧,也需要用相似度来判断,不能单纯用mIsC,因为最后结果排序时,要乘这个相似度的;
-        
-        
-        
-        
+        for (AIKVPointer *item in itemSameLayerFos) {
+            AIFoNodeBase *sameLayerFo = [SMGUtils searchNode:item];
+            NSInteger conTargetIndex = [TOUtils indexOfAbsItem:absTargetAlg atConContent:sameLayerFo.content_ps layerDiff:1 startIndex:0 endIndex:NSUIntegerMax];
+            if (conTargetIndex > 0) {
+                [spIndexDic setObject:@(conTargetIndex) forKey:@(sameLayerFo.pointer.pointerId)];
+            }
+        }
         [sameLayerFos addObjectsFromArray:itemSameLayerFos];
     }
     sameLayerFos = [SMGUtils removeRepeat:sameLayerFos];
