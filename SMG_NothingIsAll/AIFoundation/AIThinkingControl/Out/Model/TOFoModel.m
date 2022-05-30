@@ -26,7 +26,7 @@
     result.status = TOModelStatus_Runing;
     if (base) [base.actionFoModels addObject:result];
     result.baseOrGroup = base;
-    result.actionIndex = -1;//默认为头(-1),r任务自行重赋值;
+    result.actionIndex = -1;//默认为头(-1),r和h任务自行重赋值;
     result.targetSPIndex = fo.count;//默认到尾(foCount),h任务自行重赋值;
     return result;
 }

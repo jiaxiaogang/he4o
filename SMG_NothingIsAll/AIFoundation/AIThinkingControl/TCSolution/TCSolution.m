@@ -108,7 +108,6 @@
         return obj.matchFo;
     }]];
     
-    
     //3. 前3条,优先快思考;
     AISolutionModel *bestResult = nil;
     if (demand.actionFoModels.count <= 3) {
@@ -146,7 +145,7 @@
 }
 
 /**
- *  MARK:--------------------快思考--------------------
+ *  MARK:--------------------R快思考--------------------
  *  @desc 习惯 (参考26142);
  */
 +(AISolutionModel*) rSolution_Fast:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps{
@@ -195,7 +194,7 @@
 }
 
 /**
- *  MARK:--------------------慢思考--------------------
+ *  MARK:--------------------R慢思考--------------------
  *  @desc 思考求解 (参考26127);
  */
 +(AISolutionModel*) rSolution_Slow:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps{
@@ -405,6 +404,7 @@
  *      2022.01.09: 首条就是HAlg不能做H解决方案 (参考25057);
  *      2022.05.04: 树限宽也限深 (参考2523c-分析代码1);
  *      2022.05.22: 窄出排序方式改为有效率为准 (参考26095-9);
+ *      2022.05.31: 支持快慢思考 (参考26161 & 26162);
  */
 +(void) hSolution:(HDemandModel*)hDemand{
     //0. S数达到limit时设为WithOut;
@@ -422,41 +422,17 @@
     Debug();
     
     //1. 数据准备;
-    AIAlgNodeBase *targetAlg = [SMGUtils searchNode:hDemand.baseOrGroup.content_p];
-    TOFoModel *targetFoModel = (TOFoModel*)hDemand.baseOrGroup.baseOrGroup;
-    AIFoNodeBase *targetFo = [SMGUtils searchNode:targetFoModel.content_p];
     NSArray *except_ps = [TOUtils convertPointersFromTOModels:hDemand.actionFoModels];
     
-    //2. 取自身 + 向抽象 + 向具象 (目前仅取一层,如果发现一层不够,可以改为取多层) (参考25014-H描述);
-    NSMutableArray *maskFos = [[NSMutableArray alloc] init];
-    [maskFos addObject:targetFo.pointer];
-    [maskFos addObjectsFromArray:Ports2Pits([AINetUtils absPorts_All_Normal:targetFo])];
-    [maskFos addObjectsFromArray:Ports2Pits([AINetUtils conPorts_All_Normal:targetFo])];
+    //3. 前3条,优先快思考;
+    AISolutionModel *bestResult = nil;
+    if (hDemand.actionFoModels.count <= 3) {
+        bestResult = [self hSolution_Fast:hDemand except_ps:except_ps];
+    }
     
-    //3. 从maskFos中找出最优秀的result;
-    AIFoNodeBase *bestResult = nil;
-    NSInteger bestSPIndex = 0;
-    CGFloat bestEffectScore = 0;
-    for (AIKVPointer *maskFo_p in maskFos) {
-        
-        //4. 排除不应期;
-        if ([except_ps containsObject:maskFo_p]) continue;
-        
-        //5. 从maskFo中找targetAlg (找targetAlg 或 其抽具象概念);
-        AIFoNodeBase *maskFo = [SMGUtils searchNode:maskFo_p];
-        NSInteger spIndex = [TOUtils indexOfConOrAbsItem:targetAlg.pointer atContent:maskFo.content_ps layerDiff:1 startIndex:0 endIndex:NSUIntegerMax];
-        
-        //6. 如>0则找到 (HAlg不能是首条)_则判断SP评分 (参考25057);
-        if (spIndex > 0) {
-            CGFloat checkEffectScore = [TOUtils getEffectScore:targetFo effectIndex:targetFoModel.actionIndex solutionFo:maskFo_p];
-            
-            //7. 当best为空 或 check评分比best更高时 => 将check赋值到best;
-            if(!bestResult || checkEffectScore > bestEffectScore){
-                bestResult = maskFo;
-                bestSPIndex = spIndex;
-                bestEffectScore = checkEffectScore;
-            }
-        }
+    //4. 快思考无果或后2条,再做慢思考;
+    if (!bestResult) {
+        bestResult = [self hSolution_Slow:hDemand except_ps:except_ps];
     }
     
     //8. 新解决方案_的结果处理;
@@ -467,10 +443,10 @@
         [theTC updateEnergyDelta:-1];
         
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
-        TOFoModel *foModel = [TOFoModel newWithFo_p:bestResult.pointer base:hDemand];
-        foModel.targetSPIndex = bestSPIndex;
-        NSString *effectDesc = [TOUtils getEffectDesc:targetFo effectIndex:targetFoModel.actionIndex solutionFo:bestResult.pointer];
-        NSLog(@"> newH 第%ld例: %@->%@ (有效率:%.2f = %@) targetSPIndex:%ld",hDemand.actionFoModels.count,Fo2FStr(bestResult),Mvp2Str(bestResult.cmvNode_p),bestEffectScore,effectDesc,foModel.targetSPIndex);
+        TOFoModel *foModel = [TOFoModel newWithFo_p:bestResult.cansetFo base:hDemand];
+        foModel.actionIndex = bestResult.cutIndex;
+        foModel.targetSPIndex = bestResult.targetIndex;
+        NSLog(@"> newH 第%ld例: %@ (cutIndex:%ld=>targetIndex:%ld)",hDemand.actionFoModels.count,Pit2FStr(bestResult.cansetFo),bestResult.cutIndex,bestResult.targetIndex);
         
         //a) 有效率;
         [TCEffect hEffect:foModel];
@@ -485,17 +461,59 @@
 }
 
 /**
- *  MARK:--------------------h慢思考--------------------
+ *  MARK:--------------------H快思考--------------------
+ *  @desc 习惯 (参考26142);
+ */
++(AISolutionModel*) hSolution_Fast:(HDemandModel *)hDemand except_ps:(NSArray*)except_ps{
+    //1. 数据准备;
+    except_ps = ARRTOOK(except_ps);
+    TOFoModel *targetFoM = (TOFoModel*)hDemand.baseOrGroup.baseOrGroup;
+    AIFoNodeBase *targetFo = [SMGUtils searchNode:targetFoM.content_p];
+    
+    //2. 从targetFo取解决方案候选集;
+    NSArray *cansets = [targetFo.effectDic objectForKey:@(targetFoM.actionIndex)];
+    
+    //2. 过滤掉有效率为0的无效候选集;
+    cansets = [SMGUtils filterArr:cansets checkValid:^BOOL(AIEffectStrong *item) {
+        return [TOUtils getEffectScore:item] > 0;
+    }];
+    if (Log4Solution_Fast) NSLog(@"快思考候选集:F%ld effectDic{%ld:%@}",targetFo.pointer.pointerId,targetFoM.actionIndex,CLEANSTR(cansets));
+    
+    //3. 对候选集按有效率排序;
+    NSArray *sortCansets = [SMGUtils sortBig2Small:cansets compareBlock:^double(AIEffectStrong *obj) {
+        return [TOUtils getEffectScore:obj];
+    }];
+    
+    //4. 从前到后取有效的首条;
+    for (AIEffectStrong *canset in sortCansets) {
+        
+        //5. 排除不应期;
+        if ([except_ps containsObject:canset.solutionFo]) continue;
+        
+        //6. 对比思考;
+        AISolutionModel *sModel = [TOUtils compareHCansetFo:canset.solutionFo targetFo:targetFoM];
+        sModel.effectScore = [TOUtils getEffectScore:canset];
+        
+        //7. 时间不急评价: 不急 = 解决方案所需时间 <= 父任务能给的时间 (参考:24057-方案3,24171-7);
+        if (![AIScore FRS_Time:hDemand solutionModel:sModel]) continue;
+        
+        //8. 找到最佳方案;
+        if (Log4Solution) NSLog(@"快思考最佳结果:F%ld 有效率:%.2f (H%ldN%ld)",sModel.cansetFo.pointerId,sModel.effectScore,canset.hStrong,canset.nStrong);
+        return sModel;
+    }
+    return nil;
+}
+
+/**
+ *  MARK:--------------------H慢思考--------------------
  *  @desc 前段匹配,加工后段,H目标静默;
  */
-+(void) hSolution_Slow:(HDemandModel *)hDemand except_ps:(NSArray*)except_ps{
++(AISolutionModel*) hSolution_Slow:(HDemandModel *)hDemand except_ps:(NSArray*)except_ps{
     //0. 数据准备;
     except_ps = ARRTOOK(except_ps);
     AISolutionModel *result = nil;
-    AIAlgNodeBase *targetAlg = [SMGUtils searchNode:hDemand.baseOrGroup.content_p];
     TOFoModel *targetFoModel = (TOFoModel*)hDemand.baseOrGroup.baseOrGroup;
     AIFoNodeBase *targetFo = [SMGUtils searchNode:targetFoModel.content_p];
-    NSMutableDictionary *spIndexDic = [[NSMutableDictionary alloc] init];
     
     //1. 取absPFos
     NSArray *absFos = Ports2Pits([AINetUtils absPorts_All:targetFo]);
@@ -568,22 +586,15 @@
     
     //12. debugLog
     for (AISolutionModel *model in sortModels) {
-        CGFloat solutionScore = model.stableScore * model.matchValue;
+        CGFloat solutionScore = model.stableScore * model.frontMatchValue * model.backMatchValue;
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:model.cansetFo];
-        if (Log4Solution_Slow) NSLog(@"> %@\n\t评分:%.2f = 前匹配:%.2f x 后稳定:%.2f >> %@",Pit2FStr(model.cansetFo),solutionScore,model.matchValue,model.stableScore,CLEANSTR(cansetFo.spDic));
+        if (Log4Solution_Slow) NSLog(@"> %@\n\t评分:%.2f = 前匹配:%.2f x 中稳定:%.2f x 后相近:%.2f >> %@",Pit2FStr(model.cansetFo),solutionScore,model.frontMatchValue,model.stableScore,model.backMatchValue,CLEANSTR(cansetFo.spDic));
     }
-    CGFloat score = result.stableScore * result.matchValue;
+    CGFloat score = result.stableScore * result.frontMatchValue * result.backMatchValue;
     NSInteger resultIndex = [sortModels indexOfObject:result];
     AIFoNodeBase *resultFo = [SMGUtils searchNode:result.cansetFo];
-    NSLog(@"从第%ld取得慢思考最佳结果:F%ld 评分:%.2f = 前匹配:%.2f x 后稳定:%.2f %@",resultIndex,result.cansetFo.pointerId,score,result.matchValue,result.stableScore,CLEANSTR(resultFo.spDic));
+    NSLog(@"从第%ld取得慢思考最佳结果:F%ld 评分:%.2f = 前匹配:%.2f x 中稳定:%.2f x后相近:%.2f %@",resultIndex,result.cansetFo.pointerId,score,result.frontMatchValue,result.stableScore,result.backMatchValue,CLEANSTR(resultFo.spDic));
     return result;
-    
-    
-    
-    
-    
-    
-    
 }
 
 @end
