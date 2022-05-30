@@ -510,62 +510,46 @@
     absFos = [SMGUtils removeRepeat:absFos];
     NSLog(@"第1步 absFos数:%ld",absFos.count);//测时10条
     
-    //2. 过滤掉abs中无targetAlg抽具象关联的;
+    //2. 取同级;
+    NSMutableArray *sameLayerFos = [[NSMutableArray alloc] init];
     for (AIKVPointer *item in absFos) {
         AIFoNodeBase *absFo = [SMGUtils searchNode:item];
-        NSInteger absTargetIndex = [TOUtils indexOfConItem:targetAlg.pointer atAbsContent:absFo.content_ps layerDiff:1 startIndex:0 endIndex:NSUIntegerMax];
-        
-        //a. 前段至少有1位,所以spIndex至少>0;
-        if (absTargetIndex > 0) {
-            [spIndexDic setObject:@(absTargetIndex) forKey:@(absFo.pointer.pointerId)];
-        }
-    }
-    absFos = [SMGUtils filterArr:absFos checkValid:^BOOL(AIKVPointer *item) {
-        return [spIndexDic objectForKey:@(item.pointerId)];
-    }];
-    NSLog(@"第2步 absFos过滤无效后数:%ld",absFos.count);//测时10条
-    
-    //3. 取同级;
-    NSMutableArray *sameLayerFos = [[NSMutableArray alloc] init];
-    for (AIKVPointer *absFo in absFos) {
-        AIFoNodeBase *fo = [SMGUtils searchNode:absFo];
-        NSArray *itemSameLayerFos = Ports2Pits([AINetUtils conPorts_All:fo]);
-        int absTargetIndex = [NUMTOOK([spIndexDic objectForKey:@(fo.pointer.pointerId)]) intValue];
-        AIKVPointer *absTargetAlg = ARR_INDEX(fo.content_ps, absTargetIndex);
-        
-        for (AIKVPointer *item in itemSameLayerFos) {
-            AIFoNodeBase *sameLayerFo = [SMGUtils searchNode:item];
-            NSInteger conTargetIndex = [TOUtils indexOfAbsItem:absTargetAlg atConContent:sameLayerFo.content_ps layerDiff:1 startIndex:0 endIndex:NSUIntegerMax];
-            if (conTargetIndex > 0) {
-                [spIndexDic setObject:@(conTargetIndex) forKey:@(sameLayerFo.pointer.pointerId)];
-            }
-        }
+        NSArray *itemSameLayerFos = Ports2Pits([AINetUtils conPorts_All:absFo]);
         [sameLayerFos addObjectsFromArray:itemSameLayerFos];
     }
     sameLayerFos = [SMGUtils removeRepeat:sameLayerFos];
-    NSLog(@"第3步 sameLayerFos数:%ld",sameLayerFos.count);//测时749条
+    NSLog(@"第2步 sameLayerFos数:%ld",sameLayerFos.count);//测时749条
     
-    //4. 收集起来
+    //3. 收集起来
     NSMutableArray *cansetFos = [[NSMutableArray alloc] init];
     [cansetFos addObject:targetFo.pointer];
     [cansetFos addObjectsFromArray:absFos];
     [cansetFos addObjectsFromArray:sameLayerFos];
     cansetFos = [SMGUtils removeRepeat:cansetFos];
-    NSLog(@"第4步 cansetFos数:%ld",cansetFos.count);//测时758条
+    NSLog(@"第3步 cansetFos数:%ld",cansetFos.count);//测时758条
     
     //4. 过滤掉长度<2的 (因为前段全含至少要1位,后段修正也至少要0位,H目标至少要1位)
     cansetFos = [SMGUtils filterArr:cansetFos checkValid:^BOOL(AIKVPointer *item) {
         AIFoNodeBase *fo = [SMGUtils searchNode:item];
         return fo.count >= 2;
     }];
-    NSLog(@"第5步 最小长度2:%ld",cansetFos.count);//测时149条
+    NSLog(@"第4步 最小长度2:%ld",cansetFos.count);//测时149条
     
     //4. 过滤掉有负mv指向的 (参考26063 & 26127-TODO8);
     cansetFos = [SMGUtils filterArr:cansetFos checkValid:^BOOL(AIKVPointer *item) {
         AIFoNodeBase *fo = [SMGUtils searchNode:item];
         return ![ThinkingUtils havDemand:fo.cmvNode_p];
     }];
-    NSLog(@"第6步 非负价值:%ld",cansetFos.count);//测时96条
+    NSLog(@"第5步 非负价值:%ld",cansetFos.count);//测时96条
+    
+    
+    
+    
+    
+    //TODOTOMORROW20220530:
+    
+    
+    
     
     //5. 对比cansetFo和protoFo匹配,得出对比结果 (参考26128-第1步);
     NSArray *solutionModels = [SMGUtils convertArr:cansetFos convertBlock:^id(AIKVPointer *obj) {

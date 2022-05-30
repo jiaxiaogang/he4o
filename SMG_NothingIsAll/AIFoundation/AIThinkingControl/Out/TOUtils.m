@@ -601,10 +601,10 @@
     if (cansetCutIndex != -1 && frontMatchValue > 0) {
         
         //10. 后段: 从canset后段,找maskFo目标 (R不需要后段匹配,H需要);
-        CGFloat backMatchValue = 0;//后段匹配度
-        NSInteger cansetTargetIndex = -1;//canset目标下标
         if (needBackMatch) {
             //a. 数据准备mask目标帧
+            CGFloat backMatchValue = 0;//后段匹配度
+            NSInteger cansetTargetIndex = -1;//canset目标下标
             AIKVPointer *actionIndexA_p = ARR_INDEX(maskFo.content_ps, maskAleardayCount);
             
             //b. 分别对canset后段,对比两个概念匹配度;
@@ -625,6 +625,7 @@
                 result = [AISolutionModel newWithCansetFo:cansetFo_p maskFo:maskFo.pointer frontMatchValue:frontMatchValue backMatchValue:backMatchValue cutIndex:cansetCutIndex targetIndex:cansetTargetIndex];
             }
         }else{
+            //11. 后段: R不判断后段;
             result = [AISolutionModel newWithCansetFo:cansetFo_p maskFo:maskFo.pointer frontMatchValue:frontMatchValue backMatchValue:1 cutIndex:cansetCutIndex targetIndex:-1];
         }
     }
