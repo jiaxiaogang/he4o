@@ -531,8 +531,13 @@
         AIFoNodeBase *fo = [SMGUtils searchNode:absFo];
         NSArray *itemSameLayerFos = Ports2Pits([AINetUtils conPorts_All:fo]);
         
-        // 筛选出有效的,(indexofconitem取到absItem,然后再判断与具象有关联index);
+        
         //TODOTOMORROW20220530
+        //1. 筛选出有效的,(indexofconitem取到absItem,然后再判断与具象有关联index);
+        //2. 明天看下这里改也,因为目标H帧,也需要用相似度来判断,不能单纯用mIsC,因为最后结果排序时,要乘这个相似度的;
+        
+        
+        
         
         [sameLayerFos addObjectsFromArray:itemSameLayerFos];
     }
