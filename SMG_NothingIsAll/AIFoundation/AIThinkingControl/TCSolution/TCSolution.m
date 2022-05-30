@@ -181,7 +181,7 @@
         if ([except_ps containsObject:canset.solutionFo]) continue;
     
         //6. 对比思考;
-        AISolutionModel *sModel = [TOUtils compareCansetFo:canset.solutionFo protoFo:demand.protoFo];
+        AISolutionModel *sModel = [TOUtils compareRCansetFo:canset.solutionFo protoFo:demand.protoFo];
         sModel.effectScore = [TOUtils getEffectScore:canset];
             
         //7. 时间不急评价: 不急 = 解决方案所需时间 <= 父任务能给的时间 (参考:24057-方案3,24171-7);
@@ -255,7 +255,7 @@
     
     //5. 对比cansetFo和protoFo匹配,得出对比结果 (参考26128-第1步);
     NSArray *solutionModels = [SMGUtils convertArr:cansetFos convertBlock:^id(AIKVPointer *obj) {
-        return [TOUtils compareCansetFo:obj protoFo:demand.protoFo];
+        return [TOUtils compareRCansetFo:obj protoFo:demand.protoFo];
     }];
     cansetFos = [SMGUtils convertArr:solutionModels convertBlock:^id(AISolutionModel *obj) {
         return obj.cansetFo;
@@ -270,7 +270,7 @@
     
     //7. 根据候选集综合分排序 (参考26128-2-2);
     NSArray *sortModels = [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
-        return obj.stableScore * obj.matchValue;
+        return obj.stableScore * obj.frontMatchValue;
     }];
     
     //8. 取最佳解决方案;
@@ -291,14 +291,14 @@
     
     //12. debugLog
     for (AISolutionModel *model in sortModels) {
-        CGFloat solutionScore = model.stableScore * model.matchValue;
+        CGFloat solutionScore = model.stableScore * model.frontMatchValue;
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:model.cansetFo];
-        if (Log4Solution_Slow) NSLog(@"> %@\n\t评分:%.2f = 前匹配:%.2f x 后稳定:%.2f >> %@",Pit2FStr(model.cansetFo),solutionScore,model.matchValue,model.stableScore,CLEANSTR(cansetFo.spDic));
+        if (Log4Solution_Slow) NSLog(@"> %@\n\t评分:%.2f = 前匹配:%.2f x 中稳定:%.2f >> %@",Pit2FStr(model.cansetFo),solutionScore,model.frontMatchValue,model.stableScore,CLEANSTR(cansetFo.spDic));
     }
-    CGFloat score = result.stableScore * result.matchValue;
+    CGFloat score = result.stableScore * result.frontMatchValue;
     NSInteger resultIndex = [sortModels indexOfObject:result];
     AIFoNodeBase *resultFo = [SMGUtils searchNode:result.cansetFo];
-    NSLog(@"从第%ld取得慢思考最佳结果:F%ld 评分:%.2f = 前匹配:%.2f x 后稳定:%.2f %@",resultIndex,result.cansetFo.pointerId,score,result.matchValue,result.stableScore,CLEANSTR(resultFo.spDic));
+    NSLog(@"从第%ld取得慢思考最佳结果:F%ld 评分:%.2f = 前匹配:%.2f x 中稳定:%.2f %@",resultIndex,result.cansetFo.pointerId,score,result.frontMatchValue,result.stableScore,CLEANSTR(resultFo.spDic));
     return result;
 }
 
@@ -568,7 +568,7 @@
     
     //5. 对比cansetFo和protoFo匹配,得出对比结果 (参考26128-第1步);
     NSArray *solutionModels = [SMGUtils convertArr:cansetFos convertBlock:^id(AIKVPointer *obj) {
-        return [TOUtils compareCansetFo:obj protoFo:targetFo.pointer];
+        return [TOUtils compareHCansetFo:obj targetFo:targetFoModel];
     }];
     cansetFos = [SMGUtils convertArr:solutionModels convertBlock:^id(AISolutionModel *obj) {
         return obj.cansetFo;
@@ -583,7 +583,7 @@
     
     //7. 根据候选集综合分排序 (参考26128-2-2);
     NSArray *sortModels = [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
-        return obj.stableScore * obj.matchValue;
+        return obj.stableScore * obj.frontMatchValue * obj.backMatchValue;
     }];
     
     //8. 取最佳解决方案;

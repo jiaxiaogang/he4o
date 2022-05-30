@@ -525,12 +525,42 @@
  *  MARK:--------------------时序对比--------------------
  *  @desc 初步对比候选集是否适用于protoFo (参考26128-第1步);
  *  @result 返回cansetFo前段匹配度 & 以及已匹配的cutIndex截点;
+ *  @version
+ *      2022.05.30: 匹配度公式改成: 匹配度总和/proto长度 (参考26128-1-4);
+ *      2022.05.30: R和H模式复用封装 (参考26161);
  */
-+(AISolutionModel*) compareCansetFo:(AIKVPointer*)cansetFo_p protoFo:(AIKVPointer*)protoFo_p {
++(AISolutionModel*) compareRCansetFo:(AIKVPointer*)cansetFo_p protoFo:(AIKVPointer*)protoFo_p {
+    //1. 数据准备;
+    AIFoNodeBase *maskFo = [SMGUtils searchNode:protoFo_p];
+    
+    //2. 已发生个数 (protoFo所有都是已发生) (参考26128-模型);
+    NSInteger maskAleardayCount = maskFo.count;
+    
+    //3. 匹配判断;
+    return [self compareCansetFo:cansetFo_p maskFo:maskFo maskAleardayCount:maskAleardayCount needBackMatch:false];
+}
+
++(AISolutionModel*) compareHCansetFo:(AIKVPointer*)cansetFo_p targetFo:(TOFoModel*)targetFoM {
+    //1. 数据准备;
+    AIFoNodeBase *maskFo = [SMGUtils searchNode:targetFoM.content_p];
+    
+    //2. 已发生个数 (targetFo已行为化部分即已发生) (参考26161-模型);
+    NSInteger maskAleardayCount = targetFoM.actionIndex;
+    
+    //3. 匹配判断;
+    return [self compareCansetFo:cansetFo_p maskFo:maskFo maskAleardayCount:maskAleardayCount needBackMatch:true];
+}
+
+/**
+ *  MARK:--------------------对比时序--------------------
+ *  _param maskFo               : R时传入protoFo; H时传入targetFo;
+ *  @param maskAleardayCount    : mask已发生个数 (R.proto全已发生,H.actionIndex前已发生);
+ *  @param needBackMatch        : 是否需要后段匹配 (R不需要,H需要);
+ */
++(AISolutionModel*) compareCansetFo:(AIKVPointer*)cansetFo_p maskFo:(AIFoNodeBase*)maskFo maskAleardayCount:(NSInteger)maskAleardayCount needBackMatch:(BOOL)needBackMatch{
     //1. 数据准备;
     AISolutionModel *result = nil;
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
-    AIFoNodeBase *protoFo = [SMGUtils searchNode:protoFo_p];
     NSInteger lastMatchAtProtoIndex = -1;   //proto的匹配进度;
     CGFloat sumMatchValue = 0;              //累计匹配度;
     NSInteger cansetCutIndex = -1;          //canset的cutIndex,也已在proto中发生;
@@ -541,8 +571,8 @@
         CGFloat itemMatchValue = 0;
         
         //3. 继续从proto后面未找过的部分里,找匹配;
-        for (NSInteger j = lastMatchAtProtoIndex + 1; j < protoFo.count; j++) {
-            AIKVPointer *protoA_p = ARR_INDEX(protoFo.content_ps, j);
+        for (NSInteger j = lastMatchAtProtoIndex + 1; j < maskAleardayCount; j++) {
+            AIKVPointer *protoA_p = ARR_INDEX(maskFo.content_ps, j);
             
             //4. 对比两个概念匹配度;
             itemMatchValue = [self compareCansetAlg:cansetA_p protoAlg:protoA_p];
@@ -557,25 +587,45 @@
         //6. 匹配成功时: 结算这一位,继续下一位;
         if (itemMatchValue > 0) {
             sumMatchValue += itemMatchValue;
-            
-            //7. 中段: 如果已匹配到了proto的末位,则无需再匹配,停止循环;
-            if (lastMatchAtProtoIndex == protoFo.count - 1) {
-                cansetCutIndex = i;
-                break;
-            }
         }else{
-            //8. 匹配失败时: 有一帧canset在proto里没匹配到,说明proto未全含canset,则整体匹配度为0 (参考26128-1-1);
-            return result;
+            //7. 前中段截点: 匹配不到时,说明前段结束,前段proto全含canset,到cansetCutIndex为截点 (参考26128-1-1);
+            cansetCutIndex = i - 1;
+            break;
         }
     }
     
-    //9. 找到了`已发生`截点 & 还有后段 => 则为有效方案 (参考26128-1-3);
-    if (cansetCutIndex != -1 && cansetCutIndex < cansetFo.count - 1) {
+    //8. 计算前段匹配度 (参考26128-1-4);
+    CGFloat frontMatchValue = sumMatchValue / maskAleardayCount;
+    
+    //9. 找到了`前中段`截点 => 则初步为有效方案 (参考26128-1-3);
+    if (cansetCutIndex != -1 && frontMatchValue > 0) {
         
-        //10. 匹配度 (参考26128-1-4);
-        CGFloat matchValue = sumMatchValue / (cansetCutIndex + 1);
-        if (matchValue > 0) {
-            result = [AISolutionModel newWithCansetFo:cansetFo_p protoFo:protoFo_p matchValue:matchValue cutIndex:cansetCutIndex];
+        //10. 后段: 从canset后段,找maskFo目标 (R不需要后段匹配,H需要);
+        CGFloat backMatchValue = 0;//后段匹配度
+        NSInteger cansetTargetIndex = -1;//canset目标下标
+        if (needBackMatch) {
+            //a. 数据准备mask目标帧
+            AIKVPointer *actionIndexA_p = ARR_INDEX(maskFo.content_ps, maskAleardayCount);
+            
+            //b. 分别对canset后段,对比两个概念匹配度;
+            for (NSInteger i = cansetCutIndex + 1; i < cansetFo.count; i++) {
+                AIKVPointer *cansetA_p = ARR_INDEX(cansetFo.content_ps, i);
+                CGFloat checkBackMatchValue = [self compareCansetAlg:cansetA_p protoAlg:actionIndexA_p];
+                
+                //c. 匹配成功时: 记下匹配度和目标下标;
+                if (checkBackMatchValue > 0) {
+                    backMatchValue = checkBackMatchValue;
+                    cansetTargetIndex = i;
+                    break;
+                }
+            }
+            
+            //d. 后段成功;
+            if (cansetTargetIndex > -1) {
+                result = [AISolutionModel newWithCansetFo:cansetFo_p maskFo:maskFo.pointer frontMatchValue:frontMatchValue backMatchValue:backMatchValue cutIndex:cansetCutIndex targetIndex:cansetTargetIndex];
+            }
+        }else{
+            result = [AISolutionModel newWithCansetFo:cansetFo_p maskFo:maskFo.pointer frontMatchValue:frontMatchValue backMatchValue:1 cutIndex:cansetCutIndex targetIndex:-1];
         }
     }
     return result;

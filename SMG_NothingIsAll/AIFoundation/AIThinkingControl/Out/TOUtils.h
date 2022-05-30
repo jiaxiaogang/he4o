@@ -172,7 +172,8 @@
 /**
  *  MARK:--------------------对比节点相同度--------------------
  */
-+(AISolutionModel*) compareCansetFo:(AIKVPointer*)cansetFo_p protoFo:(AIKVPointer*)protoFo_p;
++(AISolutionModel*) compareRCansetFo:(AIKVPointer*)cansetFo_p protoFo:(AIKVPointer*)protoFo_p;
++(AISolutionModel*) compareHCansetFo:(AIKVPointer*)cansetFo_p targetFo:(TOFoModel*)targetFoM;
 +(CGFloat) compareCansetValue:(AIKVPointer*)cansetV_p protoValue:(AIKVPointer*)protoV_p;
 
 @end
