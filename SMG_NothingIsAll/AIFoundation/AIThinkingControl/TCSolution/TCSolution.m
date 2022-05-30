@@ -492,21 +492,125 @@
     }
 }
 
-+(void) hSolution_Slow:(HDemandModel *)hDemand{
-    //1. 数据准备;
+/**
+ *  MARK:--------------------h慢思考--------------------
+ *  @desc 前段匹配,加工后段,H目标静默;
+ */
++(void) hSolution_Slow:(HDemandModel *)hDemand except_ps:(NSArray*)except_ps{
+    //0. 数据准备;
+    except_ps = ARRTOOK(except_ps);
+    AISolutionModel *result = nil;
     AIAlgNodeBase *targetAlg = [SMGUtils searchNode:hDemand.baseOrGroup.content_p];
     TOFoModel *targetFoModel = (TOFoModel*)hDemand.baseOrGroup.baseOrGroup;
     AIFoNodeBase *targetFo = [SMGUtils searchNode:targetFoModel.content_p];
-    NSArray *except_ps = [TOUtils convertPointersFromTOModels:hDemand.actionFoModels];
+    NSMutableDictionary *spIndexDic = [[NSMutableDictionary alloc] init];
     
-    //2. 取自身 + 向抽象 + 向具象 (目前仅取一层,如果发现一层不够,可以改为取多层) (参考25014-H描述);
-    NSMutableArray *maskFos = [[NSMutableArray alloc] init];
-    [maskFos addObject:targetFo.pointer];
-    [maskFos addObjectsFromArray:Ports2Pits([AINetUtils absPorts_All_Normal:targetFo])];
-    [maskFos addObjectsFromArray:Ports2Pits([AINetUtils conPorts_All_Normal:targetFo])];
+    //1. 取absPFos
+    NSArray *absFos = Ports2Pits([AINetUtils absPorts_All:targetFo]);
+    absFos = [SMGUtils removeRepeat:absFos];
+    NSLog(@"第1步 absFos数:%ld",absFos.count);//测时10条
     
-    //TODOTOMORROW20220529:
-    //复制rSolution慢思考算法,过来一样改即可;
+    //2. 过滤掉abs中无targetAlg抽具象关联的;
+    for (AIKVPointer *item in absFos) {
+        AIFoNodeBase *absFo = [SMGUtils searchNode:item];
+        NSInteger spIndex = [TOUtils indexOfConItem:targetAlg.pointer atAbsContent:absFo.content_ps layerDiff:1 startIndex:0 endIndex:NSUIntegerMax];
+        
+        //a. 前段至少有1位,所以spIndex至少>0;
+        if (spIndex > 0) {
+            [spIndexDic setObject:@(spIndex) forKey:@(absFo.pointer.pointerId)];
+        }
+    }
+    absFos = [SMGUtils filterArr:absFos checkValid:^BOOL(AIKVPointer *item) {
+        return [spIndexDic objectForKey:@(item.pointerId)];
+    }];
+    NSLog(@"第2步 absFos过滤无效后数:%ld",absFos.count);//测时10条
+    
+    //3. 取同级;
+    NSMutableArray *sameLayerFos = [[NSMutableArray alloc] init];
+    for (AIKVPointer *absFo in absFos) {
+        AIFoNodeBase *fo = [SMGUtils searchNode:absFo];
+        NSArray *itemSameLayerFos = Ports2Pits([AINetUtils conPorts_All:fo]);
+        
+        // 筛选出有效的,(indexofconitem取到absItem,然后再判断与具象有关联index);
+        //TODOTOMORROW20220530
+        
+        [sameLayerFos addObjectsFromArray:itemSameLayerFos];
+    }
+    sameLayerFos = [SMGUtils removeRepeat:sameLayerFos];
+    NSLog(@"第3步 sameLayerFos数:%ld",sameLayerFos.count);//测时749条
+    
+    //4. 收集起来
+    NSMutableArray *cansetFos = [[NSMutableArray alloc] init];
+    [cansetFos addObject:targetFo.pointer];
+    [cansetFos addObjectsFromArray:absFos];
+    [cansetFos addObjectsFromArray:sameLayerFos];
+    cansetFos = [SMGUtils removeRepeat:cansetFos];
+    NSLog(@"第4步 cansetFos数:%ld",cansetFos.count);//测时758条
+    
+    //4. 过滤掉长度<2的 (因为前段全含至少要1位,后段修正也至少要0位,H目标至少要1位)
+    cansetFos = [SMGUtils filterArr:cansetFos checkValid:^BOOL(AIKVPointer *item) {
+        AIFoNodeBase *fo = [SMGUtils searchNode:item];
+        return fo.count >= 2;
+    }];
+    NSLog(@"第5步 最小长度2:%ld",cansetFos.count);//测时149条
+    
+    //4. 过滤掉有负mv指向的 (参考26063 & 26127-TODO8);
+    cansetFos = [SMGUtils filterArr:cansetFos checkValid:^BOOL(AIKVPointer *item) {
+        AIFoNodeBase *fo = [SMGUtils searchNode:item];
+        return ![ThinkingUtils havDemand:fo.cmvNode_p];
+    }];
+    NSLog(@"第6步 非负价值:%ld",cansetFos.count);//测时96条
+    
+    //5. 对比cansetFo和protoFo匹配,得出对比结果 (参考26128-第1步);
+    NSArray *solutionModels = [SMGUtils convertArr:cansetFos convertBlock:^id(AIKVPointer *obj) {
+        return [TOUtils compareCansetFo:obj protoFo:targetFo.pointer];
+    }];
+    cansetFos = [SMGUtils convertArr:solutionModels convertBlock:^id(AISolutionModel *obj) {
+        return obj.cansetFo;
+    }];
+    NSLog(@"第7步 对比匹配成功:%ld",cansetFos.count);//测时94条
+    
+    //6. 计算衰后stableScore (参考26128-2-1);
+    for (AISolutionModel *model in solutionModels) {
+        AIFoNodeBase *cansetFo = [SMGUtils searchNode:model.cansetFo];
+        model.stableScore = [TOUtils getColStableScore:cansetFo outOfFos:cansetFos startSPIndex:model.cutIndex + 1 endSPIndex:cansetFo.count];
+    }
+    
+    //7. 根据候选集综合分排序 (参考26128-2-2);
+    NSArray *sortModels = [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
+        return obj.stableScore * obj.matchValue;
+    }];
+    
+    //8. 取最佳解决方案;
+    for (AISolutionModel *item in sortModels) {
+        
+        //9. 排序不应期;
+        if ([except_ps containsObject:item.cansetFo]) continue;
+        
+        //10. 时间不急评价: 不急 = 解决方案所需时间 <= 父任务能给的时间 (参考:24057-方案3,24171-7);
+        AIFoNodeBase *cansetFo = [SMGUtils searchNode:item.cansetFo];
+        AIMatchFoModel *firstPFo = ARR_INDEX(demand.pFos, 0);
+        if (![AIScore FRS_Time:firstPFo solutionFo:cansetFo solutionCutIndex:item.cutIndex]) continue;
+        
+        //11. 找到最佳方案;
+        result = item;
+        break;
+    }
+    
+    //12. debugLog
+    for (AISolutionModel *model in sortModels) {
+        CGFloat solutionScore = model.stableScore * model.matchValue;
+        AIFoNodeBase *cansetFo = [SMGUtils searchNode:model.cansetFo];
+        if (Log4Solution_Slow) NSLog(@"> %@\n\t评分:%.2f = 前匹配:%.2f x 后稳定:%.2f >> %@",Pit2FStr(model.cansetFo),solutionScore,model.matchValue,model.stableScore,CLEANSTR(cansetFo.spDic));
+    }
+    CGFloat score = result.stableScore * result.matchValue;
+    NSInteger resultIndex = [sortModels indexOfObject:result];
+    AIFoNodeBase *resultFo = [SMGUtils searchNode:result.cansetFo];
+    NSLog(@"从第%ld取得慢思考最佳结果:F%ld 评分:%.2f = 前匹配:%.2f x 后稳定:%.2f %@",resultIndex,result.cansetFo.pointerId,score,result.matchValue,result.stableScore,CLEANSTR(resultFo.spDic));
+    return result;
+    
+    
+    
     
     
     
