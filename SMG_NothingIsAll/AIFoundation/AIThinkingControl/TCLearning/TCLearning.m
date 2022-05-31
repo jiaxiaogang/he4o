@@ -74,7 +74,7 @@
 +(void) rLearning:(AIShortMatchModel*)model protoFo:(AIFoNodeBase*)protoFo{
     [theTC updateOperCount];
     Debug();
-    IFTitleLog(@"rLearning","\nprotoFo: %@->%@",Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p));
+    IFTitleLog(@"rLearning",@"\nprotoFo: %@->%@",Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p));
     //1. 学习 for prFos: 加强pFos的抽具象关联;
     NSLog(@"\npFo外类比 =>");
     for (AIMatchFoModel *item in model.fos4RLearning) {

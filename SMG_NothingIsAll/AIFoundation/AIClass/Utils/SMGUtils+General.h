@@ -22,6 +22,10 @@ static int logLineNum;
 +(NSString*) strToOk:(NSString*)s;
 +(NSArray*) strToArr:(NSString*)str sep:(NSString*)sep;     //str分隔arr
 +(NSString*) subStr:(NSString*)s toIndex:(NSInteger)index;  //notnull
+
+//log
++(void) inTitle:(NSString*)title log:(NSString*)log;
++(void) outTitle:(NSString*)title log:(NSString*)log;
 +(NSString*) codeLocateFormat:(NSString*)fileName line:(NSInteger)line;
 +(void) checkPrintNSLog:(NSString*)fileName line:(NSInteger)line protoLog:(NSString*)protoLog headerMode:(LogHeaderMode)headerMode;
 +(NSString*) nsLogFormat:(NSString*)fileName line:(NSInteger)line protoLog:(NSString*)protoLog headerMode:(LogHeaderMode)headerMode;//NSLog自定义格式化;
