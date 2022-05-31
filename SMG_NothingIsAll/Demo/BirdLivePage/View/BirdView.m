@@ -193,11 +193,12 @@
         else if([FLY_RDS isEqualToString:model.identify]){
             if (OutputObserverType_Front == model.type) {
                 //a. 飞前 => 行为动画;
+                NSLog(@"飞前视觉%p:%@",model,[NVHeUtil fly2Str:model.data.floatValue]);
                 [self flyAction:[model.data floatValue]];
                 model.useTime = 0.1f;
             }else if(OutputObserverType_Back == model.type){
                 //b. 飞后 => 视觉;
-                NSLog(@"飞后视觉");
+                NSLog(@"飞后视觉%p:%@",model,[NVHeUtil fly2Str:model.data.floatValue]);
                 [self flyResult:[model.data floatValue]];
             }
         }
