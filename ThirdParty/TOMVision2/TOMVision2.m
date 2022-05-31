@@ -122,11 +122,7 @@
 //MARK:                     < method >
 //MARK:===============================================================
 -(void) updateFrame{
-    [self.panelView updateFrame:false];
-}
-
--(void) updateFrame:(BOOL)newLoop{
-    [self.panelView updateFrame:newLoop];
+    [self.panelView updateFrame];
 }
 
 /**

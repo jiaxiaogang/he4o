@@ -26,7 +26,7 @@
 @property (weak, nonatomic) id<TVPanelViewDelegate> delegate;//notnull
 @property (assign, nonatomic) BOOL stop;
 
--(void) updateFrame:(BOOL)newLoop;
+-(void) updateFrame;
 -(void) getModel:(NSInteger)changeIndex complete:(void(^)(TOMVisionItemModel*,TOModelBase*))complete;
 -(CGFloat) getFrameShowTime;
 

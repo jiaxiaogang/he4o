@@ -126,7 +126,7 @@
  *  @version
  *      2022.05.04: 内存优化_减少无用帧 (无变化不记录 & 仅保留300帧);
  */
--(void) updateFrame:(BOOL)newLoop{
+-(void) updateFrame{
     //1. 数据检查;
     if (theTC.outModelManager.getAllDemand.count <= 0) {
         return;
@@ -153,10 +153,8 @@
     [self.models addObjectsFromArray:ARRTOOK(subModels)];
     
     //3. 新轮循环Id;
-    if (newLoop) {
-        TOMVisionItemModel *lastFrame = ARR_INDEX_REVERSE(self.models, 0);
-        NSInteger oldLoopId = lastFrame ? lastFrame.loopId : 0;
-        newFrame.loopId = oldLoopId + 1;
+    if (lastFrame && lastFrame.loopId < theTC.getLoopId) {
+        newFrame.loopId = theTC.getLoopId;
     }
     
     //4. 计算变化数 (也不大耗能,就全重算吧);

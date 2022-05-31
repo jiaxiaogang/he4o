@@ -22,7 +22,8 @@
 
 @property (strong, nonatomic) DemandManager *demandManager;         //OUT短时记忆 (输出数据管理器);
 @property (strong, nonatomic) ShortMatchManager *shortMatchManager; //IN短时记忆 (输入数据管理器);
-@property (assign, nonatomic) long long operCount;                  //思想操作计数;
+@property (assign, nonatomic) long long operCount;                  //思维操作计数;
+@property (assign, nonatomic) long long loopId;                     //思维循环Id;
 
 /**
  *  MARK:--------------------当前能量值--------------------
@@ -223,13 +224,25 @@ static AIThinkingControl *_instance;
 //MARK:                     < 操作计数 >
 //MARK:===============================================================
 
-//对任何TC操作算一次操作计数 (可考虑合适话改为循环计数);
+//对任何TC操作算一次操作计数;
 -(void) updateOperCount{
     self.operCount++;
 }
 
 -(long long) getOperCount{
     return _operCount;
+}
+
+//MARK:===============================================================
+//MARK:                     < 循环Id >
+//MARK:===============================================================
+
+//循环Id (参考26183);
+-(void) updateLoopId{
+    self.loopId++;
+}
+-(long long) getLoopId{
+    return _loopId;
 }
 
 //MARK:===============================================================

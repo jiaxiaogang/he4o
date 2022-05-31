@@ -66,4 +66,10 @@
 -(void) updateOperCount;
 -(long long) getOperCount;
 
+//MARK:===============================================================
+//MARK:                     < 循环Id >
+//MARK:===============================================================
+-(void) updateLoopId;
+-(long long) getLoopId;
+
 @end

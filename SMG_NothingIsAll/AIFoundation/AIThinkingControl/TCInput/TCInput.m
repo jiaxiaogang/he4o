@@ -32,6 +32,7 @@
  */
 +(void) rInput:(AIAlgNodeBase*)algNode except_ps:(NSArray*)except_ps{
     ISGroupLog(@"input R");
+    [theTC updateLoopId];
     [theTC updateOperCount];
     Debug();
     //1. 数据准备 (瞬时记忆,理性匹配出的模型);
@@ -55,6 +56,7 @@
 
 +(void) pInput:(NSArray*)algsArr{
     ISGroupLog(@"input P");
+    [theTC updateLoopId];
     [theTC updateOperCount];
     Debug();
     DebugE();
@@ -63,6 +65,7 @@
 
 +(void) hInput:(TOAlgModel*)algModel{
     ISGroupLog(@"input H");
+    [theTC updateLoopId];
     [theTC updateOperCount];
     Debug();
     DebugE();
