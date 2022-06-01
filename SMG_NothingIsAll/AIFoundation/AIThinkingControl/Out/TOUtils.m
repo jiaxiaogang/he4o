@@ -678,4 +678,16 @@
     return nearV;
 }
 
+/**
+ *  MARK:--------------------检查某toModel的末枝有没有ActYes状态--------------------
+ *  @desc 因为actYes向上传染,不向下,所以末枝有actYes,即当前curModel也不应响应 (参考26184-原则);
+ */
++(BOOL) endHavActYes:(TOModelBase*)curModel{
+    NSArray *allSubModels = [TOUtils getSubOutModels_AllDeep:curModel validStatus:nil];
+    BOOL endHavActYes = [SMGUtils filterSingleFromArr:allSubModels checkValid:^BOOL(TOModelBase *item) {
+        return item.status == TOModelStatus_ActYes && [TOUtils getSubOutModels:item].count == 0;
+    }];
+    return endHavActYes;
+}
+
 @end

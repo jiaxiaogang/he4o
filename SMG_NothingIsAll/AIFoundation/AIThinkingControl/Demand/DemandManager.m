@@ -214,10 +214,7 @@
         if (item.status == TOModelStatus_WithOut) continue;
         
         //5. 最末枝在actYes状态时,不应期,继续secondRoot;
-        NSArray *allSubModels = [TOUtils getSubOutModels_AllDeep:item validStatus:nil];
-        BOOL endHavActYes = [SMGUtils filterSingleFromArr:allSubModels checkValid:^BOOL(TOModelBase *item) {
-            return item.status == TOModelStatus_ActYes && [TOUtils getSubOutModels:item].count == 0;
-        }];
+        BOOL endHavActYes = [TOUtils endHavActYes:item];
         if (endHavActYes) continue;
         
         //6. 有效,则返回;

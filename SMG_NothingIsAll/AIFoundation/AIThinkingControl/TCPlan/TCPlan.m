@@ -62,6 +62,7 @@
  *  @version
  *      2021.12.28: 工作记忆树任务下_首条S的支持 (参考25042);
  *      2021.12.28: 重新整理整个方法,参考评分字典数据结构做最优路径 (参考24196-示图);
+ *      2022.06.02: 中层为actYes时,不向下传染,继续找路径 (参考26185-TODO7);
  *  @result
  *      1. 返回空S的Demand时,执行solution找解决方案;
  *      2. 返回路径末枝BestFo时,执行action行为化;
@@ -107,7 +108,7 @@
         if (subDemand.status == TOModelStatus_WithOut) continue;
         
         //10. 判断subDemand.status是actYes状态 -> 继续等待 (参考25042-3);
-        if (subDemand.status == TOModelStatus_ActYes) return nil;
+        //if (subDemand.status == TOModelStatus_ActYes) return nil;
         
         //11. 未感性淘汰的,一条路走到黑(递归循环),然后把最后的结果return返回;
         return [self bestEndBranch4Plan:scoreDic curDemand:subDemand demandScore:demandScore];

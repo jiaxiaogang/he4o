@@ -17,10 +17,16 @@
  *  @version
  *      2021.12.28: 对首条S的支持 (参考25042);
  *      2021.12.28: 支持actYes时最优路径末枝为nil,并中止决策 (参考25042-3);
+ *      2022.06.02: 如果endBranch的末枝正在等待actYes,则继续等待,不进行决策 (参考26185-TODO4);
  */
 +(void) solution:(TOModelBase*)endBranch endScore:(double)endScore{
     //1. 无末枝时 (可能正在ActYes等待状态),中断决策;
     if (!endBranch) return;
+    
+    //1. 判断endBranch如果是actYes状态,则不处理,继续静默;
+    BOOL endHavActYes = [TOUtils endHavActYes:endBranch];
+    if (endHavActYes) return;
+    
     //2. 尝试取更多S;
     Act1 runSolutionAct = ^(DemandModel *demand){
         if (ISOK(demand, ReasonDemandModel.class)) {

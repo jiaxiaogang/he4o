@@ -176,4 +176,9 @@
 +(AISolutionModel*) compareHCansetFo:(AIKVPointer*)cansetFo_p targetFo:(TOFoModel*)targetFoM;
 +(CGFloat) compareCansetValue:(AIKVPointer*)cansetV_p protoValue:(AIKVPointer*)protoV_p;
 
+/**
+ *  MARK:--------------------检查某toModel的末枝有没有ActYes状态--------------------
+ */
++(BOOL) endHavActYes:(TOModelBase*)curModel;
+
 @end
