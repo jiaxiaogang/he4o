@@ -39,8 +39,6 @@
     if (foModel.actionIndex < foModel.targetSPIndex - 1) {
         //a. Alg转移 (下帧)
         foModel.actionIndex ++;
-        AIKVPointer *move_p = ARR_INDEX(curFo.content_ps, foModel.actionIndex);
-        TOAlgModel *moveAlg = [TOAlgModel newWithAlg_p:move_p group:foModel];
         NSLog(@"_Fo行为化第 %ld/%ld 个: %@",(long)foModel.actionIndex + 1,foModel.targetSPIndex,Fo2FStr(curFo));
         
         //@desc: 下标不急评价说明: R模式_Hav首先是为了避免forecastAlg,其次才是为了达成curFo解决方案 (参考22153);
@@ -60,8 +58,10 @@
         //    }
         //}
         
-        //6. 输出前,先调用frameActYes();
-        [TCActYes frameActYes:foModel];
+        //6. 转下帧;
+        AIKVPointer *move_p = ARR_INDEX(curFo.content_ps, foModel.actionIndex);
+        TOAlgModel *moveAlg = [TOAlgModel newWithAlg_p:move_p group:foModel];
+        [TCActYes frameActYes:foModel];//调用frameActYes();
         
         //7. 尝试行为当前帧;
         DebugE();
@@ -74,9 +74,8 @@
         
         if (ISOK(foModel.baseOrGroup, ReasonDemandModel.class)) {
             [TCActYes frameActYes:foModel];
-            [TCScore score];//r输出完成时,继续决策;
+            //[TCScore score];//r输出完成时,继续决策;
         }else if(ISOK(foModel.baseOrGroup, HDemandModel.class)){
-            
             //9. H目标帧只需要等 (转hActYes) (参考25031-9);
             AIKVPointer *hTarget_p = ARR_INDEX(curFo.content_ps, foModel.actionIndex);
             [TOAlgModel newWithAlg_p:hTarget_p group:foModel];

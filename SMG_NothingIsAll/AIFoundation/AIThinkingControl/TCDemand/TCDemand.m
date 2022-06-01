@@ -25,6 +25,7 @@
     
     //6. 此处推进不成功,则运行TOP四模式;
     DebugE();
+    NSLog(@"%lld score from 12",theTC.getLoopId);
     [TCScore score];
 }
 
@@ -48,6 +49,7 @@
     
     //2. 转向执行;
     DebugE();
+    NSLog(@"%lld score from 11",theTC.getLoopId);
     [TCScore score];
 }
 
@@ -88,7 +90,8 @@
     
     //2. 调用TCScore继续决策;
     DebugE();
-    [TCScore score];//[TCSolution hSolution:hDemand];
+    NSLog(@"%lld score from 10",theTC.getLoopId);
+    [TCScore score];
 }
 
 @end

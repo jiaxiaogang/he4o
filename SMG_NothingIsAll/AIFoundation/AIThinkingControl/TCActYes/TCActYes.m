@@ -245,12 +245,12 @@
  *  @desc 每帧都触发等待反馈 (参考26136-方案);
  *  @version
  *      2022.05.29: 不判断solutionFo.mv价值分因为它一般为空;
+ *      2022.06.01: actYes仅标记自己及所在的demand,不标记root (参考26185-TODO1);
  */
 +(void) frameActYes:(TOFoModel*)solutionModel{
     [theTC updateOperCount];
     Debug();
-    //0. 数据准备 (从上到下,取root,demand,solutionFo,frameAlg);
-    DemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:solutionModel];
+    //0. 数据准备 (从上到下,取demand,solutionFo,frameAlg);
     DemandModel *demand = (DemandModel*)solutionModel.baseOrGroup;
     AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.content_p];
     AIKVPointer *frameAlg_p = ARR_INDEX(solutionFo.content_ps, solutionModel.actionIndex);
@@ -261,7 +261,6 @@
     //1. 设为actYes
     solutionModel.status = TOModelStatus_ActYes;
     demand.status = TOModelStatus_ActYes;
-    root.status = TOModelStatus_ActYes;
     if (frameModel) frameModel.status = TOModelStatus_ActYes;
     
     //2. solutionFo已执行完成,直接取mvDeltaTime做触发器时间;
@@ -290,7 +289,7 @@
             if (solutionModel.status == TOModelStatus_ActYes) {
                 solutionModel.status = TOModelStatus_ActNo;
                 demand.status = TOModelStatus_Runing;
-                root.status = TOModelStatus_Runing;
+                NSLog(@"%lld score from 2",theTC.getLoopId);
                 [TCScore score];
             }
         }
@@ -307,11 +306,11 @@
             if (frameModel.status == TOModelStatus_ActYes) {
                 //5. 2020.11.28: alg本级递归 (只有_Hav全部失败时,才会自行调用failure声明失败) (参考2114C);
                 frameModel.status = TOModelStatus_ActNo;
-                solutionModel.status = TOModelStatus_Runing;
+                solutionModel.status = TOModelStatus_ActNo;
                 demand.status = TOModelStatus_Runing;
-                root.status = TOModelStatus_Runing;
                 
                 //6. 2021.12.02: 失败时,继续决策;
+                NSLog(@"%lld score from 1",theTC.getLoopId);
                 [TCScore score];
             }
         }

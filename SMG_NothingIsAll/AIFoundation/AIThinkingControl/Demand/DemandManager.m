@@ -194,6 +194,7 @@
  *      xxxx.xx.xx: (未完成 & 非等待反馈ActYes);
  *      2021.12.23: root非WithOut状态的 (参考24212-6);
  *      2021.12.23: 最优末枝处在actYes状态时,继续secondRoot (参考24212-7);
+ *      2022.06.01: 末端actYes时,root不应期,因为actYes是向上传染不向下 (参考26185-TODO3);
  */
 -(DemandModel*) getCanDecisionDemand{
     //1. 数据检查
@@ -212,12 +213,16 @@
         //4. 已无计可施,下一个 (TCPlan会优先从末枝执行,所以当root就是末枝时,说明整个三条大树干全烂透没用了);
         if (item.status == TOModelStatus_WithOut) continue;
         
-        //5. 最优末枝处在actYes状态时,继续secondRoot;
-        if (item.status == TOModelStatus_ActYes) continue;
+        //5. 最末枝在actYes状态时,不应期,继续secondRoot;
+        NSArray *allSubModels = [TOUtils getSubOutModels_AllDeep:item validStatus:nil];
+        BOOL endHavActYes = [SMGUtils filterSingleFromArr:allSubModels checkValid:^BOOL(TOModelBase *item) {
+            return item.status == TOModelStatus_ActYes && [TOUtils getSubOutModels:item].count == 0;
+        }];
+        if (endHavActYes) continue;
         
         //6. 有效,则返回;
         NSArray *statuses = [SMGUtils convertArr:ARR_SUB(self.loopCache, 0, i) convertBlock:^id(DemandModel *obj) {
-            return obj.status == TOModelStatus_ActYes ? @"等待反馈" : obj.status == TOModelStatus_WithOut ? @"无计可施" : STRFORMAT(@"%ld",obj.status);
+            return obj.status == TOModelStatus_ActYes ? @"等待反馈" : STRFORMAT(@"%ld",obj.status);
         }];
         NSLog(@"当前执行任务:%ld 不应期root任务的状态:%@",i,CLEANSTR(statuses));
         return item;

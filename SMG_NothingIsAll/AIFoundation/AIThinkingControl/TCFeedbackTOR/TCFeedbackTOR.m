@@ -70,6 +70,10 @@
  *      2022.03.13: 将mIsC改成proto或matchAlgs中任一条mIsC成立即可 (参考25146-转疑3-方案);
  *      2022.05.02: 用matchAlgs+partAlgs替代mIsC (参考25234-8);
  *      2022.05.22: H任务有效性反馈状态更新 (参考26095-6);
+ *      2022.06.01: 有反馈时,不改root的runing状态 (参考26185-TODO1);
+ *      2022.06.01: H反馈中段和末帧改的状态不同处理;
+ *      2022.06.01: 有反馈时,继续调用TCScore (参考26185-TODO2);
+ *      2022.06.01: HDemand.targetAlg提前反馈时,HDemand设为finish状态 (参考26185-TODO6);
  *  @bug
  *      2020.09.22: 加上cutStopStatus,避免同一waitModel被多次触发,导致BUG (参考21042);
  *      2020.12.26: GL时,waitType的判断改为bFo,因为只有bFo才携带了waitTypeDS (参考21204);
@@ -98,8 +102,8 @@
         if (ISOK(waitModel.baseOrGroup.baseOrGroup, HDemandModel.class)) {
             
             //5. HDemand即使waitModel不是actYes状态也处理反馈;
-            TOFoModel *hFoModel = (TOFoModel*)waitModel.baseOrGroup;    //h解决方案;
-            HDemandModel *hDemand = (HDemandModel*)hFoModel.baseOrGroup;//h需求模型
+            TOFoModel *solutionModel = (TOFoModel*)waitModel.baseOrGroup;    //h解决方案;
+            HDemandModel *hDemand = (HDemandModel*)solutionModel.baseOrGroup;//h需求模型
             TOAlgModel *targetAlg = (TOAlgModel*)hDemand.baseOrGroup;   //hDemand的目标alg;
             TOFoModel *targetFo = (TOFoModel*)targetAlg.baseOrGroup;    //hDemand的目标alg所在的fo;
             
@@ -109,50 +113,61 @@
             BOOL mIsC = [recognitionAlgs containsObject:targetAlg.content_p];
             if (Log4OPushM) NSLog(@"H有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(targetAlg.content_p),mIsC);
             if (mIsC) {
-                //a. 在H时,执行到此处,说明waitModel和baseFo已完成;
                 waitModel.status = TOModelStatus_OuterBack;
-                hFoModel.status = TOModelStatus_Finish;
-                targetAlg.status = TOModelStatus_OuterBack;
-                targetAlg.feedbackAlg = model.protoAlg.pointer;
-                hDemand.status = TOModelStatus_Finish;
+                BOOL isEndFrame = solutionModel.actionIndex == solutionModel.targetSPIndex;
                 
-                //b. root设回runing
-                DemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:waitModel];
-                root.status = TOModelStatus_Runing;
+                //a. H反馈中段: 标记OuterBack,solutionFo继续;
+                if (!isEndFrame) {
+                    solutionModel.status = TOModelStatus_Runing;
+                    hDemand.status = TOModelStatus_Runing;
+                }else{
+                    //b. H反馈末帧:
+                    solutionModel.status = TOModelStatus_Finish;
+                    hDemand.status = TOModelStatus_Finish;
+                    targetAlg.status = TOModelStatus_OuterBack;
+                    targetAlg.feedbackAlg = model.protoAlg.pointer;
+                    targetFo.status = TOModelStatus_Runing;
+                }
+                
+                //c. 最终反馈了feedbackAlg时,重组 & 反思;
                 [theTV updateFrame];
-                
-                //c. 重组;
+                if (isEndFrame) [TCRegroup feedbackRegroup:targetFo];
                 DebugE();
-                [TCRegroup feedbackRegroup:targetFo];
+                [TCScore score];
             }
         }
         
         //7. ============= "行为输出" 和 "demand.ActYes" 和 "静默成功 的有效判断 =============
+        //此处有两种frameAlg,第1种是isOut为true的行为反馈,第2种是hDemand.baseAlg;
         if (ISOK(waitModel.baseOrGroup.baseOrGroup, ReasonDemandModel.class)) {
             
             //8. RDemand只处理ActYes状态的;
             if (waitModel.status != TOModelStatus_ActYes) continue;
-            TOAlgModel *targetAlg = waitModel;                          //等待中的目标alg;
-            TOFoModel *targetFo = (TOFoModel*)targetAlg.baseOrGroup;    //目标alg所在的fo;
+            TOAlgModel *frameAlg = waitModel;                          //等待中的目标alg;
+            TOFoModel *solutionFo = (TOFoModel*)frameAlg.baseOrGroup;    //目标alg所在的fo;
+            HDemandModel *subHDemand = [SMGUtils filterSingleFromArr:frameAlg.subDemands checkValid:^BOOL(id item) {
+                return ISOK(item, HDemandModel.class);
+            }];
             
             //9. 判断input是否与等待中waitModel相匹配 (匹配,比如吃,确定自己是否真吃了);
-            [AITest test11:model waitAlg_p:targetAlg.content_p];//测下2523c-此处是否会导致匹配不到;
+            [AITest test11:model waitAlg_p:frameAlg.content_p];//测下2523c-此处是否会导致匹配不到;
 //            BOOL mIsC = [TOUtils mIsC_1:model.protoAlg.pointer c:targetAlg.content_p];
-            BOOL mIsC = [recognitionAlgs containsObject:targetAlg.content_p];
-            if (Log4OPushM) NSLog(@"Normal有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(targetAlg.content_p),mIsC);
+            BOOL mIsC = [recognitionAlgs containsObject:frameAlg.content_p];
+            if (Log4OPushM) NSLog(@"Normal有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(frameAlg.content_p),mIsC);
             if (mIsC) {
                 //a. 赋值
-                targetAlg.status = TOModelStatus_OuterBack;
-                targetAlg.feedbackAlg = model.protoAlg.pointer;
+                frameAlg.status = TOModelStatus_OuterBack;
+                frameAlg.feedbackAlg = model.protoAlg.pointer;
+                solutionFo.status = TOModelStatus_Runing;
                 
-                //b. root设回runing
-                DemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:targetAlg];
-                root.status = TOModelStatus_Runing;
-                [theTV updateFrame];
+                //b. 当waitModel为hDemand.targetAlg时,此处提前反馈了,hDemand改为finish状态 (参考26185-TODO6);
+                if (subHDemand) subHDemand.status = TOModelStatus_Finish;
                 
                 //c. 重组
+                [theTV updateFrame];
                 DebugE();
-                [TCRegroup feedbackRegroup:targetFo];
+                [TCRegroup feedbackRegroup:solutionFo];
+                [TCScore score];
             }
         }
     }
