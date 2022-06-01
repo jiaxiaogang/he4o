@@ -47,6 +47,7 @@
  *      2021.12.21: 支持状态为ActNo (如为时间不急淘汰掉) 的处理 (子解决方案全ActNo之后且WithOut的理性淘汰);
  *      2021.12.26: 支持当rDemand和hDemand已finish时不计分,并中断向子枝评分;
  *      2022.03.11: 升级支持mvScoreV2 (参考25142-TODO4);
+ *      2022.06.02: 封装单demand评分方法 (顺便解决有时solutionFos全为ActNo时,直接判负分,而不尝试新方案);
  *  @param scoreDic : notnull;
  *
  *  _result 将model及其下有效的分枝评分计算,并收集到评分字典 <K=foModel,V=score>;
@@ -55,69 +56,67 @@
     //1. 数据检查;
     double modelScore = 0;
     
-    //===== 第0部分: foModel自身理性淘汰判断 (比如时间不急评否后,为actNo状态) (参考24053);
+    //2. ===== 第0部分: foModel自身理性淘汰判断 (比如时间不急评否后,为actNo状态) (参考24053);
     if (model.status == TOModelStatus_ActNo) {
         [scoreDic setObject:@(INT_MIN) forKey:TOModel2Key(model)];
-        NSLog(@"评分1: K:%@ => V:%@分",TOModel2Key(model),[scoreDic objectForKey:TOModel2Key(model)]);
+        NSLog(@"评分1: 因actNo直接评最小分: K:%@",TOModel2Key(model));
         return;
     }
     
-    //===== 第一部分: HDemand在FoModel.subModels下 (有解决方案:参与求和 & 无解决方案:理性淘汰);
-    //2. 用每个sa取sh子任务 (求和);
+    //3. ===== 第一部分: HDemand在FoModel.subModels下 (有解决方案:参与求和 & 无解决方案:理性淘汰);
+    //3. 用每个sa取sh子任务 (求和);
     for (TOAlgModel *sa in model.subModels) {
         
         //3. 取出sh (一条sa最多只能生成一个sh任务);
         HDemandModel *sh = ARR_INDEX(sa.subDemands, 0);
         if (sh) {
-            
-            //3. 当sh在feedbackTOR已finish时,不计分;
-            if (sh.status == TOModelStatus_Finish) continue;
-            
-            //4. 取出还未理性失败的解决方案;
-            NSArray *validActionFos = [SMGUtils filterArr:sh.actionFoModels checkValid:^BOOL(TOFoModel *actionFo) {
-                return actionFo.status != TOModelStatus_ActNo;
-            }];
-            
-            //4. 当H已经withOut状态,且其解决方案全部actNo时,则理性淘汰 (参考24192-H14);
-            if (sh.status == TOModelStatus_WithOut && !ARRISOK(validActionFos)) {
-                [scoreDic setObject:@(INT_MIN) forKey:TOModel2Key(model)];
-                NSLog(@"评分2: K:%@ => V:%@分",TOModel2Key(model),[scoreDic objectForKey:TOModel2Key(model)]);
-                return;
-            }else{
-                //4. H有解决方案时,对S竞争;
-                TOFoModel *bestSS = [self score_Multi:sh.actionFoModels scoreDic:scoreDic];
-                
-                //4. 并将竞争最高分胜者计入modelScore;
-                modelScore += [NUMTOOK([scoreDic objectForKey:TOModel2Key(bestSS)]) doubleValue];
-            }
-        }
-    }
-    
-    //===== 第二部分: RDemand在AlgModel.subDemands下 (有解决方案:参与求和 & 无解决方案:R自身计入综合评分中);
-    //10. 取出subRDemands子任务 (求和) 综合评价是否放弃当前父任务 (如又累又烦的活,赚钱也不干) (参考24195);
-    for (ReasonDemandModel *sr in model.subDemands) {
-        
-        //10. 当sr在feedbackTOP已finish时,不计分;
-        if (sr.status == TOModelStatus_Finish) continue;
-        
-        //11. R有解决方案时,对S竞争,并将最高分计入modelScore;
-        if (ARRISOK(sr.actionFoModels)) {
-            
-            //a. 对S竞争;
-            TOFoModel *bestSS = [self score_Multi:sr.actionFoModels scoreDic:scoreDic];
-            
-            //b. 将竞争胜者计入modelScore;
-            modelScore += [NUMTOOK([scoreDic objectForKey:TOModel2Key(bestSS)]) doubleValue];
-        }else{
-            //12. R无解决方案时,直接将sr评分计入modelScore;
-            double score = [AIScore score4Demand:sr];
+            CGFloat score = [self score_SingleDemand:sh scoreDic:scoreDic];
             modelScore += score;
         }
     }
     
-    //13. 将求和得分,计入dic (当没有sr也没有sa子任务 = 0分);
+    //4. ===== 第二部分: RDemand在AlgModel.subDemands下 (有解决方案:参与求和 & 无解决方案:R自身计入综合评分中);
+    //4. 取出subRDemands子任务 (求和) 综合评价是否放弃当前父任务 (如又累又烦的活,赚钱也不干) (参考24195);
+    for (ReasonDemandModel *sr in model.subDemands) {
+        CGFloat score = [self score_SingleDemand:sr scoreDic:scoreDic];
+        modelScore += score;
+    }
+    
+    //5. 将求和得分,计入dic (当没有sr也没有sa子任务 = 0分);
     [scoreDic setObject:@(modelScore) forKey:TOModel2Key(model)];
     NSLog(@"评分3: K:%@ => V:%@分",TOModel2Key(model),[scoreDic objectForKey:TOModel2Key(model)]);
+}
+
+/**
+ *  MARK:--------------------获取单demand的评分--------------------
+ *  @desc 只返回不直接计入字典,因为demand评分是要"求和"后计入字典的;
+ */
++(CGFloat) score_SingleDemand:(DemandModel*)demand scoreDic:(NSMutableDictionary*)scoreDic{
+    //1. 当demand在feedbackTOR已finish时,不计分;
+    if (demand.status == TOModelStatus_Finish) return 0;
+
+    //2. 取出还未理性失败的解决方案;
+    NSArray *validActionFos = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *actionFo) {
+        return actionFo.status != TOModelStatus_ActNo;
+    }];
+
+    //3. 当demand已经withOut状态,且其解决方案全部actNo时,则理性淘汰 (参考24192-H14);
+    if (demand.status == TOModelStatus_WithOut && !ARRISOK(validActionFos)) {
+        
+        if (ISOK(demand, HDemandModel.class)) {
+            //4. H无解决方案时,直接计min分计入modelScore;
+            return INT_MIN;
+        }else {
+            //5. R无解决方案时,直接将sr评分计入modelScore;
+            return [AIScore score4Demand:demand];
+        }
+    }else{
+        //6. demand有解决方案时,对S竞争,并将最高分计入modelScore;
+        TOFoModel *bestSS = [self score_Multi:validActionFos scoreDic:scoreDic];
+        
+        //7. 并将竞争最高分胜者计入modelScore;
+        return [NUMTOOK([scoreDic objectForKey:TOModel2Key(bestSS)]) doubleValue];
+    }
 }
 
 /**
