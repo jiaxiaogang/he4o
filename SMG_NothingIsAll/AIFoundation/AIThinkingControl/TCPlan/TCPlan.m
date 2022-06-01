@@ -63,6 +63,7 @@
  *      2021.12.28: 工作记忆树任务下_首条S的支持 (参考25042);
  *      2021.12.28: 重新整理整个方法,参考评分字典数据结构做最优路径 (参考24196-示图);
  *      2022.06.02: 中层为actYes时,不向下传染,继续找路径 (参考26185-TODO7);
+ *      2022.06.02: BUG_过滤掉actNo的结果,不然给solution一个actNo的最佳路径尴尬了;
  *  @result
  *      1. 返回空S的Demand时,执行solution找解决方案;
  *      2. 返回路径末枝BestFo时,执行action行为化;
@@ -71,11 +72,14 @@
 +(TOModelBase*) bestEndBranch4Plan:(NSMutableDictionary*)scoreDic curDemand:(DemandModel*)curDemand demandScore:(double)demandScore{
     
     //1. 如果curDemand为空S,则直接返回 (参考25042-5);
-    if (!ARRISOK(curDemand.actionFoModels)) return curDemand;
+    NSArray *validActionFos = [SMGUtils filterArr:curDemand.actionFoModels checkValid:^BOOL(TOFoModel *obj) {
+        return obj.status != TOModelStatus_ActNo;
+    }];
+    if (!ARRISOK(validActionFos)) return curDemand;
     
     //2. 从actionFoModels找出最好的分支继续 (参考24196-示图 & 25042-6);
     TOFoModel *bestFo = nil;
-    for (TOFoModel *itemFo in curDemand.actionFoModels) {
+    for (TOFoModel *itemFo in validActionFos) {
         double itemScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(itemFo)]) doubleValue];
         double bestScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(bestFo)]) doubleValue];
         if (!bestFo || itemScore > bestScore) bestFo = itemFo;
