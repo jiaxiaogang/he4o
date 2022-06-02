@@ -342,6 +342,7 @@
  *  @desc 根据SP计算"稳定性"分 (稳定性指顺,就是能顺利发生的率);
  *  @version
  *      2022.05.23: 初版 (参考26096-BUG1);
+ *      2022.06.02: 每一帧的稳定性默认为0.5,而不是1 (参考26191);
  *  @result 1. 负价值时序时返回多坏(0-1);
  *          2. 正价值时序时返回多好(0-1);
  *          3. 无价值时序时返回多顺(0-1);
@@ -356,8 +357,8 @@
     for (NSInteger i = startSPIndex; i <= endSPIndex; i++) {
         AISPStrong *spStrong = [fo.spDic objectForKey:@(i)];
         
-        //3. 当sp经历都为0条时 (正mv时,表示多好评分 | 负mv时,表示多坏评分) 默认评分都为1;
-        CGFloat itemSPScore = 1.0f;
+        //3. 当sp经历都为0条时 (正mv时,表示多好评分 | 负mv时,表示多坏评分) 默认评分都为0.5;
+        CGFloat itemSPScore = 0.5f;
         
         //4. SP有效且其中之一不为0时,计算稳定性评分;
         if (spStrong && spStrong.pStrong + spStrong.sStrong > 0) {
@@ -379,11 +380,6 @@
         //6. 将itemSPScore计入综合评分 (参考25114 & 25122-公式);
         totalSPScore *= itemSPScore;
     }
-    
-    //8. 统计SP总strong值: 当sp总值为0时,默认为0.5;
-    int sumSPStrong = 0;
-    for (AISPStrong *item in fo.spDic.allValues) sumSPStrong += (item.sStrong + item.pStrong);
-    totalSPScore = sumSPStrong == 0 ? 0.5f : totalSPScore;
     
     //9. 返回SP评分 (多坏或多好);
     return totalSPScore;

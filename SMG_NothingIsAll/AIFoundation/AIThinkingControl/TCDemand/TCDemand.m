@@ -70,6 +70,7 @@
     for (NSString *atKey in fos4Demand.allKeys) {
         NSArray *pFosValue = [fos4Demand objectForKey:atKey];
         [ReasonDemandModel newWithAlgsType:atKey pFos:pFosValue inModel:model baseFo:foModel];
+        for (AIMatchFoModel *pFo in pFosValue) NSLog(@"\t pFo:%@->{%.2f}",Pit2FStr(pFo.matchFo),[AIScore score4MV_v2:pFo]);
     }
     [theTV updateFrame];
     DebugE();
