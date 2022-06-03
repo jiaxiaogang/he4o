@@ -181,6 +181,7 @@
     NSArray *sortCansets = [SMGUtils sortBig2Small:cansets compareBlock:^double(AIEffectStrong *obj) {
         return [TOUtils getEffectScore:obj];
     }];
+    NSLog(@"快cansets有效排序后:%@",CLEANSTR(sortCansets));
     
     //4. 从前到后取有效的首条;
     for (AIEffectStrong *canset in sortCansets) {
@@ -191,6 +192,11 @@
         //6. 对比思考;
         AISolutionModel *sModel = [TOUtils compareRCansetFo:canset.solutionFo protoFo:demand.protoFo];
         sModel.effectScore = [TOUtils getEffectScore:canset];
+        
+        //TODOTOMORROW20220603: 查R快思考中,候选集在对比fo结果为Nil的BUG;
+        if (!sModel) {
+            [TOUtils compareRCansetFo:canset.solutionFo protoFo:demand.protoFo];
+        }
             
         //7. 时间不急评价: 不急 = 解决方案所需时间 <= 父任务能给的时间 (参考:24057-方案3,24171-7);
         if (![AIScore FRS_Time:demand solutionModel:sModel]) continue;
