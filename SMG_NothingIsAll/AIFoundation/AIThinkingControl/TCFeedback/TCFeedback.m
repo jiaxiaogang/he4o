@@ -123,6 +123,7 @@
  *      2021.12.26: 针对rSolution的感性反馈 (参考25031-11 & 25032-6);
  *      2022.05.22: R任务有效性反馈状态更新 (参考26095-3);
  *      2022.05.29: 反馈与demand.mv对比匹配,而不是solutionFo (参考26141-BUG1);
+ *      2022.06.03: 将roots浅复制,避免强训过程中因loopCache变化而闪退;
  */
 +(void) feedbackTOP:(AICMVNode*)cmvNode{
     //1. 数据检查
@@ -133,10 +134,9 @@
     IFTitleLog(@"feedbackTOP", @"\n输入MV:%@",Mv2FStr(cmvNode));
     
     //2. ============== 对所有等待中的任务尝试处理 (R-任务); ==============
-    for (ReasonDemandModel *root in theTC.outModelManager.getAllDemand) {
-        NSLog(@"222222 a");
+    NSMutableArray *roots = [[NSMutableArray alloc] initWithArray:theTC.outModelManager.getAllDemand];
+    for (ReasonDemandModel *root in roots) {
         NSArray *waitModels = [TOUtils getSubOutModels_AllDeep:root validStatus:@[@(TOModelStatus_ActYes)]];
-        NSLog(@"222222 b");
         for (TOFoModel *waitModel in waitModels) {
             
             //3. wait不为fo解决方案时不处理;
@@ -167,18 +167,14 @@
                     //7. root设回runing
                     demand.status = TOModelStatus_Runing;
                     root.status = TOModelStatus_Runing;
-                    NSLog(@"222222 c");
                 }else{
-                    NSLog(@"222222 d");
                     //8. solutionFo反馈好时,baseDemand为完成状态;
                     waitModel.baseOrGroup.status = TOModelStatus_Finish;
                 }
                 [theTV updateFrame];
             }
         }
-        NSLog(@"222222 e");
     }
-    NSLog(@"222222");
     
     //2. ============== 对Demand反馈判断 ==============
     //a. 收集所有工作记忆树的R任务;
@@ -189,7 +185,6 @@
         }];
         [allRDemands addObjectsFromArray:singleRDemands];
     }
-    NSLog(@"33333");
     
     //b. 反馈匹配 => 同区判断 且 都为负价值 (比如撞疼,确定疼了);
     for (ReasonDemandModel *rDemand in allRDemands) {
@@ -202,12 +197,10 @@
             }
         }
     }
-    NSLog(@"4444");
     
     //3. p任务;
     DebugE();
     [TCForecast pForecast:cmvNode];
-    NSLog(@"55555");
 }
 
 @end

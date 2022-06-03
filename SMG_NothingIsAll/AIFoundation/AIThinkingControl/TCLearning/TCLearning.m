@@ -57,11 +57,7 @@
     [TCFeedback feedbackTIP:cmvNode];
     
     //2. top_OPushM
-    @try {
-        [TCFeedback feedbackTOP:cmvNode];
-    }@catch (NSException *exception) {
-        NSLog(@"----> 最近老有点闪退,但又不复现,在这儿打个try等着吧%@",exception);
-    }
+    [TCFeedback feedbackTOP:cmvNode];
 }
 
 /**
