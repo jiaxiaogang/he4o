@@ -21,12 +21,8 @@
 @interface AppDelegate ()
 
 @property (strong, nonatomic) UILabel *tipLogLab;
-@property (strong, nonatomic) UIButton *openHeLogBtn;
-@property (strong, nonatomic) UIView *refreshDot;   //因为模拟器下的UI动画老是刷新不了,所以临时写这么个点,来推动UI线程被动刷新;
+@property (strong, nonatomic) UIView *refreshDot;//因为模拟器下的UI动画老不刷新,所以写个闪动点,来推动UI被动刷新;
 @property (strong, nonatomic) MemManagerWindow *memManagerWindow;
-@property (strong, nonatomic) UIButton *memManagerBtn;
-@property (strong, nonatomic) UIButton *tvBtn;
-@property (strong, nonatomic) UIButton *rtBtn;
 
 @end
 
@@ -50,13 +46,7 @@
     [self.window makeKeyAndVisible];
     
     //3. heLogView打开按钮
-    self.openHeLogBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth - 82, StateBarHeight, 40, 20)];
-    [self.openHeLogBtn.titleLabel setFont:[UIFont systemFontOfSize:15]];
-    [self.openHeLogBtn setTitleColor:UIColorWithRGBHex(0x0000EE) forState:UIControlStateNormal];
-    [self.openHeLogBtn setBackgroundColor:UIColorWithRGBHex(0xEEFFEE)];
-    [self.openHeLogBtn setTitle:@"经历" forState:UIControlStateNormal];
-    [self.openHeLogBtn addTarget:self action:@selector(openHeLogBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.window addSubview:self.openHeLogBtn];
+    [self createNavBtn:1 title:@"经历" action:@selector(openHeLogBtnOnClick:) bg:0];
     
     //3. 被动UI刷新
     self.refreshDot = [[UIView alloc] initWithFrame:CGRectMake(ScreenWidth - 40, 8, 5, 5)];
@@ -67,31 +57,13 @@
     [self startRefreshDotAnimation];
     
     //3. 记忆管理按钮
-    self.memManagerBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth - 124, StateBarHeight, 40, 20)];
-    [self.memManagerBtn.titleLabel setFont:[UIFont systemFontOfSize:15]];
-    [self.memManagerBtn setTitleColor:UIColorWithRGBHex(0x0000EE) forState:UIControlStateNormal];
-    [self.memManagerBtn setBackgroundColor:UIColorWithRGBHex(0xEEFFEE)];
-    [self.memManagerBtn setTitle:@"记忆" forState:UIControlStateNormal];
-    [self.memManagerBtn addTarget:self action:@selector(memManagerBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.window addSubview:self.memManagerBtn];
+    [self createNavBtn:2 title:@"记忆" action:@selector(memManagerBtnOnClick:) bg:0];
     
     //3. 工作记忆按钮
-    self.tvBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth - 166, StateBarHeight, 40, 20)];
-    [self.tvBtn.titleLabel setFont:[UIFont systemFontOfSize:15]];
-    [self.tvBtn setTitleColor:UIColorWithRGBHex(0x0000EE) forState:UIControlStateNormal];
-    [self.tvBtn setBackgroundColor:UIColorWithRGBHex(0xEEFFEE)];
-    [self.tvBtn setTitle:@"思维" forState:UIControlStateNormal];
-    [self.tvBtn addTarget:self action:@selector(tvBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.window addSubview:self.tvBtn];
+    [self createNavBtn:3 title:@"思维" action:@selector(tvBtnOnClick:) bg:0];
     
     //3. 强化训练按钮
-    self.rtBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth - 208, StateBarHeight, 40, 20)];
-    [self.rtBtn.titleLabel setFont:[UIFont systemFontOfSize:15]];
-    [self.rtBtn setTitleColor:UIColorWithRGBHex(0x0000EE) forState:UIControlStateNormal];
-    [self.rtBtn setBackgroundColor:UIColorWithRGBHex(0xEEFFEE)];
-    [self.rtBtn setTitle:@"强训" forState:UIControlStateNormal];
-    [self.rtBtn addTarget:self action:@selector(rtBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.window addSubview:self.rtBtn];
+    [self createNavBtn:4 title:@"强训" action:@selector(rtBtnOnClick:) bg:0];
     
     //3. 强化训练配置->鸟出生地点;
     [theRT regist:kBirthPosRdmCentSEL target:self selector:@selector(setBirthPosMode_RdmCent)];
@@ -99,13 +71,10 @@
     [theRT regist:kBirthPosCentSEL target:self selector:@selector(setBirthPosMode_Cent)];
     
     //3. 强行停止思考能力按钮
-    UIButton *stopThinkBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth - 250, StateBarHeight, 40, 20)];
-    [stopThinkBtn.titleLabel setFont:[UIFont systemFontOfSize:15]];
-    [stopThinkBtn setTitleColor:UIColorWithRGBHex(0x0000EE) forState:UIControlStateNormal];
-    [stopThinkBtn setBackgroundColor:UIColorWithRGBHex(0xFFEEEE)];
-    [stopThinkBtn setTitle:@"植物" forState:UIControlStateNormal];
-    [stopThinkBtn addTarget:self action:@selector(stopThinkBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.window addSubview:stopThinkBtn];
+    [self createNavBtn:5 title:@"植物" action:@selector(stopThinkBtnOnClick:) bg:1];
+    
+    //3. 模拟重启
+    [self createNavBtn:6 title:@"重启" action:@selector(resetBtnOnClick:) bg:0];
     
     //4. 神经网络可视化
     self.nvView = [[NVView alloc] initWithDelegate:[NVDelegate_He new]];
@@ -187,11 +156,36 @@
     [btn setTitle:theTC.stopThink ? @"动物" : @"植物" forState:UIControlStateNormal];
 }
 
+-(void) resetBtnOnClick:(UIButton*)btn{
+    [theTC clear];
+}
+
 -(void) startRefreshDotAnimation{
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         self.refreshDot.alpha = fabs(self.refreshDot.alpha - 1);
         [self startRefreshDotAnimation];
     });
+}
+
+/**
+ *  MARK:--------------------创建navBtn--------------------
+ *  @param index : 0=40, 1=82, 2=124, 3=166, 4=208, 5=250, 6=292
+ *  @param bg : 默认0绿,1红;
+ */
+-(void) createNavBtn:(NSInteger)index title:(NSString*)title action:(SEL)action bg:(int)bg{
+    //1. 数据准备;
+    CGFloat marginRight = index * 40 + 40 + index * 2;
+    CGFloat x = ScreenWidth - marginRight;
+    UIColor *bgColor = bg == 1 ? UIColorWithRGBHex(0xFFEEEE) : UIColorWithRGBHex(0xEEFFEE);
+    
+    //2. 创建btn;
+    UIButton *btn = [[UIButton alloc] initWithFrame:CGRectMake(x, StateBarHeight, 40, 20)];
+    [btn.titleLabel setFont:[UIFont systemFontOfSize:15]];
+    [btn setTitleColor:UIColorWithRGBHex(0x0000EE) forState:UIControlStateNormal];
+    [btn setBackgroundColor:bgColor];
+    [btn setTitle:title forState:UIControlStateNormal];
+    [btn addTarget:self action:action forControlEvents:UIControlEventTouchUpInside];
+    [self.window addSubview:btn];
 }
 
 //MARK:===============================================================

@@ -166,7 +166,7 @@
     //2. 收集所有解决方案候选集;
     NSArray *cansets = [SMGUtils convertArr:demand.pFos convertItemArrBlock:^NSArray *(AIMatchFoModel *obj) {
         AIFoNodeBase *pFo = [SMGUtils searchNode:obj.matchFo];
-        if (Log4Solution_Fast) NSLog(@"快思考候选集:F%ld effectDic{%ld:%@}",pFo.pointer.pointerId,pFo.count,CLEANSTR([pFo.effectDic objectForKey:@(pFo.count)]));
+        if (Log4Solution_Fast) NSLog(@"> F%ld itemCansets{%ld:%@}",pFo.pointer.pointerId,pFo.count,CLEANSTR([pFo.effectDic objectForKey:@(pFo.count)]));
         return [pFo.effectDic objectForKey:@(pFo.count)];
     }];
     
@@ -495,7 +495,7 @@
     cansets = [SMGUtils filterArr:cansets checkValid:^BOOL(AIEffectStrong *item) {
         return [TOUtils getEffectScore:item] > 0;
     }];
-    if (Log4Solution_Fast) NSLog(@"快思考候选集:F%ld effectDic{%ld:%@}",targetFo.pointer.pointerId,targetFoM.actionIndex,CLEANSTR(cansets));
+    if (Log4Solution_Fast) NSLog(@"> F%ld itemCansets{%ld:%@}",targetFo.pointer.pointerId,targetFoM.actionIndex,CLEANSTR(cansets));
     
     //3. 对候选集按有效率排序;
     NSArray *sortCansets = [SMGUtils sortBig2Small:cansets compareBlock:^double(AIEffectStrong *obj) {
