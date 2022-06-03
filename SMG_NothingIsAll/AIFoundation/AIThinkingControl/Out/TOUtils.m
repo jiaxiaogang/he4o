@@ -618,12 +618,12 @@
             if (cansetTargetIndex > -1) {
                 result = [AISolutionModel newWithCansetFo:cansetFo_p maskFo:maskFo.pointer frontMatchValue:frontMatchValue backMatchValue:backMatchValue cutIndex:cansetCutIndex targetIndex:cansetTargetIndex];
             }
+            if (!result) NSLog(@"itemCanset不适用当前场景:%ld",cansetFo_p.pointerId);
         }else{
             //11. 后段: R不判断后段;
             result = [AISolutionModel newWithCansetFo:cansetFo_p maskFo:maskFo.pointer frontMatchValue:frontMatchValue backMatchValue:1 cutIndex:cansetCutIndex targetIndex:cansetFo.count];
         }
     }
-    if (!result) NSLog(@"itemCanset不适用当前场景:%@",Pit2FStr(cansetFo_p));
     return result;
 }
 

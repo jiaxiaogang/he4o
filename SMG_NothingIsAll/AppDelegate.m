@@ -157,7 +157,11 @@
 }
 
 -(void) resetBtnOnClick:(UIButton*)btn{
+    [btn setTitle:@"成功" forState:UIControlStateNormal];
     [theTC clear];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [btn setTitle:@"重启" forState:UIControlStateNormal];
+    });
 }
 
 -(void) startRefreshDotAnimation{

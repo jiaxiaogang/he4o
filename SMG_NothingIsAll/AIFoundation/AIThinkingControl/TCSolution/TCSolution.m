@@ -164,9 +164,10 @@
     except_ps = ARRTOOK(except_ps);
     
     //2. 收集所有解决方案候选集;
+    NSLog(@"1. 收集快思考候选集");
     NSArray *cansets = [SMGUtils convertArr:demand.pFos convertItemArrBlock:^NSArray *(AIMatchFoModel *obj) {
         AIFoNodeBase *pFo = [SMGUtils searchNode:obj.matchFo];
-        if (Log4Solution_Fast) NSLog(@"> F%ld itemCansets{%ld:%@}",pFo.pointer.pointerId,pFo.count,CLEANSTR([pFo.effectDic objectForKey:@(pFo.count)]));
+        if (Log4Solution_Fast) NSLog(@"\tF%ld的第%ld帧取: %@",pFo.pointer.pointerId,pFo.count,CLEANSTR([pFo.effectDic objectForKey:@(pFo.count)]));
         return [pFo.effectDic objectForKey:@(pFo.count)];
     }];
     
@@ -182,7 +183,8 @@
     NSArray *sortCansets = [SMGUtils sortBig2Small:cansets compareBlock:^double(AIEffectStrong *obj) {
         return [TOUtils getEffectScore:obj];
     }];
-    NSLog(@"快cansets有效排序后:%@",CLEANSTR(sortCansets));
+    NSLog(@"2. 快cansets有效排序后:%ld条",sortCansets.count);
+    if (Log4Solution_Fast) for (AIEffectStrong *item in sortCansets) NSLog(@"\tH%ldN%ld %@",item.hStrong,item.nStrong,Pit2FStr(item.solutionFo));
     
     //4. 从前到后取有效的首条;
     for (AIEffectStrong *canset in sortCansets) {
@@ -201,7 +203,7 @@
         if (![AIScore FRS_Time:demand solutionModel:sModel]) continue;
         
         //8. 找到最佳方案;
-        if (Log4Solution) NSLog(@"快思考最佳结果:F%ld 有效率:%.2f (H%ldN%ld)",sModel.cansetFo.pointerId,sModel.effectScore,canset.hStrong,canset.nStrong);
+        if (Log4Solution) NSLog(@"3. 快思考最佳结果:F%ld 有效率:%.2f (H%ldN%ld)",sModel.cansetFo.pointerId,sModel.effectScore,canset.hStrong,canset.nStrong);
         return sModel;
     }
     return nil;
@@ -495,12 +497,14 @@
     cansets = [SMGUtils filterArr:cansets checkValid:^BOOL(AIEffectStrong *item) {
         return [TOUtils getEffectScore:item] > 0;
     }];
-    if (Log4Solution_Fast) NSLog(@"> F%ld itemCansets{%ld:%@}",targetFo.pointer.pointerId,targetFoM.actionIndex,CLEANSTR(cansets));
+    if (Log4Solution_Fast) NSLog(@"1. 快思考候选集F%ld的第%ld帧取:%@",targetFo.pointer.pointerId,targetFoM.actionIndex,CLEANSTR(cansets));
     
     //3. 对候选集按有效率排序;
     NSArray *sortCansets = [SMGUtils sortBig2Small:cansets compareBlock:^double(AIEffectStrong *obj) {
         return [TOUtils getEffectScore:obj];
     }];
+    NSLog(@"2. 快cansets有效排序后:%ld条",sortCansets.count);
+    if (Log4Solution_Fast) for (AIEffectStrong *item in sortCansets) NSLog(@"\tH%ldN%ld %@",item.hStrong,item.nStrong,Pit2FStr(item.solutionFo));
     
     //4. 从前到后取有效的首条;
     for (AIEffectStrong *canset in sortCansets) {
@@ -516,7 +520,7 @@
         if (![AIScore FRS_Time:hDemand solutionModel:sModel]) continue;
         
         //8. 找到最佳方案;
-        if (Log4Solution) NSLog(@"快思考最佳结果:F%ld 有效率:%.2f (H%ldN%ld)",sModel.cansetFo.pointerId,sModel.effectScore,canset.hStrong,canset.nStrong);
+        if (Log4Solution) NSLog(@"3. 快思考最佳结果:F%ld 有效率:%.2f (H%ldN%ld)",sModel.cansetFo.pointerId,sModel.effectScore,canset.hStrong,canset.nStrong);
         return sModel;
     }
     return nil;
