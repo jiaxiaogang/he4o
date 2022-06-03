@@ -134,7 +134,9 @@
     
     //2. ============== 对所有等待中的任务尝试处理 (R-任务); ==============
     for (ReasonDemandModel *root in theTC.outModelManager.getAllDemand) {
+        NSLog(@"222222 a");
         NSArray *waitModels = [TOUtils getSubOutModels_AllDeep:root validStatus:@[@(TOModelStatus_ActYes)]];
+        NSLog(@"222222 b");
         for (TOFoModel *waitModel in waitModels) {
             
             //3. wait不为fo解决方案时不处理;
@@ -165,14 +167,18 @@
                     //7. root设回runing
                     demand.status = TOModelStatus_Runing;
                     root.status = TOModelStatus_Runing;
+                    NSLog(@"222222 c");
                 }else{
+                    NSLog(@"222222 d");
                     //8. solutionFo反馈好时,baseDemand为完成状态;
                     waitModel.baseOrGroup.status = TOModelStatus_Finish;
                 }
                 [theTV updateFrame];
             }
         }
+        NSLog(@"222222 e");
     }
+    NSLog(@"222222");
     
     //2. ============== 对Demand反馈判断 ==============
     //a. 收集所有工作记忆树的R任务;
@@ -183,6 +189,7 @@
         }];
         [allRDemands addObjectsFromArray:singleRDemands];
     }
+    NSLog(@"33333");
     
     //b. 反馈匹配 => 同区判断 且 都为负价值 (比如撞疼,确定疼了);
     for (ReasonDemandModel *rDemand in allRDemands) {
@@ -195,10 +202,12 @@
             }
         }
     }
+    NSLog(@"4444");
     
     //3. p任务;
     DebugE();
     [TCForecast pForecast:cmvNode];
+    NSLog(@"55555");
 }
 
 @end
