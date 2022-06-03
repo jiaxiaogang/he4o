@@ -155,21 +155,22 @@
 /**
  *  MARK:--------------------R快思考--------------------
  *  @desc 习惯 (参考26142);
+ *  @version
+ *      2022.06.03: 将cansets中hnStrong合并,一直这么设计的,今发现写没实现,补上;
  */
 +(AISolutionModel*) rSolution_Fast:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps{
     //1. 数据准备;
     except_ps = ARRTOOK(except_ps);
-    NSMutableArray *cansets = [[NSMutableArray alloc] init];
     
     //2. 收集所有解决方案候选集;
-    for (AIMatchFoModel *pFoModel in demand.pFos) {
-        AIFoNodeBase *pFo = [SMGUtils searchNode:pFoModel.matchFo];
-        NSArray *itemCansets = [pFo.effectDic objectForKey:@(pFo.count)];
-        [cansets addObjectsFromArray:itemCansets];
-        if (Log4Solution_Fast) NSLog(@"快思考候选集:F%ld effectDic{%ld:%@}",pFo.pointer.pointerId,pFo.count,CLEANSTR([SMGUtils filterArr:itemCansets checkValid:^BOOL(AIEffectStrong *item) {
-            return item.hStrong > 0;
-        }]));
-    }
+    NSArray *cansets = [SMGUtils convertArr:demand.pFos convertItemArrBlock:^NSArray *(AIMatchFoModel *obj) {
+        AIFoNodeBase *pFo = [SMGUtils searchNode:obj.matchFo];
+        if (Log4Solution_Fast) NSLog(@"快思考候选集:F%ld effectDic{%ld:%@}",pFo.pointer.pointerId,pFo.count,CLEANSTR([pFo.effectDic objectForKey:@(pFo.count)]));
+        return [pFo.effectDic objectForKey:@(pFo.count)];
+    }];
+    
+    //2. 将同cansetFo的effStrong累计;
+    cansets = [TOUtils mergeCansets:cansets];
     
     //2. 过滤掉有效率为0的无效候选集;
     cansets = [SMGUtils filterArr:cansets checkValid:^BOOL(AIEffectStrong *item) {

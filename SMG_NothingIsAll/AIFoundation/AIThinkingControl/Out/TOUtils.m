@@ -686,4 +686,24 @@
     return endHavActYes;
 }
 
+/**
+ *  MARK:--------------------将cansets中同fo的strong合并--------------------
+ */
++(NSArray*) mergeCansets:(NSArray*)protoCansets{
+    NSMutableDictionary *cansetsDic = [[NSMutableDictionary alloc] init];
+    for (AIEffectStrong *item in protoCansets) {
+        //a. 取旧;
+        id key = @(item.solutionFo.pointerId);
+        AIEffectStrong *old = [cansetsDic objectForKey:key];
+        if (!old) old = [AIEffectStrong newWithSolutionFo:item.solutionFo];
+        
+        //b. 更新;
+        old.hStrong += item.hStrong;
+        old.nStrong += item.nStrong;
+        [cansetsDic setObject:old forKey:key];
+    }
+    return cansetsDic.allValues;
+}
+
+
 @end

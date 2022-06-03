@@ -149,6 +149,7 @@
  */
 +(CGFloat) getEffectScore:(AIFoNodeBase*)demandFo effectIndex:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo;
 +(CGFloat) getEffectScore:(AIEffectStrong*)strong;
++(AIEffectStrong*) getEffectStrong:(AIFoNodeBase*)demandFo effectIndex:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo;
 +(NSString*) getEffectDesc:(AIFoNodeBase*)demandFo effectIndex:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo;
 
 
@@ -180,5 +181,10 @@
  *  MARK:--------------------检查某toModel的末枝有没有ActYes状态--------------------
  */
 +(BOOL) endHavActYes:(TOModelBase*)curModel;
+
+/**
+ *  MARK:--------------------将cansets中同fo的strong合并--------------------
+ */
++(NSArray*) mergeCansets:(NSArray*)protoCansets;
 
 @end
