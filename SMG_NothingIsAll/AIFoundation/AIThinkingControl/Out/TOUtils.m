@@ -623,6 +623,7 @@
             result = [AISolutionModel newWithCansetFo:cansetFo_p maskFo:maskFo.pointer frontMatchValue:frontMatchValue backMatchValue:1 cutIndex:cansetCutIndex targetIndex:cansetFo.count];
         }
     }
+    if (!result) NSLog(@"itemCanset不适用当前场景:%@",Pit2FStr(cansetFo_p));
     return result;
 }
 

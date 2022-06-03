@@ -157,6 +157,7 @@
  *  @desc 习惯 (参考26142);
  *  @version
  *      2022.06.03: 将cansets中hnStrong合并,一直这么设计的,今发现写没实现,补上;
+ *      2022.06.03: 排除掉候选方案不适用当前场景的 (参考26192);
  */
 +(AISolutionModel*) rSolution_Fast:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps{
     //1. 数据准备;
@@ -193,10 +194,8 @@
         AISolutionModel *sModel = [TOUtils compareRCansetFo:canset.solutionFo protoFo:demand.protoFo];
         sModel.effectScore = [TOUtils getEffectScore:canset];
         
-        //TODOTOMORROW20220603: 查R快思考中,候选集在对比fo结果为Nil的BUG;
-        if (!sModel) {
-            [TOUtils compareRCansetFo:canset.solutionFo protoFo:demand.protoFo];
-        }
+        //6. 排除掉候选方案不适用当前场景的 (参考26192);
+        if (!sModel) continue;
             
         //7. 时间不急评价: 不急 = 解决方案所需时间 <= 父任务能给的时间 (参考:24057-方案3,24171-7);
         if (![AIScore FRS_Time:demand solutionModel:sModel]) continue;
