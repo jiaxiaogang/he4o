@@ -391,7 +391,7 @@
 -(CGPoint) getBirdBirthPos{
     if (theApp.birthPosMode == 1) {
         return [self getBirdBirthPos_RandomCenter];
-    }else if(theApp.birthPosMode == 1){
+    }else if(theApp.birthPosMode == 2){
         return [self getBirdBirthPos_Center];
     }else{
         return [self getBirdBirthPos_Random];
@@ -407,7 +407,7 @@
  */
 -(CGPoint) getBirdBirthPos_Random{
     //1. 取随机值 (范围-80到80);
-    NSInteger areaW = 260;
+    NSInteger areaW = ScreenWidth;
     NSInteger areaH = ScreenHeight - 100;
     float randomX = (arc4random() % areaW) - areaW * 0.5f;
     float randomY = (arc4random() % areaH) - areaH * 0.5f;
@@ -431,7 +431,7 @@
  */
 -(CGPoint) getBirdBirthPos_RandomCenter{
     //1. 取根值10;
-    CGFloat areaW = 200;
+    CGFloat areaW = 400;
     CGFloat areaH = 300;
     float modW = sqrtf(areaW * 0.5f);
     float modH = sqrtf(areaH * 0.5f);

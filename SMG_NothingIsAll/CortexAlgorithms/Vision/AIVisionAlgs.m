@@ -19,6 +19,7 @@
  *  @version
  *      2021.09.07: 取消rect限制 (因为木棒或鸟都有可能飞出屏幕);
  *      2021.09.14: 废弃速度,因为HE视觉是离散的,速度不重要 (参考24017-问题1);
+ *      2022.06.04: 废弃X值和方向,新增X距 (参考26196);
  */
 +(void) commitView:(UIView*)selfView targetView:(UIView*)targetView rect:(CGRect)rect{
     //1. 数据准备;
@@ -43,14 +44,15 @@
             //model.colorBlue = [self colorBlue:curView];
             //model.radius = [self radius:curView];
             //model.speed = [self speed:curView];
-            model.direction = [self direction:selfView target:curView];
+            //model.direction = [self direction:selfView target:curView];
             model.distance = [self distance:selfView target:curView];
+            model.distanceX = [self distanceX:selfView target:curView];
             model.distanceY = [self distanceY:selfView target:curView];
             model.border = [self border:curView];
-            model.posX = [self posX:curView];
+            //model.posX = [self posX:curView];
             model.posY = [self posY:curView];
             //NSLog(@"视觉目标 [距离:%ld 角度:%f 宽:%f 高:%f 皮:%f 圆角:%f]",(long)model.distance,model.direction,model.sizeWidth,model.sizeHeight,model.border,model.radius);
-            NSLog(@"视觉目标 [距离:%ld 角度:%f 高:%ld 皮:%ld]",(long)model.distance,model.direction,model.sizeHeight,model.border);
+            NSLog(@"视觉目标 [距:%ld X距:%ld Y值:%ld Y距:%ld 高:%ld 皮:%ld]",model.distance,model.distanceX,model.posY,model.distanceY,model.sizeHeight,model.border);
             NSMutableDictionary *modelDic = [NSObject getDic:model containParent:true];
             //for (NSString *key in modelDic.allKeys) {
             //    if ([NUMTOOK([modelDic objectForKey:key]) isEqualToNumber:@(0)]) {
@@ -219,6 +221,9 @@
     //}
     ////4. 有重叠时,直接返回0;
     //return 0;
+}
++(NSInteger) distanceX:(UIView*)selfView target:(UIView*)target{
+    return selfView.showX - target.showX;
 }
 
 //border
