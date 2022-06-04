@@ -93,7 +93,10 @@
 }
 
 - (CGRect)showFrame {
-    return self.layer.presentationLayer.frame;
+    if (ARRISOK(self.layer.animationKeys)) {
+        return self.layer.presentationLayer.frame;
+    }
+    return self.frame;
 }
 
 - (CGPoint) showOrigin{
