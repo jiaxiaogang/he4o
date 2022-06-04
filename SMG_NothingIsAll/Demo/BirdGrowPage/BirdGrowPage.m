@@ -69,7 +69,8 @@
 -(void) initData{
     [super initData];
     [theRT regist:kFlySEL target:self selector:@selector(touchWingBtnOnClick:)];
-    [theRT regist:kWoodSEL target:self selector:@selector(throwWoodOnClick:)];
+    [theRT regist:kWoodLeftSEL target:self selector:@selector(throwWood_Left)];
+    [theRT regist:kWoodRdmSEL target:self selector:@selector(throwWood_Rdm)];
 }
 
 //MARK:===============================================================
@@ -273,27 +274,47 @@
  *      2021.01.16: 用NSTimer替代after延时,因为after时间不准,总会推后150ms左右,而timer非常准时;
  *      2021.02.26: NSTimer改为SEL方式,因为block方式在模拟器运行闪退;
  *      2022.04.27: 将扔出木棒速度变慢 (参考25222);
+ *      2022.06.04: 支持随机点扔出木棒 (参考26196-方案2);
  */
 - (IBAction)throwWoodOnClick:(id)sender {
+    [self throwWood_Left];
+}
+-(void) throwWood_Rdm{
+    int randomX = arc4random() % (int)ScreenWidth;
+    [self throwWood:randomX invoked:^{
+        [theRT invoked:kWoodRdmSEL];
+    }];
+}
+-(void) throwWood_Left{
+    [self throwWood:0 invoked:^{
+        [theRT invoked:kWoodLeftSEL];
+    }];
+}
+
+-(void) throwWood:(CGFloat)x invoked:(void(^)())invoked{
     //0. 鸟不在,则跳过;
     if ([self birdOut]) {
-        [theRT invoked:kWoodSEL];
+        invoked();
         return;
     }
     
     //1. 复位木棒
-    [self.woodView reset:false];
+    [self.woodView reset:false x:x];
     
     //2. 扔前木棒视觉帧
     DemoLog(@"木棒扔前视觉");
     [self.birdView see:self.woodView];
     
     //3. 预计撞到的时间 (撞需距离 / 总扔距离 * 总扔时间);
-    CGFloat hitTime = ((self.birdView.showMinX - self.woodView.showMaxX) / ScreenWidth) * ThrowTime;
+    CGFloat allDistance = ScreenWidth - self.woodView.x;
+    CGFloat allTime = allDistance / ScreenWidth * ThrowTime;
+    CGFloat frontTime = MAX(((self.birdView.showMinX - self.woodView.showMaxX) / allDistance) * allTime, 0);
+    CGFloat backTime = allTime - frontTime;
+    CGFloat speed = allTime > 0 ? allDistance / allTime : 0;
     
     //4. 扔出
-    DemoLog(@"扔木棒 (预撞hitTime:%f)",hitTime);
-    [self.woodView throw:hitTime hitBlock:^BOOL{
+    DemoLog(@"扔木棒 (frontTime:%f backTime:%f)",frontTime,backTime);
+    [self.woodView throw:x frontTime:frontTime backTime:backTime speed:speed hitBlock:^BOOL{
         BOOL xHited = self.woodView.showMaxX >= self.birdView.showMinX;
         BOOL YHit1 = self.birdView.showMinY < self.woodView.showMaxY;
         BOOL YHit2 = self.birdView.showMaxY > self.woodView.showMinY;
@@ -309,7 +330,7 @@
         }
         NSLog(@"---> failure 没撞到");
         return false;
-    }];
+    } invoked:invoked];
 }
 
 - (IBAction)stopWoodBtnOnClick:(id)sender {

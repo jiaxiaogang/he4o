@@ -99,6 +99,8 @@
         return STRFORMAT(@"向%@",valueStr);
     }else if ([@"distance" isEqualToString:value_p.dataSource]) {
         return STRFORMAT(@"距%@",valueStr);
+    }else if ([@"distanceX" isEqualToString:value_p.dataSource]) {
+        return STRFORMAT(@"X距%@",valueStr);
     }else if ([@"distanceY" isEqualToString:value_p.dataSource]) {
         return STRFORMAT(@"Y距_%@_%@",[TVUtil distanceYDesc:value],valueStr);
     }else if ([@"speed" isEqualToString:value_p.dataSource]) {

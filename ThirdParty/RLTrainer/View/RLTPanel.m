@@ -159,8 +159,10 @@
         return @"页 - 进入成长页";
     }else if ([kFlySEL isEqualToString:queue]) {
         return @"飞 - 随机";
-    }else if ([kWoodSEL isEqualToString:queue]) {
+    }else if ([kWoodLeftSEL isEqualToString:queue]) {
         return @"棒 - 扔木棒";
+    }else if ([kWoodRdmSEL isEqualToString:queue]) {
+        return @"棒 - 随机扔木棒";
     }else if ([kMainPageSEL isEqualToString:queue]) {
         return @"页 - 回主页";
     }else if ([kClearTCSEL isEqualToString:queue]) {
@@ -168,7 +170,7 @@
     }else if ([kBirthPosRdmSEL isEqualToString:queue]) {
         return @"参 - 出生地随机";
     }else if ([kBirthPosRdmCentSEL isEqualToString:queue]) {
-        return @"参 - 出生地随机偏路上";
+        return @"参 - 出生地随机偏路中";
     }
     return @"";
 }
@@ -298,28 +300,25 @@
     [self close];
 }
 
+/**
+ *  MARK:--------------------学被撞--------------------
+ *  @desc
+ *      1. 说明: 学被撞 (出生随机位置,被随机扔出的木棒撞 x 300);
+ *      2. 作用: 主要用于训练识别功能 (耗时约50min) (参考26197-1);
+ */
 - (IBAction)loadHitBtnOnClick:(id)sender {
-    [self trainer4];
+    [theRT queue1:kBirthPosRdmSEL];
+    [theRT queueN:@[kGrowPageSEL,kWoodRdmSEL,kMainPageSEL,kClearTCSEL] count:300];
 }
 
-- (IBAction)loadFlyBtnOnClick:(id)sender {
-    [self trainer3];
-}
-
-//MARK:===============================================================
-//MARK:                     < 训练项 >
-//MARK:===============================================================
-//步骤参考26011-基础版强化训练;
--(void) trainer1{
-    [theRT queue1:kGrowPageSEL];
-    [theRT queueN:@[kFlySEL,kWoodSEL] count:5];
-}
-//步骤参考xxxxx
--(void) trainer2{
-    [theRT queueN:@[kGrowPageSEL,kFlySEL,kFlySEL,kWoodSEL,kMainPageSEL,kClearTCSEL] count:20];
-}
+/**
+ *  MARK:--------------------学飞躲--------------------
+ *  @desc
+ *      1. 说明: 学飞躲 (出生随机偏中位置,左棒,随机飞x2,左棒 x 100);
+ *      2. 作用: 从中习得防撞能力,躲避危险;
+ */
 //步骤参考26029-加长版强化加训 (参考26031-2);
--(void) trainer3{
+- (IBAction)loadFlyBtnOnClick:(id)sender {
     //0. 无日志模式;
     //[self.delegate rltPanel_setNoLogMode:true];
     
@@ -335,7 +334,7 @@
         
         //2. 随机飞或扔木棒,五步;
         for (int i = 0; i < 5; i++) {
-            NSArray *randomNames = @[kFlySEL,kWoodSEL];
+            NSArray *randomNames = @[kFlySEL,kWoodLeftSEL];
             int randomIndex = arc4random() % 2;
             NSString *randomName = ARR_INDEX(randomNames, randomIndex);
             [names addObject:randomName];
@@ -348,11 +347,20 @@
         [theRT queueN:names count:1];
     }
 }
-//步骤: 先在各位置被扔木棒200轮,主要用于训练识别功能 (耗时约40min) (参考26031-1);
--(void) trainer4{
-    [theRT queue1:kBirthPosRdmSEL];
-    [theRT queueN:@[kGrowPageSEL,kWoodSEL,kMainPageSEL,kClearTCSEL] count:200];
+
+//MARK:===============================================================
+//MARK:                     < 训练项 >
+//MARK:===============================================================
+//步骤参考26011-基础版强化训练;
+-(void) trainer1{
+    [theRT queue1:kGrowPageSEL];
+    [theRT queueN:@[kFlySEL,kWoodLeftSEL] count:5];
 }
+//步骤参考xxxxx
+-(void) trainer2{
+    [theRT queueN:@[kGrowPageSEL,kFlySEL,kFlySEL,kWoodLeftSEL,kMainPageSEL,kClearTCSEL] count:20];
+}
+
 /**
  *  MARK:-------------------- 训练躲避 --------------------
  *  @version
@@ -364,7 +372,7 @@
     [theRT queue1:kBirthPosRdmCentSEL];
     
     //1. 加长版训练100轮
-    [theRT queueN:@[kGrowPageSEL,kWoodSEL,kFlySEL,kFlySEL,kWoodSEL,kMainPageSEL,kClearTCSEL] count:100];
+    [theRT queueN:@[kGrowPageSEL,kWoodLeftSEL,kFlySEL,kFlySEL,kWoodLeftSEL,kMainPageSEL,kClearTCSEL] count:100];
 }
 
 //MARK:===============================================================

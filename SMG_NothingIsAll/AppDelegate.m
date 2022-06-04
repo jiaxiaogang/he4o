@@ -195,17 +195,17 @@
 //MARK:===============================================================
 //MARK:                     < 小鸟出生地配置 >
 //MARK:===============================================================
-- (void)setBirthPosMode_RdmCent{
-    self.birthPosMode = 1;
-    [theRT invoked:kBirthPosRdmCentSEL];//标记执行完成;
-}
 - (void)setBirthPosMode_Rdm{
     self.birthPosMode = 0;
-    [theRT invoked:kBirthPosRdmSEL];    //标记执行完成;
+    [theRT invoked:kBirthPosRdmSEL];
+}
+- (void)setBirthPosMode_RdmCent{
+    self.birthPosMode = 1;
+    [theRT invoked:kBirthPosRdmCentSEL];
 }
 - (void)setBirthPosMode_Cent{
     self.birthPosMode = 2;
-    [theRT invoked:kBirthPosCentSEL];   //标记执行完成;
+    [theRT invoked:kBirthPosCentSEL];
 }
 
 @end
