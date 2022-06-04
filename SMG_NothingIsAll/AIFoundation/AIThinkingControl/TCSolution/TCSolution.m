@@ -212,6 +212,8 @@
 /**
  *  MARK:--------------------R慢思考--------------------
  *  @desc 思考求解 (参考26127);
+ *  @version
+ *      2022.06.04: 修复结果与当前场景相差甚远BUG: 分三级排序窄出 (参考26194 & 26195);
  */
 +(AISolutionModel*) rSolution_Slow:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps{
     //0. 数据准备;
@@ -275,24 +277,22 @@
     NSLog(@"第8步 排除不应期:%ld",solutionModels.count);//测时xx条
     
     //8. 时间不急评价: 不急 = 解决方案所需时间 <= 父任务能给的时间 (参考:24057-方案3,24171-7);
-    [SMGUtils filterArr:solutionModels checkValid:^BOOL(AISolutionModel *item) {
+    solutionModels = [SMGUtils filterArr:solutionModels checkValid:^BOOL(AISolutionModel *item) {
         return [AIScore FRS_Time:demand solutionModel:item];
     }];
     NSLog(@"第9步 排除FRSTime来不及的:%ld",solutionModels.count);//测时xx条
     
     //6. 计算衰后stableScore (参考26128-2-1);
-    cansetFos = [SMGUtils convertArr:solutionModels convertBlock:^id(AISolutionModel *obj) {
+    NSArray *outOfFos = [SMGUtils convertArr:solutionModels convertBlock:^id(AISolutionModel *obj) {
         return obj.cansetFo;
     }];
     for (AISolutionModel *model in solutionModels) {
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:model.cansetFo];
-        model.stableScore = [TOUtils getColStableScore:cansetFo outOfFos:cansetFos startSPIndex:model.cutIndex + 1 endSPIndex:model.targetIndex];
+        model.stableScore = [TOUtils getColStableScore:cansetFo outOfFos:outOfFos startSPIndex:model.cutIndex + 1 endSPIndex:model.targetIndex];
     }
     
     //7. 根据候选集综合分排序 (参考26128-2-2);
-    NSArray *sortModels = [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
-        return obj.stableScore * obj.frontMatchValue;
-    }];
+    NSArray *sortModels = [TOUtils solutionSlow_SortNarrow:solutionModels needBack:false];
     
     //8. 取最佳解决方案;
     result = ARR_INDEX(sortModels, 0);
@@ -303,10 +303,8 @@
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:model.cansetFo];
         if (Log4Solution_Slow) NSLog(@"> %@\n\t评分:%.2f = 前匹配:%.2f x 中稳定:%.2f >> %@",Pit2FStr(model.cansetFo),solutionScore,model.frontMatchValue,model.stableScore,CLEANSTR(cansetFo.spDic));
     }
-    CGFloat score = result.stableScore * result.frontMatchValue;
-    NSInteger resultIndex = [sortModels indexOfObject:result];
     AIFoNodeBase *resultFo = [SMGUtils searchNode:result.cansetFo];
-    NSLog(@"从第%ld取得慢思考最佳结果:F%ld 评分:%.2f = 前匹配:%.2f x 中稳定:%.2f %@",resultIndex,result.cansetFo.pointerId,score,result.frontMatchValue,result.stableScore,CLEANSTR(resultFo.spDic));
+    NSLog(@"取得慢思考最佳结果:F%ld 评分 = 前匹配:%.2f x 中稳定:%.2f %@",result.cansetFo.pointerId,result.frontMatchValue,result.stableScore,CLEANSTR(resultFo.spDic));
     return result;
 }
 
@@ -530,6 +528,8 @@
 /**
  *  MARK:--------------------H慢思考--------------------
  *  @desc 前段匹配,加工后段,H目标静默;
+ *  @version
+ *      2022.06.04: 修复结果与当前场景相差甚远BUG: 分三级排序窄出 (参考26194 & 26195);
  */
 +(AISolutionModel*) hSolution_Slow:(HDemandModel *)hDemand except_ps:(NSArray*)except_ps{
     //0. 数据准备;
@@ -586,25 +586,22 @@
     NSLog(@"第7步 排除不应期:%ld",solutionModels.count);//测时xx条
     
     //8. 对下一帧做时间不急评价: 不急 = 解决方案所需时间 <= 父任务能给的时间 (参考:24057-方案3,24171-7);
-    [SMGUtils filterArr:solutionModels checkValid:^BOOL(AISolutionModel *item) {
+    solutionModels = [SMGUtils filterArr:solutionModels checkValid:^BOOL(AISolutionModel *item) {
         return [AIScore FRS_Time:hDemand solutionModel:item];
     }];
-    
     NSLog(@"第8步 排除FRSTime来不及的:%ld",solutionModels.count);//测时xx条
     
     //6. 计算衰后stableScore (参考26161-5);
-    cansetFos = [SMGUtils convertArr:solutionModels convertBlock:^id(AISolutionModel *obj) {
+    NSArray *outOfFos = [SMGUtils convertArr:solutionModels convertBlock:^id(AISolutionModel *obj) {
         return obj.cansetFo;
     }];
     for (AISolutionModel *model in solutionModels) {
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:model.cansetFo];
-        model.stableScore = [TOUtils getColStableScore:cansetFo outOfFos:cansetFos startSPIndex:model.cutIndex + 1 endSPIndex:model.targetIndex];
+        model.stableScore = [TOUtils getColStableScore:cansetFo outOfFos:outOfFos startSPIndex:model.cutIndex + 1 endSPIndex:model.targetIndex];
     }
     
     //7. 根据候选集综合分排序 (参考26161-4);
-    NSArray *sortModels = [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
-        return obj.stableScore * obj.frontMatchValue * obj.backMatchValue;
-    }];
+    NSArray *sortModels = [TOUtils solutionSlow_SortNarrow:solutionModels needBack:true];
     
     //8. 取最佳解决方案;
     result = ARR_INDEX(sortModels, 0);
@@ -615,10 +612,8 @@
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:model.cansetFo];
         if (Log4Solution_Slow) NSLog(@"> %@\n\t评分:%.2f = 前匹配:%.2f x 中稳定:%.2f x 后相近:%.2f >> %@",Pit2FStr(model.cansetFo),solutionScore,model.frontMatchValue,model.stableScore,model.backMatchValue,CLEANSTR(cansetFo.spDic));
     }
-    CGFloat score = result.stableScore * result.frontMatchValue * result.backMatchValue;
-    NSInteger resultIndex = [sortModels indexOfObject:result];
     AIFoNodeBase *resultFo = [SMGUtils searchNode:result.cansetFo];
-    NSLog(@"从第%ld取得慢思考最佳结果:F%ld 评分:%.2f = 前匹配:%.2f x 中稳定:%.2f x后相近:%.2f %@",resultIndex,result.cansetFo.pointerId,score,result.frontMatchValue,result.stableScore,result.backMatchValue,CLEANSTR(resultFo.spDic));
+    NSLog(@"取得慢思考最佳结果:F%ld 评分 = 前匹配:%.2f x 中稳定:%.2f x后相近:%.2f %@",result.cansetFo.pointerId,result.frontMatchValue,result.stableScore,result.backMatchValue,CLEANSTR(resultFo.spDic));
     return result;
 }
 

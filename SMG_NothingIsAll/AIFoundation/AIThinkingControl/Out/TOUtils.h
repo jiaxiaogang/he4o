@@ -170,12 +170,23 @@
  */
 +(CGFloat) getColSPScore:(AIFoNodeBase*)fo outOfFos:(NSArray*)outOfFo_ps startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex;
 
+
+//MARK:===============================================================
+//MARK:                     < 思考算法 >
+//MARK:===============================================================
+
 /**
  *  MARK:--------------------对比节点相同度--------------------
  */
 +(AISolutionModel*) compareRCansetFo:(AIKVPointer*)cansetFo_p protoFo:(AIKVPointer*)protoFo_p;
 +(AISolutionModel*) compareHCansetFo:(AIKVPointer*)cansetFo_p targetFo:(TOFoModel*)targetFoM;
 +(CGFloat) compareCansetValue:(AIKVPointer*)cansetV_p protoValue:(AIKVPointer*)protoV_p;
+
+/**
+ *  MARK:--------------------慢思考排序窄出--------------------
+ *  @param needBack : R时现不需要传false(backMatchValue全是1), H时需要传true;
+ */
++(NSArray*) solutionSlow_SortNarrow:(NSArray*)solutionModels needBack:(BOOL)needBack;
 
 /**
  *  MARK:--------------------检查某toModel的末枝有没有ActYes状态--------------------

@@ -515,6 +515,10 @@
     return [ThinkingUtils havDemand:fo.cmvNode_p] ? 1 - stableScore : stableScore;
 }
 
+//MARK:===============================================================
+//MARK:                     < 思考算法 >
+//MARK:===============================================================
+
 /**
  *  MARK:--------------------时序对比--------------------
  *  @desc 初步对比候选集是否适用于protoFo (参考26128-第1步);
@@ -673,6 +677,39 @@
     double span = [AINetIndex getIndexSpan:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];
     double nearV = (span == 0) ? 1 : (1 - delta / span);
     return nearV;
+}
+
+/**
+ *  MARK:--------------------慢思考排序窄出--------------------
+ *  @desc 分三步排序窄出 (参考26194 & 26195);
+ *  @param needBack : R时现不需要传false(backMatchValue全是1), H时需要传true;
+ */
++(NSArray*) solutionSlow_SortNarrow:(NSArray*)solutionModels needBack:(BOOL)needBack{
+    //1. 后匹配排序窄出 (取50% & 限制0-40) (参考26195-TODO1);
+    if (needBack) {
+        int backLimit = MAX(0, MIN(40, solutionModels.count * 0.5f));
+        NSArray *backSorts = [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
+            return obj.backMatchValue;
+        }];
+        solutionModels = ARR_SUB(backSorts, 0, backLimit);
+    }
+    
+    //2. 中稳定排序窄出 (取50% & 最小3-20) (参考26195-TODO2);
+    int midLimit = MAX(0, MIN(40, solutionModels.count * 0.5f));
+    NSArray *midSorts = [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
+        return obj.stableScore;
+    }];
+    solutionModels = ARR_SUB(midSorts, 0, midLimit);
+    
+    //3. 前匹配排序窄出 (取前3条) (参考26195-TODO3);
+    int frontLimit = 3;
+    NSArray *frontSorts = [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
+        return obj.stableScore;
+    }];
+    solutionModels = ARR_SUB(frontSorts, 0, frontLimit);
+    
+    //4. 返回;
+    return solutionModels;
 }
 
 /**
