@@ -16,6 +16,7 @@
  *      2021.09.14: 废弃速度,因为HE视觉是离散的,速度不重要 (参考24017-问题1);
  *      2022.06.04: 加上X距,废弃posX和方向 (参考26196-方案3);
  *      2022.06.05: 回退26196-方案3 (废弃X距,打开posX和方向) (参考26196-尝试1);
+ *      2022.06.05: 太近时方向不稳定,所以废弃,改成X距 (参考26196-尝试3-结果);
  */
 @interface AIVisionAlgsModel : NSObject
 
@@ -35,11 +36,11 @@
 //@property (assign,nonatomic) NSInteger speed;
 
 //direction
-@property (assign,nonatomic) CGFloat direction;
+//@property (assign,nonatomic) CGFloat direction;
 
 //distance
 @property (assign,nonatomic) NSInteger distance;
-//@property (assign,nonatomic) NSInteger distanceX;
+@property (assign,nonatomic) NSInteger distanceX;
 @property (assign,nonatomic) NSInteger distanceY;
 
 //border

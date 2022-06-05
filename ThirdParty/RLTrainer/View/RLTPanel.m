@@ -305,10 +305,13 @@
  *  @desc
  *      1. 说明: 学被撞 (出生随机位置,被随机扔出的木棒撞 x 300);
  *      2. 作用: 主要用于训练识别功能 (耗时约50min) (参考26197-1);
+ *  @version
+ *      2022.06.05: 调整 (参考26197-1&2);
  */
 - (IBAction)loadHitBtnOnClick:(id)sender {
     [theRT queue1:kBirthPosRdmSEL];
-    [theRT queueN:@[kGrowPageSEL,kWoodRdmSEL,kMainPageSEL,kClearTCSEL] count:300];
+    [theRT queueN:@[kGrowPageSEL,kWoodRdmSEL,kMainPageSEL,kClearTCSEL] count:200];
+    [theRT queueN:@[kGrowPageSEL,kWoodLeftSEL,kMainPageSEL,kClearTCSEL] count:100];
 }
 
 /**
