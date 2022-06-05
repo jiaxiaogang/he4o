@@ -93,6 +93,7 @@
 		085F8E1D27EEC46A00836F21 /* TVUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 085F8E1C27EEC46A00836F21 /* TVUtil.m */; };
 		0860A3BB22C9851800A48682 /* CustomAddNodeWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 0860A3BA22C9851800A48682 /* CustomAddNodeWindow.m */; };
 		0860A3BD22C9859200A48682 /* CustomAddNodeWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0860A3BC22C9859200A48682 /* CustomAddNodeWindow.xib */; };
+		08616986284CF2D300A39473 /* TCSolutionUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 08616985284CF2D300A39473 /* TCSolutionUtil.m */; };
 		0864936127E216B5003EF661 /* TOMVisionNodeBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 0864936027E216B5003EF661 /* TOMVisionNodeBase.m */; };
 		086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */ = {isa = PBXBuildFile; fileRef = 086D93361F8CA782002BAF3F /* RuntimeInvoker.m */; };
 		0871C27626685D4800CB3889 /* TOModelVisionUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 0871C27526685D4800CB3889 /* TOModelVisionUtil.m */; };
@@ -366,6 +367,8 @@
 		0860A3B922C9851800A48682 /* CustomAddNodeWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomAddNodeWindow.h; sourceTree = "<group>"; };
 		0860A3BA22C9851800A48682 /* CustomAddNodeWindow.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomAddNodeWindow.m; sourceTree = "<group>"; };
 		0860A3BC22C9859200A48682 /* CustomAddNodeWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomAddNodeWindow.xib; sourceTree = "<group>"; };
+		08616984284CF2D300A39473 /* TCSolutionUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCSolutionUtil.h; sourceTree = "<group>"; };
+		08616985284CF2D300A39473 /* TCSolutionUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCSolutionUtil.m; sourceTree = "<group>"; };
 		0864935F27E216B5003EF661 /* TOMVisionNodeBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOMVisionNodeBase.h; sourceTree = "<group>"; };
 		0864936027E216B5003EF661 /* TOMVisionNodeBase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOMVisionNodeBase.m; sourceTree = "<group>"; };
 		086D93351F8CA782002BAF3F /* RuntimeInvoker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RuntimeInvoker.h; sourceTree = "<group>"; };
@@ -1065,6 +1068,15 @@
 			path = HE;
 			sourceTree = "<group>";
 		};
+		08616983284CF2B100A39473 /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				08616984284CF2D300A39473 /* TCSolutionUtil.h */,
+				08616985284CF2D300A39473 /* TCSolutionUtil.m */,
+			);
+			path = Util;
+			sourceTree = "<group>";
+		};
 		0877059E275373A700BA4EFB /* TCInput */ = {
 			isa = PBXGroup;
 			children = (
@@ -1113,6 +1125,7 @@
 		087705A3275373FA00BA4EFB /* TCSolution */ = {
 			isa = PBXGroup;
 			children = (
+				08616983284CF2B100A39473 /* Util */,
 				089A2DE92840F15400B66674 /* Model */,
 				087705B52753747300BA4EFB /* TCSolution.h */,
 				087705B62753747300BA4EFB /* TCSolution.m */,
@@ -1756,6 +1769,7 @@
 				087705B12753745D00BA4EFB /* TCForecast.m in Sources */,
 				0860A3BB22C9851800A48682 /* CustomAddNodeWindow.m in Sources */,
 				0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */,
+				08616986284CF2D300A39473 /* TCSolutionUtil.m in Sources */,
 				88E1F851211591E50036B616 /* DemandModel.m in Sources */,
 				0881965F21800F2B00D5DB36 /* BirdLivePage.m in Sources */,
 				0819F4F427583AA9007396D0 /* TCFeedback.m in Sources */,

@@ -25,6 +25,7 @@
 #import "ThinkingUtils.h"
 #import "TOUtils.h"
 #import "TIUtils.h"
+#import "TCSolutionUtil.h"
 #import "TOModelVision.h"
 #import "TOMVision2.h"
 
