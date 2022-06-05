@@ -72,6 +72,7 @@
     self.playing = true;
     self.speed = 0;
     self.changeIndex = 0;
+    self.stop = !tomV2Switch;
 }
 
 -(void) initDisplay{
@@ -128,7 +129,7 @@
  */
 -(void) updateFrame{
     //1. 数据检查;
-    if (theTC.outModelManager.getAllDemand.count <= 0) {
+    if (theTC.outModelManager.getAllDemand.count <= 0 || self.stop) {
         return;
     }
     

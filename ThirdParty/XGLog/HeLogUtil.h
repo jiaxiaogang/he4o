@@ -18,6 +18,11 @@
 +(NSArray*) filterByKeyword:(NSString*)keyword checkDatas:(NSArray*)checkDatas;
 
 /**
+ *  MARK:--------------------数据的标识--------------------
+ */
++(NSString*) idenByData:(NSMutableArray*)datas;
+
+/**
  *  MARK:--------------------NSData MD5--------------------
  */
 +(NSString *)md5ByData:(NSData*)data;

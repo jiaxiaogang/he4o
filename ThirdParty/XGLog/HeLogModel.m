@@ -15,7 +15,7 @@
 
 @property (strong, nonatomic) NSMutableArray *datas;
 @property (strong,nonatomic) NSTimer *timer;            //计时器
-@property (strong, nonatomic) NSString *diskDatasMd5;
+@property (strong, nonatomic) NSString *diskDataIden;   //现持久化数据的标识
 
 @end
 
@@ -32,7 +32,7 @@
 -(void) initData{
     //1. 初始化内存datas等;
     self.datas = [[NSMutableArray alloc] init];
-    self.timer = [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:cHeLog2DBInterval target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
     
     //2. 重新加载硬盘;
     [self reloadData];
@@ -52,7 +52,7 @@
     id file = [cache objectForKey:kFile_HeLog];
     [self.datas removeAllObjects];
     [self.datas addObjectsFromArray:file];
-    self.diskDatasMd5 = STRTOOK([HeLogUtil md5ByData:OBJ2DATA(self.datas)]);
+    self.diskDataIden = [HeLogUtil idenByData:self.datas];
 }
 
 /**
@@ -80,10 +80,14 @@
 //MARK:===============================================================
 //MARK:                     < privateMethod >
 //MARK:===============================================================
+
+/**
+ *  MARK:--------------------持久化--------------------
+ */
 - (void)notificationTimer{
     //1. md5去重,同样内容避免重复写硬盘;
-    NSString *memDatasMd5 = STRTOOK([HeLogUtil md5ByData:OBJ2DATA(self.datas)]);
-    if ([memDatasMd5 isEqualToString:self.diskDatasMd5]) {
+    NSString *memDatasIden = [HeLogUtil idenByData:self.datas];
+    if ([memDatasIden isEqualToString:self.diskDataIden]) {
         return;
     }
     
@@ -92,7 +96,7 @@
     [cache setObject:self.datas forKey:kFile_HeLog];
     
     //3. 记录硬盘日志文件的md5;
-    self.diskDatasMd5 = memDatasMd5;
+    self.diskDataIden = memDatasIden;
 }
 
 @end

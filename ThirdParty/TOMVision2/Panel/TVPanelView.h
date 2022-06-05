@@ -24,7 +24,7 @@
 
 @property (strong, nonatomic) NSMutableArray *models;   //所有帧数据 List<TOMVisionItemModel>
 @property (weak, nonatomic) id<TVPanelViewDelegate> delegate;//notnull
-@property (assign, nonatomic) BOOL stop;
+@property (assign, nonatomic) BOOL stop;                //功能开关
 
 -(void) updateFrame;
 -(void) getModel:(NSInteger)changeIndex complete:(void(^)(TOMVisionItemModel*,TOModelBase*))complete;

@@ -62,6 +62,7 @@
 
 -(void) initData{
     self.isOpen = false;
+    self.stop = !heLogSwitch;
     self.model = [[HeLogModel alloc] init];
     self.str = [[NSMutableString alloc] init];
 }

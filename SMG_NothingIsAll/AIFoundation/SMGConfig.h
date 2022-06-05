@@ -90,3 +90,11 @@
 #define cFoNarrowLimit 10
 #define cRFoNarrowLimit 2
 #define cSolutionNarrowLimit 5
+
+//MARK:===============================================================
+//MARK:                     < third & demo >
+//MARK:===============================================================
+#define cWedis2DBInterval 20
+#define cHeLog2DBInterval 20
+#define heLogSwitch false //heLog默认开关;
+#define tomV2Switch false //tv默认开关;

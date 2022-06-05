@@ -70,6 +70,19 @@
     return result;
 }
 
+/**
+ *  MARK:--------------------数据的标识--------------------
+ *  @version
+ *      xxxx.xx.xx: 初版: 使用md5=> STRTOOK([HeLogUtil md5ByData:OBJ2DATA(datas)]);
+ *      2022.06.05: v2使用末位时间戳;
+ *  @result notnull;
+ */
++(NSString*) idenByData:(NSMutableArray*)datas{
+    NSDictionary *lastDic = DICTOOK(ARR_INDEX_REVERSE(datas, 0));
+    long long lastTime = [NUMTOOK([lastDic objectForKey:kTime]) longLongValue];
+    return STRFORMAT(@"%lld",lastTime);
+}
+
 +(NSString *)md5ByData:(NSData*)data{
     //1: 创建一个MD5对象
     CC_MD5_CTX md5;
