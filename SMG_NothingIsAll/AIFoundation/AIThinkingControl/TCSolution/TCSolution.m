@@ -158,55 +158,80 @@
  *  @version
  *      2022.06.03: 将cansets中hnStrong合并,一直这么设计的,今发现写没实现,补上;
  *      2022.06.03: 排除掉候选方案不适用当前场景的 (参考26192);
+ *      2022.06.05: 支持三个阈值 (参考26199);
  */
 +(AISolutionModel*) rSolution_Fast:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps{
     //1. 数据准备;
     except_ps = ARRTOOK(except_ps);
     
     //2. 收集所有解决方案候选集;
-    NSLog(@"1. 收集快思考候选集");
     NSArray *cansets = [SMGUtils convertArr:demand.pFos convertItemArrBlock:^NSArray *(AIMatchFoModel *obj) {
         AIFoNodeBase *pFo = [SMGUtils searchNode:obj.matchFo];
         if (Log4Solution_Fast) NSLog(@"\tF%ld的第%ld帧取: %@",pFo.pointer.pointerId,pFo.count,CLEANSTR([pFo.effectDic objectForKey:@(pFo.count)]));
         return [pFo.effectDic objectForKey:@(pFo.count)];
     }];
+    NSLog(@"1. 收集快思考候选集:%ld",cansets.count);
     
     //2. 将同cansetFo的effStrong累计;
     cansets = [TOUtils mergeCansets:cansets];
+    NSLog(@"2. 按HNStrong合并后:%ld",cansets.count);
     
-    //2. 过滤掉有效率为0的无效候选集;
+    //3. cansets过滤器;
     cansets = [SMGUtils filterArr:cansets checkValid:^BOOL(AIEffectStrong *item) {
-        return [TOUtils getEffectScore:item] > 0;
+        //1. hStrong阈值 (参考26199-TODO2);
+        if (item.hStrong < 5) return false;
+        
+        //2. 排除不应期;
+        if ([except_ps containsObject:item.solutionFo]) return false;
+        
+        //3. 闯关成功;
+        return true;
     }];
+    NSLog(@"3. HStrong>5和不应期过滤后:%ld",cansets.count);
     
-    //3. 对候选集按有效率排序;
-    NSArray *sortCansets = [SMGUtils sortBig2Small:cansets compareBlock:^double(AIEffectStrong *obj) {
-        return [TOUtils getEffectScore:obj];
-    }];
-    NSLog(@"2. 快cansets有效排序后:%ld条",sortCansets.count);
-    if (Log4Solution_Fast) for (AIEffectStrong *item in sortCansets) NSLog(@"\tH%ldN%ld %@",item.hStrong,item.nStrong,Pit2FStr(item.solutionFo));
-    
-    //4. 从前到后取有效的首条;
-    for (AIEffectStrong *canset in sortCansets) {
-        
-        //5. 排除不应期;
-        if ([except_ps containsObject:canset.solutionFo]) continue;
-    
-        //6. 对比思考;
-        AISolutionModel *sModel = [TOUtils compareRCansetFo:canset.solutionFo protoFo:demand.protoFo];
-        sModel.effectScore = [TOUtils getEffectScore:canset];
-        
-        //6. 排除掉候选方案不适用当前场景的 (参考26192);
-        if (!sModel) continue;
-            
-        //7. 时间不急评价: 不急 = 解决方案所需时间 <= 父任务能给的时间 (参考:24057-方案3,24171-7);
-        if (![AIScore FRS_Time:demand solutionModel:sModel]) continue;
-        
-        //8. 找到最佳方案;
-        if (Log4Solution) NSLog(@"3. 快思考最佳结果:F%ld 有效率:%.2f (H%ldN%ld)",sModel.cansetFo.pointerId,sModel.effectScore,canset.hStrong,canset.nStrong);
+    //4. 转solutionModel & 排除掉候选方案不适用当前场景(为nil)的 (参考26192);;
+    NSArray *solutionModels = [SMGUtils convertArr:cansets convertBlock:^id(AIEffectStrong *obj) {
+        AISolutionModel *sModel = [TOUtils compareRCansetFo:obj.solutionFo protoFo:demand.protoFo];
+        sModel.effectScore = [TOUtils getEffectScore:obj];
         return sModel;
+    }];
+    NSLog(@"4. 时序对比有效后:%ld",solutionModels.count);
+    
+    //5. solutionModels过滤器;
+    solutionModels = [SMGUtils filterArr:solutionModels checkValid:^BOOL(AISolutionModel *item) {
+        //1. 时间不急评价: 不急 = 解决方案所需时间 <= 父任务能给的时间 (参考:24057-方案3,24171-7);
+        if (![AIScore FRS_Time:demand solutionModel:item]) return false;
+        
+        //2. 后段-目标匹配 (阈值>80%) (参考26199-TODO1);
+        if (item.backMatchValue < 0.8f) return false;
+        
+        //3. 中段-按有效率 (effectScore>0) (参考26199-TODO2);
+        if (item.effectScore <= 0) return false;
+        
+        //4. 前段-场景匹配 (阈值>80%) (参考26199-TODO3);
+        if (item.frontMatchValue < 0.8) return false;
+        
+        //5. 闯关成功;
+        return true;
+    }];
+    NSLog(@"5. (FRSTime & 后段阈值 & 中段阈值 & 前段阈值)过滤后:%ld",solutionModels.count);
+    
+    //6. 对候选集按有效率排序;
+    NSArray *sortSolutionModels = [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
+        return obj.effectScore;
+    }];
+    NSLog(@"6. 有效率排序后:%ld",sortSolutionModels.count);
+    if (Log4Solution_Fast) for (AISolutionModel *m in sortSolutionModels) {
+        AIEffectStrong *c = [SMGUtils filterSingleFromArr:cansets checkValid:^BOOL(AIEffectStrong *item) {
+            return [item.solutionFo isEqual:m.cansetFo];
+        }];
+        NSLog(@"\tH%ldN%ld %@",c.hStrong,c.nStrong,Pit2FStr(m.cansetFo));
     }
-    return nil;
+    
+    //7. 将首条最佳方案返回;
+    AISolutionModel *result = ARR_INDEX(sortSolutionModels, 0);
+    if (Log4Solution && result) NSLog(@"7. 快思考最佳结果:F%ld 有效率:%.2f",result.cansetFo.pointerId,result.effectScore);
+    return result;
 }
 
 /**
