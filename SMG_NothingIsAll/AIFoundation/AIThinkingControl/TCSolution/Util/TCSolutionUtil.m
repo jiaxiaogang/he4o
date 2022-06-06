@@ -26,8 +26,9 @@
     //2. 收集所有解决方案候选集;
     NSArray *cansets = [SMGUtils convertArr:demand.pFos convertItemArrBlock:^NSArray *(AIMatchFoModel *obj) {
         AIFoNodeBase *pFo = [SMGUtils searchNode:obj.matchFo];
-        if (Log4Solution_Fast) NSLog(@"\tF%ld的第%ld帧取: %@",pFo.pointer.pointerId,pFo.count,CLEANSTR([pFo.effectDic objectForKey:@(pFo.count)]));
-        return [pFo.effectDic objectForKey:@(pFo.count)];
+        NSArray *itemCansets = [pFo.effectDic objectForKey:@(pFo.count)];
+        if (Log4Solution_Fast && ARRISOK(itemCansets)) NSLog(@"\tF%ld的第%ld帧取: %@",pFo.pointer.pointerId,pFo.count,CLEANSTR(itemCansets));
+        return itemCansets;
     }];
     
     //3. 快思考算法;
@@ -70,7 +71,7 @@
 
     //2. 将同cansetFo的effStrong累计;
     cansets = [TOUtils mergeCansets:cansets];
-    NSLog(@"2. 按HNStrong合并后:%ld",cansets.count);
+    NSLog(@"2. 按HNStrong合并后:%ld %@",cansets.count,CLEANSTR(cansets));
 
     //3. cansets过滤器;
     cansets = [SMGUtils filterArr:cansets checkValid:^BOOL(AIEffectStrong *item) {
