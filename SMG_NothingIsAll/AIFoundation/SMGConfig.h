@@ -75,9 +75,11 @@
 
 /**
  *  MARK:--------------------局部匹配时,检查refPorts数--------------------
- *  @version 2020.07.20: 概念经历太多时,10个太少找不到本该出现的结果,所以改成IntMax,因为无性能问题
+ *  @version
+ *      2020.07.20: 概念经历太多时,10个太少找不到本该出现的结果,所以改成IntMax,因为无性能问题
+ *      2022.06.07: V.refA取30% (参考2619j-TODO1);
  */
-#define cPartMatchingCheckRefPortsLimit_Alg NSIntegerMax
+#define cPartMatchingCheckRefPortsLimit_Alg(refCount) refCount * 0.3f
 #define cPartMatchingThreshold 0.3  //局部匹配时_匹配阀值 (相似度) 20191224ALG改为全含方式 FO懒先不改
 #define cTIRFoAbsIndexLimit 5       //时序识别时,取抽象索引的条数
 
@@ -88,7 +90,7 @@
 #define cValueNarrowLimit 500   //不能太小,不然概念识别时,没交集了 (参考26075);
 #define cAlgNarrowLimit(protoCount) protoCount * 2
 #define cFoNarrowLimit 10
-#define cRFoNarrowLimit 2
+#define cRFoNarrowLimit 0
 #define cSolutionNarrowLimit 5
 
 //MARK:===============================================================

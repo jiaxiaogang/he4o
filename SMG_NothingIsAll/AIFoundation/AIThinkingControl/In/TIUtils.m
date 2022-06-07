@@ -139,6 +139,7 @@
  *      2022.05.24 - 排序公式改为sumNear / matchCount (参考26103-代码);
  *      2022.05.25 - 排序公式改为sumNear / proto.count (参考26114-1);
  *      2022.05.28 - 优化性能 (参考26129-方案2);
+ *      2022.06.07 - 为了打开抽象结果(确定,轻易别改了),排序公式改为sumNear / matchCount (参考2619j-TODO2);
  */
 +(void) partMatching_Alg:(AIAlgNodeBase*)protoAlg isMem:(BOOL)isMem except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
     //1. 数据准备;
@@ -149,6 +150,7 @@
     NSMutableDictionary *countDic = [NSMutableDictionary new];      //匹配度计数字典 <K:refAlg_p,V:matchCount>;
     NSMutableDictionary *recordDic = [NSMutableDictionary new];     //pit不能做key,所以存这字典里 <K:pId,V:pit>
     NSMutableDictionary *sumNearVDic = [NSMutableDictionary new];   //相近度字典 <K:refAlg_p,V:sum(nearV)> (参考25082-公式2分子部分);
+    NSMutableDictionary *sumStrongDic = [NSMutableDictionary new];  //总强度字典<K:refAPId,V:sum(strong)>;
     
     //2. 广入: 对每个元素,分别取索引序列 (参考25083-1);
     for (AIKVPointer *item_p in protoAlg.content_ps) {
@@ -164,7 +166,7 @@
             
             //6. 第2_取near_p的refPorts (参考25083-1);
             NSArray *refPorts = [SMGUtils filterPorts_Normal:[AINetUtils refPorts_All4Value:near_p isMem:isMem]];
-            refPorts = ARR_SUB(refPorts, 0, cPartMatchingCheckRefPortsLimit_Alg);
+            refPorts = ARR_SUB(refPorts, 0, cPartMatchingCheckRefPortsLimit_Alg(refPorts.count));
             
             //6. 第3_仅保留有mv指向的部分 (参考26022-3);
             //refPorts = [SMGUtils filterArr:refPorts checkValid:^BOOL(AIPort *item) {
@@ -188,6 +190,10 @@
                 double oldSumNearV = [NUMTOOK([sumNearVDic objectForKey:key]) doubleValue];
                 [sumNearVDic setObject:@(oldSumNearV + nearV) forKey:key];
                 
+                //10. 记录引用强度;
+                int oldSumStrong = [NUMTOOK([sumStrongDic objectForKey:key]) intValue];
+                [sumStrongDic setObject:@(oldSumStrong + refPort.strong.value) forKey:key];
+                
                 //11. 将指针存记录着后面用;
                 [recordDic setObject:refPort.target_p forKey:key];
             }
@@ -201,8 +207,8 @@
         double sumNearV2 = [NUMTOOK([sumNearVDic objectForKey:obj2]) doubleValue];
         
         //12. 求出nearA (参考25082-公式2);
-        double nearA1 = sumNearV1 / protoAlg.count;//[NUMTOOK([countDic objectForKey:obj1]) intValue];
-        double nearA2 = sumNearV2 / protoAlg.count;
+        double nearA1 = sumNearV1 / [NUMTOOK([countDic objectForKey:obj1]) intValue];
+        double nearA2 = sumNearV2 / [NUMTOOK([countDic objectForKey:obj1]) intValue];
         return [SMGUtils compareDoubleA:nearA1 doubleB:nearA2];
     }]);
     
@@ -212,7 +218,7 @@
     //14. 全含或局部匹配判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);
     for (NSNumber *key in sortKeys) {
         //14. 过滤掉匹配度<85%的;
-        double matchV = [NUMTOOK([sumNearVDic objectForKey:key]) doubleValue] / protoAlg.count;
+        double matchV = [NUMTOOK([sumNearVDic objectForKey:key]) doubleValue] / [NUMTOOK([countDic objectForKey:key]) intValue];
         if (matchV < 0.90f) {
             continue;
         }
@@ -231,7 +237,10 @@
     for (AIAlgNodeBase *item in matchAlgs) {
         //id key = OBJ2DATA(item.pointer);
         id key = @(item.pointer.pointerId);
-        NSLog(@"-->>> 全含item: %@   \t相近度 => %.2f (count:%@)",Alg2FStr(item),[NUMTOOK([sumNearVDic objectForKey:key]) doubleValue] / protoAlg.count,[countDic objectForKey:key]);
+        int sumStrong = [NUMTOOK([sumStrongDic objectForKey:key]) intValue];
+        double sumNear = [NUMTOOK([sumNearVDic objectForKey:key]) doubleValue];
+        int matchCount = [NUMTOOK([countDic objectForKey:key]) intValue];
+        NSLog(@"-->>>(%d) 全含item: %@   \t相近度 => %.2f (count:%d)",sumStrong,Alg2FStr(item),sumNear / matchCount,matchCount);
     }
     for (AIAlgNodeBase *item in partAlgs) NSLog(@"-->>> 局部item: %@",Alg2FStr(item));
     inModel.matchAlgs = matchAlgs;
@@ -316,6 +325,7 @@
  *      2022.05.20: 4. 提升识别准确度: 窄入,调整结果20条为NarrowLimit=5条 (参考26073-TODO6);
  *      2022.05.23: 将稳定性低的识别结果过滤掉 (参考26096-BUG4);
  *      2022.05.24: 稳定性支持衰减 (参考26104-方案);
+ *      2022.06.07: cRFoNarrowLimit调整为0,即关掉RFos结果 (参考2619j-TODO3);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
 +(void) partMatching_FoV1Dot5:(AIFoNodeBase*)maskFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup{
