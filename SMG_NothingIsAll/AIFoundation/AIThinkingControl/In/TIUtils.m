@@ -140,6 +140,7 @@
  *      2022.05.25 - 排序公式改为sumNear / proto.count (参考26114-1);
  *      2022.05.28 - 优化性能 (参考26129-方案2);
  *      2022.06.07 - 为了打开抽象结果(确定,轻易别改了),排序公式改为sumNear / matchCount (参考2619j-TODO2);
+ *      2022.06.07 - 排序公式改为sumNear / nearCount (参考2619j-TODO5);
  */
 +(void) partMatching_Alg:(AIAlgNodeBase*)protoAlg isMem:(BOOL)isMem except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
     //1. 数据准备;
@@ -148,6 +149,7 @@
     NSMutableArray *matchAlgs = [[NSMutableArray alloc] init];      //用来收集全含匹配结果;
     NSMutableArray *partAlgs = [[NSMutableArray alloc] init];       //用来收集局部匹配结果;
     NSMutableDictionary *countDic = [NSMutableDictionary new];      //匹配度计数字典 <K:refAlg_p,V:matchCount>;
+    NSMutableDictionary *nearCountDic = [NSMutableDictionary new];  //相近计数字典 <K:pId,V:count>;
     NSMutableDictionary *recordDic = [NSMutableDictionary new];     //pit不能做key,所以存这字典里 <K:pId,V:pit>
     NSMutableDictionary *sumNearVDic = [NSMutableDictionary new];   //相近度字典 <K:refAlg_p,V:sum(nearV)> (参考25082-公式2分子部分);
     NSMutableDictionary *sumStrongDic = [NSMutableDictionary new];  //总强度字典<K:refAPId,V:sum(strong)>;
@@ -186,6 +188,10 @@
                 int oldCount = [NUMTOOK([countDic objectForKey:key]) intValue];
                 [countDic setObject:@(oldCount + 1) forKey:key];
                 
+                //9. 统计相近度<1的个数;
+                int nearCount = [NUMTOOK([nearCountDic objectForKey:key]) intValue];
+                [nearCountDic setObject:@(nearCount + 1) forKey:key];
+                
                 //10. 第2_统计相近度;
                 double oldSumNearV = [NUMTOOK([sumNearVDic objectForKey:key]) doubleValue];
                 [sumNearVDic setObject:@(oldSumNearV + nearV) forKey:key];
@@ -204,8 +210,8 @@
     //11. 按nearA排序 (参考25083-2&公式2 & 25084-1);
     NSArray *sortKeys = [SMGUtils sortBig2Small:countDic.allKeys compareBlock:^double(NSNumber *obj) {
         double sumNear = [NUMTOOK([sumNearVDic objectForKey:obj]) doubleValue];
-        int count = [NUMTOOK([countDic objectForKey:obj]) intValue];
-        return sumNear / count;
+        int nearCount = [NUMTOOK([nearCountDic objectForKey:obj]) intValue];
+        return nearCount > 0 ? sumNear / nearCount : 1;
     }];
     
     //13. 仅保留最相近的20条 (参考25083-3);
@@ -214,7 +220,7 @@
     //14. 全含或局部匹配判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);
     for (NSNumber *key in sortKeys) {
         //14. 过滤掉匹配度<85%的;
-        double matchV = [NUMTOOK([sumNearVDic objectForKey:key]) doubleValue] / [NUMTOOK([countDic objectForKey:key]) intValue];
+        double matchV = [NUMTOOK([sumNearVDic objectForKey:key]) doubleValue] / [NUMTOOK([nearCountDic objectForKey:key]) intValue];
         if (matchV < 0.90f) {
             continue;
         }
@@ -235,8 +241,9 @@
         id key = @(item.pointer.pointerId);
         int sumStrong = [NUMTOOK([sumStrongDic objectForKey:key]) intValue];
         double sumNear = [NUMTOOK([sumNearVDic objectForKey:key]) doubleValue];
+        int nearCount = [NUMTOOK([nearCountDic objectForKey:key]) intValue];
         int matchCount = [NUMTOOK([countDic objectForKey:key]) intValue];
-        NSLog(@"-->>>(%d) 全含item: %@   \t相近度 => %.2f (count:%d)",sumStrong,Alg2FStr(item),sumNear / matchCount,matchCount);
+        NSLog(@"-->>>(%d) 全含item: %@   \t相近度 => %.2f (count:%d)",sumStrong,Alg2FStr(item),sumNear / nearCount,matchCount);
     }
     for (AIAlgNodeBase *item in partAlgs) NSLog(@"-->>> 局部item: %@",Alg2FStr(item));
     inModel.matchAlgs = matchAlgs;
