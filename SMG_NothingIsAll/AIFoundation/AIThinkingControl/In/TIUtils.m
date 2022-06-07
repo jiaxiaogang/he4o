@@ -201,16 +201,12 @@
         if (Log4MAlg) if (countDic.count) NSLog(@"计数字典匹配情况: %@ ------",countDic.allValues);
     }
     
-    //11. 按nearA排序 (参考25083-2 & 25084-1);
-    NSArray *sortKeys = ARRTOOK([countDic.allKeys sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-        double sumNearV1 = [NUMTOOK([sumNearVDic objectForKey:obj1]) doubleValue];
-        double sumNearV2 = [NUMTOOK([sumNearVDic objectForKey:obj2]) doubleValue];
-        
-        //12. 求出nearA (参考25082-公式2);
-        double nearA1 = sumNearV1 / [NUMTOOK([countDic objectForKey:obj1]) intValue];
-        double nearA2 = sumNearV2 / [NUMTOOK([countDic objectForKey:obj1]) intValue];
-        return [SMGUtils compareDoubleA:nearA1 doubleB:nearA2];
-    }]);
+    //11. 按nearA排序 (参考25083-2&公式2 & 25084-1);
+    NSArray *sortKeys = [SMGUtils sortBig2Small:countDic.allKeys compareBlock:^double(NSNumber *obj) {
+        double sumNear = [NUMTOOK([sumNearVDic objectForKey:obj]) doubleValue];
+        int count = [NUMTOOK([countDic objectForKey:obj]) intValue];
+        return sumNear / count;
+    }];
     
     //13. 仅保留最相近的20条 (参考25083-3);
     sortKeys = ARR_SUB(sortKeys, 0, cAlgNarrowLimit(protoAlg.count));
