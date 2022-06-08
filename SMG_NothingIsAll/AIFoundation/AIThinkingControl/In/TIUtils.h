@@ -27,5 +27,6 @@
  */
 +(NSArray*) getMatchAndPartAlgPs:(NSInteger)frameIndex;
 +(NSArray*) getMatchAndPartAlgPsByModel:(AIShortMatchModel*)frameModel;
++(AIKVPointer*) getProtoAlg:(NSInteger)frameIndex;
 
 @end

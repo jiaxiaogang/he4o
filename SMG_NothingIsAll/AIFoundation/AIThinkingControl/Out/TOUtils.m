@@ -634,6 +634,8 @@
 /**
  *  MARK:--------------------对比两个概念匹配度--------------------
  *  @result 返回0到1 (0:完全不一样 & 1:完全一样) (参考26127-TODO5);
+ *  @version
+ *      2022.06.08: 排序公式改为sumNear / nearCount (参考2619j-TODO5);
  */
 +(CGFloat) compareCansetAlg:(AIKVPointer*)cansetAlg_p protoAlg:(AIKVPointer*)protoAlg_p{
     //1. 数据准备;
@@ -651,16 +653,21 @@
     
     //3. 找出二者稀疏码同标识的;
     __block CGFloat sumNear = 0;
+    __block int nearCount = 0;
     for (AIKVPointer *cansetV in cansetAlg.content_ps) {
         for (AIKVPointer *protoV in protoAlg.content_ps) {
             if ([cansetV.dataSource isEqualToString:protoV.dataSource]) {
                 
                 //4. 对比稀疏码相近度 & 并累计;
-                sumNear += [self compareCansetValue:cansetV protoValue:protoV];
+                CGFloat near = [self compareCansetValue:cansetV protoValue:protoV];
+                if (near < 1) {
+                    sumNear += near;
+                    nearCount ++;
+                }
             }
         }
     }
-    return sumNear / protoAlg.count;
+    return nearCount > 0 ? sumNear / nearCount : 1;
 }
 
 /**

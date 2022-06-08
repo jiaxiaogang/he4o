@@ -25,6 +25,10 @@
     if (self.models.count > cShortMemoryLimit)
         self.models = [[NSMutableArray alloc] initWithArray:ARR_SUB(self.models, self.models.count - cShortMemoryLimit, cShortMemoryLimit)];
 }
+-(AIShortMatchModel*) getFrameModel:(NSInteger)frameIndex {
+    NSArray *inModels = self.models;
+    return ARR_INDEX(inModels, frameIndex);
+}
 
 /**
  *  MARK:--------------------获取瞬时记忆序列--------------------

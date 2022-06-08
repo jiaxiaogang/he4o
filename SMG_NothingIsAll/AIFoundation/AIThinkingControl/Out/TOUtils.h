@@ -180,6 +180,7 @@
  */
 +(AISolutionModel*) compareRCansetFo:(AIKVPointer*)cansetFo_p protoFo:(AIKVPointer*)protoFo_p;
 +(AISolutionModel*) compareHCansetFo:(AIKVPointer*)cansetFo_p targetFo:(TOFoModel*)targetFoM;
++(CGFloat) compareCansetAlg:(AIKVPointer*)cansetAlg_p protoAlg:(AIKVPointer*)protoAlg_p;
 +(CGFloat) compareCansetValue:(AIKVPointer*)cansetV_p protoValue:(AIKVPointer*)protoV_p;
 
 /**

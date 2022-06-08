@@ -21,7 +21,7 @@
 
 -(NSMutableArray*)models;
 -(void) add:(AIShortMatchModel*)model;
-
+-(AIShortMatchModel*) getFrameModel:(NSInteger)frameIndex;
 
 /**
  *  MARK:--------------------获取瞬时记忆序列--------------------

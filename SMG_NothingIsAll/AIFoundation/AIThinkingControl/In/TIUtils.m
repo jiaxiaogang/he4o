@@ -414,10 +414,10 @@
     
     //10. 按照 (强度x匹配度) 排序,强度最重要,包含了价值初始和使用频率,其次匹配度也重要 (参考23222-BUG2);
     NSArray *sortPFos = [SMGUtils sortBig2Small:inModel.matchPFos compareBlock:^double(AIMatchFoModel *obj) {
-        return obj.colStableScore;
+        return obj.matchFoValue;
     }];
     NSArray *sortRFos = [SMGUtils sortBig2Small:inModel.matchRFos compareBlock:^double(AIMatchFoModel *obj) {
-        return obj.colStableScore;
+        return obj.matchFoValue;
     }];
     
     //11. 仅保留前NarrowLimit条;
@@ -451,6 +451,8 @@
  *      2022.04.30: 将每帧的matchAlgs和partAlgs用于全含判断,而不是单纯用protoFo来判断 (参考25234-6);
  *      2022.05.23: 反思时,改回旧有mIsC判断方式 (参考26096-BUG6);
  *      2022.05.25: 将衰后稳定性计算集成到全含判断方法中 (这样性能好些);
+ *      2022.06.08: 稳定性低的不过滤了,因为学时统计,不关稳定性(概率)的事儿 (参考26222-TODO1);
+ *      2022.06.08: 排序公式改为sumNear / nearCount (参考26222-TODO1);
  *  _result 将protoFo与assFo判断是否全含,并将匹配度返回;
  */
 +(void) TIR_Fo_CheckFoValidMatch:(AIFoNodeBase*)assFo outOfFos:(NSArray*)outOfFos success:(void(^)(NSInteger lastAssIndex,CGFloat matchValue,CGFloat colStableScore))success regroupFo:(AIFoNodeBase*)regroupFo{
@@ -464,6 +466,8 @@
     
     //1. 默认有效数为1 (因为lastAlg肯定有效);
     int validItemCount = 1;
+    CGFloat sumNear = 0;
+    int nearCount = 0;
     //1. 在assFo已发生到的index,后面为预测;
     NSInteger lastAssIndex = -1;
     
@@ -474,10 +478,12 @@
         
         //2. 匹配判断: 反思时用mIsC判断 & 识别时用瞬时末帧matchAlgs+partAlgs包含来判断;
         BOOL mIsC = false;
+        AIKVPointer *lastProtoAlg = nil;
         if (regroupFo) {
-            AIKVPointer *reoupAlg_p = ARR_INDEX_REVERSE(regroupFo.content_ps, 0);
-            mIsC = [TOUtils mIsC_1:reoupAlg_p c:checkAssAlg_p];
+            lastProtoAlg = ARR_INDEX_REVERSE(regroupFo.content_ps, 0);
+            mIsC = [TOUtils mIsC_1:lastProtoAlg c:checkAssAlg_p];
         }else{
+            lastProtoAlg = [self getProtoAlg:theTC.inModelManager.models.count - 1];
             NSArray *lastAlgs = [self getMatchAndPartAlgPs:theTC.inModelManager.models.count - 1];
             mIsC = [lastAlgs containsObject:checkAssAlg_p];
         }
@@ -485,6 +491,13 @@
         //2. 匹配则记录lastAssIndex值;
         if (mIsC) {
             lastAssIndex = curIndex;
+            
+            //3. 统计匹配度;
+            CGFloat near = [TOUtils compareCansetAlg:checkAssAlg_p protoAlg:lastProtoAlg];
+            if (near < 1) {
+                sumNear += near;
+                nearCount ++;
+            }
             break;
         }
     }
@@ -496,7 +509,7 @@
     //3. 稳定性<0.4的过滤掉;
     NSInteger cutIndex = regroupFo ? -1 : lastAssIndex;
     CGFloat colStableScore = [TOUtils getColStableScore:assFo outOfFos:outOfFos startSPIndex:cutIndex + 1 endSPIndex:assFo.count];
-    CGFloat needScore = assFo.cmvNode_p ? 0.1f : 0.4f;
+    CGFloat needScore = assFo.cmvNode_p ? 0.0f : 0.4f;
     if (colStableScore < needScore) {
         return;
     }
@@ -526,6 +539,14 @@
                     lastProtoIndex = j; //成功匹配alg时,更新protoIndex (以达到只能向前匹配的目的);
                     checkResult = true;
                     validItemCount ++;  //有效数+1;
+                    
+                    //3. 统计匹配度;
+                    AIKVPointer *compareProtoAlg = regroupFo ? ARR_INDEX(regroupFo.content_ps, j) : [TIUtils getProtoAlg:j];
+                    CGFloat near = [TOUtils compareCansetAlg:checkAssAlg_p protoAlg:compareProtoAlg];
+                    if (near < 1) {
+                        sumNear += near;
+                        nearCount ++;
+                    }
                     if (Log4MFo)NSLog(@"时序识别: item有效+1");
                     break;
                 }else{
@@ -542,7 +563,7 @@
     }
     
     //6. 到此全含成功 之: 匹配度计算
-    CGFloat matchValue = (float)validItemCount / assFo.content_ps.count;
+    CGFloat matchValue = nearCount > 0 ? sumNear / nearCount : 1;
     
     //7. 到此全含成功 之: 返回success
     success(lastAssIndex,matchValue,colStableScore);
@@ -552,14 +573,17 @@
  *  MARK:--------------------获取某帧shortModel的matchAlgs+partAlgs--------------------
  */
 +(NSArray*) getMatchAndPartAlgPs:(NSInteger)frameIndex {
-    NSArray *inModels = theTC.inModelManager.models;
-    AIShortMatchModel *inModel = ARR_INDEX(inModels, frameIndex);
+    AIShortMatchModel *inModel = [theTC.inModelManager getFrameModel:frameIndex];
     return [self getMatchAndPartAlgPsByModel:inModel];
 }
 +(NSArray*) getMatchAndPartAlgPsByModel:(AIShortMatchModel*)frameModel {
     NSArray *algs = [SMGUtils collectArrA:frameModel.matchAlgs arrB:frameModel.partAlgs];
     NSArray *result = Nodes2Pits(algs);
     return result;
+}
++(AIKVPointer*) getProtoAlg:(NSInteger)frameIndex {
+    AIShortMatchModel *inModel = [theTC.inModelManager getFrameModel:frameIndex];
+    return inModel.protoAlg.pointer;
 }
 
 @end
