@@ -24,7 +24,7 @@
     AICMVNodeBase *mvNode = [SMGUtils searchNode:matchFo.cmvNode_p];
     NSInteger delta = [NUMTOOK([AINetIndex getData:mvNode.delta_p]) integerValue];
     NSInteger urgentTo = [NUMTOOK([AINetIndex getData:mvNode.urgentTo_p]) integerValue];
-    urgentTo = (int)(urgentTo * firstPFo.matchFoValue);
+    urgentTo = (int)(urgentTo * (firstPFo.cutIndex2 + 1));
     
     //2. 短时结构;
     if (baseFo) [baseFo.subDemands addObject:result];

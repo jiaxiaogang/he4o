@@ -329,6 +329,7 @@
  *      2022.05.23: 将稳定性低的识别结果过滤掉 (参考26096-BUG4);
  *      2022.05.24: 稳定性支持衰减 (参考26104-方案);
  *      2022.06.07: cRFoNarrowLimit调整为0,即关掉RFos结果 (参考2619j-TODO3);
+ *      2022.06.08: 排序公式改为sumNear / nearCount (参考26222-TODO1);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
 +(void) partMatching_FoV1Dot5:(AIFoNodeBase*)maskFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup{
