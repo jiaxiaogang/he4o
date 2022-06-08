@@ -168,14 +168,16 @@
  *  @version
  *      2022.05.19: demand的评分,继承firstPFo的评分 (参考26042-TODO4);
  *      2022.05.21: demand的评分,改为综合sumPFoScore评分 (参考26076);
+ *      2022.06.08: demand的评分,改为综合sumMvScore / pFos.count (参考2619j-TODO6);
  */
 +(CGFloat) score4Demand:(DemandModel*)demand{
     if (ISOK(demand, ReasonDemandModel.class) ) {
+        ReasonDemandModel *rDemand = (ReasonDemandModel*)demand;
         CGFloat sumScore = 0;
-        for (AIMatchFoModel *pFo in ((ReasonDemandModel*)demand).pFos) {
+        for (AIMatchFoModel *pFo in rDemand.pFos) {
             sumScore += [AIScore score4MV_v2:pFo];
         }
-        return sumScore;
+        return rDemand.pFos.count > 0 ? sumScore / rDemand.pFos.count : 0;
     }else if (ISOK(demand, PerceptDemandModel.class) ) {
         PerceptDemandModel *pDemand = (PerceptDemandModel*)demand;
         return [AIScore score4MV:pDemand.algsType urgentTo:pDemand.urgentTo delta:pDemand.delta ratio:1.0f];
