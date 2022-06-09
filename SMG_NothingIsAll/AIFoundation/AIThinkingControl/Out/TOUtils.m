@@ -687,41 +687,6 @@
 }
 
 /**
- *  MARK:--------------------慢思考排序窄出--------------------
- *  @desc 分三步排序窄出 (参考26194 & 26195);
- *  @param needBack : R时现不需要传false(backMatchValue全是1), H时需要传true;
- *  @version
- *      2022.06.09: 排序写错了,前匹配写成了稳定性值来排序;
- */
-+(NSArray*) solutionSlow_SortNarrow:(NSArray*)solutionModels needBack:(BOOL)needBack{
-    //1. 后匹配排序窄出 (取50% & 限制0-40) (参考26195-TODO1);
-    if (needBack) {
-        int backLimit = MAX(0, MIN(40, solutionModels.count * 0.5f));
-        NSArray *backSorts = [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
-            return obj.backMatchValue;
-        }];
-        solutionModels = ARR_SUB(backSorts, 0, backLimit);
-    }
-    
-    //2. 中稳定排序窄出 (取50% & 最小3-20) (参考26195-TODO2);
-    int midLimit = MAX(0, MIN(40, solutionModels.count * 0.5f));
-    NSArray *midSorts = [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
-        return obj.stableScore;
-    }];
-    solutionModels = ARR_SUB(midSorts, 0, midLimit);
-    
-    //3. 前匹配排序窄出 (取前3条) (参考26195-TODO3);
-    int frontLimit = 3;
-    NSArray *frontSorts = [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
-        return obj.frontMatchValue;
-    }];
-    solutionModels = ARR_SUB(frontSorts, 0, frontLimit);
-    
-    //4. 返回;
-    return solutionModels;
-}
-
-/**
  *  MARK:--------------------S综合排名--------------------
  *  @desc 对前中后段分别排名,然后综合排名 (参考26222-TODO2);
  *  @param needBack : 是否排后段: H传true需要,R传false不需要;

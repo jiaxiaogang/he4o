@@ -186,7 +186,6 @@
 //MARK:===============================================================
 //MARK:                     < 解决方案竞争 >
 //MARK:===============================================================
-+(NSArray*) solutionSlow_SortNarrow:(NSArray*)solutionModels needBack:(BOOL)needBack;
 +(NSArray*) solutionTotalRanking:(NSArray*)solutionModels needBack:(BOOL)needBack fromSlow:(BOOL)fromSlow;
 
 /**

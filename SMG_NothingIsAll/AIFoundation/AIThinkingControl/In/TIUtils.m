@@ -508,12 +508,13 @@
     }
     
     //3. 稳定性<0.4的过滤掉;
-    NSInteger cutIndex = regroupFo ? -1 : lastAssIndex;
-    CGFloat colStableScore = [TOUtils getColStableScore:assFo outOfFos:outOfFos startSPIndex:cutIndex + 1 endSPIndex:assFo.count];
-    CGFloat needScore = assFo.cmvNode_p ? 0.0f : 0.4f;
-    if (colStableScore < needScore) {
-        return;
-    }
+    //NSInteger cutIndex = regroupFo ? -1 : lastAssIndex;
+    //CGFloat colStableScore = [TOUtils getColStableScore:assFo outOfFos:outOfFos startSPIndex:cutIndex + 1 endSPIndex:assFo.count];
+    //CGFloat needScore = assFo.cmvNode_p ? 0.0f : 0.4f;
+    //if (colStableScore < needScore) {
+    //    return;
+    //}
+    CGFloat colStableScore = 1;
     
     //3. 从lastAssIndex向前逐个匹配;
     if (Log4MFo)NSLog(@"--->>>>> 在%ld位,找到LastItem匹配",lastAssIndex);
