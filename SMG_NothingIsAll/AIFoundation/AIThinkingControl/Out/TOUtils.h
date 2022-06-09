@@ -183,11 +183,11 @@
 +(CGFloat) compareCansetAlg:(AIKVPointer*)cansetAlg_p protoAlg:(AIKVPointer*)protoAlg_p;
 +(CGFloat) compareCansetValue:(AIKVPointer*)cansetV_p protoValue:(AIKVPointer*)protoV_p;
 
-/**
- *  MARK:--------------------慢思考排序窄出--------------------
- *  @param needBack : R时现不需要传false(backMatchValue全是1), H时需要传true;
- */
+//MARK:===============================================================
+//MARK:                     < 解决方案竞争 >
+//MARK:===============================================================
 +(NSArray*) solutionSlow_SortNarrow:(NSArray*)solutionModels needBack:(BOOL)needBack;
++(NSArray*) solutionTotalRanking:(NSArray*)solutionModels needBack:(BOOL)needBack fromSlow:(BOOL)fromSlow;
 
 /**
  *  MARK:--------------------检查某toModel的末枝有没有ActYes状态--------------------

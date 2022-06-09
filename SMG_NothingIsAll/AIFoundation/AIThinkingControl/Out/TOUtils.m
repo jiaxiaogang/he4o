@@ -690,6 +690,8 @@
  *  MARK:--------------------慢思考排序窄出--------------------
  *  @desc 分三步排序窄出 (参考26194 & 26195);
  *  @param needBack : R时现不需要传false(backMatchValue全是1), H时需要传true;
+ *  @version
+ *      2022.06.09: 排序写错了,前匹配写成了稳定性值来排序;
  */
 +(NSArray*) solutionSlow_SortNarrow:(NSArray*)solutionModels needBack:(BOOL)needBack{
     //1. 后匹配排序窄出 (取50% & 限制0-40) (参考26195-TODO1);
@@ -711,12 +713,42 @@
     //3. 前匹配排序窄出 (取前3条) (参考26195-TODO3);
     int frontLimit = 3;
     NSArray *frontSorts = [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
-        return obj.stableScore;
+        return obj.frontMatchValue;
     }];
     solutionModels = ARR_SUB(frontSorts, 0, frontLimit);
     
     //4. 返回;
     return solutionModels;
+}
+
+/**
+ *  MARK:--------------------S综合排名--------------------
+ *  @desc 对前中后段分别排名,然后综合排名 (参考26222-TODO2);
+ *  @param needBack : 是否排后段: H传true需要,R传false不需要;
+ *  @param fromSlow : 是否源于慢思考: 慢思考传true中段用stable排,快思考传false中段用effect排;
+ */
++(NSArray*) solutionTotalRanking:(NSArray*)solutionModels needBack:(BOOL)needBack fromSlow:(BOOL)fromSlow{
+    //1. 三段分开排;
+    NSArray *backSorts = needBack ? [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
+        return obj.backMatchValue;
+    }] : nil;
+    NSArray *midSorts = [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
+        return fromSlow ? obj.stableScore : obj.effectScore;
+    }];
+    NSArray *frontSorts = [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
+        return obj.frontMatchValue;
+    }];
+    
+    //2. 综合排名
+    NSArray *ranking = [SMGUtils sortSmall2Big:solutionModels compareBlock:^double(AISolutionModel *obj) {
+        NSInteger backIndex = needBack ? [backSorts indexOfObject:obj] : 0;
+        NSInteger midIndex = [midSorts indexOfObject:obj];
+        NSInteger frontIndex = [frontSorts indexOfObject:obj];
+        return backIndex + midIndex + frontIndex;
+    }];
+    
+    //3. 返回;
+    return ranking;
 }
 
 /**

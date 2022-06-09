@@ -63,10 +63,13 @@
  *      2022.06.03: 排除掉候选方案不适用当前场景的 (参考26192);
  *      2022.06.05: 支持三个阈值 (参考26199);
  *      2022.06.05: 将R快思考和H快思考整理成通用快思考算法;
+ *      2022.06.09: 废弃阈值方案和H>5的要求 (参考26222-TODO3);
+ *      2022.06.09: 弃用阈值方案,改为综合排名 (参考26222-TODO2);
  */
 +(AISolutionModel*) generalSolution_Fast:(DemandModel *)demand cansets:(NSArray*)cansets except_ps:(NSArray*)except_ps solutionModelBlock:(AISolutionModel*(^)(AIEffectStrong *canset))solutionModelBlock{
     //1. 数据准备;
     except_ps = ARRTOOK(except_ps);
+    BOOL havBack = ISOK(demand, HDemandModel.class); //H有后段,别的没有;
     NSLog(@"1. 快思考protoCansets数:%ld",cansets.count);
 
     //2. 将同cansetFo的effStrong累计;
@@ -76,7 +79,7 @@
     //3. cansets过滤器;
     cansets = [SMGUtils filterArr:cansets checkValid:^BOOL(AIEffectStrong *item) {
         //1. hStrong阈值 (参考26199-TODO2);
-        if (item.hStrong < 5) return false;
+        //if (item.hStrong < 5) return false;
 
         //2. 排除不应期;
         if ([except_ps containsObject:item.solutionFo]) return false;
@@ -99,24 +102,22 @@
         //1. 时间不急评价: 不急 = 解决方案所需时间 <= 父任务能给的时间 (参考:24057-方案3,24171-7);
         if (![AIScore FRS_Time:demand solutionModel:item]) return false;
 
-        //2. 后段-目标匹配 (阈值>80%) (参考26199-TODO1);
-        if (item.backMatchValue < 0.8f) return false;
-
-        //3. 中段-按有效率 (effectScore>0) (参考26199-TODO2);
-        if (item.effectScore <= 0) return false;
-
-        //4. 前段-场景匹配 (阈值>80%) (参考26199-TODO3);
-        if (item.frontMatchValue < 0.8) return false;
+        ////2. 后段-目标匹配 (阈值>80%) (参考26199-TODO1);
+        //if (item.backMatchValue < 0.8f) return false;
+        //
+        ////3. 中段-按有效率 (effectScore>0) (参考26199-TODO2);
+        //if (item.effectScore <= 0) return false;
+        //
+        ////4. 前段-场景匹配 (阈值>80%) (参考26199-TODO3);
+        //if (item.frontMatchValue < 0.8) return false;
 
         //5. 闯关成功;
         return true;
     }];
     NSLog(@"5. (FRSTime & 后段阈值 & 中段阈值 & 前段阈值)过滤后:%ld",solutionModels.count);
 
-    //6. 对候选集按有效率排序;
-    NSArray *sortSolutionModels = [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
-        return obj.effectScore;
-    }];
+    //6. 对候选集排序;
+    NSArray *sortSolutionModels = [TOUtils solutionTotalRanking:solutionModels needBack:havBack fromSlow:false];
     NSLog(@"6. 有效率排序后:%ld",sortSolutionModels.count);
     if (Log4Solution_Fast) for (AISolutionModel *m in sortSolutionModels) {
         AIEffectStrong *c = [SMGUtils filterSingleFromArr:cansets checkValid:^BOOL(AIEffectStrong *item) {
@@ -172,6 +173,7 @@
  *  @version
  *      2022.06.04: 修复结果与当前场景相差甚远BUG: 分三级排序窄出 (参考26194 & 26195);
  *      2022.06.09: 将R和H的慢思考封装成同一方法,方便调用和迭代;
+ *      2022.06.09: 弃用阈值方案,改为综合排名 (参考26222-TODO2);
  */
 +(AISolutionModel*) generalSolution_Slow:(DemandModel *)demand maskFos:(NSArray*)maskFos except_ps:(NSArray*)except_ps solutionModelBlock:(AISolutionModel*(^)(AIKVPointer *canset))solutionModelBlock{
     //1. 数据准备;
@@ -247,7 +249,7 @@
     }
     
     //11. 根据候选集综合分排序 (参考26128-2-2 & 26161-4);
-    NSArray *sortModels = [TOUtils solutionSlow_SortNarrow:solutionModels needBack:havBack];
+    NSArray *sortModels = [TOUtils solutionTotalRanking:solutionModels needBack:havBack fromSlow:true];
     
     //12. debugLog
     for (AISolutionModel *model in sortModels) {
