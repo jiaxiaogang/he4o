@@ -89,11 +89,14 @@
     }];
     NSLog(@"3. HStrong>5和不应期过滤后:%ld",cansets.count);
 
-    //4. 转solutionModel & 排除掉候选方案不适用当前场景(为nil)的 (参考26192);;
+    //4. 转solutionModel & 排除掉候选方案不适用当前场景(为nil)的 和 有效率为0的 (参考26192);;
     NSArray *solutionModels = [SMGUtils convertArr:cansets convertBlock:^id(AIEffectStrong *obj) {
         AISolutionModel *sModel = solutionModelBlock(obj);
         if (sModel) sModel.effectScore = [TOUtils getEffectScore:obj];
         return sModel;
+    }];
+    solutionModels = [SMGUtils filterArr:solutionModels checkValid:^BOOL(AISolutionModel *item) {
+        return item.effectScore > 0;
     }];
     NSLog(@"4. 时序对比有效后:%ld",solutionModels.count);
 
@@ -239,7 +242,7 @@
     }];
     NSLog(@"第9步 排除FRSTime来不及的:%ld",solutionModels.count);//测时xx条
     
-    //10. 计算衰后stableScore (参考26128-2-1 & 26161-5);
+    //10. 计算衰后stableScore并筛掉为0的 (参考26128-2-1 & 26161-5);
     NSArray *outOfFos = [SMGUtils convertArr:solutionModels convertBlock:^id(AISolutionModel *obj) {
         return obj.cansetFo;
     }];
@@ -247,6 +250,9 @@
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:model.cansetFo];
         model.stableScore = [TOUtils getColStableScore:cansetFo outOfFos:outOfFos startSPIndex:model.cutIndex + 1 endSPIndex:model.targetIndex];
     }
+    solutionModels = [SMGUtils filterArr:solutionModels checkValid:^BOOL(AISolutionModel *item) {
+        return item.stableScore > 0;
+    }];
     
     //11. 根据候选集综合分排序 (参考26128-2-2 & 26161-4);
     NSArray *sortModels = [TOUtils solutionTotalRanking:solutionModels needBack:havBack fromSlow:true];
