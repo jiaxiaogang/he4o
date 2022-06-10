@@ -52,6 +52,7 @@
 		0835557C266C6B8400ECFC51 /* MemManagerWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0835557B266C6B8400ECFC51 /* MemManagerWindow.xib */; };
 		08366B9027DFFCC3004EBBB9 /* TOMVisionItemModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08366B8F27DFFCC3004EBBB9 /* TOMVisionItemModel.m */; };
 		08366B9327E00232004EBBB9 /* TOMVisionFoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 08366B9227E00232004EBBB9 /* TOMVisionFoView.m */; };
+		083680422853863E003F91FE /* AIAnalyst.m in Sources */ = {isa = PBXBuildFile; fileRef = 083680412853863E003F91FE /* AIAnalyst.m */; };
 		0839819F24DB7F8C00A020D2 /* HEView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0839819E24DB7F8C00A020D2 /* HEView.m */; };
 		083F61381F048329000330E1 /* AILine.m in Sources */ = {isa = PBXBuildFile; fileRef = 083F61371F048329000330E1 /* AILine.m */; };
 		08412CA3216C324300483B6B /* AICerebel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08412CA2216C324300483B6B /* AICerebel.m */; };
@@ -286,6 +287,8 @@
 		08366B8F27DFFCC3004EBBB9 /* TOMVisionItemModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOMVisionItemModel.m; sourceTree = "<group>"; };
 		08366B9127E00232004EBBB9 /* TOMVisionFoView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOMVisionFoView.h; sourceTree = "<group>"; };
 		08366B9227E00232004EBBB9 /* TOMVisionFoView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOMVisionFoView.m; sourceTree = "<group>"; };
+		083680402853863E003F91FE /* AIAnalyst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIAnalyst.h; sourceTree = "<group>"; };
+		083680412853863E003F91FE /* AIAnalyst.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIAnalyst.m; sourceTree = "<group>"; };
 		0837F72322A89A0D00836689 /* ReadMe.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ReadMe.md; sourceTree = "<group>"; };
 		0839819D24DB7F8C00A020D2 /* HEView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HEView.h; sourceTree = "<group>"; };
 		0839819E24DB7F8C00A020D2 /* HEView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HEView.m; sourceTree = "<group>"; };
@@ -861,6 +864,8 @@
 				08B31E7D20648C3700FD96EA /* ThinkingUtils.m */,
 				08F3E92F2241B6E800545795 /* AIAnalogy.h */,
 				08F3E9302241B6E800545795 /* AIAnalogy.m */,
+				083680402853863E003F91FE /* AIAnalyst.h */,
+				083680412853863E003F91FE /* AIAnalyst.m */,
 				087705BE2753786700BA4EFB /* README.md */,
 			);
 			path = AIThinkingControl;
@@ -1780,6 +1785,7 @@
 				087705AB2753744300BA4EFB /* TCRegroup.m in Sources */,
 				0839819F24DB7F8C00A020D2 /* HEView.m in Sources */,
 				081B3ADB1F6E2CCD008A7F36 /* AINet.m in Sources */,
+				083680422853863E003F91FE /* AIAnalyst.m in Sources */,
 				08C6C2632518E49400DDE6BF /* NSLog+Extension.m in Sources */,
 				0858C5E021950BB300951BA5 /* TreeView.m in Sources */,
 				0892BAED277808F80024B43C /* TCActYes.m in Sources */,
