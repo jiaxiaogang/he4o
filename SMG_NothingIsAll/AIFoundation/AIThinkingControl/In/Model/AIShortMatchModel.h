@@ -67,7 +67,8 @@
  *  @version
  *      2020.06.26: 将protoFo拆分为protoFo和matchAFo两部分;
  */
-@property (strong, nonatomic) AIFoNodeBase *protoFo;
+@property (strong, nonatomic) AIFoNodeBase *protoFo;    //识别时赋值
+@property (strong, nonatomic) AIFoNodeBase *regroupFo;  //反思时赋值
 
 /**
  *  MARK:--------------------由matchAlg构建的时序--------------------

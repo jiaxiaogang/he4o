@@ -33,7 +33,7 @@
     
     //3. 快思考算法;
     return [TCSolutionUtil generalSolution_Fast:demand cansets:cansets except_ps:except_ps solutionModelBlock:^AISolutionModel *(AIEffectStrong *canset) {
-        return [TOUtils compareRCansetFo:canset.solutionFo protoFo:demand.protoFo];
+        return [AIAnalyst compareRCansetFo:canset.solutionFo demand:demand];
     }];
 }
 
@@ -51,7 +51,7 @@
     
     //3. 快思考算法;
     return [TCSolutionUtil generalSolution_Fast:hDemand cansets:cansets except_ps:except_ps solutionModelBlock:^AISolutionModel *(AIEffectStrong *canset) {
-        return [TOUtils compareHCansetFo:canset.solutionFo targetFo:targetFoM];
+        return [AIAnalyst compareHCansetFo:canset.solutionFo targetFo:targetFoM];
     }];
 }
 
@@ -150,7 +150,7 @@
     
     //2. 慢思考;
     return [self generalSolution_Slow:hDemand maskFos:@[targetFo.pointer] except_ps:except_ps solutionModelBlock:^AISolutionModel *(AIKVPointer *canset) {
-        return [TOUtils compareHCansetFo:canset targetFo:targetFoModel];
+        return [AIAnalyst compareHCansetFo:canset targetFo:targetFoModel];
     }];
 }
 
@@ -165,7 +165,7 @@
 
     //2. 慢思考;
     return [self generalSolution_Slow:demand maskFos:pFos except_ps:except_ps solutionModelBlock:^AISolutionModel *(AIKVPointer *canset) {
-        return [TOUtils compareRCansetFo:canset protoFo:demand.protoFo];
+        return [AIAnalyst compareRCansetFo:canset demand:demand];
     }];
 }
 

@@ -37,6 +37,7 @@
     result.pFos = pFos;
     result.fromIden = STRFORMAT(@"%p",inModel);
     result.protoFo = inModel.protoFo.pointer;
+    result.regroupFo = inModel.regroupFo.pointer;
     return result;
 }
 

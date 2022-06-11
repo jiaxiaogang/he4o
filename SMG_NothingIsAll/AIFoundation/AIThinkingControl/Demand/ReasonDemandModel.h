@@ -46,9 +46,10 @@
 @property (strong, nonatomic) NSString *fromIden;
 
 /**
- *  MARK:--------------------触发了此任务的protoFo记录--------------------
+ *  MARK:--------------------触发了此任务的fo记录--------------------
  *  @desc 作用: 可用于Solution思考;
  */
-@property (strong, nonatomic) AIKVPointer *protoFo;
+@property (strong, nonatomic) AIKVPointer *protoFo;     //触发识别根任务的protoFo
+@property (strong, nonatomic) AIKVPointer *regroupFo;   //触发反思子任务的regroupFo
 
 @end

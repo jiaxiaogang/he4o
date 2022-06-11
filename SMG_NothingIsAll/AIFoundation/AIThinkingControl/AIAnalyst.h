@@ -16,4 +16,12 @@
  */
 @interface AIAnalyst : NSObject
 
+/**
+ *  MARK:--------------------对比节点相同度--------------------
+ */
++(AISolutionModel*) compareRCansetFo:(AIKVPointer*)cansetFo_p demand:(ReasonDemandModel*)demand;
++(AISolutionModel*) compareHCansetFo:(AIKVPointer*)cansetFo_p targetFo:(TOFoModel*)targetFoM;
++(CGFloat) compareCansetAlg:(AIKVPointer*)cansetAlg_p protoAlg:(AIKVPointer*)protoAlg_p;
++(CGFloat) compareCansetValue:(AIKVPointer*)cansetV_p protoValue:(AIKVPointer*)protoV_p;
+
 @end

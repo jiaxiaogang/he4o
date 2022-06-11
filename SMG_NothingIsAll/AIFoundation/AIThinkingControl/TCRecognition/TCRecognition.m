@@ -89,6 +89,7 @@
 +(void) feedbackRecognition:(AIFoNodeBase*)regroupFo foModel:(TOFoModel*)foModel{
     //1. 数据检查
     AIShortMatchModel *result = [[AIShortMatchModel alloc] init];
+    result.regroupFo = regroupFo;
     [theTC updateOperCount];
     Debug();
     OFTitleLog(@"反思时序识别", @"\n%@",Fo2FStr(regroupFo));

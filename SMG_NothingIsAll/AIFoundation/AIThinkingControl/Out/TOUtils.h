@@ -172,18 +172,6 @@
 
 
 //MARK:===============================================================
-//MARK:                     < 思考算法 >
-//MARK:===============================================================
-
-/**
- *  MARK:--------------------对比节点相同度--------------------
- */
-+(AISolutionModel*) compareRCansetFo:(AIKVPointer*)cansetFo_p protoFo:(AIKVPointer*)protoFo_p;
-+(AISolutionModel*) compareHCansetFo:(AIKVPointer*)cansetFo_p targetFo:(TOFoModel*)targetFoM;
-+(CGFloat) compareCansetAlg:(AIKVPointer*)cansetAlg_p protoAlg:(AIKVPointer*)protoAlg_p;
-+(CGFloat) compareCansetValue:(AIKVPointer*)cansetV_p protoValue:(AIKVPointer*)protoV_p;
-
-//MARK:===============================================================
 //MARK:                     < 解决方案竞争 >
 //MARK:===============================================================
 +(NSArray*) solutionTotalRanking:(NSArray*)solutionModels needBack:(BOOL)needBack fromSlow:(BOOL)fromSlow;
