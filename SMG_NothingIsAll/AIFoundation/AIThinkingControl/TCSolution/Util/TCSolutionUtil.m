@@ -29,7 +29,14 @@
         NSArray *itemCansets = [pFo.effectDic objectForKey:@(pFo.count)];
         if (Log4Solution_Fast && ARRISOK(itemCansets)) NSLog(@"\tF%ld的第%ld帧取: %@",pFo.pointer.pointerId,pFo.count,CLEANSTR(itemCansets));
         
+        
+        
         //TODOTOMORROW20220611: 直接用analyst分析打分;
+        
+        
+        
+        
+        
         for (AIEffectStrong *canset in itemCansets) {
             [AIAnalyst compareRCansetFo:canset.solutionFo pFo:obj demand:demand];
         }

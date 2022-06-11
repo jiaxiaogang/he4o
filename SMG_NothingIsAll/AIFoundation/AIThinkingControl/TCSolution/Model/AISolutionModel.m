@@ -10,12 +10,12 @@
 
 @implementation AISolutionModel
 
-+(AISolutionModel*) newWithCansetFo:(AIKVPointer*)cansetFo maskFo:(AIKVPointer*)maskFo
++(AISolutionModel*) newWithCansetFo:(AIKVPointer*)cansetFo ptFo:(AIKVPointer*)ptFo
                     frontMatchValue:(CGFloat)frontMatchValue backMatchValue:(CGFloat)backMatchValue
                            cutIndex:(NSInteger)cutIndex targetIndex:(NSInteger)targetIndex{
     AISolutionModel *model = [[AISolutionModel alloc] init];
     model.cansetFo = cansetFo;
-    model.maskFo = maskFo;
+    model.ptFo = ptFo;
     model.frontMatchValue = frontMatchValue;
     model.backMatchValue = backMatchValue;
     model.cutIndex = cutIndex;
