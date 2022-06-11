@@ -59,10 +59,9 @@
 #import "AICMVNode.h"
 #import "AIAbsCMVNode.h"
 
-
 //其它: 类比器,评价器,触发器,防重器,输入,输出
-#import "AIAnalogy.h"
 #import "AIAnalyst.h"
+#import "AIAnalogy.h"
 #import "AITime.h"
 #import "OutputModel.h"
 #import "Output.h"

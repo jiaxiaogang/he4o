@@ -164,7 +164,7 @@
         for (AIKVPointer *near_p in near_ps) {
             
             //5. 第1_计算出nearV (参考25082-公式1);
-            double nearV = [TOUtils compareCansetValue:near_p protoValue:item_p];
+            double nearV = [AIAnalyst compareCansetValue:near_p protoValue:item_p];
             
             //6. 第2_取near_p的refPorts (参考25083-1);
             NSArray *refPorts = [SMGUtils filterPorts_Normal:[AINetUtils refPorts_All4Value:near_p isMem:isMem]];
@@ -494,7 +494,7 @@
             lastAssIndex = curIndex;
             
             //3. 统计匹配度;
-            CGFloat near = [TOUtils compareCansetAlg:checkAssAlg_p protoAlg:lastProtoAlg];
+            CGFloat near = [AIAnalyst compareCansetAlg:checkAssAlg_p protoAlg:lastProtoAlg];
             if (near < 1) {
                 sumNear += near;
                 nearCount ++;
@@ -544,7 +544,7 @@
                     
                     //3. 统计匹配度;
                     AIKVPointer *compareProtoAlg = regroupFo ? ARR_INDEX(regroupFo.content_ps, j) : [TIUtils getProtoAlg:j];
-                    CGFloat near = [TOUtils compareCansetAlg:checkAssAlg_p protoAlg:compareProtoAlg];
+                    CGFloat near = [AIAnalyst compareCansetAlg:checkAssAlg_p protoAlg:compareProtoAlg];
                     if (near < 1) {
                         sumNear += near;
                         nearCount ++;

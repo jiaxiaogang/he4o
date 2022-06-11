@@ -28,12 +28,19 @@
         AIFoNodeBase *pFo = [SMGUtils searchNode:obj.matchFo];
         NSArray *itemCansets = [pFo.effectDic objectForKey:@(pFo.count)];
         if (Log4Solution_Fast && ARRISOK(itemCansets)) NSLog(@"\tF%ld的第%ld帧取: %@",pFo.pointer.pointerId,pFo.count,CLEANSTR(itemCansets));
+        
+        //TODOTOMORROW20220611: 直接用analyst分析打分;
+        for (AIEffectStrong *canset in itemCansets) {
+            [AIAnalyst compareRCansetFo:canset.solutionFo pFo:obj demand:demand];
+        }
+        
+        
         return itemCansets;
     }];
     
     //3. 快思考算法;
     return [TCSolutionUtil generalSolution_Fast:demand cansets:cansets except_ps:except_ps solutionModelBlock:^AISolutionModel *(AIEffectStrong *canset) {
-        return [AIAnalyst compareRCansetFo:canset.solutionFo demand:demand];
+        return [AIAnalyst compareRCansetFo:canset.solutionFo pFo:nil demand:demand];
     }];
 }
 
@@ -165,7 +172,7 @@
 
     //2. 慢思考;
     return [self generalSolution_Slow:demand maskFos:pFos except_ps:except_ps solutionModelBlock:^AISolutionModel *(AIKVPointer *canset) {
-        return [AIAnalyst compareRCansetFo:canset demand:demand];
+        return [AIAnalyst compareRCansetFo:canset pFo:nil demand:demand];
     }];
 }
 

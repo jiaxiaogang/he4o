@@ -9,19 +9,31 @@
 #import <Foundation/Foundation.h>
 
 /**
- *  MARK:--------------------核验--------------------
- *  @desc 用于核验对比cansetFo与protoFo;
+ *  MARK:--------------------分析师--------------------
+ *  @desc 用于核验对比cansetFo与protoFo,并给出分析报告;
  *  @version
  *      2019.xx.xx: PM算法 (参考手稿PM相关涉及);
  */
 @interface AIAnalyst : NSObject
 
 /**
- *  MARK:--------------------对比节点相同度--------------------
+ *  MARK:--------------------分析R任务的cansetFo--------------------
  */
-+(AISolutionModel*) compareRCansetFo:(AIKVPointer*)cansetFo_p demand:(ReasonDemandModel*)demand;
++(AISolutionModel*) compareRCansetFo:(AIKVPointer*)cansetFo_p pFo:(AIMatchFoModel*)pFo demand:(ReasonDemandModel*)demand;
+
+/**
+ *  MARK:--------------------分析H任务的cansetFo--------------------
+ */
 +(AISolutionModel*) compareHCansetFo:(AIKVPointer*)cansetFo_p targetFo:(TOFoModel*)targetFoM;
+
+/**
+ *  MARK:--------------------对比两个概念匹配度--------------------
+ */
 +(CGFloat) compareCansetAlg:(AIKVPointer*)cansetAlg_p protoAlg:(AIKVPointer*)protoAlg_p;
+
+/**
+ *  MARK:--------------------对比稀疏码相近度--------------------
+ */
 +(CGFloat) compareCansetValue:(AIKVPointer*)cansetV_p protoValue:(AIKVPointer*)protoV_p;
 
 @end

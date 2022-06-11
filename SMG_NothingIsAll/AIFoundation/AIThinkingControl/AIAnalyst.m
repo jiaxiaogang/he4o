@@ -19,7 +19,13 @@
  *      2022.05.30: R和H模式复用封装 (参考26161);
  *      2022.06.11: 修复反思子任务没有protoFo用于analyst的BUG (参考26224-方案图);
  */
-+(AISolutionModel*) compareRCansetFo:(AIKVPointer*)cansetFo_p demand:(ReasonDemandModel*)demand {
++(AISolutionModel*) compareRCansetFo:(AIKVPointer*)cansetFo_p pFo:(AIMatchFoModel*)pFo demand:(ReasonDemandModel*)demand {
+    
+    //TODOTOMORROW20220611: 根据pFo,从protoFo中取出相应的帧数组;
+    
+    
+    
+    
     //1. 数据准备;
     BOOL isRoot = !demand.baseOrGroup;
     TOFoModel *demandBaseFo = (TOFoModel*)demand.baseOrGroup;
