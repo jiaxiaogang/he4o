@@ -394,10 +394,10 @@
             
             //7. 全含判断;
             AIFoNodeBase *regroupFo = fromRegroup ? maskFo : nil;
-            [self TIR_Fo_CheckFoValidMatch:assFo outOfFos:assFo_ps success:^(NSInteger lastAssIndex, CGFloat matchValue,CGFloat colStableScore) {
+            [self TIR_Fo_CheckFoValidMatch:assFo outOfFos:assFo_ps success:^(NSInteger lastAssIndex, NSDictionary *indexDic, CGFloat matchValue) {
                 if (Log4MFo) NSLog(@"时序识别item SUCCESS 完成度:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
                 NSInteger cutIndex = fromRegroup ? -1 : lastAssIndex;
-                AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:assFo.pointer matchFoValue:matchValue colStableScore:colStableScore lastMatchIndex:lastAssIndex cutIndex:cutIndex];
+                AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:assFo.pointer maskFo:maskFo.pointer matchFoValue:matchValue colStableScore:0 indexDic:indexDic cutIndex:cutIndex];
                 
                 //8. 被引用强度;
                 AIPort *newMatchFoFromPort = [AINetUtils findPort:assFo_p fromPorts:refFoPorts];
@@ -456,7 +456,7 @@
  *      2022.06.08: 排序公式改为sumNear / nearCount (参考26222-TODO1);
  *  _result 将protoFo与assFo判断是否全含,并将匹配度返回;
  */
-+(void) TIR_Fo_CheckFoValidMatch:(AIFoNodeBase*)assFo outOfFos:(NSArray*)outOfFos success:(void(^)(NSInteger lastAssIndex,CGFloat matchValue,CGFloat colStableScore))success regroupFo:(AIFoNodeBase*)regroupFo{
++(void) TIR_Fo_CheckFoValidMatch:(AIFoNodeBase*)assFo outOfFos:(NSArray*)outOfFos success:(void(^)(NSInteger lastAssIndex, NSDictionary *indexDic,CGFloat matchValue))success regroupFo:(AIFoNodeBase*)regroupFo{
     //1. 数据准备;
     BOOL paramValid = assFo && assFo.content_ps.count > 0 && success;
     if (!paramValid) {
@@ -466,6 +466,7 @@
     if (Log4MFo) NSLog(@"------------------------ 时序全含检查 ------------------------\nass:%@->%@",Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
     
     //1. 默认有效数为1 (因为lastAlg肯定有效);
+    NSMutableDictionary *indexDic = [[NSMutableDictionary alloc] init];
     int validItemCount = 1;
     CGFloat sumNear = 0;
     int nearCount = 0;
@@ -480,18 +481,20 @@
         //2. 匹配判断: 反思时用mIsC判断 & 识别时用瞬时末帧matchAlgs+partAlgs包含来判断;
         BOOL mIsC = false;
         AIKVPointer *lastProtoAlg = nil;
+        NSInteger maskFoIndex = regroupFo ? regroupFo.count - 1 : theTC.inModelManager.models.count - 1;
         if (regroupFo) {
-            lastProtoAlg = ARR_INDEX_REVERSE(regroupFo.content_ps, 0);
+            lastProtoAlg = ARR_INDEX(regroupFo.content_ps, maskFoIndex);
             mIsC = [TOUtils mIsC_1:lastProtoAlg c:checkAssAlg_p];
         }else{
-            lastProtoAlg = [self getProtoAlg:theTC.inModelManager.models.count - 1];
-            NSArray *lastAlgs = [self getMatchAndPartAlgPs:theTC.inModelManager.models.count - 1];
+            lastProtoAlg = [self getProtoAlg:maskFoIndex];
+            NSArray *lastAlgs = [self getMatchAndPartAlgPs:maskFoIndex];
             mIsC = [lastAlgs containsObject:checkAssAlg_p];
         }
         
         //2. 匹配则记录lastAssIndex值;
         if (mIsC) {
             lastAssIndex = curIndex;
+            [indexDic setObject:@(curIndex) forKey:@(maskFoIndex)];
             
             //3. 统计匹配度;
             CGFloat near = [AIAnalyst compareCansetAlg:checkAssAlg_p protoAlg:lastProtoAlg];
@@ -506,15 +509,6 @@
         NSLog(@"时序识别: lastItem匹配失败,查看是否在联想时就出bug了");
         return;
     }
-    
-    //3. 稳定性<0.4的过滤掉;
-    //NSInteger cutIndex = regroupFo ? -1 : lastAssIndex;
-    //CGFloat colStableScore = [TOUtils getColStableScore:assFo outOfFos:outOfFos startSPIndex:cutIndex + 1 endSPIndex:assFo.count];
-    //CGFloat needScore = assFo.cmvNode_p ? 0.0f : 0.4f;
-    //if (colStableScore < needScore) {
-    //    return;
-    //}
-    CGFloat colStableScore = 1;
     
     //3. 从lastAssIndex向前逐个匹配;
     if (Log4MFo)NSLog(@"--->>>>> 在%ld位,找到LastItem匹配",lastAssIndex);
@@ -541,6 +535,7 @@
                     lastProtoIndex = j; //成功匹配alg时,更新protoIndex (以达到只能向前匹配的目的);
                     checkResult = true;
                     validItemCount ++;  //有效数+1;
+                    [indexDic setObject:@(i) forKey:@(j)];
                     
                     //3. 统计匹配度;
                     AIKVPointer *compareProtoAlg = regroupFo ? ARR_INDEX(regroupFo.content_ps, j) : [TIUtils getProtoAlg:j];
@@ -568,7 +563,7 @@
     CGFloat matchValue = nearCount > 0 ? sumNear / nearCount : 1;
     
     //7. 到此全含成功 之: 返回success
-    success(lastAssIndex,matchValue,colStableScore);
+    success(lastAssIndex,indexDic,matchValue);
 }
 
 /**

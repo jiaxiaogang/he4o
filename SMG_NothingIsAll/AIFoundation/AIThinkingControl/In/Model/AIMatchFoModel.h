@@ -16,24 +16,29 @@
 @class AIFoNodeBase;
 @interface AIMatchFoModel : NSObject
 
-+(AIMatchFoModel*) newWithMatchFo:(AIKVPointer*)matchFo matchFoValue:(CGFloat)matchFoValue colStableScore:(CGFloat)colStableScore lastMatchIndex:(NSInteger)lastMatchIndex cutIndex:(NSInteger)cutIndex;
++(AIMatchFoModel*) newWithMatchFo:(AIKVPointer*)matchFo maskFo:(AIKVPointer*)maskFo matchFoValue:(CGFloat)matchFoValue colStableScore:(CGFloat)colStableScore indexDic:(NSDictionary*)indexDic cutIndex:(NSInteger)cutIndex;
 @property (strong, nonatomic) AIKVPointer *matchFo;     //匹配时序
+@property (strong, nonatomic) AIKVPointer *maskFo;      //识别时为protoFo,反思时为regroupFo;
 @property (assign, nonatomic) CGFloat matchFoValue;     //时序匹配度
 @property (assign, nonatomic) CGFloat colStableScore;   //衰减稳定性
 @property (assign, nonatomic) TIModelStatus status;     //状态
 
 /**
- *  MARK:--------------------匹配截点--------------------
- *  @desc 其描述了proto在match中匹配到的最后一位,在match中的下标;
+ *  MARK:--------------------匹配下标映射--------------------
+ *  @desc 其描述了match与mask匹配到的每一位的下标映射 <K:matchFoIndex,V:maskFoIndex>;
  *  @caller
  *      1. 当为瞬时识别时,lastMatchIndex与已发生cutIndex同值 (因为瞬时时,判断的本来就是当前已经发生的事);
  *      2. 当为反思识别时,lastMatchIndex与已发生cutIndex不同值 (因为反思是一种假设,并判断假设这么做会怎么样);
+ *  @version
+ *      2022.06.11: 将lastMatchIndex迭代成indexDic,即从末位改成记录所有 (参考26232-TODO2);
  */
-@property (assign, nonatomic) NSInteger lastMatchIndex;
+@property (strong, nonatomic) NSDictionary *indexDic;
 
 /**
  *  MARK:--------------------已发生截点--------------------
  *  @desc 已发生与预测的截点 (0开始,已发生含cutIndex);
+ *          1. 识别时为indexDic的长度-1,即全已发生;
+ *          2. 反思时为-1,无效数据 (反思要从foModel.actionIndex随变随取);
  */
 @property (assign, nonatomic) NSInteger cutIndex2;
 

@@ -10,12 +10,13 @@
 
 @implementation AIMatchFoModel
 
-+(AIMatchFoModel*) newWithMatchFo:(AIKVPointer*)matchFo matchFoValue:(CGFloat)matchFoValue colStableScore:(CGFloat)colStableScore lastMatchIndex:(NSInteger)lastMatchIndex cutIndex:(NSInteger)cutIndex{
++(AIMatchFoModel*) newWithMatchFo:(AIKVPointer*)matchFo maskFo:(AIKVPointer*)maskFo matchFoValue:(CGFloat)matchFoValue colStableScore:(CGFloat)colStableScore indexDic:(NSDictionary*)indexDic cutIndex:(NSInteger)cutIndex{
     AIMatchFoModel *model = [[AIMatchFoModel alloc] init];
     model.matchFo = matchFo;
+    model.maskFo = maskFo;
     model.matchFoValue = matchFoValue;
     model.colStableScore = colStableScore;
-    model.lastMatchIndex = lastMatchIndex;
+    model.indexDic = indexDic;
     model.cutIndex2 = cutIndex;
     return model;
 }
@@ -27,10 +28,11 @@
     self = [super init];
     if (self) {
         self.matchFo = [aDecoder decodeObjectForKey:@"matchFo"];
+        self.maskFo = [aDecoder decodeObjectForKey:@"maskFo"];
         self.matchFoValue = [aDecoder decodeFloatForKey:@"matchFoValue"];
         self.colStableScore = [aDecoder decodeFloatForKey:@"colStableScore"];
         self.status = [aDecoder decodeIntegerForKey:@"status"];
-        self.lastMatchIndex = [aDecoder decodeIntegerForKey:@"lastMatchIndex"];
+        self.indexDic = [aDecoder decodeObjectForKey:@"indexDic"];
         self.cutIndex2 = [aDecoder decodeIntegerForKey:@"cutIndex2"];
         self.matchFoStrong = [aDecoder decodeIntegerForKey:@"matchFoStrong"];
     }
@@ -39,10 +41,11 @@
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [aCoder encodeObject:self.matchFo forKey:@"matchFo"];
+    [aCoder encodeObject:self.maskFo forKey:@"maskFo"];
     [aCoder encodeFloat:self.matchFoValue forKey:@"matchFoValue"];
     [aCoder encodeFloat:self.colStableScore forKey:@"colStableScore"];
     [aCoder encodeInteger:self.status forKey:@"status"];
-    [aCoder encodeInteger:self.lastMatchIndex forKey:@"lastMatchIndex"];
+    [aCoder encodeObject:self.indexDic forKey:@"indexDic"];
     [aCoder encodeInteger:self.cutIndex2 forKey:@"cutIndex2"];
     [aCoder encodeInteger:self.matchFoStrong forKey:@"matchFoStrong"];
 }
