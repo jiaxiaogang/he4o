@@ -115,7 +115,7 @@
     //6. 对候选集排序;
     NSArray *sortCansets = [TOUtils solutionTotalRanking:cansets needBack:havBack fromSlow:false];
     NSLog(@"3. 有效率排序后:%ld",cansets.count);
-    if (Log4Solution_Fast) for (AISolutionModel *m in sortCansets) {
+    if (Log4Solution_Fast) for (AISolutionModel *m in ARR_SUB(sortCansets, 0, 5)) {
         NSLog(@"\t(前%.2f 中%.2f 后%.2f) %@",m.frontMatchValue,m.effectScore,m.backMatchValue,Pit2FStr(m.cansetFo));
     }
 
@@ -240,7 +240,7 @@
     //1. 取absPFos
     AIFoNodeBase *ptFo = [SMGUtils searchNode:ptFo_p];
     NSArray *absFos = Ports2Pits([AINetUtils absPorts_All:ptFo]);
-    NSLog(@"第1步 absFos数:%ld",absFos.count);//测时10条
+    //NSLog(@"第1步 absFos数:%ld",absFos.count);//测时10条
     
     //2. 取同级;
     NSArray *sameLayerFos = [SMGUtils convertArr:absFos convertItemArrBlock:^NSArray *(AIKVPointer *obj) {
@@ -248,14 +248,14 @@
         return Ports2Pits([AINetUtils conPorts_All:absFo]);
     }];
     sameLayerFos = [SMGUtils removeRepeat:sameLayerFos];
-    NSLog(@"第2步 sameLayerFos数:%ld",sameLayerFos.count);//测时749条
+    //NSLog(@"第2步 sameLayerFos数:%ld",sameLayerFos.count);//测时749条
     
     //3. 收集起来 (参考26161-0);
     NSMutableArray *cansetFos = [[NSMutableArray alloc] init];
     [cansetFos addObjectsFromArray:absFos];
     [cansetFos addObjectsFromArray:sameLayerFos];
     cansetFos = [SMGUtils removeRepeat:cansetFos];
-    NSLog(@"第3步 收集数:%ld",cansetFos.count);//测时749条
+    //NSLog(@"第3步 收集数:%ld",cansetFos.count);//测时749条
     return cansetFos;
 }
 

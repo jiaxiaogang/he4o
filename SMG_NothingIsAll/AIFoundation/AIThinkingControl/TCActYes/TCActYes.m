@@ -289,7 +289,6 @@
             if (solutionModel.status == TOModelStatus_ActYes) {
                 solutionModel.status = TOModelStatus_ActNo;
                 demand.status = TOModelStatus_Runing;
-                NSLog(@"%lld score from 2",theTC.getLoopId);
                 [TCScore score];
             }
         }
@@ -310,7 +309,6 @@
                 demand.status = TOModelStatus_Runing;
                 
                 //6. 2021.12.02: 失败时,继续决策;
-                NSLog(@"%lld score from 1",theTC.getLoopId);
                 [TCScore score];
             }
         }
