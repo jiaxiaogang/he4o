@@ -259,4 +259,59 @@
     return result;
 }
 
+//MARK:===============================================================
+//MARK:                     < privateMethod >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------取候选集fos--------------------
+ *  @param ptFo : R时传pFo, H时传targetFo;
+ */
++(NSArray*) getCansetFos_Slow:(AIFoNodeBase*)ptFo{
+    //1. 取absPFos
+    NSArray *absFos = Ports2Pits([AINetUtils absPorts_All:ptFo]);
+    NSLog(@"第1步 absFos数:%ld",absFos.count);//测时10条
+    
+    //2. 取同级;
+    NSArray *sameLayerFos = [SMGUtils convertArr:absFos convertItemArrBlock:^NSArray *(AIKVPointer *obj) {
+        AIFoNodeBase *absFo = [SMGUtils searchNode:obj];
+        return Ports2Pits([AINetUtils conPorts_All:absFo]);
+    }];
+    sameLayerFos = [SMGUtils removeRepeat:sameLayerFos];
+    NSLog(@"第2步 sameLayerFos数:%ld",sameLayerFos.count);//测时749条
+    
+    //3. 收集起来 (参考26161-0);
+    NSMutableArray *cansetFos = [[NSMutableArray alloc] init];
+    [cansetFos addObjectsFromArray:absFos];
+    [cansetFos addObjectsFromArray:sameLayerFos];
+    cansetFos = [SMGUtils removeRepeat:cansetFos];
+    NSLog(@"第3步 收集数:%ld",cansetFos.count);//测时749条
+    return cansetFos;
+}
+
+/**
+ *  MARK:--------------------cansetFos过滤器--------------------
+ */
++(NSArray*) slowCansetFosFilter:(NSArray*)cansetFos demand:(DemandModel*)demand{
+    //1. 数据准备;
+    BOOL havBack = ISOK(demand, HDemandModel.class); //H有后段,别的没有;
+    int minCount = havBack ? 2 : 1;
+    
+    //2. 过滤器;
+    cansetFos = [SMGUtils filterArr:cansetFos checkValid:^BOOL(AIKVPointer *item) {
+        //a. 过滤掉长度不够的 (因为前段全含至少要1位,中段修正也至少要0位,后段H目标要1位R要0位);
+        AIFoNodeBase *fo = [SMGUtils searchNode:item];
+        if (fo.count < minCount) return false;
+        
+        //b. 过滤掉有负mv指向的 (参考26063 & 26127-TODO8);
+        if ([ThinkingUtils havDemand:fo.cmvNode_p]) return false;
+        
+        //c. 闯关成功;
+        return true;
+    }];
+    NSLog(@"第4步 最小长度 & 非负价值过滤后:%ld",cansetFos.count);//测时96条
+    return cansetFos;
+}
+
+
 @end
