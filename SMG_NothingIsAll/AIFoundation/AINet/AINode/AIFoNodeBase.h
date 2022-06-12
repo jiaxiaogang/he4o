@@ -64,4 +64,9 @@
  */
 -(void) updateEffectStrong:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo status:(EffectStatus)status;
 
+/**
+ *  MARK:--------------------取effIndex下有效的Effs--------------------
+ */
+-(NSArray*) getValidEffs:(NSInteger)effIndex;
+
 @end

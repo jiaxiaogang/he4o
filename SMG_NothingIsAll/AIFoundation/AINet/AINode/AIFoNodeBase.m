@@ -82,6 +82,18 @@
 }
 
 /**
+ *  MARK:--------------------取effIndex下有效的Effs--------------------
+ *  @result 返回有效结果: 排除有效率为0的 (参考26192);
+ */
+-(NSArray*) getValidEffs:(NSInteger)effIndex{
+    int minHStrong = 0;//最小h强度要求 (曾用5: 参考26199-TODO2);
+    NSArray *effs = [self.effectDic objectForKey:@(effIndex)];
+    return [SMGUtils filterArr:effs checkValid:^BOOL(AIEffectStrong *item) {
+        return item.hStrong > minHStrong;
+    }];
+}
+
+/**
  *  MARK:--------------------NSCoding--------------------
  */
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {

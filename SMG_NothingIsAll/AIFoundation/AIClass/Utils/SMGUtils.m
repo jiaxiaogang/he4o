@@ -801,6 +801,7 @@
  *  MARK:--------------------交集--------------------
  *  @version
  *      2020.12.13: 使之改为保持parent_ps有序 (以前的旧有方式是dic筛选,会使无序,导致原有序被打乱,比如参考21194的BUG);
+ *  @result notnull
  */
 +(NSArray*) filterSame_ps:(NSArray*)a_ps parent_ps:(NSArray*)b_ps{
     return [self filterArr:b_ps checkValid:^BOOL(id item) {

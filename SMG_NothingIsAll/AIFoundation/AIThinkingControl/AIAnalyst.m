@@ -11,8 +11,8 @@
 @implementation AIAnalyst
 
 /**
- *  MARK:--------------------时序对比--------------------
- *  @desc 初步对比候选集是否适用于protoFo (参考26128-第1步);
+ *  MARK:--------------------时序比对--------------------
+ *  @desc 初步比对候选集是否适用于protoFo (参考26128-第1步);
  *  @result 返回cansetFo前段匹配度 & 以及已匹配的cutIndex截点;
  *  @version
  *      2022.05.30: 匹配度公式改成: 匹配度总和/proto长度 (参考26128-1-4);
@@ -65,7 +65,7 @@
 }
 
 /**
- *  MARK:--------------------对比时序--------------------
+ *  MARK:--------------------比对时序--------------------
  *  @param ptAleardayCount      : ptFo已发生个数:
  *                                  1. 根R=cutIndex+1
  *                                  2. 子R=父actionIndex对应indexDic条数;
@@ -91,7 +91,7 @@
         for (NSInteger j = lastMatchAtProtoIndex + 1; j < ptAleardayCount; j++) {
             AIKVPointer *maskA_p = getMaskAlgFromPtIndexBlock(j);
             
-            //4. 对比两个概念匹配度;
+            //4. 比对两个概念匹配度;
             itemMatchValue = [self compareCansetAlg:cansetA_p protoAlg:maskA_p];
             
             //5. 匹配成功,则更新匹配进度,并break报喜;
@@ -124,7 +124,7 @@
             NSInteger cansetTargetIndex = -1;//canset目标下标
             AIKVPointer *actionIndexA_p = getMaskAlgFromPtIndexBlock(ptAleardayCount);
             
-            //b. 分别对canset后段,对比两个概念匹配度;
+            //b. 分别对canset后段,比对两个概念匹配度;
             for (NSInteger i = cansetCutIndex + 1; i < cansetFo.count; i++) {
                 AIKVPointer *cansetA_p = ARR_INDEX(cansetFo.content_ps, i);
                 CGFloat checkBackMatchValue = [self compareCansetAlg:cansetA_p protoAlg:actionIndexA_p];
@@ -151,7 +151,7 @@
 }
 
 /**
- *  MARK:--------------------对比两个概念匹配度--------------------
+ *  MARK:--------------------比对两个概念匹配度--------------------
  *  @result 返回0到1 (0:完全不一样 & 1:完全一样) (参考26127-TODO5);
  *  @version
  *      2022.06.08: 排序公式改为sumNear / nearCount (参考2619j-TODO5);
@@ -165,7 +165,7 @@
     NSString *cansetAT = cansetFirstV_p.algsType;
     NSString *protoAT = protoFirstV_p.algsType;
     
-    //2. 先对比二者是否同区;
+    //2. 先比对二者是否同区;
     if (![cansetAT isEqualToString:protoAT]) {
         return 0;
     }
@@ -177,7 +177,7 @@
         for (AIKVPointer *protoV in protoAlg.content_ps) {
             if ([cansetV.dataSource isEqualToString:protoV.dataSource]) {
                 
-                //4. 对比稀疏码相近度 & 并累计;
+                //4. 比对稀疏码相近度 & 并累计;
                 CGFloat near = [self compareCansetValue:cansetV protoValue:protoV];
                 if (near < 1) {
                     sumNear += near;
@@ -190,7 +190,7 @@
 }
 
 /**
- *  MARK:--------------------对比稀疏码相近度--------------------
+ *  MARK:--------------------比对稀疏码相近度--------------------
  *  @result 返回0到1 (0:稀疏码完全不同, 1稀疏码完全相同) (参考26127-TODO6);
  */
 +(CGFloat) compareCansetValue:(AIKVPointer*)cansetV_p protoValue:(AIKVPointer*)protoV_p{

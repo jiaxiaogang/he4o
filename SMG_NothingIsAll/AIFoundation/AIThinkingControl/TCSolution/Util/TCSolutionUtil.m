@@ -24,31 +24,25 @@
     except_ps = ARRTOOK(except_ps);
     
     //2. 收集所有解决方案候选集;
-    NSArray *cansets = [SMGUtils convertArr:demand.pFos convertItemArrBlock:^NSArray *(AIMatchFoModel *obj) {
-        AIFoNodeBase *pFo = [SMGUtils searchNode:obj.matchFo];
-        NSArray *itemCansets = [pFo.effectDic objectForKey:@(pFo.count)];
+    NSArray *cansets = [SMGUtils convertArr:demand.pFos convertItemArrBlock:^NSArray *(AIMatchFoModel *pFoM) {
+        //a. 取出pFo的effectDic候选集;
+        AIFoNodeBase *pFo = [SMGUtils searchNode:pFoM.matchFo];
+        NSArray *itemCansets = [pFo getValidEffs:pFo.count];
         if (Log4Solution_Fast && ARRISOK(itemCansets)) NSLog(@"\tF%ld的第%ld帧取: %@",pFo.pointer.pointerId,pFo.count,CLEANSTR(itemCansets));
         
-        
-        
-        //TODOTOMORROW20220611: 直接用analyst分析打分;
-        
-        
-        
-        
-        
-        for (AIEffectStrong *canset in itemCansets) {
-            [AIAnalyst compareRCansetFo:canset.solutionFo pFo:obj demand:demand];
-        }
-        
-        
-        return itemCansets;
+        //b. 分析analyst结果 & 排除掉不适用当前场景的(为nil) (参考26232-TODO8);
+        return [SMGUtils convertArr:itemCansets convertBlock:^id(AIEffectStrong *eff) {
+            //c. 分析比对结果;
+            AISolutionModel *sModel = [AIAnalyst compareRCansetFo:eff.solutionFo pFo:pFoM demand:demand];
+            
+            //d. 快思考附加effScore分,并收集成果;
+            if (sModel) sModel.effectScore = [TOUtils getEffectScore:eff];
+            return sModel;
+        }];
     }];
     
     //3. 快思考算法;
-    return [TCSolutionUtil generalSolution_Fast:demand cansets:cansets except_ps:except_ps solutionModelBlock:^AISolutionModel *(AIEffectStrong *canset) {
-        return [AIAnalyst compareRCansetFo:canset.solutionFo pFo:nil demand:demand];
-    }];
+    return [TCSolutionUtil generalSolution_Fast:demand cansets:cansets except_ps:except_ps];
 }
 
 /**
@@ -61,12 +55,20 @@
     AIFoNodeBase *targetFo = [SMGUtils searchNode:targetFoM.content_p];
     
     //2. 从targetFo取解决方案候选集;
-    NSArray *cansets = [targetFo.effectDic objectForKey:@(targetFoM.actionIndex)];
+    NSArray *effs = [targetFo.effectDic objectForKey:@(targetFoM.actionIndex)];
+    
+    //3. 分析analyst结果 & 排除掉不适用当前场景的(为nil) (参考26232-TODO8);
+    NSArray *cansets = [SMGUtils convertArr:effs convertBlock:^id(AIEffectStrong *eff) {
+        //a. 分析比对结果;
+        AISolutionModel *sModel = [AIAnalyst compareHCansetFo:eff.solutionFo targetFo:targetFoM];
+        
+        //b. 快思考附加effScore分,并收集成果;
+        if (sModel) sModel.effectScore = [TOUtils getEffectScore:eff];
+        return sModel;
+    }];
     
     //3. 快思考算法;
-    return [TCSolutionUtil generalSolution_Fast:hDemand cansets:cansets except_ps:except_ps solutionModelBlock:^AISolutionModel *(AIEffectStrong *canset) {
-        return [AIAnalyst compareHCansetFo:canset.solutionFo targetFo:targetFoM];
-    }];
+    return [TCSolutionUtil generalSolution_Fast:hDemand cansets:cansets except_ps:except_ps];
 }
 
 /**
@@ -79,44 +81,20 @@
  *      2022.06.05: 将R快思考和H快思考整理成通用快思考算法;
  *      2022.06.09: 废弃阈值方案和H>5的要求 (参考26222-TODO3);
  *      2022.06.09: 弃用阈值方案,改为综合排名 (参考26222-TODO2);
+ *      2022.06.12: 废弃同cansetFo的effStrong累计 (参考26232-TODO8);
  */
-+(AISolutionModel*) generalSolution_Fast:(DemandModel *)demand cansets:(NSArray*)cansets except_ps:(NSArray*)except_ps solutionModelBlock:(AISolutionModel*(^)(AIEffectStrong *canset))solutionModelBlock{
++(AISolutionModel*) generalSolution_Fast:(DemandModel *)demand cansets:(NSArray*)cansets except_ps:(NSArray*)except_ps{
     //1. 数据准备;
     except_ps = ARRTOOK(except_ps);
     BOOL havBack = ISOK(demand, HDemandModel.class); //H有后段,别的没有;
     NSLog(@"1. 快思考protoCansets数:%ld",cansets.count);
-
-    //2. 将同cansetFo的effStrong累计;
-    cansets = [TOUtils mergeCansets:cansets];
-    NSLog(@"2. 按HNStrong合并后:%ld %@",cansets.count,CLEANSTR(cansets));
-
-    //3. cansets过滤器;
-    cansets = [SMGUtils filterArr:cansets checkValid:^BOOL(AIEffectStrong *item) {
-        //1. hStrong阈值 (参考26199-TODO2);
-        //if (item.hStrong < 5) return false;
-
-        //2. 排除不应期;
-        if ([except_ps containsObject:item.solutionFo]) return false;
-
-        //3. 闯关成功;
-        return true;
-    }];
-    NSLog(@"3. HStrong>5和不应期过滤后:%ld",cansets.count);
-
-    //4. 转solutionModel & 排除掉候选方案不适用当前场景(为nil)的 和 有效率为0的 (参考26192);;
-    NSArray *solutionModels = [SMGUtils convertArr:cansets convertBlock:^id(AIEffectStrong *obj) {
-        AISolutionModel *sModel = solutionModelBlock(obj);
-        if (sModel) sModel.effectScore = [TOUtils getEffectScore:obj];
-        return sModel;
-    }];
-    solutionModels = [SMGUtils filterArr:solutionModels checkValid:^BOOL(AISolutionModel *item) {
-        return item.effectScore > 0;
-    }];
-    NSLog(@"4. 时序对比有效后:%ld",solutionModels.count);
-
-    //5. solutionModels过滤器;
-    solutionModels = [SMGUtils filterArr:solutionModels checkValid:^BOOL(AISolutionModel *item) {
-        //1. 时间不急评价: 不急 = 解决方案所需时间 <= 父任务能给的时间 (参考:24057-方案3,24171-7);
+    
+    //2. solutionModels过滤器;
+    cansets = [SMGUtils filterArr:cansets checkValid:^BOOL(AISolutionModel *item) {
+        //a. 排除不应期;
+        if([except_ps containsObject:item.cansetFo]) return false;
+        
+        //b. 时间不急评价: 不急 = 解决方案所需时间 <= 父任务能给的时间 (参考:24057-方案3,24171-7);
         if (![AIScore FRS_Time:demand solutionModel:item]) return false;
 
         ////2. 后段-目标匹配 (阈值>80%) (参考26199-TODO1);
@@ -131,21 +109,18 @@
         //5. 闯关成功;
         return true;
     }];
-    NSLog(@"5. (FRSTime & 后段阈值 & 中段阈值 & 前段阈值)过滤后:%ld",solutionModels.count);
+    NSLog(@"2. (不应期 & FRSTime & 后中后段阈值)过滤后:%ld",cansets.count);
 
     //6. 对候选集排序;
-    NSArray *sortSolutionModels = [TOUtils solutionTotalRanking:solutionModels needBack:havBack fromSlow:false];
-    NSLog(@"6. 有效率排序后:%ld",sortSolutionModels.count);
-    if (Log4Solution_Fast) for (AISolutionModel *m in sortSolutionModels) {
-        AIEffectStrong *c = [SMGUtils filterSingleFromArr:cansets checkValid:^BOOL(AIEffectStrong *item) {
-            return [item.solutionFo isEqual:m.cansetFo];
-        }];
-        NSLog(@"\tH%ldN%ld %@",c.hStrong,c.nStrong,Pit2FStr(m.cansetFo));
+    NSArray *sortCansets = [TOUtils solutionTotalRanking:cansets needBack:havBack fromSlow:false];
+    NSLog(@"3. 有效率排序后:%ld",cansets.count);
+    if (Log4Solution_Fast) for (AISolutionModel *m in sortCansets) {
+        NSLog(@"\t(前%.2f 中%.2f 后%.2f) %@",m.frontMatchValue,m.effectScore,m.backMatchValue,Pit2FStr(m.cansetFo));
     }
 
     //7. 将首条最佳方案返回;
-    AISolutionModel *result = ARR_INDEX(sortSolutionModels, 0);
-    if (Log4Solution && result) NSLog(@"7. 快思考最佳结果:F%ld 有效率:%.2f",result.cansetFo.pointerId,result.effectScore);
+    AISolutionModel *result = ARR_INDEX(sortCansets, 0);
+    if (Log4Solution && result) NSLog(@"4. 快思考最佳结果:F%ld (前%.2f 中%.2f 后%.2f",result.cansetFo.pointerId,result.frontMatchValue,result.effectScore,result.backMatchValue);
     return result;
 }
 
