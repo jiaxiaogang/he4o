@@ -13,6 +13,7 @@
  *  @desc 用于核验对比cansetFo与protoFo,并给出分析报告;
  *  @version
  *      2019.xx.xx: PM算法 (参考手稿PM相关涉及);
+ *      2022.05.xx: 比对算法 (参考26122);
  */
 @interface AIAnalyst : NSObject
 

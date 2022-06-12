@@ -18,14 +18,13 @@
  *  @desc
  *      1. R任务时,backMatchValue和targetIndex两个参数无用;
  *      2. H任务时,所有参数都有效;
- *  @param ptFo : R任务时为pFo,H任务时为targetFo;
  */
-+(AISolutionModel*) newWithCansetFo:(AIKVPointer*)cansetFo ptFo:(AIKVPointer*)ptFo
++(AISolutionModel*) newWithCansetFo:(AIKVPointer*)cansetFo
                     frontMatchValue:(CGFloat)frontMatchValue backMatchValue:(CGFloat)backMatchValue
                            cutIndex:(NSInteger)cutIndex targetIndex:(NSInteger)targetIndex;
 
 @property (strong, nonatomic) AIKVPointer *cansetFo;    //候选集fo;
-@property (strong, nonatomic) AIKVPointer *ptFo;        //R任务时为pFo,H任务时为targetFo;
+//@property (strong, nonatomic) AIKVPointer *ptFo;        //R任务时为pFo,H任务时为targetFo;
 
 @property (assign, nonatomic) CGFloat frontMatchValue;  //前段(已发生部分)匹配度 (相近度和/已发生数);
 @property (assign, nonatomic) CGFloat backMatchValue;   //后段匹配度 (R时为1,H时为目标帧相近度);

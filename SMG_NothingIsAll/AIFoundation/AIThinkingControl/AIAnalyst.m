@@ -24,49 +24,57 @@
     //1. 数据准备;
     BOOL isRoot = !demand.baseOrGroup;
     TOFoModel *demandBaseFo = (TOFoModel*)demand.baseOrGroup;
-    //AIFoNodeBase *maskFo = [SMGUtils searchNode:isRoot ? demand.protoFo : demand.regroupFo];
     
-    //2. ptFo用pFo (参考26232-TODO3);
-    AIFoNodeBase *ptFo = [SMGUtils searchNode:pFo.matchFo];
+    //2. 取导致任务的maskFo;
+    AIFoNodeBase *maskFo = [SMGUtils searchNode:isRoot ? demand.protoFo : demand.regroupFo];
     
-    //3. 取pFo已发生个数;
-    NSInteger pFoAleardayCount = 0;
+    //3. 取pFo已发生个数 (参考26232-TODO3);
+    NSInteger pAleardayCount = 0;
     if (isRoot) {
         //a. 根R任务时 (参考26232-TODO5);
-        pFoAleardayCount = pFo.cutIndex2 + 1;
+        pAleardayCount = pFo.cutIndex2 + 1;
     }else{
         //b. 子R任务时 (参考26232-TODO6);
-        pFoAleardayCount = [SMGUtils filterArr:pFo.indexDic.allValues checkValid:^BOOL(NSNumber *item) {
-            int ptIndex = item.intValue;
-            return ptIndex <= demandBaseFo.actionIndex;
+        pAleardayCount = [SMGUtils filterArr:pFo.indexDic.allValues checkValid:^BOOL(NSNumber *item) {
+            int maskIndex = item.intValue;
+            return maskIndex <= demandBaseFo.actionIndex;
         }].count;
     }
     
     //4. 匹配判断;
-    return [self compareCansetFo:cansetFo_p ptFo:ptFo aleardayCount:pFoAleardayCount needBackMatch:false];
+    return [self compareCansetFo:cansetFo_p ptAleardayCount:pAleardayCount needBackMatch:false getMaskAlgFromPtIndexBlock:^AIKVPointer *(NSInteger ptIndex) {
+        
+        //5. 根据indexDic将ptIndex转成maskIndex,然后返回mask元素;
+        int maskIndex = [NUMTOOK([pFo.indexDic objectForKey:@(ptIndex)]) intValue];
+        return ARR_INDEX(maskFo.content_ps, maskIndex);
+    }];
 }
 
 +(AISolutionModel*) compareHCansetFo:(AIKVPointer*)cansetFo_p targetFo:(TOFoModel*)targetFoM {
-    //1. 数据准备;
-    AIFoNodeBase *ptFo = [SMGUtils searchNode:targetFoM.content_p];
+    //1. 已发生个数 (targetFo已行为化部分即已发生) (参考26161-模型);
+    NSInteger tAleardayCount = targetFoM.actionIndex;
     
-    //2. 已发生个数 (targetFo已行为化部分即已发生) (参考26161-模型);
-    NSInteger maskAleardayCount = targetFoM.actionIndex;
-    
-    //3. 匹配判断;
-    return [self compareCansetFo:cansetFo_p ptFo:ptFo aleardayCount:maskAleardayCount needBackMatch:true];
+    //2. 匹配判断;
+    AIFoNodeBase *maskFo = [SMGUtils searchNode:targetFoM.content_p];
+    return [self compareCansetFo:cansetFo_p ptAleardayCount:tAleardayCount needBackMatch:true getMaskAlgFromPtIndexBlock:^AIKVPointer *(NSInteger ptIndex) {
+        
+        //3. H时: ptFo=maskFo,所以直接传回maskFo的元素;
+        NSInteger maskIndex = ptIndex;
+        return ARR_INDEX(maskFo.content_ps, maskIndex);
+    }];
 }
 
 /**
  *  MARK:--------------------对比时序--------------------
- *  _param ptFo                 : R时传入pFo; H时传入targetFo;
- *  @param aleardayCount        : ptFo已发生个数:
+ *  @param ptAleardayCount      : ptFo已发生个数:
  *                                  1. 根R=cutIndex+1
  *                                  2. 子R=父actionIndex对应indexDic条数;
  *                                  3. H.actionIndex前已发生;
  *  @param needBackMatch        : 是否需要后段匹配 (R不需要,H需要);
+ *  @version
+ *      2022.06.12: 每帧analyst都映射转换成maskFo的帧元素比对 (参考26232-TODO4);
  */
-+(AISolutionModel*) compareCansetFo:(AIKVPointer*)cansetFo_p ptFo:(AIFoNodeBase*)ptFo aleardayCount:(NSInteger)aleardayCount needBackMatch:(BOOL)needBackMatch{
++(AISolutionModel*) compareCansetFo:(AIKVPointer*)cansetFo_p ptAleardayCount:(NSInteger)ptAleardayCount needBackMatch:(BOOL)needBackMatch getMaskAlgFromPtIndexBlock:(AIKVPointer*(^)(NSInteger ptIndex))getMaskAlgFromPtIndexBlock{
     //1. 数据准备;
     AISolutionModel *result = nil;
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
@@ -80,11 +88,11 @@
         CGFloat itemMatchValue = 0;
         
         //3. 继续从proto后面未找过的部分里,找匹配;
-        for (NSInteger j = lastMatchAtProtoIndex + 1; j < aleardayCount; j++) {
-            AIKVPointer *protoA_p = ARR_INDEX(ptFo.content_ps, j);
+        for (NSInteger j = lastMatchAtProtoIndex + 1; j < ptAleardayCount; j++) {
+            AIKVPointer *maskA_p = getMaskAlgFromPtIndexBlock(j);
             
             //4. 对比两个概念匹配度;
-            itemMatchValue = [self compareCansetAlg:cansetA_p protoAlg:protoA_p];
+            itemMatchValue = [self compareCansetAlg:cansetA_p protoAlg:maskA_p];
             
             //5. 匹配成功,则更新匹配进度,并break报喜;
             if (itemMatchValue > 0) {
@@ -104,7 +112,7 @@
     }
     
     //8. 计算前段匹配度 (参考26128-1-4);
-    CGFloat frontMatchValue = sumMatchValue / aleardayCount;
+    CGFloat frontMatchValue = sumMatchValue / ptAleardayCount;
     
     //9. 找到了`前中段`截点 => 则初步为有效方案 (参考26128-1-3);
     if (cansetCutIndex != -1 && frontMatchValue > 0) {
@@ -114,7 +122,7 @@
             //a. 数据准备mask目标帧
             CGFloat backMatchValue = 0;//后段匹配度
             NSInteger cansetTargetIndex = -1;//canset目标下标
-            AIKVPointer *actionIndexA_p = ARR_INDEX(ptFo.content_ps, aleardayCount);
+            AIKVPointer *actionIndexA_p = getMaskAlgFromPtIndexBlock(ptAleardayCount);
             
             //b. 分别对canset后段,对比两个概念匹配度;
             for (NSInteger i = cansetCutIndex + 1; i < cansetFo.count; i++) {
@@ -131,12 +139,12 @@
             
             //d. 后段成功;
             if (cansetTargetIndex > -1) {
-                result = [AISolutionModel newWithCansetFo:cansetFo_p ptFo:ptFo.pointer frontMatchValue:frontMatchValue backMatchValue:backMatchValue cutIndex:cansetCutIndex targetIndex:cansetTargetIndex];
+                result = [AISolutionModel newWithCansetFo:cansetFo_p frontMatchValue:frontMatchValue backMatchValue:backMatchValue cutIndex:cansetCutIndex targetIndex:cansetTargetIndex];
             }
             if (!result) NSLog(@"itemCanset不适用当前场景:%ld",cansetFo_p.pointerId);
         }else{
             //11. 后段: R不判断后段;
-            result = [AISolutionModel newWithCansetFo:cansetFo_p ptFo:ptFo.pointer frontMatchValue:frontMatchValue backMatchValue:1 cutIndex:cansetCutIndex targetIndex:cansetFo.count];
+            result = [AISolutionModel newWithCansetFo:cansetFo_p frontMatchValue:frontMatchValue backMatchValue:1 cutIndex:cansetCutIndex targetIndex:cansetFo.count];
         }
     }
     return result;
