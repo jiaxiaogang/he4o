@@ -99,4 +99,4 @@
 #define cWedis2DBInterval 20
 #define cHeLog2DBInterval 20
 #define heLogSwitch false //heLog默认开关;
-#define tomV2Switch false //tv默认开关;
+#define tomV2Switch true //tv默认开关;
