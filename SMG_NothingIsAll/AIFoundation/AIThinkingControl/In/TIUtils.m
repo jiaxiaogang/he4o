@@ -141,6 +141,7 @@
  *      2022.05.28 - 优化性能 (参考26129-方案2);
  *      2022.06.07 - 为了打开抽象结果(确定,轻易别改了),排序公式改为sumNear / matchCount (参考2619j-TODO2);
  *      2022.06.07 - 排序公式改为sumNear / nearCount (参考2619j-TODO5);
+ *      2022.06.13 - 修复因matchCount<result.count导致概念识别有错误结果的BUG (参考26236);
  */
 +(void) partMatching_Alg:(AIAlgNodeBase*)protoAlg isMem:(BOOL)isMem except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
     //1. 数据准备;
@@ -229,9 +230,9 @@
         //AIKVPointer *key_p = DATA2OBJ(key);
         AIKVPointer *key_p = [recordDic objectForKey:key];
         AIAlgNodeBase *result = [SMGUtils searchNode:key_p];
-        //if (result.content_ps.count == [NUMTOOK([countDic objectForKey:key]) intValue]) {
-        [matchAlgs addObject:result];
-        //}else{ //[partAlgs addObject:result]; }
+        if (result.content_ps.count == [NUMTOOK([countDic objectForKey:key]) intValue]) {
+            [matchAlgs addObject:result];
+        }//else{ //[partAlgs addObject:result]; }
     }
     
     //16. 未将全含返回,则返回最相似 (2020.10.22: 全含返回,也要返回seemAlg) (2022.01.15: 支持相近匹配后,全是全含没局部了);
