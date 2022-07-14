@@ -235,28 +235,15 @@
 /**
  *  MARK:--------------------取候选集fos--------------------
  *  @param ptFo_p : R时传pFo, H时传targetFo;
+ *  @version
+ *      2022.07.14: 将取抽象,同级,自身全废弃掉,改为仅取具象 (参考27049);
  */
 +(NSArray*) getCansetFos_Slow:(AIKVPointer*)ptFo_p{
-    //1. 取absPFos
+    //1. 取conPFos
     AIFoNodeBase *ptFo = [SMGUtils searchNode:ptFo_p];
-    NSArray *absFos = Ports2Pits([AINetUtils absPorts_All:ptFo]);
-    //NSLog(@"第1步 absFos数:%ld",absFos.count);//测时10条
-    
-    //2. 取同级;
-    NSArray *sameLayerFos = [SMGUtils convertArr:absFos convertItemArrBlock:^NSArray *(AIKVPointer *obj) {
-        AIFoNodeBase *absFo = [SMGUtils searchNode:obj];
-        return Ports2Pits([AINetUtils conPorts_All:absFo]);
-    }];
-    sameLayerFos = [SMGUtils removeRepeat:sameLayerFos];
-    //NSLog(@"第2步 sameLayerFos数:%ld",sameLayerFos.count);//测时749条
-    
-    //3. 收集起来 (参考26161-0);
-    NSMutableArray *cansetFos = [[NSMutableArray alloc] init];
-    [cansetFos addObjectsFromArray:absFos];
-    [cansetFos addObjectsFromArray:sameLayerFos];
-    cansetFos = [SMGUtils removeRepeat:cansetFos];
-    //NSLog(@"第3步 收集数:%ld",cansetFos.count);//测时749条
-    return cansetFos;
+    NSArray *conFos = Ports2Pits([AINetUtils conPorts_All:ptFo]);
+    conFos = [SMGUtils removeRepeat:conFos];
+    return conFos;
 }
 
 /**
