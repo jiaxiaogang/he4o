@@ -261,6 +261,8 @@
 
 /**
  *  MARK:--------------------cansetFos过滤器--------------------
+ *  @version
+ *      2022.07.14: S的价值pk迭代: 将过滤负价值的,改成过滤无价值指向的 (参考27048-TODO4&TODO9);
  */
 +(NSArray*) slowCansetFosFilter:(NSArray*)cansetFos demand:(DemandModel*)demand{
     //1. 数据准备;
@@ -273,8 +275,8 @@
         AIFoNodeBase *fo = [SMGUtils searchNode:item];
         if (fo.count < minCount) return false;
         
-        //b. 过滤掉有负mv指向的 (参考26063 & 26127-TODO8);
-        if ([ThinkingUtils havDemand:fo.cmvNode_p]) return false;
+        //b. 过滤掉无mv指向的 (参考27048-TODO9);
+        if (!fo.cmvNode_p) return false;
         
         //c. 闯关成功;
         return true;
