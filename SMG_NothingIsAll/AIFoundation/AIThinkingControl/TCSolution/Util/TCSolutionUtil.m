@@ -237,12 +237,15 @@
  *  @param ptFo_p : R时传pFo, H时传targetFo;
  *  @version
  *      2022.07.14: 将取抽象,同级,自身全废弃掉,改为仅取具象 (参考27049);
+ *      2022.07.15: 每个pFo下支持limit (参考27048-TODO6);
  */
 +(NSArray*) getCansetFos_Slow:(AIKVPointer*)ptFo_p{
     //1. 取conPFos
+    int cansetLimit = 5;
     AIFoNodeBase *ptFo = [SMGUtils searchNode:ptFo_p];
     NSArray *conFos = Ports2Pits([AINetUtils conPorts_All:ptFo]);
     conFos = [SMGUtils removeRepeat:conFos];
+    conFos = ARR_SUB(conFos, 0, cansetLimit);
     return conFos;
 }
 
@@ -255,6 +258,12 @@
     //1. 数据准备;
     BOOL havBack = ISOK(demand, HDemandModel.class); //H有后段,别的没有;
     int minCount = havBack ? 2 : 1;
+    
+    //TODOTOMORROW20220715: 在过滤器中添加上评分pk;
+    
+    
+    
+    
     
     //2. 过滤器;
     cansetFos = [SMGUtils filterArr:cansetFos checkValid:^BOOL(AIKVPointer *item) {
