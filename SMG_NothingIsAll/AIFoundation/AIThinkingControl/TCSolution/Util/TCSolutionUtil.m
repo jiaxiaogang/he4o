@@ -145,6 +145,7 @@
     NSArray *cansetModels = [SMGUtils convertArr:cansetFos convertBlock:^id(AIKVPointer *item) {
         return [AIAnalyst compareHCansetFo:item targetFo:targetFoModel];
     }];
+    cansetModels = [self slowCansetModelsFilter:cansetModels demand:hDemand];
     
     //4. 慢思考;
     return [self generalSolution_Slow:hDemand cansetModels:cansetModels except_ps:except_ps];
@@ -162,9 +163,11 @@
         cansetFos = [self slowCansetFosFilter:cansetFos demand:demand];
         
         //3. 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);
-        return [SMGUtils convertArr:cansetFos convertBlock:^id(AIKVPointer *cansetFo_p) {
+        NSArray *cansetModels = [SMGUtils convertArr:cansetFos convertBlock:^id(AIKVPointer *cansetFo_p) {
             return [AIAnalyst compareRCansetFo:cansetFo_p pFo:pFo demand:demand];
         }];
+        cansetModels = [self slowCansetModelsFilter:cansetModels demand:demand];
+        return cansetModels;
     }];
 
     //4. 慢思考;
@@ -259,12 +262,6 @@
     BOOL havBack = ISOK(demand, HDemandModel.class); //H有后段,别的没有;
     int minCount = havBack ? 2 : 1;
     
-    //TODOTOMORROW20220715: 在过滤器中添加上评分pk;
-    
-    
-    
-    
-    
     //2. 过滤器;
     cansetFos = [SMGUtils filterArr:cansetFos checkValid:^BOOL(AIKVPointer *item) {
         //a. 过滤掉长度不够的 (因为前段全含至少要1位,中段修正也至少要0位,后段H目标要1位R要0位);
@@ -279,6 +276,32 @@
     }];
     NSLog(@"第4步 最小长度 & 非负价值过滤后:%ld",cansetFos.count);//测时96条
     return cansetFos;
+}
+
+//MARK:===============================================================
+//MARK:                     < cansetModels过滤器 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------cansetModels过滤器--------------------
+ *  @version
+ *      2022.07.16: 写S评分pk (参考27048-TODO3 & 27049-TODO4);
+ */
++(NSArray*) slowCansetModelsFilter:(NSArray*)cansetModels demand:(DemandModel*)demand{
+    //1. 计算任务评分 (当前pFo评分);
+    
+    
+    //2. 过滤器;
+    cansetModels = [SMGUtils filterArr:cansetModels checkValid:^BOOL(AISolutionModel *item) {
+        //a. 取到fo,判断后段的mv评分;
+        AIFoNodeBase *fo = [SMGUtils searchNode:item.cansetFo];
+        
+        //b. 算出后段的"懒"评分;
+        
+        //c. S评分PK: (pk通过 = 任务评分 < (方案评分 + 懒评分));
+        return true;
+    }];
+    return cansetModels;
 }
 
 
