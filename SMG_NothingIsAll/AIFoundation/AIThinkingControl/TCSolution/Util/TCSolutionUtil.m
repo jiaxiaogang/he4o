@@ -289,6 +289,10 @@
  */
 +(NSArray*) slowCansetModelsFilter:(NSArray*)cansetModels demand:(DemandModel*)demand{
     //1. 计算任务评分 (当前pFo评分);
+    //H任务向base取所在的solutionFo,然后solutionFo是有评分的;
+    //R任务可以直接取后段稳定性xdemand评分;
+    
+    [AIScore score4Demand:demand];
     
     
     //2. 过滤器;
@@ -297,6 +301,7 @@
         AIFoNodeBase *fo = [SMGUtils searchNode:item.cansetFo];
         
         //b. 算出后段的"懒"评分;
+        
         
         //c. S评分PK: (pk通过 = 任务评分 < (方案评分 + 懒评分));
         return true;
