@@ -292,7 +292,7 @@
     //H任务向base取所在的solutionFo,然后solutionFo是有评分的;
     //R任务可以直接取后段稳定性xdemand评分;
     
-    [AIScore score4Demand:demand];
+    //任务pFo的评分,应该更多的向具象向性上求解 (参考n27p05);
     
     
     //2. 过滤器;
