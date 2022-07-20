@@ -145,7 +145,6 @@
     NSArray *cansetModels = [SMGUtils convertArr:cansetFos convertBlock:^id(AIKVPointer *item) {
         return [AIAnalyst compareHCansetFo:item targetFo:targetFoModel];
     }];
-    cansetModels = [self slowCansetModelsFilter:cansetModels demand:hDemand];
     
     //4. 慢思考;
     return [self generalSolution_Slow:hDemand cansetModels:cansetModels except_ps:except_ps];
@@ -166,7 +165,6 @@
         NSArray *cansetModels = [SMGUtils convertArr:cansetFos convertBlock:^id(AIKVPointer *cansetFo_p) {
             return [AIAnalyst compareRCansetFo:cansetFo_p pFo:pFo demand:demand];
         }];
-        cansetModels = [self slowCansetModelsFilter:cansetModels demand:demand];
         return cansetModels;
     }];
 
@@ -224,10 +222,21 @@
         if (Log4Solution_Slow) NSLog(@"> %@\n\t综合排名:%ld (前%.2f 中%.2f 后%.2f) >> %@",Pit2FStr(model.cansetFo),[sortModels indexOfObject:model],model.frontMatchValue,model.stableScore,model.backMatchValue,CLEANSTR(cansetFo.spDic));
     }
     
-    //13. 返回最佳解决方案;
-    result = ARR_INDEX(sortModels, 0);
-    AIFoNodeBase *resultFo = [SMGUtils searchNode:result.cansetFo];
-    NSLog(@"慢思考最佳结果:F%ld (前%.2f 中%.2f 后%.2f) %@",result.cansetFo.pointerId,result.frontMatchValue,result.stableScore,result.backMatchValue,CLEANSTR(resultFo.spDic));
+    //13. 逐条S反思;
+    for (AISolutionModel *item in sortModels) {
+        NSArray *recogs = [self recognition4SRefrection:item demand:demand];
+        BOOL score = [self score4SRefrection:recogs demand:demand];
+        if (score) {
+            result = item;
+            break;
+        }
+    }
+    
+    //14. 返回最佳解决方案;
+    if (result) {
+        AIFoNodeBase *resultFo = [SMGUtils searchNode:result.cansetFo];
+        NSLog(@"慢思考最佳结果:F%ld (前%.2f 中%.2f 后%.2f) %@",result.cansetFo.pointerId,result.frontMatchValue,result.stableScore,result.backMatchValue,CLEANSTR(resultFo.spDic));
+    }
     return result;
 }
 
@@ -256,6 +265,7 @@
  *  MARK:--------------------cansetFos过滤器--------------------
  *  @version
  *      2022.07.14: S的价值pk迭代: 将过滤负价值的,改成过滤无价值指向的 (参考27048-TODO4&TODO9);
+ *      2022.07.20: 不要求mv指向 (参考27055-步骤1);
  */
 +(NSArray*) slowCansetFosFilter:(NSArray*)cansetFos demand:(DemandModel*)demand{
     //1. 数据准备;
@@ -268,10 +278,7 @@
         AIFoNodeBase *fo = [SMGUtils searchNode:item];
         if (fo.count < minCount) return false;
         
-        //b. 过滤掉无mv指向的 (参考27048-TODO9);
-        if (!fo.cmvNode_p) return false;
-        
-        //c. 闯关成功;
+        //b. 闯关成功;
         return true;
     }];
     NSLog(@"第4步 最小长度 & 非负价值过滤后:%ld",cansetFos.count);//测时96条
@@ -279,34 +286,50 @@
 }
 
 //MARK:===============================================================
-//MARK:                     < cansetModels过滤器 >
+//MARK:                     < 反思识别 & 反思评价 >
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------cansetModels过滤器--------------------
+ *  MARK:--------------------S反思识别--------------------
  *  @version
  *      2022.07.16: 写S评分pk (参考27048-TODO3 & 27049-TODO4);
  */
-+(NSArray*) slowCansetModelsFilter:(NSArray*)cansetModels demand:(DemandModel*)demand{
++(NSArray*) recognition4SRefrection:(AISolutionModel*)item demand:(DemandModel*)demand{
     //1. 计算任务评分 (当前pFo评分);
     //H任务向base取所在的solutionFo,然后solutionFo是有评分的;
     //R任务可以直接取后段稳定性xdemand评分;
+    // 无论是H还是R,都向具象根据匹配度取数条,做综合反思 (参考27055-方案1-步骤3);
+    
+    
+    
+    return nil;
+}
+
+/**
+ *  MARK:--------------------S反思评价--------------------
+ *  @version
+ *      2022.07.16: 写S评分pk (参考27048-TODO3 & 27049-TODO4);
+ */
++(BOOL) score4SRefrection:(NSArray*)recogFos demand:(DemandModel*)demand{
+    //1. 计算任务评分 (当前pFo评分);
     
     //任务pFo的评分,应该更多的向具象向性上求解 (参考n27p05);
     
     
-    //2. 过滤器;
-    cansetModels = [SMGUtils filterArr:cansetModels checkValid:^BOOL(AISolutionModel *item) {
-        //a. 取到fo,判断后段的mv评分;
-        AIFoNodeBase *fo = [SMGUtils searchNode:item.cansetFo];
-        
-        //b. 算出后段的"懒"评分;
+    
+    //a. 取到fo,判断后段的mv评分;
+    for (AIMatchFoModel *item in recogFos) {
+        AIFoNodeBase *recogFo = [SMGUtils searchNode:item.matchFo];
         
         
-        //c. S评分PK: (pk通过 = 任务评分 < (方案评分 + 懒评分));
-        return true;
-    }];
-    return cansetModels;
+    }
+    
+    
+    //b. 算出后段的"懒"评分;
+    
+    
+    //c. S评分PK: (pk通过 = 任务评分 < (方案评分 + 懒评分));
+    return true;
 }
 
 
