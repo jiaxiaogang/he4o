@@ -224,7 +224,7 @@
     
     //13. 逐条S反思;
     for (AISolutionModel *item in sortModels) {
-        NSArray *recogs = [self recognition4SRefrection:item demand:demand];
+        NSArray *recogs = [self recognition4SRefrection:item cansets:sortModels demand:demand];
         BOOL score = [self score4SRefrection:recogs demand:demand];
         if (score) {
             result = item;
@@ -291,14 +291,17 @@
 
 /**
  *  MARK:--------------------S反思识别--------------------
- *  @desc 向性:下;
+ *  @desc   1. 功能: 从cansets中检查与item匹配度高的部分,并作为识别结果返回;
+ *          2. 向性: 下;
+ *  @param item     : 当前canset检查项;
+ *  @param cansets  : item所在的cansets;
  *  @version
  *      2022.07.16: 写S评分pk (参考27048-TODO3 & 27049-TODO4);
  */
-+(NSArray*) recognition4SRefrection:(AISolutionModel*)item demand:(DemandModel*)demand{
++(NSArray*) recognition4SRefrection:(AISolutionModel*)item cansets:(NSArray*)cansets demand:(DemandModel*)demand{
     //1. 向具象取索引;
     AIFoNodeBase *protoFo = [SMGUtils searchNode:item.cansetFo];
-    NSArray *conFos = Ports2Pits([AINetUtils conPorts_All:protoFo]);
+    //此处不用取具象,直接由调用者,把它的cansetFo兄弟们传递进来即可;
     
     
     
