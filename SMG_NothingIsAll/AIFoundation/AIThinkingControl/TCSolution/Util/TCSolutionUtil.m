@@ -291,13 +291,25 @@
 
 /**
  *  MARK:--------------------S反思识别--------------------
+ *  @desc 向性:下;
  *  @version
  *      2022.07.16: 写S评分pk (参考27048-TODO3 & 27049-TODO4);
  */
 +(NSArray*) recognition4SRefrection:(AISolutionModel*)item demand:(DemandModel*)demand{
-    //1. 计算任务评分 (当前pFo评分);
-    //H任务向base取所在的solutionFo,然后solutionFo是有评分的;
-    //R任务可以直接取后段稳定性xdemand评分;
+    //1. 向具象取索引;
+    AIFoNodeBase *protoFo = [SMGUtils searchNode:item.cansetFo];
+    NSArray *conFos = Ports2Pits([AINetUtils conPorts_All:protoFo]);
+    
+    
+    
+    
+    //2. 计算前段匹配度;
+    //TODOTOMORROW20220721: 回顾一下AIAnalyst方法,使之支持此处识别计算匹配度的工作;
+    [AIAnalyst compareCansetFo:nil ptAleardayCount:0 needBackMatch:false getMaskAlgFromPtIndexBlock:^AIKVPointer *(NSInteger ptIndex) {
+        return nil;
+    }];
+    
+    
     // 无论是H还是R,都向具象根据匹配度取数条,做综合反思 (参考27055-方案1-步骤3);
     
     
@@ -312,6 +324,8 @@
  */
 +(BOOL) score4SRefrection:(NSArray*)recogFos demand:(DemandModel*)demand{
     //1. 计算任务评分 (当前pFo评分);
+    //H任务向base取所在的solutionFo,然后solutionFo是有评分的;
+    //R任务可以直接取后段稳定性xdemand评分;
     
     //任务pFo的评分,应该更多的向具象向性上求解 (参考n27p05);
     

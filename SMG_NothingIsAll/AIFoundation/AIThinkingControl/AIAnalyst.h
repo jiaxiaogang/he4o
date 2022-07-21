@@ -28,6 +28,11 @@
 +(AISolutionModel*) compareHCansetFo:(AIKVPointer*)cansetFo_p targetFo:(TOFoModel*)targetFoM;
 
 /**
+ *  MARK:--------------------比对时序--------------------
+ */
++(AISolutionModel*) compareCansetFo:(AIKVPointer*)cansetFo_p ptAleardayCount:(NSInteger)ptAleardayCount needBackMatch:(BOOL)needBackMatch getMaskAlgFromPtIndexBlock:(AIKVPointer*(^)(NSInteger ptIndex))getMaskAlgFromPtIndexBlock;
+
+/**
  *  MARK:--------------------比对两个概念匹配度--------------------
  */
 +(CGFloat) compareCansetAlg:(AIKVPointer*)cansetAlg_p protoAlg:(AIKVPointer*)protoAlg_p;
