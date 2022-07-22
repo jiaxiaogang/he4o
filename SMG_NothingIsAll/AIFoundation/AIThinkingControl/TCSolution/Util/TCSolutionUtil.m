@@ -293,24 +293,57 @@
  *  MARK:--------------------S反思识别--------------------
  *  @desc   1. 功能: 从cansets中检查与item匹配度高的部分,并作为识别结果返回;
  *          2. 向性: 下;
- *  @param item     : 当前canset检查项;
- *  @param cansets  : item所在的cansets;
+ *  @param checkCanset  : 当前canset检查项;
+ *  @param cansets      : item所在的cansets;
  *  @version
  *      2022.07.16: 写S评分pk (参考27048-TODO3 & 27049-TODO4);
  */
-+(NSArray*) recognition4SRefrection:(AISolutionModel*)item cansets:(NSArray*)cansets demand:(DemandModel*)demand{
++(NSArray*) recognition4SRefrection:(AISolutionModel*)checkCanset cansets:(NSArray*)cansets demand:(DemandModel*)demand{
     //1. 向具象取索引;
-    AIFoNodeBase *protoFo = [SMGUtils searchNode:item.cansetFo];
+    AIFoNodeBase *checkFo = [SMGUtils searchNode:checkCanset.cansetFo];
     //此处不用取具象,直接由调用者,把它的cansetFo兄弟们传递进来即可;
     
     
+    for (AISolutionModel *otherCanset in cansets) {
+        //2. 不与自身比较;
+        if ([otherCanset.cansetFo isEqual:checkCanset.cansetFo]) continue;
+        
+        //3. 对比二者;
+        AIFoNodeBase *otherFo = [SMGUtils searchNode:otherCanset.cansetFo];
+        
+        
+        //2. 计算前段匹配度;
+        //TODOTOMORROW20220721: 经回顾AIAnalyst方法,有不兼容处,比如它不源于TI流程,所以没有indexDic,说明如下:
+        //说明: 在AIAnalyst算法中,假设了cansetFo和maskFo源于TI识别流程,
+        //      1. 然后根据它的indexDic来分别比对下标下的alg匹配度的;
+        //      2. 但此处明显并没走TI流程,所以无法生成indexDic;
+        //      3. 但此处是有抽具象关系的,所以直接对itemAlg判断mIsC抽具象关系即可 (即,有共同抽象,则可以进行比对);
+        
+        for (NSInteger checkIndex = 0; checkIndex < checkCanset.cutIndex; checkIndex++) {
+            AIKVPointer *checkAlg = ARR_INDEX(checkFo.content_ps, checkIndex);
+            
+            for (NSInteger otherIndex = 0; otherIndex < otherCanset.cutIndex; otherIndex++) {
+                AIKVPointer *otherAlg = ARR_INDEX(otherFo.content_ps, otherIndex);
+                
+                //a. 判断checkAlg与otherFo是否有共同的抽象;
+                
+                //b. 如果checkAlg找到otherIndex,则记录它的进度;
+                //c. 如果最后也没找到共同抽象的otherIndex,那则跳过这条;
+                //d. 直至二者循环完,把所有匹配上的alg,算出的匹配值,乘起来,作为最终的fo前段匹配度;
+                
+                //e. 然后根据最终综合匹配度排序;
+                
+                
+            }
+        }
+        
+    }
     
     
-    //2. 计算前段匹配度;
-    //TODOTOMORROW20220721: 回顾一下AIAnalyst方法,使之支持此处识别计算匹配度的工作;
-    [AIAnalyst compareCansetFo:nil ptAleardayCount:0 needBackMatch:false getMaskAlgFromPtIndexBlock:^AIKVPointer *(NSInteger ptIndex) {
-        return nil;
-    }];
+    
+    
+    
+    
     
     
     // 无论是H还是R,都向具象根据匹配度取数条,做综合反思 (参考27055-方案1-步骤3);
