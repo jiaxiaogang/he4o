@@ -319,17 +319,36 @@
         //      2. 但此处明显并没走TI流程,所以无法生成indexDic;
         //      3. 但此处是有抽具象关系的,所以直接对itemAlg判断mIsC抽具象关系即可 (即,有共同抽象,则可以进行比对);
         
+        NSInteger otherStart = 0;
         for (NSInteger checkIndex = 0; checkIndex < checkCanset.cutIndex; checkIndex++) {
-            AIKVPointer *checkAlg = ARR_INDEX(checkFo.content_ps, checkIndex);
+            AIKVPointer *checkAlg_p = ARR_INDEX(checkFo.content_ps, checkIndex);
+            AIAlgNodeBase *checkAlg = [SMGUtils searchNode:checkAlg_p];
+            NSArray *checkAbs = [AINetUtils absPorts_All:checkAlg];
             
-            for (NSInteger otherIndex = 0; otherIndex < otherCanset.cutIndex; otherIndex++) {
-                AIKVPointer *otherAlg = ARR_INDEX(otherFo.content_ps, otherIndex);
+            for (NSInteger otherIndex = otherStart; otherIndex < otherCanset.cutIndex; otherIndex++) {
+                AIKVPointer *otherAlg_p = ARR_INDEX(otherFo.content_ps, otherIndex);
+                AIAlgNodeBase *otherAlg = [SMGUtils searchNode:otherAlg_p];
+                NSArray *otherAbs = [AINetUtils absPorts_All:otherAlg];
                 
                 //a. 判断checkAlg与otherFo是否有共同的抽象;
+                BOOL sameAbs = ARRISOK([SMGUtils filterArr:checkAbs checkValid:^BOOL(id item) {
+                    return [otherAbs containsObject:item];
+                }]);
                 
                 //b. 如果checkAlg找到otherIndex,则记录它的进度;
+                if (sameAbs) {
+                    otherStart = otherIndex;
+                    
+                    
+                    CGFloat near = [AIAnalyst compareCansetAlg:checkAlg_p protoAlg:otherAlg_p];
+                    break;
+                }
+                
                 //c. 如果最后也没找到共同抽象的otherIndex,那则跳过这条;
+                
+                
                 //d. 直至二者循环完,把所有匹配上的alg,算出的匹配值,乘起来,作为最终的fo前段匹配度;
+                
                 
                 //e. 然后根据最终综合匹配度排序;
                 
