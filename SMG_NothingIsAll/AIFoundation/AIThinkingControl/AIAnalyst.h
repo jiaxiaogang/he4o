@@ -32,6 +32,15 @@
  */
 +(AISolutionModel*) compareCansetFo:(AIKVPointer*)cansetFo_p ptAleardayCount:(NSInteger)ptAleardayCount needBackMatch:(BOOL)needBackMatch getMaskAlgFromPtIndexBlock:(AIKVPointer*(^)(NSInteger ptIndex))getMaskAlgFromPtIndexBlock;
 
+//MARK:===============================================================
+//MARK:                 < 比对分析两条Solution候选方案 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------比对checkCanset和它的otherCanset们--------------------
+ */
++(CGFloat) compareFromSolutionCanset:(AISolutionModel*)checkCanset otherCanset:(AISolutionModel*)otherCanset;
+
 /**
  *  MARK:--------------------比对两个概念匹配度--------------------
  */

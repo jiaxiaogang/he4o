@@ -300,62 +300,19 @@
  */
 +(NSArray*) recognition4SRefrection:(AISolutionModel*)checkCanset cansets:(NSArray*)cansets demand:(DemandModel*)demand{
     //1. 向具象取索引;
-    AIFoNodeBase *checkFo = [SMGUtils searchNode:checkCanset.cansetFo];
+    
     //此处不用取具象,直接由调用者,把它的cansetFo兄弟们传递进来即可;
     
+    //2. 收集前段匹配度字典 <K:checkCansetFoPId, V:frontSumNear>
+    NSMutableDictionary *frontNearDic = [[NSMutableDictionary alloc] init];
     
     for (AISolutionModel *otherCanset in cansets) {
         //2. 不与自身比较;
         if ([otherCanset.cansetFo isEqual:checkCanset.cansetFo]) continue;
         
         //3. 对比二者;
-        AIFoNodeBase *otherFo = [SMGUtils searchNode:otherCanset.cansetFo];
-        
-        
-        //2. 计算前段匹配度;
-        //TODOTOMORROW20220721: 经回顾AIAnalyst方法,有不兼容处,比如它不源于TI流程,所以没有indexDic,说明如下:
-        //说明: 在AIAnalyst算法中,假设了cansetFo和maskFo源于TI识别流程,
-        //      1. 然后根据它的indexDic来分别比对下标下的alg匹配度的;
-        //      2. 但此处明显并没走TI流程,所以无法生成indexDic;
-        //      3. 但此处是有抽具象关系的,所以直接对itemAlg判断mIsC抽具象关系即可 (即,有共同抽象,则可以进行比对);
-        
-        NSInteger otherStart = 0;
-        for (NSInteger checkIndex = 0; checkIndex < checkCanset.cutIndex; checkIndex++) {
-            AIKVPointer *checkAlg_p = ARR_INDEX(checkFo.content_ps, checkIndex);
-            AIAlgNodeBase *checkAlg = [SMGUtils searchNode:checkAlg_p];
-            NSArray *checkAbs = [AINetUtils absPorts_All:checkAlg];
-            
-            for (NSInteger otherIndex = otherStart; otherIndex < otherCanset.cutIndex; otherIndex++) {
-                AIKVPointer *otherAlg_p = ARR_INDEX(otherFo.content_ps, otherIndex);
-                AIAlgNodeBase *otherAlg = [SMGUtils searchNode:otherAlg_p];
-                NSArray *otherAbs = [AINetUtils absPorts_All:otherAlg];
-                
-                //a. 判断checkAlg与otherFo是否有共同的抽象;
-                BOOL sameAbs = ARRISOK([SMGUtils filterArr:checkAbs checkValid:^BOOL(id item) {
-                    return [otherAbs containsObject:item];
-                }]);
-                
-                //b. 如果checkAlg找到otherIndex,则记录它的进度;
-                if (sameAbs) {
-                    otherStart = otherIndex;
-                    
-                    
-                    CGFloat near = [AIAnalyst compareCansetAlg:checkAlg_p protoAlg:otherAlg_p];
-                    break;
-                }
-                
-                //c. 如果最后也没找到共同抽象的otherIndex,那则跳过这条;
-                
-                
-                //d. 直至二者循环完,把所有匹配上的alg,算出的匹配值,乘起来,作为最终的fo前段匹配度;
-                
-                
-                //e. 然后根据最终综合匹配度排序;
-                
-                
-            }
-        }
-        
+        CGFloat frontNear = [AIAnalyst compareFromSolutionCanset:checkCanset otherCanset:otherCanset];
+        [frontNearDic setObject:@(frontNear) forKey:@(otherCanset.cansetFo.pointerId)];
     }
     
     
