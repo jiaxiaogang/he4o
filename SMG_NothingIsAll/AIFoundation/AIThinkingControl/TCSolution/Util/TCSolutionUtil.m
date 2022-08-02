@@ -224,8 +224,8 @@
     
     //13. 逐条S反思;
     for (AISolutionModel *item in sortModels) {
-        NSArray *recogs = [self recognition4SRefrection:item cansets:sortModels demand:demand];
-        BOOL score = [self score4SRefrection:recogs demand:demand];
+        NSDictionary *recogDic = [self recognition4SRefrection:item cansets:sortModels];
+        BOOL score = [self score4SRefrection:recogDic cansets:sortModels demand:demand];
         if (score) {
             result = item;
             break;
@@ -293,48 +293,38 @@
  *  MARK:--------------------S反思识别--------------------
  *  @desc   1. 功能: 从cansets中检查与item匹配度高的部分,并作为识别结果返回;
  *          2. 向性: 下;
+ *          3. 范围: 无论是H还是R,都向具象根据匹配度取数条,做综合反思 (参考27055-方案1-步骤3);
  *  @param checkCanset  : 当前canset检查项;
  *  @param cansets      : item所在的cansets;
  *  @version
  *      2022.07.16: 写S评分pk (参考27048-TODO3 & 27049-TODO4);
+ *  @result frontNearDic : 识别结果,按照前段匹配度排序返回为字典格式 <K:结果pId, V:匹配度>;
  */
-+(NSArray*) recognition4SRefrection:(AISolutionModel*)checkCanset cansets:(NSArray*)cansets demand:(DemandModel*)demand{
-    //1. 向具象取索引;
-    
-    //此处不用取具象,直接由调用者,把它的cansetFo兄弟们传递进来即可;
-    
-    //2. 收集前段匹配度字典 <K:checkCansetFoPId, V:frontSumNear>
++(NSDictionary*) recognition4SRefrection:(AISolutionModel*)checkCanset cansets:(NSArray*)cansets{
+    //1. 收集前段匹配度字典 <K:checkCansetFoPId, V:frontSumNear>
     NSMutableDictionary *frontNearDic = [[NSMutableDictionary alloc] init];
     
+    //2. 与cansets兄弟们逐一进行比对,得出前段匹配度;
     for (AISolutionModel *otherCanset in cansets) {
-        //2. 不与自身比较;
+        //3. 不与自身比较;
         if ([otherCanset.cansetFo isEqual:checkCanset.cansetFo]) continue;
         
-        //3. 对比二者;
+        //4. 对比二者;
         CGFloat frontNear = [AIAnalyst compareFromSolutionCanset:checkCanset otherCanset:otherCanset];
         [frontNearDic setObject:@(frontNear) forKey:@(otherCanset.cansetFo.pointerId)];
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    // 无论是H还是R,都向具象根据匹配度取数条,做综合反思 (参考27055-方案1-步骤3);
-    
-    
-    
-    return nil;
+    return frontNearDic;
 }
 
 /**
  *  MARK:--------------------S反思评价--------------------
+ *  @param recogDic : 反思识别的结果字典 (参考recognition4SRefrection()的@result);
+ *  @param cansets  : 所在的源候选集;
+ *  @param demand   : 所在的源demand;
  *  @version
  *      2022.07.16: 写S评分pk (参考27048-TODO3 & 27049-TODO4);
  */
-+(BOOL) score4SRefrection:(NSArray*)recogFos demand:(DemandModel*)demand{
++(BOOL) score4SRefrection:(NSDictionary*)recogDic cansets:(NSArray*)cansets demand:(DemandModel*)demand{
     //1. 计算任务评分 (当前pFo评分);
     //H任务向base取所在的solutionFo,然后solutionFo是有评分的;
     //R任务可以直接取后段稳定性xdemand评分;
@@ -342,10 +332,34 @@
     //任务pFo的评分,应该更多的向具象向性上求解 (参考n27p05);
     
     
+    //TODOTOMORROW20220802:
+    
+    
+    
+    //2. 根据前段匹配度排序;
+    NSArray *sortCansets = [SMGUtils sortBig2Small:cansets compareBlock:^double(AISolutionModel *obj) {
+        return NUMTOOK([recogDic objectForKey:@(obj.cansetFo.pointerId)]).floatValue;
+    }];
+    
+    //1. cansets有80条,那么到底前多少条,参与到反思评价中来?
+    
+    //2. 截取三分之一,但最多不超过5条;
+    NSInteger limit = MIN(5, sortCansets.count * 0.3f);
+    sortCansets = ARR_SUB(sortCansets, 0, limit);
     
     //a. 取到fo,判断后段的mv评分;
-    for (AIMatchFoModel *item in recogFos) {
+    for (AIMatchFoModel *item in sortCansets) {
         AIFoNodeBase *recogFo = [SMGUtils searchNode:item.matchFo];
+        
+        //4. 取后半段评分;
+        
+        //  a. 正mv的评分;
+        [TOUtils getSPScore:nil startSPIndex:0 endSPIndex:0];
+        
+        //  b. 负mv的评分;
+        
+        //  c. 未指向mv的评分;
+        
         
         
     }
