@@ -318,6 +318,7 @@
 
 /**
  *  MARK:--------------------S反思评价--------------------
+ *  @desc 从具象上求解 (本方法中,从同具象层的cansets中,找出前段相似的,共同算出综合评分);
  *  @param recogDic : 反思识别的结果字典 (参考recognition4SRefrection()的@result);
  *  @param cansets  : 所在的源候选集;
  *  @param demand   : 所在的源demand;
@@ -325,47 +326,41 @@
  *      2022.07.16: 写S评分pk (参考27048-TODO3 & 27049-TODO4);
  */
 +(BOOL) score4SRefrection:(NSDictionary*)recogDic cansets:(NSArray*)cansets demand:(DemandModel*)demand{
-    //1. 计算任务评分 (当前pFo评分);
-    //H任务向base取所在的solutionFo,然后solutionFo是有评分的;
-    //R任务可以直接取后段稳定性xdemand评分;
-    
-    //任务pFo的评分,应该更多的向具象向性上求解 (参考n27p05);
-    
-    
-    //TODOTOMORROW20220802:
-    
-    
-    
-    //2. 根据前段匹配度排序;
+    //1. 根据前段匹配度排序;
+    CGFloat resultScore = 0.0f;
     NSArray *sortCansets = [SMGUtils sortBig2Small:cansets compareBlock:^double(AISolutionModel *obj) {
         return NUMTOOK([recogDic objectForKey:@(obj.cansetFo.pointerId)]).floatValue;
     }];
     
-    //1. cansets有80条,那么到底前多少条,参与到反思评价中来?
-    
-    //2. 截取三分之一,但最多不超过5条;
+    //2. cansets有80条,那么到底前多少条,参与到反思评价中来? => 截取三分之一,但最多不超过5条;
     NSInteger limit = MIN(5, sortCansets.count * 0.3f);
     sortCansets = ARR_SUB(sortCansets, 0, limit);
     
-    //a. 取到fo,判断后段的mv评分;
+    //3. 取到fo,判断后段的mv评分;
     for (AIMatchFoModel *item in sortCansets) {
         AIFoNodeBase *recogFo = [SMGUtils searchNode:item.matchFo];
         
-        //4. 取后半段评分;
+        //4. 算出后半段稳定性评分;
+        CGFloat stabScore = [TOUtils getStableScore:recogFo startSPIndex:item.cutIndex2 endSPIndex:recogFo.count];
         
-        //  a. 正mv的评分;
-        [TOUtils getSPScore:nil startSPIndex:0 endSPIndex:0];
+        //5. 算出后半段稳定性 x mv评分 (正mv返回正分 | 负mv返回负分 | 无mv返回0分);
+        CGFloat mvScore = [AIScore score4MV:recogFo.cmvNode_p ratio:stabScore];
         
-        //  b. 负mv的评分;
-        
-        //  c. 未指向mv的评分;
-        
-        
-        
+        //6. 累计评分;
+        resultScore += mvScore;
     }
     
+    //TODOTOMORROW20220803:
     
-    //b. 算出后段的"懒"评分;
+    //7. 算出后段的"懒"评分;
+    //1. 遍历后半段中的"isOut=true"的行为,各指定"懒"评分;
+    
+    //2. 计算任务评分 (当前pFo评分);
+    //  a. H任务向base取所在的solutionFo,然后solutionFo是有评分的;
+    //  b. R任务可以直接取后段稳定性xdemand评分;
+    
+    //3. 然后和上面算出的反思评分,进行pk;
+    
     
     
     //c. S评分PK: (pk通过 = 任务评分 < (方案评分 + 懒评分));
