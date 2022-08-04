@@ -341,19 +341,32 @@
         AIFoNodeBase *recogFo = [SMGUtils searchNode:item.matchFo];
         
         //4. 算出后半段稳定性评分;
-        CGFloat stabScore = [TOUtils getStableScore:recogFo startSPIndex:item.cutIndex2 endSPIndex:recogFo.count];
+        //TODOTEST: 测入此处cutIndex2传的是否正确;
+        CGFloat stabScore = [TOUtils getStableScore:recogFo startSPIndex:item.cutIndex2 + 1 endSPIndex:recogFo.count];
         
         //5. 算出后半段稳定性 x mv评分 (正mv返回正分 | 负mv返回负分 | 无mv返回0分);
         CGFloat mvScore = [AIScore score4MV:recogFo.cmvNode_p ratio:stabScore];
         
         //6. 累计评分;
         resultScore += mvScore;
+        
+        //7. 算出后段的"懒"评分;
+        //TODOTEST: 测入此处cutIndex2传的是否正确;
+        CGFloat lazyScore = 0;
+        for (NSInteger i = item.cutIndex2 + 1; i < recogFo.count; i++) {
+            //8. 遍历后半段中的"isOut=true"的行为,各指定"懒"评分;
+            AIKVPointer *alg_p = ARR_INDEX(recogFo.content_ps, i);
+            if (alg_p && alg_p.isOut) {
+                lazyScore -= 0.5f;
+            }
+        }
+        resultScore += lazyScore;
     }
     
     //TODOTOMORROW20220803:
     
-    //7. 算出后段的"懒"评分;
-    //1. 遍历后半段中的"isOut=true"的行为,各指定"懒"评分;
+    
+    
     
     //2. 计算任务评分 (当前pFo评分);
     //  a. H任务向base取所在的solutionFo,然后solutionFo是有评分的;
