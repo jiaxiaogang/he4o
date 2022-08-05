@@ -363,19 +363,15 @@
         resultScore += lazyScore;
     }
     
+    //8. 计算任务评分: 取baseRDemand评分 (参考27057);
+    NSArray *rootDemands = [TOUtils getBaseDemands_AllDeep:demand];
+    rootDemands = [SMGUtils filterArr:rootDemands checkValid:^BOOL(id item) {
+        return ISOK(item, ReasonDemandModel.class);
+    }];
+    ReasonDemandModel *baseRDemand = ARR_INDEX_REVERSE(rootDemands, 0);
+    CGFloat demandScore = [AIScore score4Demand:baseRDemand];
+    
     //TODOTOMORROW20220803:
-    
-    
-    
-    
-    //2. 计算任务评分 (当前pFo评分);
-    //  a. H任务向base取所在的solutionFo,然后solutionFo是有评分的;
-    //  b. R任务可以直接取后段稳定性xdemand评分;
-    
-    //3. 然后和上面算出的反思评分,进行pk;
-    
-    
-    
     //c. S评分PK: (pk通过 = 任务评分 < (方案评分 + 懒评分));
     return true;
 }
