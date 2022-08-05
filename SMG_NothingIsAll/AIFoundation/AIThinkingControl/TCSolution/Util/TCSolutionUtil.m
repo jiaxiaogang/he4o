@@ -327,7 +327,6 @@
  */
 +(BOOL) score4SRefrection:(NSDictionary*)recogDic cansets:(NSArray*)cansets demand:(DemandModel*)demand{
     //1. 根据前段匹配度排序;
-    CGFloat resultScore = 0.0f;
     NSArray *sortCansets = [SMGUtils sortBig2Small:cansets compareBlock:^double(AISolutionModel *obj) {
         return NUMTOOK([recogDic objectForKey:@(obj.cansetFo.pointerId)]).floatValue;
     }];
@@ -336,7 +335,10 @@
     NSInteger limit = MIN(5, sortCansets.count * 0.3f);
     sortCansets = ARR_SUB(sortCansets, 0, limit);
     
-    //3. 取到fo,判断后段的mv评分;
+    //3. 取到fo,算出后段的mv评分,并累计到sum中;
+    CGFloat sumMvScore = 0.0f,sumLazyScore = 0.0f;
+    int mvScoreNum = 0,lazyScoreNum = 0;
+    
     for (AIMatchFoModel *item in sortCansets) {
         AIFoNodeBase *recogFo = [SMGUtils searchNode:item.matchFo];
         
@@ -348,7 +350,8 @@
         CGFloat mvScore = [AIScore score4MV:recogFo.cmvNode_p ratio:stabScore];
         
         //6. 累计评分;
-        resultScore += mvScore;
+        sumMvScore += mvScore;
+        mvScoreNum ++;
         
         //7. 算出后段的"懒"评分;
         //TODOTEST: 测入此处cutIndex2传的是否正确;
@@ -360,19 +363,25 @@
                 lazyScore -= 0.5f;
             }
         }
-        resultScore += lazyScore;
+        sumLazyScore += lazyScore;
+        lazyScoreNum ++;
     }
     
-    //8. 计算任务评分: 取baseRDemand评分 (参考27057);
+    //9. 根据sum和num累计,算出平均"方案评分"和"懒评分";
+    CGFloat averageMvScore = mvScoreNum > 0 ? sumMvScore / mvScoreNum : 0;
+    CGFloat averageLazyScore = lazyScoreNum > 0 ? sumLazyScore / lazyScoreNum : 0;
+    
+    //10. 计算任务评分: 取baseRDemand评分 (参考27057);
     NSArray *rootDemands = [TOUtils getBaseDemands_AllDeep:demand];
     rootDemands = [SMGUtils filterArr:rootDemands checkValid:^BOOL(id item) {
         return ISOK(item, ReasonDemandModel.class);
     }];
     ReasonDemandModel *baseRDemand = ARR_INDEX_REVERSE(rootDemands, 0);
-    CGFloat demandScore = [AIScore score4Demand:baseRDemand];
+    CGFloat averageDemandScore = [AIScore score4Demand:baseRDemand];
     
     //TODOTOMORROW20220803:
-    //c. S评分PK: (pk通过 = 任务评分 < (方案评分 + 懒评分));
+    //c. S评分PK: pk通过 = 任务评分 - 方案评分 - 懒评分 > 0;
+    //BOOL result = averageDemandScore -
     return true;
 }
 
