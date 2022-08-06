@@ -379,11 +379,10 @@
     ReasonDemandModel *baseRDemand = ARR_INDEX_REVERSE(rootDemands, 0);
     CGFloat averageDemandScore = [AIScore score4Demand:baseRDemand];
     
-    //TODOTOMORROW20220803:
-    //c. S评分PK: pk通过 = 任务评分 - 方案评分 - 懒评分 > 0;
-    //BOOL result = averageDemandScore -
-    return true;
+    //11. S评分PK: pk通过 = 任务评分 - 方案评分 - 懒评分 > 0;
+    //12. 三个评分都是负的,所以公式为以下 (result = 收益(负任务分) + mv的负分 + lazy的负分 > 0);
+    BOOL result = -averageDemandScore + averageMvScore + averageLazyScore > 0;
+    return result;
 }
-
 
 @end
