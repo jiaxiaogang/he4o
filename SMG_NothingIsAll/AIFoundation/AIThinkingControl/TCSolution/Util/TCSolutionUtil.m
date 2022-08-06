@@ -339,12 +339,12 @@
     CGFloat sumMvScore = 0.0f,sumLazyScore = 0.0f;
     int mvScoreNum = 0,lazyScoreNum = 0;
     
-    for (AIMatchFoModel *item in sortCansets) {
-        AIFoNodeBase *recogFo = [SMGUtils searchNode:item.matchFo];
+    for (AISolutionModel *item in sortCansets) {
+        AIFoNodeBase *recogFo = [SMGUtils searchNode:item.cansetFo];
         
         //4. 算出后半段稳定性评分;
         //TODOTEST: 测入此处cutIndex2传的是否正确;
-        CGFloat stabScore = [TOUtils getStableScore:recogFo startSPIndex:item.cutIndex2 + 1 endSPIndex:recogFo.count];
+        CGFloat stabScore = [TOUtils getStableScore:recogFo startSPIndex:item.cutIndex + 1 endSPIndex:recogFo.count];
         
         //5. 算出后半段稳定性 x mv评分 (正mv返回正分 | 负mv返回负分 | 无mv返回0分);
         CGFloat mvScore = [AIScore score4MV:recogFo.cmvNode_p ratio:stabScore];
@@ -356,7 +356,7 @@
         //7. 算出后段的"懒"评分;
         //TODOTEST: 测入此处cutIndex2传的是否正确;
         CGFloat lazyScore = 0;
-        for (NSInteger i = item.cutIndex2 + 1; i < recogFo.count; i++) {
+        for (NSInteger i = item.cutIndex + 1; i < recogFo.count; i++) {
             //8. 遍历后半段中的"isOut=true"的行为,各指定"懒"评分;
             AIKVPointer *alg_p = ARR_INDEX(recogFo.content_ps, i);
             if (alg_p && alg_p.isOut) {
