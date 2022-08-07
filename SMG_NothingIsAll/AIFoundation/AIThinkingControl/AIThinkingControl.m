@@ -24,6 +24,8 @@
 @property (strong, nonatomic) ShortMatchManager *shortMatchManager; //IN短时记忆 (输入数据管理器);
 @property (assign, nonatomic) long long operCount;                  //思维操作计数;
 @property (assign, nonatomic) long long loopId;                     //思维循环Id;
+@property (assign, nonatomic) NSTimeInterval lastOperTime;
+@property (assign, nonatomic) NSTimeInterval lastLoopTime;
 
 /**
  *  MARK:--------------------当前能量值--------------------
@@ -227,6 +229,11 @@ static AIThinkingControl *_instance;
 //对任何TC操作算一次操作计数;
 -(void) updateOperCount{
     self.operCount++;
+    
+    //调试用时
+    NSTimeInterval now = [NSDate new].timeIntervalSince1970 * 1000;
+    if (self.lastOperTime > 0) NSLog(@"操作计数更新:%lld 用时:%.0f",self.getOperCount,now - self.lastOperTime);
+    self.lastOperTime = now;
 }
 
 -(long long) getOperCount{
@@ -240,6 +247,11 @@ static AIThinkingControl *_instance;
 //循环Id (参考26183);
 -(void) updateLoopId{
     self.loopId++;
+    
+    //调试用时
+    NSTimeInterval now = [NSDate new].timeIntervalSince1970 * 1000;
+    if (self.lastLoopTime > 0) NSLog(@"循环计数更新:%lld 用时:%.0f",self.getLoopId,now - self.lastLoopTime);
+    self.lastLoopTime = now;
 }
 -(long long) getLoopId{
     return _loopId;
