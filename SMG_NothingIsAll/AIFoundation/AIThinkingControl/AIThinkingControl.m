@@ -233,8 +233,11 @@ static AIThinkingControl *_instance;
     //调试用时
     NSTimeInterval now = [NSDate new].timeIntervalSince1970 * 1000;
     NSTimeInterval useTime = now - self.lastOperTime;
+    
+    NSString *useTimeStr = @"";
+    for (int i = 0; i < (int)(useTime / 100); i++) {useTimeStr = STRFORMAT(@"%@*",useTimeStr);}
     if (self.lastOperTime > 0 && useTime > 200)
-        NSLog(@"操作计数更新:%lld 用时:%.0f from:%@",self.getOperCount,useTime,fileName);
+        NSLog(@"操作计数更新:%lld 用时:%@ (%.0f) from:%@",self.getOperCount,useTimeStr,useTime,fileName);
     self.lastOperTime = now;
 }
 
