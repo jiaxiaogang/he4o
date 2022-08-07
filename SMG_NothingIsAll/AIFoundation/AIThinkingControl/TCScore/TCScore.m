@@ -15,7 +15,7 @@
  */
 +(void) score{
     //1. 取当前任务 (参考24195-1);
-    [theTC updateOperCount];
+    [theTC updateOperCount:kFILENAME];
     Debug();
     OSTitleLog(@"TCScore");
     DemandModel *demand = [theTC.outModelManager getCanDecisionDemand];

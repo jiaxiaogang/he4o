@@ -17,7 +17,7 @@
  */
 +(void) rDemand:(AIShortMatchModel*)model{
     //2. 预测处理_把mv加入到demandManager;
-    [theTC updateOperCount];
+    [theTC updateOperCount:kFILENAME];
     Debug();
     OSTitleLog(@"rDemand");
     [theTC.outModelManager updateCMVCache_RMV:model];
@@ -37,7 +37,7 @@
  */
 +(void) pDemand:(AICMVNode*)cmvNode{
     //1. 将联想到的cmv更新energy & 更新demandManager & decisionLoop
-    [theTC updateOperCount];
+    [theTC updateOperCount:kFILENAME];
     Debug();
     OSTitleLog(@"pDemand");
     NSInteger delta = [NUMTOOK([AINetIndex getData:cmvNode.delta_p]) integerValue];
@@ -61,7 +61,7 @@
  */
 +(void) feedbackDemand:(AIShortMatchModel*)model foModel:(TOFoModel*)foModel{
     //1. 识别结果pFos挂载到targetFoModel下做子任务 (好的坏的全挂载,比如做的饭我爱吃{MV+},但是又太麻烦{MV-});
-    [theTC updateOperCount];
+    [theTC updateOperCount:kFILENAME];
     Debug();
     NSDictionary *fos4Demand = model.fos4Demand;
     OFTitleLog(@"subDemand",@"\n子任务数:%ld baseFo:%@",fos4Demand.count,Pit2FStr(foModel.content_p));
@@ -81,7 +81,7 @@
  */
 +(void) hDemand:(TOAlgModel*)algModel{
     //1. 对algModel生成H任务,并挂载在当前短时记忆分支下;
-    [theTC updateOperCount];
+    [theTC updateOperCount:kFILENAME];
     Debug();
     OFTitleLog(@"hDemand",@"\n%@",Pit2FStr(algModel.content_p));
     [HDemandModel newWithAlgModel:algModel];

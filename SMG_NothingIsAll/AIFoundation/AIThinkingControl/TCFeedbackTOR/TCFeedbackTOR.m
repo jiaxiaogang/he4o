@@ -82,7 +82,7 @@
  */
 +(void) feedbackTOR:(AIShortMatchModel*)model{
     //1. 将新一帧数据报告给TOR,以进行短时记忆的更新,比如我输出行为"打",短时记忆由此知道输出"打"成功 (外循环入->推进->中循环出);
-    [theTC updateOperCount];
+    [theTC updateOperCount:kFILENAME];
     Debug();
     NSMutableArray *waitModels = [[NSMutableArray alloc] init];
     NSArray *recognitionAlgs = [TIUtils getMatchAndPartAlgPsByModel:model];

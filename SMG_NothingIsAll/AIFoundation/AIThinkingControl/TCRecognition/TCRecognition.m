@@ -31,7 +31,7 @@
     //1. 数据准备;
     NSArray *except_ps = @[model.protoFo.pointer,model.matchAFo.pointer];
     AIFoNodeBase *maskFo = ARRISOK(model.matchAlgs) ? model.protoFo : model.matchAFo;
-    [theTC updateOperCount];
+    [theTC updateOperCount:kFILENAME];
     Debug();
     IFTitleLog(@"时序识别", @"\n%@:%@->%@",ARRISOK(model.matchAlgs) ? @"protoFo" : @"matchAFo",Fo2FStr(maskFo),Mvp2Str(maskFo.cmvNode_p));
     
@@ -45,7 +45,7 @@
 
 +(void) pRecognition:(AIFoNodeBase*)protoFo{
     //3. 学习
-    [theTC updateOperCount];
+    [theTC updateOperCount:kFILENAME];
     Debug();
     DebugE();
     [TCLearning pLearning:protoFo];
@@ -90,7 +90,7 @@
     //1. 数据检查
     AIShortMatchModel *result = [[AIShortMatchModel alloc] init];
     result.regroupFo = regroupFo;
-    [theTC updateOperCount];
+    [theTC updateOperCount:kFILENAME];
     Debug();
     OFTitleLog(@"反思时序识别", @"\n%@",Fo2FStr(regroupFo));
     

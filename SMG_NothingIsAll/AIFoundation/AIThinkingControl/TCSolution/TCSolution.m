@@ -105,7 +105,7 @@
         NSLog(@">>>>>> rSolution 已达limit条 (S数:%ld 层数:%ld)",demand.actionFoModels.count,deepCount);
         return;
     }
-    [theTC updateOperCount];
+    [theTC updateOperCount:kFILENAME];
     Debug();
     
     //2. 不应期 (可以考虑) (源于:反思且子任务失败的 或 fo行为化最终失败的,参考24135);
@@ -188,7 +188,7 @@
         NSLog(@"------->>>>>> pSolution 已达limit条");
         return;
     }
-    [theTC updateOperCount];
+    [theTC updateOperCount:kFILENAME];
     Debug();
     
     //2. =======以下: 调用通用diff模式方法 (以下代码全是由diff模式方法迁移而来);
@@ -275,7 +275,7 @@
         NSLog(@"------->>>>>> hSolution 已达limit条");
         return;
     }
-    [theTC updateOperCount];
+    [theTC updateOperCount:kFILENAME];
     Debug();
     
     //1. 数据准备;

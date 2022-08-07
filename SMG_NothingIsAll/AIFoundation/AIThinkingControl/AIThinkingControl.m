@@ -227,12 +227,14 @@ static AIThinkingControl *_instance;
 //MARK:===============================================================
 
 //对任何TC操作算一次操作计数;
--(void) updateOperCount{
+-(void) updateOperCount:(NSString*)fileName{
     self.operCount++;
     
     //调试用时
     NSTimeInterval now = [NSDate new].timeIntervalSince1970 * 1000;
-    if (self.lastOperTime > 0) NSLog(@"操作计数更新:%lld 用时:%.0f",self.getOperCount,now - self.lastOperTime);
+    NSTimeInterval useTime = now - self.lastOperTime;
+    if (self.lastOperTime > 0 && useTime > 200)
+        NSLog(@"操作计数更新:%lld 用时:%.0f from:%@",self.getOperCount,useTime,fileName);
     self.lastOperTime = now;
 }
 
@@ -250,7 +252,9 @@ static AIThinkingControl *_instance;
     
     //调试用时
     NSTimeInterval now = [NSDate new].timeIntervalSince1970 * 1000;
-    if (self.lastLoopTime > 0) NSLog(@"循环计数更新:%lld 用时:%.0f",self.getLoopId,now - self.lastLoopTime);
+    NSTimeInterval useTime = now - self.lastLoopTime;
+    if (self.lastLoopTime > 0 && useTime > 2000)
+        NSLog(@"循环计数更新:%lld 用时:%.0f",self.getLoopId,useTime);
     self.lastLoopTime = now;
 }
 -(long long) getLoopId{

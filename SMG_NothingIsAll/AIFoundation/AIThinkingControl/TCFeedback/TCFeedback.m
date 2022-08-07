@@ -26,7 +26,7 @@
 +(void) feedbackTIR:(AIShortMatchModel*)model{
     //1. 取所有lastWait模型,并与新输入的概念做mIsC判断;
     NSArray *inModels = theTC.inModelManager.models;
-    [theTC updateOperCount];
+    [theTC updateOperCount:kFILENAME];
     Debug();
     IFTitleLog(@"feedbackTIR", @"\n输入M:%@\n输入P:%@",Alg2FStr(model.matchAlg),Alg2FStr(model.protoAlg));
     NSArray *recognitionAlgs = [TIUtils getMatchAndPartAlgPsByModel:model];
@@ -83,7 +83,7 @@
 +(void) feedbackTIP:(AICMVNode*)cmvNode{
     //1. 数据检查
     NSArray *inModels = theTC.inModelManager.models;
-    [theTC updateOperCount];
+    [theTC updateOperCount:kFILENAME];
     Debug();
     IFTitleLog(@"feedbackTIP", @"\n输入MV:%@",Mv2FStr(cmvNode));
     
@@ -129,7 +129,7 @@
     //1. 数据检查
     NSInteger delta = [NUMTOOK([AINetIndex getData:cmvNode.delta_p]) integerValue];
     if (delta == 0) return;
-    [theTC updateOperCount];
+    [theTC updateOperCount:kFILENAME];
     Debug();
     IFTitleLog(@"feedbackTOP", @"\n输入MV:%@",Mv2FStr(cmvNode));
     

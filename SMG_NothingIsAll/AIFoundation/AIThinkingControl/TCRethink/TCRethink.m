@@ -12,7 +12,7 @@
 
 +(void) reasonInRethink:(AIMatchFoModel*)model type:(AnalogyType)type{
     AIFoNodeBase *matchFo = [SMGUtils searchNode:model.matchFo];
-    [theTC updateOperCount];
+    [theTC updateOperCount:kFILENAME];
     Debug();
     IFTitleLog(@"IR反省", @"\n%@ spIndex:%ld -> (%@)",Fo2FStr(matchFo),model.cutIndex2 + 1,ATType2Str(type));
     [matchFo updateSPStrong:model.cutIndex2 + 1 type:type];
@@ -21,7 +21,7 @@
 
 +(void) perceptInRethink:(AIMatchFoModel*)model type:(AnalogyType)type{
     AIFoNodeBase *matchFo = [SMGUtils searchNode:model.matchFo];
-    [theTC updateOperCount];
+    [theTC updateOperCount:kFILENAME];
     Debug();
     IFTitleLog(@"IP反省", @"\n%@ spIndex:%ld -> (%@)",Fo2FStr(matchFo),matchFo.count,ATType2Str(type));
     [matchFo updateSPStrong:matchFo.count type:type];
@@ -30,7 +30,7 @@
 
 +(void) reasonOutRethink:(TOFoModel*)model type:(AnalogyType)type{
     AIFoNodeBase *fo = [SMGUtils searchNode:model.content_p];
-    [theTC updateOperCount];
+    [theTC updateOperCount:kFILENAME];
     Debug();
     IFTitleLog(@"OR反省", @"\n%@ spIndex:%ld -> (%@)",FoP2FStr(model.content_p),model.actionIndex,ATType2Str(type));
     [fo updateSPStrong:model.actionIndex type:type];
@@ -39,7 +39,7 @@
 
 +(void) perceptOutRethink:(TOFoModel*)model type:(AnalogyType)type{
     AIFoNodeBase *fo = [SMGUtils searchNode:model.content_p];
-    [theTC updateOperCount];
+    [theTC updateOperCount:kFILENAME];
     Debug();
     IFTitleLog(@"OP反省", @"\n%@ spIndex:%ld -> (%@)",FoP2FStr(model.content_p),fo.count,ATType2Str(type));
     [fo updateSPStrong:fo.count type:type];

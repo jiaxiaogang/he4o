@@ -15,14 +15,14 @@
  */
 +(void) rForecast:(AIShortMatchModel*)model{
     //6. 传给TOR,做下一步处理: R任务_预测mv价值变化;
-    [theTC updateOperCount];
+    [theTC updateOperCount:kFILENAME];
     Debug();
     DebugE();
     [TCDemand rDemand:model];
 }
 
 +(void) pForecast:(AICMVNode*)cmvNode{
-    [theTC updateOperCount];
+    [theTC updateOperCount:kFILENAME];
     Debug();
     DebugE();
     [TCDemand pDemand:cmvNode];
@@ -55,7 +55,7 @@
  */
 +(void) forecastReasonIRT:(AIShortMatchModel*)model {
     //1. 数据检查 (参考25031-1);
-    [theTC updateOperCount];
+    [theTC updateOperCount:kFILENAME];
     Debug();
     IFTitleLog(@"ReasonIRT预测",@"\nprotoFo:%@",Fo2FStr(model.protoFo));
     NSArray *matchs = model.fos4RForecast;

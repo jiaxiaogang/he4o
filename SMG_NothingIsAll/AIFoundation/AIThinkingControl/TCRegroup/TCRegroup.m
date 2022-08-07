@@ -12,7 +12,7 @@
 
 +(void) rRegroup:(AIShortMatchModel*)model{
     //1. 构建时序 (把每次dic输入,都作为一个新的内存时序);
-    [theTC updateOperCount];
+    [theTC updateOperCount:kFILENAME];
     Debug();
     NSArray *matchAShortMem = [theTC.inModelManager shortCache:true];
     model.matchAFo = [theNet createConFo:matchAShortMem isMem:false];
@@ -33,7 +33,7 @@
  */
 +(void) pRegroup:(NSArray*)algsArr{
     //1. 联想到mv时,创建CmvModel取到FoNode;
-    [theTC updateOperCount];
+    [theTC updateOperCount:kFILENAME];
     Debug();
     NSTimeInterval inputTime = [[NSDate date] timeIntervalSince1970];
     
@@ -54,7 +54,7 @@
  */
 +(void) feedbackRegroup:(TOFoModel*)foModel{
     //1. 数据准备;
-    [theTC updateOperCount];
+    [theTC updateOperCount:kFILENAME];
     Debug();
     AIFoNodeBase *fo = [SMGUtils searchNode:foModel.content_p];
     

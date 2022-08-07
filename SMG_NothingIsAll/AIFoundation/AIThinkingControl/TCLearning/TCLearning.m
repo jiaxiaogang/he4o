@@ -29,7 +29,7 @@
  *      2021.12.02: 将TCLearning独立成类 (参考24164);
  */
 +(void) pLearning:(AIFoNodeBase*)protoFo{
-    [theTC updateOperCount];
+    [theTC updateOperCount:kFILENAME];
     Debug();
     //1. 获取最近的识别模型;
     IFTitleLog(@"P学习", @"\n输入ProtoFo:%@->%@", Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p));
@@ -72,7 +72,7 @@
  *      2022.01.18: 改成使用ATDefault类型,因为ATSame已废弃;
  */
 +(void) rLearning:(AIShortMatchModel*)model protoFo:(AIFoNodeBase*)protoFo{
-    [theTC updateOperCount];
+    [theTC updateOperCount:kFILENAME];
     Debug();
     IFTitleLog(@"rLearning",@"\nprotoFo: %@->%@",Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p));
     //1. 学习 for prFos: 加强pFos的抽具象关联;

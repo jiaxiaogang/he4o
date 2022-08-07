@@ -82,3 +82,5 @@
 #define DebugE() [theDebug debugModule:FILENAME suffix:@"END" line:__LINE__]
 #define DebugW() [theDebug debugWrite]
 #define DebugR() [theDebug debugRead]
+#define kFILENAME FILENAME
+#define kLINE __LINE__

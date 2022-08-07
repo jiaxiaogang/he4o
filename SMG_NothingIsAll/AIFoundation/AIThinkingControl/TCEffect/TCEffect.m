@@ -18,7 +18,7 @@
  *      2022.05.28: 不需要effect做首帧反省了,tcActYes支持每帧O反省 (参考26136-方案);
  */
 +(void) rEffect:(TOFoModel*)rSolution{
-    [theTC updateOperCount];
+    [theTC updateOperCount:kFILENAME];
     Debug();
     //1. 取deltaTime;
     ReasonDemandModel *rDemand = (ReasonDemandModel*)rSolution.baseOrGroup;
@@ -71,7 +71,7 @@
  *      2022.05.28: 不需要effect做首帧反省了,tcActYes支持每帧O反省 (参考26136-方案);
  */
 +(void) hEffect:(TOFoModel*)hSolution{
-    [theTC updateOperCount];
+    [theTC updateOperCount:kFILENAME];
     Debug();
     //1. 取deltaTime;
     AIFoNodeBase *solutionFo = [SMGUtils searchNode:hSolution.content_p];
