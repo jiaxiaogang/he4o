@@ -24,6 +24,8 @@
 @property (strong, nonatomic) ShortMatchManager *shortMatchManager; //IN短时记忆 (输入数据管理器);
 @property (assign, nonatomic) long long operCount;                  //思维操作计数;
 @property (assign, nonatomic) long long loopId;                     //思维循环Id;
+
+@property (strong, nonatomic) NSMutableArray *last10TCScoreOperTimeArr;
 @property (assign, nonatomic) NSTimeInterval lastOperTime;
 @property (assign, nonatomic) NSTimeInterval lastLoopTime;
 
@@ -62,6 +64,7 @@ static AIThinkingControl *_instance;
     self.demandManager = [[DemandManager alloc] init];
     self.shortMatchManager = [[ShortMatchManager alloc] init];
     [theRT regist:kClearTCSEL target:self selector:@selector(clear)];
+    self.last10TCScoreOperTimeArr = [[NSMutableArray alloc] init];
 }
 
 
@@ -226,11 +229,15 @@ static AIThinkingControl *_instance;
 //MARK:                     < 操作计数 >
 //MARK:===============================================================
 
-//对任何TC操作算一次操作计数;
+/**
+ *  MARK:--------------------对任何TC操作算一次操作计数--------------------
+ *  @version
+ *      2022.08.08: 判断卡顿状态时,转入植物模式 (参考27063);
+ */
 -(void) updateOperCount:(NSString*)fileName{
     self.operCount++;
     
-    //调试用时
+    //==> 调试用时
     NSTimeInterval now = [NSDate new].timeIntervalSince1970 * 1000;
     NSTimeInterval useTime = now - self.lastOperTime;
     
@@ -239,6 +246,28 @@ static AIThinkingControl *_instance;
     if (self.lastOperTime > 0 && useTime > 200)
         NSLog(@"操作计数更新:%lld 用时:%@ (%.0f) from:%@",self.getOperCount,useTimeStr,useTime,fileName);
     self.lastOperTime = now;
+    
+    //==> 判断卡顿
+    if ([fileName containsString:@"TCScore"]) {
+        
+        //1. 存10条;
+        [self.last10TCScoreOperTimeArr addObject:@(useTime)];
+        if (self.last10TCScoreOperTimeArr.count > 10) {
+            [self.last10TCScoreOperTimeArr removeObjectAtIndex:0];
+        }
+        
+        //2. 算出10条总耗时;
+        double sumUseTime = 0;
+        for (NSNumber *item in self.last10TCScoreOperTimeArr) {
+            sumUseTime += item.doubleValue;
+        }
+        
+        //3. 平均耗时>2000ms时,属于卡顿状态;
+        if (!self.stopThink && self.last10TCScoreOperTimeArr.count >= 10 && sumUseTime / self.last10TCScoreOperTimeArr.count > 2500) {
+            NSLog(@"操作计数判断当前为: 卡顿状态,转为植物模式");
+            self.stopThink = true;
+        }
+    }
 }
 
 -(long long) getOperCount{
