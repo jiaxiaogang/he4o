@@ -233,6 +233,7 @@ static AIThinkingControl *_instance;
  *  MARK:--------------------对任何TC操作算一次操作计数--------------------
  *  @version
  *      2022.08.08: 判断卡顿状态时,转入植物模式 (参考27063);
+ *      2022.08.08: 去掉<200ms的快速执行带来的影响: 仅>200ms时才统计;
  */
 -(void) updateOperCount:(NSString*)fileName{
     self.operCount++;
@@ -248,7 +249,7 @@ static AIThinkingControl *_instance;
     self.lastOperTime = now;
     
     //==> 判断卡顿
-    if ([fileName containsString:@"TCScore"]) {
+    if ([fileName containsString:@"TCScore"] && useTime > 200) {
         
         //1. 存10条;
         [self.last10TCScoreOperTimeArr addObject:@(useTime)];
