@@ -264,9 +264,20 @@ static AIThinkingControl *_instance;
         }
         
         //3. 平均耗时>2000ms时,属于卡顿状态;
-        if (!self.stopThink && self.last10TCScoreOperTimeArr.count >= 10 && sumUseTime / self.last10TCScoreOperTimeArr.count > 2500) {
+        if (!self.stopThink && self.last10TCScoreOperTimeArr.count >= 10 && sumUseTime / self.last10TCScoreOperTimeArr.count > 1500) {
+            
+            //a. 设为植物模式;
             NSLog(@"操作计数判断当前为: 卡顿状态,转为植物模式");
             self.stopThink = true;
+            
+            //b. 并暂停强化训练;
+            [theRT setPlaying:false];
+            
+            //c. 调试分析代码具体慢原因;
+            NSArray *debugModels = [theDebug getDebugModels:STRFORMAT(@"TCScoreDesc%lld",self.getLoopId)];
+            for (XGDebugModel *model in debugModels) {
+                NSLog(@"%@ 次数:%ld 均耗:%.0f 读:%ld 写:%ld",model.key,model.sumCount,model.sumTime / model.sumCount,model.sumReadCount,model.sumWriteCount);
+            }
         }
     }
 }
@@ -287,7 +298,7 @@ static AIThinkingControl *_instance;
     NSTimeInterval now = [NSDate new].timeIntervalSince1970 * 1000;
     NSTimeInterval useTime = now - self.lastLoopTime;
     if (self.lastLoopTime > 0 && useTime > 2000)
-        NSLog(@"循环计数更新:%lld 用时:%.0f",self.getLoopId,useTime);
+        NSLog(@"循环计数更新:%lld 用时:%.0f ========================================",self.getLoopId,useTime);
     self.lastLoopTime = now;
 }
 -(long long) getLoopId{

@@ -72,6 +72,12 @@ static RLTrainer *_instance;
     [theHeLog setStop:_noLogMode];
     theApp.noNSLog = _noLogMode;
 }
+/**
+ *  MARK:--------------------暂停或继续训练--------------------
+ */
+-(void)setPlaying:(BOOL)playing{
+    [self.panel setPlaying:playing];
+}
 
 //MARK:===============================================================
 //MARK:                     < RTModelDelegate >

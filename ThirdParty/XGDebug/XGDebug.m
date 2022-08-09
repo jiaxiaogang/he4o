@@ -13,7 +13,6 @@
 
 @property (assign, nonatomic) NSTimeInterval lastTime;
 @property (strong, nonatomic) NSString *lastKey;
-@property (assign, nonatomic) NSInteger lastLine;
 @property (strong, nonatomic) NSMutableArray *models;   //List<XGDebugModel>
 @property (assign, nonatomic) NSInteger lastWriteCount;
 @property (assign, nonatomic) NSInteger lastReadCount;
@@ -28,10 +27,20 @@ static XGDebug *_instance;
     return _instance;
 }
 
--(void) debugModule:(NSString*)name suffix:(NSString*)suffix line:(NSInteger)line{
+/**
+ *  MARK:--------------------追加一条记录--------------------
+ *  @version
+ *      2022.08.09: 废弃line代码行号,因为它做不参与到key防重,所以不唯一,所以不准且没用;
+ */
+-(void) debugModuleWithFileName:(NSString*)fileName suffix:(NSString*)suffix {
+    fileName = STRTOOK(fileName);
+    NSString *prefix = SUBSTR2INDEX(fileName, fileName.length - 2);
+    [self debugModuleWithPrefix:prefix suffix:suffix];
+}
+
+-(void) debugModuleWithPrefix:(NSString*)prefix suffix:(NSString*)suffix {
     //0. 数据准备;
-    name = STRTOOK(name);
-    NSString *prefix = SUBSTR2INDEX(name, name.length - 2);
+    prefix = STRTOOK(prefix);
     NSString *key = STRISOK(suffix) ? STRFORMAT(@"%@_%@",prefix,suffix) : prefix;
     
     //1. 上帧结算;
@@ -51,7 +60,6 @@ static XGDebug *_instance;
         
         //c. 统计更新;
         lastModel.key = self.lastKey;
-        lastModel.line = self.lastLine;
         lastModel.sumTime += now - self.lastTime;
         lastModel.sumCount++;
         lastModel.sumWriteCount += self.lastWriteCount;
@@ -60,7 +68,6 @@ static XGDebug *_instance;
     
     //2. 当前帧记录;
     self.lastKey = key;
-    self.lastLine = line;
     self.lastTime = now;
     self.lastWriteCount = 0;
     self.lastReadCount = 0;
@@ -79,6 +86,18 @@ static XGDebug *_instance;
         _models = [[NSMutableArray alloc] init];
     }
     return _models;
+}
+
+/**
+ *  MARK:--------------------根据前辍取debugModels--------------------
+ */
+-(NSArray*) getDebugModels:(NSString*)prefix {
+    prefix = STRTOOK(prefix);
+    NSArray *result = [SMGUtils filterArr:self.models checkValid:^BOOL(XGDebugModel *item) {
+        NSString *itemPrefix = [item.key substringWithRange:NSMakeRange(0, prefix.length)];
+        return [prefix isEqualToString:itemPrefix];
+    }];
+    return result;
 }
 
 @end

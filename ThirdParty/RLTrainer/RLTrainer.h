@@ -55,4 +55,9 @@
  */
 -(void) open;
 
+/**
+ *  MARK:--------------------暂停或继续训练--------------------
+ */
+-(void)setPlaying:(BOOL)playing;
+
 @end

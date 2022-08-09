@@ -18,11 +18,16 @@
     [theTC updateOperCount:kFILENAME];
     Debug();
     OSTitleLog(@"TCScore");
+    NSString *debugPrefix = STRFORMAT(@"TCScore%lld",theTC.getLoopId);
+    DebugParam(debugPrefix,@"0");
     DemandModel *demand = [theTC.outModelManager getCanDecisionDemand];
+    DebugParam(debugPrefix,@"1");
     
     //2. 对firstRootDemand取得分字典 (参考24195-2 & 24196示图);
     NSMutableDictionary *scoreDic = [[NSMutableDictionary alloc] init];
+    DebugParam(debugPrefix,@"2");
     TOFoModel *foModel = [self score_Multi:demand.actionFoModels scoreDic:scoreDic];
+    DebugParam(debugPrefix,@"3");
     
     //3. 转给TCPlan取最优路径;
     DebugE();
