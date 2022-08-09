@@ -94,7 +94,7 @@ static XGDebug *_instance;
 -(NSArray*) getDebugModels:(NSString*)prefix {
     prefix = STRTOOK(prefix);
     NSArray *result = [SMGUtils filterArr:self.models checkValid:^BOOL(XGDebugModel *item) {
-        NSString *itemPrefix = [item.key substringWithRange:NSMakeRange(0, prefix.length)];
+        NSString *itemPrefix = [item.key substringWithRange:NSMakeRange(0, MIN(prefix.length, item.key.length))];
         return [prefix isEqualToString:itemPrefix];
     }];
     return result;

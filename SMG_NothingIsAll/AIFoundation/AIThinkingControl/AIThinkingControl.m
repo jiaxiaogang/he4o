@@ -274,9 +274,9 @@ static AIThinkingControl *_instance;
             [theRT setPlaying:false];
             
             //c. 调试分析代码具体慢原因;
-            NSArray *debugModels = [theDebug getDebugModels:STRFORMAT(@"TCScoreDesc%lld",self.getLoopId)];
+            NSArray *debugModels = [theDebug getDebugModels:STRFORMAT(@"TCScore%lld",self.getLoopId)];
             for (XGDebugModel *model in debugModels) {
-                NSLog(@"%@ 次数:%ld 均耗:%.0f 读:%ld 写:%ld",model.key,model.sumCount,model.sumTime / model.sumCount,model.sumReadCount,model.sumWriteCount);
+                NSLog(@"%@ 计数:%ld 均耗:%.0f 读:%ld 写:%ld",model.key,model.sumCount,model.sumTime / model.sumCount,model.sumReadCount,model.sumWriteCount);
             }
         }
     }
