@@ -66,12 +66,7 @@ static RLTrainer *_instance;
 -(void) open{
     [self.panel open];
 }
--(void)setNoLogMode:(BOOL)noLogMode{
-    _noLogMode = noLogMode;
-    [theTV setStop:_noLogMode];
-    [theHeLog setStop:_noLogMode];
-    theApp.noNSLog = _noLogMode;
-}
+
 /**
  *  MARK:--------------------暂停或继续训练--------------------
  */
@@ -91,7 +86,7 @@ static RLTrainer *_instance;
 }
 
 -(void) rtModel_Finished{
-    [self setNoLogMode:false];
+    [theApp setNoLogMode:false];
 }
 
 //MARK:===============================================================
@@ -112,10 +107,6 @@ static RLTrainer *_instance;
 
 -(double) rltPanel_getUseTimed{
     return self.model.getTotalUseTimed;
-}
-
--(void) rltPanel_setNoLogMode:(BOOL)noLogMode{
-    [self setNoLogMode:noLogMode];
 }
 
 @end

@@ -132,6 +132,17 @@
     [self.tipLogLab setText:STRTOOK(tipLog)];
 }
 
+/**
+ *  MARK:--------------------无日志模式--------------------
+ *  @version
+ *      2022.08.17: 调试训练卡顿是因为theTV的帧记录导致的 (参考27065);
+ */
+-(void)setNoLogMode:(BOOL)noLogMode{
+    [theTV setStop:noLogMode];
+    [theHeLog setStop:noLogMode];
+    //self.noNSLog = noLogMode;
+}
+
 //MARK:===============================================================
 //MARK:                     < privateMethod >
 //MARK:===============================================================

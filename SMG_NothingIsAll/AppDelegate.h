@@ -20,5 +20,6 @@
 
 -(UIViewController*) getTopDisplayViewController;
 -(void) setTipLog:(NSString*)tipLog;
+-(void)setNoLogMode:(BOOL)noLogMode; //无日志模式;
 
 @end

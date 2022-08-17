@@ -14,7 +14,6 @@
 -(NSArray*) rltPanel_getQueues;
 -(NSInteger) rltPanel_getQueueIndex;
 -(double) rltPanel_getUseTimed;
--(void) rltPanel_setNoLogMode:(BOOL)noLogMode;
 
 @end
 
