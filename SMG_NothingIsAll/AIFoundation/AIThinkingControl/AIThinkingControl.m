@@ -235,13 +235,13 @@ static AIThinkingControl *_instance;
 
 /**
  *  MARK:--------------------对任何TC操作算一次操作计数--------------------
- *  @param fileName : 调用者名称 (调用者方法进入时,调用此方法);
+ *  @param operater : 调用者名称 (调用者方法进入时,调用此方法);
  *  @version
  *      2022.08.08: 判断卡顿状态时,转入植物模式 (参考27063);
  *      2022.08.08: 去掉<200ms的快速执行带来的影响: 仅>200ms时才统计;
  *      2022.08.17: 记录和调试实际last调用者的性能 (参考27064-跟进);
  */
--(void) updateOperCount:(NSString*)fileName{
+-(void) updateOperCount:(NSString*)operater{
     self.operCount++;
     
     //==> 调试用时
@@ -251,11 +251,11 @@ static AIThinkingControl *_instance;
     NSString *useTimeStr = @"";
     for (int i = 0; i < (int)(useTime / 100); i++) {useTimeStr = STRFORMAT(@"%@*",useTimeStr);}
     if (self.lastOperTime > 0 && useTime > 200)
-        NSLog(@"当前:%@ 操作计数更新:%lld 用时:%@ (%.0f) from:%@",fileName,self.getOperCount,useTimeStr,useTime,self.lastOperater);
+        NSLog(@"当前:%@ 操作计数更新:%lld 用时:%@ (%.0f) from:%@",operater,self.getOperCount,useTimeStr,useTime,self.lastOperater);
     self.lastOperTime = now;
     
     //==> 判断卡顿
-    if ([fileName containsString:@"TCScore"] && useTime > 200) {
+    if ([operater containsString:@"TCScore"] && useTime > 200) {
         
         //1. 存10条;
         [self.last10TCScoreOperTimeArr addObject:@(useTime)];
@@ -270,7 +270,7 @@ static AIThinkingControl *_instance;
         }
         
         //3. 平均耗时>2000ms时,属于卡顿状态;
-        if (!self.stopThink && self.last10TCScoreOperTimeArr.count >= 10 && sumUseTime / self.last10TCScoreOperTimeArr.count > 1500) {
+        if (!self.stopThink && self.last10TCScoreOperTimeArr.count >= 10 && sumUseTime / self.last10TCScoreOperTimeArr.count > 1200) {
             
             //a. 设为植物模式;
             NSLog(@"操作计数判断当前为: 卡顿状态,转为植物模式");
@@ -280,15 +280,18 @@ static AIThinkingControl *_instance;
             [theRT setPlaying:false];
             
             //c. 调试分析代码具体慢原因;
-            NSArray *debugModels = [theDebug getDebugModels:STRFORMAT(@"TCScore%lld",self.getLoopId)];
-            for (XGDebugModel *model in debugModels) {
-                NSLog(@"%@ 计数:%ld 均耗:%.0f 读:%ld 写:%ld",model.key,model.sumCount,model.sumTime / model.sumCount,model.sumReadCount,model.sumWriteCount);
+            NSMutableArray *debugPrewords = [[NSMutableArray alloc] initWithObjects:@"R",@"P",@"FB",@"H",nil];
+            for (NSString *debugPreword in debugPrewords) {
+                NSArray *debugModels = [theDebug getDebugModels:STRFORMAT(@"%@Demand%lld",debugPreword,self.getLoopId)];
+                for (XGDebugModel *model in debugModels) {
+                    NSLog(@"%@ 计数:%ld 均耗:%.0f 读:%ld 写:%ld",model.key,model.sumCount,model.sumTime / model.sumCount,model.sumReadCount,model.sumWriteCount);
+                }
             }
         }
     }
     
     //记录lastOperater
-    self.lastOperater = fileName;
+    self.lastOperater = operater;
 }
 
 -(long long) getOperCount{

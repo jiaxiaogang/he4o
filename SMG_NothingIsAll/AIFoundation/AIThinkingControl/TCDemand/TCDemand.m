@@ -20,8 +20,13 @@
     [theTC updateOperCount:kFILENAME];
     Debug();
     OSTitleLog(@"rDemand");
+    
+    NSString *debugPrefix = STRFORMAT(@"RDemand%lld",theTC.getLoopId);
+    DebugParam(debugPrefix,@"0");
     [theTC.outModelManager updateCMVCache_RMV:model];
+    DebugParam(debugPrefix,@"1");
     [theTV updateFrame];
+    DebugParam(debugPrefix,@"2");
     
     //6. 此处推进不成功,则运行TOP四模式;
     DebugE();
@@ -40,11 +45,18 @@
     [theTC updateOperCount:kFILENAME];
     Debug();
     OSTitleLog(@"pDemand");
+    NSString *debugPrefix = STRFORMAT(@"PDemand%lld",theTC.getLoopId);
+    DebugParam(debugPrefix,@"0");
     NSInteger delta = [NUMTOOK([AINetIndex getData:cmvNode.delta_p]) integerValue];
+    DebugParam(debugPrefix,@"1");
     NSString *algsType = cmvNode.urgentTo_p.algsType;
+    DebugParam(debugPrefix,@"2");
     NSInteger urgentTo = [NUMTOOK([AINetIndex getData:cmvNode.urgentTo_p]) integerValue];
+    DebugParam(debugPrefix,@"3");
     [theTC.outModelManager updateCMVCache_PMV:algsType urgentTo:urgentTo delta:delta];
+    DebugParam(debugPrefix,@"4");
     [theTV updateFrame];
+    DebugParam(debugPrefix,@"5");
     
     //2. 转向执行;
     DebugE();
@@ -65,12 +77,19 @@
     Debug();
     NSDictionary *fos4Demand = model.fos4Demand;
     OFTitleLog(@"subDemand",@"\n子任务数:%ld baseFo:%@",fos4Demand.count,Pit2FStr(foModel.content_p));
+    NSString *debugPrefix = STRFORMAT(@"FBDemand%lld",theTC.getLoopId);
+    DebugParam(debugPrefix,@"0");
     for (NSString *atKey in fos4Demand.allKeys) {
         NSArray *pFosValue = [fos4Demand objectForKey:atKey];
+        DebugParam(debugPrefix,@"1");
         [ReasonDemandModel newWithAlgsType:atKey pFos:pFosValue inModel:model baseFo:foModel];
+        DebugParam(debugPrefix,@"2");
         for (AIMatchFoModel *pFo in pFosValue) NSLog(@"\t pFo:%@->{%.2f}",Pit2FStr(pFo.matchFo),[AIScore score4MV_v2:pFo]);
+        DebugParam(debugPrefix,@"3");
     }
+    DebugParam(debugPrefix,@"4");
     [theTV updateFrame];
+    DebugParam(debugPrefix,@"5");
     DebugE();
 }
 
@@ -84,8 +103,12 @@
     [theTC updateOperCount:kFILENAME];
     Debug();
     OFTitleLog(@"hDemand",@"\n%@",Pit2FStr(algModel.content_p));
+    NSString *debugPrefix = STRFORMAT(@"HDemand%lld",theTC.getLoopId);
+    DebugParam(debugPrefix,@"0");
     [HDemandModel newWithAlgModel:algModel];
+    DebugParam(debugPrefix,@"1");
     [theTV updateFrame];
+    DebugParam(debugPrefix,@"2");
     
     //2. 调用TCScore继续决策;
     DebugE();

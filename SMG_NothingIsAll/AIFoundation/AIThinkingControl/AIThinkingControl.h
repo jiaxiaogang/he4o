@@ -63,7 +63,7 @@
 //MARK:===============================================================
 //MARK:                     < 操作计数 >
 //MARK:===============================================================
--(void) updateOperCount:(NSString*)fileName;
+-(void) updateOperCount:(NSString*)operater;
 -(long long) getOperCount;
 
 //MARK:===============================================================
