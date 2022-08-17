@@ -25,9 +25,13 @@
 @property (assign, nonatomic) long long operCount;                  //思维操作计数;
 @property (assign, nonatomic) long long loopId;                     //思维循环Id;
 
+//MARK:===============================================================
+//MARK:                     < 用于调试性能用 >
+//MARK:===============================================================
 @property (strong, nonatomic) NSMutableArray *last10TCScoreOperTimeArr;
 @property (assign, nonatomic) NSTimeInterval lastOperTime;
 @property (assign, nonatomic) NSTimeInterval lastLoopTime;
+@property (strong, nonatomic) NSString *lastOperater;
 
 /**
  *  MARK:--------------------当前能量值--------------------
@@ -231,9 +235,11 @@ static AIThinkingControl *_instance;
 
 /**
  *  MARK:--------------------对任何TC操作算一次操作计数--------------------
+ *  @param fileName : 调用者名称 (调用者方法进入时,调用此方法);
  *  @version
  *      2022.08.08: 判断卡顿状态时,转入植物模式 (参考27063);
  *      2022.08.08: 去掉<200ms的快速执行带来的影响: 仅>200ms时才统计;
+ *      2022.08.17: 记录和调试实际last调用者的性能 (参考27064-跟进);
  */
 -(void) updateOperCount:(NSString*)fileName{
     self.operCount++;
@@ -245,7 +251,7 @@ static AIThinkingControl *_instance;
     NSString *useTimeStr = @"";
     for (int i = 0; i < (int)(useTime / 100); i++) {useTimeStr = STRFORMAT(@"%@*",useTimeStr);}
     if (self.lastOperTime > 0 && useTime > 200)
-        NSLog(@"操作计数更新:%lld 用时:%@ (%.0f) from:%@",self.getOperCount,useTimeStr,useTime,fileName);
+        NSLog(@"当前:%@ 操作计数更新:%lld 用时:%@ (%.0f) from:%@",fileName,self.getOperCount,useTimeStr,useTime,self.lastOperater);
     self.lastOperTime = now;
     
     //==> 判断卡顿
@@ -280,6 +286,9 @@ static AIThinkingControl *_instance;
             }
         }
     }
+    
+    //记录lastOperater
+    self.lastOperater = fileName;
 }
 
 -(long long) getOperCount{

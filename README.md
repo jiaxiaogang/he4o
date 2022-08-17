@@ -13,7 +13,7 @@
 > 8. 计算：使用最简单的bool运算：`类比`和`评价`。
 >
 > 手稿：<https://github.com/jiaxiaogang/HELIX_THEORY>  
-> 网站：<http://www.jiaxiaogang.cn>
+> 网站：<http://https://jiaxiaogang.github.io>
 
 [![](https://img.shields.io/badge/%20QQGroup-528053635%20-orange.svg)](tencent://message/?uin=283636001&Site=&Menu=yes)
 [![](https://img.shields.io/badge/%20QQ-在线交谈%20-orange.svg)](http://wpa.qq.com/msgrd?v=3&uin=283636001&site=qq&menu=yes)
