@@ -129,7 +129,10 @@
  */
 -(void) updateFrame{
     //1. 数据检查;
+    NSString *debugPrefix = STRFORMAT(@"TVPanelView%lld",theTC.getLoopId);
+    DebugParam(debugPrefix,@"0");
     if (theTC.outModelManager.getAllDemand.count <= 0 || self.stop) {
+        DebugParam(debugPrefix,@"1");
         return;
     }
     

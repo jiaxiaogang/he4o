@@ -270,7 +270,7 @@ static AIThinkingControl *_instance;
         }
         
         //3. 平均耗时>2000ms时,属于卡顿状态;
-        if (!self.stopThink && self.last10TCScoreOperTimeArr.count >= 10 && sumUseTime / self.last10TCScoreOperTimeArr.count > 1200) {
+        if (!self.stopThink && self.last10TCScoreOperTimeArr.count >= 10 && sumUseTime / self.last10TCScoreOperTimeArr.count > 1000) {
             
             //a. 设为植物模式;
             NSLog(@"操作计数判断当前为: 卡顿状态,转为植物模式");
@@ -283,6 +283,15 @@ static AIThinkingControl *_instance;
             NSMutableArray *debugPrewords = [[NSMutableArray alloc] initWithObjects:@"R",@"P",@"FB",@"H",nil];
             for (NSString *debugPreword in debugPrewords) {
                 NSArray *debugModels = [theDebug getDebugModels:STRFORMAT(@"%@Demand%lld",debugPreword,self.getLoopId)];
+                for (XGDebugModel *model in debugModels) {
+                    NSLog(@"%@ 计数:%ld 均耗:%.0f 读:%ld 写:%ld",model.key,model.sumCount,model.sumTime / model.sumCount,model.sumReadCount,model.sumWriteCount);
+                }
+            }
+            
+            //d. 调试TVPanelView性能;
+            NSArray *preKeys = @[@"TVPanelView",@"DemandManager"];
+            for (NSString *preKey in preKeys) {
+                NSArray *debugModels = [theDebug getDebugModels:STRFORMAT(@"%@%lld",preKey,self.getLoopId)];
                 for (XGDebugModel *model in debugModels) {
                     NSLog(@"%@ 计数:%ld 均耗:%.0f 读:%ld 写:%ld",model.key,model.sumCount,model.sumTime / model.sumCount,model.sumReadCount,model.sumWriteCount);
                 }

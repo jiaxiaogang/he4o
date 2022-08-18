@@ -10,6 +10,7 @@
 
 /**
  *  MARK:--------------------性能分析--------------------
+ *  @desc 使用说明: 每条显示的用时为,当前条到下条执行间的代码用时;
  */
 @class XGDebugModel;
 @interface XGDebug : NSObject
