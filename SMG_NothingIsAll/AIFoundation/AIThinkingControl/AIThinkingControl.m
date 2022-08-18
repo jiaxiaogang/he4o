@@ -270,7 +270,7 @@ static AIThinkingControl *_instance;
         }
         
         //3. 平均耗时>2000ms时,属于卡顿状态;
-        if (!self.stopThink && self.last10TCScoreOperTimeArr.count >= 10 && sumUseTime / self.last10TCScoreOperTimeArr.count > 1000) {
+        if (!self.stopThink && self.last10TCScoreOperTimeArr.count >= 10 && sumUseTime / self.last10TCScoreOperTimeArr.count > 800) {
             
             //a. 设为植物模式;
             NSLog(@"操作计数判断当前为: 卡顿状态,转为植物模式");
@@ -289,7 +289,7 @@ static AIThinkingControl *_instance;
             }
             
             //d. 调试TVPanelView性能;
-            NSArray *preKeys = @[@"TVPanelView",@"DemandManager"];
+            NSArray *preKeys = @[@"TVPanelView",@"DemandManager",@"Score4Demand"];
             for (NSString *preKey in preKeys) {
                 NSArray *debugModels = [theDebug getDebugModels:STRFORMAT(@"%@%lld",preKey,self.getLoopId)];
                 for (XGDebugModel *model in debugModels) {
