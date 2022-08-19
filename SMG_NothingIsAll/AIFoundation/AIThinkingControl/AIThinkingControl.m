@@ -255,7 +255,7 @@ static AIThinkingControl *_instance;
     self.lastOperTime = now;
     
     //==> 判断卡顿
-    if ([operater containsString:@"TCScore"] && useTime > 200) {
+    if ([self.lastOperater containsString:@"TCRecognition"] && useTime > 200) {
         
         //1. 存10条;
         [self.last10TCScoreOperTimeArr addObject:@(useTime)];
@@ -270,7 +270,7 @@ static AIThinkingControl *_instance;
         }
         
         //3. 平均耗时>2000ms时,属于卡顿状态;
-        if (!self.stopThink && self.last10TCScoreOperTimeArr.count >= 10 && sumUseTime / self.last10TCScoreOperTimeArr.count > 600) {
+        if (!self.stopThink && self.last10TCScoreOperTimeArr.count >= 10 && sumUseTime / self.last10TCScoreOperTimeArr.count > 800) {
             
             //a. 设为植物模式;
             NSLog(@"操作计数判断当前为: 卡顿状态,转为植物模式");
@@ -280,7 +280,7 @@ static AIThinkingControl *_instance;
             [theRT setPlaying:false];
             
             //d. 调试具体慢原因性能;
-            NSArray *preKeys = @[@"TVPanelView"];
+            NSArray *preKeys = @[@"rRecognition",@"fbRecognition"];
             for (NSString *preKey in preKeys) {
                 NSArray *debugModels = [theDebug getDebugModels:STRFORMAT(@"%@%lld",preKey,self.getLoopId)];
                 for (XGDebugModel *model in debugModels) {
