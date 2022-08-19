@@ -22,4 +22,9 @@
 +(void) test10:(TOModelBase*)toModel;
 +(void) test11:(AIShortMatchModel*)shortModel waitAlg_p:(AIKVPointer*)waitAlg_p;
 
+/**
+ *  MARK:--------------------判断一个评分是否异常--------------------
+ */
++(void) test12:(CGFloat)score;
+
 @end

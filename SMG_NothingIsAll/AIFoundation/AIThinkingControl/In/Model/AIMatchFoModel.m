@@ -18,6 +18,7 @@
     model.colStableScore = colStableScore;
     model.indexDic = indexDic;
     model.cutIndex2 = cutIndex;
+    model.scoreCache = defaultScore; //评分缓存默认值;
     return model;
 }
 
@@ -35,6 +36,7 @@
         self.indexDic = [aDecoder decodeObjectForKey:@"indexDic"];
         self.cutIndex2 = [aDecoder decodeIntegerForKey:@"cutIndex2"];
         self.matchFoStrong = [aDecoder decodeIntegerForKey:@"matchFoStrong"];
+        self.scoreCache = [aDecoder decodeFloatForKey:@"scoreCache"];
     }
     return self;
 }
@@ -48,6 +50,7 @@
     [aCoder encodeObject:self.indexDic forKey:@"indexDic"];
     [aCoder encodeInteger:self.cutIndex2 forKey:@"cutIndex2"];
     [aCoder encodeInteger:self.matchFoStrong forKey:@"matchFoStrong"];
+    [aCoder encodeFloat:self.scoreCache forKey:@"scoreCache"];
 }
 
 @end

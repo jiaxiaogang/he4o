@@ -44,4 +44,12 @@
 
 @property (assign, nonatomic) NSInteger matchFoStrong;  //时序识别中被引用强度 (目前仅用于调试);
 
+/**
+ *  MARK:--------------------AIMatchFoModel的评分(懒加载)缓存--------------------
+ *  @desc 初始未计算时 = NSNotFound;
+ *  @version
+ *      2022.08.19: 初版,因为demand评分常慢(>1s),跑会训练就卡的很,所以加了这个评分缓存 (参考27065);
+ */
+@property (assign, nonatomic) CGFloat scoreCache;
+
 @end

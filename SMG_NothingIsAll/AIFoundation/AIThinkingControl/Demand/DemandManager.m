@@ -131,7 +131,7 @@
         //3. 数据准备
         NSArray *pFosValue = [fos4Demand objectForKey:atKey];
         AIMatchFoModel *firstPFo = ARR_INDEX(pFosValue, 0);
-        CGFloat score = [AIScore score4MV_v2:firstPFo];
+        CGFloat score = [AIScore score4MV_v2FromCache:firstPFo];
         
         //5. 取迫切度评分: 判断matchingFo.mv有值才加入demandManager,同台竞争,执行顺应mv;
         if (score < 0) {
@@ -146,7 +146,7 @@
             [theTC updateEnergyValue:-score * 20];
             NSLog(@"RMV新需求: %@ (条数+1=%ld 评分:%@)",atKey,self.loopCache.count,Double2Str_NDZ(score));
             for (AIMatchFoModel *pFo in pFosValue) {
-                NSLog(@"\t pFo:%@->{%.2f}",Pit2FStr(pFo.matchFo),[AIScore score4MV_v2:pFo]);
+                NSLog(@"\t pFo:%@->{%.2f}",Pit2FStr(pFo.matchFo),[AIScore score4MV_v2FromCache:pFo]);
             }
         }else{
             [theTC updateEnergyValue:-score * 20];

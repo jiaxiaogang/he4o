@@ -124,4 +124,10 @@
     }
 }
 
++(void) test12:(CGFloat)score {
+    if (score > 1000 || score < -1000) {
+        ELog(@"自检12: 评分异常");
+    }
+}
+
 @end

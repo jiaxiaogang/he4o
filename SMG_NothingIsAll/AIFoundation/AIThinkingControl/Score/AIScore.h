@@ -48,6 +48,7 @@
 +(CGFloat) score4MV:(NSString*)algsType urgentTo_p:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p ratio:(CGFloat)ratio;
 +(CGFloat) score4MV:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta ratio:(CGFloat)ratio;
 +(CGFloat) score4MV_v2:(AIMatchFoModel*)inModel;
++(CGFloat) score4MV_v2FromCache:(AIMatchFoModel*)inModel;
 
 /**
  *  MARK:--------------------对Demand综合评分--------------------

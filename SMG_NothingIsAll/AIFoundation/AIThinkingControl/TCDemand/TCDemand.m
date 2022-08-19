@@ -84,7 +84,7 @@
         DebugParam(debugPrefix,@"1");
         [ReasonDemandModel newWithAlgsType:atKey pFos:pFosValue inModel:model baseFo:foModel];
         DebugParam(debugPrefix,@"2");
-        for (AIMatchFoModel *pFo in pFosValue) NSLog(@"\t pFo:%@->{%.2f}",Pit2FStr(pFo.matchFo),[AIScore score4MV_v2:pFo]);
+        for (AIMatchFoModel *pFo in pFosValue) NSLog(@"\t pFo:%@->{%.2f}",Pit2FStr(pFo.matchFo),[AIScore score4MV_v2FromCache:pFo]);
         DebugParam(debugPrefix,@"3");
     }
     DebugParam(debugPrefix,@"4");

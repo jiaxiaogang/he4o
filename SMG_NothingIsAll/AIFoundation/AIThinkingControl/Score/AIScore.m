@@ -163,6 +163,19 @@
 }
 
 /**
+ *  MARK:--------------------对预测价值时序评分v2 from cache--------------------
+ *  @version
+ *      2022.08.19: 性能优化缓存版 (参考27065);
+ */
++(CGFloat) score4MV_v2FromCache:(AIMatchFoModel*)inModel {
+    if (inModel.scoreCache == defaultScore) {
+        inModel.scoreCache = [self score4MV_v2:inModel];
+    }
+    [AITest test12:inModel.scoreCache];
+    return inModel.scoreCache;
+}
+
+/**
  *  MARK:--------------------对Demand综合评分--------------------
  *  @param demand : 仅支持PR两种类型
  *  @version
