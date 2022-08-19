@@ -184,23 +184,17 @@
  *      2022.06.08: demand的评分,改为综合sumMvScore / pFos.count (参考2619j-TODO6);
  */
 +(CGFloat) score4Demand:(DemandModel*)demand{
-    NSString *debugPrefix = STRFORMAT(@"Score4Demand%lld",theTC.getLoopId);
-    DebugParam(debugPrefix,@"0");
     if (ISOK(demand, ReasonDemandModel.class) ) {
         ReasonDemandModel *rDemand = (ReasonDemandModel*)demand;
         CGFloat sumScore = 0;
-        DebugParam(debugPrefix,@"1");
         for (AIMatchFoModel *pFo in rDemand.pFos) {
             sumScore += [AIScore score4MV_v2FromCache:pFo];
         }
-        DebugParam(debugPrefix,@"2");
         return rDemand.pFos.count > 0 ? sumScore / rDemand.pFos.count : 0;
     }else if (ISOK(demand, PerceptDemandModel.class) ) {
         PerceptDemandModel *pDemand = (PerceptDemandModel*)demand;
-        DebugParam(debugPrefix,@"3");
         return [AIScore score4MV:pDemand.algsType urgentTo:pDemand.urgentTo delta:pDemand.delta ratio:1.0f];
     }
-    DebugParam(debugPrefix,@"4");
     return 0;
 }
 

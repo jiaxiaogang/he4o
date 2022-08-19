@@ -165,18 +165,13 @@
  *      2022.03.15: 将排序方式更新为用score4Demand (参考25142);
  */
 -(void) refreshCmvCacheSort{
-    NSString *debugPrefix = STRFORMAT(@"DemandManager%lld",theTC.getLoopId);
-    DebugParam(debugPrefix,@"0");
     NSArray *sort = [SMGUtils sortBig2Small:self.loopCache compareBlock1:^double(DemandModel *obj) {
         return [AIScore score4Demand:obj];
     } compareBlock2:^double(DemandModel *obj) {
         return obj.initTime;
     }];
-    DebugParam(debugPrefix,@"1");
     [self.loopCache removeAllObjects];
-    DebugParam(debugPrefix,@"2");
     [self.loopCache addObjectsFromArray:sort];
-    DebugParam(debugPrefix,@"3");
 }
 
 /**

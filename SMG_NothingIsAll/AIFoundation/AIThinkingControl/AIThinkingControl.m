@@ -279,17 +279,8 @@ static AIThinkingControl *_instance;
             //b. 并暂停强化训练;
             [theRT setPlaying:false];
             
-            //c. 调试分析代码具体慢原因;
-            NSMutableArray *debugPrewords = [[NSMutableArray alloc] initWithObjects:@"R",@"P",@"FB",@"H",nil];
-            for (NSString *debugPreword in debugPrewords) {
-                NSArray *debugModels = [theDebug getDebugModels:STRFORMAT(@"%@Demand%lld",debugPreword,self.getLoopId)];
-                for (XGDebugModel *model in debugModels) {
-                    NSLog(@"%@ 计数:%ld 均耗:%.0f = 总耗:%.0f 读:%ld 写:%ld",model.key,model.sumCount,model.sumTime / model.sumCount,model.sumTime,model.sumReadCount,model.sumWriteCount);
-                }
-            }
-            
-            //d. 调试TVPanelView性能;
-            NSArray *preKeys = @[@"TVPanelView",@"DemandManager",@"Score4Demand"];
+            //d. 调试具体慢原因性能;
+            NSArray *preKeys = @[@"TVPanelView"];
             for (NSString *preKey in preKeys) {
                 NSArray *debugModels = [theDebug getDebugModels:STRFORMAT(@"%@%lld",preKey,self.getLoopId)];
                 for (XGDebugModel *model in debugModels) {
