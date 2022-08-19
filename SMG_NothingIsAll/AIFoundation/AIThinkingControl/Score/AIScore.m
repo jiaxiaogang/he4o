@@ -191,7 +191,7 @@
         CGFloat sumScore = 0;
         DebugParam(debugPrefix,@"1");
         for (AIMatchFoModel *pFo in rDemand.pFos) {
-            sumScore += [AIScore score4MV_v2:pFo];
+            sumScore += [AIScore score4MV_v2FromCache:pFo];
         }
         DebugParam(debugPrefix,@"2");
         return rDemand.pFos.count > 0 ? sumScore / rDemand.pFos.count : 0;

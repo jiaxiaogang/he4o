@@ -270,7 +270,7 @@ static AIThinkingControl *_instance;
         }
         
         //3. 平均耗时>2000ms时,属于卡顿状态;
-        if (!self.stopThink && self.last10TCScoreOperTimeArr.count >= 10 && sumUseTime / self.last10TCScoreOperTimeArr.count > 800) {
+        if (!self.stopThink && self.last10TCScoreOperTimeArr.count >= 10 && sumUseTime / self.last10TCScoreOperTimeArr.count > 600) {
             
             //a. 设为植物模式;
             NSLog(@"操作计数判断当前为: 卡顿状态,转为植物模式");
@@ -284,7 +284,7 @@ static AIThinkingControl *_instance;
             for (NSString *debugPreword in debugPrewords) {
                 NSArray *debugModels = [theDebug getDebugModels:STRFORMAT(@"%@Demand%lld",debugPreword,self.getLoopId)];
                 for (XGDebugModel *model in debugModels) {
-                    NSLog(@"%@ 计数:%ld 均耗:%.0f 读:%ld 写:%ld",model.key,model.sumCount,model.sumTime / model.sumCount,model.sumReadCount,model.sumWriteCount);
+                    NSLog(@"%@ 计数:%ld 均耗:%.0f = 总耗:%.0f 读:%ld 写:%ld",model.key,model.sumCount,model.sumTime / model.sumCount,model.sumTime,model.sumReadCount,model.sumWriteCount);
                 }
             }
             
@@ -293,7 +293,7 @@ static AIThinkingControl *_instance;
             for (NSString *preKey in preKeys) {
                 NSArray *debugModels = [theDebug getDebugModels:STRFORMAT(@"%@%lld",preKey,self.getLoopId)];
                 for (XGDebugModel *model in debugModels) {
-                    NSLog(@"%@ 计数:%ld 均耗:%.0f 读:%ld 写:%ld",model.key,model.sumCount,model.sumTime / model.sumCount,model.sumReadCount,model.sumWriteCount);
+                    NSLog(@"%@ 计数:%ld 均耗:%.0f = 总耗:%.0f 读:%ld 写:%ld",model.key,model.sumCount,model.sumTime / model.sumCount,model.sumTime,model.sumReadCount,model.sumWriteCount);
                 }
             }
         }
