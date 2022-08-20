@@ -23,6 +23,7 @@
 #import "RLTrainer.h"
 #import "XGDebug.h"
 #import "XGDebugModel.h"
+#import "TCDebug.h"
 #endif
 
 //MARK:===============================================================
@@ -78,7 +79,7 @@
 /**
  *  MARK:--------------------debug--------------------
  */
-#define DebugParam(p,s) [theDebug debugModuleWithPrefix:p suffix:s]
+#define DebugParam(p,s) [theDebug debugModuleWithPrefix:p suffix:s] //指定前辍&&后辍
 #define Debug() [theDebug debugModuleWithFileName:FILENAME suffix:nil]
 #define DebugS() [theDebug debugModuleWithFileName:FILENAME suffix:@"START"]
 #define DebugE() [theDebug debugModuleWithFileName:FILENAME suffix:@"END"]
@@ -86,3 +87,7 @@
 #define DebugR() [theDebug debugRead]
 #define kFILENAME FILENAME
 #define kLINE __LINE__
+
+#define AddTCDebug(s) [theDebug debugModuleWithPrefix:TCDebugPrefixV1 suffix:s]
+#define TCDebugPrefixV1 TCDebugPrefixV2(kFILENAME) //TCDebug的前辍=文件名+循环Id
+#define TCDebugPrefixV2(FILENAME) STRFORMAT(@"%@%lld",FILENAME,theTC.getLoopId) //TCDebug的前辍=文件名+循环Id

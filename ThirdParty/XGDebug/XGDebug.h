@@ -22,6 +22,7 @@
  *  @param fileName : 调用者类名 (参考防重);
  *  @param suffix   : 调用者后辍 (参与防重);
  *  _param prefix   : 调用者前辍 (参考防重);
+ *  @desc 参数说明: 一般容易写死判断匹配的作为前辍 (如FILENAME或LoopId),常变不易匹配的用作后辍(如代码块标识:"R1.1");
  */
 -(void) debugModuleWithFileName:(NSString*)fileName suffix:(NSString*)suffix;
 -(void) debugModuleWithPrefix:(NSString*)prefix suffix:(NSString*)suffix;

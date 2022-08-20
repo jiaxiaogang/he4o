@@ -35,11 +35,10 @@
     Debug();
     IFTitleLog(@"时序识别", @"\n%@:%@->%@",ARRISOK(model.matchAlgs) ? @"protoFo" : @"matchAFo",Fo2FStr(maskFo),Mvp2Str(maskFo.cmvNode_p));
     
-    NSString *debugPrefix = STRFORMAT(@"rRecognition%lld",theTC.getLoopId);
-    DebugParam(debugPrefix,@"0");
+    AddTCDebug(@"R0");
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
     [TIUtils partMatching_FoV1Dot5:maskFo except_ps:except_ps decoratorInModel:model fromRegroup:false];
-    DebugParam(debugPrefix,@"1");
+    AddTCDebug(@"R1");
     
     //5. 学习;
     DebugE();
@@ -97,12 +96,11 @@
     Debug();
     OFTitleLog(@"反思时序识别", @"\n%@",Fo2FStr(regroupFo));
     
-    NSString *debugPrefix = STRFORMAT(@"fbRecognition%lld",theTC.getLoopId);
-    DebugParam(debugPrefix,@"0");
+    AddTCDebug(@"FB0");
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
     [TIUtils partMatching_FoV1Dot5:regroupFo except_ps:@[regroupFo.pointer] decoratorInModel:result fromRegroup:true];
     //NSLog(@"反思时序: Finish >> %@",Fo2FStr(result.matchFo));
-    DebugParam(debugPrefix,@"1");
+    AddTCDebug(@"FB1");
     
     //3. 调用更新到短时记忆树;
     DebugE();

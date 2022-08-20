@@ -24,14 +24,7 @@
 @property (strong, nonatomic) ShortMatchManager *shortMatchManager; //IN短时记忆 (输入数据管理器);
 @property (assign, nonatomic) long long operCount;                  //思维操作计数;
 @property (assign, nonatomic) long long loopId;                     //思维循环Id;
-
-//MARK:===============================================================
-//MARK:                     < 用于调试性能用 >
-//MARK:===============================================================
-@property (strong, nonatomic) NSMutableArray *last10TCScoreOperTimeArr;
-@property (assign, nonatomic) NSTimeInterval lastOperTime;
-@property (assign, nonatomic) NSTimeInterval lastLoopTime;
-@property (strong, nonatomic) NSString *lastOperater;
+@property (strong, nonatomic) TCDebug *tcDebug;                     //tcDebug工具;
 
 /**
  *  MARK:--------------------当前能量值--------------------
@@ -68,7 +61,7 @@ static AIThinkingControl *_instance;
     self.demandManager = [[DemandManager alloc] init];
     self.shortMatchManager = [[ShortMatchManager alloc] init];
     [theRT regist:kClearTCSEL target:self selector:@selector(clear)];
-    self.last10TCScoreOperTimeArr = [[NSMutableArray alloc] init];
+    self.tcDebug = [[TCDebug alloc] init];
 }
 
 
@@ -243,55 +236,7 @@ static AIThinkingControl *_instance;
  */
 -(void) updateOperCount:(NSString*)operater{
     self.operCount++;
-    
-    //==> 调试用时
-    NSTimeInterval now = [NSDate new].timeIntervalSince1970 * 1000;
-    NSTimeInterval useTime = now - self.lastOperTime;
-    
-    NSString *useTimeStr = @"";
-    for (int i = 0; i < (int)(useTime / 100); i++) {useTimeStr = STRFORMAT(@"%@*",useTimeStr);}
-    if (self.lastOperTime > 0 && useTime > 200)
-        NSLog(@"当前:%@ 操作计数更新:%lld 用时:%@ (%.0f) from:%@",operater,self.getOperCount,useTimeStr,useTime,self.lastOperater);
-    self.lastOperTime = now;
-    
-    //==> 判断卡顿
-    if ([self.lastOperater containsString:@"TCRecognition"] && useTime > 200) {
-        
-        //1. 存10条;
-        [self.last10TCScoreOperTimeArr addObject:@(useTime)];
-        if (self.last10TCScoreOperTimeArr.count > 10) {
-            [self.last10TCScoreOperTimeArr removeObjectAtIndex:0];
-        }
-        
-        //2. 算出10条总耗时;
-        double sumUseTime = 0;
-        for (NSNumber *item in self.last10TCScoreOperTimeArr) {
-            sumUseTime += item.doubleValue;
-        }
-        
-        //3. 平均耗时>2000ms时,属于卡顿状态;
-        if (!self.stopThink && self.last10TCScoreOperTimeArr.count >= 10 && sumUseTime / self.last10TCScoreOperTimeArr.count > 800) {
-            
-            //a. 设为植物模式;
-            NSLog(@"操作计数判断当前为: 卡顿状态,转为植物模式");
-            self.stopThink = true;
-            
-            //b. 并暂停强化训练;
-            [theRT setPlaying:false];
-            
-            //d. 调试具体慢原因性能;
-            NSArray *preKeys = @[@"rRecognition",@"fbRecognition"];
-            for (NSString *preKey in preKeys) {
-                NSArray *debugModels = [theDebug getDebugModels:STRFORMAT(@"%@%lld",preKey,self.getLoopId)];
-                for (XGDebugModel *model in debugModels) {
-                    NSLog(@"%@ 计数:%ld 均耗:%.0f = 总耗:%.0f 读:%ld 写:%ld",model.key,model.sumCount,model.sumTime / model.sumCount,model.sumTime,model.sumReadCount,model.sumWriteCount);
-                }
-            }
-        }
-    }
-    
-    //记录lastOperater
-    self.lastOperater = operater;
+    [self.tcDebug updateOperCount:operater];
 }
 
 -(long long) getOperCount{
@@ -305,13 +250,7 @@ static AIThinkingControl *_instance;
 //循环Id (参考26183);
 -(void) updateLoopId{
     self.loopId++;
-    
-    //调试用时
-    NSTimeInterval now = [NSDate new].timeIntervalSince1970 * 1000;
-    NSTimeInterval useTime = now - self.lastLoopTime;
-    if (self.lastLoopTime > 0 && useTime > 2000)
-        NSLog(@"循环计数更新:%lld 用时:%.0f ========================================",self.getLoopId,useTime);
-    self.lastLoopTime = now;
+    [self.tcDebug updateLoopId];
 }
 -(long long) getLoopId{
     return _loopId;
