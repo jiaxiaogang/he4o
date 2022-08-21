@@ -15,10 +15,10 @@
 #define DebugingTC @"TCRecognition.m"
 
 //对最后多少条时间汇总分析
-#define DebugLastOperesNum 2
+#define DebugLastOperesNum 10
 
 //判断为卡状态的阈值 (单位:ms)
-#define DebugKaleTime 300
+#define DebugKaleTime 800
 
 //TCOper操作剔除最小数的阈值 (单位:ms)
 #define DebugOperMinTime 200
