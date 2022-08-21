@@ -580,15 +580,22 @@
 
 +(NSArray*) refPorts_All4Alg:(AIAlgNodeBase*)node{
     NSMutableArray *allPorts = [[NSMutableArray alloc] init];
+    AddTCDebug(@"时序识别2.2");
     if (ISOK(node, AIAlgNodeBase.class)) {
+        AddTCDebug(@"时序识别2.3");
         [allPorts addObjectsFromArray:node.refPorts];
+        AddTCDebug(@"时序识别2.4");
         [allPorts addObjectsFromArray:[SMGUtils searchObjectForPointer:node.pointer fileName:kFNMemRefPorts time:cRTMemPort]];
+        AddTCDebug(@"时序识别2.5");
         allPorts = [SMGUtils removeRepeat:allPorts];
     }
+    AddTCDebug(@"时序识别2.6");
     return allPorts;
 }
 +(NSArray*) refPorts_All4Alg_Normal:(AIAlgNodeBase*)node{
+    AddTCDebug(@"时序识别2.1");
     NSArray *allPorts = [self refPorts_All4Alg:node];
+    AddTCDebug(@"时序识别2.7");
     return [SMGUtils filterPorts_Normal:allPorts];
 }
 

@@ -15,13 +15,13 @@
 #define DebugingTC @"TCRecognition.m"
 
 //结果打印的TC名称们 (当前要打印哪些结果,就纳入哪些名称);
-#define LogingTCs @[@"TCRecognition.m", @"TIUtils.m"]
+#define LogingTCs @[@"TCRecognition.m", @"TIUtils.m",@"AINetUtils.m",@"SMGUtils.m"]
 
 //对最后多少条时间汇总分析
-#define DebugLastOperesNum 3
+#define DebugLastOperesNum 1
 
 //判断为卡状态的阈值 (单位:ms)
-#define DebugKaleTime 2000
+#define DebugKaleTime 600
 
 //TCOper操作剔除最小数的阈值 (单位:ms)
 #define DebugOperMinTime 200
