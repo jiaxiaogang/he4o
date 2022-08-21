@@ -9,16 +9,19 @@
 #import "TCDebug.h"
 
 //判断卡了功能->开关
-#define TCDebugKaleSwitch false
+#define TCDebugKaleSwitch true
 
 //调试中的TC名称 (当前调试哪个,就改成哪个名称);
 #define DebugingTC @"TCRecognition.m"
 
+//结果打印的TC名称们 (当前要打印哪些结果,就纳入哪些名称);
+#define LogingTCs @[@"TCRecognition.m", @"TIUtils.m"]
+
 //对最后多少条时间汇总分析
-#define DebugLastOperesNum 10
+#define DebugLastOperesNum 3
 
 //判断为卡状态的阈值 (单位:ms)
-#define DebugKaleTime 800
+#define DebugKaleTime 2000
 
 //TCOper操作剔除最小数的阈值 (单位:ms)
 #define DebugOperMinTime 200
@@ -89,9 +92,11 @@
             [theRT setPlaying:false];
             
             //d. 调试具体慢原因性能;
-            NSArray *debugModels = [theDebug getDebugModels:TCDebugPrefixV2(DebugingTC)];
-            for (XGDebugModel *model in debugModels) {
-                NSLog(@"%@ 计数:%ld 均耗:%.0f = 总耗:%.0f 读:%ld 写:%ld",model.key,model.sumCount,model.sumTime / model.sumCount,model.sumTime,model.sumReadCount,model.sumWriteCount);
+            for (NSString *logingTC in LogingTCs) {
+                NSArray *debugModels = [theDebug getDebugModels:TCDebugPrefixV2(logingTC)];
+                for (XGDebugModel *model in debugModels) {
+                    NSLog(@"%@ 计数:%ld 均耗:%.0f = 总耗:%.0f 读:%ld 写:%ld",model.key,model.sumCount,model.sumTime / model.sumCount,model.sumTime,model.sumReadCount,model.sumWriteCount);
+                }
             }
         }
     }

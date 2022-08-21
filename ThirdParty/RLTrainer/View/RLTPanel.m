@@ -325,7 +325,7 @@
 //步骤参考26029-加长版强化加训 (参考26031-2);
 - (IBAction)loadFlyBtnOnClick:(id)sender {
     //0. 无日志模式;
-    [theApp setNoLogMode:true];
+    //[theApp setNoLogMode:true];
     
     //0. 出生在随机偏中位置 (以方便训练被撞和躲开经验);
     [theRT queue1:kBirthPosRdmCentSEL];
