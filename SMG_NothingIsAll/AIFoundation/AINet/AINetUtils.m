@@ -578,6 +578,11 @@
     return [SMGUtils filterPorts:allPorts havTypes:havTypes noTypes:noTypes];
 }
 
+/**
+ *  MARK:--------------------refPorts--------------------
+ *  @version
+ *      2022.08.22: 因为防重性能差,改为当memPorts有效时,才防重 (参考27082-慢代码1);
+ */
 +(NSArray*) refPorts_All4Alg:(AIAlgNodeBase*)node{
     NSMutableArray *allPorts = [[NSMutableArray alloc] init];
     AddTCDebug(@"时序识别2.2");
@@ -585,9 +590,13 @@
         AddTCDebug(@"时序识别2.3");
         [allPorts addObjectsFromArray:node.refPorts];
         AddTCDebug(@"时序识别2.4");
-        [allPorts addObjectsFromArray:[SMGUtils searchObjectForPointer:node.pointer fileName:kFNMemRefPorts time:cRTMemPort]];
-        AddTCDebug(@"时序识别2.5");
-        allPorts = [SMGUtils removeRepeat:allPorts];
+        NSArray *memPorts = [SMGUtils searchObjectForPointer:node.pointer fileName:kFNMemRefPorts time:cRTMemPort];
+        if (ARRISOK(memPorts)) {
+            [SMGUtils collectArrA_NoRepeat:allPorts arrB:memPorts];
+            [allPorts addObjectsFromArray:memPorts];
+            AddTCDebug(@"时序识别2.5");
+            allPorts = [SMGUtils removeRepeat:allPorts];
+        }
     }
     AddTCDebug(@"时序识别2.6");
     return allPorts;
@@ -600,10 +609,18 @@
 }
 
 +(NSArray*) refPorts_All4Value:(AIKVPointer*)value_p{
+    //1. 收集db的;
     NSMutableArray *allPorts = [[NSMutableArray alloc] init];
     [allPorts addObjectsFromArray:[self refPorts_All4Value:value_p isMem:false]];
-    [allPorts addObjectsFromArray:[self refPorts_All4Value:value_p isMem:true]];
-    allPorts = [SMGUtils removeRepeat:allPorts];
+    
+    //2. 收集mem的;
+    NSArray *memPorts = [self refPorts_All4Value:value_p isMem:true];
+    [allPorts addObjectsFromArray:memPorts];
+    
+    //3. mem有效时,防重;
+    if (ARRISOK(memPorts)) {
+        allPorts = [SMGUtils removeRepeat:allPorts];
+    }
     return allPorts;
 }
 +(NSArray*) refPorts_All:(AIKVPointer*)node_p{

@@ -730,28 +730,34 @@
 +(NSMutableArray*) removeRepeat:(NSArray*)protoArr convertBlock:(id(^)(id obj))convertBlock{
     //1. 数据准备
     AddTCDebug(@"时序识别2.5.1");
-    NSMutableArray *result = [[NSMutableArray alloc] init];
     protoArr = ARRTOOK(protoArr);
     AddTCDebug(@"时序识别2.5.2");
     
-    //2. 防重收集
+    //2. 防重收集 (根据当前proto转为converted后的类型防重);
+    NSMutableDictionary *convertDic = [NSMutableDictionary new];
     for (id proto in protoArr) {
+        id obj = convertBlock(proto);
         AddTCDebug(@"时序识别2.5.3");
-        
-        //3. 将已收集部分和当前proto转为converted后的类型;
-        NSArray *resultConverteds = [SMGUtils convertArr:result convertBlock:convertBlock];
-        id protoConverted = convertBlock(proto);
+        [convertDic setObject:proto forKey:OBJ2DATA(obj)];
         AddTCDebug(@"时序识别2.5.4");
-        
-        //4. 判断是否已包含 (未包含则收集);
-        if (![resultConverteds containsObject:protoConverted]) {
-            AddTCDebug(@"时序识别2.5.5");
-            [result addObject:proto];
-        }
-        AddTCDebug(@"时序识别2.5.6");
     }
+    AddTCDebug(@"时序识别2.5.5");
+    
+    //3. 保持顺序;
+    NSArray *result = convertDic.allValues;
+    result = [SMGUtils sortSmall2Big:result compareBlock:^double(id proto) {
+        return [protoArr indexOfObject:proto];
+    }];
+    AddTCDebug(@"时序识别2.5.6");
     AddTCDebug(@"时序识别2.5.7");
-    return result;
+    if (protoArr.count > 500) {
+        NSArray *debugModels = [theDebug getDebugModels:TCDebugPrefixV2(kFILENAME)];
+        for (XGDebugModel *model in debugModels) {
+            NSLog(@"%@ 计数:%ld 均耗:%.0f = 总耗:%.0f 读:%ld 写:%ld",model.key,model.sumCount,model.sumTime / model.sumCount,model.sumTime,model.sumReadCount,model.sumWriteCount);
+        }
+        NSLog(@"");
+    }
+    return [[NSMutableArray alloc] initWithArray:result];
 }
 
 +(AIKVPointer*) filterSameIdentifier_p:(AIKVPointer*)a_p b_ps:(NSArray*)b_ps{

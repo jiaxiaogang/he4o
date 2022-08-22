@@ -15,19 +15,16 @@
  */
 -(BOOL) isEqual:(AIPointer*)object{//重写指针对比地址方法;
     if (POINTERISOK(object)) {
-        //1. 对比pointerId
-        BOOL pointerIdEqual = (self.pointerId == object.pointerId);
-        //2. 对比params
-        if (pointerIdEqual && self.params.count == object.params.count) {
+        //1. 对比
+        if (self.pointerId == object.pointerId && self.params.count == object.params.count) {
             for (NSString *key in self.params.allKeys) {
-                BOOL itemEqual = [STRTOOK([self.params objectForKey:key]) isEqualToString:STRTOOK([object.params objectForKey:key])];
+                BOOL itemEqual = STRTOOK([self.params objectForKey:key]).hash == STRTOOK([object.params objectForKey:key]).hash;
                 if (!itemEqual) {
                     return false;//发现不同
                 }
             }
+            return true;//未发现不同,全一样;
         }
-        //3. params相同时返回pointerIdEqual
-        return pointerIdEqual;
     }
     return false;
 }
