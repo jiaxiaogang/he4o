@@ -308,7 +308,10 @@
  *  @result notnull
  */
 +(NSMutableArray *) collectArrA:(NSArray*)arrA arrB:(NSArray*)arrB;
+//不管顺序: 先收集bigArr再收集littleArr
 +(NSMutableArray *) collectArrA_NoRepeat:(NSArray*)arrA arrB:(NSArray*)arrB;
+//保持顺序: 先收集first再收集second
++(NSMutableArray *) collectArrA_NoRepeat_Sort:(NSArray*)firstArr arrB:(NSArray*)secondArr;
 
 @end
 

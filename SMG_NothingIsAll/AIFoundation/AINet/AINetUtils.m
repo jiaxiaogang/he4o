@@ -581,24 +581,15 @@
 /**
  *  MARK:--------------------refPorts--------------------
  *  @version
- *      2022.08.22: 因为防重性能差,改为当memPorts有效时,才防重 (参考27082-慢代码1);
+ *      2022.08.22: 因为防重性能差,优化"并集"防重算法 (参考27082-慢代码1);
  */
 +(NSArray*) refPorts_All4Alg:(AIAlgNodeBase*)node{
     NSMutableArray *allPorts = [[NSMutableArray alloc] init];
-    AddTCDebug(@"时序识别2.2");
     if (ISOK(node, AIAlgNodeBase.class)) {
-        AddTCDebug(@"时序识别2.3");
         [allPorts addObjectsFromArray:node.refPorts];
-        AddTCDebug(@"时序识别2.4");
         NSArray *memPorts = [SMGUtils searchObjectForPointer:node.pointer fileName:kFNMemRefPorts time:cRTMemPort];
-        if (ARRISOK(memPorts)) {
-            [SMGUtils collectArrA_NoRepeat:allPorts arrB:memPorts];
-            [allPorts addObjectsFromArray:memPorts];
-            AddTCDebug(@"时序识别2.5");
-            allPorts = [SMGUtils removeRepeat:allPorts];
-        }
+        allPorts = [SMGUtils collectArrA_NoRepeat_Sort:allPorts arrB:memPorts];
     }
-    AddTCDebug(@"时序识别2.6");
     return allPorts;
 }
 +(NSArray*) refPorts_All4Alg_Normal:(AIAlgNodeBase*)node{

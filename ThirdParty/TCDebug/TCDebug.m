@@ -21,7 +21,7 @@
 #define DebugLastOperesNum 1
 
 //判断为卡状态的阈值 (单位:ms)
-#define DebugKaleTime 600
+#define DebugKaleTime 1600
 
 //TCOper操作剔除最小数的阈值 (单位:ms)
 #define DebugOperMinTime 200

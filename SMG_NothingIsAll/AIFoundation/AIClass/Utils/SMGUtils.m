@@ -719,6 +719,7 @@
 /**
  *  MARK:--------------------防重--------------------
  *  _param convertBlock : 用于转换"判断防重的数据类型";
+ *  @desc 性能说明: 当AIPort类型时,防重5000条以上时,用时经常1.5s以上 (所以此方法尽量少用);
  *  @result notnull
  */
 +(NSMutableArray*) removeRepeat:(NSArray*)protoArr{
@@ -729,63 +730,22 @@
 
 +(NSMutableArray*) removeRepeat:(NSArray*)protoArr convertBlock:(id(^)(id obj))convertBlock{
     //1. 数据准备
-    AddTCDebug(@"时序识别2.5.1");
     NSMutableArray *result = [[NSMutableArray alloc] init];
     protoArr = ARRTOOK(protoArr);
-    AddTCDebug(@"时序识别2.5.2");
     
     //2. 防重收集
     for (id proto in protoArr) {
-        AddTCDebug(@"时序识别2.5.3");
         
         //3. 将已收集部分和当前proto转为converted后的类型;
         NSArray *resultConverteds = [SMGUtils convertArr:result convertBlock:convertBlock];
         id protoConverted = convertBlock(proto);
-        AddTCDebug(@"时序识别2.5.4");
         
         //4. 判断是否已包含 (未包含则收集);
         if (![resultConverteds containsObject:protoConverted]) {
-            AddTCDebug(@"时序识别2.5.5");
             [result addObject:proto];
         }
-        AddTCDebug(@"时序识别2.5.6");
     }
-    AddTCDebug(@"时序识别2.5.7");
     return result;
-}
-
-//优化版 (未启用);
-+(NSMutableArray*) removeRepeatV2:(NSArray*)protoArr convertBlock:(id(^)(id obj))convertBlock{
-    //1. 数据准备
-    AddTCDebug(@"时序识别2.5.1");
-    protoArr = ARRTOOK(protoArr);
-    AddTCDebug(@"时序识别2.5.2");
-    
-    //2. 防重收集 (根据当前proto转为converted后的类型防重);
-    NSMutableDictionary *convertDic = [NSMutableDictionary new];
-    for (id proto in protoArr) {
-        id obj = convertBlock(proto);
-        AddTCDebug(@"时序识别2.5.3");
-        [convertDic setObject:proto forKey:OBJ2DATA(obj)];
-        AddTCDebug(@"时序识别2.5.4");
-    }
-    AddTCDebug(@"时序识别2.5.5");
-    
-    //3. 保持顺序;
-    NSArray *result = convertDic.allValues;
-    result = [SMGUtils sortSmall2Big:result compareBlock:^double(id proto) {
-        return [protoArr indexOfObject:proto];
-    }];
-    AddTCDebug(@"时序识别2.5.6");
-    AddTCDebug(@"时序识别2.5.7");
-    if (protoArr.count > 500) {
-        NSArray *debugModels = [theDebug getDebugModels:TCDebugPrefixV2(kFILENAME)];
-        for (XGDebugModel *model in debugModels) {
-            NSLog(@"%@ 计数:%ld 均耗:%.0f = 总耗:%.0f 读:%ld 写:%ld",model.key,model.sumCount,model.sumTime / model.sumCount,model.sumTime,model.sumReadCount,model.sumWriteCount);
-        }
-        NSLog(@"");
-    }
-    return [[NSMutableArray alloc] initWithArray:result];
 }
 
 +(AIKVPointer*) filterSameIdentifier_p:(AIKVPointer*)a_p b_ps:(NSArray*)b_ps{
@@ -974,9 +934,33 @@
     return result;
 }
 
+//不管顺序: 先收集bigArr再收集littleArr
 +(NSMutableArray *) collectArrA_NoRepeat:(NSArray*)arrA arrB:(NSArray*)arrB{
-    NSMutableArray *result = [SMGUtils collectArrA:arrA arrB:arrB];
-    result = [SMGUtils removeRepeat:result];
+    //1. 数据准备;
+    arrA = ARRTOOK(arrA);
+    arrB = ARRTOOK(arrB);
+    NSArray *litArr = arrA.count < arrB.count ? arrA : arrB;
+    NSArray *bigArr = arrA.count < arrB.count ? arrB : arrA;
+    
+    //2. 先收集大的,再收集小的;
+    return [SMGUtils collectArrA_NoRepeat_Sort:bigArr arrB:litArr];
+}
+
+//保持顺序: 先收集first再收集second
++(NSMutableArray *) collectArrA_NoRepeat_Sort:(NSArray*)firstArr arrB:(NSArray*)secondArr{
+    //1. 数据准备;
+    firstArr = ARRTOOK(firstArr);
+    secondArr = ARRTOOK(secondArr);
+    
+    //2. 先收集大的;
+    NSMutableArray *result = [[NSMutableArray alloc] initWithArray:firstArr];
+    
+    //3. 再收集小的;
+    for (id second in secondArr) {
+        if (![result containsObject:second]) {
+            [result addObject:second];
+        }
+    }
     return result;
 }
 
