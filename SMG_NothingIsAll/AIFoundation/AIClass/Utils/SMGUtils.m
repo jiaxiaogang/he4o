@@ -730,6 +730,34 @@
 +(NSMutableArray*) removeRepeat:(NSArray*)protoArr convertBlock:(id(^)(id obj))convertBlock{
     //1. 数据准备
     AddTCDebug(@"时序识别2.5.1");
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    protoArr = ARRTOOK(protoArr);
+    AddTCDebug(@"时序识别2.5.2");
+    
+    //2. 防重收集
+    for (id proto in protoArr) {
+        AddTCDebug(@"时序识别2.5.3");
+        
+        //3. 将已收集部分和当前proto转为converted后的类型;
+        NSArray *resultConverteds = [SMGUtils convertArr:result convertBlock:convertBlock];
+        id protoConverted = convertBlock(proto);
+        AddTCDebug(@"时序识别2.5.4");
+        
+        //4. 判断是否已包含 (未包含则收集);
+        if (![resultConverteds containsObject:protoConverted]) {
+            AddTCDebug(@"时序识别2.5.5");
+            [result addObject:proto];
+        }
+        AddTCDebug(@"时序识别2.5.6");
+    }
+    AddTCDebug(@"时序识别2.5.7");
+    return result;
+}
+
+//优化版 (未启用);
++(NSMutableArray*) removeRepeatV2:(NSArray*)protoArr convertBlock:(id(^)(id obj))convertBlock{
+    //1. 数据准备
+    AddTCDebug(@"时序识别2.5.1");
     protoArr = ARRTOOK(protoArr);
     AddTCDebug(@"时序识别2.5.2");
     
