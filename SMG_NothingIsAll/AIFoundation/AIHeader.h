@@ -80,6 +80,7 @@
 #import "TCScore.h"
 #import "TCPlan.h"
 #import "TCSolution.h"
+#import "TCRefrection.h"
 #import "TCEffect.h"
 #import "TCAction.h"
 #import "TCActYes.h"
